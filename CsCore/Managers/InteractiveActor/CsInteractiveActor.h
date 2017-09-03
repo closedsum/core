@@ -1,0 +1,365 @@
+// Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
+#include "Managers/CsPooledActor.h"
+#include "CsTypes.h"
+#include "CsInteractiveActor.generated.h"
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsInteractiveActor_Override_OnTickOverlap, const int32&, Index, const float&, DeltaSeconds);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_SevenParams(FBindableDynEvent_CsInteractiveActor_Override_OnBeginOverlap, const int32&, Index, UPrimitiveComponent*, OverlappedComponent, AActor*, OtherActor, UPrimitiveComponent*, OtherComp, int32, OtherBodyIndex, bool, bFromSweep, const FHitResult &, SweepResult);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(FBindableDynEvent_CsInteractiveActor_Override_OnEndOverlap, const int32&, Index, UPrimitiveComponent*, OverlappedComponent, AActor*, OtherActor, UPrimitiveComponent*, OtherComp, int32, OtherBodyIndex);
+
+// Interaction
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsInteractiveActor_Override_OnInteraction, const int32&, Index, UObject*, InInstigator, USceneComponent*, InComponent);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsInteractiveActor_OnInteraction, const uint16&, UObject*);
+
+// FirstFreeze
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsInteractiveActor_Override_OnFirstFreeze, const int32&, Index, UObject*, InInstigator, USceneComponent*, InComponent);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsInteractiveActor_OnFirstFreeze, const uint16&, UObject*, USceneComponent*);
+// Freeze
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsInteractiveActor_Override_OnFreeze, const int32&, Index, UObject*, InInstigator, USceneComponent*, InComponent);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsInteractiveActor_OnFreeze, const uint16&, UObject*, USceneComponent*);
+// FirstUnFreeze
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsInteractiveActor_Override_OnFirstUnFreeze, const int32&, Index, UObject*, InInstigator, USceneComponent*, InComponent);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsInteractiveActor_OnFirstUnFreeze, const uint16&, UObject*, USceneComponent*);
+// FirstHold
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsInteractiveActor_Override_OnFirstHold, const int32&, Index, UObject*, InInstigator, USceneComponent*, InComponent);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsInteractiveActor_OnFirstHold, const uint16&, UObject*, USceneComponent*);
+// Hold
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsInteractiveActor_Override_OnHold, const int32&, Index, UObject*, InInstigator, USceneComponent*, InComponent);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsInteractiveActor_OnHold, const uint16&, UObject*, USceneComponent*);
+// Release
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsInteractiveActor_Override_OnRelease, const int32&, Index, UObject*, InInstigator, USceneComponent*, InComponent);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsInteractiveActor_OnRelease, const uint16&, UObject*, USceneComponent*);
+// FirstTouch
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsInteractiveActor_Override_OnFirstTouch, const int32&, Index, UObject*, InInstigator, USceneComponent*, InComponent);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsInteractiveActor_OnFirstTouch, const uint16&, UObject*, USceneComponent*);
+// Touch
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsInteractiveActor_Override_OnTouch, const int32&, Index, UObject*, InInstigator, USceneComponent*, InComponent);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsInteractiveActor_OnTouch, const uint16&, UObject*, USceneComponent*);
+// FirstHover
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsInteractiveActor_Override_OnFirstHover, const int32&, Index, UObject*, InInstigator, USceneComponent*, InComponent);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsInteractiveActor_OnFirstHover, const uint16&, UObject*, USceneComponent*);
+// Hover
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsInteractiveActor_Override_OnHover, const int32&, Index, UObject*, InInstigator, USceneComponent*, InComponent);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsInteractiveActor_OnHover, const uint16&, UObject*, USceneComponent*);
+// FirstUnHover
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsInteractiveActor_Override_OnFirstUnHover, const int32&, Index, UObject*, InInstigator, USceneComponent*, InComponent);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsInteractiveActor_OnFirstUnHover, const uint16&, UObject*, USceneComponent*);
+// FirstCollide
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsInteractiveActor_Override_OnFirstCollide, const int32&, Index, UObject*, InInstigator, USceneComponent*, InComponent);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsInteractiveActor_OnFirstCollide, const uint16&, UObject*, USceneComponent*);
+// Collide
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsInteractiveActor_Override_OnCollide, const int32&, Index, UObject*, InInstigator, USceneComponent*, InComponent);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsInteractiveActor_OnCollide, const uint16&, UObject*, USceneComponent*);
+// FirstUnCollide
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsInteractiveActor_Override_OnFirstUnCollide, const int32&, Index, UObject*, InInstigator, USceneComponent*, InComponent);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsInteractiveActor_OnFirstUnCollide, const uint16&, UObject*, USceneComponent*);
+// Remove
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsInteractiveActor_Override_OnRemove, const int32&, Index, UObject*, InInstigator, USceneComponent*, InComponent);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsInteractiveActor_OnRemove, const uint16&, UObject*, USceneComponent*);
+
+USTRUCT()
+struct FCsInteractiveActorCache : public FCsPooledObjectCache
+{
+	GENERATED_USTRUCT_BODY()
+
+	TWeakObjectPtr<class ACsInteractiveActor> Actor;
+
+	// TODO: LifeTime
+
+	FCsInteractiveActorCache()
+	{
+		Reset();
+	}
+
+	void Set(const uint16 &InIndex, ACsInteractiveActor* InActor)
+	{
+		Index		 = InIndex;
+		Index_Script = (int32)Index;
+		InActor		 = InActor;
+	}
+
+	template<typename T>
+	void Init(const uint16& InActiveIndex, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint8&))
+	{
+		ActiveIndex = InActiveIndex;
+		Owner = InOwner;
+		Parent = InParent;
+		Time = InTime;
+		RealTime = InRealTime;
+		Frame = InFrame;
+
+		if (InObject && OnDeAllocate)
+		{
+			DelegateInvoker = (UObject*)InObject;
+#if WITH_EDITOR
+			OnDeAllocate_ScriptEvent.AddUObject(InObject, OnDeAllocate);
+#endif // #if WITH_EDITOR
+			OnDeAllocate_Event.AddUObject(InObject, OnDeAllocate);
+		}
+	}
+
+	template<typename T>
+	void Init(const uint16& InActiveIndex, const float &InTime, const float &InRealTime, const uint64 &InFrame, T* InObject, void (T::*OnDeAllocate)(const uint8&))
+	{
+		Init(InActiveIndex, InTime, InRealTime, InFrame, nullptr, nullptr, InObject, OnDeAllocate);
+	}
+
+	void Init(const uint16& InActiveIndex, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent)
+	{
+		ActiveIndex = InActiveIndex;
+		Owner = InOwner;
+		Parent = InParent;
+		Time = InTime;
+		RealTime = InRealTime;
+		Frame = InFrame;
+	}
+
+	void Init(const uint16& InActiveIndex, const float &InTime, const float &InRealTime, const uint64 &InFrame)
+	{
+		Init(InActiveIndex, InTime, InRealTime, InFrame, nullptr, nullptr);
+	}
+
+	virtual void Reset() override
+	{
+		Super::Reset();
+
+		Actor.Reset();
+		Actor = nullptr;
+	}
+
+	ACsInteractiveActor* GetActor() { return Actor.IsValid() ? Actor.Get() : nullptr; }
+};
+
+UCLASS()
+class CSCORE_API ACsInteractiveActor : public ACsPooledActor
+{
+	GENERATED_UCLASS_BODY()
+
+	virtual void OnConstructor(const FObjectInitializer& ObjectInitializer);
+
+	virtual void PostInitializeComponents() override;
+	virtual void Tick(float DeltaSeconds) override;
+	virtual void OnTick_CheckCVars(const float &DeltaSeconds) override;
+
+protected:
+	bool UseSkeletalMesh;
+public:
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Mesh")
+	class UCsSkeletalMeshComponent* SkeletalMeshComponent;
+protected:
+	bool UseStaticMesh;
+public:
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Mesh")
+	class UCsStaticMeshComponent* StaticMeshComponent;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Collision")
+	class UPrimitiveComponent* WorldCollisionComponent;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Collision")
+	TEnumAsByte<ECollisionEnabled::Type> WorldCollisionEnabled;
+
+	bool WorldCollisionSimulatesPhysics;
+
+protected:
+	bool UseBoxCollision;
+public:
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Collision")
+	class UCsBoxComponent* BoxComponent;
+protected:
+	bool UseSphereCollision;
+public:
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Collision")
+	class UCsSphereComponent* SphereComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
+	class UPrimitiveComponent* InteractiveCollisionComponent;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Collision")
+	TEnumAsByte<ECollisionEnabled::Type> InteractiveCollisionEnabled;
+
+	TCsInteractiveType Type;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Interactive")
+	uint8 Type_Script;
+
+	TCsInteractiveTypeToString InteractiveTypeToString;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Interactive")
+	TEnumAsByte<ECsInteractiveCollision::Type> CollisionType;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Interactive")
+	FCsInteractiveActorCache Cache;
+
+	void Init(const int32 &Index, const TCsInteractiveType &InType);
+
+	template<typename T>
+	void Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+
+	template<typename T>
+	void Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+
+	void Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent);
+	void Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame);
+
+	virtual void Allocate_Internal();
+
+	virtual void DeAllocate() override;
+
+// State
+#pragma region
+public:
+
+	UPROPERTY(BlueprintReadWrite, Category = "State")
+	TEnumAsByte<ECsInteractiveState::Type> State;
+
+	// InteractedInfo
+#pragma region
+	TMap<TCsInteractiveState, TArray<FCsInteractedActorInfo>> InteractedInfos;
+
+	UFUNCTION(BlueprintCallable, Category = "State")
+	void AddInteractedInfo(const TEnumAsByte<ECsInteractiveState::Type> &InState, const FCsInteractedActorInfo &Info);
+	UFUNCTION(BlueprintCallable, Category = "State")
+	void RemoveInteractedInfo(const TEnumAsByte<ECsInteractiveState::Type> &InState, const FCsInteractedActorInfo &Info);
+	UFUNCTION(BlueprintCallable, Category = "State")
+	void ClearInteractedInfos();
+
+	TArray<FCsInteractedActorInfo>* GetInteractedInfos(const TEnumAsByte<ECsInteractiveState::Type> &InState);
+
+	UFUNCTION(BlueprintCallable, Category = "State")
+	void GetInteractedInfos_Script(const TEnumAsByte<ECsInteractiveState::Type> &InState, TArray<FCsInteractedActorInfo> &OutInfos);
+#pragma endregion InteractedInfo
+
+	FBindableEvent_CsInteractiveActor_OnInteraction OnInteraction_Event;
+
+	FBindableEvent_CsInteractiveActor_OnFirstFreeze OnFirstFreeze_Event;
+	FBindableEvent_CsInteractiveActor_OnFreeze OnFreeze_Event;
+	FBindableEvent_CsInteractiveActor_OnFirstUnFreeze OnFirstUnFreeze_Event;
+	FBindableEvent_CsInteractiveActor_OnFirstHold OnFirstHold_Event;
+	FBindableEvent_CsInteractiveActor_OnHold OnHold_Event;
+	FBindableEvent_CsInteractiveActor_OnRelease OnRelease_Event;
+	FBindableEvent_CsInteractiveActor_OnFirstTouch OnFirstTouch_Event;
+	FBindableEvent_CsInteractiveActor_OnTouch OnTouch_Event;
+	FBindableEvent_CsInteractiveActor_OnFirstHover OnFirstHover_Event;
+	FBindableEvent_CsInteractiveActor_OnHover OnHover_Event;
+	FBindableEvent_CsInteractiveActor_OnFirstUnHover OnFirstUnHover_Event;
+	FBindableEvent_CsInteractiveActor_OnFirstCollide OnFirstCollide_Event;
+	FBindableEvent_CsInteractiveActor_OnCollide OnCollide_Event;
+	FBindableEvent_CsInteractiveActor_OnFirstUnCollide OnFirstUnCollide_Event;
+	FBindableEvent_CsInteractiveActor_OnRemove OnRemove_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "State")
+	FBindableDynEvent_CsInteractiveActor_Override_OnInteraction Override_OnInteraction_ScriptEvent;
+
+	UPROPERTY(BlueprintAssignable, Category = "State")
+	FBindableDynEvent_CsInteractiveActor_Override_OnFirstFreeze Override_OnFirstFreeze_ScriptEvent;
+	UPROPERTY(BlueprintAssignable, Category = "State")
+	FBindableDynEvent_CsInteractiveActor_Override_OnFreeze Override_OnFreeze_ScriptEvent;
+	UPROPERTY(BlueprintAssignable, Category = "State")
+	FBindableDynEvent_CsInteractiveActor_Override_OnFirstUnFreeze Override_OnFirstUnFreeze_ScriptEvent;
+	UPROPERTY(BlueprintAssignable, Category = "State")
+	FBindableDynEvent_CsInteractiveActor_Override_OnFirstHold Override_OnFirstHold_ScriptEvent;
+	UPROPERTY(BlueprintAssignable, Category = "State")
+	FBindableDynEvent_CsInteractiveActor_Override_OnHold Override_OnHold_ScriptEvent;
+	UPROPERTY(BlueprintAssignable, Category = "State")
+	FBindableDynEvent_CsInteractiveActor_Override_OnRelease Override_OnRelease_ScriptEvent;
+	UPROPERTY(BlueprintAssignable, Category = "State")
+	FBindableDynEvent_CsInteractiveActor_Override_OnFirstTouch Override_OnFirstTouch_ScriptEvent;
+	UPROPERTY(BlueprintAssignable, Category = "State")
+	FBindableDynEvent_CsInteractiveActor_Override_OnTouch Override_OnTouch_ScriptEvent;
+	UPROPERTY(BlueprintAssignable, Category = "State")
+	FBindableDynEvent_CsInteractiveActor_Override_OnFirstHover Override_OnFirstHover_ScriptEvent;
+	UPROPERTY(BlueprintAssignable, Category = "State")
+	FBindableDynEvent_CsInteractiveActor_Override_OnHover Override_OnHover_ScriptEvent;
+	UPROPERTY(BlueprintAssignable, Category = "State")
+	FBindableDynEvent_CsInteractiveActor_Override_OnFirstUnHover Override_OnFirstUnHover_ScriptEvent;
+	UPROPERTY(BlueprintAssignable, Category = "State")
+	FBindableDynEvent_CsInteractiveActor_Override_OnFirstCollide Override_OnFirstCollide_ScriptEvent;
+	UPROPERTY(BlueprintAssignable, Category = "State")
+	FBindableDynEvent_CsInteractiveActor_Override_OnCollide Override_OnCollide_ScriptEvent;
+	UPROPERTY(BlueprintAssignable, Category = "State")
+	FBindableDynEvent_CsInteractiveActor_Override_OnFirstUnCollide Override_OnFirstUnCollide_ScriptEvent;
+	UPROPERTY(BlueprintAssignable, Category = "State")
+	FBindableDynEvent_CsInteractiveActor_Override_OnRemove Override_OnRemove_ScriptEvent;
+
+	UFUNCTION(BlueprintCallable, Category = "State")
+	void OnInteraction_Script(const TEnumAsByte<ECsInteractiveState::Type> &InState, const FCsInteractedActorInfo& Info);
+
+	virtual void OnInteraction(const FCsInteractedActorInfo& Info);
+
+	virtual void OnFirstFreeze(const FCsInteractedActorInfo& Info);
+	virtual void OnFreeze(const FCsInteractedActorInfo& Info);
+	virtual void OnFirstUnFreeze(const FCsInteractedActorInfo& Info);
+	virtual void OnFirstHold(const FCsInteractedActorInfo& Info);
+	virtual void OnHold(const FCsInteractedActorInfo& Info);
+	virtual void OnRelease(const FCsInteractedActorInfo& Info);
+	virtual void OnFirstTouch(const FCsInteractedActorInfo& Info);
+	virtual void OnTouch(const FCsInteractedActorInfo& Info);
+	virtual void OnFirstHover(const FCsInteractedActorInfo& Info);
+	virtual void OnHover(const FCsInteractedActorInfo& Info);
+	virtual void OnFirstUnHover(const FCsInteractedActorInfo& Info);
+	virtual void OnFirstCollide(const FCsInteractedActorInfo& Info);
+	virtual void OnCollide(const FCsInteractedActorInfo& Info);
+	virtual void OnFirstUnCollide(const FCsInteractedActorInfo& Info);
+	virtual void OnRemove(const FCsInteractedActorInfo& Info);
+
+	UFUNCTION(BlueprintCallable = Category = "State")
+	virtual bool CanChangeState(const TEnumAsByte<ECsInteractiveState::Type> &FromState, const TEnumAsByte<ECsInteractiveState::Type> &ToState);
+	UFUNCTION(BlueprintCallable = Category = "State")
+	virtual bool CanChangeFromAnyState(const TArray<TEnumAsByte<ECsInteractiveState::Type>> &FromStates, const TEnumAsByte<ECsInteractiveState::Type> &ToState);
+
+	UFUNCTION(BlueprintCallable, Category = "State")
+	class ACsMotionController* GetDominantHand_HoldingMe();
+	UFUNCTION(BlueprintCallable, Category = "State")
+	class ACsMotionController* GetLastHand_HoveringOverMe();
+
+#pragma endregion State
+
+	virtual void Show() override;
+	virtual void Hide() override;
+
+// Collision
+#pragma region
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
+	float MinPhysicsLinearVelocityForMovement;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
+	float MinPhysicsAngularVelocityForMovement;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Collision", meta = (Bitmask, BitmaskEnum = "ECsInteractivePhysicsState"))
+	int32 PhysicsState;
+
+	UFUNCTION(BlueprintCallable, Category = "Collision")
+	bool IsPhysicsState(const ECsInteractivePhysicsState &StateType);
+	UFUNCTION(BlueprintCallable, Category = "Collision")
+	void SetPhysicsState(const ECsInteractivePhysicsState &StateType);
+	UFUNCTION(BlueprintCallable, Category = "Collision")
+	void ClearPhysicsState(const ECsInteractivePhysicsState &StateType);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
+	bool CheckIsAirborne;
+
+	virtual void OnTick_HandlePhysicsState();
+	virtual void OnTick_Overlap(const float DeltaSeconds);
+
+	UPROPERTY(BlueprintAssignable, Category = "Collision")
+	FBindableDynEvent_CsInteractiveActor_Override_OnTickOverlap Override_OnTickOverlap_ScriptEvent;
+
+	virtual void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+
+	UPROPERTY(BlueprintAssignable, Category = "Collision")
+	FBindableDynEvent_CsInteractiveActor_Override_OnBeginOverlap Override_OnBeginOverlap_ScriptEvent;
+
+	UPROPERTY(BlueprintAssignable, Category = "Collision")
+	FBindableDynEvent_CsInteractiveActor_Override_OnEndOverlap Override_OnEndOverlap_ScriptEvent;
+
+	UFUNCTION()
+	virtual void OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	UFUNCTION(BlueprintCallable, Category = "Collision")
+	bool CanCollideWithComponent(UPrimitiveComponent* InComponent);
+
+#pragma endregion Collision
+};

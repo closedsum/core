@@ -21,7 +21,7 @@ UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer)
 void UCsGameInstance::ResetCVars()
 {
 	// Loading
-	CsCVarLogManagerLoading->Set(CS_CVAR_HIDE_LOG, ECVF_SetByConsole);
+	//CsCVarLogManagerLoading->Set(CS_CVAR_HIDE_LOG, ECVF_SetByConsole);
 }
 
 void UCsGameInstance::Init()
@@ -80,6 +80,10 @@ void UCsGameInstance::LoadDataMapping()
 	if (UClass* DataClass = AssetSubclassOf.LoadSynchronous())
 	{
 		DataMapping = DataClass->GetDefaultObject<ACsDataMapping>();
+#if WITH_EDITOR
+		DataMapping->LoadFromJson();
+		DataMapping->PopulateDataAssetReferences();
+#endif // #if WITH_EDITOR
 	}
 	else
 	{

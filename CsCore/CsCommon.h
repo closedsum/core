@@ -193,6 +193,13 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 
 #pragma endregion
 
+// Data
+#pragma region
+
+	static class ACsDataMapping* GetDataMapping(UWorld* InWorld);
+
+#pragma endregion 
+
 // Json
 #pragma region
 

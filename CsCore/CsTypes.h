@@ -296,7 +296,7 @@ public:
 
 		for (uint8 I = 0; I < SIZE; I++)
 		{
-			Values[I]      = nullptr;
+			Values[I]      = Value;
 			Last_Values[I] = Value;
 			IsDirtys[I]	   = false;
 		}
@@ -588,7 +588,7 @@ public:
 		}
 	}
 
-	virtual T GetDefaultValue() { return nullptr; }
+	virtual T GetDefaultValue() { return T(); }
 
 	void Reset()
 	{
@@ -1220,11 +1220,59 @@ typedef FString(*TCsAssetTypeToString)(const TCsAssetType&);
 // StringToAssetType
 typedef TCsAssetType(*TCsStringToAssetType)(const FString&);
 
+UENUM(BlueprintType)
 namespace ECsLoadAssetsType
 {
-	enum Type : uint8;
+	enum Type
+	{
+		Startup					UMETA(DisplayName = "Startup"),
+		MenuCommon				UMETA(DisplayName = "Menu Common"),
+		Menu					UMETA(DisplayName = "Menu"),
+		GameCommon				UMETA(DisplayName = "Game Common"),
+		Game					UMETA(DisplayName = "Game"),
+		PlayerData				UMETA(DisplayName = "Player Data"),
+		ECsLoadAssetsType_MAX	UMETA(Hidden),
+	};
 }
 
+namespace ECsLoadAssetsType
+{
+	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString Startup = TCsString(TEXT("Startup"), TEXT("startup"), TEXT("startup"));
+		const TCsString MenuCommon = TCsString(TEXT("MenuCommon"), TEXT("menucommon"), TEXT("menu common"));
+		const TCsString Menu = TCsString(TEXT("Menu"), TEXT("menu"), TEXT("menu"));
+		const TCsString GameCommon = TCsString(TEXT("GameCommon"), TEXT("gamecommon"), TEXT("game common"));
+		const TCsString Game = TCsString(TEXT("Game"), TEXT("game"), TEXT("game"));
+		const TCsString PlayerData = TCsString(TEXT("PlayerData"), TEXT("playerdata"), TEXT("player data"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::Startup) { return Str::Startup.Value; }
+		if (EType == Type::MenuCommon) { return Str::MenuCommon.Value; }
+		if (EType == Type::Menu) { return Str::Menu.Value; }
+		if (EType == Type::GameCommon) { return Str::GameCommon.Value; }
+		if (EType == Type::Game) { return Str::Game.Value; }
+		if (EType == Type::PlayerData) { return Str::PlayerData.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::Startup) { return Type::Startup; }
+		if (String == Str::MenuCommon) { return Type::MenuCommon; }
+		if (String == Str::Menu) { return Type::Menu; }
+		if (String == Str::GameCommon) { return Type::GameCommon; }
+		if (String == Str::Game) { return Type::Game; }
+		if (String == Str::PlayerData) { return Type::PlayerData; }
+		return Type::ECsLoadAssetsType_MAX;
+	}
+}
+
+#define ECS_LOAD_ASSETS_TYPE_MAX (uint8)ECsLoadAssetsType::ECsLoadAssetsType_MAX
 typedef ECsLoadAssetsType::Type TCsLoadAssetsType;
 
 UENUM(BlueprintType)
@@ -4184,6 +4232,9 @@ struct FCsRoutine
 		}
 	}
 };
+
+#define CS_COROUTINE_DECLARE(Func) static char Func(struct FCsRoutine* r)
+#define CS_COROUTINE(Class, Func) char Class::Func(FCsRoutine* r)
 
 #define CS_COROUTINE_INIT(r)  PT_INIT(&((r)->pt))
 #define CS_COROUTINE_BEGIN(r)   { char PT_YIELD_FLAG = 1; LC_RESUME((&((r)->pt))->lc)

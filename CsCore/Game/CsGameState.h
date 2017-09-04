@@ -7,6 +7,103 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsGameState_OnTick, const float&, DeltaSeconds);
 DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsGameState_OnTick, const float&);
 
+// Enums
+#pragma region
+
+namespace ECsGameStateRoutine
+{
+	enum Type
+	{
+		OnBoard_Internal		UMETA(DisplayName = "OnBoard_Internal"),
+		ECsGameStateRoutine_MAX	UMETA(Hidden),
+	};
+}
+
+namespace ECsGameStateRoutine
+{
+	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString OnBoard_Internal = TCsString(TEXT("OnBoard_Internal"), TEXT("onboard_internal"), TEXT("onboard internal"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::OnBoard_Internal) { return Str::OnBoard_Internal.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::OnBoard_Internal) { return Type::OnBoard_Internal; }
+		return Type::ECsGameStateRoutine_MAX;
+	}
+}
+
+#define ECS_GAME_STATE_ROUTINE_MAX (uint8)ECsGameStateRoutine::ECsGameStateRoutine_MAX
+typedef ECsGameStateRoutine::Type TCsGameStateRoutine;
+
+namespace ECsGameStateOnBoardState
+{
+	enum Type
+	{
+		LoadCommonData,
+		SetupHUD,
+		LoadData,
+		SetupScene,
+		SetupLastTickActor,
+		SetupJavascriptEntryPoint,
+		Completed,
+		ECsGameStateOnBoardState_MAX,
+	};
+}
+
+namespace ECsGameStateOnBoardState
+{
+	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString LoadCommonData = TCsString(TEXT("LoadCommonData"), TEXT("loadcommondata"), TEXT("load common data"));
+		const TCsString SetupHUD = TCsString(TEXT("SetupHUD"), TEXT("setuphud"), TEXT("setup hud"));
+		const TCsString LoadData = TCsString(TEXT("LoadData"), TEXT("loaddata"), TEXT("load data"));
+		const TCsString SetupScene = TCsString(TEXT("SetupScene"), TEXT("setupscene"), TEXT("setup scene"));
+		const TCsString SetupLastTickActor = TCsString(TEXT("SetupLastTickActor"), TEXT("setuplasttickactor"), TEXT("setup last tick actor"));
+		const TCsString SetupJavascriptEntryPoint = TCsString(TEXT("SetupJavascriptEntryPoint"), TEXT("setupjavascriptentrypoint"), TEXT("setup javascript entry point"));
+		const TCsString Completed = TCsString(TEXT("Completed"), TEXT("completed"), TEXT("completed"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::LoadCommonData) { return Str::LoadCommonData.Value; }
+		if (EType == Type::SetupHUD) { return Str::SetupHUD.Value; }
+		if (EType == Type::LoadData) { return Str::LoadData.Value; }
+		if (EType == Type::SetupScene) { return Str::SetupScene.Value; }
+		if (EType == Type::SetupLastTickActor) { return Str::SetupLastTickActor.Value; }
+		if (EType == Type::SetupJavascriptEntryPoint) { return Str::SetupJavascriptEntryPoint.Value; }
+		if (EType == Type::Completed) { return Str::Completed.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::LoadCommonData) { return Type::LoadCommonData; }
+		if (String == Str::SetupHUD) { return Type::SetupHUD; }
+		if (String == Str::LoadData) { return Type::LoadData; }
+		if (String == Str::SetupScene) { return Type::SetupScene; }
+		if (String == Str::SetupLastTickActor) { return Type::SetupLastTickActor; }
+		if (String == Str::SetupJavascriptEntryPoint) { return Type::SetupJavascriptEntryPoint; }
+		if (String == Str::Completed) { return Type::Completed; }
+		return Type::ECsGameStateOnBoardState_MAX;
+	}
+}
+
+#define ECS_GAME_STATE_ONBOARD_STATE_MAX (uint8)ECsGameStateOnBoardState::ECsGameStateOnBoardState_MAX
+typedef ECsGameStateOnBoardState::Type TCsGameStateOnBoardState;
+
+#pragma endregion Enums
+
 UCLASS()
 class CSCORE_API ACsGameState : public AGameState
 {
@@ -28,7 +125,53 @@ class CSCORE_API ACsGameState : public AGameState
 	//virtual void OnLevelTravelTransition();
 #endif // #if WITH_EDITOR
 
-	// Javascript
+
+// Routines
+#pragma region
+public:
+
+	static void AddRoutine(UObject* InGameState, struct FCsRoutine* Routine, const uint8 &Type);
+	virtual bool AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type);
+
+	static void RemoveRoutine(UObject* InGameState, struct FCsRoutine* Routine, const uint8 &Type);
+	virtual bool RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type);
+
+#pragma endregion Routines
+
+// OnBoard
+#pragma region
+public:
+
+
+	ECsGameStateOnBoardState::Type OnBoardState;
+
+	void OnBoard();
+	CS_COROUTINE_DECLARE(OnBoard_Internal);
+
+	struct FCsRoutine* OnBoard_Internal_Routine;
+
+	virtual void LoadCommonData();
+	virtual void OnFinishedLoadCommonData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime);
+	virtual void SetupHUD();
+	virtual void LoadData();
+	virtual void OnFinishedLoadData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime);
+	virtual void SetupScene();
+
+#pragma endregion OnBoard
+
+// LastTickActor
+#pragma region
+public:
+
+	UPROPERTY()
+	class ACsLastTickActor* LastTickActor;
+
+	void SetupLastTickActor();
+	virtual void SetupLastTickActor_BindEvents();
+
+#pragma endregion LastTickActor
+
+// Javascript
 #pragma region
 public:
 
@@ -41,39 +184,11 @@ public:
 
 	void SetupJavascriptEntryPoint();
 
-	static char SetupJavascriptEntryPoint_Internal(FCsRoutine* r);
-
 #endif // #if WITH_EDITOR
 
 #pragma endregion Javascript
 
-	// Routines
-#pragma region
-public:
-
-	CsAddRoutine MyAddRoutine;
-	CsRemoveRoutine MyRemoveRoutine;
-
-#pragma endregion Routines
-
-	// LastTickActor
-#pragma region
-public:
-
-	UPROPERTY()
-	class ACsLastTickActor* LastTickActor;
-
-	void SetupLastTickActor();
-
-	CsCoroutine CsSetupLastTickActor_Internal;
-
-	uint8 SetupLastTickActor_Internal_RoutineType;
-
-	struct FCsRoutine* SetupLastTickActor_Internal_Routine;
-
-#pragma endregion LastTickActor
-
-	// Managers
+// Managers
 #pragma region
 public:
 

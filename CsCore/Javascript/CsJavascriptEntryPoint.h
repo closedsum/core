@@ -67,6 +67,8 @@ public:
 
 	virtual bool HasCompletedAdditionalSetup();
 
+	bool HasCompletedSetup;
+
 #endif WITH_EDITOR
 
 	FString EditorFile;

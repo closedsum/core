@@ -4,6 +4,7 @@
 #include "CsCVars.h"
 #include "GameFramework/GameState.h"
 #include "GameFramework/GameMode.h"
+#include "Game/CsGameInstance.h"
 #include "Coroutine/CsCoroutineScheduler.h"
 
 // VR
@@ -546,6 +547,17 @@ TCsViewType UCsCommon::Stream_GetViewType(const TCHAR*& Str)
 }
 
 #pragma endregion
+
+// Data
+#pragma region
+
+ACsDataMapping* UCsCommon::GetDataMapping(UWorld* InWorld)
+{
+	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(InWorld->GetGameInstance());
+	return GameInstance->DataMapping;
+}
+
+#pragma endregion Data
 
 // Json
 #pragma region

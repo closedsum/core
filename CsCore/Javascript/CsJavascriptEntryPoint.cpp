@@ -11,7 +11,7 @@
 #include "Player/CsPlayerState.h"
 
 // Managers
-#include "Managers/CsManager_Input.h"
+#include "Managers/Input/CsManager_Input.h"
 
 #if WITH_EDITOR
 #include "../Plugins/UnrealJS/Source/V8/Public/JavascriptIsolate.h"
@@ -110,6 +110,8 @@ PT_THREAD(ACsJavascriptEntryPoint::Setup_Internal(FCsRoutine* r))
 
 	// Run Javascript
 	UCsCommon::Javascript_RunFile(js->Context, js->EditorFile);
+
+	js->HasCompletedSetup = true;
 
 	CS_COROUTINE_END(r);
 }

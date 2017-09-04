@@ -1,6 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #include "Player/CsPlayerController.h"
 #include "CsCore.h"
+#include "Managers/Input/CsManager_Input.h"
 
 ACsPlayerController::ACsPlayerController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

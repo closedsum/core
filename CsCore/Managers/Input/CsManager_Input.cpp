@@ -1,5 +1,5 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/CsManager_Input.h"
+#include "Managers/Input/CsManager_Input.h"
 #include "CsCore.h"
 #include "Player/CsPlayerController.h"
 #include "Player/CsCheatManager.h"

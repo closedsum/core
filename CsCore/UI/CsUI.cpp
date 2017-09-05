@@ -32,3 +32,7 @@ void ACsUI::Destroyed()
 void ACsUI::OnUpdate(const float &DeltaSeconds)
 {
 }
+
+void ACsUI::AddWidget(const TCsWidgetType &WidgetType, const bool &Enabled, const ESlateVisibility &Visiblity) {}
+UCsUserWidget* ACsUI::GetWidget(const TCsWidgetType &WidgetType) { return nullptr; }
+UCsUserWidget* ACsUI::GetActiveWidget(const TCsWidgetType &WidgetType) { return nullptr; }

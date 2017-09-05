@@ -36,6 +36,8 @@
 #define CS_INVALID_ENUM_TO_STRING TEXT("INVALID")
 #define CS_VECTOR_ONE FVector(1.0f)
 
+#define CS_INVALID_PLAYER_STATE_UNIQUE_MAPPING_ID 255
+
 // Enum Union
 #pragma region
 
@@ -1274,6 +1276,82 @@ namespace ECsLoadAssetsType
 
 #define ECS_LOAD_ASSETS_TYPE_MAX (uint8)ECsLoadAssetsType::ECsLoadAssetsType_MAX
 typedef ECsLoadAssetsType::Type TCsLoadAssetsType;
+
+USTRUCT()
+struct FCsPayload
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	FName ShortCode;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	TEnumAsByte<ECsLoadFlags_Editor::Type> LoadFlags;
+
+	FCsPayload& operator=(const FCsPayload& B)
+	{
+		ShortCode = B.ShortCode;
+		LoadFlags = B.LoadFlags;
+		return *this;
+	}
+
+	bool operator==(const FCsPayload& B) const
+	{
+		if (ShortCode != B.ShortCode)
+			return false;
+		if (LoadFlags != B.LoadFlags)
+			return false;
+		return true;
+	}
+
+	bool operator!=(const FCsPayload& B) const
+	{
+		return !(*this == B);
+	}
+};
+
+USTRUCT()
+struct FCsTArrayPayload
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	TArray<FCsPayload> Payloads;
+
+	FCsTArrayPayload& operator=(const FCsTArrayPayload& B)
+	{
+		Payloads.Reset();
+
+		const int32 Count = B.Payloads.Num();
+
+		for (int32 I = 0; I < Count; I++)
+		{
+			Payloads.Add(B.Payloads[I]);
+		}
+		return *this;
+	}
+
+	bool operator==(const FCsTArrayPayload& B) const
+	{
+		const int32 CountA = Payloads.Num();
+		const int32 CountB = B.Payloads.Num();
+
+		if (CountA != CountB)
+			return false;
+
+		for (int32 I = 0; I < CountA; I++)
+		{
+			if (Payloads[I] != B.Payloads[I])
+				return false;
+		}
+		return true;
+	}
+
+	bool operator!=(const FCsTArrayPayload& B) const
+	{
+		return !(*this == B);
+	}
+};
 
 UENUM(BlueprintType)
 namespace ECsLoadAsyncOrder
@@ -4233,7 +4311,9 @@ struct FCsRoutine
 	}
 };
 
-#define CS_COROUTINE_DECLARE(Func) static char Func(struct FCsRoutine* r)
+#define CS_COROUTINE_DECLARE(Func)	void Func(); \
+									static char Func##_Internal(struct FCsRoutine* r); \
+									struct FCsRoutine* Func##_Internal_Routine;
 #define CS_COROUTINE(Class, Func) char Class::Func(FCsRoutine* r)
 
 #define CS_COROUTINE_INIT(r)  PT_INIT(&((r)->pt))

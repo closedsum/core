@@ -1,6 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #include "Game/CsGameState.h"
 #include "CsCore.h"
+#include "CsCVars.h"
 #include "Coroutine/CsCoroutineScheduler.h"
 #include "CsLastTickActor.h"
 // Managers
@@ -13,6 +14,8 @@
 
 #include "Player/CsPlayerController.h"
 #include "UI/CsUI.h"
+#include "Player/CsPlayerState.h"
+#include "Player/CsPlayerPawn.h"
 
 ACsGameState::ACsGameState(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -226,3 +229,183 @@ void ACsGameState::SetupJavascriptEntryPoint()
 #endif // #if WITH_EDITOR
 
 #pragma endregion Javascript
+
+// Match State
+#pragma region
+
+float ACsGameState::GetElapsedGameTime()
+{
+	return GetWorld()->TimeSeconds - MatchInProgressStartTime;
+}
+
+uint64 ACsGameState::GetElapsedGameTimeMilliseconds()
+{
+	return UCsCommon::GetWorldTimeMilliseconds(GetWorld()) - MatchInProgressStartTimeMilliseconds;
+}
+
+#pragma endregion Match State
+
+// Player State
+#pragma region
+
+void ACsGameState::AddPlayerState(class APlayerState* PlayerState)
+{
+	Super::AddPlayerState(PlayerState);
+
+	if (Role < ROLE_Authority)
+		return;
+
+	ACsPlayerState* NewPlayerState = Cast<ACsPlayerState>(PlayerState);
+
+	if (!NewPlayerState)
+		return;
+
+	NewPlayerState->UniqueMappingId = CurrentPlayerStateUniqueMappingId;
+
+	PlayerStateMappings.Add(NewPlayerState->UniqueMappingId, NewPlayerState);
+
+	TArray<uint8> MappingKeys;
+	const int32 NumMappingKeys = PlayerStateMappings.GetKeys(MappingKeys);
+
+	PlayerStateMappingRelationships.Add(NewPlayerState->UniqueMappingId);
+
+	TArray<uint8> RelationshipKeys;
+	const int32 NumRelationshipKeys = PlayerStateMappingRelationships.GetKeys(RelationshipKeys);
+
+	// Sanity check
+	check(NumMappingKeys == NumRelationshipKeys);
+
+	for (int32 I = 0; I < NumMappingKeys; I++)
+	{
+		const uint8 Key = MappingKeys[I];
+
+		// For a NEW entry, add ALL relationships
+		if (Key == CurrentPlayerStateUniqueMappingId)
+		{
+			TArray<FCsPlayerStateMappingRelationship>* Relationships = PlayerStateMappingRelationships.Find(Key);
+
+			for (int32 J = 0; J < NumMappingKeys; J++)
+			{
+				Relationships->AddDefaulted(1);
+
+				FCsPlayerStateMappingRelationship& Relationship = (*Relationships)[J];
+				Relationship.A = CurrentPlayerStateUniqueMappingId;
+				Relationship.B = MappingKeys[J];
+			}
+		}
+		// For EXISTING entry, just add Key to the relationship
+		else
+		{
+			TArray<FCsPlayerStateMappingRelationship>* Relationships = PlayerStateMappingRelationships.Find(Key);
+			Relationships->AddDefaulted(1);
+
+			const uint8 Size = Relationships->Num();
+
+			FCsPlayerStateMappingRelationship& Relationship = (*Relationships)[Size - 1];
+			Relationship.A = Key;
+			Relationship.B = CurrentPlayerStateUniqueMappingId;
+		}
+	}
+	HasPlayerStateFullyReplicatedAndLoadedBroadcastFlags.Add(NewPlayerState->UniqueMappingId, false);
+
+	CurrentPlayerStateUniqueMappingId++;
+}
+
+void ACsGameState::RemovePlayerState(class APlayerState* PlayerState)
+{
+	Super::RemovePlayerState(PlayerState);
+}
+
+class ACsPlayerState* ACsGameState::GetPlayerState(const uint8 &MappingId)
+{
+	TWeakObjectPtr<ACsPlayerState>* PtrPlayerState = PlayerStateMappings.Find(MappingId);
+
+	if (!PtrPlayerState)
+		return nullptr;
+	return (*PtrPlayerState).IsValid() ? (*PtrPlayerState).Get() : nullptr;
+}
+
+void ACsGameState::OnTick_HandleBroadcastingPlayerStateFullyReplicatedAndLoaded()
+{
+	TArray<uint8> RelationshipKeys;
+	const int32 NumRelationshipKeys = PlayerStateMappingRelationships.GetKeys(RelationshipKeys);
+
+	for (int32 I = 0; I < NumRelationshipKeys; I++)
+	{
+		const uint8 Key = RelationshipKeys[I];
+
+		ACsPlayerState* PlayerState = GetPlayerState(Key);
+
+		// Check if PlayerState is still VALID (i.e. Player could have Disconnected)
+		if (!PlayerState)
+			continue;
+
+		TArray<FCsPlayerStateMappingRelationship>* Relationships = PlayerStateMappingRelationships.Find(Key);
+		const int32 NumRelationships							 = Relationships->Num();
+
+		bool ShouldBroadcast = true;
+
+		for (int32 J = 0; J < NumRelationships; J++)
+		{
+			FCsPlayerStateMappingRelationship& Relationship = (*Relationships)[J];
+
+			// If PlayerState is NOT VALID, Skip
+			if (!GetPlayerState(Relationship.B))
+				continue;
+
+			ShouldBroadcast &= Relationship.HasBCompletedInitialReplicationAndLoadingForA;
+		}
+
+		bool* BroadcastFlag = HasPlayerStateFullyReplicatedAndLoadedBroadcastFlags.Find(Key);
+
+		// If SHOULD Broadcast and Has NOT Broadcasted before, BROADCAST
+		if (ShouldBroadcast && !(*BroadcastFlag))
+		{
+			*BroadcastFlag = true;
+
+			PlayerState->MulticastSetIsOnBoardCompleted();
+
+		}
+		// If Should NOT Broadcast and HAS Broadcasted before, SET BroadcastFlag to FALSE
+
+		// TODO: See if this is necessary
+		/*
+		if (!ShouldBroadcast && *BroadcastFlag)
+		{
+		*BroadcastFlag = false;
+
+		PlayerState->MulticastUnSetIsOnBoardCompleted();
+		}
+		*/
+	}
+}
+
+void ACsGameState::SetPlayerStateMappingRelationshipFlag(const uint8 &ClientMappingId, const uint8 &MappingId)
+{
+	TArray<FCsPlayerStateMappingRelationship>* Relationships = PlayerStateMappingRelationships.Find(ClientMappingId);
+	const int32 NumRelationships							 = Relationships->Num();
+
+	for (int32 I = 0; I < NumRelationships; I++)
+	{
+		FCsPlayerStateMappingRelationship& Relationship = (*Relationships)[I];
+
+		if (Relationship.B == MappingId)
+		{
+			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
+			{
+				ACsPlayerState* ClientPlayerState = GetPlayerState(ClientMappingId);
+				ACsPlayerState* PlayerState		  = GetPlayerState(MappingId);
+
+				const FString ClientName = ClientPlayerState ? ClientPlayerState->PlayerName : TEXT("INVALID");
+				const FString OtherName  = PlayerState ? PlayerState->PlayerName : TEXT("INVALID");
+				const FString Value		 = Relationship.HasBCompletedInitialReplicationAndLoadingForA ? TEXT("True") : TEXT("False");
+
+				UE_LOG(LogCs, Log, TEXT("ACsGameState::SetPlayerStateMappingRelationshipFlag: Relationship: %s(%d) <-> %s(%d) from %s to True."), *ClientName, ClientMappingId, *OtherName, MappingId, *Value);
+			}
+			Relationship.HasBCompletedInitialReplicationAndLoadingForA = true;
+			break;
+		}
+	}
+}
+
+#pragma endregion Player State

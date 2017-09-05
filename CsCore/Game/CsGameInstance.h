@@ -58,4 +58,15 @@ class CSCORE_API UCsGameInstance : public UGameInstance
 
 	UPROPERTY(BlueprintReadOnly, Category = "Game Instance")
 	TEnumAsByte<ECsLevelState::Type> LevelState;
+
+// UI
+#pragma region
+
+	UPROPERTY(BlueprintReadOnly, Category = "Game Instance")
+	class UCsUserWidget* SplashScreenWidget;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Game Instance")
+	class UCsUserWidget* TransitionWidget;
+
+#pragma endregion UI
 };

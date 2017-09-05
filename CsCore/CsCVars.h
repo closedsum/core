@@ -23,6 +23,13 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInputRotations;
 
 #pragma endregion Input
 
+// OnBoard
+#pragma region
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogPlayerStateOnBoard;
+
+#pragma endregion OnBoard
+
 // Json
 #pragma region
 

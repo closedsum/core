@@ -69,6 +69,18 @@ TAutoConsoleVariable<int32> CsCVarLogInputRotations(
 
 #pragma endregion Input
 
+// OnBoard
+#pragma region
+
+TAutoConsoleVariable<int32> CsCVarLogPlayerStateOnBoard(
+	TEXT("log.playerstate.onboard"),
+	0,
+	TEXT("Log PlayerState OnBoard"),
+	ECVF_SetByConsole
+);
+
+#pragma endregion OnBoard
+
 // Json
 #pragma region
 

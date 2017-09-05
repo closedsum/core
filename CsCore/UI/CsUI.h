@@ -30,6 +30,11 @@ public:
 
 	TArray<class UCsUserWidget*> ActiveWidgets;
 
+	virtual void AddWidget(const TCsWidgetType &WidgetType, const bool &Enabled, const ESlateVisibility &Visiblity);
+
+	virtual class UCsUserWidget* GetWidget(const TCsWidgetType &WidgetType);
+	virtual class UCsUserWidget* GetActiveWidget(const TCsWidgetType &WidgetType);
+
 	UPROPERTY()
 	TArray<TWeakObjectPtr<class ACsWidgetActor>> WidgetActors;
 

@@ -104,6 +104,22 @@ typedef ECsGameStateOnBoardState::Type TCsGameStateOnBoardState;
 
 #pragma endregion Enums
 
+struct FCsPlayerStateMappingRelationship
+{
+	uint8 A;
+	uint8 B;
+
+	bool HasBCompletedInitialReplicationAndLoadingForA;
+
+	FCsPlayerStateMappingRelationship()
+	{
+		A = CS_INVALID_PLAYER_STATE_UNIQUE_MAPPING_ID;
+		B = CS_INVALID_PLAYER_STATE_UNIQUE_MAPPING_ID;
+
+		HasBCompletedInitialReplicationAndLoadingForA = false;
+	}
+};
+
 UCLASS()
 class CSCORE_API ACsGameState : public AGameState
 {
@@ -145,10 +161,7 @@ public:
 
 	ECsGameStateOnBoardState::Type OnBoardState;
 
-	void OnBoard();
-	CS_COROUTINE_DECLARE(OnBoard_Internal);
-
-	struct FCsRoutine* OnBoard_Internal_Routine;
+	CS_COROUTINE_DECLARE(OnBoard)
 
 	virtual void LoadCommonData();
 	virtual void OnFinishedLoadCommonData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime);
@@ -214,4 +227,40 @@ public:
 	class ACsManager_Decal* Manager_Decal;
 
 #pragma endregion Managers
+
+// Match State
+#pragma region
+public:
+
+	//static char SetMatchInProgressStartTime(struct FCsRoutine* r);
+
+	float MatchInProgressStartTime;
+	uint64 MatchInProgressStartTimeMilliseconds;
+
+	float GetElapsedGameTime();
+	uint64 GetElapsedGameTimeMilliseconds();
+
+#pragma endregion Match State
+
+// Player State
+#pragma region
+
+	uint8 CurrentPlayerStateUniqueMappingId;
+
+	bool AllPlayersFullyReplicatedAndLoaded;
+
+	virtual void AddPlayerState(class APlayerState* PlayerState) override;
+	virtual void RemovePlayerState(class APlayerState* PlayerState) override;
+
+	TMap<uint8, TWeakObjectPtr<class ACsPlayerState>> PlayerStateMappings;
+	TMap<uint8, TArray<FCsPlayerStateMappingRelationship>> PlayerStateMappingRelationships;
+	TMap<uint8, bool> HasPlayerStateFullyReplicatedAndLoadedBroadcastFlags;
+
+	class ACsPlayerState* GetPlayerState(const uint8 &MappingId);
+
+	void OnTick_HandleBroadcastingPlayerStateFullyReplicatedAndLoaded();
+
+	void SetPlayerStateMappingRelationshipFlag(const uint8 &ClientMappingId, const uint8 &MappingId);
+
+#pragma endregion Player State
 };

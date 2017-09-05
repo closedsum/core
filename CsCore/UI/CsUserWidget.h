@@ -12,6 +12,9 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsUserWidget_OnNativeTick, const FGeometry&, MyGeometry, float, InDeltaTime);
 
+// Structs
+#pragma region
+
 struct FCsWidget
 {
 public:
@@ -446,6 +449,8 @@ public:
 	}
 };
 
+#pragma endregion Structs
+
 UCLASS()
 class CSCORE_API UCsUserWidget : public UUserWidget
 {
@@ -455,6 +460,11 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OO Default")
 	FName ShortCode;
+
+	TCsWidgetType Type;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OO Default")
+	uint8 Type_Script;
 
 	UPROPERTY(BlueprintAssignable, Category = "UI")
 	FBindableDynEvent_CsUserWidget_OnNativeTick OnNativeTick_ScriptEvent;

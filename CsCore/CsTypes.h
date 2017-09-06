@@ -25,6 +25,7 @@
 #define CS_CVAR_SHOW_LOG 1
 #define CS_CVAR_HIDE_LOG 0
 #define CS_CVAR_DRAW 1
+#define CS_CVAR_DISPLAY 1
 #define CS_CVAR_LOAD_UNSET -1
 #define CS_CVAR_LOAD_NONE 0
 #define CS_CVAR_LOAD_FIRSTTOLAST 1
@@ -1227,7 +1228,7 @@ namespace ECsLoadAssetsType
 {
 	enum Type
 	{
-		Startup					UMETA(DisplayName = "Startup"),
+		StartUp					UMETA(DisplayName = "StartUp"),
 		MenuCommon				UMETA(DisplayName = "Menu Common"),
 		Menu					UMETA(DisplayName = "Menu"),
 		GameCommon				UMETA(DisplayName = "Game Common"),
@@ -1243,7 +1244,7 @@ namespace ECsLoadAssetsType
 
 	namespace Str
 	{
-		const TCsString Startup = TCsString(TEXT("Startup"), TEXT("startup"), TEXT("startup"));
+		const TCsString StartUp = TCsString(TEXT("StartUp"), TEXT("startup"), TEXT("start up"));
 		const TCsString MenuCommon = TCsString(TEXT("MenuCommon"), TEXT("menucommon"), TEXT("menu common"));
 		const TCsString Menu = TCsString(TEXT("Menu"), TEXT("menu"), TEXT("menu"));
 		const TCsString GameCommon = TCsString(TEXT("GameCommon"), TEXT("gamecommon"), TEXT("game common"));
@@ -1253,7 +1254,7 @@ namespace ECsLoadAssetsType
 
 	FORCEINLINE FString ToString(const Type &EType)
 	{
-		if (EType == Type::Startup) { return Str::Startup.Value; }
+		if (EType == Type::StartUp) { return Str::StartUp.Value; }
 		if (EType == Type::MenuCommon) { return Str::MenuCommon.Value; }
 		if (EType == Type::Menu) { return Str::Menu.Value; }
 		if (EType == Type::GameCommon) { return Str::GameCommon.Value; }
@@ -1264,7 +1265,7 @@ namespace ECsLoadAssetsType
 
 	FORCEINLINE Type ToType(const FString &String)
 	{
-		if (String == Str::Startup) { return Type::Startup; }
+		if (String == Str::StartUp) { return Type::StartUp; }
 		if (String == Str::MenuCommon) { return Type::MenuCommon; }
 		if (String == Str::Menu) { return Type::Menu; }
 		if (String == Str::GameCommon) { return Type::GameCommon; }
@@ -1286,21 +1287,29 @@ struct FCsPayload
 	FName ShortCode;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	FString AssetType;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Payload")
+	uint8 AssetType_Script;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	TEnumAsByte<ECsLoadFlags_Editor::Type> LoadFlags;
 
 	FCsPayload& operator=(const FCsPayload& B)
 	{
-		ShortCode = B.ShortCode;
-		LoadFlags = B.LoadFlags;
+		ShortCode		 = B.ShortCode;
+		AssetType		 = B.AssetType;
+		AssetType_Script = B.AssetType_Script;
+		LoadFlags		 = B.LoadFlags;
 		return *this;
 	}
 
 	bool operator==(const FCsPayload& B) const
 	{
-		if (ShortCode != B.ShortCode)
-			return false;
-		if (LoadFlags != B.LoadFlags)
-			return false;
+		if (ShortCode != B.ShortCode) { return false; }
+		if (AssetType != B.AssetType) { return false; }
+		if (AssetType_Script != B.AssetType_Script) { return false; }
+		if (LoadFlags != B.LoadFlags) { return false; }
 		return true;
 	}
 
@@ -4311,7 +4320,7 @@ struct FCsRoutine
 	}
 };
 
-#define CS_COROUTINE_DECLARE(Func)	void Func(); \
+#define CS_COROUTINE_DECLARE(Func)	virtual void Func(); \
 									static char Func##_Internal(struct FCsRoutine* r); \
 									struct FCsRoutine* Func##_Internal_Routine;
 #define CS_COROUTINE(Class, Func) char Class::Func(FCsRoutine* r)

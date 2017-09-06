@@ -3,6 +3,9 @@
 #include "CsTypes.h"
 #include "CsData_Payload.generated.h"
 
+// Structs
+#pragma region
+
 USTRUCT()
 struct FCsPayloadFindEntry
 {
@@ -80,6 +83,8 @@ struct FCsPayloadValidate
 	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Helper")
 	FString Output;
 };
+
+#pragma endregion Structs
 
 UCLASS(hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
 class CSCORE_API ACsData_Payload : public ACsData

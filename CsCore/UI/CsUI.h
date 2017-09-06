@@ -30,7 +30,7 @@ public:
 
 	TArray<class UCsUserWidget*> ActiveWidgets;
 
-	virtual void AddWidget(const TCsWidgetType &WidgetType, const bool &Enabled, const ESlateVisibility &Visiblity);
+	virtual void AddWidget(const TCsWidgetType &WidgetType);
 
 	virtual class UCsUserWidget* GetWidget(const TCsWidgetType &WidgetType);
 	virtual class UCsUserWidget* GetActiveWidget(const TCsWidgetType &WidgetType);

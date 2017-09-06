@@ -33,6 +33,18 @@ void ACsUI::OnUpdate(const float &DeltaSeconds)
 {
 }
 
-void ACsUI::AddWidget(const TCsWidgetType &WidgetType, const bool &Enabled, const ESlateVisibility &Visiblity) {}
+void ACsUI::AddWidget(const TCsWidgetType &WidgetType) {}
+
 UCsUserWidget* ACsUI::GetWidget(const TCsWidgetType &WidgetType) { return nullptr; }
-UCsUserWidget* ACsUI::GetActiveWidget(const TCsWidgetType &WidgetType) { return nullptr; }
+
+UCsUserWidget* ACsUI::GetActiveWidget(const TCsWidgetType &WidgetType) 
+{ 
+	const int32 Count = ActiveWidgets.Num();
+
+	for (int32 I = 0; I < Count; I++)
+	{
+		if (ActiveWidgets[I]->Type == WidgetType)
+			return ActiveWidgets[I];
+	}
+	return nullptr;
+}

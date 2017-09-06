@@ -7,6 +7,7 @@
 
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerLoading;
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarManagerLoadingAsyncOrder;
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDisplayLoading;
 
 #pragma endregion Loading
 

@@ -21,6 +21,7 @@ class CSCORE_API ACsManager : public AActor
 	void CreatePool_Script(const int32 &Size);
 	UFUNCTION(BlueprintCallable, Category = "Pool")
 	virtual void AddToPool(AActor* InActor, const uint8 &Type);
+	virtual void AddToPool(const TSubclassOf<class AActor> &ActorClass, const uint8 &Type, const int32 &Size);
 	UFUNCTION(BlueprintCallable, Category = "Pool")
 	virtual void AddToActivePool(AActor* InActor, const uint8 &Type);
 	UFUNCTION(BlueprintCallable, Category = "Pool")

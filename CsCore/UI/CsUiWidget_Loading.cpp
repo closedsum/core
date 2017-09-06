@@ -49,6 +49,9 @@ void UCsUiWidget_Loading::OnNativeTick_HandleLoading(const float &InDeltaTime)
 	Loading.OnNativeTick(InDeltaTime);
 }
 
+// FirstToLast
+#pragma region
+
 void UCsUiWidget_Loading::OnStartLoadingAssets(const int32 &AssetCount)
 {
 	Show();
@@ -86,3 +89,31 @@ void UCsUiWidget_Loading::OnFinishedLoadingAssets(const TArray<UObject*> &Loaded
 	OnFinishedLoadingAssets_ScriptEvent.Broadcast(LoadedAssets, LoadingTime);
 #endif // #if WITH_EDITOR
 }
+
+#pragma endregion FirstToLast
+
+// Bulk
+#pragma region
+
+void UCsUiWidget_Loading::OnStartLoadProgress(const int32 &AssetCount)
+{
+#if WITH_EDITOR
+	OnStartLoadProgress_ScriptEvent.Broadcast(AssetCount);
+#endif // #if WITH_EDITOR
+}
+
+void UCsUiWidget_Loading::OnLoadProgressUpdated(const float &Percent)
+{
+#if WITH_EDITOR
+	OnLoadProgressUpdated_ScriptEvent.Broadcast(Percent);
+#endif // #if WITH_EDITOR
+}
+
+void UCsUiWidget_Loading::Bulk_OnFinishedLoadingAssets(const TArray<UObject*> &LoadedAssets, const float &LoadingTime)
+{
+#if WITH_EDITOR
+	Bulk_OnFinishedLoadingAssets_ScriptEvent.Broadcast(LoadedAssets, LoadingTime);
+#endif // #if WITH_EDITOR
+}
+
+#pragma endregion Bulk

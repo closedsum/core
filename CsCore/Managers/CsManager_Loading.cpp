@@ -56,6 +56,9 @@ bool UCsManager_Loading::Tick(float DeltaSeconds)
 
 	TArray<FStringAssetReference>& AssetReferences = AssetReferencesQueue[CS_FIRST];
 
+	if (AsyncOrders[CS_FIRST] == ECsLoadAsyncOrder::Bulk)
+		OnLoadProgressUpdated_Event.Broadcast(LoadHandle->GetProgress());
+
 	// If Still Loading, EXIT
 	if (AssetReferencesLoadedCount < AssetReferences.Num())
 		return true;
@@ -86,6 +89,9 @@ bool UCsManager_Loading::Tick(float DeltaSeconds)
 	OnFinishedLoadingAssetReferences_Events.RemoveAt(CS_FIRST);
 
 	OnFinishedLoadingAssetReferences_Event.Broadcast(LoadedAssets, LoadingTime);
+	Bulk_OnFinishedLoadingAssetReferences_Event.Broadcast(LoadedAssets, LoadingTime);
+
+	LoadHandle = nullptr;
 
 	// Assume the Callback holds onto the references for LoadedAssets
 	LoadedAssets.Reset();
@@ -196,9 +202,7 @@ void UCsManager_Loading::LoadAssetReferences_Internal(TArray<FStringAssetReferen
 	const int32 Size = AssetReferences.Num();
 
 	OnStartLoadingAssetReferences_Event.Broadcast(Size);
-
-	if (AsyncOrder == ECsLoadAsyncOrder::FirstToLast)
-		OnStartLoadingAssetReference_Event.Broadcast(AssetReferences[CS_FIRST]);
+	OnStartLoadProgress_Event.Broadcast(Size);
 
 	if (CsCVarLogManagerLoading->GetInt() == CS_CVAR_SHOW_LOG)
 	{
@@ -222,12 +226,13 @@ void UCsManager_Loading::LoadAssetReferences_Internal(TArray<FStringAssetReferen
 		{
 			UE_LOG(LogCs, Log, TEXT("UCsManager_Loading::LoadAssetReferences_Internal: Requesting Load of %s"), *(AssetReferences[CS_FIRST].ToString()));
 		}
+		OnStartLoadingAssetReference_Event.Broadcast(AssetReferences[CS_FIRST]);
 		StreamableManager.RequestAsyncLoad(AssetReferences[CS_FIRST], AssetReferenceLoadedDelegate);
 	}
 		// Bulk
 	else
 	{
-		StreamableManager.RequestAsyncLoad(AssetReferences, AssetReferencesLoadedDelegate);
+		LoadHandle = StreamableManager.RequestAsyncLoad(AssetReferences, AssetReferencesLoadedDelegate);
 	}
 
 	LoadingStartTime	  = CurrentWorlds[CS_FIRST] ? CurrentWorlds[CS_FIRST]->GetTimeSeconds() : UCsCommon::GetCurrentDateTimeSeconds();

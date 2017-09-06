@@ -8,6 +8,10 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsManagerLoading_OnStartLoadi
 DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsManagerLoading_OnFinishedLoadingAssetReference, const FCsAssetReferenceLoadedCache&);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsManagerLoading_OnFinishedLoadingAssetReferences, const TArray<UObject*>&, const float&);
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsManagerLoading_OnStartLoadProgress, const int32&);
+DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsManagerLoading_OnLoadProgressUpdated, const float&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsManagerLoading_Bulk_OnFinishedLoadingAssetReferences, const TArray<UObject*>&, const float&);
+
 UCLASS(transient)
 class CSCORE_API UCsManager_Loading : public UObject
 {
@@ -43,11 +47,17 @@ public:
 	FBindableEvent_CsManagerLoading_OnFinishedLoadingAssetReference OnFinishedLoadingAssetReference_Event;
 	FBindableEvent_CsManagerLoading_OnFinishedLoadingAssetReferences OnFinishedLoadingAssetReferences_Event;
 
+	FBindableEvent_CsManagerLoading_OnStartLoadProgress OnStartLoadProgress_Event;
+	FBindableEvent_CsManagerLoading_OnLoadProgressUpdated OnLoadProgressUpdated_Event;
+	FBindableEvent_CsManagerLoading_Bulk_OnFinishedLoadingAssetReferences Bulk_OnFinishedLoadingAssetReferences_Event;
+
 protected:
 
 	FStreamableManager		StreamableManager;
 	FStreamableDelegate		AssetReferenceLoadedDelegate;
 	FStreamableDelegate		AssetReferencesLoadedDelegate;
+	
+	TSharedPtr<FStreamableHandle> LoadHandle;
 
 	int32 AssetReferencesLoadedCount;
 

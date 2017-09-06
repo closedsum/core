@@ -19,6 +19,12 @@ TAutoConsoleVariable<int32> CsCVarManagerLoadingAsyncOrder(
 	ECVF_SetByConsole
 );
 
+TAutoConsoleVariable<int32> CsCVarDisplayLoading(
+	TEXT("display.loading"),
+	0,
+	TEXT("Display Loading on HUD"),
+	ECVF_SetByConsole
+);
 
 #pragma endregion Loading
 

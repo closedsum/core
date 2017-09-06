@@ -9,6 +9,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUiWidgetLoading_
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUiWidgetLoading_OnFinishedLoadingAsset, const FCsAssetReferenceLoadedCache&, Cache);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsUiWidgetLoading_OnFinishedLoadingAssets, const TArray<UObject*>&, LoadedAssets, const float&, LoadingTime);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUiWidgetLoading_OnStartLoadProgress, const int32&, AssetCount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUiWidgetLoading_OnLoadProgressUpdated, const float&, Percent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsUiWidgetLoading_Bulk_OnFinishedLoadingAssetReferences, const TArray<UObject*>&, LoadedAssets, const float&, LoadingTime);
+
 UCLASS()
 class CSCORE_API UCsUiWidget_Loading : public UCsUserWidget
 {
@@ -40,6 +44,9 @@ class CSCORE_API UCsUiWidget_Loading : public UCsUserWidget
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* Loading_Total_Text;
 
+	// FirstToLast
+#pragma region
+
 	virtual void OnStartLoadingAssets(const int32 &AssetCount);
 
 	UPROPERTY(BlueprintAssignable, Category = "Loading")
@@ -59,6 +66,28 @@ class CSCORE_API UCsUiWidget_Loading : public UCsUserWidget
 
 	UPROPERTY(BlueprintAssignable, Category = "Loading")
 	FBindableDynEvent_CsUiWidgetLoading_OnFinishedLoadingAssets OnFinishedLoadingAssets_ScriptEvent;
+
+#pragma endregion FirstToLast
+
+	// Bulk
+#pragma region
+
+	virtual void OnStartLoadProgress(const int32 &AssetCount);
+
+	UPROPERTY(BlueprintAssignable, Category = "Loading")
+	FBindableDynEvent_CsUiWidgetLoading_OnStartLoadProgress OnStartLoadProgress_ScriptEvent;
+
+	virtual void OnLoadProgressUpdated(const float &Percent);
+
+	UPROPERTY(BlueprintAssignable, Category = "Loading")
+	FBindableDynEvent_CsUiWidgetLoading_OnLoadProgressUpdated OnLoadProgressUpdated_ScriptEvent;
+
+	virtual void Bulk_OnFinishedLoadingAssets(const TArray<UObject*> &LoadedAssets, const float &LoadingTime);
+
+	UPROPERTY(BlueprintAssignable, Category = "Loading")
+	FBindableDynEvent_CsUiWidgetLoading_Bulk_OnFinishedLoadingAssetReferences Bulk_OnFinishedLoadingAssets_ScriptEvent;
+
+#pragma endregion Bulk
 
 #pragma endregion Loading
 };

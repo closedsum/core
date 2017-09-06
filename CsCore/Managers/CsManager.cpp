@@ -19,6 +19,7 @@ void ACsManager::CreatePool(const TSubclassOf<class AActor> &ActorClass, const u
 void ACsManager::CreatePool(const int32 &Size){}
 void ACsManager::CreatePool_Script(const int32 &Size) { CreatePool(Size); }
 void ACsManager::AddToPool(AActor* InActor, const uint8 &Type){}
+void ACsManager::AddToPool(const TSubclassOf<class AActor> &ActorClass, const uint8 &Type, const int32 &Size) {}
 void ACsManager::AddToActivePool(AActor* InActor, const uint8 &Type) {}
 int32 ACsManager::GetActivePoolSize(const uint8& Type) { return 0; }
 bool ACsManager::IsExhausted(const uint8 &Type) { return true; }

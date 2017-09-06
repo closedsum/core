@@ -69,7 +69,87 @@ bool UCsGameInstance::Tick(float DeltaSeconds)
 	return true;
 }
 
-// Data Mapping
+// Routines
+#pragma region
+
+/*static*/ void UCsGameInstance::AddRoutine(UObject* InGameInstance, struct FCsRoutine* Routine, const uint8 &Type)
+{
+	Cast<UCsGameInstance>(InGameInstance)->AddRoutine_Internal(Routine, Type);
+}
+
+bool UCsGameInstance::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
+{
+	const TCsGameInstanceRoutine RoutineType = (TCsGameInstanceRoutine)Type;
+
+	// OnBoard_Internal
+	if (RoutineType == ECsGameInstanceRoutine::OnBoard_Internal)
+	{
+		OnBoard_Internal_Routine = Routine;
+		return true;
+	}
+	return false;
+}
+
+/*static*/ void UCsGameInstance::RemoveRoutine(UObject* InGameInstance, struct FCsRoutine* Routine, const uint8 &Type)
+{
+	Cast<UCsGameInstance>(InGameInstance)->RemoveRoutine_Internal(Routine, Type);
+}
+
+bool UCsGameInstance::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
+{
+	const TCsGameInstanceRoutine RoutineType = (TCsGameInstanceRoutine)Type;
+
+	// OnBoard_Internal
+	if (RoutineType == ECsGameInstanceRoutine::OnBoard_Internal)
+	{
+		check(OnBoard_Internal_Routine == Routine);
+		OnBoard_Internal_Routine = nullptr;
+		return true;
+	}
+	return false;
+}
+
+#pragma endregion Routines
+
+// OnBoard
+#pragma region
+
+void UCsGameInstance::OnBoard()
+{
+	CsCoroutine Function		  = &UCsGameInstance::OnBoard_Internal;
+	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckActor;
+	CsAddRoutine Add			  = &UCsGameInstance::AddRoutine;
+	CsRemoveRoutine Remove		  = &UCsGameInstance::RemoveRoutine;
+	const uint8 Type			  = (uint8)ECsGameInstanceRoutine::OnBoard_Internal;
+
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	FCsRoutine* R					 = Scheduler->Allocate(Function, Stop, this, Add, Remove, Type, true, false);
+
+	Scheduler->StartRoutine(R);
+}
+
+CS_COROUTINE(UCsGameInstance, OnBoard_Internal)
+{
+	UCsGameInstance* gi		 = Cast<UCsGameInstance>(r->GetRObject());
+	UCsCoroutineScheduler* s = r->scheduler;
+	UWorld* w				 = gi->GetWorld();
+
+	CS_COROUTINE_BEGIN(r);
+
+	gi->LoadDataMapping();
+
+	CS_COROUTINE_WAIT_UNTIL(r, gi->OnBoardState == ECsGameInstanceOnBoardState::LoadStartUpData);
+
+	gi->LoadStartUpData();
+
+	// Wait till the World is VALID
+	CS_COROUTINE_WAIT_UNTIL(r, w);
+
+
+	CS_COROUTINE_END(r);
+}
+
+	// Data Mapping
 #pragma region
 
 void UCsGameInstance::LoadDataMapping()
@@ -91,11 +171,14 @@ void UCsGameInstance::LoadDataMapping()
 		return;
 	}
 
-	CsCoroutine Function		 = &UCsGameInstance::LoadDataMapping_Internal;
+	CsCoroutine Function		  = &UCsGameInstance::LoadDataMapping_Internal;
 	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
+	CsAddRoutine Add			  = &UCsGameInstance::AddRoutine;
+	CsRemoveRoutine Remove		  = &UCsGameInstance::RemoveRoutine;
+	const uint8 Type			  = (uint8)ECsGameInstanceRoutine::LoadDataMapping_Internal;
 
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsRoutine* R					 = Scheduler->Allocate(Function, Stop, this, true, false);
+	FCsRoutine* R					 = Scheduler->Allocate(Function, Stop, this, Add, Remove, Type, true, false);
 
 	Scheduler->StartRoutine(R);
 }
@@ -107,9 +190,6 @@ PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(struct FCsRoutine* r))
 	ACsDataMapping* dataMapping = gi->DataMapping;
 
 	CS_COROUTINE_BEGIN(r);
-
-	// Wait until the World is VALID
-	CS_COROUTINE_WAIT_UNTIL(r, gi->GetWorld());
 
 	if (!gi->ForcePopulateAssetReferences || !dataMapping->ForcePopulateAssetReferences)
 	{
@@ -133,6 +213,7 @@ PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(struct FCsRoutine* r))
 		gi->LoadedDataAssets.Reset();
 	}
 	gi->HasLoadedDataMapping = true;
+	gi->OnBoardState = ECsGameInstanceOnBoardState::LoadStartUpData;
 
 	CS_COROUTINE_END(r);
 }
@@ -149,3 +230,36 @@ void UCsGameInstance::OnFinishedLoadingDataAssets(const TArray<UObject*> &Loaded
 }
 
 #pragma endregion Data Mapping
+
+	// Load StartUp Data
+#pragma region
+
+void UCsGameInstance::LoadStartUpData()
+{
+	/*
+	const TCsLoadAsyncOrder AsyncOrder = UCsCommon::GetLoadAsyncOrder();
+
+	DataMapping->AsyncLoadAssets<ACsGameState>(ECsLoadAssetsType::StartUp, AsyncOrder, this, &ACsGameState::OnFinishedLoadCommonData);
+	*/
+}
+
+void UCsGameInstance::OnFinishedLoadingStartUpDataAssets(const TArray<UObject*> &LoadedAssets, const float& LoadingTime)
+{
+	//DataMapping->OnFinishedAsyncLoadingAssetsSetReferences(ECsLoadAssetsType::StartUp, LoadedAssets);
+
+	OnBoardState = ECsGameInstanceOnBoardState::Completed;
+}
+
+#pragma endregion Load StartUp Data
+
+// Fullscreen Widget
+#pragma region
+
+void UCsGameInstance::SetupFullscreenWidget()
+{
+	//FullscreenWidget = CreateWidget<UCsUserWidget>(GetWorld(), );
+}
+
+#pragma endregion Fullscreen Widget
+
+#pragma endregion OnBoard

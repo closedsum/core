@@ -145,6 +145,9 @@ CS_COROUTINE(UCsGameInstance, OnBoard_Internal)
 	// Wait till the World is VALID
 	CS_COROUTINE_WAIT_UNTIL(r, w);
 
+	gi->SetupFullscreenWidget();
+
+	CS_COROUTINE_WAIT_UNTIL(r, gi->OnBoardState == ECsGameInstanceOnBoardState::Completed);
 
 	CS_COROUTINE_END(r);
 }
@@ -252,7 +255,7 @@ void UCsGameInstance::OnFinishedLoadingStartUpDataAssets(const TArray<UObject*> 
 
 #pragma endregion Load StartUp Data
 
-// Fullscreen Widget
+	// Fullscreen Widget
 #pragma region
 
 void UCsGameInstance::SetupFullscreenWidget()

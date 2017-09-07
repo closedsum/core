@@ -23,3 +23,22 @@ void UCsUserWidget::Hide()
 	SetVisibility(ESlateVisibility::Hidden);
 	SetIsEnabled(false);
 }
+
+// Routines
+#pragma region
+
+{
+}
+
+{
+	return false;
+}
+
+{
+}
+
+{
+	return false;
+}
+
+#pragma endregion Routines

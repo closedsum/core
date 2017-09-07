@@ -12,6 +12,41 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsUserWidget_OnNativeTick, const FGeometry&, MyGeometry, float, InDeltaTime);
 
+// Enums
+#pragma region
+
+namespace ECsUserWidgetRoutine
+{
+	enum Type
+	{
+		ECsUserWidgetRoutine_MAX,
+	};
+}
+
+namespace ECsUserWidgetRoutine
+{
+	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		return Type::ECsUserWidgetRoutine_MAX;
+	}
+}
+
+#define ECS_USER_WIDGET_ROUTINE_MAX (uint8)ECsUserWidgetRoutine::ECsUserWidgetRoutine_MAX
+typedef ECsUserWidgetRoutine::Type TCsUserWidgetRoutine;
+
+#pragma endregion Enums
+
 // Structs
 #pragma region
 
@@ -474,4 +509,16 @@ public:
 	virtual void Init();
 	virtual void Show();
 	virtual void Hide();
+
+// Routines
+#pragma region
+public:
+
+	static void AddRoutine(UObject* InWidget, struct FCsRoutine* Routine, const uint8 &InType);
+	virtual bool AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType);
+
+	static void RemoveRoutine(UObject* InWidget, struct FCsRoutine* Routine, const uint8 &InType);
+	virtual bool RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType);
+
+#pragma endregion Routines
 };

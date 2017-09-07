@@ -45,4 +45,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "UI")
 	FBindableDynEvent_CsUI_OnAddWidgetActor OnAddWidgetActor_ScriptEvent;
+
+	virtual bool HasWidgetInitialized(const TCsWidgetType &WidgetType);
+
+	virtual void Open(const TCsWidgetType &WidgetType);
+	virtual void Close(const TCsWidgetType &WidgetType);
 };

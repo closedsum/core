@@ -48,3 +48,8 @@ UCsUserWidget* ACsUI::GetActiveWidget(const TCsWidgetType &WidgetType)
 	}
 	return nullptr;
 }
+
+bool ACsUI::HasWidgetInitialized(const TCsWidgetType &WidgetType) { return true; }
+
+void ACsUI::Open(const TCsWidgetType &WidgetType){}
+void ACsUI::Close(const TCsWidgetType &WidgetType){}

@@ -27,9 +27,12 @@ void UCsWidget_Fullscreen::Init()
 // Routines
 #pragma region
 
+bool UCsWidget_Fullscreen::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType)
 {
+	if (Super::AddRoutine_Internal(Routine, InType))
 		return true;
 
+	const TCsWidgetFullscreenRoutine RoutineType = (TCsWidgetFullscreenRoutine)InType;
 
 	// OnBoard_Internal
 	if (RoutineType == ECsWidgetFullscreenRoutine::FadeOut_Internal)
@@ -41,9 +44,13 @@ void UCsWidget_Fullscreen::Init()
 	return false;
 }
 
+
+bool UCsWidget_Fullscreen::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType)
 {
+	if (Super::RemoveRoutine_Internal(Routine, InType))
 		return true;
 
+	const TCsWidgetFullscreenRoutine RoutineType = (TCsWidgetFullscreenRoutine)InType;
 
 	// OnBoard_Internal
 	if (RoutineType == ECsWidgetFullscreenRoutine::FadeOut_Internal)
@@ -55,7 +62,9 @@ void UCsWidget_Fullscreen::Init()
 	checkf(0, TEXT("UCsWidget_Fullscreen::RemoveRoutine_Internal: Adding a Routine of unknown Type"));
 	return false;
 }
+
 #pragma endregion Routines
+/*
 void UCsWidget_Fullscreen::FadeOut(const TEnumAsByte<ECsEasingType::Type> &EasingType, const float &Start, const float &End, const float &Time, const FLinearColor &Color)
 {
 	CsCoroutine Function		  = &UCsWidget_Fullscreen::FadeOut_Internal;
@@ -75,6 +84,8 @@ void UCsWidget_Fullscreen::FadeOut(const TEnumAsByte<ECsEasingType::Type> &Easin
 
 	Scheduler->StartRoutine(R);
 }
+*/
+CS_COROUTINE(UCsWidget_Fullscreen, FadeOut_Internal)
 {
 	CS_COROUTINE_BEGIN(r);
 

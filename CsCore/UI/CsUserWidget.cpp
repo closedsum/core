@@ -27,16 +27,22 @@ void UCsUserWidget::Hide()
 // Routines
 #pragma region
 
+/*static*/ void UCsUserWidget::AddRoutine(UObject* InWidget, struct FCsRoutine* Routine, const uint8 &InType)
 {
+	Cast<UCsUserWidget>(InWidget)->AddRoutine_Internal(Routine, InType);
 }
 
+bool UCsUserWidget::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType)
 {
 	return false;
 }
 
+/*static*/ void UCsUserWidget::RemoveRoutine(UObject* InWidget, struct FCsRoutine* Routine, const uint8 &InType)
 {
+	Cast<UCsUserWidget>(InWidget)->RemoveRoutine_Internal(Routine, InType);
 }
 
+bool UCsUserWidget::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType)
 {
 	return false;
 }

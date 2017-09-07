@@ -63,6 +63,8 @@ class CSCORE_API UCsWidget_Fullscreen : public UCsUserWidget
 #pragma region
 public:
 
+	virtual bool AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType) override;
+	virtual bool RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType) override;
 
 #pragma endregion Routines
 
@@ -70,6 +72,8 @@ public:
 #pragma region
 public:
 	
+	//UPROPERTY(BlueprintCallable, Category = "Widget")
+	//virtual void FadeOut(const TEnumAsByte<ECsEasingType::Type> &EasingType, const float &Time, const FLinearColor &Color);
 
 	static char FadeOut_Internal(struct FCsRoutine* r);
 	struct FCsRoutine* FadeOut_Internal_Routine;

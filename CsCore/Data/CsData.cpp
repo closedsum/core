@@ -6,6 +6,7 @@
 
 #if WITH_EDITOR
 #include "Data/CsDataMapping.h"
+#include "Data/CsData_Payload.h"
 
 #include "AssetRegistryModule.h"
 #include "Developer/AssetTools/Public/AssetToolsModule.h"
@@ -241,6 +242,37 @@ ACsDataMapping* ACsData::GetDataMapping()
 	return nullptr;
 }
 
+ACsData_Payload* ACsData::GetPayload()
+{
+	TArray<UBlueprint*> Bps;
+
+	UCsCommon::GetAssets<UBlueprint>(Bps, FName(*PayloadName));
+
+	const int32 Count = Bps.Num();
+
+	if (Count > 1)
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsData::GetPayload (%s): More than one asset named %s"), *(ShortCode.ToString()), *PayloadName);
+
+		for (int32 I = 0; I < Count; I++)
+		{
+			UE_LOG(LogCs, Warning, TEXT("ACsData::GetPayload (%s): Asset at %s"), *(ShortCode.ToString()), *(Bps[I]->GetPathName()));
+		}
+	}
+	else
+	{
+		if (ACsData_Payload* Payload = Cast<UBlueprintCore>(Bps[0])->GeneratedClass->GetDefaultObject<ACsData_Payload>())
+		{
+			return Payload;
+		}
+		else
+		{
+			UE_LOG(LogCs, Warning, TEXT("ACsData::GetPayload (%s): Asset: %s is NOT of type CsData_Payload."), *(ShortCode.ToString()), *PayloadName);
+		}
+	}
+	return nullptr;
+}
+
 void ACsData::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 {
 	FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
@@ -261,6 +293,8 @@ void ACsData::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 	
 		AddToDataMapping.Add = false;
 	}
+	// Add to Payload
+
 	// Load From Json
 	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsDataLoadFromJson, Load))
 	{

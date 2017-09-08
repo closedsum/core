@@ -4,6 +4,26 @@
 #include "CsTypes.h"
 #include "CsData.generated.h"
 
+// Macros
+#pragma region
+
+#define CS_DATA_DEFINE_TYPE(TYPE)	Type = ECsAssetType::TYPE; \
+									Type_MAX = ECsAssetType::ECsAssetType_MAX; \
+									AssetTypeToString = &ECsAssetType::ToString; \
+									StringToAssetType = &ECsAssetType::ToType; \
+									Type_Script = (uint8)Type; \
+									TypeAsString = (*AssetTypeToString)(Type);
+
+#define CS_DATA_DEFINE_LOAD_INTERNAL_FUNCTION_POINTERS(CLASS)	GetAssetReferencesFromObject_Internal = &CLASS::GetAssetReferencesFromObject_Internal; \
+																LoadObjectWithTAssetPtrs_Internal = &CLASS::LoadObjectWithTAssetPtrs_Internal; \
+																WriteObjectToJson_Internal = &CLASS::WriteObjectToJson_Internal; \
+																ReadObjectFromJson_Internal = &CLASS::ReadObjectFromJson_Internal;
+
+#pragma endregion Macros
+
+// Structs
+#pragma region
+
 USTRUCT()
 struct FCsDataAddToDataMapping
 {
@@ -29,6 +49,27 @@ struct FCsDataAddToDataMapping
 };
 
 USTRUCT()
+struct FCsDataAddToPayload
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
+	bool Add;
+
+	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
+	FString LoadAssetsType;
+
+	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	TEnumAsByte<ECsLoadFlags_Editor::Type> LoadFlags;
+
+	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Helper")
+	FString Message;
+
+	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Helper")
+	FString Output;
+};
+
+USTRUCT()
 struct FCsDataLoadFromJson
 {
 	GENERATED_USTRUCT_BODY()
@@ -36,6 +77,8 @@ struct FCsDataLoadFromJson
 	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
 	bool Load;
 };
+
+#pragma endregion Structs
 
 UCLASS(hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
 class CSCORE_API ACsData : public AActor
@@ -118,11 +161,18 @@ class CSCORE_API ACsData : public AActor
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "99 Data Mapping")
 	FCsDataAddToDataMapping AddToDataMapping;
 
+	UPROPERTY()
+	FString PayloadName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "99 Data Mapping")
+	FCsDataAddToPayload AddToPayload;
+
 #if WITH_EDITOR
 
 	class UClass* DataMappingClass;
 
 	class ACsDataMapping* GetDataMapping();
+	class ACsData_Payload* GetPayload();
 
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& e) override;
 

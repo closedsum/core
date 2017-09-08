@@ -33,7 +33,7 @@ struct FCsPayloadAddEntry
 	bool Add;
 
 	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
-	TEnumAsByte<ECsLoadAssetsType::Type> LoadAssetsType;
+	FString LoadAssetsType;
 
 	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
 	FName ShortCode;
@@ -57,7 +57,7 @@ struct FCsPayloadRemoveEntry
 	bool Remove;
 
 	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
-	TEnumAsByte<ECsLoadAssetsType::Type> LoadAssetsType;
+	FString LoadAssetsType;
 
 	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
 	FName ShortCode;
@@ -91,8 +91,11 @@ class CSCORE_API ACsData_Payload : public ACsData
 {
 	GENERATED_UCLASS_BODY()
 
-	UPROPERTY(EditDefaultsOnly, Category = "01 Payload")
-	FCsTArrayPayload Payloads[ECsLoadAssetsType::ECsLoadAssetsType_MAX];
+	TCsLoadAssetsType LoadAssetType_MAX;
+	uint8 LOAD_ASSETS_TYPE_MAX;
+
+	TCsLoadAssetsTypeToString LoadAssetsTypeToString;
+	TCsStringToLoadAssetsType StringToLoadAssetsType;
 
 // 98 Editor
 #pragma region

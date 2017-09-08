@@ -32,12 +32,14 @@ bool ACsData_Payload::PerformFindEntry(const FName &InShortCode, TArray<FCsPaylo
 			// FCsTArrayPayload
 			if (StructProperty->Struct == FCsTArrayPayload::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == ECS_LOAD_ASSETS_TYPE_MAX)
+				if (StructProperty->ArrayDim == LOAD_ASSETS_TYPE_MAX)
 				{
-					if (FCsTArrayPayload(*Member)[ECS_LOAD_ASSETS_TYPE_MAX] = Property->ContainerPtrToValuePtr<FCsTArrayPayload[ECS_LOAD_ASSETS_TYPE_MAX]>(this))
+					CS_DECLARE_AND_DEFINE_CONST_INTEGRAL_VALUE(uint8, MAX, LOAD_ASSETS_TYPE_MAX)
+
+					if (FCsTArrayPayload(*Member)[MAX] = Property->ContainerPtrToValuePtr<FCsTArrayPayload[MAX]>(this))
 					{
 						// Find LoadAssetsType
-						for (int32 I = 0; I < ECS_LOAD_ASSETS_TYPE_MAX; I++)
+						for (int32 I = 0; I < LOAD_ASSETS_TYPE_MAX; I++)
 						{
 							TArray<FCsPayload>& Array = ((*Member)[I]).Payloads;
 
@@ -102,7 +104,7 @@ void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 			if (I > 0)
 				FindEntry.Output += TEXT(", ");
 
-			const FString LoadAssetsTypeAsString = ECsLoadAssetsType::ToString(OutLoadAssetsTypes[I]);
+			const FString LoadAssetsTypeAsString = (*LoadAssetsTypeToString)(OutLoadAssetsTypes[I]);
 			const FString AssetTypeAsString		 = OutPayloads[I]->AssetType;
 			const FString LoadFlagsAsString		 = ECsLoadFlags_Editor::ToString(OutPayloads[I]->LoadFlags);
 
@@ -131,6 +133,25 @@ void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 			Super::PostEditChangeProperty(e);
 			return;
 		}
+		// Check for VALID LoadAssetsType
+		const TCsLoadAssetsType LoadAssetsType = (*StringToLoadAssetsType)(AddEntry.LoadAssetsType);
+
+		if (LoadAssetsType == LoadAssetType_MAX)
+		{
+			AddEntry.Message = TEXT("INVALID LoadAssetType. See Output Log.");
+			AddEntry.Output  = TEXT("ERROR");
+			AddEntry.Add	 = false;
+
+			UE_LOG(LogCs, Warning, TEXT("ACsData_Payload::PostEditChangeProperty: Valid LoadAssetsTypes are:"))
+
+			for (int32 I = 0; I < LOAD_ASSETS_TYPE_MAX; I++)
+			{
+				UE_LOG(LogCs, Warning, TEXT("LoadAssetType: %s"), *((*LoadAssetsTypeToString)((TCsLoadAssetsType)I)));
+			}
+
+			Super::PostEditChangeProperty(e);
+			return;
+		}
 
 		// Check if ShortCode has ALREADY been ADDED
 		TArray<FCsPayload*> OutPayloads;
@@ -149,7 +170,7 @@ void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 			{
 				FCsPayload* Payload = OutPayloads[I];
 
-				const FString LoadAssetsTypeAsString = ECsLoadAssetsType::ToString(OutLoadAssetsTypes[I]);
+				const FString LoadAssetsTypeAsString = (*LoadAssetsTypeToString)(OutLoadAssetsTypes[I]);
 				const FString AssetTypeAsString		 = Payload->AssetType;
 
 				AddEntry.Output += TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + AssetTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(OutIndices[I]) + TEXT("]");
@@ -207,11 +228,13 @@ void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 							// FCsTArrayPayload
 							if (StructProperty->Struct == FCsTArrayPayload::StaticStruct())
 							{
-								if (StructProperty->ArrayDim == ECS_LOAD_ASSETS_TYPE_MAX)
+								if (StructProperty->ArrayDim == LOAD_ASSETS_TYPE_MAX)
 								{
-									if (FCsTArrayPayload(*Member)[ECS_LOAD_ASSETS_TYPE_MAX] = Property->ContainerPtrToValuePtr<FCsTArrayPayload[ECS_LOAD_ASSETS_TYPE_MAX]>(this))
+									CS_DECLARE_AND_DEFINE_CONST_INTEGRAL_VALUE(uint8, MAX, LOAD_ASSETS_TYPE_MAX)
+
+									if (FCsTArrayPayload(*Member)[MAX] = Property->ContainerPtrToValuePtr<FCsTArrayPayload[MAX]>(this))
 									{
-										TArray<FCsPayload>& Array = ((*Member)[(uint8)AddEntry.LoadAssetsType]).Payloads;
+										TArray<FCsPayload>& Array = ((*Member)[(uint8)LoadAssetsType]).Payloads;
 
 										const int32 ArraySize = Array.Num();
 
@@ -223,7 +246,7 @@ void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 										Array[ArraySize].ShortCode		  = AddEntry.ShortCode;
 										Array[ArraySize].LoadFlags		  = AddEntry.LoadFlags;
 
-										const FString LoadAssetsTypeAsString = ECsLoadAssetsType::ToString(AddEntry.LoadAssetsType);
+										const FString LoadAssetsTypeAsString = (*LoadAssetsTypeToString)(LoadAssetsType);
 										const FString LoadFlagsAsString		 = ECsLoadFlags_Editor::ToString(AddEntry.LoadFlags);
 
 										AddEntry.Output = TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + AssetTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(ArraySize) + TEXT("]");
@@ -284,11 +307,13 @@ void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 							// FCsTArrayPayload
 							if (StructProperty->Struct == FCsTArrayPayload::StaticStruct())
 							{
-								if (StructProperty->ArrayDim == ECS_LOAD_ASSETS_TYPE_MAX)
+								if (StructProperty->ArrayDim == LOAD_ASSETS_TYPE_MAX)
 								{
-									if (FCsTArrayPayload(*Member)[ECS_LOAD_ASSETS_TYPE_MAX] = Property->ContainerPtrToValuePtr<FCsTArrayPayload[ECS_LOAD_ASSETS_TYPE_MAX]>(this))
+									CS_DECLARE_AND_DEFINE_CONST_INTEGRAL_VALUE(uint8, MAX, LOAD_ASSETS_TYPE_MAX)
+
+									if (FCsTArrayPayload(*Member)[MAX] = Property->ContainerPtrToValuePtr<FCsTArrayPayload[MAX]>(this))
 									{
-										TArray<FCsPayload>& Array = ((*Member)[(uint8)AddEntry.LoadAssetsType]).Payloads;
+										TArray<FCsPayload>& Array = ((*Member)[(uint8)LoadAssetsType]).Payloads;
 
 										const int32 ArraySize = Array.Num();
 
@@ -300,7 +325,7 @@ void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 										Array[ArraySize].ShortCode		  = AddEntry.ShortCode;
 										Array[ArraySize].LoadFlags		  = AddEntry.LoadFlags;
 
-										const FString LoadAssetsTypeAsString = ECsLoadAssetsType::ToString(AddEntry.LoadAssetsType);
+										const FString LoadAssetsTypeAsString = (*LoadAssetsTypeToString)(LoadAssetsType);
 										const FString LoadFlagsAsString		 = ECsLoadFlags_Editor::ToString(AddEntry.LoadFlags);
 
 										AddEntry.Output = TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + AssetTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(ArraySize) + TEXT("]");
@@ -332,6 +357,25 @@ void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 			Super::PostEditChangeProperty(e);
 			return;
 		}
+		// Check for VALID LoadAssetsType
+		const TCsLoadAssetsType LoadAssetsType = (*StringToLoadAssetsType)(RemoveEntry.LoadAssetsType);
+
+		if (LoadAssetsType == LoadAssetType_MAX)
+		{
+			RemoveEntry.Message = TEXT("INVALID LoadAssetType. See Output Log.");
+			RemoveEntry.Output  = TEXT("ERROR");
+			RemoveEntry.Remove	= false;
+
+			UE_LOG(LogCs, Warning, TEXT("ACsData_Payload::PostEditChangeProperty: Valid LoadAssetsTypes are:"))
+
+				for (int32 I = 0; I < LOAD_ASSETS_TYPE_MAX; I++)
+				{
+					UE_LOG(LogCs, Warning, TEXT("LoadAssetType: %s"), *((*LoadAssetsTypeToString)((TCsLoadAssetsType)I)));
+				}
+
+			Super::PostEditChangeProperty(e);
+			return;
+		}
 
 		UClass* Class = GetClass();
 
@@ -347,21 +391,23 @@ void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 				// FCorgiTArrayPayload
 				if (StructProperty->Struct == FCsTArrayPayload::StaticStruct())
 				{
-					if (StructProperty->ArrayDim == ECS_LOAD_ASSETS_TYPE_MAX)
+					if (StructProperty->ArrayDim == LOAD_ASSETS_TYPE_MAX)
 					{
-						if (FCsTArrayPayload(*Member)[ECS_LOAD_ASSETS_TYPE_MAX] = Property->ContainerPtrToValuePtr<FCsTArrayPayload[ECS_LOAD_ASSETS_TYPE_MAX]>(this))
+						CS_DECLARE_AND_DEFINE_CONST_INTEGRAL_VALUE(uint8, MAX, LOAD_ASSETS_TYPE_MAX)
+
+						if (FCsTArrayPayload(*Member)[MAX] = Property->ContainerPtrToValuePtr<FCsTArrayPayload[MAX]>(this))
 						{
 							// Find LoadAssetsType
-							for (int32 I = 0; I < ECS_LOAD_ASSETS_TYPE_MAX; I++)
+							for (int32 I = 0; I < LOAD_ASSETS_TYPE_MAX; I++)
 							{
 								TArray<FCsPayload>& Array = ((*Member)[I]).Payloads;
 
-								const TCsLoadAssetsType LoadAssetsType = (TCsLoadAssetsType)I;
+								const TCsLoadAssetsType AssetsType = (TCsLoadAssetsType)I;
 
-								if (LoadAssetsType != RemoveEntry.LoadAssetsType)
+								if (AssetsType != LoadAssetsType)
 									continue;
 
-								const FString LoadAssetsTypeAsString = ECsLoadAssetsType::ToString(LoadAssetsType);
+								const FString LoadAssetsTypeAsString = (*LoadAssetsTypeToString)(LoadAssetsType);
 
 								bool Found = false;
 

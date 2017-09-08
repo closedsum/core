@@ -183,7 +183,12 @@ public:
 	{
 	}
 
-	void Set(UImage* inImage) { Image = inImage; }
+	void Set(UImage* inImage) 
+	{ 
+		Image = inImage;
+		Tint  = Image->Brush.TintColor;
+		Color = Image->ColorAndOpacity;
+	}
 
 	virtual void OnNativeTick(const float &InDeltaTime) override
 	{
@@ -223,6 +228,13 @@ public:
 	void SetColorAndOpacity(const FLinearColor &inColor)
 	{
 		Color = inColor;
+	}
+
+	void SetOpacity(const float &Alpha)
+	{
+		FLinearColor C = Color.Get();
+		C.A			   = Alpha;
+		Color		   = C;
 	}
 
 	UImage* Get() { return Image.IsValid() ? Image.Get() : nullptr; }

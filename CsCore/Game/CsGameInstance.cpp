@@ -4,8 +4,12 @@
 #include "CsCVars.h"
 #include "Managers/CsManager_Loading.h"
 #include "Coroutine/CsCoroutineScheduler.h"
+// Data
 #include "Data/CsDataMapping.h"
 #include "Data/CsData.h"
+#include "Data/CsData_UiCommon.h"
+// UI
+#include "UI/CsUserWidget.h"
 
 UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -260,7 +264,12 @@ void UCsGameInstance::OnFinishedLoadingStartUpDataAssets(const TArray<UObject*> 
 
 void UCsGameInstance::SetupFullscreenWidget()
 {
-	//FullscreenWidget = CreateWidget<UCsUserWidget>(GetWorld(), );
+	if (!FullscreenWidget)
+	{
+		ACsData_UiCommon* bp_ui_common = Cast<ACsData_UiCommon>(DataMapping->LoadData(FName("bp_ui_common")));
+		FullscreenWidget			   = CreateWidget<UCsUserWidget>(this, bp_ui_common->FullscreenWidget.Get());
+	}
+	FullscreenWidget->Show();
 }
 
 #pragma endregion Fullscreen Widget

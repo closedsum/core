@@ -481,21 +481,8 @@ void ACsPlayerState::ServerRequestPlayerData_Implementation(const uint8 &ClientM
 }
 
 void ACsPlayerState::ServerRequestPlayerData_Internal(const uint8 &ClientMappingId, const uint8 &MappingId){}
-
 void ACsPlayerState::GetLoadAssetsShortCodes(const TCsLoadAssetsType &AssetsType, TArray<FName> &OutShortCodes){}
-
-void ACsPlayerState::LoadPlayerData()
-{
-	// Get Asset References to Load
-	ACsDataMapping* DataMapping = UCsCommon::GetDataMapping(GetWorld());
-
-	DataMapping->OnGetLoadAssetsShortCodes_Event.BindUObject(this, &ACsPlayerState::GetLoadAssetsShortCodes);
-
-	const TCsLoadAsyncOrder AsyncOrder = UCsCommon::GetLoadAsyncOrder();
-
-	DataMapping->AsyncLoadAssets(ECsLoadAssetsType::PlayerData, AsyncOrder, this, &ACsPlayerState::OnFinishedLoadingPlayerData);
-}
-
+void ACsPlayerState::LoadPlayerData(){}
 void ACsPlayerState::OnFinishedLoadingPlayerData(const TArray<UObject*> &LoadedAssets, const float &LoadingTime){}
 
 bool ACsPlayerState::ServerSendOnBoardCompleted_Validate(const uint8 &ClientMappingId, const uint8 &MappingId)

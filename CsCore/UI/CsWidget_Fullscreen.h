@@ -59,6 +59,8 @@ class CSCORE_API UCsWidget_Fullscreen : public UCsUserWidget
 	UPROPERTY(meta = (BindWidget))
 	UImage* Fullscreen_Image;
 
+	FCsWidget_Image Fullscreen;
+
 	// Routines
 #pragma region
 public:
@@ -72,11 +74,15 @@ public:
 #pragma region
 public:
 	
-	//UPROPERTY(BlueprintCallable, Category = "Widget")
-	//virtual void FadeOut(const TEnumAsByte<ECsEasingType::Type> &EasingType, const float &Time, const FLinearColor &Color);
-
-	static char FadeOut_Internal(struct FCsRoutine* r);
+	UFUNCTION(BlueprintCallable, Category = "Widget")
+	virtual void FadeOut(const TEnumAsByte<ECsEasingType::Type> &EasingType, const float &Start, const float &End, const float &Time, const FLinearColor &Color);
 	struct FCsRoutine* FadeOut_Internal_Routine;
+
+	UFUNCTION(BlueprintCallable, Category = "Widget")
+	virtual void FadeIn(const TEnumAsByte<ECsEasingType::Type> &EasingType, const float &Start, const float &End, const float &Time, const FLinearColor &Color);
+	struct FCsRoutine* FadeIn_Internal_Routine;
+
+	static char Fade_Internal(struct FCsRoutine* r);
 
 #pragma endregion Fading
 };

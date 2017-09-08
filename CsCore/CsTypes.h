@@ -746,6 +746,10 @@ namespace ECsMemberType
 //typedef ECsMemberType TCsMemberType;
 typedef TEnumAsByte<ECsMemberType::Type> TCsMemberType;
 
+#define CS_DECLARE_AND_DEFINE_CONST_INTEGRAL_VALUE(Type, Integral, Value) const Type Integral = 1; \
+																		  Type* ptr = (Type*)(&Integral); \
+																		  *ptr = Value;
+
 #pragma endregion Primitive Types
 
 // Level
@@ -1223,60 +1227,17 @@ typedef FString(*TCsAssetTypeToString)(const TCsAssetType&);
 // StringToAssetType
 typedef TCsAssetType(*TCsStringToAssetType)(const FString&);
 
-UENUM(BlueprintType)
 namespace ECsLoadAssetsType
 {
-	enum Type
-	{
-		StartUp					UMETA(DisplayName = "StartUp"),
-		MenuCommon				UMETA(DisplayName = "Menu Common"),
-		Menu					UMETA(DisplayName = "Menu"),
-		GameCommon				UMETA(DisplayName = "Game Common"),
-		Game					UMETA(DisplayName = "Game"),
-		PlayerData				UMETA(DisplayName = "Player Data"),
-		ECsLoadAssetsType_MAX	UMETA(Hidden),
-	};
+	enum Type : uint8;
 }
 
-namespace ECsLoadAssetsType
-{
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-		const TCsString StartUp = TCsString(TEXT("StartUp"), TEXT("startup"), TEXT("start up"));
-		const TCsString MenuCommon = TCsString(TEXT("MenuCommon"), TEXT("menucommon"), TEXT("menu common"));
-		const TCsString Menu = TCsString(TEXT("Menu"), TEXT("menu"), TEXT("menu"));
-		const TCsString GameCommon = TCsString(TEXT("GameCommon"), TEXT("gamecommon"), TEXT("game common"));
-		const TCsString Game = TCsString(TEXT("Game"), TEXT("game"), TEXT("game"));
-		const TCsString PlayerData = TCsString(TEXT("PlayerData"), TEXT("playerdata"), TEXT("player data"));
-	}
-
-	FORCEINLINE FString ToString(const Type &EType)
-	{
-		if (EType == Type::StartUp) { return Str::StartUp.Value; }
-		if (EType == Type::MenuCommon) { return Str::MenuCommon.Value; }
-		if (EType == Type::Menu) { return Str::Menu.Value; }
-		if (EType == Type::GameCommon) { return Str::GameCommon.Value; }
-		if (EType == Type::Game) { return Str::Game.Value; }
-		if (EType == Type::PlayerData) { return Str::PlayerData.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::StartUp) { return Type::StartUp; }
-		if (String == Str::MenuCommon) { return Type::MenuCommon; }
-		if (String == Str::Menu) { return Type::Menu; }
-		if (String == Str::GameCommon) { return Type::GameCommon; }
-		if (String == Str::Game) { return Type::Game; }
-		if (String == Str::PlayerData) { return Type::PlayerData; }
-		return Type::ECsLoadAssetsType_MAX;
-	}
-}
-
-#define ECS_LOAD_ASSETS_TYPE_MAX (uint8)ECsLoadAssetsType::ECsLoadAssetsType_MAX
 typedef ECsLoadAssetsType::Type TCsLoadAssetsType;
+
+// LoadAssetsTypeToString
+typedef FString(*TCsLoadAssetsTypeToString)(const TCsLoadAssetsType&);
+// StringToLoadAssetsType
+typedef TCsLoadAssetsType(*TCsStringToLoadAssetsType)(const FString&);
 
 USTRUCT()
 struct FCsPayload
@@ -1692,6 +1653,86 @@ public:
 	}
 };
 
+USTRUCT()
+struct FCsTArrayStaticMesh
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, Category = "Material")
+	TArray<TAssetPtr<class UStaticMesh>> Meshes;
+
+	UPROPERTY(EditAnywhere, Category = "Material", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	int32 Meshes_LoadFlags;
+
+private:
+	UPROPERTY(Transient)
+	TArray<class UStaticMesh*> Meshes_Internal;
+
+public:
+	FCsTArrayStaticMesh()
+	{
+		CS_SET_BLUEPRINT_BITFLAG(Meshes_LoadFlags, ECsLoadFlags::All);
+		CS_SET_BLUEPRINT_BITFLAG(Meshes_LoadFlags, ECsLoadFlags::Game);
+	}
+
+	FCsTArrayStaticMesh& operator=(const FCsTArrayStaticMesh& B)
+	{
+		Meshes.Reset();
+
+		const int32 Count = B.Meshes.Num();
+
+		for (int32 I = 0; I < Count; I++)
+		{
+			Meshes.Add(B.Meshes[I]);
+		}
+		Meshes_LoadFlags = B.Meshes_LoadFlags;
+		return *this;
+	}
+
+	bool operator==(const FCsTArrayStaticMesh& B) const
+	{
+		int32 Count  = Meshes.Num();
+		int32 CountB = B.Meshes.Num();
+
+		if (Count != CountB)
+			return false;
+
+		for (int32 I = 0; I < Count; I++)
+		{
+			if (Meshes[I] != B.Meshes[I])
+				return false;
+		}
+
+		Count  = Meshes_Internal.Num();
+		CountB = B.Meshes_Internal.Num();
+
+		if (Count != CountB)
+			return false;
+
+		for (int32 I = 0; I < Count; I++)
+		{
+			if (Meshes_Internal[I] != B.Meshes_Internal[I])
+				return false;
+		}
+		return Meshes_LoadFlags == B.Meshes_LoadFlags;
+	}
+
+	bool operator!=(const FCsTArrayStaticMesh& B) const
+	{
+		return !(*this == B);
+	}
+
+	TArray<class UStaticMesh*>* Get()
+	{
+		return &Meshes_Internal;
+	}
+
+	class UStaticMesh* Get(const int32 Index)
+	{
+		return Index < Meshes_Internal.Num() ? Meshes_Internal[Index] : NULL;
+	}
+};
+
 #pragma endregion Static Mesh
 
 // Skeletal Mesh
@@ -1846,6 +1887,86 @@ public:
 		if (ViewType == ECsViewType::VR)
 			return MeshVR_Internal;
 		return Mesh3P_Internal;
+	}
+};
+
+USTRUCT()
+struct FCsTArraySkeletalMesh
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, Category = "Material")
+	TArray<TAssetPtr<class USkeletalMesh>> Meshes;
+
+	UPROPERTY(EditAnywhere, Category = "Material", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	int32 Meshes_LoadFlags;
+
+private:
+	UPROPERTY(Transient)
+	TArray<class USkeletalMesh*> Meshes_Internal;
+
+public:
+	FCsTArraySkeletalMesh()
+	{
+		CS_SET_BLUEPRINT_BITFLAG(Meshes_LoadFlags, ECsLoadFlags::All);
+		CS_SET_BLUEPRINT_BITFLAG(Meshes_LoadFlags, ECsLoadFlags::Game);
+	}
+
+	FCsTArraySkeletalMesh& operator=(const FCsTArraySkeletalMesh& B)
+	{
+		Meshes.Reset();
+
+		const int32 Count = B.Meshes.Num();
+
+		for (int32 I = 0; I < Count; I++)
+		{
+			Meshes.Add(B.Meshes[I]);
+		}
+		Meshes_LoadFlags = B.Meshes_LoadFlags;
+		return *this;
+	}
+
+	bool operator==(const FCsTArraySkeletalMesh& B) const
+	{
+		int32 Count = Meshes.Num();
+		int32 CountB = B.Meshes.Num();
+
+		if (Count != CountB)
+			return false;
+
+		for (int32 I = 0; I < Count; I++)
+		{
+			if (Meshes[I] != B.Meshes[I])
+				return false;
+		}
+
+		Count = Meshes_Internal.Num();
+		CountB = B.Meshes_Internal.Num();
+
+		if (Count != CountB)
+			return false;
+
+		for (int32 I = 0; I < Count; I++)
+		{
+			if (Meshes_Internal[I] != B.Meshes_Internal[I])
+				return false;
+		}
+		return Meshes_LoadFlags == B.Meshes_LoadFlags;
+	}
+
+	bool operator!=(const FCsTArraySkeletalMesh& B) const
+	{
+		return !(*this == B);
+	}
+
+	TArray<class USkeletalMesh*>* Get()
+	{
+		return &Meshes_Internal;
+	}
+
+	class USkeletalMesh* Get(const int32 Index)
+	{
+		return Index < Meshes_Internal.Num() ? Meshes_Internal[Index] : NULL;
 	}
 };
 

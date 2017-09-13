@@ -164,6 +164,9 @@ class CSCORE_API ACsDataMapping : public AActor
 	UPROPERTY(VisibleDefaultsOnly, Category = "00 Default")
 	TArray<FCsCategoryMemberAssociation> CategoryMemberAssociations;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "00 Default")
+	class ACsData_Payload* Payload;
+
 // Asset References
 #pragma region
 public:

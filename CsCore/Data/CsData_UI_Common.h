@@ -1,14 +1,14 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Data/CsData.h"
-#include "CsData_UiCommon.generated.h"
+#include "CsData_UI_Common.generated.h"
 
 /* Current Order of Categories
 
 */
 
 UCLASS(hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
-class CSCORE_API ACsData_UiCommon : public ACsData
+class CSCORE_API ACsData_UI_Common : public ACsData
 {
 	GENERATED_UCLASS_BODY()
 

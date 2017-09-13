@@ -7,7 +7,7 @@
 // Data
 #include "Data/CsDataMapping.h"
 #include "Data/CsData.h"
-#include "Data/CsData_UiCommon.h"
+#include "Data/CsData_UI_Common.h"
 // UI
 #include "UI/CsUserWidget.h"
 
@@ -266,8 +266,8 @@ void UCsGameInstance::SetupFullscreenWidget()
 {
 	if (!FullscreenWidget)
 	{
-		ACsData_UiCommon* bp_ui_common = Cast<ACsData_UiCommon>(DataMapping->LoadData(FName("bp_ui_common")));
-		FullscreenWidget			   = CreateWidget<UCsUserWidget>(this, bp_ui_common->FullscreenWidget.Get());
+		ACsData_UI_Common* bp_ui_common = Cast<ACsData_UI_Common>(DataMapping->LoadData(FName("bp_ui_common")));
+		FullscreenWidget			    = CreateWidget<UCsUserWidget>(this, bp_ui_common->FullscreenWidget.Get());
 	}
 	FullscreenWidget->Show();
 }

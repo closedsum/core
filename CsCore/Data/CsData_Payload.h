@@ -112,7 +112,7 @@ class CSCORE_API ACsData_Payload : public ACsData
 #if WITH_EDITOR
 
 	bool PerformFindEntry(const FName &InShortCode, TArray<FCsPayload*> &OutPayloads, TArray<TCsLoadAssetsType> &OutLoadAssetsTypes, TArray<int32> &OutIndices);
-	bool PerformAddEntry(const FName &ShortCode, const TCsLoadAssetsType &LoadAssetsType, const TEnumAsByte<ECsLoadFlags_Editor::Type> &LoadFlags, FString &OutMessage, FString &OutOutput);
+	bool PerformAddEntry(const FName &InShortCode, const TCsLoadAssetsType &LoadAssetsType, const TEnumAsByte<ECsLoadFlags_Editor::Type> &LoadFlags, FString &OutMessage, FString &OutOutput);
 
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& e) override;
 

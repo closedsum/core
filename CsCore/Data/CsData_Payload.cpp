@@ -69,11 +69,11 @@ bool ACsData_Payload::PerformFindEntry(const FName &InShortCode, TArray<FCsPaylo
 	return OutPayloads.Num() > CS_EMPTY;
 }
 
-bool ACsData_Payload::PerformAddEntry(const FName &ShortCode, const TCsLoadAssetsType &LoadAssetsType, const TEnumAsByte<ECsLoadFlags_Editor::Type> &LoadFlags, FString &OutMessage, FString &OutOutput)
+bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const TCsLoadAssetsType &LoadAssetsType, const TEnumAsByte<ECsLoadFlags_Editor::Type> &LoadFlags, FString &OutMessage, FString &OutOutput)
 {
 	// Check for VALID ShortCode
-	if (ShortCode == NAME_None ||
-		ShortCode == CS_INVALID_SHORT_CODE)
+	if (InShortCode == NAME_None ||
+		InShortCode == CS_INVALID_SHORT_CODE)
 	{
 		OutMessage = TEXT("INVALID ShortCode.");
 		OutOutput  = TEXT("ERROR");
@@ -98,7 +98,7 @@ bool ACsData_Payload::PerformAddEntry(const FName &ShortCode, const TCsLoadAsset
 	TArray<TCsLoadAssetsType> OutLoadAssetsTypes;
 	TArray<int32> OutIndices;
 
-	PerformFindEntry(ShortCode, OutPayloads, OutLoadAssetsTypes, OutIndices);
+	PerformFindEntry(InShortCode, OutPayloads, OutLoadAssetsTypes, OutIndices);
 
 	const int32 PayloadCount = OutPayloads.Num();
 	// Entries Found
@@ -132,7 +132,7 @@ bool ACsData_Payload::PerformAddEntry(const FName &ShortCode, const TCsLoadAsset
 		TArray<TCsAssetType> OutAssetTypes;
 		OutIndices.Reset();
 
-		DataMapping->PerformFindEntry(ShortCode, OutEntries, OutAssetTypes, OutIndices);
+		DataMapping->PerformFindEntry(InShortCode, OutEntries, OutAssetTypes, OutIndices);
 
 		const int32 EntryCount = OutEntries.Num();
 
@@ -152,7 +152,7 @@ bool ACsData_Payload::PerformAddEntry(const FName &ShortCode, const TCsLoadAsset
 					const FString LoadFlagsAsString = ECsLoadFlags_Editor::ToString(LoadFlags);
 					const FString AssetTypeAsString = (*AssetTypeToString)(OutAssetTypes[CS_FIRST]);
 
-					UE_LOG(LogCs, Warning, TEXT("ACsData_Payload::PostEditChangeProperty: Missing LoadFlags: %s in DataMapping: [%s, %s, %d]. Manually adding LoadFlag: %s."), *LoadFlagsAsString, *AssetTypeAsString, *(ShortCode.ToString()), *(FString::FromInt(OutIndices[CS_FIRST])), *LoadFlagsAsString);
+					UE_LOG(LogCs, Warning, TEXT("ACsData_Payload::PostEditChangeProperty: Missing LoadFlags: %s in DataMapping: [%s, %s, %d]. Manually adding LoadFlag: %s."), *LoadFlagsAsString, *AssetTypeAsString, *(InShortCode.ToString()), *(FString::FromInt(OutIndices[CS_FIRST])), *LoadFlagsAsString);
 				}
 
 				UClass* Class = GetClass();
@@ -184,7 +184,7 @@ bool ACsData_Payload::PerformAddEntry(const FName &ShortCode, const TCsLoadAsset
 									Array.AddDefaulted();
 									Array[ArraySize].AssetType		  = AssetTypeAsString;
 									Array[ArraySize].AssetType_Script = (uint8)OutAssetTypes[CS_FIRST];
-									Array[ArraySize].ShortCode		  = ShortCode;
+									Array[ArraySize].ShortCode		  = InShortCode;
 									Array[ArraySize].LoadFlags		  = LoadFlags;
 
 									const FString LoadAssetsTypeAsString = (*LoadAssetsTypeToString)(LoadAssetsType);
@@ -192,6 +192,8 @@ bool ACsData_Payload::PerformAddEntry(const FName &ShortCode, const TCsLoadAsset
 
 									OutOutput = TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + AssetTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(ArraySize) + TEXT("]");
 									OutMessage = TEXT("SUCCESS.");
+
+									MarkPackageDirty();
 								}
 							}
 						}
@@ -225,7 +227,7 @@ bool ACsData_Payload::PerformAddEntry(const FName &ShortCode, const TCsLoadAsset
 		// Search for Asset in AssetRegistry, ADD it to DataMapping, and ADD Payload Entry
 		else
 		{
-			bool Successful = DataMapping->PerformAddEntry(ShortCode, (int32)LoadFlags, OutMessage, OutOutput);
+			bool Successful = DataMapping->PerformAddEntry(InShortCode, (int32)LoadFlags, OutMessage, OutOutput);
 
 			if (Successful)
 			{
@@ -233,7 +235,7 @@ bool ACsData_Payload::PerformAddEntry(const FName &ShortCode, const TCsLoadAsset
 				OutAssetTypes.Reset();
 				OutIndices.Reset();
 
-				DataMapping->PerformFindEntry(ShortCode, OutEntries, OutAssetTypes, OutIndices);
+				DataMapping->PerformFindEntry(InShortCode, OutEntries, OutAssetTypes, OutIndices);
 
 				UClass* Class = GetClass();
 
@@ -264,7 +266,7 @@ bool ACsData_Payload::PerformAddEntry(const FName &ShortCode, const TCsLoadAsset
 									Array.AddDefaulted();
 									Array[ArraySize].AssetType		  = AssetTypeAsString;
 									Array[ArraySize].AssetType_Script = (uint8)OutAssetTypes[CS_FIRST];
-									Array[ArraySize].ShortCode		  = ShortCode;
+									Array[ArraySize].ShortCode		  = InShortCode;
 									Array[ArraySize].LoadFlags		  = LoadFlags;
 
 									const FString LoadAssetsTypeAsString = (*LoadAssetsTypeToString)(LoadAssetsType);
@@ -272,6 +274,8 @@ bool ACsData_Payload::PerformAddEntry(const FName &ShortCode, const TCsLoadAsset
 
 									OutOutput  = TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + AssetTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(ArraySize) + TEXT("]");
 									OutMessage = TEXT("SUCCESS. Check LOG.");
+
+									MarkPackageDirty();
 								}
 							}
 						}
@@ -290,6 +294,12 @@ void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 	// Find Entry
 	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsPayloadFindEntry, Find))
 	{
+		if (!FindEntry.Find)
+		{
+			Super::PostEditChangeProperty(e);
+			return;
+		}
+
 		FindEntry.Message = TEXT("");
 		FindEntry.Output = TEXT("");
 
@@ -333,6 +343,12 @@ void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 	// Add Entry
 	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsPayloadAddEntry, Add))
 	{
+		if (!AddEntry.Add)
+		{
+			Super::PostEditChangeProperty(e);
+			return;
+		}
+
 		const TCsLoadAssetsType LoadAssetsType = (*StringToLoadAssetsType)(AddEntry.LoadAssetsType);
 
 		PerformAddEntry(AddEntry.ShortCode, LoadAssetsType, AddEntry.LoadFlags, AddEntry.Message, AddEntry.Output);
@@ -341,6 +357,12 @@ void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 	// Remove Entry
 	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsPayloadRemoveEntry, Remove))
 	{
+		if (!RemoveEntry.Remove)
+		{
+			Super::PostEditChangeProperty(e);
+			return;
+		}
+
 		RemoveEntry.Message = TEXT("");
 		RemoveEntry.Output = TEXT("");
 

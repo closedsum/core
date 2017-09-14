@@ -272,6 +272,6 @@ void UCsGameInstance::SetupFullscreenWidget()
 	FullscreenWidget->Show();
 }
 
-#pragma endregion Fullscreen Widget
+#pragma endregion Fullscreen Widget0
 
 #pragma endregion OnBoard

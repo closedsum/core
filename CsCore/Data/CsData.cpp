@@ -26,6 +26,7 @@ ACsData::ACsData(const FObjectInitializer& ObjectInitializer)
 	ReadObjectFromJson_Internal = nullptr;
 
 	DataMappingName = TEXT("bp_data_mapping");
+	PayloadName		= TEXT("bp_payload");
 
 #if WITH_EDITOR
 	DataMappingClass = ACsDataMapping::StaticClass();
@@ -336,18 +337,21 @@ ACsDataMapping* ACsData::GetDataMapping()
 		{
 			UE_LOG(LogCs, Warning, TEXT("ACsData::GetDataMapping (%s): Asset at %s"), *(ShortCode.ToString()), *(Bps[I]->GetPathName()));
 		}
+		return nullptr;
 	}
-	else
+
+	if (Count == CS_EMPTY)
 	{
-		if (ACsDataMapping* DataMapping = Cast<UBlueprintCore>(Bps[0])->GeneratedClass->GetDefaultObject<ACsDataMapping>())
-		{
-			return DataMapping;
-		}
-		else
-		{
-			UE_LOG(LogCs, Warning, TEXT("ACsData::GetDataMapping (%s): Asset: %s is NOT of type CsDataMapping."), *(ShortCode.ToString()), *DataMappingName);
-		}
+		UE_LOG(LogCs, Warning, TEXT("ACsData::GetDataMapping (%s): Failed to find Data Mapping named %s"), *(ShortCode.ToString()), *DataMappingName);
+		return nullptr;
 	}
+
+	if (ACsDataMapping* DataMapping = Cast<UBlueprintCore>(Bps[0])->GeneratedClass->GetDefaultObject<ACsDataMapping>())
+	{
+		return DataMapping;
+	}
+
+	UE_LOG(LogCs, Warning, TEXT("ACsData::GetDataMapping (%s): Asset: %s is NOT of type CsDataMapping."), *(ShortCode.ToString()), *DataMappingName);
 	return nullptr;
 }
 
@@ -368,17 +372,19 @@ ACsData_Payload* ACsData::GetPayload()
 			UE_LOG(LogCs, Warning, TEXT("ACsData::GetPayload (%s): Asset at %s"), *(ShortCode.ToString()), *(Bps[I]->GetPathName()));
 		}
 	}
-	else
+
+	if (Count == CS_EMPTY)
 	{
-		if (ACsData_Payload* Payload = Cast<UBlueprintCore>(Bps[0])->GeneratedClass->GetDefaultObject<ACsData_Payload>())
-		{
-			return Payload;
-		}
-		else
-		{
-			UE_LOG(LogCs, Warning, TEXT("ACsData::GetPayload (%s): Asset: %s is NOT of type CsData_Payload."), *(ShortCode.ToString()), *PayloadName);
-		}
+		UE_LOG(LogCs, Warning, TEXT("ACsData::GetPayload (%s): Failed to find Payload named %s"), *(ShortCode.ToString()), *PayloadName);
+		return nullptr;
 	}
+
+	if (ACsData_Payload* Payload = Cast<UBlueprintCore>(Bps[0])->GeneratedClass->GetDefaultObject<ACsData_Payload>())
+	{
+		return Payload;
+	}
+
+	UE_LOG(LogCs, Warning, TEXT("ACsData::GetPayload (%s): Asset: %s is NOT of type CsData_Payload."), *(ShortCode.ToString()), *PayloadName);
 	return nullptr;
 }
 
@@ -389,6 +395,12 @@ void ACsData::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 	// Add to DataMapping
 	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsDataAddToDataMapping, Add))
 	{
+		if (!AddToDataMapping.Add)
+		{
+			Super::PostEditChangeProperty(e);
+			return;
+		}
+
 		if (Type == Type_MAX)
 		{
 			AddToDataMapping.Add = false;
@@ -405,6 +417,12 @@ void ACsData::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 	// Add to Payload
 	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsDataAddToPayload, Add))
 	{
+		if (!AddToPayload.Add)
+		{
+			Super::PostEditChangeProperty(e);
+			return;
+		}
+
 		if (Type == Type_MAX)
 		{
 			AddToPayload.Add = false;
@@ -419,6 +437,12 @@ void ACsData::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 	// Load From Json
 	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsDataLoadFromJson, Load))
 	{
+		if (!PerformLoadFromJson.Load)
+		{
+			Super::PostEditChangeProperty(e);
+			return;
+		}
+
 		if (GetName().StartsWith(TEXT("Default__")))
 			LoadFromJson();
 

@@ -784,7 +784,7 @@ bool ACsDataMapping::PerformFindEntry(const FName &ShortCode, TArray<FCsDataMapp
 						{
 							FCsDataMappingEntry& Entry = (*Member)[I];
 
-							if (FindEntry.ShortCode == Entry.ShortCode)
+							if (ShortCode == Entry.ShortCode)
 							{
 								OutEntries.Add(&Entry);
 								OutAssetTypes.Add(AssetType);
@@ -874,8 +874,6 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const TCsAssetType 
 									const FString LoadFlagsAsString		= TEXT("(") + UCsCommon::LoadFlagsToString(LoadFlags) + TEXT(")");
 
 									UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::PerformAddEntry: Warning. LoadFlags Mismatch for [%s, %s, %s]. %s != %s. Manually setting it to %s."), *AssetTypeAsString, *(ShortCode.ToString()), *(FString::FromInt(I)), *DataLoadFlagsAsString, *LoadFlagsAsString, *LoadFlagsAsString);
-
-									MarkPackageDirty();
 								}
 
 								OutOutput += TEXT("[") + AssetTypeAsString + TEXT(", ") + FString::FromInt(I) + TEXT("]");
@@ -934,6 +932,8 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const TCsAssetType 
 
 										OutOutput = AssetTypeAsString + TEXT(", ") + FString::FromInt(EntryCount);
 										OutMessage = TEXT("SUCCESS.");
+
+										MarkPackageDirty();
 										return true;
 									}
 									// Mismatch. FAILED
@@ -1111,8 +1111,6 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const int32 &LoadFl
 									const FString LoadFlagsAsString		= TEXT("(") + UCsCommon::LoadFlagsToString(LoadFlags) + TEXT(")");
 
 									UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::PerformAddEntry: Warning. LoadFlags Mismatch for [%s, %s, %s]. %s != %s. Manually setting it to %s."), *AssetTypeAsString, *(ShortCode.ToString()), *(FString::FromInt(I)), *DataLoadFlagsAsString, *LoadFlagsAsString, *LoadFlagsAsString);
-
-									MarkPackageDirty();
 								}
 								OutOutput += TEXT("[") + AssetTypeAsString + TEXT(", ") + FString::FromInt(I) + TEXT("]");
 								Found = true;
@@ -1138,6 +1136,8 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const int32 &LoadFl
 
 							OutOutput = AssetTypeAsString + TEXT(", ") + FString::FromInt(EntryCount);
 							OutMessage = TEXT("SUCCESS.");
+
+							MarkPackageDirty();
 							return true;
 						}
 					}

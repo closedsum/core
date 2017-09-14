@@ -100,13 +100,13 @@ class CSCORE_API ACsData_Payload : public ACsData
 // 98 Editor
 #pragma region
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "98 Editor")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "-98 Editor")
 	FCsPayloadFindEntry FindEntry;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "98 Editor")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "-98 Editor")
 	FCsPayloadAddEntry AddEntry;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "98 Editor")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "-98 Editor")
 	FCsPayloadRemoveEntry RemoveEntry;
 
 #if WITH_EDITOR

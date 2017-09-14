@@ -546,13 +546,13 @@ public:
 // 99 Editor
 #pragma region
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "99 Editor")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "-99 Editor")
 	FCsDataMappingFindEntry FindEntry;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "99 Editor")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "-99 Editor")
 	FCsDataMappingAddEntry AddEntry;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "99 Editor")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "-99 Editor")
 	FCsDataMappingRemoveEntry RemoveEntry;
 
 #if WITH_EDITOR

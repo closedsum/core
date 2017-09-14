@@ -19,6 +19,11 @@
 																WriteObjectToJson_Internal = &CLASS::WriteObjectToJson_Internal; \
 																ReadObjectFromJson_Internal = &CLASS::ReadObjectFromJson_Internal;
 
+#define CS_DATA_DEFINE_LOAD_ASSETS_TYPE	LoadAssetType_MAX = ECsLoadAssetsType::ECsLoadAssetsType_MAX; \
+										LOAD_ASSETS_TYPE_MAX = (uint8)ECsLoadAssetsType::ECsLoadAssetsType_MAX; \
+										LoadAssetsTypeToString = &ECsLoadAssetsType::ToString; \
+										StringToLoadAssetsType = &ECsLoadAssetsType::ToType;
+
 #pragma endregion Macros
 
 // Structs
@@ -93,6 +98,12 @@ class CSCORE_API ACsData : public AActor
 	TCsAssetTypeToString AssetTypeToString;
 	TCsStringToAssetType StringToAssetType;
 
+	TCsLoadAssetsType LoadAssetType_MAX;
+	uint8 LOAD_ASSETS_TYPE_MAX;
+
+	TCsLoadAssetsTypeToString LoadAssetsTypeToString;
+	TCsStringToLoadAssetsType StringToLoadAssetsType;
+
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "00 Default")
 	uint8 Type_Script;
 
@@ -131,6 +142,10 @@ class CSCORE_API ACsData : public AActor
 	UPROPERTY(VisibleDefaultsOnly, Category = "00 Default")
 	TArray<FCsCategoryMemberAssociation> CategoryMemberAssociations;
 
+#if WITH_EDITOR
+	void VerifyJsonIntegrity();
+#endif // #if WITH_EDITOR
+
 	UPROPERTY(VisibleDefaultsOnly, Category = "00 Default")
 	FCsTArrayStringAssetReference AssetReferences[ECsLoadFlags_Editor::ECsLoadFlags_Editor_MAX];
 
@@ -158,13 +173,13 @@ class CSCORE_API ACsData : public AActor
 	UPROPERTY()
 	FString DataMappingName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "99 Data Mapping")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "-99 Data Mapping")
 	FCsDataAddToDataMapping AddToDataMapping;
 
 	UPROPERTY()
 	FString PayloadName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "99 Data Mapping")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "-99 Data Mapping")
 	FCsDataAddToPayload AddToPayload;
 
 #if WITH_EDITOR
@@ -183,7 +198,7 @@ class CSCORE_API ACsData : public AActor
 // 100 Json
 #pragma region
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "100 Json")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "-100 Json")
 	FCsDataLoadFromJson PerformLoadFromJson;
 
 #pragma endregion 100 Json

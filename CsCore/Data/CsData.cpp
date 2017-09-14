@@ -88,6 +88,112 @@ void ACsData::PopulateAssetReferences(const bool &CalculateResourceSizes)
 	}
 }
 
+#if WITH_EDITOR
+
+void ACsData::VerifyJsonIntegrity()
+{
+	const FString AssetName = GetName();
+
+	// Get Latest CategoryMemberAssociations. Check for changes do to Code updates
+	TArray<FCsCategoryMemberAssociation> LatestCategoryMemberAssociations;
+
+	UCsCommon::GetCategoryMemberAssociations(this, GetClass(), LatestCategoryMemberAssociations);
+
+	// Check for change in number of categories
+	const int32 LatestCount  = LatestCategoryMemberAssociations.Num();
+	const int32 CurrentCount = CategoryMemberAssociations.Num();
+
+	if (LatestCount != CurrentCount)
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsData::VerifyJsonIntegrity (%s): Change in category count %d -> %d. Regenerating Json."), *AssetName, CurrentCount, LatestCount);
+
+		CategoryMemberAssociations.Reset();
+
+		for (int32 I = 0; I < LatestCount; I++)
+		{
+			CategoryMemberAssociations.AddDefaulted();
+
+			CategoryMemberAssociations[I].Category = LatestCategoryMemberAssociations[I].Category;
+
+			const int32 LatestMemberCount = LatestCategoryMemberAssociations[I].Members.Num();
+
+			for (int32 J = 0; J < LatestMemberCount; J++)
+			{
+				CategoryMemberAssociations[I].Members.AddDefaulted();
+				CategoryMemberAssociations[I].Members[J] = LatestCategoryMemberAssociations[I].Members[J];
+			}
+		}
+		SaveToJson();
+		return;
+	}
+
+	bool RegenerateJson = false;
+
+	// Check for change in categories names, number of members, or member names
+	for (int32 I = 0; I < CurrentCount; I++)
+	{
+		// Change in category name
+		const FString LatestCategory  = LatestCategoryMemberAssociations[I].Category;
+		const FString CurrentCategory = CategoryMemberAssociations[I].Category;
+
+		if (LatestCategory != CurrentCategory)
+		{
+			RegenerateJson |= true;
+
+			UE_LOG(LogCs, Warning, TEXT("ACsData::VerifyJsonIntegrity (%s): Change in category name %s -> %s. Regenerating Json."), *AssetName, *CurrentCategory, *LatestCategory);
+			continue;
+		}
+
+		const int32 LatestMemberCount  = LatestCategoryMemberAssociations[I].Members.Num();
+		const int32 CurrentMemberCount = CategoryMemberAssociations[I].Members.Num();
+		// Change in number of members for a category
+		if (LatestMemberCount != CurrentMemberCount)
+		{
+			RegenerateJson |= true;
+
+			UE_LOG(LogCs, Warning, TEXT("ACsData::VerifyJsonIntegrity (%s): Change in category (%s) member count %d -> %d. Regenerating Json."), *AssetName, *CurrentCategory, CurrentMemberCount, LatestMemberCount);
+			continue;
+		}
+		
+		for (int32 J = 0; J < CurrentMemberCount; J++)
+		{
+			// Change in member name
+			const FString LatestMember  = LatestCategoryMemberAssociations[I].Members[J];
+			const FString CurrentMember = CategoryMemberAssociations[I].Members[J];
+
+			if (LatestCategory != CurrentCategory)
+			{
+				RegenerateJson |= true;
+
+				UE_LOG(LogCs, Warning, TEXT("ACsData::VerifyJsonIntegrity (%s): Change in category (%s) member name %s -> %s. Regenerating Json."), *AssetName, *CurrentCategory, *CurrentMember, *LatestMember);
+			}
+		}
+	}
+
+	if (RegenerateJson)
+	{
+		CategoryMemberAssociations.Reset();
+
+		for (int32 I = 0; I < LatestCount; I++)
+		{
+			CategoryMemberAssociations.AddDefaulted();
+
+			CategoryMemberAssociations[I].Category = LatestCategoryMemberAssociations[I].Category;
+
+			const int32 LatestMemberCount = LatestCategoryMemberAssociations[I].Members.Num();
+
+			for (int32 J = 0; J < LatestMemberCount; J++)
+			{
+				CategoryMemberAssociations[I].Members.AddDefaulted();
+				CategoryMemberAssociations[I].Members[J] = LatestCategoryMemberAssociations[I].Members[J];
+			}
+		}
+		SaveToJson();
+	}
+}
+
+#endif // #if WITH_EDITOR
+
 void ACsData::Load(const ECsLoadFlags &LoadFlags /*=ECsLoadFlags::All*/)
 {
 	const FString DataName = ShortCode.ToString();
@@ -172,6 +278,9 @@ void ACsData::LoadFromJson()
 				UE_LOG(LogCs, Warning, TEXT("ACsData::LoadFromJson (%s): Data needs to be saved at least ONCE to generate CategoryMemberAssociations"), *AssetName);
 				return;
 			}
+#if WITH_EDITOR
+			VerifyJsonIntegrity();
+#endif // #if WITH_EDITOR
 			UCsCommon::ReadObjectFromJson(JsonParsed, this, GetClass(), CategoryMemberAssociations, ReadObjectFromJson_Internal);
 		}
 		else
@@ -294,7 +403,19 @@ void ACsData::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 		AddToDataMapping.Add = false;
 	}
 	// Add to Payload
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsDataAddToPayload, Add))
+	{
+		if (Type == Type_MAX)
+		{
+			AddToPayload.Add = false;
+			Super::PostEditChangeProperty(e);
+			return;
+		}
 
+		ACsData_Payload* Payload = GetPayload();
+
+		Payload->PerformAddEntry(ShortCode, (*StringToLoadAssetsType)(AddToPayload.LoadAssetsType), AddToPayload.LoadFlags, AddToPayload.Message, AddToPayload.Output);
+	}
 	// Load From Json
 	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsDataLoadFromJson, Load))
 	{

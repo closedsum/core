@@ -27,7 +27,7 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsButtonComponent_OnPressed,
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsButtonComponent_Override_OnFirstReleased, const int32&, Index, UObject*, Instigator);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsButtonComponent_OnFirstReleased, const uint16&, UObject*);
 
-UCLASS(meta = (BlueprintSpawnableComponent))
+UCLASS()
 class CSCORE_API UCsButtonComponent : public USceneComponent
 {
 	GENERATED_UCLASS_BODY()

@@ -165,7 +165,10 @@ class CSCORE_API ACsDataMapping : public AActor
 	TArray<FCsCategoryMemberAssociation> CategoryMemberAssociations;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "00 Default")
-	class ACsData_Payload* Payload;
+	TSubclassOf<class ACsData_Payload> Payload;
+
+	UFUNCTION(BlueprintCallable, Category = "Payload")
+	class ACsData_Payload* GetPayload();
 
 // Asset References
 #pragma region
@@ -555,11 +558,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "-99 Editor")
 	FCsDataMappingRemoveEntry RemoveEntry;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "-99 Editor")
+	FCsDataMappingValidate Validate;
+
 #if WITH_EDITOR
 
 	bool PerformFindEntry(const FName &ShortCode, TArray<FCsDataMappingEntry*> &OutEntries, TArray<TCsAssetType> &OutAssetTypes, TArray<int32> &OutIndices);
 	bool PerformAddEntry(const FName &ShortCode, const TCsAssetType &AssetType, const int32 &LoadFlags, FString &OutMessage, FString &OutOutput);
 	bool PerformAddEntry(const FName &ShortCode, const int32 &LoadFlags, FString &OutMessage, FString &OutOutput);
+	
+	virtual bool IsValid();
+	virtual bool PerformValidate();
 
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& e) override;
 

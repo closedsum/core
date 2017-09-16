@@ -4,11 +4,9 @@
 #include "CsCommon.h"
 #include "Data/CsData.h"
 #include "Managers/CsManager_Loading.h"
+#include "Data/CsData_Payload.h"
 
 #if WITH_EDITOR
-#include "AssetRegistryModule.h"
-#include "Developer/AssetTools/Public/AssetToolsModule.h"
-#include "Editor/ContentBrowser/Public/ContentBrowserModule.h"
 #include "Developer/SourceControl/Public/SourceControlHelpers.h"
 #endif WITH_EDITOR
 
@@ -115,6 +113,11 @@ TCsAssetType ACsDataMapping::GetDataAssetType(const FName &ShortCode)
 		}
 	}
 	return AssetType_MAX;
+}
+
+ACsData_Payload* ACsDataMapping::GetPayload()
+{
+	return Payload->GetDefaultObject<ACsData_Payload>();
 }
 
 // Asset References
@@ -807,6 +810,12 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const TCsAssetType 
 	{
 		OutMessage = TEXT("INVALID ShortCode.");
 		OutOutput = TEXT("ERROR");
+
+		if (UCsCommon::IsDefaultObject(this))
+		{
+			UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
+			UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
+		}
 		return false;
 	}
 
@@ -815,6 +824,12 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const TCsAssetType 
 	{
 		OutMessage = TEXT("INVALID AssetType.");
 		OutOutput = TEXT("ERROR");
+
+		if (UCsCommon::IsDefaultObject(this))
+		{
+			UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
+			UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
+		}
 		return false;
 	}
 
@@ -865,7 +880,12 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const TCsAssetType 
 								// Check Data exists
 								if (Entry.Data.ToString() == TEXT(""))
 								{
-									UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::PerformAddEntry: Warning. No Data set for [%s, %s, %s]."), *AssetTypeAsString, *(ShortCode.ToString()), *(FString::FromInt(I)));
+									const FString Output = TEXT("ACsDataMapping::PerformAddEntry: Warning. No Data set for [") + AssetTypeAsString + TEXT(", ") + ShortCode.ToString() + TEXT(", ") + FString::FromInt(I) + TEXT("].");
+
+									if (UCsCommon::IsDefaultObject(this))
+										UCsCommon::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformAddEntryAdditionalOutput"), 1.5f);
+
+									UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
 								}
 								// Check LoadFlags
 								if (Entry.Data_LoadFlags != LoadFlags)
@@ -873,7 +893,12 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const TCsAssetType 
 									const FString DataLoadFlagsAsString = TEXT("(") + UCsCommon::LoadFlagsToString(Entry.Data_LoadFlags) + TEXT(")");
 									const FString LoadFlagsAsString		= TEXT("(") + UCsCommon::LoadFlagsToString(LoadFlags) + TEXT(")");
 
-									UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::PerformAddEntry: Warning. LoadFlags Mismatch for [%s, %s, %s]. %s != %s. Manually setting it to %s."), *AssetTypeAsString, *(ShortCode.ToString()), *(FString::FromInt(I)), *DataLoadFlagsAsString, *LoadFlagsAsString, *LoadFlagsAsString);
+									const FString Output = TEXT("ACsDataMapping::PerformAddEntry: Warning. LoadFlags Mismatch for [") + AssetTypeAsString + TEXT(", ") + ShortCode.ToString() + TEXT(", ") + FString::FromInt(I) + TEXT("]. ") + DataLoadFlagsAsString + TEXT(" != ") + LoadFlagsAsString + TEXT(". Manually setting it to ") + LoadFlagsAsString + TEXT(".");
+
+									if (UCsCommon::IsDefaultObject(this))
+										UCsCommon::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformAddEntryAdditionalOutput"), 1.5f);
+
+									UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
 								}
 
 								OutOutput += TEXT("[") + AssetTypeAsString + TEXT(", ") + FString::FromInt(I) + TEXT("]");
@@ -889,6 +914,12 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const TCsAssetType 
 								OutMessage = TEXT("Already Exists. WARNING, Duplicates. REMOVE extra entries.");
 							else
 								OutMessage = TEXT("Already Exists");
+
+							if (UCsCommon::IsDefaultObject(this))
+							{
+								UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
+								UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
+							}
 							return false;
 						}
 						// Search for Asset, and ADD it
@@ -896,7 +927,7 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const TCsAssetType 
 						{
 							TArray<UBlueprint*> Bps;
 
-							UCsCommon::GetAssets<UBlueprint>(Bps, ShortCode);
+							UCsCommon::GetAssets<UBlueprint>(ShortCode, Bps);
 
 							// Multiple Assets with the same name.
 							if (Bps.Num() > 1)
@@ -912,6 +943,12 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const TCsAssetType 
 
 								OutOutput = TEXT("ERROR");
 								OutMessage = TEXT("FAILED. Multiple Assets with the same ShortCode name. Check LOG.");
+
+								if (UCsCommon::IsDefaultObject(this))
+								{
+									UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
+									UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
+								}
 								return false;
 							}
 							// Single Asset
@@ -933,6 +970,11 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const TCsAssetType 
 										OutOutput = AssetTypeAsString + TEXT(", ") + FString::FromInt(EntryCount);
 										OutMessage = TEXT("SUCCESS.");
 
+										if (UCsCommon::IsDefaultObject(this))
+										{
+											UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
+											UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
+										}
 										MarkPackageDirty();
 										return true;
 									}
@@ -944,6 +986,12 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const TCsAssetType 
 										else
 											OutOutput = TEXT("AssetType mismatch. ") + (*AssetTypeToString)(DOb->Type) + TEXT(" != ") + AssetTypeAsString;
 										OutMessage = TEXT("FAILED.");
+
+										if (UCsCommon::IsDefaultObject(this))
+										{
+											UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
+											UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
+										}
 										return false;
 									}
 								}
@@ -954,6 +1002,12 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const TCsAssetType 
 
 									OutOutput = TEXT("Asset is NOT of type ACsData. Check LOG.");
 									OutMessage = TEXT("FAILED.");
+
+									if (UCsCommon::IsDefaultObject(this))
+									{
+										UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
+										UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
+									}
 									return false;
 								}
 							}
@@ -962,6 +1016,12 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const TCsAssetType 
 							{
 								OutOutput = TEXT("No Asset Found.");
 								OutMessage = TEXT("FAILED.");
+
+								if (UCsCommon::IsDefaultObject(this))
+								{
+									UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
+									UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
+								}
 								return false;
 							}
 						}
@@ -981,13 +1041,19 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const int32 &LoadFl
 	{
 		OutMessage = TEXT("INVALID ShortCode.");
 		OutOutput = TEXT("ERROR");
+
+		if (UCsCommon::IsDefaultObject(this))
+		{
+			UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
+			UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
+		}
 		return false;
 	}
 
 	// Search for Asset
 	TArray<UBlueprint*> Bps;
 
-	UCsCommon::GetAssets<UBlueprint>(Bps, ShortCode);
+	UCsCommon::GetAssets<UBlueprint>(ShortCode, Bps);
 
 	TSubclassOf<UObject> Data = nullptr;
 	ACsData* DataDOb		  = nullptr;
@@ -997,15 +1063,31 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const int32 &LoadFl
 	// Multiple Assets with the same name.
 	if (BpCount > 1)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::PerformAddEntry: FAILED. Multiple Assets with the same ShortCode name."));
+		const FString Output = TEXT("ACsDataMapping::PerformAddEntry: FAILED. Multiple Assets with the same ShortCode name.");
+
+		if (UCsCommon::IsDefaultObject(this))
+			UCsCommon::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformAddEntryAdditionalOutput"), 1.5f);
+
+		UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
 
 		for (int32 I = 0; I < BpCount; I++)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::PerformAddEntry: %s"), *(Bps[I]->GetPathName()));
+			const FString AdditionalOutput = TEXT("ACsDataMapping::PerformAddEntry: ") + Bps[I]->GetPathName();
+
+			if (UCsCommon::IsDefaultObject(this))
+				UCsCommon::DisplayNotificationInfo(AdditionalOutput, TEXT("DataMapping"), TEXT("PerformAddEntryAdditionalOutput"), 1.5f);
+
+			UE_LOG(LogCs, Warning, TEXT("%s"), *AdditionalOutput);
 		}
 
 		OutOutput = TEXT("ERROR");
 		OutMessage = TEXT("FAILED. Multiple Assets with the same ShortCode name. Check LOG.");
+
+		if (UCsCommon::IsDefaultObject(this))
+		{
+			UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
+			UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
+		}
 		return false;
 	}
 	// Single Asset
@@ -1031,6 +1113,12 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const int32 &LoadFl
 				else
 					OutOutput = TEXT("Asset: ") + ShortCode.ToString() + TEXT(" has an INVALID AssetType");
 				OutMessage = TEXT("FAILED.");
+
+				if (UCsCommon::IsDefaultObject(this))
+				{
+					UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
+					UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
+				}
 				return false;
 			}
 		}
@@ -1041,6 +1129,12 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const int32 &LoadFl
 
 			OutOutput = TEXT("Asset is NOT of type ACsData. Check LOG.");
 			OutMessage = TEXT("FAILED.");
+
+			if (UCsCommon::IsDefaultObject(this))
+			{
+				UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
+				UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
+			}
 			return false;
 		}
 	}
@@ -1049,6 +1143,12 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const int32 &LoadFl
 	{
 		OutOutput = TEXT("No Asset Found.");
 		OutMessage = TEXT("FAILED.");
+
+		if (UCsCommon::IsDefaultObject(this))
+		{
+			UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
+			UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
+		}
 		return false;
 	}
 
@@ -1102,7 +1202,12 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const int32 &LoadFl
 								{
 									Entry.Data = Data;
 
-									UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::PerformAddEntry: Warning. No Data was set for [%s, %s, %s]. Manually setting it to %s."), *AssetTypeAsString, *(ShortCode.ToString()), *(FString::FromInt(I)), *(DataDOb->GetPathName()));
+									const FString Output = TEXT("ACsDataMapping::PerformAddEntry: Warning. No Data was set for [") + AssetTypeAsString + TEXT(", ") + ShortCode.ToString() + TEXT(", ") + FString::FromInt(I) + TEXT("]. Manually setting it to ") + DataDOb->GetPathName() + TEXT(".");
+
+									if (UCsCommon::IsDefaultObject(this))
+										UCsCommon::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformAddEntryAdditionalOutput"), 1.5f);
+
+									UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
 								}
 								// Check LoadFlags
 								if (Entry.Data_LoadFlags != LoadFlags)
@@ -1110,7 +1215,12 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const int32 &LoadFl
 									const FString DataLoadFlagsAsString = TEXT("(") + UCsCommon::LoadFlagsToString(Entry.Data_LoadFlags) + TEXT(")");
 									const FString LoadFlagsAsString		= TEXT("(") + UCsCommon::LoadFlagsToString(LoadFlags) + TEXT(")");
 
-									UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::PerformAddEntry: Warning. LoadFlags Mismatch for [%s, %s, %s]. %s != %s. Manually setting it to %s."), *AssetTypeAsString, *(ShortCode.ToString()), *(FString::FromInt(I)), *DataLoadFlagsAsString, *LoadFlagsAsString, *LoadFlagsAsString);
+									const FString Output = TEXT("ACsDataMapping::PerformAddEntry: Warning. LoadFlags Mismatch for ") + AssetTypeAsString + TEXT(", ") + ShortCode.ToString() + TEXT(", ") + FString::FromInt(I) + TEXT("]. ") + DataLoadFlagsAsString + TEXT(" != ") + LoadFlagsAsString + TEXT(". Manually setting it to ") + LoadFlagsAsString + TEXT(".");
+
+									if (UCsCommon::IsDefaultObject(this))
+										UCsCommon::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformAddEntryAdditionalOutput"), 1.5f);
+
+									UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
 								}
 								OutOutput += TEXT("[") + AssetTypeAsString + TEXT(", ") + FString::FromInt(I) + TEXT("]");
 								Found = true;
@@ -1125,6 +1235,12 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const int32 &LoadFl
 								OutMessage = TEXT("Already Exists. WARNING, Duplicates. REMOVE extra entries.");
 							else
 								OutMessage = TEXT("Already Exists");
+
+							if (UCsCommon::IsDefaultObject(this))
+							{
+								UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
+								UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
+							}
 							return false;
 						}
 						else
@@ -1137,6 +1253,11 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const int32 &LoadFl
 							OutOutput = AssetTypeAsString + TEXT(", ") + FString::FromInt(EntryCount);
 							OutMessage = TEXT("SUCCESS.");
 
+							if (UCsCommon::IsDefaultObject(this))
+							{
+								UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformAddEntryOutput"), 5.0f);
+								UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformAddEntryMessage"), 5.0f);
+							}
 							MarkPackageDirty();
 							return true;
 						}
@@ -1146,6 +1267,149 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const int32 &LoadFl
 		}
 	}
 	return false;
+}
+
+bool ACsDataMapping::IsValid()
+{
+	// Check Payload is SET
+	if (!Payload.Get())
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::PerformValidate: No Payload set."));
+		return false;
+	}
+	// Check Payload is VALID
+	ACsData_Payload* PayloadDOb = Payload->GetDefaultObject<ACsData_Payload>();
+
+	if (!PayloadDOb->IsValid())
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::PerformValidate: Payload is NOT Valid."));
+		return false;
+	}
+	return true;
+}
+
+bool ACsDataMapping::PerformValidate()
+{
+	bool Pass = true;
+
+	// Check Payload is SET
+	if (!Payload.Get())
+	{
+		const FString Output = TEXT("ACsDataMapping::PerformValidate: No Payload set.");
+
+		if (UCsCommon::IsDefaultObject(this))
+			UCsCommon::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformValidate"), 5.0f);
+
+		UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
+		return false;
+	}
+	// Check Payload is VALID
+	ACsData_Payload* PayloadDOb = Payload->GetDefaultObject<ACsData_Payload>();
+
+	if (!PayloadDOb->IsValid())
+	{
+		const FString Output = TEXT("ACsDataMapping::PerformValidate: Payload is NOT Valid.");
+
+		if (UCsCommon::IsDefaultObject(this))
+			UCsCommon::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformValidate"), 5.0f);
+
+		UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::PerformValidate: Payload is NOT Valid."));
+		return false;
+	}
+
+	int32 AssetTypeIndex = INDEX_NONE;
+
+	UClass* Class = GetClass();
+
+	for (TFieldIterator<UProperty> It(Class); It; ++It)
+	{
+		UProperty* Property = Cast<UProperty>(*It);
+
+		const FString MemberName = Property->GetName();
+
+		// Array
+		if (UArrayProperty* ArrayProperty = Cast<UArrayProperty>(*It))
+		{
+			// Struct
+			if (UStructProperty* InnerStructProperty = Cast<UStructProperty>(ArrayProperty->Inner))
+			{
+				// FCsDataMappingEntry
+				if (InnerStructProperty->Struct == FCsDataMappingEntry::StaticStruct())
+				{
+					AssetTypeIndex++;
+
+					const TCsAssetType AssetType    = (TCsAssetType)AssetTypeIndex;
+					const FString AssetTypeAsString = (*AssetTypeToString)(AssetType);
+
+					if (TArray<FCsDataMappingEntry>* Member = Property->ContainerPtrToValuePtr<TArray<FCsDataMappingEntry>>(this))
+					{
+						const int32 EntryCount = Member->Num();
+
+						for (int32 I = EntryCount - 1; I >= 0; I--)
+						{
+							FCsDataMappingEntry& Entry = (*Member)[I];
+
+							TArray<UBlueprint*> Bps;
+							TArray<FName> PackagePaths;
+
+							UCsCommon::GetAssets<UBlueprint>(Entry.ShortCode, Bps, PackagePaths);
+
+							const int32 BpCount = Bps.Num();
+							// ShortCode NO longer EXISTS in AssetRegistry
+							if (BpCount == CS_EMPTY)
+							{
+								const FString Output = TEXT("ACsDataMapping::PerformValidate: Data with ShortCode: ") + Entry.ShortCode.ToString() + TEXT("is NOT found.");
+
+								if (UCsCommon::IsDefaultObject(this))
+									UCsCommon::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformValidate"), 1.5f);
+
+								UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
+								Pass &= false;
+								continue;
+							}
+							// More than ONE Blueprint Asset EXISTS with the same ShortCode
+							if (BpCount > 1)
+							{
+								const FString Output = TEXT("ACsDataMapping::PerformValidate: Multiple Data with ShortCode: ") + Entry.ShortCode.ToString();
+
+								if (UCsCommon::IsDefaultObject(this))
+									UCsCommon::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformValidate"), 1.5f);
+
+								UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
+
+								for (int32 J = 0; J < BpCount; J++)
+								{
+									const FString AdditionalOutput = TEXT("ACsDataMapping::PerformValidate: ShortCode: ") + Entry.ShortCode.ToString() + TEXT(" at ") + PackagePaths[J].ToString();
+
+									if (UCsCommon::IsDefaultObject(this))
+										UCsCommon::DisplayNotificationInfo(AdditionalOutput, TEXT("DataMapping"), TEXT("PerformValidate"), 1.5f);
+
+									UE_LOG(LogCs, Warning, TEXT("%s"), *AdditionalOutput);
+								}
+								Pass &= false;
+								continue;
+							}
+							// Asset is NOT of type ACsData
+							ACsData* DataDOb = Cast<UBlueprintCore>(Bps[CS_FIRST])->GeneratedClass->GetDefaultObject<ACsData>();
+
+							if (!DataDOb)
+							{
+								const FString Output = TEXT("ACsDataMapping::PerformValidate: Data with ShortCode: ") + Entry.ShortCode.ToString() + TEXT(" is NOT of type ACsData.");
+
+								if (UCsCommon::IsDefaultObject(this))
+									UCsCommon::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformValidate"), 1.5f);
+
+								UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
+								Pass &= false;
+								continue;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return Pass;
 }
 
 void ACsDataMapping::PostEditChangeProperty(struct FPropertyChangedEvent& e)
@@ -1172,6 +1436,11 @@ void ACsDataMapping::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 			FindEntry.Output  = TEXT("ERROR");
 			FindEntry.Find	  = false;
 
+			if (UCsCommon::IsDefaultObject(this))
+			{
+				UCsCommon::DisplayNotificationInfo(FindEntry.Output, TEXT("DataMapping"), TEXT("FindEntryOutput"), 5.0f);
+				UCsCommon::DisplayNotificationInfo(FindEntry.Message, TEXT("DataMapping"), TEXT("FindEntryMessage"), 5.0f);
+			}
 			Super::PostEditChangeProperty(e);
 			return;
 		}
@@ -1197,7 +1466,13 @@ void ACsDataMapping::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 		if (EntryCount == CS_EMPTY)
 			FindEntry.Output = TEXT("No Results.");
 		FindEntry.Message = TEXT("SUCCESS");
-		FindEntry.Find	  = false;
+
+		if (UCsCommon::IsDefaultObject(this))
+		{
+			UCsCommon::DisplayNotificationInfo(FindEntry.Output, TEXT("DataMapping"), TEXT("FindEntryOutput"), 5.0f);
+			UCsCommon::DisplayNotificationInfo(FindEntry.Message, TEXT("DataMapping"), TEXT("FindEntryMessage"), 5.0f);
+		}
+		FindEntry.Find= false;
 	}
 	// Add Entry
 	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsDataMappingAddEntry, Add))
@@ -1231,6 +1506,11 @@ void ACsDataMapping::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 			RemoveEntry.Output = TEXT("ERROR");
 			RemoveEntry.Remove = false;
 
+			if (UCsCommon::IsDefaultObject(this))
+			{
+				UCsCommon::DisplayNotificationInfo(RemoveEntry.Output, TEXT("DataMapping"), TEXT("RemoveEntryOutput"), 5.0f);
+				UCsCommon::DisplayNotificationInfo(RemoveEntry.Message, TEXT("DataMapping"), TEXT("RemoveEntryMessage"), 5.0f);
+			}
 			Super::PostEditChangeProperty(e);
 			return;
 		}
@@ -1290,6 +1570,12 @@ void ACsDataMapping::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 		if (RemoveEntry.Output == TEXT(""))
 			RemoveEntry.Output = TEXT("Nothing Removed.");
 		RemoveEntry.Message = TEXT("SUCCESS");
+
+		if (UCsCommon::IsDefaultObject(this))
+		{
+			UCsCommon::DisplayNotificationInfo(RemoveEntry.Output, TEXT("DataMapping"), TEXT("RemoveEntryOutput"), 5.0f);
+			UCsCommon::DisplayNotificationInfo(RemoveEntry.Message, TEXT("DataMapping"), TEXT("RemoveEntryMessage"), 5.0f);
+		}
 		RemoveEntry.Remove = false;
 	}
 	Super::PostEditChangeProperty(e);

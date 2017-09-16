@@ -359,7 +359,7 @@ ACsData_Payload* ACsData::GetPayload()
 {
 	TArray<UBlueprint*> Bps;
 
-	UCsCommon::GetAssets<UBlueprint>(Bps, FName(*PayloadName));
+	UCsCommon::GetAssets<UBlueprint>(FName(*PayloadName), Bps);
 
 	const int32 Count = Bps.Num();
 

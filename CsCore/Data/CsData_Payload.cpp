@@ -77,12 +77,25 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const TCsLoadAss
 	{
 		OutMessage = TEXT("INVALID ShortCode.");
 		OutOutput  = TEXT("ERROR");
+
+		if (UCsCommon::IsDefaultObject(this))
+		{
+			UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
+			UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
+		}
+		return false;
 	}
 	// Check for VALID LoadAssetsType
 	if (LoadAssetsType == LoadAssetType_MAX)
 	{
 		OutMessage = TEXT("INVALID LoadAssetType. See Output Log.");
 		OutOutput  = TEXT("ERROR");
+
+		if (UCsCommon::IsDefaultObject(this))
+		{
+			UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
+			UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
+		}
 
 		UE_LOG(LogCs, Warning, TEXT("ACsData_Payload::PerformAddEntry: Valid LoadAssetsTypes are:"));
 
@@ -120,6 +133,12 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const TCsLoadAss
 			OutMessage = TEXT("Already Exists. WARNING, Duplicates. REMOVE extra entries.");
 		else
 			OutMessage = TEXT("Already Exists.");
+
+		if (UCsCommon::IsDefaultObject(this))
+		{
+			UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
+			UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
+		}
 		return false;
 	}
 	// Attempt to ADD it
@@ -152,7 +171,12 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const TCsLoadAss
 					const FString LoadFlagsAsString = ECsLoadFlags_Editor::ToString(LoadFlags);
 					const FString AssetTypeAsString = (*AssetTypeToString)(OutAssetTypes[CS_FIRST]);
 
-					UE_LOG(LogCs, Warning, TEXT("ACsData_Payload::PostEditChangeProperty: Missing LoadFlags: %s in DataMapping: [%s, %s, %d]. Manually adding LoadFlag: %s."), *LoadFlagsAsString, *AssetTypeAsString, *(InShortCode.ToString()), *(FString::FromInt(OutIndices[CS_FIRST])), *LoadFlagsAsString);
+					const FString Output = TEXT("ACsData_Payload::PostEditChangeProperty: Missing LoadFlags: ") + LoadFlagsAsString + TEXT(" in DataMapping: [") + AssetTypeAsString + TEXT(",") + InShortCode.ToString() + TEXT(",") + FString::FromInt(OutIndices[CS_FIRST]) + TEXT("]. Manually adding LoadFlag: ") + LoadFlagsAsString + TEXT(".");
+					
+					if (UCsCommon::IsDefaultObject(this))
+						UCsCommon::DisplayNotificationInfo(Output, TEXT("Payload"), TEXT("PerformAddEntryLoadFlags"), 1.5f);
+
+					UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
 				}
 
 				UClass* Class = GetClass();
@@ -193,6 +217,11 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const TCsLoadAss
 									OutOutput = TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + AssetTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(ArraySize) + TEXT("]");
 									OutMessage = TEXT("SUCCESS.");
 
+									if (UCsCommon::IsDefaultObject(this))
+									{
+										UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
+										UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
+									}
 									MarkPackageDirty();
 								}
 							}
@@ -221,6 +250,12 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const TCsLoadAss
 
 				if (IsAssetTypeMismatch)
 					OutMessage += TEXT(" ShortCode listed under multiple AssetTypes in DataMapping. Should ONLY be ONE.");
+
+				if (UCsCommon::IsDefaultObject(this))
+				{
+					UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
+					UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
+				}
 				return false;
 			}
 		}
@@ -287,6 +322,89 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const TCsLoadAss
 	return true;
 }
 
+bool ACsData_Payload::Editor_IsValid(ACsDataMapping* DataMapping)
+{
+	bool Pass = true;
+
+	UClass* Class = GetClass();
+
+	for (TFieldIterator<UProperty> It(Class); It; ++It)
+	{
+		UProperty* Property = Cast<UProperty>(*It);
+
+		const FString MemberName = Property->GetName();
+
+		// Struct
+		if (UStructProperty* StructProperty = Cast<UStructProperty>(*It))
+		{
+			// FCsTArrayPayload
+			if (StructProperty->Struct == FCsTArrayPayload::StaticStruct())
+			{
+				if (StructProperty->ArrayDim == LOAD_ASSETS_TYPE_MAX)
+				{
+					CS_DECLARE_AND_DEFINE_CONST_INTEGRAL_VALUE(uint8, MAX, LOAD_ASSETS_TYPE_MAX)
+
+					if (FCsTArrayPayload(*Member)[MAX] = Property->ContainerPtrToValuePtr<FCsTArrayPayload[MAX]>(this))
+					{
+						// TArray<FCsPayload>
+						for (int32 I = 0; I < MAX; I++)
+						{
+							TArray<FCsPayload>& Array = ((*Member)[I]).Payloads;
+							const int32 ArraySize	  = Array.Num();
+
+							const FString LoadAssetsTypeAsString = (*LoadAssetsTypeToString)((TCsLoadAssetsType)I);
+
+							// FCsPayload
+							for (int32 J = 0; J < ArraySize; J++)
+							{
+								const FString AssetTypeAsString = Array[J].AssetType;
+								const FString _ShortCodeAsString = Array[J].ShortCode.ToString();
+
+								TArray<FCsDataMappingEntry*> OutEntries;
+								TArray<TCsAssetType> OutAssetTypes;
+								TArray<int32> OutIndices;
+
+								if (DataMapping->PerformFindEntry(Array[J].ShortCode, OutEntries, OutAssetTypes, OutIndices))
+								{
+									const int32 EntryCount = OutEntries.Num();
+
+									if (EntryCount > 1)
+									{
+										UE_LOG(LogCs, Warning, TEXT("ACsData_Payload::Editor_IsValid: [%s, %s, %d] Multiple entries found for ShortCode: %s in DataMapping. Fix DataMapping."), *LoadAssetsTypeAsString, *_ShortCodeAsString, J, *_ShortCodeAsString);
+
+										for (int32 K = 0; K < EntryCount; K++)
+										{
+											const FString OutAssetTypeAsString = (*AssetTypeToString)(OutAssetTypes[K]);
+
+											UE_LOG(LogCs, Warning, TEXT("ACsData_Payload::Editor_IsValid: In DataMapping, ShortCode: %s at [%s, %d]."), *_ShortCodeAsString, *OutAssetTypeAsString, K);
+										}
+									}
+									else
+									{
+										const FString OutAssetTypeAsString = (*AssetTypeToString)(OutAssetTypes[CS_FIRST]);
+
+										if (AssetTypeAsString != OutAssetTypeAsString)
+										{
+											UE_LOG(LogCs, Warning, TEXT("ACsData_Payload::Editor_IsValid: [%s, %s, %d] AssetType Mismatch for ShortCode: %s. %s != %s"), *LoadAssetsTypeAsString, *_ShortCodeAsString, J, *_ShortCodeAsString, *AssetTypeAsString, *OutAssetTypeAsString);
+											Pass &= false;
+										}
+									}
+								}
+								else
+								{
+									UE_LOG(LogCs, Warning, TEXT("ACsData_Payload::Editor_IsValid: [%s, %s, %d] ShortCode: %s NOT Found in DataMapping."), *LoadAssetsTypeAsString, *ShortCodeAsString, J, *ShortCodeAsString);
+									Pass &= false;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return Pass;
+}
+
 void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 {
 	FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
@@ -311,6 +429,11 @@ void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 			FindEntry.Output = TEXT("ERROR");
 			FindEntry.Find = false;
 
+			if (UCsCommon::IsDefaultObject(this))
+			{
+				UCsCommon::DisplayNotificationInfo(FindEntry.Output, TEXT("Payload"), TEXT("FindEntryOutput"), 5.0f);
+				UCsCommon::DisplayNotificationInfo(FindEntry.Message, TEXT("Payload"), TEXT("FindEntryMessage"), 5.0f);
+			}
 			Super::PostEditChangeProperty(e);
 			return;
 		}
@@ -338,6 +461,12 @@ void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 		if (PayloadCount == CS_EMPTY)
 			FindEntry.Output = TEXT("No Results.");
 		FindEntry.Message = TEXT("SUCCESS");
+
+		if (UCsCommon::IsDefaultObject(this))
+		{
+			UCsCommon::DisplayNotificationInfo(FindEntry.Output, TEXT("Payload"), TEXT("FindEntryOutput"), 5.0f);
+			UCsCommon::DisplayNotificationInfo(FindEntry.Message, TEXT("Payload"), TEXT("FindEntryMessage"), 5.0f);
+		}
 		FindEntry.Find = false;
 	}
 	// Add Entry
@@ -374,6 +503,11 @@ void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 			RemoveEntry.Output = TEXT("ERROR");
 			RemoveEntry.Remove = false;
 
+			if (UCsCommon::IsDefaultObject(this))
+			{
+				UCsCommon::DisplayNotificationInfo(RemoveEntry.Output, TEXT("Payload"), TEXT("RemoveEntryOutput"), 5.0f);
+				UCsCommon::DisplayNotificationInfo(RemoveEntry.Message, TEXT("Payload"), TEXT("RemoveEntryMessage"), 5.0f);
+			}
 			Super::PostEditChangeProperty(e);
 			return;
 		}
@@ -386,12 +520,31 @@ void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 			RemoveEntry.Output  = TEXT("ERROR");
 			RemoveEntry.Remove	= false;
 
-			UE_LOG(LogCs, Warning, TEXT("ACsData_Payload::PostEditChangeProperty: Valid LoadAssetsTypes are:"))
+			if (UCsCommon::IsDefaultObject(this))
+			{
+				UCsCommon::DisplayNotificationInfo(RemoveEntry.Output, TEXT("Payload"), TEXT("RemoveEntryOutput"), 5.0f);
+				UCsCommon::DisplayNotificationInfo(RemoveEntry.Message, TEXT("Payload"), TEXT("RemoveEntryMessage"), 5.0f);
+			}
 
-				for (int32 I = 0; I < LOAD_ASSETS_TYPE_MAX; I++)
+			FString Output = TEXT("ACsData_Payload::PostEditChangeProperty: Valid LoadAssetsTypes are:");
+
+			if (UCsCommon::IsDefaultObject(this))
+				UCsCommon::DisplayNotificationInfo(Output, TEXT("Payload"), TEXT("RemoveEntryAdditionalOutput"), 1.5f);
+
+			UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
+
+			for (int32 I = 0; I < LOAD_ASSETS_TYPE_MAX; I++)
+			{
+				Output = TEXT("LoadAssetType: ") + (*LoadAssetsTypeToString)((TCsLoadAssetsType)I);
+
+				if (UCsCommon::IsDefaultObject(this))
 				{
-					UE_LOG(LogCs, Warning, TEXT("LoadAssetType: %s"), *((*LoadAssetsTypeToString)((TCsLoadAssetsType)I)));
+					const FString AdditionalOutput = TEXT("RemoveEntryAdditionalOutput") + FString::FromInt(I);
+
+					UCsCommon::DisplayNotificationInfo(Output, TEXT("Payload"), AdditionalOutput, 1.5f);
 				}
+				UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
+			}
 
 			Super::PostEditChangeProperty(e);
 			return;
@@ -462,6 +615,12 @@ void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 		if (RemoveEntry.Output == TEXT(""))
 			RemoveEntry.Output = TEXT("Nothing Removed.");
 		RemoveEntry.Message = TEXT("SUCCESS");
+
+		if (UCsCommon::IsDefaultObject(this))
+		{
+			UCsCommon::DisplayNotificationInfo(RemoveEntry.Output, TEXT("Payload"), TEXT("RemoveEntryOutput"), 5.0f);
+			UCsCommon::DisplayNotificationInfo(RemoveEntry.Message, TEXT("Payload"), TEXT("RemoveEntryMessage"), 5.0f);
+		}
 		RemoveEntry.Remove = false;
 	}
 	// Validate

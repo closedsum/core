@@ -27,8 +27,18 @@
 #include "Data/CsData.h"
 
 #if WITH_EDITOR
+
+// Javascript
 #include "../Plugins/UnrealJS/Source/V8/Public/JavascriptIsolate.h"
 #include "../Plugins/UnrealJS/Source/V8/Public/JavascriptContext.h"
+
+// Slate
+#include "Runtime/Slate/Public/Framework/Notifications/NotificationManager.h"
+#include "Runtime/Slate/Public/Widgets/Notifications/SNotificationList.h"
+#include "../Source/Editor/EditorStyle/Public/EditorStyleSet.h"
+
+#include "Runtime/Core/Public/Internationalization/Internationalization.h"
+
 #endif // #if WITH_EDITOR
 
 UCsCommon::UCsCommon(const FObjectInitializer& ObjectInitializer)
@@ -8664,6 +8674,11 @@ bool UCsCommon::IsPlayInEditorPreview(UWorld* InWorld)
 	return InWorld && InWorld->WorldType == EWorldType::EditorPreview;
 }
 
+bool UCsCommon::IsDefaultObject(UObject* InObject)
+{
+	return InObject->GetName().StartsWith(TEXT("Default__"));
+}
+
 // Time
 #pragma region
 
@@ -8843,3 +8858,35 @@ void UCsCommon::SetCollisionFromTemplate(const FName &TemplateName, UPrimitiveCo
 }
 
 #pragma endregion Collision
+
+// Editor Message
+#pragma region
+
+#if WITH_EDITOR
+
+void UCsCommon::DisplayNotificationInfo(const FString &InTextLiteral, const FString &InNamespace, const FString &InKey, const float &Duration)
+{
+	FText Text = FInternationalization::Get().ForUseOnlyByLocMacroAndGraphNodeTextLiterals_CreateText(*InTextLiteral, *InNamespace, *InKey);
+	//FText Text = FTextCache::Get().FindOrCache(*InTextLiteral, *InNamespace, *InKey);
+
+	FNotificationInfo Info(Text);
+
+	Info.Image = FEditorStyle::GetBrush(TEXT("LevelEditor.RecompileGameCode"));
+	Info.FadeInDuration = 0.1f;
+	Info.FadeOutDuration = 0.5f;
+	Info.ExpireDuration = Duration;
+	Info.bUseThrobber = false;
+	Info.bUseSuccessFailIcons = true;
+	Info.bUseLargeFont = true;
+	Info.bFireAndForget = false;
+	Info.bAllowThrottleWhenFrameRateIsLow = false;
+
+	auto NotificationItem = FSlateNotificationManager::Get().AddNotification(Info);
+
+	NotificationItem->SetCompletionState(SNotificationItem::CS_Success);
+	NotificationItem->ExpireAndFadeout();
+}
+
+#endif // #if WITH_EDITOR
+
+#pragma endregion Editor Message

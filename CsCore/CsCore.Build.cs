@@ -28,6 +28,7 @@ public class CsCore : ModuleRules
                     "ContentBrowser",
                     "SourceControl",
                     "Slate",
+                    "EditorStyle",
                     "HeadMountedDisplay",
                     "V8",
                 }

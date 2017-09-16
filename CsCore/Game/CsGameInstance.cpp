@@ -6,6 +6,7 @@
 #include "Coroutine/CsCoroutineScheduler.h"
 // Data
 #include "Data/CsDataMapping.h"
+#include "Data/CsData_Payload.h"
 #include "Data/CsData.h"
 #include "Data/CsData_UI_Common.h"
 // UI
@@ -168,6 +169,9 @@ void UCsGameInstance::LoadDataMapping()
 	{
 		DataMapping = DataClass->GetDefaultObject<ACsDataMapping>();
 #if WITH_EDITOR
+
+		checkf(DataMapping->IsValid(), TEXT("UCsGameInstance::LoadDataMapping: DataMapping is NOT Valid."));
+
 		DataMapping->LoadFromJson();
 		DataMapping->PopulateDataAssetReferences();
 #endif // #if WITH_EDITOR
@@ -219,6 +223,15 @@ PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(struct FCsRoutine* r))
 		dataMapping->PopulateAssetReferences();
 		gi->LoadedDataAssets.Reset();
 	}
+
+#if WITH_EDITOR
+	{
+		ACsData_Payload* Payload = dataMapping->GetPayload();
+
+		checkf(Payload->Editor_IsValid(dataMapping), TEXT("UCsGameInstance::LoadDataMapping_Internal: Payload is NOT Valid."));
+	}
+#endif // #if WITH_EDITOR
+
 	gi->HasLoadedDataMapping = true;
 	gi->OnBoardState = ECsGameInstanceOnBoardState::LoadStartUpData;
 
@@ -241,21 +254,8 @@ void UCsGameInstance::OnFinishedLoadingDataAssets(const TArray<UObject*> &Loaded
 	// Load StartUp Data
 #pragma region
 
-void UCsGameInstance::LoadStartUpData()
-{
-	/*
-	const TCsLoadAsyncOrder AsyncOrder = UCsCommon::GetLoadAsyncOrder();
-
-	DataMapping->AsyncLoadAssets<ACsGameState>(ECsLoadAssetsType::StartUp, AsyncOrder, this, &ACsGameState::OnFinishedLoadCommonData);
-	*/
-}
-
-void UCsGameInstance::OnFinishedLoadingStartUpDataAssets(const TArray<UObject*> &LoadedAssets, const float& LoadingTime)
-{
-	//DataMapping->OnFinishedAsyncLoadingAssetsSetReferences(ECsLoadAssetsType::StartUp, LoadedAssets);
-
-	OnBoardState = ECsGameInstanceOnBoardState::Completed;
-}
+void UCsGameInstance::LoadStartUpData(){}
+void UCsGameInstance::OnFinishedLoadingStartUpDataAssets(const TArray<UObject*> &LoadedAssets, const float& LoadingTime){}
 
 #pragma endregion Load StartUp Data
 
@@ -267,9 +267,17 @@ void UCsGameInstance::SetupFullscreenWidget()
 	if (!FullscreenWidget)
 	{
 		ACsData_UI_Common* bp_ui_common = Cast<ACsData_UI_Common>(DataMapping->LoadData(FName("bp_ui_common")));
-		FullscreenWidget			    = CreateWidget<UCsUserWidget>(this, bp_ui_common->FullscreenWidget.Get());
+
+		if (!bp_ui_common)
+		{
+			UE_LOG(LogCs, Warning, TEXT("UCsGameInstance::SetupFullscreenWidget: Failed to Load bp_ui_common (ACsData_UI_Common)."));
+			return;
+		}
+		FullscreenWidget = CreateWidget<UCsUserWidget>(this, bp_ui_common->FullscreenWidget.Get());
 	}
 	FullscreenWidget->Show();
+
+	OnBoardState = ECsGameInstanceOnBoardState::Completed;
 }
 
 #pragma endregion Fullscreen Widget0

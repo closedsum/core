@@ -3221,6 +3221,8 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 		return Actor;
 	}
 
+	static bool IsDefaultObject(UObject* InObject);
+
 // Time
 #pragma region
 
@@ -3346,7 +3348,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	}
 
 	template<typename T>
-	static void GetAssets(TArray<T*> &OutAssets, const FName &Name)
+	static void GetAssets(const FName &Name, TArray<T*> &OutAssets)
 	{
 		OutAssets.Reset();
 
@@ -3367,7 +3369,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	}
 
 	template<typename T>
-	static void GetAssets(TArray<T*> &OutAssets, const FString &Name)
+	static void GetAssets(const FString &Name, TArray<T*> &OutAssets)
 	{
 		OutAssets.Reset();
 
@@ -3392,7 +3394,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	}
 
 	template<typename T>
-	static void GetAssets(TArray<T*> &OutAssets, const TArray<FString> &KeywordsAND)
+	static void GetAssets(const TArray<FString> &KeywordsAND, TArray<T*> &OutAssets)
 	{
 		OutAssets.Reset();
 
@@ -3409,7 +3411,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 		for (int32 I = 0; I < AssetCount; I++)
 		{
 			const FString AssetStringName = OutAssetData[I].AssetName.ToString().ToLower();
-
+			
 			bool Pass = true;
 
 			for (int32 I = 0; I < KeywordCount; I++)
@@ -3420,6 +3422,31 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 			if (Pass)
 			{
 				OutAssets.Add(Cast<T>(OutAssetData[I].GetAsset()));
+			}
+		}
+	}
+
+	template<typename T>
+	static void GetAssets(const FName &Name, TArray<T*> &OutAssets, TArray<FName> &OutPackagePaths)
+	{
+		OutAssets.Reset();
+		OutPackagePaths.Reset();
+
+		FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(FName("AssetRegistry"));
+		IAssetRegistry& AssetRegistry			  = AssetRegistryModule.Get();
+
+		TArray<FAssetData> OutAssetData;
+
+		AssetRegistry.GetAssetsByClass(T::StaticClass()->GetFName(), OutAssetData);
+
+		const int32 AssetCount = OutAssetData.Num();
+
+		for (int32 I = 0; I < AssetCount; I++)
+		{
+			if (Name == OutAssetData[I].AssetName)
+			{
+				OutAssets.Add(Cast<T>(OutAssetData[I].GetAsset()));
+				OutPackagePaths.Add(OutAssetData[I].PackagePath);
 			}
 		}
 	}
@@ -3458,4 +3485,15 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 #endif // #if WITH_EDITOR
 
 #pragma endregion Asset Registry
+
+// Editor Message
+#pragma region
+
+#if WITH_EDITOR
+
+	static void DisplayNotificationInfo(const FString &InTextLiteral, const FString &InNamespace, const FString &InKey, const float &Duration);
+
+#endif // #if WITH_EDITOR
+	
+#pragma endregion Editor Message
 };

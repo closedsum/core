@@ -114,6 +114,8 @@ class CSCORE_API ACsData_Payload : public ACsData
 	bool PerformFindEntry(const FName &InShortCode, TArray<FCsPayload*> &OutPayloads, TArray<TCsLoadAssetsType> &OutLoadAssetsTypes, TArray<int32> &OutIndices);
 	bool PerformAddEntry(const FName &InShortCode, const TCsLoadAssetsType &LoadAssetsType, const TEnumAsByte<ECsLoadFlags_Editor::Type> &LoadFlags, FString &OutMessage, FString &OutOutput);
 
+	virtual bool Editor_IsValid(class ACsDataMapping* DataMapping);
+
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& e) override;
 
 #endif // #if WITH_EDITOR

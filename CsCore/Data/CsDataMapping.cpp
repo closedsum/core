@@ -890,15 +890,28 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const TCsAssetType 
 								// Check LoadFlags
 								if (Entry.Data_LoadFlags != LoadFlags)
 								{
-									const FString DataLoadFlagsAsString = TEXT("(") + UCsCommon::LoadFlagsToString(Entry.Data_LoadFlags) + TEXT(")");
-									const FString LoadFlagsAsString		= TEXT("(") + UCsCommon::LoadFlagsToString(LoadFlags) + TEXT(")");
+									for (int32 J = 0; J < ECS_LOAD_FLAGS_EDITOR_MAX; J++)
+									{
+										if (CS_TEST_BLUEPRINT_BITFLAG(LoadFlags, J))
+										{
+											if (!CS_TEST_BLUEPRINT_BITFLAG(Entry.Data_LoadFlags, J))
+											{
+												const FString PreviousDataLoadFlagsAsString = TEXT("(") + UCsCommon::LoadFlagsToString(Entry.Data_LoadFlags) + TEXT(")");
 
-									const FString Output = TEXT("ACsDataMapping::PerformAddEntry: Warning. LoadFlags Mismatch for [") + AssetTypeAsString + TEXT(", ") + ShortCode.ToString() + TEXT(", ") + FString::FromInt(I) + TEXT("]. ") + DataLoadFlagsAsString + TEXT(" != ") + LoadFlagsAsString + TEXT(". Manually setting it to ") + LoadFlagsAsString + TEXT(".");
+												CS_SET_BLUEPRINT_BITFLAG(Entry.Data_LoadFlags, J);
 
-									if (UCsCommon::IsDefaultObject(this))
-										UCsCommon::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformAddEntryAdditionalOutput"), 1.5f);
+												const FString DataLoadFlagsAsString = TEXT("(") + UCsCommon::LoadFlagsToString(Entry.Data_LoadFlags) + TEXT(")");
+												const FString LoadFlagsAsString		= TEXT("(") + UCsCommon::LoadFlagsToString(J) + TEXT(")");
 
-									UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
+												const FString Output = TEXT("ACsDataMapping::PerformAddEntry: [") + AssetTypeAsString + TEXT(", ") + ShortCode.ToString() + TEXT(", ") + FString::FromInt(I) + TEXT("] Adding LoadFlags ") + PreviousDataLoadFlagsAsString + TEXT(" + ") + LoadFlagsAsString + TEXT(" = ") + DataLoadFlagsAsString + TEXT(".");
+
+												if (UCsCommon::IsDefaultObject(this))
+													UCsCommon::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformAddEntryAdditionalOutput"), 1.5f);
+
+												UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
+											}
+										}
+									}
 								}
 
 								OutOutput += TEXT("[") + AssetTypeAsString + TEXT(", ") + FString::FromInt(I) + TEXT("]");
@@ -966,6 +979,8 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const TCsAssetType 
 										(*Member)[EntryCount].ShortCode		 = ShortCode;
 										(*Member)[EntryCount].Data			 = Cast<UBlueprintCore>(Bps[0])->GeneratedClass;
 										(*Member)[EntryCount].Data_LoadFlags = LoadFlags;
+
+										CS_SET_BLUEPRINT_BITFLAG((*Member)[EntryCount].Data_LoadFlags, ECsLoadFlags::All);
 
 										OutOutput = AssetTypeAsString + TEXT(", ") + FString::FromInt(EntryCount);
 										OutMessage = TEXT("SUCCESS.");
@@ -1212,15 +1227,28 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const int32 &LoadFl
 								// Check LoadFlags
 								if (Entry.Data_LoadFlags != LoadFlags)
 								{
-									const FString DataLoadFlagsAsString = TEXT("(") + UCsCommon::LoadFlagsToString(Entry.Data_LoadFlags) + TEXT(")");
-									const FString LoadFlagsAsString		= TEXT("(") + UCsCommon::LoadFlagsToString(LoadFlags) + TEXT(")");
+									for (int32 J = 0; J < ECS_LOAD_FLAGS_EDITOR_MAX; J++)
+									{
+										if (CS_TEST_BLUEPRINT_BITFLAG(LoadFlags, J))
+										{
+											if (!CS_TEST_BLUEPRINT_BITFLAG(Entry.Data_LoadFlags, J))
+											{
+												const FString PreviousDataLoadFlagsAsString = TEXT("(") + UCsCommon::LoadFlagsToString(Entry.Data_LoadFlags) + TEXT(")");
 
-									const FString Output = TEXT("ACsDataMapping::PerformAddEntry: Warning. LoadFlags Mismatch for ") + AssetTypeAsString + TEXT(", ") + ShortCode.ToString() + TEXT(", ") + FString::FromInt(I) + TEXT("]. ") + DataLoadFlagsAsString + TEXT(" != ") + LoadFlagsAsString + TEXT(". Manually setting it to ") + LoadFlagsAsString + TEXT(".");
+												CS_SET_BLUEPRINT_BITFLAG(Entry.Data_LoadFlags, J);
+												
+												const FString DataLoadFlagsAsString = TEXT("(") + UCsCommon::LoadFlagsToString(Entry.Data_LoadFlags) + TEXT(")");
+												const FString LoadFlagsAsString     = TEXT("(") + UCsCommon::LoadFlagsToString(J) + TEXT(")");
 
-									if (UCsCommon::IsDefaultObject(this))
-										UCsCommon::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformAddEntryAdditionalOutput"), 1.5f);
+												const FString Output = TEXT("ACsDataMapping::PerformAddEntry: [") + AssetTypeAsString + TEXT(", ") + ShortCode.ToString() + TEXT(", ") + FString::FromInt(I) + TEXT("] Adding LoadFlags ") + PreviousDataLoadFlagsAsString + TEXT(" + ") + LoadFlagsAsString + TEXT(" = ") + DataLoadFlagsAsString + TEXT(".");
 
-									UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
+												if (UCsCommon::IsDefaultObject(this))
+													UCsCommon::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformAddEntryAdditionalOutput"), 1.5f);
+
+												UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
+											}
+										}
+									}
 								}
 								OutOutput += TEXT("[") + AssetTypeAsString + TEXT(", ") + FString::FromInt(I) + TEXT("]");
 								Found = true;
@@ -1249,6 +1277,8 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const int32 &LoadFl
 							(*Member)[EntryCount].ShortCode		 = ShortCode;
 							(*Member)[EntryCount].Data			 = Data;
 							(*Member)[EntryCount].Data_LoadFlags = LoadFlags;
+
+							CS_SET_BLUEPRINT_BITFLAG((*Member)[EntryCount].Data_LoadFlags, ECsLoadFlags::All);
 
 							OutOutput = AssetTypeAsString + TEXT(", ") + FString::FromInt(EntryCount);
 							OutMessage = TEXT("SUCCESS.");
@@ -1288,19 +1318,23 @@ bool ACsDataMapping::IsValid()
 	return true;
 }
 
-bool ACsDataMapping::PerformValidate()
+bool ACsDataMapping::PerformValidate(FString &OutMessage, FString &OutOutput)
 {
 	bool Pass = true;
 
 	// Check Payload is SET
 	if (!Payload.Get())
 	{
-		const FString Output = TEXT("ACsDataMapping::PerformValidate: No Payload set.");
+		OutMessage = TEXT("No Payload set.");
+		OutOutput  = TEXT("ERROR");
 
 		if (UCsCommon::IsDefaultObject(this))
-			UCsCommon::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformValidate"), 5.0f);
+		{
+			UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformValidateOutput"), 5.0f);
+			UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformValidateMessage"), 5.0f);
+		}
 
-		UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
+		UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::PerformValidate: No Payload set."));
 		return false;
 	}
 	// Check Payload is VALID
@@ -1308,10 +1342,14 @@ bool ACsDataMapping::PerformValidate()
 
 	if (!PayloadDOb->IsValid())
 	{
-		const FString Output = TEXT("ACsDataMapping::PerformValidate: Payload is NOT Valid.");
+		OutMessage = TEXT("Payload is NOT Valid.");
+		OutOutput  = TEXT("ERROR");
 
 		if (UCsCommon::IsDefaultObject(this))
-			UCsCommon::DisplayNotificationInfo(Output, TEXT("DataMapping"), TEXT("PerformValidate"), 5.0f);
+		{
+			UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("DataMapping"), TEXT("PerformValidateOutput"), 5.0f);
+			UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("DataMapping"), TEXT("PerformValidateMessage"), 5.0f);
+		}
 
 		UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::PerformValidate: Payload is NOT Valid."));
 		return false;
@@ -1408,6 +1446,17 @@ bool ACsDataMapping::PerformValidate()
 				}
 			}
 		}
+	}
+
+	if (Pass)
+	{
+		OutMessage = TEXT("DataMapping is Valid.");
+		OutOutput  = TEXT("SUCCESS");
+	}
+	else
+	{
+		OutMessage = TEXT("DataMapping is NOT Valid.");
+		OutOutput = TEXT("ERROR");
 	}
 	return Pass;
 }
@@ -1577,6 +1626,24 @@ void ACsDataMapping::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 			UCsCommon::DisplayNotificationInfo(RemoveEntry.Message, TEXT("DataMapping"), TEXT("RemoveEntryMessage"), 5.0f);
 		}
 		RemoveEntry.Remove = false;
+	}
+	// Validate
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsDataMappingValidate, Validate))
+	{
+		if (!Validate.Validate)
+		{
+			Super::PostEditChangeProperty(e);
+			return;
+		}
+
+		PerformValidate(Validate.Output, Validate.Message);
+
+		if (UCsCommon::IsDefaultObject(this))
+		{
+			UCsCommon::DisplayNotificationInfo(Validate.Output, TEXT("DataMapping"), TEXT("ValidateOutput"), 5.0f);
+			UCsCommon::DisplayNotificationInfo(Validate.Message, TEXT("DataMapping"), TEXT("ValidateMessage"), 5.0f);
+		}
+		Validate.Validate = false;
 	}
 	Super::PostEditChangeProperty(e);
 }

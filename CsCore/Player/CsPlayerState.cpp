@@ -113,7 +113,7 @@ bool ACsPlayerState::RemoveRoutine_Internal(struct FCsRoutine* Routine, const ui
 
 void ACsPlayerState::OnBoard()
 {
-	CsCoroutine Function		  = &ACsGameState::OnBoard_Internal;
+	CsCoroutine Function		  = &ACsPlayerState::OnBoard_Internal;
 	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckActor;
 	CsAddRoutine Add			  = &ACsPlayerState::AddRoutine;
 	CsRemoveRoutine Remove		  = &ACsPlayerState::RemoveRoutine;

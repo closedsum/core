@@ -262,7 +262,10 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const TCsLoadAss
 		// Search for Asset in AssetRegistry, ADD it to DataMapping, and ADD Payload Entry
 		else
 		{
-			bool Successful = DataMapping->PerformAddEntry(InShortCode, (int32)LoadFlags, OutMessage, OutOutput);
+			int32 Flags = 0;
+			CS_SET_BLUEPRINT_BITFLAG(Flags, LoadFlags);
+
+			bool Successful = DataMapping->PerformAddEntry(InShortCode, Flags, OutMessage, OutOutput);
 
 			if (Successful)
 			{
@@ -364,8 +367,10 @@ bool ACsData_Payload::Editor_IsValid(ACsDataMapping* DataMapping)
 								TArray<TCsAssetType> OutAssetTypes;
 								TArray<int32> OutIndices;
 
+								// Search in DataMapping
 								if (DataMapping->PerformFindEntry(Array[J].ShortCode, OutEntries, OutAssetTypes, OutIndices))
 								{
+									// Check Multiple Entries in DataMapping
 									const int32 EntryCount = OutEntries.Num();
 
 									if (EntryCount > 1)
@@ -381,11 +386,21 @@ bool ACsData_Payload::Editor_IsValid(ACsDataMapping* DataMapping)
 									}
 									else
 									{
+										// Check AssetType Mismatch
 										const FString OutAssetTypeAsString = (*AssetTypeToString)(OutAssetTypes[CS_FIRST]);
 
 										if (AssetTypeAsString != OutAssetTypeAsString)
 										{
 											UE_LOG(LogCs, Warning, TEXT("ACsData_Payload::Editor_IsValid: [%s, %s, %d] AssetType Mismatch for ShortCode: %s. %s != %s"), *LoadAssetsTypeAsString, *_ShortCodeAsString, J, *_ShortCodeAsString, *AssetTypeAsString, *OutAssetTypeAsString);
+											Pass &= false;
+										}
+										// Check for LoadFlags
+										if (!CS_TEST_BLUEPRINT_BITFLAG(OutEntries[CS_FIRST]->Data_LoadFlags, Array[J].LoadFlags))
+										{
+											const FString DataLoadFlagsAsString    = UCsCommon::LoadFlagsToString(OutEntries[CS_FIRST]->Data_LoadFlags);
+											const FString PayloadLoadFlagsAsString = ECsLoadFlags_Editor::ToString(Array[J].LoadFlags);
+
+											UE_LOG(LogCs, Warning, TEXT("ACsData_Payload::Editor_IsValid: [%s, %s, %d] LoadFlags NOT present in DataMapping Entry [%s, %d]. (%s) does NOT containt %s"), *LoadAssetsTypeAsString, *_ShortCodeAsString, J, *OutAssetTypeAsString, OutIndices[CS_FIRST], *DataLoadFlagsAsString, *PayloadLoadFlagsAsString);
 											Pass &= false;
 										}
 									}

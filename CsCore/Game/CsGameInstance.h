@@ -6,6 +6,9 @@
 #include "CsTypes.h"
 #include "CsGameInstance.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsGameInstance_OnTick, const float&, DeltaSeconds);
+DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsGameInstance_OnTick, const float&);
+
 // Enums
 #pragma region
 
@@ -117,6 +120,11 @@ class CSCORE_API UCsGameInstance : public UGameInstance
 	FDelegateHandle	TickDelegateHandle;
 
 	virtual bool Tick(float DeltaSeconds);
+
+	FBindableEvent_CsGameInstance_OnTick OnTick_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Input")
+	FBindableDynEvent_CsGameInstance_OnTick OnTick_ScriptEvent;
 
 // Routines
 #pragma region

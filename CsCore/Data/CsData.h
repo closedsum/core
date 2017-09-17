@@ -35,7 +35,7 @@ struct FCsDataAddToDataMapping
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
-	bool Add;
+	bool AddToDataMapping;
 
 	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 LoadFlags;
@@ -59,7 +59,7 @@ struct FCsDataAddToPayload
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
-	bool Add;
+	bool AddToPayload;
 
 	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
 	FString LoadAssetsType;

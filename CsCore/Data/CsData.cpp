@@ -393,9 +393,9 @@ void ACsData::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 	FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
 
 	// Add to DataMapping
-	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsDataAddToDataMapping, Add))
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsDataAddToDataMapping, AddToDataMapping))
 	{
-		if (!AddToDataMapping.Add)
+		if (!AddToDataMapping.AddToDataMapping)
 		{
 			Super::PostEditChangeProperty(e);
 			return;
@@ -403,7 +403,16 @@ void ACsData::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 
 		if (Type == Type_MAX)
 		{
-			AddToDataMapping.Add = false;
+			AddToDataMapping.Message = TEXT("INVALID Type.");
+			AddToDataMapping.Output  = TEXT("ERROR");
+
+			if (UCsCommon::IsDefaultObject(this))
+			{
+				UCsCommon::DisplayNotificationInfo(AddToDataMapping.Output, TEXT("Data"), TEXT("AddToDataMappingOutput"), 5.0f);
+				UCsCommon::DisplayNotificationInfo(AddToDataMapping.Message, TEXT("DataMapping"), TEXT("AddToDataMappingMessage"), 5.0f);
+			}
+
+			AddToDataMapping.AddToDataMapping = false;
 			Super::PostEditChangeProperty(e);
 			return;
 		}
@@ -412,12 +421,17 @@ void ACsData::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 
 		DataMapping->PerformAddEntry(ShortCode, Type, AddToDataMapping.LoadFlags, AddToDataMapping.Message, AddToDataMapping.Output);
 	
-		AddToDataMapping.Add = false;
+		if (UCsCommon::IsDefaultObject(this))
+		{
+			UCsCommon::DisplayNotificationInfo(AddToDataMapping.Output, TEXT("Data"), TEXT("AddToDataMappingOutput"), 5.0f);
+			UCsCommon::DisplayNotificationInfo(AddToDataMapping.Message, TEXT("Data"), TEXT("AddToDataMappingMessage"), 5.0f);
+		}
+		AddToDataMapping.AddToDataMapping = false;
 	}
 	// Add to Payload
-	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsDataAddToPayload, Add))
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsDataAddToPayload, AddToPayload))
 	{
-		if (!AddToPayload.Add)
+		if (!AddToPayload.AddToPayload)
 		{
 			Super::PostEditChangeProperty(e);
 			return;
@@ -425,7 +439,16 @@ void ACsData::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 
 		if (Type == Type_MAX)
 		{
-			AddToPayload.Add = false;
+			AddToPayload.Message = TEXT("INVALID Type.");
+			AddToPayload.Output = TEXT("ERROR");
+
+			if (UCsCommon::IsDefaultObject(this))
+			{
+				UCsCommon::DisplayNotificationInfo(AddToPayload.Output, TEXT("Data"), TEXT("AddToPayloadOutput"), 5.0f);
+				UCsCommon::DisplayNotificationInfo(AddToPayload.Message, TEXT("Data"), TEXT("AddToPayloadMessage"), 5.0f);
+			}
+
+			AddToPayload.AddToPayload = false;
 			Super::PostEditChangeProperty(e);
 			return;
 		}
@@ -433,6 +456,13 @@ void ACsData::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 		ACsData_Payload* Payload = GetPayload();
 
 		Payload->PerformAddEntry(ShortCode, (*StringToLoadAssetsType)(AddToPayload.LoadAssetsType), AddToPayload.LoadFlags, AddToPayload.Message, AddToPayload.Output);
+
+		if (UCsCommon::IsDefaultObject(this))
+		{
+			UCsCommon::DisplayNotificationInfo(AddToPayload.Output, TEXT("Data"), TEXT("AddToPayloadOutput"), 5.0f);
+			UCsCommon::DisplayNotificationInfo(AddToPayload.Message, TEXT("Data"), TEXT("AddToPayloadMessage"), 5.0f);
+		}
+		AddToPayload.AddToPayload = false;
 	}
 	// Load From Json
 	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsDataLoadFromJson, Load))
@@ -443,8 +473,11 @@ void ACsData::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 			return;
 		}
 
-		if (GetName().StartsWith(TEXT("Default__")))
+		if (UCsCommon::IsDefaultObject(this))
+		{
 			LoadFromJson();
+			UCsCommon::DisplayNotificationInfo(TEXT("COMPLETE"), TEXT("Data"), TEXT("LoadFromJsonMessage"), 5.0f);
+		}
 
 		PerformLoadFromJson.Load = false;
 	}

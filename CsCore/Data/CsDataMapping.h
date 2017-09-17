@@ -568,7 +568,7 @@ public:
 	bool PerformAddEntry(const FName &ShortCode, const int32 &LoadFlags, FString &OutMessage, FString &OutOutput);
 	
 	virtual bool IsValid();
-	virtual bool PerformValidate();
+	virtual bool PerformValidate(FString &OutMessage, FString &OutOutput);
 
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& e) override;
 

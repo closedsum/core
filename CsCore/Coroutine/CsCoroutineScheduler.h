@@ -5,6 +5,9 @@
 #include "CsTypes.h"
 #include "CsCoroutineScheduler.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsCoroutineScheduler_OnTick, const float&, DeltaSeconds);
+DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsCoroutineScheduler_OnTick, const float&);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsCoroutineScheduler_OnTickUpdate, float, DeltaSeconds);
 
 UCLASS(transient)
@@ -25,6 +28,19 @@ protected:
 	void CleanUp();
 
 public:
+
+	/** Delegate for callbacks to Tick */
+	FTickerDelegate	TickDelegate;
+
+	/** Handle to various registered delegates */
+	FDelegateHandle	TickDelegateHandle;
+
+	virtual bool Tick(float DeltaSeconds);
+
+	FBindableEvent_CsCoroutineScheduler_OnTick OnTick_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Input")
+	FBindableDynEvent_CsCoroutineScheduler_OnTick OnTick_ScriptEvent;
 
 	TWeakObjectPtr<UObject> MyOwner;
 

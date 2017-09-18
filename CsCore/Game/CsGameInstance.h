@@ -173,6 +173,7 @@ public:
 
 	// Load StartUp Data
 #pragma region
+public:
 
 	virtual void LoadStartUpData();
 	virtual void OnFinishedLoadingStartUpDataAssets(const TArray<UObject*> &LoadedAssets, const float& LoadingTime);
@@ -181,6 +182,7 @@ public:
 
 	// Fullscreen Widget
 #pragma region
+public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Game Instance")
 	class UCsUserWidget* FullscreenWidget;

@@ -117,204 +117,200 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const TCsLoadAss
 	// Entries Found
 	if (PayloadCount > CS_EMPTY)
 	{
-		const FString LoadFlagsAsString = ECsLoadFlags_Editor::ToString(LoadFlags);
+		const int32 Index = OutLoadAssetsTypes.Find(LoadAssetsType);
 
-		for (int32 I = 0; I < PayloadCount; I++)
+		if (Index != INDEX_NONE)
 		{
-			FCsPayload* Payload = OutPayloads[I];
+			const FString LoadFlagsAsString		 = ECsLoadFlags_Editor::ToString(LoadFlags);
+			const FString LoadAssetsTypeAsString = (*LoadAssetsTypeToString)(OutLoadAssetsTypes[Index]);
 
-			const FString LoadAssetsTypeAsString = (*LoadAssetsTypeToString)(OutLoadAssetsTypes[I]);
-			const FString AssetTypeAsString		 = Payload->AssetType;
+			FCsPayload* Payload = OutPayloads[Index];
 
-			OutOutput += TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + AssetTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(OutIndices[I]) + TEXT("]");
-		}
-		// Duplicates
-		if (PayloadCount > 1)
-			OutMessage = TEXT("Already Exists. WARNING, Duplicates. REMOVE extra entries.");
-		else
+			const FString AssetTypeAsString = Payload->AssetType;
+
+			OutOutput += TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + AssetTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(OutIndices[Index]) + TEXT("]");
 			OutMessage = TEXT("Already Exists.");
 
-		if (UCsCommon::IsDefaultObject(this))
-		{
-			UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
-			UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
+			if (UCsCommon::IsDefaultObject(this))
+			{
+				UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
+				UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
+			}
+			return false;
 		}
-		return false;
 	}
 	// Attempt to ADD it
-	else
+
+	// Check ShortCode entry EXISTS in DataMapping
+	ACsDataMapping* DataMapping = GetDataMapping();
+
+	TArray<FCsDataMappingEntry*> OutEntries;
+	TArray<TCsAssetType> OutAssetTypes;
+	OutIndices.Reset();
+
+	DataMapping->PerformFindEntry(InShortCode, OutEntries, OutAssetTypes, OutIndices);
+
+	const int32 EntryCount = OutEntries.Num();
+
+	// Entries in DataMapping Found
+	if (EntryCount > CS_EMPTY)
 	{
-		// Check ShortCode entry EXISTS in DataMapping
-		ACsDataMapping* DataMapping = GetDataMapping();
-
-		TArray<FCsDataMappingEntry*> OutEntries;
-		TArray<TCsAssetType> OutAssetTypes;
-		OutIndices.Reset();
-
-		DataMapping->PerformFindEntry(InShortCode, OutEntries, OutAssetTypes, OutIndices);
-
-		const int32 EntryCount = OutEntries.Num();
-
-		// Entries in DataMapping Found
-		if (EntryCount > CS_EMPTY)
+		// ADD
+		if (EntryCount == 1)
 		{
-			// ADD
-			if (EntryCount == 1)
+			// Check LoadFlags
+			const ECsLoadFlags Flags = ECsLoadFlags_Editor::ToBaseType(LoadFlags);
+
+			if (!CS_TEST_BLUEPRINT_BITFLAG(OutEntries[CS_FIRST]->Data_LoadFlags, Flags))
 			{
-				// Check LoadFlags
-				const ECsLoadFlags Flags = ECsLoadFlags_Editor::ToBaseType(LoadFlags);
+				CS_SET_BLUEPRINT_BITFLAG(OutEntries[CS_FIRST]->Data_LoadFlags, Flags);
 
-				if (!CS_TEST_BLUEPRINT_BITFLAG(OutEntries[CS_FIRST]->Data_LoadFlags, Flags))
-				{
-					CS_SET_BLUEPRINT_BITFLAG(OutEntries[CS_FIRST]->Data_LoadFlags, Flags);
+				const FString LoadFlagsAsString = ECsLoadFlags_Editor::ToString(LoadFlags);
+				const FString AssetTypeAsString = (*AssetTypeToString)(OutAssetTypes[CS_FIRST]);
 
-					const FString LoadFlagsAsString = ECsLoadFlags_Editor::ToString(LoadFlags);
-					const FString AssetTypeAsString = (*AssetTypeToString)(OutAssetTypes[CS_FIRST]);
-
-					const FString Output = TEXT("ACsData_Payload::PostEditChangeProperty: Missing LoadFlags: ") + LoadFlagsAsString + TEXT(" in DataMapping: [") + AssetTypeAsString + TEXT(",") + InShortCode.ToString() + TEXT(",") + FString::FromInt(OutIndices[CS_FIRST]) + TEXT("]. Manually adding LoadFlag: ") + LoadFlagsAsString + TEXT(".");
+				const FString Output = TEXT("ACsData_Payload::PostEditChangeProperty: Missing LoadFlags: ") + LoadFlagsAsString + TEXT(" in DataMapping: [") + AssetTypeAsString + TEXT(",") + InShortCode.ToString() + TEXT(",") + FString::FromInt(OutIndices[CS_FIRST]) + TEXT("]. Manually adding LoadFlag: ") + LoadFlagsAsString + TEXT(".");
 					
-					if (UCsCommon::IsDefaultObject(this))
-						UCsCommon::DisplayNotificationInfo(Output, TEXT("Payload"), TEXT("PerformAddEntryLoadFlags"), 1.5f);
+				if (UCsCommon::IsDefaultObject(this))
+					UCsCommon::DisplayNotificationInfo(Output, TEXT("Payload"), TEXT("PerformAddEntryLoadFlags"), 1.5f);
 
-					UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
-				}
+				UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
+			}
 
-				UClass* Class = GetClass();
+			UClass* Class = GetClass();
 
-				for (TFieldIterator<UProperty> It(Class); It; ++It)
+			for (TFieldIterator<UProperty> It(Class); It; ++It)
+			{
+				UProperty* Property = Cast<UProperty>(*It);
+
+				const FString MemberName = Property->GetName();
+
+				// Struct
+				if (UStructProperty* StructProperty = Cast<UStructProperty>(*It))
 				{
-					UProperty* Property = Cast<UProperty>(*It);
-
-					const FString MemberName = Property->GetName();
-
-					// Struct
-					if (UStructProperty* StructProperty = Cast<UStructProperty>(*It))
+					// FCsTArrayPayload
+					if (StructProperty->Struct == FCsTArrayPayload::StaticStruct())
 					{
-						// FCsTArrayPayload
-						if (StructProperty->Struct == FCsTArrayPayload::StaticStruct())
+						if (StructProperty->ArrayDim == LOAD_ASSETS_TYPE_MAX)
 						{
-							if (StructProperty->ArrayDim == LOAD_ASSETS_TYPE_MAX)
+							CS_DECLARE_AND_DEFINE_CONST_INTEGRAL_VALUE(uint8, MAX, LOAD_ASSETS_TYPE_MAX)
+
+							if (FCsTArrayPayload(*Member)[MAX] = Property->ContainerPtrToValuePtr<FCsTArrayPayload[MAX]>(this))
 							{
-								CS_DECLARE_AND_DEFINE_CONST_INTEGRAL_VALUE(uint8, MAX, LOAD_ASSETS_TYPE_MAX)
+								TArray<FCsPayload>& Array = ((*Member)[(uint8)LoadAssetsType]).Payloads;
 
-								if (FCsTArrayPayload(*Member)[MAX] = Property->ContainerPtrToValuePtr<FCsTArrayPayload[MAX]>(this))
+								const int32 ArraySize = Array.Num();
+
+								const FString AssetTypeAsString = (*AssetTypeToString)(OutAssetTypes[CS_FIRST]);
+
+								Array.AddDefaulted();
+								Array[ArraySize].AssetType		  = AssetTypeAsString;
+								Array[ArraySize].AssetType_Script = (uint8)OutAssetTypes[CS_FIRST];
+								Array[ArraySize].ShortCode		  = InShortCode;
+								Array[ArraySize].LoadFlags		  = LoadFlags;
+
+								const FString LoadAssetsTypeAsString = (*LoadAssetsTypeToString)(LoadAssetsType);
+								const FString LoadFlagsAsString		 = ECsLoadFlags_Editor::ToString(LoadFlags);
+
+								OutOutput = TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + AssetTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(ArraySize) + TEXT("]");
+								OutMessage = TEXT("SUCCESS.");
+
+								if (UCsCommon::IsDefaultObject(this))
 								{
-									TArray<FCsPayload>& Array = ((*Member)[(uint8)LoadAssetsType]).Payloads;
-
-									const int32 ArraySize = Array.Num();
-
-									const FString AssetTypeAsString = (*AssetTypeToString)(OutAssetTypes[CS_FIRST]);
-
-									Array.AddDefaulted();
-									Array[ArraySize].AssetType		  = AssetTypeAsString;
-									Array[ArraySize].AssetType_Script = (uint8)OutAssetTypes[CS_FIRST];
-									Array[ArraySize].ShortCode		  = InShortCode;
-									Array[ArraySize].LoadFlags		  = LoadFlags;
-
-									const FString LoadAssetsTypeAsString = (*LoadAssetsTypeToString)(LoadAssetsType);
-									const FString LoadFlagsAsString		 = ECsLoadFlags_Editor::ToString(LoadFlags);
-
-									OutOutput = TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + AssetTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(ArraySize) + TEXT("]");
-									OutMessage = TEXT("SUCCESS.");
-
-									if (UCsCommon::IsDefaultObject(this))
-									{
-										UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
-										UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
-									}
-									MarkPackageDirty();
+									UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
+									UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
 								}
+								MarkPackageDirty();
 							}
 						}
 					}
 				}
 			}
-			// Multiple in DataMapping
-			else
-			{
-				bool IsAssetTypeMismatch   = false;
-				TCsAssetType LastAssetType = OutAssetTypes[CS_FIRST];
-
-				for (int32 I = 0; I < EntryCount; I++)
-				{
-					const FString AssetTypeAsString = (*AssetTypeToString)(OutAssetTypes[I]);
-
-					OutOutput += TEXT("[") + AssetTypeAsString + TEXT(", ") + FString::FromInt(OutIndices[I]) + TEXT("]");
-
-					if (LastAssetType != OutAssetTypes[I])
-						IsAssetTypeMismatch |= true;
-					LastAssetType = OutAssetTypes[I];
-				}
-
-				OutMessage = TEXT("Can NOT ADD. WARNING, Duplicates. REMOVE extra entries in DataMapping.");
-
-				if (IsAssetTypeMismatch)
-					OutMessage += TEXT(" ShortCode listed under multiple AssetTypes in DataMapping. Should ONLY be ONE.");
-
-				if (UCsCommon::IsDefaultObject(this))
-				{
-					UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
-					UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
-				}
-				return false;
-			}
 		}
-		// Search for Asset in AssetRegistry, ADD it to DataMapping, and ADD Payload Entry
+		// Multiple in DataMapping
 		else
 		{
-			int32 Flags = 0;
-			CS_SET_BLUEPRINT_BITFLAG(Flags, LoadFlags);
+			bool IsAssetTypeMismatch   = false;
+			TCsAssetType LastAssetType = OutAssetTypes[CS_FIRST];
 
-			bool Successful = DataMapping->PerformAddEntry(InShortCode, Flags, OutMessage, OutOutput);
-
-			if (Successful)
+			for (int32 I = 0; I < EntryCount; I++)
 			{
-				OutEntries.Reset();
-				OutAssetTypes.Reset();
-				OutIndices.Reset();
+				const FString AssetTypeAsString = (*AssetTypeToString)(OutAssetTypes[I]);
 
-				DataMapping->PerformFindEntry(InShortCode, OutEntries, OutAssetTypes, OutIndices);
+				OutOutput += TEXT("[") + AssetTypeAsString + TEXT(", ") + FString::FromInt(OutIndices[I]) + TEXT("]");
 
-				UClass* Class = GetClass();
+				if (LastAssetType != OutAssetTypes[I])
+					IsAssetTypeMismatch |= true;
+				LastAssetType = OutAssetTypes[I];
+			}
 
-				for (TFieldIterator<UProperty> It(Class); It; ++It)
+			OutMessage = TEXT("Can NOT ADD. WARNING, Duplicates. REMOVE extra entries in DataMapping.");
+
+			if (IsAssetTypeMismatch)
+				OutMessage += TEXT(" ShortCode listed under multiple AssetTypes in DataMapping. Should ONLY be ONE.");
+
+			if (UCsCommon::IsDefaultObject(this))
+			{
+				UCsCommon::DisplayNotificationInfo(OutOutput, TEXT("Payload"), TEXT("PerformAddEntryOutput"), 5.0f);
+				UCsCommon::DisplayNotificationInfo(OutMessage, TEXT("Payload"), TEXT("PerformAddEntryMessage"), 5.0f);
+			}
+			return false;
+		}
+	}
+	// Search for Asset in AssetRegistry, ADD it to DataMapping, and ADD Payload Entry
+	else
+	{
+		int32 Flags = 0;
+		CS_SET_BLUEPRINT_BITFLAG(Flags, LoadFlags);
+
+		bool Successful = DataMapping->PerformAddEntry(InShortCode, Flags, OutMessage, OutOutput);
+
+		if (Successful)
+		{
+			OutEntries.Reset();
+			OutAssetTypes.Reset();
+			OutIndices.Reset();
+
+			DataMapping->PerformFindEntry(InShortCode, OutEntries, OutAssetTypes, OutIndices);
+
+			UClass* Class = GetClass();
+
+			for (TFieldIterator<UProperty> It(Class); It; ++It)
+			{
+				UProperty* Property = Cast<UProperty>(*It);
+
+				const FString MemberName = Property->GetName();
+
+				// Struct
+				if (UStructProperty* StructProperty = Cast<UStructProperty>(*It))
 				{
-					UProperty* Property = Cast<UProperty>(*It);
-
-					const FString MemberName = Property->GetName();
-
-					// Struct
-					if (UStructProperty* StructProperty = Cast<UStructProperty>(*It))
+					// FCsTArrayPayload
+					if (StructProperty->Struct == FCsTArrayPayload::StaticStruct())
 					{
-						// FCsTArrayPayload
-						if (StructProperty->Struct == FCsTArrayPayload::StaticStruct())
+						if (StructProperty->ArrayDim == LOAD_ASSETS_TYPE_MAX)
 						{
-							if (StructProperty->ArrayDim == LOAD_ASSETS_TYPE_MAX)
+							CS_DECLARE_AND_DEFINE_CONST_INTEGRAL_VALUE(uint8, MAX, LOAD_ASSETS_TYPE_MAX)
+
+							if (FCsTArrayPayload(*Member)[MAX] = Property->ContainerPtrToValuePtr<FCsTArrayPayload[MAX]>(this))
 							{
-								CS_DECLARE_AND_DEFINE_CONST_INTEGRAL_VALUE(uint8, MAX, LOAD_ASSETS_TYPE_MAX)
+								TArray<FCsPayload>& Array = ((*Member)[(uint8)LoadAssetsType]).Payloads;
 
-								if (FCsTArrayPayload(*Member)[MAX] = Property->ContainerPtrToValuePtr<FCsTArrayPayload[MAX]>(this))
-								{
-									TArray<FCsPayload>& Array = ((*Member)[(uint8)LoadAssetsType]).Payloads;
+								const int32 ArraySize = Array.Num();
 
-									const int32 ArraySize = Array.Num();
+								const FString AssetTypeAsString = (*AssetTypeToString)(OutAssetTypes[CS_FIRST]);
 
-									const FString AssetTypeAsString = (*AssetTypeToString)(OutAssetTypes[CS_FIRST]);
+								Array.AddDefaulted();
+								Array[ArraySize].AssetType		  = AssetTypeAsString;
+								Array[ArraySize].AssetType_Script = (uint8)OutAssetTypes[CS_FIRST];
+								Array[ArraySize].ShortCode		  = InShortCode;
+								Array[ArraySize].LoadFlags		  = LoadFlags;
 
-									Array.AddDefaulted();
-									Array[ArraySize].AssetType		  = AssetTypeAsString;
-									Array[ArraySize].AssetType_Script = (uint8)OutAssetTypes[CS_FIRST];
-									Array[ArraySize].ShortCode		  = InShortCode;
-									Array[ArraySize].LoadFlags		  = LoadFlags;
+								const FString LoadAssetsTypeAsString = (*LoadAssetsTypeToString)(LoadAssetsType);
+								const FString LoadFlagsAsString		 = ECsLoadFlags_Editor::ToString(LoadFlags);
 
-									const FString LoadAssetsTypeAsString = (*LoadAssetsTypeToString)(LoadAssetsType);
-									const FString LoadFlagsAsString		 = ECsLoadFlags_Editor::ToString(LoadFlags);
+								OutOutput  = TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + AssetTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(ArraySize) + TEXT("]");
+								OutMessage = TEXT("SUCCESS. Check LOG.");
 
-									OutOutput  = TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + AssetTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(ArraySize) + TEXT("]");
-									OutMessage = TEXT("SUCCESS. Check LOG.");
-
-									MarkPackageDirty();
-								}
+								MarkPackageDirty();
 							}
 						}
 					}
@@ -434,7 +430,7 @@ void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 		}
 
 		FindEntry.Message = TEXT("");
-		FindEntry.Output = TEXT("");
+		FindEntry.Output  = TEXT("");
 
 		// Check for VALID ShortCode
 		if (FindEntry.ShortCode == NAME_None ||
@@ -493,6 +489,9 @@ void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 			return;
 		}
 
+		AddEntry.Message = TEXT("");
+		AddEntry.Output  = TEXT("");
+
 		const TCsLoadAssetsType LoadAssetsType = (*StringToLoadAssetsType)(AddEntry.LoadAssetsType);
 
 		PerformAddEntry(AddEntry.ShortCode, LoadAssetsType, AddEntry.LoadFlags, AddEntry.Message, AddEntry.Output);
@@ -508,7 +507,7 @@ void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 		}
 
 		RemoveEntry.Message = TEXT("");
-		RemoveEntry.Output = TEXT("");
+		RemoveEntry.Output  = TEXT("");
 
 		// Check for VALID ShortCode
 		if (RemoveEntry.ShortCode == NAME_None ||

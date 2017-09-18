@@ -16,6 +16,8 @@ void UCsWidget_Fullscreen::NativeTick(const FGeometry& MyGeometry, float InDelta
 	if (!HasInitFinished)
 		Init();
 
+	Fullscreen.OnNativeTick(InDeltaTime);
+
 #if WITH_EDITOR
 	OnNativeTick_ScriptEvent.Broadcast(MyGeometry, InDeltaTime);
 #endif // #if WITH_EDITOR
@@ -42,6 +44,12 @@ bool UCsWidget_Fullscreen::AddRoutine_Internal(struct FCsRoutine* Routine, const
 	if (RoutineType == ECsWidgetFullscreenRoutine::FadeOut_Internal)
 	{
 		FadeOut_Internal_Routine = Routine;
+		return true;
+	}
+	// FadeIn_Internal
+	if (RoutineType == ECsWidgetFullscreenRoutine::FadeIn_Internal)
+	{
+		FadeIn_Internal_Routine = Routine;
 		return true;
 	}
 	checkf(0, TEXT("UCsWidget_Fullscreen::AddRoutine_Internal: Adding a Routine of unknown Type"));
@@ -79,7 +87,7 @@ bool UCsWidget_Fullscreen::RemoveRoutine_Internal(struct FCsRoutine* Routine, co
 void UCsWidget_Fullscreen::FadeOut(const TEnumAsByte<ECsEasingType::Type> &EasingType, const float &Start, const float &End, const float &Time, const FLinearColor &Color)
 {
 	CsCoroutine Function		  = &UCsWidget_Fullscreen::Fade_Internal;
-	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckActor;
+	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
 	CsAddRoutine Add			  = &UCsUserWidget::AddRoutine;
 	CsRemoveRoutine Remove		  = &UCsUserWidget::RemoveRoutine;
 	const uint8 RoutineType		  = (uint8)ECsWidgetFullscreenRoutine::FadeOut_Internal;
@@ -99,7 +107,7 @@ void UCsWidget_Fullscreen::FadeOut(const TEnumAsByte<ECsEasingType::Type> &Easin
 void UCsWidget_Fullscreen::FadeIn(const TEnumAsByte<ECsEasingType::Type> &EasingType, const float &Start, const float &End, const float &Time, const FLinearColor &Color)
 {
 	CsCoroutine Function		  = &UCsWidget_Fullscreen::Fade_Internal;
-	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckActor;
+	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
 	CsAddRoutine Add			  = &UCsUserWidget::AddRoutine;
 	CsRemoveRoutine Remove		  = &UCsUserWidget::RemoveRoutine;
 	const uint8 RoutineType		  = (uint8)ECsWidgetFullscreenRoutine::FadeIn_Internal;

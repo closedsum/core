@@ -470,6 +470,9 @@ ACsData* ACsDataMapping::LoadData(const FName &ShortCode, const ECsLoadFlags &Lo
 
 		FCsDataMappingEntry* Entry = Map->Find(ShortCode);
 
+		if (!Entry)
+			continue;
+
 		if (ACsData* Data = LoadData_Internal<ACsData>(AssetType, *Entry, LoadFlags))
 			return Data;
 	}
@@ -1475,7 +1478,7 @@ void ACsDataMapping::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 		}
 
 		FindEntry.Message = TEXT("");
-		FindEntry.Output = TEXT("");
+		FindEntry.Output  = TEXT("");
 
 		// Check for valid ShortCode
 		if (FindEntry.ShortCode == NAME_None ||
@@ -1531,6 +1534,9 @@ void ACsDataMapping::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 			Super::PostEditChangeProperty(e);
 			return;
 		}
+
+		AddEntry.Message = TEXT("");
+		AddEntry.Output  = TEXT("");
 
 		PerformAddEntry(AddEntry.ShortCode, (*StringToAssetType)(AddEntry.AssetType), AddEntry.LoadFlags, AddEntry.Message, AddEntry.Output);
 		AddEntry.Add = false;
@@ -1635,6 +1641,9 @@ void ACsDataMapping::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 			Super::PostEditChangeProperty(e);
 			return;
 		}
+
+		Validate.Message = TEXT("");
+		Validate.Output  = TEXT("");
 
 		PerformValidate(Validate.Output, Validate.Message);
 

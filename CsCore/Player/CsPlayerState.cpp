@@ -2,6 +2,7 @@
 #include "Player/CsPlayerState.h"
 #include "CsCore.h"
 #include "CsCVars.h"
+#include "Game/CsGameInstance.h"
 #include "Game/CsGameState.h"
 #include "Coroutine/CsCoroutineScheduler.h"
 
@@ -10,6 +11,9 @@
 
 #include "Player/CsPlayerController.h"
 #include "Player/CsPlayerPawn.h"
+
+// UI
+#include "UI/CsWidget_Fullscreen.h"
 
 ACsPlayerState::ACsPlayerState(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -130,12 +134,18 @@ CS_COROUTINE(ACsPlayerState, OnBoard_Internal)
 	ACsPlayerState* ps		 = Cast<ACsPlayerState>(r->GetActor());
 	UCsCoroutineScheduler* s = r->scheduler;
 	UWorld* w				 = ps->GetWorld();
+	UCsGameInstance* gi		 = Cast<UCsGameInstance>(ps->GetGameInstance());
 
 	ps->OnTick_OnBoard();
 
 	CS_COROUTINE_BEGIN(r);
 
 	CS_COROUTINE_WAIT_UNTIL(r, ps->OnBoardState == ECsPlayerStateOnBoardState::Completed);
+
+	{
+		UCsWidget_Fullscreen* Widget = Cast<UCsWidget_Fullscreen>(gi->FullscreenWidget);
+		Widget->Fullscreen.SetColorAndOpacity(FLinearColor(0.0f, 0.0f, 0.0f, 0.0f));
+	}
 
 	CS_COROUTINE_END(r);
 }
@@ -160,7 +170,7 @@ void ACsPlayerState::OnTick_OnBoard()
 	{
 		ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
 
-		if (GameState->OnBoardState == ECsGameStateOnBoardState::SetupHUD)
+		if (GameState->OnBoardState > ECsGameStateOnBoardState::LoadCommonData)
 		{
 			OnBoardState = ECsPlayerStateOnBoardState::WaitingForLocalPlayerState;
 

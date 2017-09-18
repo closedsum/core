@@ -39,7 +39,7 @@ void UCsGameInstance::Init()
 
 	UCsManager_Loading::Init();
 	UCsCoroutineScheduler::Init();
-	LoadDataMapping();
+	OnBoard();
 
 	IsVR = GEngine->HMDDevice.IsValid() && GEngine->IsStereoscopic3D();
 }
@@ -122,7 +122,7 @@ bool UCsGameInstance::RemoveRoutine_Internal(struct FCsRoutine* Routine, const u
 void UCsGameInstance::OnBoard()
 {
 	CsCoroutine Function		  = &UCsGameInstance::OnBoard_Internal;
-	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckActor;
+	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
 	CsAddRoutine Add			  = &UCsGameInstance::AddRoutine;
 	CsRemoveRoutine Remove		  = &UCsGameInstance::RemoveRoutine;
 	const uint8 Type			  = (uint8)ECsGameInstanceRoutine::OnBoard_Internal;
@@ -173,6 +173,7 @@ void UCsGameInstance::LoadDataMapping()
 		checkf(DataMapping->IsValid(), TEXT("UCsGameInstance::LoadDataMapping: DataMapping is NOT Valid."));
 
 		DataMapping->LoadFromJson();
+		DataMapping->ClearLoaded();
 		DataMapping->PopulateDataAssetReferences();
 #endif // #if WITH_EDITOR
 	}
@@ -232,6 +233,8 @@ PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(struct FCsRoutine* r))
 	}
 #endif // #if WITH_EDITOR
 
+	dataMapping->GenerateMaps();
+
 	gi->HasLoadedDataMapping = true;
 	gi->OnBoardState = ECsGameInstanceOnBoardState::LoadStartUpData;
 
@@ -274,6 +277,7 @@ void UCsGameInstance::SetupFullscreenWidget()
 			return;
 		}
 		FullscreenWidget = CreateWidget<UCsUserWidget>(this, bp_ui_common->FullscreenWidget.Get());
+		FullscreenWidget->AddToViewport();
 	}
 	FullscreenWidget->Show();
 

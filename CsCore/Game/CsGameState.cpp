@@ -13,9 +13,12 @@
 #include "Data/CsDataMapping.h"
 
 #include "Player/CsPlayerController.h"
-#include "UI/CsUI.h"
 #include "Player/CsPlayerState.h"
 #include "Player/CsPlayerPawn.h"
+
+// UI
+#include "UI/CsUI.h"
+#include "UI/CsWidget_Fullscreen.h"
 
 ACsGameState::ACsGameState(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -27,6 +30,9 @@ ACsGameState::ACsGameState(const FObjectInitializer& ObjectInitializer)
 
 void ACsGameState::Tick(float DeltaSeconds)
 {
+	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bStartWithTickEnabled = true;
+
 	Super::Tick(DeltaSeconds);
 }
 
@@ -137,6 +143,7 @@ void ACsGameState::OnBoard()
 CS_COROUTINE(ACsGameState, OnBoard_Internal)
 {
 	ACsGameState* gs		 = Cast<ACsGameState>(r->GetActor());
+	UCsGameInstance* gi		 = Cast<UCsGameInstance>(gs->GetGameInstance());
 	UCsCoroutineScheduler* s = r->scheduler;
 	UWorld* w				 = gs->GetWorld();
 
@@ -144,6 +151,8 @@ CS_COROUTINE(ACsGameState, OnBoard_Internal)
 	ACsUI* hud				= pc ? Cast<ACsUI>(pc->MyHUD) : nullptr;
 
 	CS_COROUTINE_BEGIN(r);
+
+	CS_COROUTINE_WAIT_UNTIL(r, gi->OnBoardState == ECsGameInstanceOnBoardState::Completed);
 
 	gs->LoadCommonData();
 

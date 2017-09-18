@@ -54,10 +54,20 @@ UCsCoroutineScheduler::UCsCoroutineScheduler(const FObjectInitializer& ObjectIni
 
 void UCsCoroutineScheduler::Initialize()
 {
+	// Register delegate for ticker callback
+	TickDelegate	   = FTickerDelegate::CreateUObject(this, &UCsCoroutineScheduler::Tick);
+	TickDelegateHandle = FTicker::GetCoreTicker().AddTicker(TickDelegate);
 }
 
 void UCsCoroutineScheduler::CleanUp()
 {
+	// Unregister ticker delegate
+	FTicker::GetCoreTicker().RemoveTicker(TickDelegateHandle);
+}
+
+bool UCsCoroutineScheduler::Tick(float DeltaSeconds)
+{
+	return true;
 }
 
 UObject* UCsCoroutineScheduler::GetMyOwner()

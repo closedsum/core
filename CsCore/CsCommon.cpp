@@ -3927,12 +3927,12 @@ void UCsCommon::EndAndClearRoutine(struct FCsRoutine* &r)
 	r = nullptr;
 }
 
-FCsRoutine* UCsCommon::ScaleActorOverTime(const TCsCoroutineSchedule &CoroutineSchedule, const TEnumAsByte<ECsEasingType::Type> &EasingType, AActor* InActor, const float &StartScale, const float &EndScale, const float &Time, const bool &IsRelativeScale)
+FCsRoutine* UCsCommon::ScaleActorOverTime(const TCsCoroutineSchedule &ScheduleType, const TEnumAsByte<ECsEasingType::Type> &EasingType, AActor* InActor, const float &StartScale, const float &EndScale, const float &Time, const bool &IsRelativeScale)
 {
-	return ScaleActorOverTime(CoroutineSchedule, EasingType, InActor, FVector(StartScale), FVector(EndScale), Time, IsRelativeScale);
+	return ScaleActorOverTime(ScheduleType, EasingType, InActor, FVector(StartScale), FVector(EndScale), Time, IsRelativeScale);
 }
 
-FCsRoutine* UCsCommon::ScaleActorOverTime(const TCsCoroutineSchedule &CoroutineSchedule, const TEnumAsByte<ECsEasingType::Type> &EasingType, AActor* InActor, const FVector &StartScale, const FVector &EndScale, const float &Time, const bool &IsRelativeScale)
+FCsRoutine* UCsCommon::ScaleActorOverTime(const TCsCoroutineSchedule &ScheduleType, const TEnumAsByte<ECsEasingType::Type> &EasingType, AActor* InActor, const FVector &StartScale, const FVector &EndScale, const float &Time, const bool &IsRelativeScale)
 {
 	if (Time <= 0.0f)
 		return nullptr;
@@ -3947,14 +3947,7 @@ FCsRoutine* UCsCommon::ScaleActorOverTime(const TCsCoroutineSchedule &CoroutineS
 	CsCoroutine Function		  = &UCsCommon::ScaleActorOverTime_Internal;
 	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckActor;
 
-	if (CoroutineSchedule == ECsCoroutineSchedule::Tick)
-	{
-		R = Scheduler->Allocate(Function, Stop, InActor, true, false);
-	}
-	else
-	{
-		R = Scheduler->CalcCamera_Allocate(Function, Stop, InActor, true, false);
-	}
+	R = Scheduler->Allocate(ScheduleType, Function, Stop, InActor, true, false);
 
 	UWorld* World			= InActor ? InActor->GetWorld() : nullptr;
 	const float CurrentTime = World ? World->GetTimeSeconds() : GetCurrentDateTimeSeconds();
@@ -3966,23 +3959,16 @@ FCsRoutine* UCsCommon::ScaleActorOverTime(const TCsCoroutineSchedule &CoroutineS
 	R->flags[0] = IsRelativeScale;
 	R->ints[0] = (int32)EasingType;
 
-	if (CoroutineSchedule == ECsCoroutineSchedule::Tick)
-	{
-		Scheduler->StartRoutine(R);
-	}
-	else
-	{
-		Scheduler->CalcCamera_StartRoutine(R);
-	}
+	Scheduler->StartRoutine(ScheduleType, R);
 	return R;
 }
 
-FCsRoutine* UCsCommon::ScaleActorOverTime(const TCsCoroutineSchedule &CoroutineSchedule, UCurveBase* Curve, AActor* InActor, const float &StartScale, const float &EndScale, const float &Time, const bool &IsRelativeScale)
+FCsRoutine* UCsCommon::ScaleActorOverTime(const TCsCoroutineSchedule &ScheduleType, UCurveBase* Curve, AActor* InActor, const float &StartScale, const float &EndScale, const float &Time, const bool &IsRelativeScale)
 {
-	return ScaleActorOverTime(CoroutineSchedule, Curve, InActor, FVector(StartScale), FVector(EndScale), Time, IsRelativeScale);
+	return ScaleActorOverTime(ScheduleType, Curve, InActor, FVector(StartScale), FVector(EndScale), Time, IsRelativeScale);
 }
 
-FCsRoutine* UCsCommon::ScaleActorOverTime(const TCsCoroutineSchedule &CoroutineSchedule, UCurveBase* Curve, AActor* InActor, const FVector &StartScale, const FVector &EndScale, const float &Time, const bool &IsRelativeScale)
+FCsRoutine* UCsCommon::ScaleActorOverTime(const TCsCoroutineSchedule &ScheduleType, UCurveBase* Curve, AActor* InActor, const FVector &StartScale, const FVector &EndScale, const float &Time, const bool &IsRelativeScale)
 {
 	if (Time <= 0.0f)
 		return nullptr;
@@ -3997,14 +3983,7 @@ FCsRoutine* UCsCommon::ScaleActorOverTime(const TCsCoroutineSchedule &CoroutineS
 	CsCoroutine Function		  = &UCsCommon::ScaleActorOverTime_Internal;
 	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckActor;
 
-	if (CoroutineSchedule == ECsCoroutineSchedule::Tick)
-	{
-		R = Scheduler->Allocate(Function, Stop, InActor, true, false);
-	}
-	else
-	{
-		R = Scheduler->CalcCamera_Allocate(Function, Stop, InActor, true, false);
-	}
+	R = Scheduler->Allocate(ScheduleType, Function, Stop, InActor, true, false);
 
 	UWorld* World			= InActor ? InActor->GetWorld() : nullptr;
 	const float CurrentTime = World ? World->GetTimeSeconds() : GetCurrentDateTimeSeconds();
@@ -4016,14 +3995,7 @@ FCsRoutine* UCsCommon::ScaleActorOverTime(const TCsCoroutineSchedule &CoroutineS
 	R->flags[0] = IsRelativeScale;
 	R->objects[0] = Curve;
 
-	if (CoroutineSchedule == ECsCoroutineSchedule::Tick)
-	{
-		Scheduler->StartRoutine(R);
-	}
-	else
-	{
-		Scheduler->CalcCamera_StartRoutine(R);
-	}
+	Scheduler->StartRoutine(ScheduleType, R);
 	return R;
 }
 
@@ -4095,7 +4067,7 @@ PT_THREAD(UCsCommon::ScaleActorOverTime_Internal(struct FCsRoutine* r))
 	CS_COROUTINE_END(r);
 }
 
-FCsRoutine* UCsCommon::ScaleActorOverTime_AsCurve(const TCsCoroutineSchedule &CoroutineSchedule, UCurveBase* Curve, AActor* InActor, const bool &IsRelativeScale)
+FCsRoutine* UCsCommon::ScaleActorOverTime_AsCurve(const TCsCoroutineSchedule &ScheduleType, UCurveBase* Curve, AActor* InActor, const bool &IsRelativeScale)
 {
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 
@@ -4110,14 +4082,7 @@ FCsRoutine* UCsCommon::ScaleActorOverTime_AsCurve(const TCsCoroutineSchedule &Co
 	CsCoroutine Function		  = &UCsCommon::ScaleActorOverTime_AsCurve_Internal;
 	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckActor;
 
-	if (CoroutineSchedule == ECsCoroutineSchedule::Tick)
-	{
-		R = Scheduler->Allocate(Function, Stop, InActor, true, false);
-	}
-	else
-	{
-		R = Scheduler->CalcCamera_Allocate(Function, Stop, InActor, true, false);
-	}
+	R = Scheduler->Allocate(ScheduleType, Function, Stop, InActor, true, false);
 
 	UWorld* World			= InActor ? InActor->GetWorld() : nullptr;
 	const float CurrentTime = World ? World->GetTimeSeconds() : GetCurrentDateTimeSeconds();
@@ -4133,14 +4098,7 @@ FCsRoutine* UCsCommon::ScaleActorOverTime_AsCurve(const TCsCoroutineSchedule &Co
 	R->flags[2] = Cast<UCurveVector>(Curve) != nullptr; // Use CurveVector;
 	R->objects[0] = Curve;
 
-	if (CoroutineSchedule == ECsCoroutineSchedule::Tick)
-	{
-		Scheduler->StartRoutine(R);
-	}
-	else
-	{
-		Scheduler->CalcCamera_StartRoutine(R);
-	}
+	Scheduler->StartRoutine(ScheduleType, R);
 	return R;
 }
 
@@ -4215,7 +4173,7 @@ PT_THREAD(UCsCommon::ScaleActorOverTime_AsCurve_Internal(struct FCsRoutine* r))
 	CS_COROUTINE_END(r);
 }
 
-FCsRoutine* UCsCommon::MoveActorOverTime(const TCsCoroutineSchedule &CoroutineSchedule, const TEnumAsByte<ECsEasingType::Type> &EasingType, AActor* InActor, const FVector &StartLocation, const FVector &EndLocation, const float &Time, const bool &IsRelativeLocation)
+FCsRoutine* UCsCommon::MoveActorOverTime(const TCsCoroutineSchedule &ScheduleType, const TEnumAsByte<ECsEasingType::Type> &EasingType, AActor* InActor, const FVector &StartLocation, const FVector &EndLocation, const float &Time, const bool &IsRelativeLocation)
 {
 	if (Time <= 0.0f)
 		return nullptr;
@@ -4230,14 +4188,7 @@ FCsRoutine* UCsCommon::MoveActorOverTime(const TCsCoroutineSchedule &CoroutineSc
 	CsCoroutine Function		  = &UCsCommon::MoveActorOverTime_Internal;
 	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckActor;
 
-	if (CoroutineSchedule == ECsCoroutineSchedule::Tick)
-	{
-		R = Scheduler->Allocate(Function, Stop, InActor, true, false);
-	}
-	else
-	{
-		R = Scheduler->CalcCamera_Allocate(Function, Stop, InActor, true, false);
-	}
+	R = Scheduler->Allocate(ScheduleType, Function, Stop, InActor, true, false);
 
 	UWorld* World			= InActor ? InActor->GetWorld() : nullptr;
 	const float CurrentTime = World ? World->GetTimeSeconds() : GetCurrentDateTimeSeconds();
@@ -4249,14 +4200,7 @@ FCsRoutine* UCsCommon::MoveActorOverTime(const TCsCoroutineSchedule &CoroutineSc
 	R->flags[0] = IsRelativeLocation;
 	R->ints[0] = (int32)EasingType;
 
-	if (CoroutineSchedule == ECsCoroutineSchedule::Tick)
-	{
-		Scheduler->StartRoutine(R);
-	}
-	else
-	{
-		Scheduler->CalcCamera_StartRoutine(R);
-	}
+	Scheduler->StartRoutine(ScheduleType, R);
 	return R;
 }
 
@@ -4304,7 +4248,7 @@ PT_THREAD(UCsCommon::MoveActorOverTime_Internal(struct FCsRoutine* r))
 	CS_COROUTINE_END(r);
 }
 
-FCsRoutine* UCsCommon::DestroyMaterialInstanceDynamic(const TCsCoroutineSchedule &CoroutineSchedule, UMaterialInstanceDynamic* InMID, const float &Delay)
+FCsRoutine* UCsCommon::DestroyMaterialInstanceDynamic(const TCsCoroutineSchedule &ScheduleType, UMaterialInstanceDynamic* InMID, const float &Delay)
 {
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 
@@ -4316,14 +4260,7 @@ FCsRoutine* UCsCommon::DestroyMaterialInstanceDynamic(const TCsCoroutineSchedule
 	CsCoroutine Function		  = &UCsCommon::DestroyMaterialInstanceDynamic_Internal;
 	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
 
-	if (CoroutineSchedule == ECsCoroutineSchedule::Tick)
-	{
-		R = Scheduler->Allocate(Function, Stop, InMID, true, false);
-	}
-	else
-	{
-		R = Scheduler->CalcCamera_Allocate(Function, Stop, InMID, true, false);
-	}
+	R = Scheduler->Allocate(ScheduleType, Function, Stop, InMID, true, false);
 
 	UWorld* World			= InMID ? InMID->GetWorld() : nullptr;
 	const float CurrentTime = World ? World->GetTimeSeconds() : GetCurrentDateTimeSeconds();
@@ -4331,14 +4268,7 @@ FCsRoutine* UCsCommon::DestroyMaterialInstanceDynamic(const TCsCoroutineSchedule
 	R->timers[0] = CurrentTime;
 	R->delay	 = Delay;
 
-	if (CoroutineSchedule == ECsCoroutineSchedule::Tick)
-	{
-		Scheduler->StartRoutine(R);
-	}
-	else
-	{
-		Scheduler->CalcCamera_StartRoutine(R);
-	}
+	Scheduler->StartRoutine(ScheduleType, R);
 	return R;
 }
 
@@ -4364,7 +4294,7 @@ PT_THREAD(UCsCommon::DestroyMaterialInstanceDynamic_Internal(struct FCsRoutine* 
 	CS_COROUTINE_END(r);
 }
 
-FCsRoutine* UCsCommon::DestroyMaterialInstanceDynamics(const TCsCoroutineSchedule &CoroutineSchedule, TArray<UMaterialInstanceDynamic*>& InMIDs, const float &Delay)
+FCsRoutine* UCsCommon::DestroyMaterialInstanceDynamics(const TCsCoroutineSchedule &ScheduleType, TArray<UMaterialInstanceDynamic*>& InMIDs, const float &Delay)
 {
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 
@@ -4380,14 +4310,7 @@ FCsRoutine* UCsCommon::DestroyMaterialInstanceDynamics(const TCsCoroutineSchedul
 
 	for (int32 I = 0; I < Count; I++)
 	{
-		if (CoroutineSchedule == ECsCoroutineSchedule::Tick)
-		{
-			R = Scheduler->Allocate(Function, Stop, InMIDs[I], true, false);
-		}
-		else
-		{
-			R = Scheduler->CalcCamera_Allocate(Function, Stop, InMIDs[I], true, false);
-		}
+		R = Scheduler->Allocate(ScheduleType, Function, Stop, InMIDs[I], true, false);
 
 		UWorld* World			= InMIDs[I] ? InMIDs[I]->GetWorld() : nullptr;
 		const float CurrentTime = World ? World->GetTimeSeconds() : GetCurrentDateTimeSeconds();
@@ -4395,19 +4318,12 @@ FCsRoutine* UCsCommon::DestroyMaterialInstanceDynamics(const TCsCoroutineSchedul
 		R->timers[0] = CurrentTime;
 		R->delay	 = Delay;
 
-		if (CoroutineSchedule == ECsCoroutineSchedule::Tick)
-		{
-			Scheduler->StartRoutine(R);
-		}
-		else
-		{
-			Scheduler->CalcCamera_StartRoutine(R);
-		}
+		Scheduler->StartRoutine(ScheduleType, R);
 	}
 	return R;
 }
 
-FCsRoutine* UCsCommon::FadeCameraOverTime(const TCsCoroutineSchedule &CoroutineSchedule, const TEnumAsByte<ECsEasingType::Type> &EasingType, APlayerController* Controller, const float &Start, const float &End, const float &Time, const FLinearColor &Color)
+FCsRoutine* UCsCommon::FadeCameraOverTime(const TCsCoroutineSchedule &ScheduleType, const TEnumAsByte<ECsEasingType::Type> &EasingType, APlayerController* Controller, const float &Start, const float &End, const float &Time, const FLinearColor &Color)
 {
 	if (Time <= 0.0f)
 		return nullptr;
@@ -4422,14 +4338,7 @@ FCsRoutine* UCsCommon::FadeCameraOverTime(const TCsCoroutineSchedule &CoroutineS
 	CsCoroutine Function		  = &UCsCommon::FadeCameraOverTime_Internal;
 	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
 
-	if (CoroutineSchedule == ECsCoroutineSchedule::Tick)
-	{
-		R = Scheduler->Allocate(Function, Stop, Controller, true, false);
-	}
-	else
-	{
-		R = Scheduler->CalcCamera_Allocate(Function, Stop, Controller, true, false);
-	}
+	R = Scheduler->Allocate(ScheduleType, Function, Stop, Controller, true, false);
 
 	UWorld* World		    = Controller ? Controller->GetWorld() : nullptr;
 	const float CurrentTime = World ? World->GetTimeSeconds() : GetCurrentDateTimeSeconds();
@@ -4441,14 +4350,7 @@ FCsRoutine* UCsCommon::FadeCameraOverTime(const TCsCoroutineSchedule &CoroutineS
 	R->floats[2] = Time;
 	R->colors[0] = Color;
 
-	if (CoroutineSchedule == ECsCoroutineSchedule::Tick)
-	{
-		Scheduler->StartRoutine(R);
-	}
-	else
-	{
-		Scheduler->CalcCamera_StartRoutine(R);
-	}
+	Scheduler->StartRoutine(ScheduleType, R);
 	return R;
 }
 
@@ -4495,7 +4397,7 @@ PT_THREAD(UCsCommon::FadeCameraOverTime_Internal(struct FCsRoutine* r))
 	CS_COROUTINE_END(r);
 }
 /*
-FCsRoutine* UCsCommon::AllocateAndActivateEmitter(ACsCoroutineScheduler* CoroutineScheduler, const TCsCoroutineSchedule &CoroutineSchedule, FEffectsElement* InEffectsElement, FVector Location, float Delay)
+FCsRoutine* UCsCommon::AllocateAndActivateEmitter(ACsCoroutineScheduler* ScheduleType, const TCsCoroutineSchedule &CoroutineSchedule, FEffectsElement* InEffectsElement, FVector Location, float Delay)
 {
 	if (!CoroutineScheduler)
 		return nullptr;
@@ -4504,27 +4406,12 @@ FCsRoutine* UCsCommon::AllocateAndActivateEmitter(ACsCoroutineScheduler* Corouti
 
 	Coroutine Function = &UShooterStatics::AllocateAndActivateEmitter_Internal;
 
-	if (CoroutineSchedule == ECoroutineSchedule::Tick)
-	{
-		R = CoroutineScheduler->Allocate(Function, true, false);
-	}
-	else
-	{
-		R = CoroutineScheduler->CalcCamera_Allocate(Function, true, false);
-	}
+	R = CoroutineScheduler->Allocate(ScheduleType, Function, true, false);
 
 	R->timers[0] = CoroutineScheduler->GetWorld()->TimeSeconds;
 	R->delay = Delay;
 
-	if (CoroutineSchedule == ECoroutineSchedule::Tick)
-	{
-		CoroutineScheduler->StartRoutine(R);
-	}
-	else
-	{
-		CoroutineScheduler->CalcCamera_StartRoutine(R);
-	}
-
+	CoroutineScheduler->StartRoutine(ScheduleType, R);
 	return R;
 }
 */

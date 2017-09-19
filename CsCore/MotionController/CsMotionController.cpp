@@ -400,6 +400,8 @@ void ACsMotionController::RemoveRoutine_Internal(struct FCsRoutine* Routine, con
 
 void ACsMotionController::Setup_OnCalcCamera()
 {
+	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+
 	CsCoroutine Function		  = &ACsMotionController::Setup_OnCalcCamera_Internal;
 	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckActor;
 	CsAddRoutine Add			  = &ACsMotionController::AddRoutine;
@@ -407,9 +409,9 @@ void ACsMotionController::Setup_OnCalcCamera()
 	const uint8 Type			  = (uint8)ECsRoutineMotionController::Setup_OnCalcCamera_Internal;
 
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsRoutine* R					 = Scheduler->Allocate(Function, Stop, this, Add, Remove, Type, true, false);
+	FCsRoutine* R					 = Scheduler->Allocate(Schedule, Function, Stop, this, Add, Remove, Type, true, false);
 
-	Scheduler->StartRoutine(R);
+	Scheduler->StartRoutine(Schedule, R);
 }
 
 PT_THREAD(ACsMotionController::Setup_OnCalcCamera_Internal(struct FCsRoutine* r))

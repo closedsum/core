@@ -128,6 +128,8 @@ bool ACsGameState::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint
 
 void ACsGameState::OnBoard()
 {
+	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+
 	CsCoroutine Function		  = &ACsGameState::OnBoard_Internal;
 	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckActor;
 	CsAddRoutine Add			  = &ACsGameState::AddRoutine;
@@ -135,9 +137,9 @@ void ACsGameState::OnBoard()
 	const uint8 Type			  = (uint8)ECsGameStateRoutine::OnBoard_Internal;
 
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsRoutine* R					 = Scheduler->Allocate(Function, Stop, this, Add, Remove, Type, true, false);
+	FCsRoutine* R					 = Scheduler->Allocate(Schedule, Function, Stop, this, Add, Remove, Type, true, false);
 
-	Scheduler->StartRoutine(R);
+	Scheduler->StartRoutine(Schedule, R);
 }
 
 CS_COROUTINE(ACsGameState, OnBoard_Internal)

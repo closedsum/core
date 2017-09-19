@@ -121,6 +121,8 @@ bool UCsGameInstance::RemoveRoutine_Internal(struct FCsRoutine* Routine, const u
 
 void UCsGameInstance::OnBoard()
 {
+	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+
 	CsCoroutine Function		  = &UCsGameInstance::OnBoard_Internal;
 	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
 	CsAddRoutine Add			  = &UCsGameInstance::AddRoutine;
@@ -128,9 +130,9 @@ void UCsGameInstance::OnBoard()
 	const uint8 Type			  = (uint8)ECsGameInstanceRoutine::OnBoard_Internal;
 
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsRoutine* R					 = Scheduler->Allocate(Function, Stop, this, Add, Remove, Type, true, false);
+	FCsRoutine* R					 = Scheduler->Allocate(Schedule, Function, Stop, this, Add, Remove, Type, true, false);
 
-	Scheduler->StartRoutine(R);
+	Scheduler->StartRoutine(Schedule, R);
 }
 
 CS_COROUTINE(UCsGameInstance, OnBoard_Internal)
@@ -183,6 +185,8 @@ void UCsGameInstance::LoadDataMapping()
 		return;
 	}
 
+	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+
 	CsCoroutine Function		  = &UCsGameInstance::LoadDataMapping_Internal;
 	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
 	CsAddRoutine Add			  = &UCsGameInstance::AddRoutine;
@@ -190,9 +194,9 @@ void UCsGameInstance::LoadDataMapping()
 	const uint8 Type			  = (uint8)ECsGameInstanceRoutine::LoadDataMapping_Internal;
 
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsRoutine* R					 = Scheduler->Allocate(Function, Stop, this, Add, Remove, Type, true, false);
+	FCsRoutine* R					 = Scheduler->Allocate(Schedule, Function, Stop, this, Add, Remove, Type, true, false);
 
-	Scheduler->StartRoutine(R);
+	Scheduler->StartRoutine(Schedule, R);
 }
 
 PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(struct FCsRoutine* r))

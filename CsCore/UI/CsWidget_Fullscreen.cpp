@@ -86,6 +86,8 @@ bool UCsWidget_Fullscreen::RemoveRoutine_Internal(struct FCsRoutine* Routine, co
 
 void UCsWidget_Fullscreen::FadeOut(const TEnumAsByte<ECsEasingType::Type> &EasingType, const float &Start, const float &End, const float &Time, const FLinearColor &Color)
 {
+	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+
 	CsCoroutine Function		  = &UCsWidget_Fullscreen::Fade_Internal;
 	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
 	CsAddRoutine Add			  = &UCsUserWidget::AddRoutine;
@@ -93,7 +95,7 @@ void UCsWidget_Fullscreen::FadeOut(const TEnumAsByte<ECsEasingType::Type> &Easin
 	const uint8 RoutineType		  = (uint8)ECsWidgetFullscreenRoutine::FadeOut_Internal;
 
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsRoutine* R					 = Scheduler->Allocate(Function, Stop, this, Add, Remove, RoutineType, true, false);
+	FCsRoutine* R					 = Scheduler->Allocate(Schedule, Function, Stop, this, Add, Remove, RoutineType, true, false);
 
 	R->ints[0] = (int32)EasingType;
 	R->floats[0] = Start;
@@ -101,11 +103,13 @@ void UCsWidget_Fullscreen::FadeOut(const TEnumAsByte<ECsEasingType::Type> &Easin
 	R->floats[2] = Time;
 	R->colors[0] = Color;
 
-	Scheduler->StartRoutine(R);
+	Scheduler->StartRoutine(Schedule, R);
 }
 
 void UCsWidget_Fullscreen::FadeIn(const TEnumAsByte<ECsEasingType::Type> &EasingType, const float &Start, const float &End, const float &Time, const FLinearColor &Color)
 {
+	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+
 	CsCoroutine Function		  = &UCsWidget_Fullscreen::Fade_Internal;
 	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
 	CsAddRoutine Add			  = &UCsUserWidget::AddRoutine;
@@ -113,7 +117,7 @@ void UCsWidget_Fullscreen::FadeIn(const TEnumAsByte<ECsEasingType::Type> &Easing
 	const uint8 RoutineType		  = (uint8)ECsWidgetFullscreenRoutine::FadeIn_Internal;
 
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsRoutine* R					 = Scheduler->Allocate(Function, Stop, this, Add, Remove, RoutineType, true, false);
+	FCsRoutine* R					 = Scheduler->Allocate(Schedule, Function, Stop, this, Add, Remove, RoutineType, true, false);
 
 	R->ints[0] = (int32)EasingType;
 	R->floats[0] = Start;
@@ -121,7 +125,7 @@ void UCsWidget_Fullscreen::FadeIn(const TEnumAsByte<ECsEasingType::Type> &Easing
 	R->floats[2] = Time;
 	R->colors[0] = Color;
 
-	Scheduler->StartRoutine(R);
+	Scheduler->StartRoutine(Schedule, R);
 }
 
 CS_COROUTINE(UCsWidget_Fullscreen, Fade_Internal)

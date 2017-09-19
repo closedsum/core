@@ -36,6 +36,8 @@ ACsJavascriptEntryPoint::ACsJavascriptEntryPoint(const FObjectInitializer& Objec
 
 void ACsJavascriptEntryPoint::Setup()
 {
+	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+
 	CsCoroutine Function		  = &ACsJavascriptEntryPoint::Setup_Internal;
 	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckActor;
 	CsAddRoutine Add			  = &ACsJavascriptEntryPoint::AddRoutine;
@@ -43,10 +45,10 @@ void ACsJavascriptEntryPoint::Setup()
 	const uint8 Type			  = (uint8)ECsRoutineJavascriptEntryPoint::Setup_Internal;
 
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsRoutine* R					 = Scheduler->Allocate(Function, Stop, this, Add, Remove, Type, true, false);
+	FCsRoutine* R					 = Scheduler->Allocate(Schedule, Function, Stop, this, Add, Remove, Type, true, false);
 	Setup_Internal_Routine			 = R;
 
-	Scheduler->StartRoutine(R);
+	Scheduler->StartRoutine(Schedule, R);
 }
 
 PT_THREAD(ACsJavascriptEntryPoint::Setup_Internal(FCsRoutine* r))

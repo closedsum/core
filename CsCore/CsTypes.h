@@ -4028,6 +4028,7 @@ namespace ECsCoroutineSchedule
 	{
 		Tick						UMETA(DisplayName = "Tick"),
 		CalcCamera					UMETA(DisplayName = "CalcCamera"),
+		LastTick					UMETA(DisplayName = "LastTick"),
 		ECsCoroutineSchedule_MAX	UMETA(Hidden),
 	};
 }
@@ -4040,12 +4041,14 @@ namespace ECsCoroutineSchedule
 	{
 		const TCsString Tick = TCsString(TEXT("Tick"), TEXT("tick"));
 		const TCsString CalcCamera = TCsString(TEXT("CalcCamera"), TEXT("calccamera"));
+		const TCsString LastTick = TCsString(TEXT("LastTick"), TEXT("lasttick"));
 	}
 
 	FORCEINLINE FString ToString(const Type &EType)
 	{
 		if (EType == Type::Tick) { return Str::Tick.Value; }
 		if (EType == Type::CalcCamera) { return Str::CalcCamera.Value; }
+		if (EType == Type::LastTick) { return Str::LastTick.Value; }
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
@@ -4053,12 +4056,12 @@ namespace ECsCoroutineSchedule
 	{
 		if (String == Str::Tick) { return Type::Tick; }
 		if (String == Str::CalcCamera) { return Type::CalcCamera; }
+		if (String == Str::LastTick) { return Type::LastTick; }
 		return Type::ECsCoroutineSchedule_MAX;
 	}
 }
 
 #define ECS_COROUTINE_SCHEDULE_MAX (uint8)ECsCoroutineSchedule::ECsCoroutineSchedule_MAX
-//typedef ECsCoroutineSchedule TCsCoroutineSchedule;
 typedef TEnumAsByte<ECsCoroutineSchedule::Type> TCsCoroutineSchedule;
 
 UENUM(BlueprintType)
@@ -4165,9 +4168,21 @@ struct FCsRoutine
 	void* voidPointers[CS_ROUTINE_VOID_POINTER_SIZE];
 	void** voidDoublePointers[CS_ROUTINE_VOID_DOUBLE_POINTER_SIZE];
 
-	void Init(struct FCsRoutine* inSelf, UCsCoroutineScheduler* inScheduler, const int32 &inPoolIndex)
+	FCsRoutine()
 	{
-		self = inSelf;
+		self   = nullptr;
+		parent = nullptr;
+
+		children.Reset();
+
+		scheduler = nullptr;
+
+		Reset();
+	}
+
+	void Init(UCsCoroutineScheduler* inScheduler, const int32 &inPoolIndex)
+	{
+		self	  = this;
 		scheduler = inScheduler;
 		poolIndex = inPoolIndex;
 
@@ -4244,7 +4259,7 @@ struct FCsRoutine
 	void End()
 	{
 		if (ownerMemberRoutine)
-			*ownerMemberRoutine = NULL;
+			*ownerMemberRoutine = nullptr;
 		else
 		if (GetOwner() && removeRoutine)
 			(*removeRoutine)(GetOwner(), self, type);

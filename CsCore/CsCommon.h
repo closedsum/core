@@ -854,27 +854,27 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	static void EndRoutine(struct FCsRoutine* r);
 	static void EndAndClearRoutine(struct FCsRoutine* &r);
 
-	static FCsRoutine* ScaleActorOverTime(const TCsCoroutineSchedule &CoroutineSchedule, const TEnumAsByte<ECsEasingType::Type> &EasingType, AActor* InActor, const float &StartScale, const float &EndScale, const float &Time, const bool &IsRelativeScale=false);
-	static FCsRoutine* ScaleActorOverTime(const TCsCoroutineSchedule &CoroutineSchedule, const TEnumAsByte<ECsEasingType::Type> &EasingType, AActor* InActor, const FVector &StartScale, const FVector &EndScale, const float &Time, const bool &IsRelativeScale=false);
-	static FCsRoutine* ScaleActorOverTime(const TCsCoroutineSchedule &CoroutineSchedule, UCurveBase* Curve, AActor* InActor, const float &StartScale, const float &EndScale, const float &Time, const bool &IsRelativeScale=false);
-	static FCsRoutine* ScaleActorOverTime(const TCsCoroutineSchedule &CoroutineSchedule, UCurveBase* Curve, AActor* InActor, const FVector &StartScale, const FVector &EndScale, const float &Time, const bool &IsRelativeScale=false);
+	static FCsRoutine* ScaleActorOverTime(const TCsCoroutineSchedule &ScheduleType, const TEnumAsByte<ECsEasingType::Type> &EasingType, AActor* InActor, const float &StartScale, const float &EndScale, const float &Time, const bool &IsRelativeScale=false);
+	static FCsRoutine* ScaleActorOverTime(const TCsCoroutineSchedule &ScheduleType, const TEnumAsByte<ECsEasingType::Type> &EasingType, AActor* InActor, const FVector &StartScale, const FVector &EndScale, const float &Time, const bool &IsRelativeScale=false);
+	static FCsRoutine* ScaleActorOverTime(const TCsCoroutineSchedule &ScheduleType, UCurveBase* Curve, AActor* InActor, const float &StartScale, const float &EndScale, const float &Time, const bool &IsRelativeScale=false);
+	static FCsRoutine* ScaleActorOverTime(const TCsCoroutineSchedule &ScheduleType, UCurveBase* Curve, AActor* InActor, const FVector &StartScale, const FVector &EndScale, const float &Time, const bool &IsRelativeScale=false);
 	static char ScaleActorOverTime_Internal(struct FCsRoutine* r);
 
-	static FCsRoutine* ScaleActorOverTime_AsCurve(const TCsCoroutineSchedule &CoroutineSchedule, UCurveBase* Curve, AActor* InActor, const bool &IsRelativeScale = false);
+	static FCsRoutine* ScaleActorOverTime_AsCurve(const TCsCoroutineSchedule &ScheduleType, UCurveBase* Curve, AActor* InActor, const bool &IsRelativeScale = false);
 	static char ScaleActorOverTime_AsCurve_Internal(struct FCsRoutine* r);
 
-	static FCsRoutine* MoveActorOverTime(const TCsCoroutineSchedule &CoroutineSchedule, const TEnumAsByte<ECsEasingType::Type> &EasingType, AActor* InActor, const FVector &StartLocation, const FVector &EndLocation, const float &Time, const bool &IsRelativeLocation=false);
+	static FCsRoutine* MoveActorOverTime(const TCsCoroutineSchedule &ScheduleType, const TEnumAsByte<ECsEasingType::Type> &EasingType, AActor* InActor, const FVector &StartLocation, const FVector &EndLocation, const float &Time, const bool &IsRelativeLocation=false);
 	static char MoveActorOverTime_Internal(struct FCsRoutine* r);
 	/*
 	static FCsRoutine* DeAllocateActor(const TCsCoroutineSchedule &CoroutineSchedule, AActor* InActor, const int32 &Index, const float &Delay);
 	static char DeAllocateActor_Internal(struct FCsRoutine* r);
 	*/
-	static FCsRoutine* DestroyMaterialInstanceDynamic(const TCsCoroutineSchedule &CoroutineSchedule, UMaterialInstanceDynamic* InMID, const float &Delay);
+	static FCsRoutine* DestroyMaterialInstanceDynamic(const TCsCoroutineSchedule &ScheduleType, UMaterialInstanceDynamic* InMID, const float &Delay);
 	static char DestroyMaterialInstanceDynamic_Internal(struct FCsRoutine* r);
 
-	static FCsRoutine* DestroyMaterialInstanceDynamics(const TCsCoroutineSchedule &CoroutineSchedule, TArray<UMaterialInstanceDynamic*>& InMIDs, const float &Delay);
+	static FCsRoutine* DestroyMaterialInstanceDynamics(const TCsCoroutineSchedule &ScheduleType, TArray<UMaterialInstanceDynamic*>& InMIDs, const float &Delay);
 
-	static FCsRoutine* FadeCameraOverTime(const TCsCoroutineSchedule &CoroutineSchedule, const TEnumAsByte<ECsEasingType::Type> &EasingType, APlayerController* Controller, const float &Start, const float &End, const float &Time, const FLinearColor &Color);
+	static FCsRoutine* FadeCameraOverTime(const TCsCoroutineSchedule &ScheduleType, const TEnumAsByte<ECsEasingType::Type> &EasingType, APlayerController* Controller, const float &Start, const float &End, const float &Time, const FLinearColor &Color);
 	static char FadeCameraOverTime_Internal(struct FCsRoutine* r);
 	/*
 	static FCsRoutine* AllocateAndActivateEmitter(TCsCoroutineSchedule CoroutineSchedule, FCsFxElement* InEffectsElement, FVector Location, float Delay);

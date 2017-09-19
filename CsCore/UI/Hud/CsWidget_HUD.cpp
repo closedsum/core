@@ -1,8 +1,8 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
-#include "UI/Menu/CsMenuWidget.h"
+#include "UI/Hud/CsWidget_HUD.h"
 #include "CsCore.h"
 
-UCsMenuWidget::UCsMenuWidget(const FObjectInitializer& ObjectInitializer)
+UCsWidget_HUD::UCsWidget_HUD(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }

@@ -48,3 +48,5 @@ bool UCsUserWidget::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uin
 }
 
 #pragma endregion Routines
+
+bool UCsUserWidget::ProcessGameEvent(const TCsGameEvent &GameEvent) { return false; }

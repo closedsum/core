@@ -41,6 +41,7 @@ public:
 	virtual void BuildInputStack(TArray<UInputComponent*>& InputStack) override;
 
 	virtual void PreProcessInput(const float DeltaTime, const bool bGamePaused) override;
+	virtual bool CanPostProcessInput();
 	virtual void PostProcessInput(const float DeltaTime, const bool bGamePaused) override;
 
 #if WITH_EDITOR

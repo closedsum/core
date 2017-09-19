@@ -52,4 +52,8 @@ UCsUserWidget* ACsUI::GetActiveWidget(const TCsWidgetType &WidgetType)
 bool ACsUI::HasWidgetInitialized(const TCsWidgetType &WidgetType) { return true; }
 
 void ACsUI::Open(const TCsWidgetType &WidgetType){}
+bool ACsUI::IsOpened(const TCsWidgetType &WidgetType) { return GetActiveWidget(WidgetType) != nullptr; }
 void ACsUI::Close(const TCsWidgetType &WidgetType){}
+bool ACsUI::IsClosed(const TCsWidgetType &WidgetType) { return GetActiveWidget(WidgetType) == nullptr; }
+
+bool ACsUI::ProcessGameEvent(const TCsGameEvent &GameEvent) { return false; }

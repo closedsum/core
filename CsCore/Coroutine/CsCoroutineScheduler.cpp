@@ -583,3 +583,23 @@ void UCsCoroutineScheduler::OnTick_Update(const float &DeltaSeconds)
 }
 
 #pragma endregion Run on Tick
+
+// Run on CalcCamera
+#pragma region
+
+void UCsCoroutineScheduler::OnCalcCamera_Update(const float &DeltaSeconds)
+{
+	Update(ECsCoroutineSchedule::CalcCamera, DeltaSeconds);
+}
+
+#pragma endregion Run on CalcCamera
+
+// Run on LastTick
+#pragma region
+
+void UCsCoroutineScheduler::OnLastTick_Update(const float &DeltaSeconds)
+{
+	Update(ECsCoroutineSchedule::LastTick, DeltaSeconds);
+}
+
+#pragma endregion Run on LastTick

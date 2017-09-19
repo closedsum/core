@@ -4958,14 +4958,20 @@ struct FCsInputFrame
 // Game
 #pragma region
 
-#define CS_MAX_GAME_EVENTS 32
-
 namespace ECsGameEvent
+{
+	enum Type : uint8;
+}
+
+typedef ECsGameEvent::Type TCsGameEvent;
+
+namespace ECsRep_GameEvent
 {
 	enum BitMask : int32;
 }
 
-typedef ECsGameEvent::BitMask TCsGameEvent;
+#define CS_MAX_REP_GAME_EVENTS 32
+typedef ECsRep_GameEvent::BitMask TCsRep_GameEvent;
 
 #pragma endregion
 

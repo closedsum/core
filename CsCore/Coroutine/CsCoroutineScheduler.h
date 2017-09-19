@@ -110,6 +110,20 @@ public:
 
 #pragma endregion Run on Tick
 
+// Run on CalcCamera
+#pragma region
+
+	void OnCalcCamera_Update(const float &DeltaSeconds);
+
+#pragma endregion Run on CalcCamera
+
+// Run on LastTick
+#pragma region
+
+	void OnLastTick_Update(const float &DeltaSeconds);
+
+#pragma endregion Run on LastTick
+
 private:
 	// Singleton data
 	static UCsCoroutineScheduler* s_coroutineSchedulerSingleton;

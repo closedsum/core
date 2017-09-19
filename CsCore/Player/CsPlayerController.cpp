@@ -8,10 +8,7 @@ ACsPlayerController::ACsPlayerController(const FObjectInitializer& ObjectInitial
 {
 }
 
-void ACsPlayerController::OnTickActor_CheckCVars()
-{
-
-}
+void ACsPlayerController::OnTickActor_CheckCVars(){}
 
 void ACsPlayerController::BuildInputStack(TArray<UInputComponent*>& InputStack)
 {
@@ -33,6 +30,6 @@ void ACsPlayerController::PreProcessInput(const float DeltaTime, const bool bGam
 	}
 }
 
-void ACsPlayerController::PostProcessInput(const float DeltaTime, const bool bGamePaused)
-{
-}
+bool ACsPlayerController::CanPostProcessInput() { return true; }
+
+void ACsPlayerController::PostProcessInput(const float DeltaTime, const bool bGamePaused){}

@@ -49,5 +49,9 @@ public:
 	virtual bool HasWidgetInitialized(const TCsWidgetType &WidgetType);
 
 	virtual void Open(const TCsWidgetType &WidgetType);
+	virtual bool IsOpened(const TCsWidgetType &WidgetType);
 	virtual void Close(const TCsWidgetType &WidgetType);
+	virtual bool IsClosed(const TCsWidgetType &WidgetType);
+
+	virtual bool ProcessGameEvent(const TCsGameEvent &GameEvent);
 };

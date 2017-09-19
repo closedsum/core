@@ -1,10 +1,10 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "UI/CsUserWidget.h"
-#include "CsHudWidget.generated.h"
+#include "CsWidget_Menu.generated.h"
 
 UCLASS()
-class CSCORE_API UCsHudWidget : public UCsUserWidget
+class CSCORE_API UCsWidget_Menu : public UCsUserWidget
 {
 	GENERATED_UCLASS_BODY()
 };

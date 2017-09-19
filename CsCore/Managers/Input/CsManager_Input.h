@@ -138,31 +138,11 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 																AddInput(ECsInputAction::INPUT, ECsInputEvent::FirstReleased); \
 															}
 
-
-#define CS_DEFINE_INPUT_ACTION_MEMBERS_FB(CLASS, INPUT, MAP, FUNCTION_NAME)	void CLASS::INPUT##_FirstPressed() \
-															{ \
-																CLASS::FUNCTION_NAME(); \
-																if (((MAP) & CurrentInputActionMap) != CurrentInputActionMap) \
-																	return; \
-																INPUT.Event = ECsInputEvent::FirstPressed; \
-																AddInput(ECsInputAction::INPUT, ECsInputEvent::FirstPressed); \
-															} \
-															void CLASS::INPUT##_Pressed() \
-															{ \
-																if (INPUT.Last_Event == ECsInputEvent::FirstPressed) \
-																	INPUT.Event = ECsInputEvent::Pressed; \
-																AddInput(ECsInputAction::INPUT, ECsInputEvent::Pressed); \
-															} \
-															void CLASS::INPUT##_FirstReleased() \
-															{ \
-																INPUT.Event = ECsInputEvent::FirstReleased; \
-																AddInput(ECsInputAction::INPUT, ECsInputEvent::FirstReleased); \
-															}
-
-
 // Example: THIS = this, CLASS = ACsManager_Input (if class is ACsManager_Input), INPUT = Fire
 #define CS_BIND_ACTION_INPUT(THIS, CLASS, INPUT) 	InputComponent->BindAction(#INPUT, IE_Pressed, this, &CLASS::INPUT##_FirstPressed).bConsumeInput = false; \
 													InputComponent->BindAction(#INPUT, IE_Released, this, &CLASS::INPUT##_FirstReleased).bConsumeInput = false;
+
+#define CS_IS_INPUT_ACTION_FIRST_PRESSED(Input, ACTION) Input->Action == ECsInputAction::ACTION && Input->Event == ECsInputEvent::FirstPressed
 
 // Example: CLASS = CsManagerInput (if class is ACsManager_Input), INPUT = TurnAtRate
 #define CS_DECLARE_INPUT_AXIS_MEMBERS(INPUT)	FCsInputInfo INPUT; \
@@ -408,8 +388,6 @@ DECLARE_MULTICAST_DELEGATE(FBindableEvent_CsManagerInput_RunEditorGameJavascript
 
 // Game Action Delegates
 
-DECLARE_DELEGATE_RetVal_OneParam(bool, FBindableEvent_CsManagerInput_CanPerformGameEvent, const ECsGameEvent::BitMask&);
-
 typedef FString(*TCsInputActionToString)(const TCsInputAction&);
 typedef FString(*TCsInputEventToString)(const ECsInputEvent::Type&);
 
@@ -460,8 +438,6 @@ class CSCORE_API ACsManager_Input : public AActor
 	FCsInput* GetPreviousInputAction(const TCsInputAction &Action, const TArray<TCsInputEvent> &Events);
 	FCsInput* GetPreviousPreviousInputAction(const TCsInputAction &Action);
 
-	TArray<ECsGameEvent::BitMask> GameEvents;
-
 	virtual void DetermineGameEvents(const TArray<FCsInput*> &Inputs);
 
 	bool HasActionEventOccured(const TCsInputAction &Action, const TCsInputEvent &Event);
@@ -506,9 +482,6 @@ protected:
 
 	TArray<TCsInputEvent*> Actions;
 	TArray<TCsInputEvent*> Last_Actions;
-
-public:
-	FBindableEvent_CsManagerInput_CanPerformGameEvent CanPerformGameEvent;
 
 	// Pressed Events
 #pragma region

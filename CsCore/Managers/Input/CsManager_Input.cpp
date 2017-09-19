@@ -60,7 +60,6 @@ void ACsManager_Input::PreProcessInput(const float DeltaTime, const bool bGamePa
 	CurrentInputFrameIndex = (CurrentInputFrameIndex + 1) % CS_MAX_INPUT_FRAMES;
 
 	InputFrames[CurrentInputFrameIndex].Init(GetWorld()->TimeSeconds, GetWorld()->RealTimeSeconds, DeltaTime, CurrentGameFrame);
-	GameEvents.Reset();
 
 	const bool IsVR = UCsCommon::IsVR();
 
@@ -569,15 +568,6 @@ FCsInput* ACsManager_Input::GetPreviousPreviousInputAction(const TCsInputAction 
 
 void ACsManager_Input::DetermineGameEvents(const TArray<FCsInput*> &Inputs)
 {
-	GameEvents.Reset();
-
-	const int32 EventCount = GameEvents.Num();
-
-	for (int32 I = EventCount - 1; I >=0; I--)
-	{
-		if (CanPerformGameEvent.IsBound() && !CanPerformGameEvent.Execute(GameEvents[I]))
-			GameEvents.RemoveAt(I);
-	}
 }
 
 bool ACsManager_Input::HasActionEventOccured(const TCsInputAction &Action, const TCsInputEvent &Event)

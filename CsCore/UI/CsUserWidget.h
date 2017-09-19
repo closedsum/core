@@ -533,4 +533,6 @@ public:
 	virtual bool RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType);
 
 #pragma endregion Routines
+
+	virtual bool ProcessGameEvent(const TCsGameEvent &GameEvent);
 };

@@ -12,6 +12,9 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsUserWidget_OnNativeTick, const FGeometry&, MyGeometry, float, InDeltaTime);
 
+#define CS_WIDGET_DEFINE_TYPE(TYPE)	Type = ECsWidgetType::TYPE; \
+									Type_Script = (uint8)Type;
+
 // Enums
 #pragma region
 
@@ -238,6 +241,80 @@ public:
 	}
 
 	UImage* Get() { return Image.IsValid() ? Image.Get() : nullptr; }
+};
+
+struct FCsWidget_Button : FCsWidget
+{
+public:
+	TWeakObjectPtr<class UButton> Button;
+
+	FCsPrimitiveType<FLinearColor> Color;
+
+public:
+	FCsWidget_Button()
+	{
+	}
+
+	void Set(class UButton* inButton)
+	{
+		Button = inButton;
+		Color  = Button->BackgroundColor;
+	}
+
+	virtual void OnNativeTick(const float &InDeltaTime) override
+	{
+		// Visibility
+		if (Visibility.HasChanged())
+		{
+			if (UButton* B = Get())
+				B->SetVisibility(Visibility.Get());
+		}
+		if (Visibility != ESlateVisibility::Visible)
+		{
+			Visibility.Clear();
+			return;
+		}
+		// Color
+		if (Color.HasChanged())
+		{
+			if (UButton* B = Get())
+				B->SetBackgroundColor(Color.Get());
+		}
+		Visibility.Clear();
+		Color.Clear();
+	}
+
+	void SetBackgroundColor(const FLinearColor &inColor)
+	{
+		Color = inColor;
+	}
+
+	UButton* Get() { return Button.IsValid() ? Button.Get() : nullptr; }
+};
+
+struct FCsWidget_ButtonAndText : FCsWidget
+{
+	FCsWidget_Button Button;
+	FCsWidget_Text Text;
+
+	virtual void OnNativeTick(const float &InDeltaTime) override
+	{
+		// Visibility
+		if (Visibility.HasChanged())
+		{
+			Button.SetVisibility(Visibility.Get());
+			Text.SetVisibility(Visibility.Get());
+		}
+
+		Button.OnNativeTick(InDeltaTime);
+		Text.OnNativeTick(InDeltaTime);
+
+		if (Visibility != ESlateVisibility::Visible)
+		{
+			Visibility.Clear();
+			return;
+		}
+	}
 };
 
 struct FCsWidget_Loading

@@ -7,7 +7,7 @@
 #include "Coroutine/CsCoroutineScheduler.h"
 #include "Game/CsGameState.h"
 #include "Player/CsPlayerController.h"
-#include "UI/Hud/CsHUD.h"
+#include "UI/CsUI.h"
 #include "Player/CsPlayerState.h"
 
 // Managers
@@ -59,7 +59,7 @@ PT_THREAD(ACsJavascriptEntryPoint::Setup_Internal(FCsRoutine* r))
 	ACsGameState* gs			= w->GetGameState<ACsGameState>();
 	UCsCoroutineScheduler* s	= r->scheduler;
 	ACsPlayerController* pc		= UCsCommon::GetLocalPlayerController<ACsPlayerController>(w);
-	ACsHUD* hud					= pc ? Cast<ACsHUD>(pc->MyHUD) : nullptr;
+	ACsUI* hud					= pc ? Cast<ACsUI>(pc->MyHUD) : nullptr;
 	ACsPlayerState* ps			= UCsCommon::GetLocalPlayerState<ACsPlayerState>(w);
 
 	CS_COROUTINE_BEGIN(r);

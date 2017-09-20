@@ -24,16 +24,16 @@ ACsGameState::ACsGameState(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bStartWithTickEnabled = true;
 
 	JavascriptEntryPointClass = ACsJavascriptEntryPoint::StaticClass();
 }
 
 void ACsGameState::Tick(float DeltaSeconds)
 {
-	PrimaryActorTick.bCanEverTick = true;
-	PrimaryActorTick.bStartWithTickEnabled = true;
-
 	Super::Tick(DeltaSeconds);
+
+	OnTick_HandleBroadcastingPlayerStateFullyReplicatedAndLoaded();
 }
 
 void ACsGameState::PostActorCreated()

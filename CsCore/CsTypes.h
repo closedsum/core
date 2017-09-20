@@ -4770,8 +4770,10 @@ struct FCsInput
 	bool IsAllocated;
 
 	ECsInputAction::Type Action;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Input")
 	uint8 Action_Script;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	FString ActionAsString;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	TEnumAsByte<ECsInputEvent::Type> Event;
@@ -4953,6 +4955,409 @@ struct FCsInputFrame
 	}
 };
 
+USTRUCT()
+struct FCsInputWord
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(BlueprintReadOnly, Category = "Input")
+	bool Completed;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Input")
+	float CompletedTime;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Input")
+	bool Consume;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	TArray<FCsInput> AndInputs;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	TArray<FCsInput> OrInputs;
+
+	FCsInputWord()
+	{
+		Completed = false;
+		CompletedTime = 0.0f;
+		Consume = false;
+	}
+
+	void AddAndInput(const TCsInputAction &Action, const TCsInputEvent &Event, const float &Value, const FVector &Location, const FRotator &Rotation)
+	{
+		AndInputs.AddDefaulted();
+		const int32 Index = AndInputs.Num() - 1;
+		AndInputs[Index].Action = Action;
+		AndInputs[Index].Event = Event;
+		AndInputs[Index].Value = Value;
+		AndInputs[Index].Location = Location;
+		AndInputs[Index].Rotation = Rotation;
+	}
+
+	void AddAndInput(const TCsInputAction &Action, const TCsInputEvent &Event)
+	{
+		AddAndInput(Action, Event, 0.0f, FVector::ZeroVector, FRotator::ZeroRotator);
+	}
+
+	void AddAndInput(const TCsInputAction &Action, const TCsInputEvent &Event, const float &Value)
+	{
+		AddAndInput(Action, Event, Value, FVector::ZeroVector, FRotator::ZeroRotator);
+	}
+
+	void AddAndInput(const TCsInputAction &Action, const TCsInputEvent &Event, const FVector &Location)
+	{
+		AddAndInput(Action, Event, 0.0f, Location, FRotator::ZeroRotator);
+	}
+
+	void AddAndInput(const TCsInputAction &Action, const TCsInputEvent &Event, const FRotator &Rotation)
+	{
+		AddAndInput(Action, Event, 0.0f, FVector::ZeroVector, Rotation);
+	}
+
+	void AddOrInput(const TCsInputAction &Action, const TCsInputEvent &Event, const float &Value, const FVector &Location, const FRotator &Rotation)
+	{
+		OrInputs.AddDefaulted();
+		const int32 Index = OrInputs.Num() - 1;
+		OrInputs[Index].Action = Action;
+		OrInputs[Index].Event = Event;
+		OrInputs[Index].Value = Value;
+		OrInputs[Index].Location = Location;
+		OrInputs[Index].Rotation = Rotation;
+	}
+
+	void AddOrInput(const TCsInputAction &Action, const TCsInputEvent &Event)
+	{
+		AddOrInput(Action, Event, 0.0f, FVector::ZeroVector, FRotator::ZeroRotator);
+	}
+
+	void AddOrInput(const TCsInputAction &Action, const TCsInputEvent &Event, const float &Value)
+	{
+		AddOrInput(Action, Event, Value, FVector::ZeroVector, FRotator::ZeroRotator);
+	}
+
+	void AddOrInput(const TCsInputAction &Action, const TCsInputEvent &Event, const FVector &Location)
+	{
+		AddOrInput(Action, Event, 0.0f, Location, FRotator::ZeroRotator);
+	}
+
+	void AddOrInput(const TCsInputAction &Action, const TCsInputEvent &Event, const FRotator &Rotation)
+	{
+		AddOrInput(Action, Event, 0.0f, FVector::ZeroVector, Rotation);
+	}
+
+	void Reset()
+	{
+		Completed = false;
+	}
+
+	void ProcessInput(FCsInputFrame &InputFrame)
+	{
+		int32 And = 0;
+		bool Or   = false;
+
+		const int32 Count = InputFrame.Inputs.Num();
+
+		for (int32 I = Count - 1; I >= 0; I--)
+		{
+			FCsInput* Input = InputFrame.Inputs[I];
+
+			// Check And
+			const int32 AndCount = AndInputs.Num();
+
+			for (int32 J = And; J < AndCount; J++)
+			{
+				if (Input->Action == AndInputs[J].Action &&
+					Input->Event == AndInputs[J].Event)
+				{
+					And++;
+				}
+			}
+			// Check Or
+			const int32 OrCount = OrInputs.Num();
+
+			for (int32 J = 0; J < OrCount; J++)
+			{
+				Or |= Input->Action == OrInputs[J].Action && Input->Event == OrInputs[J].Event;
+
+				if (Or)
+					break;
+			}
+
+			Completed = (And > 0 && And == AndCount) || Or;
+
+			if (Completed)
+			{
+				if (Consume)
+					InputFrame.Inputs.RemoveAt(I);
+				CompletedTime = InputFrame.Time;
+				break;
+			}
+		}
+	}
+};
+
+USTRUCT()
+struct FCsInputPhrase
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(BlueprintReadOnly, Category = "Input")
+	bool Completed;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Input")
+	float CompletedTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	bool UseInterval;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float Interval;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	bool UseFrames;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (ClampMin = "0", UIMin = "0"))
+	int32 Frames;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	TArray<FCsInputWord> Words;
+
+	FCsInputPhrase()
+	{
+		Completed = false;
+		CompletedTime = 0.0f;
+		UseInterval = false;
+		Interval = 0.0f;
+		UseFrames = false;
+		Frames = 0;
+	}
+
+	void AddAndInputToWord(const int32 &Index, const TCsInputAction &Action, const TCsInputEvent &Event, const float &Value = 0.0f, const FVector &Location = FVector::ZeroVector, const FRotator &Rotation = FRotator::ZeroRotator)
+	{
+		const int32 Count = Words.Num();
+
+		if (Index >= Count)
+		{
+			for (int32 I = 0; I < Index - Count + 1; I++)
+			{
+				Words.AddDefaulted();
+			}
+		}
+		Words[Index].AddAndInput(Action, Event, Value, Location, Rotation);
+	}
+
+	void AddOrInputToWord(const int32 &Index, const TCsInputAction &Action, const TCsInputEvent &Event, const float &Value = 0.0f, const FVector &Location = FVector::ZeroVector, const FRotator &Rotation = FRotator::ZeroRotator)
+	{
+		const int32 Count = Words.Num();
+
+		if (Index >= Count)
+		{
+			for (int32 I = 0; I < Index - Count + 1; I++)
+			{
+				Words.AddDefaulted();
+			}
+		}
+		Words[Index].AddOrInput(Action, Event, Value, Location, Rotation);
+	}
+
+	void Reset()
+	{
+		const int32 Count = Words.Num();
+
+		for (int32 I = 0; I < Count; I++)
+		{
+			Words[I].Reset();
+		}
+		Completed = false;
+		CompletedTime = 0.0f;
+	}
+
+	void ProcessInput(FCsInputFrame &InputFrame)
+	{
+		const float CurrentTime = InputFrame.Time;
+
+		// Check if ALL Words are Completed
+		const int32 Count = Words.Num();
+		int32 Index		  = 0;
+
+		if (UseInterval)
+		{
+			float ElapsedTime			= 0.0f;
+			float EarliestCompletedTime = CurrentTime;
+
+			for (Index = 0; Index < Count; Index++)
+			{
+				if (Words[Index].Completed)
+				{
+					if (Words[Index].CompletedTime < EarliestCompletedTime)
+						EarliestCompletedTime = Words[Index].CompletedTime;
+
+					if (CurrentTime - EarliestCompletedTime > Interval)
+					{
+						Reset();
+
+						Index = 0;
+						break;
+					}
+				}
+
+				Words[Index].ProcessInput(InputFrame);
+
+				if (Index < Count - 1 || !Words[Index].Completed)
+					break;
+			}
+		}
+		else
+		{
+			for (Index = 0; Index < Count; Index++)
+			{
+				if (Words[Index].Completed)
+					continue;
+
+				Words[Index].ProcessInput(InputFrame);
+
+				if (Index < Count - 1 || !Words[Index].Completed)
+					break;
+			}
+
+			if (Index != Count)
+				Reset();
+		}
+		// Check if Completed
+		if (Index > 0 && Index == Count)
+		{
+			Completed = true;
+			CompletedTime = CurrentTime;
+		}
+	}
+};
+
+
+USTRUCT()
+struct FCsInputSentence
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(BlueprintReadOnly, Category = "Input")
+	bool Active;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Input")
+	bool Completed;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Input")
+	float CompletedTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float Cooldown;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	bool UseInterval;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float Interval;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	bool UseFrames;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (ClampMin = "0", UIMin = "0"))
+	int32 Frames;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	TArray<FCsInputPhrase> Phrases;
+
+	FCsInputSentence()
+	{
+		Active = true;
+		Completed = false;
+		CompletedTime = 0.0f;
+		Cooldown = 0.0f;
+		UseInterval = false;
+		Interval = 0.0f;
+		UseFrames = false;
+		Frames = 0;
+	}
+
+	void Reset()
+	{
+		Active = true;
+
+		const int32 Count = Phrases.Num();
+
+		for (int32 I = 0; I < Count; I++)
+		{
+			Phrases[I].Reset();
+		}
+		Completed = false;
+	}
+
+	void ProcessInput(FCsInputFrame &InputFrame)
+	{
+		const float CurrentTime = InputFrame.Time;
+
+		// Check if Cooldown has Expired
+		if (!Active)
+		{
+			if (CurrentTime - CompletedTime >= Cooldown)
+				Reset();
+			else
+				return;
+		}
+		// Check if ALL Phrases are Completed
+		const int32 Count = Phrases.Num();
+		int32 Index		  = 0;
+
+		if (UseInterval)
+		{
+			float ElapsedTime			= 0.0f;
+			float EarliestCompletedTime = CurrentTime;
+
+			for (Index = 0; Index < Count; Index++)
+			{
+				if (Phrases[Index].Completed)
+				{
+					if (Phrases[Index].CompletedTime < EarliestCompletedTime)
+						EarliestCompletedTime = Phrases[Index].CompletedTime;
+
+					if (CurrentTime - EarliestCompletedTime > Interval)
+					{
+						Reset();
+
+						Index = 0;
+						break;
+					}
+				}
+
+				Phrases[Index].ProcessInput(InputFrame);
+
+				if (Index < Count - 1 || !Phrases[Index].Completed)
+					break;
+			}
+		}
+		else
+		{
+			for (Index = 0; Index < Count; Index++)
+			{
+				if (Phrases[Index].Completed)
+					continue;
+
+				Phrases[Index].ProcessInput(InputFrame);
+
+				if (Index < Count - 1 || !Phrases[Index].Completed)
+					break;
+			}
+
+			if (Index != Count)
+				Reset();
+		}
+		// Check if Completed
+		if (Index == Count)
+		{
+			Completed = true;
+			CompletedTime = CurrentTime;
+			Active = false;
+		}
+	}
+};
+
 #pragma endregion Input
 
 // Game
@@ -4972,6 +5377,48 @@ namespace ECsRep_GameEvent
 
 #define CS_MAX_REP_GAME_EVENTS 32
 typedef ECsRep_GameEvent::BitMask TCsRep_GameEvent;
+
+USTRUCT()
+struct FCsGameEventDefinition
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	FCsInputSentence Sentence;
+
+	TCsGameEvent Event;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	uint8 Event_Script;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	FString EventAsString;
+};
+
+#define CS_GAME_EVENT_DEFINITION_START(Definitions, EVENT)	{ \
+																Definitions.AddDefaulted(); \
+																FCsGameEventDefinition& Def = Definitions[Definitions.Num() - 1]; \
+																Def.Event = ECsGameEvent::EVENT; \
+																FCsInputSentence& Sentence = Def.Sentence;
+
+#define CS_INPUT_PHRASE_ADD()	Sentence.Phrases.AddDefaulted(); \
+								FCsInputPhrase& Phrase = Sentence.Phrases[Sentence.Phrases.Num() - 1];
+
+#define CS_INPUT_WORD_START()	{ \
+									Phrase.Words.AddDefaulted(); \
+									FCsInputWord& Word = Phrase.Words[Phrase.Words.Num() - 1]; \
+
+#define CS_INPUT_WORD_ADD_OR_INPUT(ACTION, EVENT)	Word.AddOrInput(ECsInputAction::ACTION, ECsInputEvent::EVENT);
+#define CS_INPUT_WORD_ADD_OR_INPUT_VALUE(ACTION, EVENT, VALUE)	Word.AddOrInput(ECsInputAction::ACTION, ECsInputEvent::EVENT, VALUE);
+#define CS_INPUT_WORD_ADD_OR_INPUT_LOCATION(ACTION, EVENT, LOCATION)	Word.AddOrInput(ECsInputAction::ACTION, ECsInputEvent::EVENT, LOCATION);
+#define CS_INPUT_WORD_ADD_OR_INPUT_ROTATION(ACTION, EVENT, ROTATION)	Word.AddOrInput(ECsInputAction::ACTION, ECsInputEvent::EVENT, ROTATION);
+
+#define CS_INPUT_WORD_ADD_AND_INPUT(ACTION, EVENT)	Word.AddAndInput(ECsInputAction::ACTION, ECsInputEvent::EVENT);
+#define CS_INPUT_WORD_ADD_AND_INPUT_VALUE(ACTION, EVENT, VALUE)	Word.AddAndInput(ECsInputAction::ACTION, ECsInputEvent::EVENT, VALUE);
+#define CS_INPUT_WORD_ADD_AND_INPUT_LOCATION(ACTION, EVENT, LOCATION)	Word.AddAndInput(ECsInputAction::ACTION, ECsInputEvent::EVENT, LOCATION);
+#define CS_INPUT_WORD_ADD_AND_INPUT_ROTATION(ACTION, EVENT, ROTATION)	Word.AddAndInput(ECsInputAction::ACTION, ECsInputEvent::EVENT, ROTATION);
+
+#define CS_INPUT_WORD_END()	}
+
+#define CS_GAME_EVENT_DEFINITION_END() }
 
 #pragma endregion
 

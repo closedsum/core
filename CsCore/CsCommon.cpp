@@ -3852,6 +3852,92 @@ void UCsCommon::ToggleEditorIcons(AActor* InActor, const bool &IsVisible)
 
 #pragma endregion Component
 
+// Animation
+#pragma region
+
+void UCsCommon::ConvertBoneSpaceTransformToComponentSpace(const FTransform& ComponentTransform, USkeletalMeshComponent* Mesh, FTransform& OutTransform, const FName &BoneName, const EBoneControlSpace &Space)
+{
+	const int32 BoneIndex = Mesh->GetBoneIndex(BoneName);
+
+	switch (Space)
+	{
+		case BCS_WorldSpace:
+			OutTransform.SetToRelativeTransform(ComponentTransform);
+			break;
+
+		case BCS_ComponentSpace:
+			// Component Space, no change.
+			break;
+
+		case BCS_ParentBoneSpace:
+			if (BoneIndex != INDEX_NONE)
+			{
+				const FName ParentBoneName = Mesh->GetParentBone(BoneName);
+				const int32 ParentBoneIndex = Mesh->GetBoneIndex(ParentBoneName);
+
+				if (ParentBoneIndex != INDEX_NONE)
+				{
+					const FTransform& ParentTransform = Mesh->GetBoneTransform(ParentBoneIndex);
+					OutTransform					 *= ParentTransform;
+				}
+			}
+			break;
+
+		case BCS_BoneSpace:
+			if (BoneIndex != INDEX_NONE)
+			{
+				const FTransform& BoneTransform = Mesh->GetBoneTransform(BoneIndex);;
+				OutTransform				   *= BoneTransform;
+			}
+			break;
+
+		default:
+			break;
+	}
+}
+
+void UCsCommon::ConvertComponentSpaceTransformToBoneSpace(const FTransform& ComponentTransform, USkeletalMeshComponent* Mesh, FTransform& OutTransform, const FName &BoneName, const EBoneControlSpace &Space)
+{
+	const int32 BoneIndex = Mesh->GetBoneIndex(BoneName);
+
+	switch (Space)
+	{
+		case BCS_WorldSpace:
+			// world space, so component space * component to world
+			OutTransform *= ComponentTransform;
+			break;
+
+		case BCS_ComponentSpace:
+			// Component Space, no change.
+			break;
+
+		case BCS_ParentBoneSpace:
+		{
+			const FName ParentBoneName  = Mesh->GetParentBone(BoneName);
+			const int32 ParentBoneIndex = Mesh->GetBoneIndex(ParentBoneName);
+
+			if (ParentBoneIndex != INDEX_NONE)
+			{
+				const FTransform& ParentTransform = Mesh->GetBoneTransform(ParentBoneIndex);
+				OutTransform.SetToRelativeTransform(ParentTransform);
+			}
+		}
+		break;
+
+		case BCS_BoneSpace:
+		{
+			const FTransform& BoneTransform = Mesh->GetBoneTransform(BoneIndex);
+			OutTransform.SetToRelativeTransform(BoneTransform);
+		}
+		break;
+
+		default:
+			break;
+	}
+}
+
+#pragma endregion Animation
+
 // Emitter
 #pragma region
 

@@ -1,9 +1,9 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
-#include "Animation/CsBoneActor.h"
+#include "Animation/Poseable/CsAnim_Control_JointTarget.h"
 #include "CsCore.h"
 #include "CsCommon.h"
 
-ACsBoneActor::ACsBoneActor(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+ACsAnim_Control_JointTarget::ACsAnim_Control_JointTarget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	PrimaryActorTick.bCanEverTick		   = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
@@ -12,7 +12,7 @@ ACsBoneActor::ACsBoneActor(const FObjectInitializer& ObjectInitializer) : Super(
 	SetMobility(EComponentMobility::Movable);
 }
 
-void ACsBoneActor::Tick(float DeltaSeconds)
+void ACsAnim_Control_JointTarget::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
@@ -26,7 +26,7 @@ void ACsBoneActor::Tick(float DeltaSeconds)
 #endif // #if WITH_EDITOR
 }
 
-bool ACsBoneActor::ShouldTickIfViewportsOnly() const
+bool ACsAnim_Control_JointTarget::ShouldTickIfViewportsOnly() const
 {
 #if WITH_EDITOR
 	if (UCsCommon::IsPlayInEditor(GetWorld()))
@@ -35,13 +35,14 @@ bool ACsBoneActor::ShouldTickIfViewportsOnly() const
 	return Super::ShouldTickIfViewportsOnly();
 }
 
-void ACsBoneActor::OnTick_Editor(const float &DeltaSeconds)
+void ACsAnim_Control_JointTarget::OnTick_Editor(const float &DeltaSeconds)
 {
 	if (!HasTickedInEditor)
 	{
 		HasTickedInEditor = true;
 	}
-
+	
 	Location = GetActorLocation();
 	Rotation = GetActorRotation();
+	Scale = GetActorScale();
 }

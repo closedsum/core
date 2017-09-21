@@ -242,7 +242,9 @@ void ACsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 	// Log Actions
 	if (CsCVarLogInputs->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		UE_LOG(LogCs, Log, TEXT("ACsManager_Input::PostProcessInput: Frame: %d Time: %f DeltaTime: %f Count: %d"), InputFrame.Frame, InputFrame.Time, InputFrame.DeltaTime, InputFrame.Inputs.Num());
+		const FString InputActionMapAsString = (*InputActionMapToString)(CurrentInputActionMap);
+
+		UE_LOG(LogCs, Log, TEXT("ACsManager_Input::PostProcessInput: ActionMap: %s Frame: %d Time: %f DeltaTime: %f Count: %d"), *InputActionMapAsString, InputFrame.Frame, InputFrame.Time, InputFrame.DeltaTime, InputFrame.Inputs.Num());
 
 		for (uint8 I = 0; I < InputCount; I++)
 		{

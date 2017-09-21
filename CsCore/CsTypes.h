@@ -4586,7 +4586,6 @@ namespace ECsInputEvent
 }
 
 #define ECS_INPUT_EVENT_MAX (uint8)ECsInputEvent::ECsInputEvent_MAX
-//typedef ECsInputEvent TCsInputEvent;
 typedef TEnumAsByte<ECsInputEvent::Type> TCsInputEvent;
 
 UENUM()
@@ -4642,6 +4641,8 @@ namespace ECsInputActionMap
 }
 
 typedef ECsInputActionMap::BitMask TCsInputActionMap;
+
+typedef FString(*TCsInputActionMapToString)(const int32&);
 
 namespace ECsInputAction
 {

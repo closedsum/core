@@ -134,6 +134,8 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 															} \
 															void CLASS::INPUT##_FirstReleased() \
 															{ \
+																if (((MAP) & CurrentInputActionMap) != CurrentInputActionMap) \
+																	return; \
 																INPUT.Event = ECsInputEvent::FirstReleased; \
 																AddInput(ECsInputAction::INPUT, ECsInputEvent::FirstReleased); \
 															}
@@ -432,6 +434,8 @@ class CSCORE_API ACsManager_Input : public AActor
 	FCsInputFrame CurrentInputFrame;
 
 	TCsInputActionMap CurrentInputActionMap;
+
+	TCsInputActionMapToString InputActionMapToString;
 
 	FCsInput* GetPreviousInputAction(const TCsInputAction &Action);
 	FCsInput* GetPreviousInputAction(const TCsInputAction &Action, const TCsInputEvent &Event);

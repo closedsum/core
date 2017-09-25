@@ -1,5 +1,5 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
-#include "Animation/Poseable/CsAnim_Control.h"
+#include "Animation/Poseable/Controls/CsAnim_Control.h"
 #include "CsCore.h"
 #include "CsCommon.h"
 
@@ -10,6 +10,8 @@ ACsAnim_Control::ACsAnim_Control(const FObjectInitializer& ObjectInitializer) : 
 	PrimaryActorTick.TickGroup			   = TG_PrePhysics;
 
 	SetMobility(EComponentMobility::Movable);
+
+	RecordTransform = true;
 }
 
 void ACsAnim_Control::Tick(float DeltaSeconds)
@@ -41,8 +43,41 @@ void ACsAnim_Control::OnTick_Editor(const float &DeltaSeconds)
 	{
 		HasTickedInEditor = true;
 	}
-	
+
+	const bool Record = Root->IsSelected() || IsSelected() || ForceUpdateTransform;
+
+	if (!Record)
+		return;
+	if (!RecordTransform)
+		return;
+
 	Location = GetActorLocation();
+	
+	if (!RecordLocation &&
+		Location.HasChanged())
+	{
+		SetActorLocation(Location.Last_Value);
+		Location.Value = Location.Last_Value;
+		Location.Clear();
+	}
+
 	Rotation = GetActorRotation();
-	Scale = GetActorScale();
+
+	if (!RecordRotation &&
+		Rotation.HasChanged())
+	{
+		SetActorRotation(Rotation.Last_Value);
+		Rotation.Value = Rotation.Last_Value;
+		Rotation.Clear();
+	}
+
+	Scale = GetActorScale3D();
+
+	if (!RecordScale &&
+		Scale.HasChanged())
+	{
+		SetActorScale3D(Scale.Last_Value);
+		Scale.Value = Scale.Last_Value;
+		Scale.Clear();
+	}
 }

@@ -10,6 +10,12 @@ ACsAnim_Bone::ACsAnim_Bone(const FObjectInitializer& ObjectInitializer) : Super(
 	PrimaryActorTick.TickGroup			   = TG_PrePhysics;
 
 	SetMobility(EComponentMobility::Movable);
+
+	Bone = NAME_None;
+	BoneIndex = INDEX_NONE;
+
+	RecordTransform = true;
+	RecordRotation = true;
 }
 
 void ACsAnim_Bone::Tick(float DeltaSeconds)
@@ -41,8 +47,97 @@ void ACsAnim_Bone::OnTick_Editor(const float &DeltaSeconds)
 	{
 		HasTickedInEditor = true;
 	}
-	
+	/*
 	Location = GetActorLocation();
 	Rotation = GetActorRotation();
-	Scale = GetActorScale();
+	Scale = GetActorScale3D();
+	*/
+	
+	const bool Record = Root->IsSelected() || IsSelected() || ForceUpdateTransform;
+
+	if (!Record)
+		return;
+	if (!RecordTransform)
+		return;
+
+	Location = GetActorLocation();
+
+	if (!ForceUpdateTransform &&
+		!RecordLocation &&
+		Location.HasChanged())
+	{
+		SetActorLocation(Location.Last_Value);
+		Location.Value = Location.Last_Value;
+		Location.Clear();
+	}
+
+	Rotation = GetActorRotation();
+
+	if (!ForceUpdateTransform &&
+		!RecordRotation &&
+		Rotation.HasChanged())
+	{
+		SetActorRotation(Rotation.Last_Value);
+		Rotation.Value = Rotation.Last_Value;
+		Rotation.Clear();
+	}
+
+	Scale = GetActorScale3D();
+
+	if (!ForceUpdateTransform &&
+		!RecordScale &&
+		Scale.HasChanged())
+	{
+		SetActorScale3D(Scale.Last_Value);
+		Scale.Value = Scale.Last_Value;
+		Scale.Clear();
+	}
+}
+
+void ACsAnim_Bone::ResetRelativeTransform()
+{
+	UpdateRelativeTransform(DefaultRelativeTransform, true);
+}
+
+bool ACsAnim_Bone::HasTransformChanged()
+{
+	return Location.HasChanged() || Rotation.HasChanged() || Scale.HasChanged();
+}
+
+void ACsAnim_Bone::ResolveTransform()
+{
+	Location.Clear();
+	Rotation.Clear();
+	Scale.Clear();
+}
+
+void ACsAnim_Bone::UpdateTransform(const FTransform &Transform)
+{
+	SetActorLocation(Transform.GetTranslation());
+	SetActorRotation(Transform.GetRotation());
+	SetActorScale3D(Transform.GetScale3D());
+	//SetActorTransform()
+
+	Location = GetActorLocation();
+	Rotation = GetActorRotation();
+	Scale = GetActorScale3D();
+
+	ForceUpdateTransform = true;
+}
+
+void ACsAnim_Bone::UpdateRelativeTransform(const FTransform &Transform, const bool &Resolve)
+{
+	GetRootComponent()->SetRelativeLocation(Transform.GetTranslation());
+	GetRootComponent()->SetRelativeRotation(Transform.GetRotation());
+	GetRootComponent()->SetRelativeScale3D(Transform.GetScale3D());
+
+	//SetActorRelativeTransform()
+
+	Location = GetActorLocation();
+	Rotation = GetActorRotation();
+	Scale = GetActorScale3D();
+
+	ForceUpdateTransform = Resolve;
+	//if (Resolve)
+	//	ResolveTransform();
 }

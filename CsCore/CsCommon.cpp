@@ -15,6 +15,7 @@
 // Components
 #include "Components/CsStaticMeshComponent.h"
 #include "Components/CsSkeletalMeshComponent.h"
+#include "Components/CsPoseableMeshComponent.h"
 #include "Components/CsBoxComponent.h"
 #include "Components/CsSphereComponent.h"
 
@@ -3855,7 +3856,7 @@ void UCsCommon::ToggleEditorIcons(AActor* InActor, const bool &IsVisible)
 // Animation
 #pragma region
 
-void UCsCommon::ConvertBoneSpaceTransformToComponentSpace(const FTransform& ComponentTransform, USkeletalMeshComponent* Mesh, FTransform& OutTransform, const FName &BoneName, const EBoneControlSpace &Space)
+void UCsCommon::ConvertBoneSpaceTransformToComponentSpace(const FTransform& ComponentTransform, USkinnedMeshComponent* Mesh, FTransform& OutTransform, const FName &BoneName, const EBoneControlSpace &Space)
 {
 	const int32 BoneIndex = Mesh->GetBoneIndex(BoneName);
 
@@ -3886,8 +3887,17 @@ void UCsCommon::ConvertBoneSpaceTransformToComponentSpace(const FTransform& Comp
 		case BCS_BoneSpace:
 			if (BoneIndex != INDEX_NONE)
 			{
-				const FTransform& BoneTransform = Mesh->GetBoneTransform(BoneIndex);;
-				OutTransform				   *= BoneTransform;
+				if (USkeletalMeshComponent* Component = Cast<USkeletalMeshComponent>(Mesh))
+				{
+					const FTransform& BoneTransform = Component->BoneSpaceTransforms[BoneIndex];
+					OutTransform				   *= BoneTransform;
+				}
+
+				if (UPoseableMeshComponent* Component = Cast<UPoseableMeshComponent>(Mesh))
+				{
+					const FTransform& BoneTransform = Component->BoneSpaceTransforms[BoneIndex];
+					OutTransform				   *= BoneTransform;
+				}
 			}
 			break;
 
@@ -3896,7 +3906,7 @@ void UCsCommon::ConvertBoneSpaceTransformToComponentSpace(const FTransform& Comp
 	}
 }
 
-void UCsCommon::ConvertComponentSpaceTransformToBoneSpace(const FTransform& ComponentTransform, USkeletalMeshComponent* Mesh, FTransform& OutTransform, const FName &BoneName, const EBoneControlSpace &Space)
+void UCsCommon::ConvertComponentSpaceTransformToBoneSpace(const FTransform& ComponentTransform, USkinnedMeshComponent* Mesh, FTransform& OutTransform, const FName &BoneName, const EBoneControlSpace &Space)
 {
 	const int32 BoneIndex = Mesh->GetBoneIndex(BoneName);
 
@@ -3926,8 +3936,17 @@ void UCsCommon::ConvertComponentSpaceTransformToBoneSpace(const FTransform& Comp
 
 		case BCS_BoneSpace:
 		{
-			const FTransform& BoneTransform = Mesh->GetBoneTransform(BoneIndex);
-			OutTransform.SetToRelativeTransform(BoneTransform);
+			if (USkeletalMeshComponent* Component = Cast<USkeletalMeshComponent>(Mesh))
+			{
+				const FTransform& BoneTransform = Component->BoneSpaceTransforms[BoneIndex];
+				OutTransform.SetToRelativeTransform(BoneTransform);
+			}
+
+			if (UPoseableMeshComponent* Component = Cast<UPoseableMeshComponent>(Mesh))
+			{
+				const FTransform& BoneTransform = Component->BoneSpaceTransforms[BoneIndex];
+				OutTransform.SetToRelativeTransform(BoneTransform);
+			}
 		}
 		break;
 

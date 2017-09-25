@@ -840,8 +840,8 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 // Animation
 #pragma region
 
-	static void ConvertBoneSpaceTransformToComponentSpace(const FTransform& ComponentTransform, USkeletalMeshComponent* Mesh, FTransform& OutTransform, const FName &BoneName, const EBoneControlSpace &Space);
-	static void ConvertComponentSpaceTransformToBoneSpace(const FTransform& ComponentTransform, USkeletalMeshComponent* Mesh, FTransform& OutTransform, const FName &BoneName, const EBoneControlSpace &Space);
+	static void ConvertBoneSpaceTransformToComponentSpace(const FTransform& ComponentTransform, USkinnedMeshComponent* Mesh, FTransform& OutTransform, const FName &BoneName, const EBoneControlSpace &Space);
+	static void ConvertComponentSpaceTransformToBoneSpace(const FTransform& ComponentTransform, USkinnedMeshComponent* Mesh, FTransform& OutTransform, const FName &BoneName, const EBoneControlSpace &Space);
 
 #pragma endregion Animation
 

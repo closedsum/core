@@ -31,6 +31,7 @@ public class CsCore : ModuleRules
                     "EditorStyle",
                     "HeadMountedDisplay",
                     "V8",
+                    "AnimationCore",
                 }
             );
         }

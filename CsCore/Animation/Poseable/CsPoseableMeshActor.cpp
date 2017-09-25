@@ -3,11 +3,17 @@
 #include "Components/CsPoseableMeshComponent.h"
 #include "CsCore.h"
 #include "CsCommon.h"
+
+#if WITH_EDITOR
+#include "../AnimationCore/Public/TwoBoneIK.h"
+#endif // #if WITH_EDITOR
+
 #include "Animation/Poseable/CsAnim_Bone.h"
-#include "Animation/Poseable/CsAnim_Control.h"
-#include "Animation/Poseable/CsAnim_Control_TwoBoneIK.h"
-#include "Animation/Poseable/CsAnim_Control_EndEffector.h"
-#include "Animation/Poseable/CsAnim_Control_JointTarget.h"
+#include "Animation/Poseable/Controls/CsAnim_Control.h"
+#include "Animation/Poseable/Controls/CsAnim_Control_TwoBoneIK.h"
+#include "Animation/Poseable/Controls/Helpers/CsAnim_ControlHelper_EndEffector.h"
+#include "Animation/Poseable/Controls/Helpers/CsAnim_ControlHelper_JointTarget.h"
+
 
 ACsPoseableMeshActor::ACsPoseableMeshActor(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -16,6 +22,23 @@ ACsPoseableMeshActor::ACsPoseableMeshActor(const FObjectInitializer& ObjectIniti
 	PrimaryActorTick.TickGroup			   = TG_PrePhysics;
 
 	PoseableMeshComponent = ObjectInitializer.CreateDefaultSubobject<UCsPoseableMeshComponent>(this, TEXT("PoseableMeshComponent"));
+	SetRootComponent(PoseableMeshComponent);
+}
+
+void ACsPoseableMeshActor::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	// Make a Copy of Controls_TwoBoneIK
+	Controls_TwoBoneIK_Copy.Reset();
+
+	const int32 Count = Controls_TwoBoneIK.Num();
+
+	for (int32 I = 0; I < Count; I++)
+	{
+		Controls_TwoBoneIK_Copy.AddDefaulted();
+		Controls_TwoBoneIK_Copy[I] = Controls_TwoBoneIK[I];
+	}
 }
 
 void ACsPoseableMeshActor::Tick(float DeltaSeconds)
@@ -41,6 +64,8 @@ bool ACsPoseableMeshActor::ShouldTickIfViewportsOnly() const
 	return Super::ShouldTickIfViewportsOnly();
 }
 
+#if WITH_EDITOR
+
 void ACsPoseableMeshActor::OnTick_Editor(const float &DeltaSeconds)
 {
 	if (!HasTickedInEditor)
@@ -48,9 +73,69 @@ void ACsPoseableMeshActor::OnTick_Editor(const float &DeltaSeconds)
 		HasTickedInEditor = true;
 	}
 	
-	// Controls
-	const int32 ControlCount = Controls.Num();
+	//if (IsSelected())
+	//	return;
 
+	// Controls
+
+		// TwoBoneIK
+	{
+		const int32 ControlCount = Controls_TwoBoneIK.Num();
+
+		for (int32 I = 0; I < ControlCount; I++)
+		{
+			ACsAnim_Control_TwoBoneIK* Control = Controls_TwoBoneIK[I].Actor;
+
+			if (!Control)
+				continue;
+			if (!Control->EndEffector || !Control->JointTarget)
+				continue;
+			if (!Control->StartBone || !Control->MiddleBone || !Control->EndBone)
+				continue;
+
+			const bool UpdateIK = Control->EndEffector->Location.HasChanged() || Control->JointTarget->Location.HasChanged();
+
+			if (UpdateIK)
+			{
+				TArray<FTransform> Transforms;
+
+				PerformTwoBoneIK(I, Transforms);
+
+				const FName StartBone  = Controls_TwoBoneIK[I].EndEffector.EffectorSpaceBoneName;
+				const FName MiddleBone = Controls_TwoBoneIK[I].IK.ParentBone;
+				const FName EndBone    = Controls_TwoBoneIK[I].IK.IKBone;
+
+				const int32 START = 0; const int32 MIDDLE = 1; const int32 END = 2;
+
+				// TODO: Create SetBoneTransformByIndex. This should be faster
+				
+				//PoseableMeshComponent->SetBoneTransformByName(StartBone, Transforms[START], EBoneSpaces::ComponentSpace);
+				//PoseableMeshComponent->SetBoneTransformByName(MiddleBone, Transforms[MIDDLE], EBoneSpaces::ComponentSpace);
+				//PoseableMeshComponent->SetBoneTransformByName(EndBone, Transforms[END], EBoneSpaces::ComponentSpace);
+				
+				/*
+				const FTransform ComponentTransform = PoseableMeshComponent->GetComponentTransform();
+				const FTransform StartTransform = Transforms[START] * ComponentTransform;
+				const FTransform MiddleTransform = Transforms[MIDDLE] * ComponentTransform;
+				const FTransform EndTransform = Transforms[END] * ComponentTransform;
+				*/
+
+				//Transforms[START].SetTranslation(Control->StartBone->GetActorLocation());
+				const FTransform ComponentTransform = PoseableMeshComponent->GetComponentTransform();
+				Control->StartBone->UpdateTransform(Transforms[START] * ComponentTransform);
+				Control->MiddleBone->UpdateTransform(Transforms[MIDDLE] * ComponentTransform);
+				Control->EndBone->UpdateTransform(Transforms[END] * ComponentTransform);
+
+				//Control->EndBone->UpdateRelativeTransform(PoseableMeshComponent->BoneSpaceTransforms[Control->EndBone->BoneIndex], true);
+				//Control->MiddleBone->UpdateRelativeTransform(PoseableMeshComponent->BoneSpaceTransforms[Control->MiddleBone->BoneIndex], true);
+				//Control->StartBone->UpdateRelativeTransform(PoseableMeshComponent->BoneSpaceTransforms[Control->StartBone->BoneIndex], true);
+
+				Control->EndEffector->Location.Clear();
+
+				Control->JointTarget->Location.Clear();
+			}
+		}
+	}
 
 	// Bones
 	const int32 BoneCount = Bones.Num();
@@ -58,25 +143,31 @@ void ACsPoseableMeshActor::OnTick_Editor(const float &DeltaSeconds)
 	for (int32 I = 0; I < BoneCount; I++)
 	{
 		// Location
-		if (Bones[I].Actor->Location.HasChanged())
+		if (Bones[I].Actor->Location.HasChanged() ||
+			Bones[I].Actor->ForceUpdateTransform)
 		{
 			PoseableMeshComponent->SetBoneLocationByName(Bones[I].Bone, Bones[I].Actor->Location.Get(), EBoneSpaces::WorldSpace);
 			Bones[I].Actor->Location.Clear();
 		}
 		// Rotation
-		if (Bones[I].Actor->Rotation.HasChanged())
+		if (Bones[I].Actor->Rotation.HasChanged() ||
+			Bones[I].Actor->ForceUpdateTransform)
 		{
 			PoseableMeshComponent->SetBoneRotationByName(Bones[I].Bone, Bones[I].Actor->Rotation.Get(), EBoneSpaces::WorldSpace);
 			Bones[I].Actor->Rotation.Clear();
 		}
 		// Scale
-		if (Bones[I].Actor->Scale.HasChanged())
+		if (Bones[I].Actor->Scale.HasChanged() ||
+			Bones[I].Actor->ForceUpdateTransform)
 		{
 			PoseableMeshComponent->SetBoneScaleByName(Bones[I].Bone, Bones[I].Actor->Scale.Get(), EBoneSpaces::WorldSpace);
 			Bones[I].Actor->Scale.Clear();
 		}
+		Bones[I].Actor->ForceUpdateTransform = false;
 	}
 }
+
+#endif // #if WITH_EDITOR
 
 #if WITH_EDITOR
 
@@ -104,177 +195,277 @@ void ACsPoseableMeshActor::PostEditChangeProperty(struct FPropertyChangedEvent& 
 
 void ACsPoseableMeshActor::PostEditChangeChainProperty(struct FPropertyChangedChainEvent& e)
 {
-	// Controls
-	const int32 Index = e.GetArrayIndex(TEXT("Controls"));
+	const int32 Controls_TwoBoneIK_Index = e.GetArrayIndex(TEXT("Controls_TwoBoneIK"));
 
-	if (Index == INDEX_NONE)
+	// Controls_TwoBoneIK
+	if (Controls_TwoBoneIK_Index != INDEX_NONE)
 	{
-		Super::PostEditChangeChainProperty(e);
-		return;
-	}
+		const int32 Index = Controls_TwoBoneIK_Index;
 
-	FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
-
-	// Controls[Index].Type
-	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo, Type))
-	{
-		if (Controls[Index].Type == Controls[Index].Last_Type)
+		// SkeletalMesh is NULL
+		if (!PoseableMeshComponent->SkeletalMesh)
 		{
+			UCsCommon::DisplayNotificationInfo(TEXT("SkeletalMesh is NULL."), TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 5.0f);
+
+			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty(%s): SkeletalMesh is NULL. Can NOT update Controls."), *GetName());
 			Super::PostEditChangeChainProperty(e);
 			return;
 		}
 
-		const TCsAnimControl ControlType = Controls[Index].Type;
+		FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
 
-		// None
-		if (ControlType == ECsAnimControl::None)
+		const int32 ControlCount = Controls_TwoBoneIK.Num();
+		const int32 CopyCount    = Controls_TwoBoneIK_Copy.Num();
+
+		// Check if NEW elements were ADDED
+		if (ControlCount > CopyCount)
 		{
-			// TwoBoneIK
-			if (ACsAnim_Control_TwoBoneIK* Control = Cast<ACsAnim_Control_TwoBoneIK>(Controls[Index].Actor))
+			const int32 Delta = ControlCount - CopyCount;
+
+			for (int32 I = 0; I < Delta; I++)
 			{
-				Control->EndEffector->Destroy();
-				Control->JointTarget->Destroy();
-				Control->Destroy();
+				const int32 CopyIndex = CopyCount + I;
+
+				Create_Control_TwoBoneIK(CopyIndex);
+				
+				Controls_TwoBoneIK_Copy.AddDefaulted();
+				Controls_TwoBoneIK_Copy[CopyIndex] = Controls_TwoBoneIK[CopyIndex];
 			}
 		}
-		// TwoBoneIK
-		if (ControlType == ECsAnimControl::TwoBoneIK)
+		// Check if elements were REMOVED
+		if (ControlCount < CopyCount)
 		{
-			ACsAnim_Control_TwoBoneIK* Control = GetWorld()->SpawnActor<ACsAnim_Control_TwoBoneIK>();
+			const int32 Delta = CopyCount - ControlCount;
 
-			Control->SetActorTransform(GetActorTransform());
-			Control->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
-
-			Control->SetActorLabel(Controls[Index].Control);
-			Controls[Index].Actor = Control;
-			// End Effector
-			ACsAnim_Control_EndEffector* EndEffector = GetWorld()->SpawnActor<ACsAnim_Control_EndEffector>();
-			Control->EndEffector = EndEffector;
-			EndEffector->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
-
-			const int32 Count = Bones.Num();
-
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = CopyCount - 1; I >= CopyCount - Delta; I--)
 			{
-				if (Bones[I].Bone == Controls[Index].EndEffector.EffectorSpaceBoneName)
+				ACsAnim_Control_TwoBoneIK* Control = Controls_TwoBoneIK_Copy[I].Actor;
+
+				if (Control && !Control->IsPendingKill())
 				{
-					EndEffector->SetActorTransform(Bones[I].Actor->GetActorTransform());
-					break;
+					if (Control->EndEffector && !Control->EndEffector->IsPendingKill())
+						Control->EndEffector->Destroy();
+					if (Control->JointTarget && !Control->JointTarget->IsPendingKill())
+						Control->JointTarget->Destroy();
+					Control->Destroy();
 				}
+				Controls_TwoBoneIK_Copy.RemoveAt(I);
 			}
-			// JointTarget
-			ACsAnim_Control_JointTarget* JointTarget = GetWorld()->SpawnActor<ACsAnim_Control_JointTarget>();
-			Control->JointTarget = JointTarget;
-			JointTarget->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
-
-			const FName JointBoneName = PoseableMeshComponent->GetParentBone(Controls[Index].IK.IKBone);
-
-			if (JointBoneName != NAME_None)
+		}
+		// Controls_TwoBoneIK[Index].Control
+		if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_TwoBoneIK, Control))
+		{
+			if (Controls_TwoBoneIK[Index].Actor)
 			{
+				Controls_TwoBoneIK[Index].Actor->SetActorLabel(Controls_TwoBoneIK[Index].Control);
+			}
+		}
+		// Controls[Index].IK.IKBone
+		if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_TwoBoneIK_IK, IKBone))
+		{
+			const FName BoneName	  = Controls_TwoBoneIK[Index].IK.IKBone;
+			const int32 BoneIndex	  = PoseableMeshComponent->GetBoneIndex(BoneName);
+			
+			Controls_TwoBoneIK[Index].IK.IKBoneIndex = BoneIndex;
+
+			Controls_TwoBoneIK[Index].EndEffector.EffectorSpaceBoneName = BoneName;
+			Controls_TwoBoneIK[Index].EndEffector.EffectorSpaceBoneIndex = BoneIndex;
+
+			if (BoneName == NAME_None || BoneIndex == INDEX_NONE)
+			{
+				Controls_TwoBoneIK[Index].IK.IKBone = NAME_None;
+				Controls_TwoBoneIK[Index].IK.IKBoneIndex = INDEX_NONE;
+				Controls_TwoBoneIK[Index].IK.IKBoneArrayIndex = INDEX_NONE;
+				Controls_TwoBoneIK[Index].IK.Last_IKBone = BoneName;
+				Controls_TwoBoneIK[Index].IK.ParentBone = NAME_None;
+				Controls_TwoBoneIK[Index].IK.ParentBoneIndex = INDEX_NONE;
+				Controls_TwoBoneIK[Index].IK.ParentBoneIndex = INDEX_NONE;
+
+				Controls_TwoBoneIK[Index].EndEffector.EffectorSpaceBoneName = NAME_None;
+				Controls_TwoBoneIK[Index].EndEffector.EffectorSpaceBoneIndex = INDEX_NONE;
+				Controls_TwoBoneIK[Index].EndEffector.EffectorSpaceBoneArrayIndex = NAME_None;
+
+				Controls_TwoBoneIK[Index].JointTarget.JointTargetSpaceBoneName = NAME_None;
+				Controls_TwoBoneIK[Index].JointTarget.JointTargetSpaceBoneIndex = INDEX_NONE;
+				Controls_TwoBoneIK[Index].JointTarget.JointTargetSpaceBoneArrayIndex = INDEX_NONE;
+
+				Controls_TwoBoneIK_Copy[Index] = Controls_TwoBoneIK[Index];
+
+				Super::PostEditChangeChainProperty(e);
+				return;
+			}
+
+			if (BoneName == Controls_TwoBoneIK[Index].IK.Last_IKBone)
+			{
+				Super::PostEditChangeChainProperty(e);
+				return;
+			}
+
+			Controls_TwoBoneIK[Index].IK.Last_IKBone = BoneName;
+
+			ACsAnim_Control_TwoBoneIK* Control = Controls_TwoBoneIK[Index].Actor;
+
+			if (!Control)
+			{
+				// Check control Children who do NOT have a parent, Delete them
+				TArray<AActor*> Helpers;
+				UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACsAnim_ControlHelper::StaticClass(), Helpers);
+
+				const int32 Count = Helpers.Num();
+
 				for (int32 I = 0; I < Count; I++)
 				{
-					if (Bones[I].Bone == JointBoneName)
+					ACsAnim_ControlHelper* Helper = Cast<ACsAnim_ControlHelper>(Helpers[I]);
+
+					if (Helper->ControlIndex == INDEX_NONE)
+						Helper->Destroy();
+				}
+				// Recreate the Control
+				Create_Control_TwoBoneIK(Index);
+				Controls_TwoBoneIK_Copy[Index] = Controls_TwoBoneIK[Index];
+
+				Super::PostEditChangeChainProperty(e);
+				return;
+			}
+
+			// Cache ArrayIndex
+			Controls_TwoBoneIK[Index].IK.IKBoneArrayIndex = INDEX_NONE;
+
+			{
+				const int32 Count = Bones.Num();
+
+				for (int32 I = 0; I < Count; I++)
+				{
+					if (Bones[I].Bone == BoneName)
 					{
-						JointTarget->SetActorTransform(Bones[I].Actor->GetActorTransform());
+						Controls_TwoBoneIK[Index].IK.IKBoneArrayIndex = I;
+						Controls_TwoBoneIK[Index].EndEffector.EffectorSpaceBoneArrayIndex = I;
 						break;
 					}
 				}
 			}
-			Controls[Index].Last_Type = Controls[Index].Type;
-		}
-	}
-	// Controls[Index].Control
-	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo, Control))
-	{
-		if (Controls[Index].Actor)
-		{
-			Controls[Index].Actor->SetActorLabel(Controls[Index].Control);
-		}
-	}
-	// Controls[Index].IK.IKBone
-	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_IK, IKBone))
-	{
-		const FName BoneName = Controls[Index].IK.IKBone;
 
-		if (BoneName == NAME_None)
-		{
-			Controls[Index].IK.Last_IKBone = BoneName;
+			// Middle Bone
+			const FName MiddleBoneName  = PoseableMeshComponent->GetParentBone(BoneName);
+			const int32 MiddleBoneIndex = PoseableMeshComponent->GetBoneIndex(MiddleBoneName);
 
-			Super::PostEditChangeChainProperty(e);
-			return;
-		}
+			Controls_TwoBoneIK[Index].IK.ParentBone      = MiddleBoneName;
+			Controls_TwoBoneIK[Index].IK.ParentBoneIndex = MiddleBoneIndex;
+			Controls_TwoBoneIK[Index].IK.ParentBoneArrayIndex = INDEX_NONE;
 
-		if (BoneName == Controls[Index].IK.Last_IKBone)
-		{
-			Super::PostEditChangeChainProperty(e);
-			return;
-		}
+			// Start Bone
+			const FName StartBoneName = PoseableMeshComponent->GetParentBone(MiddleBoneName);
+			const int32 StartBoneIndex = PoseableMeshComponent->GetBoneIndex(StartBoneName);
 
-		ACsAnim_Control_TwoBoneIK* Control = Cast<ACsAnim_Control_TwoBoneIK>(Controls[Index].Actor);
+			Controls_TwoBoneIK[Index].JointTarget.JointTargetSpaceBoneName = StartBoneName;
+			Controls_TwoBoneIK[Index].JointTarget.JointTargetSpaceBoneIndex = StartBoneIndex;
+			Controls_TwoBoneIK[Index].JointTarget.JointTargetSpaceBoneArrayIndex = INDEX_NONE;
 
-		if (!Control)
-		{
-			Super::PostEditChangeChainProperty(e);
-			return;
-		}
-
-		// Change JointTarget
-		ACsAnim_Control_JointTarget* JointTarget = Control->JointTarget;
-		const FName JointBoneName				 = PoseableMeshComponent->GetParentBone(BoneName);
-
-		if (JointBoneName != NAME_None)
-		{
-			const int32 Count = Bones.Num();
-
-			for (int32 I = 0; I < Count; I++)
+			// Change JointTarget (Start Bone)
 			{
-				if (Bones[I].Bone == JointBoneName)
+				// Reset PREVIOUS Start Bone
+				if (Control->StartBone)
 				{
-					JointTarget->SetActorTransform(Bones[I].Actor->GetActorTransform());
-					break;
+					Control->StartBone->ResetRelativeTransform();
+					PoseableMeshComponent->SetBoneTransformByName(Control->StartBone->Bone, Control->StartBone->GetActorTransform(), EBoneSpaces::ComponentSpace);
+				}
+
+				ACsAnim_ControlHelper_JointTarget* JointTarget = Control->JointTarget;
+
+				if (StartBoneName != NAME_None)
+				{
+					const int32 Count = Bones.Num();
+
+					for (int32 I = 0; I < Count; I++)
+					{
+						if (Bones[I].Bone == StartBoneName)
+						{
+							// Reset NEW / CURRENT Start Bone
+							Control->StartBone = Bones[I].Actor;
+							Control->StartBone->ResetRelativeTransform();
+							PoseableMeshComponent->SetBoneTransformByName(Control->StartBone->Bone, Control->StartBone->GetActorTransform(), EBoneSpaces::ComponentSpace);
+
+							JointTarget->SetActorLocation(Control->StartBone->GetActorLocation());
+							JointTarget->Location = Control->StartBone->GetActorLocation();
+							//JointTarget->Location.Clear();
+							
+							//JointTarget->UpdateRelativeTransform(Control->StartBone->DefaultRelativeTransform, true);
+
+							Controls_TwoBoneIK[Index].JointTarget.JointTargetSpaceBoneArrayIndex = I;
+							break;
+						}
+					}
+				}
+				else
+				{
+					UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::Create_Control_TwoBoneIK(%s): JointTargetBoneName (Start Bone): %s is NOT found in SkeletalMesh: %s"), *GetName(), *(StartBoneName.ToString()), *(PoseableMeshComponent->SkeletalMesh->GetName()));
 				}
 			}
-		}
-		Controls[Index].IK.Last_IKBone = BoneName;
-	}
-	// Controls[Index].EndEffector.EffectorSpaceBoneName
-	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_EndEffector, EffectorSpaceBoneName))
-	{
-		const FName BoneName = Controls[Index].EndEffector.EffectorSpaceBoneName;
-
-		if (BoneName == NAME_None)
-		{
-			Controls[Index].EndEffector.Last_EffectorSpaceBoneName = BoneName;
-
-			Super::PostEditChangeChainProperty(e);
-			return;
-		}
-
-		if (Controls[Index].EndEffector.EffectorSpaceBoneName == Controls[Index].EndEffector.Last_EffectorSpaceBoneName)
-		{
-			Super::PostEditChangeChainProperty(e);
-			return;
-		}
-
-		ACsAnim_Control_TwoBoneIK* Control = Cast<ACsAnim_Control_TwoBoneIK>(Controls[Index].Actor);
-
-		// Change End Effector
-		ACsAnim_Control_EndEffector* EndEffector = Control->EndEffector;
-		EndEffector->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
-
-		const int32 Count = Bones.Num();
-
-		for (int32 I = 0; I < Count; I++)
-		{
-			if (Bones[I].Bone == BoneName)
+			// Change Middle Bone
 			{
-				EndEffector->SetActorTransform(Bones[I].Actor->GetActorTransform());
-				break;
-			}
-		}
-		Controls[Index].EndEffector.Last_EffectorSpaceBoneName = BoneName;
-	}
+				// Reset PREVIOUS Middle Bone
+				if (Control->MiddleBone)
+				{
+					Control->MiddleBone->ResetRelativeTransform();
+					PoseableMeshComponent->SetBoneTransformByName(Control->MiddleBone->Bone, Control->MiddleBone->GetActorTransform(), EBoneSpaces::ComponentSpace);
+				}
+				// Reset NEW / CURRENT Middle Bone
+				if (MiddleBoneName != NAME_None)
+				{
+					const int32 Count = Bones.Num();
 
+					for (int32 I = 0; I < Count; I++)
+					{
+						if (Bones[I].Bone == MiddleBoneName)
+						{
+							Control->MiddleBone = Bones[I].Actor;
+							Control->MiddleBone->ResetRelativeTransform();
+							PoseableMeshComponent->SetBoneTransformByName(Control->MiddleBone->Bone, Control->MiddleBone->GetActorTransform(), EBoneSpaces::ComponentSpace);
+
+							Controls_TwoBoneIK[Index].IK.ParentBoneArrayIndex = I;
+						}
+					}
+				}
+				else
+				{
+					UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::Create_Control_TwoBoneIK(%s): IKBone's Parent Bone (Middle Bone): %s is NOT found in SkeletalMesh: %s"), *GetName(), *(MiddleBoneName.ToString()), *(PoseableMeshComponent->SkeletalMesh->GetName()));
+				}
+			}
+			// Change EndEffector (End Bone)
+			{
+				ACsAnim_ControlHelper_EndEffector* EndEffector = Control->EndEffector;
+
+				// Reset PREVIOUS End Bone. TODO: Need to check if any other Control is referencing this bone
+				if (Control->EndBone)
+				{
+					Control->EndBone->ResetRelativeTransform();
+					PoseableMeshComponent->SetBoneTransformByName(Control->EndBone->Bone, Control->EndBone->GetActorTransform(), EBoneSpaces::ComponentSpace);
+				}
+
+				const int32 Count = Bones.Num();
+
+				for (int32 I = 0; I < Count; I++)
+				{
+					if (Bones[I].Bone == BoneName)
+					{
+						// Reset NEW / CURRENT End Bone
+						Control->EndBone = Bones[I].Actor;
+						Control->EndBone->ResetRelativeTransform();
+						PoseableMeshComponent->SetBoneTransformByName(Control->EndBone->Bone, Control->EndBone->GetActorTransform(), EBoneSpaces::ComponentSpace);
+
+						EndEffector->SetActorLocation(Control->EndBone->GetActorLocation());
+						EndEffector->Location = Control->EndBone->GetActorLocation();
+						//EndEffector->Location.Clear();
+
+						//EndEffector->UpdateRelativeTransform(Control->EndBone->DefaultRelativeTransform, true);
+						break;
+					}
+				}
+			}
+
+			Controls_TwoBoneIK_Copy[Index] = Controls_TwoBoneIK[Index];
+		}
+	}
 	Super::PostEditChangeChainProperty(e);
 }
 
@@ -294,6 +485,7 @@ void ACsPoseableMeshActor::GenerateBones()
 		const FName BoneName = BoneNames[I];
 		Bone->SetActorLabel(BoneName.ToString());
 		Bone->Bone = BoneName;
+		Bone->Root = this;
 
 		Bone->SetActorRelativeTransform(FTransform::Identity);
 
@@ -318,9 +510,13 @@ void ACsPoseableMeshActor::GenerateBones()
 		}
 		
 		const int32 BoneIndex = PoseableMeshComponent->GetBoneIndex(BoneName);
+		Bone->BoneIndex		  = BoneIndex;
 		FTransform Transform  = PoseableMeshComponent->BoneSpaceTransforms[BoneIndex];
 
-		Bone->SetActorRelativeTransform(Transform);
+		Bone->UpdateRelativeTransform(Transform, true);
+
+		Bone->DefaultRelativeTransform = Transform;
+		Bone->ArrayIndex = I;
 
 		Bones.AddDefaulted();
 		const int32 Index = Bones.Num() - 1;
@@ -341,123 +537,251 @@ void ACsPoseableMeshActor::ClearBones()
 	Bones.Reset();
 }
 
-/*
-void FAnimNode_TwoBoneIK::EvaluateSkeletalControl_AnyThread(FComponentSpacePoseContext& Output, TArray<FBoneTransform>& OutBoneTransforms)
+void ACsPoseableMeshActor::Create_Control_TwoBoneIK(const int32 Index)
 {
-SCOPE_CYCLE_COUNTER(STAT_TwoBoneIK_Eval);
+	ACsAnim_Control_TwoBoneIK* Control = GetWorld()->SpawnActor<ACsAnim_Control_TwoBoneIK>();
 
-check(OutBoneTransforms.Num() == 0);
+	Control->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
 
-const FBoneContainer& BoneContainer = Output.Pose.GetPose().GetBoneContainer();
+	Control->SetActorLabel(Controls_TwoBoneIK[Index].Control);
+	Controls_TwoBoneIK[Index].Actor = Control;
+	
+	const FName BoneName = Controls_TwoBoneIK[Index].IK.IKBone;
+	const int32 BoneIndex = PoseableMeshComponent->GetBoneIndex(BoneName);
 
-// Get indices of the lower and upper limb bones and check validity.
-bool bInvalidLimb = false;
+	Controls_TwoBoneIK[Index].IK.IKBoneIndex = BoneIndex;
 
-FCompactPoseBoneIndex IKBoneCompactPoseIndex = IKBone.GetCompactPoseIndex(BoneContainer);
+	Controls_TwoBoneIK[Index].EndEffector.EffectorSpaceBoneName = BoneName;
+	Controls_TwoBoneIK[Index].EndEffector.EffectorSpaceBoneIndex = BoneIndex;
 
-FCompactPoseBoneIndex UpperLimbIndex(INDEX_NONE);
-const FCompactPoseBoneIndex LowerLimbIndex = BoneContainer.GetParentBoneIndex(IKBoneCompactPoseIndex);
-if (LowerLimbIndex == INDEX_NONE)
+	// Cache ArrayIndex
+	Controls_TwoBoneIK[Index].IK.IKBoneArrayIndex = INDEX_NONE;
+
+	{
+		const int32 Count = Bones.Num();
+
+		for (int32 I = 0; I < Count; I++)
+		{
+			if (Bones[I].Bone == BoneName)
+			{
+				Controls_TwoBoneIK[Index].IK.IKBoneArrayIndex = I;
+				Controls_TwoBoneIK[Index].EndEffector.EffectorSpaceBoneArrayIndex = I;
+				break;
+			}
+		}
+	}
+
+	// Middle Bone
+	const FName MiddleBoneName = PoseableMeshComponent->GetParentBone(BoneName);
+	const int32 MiddleBoneIndex = PoseableMeshComponent->GetBoneIndex(MiddleBoneName);
+
+	Controls_TwoBoneIK[Index].IK.ParentBone = MiddleBoneName;
+	Controls_TwoBoneIK[Index].IK.ParentBoneIndex = MiddleBoneIndex;
+	Controls_TwoBoneIK[Index].IK.ParentBoneArrayIndex = INDEX_NONE;
+
+	// Start Bone
+	const FName StartBoneName = PoseableMeshComponent->GetParentBone(MiddleBoneName);
+	const int32 StartBoneIndex = PoseableMeshComponent->GetBoneIndex(StartBoneName);
+
+	Controls_TwoBoneIK[Index].JointTarget.JointTargetSpaceBoneName = StartBoneName;
+	Controls_TwoBoneIK[Index].JointTarget.JointTargetSpaceBoneIndex = StartBoneIndex;
+	Controls_TwoBoneIK[Index].JointTarget.JointTargetSpaceBoneArrayIndex = INDEX_NONE;
+
+	// Change JointTarget (Start Bone)
+	ACsAnim_ControlHelper_JointTarget* JointTarget = GetWorld()->SpawnActor<ACsAnim_ControlHelper_JointTarget>();
+	JointTarget->ControlIndex					   = Index;
+	Control->JointTarget						   = JointTarget;
+	JointTarget->AttachToActor(Control, FAttachmentTransformRules::KeepRelativeTransform);
+	{
+		// Reset PREVIOUS Start Bone
+		if (Control->StartBone)
+		{
+			Control->StartBone->ResetRelativeTransform();
+			PoseableMeshComponent->SetBoneTransformByName(Control->StartBone->Bone, Control->StartBone->GetActorTransform(), EBoneSpaces::ComponentSpace);
+		}
+
+		if (StartBoneName != NAME_None)
+		{
+			const int32 Count = Bones.Num();
+
+			for (int32 I = 0; I < Count; I++)
+			{
+				if (Bones[I].Bone == StartBoneName)
+				{
+					// Reset NEW / CURRENT Start Bone
+					Control->StartBone = Bones[I].Actor;
+					Control->StartBone->ResetRelativeTransform();
+					PoseableMeshComponent->SetBoneTransformByName(Control->StartBone->Bone, Control->StartBone->GetActorTransform(), EBoneSpaces::ComponentSpace);
+
+					JointTarget->SetActorLocation(Control->StartBone->GetActorLocation());
+					JointTarget->Location = Control->StartBone->GetActorLocation();
+					//JointTarget->Location.Clear();
+
+					//JointTarget->UpdateRelativeTransform(Control->StartBone->DefaultRelativeTransform, true);
+
+					Controls_TwoBoneIK[Index].JointTarget.JointTargetSpaceBoneArrayIndex = I;
+					break;
+				}
+			}
+		}
+		else
+		{
+			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::Create_Control_TwoBoneIK(%s): JointTargetBoneName (Start Bone): %s is NOT found in SkeletalMesh: %s"), *GetName(), *(StartBoneName.ToString()), *(PoseableMeshComponent->SkeletalMesh->GetName()));
+		}
+	}
+	// Change Middle Bone
+	{
+		// Reset PREVIOUS Middle Bone
+		if (Control->MiddleBone)
+		{
+			Control->MiddleBone->ResetRelativeTransform();
+			PoseableMeshComponent->SetBoneTransformByName(Control->MiddleBone->Bone, Control->MiddleBone->GetActorTransform(), EBoneSpaces::ComponentSpace);
+		}
+		// Reset NEW / CURRENT Middle Bone
+		if (MiddleBoneName != NAME_None)
+		{
+			const int32 Count = Bones.Num();
+
+			for (int32 I = 0; I < Count; I++)
+			{
+				if (Bones[I].Bone == MiddleBoneName)
+				{
+					Control->MiddleBone = Bones[I].Actor;
+					Control->MiddleBone->ResetRelativeTransform();
+					PoseableMeshComponent->SetBoneTransformByName(Control->MiddleBone->Bone, Control->MiddleBone->GetActorTransform(), EBoneSpaces::ComponentSpace);
+
+					Controls_TwoBoneIK[Index].IK.ParentBoneArrayIndex = I;
+				}
+			}
+		}
+		else
+		{
+			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::Create_Control_TwoBoneIK(%s): IKBone's Parent Bone (Middle Bone): %s is NOT found in SkeletalMesh: %s"), *GetName(), *(MiddleBoneName.ToString()), *(PoseableMeshComponent->SkeletalMesh->GetName()));
+		}
+	}
+	// Change EndEffector (End Bone)
+	ACsAnim_ControlHelper_EndEffector* EndEffector = GetWorld()->SpawnActor<ACsAnim_ControlHelper_EndEffector>();
+	EndEffector->ControlIndex					   = Index;
+	Control->EndEffector						   = EndEffector;
+	EndEffector->AttachToActor(Control, FAttachmentTransformRules::KeepRelativeTransform);
+
+	{
+		// Reset PREVIOUS End Bone. TODO: Need to check if any other Control is referencing this bone
+		if (Control->EndBone)
+		{
+			Control->EndBone->ResetRelativeTransform();
+			PoseableMeshComponent->SetBoneTransformByName(Control->EndBone->Bone, Control->EndBone->GetActorTransform(), EBoneSpaces::ComponentSpace);
+		}
+		if (BoneName != NAME_None)
+		{
+			const int32 Count = Bones.Num();
+
+			for (int32 I = 0; I < Count; I++)
+			{
+				if (Bones[I].Bone == BoneName)
+				{
+					// Reset NEW / CURRENT End Bone
+					Control->EndBone = Bones[I].Actor;
+					Control->MiddleBone->ResetRelativeTransform();
+					PoseableMeshComponent->SetBoneTransformByName(Control->EndBone->Bone, Control->EndBone->GetActorTransform(), EBoneSpaces::ComponentSpace);
+
+					EndEffector->SetActorLocation(Control->EndBone->GetActorLocation());
+					EndEffector->Location = Control->EndBone->GetActorLocation();
+					//EndEffector->Location.Clear();
+					
+					//EndEffector->UpdateRelativeTransform(Control->EndBone->DefaultRelativeTransform, true);
+					break;
+				}
+			}
+		}
+		else
+		{
+			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::Create_Control_TwoBoneIK(%s): IKBone (End Bone): %s is NOT found in SkeletalMesh: %s"), *GetName(), *(BoneName.ToString()), *(PoseableMeshComponent->SkeletalMesh->GetName()));
+		}
+	}
+}
+
+// Copied from Engine\Source\Runtime\AnimGraphRuntime\Private\BoneControllers\AnimNode_TowBoneIK.cpp
+
+void ACsPoseableMeshActor::PerformTwoBoneIK(const int32 ControlIndex, TArray<FTransform>& OutTransforms)
 {
-bInvalidLimb = true;
-}
-else
-{
-UpperLimbIndex = BoneContainer.GetParentBoneIndex(LowerLimbIndex);
-if (UpperLimbIndex == INDEX_NONE)
-{
-bInvalidLimb = true;
-}
-}
+	const int32 StartIndex  = Controls_TwoBoneIK[ControlIndex].JointTarget.JointTargetSpaceBoneIndex;
+	const int32 MiddleIndex = Controls_TwoBoneIK[ControlIndex].IK.ParentBoneIndex;
+	const int32 EndIndex    = Controls_TwoBoneIK[ControlIndex].IK.IKBoneIndex;
 
-const bool bInBoneSpace = (EffectorLocationSpace == BCS_ParentBoneSpace) || (EffectorLocationSpace == BCS_BoneSpace);
-const int32 EffectorBoneIndex = bInBoneSpace ? BoneContainer.GetPoseBoneIndexForBoneName(EffectorSpaceBoneName) : INDEX_NONE;
-const FCompactPoseBoneIndex EffectorSpaceBoneIndex = BoneContainer.MakeCompactPoseIndex(FMeshPoseBoneIndex(EffectorBoneIndex));
+	if (StartIndex == INDEX_NONE || MiddleIndex == INDEX_NONE || EndIndex == INDEX_NONE)
+		return;
 
-if (bInBoneSpace && (EffectorSpaceBoneIndex == INDEX_NONE))
-{
-bInvalidLimb = true;
-}
+	// Get Local Space transforms for our bones. We do this first in case they already are local.
+	// As right after we get them in component space. (And that does the auto conversion).
+	// We might save one transform by doing local first...
+	const FTransform EndLocalTransform = PoseableMeshComponent->BoneSpaceTransforms[EndIndex];
 
-// If we walked past the root, this controlled is invalid, so return no affected bones.
-if( bInvalidLimb )
-{
-return;
-}
+	const FTransform ComponentTransform = PoseableMeshComponent->GetComponentTransform();
 
-// Get Local Space transforms for our bones. We do this first in case they already are local.
-// As right after we get them in component space. (And that does the auto conversion).
-// We might save one transform by doing local first...
-const FTransform EndBoneLocalTransform = Output.Pose.GetLocalSpaceTransform(IKBoneCompactPoseIndex);
+	// Now get those in component space...
+	FTransform StartTransform = PoseableMeshComponent->GetBoneTransform(StartIndex);
+	FTransform MiddleTransform = PoseableMeshComponent->GetBoneTransform(MiddleIndex);
+	FTransform EndTransform = PoseableMeshComponent->GetBoneTransform(EndIndex);
 
-// Now get those in component space...
-FTransform LowerLimbCSTransform = Output.Pose.GetComponentSpaceTransform(LowerLimbIndex);
-FTransform UpperLimbCSTransform = Output.Pose.GetComponentSpaceTransform(UpperLimbIndex);
-FTransform EndBoneCSTransform = Output.Pose.GetComponentSpaceTransform(IKBoneCompactPoseIndex);
+	StartTransform.SetToRelativeTransform(ComponentTransform);
+	MiddleTransform.SetToRelativeTransform(ComponentTransform);
+	EndTransform.SetToRelativeTransform(ComponentTransform);
 
-// Get current position of root of limb.
-// All position are in Component space.
-const FVector RootPos = UpperLimbCSTransform.GetTranslation();
-const FVector InitialJointPos = LowerLimbCSTransform.GetTranslation();
-const FVector InitialEndPos = EndBoneCSTransform.GetTranslation();
+	// Get current position of root of limb.
+	// All position are in Component space.
+	const FVector StartPos		   = StartTransform.GetTranslation();
+	const FVector InitialMiddlePos = MiddleTransform.GetTranslation();
+	const FVector InitialEndPos    = EndTransform.GetTranslation();
 
-// Transform EffectorLocation from EffectorLocationSpace to ComponentSpace.
-FTransform EffectorTransform(EffectorLocation);
-FAnimationRuntime::ConvertBoneSpaceTransformToCS(Output.AnimInstanceProxy->GetComponentTransform(), Output.Pose, EffectorTransform, EffectorSpaceBoneIndex, EffectorLocationSpace);
+	ACsAnim_Control_TwoBoneIK* Control  = Controls_TwoBoneIK[ControlIndex].Actor;
+	//const FTransform ComponentTransform = PoseableMeshComponent->GetComponentTransform();
 
-// Get joint target (used for defining plane that joint should be in).
-FTransform JointTargetTransform(JointTargetLocation);
-FCompactPoseBoneIndex JointTargetSpaceBoneIndex(INDEX_NONE);
+	// Get JointTarget Transform in ComponentSpace
+	
+	const FVector JointTargetLocation = Control->JointTarget->GetActorLocation();
+	FTransform JointTargetTransform(JointTargetLocation);
+		// Convert JointTargetTransform WorldSpace -> ComponentSpace
+	JointTargetTransform.SetToRelativeTransform(ComponentTransform);
+	
+	FVector	JointTargetPos = JointTargetTransform.GetTranslation();
 
-if (JointTargetLocationSpace == BCS_ParentBoneSpace || JointTargetLocationSpace == BCS_BoneSpace)
-{
-int32 Index = BoneContainer.GetPoseBoneIndexForBoneName(JointTargetSpaceBoneName);
-JointTargetSpaceBoneIndex = BoneContainer.MakeCompactPoseIndex(FMeshPoseBoneIndex(Index));
-}
+	// Get EndEffector Transform in ComponentSpace
 
-FAnimationRuntime::ConvertBoneSpaceTransformToCS(Output.AnimInstanceProxy->GetComponentTransform(), Output.Pose, JointTargetTransform, JointTargetSpaceBoneIndex, JointTargetLocationSpace);
+	const FVector EndEffectorLocation = Control->EndEffector->GetActorLocation();
+	FTransform EndEffectorTransform(EndEffectorLocation);
+		// Convert EndEffectorTransfrom WorldSpace -> ComponentSpace
+	EndEffectorTransform.SetToRelativeTransform(ComponentTransform);
 
-FVector	JointTargetPos = JointTargetTransform.GetTranslation();
+	FVector DesiredPos = EndEffectorTransform.GetTranslation();
 
-// This is our reach goal.
-FVector DesiredPos = EffectorTransform.GetTranslation();
+	// IK solver
+	
+	StartTransform.SetLocation(StartPos);
+	MiddleTransform.SetLocation(InitialMiddlePos);
+	EndTransform.SetLocation(InitialEndPos);
 
-// IK solver
-UpperLimbCSTransform.SetLocation(RootPos);
-LowerLimbCSTransform.SetLocation(InitialJointPos);
-EndBoneCSTransform.SetLocation(InitialEndPos);
+	const bool bAllowStretching   = Controls_TwoBoneIK[ControlIndex].IK.bAllowStretching;
+	const float StartStretchRatio = Controls_TwoBoneIK[ControlIndex].IK.StartStretchRatio;
+	const float MaxStretchRatio   = Controls_TwoBoneIK[ControlIndex].IK.MaxStretchRatio;
 
-AnimationCore::SolveTwoBoneIK(UpperLimbCSTransform, LowerLimbCSTransform, EndBoneCSTransform, JointTargetPos, DesiredPos, bAllowStretching, StartStretchRatio, MaxStretchScale);
+	AnimationCore::SolveTwoBoneIK(StartTransform, MiddleTransform, EndTransform, JointTargetPos, DesiredPos, bAllowStretching, StartStretchRatio, MaxStretchRatio);
 
-// Update transform for upper bone.
-{
-// Order important. First bone is upper limb.
-OutBoneTransforms.Add( FBoneTransform(UpperLimbIndex, UpperLimbCSTransform) );
-}
+	// Update transform for end bone.
 
-// Update transform for lower bone.
-{
-// Order important. Second bone is lower limb.
-OutBoneTransforms.Add( FBoneTransform(LowerLimbIndex, LowerLimbCSTransform) );
+	// only allow bTakeRotationFromEffectorSpace during bone space
+	if (Controls_TwoBoneIK[ControlIndex].EndEffector.bTakeRotationFromEffectorSpace)
+	{
+		EndTransform.SetRotation(EndEffectorTransform.GetRotation());
+	}
+	else 
+	if (Controls_TwoBoneIK[ControlIndex].EndEffector.bMaintainEffectorRelRot)
+	{
+		EndTransform = EndLocalTransform * MiddleTransform;
+	}
+	OutTransforms.Add(StartTransform);
+	OutTransforms.Add(MiddleTransform);
+	OutTransforms.Add(EndTransform);
 }
 
-// Update transform for end bone.
-{
-// only allow bTakeRotationFromEffectorSpace during bone space
-if (bInBoneSpace && bTakeRotationFromEffectorSpace)
-{
-EndBoneCSTransform.SetRotation(EffectorTransform.GetRotation());
-}
-else if (bMaintainEffectorRelRot)
-{
-EndBoneCSTransform = EndBoneLocalTransform * LowerLimbCSTransform;
-}
-// Order important. Third bone is End Bone.
-OutBoneTransforms.Add(FBoneTransform(IKBoneCompactPoseIndex, EndBoneCSTransform));
-}
-
-// Make sure we have correct number of bones
-check(OutBoneTransforms.Num() == 3);
-}
-*/
 #endif // #if WITH_EDITOR

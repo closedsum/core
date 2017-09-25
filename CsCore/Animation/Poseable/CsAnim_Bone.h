@@ -41,6 +41,8 @@ class CSCORE_API ACsAnim_Bone : public AStaticMeshActor
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "00 Control")
 	FTransform DefaultRelativeTransform;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "00 Control")
+	FTransform DefaultComponentTransform;
 
 	void ResetRelativeTransform();
 

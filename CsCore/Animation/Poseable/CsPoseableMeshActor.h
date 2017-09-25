@@ -384,7 +384,7 @@ class CSCORE_API ACsPoseableMeshActor : public AActor
 	virtual void ClearBones();
 
 	void Create_Control_TwoBoneIK(const int32 Index);
-	void PerformTwoBoneIK(const int32 ControlIndex, TArray<FTransform>& OutTransforms);
+	void PerformTwoBoneIK(const int32 Index, TArray<FTransform>& OutTransforms);
 
 #endif // #if WITH_EDITOR
 };

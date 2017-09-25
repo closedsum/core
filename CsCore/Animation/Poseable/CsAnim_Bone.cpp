@@ -122,7 +122,7 @@ void ACsAnim_Bone::UpdateTransform(const FTransform &Transform)
 	Rotation = GetActorRotation();
 	Scale = GetActorScale3D();
 
-	ForceUpdateTransform = true;
+	//ForceUpdateTransform = true;
 }
 
 void ACsAnim_Bone::UpdateRelativeTransform(const FTransform &Transform, const bool &Resolve)

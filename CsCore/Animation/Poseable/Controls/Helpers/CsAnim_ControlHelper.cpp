@@ -12,6 +12,16 @@ ACsAnim_ControlHelper::ACsAnim_ControlHelper(const FObjectInitializer& ObjectIni
 	SetMobility(EComponentMobility::Movable);
 
 	ControlIndex = INDEX_NONE;
+
+	LockTransform = false;
+	LockLocation = false;
+	LockRotation = false;
+	LockScale = false;
+
+	RecordTransform = !LockTransform;
+	RecordLocation = !LockLocation;
+	RecordRotation = !LockRotation;
+	RecordScale = !LockScale;
 }
 
 void ACsAnim_ControlHelper::Tick(float DeltaSeconds)
@@ -44,9 +54,44 @@ void ACsAnim_ControlHelper::OnTick_Editor(const float &DeltaSeconds)
 		HasTickedInEditor = true;
 	}
 
+	const bool Record = Root->IsSelected() || IsSelected() || ForceUpdateTransform;
+
+	if (!Record)
+		return;
+	if (!RecordTransform)
+		return;
+
 	Location = GetActorLocation();
+
+	if (!RecordLocation &&
+		Location.HasChanged())
+	{
+		SetActorLocation(Location.Last_Value);
+		Location.Value = Location.Last_Value;
+		Location.Clear();
+	}
+
 	Rotation = GetActorRotation();
+
+	if (!RecordRotation &&
+		Rotation.HasChanged())
+	{
+		SetActorRotation(Rotation.Last_Value);
+		Rotation.Value = Rotation.Last_Value;
+		Rotation.Clear();
+	}
+
 	Scale = GetActorScale3D();
+
+	if (!RecordScale &&
+		Scale.HasChanged())
+	{
+		SetActorScale3D(Scale.Last_Value);
+		Scale.Value = Scale.Last_Value;
+		Scale.Clear();
+	}
+
+	ForceUpdateTransform = false;
 }
 
 

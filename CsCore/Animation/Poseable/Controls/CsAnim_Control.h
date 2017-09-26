@@ -15,22 +15,27 @@ class CSCORE_API ACsAnim_Control : public AStaticMeshActor
 	virtual void OnTick_Editor(const float &DeltaSeconds);
 
 	bool HasTickedInEditor;
-
+	/* Control Name */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "00 Control")
 	FName Control;
-
+	/* Reference to PoseableMeshActor */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "00 Control")
 	AActor* Root;
 
 	bool ForceUpdateTransform;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "00 Control")
+	bool LockTransform;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "00 Control")
+	bool LockLocation;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "00 Control")
+	bool LockRotation;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "00 Control")
+	bool LockScale;
+
 	bool RecordTransform;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "00 Control")
 	bool RecordLocation;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "00 Control")
 	bool RecordRotation;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "00 Control")
 	bool RecordScale;
 
 	FCsPrimitiveType<FVector> Location;

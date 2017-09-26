@@ -5,4 +5,9 @@
 
 ACsAnim_ControlHelper_EndEffector::ACsAnim_ControlHelper_EndEffector(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+	LockRotation = true;
+	LockScale = true;
+
+	RecordRotation = !LockRotation;
+	RecordScale = !LockScale;
 }

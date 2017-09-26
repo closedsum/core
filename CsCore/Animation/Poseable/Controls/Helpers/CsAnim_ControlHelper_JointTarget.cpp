@@ -5,4 +5,9 @@
 
 ACsAnim_ControlHelper_JointTarget::ACsAnim_ControlHelper_JointTarget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+	LockRotation = true;
+	LockScale = true;
+
+	RecordRotation = !LockRotation;
+	RecordScale = !LockScale;
 }

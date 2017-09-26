@@ -88,11 +88,18 @@ struct FCsAnimBoneInfo
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Bone")
 	class ACsAnim_Bone* Actor;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bone")
+	bool RecordLocation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bone")
+	bool RecordRotation;
+
 	FCsAnimBoneInfo()
 	{
 		Bone = NAME_None;
 		BoneIndex = INDEX_NONE;
 		Actor = nullptr;
+		RecordLocation = false;
 	}
 };
 
@@ -383,8 +390,8 @@ class CSCORE_API ACsPoseableMeshActor : public AActor
 	virtual void GenerateBones();
 	virtual void ClearBones();
 
-	void Create_Control_TwoBoneIK(const int32 Index);
-	void PerformTwoBoneIK(const int32 Index, TArray<FTransform>& OutTransforms);
+	void Create_Control_TwoBoneIK(const int32 &Index);
+	void PerformTwoBoneIK(const int32 &Index);
 
 #endif // #if WITH_EDITOR
 };

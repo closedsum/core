@@ -1037,7 +1037,6 @@ namespace ECsLoadFlags_Editor
 }
 
 #define ECS_LOAD_FLAGS_EDITOR_MAX (uint8)ECsLoadFlags_Editor::ECsLoadFlags_Editor_MAX
-//typedef ECsLoadFlags_Editor TCsLoadFlags_Editor;
 typedef TEnumAsByte<ECsLoadFlags_Editor::Type> TCsLoadFlags_Editor;
 
 USTRUCT()
@@ -1437,7 +1436,6 @@ namespace ECsEasingType
 }
 
 #define ECS_EASING_TYPE_MAX (uint8)ECsEasingType::ECsEasingType_MAX
-//typedef ECsEasingType TCsEasingType;
 typedef TEnumAsByte<ECsEasingType::Type> TCsEasingType;
 
 USTRUCT()
@@ -1497,6 +1495,121 @@ struct FCsFpsDrawDistance
 		return FString::Printf(TEXT("1P=%3.3f 3P=%3.3f"), Distance1P, Distance3P);
 	}
 };
+
+// Transform
+#pragma region
+
+UENUM(BlueprintType, meta = (Bitflags))
+enum class ECsAxes : uint8
+{
+	X	UMETA(DisplayName = "X | Pitch"),
+	Y	UMETA(DisplayName = "Y | Yaw"),
+	Z	UMETA(DisplayName = "Z | Roll"),
+};
+
+UENUM(BlueprintType)
+namespace ECsAxes_Editor
+{
+	enum Type
+	{
+		X					UMETA(DisplayName = "X | Pitch"),
+		Y					UMETA(DisplayName = "Y | Yaw"),
+		Z					UMETA(DisplayName = "Z | Roll"),
+		ECsAxes_Editor_MAX	UMETA(Hidden),
+	};
+}
+
+namespace ECsAxes_Editor
+{
+	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString X = TCsString(TEXT("X"), TEXT("x"), TEXT("pitch"));
+		const TCsString Y = TCsString(TEXT("Y"), TEXT("y"), TEXT("yaw"));
+		const TCsString Z = TCsString(TEXT("Z"), TEXT("z"), TEXT("roll"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::X) { return Str::X.Value; }
+		if (EType == Type::Y) { return Str::Y.Value; }
+		if (EType == Type::Z) { return Str::Z.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::X) { return Type::X; }
+		if (String == Str::Y) { return Type::Y; }
+		if (String == Str::Z) { return Type::Z; }
+		return Type::ECsAxes_Editor_MAX;
+	}
+
+	FORCEINLINE ECsAxes ToBaseType(const Type &EType)
+	{
+		if (EType == Type::X) { return ECsAxes::X; }
+		if (EType == Type::Y) { return ECsAxes::Y; }
+		if (EType == Type::Z) { return ECsAxes::Z; }
+		return ECsAxes::X;
+	}
+
+	FORCEINLINE ECsAxes ToFlag(const FString &String)
+	{
+		if (String == Str::X) { return ECsAxes::X; }
+		if (String == Str::Y) { return ECsAxes::Y; }
+		if (String == Str::Z) { return ECsAxes::Z; }
+		return ECsAxes::X;;
+	}
+}
+
+#define ECS_AXES_EDITOR_MAX (uint8)ECsAxes_Editor::ECsAxes_Editor_MAX
+typedef TEnumAsByte<ECsAxes_Editor::Type> TCsAxes_Editor;
+
+UENUM(BlueprintType)
+namespace ECsTransformMember
+{
+	enum Type
+	{
+		Location				UMETA(DisplayName = "Location"),
+		Rotation				UMETA(DisplayName = "Rotation"),
+		Scale					UMETA(DisplayName = "Scale"),
+		ECsTransformMember_MAX	UMETA(Hidden),
+	};
+}
+
+namespace ECsTransformMember
+{
+	typedef FCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+
+	namespace Str
+	{
+		const TCsString Location = TCsString(TEXT("Location"), TEXT("location"));
+		const TCsString Rotation = TCsString(TEXT("Rotation"), TEXT("rotation"));
+		const TCsString Scale = TCsString(TEXT("Scale"), TEXT("scale"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::Location) { return Str::Location.Value; }
+		if (EType == Type::Rotation) { return Str::Rotation.Value; }
+		if (EType == Type::Scale) { return Str::Scale.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::Location) { return Type::Location; }
+		if (String == Str::Rotation) { return Type::Rotation; }
+		if (String == Str::Scale) { return Type::Scale; }
+		return Type::ECsTransformMember_MAX;
+	}
+}
+
+#define ECS_TRANSFORM_MEMBER_MAX (uint8)ECsTransformMember::ECsTransformMember_MAX
+typedef TEnumAsByte<ECsTransformMember::Type> TCsTransformMember;
+
+#pragma endregion Transform
 
 // Static Mesh
 #pragma region

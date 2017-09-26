@@ -86,22 +86,92 @@ struct FCsAnimBoneInfo
 	int32 BoneIndex;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Bone")
+	FName ParentBone;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Bone")
+	int32 ParentBoneIndex;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Bone")
 	class ACsAnim_Bone* Actor;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bone")
-	bool RecordLocation;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bone")
-	bool RecordRotation;
 
 	FCsAnimBoneInfo()
 	{
 		Bone = NAME_None;
 		BoneIndex = INDEX_NONE;
+		ParentBone = NAME_None;
+		ParentBoneIndex = INDEX_NONE;
 		Actor = nullptr;
-		RecordLocation = false;
 	}
 };
+
+	// Controls
+#pragma region
+
+USTRUCT()
+struct FCsAnimControlPinInput
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Control")
+	TEnumAsByte<ECsTransformMember::Type> Member;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Control", meta = (Bitmask, BitmaskEnum = "ECsAxes"))
+	int32 Axes;
+};
+
+USTRUCT()
+struct FCsAnimControlPin
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Control")
+	FName Bone;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Control")
+	FCsAnimControlPinInput Input;
+};
+
+USTRUCT()
+struct FCsAnimControlInfo
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Control")
+	FString Control;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Control")
+	class ACsAnim_Control* Actor;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Control")
+	TArray<FCsAnimControlPin> Pins;
+
+	FCsAnimControlInfo()
+	{
+		Control = TEXT("None");
+		Actor = nullptr;
+	}
+
+	FCsAnimControlInfo& operator=(const FCsAnimControlInfo& B)
+	{
+		Control = B.Control;
+		Actor = B.Actor;
+		return *this;
+	}
+
+	bool operator==(const FCsAnimControlInfo& B) const
+	{
+		return Control == B.Control &&
+			   Actor == B.Actor;
+	}
+
+	bool operator!=(const FCsAnimControlInfo& B) const
+	{
+		return !(*this == B);
+	}
+};
+
+		// TwoBoneIK
+#pragma region
 
 USTRUCT()
 struct FCsAnimControlInfo_TwoBoneIK_IK
@@ -351,6 +421,10 @@ struct FCsAnimControlInfo_TwoBoneIK
 	}
 };
 
+#pragma endregion TwoBoneIK
+
+#pragma endregion Controls
+
 #pragma endregion Structs
 
 UCLASS()
@@ -384,11 +458,18 @@ class CSCORE_API ACsPoseableMeshActor : public AActor
 
 #if WITH_EDITOR
 
+	void OnControlNameChanged_TwoBoneIK(const int32 &Index);
+
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& e) override;
 	virtual void PostEditChangeChainProperty(struct FPropertyChangedChainEvent& e) override;
 
 	virtual void GenerateBones();
 	virtual void ClearBones();
+
+	void DestroyOrphanedControlAnchors();
+	void DestroyOrphanedControlHelpers();
+
+	void RecreateBone(const int32 &Index);
 
 	void Create_Control_TwoBoneIK(const int32 &Index);
 	void PerformTwoBoneIK(const int32 &Index);

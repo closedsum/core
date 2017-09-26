@@ -11,6 +11,8 @@ ACsAnim_Control::ACsAnim_Control(const FObjectInitializer& ObjectInitializer) : 
 
 	SetMobility(EComponentMobility::Movable);
 
+	ControlIndex = INDEX_NONE;
+
 	LockTransform = false;
 	LockLocation = false;
 	LockRotation = false;
@@ -45,11 +47,22 @@ bool ACsAnim_Control::ShouldTickIfViewportsOnly() const
 	return Super::ShouldTickIfViewportsOnly();
 }
 
+#if WITH_EDITOR
+
 void ACsAnim_Control::OnTick_Editor(const float &DeltaSeconds)
 {
 	if (!HasTickedInEditor)
 	{
 		HasTickedInEditor = true;
+	}
+
+	ControlName = GetActorLabel();
+
+	if (ControlName.HasChanged())
+	{
+		OnControlNameChanged();
+		OnControlNameChanged_Event.ExecuteIfBound(ControlIndex);
+		ControlName.Clear();
 	}
 
 	const bool Record = Root->IsSelected() || IsSelected() || ForceUpdateTransform;
@@ -91,3 +104,53 @@ void ACsAnim_Control::OnTick_Editor(const float &DeltaSeconds)
 
 	ForceUpdateTransform = false;
 }
+
+void ACsAnim_Control::OnControlNameChanged()
+{
+	Anchor->SetActorLabel(TEXT("anchor_") + GetActorLabel());
+}
+
+void ACsAnim_Control::SetControlName(const FString &InName)
+{
+	SetActorLabel(InName);
+	OnControlNameChanged();
+}
+
+#endif // #if WITH_EDITOR
+
+#if WITH_EDITOR
+
+void ACsAnim_Control::PostEditChangeProperty(struct FPropertyChangedEvent& e)
+{
+	FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
+
+	if (!UCsCommon::IsPlayInEditor(GetWorld()))
+	{
+		Super::PostEditChangeProperty(e);
+		return;
+	}
+
+	// ResetToAnchor
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(ACsAnim_Control, ResetToAnchor))
+	{
+		if (ResetToAnchor)
+		{
+			GetRootComponent()->SetRelativeTransform(FTransform::Identity);
+			ResetToAnchor = false;
+		}
+	}
+	Super::PostEditChangeProperty(e);
+}
+
+void ACsAnim_Control::PostEditChangeChainProperty(struct FPropertyChangedChainEvent& e)
+{
+	if (!UCsCommon::IsPlayInEditor(GetWorld()))
+	{
+		Super::PostEditChangeChainProperty(e);
+		return;
+	}
+
+	Super::PostEditChangeChainProperty(e);
+}
+
+#endif // #if WITH_EDITOR

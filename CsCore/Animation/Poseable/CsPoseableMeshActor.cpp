@@ -10,6 +10,7 @@
 
 #include "Animation/Poseable/CsAnim_Bone.h"
 #include "Animation/Poseable/Controls/CsAnim_Control.h"
+#include "Animation/Poseable/Controls/CsAnim_ControlAnchor.h"
 #include "Animation/Poseable/Controls/CsAnim_Control_TwoBoneIK.h"
 #include "Animation/Poseable/Controls/Helpers/CsAnim_ControlHelper_EndEffector.h"
 #include "Animation/Poseable/Controls/Helpers/CsAnim_ControlHelper_JointTarget.h"
@@ -88,16 +89,22 @@ void ACsPoseableMeshActor::OnTick_Editor(const float &DeltaSeconds)
 			ACsAnim_Control_TwoBoneIK* Control		= TwoBoneIK.Actor;
 
 			if (!Control)
-				continue;
+			{
+				DestroyOrphanedControlAnchors();
+				DestroyOrphanedControlHelpers();
+				Create_Control_TwoBoneIK(I);
+			}
 
-			if (IsSelected())
-				Control->ForceUpdateTransform = true;
-
-			if (!Control->EndEffector || !Control->JointTarget)
-				continue;
+			if (!Control->Anchor ||
+				!Control->EndEffector || 
+				!Control->JointTarget)
+			{
+				Create_Control_TwoBoneIK(I);
+			}
 
 			if (IsSelected())
 			{
+				Control->ForceUpdateTransform = true;
 				Control->EndEffector->ForceUpdateTransform = true;
 				Control->JointTarget->ForceUpdateTransform = true;
 				continue;
@@ -120,6 +127,11 @@ void ACsPoseableMeshActor::OnTick_Editor(const float &DeltaSeconds)
 
 	for (int32 I = 0; I < BoneCount; I++)
 	{
+		if (!Bones[I].Actor)
+		{
+			RecreateBone(I);
+		}
+
 		Bones[I].Actor->ForceUpdateTransform |= IsSelected();
 
 		// Location
@@ -150,30 +162,47 @@ void ACsPoseableMeshActor::OnTick_Editor(const float &DeltaSeconds)
 
 #if WITH_EDITOR
 
+void ACsPoseableMeshActor::OnControlNameChanged_TwoBoneIK(const int32 &Index)
+{
+	FCsAnimControlInfo_TwoBoneIK& TwoBoneIK = Controls_TwoBoneIK[Index];
+	ACsAnim_Control_TwoBoneIK* Control		= TwoBoneIK.Actor;
+
+	TwoBoneIK.Control = Control->GetActorLabel();
+}
+
 void ACsPoseableMeshActor::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 {
 	FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
 
-	if (UCsCommon::IsPlayInEditor(GetWorld()))
+	if (!UCsCommon::IsPlayInEditor(GetWorld()))
 	{
-		// SkeletalMesh
-		if (PropertyName == GET_MEMBER_NAME_CHECKED(ACsPoseableMeshActor, PoseableMeshComponent))
+		Super::PostEditChangeProperty(e);
+		return;
+	}
+
+	// SkeletalMesh
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(ACsPoseableMeshActor, PoseableMeshComponent))
+	{
+		if (PoseableMeshComponent->SkeletalMesh != Last_SkeletalMesh)
 		{
-			if (PoseableMeshComponent->SkeletalMesh != Last_SkeletalMesh)
-			{
-				if (PoseableMeshComponent->SkeletalMesh)
-					GenerateBones();
-				else
-					ClearBones();
-			}
-			Last_SkeletalMesh = PoseableMeshComponent->SkeletalMesh;
+			if (PoseableMeshComponent->SkeletalMesh)
+				GenerateBones();
+			else
+				ClearBones();
 		}
+		Last_SkeletalMesh = PoseableMeshComponent->SkeletalMesh;
 	}
 	Super::PostEditChangeProperty(e);
 }
 
 void ACsPoseableMeshActor::PostEditChangeChainProperty(struct FPropertyChangedChainEvent& e)
 {
+	if (!UCsCommon::IsPlayInEditor(GetWorld()))
+	{
+		Super::PostEditChangeChainProperty(e);
+		return;
+	}
+
 	const int32 Controls_TwoBoneIK_Index = e.GetArrayIndex(TEXT("Controls_TwoBoneIK"));
 
 	// Controls_TwoBoneIK
@@ -235,9 +264,9 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty(struct FPropertyChangedCh
 		// Controls_TwoBoneIK[Index].Control
 		if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_TwoBoneIK, Control))
 		{
-			if (TwoBoneIK.Actor)
+			if (ACsAnim_Control_TwoBoneIK* Control = TwoBoneIK.Actor)
 			{
-				TwoBoneIK.Actor->SetActorLabel(TwoBoneIK.Control);
+				Control->SetControlName(TwoBoneIK.Control);
 			}
 		}
 		// Controls_TwoBoneIK[Index].IK.IKBone
@@ -294,19 +323,8 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty(struct FPropertyChangedCh
 
 			if (!Control)
 			{
-				// Check control Children who do NOT have a parent, Delete them
-				TArray<AActor*> Helpers;
-				UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACsAnim_ControlHelper::StaticClass(), Helpers);
-
-				const int32 Count = Helpers.Num();
-
-				for (int32 I = 0; I < Count; I++)
-				{
-					ACsAnim_ControlHelper* Helper = Cast<ACsAnim_ControlHelper>(Helpers[I]);
-
-					if (Helper->ControlIndex == INDEX_NONE)
-						Helper->Destroy();
-				}
+				DestroyOrphanedControlAnchors();
+				DestroyOrphanedControlHelpers();
 			}
 
 			Create_Control_TwoBoneIK(Index);
@@ -319,7 +337,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty(struct FPropertyChangedCh
 void ACsPoseableMeshActor::GenerateBones()
 {
 	ClearBones();
-
+	
 	const FTransform ComponentTransform = PoseableMeshComponent->GetComponentTransform();
 
 	TArray<FName> BoneNames;
@@ -337,8 +355,9 @@ void ACsPoseableMeshActor::GenerateBones()
 		Bone->Root = this;
 
 		Bone->SetActorRelativeTransform(FTransform::Identity);
-
+	
 		const FName ParentBoneName = PoseableMeshComponent->GetParentBone(BoneName);
+		int32 ParentBoneIndex	   = INDEX_NONE;
 
 		if (ParentBoneName == NAME_None)
 		{
@@ -352,6 +371,7 @@ void ACsPoseableMeshActor::GenerateBones()
 			{
 				if (Bones[J].Bone == ParentBoneName)
 				{
+					ParentBoneIndex = Bones[J].BoneIndex;
 					Bone->AttachToActor(Bones[J].Actor, FAttachmentTransformRules::KeepRelativeTransform);
 					break;
 				}
@@ -360,6 +380,8 @@ void ACsPoseableMeshActor::GenerateBones()
 		
 		const int32 BoneIndex = PoseableMeshComponent->GetBoneIndex(BoneName);
 		Bone->BoneIndex		  = BoneIndex;
+		Bone->ParentBone	  = ParentBoneName;
+		Bone->ParentBoneIndex = ParentBoneIndex;
 		// Store Local / Relative Transform
 		Bone->DefaultRelativeTransform = PoseableMeshComponent->BoneSpaceTransforms[BoneIndex];
 		Bone->UpdateRelativeTransform(Bone->DefaultRelativeTransform, true);
@@ -372,8 +394,10 @@ void ACsPoseableMeshActor::GenerateBones()
 		Bones.AddDefaulted();
 		const int32 Index = Bones.Num() - 1;
 		Bones[Index].Bone = BoneName;
-		Bones[Index].Actor = Bone;
 		Bones[Index].BoneIndex = BoneIndex;
+		Bones[Index].ParentBone = ParentBoneName;
+		Bones[Index].ParentBoneIndex = ParentBoneIndex;
+		Bones[Index].Actor = Bone;
 	}
 }
 
@@ -389,6 +413,90 @@ void ACsPoseableMeshActor::ClearBones()
 	Bones.Reset();
 }
 
+void ACsPoseableMeshActor::DestroyOrphanedControlAnchors()
+{
+	TArray<AActor*> Anchors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACsAnim_ControlAnchor::StaticClass(), Anchors);
+
+	const int32 Count = Anchors.Num();
+
+	for (int32 I = 0; I < Count; I++)
+	{
+		ACsAnim_ControlAnchor* Anchor = Cast<ACsAnim_ControlAnchor>(Anchors[I]);
+
+		if (!Anchor->Control)
+			Anchor->Destroy();
+	}
+}
+
+void ACsPoseableMeshActor::DestroyOrphanedControlHelpers()
+{
+	// Check Control Children who do NOT have a parent, Delete them
+	TArray<AActor*> Helpers;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACsAnim_ControlHelper::StaticClass(), Helpers);
+
+	const int32 Count = Helpers.Num();
+
+	for (int32 I = 0; I < Count; I++)
+	{
+		ACsAnim_ControlHelper* Helper = Cast<ACsAnim_ControlHelper>(Helpers[I]);
+
+		if (Helper->ControlIndex == INDEX_NONE)
+			Helper->Destroy();
+	}
+}
+
+void ACsPoseableMeshActor::RecreateBone(const int32 &Index)
+{
+	ACsAnim_Bone* Bone = GetWorld()->SpawnActor<ACsAnim_Bone>();
+
+	Bones[Index].Actor = Bone;
+	const FName BoneName = Bones[Index].Bone;
+	Bone->SetActorLabel(BoneName.ToString());
+	Bone->Bone = BoneName;
+	Bone->Root = this;
+
+	Bone->SetActorRelativeTransform(FTransform::Identity);
+
+	const FName ParentBoneName = Bones[Index].ParentBone;
+	int32 ParentBoneIndex	   = Bones[Index].ParentBoneIndex;
+
+	if (ParentBoneName == NAME_None)
+	{
+		Bone->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+	}
+
+	const int32 InfoCount = Bones.Num();
+
+	for (int32 J = 0; J < InfoCount; J++)
+	{
+		if (Bones[J].Bone == ParentBoneName)
+		{
+			Bone->AttachToActor(Bones[J].Actor, FAttachmentTransformRules::KeepRelativeTransform);
+		}
+
+		if (Bones[J].ParentBone == BoneName)
+		{
+			Bones[J].Actor->AttachToActor(Bone, FAttachmentTransformRules::KeepRelativeTransform);
+			Bones[J].Actor->ResetRelativeTransform();
+		}
+	}
+
+	const int32 BoneIndex = PoseableMeshComponent->GetBoneIndex(BoneName);
+	Bone->BoneIndex		  = BoneIndex;
+	Bone->ParentBone	  = ParentBoneName;
+	Bone->ParentBoneIndex = ParentBoneIndex;
+	// Store Local / Relative Transform
+	Bone->DefaultRelativeTransform = PoseableMeshComponent->BoneSpaceTransforms[BoneIndex];
+	Bone->UpdateRelativeTransform(Bone->DefaultRelativeTransform, true);
+	// Store Component Transform - WorldSpace -> ComponentSpace
+	const FTransform ComponentTransform = PoseableMeshComponent->GetComponentTransform();
+	Bone->DefaultComponentTransform = PoseableMeshComponent->GetBoneTransform(BoneIndex);
+	Bone->DefaultComponentTransform.SetToRelativeTransform(ComponentTransform);
+
+	Bone->ArrayIndex = Index;
+}
+
 void ACsPoseableMeshActor::Create_Control_TwoBoneIK(const int32 &Index)
 {
 	FCsAnimControlInfo_TwoBoneIK& TwoBoneIK = Controls_TwoBoneIK[Index];
@@ -396,14 +504,44 @@ void ACsPoseableMeshActor::Create_Control_TwoBoneIK(const int32 &Index)
 
 	if (!Control)
 	{
-		Control		  = GetWorld()->SpawnActor<ACsAnim_Control_TwoBoneIK>();
-		Control->Root = this;
+		ACsAnim_ControlAnchor* Anchor = GetWorld()->SpawnActor<ACsAnim_ControlAnchor>();
 
-		Control->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+		Anchor->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
 
+		Control		         = GetWorld()->SpawnActor<ACsAnim_Control_TwoBoneIK>();
+		Control->Control     = TwoBoneIK.Control;
+		Control->ControlName = TwoBoneIK.Control;
+		Control->ControlName.Clear();
 		Control->SetActorLabel(TwoBoneIK.Control);
+		Control->ControlIndex = Index;
+		Control->Root = this;
+		Control->Anchor = Anchor;
+
+		Control->AttachToActor(Anchor, FAttachmentTransformRules::KeepRelativeTransform);
+
 		TwoBoneIK.Actor = Control;
+
+		Control->OnControlNameChanged_Event.BindUObject(this, &ACsPoseableMeshActor::OnControlNameChanged_TwoBoneIK);
+
+		Anchor->Control = Control;
+		Anchor->SetActorLabel(TEXT("anchor_") + Control->GetActorLabel());
 	}
+
+	if (!Control->Anchor)
+	{
+		ACsAnim_ControlAnchor* Anchor = GetWorld()->SpawnActor<ACsAnim_ControlAnchor>();
+
+		Anchor->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+
+		const FTransform WorldTransform = Control->GetActorTransform();
+		Control->SetActorRelativeTransform(FTransform::Identity);
+		Control->AttachToActor(Anchor, FAttachmentTransformRules::KeepRelativeTransform);
+		Control->SetActorTransform(WorldTransform);
+
+		Anchor->Control = Control;
+		Anchor->SetActorLabel(TEXT("anchor_") + Control->GetActorLabel());
+	}
+
 	const FName BoneName = TwoBoneIK.IK.IKBone;
 	const int32 BoneIndex = PoseableMeshComponent->GetBoneIndex(BoneName);
 

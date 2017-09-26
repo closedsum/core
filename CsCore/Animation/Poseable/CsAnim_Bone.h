@@ -30,6 +30,12 @@ class CSCORE_API ACsAnim_Bone : public AActor
 	/* Index in Bone Array in PoseableMeshActor */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "00 Bone")
 	int32 ArrayIndex;
+	/* Parent Bone Name */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "00 Bone")
+	FName ParentBone;
+	/* Index in Parent Bone Array in SkeletalMesh */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "00 Bone")
+	int32 ParentBoneIndex;
 	/* Reference to PoseableMeshActor */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "00 Bone")
 	AActor* Root;

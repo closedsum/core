@@ -10,7 +10,12 @@ class CSCORE_API ACsAnim_Control_TwoBoneIK : public ACsAnim_Control
 {
 	GENERATED_UCLASS_BODY()
 
-	virtual void OnTick_Editor(const float &DeltaSeconds) override;
+#if WITH_EDITOR
+
+	virtual void OnTick_Editor(const float &DeltaSeconds) override;	
+	virtual void OnControlNameChanged() override;
+
+#endif // #if WITH_EDITOR
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "00 Control")
 	class ACsAnim_ControlHelper_EndEffector* EndEffector;

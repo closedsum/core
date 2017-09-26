@@ -14,7 +14,7 @@ class CSCORE_API ACsAnim_ControlHelper : public AStaticMeshActor
 	virtual bool ShouldTickIfViewportsOnly() const override;
 	virtual void OnTick_Editor(const float &DeltaSeconds);
 
-	/* Index in Control Array in PoseableMeshActor */
+	/* Index for Control in Control Array in PoseableMeshActor */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "00 Helper")
 	int32 ControlIndex;
 	/* Reference to PoseableMeshActor */

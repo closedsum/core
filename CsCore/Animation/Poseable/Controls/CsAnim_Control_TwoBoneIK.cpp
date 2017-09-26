@@ -15,6 +15,8 @@ ACsAnim_Control_TwoBoneIK::ACsAnim_Control_TwoBoneIK(const FObjectInitializer& O
 	SetMobility(EComponentMobility::Movable);
 }
 
+#if WITH_EDITOR
+
 void ACsAnim_Control_TwoBoneIK::OnTick_Editor(const float &DeltaSeconds)
 {
 	Super::OnTick_Editor(DeltaSeconds);
@@ -24,3 +26,13 @@ void ACsAnim_Control_TwoBoneIK::OnTick_Editor(const float &DeltaSeconds)
 		HasTickedInEditor = true;
 	}
 }
+
+void ACsAnim_Control_TwoBoneIK::OnControlNameChanged()
+{
+	Super::OnControlNameChanged();
+
+	EndEffector->SetActorLabel(GetActorLabel() + TEXT("_EndEffector"));
+	JointTarget->SetActorLabel(GetActorLabel() + TEXT("_JointTarget"));
+}
+
+#endif // #if WITH_EDITOR

@@ -11,7 +11,15 @@ ACsAnim_Control::ACsAnim_Control(const FObjectInitializer& ObjectInitializer) : 
 
 	SetMobility(EComponentMobility::Movable);
 
-	RecordTransform = true;
+	LockTransform = false;
+	LockLocation = false;
+	LockRotation = false;
+	LockScale = false;
+
+	RecordTransform = !LockTransform;
+	RecordLocation = !LockLocation;
+	RecordRotation = !LockRotation;
+	RecordScale = !LockScale;
 }
 
 void ACsAnim_Control::Tick(float DeltaSeconds)
@@ -80,4 +88,6 @@ void ACsAnim_Control::OnTick_Editor(const float &DeltaSeconds)
 		Scale.Value = Scale.Last_Value;
 		Scale.Clear();
 	}
+
+	ForceUpdateTransform = false;
 }

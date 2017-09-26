@@ -2,6 +2,7 @@
 #include "Animation/Poseable/CsAnim_Bone.h"
 #include "CsCore.h"
 #include "CsCommon.h"
+#include "Components/CsStaticMeshComponent.h"
 
 ACsAnim_Bone::ACsAnim_Bone(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -9,13 +10,33 @@ ACsAnim_Bone::ACsAnim_Bone(const FObjectInitializer& ObjectInitializer) : Super(
 	PrimaryActorTick.bStartWithTickEnabled = true;
 	PrimaryActorTick.TickGroup			   = TG_PrePhysics;
 
-	SetMobility(EComponentMobility::Movable);
+	DefaultRootComponent = ObjectInitializer.CreateDefaultSubobject<USceneComponent>(this, TEXT("DefaultRootComponent"));
+	DefaultRootComponent->SetMobility(EComponentMobility::Movable);
+	SetRootComponent(DefaultRootComponent);
+	StaticMeshComponent = ObjectInitializer.CreateDefaultSubobject<UCsStaticMeshComponent>(this, TEXT("StaticMeshComponent"));
+	StaticMeshComponent->SetupAttachment(GetRootComponent());
+	StaticMeshComponent->SetMobility(EComponentMobility::Movable);
+
+	HandleSize = 1.0f;
+	HandleSize_Internal = HandleSize * FVector::OneVector;
 
 	Bone = NAME_None;
 	BoneIndex = INDEX_NONE;
+	ArrayIndex = INDEX_NONE;
+	Root = nullptr;
 
-	RecordTransform = true;
-	RecordRotation = true;
+	LockTransform = false;
+	LockLocation = true;
+	LockRotation = false;
+	LockScale = true;
+
+	RecordTransform = !LockTransform;
+	RecordLocation = !LockLocation;
+	RecordRotation = !LockRotation;
+	RecordScale = !LockScale;
+
+	DefaultRelativeTransform = FTransform::Identity;
+	DefaultComponentTransform = FTransform::Identity;
 }
 
 void ACsAnim_Bone::Tick(float DeltaSeconds)
@@ -45,14 +66,19 @@ void ACsAnim_Bone::OnTick_Editor(const float &DeltaSeconds)
 {
 	if (!HasTickedInEditor)
 	{
+		HandleSize_Internal = HandleSize * FVector::OneVector;
+
 		HasTickedInEditor = true;
 	}
-	/*
-	Location = GetActorLocation();
-	Rotation = GetActorRotation();
-	Scale = GetActorScale3D();
-	*/
-	
+
+	HandleScale = StaticMeshComponent->GetComponentScale();
+
+	if (HandleScale.HasChanged())
+	{
+		StaticMeshComponent->SetWorldScale3D(HandleSize_Internal);
+		HandleScale.Clear();
+	}
+
 	const bool Record = Root->IsSelected() || IsSelected() || ForceUpdateTransform;
 
 	if (!Record)
@@ -92,6 +118,16 @@ void ACsAnim_Bone::OnTick_Editor(const float &DeltaSeconds)
 		Scale.Value = Scale.Last_Value;
 		Scale.Clear();
 	}
+
+	HandleScale = StaticMeshComponent->GetComponentScale();
+
+	if (HandleScale.HasChanged())
+	{
+		StaticMeshComponent->SetWorldScale3D(HandleSize_Internal);
+		HandleScale.Clear();
+	}
+
+	ForceUpdateTransform = false;
 }
 
 void ACsAnim_Bone::ResetRelativeTransform()
@@ -121,8 +157,24 @@ void ACsAnim_Bone::UpdateTransform(const FTransform &Transform)
 	Location = GetActorLocation();
 	Rotation = GetActorRotation();
 	Scale = GetActorScale3D();
+}
 
-	//ForceUpdateTransform = true;
+void ACsAnim_Bone::UpdateLocation(const FVector &InLocation)
+{
+	SetActorLocation(InLocation);
+	Location = GetActorLocation();
+}
+
+void ACsAnim_Bone::UpdateRotation(const FRotator &InRotation)
+{
+	SetActorRotation(InRotation);
+	Rotation = GetActorRotation();
+}
+
+void ACsAnim_Bone::UpdateScale(const FVector &InScale)
+{
+	SetActorScale3D(InScale);
+	Scale = GetActorScale3D();
 }
 
 void ACsAnim_Bone::UpdateRelativeTransform(const FTransform &Transform, const bool &Resolve)
@@ -130,7 +182,6 @@ void ACsAnim_Bone::UpdateRelativeTransform(const FTransform &Transform, const bo
 	GetRootComponent()->SetRelativeLocation(Transform.GetTranslation());
 	GetRootComponent()->SetRelativeRotation(Transform.GetRotation());
 	GetRootComponent()->SetRelativeScale3D(Transform.GetScale3D());
-
 	//SetActorRelativeTransform()
 
 	Location = GetActorLocation();
@@ -138,6 +189,4 @@ void ACsAnim_Bone::UpdateRelativeTransform(const FTransform &Transform, const bo
 	Scale = GetActorScale3D();
 
 	ForceUpdateTransform = Resolve;
-	//if (Resolve)
-	//	ResolveTransform();
 }

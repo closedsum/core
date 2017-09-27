@@ -108,31 +108,156 @@ struct FCsAnimBoneInfo
 #pragma region
 
 USTRUCT()
-struct FCsAnimControlPinInput
+struct FCsAnimControlInfo_FK_ConnectionOutput
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Control")
 	TEnumAsByte<ECsTransformMember::Type> Member;
 
+	TCsTransformMember Last_Member;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Control", meta = (Bitmask, BitmaskEnum = "ECsAxes"))
 	int32 Axes;
+
+	int32 Last_Axes;
+
+	FCsAnimControlInfo_FK_ConnectionOutput()
+	{
+		Member = ECsTransformMember::Rotation;
+		Last_Member = Member;
+		Axes = 0;
+		Last_Axes = Axes;
+	}
+
+	FCsAnimControlInfo_FK_ConnectionOutput& operator=(const FCsAnimControlInfo_FK_ConnectionOutput& B)
+	{
+		Member = B.Member;
+		Last_Member = B.Last_Member;
+		Axes = B.Axes;
+		Last_Axes = B.Last_Axes;
+		return *this;
+	}
+
+	bool operator==(const FCsAnimControlInfo_FK_ConnectionOutput& B) const
+	{
+		return Member == B.Member &&
+			   Last_Member == B.Last_Member &&
+			   Axes == B.Axes &&
+			   Last_Axes == B.Last_Axes;
+	}
+
+	bool operator!=(const FCsAnimControlInfo_FK_ConnectionOutput& B) const
+	{
+		return !(*this == B);
+	}
 };
 
 USTRUCT()
-struct FCsAnimControlPin
+struct FCsAnimControlInfo_FK_ConnectionInput
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Control")
+	TEnumAsByte<ECsTransformMember::Type> Member;
+
+	TCsTransformMember Last_Member;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Control", meta = (Bitmask, BitmaskEnum = "ECsAxes"))
+	int32 Axes;
+
+	int32 Last_Axes;
+
+	FCsAnimControlInfo_FK_ConnectionInput()
+	{
+		Member = ECsTransformMember::Rotation;
+		Last_Member = Member;
+		Axes = 0;
+		Last_Axes = Axes;
+	}
+
+	FCsAnimControlInfo_FK_ConnectionInput& operator=(const FCsAnimControlInfo_FK_ConnectionInput& B)
+	{
+		Member = B.Member;
+		Last_Member = B.Last_Member;
+		Axes = B.Axes;
+		Last_Axes = B.Last_Axes;
+		return *this;
+	}
+
+	bool operator==(const FCsAnimControlInfo_FK_ConnectionInput& B) const
+	{
+		return Member == B.Member &&
+			   Last_Member == B.Last_Member &&
+			   Axes == B.Axes &&
+			   Last_Axes == B.Last_Axes;
+	}
+
+	bool operator!=(const FCsAnimControlInfo_FK_ConnectionInput& B) const
+	{
+		return !(*this == B);
+	}
+};
+
+USTRUCT()
+struct FCsAnimControlInfo_FK_Connection
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Control")
 	FName Bone;
 
+	FName Last_Bone;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Control")
+	int32 BoneIndex;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Control")
+	int32 BoneArrayIndex;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Control")
-	FCsAnimControlPinInput Input;
+	FCsAnimControlInfo_FK_ConnectionOutput Output;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Control")
+	FCsAnimControlInfo_FK_ConnectionInput Input;
+
+	FCsAnimControlInfo_FK_Connection()
+	{
+		Bone = NAME_None;
+		Last_Bone = NAME_None;
+		BoneIndex = INDEX_NONE;
+		BoneArrayIndex = INDEX_NONE;
+	}
+
+	FCsAnimControlInfo_FK_Connection& operator=(const FCsAnimControlInfo_FK_Connection& B)
+	{
+		Bone = B.Bone;
+		Bone = B.Last_Bone;
+		BoneIndex = B.BoneIndex;
+		BoneArrayIndex = B.BoneArrayIndex;
+		Output = B.Output;
+		Input = B.Input;
+		return *this;
+	}
+
+	bool operator==(const FCsAnimControlInfo_FK_Connection& B) const
+	{
+		return Bone == B.Bone &&
+			   Bone == B.Last_Bone &&
+			   BoneIndex == B.BoneIndex &&
+			   BoneArrayIndex == B.BoneArrayIndex &&
+			   Output == B.Output &&
+			   Input == B.Input;
+	}
+
+	bool operator!=(const FCsAnimControlInfo_FK_Connection& B) const
+	{
+		return !(*this == B);
+	}
 };
 
 USTRUCT()
-struct FCsAnimControlInfo
+struct FCsAnimControlInfo_FK
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -140,31 +265,60 @@ struct FCsAnimControlInfo
 	FString Control;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Control")
-	class ACsAnim_Control* Actor;
+	class ACsAnim_Control_FK* Actor;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Control")
-	TArray<FCsAnimControlPin> Pins;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Control")
+	TArray<FCsAnimControlInfo_FK_Connection> Connections;
 
-	FCsAnimControlInfo()
+	TArray<FCsAnimControlInfo_FK_Connection> Connections_Copy;
+
+	FCsAnimControlInfo_FK()
 	{
 		Control = TEXT("None");
 		Actor = nullptr;
 	}
 
-	FCsAnimControlInfo& operator=(const FCsAnimControlInfo& B)
+	FCsAnimControlInfo_FK& operator=(const FCsAnimControlInfo_FK& B)
 	{
 		Control = B.Control;
 		Actor = B.Actor;
+
+		Connections.Reset();
+		Connections_Copy.Reset();
+
+		const int32 Count = B.Connections.Num();
+
+		for (int32 I = 0; I < Count; I++)
+		{
+			Connections.AddDefaulted();
+			Connections[I] = B.Connections[I];
+			Connections_Copy.AddDefaulted();
+			Connections_Copy[I] = B.Connections[I];
+		}
 		return *this;
 	}
 
-	bool operator==(const FCsAnimControlInfo& B) const
+	bool operator==(const FCsAnimControlInfo_FK& B) const
 	{
-		return Control == B.Control &&
-			   Actor == B.Actor;
+		if (Control != B.Control)
+			return false;
+		if (Actor != B.Actor)
+			return false;
+
+		const int32 Count = Connections.Num();
+
+		if (Count != B.Connections.Num())
+			return false;
+
+		for (int32 I = 0; I < Count; I++)
+		{
+			if (Connections[I] != B.Connections[I])
+				return false;
+		}
+		return true;
 	}
 
-	bool operator!=(const FCsAnimControlInfo& B) const
+	bool operator!=(const FCsAnimControlInfo_FK& B) const
 	{
 		return !(*this == B);
 	}
@@ -425,6 +579,48 @@ struct FCsAnimControlInfo_TwoBoneIK
 
 #pragma endregion Controls
 
+// Level Sequence
+#pragma region
+
+USTRUCT()
+struct FCsAnimLevelSequenceInfo
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	bool Create;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	FName PackagePath;
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	//class ULevelSequence* Master;
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	//TArray<class ULevelSequence*> Shots;
+
+	FCsAnimLevelSequenceInfo()
+	{
+	}
+
+	FCsAnimLevelSequenceInfo& operator=(const FCsAnimLevelSequenceInfo& B)
+	{
+		return *this;
+	}
+
+	bool operator==(const FCsAnimLevelSequenceInfo& B) const
+	{
+		return true;
+	}
+
+	bool operator!=(const FCsAnimLevelSequenceInfo& B) const
+	{
+		return !(*this == B);
+	}
+};
+
+#pragma endregion Level Sequence
+
 #pragma endregion Structs
 
 UCLASS()
@@ -452,12 +648,18 @@ class CSCORE_API ACsPoseableMeshActor : public AActor
 	TArray<FCsAnimBoneInfo> Bones;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "00 PoseableMesh")
+	TArray<FCsAnimControlInfo_FK> Controls_FK;
+
+	TArray<FCsAnimControlInfo_FK> Controls_FK_Copy;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "00 PoseableMesh")
 	TArray<FCsAnimControlInfo_TwoBoneIK> Controls_TwoBoneIK;
 
 	TArray<FCsAnimControlInfo_TwoBoneIK> Controls_TwoBoneIK_Copy;
 
 #if WITH_EDITOR
 
+	void OnControlNameChanged_FK(const int32 &Index);
 	void OnControlNameChanged_TwoBoneIK(const int32 &Index);
 
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& e) override;
@@ -470,6 +672,9 @@ class CSCORE_API ACsPoseableMeshActor : public AActor
 	void DestroyOrphanedControlHelpers();
 
 	void RecreateBone(const int32 &Index);
+
+	void Create_Control_FK(const int32 &Index);
+	void PerformFK(const int32 &Index);
 
 	void Create_Control_TwoBoneIK(const int32 &Index);
 	void PerformTwoBoneIK(const int32 &Index);

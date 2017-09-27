@@ -20,11 +20,6 @@ ACsAnim_Control_TwoBoneIK::ACsAnim_Control_TwoBoneIK(const FObjectInitializer& O
 void ACsAnim_Control_TwoBoneIK::OnTick_Editor(const float &DeltaSeconds)
 {
 	Super::OnTick_Editor(DeltaSeconds);
-
-	if (!HasTickedInEditor)
-	{
-		HasTickedInEditor = true;
-	}
 }
 
 void ACsAnim_Control_TwoBoneIK::OnControlNameChanged()

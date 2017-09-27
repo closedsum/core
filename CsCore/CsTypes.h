@@ -39,6 +39,10 @@
 
 #define CS_INVALID_PLAYER_STATE_UNIQUE_MAPPING_ID 255
 
+#define CS_TEST_BLUEPRINT_BITFLAG(Bitmask, Bit) (((Bitmask) & (1 << static_cast<uint32>(Bit))) > 0)
+#define CS_SET_BLUEPRINT_BITFLAG(Bitmask, Bit) (Bitmask |= 1 << static_cast<uint32>(Bit))
+#define CS_CLEAR_BLUEPRINT_BITFLAG(Bitmask, Bit) (Bitmask &= ~(1 << static_cast<uint32>(Bit)))
+
 // Enum Union
 #pragma region
 
@@ -76,7 +80,7 @@ public:
 		return !(*this == B);
 	}
 
-	void Set(const T &inValue)
+	virtual void Set(const T &inValue)
 	{
 		Value   = inValue;
 		IsDirty = Value != Last_Value;
@@ -84,7 +88,7 @@ public:
 
 	T Get() { return Value; }
 
-	void Clear()
+	virtual void Clear()
 	{
 		Last_Value = Value;
 		IsDirty	   = false;
@@ -112,6 +116,165 @@ struct FCsPrimitiveType_Float : FCsPrimitiveType<float>
 };
 
 typedef FCsPrimitiveType_Float TCsFloat;
+
+#define CS_AXES 3
+#define CS_AXIS_X 0
+#define CS_AXIS_Y 1
+#define CS_AXIS_Z 2
+#define CS_AXES_ALL 3
+
+struct FCsPrimitiveType_FVector : public FCsPrimitiveType<FVector>
+{
+
+protected:
+	bool IsDirtys[CS_AXES];
+
+public:
+
+	FCsPrimitiveType_FVector& operator=(const FVector& B)
+	{
+		Value = B;
+		IsDirty = Value != Last_Value;
+		IsDirtys[CS_AXIS_X] = Value.X != Last_Value.X;
+		IsDirtys[CS_AXIS_Y] = Value.Y != Last_Value.Y;
+		IsDirtys[CS_AXIS_Z] = Value.Z != Last_Value.Z;
+		return *this;
+	}
+
+	virtual void Set(const FVector &inValue) override 
+	{
+		Value = inValue;
+		IsDirty = Value != Last_Value;
+		IsDirtys[CS_AXIS_X] = Value.X != Last_Value.X;
+		IsDirtys[CS_AXIS_Y] = Value.Y != Last_Value.Y;
+		IsDirtys[CS_AXIS_Z] = Value.Z != Last_Value.Z;
+	}
+
+	FVector GetAxes(const int32 &Axes)
+	{
+		FVector V = FVector::ZeroVector;
+
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_X))
+			V.X = Value.X;
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_Y))
+			V.Y = Value.Y;
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_Z))
+			V.Z = Value.Z;
+		return V;
+	}
+
+	virtual void Clear() override
+	{
+		Last_Value = Value;
+		IsDirty = false;
+		IsDirtys[CS_AXIS_X] = false;
+		IsDirtys[CS_AXIS_Y] = false;
+		IsDirtys[CS_AXIS_Z] = false;
+	}
+
+	bool HasAxisChanged(const uint8 &Axis)
+	{
+		if (!IsDirty)
+			return false;
+		if (Axis < CS_AXIS_X || Axis > CS_AXIS_Z)
+			return true;
+		return IsDirtys[Axis];
+	}
+
+	bool HasAxesChanged(const int32 &Axes)
+	{
+		if (!IsDirty)
+			return false;
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_X) && IsDirtys[CS_AXIS_X])
+			return true;
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_Y) && IsDirtys[CS_AXIS_Y])
+			return true;
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_Z) && IsDirtys[CS_AXIS_Z])
+			return true;
+		return false;
+	}
+};
+
+typedef FCsPrimitiveType_FVector TCsFVector;
+
+#define CS_AXIS_ROLL 0
+#define CS_AXIS_PITCH 1
+#define CS_AXIS_YAW 2
+
+
+struct FCsPrimitiveType_FRotator : public FCsPrimitiveType<FRotator>
+{
+
+protected:
+	bool IsDirtys[CS_AXES];
+
+public:
+
+	FCsPrimitiveType_FRotator& operator=(const FRotator& B)
+	{
+		Value = B;
+		IsDirty = Value != Last_Value;
+		IsDirtys[CS_AXIS_ROLL] = Value.Roll != Last_Value.Roll;
+		IsDirtys[CS_AXIS_PITCH] = Value.Pitch != Last_Value.Pitch;
+		IsDirtys[CS_AXIS_YAW] = Value.Yaw != Last_Value.Yaw;
+		return *this;
+	}
+
+	virtual void Set(const FRotator &inValue) override
+	{
+		Value = inValue;
+		IsDirty = Value != Last_Value;
+		IsDirtys[CS_AXIS_ROLL] = Value.Roll != Last_Value.Roll;
+		IsDirtys[CS_AXIS_PITCH] = Value.Pitch != Last_Value.Pitch;
+		IsDirtys[CS_AXIS_YAW] = Value.Yaw != Last_Value.Yaw;
+	}
+
+	FRotator GetAxes(const int32 &Axes)
+	{
+		FRotator V = FRotator::ZeroRotator;
+
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_ROLL))
+			V.Roll = Value.Roll;
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_PITCH))
+			V.Pitch = Value.Pitch;
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_YAW))
+			V.Yaw = Value.Yaw;
+		return V;
+	}
+
+	virtual void Clear() override
+	{
+		Last_Value = Value;
+		IsDirty = false;
+		IsDirtys[CS_AXIS_ROLL] = false;
+		IsDirtys[CS_AXIS_PITCH] = false;
+		IsDirtys[CS_AXIS_YAW] = false;
+	}
+
+	bool HasAxisChanged(const uint8 &Axis)
+	{
+		if (!IsDirty)
+			return false;
+		if (Axis < CS_AXIS_PITCH || Axis > CS_AXIS_ROLL)
+			return true;
+		return IsDirtys[Axis];
+	}
+
+	bool HasAxesChanged(const int32 &Axes)
+	{
+		if (!IsDirty)
+			return false;
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_ROLL) && IsDirtys[CS_AXIS_ROLL])
+			return true;
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_PITCH) && IsDirtys[CS_AXIS_PITCH])
+			return true;
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_YAW) && IsDirtys[CS_AXIS_YAW])
+			return true;
+		return false;
+	}
+};
+
+typedef FCsPrimitiveType_FRotator TCsFRotator;
 
 template<typename T>
 struct FCsPrimitiveType_Ref
@@ -940,10 +1103,6 @@ typedef TEnumAsByte<ECsVisibility::Type> TCsVisibility;
 // Data
 #pragma region
 
-#define CS_TEST_BLUEPRINT_BITFLAG(Bitmask, Bit) (((Bitmask) & (1 << static_cast<uint32>(Bit))) > 0)
-#define CS_SET_BLUEPRINT_BITFLAG(Bitmask, Bit) (Bitmask |= 1 << static_cast<uint32>(Bit))
-#define CS_CLEAR_BLUEPRINT_BITFLAG(Bitmask, Bit) (Bitmask &= ~(1 << static_cast<uint32>(Bit)))
-
 UENUM(BlueprintType, meta = (Bitflags))
 enum class ECsLoadFlags : uint8
 {
@@ -1499,6 +1658,7 @@ struct FCsFpsDrawDistance
 // Transform
 #pragma region
 
+
 UENUM(BlueprintType, meta = (Bitflags))
 enum class ECsAxes : uint8
 {
@@ -1507,14 +1667,17 @@ enum class ECsAxes : uint8
 	Z	UMETA(DisplayName = "Z | Roll"),
 };
 
+#define ECS_AXES_NONE 0
+#define ECS_AXES_ALL (1<<((uint8)ECsAxes::X)) | (1<<((uint8)ECsAxes::Y)) | (1<<((uint8)ECsAxes::Z))
+
 UENUM(BlueprintType)
 namespace ECsAxes_Editor
 {
 	enum Type
 	{
-		X					UMETA(DisplayName = "X | Pitch"),
-		Y					UMETA(DisplayName = "Y | Yaw"),
-		Z					UMETA(DisplayName = "Z | Roll"),
+		X					UMETA(DisplayName = "X | Roll"),
+		Y					UMETA(DisplayName = "Y | Pitch"),
+		Z					UMETA(DisplayName = "Z | Yaw"),
 		ECsAxes_Editor_MAX	UMETA(Hidden),
 	};
 }
@@ -1525,9 +1688,9 @@ namespace ECsAxes_Editor
 
 	namespace Str
 	{
-		const TCsString X = TCsString(TEXT("X"), TEXT("x"), TEXT("pitch"));
-		const TCsString Y = TCsString(TEXT("Y"), TEXT("y"), TEXT("yaw"));
-		const TCsString Z = TCsString(TEXT("Z"), TEXT("z"), TEXT("roll"));
+		const TCsString X = TCsString(TEXT("X"), TEXT("x"), TEXT("roll"));
+		const TCsString Y = TCsString(TEXT("Y"), TEXT("y"), TEXT("pitch"));
+		const TCsString Z = TCsString(TEXT("Z"), TEXT("z"), TEXT("yaw"));
 	}
 
 	FORCEINLINE FString ToString(const Type &EType)

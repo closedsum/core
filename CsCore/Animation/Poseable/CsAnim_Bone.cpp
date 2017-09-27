@@ -147,36 +147,6 @@ void ACsAnim_Bone::ResolveTransform()
 	Scale.Clear();
 }
 
-void ACsAnim_Bone::UpdateTransform(const FTransform &Transform)
-{
-	SetActorLocation(Transform.GetTranslation());
-	SetActorRotation(Transform.GetRotation());
-	SetActorScale3D(Transform.GetScale3D());
-	//SetActorTransform()
-
-	Location = GetActorLocation();
-	Rotation = GetActorRotation();
-	Scale = GetActorScale3D();
-}
-
-void ACsAnim_Bone::UpdateLocation(const FVector &InLocation)
-{
-	SetActorLocation(InLocation);
-	Location = GetActorLocation();
-}
-
-void ACsAnim_Bone::UpdateRotation(const FRotator &InRotation)
-{
-	SetActorRotation(InRotation);
-	Rotation = GetActorRotation();
-}
-
-void ACsAnim_Bone::UpdateScale(const FVector &InScale)
-{
-	SetActorScale3D(InScale);
-	Scale = GetActorScale3D();
-}
-
 void ACsAnim_Bone::UpdateRelativeTransform(const FTransform &Transform, const bool &Resolve)
 {
 	GetRootComponent()->SetRelativeLocation(Transform.GetTranslation());
@@ -189,4 +159,85 @@ void ACsAnim_Bone::UpdateRelativeTransform(const FTransform &Transform, const bo
 	Scale = GetActorScale3D();
 
 	ForceUpdateTransform = Resolve;
+}
+
+void ACsAnim_Bone::UpdateTransform(const FTransform &Transform)
+{
+	SetActorLocation(Transform.GetTranslation());
+	SetActorRotation(Transform.GetRotation());
+	SetActorScale3D(Transform.GetScale3D());
+	//SetActorTransform()
+
+	Location = GetActorLocation();
+	Rotation = GetActorRotation();
+	Scale = GetActorScale3D();
+}
+
+void ACsAnim_Bone::UpdateLocation(const FVector &InLocation, const int32 &Axes /*= CS_AXES_ALL*/)
+{
+	if (Axes == CS_AXES_ALL)
+	{
+		SetActorLocation(InLocation);
+		Location = GetActorLocation();
+	}
+	else
+	{
+		FVector V = GetActorLocation();
+
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_X))
+			V.X = InLocation.X;
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_Y))
+			V.Y = InLocation.Y;
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_Z))
+			V.Z = InLocation.Z;
+
+		SetActorLocation(V);
+		Location = GetActorLocation();
+	}
+}
+
+void ACsAnim_Bone::UpdateRotation(const FRotator &InRotation, const int32 &Axes /*= CS_AXES_ALL*/)
+{
+	if (Axes == CS_AXES_ALL)
+	{
+		SetActorRotation(InRotation);
+		Rotation = GetActorRotation();
+	}
+	else
+	{
+		FRotator R = GetActorRotation();
+
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_ROLL))
+			R.Roll = InRotation.Roll;
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_PITCH))
+			R.Pitch = InRotation.Pitch;
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_YAW))
+			R.Yaw = InRotation.Yaw;
+
+		SetActorRotation(R);
+		Rotation = GetActorRotation();
+	}
+}
+
+void ACsAnim_Bone::UpdateScale(const FVector &InScale, const int32 &Axes /*= CS_AXES_ALL*/)
+{
+	if (Axes == CS_AXES_ALL)
+	{
+		SetActorScale3D(InScale);
+		Scale = GetActorScale3D();
+	}
+	else
+	{
+		FVector V = GetActorScale3D();
+
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_X))
+			V.X = InScale.X;
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_Y))
+			V.Y = InScale.Y;
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_Z))
+			V.Z = InScale.Z;
+
+		SetActorScale3D(V);
+		Scale = GetActorScale3D();
+	}
 }

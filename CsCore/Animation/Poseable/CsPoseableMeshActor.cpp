@@ -11,6 +11,7 @@
 #include "Animation/Poseable/CsAnim_Bone.h"
 #include "Animation/Poseable/Controls/CsAnim_Control.h"
 #include "Animation/Poseable/Controls/CsAnim_ControlAnchor.h"
+#include "Animation/Poseable/Controls/CsAnim_Control_FK.h"
 #include "Animation/Poseable/Controls/CsAnim_Control_TwoBoneIK.h"
 #include "Animation/Poseable/Controls/Helpers/CsAnim_ControlHelper_EndEffector.h"
 #include "Animation/Poseable/Controls/Helpers/CsAnim_ControlHelper_JointTarget.h"
@@ -79,6 +80,38 @@ void ACsPoseableMeshActor::OnTick_Editor(const float &DeltaSeconds)
 
 	// Controls
 
+		// FK
+	{
+		const int32 ControlCount = Controls_FK.Num();
+
+		for (int32 I = 0; I < ControlCount; I++)
+		{
+			FCsAnimControlInfo_FK& FK   = Controls_FK[I];
+			ACsAnim_Control_FK* Control = FK.Actor;
+
+			if (!Control)
+			{
+				DestroyOrphanedControlAnchors();
+				Create_Control_FK(I);
+			}
+
+			if (!Control->Anchor)
+				Create_Control_FK(I);
+
+			if (IsSelected())
+			{
+				Control->ForceUpdateTransform = true;
+				continue;
+			}
+
+			const bool UpdateFK = Control->Location.HasChanged() || Control->Rotation.HasChanged() || Control->Scale.HasChanged();
+
+			if (UpdateFK)
+			{
+				PerformFK(I);
+			}
+		}
+	}
 		// TwoBoneIK
 	{
 		const int32 ControlCount = Controls_TwoBoneIK.Num();
@@ -170,6 +203,14 @@ void ACsPoseableMeshActor::OnControlNameChanged_TwoBoneIK(const int32 &Index)
 	TwoBoneIK.Control = Control->GetActorLabel();
 }
 
+void ACsPoseableMeshActor::OnControlNameChanged_FK(const int32 &Index)
+{
+	FCsAnimControlInfo_FK& FK   = Controls_FK[Index];
+	ACsAnim_Control_FK* Control = FK.Actor;
+
+	FK.Control = Control->GetActorLabel();
+}
+
 void ACsPoseableMeshActor::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 {
 	FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
@@ -203,9 +244,207 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty(struct FPropertyChangedCh
 		return;
 	}
 
-	const int32 Controls_TwoBoneIK_Index = e.GetArrayIndex(TEXT("Controls_TwoBoneIK"));
+	// Controls_FK
+	const int32 Controls_FK_Index = e.GetArrayIndex(TEXT("Controls_FK"));
+
+	if (Controls_FK_Index != INDEX_NONE)
+	{
+		const int32 Index		  = Controls_FK_Index;
+		FCsAnimControlInfo_FK& FK = Controls_FK[Index];
+
+		FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
+
+		const int32 ControlCount = Controls_FK.Num();
+		const int32 CopyCount	 = Controls_FK_Copy.Num();
+
+		// Check if NEW elements were ADDED
+		if (ControlCount > CopyCount)
+		{
+			const int32 Delta = ControlCount - CopyCount;
+
+			for (int32 I = 0; I < Delta; I++)
+			{
+				const int32 CopyIndex = CopyCount + I;
+
+				Create_Control_FK(CopyIndex);
+
+				Controls_FK_Copy.AddDefaulted();
+				Controls_FK_Copy[CopyIndex] = Controls_FK[CopyIndex];
+			}
+		}
+		// Check if elements were REMOVED
+		if (ControlCount < CopyCount)
+		{
+			const int32 Delta = CopyCount - ControlCount;
+
+			for (int32 I = CopyCount - 1; I >= CopyCount - Delta; I--)
+			{
+				ACsAnim_Control_FK* Control = Controls_FK_Copy[I].Actor;
+
+				if (Control && !Control->IsPendingKill())
+				{
+					if (Control->Anchor && !Control->Anchor->IsPendingKill())
+						Control->Anchor->Destroy();
+					Control->Destroy();
+				}
+				Controls_FK_Copy.RemoveAt(I);
+			}
+		}
+		// Controls_FK[Index].Control
+		if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_FK, Control))
+		{
+			if (ACsAnim_Control_FK* Control = FK.Actor)
+			{
+				Control->SetControlName(FK.Control);
+			}
+		}
+	}
+
+	// Controls_FK[Index].Connections
+	const int32 Controls_FK_Connections_Index = e.GetArrayIndex(TEXT("Connections"));
+
+	if (Controls_FK_Connections_Index != INDEX_NONE)
+	{
+		const int32 Index = Controls_FK_Connections_Index;
+
+		// Search through Controls_FK and see if any Connections were ADDED / REMOVED
+		int32 ControlIndex		 = INDEX_NONE;
+		const int32 ControlCount = Controls_FK.Num();
+
+		for (int32 I = 0; I < ControlCount; I++)
+		{
+			if (Controls_FK[I].Connections.Num() != Controls_FK[I].Connections_Copy.Num())
+			{
+				ControlIndex = I;
+				break;
+			}
+		}
+
+		if (ControlIndex != INDEX_NONE)
+		{
+			FCsAnimControlInfo_FK& FK   = Controls_FK[ControlIndex];
+			ACsAnim_Control_FK* Control = FK.Actor;
+
+			const int32 ConnectionCount = FK.Connections.Num();
+			const int32 CopyCount		= FK.Connections_Copy.Num();
+
+			// Check if NEW elements were ADDED
+			if (ControlCount > CopyCount)
+			{
+				const int32 Delta = ControlCount - CopyCount;
+
+				for (int32 I = 0; I < Delta; I++)
+				{
+					const int32 CopyIndex = CopyCount + I;
+
+					FK.Connections_Copy.AddDefaulted();
+					FK.Connections_Copy[CopyIndex] = FK.Connections[CopyIndex];
+				}
+			}
+			// Check if elements were REMOVED
+			if (ControlCount < CopyCount)
+			{
+				const int32 Delta = CopyCount - ControlCount;
+
+				for (int32 I = CopyCount - 1; I >= CopyCount - Delta; I--)
+				{
+					FK.Connections_Copy.RemoveAt(I);
+				}
+			}
+
+			Super::PostEditChangeChainProperty(e);
+			return;
+		}
+
+		for (int32 I = 0; I < ControlCount; I++)
+		{
+			FCsAnimControlInfo_FK& FK					 = Controls_FK[I];
+			FCsAnimControlInfo_FK_Connection& Connection = FK.Connections[Index];
+
+			if (Connection.Bone != Connection.Last_Bone ||
+				Connection.Output.Member != Connection.Output.Last_Member ||
+				Connection.Output.Axes != Connection.Output.Last_Axes ||
+				Connection.Input.Member != Connection.Input.Last_Member ||
+				Connection.Input.Axes != Connection.Input.Last_Axes)
+			{
+				ControlIndex = I;
+				break;
+			}
+		}
+
+		if (ControlIndex == INDEX_NONE)
+		{
+			Super::PostEditChangeChainProperty(e);
+			return;
+		}
+
+		FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
+
+		FCsAnimControlInfo_FK& FK					 = Controls_FK[ControlIndex];
+		FCsAnimControlInfo_FK_Connection& Connection = FK.Connections[Index];
+
+		// Controls_FK[ControlIndex].Connections[Index].Bone
+		if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_FK_Connection, Bone))
+		{
+			const FName BoneName = Connection.Bone;
+
+			if (BoneName == NAME_None)
+			{
+				Connection.Last_Bone = NAME_None;
+				Connection.BoneIndex = INDEX_NONE;
+				Connection.BoneArrayIndex = INDEX_NONE;
+				Super::PostEditChangeChainProperty(e);
+				return;
+			}
+
+			const int32 BoneIndex = PoseableMeshComponent->GetBoneIndex(BoneName);
+			Connection.BoneIndex  = BoneIndex;
+
+			if (BoneIndex == INDEX_NONE)
+			{
+				Connection.Last_Bone = NAME_None;
+				Connection.BoneArrayIndex = INDEX_NONE;
+				Super::PostEditChangeChainProperty(e);
+				return;
+			}
+
+			const int32 Count = Bones.Num();
+
+			for (int32 I = 0; I < Count; I++)
+			{
+				if (Bones[I].Bone == BoneName)
+				{
+					Connection.BoneArrayIndex = I;
+					break;
+				}
+			}
+			Connection.Last_Bone = Connection.Bone;
+		}
+		// Controls_FK[ControlIndex].Connections[Index].Ouput.Member
+		if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_FK_ConnectionOutput, Member))
+		{
+			Connection.Output.Last_Member = Connection.Output.Member;
+		}
+		// Controls_FK[ControlIndex].Connections[Index].Ouput.Axes
+		if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_FK_ConnectionOutput, Axes))
+		{
+			Connection.Output.Last_Axes = Connection.Output.Axes;
+		}
+		// Controls_FK[ControlIndex].Connections[Index].Input.Member
+		if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_FK_ConnectionInput, Member))
+		{
+			Connection.Input.Last_Member = Connection.Input.Member;
+		}
+		// Controls_FK[ControlIndex].Connections[Index].Input.Axes
+		if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_FK_ConnectionInput, Axes))
+		{
+			Connection.Input.Last_Axes = Connection.Input.Axes;
+		}
+	}
 
 	// Controls_TwoBoneIK
+	const int32 Controls_TwoBoneIK_Index = e.GetArrayIndex(TEXT("Controls_TwoBoneIK"));
+
 	if (Controls_TwoBoneIK_Index != INDEX_NONE)
 	{
 		const int32 Index						= Controls_TwoBoneIK_Index;
@@ -252,6 +491,8 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty(struct FPropertyChangedCh
 
 				if (Control && !Control->IsPendingKill())
 				{
+					if (Control->Anchor && !Control->Anchor->IsPendingKill())
+						Control->Anchor->Destroy();
 					if (Control->EndEffector && !Control->EndEffector->IsPendingKill())
 						Control->EndEffector->Destroy();
 					if (Control->JointTarget && !Control->JointTarget->IsPendingKill())
@@ -495,6 +736,210 @@ void ACsPoseableMeshActor::RecreateBone(const int32 &Index)
 	Bone->DefaultComponentTransform.SetToRelativeTransform(ComponentTransform);
 
 	Bone->ArrayIndex = Index;
+}
+
+void ACsPoseableMeshActor::Create_Control_FK(const int32 &Index)
+{
+	FCsAnimControlInfo_FK& FK   = Controls_FK[Index];
+	ACsAnim_Control_FK* Control = FK.Actor;
+
+	if (!Control)
+	{
+		ACsAnim_ControlAnchor* Anchor = GetWorld()->SpawnActor<ACsAnim_ControlAnchor>();
+
+		Anchor->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+
+		Control = GetWorld()->SpawnActor<ACsAnim_Control_FK>();
+		Control->Control = FK.Control;
+		Control->ControlName = FK.Control;
+		Control->ControlName.Clear();
+		Control->SetActorLabel(FK.Control);
+		Control->ControlIndex = Index;
+		Control->Root = this;
+		Control->Anchor = Anchor;
+
+		Control->AttachToActor(Anchor, FAttachmentTransformRules::KeepRelativeTransform);
+
+		FK.Actor = Control;
+
+		Control->OnControlNameChanged_Event.BindUObject(this, &ACsPoseableMeshActor::OnControlNameChanged_FK);
+
+		Anchor->Control = Control;
+		Anchor->SetActorLabel(TEXT("anchor_") + Control->GetActorLabel());
+	}
+
+	if (!Control->Anchor)
+	{
+		ACsAnim_ControlAnchor* Anchor = GetWorld()->SpawnActor<ACsAnim_ControlAnchor>();
+
+		Anchor->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+
+		const FTransform WorldTransform = Control->GetActorTransform();
+		Control->SetActorRelativeTransform(FTransform::Identity);
+		Control->AttachToActor(Anchor, FAttachmentTransformRules::KeepRelativeTransform);
+		Control->SetActorTransform(WorldTransform);
+
+		Anchor->Control = Control;
+		Anchor->SetActorLabel(TEXT("anchor_") + Control->GetActorLabel());
+	}
+	PerformFK(Index);
+}
+
+void ACsPoseableMeshActor::PerformFK(const int32 &Index)
+{
+	FCsAnimControlInfo_FK& FK   = Controls_FK[Index];
+	ACsAnim_Control_FK* Control = FK.Actor;
+
+	const int32 Count = FK.Connections.Num();
+
+	for (int32 I = 0; I < Count; I++)
+	{
+		FCsAnimControlInfo_FK_Connection& Connection = FK.Connections[I];
+		const FName BoneName						 = Connection.Bone;
+		const int32 BoneArrayIndex					 = Connection.BoneArrayIndex;
+
+		if (BoneArrayIndex == INDEX_NONE)
+		{
+			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PerformFK(%s): Controls_FK[%d].Connections[%d].Bone %s is NOT a Valid Bone."), *GetName(), Index, I, *(BoneName.ToString()));
+			continue;
+		}
+
+		if (Connection.Output.Axes == ECS_AXES_NONE)
+		{
+			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PerformFK(%s): No Axes set for Controls_FK[%d].Connections[%d].Output.Axes = 0."), *GetName(), Index, I);
+			continue;
+		}
+
+		if (Connection.Input.Axes == ECS_AXES_NONE)
+		{
+			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PerformFK(%s): No Axes set for Controls_FK[%d].Connections[%d].Input.Axes = 0."), *GetName(), Index, I);
+			continue;
+		}
+
+		const int32 NumOutputAxes = UCsCommon::GetNumBitFlags(Connection.Output.Axes, ECS_AXES_EDITOR_MAX);
+		const int32 NumInputAxes  = UCsCommon::GetNumBitFlags(Connection.Input.Axes, ECS_AXES_EDITOR_MAX);
+
+		if (NumOutputAxes > NumInputAxes)
+		{
+			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PerformFK(%s): Number of Output Axes > Input Axes (%d > %d) for Controls_FK[%d].Connections[%d]."), *GetName(), NumOutputAxes, NumInputAxes, Index, I);
+			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PerformFK(%s): Valid Number of Output Axes is # Output Axes = # Input Axes OR # Output Axes = 1."), *GetName(), NumOutputAxes, NumInputAxes, Index, I);
+			continue;
+		}
+
+		if (NumInputAxes > NumOutputAxes &&
+			NumOutputAxes != 1)
+		{
+			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PerformFK(%s): Number of Input Axes > Output Axes (%d > %d) AND # of Output Axes != 1 for Controls_FK[%d].Connections[%d]."), *GetName(), NumOutputAxes, NumInputAxes, Index, I);
+			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PerformFK(%s): Valid Number of Output Axes is # Output Axes = # Input Axes OR # Output Axes = 1."), *GetName(), NumOutputAxes, NumInputAxes, Index, I);
+			continue;
+		}
+
+		const TCsTransformMember OutMember = Connection.Output.Member;
+		ACsAnim_Bone* Bone				   = Bones[BoneArrayIndex].Actor;
+		const int32 OutAxes				   = Connection.Output.Axes;
+		const TCsTransformMember InMember  = Connection.Input.Member;
+		const int32 InAxes				   = Connection.Input.Axes;
+		const bool OneToMany			   = NumOutputAxes == 1;
+
+		if (Control->HasTransformMemberChanged(OutMember, OutAxes))
+		{
+			// Out Location
+			if (OutMember == ECsTransformMember::Location)
+			{
+				// In Location
+				if (InMember == ECsTransformMember::Location)
+				{
+					const FVector Location = Control->Location.GetAxes(OutAxes);
+					const FVector V		   = OneToMany ? UCsCommon::BuildUniformVector(Location, OutAxes) : Location;
+					Bone->UpdateLocation(V, InAxes);
+					continue;
+				}
+				// In Rotation
+				if (InMember == ECsTransformMember::Rotation)
+				{
+					const FVector Location  = Control->Location.GetAxes(OutAxes);
+					const FRotator Rotation = FRotator(Location.Y, Location.Z, Location.X);
+					const FRotator R		= OneToMany ? UCsCommon::BuildUniformRotator(Rotation, OutAxes) : Rotation;
+					Bone->UpdateRotation(R, InAxes);
+					continue;
+				}
+				// In Scale
+				if (InMember == ECsTransformMember::Scale)
+				{
+					const FVector Location = Control->Location.GetAxes(OutAxes);
+					const FVector V		   = OneToMany ? UCsCommon::BuildUniformVector(Location, OutAxes) : Location;
+					Bone->UpdateScale(V, InAxes);
+					continue;
+				}
+				continue;
+			}
+			// Out Rotation
+			if (OutMember == ECsTransformMember::Rotation)
+			{
+				// In Location
+				if (InMember == ECsTransformMember::Location)
+				{
+					const FRotator Rotation = Control->Rotation.GetAxes(OutAxes);
+					const FVector Location  = FVector(Rotation.Roll, Rotation.Pitch, Rotation.Yaw);
+					const FVector V			= OneToMany ? UCsCommon::BuildUniformVector(Location, OutAxes) : Location;
+					Bone->UpdateLocation(V, InAxes);
+					continue;
+				}
+				// In Rotation
+				if (InMember == ECsTransformMember::Rotation)
+				{
+					const FRotator Rotation = Control->Rotation.GetAxes(OutAxes);
+					const FRotator R		= OneToMany ? UCsCommon::BuildUniformRotator(Rotation, OutAxes) : Rotation;
+					Bone->UpdateRotation(R, InAxes);
+					continue;
+				}
+				// In Scale
+				if (InMember == ECsTransformMember::Scale)
+				{
+					const FRotator Rotation = Control->Rotation.GetAxes(OutAxes);
+					const FVector Location  = FVector(Rotation.Roll, Rotation.Pitch, Rotation.Yaw);
+					const FVector V			= OneToMany ? UCsCommon::BuildUniformVector(Location, OutAxes) : Location;
+					Bone->UpdateScale(V, InAxes);
+					continue;
+				}
+				continue;
+			}
+			// Out Scale
+			if (OutMember == ECsTransformMember::Scale)
+			{
+				// In Location
+				if (InMember == ECsTransformMember::Location)
+				{
+					const FVector Scale = Control->Scale.GetAxes(OutAxes);
+					const FVector V		= OneToMany ? UCsCommon::BuildUniformVector(Scale, OutAxes) : Scale;
+					Bone->UpdateLocation(V, InAxes);
+					continue;
+				}
+				// In Rotation
+				if (InMember == ECsTransformMember::Rotation)
+				{
+					const FVector Scale		= Control->Scale.GetAxes(OutAxes);
+					const FRotator Rotation = FRotator(Scale.Y, Scale.Z, Scale.X);
+					const FRotator R		= OneToMany ? UCsCommon::BuildUniformRotator(Rotation, OutAxes) : Rotation;
+					Bone->UpdateRotation(R, InAxes);
+					continue;
+				}
+				// In Scale
+				if (InMember == ECsTransformMember::Scale)
+				{
+					const FVector Scale = Control->Scale.GetAxes(OutAxes);
+					const FVector V		= OneToMany ? UCsCommon::BuildUniformVector(Scale, OutAxes) : Scale;
+					Bone->UpdateScale(V, InAxes);
+					continue;
+				}
+				continue;
+			}
+		}
+	}
+
+	Control->Location.Clear();
+	Control->Rotation.Clear();
+	Control->Scale.Clear();
 }
 
 void ACsPoseableMeshActor::Create_Control_TwoBoneIK(const int32 &Index)

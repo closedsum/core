@@ -67,9 +67,18 @@ class CSCORE_API ACsAnim_Control : public AStaticMeshActor
 	bool RecordRotation;
 	bool RecordScale;
 
-	FCsPrimitiveType<FVector> Location;
-	FCsPrimitiveType<FRotator> Rotation;
-	FCsPrimitiveType<FVector> Scale;
+	TCsFVector RelativeLocation;
+	TCsFRotator RelativeRotation;
+	TCsFVector RelativeScale;
+
+	TCsFVector Location;
+	TCsFRotator Rotation;
+	TCsFVector Scale;
+	
+	UFUNCTION(BlueprintCallable, Category = "Control")
+	bool HasRelativeTransformMemberChanged(const TEnumAsByte<ECsTransformMember::Type> &Member, const int32 &Axes);
+	UFUNCTION(BlueprintCallable, Category = "Control")
+	bool HasTransformMemberChanged(const TEnumAsByte<ECsTransformMember::Type> &Member, const int32 &Axes);
 
 #if WITH_EDITOR
 

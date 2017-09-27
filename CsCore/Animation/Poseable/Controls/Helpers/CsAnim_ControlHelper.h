@@ -39,9 +39,9 @@ class CSCORE_API ACsAnim_ControlHelper : public AStaticMeshActor
 	bool RecordRotation;
 	bool RecordScale;
 
-	FCsPrimitiveType<FVector> Location;
-	FCsPrimitiveType<FRotator> Rotation;
-	FCsPrimitiveType<FVector> Scale;
+	TCsFVector Location;
+	TCsFRotator Rotation;
+	TCsFVector Scale;
 
 	bool HasTransformChanged();
 	void ResolveTransform();

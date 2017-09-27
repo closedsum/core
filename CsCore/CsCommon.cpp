@@ -3100,7 +3100,6 @@ FRotator UCsCommon::GetAngleDelta(const FRotator &A, const FRotator &B)
 	return Rotation;
 }
 
-
 FRotator UCsCommon::Rotator_GetAngleDelta(const FRotator &A, const FRotator &B)
 {
 	return GetAngleDelta(A, B);
@@ -3151,6 +3150,40 @@ int32 UCsCommon::Mod(const int32 &A, const int32 &B)
 {
 	const int32 C = A % B;
 	return C < 0 ? C + B : C;
+}
+
+FVector UCsCommon::BuildUniformVector(const FVector &V, const int32 &Axes)
+{
+	if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_X))
+		return FVector(V.X);
+	if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_Y))
+		return FVector(V.Y);
+	if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_Z))
+		return FVector(V.Z);
+	return FVector::ZeroVector;
+}
+
+FRotator UCsCommon::BuildUniformRotator(const FRotator &R, const int32 &Axes)
+{
+	if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_ROLL))
+		return FRotator(R.Roll);
+	if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_PITCH))
+		return FRotator(R.Pitch);
+	if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_YAW))
+		return FRotator(R.Yaw);
+	return FRotator::ZeroRotator;
+}
+
+int32 UCsCommon::GetNumBitFlags(const int32 &BitMask, const int32 &MaxBits)
+{
+	int32 Bits = 0;
+
+	for (int32 I = 0; I < MaxBits; I++)
+	{
+		if (CS_TEST_BLUEPRINT_BITFLAG(BitMask, I))
+			Bits++;
+	}
+	return Bits;
 }
 
 #pragma endregion Math

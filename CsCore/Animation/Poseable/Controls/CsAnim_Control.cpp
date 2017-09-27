@@ -73,6 +73,7 @@ void ACsAnim_Control::OnTick_Editor(const float &DeltaSeconds)
 		return;
 
 	Location = GetActorLocation();
+	RelativeLocation = GetRootComponent()->RelativeLocation;
 	
 	if (!RecordLocation &&
 		Location.HasChanged())
@@ -80,9 +81,11 @@ void ACsAnim_Control::OnTick_Editor(const float &DeltaSeconds)
 		SetActorLocation(Location.Last_Value);
 		Location.Value = Location.Last_Value;
 		Location.Clear();
+		RelativeLocation.Clear();
 	}
 
 	Rotation = GetActorRotation();
+	RelativeRotation = GetRootComponent()->RelativeRotation;
 
 	if (!RecordRotation &&
 		Rotation.HasChanged())
@@ -90,9 +93,11 @@ void ACsAnim_Control::OnTick_Editor(const float &DeltaSeconds)
 		SetActorRotation(Rotation.Last_Value);
 		Rotation.Value = Rotation.Last_Value;
 		Rotation.Clear();
+		RelativeRotation.Clear();
 	}
 
 	Scale = GetActorScale3D();
+	RelativeScale = GetRootComponent()->RelativeScale3D;
 
 	if (!RecordScale &&
 		Scale.HasChanged())
@@ -100,6 +105,7 @@ void ACsAnim_Control::OnTick_Editor(const float &DeltaSeconds)
 		SetActorScale3D(Scale.Last_Value);
 		Scale.Value = Scale.Last_Value;
 		Scale.Clear();
+		RelativeScale.Clear();
 	}
 
 	ForceUpdateTransform = false;
@@ -117,6 +123,28 @@ void ACsAnim_Control::SetControlName(const FString &InName)
 }
 
 #endif // #if WITH_EDITOR
+
+bool ACsAnim_Control::HasRelativeTransformMemberChanged(const TEnumAsByte<ECsTransformMember::Type> &Member, const int32 &Axes)
+{
+	if (Member == ECsTransformMember::Location)
+		return RelativeLocation.HasAxesChanged(Axes);
+	if (Member == ECsTransformMember::Rotation)
+		return RelativeRotation.HasAxesChanged(Axes);
+	if (Member == ECsTransformMember::Scale)
+		return RelativeScale.HasAxesChanged(Axes);
+	return false;
+}
+
+bool ACsAnim_Control::HasTransformMemberChanged(const TEnumAsByte<ECsTransformMember::Type> &Member, const int32 &Axes)
+{
+	if (Member == ECsTransformMember::Location)
+		return Location.HasAxesChanged(Axes);
+	if (Member == ECsTransformMember::Rotation)
+		return Rotation.HasAxesChanged(Axes);
+	if (Member == ECsTransformMember::Scale)
+		return Scale.HasAxesChanged(Axes);
+	return false;
+}
 
 #if WITH_EDITOR
 

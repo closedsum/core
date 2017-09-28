@@ -80,38 +80,6 @@ void ACsPoseableMeshActor::OnTick_Editor(const float &DeltaSeconds)
 
 	// Controls
 
-		// FK
-	{
-		const int32 ControlCount = Controls_FK.Num();
-
-		for (int32 I = 0; I < ControlCount; I++)
-		{
-			FCsAnimControlInfo_FK& FK   = Controls_FK[I];
-			ACsAnim_Control_FK* Control = FK.Actor;
-
-			if (!Control)
-			{
-				DestroyOrphanedControlAnchors();
-				Create_Control_FK(I);
-			}
-
-			if (!Control->Anchor)
-				Create_Control_FK(I);
-
-			if (IsSelected())
-			{
-				Control->ForceUpdateTransform = true;
-				continue;
-			}
-
-			const bool UpdateFK = Control->Location.HasChanged() || Control->Rotation.HasChanged() || Control->Scale.HasChanged();
-
-			if (UpdateFK)
-			{
-				PerformFK(I);
-			}
-		}
-	}
 		// TwoBoneIK
 	{
 		const int32 ControlCount = Controls_TwoBoneIK.Num();
@@ -146,7 +114,7 @@ void ACsPoseableMeshActor::OnTick_Editor(const float &DeltaSeconds)
 			if (!Control->StartBone || !Control->MiddleBone || !Control->EndBone)
 				continue;
 
-			const bool UpdateIK = Control->EndEffector->Location.HasChanged() || Control->JointTarget->Location.HasChanged();
+			const bool UpdateIK = true;// Control->EndEffector->Location.HasChanged() || Control->JointTarget->Location.HasChanged();
 
 			if (UpdateIK)
 			{
@@ -154,7 +122,38 @@ void ACsPoseableMeshActor::OnTick_Editor(const float &DeltaSeconds)
 			}
 		}
 	}
+		// FK
+	{
+		const int32 ControlCount = Controls_FK.Num();
 
+		for (int32 I = 0; I < ControlCount; I++)
+		{
+			FCsAnimControlInfo_FK& FK = Controls_FK[I];
+			ACsAnim_Control_FK* Control = FK.Actor;
+
+			if (!Control)
+			{
+				DestroyOrphanedControlAnchors();
+				Create_Control_FK(I);
+			}
+
+			if (!Control->Anchor)
+				Create_Control_FK(I);
+
+			if (IsSelected())
+			{
+				Control->ForceUpdateTransform = true;
+				continue;
+			}
+
+			const bool UpdateFK = true;// Control->Location.HasChanged() || Control->Rotation.HasChanged() || Control->Scale.HasChanged();
+
+			if (UpdateFK)
+			{
+				PerformFK(I);
+			}
+		}
+	}
 	// Bones
 	const int32 BoneCount = Bones.Num();
 
@@ -227,9 +226,15 @@ void ACsPoseableMeshActor::PostEditChangeProperty(struct FPropertyChangedEvent& 
 		if (PoseableMeshComponent->SkeletalMesh != Last_SkeletalMesh)
 		{
 			if (PoseableMeshComponent->SkeletalMesh)
+			{
 				GenerateBones();
+			}
 			else
+			{
+				ClearControlsFK();
+				ClearControlsTwoBoneIK();
 				ClearBones();
+			}
 		}
 		Last_SkeletalMesh = PoseableMeshComponent->SkeletalMesh;
 	}
@@ -329,9 +334,9 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty(struct FPropertyChangedCh
 			const int32 CopyCount		= FK.Connections_Copy.Num();
 
 			// Check if NEW elements were ADDED
-			if (ControlCount > CopyCount)
+			if (ConnectionCount > CopyCount)
 			{
-				const int32 Delta = ControlCount - CopyCount;
+				const int32 Delta = ConnectionCount - CopyCount;
 
 				for (int32 I = 0; I < Delta; I++)
 				{
@@ -342,9 +347,9 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty(struct FPropertyChangedCh
 				}
 			}
 			// Check if elements were REMOVED
-			if (ControlCount < CopyCount)
+			if (ConnectionCount < CopyCount)
 			{
-				const int32 Delta = CopyCount - ControlCount;
+				const int32 Delta = CopyCount - ConnectionCount;
 
 				for (int32 I = CopyCount - 1; I >= CopyCount - Delta; I--)
 				{
@@ -362,6 +367,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty(struct FPropertyChangedCh
 			FCsAnimControlInfo_FK_Connection& Connection = FK.Connections[Index];
 
 			if (Connection.Bone != Connection.Last_Bone ||
+				Connection.SnapToBone != Connection.Last_SnapToBone ||
 				Connection.Output.Member != Connection.Output.Last_Member ||
 				Connection.Output.Axes != Connection.Output.Last_Axes ||
 				Connection.Input.Member != Connection.Input.Last_Member ||
@@ -381,6 +387,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty(struct FPropertyChangedCh
 		FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
 
 		FCsAnimControlInfo_FK& FK					 = Controls_FK[ControlIndex];
+		ACsAnim_Control_FK* Control					 = FK.Actor;
 		FCsAnimControlInfo_FK_Connection& Connection = FK.Connections[Index];
 
 		// Controls_FK[ControlIndex].Connections[Index].Bone
@@ -402,6 +409,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty(struct FPropertyChangedCh
 
 			if (BoneIndex == INDEX_NONE)
 			{
+				Connection.Bone = NAME_None;
 				Connection.Last_Bone = NAME_None;
 				Connection.BoneArrayIndex = INDEX_NONE;
 				Super::PostEditChangeChainProperty(e);
@@ -419,6 +427,30 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty(struct FPropertyChangedCh
 				}
 			}
 			Connection.Last_Bone = Connection.Bone;
+		}
+		// Controls_FK[ControlIndex].Connections[Index].SnapToBone
+		if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_FK_Connection, SnapToBone))
+		{
+			if (Connection.SnapToBone)
+			{
+				const int32 BoneIndex = Connection.BoneIndex;
+
+				if (BoneIndex == INDEX_NONE)
+				{
+					Super::PostEditChangeChainProperty(e);
+					return;
+				}
+
+				const int32 BoneArrayIndex = Connection.BoneArrayIndex;
+
+				if (Control)
+				{
+					ACsAnim_Bone* Bone = Bones[BoneArrayIndex].Actor;
+					Control->Anchor->SetActorTransform(Bone->GetActorTransform());
+				}
+			}
+			Connection.SnapToBone = false;
+			Connection.Last_SnapToBone = Connection.SnapToBone;
 		}
 		// Controls_FK[ControlIndex].Connections[Index].Ouput.Member
 		if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_FK_ConnectionOutput, Member))
@@ -841,7 +873,7 @@ void ACsPoseableMeshActor::PerformFK(const int32 &Index)
 		const int32 InAxes				   = Connection.Input.Axes;
 		const bool OneToMany			   = NumOutputAxes == 1;
 
-		if (Control->HasTransformMemberChanged(OutMember, OutAxes))
+		//if (Control->HasTransformMemberChanged(OutMember, OutAxes))
 		{
 			// Out Location
 			if (OutMember == ECsTransformMember::Location)
@@ -940,6 +972,24 @@ void ACsPoseableMeshActor::PerformFK(const int32 &Index)
 	Control->Location.Clear();
 	Control->Rotation.Clear();
 	Control->Scale.Clear();
+}
+
+void ACsPoseableMeshActor::ClearControlsFK()
+{
+	const int32 Count = Controls_FK.Num();
+
+	for (int32 I = 0; I < Count; I++)
+	{
+		ACsAnim_Control_FK* Control = Controls_FK[I].Actor;
+
+		if (Control && !Control->IsPendingKill())
+		{
+			if (Control->Anchor && !Control->Anchor->IsPendingKill())
+				Control->Anchor->Destroy();
+			Control->Destroy();
+		}
+	}
+	Controls_FK.Reset();
 }
 
 void ACsPoseableMeshActor::Create_Control_TwoBoneIK(const int32 &Index)
@@ -1244,6 +1294,28 @@ void ACsPoseableMeshActor::PerformTwoBoneIK(const int32 &Index)
 
 	Control->EndEffector->Location.Clear();
 	Control->JointTarget->Location.Clear();
+}
+
+void ACsPoseableMeshActor::ClearControlsTwoBoneIK()
+{
+	const int32 Count = Controls_TwoBoneIK.Num();
+
+	for (int32 I = 0; I < Count; I++)
+	{
+		ACsAnim_Control_TwoBoneIK* Control = Controls_TwoBoneIK[I].Actor;
+
+		if (Control && !Control->IsPendingKill())
+		{
+			if (Control->Anchor && !Control->Anchor->IsPendingKill())
+				Control->Anchor->Destroy();
+			if (Control->EndEffector && !Control->EndEffector->IsPendingKill())
+				Control->EndEffector->Destroy();
+			if (Control->JointTarget && !Control->JointTarget->IsPendingKill())
+				Control->JointTarget->Destroy();
+			Control->Destroy();
+		}
+	}
+	Controls_TwoBoneIK.Reset();
 }
 
 #endif // #if WITH_EDITOR

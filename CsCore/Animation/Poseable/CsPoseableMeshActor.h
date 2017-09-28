@@ -216,6 +216,11 @@ struct FCsAnimControlInfo_FK_Connection
 	int32 BoneArrayIndex;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Control")
+	bool SnapToBone;
+
+	bool Last_SnapToBone;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Control")
 	FCsAnimControlInfo_FK_ConnectionOutput Output;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Control")
@@ -227,6 +232,8 @@ struct FCsAnimControlInfo_FK_Connection
 		Last_Bone = NAME_None;
 		BoneIndex = INDEX_NONE;
 		BoneArrayIndex = INDEX_NONE;
+		SnapToBone = false;
+		Last_SnapToBone = false;
 	}
 
 	FCsAnimControlInfo_FK_Connection& operator=(const FCsAnimControlInfo_FK_Connection& B)
@@ -235,6 +242,7 @@ struct FCsAnimControlInfo_FK_Connection
 		Bone = B.Last_Bone;
 		BoneIndex = B.BoneIndex;
 		BoneArrayIndex = B.BoneArrayIndex;
+		SnapToBone = B.SnapToBone;
 		Output = B.Output;
 		Input = B.Input;
 		return *this;
@@ -246,6 +254,7 @@ struct FCsAnimControlInfo_FK_Connection
 			   Bone == B.Last_Bone &&
 			   BoneIndex == B.BoneIndex &&
 			   BoneArrayIndex == B.BoneArrayIndex &&
+			   SnapToBone == B.SnapToBone &&
 			   Output == B.Output &&
 			   Input == B.Input;
 	}
@@ -579,7 +588,7 @@ struct FCsAnimControlInfo_TwoBoneIK
 
 #pragma endregion Controls
 
-// Level Sequence
+	// Level Sequence
 #pragma region
 
 USTRUCT()
@@ -593,11 +602,11 @@ struct FCsAnimLevelSequenceInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
 	FName PackagePath;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
-	//class ULevelSequence* Master;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	class ULevelSequence* Master;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
-	//TArray<class ULevelSequence*> Shots;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	TArray<class ULevelSequence*> Shots;
 
 	FCsAnimLevelSequenceInfo()
 	{
@@ -675,9 +684,11 @@ class CSCORE_API ACsPoseableMeshActor : public AActor
 
 	void Create_Control_FK(const int32 &Index);
 	void PerformFK(const int32 &Index);
+	void ClearControlsFK();
 
 	void Create_Control_TwoBoneIK(const int32 &Index);
 	void PerformTwoBoneIK(const int32 &Index);
+	void ClearControlsTwoBoneIK();
 
 #endif // #if WITH_EDITOR
 };

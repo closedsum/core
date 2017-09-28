@@ -32,6 +32,14 @@ public class CsCore : ModuleRules
                     "HeadMountedDisplay",
                     "V8",
                     "AnimationCore",
+                    "LevelSequence",
+                }
+            );
+
+            PrivateDependencyModuleNames.AddRange(
+                new string[] {
+                    "BlueprintGraph",
+                    "LevelSequenceEditor",
                 }
             );
         }
@@ -52,6 +60,7 @@ public class CsCore : ModuleRules
                     "UMG",
                     "HeadMountedDisplay",
                     "V8",
+                    "LevelSequence",
                 }
             );
         }

@@ -1,7 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Managers/CsPooledActor.h"
-#include "CsTypes.h"
+#include "Types/CsTypes.h"
 #include "CsProjectile.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBindableDynEvent_CsProjectileCache_OnDeAllocate);
@@ -29,8 +29,6 @@ struct FCsProjectileCache
 	FBindableDynEvent_CsProjectileCache_OnDeAllocate OnDeAllocate_ScriptEvent;
 
 	FBindableEvent_CsProjectileCache_OnDeAllocate OnDeAllocate_Event;
-
-	TCsSoundPriority Priority;
 
 	float Duration;
 

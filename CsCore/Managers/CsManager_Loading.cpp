@@ -2,7 +2,7 @@
 #include "Managers/CsManager_Loading.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "CsCommon.h"
+#include "Common/CsCommon.h"
 
 // static initializations
 UCsManager_Loading* UCsManager_Loading::s_managerLoadingSingleton;

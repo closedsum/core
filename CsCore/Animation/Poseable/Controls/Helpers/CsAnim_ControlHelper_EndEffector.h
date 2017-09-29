@@ -2,7 +2,6 @@
 #pragma once
 
 #include "Animation/Poseable/Controls/Helpers/CsAnim_ControlHelper.h"
-#include "CsTypes.h"
 #include "CsAnim_ControlHelper_EndEffector.generated.h"
 
 UCLASS()

@@ -1,6 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #include "Components/CsWidgetComponent.h"
 #include "CsCore.h"
+#include "Types/CsTypes.h"
 #include "UI/CsUserWidget.h"
 
 UCsWidgetComponent::UCsWidgetComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)

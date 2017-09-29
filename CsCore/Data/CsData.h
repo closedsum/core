@@ -1,7 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "GameFramework/Actor.h"
-#include "CsTypes.h"
+#include "Types/CsTypes_Load.h"
 #include "CsData.generated.h"
 
 // Macros

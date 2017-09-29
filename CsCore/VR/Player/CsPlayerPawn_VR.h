@@ -1,7 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Player/CsPlayerPawn.h"
-#include "CsTypes.h"
+#include "Types/CsTypes.h"
 #include "CsPlayerPawn_VR.generated.h"
 
 UCLASS(config = Game)

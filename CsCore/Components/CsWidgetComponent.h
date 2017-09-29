@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Runtime/UMG/Public/Components/WidgetComponent.h"
-#include "CsTypes.h"
+#include "Types/CsTypes.h"
 #include "CsWidgetComponent.generated.h"
 
 UCLASS(meta = (BlueprintSpawnableComponent))

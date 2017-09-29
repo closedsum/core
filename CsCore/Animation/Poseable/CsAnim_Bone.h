@@ -2,7 +2,7 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
-#include "CsTypes.h"
+#include "Types/CsTypes_Primitive.h"
 #include "CsAnim_Bone.generated.h"
 
 UCLASS()

@@ -3,7 +3,7 @@
 #include "CsCore.h"
 #include "Runtime/UMG/Public/Components/WidgetComponent.h"
 #include "UI/CsUserWidget.h"
-#include "CsCommon.h"
+#include "Common/CsCommon.h"
 
 ACsWidgetActor::ACsWidgetActor(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {

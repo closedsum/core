@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Components/CsStaticMeshComponent.h"
-#include "CsTypes.h"
+#include "Types/CsTypes.h"
 #include "CsButtonComponent_StaticMesh.generated.h"
 
 // Interaction

@@ -1,5 +1,5 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
-#include "Common/CsCommon.h"
+#include "CsCommon.h"
 #include "CsCore.h"
 #include "CsCVars.h"
 #include "GameFramework/GameState.h"

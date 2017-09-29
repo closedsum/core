@@ -1,7 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/CsManager_Projectile.h"
 #include "CsCore.h"
-#include "CsTypes.h"
+#include "Types/CsTypes.h"
 #include "Weapon/CsProjectile.h"
 // Data
 #include "Data/CsData_Projectile.h"

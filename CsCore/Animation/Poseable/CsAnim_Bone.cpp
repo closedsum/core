@@ -1,7 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #include "Animation/Poseable/CsAnim_Bone.h"
 #include "CsCore.h"
-#include "CsCommon.h"
+#include "Common/CsCommon.h"
 #include "Components/CsStaticMeshComponent.h"
 
 ACsAnim_Bone::ACsAnim_Bone(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)

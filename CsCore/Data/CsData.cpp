@@ -2,7 +2,8 @@
 #include "Data/CsData.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "CsCommon.h"
+#include "Common/CsCommon_Load.h"
+#include "Common/CsCommon.h"
 
 #if WITH_EDITOR
 #include "Data/CsDataMapping.h"
@@ -46,7 +47,7 @@ void ACsData::PreSave(const class ITargetPlatform* TargetPlatform)
 #if WITH_EDITOR
 	OnPreSave();
 	PopulateAssetReferences(true);
-	UCsCommon::GetCategoryMemberAssociations(this, GetClass(), CategoryMemberAssociations);
+	UCsCommon_Load::GetCategoryMemberAssociations(this, GetClass(), CategoryMemberAssociations);
 	SaveToJson();
 #endif WITH_EDITOR
 }
@@ -83,7 +84,7 @@ void ACsData::PopulateAssetReferences(const bool &CalculateResourceSizes)
 	{
 		AssetReferences[I].References.Reset();
 
-		UCsCommon::GetAssetReferencesFromObject(this, GetClass(), (ECsLoadFlags)I, CalculateResourceSizes, AssetReferences[I].References, GetAssetReferencesFromObject_Internal);
+		UCsCommon_Load::GetAssetReferencesFromObject(this, GetClass(), (ECsLoadFlags)I, CalculateResourceSizes, AssetReferences[I].References, GetAssetReferencesFromObject_Internal);
 		
 		AssetReferences[I].CalculateSize();
 	}
@@ -98,7 +99,7 @@ void ACsData::VerifyJsonIntegrity()
 	// Get Latest CategoryMemberAssociations. Check for changes do to Code updates
 	TArray<FCsCategoryMemberAssociation> LatestCategoryMemberAssociations;
 
-	UCsCommon::GetCategoryMemberAssociations(this, GetClass(), LatestCategoryMemberAssociations);
+	UCsCommon_Load::GetCategoryMemberAssociations(this, GetClass(), LatestCategoryMemberAssociations);
 
 	// Check for change in number of categories
 	const int32 LatestCount  = LatestCategoryMemberAssociations.Num();
@@ -202,19 +203,19 @@ void ACsData::Load(const ECsLoadFlags &LoadFlags /*=ECsLoadFlags::All*/)
 	if (!HasLoadedFromJson)
 		LoadFromJson();
 
-	UCsCommon::LoadObjectWithTAssetPtrs(DataName, (void*)this, GetClass(), LoadFlags, LoadObjectWithTAssetPtrs_Internal);
+	UCsCommon_Load::LoadObjectWithTAssetPtrs(DataName, (void*)this, GetClass(), LoadFlags, LoadObjectWithTAssetPtrs_Internal);
 }
 
 void ACsData::UnLoad()
 {
-	UCsCommon::UnLoadObjectWithTAssetPtrs((void*)this, GetClass());
+	UCsCommon_Load::UnLoadObjectWithTAssetPtrs((void*)this, GetClass());
 }
 
 bool ACsData::IsLoaded()
 {
 	const FString DataName = ShortCode.ToString();
 
-	return UCsCommon::IsLoadedObjectWithTAssetPtrs(DataName, (void*)this, GetClass());
+	return UCsCommon_Load::IsLoadedObjectWithTAssetPtrs(DataName, (void*)this, GetClass());
 }
 
 FString ACsData::GetAbsolutePath()
@@ -239,7 +240,7 @@ void ACsData::SaveToJson()
 
 	JsonWriter->WriteObjectStart();
 
-	UCsCommon::WriteObjectToJson(JsonWriter, (void*)this, GetClass(), CategoryMemberAssociations, WriteObjectToJson_Internal);
+	UCsCommon_Load::WriteObjectToJson(JsonWriter, (void*)this, GetClass(), CategoryMemberAssociations, WriteObjectToJson_Internal);
 	
 	JsonWriter->WriteObjectEnd();
 
@@ -282,7 +283,7 @@ void ACsData::LoadFromJson()
 #if WITH_EDITOR
 			VerifyJsonIntegrity();
 #endif // #if WITH_EDITOR
-			UCsCommon::ReadObjectFromJson(JsonParsed, this, GetClass(), CategoryMemberAssociations, ReadObjectFromJson_Internal);
+			UCsCommon_Load::ReadObjectFromJson(JsonParsed, this, GetClass(), CategoryMemberAssociations, ReadObjectFromJson_Internal);
 		}
 		else
 		{

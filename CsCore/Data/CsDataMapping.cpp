@@ -1,7 +1,8 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #include "Data/CsDataMapping.h"
 #include "CsCore.h"
-#include "CsCommon.h"
+#include "Common/CsCommon_Load.h"
+#include "Common/CsCommon.h"
 #include "Data/CsData.h"
 #include "Managers/CsManager_Loading.h"
 #include "Data/CsData_Payload.h"
@@ -145,7 +146,7 @@ void ACsDataMapping::PreSave(const class ITargetPlatform* TargetPlatform)
 	Super::PreSave(TargetPlatform);
 #if WITH_EDITOR
 	PopulateAssetReferences();
-	UCsCommon::GetCategoryMemberAssociations(this, GetClass(), CategoryMemberAssociations);
+	UCsCommon_Load::GetCategoryMemberAssociations(this, GetClass(), CategoryMemberAssociations);
 	SaveToJson();
 #endif // #if WITH_EDITOR
 }
@@ -367,7 +368,7 @@ void ACsDataMapping::PopulateAssetReferences()
 						{
 							ACsData* OutAsset;
 
-							UCsCommon::LoadTAssetSubclassOf<ACsData>((*Member)[I].Data, OutAsset, TEXT("Actor"));
+							UCsCommon_Load::LoadTAssetSubclassOf<ACsData>((*Member)[I].Data, OutAsset, TEXT("Actor"));
 
 							if (!OutAsset)
 							{
@@ -579,14 +580,14 @@ bool ACsDataMapping::CheckDataIsValid(const FString &FunctionName, const TCsAsse
 	// Load the Data
 	AActor* OutAsset;
 
-	UCsCommon::LoadTAssetSubclassOf<AActor>(Mapping.Data, OutAsset, TEXT("Actor"));
+	UCsCommon_Load::LoadTAssetSubclassOf<AActor>(Mapping.Data, OutAsset, TEXT("Actor"));
 
 	T* DataDOb = Cast<T>(OutAsset);
 
 	if (!DataDOb)
 	{
 		const FString ShortCode		   = Mapping.ShortCode.ToString();
-		const FString AssetDescription = UCsCommon::GetAssetDescription<AActor>(Mapping.Data);
+		const FString AssetDescription = UCsCommon_Load::GetAssetDescription<AActor>(Mapping.Data);
 
 		UE_LOG(LogCs, Warning, TEXT("%s: Failed to load data using Short Code: %s with Path Location: %s"), *FunctionName, *ShortCode, *AssetDescription);
 		return true;
@@ -691,7 +692,7 @@ void ACsDataMapping::SaveToJson()
 
 	JsonWriter->WriteObjectStart();
 
-	UCsCommon::WriteObjectToJson(JsonWriter, (void*)this, GetClass(), CategoryMemberAssociations, WriteObjectToJson_Internal);
+	UCsCommon_Load::WriteObjectToJson(JsonWriter, (void*)this, GetClass(), CategoryMemberAssociations, WriteObjectToJson_Internal);
 
 	JsonWriter->WriteObjectEnd();
 
@@ -731,7 +732,7 @@ void ACsDataMapping::LoadFromJson()
 				UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::LoadFromJson (%s): Data needs to be saved at least ONCE to generate CategoryMemberAssociations"), *AssetName);
 				return;
 			}
-			UCsCommon::ReadObjectFromJson(JsonParsed, this, GetClass(), CategoryMemberAssociations, ReadObjectFromJson_Internal);
+			UCsCommon_Load::ReadObjectFromJson(JsonParsed, this, GetClass(), CategoryMemberAssociations, ReadObjectFromJson_Internal);
 		}
 		else
 		{

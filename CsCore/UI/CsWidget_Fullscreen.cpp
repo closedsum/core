@@ -1,7 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #include "UI/CsWidget_Fullscreen.h"
 #include "CsCore.h"
-#include "CsCommon.h"
+#include "Common/CsCommon.h"
 #include "Coroutine/CsCoroutineScheduler.h"
 
 UCsWidget_Fullscreen::UCsWidget_Fullscreen(const FObjectInitializer& ObjectInitializer)

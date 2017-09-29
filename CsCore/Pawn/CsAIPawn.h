@@ -1,7 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "GameFramework/Character.h"
-#include "CsTypes.h"
+#include "Types/CsTypes.h"
 #include "CsAIPawn.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsAIPawn_Override_OnTick, const int32&, Index, const float&, DeltaSeconds);
@@ -97,7 +97,7 @@ class CSCORE_API ACsAIPawn : public ACharacter
 	uint8 Type_Script;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
-	FCsAIPawnCache Cache;
+	struct FCsAIPawnCache Cache;
 
 	void Init(const int32 &Index, const TCsAIType &InType);
 

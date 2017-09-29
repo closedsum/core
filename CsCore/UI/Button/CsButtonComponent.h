@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Engine/Classes/Components/SceneComponent.h"
-#include "CsTypes.h"
+#include "Types/CsTypes.h"
 #include "CsButtonComponent.generated.h"
 
 // Interaction

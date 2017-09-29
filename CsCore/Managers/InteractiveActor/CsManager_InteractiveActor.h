@@ -1,7 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Managers/CsManager.h"
-#include "CsTypes.h"
+#include "Types/CsTypes.h"
 #include "CsManager_InteractiveActor.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsManagerInteractiveActor_OnDeAllocate, const int32&, Index, const int32&, ActiveIndex, const uint8&, Type);

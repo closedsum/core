@@ -2,7 +2,6 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
-#include "CsTypes.h"
 #include "CsAnim_ControlAnchor.generated.h"
 
 UCLASS()

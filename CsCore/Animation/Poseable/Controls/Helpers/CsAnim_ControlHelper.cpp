@@ -1,7 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #include "Animation/Poseable/Controls/Helpers/CsAnim_ControlHelper.h"
 #include "CsCore.h"
-#include "CsCommon.h"
+#include "Common/CsCommon.h"
 
 ACsAnim_ControlHelper::ACsAnim_ControlHelper(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {

@@ -3,7 +3,7 @@
 #include "CsCore.h"
 #include "Player/CsPlayerController.h"
 #include "Player/CsCheatManager.h"
-#include "CsCommon.h"
+#include "Common/CsCommon.h"
 #include "CsCVars.h"
 
 #include "../HeadMountedDisplay/Public/IMotionController.h"

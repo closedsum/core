@@ -2,7 +2,7 @@
 #include "Managers/Sound/CsManager_Sound.h"
 #include "CsCore.h"
 #include "Managers/Sound/CsSound.h"
-#include "CsCommon.h"
+#include "Common/CsCommon.h"
 
 ACsManager_Sound::ACsManager_Sound(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {

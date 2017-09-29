@@ -1,6 +1,6 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "CsTypes.h"
+#include "Types/CsTypes.h"
 #include "Managers/CsManager.h"
 #include "CsManager_Projectile.generated.h"
 

@@ -1,7 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #include "Player/CsCheatManager.h"
 #include "CsCore.h"
-#include "CsCommon.h"
+#include "Common/CsCommon.h"
 #include "Game/CsGameState.h"
 #include "Javascript/CsJavascriptEntryPoint.h"
 

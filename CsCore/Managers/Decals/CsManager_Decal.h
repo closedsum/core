@@ -1,9 +1,8 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Managers/CsManager.h"
-#include "CsTypes.h"
+#include "Types/CsTypes.h"
 #include "CsManager_Decal.generated.h"
-
 
 #define CS_DECAL_POOL_SIZE 64
 

@@ -2,7 +2,7 @@
 #include "Pawn/CsInteractiveAIPawn.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "CsCommon.h"
+#include "Common/CsCommon.h"
 
 ACsInteractiveAIPawn::ACsInteractiveAIPawn(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

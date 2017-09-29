@@ -2,7 +2,6 @@
 #include "Managers/AI/CsManager_AI.h"
 #include "CsCore.h"
 #include "Pawn/CsAIPawn.h"
-#include "CsCommon.h"
 #include "Game/CsGameState.h"
 
 ACsManager_AI::ACsManager_AI(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)

@@ -1,6 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "CsTypes.h"
+#include "Engine/StreamableManager.h"
+#include "Types/CsTypes_Load.h"
 #include "CsManager_Loading.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsManagerLoading_OnStartLoadingAssetReferences, const int32&);

@@ -2,7 +2,7 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
-#include "CsTypes.h"
+#include "Types/CsTypes.h"
 #include "CsPoseableMeshActor.generated.h"
 
 // Enums
@@ -592,37 +592,145 @@ struct FCsAnimControlInfo_TwoBoneIK
 #pragma region
 
 USTRUCT()
-struct FCsAnimLevelSequenceInfo
+struct FCsAnimLevelSequenceInfo_Shot
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
-	bool Create;
-
+	bool FindOrCreate;
+	/* seq_ + BaseName (usually part of SkeletalMesh Name) is appended to Name */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	FName Name;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Level Sequence")
 	FName PackagePath;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
-	class ULevelSequence* Master;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	class ULevelSequence* Shot;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
-	TArray<class ULevelSequence*> Shots;
+	bool Export;
+	/* anim_ + BaseName (usually part of SkeletalMesh Name) is appended to Name */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	class UAnimSequence* Anim;
 
-	FCsAnimLevelSequenceInfo()
+	FCsAnimLevelSequenceInfo_Shot()
 	{
+		FindOrCreate = false;
+		Name = NAME_None;
+		PackagePath = NAME_None;
+		Shot = nullptr;
+		Export = false;
+		Anim = nullptr;
 	}
 
-	FCsAnimLevelSequenceInfo& operator=(const FCsAnimLevelSequenceInfo& B)
+	FCsAnimLevelSequenceInfo_Shot& operator=(const FCsAnimLevelSequenceInfo_Shot& B)
 	{
+		FindOrCreate = B.FindOrCreate;
+		Name = B.Name;
+		PackagePath = B.PackagePath;
+		Shot = B.Shot;
+		Export = B.Export;
+		Anim = B.Anim;
 		return *this;
 	}
 
-	bool operator==(const FCsAnimLevelSequenceInfo& B) const
+	bool operator==(const FCsAnimLevelSequenceInfo_Shot& B) const
 	{
+		return FindOrCreate == B.FindOrCreate &&
+			   Name == B.Name &&
+			   PackagePath == B.PackagePath &&
+			   Shot == B.Shot &&
+			   Export == B.Export &&
+			   Anim == B.Anim;
+	}
+
+	bool operator!=(const FCsAnimLevelSequenceInfo_Shot& B) const
+	{
+		return !(*this == B);
+	}
+};
+
+USTRUCT()
+struct FCsAnimLevelSequenceInfo_Master
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	bool Open;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	bool FindOrCreate;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	FName PackagePath;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	class ULevelSequence* Master;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	TArray<FCsAnimLevelSequenceInfo_Shot> Shots;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	bool Export;
+
+	FCsAnimLevelSequenceInfo_Master()
+	{
+		Open = false;
+		FindOrCreate = false;
+		PackagePath = NAME_None;
+		Master = nullptr;
+		Export = false;
+	}
+
+	FCsAnimLevelSequenceInfo_Master& operator=(const FCsAnimLevelSequenceInfo_Master& B)
+	{
+		Open = B.Open;
+		FindOrCreate = B.FindOrCreate;
+		PackagePath = B.PackagePath;
+		Master = B.Master;
+
+		Shots.Reset();
+		const int32 Count = B.Shots.Num();
+
+		for (int32 I = 0; I < Count; I++)
+		{
+			Shots.AddDefaulted();
+			Shots[I] = B.Shots[I];
+		}
+
+		Export = B.Export;
+		return *this;
+	}
+
+	bool operator==(const FCsAnimLevelSequenceInfo_Master& B) const
+	{
+		if (Open != B.Open)
+			return false;
+		if (FindOrCreate != B.FindOrCreate)
+			return false;
+		if (PackagePath != B.PackagePath)
+			return false;
+		if (Master != B.Master)
+			return false;
+
+		if (Shots.Num() != B.Shots.Num())
+			return false;
+
+		const int32 Count = Shots.Num();
+
+		for (int32 I = 0; I < Count; I++)
+		{
+			if (Shots[I] != B.Shots[I])
+				return false;
+		}
+
+		if (Export != B.Export)
+			return false;
 		return true;
 	}
 
-	bool operator!=(const FCsAnimLevelSequenceInfo& B) const
+	bool operator!=(const FCsAnimLevelSequenceInfo_Master& B) const
 	{
 		return !(*this == B);
 	}
@@ -666,21 +774,28 @@ class CSCORE_API ACsPoseableMeshActor : public AActor
 
 	TArray<FCsAnimControlInfo_TwoBoneIK> Controls_TwoBoneIK_Copy;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "00 PoseableMesh")
+	FCsAnimLevelSequenceInfo_Master LevelSequence;
+
 #if WITH_EDITOR
 
 	void OnControlNameChanged_FK(const int32 &Index);
 	void OnControlNameChanged_TwoBoneIK(const int32 &Index);
 
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& e) override;
+	void PostEditChangeProperty_LevelSequence_Master(struct FPropertyChangedEvent& e);
 	virtual void PostEditChangeChainProperty(struct FPropertyChangedChainEvent& e) override;
+	void PostEditChangeChainProperty_Control_FK(struct FPropertyChangedChainEvent& e);
+	void PostEditChangeChainProperty_Control_FK_Connection(struct FPropertyChangedChainEvent& e);
+	void PostEditChangeChainProperty_TwoBoneIK(struct FPropertyChangedChainEvent& e);
+	void PostEditChangeChainProperty_LevelSequence_Shots(struct FPropertyChangedChainEvent& e);
 
 	virtual void GenerateBones();
 	virtual void ClearBones();
+	void RecreateBone(const int32 &Index);
 
 	void DestroyOrphanedControlAnchors();
 	void DestroyOrphanedControlHelpers();
-
-	void RecreateBone(const int32 &Index);
 
 	void Create_Control_FK(const int32 &Index);
 	void PerformFK(const int32 &Index);

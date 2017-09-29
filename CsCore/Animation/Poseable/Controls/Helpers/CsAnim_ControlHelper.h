@@ -2,7 +2,7 @@
 #pragma once
 
 #include "Engine/StaticMeshActor.h"
-#include "CsTypes.h"
+#include "Types/CsTypes_Primitive.h"
 #include "CsAnim_ControlHelper.generated.h"
 
 UCLASS()

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Components/CsWidgetComponent.h"
-#include "CsTypes.h"
+#include "Types/CsTypes.h"
 #include "CsButtonComponent_Widget.generated.h"
 
 // Interaction

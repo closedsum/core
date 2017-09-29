@@ -2,7 +2,7 @@
 #include "Managers/InteractiveActor/CsInteractiveActor.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "CsCommon.h"
+#include "Common/CsCommon.h"
 #include "Components/CsSkeletalMeshComponent.h"
 #include "Components/CsStaticMeshComponent.h"
 #include "Components/CsBoxComponent.h"

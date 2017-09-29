@@ -1,6 +1,6 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "CsTypes.h"
+#include "Types/CsTypes.h"
 #include "Particles/Emitter.h"
 #include "CsEmitter.generated.h"
 

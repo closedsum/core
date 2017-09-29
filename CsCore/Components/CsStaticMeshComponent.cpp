@@ -1,8 +1,6 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #include "Components/CsStaticMeshComponent.h"
 #include "CsCore.h"
-#include "CsTypes.h"
-#include "CsCommon.h"
 
 UCsStaticMeshComponent::UCsStaticMeshComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {

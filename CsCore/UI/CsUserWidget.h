@@ -6,8 +6,8 @@
 #include "Runtime/UMG/Public/Components/TextBlock.h"
 #include "Runtime/UMG/Public/Components/Image.h"
 #include "Runtime/UMG/Public/Components/Button.h"
-#include "CsTypes.h"
-#include "CsCommon.h"
+#include "Types/CsTypes.h"
+#include "Common/CsCommon.h"
 #include "CsUserWidget.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsUserWidget_OnNativeTick, const FGeometry&, MyGeometry, float, InDeltaTime);

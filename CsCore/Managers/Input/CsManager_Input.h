@@ -2,7 +2,7 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
-#include "CsTypes.h"
+#include "Types/CsTypes.h"
 #include "CsManager_Input.generated.h"
 
 #define CS_INPUT_POOL_SIZE 65535

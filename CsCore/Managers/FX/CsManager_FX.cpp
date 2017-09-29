@@ -1,8 +1,8 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/FX/CsManager_FX.h"
 #include "CsCore.h"
-#include "CsTypes.h"
-#include "CsCommon.h"
+#include "Types/CsTypes.h"
+#include "Common/CsCommon.h"
 #include "Managers/FX/CsEmitter.h"
 
 ACsManager_FX::ACsManager_FX(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)

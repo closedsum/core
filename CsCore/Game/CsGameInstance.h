@@ -3,7 +3,7 @@
 
 #include "Engine/GameInstance.h"
 #include "../Core/Public/Containers/Ticker.h"
-#include "CsTypes.h"
+#include "Types/CsTypes.h"
 #include "CsGameInstance.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsGameInstance_OnTick, const float&, DeltaSeconds);

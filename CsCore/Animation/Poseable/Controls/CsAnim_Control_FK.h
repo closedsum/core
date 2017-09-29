@@ -2,7 +2,6 @@
 #pragma once
 
 #include "Animation/Poseable/Controls/CsAnim_Control.h"
-#include "CsTypes.h"
 #include "CsAnim_Control_FK.generated.h"
 
 UCLASS()

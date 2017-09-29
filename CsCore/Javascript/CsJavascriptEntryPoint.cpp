@@ -1,7 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #include "Javascript/CsJavascriptEntryPoint.h"
 #include "CsCore.h"
-#include "CsCommon.h"
+#include "Common/CsCommon.h"
 #include "Game/CsGameInstance.h"
 #include "Data/CsDataMapping.h"
 #include "Coroutine/CsCoroutineScheduler.h"

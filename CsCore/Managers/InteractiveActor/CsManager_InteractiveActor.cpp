@@ -2,7 +2,6 @@
 #include "Managers/InteractiveActor/CsManager_InteractiveActor.h"
 #include "CsCore.h"
 #include "Managers/InteractiveActor/CsInteractiveActor.h"
-#include "CsCommon.h"
 #include "Game/CsGameState.h"
 
 ACsManager_InteractiveActor::ACsManager_InteractiveActor(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)

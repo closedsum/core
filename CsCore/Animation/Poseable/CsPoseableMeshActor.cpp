@@ -2,7 +2,7 @@
 #include "Animation/Poseable/CsPoseableMeshActor.h"
 #include "Components/CsPoseableMeshComponent.h"
 #include "CsCore.h"
-#include "CsCommon.h"
+#include "Common/CsCommon.h"
 
 #if WITH_EDITOR
 #include "../AnimationCore/Public/TwoBoneIK.h"
@@ -16,6 +16,13 @@
 #include "Animation/Poseable/Controls/Helpers/CsAnim_ControlHelper_EndEffector.h"
 #include "Animation/Poseable/Controls/Helpers/CsAnim_ControlHelper_JointTarget.h"
 
+// Level Sequence
+#include "../LevelSequence/Public/LevelSequence.h"
+
+#if WITH_EDITOR
+#include "Private/LevelSequenceEditorToolkit.h"
+#include "../UnrealEd/Public/Toolkits/AssetEditorManager.h"
+#endif // #if WITH_EDITOR
 
 ACsPoseableMeshActor::ACsPoseableMeshActor(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -212,13 +219,13 @@ void ACsPoseableMeshActor::OnControlNameChanged_FK(const int32 &Index)
 
 void ACsPoseableMeshActor::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 {
-	FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
-
 	if (!UCsCommon::IsPlayInEditor(GetWorld()))
 	{
 		Super::PostEditChangeProperty(e);
 		return;
 	}
+
+	FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
 
 	// SkeletalMesh
 	if (PropertyName == GET_MEMBER_NAME_CHECKED(ACsPoseableMeshActor, PoseableMeshComponent))
@@ -238,7 +245,58 @@ void ACsPoseableMeshActor::PostEditChangeProperty(struct FPropertyChangedEvent& 
 		}
 		Last_SkeletalMesh = PoseableMeshComponent->SkeletalMesh;
 	}
+	// LevelSequence
+	PostEditChangeProperty_LevelSequence_Master(e);
+
 	Super::PostEditChangeProperty(e);
+}
+
+void ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(struct FPropertyChangedEvent& e)
+{
+	FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
+
+	// Open
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimLevelSequenceInfo_Master, Open))
+	{
+		if (LevelSequence.Open)
+		{
+			LevelSequence.Open = false;
+
+			if (!LevelSequence.Master)
+			{
+				UCsCommon::DisplayNotificationInfo(TEXT("No Level Sequence created. LevelSequence.Master is NULL."), TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
+
+				UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(%s): No Level Sequence created. LevelSequence.Master is NULL."), *GetName());
+				return;
+			}
+
+			IAssetEditorInstance* AssetEditor = FAssetEditorManager::Get().FindEditorForAsset(LevelSequence.Master, true);
+
+			if (!AssetEditor)
+			{
+				UCsCommon::DisplayNotificationInfo(TEXT("Failed to Open Level Sequence Editor."), TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
+
+				UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(%s): Failed to Open Level Sequence Editor."), *GetName());
+				return;
+			}
+
+			const bool Success = FAssetEditorManager::Get().OpenEditorForAsset(LevelSequence.Master);
+
+			if (!Success)
+			{
+				const FString AssetName = LevelSequence.Master->GetName();
+				const FString Message   = TEXT("Failed to Open Level Sequence: ") + AssetName + TEXT(".");
+
+				UCsCommon::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
+
+				UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(%s): %s"), *GetName(), *Message);
+				return;
+			}
+		}
+		return;
+	}
+	// FindOrCreate
+
 }
 
 void ACsPoseableMeshActor::PostEditChangeChainProperty(struct FPropertyChangedChainEvent& e)
@@ -250,361 +308,362 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty(struct FPropertyChangedCh
 	}
 
 	// Controls_FK
-	const int32 Controls_FK_Index = e.GetArrayIndex(TEXT("Controls_FK"));
+	PostEditChangeChainProperty_Control_FK(e);
+	// Controls_FK[Index].Connections
+	PostEditChangeChainProperty_Control_FK_Connection(e);
+	// Controls_TwoBoneIK
+	PostEditChangeChainProperty_TwoBoneIK(e);
+	// LevelSequence
+	PostEditChangeChainProperty_LevelSequence_Shots(e);
 
-	if (Controls_FK_Index != INDEX_NONE)
+	Super::PostEditChangeChainProperty(e);
+}
+
+void ACsPoseableMeshActor::PostEditChangeChainProperty_Control_FK(struct FPropertyChangedChainEvent& e)
+{
+	// Controls_FK
+	const int32 Index = e.GetArrayIndex(TEXT("Controls_FK"));
+
+	if (Index == INDEX_NONE)
+		return;
+
+	FCsAnimControlInfo_FK& FK = Controls_FK[Index];
+
+	FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
+
+	const int32 ControlCount = Controls_FK.Num();
+	const int32 CopyCount    = Controls_FK_Copy.Num();
+
+	// Check if NEW elements were ADDED
+	if (ControlCount > CopyCount)
 	{
-		const int32 Index		  = Controls_FK_Index;
-		FCsAnimControlInfo_FK& FK = Controls_FK[Index];
+		const int32 Delta = ControlCount - CopyCount;
 
-		FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
+		for (int32 I = 0; I < Delta; I++)
+		{
+			const int32 CopyIndex = CopyCount + I;
 
-		const int32 ControlCount = Controls_FK.Num();
-		const int32 CopyCount	 = Controls_FK_Copy.Num();
+			Create_Control_FK(CopyIndex);
+
+			Controls_FK_Copy.AddDefaulted();
+			Controls_FK_Copy[CopyIndex] = Controls_FK[CopyIndex];
+		}
+	}
+	// Check if elements were REMOVED
+	if (ControlCount < CopyCount)
+	{
+		const int32 Delta = CopyCount - ControlCount;
+
+		for (int32 I = CopyCount - 1; I >= CopyCount - Delta; I--)
+		{
+			ACsAnim_Control_FK* Control = Controls_FK_Copy[I].Actor;
+
+			if (Control && !Control->IsPendingKill())
+			{
+				if (Control->Anchor && !Control->Anchor->IsPendingKill())
+					Control->Anchor->Destroy();
+				Control->Destroy();
+			}
+			Controls_FK_Copy.RemoveAt(I);
+		}
+	}
+	// Controls_FK[Index].Control
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_FK, Control))
+	{
+		if (ACsAnim_Control_FK* Control = FK.Actor)
+		{
+			Control->SetControlName(FK.Control);
+		}
+	}
+}
+
+void ACsPoseableMeshActor::PostEditChangeChainProperty_Control_FK_Connection(struct FPropertyChangedChainEvent& e)
+{
+	const int32 Index = e.GetArrayIndex(TEXT("Connections"));
+
+	if (Index == INDEX_NONE)
+		return;
+
+	// Search through Controls_FK and see if any Connections were ADDED / REMOVED
+	int32 ControlIndex		 = INDEX_NONE;
+	const int32 ControlCount = Controls_FK.Num();
+
+	for (int32 I = 0; I < ControlCount; I++)
+	{
+		if (Controls_FK[I].Connections.Num() != Controls_FK[I].Connections_Copy.Num())
+		{
+			ControlIndex = I;
+			break;
+		}
+	}
+
+	if (ControlIndex != INDEX_NONE)
+	{
+		FCsAnimControlInfo_FK& FK   = Controls_FK[ControlIndex];
+		ACsAnim_Control_FK* Control = FK.Actor;
+
+		const int32 ConnectionCount = FK.Connections.Num();
+		const int32 CopyCount		= FK.Connections_Copy.Num();
 
 		// Check if NEW elements were ADDED
-		if (ControlCount > CopyCount)
+		if (ConnectionCount > CopyCount)
 		{
-			const int32 Delta = ControlCount - CopyCount;
+			const int32 Delta = ConnectionCount - CopyCount;
 
 			for (int32 I = 0; I < Delta; I++)
 			{
 				const int32 CopyIndex = CopyCount + I;
 
-				Create_Control_FK(CopyIndex);
-
-				Controls_FK_Copy.AddDefaulted();
-				Controls_FK_Copy[CopyIndex] = Controls_FK[CopyIndex];
+				FK.Connections_Copy.AddDefaulted();
+				FK.Connections_Copy[CopyIndex] = FK.Connections[CopyIndex];
 			}
 		}
 		// Check if elements were REMOVED
-		if (ControlCount < CopyCount)
+		if (ConnectionCount < CopyCount)
 		{
-			const int32 Delta = CopyCount - ControlCount;
+			const int32 Delta = CopyCount - ConnectionCount;
 
 			for (int32 I = CopyCount - 1; I >= CopyCount - Delta; I--)
 			{
-				ACsAnim_Control_FK* Control = Controls_FK_Copy[I].Actor;
-
-				if (Control && !Control->IsPendingKill())
-				{
-					if (Control->Anchor && !Control->Anchor->IsPendingKill())
-						Control->Anchor->Destroy();
-					Control->Destroy();
-				}
-				Controls_FK_Copy.RemoveAt(I);
+				FK.Connections_Copy.RemoveAt(I);
 			}
 		}
-		// Controls_FK[Index].Control
-		if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_FK, Control))
-		{
-			if (ACsAnim_Control_FK* Control = FK.Actor)
-			{
-				Control->SetControlName(FK.Control);
-			}
-		}
+		return;
 	}
 
-	// Controls_FK[Index].Connections
-	const int32 Controls_FK_Connections_Index = e.GetArrayIndex(TEXT("Connections"));
-
-	if (Controls_FK_Connections_Index != INDEX_NONE)
+	for (int32 I = 0; I < ControlCount; I++)
 	{
-		const int32 Index = Controls_FK_Connections_Index;
-
-		// Search through Controls_FK and see if any Connections were ADDED / REMOVED
-		int32 ControlIndex		 = INDEX_NONE;
-		const int32 ControlCount = Controls_FK.Num();
-
-		for (int32 I = 0; I < ControlCount; I++)
-		{
-			if (Controls_FK[I].Connections.Num() != Controls_FK[I].Connections_Copy.Num())
-			{
-				ControlIndex = I;
-				break;
-			}
-		}
-
-		if (ControlIndex != INDEX_NONE)
-		{
-			FCsAnimControlInfo_FK& FK   = Controls_FK[ControlIndex];
-			ACsAnim_Control_FK* Control = FK.Actor;
-
-			const int32 ConnectionCount = FK.Connections.Num();
-			const int32 CopyCount		= FK.Connections_Copy.Num();
-
-			// Check if NEW elements were ADDED
-			if (ConnectionCount > CopyCount)
-			{
-				const int32 Delta = ConnectionCount - CopyCount;
-
-				for (int32 I = 0; I < Delta; I++)
-				{
-					const int32 CopyIndex = CopyCount + I;
-
-					FK.Connections_Copy.AddDefaulted();
-					FK.Connections_Copy[CopyIndex] = FK.Connections[CopyIndex];
-				}
-			}
-			// Check if elements were REMOVED
-			if (ConnectionCount < CopyCount)
-			{
-				const int32 Delta = CopyCount - ConnectionCount;
-
-				for (int32 I = CopyCount - 1; I >= CopyCount - Delta; I--)
-				{
-					FK.Connections_Copy.RemoveAt(I);
-				}
-			}
-
-			Super::PostEditChangeChainProperty(e);
-			return;
-		}
-
-		for (int32 I = 0; I < ControlCount; I++)
-		{
-			FCsAnimControlInfo_FK& FK					 = Controls_FK[I];
-			FCsAnimControlInfo_FK_Connection& Connection = FK.Connections[Index];
-
-			if (Connection.Bone != Connection.Last_Bone ||
-				Connection.SnapToBone != Connection.Last_SnapToBone ||
-				Connection.Output.Member != Connection.Output.Last_Member ||
-				Connection.Output.Axes != Connection.Output.Last_Axes ||
-				Connection.Input.Member != Connection.Input.Last_Member ||
-				Connection.Input.Axes != Connection.Input.Last_Axes)
-			{
-				ControlIndex = I;
-				break;
-			}
-		}
-
-		if (ControlIndex == INDEX_NONE)
-		{
-			Super::PostEditChangeChainProperty(e);
-			return;
-		}
-
-		FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
-
-		FCsAnimControlInfo_FK& FK					 = Controls_FK[ControlIndex];
-		ACsAnim_Control_FK* Control					 = FK.Actor;
+		FCsAnimControlInfo_FK& FK = Controls_FK[I];
 		FCsAnimControlInfo_FK_Connection& Connection = FK.Connections[Index];
 
-		// Controls_FK[ControlIndex].Connections[Index].Bone
-		if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_FK_Connection, Bone))
+		if (Connection.Bone != Connection.Last_Bone ||
+			Connection.SnapToBone != Connection.Last_SnapToBone ||
+			Connection.Output.Member != Connection.Output.Last_Member ||
+			Connection.Output.Axes != Connection.Output.Last_Axes ||
+			Connection.Input.Member != Connection.Input.Last_Member ||
+			Connection.Input.Axes != Connection.Input.Last_Axes)
 		{
-			const FName BoneName = Connection.Bone;
-
-			if (BoneName == NAME_None)
-			{
-				Connection.Last_Bone = NAME_None;
-				Connection.BoneIndex = INDEX_NONE;
-				Connection.BoneArrayIndex = INDEX_NONE;
-				Super::PostEditChangeChainProperty(e);
-				return;
-			}
-
-			const int32 BoneIndex = PoseableMeshComponent->GetBoneIndex(BoneName);
-			Connection.BoneIndex  = BoneIndex;
-
-			if (BoneIndex == INDEX_NONE)
-			{
-				Connection.Bone = NAME_None;
-				Connection.Last_Bone = NAME_None;
-				Connection.BoneArrayIndex = INDEX_NONE;
-				Super::PostEditChangeChainProperty(e);
-				return;
-			}
-
-			const int32 Count = Bones.Num();
-
-			for (int32 I = 0; I < Count; I++)
-			{
-				if (Bones[I].Bone == BoneName)
-				{
-					Connection.BoneArrayIndex = I;
-					break;
-				}
-			}
-			Connection.Last_Bone = Connection.Bone;
-		}
-		// Controls_FK[ControlIndex].Connections[Index].SnapToBone
-		if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_FK_Connection, SnapToBone))
-		{
-			if (Connection.SnapToBone)
-			{
-				const int32 BoneIndex = Connection.BoneIndex;
-
-				if (BoneIndex == INDEX_NONE)
-				{
-					Super::PostEditChangeChainProperty(e);
-					return;
-				}
-
-				const int32 BoneArrayIndex = Connection.BoneArrayIndex;
-
-				if (Control)
-				{
-					ACsAnim_Bone* Bone = Bones[BoneArrayIndex].Actor;
-					Control->Anchor->SetActorTransform(Bone->GetActorTransform());
-				}
-			}
-			Connection.SnapToBone = false;
-			Connection.Last_SnapToBone = Connection.SnapToBone;
-		}
-		// Controls_FK[ControlIndex].Connections[Index].Ouput.Member
-		if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_FK_ConnectionOutput, Member))
-		{
-			Connection.Output.Last_Member = Connection.Output.Member;
-		}
-		// Controls_FK[ControlIndex].Connections[Index].Ouput.Axes
-		if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_FK_ConnectionOutput, Axes))
-		{
-			Connection.Output.Last_Axes = Connection.Output.Axes;
-		}
-		// Controls_FK[ControlIndex].Connections[Index].Input.Member
-		if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_FK_ConnectionInput, Member))
-		{
-			Connection.Input.Last_Member = Connection.Input.Member;
-		}
-		// Controls_FK[ControlIndex].Connections[Index].Input.Axes
-		if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_FK_ConnectionInput, Axes))
-		{
-			Connection.Input.Last_Axes = Connection.Input.Axes;
+			ControlIndex = I;
+			break;
 		}
 	}
 
-	// Controls_TwoBoneIK
-	const int32 Controls_TwoBoneIK_Index = e.GetArrayIndex(TEXT("Controls_TwoBoneIK"));
+	if (ControlIndex == INDEX_NONE)
+		return;
 
-	if (Controls_TwoBoneIK_Index != INDEX_NONE)
+	FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
+
+	FCsAnimControlInfo_FK& FK					 = Controls_FK[ControlIndex];
+	ACsAnim_Control_FK* Control					 = FK.Actor;
+	FCsAnimControlInfo_FK_Connection& Connection = FK.Connections[Index];
+
+	// Controls_FK[ControlIndex].Connections[Index].Bone
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_FK_Connection, Bone))
 	{
-		const int32 Index						= Controls_TwoBoneIK_Index;
-		FCsAnimControlInfo_TwoBoneIK& TwoBoneIK = Controls_TwoBoneIK[Index];
+		const FName BoneName = Connection.Bone;
 
-		// SkeletalMesh is NULL
-		if (!PoseableMeshComponent->SkeletalMesh)
+		if (BoneName == NAME_None)
 		{
-			UCsCommon::DisplayNotificationInfo(TEXT("SkeletalMesh is NULL."), TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 5.0f);
-
-			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty(%s): SkeletalMesh is NULL. Can NOT update Controls."), *GetName());
-			Super::PostEditChangeChainProperty(e);
+			Connection.Last_Bone	  = NAME_None;
+			Connection.BoneIndex	  = INDEX_NONE;
+			Connection.BoneArrayIndex = INDEX_NONE;
 			return;
 		}
 
-		FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
+		const int32 BoneIndex = PoseableMeshComponent->GetBoneIndex(BoneName);
+		Connection.BoneIndex = BoneIndex;
 
-		const int32 ControlCount = Controls_TwoBoneIK.Num();
-		const int32 CopyCount    = Controls_TwoBoneIK_Copy.Num();
-
-		// Check if NEW elements were ADDED
-		if (ControlCount > CopyCount)
+		if (BoneIndex == INDEX_NONE)
 		{
-			const int32 Delta = ControlCount - CopyCount;
+			Connection.Bone			  = NAME_None;
+			Connection.Last_Bone	  = NAME_None;
+			Connection.BoneArrayIndex = INDEX_NONE;
+			return;
+		}
 
-			for (int32 I = 0; I < Delta; I++)
+		const int32 Count = Bones.Num();
+
+		for (int32 I = 0; I < Count; I++)
+		{
+			if (Bones[I].Bone == BoneName)
 			{
-				const int32 CopyIndex = CopyCount + I;
-
-				Create_Control_TwoBoneIK(CopyIndex);
-				
-				Controls_TwoBoneIK_Copy.AddDefaulted();
-				Controls_TwoBoneIK_Copy[CopyIndex] = Controls_TwoBoneIK[CopyIndex];
+				Connection.BoneArrayIndex = I;
+				break;
 			}
 		}
-		// Check if elements were REMOVED
-		if (ControlCount < CopyCount)
+		Connection.Last_Bone = Connection.Bone;
+	}
+	// Controls_FK[ControlIndex].Connections[Index].SnapToBone
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_FK_Connection, SnapToBone))
+	{
+		if (Connection.SnapToBone)
 		{
-			const int32 Delta = CopyCount - ControlCount;
+			const int32 BoneIndex = Connection.BoneIndex;
 
-			for (int32 I = CopyCount - 1; I >= CopyCount - Delta; I--)
-			{
-				ACsAnim_Control_TwoBoneIK* Control = Controls_TwoBoneIK_Copy[I].Actor;
-
-				if (Control && !Control->IsPendingKill())
-				{
-					if (Control->Anchor && !Control->Anchor->IsPendingKill())
-						Control->Anchor->Destroy();
-					if (Control->EndEffector && !Control->EndEffector->IsPendingKill())
-						Control->EndEffector->Destroy();
-					if (Control->JointTarget && !Control->JointTarget->IsPendingKill())
-						Control->JointTarget->Destroy();
-					Control->Destroy();
-				}
-				Controls_TwoBoneIK_Copy.RemoveAt(I);
-			}
-		}
-		// Controls_TwoBoneIK[Index].Control
-		if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_TwoBoneIK, Control))
-		{
-			if (ACsAnim_Control_TwoBoneIK* Control = TwoBoneIK.Actor)
-			{
-				Control->SetControlName(TwoBoneIK.Control);
-			}
-		}
-		// Controls_TwoBoneIK[Index].IK.IKBone
-		if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_TwoBoneIK_IK, IKBone))
-		{
-			const FName BoneName  = TwoBoneIK.IK.IKBone;
-			const int32 BoneIndex = PoseableMeshComponent->GetBoneIndex(BoneName);
-			
-			TwoBoneIK.IK.IKBoneIndex = BoneIndex;
-
-			TwoBoneIK.EndEffector.EffectorSpaceBoneName  = BoneName;
-			TwoBoneIK.EndEffector.EffectorSpaceBoneIndex = BoneIndex;
-
-			if (BoneName == NAME_None || BoneIndex == INDEX_NONE)
-			{
-				TwoBoneIK.IK.IKBone = NAME_None;
-				TwoBoneIK.IK.IKBoneIndex = INDEX_NONE;
-				TwoBoneIK.IK.IKBoneArrayIndex = INDEX_NONE;
-				TwoBoneIK.IK.Last_IKBone = BoneName;
-				TwoBoneIK.IK.ParentBone = NAME_None;
-				TwoBoneIK.IK.ParentBoneIndex = INDEX_NONE;
-				TwoBoneIK.IK.ParentBoneIndex = INDEX_NONE;
-
-				TwoBoneIK.EndEffector.EffectorSpaceBoneName = NAME_None;
-				TwoBoneIK.EndEffector.EffectorSpaceBoneIndex = INDEX_NONE;
-				TwoBoneIK.EndEffector.EffectorSpaceBoneArrayIndex = NAME_None;
-
-				TwoBoneIK.JointTarget.JointTargetSpaceBoneName = NAME_None;
-				TwoBoneIK.JointTarget.JointTargetSpaceBoneIndex = INDEX_NONE;
-				TwoBoneIK.JointTarget.JointTargetSpaceBoneArrayIndex = INDEX_NONE;
-				
-				if (ACsAnim_Control_TwoBoneIK* Control = TwoBoneIK.Actor)
-				{
-					Control->StartBone = nullptr;
-					Control->MiddleBone = nullptr;
-					Control->EndBone = nullptr;
-				}
-
-				Controls_TwoBoneIK_Copy[Index] = TwoBoneIK;
-
-				Super::PostEditChangeChainProperty(e);
+			if (BoneIndex == INDEX_NONE)
 				return;
-			}
 
-			if (BoneName == TwoBoneIK.IK.Last_IKBone)
+			const int32 BoneArrayIndex = Connection.BoneArrayIndex;
+
+			if (Control)
 			{
-				Super::PostEditChangeChainProperty(e);
-				return;
+				ACsAnim_Bone* Bone = Bones[BoneArrayIndex].Actor;
+				Control->Anchor->SetActorTransform(Bone->GetActorTransform());
 			}
+		}
+		Connection.SnapToBone = false;
+		Connection.Last_SnapToBone = Connection.SnapToBone;
+	}
+	// Controls_FK[ControlIndex].Connections[Index].Ouput.Member
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_FK_ConnectionOutput, Member))
+	{
+		Connection.Output.Last_Member = Connection.Output.Member;
+	}
+	// Controls_FK[ControlIndex].Connections[Index].Ouput.Axes
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_FK_ConnectionOutput, Axes))
+	{
+		Connection.Output.Last_Axes = Connection.Output.Axes;
+	}
+	// Controls_FK[ControlIndex].Connections[Index].Input.Member
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_FK_ConnectionInput, Member))
+	{
+		Connection.Input.Last_Member = Connection.Input.Member;
+	}
+	// Controls_FK[ControlIndex].Connections[Index].Input.Axes
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_FK_ConnectionInput, Axes))
+	{
+		Connection.Input.Last_Axes = Connection.Input.Axes;
+	}
+}
 
-			TwoBoneIK.IK.Last_IKBone = BoneName;
+void ACsPoseableMeshActor::PostEditChangeChainProperty_TwoBoneIK(struct FPropertyChangedChainEvent& e)
+{
+	const int32 Index = e.GetArrayIndex(TEXT("Controls_TwoBoneIK"));
 
-			ACsAnim_Control_TwoBoneIK* Control = TwoBoneIK.Actor;
+	if (Index == INDEX_NONE)
+		return;
 
-			if (!Control)
-			{
-				DestroyOrphanedControlAnchors();
-				DestroyOrphanedControlHelpers();
-			}
+	FCsAnimControlInfo_TwoBoneIK& TwoBoneIK = Controls_TwoBoneIK[Index];
 
-			Create_Control_TwoBoneIK(Index);
-			Controls_TwoBoneIK_Copy[Index] = Controls_TwoBoneIK[Index];
+	// SkeletalMesh is NULL
+	if (!PoseableMeshComponent->SkeletalMesh)
+	{
+		UCsCommon::DisplayNotificationInfo(TEXT("SkeletalMesh is NULL."), TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 5.0f);
+
+		UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_TwoBoneIK(%s): SkeletalMesh is NULL. Can NOT update Controls."), *GetName());
+		return;
+	}
+
+	FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
+
+	const int32 ControlCount = Controls_TwoBoneIK.Num();
+	const int32 CopyCount = Controls_TwoBoneIK_Copy.Num();
+
+	// Check if NEW elements were ADDED
+	if (ControlCount > CopyCount)
+	{
+		const int32 Delta = ControlCount - CopyCount;
+
+		for (int32 I = 0; I < Delta; I++)
+		{
+			const int32 CopyIndex = CopyCount + I;
+
+			Create_Control_TwoBoneIK(CopyIndex);
+
+			Controls_TwoBoneIK_Copy.AddDefaulted();
+			Controls_TwoBoneIK_Copy[CopyIndex] = Controls_TwoBoneIK[CopyIndex];
 		}
 	}
-	Super::PostEditChangeChainProperty(e);
+	// Check if elements were REMOVED
+	if (ControlCount < CopyCount)
+	{
+		const int32 Delta = CopyCount - ControlCount;
+
+		for (int32 I = CopyCount - 1; I >= CopyCount - Delta; I--)
+		{
+			ACsAnim_Control_TwoBoneIK* Control = Controls_TwoBoneIK_Copy[I].Actor;
+
+			if (Control && !Control->IsPendingKill())
+			{
+				if (Control->Anchor && !Control->Anchor->IsPendingKill())
+					Control->Anchor->Destroy();
+				if (Control->EndEffector && !Control->EndEffector->IsPendingKill())
+					Control->EndEffector->Destroy();
+				if (Control->JointTarget && !Control->JointTarget->IsPendingKill())
+					Control->JointTarget->Destroy();
+				Control->Destroy();
+			}
+			Controls_TwoBoneIK_Copy.RemoveAt(I);
+		}
+	}
+	// Controls_TwoBoneIK[Index].Control
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_TwoBoneIK, Control))
+	{
+		if (ACsAnim_Control_TwoBoneIK* Control = TwoBoneIK.Actor)
+		{
+			Control->SetControlName(TwoBoneIK.Control);
+		}
+	}
+	// Controls_TwoBoneIK[Index].IK.IKBone
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimControlInfo_TwoBoneIK_IK, IKBone))
+	{
+		const FName BoneName = TwoBoneIK.IK.IKBone;
+		const int32 BoneIndex = PoseableMeshComponent->GetBoneIndex(BoneName);
+
+		TwoBoneIK.IK.IKBoneIndex = BoneIndex;
+
+		TwoBoneIK.EndEffector.EffectorSpaceBoneName = BoneName;
+		TwoBoneIK.EndEffector.EffectorSpaceBoneIndex = BoneIndex;
+
+		if (BoneName == NAME_None || BoneIndex == INDEX_NONE)
+		{
+			TwoBoneIK.IK.IKBone = NAME_None;
+			TwoBoneIK.IK.IKBoneIndex = INDEX_NONE;
+			TwoBoneIK.IK.IKBoneArrayIndex = INDEX_NONE;
+			TwoBoneIK.IK.Last_IKBone = BoneName;
+			TwoBoneIK.IK.ParentBone = NAME_None;
+			TwoBoneIK.IK.ParentBoneIndex = INDEX_NONE;
+			TwoBoneIK.IK.ParentBoneIndex = INDEX_NONE;
+
+			TwoBoneIK.EndEffector.EffectorSpaceBoneName = NAME_None;
+			TwoBoneIK.EndEffector.EffectorSpaceBoneIndex = INDEX_NONE;
+			TwoBoneIK.EndEffector.EffectorSpaceBoneArrayIndex = NAME_None;
+
+			TwoBoneIK.JointTarget.JointTargetSpaceBoneName = NAME_None;
+			TwoBoneIK.JointTarget.JointTargetSpaceBoneIndex = INDEX_NONE;
+			TwoBoneIK.JointTarget.JointTargetSpaceBoneArrayIndex = INDEX_NONE;
+
+			if (ACsAnim_Control_TwoBoneIK* Control = TwoBoneIK.Actor)
+			{
+				Control->StartBone = nullptr;
+				Control->MiddleBone = nullptr;
+				Control->EndBone = nullptr;
+			}
+
+			Controls_TwoBoneIK_Copy[Index] = TwoBoneIK;
+			return;
+		}
+
+		if (BoneName == TwoBoneIK.IK.Last_IKBone)
+			return;
+
+		TwoBoneIK.IK.Last_IKBone = BoneName;
+
+		ACsAnim_Control_TwoBoneIK* Control = TwoBoneIK.Actor;
+
+		if (!Control)
+		{
+			DestroyOrphanedControlAnchors();
+			DestroyOrphanedControlHelpers();
+		}
+
+		Create_Control_TwoBoneIK(Index);
+		Controls_TwoBoneIK_Copy[Index] = Controls_TwoBoneIK[Index];
+	}
+}
+
+void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots(struct FPropertyChangedChainEvent& e)
+{
 }
 
 void ACsPoseableMeshActor::GenerateBones()
@@ -686,44 +745,11 @@ void ACsPoseableMeshActor::ClearBones()
 	Bones.Reset();
 }
 
-void ACsPoseableMeshActor::DestroyOrphanedControlAnchors()
-{
-	TArray<AActor*> Anchors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACsAnim_ControlAnchor::StaticClass(), Anchors);
-
-	const int32 Count = Anchors.Num();
-
-	for (int32 I = 0; I < Count; I++)
-	{
-		ACsAnim_ControlAnchor* Anchor = Cast<ACsAnim_ControlAnchor>(Anchors[I]);
-
-		if (!Anchor->Control)
-			Anchor->Destroy();
-	}
-}
-
-void ACsPoseableMeshActor::DestroyOrphanedControlHelpers()
-{
-	// Check Control Children who do NOT have a parent, Delete them
-	TArray<AActor*> Helpers;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACsAnim_ControlHelper::StaticClass(), Helpers);
-
-	const int32 Count = Helpers.Num();
-
-	for (int32 I = 0; I < Count; I++)
-	{
-		ACsAnim_ControlHelper* Helper = Cast<ACsAnim_ControlHelper>(Helpers[I]);
-
-		if (Helper->ControlIndex == INDEX_NONE)
-			Helper->Destroy();
-	}
-}
-
 void ACsPoseableMeshActor::RecreateBone(const int32 &Index)
 {
 	ACsAnim_Bone* Bone = GetWorld()->SpawnActor<ACsAnim_Bone>();
 
-	Bones[Index].Actor = Bone;
+	Bones[Index].Actor   = Bone;
 	const FName BoneName = Bones[Index].Bone;
 	Bone->SetActorLabel(BoneName.ToString());
 	Bone->Bone = BoneName;
@@ -732,7 +758,7 @@ void ACsPoseableMeshActor::RecreateBone(const int32 &Index)
 	Bone->SetActorRelativeTransform(FTransform::Identity);
 
 	const FName ParentBoneName = Bones[Index].ParentBone;
-	int32 ParentBoneIndex	   = Bones[Index].ParentBoneIndex;
+	int32 ParentBoneIndex = Bones[Index].ParentBoneIndex;
 
 	if (ParentBoneName == NAME_None)
 	{
@@ -764,10 +790,43 @@ void ACsPoseableMeshActor::RecreateBone(const int32 &Index)
 	Bone->UpdateRelativeTransform(Bone->DefaultRelativeTransform, true);
 	// Store Component Transform - WorldSpace -> ComponentSpace
 	const FTransform ComponentTransform = PoseableMeshComponent->GetComponentTransform();
-	Bone->DefaultComponentTransform = PoseableMeshComponent->GetBoneTransform(BoneIndex);
+	Bone->DefaultComponentTransform     = PoseableMeshComponent->GetBoneTransform(BoneIndex);
 	Bone->DefaultComponentTransform.SetToRelativeTransform(ComponentTransform);
 
 	Bone->ArrayIndex = Index;
+}
+
+void ACsPoseableMeshActor::DestroyOrphanedControlAnchors()
+{
+	TArray<AActor*> Anchors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACsAnim_ControlAnchor::StaticClass(), Anchors);
+
+	const int32 Count = Anchors.Num();
+
+	for (int32 I = 0; I < Count; I++)
+	{
+		ACsAnim_ControlAnchor* Anchor = Cast<ACsAnim_ControlAnchor>(Anchors[I]);
+
+		if (!Anchor->Control)
+			Anchor->Destroy();
+	}
+}
+
+void ACsPoseableMeshActor::DestroyOrphanedControlHelpers()
+{
+	// Check Control Children who do NOT have a parent, Delete them
+	TArray<AActor*> Helpers;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACsAnim_ControlHelper::StaticClass(), Helpers);
+
+	const int32 Count = Helpers.Num();
+
+	for (int32 I = 0; I < Count; I++)
+	{
+		ACsAnim_ControlHelper* Helper = Cast<ACsAnim_ControlHelper>(Helpers[I]);
+
+		if (Helper->ControlIndex == INDEX_NONE)
+			Helper->Destroy();
+	}
 }
 
 void ACsPoseableMeshActor::Create_Control_FK(const int32 &Index)
@@ -1221,6 +1280,8 @@ void ACsPoseableMeshActor::PerformTwoBoneIK(const int32 &Index)
 	ACsAnim_Bone* MiddleBone = Control->MiddleBone;
 	ACsAnim_Bone* EndBone = Control->EndBone;
 
+	const FTransform ComponentTransform = PoseableMeshComponent->GetComponentTransform();
+
 	// Now get those in component space...
 	FTransform StartTransform = StartBone->DefaultComponentTransform;
 	FTransform MiddleTransform = MiddleBone->DefaultComponentTransform;
@@ -1231,8 +1292,6 @@ void ACsPoseableMeshActor::PerformTwoBoneIK(const int32 &Index)
 	const FVector StartPos		   = StartTransform.GetTranslation();
 	const FVector InitialMiddlePos = MiddleTransform.GetTranslation();
 	const FVector InitialEndPos    = EndTransform.GetTranslation();
-
-	const FTransform ComponentTransform = PoseableMeshComponent->GetComponentTransform();
 
 	// Get JointTarget Transform in ComponentSpace
 	

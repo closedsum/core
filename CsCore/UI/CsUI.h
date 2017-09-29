@@ -2,7 +2,7 @@
 #pragma once 
 #include "GameFramework/HUD.h"
 #include "Runtime/UMG/Public/Components/SlateWrapperTypes.h"
-#include "CsTypes.h" 
+#include "Types/CsTypes.h" 
 #include "CsUI.generated.h"
 
 // Update

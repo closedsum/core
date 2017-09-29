@@ -1,7 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Managers/CsManager.h"
-#include "CsTypes.h"
+#include "Types/CsTypes.h"
 #include "CsManager_WidgetActor.generated.h"
 
 typedef FString(*TCsWidgetActorTypeToString)(const ECsWidgetActorType::Type&);

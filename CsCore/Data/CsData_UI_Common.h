@@ -1,6 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Data/CsData.h"
+#include "Types/CsTypes.h"
 #include "CsData_UI_Common.generated.h"
 
 /* Current Order of Categories

@@ -3,7 +3,6 @@
 #include "GameFramework/HUD.h"
 #include "Runtime/UMG/Public/Components/SlateWrapperTypes.h"
 #include "UI/CsUI.h"
-#include "CsTypes.h" 
 #include "CsMenu.generated.h"
 
 UCLASS()

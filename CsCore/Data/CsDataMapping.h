@@ -1,8 +1,8 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "GameFramework/Actor.h"
-#include "CsTypes.h"
-#include "CsCommon.h"
+#include "Types/CsTypes_Load.h"
+#include "Common/CsCommon_Load.h"
 #include "Managers/CsManager_Loading.h"
 #include "CsDataMapping.generated.h"
 
@@ -350,14 +350,14 @@ public:
 		// Load the Data
 		ACsData* OutAsset;
 
-		UCsCommon::LoadTAssetSubclassOf<ACsData>(Mapping.Data, OutAsset, TEXT("Actor"));
+		UCsCommon_Load::LoadTAssetSubclassOf<ACsData>(Mapping.Data, OutAsset, TEXT("Actor"));
 
 		T* DataDOb = Cast<T>(OutAsset);
 
 		if (!DataDOb)
 		{
 			const FString ShortCode		   = Mapping.ShortCode.ToString();
-			const FString AssetDescription = UCsCommon::GetAssetDescription<ACsData>(Mapping.Data);
+			const FString AssetDescription = UCsCommon_Load::GetAssetDescription<ACsData>(Mapping.Data);
 
 			UE_LOG(LogLoad, Warning, TEXT("%s: Failed to load data using Short Code: %s with Path Location: %s"), *FunctionName, *ShortCode, *AssetDescription);
 			return nullptr;

@@ -1,8 +1,6 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Decals/CsManager_Decal.h"
 #include "CsCore.h"
-#include "Pawn/CsAIPawn.h"
-#include "CsCommon.h"
 #include "Game/CsGameState.h"
 
 ACsManager_Decal::ACsManager_Decal(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)

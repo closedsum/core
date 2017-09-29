@@ -1,7 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "../CoreUObject/Public/UObject/Object.h"
-#include "CsTypes.h"
+#include "Types/CsTypes.h"
 #include "CsGesture.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsGesture_Override_ProcessInputs, const FCsInputFrame&, InputFrame);
@@ -44,5 +44,5 @@ public:
 	FBindableDynEvent_CsGesture_Override_ProcessInputs Override_ProcessInputs_ScriptEvent;
 
 	UFUNCTION(BlueprintCallable, Category = "Gesture")
-	virtual void ProcessInputs(FCsInputFrame &InputFrame);
+	virtual void ProcessInputs(struct FCsInputFrame &InputFrame);
 };

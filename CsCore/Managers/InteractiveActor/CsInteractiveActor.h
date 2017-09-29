@@ -1,7 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Managers/CsPooledActor.h"
-#include "CsTypes.h"
+#include "Types/CsTypes.h"
 #include "CsInteractiveActor.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsInteractiveActor_Override_OnTickOverlap, const int32&, Index, const float&, DeltaSeconds);

@@ -1,8 +1,8 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
-#include "CsCommon.h"
-#include "CsTypes.h"
+#include "Common/CsCommon.h"
+#include "Types/CsTypes.h"
 #include "CsCoroutineScheduler.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsCoroutineScheduler_OnTick, const float&, DeltaSeconds);

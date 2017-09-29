@@ -1,7 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #include "Animation/Poseable/Controls/CsAnim_ControlAnchor.h"
 #include "CsCore.h"
-#include "CsCommon.h"
+#include "Common/CsCommon.h"
 
 ACsAnim_ControlAnchor::ACsAnim_ControlAnchor(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {

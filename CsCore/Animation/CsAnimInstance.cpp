@@ -2,7 +2,8 @@
 
 #include "Animation/CsAnimInstance.h"
 #include "CsCore.h"
-#include "CsCommon.h"
+#include "Common/CsCommon_Load.h"
+#include "Common/CsCommon.h"
 #include "Coroutine/CsCoroutineScheduler.h"
 // Managers
 #include "Managers/FX/CsManager_FX.h"
@@ -225,17 +226,17 @@ void UCsAnimInstance::LoadAnim(const FString& MemberName, FCsAnimInstance_AnimSe
 	if (DataAnim &&
 		Anim.UseDataValueAsDefault)
 	{
-		UCsCommon::LoadFCsAnimSequence(MemberName, DataAnim);
+		UCsCommon_Load::LoadFCsAnimSequence(MemberName, DataAnim);
 
 		if (UAnimSequence* Seq = DataAnim->Get())
 			Anim.Anim_Internal = Seq;
 		else
-			UCsCommon::LoadTAssetPtr<UAnimSequence>(MemberName, Anim.Anim, Anim.Anim_Internal, TEXT("AnimSequence"), TEXT("Anim Sequence"));
+			UCsCommon_Load::LoadTAssetPtr<UAnimSequence>(MemberName, Anim.Anim, Anim.Anim_Internal, TEXT("AnimSequence"), TEXT("Anim Sequence"));
 	}
 	else
 	{
 		if (Anim.Anim.ToString() != TEXT(""))
-			UCsCommon::LoadTAssetPtr<UAnimSequence>(MemberName, Anim.Anim, Anim.Anim_Internal, TEXT("AnimSequence"), TEXT("Anim Sequence"));
+			UCsCommon_Load::LoadTAssetPtr<UAnimSequence>(MemberName, Anim.Anim, Anim.Anim_Internal, TEXT("AnimSequence"), TEXT("Anim Sequence"));
 	}
 }
 
@@ -244,17 +245,17 @@ void UCsAnimInstance::LoadAnim(const FString& MemberName, FCsAnimInstance_AnimMo
 	if (DataAnim &&
 		Anim.UseDataValueAsDefault)
 	{
-		UCsCommon::LoadFCsAnimMontage(MemberName, DataAnim);
+		UCsCommon_Load::LoadFCsAnimMontage(MemberName, DataAnim);
 
 		if (UAnimMontage* Seq = DataAnim->Get())
 			Anim.Anim_Internal = Seq;
 		else
-			UCsCommon::LoadTAssetPtr<UAnimMontage>(MemberName, Anim.Anim, Anim.Anim_Internal, TEXT("AnimMontage"), TEXT("Anim Montage"));
+			UCsCommon_Load::LoadTAssetPtr<UAnimMontage>(MemberName, Anim.Anim, Anim.Anim_Internal, TEXT("AnimMontage"), TEXT("Anim Montage"));
 	}
 	else
 	{
 		if (Anim.Anim.ToString() != TEXT(""))
-			UCsCommon::LoadTAssetPtr<UAnimMontage>(MemberName, Anim.Anim, Anim.Anim_Internal, TEXT("AnimMontage"), TEXT("Anim Montage"));
+			UCsCommon_Load::LoadTAssetPtr<UAnimMontage>(MemberName, Anim.Anim, Anim.Anim_Internal, TEXT("AnimMontage"), TEXT("Anim Montage"));
 	}
 }
 
@@ -263,17 +264,17 @@ void UCsAnimInstance::LoadAnim(const FString& MemberName, const TCsViewType &Vie
 	if (DataAnim &&
 		Anim.UseDataValueAsDefault)
 	{
-		UCsCommon::LoadFCsFpsAnimSequence(MemberName, DataAnim, ViewType);
+		UCsCommon_Load::LoadFCsFpsAnimSequence(MemberName, DataAnim, ViewType);
 
 		if (UAnimSequence* Seq = DataAnim->Get(ViewType))
 			Anim.Anim_Internal = Seq;
 		else
-			UCsCommon::LoadTAssetPtr<UAnimSequence>(MemberName, Anim.Anim, Anim.Anim_Internal, TEXT("AnimSequence"), TEXT("Anim Sequence"));
+			UCsCommon_Load::LoadTAssetPtr<UAnimSequence>(MemberName, Anim.Anim, Anim.Anim_Internal, TEXT("AnimSequence"), TEXT("Anim Sequence"));
 	}
 	else
 	{
 		if (Anim.Anim.ToString() != TEXT(""))
-			UCsCommon::LoadTAssetPtr<UAnimSequence>(MemberName, Anim.Anim, Anim.Anim_Internal, TEXT("AnimSequence"), TEXT("Anim Sequence"));
+			UCsCommon_Load::LoadTAssetPtr<UAnimSequence>(MemberName, Anim.Anim, Anim.Anim_Internal, TEXT("AnimSequence"), TEXT("Anim Sequence"));
 	}
 }
 
@@ -282,17 +283,17 @@ void UCsAnimInstance::LoadAnim(const FString& MemberName, const TCsViewType &Vie
 	if (DataAnim &&
 		Anim.UseDataValueAsDefault)
 	{
-		UCsCommon::LoadFCsFpsAnimMontage(MemberName, DataAnim, ViewType);
+		UCsCommon_Load::LoadFCsFpsAnimMontage(MemberName, DataAnim, ViewType);
 
 		if (UAnimMontage* Seq = DataAnim->Get(ViewType))
 			Anim.Anim_Internal = Seq;
 		else
-			UCsCommon::LoadTAssetPtr<UAnimMontage>(MemberName, Anim.Anim, Anim.Anim_Internal, TEXT("AnimMontage"), TEXT("Anim Montage"));
+			UCsCommon_Load::LoadTAssetPtr<UAnimMontage>(MemberName, Anim.Anim, Anim.Anim_Internal, TEXT("AnimMontage"), TEXT("Anim Montage"));
 	}
 	else
 	{
 		if (Anim.Anim.ToString() != TEXT(""))
-			UCsCommon::LoadTAssetPtr<UAnimMontage>(MemberName, Anim.Anim, Anim.Anim_Internal, TEXT("AnimMontage"), TEXT("Anim Montage"));
+			UCsCommon_Load::LoadTAssetPtr<UAnimMontage>(MemberName, Anim.Anim, Anim.Anim_Internal, TEXT("AnimMontage"), TEXT("Anim Montage"));
 	}
 }
 

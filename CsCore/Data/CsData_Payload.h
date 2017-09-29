@@ -1,6 +1,6 @@
 #pragma once
 #include "Data/CsData.h"
-#include "CsTypes.h"
+#include "Types/CsTypes_Load.h"
 #include "CsData_Payload.generated.h"
 
 // Structs

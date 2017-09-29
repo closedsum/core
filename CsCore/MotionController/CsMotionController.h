@@ -2,7 +2,7 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
-#include "CsTypes.h"
+#include "Types/CsTypes.h"
 #include "CsMotionController.generated.h"
 
 // Delegates

@@ -1,7 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #include "Player/CsPlayerPawn.h"
 #include "CsCore.h"
-#include "CsCommon.h"
+#include "Common/CsCommon.h"
 
 ACsPlayerPawn::ACsPlayerPawn(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

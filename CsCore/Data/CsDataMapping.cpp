@@ -2,6 +2,7 @@
 #include "Data/CsDataMapping.h"
 #include "CsCore.h"
 #include "Common/CsCommon_Load.h"
+#include "Common/CsCommon_Asset.h"
 #include "Common/CsCommon.h"
 #include "Data/CsData.h"
 #include "Managers/CsManager_Loading.h"
@@ -944,7 +945,7 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const TCsAssetType 
 						{
 							TArray<UBlueprint*> Bps;
 
-							UCsCommon::GetAssets<UBlueprint>(ShortCode, Bps);
+							UCsCommon_Asset::GetAssets<UBlueprint>(ShortCode, Bps);
 
 							// Multiple Assets with the same name.
 							if (Bps.Num() > 1)
@@ -1072,7 +1073,7 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const int32 &LoadFl
 	// Search for Asset
 	TArray<UBlueprint*> Bps;
 
-	UCsCommon::GetAssets<UBlueprint>(ShortCode, Bps);
+	UCsCommon_Asset::GetAssets<UBlueprint>(ShortCode, Bps);
 
 	TSubclassOf<UObject> Data = nullptr;
 	ACsData* DataDOb		  = nullptr;
@@ -1394,7 +1395,7 @@ bool ACsDataMapping::PerformValidate(FString &OutMessage, FString &OutOutput)
 							TArray<UBlueprint*> Bps;
 							TArray<FName> PackagePaths;
 
-							UCsCommon::GetAssets<UBlueprint>(Entry.ShortCode, Bps, PackagePaths);
+							UCsCommon_Asset::GetAssets<UBlueprint>(Entry.ShortCode, Bps, PackagePaths);
 
 							const int32 BpCount = Bps.Num();
 							// ShortCode NO longer EXISTS in AssetRegistry

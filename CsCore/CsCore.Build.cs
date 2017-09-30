@@ -32,7 +32,10 @@ public class CsCore : ModuleRules
                     "HeadMountedDisplay",
                     "V8",
                     "AnimationCore",
+                    "Sequencer",
                     "LevelSequence",
+                    "MovieScene",
+                    "MovieSceneTracks",
                 }
             );
 

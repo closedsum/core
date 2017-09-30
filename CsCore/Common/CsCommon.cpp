@@ -1,5 +1,5 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
-#include "CsCommon.h"
+#include "Common/CsCommon.h"
 #include "CsCore.h"
 #include "CsCVars.h"
 #include "GameFramework/GameState.h"
@@ -39,14 +39,6 @@
 #include "../Source/Editor/EditorStyle/Public/EditorStyleSet.h"
 
 #include "Runtime/Core/Public/Internationalization/Internationalization.h"
-
-// Level Sequence
-#include "../LevelSequence/Public/LevelSequence.h"
-
-#include "../Classes/Factories/AnimSequenceFactory.h"
-
-#include "Developer/AssetTools/Public/IAssetTools.h"
-#include "Editor/ContentBrowser/Public/IContentBrowserSingleton.h"
 
 #endif // #if WITH_EDITOR
 
@@ -275,167 +267,6 @@ FString UCsCommon::LoadFlagsToString(const int32 &LoadFlags)
 	return String;
 }
 
-FString UCsCommon::ViewTypeToString(const TCsViewType &ViewType)
-{
-	switch (ViewType)
-	{
-	case ECsViewType::FirstPerson:
-		return TEXT("1st Person");
-	case ECsViewType::VR:
-		return TEXT("VR");
-	case ECsViewType::ThirdPerson:
-		return TEXT("3rd Person");
-	}
-	return TEXT("");
-}
-
-FString UCsCommon::ViewTypeToShooterAnimMemberName(const TCsViewType &ViewType, const bool &IsLow)
-{
-	if (ViewType == ECsViewType::FirstPerson)
-		return TEXT("Anim1P");
-	if (ViewType == ECsViewType::ThirdPerson)
-		return IsLow ? TEXT("Anim3P_Low") : TEXT("Anim3P");
-	if (ViewType == ECsViewType::VR)
-		return TEXT("AnimVR");
-	return TEXT("");
-}
-
-FString UCsCommon::ViewTypeToShooterAnimBlueprintMemberName(const TCsViewType &ViewType, const bool &IsLow)
-{
-	if (ViewType == ECsViewType::FirstPerson)
-		return TEXT("Blueprint1P");
-	if (ViewType == ECsViewType::ThirdPerson)
-		return IsLow ? TEXT("Blueprint3P_Low") : TEXT("Blueprint3P");
-	if (ViewType == ECsViewType::VR)
-		return TEXT("BlueprintVR");
-	return TEXT("");
-}
-
-FString UCsCommon::ViewTypeToShooterBlendSpaceMemberName(const TCsViewType &ViewType, const bool &IsLow)
-{
-	if (ViewType == ECsViewType::FirstPerson)
-		return TEXT("Blend1P");
-	if (ViewType == ECsViewType::ThirdPerson)
-		return IsLow ? TEXT("Blend3P_Low") : TEXT("Blend3P");
-	if (ViewType == ECsViewType::VR)
-		return TEXT("BlendVR");
-	return TEXT("");
-}
-
-TCsViewType UCsCommon::StringToViewType(const FString &CommonName)
-{
-	const FString Name = CommonName.ToLower();
-
-	if (Name == TEXT("firstperson") || Name == TEXT("1p"))
-		return ECsViewType::FirstPerson;
-	if (Name == TEXT("thirdperson") || Name == TEXT("3p"))
-		return ECsViewType::ThirdPerson;
-	if (Name == TEXT("vr"))
-		return ECsViewType::VR;
-	return ECsViewType::ECsViewType_MAX;
-}
-
-FString UCsCommon::AdditiveAnimTypeToString(const EAdditiveAnimationType &AddType)
-{
-	if (AddType == EAdditiveAnimationType::AAT_None)
-		return TEXT("No additive");
-	if (AddType == EAdditiveAnimationType::AAT_LocalSpaceBase)
-		return TEXT("Local Space");
-	if (AddType == EAdditiveAnimationType::AAT_RotationOffsetMeshSpace)
-		return TEXT("Mesh Space");
-	return TEXT("");
-}
-
-FString UCsCommon::AdditiveBasePoseTypeToString(const EAdditiveBasePoseType &PoseType)
-{
-	if (PoseType == EAdditiveBasePoseType::ABPT_None)
-		return TEXT("None");
-	if (PoseType == EAdditiveBasePoseType::ABPT_RefPose)
-		return TEXT("Reference Pose");
-	if (PoseType == EAdditiveBasePoseType::ABPT_AnimScaled)
-		return TEXT("Selected animation scaled");
-	if (PoseType == EAdditiveBasePoseType::ABPT_AnimFrame)
-		return TEXT("Selected animation frame");
-	return TEXT("");
-}
-
-FString UCsCommon::RichCurveInterpModeToString(const ERichCurveInterpMode &InterpMode)
-{
-	if (InterpMode == ERichCurveInterpMode::RCIM_Linear)
-		return TEXT("Linear");
-	if (InterpMode == ERichCurveInterpMode::RCIM_Constant)
-		return TEXT("Constant");
-	if (InterpMode == ERichCurveInterpMode::RCIM_Cubic)
-		return TEXT("Cubic");
-	if (InterpMode == ERichCurveInterpMode::RCIM_None)
-		return TEXT("None");
-	return TEXT("Linear");
-}
-
-ERichCurveInterpMode UCsCommon::StringToRichCurveInterpMode(const FString& CommonName)
-{
-	FString Name = CommonName.ToLower();
-
-	if (Name == TEXT("linear"))
-		return ERichCurveInterpMode::RCIM_Linear;
-	if (Name == TEXT("constant"))
-		return ERichCurveInterpMode::RCIM_Constant;
-	if (Name == TEXT("cubic"))
-		return ERichCurveInterpMode::RCIM_Cubic;
-	if (Name == TEXT("none"))
-		return ERichCurveInterpMode::RCIM_None;
-	return ERichCurveInterpMode::RCIM_Linear;
-}
-
-FString UCsCommon::RichCurveTangentModeToString(const ERichCurveTangentMode &TangentMode)
-{
-	if (TangentMode == ERichCurveTangentMode::RCTM_Auto)
-		return TEXT("Auto");
-	if (TangentMode == ERichCurveTangentMode::RCTM_User)
-		return TEXT("Users");
-	if (TangentMode == ERichCurveTangentMode::RCTM_Break)
-		return TEXT("Break");
-	if (TangentMode == ERichCurveTangentMode::RCTM_None)
-		return TEXT("None");
-	return TEXT("Linear");
-}
-
-ERichCurveTangentMode UCsCommon::StringToRichCurveTangentMode(const FString& CommonName)
-{
-	FString Name = CommonName.ToLower();
-
-	if (Name == TEXT("auto"))
-		return ERichCurveTangentMode::RCTM_Auto;
-	if (Name == TEXT("user"))
-		return ERichCurveTangentMode::RCTM_User;
-	if (Name == TEXT("break"))
-		return ERichCurveTangentMode::RCTM_Break;
-	if (Name == TEXT("none"))
-		return ERichCurveTangentMode::RCTM_None;
-	return ERichCurveTangentMode::RCTM_Auto;
-}
-
-FString UCsCommon::InputEventToString(const TCsInputEvent &Event)
-{
-	if (Event == ECsInputEvent::FirstPressed)
-		return TEXT("FirePressed");
-	if (Event == ECsInputEvent::Pressed)
-		return TEXT("Pressed");
-	if (Event == ECsInputEvent::FirstReleased)
-		return TEXT("FireReleased");
-	if (Event == ECsInputEvent::Released)
-		return TEXT("Released");
-	if (Event == ECsInputEvent::FirstMoved)
-		return TEXT("FirstMoved");
-	if (Event == ECsInputEvent::Moved)
-		return TEXT("Moved");
-	if (Event == ECsInputEvent::FirstStationary)
-		return TEXT("FirstStationary");
-	if (Event == ECsInputEvent::Stationary)
-		return TEXT("Stationary");
-	return TEXT("");
-}
-
 FString UCsCommon::InteractivePhysicsStateToString(const int32 &PhysicsState)
 {
 	FString String = TEXT("");
@@ -548,13 +379,13 @@ float UCsCommon::Stream_GetFloat(const TCHAR*& Str)
 ERichCurveInterpMode UCsCommon::Stream_GetRichCurveInterpMode(const TCHAR*& Str)
 {
 	FString Arg = Stream_GetString(Str, true);
-	return StringToRichCurveInterpMode(Arg);
+	return ECsRichCurveInterpMode::ToBaseType(Arg);
 }
 
 ERichCurveTangentMode UCsCommon::Stream_GetRichCurveTangentMode(const TCHAR*& Str)
 {
 	FString Arg = Stream_GetString(Str, true);
-	return StringToRichCurveTangentMode(Arg);
+	return ECsRichCurveTangentMode::ToBaseType(Arg);
 }
 
 TCsViewType UCsCommon::Stream_GetViewType(const TCHAR*& Str)
@@ -562,7 +393,7 @@ TCsViewType UCsCommon::Stream_GetViewType(const TCHAR*& Str)
 	FString Arg;
 	FParse::Token(Str, Arg, false);
 
-	return StringToViewType(Arg);
+	return ECsViewType::ToType(Arg);
 }
 
 #pragma endregion
@@ -2652,62 +2483,6 @@ void UCsCommon::SetCollisionFromTemplate(const FName &TemplateName, UPrimitiveCo
 }
 
 #pragma endregion Collision
-
-// Asset Registry
-#pragma region
-
-#if WITH_EDITOR
-
-UFactory* UCsCommon::GetFactory(UClass* ClassToSpawn)
-{
-	for (TObjectIterator<UClass> It; It; ++It)
-	{
-		UClass* CurrentClass = *It;
-
-		if (CurrentClass->IsChildOf(UFactory::StaticClass()) && !(CurrentClass->HasAnyClassFlags(CLASS_Abstract)))
-		{
-			UFactory* Factory = Cast<UFactory>(CurrentClass->GetDefaultObject());
-
-			if (Factory->CanCreateNew() && Factory->ImportPriority >= 0 && Factory->SupportedClass == ClassToSpawn)
-			{
-				return Factory;
-			}
-		}
-	}
-	return nullptr;
-}
-
-UObject* UCsCommon::CreateAsset(UClass* ClassToSpawn, const FString& Name, const FString &PackagePath)
-{
-	FAssetToolsModule& AssetToolsModule = FModuleManager::GetModuleChecked<FAssetToolsModule>("AssetTools");
-	UFactory* Factory					= GetFactory(ClassToSpawn);
-	UObject* NewAsset					= Cast<ULevelSequence>(AssetToolsModule.Get().CreateAsset(Name, PackagePath, ClassToSpawn, Factory));;
-
-	TArray<UObject*> ObjectsToSync;
-	ObjectsToSync.Add(NewAsset);
-
-	FContentBrowserModule& ContentBrowserModule = FModuleManager::LoadModuleChecked<FContentBrowserModule>("ContentBrowser");
-	ContentBrowserModule.Get().SyncBrowserToAssets(ObjectsToSync);
-
-	return NewAsset;
-}
-
-ULevelSequence* UCsCommon::CreateLevelSequence(const FString &Name, const FString &PackagePath)
-{
-	return Cast<ULevelSequence>(CreateAsset(ULevelSequence::StaticClass(), Name, PackagePath));
-}
-
-UAnimSequence* UCsCommon::CreateAnimSequence(USkeletalMesh* Mesh, const FString &Name, const FString &PackagePath)
-{
-	FAssetToolsModule& AssetToolsModule = FModuleManager::GetModuleChecked<FAssetToolsModule>("AssetTools");
-	UAnimSequenceFactory* Factory		= NewObject<UAnimSequenceFactory>();
-
-	return nullptr;
-}
-
-#endif // #if WITH_EDITOR
-
-#pragma endregion Asset Registry
 
 // Editor Message
 #pragma region

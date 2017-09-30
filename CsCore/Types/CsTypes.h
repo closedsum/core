@@ -1854,7 +1854,6 @@ namespace ECsFpsAnimMember
 }
 
 #define ECS_FPS_ANIM_MEMBER_MAX (uint8)ECsFpsAnimMember::ECsFpsAnimMember_MAX
-//typedef ECsFpsAnimMember TCsFpsAnimMember;
 typedef TEnumAsByte<ECsFpsAnimMember::Type> TCsFpsAnimMember;
 
 USTRUCT()
@@ -2312,7 +2311,6 @@ namespace ECsFpsAnimBlueprintMember
 }
 
 #define ECS_FPS_ANIM_BLUEPRINT_MEMBER_MAX (uint8)ECsFpsAnimBlueprintMember::ECsFpsAnimBlueprintMember_MAX
-//typedef ECsFpsAnimBlueprintMember TCsFpsAnimBlueprintMember;
 typedef TEnumAsByte<ECsFpsAnimBlueprintMember::Type> TCsFpsAnimBlueprintMember;
 
 USTRUCT()
@@ -2525,7 +2523,6 @@ namespace ECsFpsAnimBlendSpaceMember
 }
 
 #define ECS_FPS_ANIM_BLEND_SPACE_MEMBER_MAX (uint8)ECsFpsAnimBlendSpaceMember::ECsFpsAnimBlendSpaceMember_MAX
-//typedef ECsFpsAnimBlendSpaceMember TCsFpsAnimBlendSpaceMember;
 typedef TEnumAsByte<ECsFpsAnimBlendSpaceMember::Type> TCsFpsAnimBlendSpaceMember;
 
 USTRUCT()
@@ -2683,6 +2680,137 @@ public:
 	}
 };
 
+UENUM(BlueprintType)
+namespace ECsAdditiveBasePoseType
+{
+	enum Type
+	{
+		/** Will be deprecated. */
+		ABPT_None		UMETA(DisplayName = "None"),
+		/** Use the Skeleton's ref pose as base. */
+		ABPT_RefPose	UMETA(DisplayName = "Skeleton Reference Pose"),
+		/** Use a whole animation as a base pose. BasePoseSeq must be set. */
+		ABPT_AnimScaled	UMETA(DisplayName = "Selected animation scaled"),
+		/** Use one frame of an animation as a base pose. BasePoseSeq and RefFrameIndex must be set (RefFrameIndex will be clamped). */
+		ABPT_AnimFrame	UMETA(DisplayName = "Selected animation frame"),
+		ABPT_MAX		UMETA(Hidden),
+	};
+}
+
+namespace ECsAdditiveBasePoseType
+{
+	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString ABPT_None = TCsString(TEXT("ABPT_None"), TEXT("abpt_none"), TEXT("none"));
+		const TCsString ABPT_RefPose = TCsString(TEXT("ABPT_RefPose"), TEXT("abpt_refpose"), TEXT("ref pose"));
+		const TCsString ABPT_AnimScaled = TCsString(TEXT("ABPT_AnimScaled"), TEXT("abpt_animscaled"), TEXT("anim scaled"));
+		const TCsString ABPT_AnimFrame = TCsString(TEXT("ABPT_AnimFrame"), TEXT("abpt_animframe"), TEXT("anim frame"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::ABPT_None) { return Str::ABPT_None.Value; }
+		if (EType == Type::ABPT_RefPose) { return Str::ABPT_RefPose.Value; }
+		if (EType == Type::ABPT_AnimScaled) { return Str::ABPT_AnimScaled.Value; }
+		if (EType == Type::ABPT_AnimFrame) { return Str::ABPT_AnimFrame.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE FString ToString(const EAdditiveBasePoseType &EType)
+	{
+		if (EType == EAdditiveBasePoseType::ABPT_None) { return Str::ABPT_None.Value; }
+		if (EType == EAdditiveBasePoseType::ABPT_RefPose) { return Str::ABPT_RefPose.Value; }
+		if (EType == EAdditiveBasePoseType::ABPT_AnimScaled) { return Str::ABPT_AnimScaled.Value; }
+		if (EType == EAdditiveBasePoseType::ABPT_AnimFrame) { return Str::ABPT_AnimFrame.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::ABPT_None) { return Type::ABPT_None; }
+		if (String == Str::ABPT_RefPose) { return Type::ABPT_RefPose; }
+		if (String == Str::ABPT_AnimScaled) { return Type::ABPT_AnimScaled; }
+		if (String == Str::ABPT_AnimFrame) { return Type::ABPT_AnimFrame; }
+		return Type::ABPT_MAX;
+	}
+
+	FORCEINLINE EAdditiveBasePoseType ToBaseType(const FString &String)
+	{
+		if (String == Str::ABPT_None) { return EAdditiveBasePoseType::ABPT_None; }
+		if (String == Str::ABPT_RefPose) { return EAdditiveBasePoseType::ABPT_RefPose; }
+		if (String == Str::ABPT_AnimScaled) { return EAdditiveBasePoseType::ABPT_AnimScaled; }
+		if (String == Str::ABPT_AnimFrame) { return EAdditiveBasePoseType::ABPT_AnimFrame; }
+		return EAdditiveBasePoseType::ABPT_MAX;
+	}
+}
+
+#define ECS_ADDITIVE_BASE_POSE_TYPE_MAX (uint8)ECsAdditiveBasePoseType::ABPT_MAX
+typedef TEnumAsByte<ECsAdditiveBasePoseType::Type> TCsAdditiveBasePoseType;
+
+UENUM(BlueprintType)
+namespace ECsAdditiveAnimationType
+{
+	enum Type
+	{
+		/** No additive. */
+		AAT_None					UMETA(DisplayName = "None"),
+		/* Create Additive from LocalSpace Base. */
+		AAT_LocalSpaceBase			UMETA(DisplayName = "Local Space"),
+		/* Create Additive from MeshSpace Rotation Only, Translation still will be LocalSpace. */
+		AAT_RotationOffsetMeshSpace	UMETA(DisplayName = "Mesh Space"),
+		AAT_MAX						UMETA(Hidden),
+	};
+}
+
+namespace ECsAdditiveAnimationType
+{
+	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString AAT_None = TCsString(TEXT("AAT_None"), TEXT("aat_none"), TEXT("none"));
+		const TCsString AAT_LocalSpaceBase = TCsString(TEXT("AAT_LocalSpaceBase"), TEXT("aat_localspacebase"), TEXT("local space base"));
+		const TCsString AAT_RotationOffsetMeshSpace = TCsString(TEXT("AAT_RotationOffsetMeshSpace"), TEXT("aat_rotationoffsetmeshspace"), TEXT("rotation offset mesh space"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::AAT_None) { return Str::AAT_None.Value; }
+		if (EType == Type::AAT_LocalSpaceBase) { return Str::AAT_LocalSpaceBase.Value; }
+		if (EType == Type::AAT_RotationOffsetMeshSpace) { return Str::AAT_RotationOffsetMeshSpace.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE FString ToString(const EAdditiveAnimationType &EType)
+	{
+		if (EType == EAdditiveAnimationType::AAT_None) { return Str::AAT_None.Value; }
+		if (EType == EAdditiveAnimationType::AAT_LocalSpaceBase) { return Str::AAT_LocalSpaceBase.Value; }
+		if (EType == EAdditiveAnimationType::AAT_RotationOffsetMeshSpace) { return Str::AAT_RotationOffsetMeshSpace.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::AAT_None) { return Type::AAT_None; }
+		if (String == Str::AAT_LocalSpaceBase) { return Type::AAT_LocalSpaceBase; }
+		if (String == Str::AAT_RotationOffsetMeshSpace) { return Type::AAT_RotationOffsetMeshSpace; }
+		return Type::AAT_MAX;
+	}
+
+	FORCEINLINE EAdditiveAnimationType ToBaseType(const FString &String)
+	{
+		if (String == Str::AAT_None) { return EAdditiveAnimationType::AAT_None; }
+		if (String == Str::AAT_LocalSpaceBase) { return EAdditiveAnimationType::AAT_LocalSpaceBase; }
+		if (String == Str::AAT_RotationOffsetMeshSpace) { return EAdditiveAnimationType::AAT_RotationOffsetMeshSpace; }
+		return EAdditiveAnimationType::AAT_MAX;
+	}
+}
+
+#define ECS_ADDITIVE_ANIMATION_TYPE_MAX (uint8)ECsAdditiveAnimationType::AAT_MAX
+typedef TEnumAsByte<ECsAdditiveAnimationType::Type> TCsAdditiveAnimationType;
+
 #pragma endregion Anim
 
 // Curves
@@ -2781,6 +2909,136 @@ public:
 		return Curve_Internal;
 	}
 };
+
+UENUM(BlueprintType)
+namespace ECsRichCurveInterpMode
+{
+	enum Type
+	{
+		RCIM_Linear					UMETA(DisplayName = "Linear"),
+		RCIM_Constant				UMETA(DisplayName = "Constant"),
+		RCIM_Cubic					UMETA(DisplayName = "Cubic"),
+		RCIM_None					UMETA(DisplayName = "None"),
+		ECsRichCurveInterpMode_MAX	UMETA(Hidden),
+	};
+}
+
+namespace ECsRichCurveInterpMode
+{
+	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString RCIM_Linear = TCsString(TEXT("RCIM_Linear"), TEXT("rcim_linear"), TEXT("linear"));
+		const TCsString RCIM_Constant = TCsString(TEXT("RCIM_Constant"), TEXT("rcim_constant"), TEXT("constant"));
+		const TCsString RCIM_Cubic = TCsString(TEXT("RCIM_Cubic"), TEXT("rcim_cubic"), TEXT("cubic"));
+		const TCsString RCIM_None = TCsString(TEXT("RCIM_None"), TEXT("rcim_none"), TEXT("none"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::RCIM_Linear) { return Str::RCIM_Linear.Value; }
+		if (EType == Type::RCIM_Constant) { return Str::RCIM_Constant.Value; }
+		if (EType == Type::RCIM_Cubic) { return Str::RCIM_Cubic.Value; }
+		if (EType == Type::RCIM_None) { return Str::RCIM_None.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE FString ToString(const ERichCurveInterpMode &EType)
+	{
+		if (EType == ERichCurveInterpMode::RCIM_Linear) { return Str::RCIM_Linear.Value; }
+		if (EType == ERichCurveInterpMode::RCIM_Constant) { return Str::RCIM_Constant.Value; }
+		if (EType == ERichCurveInterpMode::RCIM_Cubic) { return Str::RCIM_Cubic.Value; }
+		if (EType == ERichCurveInterpMode::RCIM_None) { return Str::RCIM_None.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::RCIM_Linear) { return Type::RCIM_Linear; }
+		if (String == Str::RCIM_Constant) { return Type::RCIM_Constant; }
+		if (String == Str::RCIM_Cubic) { return Type::RCIM_Cubic; }
+		if (String == Str::RCIM_None) { return Type::RCIM_None; }
+		return Type::ECsRichCurveInterpMode_MAX;
+	}
+
+	FORCEINLINE ERichCurveInterpMode ToBaseType(const FString &String)
+	{
+		if (String == Str::RCIM_Linear) { return ERichCurveInterpMode::RCIM_Linear; }
+		if (String == Str::RCIM_Constant) { return ERichCurveInterpMode::RCIM_Constant; }
+		if (String == Str::RCIM_Cubic) { return ERichCurveInterpMode::RCIM_Cubic; }
+		if (String == Str::RCIM_None) { return ERichCurveInterpMode::RCIM_None; }
+		return ERichCurveInterpMode::RCIM_None;
+	}
+}
+
+#define ECS_RICH_CURVE_INTERP_MODE_MAX (uint8)ECsRichCurveInterpMode::ABPT_MAX
+typedef TEnumAsByte<ECsRichCurveInterpMode::Type> TCsRichCurveInterpMode;
+
+UENUM(BlueprintType)
+namespace ECsRichCurveTangentMode
+{
+	enum Type
+	{
+		RCTM_Auto					UMETA(DisplayName = "Auto"),
+		RCTM_User					UMETA(DisplayName = "User"),
+		RCTM_Break					UMETA(DisplayName = "Break"),
+		RCTM_None					UMETA(DisplayName = "None"),
+		ECsRichCurveTangentMode_MAX	UMETA(Hidden),
+	};
+}
+
+namespace ECsRichCurveTangentMode
+{
+	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString RCTM_Auto = TCsString(TEXT("RCTM_Auto"), TEXT("rctm_auto"), TEXT("auto"));
+		const TCsString RCTM_User = TCsString(TEXT("RCTM_User"), TEXT("rctm_user"), TEXT("user"));
+		const TCsString RCTM_Break = TCsString(TEXT("RCTM_Break"), TEXT("rctm_break"), TEXT("break"));
+		const TCsString RCTM_None = TCsString(TEXT("RCTM_None"), TEXT("rctm_none"), TEXT("none"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::RCTM_Auto) { return Str::RCTM_Auto.Value; }
+		if (EType == Type::RCTM_User) { return Str::RCTM_User.Value; }
+		if (EType == Type::RCTM_Break) { return Str::RCTM_Break.Value; }
+		if (EType == Type::RCTM_None) { return Str::RCTM_None.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE FString ToString(const ERichCurveTangentMode &EType)
+	{
+		if (EType == ERichCurveTangentMode::RCTM_Auto) { return Str::RCTM_Auto.Value; }
+		if (EType == ERichCurveTangentMode::RCTM_User) { return Str::RCTM_User.Value; }
+		if (EType == ERichCurveTangentMode::RCTM_Break) { return Str::RCTM_Break.Value; }
+		if (EType == ERichCurveTangentMode::RCTM_None) { return Str::RCTM_None.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::RCTM_Auto) { return Type::RCTM_Auto; }
+		if (String == Str::RCTM_User) { return Type::RCTM_User; }
+		if (String == Str::RCTM_Break) { return Type::RCTM_Break; }
+		if (String == Str::RCTM_None) { return Type::RCTM_None; }
+		return Type::ECsRichCurveTangentMode_MAX;
+	}
+
+	FORCEINLINE ERichCurveTangentMode ToBaseType(const FString &String)
+	{
+		if (String == Str::RCTM_Auto) { return ERichCurveTangentMode::RCTM_Auto; }
+		if (String == Str::RCTM_User) { return ERichCurveTangentMode::RCTM_User; }
+		if (String == Str::RCTM_Break) { return ERichCurveTangentMode::RCTM_Break; }
+		if (String == Str::RCTM_None) { return ERichCurveTangentMode::RCTM_None; }
+		return ERichCurveTangentMode::RCTM_None;
+	}
+}
+
+#define ECS_RICH_CURVE_TANGENT_MODE_MAX (uint8)ECsRichCurveTangentMode::ABPT_MAX
+typedef TEnumAsByte<ECsRichCurveTangentMode::Type> TCsRichCurveTangentMode;
 
 #pragma endregion Curves
 

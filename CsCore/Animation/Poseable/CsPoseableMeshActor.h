@@ -600,10 +600,10 @@ struct FCsAnimLevelSequenceInfo_Shot
 	bool FindOrCreate;
 	/* seq_ + BaseName (usually part of SkeletalMesh Name) is appended to Name */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
-	FName Name;
+	FString Name;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Level Sequence")
-	FName PackagePath;
+	FString PackagePath;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Level Sequence")
 	class ULevelSequence* Shot;
@@ -617,8 +617,8 @@ struct FCsAnimLevelSequenceInfo_Shot
 	FCsAnimLevelSequenceInfo_Shot()
 	{
 		FindOrCreate = false;
-		Name = NAME_None;
-		PackagePath = NAME_None;
+		Name = TEXT("");
+		PackagePath = TEXT("");
 		Shot = nullptr;
 		Export = false;
 		Anim = nullptr;
@@ -663,13 +663,15 @@ struct FCsAnimLevelSequenceInfo_Master
 	bool FindOrCreate;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Level Sequence")
-	FName PackagePath;
+	FString PackagePath;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Level Sequence")
 	class ULevelSequence* Master;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
 	TArray<FCsAnimLevelSequenceInfo_Shot> Shots;
+
+	TArray<FCsAnimLevelSequenceInfo_Shot> Shots_Copy;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
 	bool Export;
@@ -678,7 +680,7 @@ struct FCsAnimLevelSequenceInfo_Master
 	{
 		Open = false;
 		FindOrCreate = false;
-		PackagePath = NAME_None;
+		PackagePath = TEXT("");
 		Master = nullptr;
 		Export = false;
 	}
@@ -775,7 +777,7 @@ class CSCORE_API ACsPoseableMeshActor : public AActor
 	TArray<FCsAnimControlInfo_TwoBoneIK> Controls_TwoBoneIK_Copy;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "00 PoseableMesh")
-	FCsAnimLevelSequenceInfo_Master LevelSequence;
+	FCsAnimLevelSequenceInfo_Master AnimLevelSequence;
 
 #if WITH_EDITOR
 
@@ -789,6 +791,9 @@ class CSCORE_API ACsPoseableMeshActor : public AActor
 	void PostEditChangeChainProperty_Control_FK_Connection(struct FPropertyChangedChainEvent& e);
 	void PostEditChangeChainProperty_TwoBoneIK(struct FPropertyChangedChainEvent& e);
 	void PostEditChangeChainProperty_LevelSequence_Shots(struct FPropertyChangedChainEvent& e);
+
+	void AnimLevelSequence_Shot_AddTransformTrack(const int32 &Index, const FGuid& Guid, AActor* Actor);
+	void AnimLevelSequence_Shot_Export(const int32 &Index);
 
 	virtual void GenerateBones();
 	virtual void ClearBones();

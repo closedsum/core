@@ -25,6 +25,7 @@
 #include "../MovieScene/Public/MovieScene.h"
 #include "../MovieScene/Public/MovieSceneSection.h"
 #include "../MovieScene/Public/MovieScenePossessable.h"
+#include "../MovieScene/Public/MovieSceneFolder.h"
 #include "../MovieSceneTracks/Public/Tracks/MovieSceneCinematicShotTrack.h"
 #include "../MovieSceneTracks/Public/Tracks/MovieScene3DTransformTrack.h"
 #include "../MovieSceneTracks/Public/Sections/MovieScene3dTransformSection.h"
@@ -97,6 +98,10 @@ void ACsPoseableMeshActor::OnTick_Editor(const float &DeltaSeconds)
 		HasTickedInEditor = true;
 	}
 	
+	OpenShotIndex	    = GetOpenShotIndexInEditor();
+	bIsAssetEditorOpen  = OpenShotIndex != INDEX_NONE;
+	LevelSequenceEditor = bIsAssetEditorOpen ? GetOpenAssetEditor() : nullptr;
+
 	//if (IsSelected())
 	//	return;
 
@@ -136,11 +141,18 @@ void ACsPoseableMeshActor::OnTick_Editor(const float &DeltaSeconds)
 			if (!Control->StartBone || !Control->MiddleBone || !Control->EndBone)
 				continue;
 
-			const bool UpdateIK = true;// Control->EndEffector->Location.HasChanged() || Control->JointTarget->Location.HasChanged();
+			const bool UpdateIK = !bIsAssetEditorOpen || (bIsAssetEditorOpen && (Control->EndEffector->Location.HasChanged() || Control->JointTarget->Location.HasChanged()));
 
 			if (UpdateIK)
 			{
 				PerformTwoBoneIK(I);
+			}
+
+			if (bIsAssetEditorOpen && UpdateIK)
+			{
+				AnimLevelSequence_Shot_AddKey(OpenShotIndex, Control->StartBone);
+				AnimLevelSequence_Shot_AddKey(OpenShotIndex, Control->MiddleBone);
+				AnimLevelSequence_Shot_AddKey(OpenShotIndex, Control->EndBone);
 			}
 		}
 	}
@@ -168,12 +180,7 @@ void ACsPoseableMeshActor::OnTick_Editor(const float &DeltaSeconds)
 				continue;
 			}
 
-			const bool UpdateFK = true;// Control->Location.HasChanged() || Control->Rotation.HasChanged() || Control->Scale.HasChanged();
-
-			if (UpdateFK)
-			{
-				PerformFK(I);
-			}
+			PerformFK(I);
 		}
 	}
 	// Bones
@@ -186,7 +193,7 @@ void ACsPoseableMeshActor::OnTick_Editor(const float &DeltaSeconds)
 			RecreateBone(I);
 		}
 
-		Bones[I].Actor->ForceUpdateTransform |= IsSelected();
+		Bones[I].Actor->ForceUpdateTransform |= IsSelected() || bIsAssetEditorOpen;
 
 		// Location
 		if (Bones[I].Actor->Location.HasChanged() ||
@@ -216,6 +223,60 @@ void ACsPoseableMeshActor::OnTick_Editor(const float &DeltaSeconds)
 
 #if WITH_EDITOR
 
+bool ACsPoseableMeshActor::IsAssetEditorOpen()
+{
+	if (AnimLevelSequence.Master && FAssetEditorManager::Get().FindEditorForAsset(AnimLevelSequence.Master, false))
+		return true;
+
+	const int32 Count = AnimLevelSequence.Shots.Num();
+
+	for (int32 I = 0; I < Count; I++)
+	{
+		FCsAnimLevelSequenceInfo_Shot& Shot = AnimLevelSequence.Shots[I];
+
+		if (Shot.Shot && FAssetEditorManager::Get().FindEditorForAsset(Shot.Shot, false))
+			return true;
+	}
+	return false;
+}
+
+FLevelSequenceEditorToolkit* ACsPoseableMeshActor::GetOpenAssetEditor()
+{
+	if (AnimLevelSequence.Master)
+	{
+		if (FLevelSequenceEditorToolkit* Editor = (FLevelSequenceEditorToolkit*)(FAssetEditorManager::Get().FindEditorForAsset(AnimLevelSequence.Master, false)))
+			return Editor;
+	}
+
+	const int32 Count = AnimLevelSequence.Shots.Num();
+
+	for (int32 I = 0; I < Count; I++)
+	{
+		FCsAnimLevelSequenceInfo_Shot& Shot = AnimLevelSequence.Shots[I];
+
+		if (Shot.Shot)
+		{
+			if (FLevelSequenceEditorToolkit* Editor = (FLevelSequenceEditorToolkit*)(FAssetEditorManager::Get().FindEditorForAsset(Shot.Shot, false)))
+				return Editor;
+		}
+	}
+	return nullptr;
+}
+
+int32 ACsPoseableMeshActor::GetOpenShotIndexInEditor()
+{
+	const int32 Count = AnimLevelSequence.Shots.Num();
+
+	for (int32 I = 0; I < Count; I++)
+	{
+		FCsAnimLevelSequenceInfo_Shot& Shot = AnimLevelSequence.Shots[I];
+
+		if (Shot.Shot && FAssetEditorManager::Get().FindEditorForAsset(Shot.Shot, false))
+			return I;
+	}
+	return INDEX_NONE;
+}
+
 void ACsPoseableMeshActor::OnControlNameChanged_TwoBoneIK(const int32 &Index)
 {
 	FCsAnimControlInfo_TwoBoneIK& TwoBoneIK = Controls_TwoBoneIK[Index];
@@ -230,6 +291,16 @@ void ACsPoseableMeshActor::OnControlNameChanged_FK(const int32 &Index)
 	ACsAnim_Control_FK* Control = FK.Actor;
 
 	FK.Control = Control->GetActorLabel();
+}
+
+FString ACsPoseableMeshActor::GetMeshName()
+{
+	return PoseableMeshComponent->SkeletalMesh->GetName();
+}
+
+FString ACsPoseableMeshActor::GetBaseAssetName()
+{
+	return TEXT("seq_") + GetMeshName();
 }
 
 void ACsPoseableMeshActor::PostEditChangeProperty(struct FPropertyChangedEvent& e)
@@ -318,51 +389,61 @@ void ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(struct FP
 
 		AnimLevelSequence.FindOrCreate = false;
 
-		const FString MeshName		= PoseableMeshComponent->SkeletalMesh->GetName();
-		const FString BaseAssetName = TEXT("seq_") + MeshName;
-		const FString AssetName		= BaseAssetName + TEXT("_master");
+		if (AnimLevelSequence.Master)
+			return;
 
-		FString PackageName = PoseableMeshComponent->SkeletalMesh->GetPathName();
+		const FString MeshName		= GetMeshName();
+		const FString BaseAssetName = GetBaseAssetName();
+		const FString AssetName		= AnimLevelSequence.Name != TEXT("") ? BaseAssetName + TEXT("_") + AnimLevelSequence.Name + ("_master") : BaseAssetName + ("_master");
+
+		FString PackageName = AnimLevelSequence.PackagePath != TEXT("") ? AnimLevelSequence.PackagePath : PoseableMeshComponent->SkeletalMesh->GetPathName();
 		PackageName			= PackageName.Replace(*MeshName, TEXT(""));
 		PackageName			= PackageName.Replace(TEXT("."), TEXT(""));
 
-		const int32 Len = PackageName.Len();
-		PackageName.RemoveAt(Len - 1);
-
-		if (!AnimLevelSequence.Master)
+		if (PackageName.EndsWith(TEXT("/")))
 		{
-			TArray<ULevelSequence*> Sequences;
-			UCsCommon_Asset::GetAssets<ULevelSequence>(AssetName, Sequences);
+			const int32 Len = PackageName.Len();
+			PackageName.RemoveAt(Len - 1);
+		}
 
-			const int32 SeqCount = Sequences.Num();
+		TArray<ULevelSequence*> Sequences;
+		TArray<FString> PackagePaths;
+		UCsCommon_Asset::GetAssets<ULevelSequence>(AssetName, Sequences, PackagePaths);
 
-			if (SeqCount > CS_EMPTY)
+		const int32 SeqCount = Sequences.Num();
+
+		if (SeqCount > CS_EMPTY)
+		{
+			if (SeqCount == 1)
 			{
-				if (SeqCount == 1)
-				{
-					AnimLevelSequence.Master = Sequences[CS_FIRST];
-				}
-				else
-				{
-					for (int32 I = 0; I < SeqCount; I++)
-					{
-						const FString Message = TEXT("Multiple Level Sequences with the Name: ") + AssetName + TEXT(".");
-
-						UCsCommon::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
-
-						UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(%s): %s"), *GetName(), *Message);
-					}
-					return;
-				}
+				AnimLevelSequence.Master = Sequences[CS_FIRST];
 			}
 			else
 			{
-				AnimLevelSequence.Master = UCsCommon_Asset::CreateLevelSequence(AssetName, PackageName);
+				FString Message = TEXT("Multiple Level Sequences found with the Name: ") + AssetName;
+
+				UCsCommon::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
+
+				UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(%s): %s"), *GetName(), *Message);
+
+				for (int32 I = 0; I < SeqCount; I++)
+				{
+					const FString FullPathName = PackagePaths[I] + TEXT("/") + AssetName;
+					Message						= TEXT("Level Sequence already exists at ") + FullPathName;
+
+					UCsCommon::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
+
+					UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(%s): %s"), *GetName(), *Message);
+				}
+				return;
 			}
 		}
+		else
+		{
+			AnimLevelSequence.Master = UCsCommon_Asset::CreateLevelSequence(AssetName, PackageName);
+		}
 
-		ULevelSequence* Seq = AnimLevelSequence.Master;
-
+		ULevelSequence* Seq						 = AnimLevelSequence.Master;
 		UMovieSceneCinematicShotTrack* ShotTrack = Cast<UMovieSceneCinematicShotTrack>(Seq->GetMovieScene()->FindMasterTrack(UMovieSceneCinematicShotTrack::StaticClass()));
 	
 		if (!ShotTrack)
@@ -771,296 +852,411 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots(struc
 		}
 	}
 
-	FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
 	// AnimLevelSequence.Shots[Index].FindOrCreate
-	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimLevelSequenceInfo_Shot, FindOrCreate))
+	PostEditChangeChainProperty_LevelSequence_Shots_FindOrCreate(e);
+	// AnimLevelSequence.Shots[Index].Export
+	PostEditChangeChainProperty_LevelSequence_Shots_Export(e);
+
+	FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
+
+	// AnimLevelSequence.Shots[Index].ExportInterval
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimLevelSequenceInfo_Shot, Export))
 	{
-		if (!Shot.FindOrCreate)
-			return;
+		Shot.ExportInterval_Internal = ECsSequencerTimeSnapInterval::ToFloat(Shot.ExportInterval);
+		Shot.ExportInterval_FPS = ECsSequencerTimeSnapInterval::ToFPS(Shot.ExportInterval);
+		return;
+	}
+}
 
-		Shot.FindOrCreate = false;
+void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindOrCreate(struct FPropertyChangedChainEvent& e)
+{
+	const int32 Index = e.GetArrayIndex(TEXT("Shots"));
 
-		USkeletalMesh* Mesh = PoseableMeshComponent->SkeletalMesh;
+	if (Index == INDEX_NONE)
+		return;
 
-		if (!Mesh)
+	FCsAnimLevelSequenceInfo_Shot& Shot = AnimLevelSequence.Shots[Index];
+
+	FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
+
+	if (PropertyName != GET_MEMBER_NAME_CHECKED(FCsAnimLevelSequenceInfo_Shot, FindOrCreate))
+		return;
+
+	if (!Shot.FindOrCreate)
+		return;
+
+	Shot.FindOrCreate = false;
+
+	USkeletalMesh* Mesh = PoseableMeshComponent->SkeletalMesh;
+
+	if (!Mesh)
+	{
+		const FString Message = TEXT("SkeletalMesh is NULL.");
+
+		UCsCommon::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 5.0f);
+
+		UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindOrCreate(%s): %s"), *GetName(), *Message);
+		return;
+	}
+
+	if (Shot.Name == TEXT(""))
+	{
+		const FString Message = TEXT("No Name set for AnimLevelSequence.Shots[") + FString::FromInt(Index) + TEXT("].Name.");
+
+		UCsCommon::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 5.0f);
+
+		UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindOrCreate(%s): %s"), *GetName(), *Message);
+		return;
+	}
+	// Check for existing Level Sequence
+	const FString BaseAssetName = GetBaseAssetName();
+	const FString AssetName		= BaseAssetName + TEXT("_") + Shot.Name;
+
+	TArray<ULevelSequence*> Sequences;
+	TArray<FString> PackagePaths;
+	UCsCommon_Asset::GetAssets<ULevelSequence>(AssetName, Sequences, PackagePaths);
+
+	const int32 SeqCount = Sequences.Num();
+	// Found
+	if (SeqCount > CS_EMPTY)
+	{
+		// If Only ONE, Set Shot
+		if (SeqCount == 1)
 		{
-			const FString Message = TEXT("SkeletalMesh is NULL.");
+			// Verify the Shot
+			ULevelSequence* Seq		= Sequences[CS_FIRST];
+			UMovieScene* MovieScene = Seq->GetMovieScene();
+			
+			// Check Folder Exists
 
-			UCsCommon::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 5.0f);
-
-			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots(%s): %s"), *GetName(), *Message);
-			return;
-		}
-
-		if (Shot.Name == TEXT(""))
-		{
-			const FString Message = TEXT("No Name set for AnimLevelSequence.Shots[") + FString::FromInt(Index) + TEXT("].Name.");
-
-			UCsCommon::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 5.0f);
-
-			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots(%s): %s"), *GetName(), *Message);
-			return;
-		}
-		// Check for existing Level Sequence
-		const FString MeshName		= PoseableMeshComponent->SkeletalMesh->GetName();
-		const FString BaseAssetName = TEXT("seq_") + MeshName;
-		const FString AssetName		= BaseAssetName + TEXT("_") + Shot.Name;
-
-		TArray<ULevelSequence*> Sequences;
-		UCsCommon_Asset::GetAssets<ULevelSequence>(AssetName, Sequences);
-
-		const int32 SeqCount = Sequences.Num();
-		// Found
-		if (SeqCount > CS_EMPTY)
-		{
-			// If Only ONE, Set Shot
-			if (SeqCount == 1)
+			const int32 PossessableCount = MovieScene->GetPossessableCount();
+			
+			for (int32 I = 0; I < PossessableCount; I++)
 			{
-				AnimLevelSequence.Shots[Index].Shot = Sequences[CS_FIRST];
+				//MovieScene->GetRootFolders()
+				//UMovieSceneFolder Folder;
+				//Folder.GetChildObjectBindings()
 
-				// TODO: Check the Sequence has all the bones and they are mapped correctly
+				FMovieScenePossessable& Possessable = MovieScene->GetPossessable(I);
+				const FGuid Guid					= Possessable.GetGuid();
+				const FString ActorName				= Possessable.GetName();
+
+				TArray<UObject*, TInlineAllocator<1>> Objects;
+
+				Seq->LocateBoundObjects(Guid, GetWorld(), Objects);
+
+				const int32 ObjectCount = Objects.Num();
+				// If Guid is NOT Bound and ActorName is VALID (i.e. the Actor exists), then Bind it
+				if (ObjectCount == CS_EMPTY)
+				{
+				}
+			}
+
+			FString PackagePath = Seq->GetPathName();
+			PackagePath			= PackagePath.Replace(*AssetName, TEXT(""));
+			PackagePath			= PackagePath.Replace(TEXT("."), TEXT(""));
+
+			if (PackageName.EndsWith(TEXT("/")))
+			{
+				const int32 Len = PackageName.Len();
+				PackageName.RemoveAt(Len - 1);
+			}
+
+			AnimLevelSequence.PackagePath = PackagePath;
+
+			AnimLevelSequence.Shots[Index].Shot = Sequences[CS_FIRST];
+
+			// TODO: Check the Sequence has all the bones and they are mapped correctly
+		}
+		// Else MORE than ONE, ERROR
+		else
+		{
+			FString Message = TEXT("Multiple Level Sequences with the AnimLevelSequence.Shots[") + FString::FromInt(Index) + TEXT("].Name: ") + AssetName + TEXT(".");
+
+			UCsCommon::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 5.0f);
+
+			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindOrCreate(%s): %s"), *GetName(), *Message);
+
+			for (int32 I = 0; I < SeqCount; I++)
+			{
+				const FString FullPathName = PackagePaths[I] + TEXT("/") + AssetName;
+				Message = TEXT("Level Sequence already exists at ") + FullPathName;
+
+				UCsCommon::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 2.0f);
+
+				UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindOrCreate(%s): %s"), *GetName(), *Message);
+			}
+			return;
+		}
+	}
+	// NOT Found, Create it
+	else
+	{
+		const FString MeshName = GetMeshName();
+		FString PackageName	   = PoseableMeshComponent->SkeletalMesh->GetPathName();
+		PackageName			   = PackageName.Replace(*MeshName, TEXT(""));
+		PackageName			   = PackageName.Replace(TEXT("."), TEXT(""));
+
+		if (PackageName.EndsWith(TEXT("/")))
+		{
+			const int32 Len = PackageName.Len();
+			PackageName.RemoveAt(Len - 1);
+		}
+
+		AnimLevelSequence.Shots[Index].Shot = UCsCommon_Asset::CreateLevelSequence(AssetName, PackageName);
+
+		ULevelSequence* Seq     = AnimLevelSequence.Shots[Index].Shot;
+		const float DeltaTime   = 2.0f;
+		UMovieScene* MovieScene = Seq->GetMovieScene();
+		MovieScene->SetPlaybackRange(0.0f, DeltaTime);
+
+		UMovieSceneFolder* NewFolder = NewObject<UMovieSceneFolder>(MovieScene, NAME_None, RF_Transactional);
+		const FString AnimName	     = TEXT("anim_") + MeshName + TEXT("_") + Shot.Name;
+		NewFolder->SetFolderName(FName(*AnimName));
+		MovieScene->GetRootFolders().Add(NewFolder);
+
+		// Populate Level Sequence with Actors
+
+		const int32 BoneCount = Bones.Num();
+
+		for (int32 I = 0; I < BoneCount; I++)
+		{
+			FGuid Guid = MovieScene->AddPossessable(Bones[I].Actor->GetActorLabel(), Bones[I].Actor->GetClass());
+			Seq->BindPossessableObject(Guid, *(Bones[I].Actor), GetWorld());
+			
+			AnimLevelSequence_Shot_AddTransformTrack(Index, Guid, Bones[I].Actor);
+
+			NewFolder->AddChildObjectBinding(Guid);
+		}
+
+		// Add to Master Track
+		ULevelSequence* Master = AnimLevelSequence.Master;
+
+		if (Master)
+		{
+			UMovieSceneCinematicShotTrack* ShotTrack = Cast<UMovieSceneCinematicShotTrack>(Master->GetMovieScene()->FindMasterTrack(UMovieSceneCinematicShotTrack::StaticClass()));
+
+			if (!ShotTrack)
+			{
+				ShotTrack = Cast<UMovieSceneCinematicShotTrack>(Master->GetMovieScene()->AddMasterTrack(UMovieSceneCinematicShotTrack::StaticClass()));
+			}
+
+			const TArray<UMovieSceneSection*>& Sections = ShotTrack->GetAllSections();
+
+			const int32 SectionCount = Sections.Num();
+
+			if (SectionCount > CS_EMPTY)
+			{
+				float LastTime = 0.0f;
+
+				for (int32 I = 0; I < SectionCount; I++)
+				{
+					if (LastTime < Sections[I]->GetEndTime())
+						LastTime = Sections[I]->GetEndTime();
+				}
+
+				const float BufferTime = 0.1f;
+				const float StartTime  = LastTime + BufferTime;
+				const float EndTime    = StartTime + DeltaTime;
+
+				ShotTrack->AddSequence(Seq, LastTime + BufferTime, EndTime);
+			}
+			else
+			{
+				ShotTrack->AddSequence(Seq, 0.0f, DeltaTime);
+			}
+		}
+		else
+		{
+			// Warning
+		}
+	}
+	AnimLevelSequence.Shots_Copy[Index] = AnimLevelSequence.Shots[Index];
+}
+
+void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_Export(struct FPropertyChangedChainEvent& e)
+{
+	const int32 Index = e.GetArrayIndex(TEXT("Shots"));
+
+	if (Index == INDEX_NONE)
+		return;
+
+	FCsAnimLevelSequenceInfo_Shot& Shot = AnimLevelSequence.Shots[Index];
+
+	FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
+
+	// AnimLevelSequence.Shots[Index].Export
+	if (PropertyName != GET_MEMBER_NAME_CHECKED(FCsAnimLevelSequenceInfo_Shot, Export))
+		return;
+
+	if (!Shot.Export)
+		return;
+
+	Shot.Export = false;
+
+	if (!Shot.Shot)
+	{
+		return;
+	}
+
+	if (Shot.Name == TEXT(""))
+	{
+		return;
+	}
+
+	ULevelSequence* Seq = Shot.Shot;
+
+	if (!Seq->GetName().Contains(Shot.Name))
+	{
+		return;
+	}
+
+	// Check if an Animation has already been created
+	UAnimSequence* Anim = nullptr;
+
+	if (Shot.Anim)
+	{
+		Anim = Shot.Anim;
+	}
+	else
+	{
+		const FString MeshName = PoseableMeshComponent->SkeletalMesh->GetName();
+		const FString AnimName = TEXT("anim_") + MeshName + TEXT("_") + Shot.Name;
+
+		TArray<UAnimSequence*> Anims;
+		TArray<FString> PackagePaths;
+		UCsCommon_Asset::GetAssets<UAnimSequence>(AnimName, Anims, PackagePaths);
+
+		const int32 AnimCount = Anims.Num();
+
+		// Already Exists
+		if (AnimCount > CS_EMPTY)
+		{
+			// If ONE, Set it
+			if (AnimCount == 1)
+			{
+				Anim = Anims[CS_FIRST];
+				Shot.Anim = Anim;
 			}
 			// Else MORE than ONE, ERROR
 			else
 			{
-				for (int32 I = 0; I < SeqCount; I++)
+				FString Message = TEXT("Multiple Anim Sequences found with the Name: ") + AnimName;
+
+				UCsCommon::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 5.0f);
+
+				UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_Export(%s): %s"), *GetName(), *Message);
+
+				for (int32 I = 0; I < AnimCount; I++)
 				{
-					const FString Message = TEXT("Multiple Level Sequences with the AnimLevelSequence.Shots[") + FString::FromInt(Index) + TEXT("].Name: ") + AssetName + TEXT(".");
+					const FString FullPathName = PackagePaths[I] + TEXT("/") + AnimName;
+					Message = TEXT("Anim Sequence already exists at ") + FullPathName;
 
-					UCsCommon::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeChainProperty"), 5.0f);
+					UCsCommon::DisplayNotificationInfo(Message, TEXT("PoseableMesh"), TEXT("PostEditChangeProperty"), 2.0f);
 
-					UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(%s): %s"), *GetName(), *Message);
+					UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_Export(%s): %s"), *GetName(), *Message);
 				}
 				return;
 			}
 		}
-		// NOT Found, Create it
+		// NONE Exists, Create it
 		else
 		{
-			FString PackageName	   = PoseableMeshComponent->SkeletalMesh->GetPathName();
-			PackageName			   = PackageName.Replace(*MeshName, TEXT(""));
-			PackageName			   = PackageName.Replace(TEXT("."), TEXT(""));
+			FString PackageName = PoseableMeshComponent->SkeletalMesh->GetPathName();
+			PackageName = PackageName.Replace(*MeshName, TEXT(""));
+			PackageName = PackageName.Replace(TEXT("."), TEXT(""));
 
 			const int32 Len = PackageName.Len();
 			PackageName.RemoveAt(Len - 1);
 
-			AnimLevelSequence.Shots[Index].Shot = UCsCommon_Asset::CreateLevelSequence(AssetName, PackageName);
-
-			ULevelSequence* Seq     = AnimLevelSequence.Shots[Index].Shot;
-			const float DeltaTime   = 2.0f;
-			UMovieScene* MovieScene = Seq->GetMovieScene();
-			MovieScene->SetPlaybackRange(0.0f, DeltaTime);
-
-			// Populate Level Sequence with Actors
-
-			const int32 BoneCount = Bones.Num();
-			
-			for (int32 I = 0; I < BoneCount; I++)
-			{
-				FGuid Guid = MovieScene->AddPossessable(Bones[I].Actor->GetActorLabel(), Bones[I].Actor->GetClass());
-				Seq->BindPossessableObject(Guid, *(Bones[I].Actor), GetWorld());
-
-				AnimLevelSequence_Shot_AddTransformTrack(Index, Guid, Bones[I].Actor);
-			}
-
-			// Add to Master Track
-			ULevelSequence* Master = AnimLevelSequence.Master;
-
-			if (Master)
-			{
-				UMovieSceneCinematicShotTrack* ShotTrack = Cast<UMovieSceneCinematicShotTrack>(Master->GetMovieScene()->FindMasterTrack(UMovieSceneCinematicShotTrack::StaticClass()));
-
-				if (!ShotTrack)
-				{
-					ShotTrack = Cast<UMovieSceneCinematicShotTrack>(Master->GetMovieScene()->AddMasterTrack(UMovieSceneCinematicShotTrack::StaticClass()));
-				}
-
-				const TArray<UMovieSceneSection*>& Sections = ShotTrack->GetAllSections();
-
-				const int32 SectionCount = Sections.Num();
-
-				if (SectionCount > CS_EMPTY)
-				{
-					float LastTime = 0.0f;
-
-					for (int32 I = 0; I < SectionCount; I++)
-					{
-						if (LastTime < Sections[I]->GetEndTime())
-							LastTime = Sections[I]->GetEndTime();
-					}
-
-					const float BufferTime = 0.1f;
-					const float StartTime  = LastTime + BufferTime;
-					const float EndTime    = StartTime + DeltaTime;
-
-					ShotTrack->AddSequence(Seq, LastTime + BufferTime, EndTime);
-				}
-				else
-				{
-					ShotTrack->AddSequence(Seq, 0.0f, DeltaTime);
-				}
-			}
-			else
-			{
-				// Warning
-			}
+			Anim = UCsCommon_Asset::CreateAnimSequence(PoseableMeshComponent->SkeletalMesh, AnimName, PackageName);
+			Shot.Anim = Anim;
 		}
-		AnimLevelSequence.Shots_Copy[Index] = AnimLevelSequence.Shots[Index];
-		return;
 	}
-	// AnimLevelSequence.Shots[Index].Export
-	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimLevelSequenceInfo_Shot, Export))
+
+	UCsCommon_Asset::InitAnimSequence(Anim, PoseableMeshComponent);
+
+	// Create a sequence actor to run the sequence off of
+	ALevelSequenceActor* LevelSequenceActor = GetWorld()->SpawnActor<ALevelSequenceActor>();
+	LevelSequenceActor->LevelSequence = Seq;
+	LevelSequenceActor->PlaybackSettings.bRestoreState = true;
+	LevelSequenceActor->SequencePlayer = NewObject<ULevelSequencePlayer>(LevelSequenceActor, "AnimationPlayer");
+	LevelSequenceActor->SequencePlayer->Initialize(Seq, GetWorld(), LevelSequenceActor->PlaybackSettings);
+
+	// Now run our sequence
+	UMovieScene* MovieScene = Seq->GetMovieScene();
+
+	double StartTime		= MovieScene->GetPlaybackRange().GetLowerBoundValue();
+	double SequenceLength	= Anim->SequenceLength = MovieScene->GetPlaybackRange().Size<float>();
+	const float FPS			= Shot.ExportInterval_FPS;
+	int32 FrameCount		= Anim->NumFrames = FMath::CeilToInt(SequenceLength * FPS);
+	double FrameCountDouble = (double)FrameCount;
+	double FrameLength		= 1.0 / (double)FPS;
+
+	USkeleton* Skeleton = Anim->GetSkeleton();
+	USkeletalMesh* SkeletalMesh = PoseableMeshComponent->SkeletalMesh;
+
+	for (int32 Frame = 0; Frame < FrameCount; ++Frame)
 	{
-		if (!Shot.Export)
-			return;
+		float CurrentTime = (float)(StartTime + FMath::Clamp(((double)Frame / FrameCountDouble) * SequenceLength, 0.0, SequenceLength));
 
-		Shot.Export = false;
+		// Tick Sequence
+		LevelSequenceActor->SequencePlayer->SetPlaybackPosition(CurrentTime);
 
-		if (!Shot.Shot)
+		// Copy data to tracks
+		const FTransform ComponentTransform = PoseableMeshComponent->GetComponentTransform();
+		const int32 TrackCount				= Anim->GetRawAnimationData().Num();
+
+		for (int32 TrackIndex = 0; TrackIndex < TrackCount; ++TrackIndex)
 		{
-			return;
-		}
+			// verify if this bone exists in skeleton
+			int32 BoneTreeIndex = Anim->GetSkeletonIndexFromRawDataTrackIndex(TrackIndex);
 
-		if (Shot.Name == TEXT(""))
-		{
-			return;
-		}
-
-		ULevelSequence* Seq = Shot.Shot;
-
-		if (!Seq->GetName().Contains(Shot.Name))
-		{
-			return;
-		}
-
-		// Check if an Animation has already been created
-		UAnimSequence* Anim = nullptr;
-
-		if (Shot.Anim)
-		{
-			Anim = Shot.Anim;
-		}
-		else
-		{
-			const FString MeshName = PoseableMeshComponent->SkeletalMesh->GetName();
-			const FString AnimName = TEXT("anim_") + MeshName + TEXT("_") + Shot.Name;
-
-			TArray<UAnimSequence*> Anims;
-			UCsCommon_Asset::GetAssets<UAnimSequence>(AnimName, Anims);
-
-			const int32 AnimCount = Anims.Num();
-
-			// Already Exists
-			if (AnimCount > CS_EMPTY)
+			if (BoneTreeIndex != INDEX_NONE)
 			{
-				// If ONE, Set it
-				if (AnimCount == 1)
-				{
-					Anim	  = Anims[CS_FIRST];
-					Shot.Anim = Anim;
-				}
-				// Else MORE than ONE, ERROR
-				else
-				{
+				FRawAnimSequenceTrack& RawTrack = Anim->GetRawAnimationTrack(TrackIndex);
 
-				}
-			}
-			// NONE Exists, Create it
-			else
-			{
-				FString PackageName = PoseableMeshComponent->SkeletalMesh->GetPathName();
-				PackageName			= PackageName.Replace(*MeshName, TEXT(""));
-				PackageName			= PackageName.Replace(TEXT("."), TEXT(""));
+				int32 BoneIndex = Skeleton->GetMeshBoneIndexFromSkeletonBoneIndex(SkeletalMesh, BoneTreeIndex);
 
-				Anim	  = UCsCommon_Asset::CreateAnimSequence(PoseableMeshComponent->SkeletalMesh, AnimName, PackageName);
-				Shot.Anim = Anim;
+				FTransform Transform = Bones[BoneIndex].Actor->GetRootComponent()->GetRelativeTransform();
+				//Transform.SetToRelativeTransform(ComponentTransform);
+
+				RawTrack.PosKeys.Add(Transform.GetTranslation());
+				RawTrack.RotKeys.Add(Transform.GetRotation());
+				RawTrack.ScaleKeys.Add(Transform.GetScale3D());
 			}
 		}
-
-		UCsCommon_Asset::InitAnimSequence(Anim, PoseableMeshComponent);
-
-		// Create a sequence actor to run the sequence off of
-		ALevelSequenceActor* LevelSequenceActor = GetWorld()->SpawnActor<ALevelSequenceActor>();
-		LevelSequenceActor->LevelSequence = Seq;
-		LevelSequenceActor->PlaybackSettings.bRestoreState = true;
-		LevelSequenceActor->SequencePlayer = NewObject<ULevelSequencePlayer>(LevelSequenceActor, "AnimationPlayer");
-		LevelSequenceActor->SequencePlayer->Initialize(Seq, GetWorld(), LevelSequenceActor->PlaybackSettings);
-
-		// Now run our sequence
-		UMovieScene* MovieScene = Seq->GetMovieScene();
-
-		double StartTime	    = MovieScene->GetPlaybackRange().GetLowerBoundValue();
-		double SequenceLength   = Anim->SequenceLength = MovieScene->GetPlaybackRange().Size<float>();
-		int32 FrameCount		= Anim->NumFrames = FMath::CeilToInt(SequenceLength);// *Settings->FrameRate);
-		double FrameCountDouble = (double)FrameCount;
-		double FrameLength		= 1.0 / 1.0;// (double)Settings->FrameRate;
-
-		USkeleton* Skeleton			= Anim->GetSkeleton();
-		USkeletalMesh* SkeletalMesh = PoseableMeshComponent->SkeletalMesh;
-
-		for (int32 Frame = 0; Frame < FrameCount; ++Frame)
-		{
-			float CurrentTime = (float)(StartTime + FMath::Clamp(((double)Frame / FrameCountDouble) * SequenceLength, 0.0, SequenceLength));
-
-			// Tick Sequence
-			LevelSequenceActor->SequencePlayer->SetPlaybackPosition(CurrentTime);
-
-			// Tick skeletal mesh component
-			//SkeletalMeshComponent->TickAnimation(FrameLength, false);
-			//SkeletalMeshComponent->RefreshBoneTransforms();
-
-			// copy data to tracks
-			const FTransform ComponentTransform = PoseableMeshComponent->GetComponentTransform();
-			const int32 TrackCount				= Anim->GetRawAnimationData().Num();
-
-			for (int32 TrackIndex = 0; TrackIndex < TrackCount; ++TrackIndex)
-			{
-				// verify if this bone exists in skeleton
-				int32 BoneTreeIndex = Anim->GetSkeletonIndexFromRawDataTrackIndex(TrackIndex);
-
-				if (BoneTreeIndex != INDEX_NONE)
-				{
-					FRawAnimSequenceTrack& RawTrack = Anim->GetRawAnimationTrack(TrackIndex);
-
-					int32 BoneIndex = Skeleton->GetMeshBoneIndexFromSkeletonBoneIndex(SkeletalMesh, BoneTreeIndex);
-
-					FTransform Transform = Bones[BoneIndex].Actor->GetActorTransform();
-					Transform.SetToRelativeTransform(ComponentTransform);
-
-					RawTrack.PosKeys.Add(Transform.GetTranslation());
-					RawTrack.RotKeys.Add(Transform.GetRotation());
-					RawTrack.ScaleKeys.Add(Transform.GetScale3D());
-				}
-			}
-		}
-
-		Anim->PostProcessSequence();
-		Anim->MarkPackageDirty();
-
-		// Clean up the temp objects we used for export
-		LevelSequenceActor->SequencePlayer->Stop();
-		LevelSequenceActor->SequencePlayer->MarkPendingKill();
-		LevelSequenceActor->Destroy();
-
-		// TODO - Setting just to Export the Keys set
-
-		/*
-		UMovieScene* MovieScene = Seq->GetMovieScene();
-
-		const int32 PossessableCount = MovieScene->GetPossessableCount();
-
-		for (int32 I = 0; I < PossessableCount; I++)
-		{
-			FMovieScenePossessable& Possessable = MovieScene->GetPossessable(I);
-			const FGuid Guid					= Possessable.GetGuid();
-			
-			UMovieScene3DTransformTrack* TransformTrack		= Cast<UMovieScene3DTransformTrack>(MovieScene->FindTrack(UMovieScene3DTransformTrack::StaticClass(), Guid, "Transform"));
-			const TArray<UMovieSceneSection*>& Sections		= TransformTrack->GetAllSections();
-			UMovieSceneSection* Section						= Sections[CS_FIRST];
-			UMovieScene3DTransformSection* TransformSection = CastChecked<UMovieScene3DTransformSection>(Section);
-		}
-		*/
 	}
+
+	Anim->PostProcessSequence();
+	Anim->MarkPackageDirty();
+
+	// Set Bones back to their original location
+	ResetBones();
+
+	// Clean up the temp objects we used for export
+	LevelSequenceActor->SequencePlayer->Stop();
+	LevelSequenceActor->SequencePlayer->MarkPendingKill();
+	LevelSequenceActor->Destroy();
+
+	// TODO - Setting just to Export the Keys set
+
+	/*
+	UMovieScene* MovieScene = Seq->GetMovieScene();
+
+	const int32 PossessableCount = MovieScene->GetPossessableCount();
+
+	for (int32 I = 0; I < PossessableCount; I++)
+	{
+	FMovieScenePossessable& Possessable = MovieScene->GetPossessable(I);
+	const FGuid Guid					= Possessable.GetGuid();
+
+	UMovieScene3DTransformTrack* TransformTrack		= Cast<UMovieScene3DTransformTrack>(MovieScene->FindTrack(UMovieScene3DTransformTrack::StaticClass(), Guid, "Transform"));
+	const TArray<UMovieSceneSection*>& Sections		= TransformTrack->GetAllSections();
+	UMovieSceneSection* Section						= Sections[CS_FIRST];
+	UMovieScene3DTransformSection* TransformSection = CastChecked<UMovieScene3DTransformSection>(Section);
+	}
+	*/
 }
 
 void ACsPoseableMeshActor::AnimLevelSequence_Shot_AddTransformTrack(const int32 &Index, const FGuid& Guid, AActor* Actor)
@@ -1072,6 +1268,9 @@ void ACsPoseableMeshActor::AnimLevelSequence_Shot_AddTransformTrack(const int32 
 
 	const bool bUnwindRotation						= false;
 	const TArray<UMovieSceneSection*>& Sections	    = TransformTrack->GetAllSections();
+
+	TransformTrack->AddSection(*TransformTrack->CreateNewSection());
+
 	UMovieSceneSection* Section						= Sections[CS_FIRST];
 	UMovieScene3DTransformSection* TransformSection = CastChecked<UMovieScene3DTransformSection>(Section);
 
@@ -1080,7 +1279,7 @@ void ACsPoseableMeshActor::AnimLevelSequence_Shot_AddTransformTrack(const int32 
 	const FVector Location  = ActorRelativeTransform.GetTranslation();
 	const FRotator Rotation = ActorRelativeTransform.GetRotation().Rotator();
 	const FVector Scale     = ActorRelativeTransform.GetScale3D();
-
+	
 	TransformSection->SetDefault(FTransformKey(EKey3DTransformChannel::Translation, EAxis::X, Location.X, false /*bUnwindRotation*/));
 	TransformSection->SetDefault(FTransformKey(EKey3DTransformChannel::Translation, EAxis::Y, Location.Y, false /*bUnwindRotation*/));
 	TransformSection->SetDefault(FTransformKey(EKey3DTransformChannel::Translation, EAxis::Z, Location.Z, false /*bUnwindRotation*/));
@@ -1092,6 +1291,74 @@ void ACsPoseableMeshActor::AnimLevelSequence_Shot_AddTransformTrack(const int32 
 	TransformSection->SetDefault(FTransformKey(EKey3DTransformChannel::Scale, EAxis::X, Scale.X, false /*bUnwindRotation*/));
 	TransformSection->SetDefault(FTransformKey(EKey3DTransformChannel::Scale, EAxis::Y, Scale.Y, false /*bUnwindRotation*/));
 	TransformSection->SetDefault(FTransformKey(EKey3DTransformChannel::Scale, EAxis::Z, Scale.Z, false /*bUnwindRotation*/));
+}
+
+void ACsPoseableMeshActor::AnimLevelSequence_Shot_AddKey(const int32 &Index, AActor* Actor)
+{
+	ULevelSequence* Seq		= AnimLevelSequence.Shots[Index].Shot;
+	UMovieScene* MovieScene = Seq->GetMovieScene();
+
+	// Find Guid for Actor
+	FGuid Guid;
+
+	const int32 PossessableCount = MovieScene->GetPossessableCount();
+
+	for (int32 I = 0; I < PossessableCount; I++)
+	{
+		FMovieScenePossessable Possessable = MovieScene->GetPossessable(I);
+		Guid							   = Possessable.GetGuid();
+
+		TArray<UObject*, TInlineAllocator<1>> Objects;
+
+		Seq->LocateBoundObjects(Guid, GetWorld(), Objects);
+
+		const int32 ObjectCount = Objects.Num();
+
+		if (ObjectCount == CS_EMPTY)
+			continue;
+		
+		bool Found = false;
+
+		for (int32 J = 0; J < ObjectCount; J++)
+		{
+			if (Actor == Cast<AActor>(Objects[J]))
+			{
+				Found = true;
+				break;
+			}
+		}
+
+		if (Found)
+			break;
+	}
+
+	UMovieScene3DTransformTrack* TransformTrack		= Cast<UMovieScene3DTransformTrack>(MovieScene->FindTrack(UMovieScene3DTransformTrack::StaticClass(), Guid, TEXT("Transform")));
+	const TArray<UMovieSceneSection*>& Sections		= TransformTrack->GetAllSections();
+	UMovieSceneSection* Section						= Sections[CS_FIRST];
+	UMovieScene3DTransformSection* TransformSection = CastChecked<UMovieScene3DTransformSection>(Section);
+
+	const float CurrentTime = LevelSequenceEditor->GetSequencer().Get()->GetGlobalTime();
+
+	if (CurrentTime > TransformSection->GetEndTime())
+		TransformSection->SetEndTime(CurrentTime);
+
+	FTransform ActorRelativeTransform = Actor->GetRootComponent()->GetRelativeTransform();
+
+	const FVector Location = ActorRelativeTransform.GetTranslation();
+	const FRotator Rotation = ActorRelativeTransform.GetRotation().Rotator();
+	const FVector Scale = ActorRelativeTransform.GetScale3D();
+
+	TransformSection->AddKey(CurrentTime, FTransformKey(EKey3DTransformChannel::Translation, EAxis::X, Location.X, false), EMovieSceneKeyInterpolation::Auto);
+	TransformSection->AddKey(CurrentTime, FTransformKey(EKey3DTransformChannel::Translation, EAxis::Y, Location.Y, false), EMovieSceneKeyInterpolation::Auto);
+	TransformSection->AddKey(CurrentTime, FTransformKey(EKey3DTransformChannel::Translation, EAxis::Z, Location.Z, false), EMovieSceneKeyInterpolation::Auto);
+
+	TransformSection->AddKey(CurrentTime, FTransformKey(EKey3DTransformChannel::Rotation, EAxis::X, Rotation.Euler().X, false), EMovieSceneKeyInterpolation::Auto);
+	TransformSection->AddKey(CurrentTime, FTransformKey(EKey3DTransformChannel::Rotation, EAxis::Y, Rotation.Euler().Y, false), EMovieSceneKeyInterpolation::Auto);
+	TransformSection->AddKey(CurrentTime, FTransformKey(EKey3DTransformChannel::Rotation, EAxis::Z, Rotation.Euler().Z, false), EMovieSceneKeyInterpolation::Auto);
+
+	TransformSection->AddKey(CurrentTime, FTransformKey(EKey3DTransformChannel::Scale, EAxis::X, Scale.X, false), EMovieSceneKeyInterpolation::Auto);
+	TransformSection->AddKey(CurrentTime, FTransformKey(EKey3DTransformChannel::Scale, EAxis::Y, Scale.Y, false), EMovieSceneKeyInterpolation::Auto);
+	TransformSection->AddKey(CurrentTime, FTransformKey(EKey3DTransformChannel::Scale, EAxis::Z, Scale.Z, false), EMovieSceneKeyInterpolation::Auto);
 }
 
 void ACsPoseableMeshActor::GenerateBones()
@@ -1222,6 +1489,16 @@ void ACsPoseableMeshActor::RecreateBone(const int32 &Index)
 	Bone->DefaultComponentTransform.SetToRelativeTransform(ComponentTransform);
 
 	Bone->ArrayIndex = Index;
+}
+
+void ACsPoseableMeshActor::ResetBones()
+{
+	const int32 Count = Bones.Num();
+
+	for (int32 I = 0; I < Count; I++)
+	{
+		Bones[I].Actor->ResetRelativeTransform();
+	}
 }
 
 void ACsPoseableMeshActor::DestroyOrphanedControlAnchors()
@@ -1360,7 +1637,9 @@ void ACsPoseableMeshActor::PerformFK(const int32 &Index)
 		const int32 InAxes				   = Connection.Input.Axes;
 		const bool OneToMany			   = NumOutputAxes == 1;
 
-		//if (Control->HasTransformMemberChanged(OutMember, OutAxes))
+		const bool UpdateFK = !bIsAssetEditorOpen || (bIsAssetEditorOpen && Control->HasTransformMemberChanged(OutMember, OutAxes));
+
+		if (UpdateFK)
 		{
 			// Out Location
 			if (OutMember == ECsTransformMember::Location)

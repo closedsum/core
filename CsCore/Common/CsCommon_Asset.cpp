@@ -29,6 +29,21 @@ UCsCommon_Asset::UCsCommon_Asset(const FObjectInitializer& ObjectInitializer)
 
 #if WITH_EDITOR
 
+void UCsCommon_Asset::SyncBrowserToAsset(UObject* InObject)
+{
+	TArray<UObject*> ObjectsToSync;
+	ObjectsToSync.Add(InObject);
+
+	FContentBrowserModule& ContentBrowserModule = FModuleManager::LoadModuleChecked<FContentBrowserModule>("ContentBrowser");
+	ContentBrowserModule.Get().SyncBrowserToAssets(ObjectsToSync);
+}
+
+void UCsCommon_Asset::SyncBrowserToAssets(TArray<UObject*> Objects)
+{
+	FContentBrowserModule& ContentBrowserModule = FModuleManager::LoadModuleChecked<FContentBrowserModule>("ContentBrowser");
+	ContentBrowserModule.Get().SyncBrowserToAssets(Objects);
+}
+
 UFactory* UCsCommon_Asset::GetFactory(UClass* ClassToSpawn)
 {
 	for (TObjectIterator<UClass> It; It; ++It)
@@ -89,6 +104,8 @@ UAnimSequence* UCsCommon_Asset::CreateAnimSequence(USkeletalMesh* Mesh, const FS
 
 void UCsCommon_Asset::InitAnimSequence(class UAnimSequence* Anim, class USkeletalMeshComponent* Mesh)
 {
+	Anim->RecycleAnimSequence();
+
 	USkeleton* AnimSkeleton     = Anim->GetSkeleton();
 	USkeletalMesh* SkeletalMesh = Mesh->SkeletalMesh;
 
@@ -112,10 +129,12 @@ void UCsCommon_Asset::InitAnimSequence(class UAnimSequence* Anim, class USkeleta
 
 void UCsCommon_Asset::InitAnimSequence(class UAnimSequence* Anim, class UPoseableMeshComponent* Mesh)
 {
+	Anim->RecycleAnimSequence();
+
 	USkeleton* AnimSkeleton     = Anim->GetSkeleton();
 	USkeletalMesh* SkeletalMesh = Mesh->SkeletalMesh;
 
-	const int32 BoneCount = Mesh->GetComponentSpaceTransforms().Num();
+	const int32 BoneCount = Mesh->BoneSpaceTransforms.Num();
 
 	for (int32 BoneIndex = 0; BoneIndex < BoneCount; ++BoneIndex)
 	{

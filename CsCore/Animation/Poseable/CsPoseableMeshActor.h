@@ -8,45 +8,6 @@
 // Enums
 #pragma region
 
-UENUM(BlueprintType)
-namespace ECsAnimControl
-{
-	enum Type
-	{
-		None				UMETA(DisplayName = "None"),
-		TwoBoneIK			UMETA(DisplayName = "TwoBoneIK"),
-		ECsAnimControl_MAX	UMETA(Hidden),
-	};
-}
-
-namespace ECsAnimControl
-{
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
-
-	namespace Str
-	{
-		const TCsString None = TCsString(TEXT("Tick"), TEXT("tick"));
-		const TCsString TwoBoneIK = TCsString(TEXT("CalcCamera"), TEXT("calccamera"));
-	}
-
-	FORCEINLINE FString ToString(const Type &EType)
-	{
-		if (EType == Type::None) { return Str::None.Value; }
-		if (EType == Type::TwoBoneIK) { return Str::TwoBoneIK.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::None) { return Type::None; }
-		if (String == Str::TwoBoneIK) { return Type::TwoBoneIK; }
-		return Type::ECsAnimControl_MAX;
-	}
-}
-
-#define ECS_ANIM_CONTROL_MAX (uint8)ECsAnimControl::ECsAnimControl_MAX
-typedef TEnumAsByte<ECsAnimControl::Type> TCsAnimControl;
-
 #pragma endregion Enums
 
 // Structs
@@ -591,6 +552,149 @@ struct FCsAnimControlInfo_TwoBoneIK
 	// Level Sequence
 #pragma region
 
+UENUM(BlueprintType)
+namespace ECsSequencerTimeSnapInterval
+{
+	enum Type
+	{
+		STSI_0_001							UMETA(DisplayName = "0.001s"),
+		STSI_0_01							UMETA(DisplayName = "0.01s"),
+		STSI_0_1							UMETA(DisplayName = "0.1s"),
+		STSI_1								UMETA(DisplayName = "1s"),
+		STSI_10								UMETA(DisplayName = "10s"),
+		STSI_100							UMETA(DisplayName = "100s"),
+		STSI_15Fps							UMETA(DisplayName = "15 fps"),
+		STSI_24Fps							UMETA(DisplayName = "24 fps (film)"),
+		STSI_25Fps							UMETA(DisplayName = "25 fps (PAL/25)"),
+		STSI_29_97Fps						UMETA(DisplayName = "29.97 fps (NTSC/30)"),
+		STSI_30Fps							UMETA(DisplayName = "30 fps"),
+		STSI_48Fps							UMETA(DisplayName = "48 fps"),
+		STSI_50Fps							UMETA(DisplayName = "50 fps (PAL/50)"),
+		STSI_59_94Fps						UMETA(DisplayName = "59.94 fps (NTSC/60)"),
+		STSI_60Fps							UMETA(DisplayName = "60 fps"),
+		STSI_120Fps							UMETA(DisplayName = "120 fps"),
+		STSI_Custom							UMETA(DisplayName = "Custom"),
+		ECsSequencerTimeSnapInterval_MAX	UMETA(Hidden),
+	};
+}
+
+namespace ECsSequencerTimeSnapInterval
+{
+	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString STSI_0_001 = TCsString(TEXT("STSI_0_001"), TEXT("stsi_0_001"), TEXT("0.001"));
+		const TCsString STSI_0_01 = TCsString(TEXT("STSI_0_01"), TEXT("stsi_0_01"), TEXT("0.01"));
+		const TCsString STSI_0_1 = TCsString(TEXT("STSI_0_1"), TEXT("stsi_0_1"), TEXT("0.1"));
+		const TCsString STSI_1 = TCsString(TEXT("STSI_1"), TEXT("stsi_1"), TEXT("1"));
+		const TCsString STSI_10 = TCsString(TEXT("STSI_10"), TEXT("stsi_10"), TEXT("10"));
+		const TCsString STSI_100 = TCsString(TEXT("STSI_100"), TEXT("stsi_100"), TEXT("100"));
+		const TCsString STSI_15Fps = TCsString(TEXT("STSI_15Fps"), TEXT("stsi_15fps"), TEXT("15fps"));
+		const TCsString STSI_24Fps = TCsString(TEXT("STSI_24Fps"), TEXT("stsi_24fps"), TEXT("24fps"));
+		const TCsString STSI_25Fps = TCsString(TEXT("STSI_25Fps"), TEXT("stsi_25fps"), TEXT("25fps"));
+		const TCsString STSI_29_97Fps = TCsString(TEXT("STSI_29_97Fps"), TEXT("stsi_29_97fps"), TEXT("29.97fps"));
+		const TCsString STSI_30Fps = TCsString(TEXT("STSI_30Fps"), TEXT("stsi_30fps"), TEXT("30fps"));
+		const TCsString STSI_48Fps = TCsString(TEXT("STSI_48Fps"), TEXT("stsi_48fps"), TEXT("48fps"));
+		const TCsString STSI_50Fps = TCsString(TEXT("STSI_50Fps"), TEXT("stsi_50fps"), TEXT("50fps"));
+		const TCsString STSI_59_94Fps = TCsString(TEXT("STSI_59_94Fps"), TEXT("stsi_59_94fps"), TEXT("59.94fps"));
+		const TCsString STSI_60Fps = TCsString(TEXT("STSI_60Fps"), TEXT("stsi_60fps"), TEXT("60fps"));
+		const TCsString STSI_120Fps = TCsString(TEXT("STSI_120Fps"), TEXT("stsi_120fps"), TEXT("120fps"));
+		const TCsString STSI_Custom = TCsString(TEXT("STSI_Custom"), TEXT("stsi_custom"), TEXT("custom"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::STSI_0_001) { return Str::STSI_0_001.Value; }
+		if (EType == Type::STSI_0_01) { return Str::STSI_0_01.Value; }
+		if (EType == Type::STSI_0_1) { return Str::STSI_0_1.Value; }
+		if (EType == Type::STSI_1) { return Str::STSI_1.Value; }
+		if (EType == Type::STSI_10) { return Str::STSI_10.Value; }
+		if (EType == Type::STSI_100) { return Str::STSI_100.Value; }
+		if (EType == Type::STSI_15Fps) { return Str::STSI_15Fps.Value; }
+		if (EType == Type::STSI_24Fps) { return Str::STSI_24Fps.Value; }
+		if (EType == Type::STSI_25Fps) { return Str::STSI_25Fps.Value; }
+		if (EType == Type::STSI_29_97Fps) { return Str::STSI_29_97Fps.Value; }
+		if (EType == Type::STSI_30Fps) { return Str::STSI_30Fps.Value; }
+		if (EType == Type::STSI_48Fps) { return Str::STSI_48Fps.Value; }
+		if (EType == Type::STSI_50Fps) { return Str::STSI_50Fps.Value; }
+		if (EType == Type::STSI_59_94Fps) { return Str::STSI_59_94Fps.Value; }
+		if (EType == Type::STSI_60Fps) { return Str::STSI_60Fps.Value; }
+		if (EType == Type::STSI_120Fps) { return Str::STSI_120Fps.Value; }
+		if (EType == Type::STSI_Custom) { return Str::STSI_Custom.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::STSI_0_001) { return Type::STSI_0_001; }
+		if (String == Str::STSI_0_01) { return Type::STSI_0_01; }
+		if (String == Str::STSI_0_1) { return Type::STSI_0_1; }
+		if (String == Str::STSI_1) { return Type::STSI_1; }
+		if (String == Str::STSI_10) { return Type::STSI_10; }
+		if (String == Str::STSI_100) { return Type::STSI_100; }
+		if (String == Str::STSI_15Fps) { return Type::STSI_15Fps; }
+		if (String == Str::STSI_24Fps) { return Type::STSI_24Fps; }
+		if (String == Str::STSI_25Fps) { return Type::STSI_25Fps; }
+		if (String == Str::STSI_29_97Fps) { return Type::STSI_29_97Fps; }
+		if (String == Str::STSI_30Fps) { return Type::STSI_30Fps; }
+		if (String == Str::STSI_48Fps) { return Type::STSI_48Fps; }
+		if (String == Str::STSI_50Fps) { return Type::STSI_50Fps; }
+		if (String == Str::STSI_59_94Fps) { return Type::STSI_59_94Fps; }
+		if (String == Str::STSI_60Fps) { return Type::STSI_60Fps; }
+		if (String == Str::STSI_120Fps) { return Type::STSI_120Fps; }
+		if (String == Str::STSI_Custom) { return Type::STSI_Custom; }
+		return Type::ECsSequencerTimeSnapInterval_MAX;
+	}
+
+	FORCEINLINE float ToFloat(const Type &EType)
+	{
+		if (EType == Type::STSI_0_001) { return 0.001f; }
+		if (EType == Type::STSI_0_01) { return 0.01f; }
+		if (EType == Type::STSI_0_1) { return 0.1f; }
+		if (EType == Type::STSI_1) { return 1.0f; }
+		if (EType == Type::STSI_10) { return 10.0f; }
+		if (EType == Type::STSI_100) { return 100.0f; }
+		if (EType == Type::STSI_15Fps) { return 1.0f / 15.0f; }
+		if (EType == Type::STSI_24Fps) { return 1.0f / 24.0f; }
+		if (EType == Type::STSI_25Fps) { return 1.0f / 25.0f; }
+		if (EType == Type::STSI_29_97Fps) { return 1.0f / 29.97f; }
+		if (EType == Type::STSI_30Fps) { return 1.0f / 30.0f; }
+		if (EType == Type::STSI_48Fps) { return 1.0f / 48.0f; }
+		if (EType == Type::STSI_50Fps) { return 1.0f / 50.0f; }
+		if (EType == Type::STSI_59_94Fps) { return 1.0f / 59.94f; }
+		if (EType == Type::STSI_60Fps) { return 1.0f / 60.0f; }
+		if (EType == Type::STSI_120Fps) { return 1.0f / 120.0f; }
+		if (EType == Type::STSI_Custom) { return 0.01f; }
+		return 1.0f;
+	}
+
+	FORCEINLINE float ToFPS(const Type &EType)
+	{
+		if (EType == Type::STSI_0_001) { return 1000.0f; }
+		if (EType == Type::STSI_0_01) { return 100.0f; }
+		if (EType == Type::STSI_0_1) { return 10.0f; }
+		if (EType == Type::STSI_1) { return 1.0f; }
+		if (EType == Type::STSI_10) { return 0.1f; }
+		if (EType == Type::STSI_100) { return 0.01f; }
+		if (EType == Type::STSI_15Fps) { return 15.0f; }
+		if (EType == Type::STSI_24Fps) { return 24.0f; }
+		if (EType == Type::STSI_25Fps) { return 25.0f; }
+		if (EType == Type::STSI_29_97Fps) { return 29.97f; }
+		if (EType == Type::STSI_30Fps) { return 30.0f; }
+		if (EType == Type::STSI_48Fps) { return 48.0f; }
+		if (EType == Type::STSI_50Fps) { return 50.0f; }
+		if (EType == Type::STSI_59_94Fps) { return 59.94f; }
+		if (EType == Type::STSI_60Fps) { return 60.0f; }
+		if (EType == Type::STSI_120Fps) { return 120.0f; }
+		if (EType == Type::STSI_Custom) { return 100.0f; }
+		return 1.0f;
+	}
+}
+
+#define ECS_SEQUENCER_TIME_SNAP_INTERVAL_MAX (uint8)ECsSequencerTimeSnapInterval::ECsSequencerTimeSnapInterval_MAX
+typedef TEnumAsByte<ECsSequencerTimeSnapInterval::Type> TCsSequencerTimeSnapInterval;
+
 USTRUCT()
 struct FCsAnimLevelSequenceInfo_Shot
 {
@@ -602,16 +706,28 @@ struct FCsAnimLevelSequenceInfo_Shot
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
 	FString Name;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
 	FString PackagePath;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Level Sequence")
 	class ULevelSequence* Shot;
-
+	/* Export Shot to AnimSequence */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
 	bool Export;
-	/* anim_ + BaseName (usually part of SkeletalMesh Name) is appended to Name */
+	/* Interval at which to Save AnimSequence (i.e. 30 Fps, 60 Fps, ... etc) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	TEnumAsByte<ECsSequencerTimeSnapInterval::Type> ExportInterval;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	float ExportInterval_Internal;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	float ExportInterval_FPS;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	bool Import;
+
+	/* anim_ + BaseName (usually part of SkeletalMesh Name) is appended to Name */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
 	class UAnimSequence* Anim;
 
 	FCsAnimLevelSequenceInfo_Shot()
@@ -621,6 +737,9 @@ struct FCsAnimLevelSequenceInfo_Shot
 		PackagePath = TEXT("");
 		Shot = nullptr;
 		Export = false;
+		ExportInterval = ECsSequencerTimeSnapInterval::STSI_30Fps;
+		ExportInterval_Internal = ECsSequencerTimeSnapInterval::ToFloat(ExportInterval);
+		ExportInterval_FPS = ECsSequencerTimeSnapInterval::ToFPS(ExportInterval);
 		Anim = nullptr;
 	}
 
@@ -631,6 +750,10 @@ struct FCsAnimLevelSequenceInfo_Shot
 		PackagePath = B.PackagePath;
 		Shot = B.Shot;
 		Export = B.Export;
+		ExportInterval = B.ExportInterval;
+		ExportInterval_Internal = B.ExportInterval_Internal;
+		ExportInterval_FPS = B.ExportInterval_FPS;
+		Import = B.Import;
 		Anim = B.Anim;
 		return *this;
 	}
@@ -642,6 +765,10 @@ struct FCsAnimLevelSequenceInfo_Shot
 			   PackagePath == B.PackagePath &&
 			   Shot == B.Shot &&
 			   Export == B.Export &&
+			   ExportInterval == B.ExportInterval &&
+			   ExportInterval_Internal == B.ExportInterval_Internal &&
+			   ExportInterval_FPS == B.ExportInterval_FPS &&
+			   Import == B.Import &&
 			   Anim == B.Anim;
 	}
 
@@ -662,24 +789,28 @@ struct FCsAnimLevelSequenceInfo_Master
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
 	bool FindOrCreate;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	FString Name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
 	FString PackagePath;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Level Sequence")
 	class ULevelSequence* Master;
+	/* Export all Shots to AnimSequences */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
+	bool Export;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
 	TArray<FCsAnimLevelSequenceInfo_Shot> Shots;
 
 	TArray<FCsAnimLevelSequenceInfo_Shot> Shots_Copy;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Sequence")
-	bool Export;
-
 	FCsAnimLevelSequenceInfo_Master()
 	{
 		Open = false;
 		FindOrCreate = false;
+		Name = TEXT("");
 		PackagePath = TEXT("");
 		Master = nullptr;
 		Export = false;
@@ -689,6 +820,7 @@ struct FCsAnimLevelSequenceInfo_Master
 	{
 		Open = B.Open;
 		FindOrCreate = B.FindOrCreate;
+		Name = B.Name;
 		PackagePath = B.PackagePath;
 		Master = B.Master;
 
@@ -710,6 +842,8 @@ struct FCsAnimLevelSequenceInfo_Master
 		if (Open != B.Open)
 			return false;
 		if (FindOrCreate != B.FindOrCreate)
+			return false;
+		if (Name != B.Name)
 			return false;
 		if (PackagePath != B.PackagePath)
 			return false;
@@ -781,23 +915,43 @@ class CSCORE_API ACsPoseableMeshActor : public AActor
 
 #if WITH_EDITOR
 
+	bool bIsAssetEditorOpen;
+	bool IsAssetEditorOpen();
+
+	class FLevelSequenceEditorToolkit* LevelSequenceEditor;
+	class FLevelSequenceEditorToolkit* GetOpenAssetEditor();
+
+	int32 OpenShotIndex;
+	int32 GetOpenShotIndexInEditor();
+
 	void OnControlNameChanged_FK(const int32 &Index);
 	void OnControlNameChanged_TwoBoneIK(const int32 &Index);
 
+	FString GetMeshName();
+	FString GetBaseAssetName();
+
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& e) override;
 	void PostEditChangeProperty_LevelSequence_Master(struct FPropertyChangedEvent& e);
+
 	virtual void PostEditChangeChainProperty(struct FPropertyChangedChainEvent& e) override;
+
 	void PostEditChangeChainProperty_Control_FK(struct FPropertyChangedChainEvent& e);
 	void PostEditChangeChainProperty_Control_FK_Connection(struct FPropertyChangedChainEvent& e);
+
 	void PostEditChangeChainProperty_TwoBoneIK(struct FPropertyChangedChainEvent& e);
+
 	void PostEditChangeChainProperty_LevelSequence_Shots(struct FPropertyChangedChainEvent& e);
+	void PostEditChangeChainProperty_LevelSequence_Shots_FindOrCreate(struct FPropertyChangedChainEvent& e);
+	void PostEditChangeChainProperty_LevelSequence_Shots_Export(struct FPropertyChangedChainEvent& e);
 
 	void AnimLevelSequence_Shot_AddTransformTrack(const int32 &Index, const FGuid& Guid, AActor* Actor);
-	void AnimLevelSequence_Shot_Export(const int32 &Index);
+	void AnimLevelSequence_Shot_AddKey(const int32 &Index, AActor* Actor);
+	//void AnimLevelSequence_Shot_Export(const int32 &Index);
 
 	virtual void GenerateBones();
 	virtual void ClearBones();
 	void RecreateBone(const int32 &Index);
+	void ResetBones();
 
 	void DestroyOrphanedControlAnchors();
 	void DestroyOrphanedControlHelpers();

@@ -258,6 +258,9 @@ class CSCORE_API UCsCommon_Asset : public UBlueprintFunctionLibrary
 		}
 	}
 
+	static void SyncBrowserToAsset(UObject* InObject);
+	static void SyncBrowserToAssets(TArray<UObject*> Objects);
+
 	static class UFactory* GetFactory(UClass* ClassToSpawn);
 	static class UObject* CreateAsset(UClass* ClassToSpawn, const FString &Name, const FString &PackagePath);
 

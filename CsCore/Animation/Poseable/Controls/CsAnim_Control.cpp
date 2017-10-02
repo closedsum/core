@@ -124,6 +124,11 @@ void ACsAnim_Control::SetControlName(const FString &InName)
 
 #endif // #if WITH_EDITOR
 
+bool ACsAnim_Control::HasTransformChanged()
+{
+	return Location.HasChanged() || Rotation.HasChanged() || Scale.HasChanged();
+}
+
 bool ACsAnim_Control::HasRelativeTransformMemberChanged(const TEnumAsByte<ECsTransformMember::Type> &Member, const int32 &Axes)
 {
 	if (Member == ECsTransformMember::Location)

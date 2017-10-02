@@ -5,7 +5,7 @@
 #include "Types/CsTypes_Primitive.h"
 #include "CsAnim_Bone.generated.h"
 
-UCLASS()
+UCLASS(hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
 class CSCORE_API ACsAnim_Bone : public AActor
 {
 	GENERATED_UCLASS_BODY()
@@ -18,7 +18,7 @@ class CSCORE_API ACsAnim_Bone : public AActor
 
 	class USceneComponent* DefaultRootComponent;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "00 Bone")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "00 Bone")
 	class UCsStaticMeshComponent* StaticMeshComponent;
 
 	/* Bone Name */
@@ -45,7 +45,7 @@ class CSCORE_API ACsAnim_Bone : public AActor
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "00 Bone")
 	FVector HandleSize_Internal;
 
-	FCsPrimitiveType<FVector> HandleScale;
+	TCsFVector HandleScale;
 
 	bool ForceUpdateTransform;
 

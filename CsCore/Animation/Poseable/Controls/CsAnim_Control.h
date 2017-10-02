@@ -7,7 +7,7 @@
 
 DECLARE_DELEGATE_OneParam(FBindableEvent_CsAnimControl_OnControlNameChanged, const int32&);
 
-UCLASS()
+UCLASS(hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
 class CSCORE_API ACsAnim_Control : public AStaticMeshActor
 {
 	GENERATED_UCLASS_BODY()
@@ -75,6 +75,8 @@ class CSCORE_API ACsAnim_Control : public AStaticMeshActor
 	TCsFRotator Rotation;
 	TCsFVector Scale;
 	
+	UFUNCTION(BlueprintCallable, Category = "Control")
+	bool HasTransformChanged();
 	UFUNCTION(BlueprintCallable, Category = "Control")
 	bool HasRelativeTransformMemberChanged(const TEnumAsByte<ECsTransformMember::Type> &Member, const int32 &Axes);
 	UFUNCTION(BlueprintCallable, Category = "Control")

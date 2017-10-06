@@ -6,7 +6,11 @@
 #include "Runtime/UMG/Public/Components/TextBlock.h"
 #include "Runtime/UMG/Public/Components/Image.h"
 #include "Runtime/UMG/Public/Components/Button.h"
+#include "Runtime/UMG/Public/Components/Slider.h"
+#include "Runtime/UMG/Public/Components/EditableTextBox.h"
+#include "Runtime/UMG/Public/Components/CheckBox.h"
 #include "Types/CsTypes.h"
+#include "Types/CsTypes_Input.h"
 #include "Common/CsCommon.h"
 #include "CsUserWidget.generated.h"
 
@@ -290,6 +294,335 @@ public:
 	}
 
 	UButton* Get() { return Button.IsValid() ? Button.Get() : nullptr; }
+};
+
+struct FCsWidget_CheckBox : FCsWidget
+{
+public:
+	TWeakObjectPtr<class UCheckBox> CheckBox;
+
+	FCsPrimitiveType<ECheckBoxState> State;
+
+	void Set(class UCheckBox* inCheckBox)
+	{
+		CheckBox = inCheckBox;
+		State    = CheckBox->GetCheckedState();
+	}
+
+	virtual void OnNativeTick(const float &InDeltaTime) override
+	{
+		// Visibility
+		if (Visibility.HasChanged())
+		{
+			if (UCheckBox* C = Get())
+				C->SetVisibility(Visibility.Get());
+		}
+		if (Visibility != ESlateVisibility::Visible)
+		{
+			Visibility.Clear();
+			return;
+		}
+		// CheckBoxState
+		if (State.HasChanged())
+		{
+			if (UCheckBox* C = Get())
+				C->SetCheckedState(State.Get());
+		}
+		Visibility.Clear();
+		State.Clear();
+	}
+
+	void SetCheckState(const ECheckBoxState &inState)
+	{
+		State = inState;
+	}
+
+	UCheckBox* Get() { return CheckBox.IsValid() ? CheckBox.Get() : nullptr; }
+};
+
+struct FCsWidget_Slider : FCsWidget
+{
+public:
+	TWeakObjectPtr<class USlider> Slider;
+
+	TCsFloat Value;
+	FCsPrimitiveType<FLinearColor> HandleColor;
+
+	void Set(class USlider* inSlider)
+	{
+		Slider		= inSlider;
+		HandleColor = Slider->SliderHandleColor;
+	}
+
+	virtual void OnNativeTick(const float &InDeltaTime) override
+	{
+		// Visibility
+		if (Visibility.HasChanged())
+		{
+			if (USlider* S = Get())
+				S->SetVisibility(Visibility.Get());
+		}
+		if (Visibility != ESlateVisibility::Visible)
+		{
+			Visibility.Clear();
+			return;
+		}
+		// Value
+		if (Value.HasChanged())
+		{
+			if (USlider* S = Get())
+				S->SetValue(Value.Get());
+		}
+		// Color
+		if (HandleColor.HasChanged())
+		{
+			if (USlider* S = Get())
+				S->SetSliderHandleColor(HandleColor.Get());
+		}
+		Visibility.Clear();
+		HandleColor.Clear();
+	}
+
+	void SetValue(const float &inValue)
+	{
+		Value = inValue;
+	}
+
+	void SetHandleColor(const FLinearColor &Color)
+	{
+		HandleColor = Color;
+	}
+
+	USlider* Get() { return Slider.IsValid() ? Slider.Get() : nullptr; }
+};
+
+struct FCsWidget_EditableTextBox : FCsWidget
+{
+public:
+	TWeakObjectPtr<class UEditableTextBox> TextBox;
+
+	FCsPrimitiveType<FString> Text;
+	FCsPrimitiveType<FLinearColor> Color;
+
+	void Set(class UEditableTextBox* inTextBox)
+	{
+		TextBox = inTextBox;
+		Color   = TextBox->BackgroundColor_DEPRECATED;
+	}
+
+	virtual void OnNativeTick(const float &InDeltaTime) override
+	{
+		// Visibility
+		if (Visibility.HasChanged())
+		{
+			if (UEditableTextBox* T = Get())
+				T->SetVisibility(Visibility.Get());
+		}
+		if (Visibility != ESlateVisibility::Visible)
+		{
+			Visibility.Clear();
+			return;
+		}
+		// Text
+		if (Text.HasChanged())
+		{
+			if (UEditableTextBox* T = Get())
+				T->SetText(FText(FText::FromString(Text.Get())));
+		}
+		// Color
+		if (Color.HasChanged())
+		{
+			if (UEditableTextBox* T = Get())
+				T->BackgroundColor_DEPRECATED = Color.Get();
+		}
+		Visibility.Clear();
+		Color.Clear();
+	}
+
+	virtual void SetText(const FString &inText)
+	{
+		Text = inText;
+	}
+
+	void SetBackgroundColor(const FLinearColor &inColor)
+	{
+		Color = inColor;
+	}
+
+	UEditableTextBox* Get() { return TextBox.IsValid() ? TextBox.Get() : nullptr; }
+};
+
+struct FCsWidget_EditableFloatBox : FCsWidget_EditableTextBox
+{
+public:
+	TCsFloat Value;
+
+	virtual void SetText(const FString &inText)
+	{
+		const int32 Len = inText.Len();
+
+		if (Len == CS_EMPTY)
+			return;
+		if (Len > 4)
+			return;
+		if (Text == inText)
+			return;
+
+		FString First = inText[0] == '.' ? TEXT(".") : TEXT("");
+		FString Second = Len > 1 && inText[1] == '.' ? TEXT(".") : TEXT("");
+		FString Third = Len > 2 && inText[2] == '.' ? TEXT(".") : TEXT("");
+		FString Fourth = Len > 3 && inText[3] == '.' ? TEXT(".") : TEXT("");
+
+		int32 FirstValue = INDEX_NONE;
+		int32 SecondValue = INDEX_NONE;
+		int32 ThirdValue = INDEX_NONE;
+		int32 FourthValue = INDEX_NONE;
+
+		const int32 Max = 10;
+
+		for (int32 I = 0; I < Max; I++)
+		{
+			if (inText[0] == FString::FromInt(I)[0])
+			{
+				First	   = FString::FromInt(I);
+				FirstValue = I;
+				continue;
+			}
+			if (Len > 1 &&
+				inText[1] == FString::FromInt(I)[0])
+			{
+				Second		= FString::FromInt(I);
+				SecondValue = I;
+				continue;
+			}
+			if (Len > 2 &&
+				inText[2] == FString::FromInt(I)[0])
+			{
+				Third	   = FString::FromInt(I);
+				ThirdValue = I;
+				continue;
+			}
+			if (Len > 3 &&
+				inText[3] == FString::FromInt(I)[0])
+			{
+				Fourth	    = FString::FromInt(I);
+				FourthValue = I;
+			}
+		}
+
+		// Blank -> Do Nothing
+		if (First == TEXT(""))
+			return;
+		// .
+		if (First == TEXT("."))
+		{
+			// .. or . -> Do Nothing
+			if (Second == TEXT(".") || Second == TEXT(""))
+				return;
+			Text = First + Second;
+			Value = (float)SecondValue / 10.0f;
+			// .N. -> return .N
+			if (Third == TEXT(".") || Third == TEXT(""))
+				return;
+			Text = Text.Get() + Third;
+			Value = Value.Get() + ((float)ThirdValue / 100.0f);
+			return;
+		}
+		// 0
+		if (First == FString::FromInt(0))
+		{
+			// 0
+			if (Second == TEXT(""))
+			{
+				Text = First;
+				Value = 0.0f;
+				return;
+			}
+			// 0.
+			if (Second == TEXT("."))
+			{
+				// 0.. or 0.
+				if (Third == TEXT(".") || Third == TEXT(""))
+				{
+					Text = First;
+					Value = 0.0f;
+					return;
+				}
+				Text = First + Second + Third;
+				Value = ((float)ThirdValue / 10.0f);
+				// 0.N. -> return 0.N
+				if (Fourth == TEXT(".") || Fourth == TEXT(""))
+					return;
+				Text = Text.Get() + Fourth;
+				Value = ((float)SecondValue / 10.0f) + ((float)ThirdValue / 100.0f);
+				return;
+			}
+			Text = TEXT("1.0");
+			Value = 1.0f;
+			return;
+		}
+		// > 1
+		Text = TEXT("1.0");
+		Value = 1.0f;
+	}
+
+	void SetValue(const float &inValue)
+	{
+		Value = FMath::Clamp(inValue, 0.0f, 1.0f);
+
+		if (Value == 0.0f)
+		{
+			Text = TEXT("0.0f");
+		}
+		else
+		if (Value < 1.0f)
+		{
+			const int32 Tenths = FMath::FloorToInt(Value / 10.0f);
+			int32 Hundredths = FMath::FloorToInt((Value / 100.0f) - 10.0f);
+
+			if (Hundredths < 0)
+				Hundredths = 0;
+
+			Value = ((float)Tenths / 10.0f) + ((float)Hundredths / 100.0f);
+			Text = TEXT("0.") + FString::FromInt(Tenths);
+			Text = Hundredths > 0 ? Text.Get() + FString::FromInt(Hundredths) : Text.Get();
+		}
+		else
+		{
+			Text = TEXT("1.0");
+		}
+	}
+};
+
+struct FCsWidget_SliderAndEditableFloatBox : FCsWidget
+{
+	FCsWidget_Slider Slider;
+	FCsWidget_EditableFloatBox FloatBox;
+
+	virtual void OnNativeTick(const float &InDeltaTime) override
+	{
+		// Visibility
+		if (Visibility.HasChanged())
+		{
+			Slider.SetVisibility(Visibility.Get());
+			FloatBox.SetVisibility(Visibility.Get());
+		}
+
+		Slider.OnNativeTick(InDeltaTime);
+		FloatBox.OnNativeTick(InDeltaTime);
+
+		if (Visibility != ESlateVisibility::Visible)
+		{
+			Visibility.Clear();
+			return;
+		}
+	}
+
+	void SetValue(const float &inValue)
+	{
+		Slider.SetValue(inValue);
+		FloatBox.SetValue(inValue);
+	}
 };
 
 struct FCsWidget_ButtonAndText : FCsWidget
@@ -582,6 +915,9 @@ class CSCORE_API UCsUserWidget : public UUserWidget
 
 public:
 
+	virtual void Init();
+	virtual void OnLastTick(const float &DeltaSeconds);
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OO Default")
 	FName ShortCode;
 
@@ -593,11 +929,19 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "UI")
 	FBindableDynEvent_CsUserWidget_OnNativeTick OnNativeTick_ScriptEvent;
 
+	UPROPERTY()
 	bool HasInitFinished;
 
-	virtual void Init();
+	UPROPERTY()
+	int32 Focus;
+
+	virtual void SetFocus(const ECsWidgetFocus &InFocus);
+	virtual void SetFocus(const int32 &InFocus);
+
 	virtual void Show();
 	virtual void Hide();
+
+	TArray<TCsWidgetType> ChildWidgetTypes;
 
 // Routines
 #pragma region

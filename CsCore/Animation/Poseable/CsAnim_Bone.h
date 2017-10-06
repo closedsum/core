@@ -93,4 +93,10 @@ class CSCORE_API ACsAnim_Bone : public AActor
 	void UpdateRotation(const FRotator &InRotation, const int32 &Axes = 3 /*CS_AXES_ALL*/);
 	UFUNCTION(BlueprintCallable, Category = "Bone")
 	void UpdateScale(const FVector &InScale, const int32 &Axes = 3 /*CS_AXES_ALL*/);
+
+#if WITH_EDITOR
+
+	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& e) override;
+
+#endif // #if WITH_EDITOR
 };

@@ -241,3 +241,29 @@ void ACsAnim_Bone::UpdateScale(const FVector &InScale, const int32 &Axes /*= CS_
 		Scale = GetActorScale3D();
 	}
 }
+
+#if WITH_EDITOR
+
+void ACsAnim_Bone::PostEditChangeProperty(struct FPropertyChangedEvent& e)
+{
+	if (!UCsCommon::IsPlayInEditor(GetWorld()))
+	{
+		Super::PostEditChangeProperty(e);
+		return;
+	}
+
+	FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
+
+	// HandleSize
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(ACsAnim_Bone, HandleSize))
+	{
+		HandleSize_Internal = FVector(HandleSize);
+		HandleScale			= HandleSize_Internal;
+
+		StaticMeshComponent->SetWorldScale3D(HandleSize_Internal);
+	}
+
+	Super::PostEditChangeProperty(e);
+}
+
+#endif // #if WITH_EDITOR

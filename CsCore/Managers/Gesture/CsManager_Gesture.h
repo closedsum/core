@@ -1,6 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Types/CsTypes.h"
+#include "Types/CsTypes_Input.h"
 #include "CsManager_Gesture.generated.h"
 
 UCLASS(transient)

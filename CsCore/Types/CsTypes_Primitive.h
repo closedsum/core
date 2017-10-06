@@ -72,6 +72,93 @@ typedef FCsPrimitiveType_Int32 TCsInt32;
 
 struct FCsPrimitiveType_Float : FCsPrimitiveType<float>
 {
+	FCsPrimitiveType_Float& operator=(const float& B)
+	{
+		Value = B;
+		IsDirty = Value != Last_Value;
+		return *this;
+	}
+
+	FORCEINLINE friend bool operator==(const float &Lhs, const FCsPrimitiveType_Float &Rhs)
+	{
+		return Lhs == Rhs.Value;
+	}
+
+	FORCEINLINE friend bool operator==(const FCsPrimitiveType_Float &Lhs, const float &Rhs)
+	{
+		return Lhs.Value == Rhs;
+	}
+
+	FORCEINLINE friend bool operator!=(const float &Lhs, const FCsPrimitiveType_Float &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_Float &Lhs, const float &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FCsPrimitiveType_Float& operator+=(const float& B)
+	{
+		Value += B;
+		IsDirty = Value != Last_Value;
+		return *this;
+	}
+
+	FCsPrimitiveType_Float& operator-=(const float& B)
+	{
+		Value -= B;
+		IsDirty = Value != Last_Value;
+		return *this;
+	}
+
+	FCsPrimitiveType_Float& operator*=(const float& B)
+	{
+		Value *= B;
+		IsDirty = Value != Last_Value;
+		return *this;
+	}
+
+	FORCEINLINE friend bool operator<(const FCsPrimitiveType_Float &Lhs, const float &Rhs)
+	{
+		return Lhs.Value < Rhs;
+	}
+
+	FORCEINLINE friend bool operator<(const float &Lhs, const FCsPrimitiveType_Float &Rhs)
+	{
+		return Lhs < Rhs.Value;
+	}
+
+	FORCEINLINE friend bool operator>(const FCsPrimitiveType_Float &Lhs, const float &Rhs)
+	{
+		return Lhs.Value > Rhs;
+	}
+
+	FORCEINLINE friend bool operator>(const float &Lhs, const FCsPrimitiveType_Float &Rhs)
+	{
+		return Lhs > Rhs.Value;
+	}
+
+	FORCEINLINE friend float operator/(const FCsPrimitiveType_Float &Lhs, const float &Rhs)
+	{
+		return Lhs.Value / Rhs;
+	}
+
+	FORCEINLINE friend float operator/(const float &Lhs, const FCsPrimitiveType_Float &Rhs)
+	{
+		return Lhs / Rhs.Value;
+	}
+
+	FORCEINLINE friend float operator*(const FCsPrimitiveType_Float &Lhs, const float &Rhs)
+	{
+		return Lhs.Value * Rhs;
+	}
+
+	FORCEINLINE friend float operator*(const float &Lhs, const FCsPrimitiveType_Float &Rhs)
+	{
+		return Lhs * Rhs.Value;
+	}
 };
 
 typedef FCsPrimitiveType_Float TCsFloat;
@@ -865,7 +952,6 @@ namespace ECsMemberType
 }
 
 #define ECS_MEMBER_TYPE_MAX (uint8)ECsMemberType::ECsMemberType_MAX
-//typedef ECsMemberType TCsMemberType;
 typedef TEnumAsByte<ECsMemberType::Type> TCsMemberType;
 
 #define CS_DECLARE_AND_DEFINE_CONST_INTEGRAL_VALUE(Type, Integral, Value) const Type Integral = 1; \

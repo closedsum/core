@@ -3905,9 +3905,10 @@ bool UCsCommon_Load::CanLoad(void* InObject, UScriptStruct* const &InClass, cons
 	{
 		if (int32* MemberLoadFlags = IntProperty->ContainerPtrToValuePtr<int32>(InObject))
 		{
+			if (LoadFlags == ECsLoadFlags::All)
+				return true;
 			if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, ECsLoadFlags::All))
 				return true;
-
 			if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, LoadFlags))
 				return true;
 		}
@@ -3923,9 +3924,10 @@ bool UCsCommon_Load::CanLoad(void* InObject, UClass* const &InClass, const FStri
 	{
 		if (int32* MemberLoadFlags = IntProperty->ContainerPtrToValuePtr<int32>(InObject))
 		{
+			if (LoadFlags == ECsLoadFlags::All)
+				return true;
 			if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, ECsLoadFlags::All))
 				return true;
-
 			if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, LoadFlags))
 				return true;
 		}

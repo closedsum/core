@@ -12,14 +12,28 @@ void UCsUserWidget::Init()
 	HasInitFinished = true;
 }
 
+void UCsUserWidget::OnLastTick(const float &DeltaSeconds){}
+
+void UCsUserWidget::SetFocus(const ECsWidgetFocus &InFocus)
+{
+	CS_SET_BLUEPRINT_BITFLAG(Focus, InFocus);
+}
+
+void UCsUserWidget::SetFocus(const int32 &InFocus)
+{
+	Focus = InFocus;
+}
+
 void UCsUserWidget::Show()
 {
 	SetIsEnabled(true);
 	SetVisibility(ESlateVisibility::Visible);
+	SetFocus(ECS_WIDGET_FOCUS_ALL);
 }
 
 void UCsUserWidget::Hide()
 {
+	SetFocus(ECS_WIDGET_FOCUS_NONE);
 	SetVisibility(ESlateVisibility::Hidden);
 	SetIsEnabled(false);
 }

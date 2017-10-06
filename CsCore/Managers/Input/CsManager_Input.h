@@ -2,7 +2,7 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
-#include "Types/CsTypes.h"
+#include "Types/CsTypes_Input.h"
 #include "CsManager_Input.generated.h"
 
 #define CS_INPUT_POOL_SIZE 65535
@@ -398,7 +398,7 @@ class CSCORE_API ACsManager_Input : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
-	static ACsManager_Input* Get(UWorld* InWorld);
+	static ACsManager_Input* Get(UWorld* InWorld, const int32 &Id = INDEX_NONE);
 
 	TWeakObjectPtr<AActor> InputOwner;
 
@@ -442,6 +442,12 @@ class CSCORE_API ACsManager_Input : public AActor
 	FCsInput* GetPreviousInputAction(const TCsInputAction &Action, const TArray<TCsInputEvent> &Events);
 	FCsInput* GetPreviousPreviousInputAction(const TCsInputAction &Action);
 
+	TArray<TCsGameEvent> QueuedGameEventsForNextFrame;
+
+	virtual void QueueGameEvent(const TCsGameEvent &Event);
+
+	void ClearQueuedGameEvents();
+
 	virtual void DetermineGameEvents(const TArray<FCsInput*> &Inputs);
 
 	bool HasActionEventOccured(const TCsInputAction &Action, const TCsInputEvent &Event);
@@ -454,6 +460,9 @@ class CSCORE_API ACsManager_Input : public AActor
 	TEnumAsByte<ECsInputEvent::Type> GetInputEvent_Script(const uint8& Action);
 
 	float GetInputDuration(const TCsInputAction &Action);
+
+	void RebindActionMapping(const TCsInputAction &Action, const FKey &Key);
+	void RebindAxisMapping(const TCsInputAction &Action, const FKey &Key);
 
 #if WITH_EDITOR
 

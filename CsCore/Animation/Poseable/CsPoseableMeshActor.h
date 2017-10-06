@@ -948,10 +948,21 @@ class CSCORE_API ACsPoseableMeshActor : public AActor
 	void AnimLevelSequence_Shot_AddKey(const int32 &Index, AActor* Actor);
 	//void AnimLevelSequence_Shot_Export(const int32 &Index);
 
+	// Bones
+#pragma region
+
 	virtual void GenerateBones();
 	virtual void ClearBones();
 	void RecreateBone(const int32 &Index);
 	void ResetBones();
+
+	class ACsAnim_Bone* GetBone(const FName &BoneName);
+	class ACsAnim_Bone* GetBone(const FString &BoneName);
+
+#pragma endregion Bones
+
+	// Controls
+#pragma region
 
 	void DestroyOrphanedControlAnchors();
 	void DestroyOrphanedControlHelpers();
@@ -963,6 +974,8 @@ class CSCORE_API ACsPoseableMeshActor : public AActor
 	void Create_Control_TwoBoneIK(const int32 &Index);
 	void PerformTwoBoneIK(const int32 &Index);
 	void ClearControlsTwoBoneIK();
+
+#pragma endregion Controls
 
 #endif // #if WITH_EDITOR
 };

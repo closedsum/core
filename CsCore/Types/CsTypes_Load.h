@@ -245,7 +245,6 @@ struct FCsDataMappingEntry
 	{
 		LookUpCode = CS_INVALID_LOOK_UP_CODE_MAX;
 
-		CS_SET_BLUEPRINT_BITFLAG(Data_LoadFlags, ECsLoadFlags::All);
 		CS_SET_BLUEPRINT_BITFLAG(Data_LoadFlags, ECsLoadFlags::Game);
 	}
 

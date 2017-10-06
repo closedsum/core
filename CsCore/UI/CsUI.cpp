@@ -6,6 +6,10 @@
 ACsUI::ACsUI(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	WidgetTypeToString = nullptr;
+	StringToWidgetType = nullptr;
+	WidgetActorTypeToString = nullptr;
+	StringToWidgetActorType = nullptr;
 }
 
 void ACsUI::Destroyed()
@@ -29,13 +33,22 @@ void ACsUI::Destroyed()
 	WidgetActors.Reset();
 }
 
-void ACsUI::OnUpdate(const float &DeltaSeconds)
-{
-}
+void ACsUI::OnUpdate(const float &DeltaSeconds){}
+void ACsUI::OnLastTick(const float &DeltaSeconds){}
 
 void ACsUI::AddWidget(const TCsWidgetType &WidgetType) {}
 
-UCsUserWidget* ACsUI::GetWidget(const TCsWidgetType &WidgetType) { return nullptr; }
+UCsUserWidget* ACsUI::GetWidget(const TCsWidgetType &WidgetType)
+{ 
+	const int32 Count = Widgets.Num();
+
+	for (int32 I = 0; I < Count; I++)
+	{
+		if (Widgets[I]->Type == WidgetType)
+			return Widgets[I];
+	}
+	return nullptr;
+}
 
 UCsUserWidget* ACsUI::GetActiveWidget(const TCsWidgetType &WidgetType) 
 { 
@@ -53,6 +66,37 @@ bool ACsUI::HasWidgetInitialized(const TCsWidgetType &WidgetType) { return true;
 
 void ACsUI::Open(const TCsWidgetType &WidgetType){}
 bool ACsUI::IsOpened(const TCsWidgetType &WidgetType) { return GetActiveWidget(WidgetType) != nullptr; }
+bool ACsUI::IsOpenedAndFocused(const TCsWidgetType &WidgetType)
+{
+	if (UCsUserWidget* Widget = GetActiveWidget(WidgetType))
+		return Widget->Focus > ECS_WIDGET_FOCUS_NONE;
+	return false;
+}
+
+void ACsUI::SetFocus(const TCsWidgetType &WidgetType, const int32& Focus)
+{
+	if (UCsUserWidget* Widget = GetActiveWidget(WidgetType))
+	{
+		Widget->Focus = Focus;
+	}
+	else
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsUI::SetFocus(%s): Widget: %s is NOT Active."), *GetName(), *((*WidgetTypeToString)(WidgetType)));
+	}
+}
+
+void ACsUI::SetFocus(const TCsWidgetType &WidgetType, const ECsWidgetFocus& Focus)
+{
+	if (UCsUserWidget* Widget = GetActiveWidget(WidgetType))
+	{
+		CS_SET_BLUEPRINT_BITFLAG(Widget->Focus, Focus);
+	}
+	else
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsUI::SetFocus(%s): Widget: %s is NOT Active."), *GetName(), *((*WidgetTypeToString)(WidgetType)));
+	}
+}
+
 void ACsUI::Close(const TCsWidgetType &WidgetType){}
 bool ACsUI::IsClosed(const TCsWidgetType &WidgetType) { return GetActiveWidget(WidgetType) == nullptr; }
 

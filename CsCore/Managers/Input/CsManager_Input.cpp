@@ -5,6 +5,7 @@
 #include "Player/CsCheatManager.h"
 #include "Common/CsCommon.h"
 #include "CsCVars.h"
+#include "../Engine/Classes/GameFramework/PlayerInput.h"
 
 #include "../HeadMountedDisplay/Public/IMotionController.h"
 
@@ -18,7 +19,7 @@ ACsManager_Input::ACsManager_Input(const FObjectInitializer& ObjectInitializer) 
 	//CurrentInputActionMap = ECsInputActionMap::Game;
 }
 
-/*static*/ ACsManager_Input* ACsManager_Input::Get(UWorld* InWorld)
+/*static*/ ACsManager_Input* ACsManager_Input::Get(UWorld* InWorld, const int32 &Id /*= INDEX_NONE*/)
 {
 	return UCsCommon::GetLocalPlayerController<ACsPlayerController>(InWorld)->Manager_Input;
 }
@@ -568,6 +569,16 @@ FCsInput* ACsManager_Input::GetPreviousPreviousInputAction(const TCsInputAction 
 	return Input;
 }
 
+void ACsManager_Input::QueueGameEvent(const TCsGameEvent &Event)
+{
+	QueuedGameEventsForNextFrame.Add(Event);
+}
+
+void ACsManager_Input::ClearQueuedGameEvents()
+{
+	QueuedGameEventsForNextFrame.Reset();
+}
+
 void ACsManager_Input::DetermineGameEvents(const TArray<FCsInput*> &Inputs)
 {
 }
@@ -644,6 +655,50 @@ TEnumAsByte<ECsInputEvent::Type> ACsManager_Input::GetInputEvent_Script(const ui
 float ACsManager_Input::GetInputDuration(const TCsInputAction &Action)
 {
 	return Infos[(uint8)Action]->Duration;
+}
+
+void ACsManager_Input::RebindActionMapping(const TCsInputAction &Action, const FKey &Key)
+{
+	ACsPlayerController* Controller = Cast<ACsPlayerController>(GetInputOwner());
+	UPlayerInput* PlayerInput		= Controller->PlayerInput;
+
+	const FName ActionName = FName(*((*InputActionToString)(Action)));
+
+	const int32 Count = PlayerInput->ActionMappings.Num();
+
+	for (int32 I = 0; I < Count; I++)
+	{
+		FInputActionKeyMapping& ActionMapping = PlayerInput->ActionMappings[I];
+
+		if (ActionName == ActionMapping.ActionName)
+		{
+			ActionMapping.Key = Key;
+			break;
+		}
+	}
+	PlayerInput->ForceRebuildingKeyMaps(false);
+}
+
+void ACsManager_Input::RebindAxisMapping(const TCsInputAction &Action, const FKey &Key)
+{
+	ACsPlayerController* Controller = Cast<ACsPlayerController>(GetInputOwner());
+	UPlayerInput* PlayerInput		= Controller->PlayerInput;
+
+	const FName ActionName = FName(*((*InputActionToString)(Action)));
+
+	const int32 Count = PlayerInput->ActionMappings.Num();
+
+	for (int32 I = 0; I < Count; I++)
+	{
+		FInputAxisKeyMapping& AxisMapping = PlayerInput->AxisMappings[I];
+
+		if (ActionName == AxisMapping.AxisName)
+		{
+			AxisMapping.Key = Key;
+			break;
+		}
+	}
+	PlayerInput->ForceRebuildingKeyMaps(false);
 }
 
 #if WITH_EDITOR

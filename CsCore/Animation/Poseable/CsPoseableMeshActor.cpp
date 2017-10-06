@@ -927,46 +927,169 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindO
 			ULevelSequence* Seq		= Sequences[CS_FIRST];
 			UMovieScene* MovieScene = Seq->GetMovieScene();
 			
+			const FString MeshName = GetMeshName();
+			const FString AnimName = TEXT("anim_") + MeshName + TEXT("_") + Shot.Name;
+
 			// Check Folder Exists
+			TArray<UMovieSceneFolder*>& Folders = MovieScene->GetRootFolders();
+			const int32 FolderCount				= Folders.Num();
 
-			const int32 PossessableCount = MovieScene->GetPossessableCount();
-			
-			for (int32 I = 0; I < PossessableCount; I++)
+			UMovieSceneFolder* MainFolder = nullptr;
+
+			// If NO Folders, CREATE it.
+			if (FolderCount == CS_EMPTY)
 			{
-				//MovieScene->GetRootFolders()
-				//UMovieSceneFolder Folder;
-				//Folder.GetChildObjectBindings()
+				MainFolder = NewObject<UMovieSceneFolder>(MovieScene, NAME_None, RF_Transactional);
+				MainFolder->SetFolderName(FName(*AnimName));
+				Folders.Add(MainFolder);
+			}
+			// If Folder does NOT Exist, CREATE it.
+			else
+			{
+				bool Found = false;
 
-				FMovieScenePossessable& Possessable = MovieScene->GetPossessable(I);
-				const FGuid Guid					= Possessable.GetGuid();
-				const FString ActorName				= Possessable.GetName();
-
-				TArray<UObject*, TInlineAllocator<1>> Objects;
-
-				Seq->LocateBoundObjects(Guid, GetWorld(), Objects);
-
-				const int32 ObjectCount = Objects.Num();
-				// If Guid is NOT Bound and ActorName is VALID (i.e. the Actor exists), then Bind it
-				if (ObjectCount == CS_EMPTY)
+				for (int32 I = 0; I < FolderCount; I++)
 				{
+					const FString FolderName = Folders[I]->GetFolderName().ToString();
+
+					if (AnimName.ToLower() == FolderName.ToLower())
+					{
+						MainFolder = Folders[I];
+						Found = true;
+						break;
+					}
+				}
+
+				if (!Found)
+				{
+					MainFolder = NewObject<UMovieSceneFolder>(MovieScene, NAME_None, RF_Transactional);
+					MainFolder->SetFolderName(FName(*AnimName));
+					Folders.Add(MainFolder);
 				}
 			}
 
+			TArray<FGuid> QueueBindPossessableGuids;
+			TArray<AActor*> QueueBindPossessableActors;
+			TArray<FGuid> QueueAddGuidsToFolder;
+
+			const int32 BoneCount = Bones.Num();
+
+			for (int32 I = 0; I < BoneCount; I++)
+			{
+				const FString BoneName = Bones[I].Bone.ToString();
+				ACsAnim_Bone* Actor	   = Bones[I].Actor;
+
+				// Check if any Possessable matches Actor
+
+				const int32 PossessableCount = MovieScene->GetPossessableCount();
+
+				for (int32 J = 0; J < PossessableCount; J++)
+				{
+					bool CheckActorIsInFolder = true;
+
+					FMovieScenePossessable& Possessable = MovieScene->GetPossessable(J);
+					const FGuid Guid					= Possessable.GetGuid();
+					const FString ActorName				= Possessable.GetName();
+
+					TArray<UObject*, TInlineAllocator<1>> Objects;
+
+					Seq->LocateBoundObjects(Guid, GetWorld(), Objects);
+
+					const int32 ObjectCount = Objects.Num();
+					// If Guid is NOT Bound and ActorName is VALID (i.e. the Actor exists), then Bind it
+					if (ObjectCount == CS_EMPTY)
+					{
+						if (BoneName == ActorName)
+						{
+							QueueBindPossessableGuids.Add(Guid);
+							QueueBindPossessableActors.Add(Actor);
+						}
+						else
+						{
+							CheckActorIsInFolder = false;
+						}
+					}
+					else
+					{
+						bool Found = false;
+
+						for (int32 K = 0; K < ObjectCount; K++)
+						{
+							if (Actor == Cast<ACsAnim_Bone>(Objects[K]))
+							{
+								Possessable.SetName(BoneName);
+								Found = true;
+								break;
+							}
+						}
+
+						if (!Found)
+						{
+							if (BoneName == ActorName)
+							{
+								QueueBindPossessableGuids.Add(Guid);
+								QueueBindPossessableActors.Add(Actor);
+							}
+							else
+							{
+								CheckActorIsInFolder = false;
+							}
+						}
+					}
+
+					if (CheckActorIsInFolder)
+					{
+						bool Found = false;
+
+						const TArray<FGuid>& Bindings = MainFolder->GetChildObjectBindings();
+						const int32 BindingCount	  = Bindings.Num();
+
+						for (int32 K = 0; K < BindingCount; K++)
+						{
+							if (Guid == Bindings[K])
+							{
+								Found = true;
+								break;
+							}
+						}
+
+						if (!Found)
+						{
+							QueueAddGuidsToFolder.Add(Guid);
+						}
+					}
+				}
+			}
+
+			// Add Queued Bindings
+
+			int32 QueueCount = QueueBindPossessableGuids.Num();
+
+			for (int32 I = 0; I < QueueCount; I++)
+			{
+				Seq->BindPossessableObject(QueueBindPossessableGuids[I], *(QueueBindPossessableActors[I]), GetWorld());
+			}
+
+			QueueCount = QueueAddGuidsToFolder.Num();
+
+			for (int32 I = 0; I < QueueCount; I++)
+			{
+				MainFolder->AddChildObjectBinding(QueueAddGuidsToFolder[I]);
+			}
+			
 			FString PackagePath = Seq->GetPathName();
 			PackagePath			= PackagePath.Replace(*AssetName, TEXT(""));
 			PackagePath			= PackagePath.Replace(TEXT("."), TEXT(""));
 
-			if (PackageName.EndsWith(TEXT("/")))
+			if (PackagePath.EndsWith(TEXT("/")))
 			{
-				const int32 Len = PackageName.Len();
-				PackageName.RemoveAt(Len - 1);
+				const int32 Len = PackagePath.Len();
+				PackagePath.RemoveAt(Len - 1);
 			}
 
 			AnimLevelSequence.PackagePath = PackagePath;
 
 			AnimLevelSequence.Shots[Index].Shot = Sequences[CS_FIRST];
-
-			// TODO: Check the Sequence has all the bones and they are mapped correctly
 		}
 		// Else MORE than ONE, ERROR
 		else
@@ -1361,6 +1484,9 @@ void ACsPoseableMeshActor::AnimLevelSequence_Shot_AddKey(const int32 &Index, AAc
 	TransformSection->AddKey(CurrentTime, FTransformKey(EKey3DTransformChannel::Scale, EAxis::Z, Scale.Z, false), EMovieSceneKeyInterpolation::Auto);
 }
 
+// Bones
+#pragma region
+
 void ACsPoseableMeshActor::GenerateBones()
 {
 	ClearBones();
@@ -1500,6 +1626,28 @@ void ACsPoseableMeshActor::ResetBones()
 		Bones[I].Actor->ResetRelativeTransform();
 	}
 }
+
+ACsAnim_Bone* ACsPoseableMeshActor::GetBone(const FName &BoneName)
+{
+	const int32 Count = Bones.Num();
+
+	for (int32 I = 0; I < Count; I++)
+	{
+		if (Bones[I].Bone == BoneName)
+			return Bones[I].Actor;
+	}
+	return nullptr;
+}
+
+ACsAnim_Bone* ACsPoseableMeshActor::GetBone(const FString &BoneName)
+{
+	return GetBone(FName(*BoneName));
+}
+
+#pragma endregion Bones
+
+// Controls
+#pragma region 
 
 void ACsPoseableMeshActor::DestroyOrphanedControlAnchors()
 {
@@ -2083,5 +2231,7 @@ void ACsPoseableMeshActor::ClearControlsTwoBoneIK()
 	}
 	Controls_TwoBoneIK.Reset();
 }
+
+#pragma endregion Controls
 
 #endif // #if WITH_EDITOR

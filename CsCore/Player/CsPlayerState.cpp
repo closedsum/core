@@ -149,6 +149,8 @@ CS_COROUTINE(ACsPlayerState, OnBoard_Internal)
 		Widget->Fullscreen.SetColorAndOpacity(FLinearColor(0.0f, 0.0f, 0.0f, 0.0f));
 	}
 
+	ps->OnBoard_Completed();
+
 	CS_COROUTINE_END(r);
 }
 
@@ -518,6 +520,8 @@ void ACsPlayerState::MulticastUnSetIsOnBoardCompleted_Implementation()
 {
 	IsOnBoardCompleted = false;
 }
+
+void ACsPlayerState::OnBoard_Completed() {}
 
 bool ACsPlayerState::IsOnBoardCompleted_Game()
 {

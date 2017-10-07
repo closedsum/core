@@ -916,6 +916,7 @@ class CSCORE_API UCsUserWidget : public UUserWidget
 public:
 
 	virtual void Init();
+	virtual void OnPostProcessInput(const float &DeltaTime);
 	virtual void OnLastTick(const float &DeltaSeconds);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OO Default")

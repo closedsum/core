@@ -254,6 +254,8 @@ public:
 	UFUNCTION(reliable, netmulticast)
 	void MulticastUnSetIsOnBoardCompleted();
 
+	virtual void OnBoard_Completed();
+
 	bool IsOnBoardCompleted_Game();
 
 #pragma endregion OnBoard

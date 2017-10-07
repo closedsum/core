@@ -34,6 +34,7 @@ void ACsUI::Destroyed()
 }
 
 void ACsUI::OnUpdate(const float &DeltaSeconds){}
+void ACsUI::OnPostProcessInput(const float &DeltaTime){}
 void ACsUI::OnLastTick(const float &DeltaSeconds){}
 
 void ACsUI::AddWidget(const TCsWidgetType &WidgetType) {}

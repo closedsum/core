@@ -62,6 +62,28 @@ void ACsManager_Input::PreProcessInput(const float DeltaTime, const bool bGamePa
 
 	InputFrames[CurrentInputFrameIndex].Init(GetWorld()->TimeSeconds, GetWorld()->RealTimeSeconds, DeltaTime, CurrentGameFrame);
 
+	// Cache Raw Pressed Inputs
+	PressedKeys.Reset();
+
+	APlayerController* Controller = Cast<APlayerController>(GetInputOwner());
+	UPlayerInput* PlayerInput	  = Controller->PlayerInput;
+
+	TArray<FKey> AllKeys;
+	EKeys::GetAllKeys(AllKeys);
+
+	const int32 KeyCount = AllKeys.Num();
+
+	for (int32 I = 1; I < KeyCount; I++)
+	{
+		const FKey& Key = AllKeys[I];
+
+		if (PlayerInput->IsPressed(Key))
+		{
+			PressedKeys.AddDefaulted();
+			PressedKeys[PressedKeys.Num() - 1] = Key;
+		}
+	}
+
 	const bool IsVR = UCsCommon::IsVR();
 
 	if (IsVR)
@@ -657,6 +679,8 @@ float ACsManager_Input::GetInputDuration(const TCsInputAction &Action)
 	return Infos[(uint8)Action]->Duration;
 }
 
+// TODO: Need to store the original Key "Keyboard" mappings for Input. Do similar for control setup
+
 void ACsManager_Input::RebindActionMapping(const TCsInputAction &Action, const FKey &Key)
 {
 	ACsPlayerController* Controller = Cast<ACsPlayerController>(GetInputOwner());
@@ -669,6 +693,11 @@ void ACsManager_Input::RebindActionMapping(const TCsInputAction &Action, const F
 	for (int32 I = 0; I < Count; I++)
 	{
 		FInputActionKeyMapping& ActionMapping = PlayerInput->ActionMappings[I];
+
+		if (ActionMapping.Key.IsGamepadKey())
+			continue;
+		if (ActionMapping.Key == EKeys::MouseX || ActionMapping.Key == EKeys::MouseY)
+			continue;
 
 		if (ActionName == ActionMapping.ActionName)
 		{
@@ -691,6 +720,11 @@ void ACsManager_Input::RebindAxisMapping(const TCsInputAction &Action, const FKe
 	for (int32 I = 0; I < Count; I++)
 	{
 		FInputAxisKeyMapping& AxisMapping = PlayerInput->AxisMappings[I];
+
+		if (AxisMapping.Key.IsGamepadKey())
+			continue;
+		if (AxisMapping.Key == EKeys::MouseX || AxisMapping.Key == EKeys::MouseY)
+			continue;
 
 		if (ActionName == AxisMapping.AxisName)
 		{

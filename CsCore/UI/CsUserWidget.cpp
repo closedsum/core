@@ -12,6 +12,7 @@ void UCsUserWidget::Init()
 	HasInitFinished = true;
 }
 
+void UCsUserWidget::OnPostProcessInput(const float &DeltaTime) {}
 void UCsUserWidget::OnLastTick(const float &DeltaSeconds){}
 
 void UCsUserWidget::SetFocus(const ECsWidgetFocus &InFocus)

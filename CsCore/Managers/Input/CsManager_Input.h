@@ -437,6 +437,8 @@ class CSCORE_API ACsManager_Input : public AActor
 
 	TCsInputActionMapToString InputActionMapToString;
 
+	TArray<FKey> PressedKeys;
+
 	FCsInput* GetPreviousInputAction(const TCsInputAction &Action);
 	FCsInput* GetPreviousInputAction(const TCsInputAction &Action, const TCsInputEvent &Event);
 	FCsInput* GetPreviousInputAction(const TCsInputAction &Action, const TArray<TCsInputEvent> &Events);

@@ -8,6 +8,8 @@
 
 // Update
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUI_OnUpdate, const float&, DeltaSeconds);
+// PostProcessInput
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUI_OnPostProcessInput, const float&, DeltaTime);
 // Last Tick
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUI_OnLastTick, const float&, DeltaSeconds);
 // Widget
@@ -27,6 +29,11 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "UI")
 	FBindableDynEvent_CsUI_OnUpdate OnUpdate_ScriptEvent;
+
+	virtual void OnPostProcessInput(const float &DeltaTime);
+
+	UPROPERTY(BlueprintAssignable, Category = "UI")
+	FBindableDynEvent_CsUI_OnPostProcessInput OnPostProcessInput_ScriptEvent;
 
 	virtual void OnLastTick(const float &DeltaSeconds);
 

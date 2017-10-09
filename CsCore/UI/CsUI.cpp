@@ -30,7 +30,11 @@ void ACsUI::Destroyed()
 		Widgets.RemoveAt(I);
 	}
 
+	WidgetsMap.Reset();
+	ActiveWidgets.Reset();
+	ActiveWidgetsMap.Reset();
 	WidgetActors.Reset();
+	ActiveWidgetActors.Reset();
 }
 
 void ACsUI::OnUpdate(const float &DeltaSeconds){}
@@ -41,38 +45,24 @@ void ACsUI::AddWidget(const TCsWidgetType &WidgetType) {}
 
 UCsUserWidget* ACsUI::GetWidget(const TCsWidgetType &WidgetType)
 { 
-	const int32 Count = Widgets.Num();
+	TArray<UCsUserWidget*>* Array = WidgetsMap.Find(WidgetType);
 
-	for (int32 I = 0; I < Count; I++)
-	{
-		if (Widgets[I]->Type == WidgetType)
-			return Widgets[I];
-	}
-	return nullptr;
+	return (*Array)[CS_FIRST];
 }
 
 UCsUserWidget* ACsUI::GetActiveWidget(const TCsWidgetType &WidgetType) 
 { 
-	const int32 Count = ActiveWidgets.Num();
+	TArray<UCsUserWidget*>* Array = ActiveWidgetsMap.Find(WidgetType);
 
-	for (int32 I = 0; I < Count; I++)
-	{
-		if (ActiveWidgets[I]->Type == WidgetType)
-			return ActiveWidgets[I];
-	}
-	return nullptr;
+	if (!Array)
+		return nullptr;
+	if (Array->Num() == CS_EMPTY)
+		return nullptr;
+	return (*Array)[CS_FIRST];
 }
 
 bool ACsUI::HasWidgetInitialized(const TCsWidgetType &WidgetType) { return true; }
 
-void ACsUI::Open(const TCsWidgetType &WidgetType){}
-bool ACsUI::IsOpened(const TCsWidgetType &WidgetType) { return GetActiveWidget(WidgetType) != nullptr; }
-bool ACsUI::IsOpenedAndFocused(const TCsWidgetType &WidgetType)
-{
-	if (UCsUserWidget* Widget = GetActiveWidget(WidgetType))
-		return Widget->Focus > ECS_WIDGET_FOCUS_NONE;
-	return false;
-}
 
 void ACsUI::SetFocus(const TCsWidgetType &WidgetType, const int32& Focus)
 {
@@ -98,7 +88,91 @@ void ACsUI::SetFocus(const TCsWidgetType &WidgetType, const ECsWidgetFocus& Focu
 	}
 }
 
-void ACsUI::Close(const TCsWidgetType &WidgetType){}
+// Open / Close
+#pragma region
+
+void ACsUI::Open(const TCsWidgetType &WidgetType)
+{
+	if (UCsUserWidget* Widget = GetActiveWidget(WidgetType))
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsUI::Open: Attempting to open menu: %s but it is already open."), *((*WidgetTypeToString)(WidgetType)));
+		return;
+	}
+
+	UCsUserWidget* Widget = GetWidget(WidgetType);
+
+	ActiveWidgets.Add(Widget);
+
+	if (TArray<UCsUserWidget*>* WidgetArray = ActiveWidgetsMap.Find(WidgetType))
+	{
+		WidgetArray->Add(Widget);
+	}
+	else
+	{
+		TArray<UCsUserWidget*> Array;
+		Array.Add(Widget);
+		ActiveWidgetsMap.Add(WidgetType, Array);
+	}
+
+	Widget->Show();
+#if WITH_EDITOR
+	OnOpen_ScriptEvent.Broadcast((uint8)WidgetType);
+#endif // #if WITH_EDITOR
+	OnOpen_Event.Broadcast(WidgetType);
+}
+
+bool ACsUI::IsOpened(const TCsWidgetType &WidgetType) { return GetActiveWidget(WidgetType) != nullptr; }
+bool ACsUI::IsOpenedAndFocused(const TCsWidgetType &WidgetType)
+{
+	if (UCsUserWidget* Widget = GetActiveWidget(WidgetType))
+		return Widget->Focus > ECS_WIDGET_FOCUS_NONE;
+	return false;
+}
+
+void ACsUI::Close(const TCsWidgetType &WidgetType)
+{
+	UCsUserWidget* Widget = GetActiveWidget(WidgetType);
+
+	if (!Widget)
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsUI::Close: Attempting to close menu: %s but it is NOT open."), *((*WidgetTypeToString)(WidgetType)));
+		return;
+	}
+
+	const int32 Count = ActiveWidgets.Num();
+
+	for (int32 I = Count - 1; I >= 0; I--)
+	{
+		if (ActiveWidgets[I] == Widget)
+		{
+			ActiveWidgets.RemoveAt(I);
+			break;
+		}
+	}
+
+	if (TArray<UCsUserWidget*>* WidgetArray = ActiveWidgetsMap.Find(WidgetType))
+	{
+		const int32 WidgetCount = WidgetArray->Num();
+
+		for (int32 I = WidgetCount - 1; I >= 0; I--)
+		{
+			if ((*WidgetArray)[I] == Widget)
+			{
+				WidgetArray->RemoveAt(I);
+				break;
+			}
+		}
+	}
+
+	Widget->Hide();
+#if WITH_EDITOR
+	OnClose_ScriptEvent.Broadcast((uint8)WidgetType);
+#endif // #if WITH_EDITOR
+	OnClose_Event.Broadcast(WidgetType);
+}
+
 bool ACsUI::IsClosed(const TCsWidgetType &WidgetType) { return GetActiveWidget(WidgetType) == nullptr; }
+
+#pragma endregion Open / Close
 
 bool ACsUI::ProcessGameEvent(const TCsGameEvent &GameEvent) { return false; }

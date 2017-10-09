@@ -16,8 +16,15 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsUserWidget_OnNativeTick, const FGeometry&, MyGeometry, float, InDeltaTime);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUserWidget_OnOpenChild, const uint8&, WidgetType);
+DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsUserWidget_OnOpenChild, const TEnumAsByte<ECsWidgetType::Type>&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUserWidget_OnCloseChild, const uint8&, WidgetType);
+DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsUserWidget_OnCloseChild, const TEnumAsByte<ECsWidgetType::Type>&);
+
 #define CS_WIDGET_DEFINE_TYPE(TYPE)	Type = ECsWidgetType::TYPE; \
-									Type_Script = (uint8)Type;
+									Type_Script = (uint8)Type; \
+									WidgetTypeToString = &ECsWidgetType::ToString; \
+									StringToWidgetType = &ECsWidgetType::ToType;
 
 // Enums
 #pragma region
@@ -60,11 +67,23 @@ typedef ECsUserWidgetRoutine::Type TCsUserWidgetRoutine;
 struct FCsWidget
 {
 public:
-	FCsPrimitiveType<ESlateVisibility> Visibility;
+	FString Name;
+	FString EditorName;
+	FString Path;
 
-	virtual void OnNativeTick(const float &InDeltaTime)
+	FString PathAndName;
+
+	FCsPrimitiveType<ESlateVisibility> Visibility;
+	
+	virtual void Init(const FString &inName, const FString &inEditorName, const FString &inPath)
 	{
+		Name		= inName;
+		EditorName  = inEditorName;
+		Path		= inPath;
+		PathAndName = Path + TEXT(".") + Name;
 	}
+
+	virtual void OnNativeTick(const float &InDeltaTime){}
 
 	virtual void SetVisibility(const ESlateVisibility &Visible)
 	{
@@ -77,14 +96,21 @@ struct FCsWidget_Bar : FCsWidget
 public:
 	TWeakObjectPtr<class UProgressBar> Bar;
 
-	FCsPrimitiveType<float> Percent;
+	TCsFloat Percent;
 
 public:
 	FCsWidget_Bar()
 	{
 	}
 
-	void Set(UProgressBar* inBar) { Bar = inBar; }
+	void Set(UProgressBar* inBar) 
+	{ 
+		Bar		   = inBar;
+		Visibility = Bar->Visibility;
+		Visibility.Clear();
+		Percent = Bar->Percent;
+		Percent.Clear();
+	}
 
 	virtual void OnNativeTick(const float &InDeltaTime) override
 	{
@@ -131,7 +157,16 @@ public:
 	{
 	}
 
-	void Set(UTextBlock* inText) { Text = inText; }
+	void Set(UTextBlock* inText) 
+	{ 
+		Text	   = inText;
+		Visibility = Text->Visibility;
+		Visibility.Clear();
+		String = Text->Text.ToString();
+		String.Clear();
+		Color = Text->ColorAndOpacity.GetSpecifiedColor();
+		Color.Clear();
+	}
 
 	virtual void OnNativeTick(const float &InDeltaTime) override
 	{
@@ -192,9 +227,13 @@ public:
 
 	void Set(UImage* inImage) 
 	{ 
-		Image = inImage;
+		Image      = inImage;
+		Visibility = Image->Visibility;
+		Visibility.Clear();
 		Tint  = Image->Brush.TintColor;
+		Tint.Clear();
 		Color = Image->ColorAndOpacity;
+		Color.Clear();
 	}
 
 	virtual void OnNativeTick(const float &InDeltaTime) override
@@ -261,8 +300,11 @@ public:
 
 	void Set(class UButton* inButton)
 	{
-		Button = inButton;
+		Button     = inButton;
+		Visibility = Button->Visibility;
+		Visibility.Clear();
 		Color  = Button->BackgroundColor;
+		Color.Clear();
 	}
 
 	virtual void OnNativeTick(const float &InDeltaTime) override
@@ -305,8 +347,11 @@ public:
 
 	void Set(class UCheckBox* inCheckBox)
 	{
-		CheckBox = inCheckBox;
-		State    = CheckBox->GetCheckedState();
+		CheckBox   = inCheckBox;
+		Visibility = CheckBox->Visibility;
+		Visibility.Clear();
+		State = CheckBox->GetCheckedState();
+		State.Clear();
 	}
 
 	virtual void OnNativeTick(const float &InDeltaTime) override
@@ -350,8 +395,13 @@ public:
 
 	void Set(class USlider* inSlider)
 	{
-		Slider		= inSlider;
+		Slider	   = inSlider;
+		Visibility = Slider->Visibility;
+		Visibility.Clear();
+		Value = Slider->Value;
+		Value.Clear();
 		HandleColor = Slider->SliderHandleColor;
+		HandleColor.Clear();
 	}
 
 	virtual void OnNativeTick(const float &InDeltaTime) override
@@ -406,8 +456,13 @@ public:
 
 	void Set(class UEditableTextBox* inTextBox)
 	{
-		TextBox = inTextBox;
-		Color   = TextBox->BackgroundColor_DEPRECATED;
+		TextBox    = inTextBox;
+		Visibility = TextBox->Visibility;
+		Visibility.Clear();
+		Text = TextBox->Text.ToString();
+		Text.Clear();
+		Color = TextBox->BackgroundColor_DEPRECATED;
+		Color.Clear();
 	}
 
 	virtual void OnNativeTick(const float &InDeltaTime) override
@@ -942,7 +997,41 @@ public:
 	virtual void Show();
 	virtual void Hide();
 
+	TCsWidgetTypeToString WidgetTypeToString;
+	TCsStringToWidgetType StringToWidgetType;
+
 	TArray<TCsWidgetType> ChildWidgetTypes;
+	TArray<UCsUserWidget*> ChildWidgets;
+	TMap<TCsWidgetType, TArray<UCsUserWidget*>> ChildWidgetsMap;
+	TArray<UCsUserWidget*> ActiveChildWidgets;
+	TMap<TCsWidgetType, TArray<UCsUserWidget*>> ActiveChildWidgetsMap;
+
+	virtual UCsUserWidget* GetChildWidget(const TCsWidgetType &WidgetType);
+	virtual UCsUserWidget* GetActiveChildWidget(const TCsWidgetType &WidgetType);
+
+// Open / Close Child
+#pragma region
+
+	virtual void OpenChild(const TCsWidgetType &WidgetType);
+
+	FBindableEvent_CsUserWidget_OnOpenChild OnOpenChild_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Widget")
+	FBindableDynEvent_CsUserWidget_OnOpenChild OnOpenChild_ScriptEvent;
+
+	virtual bool IsChildOpened(const TCsWidgetType &WidgetType);
+
+	virtual void CloseChild(const TCsWidgetType &WidgetType);
+
+	FBindableEvent_CsUserWidget_OnCloseChild OnCloseChild_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Widget")
+	FBindableDynEvent_CsUserWidget_OnCloseChild OnCloseChild_ScriptEvent;
+
+	virtual void CloseAllChildrenExcept(const TCsWidgetType &WidgetType);
+	virtual bool IsChildClosed(const TCsWidgetType &WidgetType);
+
+#pragma endregion Open / Close Child
 
 // Routines
 #pragma region

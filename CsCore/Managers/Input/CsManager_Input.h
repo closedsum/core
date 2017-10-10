@@ -67,7 +67,6 @@ DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Rotation_St
 
 DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRotator&);
 
-
 // Macros - Should ONLY be used for testing
 #pragma region
 
@@ -390,9 +389,6 @@ DECLARE_MULTICAST_DELEGATE(FBindableEvent_CsManagerInput_RunEditorGameJavascript
 
 // Game Action Delegates
 
-typedef FString(*TCsInputActionToString)(const TCsInputAction&);
-typedef FString(*TCsInputEventToString)(const ECsInputEvent::Type&);
-
 UCLASS()
 class CSCORE_API ACsManager_Input : public AActor
 {
@@ -463,8 +459,16 @@ class CSCORE_API ACsManager_Input : public AActor
 
 	float GetInputDuration(const TCsInputAction &Action);
 
-	void RebindActionMapping(const TCsInputAction &Action, const FKey &Key);
-	void RebindAxisMapping(const TCsInputAction &Action, const FKey &Key);
+	FCsInputProfile InputProfile;
+
+	void SaveInputProfile();
+	void LoadInputProfile();
+
+	struct FKey GetKey(const FString &KeyName);
+
+	void RebindActionMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key);
+	void RebindAxisMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key);
+	void RebindMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key);
 
 #if WITH_EDITOR
 
@@ -491,7 +495,7 @@ protected:
 	TCsInputAction InputAction_MAX;
 
 	TCsInputActionToString InputActionToString;
-	TCsInputEventToString InputEventToString;
+	TCsStringToInputAction StringToInputAction;
 
 	TArray<FCsInputInfo*> Infos;
 

@@ -176,7 +176,8 @@ public:
 			if (UTextBlock* T = Get())
 				T->SetVisibility(Visibility.Get());
 		}
-		if (Visibility != ESlateVisibility::Visible)
+		if (Visibility == ESlateVisibility::Collapsed ||
+			Visibility == ESlateVisibility::Hidden)
 		{
 			Visibility.Clear();
 			String.Clear();
@@ -244,7 +245,8 @@ public:
 			if (UImage* I = Get())
 				I->SetVisibility(Visibility.Get());
 		}
-		if (Visibility != ESlateVisibility::Visible)
+		if (Visibility == ESlateVisibility::Collapsed ||
+			Visibility == ESlateVisibility::Hidden)
 		{
 			Visibility.Clear();
 			return;
@@ -315,7 +317,8 @@ public:
 			if (UButton* B = Get())
 				B->SetVisibility(Visibility.Get());
 		}
-		if (Visibility != ESlateVisibility::Visible)
+		if (Visibility == ESlateVisibility::Collapsed ||
+			Visibility == ESlateVisibility::Hidden)
 		{
 			Visibility.Clear();
 			return;
@@ -362,7 +365,8 @@ public:
 			if (UCheckBox* C = Get())
 				C->SetVisibility(Visibility.Get());
 		}
-		if (Visibility != ESlateVisibility::Visible)
+		if (Visibility == ESlateVisibility::Collapsed ||
+			Visibility == ESlateVisibility::Hidden)
 		{
 			Visibility.Clear();
 			return;
@@ -412,7 +416,8 @@ public:
 			if (USlider* S = Get())
 				S->SetVisibility(Visibility.Get());
 		}
-		if (Visibility != ESlateVisibility::Visible)
+		if (Visibility == ESlateVisibility::Collapsed ||
+			Visibility == ESlateVisibility::Hidden)
 		{
 			Visibility.Clear();
 			return;
@@ -473,7 +478,8 @@ public:
 			if (UEditableTextBox* T = Get())
 				T->SetVisibility(Visibility.Get());
 		}
-		if (Visibility != ESlateVisibility::Visible)
+		if (Visibility == ESlateVisibility::Collapsed ||
+			Visibility == ESlateVisibility::Hidden)
 		{
 			Visibility.Clear();
 			return;
@@ -666,7 +672,8 @@ struct FCsWidget_SliderAndEditableFloatBox : FCsWidget
 		Slider.OnNativeTick(InDeltaTime);
 		FloatBox.OnNativeTick(InDeltaTime);
 
-		if (Visibility != ESlateVisibility::Visible)
+		if (Visibility == ESlateVisibility::Collapsed ||
+			Visibility == ESlateVisibility::Hidden)
 		{
 			Visibility.Clear();
 			return;
@@ -697,7 +704,8 @@ struct FCsWidget_ButtonAndText : FCsWidget
 		Button.OnNativeTick(InDeltaTime);
 		Text.OnNativeTick(InDeltaTime);
 
-		if (Visibility != ESlateVisibility::Visible)
+		if (Visibility == ESlateVisibility::Collapsed ||
+			Visibility == ESlateVisibility::Hidden)
 		{
 			Visibility.Clear();
 			return;
@@ -1008,6 +1016,8 @@ public:
 
 	virtual UCsUserWidget* GetChildWidget(const TCsWidgetType &WidgetType);
 	virtual UCsUserWidget* GetActiveChildWidget(const TCsWidgetType &WidgetType);
+
+	virtual void SetChildFocus(const TCsWidgetType &WidgetType, const int32 &InFocus);
 
 // Open / Close Child
 #pragma region

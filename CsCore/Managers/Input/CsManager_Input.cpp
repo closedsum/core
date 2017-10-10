@@ -17,6 +17,9 @@ ACsManager_Input::ACsManager_Input(const FObjectInitializer& ObjectInitializer) 
 
 	CurrentInputFrameIndex	  = INDEX_NONE;
 	//CurrentInputActionMap = ECsInputActionMap::Game;
+
+	InputActionToString = nullptr;
+	StringToInputAction = nullptr;
 }
 
 /*static*/ ACsManager_Input* ACsManager_Input::Get(UWorld* InWorld, const int32 &Id /*= INDEX_NONE*/)
@@ -274,7 +277,7 @@ void ACsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 			const FCsInput* Input = InputFrame.Inputs[I];
 
 			const FString Action = (*InputActionToString)(Input->Action);
-			const FString Event = (*InputEventToString)(Input->Event);
+			const FString Event = ECsInputEvent::ToString(Input->Event);
 
 			// Void - No Value
 			if ((CsCVarLogInputAll->GetInt() == CS_CVAR_SHOW_LOG || CsCVarLogInputActions->GetInt() == CS_CVAR_SHOW_LOG) &&
@@ -679,16 +682,72 @@ float ACsManager_Input::GetInputDuration(const TCsInputAction &Action)
 	return Infos[(uint8)Action]->Duration;
 }
 
+void ACsManager_Input::SaveInputProfile()
+{
+}
+
+void ACsManager_Input::LoadInputProfile()
+{
+	// MouseAndKeyboard
+	{
+		TArray<FCsInputActionMapping>& Mappings = InputProfile.MouseAndKeyboardMappings;
+
+		const int32 Count = Mappings.Num();
+
+		for (int32 I = 0; I < Count; I++)
+		{
+			FCsInputActionMapping& Mapping = Mappings[I];
+
+			Mapping.Action_Internal = (*StringToInputAction)(Mapping.Action);
+			Mapping.Key_Internal	= GetKey(Mapping.Key);
+		}
+	}
+	// Gamepad
+	{
+		TArray<FCsInputActionMapping>& Mappings = InputProfile.GamepadMappings;
+
+		const int32 Count = Mappings.Num();
+
+		for (int32 I = 0; I < Count; I++)
+		{
+			FCsInputActionMapping& Mapping = Mappings[I];
+
+			Mapping.Action_Internal = (*StringToInputAction)(Mapping.Action);
+			Mapping.Key_Internal	= GetKey(Mapping.Key);
+		}
+	}
+}
+
+FKey ACsManager_Input::GetKey(const FString &KeyName)
+{
+	TArray<FKey> AllKeys;
+	EKeys::GetAllKeys(AllKeys);
+
+	const int32 KeyCount = AllKeys.Num();
+
+	for (int32 I = 1; I < KeyCount; I++)
+	{
+		const FKey& Key = AllKeys[I];
+
+		if (KeyName == Key.ToString())
+			return Key;
+	}
+	return EKeys::Invalid;
+}
+
 // TODO: Need to store the original Key "Keyboard" mappings for Input. Do similar for control setup
 
-void ACsManager_Input::RebindActionMapping(const TCsInputAction &Action, const FKey &Key)
+void ACsManager_Input::RebindActionMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key)
 {
 	ACsPlayerController* Controller = Cast<ACsPlayerController>(GetInputOwner());
 	UPlayerInput* PlayerInput		= Controller->PlayerInput;
 
+	FCsInputActionMapping& Mapping = InputProfile.GetMapping(Device, Action);
+	const FKey PreviousKey = Mapping.Key_Internal;
 	const FName ActionName = FName(*((*InputActionToString)(Action)));
+	const int32 Count	   = PlayerInput->ActionMappings.Num();
 
-	const int32 Count = PlayerInput->ActionMappings.Num();
+	bool Found = false;
 
 	for (int32 I = 0; I < Count; I++)
 	{
@@ -699,23 +758,39 @@ void ACsManager_Input::RebindActionMapping(const TCsInputAction &Action, const F
 		if (ActionMapping.Key == EKeys::MouseX || ActionMapping.Key == EKeys::MouseY)
 			continue;
 
-		if (ActionName == ActionMapping.ActionName)
+		const FString KeyName = ActionMapping.Key.ToString();
+
+		if (ActionName == ActionMapping.ActionName &&
+			PreviousKey == ActionMapping.Key)
 		{
 			ActionMapping.Key = Key;
+			Found = true;
 			break;
 		}
+	}
+	// Add Mapping if it is NOT found
+	if (!Found)
+	{
+		PlayerInput->ActionMappings.AddDefaulted();
+
+		FInputActionKeyMapping& ActionMapping = PlayerInput->ActionMappings[Count];
+		ActionMapping.ActionName			  = FName(*Mapping.Action);
+		ActionMapping.Key					  = Mapping.Key_Internal;
 	}
 	PlayerInput->ForceRebuildingKeyMaps(false);
 }
 
-void ACsManager_Input::RebindAxisMapping(const TCsInputAction &Action, const FKey &Key)
+void ACsManager_Input::RebindAxisMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key)
 {
 	ACsPlayerController* Controller = Cast<ACsPlayerController>(GetInputOwner());
 	UPlayerInput* PlayerInput		= Controller->PlayerInput;
 
-	const FName ActionName = FName(*((*InputActionToString)(Action)));
+	FCsInputActionMapping& Mapping = InputProfile.GetMapping(Device, Action);
+	const FKey PreviousKey		   = Mapping.Key_Internal;
+	const FName ActionName		   = FName(*((*InputActionToString)(Action)));
+	const int32 Count			   = PlayerInput->ActionMappings.Num();
 
-	const int32 Count = PlayerInput->ActionMappings.Num();
+	bool Found = false;
 
 	for (int32 I = 0; I < Count; I++)
 	{
@@ -726,13 +801,31 @@ void ACsManager_Input::RebindAxisMapping(const TCsInputAction &Action, const FKe
 		if (AxisMapping.Key == EKeys::MouseX || AxisMapping.Key == EKeys::MouseY)
 			continue;
 
-		if (ActionName == AxisMapping.AxisName)
+		if (ActionName == AxisMapping.AxisName &&
+			PreviousKey == AxisMapping.Key)
 		{
 			AxisMapping.Key = Key;
+			Found = true;
 			break;
 		}
 	}
+	// Add Mapping if it is NOT found
+	if (!Found)
+	{
+		FInputAxisKeyMapping& AxisMapping = PlayerInput->AxisMappings[Count];
+		AxisMapping.AxisName			  = FName(*Mapping.Action);
+		AxisMapping.Key					  = Mapping.Key_Internal;
+		AxisMapping.Scale				  = Mapping.Scale;
+	}
 	PlayerInput->ForceRebuildingKeyMaps(false);
+}
+
+void ACsManager_Input::RebindMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key)
+{
+	if (Infos[(uint8)Action]->Type == ECsInputType::Action)
+		RebindActionMapping(Device, Action, Key);
+	if (Infos[(uint8)Action]->Type == ECsInputType::Axis)
+		RebindAxisMapping(Device, Action, Key);
 }
 
 #if WITH_EDITOR

@@ -57,6 +57,18 @@ UCsUserWidget* UCsUserWidget::GetActiveChildWidget(const TCsWidgetType &WidgetTy
 	return (*Widgets)[CS_FIRST];
 }
 
+void UCsUserWidget::SetChildFocus(const TCsWidgetType &WidgetType, const int32 &InFocus)
+{
+	if (UCsUserWidget* Widget = GetActiveChildWidget(WidgetType))
+	{
+		Widget->SetFocus(Focus);
+	}
+	else
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsUserWidget::SetChildFocus(%s): Widget: %s is NOT Active."), *GetName(), *((*WidgetTypeToString)(WidgetType)));
+	}
+}
+
 void UCsUserWidget::OpenChild(const TCsWidgetType &WidgetType)
 {
 	if (UCsUserWidget* Widget = GetActiveChildWidget(WidgetType))

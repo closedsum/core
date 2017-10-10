@@ -8,6 +8,49 @@
 #pragma region
 
 UENUM()
+namespace ECsInputDevice
+{
+	enum Type
+	{
+		MouseAndKeyboard	UMETA(DisplayName = "Mouse And Keyboard"),
+		Gamepad				UMETA(DisplayName = "Gamepad"),
+		MotionController	UMETA(DisplayName = "MotionController"),
+		ECsInputDevice_MAX	UMETA(Hidden),
+	};
+}
+
+namespace ECsInputDevice
+{
+	typedef FCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+
+	namespace Str
+	{
+		const TCsString MouseAndKeyboard = TCsString(TEXT("MouseAndKeyboard"), TEXT("mouseandkeyboard"));
+		const TCsString Gamepad = TCsString(TEXT("Gamepad"), TEXT("gamepad"));
+		const TCsString MotionController = TCsString(TEXT("MotionController"), TEXT("motioncontroller"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::MouseAndKeyboard) { return Str::MouseAndKeyboard.Value; }
+		if (EType == Type::Gamepad) { return Str::Gamepad.Value; }
+		if (EType == Type::MotionController) { return Str::MotionController.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::MouseAndKeyboard) { return Type::MouseAndKeyboard; }
+		if (String == Str::Gamepad) { return Type::Gamepad; }
+		if (String == Str::MotionController) { return Type::MotionController; }
+		return Type::ECsInputDevice_MAX;
+	}
+}
+
+#define ECS_INPUT_DEVICE_MAX (uint8)ECsInputDevice::ECsInputDevice_MAX
+typedef ECsInputDevice::Type TCsInputDevice;
+
+UENUM()
 namespace ECsInputType
 {
 	enum Type
@@ -183,6 +226,9 @@ namespace ECsInputAction
 }
 
 typedef ECsInputAction::Type TCsInputAction;
+
+typedef FString(*TCsInputActionToString)(const TCsInputAction&);
+typedef TCsInputAction(*TCsStringToInputAction)(const FString&);
 
 #define CS_INVALID_INPUT_POOL_INDEX 65535
 
@@ -765,7 +811,6 @@ struct FCsInputPhrase
 	}
 };
 
-
 USTRUCT()
 struct FCsInputSentence
 {
@@ -889,6 +934,127 @@ struct FCsInputSentence
 			CompletedTime = CurrentTime;
 			Active = false;
 		}
+	}
+};
+
+USTRUCT()
+struct FCsInputActionMapping
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	FString Action;
+
+	TCsInputAction Action_Internal;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	FString Key;
+
+	FKey Key_Internal;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	float Scale;
+
+	FCsInputActionMapping& operator=(const FCsInputActionMapping& B)
+	{
+		Action = B.Action;
+		Action_Internal = B.Action_Internal;
+		Key = B.Key;
+		Key_Internal = B.Key_Internal;
+		Scale = B.Scale;
+		return *this;
+	}
+
+	bool operator==(const FCsInputActionMapping& B) const
+	{
+		return Action == B.Action &&
+			   Action_Internal == B.Action_Internal &&
+			   Key == B.Key &&
+			   Key_Internal == B.Key_Internal &&
+			   Scale == B.Scale;
+	}
+
+	bool operator!=(const FCsInputActionMapping& B) const
+	{
+		return !(*this == B);
+	}
+};
+
+USTRUCT()
+struct FCsInputProfile
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	uint8 Player;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	TArray<FCsInputActionMapping> MouseAndKeyboardMappings;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	TArray<FCsInputActionMapping> GamepadMappings;
+
+	FCsInputProfile()
+	{
+		Player = 0;
+	}
+
+	FCsInputActionMapping& GetMapping(const TCsInputDevice &Device, const TCsInputAction &Action)
+	{
+		// MouseAndKeyboard
+		if (Device == ECsInputDevice::MouseAndKeyboard)
+		{
+			const int32 Count = MouseAndKeyboardMappings.Num();
+
+			for (int32 I = 0; I < Count; I++)
+			{
+				if (Action == MouseAndKeyboardMappings[I].Action_Internal)
+					return MouseAndKeyboardMappings[I];
+			}
+		}
+		// Gamepad
+		if (Device == ECsInputDevice::Gamepad)
+		{
+			const int32 Count = GamepadMappings.Num();
+
+			for (int32 I = 0; I < Count; I++)
+			{
+				if (Action == GamepadMappings[I].Action_Internal)
+					return GamepadMappings[I];
+			}
+		}
+		return MouseAndKeyboardMappings[CS_FIRST];
+	}
+
+	FKey GetKey(const TCsInputDevice &Device, const TCsInputAction &Action)
+	{
+		// MouseAndKeyboard
+		if (Device == ECsInputDevice::MouseAndKeyboard)
+		{
+			const int32 Count = MouseAndKeyboardMappings.Num();
+
+			for (int32 I = 0; I < Count; I++)
+			{
+				const FCsInputActionMapping& Mapping = MouseAndKeyboardMappings[I];
+
+				if (Action == Mapping.Action_Internal)
+					return Mapping.Key_Internal;
+			}
+		}
+		// Gamepad
+		if (Device == ECsInputDevice::Gamepad)
+		{
+			const int32 Count = GamepadMappings.Num();
+
+			for (int32 I = 0; I < Count; I++)
+			{
+				const FCsInputActionMapping& Mapping = GamepadMappings[I];
+
+				if (Action == Mapping.Action_Internal)
+					return Mapping.Key_Internal;
+			}
+		}
+		return EKeys::Invalid;
 	}
 };
 

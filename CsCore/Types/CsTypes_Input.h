@@ -219,6 +219,7 @@ namespace ECsInputActionMap
 typedef ECsInputActionMap::BitMask TCsInputActionMap;
 
 typedef FString(*TCsInputActionMapToString)(const int32&);
+typedef TCsInputActionMap(*TCsStringToInputActionMap)(const FString&);
 
 namespace ECsInputAction
 {
@@ -943,38 +944,80 @@ struct FCsInputActionMapping
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	FString Action;
+	FString ActionName;
 
-	TCsInputAction Action_Internal;
+	TCsInputAction Action;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	FString Key;
+	FString KeyName;
 
-	FKey Key_Internal;
+	FKey Key;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	float Scale;
 
 	FCsInputActionMapping& operator=(const FCsInputActionMapping& B)
 	{
+		ActionName = B.ActionName;
 		Action = B.Action;
-		Action_Internal = B.Action_Internal;
+		KeyName = B.KeyName;
 		Key = B.Key;
-		Key_Internal = B.Key_Internal;
 		Scale = B.Scale;
 		return *this;
 	}
 
 	bool operator==(const FCsInputActionMapping& B) const
 	{
-		return Action == B.Action &&
-			   Action_Internal == B.Action_Internal &&
+		return ActionName == B.ActionName &&
+			   Action == B.Action &&
+			   KeyName == B.KeyName &&
 			   Key == B.Key &&
-			   Key_Internal == B.Key_Internal &&
 			   Scale == B.Scale;
 	}
 
 	bool operator!=(const FCsInputActionMapping& B) const
+	{
+		return !(*this == B);
+	}
+};
+
+USTRUCT()
+struct FCsInputActionMappings
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	TArray<FCsInputActionMapping> Mappings;
+
+	FCsInputActionMappings& operator=(const FCsInputActionMappings& B)
+	{
+		Mappings.Reset();
+
+		const int32 Count = B.Mappings.Num();
+
+		for (int32 I = 0; I < Count; I++)
+		{
+			Mappings.AddDefaulted();
+			Mappings[I] = B.Mappings[I];
+		}
+		return *this;
+	}
+
+	bool operator==(const FCsInputActionMappings& B) const
+	{
+		if (Mappings.Num() != B.Mappings.Num())
+			return false;
+
+		const int32 Count = Mappings.Num();
+
+		for (int32 I = 0; I < Count; I++)
+		{
+
+		}
+		return true;
+	}
+
+	bool operator!=(const FCsInputActionMappings& B) const
 	{
 		return !(*this == B);
 	}
@@ -988,11 +1031,8 @@ struct FCsInputProfile
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	uint8 Player;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	TArray<FCsInputActionMapping> MouseAndKeyboardMappings;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	TArray<FCsInputActionMapping> GamepadMappings;
+	UPROPERTY(VisibleDefaultsOnly, Category = "Input")
+	FCsInputActionMappings DeviceMappings[ECsInputDevice::ECsInputDevice_MAX];
 
 	FCsInputProfile()
 	{
@@ -1001,60 +1041,78 @@ struct FCsInputProfile
 
 	FCsInputActionMapping& GetMapping(const TCsInputDevice &Device, const TCsInputAction &Action)
 	{
-		// MouseAndKeyboard
-		if (Device == ECsInputDevice::MouseAndKeyboard)
-		{
-			const int32 Count = MouseAndKeyboardMappings.Num();
+		FCsInputActionMappings& DeviceMapping   = DeviceMappings[(uint8)Device];
+		TArray<FCsInputActionMapping>& Mappings = DeviceMapping.Mappings;
 
-			for (int32 I = 0; I < Count; I++)
-			{
-				if (Action == MouseAndKeyboardMappings[I].Action_Internal)
-					return MouseAndKeyboardMappings[I];
-			}
-		}
-		// Gamepad
-		if (Device == ECsInputDevice::Gamepad)
-		{
-			const int32 Count = GamepadMappings.Num();
+		const int32 Count = Mappings.Num();
 
-			for (int32 I = 0; I < Count; I++)
-			{
-				if (Action == GamepadMappings[I].Action_Internal)
-					return GamepadMappings[I];
-			}
+		for (int32 I = 0; I < Count; I++)
+		{
+			const FCsInputActionMapping& Mapping = Mappings[I];
+
+			if (Action == Mapping.Action)
+				return DeviceMapping.Mappings[I];
 		}
-		return MouseAndKeyboardMappings[CS_FIRST];
+		return Mappings[CS_FIRST];
 	}
 
 	FKey GetKey(const TCsInputDevice &Device, const TCsInputAction &Action)
 	{
-		// MouseAndKeyboard
-		if (Device == ECsInputDevice::MouseAndKeyboard)
+		FCsInputActionMappings& DeviceMapping   = DeviceMappings[(uint8)Device];
+		TArray<FCsInputActionMapping>& Mappings = DeviceMapping.Mappings;
+
+		const int32 Count = Mappings.Num();
+
+		for (int32 I = 0; I < Count; I++)
 		{
-			const int32 Count = MouseAndKeyboardMappings.Num();
+			const FCsInputActionMapping& Mapping = Mappings[I];
 
-			for (int32 I = 0; I < Count; I++)
-			{
-				const FCsInputActionMapping& Mapping = MouseAndKeyboardMappings[I];
-
-				if (Action == Mapping.Action_Internal)
-					return Mapping.Key_Internal;
-			}
-		}
-		// Gamepad
-		if (Device == ECsInputDevice::Gamepad)
-		{
-			const int32 Count = GamepadMappings.Num();
-
-			for (int32 I = 0; I < Count; I++)
-			{
-				const FCsInputActionMapping& Mapping = GamepadMappings[I];
-
-				if (Action == Mapping.Action_Internal)
-					return Mapping.Key_Internal;
-			}
+			if (Action == Mapping.Action)
+				return Mapping.Key;
 		}
 		return EKeys::Invalid;
+	}
+
+	void SetKey(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key)
+	{
+		FCsInputActionMappings& DeviceMapping   = DeviceMappings[(uint8)Device];
+		TArray<FCsInputActionMapping>& Mappings = DeviceMapping.Mappings;
+
+		const int32 Count = Mappings.Num();
+
+		for (int32 I = 0; I < Count; I++)
+		{
+			FCsInputActionMapping& Mapping = Mappings[I];
+
+			if (Action == Mapping.Action)
+			{
+				Mapping.KeyName = Key == EKeys::Invalid ? TEXT("") : Key.GetDisplayName().ToString();;
+				Mapping.Key		= Key;
+				break;
+			}
+		}
+	}
+
+	void AddMapping(const TCsInputDevice &Device, const FString &ActionName, const TCsInputAction &Action, const FString &KeyName, const FKey &Key)
+	{
+		FCsInputActionMappings& DeviceMapping   = DeviceMappings[(uint8)Device];
+		TArray<FCsInputActionMapping>& Mappings = DeviceMapping.Mappings;
+
+		const int32 Count = Mappings.Num();
+		Mappings.AddDefaulted();
+		FCsInputActionMapping& Mapping = Mappings[Count];
+		Mapping.ActionName = ActionName;
+		Mapping.Action	   = Action;
+		Mapping.KeyName	   = KeyName;
+		Mapping.Key		   = Key;
+	}
+
+	void Reset()
+	{
+		for (int32 I = 0; I < ECS_INPUT_DEVICE_MAX; I++)
+		{
+			DeviceMappings[I].Mappings.Reset();
+		}
 	}
 };
 

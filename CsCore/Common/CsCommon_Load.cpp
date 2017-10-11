@@ -2,6 +2,7 @@
 #include "Common/CsCommon_Load.h"
 #include "CsCore.h"
 #include "Types/CsTypes.h"
+#include "Types/CsTypes_Input.h"
 #include "CsCVars.h"
 
 #include "Common/CsCommon.h"
@@ -1504,6 +1505,20 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FCsDataMappingEntry
 			if (StructProperty->Struct == FCsDataMappingEntry::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsDataMappingEntry>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsInputProfile
+			if (StructProperty->Struct == FCsInputProfile::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsInputProfile>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsInputActionMapping
+			if (StructProperty->Struct == FCsInputActionMapping::StaticStruct())
+			{
+				if (StructProperty->ArrayDim == 1)
+				{ WriteToMemberStructPropertyFromJson<FCsInputActionMapping>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				
+				if (StructProperty->ArrayDim == ECS_INPUT_DEVICE_MAX)
+				{
+
+				}
+			}
 
 			if (Internal)
 			{
@@ -1568,6 +1583,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 				// FCsFpsSoundElement
 				if (InnerStructProperty->Struct == FCsFpsSoundElement::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsFpsSoundElement>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
+				// FCsInputActionMapping
+				if (InnerStructProperty->Struct == FCsInputActionMapping::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsInputActionMapping>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
 
 				if (Internal)
 				{

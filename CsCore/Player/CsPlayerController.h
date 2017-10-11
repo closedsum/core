@@ -38,6 +38,12 @@ public:
 	UPROPERTY()
 	class ACsManager_Input* Manager_Input;
 	
+	TSubclassOf<class ACsManager_Input> ManagerInputClass;
+
+	virtual void InitInputSystem() override;
+	virtual void BindDelegatesToInputManager();
+	virtual void UnBindPawnDelegatesFromInputManager();
+
 	virtual void BuildInputStack(TArray<UInputComponent*>& InputStack) override;
 
 	virtual void PreProcessInput(const float DeltaTime, const bool bGamePaused) override;

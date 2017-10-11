@@ -103,6 +103,12 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 													FBindableEvent_##CLASS##_On##INPUT##_Stationary On##INPUT##_Stationary_Event; \
 */
 
+#define CS_INPUT_DEFINE_TYPES	InputActionToString = &ECsInputAction::ToString; \
+								StringToInputAction = &ECsInputAction::ToType; \
+								InputAction_MAX = ECsInputAction::ECsInputAction_MAX; \
+								InputActionMapToString = &ECsInputActionMap::ToString; \
+								StringToInputActionMap = &ECsInputActionMap::ToBitMask;
+
 // Example: CLASS = CsManagerInput (if class is ACsManager_Input), INPUT = TurnAtRate
 #define CS_DECLARE_INPUT_ACTION_MEMBERS(INPUT)	FCsInputInfo INPUT; \
 												void INPUT##_FirstPressed(); \
@@ -400,6 +406,8 @@ class CSCORE_API ACsManager_Input : public AActor
 
 	virtual AActor* GetInputOwner();
 
+	int32 ControllerId;
+
 	virtual void SetupInputComponent();
 
 	virtual void PreProcessInput(const float DeltaTime, const bool bGamePaused);
@@ -432,6 +440,7 @@ class CSCORE_API ACsManager_Input : public AActor
 	TCsInputActionMap CurrentInputActionMap;
 
 	TCsInputActionMapToString InputActionMapToString;
+	TCsStringToInputActionMap StringToInputActionMap;
 
 	TArray<FKey> PressedKeys;
 
@@ -459,13 +468,22 @@ class CSCORE_API ACsManager_Input : public AActor
 
 	float GetInputDuration(const TCsInputAction &Action);
 
+	virtual bool CanSaveInputActionMapping(const TCsInputDevice &Device, const TCsInputAction &Action);
+
 	FCsInputProfile InputProfile;
 
 	void SaveInputProfile();
+	void LoadDefaultInputProfile();
 	void LoadInputProfile();
 
-	struct FKey GetKey(const FString &KeyName);
+	bool IsValidKey(const TCsInputDevice &Device, const FKey &Key);
 
+	struct FKey GetKey(const FString &KeyName);
+	
+	TCsInputAction GetActionFromKey(const TCsInputDevice &Device, const FKey &Key);
+
+	void UnbindActionMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key);
+	void UnbindAxisMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key);
 	void RebindActionMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key);
 	void RebindAxisMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key);
 	void RebindMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key);

@@ -752,7 +752,7 @@ void ACsManager_Input::LoadDefaultInputProfile()
 	// AxisMappings
 	const int32 AxisCount = PlayerInput->AxisMappings.Num();
 
-	for (int32 I = 0; I < ActionCount; I++)
+	for (int32 I = 0; I < AxisCount; I++)
 	{
 		FInputAxisKeyMapping& Mapping = PlayerInput->AxisMappings[I];
 
@@ -970,6 +970,14 @@ void ACsManager_Input::UnbindAxisMapping(const TCsInputDevice &Device, const TCs
 	PlayerInput->ForceRebuildingKeyMaps(false);
 }
 
+void ACsManager_Input::UnbindMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key)
+{
+	if (Infos[(uint8)Action]->Type == ECsInputType::Action)
+		UnbindActionMapping(Device, Action, Key);
+	if (Infos[(uint8)Action]->Type == ECsInputType::Axis)
+		UnbindAxisMapping(Device, Action, Key);
+}
+
 // TODO: Need to store the original Key "Keyboard" mappings for Input. Do similar for control setup
 
 void ACsManager_Input::RebindActionMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key)
@@ -993,7 +1001,7 @@ void ACsManager_Input::RebindActionMapping(const TCsInputDevice &Device, const T
 	// Unbind ActionMapping for OtherAction bound to Key
 	if (OtherAction != InputAction_MAX)
 	{
-		UnbindActionMapping(Device, OtherAction, Key);
+		UnbindMapping(Device, OtherAction, Key);
 	}
 
 	const FName ActionName = FName(*((*InputActionToString)(Action)));
@@ -1049,11 +1057,11 @@ void ACsManager_Input::RebindAxisMapping(const TCsInputDevice &Device, const TCs
 	// Unbind ActionMapping for OtherAction bound to Key
 	if (OtherAction != InputAction_MAX)
 	{
-		UnbindAxisMapping(Device, OtherAction, Key);
+		UnbindMapping(Device, OtherAction, Key);
 	}
 
 	const FName ActionName = FName(*((*InputActionToString)(Action)));
-	const int32 Count	   = PlayerInput->ActionMappings.Num();
+	const int32 Count	   = PlayerInput->AxisMappings.Num();
 
 	bool Found = false;
 
@@ -1072,6 +1080,8 @@ void ACsManager_Input::RebindAxisMapping(const TCsInputDevice &Device, const TCs
 	// Add Mapping if it is NOT found
 	if (!Found)
 	{
+		PlayerInput->AxisMappings.AddDefaulted();
+
 		FInputAxisKeyMapping& AxisMapping = PlayerInput->AxisMappings[Count];
 		AxisMapping.AxisName			  = FName(*Mapping.ActionName);
 		AxisMapping.Key					  = Mapping.Key;

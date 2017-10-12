@@ -994,6 +994,9 @@ public:
 	FBindableDynEvent_CsUserWidget_OnNativeTick OnNativeTick_ScriptEvent;
 
 	UPROPERTY()
+	bool HasNativeContructed;
+
+	UPROPERTY()
 	bool HasInitFinished;
 
 	UPROPERTY()

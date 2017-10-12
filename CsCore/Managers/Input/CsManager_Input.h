@@ -484,6 +484,8 @@ class CSCORE_API ACsManager_Input : public AActor
 
 	void UnbindActionMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key);
 	void UnbindAxisMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key);
+	void UnbindMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key);
+
 	void RebindActionMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key);
 	void RebindAxisMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key);
 	void RebindMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key);

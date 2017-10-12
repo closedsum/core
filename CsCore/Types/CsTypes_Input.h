@@ -956,6 +956,13 @@ struct FCsInputActionMapping
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	float Scale;
 
+	FCsInputActionMapping()
+	{
+		ActionName = TEXT("");
+		KeyName = TEXT("");
+		Scale = 1.0f;
+	}
+
 	FCsInputActionMapping& operator=(const FCsInputActionMapping& B)
 	{
 		ActionName = B.ActionName;

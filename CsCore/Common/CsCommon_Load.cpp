@@ -468,10 +468,25 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			{ WriteMemberStructPropertyToJson<FCsTArrayBlueprint>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 			// FCollisionResponseContainer
 			if (StructProperty->Struct == FCollisionResponseContainer::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCollisionResponseContainer>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); }
+			{ WriteMemberStructPropertyToJson<FCollisionResponseContainer>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 			// FCsDataMappingEntry
 			if (StructProperty->Struct == FCsDataMappingEntry::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsDataMappingEntry>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); }
+			{ WriteMemberStructPropertyToJson<FCsDataMappingEntry>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsInputProfile
+			if (StructProperty->Struct == FCsInputProfile::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsInputProfile>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsInputActionMappings
+			if (StructProperty->Struct == FCsInputActionMappings::StaticStruct())
+			{
+				if (StructProperty->ArrayDim == 1)
+				{ WriteMemberStructPropertyToJson<FCsInputActionMappings>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+
+				if (StructProperty->ArrayDim == ECS_INPUT_DEVICE_MAX)
+				{ WriteMemberFixedArrayStructPropertyToJson_EnumSize<FCsInputActionMappings, ECsInputDevice::Type, ECS_INPUT_DEVICE_MAX>(InJsonWriter, StructProperty, InStruct, MemberName, &ECsInputDevice::ToString, nullptr); continue; }
+			}
+			// FCsInputActionMapping
+			if (StructProperty->Struct == FCsInputActionMapping::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsInputActionMapping>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 
 			if (Internal)
 			{
@@ -545,6 +560,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FCsFpsSoundElement
 				if (InnerStructProperty->Struct == FCsFpsSoundElement::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsFpsSoundElement>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsInputActionMapping
+				if (InnerStructProperty->Struct == FCsInputActionMapping::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsInputActionMapping>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 
 				if (Internal)
 				{
@@ -1508,17 +1526,25 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FCsInputProfile
 			if (StructProperty->Struct == FCsInputProfile::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsInputProfile>(JsonObject, StructProperty, InStruct, MemberName); continue; }
-			// FCsInputActionMapping
-			if (StructProperty->Struct == FCsInputActionMapping::StaticStruct())
+			// FCsInputActionMappings
+			if (StructProperty->Struct == FCsInputActionMappings::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == 1)
-				{ WriteToMemberStructPropertyFromJson<FCsInputActionMapping>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				{ WriteToMemberStructPropertyFromJson<FCsInputActionMappings>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 				
 				if (StructProperty->ArrayDim == ECS_INPUT_DEVICE_MAX)
-				{
+				{ WriteToMemberFixedArrayStructPropertyFromJson_EnumSize<FCsInputActionMappings, ECsInputDevice::Type, ECS_INPUT_DEVICE_MAX>(JsonObject, StructProperty, InStruct, MemberName, &ECsInputDevice::ToString, nullptr); continue; }
 
+				if (Internal)
+				{
+					if ((*Internal)(Property, JsonObject, InStruct, InScriptStruct))
+						continue;
 				}
+				continue;
 			}
+			// FCsInputActionMapping
+			if (StructProperty->Struct == FCsInputActionMapping::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsInputActionMapping>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 
 			if (Internal)
 			{

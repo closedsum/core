@@ -435,6 +435,7 @@ public:
 				S->SetSliderHandleColor(HandleColor.Get());
 		}
 		Visibility.Clear();
+		Value.Clear();
 		HandleColor.Clear();
 	}
 
@@ -459,7 +460,7 @@ public:
 	FCsPrimitiveType<FString> Text;
 	FCsPrimitiveType<FLinearColor> Color;
 
-	void Set(class UEditableTextBox* inTextBox)
+	virtual void Set(class UEditableTextBox* inTextBox)
 	{
 		TextBox    = inTextBox;
 		Visibility = TextBox->Visibility;
@@ -497,6 +498,7 @@ public:
 				T->BackgroundColor_DEPRECATED = Color.Get();
 		}
 		Visibility.Clear();
+		Text.Clear();
 		Color.Clear();
 	}
 
@@ -517,6 +519,50 @@ struct FCsWidget_EditableFloatBox : FCsWidget_EditableTextBox
 {
 public:
 	TCsFloat Value;
+
+	virtual void Set(class UEditableTextBox* inTextBox) override
+	{
+		TextBox = inTextBox;
+		Visibility = TextBox->Visibility;
+		Visibility.Clear();
+		SetText(TextBox->Text.ToString());
+		Text.Clear();
+		Value.Clear();
+		Color = TextBox->BackgroundColor_DEPRECATED;
+		Color.Clear();
+	}
+
+	virtual void OnNativeTick(const float &InDeltaTime) override
+	{
+		// Visibility
+		if (Visibility.HasChanged())
+		{
+			if (UEditableTextBox* T = Get())
+				T->SetVisibility(Visibility.Get());
+		}
+		if (Visibility == ESlateVisibility::Collapsed ||
+			Visibility == ESlateVisibility::Hidden)
+		{
+			Visibility.Clear();
+			return;
+		}
+		// Text
+		if (Text.HasChanged() || Value.HasChanged())
+		{
+			if (UEditableTextBox* T = Get())
+				T->SetText(FText(FText::FromString(Text.Get())));
+		}
+		// Color
+		if (Color.HasChanged())
+		{
+			if (UEditableTextBox* T = Get())
+				T->BackgroundColor_DEPRECATED = Color.Get();
+		}
+		Visibility.Clear();
+		Text.Clear();
+		Value.Clear();
+		Color.Clear();
+	}
 
 	virtual void SetText(const FString &inText)
 	{
@@ -615,7 +661,7 @@ public:
 				if (Fourth == TEXT(".") || Fourth == TEXT(""))
 					return;
 				Text = Text.Get() + Fourth;
-				Value = ((float)SecondValue / 10.0f) + ((float)ThirdValue / 100.0f);
+				Value = ((float)ThirdValue / 10.0f) + ((float)FourthValue / 100.0f);
 				return;
 			}
 			Text = TEXT("1.0");
@@ -638,8 +684,8 @@ public:
 		else
 		if (Value < 1.0f)
 		{
-			const int32 Tenths = FMath::FloorToInt(Value / 10.0f);
-			int32 Hundredths = FMath::FloorToInt((Value / 100.0f) - 10.0f);
+			const int32 Tenths = FMath::FloorToInt(Value * 10.0f);
+			int32 Hundredths = FMath::FloorToInt((Value * 100.0f) - 10.0f);
 
 			if (Hundredths < 0)
 				Hundredths = 0;

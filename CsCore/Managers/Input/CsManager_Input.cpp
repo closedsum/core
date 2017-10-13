@@ -832,6 +832,9 @@ void ACsManager_Input::LoadInputProfile()
 
 bool ACsManager_Input::IsValidKey(const TCsInputDevice &Device, const FKey &Key)
 {
+	if (Key == EKeys::Invalid)
+		return false;
+
 	// MouseAndKeyboard
 	if (Device == ECsInputDevice::MouseAndKeyboard)
 	{
@@ -884,6 +887,23 @@ TCsInputAction ACsManager_Input::GetActionFromKey(const TCsInputDevice &Device, 
 			return Mapping.Action;
 	}
 	return InputAction_MAX;
+}
+
+FKey ACsManager_Input::GetKeyFromAction(const TCsInputDevice &Device, const TCsInputAction &Action)
+{
+	FCsInputActionMappings& DeviceMapping   = InputProfile.DeviceMappings[(uint8)Device];
+	TArray<FCsInputActionMapping>& Mappings = DeviceMapping.Mappings;
+
+	const int32 Count = Mappings.Num();
+
+	for (int32 I = 0; I < Count; I++)
+	{
+		FCsInputActionMapping& Mapping = Mappings[I];
+
+		if (Mapping.Action == Action)
+			return Mapping.Key;
+	}
+	return EKeys::Invalid;
 }
 
 void ACsManager_Input::UnbindActionMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key)
@@ -1123,3 +1143,21 @@ void ACsManager_Input::RunEditorGameJavascriptFile_FirstPressed()
 #pragma region
 
 #pragma endregion Actions
+
+// Game Events
+#pragma region
+
+void ACsManager_Input::CreateGameEventDefinitionSimple(TArray<FCsGameEventDefinition> &Definitions, const TCsGameEvent &GameEvent, const TCsInputAction &Action, const TCsInputEvent &Event)
+{
+	Definitions.AddDefaulted();
+	FCsGameEventDefinition& Def = Definitions[Definitions.Num() - 1];
+	Def.Event = GameEvent;
+	FCsInputSentence& Sentence = Def.Sentence;
+	Sentence.Phrases.AddDefaulted();
+	FCsInputPhrase& Phrase = Sentence.Phrases[Sentence.Phrases.Num() - 1];
+	Phrase.Words.AddDefaulted();
+	FCsInputWord& Word = Phrase.Words[Phrase.Words.Num() - 1];
+	Word.AddOrInput(Action, Event);
+}
+
+#pragma endregion Game Events

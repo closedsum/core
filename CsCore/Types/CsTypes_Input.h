@@ -1185,16 +1185,6 @@ struct FCsGameEventDefinition
 
 #define CS_GAME_EVENT_DEFINITION_END() }
 
-#define CS_GAME_EVENT_DEFINITION_SIMPLE(Definitions, GAMEEVENT, ACTION, EVENT)	{ \
-																					Definitions.AddDefaulted(); \
-																					FCsGameEventDefinition& Def = Definitions[Definitions.Num() - 1]; \
-																					Def.Event = ECsGameEvent::GAMEEVENT; \
-																					FCsInputSentence& Sentence = Def.Sentence; \
-																					Sentence.Phrases.AddDefaulted(); \
-																					FCsInputPhrase& Phrase = Sentence.Phrases[Sentence.Phrases.Num() - 1]; \
-																					Phrase.Words.AddDefaulted(); \
-																					FCsInputWord& Word = Phrase.Words[Phrase.Words.Num() - 1]; \
-																					Word.AddOrInput(ECsInputAction::ACTION, ECsInputEvent::EVENT); \
-																				}
+#define CS_GAME_EVENT_DEFINITION_SIMPLE(Definitions, GAMEEVENT, ACTION, EVENT)	CreateGameEventDefinitionSimple(Definitions, ECsGameEvent::GAMEEVENT, ECsInputAction::ACTION, ECsInputEvent::EVENT);
 
 #pragma endregion

@@ -481,6 +481,7 @@ class CSCORE_API ACsManager_Input : public AActor
 	struct FKey GetKey(const FString &KeyName);
 	
 	TCsInputAction GetActionFromKey(const TCsInputDevice &Device, const FKey &Key);
+	FKey GetKeyFromAction(const TCsInputDevice &Device, const TCsInputAction &Action);
 
 	void UnbindActionMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key);
 	void UnbindAxisMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key);
@@ -654,4 +655,11 @@ public:
 #pragma endregion Rotation Events
 
 #pragma endregion Actions
+
+// Game Events
+#pragma region
+
+	void CreateGameEventDefinitionSimple(TArray<FCsGameEventDefinition> &Definitions, const TCsGameEvent &GameEvent, const TCsInputAction &Action, const TCsInputEvent &Event);
+
+#pragma endregion Game Events
 };

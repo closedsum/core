@@ -389,6 +389,38 @@ public:
 	UCheckBox* Get() { return CheckBox.IsValid() ? CheckBox.Get() : nullptr; }
 };
 
+
+struct FCsWidget_LabelAndCheckBox : FCsWidget
+{
+	FCsWidget_Text Label;
+	FCsWidget_CheckBox CheckBox;
+
+	virtual void OnNativeTick(const float &InDeltaTime) override
+	{
+		// Visibility
+		if (Visibility.HasChanged())
+		{
+			Label.SetVisibility(Visibility.Get());
+			CheckBox.SetVisibility(Visibility.Get());
+		}
+
+		Label.OnNativeTick(InDeltaTime);
+		CheckBox.OnNativeTick(InDeltaTime);
+
+		if (Visibility == ESlateVisibility::Collapsed ||
+			Visibility == ESlateVisibility::Hidden)
+		{
+			Visibility.Clear();
+			return;
+		}
+	}
+
+	void SetCheckState(const bool &IsChecked)
+	{
+		CheckBox.SetCheckState(IsChecked ? ECheckBoxState::Checked : ECheckBoxState::Unchecked);
+	}
+};
+
 struct FCsWidget_Slider : FCsWidget
 {
 public:
@@ -733,6 +765,47 @@ struct FCsWidget_SliderAndEditableFloatBox : FCsWidget
 	}
 };
 
+struct FCsWidget_LabelAndSliderAndEditableFloatBox : FCsWidget
+{
+	FCsWidget_Text Label;
+	FCsWidget_Slider Slider;
+	FCsWidget_EditableFloatBox FloatBox;
+
+	virtual void OnNativeTick(const float &InDeltaTime) override
+	{
+		// Visibility
+		if (Visibility.HasChanged())
+		{
+			Label.SetVisibility(Visibility.Get());
+			Slider.SetVisibility(Visibility.Get());
+			FloatBox.SetVisibility(Visibility.Get());
+		}
+
+		Label.OnNativeTick(InDeltaTime);
+		Slider.OnNativeTick(InDeltaTime);
+		FloatBox.OnNativeTick(InDeltaTime);
+
+		if (Visibility == ESlateVisibility::Collapsed ||
+			Visibility == ESlateVisibility::Hidden)
+		{
+			Visibility.Clear();
+			return;
+		}
+	}
+
+	void SetValue(const float &inValue)
+	{
+		Slider.SetValue(inValue);
+		FloatBox.SetValue(inValue);
+	}
+
+	void SetValue(const FText &Text)
+	{
+		FloatBox.SetText(Text.ToString());
+		Slider.SetValue(FloatBox.Value.Get());
+	}
+};
+
 struct FCsWidget_ButtonAndText : FCsWidget
 {
 	FCsWidget_Button Button;
@@ -747,6 +820,35 @@ struct FCsWidget_ButtonAndText : FCsWidget
 			Text.SetVisibility(Visibility.Get());
 		}
 
+		Button.OnNativeTick(InDeltaTime);
+		Text.OnNativeTick(InDeltaTime);
+
+		if (Visibility == ESlateVisibility::Collapsed ||
+			Visibility == ESlateVisibility::Hidden)
+		{
+			Visibility.Clear();
+			return;
+		}
+	}
+};
+
+struct FCsWidget_LabelAndButtonAndText : FCsWidget
+{
+	FCsWidget_Text Label;
+	FCsWidget_Button Button;
+	FCsWidget_Text Text;
+
+	virtual void OnNativeTick(const float &InDeltaTime) override
+	{
+		// Visibility
+		if (Visibility.HasChanged())
+		{
+			Label.SetVisibility(Visibility.Get());
+			Button.SetVisibility(Visibility.Get());
+			Text.SetVisibility(Visibility.Get());
+		}
+
+		Label.OnNativeTick(InDeltaTime);
 		Button.OnNativeTick(InDeltaTime);
 		Text.OnNativeTick(InDeltaTime);
 

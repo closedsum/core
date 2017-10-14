@@ -1152,12 +1152,21 @@ void ACsManager_Input::CreateGameEventDefinitionSimple(TArray<FCsGameEventDefini
 	Definitions.AddDefaulted();
 	FCsGameEventDefinition& Def = Definitions[Definitions.Num() - 1];
 	Def.Event = GameEvent;
-	FCsInputSentence& Sentence = Def.Sentence;
-	Sentence.Phrases.AddDefaulted();
-	FCsInputPhrase& Phrase = Sentence.Phrases[Sentence.Phrases.Num() - 1];
-	Phrase.Words.AddDefaulted();
-	FCsInputWord& Word = Phrase.Words[Phrase.Words.Num() - 1];
-	Word.AddOrInput(Action, Event);
+	// Sentence
+	{
+		FCsInputSentence& Sentence = Def.Sentence;
+		Sentence.Phrases.AddDefaulted();
+		// Phrase
+		{
+			FCsInputPhrase& Phrase = Sentence.Phrases[Sentence.Phrases.Num() - 1];
+			Phrase.Words.AddDefaulted();
+			// Word
+			{
+				FCsInputWord& Word = Phrase.Words[Phrase.Words.Num() - 1];
+				Word.AddOrInput(Action, Event);
+			}
+		}
+	}
 }
 
 #pragma endregion Game Events

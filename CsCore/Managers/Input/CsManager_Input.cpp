@@ -906,6 +906,35 @@ FKey ACsManager_Input::GetKeyFromAction(const TCsInputDevice &Device, const TCsI
 	return EKeys::Invalid;
 }
 
+FKey ACsManager_Input::GetKeyFromAction(const TCsInputAction& Action)
+{
+	UPlayerInput* PlayerInput = UCsCommon::GetLocalPlayerInput(GetWorld());
+
+	const FString ActionAsString = (*InputActionToString)(Action);
+	const FName ActionName		 = FName(*ActionAsString);
+
+	const int32 ActionCount	= PlayerInput->ActionMappings.Num();
+
+	for (int32 I = 0; I < ActionCount; I++)
+	{
+		FInputActionKeyMapping& Mapping = PlayerInput->ActionMappings[I];
+
+		if (ActionName == Mapping.ActionName)
+			return Mapping.Key;
+	}
+
+	const int32 AxisCount = PlayerInput->AxisMappings.Num();
+
+	for (int32 I = 0; I < AxisCount; I++)
+	{
+		FInputAxisKeyMapping& Mapping = PlayerInput->AxisMappings[I];
+
+		if (ActionName == Mapping.AxisName)
+			return Mapping.Key;
+	}
+	return EKeys::Invalid;
+}
+
 void ACsManager_Input::UnbindActionMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key)
 {
 	ACsPlayerController* Controller = Cast<ACsPlayerController>(GetInputOwner());

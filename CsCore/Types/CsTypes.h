@@ -47,27 +47,30 @@ namespace ECsLevelState
 	{
 		None				UMETA(DisplayName = "None"),
 		Loaded				UMETA(DisplayName = "Loaded"),
-		Transition			UMETA(DisplayName = "Transition"),
+		BeginTransition		UMETA(DisplayName = "Begin Transition"),
+		InTransition		UMETA(DisplayName = "In Transition"),
 		ECsLevelState_MAX	UMETA(Hidden),
 	};
 }
 
 namespace ECsLevelState
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
-		const TCsString None = TCsString(TEXT("None"), TEXT("none"));
-		const TCsString Loaded = TCsString(TEXT("Loaded"), TEXT("loaded"));
-		const TCsString Transition = TCsString(TEXT("Transition"), TEXT("transition"));
+		const TCsString None = TCsString(TEXT("None"), TEXT("none"), TEXT("none"));
+		const TCsString Loaded = TCsString(TEXT("Loaded"), TEXT("loaded"), TEXT("loaded"));
+		const TCsString BeginTransition = TCsString(TEXT("BeginTransition"), TEXT("begintransition"), TEXT("begin transition"));
+		const TCsString InTransition = TCsString(TEXT("InTransition"), TEXT("intransition"), TEXT("in transition"));
 	}
 
 	FORCEINLINE FString ToString(const Type &EType)
 	{
 		if (EType == Type::None) { return Str::None.Value; }
 		if (EType == Type::Loaded) { return Str::Loaded.Value; }
-		if (EType == Type::Transition) { return Str::Transition.Value; }
+		if (EType == Type::BeginTransition) { return Str::BeginTransition.Value; }
+		if (EType == Type::InTransition) { return Str::InTransition.Value; }
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
@@ -75,7 +78,8 @@ namespace ECsLevelState
 	{
 		if (String == Str::None) { return Type::None; }
 		if (String == Str::Loaded) { return Type::Loaded; }
-		if (String == Str::Transition) { return Type::Transition; }
+		if (String == Str::BeginTransition) { return Type::BeginTransition; }
+		if (String == Str::InTransition) { return Type::InTransition; }
 		return Type::ECsLevelState_MAX;
 	}
 }
@@ -83,7 +87,7 @@ namespace ECsLevelState
 #define ECS_LEVEL_STATE (uint8)ECsLevelState::ECsLevelState_MAX
 typedef TEnumAsByte<ECsLevelState::Type> TCsLevelState;
 
-#pragma endregion
+#pragma endregion Level
 
 // Render
 #pragma region
@@ -3205,6 +3209,7 @@ typedef TEnumAsByte<ECsCoroutineMessage::Type> TCsCoroutineMessage;
 #define CS_ROUTINE_FLOAT_SIZE 4
 #define CS_ROUTINE_VECTOR_SIZE 4
 #define CS_ROUTINE_COLOR_SIZE 4
+#define CS_ROUTINE_STRING_SIZE 4
 #define CS_ROUTINE_OBJECT_SIZE 4
 #define CS_ROUTINE_VOID_POINTER_SIZE 4
 #define CS_ROUTINE_VOID_DOUBLE_POINTER_SIZE 4
@@ -3252,6 +3257,7 @@ struct FCsRoutine
 	float floats[CS_ROUTINE_FLOAT_SIZE];
 	FVector vectors[CS_ROUTINE_VECTOR_SIZE];
 	FLinearColor colors[CS_ROUTINE_COLOR_SIZE];
+	FString strings[CS_ROUTINE_STRING_SIZE];
 	TWeakObjectPtr<UObject> objects[CS_ROUTINE_OBJECT_SIZE];
 	void* voidPointers[CS_ROUTINE_VOID_POINTER_SIZE];
 	void** voidDoublePointers[CS_ROUTINE_VOID_DOUBLE_POINTER_SIZE];
@@ -3427,6 +3433,11 @@ struct FCsRoutine
 		for (int32 i = 0; i < CS_ROUTINE_COLOR_SIZE; i++)
 		{
 			colors[i] = FLinearColor::White;
+		}
+
+		for (int32 i = 0; i < CS_ROUTINE_STRING_SIZE; i++)
+		{
+			strings[i] = TEXT("");
 		}
 
 		for (int32 i = 0; i < CS_ROUTINE_OBJECT_SIZE; i++)

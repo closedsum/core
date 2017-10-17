@@ -482,6 +482,7 @@ class CSCORE_API ACsManager_Input : public AActor
 	
 	TCsInputAction GetActionFromKey(const TCsInputDevice &Device, const FKey &Key);
 	FKey GetKeyFromAction(const TCsInputDevice &Device, const TCsInputAction &Action);
+	FKey GetKeyFromAction(const TCsInputAction& Action);
 
 	void UnbindActionMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key);
 	void UnbindAxisMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key);

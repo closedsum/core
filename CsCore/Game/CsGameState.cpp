@@ -4,6 +4,9 @@
 #include "CsCVars.h"
 #include "Coroutine/CsCoroutineScheduler.h"
 #include "CsLastTickActor.h"
+
+#include "Game/CsGameInstance.h"
+
 // Managers
 #include "Managers/CsManager_Loading.h"
 #include "Managers/Input/CsManager_Input.h"
@@ -43,6 +46,9 @@ void ACsGameState::PostActorCreated()
 	if (GetWorld()->WorldType == EWorldType::Editor ||
 		GetWorld()->WorldType == EWorldType::EditorPreview)
 		return;
+
+	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+	GameInstance->LevelState	  = ECsLevelState::Loaded;
 
 	// Coroutine Scheduler
 	UCsCoroutineScheduler::Get()->MyOwner = this;

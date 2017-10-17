@@ -21,6 +21,10 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsUI_OnOpen, const TEnumAsByt
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUI_OnClose, const uint8&, WidgetType);
 DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsUI_OnClose, const TEnumAsByte<ECsWidgetType::Type>&);
 
+#define CS_UI_DEFINE_TYPE	WidgetType_MAX = ECsWidgetType::ECsWidgetType_MAX; \
+							WidgetTypeToString = &ECsWidgetType::ToString; \
+							StringToWidgetType = &ECsWidgetType::ToType;
+
 UCLASS()
 class CSCORE_API ACsUI : public AHUD
 {
@@ -45,6 +49,8 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "UI")
 	FBindableDynEvent_CsUI_OnLastTick OnLastTick_ScriptEvent;
 
+	TArray<TCsWidgetType> WidgetTypes;
+
 	UPROPERTY()
 	TArray<class UCsUserWidget*> Widgets;
 
@@ -53,6 +59,8 @@ public:
 	TArray<class UCsUserWidget*> ActiveWidgets;
 
 	TMap<TCsWidgetType, TArray<class UCsUserWidget*>> ActiveWidgetsMap;
+
+	TCsWidgetType WidgetType_MAX;
 
 	TCsWidgetTypeToString WidgetTypeToString;
 	TCsStringToWidgetType StringToWidgetType;
@@ -95,6 +103,7 @@ public:
 	virtual bool IsOpenedAndFocused(const TCsWidgetType &WidgetType);
 
 	virtual void Close(const TCsWidgetType &WidgetType);
+	virtual void CloseAll();
 
 	FBindableEvent_CsUI_OnClose OnClose_Event;
 

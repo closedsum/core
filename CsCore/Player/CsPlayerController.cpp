@@ -7,6 +7,9 @@
 ACsPlayerController::ACsPlayerController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	bShowMouseCursor	   = false;
+	bEnableClickEvents	   = true;
+	bEnableMouseOverEvents = true;
 }
 
 void ACsPlayerController::OnTickActor_CheckCVars(){}

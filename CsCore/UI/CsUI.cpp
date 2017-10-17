@@ -131,6 +131,35 @@ bool ACsUI::IsOpenedAndFocused(const TCsWidgetType &WidgetType)
 
 void ACsUI::Close(const TCsWidgetType &WidgetType)
 {
+	// Close All
+	if (WidgetType == WidgetType_MAX)
+	{
+		int32 Count = ActiveWidgets.Num();
+
+		for (int32 I = 0; I < Count; I++)
+		{
+			UCsUserWidget* Widget = ActiveWidgets[I];
+
+			Widget->Hide();
+#if WITH_EDITOR
+			OnClose_ScriptEvent.Broadcast((uint8)Widget->Type);
+#endif // #if WITH_EDITOR
+			OnClose_Event.Broadcast(Widget->Type);
+		}
+		ActiveWidgets.Reset();
+
+		Count = WidgetTypes.Num();
+
+		for (int32 I = 0; I < Count; I++)
+		{
+			if (TArray<UCsUserWidget*>* WidgetArray = ActiveWidgetsMap.Find(WidgetTypes[I]))
+			{
+				WidgetArray->Reset();
+			}
+		}
+		return;
+	}
+
 	UCsUserWidget* Widget = GetActiveWidget(WidgetType);
 
 	if (!Widget)
@@ -170,6 +199,8 @@ void ACsUI::Close(const TCsWidgetType &WidgetType)
 #endif // #if WITH_EDITOR
 	OnClose_Event.Broadcast(WidgetType);
 }
+
+void ACsUI::CloseAll() { Close(WidgetType_MAX); }
 
 bool ACsUI::IsClosed(const TCsWidgetType &WidgetType) { return GetActiveWidget(WidgetType) == nullptr; }
 

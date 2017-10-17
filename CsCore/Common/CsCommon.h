@@ -53,6 +53,8 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 		return Cast<T>(Controller->MyHUD);
 	}
 
+	static class UPlayerInput* GetLocalPlayerInput(UWorld* InWorld);
+
 	template<typename T>
 	static T* GetLocalPlayerState(UWorld* InWorld)
 	{
@@ -764,6 +766,13 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	static void SetCollisionFromTemplate(const FName &TemplateName, UPrimitiveComponent* Component, bool SetCollisionEnabled = true);
 
 #pragma endregion Collision
+
+// Level
+#pragma region
+
+	static void TransitionToLevel(UWorld* InWorld, const FString &Level, const FString &GameMode);
+
+#pragma endregion Level
 
 // Editor Message
 #pragma region

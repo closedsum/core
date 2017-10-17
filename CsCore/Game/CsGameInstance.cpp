@@ -11,6 +11,7 @@
 #include "Data/CsData_UI_Common.h"
 // UI
 #include "UI/CsUserWidget.h"
+#include "UI/CsWidget_Fullscreen.h"
 
 UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -92,6 +93,12 @@ bool UCsGameInstance::AddRoutine_Internal(struct FCsRoutine* Routine, const uint
 		OnBoard_Internal_Routine = Routine;
 		return true;
 	}
+	// PerformLevelTransition_Internal
+	if (RoutineType == ECsGameInstanceRoutine::PerformLevelTransition_Internal)
+	{
+		PerformLevelTransition_Internal_Routine = Routine;
+		return true;
+	}
 	return false;
 }
 
@@ -109,6 +116,13 @@ bool UCsGameInstance::RemoveRoutine_Internal(struct FCsRoutine* Routine, const u
 	{
 		check(OnBoard_Internal_Routine == Routine);
 		OnBoard_Internal_Routine = nullptr;
+		return true;
+	}
+	// PerformLevelTransition_Internal
+	if (RoutineType == ECsGameInstanceRoutine::PerformLevelTransition_Internal)
+	{
+		check(PerformLevelTransition_Internal_Routine == Routine);
+		PerformLevelTransition_Internal_Routine = nullptr;
 		return true;
 	}
 	return false;
@@ -153,6 +167,9 @@ CS_COROUTINE(UCsGameInstance, OnBoard_Internal)
 	CS_COROUTINE_WAIT_UNTIL(r, w);
 
 	gi->SetupFullscreenWidget();
+
+	FWorldDelegates::LevelAddedToWorld.AddUObject(gi, &UCsGameInstance::OnLevelAddedToWorld);
+	FWorldDelegates::LevelRemovedFromWorld.AddUObject(gi, &UCsGameInstance::OnLevelRemovedFromWorld);
 
 	CS_COROUTINE_WAIT_UNTIL(r, gi->OnBoardState == ECsGameInstanceOnBoardState::Completed);
 
@@ -288,6 +305,78 @@ void UCsGameInstance::SetupFullscreenWidget()
 	OnBoardState = ECsGameInstanceOnBoardState::Completed;
 }
 
-#pragma endregion Fullscreen Widget0
+#pragma endregion Fullscreen Widget
 
 #pragma endregion OnBoard
+
+// Level
+#pragma region
+
+void UCsGameInstance::OnLevelAddedToWorld(ULevel* InLevel, UWorld* InWorld)
+{
+	// Make sure FullscreenWidget is attached to Viewport
+	if (FullscreenWidget &&
+		!FullscreenWidget->GetParent())
+	{
+		FullscreenWidget->AddToViewport();
+	}
+}
+
+void UCsGameInstance::OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld)
+{
+	// Make sure FullscreenWidget is attached to Viewport
+	if (FullscreenWidget &&
+		!FullscreenWidget->GetParent())
+	{
+		FullscreenWidget->AddToViewport();
+	}
+}
+
+void UCsGameInstance::PerformLevelTransition(const FString &Level, const FString &GameMode)
+{
+	LevelState = ECsLevelState::BeginTransition;
+
+	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+
+	CsCoroutine Function		  = &UCsGameInstance::PerformLevelTransition_Internal;
+	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
+	CsAddRoutine Add			  = &UCsGameInstance::AddRoutine;
+	CsRemoveRoutine Remove		  = &UCsGameInstance::RemoveRoutine;
+	const uint8 Type			  = (uint8)ECsGameInstanceRoutine::PerformLevelTransition_Internal;
+
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	FCsRoutine* R					 = Scheduler->Allocate(Schedule, Function, Stop, this, Add, Remove, Type, true, false);
+
+	R->strings[0] = Level;
+	R->strings[1] = GameMode;
+	//R->floats[0] = Time;
+
+	Scheduler->StartRoutine(Schedule, R);
+}
+
+CS_COROUTINE(UCsGameInstance, PerformLevelTransition_Internal)
+{
+	UCsGameInstance* gi		 = Cast<UCsGameInstance>(r->GetRObject());
+	UCsCoroutineScheduler* s = r->scheduler;
+	UWorld* w				 = gi->GetWorld();
+
+	UCsWidget_Fullscreen* Widget = Cast<UCsWidget_Fullscreen>(gi->FullscreenWidget);
+
+	CS_COROUTINE_BEGIN(r);
+
+	// Set Screen to Black
+	Widget->Fullscreen.SetColorAndOpacity(FLinearColor(0.0f, 0.0f, 0.0f, 1.0f));
+
+	gi->LevelState = ECsLevelState::InTransition;
+
+	{
+		const FString Level	   = r->strings[0];
+		const FString GameMode = r->strings[1];
+
+		w->ServerTravel(Level + TEXT("?game=") + GameMode);
+	}
+
+	CS_COROUTINE_END(r);
+}
+
+#pragma endregion Level

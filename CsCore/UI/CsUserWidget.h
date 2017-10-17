@@ -23,6 +23,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsUserWidget_OnCloseChild, co
 
 #define CS_WIDGET_DEFINE_TYPE(TYPE)	Type = ECsWidgetType::TYPE; \
 									Type_Script = (uint8)Type; \
+									WidgetType_MAX = ECsWidgetType::ECsWidgetType_MAX; \
 									WidgetTypeToString = &ECsWidgetType::ToString; \
 									StringToWidgetType = &ECsWidgetType::ToType;
 
@@ -1155,6 +1156,8 @@ public:
 
 	virtual void Show();
 	virtual void Hide();
+
+	TCsWidgetType WidgetType_MAX;
 
 	TCsWidgetTypeToString WidgetTypeToString;
 	TCsStringToWidgetType StringToWidgetType;

@@ -22,6 +22,7 @@
 // Player
 #include "Player/CsPlayerPawn.h"
 #include "VR/Player/CsPlayerPawn_VR.h"
+#include "../Engine/Classes/GameFramework/PlayerInput.h"
 
 #include "Engine/CollisionProfile.h"
 
@@ -100,6 +101,12 @@ bool UCsCommon::IsLocallyControlled(AShooterCharacter* InPawn, UWorld* InWorld)
 AController* UCsCommon::GetLocalPlayerController(UWorld* InWorld)
 {
 	return GetLocalPlayerController<AController>(InWorld);
+}
+
+UPlayerInput* UCsCommon::GetLocalPlayerInput(UWorld* InWorld)
+{
+	APlayerController* Controller = GetLocalPlayerController<APlayerController>(InWorld);
+	return Controller->PlayerInput;
 }
 
 APlayerState* UCsCommon::GetLocalPlayerState(UWorld* InWorld)
@@ -2483,6 +2490,17 @@ void UCsCommon::SetCollisionFromTemplate(const FName &TemplateName, UPrimitiveCo
 }
 
 #pragma endregion Collision
+
+// Level
+#pragma region
+
+void UCsCommon::TransitionToLevel(UWorld* InWorld, const FString &Level, const FString &GameMode)
+{
+	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(InWorld->GetGameInstance());
+	GameInstance->PerformLevelTransition(Level, GameMode);
+}
+
+#pragma endregion Level
 
 // Editor Message
 #pragma region

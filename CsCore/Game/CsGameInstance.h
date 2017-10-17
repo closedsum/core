@@ -16,9 +16,10 @@ namespace ECsGameInstanceRoutine
 {
 	enum Type
 	{
-		OnBoard_Internal			UMETA(DisplayName = "OnBoard_Internal"),
-		LoadDataMapping_Internal	UMETA(DisplayName = "LoadDataMapping_Internal"),
-		ECsGameInstanceRoutine_MAX	UMETA(Hidden),
+		OnBoard_Internal				UMETA(DisplayName = "OnBoard_Internal"),
+		LoadDataMapping_Internal		UMETA(DisplayName = "LoadDataMapping_Internal"),
+		PerformLevelTransition_Internal	UMETA(DisplayName = "PerformLevelTransition_Internal"),
+		ECsGameInstanceRoutine_MAX		UMETA(Hidden),
 	};
 }
 
@@ -30,12 +31,14 @@ namespace ECsGameInstanceRoutine
 	{
 		const TCsString OnBoard_Internal = TCsString(TEXT("OnBoard_Internal"), TEXT("onboard_internal"), TEXT("onboard internal"));
 		const TCsString LoadDataMapping_Internal = TCsString(TEXT("LoadDataMapping_Internal"), TEXT("loaddatamapping_internal"), TEXT("load data mapping internal"));
+		const TCsString PerformLevelTransition_Internal = TCsString(TEXT("PerformLevelTransition_Internal"), TEXT("performleveltransition_internal"), TEXT("perform level transition internal"));
 	}
 
 	FORCEINLINE FString ToString(const Type &EType)
 	{
 		if (EType == Type::OnBoard_Internal) { return Str::OnBoard_Internal.Value; }
 		if (EType == Type::LoadDataMapping_Internal) { return Str::LoadDataMapping_Internal.Value; }
+		if (EType == Type::PerformLevelTransition_Internal) { return Str::PerformLevelTransition_Internal.Value; }
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
@@ -43,6 +46,7 @@ namespace ECsGameInstanceRoutine
 	{
 		if (String == Str::OnBoard_Internal) { return Type::OnBoard_Internal; }
 		if (String == Str::LoadDataMapping_Internal) { return Type::LoadDataMapping_Internal; }
+		if (String == Str::PerformLevelTransition_Internal) { return Type::PerformLevelTransition_Internal; }
 		return Type::ECsGameInstanceRoutine_MAX;
 	}
 }
@@ -195,9 +199,6 @@ public:
 
 	bool IsVR;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Game Instance")
-	TEnumAsByte<ECsLevelState::Type> LevelState;
-
 // UI
 #pragma region
 public:
@@ -209,4 +210,19 @@ public:
 	class UCsUserWidget* TransitionWidget;
 
 #pragma endregion UI
+
+// Level
+#pragma region
+
+	UPROPERTY(BlueprintReadOnly, Category = "Game Instance")
+	TEnumAsByte<ECsLevelState::Type> LevelState;
+
+	void OnLevelAddedToWorld(ULevel* InLevel, UWorld* InWorld);
+	void OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld);
+
+	virtual void PerformLevelTransition(const FString &Level, const FString &GameMode);
+	static char PerformLevelTransition_Internal(struct FCsRoutine* r);
+	struct FCsRoutine* PerformLevelTransition_Internal_Routine;
+
+#pragma endregion Level
 };

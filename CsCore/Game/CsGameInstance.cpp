@@ -316,7 +316,8 @@ void UCsGameInstance::OnLevelAddedToWorld(ULevel* InLevel, UWorld* InWorld)
 {
 	// Make sure FullscreenWidget is attached to Viewport
 	if (FullscreenWidget &&
-		!FullscreenWidget->GetParent())
+		!FullscreenWidget->GetParent() &&
+		!FullscreenWidget->IsInViewport())
 	{
 		FullscreenWidget->AddToViewport();
 	}
@@ -326,7 +327,8 @@ void UCsGameInstance::OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld)
 {
 	// Make sure FullscreenWidget is attached to Viewport
 	if (FullscreenWidget &&
-		!FullscreenWidget->GetParent())
+		!FullscreenWidget->GetParent() &&
+		!FullscreenWidget->IsInViewport())
 	{
 		FullscreenWidget->AddToViewport();
 	}
@@ -362,10 +364,17 @@ CS_COROUTINE(UCsGameInstance, PerformLevelTransition_Internal)
 
 	UCsWidget_Fullscreen* Widget = Cast<UCsWidget_Fullscreen>(gi->FullscreenWidget);
 
+	const float CurrentTime = w->GetTimeSeconds();
+	const float StartTime	= r->startTime;
+
+	const float Delay = 1.0f;
+
 	CS_COROUTINE_BEGIN(r);
 
 	// Set Screen to Black
 	Widget->Fullscreen.SetColorAndOpacity(FLinearColor(0.0f, 0.0f, 0.0f, 1.0f));
+	// Slight delay before transitioning
+	CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - StartTime > Delay);
 
 	gi->LevelState = ECsLevelState::InTransition;
 

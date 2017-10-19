@@ -3950,9 +3950,15 @@ bool UCsCommon_Load::CanLoad(void* InObject, UScriptStruct* const &InClass, cons
 		if (int32* MemberLoadFlags = IntProperty->ContainerPtrToValuePtr<int32>(InObject))
 		{
 			if (LoadFlags == ECsLoadFlags::All)
+			{
+				UE_LOG(LogCs, Warning, TEXT("UCsCommon_Load::CanLoad (%s @ %s): Using LoadFlags = ECsLoadFlags::All. This should be reserved for debugging. Be explicit with LoadFlags."), *(InClass->GetName()), *MemberName);
 				return true;
+			}
 			if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, ECsLoadFlags::All))
+			{
+				UE_LOG(LogCs, Warning, TEXT("UCsCommon_Load::CanLoad (%s @ %s): Using LoadFlags = ECsLoadFlags::All. This should be reserved for debugging. Be explicit with LoadFlags."), *(InClass->GetName()), *MemberName);
 				return true;
+			}
 			if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, LoadFlags))
 				return true;
 		}
@@ -3969,9 +3975,15 @@ bool UCsCommon_Load::CanLoad(void* InObject, UClass* const &InClass, const FStri
 		if (int32* MemberLoadFlags = IntProperty->ContainerPtrToValuePtr<int32>(InObject))
 		{
 			if (LoadFlags == ECsLoadFlags::All)
+			{
+				UE_LOG(LogCs, Warning, TEXT("UCsCommon_Load::CanLoad (%s @ %s): Using LoadFlags = ECsLoadFlags::All. This should be reserved for debugging. Be explicit with LoadFlags."), *(InClass->GetName()), *MemberName);
 				return true;
+			}
 			if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, ECsLoadFlags::All))
+			{
+				UE_LOG(LogCs, Warning, TEXT("UCsCommon_Load::CanLoad (%s @ %s): Using LoadFlags = ECsLoadFlags::All. This should be reserved for debugging. Be explicit with LoadFlags."), *(InClass->GetName()), *MemberName);
 				return true;
+			}
 			if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, LoadFlags))
 				return true;
 		}

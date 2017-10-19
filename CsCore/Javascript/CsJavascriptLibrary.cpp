@@ -75,3 +75,11 @@ UCharacterMovementComponent* UCsJavascriptLibrary::GetCharacterMovement(ACharact
 USkeletalMeshComponent* UCsJavascriptLibrary::GetMesh(class ACharacter* InCharacter) { return InCharacter->GetMesh(); }
 
 #pragma endregion Character
+
+// Color
+#pragma region
+
+FLinearColor UCsJavascriptLibrary::GetLinearColor(const TEnumAsByte<ECsLinearColor::Type> &Color) { return ECsLinearColor::ToLinearColor(Color); }
+FColor UCsJavascriptLibrary::GetColor(const TEnumAsByte<ECsColor::Type> &Color) { return ECsColor::ToColor(Color); }
+
+#pragma endregion Color

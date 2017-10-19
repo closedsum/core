@@ -41,7 +41,13 @@ void ACsUI::OnUpdate(const float &DeltaSeconds){}
 void ACsUI::OnPostProcessInput(const float &DeltaTime){}
 void ACsUI::OnLastTick(const float &DeltaSeconds){}
 
+AActor* ACsUI::GetMyOwner() { return MyOwner.IsValid() ? MyOwner.Get() : nullptr; }
+
 void ACsUI::AddWidget(const TCsWidgetType &WidgetType) {}
+void ACsUI::AddWidget_Script(const uint8 &WidgetType) { AddWidget((TCsWidgetType)WidgetType); }
+
+// Get
+#pragma region
 
 UCsUserWidget* ACsUI::GetWidget(const TCsWidgetType &WidgetType)
 { 
@@ -49,6 +55,8 @@ UCsUserWidget* ACsUI::GetWidget(const TCsWidgetType &WidgetType)
 
 	return (*Array)[CS_FIRST];
 }
+
+UCsUserWidget* ACsUI::GetWidget_Script(const uint8 &WidgetType) { return GetWidget((TCsWidgetType)WidgetType); }
 
 UCsUserWidget* ACsUI::GetActiveWidget(const TCsWidgetType &WidgetType) 
 { 
@@ -61,8 +69,11 @@ UCsUserWidget* ACsUI::GetActiveWidget(const TCsWidgetType &WidgetType)
 	return (*Array)[CS_FIRST];
 }
 
-bool ACsUI::HasWidgetInitialized(const TCsWidgetType &WidgetType) { return true; }
+UCsUserWidget* ACsUI::GetActiveWidget_Script(const uint8 &WidgetType) { return GetActiveWidget((TCsWidgetType)WidgetType); }
 
+#pragma endregion Get
+
+bool ACsUI::HasWidgetInitialized(const TCsWidgetType &WidgetType) { return true; }
 
 void ACsUI::SetFocus(const TCsWidgetType &WidgetType, const int32& Focus)
 {
@@ -122,12 +133,16 @@ void ACsUI::Open(const TCsWidgetType &WidgetType)
 }
 
 bool ACsUI::IsOpened(const TCsWidgetType &WidgetType) { return GetActiveWidget(WidgetType) != nullptr; }
+bool ACsUI::IsOpened_Script(const uint8 &WidgetType) { return IsOpened((TCsWidgetType)WidgetType); }
+
 bool ACsUI::IsOpenedAndFocused(const TCsWidgetType &WidgetType)
 {
 	if (UCsUserWidget* Widget = GetActiveWidget(WidgetType))
 		return Widget->Focus > ECS_WIDGET_FOCUS_NONE;
 	return false;
 }
+
+bool ACsUI::IsOpenedAndFocused_Script(const uint8 &WidgetType) { return IsOpenedAndFocused((TCsWidgetType)WidgetType); }
 
 void ACsUI::Close(const TCsWidgetType &WidgetType)
 {
@@ -200,9 +215,11 @@ void ACsUI::Close(const TCsWidgetType &WidgetType)
 	OnClose_Event.Broadcast(WidgetType);
 }
 
+void ACsUI::Close_Script(const uint8 &WidgetType) { Close((TCsWidgetType)WidgetType); }
 void ACsUI::CloseAll() { Close(WidgetType_MAX); }
 
 bool ACsUI::IsClosed(const TCsWidgetType &WidgetType) { return GetActiveWidget(WidgetType) == nullptr; }
+bool ACsUI::IsClosed_Script(const uint8 &WidgetType) { return IsClosed((TCsWidgetType)WidgetType); }
 
 #pragma endregion Open / Close
 

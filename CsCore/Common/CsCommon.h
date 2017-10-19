@@ -284,6 +284,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	UFUNCTION(BlueprintCallable, Category = "Commmon")
 	static FRotator BuildUniformRotator(const FRotator &R, const int32 &Axes);
 
+	UFUNCTION(BlueprintCallable, Category = "Commmon")
 	static int32 GetNumBitFlags(const int32 &BitMask, const int32 &MaxBits);
 
 #pragma endregion Math

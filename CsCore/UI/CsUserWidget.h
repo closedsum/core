@@ -20,6 +20,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUserWidget_OnOpe
 DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsUserWidget_OnOpenChild, const TEnumAsByte<ECsWidgetType::Type>&);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUserWidget_OnCloseChild, const uint8&, WidgetType);
 DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsUserWidget_OnCloseChild, const TEnumAsByte<ECsWidgetType::Type>&);
+// ProcessGameEvent
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUserWidget_Override_ProcessGameEvent, const uint8&, GameEvent);
 
 #define CS_WIDGET_DEFINE_TYPE(TYPE)	Type = ECsWidgetType::TYPE; \
 									Type_Script = (uint8)Type; \
@@ -1148,13 +1150,20 @@ public:
 	UPROPERTY()
 	bool HasInitFinished;
 
+	TWeakObjectPtr<AActor> MyOwner;
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	AActor* GetMyOwner();
+
 	UPROPERTY()
 	int32 Focus;
 
 	virtual void SetFocus(const ECsWidgetFocus &InFocus);
 	virtual void SetFocus(const int32 &InFocus);
 
+	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual void Show();
+	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual void Hide();
 
 	TCsWidgetType WidgetType_MAX;
@@ -1163,13 +1172,31 @@ public:
 	TCsStringToWidgetType StringToWidgetType;
 
 	TArray<TCsWidgetType> ChildWidgetTypes;
+
+	UPROPERTY(BlueprintReadWrite, Category = "UI")
 	TArray<UCsUserWidget*> ChildWidgets;
+
 	TMap<TCsWidgetType, TArray<UCsUserWidget*>> ChildWidgetsMap;
+
+	UPROPERTY(BlueprintReadWrite, Category = "UI")
 	TArray<UCsUserWidget*> ActiveChildWidgets;
+
 	TMap<TCsWidgetType, TArray<UCsUserWidget*>> ActiveChildWidgetsMap;
 
+// Get
+#pragma region
+
 	virtual UCsUserWidget* GetChildWidget(const TCsWidgetType &WidgetType);
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	virtual UCsUserWidget* GetChildWidget_Script(const uint8 &WidgetType);
+
 	virtual UCsUserWidget* GetActiveChildWidget(const TCsWidgetType &WidgetType);
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	virtual UCsUserWidget* GetActiveChildWidget_Script(const uint8 &WidgetType);
+
+#pragma endregion Get
 
 	virtual void SetChildFocus(const TCsWidgetType &WidgetType, const int32 &InFocus);
 
@@ -1178,22 +1205,38 @@ public:
 
 	virtual void OpenChild(const TCsWidgetType &WidgetType);
 
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	virtual void OpenChild_Script(const uint8 &WidgetType);
+
 	FBindableEvent_CsUserWidget_OnOpenChild OnOpenChild_Event;
 
-	UPROPERTY(BlueprintAssignable, Category = "Widget")
+	UPROPERTY(BlueprintAssignable, Category = "UI")
 	FBindableDynEvent_CsUserWidget_OnOpenChild OnOpenChild_ScriptEvent;
 
 	virtual bool IsChildOpened(const TCsWidgetType &WidgetType);
 
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	virtual bool IsChildOpened_Script(const uint8 &WidgetType);
+
 	virtual void CloseChild(const TCsWidgetType &WidgetType);
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	virtual void CloseChild_Script(const uint8 &WidgetType);
 
 	FBindableEvent_CsUserWidget_OnCloseChild OnCloseChild_Event;
 
-	UPROPERTY(BlueprintAssignable, Category = "Widget")
+	UPROPERTY(BlueprintAssignable, Category = "UI")
 	FBindableDynEvent_CsUserWidget_OnCloseChild OnCloseChild_ScriptEvent;
 
 	virtual void CloseAllChildrenExcept(const TCsWidgetType &WidgetType);
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	virtual void CloseAllChildrenExcept_Script(const uint8 &WidgetType);
+
 	virtual bool IsChildClosed(const TCsWidgetType &WidgetType);
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	virtual bool IsChildClosed_Script(const uint8 &WidgetType);
 
 #pragma endregion Open / Close Child
 
@@ -1210,4 +1253,15 @@ public:
 #pragma endregion Routines
 
 	virtual bool ProcessGameEvent(const TCsGameEvent &GameEvent);
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	virtual bool ProcessGameEvent_Script(const uint8 &GameEvent);
+
+	UPROPERTY(BlueprintAssignable, Category = "UI")
+	FBindableDynEvent_CsUserWidget_Override_ProcessGameEvent Override_ProcessGameEvent_ScriptEvent;
+
+	virtual bool ChildWidgets_ProcessGameEvent(const TCsGameEvent &GamEvent);
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	virtual bool ChildWidgets_ProcessGameEvent_Script(const uint8 &GameEvent);
 };

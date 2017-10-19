@@ -15,6 +15,8 @@ void UCsUserWidget::Init()
 void UCsUserWidget::OnPostProcessInput(const float &DeltaTime) {}
 void UCsUserWidget::OnLastTick(const float &DeltaSeconds){}
 
+AActor* UCsUserWidget::GetMyOwner() { return MyOwner.IsValid() ? MyOwner.Get() : nullptr; }
+
 void UCsUserWidget::SetFocus(const ECsWidgetFocus &InFocus)
 {
 	CS_SET_BLUEPRINT_BITFLAG(Focus, InFocus);
@@ -39,12 +41,17 @@ void UCsUserWidget::Hide()
 	SetIsEnabled(false);
 }
 
+// Get
+#pragma region
+
 UCsUserWidget* UCsUserWidget::GetChildWidget(const TCsWidgetType &WidgetType)
 {
 	TArray<UCsUserWidget*>* Widgets = ChildWidgetsMap.Find(WidgetType);
 
 	return (*Widgets)[CS_FIRST];
 }
+
+UCsUserWidget* UCsUserWidget::GetChildWidget_Script(const uint8 &WidgetType){ return GetChildWidget((TCsWidgetType)WidgetType); }
 
 UCsUserWidget* UCsUserWidget::GetActiveChildWidget(const TCsWidgetType &WidgetType)
 {
@@ -57,6 +64,10 @@ UCsUserWidget* UCsUserWidget::GetActiveChildWidget(const TCsWidgetType &WidgetTy
 	return (*Widgets)[CS_FIRST];
 }
 
+UCsUserWidget* UCsUserWidget::GetActiveChildWidget_Script(const uint8 &WidgetType) { return GetActiveChildWidget((TCsWidgetType)WidgetType); }
+
+#pragma endregion Get
+
 void UCsUserWidget::SetChildFocus(const TCsWidgetType &WidgetType, const int32 &InFocus)
 {
 	if (UCsUserWidget* Widget = GetActiveChildWidget(WidgetType))
@@ -68,6 +79,9 @@ void UCsUserWidget::SetChildFocus(const TCsWidgetType &WidgetType, const int32 &
 		UE_LOG(LogCs, Warning, TEXT("UCsUserWidget::SetChildFocus(%s): Widget: %s is NOT Active."), *GetName(), *((*WidgetTypeToString)(WidgetType)));
 	}
 }
+
+// Open / Close Child
+#pragma region
 
 void UCsUserWidget::OpenChild(const TCsWidgetType &WidgetType)
 {
@@ -99,7 +113,10 @@ void UCsUserWidget::OpenChild(const TCsWidgetType &WidgetType)
 	OnOpenChild_Event.Broadcast(WidgetType);
 }
 
-bool UCsUserWidget::IsChildOpened(const TCsWidgetType &WidgetType) { return GetActiveChildWidget(WidgetType) != nullptr;  }
+void UCsUserWidget::OpenChild_Script(const uint8 &WidgetType) { OpenChild((TCsWidgetType)WidgetType); }
+
+bool UCsUserWidget::IsChildOpened(const TCsWidgetType &WidgetType) { return GetActiveChildWidget(WidgetType) != nullptr; }
+bool UCsUserWidget::IsChildOpened_Script(const uint8 &WidgetType) { return IsChildOpened((TCsWidgetType)WidgetType); }
 
 void UCsUserWidget::CloseChild(const TCsWidgetType &WidgetType)
 {
@@ -143,6 +160,8 @@ void UCsUserWidget::CloseChild(const TCsWidgetType &WidgetType)
 	OnCloseChild_Event.Broadcast(WidgetType);
 }
 
+void UCsUserWidget::CloseChild_Script(const uint8 &WidgetType) { CloseChild((TCsWidgetType)WidgetType); }
+
 void UCsUserWidget::CloseAllChildrenExcept(const TCsWidgetType &WidgetType)
 {
 	const int32 Count = ActiveChildWidgets.Num();
@@ -179,7 +198,12 @@ void UCsUserWidget::CloseAllChildrenExcept(const TCsWidgetType &WidgetType)
 	}
 }
 
+void UCsUserWidget::CloseAllChildrenExcept_Script(const uint8 &WidgetType) { CloseAllChildrenExcept((TCsWidgetType)WidgetType); }
+
 bool UCsUserWidget::IsChildClosed(const TCsWidgetType &WidgetType) { return GetActiveChildWidget(WidgetType) == nullptr; }
+bool UCsUserWidget::IsChildClosed_Script(const uint8 &WidgetType) { return IsChildClosed((TCsWidgetType)WidgetType); }
+
+#pragma endregion Open / Close Child
 
 // Routines
 #pragma region
@@ -207,3 +231,23 @@ bool UCsUserWidget::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uin
 #pragma endregion Routines
 
 bool UCsUserWidget::ProcessGameEvent(const TCsGameEvent &GameEvent) { return false; }
+bool UCsUserWidget::ProcessGameEvent_Script(const uint8 &GameEvent) { return ProcessGameEvent((TCsGameEvent)GameEvent); }
+
+bool UCsUserWidget::ChildWidgets_ProcessGameEvent(const TCsGameEvent &GameEvent)
+{
+	const int32 Count = ChildWidgetTypes.Num();
+
+	for (int32 I = 0; I < Count; I++)
+	{
+		if (IsChildOpened(ChildWidgetTypes[I]))
+		{
+			UCsUserWidget* Widget = GetActiveChildWidget(ChildWidgetTypes[I]);
+
+			if (Widget->ProcessGameEvent(GameEvent))
+				return true;
+		}
+	}
+	return false;
+}
+
+bool UCsUserWidget::ChildWidgets_ProcessGameEvent_Script(const uint8 &GameEvent) { return ChildWidgets_ProcessGameEvent((TCsGameEvent)GameEvent); }

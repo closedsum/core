@@ -3814,7 +3814,7 @@ typedef FString(*TCsInteractiveTypeToString)(const TCsInteractiveType&);
 // StringToInteractiveType
 typedef TCsInteractiveType(*TCsStringToInteractiveType)(const FString&);
 
-UENUM()
+UENUM(BlueprintType)
 namespace ECsInteractiveState
 {
 	enum Type
@@ -4202,7 +4202,7 @@ typedef ECsAIType::Type TCsAIType;
 // VR
 #pragma region
 
-UENUM()
+UENUM(BlueprintType)
 namespace ECsHMDDeviceType
 {
 	enum Type
@@ -5010,3 +5010,190 @@ struct FCsCollisionPreset
 };
 
 #pragma endregion Collision
+
+// Color
+#pragma region
+
+UENUM(BlueprintType)
+namespace ECsLinearColor
+{
+	enum Type
+	{
+		White				UMETA(DisplayName = "White"),
+		Gray				UMETA(DisplayName = "Gray"),
+		Black				UMETA(DisplayName = "Black"),
+		Transparent			UMETA(DisplayName = "Transparent"),
+		Red					UMETA(DisplayName = "Red"),
+		Green				UMETA(DisplayName = "Green"),
+		Blue				UMETA(DisplayName = "Blue"),
+		Yellow				UMETA(DisplayName = "Yellow"),
+		ECsLinearColor_MAX	UMETA(Hidden),
+	};
+}
+
+namespace ECsLinearColor
+{
+	typedef FCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+
+	namespace Str
+	{
+		const TCsString White = TCsString(TEXT("White"), TEXT("white"));
+		const TCsString Gray = TCsString(TEXT("Gray"), TEXT("gray"));
+		const TCsString Black = TCsString(TEXT("Black"), TEXT("black"));
+		const TCsString Transparent = TCsString(TEXT("Transparent"), TEXT("transparent"));
+		const TCsString Red = TCsString(TEXT("Red"), TEXT("red"));
+		const TCsString Green = TCsString(TEXT("Green"), TEXT("green"));
+		const TCsString Blue = TCsString(TEXT("Blue"), TEXT("blue"));
+		const TCsString Yellow = TCsString(TEXT("Yellow"), TEXT("yellow"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::White) { return Str::White.Value; }
+		if (EType == Type::Gray) { return Str::Gray.Value; }
+		if (EType == Type::Black) { return Str::Black.Value; }
+		if (EType == Type::Transparent) { return Str::Transparent.Value; }
+		if (EType == Type::Red) { return Str::Red.Value; }
+		if (EType == Type::Green) { return Str::Green.Value; }
+		if (EType == Type::Blue) { return Str::Blue.Value; }
+		if (EType == Type::Yellow) { return Str::Yellow.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::White) { return Type::White; }
+		if (String == Str::Gray) { return Type::Gray; }
+		if (String == Str::Black) { return Type::Black; }
+		if (String == Str::Transparent) { return Type::Transparent; }
+		if (String == Str::Red) { return Type::Red; }
+		if (String == Str::Green) { return Type::Green; }
+		if (String == Str::Blue) { return Type::Blue; }
+		if (String == Str::Yellow) { return Type::Yellow; }
+		return Type::ECsLinearColor_MAX;
+	}
+
+	FORCEINLINE FLinearColor ToLinearColor(const Type &EType)
+	{
+		if (EType == Type::White) { return FLinearColor::White; }
+		if (EType == Type::Gray) { return FLinearColor::Gray; }
+		if (EType == Type::Black) { return FLinearColor::Black; }
+		if (EType == Type::Transparent) { return FLinearColor::Transparent; }
+		if (EType == Type::Red) { return FLinearColor::Red; }
+		if (EType == Type::Green) { return FLinearColor::Green; }
+		if (EType == Type::Blue) { return FLinearColor::Blue; }
+		if (EType == Type::Yellow) { return FLinearColor::Yellow; }
+		return FLinearColor::White;
+	}
+}
+
+#define ECS_LINEAR_COLOR_MAX (uint8)ECsLinearColor::ECsLinearColor_MAX
+typedef TEnumAsByte<ECsLinearColor::Type> TCsLinearColor;
+
+UENUM(BlueprintType)
+namespace ECsColor
+{
+	enum Type
+	{
+		White			UMETA(DisplayName = "White"),
+		Black			UMETA(DisplayName = "Black"),
+		Transparent		UMETA(DisplayName = "Transparent"),
+		Red				UMETA(DisplayName = "Red"),
+		Green			UMETA(DisplayName = "Green"),
+		Blue			UMETA(DisplayName = "Blue"),
+		Yellow			UMETA(DisplayName = "Yellow"),
+		Cyan			UMETA(DisplayName = "Cyan"),
+		Magenta			UMETA(DisplayName = "Magenta"),
+		Orange			UMETA(DisplayName = "Orange"),
+		Purple			UMETA(DisplayName = "Purple"),
+		Turquoise		UMETA(DisplayName = "Turquoise"),
+		Silver			UMETA(DisplayName = "Silver"),
+		Emerald			UMETA(DisplayName = "Emerald"),
+		ECsColor_MAX	UMETA(Hidden),
+	};
+}
+
+namespace ECsColor
+{
+	typedef FCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+
+	namespace Str
+	{
+		const TCsString White = TCsString(TEXT("White"), TEXT("white"));
+		const TCsString Black = TCsString(TEXT("Black"), TEXT("black"));
+		const TCsString Transparent = TCsString(TEXT("Transparent"), TEXT("transparent"));
+		const TCsString Red = TCsString(TEXT("Red"), TEXT("red"));
+		const TCsString Green = TCsString(TEXT("Green"), TEXT("green"));
+		const TCsString Blue = TCsString(TEXT("Blue"), TEXT("blue"));
+		const TCsString Yellow = TCsString(TEXT("Yellow"), TEXT("yellow"));
+		const TCsString Cyan = TCsString(TEXT("Cyan"), TEXT("cyan"));
+		const TCsString Magenta = TCsString(TEXT("Magenta"), TEXT("magenta"));
+		const TCsString Orange = TCsString(TEXT("Orange"), TEXT("orange"));
+		const TCsString Purple = TCsString(TEXT("Purple"), TEXT("purple"));
+		const TCsString Turquoise = TCsString(TEXT("Turquoise"), TEXT("turquoise"));
+		const TCsString Silver = TCsString(TEXT("Silver"), TEXT("silver"));
+		const TCsString Emerald = TCsString(TEXT("Emerald"), TEXT("emerald"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::White) { return Str::White.Value; }
+		if (EType == Type::Black) { return Str::Black.Value; }
+		if (EType == Type::Transparent) { return Str::Transparent.Value; }
+		if (EType == Type::Red) { return Str::Red.Value; }
+		if (EType == Type::Green) { return Str::Green.Value; }
+		if (EType == Type::Blue) { return Str::Blue.Value; }
+		if (EType == Type::Yellow) { return Str::Yellow.Value; }
+		if (EType == Type::Cyan) { return Str::Cyan.Value; }
+		if (EType == Type::Magenta) { return Str::Magenta.Value; }
+		if (EType == Type::Orange) { return Str::Orange.Value; }
+		if (EType == Type::Purple) { return Str::Purple.Value; }
+		if (EType == Type::Turquoise) { return Str::Turquoise.Value; }
+		if (EType == Type::Silver) { return Str::Silver.Value; }
+		if (EType == Type::Emerald) { return Str::Emerald.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::White) { return Type::White; }
+		if (String == Str::Black) { return Type::Black; }
+		if (String == Str::Transparent) { return Type::Transparent; }
+		if (String == Str::Red) { return Type::Red; }
+		if (String == Str::Green) { return Type::Green; }
+		if (String == Str::Blue) { return Type::Blue; }
+		if (String == Str::Yellow) { return Type::Yellow; }
+		if (String == Str::Cyan) { return Type::Cyan; }
+		if (String == Str::Magenta) { return Type::Magenta; }
+		if (String == Str::Orange) { return Type::Orange; }
+		if (String == Str::Purple) { return Type::Purple; }
+		if (String == Str::Turquoise) { return Type::Turquoise; }
+		if (String == Str::Silver) { return Type::Silver; }
+		if (String == Str::Emerald) { return Type::Emerald; }
+		return Type::ECsColor_MAX;
+	}
+
+	FORCEINLINE FColor ToColor(const Type &EType)
+	{
+		if (EType == Type::White) { return FColor::White; }
+		if (EType == Type::Black) { return FColor::Black; }
+		if (EType == Type::Transparent) { return FColor::Transparent; }
+		if (EType == Type::Red) { return FColor::Red; }
+		if (EType == Type::Green) { return FColor::Green; }
+		if (EType == Type::Blue) { return FColor::Blue; }
+		if (EType == Type::Yellow) { return FColor::Yellow; }
+		if (EType == Type::Cyan) { return FColor::Cyan; }
+		if (EType == Type::Magenta) { return FColor::Magenta; }
+		if (EType == Type::Orange) { return FColor::Orange; }
+		if (EType == Type::Purple) { return FColor::Purple; }
+		if (EType == Type::Turquoise) { return FColor::Turquoise; }
+		if (EType == Type::Silver) { return FColor::Silver; }
+		if (EType == Type::Emerald) { return FColor::Emerald; }
+		return FColor::White;
+	}
+}
+
+#define ECS_COLOR_MAX (uint8)ECsColor::ECsColor_MAX
+typedef TEnumAsByte<ECsColor::Type> TCsColor;
+
+#pragma endregion Color

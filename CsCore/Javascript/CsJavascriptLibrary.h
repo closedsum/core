@@ -2,6 +2,7 @@
 #pragma once
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "../Engine/Classes/Engine/EngineTypes.h"
+#include "Types/CsTypes.h"
 #include "CsJavascriptLibrary.generated.h"
 
 UCLASS()
@@ -87,4 +88,14 @@ class CSCORE_API UCsJavascriptLibrary : public UBlueprintFunctionLibrary
 	static class USkeletalMeshComponent* GetMesh(class ACharacter* InCharacter);
 
 #pragma endregion Character
+
+// Color
+#pragma region
+
+	UFUNCTION(BlueprintCallable, Category = "Javascript")
+	static FLinearColor GetLinearColor(const TEnumAsByte<ECsLinearColor::Type> &Color);
+	UFUNCTION(BlueprintCallable, Category = "Javascript")
+		static FColor GetColor(const TEnumAsByte<ECsColor::Type> &Color);
+
+#pragma endregion Color
 };

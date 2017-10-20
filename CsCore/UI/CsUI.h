@@ -121,6 +121,11 @@ public:
 	virtual void SetFocus(const TCsWidgetType &WidgetType, const int32 &Focus);
 	virtual void SetFocus(const TCsWidgetType &WidgetType, const ECsWidgetFocus &Focus);
 
+	void SetFocusAll(const TCsWidgetType &WidgetType);
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void SetFocusAll_Script(const uint8 &WidgetType);
+
 // Open / Close
 #pragma region
 

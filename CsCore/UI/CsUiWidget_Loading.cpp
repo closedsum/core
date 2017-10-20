@@ -5,6 +5,8 @@
 UCsUiWidget_Loading::UCsUiWidget_Loading(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	Type_Script = 1;
+	Type = (TCsWidgetType)Type_Script;
 }
 
 void UCsUiWidget_Loading::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)

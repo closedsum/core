@@ -7,6 +7,8 @@
 UCsWidget_Fullscreen::UCsWidget_Fullscreen(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	Type_Script = 0;
+	Type = (TCsWidgetType)Type_Script;
 }
 
 void UCsWidget_Fullscreen::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)

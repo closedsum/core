@@ -771,7 +771,11 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 // Level
 #pragma region
 
+	UFUNCTION(BlueprintCallable, Category = "Common")
 	static void TransitionToLevel(UWorld* InWorld, const FString &Level, const FString &GameMode);
+	
+	UFUNCTION(BlueprintCallable, Category = "Common")
+	static void RequestEndPlayMap();
 
 #pragma endregion Level
 

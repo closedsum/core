@@ -99,6 +99,9 @@ void ACsUI::SetFocus(const TCsWidgetType &WidgetType, const ECsWidgetFocus& Focu
 	}
 }
 
+void ACsUI::SetFocusAll(const TCsWidgetType &WidgetType) { SetFocus(WidgetType, ECS_WIDGET_FOCUS_ALL); }
+void ACsUI::SetFocusAll_Script(const uint8 &WidgetType) { SetFocusAll((TCsWidgetType)WidgetType); }
+
 // Open / Close
 #pragma region
 

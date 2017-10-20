@@ -5,7 +5,7 @@
 
 var me = [];
 
-module.exports = class JsCsWidget_Loading
+module.exports = class JsCsUiWidget_Loading
 {
     constructor()
     {
@@ -17,7 +17,7 @@ module.exports = class JsCsWidget_Loading
 
     Init(inPtr, inRoot)
     {
-        this.ptr = CsWidget_Loading.C(inPtr);
+        this.ptr = CsUiWidget_Loading.C(inPtr);
         this.root = inRoot;
     }
 };

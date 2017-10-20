@@ -41,6 +41,8 @@
 
 #include "Runtime/Core/Public/Internationalization/Internationalization.h"
 
+#include "../Source/Editor/UnrealEd/Public/Editor.h"
+
 #endif // #if WITH_EDITOR
 
 UCsCommon::UCsCommon(const FObjectInitializer& ObjectInitializer)
@@ -2498,6 +2500,13 @@ void UCsCommon::TransitionToLevel(UWorld* InWorld, const FString &Level, const F
 {
 	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(InWorld->GetGameInstance());
 	GameInstance->PerformLevelTransition(Level, GameMode);
+}
+
+void UCsCommon::RequestEndPlayMap() 
+{
+#if WITH_EDITOR
+	GEditor->RequestEndPlayMap();
+#endif // #if WITH_EDITOR
 }
 
 #pragma endregion Level

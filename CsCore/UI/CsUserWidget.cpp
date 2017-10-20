@@ -27,6 +27,16 @@ void UCsUserWidget::SetFocus(const int32 &InFocus)
 	Focus = InFocus;
 }
 
+void UCsUserWidget::ClearFocus()
+{
+	Focus = ECS_WIDGET_FOCUS_NONE;
+}
+
+void UCsUserWidget::SetFocusAll()
+{
+	Focus = ECS_WIDGET_FOCUS_ALL;
+}
+
 void UCsUserWidget::Show()
 {
 	SetIsEnabled(true);

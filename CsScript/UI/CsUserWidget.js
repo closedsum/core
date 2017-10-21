@@ -25,4 +25,8 @@ module.exports = class JsCsUserWidget
         //this.ptr.OnCloseChild.ScriptEvent.Add(this.OnCloseChild);
         //this.ptr.Override_ProcessGameEvent_ScriptEvent.Add(this.ProcessGameEvent);
     }
+
+    CleanUp()
+    {
+    }
 };

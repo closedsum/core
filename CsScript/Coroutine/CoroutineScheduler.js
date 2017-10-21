@@ -38,6 +38,11 @@ module.exports = class JsCsCoroutineScheduler
         }
     };
 
+    CleanUp()
+    {
+        EndAll();
+    }
+
     Allocate(inCoroutine, inStopCondition, inActor, inObject, doInit, performFirstRun)
     {
         let lastIndex = Math.min(this.RoutinePoolIndex, ROUTINE_POOL_SIZE);

@@ -67,3 +67,10 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInteractiveActorPhysicsSt
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInteractiveAIPawnPhysicsStateChange;
 
 #pragma endregion Interactive AI Pawn
+
+// Script
+#pragma region
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogOverrideFunctions;
+
+#pragma endregion

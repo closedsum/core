@@ -1,6 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/WidgetActor/CsWidgetActor.h"
 #include "CsCore.h"
+#include "CsCVars.h"
 #include "Runtime/UMG/Public/Components/WidgetComponent.h"
 #include "UI/CsUserWidget.h"
 #include "Common/CsCommon.h"
@@ -37,6 +38,10 @@ void ACsWidgetActor::OnCalcCamera(const uint8 &MappingId, const float &DeltaTime
 #if WITH_EDITOR
 	if (Override_OnCalcCamera_ScriptEvent.IsBound())
 	{
+		if (CsCVarLogOverrideFunctions->GetInt() == CS_CVAR_DISPLAY)
+		{
+			UE_LOG(LogCs, Warning, TEXT("ACsWidgetActor::OnCalcCamera(%s): Using Override Function."), *GetName());
+		}
 		Override_OnCalcCamera_ScriptEvent.Broadcast(PoolIndex, MappingId, DeltaTime, OutResult);
 		return;
 	}

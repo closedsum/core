@@ -160,3 +160,15 @@ TAutoConsoleVariable<int32> CsCVarLogInteractiveAIPawnPhysicsStateChange(
 );
 
 #pragma endregion Interactive AI Pawn
+
+// Script
+#pragma region
+
+TAutoConsoleVariable<int32> CsCVarLogOverrideFunctions(
+	TEXT("log.override.functions"),
+	0,
+	TEXT("Log Override Functions used by Script"),
+	ECVF_SetByConsole
+);
+
+#pragma endregion Script

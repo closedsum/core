@@ -10,9 +10,6 @@ class CSCORE_API ACsPlayerPawn : public ACharacter
 {
 	GENERATED_UCLASS_BODY()
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Mesh)
-	class USkeletalMeshComponent* Mesh1P;
-
 	UPROPERTY(BlueprintAssignable, Category = "Tick")
 	FBindableDynEvent_CsPlayerPawn_OnTick OnTick_ScriptEvent;
 

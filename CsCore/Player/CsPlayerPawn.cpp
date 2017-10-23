@@ -8,6 +8,7 @@ ACsPlayerPawn::ACsPlayerPawn(const FObjectInitializer& ObjectInitializer)
 {
 	PrimaryActorTick.bStartWithTickEnabled = true;
 	bAllowTickBeforeBeginPlay = true;
+
 	/*
 	GetCapsuleComponent()->SetCollisionObjectType(ECollisionChannel::ECC_Pawn);
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);

@@ -442,6 +442,10 @@ void ACsMotionController::OnCalcCamera(const uint8 &MappingId, const float &Delt
 #if WITH_EDITOR
 	if (Override_OnCalcCamera_ScriptEvent.IsBound())
 	{
+		if (CsCVarLogOverrideFunctions->GetInt() == CS_CVAR_DISPLAY)
+		{
+			UE_LOG(LogCs, Warning, TEXT("ACsMotionController::OnCalcCamera(%s): Using Override Function."), *GetName());
+		}
 		Override_OnCalcCamera_ScriptEvent.Broadcast(MappingId, Hand, DeltaTime, ViewInfo);
 	}
 #endif WITH_EDITOR

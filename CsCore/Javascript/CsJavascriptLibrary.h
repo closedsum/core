@@ -95,7 +95,15 @@ class CSCORE_API UCsJavascriptLibrary : public UBlueprintFunctionLibrary
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
 	static FLinearColor GetLinearColor(const TEnumAsByte<ECsLinearColor::Type> &Color);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-		static FColor GetColor(const TEnumAsByte<ECsColor::Type> &Color);
+	static FColor GetColor(const TEnumAsByte<ECsColor::Type> &Color);
 
 #pragma endregion Color
+
+// World
+#pragma region 
+
+	UFUNCTION(BlueprintCallable, Category = "Javascript")
+	static float GetTimeSeconds(UWorld* InWorld);
+
+#pragma endregion World
 };

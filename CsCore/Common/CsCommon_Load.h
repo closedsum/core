@@ -524,6 +524,7 @@ template<typename T>
 	}
 
 	static void WriteStructToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, void* InStruct, UScriptStruct* const &InScriptStruct, TCsWriteStructToJson_Internal Internal = nullptr);
+	static void WriteStructToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, void* InStruct, UScriptStruct* const &InScriptStruct, const TArray<FCsCategoryMemberAssociation> &CategoryMemberAssociations, TCsWriteStructToJson_Internal Internal = nullptr);
 	static void WriteObjectToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, void* InObject, UClass* const &InClass, const TArray<FCsCategoryMemberAssociation> &CategoryMemberAssociations, TCsWriteObjectToJson_Internal Internal = nullptr);
 
 #pragma endregion Write
@@ -737,6 +738,7 @@ template<typename T>
 	}
 
 	static void ReadStructFromJson(TSharedPtr<class FJsonObject> &JsonObject, void* InStruct, UScriptStruct* const &InScriptStruct, TCsReadStructFromJson_Internal Internal = nullptr);
+	static void ReadStructFromJson(TSharedPtr<class FJsonObject> &JsonParsed, void* InStruct, UScriptStruct* const &InScriptStruct, const TArray<FCsCategoryMemberAssociation> &CategoryMemberAssociations, TCsReadStructFromJson_Internal Internal = nullptr);
 	static void ReadObjectFromJson(TSharedPtr<class FJsonObject> &JsonParsed, void* InObject, UClass* const &InClass, const TArray<FCsCategoryMemberAssociation> &CategoryMemberAssociations, TCsReadObjectFromJson_Internal Internal = nullptr);
 
 #pragma endregion Read
@@ -2609,6 +2611,7 @@ template<typename T>
 #pragma region
 
 #if WITH_EDITOR
+	static void GetCategoryMemberAssociations(void* InStruct, UScriptStruct* const &InScriptStruct, TArray<FCsCategoryMemberAssociation> &OutCategoryMemberAssociations);
 	static void GetCategoryMemberAssociations(void* InObject, UClass* const &InClass, TArray<FCsCategoryMemberAssociation> &OutCategoryMemberAssociations);
 #endif // #if WITH_EDITOR
 

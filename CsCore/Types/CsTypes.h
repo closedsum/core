@@ -4695,21 +4695,21 @@ struct FCsPooledObjectCache
 		}
 
 		Instigator.Reset();
-		Instigator = NULL;
+		Instigator = nullptr;
 		Owner.Reset();
-		Owner = NULL;
+		Owner = nullptr;
 		Parent.Reset();
-		Parent = NULL;
+		Parent = nullptr;
 		Time = 0.0f;
 		RealTime = 0.0f;
 		Frame = 0;
 		Frame_Script = 0;
 	}
 
-	UObject* GetInstigator() { return Instigator.IsValid() ? Instigator.Get() : NULL; }
-	UObject* GetOwner() { return Owner.IsValid() ? Owner.Get() : NULL; }
-	UObject* GetParent() { return Parent.IsValid() ? Parent.Get() : NULL; }
-	UObject* GetDelegateInvoker() { return DelegateInvoker.IsValid() ? DelegateInvoker.Get() : NULL; }
+	UObject* GetInstigator() { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
+	UObject* GetOwner() { return Owner.IsValid() ? Owner.Get() : nullptr; }
+	UObject* GetParent() { return Parent.IsValid() ? Parent.Get() : nullptr; }
+	UObject* GetDelegateInvoker() { return DelegateInvoker.IsValid() ? DelegateInvoker.Get() : nullptr; }
 
 	void DeAllocate()
 	{

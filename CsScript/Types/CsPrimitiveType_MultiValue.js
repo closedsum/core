@@ -41,14 +41,14 @@ module.exports = class JsCsPrimitiveType_MultiValue
         this.Value      = defaultValue;
         this.Last_Value = this.Value;
 
-        for (let i = 0; i < SIZE; i++)
+        for (let i = 0; i < this.SIZE; i++)
         {
             this.Values.push(defaultValue);
             this.Last_Values.push(this.Values[i]);
 
             this.IsDirtys.push(false);
 
-            Get(index);
+            this.Get(i);
         }
     }
 
@@ -93,6 +93,7 @@ module.exports = class JsCsPrimitiveType_MultiValue
 
     Add(index, value)
     {
-        this.Values[index] += value;
+        this.Values[index]  += value;
+        this.IsDirtys[index] = this.Values[index] != this.Last_Values[index];
     }
 };

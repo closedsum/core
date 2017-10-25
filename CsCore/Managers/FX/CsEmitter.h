@@ -8,36 +8,24 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBindableDynEvent_CsFxCache_OnDeAllocate);
 DECLARE_DELEGATE(FBindableEvent_CsFxCache_OnDeAllocate);
 
 USTRUCT()
-struct FCsFxCache
+struct FCsFxCache : public FCsPooledObjectCache
 {
 	GENERATED_USTRUCT_BODY()
 
-	uint8 Index;
-
-	bool IsAllocated;
-
-	TWeakObjectPtr<UObject> Owner;
 	TWeakObjectPtr<class ACsEmitter> Emitter;
 	TWeakObjectPtr<class UParticleSystem> Particle;
-	TWeakObjectPtr<UObject> Parent;
-	TWeakObjectPtr<UObject> DelegateInvoker;
 
-	UPROPERTY(BlueprintAssignable, Category = "Effects")
-	FBindableDynEvent_CsFxCache_OnDeAllocate OnDeAllocate_ScriptEvent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	TEnumAsByte<ECsFxPriority::Type> Priority;
 
-	FBindableEvent_CsFxCache_OnDeAllocate OnDeAllocate_Event;
-
-	TCsFxPriority Priority;
-
-	float LifeTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	float DeathTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	float DeathStartTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	bool IsDying;
 
-	float Time;
-	float RealTime;
-	uint64 Frame;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FVector Location;
 
 	FCsFxCache()
@@ -132,49 +120,22 @@ struct FCsFxCache
 		Init(InElement, InTime, InRealTime, InFrame, nullptr, nullptr, FVector::ZeroVector);
 	}
 
-	void Reset()
+	virtual void Reset() override
 	{
+		Super::Reset();
+
 		IsAllocated = false;
 
-		if (UObject* Invoker = GetDelegateInvoker())
-		{
-#if WITH_EDITOR
-			OnDeAllocate_ScriptEvent.RemoveAll(Invoker);
-#endif // #if WITH_EDITOR
-			OnDeAllocate_Event.Unbind();
-		}
-
-		Owner.Reset();
-		Owner = nullptr;
 		Particle.Reset();
 		Particle = nullptr;
-		Parent.Reset();
-		Parent = nullptr;
 		Priority = ECsFxPriority::Low;
-		LifeTime = 0.0f;
 		DeathTime = 0.0f;
 		DeathStartTime = 0.0f;
 		IsDying = false;
-		Time = 0.0f;
-		RealTime = 0.0f;
-		Frame = 0;
 	}
 
-	UObject* GetOwner() { return Owner.IsValid() ? Owner.Get() : nullptr; }
 	ACsEmitter* GetEmitter() { return Emitter.IsValid() ? Emitter.Get() : nullptr; }
 	class UParticleSystem* GetCue() { return Particle.IsValid() ? Particle.Get() : nullptr; }
-	UObject* GetParent() { return Parent.IsValid() ? Parent.Get() : nullptr; }
-	UObject* GetDelegateInvoker() { return DelegateInvoker.IsValid() ? DelegateInvoker.Get() : nullptr; }
-
-	void DeAllocate()
-	{
-#if WITH_EDITOR
-		OnDeAllocate_ScriptEvent.Broadcast();
-#endif // #if WITH_EDITOR
-		OnDeAllocate_Event.ExecuteIfBound();
-
-		Reset();
-	}
 };
 
 UCLASS()

@@ -57,6 +57,7 @@ void ACsManager_FX::CreatePool(const int32 &Size)
 		Emitter->Role = ROLE_None;
 		GetWorld()->RemoveNetworkActor(Emitter);
 		Emitter->Init(I);
+		Emitter->DeAllocate();
 		Pool.Add(Emitter);
 	}
 }

@@ -52,7 +52,7 @@ void ACsManager_Projectile::CreatePool(const int32 &Size)
 		Projectile->SetReplicates(false);
 		Projectile->Role = ROLE_None;
 		GetWorld()->RemoveNetworkActor(Projectile);
-
+		Projectile->DeAllocate();
 		//ProjectilePool.Add(Projectile);
 		//ProjectilesToDeActivate.Add(Projectile);
 

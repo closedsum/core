@@ -71,11 +71,20 @@ void ACsProjectile::PostInitializeComponents()
 	CollisionComponent->SetComponentTickEnabled(false);
 	MovementComponent->SetComponentTickEnabled(false);
 	MeshComponent->SetComponentTickEnabled(false);
+
+	SetActorTickEnabled(false);
 }
 
 void ACsProjectile::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+}
+
+void ACsProjectile::Init(const int32 &Index)
+{
+	PoolIndex = Index;
+
+	Cache.Set(Index, this);
 }
 
 template<typename T>
@@ -119,6 +128,23 @@ void ACsProjectile::Allocate_Internal()
 void ACsProjectile::DeAllocate()
 {
 	Super::DeAllocate();
+
+	// Collision
+	CollisionComponent->Deactivate();
+	CollisionComponent->ClearMoveIgnoreActors();
+	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	CollisionComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
+	CollisionComponent->SetComponentTickEnabled(false);
+	CollisionComponent->SetNotifyRigidBodyCollision(false);
+	// Movement
+	MovementComponent->StopMovementImmediately();
+	MovementComponent->SetComponentTickEnabled(false);
+	MovementComponent->Deactivate();
+	// Mesh
+	MeshComponent->SetVisibility(false);
+	MeshComponent->SetHiddenInGame(true);
+	MeshComponent->SetComponentTickEnabled(false);
+	MeshComponent->Deactivate();
 
 	if (ACsProjectile* Projectile = GetFakeProjectile())
 		Projectile->DeAllocate();

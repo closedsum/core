@@ -83,3 +83,10 @@ FLinearColor UCsJavascriptLibrary::GetLinearColor(const TEnumAsByte<ECsLinearCol
 FColor UCsJavascriptLibrary::GetColor(const TEnumAsByte<ECsColor::Type> &Color) { return ECsColor::ToColor(Color); }
 
 #pragma endregion Color
+
+// World
+#pragma region 
+
+float UCsJavascriptLibrary::GetTimeSeconds(UWorld* InWorld) { return InWorld->GetTimeSeconds(); }
+
+#pragma endregion World

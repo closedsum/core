@@ -8,38 +8,27 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBindableDynEvent_CsProjectileCache_OnDeAlloc
 DECLARE_DELEGATE(FBindableEvent_CsProjectileCache_OnDeAllocate);
 
 USTRUCT()
-struct FCsProjectileCache
+struct FCsProjectileCache : public FCsPooledObjectCache
 {
 	GENERATED_USTRUCT_BODY()
 
-	uint8 Index;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	TEnumAsByte<ECsProjectileType::Type> Type_Scipt;
 
-	bool IsAllocated;
-
-	TCsProjectileType Type;
-
-	TWeakObjectPtr<UObject> Instigator;
-	TWeakObjectPtr<UObject> Owner;
 	TWeakObjectPtr<class ACsProjectile> Projectile;
 	TWeakObjectPtr<class ACsData_Projectile> Data;
-	TWeakObjectPtr<UObject> Parent;
-	TWeakObjectPtr<UObject> DelegateInvoker;
 
-	UPROPERTY(BlueprintAssignable, Category = "Projectile")
-	FBindableDynEvent_CsProjectileCache_OnDeAllocate OnDeAllocate_ScriptEvent;
-
-	FBindableEvent_CsProjectileCache_OnDeAllocate OnDeAllocate_Event;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	float Duration;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	bool IsLooping;
 
-	float Time;
-	float RealTime;
-	uint64 Frame;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FVector Location;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FVector Direction;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	float Speed;
 
 	FCsProjectileCache()
@@ -130,47 +119,16 @@ struct FCsProjectileCache
 
 	void Reset()
 	{
-		IsAllocated = false;
+		Super::Reset();
 
-		if (UObject* Invoker = GetDelegateInvoker())
-		{
-#if WITH_EDITOR
-			OnDeAllocate_ScriptEvent.RemoveAll(Invoker);
-#endif // #if WITH_EDITOR
-			OnDeAllocate_Event.Unbind();
-		}
-
-		Instigator.Reset();
-		Instigator = NULL;
-		Owner.Reset();
-		Owner = NULL;
 		Data.Reset();
 		Data  = NULL;
-		Parent.Reset();
-		Parent	  = NULL;
 		Duration  = 0.0f;
 		IsLooping = false;
-		Time	  = 0.0f;
-		RealTime  = 0.0f;
-		Frame	  = 0;
 	}
 
-	UObject* GetInstigator() { return Instigator.IsValid() ? Instigator.Get() : NULL; }
-	UObject* GetOwner() { return Owner.IsValid() ? Owner.Get() : NULL; }
 	ACsProjectile* GetProjectile() { return Projectile.IsValid() ? Projectile.Get() : NULL; }
 	ACsData_Projectile* GetData() { return Data.IsValid() ? Data.Get() : NULL; }
-	UObject* GetParent() { return Parent.IsValid() ? Parent.Get() : NULL; }
-	UObject* GetDelegateInvoker() { return DelegateInvoker.IsValid() ? DelegateInvoker.Get() : NULL; }
-
-	void DeAllocate()
-	{
-#if WITH_EDITOR
-		OnDeAllocate_ScriptEvent.Broadcast();
-#endif // #if WITH_EDITOR
-		OnDeAllocate_Event.ExecuteIfBound();
-
-		Reset();
-	}
 };
 
 UCLASS()
@@ -193,6 +151,8 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 	FCsProjectileCache Cache;
+
+	void Init(const int32 &Index);
 
 	template<typename T>
 	void Allocate(class ACsData_Projectile* InData, const FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)());

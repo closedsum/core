@@ -527,26 +527,46 @@ struct FCsIntegralType_MultiValue : FCsPrimitiveType_MultiValue<T, U, SIZE>
 		return (T)0;
 	}
 
-	void Add(const T &inValue) { Value += inValue; }
+	void Add(const T &inValue) 
+	{ 
+		Value  += inValue; 
+		IsDirty = Value != Last_Value;
+	}
+
 	void Add(const U &Index, const T &inValue) { Add((int64)Index, inValue); }
 
 	void Add(const int64 &Index, const T &inValue)
 	{
 		if (Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE)
+		{
 			Add(inValue);
+		}
 		else
-			Values[Index] += inValue;
+		{
+			Values[Index]  += inValue;
+			IsDirtys[Index] = Values[Index] != Last_Values[Index];
+		}
 	}
 
-	void Subtract(const T &inValue) { Value -= inValue; }
+	void Subtract(const T &inValue) 
+	{ 
+		Value  -= inValue;
+		IsDirty = Value != Last_Value;
+	}
+
 	void Subtract(const U &Index, const T &inValue) { Subtract((int64)Index, inValue); }
 
 	void Subtract(const int64 &Index, const T &inValue)
 	{
 		if (Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE)
+		{
 			Subtract(inValue);
+		}
 		else
-			Values[Index] -= inValue;
+		{
+			Values[Index]  -= inValue;
+			IsDirtys[Index] = Values[Index] != Last_Values[Index];
+		}
 	}
 
 	T Max()

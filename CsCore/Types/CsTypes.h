@@ -4518,7 +4518,6 @@ namespace ECsProjectileDeActivate
 }
 
 #define ECS_PROJECTILE_DEACTIVATE_MAX (uint8)ECsProjectileDeActivate::ECsProjectileDeActivate_MAX
-//typedef ECsProjectileDeActivate TCsProjectileDeActivate;
 typedef TEnumAsByte<ECsProjectileDeActivate::Type> TCsProjectileDeActivate;
 
 USTRUCT()
@@ -4557,6 +4556,24 @@ struct FCsProjectileFireCache
 
 	UPROPERTY()
 	float HomingAccelerationMagnitude;
+
+	FCsProjectileFireCache& operator=(const FCsProjectileFireCache& B)
+	{
+		IsAllocated = B.IsAllocated;
+		Time = B.Time;
+		RealTime = B.RealTime;
+		return *this;
+	}
+
+	bool operator==(const FCsProjectileFireCache& B) const
+	{
+		return IsAllocated == B.IsAllocated && Time == B.Time;
+	}
+
+	bool operator!=(const FCsProjectileFireCache& B) const
+	{
+		return !(*this == B);
+	}
 
 	void Reset()
 	{

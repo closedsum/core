@@ -86,7 +86,7 @@ module.exports = class JsCsPrimitiveType_MultiValue
         if (this.Type == ECsMemberType.Float)
             this.Values[index] = this.Owner.GetMemberValue_float(index, this.MemberName);
 
-        this.Last_Values[Index] = this.Values[index];
+        this.Last_Values[index] = this.Values[index];
         this.IsDirtys[index]    = this.Values[index] != this.Last_Values[index];
         return this.Values[index];
     }

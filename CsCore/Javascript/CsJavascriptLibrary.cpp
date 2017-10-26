@@ -90,3 +90,11 @@ FColor UCsJavascriptLibrary::GetColor(const TEnumAsByte<ECsColor::Type> &Color) 
 float UCsJavascriptLibrary::GetTimeSeconds(UWorld* InWorld) { return InWorld->GetTimeSeconds(); }
 
 #pragma endregion World
+
+// Coroutine
+#pragma region
+
+uint8 UCsJavascriptLibrary::CoroutineScheduleToUint8(const TEnumAsByte<ECsCoroutineSchedule::Type> &Schedule) { return (uint8)Schedule; }
+uint8 UCsJavascriptLibrary::GetCoroutineScheduleMax() { return ECS_COROUTINE_SCHEDULE_MAX; }
+
+#pragma endregion Coroutine

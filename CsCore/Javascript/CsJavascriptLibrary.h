@@ -106,4 +106,14 @@ class CSCORE_API UCsJavascriptLibrary : public UBlueprintFunctionLibrary
 	static float GetTimeSeconds(UWorld* InWorld);
 
 #pragma endregion World
+
+// Coroutine
+#pragma region
+
+	UFUNCTION(BlueprintCallable, Category = "Javascript")
+	static uint8 CoroutineScheduleToUint8(const TEnumAsByte<ECsCoroutineSchedule::Type> &Schedule);
+	UFUNCTION(BlueprintCallable, Category = "Javascript")
+	static uint8 GetCoroutineScheduleMax();
+
+#pragma endregion Coroutine
 };

@@ -104,6 +104,8 @@ class CSCORE_API UCsJavascriptLibrary : public UBlueprintFunctionLibrary
 
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
 	static float GetTimeSeconds(UWorld* InWorld);
+	UFUNCTION(BlueprintCallable, Category = "Javascript")
+	static float GetRealTimeSeconds(UWorld* InWorld);
 
 #pragma endregion World
 

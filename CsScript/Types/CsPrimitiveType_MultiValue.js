@@ -93,6 +93,10 @@ module.exports = class JsCsPrimitiveType_MultiValue
 
     Add(index, value)
     {
+        // uint8
+        if (this.Type == ECsMemberType.Uint8)
+            this.Owner.AddMemberValue_uint8(index, this.MemberName, value);
+
         this.Values[index]  += value;
         this.IsDirtys[index] = this.Values[index] != this.Last_Values[index];
     }

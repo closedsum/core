@@ -6,6 +6,8 @@
 
 var JsCsRoutine = require('CsScript/Coroutine/Routine.js');
 
+var me;
+
 const INDEX_NONE = -1;
 
 const ROUTINE_POOL_SIZE = 256;
@@ -16,6 +18,8 @@ module.exports = class JsCsCoroutineScheduler
 {
     constructor()
     {
+        me = this;
+
         this.RoutinePools = [];
         this.RoutinePoolIndices = [];
         this.RoutinesToInit   = [];
@@ -32,7 +36,7 @@ module.exports = class JsCsCoroutineScheduler
 
             for (let j = 0; j < ROUTINE_POOL_SIZE; j++)
             {
-                this.RoutinePool[i][j] = new JsCsRoutine();
+                this.RoutinePools[i][j] = new JsCsRoutine();
                 this.RoutinePools[i][j].Init(this.RoutinePools[i][j], this, j);
             }
         }
@@ -55,7 +59,12 @@ module.exports = class JsCsCoroutineScheduler
 
             if (r.index == ROUTINE_FREE)
             {
-                const currentTime = CsJavascriptLibrary.GetTimeSeconds();
+                let currentTime = 0;
+                
+                if (inActor != null && typeof inActor === "object")
+                    currentTime = CsJavascriptLibrary.GetTimeSeconds(inActor.root.MyWorld);
+                if (inObject != null && typeof inObject === "object")
+                    currentTime = CsJavascriptLibrary.GetTimeSeconds(inObject.root.MyWorld);
 
                 r.Start(inCoroutine, inStopCondition, inActor, inObject, currentTime, inAddRoutine, inRemoveRoutine, routineType);
 
@@ -97,7 +106,12 @@ module.exports = class JsCsCoroutineScheduler
 
             if (r.index == ROUTINE_FREE)
             {
-                const currentTime = CsJavascriptLibrary.GetTimeSeconds();
+                let currentTime = 0;
+
+                if (inActor != null && typeof inActor === "object")
+                    currentTime = CsJavascriptLibrary.GetTimeSeconds(inActor.root.MyWorld);
+                if (inObject != null && typeof inObject === "object")
+                    currentTime = CsJavascriptLibrary.GetTimeSeconds(inObject.root.MyWorld);
 
                 parent.AddChild(r);
                 r.Start(inCoroutine, inStopCondition, inActor, inObject, currentTime, inAddRoutine, inRemoveRoutine, routineType);
@@ -188,9 +202,10 @@ module.exports = class JsCsCoroutineScheduler
         }
     }
 
-    OnTick_Update(deltaSeconds)
+    OnTick_Update(deltaSeconds) { me.OnTick_Update_Internal(deltaSeconds); }
+    OnTick_Update_Internal(deltaSeconds)
     {
-        Update(ECsCoroutineSchedule.Tick, deltaSeconds);
+        this.Update(ECsCoroutineSchedule.Tick, deltaSeconds);
     }
 
     EndAll(schedule)
@@ -253,3 +268,49 @@ module.exports = class JsCsCoroutineScheduler
         }
     }
 };
+
+// Example
+/*
+
+let func = RotateMesh();
+MyScheduler.Start(func, null, null, null);
+
+var RotateMesh = function*()
+{
+    class _Local
+    {
+        constructor()
+        {
+            this.a        = null;
+            this.deltaSeconds = 0;
+            this.rotation = new Rotator();
+        }
+
+        Set(r)
+        {
+            this.a        = r.GetActor();
+            this.deltaSeconds = r.deltaSeconds;
+            this.rotation = this.a.GetActorRotation();
+        }
+    }
+
+    let local = new _Local();
+    let r;
+
+    // COROUTINE_BEGIN
+    r = yield; local.Set(r);
+
+    do
+    {
+        local.rotation = local.a.GetActorRotation();
+        local.rotation.Yaw += local.deltaSeconds * 10;
+        local.a.SetActorRotation(local.rotation);
+
+        r = yield; local.Set(r);
+    }
+    while(1);
+
+    r.End();
+    // COROUTINE_END
+}
+*/

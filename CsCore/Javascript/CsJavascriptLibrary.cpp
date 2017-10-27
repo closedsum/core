@@ -88,6 +88,7 @@ FColor UCsJavascriptLibrary::GetColor(const TEnumAsByte<ECsColor::Type> &Color) 
 #pragma region 
 
 float UCsJavascriptLibrary::GetTimeSeconds(UWorld* InWorld) { return InWorld->GetTimeSeconds(); }
+float UCsJavascriptLibrary::GetRealTimeSeconds(UWorld* InWorld) { return InWorld->GetRealTimeSeconds(); }
 
 #pragma endregion World
 

@@ -14,7 +14,9 @@ const ROUTINE_FLOAT_SIZE = 4;
 const ROUTINE_VECTOR_SIZE = 4;
 const ROUTINE_ROTATOR_SIZE = 4;
 const ROUTINE_COLOR_SIZE = 4;
+const ROUTINE_STRING_SIZE = 4;
 const ROUTINE_OBJECT_SIZE = 4;
+const ROUTINE_VOID_POINTER_SIZE = 4;
 const ROUTINE_MAX_TYPE = 255;
 const ROUTINE_END = -1;
 const ROUTINE_FREE = -2;
@@ -31,9 +33,13 @@ module.exports = class JsCsRoutine
         this.stopCondition = null;
         this.poolIndex = -1;
         this.index = ROUTINE_FREE;
+        this.name = "";
+        this.type = ROUTINE_MAX_TYPE;
         this.a = null;
         this.o = null;
         this.owner = null;
+        this.addRoutine = null;
+        this.removeRoutine = null;
         this.startTime = 0.0;
         this.deltaSeconds = 0.0;
         this.tickCount = 0;
@@ -56,7 +62,9 @@ module.exports = class JsCsRoutine
 		}
 
         this.colors = new Array(ROUTINE_COLOR_SIZE);
+        this.strings = new Array(ROUTINE_STRING_SIZE);
         this.objects = new Array(ROUTINE_OBJECT_SIZE);
+        this.voidPointers = new Array(ROUTINE_VOID_POINTER_SIZE);
     }
 
     Init(inSelf, inScheduler, inPoolIndex)
@@ -88,25 +96,29 @@ module.exports = class JsCsRoutine
         this.a = inActor;
         this.o = inObject;
         this.startTime = inStartTime;
+        this.addRoutine = inAddRoutine;
+        this.removeRoutine = inRemoveRoutine;
 
         if (this.GetActor() != null && this.GetActor() === "object")
         {
             this.owner = this.a;
         }
         else
-        if (this.GetRObject() != null && this.GetRObject() === "object")
+        if (this.GetRObject() != null && typeof this.GetRObject() === "object")
         {
             this.owner = this.o;
         }
 
-        //if (GetOwner() != null && GetOwner() === "object" && IsFunction(this.addRoutine))
-        //    this.addRoutine(GetOwner(), this.self, this.type)
+        if (this.GetOwner() != null && typeof this.GetOwner() === "object" && IsFunction(this.addRoutine))
+            this.addRoutine(GetOwner(), this.self, this.type)
 
         this.coroutine.next(this.self);
     }
 
     End()
     {
+        if (this.GetOwner() != null && typeof this.GetOwner() === "object" && IsFunction(this.removeRoutine))
+            this.removeRoutine(GetOwner(), this.self, this.type);
         this.index = ROUTINE_END;
     }
 
@@ -117,7 +129,7 @@ module.exports = class JsCsRoutine
 
     Reset()
 	{
-		if (this.parent != null && this.parent === "object")
+		if (this.parent != null && typeof this.parent === "object")
 		{
 		    let i = this.parent.children.indexOf(this.self);
 
@@ -132,12 +144,15 @@ module.exports = class JsCsRoutine
 		this.coroutine	  = null;
 		this.stopCondition = null;
 		this.index		  = ROUTINE_FREE;
-		//this.name		  = NAME_None;
-		//this.type		  = ROUTINE_MAX_TYPE;
+	    this.name		  = "";
+		this.type		  = ROUTINE_MAX_TYPE;
 		this.a		      = null;
-		this.o		      = null;
-		this.startTime     = 0.0;
-		this.tickCount     = 0;
+        this.o            = null;
+        this.owner        = null;
+        this.addRoutine   = null;
+        this.removeRoutine = null;
+		this.startTime    = 0.0;
+		this.tickCount    = 0;
 		this.delay	      = 0.0;
 
 		for (let i = 0; i < ROUTINE_INDEXER_SIZE; i++)
@@ -178,9 +193,14 @@ module.exports = class JsCsRoutine
 		}
 
 		for (let i = 0; i < ROUTINE_COLOR_SIZE; i++)
-		{
-			//this.colors[i] = FLinearColor::White;
+        {
+            this.colors[i] = CsJavascriptLibrary.GetLinearColor(ECsLinearColor.White);
 		}
+
+        for (let i = 0; i < ROUTINE_STRING_SIZE; i++)
+        {
+            this.strings[i] = "";
+        }
 
 		for (let i = 0; i < ROUTINE_OBJECT_SIZE; i++)
 		{
@@ -213,8 +233,8 @@ module.exports = class JsCsRoutine
 
 		if (this.index == ROUTINE_END)
 		{
-            //if (GetOwner() && IsFunction(this.removeRoutine))
-			//	this.removeRoutine(GetOwner(), this.self, this.type);
+            if (this.GetOwner() != null && typeof this.GetOwner() === "object" && IsFunction(this.removeRoutine))
+                this.removeRoutine(GetOwner(), this.self, this.type);
 			return;
 		}
 		this.deltaSeconds = inDeltaSeconds;

@@ -89,7 +89,7 @@ module.exports = class JsCsRoutine
         return func && getType.toString.call(func) === '[object Function]';
     }
 
-    Start(inCoroutine, inStopCondition, inActor, inObject, inStartTime, inAddRoutine, inRemoveRoutine)
+    Start(inCoroutine, inStopCondition, inActor, inObject, inStartTime, inAddRoutine, inRemoveRoutine, routineType)
     {
         this.coroutine = inCoroutine;
         this.stopCondition = inStopCondition;
@@ -98,8 +98,9 @@ module.exports = class JsCsRoutine
         this.startTime = inStartTime;
         this.addRoutine = inAddRoutine;
         this.removeRoutine = inRemoveRoutine;
+        this.type = routineType;
 
-        if (this.GetActor() != null && this.GetActor() === "object")
+        if (this.GetActor() != null && typeof this.GetActor() === "object")
         {
             this.owner = this.a;
         }
@@ -109,16 +110,16 @@ module.exports = class JsCsRoutine
             this.owner = this.o;
         }
 
-        if (this.GetOwner() != null && typeof this.GetOwner() === "object" && IsFunction(this.addRoutine))
-            this.addRoutine(GetOwner(), this.self, this.type)
+        if (this.GetOwner() != null && typeof this.GetOwner() === "object" && this.IsFunction(this.addRoutine))
+            this.addRoutine(this.GetOwner(), this.self, this.type)
 
         this.coroutine.next(this.self);
     }
 
     End()
     {
-        if (this.GetOwner() != null && typeof this.GetOwner() === "object" && IsFunction(this.removeRoutine))
-            this.removeRoutine(GetOwner(), this.self, this.type);
+        if (this.GetOwner() != null && typeof this.GetOwner() === "object" && this.IsFunction(this.removeRoutine))
+            this.removeRoutine(this.GetOwner(), this.self, this.type);
         this.index = ROUTINE_END;
     }
 
@@ -253,7 +254,7 @@ module.exports = class JsCsRoutine
 	}
 
 	GetOwner()
-	{
+    {
 		return this.owner;
 	}
 

@@ -3,6 +3,7 @@
 #include "CsCore.h"
 #include "Managers/Sound/CsSound.h"
 #include "Common/CsCommon.h"
+#include "Game/CsGameState.h"
 
 ACsManager_Sound::ACsManager_Sound(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -87,6 +88,11 @@ void ACsManager_Sound::OnTick(const float &DeltaSeconds)
 			ActiveSounds.RemoveAt(I);
 		}
 	}
+}
+
+/*static*/ ACsManager_Sound* ACsManager_Sound::Get(UWorld* InWorld)
+{
+	return InWorld->GetGameState<ACsGameState>()->Manager_Sound;
 }
 
 ACsSound* ACsManager_Sound::Allocate()

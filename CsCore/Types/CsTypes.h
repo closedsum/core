@@ -1442,7 +1442,6 @@ namespace ECsSoundPriority
 }
 
 #define ECS_SOUND_PRIORITY_MAX (uint8)ECsSoundPriority::ECsSoundPriority_MAX
-//typedef ECsSoundPriority TCsSoundPriority;
 typedef TEnumAsByte<ECsSoundPriority::Type> TCsSoundPriority;
 
 USTRUCT()
@@ -1450,20 +1449,27 @@ struct FCsSoundElement
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, Category = "Sound")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 	TAssetPtr<class USoundCue> Sound;
 
-	UPROPERTY(EditAnywhere, Category = "Sound", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Sound_LoadFlags;
 
-	UPROPERTY(EditAnywhere, Category = "Sound")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 	TEnumAsByte<ECsSoundPriority::Type> Priority;
 
-	UPROPERTY(EditAnywhere, Category = "Sound", meta = (ClampMin = "0.05", UIMin = "0.05"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound", meta = (ClampMin = "0.05", UIMin = "0.05"))
 	float Duration;
 
-	UPROPERTY(EditAnywhere, Category = "Sound")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 	bool IsLooping;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	float VolumeMultiplier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	float PitchMultiplier;
+
 
 private:
 	UPROPERTY(Transient)
@@ -1473,6 +1479,9 @@ public:
 	FCsSoundElement()
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Sound_LoadFlags, ECsLoadFlags::Game);
+
+		VolumeMultiplier = 1.0f;
+		PitchMultiplier = 1.0f;
 	}
 
 	FCsSoundElement& operator=(const FCsSoundElement& B)
@@ -1482,17 +1491,31 @@ public:
 		Priority = B.Priority;
 		Duration = B.Duration;
 		IsLooping = B.IsLooping;
+		VolumeMultiplier = B.VolumeMultiplier;
+		PitchMultiplier = B.PitchMultiplier;
 		return *this;
 	}
 
 	bool operator==(const FCsSoundElement& B) const
 	{
-		return Sound == B.Sound && Sound_LoadFlags == B.Sound_LoadFlags && Priority == B.Priority && Duration == B.Duration && IsLooping == B.IsLooping;
+		return Sound == B.Sound && 
+			   Sound_LoadFlags == B.Sound_LoadFlags && 
+			   Priority == B.Priority && 
+			   Duration == B.Duration && 
+			   IsLooping == B.IsLooping &&
+			   VolumeMultiplier == B.VolumeMultiplier &&
+			   PitchMultiplier == B.PitchMultiplier;
 	}
 
 	bool operator!=(const FCsSoundElement& B) const
 	{
 		return !(*this == B);
+	}
+
+	void Set(USoundCue* InSound)
+	{
+		Sound		   = TAssetPtr<USoundCue>(InSound);
+		Sound_Internal = InSound;
 	}
 
 	USoundCue* Get() const

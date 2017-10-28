@@ -19,6 +19,8 @@ class CSCORE_API ACsManager_Sound : public ACsManager
 
 	virtual void OnTick(const float &DeltaSeconds) override;
 
+	static ACsManager_Sound* Get(UWorld* InWorld);
+
 	TSubclassOf<class ACsSound> SoundClass;
 
 	TArray<class ACsSound*> ActiveSounds;

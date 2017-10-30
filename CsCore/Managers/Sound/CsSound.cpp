@@ -92,37 +92,47 @@ void ACsSound::DeAllocate()
 
 bool ACsSound::Play()
 {
-	/*
 	if (!AudioComponent)
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsSound::Play (%s): AudioComponent is NULL."), *GetName())
 		return false;
+	}
 
-	StartTime = inStartTime;
-
+	USoundCue* Cue = Cache.GetCue();
 	AudioComponent->SetSound(Cue);
-	AudioComponent->AttenuationSettings->Attenuation = *(Cue->GetAttenuationSettingsToApply());
+
+	if (const FSoundAttenuationSettings* Settings = Cue->GetAttenuationSettingsToApply())
+		AudioComponent->AttenuationSettings->Attenuation = *Settings;
+
+	AudioComponent->AttenuationSettings->Attenuation.bSpatialize = Cache.Type_Script == ECsSoundType::s3D;
+
+	AudioComponent->SetVolumeMultiplier(Cache.VolumeMultiplier);
+	AudioComponent->SetPitchMultiplier(Cache.PitchMultiplier);
+
 	SetActorHiddenInGame(false);
+
+	UObject* Parent = Cache.GetParent();
 
 	// Actors
 	if (AActor* Actor = Cast<AActor>(Parent))
 	{
 		SetActorLocation(Actor->GetActorLocation());
-		AttachToActor(Actor, FAttachmentTransformRules::KeepRelativeTransform, NAME_None);
+		AttachToActor(Actor, FAttachmentTransformRules::KeepRelativeTransform, Cache.Bone);
 	}
 	// Component
 	else
 	if (USceneComponent*Component = Cast<USceneComponent>(Parent))
 	{
 		SetActorLocation(Component->GetComponentLocation());
-		AttachToComponent(Component, FAttachmentTransformRules::KeepRelativeTransform, NAME_None);
+		AttachToComponent(Component, FAttachmentTransformRules::KeepRelativeTransform, Cache.Bone);
 	}
 	else
 	{
-		SetActorLocation(Location);
+		SetActorLocation(Cache.Location);
 	}
 
 	AudioComponent->Activate(true);
-	AudioComponent->Play(StartTime);
-	*/
+	AudioComponent->Play();
 	return true;
 }
 

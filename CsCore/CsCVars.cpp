@@ -167,8 +167,20 @@ TAutoConsoleVariable<int32> CsCVarLogInteractiveAIPawnPhysicsStateChange(
 TAutoConsoleVariable<int32> CsCVarLogOverrideFunctions(
 	TEXT("log.override.functions"),
 	0,
-	TEXT("Log Override Functions used by Script"),
+	TEXT("Log Override Functions used by Script."),
 	ECVF_SetByConsole
 );
 
 #pragma endregion Script
+
+// Sound
+#pragma region
+
+TAutoConsoleVariable<int32> CsCVarLogManagerSoundTransactions(
+	TEXT("log.manager.sound.transactions"),
+	0,
+	TEXT("Log Manager Sound Allocation and DeAllocation."),
+	ECVF_SetByConsole
+);
+
+#pragma endregion Sound

@@ -9,6 +9,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPlayerState_OnT
 // Enums
 #pragma region
 
+UENUM(BlueprintType)
 namespace ECsPlayerStateRoutine
 {
 	enum Type

@@ -1394,6 +1394,45 @@ struct FCsPhysicsPreset
 #pragma region
 
 UENUM(BlueprintType)
+namespace ECsSoundType
+{
+	enum Type
+	{
+		s2D				 UMETA(DisplayName = "2D"),
+		s3D				 UMETA(DisplayName = "3D"),
+		ECsSoundType_MAX UMETA(Hidden),
+	};
+}
+
+namespace ECsSoundType
+{
+	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString s2D = TCsString(TEXT("s2D"), TEXT("s2d"), TEXT("2d"));
+		const TCsString s3D = TCsString(TEXT("s3D"), TEXT("s3d"), TEXT("3d"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::s2D) { return Str::s2D.Value; }
+		if (EType == Type::s3D) { return Str::s3D.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::s2D) { return Type::s2D; }
+		if (String == Str::s3D) { return Type::s3D; }
+		return Type::ECsSoundType_MAX;
+	}
+}
+
+#define ECS_SOUND_TYPE_MAX (uint8)ECsSoundType::ECsSoundType_MAX
+typedef TEnumAsByte<ECsSoundType::Type> TCsSoundType;
+
+UENUM(BlueprintType)
 namespace ECsSoundPriority
 {
 	enum Type
@@ -1456,6 +1495,9 @@ struct FCsSoundElement
 	int32 Sound_LoadFlags;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	TEnumAsByte<ECsSoundType::Type> Type;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 	TEnumAsByte<ECsSoundPriority::Type> Priority;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound", meta = (ClampMin = "0.05", UIMin = "0.05"))
@@ -1470,6 +1512,8 @@ struct FCsSoundElement
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 	float PitchMultiplier;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	FName Bone;
 
 private:
 	UPROPERTY(Transient)
@@ -1480,31 +1524,38 @@ public:
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Sound_LoadFlags, ECsLoadFlags::Game);
 
+		Type = ECsSoundType::s3D;
+		Priority = ECsSoundPriority::Medium;
 		VolumeMultiplier = 1.0f;
 		PitchMultiplier = 1.0f;
+		Bone = NAME_None;
 	}
 
 	FCsSoundElement& operator=(const FCsSoundElement& B)
 	{
 		Sound = B.Sound;
 		Sound_LoadFlags = B.Sound_LoadFlags;
+		Type = B.Type;
 		Priority = B.Priority;
 		Duration = B.Duration;
 		IsLooping = B.IsLooping;
 		VolumeMultiplier = B.VolumeMultiplier;
 		PitchMultiplier = B.PitchMultiplier;
+		Bone = B.Bone;
 		return *this;
 	}
 
 	bool operator==(const FCsSoundElement& B) const
 	{
 		return Sound == B.Sound && 
-			   Sound_LoadFlags == B.Sound_LoadFlags && 
+			   Sound_LoadFlags == B.Sound_LoadFlags &&
+			   Type == B.Type &&
 			   Priority == B.Priority && 
 			   Duration == B.Duration && 
 			   IsLooping == B.IsLooping &&
 			   VolumeMultiplier == B.VolumeMultiplier &&
-			   PitchMultiplier == B.PitchMultiplier;
+			   PitchMultiplier == B.PitchMultiplier &&
+			   Bone == B.Bone;
 	}
 
 	bool operator!=(const FCsSoundElement& B) const

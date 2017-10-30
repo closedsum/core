@@ -24,6 +24,7 @@ void ACsManager::AddToActivePool(AActor* InActor, const uint8 &Type) {}
 int32 ACsManager::GetActivePoolSize(const uint8& Type) { return 0; }
 bool ACsManager::IsExhausted(const uint8 &Type) { return true; }
 void ACsManager::OnTick(const float &DeltaSeconds){}
+void ACsManager::LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, UObject* InObject){}
 void ACsManager::DeAllocate(const int32 &Index){}
 void ACsManager::DeAllocate_Script(const int32 &Index) { DeAllocate(Index); }
 void ACsManager::DeAllocate(const uint8 &Type, const int32 &Index){}

@@ -74,3 +74,10 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInteractiveAIPawnPhysicsS
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogOverrideFunctions;
 
 #pragma endregion
+
+// Sound
+#pragma region
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerSoundTransactions;
+
+#pragma endregion

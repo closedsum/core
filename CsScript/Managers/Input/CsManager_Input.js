@@ -3,22 +3,24 @@
 
 "use strict"
 
+var JsCsManager = require('CsScript/Managers/CsManager.js');
+
 var me;
 
-module.exports = class JsCsManager_Input
+module.exports = class JsCsManager_Input extends JsCsManager
 {
     constructor()
     {
+        super();
+
         me = this;
-        
-        this.ptr = null;
-        this.root = null;
     }
 
     Init(inPtr, inRoot)
     {
+        super.Init(inPtr, inRoot);
+
         this.ptr = CsManager_Input.C(inPtr);
-        this.root = inRoot;
 
         /*
         // Pressed
@@ -69,6 +71,8 @@ module.exports = class JsCsManager_Input
         this.Manager.Rotation_Stationary_ScriptEvent.Add(this.Rotation_Stationary_ScriptEvent);
         */
     }
+
+    CleanUp(){}
 
     // Pressed
     Default_Event(actor, action, event){}

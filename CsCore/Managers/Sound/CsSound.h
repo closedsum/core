@@ -12,15 +12,26 @@ struct FCsSoundCache : public FCsPooledObjectCache
 	TWeakObjectPtr<class ACsSound> Sound;
 	TWeakObjectPtr<USoundCue> Cue;
 
-	TCsSoundPriority Priority;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
-	uint8 Priority_Script;
+	TEnumAsByte<ECsSoundType::Type> Type_Script;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	TEnumAsByte<ECsSoundPriority::Type> Priority;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	float Duration;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	bool IsLooping;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	float VolumeMultiplier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	float PitchMultiplier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	FName Bone;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FVector Location;
@@ -41,16 +52,20 @@ struct FCsSoundCache : public FCsPooledObjectCache
 	{
 		ActiveIndex = InActiveIndex;
 		ActiveIndex_Script = (int32)ActiveIndex;
-		Owner	  = InOwner;
-		Cue		  = InElement->Get();
-		Parent	  = InParent;
-		Priority  = InElement->Priority;
-		Priority_Script = (uint8)Priority;
-		Duration  = InElement->Duration;
-		IsLooping = InElement->IsLooping;
-		Time	  = InTime;
-		RealTime  = InRealTime;
-		Frame	  = InFrame;
+		Owner			 = InOwner;
+		Cue				 = InElement->Get();
+		Parent			 = InParent;
+		Type_Script		 = InElement->Type;
+		Type			 = (uint8)Type_Script;
+		Priority		 = InElement->Priority;
+		Duration		 = InElement->Duration;
+		IsLooping		 = InElement->IsLooping;
+		VolumeMultiplier = InElement->VolumeMultiplier;
+		PitchMultiplier  = InElement->PitchMultiplier;
+		Bone			 = InElement->Bone;
+		Time			 = InTime;
+		RealTime		 = InRealTime;
+		Frame			 = InFrame;
 
 		if (InObject && OnDeAllocate)
 		{
@@ -89,17 +104,21 @@ struct FCsSoundCache : public FCsPooledObjectCache
 
 		IsAllocated = true;
 
-		Owner	  = InOwner;
-		Cue		  = InElement->Get();
-		Parent	  = InParent;
-		Priority  = InElement->Priority;
-		Priority_Script = (uint8)Priority;
-		Duration  = InElement->Duration;
-		IsLooping = InElement->IsLooping;
-		Time	  = InTime;
-		RealTime  = InRealTime;
-		Frame	  = InFrame;
-		Location  = InLocation;
+		Owner			 = InOwner;
+		Cue				 = InElement->Get();
+		Parent			 = InParent;
+		Type_Script		 = InElement->Type;
+		Type			 = (uint8)Type_Script;
+		Priority		 = InElement->Priority;
+		Duration		 = InElement->Duration;
+		IsLooping		 = InElement->IsLooping;
+		VolumeMultiplier = InElement->VolumeMultiplier;
+		PitchMultiplier	 = InElement->PitchMultiplier;
+		Bone			 = InElement->Bone;
+		Time			 = InTime;
+		RealTime		 = InRealTime;
+		Frame			 = InFrame;
+		Location		 = InLocation;
 	}
 
 	void Init(const uint16& InActiveIndex, FCsSoundElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent)
@@ -128,10 +147,14 @@ struct FCsSoundCache : public FCsPooledObjectCache
 
 		Cue.Reset();
 		Cue   = nullptr;
-		Priority  = ECsSoundPriority::VeryLow;
-		Priority_Script = (uint8)Priority;
-		Duration  = 0.0f;
-		IsLooping = false;
+		Type_Script		 = ECsSoundType::s3D;
+		Type			 = (uint8)Type_Script;
+		Priority		 = ECsSoundPriority::VeryLow;
+		Duration		 = 0.0f;
+		IsLooping		 = false;
+		VolumeMultiplier = 1.0f;
+		PitchMultiplier  = 1.0f;
+		Bone			 = NAME_None;
 	}
 
 	ACsSound* GetSound() { return Sound.IsValid() ? Sound.Get() : nullptr; }
@@ -150,6 +173,7 @@ private:
 	USoundAttenuation* DefaultAttenuation;
 public:
 
+	UPROPERTY()
 	FCsSoundCache Cache;
 
 	void Init(const int32 &Index);
@@ -173,8 +197,6 @@ public:
 	void Allocate(const uint16& ActiveIndex, FCsSoundElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame);
 
 	virtual void DeAllocate() override;
-
-	float StartTime;
 
 	//bool Play(USoundCue* Cue, UObject* Parent, const float &StartTime=0.0f, const FVector &Location = FVector::ZeroVector);
 	bool Play();

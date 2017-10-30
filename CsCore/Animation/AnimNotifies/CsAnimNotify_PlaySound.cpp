@@ -17,9 +17,6 @@
 UCsAnimNotify_PlaySound::UCsAnimNotify_PlaySound()
 	: Super()
 {
-	VolumeMultiplier = 1.f;
-	PitchMultiplier = 1.f;
-
 #if WITH_EDITORONLY_DATA
 	NotifyColor = FColor(196, 142, 255, 255);
 #endif // WITH_EDITORONLY_DATA
@@ -27,14 +24,9 @@ UCsAnimNotify_PlaySound::UCsAnimNotify_PlaySound()
 
 FString UCsAnimNotify_PlaySound::GetNotifyName_Implementation() const
 {
-	if (Sound.ToString() == TEXT(""))
-		Super::GetNotifyName_Implementation();
-
-	const USoundCue* S = Sound_Internal.IsValid() ? Sound_Internal.Get() : nullptr;
-
-	if (S)
+	if (Sound.Sound)
 	{
-		return S->GetName();
+		return Sound.Sound->GetName();
 	}
 	else
 	{
@@ -46,37 +38,36 @@ void UCsAnimNotify_PlaySound::Notify(class USkeletalMeshComponent* MeshComp, cla
 {
 	UWorld* CurrentWorld = MeshComp->GetWorld();
 
-	if (Sound.ToString() == TEXT(""))
-		return;
-
-	USoundCue* S = GetSound();
-
-	if (!S)
-	{
-		S			   = Sound.LoadSynchronous();
-		Sound_Internal = S;
-	}
+	// TODO: need to check case of AnimInstance
 
 	const bool InGame = UCsCommon::IsPlayInGame(CurrentWorld) || UCsCommon::IsPlayInPIE(CurrentWorld);
 
 	// Use Sound Manager
-	if (InGame)
+	if (InGame &&
+		Sound.Sound)
 	{
 		ACsManager_Sound* Manager_Sound = ACsManager_Sound::Get(CurrentWorld);
 
-		SoundElement.Sound = Sound;
+		SoundElement.Set(Sound.Sound);
+		SoundElement.Type = Sound.Type;
+		SoundElement.Priority = Sound.Priority;
+		SoundElement.Duration = Sound.Sound->GetDuration();
+		SoundElement.IsLooping = false;
+		SoundElement.VolumeMultiplier = Sound.VolumeMultiplier;
+		SoundElement.PitchMultiplier = Sound.PitchMultiplier;
+		SoundElement.Bone = Sound.Bone;
+
+		Manager_Sound->Play(&SoundElement, MeshComp->GetAttachParent(), MeshComp);
 	}
 	else
 	{
-		if (bFollow)
+		if (Sound.Bone != NAME_None)
 		{
-			UGameplayStatics::SpawnSoundAttached(S, MeshComp, AttachName, FVector(ForceInit), EAttachLocation::KeepRelativeOffset, false, VolumeMultiplier, PitchMultiplier);
+			UGameplayStatics::SpawnSoundAttached(Sound.Sound, MeshComp, Sound.Bone, FVector(ForceInit), EAttachLocation::KeepRelativeOffset, false, Sound.VolumeMultiplier, Sound.PitchMultiplier);
 		}
 		else
 		{
-			UGameplayStatics::PlaySoundAtLocation(CurrentWorld, S, MeshComp->GetComponentLocation(), VolumeMultiplier, PitchMultiplier);
+			UGameplayStatics::PlaySoundAtLocation(CurrentWorld, Sound.Sound, MeshComp->GetComponentLocation(), Sound.VolumeMultiplier, Sound.PitchMultiplier);
 		}
 	}
 }
-
-USoundCue* UCsAnimNotify_PlaySound::GetSound() { return Sound_Internal.IsValid() ? Sound_Internal.Get() : nullptr; }

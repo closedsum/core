@@ -1,6 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Sound/CsManager_Sound.h"
 #include "CsCore.h"
+#include "CsCVars.h"
 #include "Managers/Sound/CsSound.h"
 #include "Common/CsCommon.h"
 #include "Game/CsGameState.h"
@@ -84,6 +85,8 @@ void ACsManager_Sound::OnTick(const float &DeltaSeconds)
 
 		if (GetWorld()->TimeSeconds - Sound->Cache.Time > Sound->Cache.Duration)
 		{
+			LogTransaction(TEXT("ACsManager_Sound::Play"), ECsPoolTransaction::Deallocate, Sound);
+
 			Sound->DeAllocate();
 			ActiveSounds.RemoveAt(I);
 		}
@@ -93,6 +96,52 @@ void ACsManager_Sound::OnTick(const float &DeltaSeconds)
 /*static*/ ACsManager_Sound* ACsManager_Sound::Get(UWorld* InWorld)
 {
 	return InWorld->GetGameState<ACsGameState>()->Manager_Sound;
+}
+
+void ACsManager_Sound::LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, UObject* InObject)
+{
+	if (CsCVarLogManagerSoundTransactions->GetInt() == CS_CVAR_SHOW_LOG)
+	{
+		ACsSound* Sound = Cast<ACsSound>(InObject);
+
+		const FString TransactionAsString = Transaction == ECsPoolTransaction::Allocate ? TEXT("Allocating") : TEXT("DeAllocating");
+
+		const FString SoundName   = Sound->GetName();
+		const FString CueName	  = Sound->Cache.GetCue()->GetName();
+		const float CurrentTime   = GetWorld()->GetTimeSeconds();
+		const UObject* SoundOwner = Sound->Cache.GetOwner();
+		const FString OwnerName	  = SoundOwner ? SoundOwner->GetName() : TEXT("");
+		const UObject* Parent	  = Sound->Cache.GetParent();
+		const FString ParentName  = Parent ? Parent->GetName() : TEXT("");
+
+		if (SoundOwner && Parent)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s Sound: %s with Cue: %s at %f for %s attached to %s."), *FunctionName, *TransactionAsString, *SoundName, *CueName, CurrentTime, *OwnerName, *ParentName);
+		}
+		else
+		if (SoundOwner)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s Sound: %s with Cue: %s at %f for %s."), *FunctionName, *TransactionAsString, *SoundName, *CueName, CurrentTime, *OwnerName);
+		}
+		else
+		if (Parent)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s Sound: %s with Cue: %s at %f attached to %s."), *TransactionAsString, *FunctionName, *SoundName, *CueName, CurrentTime, *ParentName);
+		}
+		else
+		{
+			if (Sound->Cache.Location != FVector::ZeroVector)
+			{
+				const FString LocationAsString = Sound->Cache.Location.ToString();
+
+				UE_LOG(LogCs, Warning, TEXT("%s: %s Sound: %s with Cue: %s at %f at %s."), *FunctionName, *TransactionAsString, *SoundName, *CueName, CurrentTime, *ParentName, *LocationAsString);
+			}
+			else
+			{
+				UE_LOG(LogCs, Warning, TEXT("%s: %s Sound: %s with Cue: %s at %f."), *FunctionName, *TransactionAsString, *SoundName, *CueName, CurrentTime, *ParentName);
+			}
+		}
+	}
 }
 
 ACsSound* ACsManager_Sound::Allocate()
@@ -105,6 +154,11 @@ ACsSound* ACsManager_Sound::Allocate()
 		if (!Sound->Cache.IsAllocated)
 		{
 			Sound->Cache.IsAllocated = true;
+
+#if WITH_EDITOR
+			OnAllocate_ScriptEvent.Broadcast(PoolIndex);
+#endif // #if WITH_EDITOR
+			OnAllocate_Event.Broadcast(PoolIndex);
 			return Sound;
 		}
 	}
@@ -122,25 +176,36 @@ void ACsManager_Sound::DeAllocate(const int32 &Index)
 
 		if (Sound->PoolIndex == Index)
 		{
+			LogTransaction(TEXT("ACsManager_Sound::DeAllocate"), ECsPoolTransaction::Deallocate, Sound);
+
 			Sound->DeAllocate();
 			ActiveSounds.RemoveAt(I);
+
+#if WITH_EDITOR
+			OnDeAllocate_ScriptEvent.Broadcast(Index);
+#endif // #if WITH_EDITOR
+			OnDeAllocate_Event.Broadcast(Index);
 			return;
 		}
 	}
 }
 
-ACsSound* ACsManager_Sound::Play(FCsSoundElement* InSound, UObject* InOwner, UObject* Parent)
+ACsSound* ACsManager_Sound::Play(FCsSoundElement* InSound, UObject* InOwner, UObject* InParent)
 {
+	checkf(InSound->Get(), TEXT("ACsManager_Sound::Play: Attemping to Play a NULL Sound."));
+
 	ACsSound* Sound	= Allocate();
 
 	const int32 Count = ActiveSounds.Num();
 
-	Sound->Allocate((uint16)Count, InSound, GetWorld()->TimeSeconds, GetWorld()->RealTimeSeconds, 0, InOwner, Parent);
+	Sound->Allocate((uint16)Count, InSound, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), 0, InOwner, InParent);
+
+	LogTransaction(TEXT("ACsManager_Sound::Play"), ECsPoolTransaction::Allocate, Sound);
 
 	if (Count >= CS_MAX_CONCURRENT_SOUNDS)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_Sound::Play: Warning more than %d Sounds playing at once"), CS_MAX_CONCURRENT_SOUNDS);
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_Sound::Play: Remove Sound"));
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Sound::Play: Warning more than %d Sounds playing at once."), CS_MAX_CONCURRENT_SOUNDS);
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Sound::Play: Remove Sound."));
 
 		ActiveSounds.RemoveAt(0);
 	}
@@ -168,7 +233,9 @@ ACsSound* ACsManager_Sound::Play(FCsSoundElement* InSound, UObject* InOwner, con
 
 	const int32 Count = ActiveSounds.Num();
 
-	Sound->Allocate((uint16)Count, InSound, GetWorld()->TimeSeconds, GetWorld()->RealTimeSeconds, 0, InOwner, nullptr, Location);
+	Sound->Allocate((uint16)Count, InSound, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), 0, InOwner, nullptr, Location);
+
+	LogTransaction(TEXT("ACsManager_Sound::Play"), ECsPoolTransaction::Allocate, Sound);
 
 	if (Count >= CS_MAX_CONCURRENT_SOUNDS)
 	{
@@ -186,13 +253,15 @@ ACsSound* ACsManager_Sound::Play(FCsSoundElement* InSound, UObject* InOwner, con
 }
 
 template<typename T>
-void ACsManager_Sound::Play(ACsSound* OutSound, FCsSoundElement* InSound, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsManager_Sound::Play(ACsSound* OutSound, FCsSoundElement* InSound, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
 	OutSound = Allocate();
 
 	const int32 Count = ActiveSounds.Num();
 
-	OutSound->Allocate<T>((uint16)Count, InSound, GetWorld()->TimeSeconds, GetWorld()->RealTimeSeconds, 0, InOwner, Parent, InObject, OnDeAllocate);
+	OutSound->Allocate<T>((uint16)Count, InSound, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), 0, InOwner, InParent, InObject, OnDeAllocate);
+
+	LogTransaction(TEXT("ACsManager_Sound::Play"), ECsPoolTransaction::Allocate, Sound);
 
 	if (Count >= CS_MAX_CONCURRENT_SOUNDS)
 	{
@@ -227,7 +296,9 @@ void ACsManager_Sound::Play(ACsSound* OutSound, FCsSoundElement* InSound, UObjec
 
 	const int32 Count = ActiveSounds.Num();
 
-	OutSound->Allocate<T>((uint16)Count, InSound, GetWorld()->TimeSeconds, GetWorld()->RealTimeSeconds, 0, InOwner, Location, InObject, OnDeAllocate);
+	OutSound->Allocate<T>((uint16)Count, InSound, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), 0, InOwner, Location, InObject, OnDeAllocate);
+
+	LogTransaction(TEXT("ACsManager_Sound::Play"), ECsPoolTransaction::Allocate, Sound);
 
 	if (Count >= CS_MAX_CONCURRENT_SOUNDS)
 	{
@@ -241,4 +312,14 @@ void ACsManager_Sound::Play(ACsSound* OutSound, FCsSoundElement* InSound, UObjec
 		ActiveSounds.Add(OutSound);
 	}
 	OutSound->Play();
+}
+
+ACsSound* ACsManager_Sound::Play_Script(FCsSoundElement &InSound, UObject* InOwner, UObject* InParent)
+{
+	return Play(&InSound, InOwner, InParent);
+}
+
+ACsSound* ACsManager_Sound::Play_ScriptEX(FCsSoundElement &InSound, UObject* InOwner, const FVector &Location)
+{
+	return Play(&InSound, InOwner, Location);
 }

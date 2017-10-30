@@ -1,6 +1,4 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
-
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -8,6 +6,63 @@
 #include "Animation/AnimNotifies/AnimNotify.h"
 #include "Types/CsTypes.h"
 #include "CsAnimNotify_PlaySound.generated.h"
+
+USTRUCT()
+struct FCsAnimNotifySound
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	class USoundCue* Sound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	TEnumAsByte<ECsSoundType::Type> Type;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	TEnumAsByte<ECsSoundPriority::Type> Priority;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	float VolumeMultiplier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	float PitchMultiplier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	FName Bone;
+
+	FCsAnimNotifySound()
+	{
+		Type = ECsSoundType::s3D;
+		Priority = ECsSoundPriority::Medium;
+		VolumeMultiplier = 1.0f;
+		PitchMultiplier = 1.0f;
+		Bone = NAME_None;
+	}
+
+	FCsAnimNotifySound& operator=(const FCsAnimNotifySound& B)
+	{
+		Sound = B.Sound;
+		Priority = B.Priority;
+		VolumeMultiplier = B.VolumeMultiplier;
+		PitchMultiplier = B.PitchMultiplier;
+		Bone = B.Bone;
+		return *this;
+	}
+
+	bool operator==(const FCsAnimNotifySound& B) const
+	{
+		return Sound == B.Sound &&
+			   Priority == B.Priority &&
+			   VolumeMultiplier == B.VolumeMultiplier &&
+			   PitchMultiplier == B.PitchMultiplier &&
+			   Bone == B.Bone;
+	}
+
+	bool operator!=(const FCsAnimNotifySound& B) const
+	{
+		return !(*this == B);
+	}
+};
 
 class UAnimSequenceBase;
 class USkeletalMeshComponent;
@@ -27,32 +82,10 @@ public:
 	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
 	// End UAnimNotify interface
 
-	// Sound to Play
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AnimNotify")
-	TAssetPtr<USoundCue> Sound;
-
-	UPROPERTY(VisibleDefaultsOnly, Transient, Category = "AnimNotify")
-	TWeakObjectPtr<USoundCue> Sound_Internal;
-
-	USoundCue* GetSound();
+	FCsAnimNotifySound Sound;
 
 	FCsSoundElement SoundElement;
-
-	// Volume Multiplier
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AnimNotify", meta=(ExposeOnSpawn = true))
-	float VolumeMultiplier;
-
-	// Pitch Multiplier
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AnimNotify", meta=(ExposeOnSpawn = true))
-	float PitchMultiplier;
-
-	// If this sound should follow its owner
-	UPROPERTY(EditAnywhere, Category = "AnimNotify")
-	uint32 bFollow:1;
-
-	// Socket or bone name to attach sound to
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AnimNotify", meta=(EditCondition="bFollow", ExposeOnSpawn = true))
-	FName AttachName;
 };
 
 

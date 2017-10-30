@@ -10,6 +10,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsGameState_OnTick, const flo
 // Enums
 #pragma region
 
+UENUM(BlueprintType)
 namespace ECsGameStateRoutine
 {
 	enum Type

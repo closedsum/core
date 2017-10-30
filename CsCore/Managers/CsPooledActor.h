@@ -40,6 +40,8 @@ class CSCORE_API ACsPooledActor : public AActor
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pool")
 	TEnumAsByte<ECsVisibility::Type> Visibility;
 
+	UFUNCTION(BlueprintCallable, Category = "Pool")
 	virtual void Show();
+	UFUNCTION(BlueprintCallable, Category = "Pool")
 	virtual void Hide();
 };

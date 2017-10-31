@@ -1,6 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Types/CsTypes.h"
+#include "Types/CsTypes_Sound.h"
 #include "Managers/CsPooledActor.h"
 #include "CsSound.generated.h"
 
@@ -50,8 +51,11 @@ struct FCsSoundCache : public FCsPooledObjectCache
 	template<typename T>
 	void Init(const uint16& InActiveIndex, FCsSoundElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 	{
-		ActiveIndex = InActiveIndex;
+		ActiveIndex		   = InActiveIndex;
 		ActiveIndex_Script = (int32)ActiveIndex;
+
+		IsAllocated = true;
+
 		Owner			 = InOwner;
 		Cue				 = InElement->Get();
 		Parent			 = InParent;
@@ -80,13 +84,13 @@ struct FCsSoundCache : public FCsPooledObjectCache
 	template<typename T>
 	void Init(const uint16& InActiveIndex, FCsSoundElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 	{
-		Init(ActiveIndex, InElement, InTime, InRealTime, InFrame, nullptr, nullptr, InObject, OnDeAllocate);
+		Init(InActiveIndex, InElement, InTime, InRealTime, InFrame, nullptr, nullptr, InObject, OnDeAllocate);
 	}
 
 	template<typename T>
 	void Init(const uint16& InActiveIndex, FCsSoundElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, const FVector &InLocation, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 	{
-		Init(ActiveIndex, InElement, InTime, InRealTime, InFrame, InOwner, nullptr, InObject, OnDeAllocate);
+		Init(InActiveIndex, InElement, InTime, InRealTime, InFrame, InOwner, nullptr, InObject, OnDeAllocate);
 
 		Location = InLocation;
 	}
@@ -94,7 +98,7 @@ struct FCsSoundCache : public FCsPooledObjectCache
 	template<typename T>
 	void Init(const uint16& InActiveIndex, FCsSoundElement* InElement, const float &InTime, const float &InRealTime, const uint64 &inFrame, const FVector &InLocation, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 	{
-		Init(ActiveIndex, InElement, InTime, InRealTime, inFrame, nullptr, InLocation, InObject, OnDeAllocate);
+		Init(InActiveIndex, InElement, InTime, InRealTime, inFrame, nullptr, InLocation, InObject, OnDeAllocate);
 	}
 
 	void Init(const uint16& InActiveIndex, FCsSoundElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, const FVector &InLocation)
@@ -123,22 +127,22 @@ struct FCsSoundCache : public FCsPooledObjectCache
 
 	void Init(const uint16& InActiveIndex, FCsSoundElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent)
 	{
-		Init(ActiveIndex, InElement, InTime, InRealTime, InFrame, InOwner, InParent, FVector::ZeroVector);
+		Init(InActiveIndex, InElement, InTime, InRealTime, InFrame, InOwner, InParent, FVector::ZeroVector);
 	}
 
 	void Init(const uint16& InActiveIndex, FCsSoundElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, const FVector &InLocation)
 	{
-		Init(ActiveIndex, InElement, InTime, InRealTime, InFrame, nullptr, InOwner, InLocation);
+		Init(InActiveIndex, InElement, InTime, InRealTime, InFrame, nullptr, InOwner, InLocation);
 	}
 
 	void Init(const uint16& InActiveIndex, FCsSoundElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, const FVector &InLocation)
 	{
-		Init(ActiveIndex, InElement, InTime, InRealTime, InFrame, nullptr, nullptr, InLocation);
+		Init(InActiveIndex, InElement, InTime, InRealTime, InFrame, nullptr, nullptr, InLocation);
 	}
 
 	void Init(const uint16& InActiveIndex, FCsSoundElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
-		Init(ActiveIndex, InElement, InTime, InRealTime, InFrame, nullptr, nullptr, FVector::ZeroVector);
+		Init(InActiveIndex, InElement, InTime, InRealTime, InFrame, nullptr, nullptr, FVector::ZeroVector);
 	}
 
 	virtual void Reset() override
@@ -173,7 +177,7 @@ private:
 	USoundAttenuation* DefaultAttenuation;
 public:
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite, Category = "Sound")
 	FCsSoundCache Cache;
 
 	void Init(const int32 &Index);
@@ -185,10 +189,10 @@ public:
 	void Allocate(const uint16& ActiveIndex, FCsSoundElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 
 	template<typename T>
-	void Allocate(const uint16& ActiveIndex, FCsSoundElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, const FVector &inLocation, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	void Allocate(const uint16& ActiveIndex, FCsSoundElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, const FVector &InLocation, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 
 	template<typename T>
-	void Allocate(const uint16& ActiveIndex, FCsSoundElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, const FVector &inLocation, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	void Allocate(const uint16& ActiveIndex, FCsSoundElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, const FVector &InLocation, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 
 	void Allocate(const uint16& ActiveIndex, FCsSoundElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent, const FVector &InLocation);
 	void Allocate(const uint16& ActiveIndex, FCsSoundElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent);

@@ -96,3 +96,110 @@ struct FCsViewFlags
 };
 
 #pragma endregion View
+
+// Render
+#pragma region
+
+UENUM(BlueprintType)
+namespace ECsVisibility
+{
+	enum Type
+	{
+		Hidden				UMETA(DisplayName = "Hidden"),
+		Visible				UMETA(DisplayName = "Visible"),
+		ECsVisibility_MAX	UMETA(Hidden),
+	};
+}
+
+namespace ECsVisibility
+{
+	typedef FCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+
+	namespace Str
+	{
+		const TCsString Hidden = TCsString(TEXT("Hidden"), TEXT("hidden"));
+		const TCsString Visible = TCsString(TEXT("Visible"), TEXT("visible"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::Hidden) { return Str::Hidden.Value; }
+		if (EType == Type::Visible) { return Str::Visible.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::Hidden) { return Type::Hidden; }
+		if (String == Str::Visible) { return Type::Visible; }
+		return Type::ECsVisibility_MAX;
+	}
+}
+
+#define ECS_VISIBILITY_MAX (uint8)ECsVisibility::ECsVisibility_MAX
+typedef TEnumAsByte<ECsVisibility::Type> TCsVisibility;
+
+USTRUCT()
+struct FCsFpsDrawDistance
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Draw Distance", meta = (ClampMin = "0", UIMin = "0"))
+	float Distance1P;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Draw Distance", meta = (ClampMin = "0", UIMin = "0"))
+	float Distance3P;
+
+	FCsFpsDrawDistance()
+	{
+		Reset();
+	}
+
+	FCsFpsDrawDistance& operator=(const FCsFpsDrawDistance& B)
+	{
+		Distance1P = B.Distance1P;
+		Distance3P = B.Distance3P;
+		return *this;
+	}
+
+	bool operator==(const FCsFpsDrawDistance& B) const
+	{
+		return Distance1P == B.Distance1P && Distance3P == B.Distance3P;
+	}
+
+	bool operator!=(const FCsFpsDrawDistance& B) const
+	{
+		return !(*this == B);
+	}
+
+	float Get(const TCsViewType &ViewType) const
+	{
+		if (ViewType == ECsViewType::FirstPerson || ViewType == ECsViewType::VR)
+			return Distance1P;
+		if (ViewType == ECsViewType::ThirdPerson)
+			return Distance3P;
+		return 0.0f;
+	}
+
+	float GetSquared(const TCsViewType &ViewType) const
+	{
+		if (ViewType == ECsViewType::FirstPerson || ViewType == ECsViewType::VR)
+			return Distance1P * Distance1P;
+		if (ViewType == ECsViewType::ThirdPerson)
+			return Distance3P * Distance3P;
+		return 0.0f;
+	}
+
+	FString ToString() const
+	{
+		return FString::Printf(TEXT("1P=%3.3f 3P=%3.3f"), Distance1P, Distance3P);
+	}
+
+	void Reset()
+	{
+		Distance1P = 3000.0f;
+		Distance3P = 3000.0f;
+	}
+};
+
+#pragma endregion Render

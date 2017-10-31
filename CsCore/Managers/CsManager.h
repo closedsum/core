@@ -5,6 +5,15 @@
 #include "Types/CsTypes_Primitive.h"
 #include "CsManager.generated.h"
 
+// OnAllocate
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsManager_OnAllocate, const int32&, PoolIndex);
+DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsManager_OnAllocate, const uint16&);
+// OnDeAllocate
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsManager_OnDeAllocate, const int32&, PoolIndex);
+DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsManager_OnDeAllocate, const uint16&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsManager_OnDeAllocateEX, const int32&, PoolIndex, const int32&, ActiveIndex, const uint8&, Type);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManager_OnDeAllocateEX, const uint16&, const uint16&, const uint8&);
+
 // Enums
 #pragma region
 
@@ -78,16 +87,42 @@ class CSCORE_API ACsManager : public AActor
 	UFUNCTION(BlueprintCallable, Category = "Pool")
 	virtual void LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, UObject* InObject);
 
+// Allocate
+#pragma region
+
+	UPROPERTY(BlueprintAssignable, Category = "Pool")
+	FBindableDynEvent_CsManager_OnAllocate OnAllocate_ScriptEvent;
+
+	FBindableEvent_CsManager_OnAllocate OnAllocate_Event;
+	
+#pragma endregion Allocate
+
+// DeAllocate
+#pragma region
+
 	virtual void DeAllocate(const int32 &Index);
 	UFUNCTION(BlueprintCallable, Category = "Pool")
 	void DeAllocate_Script(const int32 &Index);
 	UFUNCTION(BlueprintCallable, Category = "Pool")
 	virtual void DeAllocate(const uint8 &Type, const int32 &Index);
+
+	UPROPERTY(BlueprintAssignable, Category = "Pool")
+	FBindableDynEvent_CsManager_OnDeAllocate OnDeAllocate_ScriptEvent;
+
+	FBindableEvent_CsManager_OnDeAllocate OnDeAllocate_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Pool")
+	FBindableDynEvent_CsManager_OnDeAllocateEX OnDeAllocateEX_ScriptEvent;
+
+	FBindableEvent_CsManager_OnDeAllocateEX OnDeAllocateEX_Event;
+
 	UFUNCTION(BlueprintCallable, Category = "Pool")
 	virtual void DeAllocateAll();
 
 	UFUNCTION(BlueprintCallable, Category = "Pool")
 	void DeAllocateAll_Script();
+
+#pragma endregion DeAllocate
 
 	UPROPERTY(BlueprintReadWrite, Category = "Pool")
 	int32 PoolSize;

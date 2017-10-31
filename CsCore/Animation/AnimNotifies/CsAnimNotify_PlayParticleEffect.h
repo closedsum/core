@@ -6,7 +6,80 @@
 #include "CoreMinimal.h"
 #include "UObject/ObjectMacros.h"
 #include "Animation/AnimNotifies/AnimNotify.h"
+#include "Types/CsTypes_FX.h"
 #include "CsAnimNotify_PlayParticleEffect.generated.h"
+
+USTRUCT()
+struct FCsAnimNotifyFX
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, Category = "FX")
+	class UParticleSystem* Particle;
+
+	UPROPERTY(EditAnywhere, Category = "FX")
+	TEnumAsByte<ECsFxPriority::Type> Priority;
+
+	UPROPERTY(EditAnywhere, Category = "FX", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float LifeTime;
+
+	UPROPERTY(EditAnywhere, Category = "FX", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float DeathTime;
+
+	UPROPERTY(EditAnywhere, Category = "FX", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float Scale;
+
+	UPROPERTY(EditAnywhere, Category = "FX")
+	FCsFpsDrawDistance DrawDistances;
+
+	UPROPERTY(EditAnywhere, Category = "FX")
+	FName Bone;
+
+	UPROPERTY(EditAnywhere, Category = "FX")
+	FVector Location;
+
+	UPROPERTY(EditAnywhere, Category = "FX")
+	FRotator Rotation;
+
+	FQuat RotationQuat;
+
+	FCsAnimNotifyFX()
+	{
+		DeathTime = 1.0f;
+		Scale = 1.0f;
+		Priority = ECsFxPriority::Medium;
+	}
+
+	FCsAnimNotifyFX& operator=(const FCsAnimNotifyFX& B)
+	{
+		Particle = B.Particle;
+		LifeTime = B.LifeTime;
+		DeathTime = B.DeathTime;
+		Scale = B.Scale;
+		DrawDistances = B.DrawDistances;
+		Bone = B.Bone;
+		Location = B.Location;
+		Rotation = B.Rotation;
+		return *this;
+	}
+
+	bool operator==(const FCsAnimNotifyFX& B) const
+	{
+		return (Particle == B.Particle &&
+				LifeTime == B.LifeTime &&
+				DeathTime == B.DeathTime &&
+				Scale == B.Scale &&
+				DrawDistances == B.DrawDistances &&
+				Bone == B.Bone &&
+				Location == B.Location &&
+				Rotation == B.Rotation);
+	}
+
+	bool operator!=(const FCsAnimNotifyFX& B) const
+	{
+		return !(*this == B);
+	}
+};
 
 class UAnimSequenceBase;
 class UParticleSystem;
@@ -24,7 +97,7 @@ public:
 	// Begin UObject interface
 	virtual void PostLoad() override;
 #if WITH_EDITOR
-	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
+	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& e) override;
 #endif
 	// End UObject interface
 
@@ -33,32 +106,8 @@ public:
 	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
 	// End UAnimNotify interface
 
-	// Particle System to Spawn
-	UPROPERTY(EditAnywhere, Category="AnimNotify", meta=(DisplayName="Particle System"))
-	UParticleSystem* PSTemplate;
-
-	// Location offset from the socket
-	UPROPERTY(EditAnywhere, Category="AnimNotify")
-	FVector LocationOffset;
-
-	// Rotation offset from socket
-	UPROPERTY(EditAnywhere, Category="AnimNotify")
-	FRotator RotationOffset;
-
-private:
-	// Cached version of the Rotation Offset already in Quat form
-	FQuat RotationOffsetQuat;
-
-public:
-
-	// Should attach to the bone/socket
-	UPROPERTY(EditAnywhere, Category="AnimNotify")
-	uint32 Attached:1; 	//~ Does not follow coding standard due to redirection from BP
-
-	// SocketName to attach to
 	UPROPERTY(EditAnywhere, Category = "AnimNotify")
-	FName SocketName;
+	FCsAnimNotifyFX FX;
+
+	FCsFxElement FxElement;
 };
-
-
-

@@ -8,10 +8,8 @@ var JsCsSound = require('CsScript/Managers/Sound/CsSound.js')
 
 var me;
 
-module.exports = class JsCsManager_Sound extends JsCsManager
-{
-    constructor()
-    {
+module.exports = class JsCsManager_Sound extends JsCsManager {
+    constructor() {
         super();
 
         me = this;
@@ -20,8 +18,7 @@ module.exports = class JsCsManager_Sound extends JsCsManager
         this.ActiveSounds = [];
     }
 
-    Init(inPtr, inRoot)
-    {
+    Init(inPtr, inRoot) {
         super.Init(inPtr, inRoot);
 
         this.ptr = CsManager_Sound.C(inPtr);
@@ -33,8 +30,7 @@ module.exports = class JsCsManager_Sound extends JsCsManager
 
         const len = this.ptr.Pool.length;
 
-        for (let i = 0; i < len; i++)
-        {
+        for (let i = 0; i < len; i++) {
             let sound = new JsCsSound();
             sound.Init(this.ptr.Pool[i], inRoot);
 
@@ -44,10 +40,14 @@ module.exports = class JsCsManager_Sound extends JsCsManager
 
     CleanUp()
     {
-        // OnAllocate
-        this.ptr.OnAllocate_ScriptEvent.Remove(this.OnAllocate);
-        // OnDeAllocate
-        this.ptr.OnDeAllocate_ScriptEvent.Remove(this.OnDeAllocate);
+        super.CleanUp();
+
+        const len = this.Pool.length;
+
+        for (let i = 0; i < len; i++)
+        {
+            this.Pool[i].CleanUp();
+        }
     }
 
     OnAllocate(poolIndex) { me.OnAllocate_Internal(poolIndex); }

@@ -36,6 +36,12 @@ FString UCsAnimNotify_PlaySound::GetNotifyName_Implementation() const
 
 void UCsAnimNotify_PlaySound::Notify(class USkeletalMeshComponent* MeshComp, class UAnimSequenceBase* Animation)
 {
+	if (!Sound.Sound)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsAnimNotify_PlaySound::Notify (%s): No Sound set on Notify for Animation: %s"), *(MeshComp->SkeletalMesh->GetName()), *(Animation->GetName()));
+		return;
+	}
+
 	UWorld* CurrentWorld = MeshComp->GetWorld();
 
 	// TODO: need to check case of AnimInstance
@@ -43,8 +49,7 @@ void UCsAnimNotify_PlaySound::Notify(class USkeletalMeshComponent* MeshComp, cla
 	const bool InGame = UCsCommon::IsPlayInGame(CurrentWorld) || UCsCommon::IsPlayInPIE(CurrentWorld);
 
 	// Use Sound Manager
-	if (InGame &&
-		Sound.Sound)
+	if (InGame)
 	{
 		ACsManager_Sound* Manager_Sound = ACsManager_Sound::Get(CurrentWorld);
 
@@ -57,8 +62,9 @@ void UCsAnimNotify_PlaySound::Notify(class USkeletalMeshComponent* MeshComp, cla
 		SoundElement.PitchMultiplier = Sound.PitchMultiplier;
 		SoundElement.Bone = Sound.Bone;
 
-		Manager_Sound->Play(&SoundElement, MeshComp->GetAttachParent(), MeshComp);
+		Manager_Sound->Play(&SoundElement, MeshComp->GetOwner() ? Cast<UObject>(MeshComp->GetOwner()) : Cast<UObject>(MeshComp->GetAttachParent()), MeshComp);
 	}
+	// Editor
 	else
 	{
 		if (Sound.Bone != NAME_None)

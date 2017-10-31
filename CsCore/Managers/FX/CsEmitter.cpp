@@ -42,35 +42,35 @@ void ACsEmitter::Init(const int32 &Index)
 }
 
 template<typename T>
-void ACsEmitter::Allocate(FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)())
+void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)())
 {
-	Cache.Init<T>(InElement, InTime, InRealTime, InFrame, InOwner, InParent, InObject, OnDeAllocate);
+	Cache.Init<T>(ActiveIndex, InElement, Time, RealTime, Frame, InOwner, InParent, InObject, OnDeAllocate);
 }
 
 template<typename T>
-void ACsEmitter::Allocate(FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, T* InObject, void (T::*OnDeAllocate)())
+void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, T* InObject, void (T::*OnDeAllocate)())
 {
-	Cache.Init<T>(InElement, InTime, InRealTime, InFrame, InObject, OnDeAllocate);
+	Cache.Init<T>(ActiveIndex, InElement, Time, RealTime, Frame, InObject, OnDeAllocate);
 }
 
 template<typename T>
-void ACsEmitter::Allocate(FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, const FVector &InLocation, T* InObject, void (T::*OnDeAllocate)())
+void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, const FVector &InLocation, T* InObject, void (T::*OnDeAllocate)())
 {
-	Cache.Init<T>(InElement, InTime, InRealTime, InFrame, InOwner, InLocation, InObject, OnDeAllocate);
+	Cache.Init<T>(ActiveIndex, InElement, Time, RealTime, Frame, InOwner, InLocation, InObject, OnDeAllocate);
 }
 
 template<typename T>
-void ACsEmitter::Allocate(FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &inFrame, const FVector &InLocation, T* InObject, void (T::*OnDeAllocate)())
+void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, const FVector &InLocation, T* InObject, void (T::*OnDeAllocate)())
 {
-	Cache.Init<T>(InElement, InTime, InRealTime, inFrame, nullptr, inLocation, InObject, OnDeAllocate);
+	Cache.Init<T>(ActiveIndex, InElement, Time, RealTime, Frame, nullptr, InLocation, InObject, OnDeAllocate);
 }
 
-void ACsEmitter::Allocate(FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, const FVector &InLocation)
+void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent, const FVector &InLocation)
 {
-	Cache.Init(InElement, InTime, InRealTime, InFrame, InOwner, InParent, InLocation);
+	Cache.Init(ActiveIndex, InElement, Time, RealTime, Frame, InOwner, InParent, InLocation);
 }
 
-void ACsEmitter::Allocate(FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent)
+void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent)
 {
 	UParticleSystem* Particle = InElement->Get();
 
@@ -86,7 +86,7 @@ void ACsEmitter::Allocate(FCsFxElement* InElement, const float &InTime, const fl
 		return;
 	}
 
-	Cache.Init(InElement, InTime, InRealTime, InFrame, InOwner, InParent);
+	Cache.Init(ActiveIndex, InElement, Time, RealTime, Frame, InOwner, InParent);
 
 	SetActorHiddenInGame(false);
 	SetTemplate(Particle);
@@ -106,19 +106,19 @@ void ACsEmitter::Allocate(FCsFxElement* InElement, const float &InTime, const fl
 		AttachToComponent(Component, FAttachmentTransformRules::KeepRelativeTransform, InElement->Bone);
 }
 
-void ACsEmitter::Allocate(FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, const FVector &InLocation)
+void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, const FVector &InLocation)
 {
-	Cache.Init(InElement, InTime, InRealTime, InFrame, InOwner, InLocation);
+	Cache.Init(ActiveIndex, InElement, Time, RealTime, Frame, InOwner, InLocation);
 }
 
-void ACsEmitter::Allocate(FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, const FVector &InLocation)
+void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, const FVector &InLocation)
 {
-	Cache.Init(InElement, InTime, InRealTime, InFrame, InLocation);
+	Cache.Init(ActiveIndex, InElement, Time, RealTime, Frame, InLocation);
 }
 
-void ACsEmitter::Allocate(FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame)
+void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame)
 {
-	Cache.Init(InElement, InTime, InRealTime, InFrame);
+	Cache.Init(ActiveIndex, InElement, Time, RealTime, Frame);
 }
 
 void ACsEmitter::DeAllocate()

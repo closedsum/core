@@ -4,7 +4,7 @@
 #include "CoreMinimal.h"
 #include "UObject/ObjectMacros.h"
 #include "Animation/AnimNotifies/AnimNotify.h"
-#include "Types/CsTypes.h"
+#include "Types/CsTypes_Sound.h"
 #include "CsAnimNotify_PlaySound.generated.h"
 
 USTRUCT()

@@ -81,14 +81,17 @@ struct FCsWidgetActorCache : public FCsPooledObjectCache
 	template<typename T>
 	void Init(const uint16& InActiveIndex, class UCsUserWidget* InWidget, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 	{
-		ActiveIndex = InActiveIndex;
+		ActiveIndex		   = InActiveIndex;
 		ActiveIndex_Script = (int32)ActiveIndex;
-		Owner = InOwner;
-		Widget = InWidget;
-		Parent = InParent;
-		Time = InTime;
+
+		IsAllocated = true;
+
+		Owner	 = InOwner;
+		Widget   = InWidget;
+		Parent   = InParent;
+		Time	 = InTime;
 		RealTime = InRealTime;
-		Frame = InFrame;
+		Frame	 = InFrame;
 
 		if (InObject && OnDeAllocate)
 		{
@@ -108,14 +111,17 @@ struct FCsWidgetActorCache : public FCsPooledObjectCache
 
 	void Init(const uint16& InActiveIndex, class UCsUserWidget* InWidget, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent)
 	{
-		ActiveIndex = InActiveIndex;
+		ActiveIndex		   = InActiveIndex;
 		ActiveIndex_Script = (int32)ActiveIndex;
-		Owner = InOwner;
-		Widget = InWidget;
-		Parent = InParent;
-		Time = InTime;
+
+		IsAllocated = true;
+
+		Owner	 = InOwner;
+		Widget	 = InWidget;
+		Parent	 = InParent;
+		Time	 = InTime;
 		RealTime = InRealTime;
-		Frame = InFrame;
+		Frame	 = InFrame;
 	}
 
 	void Init(const uint16& InActiveIndex, class UCsUserWidget* InWidget, const float &InTime, const float &InRealTime, const uint64 &InFrame)
@@ -127,8 +133,6 @@ struct FCsWidgetActorCache : public FCsPooledObjectCache
 	{
 		Super::Reset();
 
-		WidgetActor.Reset();
-		WidgetActor = nullptr;
 		Widget.Reset();
 		Widget = nullptr;
 	}

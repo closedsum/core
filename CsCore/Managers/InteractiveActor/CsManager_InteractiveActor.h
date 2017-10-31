@@ -4,8 +4,7 @@
 #include "Types/CsTypes.h"
 #include "CsManager_InteractiveActor.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsManagerInteractiveActor_OnDeAllocate, const int32&, Index, const int32&, ActiveIndex, const uint8&, Type);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInteractiveActor_OnDeAllocate, const uint16&, const uint16&, const ECsInteractiveType::Type&);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInteractiveActor_OnDeAllocateEX_Internal, const uint16&, const uint16&, const ECsInteractiveType::Type&);
 
 typedef FString(*TCsInteractiveTypeToString)(const ECsInteractiveType::Type&);
 
@@ -49,6 +48,8 @@ class CSCORE_API ACsManager_InteractiveActor : public ACsManager
 
 	virtual bool IsExhausted(const uint8 &Type) override;
 
+	virtual void LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, class UObject* InObject) override;
+
 	class ACsInteractiveActor* Allocate(const TCsInteractiveType &Type);
 
 	virtual void DeAllocate(const uint8 &Type, const int32 &Index) override;
@@ -56,10 +57,7 @@ class CSCORE_API ACsManager_InteractiveActor : public ACsManager
 
 	virtual void OnDeAllocate(const uint16 &Index, const uint16 &ActiveIndex, const uint8 &Type);
 
-	UPROPERTY(BlueprintAssignable, Category = "Pool")
-	FBindableDynEvent_CsManagerInteractiveActor_OnDeAllocate OnDeAllocate_ScriptEvent;
-
-	FBindableEvent_CsManagerInteractiveActor_OnDeAllocate OnDeAllocate_Event;
+	FBindableEvent_CsManagerInteractiveActor_OnDeAllocateEX_Internal OnDeAllocateEX_Internal_Event;
 
 	class ACsInteractiveActor* WakeUp(const TCsInteractiveType &Type, UObject* InOwner, UObject* Parent);
 	class ACsInteractiveActor* WakeUp(const TCsInteractiveType &Type, UObject* InOwner);

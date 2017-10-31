@@ -33,15 +33,13 @@ class CSCORE_API ACsManager_Projectile : public ACsManager
 	class ACsProjectile* Fire(class ACsData_Projectile* InData, const struct FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner);
 	class ACsProjectile* Fire(class ACsData_Projectile* InData, const struct FCsProjectileFireCache* Cache);
 	class ACsProjectile* Fire(class ACsData_Projectile* InData, const struct FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, const FVector &Location);
-	// TODO: Fix compile error
-	/*
+
 	template<typename T>
-	class ACsProjectile* Fire(class ACsData_Projectile* InData, const struct FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)());
+	void Fire(class ACsProjectile* OutProjectile, class ACsData_Projectile* InData, const struct FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)());
 	template<typename T>
-	class ACsProjectile* Fire(class ACsData_Projectile* InData, const struct FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)());
+	void Fire(class ACsProjectile* OutProjectile, class ACsData_Projectile* InData, const struct FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)());
 	template<typename T>
-	class ACsProjectile* Fire(class ACsData_Projectile* InData, const struct FCsProjectileFireCache* Cache, UObject* InInstigator, T* InObject, void (T::*OnDeAllocate)());
+	void Fire(class ACsProjectile* OutProjectile, class ACsData_Projectile* InData, const struct FCsProjectileFireCache* Cache, UObject* InInstigator, T* InObject, void (T::*OnDeAllocate)());
 	template<typename T>
-	class ACsProjectile* Fire(class ACsData_Projectile* InData, const struct FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, const FVector &Location, T* InObject, void (T::*OnDeAllocate)());
-	*/
+	void Fire(class ACsProjectile* OutProjectile, class ACsData_Projectile* InData, const struct FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, const FVector &Location, T* InObject, void (T::*OnDeAllocate)());
 };

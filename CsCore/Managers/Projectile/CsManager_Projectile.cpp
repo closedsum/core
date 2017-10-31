@@ -1,8 +1,8 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/CsManager_Projectile.h"
+#include "Managers/Projectile/CsManager_Projectile.h"
 #include "CsCore.h"
 #include "Types/CsTypes.h"
-#include "Weapon/CsProjectile.h"
+#include "Managers/Projectile/CsProjectile.h"
 // Data
 #include "Data/CsData_Projectile.h"
 
@@ -89,7 +89,7 @@ void ACsManager_Projectile::DeAllocate(const int32 &Index)
 	{
 		ACsProjectile* Projectile = ActiveProjectiles[I];
 
-		if (Projectile->PoolIndex == Index)
+		if (Projectile->Cache.Index == Index)
 		{
 			Projectile->DeAllocate();
 			ActiveProjectiles.RemoveAt(I);
@@ -102,12 +102,16 @@ ACsProjectile* ACsManager_Projectile::Fire(ACsData_Projectile* InData, const FCs
 {
 	// Real
 	ACsProjectile* RealProjectile = Allocate(ECsProjectileType::Real);
-	RealProjectile->Allocate(InData, Cache, InInstigator, InOwner, InParent);
+	int32 Count					  = ActiveProjectiles.Num();
+
+	RealProjectile->Allocate((uint16)Count, InData, Cache, InInstigator, InOwner, InParent);
 	ActiveProjectiles.Add(RealProjectile);
 	
 	// Fake
 	ACsProjectile* FakeProjectile = Allocate(ECsProjectileType::Fake);
-	FakeProjectile->Allocate(InData, Cache, InInstigator, InOwner, InParent);
+	Count						  = ActiveProjectiles.Num();
+
+	FakeProjectile->Allocate((uint16)Count, InData, Cache, InInstigator, InOwner, InParent);
 	ActiveProjectiles.Add(FakeProjectile);
 
 	RealProjectile->FakeProjectile = FakeProjectile;
@@ -129,27 +133,25 @@ ACsProjectile* ACsManager_Projectile::Fire(ACsData_Projectile* InData, const FCs
 {
 	return nullptr;
 }
-/*
+
 template<typename T>
-ACsProjectile* ACsManager_Projectile::Fire(ACsData_Projectile* InData, const FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)())
+void ACsManager_Projectile::Fire(ACsProjectile* OutProjectile, ACsData_Projectile* InData, const FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)())
 {
-	InObject = nullptr;
-	return nullptr;
+	OutProjectile = nullptr;
 }
 template<typename T>
-ACsProjectile* ACsManager_Projectile::Fire(ACsData_Projectile* InData, const FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)())
+void ACsManager_Projectile::Fire(ACsProjectile* OutProjectile, ACsData_Projectile* InData, const FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)())
 {
-	return nullptr;
+	OutProjectile = nullptr;
 }
 
 template<typename T>
-ACsProjectile* ACsManager_Projectile::Fire(ACsData_Projectile* InData, const FCsProjectileFireCache* Cache, UObject* InInstigator, T* InObject, void (T::*OnDeAllocate)())
+void ACsManager_Projectile::Fire(ACsProjectile* OutProjectile, ACsData_Projectile* InData, const FCsProjectileFireCache* Cache, UObject* InInstigator, T* InObject, void (T::*OnDeAllocate)())
 {
-	return nullptr;
+	OutProjectile = nullptr;
 }
 template<typename T>
-ACsProjectile* ACsManager_Projectile::Fire(ACsData_Projectile* InData, const FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, const FVector &Location, T* InObject, void (T::*OnDeAllocate)())
+void ACsManager_Projectile::Fire(ACsProjectile* OutProjectile, ACsData_Projectile* InData, const FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, const FVector &Location, T* InObject, void (T::*OnDeAllocate)())
 {
-	return nullptr;
+	OutProjectile = nullptr;
 }
-*/

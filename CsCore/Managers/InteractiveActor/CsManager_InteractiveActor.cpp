@@ -1,6 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/InteractiveActor/CsManager_InteractiveActor.h"
 #include "CsCore.h"
+#include "CsCVars.h"
 #include "Managers/InteractiveActor/CsInteractiveActor.h"
 #include "Game/CsGameState.h"
 
@@ -15,7 +16,6 @@ ACsManager_InteractiveActor::ACsManager_InteractiveActor(const FObjectInitialize
 {
 	return InWorld->GetGameState<ACsGameState>()->Manager_InteractiveActor;
 }
-
 
 void ACsManager_InteractiveActor::Clear()
 {
@@ -216,6 +216,43 @@ bool ACsManager_InteractiveActor::IsExhausted(const uint8 &Type)
 	return GetActivePoolSize(Type) >= PoolPtr->Num();
 }
 
+void ACsManager_InteractiveActor::LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, UObject* InObject)
+{
+	if (CsCVarLogManagerInteractiveActorTransactions->GetInt() == CS_CVAR_SHOW_LOG)
+	{
+		ACsInteractiveActor* Actor = Cast<ACsInteractiveActor>(InObject);
+
+		const FString TransactionAsString = Transaction == ECsPoolTransaction::Allocate ? TEXT("Allocating") : TEXT("DeAllocating");
+
+		const FString ActorName	   = Actor->GetName();
+		const FString TypeAsString = (*InteractiveTypeToString)((TCsInteractiveType)Actor->Cache.Type);
+		const float CurrentTime	   = GetWorld()->GetTimeSeconds();
+		const UObject* ActorOwner  = Actor->Cache.GetOwner();
+		const FString OwnerName	   = ActorOwner ? ActorOwner->GetName() : TEXT("");
+		const UObject* Parent	   = Actor->Cache.GetParent();
+		const FString ParentName   = Parent ? Parent->GetName() : TEXT("");
+
+		if (ActorOwner && Parent)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s InteractiveActor: %s of Type: %s at %f for %s attached to %s."), *FunctionName, *TransactionAsString, *ActorName, *TypeAsString, CurrentTime, *OwnerName, *ParentName);
+		}
+		else
+		if (ActorOwner)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s Emitter: %s of Type: %s at %f for %s."), *FunctionName, *TransactionAsString, *ActorName, *TypeAsString, CurrentTime, *OwnerName);
+		}
+		else
+		if (Parent)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s Emitter: %s of Type: %s at %f attached to %s."), *TransactionAsString, *FunctionName, *ActorName, *TypeAsString, CurrentTime, *ParentName);
+		}
+		else
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s Emitter: %s of Type: %s at %f."), *FunctionName, *TransactionAsString, *ActorName, *TypeAsString, CurrentTime, *ParentName);
+		}
+	}
+}
+
 ACsInteractiveActor* ACsManager_InteractiveActor::Allocate(const TCsInteractiveType &Type)
 {
 	TArray<ACsInteractiveActor*>* ActorPool = Pools.Find(Type);
@@ -245,7 +282,7 @@ void ACsManager_InteractiveActor::DeAllocate(const uint8 &Type, const int32 &Ind
 
 	if (!Actors)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_InteractiveActor::DeAllocate: InteractiveActor of Type: %s at Index: %d is already deallocated."), *((*InteractiveTypeToString)(ClassType)), Index);
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_InteractiveActor::DeAllocate: InteractiveActor of Type: %s at PoolIndex: %d is already deallocated."), *((*InteractiveTypeToString)(ClassType)), Index);
 		return;
 	}
 
@@ -255,14 +292,38 @@ void ACsManager_InteractiveActor::DeAllocate(const uint8 &Type, const int32 &Ind
 	{
 		ACsInteractiveActor* Actor = (*Actors)[I];
 
-		if (Actor->PoolIndex == Index)
+		// Update ActiveIndex
+		if (I > CS_FIRST)
 		{
+			Actor->Cache.ActiveIndex--;
+			Actor->Cache.ActiveIndex_Script--;
+		}
+
+		if (Actor->Cache.Index == Index)
+		{
+			LogTransaction(TEXT("ACsManager_InteractiveActor::DeAllocate"), ECsPoolTransaction::Deallocate, Actor);
+
 			Actor->DeAllocate();
 			Actors->RemoveAt(I);
+
+#if WITH_EDITOR
+			OnDeAllocateEX_ScriptEvent.Broadcast(Index, I, Actor->Cache.Type);
+#endif // #if WITH_EDITOR
+			OnDeAllocateEX_Internal_Event.Broadcast(Index, I, (TCsInteractiveType)Actor->Cache.Type);
 			return;
 		}
 	}
-	UE_LOG(LogCs, Warning, TEXT("ACsManager_InteractiveActor::DeAllocate: InteractiveActor of Type: %s at Index: %d is already deallocated."), *((*InteractiveTypeToString)(ClassType)), Index);
+
+	// Correct on Cache "Miss"
+	for (int32 I = 1; I < Count; I++)
+	{
+		ACsInteractiveActor* Actor = (*Actors)[I];
+
+		// Reset ActiveIndex
+		Actor->Cache.ActiveIndex++;
+		Actor->Cache.ActiveIndex_Script++;
+	}
+	UE_LOG(LogCs, Warning, TEXT("ACsManager_InteractiveActor::DeAllocate: InteractiveActor of Type: %s at PoolIndex: %d is already deallocated."), *((*InteractiveTypeToString)(ClassType)), Index);
 }
 
 void ACsManager_InteractiveActor::DeAllocateAll()
@@ -282,6 +343,8 @@ void ACsManager_InteractiveActor::DeAllocateAll()
 
 		for (int32 J = ActorCount - 1; J >= 0; J--)
 		{
+			LogTransaction(TEXT("ACsManager_InteractiveActor::DeAllocateAll"), ECsPoolTransaction::Deallocate, (*Actors)[J]);
+
 			(*Actors)[J]->DeAllocate();
 			Actors->RemoveAt(J);
 		}
@@ -291,9 +354,9 @@ void ACsManager_InteractiveActor::DeAllocateAll()
 void ACsManager_InteractiveActor::OnDeAllocate(const uint16& Index, const uint16& ActiveIndex, const uint8 &Type)
 {
 #if WITH_EDITOR
-	OnDeAllocate_ScriptEvent.Broadcast((int32)Index, (int32)ActiveIndex, Type);
+	OnDeAllocateEX_ScriptEvent.Broadcast((int32)Index, (int32)ActiveIndex, Type);
 #endif // #if WITH_EDITOR
-	OnDeAllocate_Event.Broadcast(Index, ActiveIndex, (TCsInteractiveType)Type);
+	OnDeAllocateEX_Internal_Event.Broadcast(Index, ActiveIndex, (TCsInteractiveType)Type);
 }
 
 ACsInteractiveActor* ACsManager_InteractiveActor::WakeUp(const TCsInteractiveType &Type, UObject* InOwner, UObject* Parent)
@@ -301,6 +364,9 @@ ACsInteractiveActor* ACsManager_InteractiveActor::WakeUp(const TCsInteractiveTyp
 	ACsInteractiveActor* Actor = Allocate(Type);
 
 	Actor->Allocate(GetActivePoolSize((uint8)Type), GetWorld()->TimeSeconds, GetWorld()->RealTimeSeconds, 0, InOwner, Parent);
+
+	LogTransaction(TEXT("ACsManager_InteractiveActor::WakeUp"), ECsPoolTransaction::Allocate, Actor);
+
 	AddToActivePool(Actor, (uint8)Type);
 	return Actor;
 }
@@ -321,6 +387,9 @@ void ACsInteractiveActor::WakeUp(const TCsInteractiveType &Type, ACsInteractiveA
 	OutActor = Allocate(Type);
 
 	OutActor->Allocate<T>(GetActivePoolSize((uint8)Type), GetWorld()->TimeSeconds, GetWorld()->RealTimeSeconds, 0, InOwner, Parent, InObject, OnDeAllocate);
+
+	LogTransaction(TEXT("ACsManager_InteractiveActor::WakeUp"), ECsPoolTransaction::Allocate, Actor);
+
 	AddToActivePool(Actor, (uint8)Type);
 }
 

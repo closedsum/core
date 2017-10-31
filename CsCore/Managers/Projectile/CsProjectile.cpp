@@ -1,5 +1,5 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
-#include "Weapon/CsProjectile.h"
+#include "Managers/Projectile/CsProjectile.h"
 #include "CsCore.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 // Data
@@ -88,37 +88,37 @@ void ACsProjectile::Init(const int32 &Index)
 }
 
 template<typename T>
-void ACsProjectile::Allocate(ACsData_Projectile* InData, const FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)())
+void ACsProjectile::Allocate(const uint16& ActiveIndex, ACsData_Projectile* InData, const FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)())
 {
-	Cache.Init<T>(InData, InFireCache->Time, InFireCache->RealTime, InFireCache->Frame, InInstigator, InOwner, InParent, InObject, OnDeAllocate);
+	Cache.Init<T>(ActiveIndex, Type, InData, InFireCache->Time, InFireCache->RealTime, InFireCache->Frame, InInstigator, InOwner, InParent, InObject, OnDeAllocate);
 }
 
 template<typename T>
-void ACsProjectile::Allocate(ACsData_Projectile* InData, const FCsProjectileFireCache* InFireCache, T* InObject, void (T::*OnDeAllocate)())
+void ACsProjectile::Allocate(const uint16& ActiveIndex, ACsData_Projectile* InData, const FCsProjectileFireCache* InFireCache, T* InObject, void (T::*OnDeAllocate)())
 {
-	Cache.Init<T>(InData, InFireCache->Time, InFireCache->RealTime, InFireCache->Frame, nullptr, nullptr, InObject, OnDeAllocate);
+	Cache.Init<T>(ActiveIndex, Type, InData, InFireCache->Time, InFireCache->RealTime, InFireCache->Frame, nullptr, nullptr, InObject, OnDeAllocate);
 }
 
 template<typename T>
-void ACsProjectile::Allocate(ACsData_Projectile* InData, const FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, const FVector &InLocation, T* InObject, void (T::*OnDeAllocate)())
+void ACsProjectile::Allocate(const uint16& ActiveIndex, ACsData_Projectile* InData, const FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, const FVector &InLocation, T* InObject, void (T::*OnDeAllocate)())
 {
-	Cache.Init<T>(InData, InFireCache->Time, InFireCache->RealTime, InFireCache->Frame, InInstigator, InOwner, InLocation, InObject, OnDeAllocate);
+	Cache.Init<T>(ActiveIndex, Type, InData, InFireCache->Time, InFireCache->RealTime, InFireCache->Frame, InInstigator, InOwner, InLocation, InObject, OnDeAllocate);
 }
 
 template<typename T>
-void ACsProjectile::Allocate(ACsData_Projectile* InData, const FCsProjectileFireCache* InFireCache, const FVector &Location, T* InObject, void (T::*OnDeAllocate)())
+void ACsProjectile::Allocate(const uint16& ActiveIndex, ACsData_Projectile* InData, const FCsProjectileFireCache* InFireCache, const FVector &Location, T* InObject, void (T::*OnDeAllocate)())
 {
-	Cache.Init<T>(InData, InFireCache->Time, InFireCache->RealTime, InFireCache->Frame, Location, InObject, OnDeAllocate);
+	Cache.Init<T>(ActiveIndex, Type, InData, InFireCache->Time, InFireCache->RealTime, InFireCache->Frame, Location, InObject, OnDeAllocate);
 }
 
-void ACsProjectile::Allocate(ACsData_Projectile* InData, const FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, UObject* InParent /*=nullptr*/, const FVector &Location /*=FVector::ZeroVector*/)
+void ACsProjectile::Allocate(const uint16& ActiveIndex, ACsData_Projectile* InData, const FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, UObject* InParent /*=nullptr*/, const FVector &Location /*=FVector::ZeroVector*/)
 {
-	Cache.Init(InData, InFireCache->Time, InFireCache->RealTime, InFireCache->Frame, InInstigator, InOwner, InParent, Location);
+	Cache.Init(ActiveIndex, Type, InData, InFireCache->Time, InFireCache->RealTime, InFireCache->Frame, InInstigator, InOwner, InParent, Location);
 }
 
-void ACsProjectile::Allocate(ACsData_Projectile* InData, const FCsProjectileFireCache* InFireCache, const FVector &Location)
+void ACsProjectile::Allocate(const uint16& ActiveIndex, ACsData_Projectile* InData, const FCsProjectileFireCache* InFireCache, const FVector &Location)
 {
-	Cache.Init(InData, InFireCache->Time, InFireCache->RealTime, InFireCache->Frame, Location);
+	Cache.Init(ActiveIndex, Type, InData, InFireCache->Time, InFireCache->RealTime, InFireCache->Frame, Location);
 }
 
 void ACsProjectile::Allocate_Internal()

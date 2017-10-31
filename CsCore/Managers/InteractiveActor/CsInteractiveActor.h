@@ -65,6 +65,8 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 
 	TWeakObjectPtr<class ACsInteractiveActor> Actor;
 
+	TCsInteractiveType Type_Script;
+
 	// TODO: LifeTime
 
 	FCsInteractiveActorCache()
@@ -72,11 +74,11 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 		Reset();
 	}
 
-	void Set(const uint16 &InIndex, ACsInteractiveActor* InActor)
+	void Set(const uint16 &InIndex, class ACsInteractiveActor* InActor)
 	{
 		Index		 = InIndex;
 		Index_Script = (int32)Index;
-		InActor		 = InActor;
+		Actor		 = InActor;
 	}
 
 	template<typename T>
@@ -123,12 +125,9 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 	virtual void Reset() override
 	{
 		Super::Reset();
-
-		Actor.Reset();
-		Actor = nullptr;
 	}
 
-	ACsInteractiveActor* GetActor() { return Actor.IsValid() ? Actor.Get() : nullptr; }
+	class ACsInteractiveActor* GetActor() { return Actor.IsValid() ? Actor.Get() : nullptr; }
 };
 
 UCLASS()

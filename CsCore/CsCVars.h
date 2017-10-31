@@ -58,6 +58,7 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawPooledActorRootLocation;
 #pragma region
 
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInteractiveActorPhysicsStateChange;
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerInteractiveActorTransactions;
 
 #pragma endregion Interactive Actor
 
@@ -73,11 +74,18 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInteractiveAIPawnPhysicsS
 
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogOverrideFunctions;
 
-#pragma endregion
+#pragma endregion Script
 
 // Sound
 #pragma region
 
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerSoundTransactions;
 
-#pragma endregion
+#pragma endregion Sound
+
+// FX
+#pragma region
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerFxTransactions;
+
+#pragma endregion FX

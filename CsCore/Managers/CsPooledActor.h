@@ -29,9 +29,6 @@ class CSCORE_API ACsPooledActor : public AActor
 
 	virtual void DeAllocate();
 
-	UPROPERTY(BlueprintReadWrite, Category = "Pool")
-	bool IsAllocated;
-
 	virtual void OnCreatePool();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pool")

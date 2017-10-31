@@ -13,6 +13,19 @@ ACsManager_Sound::ACsManager_Sound(const FObjectInitializer& ObjectInitializer) 
 	PoolSize = CS_SOUND_POOL_SIZE;
 }
 
+/*static*/ ACsManager_Sound* ACsManager_Sound::Get(UWorld* InWorld)
+{
+	return InWorld->GetGameState<ACsGameState>()->Manager_Sound;
+}
+
+void ACsManager_Sound::Clear()
+{
+	Super::Clear();
+
+	Pool.Reset();
+	ActiveSounds.Reset();
+}
+
 void ACsManager_Sound::Shutdown()
 {
 	Super::Shutdown();
@@ -24,8 +37,7 @@ void ACsManager_Sound::Shutdown()
 		if (Pool[I] && !Pool[I]->IsPendingKill())
 			Pool[I]->Destroy(true);
 	}
-	Pool.Reset();
-	ActiveSounds.Reset();
+	Clear();
 }
 
 void ACsManager_Sound::Destroyed()
@@ -37,8 +49,7 @@ void ACsManager_Sound::Destroyed()
 		if (Pool[I] && !Pool[I]->IsPendingKill())
 			Pool[I]->Destroy(true);
 	}
-	Pool.Reset();
-	ActiveSounds.Reset();
+	Clear();
 
 	Super::Destroyed();
 }
@@ -77,25 +88,49 @@ void ACsManager_Sound::PostActorCreated()
 
 void ACsManager_Sound::OnTick(const float &DeltaSeconds)
 {
+	bool AnyDeAllocated = false;
+
 	const uint8 Count = ActiveSounds.Num();
 
 	for (int32 I = Count - 1; I >= 0; I--)
 	{
 		ACsSound* Sound = ActiveSounds[I];
 
+		// Check if Sound was DeAllocated NOT in a normal way (i.e. Out of Bounds)
+		if (!Sound->Cache.IsAllocated)
+		{
+			UE_LOG(LogCs, Warning, TEXT("ACsManager_Sound::OnTick: Sound: %s at PoolIndex: %s was prematurely deallocted NOT in a normal way."), *(Sound->GetName()), Sound->Cache.Index);
+
+			LogTransaction(TEXT("ACsManager_Sound::OnTick"), ECsPoolTransaction::Deallocate, Sound);
+
+			ActiveSounds.RemoveAt(I);
+
+			AnyDeAllocated |= true;
+			continue;
+		}
+
 		if (GetWorld()->TimeSeconds - Sound->Cache.Time > Sound->Cache.Duration)
 		{
-			LogTransaction(TEXT("ACsManager_Sound::Play"), ECsPoolTransaction::Deallocate, Sound);
+			LogTransaction(TEXT("ACsManager_Sound::OnTick"), ECsPoolTransaction::Deallocate, Sound);
 
 			Sound->DeAllocate();
 			ActiveSounds.RemoveAt(I);
+
+			AnyDeAllocated |= true;
 		}
 	}
-}
+	// Update ActiveIndex
+	if (AnyDeAllocated)
+	{
+		const uint8 Max = ActiveSounds.Num();
 
-/*static*/ ACsManager_Sound* ACsManager_Sound::Get(UWorld* InWorld)
-{
-	return InWorld->GetGameState<ACsGameState>()->Manager_Sound;
+		for (uint8 I = 0; I < Max; I++)
+		{
+			ACsSound* Sound					= ActiveSounds[I];
+			Sound->Cache.ActiveIndex		= I;
+			Sound->Cache.ActiveIndex_Script = I;
+		}
+	}
 }
 
 void ACsManager_Sound::LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, UObject* InObject)
@@ -174,7 +209,14 @@ void ACsManager_Sound::DeAllocate(const int32 &Index)
 	{
 		ACsSound* Sound = ActiveSounds[I];
 
-		if (Sound->PoolIndex == Index)
+		// Update ActiveIndex
+		if (I > CS_FIRST)
+		{
+			Sound->Cache.ActiveIndex--;
+			Sound->Cache.ActiveIndex_Script--;
+		}
+
+		if (Sound->Cache.Index == Index)
 		{
 			LogTransaction(TEXT("ACsManager_Sound::DeAllocate"), ECsPoolTransaction::Deallocate, Sound);
 
@@ -188,14 +230,27 @@ void ACsManager_Sound::DeAllocate(const int32 &Index)
 			return;
 		}
 	}
+
+	// Correct on Cache "Miss"
+	for (int32 I = 1; I < Count; I++)
+	{
+		ACsSound* Sound = ActiveSounds[I];
+		// Reset ActiveIndex
+		Sound->Cache.ActiveIndex++;
+		Sound->Cache.ActiveIndex_Script++;
+	}
+	UE_LOG(LogCs, Warning, TEXT("ACsManager_Sound::DeAllocate: Sound with PoolIndex: %s is already deallocated."), Index);
 }
 
 ACsSound* ACsManager_Sound::Play(FCsSoundElement* InSound, UObject* InOwner, UObject* InParent)
 {
-	checkf(InSound->Get(), TEXT("ACsManager_Sound::Play: Attemping to Play a NULL Sound."));
+	if (!InSound->Get())
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Sound::Play: Attemping to Play a NULL Sound."));
+		return nullptr;
+	}
 
-	ACsSound* Sound	= Allocate();
-
+	ACsSound* Sound	  = Allocate();
 	const int32 Count = ActiveSounds.Num();
 
 	Sound->Allocate((uint16)Count, InSound, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), 0, InOwner, InParent);
@@ -229,8 +284,13 @@ ACsSound* ACsManager_Sound::Play(FCsSoundElement* InSound)
 
 ACsSound* ACsManager_Sound::Play(FCsSoundElement* InSound, UObject* InOwner, const FVector &Location)
 {
-	ACsSound* Sound	= Allocate();
+	if (!InSound->Get())
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Sound::Play: Attemping to Play a NULL Sound."));
+		return nullptr;
+	}
 
+	ACsSound* Sound	  = Allocate();
 	const int32 Count = ActiveSounds.Num();
 
 	Sound->Allocate((uint16)Count, InSound, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), 0, InOwner, nullptr, Location);
@@ -255,8 +315,13 @@ ACsSound* ACsManager_Sound::Play(FCsSoundElement* InSound, UObject* InOwner, con
 template<typename T>
 void ACsManager_Sound::Play(ACsSound* OutSound, FCsSoundElement* InSound, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
-	OutSound = Allocate();
+	if (!InSound->Get())
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Sound::Play: Attemping to Play a NULL Sound."));
+		return nullptr;
+	}
 
+	OutSound		  = Allocate();
 	const int32 Count = ActiveSounds.Num();
 
 	OutSound->Allocate<T>((uint16)Count, InSound, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), 0, InOwner, InParent, InObject, OnDeAllocate);
@@ -292,8 +357,13 @@ void ACsManager_Sound::Play(ACsSound* OutSound, FCsSoundElement* InSound, T* InO
 template<typename T>
 void ACsManager_Sound::Play(ACsSound* OutSound, FCsSoundElement* InSound, UObject* InOwner, const FVector &Location, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
-	OutSound = Allocate();
+	if (!InSound->Get())
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Sound::Play: Attemping to Play a NULL Sound."));
+		return nullptr;
+	}
 
+	OutSound		  = Allocate();
 	const int32 Count = ActiveSounds.Num();
 
 	OutSound->Allocate<T>((uint16)Count, InSound, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), 0, InOwner, Location, InObject, OnDeAllocate);

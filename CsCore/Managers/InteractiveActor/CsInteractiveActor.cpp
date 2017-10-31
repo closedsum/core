@@ -100,6 +100,8 @@ void ACsInteractiveActor::Init(const int32 &Index, const TCsInteractiveType &InT
 	Type_Script = (uint8)Type;
 
 	Cache.Set(Index, this);
+	Cache.Type		  = Type_Script;
+	Cache.Type_Script = Type;
 }
 
 template<typename T>

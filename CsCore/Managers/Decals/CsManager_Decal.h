@@ -6,7 +6,7 @@
 
 #define CS_DECAL_POOL_SIZE 64
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsDecalCache : public FCsPooledObjectCache
 {
 	GENERATED_USTRUCT_BODY()
@@ -19,6 +19,9 @@ struct FCsDecalCache : public FCsPooledObjectCache
 
 	UPROPERTY()
 	class ADecalActor* DecalActor;
+
+	FCsDecalCache(){}
+	~FCsDecalCache(){}
 };
 
 UCLASS()

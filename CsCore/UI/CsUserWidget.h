@@ -78,6 +78,9 @@ public:
 
 	FCsPrimitiveType<ESlateVisibility> Visibility;
 	
+	FCsWidget() {}
+	virtual ~FCsWidget(){}
+
 	virtual void Init(const FString &inName, const FString &inEditorName, const FString &inPath)
 	{
 		Name		= inName;
@@ -105,6 +108,8 @@ public:
 	FCsWidget_Bar()
 	{
 	}
+	
+	~FCsWidget_Bar(){}
 
 	void Set(UProgressBar* inBar) 
 	{ 
@@ -159,6 +164,8 @@ public:
 	FCsWidget_Text()
 	{
 	}
+
+	~FCsWidget_Text(){}
 
 	void Set(UTextBlock* inText) 
 	{ 
@@ -228,6 +235,8 @@ public:
 	FCsWidget_Image()
 	{
 	}
+
+	~FCsWidget_Image(){}
 
 	void Set(UImage* inImage) 
 	{ 
@@ -303,6 +312,8 @@ public:
 	{
 	}
 
+	~FCsWidget_Button(){}
+
 	void Set(class UButton* inButton)
 	{
 		Button     = inButton;
@@ -351,6 +362,9 @@ public:
 
 	FCsPrimitiveType<ECheckBoxState> State;
 
+	FCsWidget_CheckBox(){}
+	~FCsWidget_CheckBox(){}
+
 	void Set(class UCheckBox* inCheckBox)
 	{
 		CheckBox   = inCheckBox;
@@ -398,6 +412,9 @@ struct FCsWidget_LabelAndCheckBox : FCsWidget
 	FCsWidget_Text Label;
 	FCsWidget_CheckBox CheckBox;
 
+	FCsWidget_LabelAndCheckBox(){}
+	~FCsWidget_LabelAndCheckBox(){}
+
 	virtual void OnNativeTick(const float &InDeltaTime) override
 	{
 		// Visibility
@@ -431,6 +448,9 @@ public:
 
 	TCsFloat Value;
 	FCsPrimitiveType<FLinearColor> HandleColor;
+
+	FCsWidget_Slider(){}
+	~FCsWidget_Slider(){}
 
 	void Set(class USlider* inSlider)
 	{
@@ -495,6 +515,9 @@ public:
 	FCsPrimitiveType<FString> Text;
 	FCsPrimitiveType<FLinearColor> Color;
 
+	FCsWidget_EditableTextBox(){}
+	~FCsWidget_EditableTextBox(){}
+
 	virtual void Set(class UEditableTextBox* inTextBox)
 	{
 		TextBox    = inTextBox;
@@ -554,6 +577,9 @@ struct FCsWidget_EditableFloatBox : FCsWidget_EditableTextBox
 {
 public:
 	TCsFloat Value;
+
+	FCsWidget_EditableFloatBox(){}
+	~FCsWidget_EditableFloatBox(){}
 
 	virtual void Set(class UEditableTextBox* inTextBox) override
 	{
@@ -741,6 +767,9 @@ struct FCsWidget_SliderAndEditableFloatBox : FCsWidget
 	FCsWidget_Slider Slider;
 	FCsWidget_EditableFloatBox FloatBox;
 
+	FCsWidget_SliderAndEditableFloatBox(){}
+	~FCsWidget_SliderAndEditableFloatBox(){}
+
 	virtual void OnNativeTick(const float &InDeltaTime) override
 	{
 		// Visibility
@@ -773,6 +802,9 @@ struct FCsWidget_LabelAndSliderAndEditableFloatBox : FCsWidget
 	FCsWidget_Text Label;
 	FCsWidget_Slider Slider;
 	FCsWidget_EditableFloatBox FloatBox;
+
+	FCsWidget_LabelAndSliderAndEditableFloatBox(){}
+	~FCsWidget_LabelAndSliderAndEditableFloatBox(){}
 
 	virtual void OnNativeTick(const float &InDeltaTime) override
 	{
@@ -814,6 +846,9 @@ struct FCsWidget_ButtonAndText : FCsWidget
 	FCsWidget_Button Button;
 	FCsWidget_Text Text;
 
+	FCsWidget_ButtonAndText(){}
+	~FCsWidget_ButtonAndText(){}
+
 	virtual void OnNativeTick(const float &InDeltaTime) override
 	{
 		// Visibility
@@ -840,6 +875,9 @@ struct FCsWidget_LabelAndButtonAndText : FCsWidget
 	FCsWidget_Text Label;
 	FCsWidget_Button Button;
 	FCsWidget_Text Text;
+
+	FCsWidget_LabelAndButtonAndText(){}
+	~FCsWidget_LabelAndButtonAndText(){}
 
 	virtual void OnNativeTick(const float &InDeltaTime) override
 	{

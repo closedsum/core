@@ -77,9 +77,8 @@ void ACsManager_FX::CreatePool(const int32 &Size)
 
 void ACsManager_FX::OnTick(const float &DeltaSeconds)
 {
-	bool AnyDeAllocated = false;
-
-	const uint8 Count = ActiveEmitters.Num();
+	const uint8 Count   = ActiveEmitters.Num();
+	uint8 EarliestIndex = Count;
 
 	for (int32 I = Count - 1; I >= 0; I--)
 	{
@@ -94,7 +93,8 @@ void ACsManager_FX::OnTick(const float &DeltaSeconds)
 
 			ActiveEmitters.RemoveAt(I);
 
-			AnyDeAllocated |= true;
+			if (I < EarliestIndex)
+				EarliestIndex = I;
 			continue;
 		}
 
@@ -107,6 +107,9 @@ void ACsManager_FX::OnTick(const float &DeltaSeconds)
 
 				Emitter->DeAllocate();
 				ActiveEmitters.RemoveAt(I);
+
+				if (I < EarliestIndex)
+					EarliestIndex = I;
 			}
 		}
 		// Check Normal Lifetime
@@ -124,16 +127,19 @@ void ACsManager_FX::OnTick(const float &DeltaSeconds)
 
 					Emitter->DeAllocate();
 					ActiveEmitters.RemoveAt(I);
+
+					if (I < EarliestIndex)
+						EarliestIndex = I;
 				}
 			}
 		}
 	}
 	// Update ActiveIndex
-	if (AnyDeAllocated)
+	if (EarliestIndex != Count)
 	{
 		const uint8 Max = ActiveEmitters.Num();
 
-		for (uint8 I = 0; I < Max; I++)
+		for (uint8 I = EarliestIndex; I < Max; I++)
 		{
 			ACsEmitter* Emitter				  = ActiveEmitters[I];
 			Emitter->Cache.ActiveIndex		  = I;
@@ -178,11 +184,11 @@ void ACsManager_FX::LogTransaction(const FString &FunctionName, const TEnumAsByt
 			{
 				const FString LocationAsString = Emitter->Cache.Location.ToString();
 
-				UE_LOG(LogCs, Warning, TEXT("%s: %s Emitter: %s with Particle: %s at %f at %s."), *FunctionName, *TransactionAsString, *EmitterName, *ParticleName, CurrentTime, *ParentName, *LocationAsString);
+				UE_LOG(LogCs, Warning, TEXT("%s: %s Emitter: %s with Particle: %s at %f at %s."), *FunctionName, *TransactionAsString, *EmitterName, *ParticleName, CurrentTime, *LocationAsString);
 			}
 			else
 			{
-				UE_LOG(LogCs, Warning, TEXT("%s: %s Emitter: %s with Particle: %s at %f."), *FunctionName, *TransactionAsString, *EmitterName, *ParticleName, CurrentTime, *ParentName);
+				UE_LOG(LogCs, Warning, TEXT("%s: %s Emitter: %s with Particle: %s at %f."), *FunctionName, *TransactionAsString, *EmitterName, *ParticleName, CurrentTime);
 			}
 		}
 	}
@@ -278,7 +284,7 @@ ACsEmitter* ACsManager_FX::Play(FCsFxElement* InFX, UObject* InOwner, UObject* I
 	ACsEmitter* Emitter = Allocate();
 	const int32 Count   = ActiveEmitters.Num();
 	
-	Emitter->Allocate((uint16)Count, InFX, GetWorld()->TimeSeconds, GetWorld()->RealTimeSeconds, 0, InOwner, InParent);
+	Emitter->Allocate((uint16)Count, InFX, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), 0, InOwner, InParent);
 
 	LogTransaction(TEXT("ACsManager_FX::Play"), ECsPoolTransaction::Allocate, Emitter);
 
@@ -297,7 +303,7 @@ ACsEmitter* ACsManager_FX::Play(FCsFxElement* InFX)
 	return Play(InFX, nullptr, nullptr);
 }
 
-ACsEmitter* ACsManager_FX::Play(FCsFxElement* InFX, UObject* InOwner, const FVector &Location)
+ACsEmitter* ACsManager_FX::Play(FCsFxElement* InFX, UObject* InOwner, const FVector &Location, const FRotator &Rotation)
 {
 	if (!InFX->Get())
 	{
@@ -308,7 +314,7 @@ ACsEmitter* ACsManager_FX::Play(FCsFxElement* InFX, UObject* InOwner, const FVec
 	ACsEmitter* Emitter = Allocate();
 	const int32 Count   = ActiveEmitters.Num();
 
-	Emitter->Allocate((uint16)Count, InFX, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), 0, InOwner, nullptr, Location);
+	Emitter->Allocate((uint16)Count, InFX, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), 0, InOwner, nullptr, Location, Rotation);
 
 	LogTransaction(TEXT("ACsManager_FX::Play"), ECsPoolTransaction::Allocate, Emitter);
 
@@ -350,7 +356,7 @@ void ACsManager_FX::Play(ACsEmitter* OutEmitter, FCsFxElement* InFX, T* InObject
 }
 
 template<typename T>
-void ACsManager_FX::Play(ACsEmitter* OutEmitter, FCsFxElement* InFX, UObject* InOwner, const FVector &Location, T* InObject, void (T::*OnDeAllocate)())
+void ACsManager_FX::Play(ACsEmitter* OutEmitter, FCsFxElement* InFX, UObject* InOwner, const FVector &Location, const FRotator &Rotation, T* InObject, void (T::*OnDeAllocate)())
 {
 	if (!InFX->Get())
 	{
@@ -361,7 +367,7 @@ void ACsManager_FX::Play(ACsEmitter* OutEmitter, FCsFxElement* InFX, UObject* In
 	OutEmitter		  = Allocate();
 	const int32 Count = ActiveEmitters.Num();
 
-	OutEmitter->Allocate<T>((uint16)Count, InFX, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), 0, InOwner, Location, InObject, OnDeAllocate);
+	OutEmitter->Allocate<T>((uint16)Count, InFX, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), 0, InOwner, Location, Rotation, InObject, OnDeAllocate);
 
 	LogTransaction(TEXT("ACsManager_FX::Play"), ECsPoolTransaction::Allocate, Emitter);
 
@@ -374,9 +380,9 @@ ACsEmitter* ACsManager_FX::Play_Script(FCsFxElement& InFX, UObject* InOwner, UOb
 	return Play(&InFX, InOwner, InParent);
 }
 
-ACsEmitter* ACsManager_FX::Play_ScriptEX(FCsFxElement& InFX, UObject* InOwner, const FVector &Location)
+ACsEmitter* ACsManager_FX::Play_ScriptEX(FCsFxElement& InFX, UObject* InOwner, const FVector &Location, const FRotator &Rotation)
 {
-	return Play(&InFX, InOwner, Location);
+	return Play(&InFX, InOwner, Location, Rotation);
 }
 
 #if WITH_EDITOR

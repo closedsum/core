@@ -14,7 +14,6 @@ module.exports = class JsCsManager_Sound extends JsCsManager {
 
         me = this;
 
-        this.Pool = [];
         this.ActiveSounds = [];
     }
 

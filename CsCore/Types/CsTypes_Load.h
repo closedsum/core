@@ -220,7 +220,7 @@ struct FCsTArrayStringAssetReference
 #define CS_INVALID_LOOK_UP_CODE 255
 #define CS_INVALID_LOOK_UP_CODE_MAX 65535
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsDataMappingEntry
 {
 	GENERATED_USTRUCT_BODY()
@@ -309,7 +309,7 @@ typedef FString(*TCsLoadAssetsTypeToString)(const TCsLoadAssetsType&);
 // StringToLoadAssetsType
 typedef TCsLoadAssetsType(*TCsStringToLoadAssetsType)(const FString&);
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsPayload
 {
 	GENERATED_USTRUCT_BODY()
@@ -350,7 +350,7 @@ struct FCsPayload
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsTArrayPayload
 {
 	GENERATED_USTRUCT_BODY()

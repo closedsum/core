@@ -29,7 +29,7 @@
 // Structs
 #pragma region
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsDataAddToDataMapping
 {
 	GENERATED_USTRUCT_BODY()
@@ -53,7 +53,7 @@ struct FCsDataAddToDataMapping
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsDataAddToPayload
 {
 	GENERATED_USTRUCT_BODY()
@@ -74,7 +74,7 @@ struct FCsDataAddToPayload
 	FString Output;
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsDataLoadFromJson
 {
 	GENERATED_USTRUCT_BODY()
@@ -137,7 +137,7 @@ class CSCORE_API ACsData : public AActor
 
 	TCsGetAssetReferencesFromObject_Internal GetAssetReferencesFromObject_Internal;
 
-	void PopulateAssetReferences(const bool &CalculateResourceSizes);
+	virtual void PopulateAssetReferences(const bool &CalculateResourceSizes);
 
 	UPROPERTY(VisibleDefaultsOnly, Category = "00 Default")
 	TArray<FCsCategoryMemberAssociation> CategoryMemberAssociations;

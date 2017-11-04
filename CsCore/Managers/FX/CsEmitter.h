@@ -5,7 +5,7 @@
 #include "Particles/Emitter.h"
 #include "CsEmitter.generated.h"
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsFxCache : public FCsPooledObjectCache
 {
 	GENERATED_USTRUCT_BODY()
@@ -34,6 +34,8 @@ struct FCsFxCache : public FCsPooledObjectCache
 	{
 		Reset();
 	}
+
+	~FCsFxCache(){}
 
 	void Set(const uint8 &InIndex, ACsEmitter* InEmitter)
 	{
@@ -80,20 +82,24 @@ struct FCsFxCache : public FCsPooledObjectCache
 	}
 
 	template<typename T>
-	void Init(const uint16& InActiveIndex, FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, const FVector &InLocation, T* InObject, void (T::*OnDeAllocate)())
+	void Init(const uint16& InActiveIndex, FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, const FVector &InLocation, const FRotator &InRotation, T* InObject, void (T::*OnDeAllocate)())
 	{
 		Init(InActiveIndex, InElement, InTime, InRealTime, InFrame, InOwner, nullptr, InObject, OnDeAllocate);
 
-		Location = InLocation;
+		if (Bone != NAME_None)
+		{
+			Location = InLocation;
+			Rotation = InRotation;
+		}
 	}
 
 	template<typename T>
-	void Init(const uint16& InActiveIndex, FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &inFrame, const FVector &InLocation, T* InObject, void (T::*OnDeAllocate)())
+	void Init(const uint16& InActiveIndex, FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &inFrame, const FVector &InLocation, const FVector &InRotation, T* InObject, void (T::*OnDeAllocate)())
 	{
-		Init(InActiveIndex, InElement, InTime, InRealTime, inFrame, nullptr, InLocation, InObject, OnDeAllocate);
+		Init(InActiveIndex, InElement, InTime, InRealTime, inFrame, nullptr, InLocation, InRotation, InObject, OnDeAllocate);
 	}
 
-	void Init(const uint16& InActiveIndex, FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, const FVector &InLocation)
+	void Init(const uint16& InActiveIndex, FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, const FVector &InLocation, const FRotator &InRotation)
 	{
 		ActiveIndex = InActiveIndex;
 		ActiveIndex_Script = (int32)ActiveIndex;
@@ -109,7 +115,7 @@ struct FCsFxCache : public FCsPooledObjectCache
 		IsDying = false;
 		Bone = InElement->Bone;
 		Location = Bone != NAME_None ? InElement->Location : InLocation;
-		Rotation = Bone != NAME_None ? InElement->Rotation : FRotator::ZeroRotator;
+		Rotation = Bone != NAME_None ? InElement->Rotation : InRotation;
 		Time = InTime;
 		RealTime = InRealTime;
 		Frame = InFrame;
@@ -117,22 +123,22 @@ struct FCsFxCache : public FCsPooledObjectCache
 
 	void Init(const uint16& InActiveIndex, FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent)
 	{
-		Init(InActiveIndex, InElement, InTime, InRealTime, InFrame, InOwner, InParent, FVector::ZeroVector);
+		Init(InActiveIndex, InElement, InTime, InRealTime, InFrame, InOwner, InParent, FVector::ZeroVector, FRotator::ZeroRotator);
 	}
 
-	void Init(const uint16& InActiveIndex, FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, const FVector &InLocation)
+	void Init(const uint16& InActiveIndex, FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, const FVector &InLocation, const FRotator &InRotation)
 	{
-		Init(InActiveIndex, InElement, InTime, InRealTime, InFrame, nullptr, InOwner, InLocation);
+		Init(InActiveIndex, InElement, InTime, InRealTime, InFrame, nullptr, InOwner, InLocation, InRotation);
 	}
 
-	void Init(const uint16& InActiveIndex, FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, const FVector &InLocation)
+	void Init(const uint16& InActiveIndex, FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, const FVector &InLocation, const FRotator &InRotation)
 	{
-		Init(InActiveIndex, InElement, InTime, InRealTime, InFrame, nullptr, nullptr, InLocation);
+		Init(InActiveIndex, InElement, InTime, InRealTime, InFrame, nullptr, nullptr, InLocation, InRotation);
 	}
 
 	void Init(const uint16& InActiveIndex, FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
-		Init(InActiveIndex, InElement, InTime, InRealTime, InFrame, nullptr, nullptr, FVector::ZeroVector);
+		Init(InActiveIndex, InElement, InTime, InRealTime, InFrame, nullptr, nullptr, FVector::ZeroVector, FRotator::ZeroRotator);
 	}
 
 	virtual void Reset() override
@@ -183,15 +189,15 @@ public:
 	void Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, T* InObject, void (T::*OnDeAllocate)());
 
 	template<typename T>
-	void Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, const FVector &inLocation, T* InObject, void (T::*OnDeAllocate)());
+	void Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, const FVector &Location, const FRotator &Rotation, T* InObject, void (T::*OnDeAllocate)());
 
 	template<typename T>
-	void Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, const FVector &inLocation, T* InObject, void (T::*OnDeAllocate)());
+	void Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, const FVector &Location, const FRotator &Rotation, T* InObject, void (T::*OnDeAllocate)());
 
-	void Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent, const FVector &InLocation);
+	void Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent, const FVector &Location, const FRotator &Rotation);
 	void Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent);
-	void Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, const FVector &InLocation);
-	void Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, const FVector &InLocation);
+	void Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, const FVector &Location, const FRotator &Rotation);
+	void Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, const FVector &Location, const FRotator &Rotation);
 	void Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame);
 
 	void DeAllocate();

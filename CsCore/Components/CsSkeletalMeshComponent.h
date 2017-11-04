@@ -10,8 +10,6 @@ class CSCORE_API UCsSkeletalMeshComponent : public USkeletalMeshComponent
 
 #if WITH_EDITOR
 
-	virtual void OnPostLoad();
-
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& e) override;
 	virtual void PostEditChangeChainProperty(struct FPropertyChangedChainEvent& e) override;
 

@@ -6,7 +6,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsAIPawn_Override_OnTick, const int32&, Index, const float&, DeltaSeconds);
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsAIPawnCache : public FCsPooledObjectCache
 {
 	GENERATED_USTRUCT_BODY()
@@ -19,6 +19,8 @@ struct FCsAIPawnCache : public FCsPooledObjectCache
 	{
 		Reset();
 	}
+
+	~FCsAIPawnCache(){}
 
 	void Set(const uint16 &InIndex, ACsAIPawn* InPawn)
 	{

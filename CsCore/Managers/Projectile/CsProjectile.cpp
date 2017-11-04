@@ -88,37 +88,37 @@ void ACsProjectile::Init(const int32 &Index)
 }
 
 template<typename T>
-void ACsProjectile::Allocate(const uint16& ActiveIndex, ACsData_Projectile* InData, const FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)())
+void ACsProjectile::Allocate(const uint16& ActiveIndex, ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)())
 {
-	Cache.Init<T>(ActiveIndex, Type, InData, InFireCache->Time, InFireCache->RealTime, InFireCache->Frame, InInstigator, InOwner, InParent, InObject, OnDeAllocate);
+	Cache.Init<T>(ActiveIndex, Relevance, InData, InFireCache, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), 0, InInstigator, InOwner, InParent, InObject, OnDeAllocate);
 }
 
 template<typename T>
-void ACsProjectile::Allocate(const uint16& ActiveIndex, ACsData_Projectile* InData, const FCsProjectileFireCache* InFireCache, T* InObject, void (T::*OnDeAllocate)())
+void ACsProjectile::Allocate(const uint16& ActiveIndex, ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, T* InObject, void (T::*OnDeAllocate)())
 {
-	Cache.Init<T>(ActiveIndex, Type, InData, InFireCache->Time, InFireCache->RealTime, InFireCache->Frame, nullptr, nullptr, InObject, OnDeAllocate);
+	Cache.Init<T>(ActiveIndex, Relevance, InData, InFireCache, GetWorld()->GetTimeSeconds, GetWorld()->GetRealTimeSeconds(), 0, nullptr, nullptr, InObject, OnDeAllocate);
 }
 
 template<typename T>
-void ACsProjectile::Allocate(const uint16& ActiveIndex, ACsData_Projectile* InData, const FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, const FVector &InLocation, T* InObject, void (T::*OnDeAllocate)())
+void ACsProjectile::Allocate(const uint16& ActiveIndex, ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)())
 {
-	Cache.Init<T>(ActiveIndex, Type, InData, InFireCache->Time, InFireCache->RealTime, InFireCache->Frame, InInstigator, InOwner, InLocation, InObject, OnDeAllocate);
+	Cache.Init<T>(ActiveIndex, Relevance, InData, InFireCache, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), 0, InInstigator, InOwner, InObject, OnDeAllocate);
 }
 
 template<typename T>
-void ACsProjectile::Allocate(const uint16& ActiveIndex, ACsData_Projectile* InData, const FCsProjectileFireCache* InFireCache, const FVector &Location, T* InObject, void (T::*OnDeAllocate)())
+void ACsProjectile::Allocate(const uint16& ActiveIndex, ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, const FVector &Location, T* InObject, void (T::*OnDeAllocate)())
 {
-	Cache.Init<T>(ActiveIndex, Type, InData, InFireCache->Time, InFireCache->RealTime, InFireCache->Frame, Location, InObject, OnDeAllocate);
+	Cache.Init<T>(ActiveIndex, Relevance, InData, InFireCache, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), 0, InObject, OnDeAllocate);
 }
 
-void ACsProjectile::Allocate(const uint16& ActiveIndex, ACsData_Projectile* InData, const FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, UObject* InParent /*=nullptr*/, const FVector &Location /*=FVector::ZeroVector*/)
+void ACsProjectile::Allocate(const uint16& ActiveIndex, ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, UObject* InParent /*=nullptr*/)
 {
-	Cache.Init(ActiveIndex, Type, InData, InFireCache->Time, InFireCache->RealTime, InFireCache->Frame, InInstigator, InOwner, InParent, Location);
+	Cache.Init(ActiveIndex, Relevance, InData, InFireCache, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), 0, InInstigator, InOwner, InParent);
 }
 
-void ACsProjectile::Allocate(const uint16& ActiveIndex, ACsData_Projectile* InData, const FCsProjectileFireCache* InFireCache, const FVector &Location)
+void ACsProjectile::Allocate(const uint16& ActiveIndex, ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache)
 {
-	Cache.Init(ActiveIndex, Type, InData, InFireCache->Time, InFireCache->RealTime, InFireCache->Frame, Location);
+	Cache.Init(ActiveIndex, Relevance, InData, InFireCache, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), InFireCache->Frame);
 }
 
 void ACsProjectile::Allocate_Internal()

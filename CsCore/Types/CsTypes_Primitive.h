@@ -22,6 +22,9 @@ protected:
 	bool IsDirty;
 
 public:
+	FCsPrimitiveType(){}
+	virtual ~FCsPrimitiveType(){}
+
 	FCsPrimitiveType& operator=(const T& B)
 	{
 		Value   = B;
@@ -66,12 +69,17 @@ public:
 
 struct FCsPrimitiveType_Int32 : FCsPrimitiveType<int32>
 {
+	FCsPrimitiveType_Int32(){}
+	~FCsPrimitiveType_Int32(){}
 };
 
 typedef FCsPrimitiveType_Int32 TCsInt32;
 
 struct FCsPrimitiveType_Float : FCsPrimitiveType<float>
 {
+	FCsPrimitiveType_Float(){}
+	~FCsPrimitiveType_Float(){}
+
 	FCsPrimitiveType_Float& operator=(const float& B)
 	{
 		Value = B;
@@ -177,6 +185,9 @@ protected:
 
 public:
 
+	FCsPrimitiveType_FVector(){}
+	~FCsPrimitiveType_FVector(){}
+
 	FCsPrimitiveType_FVector& operator=(const FVector& B)
 	{
 		Value = B;
@@ -256,6 +267,9 @@ protected:
 
 public:
 
+	FCsPrimitiveType_FRotator(){}
+	~FCsPrimitiveType_FRotator(){}
+
 	FCsPrimitiveType_FRotator& operator=(const FRotator& B)
 	{
 		Value = B;
@@ -332,6 +346,9 @@ protected:
 	bool IsDirty;
 
 public:
+	FCsPrimitiveType_Ref(){}
+	virtual ~FCsPrimitiveType_Ref(){}
+
 	FCsPrimitiveType_Ref& operator=(const T& B)
 	{
 		Value = B;
@@ -399,6 +416,9 @@ typedef FCsPrimitiveType_Ref_Int32 TCsInt32_Ref;
 
 struct FCsPrimitiveType_Ref_Float : FCsPrimitiveType_Ref<float>
 {
+	FCsPrimitiveType_Ref_Float(){}
+	~FCsPrimitiveType_Ref_Float(){}
+
 	virtual float GetDefaultValue() override
 	{
 		return 0.0f;
@@ -424,6 +444,10 @@ protected:
 
 	bool IsDirtys[SIZE];
 public:
+
+	FCsPrimitiveType_MultiValue(){}
+	virtual ~FCsPrimitiveType_MultiValue(){}
+
 	FCsPrimitiveType_MultiValue& operator=(const T& B)
 	{
 		Value  = B;
@@ -522,6 +546,9 @@ public:
 template<typename T, typename U, uint8 SIZE>
 struct FCsIntegralType_MultiValue : FCsPrimitiveType_MultiValue<T, U, SIZE>
 {
+	FCsIntegralType_MultiValue(){}
+	~FCsIntegralType_MultiValue(){}
+
 	virtual T GetDefaultValue() override
 	{
 		return (T)0;
@@ -595,6 +622,9 @@ struct FCsIntegralType_MultiValue : FCsPrimitiveType_MultiValue<T, U, SIZE>
 template<typename U, uint8 SIZE>
 struct FCsPrimitiveType_MultiValue_bool : FCsPrimitiveType_MultiValue<bool, U, SIZE>
 {
+	FCsPrimitiveType_MultiValue_bool(){}
+	~FCsPrimitiveType_MultiValue_bool(){}
+
 	virtual bool GetDefaultValue() override
 	{
 		return false;
@@ -626,6 +656,9 @@ struct FCsPrimitiveType_MultiValue_bool : FCsPrimitiveType_MultiValue<bool, U, S
 template<typename U, uint8 SIZE>
 struct FCsPrimitiveType_MultiValue_FString : FCsPrimitiveType_MultiValue<FString, U, SIZE>
 {
+	FCsPrimitiveType_MultiValue_FString(){}
+	~FCsPrimitiveType_MultiValue_FString(){}
+
 	virtual FString GetDefaultValue() override
 	{
 		return TEXT("");
@@ -640,7 +673,8 @@ struct FCsPrimitiveType_MultiValue_FString : FCsPrimitiveType_MultiValue<FString
 
 struct FCsPrimitiveType_MultiValue_FString_Enum_TwoParams : FCsPrimitiveType_MultiValue_FString<int32, CS_FSTRING_ENUM_TWO_PARAMS>
 {
-	FCsPrimitiveType_MultiValue_FString_Enum_TwoParams() {}
+	FCsPrimitiveType_MultiValue_FString_Enum_TwoParams(){}
+	~FCsPrimitiveType_MultiValue_FString_Enum_TwoParams(){}
 
 	FCsPrimitiveType_MultiValue_FString_Enum_TwoParams(const FString &inValue1, const FString &inValue2)
 	{
@@ -687,7 +721,8 @@ struct FCsPrimitiveType_MultiValue_FString_Enum_TwoParams : FCsPrimitiveType_Mul
 
 struct FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams : FCsPrimitiveType_MultiValue_FString<int32, CS_FSTRING_ENUM_THREE_PARAMS>
 {
-	FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams() {}
+	FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams(){}
+	~FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams(){}
 
 	FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams(const FString &inValue1, const FString &inValue2, const FString &inValue3)
 	{
@@ -748,6 +783,10 @@ protected:
 
 	bool IsDirtys[SIZE];
 public:
+
+	FCsPrimitiveType_MultiRefValue(){}
+	virtual ~FCsPrimitiveType_MultiRefValue(){}
+
 	FCsPrimitiveType_MultiRefValue& operator=(const T& B)
 	{
 		Value   = B;
@@ -848,6 +887,9 @@ public:
 template<typename T, typename U, uint8 SIZE>
 struct FCsIntegralType_MultiRefValue : FCsPrimitiveType_MultiRefValue<T, U, SIZE>
 {
+	FCsIntegralType_MultiRefValue(){}
+	~FCsIntegralType_MultiRefValue(){}
+
 	virtual T GetDefaultValue() override
 	{
 		return (T)0;
@@ -879,6 +921,9 @@ struct FCsIntegralType_MultiRefValue : FCsPrimitiveType_MultiRefValue<T, U, SIZE
 template<typename U, uint8 SIZE>
 struct FCsPrimitiveType_MultiRefValue_bool : FCsPrimitiveType_MultiRefValue<bool, U, SIZE>
 {
+	FCsPrimitiveType_MultiRefValue_bool(){}
+	~FCsPrimitiveType_MultiRefValue_bool(){}
+
 	virtual bool GetDefaultValue() override
 	{
 		return false;

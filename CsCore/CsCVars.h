@@ -89,3 +89,10 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerSoundTransactions;
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerFxTransactions;
 
 #pragma endregion FX
+
+// Projectile
+#pragma region
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerProjectileTransactions;
+
+#pragma endregion Projectile

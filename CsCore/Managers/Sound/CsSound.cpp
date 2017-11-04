@@ -140,7 +140,7 @@ bool ACsSound::Stop()
 {
 	SetActorRelativeLocation(FVector::ZeroVector, false, nullptr, ETeleportType::TeleportPhysics);
 	SetActorLocation(FVector(0.0f, 0.0f, 10000.0f), false, nullptr, ETeleportType::TeleportPhysics);
-	DetachRootComponentFromParent();
+	DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
 
 	if (AudioComponent)
 	{

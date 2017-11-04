@@ -233,7 +233,7 @@ typedef TCsInputAction(*TCsStringToInputAction)(const FString&);
 
 #define CS_INVALID_INPUT_POOL_INDEX 65535
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsInputInfo
 {
 	GENERATED_USTRUCT_BODY()
@@ -300,7 +300,7 @@ struct FCsInputInfo
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FRep_CsInput
 {
 	GENERATED_USTRUCT_BODY()
@@ -340,7 +340,7 @@ struct FRep_CsInput
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsInput
 {
 	GENERATED_USTRUCT_BODY()
@@ -458,7 +458,7 @@ struct FCsInput
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsInputFrame
 {
 	GENERATED_USTRUCT_BODY()
@@ -536,7 +536,7 @@ struct FCsInputFrame
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsInputWord
 {
 	GENERATED_USTRUCT_BODY()
@@ -676,7 +676,7 @@ struct FCsInputWord
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsInputPhrase
 {
 	GENERATED_USTRUCT_BODY()
@@ -812,7 +812,7 @@ struct FCsInputPhrase
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsInputSentence
 {
 	GENERATED_USTRUCT_BODY()
@@ -938,7 +938,7 @@ struct FCsInputSentence
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsInputActionMapping
 {
 	GENERATED_USTRUCT_BODY()
@@ -988,7 +988,7 @@ struct FCsInputActionMapping
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsInputActionMappings
 {
 	GENERATED_USTRUCT_BODY()
@@ -1030,7 +1030,7 @@ struct FCsInputActionMappings
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsInputProfile
 {
 	GENERATED_USTRUCT_BODY()
@@ -1143,7 +1143,7 @@ namespace ECsRep_GameEvent
 #define CS_MAX_REP_GAME_EVENTS 32
 typedef ECsRep_GameEvent::BitMask TCsRep_GameEvent;
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsGameEventDefinition
 {
 	GENERATED_USTRUCT_BODY()

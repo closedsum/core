@@ -15,8 +15,6 @@ module.exports = class JsCsManager_WidgetActor extends JsCsManager
 
         me = this;
 
-        this.Pool = [];
-        this.Pools = [];
         this.ActiveWidgetActors = [];
     }
 

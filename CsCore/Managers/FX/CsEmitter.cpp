@@ -54,20 +54,20 @@ void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, co
 }
 
 template<typename T>
-void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, const FVector &InLocation, T* InObject, void (T::*OnDeAllocate)())
+void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, const FVector &Location, const FRotator &Rotation, T* InObject, void (T::*OnDeAllocate)())
 {
-	Cache.Init<T>(ActiveIndex, InElement, Time, RealTime, Frame, InOwner, InLocation, InObject, OnDeAllocate);
+	Cache.Init<T>(ActiveIndex, InElement, Time, RealTime, Frame, InOwner, Location, Rotation, InObject, OnDeAllocate);
 }
 
 template<typename T>
-void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, const FVector &InLocation, T* InObject, void (T::*OnDeAllocate)())
+void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, const FVector &Location, const FRotator &Rotation, T* InObject, void (T::*OnDeAllocate)())
 {
-	Cache.Init<T>(ActiveIndex, InElement, Time, RealTime, Frame, nullptr, InLocation, InObject, OnDeAllocate);
+	Cache.Init<T>(ActiveIndex, InElement, Time, RealTime, Frame, nullptr, Location, Rotation, InObject, OnDeAllocate);
 }
 
-void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent, const FVector &InLocation)
+void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent, const FVector &Location, const FRotator &Rotation)
 {
-	Cache.Init(ActiveIndex, InElement, Time, RealTime, Frame, InOwner, InParent, InLocation);
+	Cache.Init(ActiveIndex, InElement, Time, RealTime, Frame, InOwner, InParent, Location, Rotation);
 }
 
 void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent)
@@ -106,14 +106,14 @@ void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, co
 		AttachToComponent(Component, FAttachmentTransformRules::KeepRelativeTransform, InElement->Bone);
 }
 
-void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, const FVector &InLocation)
+void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, const FVector &Location, const FRotator &Rotation)
 {
-	Cache.Init(ActiveIndex, InElement, Time, RealTime, Frame, InOwner, InLocation);
+	Cache.Init(ActiveIndex, InElement, Time, RealTime, Frame, InOwner, Location, Rotation);
 }
 
-void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, const FVector &InLocation)
+void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, const FVector &Location, const FRotator &Rotation)
 {
-	Cache.Init(ActiveIndex, InElement, Time, RealTime, Frame, InLocation);
+	Cache.Init(ActiveIndex, InElement, Time, RealTime, Frame, Location, Rotation);
 }
 
 void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame)
@@ -124,7 +124,7 @@ void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, co
 void ACsEmitter::DeAllocate()
 {
 	// TODO: Might need to do some extra checks
-	DetachRootComponentFromParent();
+	DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
 
 	Cache.Reset();
 

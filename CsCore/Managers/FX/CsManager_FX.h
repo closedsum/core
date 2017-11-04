@@ -37,7 +37,7 @@ class CSCORE_API ACsManager_FX : public ACsManager
 	class ACsEmitter* Play(FCsFxElement* InFX, UObject* InOwner, UObject* InParent);
 	class ACsEmitter* Play(FCsFxElement* InFX, UObject* InOwner);
 	class ACsEmitter* Play(FCsFxElement* InFX);
-	class ACsEmitter* Play(FCsFxElement* InFX, UObject* InOwner, const FVector &Location);
+	class ACsEmitter* Play(FCsFxElement* InFX, UObject* InOwner, const FVector &Location, const FRotator &Rotation);
 
 	template<typename T>
 	void Play(class ACsEmitter* OutEmitter, FCsFxElement* InFX, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)());
@@ -49,12 +49,12 @@ class CSCORE_API ACsManager_FX : public ACsManager
 	void Play(class ACsEmitter* OutEmitter, FCsFxElement* InFX, T* InObject, void (T::*OnDeAllocate)());
 
 	template<typename T>
-	void Play(class ACsEmitter* OutEmitter, FCsFxElement* InFX, UObject* InOwner, const FVector &Location, T* InObject, void (T::*OnDeAllocate)());
+	void Play(class ACsEmitter* OutEmitter, FCsFxElement* InFX, UObject* InOwner, const FVector &Location, const FRotator &Rotation, T* InObject, void (T::*OnDeAllocate)());
 
 	UFUNCTION(BlueprintCallable, Category = "Pool")
 	class ACsEmitter* Play_Script(FCsFxElement& InFX, UObject* InOwner, UObject* InParent);
 	UFUNCTION(BlueprintCallable, Category = "Pool")
-	class ACsEmitter* Play_ScriptEX(FCsFxElement& InFX, UObject* InOwner, const FVector &Location);
+	class ACsEmitter* Play_ScriptEX(FCsFxElement& InFX, UObject* InOwner, const FVector &Location, const FRotator &Rotation);
 
 #if WITH_EDITOR
 	void ToggleEmitterEditorIcons(const bool &Toggle);

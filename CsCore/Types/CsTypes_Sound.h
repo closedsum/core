@@ -97,7 +97,7 @@ namespace ECsSoundPriority
 #define ECS_SOUND_PRIORITY_MAX (uint8)ECsSoundPriority::ECsSoundPriority_MAX
 typedef TEnumAsByte<ECsSoundPriority::Type> TCsSoundPriority;
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsSoundElement
 {
 	GENERATED_USTRUCT_BODY()
@@ -140,6 +140,7 @@ public:
 
 		Type = ECsSoundType::s3D;
 		Priority = ECsSoundPriority::Medium;
+		Duration = 0.05f;
 		VolumeMultiplier = 1.0f;
 		PitchMultiplier = 1.0f;
 		Bone = NAME_None;
@@ -189,7 +190,7 @@ public:
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsFpsSoundElement
 {
 	GENERATED_USTRUCT_BODY()

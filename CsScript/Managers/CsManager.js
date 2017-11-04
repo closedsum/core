@@ -13,6 +13,9 @@ module.exports = class JsCsManager
         
         this.ptr = null;
         this.root = null;
+
+        this.Pool = [];
+        this.Pools = [];
     }
 
     Init(inPtr, inRoot)

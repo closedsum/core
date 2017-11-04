@@ -57,7 +57,7 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsWidgetActor_OnFirstUnColli
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsWidgetActor_Override_OnRemove, const int32&, Index, const FCsInteractedActorInfo&, Info);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsWidgetActor_OnRemove, const uint16&, const FCsInteractedActorInfo&);
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsWidgetActorCache : public FCsPooledObjectCache
 {
 	GENERATED_USTRUCT_BODY()

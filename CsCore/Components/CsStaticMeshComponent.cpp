@@ -5,12 +5,6 @@
 UCsStaticMeshComponent::UCsStaticMeshComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }
-#if WITH_EDITOR
-
-void UCsStaticMeshComponent::OnPostLoad()
-{
-}
-#endif // WITH_EDITOR
 
 #if WITH_EDITOR
 

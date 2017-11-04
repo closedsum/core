@@ -6,7 +6,7 @@
 // Structs
 #pragma region
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsPayloadFindEntry
 {
 	GENERATED_USTRUCT_BODY()
@@ -24,7 +24,7 @@ struct FCsPayloadFindEntry
 	FString Output;
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsPayloadAddEntry
 {
 	GENERATED_USTRUCT_BODY()
@@ -48,7 +48,7 @@ struct FCsPayloadAddEntry
 	FString Output;
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsPayloadRemoveEntry
 {
 	GENERATED_USTRUCT_BODY()
@@ -69,7 +69,7 @@ struct FCsPayloadRemoveEntry
 	FString Output;
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsPayloadValidate
 {
 	GENERATED_USTRUCT_BODY()

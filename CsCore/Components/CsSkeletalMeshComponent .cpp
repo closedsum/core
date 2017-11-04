@@ -5,12 +5,6 @@
 UCsSkeletalMeshComponent::UCsSkeletalMeshComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }
-#if WITH_EDITOR
-
-void UCsSkeletalMeshComponent::OnPostLoad()
-{
-}
-#endif // WITH_EDITOR
 
 #if WITH_EDITOR
 

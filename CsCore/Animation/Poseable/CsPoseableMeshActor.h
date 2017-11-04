@@ -13,7 +13,7 @@
 // Structs
 #pragma region
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsPoseableMeshFK
 {
 	GENERATED_USTRUCT_BODY()
@@ -35,7 +35,7 @@ struct FCsPoseableMeshFK
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsAnimBoneInfo
 {
 	GENERATED_USTRUCT_BODY()
@@ -68,7 +68,7 @@ struct FCsAnimBoneInfo
 	// Controls
 #pragma region
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsAnimControlInfo_FK_ConnectionOutput
 {
 	GENERATED_USTRUCT_BODY()
@@ -114,7 +114,7 @@ struct FCsAnimControlInfo_FK_ConnectionOutput
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsAnimControlInfo_FK_ConnectionInput
 {
 	GENERATED_USTRUCT_BODY()
@@ -160,7 +160,7 @@ struct FCsAnimControlInfo_FK_ConnectionInput
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsAnimControlInfo_FK_Connection
 {
 	GENERATED_USTRUCT_BODY()
@@ -226,7 +226,7 @@ struct FCsAnimControlInfo_FK_Connection
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsAnimControlInfo_FK
 {
 	GENERATED_USTRUCT_BODY()
@@ -297,7 +297,7 @@ struct FCsAnimControlInfo_FK
 		// TwoBoneIK
 #pragma region
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsAnimControlInfo_TwoBoneIK_IK
 {
 	GENERATED_USTRUCT_BODY()
@@ -387,7 +387,7 @@ struct FCsAnimControlInfo_TwoBoneIK_IK
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsAnimControlInfo_TwoBoneIK_EndEffector
 {
 	GENERATED_USTRUCT_BODY()
@@ -441,7 +441,7 @@ struct FCsAnimControlInfo_TwoBoneIK_EndEffector
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsAnimControlInfo_TwoBoneIK_JoinTarget
 {
 	GENERATED_USTRUCT_BODY()
@@ -494,7 +494,7 @@ struct FCsAnimControlInfo_TwoBoneIK_JoinTarget
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsAnimControlInfo_TwoBoneIK
 {
 	GENERATED_USTRUCT_BODY()
@@ -695,7 +695,7 @@ namespace ECsSequencerTimeSnapInterval
 #define ECS_SEQUENCER_TIME_SNAP_INTERVAL_MAX (uint8)ECsSequencerTimeSnapInterval::ECsSequencerTimeSnapInterval_MAX
 typedef TEnumAsByte<ECsSequencerTimeSnapInterval::Type> TCsSequencerTimeSnapInterval;
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsAnimLevelSequenceInfo_Shot
 {
 	GENERATED_USTRUCT_BODY()
@@ -778,7 +778,7 @@ struct FCsAnimLevelSequenceInfo_Shot
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsAnimLevelSequenceInfo_Master
 {
 	GENERATED_USTRUCT_BODY()

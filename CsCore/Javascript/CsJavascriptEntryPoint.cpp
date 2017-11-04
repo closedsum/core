@@ -182,6 +182,6 @@ void ACsJavascriptEntryPoint::Run()
 
 	DoPerformCleanUpOnEditorFile = true;
 
-	Cast<UJavascriptContext>(Context)->RunFile(*EditorFile);
+	UCsCommon::Javascript_RunFile(Context, EditorFile);
 #endif // #if WITH_EDITOR
 }

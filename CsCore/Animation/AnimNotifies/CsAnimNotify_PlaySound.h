@@ -7,7 +7,7 @@
 #include "Types/CsTypes_Sound.h"
 #include "CsAnimNotify_PlaySound.generated.h"
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsAnimNotifySound
 {
 	GENERATED_USTRUCT_BODY()

@@ -88,7 +88,7 @@ FTransform GetBoneTransformByIndexHelper(const int32 &BoneIndex, const EBoneSpac
 	}
 	else
 	{
-		return CSPose.GetComponentSpaceTransform(BoneIndex) * Component->ComponentToWorld;
+		return CSPose.GetComponentSpaceTransform(BoneIndex) * Component->GetComponentTransform();
 	}
 }
 

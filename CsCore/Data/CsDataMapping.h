@@ -59,7 +59,7 @@
 
 DECLARE_DELEGATE_TwoParams(FBindableDynEvent_CsDataMapping_OnGetLoadAssetsShortCodes, const TCsLoadAssetsType&, TArray<FName>&);
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsDataMappingFindEntry
 {
 	GENERATED_USTRUCT_BODY()
@@ -77,7 +77,7 @@ struct FCsDataMappingFindEntry
 	FString Output;
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsDataMappingAddEntry
 {
 	GENERATED_USTRUCT_BODY()
@@ -107,7 +107,7 @@ struct FCsDataMappingAddEntry
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsDataMappingRemoveEntry
 {
 	GENERATED_USTRUCT_BODY()
@@ -125,7 +125,7 @@ struct FCsDataMappingRemoveEntry
 	FString Output;
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsDataMappingValidate
 {
 	GENERATED_USTRUCT_BODY()

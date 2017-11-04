@@ -7,7 +7,7 @@
 // Structs
 #pragma region
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsAnimInstance_AnimSequence
 {
 	GENERATED_USTRUCT_BODY()
@@ -52,7 +52,7 @@ public:
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsAnimInstance_AnimMontage
 {
 	GENERATED_USTRUCT_BODY()
@@ -99,7 +99,7 @@ public:
 
 #pragma endregion Structs
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsAnimInstance_Blueprint
 {
 	GENERATED_USTRUCT_BODY()

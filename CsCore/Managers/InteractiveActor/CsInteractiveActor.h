@@ -58,7 +58,7 @@ DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsInteractiveActor_OnFirst
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsInteractiveActor_Override_OnRemove, const int32&, Index, UObject*, InInstigator, USceneComponent*, InComponent);
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsInteractiveActor_OnRemove, const uint16&, UObject*, USceneComponent*);
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsInteractiveActorCache : public FCsPooledObjectCache
 {
 	GENERATED_USTRUCT_BODY()
@@ -73,6 +73,8 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 	{
 		Reset();
 	}
+
+	~FCsInteractiveActorCache(){}
 
 	void Set(const uint16 &InIndex, class ACsInteractiveActor* InActor)
 	{

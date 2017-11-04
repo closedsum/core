@@ -5,7 +5,7 @@
 #include "Managers/CsPooledActor.h"
 #include "CsSound.generated.h"
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsSoundCache : public FCsPooledObjectCache
 {
 	GENERATED_USTRUCT_BODY()
@@ -41,6 +41,8 @@ struct FCsSoundCache : public FCsPooledObjectCache
 	{
 		Reset();
 	}
+
+	~FCsSoundCache(){}
 
 	void Set(const uint16 &InIndex, ACsSound* InSound)
 	{

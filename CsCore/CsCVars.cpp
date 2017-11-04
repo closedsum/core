@@ -203,3 +203,15 @@ TAutoConsoleVariable<int32> CsCVarLogManagerFxTransactions(
 );
 
 #pragma endregion FX
+
+// Projectile
+#pragma region
+
+TAutoConsoleVariable<int32> CsCVarLogManagerProjectileTransactions(
+	TEXT("log.manager.projectile.transactions"),
+	0,
+	TEXT("Log Manager Projectile Allocation and DeAllocation."),
+	ECVF_SetByConsole
+);
+
+#pragma endregion Projectile

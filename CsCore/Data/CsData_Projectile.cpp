@@ -6,3 +6,5 @@ ACsData_Projectile::ACsData_Projectile(const FObjectInitializer& ObjectInitializ
 	: Super(ObjectInitializer)
 {
 }
+
+TCsProjectileType ACsData_Projectile::GetBaseProjectileType() { return ProjectileType_Internal; }

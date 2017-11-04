@@ -248,7 +248,7 @@ void ACsManager_InteractiveActor::LogTransaction(const FString &FunctionName, co
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s Emitter: %s of Type: %s at %f."), *FunctionName, *TransactionAsString, *ActorName, *TypeAsString, CurrentTime, *ParentName);
+			UE_LOG(LogCs, Warning, TEXT("%s: %s Emitter: %s of Type: %s at %f."), *FunctionName, *TransactionAsString, *ActorName, *TypeAsString, CurrentTime);
 		}
 	}
 }

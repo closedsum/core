@@ -282,7 +282,7 @@ typedef TEnumAsByte<ECsTransformMember::Type> TCsTransformMember;
 // Static Mesh
 #pragma region
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsStaticMesh
 {
 	GENERATED_USTRUCT_BODY()
@@ -327,7 +327,7 @@ public:
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsFpsStaticMesh
 {
 	GENERATED_USTRUCT_BODY()
@@ -429,7 +429,7 @@ public:
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsTArrayStaticMesh
 {
 	GENERATED_USTRUCT_BODY()
@@ -513,7 +513,7 @@ public:
 // Skeletal Mesh
 #pragma region
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsSkeletalMesh
 {
 	GENERATED_USTRUCT_BODY()
@@ -558,7 +558,7 @@ public:
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsFpsSkeletalMesh
 {
 	GENERATED_USTRUCT_BODY()
@@ -660,7 +660,7 @@ public:
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsTArraySkeletalMesh
 {
 	GENERATED_USTRUCT_BODY()
@@ -741,10 +741,24 @@ public:
 
 #pragma endregion Skeletal Mesh
 
+// Surface
+#pragma region
+
+#define CS_SURFACE_Default SurfaceType_Default
+
+namespace ECsSurfaceType
+{
+	enum Type : uint8;
+}
+
+typedef ECsSurfaceType::Type TCsSurfaceType;
+
+#pragma endregion Surface
+
 // Materials
 #pragma region
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsMaterialInstance
 {
 	GENERATED_USTRUCT_BODY()
@@ -771,7 +785,7 @@ public:
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsMaterialInstanceConstant
 {
 	GENERATED_USTRUCT_BODY()
@@ -798,7 +812,7 @@ public:
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsTArrayMaterialInstanceConstant
 {
 	GENERATED_USTRUCT_BODY()
@@ -877,7 +891,7 @@ public:
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsFpsTArrayMaterialInstanceConstant
 {
 	GENERATED_USTRUCT_BODY()
@@ -1126,7 +1140,7 @@ public:
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsPhysicalMaterial
 {
 	GENERATED_USTRUCT_BODY()
@@ -1226,7 +1240,7 @@ namespace NCsAttachmentTransformRules
 	const FAttachmentTransformRules InteractivePawnKeepRelativeTransform(EAttachmentRule::KeepRelative, true);
 }
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsPhysicsPreset
 {
 	GENERATED_USTRUCT_BODY()
@@ -1347,7 +1361,7 @@ namespace ECsFpsAnimMember
 #define ECS_FPS_ANIM_MEMBER_MAX (uint8)ECsFpsAnimMember::ECsFpsAnimMember_MAX
 typedef TEnumAsByte<ECsFpsAnimMember::Type> TCsFpsAnimMember;
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsAnimSequence
 {
 	GENERATED_USTRUCT_BODY()
@@ -1395,7 +1409,7 @@ public:
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsFpsAnimSequence
 {
 	GENERATED_USTRUCT_BODY()
@@ -1498,7 +1512,7 @@ public:
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsAnimMontage
 {
 	GENERATED_USTRUCT_BODY()
@@ -1546,7 +1560,7 @@ public:
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsFpsAnimMontage
 {
 	GENERATED_USTRUCT_BODY()
@@ -1793,7 +1807,7 @@ namespace ECsFpsAnimBlueprintMember
 #define ECS_FPS_ANIM_BLUEPRINT_MEMBER_MAX (uint8)ECsFpsAnimBlueprintMember::ECsFpsAnimBlueprintMember_MAX
 typedef TEnumAsByte<ECsFpsAnimBlueprintMember::Type> TCsFpsAnimBlueprintMember;
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsAnimBlueprint
 {
 	GENERATED_USTRUCT_BODY()
@@ -1841,7 +1855,7 @@ public:
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsFpsAnimBlueprint
 {
 	GENERATED_USTRUCT_BODY()
@@ -2000,7 +2014,7 @@ namespace ECsFpsAnimBlendSpaceMember
 #define ECS_FPS_ANIM_BLEND_SPACE_MEMBER_MAX (uint8)ECsFpsAnimBlendSpaceMember::ECsFpsAnimBlendSpaceMember_MAX
 typedef TEnumAsByte<ECsFpsAnimBlendSpaceMember::Type> TCsFpsAnimBlendSpaceMember;
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsBlendSpace
 {
 	GENERATED_USTRUCT_BODY()
@@ -2047,7 +2061,7 @@ public:
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsFpsBlendSpace
 {
 	GENERATED_USTRUCT_BODY()
@@ -2287,7 +2301,7 @@ typedef TEnumAsByte<ECsAdditiveAnimationType::Type> TCsAdditiveAnimationType;
 #pragma region
 
 // UCurveFloat
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsCurveFloat
 {
 	GENERATED_USTRUCT_BODY()
@@ -2513,7 +2527,7 @@ typedef TEnumAsByte<ECsRichCurveTangentMode::Type> TCsRichCurveTangentMode;
 // Blueprint
 #pragma region
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsBlueprint
 {
 	GENERATED_USTRUCT_BODY()
@@ -2540,7 +2554,7 @@ public:
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsTArrayBlueprint
 {
 	GENERATED_USTRUCT_BODY()
@@ -3120,7 +3134,7 @@ typedef FString(*TCsWidgetTypeToString)(const TCsWidgetType&);
 // StringToWidgetType
 typedef TCsWidgetType(*TCsStringToWidgetType)(const FString&);
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsWidgetActorInfo
 {
 	GENERATED_USTRUCT_BODY()
@@ -3653,7 +3667,7 @@ namespace ECsInteractivePhysicsState_Editor
 #define ECS_INTERACTIVE_PHYSICS_STATE_EDITOR_MAX (uint8)ECsInteractivePhysicsState_Editor::ECsInteractivePhysicsState_Editor_MAX
 typedef TEnumAsByte<ECsInteractivePhysicsState_Editor::Type> TCsInteractivePhysicsState_Editor;
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsInteractedActorInfo
 {
 	GENERATED_USTRUCT_BODY()
@@ -3853,6 +3867,13 @@ typedef ECsGestureType::Type TCsGestureType;
 // Weapon
 #pragma region
 
+namespace ECsWeaponFire
+{
+	enum Type : uint8;
+}
+
+typedef ECsWeaponFire::Type TCsWeaponFire;
+
 #pragma endregion Weapon
 
 // Projectile
@@ -3905,17 +3926,17 @@ public:
 };
 
 UENUM(BlueprintType)
-namespace ECsProjectileType
+namespace ECsProjectileRelevance
 {
 	enum Type
 	{
-		Real					UMETA(DisplayName = "Real"),
-		Fake					UMETA(DisplayName = "Fake"),
-		ECsProjectileType_MAX	UMETA(Hidden),
+		Real						UMETA(DisplayName = "Real"),
+		Fake						UMETA(DisplayName = "Fake"),
+		ECsProjectileRelevance_MAX	UMETA(Hidden),
 	};
 }
 
-namespace ECsProjectileType
+namespace ECsProjectileRelevance
 {
 	typedef FCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
 
@@ -3936,12 +3957,19 @@ namespace ECsProjectileType
 	{
 		if (String == Str::Real) { return Type::Real; }
 		if (String == Str::Fake) { return Type::Fake; }
-		return Type::ECsProjectileType_MAX;
+		return Type::ECsProjectileRelevance_MAX;
 	}
 }
 
-#define ECS_PROJECTILE_TYPE_MAX (uint8)ECsProjectileType::ECsProjectileType_MAX
-typedef TEnumAsByte<ECsProjectileType::Type> TCsProjectileType;
+#define ECS_PROJECTILE_RELEVANCE_MAX (uint8)ECsProjectileRelevance::ECsProjectileRelevance_MAX
+typedef TEnumAsByte<ECsProjectileRelevance::Type> TCsProjectileRelevance;
+
+namespace ECsProjectileType
+{
+	enum Type : uint8;
+}
+
+typedef ECsProjectileType::Type TCsProjectileType;
 
 UENUM(BlueprintType)
 namespace ECsProjectileState
@@ -4029,7 +4057,7 @@ namespace ECsProjectileDeActivate
 #define ECS_PROJECTILE_DEACTIVATE_MAX (uint8)ECsProjectileDeActivate::ECsProjectileDeActivate_MAX
 typedef TEnumAsByte<ECsProjectileDeActivate::Type> TCsProjectileDeActivate;
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsProjectileFireCache
 {
 	GENERATED_USTRUCT_BODY()
@@ -4041,7 +4069,6 @@ struct FCsProjectileFireCache
 	float Time;
 	UPROPERTY()
 	float RealTime;
-
 	UPROPERTY()
 	uint64 Frame;
 
@@ -4066,17 +4093,40 @@ struct FCsProjectileFireCache
 	UPROPERTY()
 	float HomingAccelerationMagnitude;
 
+	FCsProjectileFireCache()
+	{
+		Reset();
+	}
+
 	FCsProjectileFireCache& operator=(const FCsProjectileFireCache& B)
 	{
 		IsAllocated = B.IsAllocated;
 		Time = B.Time;
 		RealTime = B.RealTime;
+		Frame = B.Frame;
+		ChargePercent = B.ChargePercent;
+		Location = B.Location;
+		Direction = B.Direction;
+		AdditionalSpeed = B.AdditionalSpeed;
+		HomingTarget = B.HomingTarget;
+		HomingBoneName = B.HomingBoneName;
+		HomingAccelerationMagnitude = B.HomingAccelerationMagnitude;
 		return *this;
 	}
 
 	bool operator==(const FCsProjectileFireCache& B) const
 	{
-		return IsAllocated == B.IsAllocated && Time == B.Time;
+		return IsAllocated == B.IsAllocated &&
+			   Time == B.Time &&
+			   RealTime == B.RealTime &&
+			   Frame == B.Frame &&
+			   ChargePercent == B.ChargePercent &&
+			   Location == B.Location &&
+			   Direction == B.Direction &&
+			   AdditionalSpeed == B.AdditionalSpeed &&
+			   HomingTarget == B.HomingTarget &&
+			   HomingBoneName == B.HomingBoneName &&
+			   HomingAccelerationMagnitude == B.HomingAccelerationMagnitude;
 	}
 
 	bool operator!=(const FCsProjectileFireCache& B) const
@@ -4108,7 +4158,7 @@ struct FCsProjectileFireCache
 
 #pragma endregion Projectile
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsLocationDamageModifier
 {
 	GENERATED_USTRUCT_BODY()
@@ -4157,7 +4207,7 @@ struct FCsLocationDamageModifier
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsPooledObjectCache_OnDeAllocate, const int32&, PoolIndex, const int32&, ActiveIndex, const uint8&, Type);
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsPooledObjectCache_OnDeAllocate, const uint16&, const uint16&, const uint8&);
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsPooledObjectCache
 {
 	GENERATED_USTRUCT_BODY()
@@ -4202,6 +4252,8 @@ struct FCsPooledObjectCache
 	{
 		Reset();
 	}
+
+	virtual ~FCsPooledObjectCache(){}
 
 	virtual void Reset()
 	{
@@ -4477,7 +4529,7 @@ namespace ECsCollisionResponse
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCsCollisionPreset
 {
 	GENERATED_USTRUCT_BODY()

@@ -39,6 +39,9 @@ class CSCORE_API ACsManager_Sound : public ACsManager
 
 	virtual void DeAllocate(const int32 &Index) override;
 
+// Play
+#pragma region
+
 	class ACsSound* Play(FCsSoundElement* InSound, UObject* InOwner, UObject* InParent);
 	class ACsSound* Play(FCsSoundElement* InSound, UObject* InOwner);
 	class ACsSound* Play(FCsSoundElement* InSound);
@@ -57,4 +60,14 @@ class CSCORE_API ACsManager_Sound : public ACsManager
 	class ACsSound* Play_Script(FCsSoundElement &InSound, UObject* InOwner, UObject* InParent);
 	UFUNCTION(BlueprintCallable, Category = "Pool")
 	class ACsSound* Play_ScriptEX(FCsSoundElement &InSound, UObject* InOwner, const FVector &Location);
+
+#pragma endregion Play
+
+// Stop
+#pragma region
+
+	void Stop(FCsSoundElement* InSound, UObject* InOwner, UObject* InParent);
+
+#pragma endregion Stop
+
 };

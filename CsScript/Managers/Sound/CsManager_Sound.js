@@ -8,7 +8,8 @@ var JsCsSound = require('CsScript/Managers/Sound/CsSound.js')
 
 var me;
 
-module.exports = class JsCsManager_Sound extends JsCsManager {
+module.exports = class JsCsManager_Sound extends JsCsManager
+{
     constructor() {
         super();
 
@@ -17,7 +18,8 @@ module.exports = class JsCsManager_Sound extends JsCsManager {
         this.ActiveSounds = [];
     }
 
-    Init(inPtr, inRoot) {
+    Init(inPtr, inRoot)
+    {
         super.Init(inPtr, inRoot);
 
         this.ptr = CsManager_Sound.C(inPtr);

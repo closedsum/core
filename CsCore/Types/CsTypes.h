@@ -3874,6 +3874,41 @@ namespace ECsWeaponFire
 
 typedef ECsWeaponFire::Type TCsWeaponFire;
 
+namespace ECsWeaponAnim
+{
+	enum Type : uint8;
+}
+
+typedef ECsWeaponAnim::Type TCsWeaponAnim;
+
+namespace ECsWeaponBlendSpace
+{
+	enum Type : uint8;
+}
+
+typedef ECsWeaponBlendSpace::Type TCsWeaponBlendSpace;
+
+namespace ECsWeaponAnimBlueprint
+{
+	enum Type : uint8;
+}
+
+typedef ECsWeaponAnimBlueprint::Type TCsWeaponAnimBlueprint;
+
+namespace ECsWeaponSound
+{
+	enum Type : uint8;
+}
+
+typedef ECsWeaponSound::Type TCsWeaponSound;
+
+namespace ECsWeaponOwner
+{
+	enum Type : uint8;
+}
+
+typedef ECsWeaponOwner::Type TCsWeaponOwner;
+
 #pragma endregion Weapon
 
 // Projectile

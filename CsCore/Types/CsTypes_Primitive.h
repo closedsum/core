@@ -336,6 +336,9 @@ public:
 
 typedef FCsPrimitiveType_FRotator TCsFRotator;
 
+// Ref
+#pragma region
+
 template<typename T>
 struct FCsPrimitiveType_Ref
 {
@@ -427,7 +430,13 @@ struct FCsPrimitiveType_Ref_Float : FCsPrimitiveType_Ref<float>
 
 typedef FCsPrimitiveType_Ref_Float TCsFloat_Ref;
 
+#pragma endregion Ref
+
 #define CS_PRIMITIVE_TYPE_DEFAULT -1
+#define CS_PRIMITIVE_TYPE_GET_DELEGATE -2
+
+// MultiValue
+#pragma region
 
 // DON'T USE int64 for U
 template<typename T, typename U = int32, uint8 SIZE = 1>
@@ -768,6 +777,11 @@ struct FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams : FCsPrimitiveType_M
 	}
 };
 
+#pragma endregion MultiValue
+
+// MultiRefValue
+#pragma region
+
 // DON'T USE int64 for U
 template<typename T, typename U = int32, uint8 SIZE = 1>
 struct FCsPrimitiveType_MultiRefValue
@@ -951,6 +965,443 @@ struct FCsPrimitiveType_MultiRefValue_bool : FCsPrimitiveType_MultiRefValue<bool
 		return and;
 	}
 };
+
+#pragma endregion MultiRefValue
+
+// TArrayValue
+#pragma region
+
+// DON'T USE int64 for U
+template<typename T, typename U = int32>
+struct FCsPrimitiveType_TArrayValue
+{
+public:
+	T Value;
+	T Last_Value;
+
+	TArray<T> Values;
+	TArray<T> Last_Values;
+
+protected:
+	uint8 SIZE;
+	bool IsDirty;
+
+	TArray<bool> IsDirtys;
+public:
+
+	FCsPrimitiveType_TArrayValue() {}
+	virtual ~FCsPrimitiveType_TArrayValue() {}
+
+	FCsPrimitiveType_TArrayValue& operator=(const T& B)
+	{
+		Value = B;
+		IsDirty = Value != Last_Value;
+
+		for (uint8 I = 0; I < SIZE; I++)
+		{
+			Values[I] = B.Values[I];
+			IsDirtys[I] = Values[I] != Last_Values[I];
+		}
+		return *this;
+	}
+
+	bool operator==(const FCsPrimitiveType_TArrayValue& B) const
+	{
+		for (uint8 I = 0; I < SIZE; I++)
+		{
+			if (Values[I] != B.Values[I])
+				return false;
+		}
+		return Value == B;
+	}
+
+	bool operator!=(const FCsPrimitiveType_TArrayValue& B) const
+	{
+		return !(*this == B);
+	}
+
+	void Init(const uint8 &inSIZE)
+	{
+		SIZE = inSIZE;
+		Values.SetNumZeroed(SIZE, true);
+		Last_Values.SetNumZeroed(SIZE, true);
+		IsDirtys.SetNumZeroed(SIZE, true);
+	}
+
+	void Set(const T &inValue)
+	{
+		Value = inValue;
+		IsDirty = Value != Last_Value;
+	}
+
+	void Set(const U &Index, const T &inValue)
+	{
+		Set((int64)Index, inValue);
+	}
+
+	void Set(const int64 &Index, const T &inValue)
+	{
+		const int64 I = (int64)Index;
+
+		if (Index > CS_PRIMITIVE_TYPE_DEFAULT && Index < SIZE)
+		{
+			Values[Index] = inValue;
+			IsDirtys[Index] = Values[Index] != Last_Values[Index];
+		}
+		else
+		{
+			Set(inValue);
+		}
+	}
+
+	T Get() { return Value; }
+	T Get(const U &Index) { return Get((int64)Index); }
+	T Get(const int64 &Index){ return Index <= CS_PRIMITIVE_TYPE_DEFAULT ? Value : Values[Index]; }
+
+	void Clear()
+	{
+		Last_Value = Value;
+		IsDirty = false;
+
+		for (uint8 I = 0; I < SIZE; I++)
+		{
+			Last_Values[I] = Values[I];
+			IsDirtys[I] = false;
+		}
+	}
+
+	virtual T GetDefaultValue() { return T(); }
+
+	void Reset()
+	{
+		Value = GetDefaultValue();
+		Last_Value = Value;
+		IsDirty = false;
+
+		for (uint8 I = 0; I < SIZE; I++)
+		{
+			Values[I] = Value;
+			Last_Values[I] = Value;
+			IsDirtys[I] = false;
+		}
+	}
+
+	bool HasChanged() { return IsDirty; }
+	bool HasChanged(const U &Index) { return HasChanged((int64)Index); }
+	bool HasChanged(const int64 &Index) { return Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE ? IsDirty : IsDirtys[Index]; }
+};
+
+template<typename T, typename U>
+struct FCsIntegralType_TArrayValue : FCsPrimitiveType_TArrayValue<T, U>
+{
+	FCsIntegralType_TArrayValue() {}
+	~FCsIntegralType_TArrayValue() {}
+
+	virtual T GetDefaultValue() override
+	{
+		return (T)0;
+	}
+
+	void Add(const T &inValue)
+	{
+		Value += inValue;
+		IsDirty = Value != Last_Value;
+	}
+
+	void Add(const U &Index, const T &inValue) { Add((int64)Index, inValue); }
+
+	void Add(const int64 &Index, const T &inValue)
+	{
+		if (Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE)
+		{
+			Add(inValue);
+		}
+		else
+		{
+			Values[Index] += inValue;
+			IsDirtys[Index] = Values[Index] != Last_Values[Index];
+		}
+	}
+
+	void Subtract(const T &inValue)
+	{
+		Value -= inValue;
+		IsDirty = Value != Last_Value;
+	}
+
+	void Subtract(const U &Index, const T &inValue) { Subtract((int64)Index, inValue); }
+
+	void Subtract(const int64 &Index, const T &inValue)
+	{
+		if (Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE)
+		{
+			Subtract(inValue);
+		}
+		else
+		{
+			Values[Index] -= inValue;
+			IsDirtys[Index] = Values[Index] != Last_Values[Index];
+		}
+	}
+
+	T Max()
+	{
+		T max = Values[0];
+
+		for (uint8 I = 1; I < SIZE; I++)
+		{
+			max = (T)FMath::Max(max, Values[I]);
+		}
+		return max;
+	}
+
+	T Min()
+	{
+		T min = Values[0];
+
+		for (uint8 I = 1; I < SIZE; I++)
+		{
+			min = (T)FMath::Min(min, Values[I]);
+		}
+		return min;
+	}
+};
+
+template<typename U>
+struct FCsPrimitiveType_TArrayValue_bool : FCsPrimitiveType_TArrayValue<bool, U>
+{
+	FCsPrimitiveType_TArrayValue_bool() {}
+	~FCsPrimitiveType_TArrayValue_bool() {}
+
+	virtual bool GetDefaultValue() override
+	{
+		return false;
+	}
+
+	bool Or()
+	{
+		bool or = Values[0];
+
+		for (uint8 I = 1; I < SIZE; I++)
+		{
+			or |= Values[I];
+		}
+		return or ;
+	}
+
+	bool And()
+	{
+		bool and = Values[0];
+
+		for (uint8 I = 1; I < SIZE; I++)
+		{
+			and &= Values[I];
+		}
+		return and;
+	}
+};
+
+#pragma endregion TArrayValue
+
+// TArrayRefValue
+#pragma region
+
+// DON'T USE int64 for U
+template<typename T, typename U = int32>
+struct FCsPrimitiveType_TArrayRefValue
+{
+public:
+	T Value;
+	T Last_Value;
+
+	TArray<T*> Values;
+	TArray<T> Last_Values;
+
+protected:
+	uint8 SIZE;
+	bool IsDirty;
+
+	TArray<bool> IsDirtys;
+public:
+
+	FCsPrimitiveType_TArrayRefValue() {}
+	virtual ~FCsPrimitiveType_TArrayRefValue() {}
+
+	FCsPrimitiveType_TArrayRefValue& operator=(const T& B)
+	{
+		Value = B;
+		IsDirty = Value != Last_Value;
+
+		for (uint8 I = 0; I < SIZE; I++)
+		{
+			Values[I] = B.Values[I];
+			IsDirtys[I] = *(Values[I]) != Last_Values[I];
+		}
+		return *this;
+	}
+
+	bool operator==(const FCsPrimitiveType_TArrayRefValue& B) const
+	{
+		for (uint8 I = 0; I < SIZE; I++)
+		{
+			if (Values[I] != B.Values[I])
+				return false;
+		}
+		return Value == B;
+	}
+
+	bool operator!=(const FCsPrimitiveType_TArrayRefValue& B) const
+	{
+		return !(*this == B);
+	}
+
+	void Init(const uint8 &inSIZE)
+	{
+		SIZE = inSIZE;
+		Values.SetNum(SIZE, true);
+
+		for (uint8 I = 0; I < SIZE; I++)
+		{
+			Values[I] = nullptr;
+		}
+		Last_Values.SetNumZeroed(SIZE, true);
+		IsDirtys.SetNumZeroed(SIZE, true);
+	}
+
+	void Set(T &inValue)
+	{
+		Value = inValue;
+		IsDirty = Value != Last_Value;
+	}
+
+	void Set(const U &Index, T* inValue)
+	{
+		Set((int64)Index, inValue);
+	}
+
+	void Set(const int64 &Index, T* inValue)
+	{
+		if (Index > CS_PRIMITIVE_TYPE_DEFAULT && Index < SIZE)
+		{
+			Values[Index] = inValue;
+			IsDirtys[Index] = *(Values[Index]) != Last_Values[Index];
+		}
+		else
+		{
+			Set(*inValue);
+		}
+	}
+
+	T Get() { return Value; }
+	T Get(const U &Index) { return Get((int64)Index); }
+	T Get(const int64 &Index){ return Index <= CS_PRIMITIVE_TYPE_DEFAULT ? Value : *(Values[Index]); }
+
+	void Clear()
+	{
+		Last_Value = Value;
+		IsDirty = false;
+
+		for (uint8 I = 0; I < SIZE; I++)
+		{
+			Last_Values[I] = *(Values[I]);
+			IsDirtys[I] = false;
+		}
+	}
+
+	virtual T GetDefaultValue() { return T(); }
+
+	void Reset()
+	{
+		Value = GetDefaultValue();
+		Last_Value = Value;
+		IsDirty = false;
+
+		for (uint8 I = 0; I < SIZE; I++)
+		{
+			Values[I] = nullptr;
+			Last_Values[I] = Value;
+			IsDirtys[I] = false;
+		}
+	}
+
+	bool HasChanged() { return IsDirty; }
+
+	bool HasChanged(const U &Index)
+	{
+		const int32 I = (int32)Index;
+		return I <= CS_PRIMITIVE_TYPE_DEFAULT || I >= SIZE ? IsDirty : IsDirtys[I];
+	}
+};
+
+template<typename T, typename U>
+struct FCsIntegralType_TArrayRefValue : FCsPrimitiveType_TArrayRefValue<T, U>
+{
+	FCsIntegralType_TArrayRefValue() {}
+	~FCsIntegralType_TArrayRefValue() {}
+
+	virtual T GetDefaultValue() override
+	{
+		return (T)0;
+	}
+
+	T Max()
+	{
+		T max = *(Values[0]);
+
+		for (uint8 I = 1; I < SIZE; I++)
+		{
+			max = (T)FMath::Max(max, *(Values[I]));
+		}
+		return max;
+	}
+
+	T Min()
+	{
+		T min = *(Values[0]);
+
+		for (uint8 I = 1; I < SIZE; I++)
+		{
+			min = (T)FMath::Min(min, *(Values[I]));
+		}
+		return min;
+	}
+};
+
+template<typename U>
+struct FCsPrimitiveType_TArrayRefValue_bool : FCsPrimitiveType_TArrayRefValue<bool, U>
+{
+	FCsPrimitiveType_TArrayRefValue_bool() {}
+	~FCsPrimitiveType_TArrayRefValue_bool() {}
+
+	virtual bool GetDefaultValue() override
+	{
+		return false;
+	}
+
+	bool Or()
+	{
+		bool or = Values[0];
+
+		for (uint8 I = 1; I < SIZE; I++)
+		{
+			or |= Values[I];
+		}
+		return or ;
+	}
+
+	bool And()
+	{
+		bool and = Values[0];
+
+		for (uint8 I = 1; I < SIZE; I++)
+		{
+			and &= Values[I];
+		}
+		return and;
+	}
+};
+
+#pragma endregion TArrayRefValue
 
 UENUM(BlueprintType)
 namespace ECsMemberType

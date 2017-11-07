@@ -205,7 +205,6 @@ void ACsManager_Projectile::DeAllocate(const int32 &Index)
 
 ACsProjectile* ACsManager_Projectile::Fire(const TCsProjectileRelevance &Type, ACsData_Projectile* InData, FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, UObject* InParent)
 {
-	// Real
 	ACsProjectile* Projectile = Allocate(Type);
 	const int32 Count		  = ActiveProjectiles.Num();
 

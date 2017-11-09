@@ -7,7 +7,7 @@
 
 UCsCheatManager::UCsCheatManager(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	EditorGameBatchConsoleCommandsFilePath = TEXT("C:/Trees/cs1/Mbo/Config/EditorGameBatchConsoleCommands.txt");
+	EditorGameBatchConsoleCommandsFilePath = TEXT("C:/Trees/cs1/Config/EditorGameBatchConsoleCommands.txt");
 }
 
 void UCsCheatManager::OnTick(float DeltaSeconds)

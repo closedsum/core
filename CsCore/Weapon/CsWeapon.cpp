@@ -1386,7 +1386,7 @@ void ACsWeapon::FireHitscan(const TCsWeaponFire &FireType, const FCsProjectileFi
 				ACsCharacter* HitPawn = HittablePawns[I];
 				//AShooterBot* Bot = Cast<AShooterBot>(ThisChar);
 
-				ACsData_Character* Data_Character = HitPawn->GetMyData_Character();
+				ACsData_Character* Data_Character = HitPawn->GetMyData_Ship();
 
 				const float HeadRadius = Data_Character->HeadCollision.Radius;
 				const FName BoneName   = Data_Character->HeadCollision.BoneName;

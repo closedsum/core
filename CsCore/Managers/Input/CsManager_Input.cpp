@@ -7,6 +7,7 @@
 #include "Player/CsPlayerController.h"
 #include "Player/CsCheatManager.h"
 #include "../Engine/Classes/GameFramework/PlayerInput.h"
+#include "../Engine/Classes/Engine/LocalPlayer.h"
 
 #include "../HeadMountedDisplay/Public/IMotionController.h"
 
@@ -91,7 +92,29 @@ void ACsManager_Input::PreProcessInput(const float DeltaTime, const bool bGamePa
 			PressedKeys[PressedKeys.Num() - 1] = Key;
 		}
 	}
+	// Capture Mouse Position
 
+	FVector MousePosition;
+	
+	const bool bGotMousePosition = Controller->GetMousePosition(MousePosition.X, MousePosition.Y);
+
+	if (bGotMousePosition)
+		Mouse_Location_Raw.ExecuteIfBound(MousePosition);
+
+	/*
+	ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Controller->Player);
+
+	if (LocalPlayer && LocalPlayer->ViewportClient)
+	{
+		FVector2D MousePosition;
+
+		const bool bGotMousePosition = LocalPlayer->ViewportClient->GetMousePosition(MousePosition);
+		
+		Mouse_Location_Raw.ExecuteIfBound(FVector(MousePosition.X, MousePosition.Y, 0.0f));
+	}
+	*/
+
+	// Capture VR related Input
 	const bool IsVR = UCsCommon::IsVR();
 
 	if (IsVR)

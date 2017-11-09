@@ -5391,12 +5391,12 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 			// TAssetSubclassOf
 			if (UAssetClassProperty* InnerAssetClassProperty = Cast<UAssetClassProperty>(ArrayProperty->Inner))
 			{
-				// AMboData_Weapon
-				//if (InnerAssetClassProperty->PropertyClass == AMboData_Weapon::StaticClass() || InnerAssetClassProperty->MetaClass == AMboData_Weapon::StaticClass())
-				//{ LoadArrayAssetClassProperty<AMboData_Weapon>(ArrayProperty, ObjectName, InStruct, InScriptStruct, MemberName, TEXT("MboData_Weapon")); continue; }
-				// AMboData_Projectile
-				//if (InnerAssetClassProperty->PropertyClass == AMboData_Projectile::StaticClass() || InnerAssetClassProperty->MetaClass == AMboData_Projectile::StaticClass())
-				//{ LoadArrayAssetClassProperty<AMboData_Projectile>(ArrayProperty, ObjectName, InStruct, InScriptStruct, MemberName, TEXT("MboData_Projectile")); continue; }
+				// AFosData_Weapon
+				//if (InnerAssetClassProperty->PropertyClass == AFosData_Weapon::StaticClass() || InnerAssetClassProperty->MetaClass == AFosData_Weapon::StaticClass())
+				//{ LoadArrayAssetClassProperty<AFosData_Weapon>(ArrayProperty, ObjectName, InStruct, InScriptStruct, MemberName, TEXT("FosData_Weapon")); continue; }
+				// AFosData_Projectile
+				//if (InnerAssetClassProperty->PropertyClass == AFosData_Projectile::StaticClass() || InnerAssetClassProperty->MetaClass == AFosData_Projectile::StaticClass())
+				//{ LoadArrayAssetClassProperty<AFosData_Projectile>(ArrayProperty, ObjectName, InStruct, InScriptStruct, MemberName, TEXT("FosData_Projectile")); continue; }
 				if (Internal)
 				{
 					if ((*Internal)(Property, ObjectName, InStruct, InScriptStruct, LoadFlags))

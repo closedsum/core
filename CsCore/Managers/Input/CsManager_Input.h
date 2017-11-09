@@ -610,6 +610,10 @@ public:
 
 	FBindableEvent_CsManagerInput_Location_Stationary Location_Stationary_Event;
 
+	// Mouse
+
+	FBindableCall_CsManagerInput_Location_Raw Mouse_Location_Raw;
+
 	// VR
 
 	FBindableCall_CsManagerInput_Location_Raw HMD_Location_Raw;

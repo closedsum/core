@@ -1,7 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Managers/CsPooledActor.h"
-#include "Types/CsTypes.h"
+#include "Types/CsTypes_Projectile.h"
 #include "Data/CsData_Projectile.h"
 #include "CsProjectile.generated.h"
 

@@ -1,12 +1,12 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "GameFramework/Character.h"
+#include "Pawn/CsPawn.h"
 #include "CsPlayerPawn.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPlayerPawn_OnTick, const uint8&, MappingId, const float&, DeltaSeconds);
 
 UCLASS(config = Game)
-class CSCORE_API ACsPlayerPawn : public ACharacter
+class CSCORE_API ACsPlayerPawn : public ACsPawn
 {
 	GENERATED_UCLASS_BODY()
 

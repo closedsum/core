@@ -5,6 +5,9 @@
 #include "Types/CsTypes_Input.h"
 #include "Types/CsTypes_FX.h"
 #include "Types/CsTypes_Sound.h"
+#include "Types/CsTypes_Anim.h"
+#include "Types/CsTypes_Projectile.h"
+#include "Types/CsTypes_Weapon.h"
 #include "CsCVars.h"
 
 #include "Common/CsCommon.h"

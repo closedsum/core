@@ -1,6 +1,7 @@
 #pragma once
 #include "GameFramework/Actor.h"
 #include "Types/CsTypes.h"
+#include "Types/CsTypes_Weapon.h"
 #include "CsWeapon.generated.h"
 
 // Data
@@ -63,13 +64,11 @@ namespace ECsWeaponRoutine
 #define ECS_ROUTINE_WEAPON_MAX (uint8)ECsWeaponRoutine::ECsWeaponRoutine_MAX
 typedef TEnumAsByte<ECsWeaponRoutine::Type> TCsWeaponRoutine;
 
-
 UENUM(BlueprintType)
 namespace ECsWeaponCacheMultiValueMember
 {
 	enum Type
 	{
-
 		// Firing
 		MaxAmmo									UMETA(DisplayName = "MaxAmmo"),
 		ProjectilesPerShot						UMETA(DisplayName = "ProjectilesPerShot"),
@@ -416,23 +415,13 @@ class CSCORE_API ACsWeapon : public AActor
 	virtual void PostInitializeComponents() override;
 	virtual void OutsideWorldBounds() override;
 
-	// Data
-#pragma region
-
-	TWeakObjectPtr<class ACsData_Weapon> MyData_Weapon;
-
-	UFUNCTION(BlueprintCallable, Category = "Data")
-	class ACsData_Weapon* GetMyData_Weapon();
-
-#pragma endregion Data
-
 // Members
 #pragma region
 
 	TCsWeaponFire FireType_MAX;
 	uint8 FIRE_TYPE_MAX;
 
-	void InitMultiValueMembers();
+	virtual void InitMultiValueMembers();
 
 	// Set
 #pragma region
@@ -509,6 +498,16 @@ class CSCORE_API ACsWeapon : public AActor
 
 #pragma endregion Members
 
+// Data
+#pragma region
+
+	TWeakObjectPtr<class ACsData_Weapon> MyData_Weapon;
+
+	UFUNCTION(BlueprintCallable, Category = "Data")
+	class ACsData_Weapon* GetMyData_Weapon();
+
+#pragma endregion Data
+
 // Routines
 #pragma region
 public:
@@ -531,6 +530,7 @@ public:
 
 private:
 	TWeakObjectPtr<class UObject> MyOwner;
+	TWeakObjectPtr<class ACsPawn> MyPawn;
 
 public:
 	virtual void SetMyOwner(UObject* InMyOwner);
@@ -539,6 +539,11 @@ public:
 	UObject* GetMyOwner();
 
 	TCsWeaponOwner MyOwnerType;
+
+	virtual void SetMyPawn(class ACsPawn* InMyPawn);
+
+	UFUNCTION(BlueprintCallable, Category = "Owner")
+	class ACsPawn* GetMyPawn();
 
 #pragma endregion Owner
 

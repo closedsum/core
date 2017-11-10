@@ -1,7 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Animation/AnimInstance.h"
-#include "Types/CsTypes.h"
+#include "Types/CsTypes_Anim.h"
 #include "CsAnimInstance.generated.h"
 
 // Structs

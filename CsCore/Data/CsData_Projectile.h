@@ -1,7 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Data/CsData.h"
-#include "Types/CsTypes.h"
+#include "Types/CsTypes_Projectile.h"
 #include "CsData_Projectile.generated.h"
 
 UCLASS(hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))

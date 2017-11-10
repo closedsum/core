@@ -6,8 +6,9 @@
 #include "Common/CsCommon_Load.h"
 #include "Common/CsCommon.h"
 #include "Coroutine/CsCoroutineScheduler.h"
-#include "Player/CsPlayerState.h"
 #include "Game/CsGameState.h"
+#include "Player/CsPlayerState.h"
+#include "Pawn/CsPawn.h"
 
 // Managers
 #include "Managers/FX/CsManager_FX.h"
@@ -20,6 +21,9 @@ ACsWeapon::ACsWeapon(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	PrimaryActorTick.bCanEverTick = false;
+
+	//FireType_MAX  = ECsWeaponFire::ECsWeaponFire_MAX;
+	//FIRE_TYPE_MAX = (uint8)FireType_MAX;
 
 	//CurrentState = ECsWeaponState::Idle;
 	//LastState	 = CurrentState;
@@ -351,6 +355,16 @@ void ACsWeapon::AddMemberValue_uint8(const int32 &Index, const FString &MemberNa
 
 #pragma endregion Members
 
+// Data
+#pragma region
+
+ACsData_Weapon* ACsWeapon::GetMyData_Weapon()
+{
+	return MyData_Weapon.IsValid() ? MyData_Weapon.Get() : nullptr;
+}
+
+#pragma endregion Data
+
 // Routines
 #pragma region
 
@@ -412,16 +426,6 @@ void ACsWeapon::ClearRoutines()
 
 #pragma endregion Routines
 
-// Data
-#pragma region
-
-ACsData_Weapon* ACsWeapon::GetMyData_Weapon()
-{
-	return MyData_Weapon.IsValid() ? MyData_Weapon.Get() : nullptr;
-}
-
-#pragma endregion Data
-
 // Owner
 #pragma region
 
@@ -433,6 +437,21 @@ void ACsWeapon::SetMyOwner(UObject* InMyOwner)
 UObject* ACsWeapon::GetMyOwner()
 {
 	return MyOwner.IsValid() ? MyOwner.Get() : nullptr;
+}
+
+void ACsWeapon::SetMyPawn(class ACsPawn* InMyPawn)
+{
+	SetMyOwner(InMyPawn);
+
+	MyPawn	   = InMyPawn;
+	Instigator = InMyPawn;
+
+	SetOwner(InMyPawn);
+}
+
+ACsPawn* ACsWeapon::GetMyPawn()
+{
+	return MyPawn.IsValid() ? MyPawn.Get() : nullptr;
 }
 
 #pragma endregion Owner

@@ -2,6 +2,7 @@
 #include "Common/CsCommon.h"
 #include "CsCore.h"
 #include "CsCVars.h"
+#include "Types/CsTypes_Curve.h"
 #include "GameFramework/GameState.h"
 #include "GameFramework/GameMode.h"
 #include "Game/CsGameInstance.h"

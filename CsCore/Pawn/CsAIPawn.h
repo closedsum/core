@@ -1,6 +1,6 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "GameFramework/Character.h"
+#include "Pawn/CsPawn.h"
 #include "Types/CsTypes.h"
 #include "CsAIPawn.generated.h"
 
@@ -83,7 +83,7 @@ struct FCsAIPawnCache : public FCsPooledObjectCache
 };
 
 UCLASS()
-class CSCORE_API ACsAIPawn : public ACharacter
+class CSCORE_API ACsAIPawn : public ACsPawn
 {
 	GENERATED_UCLASS_BODY()
 

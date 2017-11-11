@@ -2647,6 +2647,8 @@ template<typename T>
 	//static TEnumAsByte<EMemberType::Type> GetObjectMemberType(UClass* const &InClass, const FString &MemberName);
 	//static TEnumAsByte<EMemberType::Type> GetStructMemberType(UScriptStruct* const &InScriptStruct, const FString &MemberName);
 
+	static void* GetStructMemberEX(UProperty* Property, void* InStruct, UScriptStruct* const &InScriptStruct, const FString &MemberName);
+
 	template<typename T>
 	static T* GetStructMember(void* InStruct, UScriptStruct* const &InScriptStruct, const FString &MemberName, TCsGetStructMember_Internal Internal = NULL)
 	{
@@ -2664,6 +2666,8 @@ template<typename T>
 			{
 				if (Internal)
 				{
+					if (void* Ptr = GetStructMemberEX(Property, InStruct, InScriptStruct))
+						return (T*)Ptr;
 					if (void* Ptr = (*Internal)(Property, InStruct, InScriptStruct, MemberName))
 						return (T*)Ptr;
 				}

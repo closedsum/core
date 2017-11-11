@@ -1016,7 +1016,42 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsInputActionMapping
 			if (StructProperty->Struct == FCsInputActionMapping::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsInputActionMapping>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
-
+			// Weapon_FireType
+			{
+				// FCsData_Weapon_FireType_Firing
+				if (StructProperty->Struct == FCsData_Weapon_FireType_Firing::StaticStruct())
+				{ WriteMemberStructPropertyToJson<FCsData_Weapon_FireType_Firing>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+				// FCsData_Weapon_FireType_Animation
+				if (StructProperty->Struct == FCsData_Weapon_FireType_Animation::StaticStruct())
+				{ WriteMemberStructPropertyToJson<FCsData_Weapon_FireType_Animation>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+				// FCsData_FpsWeapon_FireType_Animation
+				if (StructProperty->Struct == FCsData_FpsWeapon_FireType_Animation::StaticStruct())
+				{ WriteMemberStructPropertyToJson<FCsData_FpsWeapon_FireType_Animation>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+				// FCsData_Weapon_FireType_Movement
+				if (StructProperty->Struct == FCsData_Weapon_FireType_Movement::StaticStruct())
+				{ WriteMemberStructPropertyToJson<FCsData_Weapon_FireType_Movement>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+				// FCsData_Weapon_FireType_Aiming
+				if (StructProperty->Struct == FCsData_Weapon_FireType_Aiming::StaticStruct())
+				{ WriteMemberStructPropertyToJson<FCsData_Weapon_FireType_Aiming>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+				// FCsData_FpsWeapon_FireType_Aiming
+				if (StructProperty->Struct == FCsData_FpsWeapon_FireType_Aiming::StaticStruct())
+				{ WriteMemberStructPropertyToJson<FCsData_FpsWeapon_FireType_Aiming>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+				// FCsData_Weapon_FireType_Scope
+				if (StructProperty->Struct == FCsData_Weapon_FireType_Scope::StaticStruct())
+				{ WriteMemberStructPropertyToJson<FCsData_Weapon_FireType_Scope>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+				// FCsData_Weapon_FireType_FXs
+				if (StructProperty->Struct == FCsData_Weapon_FireType_FXs::StaticStruct())
+				{ WriteMemberStructPropertyToJson<FCsData_Weapon_FireType_FXs>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+				// FCsData_FpsWeapon_FireType_FXs
+				if (StructProperty->Struct == FCsData_FpsWeapon_FireType_FXs::StaticStruct())
+				{ WriteMemberStructPropertyToJson<FCsData_FpsWeapon_FireType_FXs>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+				// FCsData_Weapon_FireType_Sounds
+				if (StructProperty->Struct == FCsData_Weapon_FireType_Sounds::StaticStruct())
+				{ WriteMemberStructPropertyToJson<FCsData_Weapon_FireType_Sounds>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+				// FCsData_FpsWeapon_FireType_Sounds
+				if (StructProperty->Struct == FCsData_FpsWeapon_FireType_Sounds::StaticStruct())
+				{ WriteMemberStructPropertyToJson<FCsData_FpsWeapon_FireType_Sounds>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			}
 			if (Internal)
 			{
 				if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
@@ -2657,6 +2692,42 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsInputActionMapping
 			if (StructProperty->Struct == FCsInputActionMapping::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsInputActionMapping>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// Weapon_FireType
+			{
+				// FCsData_Weapon_FireType_Firing
+				if (StructProperty->Struct == FCsData_Weapon_FireType_Firing::StaticStruct())
+				{ WriteToMemberStructPropertyFromJson<FCsData_Weapon_FireType_Firing>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FCsData_Weapon_FireType_Animation
+				if (StructProperty->Struct == FCsData_Weapon_FireType_Animation::StaticStruct())
+				{ WriteToMemberStructPropertyFromJson<FCsData_Weapon_FireType_Animation>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FCsData_FpsWeapon_FireType_Animation
+				if (StructProperty->Struct == FCsData_FpsWeapon_FireType_Animation::StaticStruct())
+				{ WriteToMemberStructPropertyFromJson<FCsData_FpsWeapon_FireType_Animation>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FCsData_Weapon_FireType_Movement
+				if (StructProperty->Struct == FCsData_Weapon_FireType_Movement::StaticStruct())
+				{ WriteToMemberStructPropertyFromJson<FCsData_Weapon_FireType_Movement>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FCsData_Weapon_FireType_Aiming
+				if (StructProperty->Struct == FCsData_Weapon_FireType_Aiming::StaticStruct())
+				{ WriteToMemberStructPropertyFromJson<FCsData_Weapon_FireType_Aiming>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FCsData_FpsWeapon_FireType_Aiming
+				if (StructProperty->Struct == FCsData_FpsWeapon_FireType_Aiming::StaticStruct())
+				{ WriteToMemberStructPropertyFromJson<FCsData_FpsWeapon_FireType_Aiming>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FCsData_Weapon_FireType_Scope
+				if (StructProperty->Struct == FCsData_Weapon_FireType_Scope::StaticStruct())
+				{ WriteToMemberStructPropertyFromJson<FCsData_Weapon_FireType_Scope>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FCsData_Weapon_FireType_FXs
+				if (StructProperty->Struct == FCsData_Weapon_FireType_FXs::StaticStruct())
+				{ WriteToMemberStructPropertyFromJson<FCsData_Weapon_FireType_FXs>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FCsData_FpsWeapon_FireType_FXs
+				if (StructProperty->Struct == FCsData_FpsWeapon_FireType_FXs::StaticStruct())
+				{ WriteToMemberStructPropertyFromJson<FCsData_FpsWeapon_FireType_FXs>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FCsData_Weapon_FireType_Sounds
+				if (StructProperty->Struct == FCsData_Weapon_FireType_Sounds::StaticStruct())
+				{ WriteToMemberStructPropertyFromJson<FCsData_Weapon_FireType_Sounds>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FCsData_FpsWeapon_FireType_Sounds
+				if (StructProperty->Struct == FCsData_FpsWeapon_FireType_Sounds::StaticStruct())
+				{ WriteToMemberStructPropertyFromJson<FCsData_FpsWeapon_FireType_Sounds>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			}
 
 			if (Internal)
 			{
@@ -4445,7 +4516,34 @@ void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct*
 			// FCsBlueprint
 			if (StructProperty->Struct == FCsBlueprint::StaticStruct())
 			{ GetAssetReferencesFromStructProperty<FCsBlueprint>(StructProperty, InStruct, LoadFlags, CalculateResourceSizes, OutAssetReferences, Internal); continue; }
-			
+			// Weapon_FireType
+			{
+				// FCsData_Weapon_FireType_Firing
+				if (StructProperty->Struct == FCsData_Weapon_FireType_Firing::StaticStruct())
+				{ GetAssetReferencesFromStructProperty<FCsData_Weapon_FireType_Firing>(StructProperty, InStruct, LoadFlags, CalculateResourceSizes, OutAssetReferences, Internal); continue; }
+				// FCsData_Weapon_FireType_Animation
+				if (StructProperty->Struct == FCsData_Weapon_FireType_Animation::StaticStruct())
+				{ GetAssetReferencesFromStructProperty<FCsData_Weapon_FireType_Animation>(StructProperty, InStruct, LoadFlags, CalculateResourceSizes, OutAssetReferences, Internal); continue; }
+				// FCsData_FpsWeapon_FireType_Animation
+				if (StructProperty->Struct == FCsData_FpsWeapon_FireType_Animation::StaticStruct())
+				{ GetAssetReferencesFromStructProperty<FCsData_FpsWeapon_FireType_Animation>(StructProperty, InStruct, LoadFlags, CalculateResourceSizes, OutAssetReferences, Internal); continue; }
+				// FCsData_Weapon_FireType_Scope
+				if (StructProperty->Struct == FCsData_Weapon_FireType_Scope::StaticStruct())
+				{ GetAssetReferencesFromStructProperty<FCsData_Weapon_FireType_Scope>(StructProperty, InStruct, LoadFlags, CalculateResourceSizes, OutAssetReferences, Internal); continue; }
+				// FCsData_Weapon_FireType_FXs
+				if (StructProperty->Struct == FCsData_Weapon_FireType_FXs::StaticStruct())
+				{ GetAssetReferencesFromStructProperty<FCsData_Weapon_FireType_FXs>(StructProperty, InStruct, LoadFlags, CalculateResourceSizes, OutAssetReferences, Internal); continue; }
+				// FCsData_FpsWeapon_FireType_FXs
+				if (StructProperty->Struct == FCsData_FpsWeapon_FireType_FXs::StaticStruct())
+				{ GetAssetReferencesFromStructProperty<FCsData_FpsWeapon_FireType_FXs>(StructProperty, InStruct, LoadFlags, CalculateResourceSizes, OutAssetReferences, Internal); continue; }
+				// FCsData_Weapon_FireType_Sounds
+				if (StructProperty->Struct == FCsData_Weapon_FireType_Sounds::StaticStruct())
+				{ GetAssetReferencesFromStructProperty<FCsData_Weapon_FireType_Sounds>(StructProperty, InStruct, LoadFlags, CalculateResourceSizes, OutAssetReferences, Internal); continue; }
+				// FCsData_FpsWeapon_FireType_Sounds
+				if (StructProperty->Struct == FCsData_FpsWeapon_FireType_Sounds::StaticStruct())
+				{ GetAssetReferencesFromStructProperty<FCsData_FpsWeapon_FireType_Sounds>(StructProperty, InStruct, LoadFlags, CalculateResourceSizes, OutAssetReferences, Internal); continue; }
+			}
+
 			if (Internal)
 			{
 				if ((*Internal)(Property, InStruct, InScriptStruct, LoadFlags, CalculateResourceSizes, OutAssetReferences))
@@ -5380,6 +5478,33 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 			// FCsTArrayBlueprint
 			if (StructProperty->Struct == FCsTArrayBlueprint::StaticStruct())
 			{ LoadMemberStructProperty<FCsTArrayBlueprint>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
+			// Weapon_FireType
+			{
+				// FCsData_Weapon_FireType_Firing
+				if (StructProperty->Struct == FCsData_Weapon_FireType_Firing::StaticStruct())
+				{ LoadMemberStructProperty<FCsData_Weapon_FireType_Firing>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
+				// FCsData_Weapon_FireType_Animation
+				if (StructProperty->Struct == FCsData_Weapon_FireType_Animation::StaticStruct())
+				{ LoadMemberStructProperty<FCsData_Weapon_FireType_Animation>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
+				// FCsData_FpsWeapon_FireType_Animation
+				if (StructProperty->Struct == FCsData_FpsWeapon_FireType_Animation::StaticStruct())
+				{ LoadMemberStructProperty<FCsData_FpsWeapon_FireType_Animation>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
+				// FCsData_Weapon_FireType_Scope
+				if (StructProperty->Struct == FCsData_Weapon_FireType_Scope::StaticStruct())
+				{ LoadMemberStructProperty<FCsData_Weapon_FireType_Scope>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
+				// FCsData_Weapon_FireType_FXs
+				if (StructProperty->Struct == FCsData_Weapon_FireType_FXs::StaticStruct())
+				{ LoadMemberStructProperty<FCsData_Weapon_FireType_FXs>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
+				// FCsData_FpsWeapon_FireType_FXs
+				if (StructProperty->Struct == FCsData_FpsWeapon_FireType_FXs::StaticStruct())
+				{ LoadMemberStructProperty<FCsData_FpsWeapon_FireType_FXs>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
+				// FCsData_Weapon_FireType_Sounds
+				if (StructProperty->Struct == FCsData_Weapon_FireType_Sounds::StaticStruct())
+				{ LoadMemberStructProperty<FCsData_Weapon_FireType_Sounds>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
+				// FCsData_FpsWeapon_FireType_Sounds
+				if (StructProperty->Struct == FCsData_FpsWeapon_FireType_Sounds::StaticStruct())
+				{ LoadMemberStructProperty<FCsData_FpsWeapon_FireType_Sounds>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
+			}
 
 			if (Internal)
 			{
@@ -7152,6 +7277,53 @@ void UCsCommon_Load::SetObjectMembers(void* FromObject, void* ToObject, UClass* 
 // Get
 #pragma region
 
+void* UCsCommon_Load::GetStructMemberEX(UProperty* Property, void* InStruct, UScriptStruct* const &InScriptStruct, const FString &MemberName)
+{
+	const FString PropertyName = Property->GetName();
+
+	if (PropertyName != MemberName)
+		return nullptr;
+
+	// Struct
+	if (UStructProperty* StructProperty = Cast<UStructProperty>(Property))
+	{
+		// FCsData_Weapon_FireType_Firing
+		if (StructProperty->Struct == FCsData_Weapon_FireType_Firing::StaticStruct())
+			return (void*)Property->ContainerPtrToValuePtr<FCsData_Weapon_FireType_Firing>(InStruct);
+		// FCsData_Weapon_FireType_Animation
+		if (StructProperty->Struct == FCsData_Weapon_FireType_Animation::StaticStruct())
+			return (void*)Property->ContainerPtrToValuePtr<FCsData_Weapon_FireType_Animation>(InStruct);
+		// FCsData_FpsWeapon_FireType_Animation
+		if (StructProperty->Struct == FCsData_FpsWeapon_FireType_Animation::StaticStruct())
+			return (void*)Property->ContainerPtrToValuePtr<FCsData_FpsWeapon_FireType_Animation>(InStruct);
+		// FCsData_Weapon_FireType_Movement
+		if (StructProperty->Struct == FCsData_Weapon_FireType_Movement::StaticStruct())
+			return (void*)Property->ContainerPtrToValuePtr<FCsData_Weapon_FireType_Movement>(InStruct);
+		// FCsData_Weapon_FireType_Aiming
+		if (StructProperty->Struct == FCsData_Weapon_FireType_Aiming::StaticStruct())
+			return (void*)Property->ContainerPtrToValuePtr<FCsData_Weapon_FireType_Aiming>(InStruct);
+		// FCsData_FpsWeapon_FireType_Aiming
+		if (StructProperty->Struct == FCsData_FpsWeapon_FireType_Aiming::StaticStruct())
+			return (void*)Property->ContainerPtrToValuePtr<FCsData_FpsWeapon_FireType_Aiming>(InStruct);
+		// FCsData_Weapon_FireType_Scope
+		if (StructProperty->Struct == FCsData_Weapon_FireType_Scope::StaticStruct())
+			return (void*)Property->ContainerPtrToValuePtr<FCsData_Weapon_FireType_Scope>(InStruct);
+		// FCsData_Weapon_FireType_FXs
+		if (StructProperty->Struct == FCsData_Weapon_FireType_FXs::StaticStruct())
+			return (void*)Property->ContainerPtrToValuePtr<FCsData_Weapon_FireType_FXs>(InStruct);
+		// FCsData_FpsWeapon_FireType_FXs
+		if (StructProperty->Struct == FCsData_FpsWeapon_FireType_FXs::StaticStruct())
+			return (void*)Property->ContainerPtrToValuePtr<FCsData_FpsWeapon_FireType_FXs>(InStruct);
+		// FCsData_Weapon_FireType_Sounds
+		if (StructProperty->Struct == FCsData_Weapon_FireType_Sounds::StaticStruct())
+			return (void*)Property->ContainerPtrToValuePtr<FCsData_Weapon_FireType_Sounds>(InStruct);
+		// FCsData_FpsWeapon_FireType_Sounds
+		if (StructProperty->Struct == FCsData_FpsWeapon_FireType_Sounds::StaticStruct())
+			return (void*)Property->ContainerPtrToValuePtr<FCsData_FpsWeapon_FireType_Sounds>(InStruct);
+	}
+	return nullptr;
+}
+
 UScriptStruct* UCsCommon_Load::GetScriptStructMember(void* InStruct, UScriptStruct* const &InScriptStruct, const FString &MemberName, TCsGetScriptStructMember_Internal Internal /*=nullptr*/)
 {
 	for (TFieldIterator<UProperty> It(InScriptStruct); It; ++It)
@@ -7166,6 +7338,40 @@ UScriptStruct* UCsCommon_Load::GetScriptStructMember(void* InStruct, UScriptStru
 		// Struct
 		if (UStructProperty* StructProperty = Cast<UStructProperty>(*It))
 		{
+			// FCsData_Weapon_FireType_Firing
+			if (StructProperty->Struct == FCsData_Weapon_FireType_Firing::StaticStruct())
+				return FCsData_Weapon_FireType_Firing::StaticStruct();
+			// FCsData_Weapon_FireType_Animation
+			if (StructProperty->Struct == FCsData_Weapon_FireType_Animation::StaticStruct())
+				return FCsData_Weapon_FireType_Animation::StaticStruct();
+			// FCsData_FpsWeapon_FireType_Animation
+			if (StructProperty->Struct == FCsData_FpsWeapon_FireType_Animation::StaticStruct())
+				return FCsData_FpsWeapon_FireType_Animation::StaticStruct();
+			// FCsData_Weapon_FireType_Movement
+			if (StructProperty->Struct == FCsData_Weapon_FireType_Movement::StaticStruct())
+				return FCsData_Weapon_FireType_Movement::StaticStruct();
+			// FCsData_Weapon_FireType_Aiming
+			if (StructProperty->Struct == FCsData_Weapon_FireType_Aiming::StaticStruct())
+				return FCsData_Weapon_FireType_Aiming::StaticStruct();
+			// FCsData_FpsWeapon_FireType_Aiming
+			if (StructProperty->Struct == FCsData_FpsWeapon_FireType_Aiming::StaticStruct())
+				return FCsData_FpsWeapon_FireType_Aiming::StaticStruct();
+			// FCsData_Weapon_FireType_Scope
+			if (StructProperty->Struct == FCsData_Weapon_FireType_Scope::StaticStruct())
+				return FCsData_Weapon_FireType_Scope::StaticStruct();
+			// FCsData_Weapon_FireType_FXs
+			if (StructProperty->Struct == FCsData_Weapon_FireType_FXs::StaticStruct())
+				return FCsData_Weapon_FireType_FXs::StaticStruct();
+			// FCsData_FpsWeapon_FireType_FXs
+			if (StructProperty->Struct == FCsData_FpsWeapon_FireType_FXs::StaticStruct())
+				return FCsData_FpsWeapon_FireType_FXs::StaticStruct();
+			// FCsData_Weapon_FireType_Sounds
+			if (StructProperty->Struct == FCsData_Weapon_FireType_Sounds::StaticStruct())
+				return FCsData_Weapon_FireType_Sounds::StaticStruct();
+			// FCsData_FpsWeapon_FireType_Sounds
+			if (StructProperty->Struct == FCsData_FpsWeapon_FireType_Sounds::StaticStruct())
+				return FCsData_FpsWeapon_FireType_Sounds::StaticStruct();
+
 			if (Internal)
 			{
 				if (UScriptStruct* Ptr = (*Internal)(Property, InStruct, InScriptStruct, MemberName))

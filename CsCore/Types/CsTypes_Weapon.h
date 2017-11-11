@@ -321,13 +321,13 @@ struct FCsData_Weapon_FireType_Scope
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Scope")
 	FCsCurveFloat LocationDamageModifierRamp;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Big Head", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Scope", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	bool DoScopePower;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Big Head", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Scope", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float MaxScopePower;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Big Head", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Scope", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float ScopePowerGrowthRate;
 
 public:

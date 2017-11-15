@@ -1,6 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #include "Player/CsPlayerPawn.h"
 #include "CsCore.h"
+#include "CsCVars.h"
 #include "Common/CsCommon.h"
 
 ACsPlayerPawn::ACsPlayerPawn(const FObjectInitializer& ObjectInitializer)
@@ -41,7 +42,29 @@ ACsPlayerPawn::ACsPlayerPawn(const FObjectInitializer& ObjectInitializer)
 	EyeHeight = 192.0f;
 }
 
-void ACsPlayerPawn::OnTickActor_CheckCVars(){};
+void ACsPlayerPawn::OnTickActor_HandleCVars(const float &DeltaSeconds)
+{
+	Super::OnTickActor_HandleCVars(DeltaSeconds);
+
+	// Forward
+	if (CsCVarDrawPlayerPawnForward->GetInt() == CS_CVAR_DRAW)
+	{
+		const FVector Start = GetActorLocation();
+		const float Length  = FMath::Max(CS_CVAR_DRAW_PLAYER_PAWN_FORWARD_LENGTH, CsCVarDrawPlayerPawnForwardLength->GetFloat());
+		const FVector End   = Start + Length * CurrentCapsuleVelocityDir;
+
+		DrawDebugDirectionalArrow(GetWorld(), Start, End, 10.0f, FColor::Red, false, DeltaSeconds + 0.005f, 0, 10.0f);
+	}
+	// Right
+	if (CsCVarDrawPlayerPawnRight->GetInt() == CS_CVAR_DRAW)
+	{
+		const FVector Start = GetActorLocation();
+		const float Length  = FMath::Max(CS_CVAR_DRAW_PLAYER_PAWN_RIGHT_LENGTH, CsCVarDrawPlayerPawnRightLength->GetFloat());
+		const FVector End   = Start + Length * CurrentCapsuleVelocityDir;
+
+		DrawDebugDirectionalArrow(GetWorld(), Start, End, 10.0f, FColor::Green, false, DeltaSeconds + 0.005f, 0, 10.0f);
+	}
+}
 
 // Camera
 #pragma region

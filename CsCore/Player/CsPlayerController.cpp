@@ -12,7 +12,7 @@ ACsPlayerController::ACsPlayerController(const FObjectInitializer& ObjectInitial
 	bEnableMouseOverEvents = true;
 }
 
-void ACsPlayerController::OnTickActor_CheckCVars(){}
+void ACsPlayerController::OnTickActor_HandleCVars(){}
 
 void ACsPlayerController::InitInputSystem()
 {

@@ -15,7 +15,7 @@ class CSCORE_API ACsPlayerController : public APlayerController
 	UPROPERTY(BlueprintAssignable, Category = "Tick")
 	FBindableDynEvent_CsPlayerController_OnTickActor OnTickActor_ScriptEvent;
 
-	virtual void OnTickActor_CheckCVars();
+	virtual void OnTickActor_HandleCVars();
 
 // Camera
 #pragma region

@@ -1,6 +1,9 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_View.h"
 #include "Types/CsTypes_Load.h"
+
+#include "Sound/SoundCue.h"
+
 #include "CsTypes_Sound.generated.h"
 #pragma once
 

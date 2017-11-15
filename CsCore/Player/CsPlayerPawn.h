@@ -13,7 +13,7 @@ class CSCORE_API ACsPlayerPawn : public ACsPawn
 	UPROPERTY(BlueprintAssignable, Category = "Tick")
 	FBindableDynEvent_CsPlayerPawn_OnTick OnTick_ScriptEvent;
 
-	virtual void OnTickActor_CheckCVars();
+	virtual void OnTickActor_HandleCVars(const float &DeltaSeconds);
 
 // Camera
 #pragma region

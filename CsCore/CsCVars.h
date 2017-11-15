@@ -96,3 +96,16 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerFxTransactions;
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerProjectileTransactions;
 
 #pragma endregion Projectile
+
+// Player Pawn
+#pragma region
+
+#define CS_CVAR_DRAW_PLAYER_PAWN_FORWARD_LENGTH 100.0f
+#define CS_CVAR_DRAW_PLAYER_PAWN_RIGHT_LENGTH 100.0f
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawPlayerPawnForward;
+extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawPlayerPawnForwardLength;
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawPlayerPawnRight;
+extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawPlayerPawnRightLength;
+
+#pragma endregion Player Pawn

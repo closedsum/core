@@ -2,6 +2,8 @@
 #include "GameFramework/Actor.h"
 #include "Types/CsTypes.h"
 #include "Types/CsTypes_Weapon.h"
+#include "Common/CsCommon_Load.h"
+#include "Data/CsData_Weapon.h"
 #include "CsWeapon.generated.h"
 
 // Data
@@ -14,6 +16,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsWeapon_Override_
 
 // Firing
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsWeapon_Override_FireWeapon, const uint8&, WeaponIndex, const uint8&, FireType);
+// Reloading
 
 // Enums
 #pragma region
@@ -30,6 +33,7 @@ namespace ECsWeaponRoutine
 {
 	enum Type
 	{
+		PlayAnimation_Reload_Internal		UMETA(DisplayName = "PlayAnimation_Reload_Internal"),
 		StartChargeFire_Internal			UMETA(DisplayName = "StartChargeFire_Internal"),
 		FireWeapon_Internal					UMETA(DisplayName = "FireWeapon_Internal"),
 		ECsWeaponRoutine_MAX				UMETA(Hidden),
@@ -42,12 +46,14 @@ namespace ECsWeaponRoutine
 
 	namespace Str
 	{
+		const TCsString PlayAnimation_Reload_Internal = TCsString(TEXT("PlayAnimation_Reload_Internal"), TEXT("playanimation_reload_internal"), TEXT("play animation reload internal"));
 		const TCsString StartChargeFire_Internal = TCsString(TEXT("StartChargeFire_Internal"), TEXT("startchargefire_internal"), TEXT("start charge fire internal"));
 		const TCsString FireWeapon_Internal = TCsString(TEXT("FireWeapon_Internal"), TEXT("fireweapon_internal"), TEXT("fire weapon internal"));
 	}
 
 	inline FString ToString(const Type &EType)
 	{
+		if (EType == Type::PlayAnimation_Reload_Internal) { return Str::PlayAnimation_Reload_Internal.Value; }
 		if (EType == Type::StartChargeFire_Internal) { return Str::StartChargeFire_Internal.Value; }
 		if (EType == Type::FireWeapon_Internal) { return Str::FireWeapon_Internal.Value; }
 		return CS_INVALID_ENUM_TO_STRING;
@@ -55,6 +61,7 @@ namespace ECsWeaponRoutine
 
 	inline Type ToType(const FString &String)
 	{
+		if (String == Str::PlayAnimation_Reload_Internal) { return Type::PlayAnimation_Reload_Internal; }
 		if (String == Str::StartChargeFire_Internal) { return Type::StartChargeFire_Internal; }
 		if (String == Str::FireWeapon_Internal) { return Type::FireWeapon_Internal; }
 		return Type::ECsWeaponRoutine_MAX;
@@ -421,21 +428,25 @@ class CSCORE_API ACsWeapon : public AActor
 	TCsWeaponFire FireType_MAX;
 	uint8 FIRE_TYPE_MAX;
 
+	TCsGetObjectMember_Internal GetObjectMember_Internal;
+	TCsGetStructMember_Internal GetStructMember_Internal;
+	TCsGetScriptStructMember_Internal GetScriptStructMember_Internal;
+
 	virtual void InitMultiValueMembers();
 
 	// Set
 #pragma region
 
-	template<typename T, uint8 TYPE_SIZE>
-	void SetMemberRefValue(struct FCsPrimitiveType_MultiRefValue<T, int32, TYPE_SIZE> &Member, const FString &MemberName, TCsGetObjectMember_Internal &ObjectMember_Internal)
+	template<typename T>
+	void SetMemberRefValue(struct FCsPrimitiveType_TArrayRefValue<T, int32> &Member, const FString &MemberName)
 	{
 		ACsData_Weapon* Data_Weapon = GetMyData_Weapon();
 
 		Member.Reset();
 
-		for (uint8 I = 0; I < TYPE_SIZE; I++)
+		for (uint8 I = 0; I < FIRE_TYPE_MAX; I++)
 		{
-			T* DataMember = UCsCommon_Load::GetObjectMember<T>(Data_Weapon, Data_Weapon->GetClass(), MemberName, ObjectMember_Internal);
+			T* DataMember = UCsCommon_Load::GetObjectMember<T>(Data_Weapon, Data_Weapon->GetClass(), MemberName, GetObjectMember_Internal);
 
 			if (I == 0)
 				Member.Set(*DataMember);
@@ -443,11 +454,39 @@ class CSCORE_API ACsWeapon : public AActor
 		}
 	}
 
-	template<typename T, uint8 FIRE_MAX>
-	void SetMemberMultiValue(struct FCsPrimitiveType_MultiValue<T, TCsWeaponFire, FIRE_MAX> &Member, const T &Value);
+	template<typename T>
+	void SetMemberMultiValue(struct FCsPrimitiveType_TArrayValue<T, TCsWeaponFire> &Member, const T &Value)
+	{
+		Member.Reset();
 
-	template<typename T, uint8 FIRE_MAX>
-	void SetMemberMultiRefValue(struct FCsPrimitiveType_MultiRefValue<T, TCsWeaponFire, FIRE_MAX> &Member, const FString &FireTypeMemberName, const FString &MemberName);
+		for (uint8 I = 0; I < FIRE_TYPE_MAX; I++)
+		{
+			if (I == 0)
+				Member.Set(Value);
+			Member.Set(I, Value);
+		}
+	}
+
+	template<typename T>
+	void SetMemberMultiRefValue(struct FCsPrimitiveType_TArrayRefValue<T, TCsWeaponFire> &Member, const TCsData_Weapon_FireType &FireTypeMember, const FString &MemberName)
+	{
+		ACsData_Weapon* Data_Weapon = GetMyData_Weapon();
+
+		Member.Reset();
+
+		const FString StructName = ECsData_Weapon_FireType::ToString(FireTypeMember);
+
+		for (uint8 I = 0; I < FIRE_TYPE_MAX; I++)
+		{
+			void* Struct				= UCsCommon_Load::GetStructMember<void>(Data_Weapon->GetFireTypeStruct(I), Data_Weapon->GetFireTypeScriptStruct(), StructName, GetStructMember_Internal);
+			UScriptStruct* ScriptStruct = UCsCommon_Load::GetScriptStructMember(Data_Weapon->GetFireTypeStruct(I), Data_Weapon->GetFireTypeScriptStruct(), StructName, GetScriptStructMember_Internal);
+			T* StructMember				= UCsCommon_Load::GetStructMember<T>(Struct, ScriptStruct, MemberName, GetStructMember_Internal);
+
+			if (I == 0)
+				Member.Set(*StructMember);
+			Member.Set(I, StructMember);
+		}
+	}
 
 	void SetMemberValue_bool(const TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> &Member, const int32 &Index, const bool &Value);
 	UFUNCTION(BlueprintCallable, Category = "Member")
@@ -506,6 +545,14 @@ class CSCORE_API ACsWeapon : public AActor
 	UFUNCTION(BlueprintCallable, Category = "Data")
 	class ACsData_Weapon* GetMyData_Weapon();
 
+	/* Declare / Implement in Child class */
+	// ApplyData_Weapon
+
+	FBindableEvent_CsWeapon_OnApplyDataWeapon OnApplyData_Weapon_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Data")
+	FBindableDynEvent_CsWeapon_OnApplyDataWeapon OnApplyData_Weapon_ScriptEvent;
+
 #pragma endregion Data
 
 // Routines
@@ -545,6 +592,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Owner")
 	class ACsPawn* GetMyPawn();
 
+	UFUNCTION(BlueprintCallable, Category = "Owner")
+	virtual TEnumAsByte<ECsViewType::Type> GetCurrentViewType();
+
 #pragma endregion Owner
 
 // State
@@ -553,6 +603,8 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "State")
 	uint8 WeaponIndex;
+
+	TCsWeaponSlot WeaponSlot;
 
 	TCsWeaponState CurrentState;
 	TCsWeaponState LastState;
@@ -595,6 +647,15 @@ public:
 public:
 
 	virtual void PlayAnimation(const TCsWeaponFire &FireType, const TCsWeaponAnim &AnimType, const int32 &Index = 0);
+
+	TCsWeaponAnim ReloadAnim;
+
+	UFUNCTION(BlueprintCallable, Category = "Animation")
+	virtual void PlayAnimation_Reload();
+	static char PlayAnimation_Reload_Internal(struct FCsRoutine* r);
+	struct FCsRoutine* PlayAnimation_Reload_Internal_Routine;
+	static void PlayAnimation_Reload_StopCondition(struct FCsRoutine* r);
+
 	virtual float GetAnimationLength(const TCsWeaponFire &FireType, const TCsWeaponAnim &AnimType, const int32 &Index = 0);
 	virtual void StopAnimation(const TCsWeaponFire &FireType, const TCsWeaponAnim &AnimType, const int32 &Index = 0);
 
@@ -603,10 +664,9 @@ public:
 // Sound
 #pragma region
 
-	TWeakObjectPtr<class ACsSound> Sound_Fire;
-
 	TCsWeaponSound FireSound;
 
+	virtual UObject* GetSoundParent();
 	virtual class ACsSound* GetSound(const TCsWeaponSound &SoundType);
 
 	virtual void PlaySound(const TCsWeaponFire &FireType, const TCsWeaponSound &SoundType);
@@ -717,6 +777,8 @@ public:
 	virtual float GetSpreadRecoveryRate(const TCsWeaponFire &FireType);
 	FCsWeapon_TArrayRef_float FiringSpreadRecoveryDelay;
 	virtual float GetFiringSpreadRecoveryDelay(const TCsWeaponFire &FireType);
+	FCsWeapon_TArrayRef_float MovingSpreadBonus;
+	virtual float GetMovingSpreadBonus(const TCsWeaponFire &FireType);
 
 	FCsWeapon_TArray_float CurrentBaseSpread;
 	FCsWeapon_TArray_float CurrentSpread;
@@ -779,8 +841,9 @@ public:
 
 #pragma endregion Hitscan
 
-	virtual FVector GetMuzzleLocation(const TCsWeaponFire &FireType);
-	virtual FVector GetMuzzleLocation(const TCsWeaponFire &FireType, const TCsViewType &ViewType);
+	virtual UObject* GetMuzzleFlashParent();
+
+	virtual FVector GetMuzzleLocation(const TCsViewType &ViewType, const TCsWeaponFire &FireType);
 
 	virtual void PlayMuzzleFlash(const TCsWeaponFire &FireType);
 

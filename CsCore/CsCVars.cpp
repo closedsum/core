@@ -215,3 +215,36 @@ TAutoConsoleVariable<int32> CsCVarLogManagerProjectileTransactions(
 );
 
 #pragma endregion Projectile
+
+// Player Pawn
+#pragma region
+
+TAutoConsoleVariable<int32> CsCVarDrawPlayerPawnForward(
+	TEXT("draw.playerpawn.forward"),
+	0,
+	TEXT("Draw the Forward vector from the center of the Player capsule."),
+	ECVF_SetByConsole
+);
+
+TAutoConsoleVariable<float> CsCVarDrawPlayerPawnForwardLength(
+	TEXT("draw.playerpawn.forwardlength"),
+	CS_CVAR_DRAW_PLAYER_PAWN_FORWARD_LENGTH,
+	TEXT("Length of the forward vector to be drawn from the center of the Player capsule."),
+	ECVF_SetByConsole
+);
+
+TAutoConsoleVariable<int32> CsCVarDrawPlayerPawnRight(
+	TEXT("draw.playerpawn.right"),
+	0,
+	TEXT("Draw the Right vector from the center of the Player capsule."),
+	ECVF_SetByConsole
+);
+
+TAutoConsoleVariable<float> CsCVarDrawPlayerPawnRightLength(
+	TEXT("draw.playerpawn.rightlength"),
+	CS_CVAR_DRAW_PLAYER_PAWN_RIGHT_LENGTH,
+	TEXT("Length of the right vector to be drawn from the center of the Player capsule."),
+	ECVF_SetByConsole
+);
+
+#pragma endregion Player Pawn

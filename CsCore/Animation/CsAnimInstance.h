@@ -190,6 +190,8 @@ public:
 
 	virtual void OnTick_HandleGlobalPlayRate();
 
+	TCsViewType CurrentViewType;
+
 #if WITH_EDITOR
 
 	// Coroutine Scheduler

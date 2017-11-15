@@ -3,7 +3,6 @@
 #include "Engine.h"
 #include "Materials/MaterialInstanceConstant.h"
 #include "PhysicsEngine/PhysicsAsset.h"
-#include "Sound/SoundCue.h"
 
 #include "Json.h"
 #include "JsonObjectConverter.h"

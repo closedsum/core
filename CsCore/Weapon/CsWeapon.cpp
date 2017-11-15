@@ -3,19 +3,18 @@
 #include "Weapon/CsWeapon.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Common/CsCommon_Load.h"
 #include "Common/CsCommon.h"
 #include "Coroutine/CsCoroutineScheduler.h"
 #include "Game/CsGameState.h"
 #include "Player/CsPlayerState.h"
 #include "Pawn/CsPawn.h"
 
+#include "Animation/CsAnimInstance.h"
+
 // Managers
 #include "Managers/FX/CsManager_FX.h"
 #include "Managers/Projectile/CsManager_Projectile.h"
 #include "Managers/Projectile/CsProjectile.h"
-// Data
-#include "Data/CsData_Weapon.h"
 
 ACsWeapon::ACsWeapon(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -28,9 +27,14 @@ ACsWeapon::ACsWeapon(const FObjectInitializer& ObjectInitializer)
 	//CurrentState = ECsWeaponState::Idle;
 	//LastState	 = CurrentState;
 
-	//IdleState = ECsWeaponState::Idle
-	//FiringState = ECsWeaponState::Firing
-	//ReloadingState = ECsWeaponState::Reloading
+	//IdleState = ECsWeaponState::Idle;
+
+	//FiringState = ECsWeaponState::Firing;
+	//ChargeFireStartAnim = ECsWeaponAnim::ECsWeaponAnim_MAX;
+	//ChargeFireLoopAnim = ECsWeaponAnim::ECsWeaponAnim_MAX;
+
+	//ReloadingState = ECsWeaponState::Reloading;
+	//ReloadAnim = ECsWeaponAnim::Reload;
 
 	// Make sure to call InitMultiValueMembers() in the Child Class
 }
@@ -69,6 +73,8 @@ void ACsWeapon::InitMultiValueMembers()
 		TimeBetweenAutoShots.GetDelegate.BindUObject(this, &ACsWeapon::GetTimeBetweenShots);
 		IsFirePressed.Init(SIZE);
 		Last_IsFirePressed.Init(SIZE);
+		IsFirePressed_StartTime.Init(SIZE);
+		IsFireReleased_StartTime.Init(SIZE);
 		Fire_StartTime.Init(SIZE);
 		// Charge
 		AllowChargeFire.Init(SIZE);
@@ -107,6 +113,8 @@ void ACsWeapon::InitMultiValueMembers()
 	{
 		ReloadTime.Init(1);
 		ReloadTime.GetDelegate.BindUObject(this, &ACsWeapon::GetReloadTime);
+		AllowRechargeAmmo.Init(1);
+		AllowRechargeAmmoDuringFire.Init(1);
 		RechargeSecondsPerAmmo.Init(1);
 		RechargeSecondsPerAmmo.GetDelegate.BindUObject(this, &ACsWeapon::GetRechargeSecondsPerAmmo);
 		RechargeStartupDelay.Init(1);
@@ -116,40 +124,6 @@ void ACsWeapon::InitMultiValueMembers()
 
 	// Set
 #pragma region
-
-template<typename T, uint8 FIRE_MAX>
-void ACsWeapon::SetMemberMultiValue(struct FCsPrimitiveType_MultiValue<T, TCsWeaponFire, FIRE_MAX> &Member, const T &Value)
-{
-	Member.Reset();
-
-	for (uint8 I = 0; I < FIRE_MAX; I++)
-	{
-		if (I == 0)
-			Member.Set(Value);
-		Member.Set(I, Value);
-	}
-}
-
-template<typename T, uint8 FIRE_MAX>
-void ACsWeapon::SetMemberMultiRefValue(struct FCsPrimitiveType_MultiRefValue<T, TCsWeaponFire, FIRE_MAX> &Member, const FString &FireTypeMemberName, const FString &MemberName)
-{
-	ACsData_Weapon* Data_Weapon = GetMyData_Weapon();
-
-	Member.Reset();
-
-	const FString StructName = FireTypeMemberName;
-
-	for (uint8 I = 0; I < FIRE_MAX; I++)
-	{
-		void* Struct				= UCsCommon_Load::GetStructMember<void>(Data_Weapon->GetFireTypeStruct(I), Data_Weapon->GetFireTypeScriptStruct(), StructName, &UCsCommon_Load::GetStructMember_Internal);
-		UScriptStruct* ScriptStruct = UCsCommon_Load::GetScriptStructMember(Data_Weapon->GetFireTypeStruct(I), Data_Weapon->GetFireTypeScriptStruct(), StructName, &UCsCommon_Load::GetScriptStructMember_Internal);
-		T* StructMember				= UCsCommon_Load::GetStructMember<T>(Struct, ScriptStruct, MemberName, &UCsCommon_Load::GetStructMember_Internal);
-
-		if (I == 0)
-			Member.Set(*StructMember);
-		Member.Set(I, StructMember);
-	}
-}
 
 void ACsWeapon::SetMemberValue_bool(const TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> &Member, const int32 &Index, const bool &Value)
 {
@@ -377,6 +351,12 @@ bool ACsWeapon::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Typ
 {
 	TCsWeaponRoutine RoutineType = (TCsWeaponRoutine)Type;
 
+	// PlayAnimation_Reload_Internal
+	if (RoutineType == ECsWeaponRoutine::PlayAnimation_Reload_Internal)
+	{
+		PlayAnimation_Reload_Internal_Routine = Routine;
+		return true;
+	}
 	// StartChargeShot_Internal
 	if (RoutineType == ECsWeaponRoutine::StartChargeFire_Internal)
 	{
@@ -401,15 +381,24 @@ bool ACsWeapon::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &
 {
 	TCsWeaponRoutine RoutineType = (TCsWeaponRoutine)Type;
 
+	// PlayAnimation_Reload_Internal
+	if (RoutineType == ECsWeaponRoutine::PlayAnimation_Reload_Internal)
+	{
+		check(Routine == PlayAnimation_Reload_Internal_Routine);
+		PlayAnimation_Reload_Internal_Routine = nullptr;
+		return true;
+	}
 	// StartChargeShot_Internal
 	if (RoutineType == ECsWeaponRoutine::StartChargeFire_Internal)
 	{
+		check(Routine == StartChargeFire_Internal_Routine);
 		StartChargeFire_Internal_Routine = nullptr;
 		return true;
 	}
 	// FireWeapon_Internal
 	if (RoutineType == ECsWeaponRoutine::FireWeapon_Internal)
 	{
+		check(Routine == FireWeapon_Internal_Routine);
 		FireWeapon_Internal_Routine = nullptr;
 		return true;
 	}
@@ -420,6 +409,7 @@ void ACsWeapon::ClearRoutines()
 {
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 
+	Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, FName("Stop PlayAnimation_Reload_Internal"), this);
 	Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, FName("Stop StartChargeFire_Internal"), this);
 	Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, FName("Stop FireWeapon_Internal"), this);
 }
@@ -452,6 +442,25 @@ void ACsWeapon::SetMyPawn(class ACsPawn* InMyPawn)
 ACsPawn* ACsWeapon::GetMyPawn()
 {
 	return MyPawn.IsValid() ? MyPawn.Get() : nullptr;
+}
+
+TEnumAsByte<ECsViewType::Type> ACsWeapon::GetCurrentViewType()
+{
+#if WITH_EDITOR 
+	// In Editor Preview Window
+	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	{
+		if (UCsAnimInstance* AnimInstance = Cast<UCsAnimInstance>(GetMyOwner()))
+			return AnimInstance->CurrentViewType;
+	}
+	// In Game
+	else
+#endif // #if WITH_EDITOR
+	{
+		if (ACsPawn* Pawn = GetMyPawn())
+			return UCsCommon::IsLocalPawn(GetWorld(), Pawn) ? ECsViewType::FirstPerson : ECsViewType::ThirdPerson;
+	}
+	return ECsViewType::ThirdPerson;
 }
 
 #pragma endregion Owner
@@ -568,17 +577,7 @@ void ACsWeapon::OnTick_HandleStates()
 					ReloadStartTime = GetWorld()->TimeSeconds;
 					IsReloading		= true;
 
-#if WITH_EDITOR 
-					// In Editor Preview Window
-					if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
-					{
-					}
-					// In Game
-					else
-#endif // #if WITH_EDITOR
-					{
-						//MyPawn->OnReloadFinishEvent.Broadcast();
-					}
+					PlayAnimation_Reload();
 
 					LastState    = CurrentState;
 					CurrentState = ReloadingState;
@@ -681,17 +680,7 @@ void ACsWeapon::CheckState_Idle()
 			ReloadStartTime = TimeSeconds;
 			IsReloading		= true;
 
-#if WITH_EDITOR 
-			// In Editor Preview Window
-			if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
-			{
-			}
-			// In Game
-			else
-#endif // #if WITH_EDITOR
-			{
-				//MyPawn->OnReloadStartEvent.Broadcast();
-			}
+			PlayAnimation_Reload();
 
 			LastState	 = CurrentState;
 			CurrentState = ReloadingState;
@@ -846,6 +835,74 @@ void ACsWeapon::PlayAnimation(const TCsWeaponFire &FireType, const TCsWeaponAnim
 {
 }
 
+void ACsWeapon::PlayAnimation_Reload()
+{
+	if (PlayAnimation_Reload_Internal_Routine && PlayAnimation_Reload_Internal_Routine->IsValid())
+		PlayAnimation_Reload_Internal_Routine->End();
+
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+
+	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+
+	CsCoroutine Function		  = &ACsWeapon::PlayAnimation_Reload_Internal;
+	CsCoroutineStopCondition Stop = &ACsWeapon::PlayAnimation_Reload_StopCondition;
+	CsAddRoutine Add			  = &ACsWeapon::AddRoutine;
+	CsRemoveRoutine Remove		  = &ACsWeapon::RemoveRoutine;
+	const uint8 Type			  = (uint8)ECsWeaponRoutine::PlayAnimation_Reload_Internal;
+
+	FCsRoutine* R = Scheduler->Allocate(Schedule, Function, Stop, this, Add, Remove, Type, true, false);
+	R->timers[0]  = GetWorld()->TimeSeconds;
+	R->ints[0]    = 0;
+	R->floats[0]  = GetAnimationLength(FireType_MAX, ReloadAnim);
+
+	Scheduler->StartRoutine(Schedule, R);
+}
+
+PT_THREAD(ACsWeapon::PlayAnimation_Reload_Internal(struct FCsRoutine* r))
+{
+	ACsWeapon* mw			 = Cast<ACsWeapon>(r->GetActor());
+	UCsCoroutineScheduler* s = r->scheduler;
+	UWorld* w				 = mw->GetWorld();
+
+	const TCsWeaponAnim ReloadAnim = mw->ReloadAnim;
+	const float ReloadTime		   = r->floats[0];
+
+	const float CurrentTime = w->GetTimeSeconds();
+	const float StartTime   = r->startTime;
+
+	CS_COROUTINE_BEGIN(r);
+
+	r->AddMessage(ECsCoroutineMessage::Stop, FName("Stop PlayAnimation_Reload_Internal"));
+
+	mw->PlayAnimation(mw->FireType_MAX, ReloadAnim, 0);
+
+	if (ReloadTime > 0)
+		CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - StartTime >= ReloadTime);
+	
+	CS_COROUTINE_END(r);
+}
+
+void ACsWeapon::PlayAnimation_Reload_StopCondition(struct FCsRoutine* r)
+{
+	ACsWeapon* mw = Cast<ACsWeapon>(r->GetActor());
+
+#if WITH_EDITOR 
+	// In Editor Preview Window
+	if (UCsCommon::IsPlayInEditorPreview(mw->GetWorld()) &&
+		mw)
+	{
+		if (!mw->GetMyOwner())
+			r->End();
+	}
+	// In Game
+	else
+#endif // #if WITH_EDITOR
+	{
+		if (!mw)
+			r->End();
+	}
+}
+
 float ACsWeapon::GetAnimationLength(const TCsWeaponFire &FireType, const TCsWeaponAnim &AnimType, const int32 &Index /*=0*/)
 {
 	return 0.0f;
@@ -860,17 +917,23 @@ void ACsWeapon::StopAnimation(const TCsWeaponFire &FireType, const TCsWeaponAnim
 // Sound
 #pragma region
 
-ACsSound* ACsWeapon::GetSound(const TCsWeaponSound &SoundType)
-{
-	return nullptr;
-}
+UObject* ACsWeapon::GetSoundParent() { return nullptr; }
+ACsSound* ACsWeapon::GetSound(const TCsWeaponSound &SoundType){ return nullptr; }
 
 void ACsWeapon::PlaySound(const TCsWeaponFire &FireType, const TCsWeaponSound &SoundType)
 {
+	ACsData_Weapon* Data	   = GetMyData_Weapon();
+	const TCsViewType ViewType = GetCurrentViewType();
+
+	Data->PlaySound(GetWorld(), ViewType, FireType, SoundType, GetMyPawn(), GetSoundParent());
 }
 
 void ACsWeapon::StopSound(const TCsWeaponFire &FireType, const TCsWeaponSound &SoundType)
 {
+	ACsData_Weapon* Data	   = GetMyData_Weapon();
+	const TCsViewType ViewType = GetCurrentViewType();
+
+	Data->StopSound(GetWorld(), ViewType, FireType, SoundType, GetMyPawn(), GetSoundParent());
 }
 
 #pragma endregion Sound
@@ -1076,6 +1139,7 @@ float ACsWeapon::GetMaxSpread(const TCsWeaponFire &FireType) { return MaxSpread.
 float ACsWeapon::GetSpreadAddedPerShot(const TCsWeaponFire &FireType) { return SpreadAddedPerShot.Get(FireType); }
 float ACsWeapon::GetSpreadRecoveryRate(const TCsWeaponFire &FireType) { return SpreadRecoveryRate.Get(FireType); }
 float ACsWeapon::GetFiringSpreadRecoveryDelay(const TCsWeaponFire &FireType) { return FiringSpreadRecoveryDelay.Get(FireType); }
+float ACsWeapon::GetMovingSpreadBonus(const TCsWeaponFire &FireType) { return MovingSpreadBonus.Get(FireType); }
 
 #pragma endregion Spread
 
@@ -1300,8 +1364,9 @@ void ACsWeapon::FireProjectile(const TCsWeaponFire &FireType, FCsProjectileFireC
 
 	ACsData_Weapon* Data_Weapon = GetMyData_Weapon();
 
-	const FVector FakeStart = GetMuzzleLocation(FireType);
-	FVector FakeDir			= (RealEnd - FakeStart).GetSafeNormal();
+	const TCsViewType ViewType = GetCurrentViewType();
+	const FVector FakeStart	   = GetMuzzleLocation(ViewType, FireType);
+	FVector FakeDir			   = (RealEnd - FakeStart).GetSafeNormal();
 
 	// Spread
 	if (DoSpread.Get(FireType))
@@ -1547,15 +1612,15 @@ void ACsWeapon::FireHitscan(const TCsWeaponFire &FireType, const FCsProjectileFi
 
 #pragma endregion Hitscan
 
-FVector ACsWeapon::GetMuzzleLocation(const TCsWeaponFire &FireType) { return FVector::ZeroVector; }
-FVector ACsWeapon::GetMuzzleLocation(const TCsWeaponFire &FireType, const TCsViewType &ViewType)
+UObject* ACsWeapon::GetMuzzleFlashParent() { return nullptr; }
+
+FVector ACsWeapon::GetMuzzleLocation(const TCsViewType &ViewType, const TCsWeaponFire &FireType)
 {
 	return FVector::ZeroVector; // GetMyData_Weapon()->GetMuzzleLocation(GetMesh(ViewType), ViewType, FireType, CurrentProjectilePerShotIndex.Get(FireType));
 }
 
 void ACsWeapon::PlayMuzzleFlash(const TCsWeaponFire &FireType)
 {
-	/*
 	ACsManager_FX* Manager_FX = nullptr;
 
 #if WITH_EDITOR 
@@ -1574,11 +1639,10 @@ void ACsWeapon::PlayMuzzleFlash(const TCsWeaponFire &FireType)
 	}
 
 	ACsData_Weapon* Data_Weapon = GetMyData_Weapon();
-	const TCsViewType ViewType	 = GetCurrentViewType();
-	FCsFxElement* FX			 = Data_Weapon->GetMuzzleFX(ViewType, FireType, CurrentProjectilePerShotIndex.Get(FireType));
+	const TCsViewType ViewType	= GetCurrentViewType();
+	FCsFxElement* FX			= Data_Weapon->GetMuzzleFX(ViewType, FireType, CurrentProjectilePerShotIndex.Get(FireType));
 
-	Manager_FX->Play(FX, GetMyPawn(), GetMesh(ViewType));
-	*/
+	Manager_FX->Play(FX, GetMyPawn(), GetMuzzleFlashParent());
 }
 
 #pragma endregion Firing
@@ -1621,6 +1685,8 @@ void ACsWeapon::Reload()
 
 	ReloadStartTime = GetWorld()->TimeSeconds;
 	IsReloading		= true;
+
+	PlayAnimation_Reload();
 
 	LastState    = CurrentState;
 	CurrentState = ReloadingState;

@@ -351,7 +351,7 @@ struct FCsData_Weapon_FireType_FXs
 	{
 		const int32 Count = MuzzleFXs.Num();
 
-		return &(MuzzleFXs[Index % Count]);
+		return Count > CS_EMPTY ? &(MuzzleFXs[Index % Count]) : nullptr;
 	}
 };
 

@@ -2650,7 +2650,7 @@ template<typename T>
 	static void* GetStructMemberEX(UProperty* Property, void* InStruct, UScriptStruct* const &InScriptStruct, const FString &MemberName);
 
 	template<typename T>
-	static T* GetStructMember(void* InStruct, UScriptStruct* const &InScriptStruct, const FString &MemberName, TCsGetStructMember_Internal Internal = NULL)
+	static T* GetStructMember(void* InStruct, UScriptStruct* const &InScriptStruct, const FString &MemberName, TCsGetStructMember_Internal Internal = nullptr)
 	{
 		for (TFieldIterator<UProperty> It(InScriptStruct); It; ++It)
 		{
@@ -2666,12 +2666,12 @@ template<typename T>
 			{
 				if (Internal)
 				{
-					if (void* Ptr = GetStructMemberEX(Property, InStruct, InScriptStruct))
+					if (void* Ptr = GetStructMemberEX(Property, InStruct, InScriptStruct, MemberName))
 						return (T*)Ptr;
 					if (void* Ptr = (*Internal)(Property, InStruct, InScriptStruct, MemberName))
 						return (T*)Ptr;
 				}
-				return NULL;
+				return nullptr;
 			}
 			// bool
 			if (UBoolProperty* BoolProperty = Cast<UBoolProperty>(*It))
@@ -2696,10 +2696,10 @@ template<typename T>
 			if (UFloatProperty* FloatProperty = Cast<UFloatProperty>(*It))
 				return (T*)Property->ContainerPtrToValuePtr<float>(InStruct);
 		}
-		return NULL;
+		return nullptr;
 	}
 
-	static UScriptStruct* GetScriptStructMember(void* InStruct, UScriptStruct* const &InScriptStruct, const FString &MemberName, TCsGetScriptStructMember_Internal Internal = NULL);
+	static UScriptStruct* GetScriptStructMember(void* InStruct, UScriptStruct* const &InScriptStruct, const FString &MemberName, TCsGetScriptStructMember_Internal Internal = nullptr);
 
 	template<typename T>
 	static T* GetObjectMember(void* InObject, UClass* const &InClass, const FString &MemberName, TCsGetObjectMember_Internal Internal = NULL)

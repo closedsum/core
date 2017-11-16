@@ -10,48 +10,78 @@ class CSCORE_API ACsPawn : public ACharacter
 
 	virtual void OnTickActor_HandleCVars(const float &DeltaSeconds);
 
+// View
+#pragma region
+
+	UPROPERTY(BlueprintReadOnly, Category = "View")
+	FRotator CurrentViewRotation;
+	UPROPERTY(BlueprintReadOnly, Category = "View")
+	FVector CurrentViewLocation;
+	UPROPERTY(BlueprintReadOnly, Category = "View")
+	FVector CurrentViewDir;
+	UPROPERTY(BlueprintReadOnly, Category = "View")
+	FVector CurrentViewDirXY;
+	UPROPERTY(BlueprintReadOnly, Category = "View")
+	FVector CurrentViewRight;
+	UPROPERTY(BlueprintReadOnly, Category = "View")
+	FVector CurrentViewRightXY;
+
+	virtual void RecordView();
+
+#pragma endregion View
+
 // Movement
 #pragma region
 
-	UPROPERTY(BlueprintReadWrite, Category = "Movement")
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	FVector CurrentVelocity;
-	UPROPERTY(BlueprintReadWrite, Category = "Movement")
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	FVector CurrentVelocityDir;
-	UPROPERTY(BlueprintReadWrite, Category = "Movement")
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	FVector CurrentVelocityXY;
-	UPROPERTY(BlueprintReadWrite, Category = "Movement")
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	FVector CurrentVelocityDirXY;
-	UPROPERTY(BlueprintReadWrite, Category = "Movement")
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	FVector CurrentVelocityZ;
-	UPROPERTY(BlueprintReadWrite, Category = "Movement")
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	FVector CurrentVelocityDirZ;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Movement")
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float CurrentSpeed;
-	UPROPERTY(BlueprintReadWrite, Category = "Movement")
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float CurrentSpeedXY;
-	UPROPERTY(BlueprintReadWrite, Category = "Movement")
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float CurrentSpeedZ;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Movement")
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	FVector CurrentVelocityRight;
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	FVector CurrentVelocityRightXY;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	FVector CurrentCapsuleVelocity;
-	UPROPERTY(BlueprintReadWrite, Category = "Movement")
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	FVector CurrentCapsuleVelocityDir;
-	UPROPERTY(BlueprintReadWrite, Category = "Movement")
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	FVector CurrentCapsuleVelocityXY;
-	UPROPERTY(BlueprintReadWrite, Category = "Movement")
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	FVector CurrentCapsuleVelocityDirXY;
-	UPROPERTY(BlueprintReadWrite, Category = "Movement")
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	FVector CurrentCapsuleVelocityZ;
-	UPROPERTY(BlueprintReadWrite, Category = "Movement")
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	FVector CurrentCapsuleVelocityDirZ;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Movement")
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float CurrentCapsuleSpeed;
-	UPROPERTY(BlueprintReadWrite, Category = "Movement")
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float CurrentCapsuleSpeedXY;
-	UPROPERTY(BlueprintReadWrite, Category = "Movement")
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float CurrentCapsuleSpeedZ;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	FVector CurrentCapsuleVelocityRight;
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	FVector CurrentCapsuleVelocityRightXY;
 
 	virtual void RecordVelocityAndSpeed();
 

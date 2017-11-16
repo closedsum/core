@@ -97,15 +97,41 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerProjectileTransact
 
 #pragma endregion Projectile
 
-// Player Pawn
+// Player
+#pragma region
+
+	// View
+#pragma region
+
+#define CS_CVAR_DRAW_PLAYER_VIEW_FORWARD_LENGTH 100.0f
+#define CS_CVAR_DRAW_PLAYER_VIEW_FORWARD_THICKNESS 2.0f
+#define CS_CVAR_DRAW_PLAYER_VIEW_RIGHT_LENGTH 100.0f
+#define CS_CVAR_DRAW_PLAYER_VIEW_RIGHT_THICKNESS 2.0f
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawPlayerViewForward;
+extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawPlayerViewForwardLength;
+extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawPlayerViewForwardThickness;
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawPlayerViewRight;
+extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawPlayerViewRightLength;
+extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawPlayerViewRightThickness;
+
+#pragma endregion View
+
+	// Pawn
 #pragma region
 
 #define CS_CVAR_DRAW_PLAYER_PAWN_FORWARD_LENGTH 100.0f
+#define CS_CVAR_DRAW_PLAYER_PAWN_FORWARD_THICKNESS 2.0f
 #define CS_CVAR_DRAW_PLAYER_PAWN_RIGHT_LENGTH 100.0f
+#define CS_CVAR_DRAW_PLAYER_PAWN_RIGHT_THICKNESS 2.0f
 
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawPlayerPawnForward;
 extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawPlayerPawnForwardLength;
+extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawPlayerPawnForwardThickness;
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawPlayerPawnRight;
 extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawPlayerPawnRightLength;
+extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawPlayerPawnRightThickness;
 
-#pragma endregion Player Pawn
+#pragma endregion Pawn
+
+#pragma endregion Player

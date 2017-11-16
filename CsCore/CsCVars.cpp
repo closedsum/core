@@ -216,35 +216,101 @@ TAutoConsoleVariable<int32> CsCVarLogManagerProjectileTransactions(
 
 #pragma endregion Projectile
 
-// Player Pawn
+// Player
+#pragma region
+
+	// View
+#pragma region
+
+TAutoConsoleVariable<int32> CsCVarDrawPlayerViewForward(
+	TEXT("draw.player.view.forward"),
+	0,
+	TEXT("Draw the Forward vector from the center of the Player capsule."),
+	ECVF_SetByConsole
+);
+
+TAutoConsoleVariable<float> CsCVarDrawPlayerViewForwardLength(
+	TEXT("draw.player.view.forwardlength"),
+	CS_CVAR_DRAW_PLAYER_VIEW_FORWARD_LENGTH,
+	TEXT("Length of the forward vector to be drawn from the Player view."),
+	ECVF_SetByConsole
+);
+
+TAutoConsoleVariable<float> CsCVarDrawPlayerViewForwardThickness(
+	TEXT("draw.player.view.forwardthickness"),
+	CS_CVAR_DRAW_PLAYER_VIEW_FORWARD_THICKNESS,
+	TEXT("Thickness of the forward vector to be drawn from the Player view."),
+	ECVF_SetByConsole
+);
+
+TAutoConsoleVariable<int32> CsCVarDrawPlayerViewRight(
+	TEXT("draw.player.view.right"),
+	0,
+	TEXT("Draw the Right vector from the Player view."),
+	ECVF_SetByConsole
+);
+
+TAutoConsoleVariable<float> CsCVarDrawPlayerViewRightLength(
+	TEXT("draw.player.view.rightlength"),
+	CS_CVAR_DRAW_PLAYER_VIEW_RIGHT_LENGTH,
+	TEXT("Length of the right vector to be drawn from the Player view."),
+	ECVF_SetByConsole
+);
+
+TAutoConsoleVariable<float> CsCVarDrawPlayerViewRightThickness(
+	TEXT("draw.player.view.rightthickness"),
+	CS_CVAR_DRAW_PLAYER_VIEW_RIGHT_THICKNESS,
+	TEXT("Thickness of the right vector to be drawn from the Player view."),
+	ECVF_SetByConsole
+);
+
+#pragma endregion View
+
+	// Pawn
 #pragma region
 
 TAutoConsoleVariable<int32> CsCVarDrawPlayerPawnForward(
-	TEXT("draw.playerpawn.forward"),
+	TEXT("draw.player.pawn.forward"),
 	0,
 	TEXT("Draw the Forward vector from the center of the Player capsule."),
 	ECVF_SetByConsole
 );
 
 TAutoConsoleVariable<float> CsCVarDrawPlayerPawnForwardLength(
-	TEXT("draw.playerpawn.forwardlength"),
+	TEXT("draw.player.pawn.forwardlength"),
 	CS_CVAR_DRAW_PLAYER_PAWN_FORWARD_LENGTH,
 	TEXT("Length of the forward vector to be drawn from the center of the Player capsule."),
 	ECVF_SetByConsole
 );
 
+TAutoConsoleVariable<float> CsCVarDrawPlayerPawnForwardThickness(
+	TEXT("draw.player.pawn.forwardthickness"),
+	CS_CVAR_DRAW_PLAYER_PAWN_FORWARD_THICKNESS,
+	TEXT("Thickness of the forward vector to be drawn from the center of the Player capsule."),
+	ECVF_SetByConsole
+);
+
 TAutoConsoleVariable<int32> CsCVarDrawPlayerPawnRight(
-	TEXT("draw.playerpawn.right"),
+	TEXT("draw.player.pawn.right"),
 	0,
 	TEXT("Draw the Right vector from the center of the Player capsule."),
 	ECVF_SetByConsole
 );
 
 TAutoConsoleVariable<float> CsCVarDrawPlayerPawnRightLength(
-	TEXT("draw.playerpawn.rightlength"),
+	TEXT("draw.player.pawn.rightlength"),
 	CS_CVAR_DRAW_PLAYER_PAWN_RIGHT_LENGTH,
 	TEXT("Length of the right vector to be drawn from the center of the Player capsule."),
 	ECVF_SetByConsole
 );
 
-#pragma endregion Player Pawn
+TAutoConsoleVariable<float> CsCVarDrawPlayerPawnRightThickness(
+	TEXT("draw.player.pawn.rightthickness"),
+	CS_CVAR_DRAW_PLAYER_PAWN_RIGHT_THICKNESS,
+	TEXT("Thickness of the right vector to be drawn from the center of the Player capsule."),
+	ECVF_SetByConsole
+);
+
+#pragma endregion Pawn
+
+#pragma endregion Player

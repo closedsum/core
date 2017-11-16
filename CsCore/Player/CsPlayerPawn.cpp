@@ -46,23 +46,51 @@ void ACsPlayerPawn::OnTickActor_HandleCVars(const float &DeltaSeconds)
 {
 	Super::OnTickActor_HandleCVars(DeltaSeconds);
 
-	// Forward
-	if (CsCVarDrawPlayerPawnForward->GetInt() == CS_CVAR_DRAW)
+	// View
 	{
-		const FVector Start = GetActorLocation();
-		const float Length  = FMath::Max(CS_CVAR_DRAW_PLAYER_PAWN_FORWARD_LENGTH, CsCVarDrawPlayerPawnForwardLength->GetFloat());
-		const FVector End   = Start + Length * CurrentCapsuleVelocityDir;
+		// Forward
+		if (CsCVarDrawPlayerViewForward->GetInt() == CS_CVAR_DRAW)
+		{
+			const FVector Start	  = GetActorLocation();
+			const float Length	  = FMath::Max(CS_CVAR_DRAW_PLAYER_VIEW_FORWARD_LENGTH, CsCVarDrawPlayerViewForwardLength->GetFloat());
+			const FVector End	  = Start + Length * CurrentViewDir;
+			const float Thickness = FMath::Max(CS_CVAR_DRAW_PLAYER_VIEW_FORWARD_THICKNESS, CsCVarDrawPlayerViewForwardThickness->GetFloat());
 
-		DrawDebugDirectionalArrow(GetWorld(), Start, End, 10.0f, FColor::Red, false, DeltaSeconds + 0.005f, 0, 10.0f);
+			DrawDebugDirectionalArrow(GetWorld(), Start, End, 10.0f, FColor::Red, false, DeltaSeconds + 0.005f, 0, Thickness);
+		}
+		// Right
+		if (CsCVarDrawPlayerViewRight->GetInt() == CS_CVAR_DRAW)
+		{
+			const FVector Start	  = GetActorLocation();
+			const float Length	  = FMath::Max(CS_CVAR_DRAW_PLAYER_VIEW_RIGHT_LENGTH, CsCVarDrawPlayerViewRightLength->GetFloat());
+			const FVector End	  = Start + Length * CurrentViewRight;
+			const float Thickness = FMath::Max(CS_CVAR_DRAW_PLAYER_VIEW_RIGHT_THICKNESS, CsCVarDrawPlayerViewRightThickness->GetFloat());
+
+			DrawDebugDirectionalArrow(GetWorld(), Start, End, 10.0f, FColor::Green, false, DeltaSeconds + 0.005f, 0, Thickness);
+		}
 	}
-	// Right
-	if (CsCVarDrawPlayerPawnRight->GetInt() == CS_CVAR_DRAW)
+	// Pawn
 	{
-		const FVector Start = GetActorLocation();
-		const float Length  = FMath::Max(CS_CVAR_DRAW_PLAYER_PAWN_RIGHT_LENGTH, CsCVarDrawPlayerPawnRightLength->GetFloat());
-		const FVector End   = Start + Length * CurrentCapsuleVelocityDir;
+		// Forward
+		if (CsCVarDrawPlayerPawnForward->GetInt() == CS_CVAR_DRAW)
+		{
+			const FVector Start	  = GetActorLocation();
+			const float Length	  = FMath::Max(CS_CVAR_DRAW_PLAYER_PAWN_FORWARD_LENGTH, CsCVarDrawPlayerPawnForwardLength->GetFloat());
+			const FVector End	  = Start + Length * CurrentCapsuleVelocityDir;
+			const float Thickness = FMath::Max(CS_CVAR_DRAW_PLAYER_PAWN_FORWARD_THICKNESS, CsCVarDrawPlayerPawnForwardThickness->GetFloat());
 
-		DrawDebugDirectionalArrow(GetWorld(), Start, End, 10.0f, FColor::Green, false, DeltaSeconds + 0.005f, 0, 10.0f);
+			DrawDebugDirectionalArrow(GetWorld(), Start, End, 10.0f, FColor::Red, false, DeltaSeconds + 0.005f, 0, Thickness);
+		}
+		// Right
+		if (CsCVarDrawPlayerPawnRight->GetInt() == CS_CVAR_DRAW)
+		{
+			const FVector Start	  = GetActorLocation();
+			const float Length	  = FMath::Max(CS_CVAR_DRAW_PLAYER_PAWN_RIGHT_LENGTH, CsCVarDrawPlayerPawnRightLength->GetFloat());
+			const FVector End	  = Start + Length * CurrentCapsuleVelocityRight;
+			const float Thickness = FMath::Max(CS_CVAR_DRAW_PLAYER_PAWN_RIGHT_THICKNESS, CsCVarDrawPlayerPawnRightThickness->GetFloat());
+
+			DrawDebugDirectionalArrow(GetWorld(), Start, End, 10.0f, FColor::Green, false, DeltaSeconds + 0.005f, 0, Thickness);
+		}
 	}
 }
 
@@ -98,3 +126,26 @@ FVector ACsPlayerPawn::GetFeetLocation() const
 }
 
 #pragma endregion Camera
+
+// View
+#pragma region
+
+void ACsPlayerPawn::RecordView()
+{
+	CurrentViewRotation = GetViewRotation();
+	CurrentViewLocation = GetPawnViewLocation();
+	CurrentViewDir		= CurrentViewRotation.Vector();
+	CurrentViewDirXY	= FRotator(0.0f, CurrentViewRotation.Yaw, 0.0f).Vector();
+
+	FRotator Rotation = CurrentViewRotation;
+
+	FRotationMatrix Matrix = FRotationMatrix(Rotation);
+	CurrentViewRight	   = Matrix.GetScaledAxis(EAxis::Y);
+		
+	Rotation = FRotator(0.0f, CurrentViewRotation.Yaw, 0.0f);
+
+	Matrix				= FRotationMatrix(Rotation);
+	CurrentViewRightXY	= Matrix.GetScaledAxis(EAxis::Y);
+}
+
+#pragma endregion View

@@ -28,4 +28,11 @@ public:
 	virtual FVector GetFeetLocation() const;
 
 #pragma endregion Camera
+
+// View
+#pragma region
+
+	virtual void RecordView() override;
+
+#pragma endregion View
 };

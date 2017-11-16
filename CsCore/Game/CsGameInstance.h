@@ -107,7 +107,7 @@ class CSCORE_API UCsGameInstance : public UGameInstance
 {
 	GENERATED_UCLASS_BODY()
 
-	virtual void ResetCVars();
+	virtual void InitCVars();
 
 	virtual void Init() override;
 	virtual void Shutdown() override;

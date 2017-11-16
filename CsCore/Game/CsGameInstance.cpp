@@ -20,15 +20,9 @@ UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer)
 	DataMapping			 = nullptr;
 
 	LevelState = ECsLevelState::None;
-
-	ResetCVars();
 }
 
-void UCsGameInstance::ResetCVars()
-{
-	// Loading
-	//CsCVarLogManagerLoading->Set(CS_CVAR_HIDE_LOG, ECVF_SetByConsole);
-}
+void UCsGameInstance::InitCVars(){}
 
 void UCsGameInstance::Init()
 {

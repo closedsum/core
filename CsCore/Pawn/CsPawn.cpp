@@ -10,6 +10,13 @@ ACsPawn::ACsPawn(const FObjectInitializer& ObjectInitializer)
 
 void ACsPawn::OnTickActor_HandleCVars(const float &DeltaSeconds) {};
 
+// View
+#pragma region
+
+void ACsPawn::RecordView() {}
+
+#pragma endregion View
+
 // Movement
 #pragma region
 
@@ -26,6 +33,17 @@ void ACsPawn::RecordVelocityAndSpeed()
 	CurrentSpeed			= CurrentVelocity.Size();
 	CurrentSpeedXY			= CurrentVelocityXY.Size();
 	CurrentSpeedZ			= CurrentVelocityZ.Size();
+
+	FRotator Rotation = CurrentVelocityDir.Rotation();
+
+	FRotationMatrix Matrix = FRotationMatrix(Rotation);
+	CurrentVelocityRight = Matrix.GetScaledAxis(EAxis::Y);
+	
+	Rotation = CurrentVelocityDirXY.Rotation();
+
+	Matrix = FRotationMatrix(Rotation);
+	CurrentVelocityRightXY = Matrix.GetScaledAxis(EAxis::Y);
+
 	// Velocity from Capsule
 	CurrentCapsuleVelocity		= GetCapsuleComponent()->GetComponentVelocity();
 	CurrentCapsuleVelocityDir	= CurrentCapsuleVelocity.GetSafeNormal();
@@ -37,6 +55,17 @@ void ACsPawn::RecordVelocityAndSpeed()
 	CurrentCapsuleSpeed			= CurrentCapsuleVelocity.Size();
 	CurrentCapsuleSpeedXY		= CurrentCapsuleVelocityXY.Size();
 	CurrentCapsuleSpeedZ		= CurrentCapsuleVelocityZ.Size();
+
+	Rotation = CurrentCapsuleVelocityDir.Rotation();
+
+	Matrix = FRotationMatrix(Rotation);
+	CurrentCapsuleVelocityRight = Matrix.GetScaledAxis(EAxis::Y);
+
+	Rotation = CurrentCapsuleVelocityDirXY.Rotation();
+
+	Matrix = FRotationMatrix(Rotation);
+	CurrentCapsuleVelocityRightXY = Matrix.GetScaledAxis(EAxis::Y);
+
 }
 
 #pragma endregion Movement

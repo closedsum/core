@@ -167,6 +167,10 @@ struct FCsData_Weapon_FireType_Firing
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 	TArray<FCsLocationDamageModifier> LocationDamageModifiers;
 
+	/* Whether to also use a Fake Projectile when firing a projectile */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	bool UseFake;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 	FCsData_ProjectilePtr Data;
 

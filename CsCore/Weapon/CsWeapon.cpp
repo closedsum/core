@@ -1288,13 +1288,14 @@ PT_THREAD(ACsWeapon::FireWeapon_Internal(struct FCsRoutine* r))
 			else
 #endif // #if WITH_EDITOR
 			{
-				//FCsProjectileFireCache* Cache = mw->AllocateProjectileFireCache(ECsWeaponFire::ToBaseType(FireType));
+				FCsProjectileFireCache* Cache = mw->AllocateProjectileFireCache(FireType);
 				/*
 				if (mw->IsHitscan.Get(FireType))
 					mw->FireHitscan(FireType, Cache);
 				else
 					mw->FireProjectile(FireType, Cache);
 				*/
+				mw->FireProjectile(FireType, Cache);
 			}
 
 			mw->PlayMuzzleFlash(FireType);
@@ -1395,12 +1396,14 @@ void ACsWeapon::FireProjectile(const TCsWeaponFire &FireType, FCsProjectileFireC
 
 	ACsGameState* GameState					  = GetWorld()->GetGameState<ACsGameState>();
 	ACsManager_Projectile* Manager_Projectile = GameState->Manager_Projectile;
-	ACsData_Projectile* Data_Projectile		  = nullptr;// Data_Weapon->GetData_Projectile(FireType, Cache->ChargePercent > 0.0f);
+	ACsData_Projectile* Data_Projectile		  = Data_Weapon->GetData_Projectile(FireType, Cache->ChargePercent > 0.0f);
+
+	const bool UseFakeProjectile = Data_Weapon->UseFakeProjectile(FireType);
 
 	// Real
 	Cache->Location = RealStart;
 	Cache->Direction = RealDir;
-	ACsProjectile* RealProjectile = Manager_Projectile->Fire(ECsProjectileRelevance::Real, Data_Projectile, Cache, GetMyOwner(), this);
+	ACsProjectile* RealProjectile = Manager_Projectile->Fire(UseFakeProjectile ? ECsProjectileRelevance::RealInvisible : ECsProjectileRelevance::RealVisible, Data_Projectile, Cache, GetMyOwner(), this);
 	// Fake
 	if (UseFakeProjectile)
 	{

@@ -15,6 +15,7 @@ class CSCORE_API ACsData_Weapon : public ACsData
 	virtual void* GetFireTypeStruct(const uint8 &Index);
 	virtual UScriptStruct* GetFireTypeScriptStruct();
 
+	virtual bool UseFakeProjectile(const TCsWeaponFire &FireType);
 	virtual class ACsData_Projectile* GetData_Projectile(const TCsWeaponFire &FireType, const bool &IsCharged = false);
 
 #pragma endregion Stats

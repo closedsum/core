@@ -23,7 +23,7 @@ struct FCsData_ProjectilePtr
 
 private:
 	UPROPERTY(Transient)
-		class ACsData_Projectile* Data_Internal;
+	class ACsData_Projectile* Data_Internal;
 
 public:
 	FCsData_ProjectilePtr()
@@ -60,7 +60,8 @@ namespace ECsProjectileRelevance
 {
 	enum Type
 	{
-		Real						UMETA(DisplayName = "Real"),
+		RealVisible					UMETA(DisplayName = "Real Visible"),
+		RealInvisible				UMETA(DisplayName = "Real Invisible"),
 		Fake						UMETA(DisplayName = "Fake"),
 		ECsProjectileRelevance_MAX	UMETA(Hidden),
 	};
@@ -72,20 +73,23 @@ namespace ECsProjectileRelevance
 
 	namespace Str
 	{
-		const TCsString Real = TCsString(TEXT("Real"), TEXT("real"));
+		const TCsString RealVisible = TCsString(TEXT("RealVisible"), TEXT("realvisible"));
+		const TCsString RealInvisible = TCsString(TEXT("RealInvisible"), TEXT("realinvisible"));
 		const TCsString Fake = TCsString(TEXT("Fake"), TEXT("fake"));
 	}
 
 	FORCEINLINE FString ToString(const Type &EType)
 	{
-		if (EType == Type::Real) { return Str::Real.Value; }
+		if (EType == Type::RealVisible) { return Str::RealVisible.Value; }
+		if (EType == Type::RealInvisible) { return Str::RealInvisible.Value; }
 		if (EType == Type::Fake) { return Str::Fake.Value; }
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
 	FORCEINLINE Type ToType(const FString &String)
 	{
-		if (String == Str::Real) { return Type::Real; }
+		if (String == Str::RealVisible) { return Type::RealVisible; }
+		if (String == Str::RealInvisible) { return Type::RealInvisible; }
 		if (String == Str::Fake) { return Type::Fake; }
 		return Type::ECsProjectileRelevance_MAX;
 	}

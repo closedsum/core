@@ -76,6 +76,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 		return Controller ? Cast<T>(Controller->GetPawn()) : nullptr;
 	}
 
+	UFUNCTION(BlueprintCallable, Category = "Pawn")
 	static bool IsLocalPawn(UWorld* InWorld, APawn* InPawn);
 	
 	template<typename T>

@@ -13,6 +13,7 @@
 #include "Common/CsCommon.h"
 
 #include "Data/CsData.h"
+#include "Data/CsData_Projectile.h"
 
 UCsCommon_Load::UCsCommon_Load(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -213,530 +214,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 		// TAssetSubclassOf
 		if (UAssetClassProperty* AssetClassProperty = Cast<UAssetClassProperty>(*It))
 		{
-			// ACsData
-			if (AssetClassProperty->MetaClass == ACsData::StaticClass())
-			{ WriteAssetClassPropertyToJson<ACsData>(InJsonWriter, AssetClassProperty, InStruct, MemberName); continue; }
-
-			if (Internal)
-			{
-				if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
-					continue;
-			}
-			continue;
-		}
-		// TAssetPtr
-		if (UAssetObjectProperty* AssetObjectProperty = Cast<UAssetObjectProperty>(*It))
-		{
-			// UStaticMesh
-			if (AssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UStaticMesh>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
-			// USkeletalMesh
-			if (AssetObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
-			{ WriteAssetObjectPropertyToJson<USkeletalMesh>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
-			// UMaterialInstance
-			if (AssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UMaterialInstance>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
-			// UMaterialInstanceConstant
-			if (AssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
-			{
-				if (AssetObjectProperty->ArrayDim == 1)
-				{ WriteAssetObjectPropertyToJson<UMaterialInstanceConstant>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
-				if (AssetObjectProperty->ArrayDim == ECS_INTERACTIVE_STATE_MAX)
-				{ WriteFixedArrayAssetObjectPropertyToJson_EnumSize<UMaterialInstanceConstant, ECsInteractiveState::Type, ECS_INTERACTIVE_STATE_MAX>(InJsonWriter, AssetObjectProperty, InStruct, MemberName, &ECsInteractiveState::ToString); continue; }
-
-				if (Internal)
-				{
-					if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
-						continue;
-				}
-				continue;
-			}
-			// UPhysicalMaterial
-			if (AssetObjectProperty->PropertyClass == UPhysicalMaterial::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UPhysicalMaterial>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
-			// UPhysicsAsset
-			if (AssetObjectProperty->PropertyClass == UPhysicsAsset::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UPhysicsAsset>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
-			// UCurveFloat
-			if (AssetObjectProperty->PropertyClass == UCurveFloat::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UCurveFloat>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
-			// UCurveVector
-			if (AssetObjectProperty->PropertyClass == UCurveVector::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UCurveVector>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
-			// USoundCue
-			if (AssetObjectProperty->PropertyClass == USoundCue::StaticClass())
-			{ WriteAssetObjectPropertyToJson<USoundCue>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
-			// UParticleSystem
-			if (AssetObjectProperty->PropertyClass == UParticleSystem::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UParticleSystem>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
-			// UAnimSequence
-			if (AssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UAnimSequence>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
-			// UAnimMontage
-			if (AssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UAnimMontage>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
-			// UBlendSpace
-			if (AssetObjectProperty->PropertyClass == UBlendSpace::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UBlendSpace>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
-			// UAnimBlueprint
-			if (AssetObjectProperty->PropertyClass == UAnimBlueprint::StaticClass())
-			{ WriteAssetObjectPropertyToJson_AnimBlueprint(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
-			// UBlueprint
-			if (AssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
-			{
-				if (AssetObjectProperty->ArrayDim == 1)
-				{ WriteAssetObjectPropertyToJson_Blueprint(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
-			}
-
-			if (Internal)
-			{
-				if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
-					continue;
-			}
-			continue;
-		}
-		// Structs
-		if (UStructProperty* StructProperty = Cast<UStructProperty>(*It))
-		{
-			// FVector
-			if (StructProperty->Struct == TBaseStructure<FVector>::Get())
-			{ WriteMemberStructPropertyToJson_Primitive<FVector>(InJsonWriter, StructProperty, InStruct, MemberName, &FVector::ToString); continue; }
-			// FRotator
-			if (StructProperty->Struct == TBaseStructure<FRotator>::Get())
-			{ WriteMemberStructPropertyToJson_Primitive<FRotator>(InJsonWriter, StructProperty, InStruct, MemberName, &FRotator::ToString); continue; }
-			// FColor
-			if (StructProperty->Struct == TBaseStructure<FColor>::Get())
-			{ WriteMemberStructPropertyToJson_Primitive<FColor>(InJsonWriter, StructProperty, InStruct, MemberName, &FColor::ToString); continue; }
-			// FTransform
-			if (StructProperty->Struct == TBaseStructure<FTransform>::Get())
-			{ WriteMemberStructPropertyToJson_Transform(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
-			// FCsStaticMesh
-			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsStaticMesh>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-			// FCsFpsStaticMesh
-			if (StructProperty->Struct == FCsFpsStaticMesh::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsFpsStaticMesh>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-			// FCsSkeletalMesh
-			if (StructProperty->Struct == FCsSkeletalMesh::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsSkeletalMesh>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-			// FCsFpsSkeletalMesh
-			if (StructProperty->Struct == FCsFpsSkeletalMesh::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsFpsSkeletalMesh>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-			// FCsMaterialInstance
-			if (StructProperty->Struct == FCsMaterialInstance::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsMaterialInstance>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-			// FCsMaterialInstanceConstant
-			if (StructProperty->Struct == FCsMaterialInstanceConstant::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsMaterialInstanceConstant>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-			// FCsTArrayMaterialInstanceConstant
-			if (StructProperty->Struct == FCsTArrayMaterialInstanceConstant::StaticStruct())
-			{
-				if (StructProperty->ArrayDim == 1)
-				{ WriteMemberStructPropertyToJson<FCsTArrayMaterialInstanceConstant>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-
-				if (Internal)
-				{
-					if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
-						continue;
-				}
-				continue;
-			}
-			// FCsFpsTArrayMaterialInstanceConstant
-			if (StructProperty->Struct == FCsFpsTArrayMaterialInstanceConstant::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsFpsTArrayMaterialInstanceConstant>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-			// FCsPhysicalMaterial
-			if (StructProperty->Struct == FCsPhysicalMaterial::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsPhysicalMaterial>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-			// FCsPhysicsAsset
-			if (StructProperty->Struct == FCsPhysicsAsset::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsPhysicsAsset>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-			// FCsCurveFloat
-			if (StructProperty->Struct == FCsCurveFloat::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsCurveFloat>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-			// FCsCurveVector
-			if (StructProperty->Struct == FCsCurveVector::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsCurveVector>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-			// FCsSoundElement
-			if (StructProperty->Struct == FCsSoundElement::StaticStruct())
-			{
-				if (StructProperty->ArrayDim == 1)
-				{ WriteMemberStructPropertyToJson<FCsSoundElement>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-
-				if (Internal)
-				{
-					if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
-						continue;
-				}
-				continue;
-			}
-			// FCsFpsSoundElement
-			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
-			{
-				if (StructProperty->ArrayDim == 1)
-				{ WriteMemberStructPropertyToJson<FCsFpsSoundElement>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-
-				if (Internal)
-				{
-					if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
-						continue;
-				}
-				continue;
-			}
-			// FCsFxElement
-			if (StructProperty->Struct == FCsFxElement::StaticStruct())
-			{
-				if (StructProperty->ArrayDim == 1)
-				{ WriteMemberStructPropertyToJson<FCsFxElement>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-
-				if (Internal)
-				{
-					if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
-						continue;
-				}
-				continue;
-			}
-			// FCsFpsFxElement
-			if (StructProperty->Struct == FCsFpsFxElement::StaticStruct())
-			{
-				if (StructProperty->ArrayDim == 1)
-				{ WriteMemberStructPropertyToJson<FCsFpsFxElement>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-
-				if (Internal)
-				{
-					if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
-						continue;
-				}
-				continue;
-			}
-			// FCsAnimSequence
-			if (StructProperty->Struct == FCsAnimSequence::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsAnimSequence>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-			// FCsFpsAnimSequence
-			if (StructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsFpsAnimSequence>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-			// FCsAnimMontage
-			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
-			{
-				if (StructProperty->ArrayDim == 1)
-				{ WriteMemberStructPropertyToJson<FCsAnimMontage>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-
-				if (Internal)
-				{
-					if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
-						continue;
-				}
-				continue;
-			}
-			// FCsFpsAnimMontage
-			if (StructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
-			{
-				if (StructProperty->ArrayDim == 1)
-				{ WriteMemberStructPropertyToJson<FCsFpsAnimMontage>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-
-				if (Internal)
-				{
-					if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
-						continue;
-				}
-				continue;
-			}
-			// FCsTArrayAnimMontage
-			if (StructProperty->Struct == FCsTArrayAnimMontage::StaticStruct())
-			{
-				if (StructProperty->ArrayDim == 1)
-				{ WriteMemberStructPropertyToJson<FCsTArrayAnimMontage>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-
-				if (Internal)
-				{
-					if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
-						continue;
-				}
-				continue;
-			}
-			// FCsBlendSpace
-			if (StructProperty->Struct == FCsBlendSpace::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsBlendSpace>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-			// FCsFpsBlendSpace
-			if (StructProperty->Struct == FCsFpsBlendSpace::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsFpsBlendSpace>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-			// FCsAnimBlueprint
-			if (StructProperty->Struct == FCsAnimBlueprint::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsAnimBlueprint>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-			// FCsFpsAnimBlueprint
-			if (StructProperty->Struct == FCsFpsAnimBlueprint::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsFpsAnimBlueprint>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-			// FCsBlueprint
-			if (StructProperty->Struct == FCsBlueprint::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsBlueprint>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-			// FCsTArrayBlueprint
-			if (StructProperty->Struct == FCsTArrayBlueprint::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsTArrayBlueprint>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-			// FCollisionResponseContainer
-			if (StructProperty->Struct == FCollisionResponseContainer::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCollisionResponseContainer>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
-			// FCsDataMappingEntry
-			if (StructProperty->Struct == FCsDataMappingEntry::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsDataMappingEntry>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
-			// FCsInputProfile
-			if (StructProperty->Struct == FCsInputProfile::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsInputProfile>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
-			// FCsInputActionMappings
-			if (StructProperty->Struct == FCsInputActionMappings::StaticStruct())
-			{
-				if (StructProperty->ArrayDim == 1)
-				{ WriteMemberStructPropertyToJson<FCsInputActionMappings>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
-
-				if (StructProperty->ArrayDim == ECS_INPUT_DEVICE_MAX)
-				{ WriteMemberFixedArrayStructPropertyToJson_EnumSize<FCsInputActionMappings, ECsInputDevice::Type, ECS_INPUT_DEVICE_MAX>(InJsonWriter, StructProperty, InStruct, MemberName, &ECsInputDevice::ToString, nullptr); continue; }
-			}
-			// FCsInputActionMapping
-			if (StructProperty->Struct == FCsInputActionMapping::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsInputActionMapping>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
-
-			if (Internal)
-			{
-				if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
-					continue;
-			}
-			continue;
-		}
-		// Array
-		if (UArrayProperty* ArrayProperty = Cast<UArrayProperty>(*It))
-		{
-			// TAssetPtr
-			if (UAssetObjectProperty* InnerAssetObjectProperty = Cast<UAssetObjectProperty>(ArrayProperty->Inner))
-			{
-				// UStaticMesh
-				if (InnerAssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UStaticMesh>(InJsonWriter, ArrayProperty, InStruct, MemberName, TEXT("Mesh")); continue; }
-				// USkeletalMesh
-				if (InnerAssetObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<USkeletalMesh>(InJsonWriter, ArrayProperty, InStruct, MemberName, TEXT("Mesh")); continue; }
-				// UMaterialInstance
-				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UMaterialInstance>(InJsonWriter, ArrayProperty, InStruct, MemberName, TEXT("Mat")); continue; }
-				// UMaterialInstanceConstant
-				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UMaterialInstanceConstant>(InJsonWriter, ArrayProperty, InStruct, MemberName, TEXT("Mat")); continue; }
-				// UAnimSequence
-				if (InnerAssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UAnimSequence>(InJsonWriter, ArrayProperty, InStruct, MemberName, TEXT("Anim")); continue; }
-				// UAnimMontage
-				if (InnerAssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UAnimMontage>(InJsonWriter, ArrayProperty, InStruct, MemberName, TEXT("Anim")); continue; }
-				// UBlueprint
-				if (InnerAssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UBlueprint>(InJsonWriter, ArrayProperty, InStruct, MemberName, TEXT("Bp")); continue; }
-
-				if (Internal)
-				{
-					if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
-						continue;
-				}
-			}
-			// Struct
-			if (UStructProperty* InnerStructProperty = Cast<UStructProperty>(ArrayProperty->Inner))
-			{
-				// FVector
-				if (InnerStructProperty->Struct == TBaseStructure<FVector>::Get())
-				{ WriteMemberArrayStructPropertyToJson_Primitive<FVector>(InJsonWriter, ArrayProperty, InStruct, MemberName, &FVector::ToString); continue; }
-				// FRotator
-				if (InnerStructProperty->Struct == TBaseStructure<FRotator>::Get())
-				{ WriteMemberArrayStructPropertyToJson_Primitive<FRotator>(InJsonWriter, ArrayProperty, InStruct, MemberName, &FRotator::ToString); continue; }
-				// FColor
-				if (InnerStructProperty->Struct == TBaseStructure<FColor>::Get())
-				{ WriteMemberArrayStructPropertyToJson_Primitive<FColor>(InJsonWriter, ArrayProperty, InStruct, MemberName, &FColor::ToString); continue; }
-				// FTransform
-				if (InnerStructProperty->Struct == TBaseStructure<FTransform>::Get())
-				{ WriteMemberArrayStructPropertyToJson_Transform(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
-				// FCsAnimMontage
-				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
-				{ WriteMemberArrayStructPropertyToJson<FCsAnimMontage>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
-				// FCsFxElement
-				if (InnerStructProperty->Struct == FCsFxElement::StaticStruct())
-				{ WriteMemberArrayStructPropertyToJson<FCsFxElement>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
-				// FCsFpsFxElement
-				if (InnerStructProperty->Struct == FCsFpsFxElement::StaticStruct())
-				{ WriteMemberArrayStructPropertyToJson<FCsFpsFxElement>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
-				// FCsSoundElement
-				if (InnerStructProperty->Struct == FCsSoundElement::StaticStruct())
-				{ WriteMemberArrayStructPropertyToJson<FCsSoundElement>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
-				// FCsFpsSoundElement
-				if (InnerStructProperty->Struct == FCsFpsSoundElement::StaticStruct())
-				{ WriteMemberArrayStructPropertyToJson<FCsFpsSoundElement>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
-				// FCsInputActionMapping
-				if (InnerStructProperty->Struct == FCsInputActionMapping::StaticStruct())
-				{ WriteMemberArrayStructPropertyToJson<FCsInputActionMapping>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
-
-				if (Internal)
-				{
-					if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
-						continue;
-				}
-				continue;
-			}
-			// FName
-			if (UNameProperty* NameProperty = Cast<UNameProperty>(ArrayProperty->Inner))
-			{ WriteMemberArrayStructPropertyToJson_Primitive<FName>(InJsonWriter, ArrayProperty, InStruct, MemberName, &FName::ToString); continue; }
-			continue;
-		}
-		// bool
-		if (UBoolProperty* BoolProperty = Cast<UBoolProperty>(*It))
-		{
-			if (bool* Member = BoolProperty->ContainerPtrToValuePtr<bool>(InStruct))
-				InJsonWriter->WriteValue(MemberName, *Member);
-			continue;
-		}
-		// Byte / Enum
-		if (UByteProperty* ByteProperty = Cast<UByteProperty>(*It))
-		{
-			// enum
-			if (ByteProperty->IsEnum())
-			{
-				// ECollisionEnabled
-				if (ByteProperty->Enum->CppType.Contains(TEXT("ECollisionEnabled")))
-				{ WriteMemberBytePropertyToJson<ECollisionEnabled::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECollisionEnabled::ToString); continue; }
-				// ECollisionChannel
-				if (ByteProperty->Enum->CppType.Contains(TEXT("ECollisionChannel")))
-				{ WriteMemberBytePropertyToJson<ECollisionChannel>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsCollisionChannel::ToString); continue; }
-				// ECollisionResponse
-				if (ByteProperty->Enum->CppType.Contains(TEXT("ECollisionResponse")))
-				{ WriteMemberBytePropertyToJson<ECollisionResponse>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsCollisionResponse::ToString); continue; }
-				// EHorizTextAligment
-				if (ByteProperty->Enum->CppType.Contains(TEXT("EHorizTextAligment")))
-				{ WriteMemberBytePropertyToJson<EHorizTextAligment>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsHorizTextAligment::ToString); continue; }
-				// EVerticalTextAligment
-				if (ByteProperty->Enum->CppType.Contains(TEXT("EVerticalTextAligment")))
-				{ WriteMemberBytePropertyToJson<EVerticalTextAligment>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsVerticalTextAligment::ToString); continue; }
-				// ECsLoadFlags_Editor
-				if (ByteProperty->Enum->CppType.Contains(TEXT("ECsLoadFlags_Editor")))
-				{ WriteMemberBytePropertyToJson<ECsLoadFlags_Editor::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsLoadFlags_Editor::ToString); continue; }
-				// ECsFxPriority
-				if (ByteProperty->Enum->CppType.Contains(TEXT("ECsFxPriority")))
-				{ WriteMemberBytePropertyToJson<ECsFxPriority::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsFxPriority::ToString); continue; }
-				// ECsSoundPriority
-				if (ByteProperty->Enum->CppType.Contains(TEXT("ECsSoundPriority")))
-				{ WriteMemberBytePropertyToJson<ECsSoundPriority::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsSoundPriority::ToString); continue; }
-
-				if (Internal)
-				{
-					if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
-						continue;
-				}
-				continue;
-			}
-			// uint8
-			else
-			{
-				if (uint8* Member = ByteProperty->ContainerPtrToValuePtr<uint8>(InStruct))
-					InJsonWriter->WriteValue(MemberName, *Member);
-			}
-			continue;
-		}
-		// uint16
-		if (UUInt16Property* Int16Property = Cast<UUInt16Property>(*It))
-		{
-			if (uint16* Member = Int16Property->ContainerPtrToValuePtr<uint16>(InStruct))
-			{ InJsonWriter->WriteValue(MemberName, *Member); continue; }
-			continue;
-		}
-		// int32
-		if (UIntProperty* IntProperty = Cast<UIntProperty>(*It))
-		{
-			
-			if (int32* Member = IntProperty->ContainerPtrToValuePtr<int32>(InStruct))
-			{
-#if WITH_EDITOR
-				if (Property->HasMetaData(TEXT("BitmaskEnum")))
-				{
-					const FString BitmaskEnum = Property->GetMetaData(TEXT("BitmaskEnum"));
-
-					if (BitmaskEnum == TEXT("ECsLoadFlags"))
-					{
-						InJsonWriter->WriteValue(MemberName, LoadFlagsToString(*Member));
-					}
-				}
-				else
-#endif // #if WITH_EDITOR
-				{
-					InJsonWriter->WriteValue(MemberName, *Member);
-				}
-			}
-			continue;
-		}
-		// float
-		if (UFloatProperty* FloatProperty = Cast<UFloatProperty>(*It))
-		{
-			if (float* Member = FloatProperty->ContainerPtrToValuePtr<float>(InStruct))
-				InJsonWriter->WriteValue(MemberName, *Member);
-			continue;
-		}
-		// FString
-		if (UStrProperty* StrProperty = Cast<UStrProperty>(*It))
-		{
-			if (FString* Member = StrProperty->ContainerPtrToValuePtr<FString>(InStruct))
-				InJsonWriter->WriteValue(MemberName, *Member);
-			continue;
-		}
-		// FName
-		if (UNameProperty* NameProperty = Cast<UNameProperty>(*It))
-		{
-			if (NameProperty->ArrayDim == 1)
-			{
-				if (FName* Member = NameProperty->ContainerPtrToValuePtr<FName>(InStruct))
-				{ InJsonWriter->WriteValue(MemberName, (*Member).ToString()); continue; }
-			}
-
-			if (Internal)
-			{
-				if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
-					continue;
-			}
-			continue;
-		}
-	}
-}
-
-void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, void* InStruct, UScriptStruct* const &InScriptStruct, const TArray<FCsCategoryMemberAssociation> &CategoryMemberAssociations, TCsWriteStructToJson_Internal Internal /*=nullptr*/)
-{
-	const FString NoCategory = TEXT("");
-	FString Category		 = NoCategory;
-	FString LastCategory	 = NoCategory;
-	int32 CategoryIndex		 = 0;
-
-	for (TFieldIterator<UProperty> It(InScriptStruct); It; ++It)
-	{
-		UProperty* Property = Cast<UProperty>(*It);
-
-		const FString MemberName = Property->GetName();
-
-		if (CategoryIndex >= CategoryMemberAssociations.Num())
-			break;
-
-		const int32 Count = CategoryMemberAssociations[CategoryIndex].Members.Num();
-		const int32 Index = CategoryMemberAssociations[CategoryIndex].Members.Find(MemberName);
-
-		if (Index == INDEX_NONE)
-			continue;
-
-		Category = CategoryMemberAssociations[CategoryIndex].Category;
-
-		if (Index == Count - 1)
-			CategoryIndex++;
-
-		// Check if Category changed
-		if (Category != LastCategory)
-		{
-			if (LastCategory != TEXT(""))
-				InJsonWriter->WriteObjectEnd();
-			InJsonWriter->WriteObjectStart(Category);
-
-			LastCategory = Category;
-		}
-
-		// TAssetSubclassOf
-		if (UAssetClassProperty* AssetClassProperty = Cast<UAssetClassProperty>(*It))
-		{
+			// ACsData_Projectile
+			if (AssetClassProperty->MetaClass == ACsData_Projectile::StaticClass())
+			{ WriteAssetClassPropertyToJson<ACsData_Projectile>(InJsonWriter, AssetClassProperty, InStruct, MemberName); continue; }
 			// ACsData
 			if (AssetClassProperty->MetaClass == ACsData::StaticClass())
 			{ WriteAssetClassPropertyToJson<ACsData>(InJsonWriter, AssetClassProperty, InStruct, MemberName); continue; }
@@ -1052,6 +532,579 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				if (StructProperty->Struct == FCsData_FpsWeapon_FireType_Sounds::StaticStruct())
 				{ WriteMemberStructPropertyToJson<FCsData_FpsWeapon_FireType_Sounds>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 			}
+			// FCsData_ProjectilePtr
+			if (StructProperty->Struct == FCsData_ProjectilePtr::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsData_ProjectilePtr>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+
+			if (Internal)
+			{
+				if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
+					continue;
+			}
+			continue;
+		}
+		// Array
+		if (UArrayProperty* ArrayProperty = Cast<UArrayProperty>(*It))
+		{
+			// TAssetPtr
+			if (UAssetObjectProperty* InnerAssetObjectProperty = Cast<UAssetObjectProperty>(ArrayProperty->Inner))
+			{
+				// UStaticMesh
+				if (InnerAssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
+				{ WriteArrayAssetObjectPropertyToJson<UStaticMesh>(InJsonWriter, ArrayProperty, InStruct, MemberName, TEXT("Mesh")); continue; }
+				// USkeletalMesh
+				if (InnerAssetObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
+				{ WriteArrayAssetObjectPropertyToJson<USkeletalMesh>(InJsonWriter, ArrayProperty, InStruct, MemberName, TEXT("Mesh")); continue; }
+				// UMaterialInstance
+				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
+				{ WriteArrayAssetObjectPropertyToJson<UMaterialInstance>(InJsonWriter, ArrayProperty, InStruct, MemberName, TEXT("Mat")); continue; }
+				// UMaterialInstanceConstant
+				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
+				{ WriteArrayAssetObjectPropertyToJson<UMaterialInstanceConstant>(InJsonWriter, ArrayProperty, InStruct, MemberName, TEXT("Mat")); continue; }
+				// UAnimSequence
+				if (InnerAssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
+				{ WriteArrayAssetObjectPropertyToJson<UAnimSequence>(InJsonWriter, ArrayProperty, InStruct, MemberName, TEXT("Anim")); continue; }
+				// UAnimMontage
+				if (InnerAssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+				{ WriteArrayAssetObjectPropertyToJson<UAnimMontage>(InJsonWriter, ArrayProperty, InStruct, MemberName, TEXT("Anim")); continue; }
+				// UBlueprint
+				if (InnerAssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
+				{ WriteArrayAssetObjectPropertyToJson<UBlueprint>(InJsonWriter, ArrayProperty, InStruct, MemberName, TEXT("Bp")); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
+						continue;
+				}
+			}
+			// Struct
+			if (UStructProperty* InnerStructProperty = Cast<UStructProperty>(ArrayProperty->Inner))
+			{
+				// FVector
+				if (InnerStructProperty->Struct == TBaseStructure<FVector>::Get())
+				{ WriteMemberArrayStructPropertyToJson_Primitive<FVector>(InJsonWriter, ArrayProperty, InStruct, MemberName, &FVector::ToString); continue; }
+				// FRotator
+				if (InnerStructProperty->Struct == TBaseStructure<FRotator>::Get())
+				{ WriteMemberArrayStructPropertyToJson_Primitive<FRotator>(InJsonWriter, ArrayProperty, InStruct, MemberName, &FRotator::ToString); continue; }
+				// FColor
+				if (InnerStructProperty->Struct == TBaseStructure<FColor>::Get())
+				{ WriteMemberArrayStructPropertyToJson_Primitive<FColor>(InJsonWriter, ArrayProperty, InStruct, MemberName, &FColor::ToString); continue; }
+				// FTransform
+				if (InnerStructProperty->Struct == TBaseStructure<FTransform>::Get())
+				{ WriteMemberArrayStructPropertyToJson_Transform(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsAnimMontage
+				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsAnimMontage>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsFxElement
+				if (InnerStructProperty->Struct == FCsFxElement::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsFxElement>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsFpsFxElement
+				if (InnerStructProperty->Struct == FCsFpsFxElement::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsFpsFxElement>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsSoundElement
+				if (InnerStructProperty->Struct == FCsSoundElement::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsSoundElement>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsFpsSoundElement
+				if (InnerStructProperty->Struct == FCsFpsSoundElement::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsFpsSoundElement>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsInputActionMapping
+				if (InnerStructProperty->Struct == FCsInputActionMapping::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsInputActionMapping>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
+						continue;
+				}
+				continue;
+			}
+			// FName
+			if (UNameProperty* NameProperty = Cast<UNameProperty>(ArrayProperty->Inner))
+			{ WriteMemberArrayStructPropertyToJson_Primitive<FName>(InJsonWriter, ArrayProperty, InStruct, MemberName, &FName::ToString); continue; }
+			continue;
+		}
+		// bool
+		if (UBoolProperty* BoolProperty = Cast<UBoolProperty>(*It))
+		{
+			if (bool* Member = BoolProperty->ContainerPtrToValuePtr<bool>(InStruct))
+				InJsonWriter->WriteValue(MemberName, *Member);
+			continue;
+		}
+		// Byte / Enum
+		if (UByteProperty* ByteProperty = Cast<UByteProperty>(*It))
+		{
+			// enum
+			if (ByteProperty->IsEnum())
+			{
+				// ECollisionEnabled
+				if (ByteProperty->Enum->CppType.Contains(TEXT("ECollisionEnabled")))
+				{ WriteMemberBytePropertyToJson<ECollisionEnabled::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECollisionEnabled::ToString); continue; }
+				// ECollisionChannel
+				if (ByteProperty->Enum->CppType.Contains(TEXT("ECollisionChannel")))
+				{ WriteMemberBytePropertyToJson<ECollisionChannel>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsCollisionChannel::ToString); continue; }
+				// ECollisionResponse
+				if (ByteProperty->Enum->CppType.Contains(TEXT("ECollisionResponse")))
+				{ WriteMemberBytePropertyToJson<ECollisionResponse>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsCollisionResponse::ToString); continue; }
+				// EHorizTextAligment
+				if (ByteProperty->Enum->CppType.Contains(TEXT("EHorizTextAligment")))
+				{ WriteMemberBytePropertyToJson<EHorizTextAligment>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsHorizTextAligment::ToString); continue; }
+				// EVerticalTextAligment
+				if (ByteProperty->Enum->CppType.Contains(TEXT("EVerticalTextAligment")))
+				{ WriteMemberBytePropertyToJson<EVerticalTextAligment>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsVerticalTextAligment::ToString); continue; }
+				// ECsLoadFlags_Editor
+				if (ByteProperty->Enum->CppType.Contains(TEXT("ECsLoadFlags_Editor")))
+				{ WriteMemberBytePropertyToJson<ECsLoadFlags_Editor::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsLoadFlags_Editor::ToString); continue; }
+				// ECsFxPriority
+				if (ByteProperty->Enum->CppType.Contains(TEXT("ECsFxPriority")))
+				{ WriteMemberBytePropertyToJson<ECsFxPriority::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsFxPriority::ToString); continue; }
+				// ECsSoundPriority
+				if (ByteProperty->Enum->CppType.Contains(TEXT("ECsSoundPriority")))
+				{ WriteMemberBytePropertyToJson<ECsSoundPriority::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsSoundPriority::ToString); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
+						continue;
+				}
+				continue;
+			}
+			// uint8
+			else
+			{
+				if (uint8* Member = ByteProperty->ContainerPtrToValuePtr<uint8>(InStruct))
+					InJsonWriter->WriteValue(MemberName, *Member);
+			}
+			continue;
+		}
+		// uint16
+		if (UUInt16Property* Int16Property = Cast<UUInt16Property>(*It))
+		{
+			if (uint16* Member = Int16Property->ContainerPtrToValuePtr<uint16>(InStruct))
+			{ InJsonWriter->WriteValue(MemberName, *Member); continue; }
+			continue;
+		}
+		// int32
+		if (UIntProperty* IntProperty = Cast<UIntProperty>(*It))
+		{
+			
+			if (int32* Member = IntProperty->ContainerPtrToValuePtr<int32>(InStruct))
+			{
+#if WITH_EDITOR
+				if (Property->HasMetaData(TEXT("BitmaskEnum")))
+				{
+					const FString BitmaskEnum = Property->GetMetaData(TEXT("BitmaskEnum"));
+
+					if (BitmaskEnum == TEXT("ECsLoadFlags"))
+					{
+						InJsonWriter->WriteValue(MemberName, LoadFlagsToString(*Member));
+					}
+				}
+				else
+#endif // #if WITH_EDITOR
+				{
+					InJsonWriter->WriteValue(MemberName, *Member);
+				}
+			}
+			continue;
+		}
+		// float
+		if (UFloatProperty* FloatProperty = Cast<UFloatProperty>(*It))
+		{
+			if (float* Member = FloatProperty->ContainerPtrToValuePtr<float>(InStruct))
+				InJsonWriter->WriteValue(MemberName, *Member);
+			continue;
+		}
+		// FString
+		if (UStrProperty* StrProperty = Cast<UStrProperty>(*It))
+		{
+			if (FString* Member = StrProperty->ContainerPtrToValuePtr<FString>(InStruct))
+				InJsonWriter->WriteValue(MemberName, *Member);
+			continue;
+		}
+		// FName
+		if (UNameProperty* NameProperty = Cast<UNameProperty>(*It))
+		{
+			if (NameProperty->ArrayDim == 1)
+			{
+				if (FName* Member = NameProperty->ContainerPtrToValuePtr<FName>(InStruct))
+				{ InJsonWriter->WriteValue(MemberName, (*Member).ToString()); continue; }
+			}
+
+			if (Internal)
+			{
+				if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
+					continue;
+			}
+			continue;
+		}
+	}
+}
+
+void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, void* InStruct, UScriptStruct* const &InScriptStruct, const TArray<FCsCategoryMemberAssociation> &CategoryMemberAssociations, TCsWriteStructToJson_Internal Internal /*=nullptr*/)
+{
+	const FString NoCategory = TEXT("");
+	FString Category		 = NoCategory;
+	FString LastCategory	 = NoCategory;
+	int32 CategoryIndex		 = 0;
+
+	for (TFieldIterator<UProperty> It(InScriptStruct); It; ++It)
+	{
+		UProperty* Property = Cast<UProperty>(*It);
+
+		const FString MemberName = Property->GetName();
+
+		if (CategoryIndex >= CategoryMemberAssociations.Num())
+			break;
+
+		const int32 Count = CategoryMemberAssociations[CategoryIndex].Members.Num();
+		const int32 Index = CategoryMemberAssociations[CategoryIndex].Members.Find(MemberName);
+
+		if (Index == INDEX_NONE)
+			continue;
+
+		Category = CategoryMemberAssociations[CategoryIndex].Category;
+
+		if (Index == Count - 1)
+			CategoryIndex++;
+
+		// Check if Category changed
+		if (Category != LastCategory)
+		{
+			if (LastCategory != TEXT(""))
+				InJsonWriter->WriteObjectEnd();
+			InJsonWriter->WriteObjectStart(Category);
+
+			LastCategory = Category;
+		}
+
+		// TAssetSubclassOf
+		if (UAssetClassProperty* AssetClassProperty = Cast<UAssetClassProperty>(*It))
+		{
+			// ACsData_Projectile
+			if (AssetClassProperty->MetaClass == ACsData_Projectile::StaticClass())
+			{ WriteAssetClassPropertyToJson<ACsData_Projectile>(InJsonWriter, AssetClassProperty, InStruct, MemberName); continue; }
+			// ACsData
+			if (AssetClassProperty->MetaClass == ACsData::StaticClass())
+			{ WriteAssetClassPropertyToJson<ACsData>(InJsonWriter, AssetClassProperty, InStruct, MemberName); continue; }
+
+			if (Internal)
+			{
+				if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
+					continue;
+			}
+			continue;
+		}
+		// TAssetPtr
+		if (UAssetObjectProperty* AssetObjectProperty = Cast<UAssetObjectProperty>(*It))
+		{
+			// UStaticMesh
+			if (AssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
+			{ WriteAssetObjectPropertyToJson<UStaticMesh>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			// USkeletalMesh
+			if (AssetObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
+			{ WriteAssetObjectPropertyToJson<USkeletalMesh>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			// UMaterialInstance
+			if (AssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
+			{ WriteAssetObjectPropertyToJson<UMaterialInstance>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			// UMaterialInstanceConstant
+			if (AssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
+			{
+				if (AssetObjectProperty->ArrayDim == 1)
+				{ WriteAssetObjectPropertyToJson<UMaterialInstanceConstant>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+				if (AssetObjectProperty->ArrayDim == ECS_INTERACTIVE_STATE_MAX)
+				{ WriteFixedArrayAssetObjectPropertyToJson_EnumSize<UMaterialInstanceConstant, ECsInteractiveState::Type, ECS_INTERACTIVE_STATE_MAX>(InJsonWriter, AssetObjectProperty, InStruct, MemberName, &ECsInteractiveState::ToString); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
+						continue;
+				}
+				continue;
+			}
+			// UPhysicalMaterial
+			if (AssetObjectProperty->PropertyClass == UPhysicalMaterial::StaticClass())
+			{ WriteAssetObjectPropertyToJson<UPhysicalMaterial>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			// UPhysicsAsset
+			if (AssetObjectProperty->PropertyClass == UPhysicsAsset::StaticClass())
+			{ WriteAssetObjectPropertyToJson<UPhysicsAsset>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			// UCurveFloat
+			if (AssetObjectProperty->PropertyClass == UCurveFloat::StaticClass())
+			{ WriteAssetObjectPropertyToJson<UCurveFloat>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			// UCurveVector
+			if (AssetObjectProperty->PropertyClass == UCurveVector::StaticClass())
+			{ WriteAssetObjectPropertyToJson<UCurveVector>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			// USoundCue
+			if (AssetObjectProperty->PropertyClass == USoundCue::StaticClass())
+			{ WriteAssetObjectPropertyToJson<USoundCue>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			// UParticleSystem
+			if (AssetObjectProperty->PropertyClass == UParticleSystem::StaticClass())
+			{ WriteAssetObjectPropertyToJson<UParticleSystem>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			// UAnimSequence
+			if (AssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
+			{ WriteAssetObjectPropertyToJson<UAnimSequence>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			// UAnimMontage
+			if (AssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+			{ WriteAssetObjectPropertyToJson<UAnimMontage>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			// UBlendSpace
+			if (AssetObjectProperty->PropertyClass == UBlendSpace::StaticClass())
+			{ WriteAssetObjectPropertyToJson<UBlendSpace>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			// UAnimBlueprint
+			if (AssetObjectProperty->PropertyClass == UAnimBlueprint::StaticClass())
+			{ WriteAssetObjectPropertyToJson_AnimBlueprint(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			// UBlueprint
+			if (AssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
+			{
+				if (AssetObjectProperty->ArrayDim == 1)
+				{ WriteAssetObjectPropertyToJson_Blueprint(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			}
+
+			if (Internal)
+			{
+				if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
+					continue;
+			}
+			continue;
+		}
+		// Structs
+		if (UStructProperty* StructProperty = Cast<UStructProperty>(*It))
+		{
+			// FVector
+			if (StructProperty->Struct == TBaseStructure<FVector>::Get())
+			{ WriteMemberStructPropertyToJson_Primitive<FVector>(InJsonWriter, StructProperty, InStruct, MemberName, &FVector::ToString); continue; }
+			// FRotator
+			if (StructProperty->Struct == TBaseStructure<FRotator>::Get())
+			{ WriteMemberStructPropertyToJson_Primitive<FRotator>(InJsonWriter, StructProperty, InStruct, MemberName, &FRotator::ToString); continue; }
+			// FColor
+			if (StructProperty->Struct == TBaseStructure<FColor>::Get())
+			{ WriteMemberStructPropertyToJson_Primitive<FColor>(InJsonWriter, StructProperty, InStruct, MemberName, &FColor::ToString); continue; }
+			// FTransform
+			if (StructProperty->Struct == TBaseStructure<FTransform>::Get())
+			{ WriteMemberStructPropertyToJson_Transform(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+			// FCsStaticMesh
+			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsStaticMesh>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsFpsStaticMesh
+			if (StructProperty->Struct == FCsFpsStaticMesh::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsFpsStaticMesh>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsSkeletalMesh
+			if (StructProperty->Struct == FCsSkeletalMesh::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsSkeletalMesh>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsFpsSkeletalMesh
+			if (StructProperty->Struct == FCsFpsSkeletalMesh::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsFpsSkeletalMesh>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsMaterialInstance
+			if (StructProperty->Struct == FCsMaterialInstance::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsMaterialInstance>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsMaterialInstanceConstant
+			if (StructProperty->Struct == FCsMaterialInstanceConstant::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsMaterialInstanceConstant>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsTArrayMaterialInstanceConstant
+			if (StructProperty->Struct == FCsTArrayMaterialInstanceConstant::StaticStruct())
+			{
+				if (StructProperty->ArrayDim == 1)
+				{ WriteMemberStructPropertyToJson<FCsTArrayMaterialInstanceConstant>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
+						continue;
+				}
+				continue;
+			}
+			// FCsFpsTArrayMaterialInstanceConstant
+			if (StructProperty->Struct == FCsFpsTArrayMaterialInstanceConstant::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsFpsTArrayMaterialInstanceConstant>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsPhysicalMaterial
+			if (StructProperty->Struct == FCsPhysicalMaterial::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsPhysicalMaterial>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsPhysicsAsset
+			if (StructProperty->Struct == FCsPhysicsAsset::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsPhysicsAsset>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsCurveFloat
+			if (StructProperty->Struct == FCsCurveFloat::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsCurveFloat>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsCurveVector
+			if (StructProperty->Struct == FCsCurveVector::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsCurveVector>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsSoundElement
+			if (StructProperty->Struct == FCsSoundElement::StaticStruct())
+			{
+				if (StructProperty->ArrayDim == 1)
+				{ WriteMemberStructPropertyToJson<FCsSoundElement>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
+						continue;
+				}
+				continue;
+			}
+			// FCsFpsSoundElement
+			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
+			{
+				if (StructProperty->ArrayDim == 1)
+				{ WriteMemberStructPropertyToJson<FCsFpsSoundElement>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
+						continue;
+				}
+				continue;
+			}
+			// FCsFxElement
+			if (StructProperty->Struct == FCsFxElement::StaticStruct())
+			{
+				if (StructProperty->ArrayDim == 1)
+				{ WriteMemberStructPropertyToJson<FCsFxElement>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
+						continue;
+				}
+				continue;
+			}
+			// FCsFpsFxElement
+			if (StructProperty->Struct == FCsFpsFxElement::StaticStruct())
+			{
+				if (StructProperty->ArrayDim == 1)
+				{ WriteMemberStructPropertyToJson<FCsFpsFxElement>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
+						continue;
+				}
+				continue;
+			}
+			// FCsAnimSequence
+			if (StructProperty->Struct == FCsAnimSequence::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsAnimSequence>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsFpsAnimSequence
+			if (StructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsFpsAnimSequence>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsAnimMontage
+			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
+			{
+				if (StructProperty->ArrayDim == 1)
+				{ WriteMemberStructPropertyToJson<FCsAnimMontage>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
+						continue;
+				}
+				continue;
+			}
+			// FCsFpsAnimMontage
+			if (StructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
+			{
+				if (StructProperty->ArrayDim == 1)
+				{ WriteMemberStructPropertyToJson<FCsFpsAnimMontage>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
+						continue;
+				}
+				continue;
+			}
+			// FCsTArrayAnimMontage
+			if (StructProperty->Struct == FCsTArrayAnimMontage::StaticStruct())
+			{
+				if (StructProperty->ArrayDim == 1)
+				{ WriteMemberStructPropertyToJson<FCsTArrayAnimMontage>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
+						continue;
+				}
+				continue;
+			}
+			// FCsBlendSpace
+			if (StructProperty->Struct == FCsBlendSpace::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsBlendSpace>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsFpsBlendSpace
+			if (StructProperty->Struct == FCsFpsBlendSpace::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsFpsBlendSpace>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsAnimBlueprint
+			if (StructProperty->Struct == FCsAnimBlueprint::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsAnimBlueprint>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsFpsAnimBlueprint
+			if (StructProperty->Struct == FCsFpsAnimBlueprint::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsFpsAnimBlueprint>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsBlueprint
+			if (StructProperty->Struct == FCsBlueprint::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsBlueprint>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsTArrayBlueprint
+			if (StructProperty->Struct == FCsTArrayBlueprint::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsTArrayBlueprint>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsCollisionPreset
+			if (StructProperty->Struct == FCsCollisionPreset::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsCollisionPreset>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCollisionResponseContainer
+			if (StructProperty->Struct == FCollisionResponseContainer::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCollisionResponseContainer>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsDataMappingEntry
+			if (StructProperty->Struct == FCsDataMappingEntry::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsDataMappingEntry>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsInputProfile
+			if (StructProperty->Struct == FCsInputProfile::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsInputProfile>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsInputActionMappings
+			if (StructProperty->Struct == FCsInputActionMappings::StaticStruct())
+			{
+				if (StructProperty->ArrayDim == 1)
+				{ WriteMemberStructPropertyToJson<FCsInputActionMappings>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+
+				if (StructProperty->ArrayDim == ECS_INPUT_DEVICE_MAX)
+				{ WriteMemberFixedArrayStructPropertyToJson_EnumSize<FCsInputActionMappings, ECsInputDevice::Type, ECS_INPUT_DEVICE_MAX>(InJsonWriter, StructProperty, InStruct, MemberName, &ECsInputDevice::ToString, nullptr); continue; }
+			}
+			// FCsInputActionMapping
+			if (StructProperty->Struct == FCsInputActionMapping::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsInputActionMapping>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// Weapon_FireType
+			{
+				// FCsData_Weapon_FireType_Firing
+				if (StructProperty->Struct == FCsData_Weapon_FireType_Firing::StaticStruct())
+				{ WriteMemberStructPropertyToJson<FCsData_Weapon_FireType_Firing>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+				// FCsData_Weapon_FireType_Animation
+				if (StructProperty->Struct == FCsData_Weapon_FireType_Animation::StaticStruct())
+				{ WriteMemberStructPropertyToJson<FCsData_Weapon_FireType_Animation>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+				// FCsData_FpsWeapon_FireType_Animation
+				if (StructProperty->Struct == FCsData_FpsWeapon_FireType_Animation::StaticStruct())
+				{ WriteMemberStructPropertyToJson<FCsData_FpsWeapon_FireType_Animation>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+				// FCsData_Weapon_FireType_Movement
+				if (StructProperty->Struct == FCsData_Weapon_FireType_Movement::StaticStruct())
+				{ WriteMemberStructPropertyToJson<FCsData_Weapon_FireType_Movement>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+				// FCsData_Weapon_FireType_Aiming
+				if (StructProperty->Struct == FCsData_Weapon_FireType_Aiming::StaticStruct())
+				{ WriteMemberStructPropertyToJson<FCsData_Weapon_FireType_Aiming>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+				// FCsData_FpsWeapon_FireType_Aiming
+				if (StructProperty->Struct == FCsData_FpsWeapon_FireType_Aiming::StaticStruct())
+				{ WriteMemberStructPropertyToJson<FCsData_FpsWeapon_FireType_Aiming>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+				// FCsData_Weapon_FireType_Scope
+				if (StructProperty->Struct == FCsData_Weapon_FireType_Scope::StaticStruct())
+				{ WriteMemberStructPropertyToJson<FCsData_Weapon_FireType_Scope>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+				// FCsData_Weapon_FireType_FXs
+				if (StructProperty->Struct == FCsData_Weapon_FireType_FXs::StaticStruct())
+				{ WriteMemberStructPropertyToJson<FCsData_Weapon_FireType_FXs>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+				// FCsData_FpsWeapon_FireType_FXs
+				if (StructProperty->Struct == FCsData_FpsWeapon_FireType_FXs::StaticStruct())
+				{ WriteMemberStructPropertyToJson<FCsData_FpsWeapon_FireType_FXs>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+				// FCsData_Weapon_FireType_Sounds
+				if (StructProperty->Struct == FCsData_Weapon_FireType_Sounds::StaticStruct())
+				{ WriteMemberStructPropertyToJson<FCsData_Weapon_FireType_Sounds>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+				// FCsData_FpsWeapon_FireType_Sounds
+				if (StructProperty->Struct == FCsData_FpsWeapon_FireType_Sounds::StaticStruct())
+				{ WriteMemberStructPropertyToJson<FCsData_FpsWeapon_FireType_Sounds>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			}
+			// FCsData_ProjectilePtr
+			if (StructProperty->Struct == FCsData_ProjectilePtr::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsData_ProjectilePtr>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+
 			if (Internal)
 			{
 				if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
@@ -2412,6 +2465,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 		// TAssetSubclassOf
 		if (UAssetClassProperty* AssetClassProperty = Cast<UAssetClassProperty>(*It))
 		{
+			// ACsData_Projectile
+			if (AssetClassProperty->MetaClass == ACsData_Projectile::StaticClass())
+			{ WriteToAssetClassPropertyFromJson<ACsData_Projectile>(JsonObject, AssetClassProperty, InStruct, MemberName); continue; }
 			// ACsData
 			if (AssetClassProperty->MetaClass == ACsData::StaticClass())
 			{ WriteToAssetClassPropertyFromJson<ACsData>(JsonObject, AssetClassProperty, InStruct, MemberName); continue; }
@@ -2664,6 +2720,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsTArrayBlueprint
 			if (StructProperty->Struct == FCsTArrayBlueprint::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsTArrayBlueprint>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
+			// FCsCollisionPreset
+			if (StructProperty->Struct == FCsCollisionPreset::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsCollisionPreset>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 			// FCollisionResponseContainer
 			if (StructProperty->Struct == FCollisionResponseContainer::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCollisionResponseContainer>(JsonObject, StructProperty, InStruct, MemberName); continue; }
@@ -2728,6 +2787,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				if (StructProperty->Struct == FCsData_FpsWeapon_FireType_Sounds::StaticStruct())
 				{ WriteToMemberStructPropertyFromJson<FCsData_FpsWeapon_FireType_Sounds>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 			}
+			// FCsData_ProjectilePtr
+			if (StructProperty->Struct == FCsData_ProjectilePtr::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsData_ProjectilePtr>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 
 			if (Internal)
 			{
@@ -4366,6 +4428,10 @@ void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct*
 		// TAssetSubclassOf
 		if (UAssetClassProperty* AssetClassProperty = Cast<UAssetClassProperty>(*It))
 		{
+			// ACsData_Projectile
+			if (AssetClassProperty->MetaClass == ACsData_Projectile::StaticClass())
+			{ GetAssetReferenceFromAssetClassProperty<ACsData_Projectile>(AssetClassProperty, InStruct, InScriptStruct, LoadFlags, CalculateResourceSizes, EResourceSizeMode::Exclusive, OutAssetReferences); continue; }
+
 			if (Internal)
 			{
 				if ((*Internal)(Property, InStruct, InScriptStruct, LoadFlags, CalculateResourceSizes, OutAssetReferences))
@@ -4516,6 +4582,9 @@ void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct*
 			// FCsBlueprint
 			if (StructProperty->Struct == FCsBlueprint::StaticStruct())
 			{ GetAssetReferencesFromStructProperty<FCsBlueprint>(StructProperty, InStruct, LoadFlags, CalculateResourceSizes, OutAssetReferences, Internal); continue; }
+			// FCsCollisionPreset
+			if (StructProperty->Struct == FCsCollisionPreset::StaticStruct())
+			{ GetAssetReferencesFromStructProperty<FCsCollisionPreset>(StructProperty, InStruct, LoadFlags, CalculateResourceSizes, OutAssetReferences, Internal); continue; }
 			// Weapon_FireType
 			{
 				// FCsData_Weapon_FireType_Firing
@@ -4543,6 +4612,9 @@ void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct*
 				if (StructProperty->Struct == FCsData_FpsWeapon_FireType_Sounds::StaticStruct())
 				{ GetAssetReferencesFromStructProperty<FCsData_FpsWeapon_FireType_Sounds>(StructProperty, InStruct, LoadFlags, CalculateResourceSizes, OutAssetReferences, Internal); continue; }
 			}
+			// FCsData_ProjectilePtr
+			if (StructProperty->Struct == FCsData_ProjectilePtr::StaticStruct())
+			{ GetAssetReferencesFromStructProperty<FCsData_ProjectilePtr>(StructProperty, InStruct, LoadFlags, CalculateResourceSizes, OutAssetReferences, Internal); continue; }
 
 			if (Internal)
 			{
@@ -5290,6 +5362,10 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 		// TAssetSubclassOf
 		if (UAssetClassProperty* AssetClassProperty = Cast<UAssetClassProperty>(*It))
 		{
+			// ACsData_Projectile
+			if (AssetClassProperty->MetaClass == ACsData_Projectile::StaticClass())
+			{ LoadAssetClassProperty<ACsData_Projectile>(AssetClassProperty, ObjectName, InStruct, InScriptStruct, MemberName, TEXT("CsData_Projectile"), LoadFlags); continue; }
+
 			if (Internal)
 			{
 				if ((*Internal)(Property, ObjectName, InStruct, InScriptStruct, LoadFlags))
@@ -5420,6 +5496,12 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 			// FCsFpsAnimBlueprint
 			if (StructProperty->Struct == FCsFpsAnimBlueprint::StaticStruct())
 			{ LoadMemberStructProperty<FCsFpsAnimBlueprint>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
+			// FCsPhysicalMaterial
+			if (StructProperty->Struct == FCsPhysicalMaterial::StaticStruct())
+			{ LoadMemberStructProperty<FCsPhysicalMaterial>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
+			// FCsPhysicsAsset
+			if (StructProperty->Struct == FCsPhysicsAsset::StaticStruct())
+			{ LoadMemberStructProperty<FCsPhysicsAsset>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
 			// FCsSoundElement
 			if (StructProperty->Struct == FCsSoundElement::StaticStruct())
 			{
@@ -5478,6 +5560,9 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 			// FCsTArrayBlueprint
 			if (StructProperty->Struct == FCsTArrayBlueprint::StaticStruct())
 			{ LoadMemberStructProperty<FCsTArrayBlueprint>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
+			// FCsCollisionPreset
+			if (StructProperty->Struct == FCsCollisionPreset::StaticStruct())
+			{ LoadMemberStructProperty<FCsCollisionPreset>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
 			// Weapon_FireType
 			{
 				// FCsData_Weapon_FireType_Firing
@@ -5505,6 +5590,9 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 				if (StructProperty->Struct == FCsData_FpsWeapon_FireType_Sounds::StaticStruct())
 				{ LoadMemberStructProperty<FCsData_FpsWeapon_FireType_Sounds>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
 			}
+			// FCsData_ProjectilePtr
+			if (StructProperty->Struct == FCsData_ProjectilePtr::StaticStruct())
+			{ LoadMemberStructProperty<FCsData_ProjectilePtr>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
 
 			if (Internal)
 			{

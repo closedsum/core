@@ -16,6 +16,8 @@ ACsData_Weapon::ACsData_Weapon(const FObjectInitializer& ObjectInitializer)
 
 void* ACsData_Weapon::GetFireTypeStruct(const uint8 &Index) { return nullptr; }
 UScriptStruct* ACsData_Weapon::GetFireTypeScriptStruct() { return nullptr; }
+
+bool ACsData_Weapon::UseFakeProjectile(const TCsWeaponFire &FireType){ return false; }
 ACsData_Projectile* ACsData_Weapon::GetData_Projectile(const TCsWeaponFire &FireType, const bool &IsCharged){ return nullptr; }
 
 #pragma endregion Stats

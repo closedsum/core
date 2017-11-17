@@ -87,7 +87,8 @@ void ACsManager_Projectile::OnTick(const float &DeltaSeconds)
 		// Check if Projectile was DeAllocated NOT in a normal way (i.e. Out of Bounds)
 		if (!Projectile->Cache.IsAllocated)
 		{
-			if (Projectile->Cache.Relevance == ECsProjectileRelevance::Real)
+			if (Projectile->Cache.Relevance == ECsProjectileRelevance::RealVisible ||
+				Projectile->Cache.Relevance == ECsProjectileRelevance::RealInvisible)
 			{
 				UE_LOG(LogCs, Warning, TEXT("ACsManager_Projectile::OnTick: Projectile: %s at PoolIndex: %s was prematurely deallocted NOT in a normal way."), *(Projectile->GetName()), Projectile->Cache.Index);
 			}
@@ -101,7 +102,7 @@ void ACsManager_Projectile::OnTick(const float &DeltaSeconds)
 			continue;
 		}
 
-		if (GetWorld()->GetTimeSeconds() - Projectile->Cache.Time > Projectile->Cache.Duration)
+		if (GetWorld()->GetTimeSeconds() - Projectile->Cache.Time > Projectile->Cache.LifeTime)
 		{
 			LogTransaction(TEXT("ACsManager_Projectile::OnTick"), ECsPoolTransaction::Deallocate, Projectile);
 
@@ -218,12 +219,12 @@ ACsProjectile* ACsManager_Projectile::Fire(const TCsProjectileRelevance &Type, A
 
 ACsProjectile* ACsManager_Projectile::Fire(const TCsProjectileRelevance &Type, ACsData_Projectile* InData, FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner)
 {
-	return nullptr;
+	return Fire(Type, InData, Cache, InInstigator, InOwner, nullptr);
 }
 
 ACsProjectile* ACsManager_Projectile::Fire(const TCsProjectileRelevance &Type, ACsData_Projectile* InData, FCsProjectileFireCache* Cache)
 {
-	return nullptr;
+	return Fire(Type, InData, Cache, nullptr, nullptr, nullptr);;
 }
 
 template<typename T>
@@ -234,18 +235,13 @@ void ACsManager_Projectile::Fire(ACsProjectile* OutProjectile, const TCsProjecti
 template<typename T>
 void ACsManager_Projectile::Fire(ACsProjectile* OutProjectile, const TCsProjectileRelevance &Type, ACsData_Projectile* InData, FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)())
 {
-	OutProjectile = nullptr;
+	Fire<T>(OutProjectile, Type, InData, Cache, InInstigator, InOwner, nullptr, InObject, OnDeAllocate);
 }
 
 template<typename T>
 void ACsManager_Projectile::Fire(ACsProjectile* OutProjectile, const TCsProjectileRelevance &Type, ACsData_Projectile* InData, FCsProjectileFireCache* Cache, UObject* InInstigator, T* InObject, void (T::*OnDeAllocate)())
 {
-	OutProjectile = nullptr;
-}
-template<typename T>
-void ACsManager_Projectile::Fire(ACsProjectile* OutProjectile, const TCsProjectileRelevance &Type, ACsData_Projectile* InData, FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, const FVector &Location, T* InObject, void (T::*OnDeAllocate)())
-{
-	OutProjectile = nullptr;
+	Fire<T>(OutProjectile, Type, InData, Cache, InInstigator, nullptr, nullptr, InObject, OnDeAllocate);
 }
 
 #pragma endregion Fire

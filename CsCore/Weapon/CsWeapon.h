@@ -818,8 +818,6 @@ public:
 
 	virtual FVector GetOwnerRightVector();
 
-	bool UseFakeProjectile;
-
 	virtual void FireProjectile(const TCsWeaponFire &FireType, FCsProjectileFireCache* Cache);
 
 	UFUNCTION(BlueprintCallable, Category = "Firing")

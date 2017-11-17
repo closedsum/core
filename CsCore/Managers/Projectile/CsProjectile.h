@@ -5,8 +5,7 @@
 #include "Data/CsData_Projectile.h"
 #include "CsProjectile.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBindableDynEvent_CsProjectileCache_OnDeAllocate);
-DECLARE_DELEGATE(FBindableEvent_CsProjectileCache_OnDeAllocate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsProjectile_Allocate_Internal, const int32&, PoolIndex);
 
 USTRUCT(BlueprintType)
 struct FCsProjectileCache : public FCsPooledObjectCache
@@ -22,13 +21,13 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 	TEnumAsByte<ECsProjectileRelevance::Type> Relevance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
-	float Duration;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FVector Location;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FVector Direction;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	float ChargePercent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	float Speed;
 
 	FCsProjectileCache()
 	{
@@ -64,9 +63,11 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 		RealTime   = InRealTime;
 		Frame	   = InFrame;
 
-		Location = InFireCache->Location;
-		Direction = InFireCache->Direction;
+		LifeTime	  = InData->GetLifeTime();
+		Location	  = InFireCache->Location;
+		Direction	  = InFireCache->Direction;
 		ChargePercent = InFireCache->ChargePercent;
+		Speed		  = InData->GetInitialSpeed() + InFireCache->AdditionalSpeed;
 
 		if (InObject && OnDeAllocate)
 		{
@@ -110,9 +111,11 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 		RealTime   = InRealTime;
 		Frame	   = InFrame;
 
-		Location = InFireCache->Location;
-		Direction = InFireCache->Direction;
+		LifeTime	  = InData->GetLifeTime();
+		Location	  = InFireCache->Location;
+		Direction	  = InFireCache->Direction;
 		ChargePercent = InFireCache->ChargePercent;
+		Speed		  = InData->GetInitialSpeed() + InFireCache->AdditionalSpeed;
 	}
 
 	void Init(const uint16& InActiveIndex, const TCsProjectileRelevance &InRelevance, ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InInstigator, UObject* InOwner)
@@ -131,10 +134,11 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 
 		Data.Reset();
 		Data  = nullptr;
-		Duration  = 0.0f;
+		Relevance = ECsProjectileRelevance::ECsProjectileRelevance_MAX;
 		Location = FVector::ZeroVector;
 		Direction = FVector::ZeroVector;
 		ChargePercent = 0.0f;
+		Speed = 0.0f;
 	}
 
 	ACsProjectile* GetProjectile() { return Projectile.IsValid() ? Projectile.Get() : nullptr; }
@@ -174,18 +178,15 @@ public:
 	template<typename T>
 	void Allocate(const uint16& ActiveIndex, class ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)());
 
-	template<typename T>
-	void Allocate(const uint16& ActiveIndex, class ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, const FVector &InLocation, T* InObject, void (T::*OnDeAllocate)());
-
 	virtual void Allocate(const uint16& ActiveIndex, class ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, UObject* InParent = nullptr);
 	virtual void Allocate(const uint16& ActiveIndex, class ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache);
 
 	virtual void Allocate_Internal();
 
-	virtual void DeAllocate() override;
+	UPROPERTY(BlueprintAssignable, Category = "Projectile")
+	FBindableDynEvent_CsProjectile_Allocate_Internal Override_Allocate_Internal_ScriptEvent;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Projectile")
-	TEnumAsByte<ECsProjectileRelevance::Type> Relevance;
+	virtual void DeAllocate() override;
 
 	TWeakObjectPtr<ACsProjectile> FakeProjectile;
 
@@ -198,9 +199,22 @@ public:
 	float CurrentSpeed;
 	float Damage;
 
-	UFUNCTION()
-	void OnHitCallback(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& HitResult);
+	UPROPERTY()
+	TArray<TWeakObjectPtr<AActor>> IgnoreActors;
 
-	virtual void OnHitCallback_Internal(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& HitResult);
+	UFUNCTION()
+	virtual void OnHitCallback(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& HitResult);
+
+// Script
+#pragma region
+
+	UFUNCTION(BlueprintCallable, Category = "Projectile")
+	UObject* Cache_GetInstigator();
+	UFUNCTION(BlueprintCallable, Category = "Projectile")
+	ACsProjectile* Cache_GetProjectile();
+	UFUNCTION(BlueprintCallable, Category = "Projectile")
+	ACsData_Projectile* Cache_GetData();
+
+#pragma endregion Script
 };
 

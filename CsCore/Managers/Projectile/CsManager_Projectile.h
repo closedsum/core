@@ -48,8 +48,6 @@ class CSCORE_API ACsManager_Projectile : public ACsManager
 	void Fire(class ACsProjectile* OutProjectile, const TCsProjectileRelevance &Type, class ACsData_Projectile* InData, struct FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)());
 	template<typename T>
 	void Fire(class ACsProjectile* OutProjectile, const TCsProjectileRelevance &Type, class ACsData_Projectile* InData, struct FCsProjectileFireCache* Cache, UObject* InInstigator, T* InObject, void (T::*OnDeAllocate)());
-	template<typename T>
-	void Fire(class ACsProjectile* OutProjectile, const TCsProjectileRelevance &Type, class ACsData_Projectile* InData, struct FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, const FVector &Location, T* InObject, void (T::*OnDeAllocate)());
 
 #pragma endregion Fire
 };

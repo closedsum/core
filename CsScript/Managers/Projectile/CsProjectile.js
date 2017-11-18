@@ -23,7 +23,7 @@ module.exports = class JsCsProjectile extends JsCsPooledActor
         this.ptr = CsProjectile.C(inPtr);
 
         // Override Allocate Internal
-        this.ptr.Override_Allocate_Internal_ScriptEvent.Add(this.Allocate);
+        //this.ptr.Override_Allocate_Internal_ScriptEvent.Add(this.Allocate);
     }
 
     CleanUp()
@@ -54,102 +54,99 @@ module.exports = class JsCsProjectile extends JsCsPooledActor
 
         let ownerWeapon		= CsWeapon.C(this.ptr.Cache_GetOwner());
         let data_Weapon		= (ownerWeapon != null && typeof ownerWeapon === "object") ? ownerWeapon.GetMyData_Weapon() : null;
-        let data_Projectile = CsProjectile.C(this.ptr.Cache_GetData());
+        let data_Projectile = CsData_Projectile.C(this.ptr.Cache_GetData());
 
         const relevance = this.ptr.Cache.Relevance;
 
         // Move
 
         // Real Invisible
-        if (relevance == ECsProjectileRelevance.RealInvisible)
+        if (relevance === ECsProjectileRelevance.RealInvisible)
         {
-            MeshComponent ->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
-            MeshComponent ->SetVisibility(false);
+            CsJavascriptLibrary.ComponentDetachFromComponent(this.ptr.MeshComponent, FCsDetachmentTransformRules.KeepRelativeTransform);
+            this.ptr.MeshComponent.SetVisibility(false);
 
-            MovementComponent ->UpdatedComponent = CollisionComponent;
-            MovementComponent ->Activate();
-            MovementComponent ->SetComponentTickEnabled(true);
-            //MovementComponent->MaxSimulationIterations = CVarSimulationIterationsProjectile->GetInt();
+            this.ptr.MovementComponent.SetUpdatedComponent(this.ptr.CollisionComponent);
+            this.ptr.MovementComponent.Activate();
+            this.ptr.MovementComponent.SetComponentTickEnabled(true);
         }
         // Real Visible
-        if (relevance == ECsProjectileRelevance::RealVisible)
+        if (relevance === ECsProjectileRelevance.RealVisible)
         {
-            MovementComponent ->UpdatedComponent = CollisionComponent;
-            MovementComponent ->Activate();
-            MovementComponent ->SetComponentTickEnabled(true);
+            this.ptr.MovementComponent.SetUpdatedComponent(this.ptr.CollisionComponent);
+            this.ptr.MovementComponent.Activate();
+            this.ptr.MovementComponent.SetComponentTickEnabled(true);
         }
         // Fake
-        if (relevance == ECsProjectileRelevance::Fake)
+        if (relevance === ECsProjectileRelevance.Fake)
         {
-            MeshComponent ->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-            RootComponent = MeshComponent;
-            MovementComponent ->UpdatedComponent = MeshComponent;
-            MovementComponent ->Activate();
-            MovementComponent ->SetComponentTickEnabled(true);
+            CsJavascriptLibrary.ComponentDetachFromComponent(this.ptr.MeshComponent, FDetachmentTransformRules.KeepWorldTransform);
+            this.ptr.SetRootComponent(this.ptr.MeshComponent);
+            this.ptr.MovementComponent.SetUpdatedComponent(this.ptr.MeshComponent);
+            this.ptr.MovementComponent.Activate();
+            this.ptr.MovementComponent.SetComponentTickEnabled(true);
         }
 
         // Mesh / Visual
 
         // Real Visible | Fake
-        if (relevance == ECsProjectileRelevance::RealVisible ||
-            relevance == ECsProjectileRelevance::Fake)
+        if (relevance === ECsProjectileRelevance.RealVisible ||
+            relevance === ECsProjectileRelevance.Fake)
         {
             // Mesh
 
-            MeshComponent ->SetStaticMesh(Data_Projectile ->GetMesh(ViewType));
-            MeshComponent ->SetRelativeTransform(Data_Projectile ->GetTransform());
-            MeshComponent ->Activate();
-            MeshComponent ->SetVisibility(true);
-            MeshComponent ->SetHiddenInGame(false);
-            MeshComponent ->SetComponentTickEnabled(true);
+            this.ptr.MeshComponent.SetStaticMesh(data_Projectile.GetMesh(viewType));
+            CsJavascriptLibrary.SetComponentRelativeTransform(this.ptr.MeshComponent, data_Projectile.GetTransform());
+            this.ptr.MeshComponent.Activate();
+            this.ptr.MeshComponent.SetVisibility(true);
+            this.ptr.MeshComponent.SetHiddenInGame(false);
+            this.ptr.MeshComponent.SetComponentTickEnabled(true);
         }
-
+        
         // Collision
 
         // Real Visible | Real Invisible
-        if (relevance == ECsProjectileRelevance::RealVisible ||
-            relevance == ECsProjectileRelevance::RealInvisible)
+        if (relevance === ECsProjectileRelevance.RealVisible ||
+            relevance === ECsProjectileRelevance.RealInvisible)
         {
-            CollisionComponent ->Activate();
+            this.ptr.CollisionComponent.Activate();
 
-            if (AActor * MyInstigator = Cast<AActor>(Cache.GetInstigator()))
-            IgnoreActors.Add(MyInstigator);
+            let myInstigator = Actor.C(this.ptr.Cache_GetInstigator());
 
-            if (OwnerWeapon)
-                IgnoreActors.Add(OwnerWeapon);
+            if (myInstigator != null && typeof myInstigator === "object")
+                this.ptr.AddIgnoreActor(myInstigator);
 
-            const int32 Count = IgnoreActors.Num();
+            if (ownerWeapon != null && typeof ownerWeapon === "object")
+                this.ptr.AddIgnoreActor(ownerWeapon);
 
-            for (int32 I = 0; I < Count; I++)
+            const count = this.ptr.IgnoreActors.length;
+
+            for (let i = 0; i < count; i++)
             {
-                AActor * Actor = IgnoreActors[I].IsValid() ? IgnoreActors[I].Get() : nullptr;
+                let actor = this.ptr.GetIgnoreActor(i);
 
-                if (!Actor)
+                if (actor == null && typeof actor != "object")
                     continue;
 
-                CollisionComponent ->MoveIgnoreActors.Add(Actor);
+                CsJavascriptLibrary.AddMoveIngoreActor(this.ptr.CollisionComponent, actor);
             }
 
-            //FCollisionResponseContainer CapsuleResponseContainer(ECR_Ignore);
-            //CapsuleResponseContainer.SetResponse(ECC_Pawn, ECR_Block);
-            //CapsuleResponseContainer.SetResponse(MBO_COLLISION_PROJECTILE, ECR_Ignore);
+            this.ptr.CollisionComponent.SetCollisionObjectType(data_Projectile.GetCollisionObjectType());
+            CsJavascriptLibrary.SetCollisionResponseToChannels(this.ptr.CollisionComponent, data_Projectile.GetCollisionResponseContainer());
+            this.ptr.CollisionComponent.SetCollisionEnabled(data_Projectile.GetCollisionEnabled());
+            this.ptr.CollisionComponent.SetNotifyRigidBodyCollision(true);
 
-            CollisionComponent ->SetCollisionObjectType(Data_Projectile ->GetCollisionObjectType());
-            CollisionComponent ->SetCollisionResponseToChannels(Data_Projectile ->GetCollisionResponseContainer());
-            CollisionComponent ->SetCollisionEnabled(Data_Projectile ->GetCollisionEnabled());
-            CollisionComponent ->SetNotifyRigidBodyCollision(true);
+            this.ptr.CollisionComponent.SetComponentTickEnabled(true);
 
-            CollisionComponent ->SetComponentTickEnabled(true);
-
-            CollisionComponent ->SetSphereRadius(Data_Projectile ->GetSphereRadius());
+            this.ptr.CollisionComponent.SetSphereRadius(data_Projectile.GetSphereRadius());
         }
         // Fake
-        if (Relevance == ECsProjectileRelevance::Fake)
+        if (relevance === ECsProjectileRelevance.Fake)
         {
-            CollisionComponent ->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-            CollisionComponent ->SetCollisionObjectType(Data_Projectile ->GetCollisionObjectType());
-            CollisionComponent ->SetCollisionResponseToAllChannels(ECR_Ignore);
-            CollisionComponent ->SetNotifyRigidBodyCollision(false);
+            this.ptr.CollisionComponent.SetCollisionEnabled(ECollisionEnabled.NoCollision);
+            this.ptr.CollisionComponent.SetCollisionObjectType(data_Projectile.GetCollisionObjectType());
+            this.ptr.CollisionComponent.SetCollisionResponseToAllChannels(ECollisionResponse.ECR_Ignore);
+            this.ptr.CollisionComponent.SetNotifyRigidBodyCollision(false);
         }
 
         // Homing
@@ -163,22 +160,23 @@ module.exports = class JsCsProjectile extends JsCsPooledActor
         }
         */
 
-        SetActorTickEnabled(true);
-        TeleportTo(Cache.Location, Cache.Direction.Rotation(), false, true);
+        this.ptr.SetActorTickEnabled(true);
+        CsJavascriptLibrary.TeleportTo(this.ptr, this.ptr.Cache.Location, CsJavascriptLibrary.Vector_Rotation(this.ptr.Cache.Direction), false, true);
 
-        const float DrawDistanceSq = Data_Projectile ->GetDrawDistanceSq(ViewType);
+        const drawDistanceSq = data_Projectile.GetDrawDistanceSq(viewType);
 
-        if (DrawDistanceSq > 0) {
-            const float DistanceSq = UCsCommon::GetSquaredDistanceToLocalControllerEye(GetWorld(), GetActorLocation());
-            const bool Hide		   = DistanceSq > DrawDistanceSq;
+        if (drawDistanceSq > 0)
+        {
+            const distanceSq = CsCommon.GetSquaredDistanceToLocalControllerEye(this.root.MyWorld, CsJavascriptLibrary.GetActorLocation(this.ptr));
+            const hide		 = distanceSq > drawDistanceSq;
 
-            if (Hide != bHidden)
-                SetActorHiddenInGame(Hide);
+            if (hide != this.ptr.bHidden)
+                this.ptr.SetActorHiddenInGame(hide);
         }
 
-        MovementComponent ->InitialSpeed			  = Cache.Speed;
-        MovementComponent ->MaxSpeed				  = Data_Projectile ->GetMaxSpeed();
-        MovementComponent ->Velocity				  = MovementComponent ->InitialSpeed * Cache.Direction;
-        MovementComponent ->ProjectileGravityScale = Data_Projectile ->GetGravityMultiplier();
+        this.ptr.MovementComponent.InitialSpeed		      = this.ptr.Cache.Speed;
+        this.ptr.MovementComponent.MaxSpeed               = data_Projectile.GetMaxSpeed();
+        this.ptr.MovementComponent.Velocity               = KismetMathLibrary.Multiply_VectorFloat(this.ptr.Cache.Direction, this.ptr.MovementComponent.InitialSpeed);
+        this.ptr.MovementComponent.ProjectileGravityScale = data_Projectile.GetGravityMultiplier();
     }
 };

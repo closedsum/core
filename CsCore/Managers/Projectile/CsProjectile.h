@@ -170,16 +170,16 @@ public:
 	void Init(const int32 &Index);
 
 	template<typename T>
-	void Allocate(const uint16& ActiveIndex, class ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)());
+	void Allocate(const uint16& ActiveIndex, const TCsProjectileRelevance &Relevance, class ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)());
 
 	template<typename T>
-	void Allocate(const uint16& ActiveIndex, class ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, T* InObject, void (T::*OnDeAllocate)());
+	void Allocate(const uint16& ActiveIndex, const TCsProjectileRelevance &Relevance, class ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, T* InObject, void (T::*OnDeAllocate)());
 
 	template<typename T>
-	void Allocate(const uint16& ActiveIndex, class ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)());
+	void Allocate(const uint16& ActiveIndex, const TCsProjectileRelevance &Relevance, class ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)());
 
-	virtual void Allocate(const uint16& ActiveIndex, class ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, UObject* InParent = nullptr);
-	virtual void Allocate(const uint16& ActiveIndex, class ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache);
+	virtual void Allocate(const uint16& ActiveIndex, const TCsProjectileRelevance &Relevance, class ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, UObject* InParent = nullptr);
+	virtual void Allocate(const uint16& ActiveIndex, const TCsProjectileRelevance &Relevance, class ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache);
 
 	virtual void Allocate_Internal();
 
@@ -202,12 +202,19 @@ public:
 	UPROPERTY()
 	TArray<TWeakObjectPtr<AActor>> IgnoreActors;
 
+	UFUNCTION(BlueprintCallable, Category = "Projectile")
+	void AddIgnoreActor(AActor* InActor);
+	UFUNCTION(BlueprintCallable, Category = "Projectile")
+	AActor* GetIgnoreActor(const int32 &Index);
+
 	UFUNCTION()
 	virtual void OnHitCallback(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& HitResult);
 
 // Script
 #pragma region
 
+	UFUNCTION(BlueprintCallable, Category = "Projectile")
+	UObject* Cache_GetOwner();
 	UFUNCTION(BlueprintCallable, Category = "Projectile")
 	UObject* Cache_GetInstigator();
 	UFUNCTION(BlueprintCallable, Category = "Projectile")

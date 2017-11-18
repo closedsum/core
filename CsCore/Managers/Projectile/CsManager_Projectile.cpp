@@ -70,6 +70,7 @@ void ACsManager_Projectile::CreatePool(const int32 &Size)
 		Projectile->SetReplicates(false);
 		Projectile->Role = ROLE_None;
 		GetWorld()->RemoveNetworkActor(Projectile);
+		Projectile->Init(I);
 		Projectile->DeAllocate();
 		Pool.Add(Projectile);
 	}
@@ -166,7 +167,7 @@ void ACsManager_Projectile::LogTransaction(const FString &FunctionName, const TE
 	}
 }
 
-ACsProjectile* ACsManager_Projectile::Allocate(const TCsProjectileRelevance &Type)
+ACsProjectile* ACsManager_Projectile::Allocate()
 {
 	for (uint16 I = 0; I < PoolSize; ++I)
 	{
@@ -176,7 +177,6 @@ ACsProjectile* ACsManager_Projectile::Allocate(const TCsProjectileRelevance &Typ
 		if (!Projectile->Cache.IsAllocated)
 		{
 			Projectile->Cache.IsAllocated = true;
-			Projectile->Cache.Type		  = Type;
 			return Projectile;
 		}
 	}
@@ -204,12 +204,12 @@ void ACsManager_Projectile::DeAllocate(const int32 &Index)
 // Fire
 #pragma region
 
-ACsProjectile* ACsManager_Projectile::Fire(const TCsProjectileRelevance &Type, ACsData_Projectile* InData, FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, UObject* InParent)
+ACsProjectile* ACsManager_Projectile::Fire(const TCsProjectileRelevance &Relevance, ACsData_Projectile* InData, FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, UObject* InParent)
 {
-	ACsProjectile* Projectile = Allocate(Type);
+	ACsProjectile* Projectile = Allocate();
 	const int32 Count		  = ActiveProjectiles.Num();
 
-	Projectile->Allocate((uint16)Count, InData, Cache, InInstigator, InOwner, InParent);
+	Projectile->Allocate((uint16)Count, Relevance, InData, Cache, InInstigator, InOwner, InParent);
 
 	LogTransaction(TEXT("ACsManager_Projectile::Fire"), ECsPoolTransaction::Allocate, Projectile);
 
@@ -217,31 +217,31 @@ ACsProjectile* ACsManager_Projectile::Fire(const TCsProjectileRelevance &Type, A
 	return Projectile;
 }
 
-ACsProjectile* ACsManager_Projectile::Fire(const TCsProjectileRelevance &Type, ACsData_Projectile* InData, FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner)
+ACsProjectile* ACsManager_Projectile::Fire(const TCsProjectileRelevance &Relevance, ACsData_Projectile* InData, FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner)
 {
-	return Fire(Type, InData, Cache, InInstigator, InOwner, nullptr);
+	return Fire(Relevance, InData, Cache, InInstigator, InOwner, nullptr);
 }
 
-ACsProjectile* ACsManager_Projectile::Fire(const TCsProjectileRelevance &Type, ACsData_Projectile* InData, FCsProjectileFireCache* Cache)
+ACsProjectile* ACsManager_Projectile::Fire(const TCsProjectileRelevance &Relevance, ACsData_Projectile* InData, FCsProjectileFireCache* Cache)
 {
-	return Fire(Type, InData, Cache, nullptr, nullptr, nullptr);;
+	return Fire(Relevance, InData, Cache, nullptr, nullptr, nullptr);;
 }
 
 template<typename T>
-void ACsManager_Projectile::Fire(ACsProjectile* OutProjectile, const TCsProjectileRelevance &Type, ACsData_Projectile* InData, FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)())
+void ACsManager_Projectile::Fire(ACsProjectile* OutProjectile, const TCsProjectileRelevance &Relevance, ACsData_Projectile* InData, FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)())
 {
 	OutProjectile = nullptr;
 }
 template<typename T>
-void ACsManager_Projectile::Fire(ACsProjectile* OutProjectile, const TCsProjectileRelevance &Type, ACsData_Projectile* InData, FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)())
+void ACsManager_Projectile::Fire(ACsProjectile* OutProjectile, const TCsProjectileRelevance &Relevance, ACsData_Projectile* InData, FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)())
 {
-	Fire<T>(OutProjectile, Type, InData, Cache, InInstigator, InOwner, nullptr, InObject, OnDeAllocate);
+	Fire<T>(OutProjectile, Relevance, InData, Cache, InInstigator, InOwner, nullptr, InObject, OnDeAllocate);
 }
 
 template<typename T>
-void ACsManager_Projectile::Fire(ACsProjectile* OutProjectile, const TCsProjectileRelevance &Type, ACsData_Projectile* InData, FCsProjectileFireCache* Cache, UObject* InInstigator, T* InObject, void (T::*OnDeAllocate)())
+void ACsManager_Projectile::Fire(ACsProjectile* OutProjectile, const TCsProjectileRelevance &Relevance, ACsData_Projectile* InData, FCsProjectileFireCache* Cache, UObject* InInstigator, T* InObject, void (T::*OnDeAllocate)())
 {
-	Fire<T>(OutProjectile, Type, InData, Cache, InInstigator, nullptr, nullptr, InObject, OnDeAllocate);
+	Fire<T>(OutProjectile, Relevance, InData, Cache, InInstigator, nullptr, nullptr, InObject, OnDeAllocate);
 }
 
 #pragma endregion Fire

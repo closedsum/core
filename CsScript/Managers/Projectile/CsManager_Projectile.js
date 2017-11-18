@@ -24,7 +24,7 @@ module.exports = class JsCsManager_Projectile extends JsCsManager
         this.ptr = CsManager_Projectile.C(inPtr);
 
         const len = this.ptr.Pool.length;
-
+        
         for (let i = 0; i < len; i++)
         {
             let projectile = new JsCsProjectile();

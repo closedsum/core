@@ -70,6 +70,7 @@ class CSCORE_API ACsData_Projectile : public ACsData
 	virtual TEnumAsByte<ECollisionChannel> GetCollisionObjectType();
 
 	FCollisionResponseContainer DefaultCollisionResponseContainer;
+	UFUNCTION(BlueprintCallable, Category = "Collision")
 	virtual FCollisionResponseContainer& GetCollisionResponseContainer();
 
 	UFUNCTION(BlueprintCallable, Category = "Collision")

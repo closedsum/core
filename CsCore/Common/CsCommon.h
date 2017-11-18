@@ -90,6 +90,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 
 	static void GetLocalPlayerViewPoint(UWorld* InWorld, FVector &OutLocation, FRotator &OutRotation);
 
+	UFUNCTION(BlueprintCallable, Category = "Common")
 	static float GetSquaredDistanceToLocalControllerEye(UWorld *InWorld, const FVector& Location);
 
 	static class ACsMotionController* GetLocalHand(UWorld *InWorld, const TCsControllerHand &Hand);

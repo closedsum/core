@@ -31,23 +31,23 @@ class CSCORE_API ACsManager_Projectile : public ACsManager
 
 	virtual void LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, class UObject* InObject) override;
 
-	class ACsProjectile* Allocate(const TCsProjectileRelevance &Type);
+	class ACsProjectile* Allocate();
 
 	virtual void DeAllocate(const int32 &Index) override;
 
 // Fire
 #pragma region
 
-	virtual class ACsProjectile* Fire(const TCsProjectileRelevance &Type, class ACsData_Projectile* InData, struct FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, UObject* InParent);
-	virtual class ACsProjectile* Fire(const TCsProjectileRelevance &Type, class ACsData_Projectile* InData, struct FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner);
-	virtual class ACsProjectile* Fire(const TCsProjectileRelevance &Type, class ACsData_Projectile* InData, struct FCsProjectileFireCache* Cache);
+	virtual class ACsProjectile* Fire(const TCsProjectileRelevance &Relevance, class ACsData_Projectile* InData, struct FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, UObject* InParent);
+	virtual class ACsProjectile* Fire(const TCsProjectileRelevance &Relevance, class ACsData_Projectile* InData, struct FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner);
+	virtual class ACsProjectile* Fire(const TCsProjectileRelevance &Relevance, class ACsData_Projectile* InData, struct FCsProjectileFireCache* Cache);
 
 	template<typename T>
-	void Fire(class ACsProjectile* OutProjectile, const TCsProjectileRelevance &Type, class ACsData_Projectile* InData, struct FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)());
+	void Fire(class ACsProjectile* OutProjectile, const TCsProjectileRelevance &Relevance, class ACsData_Projectile* InData, struct FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)());
 	template<typename T>
-	void Fire(class ACsProjectile* OutProjectile, const TCsProjectileRelevance &Type, class ACsData_Projectile* InData, struct FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)());
+	void Fire(class ACsProjectile* OutProjectile, const TCsProjectileRelevance &Relevance, class ACsData_Projectile* InData, struct FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)());
 	template<typename T>
-	void Fire(class ACsProjectile* OutProjectile, const TCsProjectileRelevance &Type, class ACsData_Projectile* InData, struct FCsProjectileFireCache* Cache, UObject* InInstigator, T* InObject, void (T::*OnDeAllocate)());
+	void Fire(class ACsProjectile* OutProjectile, const TCsProjectileRelevance &Relevance, class ACsData_Projectile* InData, struct FCsProjectileFireCache* Cache, UObject* InInstigator, T* InObject, void (T::*OnDeAllocate)());
 
 #pragma endregion Fire
 };

@@ -10,6 +10,9 @@ class CSCORE_API UCsJavascriptLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_UCLASS_BODY()
 
+	UFUNCTION(BlueprintCallable, Category = "Javascript")
+	static void ConsoleLog(const FString &String);
+
 // Vector
 #pragma region
 
@@ -51,11 +54,27 @@ class CSCORE_API UCsJavascriptLibrary : public UBlueprintFunctionLibrary
 
 #pragma endregion HitResult
 
+// PrimitiveComponent
+#pragma region
+
+	UFUNCTION(BlueprintCallable, Category = "Javascript")
+	static void SetCollisionResponseToChannels(UPrimitiveComponent* InComponent, const FCollisionResponseContainer &Response);
+	UFUNCTION(BlueprintCallable, Category = "Javascript")
+	static void AddMoveIngoreActor(UPrimitiveComponent* InComponent, AActor* InActor);
+
+#pragma endregion PrimitiveComponent
+
 // SceneComponent
 #pragma region
 
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static FVector GetComponentLocation(class USceneComponent* Component);
+	static FVector GetComponentLocation(USceneComponent* InComponent);
+	UFUNCTION(BlueprintCallable, Category = "Javascript")
+	static void ComponentAttachToComponent(USceneComponent* InComponent, USceneComponent* Parent, const TEnumAsByte<ECsAttachmentTransformRules::Type> &AttachmentRules, const FName &SocketName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Javascript")
+	static void ComponentDetachFromComponent(USceneComponent* InComponent, const TEnumAsByte<ECsDetachmentTransformRules::Type> &DetachmentRules);
+	UFUNCTION(BlueprintCallable, Category = "Javascript")
+	static void SetComponentRelativeTransform(USceneComponent* InComponent, const FTransform& NewTransform, bool bSweep, FHitResult& SweepHitResult, bool bTeleport);
 
 #pragma endregion SceneComponent
 
@@ -74,6 +93,16 @@ class CSCORE_API UCsJavascriptLibrary : public UBlueprintFunctionLibrary
 	static bool SetActorRotation(AActor* InActor, const FRotator &NewRotation, const bool &bTeleportPhysics);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
 	static void SetActorRelativeRotation(AActor* InActor, const FRotator &NewRelativeRotation, const bool &bSweep, FHitResult& SweepHitResult, const bool &bTeleport);
+	UFUNCTION(BlueprintCallable, Category = "Javascript")
+	static void SetActorRelativeTransform(AActor* InActor, const FTransform& NewTransform, const bool &bSweep, FHitResult& SweepHitResult, const bool &bTeleport);
+	UFUNCTION(BlueprintCallable, Category = "Javascript")
+	static bool TeleportTo(AActor* InActor, const FVector& DestLocation, const FRotator& DestRotation, bool bIsATest = false, bool bNoCheck = false);
+	UFUNCTION(BlueprintCallable, Category = "Javascript")
+	static void ActorAttachToActor(AActor* InActor, AActor* ParentActor, const TEnumAsByte<ECsAttachmentTransformRules::Type> &AttachmentRules, const FName &SocketName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Javascript")
+	static void ActorAttachToComponent(AActor* InActor, USceneComponent* Parent, const TEnumAsByte<ECsAttachmentTransformRules::Type> &AttachmentRules, const FName &SocketName = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Javascript")
+	static void ActorDetachFromActor(AActor* InActor, const TEnumAsByte<ECsDetachmentTransformRules::Type> &DetachmentRules);
 
 #pragma endregion Actor
 

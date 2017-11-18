@@ -94,7 +94,7 @@ void ACsProjectile::Init(const int32 &Index)
 }
 
 template<typename T>
-void ACsProjectile::Allocate(const uint16& ActiveIndex, ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)())
+void ACsProjectile::Allocate(const uint16& ActiveIndex, const TCsProjectileRelevance &Relevance, ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)())
 {
 	Cache.Init<T>(ActiveIndex, Relevance, InData, InFireCache, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), 0, InInstigator, InOwner, InParent, InObject, OnDeAllocate);
 
@@ -102,27 +102,27 @@ void ACsProjectile::Allocate(const uint16& ActiveIndex, ACsData_Projectile* InDa
 }
 
 template<typename T>
-void ACsProjectile::Allocate(const uint16& ActiveIndex, ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, T* InObject, void (T::*OnDeAllocate)())
+void ACsProjectile::Allocate(const uint16& ActiveIndex, const TCsProjectileRelevance &Relevance, ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, T* InObject, void (T::*OnDeAllocate)())
 {
 	Allocate<T>(ActiveIndex, Relevance, InData, InFireCache, nullptr, nullptr, InObject, OnDeAllocate);
 }
 
 template<typename T>
-void ACsProjectile::Allocate(const uint16& ActiveIndex, ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)())
+void ACsProjectile::Allocate(const uint16& ActiveIndex, const TCsProjectileRelevance &Relevance, ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)())
 {
 	Allocate<T>(ActiveIndex, Relevance, InData, InFireCache, nullptr, InOwner, InObject, OnDeAllocate);
 }
 
-void ACsProjectile::Allocate(const uint16& ActiveIndex, ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, UObject* InParent /*=nullptr*/)
+void ACsProjectile::Allocate(const uint16& ActiveIndex, const TCsProjectileRelevance &Relevance, ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, UObject* InParent /*=nullptr*/)
 {
 	Cache.Init(ActiveIndex, Relevance, InData, InFireCache, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), 0, InInstigator, InOwner, InParent);
 
 	Allocate_Internal();
 }
 
-void ACsProjectile::Allocate(const uint16& ActiveIndex, ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache)
+void ACsProjectile::Allocate(const uint16& ActiveIndex, const TCsProjectileRelevance &Relevance, ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache)
 {
-	Allocate(ActiveIndex, InData, InFireCache, nullptr, nullptr, nullptr);
+	Allocate(ActiveIndex, Relevance, InData, InFireCache, nullptr, nullptr, nullptr);
 }
 
 void ACsProjectile::Allocate_Internal()
@@ -156,7 +156,7 @@ void ACsProjectile::Allocate_Internal()
 	{
 		MeshComponent->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
 		MeshComponent->SetVisibility(false);
-
+		
 		MovementComponent->UpdatedComponent = CollisionComponent;
 		MovementComponent->Activate();
 		MovementComponent->SetComponentTickEnabled(true);
@@ -253,7 +253,7 @@ void ACsProjectile::Allocate_Internal()
 		}
 	}
 	*/
-
+	
 	SetActorTickEnabled(true);
 	TeleportTo(Cache.Location, Cache.Direction.Rotation(), false, true);
 
@@ -307,6 +307,18 @@ ACsProjectile* ACsProjectile::GetFakeProjectile()
 	return FakeProjectile.IsValid() ? FakeProjectile.Get() : nullptr;
 }
 
+void ACsProjectile::AddIgnoreActor(AActor* InActor)
+{
+	IgnoreActors.Add(InActor);
+}
+
+AActor* ACsProjectile::GetIgnoreActor(const int32 &Index)
+{
+	if (Index >= IgnoreActors.Num())
+		return nullptr;
+	return IgnoreActors[Index].IsValid() ? IgnoreActors[Index].Get() : nullptr;
+}
+
 void ACsProjectile::OnHitCallback(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& HitResult)
 {
 
@@ -315,6 +327,7 @@ void ACsProjectile::OnHitCallback(UPrimitiveComponent* HitComp, AActor* OtherAct
 // Script
 #pragma region
 
+UObject* ACsProjectile::Cache_GetOwner() { return Cache.GetOwner(); }
 UObject* ACsProjectile::Cache_GetInstigator() { return Cache.GetInstigator(); }
 ACsProjectile* ACsProjectile::Cache_GetProjectile() { return Cache.GetProjectile(); }
 ACsData_Projectile* ACsProjectile::Cache_GetData() { return Cache.GetData(); }

@@ -3208,3 +3208,110 @@ namespace ECsColor
 typedef TEnumAsByte<ECsColor::Type> TCsColor;
 
 #pragma endregion Color
+
+// Attach / Detach
+#pragma region
+
+UENUM(BlueprintType)
+namespace ECsAttachmentTransformRules
+{
+	enum Type
+	{
+		KeepRelativeTransform			UMETA(DisplayName = "Keep Relative Transform"),
+		KeepWorldTransform				UMETA(DisplayName = "Keep World Transform"),
+		SnapToTargetNotIncludingScale	UMETA(DisplayName = "Snap To Target Not Including Scale"),
+		SnapToTargetIncludingScale		UMETA(DisplayName = "Snap To Target Including Scale"),
+		ECsAttachmentTransformRules_MAX	UMETA(Hidden),
+	};
+}
+
+namespace ECsAttachmentTransformRules
+{
+	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString KeepRelativeTransform = TCsString(TEXT("KeepRelativeTransform"), TEXT("keeprelativetransform"), TEXT("keep relative transform"));
+		const TCsString KeepWorldTransform = TCsString(TEXT("KeepWorldTransform"), TEXT("keepworldtransform"), TEXT("keep world transform"));
+		const TCsString SnapToTargetNotIncludingScale = TCsString(TEXT("SnapToTargetNotIncludingScale"), TEXT("snaptotargetnotincludingscale"), TEXT("snap to target not including scale"));
+		const TCsString SnapToTargetIncludingScale = TCsString(TEXT("SnapToTargetIncludingScale"), TEXT("snaptotargetincludingscale"), TEXT("snap to target including scale"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::KeepRelativeTransform) { return Str::KeepRelativeTransform.Value; }
+		if (EType == Type::KeepWorldTransform) { return Str::KeepWorldTransform.Value; }
+		if (EType == Type::SnapToTargetNotIncludingScale) { return Str::SnapToTargetNotIncludingScale.Value; }
+		if (EType == Type::SnapToTargetIncludingScale) { return Str::SnapToTargetIncludingScale.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::KeepRelativeTransform) { return Type::KeepRelativeTransform; }
+		if (String == Str::KeepWorldTransform) { return Type::KeepWorldTransform; }
+		if (String == Str::SnapToTargetNotIncludingScale) { return Type::SnapToTargetNotIncludingScale; }
+		if (String == Str::SnapToTargetIncludingScale) { return Type::SnapToTargetIncludingScale; }
+		return Type::ECsAttachmentTransformRules_MAX;
+	}
+
+	FORCEINLINE FAttachmentTransformRules ToRule(const Type &EType)
+	{
+		if (EType == Type::KeepRelativeTransform) { return FAttachmentTransformRules::KeepRelativeTransform; }
+		if (EType == Type::KeepWorldTransform) { return FAttachmentTransformRules::KeepWorldTransform; }
+		if (EType == Type::SnapToTargetNotIncludingScale) { return FAttachmentTransformRules::SnapToTargetNotIncludingScale; }
+		if (EType == Type::SnapToTargetIncludingScale) { return FAttachmentTransformRules::SnapToTargetIncludingScale; }
+		return FAttachmentTransformRules::KeepRelativeTransform;
+	}
+}
+
+#define ECS_ATTACHMENT_TRANSFORM_RULES_MAX (uint8)ECsAttachmentTransformRules::ECsAttachmentTransformRules_MAX
+typedef TEnumAsByte<ECsAttachmentTransformRules::Type> TCsAttachmentTransformRules;
+
+UENUM(BlueprintType)
+namespace ECsDetachmentTransformRules
+{
+	enum Type
+	{
+		KeepRelativeTransform			UMETA(DisplayName = "Keep Relative Transform"),
+		KeepWorldTransform				UMETA(DisplayName = "Keep World Transform"),
+		ECsDetachmentTransformRules_MAX	UMETA(Hidden),
+	};
+}
+
+namespace ECsDetachmentTransformRules
+{
+	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString KeepRelativeTransform = TCsString(TEXT("KeepRelativeTransform"), TEXT("keeprelativetransform"), TEXT("keep relative transform"));
+		const TCsString KeepWorldTransform = TCsString(TEXT("KeepWorldTransform"), TEXT("keepworldtransform"), TEXT("keep world transform"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::KeepRelativeTransform) { return Str::KeepRelativeTransform.Value; }
+		if (EType == Type::KeepWorldTransform) { return Str::KeepWorldTransform.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::KeepRelativeTransform) { return Type::KeepRelativeTransform; }
+		if (String == Str::KeepWorldTransform) { return Type::KeepWorldTransform; }
+		return Type::ECsDetachmentTransformRules_MAX;
+	}
+
+	FORCEINLINE FDetachmentTransformRules ToRule(const Type &EType)
+	{
+		if (EType == Type::KeepRelativeTransform) { return FDetachmentTransformRules::KeepRelativeTransform; }
+		if (EType == Type::KeepWorldTransform) { return FDetachmentTransformRules::KeepWorldTransform; }
+		return FDetachmentTransformRules::KeepRelativeTransform;
+	}
+}
+
+#define ECS_DETACHMENT_TRANSFORM_RULES_MAX (uint8)ECsDetachmentTransformRules::ECsDetachmentTransformRules_MAX
+typedef TEnumAsByte<ECsDetachmentTransformRules::Type> TCsDetachmentTransformRules;
+
+#pragma endregion Attach / Detach

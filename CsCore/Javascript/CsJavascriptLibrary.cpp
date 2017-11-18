@@ -7,6 +7,11 @@ UCsJavascriptLibrary::UCsJavascriptLibrary(const FObjectInitializer& ObjectIniti
 {
 }
 
+void UCsJavascriptLibrary::ConsoleLog(const FString &String)
+{
+	UE_LOG(LogCs, Log, TEXT("Javascript: %s"), *String);
+}
+
 // Vector
 #pragma region
 
@@ -36,10 +41,33 @@ UPrimitiveComponent* UCsJavascriptLibrary::HitResult_GetComponent(const FHitResu
 
 #pragma endregion HitResult
 
+// PrimitiveComponent
+#pragma region
+
+void UCsJavascriptLibrary::SetCollisionResponseToChannels(UPrimitiveComponent* InComponent, const FCollisionResponseContainer &Response) { InComponent->SetCollisionResponseToChannels(Response); }
+void UCsJavascriptLibrary::AddMoveIngoreActor(UPrimitiveComponent* InComponent, AActor* InActor) { InComponent->MoveIgnoreActors.Add(InActor); }
+
+#pragma endregion PrimitiveComponent
+
 // SceneComponent
 #pragma region
 
-FVector UCsJavascriptLibrary::GetComponentLocation(USceneComponent* Component) { return Component->GetComponentLocation(); }
+FVector UCsJavascriptLibrary::GetComponentLocation(USceneComponent* InComponent) { return InComponent->GetComponentLocation(); }
+
+void UCsJavascriptLibrary::ComponentAttachToComponent(USceneComponent* InComponent, USceneComponent* Parent, const TEnumAsByte<ECsAttachmentTransformRules::Type> &AttachmentRules, const FName &SocketName /*= NAME_None*/)
+{
+	InComponent->AttachToComponent(Parent, ECsAttachmentTransformRules::ToRule(AttachmentRules), SocketName);
+}
+
+void UCsJavascriptLibrary::ComponentDetachFromComponent(USceneComponent* InComponent, const TEnumAsByte<ECsDetachmentTransformRules::Type> &DetachmentRules)
+{
+	InComponent->DetachFromComponent(ECsDetachmentTransformRules::ToRule(DetachmentRules));
+}
+
+void UCsJavascriptLibrary::SetComponentRelativeTransform(USceneComponent* InComponent, const FTransform& NewTransform, bool bSweep, FHitResult& SweepHitResult, bool bTeleport)
+{
+	InComponent->K2_SetRelativeTransform(NewTransform, bSweep, SweepHitResult, bTeleport);
+}
 
 #pragma endregion SceneComponent
 
@@ -63,6 +91,31 @@ bool UCsJavascriptLibrary::SetActorRotation(AActor* InActor, const FRotator &New
 void UCsJavascriptLibrary::SetActorRelativeRotation(AActor* InActor, const FRotator &NewRelativeRotation, const bool &bSweep, FHitResult& SweepHitResult, const bool &bTeleport)
 {
 	InActor->K2_SetActorRelativeRotation(NewRelativeRotation, bSweep, SweepHitResult, bTeleport);
+}
+
+void UCsJavascriptLibrary::SetActorRelativeTransform(AActor* InActor, const FTransform &NewTransform, const bool &bSweep, FHitResult& SweepHitResult, const bool &bTeleport)
+{
+	InActor->K2_SetActorRelativeTransform(NewTransform, bSweep, SweepHitResult, bTeleport);
+}
+
+bool UCsJavascriptLibrary::TeleportTo(AActor* InActor, const FVector& DestLocation, const FRotator& DestRotation, bool bIsATest /*= false*/, bool bNoCheck /*= false*/)
+{
+	return InActor->TeleportTo(DestLocation, DestRotation, bIsATest, bNoCheck);
+}
+
+void UCsJavascriptLibrary::ActorAttachToActor(AActor* InActor, AActor* ParentActor, const TEnumAsByte<ECsAttachmentTransformRules::Type> &AttachmentRules, const FName &SocketName /*= NAME_None*/)
+{
+	InActor->AttachToActor(ParentActor, ECsAttachmentTransformRules::ToRule(AttachmentRules), SocketName);
+}
+
+void UCsJavascriptLibrary::ActorAttachToComponent(AActor* InActor, USceneComponent* Parent, const TEnumAsByte<ECsAttachmentTransformRules::Type> &AttachmentRules, const FName &SocketName /*= NAME_None*/)
+{
+	InActor->AttachToComponent(Parent, ECsAttachmentTransformRules::ToRule(AttachmentRules), SocketName);
+}
+
+void UCsJavascriptLibrary::ActorDetachFromActor(AActor* InActor, const TEnumAsByte<ECsDetachmentTransformRules::Type> &DetachmentRules)
+{
+	InActor->DetachFromActor(ECsDetachmentTransformRules::ToRule(DetachmentRules));
 }
 
 #pragma endregion Actor

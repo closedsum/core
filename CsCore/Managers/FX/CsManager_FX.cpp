@@ -323,6 +323,26 @@ ACsEmitter* ACsManager_FX::Play(FCsFxElement* InFX, UObject* InOwner, const FVec
 	return Emitter;
 }
 
+ACsEmitter* ACsManager_FX::Play(FCsFxElement* InFX, UObject* InOwner, UObject* InParent, const FRotator &Rotation)
+{
+	if (!InFX->Get())
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_FX::Play: Attempting to Play a NULL ParticleSystem."));
+		return nullptr;
+	}
+
+	ACsEmitter* Emitter = Allocate();
+	const int32 Count = ActiveEmitters.Num();
+
+	Emitter->Allocate((uint16)Count, InFX, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), 0, InOwner, InParent, Rotation);
+
+	LogTransaction(TEXT("ACsManager_FX::Play"), ECsPoolTransaction::Allocate, Emitter);
+
+	ActiveEmitters.Add(Emitter);
+	Emitter->Play();
+	return Emitter;
+}
+
 template<typename T>
 void ACsManager_FX::Play(ACsEmitter* OutEmitter, FCsFxElement* InFX, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)())
 {

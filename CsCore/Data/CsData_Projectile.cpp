@@ -2,10 +2,21 @@
 #include "Data/CsData_Projectile.h"
 #include "CsCore.h"
 
+// Data
+#include "Data/CsData_ProjectileImpact.h"
+
 ACsData_Projectile::ACsData_Projectile(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	DefaultCollisionResponseContainer = FCollisionResponseContainer(ECR_Ignore);
+}
+
+void ACsData_Projectile::Load(const ECsLoadFlags &LoadFlags /*=ECsLoadFlags::All*/)
+{
+	Super::Load(LoadFlags);
+	
+	if (ACsData_ProjectileImpact* Data = GetData_Impact())
+		Data->Load(LoadFlags);
 }
 
 TCsProjectileType ACsData_Projectile::GetBaseProjectileType() { return ProjectileType_Internal; }
@@ -55,6 +66,13 @@ float ACsData_Projectile::GetSphereRadius() { return 0.0f; }
 // FX
 #pragma region
 
-FCsFxElement* ACsData_Projectile::GetTrailFX() { return nullptr; }
+FCsFxElement* ACsData_Projectile::GetTrailFX(const TCsViewType &ViewType) { return nullptr; }
 
 #pragma endregion FX
+
+// Impact
+#pragma region
+
+ACsData_ProjectileImpact* ACsData_Projectile::GetData_Impact() { return nullptr; }
+
+#pragma endregion Impact

@@ -4,9 +4,15 @@
 #include "CsCVars.h"
 #include "Common/CsCommon.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+
 // Data
 #include "Data/CsData_Weapon.h"
 #include "Data/CsData_Projectile.h"
+#include "Data/CsData_ProjectileImpact.h"
+
+// Managers
+#include "Managers/FX/CsManager_FX.h"
+#include "Managers/FX/CsEmitter.h"
 
 #include "Pawn/CsPawn.h"
 #include "Weapon/CsWeapon.h"
@@ -186,13 +192,17 @@ void ACsProjectile::Allocate_Internal()
 		Relevance == ECsProjectileRelevance::Fake)
 	{
 		// Mesh
-		
 		MeshComponent->SetStaticMesh(Data_Projectile->GetMesh(ViewType));
 		MeshComponent->SetRelativeTransform(Data_Projectile->GetTransform());
 		MeshComponent->Activate();
 		MeshComponent->SetVisibility(true);
 		MeshComponent->SetHiddenInGame(false);
 		MeshComponent->SetComponentTickEnabled(true);
+
+		// Trail
+		ACsManager_FX* Manager_FX = ACsManager_FX::Get(GetWorld());
+		ACsEmitter* TrailFX		  = Manager_FX->Play(Data_Projectile->GetTrailFX(ViewType), OwnerWeapon, MeshComponent, Cache.Rotation.GetInverse());
+		TrailFX->Cache.LifeTime   = Data_Projectile->GetLifeTime();
 	}
 
 	// Collision
@@ -255,7 +265,7 @@ void ACsProjectile::Allocate_Internal()
 	*/
 	
 	SetActorTickEnabled(true);
-	TeleportTo(Cache.Location, Cache.Direction.Rotation(), false, true);
+	TeleportTo(Cache.Location, Cache.Rotation, false, true);
 
 	const float DrawDistanceSq = Data_Projectile->GetDrawDistanceSq(ViewType);
 
@@ -291,6 +301,23 @@ void ACsProjectile::DeAllocate()
 	MovementComponent->StopMovementImmediately();
 	MovementComponent->SetComponentTickEnabled(false);
 	MovementComponent->Deactivate();
+
+		// DeAllocate attachments
+	ACsManager_FX* Manager_FX = ACsManager_FX::Get(GetWorld());
+
+	const TArray<USceneComponent*>& AttachChildren = MeshComponent->GetAttachChildren();
+	const int32 Count							    = AttachChildren.Num();
+
+	for (int32 I = 0; I < Count; I++)
+	{
+		USceneComponent* Component = AttachChildren[I];
+		AActor* Actor			   = Component->GetOwner();
+
+		// FX
+		if (ACsEmitter* FX = Cast<ACsEmitter>(Actor))
+			FX->Cache.LifeTime = 0.0f;
+	}
+
 	// Mesh
 	MeshComponent->SetVisibility(false);
 	MeshComponent->SetHiddenInGame(true);
@@ -321,7 +348,20 @@ AActor* ACsProjectile::GetIgnoreActor(const int32 &Index)
 
 void ACsProjectile::OnHitCallback(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& HitResult)
 {
+	if (!Cache.IsAllocated)
+		return;
 
+	// Play Impact FX / Sound
+	UPhysicalMaterial* PhysicalMaterial = HitResult.PhysMaterial.IsValid() ? HitResult.PhysMaterial.Get() : nullptr;
+
+	if (PhysicalMaterial)
+	{
+		// FX
+		Cache.GetData()->GetData_Impact()->PlayImpactFX(GetWorld(), Cache.Type_Script, PhysicalMaterial->SurfaceType, Cache.GetOwner(), HitResult.Location, HitResult.ImpactNormal);
+		// Sound
+	}
+
+	Cache.LifeTime = 0.0f;
 }
 
 // Script

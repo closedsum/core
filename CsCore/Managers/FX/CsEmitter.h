@@ -26,6 +26,10 @@ struct FCsFxCache : public FCsPooledObjectCache
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FName Bone;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	float Scale;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	FVector Scale3D;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FVector Location;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FRotator Rotation;
@@ -59,6 +63,8 @@ struct FCsFxCache : public FCsPooledObjectCache
 		DeathTime = InElement->DeathTime;
 		IsDying = false;
 		Bone = InElement->Bone;
+		Scale = InElement->Scale;
+		Scale3D = FVector(Scale);
 		Location = Bone != NAME_None ? InElement->Location : FVector::ZeroVector;
 		Rotation = Bone != NAME_None ? InElement->Rotation : FRotator::ZeroRotator;
 		Time = InTime;
@@ -114,6 +120,8 @@ struct FCsFxCache : public FCsPooledObjectCache
 		DeathTime = InElement->DeathTime;
 		IsDying = false;
 		Bone = InElement->Bone;
+		Scale = InElement->Scale;
+		Scale3D = FVector(Scale);
 		Location = Bone != NAME_None ? InElement->Location : InLocation;
 		Rotation = Bone != NAME_None ? InElement->Rotation : InRotation;
 		Time = InTime;
@@ -154,6 +162,8 @@ struct FCsFxCache : public FCsPooledObjectCache
 		DeathStartTime = 0.0f;
 		IsDying = false;
 		Bone = NAME_None;
+		Scale = 1.0f;
+		Scale3D = FVector::OneVector;
 		Location = FVector::ZeroVector;
 		Rotation = FRotator::ZeroRotator;
 	}
@@ -199,6 +209,8 @@ public:
 	void Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, const FVector &Location, const FRotator &Rotation);
 	void Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, const FVector &Location, const FRotator &Rotation);
 	void Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame);
+
+	void Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent, const FRotator &Rotation);
 
 	void DeAllocate();
 	void StartDeath();

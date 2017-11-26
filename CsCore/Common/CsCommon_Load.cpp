@@ -14,6 +14,7 @@
 
 #include "Data/CsData.h"
 #include "Data/CsData_Projectile.h"
+#include "Data/CsData_ProjectileImpact.h"
 
 UCsCommon_Load::UCsCommon_Load(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -217,6 +218,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// ACsData_Projectile
 			if (AssetClassProperty->MetaClass == ACsData_Projectile::StaticClass())
 			{ WriteAssetClassPropertyToJson<ACsData_Projectile>(InJsonWriter, AssetClassProperty, InStruct, MemberName); continue; }
+			// ACsData_ProjectileImpact
+			if (AssetClassProperty->MetaClass == ACsData_ProjectileImpact::StaticClass())
+			{ WriteAssetClassPropertyToJson<ACsData_ProjectileImpact>(InJsonWriter, AssetClassProperty, InStruct, MemberName); continue; }
 			// ACsData
 			if (AssetClassProperty->MetaClass == ACsData::StaticClass())
 			{ WriteAssetClassPropertyToJson<ACsData>(InJsonWriter, AssetClassProperty, InStruct, MemberName); continue; }
@@ -535,6 +539,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsData_ProjectilePtr
 			if (StructProperty->Struct == FCsData_ProjectilePtr::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsData_ProjectilePtr>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsData_ProjectileImpactPtr
+			if (StructProperty->Struct == FCsData_ProjectileImpactPtr::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsData_ProjectileImpactPtr>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 
 			if (Internal)
 			{
@@ -783,6 +790,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// ACsData_Projectile
 			if (AssetClassProperty->MetaClass == ACsData_Projectile::StaticClass())
 			{ WriteAssetClassPropertyToJson<ACsData_Projectile>(InJsonWriter, AssetClassProperty, InStruct, MemberName); continue; }
+			// ACsData_ProjectileImpact
+			if (AssetClassProperty->MetaClass == ACsData_ProjectileImpact::StaticClass())
+			{ WriteAssetClassPropertyToJson<ACsData_ProjectileImpact>(InJsonWriter, AssetClassProperty, InStruct, MemberName); continue; }
 			// ACsData
 			if (AssetClassProperty->MetaClass == ACsData::StaticClass())
 			{ WriteAssetClassPropertyToJson<ACsData>(InJsonWriter, AssetClassProperty, InStruct, MemberName); continue; }
@@ -1104,6 +1114,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsData_ProjectilePtr
 			if (StructProperty->Struct == FCsData_ProjectilePtr::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsData_ProjectilePtr>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsData_ProjectileImpactPtr
+			if (StructProperty->Struct == FCsData_ProjectileImpactPtr::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsData_ProjectileImpactPtr>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 
 			if (Internal)
 			{
@@ -2468,6 +2481,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// ACsData_Projectile
 			if (AssetClassProperty->MetaClass == ACsData_Projectile::StaticClass())
 			{ WriteToAssetClassPropertyFromJson<ACsData_Projectile>(JsonObject, AssetClassProperty, InStruct, MemberName); continue; }
+			// ACsData_ProjectileImpact
+			if (AssetClassProperty->MetaClass == ACsData_ProjectileImpact::StaticClass())
+			{ WriteToAssetClassPropertyFromJson<ACsData_ProjectileImpact>(JsonObject, AssetClassProperty, InStruct, MemberName); continue; }
 			// ACsData
 			if (AssetClassProperty->MetaClass == ACsData::StaticClass())
 			{ WriteToAssetClassPropertyFromJson<ACsData>(JsonObject, AssetClassProperty, InStruct, MemberName); continue; }
@@ -2790,6 +2806,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsData_ProjectilePtr
 			if (StructProperty->Struct == FCsData_ProjectilePtr::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsData_ProjectilePtr>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsData_ProjectileImpactPtr
+			if (StructProperty->Struct == FCsData_ProjectileImpactPtr::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsData_ProjectileImpactPtr>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 
 			if (Internal)
 			{
@@ -4431,6 +4450,9 @@ void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct*
 			// ACsData_Projectile
 			if (AssetClassProperty->MetaClass == ACsData_Projectile::StaticClass())
 			{ GetAssetReferenceFromAssetClassProperty<ACsData_Projectile>(AssetClassProperty, InStruct, InScriptStruct, LoadFlags, CalculateResourceSizes, EResourceSizeMode::Exclusive, OutAssetReferences); continue; }
+			// ACsData_ProjectileImpact
+			if (AssetClassProperty->MetaClass == ACsData_ProjectileImpact::StaticClass())
+			{ GetAssetReferenceFromAssetClassProperty<ACsData_ProjectileImpact>(AssetClassProperty, InStruct, InScriptStruct, LoadFlags, CalculateResourceSizes, EResourceSizeMode::Exclusive, OutAssetReferences); continue; }
 
 			if (Internal)
 			{
@@ -4615,6 +4637,9 @@ void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct*
 			// FCsData_ProjectilePtr
 			if (StructProperty->Struct == FCsData_ProjectilePtr::StaticStruct())
 			{ GetAssetReferencesFromStructProperty<FCsData_ProjectilePtr>(StructProperty, InStruct, LoadFlags, CalculateResourceSizes, OutAssetReferences, Internal); continue; }
+			// FCsData_ProjectileImpactPtr
+			if (StructProperty->Struct == FCsData_ProjectileImpactPtr::StaticStruct())
+			{ GetAssetReferencesFromStructProperty<FCsData_ProjectileImpactPtr>(StructProperty, InStruct, LoadFlags, CalculateResourceSizes, OutAssetReferences, Internal); continue; }
 
 			if (Internal)
 			{
@@ -5365,6 +5390,9 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 			// ACsData_Projectile
 			if (AssetClassProperty->MetaClass == ACsData_Projectile::StaticClass())
 			{ LoadAssetClassProperty<ACsData_Projectile>(AssetClassProperty, ObjectName, InStruct, InScriptStruct, MemberName, TEXT("CsData_Projectile"), LoadFlags); continue; }
+			// ACsData_ProjectileImpact
+			if (AssetClassProperty->MetaClass == ACsData_ProjectileImpact::StaticClass())
+			{ LoadAssetClassProperty<ACsData_ProjectileImpact>(AssetClassProperty, ObjectName, InStruct, InScriptStruct, MemberName, TEXT("CsData_Projectile"), LoadFlags); continue; }
 
 			if (Internal)
 			{
@@ -5593,6 +5621,9 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 			// FCsData_ProjectilePtr
 			if (StructProperty->Struct == FCsData_ProjectilePtr::StaticStruct())
 			{ LoadMemberStructProperty<FCsData_ProjectilePtr>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
+			// FCsData_ProjectileImpactPtr
+			if (StructProperty->Struct == FCsData_ProjectileImpactPtr::StaticStruct())
+			{ LoadMemberStructProperty<FCsData_ProjectileImpactPtr>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
 
 			if (Internal)
 			{

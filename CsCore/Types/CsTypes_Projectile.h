@@ -55,6 +55,52 @@ public:
 	}
 };
 
+// ACsData_ProjectileImpact
+USTRUCT(BlueprintType)
+struct FCsData_ProjectileImpactPtr
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, Category = "Data")
+	TAssetSubclassOf<class ACsData_ProjectileImpact> Data;
+
+	UPROPERTY(EditAnywhere, Category = "Data", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	int32 Data_LoadFlags;
+
+private:
+	UPROPERTY(Transient)
+	class ACsData_ProjectileImpact* Data_Internal;
+
+public:
+	FCsData_ProjectileImpactPtr()
+	{
+		CS_SET_BLUEPRINT_BITFLAG(Data_LoadFlags, ECsLoadFlags::Game);
+	}
+
+	FCsData_ProjectileImpactPtr& operator=(const FCsData_ProjectileImpactPtr& B)
+	{
+		Data = B.Data;
+		Data_LoadFlags = B.Data_LoadFlags;
+		Data_Internal = B.Data_Internal;
+		return *this;
+	}
+
+	bool operator==(const FCsData_ProjectileImpactPtr& B) const
+	{
+		return Data == B.Data && Data_LoadFlags == B.Data_LoadFlags && Data_Internal == B.Data_Internal;
+	}
+
+	bool operator!=(const FCsData_ProjectileImpactPtr& B) const
+	{
+		return !(*this == B);
+	}
+
+	class ACsData_ProjectileImpact* Get() const
+	{
+		return Data_Internal;
+	}
+};
+
 UENUM(BlueprintType)
 namespace ECsProjectileRelevance
 {

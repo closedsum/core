@@ -63,19 +63,19 @@ void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, co
 	SetActorHiddenInGame(false);
 	SetTemplate(Particle);
 
-	SetActorRelativeScale3D(FVector(InElement->Scale));
-	SetActorRelativeLocation(InElement->Location);
-	SetActorRelativeRotation(InElement->Rotation);
+	SetActorRelativeScale3D(Cache.Scale3D);
+	SetActorRelativeLocation(Cache.Location);
+	SetActorRelativeRotation(Cache.Rotation);
 
 	// Owner
 	if (AActor* MyOwner = Cast<AActor>(InOwner))
 		SetOwner(MyOwner);
 	// Parent
 	if (AActor* Actor = Cast<AActor>(InParent))
-		AttachToActor(Actor, FAttachmentTransformRules::KeepRelativeTransform, InElement->Bone);
+		AttachToActor(Actor, FAttachmentTransformRules::KeepRelativeTransform, Cache.Bone);
 	else
 	if (USceneComponent* Component = Cast<USceneComponent>(InParent))
-		AttachToComponent(Component, FAttachmentTransformRules::KeepRelativeTransform, InElement->Bone);
+		AttachToComponent(Component, FAttachmentTransformRules::KeepRelativeTransform, Cache.Bone);
 }
 
 template<typename T>
@@ -106,7 +106,7 @@ void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, co
 	SetActorHiddenInGame(false);
 	SetTemplate(Particle);
 
-	SetActorRelativeScale3D(FVector(InElement->Scale));
+	SetActorRelativeScale3D(Cache.Scale3D);
 
 	// Owner
 	if (AActor* MyOwner = Cast<AActor>(InOwner))
@@ -142,17 +142,17 @@ void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, co
 	SetActorHiddenInGame(false);
 	SetTemplate(Particle);
 
-	SetActorRelativeScale3D(FVector(InElement->Scale));
+	SetActorRelativeScale3D(Cache.Scale3D);
 
 	// Owner
 	if (AActor* MyOwner = Cast<AActor>(InOwner))
 		SetOwner(MyOwner);
 	// Parent
 	if (AActor* Actor = Cast<AActor>(InParent))
-		AttachToActor(Actor, FAttachmentTransformRules::KeepWorldTransform);
+		AttachToActor(Actor, FAttachmentTransformRules::KeepWorldTransform, Cache.Bone);
 	else
 	if (USceneComponent* Component = Cast<USceneComponent>(InParent))
-		AttachToComponent(Component, FAttachmentTransformRules::KeepWorldTransform);
+		AttachToComponent(Component, FAttachmentTransformRules::KeepWorldTransform, Cache.Bone);
 
 	SetActorLocationAndRotation(Location, Rotation);
 }
@@ -178,19 +178,19 @@ void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, co
 	SetActorHiddenInGame(false);
 	SetTemplate(Particle);
 
-	SetActorRelativeScale3D(FVector(InElement->Scale));
-	SetActorRelativeLocation(InElement->Location);
-	SetActorRelativeRotation(InElement->Rotation);
+	SetActorRelativeScale3D(Cache.Scale3D);
+	SetActorRelativeLocation(Cache.Location);
+	SetActorRelativeRotation(Cache.Rotation);
 
 	// Owner
 	if (AActor* MyOwner = Cast<AActor>(InOwner))
 		SetOwner(MyOwner);
 	// Parent
 	if (AActor* Actor = Cast<AActor>(InParent))
-		AttachToActor(Actor, FAttachmentTransformRules::KeepRelativeTransform, InElement->Bone);
+		AttachToActor(Actor, FAttachmentTransformRules::KeepRelativeTransform, Cache.Bone);
 	else
 	if (USceneComponent* Component = Cast<USceneComponent>(InParent))
-		AttachToComponent(Component, FAttachmentTransformRules::KeepRelativeTransform, InElement->Bone);
+		AttachToComponent(Component, FAttachmentTransformRules::KeepRelativeTransform, Cache.Bone);
 }
 
 void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, const FVector &Location, const FRotator &Rotation)
@@ -207,6 +207,43 @@ void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, co
 {
 	Cache.Init(ActiveIndex, InElement, Time, RealTime, Frame);
 }
+
+void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent, const FRotator &Rotation)
+{
+	UParticleSystem* Particle = InElement->Get();
+
+	if (!Particle)
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsEmitter::Allocate: Warning. Trying to Allocate Emitter with nullptr Particle System."));
+		return;
+	}
+
+	if (!GetParticleSystemComponent())
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsEmitter::Allocate: Warning. Particle System Component is nullptr for %s"), *GetName());
+		return;
+	}
+
+	Cache.Init(ActiveIndex, InElement, Time, RealTime, Frame, InOwner, InParent);
+
+	SetActorHiddenInGame(false);
+	SetTemplate(Particle);
+
+	SetActorRelativeScale3D(Cache.Scale3D);
+
+	// Owner
+	if (AActor* MyOwner = Cast<AActor>(InOwner))
+		SetOwner(MyOwner);
+	// Parent
+	if (AActor* Actor = Cast<AActor>(InParent))
+		AttachToActor(Actor, FAttachmentTransformRules::KeepRelativeTransform, Cache.Bone);
+	else
+	if (USceneComponent* Component = Cast<USceneComponent>(InParent))
+		AttachToComponent(Component, FAttachmentTransformRules::KeepRelativeTransform, Cache.Bone);
+
+	SetActorRotation(Rotation);
+}
+
 
 void ACsEmitter::DeAllocate()
 {
@@ -229,9 +266,8 @@ void ACsEmitter::DeAllocate()
 		UE_LOG(LogCs, Warning, TEXT("ACsEmitter::Allocate: Warning. Particle System Component is nullptr for %s"), *GetName());
 	}
 
+	SetActorHiddenInGame(true);
 	SetActorRelativeTransform(FTransform::Identity);
-	SetActorScale3D(CS_VECTOR_ONE);
-	SetActorLocation(CS_EMITTER_DEFAULT_LOCATION);
 	SetTemplate(nullptr);
 	SetOwner(nullptr);
 }

@@ -743,6 +743,21 @@ namespace ECsSurfaceType
 
 typedef ECsSurfaceType::Type TCsSurfaceType;
 
+// SurfaceTypeToString
+typedef FString(*TCsSurfaceTypeToString)(const TCsSurfaceType&);
+// StringToSurfaceType
+typedef TCsSurfaceType(*TCsStringToSurfaceType)(const FString&);
+// PhysicalSurfaceToSurfaceType
+typedef TCsSurfaceType(*TCsPhysicalSurfaceToSurfaceType)(const TEnumAsByte<EPhysicalSurface>&);
+
+#define CS_DECLARE_SURFACE_TYPE_FUNCTIONS	TCsSurfaceTypeToString SurfaceTypeToString; \
+											TCsStringToSurfaceType StringToSurfaceType; \
+											TCsPhysicalSurfaceToSurfaceType PhysicalSurfaceToSurfaceType;
+
+#define CS_DEFINE_SURFACE_TYPE_FUNCTIONS SurfaceTypeToString = &ECsSurfaceType::ToString; \
+										 StringToSurfaceType = (TCsSurfaceType (*)(const FString&))(&ECsSurfaceType::ToType); \
+										 PhysicalSurfaceToSurfaceType = (TCsSurfaceType (*)(const TEnumAsByte<EPhysicalSurface>&))(&ECsSurfaceType::ToType);
+
 #pragma endregion Surface
 
 // Materials

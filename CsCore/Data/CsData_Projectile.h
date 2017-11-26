@@ -11,6 +11,8 @@ class CSCORE_API ACsData_Projectile : public ACsData
 {
 	GENERATED_UCLASS_BODY()
 
+		virtual void Load(const ECsLoadFlags &LoadFlags = ECsLoadFlags::All) override;
+
 	TCsProjectileType ProjectileType_Internal;
 	TCsProjectileType ProjectileType_Internal_MAX;
 
@@ -81,7 +83,14 @@ class CSCORE_API ACsData_Projectile : public ACsData
 // FX
 #pragma region
 
-	virtual FCsFxElement* GetTrailFX();
+	virtual FCsFxElement* GetTrailFX(const TCsViewType &ViewType);
 
 #pragma endregion FX
+
+// Impact
+#pragma region
+
+	virtual class ACsData_ProjectileImpact* GetData_Impact();
+
+#pragma endregion Impact
 };

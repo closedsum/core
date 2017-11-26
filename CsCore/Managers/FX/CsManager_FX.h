@@ -39,6 +39,8 @@ class CSCORE_API ACsManager_FX : public ACsManager
 	class ACsEmitter* Play(FCsFxElement* InFX);
 	class ACsEmitter* Play(FCsFxElement* InFX, UObject* InOwner, const FVector &Location, const FRotator &Rotation);
 
+	class ACsEmitter* Play(FCsFxElement* InFX, UObject* InOwner, UObject* InParent, const FRotator &Rotation);
+
 	template<typename T>
 	void Play(class ACsEmitter* OutEmitter, FCsFxElement* InFX, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)());
 

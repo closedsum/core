@@ -25,6 +25,8 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FVector Direction;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	FRotator Rotation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	float ChargePercent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	float Speed;
@@ -66,6 +68,7 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 		LifeTime	  = InData->GetLifeTime();
 		Location	  = InFireCache->Location;
 		Direction	  = InFireCache->Direction;
+		Rotation	  = Direction.Rotation();
 		ChargePercent = InFireCache->ChargePercent;
 		Speed		  = InData->GetInitialSpeed() + InFireCache->AdditionalSpeed;
 
@@ -114,6 +117,7 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 		LifeTime	  = InData->GetLifeTime();
 		Location	  = InFireCache->Location;
 		Direction	  = InFireCache->Direction;
+		Rotation	  = Direction.Rotation();
 		ChargePercent = InFireCache->ChargePercent;
 		Speed		  = InData->GetInitialSpeed() + InFireCache->AdditionalSpeed;
 	}
@@ -137,6 +141,7 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 		Relevance = ECsProjectileRelevance::ECsProjectileRelevance_MAX;
 		Location = FVector::ZeroVector;
 		Direction = FVector::ZeroVector;
+		Rotation = FRotator::ZeroRotator;
 		ChargePercent = 0.0f;
 		Speed = 0.0f;
 	}

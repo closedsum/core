@@ -23,6 +23,7 @@ namespace ECsPoolTransaction
 	enum Type
 	{
 		Allocate				UMETA(DisplayName = "Allocate"),
+		PreDeallocate			UMETA(DisplayName = "Pre-Deallocate"),
 		Deallocate				UMETA(DisplayName = "Deallocate"),
 		ECsPoolTransaction_MAX	UMETA(Hidden),
 	};
@@ -35,12 +36,14 @@ namespace ECsPoolTransaction
 	namespace Str
 	{
 		const TCsString Allocate = TCsString(TEXT("Allocate"), TEXT("allocate"));
+		const TCsString PreDeallocate = TCsString(TEXT("PreDeallocate"), TEXT("predeallocate"));
 		const TCsString Deallocate = TCsString(TEXT("Deallocate"), TEXT("deallocate"));
 	}
 
 	FORCEINLINE FString ToString(const Type &EType)
 	{
 		if (EType == Type::Allocate) { return Str::Allocate.Value; }
+		if (EType == Type::PreDeallocate) { return Str::PreDeallocate.Value; }
 		if (EType == Type::Deallocate) { return Str::Deallocate.Value; }
 		return CS_INVALID_ENUM_TO_STRING;
 	}
@@ -48,6 +51,7 @@ namespace ECsPoolTransaction
 	FORCEINLINE Type ToType(const FString &String)
 	{
 		if (String == Str::Allocate) { return Type::Allocate; }
+		if (String == Str::PreDeallocate) { return Type::PreDeallocate; }
 		if (String == Str::Deallocate) { return Type::Deallocate; }
 		return Type::ECsPoolTransaction_MAX;
 	}

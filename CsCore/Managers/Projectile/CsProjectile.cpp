@@ -351,14 +351,27 @@ void ACsProjectile::OnHitCallback(UPrimitiveComponent* HitComp, AActor* OtherAct
 	if (!Cache.IsAllocated)
 		return;
 
+	// Impact Normal
+	if (CsCVarDrawProjectileImpactNormal->GetInt() == CS_CVAR_DRAW)
+	{
+		const FVector Start   = HitResult.Location;
+		const float Length	  = FMath::Max(CS_CVAR_DRAW_PROJECTILE_IMPACT_NORMAL_LENGTH, CsCVarDrawProjectileImpactNormalLength->GetFloat());
+		const FVector End	  = Start + Length * HitResult.ImpactNormal;
+		const float Duration  = FMath::Max(CS_CVAR_DRAW_PROJECTILE_IMPACT_NORMAL_DURATION, CsCVarDrawProjectileImpactNormalDuration->GetFloat());
+		const float Thickness = FMath::Max(CS_CVAR_DRAW_PROJECTILE_IMPACT_NORMAL_THICKNESS, CsCVarDrawProjectileImpactNormalThickness->GetFloat());
+
+		DrawDebugDirectionalArrow(GetWorld(), Start, End, 10.0f, FColor::Red, false, Duration, 0, Thickness);
+	}
+
 	// Play Impact FX / Sound
 	UPhysicalMaterial* PhysicalMaterial = HitResult.PhysMaterial.IsValid() ? HitResult.PhysMaterial.Get() : nullptr;
 
 	if (PhysicalMaterial)
 	{
 		// FX
-		Cache.GetData()->GetData_Impact()->PlayImpactFX(GetWorld(), Cache.Type_Script, PhysicalMaterial->SurfaceType, Cache.GetOwner(), HitResult.Location, HitResult.ImpactNormal);
+		Cache.GetData()->GetData_Impact()->PlayImpactFX(GetWorld(), PhysicalMaterial->SurfaceType, Cache.GetOwner(), HitResult.Location, HitResult.ImpactNormal);
 		// Sound
+		Cache.GetData()->GetData_Impact()->PlayImpactSound(GetWorld(), PhysicalMaterial->SurfaceType, Cache.GetOwner(), HitResult.Location);
 	}
 
 	Cache.LifeTime = 0.0f;

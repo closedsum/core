@@ -214,6 +214,34 @@ TAutoConsoleVariable<int32> CsCVarLogManagerProjectileTransactions(
 	ECVF_SetByConsole
 );
 
+TAutoConsoleVariable<int32> CsCVarDrawProjectileImpactNormal(
+	TEXT("draw.projectile.impactnormal"),
+	0,
+	TEXT("Draw the Impact Normal for a Projectile hitting a surface."),
+	ECVF_SetByConsole
+);
+
+TAutoConsoleVariable<float> CsCVarDrawProjectileImpactNormalLength(
+	TEXT("draw.projectile.impactnormallength"),
+	CS_CVAR_DRAW_PROJECTILE_IMPACT_NORMAL_LENGTH,
+	TEXT("Length of the Impact Normal to be drawn from the surface hit by a Projectile."),
+	ECVF_SetByConsole
+);
+
+TAutoConsoleVariable<float> CsCVarDrawProjectileImpactNormalThickness(
+	TEXT("draw.projectile.impactnormalthickness"),
+	CS_CVAR_DRAW_PROJECTILE_IMPACT_NORMAL_THICKNESS,
+	TEXT("Thickness of the Impact Normal to be drawn from the surface hit by a Projectile."),
+	ECVF_SetByConsole
+);
+
+TAutoConsoleVariable<float> CsCVarDrawProjectileImpactNormalDuration(
+	TEXT("draw.projectile.impactnormalduration"),
+	CS_CVAR_DRAW_PROJECTILE_IMPACT_NORMAL_THICKNESS,
+	TEXT("Duration of the Impact Normal to be drawn from the surface hit by a Projectile."),
+	ECVF_SetByConsole
+);
+
 #pragma endregion Projectile
 
 // Player

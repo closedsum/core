@@ -95,6 +95,15 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerFxTransactions;
 
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerProjectileTransactions;
 
+#define CS_CVAR_DRAW_PROJECTILE_IMPACT_NORMAL_LENGTH 100.0f
+#define CS_CVAR_DRAW_PROJECTILE_IMPACT_NORMAL_THICKNESS 2.0f
+#define CS_CVAR_DRAW_PROJECTILE_IMPACT_NORMAL_DURATION 0.25f
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawProjectileImpactNormal;
+extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawProjectileImpactNormalLength;
+extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawProjectileImpactNormalThickness;
+extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawProjectileImpactNormalDuration;
+
 #pragma endregion Projectile
 
 // Player

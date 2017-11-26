@@ -119,6 +119,8 @@ void ACsManager_FX::OnTick(const float &DeltaSeconds)
 			{
 				if (Emitter->Cache.DeathTime > 0.0f)
 				{
+					LogTransaction(TEXT("ACsManager_FX::OnTick"), ECsPoolTransaction::PreDeallocate, Emitter);
+
 					Emitter->StartDeath();
 				}
 				else
@@ -154,7 +156,16 @@ void ACsManager_FX::LogTransaction(const FString &FunctionName, const TEnumAsByt
 	{
 		ACsEmitter* Emitter = Cast<ACsEmitter>(InObject);
 
-		const FString TransactionAsString = Transaction == ECsPoolTransaction::Allocate ? TEXT("Allocating") : TEXT("DeAllocating");
+		FString TransactionAsString = TEXT("");
+		
+		if (Transaction == ECsPoolTransaction::Allocate)
+			TransactionAsString = TEXT("Allocating");
+		else
+		if (Transaction == ECsPoolTransaction::PreDeallocate)
+			TransactionAsString = TEXT("PreDeAllocating");
+		else
+		if (Transaction == ECsPoolTransaction::Deallocate)
+			TransactionAsString = TEXT("DeAllocating");
 
 		const FString EmitterName   = Emitter->GetName();
 		const FString ParticleName  = Emitter->Cache.GetParticle()->GetName();

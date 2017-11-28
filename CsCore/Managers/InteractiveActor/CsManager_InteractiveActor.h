@@ -6,8 +6,6 @@
 
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInteractiveActor_OnDeAllocateEX_Internal, const uint16&, const uint16&, const ECsInteractiveType::Type&);
 
-typedef FString(*TCsInteractiveTypeToString)(const ECsInteractiveType::Type&);
-
 UCLASS()
 class CSCORE_API ACsManager_InteractiveActor : public ACsManager
 {
@@ -25,9 +23,9 @@ class CSCORE_API ACsManager_InteractiveActor : public ACsManager
 	void Init(const TCsInteractiveType &InInteractiveType_MAX, TCsInteractiveTypeToString InInteractiveTypeToString);
 
 	virtual void Destroyed() override;
-	virtual void CreatePool(const TSubclassOf<class AActor> &ActorClass, const uint8 &Type, const int32 &Size);
-	virtual void AddToPool(AActor* InActor, const uint8& Type);
-	virtual void AddToActivePool(AActor* InActor, const uint8& Type);
+	virtual void CreatePool(const TSubclassOf<class UObject> &ObjectClass, const uint8 &Type, const int32 &Size);
+	virtual void AddToPool(UObject* InObject, const uint8& Type);
+	virtual void AddToActivePool(UObject* InObject, const uint8& Type);
 	virtual void OnTick(const float &DeltaSeconds) override;
 
 	TMap<TCsInteractiveType, uint8> PoolSizes;

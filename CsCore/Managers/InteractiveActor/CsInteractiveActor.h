@@ -67,8 +67,6 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 
 	TCsInteractiveType Type_Script;
 
-	// TODO: LifeTime
-
 	FCsInteractiveActorCache()
 	{
 		Reset();

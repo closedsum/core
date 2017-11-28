@@ -53,7 +53,7 @@ void ACsManager_WidgetActor::Init(TCsWidgetActorTypeToString InWidgetActorClassT
 	WidgetActorClassToString = InWidgetActorClassToString;
 }
 
-void ACsManager_WidgetActor::CreatePool(const TSubclassOf<class AActor> &ActorClass, const uint8 &Type, const int32 &Size)
+void ACsManager_WidgetActor::CreatePool(const TSubclassOf<class UObject> &ObjectClass, const uint8 &Type, const int32 &Size)
 {
 	const TCsWidgetActorType ClassType = (TCsWidgetActorType)Type;
 
@@ -69,7 +69,7 @@ void ACsManager_WidgetActor::CreatePool(const TSubclassOf<class AActor> &ActorCl
 
 	for (int32 I = 0; I < Size; I++)
 	{
-		ACsWidgetActor* Widget = GetWorld()->SpawnActor<ACsWidgetActor>(ActorClass, SpawnInfo);
+		ACsWidgetActor* Widget = GetWorld()->SpawnActor<ACsWidgetActor>(ObjectClass, SpawnInfo);
 		Widget->SetReplicates(false);
 		Widget->Role = ROLE_None;
 		GetWorld()->RemoveNetworkActor(Widget);

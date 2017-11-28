@@ -73,15 +73,16 @@ class CSCORE_API ACsManager : public AActor
 	virtual void Shutdown();
 	
 	UFUNCTION(BlueprintCallable, Category = "Pool")
-	virtual void CreatePool(const TSubclassOf<class AActor> &ActorClass, const uint8 &Type, const int32 &Size);
+	virtual void CreatePool(const TSubclassOf<class UObject> &ObjectClass, const uint8 &Type, const int32 &Size);
+	virtual void CreatePool(const TSubclassOf<class UObject> &ObjectClass, const int32 &Size);
 	virtual void CreatePool(const int32 &Size);
 	UFUNCTION(BlueprintCallable, Category = "Pool")
 	void CreatePool_Script(const int32 &Size);
 	UFUNCTION(BlueprintCallable, Category = "Pool")
-	virtual void AddToPool(AActor* InActor, const uint8 &Type);
-	virtual void AddToPool(const TSubclassOf<class AActor> &ActorClass, const uint8 &Type, const int32 &Size);
+	virtual void AddToPool(UObject* InObject, const uint8 &Type);
+	virtual void AddToPool(const TSubclassOf<class UObject> &ObjectClass, const uint8 &Type, const int32 &Size);
 	UFUNCTION(BlueprintCallable, Category = "Pool")
-	virtual void AddToActivePool(AActor* InActor, const uint8 &Type);
+	virtual void AddToActivePool(UObject* InObject, const uint8 &Type);
 	UFUNCTION(BlueprintCallable, Category = "Pool")
 	virtual int32 GetActivePoolSize(const uint8& Type);
 	UFUNCTION(BlueprintCallable, Category = "Pool")

@@ -60,6 +60,7 @@ struct FCsFxCache : public FCsPooledObjectCache
 		Parent = InParent;
 		Priority = InElement->Priority;
 		LifeTime = InElement->LifeTime;
+		UseLifeTime = LifeTime > 0.0f;
 		DeathTime = InElement->DeathTime;
 		IsDying = false;
 		Bone = InElement->Bone;
@@ -117,6 +118,7 @@ struct FCsFxCache : public FCsPooledObjectCache
 		Parent = InParent;
 		Priority = InElement->Priority;
 		LifeTime = InElement->LifeTime;
+		UseLifeTime = LifeTime > 0.0f;
 		DeathTime = InElement->DeathTime;
 		IsDying = false;
 		Bone = InElement->Bone;

@@ -17,17 +17,18 @@ class CSCORE_API ACsManager_Projectile : public ACsManager
 	virtual void Clear() override;
 	virtual void Shutdown() override;
 	virtual void Destroyed() override;
+	virtual void CreatePool(const TSubclassOf<class UObject> &ObjectClass, const int32 &Size) override;
 	virtual void CreatePool(const int32 &Size) override;
 	virtual void OnTick(const float &DeltaSeconds);
 
 	TSubclassOf<class ACsProjectile> ProjectileClass;
 
-	TArray<class ACsProjectile*> ActiveProjectiles;
-
 	UPROPERTY()
 	TArray<class ACsProjectile*> Pool;
 
 	uint16 PoolIndex;
+
+	TArray<class ACsProjectile*> ActiveProjectiles;
 
 	virtual void LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, class UObject* InObject) override;
 

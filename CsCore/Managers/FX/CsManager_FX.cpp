@@ -77,10 +77,14 @@ void ACsManager_FX::CreatePool(const int32 &Size)
 
 void ACsManager_FX::OnTick(const float &DeltaSeconds)
 {
-	const uint8 Count   = ActiveEmitters.Num();
-	uint8 EarliestIndex = Count;
+	const uint16 Count = ActiveEmitters.Num();
 
-	for (int32 I = Count - 1; I >= 0; I--)
+	if (Count == CS_EMPTY)
+		return;
+
+	uint16 EarliestIndex = Count;
+
+	for (uint16 I = Count - 1; I >= 0; I--)
 	{
 		ACsEmitter* Emitter = ActiveEmitters[I];
 
@@ -97,6 +101,9 @@ void ACsManager_FX::OnTick(const float &DeltaSeconds)
 				EarliestIndex = I;
 			continue;
 		}
+
+		if (!Emitter->Cache.UseLifeTime)
+			continue;
 
 		// Check Dying
 		if (Emitter->Cache.IsDying)
@@ -139,9 +146,9 @@ void ACsManager_FX::OnTick(const float &DeltaSeconds)
 	// Update ActiveIndex
 	if (EarliestIndex != Count)
 	{
-		const uint8 Max = ActiveEmitters.Num();
+		const uint16 Max = ActiveEmitters.Num();
 
-		for (uint8 I = EarliestIndex; I < Max; I++)
+		for (uint16 I = EarliestIndex; I < Max; I++)
 		{
 			ACsEmitter* Emitter				  = ActiveEmitters[I];
 			Emitter->Cache.ActiveIndex		  = I;

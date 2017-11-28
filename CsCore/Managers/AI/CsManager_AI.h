@@ -20,9 +20,9 @@ class CSCORE_API ACsManager_AI : public ACsManager
 	void Init(const TCsAIType &InAIType_MAX, TCsAITypeToString InAITypeToString);
 
 	virtual void Destroyed() override;
-	virtual void CreatePool(const TSubclassOf<class AActor> &ActorClass, const uint8 &Type, const int32 &Size);
-	virtual void AddToPool(AActor* InActor, const uint8& Type);
-	virtual void AddToActivePool(AActor* InActor, const uint8& Type);
+	virtual void CreatePool(const TSubclassOf<class UObject> &ObjectClass, const uint8 &Type, const int32 &Size);
+	virtual void AddToPool(UObject* InObject, const uint8& Type);
+	virtual void AddToActivePool(UObject* InObject, const uint8& Type);
 	virtual void OnTick(const float &DeltaSeconds) override;
 
 	static ACsManager_AI* Get(UWorld* InWorld);

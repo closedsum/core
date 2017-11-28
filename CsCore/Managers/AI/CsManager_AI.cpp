@@ -53,7 +53,7 @@ void ACsManager_AI::Init(const TCsAIType &InAIType_MAX, TCsAITypeToString InAITy
 	AITypeToString = InAITypeToString;
 }
 
-void ACsManager_AI::CreatePool(const TSubclassOf<class AActor> &ActorClass, const uint8 &Type, const int32 &Size)
+void ACsManager_AI::CreatePool(const TSubclassOf<class UObject> &ObjectClass, const uint8 &Type, const int32 &Size)
 {
 	const TCsAIType ClassType = (TCsAIType)Type;
 
@@ -69,7 +69,7 @@ void ACsManager_AI::CreatePool(const TSubclassOf<class AActor> &ActorClass, cons
 
 	for (int32 I = 0; I < Size; I++)
 	{
-		ACsAIPawn* Pawn = GetWorld()->SpawnActor<ACsAIPawn>(ActorClass, SpawnInfo);
+		ACsAIPawn* Pawn = GetWorld()->SpawnActor<ACsAIPawn>(ObjectClass, SpawnInfo);
 		Pawn->Init(I, ClassType);
 		Pawn->OnCreatePool();
 		Pool.Add(Pawn);
@@ -78,13 +78,13 @@ void ACsManager_AI::CreatePool(const TSubclassOf<class AActor> &ActorClass, cons
 	Pools.Add(ClassType, PawnPool);
 }
 
-void ACsManager_AI::AddToPool(AActor* InActor, const uint8& Type)
+void ACsManager_AI::AddToPool(UObject* InObject, const uint8& Type)
 {
-	checkf(InActor, TEXT("ACsManager_AI::AddToPool: InActor is NULL."));
+	checkf(InObject, TEXT("ACsManager_AI::AddToPool: InObject is NULL."));
 
-	ACsAIPawn* Actor = Cast<ACsAIPawn>(InActor);
+	ACsAIPawn* Actor = Cast<ACsAIPawn>(InObject);
 
-	checkf(Actor, TEXT("ACsManager_AI::AddToPool: InActor (%s) is NOT type ACsAIPawn."), *InActor->GetClass()->GetName());
+	checkf(Actor, TEXT("ACsManager_AI::AddToPool: InObject (%s) is NOT type ACsAIPawn."), *InObject->GetClass()->GetName());
 
 	const TCsAIType ClassType = (TCsAIType)Type;
 
@@ -120,13 +120,13 @@ void ACsManager_AI::AddToPool(AActor* InActor, const uint8& Type)
 }
 
 
-void ACsManager_AI::AddToActivePool(AActor* InActor, const uint8& Type)
+void ACsManager_AI::AddToActivePool(UObject* InObject, const uint8& Type)
 {
-	checkf(InActor, TEXT("ACsManager_AI::AddToActivePool: InActor is NULL."));
+	checkf(InObject, TEXT("ACsManager_AI::AddToActivePool: InObject is NULL."));
 
-	ACsAIPawn* Actor = Cast<ACsAIPawn>(InActor);
+	ACsAIPawn* Actor = Cast<ACsAIPawn>(InObject);
 
-	checkf(Actor, TEXT("ACsManager_AI::AddToActivePool: InActor (%s) is NOT type ACsAIPawn."), *InActor->GetClass()->GetName());
+	checkf(Actor, TEXT("ACsManager_AI::AddToActivePool: InObject (%s) is NOT type ACsAIPawn."), *InObject->GetClass()->GetName());
 
 	const TCsAIType ClassType = (TCsAIType)Type;
 

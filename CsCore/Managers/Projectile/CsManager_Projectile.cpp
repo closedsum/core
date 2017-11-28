@@ -55,7 +55,7 @@ void ACsManager_Projectile::Destroyed()
 	Super::Destroyed();
 }
 
-void ACsManager_Projectile::CreatePool(const int32 &Size)
+void ACsManager_Projectile::CreatePool(const TSubclassOf<class UObject> &ObjectClass, const int32 &Size)
 {
 	PoolSize = Size;
 
@@ -65,7 +65,7 @@ void ACsManager_Projectile::CreatePool(const int32 &Size)
 
 	for (int32 I = 0; I < Size; I++)
 	{
-		ACsProjectile* Projectile = GetWorld()->SpawnActor<ACsProjectile>(ProjectileClass, SpawnInfo);
+		ACsProjectile* Projectile = GetWorld()->SpawnActor<ACsProjectile>(ObjectClass, SpawnInfo);
 
 		Projectile->SetReplicates(false);
 		Projectile->Role = ROLE_None;
@@ -74,6 +74,11 @@ void ACsManager_Projectile::CreatePool(const int32 &Size)
 		Projectile->DeAllocate();
 		Pool.Add(Projectile);
 	}
+}
+
+void ACsManager_Projectile::CreatePool(const int32 &Size)
+{
+	CreatePool(ProjectileClass, Size);
 }
 
 void ACsManager_Projectile::OnTick(const float &DeltaSeconds)

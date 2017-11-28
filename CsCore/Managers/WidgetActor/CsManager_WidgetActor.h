@@ -18,7 +18,7 @@ class CSCORE_API ACsManager_WidgetActor : public ACsManager
 	void Init(TCsWidgetActorTypeToString InWidgetActorClassToString);
 
 	virtual void Destroyed() override;
-	virtual void CreatePool(const TSubclassOf<class AActor> &ActorClass, const uint8 &Type, const int32 &Size);
+	virtual void CreatePool(const TSubclassOf<class UObject> &ObjectClass, const uint8 &Type, const int32 &Size);
 	virtual void OnTick(const float &DeltaSeconds) override;
 
 	static ACsManager_WidgetActor* Get(UWorld* InWorld);

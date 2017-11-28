@@ -62,7 +62,7 @@ void ACsManager_InteractiveActor::Init(const TCsInteractiveType &InInteractiveTy
 	InteractiveTypeToString = InInteractiveTypeToString;
 }
 
-void ACsManager_InteractiveActor::CreatePool(const TSubclassOf<class AActor> &ActorClass, const uint8 &Type, const int32 &Size)
+void ACsManager_InteractiveActor::CreatePool(const TSubclassOf<class UObject> &ObjectClass, const uint8 &Type, const int32 &Size)
 {
 	const TCsInteractiveType ClassType = (TCsInteractiveType)Type;
 
@@ -78,7 +78,7 @@ void ACsManager_InteractiveActor::CreatePool(const TSubclassOf<class AActor> &Ac
 
 	for (int32 I = 0; I < Size; I++)
 	{
-		ACsInteractiveActor* Actor = GetWorld()->SpawnActor<ACsInteractiveActor>(ActorClass, SpawnInfo);
+		ACsInteractiveActor* Actor = GetWorld()->SpawnActor<ACsInteractiveActor>(ObjectClass, SpawnInfo);
 		Actor->SetReplicates(false);
 		Actor->Role = ROLE_None;
 		GetWorld()->RemoveNetworkActor(Actor);
@@ -90,13 +90,13 @@ void ACsManager_InteractiveActor::CreatePool(const TSubclassOf<class AActor> &Ac
 	Pools.Add(ClassType, ActorPool);
 }
 
-void ACsManager_InteractiveActor::AddToPool(AActor* InActor, const uint8& Type)
+void ACsManager_InteractiveActor::AddToPool(UObject* InObject, const uint8& Type)
 {
-	checkf(InActor, TEXT("ACsManager_InteractiveActor::AddToPool: InActor is NULL."));
+	checkf(InObject, TEXT("ACsManager_InteractiveActor::AddToPool: InObject is NULL."));
 
-	ACsInteractiveActor* Actor = Cast<ACsInteractiveActor>(InActor);
+	ACsInteractiveActor* Actor = Cast<ACsInteractiveActor>(InObject);
 
-	checkf(Actor, TEXT("ACsManager_InteractiveActor::AddToPool: InActor (%s) is NOT type ACsInteraciveActor."), *InActor->GetClass()->GetName());
+	checkf(Actor, TEXT("ACsManager_InteractiveActor::AddToPool: InObject (%s) is NOT type ACsInteraciveActor."), *InObject->GetClass()->GetName());
 
 	const TCsInteractiveType ClassType = (TCsInteractiveType)Type;
 
@@ -134,13 +134,13 @@ void ACsManager_InteractiveActor::AddToPool(AActor* InActor, const uint8& Type)
 }
 
 
-void ACsManager_InteractiveActor::AddToActivePool(AActor* InActor, const uint8& Type)
+void ACsManager_InteractiveActor::AddToActivePool(UObject* InObject, const uint8& Type)
 {
-	checkf(InActor, TEXT("ACsManager_InteractiveActor::AddToActivePool: InActor is NULL."));
+	checkf(InObject, TEXT("ACsManager_InteractiveActor::AddToActivePool: InObject is NULL."));
 
-	ACsInteractiveActor* Actor = Cast<ACsInteractiveActor>(InActor);
+	ACsInteractiveActor* Actor = Cast<ACsInteractiveActor>(InObject);
 
-	checkf(Actor, TEXT("ACsManager_InteractiveActor::AddToActivePool: InActor (%s) is NOT type ACsInteraciveActor."), *InActor->GetClass()->GetName());
+	checkf(Actor, TEXT("ACsManager_InteractiveActor::AddToActivePool: InObject (%s) is NOT type ACsInteraciveActor."), *InObject->GetClass()->GetName());
 
 	const TCsInteractiveType ClassType = (TCsInteractiveType)Type;
 
@@ -161,6 +161,41 @@ void ACsManager_InteractiveActor::AddToActivePool(AActor* InActor, const uint8& 
 
 void ACsManager_InteractiveActor::OnTick(const float &DeltaSeconds)
 {
+	const int32 PoolCount = ActiveActors.Num();
+
+	for (int32 I = PoolCount - 1; I >= 0; I--)
+	{
+		const TCsInteractiveType Type			= (TCsInteractiveType)I;
+		TArray<ACsInteractiveActor*>* ActorsPtr = ActiveActors.Find(Type);
+
+		const int32 ActorCount = ActorsPtr->Num();
+		int32 EarliestIndex    = ActorCount;
+
+		for (int32 J = ActorCount - 1; J >= 0; J--)
+		{
+			ACsInteractiveActor* Actor = (*ActorsPtr)[I];
+
+			// Check if Emitter was DeAllocated NOT in a normal way (i.e. Out of Bounds)
+
+			/*
+			if (!Actor->Cache.IsAllocated)
+			{
+				UE_LOG(LogCs, Warning, TEXT("ACsManager_InteractiveActor::OnTick: InteractiveActor: %s at PoolIndex: %s was prematurely deallocted NOT in a normal way."), *(Emitter->GetName()), Emitter->Cache.Index);
+
+				LogTransaction(TEXT("ACsManager_FX::OnTick"), ECsPoolTransaction::Deallocate, Emitter);
+
+				ActiveEmitters.RemoveAt(I);
+
+				if (I < EarliestIndex)
+					EarliestIndex = I;
+				continue;
+			}
+			*/
+
+			if (!Actor->Cache.UseLifeTime)
+				continue;
+		}
+	}
 	/*
 	const uint8 Count = ActiveWidgetActors.Num();
 
@@ -320,8 +355,8 @@ void ACsManager_InteractiveActor::DeAllocate(const uint8 &Type, const int32 &Ind
 		ACsInteractiveActor* Actor = (*Actors)[I];
 
 		// Reset ActiveIndex
-		Actor->Cache.ActiveIndex++;
-		Actor->Cache.ActiveIndex_Script++;
+		Actor->Cache.ActiveIndex		= I;
+		Actor->Cache.ActiveIndex_Script = I;
 	}
 	UE_LOG(LogCs, Warning, TEXT("ACsManager_InteractiveActor::DeAllocate: InteractiveActor of Type: %s at PoolIndex: %d is already deallocated."), *((*InteractiveTypeToString)(ClassType)), Index);
 }

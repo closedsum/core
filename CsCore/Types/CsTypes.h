@@ -2685,6 +2685,8 @@ struct FCsPooledObjectCache
 	FBindableEvent_CsPooledObjectCache_OnDeAllocate OnDeAllocate_Event;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	bool UseLifeTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	float LifeTime;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
@@ -2726,6 +2728,8 @@ struct FCsPooledObjectCache
 		Owner = nullptr;
 		Parent.Reset();
 		Parent = nullptr;
+		UseLifeTime = false;
+		LifeTime = 0.0f;
 		Time = 0.0f;
 		RealTime = 0.0f;
 		Frame = 0;

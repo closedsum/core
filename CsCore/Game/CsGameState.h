@@ -222,6 +222,9 @@ public:
 	class ACsManager_InteractiveActor* Manager_InteractiveActor;
 
 	UPROPERTY()
+	class ACsManager_Item* Manager_Item;
+
+	UPROPERTY()
 	class ACsManager_AI* Manager_AI;
 
 	UPROPERTY()

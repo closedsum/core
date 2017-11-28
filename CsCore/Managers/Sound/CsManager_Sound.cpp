@@ -109,6 +109,9 @@ void ACsManager_Sound::OnTick(const float &DeltaSeconds)
 			continue;
 		}
 
+		if (Sound->Cache.IsLooping)
+			continue;
+
 		if (GetWorld()->TimeSeconds - Sound->Cache.Time > Sound->Cache.Duration)
 		{
 			LogTransaction(TEXT("ACsManager_Sound::OnTick"), ECsPoolTransaction::Deallocate, Sound);

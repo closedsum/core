@@ -2,6 +2,7 @@
 #pragma once
 #include "Pawn/CsAIPawn.h"
 #include "Types/CsTypes.h"
+#include "Types/CsTypes_Interactive.h"
 #include "CsInteractiveAIPawn.generated.h"
 
 // Interaction

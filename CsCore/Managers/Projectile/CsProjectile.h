@@ -5,7 +5,8 @@
 #include "Data/CsData_Projectile.h"
 #include "CsProjectile.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsProjectile_Allocate_Internal, const int32&, PoolIndex);
+// Allocate
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsProjectile_Override_Allocate_Internal, const int32&, PoolIndex);
 
 USTRUCT(BlueprintType)
 struct FCsProjectileCache : public FCsPooledObjectCache
@@ -189,7 +190,7 @@ public:
 	virtual void Allocate_Internal();
 
 	UPROPERTY(BlueprintAssignable, Category = "Projectile")
-	FBindableDynEvent_CsProjectile_Allocate_Internal Override_Allocate_Internal_ScriptEvent;
+	FBindableDynEvent_CsProjectile_Override_Allocate_Internal Override_Allocate_Internal_ScriptEvent;
 
 	virtual void DeAllocate() override;
 

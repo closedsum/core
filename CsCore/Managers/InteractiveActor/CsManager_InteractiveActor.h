@@ -1,7 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Managers/CsManager.h"
-#include "Types/CsTypes.h"
+#include "Types/CsTypes_Interactive.h"
 #include "CsManager_InteractiveActor.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInteractiveActor_OnDeAllocateEX_Internal, const uint16&, const uint16&, const ECsInteractiveType::Type&);
@@ -57,14 +57,15 @@ class CSCORE_API ACsManager_InteractiveActor : public ACsManager
 
 	FBindableEvent_CsManagerInteractiveActor_OnDeAllocateEX_Internal OnDeAllocateEX_Internal_Event;
 
-	class ACsInteractiveActor* WakeUp(const TCsInteractiveType &Type, UObject* InOwner, UObject* Parent);
-	class ACsInteractiveActor* WakeUp(const TCsInteractiveType &Type, UObject* InOwner);
+	class ACsInteractiveActor* WakeUp(const TCsInteractiveType &Type, void* Payload, UObject* InOwner, UObject* Parent);
+	class ACsInteractiveActor* WakeUp(const TCsInteractiveType &Type, void* Payload, UObject* InOwner);
+	class ACsInteractiveActor* WakeUp(const TCsInteractiveType &Type, void* Payload);
 	class ACsInteractiveActor* WakeUp(const TCsInteractiveType &Type);
 
 	template<typename T>
-	void WakeUp(const TCsInteractiveType &Type, class ACsInteractiveActor* &OutActor, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	void WakeUp(const TCsInteractiveType &Type, class ACsInteractiveActor* &OutActor, void* Payload, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 	template<typename T>
-	void WakeUp(const TCsInteractiveType &Type, class ACsInteractiveActor* &OutActor, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	void WakeUp(const TCsInteractiveType &Type, class ACsInteractiveActor* &OutActor, void* Payload, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 	template<typename T>
-	void WakeUp(const TCsInteractiveType &Type, class ACsInteractiveActor* &OutActor, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	void WakeUp(const TCsInteractiveType &Type, class ACsInteractiveActor* &OutActor, void* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 };

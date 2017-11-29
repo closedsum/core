@@ -1,6 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Types/CsTypes.h"
+#include "Types/CsTypes_Interactive.h"
 #include "Managers/CsPooledActor.h"
 #include "UI/CsUserWidget.h"
 #include "CsWidgetActor.generated.h"

@@ -16,7 +16,7 @@ typedef ECsItemType::Type TCsItemType;
 
 // ItemTypeToString
 typedef FString(*TCsItemTypeToString)(const TCsItemType&);
-// StringToInteractiveType
+// StringToItemType
 typedef TCsItemType(*TCsStringToItemType)(const FString&);
 
 #define CS_DECLARE_ITEM_TYPE_FUNCTIONS	TCsItemTypeToString ItemTypeToString; \
@@ -24,6 +24,26 @@ typedef TCsItemType(*TCsStringToItemType)(const FString&);
 
 #define CS_DEFINE_ITEM_TYPE_FUNCTIONS	ItemTypeToString = &ECsItemType::ToString; \
 										StringToItemType = &ECsItemType::ToType;
+
+#pragma region
+
+namespace ECsItemCollectionType
+{
+	enum Type : uint8;
+}
+
+typedef ECsItemCollectionType::Type TCsItemCollectionType;
+
+// ItemCollectionTypeToString
+typedef FString(*TCsItemCollectionTypeToString)(const TCsItemType&);
+// StringToItemCollectionType
+typedef TCsItemCollectionType(*TCsStringToItemCollectionType)(const FString&);
+
+#define CS_DECLARE_ITEM_COLLECTION_TYPE_FUNCTIONS	TCsItemCollectionTypeToString ItemCollectionTypeToString; \
+													TCsStringToItemCollectionType StringToItemCollectionType;
+
+#define CS_DEFINE_ITEM_COLLECTION_TYPE_FUNCTIONS	ItemCollectionTypeToString = &ECsItemCollectionType::ToString; \
+													StringToItemCollectionType = &ECsItemCollectionType::ToType;
 
 USTRUCT(BlueprintType)
 struct FCsInventoryItemDimension
@@ -53,6 +73,12 @@ struct FCsInventoryItemDimension
 	bool operator!=(const FCsInventoryItemDimension& B) const
 	{
 		return !(*this == B);
+	}
+
+	void Reset()
+	{
+		Width = 0;
+		Height = 0;
 	}
 };
 
@@ -84,6 +110,12 @@ struct FCsInventoryItemPosition
 	bool operator!=(const FCsInventoryItemPosition& B) const
 	{
 		return !(*this == B);
+	}
+
+	void Reset()
+	{
+		X = 0;
+		Y = 0;
 	}
 };
 
@@ -126,6 +158,14 @@ struct FCsInventoryItemProperties
 	bool operator!=(const FCsInventoryItemProperties& B) const
 	{
 		return !(*this == B);
+	}
+
+	void Reset()
+	{
+		Count = 0;
+		MaxCount = 0;
+		Dimension.Reset();
+		Position.Reset();
 	}
 };
 
@@ -175,15 +215,24 @@ struct FCsItemMemberValue
 	float GetFloat() { return Value_float; }
 };
 
+#define CS_ITEM_POOL_INVALID_INDEX 65535
+
 USTRUCT(BlueprintType)
 struct FCsItem
 {
 	GENERATED_USTRUCT_BODY()
 
+	UPROPERTY()
+	uint16 Index;
+
+	bool IsAllocated;
+
 	TCsItemType Type;
 
 	UPROPERTY()
 	uint8 Type_Script;
+	UPROPERTY()
+	FString TypeAsString;
 
 	UPROPERTY()
 	uint64 UniqueId;
@@ -192,18 +241,27 @@ struct FCsItem
 	UPROPERTY()
 	FString DisplayName;
 
+	TWeakObjectPtr<class ACsData_Item> Data;
+
 	UPROPERTY()
 	FCsInventoryItemProperties InventoryProperties;
 
 	TMap<FName, FCsItemMemberValue> Members;
 
-	FCsItem() {}
+	FCsItem() 
+	{
+		Index = CS_ITEM_POOL_INVALID_INDEX;
+
+		Reset();
+	}
+
 	~FCsItem() {}
 
 	FCsItem& operator=(const FCsItem& B)
 	{
 		Type = B.Type;
 		Type_Script = B.Type_Script;
+		TypeAsString = B.TypeAsString;
 		UniqueId = B.UniqueId;
 		Name = B.Name;
 		DisplayName = B.DisplayName;
@@ -215,6 +273,7 @@ struct FCsItem
 	{
 		if (Type != B.Type) { return false; }
 		if (Type_Script != B.Type_Script) { return false; }
+		if (TypeAsString != B.TypeAsString) { return false; }
 		if (UniqueId != B.UniqueId) { return false; }
 		if (Name != B.Name) { return false; }
 		if (DisplayName != B.DisplayName) { return false; }
@@ -226,6 +285,26 @@ struct FCsItem
 	{
 		return !(*this == B);
 	}
+
+	void Init(const uint16 &InIndex)
+	{
+		Index = InIndex;
+	}
+
+	void Reset()
+	{
+		IsAllocated = false;
+		//Type;
+		Type_Script  = 0;
+		TypeAsString = TEXT("");
+		UniqueId = 0;
+		Name = NAME_Name;
+		DisplayName = TEXT("");
+		InventoryProperties.Reset();
+		Members.Reset();
+	}
+
+	class ACsData_Item* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
 };
 
 #pragma endregion Items

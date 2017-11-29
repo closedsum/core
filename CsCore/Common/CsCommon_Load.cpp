@@ -8,6 +8,7 @@
 #include "Types/CsTypes_Anim.h"
 #include "Types/CsTypes_Projectile.h"
 #include "Types/CsTypes_Weapon.h"
+#include "Types/CsTypes_Interactive.h"
 #include "CsCVars.h"
 
 #include "Common/CsCommon.h"

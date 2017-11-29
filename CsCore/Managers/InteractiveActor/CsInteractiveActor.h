@@ -1,7 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Managers/CsPooledActor.h"
-#include "Types/CsTypes.h"
+#include "Types/CsTypes_Interactive.h"
 #include "CsInteractiveActor.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsInteractiveActor_Override_OnTickOverlap, const int32&, Index, const float&, DeltaSeconds);
@@ -193,15 +193,16 @@ public:
 	void Init(const int32 &Index, const TCsInteractiveType &InType);
 
 	template<typename T>
-	void Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	void Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, void* Payload, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 
 	template<typename T>
-	void Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	void Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, void* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 
-	void Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent);
+	void Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, void* Payload, UObject* InOwner, UObject* InParent);
+	void Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, void* Payload);
 	void Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame);
 
-	virtual void Allocate_Internal();
+	virtual void Allocate_Internal(void* Payload);
 
 	virtual void DeAllocate() override;
 

@@ -105,36 +105,41 @@ void ACsInteractiveActor::Init(const int32 &Index, const TCsInteractiveType &InT
 }
 
 template<typename T>
-void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, void* Payload, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
 	Cache.Init<T>(ActiveIndex, Time, RealTime, Frame, InOwner, InParent, InObject, OnDeAllocate);
 
-	Allocate_Internal();
+	Allocate_Internal(Payload);
 }
 
 template<typename T>
-void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, void* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
 	Cache.Init<T>(ActiveIndex, Time, RealTime, Frame, InObject, OnDeAllocate);
 
-	Allocate_Internal();
+	Allocate_Internal(Payload);
 }
 
-void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent)
+void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, void* Payload, UObject* InOwner, UObject* InParent)
 {
 	Cache.Init(ActiveIndex, Time, RealTime, Frame, InOwner, InParent);
 
-	Allocate_Internal();
+	Allocate_Internal(Payload);
+}
+
+void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, void* Payload)
+{
+	Cache.Init(ActiveIndex, Time, RealTime, Frame);
+
+	Allocate_Internal(Payload);
 }
 
 void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame)
 {
-	Cache.Init(ActiveIndex, Time, RealTime, Frame);
-
-	Allocate_Internal();
+	Allocate(ActiveIndex, Time, RealTime, Frame, nullptr);
 }
 
-void ACsInteractiveActor::Allocate_Internal()
+void ACsInteractiveActor::Allocate_Internal(void* Payload)
 {
 	if (WorldCollisionComponent)
 	{

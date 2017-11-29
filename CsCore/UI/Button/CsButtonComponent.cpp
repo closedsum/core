@@ -97,7 +97,7 @@ void UCsButtonComponent::RemoveInstigator(const TEnumAsByte<ECsButtonState::Type
 
 void UCsButtonComponent::ClearInstigators()
 {
-	for (int32 I = 0; I < ECS_INTERACTIVE_STATE_MAX; I++)
+	for (int32 I = 0; I < ECS_BUTTON_STATE_MAX; I++)
 	{
 		TArray<TWeakObjectPtr<UObject>>* Objects = Instigators.Find((TCsButtonState)I);
 

@@ -7,4 +7,17 @@ UCLASS(hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Ti
 class CSCORE_API ACsData_Interactive : public ACsData
 {
 	GENERATED_UCLASS_BODY()
+
+// Mesh
+#pragma region
+
+	virtual class UStaticMesh* GetStaticMesh();
+	virtual class USkeletalMesh* GetSkeletalMesh();
+
+	virtual TArray<class UMaterialInstanceConstant*>* GetMaterials();
+
+	void SetMeshAndMaterials(UStaticMeshComponent* InMesh);
+	void SetMeshAndMaterials(USkeletalMeshComponent* InMesh);
+
+#pragma endregion Mesh
 };

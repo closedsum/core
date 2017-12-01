@@ -13,13 +13,4 @@ class CSCORE_API ACsData_Item : public ACsData
 #pragma region
 
 #pragma endregion UI
-
-// World
-#pragma region
-
-	virtual class UStaticMesh* GetWorldStaticMesh();
-	virtual class USkeletalMesh* GetWorldSkeletalMesh();
-	virtual TArray<class UMaterialInstanceConstant*>* GetWorldMaterials();
-
-#pragma endregion World
 };

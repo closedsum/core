@@ -182,19 +182,16 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 // Materials
 #pragma region
 
-	static void SetMaterials(UStaticMeshComponent* InMesh, TArray<UMaterialInstanceConstant*>& Materials);
-	static void SetMaterials(USkeletalMeshComponent* InMesh, TArray<UMaterialInstanceConstant*>& Materials);
-
-	static void SetSkeletalMeshAndMaterials(USkeletalMeshComponent* InMesh, USkeletalMesh* MeshTemplate);
-	static void SetSkeletalMeshAndMaterials(USkeletalMeshComponent* InMesh, USkeletalMesh* MeshTemplate, TArray<UMaterialInstanceConstant*> & Materials);
+	static void SetMaterials(UStaticMeshComponent* InMesh, const TArray<UMaterialInstanceConstant*>& Materials);
+	static void SetMaterials(USkeletalMeshComponent* InMesh, const TArray<UMaterialInstanceConstant*>& Materials);
 
 	static void ClearOverrideMaterials(UStaticMeshComponent* InMesh);
 	static void ClearOverrideMaterials(USkeletalMeshComponent* InMesh);
 
 	static void DestroyMIDs(TArray<UMaterialInstanceDynamic*>& MIDs);
-	static void SetMIDs(USkeletalMeshComponent* InMesh, TArray<UMaterialInstanceDynamic*>& MIDs, TArray<FSkeletalMaterial>& Materials);
-	static void SetMIDs(USkeletalMeshComponent* InMesh, TArray<UMaterialInstanceDynamic*>& MIDs, TArray<UMaterialInstanceConstant*>& Materials);
-	static void SetMIDs(USkeletalMeshComponent* InMesh, TArray<UMaterialInstanceDynamic*>& MIDs, TArray<UMaterialInterface*>& Materials);
+	static void SetMIDs(USkeletalMeshComponent* InMesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<FSkeletalMaterial>& Materials);
+	static void SetMIDs(USkeletalMeshComponent* InMesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInstanceConstant*>& Materials);
+	static void SetMIDs(USkeletalMeshComponent* InMesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials);
 
 	static void MIDs_SetScalarParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float &Value);
 	static void MIDs_SetVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector &Value);
@@ -748,6 +745,8 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	static uint64 GetWorldTimeMilliseconds(UWorld* InWorld);
 
 	static float GetCurrentDateTimeSeconds();
+
+	static uint64 GetCurrentFrame(UWorld* InWorld);
 
 #pragma endregion Time
 

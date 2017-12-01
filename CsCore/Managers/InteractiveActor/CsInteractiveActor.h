@@ -2,6 +2,7 @@
 #pragma once
 #include "Managers/CsPooledActor.h"
 #include "Types/CsTypes_Interactive.h"
+#include "Data/CsData_Interactive.h"
 #include "CsInteractiveActor.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsInteractiveActor_Override_OnTickOverlap, const int32&, Index, const float&, DeltaSeconds);
@@ -64,6 +65,7 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 	GENERATED_USTRUCT_BODY()
 
 	TWeakObjectPtr<class ACsInteractiveActor> Actor;
+	TWeakObjectPtr<class ACsData_Interactive> Data;
 
 	TCsInteractiveType Type_Script;
 
@@ -82,9 +84,10 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 	}
 
 	template<typename T>
-	void Init(const uint16& InActiveIndex, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint8&))
+	void Init(const uint16& InActiveIndex, class ACsData_Interactive* InData, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint8&))
 	{
 		ActiveIndex = InActiveIndex;
+		Data = InData;
 		Owner = InOwner;
 		Parent = InParent;
 		Time = InTime;
@@ -102,14 +105,15 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 	}
 
 	template<typename T>
-	void Init(const uint16& InActiveIndex, const float &InTime, const float &InRealTime, const uint64 &InFrame, T* InObject, void (T::*OnDeAllocate)(const uint8&))
+	void Init(const uint16& InActiveIndex, class ACsData_Interactive* InData, const float &InTime, const float &InRealTime, const uint64 &InFrame, T* InObject, void (T::*OnDeAllocate)(const uint8&))
 	{
-		Init(InActiveIndex, InTime, InRealTime, InFrame, nullptr, nullptr, InObject, OnDeAllocate);
+		Init(InActiveIndex, InData, InTime, InRealTime, InFrame, nullptr, nullptr, InObject, OnDeAllocate);
 	}
 
-	void Init(const uint16& InActiveIndex, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent)
+	void Init(const uint16& InActiveIndex, class ACsData_Interactive* InData, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent)
 	{
 		ActiveIndex = InActiveIndex;
+		Data = InData;
 		Owner = InOwner;
 		Parent = InParent;
 		Time = InTime;
@@ -117,9 +121,9 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 		Frame = InFrame;
 	}
 
-	void Init(const uint16& InActiveIndex, const float &InTime, const float &InRealTime, const uint64 &InFrame)
+	void Init(const uint16& InActiveIndex, class ACsData_Interactive* InData, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
-		Init(InActiveIndex, InTime, InRealTime, InFrame, nullptr, nullptr);
+		Init(InActiveIndex, InData, InTime, InRealTime, InFrame, nullptr, nullptr);
 	}
 
 	virtual void Reset() override
@@ -128,6 +132,7 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 	}
 
 	class ACsInteractiveActor* GetActor() { return Actor.IsValid() ? Actor.Get() : nullptr; }
+	class ACsData_Interactive* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
 };
 
 UCLASS()
@@ -193,14 +198,14 @@ public:
 	void Init(const int32 &Index, const TCsInteractiveType &InType);
 
 	template<typename T>
-	void Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, void* Payload, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	void Allocate(const uint16 &ActiveIndex, class ACsData_Interactive* InData, void* Payload, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 
 	template<typename T>
-	void Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, void* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	void Allocate(const uint16 &ActiveIndex, class ACsData_Interactive* InData, void* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 
-	void Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, void* Payload, UObject* InOwner, UObject* InParent);
-	void Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, void* Payload);
-	void Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame);
+	void Allocate(const uint16 &ActiveIndex, class ACsData_Interactive* InData, void* Payload, UObject* InOwner, UObject* InParent);
+	void Allocate(const uint16 &ActiveIndex, class ACsData_Interactive* InData, void* Payload);
+	void Allocate(const uint16 &ActiveIndex, class ACsData_Interactive* InData);
 
 	virtual void Allocate_Internal(void* Payload);
 

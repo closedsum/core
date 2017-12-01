@@ -26,5 +26,9 @@ class CSCORE_API ACsManager_Item : public AActor
 	uint16 PoolIndex;
 
 	virtual FCsItem* Allocate();
-	//virtual FCsItem* Allocate(const TCsItemType &ItemType);
+	virtual FCsItem* Allocate(const TCsItemType &ItemType);
+
+	TMap<uint64, FCsItem*> ActiveItems;
+
+	virtual FCsItem* GetItem(const uint64 &Id);
 };

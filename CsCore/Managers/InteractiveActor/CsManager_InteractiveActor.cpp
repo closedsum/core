@@ -2,8 +2,12 @@
 #include "Managers/InteractiveActor/CsManager_InteractiveActor.h"
 #include "CsCore.h"
 #include "CsCVars.h"
+#include "Common/CsCommon.h"
 #include "Managers/InteractiveActor/CsInteractiveActor.h"
 #include "Game/CsGameState.h"
+
+// Data
+#include "Data/CsData_Interactive.h"
 
 ACsManager_InteractiveActor::ACsManager_InteractiveActor(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -83,6 +87,7 @@ void ACsManager_InteractiveActor::CreatePool(const TSubclassOf<class UObject> &O
 		Actor->Role = ROLE_None;
 		GetWorld()->RemoveNetworkActor(Actor);
 		Actor->Init(I, ClassType);
+		Actor->DeAllocate();
 		Actor->OnCreatePool();
 		Pool.Add(Actor);
 		ActorPool.Add(Actor);
@@ -130,9 +135,9 @@ void ACsManager_InteractiveActor::AddToPool(UObject* InObject, const uint8& Type
 	}
 
 	Actor->Init(PoolPtr->Num() - 1, ClassType);
-	Actor->Cache.Init(0, GetWorld()->TimeSeconds, GetWorld()->RealTimeSeconds, 0);
+	// TODO: Data needs to get somewhere
+	Actor->Cache.Init(0, nullptr, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
 }
-
 
 void ACsManager_InteractiveActor::AddToActivePool(UObject* InObject, const uint8& Type)
 {
@@ -394,11 +399,11 @@ void ACsManager_InteractiveActor::OnDeAllocate(const uint16& Index, const uint16
 	OnDeAllocateEX_Internal_Event.Broadcast(Index, ActiveIndex, (TCsInteractiveType)Type);
 }
 
-ACsInteractiveActor* ACsManager_InteractiveActor::WakeUp(const TCsInteractiveType &Type, void* Payload, UObject* InOwner, UObject* Parent)
+ACsInteractiveActor* ACsManager_InteractiveActor::WakeUp(const TCsInteractiveType &Type, ACsData_Interactive* InData, void* Payload, UObject* InOwner, UObject* Parent)
 {
 	ACsInteractiveActor* Actor = Allocate(Type);
 
-	Actor->Allocate(GetActivePoolSize((uint8)Type), GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), 0, Payload, InOwner, Parent);
+	Actor->Allocate(GetActivePoolSize((uint8)Type), InData, Payload, InOwner, Parent);
 
 	LogTransaction(TEXT("ACsManager_InteractiveActor::WakeUp"), ECsPoolTransaction::Allocate, Actor);
 
@@ -406,27 +411,27 @@ ACsInteractiveActor* ACsManager_InteractiveActor::WakeUp(const TCsInteractiveTyp
 	return Actor;
 }
 
-ACsInteractiveActor* ACsManager_InteractiveActor::WakeUp(const TCsInteractiveType &Type, void* Payload, UObject* InOwner)
+ACsInteractiveActor* ACsManager_InteractiveActor::WakeUp(const TCsInteractiveType &Type, ACsData_Interactive* InData, void* Payload, UObject* InOwner)
 {
-	return WakeUp(Type, Payload, InOwner, nullptr);
+	return WakeUp(Type, InData, Payload, InOwner, nullptr);
 }
 
-ACsInteractiveActor* ACsManager_InteractiveActor::WakeUp(const TCsInteractiveType &Type, void* Payload)
+ACsInteractiveActor* ACsManager_InteractiveActor::WakeUp(const TCsInteractiveType &Type, ACsData_Interactive* InData, void* Payload)
 {
-	return WakeUp(Type, Payload, nullptr, nullptr);
+	return WakeUp(Type, InData, Payload, nullptr, nullptr);
 }
 
-ACsInteractiveActor* ACsManager_InteractiveActor::WakeUp(const TCsInteractiveType &Type)
+ACsInteractiveActor* ACsManager_InteractiveActor::WakeUp(const TCsInteractiveType &Type, ACsData_Interactive* InData)
 {
-	return WakeUp(Type, nullptr, nullptr, nullptr);
+	return WakeUp(Type, InData, nullptr, nullptr, nullptr);
 }
 
 template<typename T>
-void ACsInteractiveActor::WakeUp(const TCsInteractiveType &Type, ACsInteractiveActor* &OutActor, void* Payload, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsInteractiveActor::WakeUp(const TCsInteractiveType &Type, ACsInteractiveActor* &OutActor, ACsData_Interactive* InData, void* Payload, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
 	OutActor = Allocate(Type);
 
-	OutActor->Allocate<T>(GetActivePoolSize((uint8)Type), GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), 0, Payload, InOwner, Parent, InObject, OnDeAllocate);
+	OutActor->Allocate<T>(GetActivePoolSize((uint8)Type), InData, Payload, InOwner, Parent, InObject, OnDeAllocate);
 
 	LogTransaction(TEXT("ACsManager_InteractiveActor::WakeUp"), ECsPoolTransaction::Allocate, Actor);
 
@@ -434,13 +439,13 @@ void ACsInteractiveActor::WakeUp(const TCsInteractiveType &Type, ACsInteractiveA
 }
 
 template<typename T>
-void ACsInteractiveActor::WakeUp(const TCsInteractiveType &Type, ACsInteractiveActor* &OutActor, void* Payload, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsInteractiveActor::WakeUp(const TCsInteractiveType &Type, ACsInteractiveActor* &OutActor, ACsData_Interactive* InData, void* Payload, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
-	WakeUp<T>(Type, OutActor, Payload, nullptr, InOwner, InObject, OnDeAllocate);
+	WakeUp<T>(Type, OutActor, InData, Payload, nullptr, InOwner, InObject, OnDeAllocate);
 }
 
 template<typename T>
-void ACsInteractiveActor::WakeUp(const TCsInteractiveType &ClassType, ACsInteractiveActor* &OutActor, void* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsInteractiveActor::WakeUp(const TCsInteractiveType &ClassType, ACsInteractiveActor* &OutActor, ACsData_Interactive* InData, void* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
-	WakeUp<T>(Type, OutActor, Payload, nullptr, nullptr, InObject, OnDeAllocate);
+	WakeUp<T>(Type, OutActor, InData, Payload, nullptr, nullptr, InObject, OnDeAllocate);
 }

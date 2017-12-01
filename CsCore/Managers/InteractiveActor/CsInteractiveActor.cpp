@@ -10,6 +10,9 @@
 
 #include "MotionController/CsMotionController.h"
 
+// Data
+#include "Data/CsData_Interactive.h"
+
 ACsInteractiveActor::ACsInteractiveActor(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	CS_SET_BLUEPRINT_BITFLAG(PhysicsState, ECsInteractivePhysicsState::Grounded);
@@ -105,38 +108,38 @@ void ACsInteractiveActor::Init(const int32 &Index, const TCsInteractiveType &InT
 }
 
 template<typename T>
-void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, void* Payload, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, ACsData_Interactive* InData, void* Payload, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
-	Cache.Init<T>(ActiveIndex, Time, RealTime, Frame, InOwner, InParent, InObject, OnDeAllocate);
+	Cache.Init<T>(ActiveIndex, InData, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InOwner, InParent, InObject, OnDeAllocate);
 
 	Allocate_Internal(Payload);
 }
 
 template<typename T>
-void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, void* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, ACsData_Interactive* InData, void* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
-	Cache.Init<T>(ActiveIndex, Time, RealTime, Frame, InObject, OnDeAllocate);
+	Cache.Init<T>(ActiveIndex, InData, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InObject, OnDeAllocate);
 
 	Allocate_Internal(Payload);
 }
 
-void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, void* Payload, UObject* InOwner, UObject* InParent)
+void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, ACsData_Interactive* InData, void* Payload, UObject* InOwner, UObject* InParent)
 {
-	Cache.Init(ActiveIndex, Time, RealTime, Frame, InOwner, InParent);
+	Cache.Init(ActiveIndex, InData, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InOwner, InParent);
 
 	Allocate_Internal(Payload);
 }
 
-void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, void* Payload)
+void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, ACsData_Interactive* InData, void* Payload)
 {
-	Cache.Init(ActiveIndex, Time, RealTime, Frame);
+	Cache.Init(ActiveIndex, InData, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
 
 	Allocate_Internal(Payload);
 }
 
-void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame)
+void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, ACsData_Interactive* InData)
 {
-	Allocate(ActiveIndex, Time, RealTime, Frame, nullptr);
+	Allocate(ActiveIndex, InData, nullptr);
 }
 
 void ACsInteractiveActor::Allocate_Internal(void* Payload)

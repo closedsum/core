@@ -422,7 +422,7 @@ ACsDataMapping* UCsCommon::GetDataMapping(UWorld* InWorld)
 // Materials
 #pragma region
 
-void UCsCommon::SetMaterials(UStaticMeshComponent* InMesh, TArray<UMaterialInstanceConstant*>& Materials)
+void UCsCommon::SetMaterials(UStaticMeshComponent* InMesh, const TArray<UMaterialInstanceConstant*>& Materials)
 {
 	const int32 Count		  = InMesh->GetStaticMesh()->StaticMaterials.Num();
 	const int32 MaterialCount = Materials.Num();
@@ -441,7 +441,7 @@ void UCsCommon::SetMaterials(UStaticMeshComponent* InMesh, TArray<UMaterialInsta
 	}
 }
 
-void UCsCommon::SetMaterials(USkeletalMeshComponent* InMesh, TArray<UMaterialInstanceConstant*>& Materials)
+void UCsCommon::SetMaterials(USkeletalMeshComponent* InMesh, const TArray<UMaterialInstanceConstant*>& Materials)
 {
 	const int32 Count		  = InMesh->SkeletalMesh->Materials.Num();
 	const int32 MaterialCount = Materials.Num();
@@ -453,30 +453,6 @@ void UCsCommon::SetMaterials(USkeletalMeshComponent* InMesh, TArray<UMaterialIns
 	}
 
 	ClearOverrideMaterials(InMesh);
-
-	for (int32 Index = 0; Index < Count; Index++)
-	{
-		InMesh->SetMaterial(Index, Materials[Index]);
-	}
-}
-
-void UCsCommon::SetSkeletalMeshAndMaterials(USkeletalMeshComponent* InMesh, USkeletalMesh* MeshTemplate)
-{
-	InMesh->SetSkeletalMesh(MeshTemplate);
-
-	const int32 Count = MeshTemplate->Materials.Num();
-
-	for (int32 Index = 0; Index < Count; Index++)
-	{
-		InMesh->SetMaterial(Index, MeshTemplate->Materials[Index].MaterialInterface);
-	}
-}
-
-void UCsCommon::SetSkeletalMeshAndMaterials(USkeletalMeshComponent* InMesh, USkeletalMesh* MeshTemplate, TArray<UMaterialInstanceConstant*> & Materials)
-{
-	InMesh->SetSkeletalMesh(MeshTemplate);
-
-	const int32 Count = Materials.Num();
 
 	for (int32 Index = 0; Index < Count; Index++)
 	{
@@ -533,7 +509,7 @@ void UCsCommon::DestroyMIDs(TArray<UMaterialInstanceDynamic*>& MIDs)
 	MIDs.SetNum(0, true);
 }
 
-void UCsCommon::SetMIDs(USkeletalMeshComponent* InMesh, TArray<UMaterialInstanceDynamic*>& MIDs, TArray<FSkeletalMaterial>& Materials)
+void UCsCommon::SetMIDs(USkeletalMeshComponent* InMesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<FSkeletalMaterial>& Materials)
 {
 	ClearOverrideMaterials(InMesh);
 	DestroyMIDs(MIDs);
@@ -546,7 +522,7 @@ void UCsCommon::SetMIDs(USkeletalMeshComponent* InMesh, TArray<UMaterialInstance
 	}
 }
 
-void UCsCommon::SetMIDs(USkeletalMeshComponent* InMesh, TArray<UMaterialInstanceDynamic*>& MIDs, TArray<UMaterialInstanceConstant*>& Materials)
+void UCsCommon::SetMIDs(USkeletalMeshComponent* InMesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInstanceConstant*>& Materials)
 {
 	ClearOverrideMaterials(InMesh);
 	DestroyMIDs(MIDs);
@@ -559,7 +535,7 @@ void UCsCommon::SetMIDs(USkeletalMeshComponent* InMesh, TArray<UMaterialInstance
 	}
 }
 
-void UCsCommon::SetMIDs(USkeletalMeshComponent* InMesh, TArray<UMaterialInstanceDynamic*>& MIDs, TArray<UMaterialInterface*>& Materials)
+void UCsCommon::SetMIDs(USkeletalMeshComponent* InMesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials)
 {
 	ClearOverrideMaterials(InMesh);
 	DestroyMIDs(MIDs);
@@ -2332,6 +2308,10 @@ float UCsCommon::GetCurrentDateTimeSeconds()
 	
 	return Seconds;
 }
+
+// TODO: Get InputManager and then get CurrentFrame. Possibly move CurrentFrame to GameInstnace since
+//		 there is an InputManager for each Player
+uint64 UCsCommon::GetCurrentFrame(UWorld* InWorld) { return 0; }
 
 #pragma endregion Time
 

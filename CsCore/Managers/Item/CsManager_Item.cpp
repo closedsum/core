@@ -42,9 +42,20 @@ FCsItem* ACsManager_Item::Allocate()
 		{
 			Item->IsAllocated = true;
 			Item->UniqueId	  = GetUniqueId();
+			ActiveItems.Add(Item->UniqueId, Item);
 			return Item;
 		}
 	}
 	checkf(0, TEXT("ACsManager_Item::Allocate: Pool is exhausted"));
 	return nullptr;
+}
+
+FCsItem* ACsManager_Item::Allocate(const TCsItemType &ItemType)
+{
+	return nullptr;
+}
+
+FCsItem* ACsManager_Item::GetItem(const uint64 &Id)
+{
+	return *(ActiveItems.Find(Id));
 }

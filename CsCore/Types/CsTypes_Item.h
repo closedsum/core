@@ -27,23 +27,48 @@ typedef TCsItemType(*TCsStringToItemType)(const FString&);
 
 #pragma region
 
-namespace ECsItemCollectionType
+UENUM(BlueprintType)
+namespace ECsItemCollection
 {
-	enum Type : uint8;
+	enum Type
+	{
+		Single					UMETA(DisplayName = "Single"),
+		GroupHomogenous			UMETA(DisplayName = "Group Homogenous"),
+		GroupMixed				UMETA(DisplayName = "Group Mixed"),
+		ECsItemCollection_MAX	UMETA(Hidden),
+	};
 }
 
-typedef ECsItemCollectionType::Type TCsItemCollectionType;
+namespace ECsItemCollection
+{
+	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
 
-// ItemCollectionTypeToString
-typedef FString(*TCsItemCollectionTypeToString)(const TCsItemType&);
-// StringToItemCollectionType
-typedef TCsItemCollectionType(*TCsStringToItemCollectionType)(const FString&);
+	namespace Str
+	{
+		const TCsString Single = TCsString(TEXT("Single"), TEXT("single"), TEXT("single"));
+		const TCsString GroupHomogenous = TCsString(TEXT("GroupHomogenous"), TEXT("grouphomogenous"), TEXT("group homogenous"));
+		const TCsString GroupMixed = TCsString(TEXT("GroupMixed"), TEXT("groupmixed"), TEXT("group mixed"));
+	}
 
-#define CS_DECLARE_ITEM_COLLECTION_TYPE_FUNCTIONS	TCsItemCollectionTypeToString ItemCollectionTypeToString; \
-													TCsStringToItemCollectionType StringToItemCollectionType;
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::Single) { return Str::Single.Value; }
+		if (EType == Type::GroupHomogenous) { return Str::GroupHomogenous.Value; }
+		if (EType == Type::GroupMixed) { return Str::GroupMixed.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
 
-#define CS_DEFINE_ITEM_COLLECTION_TYPE_FUNCTIONS	ItemCollectionTypeToString = &ECsItemCollectionType::ToString; \
-													StringToItemCollectionType = &ECsItemCollectionType::ToType;
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::Single) { return Type::Single; }
+		if (String == Str::GroupHomogenous) { return Type::GroupHomogenous; }
+		if (String == Str::GroupMixed) { return Type::GroupMixed; }
+		return Type::ECsItemCollection_MAX;
+	}
+}
+
+#define ECS_ITEM_COLLECTION_MAX (uint8)ECsItemCollection::ECsItemCollection_MAX
+typedef TEnumAsByte<ECsItemCollection::Type> TCsItemCollection;
 
 USTRUCT(BlueprintType)
 struct FCsInventoryItemDimension

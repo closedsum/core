@@ -225,6 +225,9 @@ public:
 	class ACsManager_Item* Manager_Item;
 
 	UPROPERTY()
+	class ACsManager_Inventory* Manager_Inventory;
+
+	UPROPERTY()
 	class ACsManager_AI* Manager_AI;
 
 	UPROPERTY()

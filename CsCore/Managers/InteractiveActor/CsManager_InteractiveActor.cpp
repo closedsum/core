@@ -63,6 +63,7 @@ void ACsManager_InteractiveActor::Destroyed()
 void ACsManager_InteractiveActor::Init(const TCsInteractiveType &InInteractiveType_MAX, TCsInteractiveTypeToString InInteractiveTypeToString)
 {
 	InteractiveType_MAX     = InInteractiveType_MAX;
+	INTERACTIVE_TYPE_MAX	= (uint8)InInteractiveType_MAX;
 	InteractiveTypeToString = InInteractiveTypeToString;
 }
 
@@ -135,7 +136,7 @@ void ACsManager_InteractiveActor::AddToPool(UObject* InObject, const uint8& Type
 	}
 
 	Actor->Init(PoolPtr->Num() - 1, ClassType);
-	// TODO: Data needs to get somewhere
+	// TODO: Data needs to be set somewhere
 	Actor->Cache.Init(0, nullptr, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
 }
 
@@ -180,41 +181,54 @@ void ACsManager_InteractiveActor::OnTick(const float &DeltaSeconds)
 		{
 			ACsInteractiveActor* Actor = (*ActorsPtr)[I];
 
-			// Check if Emitter was DeAllocated NOT in a normal way (i.e. Out of Bounds)
+			// Check if InteractiveActor was DeAllocated NOT in a normal way (i.e. Out of Bounds)
 
-			/*
 			if (!Actor->Cache.IsAllocated)
 			{
-				UE_LOG(LogCs, Warning, TEXT("ACsManager_InteractiveActor::OnTick: InteractiveActor: %s at PoolIndex: %s was prematurely deallocted NOT in a normal way."), *(Emitter->GetName()), Emitter->Cache.Index);
+				UE_LOG(LogCs, Warning, TEXT("ACsManager_InteractiveActor::OnTick: InteractiveActor: %s at PoolIndex: %s was prematurely deallocted NOT in a normal way."), *(Actor->GetName()), Actor->Cache.Index);
 
-				LogTransaction(TEXT("ACsManager_FX::OnTick"), ECsPoolTransaction::Deallocate, Emitter);
+				LogTransaction(TEXT("ACsManager_InteractiveActor::OnTick"), ECsPoolTransaction::Deallocate, Actor);
 
-				ActiveEmitters.RemoveAt(I);
+				ActorsPtr->RemoveAt(J);
 
-				if (I < EarliestIndex)
-					EarliestIndex = I;
+				if (J < EarliestIndex)
+					EarliestIndex = J;
 				continue;
 			}
-			*/
 
 			if (!Actor->Cache.UseLifeTime)
 				continue;
+			if (Actor->Cache.State == ECsPooledObjectState::WarmUp &&
+				GetWorld()->GetTimeSeconds() - Actor->Cache.Time >= Actor->Cache.WarmUpTime)
+			{
+				Actor->Cache.State = ECsPooledObjectState::Active;
+			}
+
+			if (GetWorld()->GetTimeSeconds() - Actor->Cache.Time > Actor->Cache.LifeTime)
+			{
+				LogTransaction(TEXT("ACsManager_InteractiveActor::OnTick"), ECsPoolTransaction::Deallocate, Actor);
+
+				Actor->DeAllocate();
+				ActorsPtr->RemoveAt(J);
+
+				if (J < EarliestIndex)
+					EarliestIndex = J;
+			}
+		}
+
+		// Update ActiveIndex
+		if (EarliestIndex != ActorCount)
+		{
+			const uint16 Max = ActorsPtr->Num();
+
+			for (uint16 J = EarliestIndex; J < Max; J++)
+			{
+				ACsInteractiveActor* Actor		= (*ActorsPtr)[J];
+				Actor->Cache.ActiveIndex		= J;
+				Actor->Cache.ActiveIndex_Script = J;
+			}
 		}
 	}
-	/*
-	const uint8 Count = ActiveWidgetActors.Num();
-
-	for (int32 I = Count - 1; I >= 0; I--)
-	{
-	ACsWidgetActor* Widget = ActiveWidgetActors[I];
-
-	if (GetWorld()->TimeSeconds - Sound->Cache.Time > Sound->Cache.Duration)
-	{
-	Widget->DeAllocate();
-	ActiveWidgetActors.RemoveAt(I);
-	}
-	}
-	*/
 }
 
 void ACsManager_InteractiveActor::GetAllActiveActors(TArray<class ACsInteractiveActor*> &OutActors)

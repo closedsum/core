@@ -303,8 +303,6 @@ void ACsProjectile::DeAllocate()
 	MovementComponent->Deactivate();
 
 		// DeAllocate attachments
-	ACsManager_FX* Manager_FX = ACsManager_FX::Get(GetWorld());
-
 	const TArray<USceneComponent*>& AttachChildren = MeshComponent->GetAttachChildren();
 	const int32 Count							    = AttachChildren.Num();
 
@@ -315,7 +313,10 @@ void ACsProjectile::DeAllocate()
 
 		// FX
 		if (ACsEmitter* FX = Cast<ACsEmitter>(Actor))
-			FX->Cache.LifeTime = 0.0f;
+		{
+			FX->Cache.LifeTime    = 0.0f;
+			FX->Cache.UseLifeTime = true;
+		}
 	}
 
 	// Mesh

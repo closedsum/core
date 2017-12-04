@@ -11,7 +11,7 @@ class CSCORE_API ACsData_Projectile : public ACsData
 {
 	GENERATED_UCLASS_BODY()
 
-		virtual void Load(const ECsLoadFlags &LoadFlags = ECsLoadFlags::All) override;
+	virtual void Load(const ECsLoadFlags &LoadFlags = ECsLoadFlags::All) override;
 
 	TCsProjectileType ProjectileType_Internal;
 	TCsProjectileType ProjectileType_Internal_MAX;

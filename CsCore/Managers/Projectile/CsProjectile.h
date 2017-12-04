@@ -61,10 +61,12 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 		Type_Script = InData->GetBaseProjectileType();
 		Type		= (uint8)Type_Script;
 
-		Parent	   = InParent;
-		Time	   = InTime;
-		RealTime   = InRealTime;
-		Frame	   = InFrame;
+		Parent	    = InParent;
+		LifeTime	= InData->GetLifeTime();
+		UseLifeTime = LifeTime > 0.0f;
+		Time	    = InTime;
+		RealTime    = InRealTime;
+		Frame	    = InFrame;
 
 		LifeTime	  = InData->GetLifeTime();
 		Location	  = InFireCache->Location;

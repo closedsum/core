@@ -83,7 +83,11 @@ void ACsManager_Projectile::CreatePool(const int32 &Size)
 
 void ACsManager_Projectile::OnTick(const float &DeltaSeconds)
 {
-	const uint16 Count   = ActiveProjectiles.Num();
+	const uint16 Count = ActiveProjectiles.Num();
+
+	if (Count == CS_EMPTY)
+		return;
+
 	uint16 EarliestIndex = Count;
 
 	for (int32 I = Count - 1; I >= 0; I--)
@@ -192,6 +196,9 @@ ACsProjectile* ACsManager_Projectile::Allocate()
 void ACsManager_Projectile::DeAllocate(const int32 &Index)
 {
 	const uint16 Count = ActiveProjectiles.Num();
+
+	if (Count == CS_EMPTY)
+		return;
 
 	for (int32 I = Count - 1; I >= 0; I--)
 	{

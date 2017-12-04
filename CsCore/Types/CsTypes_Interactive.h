@@ -20,11 +20,15 @@ typedef FString(*TCsInteractiveTypeToString)(const TCsInteractiveType&);
 // StringToInteractiveType
 typedef TCsInteractiveType(*TCsStringToInteractiveType)(const FString&);
 
-#define CS_DECLARE_INTERACTIVE_TYPE_FUNCTIONS	TCsInteractiveTypeToString InteractiveTypeToString; \
-												TCsStringToInteractiveType StringToInteractiveType;
+#define CS_DECLARE_INTERACTIVE_TYPE	TCsInteractiveType InteractiveType_MAX; \
+									uint8 INTERACTIVE_TYPE_MAX; \
+									TCsInteractiveTypeToString InteractiveTypeToString; \
+									TCsStringToInteractiveType StringToInteractiveType;
 
-#define CS_DEFINE_INTERACTIVE_TYPE_FUNCTIONS	InteractiveTypeToString = &ECsInteractiveType::ToString; \
-												StringToInteractiveType = &ECsInteractiveType::ToType;
+#define CS_DEFINE_INTERACTIVE_TYPE	InteractiveType_MAX = ECsInteractiveType::ECsInteractiveType_MAX;\
+									INTERACTIVE_TYPE_MAX = (uint8)InteractiveType_MAX \
+									InteractiveTypeToString = &ECsInteractiveType::ToString; \
+									StringToInteractiveType = &ECsInteractiveType::ToType;
 
 UENUM(BlueprintType)
 namespace ECsInteractiveState

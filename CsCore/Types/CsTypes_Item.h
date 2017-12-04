@@ -19,11 +19,15 @@ typedef FString(*TCsItemTypeToString)(const TCsItemType&);
 // StringToItemType
 typedef TCsItemType(*TCsStringToItemType)(const FString&);
 
-#define CS_DECLARE_ITEM_TYPE_FUNCTIONS	TCsItemTypeToString ItemTypeToString; \
-										TCsStringToItemType StringToItemType;
+#define CS_DECLARE_ITEM_TYPE	TCsItemType ItemType_MAX;\
+								uint8 ITEM_TYPE_MAX; \
+								TCsItemTypeToString ItemTypeToString; \
+								TCsStringToItemType StringToItemType;
 
-#define CS_DEFINE_ITEM_TYPE_FUNCTIONS	ItemTypeToString = &ECsItemType::ToString; \
-										StringToItemType = &ECsItemType::ToType;
+#define CS_DEFINE_ITEM_TYPE	ItemType_MAX = ECsItemType::ECsItemType_MAX; \
+							ITEM_TYPE_MAX = (uint8)ItemType_MAX; \
+							ItemTypeToString = &ECsItemType::ToString; \
+							StringToItemType = &ECsItemType::ToType;
 
 #pragma region
 

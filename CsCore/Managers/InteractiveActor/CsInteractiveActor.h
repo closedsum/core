@@ -90,6 +90,12 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 		Data = InData;
 		Owner = InOwner;
 		Parent = InParent;
+
+		WarmUpTime = InData->GetWarmUpTime();
+		State = WarmUpTime > 0.0f ? ECsPooledObjectState::WarmUp : ECsPooledObjectState::Active;
+
+		SetLifeTime(InData->GetLifeTime());
+
 		Time = InTime;
 		RealTime = InRealTime;
 		Frame = InFrame;
@@ -116,6 +122,12 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 		Data = InData;
 		Owner = InOwner;
 		Parent = InParent;
+
+		WarmUpTime = InData->GetWarmUpTime();
+		State = WarmUpTime > 0.0f ? ECsPooledObjectState::WarmUp : ECsPooledObjectState::Active;
+
+		SetLifeTime(InData->GetLifeTime());
+
 		Time = InTime;
 		RealTime = InRealTime;
 		Frame = InFrame;

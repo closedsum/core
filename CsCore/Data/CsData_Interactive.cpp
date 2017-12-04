@@ -8,6 +8,14 @@ ACsData_Interactive::ACsData_Interactive(const FObjectInitializer& ObjectInitial
 {
 }
 
+// Stats
+#pragma region
+
+float ACsData_Interactive::GetWarmUpTime() { return 0.0f; }
+float ACsData_Interactive::GetLifeTime() { return 0.0f; }
+
+#pragma endregion Stats
+
 // Mesh
 #pragma region
 

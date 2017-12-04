@@ -8,10 +8,22 @@ class CSCORE_API ACsData_Interactive : public ACsData
 {
 	GENERATED_UCLASS_BODY()
 
+// Stats
+#pragma region
+
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+	virtual float GetWarmUpTime();
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+	virtual float GetLifeTime();
+
+#pragma endregion Stats
+
 // Mesh
 #pragma region
 
+	UFUNCTION(BlueprintCallable, Category = "Mesh")
 	virtual class UStaticMesh* GetStaticMesh();
+	UFUNCTION(BlueprintCallable, Category = "Mesh")
 	virtual class USkeletalMesh* GetSkeletalMesh();
 
 	virtual TArray<class UMaterialInstanceConstant*>* GetMaterials();

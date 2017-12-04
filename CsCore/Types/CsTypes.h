@@ -2262,6 +2262,49 @@ typedef ECsGestureType::Type TCsGestureType;
 // Pooled Objects
 #pragma region
 
+UENUM(BlueprintType)
+namespace ECsPooledObjectState
+{
+	enum Type
+	{
+		WarmUp						UMETA(DisplayName = "Warm Up"),
+		Active						UMETA(DisplayName = "Active"),
+		Inactive					UMETA(DisplayName = "Inactive"),
+		ECsPooledObjectState_MAX	UMETA(Hidden),
+	};
+}
+
+namespace ECsPooledObjectState
+{
+	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString WarmUp = TCsString(TEXT("WarmUp"), TEXT("warmup"), TEXT("warm up"));
+		const TCsString Active = TCsString(TEXT("Active"), TEXT("active"), TEXT("active"));
+		const TCsString Inactive = TCsString(TEXT("Inactive"), TEXT("inactive"), TEXT("inactive"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::WarmUp) { return Str::WarmUp.Value; }
+		if (EType == Type::Active) { return Str::Active.Value; }
+		if (EType == Type::Inactive) { return Str::Inactive.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::WarmUp) { return Type::WarmUp; }
+		if (String == Str::Active) { return Type::Active; }
+		if (String == Str::Inactive) { return Type::Inactive; }
+		return Type::ECsPooledObjectState_MAX;
+	}
+}
+
+#define ECS_POOLED_OBJECT_STATE_MAX (uint8)ECsPooledObjectState::ECsPooledObjectState_MAX
+typedef TEnumAsByte<ECsPooledObjectState::Type> TCsPooledObjectState;
+
 #define CS_POOLED_OBJECT_CACHE_INVALID_TYPE 255
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsPooledObjectCache_OnDeAllocate, const int32&, PoolIndex, const int32&, ActiveIndex, const uint8&, Type);
@@ -2284,6 +2327,9 @@ struct FCsPooledObjectCache
 	bool IsAllocated;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	TEnumAsByte<ECsPooledObjectState::Type> State;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	uint8 Type;
 
 	TWeakObjectPtr<UObject> Instigator;
@@ -2296,6 +2342,8 @@ struct FCsPooledObjectCache
 
 	FBindableEvent_CsPooledObjectCache_OnDeAllocate OnDeAllocate_Event;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	float WarmUpTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	bool UseLifeTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
@@ -2323,6 +2371,7 @@ struct FCsPooledObjectCache
 		ActiveIndex_Script = 0;
 
 		IsAllocated = false;
+		State = ECsPooledObjectState::Inactive;
 
 		Type = CS_POOLED_OBJECT_CACHE_INVALID_TYPE;
 
@@ -2340,12 +2389,19 @@ struct FCsPooledObjectCache
 		Owner = nullptr;
 		Parent.Reset();
 		Parent = nullptr;
+		WarmUpTime = 0.0f;
 		UseLifeTime = false;
 		LifeTime = 0.0f;
 		Time = 0.0f;
 		RealTime = 0.0f;
 		Frame = 0;
 		Frame_Script = 0;
+	}
+
+	void SetLifeTime(const float &InLifeTime)
+	{
+		LifeTime	= InLifeTime;
+		UseLifeTime = LifeTime > 0.0f;
 	}
 
 	UObject* GetInstigator() { return Instigator.IsValid() ? Instigator.Get() : nullptr; }

@@ -84,7 +84,7 @@ void ACsManager_FX::OnTick(const float &DeltaSeconds)
 
 	uint16 EarliestIndex = Count;
 
-	for (uint16 I = Count - 1; I >= 0; I--)
+	for (int32 I = Count - 1; I >= 0; I--)
 	{
 		ACsEmitter* Emitter = ActiveEmitters[I];
 

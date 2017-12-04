@@ -16,9 +16,7 @@ class CSCORE_API ACsManager_InteractiveActor : public ACsManager
 	virtual void Clear() override;
 	virtual void Shutdown() override;
 
-	TCsInteractiveType InteractiveType_MAX;
-
-	TCsInteractiveTypeToString InteractiveTypeToString;
+	CS_DECLARE_INTERACTIVE_TYPE
 
 	void Init(const TCsInteractiveType &InInteractiveType_MAX, TCsInteractiveTypeToString InInteractiveTypeToString);
 

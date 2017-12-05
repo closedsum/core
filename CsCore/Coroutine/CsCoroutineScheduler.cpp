@@ -1,6 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #include "Coroutine/CsCoroutineScheduler.h"
 #include "CsCore.h"
+#include "CsCVars.h"
 #include "Game/CsGameState.h"
 
 // static initializations

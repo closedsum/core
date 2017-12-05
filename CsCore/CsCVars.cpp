@@ -342,3 +342,16 @@ TAutoConsoleVariable<float> CsCVarDrawPlayerPawnRightThickness(
 #pragma endregion Pawn
 
 #pragma endregion Player
+
+// Coroutine
+#pragma region
+
+TAutoConsoleVariable<int32> CsCVarLogCoroutineTransactions(
+	TEXT("log.coroutine.transactions"),
+	0,
+	TEXT("Log Coroutine Scheduler Allocation and DeAllocation."),
+	ECVF_SetByConsole
+);
+
+
+#pragma endregion Coroutine

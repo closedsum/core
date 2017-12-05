@@ -10,6 +10,62 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsCoroutineScheduler_OnTick, 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsCoroutineScheduler_OnTickUpdate, float, DeltaSeconds);
 
+// Enums
+#pragma region
+
+UENUM(BlueprintType)
+namespace ECsCoroutineTransaction
+{
+	enum Type
+	{
+		Allocate					UMETA(DisplayName = "Allocate"),
+		Start						UMETA(DisplayName = "Start"),
+		End							UMETA(DisplayName = "End"),
+		ECsCoroutineTransaction_MAX	UMETA(Hidden),
+	};
+}
+
+namespace ECsCoroutineTransaction
+{
+	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString Allocate = TCsString(TEXT("Allocate"), TEXT("allocate"), TEXT("Allocating"));
+		const TCsString Start = TCsString(TEXT("Start"), TEXT("start"), TEXT("Starting"));
+		const TCsString End = TCsString(TEXT("End"), TEXT("end"), TEXT("Ending"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::Allocate) { return Str::Allocate.Value; }
+		if (EType == Type::Start) { return Str::Start.Value; }
+		if (EType == Type::End) { return Str::End.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE FString ToActionString(const Type &EType)
+	{
+		if (EType == Type::Allocate) { return Str::Allocate.Values[CS_FSTRING_ENUM_ALT_1_VALUE]; }
+		if (EType == Type::Start) { return Str::Start.Values[CS_FSTRING_ENUM_ALT_1_VALUE]; }
+		if (EType == Type::End) { return Str::End.Values[CS_FSTRING_ENUM_ALT_1_VALUE]; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::Allocate) { return Type::Allocate; }
+		if (String == Str::Start) { return Type::Start; }
+		if (String == Str::End) { return Type::End; }
+		return Type::ECsCoroutineTransaction_MAX;
+	}
+}
+
+#define ECS_COROUTINE_TRANSACTION_MAX (uint8)ECsCoroutineTransaction::ECsCoroutineTransaction_MAX
+typedef TEnumAsByte<ECsCoroutineTransaction::Type> TCsCoroutineTransaction;
+
+#pragma endregion Enums
+
 UCLASS(transient)
 class CSCORE_API UCsCoroutineScheduler : public UObject
 {

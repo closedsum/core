@@ -144,3 +144,10 @@ extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawPlayerPawnRightThickness
 #pragma endregion Pawn
 
 #pragma endregion Player
+
+// Coroutine
+#pragma region
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogCoroutineTransactions;
+
+#pragma endregion Coroutine

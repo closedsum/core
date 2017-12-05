@@ -31,13 +31,13 @@ namespace ECsPoolTransaction
 
 namespace ECsPoolTransaction
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
-		const TCsString Allocate = TCsString(TEXT("Allocate"), TEXT("allocate"));
-		const TCsString PreDeallocate = TCsString(TEXT("PreDeallocate"), TEXT("predeallocate"));
-		const TCsString Deallocate = TCsString(TEXT("Deallocate"), TEXT("deallocate"));
+		const TCsString Allocate = TCsString(TEXT("Allocate"), TEXT("allocate"), TEXT("Allocating"));
+		const TCsString PreDeallocate = TCsString(TEXT("PreDeallocate"), TEXT("predeallocate"), TEXT("PreDeallocating"));
+		const TCsString Deallocate = TCsString(TEXT("Deallocate"), TEXT("deallocate"), TEXT("Deallocating"));
 	}
 
 	FORCEINLINE FString ToString(const Type &EType)
@@ -45,6 +45,14 @@ namespace ECsPoolTransaction
 		if (EType == Type::Allocate) { return Str::Allocate.Value; }
 		if (EType == Type::PreDeallocate) { return Str::PreDeallocate.Value; }
 		if (EType == Type::Deallocate) { return Str::Deallocate.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE FString ToActionString(const Type &EType)
+	{
+		if (EType == Type::Allocate) { return Str::Allocate.Values[CS_FSTRING_ENUM_ALT_1_VALUE]; }
+		if (EType == Type::PreDeallocate) { return Str::PreDeallocate.Values[CS_FSTRING_ENUM_ALT_1_VALUE]; }
+		if (EType == Type::Deallocate) { return Str::Deallocate.Values[CS_FSTRING_ENUM_ALT_1_VALUE]; }
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 

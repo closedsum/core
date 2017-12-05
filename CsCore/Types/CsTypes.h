@@ -1505,8 +1505,54 @@ namespace ECsCoroutineMessage
 }
 
 #define ECS_COROUTINE_MESSAGE_MAX (uint8)ECsCoroutineMessage::ECsCoroutineMessage_MAX
-//typedef ECsCoroutineMessage TCsCoroutineMessage;
 typedef TEnumAsByte<ECsCoroutineMessage::Type> TCsCoroutineMessage;
+
+UENUM(BlueprintType)
+namespace ECsCoroutineEndReason
+{
+	enum Type
+	{
+		EndOfExecution				UMETA(DisplayName = "End of Execution"),
+		Message						UMETA(DisplayName = "Message"),
+		StopCondition				UMETA(DisplayName = "Stop Condition"),
+		Parent						UMETA(DisplayName = "Parent"),
+		ECsCoroutineEndReason_MAX	UMETA(Hidden),
+	};
+}
+
+namespace ECsCoroutineEndReason
+{
+	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString EndOfExecution = TCsString(TEXT("EndOfExecution"), TEXT("endofexecution"), TEXT("end of execution"));
+		const TCsString Message = TCsString(TEXT("Message"), TEXT("message"), TEXT("message"));
+		const TCsString StopCondition = TCsString(TEXT("StopCondition"), TEXT("stopcondition"), TEXT("stop condition"));
+		const TCsString Parent = TCsString(TEXT("Parent"), TEXT("parent"), TEXT("parent"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::EndOfExecution) { return Str::EndOfExecution.Value; }
+		if (EType == Type::Message) { return Str::Message.Value; }
+		if (EType == Type::StopCondition) { return Str::StopCondition.Value; }
+		if (EType == Type::Parent) { return Str::Parent.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::EndOfExecution) { return Type::EndOfExecution; }
+		if (String == Str::Message) { return Type::Message; }
+		if (String == Str::StopCondition) { return Type::StopCondition; }
+		if (String == Str::Parent) { return Type::Parent; }
+		return Type::ECsCoroutineEndReason_MAX;
+	}
+}
+
+#define ECS_COROUTINE_END_REASON_MAX (uint8)ECsCoroutineEndReason::ECsCoroutineEndReason_MAX
+typedef TEnumAsByte<ECsCoroutineEndReason::Type> TCsCoroutineEndReason;
 
 #define CS_ROUTINE_POOL_SIZE 256
 #define CS_ROUTINE_INDEXER_SIZE 4
@@ -1556,6 +1602,8 @@ struct FCsRoutine
 
 	TArray<FName> stopMessages;
 	TArray<FName> stopMessages_recieved;
+
+	TCsCoroutineEndReason endReason;
 
 	int32 indexers[CS_ROUTINE_INDEXER_SIZE];
 	int32 counters[CS_ROUTINE_COUNTER_SIZE];
@@ -1702,6 +1750,7 @@ struct FCsRoutine
 		startTime = 0.0f;
 		tickCount = 0;
 		delay = 0.0f;
+		endReason = ECsCoroutineEndReason::ECsCoroutineEndReason_MAX;
 
 		for (int32 i = 0; i < CS_ROUTINE_INDEXER_SIZE; i++)
 		{
@@ -1770,9 +1819,9 @@ struct FCsRoutine
 
 	void Run(const float &inDeltaSeconds)
 	{
-		const int32 iMax = stopMessages_recieved.Num();
+		const int32 count = stopMessages_recieved.Num();
 
-		for (int32 i = 0; i < iMax; i++)
+		for (int32 i = 0; i < count; i++)
 		{
 			if (stopMessages.Find(stopMessages_recieved[i]) != INDEX_NONE)
 			{

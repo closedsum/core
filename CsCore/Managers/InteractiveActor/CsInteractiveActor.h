@@ -204,6 +204,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Interactive")
 	TEnumAsByte<ECsInteractiveCollision::Type> CollisionType;
 
+	TArray<TWeakObjectPtr<AActor>> CollidableActors;
+	TArray<TWeakObjectPtr<AActor>> IgnoredActors;
+
 	UPROPERTY(BlueprintReadWrite, Category = "Interactive")
 	FCsInteractiveActorCache Cache;
 

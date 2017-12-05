@@ -198,11 +198,6 @@ void ACsManager_InteractiveActor::OnTick(const float &DeltaSeconds)
 
 			if (!Actor->Cache.UseLifeTime)
 				continue;
-			if (Actor->Cache.State == ECsPooledObjectState::WarmUp &&
-				GetWorld()->GetTimeSeconds() - Actor->Cache.Time >= Actor->Cache.WarmUpTime)
-			{
-				Actor->Cache.State = ECsPooledObjectState::Active;
-			}
 
 			if (GetWorld()->GetTimeSeconds() - Actor->Cache.Time > Actor->Cache.LifeTime)
 			{

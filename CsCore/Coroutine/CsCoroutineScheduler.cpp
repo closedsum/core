@@ -18,9 +18,13 @@ UCsCoroutineScheduler::UCsCoroutineScheduler(const FObjectInitializer& ObjectIni
 
 		for (int32 J = 0; J < CS_ROUTINE_POOL_SIZE; J++)
 		{
-			RoutinePools[I][J].Init(this, J);
+			RoutinePools[I][J].Init(this, (TCsCoroutineSchedule)I, J);
 		}
 	}
+
+	AllocateName = TEXT("UCsCoroutineScheduler::Allocate");
+	StartName = TEXT("UCsCoroutineScheduler::StartName");
+	OnTickUpdateName = TEXT("UCsCoroutineScheduler::OnTick_Update");
 }
 
 /*static*/ UCsCoroutineScheduler* UCsCoroutineScheduler::Get()
@@ -214,6 +218,7 @@ struct FCsRoutine* UCsCoroutineScheduler::Allocate(const TCsCoroutineSchedule &S
 			{
 				RoutinesToInit[Schedule].Add(R);
 			}
+			LogTransaction(AllocateName, ECsCoroutineTransaction::Allocate, R);
 			return R;
 		}
 	}
@@ -604,3 +609,49 @@ void UCsCoroutineScheduler::OnLastTick_Update(const float &DeltaSeconds)
 }
 
 #pragma endregion Run on LastTick
+
+void UCsCoroutineScheduler::LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsCoroutineTransaction::Type> &Transaction, FCsRoutine* R)
+{
+	if (CsCVarLogCoroutineTransactions->GetInt() == CS_CVAR_SHOW_LOG)
+	{
+		const FString TransactionAsString = ECsCoroutineTransaction::ToActionString(ECsCoroutineTransaction::Allocate);
+		const FString ScheduleTypeAsString = ECsCoroutineSchedule::ToString(R->scheduleType);
+
+		AActor* Actor = R->GetActor();
+		const FString ActorName = Actor ? Actor->GetName() : ECsCachedString::Str::Empty;
+		UObject* Object = R->GetRObject();
+		const FString ObjectName = Object ? Object->GetName() : ECsCachedString::Str::Empty;
+		UObject* Owner = R->GetOwner();
+		const FString OwnerName = Owner ? Owner->GetName() : ECsCachedString::Str::Empty;
+
+		UWorld* World = nullptr;
+
+		if (Actor)
+			World = Actor->GetWorld();
+		if (Object)
+			World = Object->GetWorld();
+
+		const float CurrentTime = World ? World->GetTimeSeconds() : UCsCommon::GetCurrentDateTimeSeconds();
+
+		const FString CoroutineName = R->name == NAME_None ? ECsCachedString::Str::None : R->name.ToString();
+
+		if (Actor && Object)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s %s Routine with Coroutine: %s at %f. Owner: %s using Actor: %s and Object: %s."), *FunctionName, *TransactionAsString, *ScheduleTypeAsString, *CoroutineName, CurrentTime, *ActorName, *ObjectName);
+		}
+		else
+		if (Actor)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s %s Routine with Coroutine: %s at %f. Using Owner: %s."), *FunctionName, *TransactionAsString, *ScheduleTypeAsString, *CoroutineName, CurrentTime, *ActorName);
+		}
+		else
+		if (Object)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s %s Routine with Coroutine: %s at %f. Using Owner: %s."), *FunctionName, *TransactionAsString, *ScheduleTypeAsString, *CoroutineName, CurrentTime, *ObjectName);
+		}
+		else
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s %s Routine with Coroutine: %s at %f."), *FunctionName, *TransactionAsString, *ScheduleTypeAsString, *CoroutineName, CurrentTime);
+		}
+	}
+}

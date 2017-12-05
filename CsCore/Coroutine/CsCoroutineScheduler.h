@@ -180,8 +180,19 @@ public:
 
 #pragma endregion Run on LastTick
 
+	void LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsCoroutineTransaction::Type> &Transaction, struct FCsRoutine* R);
+
 private:
 	// Singleton data
 	static UCsCoroutineScheduler* s_coroutineSchedulerSingleton;
 	static bool s_bCoroutineSchedulerHasShutdown;
+
+// Caching Strings / Names
+#pragma region
+
+	FString AllocateName;
+	FString StartName;
+	FString OnTickUpdateName;
+
+#pragma endregion Caching Strings / Names
 };

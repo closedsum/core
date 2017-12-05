@@ -271,7 +271,7 @@ void ACsManager_InteractiveActor::LogTransaction(const FString &FunctionName, co
 	{
 		ACsInteractiveActor* Actor = Cast<ACsInteractiveActor>(InObject);
 
-		const FString TransactionAsString = Transaction == ECsPoolTransaction::Allocate ? TEXT("Allocating") : TEXT("DeAllocating");
+		const FString TransactionAsString = ECsPoolTransaction::ToActionString(Transaction);
 
 		const FString ActorName	   = Actor->GetName();
 		const FString TypeAsString = (*InteractiveTypeToString)((TCsInteractiveType)Actor->Cache.Type);

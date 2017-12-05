@@ -27,6 +27,20 @@
 
 #define CS_INVALID_PLAYER_STATE_UNIQUE_MAPPING_ID 255
 
+// String
+#pragma region
+
+namespace ECsCachedString
+{
+	namespace Str
+	{
+		const FString Empty = TEXT("");
+		const FString None = TEXT("None");
+	}
+}
+
+#pragma endregion String
+
 // Level
 #pragma region
 
@@ -1595,6 +1609,7 @@ struct FCsRoutine
 	struct FCsRoutine* parent;
 	TArray<struct FCsRoutine*> children;
 	class UCsCoroutineScheduler* scheduler;
+	TCsCoroutineSchedule scheduleType;
 	CsCoroutine coroutine;
 	CsCoroutineStopCondition stopCondition;
 	int32 poolIndex;
@@ -1642,10 +1657,11 @@ struct FCsRoutine
 		Reset();
 	}
 
-	void Init(UCsCoroutineScheduler* inScheduler, const int32 &inPoolIndex)
+	void Init(UCsCoroutineScheduler* inScheduler, const TCsCoroutineSchedule &inScheduleType, const int32 &inPoolIndex)
 	{
 		self	  = this;
 		scheduler = inScheduler;
+		scheduleType = inScheduleType;
 		poolIndex = inPoolIndex;
 
 		Reset();

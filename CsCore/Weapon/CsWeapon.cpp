@@ -838,7 +838,7 @@ void ACsWeapon::PlayAnimation(const TCsWeaponFire &FireType, const TCsWeaponAnim
 void ACsWeapon::PlayAnimation_Reload()
 {
 	if (PlayAnimation_Reload_Internal_Routine && PlayAnimation_Reload_Internal_Routine->IsValid())
-		PlayAnimation_Reload_Internal_Routine->End();
+		PlayAnimation_Reload_Internal_Routine->End(ECsCoroutineEndReason::UniqueInstance);
 
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 
@@ -892,14 +892,14 @@ void ACsWeapon::PlayAnimation_Reload_StopCondition(struct FCsRoutine* r)
 		mw)
 	{
 		if (!mw->GetMyOwner())
-			r->End();
+			r->End(ECsCoroutineEndReason::StopCondition);
 	}
 	// In Game
 	else
 #endif // #if WITH_EDITOR
 	{
 		if (!mw)
-			r->End();
+			r->End(ECsCoroutineEndReason::StopCondition);
 	}
 }
 
@@ -1005,7 +1005,7 @@ void ACsWeapon::StartChargeFire(const TCsWeaponFire &FireType)
 	ChargeFire_StartTime = GetWorld()->TimeSeconds;
 
 	if (StartChargeFire_Internal_Routine && StartChargeFire_Internal_Routine->IsValid())
-		StartChargeFire_Internal_Routine->End();
+		StartChargeFire_Internal_Routine->End(ECsCoroutineEndReason::UniqueInstance);
 
 	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
@@ -1075,7 +1075,7 @@ void ACsWeapon::StartChargeFire_StopCondition(struct FCsRoutine* r)
 		{
 			mw->StopAnimation(FireType, mw->ChargeFireStartAnim);
 			mw->StopAnimation(FireType, mw->ChargeFireLoopAnim);
-			r->End();
+			r->End(ECsCoroutineEndReason::StopMessage);
 		}
 	}
 	// In Game
@@ -1087,7 +1087,7 @@ void ACsWeapon::StartChargeFire_StopCondition(struct FCsRoutine* r)
 			mw->StopAnimation(FireType, mw->ChargeFireStartAnim);
 			mw->StopAnimation(FireType, mw->ChargeFireLoopAnim);
 		}
-		r->End();
+		r->End(ECsCoroutineEndReason::StopCondition);
 	}
 }
 
@@ -1123,7 +1123,7 @@ void ACsWeapon::StopChargeFire(const TCsWeaponFire &FireType)
 	Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, TEXT("Stop StartChargeFire_Internal"), this);
 
 	if (StartChargeFire_Internal_Routine && StartChargeFire_Internal_Routine->IsValid())
-		StartChargeFire_Internal_Routine->End();
+		StartChargeFire_Internal_Routine->End(ECsCoroutineEndReason::UniqueInstance);
 
 	StopAnimation(FireType, ChargeFireStartAnim);
 	StopAnimation(FireType, ChargeFireLoopAnim);
@@ -1218,7 +1218,7 @@ void ACsWeapon::FireWeapon(const TCsWeaponFire &FireType)
 #endif // #if WITH_EDITOR
 
 	if (FireWeapon_Internal_Routine && FireWeapon_Internal_Routine->IsValid())
-		FireWeapon_Internal_Routine->End();
+		FireWeapon_Internal_Routine->End(ECsCoroutineEndReason::UniqueInstance);
 
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 
@@ -1327,7 +1327,7 @@ void ACsWeapon::FireWeapon_StopCondition(struct FCsRoutine* r)
 		{
 			mw->StopAnimation(FireType, mw->FireAnim);
 
-			r->End();
+			r->End(ECsCoroutineEndReason::StopCondition);
 		}
 	}
 	// In Game
@@ -1342,7 +1342,7 @@ void ACsWeapon::FireWeapon_StopCondition(struct FCsRoutine* r)
 			FCsProjectileFireCache* Cache = (FCsProjectileFireCache*)r->voidPointers[0];
 
 			Cache->Reset();
-			r->End();
+			r->End(ECsCoroutineEndReason::StopCondition);
 		}
 	}
 }

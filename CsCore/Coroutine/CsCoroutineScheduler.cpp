@@ -471,7 +471,7 @@ void UCsCoroutineScheduler::EndAll(const TCsCoroutineSchedule &ScheduleType /*= 
 		{
 			FCsRoutine* R = RoutinesToInit[I][Index];
 
-			R->End();
+			R->End(ECsCoroutineEndReason::Shutdown);
 			R->Reset();
 		}
 
@@ -483,7 +483,7 @@ void UCsCoroutineScheduler::EndAll(const TCsCoroutineSchedule &ScheduleType /*= 
 		{
 			FCsRoutine* R = RoutinesToRun[I][Index];
 
-			R->End();
+			R->End(ECsCoroutineEndReason::Shutdown);
 			R->Reset();
 		}
 		RoutinesToRun[I].Reset();

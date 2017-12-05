@@ -1675,13 +1675,13 @@ void UCsCommon::SetAndAttachEmitter(AEmitter* InEmitter, USceneComponent* Parent
 void UCsCommon::EndRoutine(struct FCsRoutine* r)
 {
 	if (r && r->IsValid())
-		r->End();
+		r->End(ECsCoroutineEndReason::Manual);
 }
 
 void UCsCommon::EndAndClearRoutine(struct FCsRoutine* &r)
 {
 	if (r && r->IsValid())
-		r->End();
+		r->End(ECsCoroutineEndReason::Manual);
 	r = nullptr;
 }
 
@@ -2184,13 +2184,13 @@ PT_THREAD(UCsCommon::AllocateAndActivateEmitter_Internal(struct FCsRoutine* r))
 void UCsCommon::CoroutineStopCondition_CheckActor(struct FCsRoutine* r)
 {
 	if (!r->GetActor())
-		r->End();
+		r->End(ECsCoroutineEndReason::StopCondition);
 }
 
 void UCsCommon::CoroutineStopCondition_CheckObject(struct FCsRoutine* r)
 {
 	if (!r->GetRObject())
-		r->End();
+		r->End(ECsCoroutineEndReason::StopCondition);
 }
 /*
 void UCsCommon::CoroutineStopCondition_CheckCharacter(struct FRoutine* r)
@@ -2198,7 +2198,7 @@ void UCsCommon::CoroutineStopCondition_CheckCharacter(struct FRoutine* r)
 	AShooterCharacter* c = Cast<AShooterCharacter>(r->GetActor());
 
 	if (!c || !c->IsAlive() || !c->IsActiveAndFullyReplicated)
-		r->End();
+		r->End(ECsCoroutineEndReason::StopCondition);
 }
 */
 #pragma endregion Coroutine

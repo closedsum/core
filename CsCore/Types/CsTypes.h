@@ -1517,6 +1517,8 @@ namespace ECsCoroutineEndReason
 		StopCondition				UMETA(DisplayName = "Stop Condition"),
 		Parent						UMETA(DisplayName = "Parent"),
 		UniqueInstance				UMETA(DisplayName = "Unique Instance"),
+		Shutdown					UMETA(DisplayName = "Shutdown"),
+		Manual						UMETA(DisplayName = "Manual"),
 		ECsCoroutineEndReason_MAX	UMETA(Hidden),
 	};
 }
@@ -1532,6 +1534,8 @@ namespace ECsCoroutineEndReason
 		const TCsString StopCondition = TCsString(TEXT("StopCondition"), TEXT("stopcondition"), TEXT("stop condition"));
 		const TCsString Parent = TCsString(TEXT("Parent"), TEXT("parent"), TEXT("parent"));
 		const TCsString UniqueInstance = TCsString(TEXT("UniqueInstance"), TEXT("uniqueinstance"), TEXT("unique instance"));
+		const TCsString Shutdown = TCsString(TEXT("Shutdown"), TEXT("shutdown"), TEXT("shutdown"));
+		const TCsString Manual = TCsString(TEXT("Manual"), TEXT("manual"), TEXT("manual"));
 	}
 
 	FORCEINLINE FString ToString(const Type &EType)
@@ -1541,6 +1545,8 @@ namespace ECsCoroutineEndReason
 		if (EType == Type::StopCondition) { return Str::StopCondition.Value; }
 		if (EType == Type::Parent) { return Str::Parent.Value; }
 		if (EType == Type::UniqueInstance) { return Str::UniqueInstance.Value; }
+		if (EType == Type::Shutdown) { return Str::Shutdown.Value; }
+		if (EType == Type::Manual) { return Str::Manual.Value; }
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
@@ -1551,6 +1557,8 @@ namespace ECsCoroutineEndReason
 		if (String == Str::StopCondition) { return Type::StopCondition; }
 		if (String == Str::Parent) { return Type::Parent; }
 		if (String == Str::UniqueInstance) { return Type::UniqueInstance; }
+		if (String == Str::Shutdown) { return Type::Shutdown; }
+		if (String == Str::Manual) { return Type::Manual; }
 		return Type::ECsCoroutineEndReason_MAX;
 	}
 }
@@ -1710,7 +1718,7 @@ struct FCsRoutine
 			(*addRoutine)(GetOwner(), self, type);
 	}
 
-	void End()
+	void End(const TCsCoroutineEndReason &inEndReason)
 	{
 		if (ownerMemberRoutine)
 			*ownerMemberRoutine = nullptr;
@@ -1719,6 +1727,7 @@ struct FCsRoutine
 			(*removeRoutine)(GetOwner(), self, type);
 		EndChildren();
 		index = CS_ROUTINE_END;
+		endReason = inEndReason;
 	}
 
 	bool HasEnded()
@@ -1830,7 +1839,7 @@ struct FCsRoutine
 			if (stopMessages.Find(stopMessages_recieved[i]) != INDEX_NONE)
 			{
 				stopMessages.Reset();
-				End();
+				End(ECsCoroutineEndReason::StopMessage);
 				break;
 			}
 		}
@@ -1841,8 +1850,8 @@ struct FCsRoutine
 
 		if (index == CS_ROUTINE_END)
 		{
-			if (GetOwner() && removeRoutine)
-				(*removeRoutine)(GetOwner(), self, type);
+			if (endReason == ECsCoroutineEndReason::ECsCoroutineEndReason_MAX)
+				End(ECsCoroutineEndReason::EndOfExecution);
 			return;
 		}
 		deltaSeconds = inDeltaSeconds;
@@ -1877,7 +1886,7 @@ struct FCsRoutine
 
 		for (int32 i = 0; i < count; i++)
 		{
-			children[i]->End();
+			children[i]->End(ECsCoroutineEndReason::Parent);
 		}
 		children.Reset();
 	}
@@ -1890,7 +1899,7 @@ struct FCsRoutine
 		{
 			if (child == children[i])
 			{
-				child->End();
+				child->End(ECsCoroutineEndReason::Parent);
 				children.RemoveAt(i);
 				break;
 			}

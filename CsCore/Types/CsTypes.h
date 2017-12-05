@@ -1513,9 +1513,10 @@ namespace ECsCoroutineEndReason
 	enum Type
 	{
 		EndOfExecution				UMETA(DisplayName = "End of Execution"),
-		Message						UMETA(DisplayName = "Message"),
+		StopMessage					UMETA(DisplayName = "Stop Message"),
 		StopCondition				UMETA(DisplayName = "Stop Condition"),
 		Parent						UMETA(DisplayName = "Parent"),
+		UniqueInstance				UMETA(DisplayName = "Unique Instance"),
 		ECsCoroutineEndReason_MAX	UMETA(Hidden),
 	};
 }
@@ -1527,26 +1528,29 @@ namespace ECsCoroutineEndReason
 	namespace Str
 	{
 		const TCsString EndOfExecution = TCsString(TEXT("EndOfExecution"), TEXT("endofexecution"), TEXT("end of execution"));
-		const TCsString Message = TCsString(TEXT("Message"), TEXT("message"), TEXT("message"));
+		const TCsString StopMessage = TCsString(TEXT("StopMessage"), TEXT("stopmessage"), TEXT("stop message"));
 		const TCsString StopCondition = TCsString(TEXT("StopCondition"), TEXT("stopcondition"), TEXT("stop condition"));
 		const TCsString Parent = TCsString(TEXT("Parent"), TEXT("parent"), TEXT("parent"));
+		const TCsString UniqueInstance = TCsString(TEXT("UniqueInstance"), TEXT("uniqueinstance"), TEXT("unique instance"));
 	}
 
 	FORCEINLINE FString ToString(const Type &EType)
 	{
 		if (EType == Type::EndOfExecution) { return Str::EndOfExecution.Value; }
-		if (EType == Type::Message) { return Str::Message.Value; }
+		if (EType == Type::StopMessage) { return Str::StopMessage.Value; }
 		if (EType == Type::StopCondition) { return Str::StopCondition.Value; }
 		if (EType == Type::Parent) { return Str::Parent.Value; }
+		if (EType == Type::UniqueInstance) { return Str::UniqueInstance.Value; }
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
 	FORCEINLINE Type ToType(const FString &String)
 	{
 		if (String == Str::EndOfExecution) { return Type::EndOfExecution; }
-		if (String == Str::Message) { return Type::Message; }
+		if (String == Str::StopMessage) { return Type::StopMessage; }
 		if (String == Str::StopCondition) { return Type::StopCondition; }
 		if (String == Str::Parent) { return Type::Parent; }
+		if (String == Str::UniqueInstance) { return Type::UniqueInstance; }
 		return Type::ECsCoroutineEndReason_MAX;
 	}
 }

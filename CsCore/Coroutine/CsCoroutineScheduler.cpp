@@ -21,10 +21,6 @@ UCsCoroutineScheduler::UCsCoroutineScheduler(const FObjectInitializer& ObjectIni
 			RoutinePools[I][J].Init(this, (TCsCoroutineSchedule)I, J);
 		}
 	}
-
-	AllocateName = TEXT("UCsCoroutineScheduler::Allocate");
-	StartName = TEXT("UCsCoroutineScheduler::StartName");
-	OnTickUpdateName = TEXT("UCsCoroutineScheduler::OnTick_Update");
 }
 
 /*static*/ UCsCoroutineScheduler* UCsCoroutineScheduler::Get()
@@ -218,7 +214,7 @@ struct FCsRoutine* UCsCoroutineScheduler::Allocate(const TCsCoroutineSchedule &S
 			{
 				RoutinesToInit[Schedule].Add(R);
 			}
-			LogTransaction(AllocateName, ECsCoroutineTransaction::Allocate, R);
+			LogTransaction(ECsCoroutineCachedString::Str::Allocate, (DoInit && PerformFirstRun) ? ECsCoroutineTransaction::Start : ECsCoroutineTransaction::Allocate, R);
 			return R;
 		}
 	}
@@ -555,6 +551,8 @@ void UCsCoroutineScheduler::Update(const TCsCoroutineSchedule &ScheduleType, con
 
 		if (R->index == CS_ROUTINE_END)
 		{
+			LogTransaction(ECsCoroutineCachedString::ToUpdate(ScheduleType), ECsCoroutineTransaction::End, R);
+
 			R->Reset();
 			RoutinesToRun[Schedule].RemoveAt(Index);
 		}
@@ -573,6 +571,8 @@ void UCsCoroutineScheduler::Update(const TCsCoroutineSchedule &ScheduleType, con
 
 		if (R->index == CS_ROUTINE_END)
 		{
+			LogTransaction(ECsCoroutineCachedString::ToUpdate(ScheduleType), ECsCoroutineTransaction::End, R);
+
 			R->Reset();
 			RoutinesToRun[Schedule].RemoveAt(Index);
 		}
@@ -614,7 +614,11 @@ void UCsCoroutineScheduler::LogTransaction(const FString &FunctionName, const TE
 {
 	if (CsCVarLogCoroutineTransactions->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		const FString TransactionAsString = ECsCoroutineTransaction::ToActionString(ECsCoroutineTransaction::Allocate);
+		FString TransactionAsString = ECsCoroutineTransaction::ToActionString(Transaction);
+			
+		if (Transaction == ECsCoroutineTransaction::End)
+			TransactionAsString = ECsCoroutineTransaction::ToActionString(Transaction) + TEXT("(Reason=") + ECsCoroutineEndReason::ToString(R->endReason) + TEXT(")");
+
 		const FString ScheduleTypeAsString = ECsCoroutineSchedule::ToString(R->scheduleType);
 
 		AActor* Actor = R->GetActor();

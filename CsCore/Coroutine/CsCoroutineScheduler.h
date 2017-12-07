@@ -66,6 +66,27 @@ typedef TEnumAsByte<ECsCoroutineTransaction::Type> TCsCoroutineTransaction;
 
 #pragma endregion Enums
 
+namespace ECsCoroutineCachedString
+{
+	namespace Str
+	{
+		const FString Allocate = TEXT("UCsCoroutineScheduler::Allocate");
+		const FString Start = TEXT("UCsCoroutineScheduler::Start");
+		const FString Update = TEXT("UCsCoroutineScheduler::Update");
+		const FString OnTick_Update = TEXT("UCsCoroutineScheduler::OnTick_Update");
+		const FString OnCacCamera_Update = TEXT("UCsCoroutineScheduler::OnCacCamera_Update");
+		const FString OnLastTick_Update = TEXT("UCsCoroutineScheduler::OnLastTick_Update");
+	}
+
+	FORCEINLINE FString ToUpdate(const TCsCoroutineSchedule &ScheduleType)
+	{
+		if (ScheduleType == ECsCoroutineSchedule::Tick) { return Str::OnTick_Update; }
+		if (ScheduleType == ECsCoroutineSchedule::CalcCamera) { return Str::OnCacCamera_Update; }
+		if (ScheduleType == ECsCoroutineSchedule::LastTick) { return Str::OnLastTick_Update; }
+		return Str::Update;
+	}
+}
+
 UCLASS(transient)
 class CSCORE_API UCsCoroutineScheduler : public UObject
 {
@@ -186,13 +207,4 @@ private:
 	// Singleton data
 	static UCsCoroutineScheduler* s_coroutineSchedulerSingleton;
 	static bool s_bCoroutineSchedulerHasShutdown;
-
-// Caching Strings / Names
-#pragma region
-
-	FString AllocateName;
-	FString StartName;
-	FString OnTickUpdateName;
-
-#pragma endregion Caching Strings / Names
 };

@@ -91,9 +91,9 @@ bool ACsPlayerState::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8
 	return false;
 }
 
-/*static*/ void ACsPlayerState::RemoveRoutine(UObject* InGameState, struct FCsRoutine* Routine, const uint8 &Type)
+/*static*/ void ACsPlayerState::RemoveRoutine(UObject* InPlayerState, struct FCsRoutine* Routine, const uint8 &Type)
 {
-	Cast<ACsGameState>(InGameState)->RemoveRoutine_Internal(Routine, Type);
+	Cast<ACsPlayerState>(InPlayerState)->RemoveRoutine_Internal(Routine, Type);
 }
 
 bool ACsPlayerState::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)

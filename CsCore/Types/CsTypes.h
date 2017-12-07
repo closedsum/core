@@ -1873,6 +1873,9 @@ struct FCsRoutine
 		deltaSeconds = inDeltaSeconds;
 		tickCount++;
 		(*coroutine)(self);
+
+		if (index == CS_ROUTINE_END)
+			End(ECsCoroutineEndReason::EndOfExecution);
 	}
 
 	AActor* GetActor()

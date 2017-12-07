@@ -15,6 +15,26 @@
 // UI
 #include "UI/CsWidget_Fullscreen.h"
 
+namespace ECsPlayerStateCachedName
+{
+	namespace Name
+	{
+		// Functions
+		const FName OnBoard_Internal = FName("ACsPlayerState::OnBoard_Internal");
+		const FName SetupPawn_Internal = FName("ACsPlayerState::SetupPawn_Internal");
+	};
+}
+
+namespace ECsPlayerStateCachedString
+{
+	namespace Str
+	{
+		// Functions
+		const FString OnBoard_Internal = TEXT("ACsPlayerState::OnBoard_Internal");
+		const FString SetupPawn_Internal = TEXT("ACsPlayerState::SetupPawn_Internal");
+	};
+}
+
 ACsPlayerState::ACsPlayerState(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -117,16 +137,24 @@ bool ACsPlayerState::RemoveRoutine_Internal(struct FCsRoutine* Routine, const ui
 
 void ACsPlayerState::OnBoard()
 {
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+
 	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
-	CsCoroutine Function		  = &ACsPlayerState::OnBoard_Internal;
-	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckActor;
-	CsAddRoutine Add			  = &ACsPlayerState::AddRoutine;
-	CsRemoveRoutine Remove		  = &ACsPlayerState::RemoveRoutine;
-	const uint8 Type			  = (uint8)ECsPlayerStateRoutine::OnBoard_Internal;
+	Payload->Schedule		= Schedule;
+	Payload->Function		= &ACsPlayerState::OnBoard_Internal;
+	Payload->Actor			= this;
+	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
+	Payload->Add			= &ACsPlayerState::AddRoutine;
+	Payload->Remove			= &ACsPlayerState::RemoveRoutine;
+	Payload->Type			= (uint8)ECsPlayerStateRoutine::OnBoard_Internal;
+	Payload->DoInit			= true;
+	Payload->PerformFirstRun = false;
+	Payload->Name			= ECsPlayerStateCachedName::Name::OnBoard_Internal;
+	Payload->NameAsString	= ECsPlayerStateCachedString::Str::OnBoard_Internal;
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsRoutine* R					 = Scheduler->Allocate(Schedule, Function, Stop, this, Add, Remove, Type, true, false);
+	FCsRoutine* R = Scheduler->Allocate(Payload);
 
 	Scheduler->StartRoutine(Schedule, R);
 }

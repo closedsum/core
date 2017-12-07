@@ -861,21 +861,25 @@ void ACsWeapon::PlayAnimation_Reload()
 	if (PlayAnimation_Reload_Internal_Routine && PlayAnimation_Reload_Internal_Routine->IsValid())
 		PlayAnimation_Reload_Internal_Routine->End(ECsCoroutineEndReason::UniqueInstance);
 
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+
 	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
-	CsCoroutine Function		  = &ACsWeapon::PlayAnimation_Reload_Internal;
-	CsCoroutineStopCondition Stop = &ACsWeapon::PlayAnimation_Reload_StopCondition;
-	CsAddRoutine Add			  = &ACsWeapon::AddRoutine;
-	CsRemoveRoutine Remove		  = &ACsWeapon::RemoveRoutine;
-	const uint8 Type			  = (uint8)ECsWeaponRoutine::PlayAnimation_Reload_Internal;
+	Payload->Schedule		= Schedule;
+	Payload->Function		= &ACsWeapon::PlayAnimation_Reload_Internal;
+	Payload->Actor			= this;
+	Payload->Stop			= &ACsWeapon::PlayAnimation_Reload_StopCondition;
+	Payload->Add			= &ACsWeapon::AddRoutine;
+	Payload->Remove			= &ACsWeapon::RemoveRoutine;
+	Payload->Type			= (uint8)ECsWeaponRoutine::PlayAnimation_Reload_Internal;
+	Payload->DoInit			= true;
+	Payload->PerformFirstRun = false;
+	Payload->Name			= ECsWeaponCachedName::Name::PlayAnimation_Reload_Internal;
+	Payload->NameAsString	= ECsWeaponCachedString::Str::PlayAnimation_Reload_Internal;
+	
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-
-	FCsRoutine* R = Scheduler->Allocate(Schedule, Function, Stop, this, Add, Remove, Type, true, false);
-
-	R->name			= ECsWeaponCachedName::Name::PlayAnimation_Reload_Internal;
-	R->nameAsString = ECsWeaponCachedString::Str::PlayAnimation_Reload_Internal;
-
+	FCsRoutine* R = Scheduler->Allocate(Payload);
 	R->timers[0]  = GetWorld()->TimeSeconds;
 	R->ints[0]    = 0;
 	R->floats[0]  = GetAnimationLength(FireType_MAX, ReloadAnim);
@@ -1032,21 +1036,26 @@ void ACsWeapon::StartChargeFire(const TCsWeaponFire &FireType)
 	if (StartChargeFire_Internal_Routine && StartChargeFire_Internal_Routine->IsValid())
 		StartChargeFire_Internal_Routine->End(ECsCoroutineEndReason::UniqueInstance);
 
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+
 	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
-	CsCoroutine Function		  = &ACsWeapon::StartChargeFire_Internal;
-	CsCoroutineStopCondition Stop = &ACsWeapon::StartChargeFire_StopCondition;
-	CsAddRoutine Add			  = &ACsWeapon::AddRoutine;
-	CsRemoveRoutine Remove		  = &ACsWeapon::RemoveRoutine;
-	const uint8 Type			  = (uint8)ECsWeaponRoutine::StartChargeFire_Internal;
+	Payload->Schedule		= Schedule;
+	Payload->Function		= &ACsWeapon::StartChargeFire_Internal;
+	Payload->Actor			= this;
+	Payload->Stop			= &ACsWeapon::StartChargeFire_StopCondition;
+	Payload->Add			= &ACsWeapon::AddRoutine;
+	Payload->Remove			= &ACsWeapon::RemoveRoutine;
+	Payload->Type			= (uint8)ECsWeaponRoutine::StartChargeFire_Internal;
+	Payload->DoInit			= true;
+	Payload->PerformFirstRun = false;
+	Payload->Name			= ECsWeaponCachedName::Name::StartChargeFire_Internal;
+	Payload->NameAsString	= ECsWeaponCachedString::Str::StartChargeFire_Internal;
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-
-	FCsRoutine* R	= Scheduler->Allocate(Schedule, Function, Stop, this, Add, Remove, Type, true, false);
-	R->name			= ECsWeaponCachedName::Name::StartChargeFire_Internal;
-	R->nameAsString	= ECsWeaponCachedString::Str::StartChargeFire_Internal;
-	R->timers[0]	= GetWorld()->GetTimeSeconds();
-	R->ints[0]		= (uint8)FireType;
+	FCsRoutine* R = Scheduler->Allocate(Payload);
+	R->timers[0]  = GetWorld()->GetTimeSeconds();
+	R->ints[0]	  = (uint8)FireType;
 
 	Scheduler->StartRoutine(Schedule, R);
 }
@@ -1247,21 +1256,26 @@ void ACsWeapon::FireWeapon(const TCsWeaponFire &FireType)
 
 	if (FireWeapon_Internal_Routine && FireWeapon_Internal_Routine->IsValid())
 		FireWeapon_Internal_Routine->End(ECsCoroutineEndReason::UniqueInstance);
+	
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
 	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
-	CsCoroutine Function		  = &ACsWeapon::FireWeapon_Internal;
-	CsCoroutineStopCondition Stop = &ACsWeapon::FireWeapon_StopCondition;
-	CsAddRoutine Add			  = &ACsWeapon::AddRoutine;
-	CsRemoveRoutine Remove		  = &ACsWeapon::RemoveRoutine;
-	const uint8 Type			  = (uint8)ECsWeaponRoutine::FireWeapon_Internal;
+	Payload->Schedule		= ECsCoroutineSchedule::Tick;
+	Payload->Function		= &ACsWeapon::FireWeapon_Internal;
+	Payload->Actor			= this;
+	Payload->Stop			= &ACsWeapon::FireWeapon_StopCondition;
+	Payload->Add			= &ACsWeapon::AddRoutine;
+	Payload->Remove			= &ACsWeapon::RemoveRoutine;
+	Payload->Type			= (uint8)ECsWeaponRoutine::FireWeapon_Internal;
+	Payload->DoInit			= true;
+	Payload->PerformFirstRun = false;
+	Payload->Name			= ECsWeaponCachedName::Name::FireWeapon_Internal;
+	Payload->NameAsString	= ECsWeaponCachedString::Str::FireWeapon_Internal;
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-
-	FCsRoutine* R   = Scheduler->Allocate(Schedule, Function, Stop, this, Add, Remove, Type, true, false);
-	R->name			= ECsWeaponCachedName::Name::FireWeapon_Internal;
-	R->nameAsString = ECsWeaponCachedString::Str::FireWeapon_Internal;
-	R->timers[0]    = GetWorld()->TimeSeconds;
+	FCsRoutine* R   = Scheduler->Allocate(Payload);
+	R->timers[0]    = GetWorld()->GetTimeSeconds();
 	R->ints[0]	    = (uint8)FireType;
 
 	Scheduler->StartRoutine(Schedule, R);
@@ -1275,7 +1289,7 @@ PT_THREAD(ACsWeapon::FireWeapon_Internal(struct FCsRoutine* r))
 
 	const TCsWeaponFire FireType = (TCsWeaponFire)r->ints[0];
 
-	const float CurrentTime = w->TimeSeconds;
+	const float CurrentTime = w->GetTimeSeconds();
 	float StartTime			= r->timers[0];
 
 #if WITH_EDITOR 

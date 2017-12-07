@@ -1723,16 +1723,18 @@ FCsRoutine* UCsCommon::ScaleActorOverTime(const TCsCoroutineSchedule &ScheduleTy
 		return nullptr;
 
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	if (!Scheduler)
-		return nullptr;
+	Payload->Schedule		= ScheduleType;
+	Payload->Function		= &UCsCommon::ScaleActorOverTime_Internal;
+	Payload->Actor			= InActor;
+	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
+	Payload->DoInit			= true;
+	Payload->PerformFirstRun = false;
+	Payload->Name			= ECsCommonCachedName::Name::ScaleActorOverTime_Internal;
+	Payload->NameAsString	= ECsCommonCachedString::Str::ScaleActorOverTime_Internal;
 
-	FCsRoutine* R = nullptr;
-
-	CsCoroutine Function		  = &UCsCommon::ScaleActorOverTime_Internal;
-	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckActor;
-
-	R = Scheduler->Allocate(ScheduleType, Function, Stop, InActor, true, false);
+	FCsRoutine* R = Scheduler->Allocate(Payload);
 
 	UWorld* World			= InActor ? InActor->GetWorld() : nullptr;
 	const float CurrentTime = World ? World->GetTimeSeconds() : GetCurrentDateTimeSeconds();
@@ -1857,23 +1859,22 @@ PT_THREAD(UCsCommon::ScaleActorOverTime_Internal(struct FCsRoutine* r))
 
 FCsRoutine* UCsCommon::ScaleActorOverTime_AsCurve(const TCsCoroutineSchedule &ScheduleType, UCurveBase* Curve, AActor* InActor, const bool &IsRelativeScale)
 {
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-
-	if (!Scheduler)
-		return nullptr;
-
 	if (!Cast<UCurveFloat>(Curve) && !Cast<UCurveVector>(Curve))
 		return nullptr;
 
-	FCsRoutine* R = nullptr;
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	CsCoroutine Function		  = &UCsCommon::ScaleActorOverTime_AsCurve_Internal;
-	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckActor;
+	Payload->Schedule		= ScheduleType;
+	Payload->Function		= &UCsCommon::ScaleActorOverTime_AsCurve_Internal;
+	Payload->Actor			= InActor;
+	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
+	Payload->DoInit			= true;
+	Payload->PerformFirstRun = false;
+	Payload->Name			= ECsCommonCachedName::Name::ScaleActorOverTime_AsCurve_Internal;
+	Payload->NameAsString	= ECsCommonCachedString::Str::ScaleActorOverTime_AsCurve_Internal;
 
-	R = Scheduler->Allocate(ScheduleType, Function, Stop, InActor, true, false);
-
-	R->name			= ECsCommonCachedName::Name::ScaleActorOverTime_AsCurve_Internal;
-	R->nameAsString = ECsCommonCachedString::Str::ScaleActorOverTime_AsCurve_Internal;
+	FCsRoutine* R = Scheduler->Allocate(Payload);
 
 	UWorld* World			= InActor ? InActor->GetWorld() : nullptr;
 	const float CurrentTime = World ? World->GetTimeSeconds() : GetCurrentDateTimeSeconds();
@@ -1970,19 +1971,18 @@ FCsRoutine* UCsCommon::MoveActorOverTime(const TCsCoroutineSchedule &ScheduleTyp
 		return nullptr;
 
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	if (!Scheduler)
-		return nullptr;
+	Payload->Schedule		= ScheduleType;
+	Payload->Function		= &UCsCommon::MoveActorOverTime_Internal;
+	Payload->Actor			= InActor;
+	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
+	Payload->DoInit			= true;
+	Payload->PerformFirstRun = false;
+	Payload->Name			= ECsCommonCachedName::Name::MoveActorOverTime_Internal;
+	Payload->NameAsString	= ECsCommonCachedString::Str::MoveActorOverTime_Internal;
 
-	FCsRoutine* R = nullptr;
-
-	CsCoroutine Function		  = &UCsCommon::MoveActorOverTime_Internal;
-	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckActor;
-
-	R = Scheduler->Allocate(ScheduleType, Function, Stop, InActor, true, false);
-
-	R->name			= ECsCommonCachedName::Name::MoveActorOverTime_Internal;
-	R->nameAsString = ECsCommonCachedString::Str::MoveActorOverTime_Internal;
+	FCsRoutine* R = Scheduler->Allocate(Payload);
 
 	UWorld* World			= InActor ? InActor->GetWorld() : nullptr;
 	const float CurrentTime = World ? World->GetTimeSeconds() : GetCurrentDateTimeSeconds();
@@ -2045,19 +2045,18 @@ PT_THREAD(UCsCommon::MoveActorOverTime_Internal(struct FCsRoutine* r))
 FCsRoutine* UCsCommon::DestroyMaterialInstanceDynamic(const TCsCoroutineSchedule &ScheduleType, UMaterialInstanceDynamic* InMID, const float &Delay)
 {
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	if (!Scheduler)
-		return nullptr;
+	Payload->Schedule		= ScheduleType;
+	Payload->Function		= &UCsCommon::DestroyMaterialInstanceDynamic_Internal;
+	Payload->Object			= InMID;
+	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckObject;
+	Payload->DoInit			= true;
+	Payload->PerformFirstRun = false;
+	Payload->Name			= ECsCommonCachedName::Name::DestroyMaterialInstanceDynamic_Internal;
+	Payload->NameAsString	= ECsCommonCachedString::Str::DestroyMaterialInstanceDynamic_Internal;
 
-	FCsRoutine* R = nullptr;
-
-	CsCoroutine Function		  = &UCsCommon::DestroyMaterialInstanceDynamic_Internal;
-	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
-
-	R = Scheduler->Allocate(ScheduleType, Function, Stop, InMID, true, false);
-
-	R->name			= ECsCommonCachedName::Name::DestroyMaterialInstanceDynamic_Internal;
-	R->nameAsString = ECsCommonCachedString::Str::DestroyMaterialInstanceDynamic_Internal;
+	FCsRoutine* R = Scheduler->Allocate(Payload);
 
 	UWorld* World			= InMID ? InMID->GetWorld() : nullptr;
 	const float CurrentTime = World ? World->GetTimeSeconds() : GetCurrentDateTimeSeconds();
@@ -2129,19 +2128,18 @@ FCsRoutine* UCsCommon::FadeCameraOverTime(const TCsCoroutineSchedule &ScheduleTy
 		return nullptr;
 
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	if (!Scheduler)
-		return nullptr;
+	Payload->Schedule		= ScheduleType;
+	Payload->Function		= &UCsCommon::FadeCameraOverTime_Internal;
+	Payload->Actor			= Controller;
+	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckObject;
+	Payload->DoInit			= true;
+	Payload->PerformFirstRun = false;
+	Payload->Name			= ECsCommonCachedName::Name::FadeCameraOverTime_Internal;
+	Payload->NameAsString	= ECsCommonCachedString::Str::FadeCameraOverTime_Internal;
 
-	FCsRoutine* R = nullptr;
-
-	CsCoroutine Function		  = &UCsCommon::FadeCameraOverTime_Internal;
-	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
-
-	R = Scheduler->Allocate(ScheduleType, Function, Stop, Controller, true, false);
-
-	R->name			= ECsCommonCachedName::Name::FadeCameraOverTime_Internal;
-	R->nameAsString = ECsCommonCachedString::Str::FadeCameraOverTime_Internal;
+	FCsRoutine* R = Scheduler->Allocate(Payload);
 
 	UWorld* World		    = Controller ? Controller->GetWorld() : nullptr;
 	const float CurrentTime = World ? World->GetTimeSeconds() : GetCurrentDateTimeSeconds();

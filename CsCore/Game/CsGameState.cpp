@@ -23,6 +23,22 @@
 #include "UI/CsUI.h"
 #include "UI/CsWidget_Fullscreen.h"
 
+namespace ECsGameStateCachedName
+{
+	namespace Name
+	{
+		const FName OnBoard_Internal = FName("OnBoard_Internal");
+	};
+}
+
+namespace ECsGameStateCachedString
+{
+	namespace Str
+	{
+		const FString OnBoard_Internal = TEXT("OnBoard_Internal");
+	};
+}
+
 ACsGameState::ACsGameState(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -134,16 +150,24 @@ bool ACsGameState::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint
 
 void ACsGameState::OnBoard()
 {
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+
 	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
-	CsCoroutine Function		  = &ACsGameState::OnBoard_Internal;
-	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckActor;
-	CsAddRoutine Add			  = &ACsGameState::AddRoutine;
-	CsRemoveRoutine Remove		  = &ACsGameState::RemoveRoutine;
-	const uint8 Type			  = (uint8)ECsGameStateRoutine::OnBoard_Internal;
+	Payload->Schedule		= Schedule;
+	Payload->Function		= &ACsGameState::OnBoard_Internal;
+	Payload->Actor			= this;
+	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
+	Payload->Add			= &ACsGameState::AddRoutine;
+	Payload->Remove			= &ACsGameState::RemoveRoutine;
+	Payload->Type			= (uint8)ECsGameStateRoutine::OnBoard_Internal;
+	Payload->DoInit			= true;
+	Payload->PerformFirstRun = false;
+	Payload->Name			= ECsGameStateCachedName::Name::OnBoard_Internal;
+	Payload->NameAsString	= ECsGameStateCachedString::Str::OnBoard_Internal;
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsRoutine* R					 = Scheduler->Allocate(Schedule, Function, Stop, this, Add, Remove, Type, true, false);
+	FCsRoutine* R = Scheduler->Allocate(Payload);
 
 	Scheduler->StartRoutine(Schedule, R);
 }

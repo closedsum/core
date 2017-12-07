@@ -133,52 +133,41 @@ struct FCsRoutine* UCsCoroutineScheduler::Allocate(const TCsCoroutineSchedule &S
 
 struct FCsRoutine* UCsCoroutineScheduler::Allocate(const TCsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject, struct FCsRoutine** InOwnerMemberRoutine, const bool &DoInit, const bool &PerformFirstRun)
 {
-	const uint8 Schedule = (uint8)ScheduleType;
+	FCsCoroutinePayload* Payload = AllocatePayload();
 
-	for (int32 Index = 0; Index < CS_ROUTINE_POOL_SIZE; Index++)
-	{
-		RoutinePoolIndices[Schedule] = (RoutinePoolIndices[Schedule] + 1) % CS_ROUTINE_POOL_SIZE;
+	Payload->Schedule = ScheduleType;
+	Payload->Function = InCoroutine;
+	Payload->Stop = InStopCondition;
+	Payload->Actor = InActor;
+	Payload->Object = InObject;
+	Payload->Routine = InOwnerMemberRoutine;
+	Payload->DoInit = DoInit;
+	Payload->PerformFirstRun = PerformFirstRun;
 
-		FCsRoutine* R = &(RoutinePools[Schedule][Index]);
-
-		if (R->index == CS_ROUTINE_FREE)
-		{
-			UWorld* World = nullptr;
-
-			if (InActor)
-				World = InActor->GetWorld();
-			if (InObject)
-				World = InObject->GetWorld();
-
-			const float CurrentTime = World ? World->GetTimeSeconds() : UCsCommon::GetCurrentDateTimeSeconds();
-
-			R->Start(InCoroutine, InStopCondition, InActor, InObject, CurrentTime, InOwnerMemberRoutine);
-
-			if (DoInit)
-			{
-				CS_COROUTINE_INIT(R);
-				R->index = RoutinesToRun[Schedule].Num();
-				RoutinesToRun[Schedule].Add(R);
-
-				if (PerformFirstRun)
-				{
-					R->Run(0.0f);
-				}
-			}
-			else
-			{
-				RoutinesToInit[Schedule].Add(R);
-			}
-			return R;
-		}
-	}
-	UE_LOG(LogCs, Warning, TEXT("UCsCoroutineScheduler::Allocate: No free Routines. Look for Runaway Coroutines or consider raising the pool size."));
-	return nullptr;
+	return Allocate(Payload);
 }
 
 struct FCsRoutine* UCsCoroutineScheduler::Allocate(const TCsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject, CsAddRoutine InAddRoutine, CsRemoveRoutine InRemoveRoutine, const uint8 &RoutineType, const bool &DoInit, const bool &PerformFirstRun)
 {
-	const uint8 Schedule = (uint8)ScheduleType;
+	FCsCoroutinePayload* Payload = AllocatePayload();
+
+	Payload->Schedule = ScheduleType;
+	Payload->Function = InCoroutine;
+	Payload->Stop = InStopCondition;
+	Payload->Actor = InActor;
+	Payload->Object = InObject;
+	Payload->Add = InAddRoutine;
+	Payload->Remove = InRemoveRoutine;
+	Payload->Type = RoutineType;
+	Payload->DoInit = DoInit;
+	Payload->PerformFirstRun = PerformFirstRun;
+
+	return Allocate(Payload);
+}
+
+struct FCsRoutine* UCsCoroutineScheduler::Allocate(FCsCoroutinePayload* Payload)
+{
+	const uint8 Schedule = (uint8)Payload->Schedule;
 
 	for (int32 Index = 0; Index < CS_ROUTINE_POOL_SIZE; Index++)
 	{
@@ -188,24 +177,30 @@ struct FCsRoutine* UCsCoroutineScheduler::Allocate(const TCsCoroutineSchedule &S
 
 		if (R->index == CS_ROUTINE_FREE)
 		{
+			R->name			= Payload->Name;
+			R->nameAsString = Payload->NameAsString;
+
 			UWorld* World = nullptr;
 
-			if (InActor)
-				World = InActor->GetWorld();
-			if (InObject)
-				World = InObject->GetWorld();
+			if (Payload->Actor)
+				World = Payload->Actor->GetWorld();
+			if (Payload->Object)
+				World = Payload->Object->GetWorld();
 
 			const float CurrentTime = World ? World->GetTimeSeconds() : UCsCommon::GetCurrentDateTimeSeconds();
 
-			R->Start(InCoroutine, InStopCondition, InActor, InObject, CurrentTime, InAddRoutine, InRemoveRoutine, RoutineType);
+			if (Payload->Routine)
+				R->Start(Payload->Function, Payload->Stop, Payload->Actor, Payload->Object, CurrentTime, Payload->Routine);
+			else
+				R->Start(Payload->Function, Payload->Stop, Payload->Actor, Payload->Object, CurrentTime, Payload->Add, Payload->Remove, Payload->Type);
 
-			if (DoInit)
+			if (Payload->DoInit)
 			{
 				CS_COROUTINE_INIT(R);
 				R->index = RoutinesToRun[Schedule].Num();
 				RoutinesToRun[Schedule].Add(R);
 
-				if (PerformFirstRun)
+				if (Payload->PerformFirstRun)
 				{
 					R->Run(0.0f);
 				}
@@ -214,7 +209,8 @@ struct FCsRoutine* UCsCoroutineScheduler::Allocate(const TCsCoroutineSchedule &S
 			{
 				RoutinesToInit[Schedule].Add(R);
 			}
-			LogTransaction(ECsCoroutineCachedString::Str::Allocate, (DoInit && PerformFirstRun) ? ECsCoroutineTransaction::Start : ECsCoroutineTransaction::Allocate, R);
+			LogTransaction(ECsCoroutineCachedString::Str::Allocate, (Payload->DoInit && Payload->PerformFirstRun) ? ECsCoroutineTransaction::Start : ECsCoroutineTransaction::Allocate, R);
+			Payload->Reset();
 			return R;
 		}
 	}
@@ -277,6 +273,11 @@ struct FCsRoutine* UCsCoroutineScheduler::Start(const TCsCoroutineSchedule &Sche
 	return Allocate(ScheduleType, InCoroutine, InStopCondition, InActor, InObject, nullptr, nullptr, CS_ROUTINE_MAX_TYPE, true, true);
 }
 
+struct FCsRoutine* UCsCoroutineScheduler::Start(FCsCoroutinePayload* Payload)
+{
+	return Allocate(Payload);
+}
+
 #pragma endregion // Start
 
 // StartChild
@@ -334,53 +335,39 @@ struct FCsRoutine* UCsCoroutineScheduler::StartChild(const TCsCoroutineSchedule 
 
 struct FCsRoutine* UCsCoroutineScheduler::StartChild(const TCsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject, struct FCsRoutine** InOwnerMemberRoutine)
 {
-	const uint8 Schedule = (uint8)ScheduleType;
+	FCsCoroutinePayload* Payload = AllocatePayload();
 
-	for (int32 Index = 0; Index < CS_ROUTINE_POOL_SIZE; Index++)
-	{
-		RoutinePoolIndices[Schedule] = (RoutinePoolIndices[Schedule] + 1) % CS_ROUTINE_POOL_SIZE;
+	Payload->Schedule = ScheduleType;
+	Payload->Parent = Parent;
+	Payload->Function = InCoroutine;
+	Payload->Stop = InStopCondition;
+	Payload->Actor = InActor;
+	Payload->Object = InObject;
+	Payload->Routine = InOwnerMemberRoutine;
 
-		FCsRoutine* R = &(RoutinePools[Schedule][Index]);
-
-		if (R->index == CS_ROUTINE_FREE)
-		{
-			UWorld* World = nullptr;
-
-			if (InActor)
-				World = InActor->GetWorld();
-			if (InObject)
-				World = InObject->GetWorld();
-
-			const float CurrentTime = World ? World->GetTimeSeconds() : UCsCommon::GetCurrentDateTimeSeconds();
-
-			Parent->AddChild(R);
-			R->Start(InCoroutine, InStopCondition, InActor, InObject, CurrentTime, InOwnerMemberRoutine);
-
-			CS_COROUTINE_INIT(R);
-
-			bool InsertedAtLastChild = Parent->children.Num() > 0 && Parent->children.Last() && Parent->children.Last() != R;
-			FCsRoutine* Element		 = InsertedAtLastChild ? Parent->children.Last() : Parent;
-			R->index				 = RoutinesToRun[Schedule].Find(Element);
-			RoutinesToRun[Schedule].Insert(R, R->index);
-
-			const int32 ParentIndex = Parent->index;
-
-			for (int32 J = R->index + 1; J <= ParentIndex; J++)
-			{
-				R->index++;
-			}
-
-			R->Run(0.0f);
-			return R;
-		}
-	}
-	UE_LOG(LogCs, Warning, TEXT("UCsCoroutineScheduler::StartChild: No free Routines. Look for Runaway Coroutines or consider raising the pool size."));
-	return nullptr;
+	return StartChild(Payload);
 }
 
 struct FCsRoutine* UCsCoroutineScheduler::StartChild(const TCsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject, CsAddRoutine InAddRoutine, CsRemoveRoutine InRemoveRoutine, const uint8 &RoutineType)
 {
-	const uint8 Schedule = (uint8)ScheduleType;
+	FCsCoroutinePayload* Payload = AllocatePayload();
+
+	Payload->Schedule = ScheduleType;
+	Payload->Parent = Parent;
+	Payload->Function = InCoroutine;
+	Payload->Stop = InStopCondition;
+	Payload->Actor = InActor;
+	Payload->Object = InObject;
+	Payload->Add = InAddRoutine;
+	Payload->Remove = InRemoveRoutine;
+	Payload->Type = RoutineType;
+
+	return StartChild(Payload);
+}
+
+struct FCsRoutine* UCsCoroutineScheduler::StartChild(FCsCoroutinePayload* Payload)
+{
+	const uint8 Schedule = (uint8)Payload->Schedule;
 
 	for (int32 Index = 0; Index < CS_ROUTINE_POOL_SIZE; Index++)
 	{
@@ -390,17 +377,26 @@ struct FCsRoutine* UCsCoroutineScheduler::StartChild(const TCsCoroutineSchedule 
 
 		if (R->index == CS_ROUTINE_FREE)
 		{
+			R->name			= Payload->Name;
+			R->nameAsString = Payload->NameAsString;
+
 			UWorld* World = nullptr;
 
-			if (InActor)
-				World = InActor->GetWorld();
-			if (InObject)
-				World = InObject->GetWorld();
+			if (Payload->Actor)
+				World = Payload->Actor->GetWorld();
+			if (Payload->Object)
+				World = Payload->Object->GetWorld();
 
 			const float CurrentTime = World ? World->GetTimeSeconds() : UCsCommon::GetCurrentDateTimeSeconds();
 
+			FCsRoutine* Parent = Payload->Parent;
+
 			Parent->AddChild(R);
-			R->Start(InCoroutine, InStopCondition, InActor, InObject, CurrentTime, InAddRoutine, InRemoveRoutine, RoutineType);
+
+			if (Payload->Routine)
+				R->Start(Payload->Function, Payload->Stop, Payload->Actor, Payload->Object, CurrentTime, Payload->Routine);
+			else
+				R->Start(Payload->Function, Payload->Stop, Payload->Actor, Payload->Object, CurrentTime, Payload->Add, Payload->Remove, Payload->Type);
 
 			CS_COROUTINE_INIT(R);
 
@@ -415,7 +411,7 @@ struct FCsRoutine* UCsCoroutineScheduler::StartChild(const TCsCoroutineSchedule 
 			{
 				R->index++;
 			}
-			
+
 			R->Run(0.0f);
 			return R;
 		}
@@ -718,3 +714,23 @@ void UCsCoroutineScheduler::LogRunning(const TCsCoroutineSchedule &ScheduleType)
 		}
 	}
 }
+
+// Payload
+#pragma region
+
+FCsCoroutinePayload* UCsCoroutineScheduler::AllocatePayload()
+{
+	for (int32 Index = 0; Index < CS_ROUTINE_POOL_SIZE; Index++)
+	{
+		PayloadIndex = (PayloadIndex + 1) % CS_ROUTINE_POOL_SIZE;
+
+		if (!Payloads[PayloadIndex].IsAllocated)
+		{
+			return &(Payloads[PayloadIndex]);
+		}
+	}
+	UE_LOG(LogCs, Warning, TEXT("UCsCoroutineScheduler::AllocatePayload: No free Payloads. Look for Runaway Coroutines or consider raising the pool size."));
+	return nullptr;
+}
+
+#pragma endregion Payload

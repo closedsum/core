@@ -46,6 +46,33 @@
 
 #endif // #if WITH_EDITOR
 
+
+namespace ECsCommonCachedName
+{
+	namespace Name
+	{
+		// Functions
+		const FName ScaleActorOverTime_Internal = FName("UCsCommon::ScaleActorOverTime_Internal");
+		const FName ScaleActorOverTime_AsCurve_Internal = FName("UCsCommon::ScaleActorOverTime_AsCurve_Internal");
+		const FName MoveActorOverTime_Internal = FName("UCsCommon::MoveActorOverTime_Internal");
+		const FName DestroyMaterialInstanceDynamic_Internal = FName("UCsCommon::DestroyMaterialInstanceDynamic_Internal");
+		const FName FadeCameraOverTime_Internal = FName("UCsCommon::FadeCameraOverTime_Internal");
+	}
+}
+
+namespace ECsCommonCachedString
+{
+	namespace Str
+	{
+		// Functions
+		const FString ScaleActorOverTime_Internal = TEXT("UCsCommon::ScaleActorOverTime_Internal");
+		const FString ScaleActorOverTime_AsCurve_Internal = TEXT("UCsCommon::ScaleActorOverTime_AsCurve_Internal");
+		const FString MoveActorOverTime_Internal = TEXT("UCsCommon::MoveActorOverTime_Internal");
+		const FString DestroyMaterialInstanceDynamic_Internal = TEXT("UCsCommon::DestroyMaterialInstanceDynamic_Internal");
+		const FString FadeCameraOverTime_Internal = TEXT("UCsCommon::FadeCameraOverTime_Internal");
+	}
+}
+
 UCsCommon::UCsCommon(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -1746,6 +1773,9 @@ FCsRoutine* UCsCommon::ScaleActorOverTime(const TCsCoroutineSchedule &ScheduleTy
 	UWorld* World			= InActor ? InActor->GetWorld() : nullptr;
 	const float CurrentTime = World ? World->GetTimeSeconds() : GetCurrentDateTimeSeconds();
 
+	R->name = ECsCommonCachedName::Name::ScaleActorOverTime_Internal;
+	R->nameAsString = ECsCommonCachedString::Str::ScaleActorOverTime_Internal;
+
 	R->timers[0] = CurrentTime;
 	R->vectors[0] = StartScale;
 	R->vectors[1] = EndScale;
@@ -1841,6 +1871,9 @@ FCsRoutine* UCsCommon::ScaleActorOverTime_AsCurve(const TCsCoroutineSchedule &Sc
 	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckActor;
 
 	R = Scheduler->Allocate(ScheduleType, Function, Stop, InActor, true, false);
+
+	R->name			= ECsCommonCachedName::Name::ScaleActorOverTime_AsCurve_Internal;
+	R->nameAsString = ECsCommonCachedString::Str::ScaleActorOverTime_AsCurve_Internal;
 
 	UWorld* World			= InActor ? InActor->GetWorld() : nullptr;
 	const float CurrentTime = World ? World->GetTimeSeconds() : GetCurrentDateTimeSeconds();
@@ -1948,6 +1981,9 @@ FCsRoutine* UCsCommon::MoveActorOverTime(const TCsCoroutineSchedule &ScheduleTyp
 
 	R = Scheduler->Allocate(ScheduleType, Function, Stop, InActor, true, false);
 
+	R->name			= ECsCommonCachedName::Name::MoveActorOverTime_Internal;
+	R->nameAsString = ECsCommonCachedString::Str::MoveActorOverTime_Internal;
+
 	UWorld* World			= InActor ? InActor->GetWorld() : nullptr;
 	const float CurrentTime = World ? World->GetTimeSeconds() : GetCurrentDateTimeSeconds();
 
@@ -2020,6 +2056,9 @@ FCsRoutine* UCsCommon::DestroyMaterialInstanceDynamic(const TCsCoroutineSchedule
 
 	R = Scheduler->Allocate(ScheduleType, Function, Stop, InMID, true, false);
 
+	R->name			= ECsCommonCachedName::Name::DestroyMaterialInstanceDynamic_Internal;
+	R->nameAsString = ECsCommonCachedString::Str::DestroyMaterialInstanceDynamic_Internal;
+
 	UWorld* World			= InMID ? InMID->GetWorld() : nullptr;
 	const float CurrentTime = World ? World->GetTimeSeconds() : GetCurrentDateTimeSeconds();
 
@@ -2070,6 +2109,9 @@ FCsRoutine* UCsCommon::DestroyMaterialInstanceDynamics(const TCsCoroutineSchedul
 	{
 		R = Scheduler->Allocate(ScheduleType, Function, Stop, InMIDs[I], true, false);
 
+		R->name			= ECsCommonCachedName::Name::DestroyMaterialInstanceDynamic_Internal;
+		R->nameAsString = ECsCommonCachedString::Str::DestroyMaterialInstanceDynamic_Internal;
+
 		UWorld* World			= InMIDs[I] ? InMIDs[I]->GetWorld() : nullptr;
 		const float CurrentTime = World ? World->GetTimeSeconds() : GetCurrentDateTimeSeconds();
 
@@ -2097,6 +2139,9 @@ FCsRoutine* UCsCommon::FadeCameraOverTime(const TCsCoroutineSchedule &ScheduleTy
 	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
 
 	R = Scheduler->Allocate(ScheduleType, Function, Stop, Controller, true, false);
+
+	R->name			= ECsCommonCachedName::Name::FadeCameraOverTime_Internal;
+	R->nameAsString = ECsCommonCachedString::Str::FadeCameraOverTime_Internal;
 
 	UWorld* World		    = Controller ? Controller->GetWorld() : nullptr;
 	const float CurrentTime = World ? World->GetTimeSeconds() : GetCurrentDateTimeSeconds();

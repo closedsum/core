@@ -639,25 +639,25 @@ void UCsCoroutineScheduler::LogTransaction(const FString &FunctionName, const TE
 
 		const float CurrentTime = World ? World->GetTimeSeconds() : UCsCommon::GetCurrentDateTimeSeconds();
 
-		const FString CoroutineName = R->name == NAME_None ? ECsCachedString::Str::None : R->name.ToString();
+		const FString CoroutineName = R->name == NAME_None ? ECsCachedString::Str::None : R->nameAsString;
 
 		if (Actor && Object)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s %s Routine with Coroutine: %s at %f. Owner: %s using Actor: %s and Object: %s."), *FunctionName, *TransactionAsString, *ScheduleTypeAsString, *CoroutineName, CurrentTime, *ActorName, *ObjectName);
+			UE_LOG(LogCs, Warning, TEXT("%s: On%s %s Routine with Coroutine: %s at %f. Owner: %s using Actor: %s and Object: %s."), *FunctionName, *ScheduleTypeAsString, *TransactionAsString, *CoroutineName, CurrentTime, *ActorName, *ObjectName);
 		}
 		else
 		if (Actor)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s %s Routine with Coroutine: %s at %f. Using Owner: %s."), *FunctionName, *TransactionAsString, *ScheduleTypeAsString, *CoroutineName, CurrentTime, *ActorName);
+			UE_LOG(LogCs, Warning, TEXT("%s: On%s %s Routine with Coroutine: %s at %f. Using Owner: %s."), *FunctionName, *ScheduleTypeAsString, *TransactionAsString, *CoroutineName, CurrentTime, *ActorName);
 		}
 		else
 		if (Object)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s %s Routine with Coroutine: %s at %f. Using Owner: %s."), *FunctionName, *TransactionAsString, *ScheduleTypeAsString, *CoroutineName, CurrentTime, *ObjectName);
+			UE_LOG(LogCs, Warning, TEXT("%s: On%s %s Routine with Coroutine: %s at %f. Using Owner: %s."), *FunctionName, *ScheduleTypeAsString, *TransactionAsString, *CoroutineName, CurrentTime, *ObjectName);
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s %s Routine with Coroutine: %s at %f."), *FunctionName, *TransactionAsString, *ScheduleTypeAsString, *CoroutineName, CurrentTime);
+			UE_LOG(LogCs, Warning, TEXT("%s: On%s %s Routine with Coroutine: %s at %f."), *FunctionName, *ScheduleTypeAsString, *TransactionAsString, *CoroutineName, CurrentTime);
 		}
 	}
 }

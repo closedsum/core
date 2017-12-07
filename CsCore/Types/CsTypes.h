@@ -27,20 +27,6 @@
 
 #define CS_INVALID_PLAYER_STATE_UNIQUE_MAPPING_ID 255
 
-// String
-#pragma region
-
-namespace ECsCachedString
-{
-	namespace Str
-	{
-		const FString Empty = TEXT("");
-		const FString None = TEXT("None");
-	}
-}
-
-#pragma endregion String
-
 // Level
 #pragma region
 

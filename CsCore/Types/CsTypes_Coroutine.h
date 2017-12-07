@@ -188,6 +188,7 @@ struct FCsRoutine
 	int32 poolIndex;
 	int32 index;
 	FName name;
+	FString nameAsString;
 	uint8 type;
 	TWeakObjectPtr<AActor> a;
 	TWeakObjectPtr<UObject> o;
@@ -339,6 +340,7 @@ struct FCsRoutine
 		stopCondition = nullptr;
 		index = CS_ROUTINE_FREE;
 		name = NAME_None;
+		nameAsString = ECsCachedString::Str::Empty;
 		type = CS_ROUTINE_MAX_TYPE;
 		a.Reset();
 		a = nullptr;

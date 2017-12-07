@@ -4,6 +4,20 @@
 #include "CsTypes_Primitive.generated.h"
 #pragma once
 
+// String
+#pragma region
+
+namespace ECsCachedString
+{
+	namespace Str
+	{
+		const FString Empty = TEXT("");
+		const FString None = TEXT("None");
+	}
+}
+
+#pragma endregion String
+
 // Enum Union
 #pragma region
 

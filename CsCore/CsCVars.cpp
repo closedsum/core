@@ -353,5 +353,11 @@ TAutoConsoleVariable<int32> CsCVarLogCoroutineTransactions(
 	ECVF_SetByConsole
 );
 
+TAutoConsoleVariable<int32> CsCVarLogCoroutineRunning(
+	TEXT("log.coroutine.running"),
+	0,
+	TEXT("Log Coroutines currently running."),
+	ECVF_SetByConsole
+);
 
 #pragma endregion Coroutine

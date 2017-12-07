@@ -558,6 +558,8 @@ void UCsCoroutineScheduler::Update(const TCsCoroutineSchedule &ScheduleType, con
 		}
 	}
 	// Execute
+	LogRunning(ScheduleType);
+
 	Count = RoutinesToRun[Schedule].Num();
 
 	for (int32 Index = 0; Index < Count; Index++)
@@ -656,6 +658,63 @@ void UCsCoroutineScheduler::LogTransaction(const FString &FunctionName, const TE
 		else
 		{
 			UE_LOG(LogCs, Warning, TEXT("%s: %s %s Routine with Coroutine: %s at %f."), *FunctionName, *TransactionAsString, *ScheduleTypeAsString, *CoroutineName, CurrentTime);
+		}
+	}
+}
+
+void UCsCoroutineScheduler::LogRunning(const TCsCoroutineSchedule &ScheduleType)
+{
+	if (CsCVarLogCoroutineRunning->GetInt() != CS_CVAR_SHOW_LOG)
+		return;
+
+	const uint8 Schedule = (uint8)ScheduleType;
+	const int32 Count    = RoutinesToRun[Schedule].Num();
+
+	if (Count == CS_EMPTY)
+		return;
+
+	UWorld* World = nullptr;
+
+	if (UObject* Object = GetMyOwner())
+		World = Object->GetWorld();
+
+	float CurrentTime = World ? World->GetTimeSeconds() : UCsCommon::GetCurrentDateTimeSeconds();
+
+	const FString FunctionName		   = ECsCoroutineCachedString::Str::Update;
+	const FString ScheduleTypeAsString = ECsCoroutineSchedule::ToString(ScheduleType);
+
+	UE_LOG(LogCs, Warning, TEXT("%s: On%s. Running %d Coroutines at %f."), *FunctionName, *ScheduleTypeAsString, Count, CurrentTime);
+
+	for (int32 Index = 0; Index < Count; Index++)
+	{
+		FCsRoutine* R = RoutinesToRun[Schedule][Index];
+
+		AActor* Actor = R->GetActor();
+		const FString ActorName = Actor ? Actor->GetName() : ECsCachedString::Str::Empty;
+		UObject* Object = R->GetRObject();
+		const FString ObjectName = Object ? Object->GetName() : ECsCachedString::Str::Empty;
+		UObject* Owner = R->GetOwner();
+		const FString OwnerName = Owner ? Owner->GetName() : ECsCachedString::Str::Empty;
+
+		const FString CoroutineName = R->name == NAME_None ? ECsCachedString::Str::None : R->name.ToString();
+
+		if (Actor && Object)
+		{
+			UE_LOG(LogCs, Warning, TEXT("-- Routine with Coroutine: %s. Owner: %s using Actor: %s and Object: %s."), *CoroutineName, *ActorName, *ObjectName);
+		}
+		else
+		if (Actor)
+		{
+			UE_LOG(LogCs, Warning, TEXT("-- Routine with Coroutine: %s. Using Owner: %s."), *CoroutineName, *ActorName);
+		}
+		else
+		if (Object)
+		{
+			UE_LOG(LogCs, Warning, TEXT("-- Routine with Coroutine: %s. Using Owner: %s."), *CoroutineName, *ObjectName);
+		}
+		else
+		{
+			UE_LOG(LogCs, Warning, TEXT("-- Routine with Coroutine: %s."), *CoroutineName);
 		}
 	}
 }

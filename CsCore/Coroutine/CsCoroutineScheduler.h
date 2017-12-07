@@ -202,6 +202,7 @@ public:
 #pragma endregion Run on LastTick
 
 	void LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsCoroutineTransaction::Type> &Transaction, struct FCsRoutine* R);
+	void LogRunning(const TCsCoroutineSchedule &ScheduleType);
 
 private:
 	// Singleton data

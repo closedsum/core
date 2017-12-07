@@ -2,6 +2,7 @@
 #pragma once
 #include "GameFramework/GameState.h"
 #include "Types/CsTypes.h"
+#include "Types/CsTypes_Coroutine.h"
 #include "CsGameState.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsGameState_OnTick, const float&, DeltaSeconds);

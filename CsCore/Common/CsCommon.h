@@ -4,6 +4,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Types/CsTypes.h"
 #include "Types/CsTypes_Anim.h"
+#include "Types/CsTypes_Coroutine.h"
 #include "Player/CsPlayerController.h"
 
 #include "CsCommon.generated.h"

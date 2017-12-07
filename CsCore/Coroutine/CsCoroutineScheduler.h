@@ -3,6 +3,7 @@
 
 #include "Common/CsCommon.h"
 #include "Types/CsTypes.h"
+#include "Types/CsTypes_Coroutine.h"
 #include "CsCoroutineScheduler.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsCoroutineScheduler_OnTick, const float&, DeltaSeconds);

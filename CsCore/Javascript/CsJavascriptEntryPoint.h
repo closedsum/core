@@ -2,6 +2,7 @@
 #pragma once
 #include "GameFramework/Actor.h"
 #include "Types/CsTypes.h"
+#include "Types/CsTypes_Coroutine.h"
 #include "CsJavascriptEntryPoint.generated.h"
 
 // Enums

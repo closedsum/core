@@ -3,6 +3,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "../Engine/Classes/Engine/EngineTypes.h"
 #include "Types/CsTypes.h"
+#include "Types/CsTypes_Coroutine.h"
 #include "CsJavascriptLibrary.generated.h"
 
 UCLASS()

@@ -179,7 +179,7 @@ void ACsManager_InteractiveActor::OnTick(const float &DeltaSeconds)
 
 		for (int32 J = ActorCount - 1; J >= 0; J--)
 		{
-			ACsInteractiveActor* Actor = (*ActorsPtr)[I];
+			ACsInteractiveActor* Actor = (*ActorsPtr)[J];
 
 			// Check if InteractiveActor was DeAllocated NOT in a normal way (i.e. Out of Bounds)
 

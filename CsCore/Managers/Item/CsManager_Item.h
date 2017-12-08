@@ -31,4 +31,6 @@ class CSCORE_API ACsManager_Item : public AActor
 	TMap<uint64, FCsItem*> ActiveItems;
 
 	virtual FCsItem* GetItem(const uint64 &Id);
+
+	virtual void DeAllocate(FCsItem* Item);
 };

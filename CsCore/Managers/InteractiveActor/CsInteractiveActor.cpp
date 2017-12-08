@@ -199,6 +199,8 @@ void ACsInteractiveActor::DeAllocate()
 		InteractiveCollisionComponent->SetHiddenInGame(true);
 		InteractiveCollisionComponent->SetComponentTickEnabled(false);
 	}
+	CollidableActors.Reset();
+	IgnoredActors.Reset();
 	SetActorTickEnabled(false);
 }
 

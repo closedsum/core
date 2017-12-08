@@ -59,3 +59,9 @@ FCsItem* ACsManager_Item::GetItem(const uint64 &Id)
 {
 	return *(ActiveItems.Find(Id));
 }
+
+void ACsManager_Item::DeAllocate(FCsItem* Item)
+{
+	AvailableUnqiueIds.Add(Item->UniqueId);
+	Item->Reset();
+}

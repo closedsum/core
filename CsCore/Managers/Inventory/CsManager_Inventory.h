@@ -17,6 +17,14 @@ class CSCORE_API ACsManager_Inventory : public AActor
 	AActor* GetMyOwner();
 
 	TMap<uint64, FCsItem*> Items;
+	TMap<TCsItemType, TArray<FCsItem*>> ItemMap;
 
 	virtual FCsItem* GetItem(const uint64 &Id);
+	virtual FCsItem* GetFirstItem(const TCsItemType &ItemType);
+
+	virtual void RemoveItem(const uint64 &Id, const bool &ShouldDestroy);
+	virtual void RemoveItem(FCsItem* Item, const bool &ShouldDestroy);
+
+	virtual void ConsumeItem(const uint64 &Id);
+	virtual void ConsumeItem(FCsItem* Item);
 };

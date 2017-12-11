@@ -13,6 +13,7 @@ namespace ECsCachedString
 	{
 		const FString Empty = TEXT("");
 		const FString None = TEXT("None");
+		const FString Json = TEXT(".json");
 	}
 }
 

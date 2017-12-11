@@ -14,6 +14,8 @@ class CSCORE_API ACsManager_Item : public AActor
 
 	static ACsManager_Item* Get(UWorld* InWorld);
 
+	CS_DECLARE_ITEM_TYPE
+
 	UPROPERTY()
 	uint64 UniqueIdIndex;
 
@@ -32,5 +34,12 @@ class CSCORE_API ACsManager_Item : public AActor
 
 	virtual FCsItem* GetItem(const uint64 &Id);
 
+	virtual void DeAllocate(const uint64 &Id);
 	virtual void DeAllocate(FCsItem* Item);
+
+	virtual void PopulateExistingItems();
+	virtual void LoadCurrentHistory(TSharedPtr<class FJsonObject> &JsonParsed, FCsItem* Item);
+	virtual void LoadPreviousHistories(TSharedPtr<class FJsonObject> &JsonParsed, FCsItem* Item);
+
+	virtual void InitInventory(class ACsManager_Inventory* Manager_Inventory);
 };

@@ -288,6 +288,8 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	UFUNCTION(BlueprintCallable, Category = "Commmon")
 	static int32 GetNumBitFlags(const int32 &BitMask, const int32 &MaxBits);
 
+	static FString UInt64ToString(const uint64 &Value);
+
 #pragma endregion Math
 
 	/*

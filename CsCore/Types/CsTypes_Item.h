@@ -37,7 +37,7 @@ namespace ECsItemCollection
 	enum Type
 	{
 		Single					UMETA(DisplayName = "Single"),
-		GroupHomogenous			UMETA(DisplayName = "Group Homogenous"),
+		GroupHomogeneous			UMETA(DisplayName = "Group Homogeneous"),
 		GroupMixed				UMETA(DisplayName = "Group Mixed"),
 		ECsItemCollection_MAX	UMETA(Hidden),
 	};
@@ -50,14 +50,14 @@ namespace ECsItemCollection
 	namespace Str
 	{
 		const TCsString Single = TCsString(TEXT("Single"), TEXT("single"), TEXT("single"));
-		const TCsString GroupHomogenous = TCsString(TEXT("GroupHomogenous"), TEXT("grouphomogenous"), TEXT("group homogenous"));
+		const TCsString GroupHomogeneous = TCsString(TEXT("GroupHomogeneous"), TEXT("grouphomogeneous"), TEXT("group homogeneous"));
 		const TCsString GroupMixed = TCsString(TEXT("GroupMixed"), TEXT("groupmixed"), TEXT("group mixed"));
 	}
 
 	FORCEINLINE FString ToString(const Type &EType)
 	{
 		if (EType == Type::Single) { return Str::Single.Value; }
-		if (EType == Type::GroupHomogenous) { return Str::GroupHomogenous.Value; }
+		if (EType == Type::GroupHomogeneous) { return Str::GroupHomogeneous.Value; }
 		if (EType == Type::GroupMixed) { return Str::GroupMixed.Value; }
 		return CS_INVALID_ENUM_TO_STRING;
 	}
@@ -65,7 +65,7 @@ namespace ECsItemCollection
 	FORCEINLINE Type ToType(const FString &String)
 	{
 		if (String == Str::Single) { return Type::Single; }
-		if (String == Str::GroupHomogenous) { return Type::GroupHomogenous; }
+		if (String == Str::GroupHomogeneous) { return Type::GroupHomogeneous; }
 		if (String == Str::GroupMixed) { return Type::GroupMixed; }
 		return Type::ECsItemCollection_MAX;
 	}
@@ -73,6 +73,13 @@ namespace ECsItemCollection
 
 #define ECS_ITEM_COLLECTION_MAX (uint8)ECsItemCollection::ECsItemCollection_MAX
 typedef TEnumAsByte<ECsItemCollection::Type> TCsItemCollection;
+
+namespace ECsItemOwner
+{
+	enum Type : uint8;
+}
+
+typedef ECsItemOwner::Type TCsItemOwner;
 
 USTRUCT(BlueprintType)
 struct FCsInventoryItemDimension
@@ -244,6 +251,45 @@ struct FCsItemMemberValue
 	float GetFloat() { return Value_float; }
 };
 
+USTRUCT(BlueprintType)
+struct FCsItemHistory
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY()
+	uint64 OwnerId;
+
+	TCsItemOwner OwnerType;
+
+	UPROPERTY()
+	FString OwnerName;
+
+	TMap<FName, FCsItemMemberValue> Members;
+
+	FCsItemHistory(){}
+	~FCsItemHistory(){}
+
+	FCsItemHistory& operator=(const FCsItemHistory& B)
+	{
+		return *this;
+	}
+
+	bool operator==(const FCsItemHistory& B) const
+	{
+		return true;
+	}
+
+	bool operator!=(const FCsItemHistory& B) const
+	{
+		return !(*this == B);
+	}
+
+	void Reset()
+	{
+		Members.Reset();
+	}
+};
+
 #define CS_ITEM_POOL_INVALID_INDEX 65535
 
 USTRUCT(BlueprintType)
@@ -255,6 +301,7 @@ struct FCsItem
 	uint16 Index;
 
 	bool IsAllocated;
+	bool IsSaved;
 
 	TCsItemType Type;
 
@@ -270,17 +317,23 @@ struct FCsItem
 	UPROPERTY()
 	FString DisplayName;
 
+	FDateTime Created;
+	FTimespan LifeTime;
+
 	TWeakObjectPtr<class ACsData_Item> Data;
 
 	UPROPERTY()
 	FCsInventoryItemProperties InventoryProperties;
 
-	TMap<FName, FCsItemMemberValue> Members;
+	FCsItemHistory CurrentHistory;
+
+	TArray<FCsItemHistory> PreviousHistories;
 
 	FCsItem() 
 	{
 		Index = CS_ITEM_POOL_INVALID_INDEX;
 
+		PreviousHistories.SetNum(0);
 		Reset();
 	}
 
@@ -323,6 +376,7 @@ struct FCsItem
 	void Reset()
 	{
 		IsAllocated = false;
+		IsSaved = false;
 		//Type;
 		Type_Script  = 0;
 		TypeAsString = TEXT("");
@@ -330,10 +384,35 @@ struct FCsItem
 		Name = NAME_Name;
 		DisplayName = TEXT("");
 		InventoryProperties.Reset();
-		Members.Reset();
+		CurrentHistory.Reset();
+		PreviousHistories.Reset();
 	}
 
 	class ACsData_Item* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
 };
+
+namespace ECsFileItemHeaderCachedString
+{
+	namespace Str
+	{
+		const FString UniqueId = TEXT("UniqueId");
+		const FString Name = TEXT("Name");
+		const FString DisplayName = TEXT("DisplayName");
+		const FString Type = TEXT("Type");
+		const FString Created = TEXT("Created");
+		const FString LifeTime = TEXT("LifeTime");
+		const FString Timespan = TEXT("Timespan");
+	}
+}
+
+namespace ECsFileItemHistoryHeaderCachedString
+{
+	namespace Str
+	{
+		const FString OwnerId = TEXT("OwnerId");
+		const FString OwnerName = TEXT("OwnerName");
+		const FString OwnerType = TEXT("OwnerType");
+	}
+}
 
 #pragma endregion Items

@@ -261,4 +261,7 @@ public:
 	bool IsOnBoardCompleted_Game();
 
 #pragma endregion OnBoard
+
+	UPROPERTY()
+	class ACsManager_Inventory* Manager_Inventory;
 };

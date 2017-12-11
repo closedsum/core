@@ -833,6 +833,31 @@ int32 UCsCommon::GetNumBitFlags(const int32 &BitMask, const int32 &MaxBits)
 	return Bits;
 }
 
+FString UCsCommon::UInt64ToString(const uint64 &Value)
+{
+	// 18,446,744,073,709,551,615
+	const uint8 MAX_UINT64_DIGITS = 20;
+
+	uint8 Digits = 0;
+	float ValueDivided = (float)Value;
+
+	while (ValueDivided >= 1.0f)
+	{
+		ValueDivided /= 10.0f;
+		Digits++;
+	}
+
+	FString Zeroes	  = TEXT("");
+	const uint8 Count = MAX_UINT64_DIGITS - Digits;
+
+	for (uint8 I = 0; I < Count; I++)
+	{
+		Zeroes += TEXT("0");
+	}
+
+	return Zeroes + FString::Printf(TEXT("%llu"), Value);
+}
+
 #pragma endregion Math
 
 /*

@@ -696,7 +696,10 @@ public:
 	virtual int32 GetMaxAmmo(const int32 &Index);
 
 	UPROPERTY(BlueprintReadWrite, Category = "Firing")
-	uint8 CurrentAmmo;
+	int32 CurrentAmmo;
+
+	virtual void IncrementCurrentAmmo(const int32 &Index);
+	virtual void ResetCurrentAmmo(const int32 &Index);
 
 	bool HasUnlimitedAmmo;
 

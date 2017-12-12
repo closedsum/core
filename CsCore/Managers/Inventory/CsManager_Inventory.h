@@ -22,6 +22,8 @@ class CSCORE_API ACsManager_Inventory : public AActor
 	virtual FCsItem* GetItem(const uint64 &Id);
 	virtual FCsItem* GetFirstItem(const TCsItemType &ItemType);
 
+	virtual int32 GetItemCount(const TCsItemType &ItemType);
+
 	virtual void RemoveItem(const uint64 &Id, const bool &ShouldDestroy);
 	virtual void RemoveItem(FCsItem* Item, const bool &ShouldDestroy);
 

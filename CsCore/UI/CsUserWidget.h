@@ -223,6 +223,12 @@ public:
 	UTextBlock* Get() { return Text.IsValid() ? Text.Get() : nullptr; }
 };
 
+struct FCsWidget_Float : FCsWidget_Text
+{
+	FCsWidget_Float(){}
+	~FCsWidget_Float(){}
+};
+
 struct FCsWidget_Image : FCsWidget
 {
 public:
@@ -405,7 +411,6 @@ public:
 
 	UCheckBox* Get() { return CheckBox.IsValid() ? CheckBox.Get() : nullptr; }
 };
-
 
 struct FCsWidget_LabelAndCheckBox : FCsWidget
 {

@@ -36,6 +36,15 @@ FCsItem* ACsManager_Inventory::GetFirstItem(const TCsItemType &ItemType)
 	return (*ItemsPtr)[CS_FIRST];
 }
 
+int32 ACsManager_Inventory::GetItemCount(const TCsItemType &ItemType)
+{
+	TArray<FCsItem*>* ItemsPtr = ItemMap.Find(ItemType);
+
+	if (!ItemsPtr)
+		return 0;
+	return ItemsPtr->Num();
+}
+
 void ACsManager_Inventory::RemoveItem(const uint64 &Id, const bool &ShouldDestroy)
 {
 	FCsItem* Item = *(Items.Find(Id));

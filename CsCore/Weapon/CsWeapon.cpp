@@ -543,7 +543,7 @@ void ACsWeapon::OnTick(const float &DeltaSeconds)
 void ACsWeapon::OnTick_HandleStates()
 {
 	ACsData_Weapon* Data_Weapon = GetMyData_Weapon();
-	const uint8 maxAmmo			 = MaxAmmo.GetEX(CS_WEAPON_DATA_VALUE);
+	const int32 maxAmmo			= MaxAmmo.GetEX(CS_WEAPON_DATA_VALUE);
 
 	const float TimeSeconds = GetWorld()->GetTimeSeconds();
 
@@ -555,8 +555,7 @@ void ACsWeapon::OnTick_HandleStates()
 	{
 		if (TimeSeconds > NextRechargeAmmoTime)
 		{
-			CurrentAmmo++;
-			CurrentAmmo = FMath::Min(CurrentAmmo, maxAmmo);
+			IncrementCurrentAmmo(CS_WEAPON_DATA_VALUE);
 
 			if (CurrentAmmo == maxAmmo)
 			{
@@ -641,7 +640,8 @@ void ACsWeapon::OnTick_HandleStates()
 	{
 		if (TimeSeconds - ReloadStartTime > ReloadTime.GetEX(CS_WEAPON_DATA_VALUE))
 		{
-			CurrentAmmo  = maxAmmo;
+			ResetCurrentAmmo(CS_WEAPON_DATA_VALUE);
+
 			IsReloading  = false;
 			LastState    = CurrentState;
 			CurrentState = IdleState;
@@ -690,7 +690,7 @@ void ACsWeapon::CheckState_Idle()
 		if (IsReloading &&
 			TimeSeconds - ReloadStartTime > ReloadTime.GetEX(CS_WEAPON_DATA_VALUE))
 		{
-			CurrentAmmo = MaxAmmo.GetEX(CS_WEAPON_DATA_VALUE);
+			ResetCurrentAmmo(CS_WEAPON_DATA_VALUE);
 			IsReloading = false;
 		}
 
@@ -792,7 +792,7 @@ bool ACsWeapon::CanFire_Auto(const TCsWeaponFire &FireType)
 
 void ACsWeapon::Enable()
 {
-	CurrentAmmo = MaxAmmo.Get(CS_WEAPON_DATA_VALUE);
+	ResetCurrentAmmo(CS_WEAPON_DATA_VALUE);
 }
 
 void ACsWeapon::Disable()
@@ -971,6 +971,12 @@ void ACsWeapon::StopSound(const TCsWeaponFire &FireType, const TCsWeaponSound &S
 #pragma region
 
 int32 ACsWeapon::GetMaxAmmo(const int32 &Index) { return MaxAmmo.Get(Index); }
+void ACsWeapon::IncrementCurrentAmmo(const int32 &Index)
+{
+	CurrentAmmo++;
+	CurrentAmmo = FMath::Min(CurrentAmmo, GetMaxAmmo(Index));
+}
+void ACsWeapon::ResetCurrentAmmo(const int32 &Index) { CurrentAmmo = GetMaxAmmo(Index); }
 uint8 ACsWeapon::GetProjectilesPerShot(const TCsWeaponFire &FireType) { return ProjectilesPerShot.Get(FireType); }
 float ACsWeapon::GetTimeBetweenProjectilesPerShot(const TCsWeaponFire &FireType) { return TimeBetweenProjectilesPerShot.Get(FireType); }
 float ACsWeapon::GetTimeBetweenShots(const TCsWeaponFire &FireType) { return TimeBetweenShots.Get(FireType); }

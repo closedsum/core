@@ -2,6 +2,7 @@
 #pragma once
 #include "Managers/CsManager.h"
 #include "Types/CsTypes.h"
+#include "Types/CsTypes_UI.h"
 #include "CsManager_WidgetActor.generated.h"
 
 typedef FString(*TCsWidgetActorTypeToString)(const ECsWidgetActorType::Type&);

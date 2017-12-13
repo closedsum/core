@@ -3,6 +3,7 @@
 #include "CsCore.h"
 #include "Types/CsTypes.h"
 #include "Types/CsTypes_Input.h"
+#include "Types/CsTypes_UI.h"
 #include "Types/CsTypes_FX.h"
 #include "Types/CsTypes_Sound.h"
 #include "Types/CsTypes_Anim.h"

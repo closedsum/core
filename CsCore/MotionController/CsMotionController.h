@@ -4,6 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "Types/CsTypes.h"
 #include "Types/CsTypes_Interactive.h"
+#include "Types/CsTypes_UI.h"
 #include "CsMotionController.generated.h"
 
 // Delegates

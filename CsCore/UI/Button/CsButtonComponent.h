@@ -2,6 +2,7 @@
 
 #include "../Engine/Classes/Components/SceneComponent.h"
 #include "Types/CsTypes.h"
+#include "Types/CsTypes_UI.h"
 #include "CsButtonComponent.generated.h"
 
 // Interaction

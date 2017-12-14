@@ -3,6 +3,7 @@
 #include "Types/CsTypes_Load.h"
 
 #include "Runtime/UMG/Public/Components/SlateWrapperTypes.h"
+#include "Runtime/UMG/Public/Components/CanvasPanel.h"
 #include "Runtime/UMG/Public/Components/ProgressBar.h"
 #include "Runtime/UMG/Public/Components/TextBlock.h"
 #include "Runtime/UMG/Public/Components/Image.h"

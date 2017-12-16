@@ -37,3 +37,11 @@ void ACsData_Interactive::SetMeshAndMaterials(USkeletalMeshComponent* InMesh)
 TArray<UMaterialInstanceConstant*>* ACsData_Interactive::GetMaterials() { return nullptr; }
 
 #pragma endregion Mesh
+
+// UI
+#pragma region
+
+FString ACsData_Interactive::GetDisplayName() { return ECsCachedString::Str::Empty; }
+void ACsData_Interactive::GetScreenSpaceOffset(FIntPoint &OutPoint){ OutPoint = FIntPoint::ZeroValue; }
+
+#pragma endregion UI

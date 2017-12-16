@@ -1,6 +1,6 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "UI/SimpleWidget/CsSimpleWidget.h"
+#include "Managers/Widget/CsSimpleWidget.h"
 #include "CsWidget_TextBlock.generated.h"
 
 UCLASS()

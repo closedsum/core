@@ -1395,3 +1395,20 @@ public:
 };
 
 #pragma endregion Structs
+
+struct FCsSimpleWidgetPayload
+{
+	FString DisplayName;
+	FIntPoint Offset;
+	float LifeTime;
+
+	FCsSimpleWidgetPayload() {}
+	~FCsSimpleWidgetPayload() {}
+
+	void Reset()
+	{
+		DisplayName = ECsCachedString::Str::Empty;
+		Offset = FIntPoint::ZeroValue;
+		LifeTime = 0.0f;
+	}
+};

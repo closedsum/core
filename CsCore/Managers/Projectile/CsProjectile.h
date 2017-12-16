@@ -62,13 +62,13 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 		Type		= (uint8)Type_Script;
 
 		Parent	    = InParent;
-		LifeTime	= InData->GetLifeTime();
-		UseLifeTime = LifeTime > 0.0f;
+
+		SetLifeTime(InData->GetLifeTime());
+
 		Time	    = InTime;
 		RealTime    = InRealTime;
 		Frame	    = InFrame;
 
-		LifeTime	  = InData->GetLifeTime();
 		Location	  = InFireCache->Location;
 		Direction	  = InFireCache->Direction;
 		Rotation	  = Direction.Rotation();
@@ -113,11 +113,13 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 		Type		= (uint8)Type_Script;
 
 		Parent	   = InParent;
+
+		SetLifeTime(InData->GetLifeTime());
+
 		Time	   = InTime;
 		RealTime   = InRealTime;
 		Frame	   = InFrame;
 
-		LifeTime	  = InData->GetLifeTime();
 		Location	  = InFireCache->Location;
 		Direction	  = InFireCache->Direction;
 		Rotation	  = Direction.Rotation();

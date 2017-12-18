@@ -38,9 +38,12 @@ void UCsManager_Widget::BeginDestroy()
 	Super::BeginDestroy();
 }
 
-void UCsManager_Widget::CreatePool(const TSubclassOf<class UObject> &ObjectClass, const int32 &Size)
+void UCsManager_Widget::CreatePool(const TSubclassOf<class UObject> &ObjectClass, const TCsSimpleWidgetType &Type, const int32 &Size)
 {
-	PoolSize = Size;
+	PoolSizes.Add(Type, Size);
+	PoolIndices.Add(Type, 0);
+
+	TArray<UCsSimpleWidget*> WidgetPool;
 
 	for (int32 I = 0; I < Size; I++)
 	{
@@ -49,62 +52,76 @@ void UCsManager_Widget::CreatePool(const TSubclassOf<class UObject> &ObjectClass
 		Widget->Init(I);
 		Widget->DeAllocate();
 		Pool.Add(Widget);
+		WidgetPool.Add(Widget);
 	}
+	Pools.Add(Type, WidgetPool);
 }
 
 void UCsManager_Widget::OnTick(const float &DeltaSeconds)
 {
-	const int32 Count	 = ActiveWidgets.Num();
-	uint16 EarliestIndex = Count;
+	const int32 PoolCount = ActiveWidgets.Num();
 
-	for (int32 I = Count - 1; I >= 0; I--)
+	for (int32 I = PoolCount - 1; I >= 0; I--)
 	{
-		UCsSimpleWidget* Widget = ActiveWidgets[I];
+		const TCsSimpleWidgetType Type		 = (TCsSimpleWidgetType)I;
+		TArray<UCsSimpleWidget*>* WidgetsPtr = ActiveWidgets.Find(Type);
 
-		// Check if Widget was DeAllocated NOT in a normal way
-		if (!Widget->Cache.IsAllocated)
+		const int32 WidgetCount = WidgetsPtr->Num();
+		int32 EarliestIndex		= WidgetCount;
+
+		for (int32 J = WidgetCount - 1; J >= 0; J--)
 		{
-			//UE_LOG(LogCs, Warning, TEXT("ACsManager_Projectile::OnTick: Projectile: %s at PoolIndex: %s was prematurely deallocted NOT in a normal way."), *(Projectile->GetName()), Projectile->Cache.Index);
+			UCsSimpleWidget* Widget = (*WidgetsPtr)[J];
 
-			//LogTransaction(TEXT("ACsManager_Projectile::OnTick"), ECsPoolTransaction::Deallocate, Projectile);
+			// Check if SimpleWidget was DeAllocated NOT in a normal way
 
-			ActiveWidgets.RemoveAt(I);
+			if (!Widget->Cache.IsAllocated)
+			{
+				UE_LOG(LogCs, Warning, TEXT("UCsManager_Widget::OnTick: SimpleWidget: %s at PoolIndex: %s was prematurely deallocted NOT in a normal way."), *(Widget->GetName()), Widget->Cache.Index);
 
-			if (I < EarliestIndex)
-				EarliestIndex = I;
-			continue;
+				LogTransaction(TEXT("UCsManager_Widget::OnTick"), ECsPoolTransaction::Deallocate, Widget);
+
+				WidgetsPtr->RemoveAt(J);
+
+				if (J < EarliestIndex)
+					EarliestIndex = J;
+				continue;
+			}
+
+			if (!Widget->Cache.UseLifeTime)
+				continue;
+
+			if (GetWorld()->GetTimeSeconds() - Widget->Cache.Time > Widget->Cache.LifeTime)
+			{
+				LogTransaction(TEXT("ACsManager_InteractiveActor::OnTick"), ECsPoolTransaction::Deallocate, Widget);
+
+				Widget->DeAllocate();
+				WidgetsPtr->RemoveAt(J);
+
+				if (J < EarliestIndex)
+					EarliestIndex = J;
+			}
 		}
 
-		if (CurrentWorld->GetTimeSeconds() - Widget->Cache.Time > Widget->Cache.LifeTime)
+		// Update ActiveIndex
+		if (EarliestIndex != WidgetCount)
 		{
-			//LogTransaction(TEXT("ACsManager_Projectile::OnTick"), ECsPoolTransaction::Deallocate, Projectile);
+			const uint16 Max = WidgetsPtr->Num();
 
-			Widget->DeAllocate();
-			ActiveWidgets.RemoveAt(I);
-
-			if (I < EarliestIndex)
-				EarliestIndex = I;
-		}
-	}
-	// Update ActiveIndex
-	if (EarliestIndex != Count)
-	{
-		const uint8 Max = ActiveWidgets.Num();
-
-		for (uint8 I = EarliestIndex; I < Max; I++)
-		{
-			UCsSimpleWidget* Widget			 = ActiveWidgets[I];
-			Widget->Cache.ActiveIndex		 = I;
-			Widget->Cache.ActiveIndex_Script = I;
+			for (uint16 J = EarliestIndex; J < Max; J++)
+			{
+				UCsSimpleWidget* Widget = (*WidgetsPtr)[J];
+				Widget->Cache.SetActiveIndex(J);
+			}
 		}
 	}
 }
 
-/*
 void UCsManager_Widget::LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, UObject* InObject)
 {
 	if (CsCVarLogManagerProjectileTransactions->GetInt() == CS_CVAR_SHOW_LOG)
 	{
+		/*
 		ACsProjectile* Projectile = Cast<ACsProjectile>(InObject);
 
 		const FString TransactionAsString = Transaction == ECsPoolTransaction::Allocate ? TEXT("Allocating") : TEXT("DeAllocating");
@@ -137,16 +154,26 @@ void UCsManager_Widget::LogTransaction(const FString &FunctionName, const TEnumA
 		{
 			UE_LOG(LogCs, Warning, TEXT("%s: %s Projectile: %s with Data: %s at %f at %s moving at %s."), *FunctionName, *TransactionAsString, *ProjectileName, *DataName, CurrentTime, *LocationAsString, *DirectionAsString);
 		}
+		*/
 	}
 }
-*/
 
-UCsSimpleWidget* UCsManager_Widget::Allocate()
+UCsSimpleWidget* UCsManager_Widget::Allocate(const ECsSimpleWidgetType &Type)
 {
-	for (uint16 I = 0; I < PoolSize; ++I)
+	TArray<UCsSimpleWidget*>* WidgetPool = Pools.Find(Type);
+	const uint16 Size					 = *(PoolSizes.Find(Type));
+
+	if (Size == CS_EMPTY)
 	{
-		PoolIndex				= (PoolIndex + I) % PoolSize;
-		UCsSimpleWidget* Widget = Pool[PoolIndex];
+		checkf(0, TEXT("UCsManager_Widget::Allocate: Pool: %s is exhausted"), *(ECsSimpleWidgetType::ToString(Type)));
+		return nullptr;
+	}
+
+	for (uint16 I = 0; I < Size; ++I)
+	{
+		uint16* PoolIndexPtr	= (PoolIndices.Find(Type));
+		*PoolIndexPtr			= (*PoolIndexPtr + I) % Size;
+		UCsSimpleWidget* Widget = (*WidgetPool)[*PoolIndexPtr];
 
 		if (!Widget->Cache.IsAllocated)
 		{
@@ -154,7 +181,7 @@ UCsSimpleWidget* UCsManager_Widget::Allocate()
 			return Widget;
 		}
 	}
-	checkf(0, TEXT("UCsManager_Widget::Allocate: Pool is exhausted"));
+	checkf(0, TEXT("UCsManager_Widget::Allocate: Pool: %s is exhausted"), *(ECsSimpleWidgetType::ToString(Type)));
 	return nullptr;
 }
 
@@ -169,6 +196,12 @@ void UCsManager_Widget::DeAllocate(const int32 &Index)
 	{
 		UCsSimpleWidget* Widget = ActiveWidgets[I];
 
+		// Update ActiveIndex
+		if (I > CS_FIRST)
+		{
+			Widget->Cache.DecrementActiveIndex();
+		}
+
 		if (Widget->Cache.Index == Index)
 		{
 			Widget->DeAllocate();
@@ -176,6 +209,15 @@ void UCsManager_Widget::DeAllocate(const int32 &Index)
 			return;
 		}
 	}
+
+	// Correct on Cache "Miss"
+	for (int32 I = 1; I < Count; I++)
+	{
+		UCsSimpleWidget* Widget = ActiveWidgets[I];
+		// Reset ActiveIndex
+		Widget->Cache.SetActiveIndex(I);
+	}
+	UE_LOG(LogCs, Warning, TEXT("UCsManager_Widget::DeAllocate: Widget at PoolIndex: %d is already deallocated."), Index);
 }
 
 // Show

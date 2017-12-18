@@ -106,14 +106,14 @@ void ACsManager_InteractiveActor::AddToPool(UObject* InObject, const uint8& Type
 
 	const TCsInteractiveType ClassType = (TCsInteractiveType)Type;
 
-	uint8* Size = PoolSizes.Find(ClassType);
+	uint16* Size = PoolSizes.Find(ClassType);
 
 	if (Size)
 		(*Size)++;
 	else
 		PoolSizes.Add(ClassType, 1);
 
-	uint8* Index = PoolIndices.Find(ClassType);
+	uint16* Index = PoolIndices.Find(ClassType);
 
 	if (!Index)
 		PoolIndices.Add(ClassType, 0);
@@ -218,9 +218,8 @@ void ACsManager_InteractiveActor::OnTick(const float &DeltaSeconds)
 
 			for (uint16 J = EarliestIndex; J < Max; J++)
 			{
-				ACsInteractiveActor* Actor		= (*ActorsPtr)[J];
-				Actor->Cache.ActiveIndex		= J;
-				Actor->Cache.ActiveIndex_Script = J;
+				ACsInteractiveActor* Actor = (*ActorsPtr)[J];
+				Actor->Cache.SetActiveIndex(J);
 			}
 		}
 	}
@@ -305,11 +304,17 @@ void ACsManager_InteractiveActor::LogTransaction(const FString &FunctionName, co
 ACsInteractiveActor* ACsManager_InteractiveActor::Allocate(const TCsInteractiveType &Type)
 {
 	TArray<ACsInteractiveActor*>* ActorPool = Pools.Find(Type);
-	const uint8 Size						= *(PoolSizes.Find(Type));
+	const uint16 Size						= *(PoolSizes.Find(Type));
 
-	for (uint8 I = 0; I < Size; ++I)
+	if (Size == CS_EMPTY)
 	{
-		uint8* PoolIndexPtr		   = (PoolIndices.Find(Type));
+		checkf(0, TEXT("ACsManager_InteractiveActor::Allocate: Pool: %s is exhausted"), *(*InteractiveTypeToString(Type)));
+		return nullptr;
+	}
+
+	for (uint16 I = 0; I < Size; ++I)
+	{
+		uint16* PoolIndexPtr	   = (PoolIndices.Find(Type));
 		*PoolIndexPtr			   = (*PoolIndexPtr + I) % Size;
 		ACsInteractiveActor* Actor = (*ActorPool)[*PoolIndexPtr];
 
@@ -344,8 +349,7 @@ void ACsManager_InteractiveActor::DeAllocate(const uint8 &Type, const int32 &Ind
 		// Update ActiveIndex
 		if (I > CS_FIRST)
 		{
-			Actor->Cache.ActiveIndex--;
-			Actor->Cache.ActiveIndex_Script--;
+			Actor->Cache.DecrementActiveIndex();
 		}
 
 		if (Actor->Cache.Index == Index)
@@ -367,10 +371,8 @@ void ACsManager_InteractiveActor::DeAllocate(const uint8 &Type, const int32 &Ind
 	for (int32 I = 1; I < Count; I++)
 	{
 		ACsInteractiveActor* Actor = (*Actors)[I];
-
 		// Reset ActiveIndex
-		Actor->Cache.ActiveIndex		= I;
-		Actor->Cache.ActiveIndex_Script = I;
+		Actor->Cache.SetActiveIndex(I);
 	}
 	UE_LOG(LogCs, Warning, TEXT("ACsManager_InteractiveActor::DeAllocate: InteractiveActor of Type: %s at PoolIndex: %d is already deallocated."), *((*InteractiveTypeToString)(ClassType)), Index);
 }

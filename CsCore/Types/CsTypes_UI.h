@@ -44,6 +44,16 @@ typedef FString(*TCsWidgetActorTypeToString)(const TCsWidgetActorType&);
 // StringToWidgetActorType
 typedef TCsWidgetActorType(*TCsStringToWidgetActorType)(const FString&);
 
+#define CS_DECLARE_WIDGET_ACTOR_TYPE	TCsWidgetActorType WidgetActorType_MAX; \
+										uint8 WIDGET_ACTOR_TYPE_MAX; \
+										TCsWidgetActorTypeToString WidgetActorTypeToString; \
+										TCsStringToWidgetActorType StringToWidgetActorType;
+
+#define CS_DEFINE_WIDGET_ACTOR_TYPE	WidgetActorType_MAX = ECsWidgetActorType::ECsWidgetActorType_MAX;\
+									WIDGET_ACTOR_TYPE_MAX = (uint8)WidgetActorType_MAX \
+									WidgetActorTypeToString = &ECsWidgetActorType::ToString; \
+									StringToWidgetActorType = &ECsWidgetActorType::ToType;
+
 namespace ECsWidgetType
 {
 	enum Type : uint8;
@@ -55,6 +65,55 @@ typedef ECsWidgetType::Type TCsWidgetType;
 typedef FString(*TCsWidgetTypeToString)(const TCsWidgetType&);
 // StringToWidgetType
 typedef TCsWidgetType(*TCsStringToWidgetType)(const FString&);
+
+#define CS_DECLARE_WIDGET_TYPE	TCsWidgetType WidgetType_MAX; \
+								uint8 WIDGET_TYPE_MAX; \
+								TCsWidgetTypeToString WidgetTypeToString; \
+								TCsStringToWidgetType StringToWidgetType;
+
+#define CS_DEFINE_WIDGET_TYPE	WidgetType_MAX = ECsWidgetType::ECsWidgetType_MAX;\
+								WIDGET_TYPE_MAX = (uint8)WidgetType_MAX \
+								WidgetTypeToString = &ECsWidgetType::ToString; \
+								StringToWidgetType = &ECsWidgetType::ToType;
+
+UENUM(BlueprintType)
+namespace ECsSimpleWidgetType
+{
+	enum Type
+	{
+		Text					UMETA(DisplayName = "Text"),
+		Float					UMETA(DisplayName = "Float"),
+		ECsSimpleWidgetType_MAX	UMETA(Hidden),
+	};
+}
+
+namespace ECsSimpleWidgetType
+{
+	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString Text = TCsString(TEXT("EHTA_Left"), TEXT("ehta_left"), TEXT("left"));
+		const TCsString Float = TCsString(TEXT("EHTA_Center"), TEXT("ehta_center"), TEXT("center"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::Text) { return Str::Text.Value; }
+		if (EType == Type::Float) { return Str::Float.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::Text) { return Type::Text; }
+		if (String == Str::Float) { return Type::Float; }
+		return Type::ECsSimpleWidgetType_MAX;
+	}
+}
+
+#define ECS_SIMPLE_WIDGET_TYPE_MAX (uint8)ECsSimpleWidgetType::ECsSimpleWidgetType_MAX
+typedef TEnumAsByte<ECsSimpleWidgetType::Type> TCsSimpleWidgetType;
 
 USTRUCT(BlueprintType)
 struct FCsWidgetActorInfo
@@ -279,7 +338,7 @@ public:
 	}
 };
 
-struct FCsWidget_Bar : FCsWidget
+struct FCsWidget_Bar : public FCsWidget
 {
 public:
 	TWeakObjectPtr<class UProgressBar> Bar;
@@ -334,7 +393,7 @@ public:
 	UProgressBar* Get() { return Bar.IsValid() ? Bar.Get() : nullptr; }
 };
 
-struct FCsWidget_Text : FCsWidget
+struct FCsWidget_Text : public FCsWidget
 {
 public:
 	TWeakObjectPtr<class UTextBlock> Text;
@@ -343,13 +402,10 @@ public:
 	FCsPrimitiveType<FLinearColor> Color;
 
 public:
-	FCsWidget_Text()
-	{
-	}
-
+	FCsWidget_Text(){}
 	~FCsWidget_Text() {}
 
-	void Set(UTextBlock* inText)
+	virtual void Set(UTextBlock* inText)
 	{
 		Text = inText;
 		Visibility = Text->Visibility;
@@ -392,7 +448,7 @@ public:
 		Color.Clear();
 	}
 
-	void SetString(const FString &inString)
+	virtual void SetString(const FString &inString)
 	{
 		String = inString;
 	}
@@ -405,13 +461,76 @@ public:
 	UTextBlock* Get() { return Text.IsValid() ? Text.Get() : nullptr; }
 };
 
-struct FCsWidget_Float : FCsWidget_Text
+struct FCsWidget_Float : public FCsWidget_Text
 {
+	TCsFloat Value;
+
 	FCsWidget_Float() {}
 	~FCsWidget_Float() {}
+
+	virtual void Set(UTextBlock* inText) override
+	{
+		Text = inText;
+		Visibility = Text->Visibility;
+		Visibility.Clear();
+		String = Text->Text.ToString();
+		String.Clear();
+		Value = FCString::Atof(*(String.Get()));
+		Value.Clear();
+		Color = Text->ColorAndOpacity.GetSpecifiedColor();
+		Color.Clear();
+	}
+
+	virtual void OnNativeTick(const float &InDeltaTime) override
+	{
+		// Visibility
+		if (Visibility.HasChanged())
+		{
+			if (UTextBlock* T = Get())
+				T->SetVisibility(Visibility.Get());
+		}
+		if (Visibility == ESlateVisibility::Collapsed ||
+			Visibility == ESlateVisibility::Hidden)
+		{
+			Visibility.Clear();
+			String.Clear();
+			return;
+		}
+		// Value
+		if (Value.HasChanged())
+		{
+			if (UTextBlock* T = Get())
+				T->SetText(FText::FromString(String.Get()));
+		}
+		// Color
+		if (Color.HasChanged())
+		{
+			if (UTextBlock* T = Get())
+				T->SetColorAndOpacity(Color.Get());
+		}
+		Visibility.Clear();
+		String.Clear();
+		Color.Clear();
+	}
+
+	virtual void SetString(const FString &inString) override
+	{
+		String = inString;
+
+		if (String.HasChanged())
+			Value = FCString::Atof(*inString);
+	}
+
+	void SetValue(const float &inValue)
+	{
+		Value = inValue;
+		
+		if (Value.HasChanged())
+			String = FString::SanitizeFloat(inValue);
+	}
 };
 
-struct FCsWidget_Image : FCsWidget
+struct FCsWidget_Image : public FCsWidget
 {
 public:
 	TWeakObjectPtr<class UImage> Image;
@@ -488,7 +607,7 @@ public:
 	UImage* Get() { return Image.IsValid() ? Image.Get() : nullptr; }
 };
 
-struct FCsWidget_Button : FCsWidget
+struct FCsWidget_Button : public FCsWidget
 {
 public:
 	TWeakObjectPtr<class UButton> Button;
@@ -543,7 +662,7 @@ public:
 	UButton* Get() { return Button.IsValid() ? Button.Get() : nullptr; }
 };
 
-struct FCsWidget_CheckBox : FCsWidget
+struct FCsWidget_CheckBox : public FCsWidget
 {
 public:
 	TWeakObjectPtr<class UCheckBox> CheckBox;
@@ -594,7 +713,7 @@ public:
 	UCheckBox* Get() { return CheckBox.IsValid() ? CheckBox.Get() : nullptr; }
 };
 
-struct FCsWidget_LabelAndCheckBox : FCsWidget
+struct FCsWidget_LabelAndCheckBox : public FCsWidget
 {
 	FCsWidget_Text Label;
 	FCsWidget_CheckBox CheckBox;
@@ -628,7 +747,7 @@ struct FCsWidget_LabelAndCheckBox : FCsWidget
 	}
 };
 
-struct FCsWidget_Slider : FCsWidget
+struct FCsWidget_Slider : public FCsWidget
 {
 public:
 	TWeakObjectPtr<class USlider> Slider;
@@ -694,7 +813,7 @@ public:
 	USlider* Get() { return Slider.IsValid() ? Slider.Get() : nullptr; }
 };
 
-struct FCsWidget_EditableTextBox : FCsWidget
+struct FCsWidget_EditableTextBox : public FCsWidget
 {
 public:
 	TWeakObjectPtr<class UEditableTextBox> TextBox;
@@ -760,7 +879,7 @@ public:
 	UEditableTextBox* Get() { return TextBox.IsValid() ? TextBox.Get() : nullptr; }
 };
 
-struct FCsWidget_EditableFloatBox : FCsWidget_EditableTextBox
+struct FCsWidget_EditableFloatBox : public FCsWidget_EditableTextBox
 {
 public:
 	TCsFloat Value;
@@ -949,7 +1068,7 @@ public:
 	}
 };
 
-struct FCsWidget_SliderAndEditableFloatBox : FCsWidget
+struct FCsWidget_SliderAndEditableFloatBox : public FCsWidget
 {
 	FCsWidget_Slider Slider;
 	FCsWidget_EditableFloatBox FloatBox;
@@ -984,7 +1103,7 @@ struct FCsWidget_SliderAndEditableFloatBox : FCsWidget
 	}
 };
 
-struct FCsWidget_LabelAndSliderAndEditableFloatBox : FCsWidget
+struct FCsWidget_LabelAndSliderAndEditableFloatBox : public FCsWidget
 {
 	FCsWidget_Text Label;
 	FCsWidget_Slider Slider;
@@ -1028,7 +1147,7 @@ struct FCsWidget_LabelAndSliderAndEditableFloatBox : FCsWidget
 	}
 };
 
-struct FCsWidget_ButtonAndText : FCsWidget
+struct FCsWidget_ButtonAndText : public FCsWidget
 {
 	FCsWidget_Button Button;
 	FCsWidget_Text Text;
@@ -1057,7 +1176,7 @@ struct FCsWidget_ButtonAndText : FCsWidget
 	}
 };
 
-struct FCsWidget_LabelAndButtonAndText : FCsWidget
+struct FCsWidget_LabelAndButtonAndText : public FCsWidget
 {
 	FCsWidget_Text Label;
 	FCsWidget_Button Button;

@@ -1,6 +1,6 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Types/CsTypes.h"
+#include "Types/CsTypes_Pool.h"
 #include "Types/CsTypes_Sound.h"
 #include "Managers/CsPooledActor.h"
 #include "CsSound.generated.h"
@@ -46,15 +46,14 @@ struct FCsSoundCache : public FCsPooledObjectCache
 
 	void Set(const uint16 &InIndex, ACsSound* InSound)
 	{
-		Index = InIndex;
+		SetIndex(Index);
 		Sound = InSound;
 	}
 
 	template<typename T>
 	void Init(const uint16& InActiveIndex, FCsSoundElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 	{
-		ActiveIndex		   = InActiveIndex;
-		ActiveIndex_Script = (int32)ActiveIndex;
+		SetActiveIndex(InActiveIndex);
 
 		IsAllocated = true;
 
@@ -71,7 +70,7 @@ struct FCsSoundCache : public FCsPooledObjectCache
 		Bone			 = InElement->Bone;
 		Time			 = InTime;
 		RealTime		 = InRealTime;
-		Frame			 = InFrame;
+		SetFrame(InFrame);
 
 		if (InObject && OnDeAllocate)
 		{
@@ -105,8 +104,7 @@ struct FCsSoundCache : public FCsPooledObjectCache
 
 	void Init(const uint16& InActiveIndex, FCsSoundElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, const FVector &InLocation)
 	{
-		ActiveIndex = InActiveIndex;
-		ActiveIndex_Script = (int32)ActiveIndex;
+		SetActiveIndex(InActiveIndex);
 
 		IsAllocated = true;
 
@@ -123,7 +121,7 @@ struct FCsSoundCache : public FCsPooledObjectCache
 		Bone			 = InElement->Bone;
 		Time			 = InTime;
 		RealTime		 = InRealTime;
-		Frame			 = InFrame;
+		SetFrame(InFrame);
 		Location		 = InLocation;
 	}
 
@@ -149,7 +147,7 @@ struct FCsSoundCache : public FCsPooledObjectCache
 
 	virtual void Reset() override
 	{
-		Super::Reset();
+		Reset_Internal();
 
 		Cue.Reset();
 		Cue   = nullptr;

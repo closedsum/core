@@ -126,9 +126,8 @@ void ACsManager_Projectile::OnTick(const float &DeltaSeconds)
 
 		for (uint8 I = EarliestIndex; I < Max; I++)
 		{
-			ACsProjectile* Projectile			 = ActiveProjectiles[I];
-			Projectile->Cache.ActiveIndex		 = I;
-			Projectile->Cache.ActiveIndex_Script = I;
+			ACsProjectile* Projectile = ActiveProjectiles[I];
+			Projectile->Cache.SetActiveIndex(I);
 		}
 	}
 }
@@ -200,6 +199,12 @@ void ACsManager_Projectile::DeAllocate(const int32 &Index)
 	{
 		ACsProjectile* Projectile = ActiveProjectiles[I];
 
+		// Update ActiveIndex
+		if (I > CS_FIRST)
+		{
+			Projectile->Cache.DecrementActiveIndex();
+		}
+
 		if (Projectile->Cache.Index == Index)
 		{
 			Projectile->DeAllocate();
@@ -207,6 +212,15 @@ void ACsManager_Projectile::DeAllocate(const int32 &Index)
 			return;
 		}
 	}
+
+	// Correct on Cache "Miss"
+	for (int32 I = 1; I < Count; I++)
+	{
+		ACsProjectile* Projectile = ActiveProjectiles[I];
+		// Reset ActiveIndex
+		Projectile->Cache.SetActiveIndex(I);
+	}
+	UE_LOG(LogCs, Warning, TEXT("ACsManager_Projectile::DeAllocate: Projectile at PoolIndex: %d is already deallocated."), Index);
 }
 
 // Fire

@@ -1,6 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Managers/CsPooledActor.h"
+#include "Types/CsTypes_Pool.h"
 #include "Types/CsTypes_Projectile.h"
 #include "Data/CsData_Projectile.h"
 #include "CsProjectile.generated.h"
@@ -41,16 +42,15 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 
 	void Set(const uint8 &InIndex, ACsProjectile* InProjectile)
 	{
-		Index	   = InIndex;
+		SetIndex(InIndex);
 		Projectile = InProjectile;
 	}
 
 	template<typename T>
 	void Init(const uint16& InActiveIndex, const TCsProjectileRelevance &InRelevance, ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InInstigator, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)())
 	{
-		ActiveIndex		   = InActiveIndex;
-		ActiveIndex_Script = (int32)ActiveIndex;
-		Relevance		   = InRelevance;
+		SetActiveIndex(InActiveIndex);
+		Relevance = InRelevance;
 
 		IsAllocated = true;
 
@@ -67,7 +67,7 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 
 		Time	    = InTime;
 		RealTime    = InRealTime;
-		Frame	    = InFrame;
+		SetFrame(InFrame);
 
 		Location	  = InFireCache->Location;
 		Direction	  = InFireCache->Direction;
@@ -99,9 +99,8 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 
 	void Init(const uint16& InActiveIndex, const TCsProjectileRelevance &InRelevance, ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InInstigator, UObject* InOwner, UObject* InParent)
 	{
-		ActiveIndex		   = InActiveIndex;
-		ActiveIndex_Script = (int32)ActiveIndex;
-		Relevance		   = InRelevance;
+		SetActiveIndex(InActiveIndex);
+		Relevance = InRelevance;
 
 		IsAllocated = true;
 
@@ -118,7 +117,7 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 
 		Time	   = InTime;
 		RealTime   = InRealTime;
-		Frame	   = InFrame;
+		SetFrame(InFrame);
 
 		Location	  = InFireCache->Location;
 		Direction	  = InFireCache->Direction;
@@ -139,7 +138,7 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 
 	void Reset()
 	{
-		Super::Reset();
+		Reset_Internal();
 
 		Data.Reset();
 		Data  = nullptr;

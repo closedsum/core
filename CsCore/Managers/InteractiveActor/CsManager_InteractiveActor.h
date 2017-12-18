@@ -26,14 +26,14 @@ class CSCORE_API ACsManager_InteractiveActor : public ACsManager
 	virtual void AddToActivePool(UObject* InObject, const uint8& Type);
 	virtual void OnTick(const float &DeltaSeconds) override;
 
-	TMap<TCsInteractiveType, uint8> PoolSizes;
+	TMap<TCsInteractiveType, uint16> PoolSizes;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Pool")
 	TArray<class ACsInteractiveActor*> Pool;
 
 	TMap<TCsInteractiveType, TArray<class ACsInteractiveActor*>> Pools;
 
-	TMap<TCsInteractiveType, uint8> PoolIndices;
+	TMap<TCsInteractiveType, uint16> PoolIndices;
 
 	TMap<TCsInteractiveType, TArray<class ACsInteractiveActor*>> ActiveActors;
 

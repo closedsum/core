@@ -2,6 +2,7 @@
 #pragma once
 #include "Pawn/CsPawn.h"
 #include "Types/CsTypes.h"
+#include "Types/CsTypes_Pool.h"
 #include "CsAIPawn.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsAIPawn_Override_OnTick, const int32&, Index, const float&, DeltaSeconds);
@@ -73,7 +74,7 @@ struct FCsAIPawnCache : public FCsPooledObjectCache
 
 	virtual void Reset() override
 	{
-		Super::Reset();
+		Reset_Internal();
 
 		Pawn.Reset();
 		Pawn = nullptr;

@@ -14,21 +14,27 @@ class CSCORE_API UCsManager_Widget : public UObject
 	virtual void Clear();
 	virtual void Shutdown();
 	virtual void BeginDestroy() override;
-	virtual void CreatePool(const TSubclassOf<class UObject> &ObjectClass, const int32 &Size);
+	virtual void CreatePool(const TSubclassOf<class UObject> &ObjectClass, const TCsSimpleWidgetType &Type, const int32 &Size);
 	virtual void OnTick(const float &DeltaSeconds);
 
 	UWorld* CurrentWorld;
 
 	int32 PoolSize;
 
-	UPROPERTY()
+	TMap<TCsSimpleWidgetType, uint16> PoolSizes;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Pool")
 	TArray<class UCsSimpleWidget*> Pool;
+
+	TMap<TCsSimpleWidgetType, TArray<class UCsSimpleWidget*>> Pools;
+
+	TMap<TCsSimpleWidgetType, uint16> PoolIndices;
 
 	uint16 PoolIndex;
 
 	TArray<class UCsSimpleWidget*> ActiveWidgets;
 
-	//virtual void LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, class UObject* InObject) override;
+	virtual void LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, class UObject* InObject);
 
 	class UCsSimpleWidget* Allocate();
 

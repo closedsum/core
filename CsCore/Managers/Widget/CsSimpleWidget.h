@@ -1,7 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Runtime/UMG/Public/Blueprint/UserWidget.h"
-#include "Types/CsTypes.h"
+#include "Types/CsTypes_Pool.h"
 #include "Types/CsTypes_UI.h"
 #include "CsSimpleWidget.generated.h"
 
@@ -26,27 +26,25 @@ struct FCsSimpleWidgetCache : public FCsPooledObjectCache
 
 	void Set(const uint16 &InIndex, class UCsSimpleWidget* InWidget)
 	{
-		Index = InIndex;
+		SetIndex(InIndex);
 		Widget = InWidget;
 	}
 
 	template<typename T>
 	void Init(const uint16& InActiveIndex, FCsSimpleWidgetPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)())
 	{
-		ActiveIndex = InActiveIndex;
-		ActiveIndex_Script = (int32)ActiveIndex;
+		SetActiveIndex(InActiveIndex);
 
 		IsAllocated = true;
 
 		Owner = InOwner;
-
 		Parent = InParent;
 
 		SetLifeTime(Payload->LifeTime);
 
 		Time = InTime;
 		RealTime = InRealTime;
-		Frame = InFrame;
+		SetFrame(InFrame);
 
 		if (InObject && OnDeAllocate)
 		{
@@ -72,20 +70,18 @@ struct FCsSimpleWidgetCache : public FCsPooledObjectCache
 
 	void Init(const uint16& InActiveIndex, FCsSimpleWidgetPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent)
 	{
-		ActiveIndex = InActiveIndex;
-		ActiveIndex_Script = (int32)ActiveIndex;
+		SetActiveIndex(InActiveIndex);
 
 		IsAllocated = true;
 
 		Owner = InOwner;
-
 		Parent = InParent;
 
 		SetLifeTime(Payload->LifeTime);
 
 		Time = InTime;
 		RealTime = InRealTime;
-		Frame = InFrame;
+		SetFrame(InFrame);
 	}
 
 	void Init(const uint16& InActiveIndex, FCsSimpleWidgetPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner)
@@ -98,9 +94,9 @@ struct FCsSimpleWidgetCache : public FCsPooledObjectCache
 		Init(InActiveIndex, Payload, InTime, InRealTime, InFrame, nullptr, nullptr);
 	}
 
-	void Reset()
+	virtual void Reset() override
 	{
-		Super::Reset();
+		Reset_Internal();
 
 		DisplayName = ECsCachedString::Str::Empty;
 		Offset = FIntPoint::ZeroValue;
@@ -124,4 +120,6 @@ class CSCORE_API UCsSimpleWidget : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 	UCanvas* Canvas;
+
+	virtual void OnOwnerDeAllocate(const uint16 &PoolIndex, const uint16 &ActiveIndex, const uint8 &Type);
 };

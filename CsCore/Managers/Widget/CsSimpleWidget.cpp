@@ -21,3 +21,8 @@ void UCsSimpleWidget::DeAllocate()
 {
 	Cache.DeAllocate();
 }
+
+void UCsSimpleWidget::OnOwnerDeAllocate(const uint16 &PoolIndex, const uint16 &ActiveIndex, const uint8 &Type)
+{
+	DeAllocate();
+}

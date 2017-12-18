@@ -2,7 +2,7 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
-#include "Types/CsTypes_Primitive.h"
+#include "Types/CsTypes_Pool.h"
 #include "CsManager.generated.h"
 
 // OnAllocate
@@ -13,62 +13,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsManager_OnDeAllo
 DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsManager_OnDeAllocate, const uint16&);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsManager_OnDeAllocateEX, const int32&, PoolIndex, const int32&, ActiveIndex, const uint8&, Type);
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManager_OnDeAllocateEX, const uint16&, const uint16&, const uint8&);
-
-// Enums
-#pragma region
-
-UENUM(BlueprintType)
-namespace ECsPoolTransaction
-{
-	enum Type
-	{
-		Allocate				UMETA(DisplayName = "Allocate"),
-		PreDeallocate			UMETA(DisplayName = "Pre-Deallocate"),
-		Deallocate				UMETA(DisplayName = "Deallocate"),
-		ECsPoolTransaction_MAX	UMETA(Hidden),
-	};
-}
-
-namespace ECsPoolTransaction
-{
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-		const TCsString Allocate = TCsString(TEXT("Allocate"), TEXT("allocate"), TEXT("Allocating"));
-		const TCsString PreDeallocate = TCsString(TEXT("PreDeallocate"), TEXT("predeallocate"), TEXT("PreDeallocating"));
-		const TCsString Deallocate = TCsString(TEXT("Deallocate"), TEXT("deallocate"), TEXT("Deallocating"));
-	}
-
-	FORCEINLINE FString ToString(const Type &EType)
-	{
-		if (EType == Type::Allocate) { return Str::Allocate.Value; }
-		if (EType == Type::PreDeallocate) { return Str::PreDeallocate.Value; }
-		if (EType == Type::Deallocate) { return Str::Deallocate.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE FString ToActionString(const Type &EType)
-	{
-		if (EType == Type::Allocate) { return Str::Allocate.Values[CS_FSTRING_ENUM_ALT_1_VALUE]; }
-		if (EType == Type::PreDeallocate) { return Str::PreDeallocate.Values[CS_FSTRING_ENUM_ALT_1_VALUE]; }
-		if (EType == Type::Deallocate) { return Str::Deallocate.Values[CS_FSTRING_ENUM_ALT_1_VALUE]; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::Allocate) { return Type::Allocate; }
-		if (String == Str::PreDeallocate) { return Type::PreDeallocate; }
-		if (String == Str::Deallocate) { return Type::Deallocate; }
-		return Type::ECsPoolTransaction_MAX;
-	}
-}
-
-#define ECS_POOL_TRANSACTION_MAX (uint8)ECsPoolTransaction::ECsPoolTransaction_MAX
-typedef TEnumAsByte<ECsPoolTransaction::Type> TCsPoolTransaction;
-
-#pragma endregion Enums
 
 UCLASS()
 class CSCORE_API ACsManager : public AActor

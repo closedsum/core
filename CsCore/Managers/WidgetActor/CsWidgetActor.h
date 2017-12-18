@@ -1,6 +1,6 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Types/CsTypes.h"
+#include "Types/CsTypes_Pool.h"
 #include "Types/CsTypes_Interactive.h"
 #include "Managers/CsPooledActor.h"
 #include "UI/CsUserWidget.h"
@@ -75,15 +75,14 @@ struct FCsWidgetActorCache : public FCsPooledObjectCache
 
 	void Set(const uint16 &InIndex, ACsWidgetActor* InWidgetActor)
 	{
-		Index	    = InIndex;
+		SetIndex(InIndex);
 		WidgetActor = InWidgetActor;
 	}
 
 	template<typename T>
 	void Init(const uint16& InActiveIndex, class UCsUserWidget* InWidget, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 	{
-		ActiveIndex		   = InActiveIndex;
-		ActiveIndex_Script = (int32)ActiveIndex;
+		SetActiveIndex(InActiveIndex);
 
 		IsAllocated = true;
 
@@ -92,7 +91,7 @@ struct FCsWidgetActorCache : public FCsPooledObjectCache
 		Parent   = InParent;
 		Time	 = InTime;
 		RealTime = InRealTime;
-		Frame	 = InFrame;
+		SetFrame(InFrame);
 
 		if (InObject && OnDeAllocate)
 		{
@@ -112,8 +111,7 @@ struct FCsWidgetActorCache : public FCsPooledObjectCache
 
 	void Init(const uint16& InActiveIndex, class UCsUserWidget* InWidget, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent)
 	{
-		ActiveIndex		   = InActiveIndex;
-		ActiveIndex_Script = (int32)ActiveIndex;
+		SetActiveIndex(InActiveIndex);
 
 		IsAllocated = true;
 
@@ -122,7 +120,7 @@ struct FCsWidgetActorCache : public FCsPooledObjectCache
 		Parent	 = InParent;
 		Time	 = InTime;
 		RealTime = InRealTime;
-		Frame	 = InFrame;
+		SetFrame(InFrame);
 	}
 
 	void Init(const uint16& InActiveIndex, class UCsUserWidget* InWidget, const float &InTime, const float &InRealTime, const uint64 &InFrame)
@@ -132,7 +130,7 @@ struct FCsWidgetActorCache : public FCsPooledObjectCache
 
 	virtual void Reset() override
 	{
-		Super::Reset();
+		Reset_Internal();
 
 		Widget.Reset();
 		Widget = nullptr;

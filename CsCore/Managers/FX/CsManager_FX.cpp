@@ -150,9 +150,8 @@ void ACsManager_FX::OnTick(const float &DeltaSeconds)
 
 		for (uint16 I = EarliestIndex; I < Max; I++)
 		{
-			ACsEmitter* Emitter				  = ActiveEmitters[I];
-			Emitter->Cache.ActiveIndex		  = I;
-			Emitter->Cache.ActiveIndex_Script = I;
+			ACsEmitter* Emitter = ActiveEmitters[I];
+			Emitter->Cache.SetActiveIndex(I);
 		}
 	}
 }
@@ -261,8 +260,7 @@ void ACsManager_FX::DeAllocate(const int32 &Index)
 		// Update ActiveIndex
 		if (I > CS_FIRST)
 		{
-			Emitter->Cache.ActiveIndex--;
-			Emitter->Cache.ActiveIndex_Script--;
+			Emitter->Cache.DecrementActiveIndex();
 		}
 
 		if (Emitter->PoolIndex == Index)
@@ -285,8 +283,7 @@ void ACsManager_FX::DeAllocate(const int32 &Index)
 	{
 		ACsEmitter* Emitter = ActiveEmitters[I];
 		// Reset ActiveIndex
-		Emitter->Cache.ActiveIndex++;
-		Emitter->Cache.ActiveIndex_Script++;
+		Emitter->Cache.SetActiveIndex(I);
 	}
 	UE_LOG(LogCs, Warning, TEXT("ACsManager_FX::DeAllocate: Emitter with PoolIndex: %s is already deallocated."), Index);
 }

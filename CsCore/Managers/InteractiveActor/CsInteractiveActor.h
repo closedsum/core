@@ -1,6 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Managers/CsPooledActor.h"
+#include "Types/CsTypes_Pool.h"
 #include "Types/CsTypes_Interactive.h"
 #include "Data/CsData_Interactive.h"
 #include "CsInteractiveActor.generated.h"
@@ -78,15 +79,14 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 
 	void Set(const uint16 &InIndex, class ACsInteractiveActor* InActor)
 	{
-		Index		 = InIndex;
-		Index_Script = (int32)Index;
-		Actor		 = InActor;
+		SetIndex(InIndex);
+		Actor = InActor;
 	}
 
 	template<typename T>
 	void Init(const uint16& InActiveIndex, class ACsData_Interactive* InData, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint8&))
 	{
-		ActiveIndex = InActiveIndex;
+		SetActiveIndex(InActiveIndex);
 		Data = InData;
 		Owner = InOwner;
 		Parent = InParent;
@@ -98,7 +98,7 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 
 		Time = InTime;
 		RealTime = InRealTime;
-		Frame = InFrame;
+		SetFrame(InFrame);
 
 		if (InObject && OnDeAllocate)
 		{
@@ -118,7 +118,7 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 
 	void Init(const uint16& InActiveIndex, class ACsData_Interactive* InData, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent)
 	{
-		ActiveIndex = InActiveIndex;
+		SetActiveIndex(InActiveIndex);
 		Data = InData;
 		Owner = InOwner;
 		Parent = InParent;
@@ -130,7 +130,7 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 
 		Time = InTime;
 		RealTime = InRealTime;
-		Frame = InFrame;
+		SetFrame(InFrame);
 	}
 
 	void Init(const uint16& InActiveIndex, class ACsData_Interactive* InData, const float &InTime, const float &InRealTime, const uint64 &InFrame)
@@ -140,7 +140,12 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 
 	virtual void Reset() override
 	{
-		Super::Reset();
+		Reset_Internal();
+
+		Actor.Reset();
+		Actor = nullptr;
+		Data.Reset();
+		Data = nullptr;
 	}
 
 	class ACsInteractiveActor* GetActor() { return Actor.IsValid() ? Actor.Get() : nullptr; }

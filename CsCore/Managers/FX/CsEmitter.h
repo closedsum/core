@@ -1,6 +1,6 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Types/CsTypes.h"
+#include "Types/CsTypes_Pool.h"
 #include "Types/CsTypes_FX.h"
 #include "Particles/Emitter.h"
 #include "CsEmitter.generated.h"
@@ -43,15 +43,14 @@ struct FCsFxCache : public FCsPooledObjectCache
 
 	void Set(const uint8 &InIndex, ACsEmitter* InEmitter)
 	{
-		Index   = InIndex;
+		SetIndex(InIndex);
 		Emitter = InEmitter;
 	}
 
 	template<typename T>
 	void Init(const uint16& InActiveIndex, FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)())
 	{
-		ActiveIndex = InActiveIndex;
-		ActiveIndex_Script = (uint8)ActiveIndex;
+		SetActiveIndex(InActiveIndex);
 
 		IsAllocated = true;
 
@@ -71,7 +70,7 @@ struct FCsFxCache : public FCsPooledObjectCache
 		Rotation = Bone != NAME_None ? InElement->Rotation : FRotator::ZeroRotator;
 		Time = InTime;
 		RealTime = InRealTime;
-		Frame = InFrame;
+		SetFrame(InFrame);
 
 		if (InObject && OnDeAllocate)
 		{
@@ -109,8 +108,7 @@ struct FCsFxCache : public FCsPooledObjectCache
 
 	void Init(const uint16& InActiveIndex, FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, const FVector &InLocation, const FRotator &InRotation)
 	{
-		ActiveIndex = InActiveIndex;
-		ActiveIndex_Script = (int32)ActiveIndex;
+		SetActiveIndex(InActiveIndex);
 
 		IsAllocated = true;
 
@@ -130,7 +128,7 @@ struct FCsFxCache : public FCsPooledObjectCache
 		Rotation = Bone != NAME_None ? InElement->Rotation : InRotation;
 		Time = InTime;
 		RealTime = InRealTime;
-		Frame = InFrame;
+		SetFrame(InFrame);
 	}
 
 	void Init(const uint16& InActiveIndex, FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent)
@@ -155,7 +153,7 @@ struct FCsFxCache : public FCsPooledObjectCache
 
 	virtual void Reset() override
 	{
-		Super::Reset();
+		Reset_Internal();
 
 		IsAllocated = false;
 

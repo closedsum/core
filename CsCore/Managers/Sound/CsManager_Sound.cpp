@@ -130,9 +130,8 @@ void ACsManager_Sound::OnTick(const float &DeltaSeconds)
 
 		for (uint8 I = EarliestIndex; I < Max; I++)
 		{
-			ACsSound* Sound					= ActiveSounds[I];
-			Sound->Cache.ActiveIndex		= I;
-			Sound->Cache.ActiveIndex_Script = I;
+			ACsSound* Sound	= ActiveSounds[I];
+			Sound->Cache.SetActiveIndex(I);
 		}
 	}
 }
@@ -216,8 +215,7 @@ void ACsManager_Sound::DeAllocate(const int32 &Index)
 		// Update ActiveIndex
 		if (I > CS_FIRST)
 		{
-			Sound->Cache.ActiveIndex--;
-			Sound->Cache.ActiveIndex_Script--;
+			Sound->Cache.DecrementActiveIndex();
 		}
 
 		if (Sound->Cache.Index == Index)
@@ -240,8 +238,7 @@ void ACsManager_Sound::DeAllocate(const int32 &Index)
 	{
 		ACsSound* Sound = ActiveSounds[I];
 		// Reset ActiveIndex
-		Sound->Cache.ActiveIndex		= I;
-		Sound->Cache.ActiveIndex_Script = I;
+		Sound->Cache.SetActiveIndex(I);
 	}
 	UE_LOG(LogCs, Warning, TEXT("ACsManager_Sound::DeAllocate: Sound with PoolIndex: %s is already deallocated."), Index);
 }

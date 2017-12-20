@@ -1250,7 +1250,7 @@ template<typename T>
 	}
 
 	template<typename T, int32 SIZE>
-	static void GetAssetReferencesFromFixedArrayStructProperty_EnumSize(UStructProperty* &StructProperty, void* InObject, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences, TCsGetAssetReferencesFromStruct_Internal Internal = NULL)
+	static void GetAssetReferencesFromFixedArrayStructProperty_EnumSize(UStructProperty* &StructProperty, void* InObject, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences, TCsGetAssetReferencesFromStruct_Internal Internal = nullptr)
 	{
 		if (T(*Member)[SIZE] = StructProperty->ContainerPtrToValuePtr<T[SIZE]>(InObject))
 		{
@@ -1355,7 +1355,7 @@ template<typename T>
 			const FString MemberName	 = ArrayAssetObjectProperty->GetName();
 			const FString FlagMemberName = MemberName + TEXT("_LoadFlags");
 
-			int32* MemberLoadFlags = NULL;
+			int32* MemberLoadFlags = nullptr;
 
 			if (UIntProperty* IntProperty = FindField<UIntProperty>(InClass, *FlagMemberName))
 				MemberLoadFlags = IntProperty->ContainerPtrToValuePtr<int32>(InObject);
@@ -1405,7 +1405,7 @@ template<typename T>
 			const FString MemberName	 = ArrayAssetObjectProperty->GetName();
 			const FString FlagMemberName = MemberName + TEXT("_LoadFlags");
 
-			int32* MemberLoadFlags = NULL;
+			int32* MemberLoadFlags = nullptr;
 
 			if (UIntProperty* IntProperty = FindField<UIntProperty>(InClass, *FlagMemberName))
 				MemberLoadFlags = IntProperty->ContainerPtrToValuePtr<int32>(InObject);
@@ -1448,14 +1448,14 @@ template<typename T>
 	}
 
 	template<typename T>
-	static void GetAssetReferencesFromStructProperty(UStructProperty* &StructProperty, void* InObject, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences, TCsGetAssetReferencesFromStruct_Internal Internal = NULL)
+	static void GetAssetReferencesFromStructProperty(UStructProperty* &StructProperty, void* InObject, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences, TCsGetAssetReferencesFromStruct_Internal Internal = nullptr)
 	{
 		if (T* Member = StructProperty->ContainerPtrToValuePtr<T>(InObject))
 			GetAssetReferencesFromStruct((void*)Member, StructProperty->Struct, LoadFlags, CalculateResourceSizes, OutAssetReferences, Internal);
 	}
 
 	template<typename T>
-	static void GetAssetReferencesFromArrayStructProperty(UArrayProperty* ArrayProperty, void* InObject, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences, TCsGetAssetReferencesFromStruct_Internal Internal = NULL)
+	static void GetAssetReferencesFromArrayStructProperty(UArrayProperty* ArrayProperty, void* InObject, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences, TCsGetAssetReferencesFromStruct_Internal Internal = nullptr)
 	{
 		if (TArray<T>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<T>>(InObject))
 		{
@@ -1472,8 +1472,8 @@ template<typename T>
 
 #pragma endregion CsStringAssetReference
 
-	static void GetAssetReferencesFromStruct(void* InStruct, UScriptStruct* const &InScriptStruct, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences, TCsGetAssetReferencesFromStruct_Internal Internal = NULL);
-	static void GetAssetReferencesFromObject(void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences, TCsGetAssetReferencesFromObject_Internal Internal = NULL);
+	static void GetAssetReferencesFromStruct(void* InStruct, UScriptStruct* const &InScriptStruct, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences, TCsGetAssetReferencesFromStruct_Internal Internal = nullptr);
+	static void GetAssetReferencesFromObject(void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences, TCsGetAssetReferencesFromObject_Internal Internal = nullptr);
 
 #pragma endregion Asset References
 
@@ -2276,7 +2276,7 @@ template<typename T>
 	}
 
 	template<typename T>
-	static void LoadMemberStructProperty(UStructProperty* &StructProperty, void* InObject, const FString &MemberName, const ECsLoadFlags &LoadFlags, TCsLoadStructWithTAssetPtrs_Internal Internal = NULL)
+	static void LoadMemberStructProperty(UStructProperty* &StructProperty, void* InObject, const FString &MemberName, const ECsLoadFlags &LoadFlags, TCsLoadStructWithTAssetPtrs_Internal Internal = nullptr)
 	{
 		if (T* Member = StructProperty->ContainerPtrToValuePtr<T>(InObject))
 			LoadStructWithTAssetPtrs(MemberName, (void*)Member, StructProperty->Struct, LoadFlags, Internal);
@@ -2313,8 +2313,8 @@ template<typename T>
 		}
 	}
 
-	static void LoadStructWithTAssetPtrs(const FString &ObjectName, void* InStruct, UScriptStruct* const &InScriptStruct, const ECsLoadFlags &LoadFlags, TCsLoadStructWithTAssetPtrs_Internal Internal = NULL);
-	static void LoadObjectWithTAssetPtrs(const FString &ObjectName, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TCsLoadObjectWithTAssetPtrs_Internal Internal = NULL);
+	static void LoadStructWithTAssetPtrs(const FString &ObjectName, void* InStruct, UScriptStruct* const &InScriptStruct, const ECsLoadFlags &LoadFlags, TCsLoadStructWithTAssetPtrs_Internal Internal = nullptr);
+	static void LoadObjectWithTAssetPtrs(const FString &ObjectName, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TCsLoadObjectWithTAssetPtrs_Internal Internal = nullptr);
 
 	template<typename T, typename U, typename S>
 	static void SetTArrayInternalMemberFromLoadedAssets(void* InObject, UClass* const &InClass, const FString &StructMemberName, UScriptStruct* const &InScriptStruct, const FString &MemberName, const TArray<UObject*> &LoadedAssets)
@@ -2702,7 +2702,7 @@ template<typename T>
 	static UScriptStruct* GetScriptStructMember(void* InStruct, UScriptStruct* const &InScriptStruct, const FString &MemberName, TCsGetScriptStructMember_Internal Internal = nullptr);
 
 	template<typename T>
-	static T* GetObjectMember(void* InObject, UClass* const &InClass, const FString &MemberName, TCsGetObjectMember_Internal Internal = NULL)
+	static T* GetObjectMember(void* InObject, UClass* const &InClass, const FString &MemberName, TCsGetObjectMember_Internal Internal = nullptr)
 	{
 		for (TFieldIterator<UProperty> It(InClass); It; ++It)
 		{
@@ -2721,7 +2721,7 @@ template<typename T>
 					if (void* Ptr = (*Internal)(Property, InObject, InClass, MemberName))
 						return (T*)Ptr;
 				}
-				return NULL;
+				return nullptr;
 			}
 			// bool
 			if (UBoolProperty* BoolProperty = Cast<UBoolProperty>(*It))
@@ -2746,7 +2746,7 @@ template<typename T>
 			if (UFloatProperty* FloatProperty = Cast<UFloatProperty>(*It))
 				return (T*)Property->ContainerPtrToValuePtr<float>(InObject);
 		}
-		return NULL;
+		return nullptr;
 	}
 
 	static uint16 GetObjectMemberIndex(UClass* const &InClass, const FString &MemberName);

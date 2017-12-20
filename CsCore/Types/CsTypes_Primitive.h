@@ -15,6 +15,7 @@ namespace ECsCachedString
 		const FString None = TEXT("None");
 		const FString Json = TEXT(".json");
 		const FString INVALID = TEXT("INVALID");
+		const FString Dot = TEXT(".");
 	}
 }
 

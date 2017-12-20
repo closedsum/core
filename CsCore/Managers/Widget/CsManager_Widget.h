@@ -47,6 +47,8 @@ class CSCORE_API UCsManager_Widget : public UObject
 	virtual void DeAllocate(const TCsSimpleWidgetType &Type, const int32 &Index);
 	virtual void DeAllocateAll();
 
+	virtual void AddPoolToCanvas(UCanvasPanel* InCanvas, const TCsSimpleWidgetType &Type);
+
 // Show
 #pragma region
 

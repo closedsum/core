@@ -386,7 +386,7 @@ void ACsDataMapping::PopulateAssetReferences()
 							{
 								(*Member)[I].AssetReferences[J].References.Reset();
 
-								if (!CS_TEST_BLUEPRINT_BITFLAG(LoadFlags, ECsLoadFlags(J)))
+								if (!CS_TEST_BLUEPRINT_BITFLAG(LoadFlags, (ECsLoadFlags)J))
 									continue;
 
 								// Reference to "Root" Data

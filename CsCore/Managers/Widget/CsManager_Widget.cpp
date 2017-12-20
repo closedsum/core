@@ -306,6 +306,21 @@ void UCsManager_Widget::DeAllocateAll()
 	}
 }
 
+void UCsManager_Widget::AddPoolToCanvas(UCanvasPanel* InCanvas, const TCsSimpleWidgetType &Type)
+{
+	TArray<UCsSimpleWidget*>* WidgetsPtr = ActiveWidgets.Find(Type);
+
+	if (!WidgetsPtr)
+		return;
+
+	const uint16 Count = WidgetsPtr->Num();
+
+	for (uint16 I = 0; I < Count; I++)
+	{
+		InCanvas->AddChildToCanvas((*WidgetsPtr)[I]);
+	}
+}
+
 // Show
 #pragma region
 

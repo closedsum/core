@@ -6,3 +6,8 @@ UCsWidget_TextBlock::UCsWidget_TextBlock(const FObjectInitializer& ObjectInitial
 	: Super(ObjectInitializer)
 {
 }
+
+void UCsWidget_TextBlock::NativeConstruct()
+{
+	Super::NativeConstruct();
+}

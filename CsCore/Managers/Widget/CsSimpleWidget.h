@@ -119,7 +119,7 @@ class CSCORE_API UCsSimpleWidget : public UUserWidget
 	FCsSimpleWidgetCache Cache;
 
 	UPROPERTY(meta = (BindWidget))
-	UCanvas* Canvas;
+	UCanvasPanel* Canvas;
 
 	virtual void OnOwnerDeAllocate(const uint16 &PoolIndex, const uint16 &ActiveIndex, const uint8 &Type);
 };

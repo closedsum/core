@@ -16,6 +16,17 @@
 // Load
 #pragma region
 
+UENUM(BlueprintType)
+namespace ECsLoadCode
+{
+	enum Type
+	{
+		None											UMETA(DisplayName = "None"),
+		EditorGetReferencesSuppressLoadFlagsAllWarning	UMETA(DisplayName = "Editor Get References Suppress Load Flags All Warning"),
+		ECsLoadCode_MAX									UMETA(Hidden),
+	};
+}
+
 UENUM(BlueprintType, meta = (Bitflags))
 enum class ECsLoadFlags : uint8
 {

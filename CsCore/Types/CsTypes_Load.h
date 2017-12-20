@@ -16,6 +16,15 @@
 // Load
 #pragma region
 
+namespace ECsLoadCachedString
+{
+	namespace Str
+	{
+		const FString _Internal = TEXT("_Internal");
+		const FString _LoadFlags = TEXT("_LoadFlags");
+	}
+}
+
 UENUM(BlueprintType)
 namespace ECsLoadCode
 {

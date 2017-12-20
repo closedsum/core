@@ -4,6 +4,16 @@
 #include "Common/CsCommon.h"
 #include "Managers/Widget/CsSimpleWidget.h"
 
+namespace ECsManagerWidgetCachedString
+{
+	namespace Str
+	{
+		const FString OnTick = TEXT("UCsManager_Widget::OnTick");
+		const FString DeAllocate = TEXT("UCsManager_Widget::DeAllocate");
+		const FString Show = TEXT("UCsManager_Widget::Show");
+	}
+}
+
 UCsManager_Widget::UCsManager_Widget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -57,6 +67,29 @@ void UCsManager_Widget::CreatePool(const TSubclassOf<class UObject> &ObjectClass
 	Pools.Add(Type, WidgetPool);
 }
 
+void UCsManager_Widget::AddToActivePool(UObject* InObject, const TCsSimpleWidgetType& Type)
+{
+	checkf(InObject, TEXT("UCsManager_Widget::AddToActivePool: InObject is NULL."));
+
+	UCsSimpleWidget* Widget = Cast<UCsSimpleWidget>(InObject);
+
+	checkf(Widget, TEXT("UCsManager_Widget::AddToActivePool: InObject (%s) is NOT type UCsSimpleWidget."), *InObject->GetClass()->GetName());
+
+	Widget->Cache.IsAllocated = true;
+
+	if (TArray<UCsSimpleWidget*>* WidgetsPtr = ActiveWidgets.Find(Type))
+	{
+		WidgetsPtr->Add(Widget);
+	}
+	else
+	{
+		TArray<UCsSimpleWidget*> Widgets;
+		Widgets.Add(Widget);
+		ActiveWidgets.Add(Type, Widgets);
+	}
+	//Widget->Cache.OnDeAllocate_Event.AddUObject(this, &UCsManager_Widget::OnDeAllocate);
+}
+
 void UCsManager_Widget::OnTick(const float &DeltaSeconds)
 {
 	const int32 PoolCount = ActiveWidgets.Num();
@@ -79,7 +112,7 @@ void UCsManager_Widget::OnTick(const float &DeltaSeconds)
 			{
 				UE_LOG(LogCs, Warning, TEXT("UCsManager_Widget::OnTick: SimpleWidget: %s at PoolIndex: %s was prematurely deallocted NOT in a normal way."), *(Widget->GetName()), Widget->Cache.Index);
 
-				LogTransaction(TEXT("UCsManager_Widget::OnTick"), ECsPoolTransaction::Deallocate, Widget);
+				LogTransaction(ECsManagerWidgetCachedString::Str::OnTick, ECsPoolTransaction::Deallocate, Widget);
 
 				WidgetsPtr->RemoveAt(J);
 
@@ -93,7 +126,7 @@ void UCsManager_Widget::OnTick(const float &DeltaSeconds)
 
 			if (GetWorld()->GetTimeSeconds() - Widget->Cache.Time > Widget->Cache.LifeTime)
 			{
-				LogTransaction(TEXT("ACsManager_InteractiveActor::OnTick"), ECsPoolTransaction::Deallocate, Widget);
+				LogTransaction(ECsManagerWidgetCachedString::Str::OnTick, ECsPoolTransaction::Deallocate, Widget);
 
 				Widget->DeAllocate();
 				WidgetsPtr->RemoveAt(J);
@@ -117,9 +150,28 @@ void UCsManager_Widget::OnTick(const float &DeltaSeconds)
 	}
 }
 
+int32 UCsManager_Widget::GetActivePoolSize(const TCsSimpleWidgetType& Type)
+{
+	TArray<UCsSimpleWidget*>* WidgetsPtr = ActiveWidgets.Find(Type);
+
+	if (!WidgetsPtr)
+		return CS_EMPTY;
+	return WidgetsPtr->Num();
+}
+
+bool UCsManager_Widget::IsExhausted(const TCsSimpleWidgetType &Type)
+{
+	TArray<UCsSimpleWidget*>* PoolPtr = Pools.Find(Type);
+
+	if (!PoolPtr)
+		return true;
+
+	return GetActivePoolSize(Type) >= PoolPtr->Num();
+}
+
 void UCsManager_Widget::LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, UObject* InObject)
 {
-	if (CsCVarLogManagerProjectileTransactions->GetInt() == CS_CVAR_SHOW_LOG)
+	//if (CsCVarLogManagerProjectileTransactions->GetInt() == CS_CVAR_SHOW_LOG)
 	{
 		/*
 		ACsProjectile* Projectile = Cast<ACsProjectile>(InObject);
@@ -158,7 +210,7 @@ void UCsManager_Widget::LogTransaction(const FString &FunctionName, const TEnumA
 	}
 }
 
-UCsSimpleWidget* UCsManager_Widget::Allocate(const ECsSimpleWidgetType &Type)
+UCsSimpleWidget* UCsManager_Widget::Allocate(const TCsSimpleWidgetType &Type)
 {
 	TArray<UCsSimpleWidget*>* WidgetPool = Pools.Find(Type);
 	const uint16 Size					 = *(PoolSizes.Find(Type));
@@ -185,16 +237,21 @@ UCsSimpleWidget* UCsManager_Widget::Allocate(const ECsSimpleWidgetType &Type)
 	return nullptr;
 }
 
-void UCsManager_Widget::DeAllocate(const int32 &Index)
+void UCsManager_Widget::DeAllocate(const TCsSimpleWidgetType &Type, const int32 &Index)
 {
-	const uint16 Count = ActiveWidgets.Num();
+	TArray<UCsSimpleWidget*>* Widgets = ActiveWidgets.Find(Type);
 
-	if (Count == CS_EMPTY)
+	if (!Widgets)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Widget::DeAllocate: InteractiveActor of Type: %s at PoolIndex: %d is already deallocated."), *(ECsSimpleWidgetType::ToString(Type)), Index);
 		return;
+	}
+
+	const uint8 Count = Widgets->Num();
 
 	for (int32 I = Count - 1; I >= 0; I--)
 	{
-		UCsSimpleWidget* Widget = ActiveWidgets[I];
+		UCsSimpleWidget* Widget = (*Widgets)[I];
 
 		// Update ActiveIndex
 		if (I > CS_FIRST)
@@ -204,8 +261,17 @@ void UCsManager_Widget::DeAllocate(const int32 &Index)
 
 		if (Widget->Cache.Index == Index)
 		{
+			LogTransaction(ECsManagerWidgetCachedString::Str::DeAllocate, ECsPoolTransaction::Deallocate, Widget);
+
 			Widget->DeAllocate();
-			ActiveWidgets.RemoveAt(I);
+			Widgets->RemoveAt(I);
+
+			/*
+#if WITH_EDITOR
+			OnDeAllocateEX_ScriptEvent.Broadcast(Index, I, Actor->Cache.Type);
+#endif // #if WITH_EDITOR
+			OnDeAllocateEX_Internal_Event.Broadcast(Index, I, (TCsInteractiveType)Actor->Cache.Type);
+			*/
 			return;
 		}
 	}
@@ -213,26 +279,25 @@ void UCsManager_Widget::DeAllocate(const int32 &Index)
 	// Correct on Cache "Miss"
 	for (int32 I = 1; I < Count; I++)
 	{
-		UCsSimpleWidget* Widget = ActiveWidgets[I];
+		UCsSimpleWidget* Widget = (*Widgets)[I];
 		// Reset ActiveIndex
 		Widget->Cache.SetActiveIndex(I);
 	}
-	UE_LOG(LogCs, Warning, TEXT("UCsManager_Widget::DeAllocate: Widget at PoolIndex: %d is already deallocated."), Index);
+	UE_LOG(LogCs, Warning, TEXT("UCsManager_Widget::DeAllocate: SimpleWidget of Type: %s at PoolIndex: %d is already deallocated."), *(ECsSimpleWidgetType::ToString(Type)), Index);
 }
 
 // Show
 #pragma region
 
-UCsSimpleWidget* UCsManager_Widget::Show(FCsSimpleWidgetPayload* Payload, UObject* InOwner, UObject* InParent)
+UCsSimpleWidget* UCsManager_Widget::Show(const TCsSimpleWidgetType &Type, FCsSimpleWidgetPayload* Payload, UObject* InOwner, UObject* InParent)
 {
-	UCsSimpleWidget* Widget = Allocate();
-	const int32 Count		= ActiveWidgets.Num();
+	UCsSimpleWidget* Widget = Allocate(Type);
 
-	Widget->Allocate((uint16)Count, Payload, CurrentWorld->GetTimeSeconds(), CurrentWorld->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(CurrentWorld), InOwner, InParent);
+	Widget->Allocate(GetActivePoolSize(Type), Payload, CurrentWorld->GetTimeSeconds(), CurrentWorld->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(CurrentWorld), InOwner, InParent);
 
-	//LogTransaction(TEXT("ACsManager_Projectile::Fire"), ECsPoolTransaction::Allocate, Projectile);
+	LogTransaction(ECsManagerWidgetCachedString::Str::Show, ECsPoolTransaction::Allocate, Widget);
 
-	ActiveWidgets.Add(Widget);
+	AddToActivePool(Widget, Type);
 	return Widget;
 }
 

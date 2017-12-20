@@ -2,6 +2,7 @@
 #pragma once
 #include "../CoreUObject/Public/UObject/Object.h"
 #include "Types/CsTypes_UI.h"
+#include "Types/CsTypes_Pool.h"
 #include "CsManager_Widget.generated.h"
 
 UCLASS()
@@ -15,6 +16,7 @@ class CSCORE_API UCsManager_Widget : public UObject
 	virtual void Shutdown();
 	virtual void BeginDestroy() override;
 	virtual void CreatePool(const TSubclassOf<class UObject> &ObjectClass, const TCsSimpleWidgetType &Type, const int32 &Size);
+	virtual void AddToActivePool(UObject* InObject, const TCsSimpleWidgetType& Type);
 	virtual void OnTick(const float &DeltaSeconds);
 
 	UWorld* CurrentWorld;
@@ -32,18 +34,22 @@ class CSCORE_API UCsManager_Widget : public UObject
 
 	uint16 PoolIndex;
 
-	TArray<class UCsSimpleWidget*> ActiveWidgets;
+	TMap<TCsSimpleWidgetType, TArray<class UCsSimpleWidget*>> ActiveWidgets;
+
+	virtual int32 GetActivePoolSize(const TCsSimpleWidgetType& Type);
+
+	virtual bool IsExhausted(const TCsSimpleWidgetType &Type);
 
 	virtual void LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, class UObject* InObject);
 
-	class UCsSimpleWidget* Allocate();
+	class UCsSimpleWidget* Allocate(const TCsSimpleWidgetType &Type);
 
-	virtual void DeAllocate(const int32 &Index);
+	virtual void DeAllocate(const TCsSimpleWidgetType &Type, const int32 &Index);
 
 // Show
 #pragma region
 
-	virtual class UCsSimpleWidget* Show(FCsSimpleWidgetPayload* Payload, UObject* InOwner, UObject* InParent);
+	virtual class UCsSimpleWidget* Show(const TCsSimpleWidgetType &Type, FCsSimpleWidgetPayload* Payload, UObject* InOwner, UObject* InParent);
 
 #pragma endregion Show
 };

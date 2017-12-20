@@ -438,7 +438,7 @@ ACsInteractiveActor* ACsManager_InteractiveActor::WakeUp(const TCsInteractiveTyp
 }
 
 template<typename T>
-void ACsInteractiveActor::WakeUp(const TCsInteractiveType &Type, ACsInteractiveActor* &OutActor, ACsData_Interactive* InData, void* Payload, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsManager_InteractiveActor::WakeUp(const TCsInteractiveType &Type, ACsInteractiveActor* &OutActor, ACsData_Interactive* InData, void* Payload, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
 	OutActor = Allocate(Type);
 
@@ -450,13 +450,13 @@ void ACsInteractiveActor::WakeUp(const TCsInteractiveType &Type, ACsInteractiveA
 }
 
 template<typename T>
-void ACsInteractiveActor::WakeUp(const TCsInteractiveType &Type, ACsInteractiveActor* &OutActor, ACsData_Interactive* InData, void* Payload, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsManager_InteractiveActor::WakeUp(const TCsInteractiveType &Type, ACsInteractiveActor* &OutActor, ACsData_Interactive* InData, void* Payload, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
 	WakeUp<T>(Type, OutActor, InData, Payload, nullptr, InOwner, InObject, OnDeAllocate);
 }
 
 template<typename T>
-void ACsInteractiveActor::WakeUp(const TCsInteractiveType &ClassType, ACsInteractiveActor* &OutActor, ACsData_Interactive* InData, void* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsManager_InteractiveActor::WakeUp(const TCsInteractiveType &ClassType, ACsInteractiveActor* &OutActor, ACsData_Interactive* InData, void* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
 	WakeUp<T>(Type, OutActor, InData, Payload, nullptr, nullptr, InObject, OnDeAllocate);
 }

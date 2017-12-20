@@ -27,6 +27,34 @@ namespace ECsLoadCode
 	};
 }
 
+namespace ECsLoadCode
+{
+	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString None = TCsString(TEXT("None"), TEXT("none"), TEXT("none"));
+		const TCsString EditorGetReferencesSuppressLoadFlagsAllWarning = TCsString(TEXT("EditorGetReferencesSuppressLoadFlagsAllWarning"), TEXT("editorgetreferencessuppressloadflagsallwarning"), TEXT("editor get references suppress load flags all warning"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::None) { return Str::None.Value; }
+		if (EType == Type::EditorGetReferencesSuppressLoadFlagsAllWarning) { return Str::EditorGetReferencesSuppressLoadFlagsAllWarning.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::None) { return Type::None; }
+		if (String == Str::EditorGetReferencesSuppressLoadFlagsAllWarning) { return Type::EditorGetReferencesSuppressLoadFlagsAllWarning; }
+		return Type::ECsLoadCode_MAX;
+	}
+}
+
+#define ECS_LOAD_CODE_MAX (uint8)ECsLoadCode::ECsLoadCode_MAX
+typedef ECsLoadCode::Type TCsLoadCode;
+
 UENUM(BlueprintType, meta = (Bitflags))
 enum class ECsLoadFlags : uint8
 {

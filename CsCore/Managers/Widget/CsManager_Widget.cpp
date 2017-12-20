@@ -1,6 +1,7 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Widget/CsManager_Widget.h"
 #include "CsCore.h"
+#include "CsCVars.h"
 #include "Common/CsCommon.h"
 #include "Managers/Widget/CsSimpleWidget.h"
 
@@ -10,6 +11,7 @@ namespace ECsManagerWidgetCachedString
 	{
 		const FString OnTick = TEXT("UCsManager_Widget::OnTick");
 		const FString DeAllocate = TEXT("UCsManager_Widget::DeAllocate");
+		const FString DeAllocateAll = TEXT("UCsManager_Widget::DeAllocateAll");
 		const FString Show = TEXT("UCsManager_Widget::Show");
 	}
 }
@@ -171,42 +173,37 @@ bool UCsManager_Widget::IsExhausted(const TCsSimpleWidgetType &Type)
 
 void UCsManager_Widget::LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, UObject* InObject)
 {
-	//if (CsCVarLogManagerProjectileTransactions->GetInt() == CS_CVAR_SHOW_LOG)
+	if (CsCVarLogManagerWidgetTransactions->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		/*
-		ACsProjectile* Projectile = Cast<ACsProjectile>(InObject);
+		UCsSimpleWidget* Widget = Cast<UCsSimpleWidget>(InObject);
 
-		const FString TransactionAsString = Transaction == ECsPoolTransaction::Allocate ? TEXT("Allocating") : TEXT("DeAllocating");
+		const FString TransactionAsString = ECsPoolTransaction::ToActionString(Transaction);
 
-		const FString ProjectileName   = Projectile->GetName();
-		const FString DataName		   = Projectile->Cache.GetData()->ShortCode.ToString();
-		const float CurrentTime		   = GetWorld()->GetTimeSeconds();
-		const UObject* ProjectileOwner = Projectile->Cache.GetOwner();
-		const FString OwnerName		   = ProjectileOwner ? ProjectileOwner->GetName() : TEXT("None");
-		const UObject* Parent		   = Projectile->Cache.GetParent();
-		const FString ParentName	   = Parent ? Parent->GetName() : TEXT("None");
-		const FString LocationAsString = Projectile->GetActorLocation().ToString();
-		const FString DirectionAsString = Projectile->GetActorRotation().Vector().GetSafeNormal().ToString();
+		const FString WidgetName	   = Widget->GetName();
+		const float CurrentTime		   = Widget->GetWorld()->GetTimeSeconds();
+		const UObject* WidgetOwner	   = Widget->Cache.GetOwner();
+		const FString OwnerName		   = WidgetOwner ? WidgetOwner->GetName() : ECsCachedString::Str::None;
+		const UObject* Parent		   = Widget->Cache.GetParent();
+		const FString ParentName	   = Parent ? Parent->GetName() : ECsCachedString::Str::None;
 
-		if (ProjectileOwner && Parent)
+		if (WidgetOwner && Parent)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s Projectile: %s with Data: %s at %f for %s attached to %s at %s moving at %s."), *FunctionName, *TransactionAsString, *ProjectileName, *DataName, CurrentTime, *OwnerName, *ParentName, *LocationAsString, *DirectionAsString);
+			UE_LOG(LogCs, Warning, TEXT("%s: %s SimpleWidget: %s at %f for %s attached to %s."), *FunctionName, *TransactionAsString, *WidgetName, CurrentTime, *OwnerName, *ParentName);
 		}
 		else
-		if (ProjectileOwner)
+		if (WidgetOwner)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s Projectile: %s with Data: %s at %f for %s at %s moving at %s."), *FunctionName, *TransactionAsString, *ProjectileName, *DataName, CurrentTime, *OwnerName, *LocationAsString, *DirectionAsString);
+			UE_LOG(LogCs, Warning, TEXT("%s: %s SimpleWidget: %s at %f for %s."), *FunctionName, *TransactionAsString, *WidgetName, CurrentTime, *OwnerName);
 		}
 		else
 		if (Parent)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s Projectile: %s with Data: %s at %f attached to %s at %s moving at %s."), *TransactionAsString, *FunctionName, *ProjectileName, *DataName, CurrentTime, *ParentName, *LocationAsString, *DirectionAsString);
+			UE_LOG(LogCs, Warning, TEXT("%s: %s SimpleWidget: %s at %f attached to %s."), *TransactionAsString, *FunctionName, *WidgetName, CurrentTime, *ParentName);
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s Projectile: %s with Data: %s at %f at %s moving at %s."), *FunctionName, *TransactionAsString, *ProjectileName, *DataName, CurrentTime, *LocationAsString, *DirectionAsString);
+			UE_LOG(LogCs, Warning, TEXT("%s: %s SimpleWidget: %s at %f."), *FunctionName, *TransactionAsString, *WidgetName, CurrentTime);
 		}
-		*/
 	}
 }
 
@@ -243,7 +240,7 @@ void UCsManager_Widget::DeAllocate(const TCsSimpleWidgetType &Type, const int32 
 
 	if (!Widgets)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Widget::DeAllocate: InteractiveActor of Type: %s at PoolIndex: %d is already deallocated."), *(ECsSimpleWidgetType::ToString(Type)), Index);
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Widget::DeAllocate: SimpleWidget of Type: %s at PoolIndex: %d is already deallocated."), *(ECsSimpleWidgetType::ToString(Type)), Index);
 		return;
 	}
 
@@ -284,6 +281,29 @@ void UCsManager_Widget::DeAllocate(const TCsSimpleWidgetType &Type, const int32 
 		Widget->Cache.SetActiveIndex(I);
 	}
 	UE_LOG(LogCs, Warning, TEXT("UCsManager_Widget::DeAllocate: SimpleWidget of Type: %s at PoolIndex: %d is already deallocated."), *(ECsSimpleWidgetType::ToString(Type)), Index);
+}
+
+void UCsManager_Widget::DeAllocateAll()
+{
+	for (uint8 I = 0; I < ECS_SIMPLE_WIDGET_TYPE_MAX; I++)
+	{
+		const TCsSimpleWidgetType Type = (TCsSimpleWidgetType)I;
+
+		TArray<UCsSimpleWidget*>* Widgets = ActiveWidgets.Find(Type);
+
+		if (!Widgets)
+			continue;
+
+		const int32 WidgetCount = Widgets->Num();
+
+		for (int32 J = WidgetCount - 1; J >= 0; J--)
+		{
+			LogTransaction(ECsManagerWidgetCachedString::Str::DeAllocateAll, ECsPoolTransaction::Deallocate, (*Widgets)[J]);
+
+			(*Widgets)[J]->DeAllocate();
+			Widgets->RemoveAt(J);
+		}
+	}
 }
 
 // Show

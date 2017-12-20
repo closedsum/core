@@ -45,6 +45,7 @@ class CSCORE_API UCsManager_Widget : public UObject
 	class UCsSimpleWidget* Allocate(const TCsSimpleWidgetType &Type);
 
 	virtual void DeAllocate(const TCsSimpleWidgetType &Type, const int32 &Index);
+	virtual void DeAllocateAll();
 
 // Show
 #pragma region

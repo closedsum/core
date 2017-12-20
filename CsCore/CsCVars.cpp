@@ -361,3 +361,20 @@ TAutoConsoleVariable<int32> CsCVarLogCoroutineRunning(
 );
 
 #pragma endregion Coroutine
+
+// UI
+#pragma region
+
+	// Widget
+#pragma region
+
+TAutoConsoleVariable<int32> CsCVarLogManagerWidgetTransactions(
+	TEXT("log.manager.widget.transactions"),
+	0,
+	TEXT("Log Manager Widget Allocation and DeAllocation."),
+	ECVF_SetByConsole
+);
+
+#pragma endregion Widget
+
+#pragma endregion UI

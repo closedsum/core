@@ -152,3 +152,15 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogCoroutineTransactions;
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogCoroutineRunning;
 
 #pragma endregion Coroutine
+
+// UI
+#pragma region
+
+	// Widget
+#pragma region
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerWidgetTransactions;
+
+#pragma endregion Widget
+
+#pragma endregion UI

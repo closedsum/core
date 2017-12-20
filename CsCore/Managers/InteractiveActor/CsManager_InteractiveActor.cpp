@@ -9,6 +9,17 @@
 // Data
 #include "Data/CsData_Interactive.h"
 
+namespace ECsManagerInteractiveActorCachedString
+{
+	namespace Str
+	{
+		const FString OnTick = TEXT("ACsManager_InteractiveActor::OnTick");
+		const FString DeAllocate = TEXT("ACsManager_InteractiveActor::DeAllocate");
+		const FString DeAllocateAll = TEXT("ACsManager_InteractiveActor::DeAllocateAll");
+		const FString WakeUp = TEXT("ACsManager_InteractiveActor::WakeUp");
+	}
+}
+
 ACsManager_InteractiveActor::ACsManager_InteractiveActor(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	InteractiveTypeToString = nullptr;
@@ -187,7 +198,7 @@ void ACsManager_InteractiveActor::OnTick(const float &DeltaSeconds)
 			{
 				UE_LOG(LogCs, Warning, TEXT("ACsManager_InteractiveActor::OnTick: InteractiveActor: %s at PoolIndex: %s was prematurely deallocted NOT in a normal way."), *(Actor->GetName()), Actor->Cache.Index);
 
-				LogTransaction(TEXT("ACsManager_InteractiveActor::OnTick"), ECsPoolTransaction::Deallocate, Actor);
+				LogTransaction(ECsManagerInteractiveActorCachedString::Str::OnTick, ECsPoolTransaction::Deallocate, Actor);
 
 				ActorsPtr->RemoveAt(J);
 
@@ -201,7 +212,7 @@ void ACsManager_InteractiveActor::OnTick(const float &DeltaSeconds)
 
 			if (GetWorld()->GetTimeSeconds() - Actor->Cache.Time > Actor->Cache.LifeTime)
 			{
-				LogTransaction(TEXT("ACsManager_InteractiveActor::OnTick"), ECsPoolTransaction::Deallocate, Actor);
+				LogTransaction(ECsManagerInteractiveActorCachedString::Str::OnTick, ECsPoolTransaction::Deallocate, Actor);
 
 				Actor->DeAllocate();
 				ActorsPtr->RemoveAt(J);
@@ -276,9 +287,9 @@ void ACsManager_InteractiveActor::LogTransaction(const FString &FunctionName, co
 		const FString TypeAsString = (*InteractiveTypeToString)((TCsInteractiveType)Actor->Cache.Type);
 		const float CurrentTime	   = GetWorld()->GetTimeSeconds();
 		const UObject* ActorOwner  = Actor->Cache.GetOwner();
-		const FString OwnerName	   = ActorOwner ? ActorOwner->GetName() : TEXT("");
+		const FString OwnerName	   = ActorOwner ? ActorOwner->GetName() : ECsCachedString::Str::None;
 		const UObject* Parent	   = Actor->Cache.GetParent();
-		const FString ParentName   = Parent ? Parent->GetName() : TEXT("");
+		const FString ParentName   = Parent ? Parent->GetName() : ECsCachedString::Str::None;
 
 		if (ActorOwner && Parent)
 		{
@@ -354,7 +365,7 @@ void ACsManager_InteractiveActor::DeAllocate(const uint8 &Type, const int32 &Ind
 
 		if (Actor->Cache.Index == Index)
 		{
-			LogTransaction(TEXT("ACsManager_InteractiveActor::DeAllocate"), ECsPoolTransaction::Deallocate, Actor);
+			LogTransaction(ECsManagerInteractiveActorCachedString::Str::DeAllocate, ECsPoolTransaction::Deallocate, Actor);
 
 			Actor->DeAllocate();
 			Actors->RemoveAt(I);
@@ -394,7 +405,7 @@ void ACsManager_InteractiveActor::DeAllocateAll()
 
 		for (int32 J = ActorCount - 1; J >= 0; J--)
 		{
-			LogTransaction(TEXT("ACsManager_InteractiveActor::DeAllocateAll"), ECsPoolTransaction::Deallocate, (*Actors)[J]);
+			LogTransaction(ECsManagerInteractiveActorCachedString::Str::DeAllocateAll, ECsPoolTransaction::Deallocate, (*Actors)[J]);
 
 			(*Actors)[J]->DeAllocate();
 			Actors->RemoveAt(J);
@@ -416,7 +427,7 @@ ACsInteractiveActor* ACsManager_InteractiveActor::WakeUp(const TCsInteractiveTyp
 
 	Actor->Allocate(GetActivePoolSize((uint8)Type), InData, Payload, InOwner, Parent);
 
-	LogTransaction(TEXT("ACsManager_InteractiveActor::WakeUp"), ECsPoolTransaction::Allocate, Actor);
+	LogTransaction(ECsManagerInteractiveActorCachedString::Str::WakeUp, ECsPoolTransaction::Allocate, Actor);
 
 	AddToActivePool(Actor, (uint8)Type);
 	return Actor;
@@ -444,7 +455,7 @@ void ACsManager_InteractiveActor::WakeUp(const TCsInteractiveType &Type, ACsInte
 
 	OutActor->Allocate<T>(GetActivePoolSize((uint8)Type), InData, Payload, InOwner, Parent, InObject, OnDeAllocate);
 
-	LogTransaction(TEXT("ACsManager_InteractiveActor::WakeUp"), ECsPoolTransaction::Allocate, Actor);
+	LogTransaction(ECsManagerInteractiveActorCachedString::Str::WakeUp, ECsPoolTransaction::Allocate, Actor);
 
 	AddToActivePool(Actor, (uint8)Type);
 }

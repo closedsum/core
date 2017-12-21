@@ -85,7 +85,14 @@ void ACsData::PopulateAssetReferences(const bool &CalculateResourceSizes)
 	{
 		AssetReferences[I].References.Reset();
 
-		UCsCommon_Load::GetAssetReferencesFromObject(this, GetClass(), (ECsLoadFlags)I, CalculateResourceSizes, AssetReferences[I].References, GetAssetReferencesFromObject_Internal);
+		int32 LoadCodes = 0;
+
+		if (CalculateResourceSizes)
+			CS_SET_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::CalculateResourceSizes);
+		if (I == Count - 1)
+			CS_SET_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::SuppressLoadFlagsAllWarning);
+
+		UCsCommon_Load::GetAssetReferencesFromObject(this, GetClass(), (ECsLoadFlags)I, AssetReferences[I].References, GetAssetReferencesFromObject_Internal, LoadCodes);
 		
 		AssetReferences[I].CalculateSize();
 	}

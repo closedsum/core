@@ -769,108 +769,94 @@ template<typename T>
 #pragma region
 
 	template<typename T>
-	static void GetAssetReferenceFromAssetObjectProperty(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences)
+	static void GetAssetReferenceFromAssetObjectProperty(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
 	{
+		const FString MemberName = AssetObjectProperty->GetName();
+
+		if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
+			return;
+
 		if (TAssetPtr<T>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<T>>(InObject))
 		{
 			const FStringAssetReference AssetRef = Member->ToStringReference();
 			const FString AssetName				 = AssetRef.ToString();
 
-			if (AssetName == TEXT(""))
+			if (AssetName == ECsCachedString::Str::Empty)
 				return;
 
-			const FString MemberName	 = AssetObjectProperty->GetName();
-			const FString FlagMemberName = MemberName + TEXT("_LoadFlags");
+			OutAssetReferences.AddDefaulted();
 
-			if (UIntProperty* IntProperty = FindField<UIntProperty>(InClass, *FlagMemberName))
-			{
-				if (int32* MemberLoadFlags = IntProperty->ContainerPtrToValuePtr<int32>(InObject))
-				{
-					if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, LoadFlags))
-					{
-						OutAssetReferences.AddDefaulted();
+			const int32 Size = OutAssetReferences.Num();
 
-						const int32 Size = OutAssetReferences.Num();
-
-						FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
-						Reference.Reference				   = AssetName;
-						Reference.Reference_Internal	   = AssetRef;
+			FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
+			Reference.Reference				   = AssetName;
+			Reference.Reference_Internal	   = AssetRef;
 #if WITH_EDITOR
-						if (CalculateResourceSizes)
-						{
-							UObject* Asset = Cast<UObject>(Member->LoadSynchronous());
+			if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::CalculateResourceSizes))
+			{
+				UObject* Asset = Cast<UObject>(Member->LoadSynchronous());
 
-							Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-							Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-							Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
-						}
-#endif // #if WITH_EDITOR
-					}
-				}
+				Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
+				Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
 			}
+#endif // #if WITH_EDITOR
 		}
 	}
 
 	template<typename T>
-	static void GetAssetReferenceFromAssetObjectProperty(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences)
+	static void GetAssetReferenceFromAssetObjectProperty(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
 	{
+		const FString MemberName = AssetObjectProperty->GetName();
+
+		if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
+			return;
+
 		if (TAssetPtr<T>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<T>>(InObject))
 		{
 			const FStringAssetReference AssetRef = Member->ToStringReference();
 			const FString AssetName				 = AssetRef.ToString();
 
-			if (AssetName == TEXT(""))
+			if (AssetName == ECsCachedString::Str::Empty)
 				return;
 
-			const FString MemberName = AssetObjectProperty->GetName();
-			const FString FlagMemberName = MemberName + TEXT("_LoadFlags");
+			OutAssetReferences.AddDefaulted();
 
-			if (UIntProperty* IntProperty = FindField<UIntProperty>(InClass, *FlagMemberName))
-			{
-				if (int32* MemberLoadFlags = IntProperty->ContainerPtrToValuePtr<int32>(InObject))
-				{
-					if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, LoadFlags))
-					{
-						OutAssetReferences.AddDefaulted();
+			const int32 Size = OutAssetReferences.Num();
 
-						const int32 Size = OutAssetReferences.Num();
-
-						FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
-						Reference.Reference				   = AssetName;
-						Reference.Reference_Internal	   = AssetRef;
+			FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
+			Reference.Reference				   = AssetName;
+			Reference.Reference_Internal	   = AssetRef;
 #if WITH_EDITOR
-						if (CalculateResourceSizes)
-						{
-							UObject* Asset = Cast<UObject>(Member->LoadSynchronous());
+			if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::CalculateResourceSizes))
+			{
+				UObject* Asset = Cast<UObject>(Member->LoadSynchronous());
 
-							Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-							Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-							Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
-						}
-#endif // #if WITH_EDITOR
-					}
-				}
+				Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
+				Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
 			}
+#endif // #if WITH_EDITOR
 		}
 	}
 
-	static void GetAssetReferenceFromAssetObjectProperty_AnimMontage(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences);
-	static void GetAssetReferenceFromAssetObjectProperty_AnimMontage(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences);
+	static void GetAssetReferenceFromAssetObjectProperty_AnimMontage(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+	static void GetAssetReferenceFromAssetObjectProperty_AnimMontage(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
 
-	static void GetAssetReferenceFromAssetObjectProperty_AnimSequence(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences);
-	static void GetAssetReferenceFromAssetObjectProperty_AnimSequence(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences);
+	static void GetAssetReferenceFromAssetObjectProperty_AnimSequence(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+	static void GetAssetReferenceFromAssetObjectProperty_AnimSequence(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
 
-	static void GetAssetReferenceFromAssetObjectProperty_AnimBlueprint(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences);
-	static void GetAssetReferenceFromAssetObjectProperty_AnimBlueprint(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences);
+	static void GetAssetReferenceFromAssetObjectProperty_AnimBlueprint(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+	static void GetAssetReferenceFromAssetObjectProperty_AnimBlueprint(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
 
-	static void GetAssetReferenceFromAssetObjectProperty_MaterialInstanceConstant(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences);
-	static void GetAssetReferenceFromAssetObjectProperty_MaterialInstanceConstant(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences);
+	static void GetAssetReferenceFromAssetObjectProperty_MaterialInstanceConstant(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+	static void GetAssetReferenceFromAssetObjectProperty_MaterialInstanceConstant(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
 
-	static void GetAssetReferenceFromAssetObjectProperty_Blueprint(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences);
-	static void GetAssetReferenceFromAssetObjectProperty_Blueprint(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences);
+	static void GetAssetReferenceFromAssetObjectProperty_Blueprint(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+	static void GetAssetReferenceFromAssetObjectProperty_Blueprint(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
 
 	template<typename T>
-	static void GetAssetReferenceFromArrayAssetObjectProperty(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences)
+	static void GetAssetReferenceFromArrayAssetObjectProperty(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
 	{
 		if (TArray<TAssetPtr<T>>* Member = ArrayAssetObjectProperty->ContainerPtrToValuePtr<TArray<TAssetPtr<T>>>(InObject))
 		{
@@ -908,7 +894,7 @@ template<typename T>
 								Reference.Reference				   = AssetName;
 								Reference.Reference_Internal	   = AssetRef;
 #if WITH_EDITOR
-								if (CalculateResourceSizes)
+								if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::CalculateResourceSizes))
 								{
 									UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
 
@@ -924,216 +910,17 @@ template<typename T>
 				return;
 			}
 			// Singleton
-			if (UIntProperty* IntProperty = FindField<UIntProperty>(InClass, *FlagMemberName))
-			{
-				if (int32* MemberLoadFlags = IntProperty->ContainerPtrToValuePtr<int32>(InObject))
-				{
-					if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, LoadFlags))
-					{
-						const int32 Count = Member->Num();
-
-						for (int32 I = 0; I < Count; I++)
-						{
-							const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
-							const FString AssetName				 = AssetRef.ToString();
-
-							if (AssetName == TEXT(""))
-								continue;
-
-							OutAssetReferences.AddDefaulted();
-
-							const int32 Size = OutAssetReferences.Num();
-
-							FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
-							Reference.Reference				   = AssetName;
-							Reference.Reference_Internal	   = AssetRef;
-#if WITH_EDITOR
-							UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
-
-							Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-							Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-							Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
-#endif // #if WITH_EDITOR
-						}
-					}
-				}
-			}
-		}
-	}
-
-	template<typename T>
-	static void GetAssetReferenceFromArrayAssetObjectProperty(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences)
-	{
-		if (TArray<TAssetPtr<T>>* Member = ArrayAssetObjectProperty->ContainerPtrToValuePtr<TArray<TAssetPtr<T>>>(InObject))
-		{
-			const FString MemberName	 = ArrayAssetObjectProperty->GetName();
-			const FString FlagMemberName = MemberName + TEXT("_LoadFlags");
-
-			// Array
-			if (UArrayProperty* ArrayProperty = FindField<UArrayProperty>(InClass, *FlagMemberName))
-			{
-				if (UIntProperty* IntProperty = Cast<UIntProperty>(ArrayProperty->Inner))
-				{
-					if (TArray<int32>* MemberLoadFlags = IntProperty->ContainerPtrToValuePtr<TArray<int32>>(InObject))
-					{
-						const int32 Count	  = Member->Num();
-						const int32 FlagCount = MemberLoadFlags->Num();
-
-						if (Count != FlagCount)
-							return;
-
-						for (int32 I = 0; I < Count; I++)
-						{
-							const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
-							const FString AssetName				 = AssetRef.ToString();
-
-							if (AssetName == TEXT(""))
-								continue;
-
-							if (CS_TEST_BLUEPRINT_BITFLAG((*MemberLoadFlags)[I], LoadFlags))
-							{
-								OutAssetReferences.AddDefaulted();
-
-								const int32 Size = OutAssetReferences.Num();
-
-								FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
-								Reference.Reference				   = AssetName;
-								Reference.Reference_Internal	   = AssetRef;
-#if WITH_EDITOR
-								if (CalculateResourceSizes)
-								{
-									UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
-
-									Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-									Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-									Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
-								}
-#endif // #if WITH_EDITOR
-							}
-						}
-					}
-				}
-				return;
-			}
-			// Singleton
-			if (UIntProperty* IntProperty = FindField<UIntProperty>(InClass, *FlagMemberName))
-			{
-				if (int32* MemberLoadFlags = IntProperty->ContainerPtrToValuePtr<int32>(InObject))
-				{
-					if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, LoadFlags))
-					{
-						const int32 Count = Member->Num();
-
-						for (int32 I = 0; I < Count; I++)
-						{
-							const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
-							const FString AssetName				 = AssetRef.ToString();
-
-							if (AssetName == TEXT(""))
-								continue;
-
-							OutAssetReferences.AddDefaulted();
-
-							const int32 Size = OutAssetReferences.Num();
-
-							FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
-							Reference.Reference				   = AssetName;
-							Reference.Reference_Internal	   = AssetRef;
-#if WITH_EDITOR
-							UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
-
-							Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-							Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-							Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
-#endif // #if WITH_EDITOR
-						}
-					}
-				}
-			}
-		}
-	}
-
-	template<typename T, int32 SIZE>
-	static void GetAssetReferenceFromFixedArrayAssetObjectProperty_EnumSize(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences)
-	{
-		if (TAssetPtr<T>(*Member)[SIZE] = ArrayAssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<T>[SIZE]>(InObject))
-		{
-			const FString MemberName	 = ArrayAssetObjectProperty->GetName();
-			const FString FlagMemberName = MemberName + TEXT("_LoadFlags");
-
-			// Singleton
-			if (UIntProperty* IntProperty = FindField<UIntProperty>(InClass, *FlagMemberName))
-			{
-				if (int32* MemberLoadFlags = IntProperty->ContainerPtrToValuePtr<int32>(InObject))
-				{
-					if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, LoadFlags))
-					{
-						for (int32 I = 0; I < SIZE; I++)
-						{
-							const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
-							const FString AssetName				 = AssetRef.ToString();
-
-							if (AssetName == TEXT(""))
-								continue;
-
-							OutAssetReferences.AddDefaulted();
-
-							const int32 Size = OutAssetReferences.Num();
-
-							FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
-							Reference.Reference				   = AssetName;
-							Reference.Reference_Internal	   = AssetRef;
-#if WITH_EDITOR
-							if (CalculateResourceSizes)
-							{
-								UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
-
-								Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-								Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-								Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
-							}
-#endif // #if WITH_EDITOR
-						}
-					}
-				}
-			}
-		}
-	}
-
-	static void GetAssetReferenceFromArrayAssetObjectProperty_AnimMontage(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences);
-	static void GetAssetReferenceFromArrayAssetObjectProperty_AnimMontage(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences);
-
-	static void GetAssetReferenceFromArrayAssetObjectProperty_AnimSequence(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences);
-	static void GetAssetReferenceFromArrayAssetObjectProperty_AnimSequence(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences);
-
-	static void GetAssetReferenceFromArrayAssetObjectProperty_MaterialInstanceConstant(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences);
-	static void GetAssetReferenceFromArrayAssetObjectProperty_MaterialInstanceConstant(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences);
-
-	template<int32 SIZE>
-	static void GetAssetReferenceFromFixedArrayAssetObjectProperty_EnumSize_MaterialInstanceConstant(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences)
-	{
-		if (TAssetPtr<UMaterialInstanceConstant>(*Member)[SIZE] = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UMaterialInstanceConstant>[SIZE]>(InObject))
-		{
-			const FString MemberName	 = AssetObjectProperty->GetName();
-			const FString FlagMemberName = MemberName + TEXT("_LoadFlags");
-
-			int32* MemberLoadFlags = nullptr;
-
-			if (UIntProperty* IntProperty = FindField<UIntProperty>(InClass, *FlagMemberName))
-				MemberLoadFlags	= IntProperty->ContainerPtrToValuePtr<int32>(InObject);
-
-			if (!MemberLoadFlags)
+			if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
 				return;
 
-			if (!CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, LoadFlags))
-				return;
+			const int32 Count = Member->Num();
 
-			for (int32 I = 0; I < SIZE; I++)
+			for (int32 I = 0; I < Count; I++)
 			{
 				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 				const FString AssetName				 = AssetRef.ToString();
 
-				if (AssetName == TEXT(""))
+				if (AssetName == ECsCachedString::Str::Empty)
 					continue;
 
 				OutAssetReferences.AddDefaulted();
@@ -1144,7 +931,179 @@ template<typename T>
 				Reference.Reference				   = AssetName;
 				Reference.Reference_Internal	   = AssetRef;
 #if WITH_EDITOR
-				if (CalculateResourceSizes)
+				UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
+
+				Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
+				Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+#endif // #if WITH_EDITOR
+			}
+		}
+	}
+
+	template<typename T>
+	static void GetAssetReferenceFromArrayAssetObjectProperty(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
+	{
+		if (TArray<TAssetPtr<T>>* Member = ArrayAssetObjectProperty->ContainerPtrToValuePtr<TArray<TAssetPtr<T>>>(InObject))
+		{
+			const FString MemberName	 = ArrayAssetObjectProperty->GetName();
+			const FString FlagMemberName = MemberName + TEXT("_LoadFlags");
+
+			// Array
+			if (UArrayProperty* ArrayProperty = FindField<UArrayProperty>(InClass, *FlagMemberName))
+			{
+				if (UIntProperty* IntProperty = Cast<UIntProperty>(ArrayProperty->Inner))
+				{
+					if (TArray<int32>* MemberLoadFlags = IntProperty->ContainerPtrToValuePtr<TArray<int32>>(InObject))
+					{
+						const int32 Count	  = Member->Num();
+						const int32 FlagCount = MemberLoadFlags->Num();
+
+						if (Count != FlagCount)
+							return;
+
+						for (int32 I = 0; I < Count; I++)
+						{
+							const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
+							const FString AssetName				 = AssetRef.ToString();
+
+							if (AssetName == ECsCachedString::Str::Empty)
+								continue;
+
+							if (CS_TEST_BLUEPRINT_BITFLAG((*MemberLoadFlags)[I], LoadFlags))
+							{
+								OutAssetReferences.AddDefaulted();
+
+								const int32 Size = OutAssetReferences.Num();
+
+								FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
+								Reference.Reference				   = AssetName;
+								Reference.Reference_Internal	   = AssetRef;
+#if WITH_EDITOR
+								if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::CalculateResourceSizes))
+								{
+									UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
+
+									Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
+									Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
+									Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+								}
+#endif // #if WITH_EDITOR
+							}
+						}
+					}
+				}
+				return;
+			}
+			// Singleton
+			const FString MemberName = AssetObjectProperty->GetName();
+
+			if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
+				return;
+
+			const int32 Count = Member->Num();
+
+			for (int32 I = 0; I < Count; I++)
+			{
+				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
+				const FString AssetName				 = AssetRef.ToString();
+
+				if (AssetName == ECsCachedString::Str::Empty)
+					continue;
+
+				OutAssetReferences.AddDefaulted();
+
+				const int32 Size = OutAssetReferences.Num();
+
+				FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
+				Reference.Reference				   = AssetName;
+				Reference.Reference_Internal	   = AssetRef;
+#if WITH_EDITOR
+				UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
+
+				Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
+				Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+#endif // #if WITH_EDITOR
+			}
+		}
+	}
+
+	template<typename T, int32 SIZE>
+	static void GetAssetReferenceFromFixedArrayAssetObjectProperty_EnumSize(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
+	{
+		const FString MemberName = AssetObjectProperty->GetName();
+
+		if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
+			return;
+
+		if (TAssetPtr<T>(*Member)[SIZE] = ArrayAssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<T>[SIZE]>(InObject))
+		{
+			for (int32 I = 0; I < SIZE; I++)
+			{
+				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
+				const FString AssetName				 = AssetRef.ToString();
+
+				if (AssetName == ECsCachedString::Str::Empty)
+					continue;
+
+				OutAssetReferences.AddDefaulted();
+
+				const int32 Size = OutAssetReferences.Num();
+
+				FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
+				Reference.Reference				   = AssetName;
+				Reference.Reference_Internal	   = AssetRef;
+#if WITH_EDITOR
+				if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::CalculateResourceSizes))
+				{
+					UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
+
+					Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
+					Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
+					Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+				}
+#endif // #if WITH_EDITOR
+			}
+		}
+	}
+
+	static void GetAssetReferenceFromArrayAssetObjectProperty_AnimMontage(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+	static void GetAssetReferenceFromArrayAssetObjectProperty_AnimMontage(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+
+	static void GetAssetReferenceFromArrayAssetObjectProperty_AnimSequence(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+	static void GetAssetReferenceFromArrayAssetObjectProperty_AnimSequence(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+
+	static void GetAssetReferenceFromArrayAssetObjectProperty_MaterialInstanceConstant(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+	static void GetAssetReferenceFromArrayAssetObjectProperty_MaterialInstanceConstant(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+
+	template<int32 SIZE>
+	static void GetAssetReferenceFromFixedArrayAssetObjectProperty_EnumSize_MaterialInstanceConstant(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
+	{
+		const FString MemberName = AssetObjectProperty->GetName();
+
+		if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
+			return;
+
+		if (TAssetPtr<UMaterialInstanceConstant>(*Member)[SIZE] = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UMaterialInstanceConstant>[SIZE]>(InObject))
+		{
+			for (int32 I = 0; I < SIZE; I++)
+			{
+				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
+				const FString AssetName				 = AssetRef.ToString();
+
+				if (AssetName == ECsCachedString::Str::Empty)
+					continue;
+
+				OutAssetReferences.AddDefaulted();
+
+				const int32 Size = OutAssetReferences.Num();
+
+				FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
+				Reference.Reference				   = AssetName;
+				Reference.Reference_Internal	   = AssetRef;
+#if WITH_EDITOR
+				if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::CalculateResourceSizes))
 				{
 					UMaterialInstanceConstant* Asset = Cast<UMaterialInstanceConstant>((*Member)[I].LoadSynchronous());
 
@@ -1168,25 +1127,25 @@ template<typename T>
 		}
 	}
 
-	static void GetAssetReferenceFromArrayAssetObjectProperty_Blueprint(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences);
-	static void GetAssetReferenceFromArrayAssetObjectProperty_Blueprint(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences);
+	static void GetAssetReferenceFromArrayAssetObjectProperty_Blueprint(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+	static void GetAssetReferenceFromArrayAssetObjectProperty_Blueprint(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
 
 	template<int32 SIZE>
-	static void GetAssetReferenceFromFixedArrayAssetObjectProperty_Blueprint_EnumSize(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences)
+	static void GetAssetReferenceFromFixedArrayAssetObjectProperty_Blueprint_EnumSize(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
 	{
+		const FString MemberName = AssetObjectProperty->GetName();
+
+		if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
+			return;
+
 		if (TAssetPtr<UBlueprint>(*Member)[SIZE] = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UBlueprint>[SIZE]>(InObject))
 		{
-			const FString MemberName = AssetObjectProperty->GetName();
-
-			if (!CanLoad(InObject, InClass, MemberName, LoadFlags))
-				return;
-
 			for (int32 I = 0; I < SIZE; I++)
 			{
 				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 				const FString AssetName				 = AssetRef.ToString();
 
-				if (AssetName == TEXT(""))
+				if (AssetName == ECsCachedString::Str::Empty)
 					continue;
 
 				OutAssetReferences.AddDefaulted();
@@ -1194,10 +1153,10 @@ template<typename T>
 				const int32 Size = OutAssetReferences.Num();
 				// TODO: Fix / Investigate. 4.16.1. Built Game (Okay in Editor). TAssetPtr for UAnimBlueprint / UWidgetBlueprint does NOT have _C
 				FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
-				Reference.Reference				   = AssetName.EndsWith(TEXT("_C")) ? AssetName : AssetName + TEXT("_C");
+				Reference.Reference				   = AssetName.EndsWith(ECsLoadCachedString::Str::_C) ? AssetName : AssetName + ECsLoadCachedString::Str::_C;
 				Reference.Reference_Internal	   = FStringAssetReference(Reference.Reference);
 #if WITH_EDITOR
-				if (CalculateResourceSizes)
+				if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::CalculateResourceSizes))
 				{
 					UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
 
@@ -1211,21 +1170,21 @@ template<typename T>
 	}
 
 	template<int32 SIZE>
-	static void GetAssetReferenceFromFixedArrayAssetObjectProperty_Blueprint_EnumSize(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences)
+	static void GetAssetReferenceFromFixedArrayAssetObjectProperty_Blueprint_EnumSize(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
 	{
+		const FString MemberName = AssetObjectProperty->GetName();
+
+		if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
+			return;
+
 		if (TAssetPtr<UBlueprint>(*Member)[SIZE] = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UBlueprint>[SIZE]>(InObject))
 		{
-			const FString MemberName = AssetObjectProperty->GetName();
-
-			if (!CanLoad(InObject, InClass, MemberName, LoadFlags))
-				return;
-
 			for (int32 I = 0; I < SIZE; I++)
 			{
 				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 				const FString AssetName				 = AssetRef.ToString();
 
-				if (AssetName == TEXT(""))
+				if (AssetName == ECsCachedString::Str::Empty)
 					continue;
 
 				OutAssetReferences.AddDefaulted();
@@ -1233,7 +1192,7 @@ template<typename T>
 				const int32 Size = OutAssetReferences.Num();
 				// TODO: Fix / Investigate. 4.16.1. Built Game (Okay in Editor). TAssetPtr for UWidgetBlueprint does NOT have _C
 				FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
-				Reference.Reference				   = AssetName.EndsWith(TEXT("_C")) ? AssetName : AssetName + TEXT("_C");
+				Reference.Reference				   = AssetName.EndsWith(ECsLoadCachedString::Str::_C) ? AssetName : AssetName + ECsLoadCachedString::Str::_C;
 				Reference.Reference_Internal	   = FStringAssetReference(Reference.Reference);
 #if WITH_EDITOR
 				if (CalculateResourceSizes)
@@ -1250,122 +1209,99 @@ template<typename T>
 	}
 
 	template<typename T, int32 SIZE>
-	static void GetAssetReferencesFromFixedArrayStructProperty_EnumSize(UStructProperty* &StructProperty, void* InObject, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences, TCsGetAssetReferencesFromStruct_Internal Internal = nullptr)
+	static void GetAssetReferencesFromFixedArrayStructProperty_EnumSize(UStructProperty* &StructProperty, void* InObject, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, TCsGetAssetReferencesFromStruct_Internal Internal = nullptr, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
 	{
 		if (T(*Member)[SIZE] = StructProperty->ContainerPtrToValuePtr<T[SIZE]>(InObject))
 		{
 			for (int32 I = 0; I < SIZE; I++)
 			{
-				GetAssetReferencesFromStruct((void*)&((*Member)[I]), StructProperty->Struct, LoadFlags, CalculateResourceSizes, OutAssetReferences, Internal);
+				GetAssetReferencesFromStruct((void*)&((*Member)[I]), StructProperty->Struct, LoadFlags, OutAssetReferences, Internal, LoadCodes);
 			}
 		}
 	}
 
 	template<typename T>
-	static void GetAssetReferenceFromAssetClassProperty(UAssetClassProperty* &AssetClassProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences)
+	static void GetAssetReferenceFromAssetClassProperty(UAssetClassProperty* &AssetClassProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
 	{
+		const FString MemberName = AssetClassProperty->GetName();
+
+		if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
+			return;
+
 		if (TAssetSubclassOf<T>* Member = AssetClassProperty->ContainerPtrToValuePtr<TAssetSubclassOf<T>>(InObject))
 		{
 			const FStringAssetReference AssetRef = Member->ToStringReference();
 			const FString AssetName				 = AssetRef.ToString();
 
-			if (AssetName == TEXT(""))
+			if (AssetName == ECsCachedString::Str::Empty)
 				return;
 
-			const FString MemberName	 = AssetClassProperty->GetName();
-			const FString FlagMemberName = MemberName + TEXT("_LoadFlags");
+			OutAssetReferences.AddDefaulted();
 
-			if (UIntProperty* IntProperty = FindField<UIntProperty>(InClass, *FlagMemberName))
-			{
-				if (int32* MemberLoadFlags = IntProperty->ContainerPtrToValuePtr<int32>(InObject))
-				{
-					if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, LoadFlags))
-					{
-						OutAssetReferences.AddDefaulted();
+			const int32 Size = OutAssetReferences.Num();
 
-						const int32 Size = OutAssetReferences.Num();
-
-						FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
-						Reference.Reference				   = AssetName;
-						Reference.Reference_Internal	   = AssetRef;
+			FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
+			Reference.Reference				   = AssetName;
+			Reference.Reference_Internal	   = AssetRef;
 #if WITH_EDITOR
-						if (CalculateResourceSizes)
-						{
-							UObject* Asset = Cast<UObject>(Member->LoadSynchronous());
+			if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::CalculateResourceSizes))
+			{
+				UObject* Asset = Cast<UObject>(Member->LoadSynchronous());
 
-							Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-							Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-							Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
-						}
-#endif // #if WITH_EDITOR
-					}
-				}
+				Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
+				Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
 			}
+#endif // #if WITH_EDITOR
 		}
 	}
 
 	template<typename T>
-	static void GetAssetReferenceFromAssetClassProperty(UAssetClassProperty* &AssetClassProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences)
+	static void GetAssetReferenceFromAssetClassProperty(UAssetClassProperty* &AssetClassProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
 	{
+		const FString MemberName = AssetClassProperty->GetName();
+
+		if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
+			return;
+
 		if (TAssetSubclassOf<T>* Member = AssetClassProperty->ContainerPtrToValuePtr<TAssetSubclassOf<T>>(InObject))
 		{
 			const FStringAssetReference AssetRef = Member->ToStringReference();
 			const FString AssetName				 = AssetRef.ToString();
 
-			if (AssetName == TEXT(""))
+			if (AssetName == ECsCachedString::Str::Empty)
 				return;
 
-			const FString MemberName = AssetClassProperty->GetName();
-			const FString FlagMemberName = MemberName + TEXT("_LoadFlags");
+			OutAssetReferences.AddDefaulted();
 
-			if (UIntProperty* IntProperty = FindField<UIntProperty>(InClass, *FlagMemberName))
-			{
-				if (int32* MemberLoadFlags = IntProperty->ContainerPtrToValuePtr<int32>(InObject))
-				{
-					if (CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, LoadFlags))
-					{
-						OutAssetReferences.AddDefaulted();
+			const int32 Size = OutAssetReferences.Num();
 
-						const int32 Size = OutAssetReferences.Num();
-
-						FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
-						Reference.Reference				   = AssetName;
-						Reference.Reference_Internal	   = AssetRef;
+			FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
+			Reference.Reference				   = AssetName;
+			Reference.Reference_Internal	   = AssetRef;
 #if WITH_EDITOR
-						if (CalculateResourceSizes)
-						{
-							UObject* Asset = Cast<UObject>(Member->LoadSynchronous());
+			if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::CalculateResourceSizes))
+			{
+				UObject* Asset = Cast<UObject>(Member->LoadSynchronous());
 
-							Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-							Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-							Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
-						}
-#endif // #if WITH_EDITOR
-					}
-				}
+				Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
+				Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
 			}
+#endif // #if WITH_EDITOR
 		}
 	}
 
 	template<typename T>
-	static void GetAssetReferenceFromArrayAssetClassProperty(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences)
+	static void GetAssetReferenceFromArrayAssetClassProperty(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
 	{
+		const FString MemberName = ArrayAssetObjectProperty->GetName();
+
+		if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
+			return;
+
 		if (TArray<TAssetSubclassOf<T>>* Member = ArrayAssetObjectProperty->ContainerPtrToValuePtr<TArray<TAssetSubclassOf<T>>>(InObject))
 		{
-			const FString MemberName	 = ArrayAssetObjectProperty->GetName();
-			const FString FlagMemberName = MemberName + TEXT("_LoadFlags");
-
-			int32* MemberLoadFlags = nullptr;
-
-			if (UIntProperty* IntProperty = FindField<UIntProperty>(InClass, *FlagMemberName))
-				MemberLoadFlags = IntProperty->ContainerPtrToValuePtr<int32>(InObject);
-
-			if (!MemberLoadFlags)
-				return;
-
-			if (!CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, LoadFlags))
-				return;
-
 			const int32 Count = Member->Num();
 
 			for (int32 I = 0; I < Count; I++)
@@ -1373,7 +1309,48 @@ template<typename T>
 				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 				const FString AssetName				 = AssetRef.ToString();
 
-				if (AssetName == TEXT(""))
+				if (AssetName == ECsCachedString::Str::Empty)
+					continue;
+
+				OutAssetReferences.AddDefaulted();
+
+				const int32 Size = OutAssetReferences.Num();
+
+				FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
+				Reference.Reference				   = AssetName;
+				Reference.Reference_Internal	   = AssetRef;
+#if WITH_EDITOR
+				if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::CalculateResourceSizes))
+				{
+					UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
+
+					Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
+					Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
+					Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+				}
+#endif // #if WITH_EDITOR
+			}
+		}
+	}
+
+	template<typename T>
+	static void GetAssetReferenceFromArrayAssetClassProperty(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
+	{
+		const FString MemberName = ArrayAssetObjectProperty->GetName();
+
+		if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
+			return;
+
+		if (TArray<TAssetSubclassOf<T>>* Member = ArrayAssetObjectProperty->ContainerPtrToValuePtr<TArray<TAssetSubclassOf<T>>>(InObject))
+		{
+			const int32 Count = Member->Num();
+
+			for (int32 I = 0; I < Count; I++)
+			{
+				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
+				const FString AssetName				 = AssetRef.ToString();
+
+				if (AssetName == ECsCachedString::Str::Empty)
 					continue;
 
 				OutAssetReferences.AddDefaulted();
@@ -1398,64 +1375,14 @@ template<typename T>
 	}
 
 	template<typename T>
-	static void GetAssetReferenceFromArrayAssetClassProperty(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences)
-	{
-		if (TArray<TAssetSubclassOf<T>>* Member = ArrayAssetObjectProperty->ContainerPtrToValuePtr<TArray<TAssetSubclassOf<T>>>(InObject))
-		{
-			const FString MemberName	 = ArrayAssetObjectProperty->GetName();
-			const FString FlagMemberName = MemberName + TEXT("_LoadFlags");
-
-			int32* MemberLoadFlags = nullptr;
-
-			if (UIntProperty* IntProperty = FindField<UIntProperty>(InClass, *FlagMemberName))
-				MemberLoadFlags = IntProperty->ContainerPtrToValuePtr<int32>(InObject);
-
-			if (!MemberLoadFlags)
-				return;
-
-			if (!CS_TEST_BLUEPRINT_BITFLAG(*MemberLoadFlags, LoadFlags))
-				return;
-
-			const int32 Count = Member->Num();
-
-			for (int32 I = 0; I < Count; I++)
-			{
-				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
-				const FString AssetName				 = AssetRef.ToString();
-
-				if (AssetName == TEXT(""))
-					continue;
-
-				OutAssetReferences.AddDefaulted();
-
-				const int32 Size = OutAssetReferences.Num();
-
-				FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
-				Reference.Reference				   = AssetName;
-				Reference.Reference_Internal	   = AssetRef;
-#if WITH_EDITOR
-				if (CalculateResourceSizes)
-				{
-					UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
-
-					Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-					Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-					Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
-				}
-#endif // #if WITH_EDITOR
-			}
-		}
-	}
-
-	template<typename T>
-	static void GetAssetReferencesFromStructProperty(UStructProperty* &StructProperty, void* InObject, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences, TCsGetAssetReferencesFromStruct_Internal Internal = nullptr)
+	static void GetAssetReferencesFromStructProperty(UStructProperty* &StructProperty, void* InObject, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, TCsGetAssetReferencesFromStruct_Internal Internal = nullptr, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
 	{
 		if (T* Member = StructProperty->ContainerPtrToValuePtr<T>(InObject))
-			GetAssetReferencesFromStruct((void*)Member, StructProperty->Struct, LoadFlags, CalculateResourceSizes, OutAssetReferences, Internal);
+			GetAssetReferencesFromStruct((void*)Member, StructProperty->Struct, LoadFlags, OutAssetReferences, Internal, LoadCodes);
 	}
 
 	template<typename T>
-	static void GetAssetReferencesFromArrayStructProperty(UArrayProperty* ArrayProperty, void* InObject, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences, TCsGetAssetReferencesFromStruct_Internal Internal = nullptr)
+	static void GetAssetReferencesFromArrayStructProperty(UArrayProperty* ArrayProperty, void* InObject, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, TCsGetAssetReferencesFromStruct_Internal Internal = nullptr, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
 	{
 		if (TArray<T>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<T>>(InObject))
 		{
@@ -1465,15 +1392,15 @@ template<typename T>
 
 			for (int32 I = 0; I < Count; I++)
 			{
-				GetAssetReferencesFromStruct((void*)&((*Member)[I]), StructProperty->Struct, LoadFlags, CalculateResourceSizes, OutAssetReferences, Internal);
+				GetAssetReferencesFromStruct((void*)&((*Member)[I]), StructProperty->Struct, LoadFlags, OutAssetReferences, Internal, LoadCodes);
 			}
 		}
 	}
 
 #pragma endregion CsStringAssetReference
 
-	static void GetAssetReferencesFromStruct(void* InStruct, UScriptStruct* const &InScriptStruct, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences, TCsGetAssetReferencesFromStruct_Internal Internal = nullptr);
-	static void GetAssetReferencesFromObject(void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, const bool &CalculateResourceSizes, TArray<FCsStringAssetReference> &OutAssetReferences, TCsGetAssetReferencesFromObject_Internal Internal = nullptr);
+	static void GetAssetReferencesFromStruct(void* InStruct, UScriptStruct* const &InScriptStruct, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, TCsGetAssetReferencesFromStruct_Internal Internal = nullptr, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+	static void GetAssetReferencesFromObject(void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, TCsGetAssetReferencesFromObject_Internal Internal = nullptr, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
 
 #pragma endregion Asset References
 
@@ -2043,15 +1970,15 @@ template<typename T>
 	static void LoadFCsFpsAnimMontage(const FString &MemberName, struct FCsFpsAnimMontage* Anim, const ECsLoadFlags &LoadFlags);
 	static void LoadFCsFpsAnimMontage(const FString &MemberName, struct FCsFpsAnimMontage* Anim, const TCsViewType &ViewType);
 
-	static bool CanLoad(void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags);
-	static bool CanLoad(void* InObject, UClass* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags);
+	static bool CanLoad(void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags, const int32 &LoadCodes);
+	static bool CanLoad(void* InObject, UClass* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags, const int32 &LoadCodes);
 
 	template<typename T>
 	static void LoadAssetClassProperty(UAssetClassProperty* &AssetClassProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName, const FString &AssetType, const ECsLoadFlags &LoadFlags)
 	{
 		if (TAssetSubclassOf<T>* Member = AssetClassProperty->ContainerPtrToValuePtr<TAssetSubclassOf<T>>(InObject))
 		{
-			if (!CanLoad(InObject, InClass, MemberName, LoadFlags))
+			if (!CanLoad(InObject, InClass, MemberName, LoadFlags, 0))
 				return;
 
 			const FString InternalMemberName = MemberName + TEXT("_Internal");
@@ -2069,7 +1996,7 @@ template<typename T>
 	{
 		if (TAssetSubclassOf<T>* Member = AssetClassProperty->ContainerPtrToValuePtr<TAssetSubclassOf<T>>(InObject))
 		{
-			if (!CanLoad(InObject, InClass, MemberName, LoadFlags))
+			if (!CanLoad(InObject, InClass, MemberName, LoadFlags, 0))
 				return;
 
 			const FString InternalMemberName = MemberName + TEXT("_Internal");
@@ -2087,7 +2014,7 @@ template<typename T>
 	{
 		if (TArray<TAssetSubclassOf<T>>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<TAssetSubclassOf<T>>>(InObject))
 		{
-			if (!CanLoad(InObject, InClass, MemberName, LoadFlags))
+			if (!CanLoad(InObject, InClass, MemberName, LoadFlags, 0))
 				return;
 
 			const FString InternalMemberName = MemberName + TEXT("_Internal");
@@ -2105,7 +2032,7 @@ template<typename T>
 	{
 		if (TArray<TAssetSubclassOf<T>>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<TAssetSubclassOf<T>>>(InObject))
 		{
-			if (!CanLoad(InObject, InClass, MemberName, LoadFlags))
+			if (!CanLoad(InObject, InClass, MemberName, LoadFlags, 0))
 				return;
 
 			const FString InternalMemberName = MemberName + TEXT("_Internal");
@@ -2123,7 +2050,7 @@ template<typename T>
 	{
 		if (TAssetPtr<T>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<T>>(InObject))
 		{
-			if (!CanLoad(InObject, InClass, MemberName, LoadFlags))
+			if (!CanLoad(InObject, InClass, MemberName, LoadFlags, 0))
 				return;
 
 			const FString InternalMemberName = MemberName + TEXT("_Internal");
@@ -2141,7 +2068,7 @@ template<typename T>
 	{
 		if (TAssetPtr<T>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<T>>(InObject))
 		{
-			if (!CanLoad(InObject, InClass, MemberName, LoadFlags))
+			if (!CanLoad(InObject, InClass, MemberName, LoadFlags, 0))
 				return;
 
 			const FString InternalMemberName = MemberName + TEXT("_Internal");
@@ -2165,7 +2092,7 @@ template<typename T>
 	{
 		if (TArray<TAssetPtr<T>>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<TAssetPtr<T>>>(InObject))
 		{
-			if (!CanLoad(InObject, InClass, MemberName, LoadFlags))
+			if (!CanLoad(InObject, InClass, MemberName, LoadFlags, 0))
 				return;
 
 			const FString InternalMemberName = MemberName + TEXT("_Internal");
@@ -2183,7 +2110,7 @@ template<typename T>
 	{
 		if (TArray<TAssetPtr<T>>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<TAssetPtr<T>>>(InObject))
 		{
-			if (!CanLoad(InObject, InClass, MemberName, LoadFlags))
+			if (!CanLoad(InObject, InClass, MemberName, LoadFlags, 0))
 				return;
 
 			const FString InternalMemberName = MemberName + TEXT("_Internal");
@@ -2201,7 +2128,7 @@ template<typename T>
 	{
 		if (TAssetPtr<T>(*Member)[SIZE] = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<T>[SIZE]>(InObject))
 		{
-			if (!CanLoad(InObject, InClass, MemberName, LoadFlags))
+			if (!CanLoad(InObject, InClass, MemberName, LoadFlags, 0))
 				return;
 
 			const FString InternalMemberName = MemberName + TEXT("_Internal");
@@ -2230,7 +2157,7 @@ template<typename T>
 	{
 		if (TAssetPtr<UBlueprint>(*Member)[SIZE] = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UBlueprint>[SIZE]>(InObject))
 		{
-			if (!CanLoad(InObject, InClass, MemberName, LoadFlags))
+			if (!CanLoad(InObject, InClass, MemberName, LoadFlags, 0))
 				return;
 
 			const FString InternalMemberName = MemberName + TEXT("_Internal");
@@ -2255,7 +2182,7 @@ template<typename T>
 	{
 		if (TAssetPtr<UBlueprint>(*Member)[SIZE] = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UBlueprint>[SIZE]>(InObject))
 		{
-			if (!CanLoad(InObject, InClass, MemberName, LoadFlags))
+			if (!CanLoad(InObject, InClass, MemberName, LoadFlags, 0))
 				return;
 
 			const FString InternalMemberName = MemberName + TEXT("_Internal");

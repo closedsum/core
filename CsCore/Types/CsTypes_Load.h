@@ -22,47 +22,18 @@ namespace ECsLoadCachedString
 	{
 		const FString _Internal = TEXT("_Internal");
 		const FString _LoadFlags = TEXT("_LoadFlags");
+		const FString _C = TEXT("_C");
 	}
 }
 
-UENUM(BlueprintType)
-namespace ECsLoadCode
+UENUM(BlueprintType, meta = (Bitflags))
+enum class ECsLoadCode : uint8
 {
-	enum Type
-	{
-		None											UMETA(DisplayName = "None"),
-		EditorGetReferencesSuppressLoadFlagsAllWarning	UMETA(DisplayName = "Editor Get References Suppress Load Flags All Warning"),
-		ECsLoadCode_MAX									UMETA(Hidden),
-	};
-}
+	CalculateResourceSizes		UMETA(DisplayName = "Calculate Resource Sizes"),
+	SuppressLoadFlagsAllWarning	UMETA(DisplayName = "Suppress Load Flags All Warning"),
+};
 
-namespace ECsLoadCode
-{
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-		const TCsString None = TCsString(TEXT("None"), TEXT("none"), TEXT("none"));
-		const TCsString EditorGetReferencesSuppressLoadFlagsAllWarning = TCsString(TEXT("EditorGetReferencesSuppressLoadFlagsAllWarning"), TEXT("editorgetreferencessuppressloadflagsallwarning"), TEXT("editor get references suppress load flags all warning"));
-	}
-
-	FORCEINLINE FString ToString(const Type &EType)
-	{
-		if (EType == Type::None) { return Str::None.Value; }
-		if (EType == Type::EditorGetReferencesSuppressLoadFlagsAllWarning) { return Str::EditorGetReferencesSuppressLoadFlagsAllWarning.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::None) { return Type::None; }
-		if (String == Str::EditorGetReferencesSuppressLoadFlagsAllWarning) { return Type::EditorGetReferencesSuppressLoadFlagsAllWarning; }
-		return Type::ECsLoadCode_MAX;
-	}
-}
-
-#define ECS_LOAD_CODE_MAX (uint8)ECsLoadCode::ECsLoadCode_MAX
-typedef ECsLoadCode::Type TCsLoadCode;
+#define ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES 1
 
 UENUM(BlueprintType, meta = (Bitflags))
 enum class ECsLoadFlags : uint8
@@ -493,8 +464,8 @@ typedef bool(*TCsWriteObjectToJson_Internal)(UProperty*, TSharedRef<class TJsonW
 typedef bool(*TCsReadStructFromJson_Internal)(UProperty*, TSharedPtr<class FJsonObject> &, void*, UScriptStruct* const &);
 typedef bool(*TCsReadObjectFromJson_Internal)(UProperty*, TSharedPtr<class FJsonObject> &, void*, UClass* const &);
 // AssetReferences
-typedef bool(*TCsGetAssetReferencesFromStruct_Internal)(UProperty*, void*, UScriptStruct* const &, const ECsLoadFlags&, const bool&, TArray<FCsStringAssetReference>&);
-typedef bool(*TCsGetAssetReferencesFromObject_Internal)(UProperty*, void*, UClass* const &, const ECsLoadFlags&, const bool&, TArray<FCsStringAssetReference>&);
+typedef bool(*TCsGetAssetReferencesFromStruct_Internal)(UProperty*, void*, UScriptStruct* const &, const ECsLoadFlags&, TArray<FCsStringAssetReference>&, const int32&);
+typedef bool(*TCsGetAssetReferencesFromObject_Internal)(UProperty*, void*, UClass* const &, const ECsLoadFlags&, TArray<FCsStringAssetReference>&, const int32&);
 // Load TAssetPtrs
 typedef bool(*TCsLoadStructWithTAssetPtrs_Internal)(UProperty*, const FString&, void*, UScriptStruct* const &, const ECsLoadFlags&);
 typedef bool(*TCsLoadObjectWithTAssetPtrs_Internal)(UProperty*, const FString&, void*, UClass* const &, const ECsLoadFlags&);

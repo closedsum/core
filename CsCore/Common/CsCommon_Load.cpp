@@ -3714,6 +3714,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_AnimMontage(UAsset
 		const FStringAssetReference AssetRef = Member->ToStringReference();
 		const FString AssetName				 = AssetRef.ToString();
 
+		// (AssetName == TEXT(""))
 		if (AssetName == ECsCachedString::Str::Empty)
 			return;
 
@@ -3762,6 +3763,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_AnimMontage(UAsset
 		const FStringAssetReference AssetRef = Member->ToStringReference();
 		const FString AssetName				 = AssetRef.ToString();
 
+		// (AssetName == TEXT(""))
 		if (AssetName == ECsCachedString::Str::Empty)
 			return;
 
@@ -3810,6 +3812,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_AnimSequence(UAsse
 		const FStringAssetReference AssetRef = Member->ToStringReference();
 		const FString AssetName				 = AssetRef.ToString();
 
+		// (AssetName == TEXT(""))
 		if (AssetName == ECsCachedString::Str::Empty)
 			return;
 
@@ -3845,6 +3848,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_AnimSequence(UAsse
 		const FStringAssetReference AssetRef = Member->ToStringReference();
 		const FString AssetName				 = AssetRef.ToString();
 
+		// (AssetName == TEXT(""))
 		if (AssetName == ECsCachedString::Str::Empty)
 			return;
 
@@ -3880,6 +3884,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_MaterialInstanceCo
 		const FStringAssetReference AssetRef = Member->ToStringReference();
 		const FString AssetName				 = AssetRef.ToString();
 
+		// (AssetName == TEXT(""))
 		if (AssetName == ECsCachedString::Str::Empty)
 			return;
 
@@ -3926,6 +3931,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_MaterialInstanceCo
 		const FStringAssetReference AssetRef = Member->ToStringReference();
 		const FString AssetName				 = AssetRef.ToString();
 
+		// (AssetName == TEXT(""))
 		if (AssetName == ECsCachedString::Str::Empty)
 			return;
 
@@ -3972,6 +3978,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_Blueprint(UAssetOb
 		const FStringAssetReference AssetRef = Member->ToStringReference();
 		const FString AssetName				 = AssetRef.ToString();
 
+		// (AssetName == TEXT(""))
 		if (AssetName == ECsCachedString::Str::Empty)
 			return;
 
@@ -3981,6 +3988,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_Blueprint(UAssetOb
 
 		// TODO: Fix / Investigate. 4.16.1. Built Game (Okay in Editor). TAssetPtr for UAnimBlueprint / UWidgetBlueprint does NOT have _C
 		FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
+										  // AssetName.EndsWith(TEXT("_C")) ? AssetName : AssetName + TEXT("_C");
 		Reference.Reference				   = AssetName.EndsWith(ECsLoadCachedString::Str::_C) ? AssetName : AssetName + ECsLoadCachedString::Str::_C;
 		Reference.Reference_Internal	   = FStringAssetReference(Reference.Reference);
 #if WITH_EDITOR
@@ -4008,6 +4016,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_Blueprint(UAssetOb
 		const FStringAssetReference AssetRef = Member->ToStringReference();
 		const FString AssetName				 = AssetRef.ToString();
 
+		// (AssetName == TEXT(""))
 		if (AssetName == ECsCachedString::Str::Empty)
 			return;
 
@@ -4017,6 +4026,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_Blueprint(UAssetOb
 
 		// TODO: Fix / Investigate. 4.16.1. Built Game (Okay in Editor). TAssetPtr for UAnimBlueprint / UWidgetBlueprint does NOT have _C
 		FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
+										  // AssetName.EndsWith(TEXT("_C")) ? AssetName : AssetName + TEXT("_C");
 		Reference.Reference				   = AssetName.EndsWith(ECsLoadCachedString::Str::_C) ? AssetName : AssetName + ECsLoadCachedString::Str::_C;
 		Reference.Reference_Internal	   = FStringAssetReference(Reference.Reference);
 #if WITH_EDITOR
@@ -4048,6 +4058,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_AnimMontage(U
 			const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 			const FString AssetName				 = AssetRef.ToString();
 
+			// (AssetName == TEXT(""))
 			if (AssetName == ECsCachedString::Str::Empty)
 				continue;
 
@@ -4101,6 +4112,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_AnimMontage(U
 			const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 			const FString AssetName				 = AssetRef.ToString();
 
+			// (AssetName == TEXT(""))
 			if (AssetName == ECsCachedString::Str::Empty)
 				continue;
 
@@ -4154,6 +4166,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_AnimSequence(
 			const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 			const FString AssetName				 = AssetRef.ToString();
 
+			// (AssetName == TEXT(""))
 			if (AssetName == ECsCachedString::Str::Empty)
 				continue;
 
@@ -4194,6 +4207,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_AnimSequence(
 			const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 			const FString AssetName				 = AssetRef.ToString();
 
+			// (AssetName == TEXT(""))
 			if (AssetName == ECsCachedString::Str::Empty)
 				continue;
 
@@ -4234,6 +4248,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_MaterialInsta
 			const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 			const FString AssetName				 = AssetRef.ToString();
 
+			// (AssetName == TEXT(""))
 			if (AssetName == ECsCachedString::Str::Empty)
 				continue;
 
@@ -4291,6 +4306,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_MaterialInsta
 			const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 			const FString AssetName				 = AssetRef.ToString();
 
+			// (AssetName == TEXT(""))
 			if (AssetName == ECsCachedString::Str::Empty)
 				continue;
 
@@ -4342,6 +4358,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_Blueprint(UAr
 			const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 			const FString AssetName				 = AssetRef.ToString();
 
+			// (AssetName == TEXT(""))
 			if (AssetName == ECsCachedString::Str::Empty)
 				continue;
 
@@ -4350,6 +4367,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_Blueprint(UAr
 			const int32 Size = OutAssetReferences.Num();
 			// TODO: Fix / Investigate. 4.16.1. Built Game (Okay in Editor). TAssetPtr for UWidgetBlueprint does NOT have _C
 			FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
+											  // AssetName.EndsWith(TEXT("_C")) ? AssetName : AssetName + TEXT("_C");
 			Reference.Reference				   = AssetName.EndsWith(ECsLoadCachedString::Str::_C) ? AssetName : AssetName + ECsLoadCachedString::Str::_C;
 			Reference.Reference_Internal	   = FStringAssetReference(Reference.Reference);
 #if WITH_EDITOR
@@ -4382,6 +4400,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_Blueprint(UAr
 			const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 			const FString AssetName				 = AssetRef.ToString();
 
+			// (AssetName == TEXT(""))
 			if (AssetName == ECsCachedString::Str::Empty)
 				continue;
 
@@ -4390,6 +4409,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_Blueprint(UAr
 			const int32 Size = OutAssetReferences.Num();
 			// TODO: Fix / Investigate. 4.16.1. Built Game (Okay in Editor). TAssetPtr for UWidgetBlueprint does NOT have _C
 			FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
+											  // AssetName.EndsWith(TEXT("_C")) ? AssetName : AssetName + TEXT("_C");
 			Reference.Reference				   = AssetName.EndsWith(ECsLoadCachedString::Str::_C) ? AssetName : AssetName + ECsLoadCachedString::Str::_C;
 			Reference.Reference_Internal	   = FStringAssetReference(Reference.Reference);
 #if WITH_EDITOR
@@ -5234,6 +5254,7 @@ void UCsCommon_Load::LoadFCsFpsAnimMontage(const FString &MemberName, FCsFpsAnim
 
 bool UCsCommon_Load::CanLoad(void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags, const int32 &LoadCodes)
 {
+								// MemberName + TEXT("_LoadFlags")
 	const FString FlagMemberName = MemberName + ECsLoadCachedString::Str::_LoadFlags;
 
 	if (UIntProperty* IntProperty = FindField<UIntProperty>(InClass, *FlagMemberName))
@@ -5265,6 +5286,7 @@ bool UCsCommon_Load::CanLoad(void* InObject, UScriptStruct* const &InClass, cons
 
 bool UCsCommon_Load::CanLoad(void* InObject, UClass* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags, const int32 &LoadCodes)
 {
+								// MemberName + TEXT("_LoadFlags")
 	const FString FlagMemberName = MemberName + ECsLoadCachedString::Str::_LoadFlags;
 
 	if (UIntProperty* IntProperty = FindField<UIntProperty>(InClass, *FlagMemberName))

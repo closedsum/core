@@ -780,7 +780,8 @@ template<typename T>
 		{
 			const FStringAssetReference AssetRef = Member->ToStringReference();
 			const FString AssetName				 = AssetRef.ToString();
-
+			
+			// (AssetName == TEXT(""))
 			if (AssetName == ECsCachedString::Str::Empty)
 				return;
 
@@ -817,6 +818,7 @@ template<typename T>
 			const FStringAssetReference AssetRef = Member->ToStringReference();
 			const FString AssetName				 = AssetRef.ToString();
 
+			// (AssetName == TEXT(""))
 			if (AssetName == ECsCachedString::Str::Empty)
 				return;
 
@@ -920,6 +922,7 @@ template<typename T>
 				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 				const FString AssetName				 = AssetRef.ToString();
 
+				// (AssetName == TEXT(""))
 				if (AssetName == ECsCachedString::Str::Empty)
 					continue;
 
@@ -967,6 +970,7 @@ template<typename T>
 							const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 							const FString AssetName				 = AssetRef.ToString();
 
+							// (AssetName == TEXT(""))
 							if (AssetName == ECsCachedString::Str::Empty)
 								continue;
 
@@ -1008,6 +1012,7 @@ template<typename T>
 				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 				const FString AssetName				 = AssetRef.ToString();
 
+				// (AssetName == TEXT(""))
 				if (AssetName == ECsCachedString::Str::Empty)
 					continue;
 
@@ -1044,6 +1049,7 @@ template<typename T>
 				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 				const FString AssetName				 = AssetRef.ToString();
 
+				// (AssetName == TEXT(""))
 				if (AssetName == ECsCachedString::Str::Empty)
 					continue;
 
@@ -1092,6 +1098,7 @@ template<typename T>
 				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 				const FString AssetName				 = AssetRef.ToString();
 
+				// (AssetName == TEXT(""))
 				if (AssetName == ECsCachedString::Str::Empty)
 					continue;
 
@@ -1145,6 +1152,7 @@ template<typename T>
 				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 				const FString AssetName				 = AssetRef.ToString();
 
+				// (AssetName == TEXT(""))
 				if (AssetName == ECsCachedString::Str::Empty)
 					continue;
 
@@ -1184,6 +1192,7 @@ template<typename T>
 				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 				const FString AssetName				 = AssetRef.ToString();
 
+				// (AssetName == TEXT(""))
 				if (AssetName == ECsCachedString::Str::Empty)
 					continue;
 
@@ -1233,6 +1242,7 @@ template<typename T>
 			const FStringAssetReference AssetRef = Member->ToStringReference();
 			const FString AssetName				 = AssetRef.ToString();
 
+			// (AssetName == TEXT(""))
 			if (AssetName == ECsCachedString::Str::Empty)
 				return;
 
@@ -1269,6 +1279,7 @@ template<typename T>
 			const FStringAssetReference AssetRef = Member->ToStringReference();
 			const FString AssetName				 = AssetRef.ToString();
 
+			// (AssetName == TEXT(""))
 			if (AssetName == ECsCachedString::Str::Empty)
 				return;
 
@@ -1309,6 +1320,7 @@ template<typename T>
 				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 				const FString AssetName				 = AssetRef.ToString();
 
+				// (AssetName == TEXT(""))
 				if (AssetName == ECsCachedString::Str::Empty)
 					continue;
 
@@ -1350,6 +1362,7 @@ template<typename T>
 				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 				const FString AssetName				 = AssetRef.ToString();
 
+				// (AssetName == TEXT(""))
 				if (AssetName == ECsCachedString::Str::Empty)
 					continue;
 

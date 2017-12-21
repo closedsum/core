@@ -115,11 +115,22 @@ class CSCORE_API UCsSimpleWidget : public UUserWidget
 	virtual void Allocate(const uint16& ActiveIndex, FCsSimpleWidgetPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent);
 	virtual void DeAllocate();
 
+	UPROPERTY()
+	bool HasNativeContructed;
+
 	UPROPERTY(BlueprintReadWrite, Category = "Widget")
 	FCsSimpleWidgetCache Cache;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Widget")
+	ESlateVisibility DefaultVisibility;
 
 	UPROPERTY(meta = (BindWidget))
 	UCanvasPanel* Canvas;
 
 	virtual void OnOwnerDeAllocate(const uint16 &PoolIndex, const uint16 &ActiveIndex, const uint8 &Type);
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	virtual void Show();
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	virtual void Hide();
 };

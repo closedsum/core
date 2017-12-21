@@ -50,7 +50,7 @@ void UCsManager_Widget::BeginDestroy()
 	Super::BeginDestroy();
 }
 
-void UCsManager_Widget::CreatePool(const TSubclassOf<class UObject> &ObjectClass, const TCsSimpleWidgetType &Type, const int32 &Size)
+void UCsManager_Widget::CreatePool(UClass* InClass, const TCsSimpleWidgetType &Type, const int32 &Size)
 {
 	PoolSizes.Add(Type, Size);
 	PoolIndices.Add(Type, 0);
@@ -59,7 +59,7 @@ void UCsManager_Widget::CreatePool(const TSubclassOf<class UObject> &ObjectClass
 
 	for (int32 I = 0; I < Size; I++)
 	{
-		UCsSimpleWidget* Widget = NewObject<UCsSimpleWidget>(ObjectClass);
+		UCsSimpleWidget* Widget = CreateWidget<UCsSimpleWidget>(CurrentWorld, InClass);
 
 		Widget->Init(I);
 		Widget->DeAllocate();
@@ -308,7 +308,7 @@ void UCsManager_Widget::DeAllocateAll()
 
 void UCsManager_Widget::AddPoolToCanvas(UCanvasPanel* InCanvas, const TCsSimpleWidgetType &Type)
 {
-	TArray<UCsSimpleWidget*>* WidgetsPtr = ActiveWidgets.Find(Type);
+	TArray<UCsSimpleWidget*>* WidgetsPtr = Pools.Find(Type);
 
 	if (!WidgetsPtr)
 		return;
@@ -320,6 +320,28 @@ void UCsManager_Widget::AddPoolToCanvas(UCanvasPanel* InCanvas, const TCsSimpleW
 		InCanvas->AddChildToCanvas((*WidgetsPtr)[I]);
 	}
 }
+
+// Payload
+#pragma region
+
+FCsSimpleWidgetPayload* UCsManager_Widget::AllocatePayload()
+{
+	for (uint8 I = 0; I < CS_SIMPLE_WIDGET_PAYLOAD_SIZE; I++)
+	{
+		const uint8 Index				= (PayloadIndex + I) % CS_SIMPLE_WIDGET_PAYLOAD_SIZE;
+		FCsSimpleWidgetPayload* Payload = &(Payloads[Index]);
+		
+		if (!Payload->IsAllocated)
+		{
+			Payload->IsAllocated = true;
+			return Payload;
+		}
+	}
+	checkf(0, TEXT("UCsManager_Widget::AllocatePayload: Pool is exhausted"));
+	return nullptr;
+}
+
+#pragma endregion Payload
 
 // Show
 #pragma region
@@ -333,6 +355,7 @@ UCsSimpleWidget* UCsManager_Widget::Show(const TCsSimpleWidgetType &Type, FCsSim
 	LogTransaction(ECsManagerWidgetCachedString::Str::Show, ECsPoolTransaction::Allocate, Widget);
 
 	AddToActivePool(Widget, Type);
+	Payload->Reset();
 	return Widget;
 }
 

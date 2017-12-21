@@ -5,6 +5,8 @@
 #include "Types/CsTypes_Pool.h"
 #include "CsManager_Widget.generated.h"
 
+#define CS_SIMPLE_WIDGET_PAYLOAD_SIZE 256
+
 UCLASS()
 class CSCORE_API UCsManager_Widget : public UObject
 {
@@ -15,7 +17,7 @@ class CSCORE_API UCsManager_Widget : public UObject
 	virtual void Clear();
 	virtual void Shutdown();
 	virtual void BeginDestroy() override;
-	virtual void CreatePool(const TSubclassOf<class UObject> &ObjectClass, const TCsSimpleWidgetType &Type, const int32 &Size);
+	virtual void CreatePool(UClass* InClass, const TCsSimpleWidgetType &Type, const int32 &Size);
 	virtual void AddToActivePool(UObject* InObject, const TCsSimpleWidgetType& Type);
 	virtual void OnTick(const float &DeltaSeconds);
 
@@ -48,6 +50,17 @@ class CSCORE_API UCsManager_Widget : public UObject
 	virtual void DeAllocateAll();
 
 	virtual void AddPoolToCanvas(UCanvasPanel* InCanvas, const TCsSimpleWidgetType &Type);
+
+// Payload
+#pragma region
+
+	FCsSimpleWidgetPayload Payloads[CS_SIMPLE_WIDGET_PAYLOAD_SIZE];
+
+	uint8 PayloadIndex;
+
+	FCsSimpleWidgetPayload* AllocatePayload();
+
+#pragma endregion Payload
 
 // Show
 #pragma region

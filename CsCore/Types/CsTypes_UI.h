@@ -4,6 +4,7 @@
 
 #include "Runtime/UMG/Public/Components/SlateWrapperTypes.h"
 #include "Runtime/UMG/Public/Components/CanvasPanel.h"
+#include "Runtime/UMG/Public/Components/CanvasPanelSlot.h"
 #include "Runtime/UMG/Public/Components/ProgressBar.h"
 #include "Runtime/UMG/Public/Components/TextBlock.h"
 #include "Runtime/UMG/Public/Components/Image.h"
@@ -331,6 +332,7 @@ public:
 	}
 
 	virtual void OnNativeTick(const float &InDeltaTime) {}
+	virtual void SetIsEnabled(const bool &InIsEnabled){}
 
 	virtual void SetVisibility(const ESlateVisibility &Visible)
 	{
@@ -369,7 +371,8 @@ public:
 			if (UProgressBar* B = Get())
 				B->SetVisibility(Visibility.Get());
 		}
-		if (Visibility != ESlateVisibility::Visible)
+		if (Visibility == ESlateVisibility::Collapsed ||
+			Visibility == ESlateVisibility::Hidden)
 		{
 			Visibility.Clear();
 			Percent.Clear();
@@ -446,6 +449,12 @@ public:
 		Visibility.Clear();
 		String.Clear();
 		Color.Clear();
+	}
+
+	virtual void SetIsEnabled(const bool &InIsEnabled) override
+	{
+		if (UTextBlock* T = Get())
+			T->SetIsEnabled(InIsEnabled);
 	}
 
 	virtual void SetString(const FString &inString)
@@ -1517,6 +1526,7 @@ public:
 
 struct FCsSimpleWidgetPayload
 {
+	bool IsAllocated;
 	FString DisplayName;
 	FIntPoint Offset;
 	float LifeTime;
@@ -1526,6 +1536,7 @@ struct FCsSimpleWidgetPayload
 
 	void Reset()
 	{
+		IsAllocated = false;
 		DisplayName = ECsCachedString::Str::Empty;
 		Offset = FIntPoint::ZeroValue;
 		LifeTime = 0.0f;

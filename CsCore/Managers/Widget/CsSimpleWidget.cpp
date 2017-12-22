@@ -8,6 +8,9 @@ UCsSimpleWidget::UCsSimpleWidget(const FObjectInitializer& ObjectInitializer)
 	DefaultVisibility = ESlateVisibility::HitTestInvisible;
 }
 
+void UCsSimpleWidget::OnNativeTick(const FGeometry& MyGeometry, float InDeltaTime){}
+void UCsSimpleWidget::OnTick(const float &InDeltaTime){}
+
 void UCsSimpleWidget::Init(const int32 &Index)
 {
 	Cache.Set(Index, this);
@@ -27,10 +30,7 @@ void UCsSimpleWidget::DeAllocate()
 	Hide();
 }
 
-void UCsSimpleWidget::OnOwnerDeAllocate(const uint16 &PoolIndex, const uint16 &ActiveIndex, const uint8 &Type)
-{
-	DeAllocate();
-}
+void UCsSimpleWidget::OnAddToCanvas(){}
 
 void UCsSimpleWidget::Show()
 {
@@ -42,4 +42,15 @@ void UCsSimpleWidget::Hide()
 {
 	SetVisibility(ESlateVisibility::Hidden);
 	SetIsEnabled(false);
+}
+
+void UCsSimpleWidget::SetPosition(const FVector2D &InPosition)
+{
+	FVector2D Resolution = FVector2D(GSystemResolution.ResX, GSystemResolution.ResY);
+	Position			 = (ParentCanvasSize / Resolution) * InPosition;
+}
+
+void UCsSimpleWidget::SetSize(const FVector2D &InSize)
+{
+	Size = InSize;
 }

@@ -33,19 +33,30 @@ template<typename T>
 struct FCsPrimitiveType
 {
 public:
+	T DefaultValue;
 	T Value;
 	T Last_Value;
 protected:
 	bool IsDirty;
+public:
+	TMulticastDelegate<void, const T&> OnChange_Event;
 
 public:
 	FCsPrimitiveType(){}
 	virtual ~FCsPrimitiveType(){}
 
+	virtual void UpdateIsDirty()
+	{
+		IsDirty = Value != Last_Value;
+
+		if (IsDirty)
+			OnChange_Event.Broadcast(Value);
+	}
+
 	FCsPrimitiveType& operator=(const T& B)
 	{
-		Value   = B;
-		IsDirty = Value != Last_Value;
+		Value = B;
+		UpdateIsDirty();
 		return *this;
 	}
 
@@ -61,8 +72,8 @@ public:
 
 	virtual void Set(const T &inValue)
 	{
-		Value   = inValue;
-		IsDirty = Value != Last_Value;
+		Value = inValue;
+		UpdateIsDirty();
 	}
 
 	T Get() { return Value; }
@@ -188,17 +199,135 @@ struct FCsPrimitiveType_Float : FCsPrimitiveType<float>
 
 typedef FCsPrimitiveType_Float TCsFloat;
 
-#define CS_AXES 3
+#define CS_AXES_2D 2
+#define CS_AXES_3D 3
 #define CS_AXIS_X 0
 #define CS_AXIS_Y 1
 #define CS_AXIS_Z 2
-#define CS_AXES_ALL 3
+#define CS_AXES_3D_ALL 3
+
+struct FCsPrimitiveType_FVector2D : public FCsPrimitiveType<FVector2D>
+{
+
+protected:
+	bool IsDirtys[CS_AXES_2D];
+
+public:
+
+	FCsPrimitiveType_FVector2D() {}
+	~FCsPrimitiveType_FVector2D() {}
+
+	virtual void UpdateIsDirty() override
+	{
+		IsDirty = Value != Last_Value;
+		IsDirtys[CS_AXIS_X] = Value.X != Last_Value.X;
+		IsDirtys[CS_AXIS_Y] = Value.Y != Last_Value.Y;
+
+		if (IsDirty)
+			OnChange_Event.Broadcast(Value);
+	}
+
+	FCsPrimitiveType_FVector2D& operator=(const FVector2D& B)
+	{
+		Value = B;
+		UpdateIsDirty();
+		return *this;
+	}
+
+	FORCEINLINE friend bool operator==(const FVector2D &Lhs, const FCsPrimitiveType_FVector2D &Rhs)
+	{
+		return Lhs == Rhs.Value;
+	}
+
+	FORCEINLINE friend bool operator==(const FCsPrimitiveType_FVector2D &Lhs, const FVector2D &Rhs)
+	{
+		return Lhs.Value == Rhs;
+	}
+
+	FORCEINLINE friend bool operator!=(const FVector2D &Lhs, const FCsPrimitiveType_FVector2D &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_FVector2D &Lhs, const FVector2D &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FCsPrimitiveType_FVector2D& operator+=(const FVector2D& B)
+	{
+		Value += B;
+		UpdateIsDirty();
+		return *this;
+	}
+
+	FCsPrimitiveType_FVector2D& operator-=(const FVector2D& B)
+	{
+		Value -= B;
+		UpdateIsDirty();
+		return *this;
+	}
+
+	FCsPrimitiveType_FVector2D& operator*=(const FVector2D& B)
+	{
+		Value *= B;
+		UpdateIsDirty();
+		return *this;
+	}
+
+	virtual void Set(const FVector2D &inValue) override
+	{
+		Value = inValue;
+		UpdateIsDirty();
+	}
+
+	FVector2D GetAxes(const int32 &Axes)
+	{
+		FVector2D V = FVector2D::ZeroVector;
+
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_X))
+			V.X = Value.X;
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_Y))
+			V.Y = Value.Y;
+		return V;
+	}
+
+	virtual void Clear() override
+	{
+		Last_Value = Value;
+		IsDirty = false;
+		IsDirtys[CS_AXIS_X] = false;
+		IsDirtys[CS_AXIS_Y] = false;
+	}
+
+	bool HasAxisChanged(const uint8 &Axis)
+	{
+		if (!IsDirty)
+			return false;
+		if (Axis < CS_AXIS_X || Axis > CS_AXIS_Y)
+			return true;
+		return IsDirtys[Axis];
+	}
+
+	bool HasAxesChanged(const int32 &Axes)
+	{
+		if (!IsDirty)
+			return false;
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_X) && IsDirtys[CS_AXIS_X])
+			return true;
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_Y) && IsDirtys[CS_AXIS_Y])
+			return true;
+		return false;
+	}
+};
+
+typedef FCsPrimitiveType_FVector2D TCsFVector2D;
 
 struct FCsPrimitiveType_FVector : public FCsPrimitiveType<FVector>
 {
 
 protected:
-	bool IsDirtys[CS_AXES];
+	bool IsDirtys[CS_AXES_3D];
 
 public:
 
@@ -208,6 +337,56 @@ public:
 	FCsPrimitiveType_FVector& operator=(const FVector& B)
 	{
 		Value = B;
+		IsDirty = Value != Last_Value;
+		IsDirtys[CS_AXIS_X] = Value.X != Last_Value.X;
+		IsDirtys[CS_AXIS_Y] = Value.Y != Last_Value.Y;
+		IsDirtys[CS_AXIS_Z] = Value.Z != Last_Value.Z;
+		return *this;
+	}
+
+	FORCEINLINE friend bool operator==(const FVector &Lhs, const FCsPrimitiveType_FVector &Rhs)
+	{
+		return Lhs == Rhs.Value;
+	}
+
+	FORCEINLINE friend bool operator==(const FCsPrimitiveType_FVector &Lhs, const FVector &Rhs)
+	{
+		return Lhs.Value == Rhs;
+	}
+
+	FORCEINLINE friend bool operator!=(const FVector &Lhs, const FCsPrimitiveType_FVector &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_FVector &Lhs, const FVector &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FCsPrimitiveType_FVector& operator+=(const FVector& B)
+	{
+		Value += B;
+		IsDirty = Value != Last_Value;
+		IsDirtys[CS_AXIS_X] = Value.X != Last_Value.X;
+		IsDirtys[CS_AXIS_Y] = Value.Y != Last_Value.Y;
+		IsDirtys[CS_AXIS_Z] = Value.Z != Last_Value.Z;
+		return *this;
+	}
+
+	FCsPrimitiveType_FVector& operator-=(const FVector& B)
+	{
+		Value -= B;
+		IsDirty = Value != Last_Value;
+		IsDirtys[CS_AXIS_X] = Value.X != Last_Value.X;
+		IsDirtys[CS_AXIS_Y] = Value.Y != Last_Value.Y;
+		IsDirtys[CS_AXIS_Z] = Value.Z != Last_Value.Z;
+		return *this;
+	}
+
+	FCsPrimitiveType_FVector& operator*=(const FVector& B)
+	{
+		Value *= B;
 		IsDirty = Value != Last_Value;
 		IsDirtys[CS_AXIS_X] = Value.X != Last_Value.X;
 		IsDirtys[CS_AXIS_Y] = Value.Y != Last_Value.Y;
@@ -280,7 +459,7 @@ struct FCsPrimitiveType_FRotator : public FCsPrimitiveType<FRotator>
 {
 
 protected:
-	bool IsDirtys[CS_AXES];
+	bool IsDirtys[CS_AXES_3D];
 
 public:
 
@@ -290,6 +469,46 @@ public:
 	FCsPrimitiveType_FRotator& operator=(const FRotator& B)
 	{
 		Value = B;
+		IsDirty = Value != Last_Value;
+		IsDirtys[CS_AXIS_ROLL] = Value.Roll != Last_Value.Roll;
+		IsDirtys[CS_AXIS_PITCH] = Value.Pitch != Last_Value.Pitch;
+		IsDirtys[CS_AXIS_YAW] = Value.Yaw != Last_Value.Yaw;
+		return *this;
+	}
+
+	FORCEINLINE friend bool operator==(const FRotator &Lhs, const FCsPrimitiveType_FRotator &Rhs)
+	{
+		return Lhs == Rhs.Value;
+	}
+
+	FORCEINLINE friend bool operator==(const FCsPrimitiveType_FRotator &Lhs, const FRotator &Rhs)
+	{
+		return Lhs.Value == Rhs;
+	}
+
+	FORCEINLINE friend bool operator!=(const FRotator &Lhs, const FCsPrimitiveType_FRotator &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_FRotator &Lhs, const FRotator &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FCsPrimitiveType_FRotator& operator+=(const FRotator& B)
+	{
+		Value += B;
+		IsDirty = Value != Last_Value;
+		IsDirtys[CS_AXIS_ROLL] = Value.Roll != Last_Value.Roll;
+		IsDirtys[CS_AXIS_PITCH] = Value.Pitch != Last_Value.Pitch;
+		IsDirtys[CS_AXIS_YAW] = Value.Yaw != Last_Value.Yaw;
+		return *this;
+	}
+
+	FCsPrimitiveType_FRotator& operator-=(const FRotator& B)
+	{
+		Value -= B;
 		IsDirty = Value != Last_Value;
 		IsDirtys[CS_AXIS_ROLL] = Value.Roll != Last_Value.Roll;
 		IsDirtys[CS_AXIS_PITCH] = Value.Pitch != Last_Value.Pitch;

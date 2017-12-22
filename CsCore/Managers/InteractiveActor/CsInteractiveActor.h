@@ -387,4 +387,18 @@ public:
 	bool CanCollideWithComponent(UPrimitiveComponent* InComponent);
 
 #pragma endregion Collision
+
+// UI
+#pragma region
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactive")
+	bool bCalculateScreenPosition;
+
+	virtual void CalculateScreenPosition();
+
+	TCsFVector2D ScreenPosition;
+	TCsFVector WorldPosition;
+
+#pragma endregion UI
 };

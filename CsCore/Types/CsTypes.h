@@ -163,7 +163,9 @@ enum class ECsAxes : uint8
 };
 
 #define ECS_AXES_NONE 0
-#define ECS_AXES_ALL (1<<((uint8)ECsAxes::X)) | (1<<((uint8)ECsAxes::Y)) | (1<<((uint8)ECsAxes::Z))
+					 // (1<<((uint8)ECsAxes::X)) | (1<<((uint8)ECsAxes::Y)) | (1<<((uint8)ECsAxes::Z))
+					 // 1 + 2 + 4 = 7
+#define ECS_AXES_3D_ALL 7
 
 UENUM(BlueprintType)
 namespace ECsAxes_Editor

@@ -110,6 +110,8 @@ class CSCORE_API UCsSimpleWidget : public UUserWidget
 {
 	GENERATED_UCLASS_BODY()
 
+	virtual void OnNativeTick(const FGeometry& MyGeometry, float InDeltaTime);
+	virtual void OnTick(const float &InDeltaTime);
 	virtual void Init(const int32 &Index);
 
 	virtual void Allocate(const uint16& ActiveIndex, FCsSimpleWidgetPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent);
@@ -127,10 +129,18 @@ class CSCORE_API UCsSimpleWidget : public UUserWidget
 	UPROPERTY(meta = (BindWidget))
 	UCanvasPanel* Canvas;
 
-	virtual void OnOwnerDeAllocate(const uint16 &PoolIndex, const uint16 &ActiveIndex, const uint8 &Type);
+	virtual void OnAddToCanvas();
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual void Show();
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual void Hide();
+
+	FVector2D ParentCanvasSize;
+
+	FCsPrimitiveType<FVector2D> Position;
+	FCsPrimitiveType<FVector2D> Size;
+
+	virtual void SetPosition(const FVector2D &InPosition);
+	virtual void SetSize(const FVector2D &InSize);
 };

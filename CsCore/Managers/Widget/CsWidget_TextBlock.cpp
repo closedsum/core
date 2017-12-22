@@ -29,9 +29,9 @@ void UCsWidget_TextBlock::NativeConstruct()
 	HasNativeContructed = true;
 }
 
-void UCsWidget_TextBlock::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+void UCsWidget_TextBlock::OnTick(const float &InDeltaTime)
 {
-	Super::NativeTick(MyGeometry, InDeltaTime);
+	Super::OnTick(InDeltaTime);
 
 	// Position
 	if (Position.HasChanged())
@@ -42,7 +42,7 @@ void UCsWidget_TextBlock::NativeTick(const FGeometry& MyGeometry, float InDeltaT
 	// Size
 	if (!Size.HasChanged())
 	{
-		SetDesiredSizeInViewport(Size.Get());
+		//SetDesiredSizeInViewport(Size.Get());
 
 		// Set Size of TextBlock
 		UCanvasPanelSlot* ChildSlot = Cast<UCanvasPanelSlot>(MyText->Slot);
@@ -53,6 +53,16 @@ void UCsWidget_TextBlock::NativeTick(const FGeometry& MyGeometry, float InDeltaT
 	}
 	Position.Clear();
 	Size.Clear();
+
+}
+
+void UCsWidget_TextBlock::OnAddToCanvas()
+{
+	Super::OnAddToCanvas();
+
+	UCanvasPanelSlot* ChildSlot = Cast<UCanvasPanelSlot>(MyText->Slot);
+	UCanvasPanelSlot* ParentSlot = Cast<UCanvasPanelSlot>(Slot);
+	ParentSlot->SetAlignment(ChildSlot->GetAlignment());
 }
 
 void UCsWidget_TextBlock::Show()
@@ -74,14 +84,4 @@ void UCsWidget_TextBlock::Hide()
 void UCsWidget_TextBlock::SetString(const FString &InString)
 {
 	Text.SetString(InString);
-}
-
-void UCsWidget_TextBlock::SetPosition(const FVector2D &InPosition)
-{
-	Position = InPosition;
-}
-
-void UCsWidget_TextBlock::SetSize(const FVector2D &InSize)
-{
-	Size = InSize;
 }

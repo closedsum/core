@@ -88,11 +88,11 @@ class CSCORE_API ACsAnim_Bone : public AActor
 	UFUNCTION(BlueprintCallable, Category = "Bone")
 	void UpdateTransform(const FTransform &Transform);
 	UFUNCTION(BlueprintCallable, Category = "Bone")
-	void UpdateLocation(const FVector &InLocation, const int32 &Axes = 3 /*CS_AXES_ALL*/);
+	void UpdateLocation(const FVector &InLocation, const int32 &Axes = 7 /*ECS_AXES_3D_ALL*/);
 	UFUNCTION(BlueprintCallable, Category = "Bone")
-	void UpdateRotation(const FRotator &InRotation, const int32 &Axes = 3 /*CS_AXES_ALL*/);
+	void UpdateRotation(const FRotator &InRotation, const int32 &Axes = 7 /*ECS_AXES_3D_ALL*/);
 	UFUNCTION(BlueprintCallable, Category = "Bone")
-	void UpdateScale(const FVector &InScale, const int32 &Axes = 3 /*CS_AXES_ALL*/);
+	void UpdateScale(const FVector &InScale, const int32 &Axes = 7 /*ECS_AXES_3D_ALL*/);
 
 #if WITH_EDITOR
 

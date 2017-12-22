@@ -2,6 +2,7 @@
 #include "Animation/Poseable/CsAnim_Bone.h"
 #include "CsCore.h"
 #include "Common/CsCommon.h"
+#include "Types/CsTypes.h"
 #include "Components/CsStaticMeshComponent.h"
 
 ACsAnim_Bone::ACsAnim_Bone(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -173,9 +174,9 @@ void ACsAnim_Bone::UpdateTransform(const FTransform &Transform)
 	Scale = GetActorScale3D();
 }
 
-void ACsAnim_Bone::UpdateLocation(const FVector &InLocation, const int32 &Axes /*= CS_AXES_ALL*/)
+void ACsAnim_Bone::UpdateLocation(const FVector &InLocation, const int32 &Axes /*= ECS_AXES_3D_ALL*/)
 {
-	if (Axes == CS_AXES_ALL)
+	if (Axes == ECS_AXES_3D_ALL)
 	{
 		SetActorLocation(InLocation);
 		Location = GetActorLocation();
@@ -184,11 +185,11 @@ void ACsAnim_Bone::UpdateLocation(const FVector &InLocation, const int32 &Axes /
 	{
 		FVector V = GetActorLocation();
 
-		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_X))
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, ECsAxes::X))
 			V.X = InLocation.X;
-		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_Y))
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, ECsAxes::Y))
 			V.Y = InLocation.Y;
-		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_Z))
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, ECsAxes::Z))
 			V.Z = InLocation.Z;
 
 		SetActorLocation(V);
@@ -196,9 +197,9 @@ void ACsAnim_Bone::UpdateLocation(const FVector &InLocation, const int32 &Axes /
 	}
 }
 
-void ACsAnim_Bone::UpdateRotation(const FRotator &InRotation, const int32 &Axes /*= CS_AXES_ALL*/)
+void ACsAnim_Bone::UpdateRotation(const FRotator &InRotation, const int32 &Axes /*= ECS_AXES_3D_ALL*/)
 {
-	if (Axes == CS_AXES_ALL)
+	if (Axes == ECS_AXES_3D_ALL)
 	{
 		SetActorRotation(InRotation);
 		Rotation = GetActorRotation();
@@ -219,9 +220,9 @@ void ACsAnim_Bone::UpdateRotation(const FRotator &InRotation, const int32 &Axes 
 	}
 }
 
-void ACsAnim_Bone::UpdateScale(const FVector &InScale, const int32 &Axes /*= CS_AXES_ALL*/)
+void ACsAnim_Bone::UpdateScale(const FVector &InScale, const int32 &Axes /*= ECS_AXES_3D_ALL*/)
 {
-	if (Axes == CS_AXES_ALL)
+	if (Axes == ECS_AXES_3D_ALL)
 	{
 		SetActorScale3D(InScale);
 		Scale = GetActorScale3D();
@@ -230,11 +231,11 @@ void ACsAnim_Bone::UpdateScale(const FVector &InScale, const int32 &Axes /*= CS_
 	{
 		FVector V = GetActorScale3D();
 
-		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_X))
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, ECsAxes::X))
 			V.X = InScale.X;
-		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_Y))
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, ECsAxes::Y))
 			V.Y = InScale.Y;
-		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_Z))
+		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, ECsAxes::Z))
 			V.Z = InScale.Z;
 
 		SetActorScale3D(V);

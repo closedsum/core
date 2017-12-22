@@ -124,9 +124,12 @@ void UCsManager_Widget::OnTick(const float &DeltaSeconds)
 			}
 
 			if (!Widget->Cache.UseLifeTime)
+			{
+				Widget->OnTick(DeltaSeconds);
 				continue;
+			}
 
-			if (GetWorld()->GetTimeSeconds() - Widget->Cache.Time > Widget->Cache.LifeTime)
+			if (CurrentWorld->GetTimeSeconds() - Widget->Cache.Time > Widget->Cache.LifeTime)
 			{
 				LogTransaction(ECsManagerWidgetCachedString::Str::OnTick, ECsPoolTransaction::Deallocate, Widget);
 
@@ -135,6 +138,10 @@ void UCsManager_Widget::OnTick(const float &DeltaSeconds)
 
 				if (J < EarliestIndex)
 					EarliestIndex = J;
+			}
+			else
+			{
+				Widget->OnTick(DeltaSeconds);
 			}
 		}
 
@@ -318,6 +325,7 @@ void UCsManager_Widget::AddPoolToCanvas(UCanvasPanel* InCanvas, const TCsSimpleW
 	for (uint16 I = 0; I < Count; I++)
 	{
 		InCanvas->AddChildToCanvas((*WidgetsPtr)[I]);
+		(*WidgetsPtr)[I]->OnAddToCanvas();
 	}
 }
 

@@ -10,6 +10,8 @@
 
 #include "MotionController/CsMotionController.h"
 
+#include "Player/CsPlayerController.h"
+
 // Data
 #include "Data/CsData_Interactive.h"
 
@@ -89,9 +91,6 @@ void ACsInteractiveActor::PostInitializeComponents()
 void ACsInteractiveActor::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-
-	if (!Cache.IsAllocated)
-		return;
 }
 
 void ACsInteractiveActor::OnTick_CheckCVars(const float &DeltaSeconds){}
@@ -180,8 +179,6 @@ void ACsInteractiveActor::DeAllocate()
 	// Clear BitMask
 	PhysicsState = 0;
 
-	Cache.Reset();
-
 	if (WorldCollisionComponent)
 	{
 		WorldCollisionComponent->SetSimulatePhysics(false);
@@ -202,6 +199,7 @@ void ACsInteractiveActor::DeAllocate()
 	CollidableActors.Reset();
 	IgnoredActors.Reset();
 	SetActorTickEnabled(false);
+	Cache.DeAllocate();
 }
 
 // State
@@ -654,3 +652,28 @@ bool ACsInteractiveActor::CanCollideWithComponent(UPrimitiveComponent* InCompone
 }
 
 #pragma endregion Collision
+
+// UI
+#pragma region
+
+void ACsInteractiveActor::CalculateScreenPosition()
+{
+	bool HasChanged = false;
+
+	HasChanged |= WorldPosition.HasChanged();
+
+	ACsPlayerController* Controller = UCsCommon::GetLocalPlayerController<ACsPlayerController>(GetWorld());
+
+	HasChanged |= Controller->ViewRotation.HasChanged();
+	HasChanged |= Controller->ViewLocation.HasChanged();
+
+	if (!HasChanged)
+		return;
+
+	FVector2D OutScreenPosition	= FVector2D::ZeroVector;
+	UGameplayStatics::ProjectWorldToScreen(Controller, WorldPosition.Value, OutScreenPosition, false);
+
+	ScreenPosition = OutScreenPosition;
+}
+
+#pragma endregion UI

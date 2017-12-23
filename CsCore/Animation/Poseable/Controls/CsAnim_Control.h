@@ -26,7 +26,7 @@ class CSCORE_API ACsAnim_Control : public AStaticMeshActor
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "00 Control")
 	FString Control;
 
-	FCsPrimitiveType<FString> ControlName;
+	TCsFString ControlName;
 
 #if WITH_EDITOR
 

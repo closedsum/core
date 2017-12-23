@@ -286,130 +286,70 @@ typedef TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> TCsWeaponCacheMultiVal
 #pragma region
 
 // bool
-struct FCsWeapon_Ref_bool : public FCsIntegralType_TArrayRefValue<bool, int32>
+struct FCsWeapon_Ref_bool : public FCsPrimitiveType_TArrayRefValue_bool<int32>
 {
-	DECLARE_DELEGATE_RetVal_OneParam(bool, CsGetDelegate, const int32&);
-
-	CsGetDelegate GetDelegate;
-
-	FCsWeapon_Ref_bool() {}
+	FCsWeapon_Ref_bool() : FCsPrimitiveType_TArrayRefValue_bool<int32>(){}
 	~FCsWeapon_Ref_bool() {}
-
-	bool GetEX(const int32 &Index) { return GetDelegate.Execute(Index); }
 };
 
-struct FCsWeapon_TArray_bool : public FCsIntegralType_TArrayValue<bool, TCsWeaponFire>
+struct FCsWeapon_TArray_bool : public FCsPrimitiveType_TArrayValue_bool<TCsWeaponFire>
 {
-	DECLARE_DELEGATE_RetVal_OneParam(bool, CsGetDelegate, const TCsWeaponFire&);
-
-	CsGetDelegate GetDelegate;
-
-	FCsWeapon_TArray_bool() {}
+	FCsWeapon_TArray_bool() : FCsPrimitiveType_TArrayValue_bool<TCsWeaponFire>(){}
 	~FCsWeapon_TArray_bool() {}
-
-	bool GetEX(const TCsWeaponFire &Index) { return GetDelegate.Execute(Index); }
 };
 
-struct FCsWeapon_TArrayRef_bool : public FCsIntegralType_TArrayRefValue<bool, TCsWeaponFire>
+struct FCsWeapon_TArrayRef_bool : public FCsPrimitiveType_TArrayRefValue_bool<TCsWeaponFire>
 {
-	DECLARE_DELEGATE_RetVal_OneParam(bool, CsGetDelegate, const TCsWeaponFire&);
-
-	CsGetDelegate GetDelegate;
-
-	FCsWeapon_TArrayRef_bool() {}
+	FCsWeapon_TArrayRef_bool() : FCsPrimitiveType_TArrayRefValue_bool<TCsWeaponFire>(){}
 	~FCsWeapon_TArrayRef_bool() {}
-
-	bool GetEX(const TCsWeaponFire &Index) { return GetDelegate.Execute(Index); }
 };
 
 // uint8
-struct FCsWeapon_TArray_uint8 : public FCsIntegralType_TArrayValue<uint8, TCsWeaponFire>
+struct FCsWeapon_TArray_uint8 : public FCsIntegralType_TArrayValue_uint8<TCsWeaponFire>
 {
-	DECLARE_DELEGATE_RetVal_OneParam(uint8, CsGetDelegate, const TCsWeaponFire&);
-
-	CsGetDelegate GetDelegate;
-
-	FCsWeapon_TArray_uint8() {}
+	FCsWeapon_TArray_uint8() : FCsIntegralType_TArrayValue_uint8<TCsWeaponFire>(){}
 	~FCsWeapon_TArray_uint8() {}
-
-	uint8 GetEX(const TCsWeaponFire &Index) { return GetDelegate.Execute(Index); }
 };
 
-struct FCsWeapon_TArrayRef_uint8 : public FCsIntegralType_TArrayRefValue<uint8, TCsWeaponFire>
+struct FCsWeapon_TArrayRef_uint8 : public FCsIntegralType_TArrayRefValue_uint8<TCsWeaponFire>
 {
-	DECLARE_DELEGATE_RetVal_OneParam(uint8, CsGetDelegate, const TCsWeaponFire&);
-
-	CsGetDelegate GetDelegate;
-
-	FCsWeapon_TArrayRef_uint8() {}
+	FCsWeapon_TArrayRef_uint8() : FCsIntegralType_TArrayRefValue_uint8<TCsWeaponFire>(){}
 	~FCsWeapon_TArrayRef_uint8() {}
-
-	uint8 GetEX(const TCsWeaponFire &Index) { return GetDelegate.Execute(Index); }
 };
 
 // int32
-struct FCsWeapon_Ref_int32 : public FCsIntegralType_TArrayRefValue<int32, int32>
+struct FCsWeapon_Ref_int32 : public FCsIntegralType_TArrayRefValue_int32<int32>
 {
-	DECLARE_DELEGATE_RetVal_OneParam(int32, CsGetDelegate, const int32&);
-
-	CsGetDelegate GetDelegate;
-
-	FCsWeapon_Ref_int32() {}
+	FCsWeapon_Ref_int32() : FCsIntegralType_TArrayRefValue_int32<int32>(){}
 	~FCsWeapon_Ref_int32() {}
-
-	int32 GetEX(const int32 &Index) { return GetDelegate.Execute(Index); }
 };
 
-struct FCsWeapon_TArrayRef_int32 : public FCsIntegralType_TArrayRefValue<int32, TCsWeaponFire>
+struct FCsWeapon_TArrayRef_int32 : public FCsIntegralType_TArrayRefValue_int32<TCsWeaponFire>
 {
-	DECLARE_DELEGATE_RetVal_OneParam(int32, CsGetDelegate, const TCsWeaponFire&);
-
-	CsGetDelegate GetDelegate;
-
-	FCsWeapon_TArrayRef_int32() {}
+	FCsWeapon_TArrayRef_int32() : FCsIntegralType_TArrayRefValue_int32<TCsWeaponFire>(){}
 	~FCsWeapon_TArrayRef_int32() {}
-
-	int32 GetEX(const TCsWeaponFire &Index) { return GetDelegate.Execute(Index); }
 };
 
 // float
-struct FCsWeapon_Ref_float : public FCsIntegralType_TArrayRefValue<float, int32>
+struct FCsWeapon_Ref_float : public FCsIntegralType_TArrayRefValue_float<int32>
 {
-	DECLARE_DELEGATE_RetVal_OneParam(float, CsGetDelegate, const int32&);
-
-	CsGetDelegate GetDelegate;
-
-	FCsWeapon_Ref_float() {}
+	FCsWeapon_Ref_float() : FCsIntegralType_TArrayRefValue_float<int32>(){}
 	~FCsWeapon_Ref_float() {}
-
-	float GetEX(const int32 &Index) { return GetDelegate.Execute(Index); }
 };
 
-struct FCsWeapon_TArray_float : public FCsIntegralType_TArrayValue<float, TCsWeaponFire>
+struct FCsWeapon_TArray_float : public FCsIntegralType_TArrayValue_float<TCsWeaponFire>
 {
-	DECLARE_DELEGATE_RetVal_OneParam(float, CsGetDelegate, const TCsWeaponFire&);
-
-	CsGetDelegate GetDelegate;
-
-	FCsWeapon_TArray_float() {}
+	FCsWeapon_TArray_float() : FCsIntegralType_TArrayValue_float<TCsWeaponFire>(){}
 	~FCsWeapon_TArray_float() {}
-
-	float GetEX(const TCsWeaponFire &Index) { return GetDelegate.Execute(Index); }
 };
 
-struct FCsWeapon_TArrayRef_float : public FCsIntegralType_TArrayRefValue<float, TCsWeaponFire>
+struct FCsWeapon_TArrayRef_float : public FCsIntegralType_TArrayRefValue_float<TCsWeaponFire>
 {
-	DECLARE_DELEGATE_RetVal_OneParam(float, CsGetDelegate, const TCsWeaponFire&);
-
-	CsGetDelegate GetDelegate;
-
-	FCsWeapon_TArrayRef_float() {}
+	FCsWeapon_TArrayRef_float() : FCsIntegralType_TArrayRefValue_float<TCsWeaponFire>(){}
 	~FCsWeapon_TArrayRef_float() {}
-
-	float GetEX(const TCsWeaponFire &Index) { return GetDelegate.Execute(Index); }
 };
 
-#pragma endregion
+#pragma endregion Structs
 
 #define CS_WEAPON_DATA_VALUE 0
 #define CS_WEAPON_CUSTOM_VALUE -1

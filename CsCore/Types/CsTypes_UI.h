@@ -306,6 +306,131 @@ typedef TEnumAsByte<ECsButtonState::Type> TCsButtonState;
 
 #pragma endregion UI
 
+// PrimitiveType
+#pragma region
+
+struct FCsPrimitiveType_ESlateVisibility : public FCsPrimitiveType<ESlateVisibility>
+{
+public:
+
+	FCsPrimitiveType_ESlateVisibility()
+	{
+		DefaultValue = ESlateVisibility::Hidden;
+	}
+	~FCsPrimitiveType_ESlateVisibility() {}
+
+	FCsPrimitiveType_ESlateVisibility& operator=(const ESlateVisibility& B)
+	{
+		Value = B;
+		UpdateIsDirty();
+		return *this;
+	}
+
+	FORCEINLINE friend bool operator==(const ESlateVisibility &Lhs, const FCsPrimitiveType_ESlateVisibility &Rhs)
+	{
+		return Lhs == Rhs.Value;
+	}
+
+	FORCEINLINE friend bool operator==(const FCsPrimitiveType_ESlateVisibility &Lhs, const ESlateVisibility &Rhs)
+	{
+		return Lhs.Value == Rhs;
+	}
+
+	FORCEINLINE friend bool operator!=(const ESlateVisibility &Lhs, const FCsPrimitiveType_ESlateVisibility &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_ESlateVisibility &Lhs, const ESlateVisibility &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+};
+
+typedef FCsPrimitiveType_ESlateVisibility TCsESlateVisibility;
+
+struct FCsPrimitiveType_FSlateColor : public FCsPrimitiveType<FSlateColor>
+{
+public:
+
+	FCsPrimitiveType_FSlateColor()
+	{
+		DefaultValue = FSlateColor();
+	}
+	~FCsPrimitiveType_FSlateColor() {}
+
+	FCsPrimitiveType_FSlateColor& operator=(const FSlateColor& B)
+	{
+		Value = B;
+		UpdateIsDirty();
+		return *this;
+	}
+
+	FORCEINLINE friend bool operator==(const FSlateColor &Lhs, const FCsPrimitiveType_FSlateColor &Rhs)
+	{
+		return Lhs == Rhs.Value;
+	}
+
+	FORCEINLINE friend bool operator==(const FCsPrimitiveType_FSlateColor &Lhs, const FSlateColor &Rhs)
+	{
+		return Lhs.Value == Rhs;
+	}
+
+	FORCEINLINE friend bool operator!=(const FSlateColor &Lhs, const FCsPrimitiveType_FSlateColor &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_FSlateColor &Lhs, const FSlateColor &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+};
+
+typedef FCsPrimitiveType_FSlateColor TCsFSlateColor;
+
+struct FCsPrimitiveType_ECheckBoxState : public FCsPrimitiveType<ECheckBoxState>
+{
+public:
+
+	FCsPrimitiveType_ECheckBoxState()
+	{
+		DefaultValue = ECheckBoxState::Unchecked;
+	}
+	~FCsPrimitiveType_ECheckBoxState() {}
+
+	FCsPrimitiveType_ECheckBoxState& operator=(const ECheckBoxState& B)
+	{
+		Value = B;
+		UpdateIsDirty();
+		return *this;
+	}
+
+	FORCEINLINE friend bool operator==(const ECheckBoxState &Lhs, const FCsPrimitiveType_ECheckBoxState &Rhs)
+	{
+		return Lhs == Rhs.Value;
+	}
+
+	FORCEINLINE friend bool operator==(const FCsPrimitiveType_ECheckBoxState &Lhs, const ECheckBoxState &Rhs)
+	{
+		return Lhs.Value == Rhs;
+	}
+
+	FORCEINLINE friend bool operator!=(const ECheckBoxState &Lhs, const FCsPrimitiveType_ECheckBoxState &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_ECheckBoxState &Lhs, const ECheckBoxState &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+};
+
+typedef FCsPrimitiveType_ECheckBoxState TCsECheckBoxState;
+
+#pragma endregion PrimitiveType
+
 // Structs
 #pragma region
 
@@ -318,7 +443,7 @@ public:
 
 	FString PathAndName;
 
-	FCsPrimitiveType<ESlateVisibility> Visibility;
+	TCsESlateVisibility Visibility;
 
 	FCsWidget() {}
 	virtual ~FCsWidget() {}
@@ -401,8 +526,8 @@ struct FCsWidget_Text : public FCsWidget
 public:
 	TWeakObjectPtr<class UTextBlock> Text;
 
-	FCsPrimitiveType<FString> String;
-	FCsPrimitiveType<FLinearColor> Color;
+	TCsFString String;
+	TCsFLinearColor Color;
 
 public:
 	FCsWidget_Text(){}
@@ -544,8 +669,8 @@ struct FCsWidget_Image : public FCsWidget
 public:
 	TWeakObjectPtr<class UImage> Image;
 
-	FCsPrimitiveType<FSlateColor> Tint;
-	FCsPrimitiveType<FLinearColor> Color;
+	TCsFSlateColor Tint;
+	TCsFLinearColor Color;
 
 public:
 	FCsWidget_Image()
@@ -621,7 +746,7 @@ struct FCsWidget_Button : public FCsWidget
 public:
 	TWeakObjectPtr<class UButton> Button;
 
-	FCsPrimitiveType<FLinearColor> Color;
+	TCsFLinearColor Color;
 
 public:
 	FCsWidget_Button()
@@ -676,7 +801,7 @@ struct FCsWidget_CheckBox : public FCsWidget
 public:
 	TWeakObjectPtr<class UCheckBox> CheckBox;
 
-	FCsPrimitiveType<ECheckBoxState> State;
+	TCsECheckBoxState State;
 
 	FCsWidget_CheckBox() {}
 	~FCsWidget_CheckBox() {}
@@ -762,7 +887,7 @@ public:
 	TWeakObjectPtr<class USlider> Slider;
 
 	TCsFloat Value;
-	FCsPrimitiveType<FLinearColor> HandleColor;
+	TCsFLinearColor HandleColor;
 
 	FCsWidget_Slider() {}
 	~FCsWidget_Slider() {}
@@ -827,8 +952,8 @@ struct FCsWidget_EditableTextBox : public FCsWidget
 public:
 	TWeakObjectPtr<class UEditableTextBox> TextBox;
 
-	FCsPrimitiveType<FString> Text;
-	FCsPrimitiveType<FLinearColor> Color;
+	TCsFString Text;
+	TCsFLinearColor Color;
 
 	FCsWidget_EditableTextBox() {}
 	~FCsWidget_EditableTextBox() {}
@@ -1226,7 +1351,7 @@ public:
 	FCsWidget_Bar Bar;
 	FCsWidget_Text Total;
 
-	FCsPrimitiveType<ESlateVisibility> Visibility;
+	TCsESlateVisibility Visibility;
 
 	bool IsActive;
 	bool IsShuttingDown;

@@ -45,6 +45,11 @@ public:
 	FCsPrimitiveType(){}
 	virtual ~FCsPrimitiveType(){}
 
+	void SetDefaultValue(const T &inDefaultValue)
+	{
+		DefaultValue = inDefaultValue;
+	}
+
 	virtual void UpdateIsDirty()
 	{
 		IsDirty = Value != Last_Value;
@@ -86,7 +91,7 @@ public:
 
 	void Reset()
 	{
-		Value	   = T<>;
+		Value	   = DefaultValue;
 		Last_Value = Value;
 		IsDirty	   = false;
 	}
@@ -95,23 +100,117 @@ public:
 
 };
 
-struct FCsPrimitiveType_Int32 : FCsPrimitiveType<int32>
+struct FCsPrimitiveType_Int32 : public FCsPrimitiveType<int32>
 {
-	FCsPrimitiveType_Int32(){}
+	FCsPrimitiveType_Int32()
+	{
+		DefaultValue = 0;
+	}
 	~FCsPrimitiveType_Int32(){}
+
+	FCsPrimitiveType_Int32& operator=(const int32& B)
+	{
+		Value = B;
+		UpdateIsDirty();
+		return *this;
+	}
+
+	FORCEINLINE friend bool operator==(const int32 &Lhs, const FCsPrimitiveType_Int32 &Rhs)
+	{
+		return Lhs == Rhs.Value;
+	}
+
+	FORCEINLINE friend bool operator==(const FCsPrimitiveType_Int32 &Lhs, const int32 &Rhs)
+	{
+		return Lhs.Value == Rhs;
+	}
+
+	FORCEINLINE friend bool operator!=(const int32 &Lhs, const FCsPrimitiveType_Int32 &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_Int32 &Lhs, const int32 &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FCsPrimitiveType_Int32& operator+=(const int32& B)
+	{
+		Value += B;
+		UpdateIsDirty();
+		return *this;
+	}
+
+	FCsPrimitiveType_Int32& operator-=(const int32& B)
+	{
+		Value -= B;
+		UpdateIsDirty();
+		return *this;
+	}
+
+	FCsPrimitiveType_Int32& operator*=(const int32& B)
+	{
+		Value *= B;
+		UpdateIsDirty();
+		return *this;
+	}
+
+	FORCEINLINE friend bool operator<(const FCsPrimitiveType_Int32 &Lhs, const int32 &Rhs)
+	{
+		return Lhs.Value < Rhs;
+	}
+
+	FORCEINLINE friend bool operator<(const int32 &Lhs, const FCsPrimitiveType_Int32 &Rhs)
+	{
+		return Lhs < Rhs.Value;
+	}
+
+	FORCEINLINE friend bool operator>(const FCsPrimitiveType_Int32 &Lhs, const int32 &Rhs)
+	{
+		return Lhs.Value > Rhs;
+	}
+
+	FORCEINLINE friend bool operator>(const int32 &Lhs, const FCsPrimitiveType_Int32 &Rhs)
+	{
+		return Lhs > Rhs.Value;
+	}
+
+	FORCEINLINE friend float operator/(const FCsPrimitiveType_Int32 &Lhs, const int32 &Rhs)
+	{
+		return Lhs.Value / Rhs;
+	}
+
+	FORCEINLINE friend float operator/(const int32 &Lhs, const FCsPrimitiveType_Int32 &Rhs)
+	{
+		return Lhs / Rhs.Value;
+	}
+
+	FORCEINLINE friend float operator*(const FCsPrimitiveType_Int32 &Lhs, const int32 &Rhs)
+	{
+		return Lhs.Value * Rhs;
+	}
+
+	FORCEINLINE friend float operator*(const int32 &Lhs, const FCsPrimitiveType_Int32 &Rhs)
+	{
+		return Lhs * Rhs.Value;
+	}
 };
 
 typedef FCsPrimitiveType_Int32 TCsInt32;
 
-struct FCsPrimitiveType_Float : FCsPrimitiveType<float>
+struct FCsPrimitiveType_Float : public FCsPrimitiveType<float>
 {
-	FCsPrimitiveType_Float(){}
+	FCsPrimitiveType_Float()
+	{
+		DefaultValue = 0.0f;
+	}
 	~FCsPrimitiveType_Float(){}
 
 	FCsPrimitiveType_Float& operator=(const float& B)
 	{
 		Value = B;
-		IsDirty = Value != Last_Value;
+		UpdateIsDirty();
 		return *this;
 	}
 
@@ -138,21 +237,21 @@ struct FCsPrimitiveType_Float : FCsPrimitiveType<float>
 	FCsPrimitiveType_Float& operator+=(const float& B)
 	{
 		Value += B;
-		IsDirty = Value != Last_Value;
+		UpdateIsDirty();
 		return *this;
 	}
 
 	FCsPrimitiveType_Float& operator-=(const float& B)
 	{
 		Value -= B;
-		IsDirty = Value != Last_Value;
+		UpdateIsDirty();
 		return *this;
 	}
 
 	FCsPrimitiveType_Float& operator*=(const float& B)
 	{
 		Value *= B;
-		IsDirty = Value != Last_Value;
+		UpdateIsDirty();
 		return *this;
 	}
 
@@ -214,7 +313,10 @@ protected:
 
 public:
 
-	FCsPrimitiveType_FVector2D() {}
+	FCsPrimitiveType_FVector2D() 
+	{
+		DefaultValue = FVector2D::ZeroVector;
+	}
 	~FCsPrimitiveType_FVector2D() {}
 
 	virtual void UpdateIsDirty() override
@@ -331,16 +433,27 @@ protected:
 
 public:
 
-	FCsPrimitiveType_FVector(){}
+	FCsPrimitiveType_FVector()
+	{
+		DefaultValue = FVector::ZeroVector;
+	}
 	~FCsPrimitiveType_FVector(){}
 
-	FCsPrimitiveType_FVector& operator=(const FVector& B)
+	virtual void UpdateIsDirty() override
 	{
-		Value = B;
 		IsDirty = Value != Last_Value;
 		IsDirtys[CS_AXIS_X] = Value.X != Last_Value.X;
 		IsDirtys[CS_AXIS_Y] = Value.Y != Last_Value.Y;
 		IsDirtys[CS_AXIS_Z] = Value.Z != Last_Value.Z;
+
+		if (IsDirty)
+			OnChange_Event.Broadcast(Value);
+	}
+
+	FCsPrimitiveType_FVector& operator=(const FVector& B)
+	{
+		Value = B;
+		UpdateIsDirty();
 		return *this;
 	}
 
@@ -367,40 +480,28 @@ public:
 	FCsPrimitiveType_FVector& operator+=(const FVector& B)
 	{
 		Value += B;
-		IsDirty = Value != Last_Value;
-		IsDirtys[CS_AXIS_X] = Value.X != Last_Value.X;
-		IsDirtys[CS_AXIS_Y] = Value.Y != Last_Value.Y;
-		IsDirtys[CS_AXIS_Z] = Value.Z != Last_Value.Z;
+		UpdateIsDirty();
 		return *this;
 	}
 
 	FCsPrimitiveType_FVector& operator-=(const FVector& B)
 	{
 		Value -= B;
-		IsDirty = Value != Last_Value;
-		IsDirtys[CS_AXIS_X] = Value.X != Last_Value.X;
-		IsDirtys[CS_AXIS_Y] = Value.Y != Last_Value.Y;
-		IsDirtys[CS_AXIS_Z] = Value.Z != Last_Value.Z;
+		UpdateIsDirty();
 		return *this;
 	}
 
 	FCsPrimitiveType_FVector& operator*=(const FVector& B)
 	{
 		Value *= B;
-		IsDirty = Value != Last_Value;
-		IsDirtys[CS_AXIS_X] = Value.X != Last_Value.X;
-		IsDirtys[CS_AXIS_Y] = Value.Y != Last_Value.Y;
-		IsDirtys[CS_AXIS_Z] = Value.Z != Last_Value.Z;
+		UpdateIsDirty();
 		return *this;
 	}
 
 	virtual void Set(const FVector &inValue) override 
 	{
 		Value = inValue;
-		IsDirty = Value != Last_Value;
-		IsDirtys[CS_AXIS_X] = Value.X != Last_Value.X;
-		IsDirtys[CS_AXIS_Y] = Value.Y != Last_Value.Y;
-		IsDirtys[CS_AXIS_Z] = Value.Z != Last_Value.Z;
+		UpdateIsDirty();
 	}
 
 	FVector GetAxes(const int32 &Axes)
@@ -463,16 +564,27 @@ protected:
 
 public:
 
-	FCsPrimitiveType_FRotator(){}
+	FCsPrimitiveType_FRotator()
+	{
+		DefaultValue = FRotator::ZeroRotator;
+	}
 	~FCsPrimitiveType_FRotator(){}
 
-	FCsPrimitiveType_FRotator& operator=(const FRotator& B)
+	virtual void UpdateIsDirty() override
 	{
-		Value = B;
 		IsDirty = Value != Last_Value;
 		IsDirtys[CS_AXIS_ROLL] = Value.Roll != Last_Value.Roll;
 		IsDirtys[CS_AXIS_PITCH] = Value.Pitch != Last_Value.Pitch;
 		IsDirtys[CS_AXIS_YAW] = Value.Yaw != Last_Value.Yaw;
+
+		if (IsDirty)
+			OnChange_Event.Broadcast(Value);
+	}
+
+	FCsPrimitiveType_FRotator& operator=(const FRotator& B)
+	{
+		Value = B;
+		UpdateIsDirty();
 		return *this;
 	}
 
@@ -499,30 +611,21 @@ public:
 	FCsPrimitiveType_FRotator& operator+=(const FRotator& B)
 	{
 		Value += B;
-		IsDirty = Value != Last_Value;
-		IsDirtys[CS_AXIS_ROLL] = Value.Roll != Last_Value.Roll;
-		IsDirtys[CS_AXIS_PITCH] = Value.Pitch != Last_Value.Pitch;
-		IsDirtys[CS_AXIS_YAW] = Value.Yaw != Last_Value.Yaw;
+		UpdateIsDirty();
 		return *this;
 	}
 
 	FCsPrimitiveType_FRotator& operator-=(const FRotator& B)
 	{
 		Value -= B;
-		IsDirty = Value != Last_Value;
-		IsDirtys[CS_AXIS_ROLL] = Value.Roll != Last_Value.Roll;
-		IsDirtys[CS_AXIS_PITCH] = Value.Pitch != Last_Value.Pitch;
-		IsDirtys[CS_AXIS_YAW] = Value.Yaw != Last_Value.Yaw;
+		UpdateIsDirty();
 		return *this;
 	}
 
 	virtual void Set(const FRotator &inValue) override
 	{
 		Value = inValue;
-		IsDirty = Value != Last_Value;
-		IsDirtys[CS_AXIS_ROLL] = Value.Roll != Last_Value.Roll;
-		IsDirtys[CS_AXIS_PITCH] = Value.Pitch != Last_Value.Pitch;
-		IsDirtys[CS_AXIS_YAW] = Value.Yaw != Last_Value.Yaw;
+		UpdateIsDirty();
 	}
 
 	FRotator GetAxes(const int32 &Axes)
@@ -572,6 +675,86 @@ public:
 
 typedef FCsPrimitiveType_FRotator TCsFRotator;
 
+struct FCsPrimitiveType_FString : public FCsPrimitiveType<FString>
+{
+public:
+
+	FCsPrimitiveType_FString()
+	{
+		DefaultValue = ECsCachedString::Str::Empty;
+	}
+	~FCsPrimitiveType_FString() {}
+
+	FCsPrimitiveType_FString& operator=(const FString& B)
+	{
+		Value = B;
+		UpdateIsDirty();
+		return *this;
+	}
+
+	FORCEINLINE friend bool operator==(const FString &Lhs, const FCsPrimitiveType_FString &Rhs)
+	{
+		return Lhs == Rhs.Value;
+	}
+
+	FORCEINLINE friend bool operator==(const FCsPrimitiveType_FString &Lhs, const FString &Rhs)
+	{
+		return Lhs.Value == Rhs;
+	}
+
+	FORCEINLINE friend bool operator!=(const FString &Lhs, const FCsPrimitiveType_FString &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_FString &Lhs, const FString &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+};
+
+typedef FCsPrimitiveType_FString TCsFString;
+
+struct FCsPrimitiveType_FLinearColor : public FCsPrimitiveType<FLinearColor>
+{
+public:
+
+	FCsPrimitiveType_FLinearColor()
+	{
+		DefaultValue = FLinearColor::White;
+	}
+	~FCsPrimitiveType_FLinearColor() {}
+
+	FCsPrimitiveType_FLinearColor& operator=(const FLinearColor& B)
+	{
+		Value = B;
+		UpdateIsDirty();
+		return *this;
+	}
+
+	FORCEINLINE friend bool operator==(const FLinearColor &Lhs, const FCsPrimitiveType_FLinearColor &Rhs)
+	{
+		return Lhs == Rhs.Value;
+	}
+
+	FORCEINLINE friend bool operator==(const FCsPrimitiveType_FLinearColor &Lhs, const FLinearColor &Rhs)
+	{
+		return Lhs.Value == Rhs;
+	}
+
+	FORCEINLINE friend bool operator!=(const FLinearColor &Lhs, const FCsPrimitiveType_FLinearColor &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_FLinearColor &Lhs, const FLinearColor &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+};
+
+typedef FCsPrimitiveType_FLinearColor TCsFLinearColor;
+
 // Ref
 #pragma region
 
@@ -579,19 +762,35 @@ template<typename T>
 struct FCsPrimitiveType_Ref
 {
 public:
+	T DefaultValue;
 	T* Value;
 	T Last_Value;
 protected:
 	bool IsDirty;
+public:
+	TMulticastDelegate<void, const T&> OnChange_Event;
 
 public:
 	FCsPrimitiveType_Ref(){}
 	virtual ~FCsPrimitiveType_Ref(){}
 
+	void SetDefaultValue(const T &inDefaultValue)
+	{
+		DefaultValue = inDefaultValue;
+	}
+
+	virtual void UpdateIsDirty()
+	{
+		IsDirty = *Value != Last_Value;
+
+		if (IsDirty)
+			OnChange_Event.Broadcast(*Value);
+	}
+
 	FCsPrimitiveType_Ref& operator=(const T& B)
 	{
-		Value = B;
-		IsDirty = Value != Last_Value;
+		*Value = B;
+		UpdateIsDirty();
 		return *this;
 	}
 
@@ -608,18 +807,16 @@ public:
 	void Set(T* inValue)
 	{
 		Value   = inValue;
-		IsDirty = *Value != Last_Value;
+		UpdateIsDirty();
 	}
 
 	void Set(const T &inValue)
 	{
 		*Value  = inValue;
-		IsDirty = *Value != Last_Value;
+		UpdateIsDirty();
 	}
 
 	T Get() { return *Value; }
-
-	virtual T GetDefaultValue() { return T(); }
 
 	void Clear()
 	{
@@ -629,8 +826,8 @@ public:
 
 	void Reset()
 	{
-		Value	   = GetDefaultValue();
-		Last_Value = *Value;
+		Value	   = nullptr;
+		Last_Value = DefaultValue;
 		IsDirty	   = false;
 	}
 
@@ -643,24 +840,97 @@ public:
 	bool HasChanged() { return IsDirty; }
 };
 
-struct FCsPrimitiveType_Ref_Int32 : FCsPrimitiveType_Ref<int32>
+struct FCsPrimitiveType_Ref_Int32 : public FCsPrimitiveType_Ref<int32>
 {
-	virtual int32 GetDefaultValue() override
+	FCsPrimitiveType_Ref_Int32() {}
+	~FCsPrimitiveType_Ref_Int32() {}
+
+	FORCEINLINE friend bool operator==(const int32 &Lhs, const FCsPrimitiveType_Ref_Int32 &Rhs)
 	{
-		return 0;
+		return Lhs == *(Rhs.Value);
+	}
+
+	FORCEINLINE friend bool operator==(const FCsPrimitiveType_Ref_Int32 &Lhs, const int32 &Rhs)
+	{
+		return *(Lhs.Value) == Rhs;
+	}
+
+	FORCEINLINE friend bool operator!=(const int32 &Lhs, const FCsPrimitiveType_Ref_Int32 &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_Ref_Int32 &Lhs, const int32 &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE friend bool operator<(const FCsPrimitiveType_Ref_Int32 &Lhs, const int32 &Rhs)
+	{
+		return (*Lhs.Value) < Rhs;
+	}
+
+	FORCEINLINE friend bool operator<(const int32 &Lhs, const FCsPrimitiveType_Ref_Int32 &Rhs)
+	{
+		return Lhs < (*Rhs.Value);
+	}
+
+	FORCEINLINE friend bool operator>(const FCsPrimitiveType_Ref_Int32 &Lhs, const int32 &Rhs)
+	{
+		return (*Lhs.Value) > Rhs;
+	}
+
+	FORCEINLINE friend bool operator>(const int32 &Lhs, const FCsPrimitiveType_Ref_Int32 &Rhs)
+	{
+		return Lhs > (*Rhs.Value);
 	}
 };
 
 typedef FCsPrimitiveType_Ref_Int32 TCsInt32_Ref;
 
-struct FCsPrimitiveType_Ref_Float : FCsPrimitiveType_Ref<float>
+struct FCsPrimitiveType_Ref_Float : public FCsPrimitiveType_Ref<float>
 {
 	FCsPrimitiveType_Ref_Float(){}
 	~FCsPrimitiveType_Ref_Float(){}
 
-	virtual float GetDefaultValue() override
+	FORCEINLINE friend bool operator==(const float &Lhs, const FCsPrimitiveType_Ref_Float &Rhs)
 	{
-		return 0.0f;
+		return Lhs == *(Rhs.Value);
+	}
+
+	FORCEINLINE friend bool operator==(const FCsPrimitiveType_Ref_Float &Lhs, const float &Rhs)
+	{
+		return *(Lhs.Value) == Rhs;
+	}
+
+	FORCEINLINE friend bool operator!=(const float &Lhs, const FCsPrimitiveType_Ref_Float &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_Ref_Float &Lhs, const float &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE friend bool operator<(const FCsPrimitiveType_Ref_Float &Lhs, const float &Rhs)
+	{
+		return (*Lhs.Value) < Rhs;
+	}
+
+	FORCEINLINE friend bool operator<(const float &Lhs, const FCsPrimitiveType_Ref_Float &Rhs)
+	{
+		return Lhs < (*Rhs.Value);
+	}
+
+	FORCEINLINE friend bool operator>(const FCsPrimitiveType_Ref_Float &Lhs, const float &Rhs)
+	{
+		return (*Lhs.Value) > Rhs;
+	}
+
+	FORCEINLINE friend bool operator>(const float &Lhs, const FCsPrimitiveType_Ref_Float &Rhs)
+	{
+		return Lhs > (*Rhs.Value);
 	}
 };
 
@@ -679,6 +949,7 @@ template<typename T, typename U = int32, uint8 SIZE = 1>
 struct FCsPrimitiveType_MultiValue
 {
 public:
+	T DefaultValue;
 	T Value;
 	T Last_Value;
 
@@ -689,19 +960,39 @@ protected:
 
 	bool IsDirtys[SIZE];
 public:
+	TMulticastDelegate<void, const T&> OnChange_Event;
+	TMulticastDelegate<void, const U&, const T&> OnChangeEX_Event;
+
+public:
 
 	FCsPrimitiveType_MultiValue(){}
 	virtual ~FCsPrimitiveType_MultiValue(){}
 
+	virtual void UpdateIsDirty()
+	{
+		IsDirty = Value != Last_Value;
+
+		if (IsDirty)
+			OnChange_Event.Broadcast(Value);
+	}
+
+	virtual void UpdateIsDirtys(const int64 &Index)
+	{
+		IsDirtys[Index] = Values[Index] != Last_Values[Index];
+
+		if (IsDirtys[Index])
+			OnChangeEX_Event.Broadcast((U)Index, Values[Index]);
+	}
+
 	FCsPrimitiveType_MultiValue& operator=(const T& B)
 	{
-		Value  = B;
-		IsDirty = Value != Last_Value;
+		Value = B;
+		UpdateIsDirty();
 
 		for (uint8 I = 0; I < SIZE; I++)
 		{
 			Values[I] = B.Values[I];
-			IsDirtys[I] = Values[I] != Last_Values[I];
+			UpdateIsDirtys(I);
 		}
 		return *this;
 	}
@@ -723,8 +1014,8 @@ public:
 
 	void Set(const T &inValue)
 	{
-		Value   = inValue;
-		IsDirty = Value != Last_Value;
+		Value = inValue;
+		UpdateIsDirty();
 	}
 
 	void Set(const U &Index, const T &inValue)
@@ -738,8 +1029,8 @@ public:
 
 		if (Index > CS_PRIMITIVE_TYPE_DEFAULT && Index < SIZE)
 		{
-			Values[Index]   = inValue;
-			IsDirtys[Index] = Values[Index] != Last_Values[Index];
+			Values[Index] = inValue;
+			UpdateIsDirtys(Index);
 		}
 		else
 		{
@@ -767,11 +1058,9 @@ public:
 		}
 	}
 
-	virtual T GetDefaultValue() { return T(); }
-
 	void Reset()
 	{
-		Value	   = GetDefaultValue();
+		Value	   = DefaultValue;
 		Last_Value = Value;
 		IsDirty	   = false;
 
@@ -789,20 +1078,15 @@ public:
 };
 
 template<typename T, typename U, uint8 SIZE>
-struct FCsIntegralType_MultiValue : FCsPrimitiveType_MultiValue<T, U, SIZE>
+struct FCsIntegralType_MultiValue : public FCsPrimitiveType_MultiValue<T, U, SIZE>
 {
 	FCsIntegralType_MultiValue(){}
 	~FCsIntegralType_MultiValue(){}
 
-	virtual T GetDefaultValue() override
-	{
-		return (T)0;
-	}
-
 	void Add(const T &inValue) 
 	{ 
-		Value  += inValue; 
-		IsDirty = Value != Last_Value;
+		Value += inValue;
+		UpdateIsDirty();
 	}
 
 	void Add(const U &Index, const T &inValue) { Add((int64)Index, inValue); }
@@ -815,15 +1099,15 @@ struct FCsIntegralType_MultiValue : FCsPrimitiveType_MultiValue<T, U, SIZE>
 		}
 		else
 		{
-			Values[Index]  += inValue;
-			IsDirtys[Index] = Values[Index] != Last_Values[Index];
+			Values[Index] += inValue;
+			UpdateIsDirtys(Index);
 		}
 	}
 
 	void Subtract(const T &inValue) 
 	{ 
-		Value  -= inValue;
-		IsDirty = Value != Last_Value;
+		Value -= inValue;
+		UpdateIsDirty();
 	}
 
 	void Subtract(const U &Index, const T &inValue) { Subtract((int64)Index, inValue); }
@@ -836,8 +1120,8 @@ struct FCsIntegralType_MultiValue : FCsPrimitiveType_MultiValue<T, U, SIZE>
 		}
 		else
 		{
-			Values[Index]  -= inValue;
-			IsDirtys[Index] = Values[Index] != Last_Values[Index];
+			Values[Index] -= inValue;
+			UpdateIsDirtys(Index);
 		}
 	}
 
@@ -865,15 +1149,13 @@ struct FCsIntegralType_MultiValue : FCsPrimitiveType_MultiValue<T, U, SIZE>
 };
 
 template<typename U, uint8 SIZE>
-struct FCsPrimitiveType_MultiValue_bool : FCsPrimitiveType_MultiValue<bool, U, SIZE>
+struct FCsPrimitiveType_MultiValue_bool : public FCsPrimitiveType_MultiValue<bool, U, SIZE>
 {
-	FCsPrimitiveType_MultiValue_bool(){}
-	~FCsPrimitiveType_MultiValue_bool(){}
-
-	virtual bool GetDefaultValue() override
+	FCsPrimitiveType_MultiValue_bool()
 	{
-		return false;
+		DefaultValue = false;
 	}
+	~FCsPrimitiveType_MultiValue_bool(){}
 
 	bool Or()
 	{
@@ -899,15 +1181,13 @@ struct FCsPrimitiveType_MultiValue_bool : FCsPrimitiveType_MultiValue<bool, U, S
 };
 
 template<typename U, uint8 SIZE>
-struct FCsPrimitiveType_MultiValue_FString : FCsPrimitiveType_MultiValue<FString, U, SIZE>
+struct FCsPrimitiveType_MultiValue_FString : public FCsPrimitiveType_MultiValue<FString, U, SIZE>
 {
-	FCsPrimitiveType_MultiValue_FString(){}
-	~FCsPrimitiveType_MultiValue_FString(){}
-
-	virtual FString GetDefaultValue() override
+	FCsPrimitiveType_MultiValue_FString()
 	{
-		return TEXT("");
+		DefaultValue = ECsCachedString::Str::Empty;
 	}
+	~FCsPrimitiveType_MultiValue_FString(){}
 };
 
 #define CS_FSTRING_ENUM_TWO_PARAMS 2
@@ -916,9 +1196,12 @@ struct FCsPrimitiveType_MultiValue_FString : FCsPrimitiveType_MultiValue<FString
 #define CS_FSTRING_ENUM_LOWER_VALUE 1
 #define CS_FSTRING_ENUM_ALT_1_VALUE 2
 
-struct FCsPrimitiveType_MultiValue_FString_Enum_TwoParams : FCsPrimitiveType_MultiValue_FString<int32, CS_FSTRING_ENUM_TWO_PARAMS>
+struct FCsPrimitiveType_MultiValue_FString_Enum_TwoParams : public FCsPrimitiveType_MultiValue_FString<int32, CS_FSTRING_ENUM_TWO_PARAMS>
 {
-	FCsPrimitiveType_MultiValue_FString_Enum_TwoParams(){}
+	FCsPrimitiveType_MultiValue_FString_Enum_TwoParams()
+	{
+		DefaultValue = ECsCachedString::Str::Empty;
+	}
 	~FCsPrimitiveType_MultiValue_FString_Enum_TwoParams(){}
 
 	FCsPrimitiveType_MultiValue_FString_Enum_TwoParams(const FString &inValue1, const FString &inValue2)
@@ -964,9 +1247,12 @@ struct FCsPrimitiveType_MultiValue_FString_Enum_TwoParams : FCsPrimitiveType_Mul
 	}
 };
 
-struct FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams : FCsPrimitiveType_MultiValue_FString<int32, CS_FSTRING_ENUM_THREE_PARAMS>
+struct FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams : public FCsPrimitiveType_MultiValue_FString<int32, CS_FSTRING_ENUM_THREE_PARAMS>
 {
-	FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams(){}
+	FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams()
+	{
+		DefaultValue = ECsCachedString::Str::Empty;
+	}
 	~FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams(){}
 
 	FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams(const FString &inValue1, const FString &inValue2, const FString &inValue3)
@@ -1023,6 +1309,7 @@ template<typename T, typename U = int32, uint8 SIZE = 1>
 struct FCsPrimitiveType_MultiRefValue
 {
 public:
+	T DefaultValue;
 	T Value;
 	T Last_Value;
 
@@ -1033,19 +1320,39 @@ protected:
 
 	bool IsDirtys[SIZE];
 public:
+	TMulticastDelegate<void, const T&> OnChange_Event;
+	TMulticastDelegate<void, const U&, const T&> OnChangeEX_Event;
+
+public:
 
 	FCsPrimitiveType_MultiRefValue(){}
 	virtual ~FCsPrimitiveType_MultiRefValue(){}
 
+	virtual void UpdateIsDirty()
+	{
+		IsDirty = Value != Last_Value;
+
+		if (IsDirty)
+			OnChange_Event.Broadcast(Value);
+	}
+
+	virtual void UpdateIsDirtys(const int64 &Index)
+	{
+		IsDirtys[Index] = *(Values[Index]) != Last_Values[Index];
+
+		if (IsDirtys[Index])
+			OnChangeEX_Event.Broadcast((U)Index, *(Values[Index]));
+	}
+
 	FCsPrimitiveType_MultiRefValue& operator=(const T& B)
 	{
-		Value   = B;
-		IsDirty = Value != Last_Value;
+		Value = B;
+		UpdateIsDirty();
 
 		for (uint8 I = 0; I < SIZE; I++)
 		{
-			Values[I]   = B.Values[I];
-			IsDirtys[I] = *(Values[I]) != Last_Values[I];
+			Values[I] = B.Values[I];
+			UpdateIsDirtys(I);
 		}
 		return *this;
 	}
@@ -1067,8 +1374,8 @@ public:
 
 	void Set(T &inValue)
 	{
-		Value   = inValue;
-		IsDirty = Value != Last_Value;
+		Value = inValue;
+		UpdateIsDirty();
 	}
 
 	void Set(const U &Index, T* inValue)
@@ -1080,8 +1387,8 @@ public:
 	{
 		if (Index > CS_PRIMITIVE_TYPE_DEFAULT && Index < SIZE)
 		{
-			Values[Index]   = inValue;
-			IsDirtys[Index] = *(Values[Index]) != Last_Values[Index];
+			Values[Index] = inValue;
+			UpdateIsDirtys(Index);
 		}
 		else
 		{
@@ -1109,11 +1416,9 @@ public:
 		}
 	}
 
-	virtual T GetDefaultValue() { return T(); }
-
 	void Reset()
 	{
-		Value	   = GetDefaultValue();
+		Value	   = DefaultValue;
 		Last_Value = Value;
 		IsDirty	   = false;
 
@@ -1135,15 +1440,10 @@ public:
 };
 
 template<typename T, typename U, uint8 SIZE>
-struct FCsIntegralType_MultiRefValue : FCsPrimitiveType_MultiRefValue<T, U, SIZE>
+struct FCsIntegralType_MultiRefValue : public FCsPrimitiveType_MultiRefValue<T, U, SIZE>
 {
 	FCsIntegralType_MultiRefValue(){}
 	~FCsIntegralType_MultiRefValue(){}
-
-	virtual T GetDefaultValue() override
-	{
-		return (T)0;
-	}
 
 	T Max()
 	{
@@ -1169,15 +1469,13 @@ struct FCsIntegralType_MultiRefValue : FCsPrimitiveType_MultiRefValue<T, U, SIZE
 };
 
 template<typename U, uint8 SIZE>
-struct FCsPrimitiveType_MultiRefValue_bool : FCsPrimitiveType_MultiRefValue<bool, U, SIZE>
+struct FCsPrimitiveType_MultiRefValue_bool : public FCsPrimitiveType_MultiRefValue<bool, U, SIZE>
 {
-	FCsPrimitiveType_MultiRefValue_bool(){}
-	~FCsPrimitiveType_MultiRefValue_bool(){}
-
-	virtual bool GetDefaultValue() override
+	FCsPrimitiveType_MultiRefValue_bool()
 	{
-		return false;
+		DefaultValue = bool;
 	}
+	~FCsPrimitiveType_MultiRefValue_bool(){}
 
 	bool Or()
 	{
@@ -1212,6 +1510,7 @@ template<typename T, typename U = int32>
 struct FCsPrimitiveType_TArrayValue
 {
 public:
+	T DefaultValue;
 	T Value;
 	T Last_Value;
 
@@ -1224,19 +1523,45 @@ protected:
 
 	TArray<bool> IsDirtys;
 public:
+	TBaseDelegate<T, const U&> GetDelegate;
+	TMulticastDelegate<void, const T&> OnChange_Event;
+	TMulticastDelegate<void, const U&, const T&> OnChangeEX_Event;
+
+public:
 
 	FCsPrimitiveType_TArrayValue() {}
 	virtual ~FCsPrimitiveType_TArrayValue() {}
 
+	void SetDefaultValue(const T& inDefaultValue)
+	{
+		DefaultValue = inDefaultValue;
+	}
+
+	virtual void UpdateIsDirty()
+	{
+		IsDirty = Value != Last_Value;
+
+		if (IsDirty)
+			OnChange_Event.Broadcast(Value);
+	}
+
+	virtual void UpdateIsDirtys(const int64 &Index)
+	{
+		IsDirtys[Index] = Values[Index] != Last_Values[Index];
+
+		if (IsDirtys[Index])
+			OnChangeEX_Event.Broadcast((U)Index, Values[Index]);
+	}
+
 	FCsPrimitiveType_TArrayValue& operator=(const T& B)
 	{
 		Value = B;
-		IsDirty = Value != Last_Value;
+		UpdateIsDirty();
 
 		for (uint8 I = 0; I < SIZE; I++)
 		{
 			Values[I] = B.Values[I];
-			IsDirtys[I] = Values[I] != Last_Values[I];
+			UpdateIsDirtys(I);
 		}
 		return *this;
 	}
@@ -1267,7 +1592,7 @@ public:
 	void Set(const T &inValue)
 	{
 		Value = inValue;
-		IsDirty = Value != Last_Value;
+		UpdateIsDirty();
 	}
 
 	void Set(const U &Index, const T &inValue)
@@ -1282,7 +1607,7 @@ public:
 		if (Index > CS_PRIMITIVE_TYPE_DEFAULT && Index < SIZE)
 		{
 			Values[Index] = inValue;
-			IsDirtys[Index] = Values[Index] != Last_Values[Index];
+			UpdateIsDirtys(Index);
 		}
 		else
 		{
@@ -1293,6 +1618,8 @@ public:
 	T Get() { return Value; }
 	T Get(const U &Index) { return Get((int64)Index); }
 	T Get(const int64 &Index){ return Index <= CS_PRIMITIVE_TYPE_DEFAULT ? Value : Values[Index]; }
+
+	T GetEX(const U &Index) { return GetDelegate.Execute(Index); }
 
 	void Clear()
 	{
@@ -1306,11 +1633,9 @@ public:
 		}
 	}
 
-	virtual T GetDefaultValue() { return T(); }
-
 	void Reset()
 	{
-		Value = GetDefaultValue();
+		Value = DefaultValue;
 		Last_Value = Value;
 		IsDirty = false;
 
@@ -1328,15 +1653,10 @@ public:
 };
 
 template<typename T, typename U>
-struct FCsIntegralType_TArrayValue : FCsPrimitiveType_TArrayValue<T, U>
+struct FCsIntegralType_TArrayValue : public FCsPrimitiveType_TArrayValue<T, U>
 {
 	FCsIntegralType_TArrayValue() {}
 	~FCsIntegralType_TArrayValue() {}
-
-	virtual T GetDefaultValue() override
-	{
-		return (T)0;
-	}
 
 	void Add(const T &inValue)
 	{
@@ -1404,15 +1724,33 @@ struct FCsIntegralType_TArrayValue : FCsPrimitiveType_TArrayValue<T, U>
 };
 
 template<typename U>
-struct FCsPrimitiveType_TArrayValue_bool : FCsPrimitiveType_TArrayValue<bool, U>
+struct FCsIntegralType_TArrayValue_uint8 : public FCsIntegralType_TArrayValue<uint8, U>
 {
-	FCsPrimitiveType_TArrayValue_bool() {}
-	~FCsPrimitiveType_TArrayValue_bool() {}
-
-	virtual bool GetDefaultValue() override
+	FCsIntegralType_TArrayValue_uint8()
 	{
-		return false;
+		DefaultValue = 0;
 	}
+	~FCsIntegralType_TArrayValue_uint8(){}
+};
+
+template<typename U>
+struct FCsIntegralType_TArrayValue_float : public FCsIntegralType_TArrayValue<float, U>
+{
+	FCsIntegralType_TArrayValue_float()
+	{
+		DefaultValue = 0.0f;
+	}
+	~FCsIntegralType_TArrayValue_float() {}
+};
+
+template<typename U>
+struct FCsPrimitiveType_TArrayValue_bool : public FCsPrimitiveType_TArrayValue<bool, U>
+{
+	FCsPrimitiveType_TArrayValue_bool() 
+	{
+		DefaultValue = false;
+	}
+	~FCsPrimitiveType_TArrayValue_bool() {}
 
 	bool Or()
 	{
@@ -1447,6 +1785,7 @@ template<typename T, typename U = int32>
 struct FCsPrimitiveType_TArrayRefValue
 {
 public:
+	T DefaultValue;
 	T Value;
 	T Last_Value;
 
@@ -1459,19 +1798,44 @@ protected:
 
 	TArray<bool> IsDirtys;
 public:
+	TBaseDelegate<T, const U&> GetDelegate;
+	TMulticastDelegate<void, const T&> OnChange_Event;
+	TMulticastDelegate<void, const U&, const T&> OnChangeEX_Event;
+public:
 
 	FCsPrimitiveType_TArrayRefValue() {}
 	virtual ~FCsPrimitiveType_TArrayRefValue() {}
 
+	void SetDefaultValue(const T& inDefaultValue)
+	{
+		DefaultValue = inDefaultValue;
+	}
+
+	virtual void UpdateIsDirty()
+	{
+		IsDirty = Value != Last_Value;
+
+		if (IsDirty)
+			OnChange_Event.Broadcast(Value);
+	}
+
+	virtual void UpdateIsDirtys(const int64 &Index)
+	{
+		IsDirtys[Index] = *(Values[Index]) != Last_Values[Index];
+
+		if (IsDirtys[Index])
+			OnChangeEX_Event.Broadcast((U)Index, *(Values[Index]));
+	}
+
 	FCsPrimitiveType_TArrayRefValue& operator=(const T& B)
 	{
 		Value = B;
-		IsDirty = Value != Last_Value;
+		UpdateIsDirty();
 
 		for (uint8 I = 0; I < SIZE; I++)
 		{
 			Values[I] = B.Values[I];
-			IsDirtys[I] = *(Values[I]) != Last_Values[I];
+			UpdateIsDirtys(I);
 		}
 		return *this;
 	}
@@ -1507,7 +1871,7 @@ public:
 	void Set(T &inValue)
 	{
 		Value = inValue;
-		IsDirty = Value != Last_Value;
+		UpdateIsDirty();
 	}
 
 	void Set(const U &Index, T* inValue)
@@ -1520,7 +1884,7 @@ public:
 		if (Index > CS_PRIMITIVE_TYPE_DEFAULT && Index < SIZE)
 		{
 			Values[Index] = inValue;
-			IsDirtys[Index] = *(Values[Index]) != Last_Values[Index];
+			UpdateIsDirtys(Index);
 		}
 		else
 		{
@@ -1531,6 +1895,8 @@ public:
 	T Get() { return Value; }
 	T Get(const U &Index) { return Get((int64)Index); }
 	T Get(const int64 &Index){ return Index <= CS_PRIMITIVE_TYPE_DEFAULT ? Value : *(Values[Index]); }
+
+	T GetEX(const U &Index) { return GetDelegate.Execute(Index); }
 
 	void Clear()
 	{
@@ -1544,11 +1910,9 @@ public:
 		}
 	}
 
-	virtual T GetDefaultValue() { return T(); }
-
 	void Reset()
 	{
-		Value = GetDefaultValue();
+		Value = DefaultValue;
 		Last_Value = Value;
 		IsDirty = false;
 
@@ -1570,15 +1934,10 @@ public:
 };
 
 template<typename T, typename U>
-struct FCsIntegralType_TArrayRefValue : FCsPrimitiveType_TArrayRefValue<T, U>
+struct FCsIntegralType_TArrayRefValue : public FCsPrimitiveType_TArrayRefValue<T, U>
 {
 	FCsIntegralType_TArrayRefValue() {}
 	~FCsIntegralType_TArrayRefValue() {}
-
-	virtual T GetDefaultValue() override
-	{
-		return (T)0;
-	}
 
 	T Max()
 	{
@@ -1604,15 +1963,43 @@ struct FCsIntegralType_TArrayRefValue : FCsPrimitiveType_TArrayRefValue<T, U>
 };
 
 template<typename U>
-struct FCsPrimitiveType_TArrayRefValue_bool : FCsPrimitiveType_TArrayRefValue<bool, U>
+struct FCsIntegralType_TArrayRefValue_uint8 : public FCsIntegralType_TArrayRefValue<uint8, U>
 {
-	FCsPrimitiveType_TArrayRefValue_bool() {}
-	~FCsPrimitiveType_TArrayRefValue_bool() {}
-
-	virtual bool GetDefaultValue() override
+	FCsIntegralType_TArrayRefValue_uint8() 
 	{
-		return false;
+		DefaultValue = 0;
 	}
+	~FCsIntegralType_TArrayRefValue_uint8() {}
+};
+
+template<typename U>
+struct FCsIntegralType_TArrayRefValue_int32 : public FCsIntegralType_TArrayRefValue<int32, U>
+{
+	FCsIntegralType_TArrayRefValue_int32()
+	{
+		DefaultValue = 0;
+	}
+	~FCsIntegralType_TArrayRefValue_int32() {}
+};
+
+template<typename U>
+struct FCsIntegralType_TArrayRefValue_float : public FCsIntegralType_TArrayRefValue<float, U>
+{
+	FCsIntegralType_TArrayRefValue_float()
+	{
+		DefaultValue = 0.0f;
+	}
+	~FCsIntegralType_TArrayRefValue_float() {}
+};
+
+template<typename U>
+struct FCsPrimitiveType_TArrayRefValue_bool : public FCsPrimitiveType_TArrayRefValue<bool, U>
+{
+	FCsPrimitiveType_TArrayRefValue_bool() 
+	{
+		DefaultValue = false;
+	}
+	~FCsPrimitiveType_TArrayRefValue_bool() {}
 
 	bool Or()
 	{

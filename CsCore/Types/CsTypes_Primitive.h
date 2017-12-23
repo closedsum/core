@@ -981,7 +981,7 @@ public:
 		IsDirtys[Index] = Values[Index] != Last_Values[Index];
 
 		if (IsDirtys[Index])
-			OnChangeEX_Event.Broadcast((U)Index, Values[Index]);
+			OnChangeEX_Event.Broadcast((U)(int32)Index, Values[Index]);
 	}
 
 	FCsPrimitiveType_MultiValue& operator=(const T& B)
@@ -1025,8 +1025,6 @@ public:
 
 	void Set(const int64 &Index, const T &inValue)
 	{
-		const int64 I = (int64)Index;
-
 		if (Index > CS_PRIMITIVE_TYPE_DEFAULT && Index < SIZE)
 		{
 			Values[Index] = inValue;
@@ -1341,7 +1339,7 @@ public:
 		IsDirtys[Index] = *(Values[Index]) != Last_Values[Index];
 
 		if (IsDirtys[Index])
-			OnChangeEX_Event.Broadcast((U)Index, *(Values[Index]));
+			OnChangeEX_Event.Broadcast((U)(int32)Index, *(Values[Index]));
 	}
 
 	FCsPrimitiveType_MultiRefValue& operator=(const T& B)

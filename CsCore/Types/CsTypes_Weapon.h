@@ -61,12 +61,12 @@ namespace ECsWeaponSlot
 
 typedef ECsWeaponSlot::Type TCsWeaponSlot;
 
-namespace ECsWeaponFire
+namespace ECsWeaponFireMode
 {
 	enum Type : uint8;
 }
 
-typedef ECsWeaponFire::Type TCsWeaponFire;
+typedef ECsWeaponFireMode::Type TCsWeaponFireMode;
 
 namespace ECsWeaponAnim
 {
@@ -105,7 +105,7 @@ typedef ECsWeaponOwner::Type TCsWeaponOwner;
 
 
 USTRUCT(BlueprintType)
-struct FCsData_Weapon_FireType_Firing
+struct FCsData_Weapon_FireMode_Firing
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -177,8 +177,8 @@ struct FCsData_Weapon_FireType_Firing
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 	FCsData_ProjectilePtr ChargeData;
 
-	FCsData_Weapon_FireType_Firing() {}
-	virtual ~FCsData_Weapon_FireType_Firing() {}
+	FCsData_Weapon_FireMode_Firing() {}
+	virtual ~FCsData_Weapon_FireMode_Firing() {}
 
 	class ACsData_Projectile* GetData()
 	{
@@ -192,7 +192,7 @@ struct FCsData_Weapon_FireType_Firing
 };
 
 USTRUCT(BlueprintType)
-struct FCsData_Weapon_FireType_Animation
+struct FCsData_Weapon_FireMode_Animation
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -205,12 +205,12 @@ struct FCsData_Weapon_FireType_Animation
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 	bool DoScaleFireAnim;
 
-	FCsData_Weapon_FireType_Animation() {}
-	virtual ~FCsData_Weapon_FireType_Animation() {}
+	FCsData_Weapon_FireMode_Animation() {}
+	virtual ~FCsData_Weapon_FireMode_Animation() {}
 };
 
 USTRUCT(BlueprintType)
-struct FCsData_FpsWeapon_FireType_Animation
+struct FCsData_FpsWeapon_FireMode_Animation
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -232,12 +232,12 @@ struct FCsData_FpsWeapon_FireType_Animation
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 	bool DoScaleAdsFireAnim;
 
-	FCsData_FpsWeapon_FireType_Animation() {}
-	virtual ~FCsData_FpsWeapon_FireType_Animation() {}
+	FCsData_FpsWeapon_FireMode_Animation() {}
+	virtual ~FCsData_FpsWeapon_FireMode_Animation() {}
 };
 
 USTRUCT(BlueprintType)
-struct FCsData_Weapon_FireType_Movement
+struct FCsData_Weapon_FireMode_Movement
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -256,12 +256,12 @@ struct FCsData_Weapon_FireType_Movement
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float KickbackStrength;
 
-	FCsData_Weapon_FireType_Movement() {}
-	virtual ~FCsData_Weapon_FireType_Movement() {}
+	FCsData_Weapon_FireMode_Movement() {}
+	virtual ~FCsData_Weapon_FireMode_Movement() {}
 };
 
 USTRUCT(BlueprintType)
-struct FCsData_Weapon_FireType_Aiming
+struct FCsData_Weapon_FireMode_Aiming
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -292,12 +292,12 @@ struct FCsData_Weapon_FireType_Aiming
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Aiming")
 	float MovingSpreadBonus;
 
-	FCsData_Weapon_FireType_Aiming() {}
-	virtual ~FCsData_Weapon_FireType_Aiming() {}
+	FCsData_Weapon_FireMode_Aiming() {}
+	virtual ~FCsData_Weapon_FireMode_Aiming() {}
 };
 
 USTRUCT(BlueprintType)
-struct FCsData_FpsWeapon_FireType_Aiming : public FCsData_Weapon_FireType_Aiming
+struct FCsData_FpsWeapon_FireMode_Aiming : public FCsData_Weapon_FireMode_Aiming
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -307,12 +307,12 @@ struct FCsData_FpsWeapon_FireType_Aiming : public FCsData_Weapon_FireType_Aiming
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Aiming")
 	float ScopeAccuracyBonus;
 
-	FCsData_FpsWeapon_FireType_Aiming(){}
-	~FCsData_FpsWeapon_FireType_Aiming() {}
+	FCsData_FpsWeapon_FireMode_Aiming(){}
+	~FCsData_FpsWeapon_FireMode_Aiming() {}
 };
 
 USTRUCT(BlueprintType)
-struct FCsData_Weapon_FireType_Scope
+struct FCsData_Weapon_FireMode_Scope
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -336,20 +336,20 @@ struct FCsData_Weapon_FireType_Scope
 
 public:
 
-	FCsData_Weapon_FireType_Scope() {}
-	virtual ~FCsData_Weapon_FireType_Scope() {}
+	FCsData_Weapon_FireMode_Scope() {}
+	virtual ~FCsData_Weapon_FireMode_Scope() {}
 };
 
 USTRUCT(BlueprintType)
-struct FCsData_Weapon_FireType_FXs
+struct FCsData_Weapon_FireMode_FXs
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effects")
 	TArray<FCsFxElement> MuzzleFXs;
 
-	FCsData_Weapon_FireType_FXs() {}
-	virtual ~FCsData_Weapon_FireType_FXs() {}
+	FCsData_Weapon_FireMode_FXs() {}
+	virtual ~FCsData_Weapon_FireMode_FXs() {}
 
 	FCsFxElement* GetMuzzleFX(const int32 Index = 0)
 	{
@@ -360,15 +360,15 @@ struct FCsData_Weapon_FireType_FXs
 };
 
 USTRUCT(BlueprintType)
-struct FCsData_FpsWeapon_FireType_FXs
+struct FCsData_FpsWeapon_FireMode_FXs
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effects")
 	TArray<FCsFpsFxElement> MuzzleFXs;
 
-	FCsData_FpsWeapon_FireType_FXs() {}
-	virtual ~FCsData_FpsWeapon_FireType_FXs() {}
+	FCsData_FpsWeapon_FireMode_FXs() {}
+	virtual ~FCsData_FpsWeapon_FireMode_FXs() {}
 
 	FCsFxElement* GetMuzzleFX(const TCsViewType &ViewType, const int32 Index = 0)
 	{
@@ -379,7 +379,7 @@ struct FCsData_FpsWeapon_FireType_FXs
 };
 
 USTRUCT(BlueprintType)
-struct FCsData_Weapon_FireType_Sounds
+struct FCsData_Weapon_FireMode_Sounds
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -398,12 +398,12 @@ struct FCsData_Weapon_FireType_Sounds
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds")
 	FCsSoundElement FireFinishSound;
 
-	FCsData_Weapon_FireType_Sounds() {}
-	virtual ~FCsData_Weapon_FireType_Sounds() {}
+	FCsData_Weapon_FireMode_Sounds() {}
+	virtual ~FCsData_Weapon_FireMode_Sounds() {}
 };
 
 USTRUCT(BlueprintType)
-struct FCsData_FpsWeapon_FireType_Sounds
+struct FCsData_FpsWeapon_FireMode_Sounds
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -422,15 +422,15 @@ struct FCsData_FpsWeapon_FireType_Sounds
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds")
 	FCsFpsSoundElement FireFinishSounds;
 
-	FCsData_FpsWeapon_FireType_Sounds() {}
-	virtual ~FCsData_FpsWeapon_FireType_Sounds() {}
+	FCsData_FpsWeapon_FireMode_Sounds() {}
+	virtual ~FCsData_FpsWeapon_FireMode_Sounds() {}
 };
 
-namespace ECsData_Weapon_FireType
+namespace ECsData_Weapon_FireMode
 {
 	enum Type : uint8;
 }
 
-typedef ECsData_Weapon_FireType::Type TCsData_Weapon_FireType;
+typedef ECsData_Weapon_FireMode::Type TCsData_Weapon_FireMode;
 
 #pragma endregion Weapon

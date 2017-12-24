@@ -14,45 +14,45 @@ ACsData_Weapon::ACsData_Weapon(const FObjectInitializer& ObjectInitializer)
 // Stats
 #pragma region
 
-void* ACsData_Weapon::GetFireTypeStruct(const uint8 &Index) { return nullptr; }
-UScriptStruct* ACsData_Weapon::GetFireTypeScriptStruct() { return nullptr; }
+void* ACsData_Weapon::GetFireModeStruct(const uint8 &Index) { return nullptr; }
+UScriptStruct* ACsData_Weapon::GetFireModeScriptStruct() { return nullptr; }
 
-bool ACsData_Weapon::UseFakeProjectile(const TCsWeaponFire &FireType){ return false; }
-ACsData_Projectile* ACsData_Weapon::GetData_Projectile(const TCsWeaponFire &FireType, const bool &IsCharged){ return nullptr; }
+bool ACsData_Weapon::UseFakeProjectile(const TCsWeaponFireMode &FireMode){ return false; }
+ACsData_Projectile* ACsData_Weapon::GetData_Projectile(const TCsWeaponFireMode &FireMode, const bool &IsCharged){ return nullptr; }
 
 #pragma endregion Stats
 
 // FX
 #pragma region
 
-FCsFxElement* ACsData_Weapon::GetMuzzleFX(const TCsViewType &ViewType, const TCsWeaponFire &FireType, const int32 &Index /*=0*/){ return nullptr; }
+FCsFxElement* ACsData_Weapon::GetMuzzleFX(const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const int32 &Index /*=0*/){ return nullptr; }
 
 #pragma endregion FX
 
 // Sounds
 #pragma region
 
-FCsSoundElement* ACsData_Weapon::GetSound(const TCsViewType &ViewType, const TCsWeaponFire &FireType, const TCsWeaponSound &SoundType){ return nullptr;  }
+FCsSoundElement* ACsData_Weapon::GetSound(const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const TCsWeaponSound &SoundType){ return nullptr;  }
 
-void ACsData_Weapon::PlaySound(UWorld* InWorld, const TCsViewType &ViewType, const TCsWeaponFire &FireType, const TCsWeaponSound &SoundType, UObject* InOwner, UObject* InParent)
+void ACsData_Weapon::PlaySound(UWorld* InWorld, const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const TCsWeaponSound &SoundType, UObject* InOwner, UObject* InParent)
 {
-	FCsSoundElement* SoundElement   = GetSound(ViewType, FireType, SoundType);
+	FCsSoundElement* SoundElement   = GetSound(ViewType, FireMode, SoundType);
 	ACsManager_Sound* Manager_Sound = ACsManager_Sound::Get(InWorld);
 
 	Manager_Sound->Play(SoundElement, InOwner, InParent);
 }
 
-void ACsData_Weapon::PlaySoundEX(UWorld* InWorld, const TCsViewType &ViewType, const TCsWeaponFire &FireType, const TCsWeaponSound &SoundType, UObject* InOwner, const FVector &Location)
+void ACsData_Weapon::PlaySoundEX(UWorld* InWorld, const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const TCsWeaponSound &SoundType, UObject* InOwner, const FVector &Location)
 {
-	FCsSoundElement* SoundElement   = GetSound(ViewType, FireType, SoundType);
+	FCsSoundElement* SoundElement   = GetSound(ViewType, FireMode, SoundType);
 	ACsManager_Sound* Manager_Sound = ACsManager_Sound::Get(InWorld);
 
 	Manager_Sound->Play(SoundElement, InOwner, Location);
 }
 
-void ACsData_Weapon::StopSound(UWorld* InWorld, const TCsViewType &ViewType, const TCsWeaponFire &FireType, const TCsWeaponSound &SoundType, UObject* InOwner, UObject* InParent)
+void ACsData_Weapon::StopSound(UWorld* InWorld, const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const TCsWeaponSound &SoundType, UObject* InOwner, UObject* InParent)
 {
-	FCsSoundElement* SoundElement   = GetSound(ViewType, FireType, SoundType);
+	FCsSoundElement* SoundElement   = GetSound(ViewType, FireMode, SoundType);
 	ACsManager_Sound* Manager_Sound = ACsManager_Sound::Get(InWorld);
 
 	Manager_Sound->Stop(SoundElement, InOwner, InParent);

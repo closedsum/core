@@ -42,8 +42,8 @@ ACsWeapon::ACsWeapon(const FObjectInitializer& ObjectInitializer)
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	//FireType_MAX  = ECsWeaponFire::ECsWeaponFire_MAX;
-	//FIRE_TYPE_MAX = (uint8)FireType_MAX;
+	//FireMode_MAX  = ECsWeaponFireMode::ECsWeaponFireMode_MAX;
+	//FIRE_MODE_MAX = (uint8)FireMode_MAX;
 
 	//CurrentState = ECsWeaponState::Idle;
 	//LastState	 = CurrentState;
@@ -75,7 +75,7 @@ void ACsWeapon::OutsideWorldBounds()
 
 void ACsWeapon::InitMultiValueMembers()
 {
-	const uint8 SIZE = (uint8)FireType_MAX;
+	const uint8 SIZE = (uint8)FireMode_MAX;
 
 	// Firing
 	{
@@ -258,7 +258,7 @@ uint8 ACsWeapon::GetMemberValue_uint8(const TEnumAsByte<ECsWeaponCacheMultiValue
 #if WITH_EDITOR
 	// Firing
 	{
-		if (Member == ECsWeaponCacheMultiValueMember::ProjectilesPerShot) { return ProjectilesPerShot.GetEX((TCsWeaponFire)Index); }
+		if (Member == ECsWeaponCacheMultiValueMember::ProjectilesPerShot) { return ProjectilesPerShot.GetEX((TCsWeaponFireMode)Index); }
 		if (Member == ECsWeaponCacheMultiValueMember::CurrentProjectilePerShotIndex) { return CurrentProjectilePerShotIndex.Get(Index); }
 	}
 #endif // #if WITH_EDITOR
@@ -277,10 +277,10 @@ int32 ACsWeapon::GetMemberValue_int32(const TEnumAsByte<ECsWeaponCacheMultiValue
 {
 	// Firing
 	{
-		if (Member == ECsWeaponCacheMultiValueMember::MaxAmmo) { return MaxAmmo.GetEX((TCsWeaponFire)Index); }
+		if (Member == ECsWeaponCacheMultiValueMember::MaxAmmo) { return MaxAmmo.GetEX((TCsWeaponFireMode)Index); }
 		// Hitscan
-		if (Member == ECsWeaponCacheMultiValueMember::ObstaclePenetrations) { return ObstaclePenetrations.GetEX((TCsWeaponFire)Index); }
-		if (Member == ECsWeaponCacheMultiValueMember::PawnPenetrations) { return PawnPenetrations.GetEX((TCsWeaponFire)Index); }
+		if (Member == ECsWeaponCacheMultiValueMember::ObstaclePenetrations) { return ObstaclePenetrations.GetEX((TCsWeaponFireMode)Index); }
+		if (Member == ECsWeaponCacheMultiValueMember::PawnPenetrations) { return PawnPenetrations.GetEX((TCsWeaponFireMode)Index); }
 	}
 	return 0;
 }
@@ -297,28 +297,28 @@ float ACsWeapon::GetMemberValue_float(const TEnumAsByte<ECsWeaponCacheMultiValue
 {
 	// Firing
 	{
-		if (Member == ECsWeaponCacheMultiValueMember::TimeBetweenProjectilesPerShot) { return TimeBetweenProjectilesPerShot.GetEX((TCsWeaponFire)Index); }
-		if (Member == ECsWeaponCacheMultiValueMember::TimeBetweenShots) { return TimeBetweenShots.GetEX((TCsWeaponFire)Index); }
-		if (Member == ECsWeaponCacheMultiValueMember::TimeBetweenAutoShots) { return TimeBetweenAutoShots.GetEX((TCsWeaponFire)Index); }
+		if (Member == ECsWeaponCacheMultiValueMember::TimeBetweenProjectilesPerShot) { return TimeBetweenProjectilesPerShot.GetEX((TCsWeaponFireMode)Index); }
+		if (Member == ECsWeaponCacheMultiValueMember::TimeBetweenShots) { return TimeBetweenShots.GetEX((TCsWeaponFireMode)Index); }
+		if (Member == ECsWeaponCacheMultiValueMember::TimeBetweenAutoShots) { return TimeBetweenAutoShots.GetEX((TCsWeaponFireMode)Index); }
 		if (Member == ECsWeaponCacheMultiValueMember::IsFirePressed_StartTime) { return IsFirePressed_StartTime.Get(Index); }
 		if (Member == ECsWeaponCacheMultiValueMember::IsFireReleased_StartTime) { return IsFireReleased_StartTime.Get(Index); }
 		// Charge
-		if (Member == ECsWeaponCacheMultiValueMember::MaxChargeFireTime) { return MaxChargeFireTime.GetEX((TCsWeaponFire)Index); }
+		if (Member == ECsWeaponCacheMultiValueMember::MaxChargeFireTime) { return MaxChargeFireTime.GetEX((TCsWeaponFireMode)Index); }
 		// Spread
-		if (Member == ECsWeaponCacheMultiValueMember::MinSpread) { return MinSpread.GetEX((TCsWeaponFire)Index); }
-		if (Member == ECsWeaponCacheMultiValueMember::MaxSpread) { return MaxSpread.GetEX((TCsWeaponFire)Index); }
-		if (Member == ECsWeaponCacheMultiValueMember::SpreadAddedPerShot) { return SpreadAddedPerShot.GetEX((TCsWeaponFire)Index); }
-		if (Member == ECsWeaponCacheMultiValueMember::SpreadRecoveryRate) { return SpreadRecoveryRate.GetEX((TCsWeaponFire)Index); }
-		if (Member == ECsWeaponCacheMultiValueMember::FiringSpreadRecoveryDelay) { return FiringSpreadRecoveryDelay.GetEX((TCsWeaponFire)Index); }
+		if (Member == ECsWeaponCacheMultiValueMember::MinSpread) { return MinSpread.GetEX((TCsWeaponFireMode)Index); }
+		if (Member == ECsWeaponCacheMultiValueMember::MaxSpread) { return MaxSpread.GetEX((TCsWeaponFireMode)Index); }
+		if (Member == ECsWeaponCacheMultiValueMember::SpreadAddedPerShot) { return SpreadAddedPerShot.GetEX((TCsWeaponFireMode)Index); }
+		if (Member == ECsWeaponCacheMultiValueMember::SpreadRecoveryRate) { return SpreadRecoveryRate.GetEX((TCsWeaponFireMode)Index); }
+		if (Member == ECsWeaponCacheMultiValueMember::FiringSpreadRecoveryDelay) { return FiringSpreadRecoveryDelay.GetEX((TCsWeaponFireMode)Index); }
 		if (Member == ECsWeaponCacheMultiValueMember::CurrentBaseSpread) { return CurrentBaseSpread.Get(Index); }
 		if (Member == ECsWeaponCacheMultiValueMember::CurrentSpread) { return CurrentSpread.Get(Index); }
 		if (Member == ECsWeaponCacheMultiValueMember::LastSpreadFireTime) { return LastSpreadFireTime.Get(Index); }
 	}
 	// Reload
 	{
-		if (Member == ECsWeaponCacheMultiValueMember::ReloadTime) { return ReloadTime.GetEX((TCsWeaponFire)Index); }
-		if (Member == ECsWeaponCacheMultiValueMember::RechargeSecondsPerAmmo) { return RechargeSecondsPerAmmo.GetEX((TCsWeaponFire)Index); }
-		if (Member == ECsWeaponCacheMultiValueMember::RechargeStartupDelay) { return RechargeStartupDelay.GetEX((TCsWeaponFire)Index); }
+		if (Member == ECsWeaponCacheMultiValueMember::ReloadTime) { return ReloadTime.GetEX((TCsWeaponFireMode)Index); }
+		if (Member == ECsWeaponCacheMultiValueMember::RechargeSecondsPerAmmo) { return RechargeSecondsPerAmmo.GetEX((TCsWeaponFireMode)Index); }
+		if (Member == ECsWeaponCacheMultiValueMember::RechargeStartupDelay) { return RechargeStartupDelay.GetEX((TCsWeaponFireMode)Index); }
 	}
 	return 0.0f;
 }
@@ -515,18 +515,18 @@ void ACsWeapon::OnTick(const float &DeltaSeconds)
 		const float TimeSeconds = GetWorld()->GetTimeSeconds();
 
 		// Spread
-		for (uint8 I = 0; I < FIRE_TYPE_MAX; I++)
+		for (uint8 I = 0; I < FIRE_MODE_MAX; I++)
 		{
-			const TCsWeaponFire FireType = (TCsWeaponFire)I;
+			const TCsWeaponFireMode FireMode = (TCsWeaponFireMode)I;
 
 			if (DoSpread.Get(I))
 			{
 				// Firing
 				if (TimeSeconds - LastSpreadFireTime.Get(I) > FiringSpreadRecoveryDelay.Get(I))
 				{
-					CurrentBaseSpread.Set(CS_WEAPON_DATA_VALUE, FMath::Max(CurrentBaseSpread.Get(CS_WEAPON_DATA_VALUE) - (SpreadRecoveryRate.GetEX(FireType) * DeltaSeconds), MinSpread.GetEX(FireType)));
+					CurrentBaseSpread.Set(CS_WEAPON_DATA_VALUE, FMath::Max(CurrentBaseSpread.Get(CS_WEAPON_DATA_VALUE) - (SpreadRecoveryRate.GetEX(FireMode) * DeltaSeconds), MinSpread.GetEX(FireMode)));
 				}
-				CurrentSpread.Set(CS_WEAPON_DATA_VALUE, FMath::Clamp(CurrentBaseSpread.Get(CS_WEAPON_DATA_VALUE), 0.f, MaxSpread.GetEX(FireType)));
+				CurrentSpread.Set(CS_WEAPON_DATA_VALUE, FMath::Clamp(CurrentBaseSpread.Get(CS_WEAPON_DATA_VALUE), 0.f, MaxSpread.GetEX(FireMode)));
 			}
 		}
 	}
@@ -576,14 +576,14 @@ void ACsWeapon::OnTick_HandleStates()
 	{
 		bool Pass = false;
 
-		for (uint8 I = 0; I < FIRE_TYPE_MAX; I++)
+		for (uint8 I = 0; I < FIRE_MODE_MAX; I++)
 		{
-			const TCsWeaponFire FireType = (TCsWeaponFire)I;
+			const TCsWeaponFireMode FireMode = (TCsWeaponFireMode)I;
 
-			const bool IsPressed = IsFirePressed.Get(FireType);
+			const bool IsPressed = IsFirePressed.Get(FireMode);
 
-			const bool Pass_AutoShots = IsPressed && IsFullAuto.Get(FireType) && TimeSeconds - Fire_StartTime.Get(FireType) > TimeBetweenAutoShots.GetEX(FireType);
-			const bool Pass_Shots	  = IsPressed && TimeSeconds - Fire_StartTime.Get(FireType) > TimeBetweenShots.GetEX(FireType);
+			const bool Pass_AutoShots = IsPressed && IsFullAuto.Get(FireMode) && TimeSeconds - Fire_StartTime.Get(FireMode) > TimeBetweenAutoShots.GetEX(FireMode);
+			const bool Pass_Shots	  = IsPressed && TimeSeconds - Fire_StartTime.Get(FireMode) > TimeBetweenShots.GetEX(FireMode);
 
 			if (Pass_AutoShots || Pass_Shots)
 			{
@@ -592,7 +592,7 @@ void ACsWeapon::OnTick_HandleStates()
 				// If out of ammo, Reload
 				if (CurrentAmmo == 0)
 				{
-					StopSound(FireType, FireSound);
+					StopSound(FireMode, FireSound);
 
 					ReloadStartTime = GetWorld()->TimeSeconds;
 					IsReloading		= true;
@@ -606,17 +606,17 @@ void ACsWeapon::OnTick_HandleStates()
 				{
 					// If using an automatic weapon / continuous fire, then
 					// do the firing again
-					if ((Pass_AutoShots && CanFire_Auto(FireType)) ||
-						(Pass_Shots && CanFire(FireType)))
+					if ((Pass_AutoShots && CanFire_Auto(FireMode)) ||
+						(Pass_Shots && CanFire(FireMode)))
 					{
-						HandleState_Firing(FireType);
+						HandleState_Firing(FireMode);
 					}
 					// Stop Firing, go to Idle
 					else
 					{
 						//StopFireSound();
-						StopSound(FireType, FireSound);
-						StopAnimation(FireType, FireAnim);
+						StopSound(FireMode, FireSound);
+						StopAnimation(FireMode, FireAnim);
 
 						LastState    = CurrentState;
 						CurrentState = IdleState;
@@ -711,36 +711,36 @@ void ACsWeapon::CheckState_Idle()
 
 		bool Pass_Firing = false;
 
-		for (uint8 I = 0; I < FIRE_TYPE_MAX; I++)
+		for (uint8 I = 0; I < FIRE_MODE_MAX; I++)
 		{
-			const TCsWeaponFire FireType = (TCsWeaponFire)I;
+			const TCsWeaponFireMode FireMode = (TCsWeaponFireMode)I;
 
-			if ((IsFullAuto.Get(I) && CanFire_Auto(FireType)) ||
-				CanFire(FireType))
+			if ((IsFullAuto.Get(I) && CanFire_Auto(FireMode)) ||
+				CanFire(FireMode))
 			{
 				Pass_Firing |= true;
 
 				if (LoopFireSound.Get(I))
-					PlaySound(FireType, FireSound);
+					PlaySound(FireMode, FireSound);
 
 				if (LoopFireAnim.Get(I))
-					PlayAnimation(FireType, FireAnim);
+					PlayAnimation(FireMode, FireAnim);
 
 				if (AllowRechargeAmmo.Get(CS_WEAPON_DATA_VALUE) && !AllowRechargeAmmoDuringFire.Get(CS_WEAPON_DATA_VALUE))
 				{
 					IsRechargingAmmo = false;
 				}
-				HandleState_Firing(FireType);
+				HandleState_Firing(FireMode);
 			}
 		}
 	}
 }
 
-void ACsWeapon::HandleState_Firing(const TCsWeaponFire &FireType)
+void ACsWeapon::HandleState_Firing(const TCsWeaponFireMode &FireMode)
 {
-	CurrentProjectilePerShotIndex.Set(FireType, CurrentAmmo > ProjectilesPerShot.GetEX(FireType) ? 0 : ProjectilesPerShot.GetEX(FireType) - CurrentAmmo);
+	CurrentProjectilePerShotIndex.Set(FireMode, CurrentAmmo > ProjectilesPerShot.GetEX(FireMode) ? 0 : ProjectilesPerShot.GetEX(FireMode) - CurrentAmmo);
 
-	FireWeapon(FireType);
+	FireWeapon(FireMode);
 
 	ACsData_Weapon* Data_Weapon = GetMyData_Weapon();
 
@@ -759,32 +759,32 @@ void ACsWeapon::HandleState_Firing(const TCsWeaponFire &FireType)
 		}
 	}
 
-	Fire_StartTime.Set(FireType, TimeSeconds);
+	Fire_StartTime.Set(FireMode, TimeSeconds);
 	LastState	   = CurrentState;
 	CurrentState   = FiringState;
 }
 
-bool ACsWeapon::CanFire(const TCsWeaponFire &FireType)
+bool ACsWeapon::CanFire(const TCsWeaponFireMode &FireMode)
 {
 	const float TimeSeconds = GetWorld()->GetTimeSeconds();
 
 	const bool IsBot			  = false;// Cast<AShooterBot>(MyPawn) != nullptr;
-	const bool AllowFire		  = !DoingEquipTransition && IsEquipped && TimeSeconds - Fire_StartTime.Get(FireType) > TimeBetweenShots.GetEX(FireType);
-	const bool Pass_IsFirePressed = IsFirePressed.Get(FireType) && !DoFireOnRelease.Get(FireType) && (IsFullAuto.Get(FireType) || (!Last_IsFirePressed.Get(FireType) && IsFirePressed.Get(FireType)) || IsBot) && AllowFire;
-	const bool Pass_FireOnRelease = DoFireOnRelease.Get(FireType) && ((Last_IsFirePressed.Get(FireType) && !IsFirePressed.Get(FireType))) && AllowFire;
+	const bool AllowFire		  = !DoingEquipTransition && IsEquipped && TimeSeconds - Fire_StartTime.Get(FireMode) > TimeBetweenShots.GetEX(FireMode);
+	const bool Pass_IsFirePressed = IsFirePressed.Get(FireMode) && !DoFireOnRelease.Get(FireMode) && (IsFullAuto.Get(FireMode) || (!Last_IsFirePressed.Get(FireMode) && IsFirePressed.Get(FireMode)) || IsBot) && AllowFire;
+	const bool Pass_FireOnRelease = DoFireOnRelease.Get(FireMode) && ((Last_IsFirePressed.Get(FireMode) && !IsFirePressed.Get(FireMode))) && AllowFire;
 	const bool Pass_Ammo		  = CurrentAmmo > 0 || HasUnlimitedAmmo;
 
 	return (Pass_IsFirePressed || Pass_FireOnRelease) && Pass_Ammo && !IsReloading;
 }
 
-bool ACsWeapon::CanFire_Auto(const TCsWeaponFire &FireType)
+bool ACsWeapon::CanFire_Auto(const TCsWeaponFireMode &FireMode)
 {
 	const float TimeSeconds = GetWorld()->GetTimeSeconds();
 
 	const bool IsBot			  = false;// Cast<AShooterBot>(MyPawn) != nullptr;
-	const bool AllowFire		  = !DoingEquipTransition && IsEquipped && TimeSeconds - Fire_StartTime.Get(FireType) > TimeBetweenAutoShots.GetEX(FireType);
-	const bool Pass_IsFirePressed = IsFirePressed.Get(FireType) && !DoFireOnRelease.Get(FireType) && (IsFullAuto.Get(FireType) || (!Last_IsFirePressed.Get(FireType) && IsFirePressed.Get(FireType)) || IsBot) && AllowFire;
-	const bool Pass_FireOnRelease = DoFireOnRelease.Get(FireType) && ((Last_IsFirePressed.Get(FireType) && !IsFirePressed.Get(FireType))) && AllowFire;
+	const bool AllowFire		  = !DoingEquipTransition && IsEquipped && TimeSeconds - Fire_StartTime.Get(FireMode) > TimeBetweenAutoShots.GetEX(FireMode);
+	const bool Pass_IsFirePressed = IsFirePressed.Get(FireMode) && !DoFireOnRelease.Get(FireMode) && (IsFullAuto.Get(FireMode) || (!Last_IsFirePressed.Get(FireMode) && IsFirePressed.Get(FireMode)) || IsBot) && AllowFire;
+	const bool Pass_FireOnRelease = DoFireOnRelease.Get(FireMode) && ((Last_IsFirePressed.Get(FireMode) && !IsFirePressed.Get(FireMode))) && AllowFire;
 	const bool Pass_Ammo		  = CurrentAmmo > 0 || HasUnlimitedAmmo;
 
 	return (Pass_IsFirePressed || Pass_FireOnRelease) && Pass_Ammo && !IsReloading;
@@ -799,16 +799,16 @@ void ACsWeapon::Disable()
 {
 	if (CurrentState == FiringState || GetSound(FireSound))
 	{
-		for (uint8 I = 0; I < FIRE_TYPE_MAX; I++)
+		for (uint8 I = 0; I < FIRE_MODE_MAX; I++)
 		{
-			StopSound((TCsWeaponFire)I, FireSound);
+			StopSound((TCsWeaponFireMode)I, FireSound);
 		}
 	}
 
 	LastState    = CurrentState;
 	CurrentState = IdleState;
 
-	for (uint8 I = 0; I < FIRE_TYPE_MAX; I++)
+	for (uint8 I = 0; I < FIRE_MODE_MAX; I++)
 	{
 		IsFirePressed.Set(I, false);
 		Last_IsFirePressed.Set(I, false);
@@ -818,10 +818,10 @@ void ACsWeapon::Disable()
 
 	if (GetMyData_Weapon())
 	{
-		for (uint8 I = 0; I < FIRE_TYPE_MAX; I++)
+		for (uint8 I = 0; I < FIRE_MODE_MAX; I++)
 		{
 			if (LoopFireAnim.Get(I))
-				StopAnimation((TCsWeaponFire)I, FireAnim);
+				StopAnimation((TCsWeaponFireMode)I, FireAnim);
 		}
 	}
 
@@ -852,7 +852,7 @@ void ACsWeapon::OnCalcCamera(float DeltaTime, struct FMinimalViewInfo& OutResult
 // Animation
 #pragma region
 
-void ACsWeapon::PlayAnimation(const TCsWeaponFire &FireType, const TCsWeaponAnim &AnimType, const int32 &Index /*=0*/)
+void ACsWeapon::PlayAnimation(const TCsWeaponFireMode &FireMode, const TCsWeaponAnim &AnimType, const int32 &Index /*=0*/)
 {
 }
 
@@ -882,7 +882,7 @@ void ACsWeapon::PlayAnimation_Reload()
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 	R->timers[0]  = GetWorld()->TimeSeconds;
 	R->ints[0]    = 0;
-	R->floats[0]  = GetAnimationLength(FireType_MAX, ReloadAnim);
+	R->floats[0]  = GetAnimationLength(FireMode_MAX, ReloadAnim);
 
 	Scheduler->StartRoutine(Schedule, R);
 }
@@ -903,7 +903,7 @@ PT_THREAD(ACsWeapon::PlayAnimation_Reload_Internal(struct FCsRoutine* r))
 
 	r->AddMessage(ECsCoroutineMessage::Stop, FName("Stop PlayAnimation_Reload_Internal"));
 
-	mw->PlayAnimation(mw->FireType_MAX, ReloadAnim, 0);
+	mw->PlayAnimation(mw->FireMode_MAX, ReloadAnim, 0);
 
 	if (ReloadTime > 0)
 		CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - StartTime >= ReloadTime);
@@ -932,12 +932,12 @@ void ACsWeapon::PlayAnimation_Reload_StopCondition(struct FCsRoutine* r)
 	}
 }
 
-float ACsWeapon::GetAnimationLength(const TCsWeaponFire &FireType, const TCsWeaponAnim &AnimType, const int32 &Index /*=0*/)
+float ACsWeapon::GetAnimationLength(const TCsWeaponFireMode &FireMode, const TCsWeaponAnim &AnimType, const int32 &Index /*=0*/)
 {
 	return 0.0f;
 }
 
-void ACsWeapon::StopAnimation(const TCsWeaponFire &FireType, const TCsWeaponAnim &AnimType, const int32 &Index /*=0*/)
+void ACsWeapon::StopAnimation(const TCsWeaponFireMode &FireMode, const TCsWeaponAnim &AnimType, const int32 &Index /*=0*/)
 {
 }
 
@@ -949,20 +949,20 @@ void ACsWeapon::StopAnimation(const TCsWeaponFire &FireType, const TCsWeaponAnim
 UObject* ACsWeapon::GetSoundParent() { return nullptr; }
 ACsSound* ACsWeapon::GetSound(const TCsWeaponSound &SoundType){ return nullptr; }
 
-void ACsWeapon::PlaySound(const TCsWeaponFire &FireType, const TCsWeaponSound &SoundType)
+void ACsWeapon::PlaySound(const TCsWeaponFireMode &FireMode, const TCsWeaponSound &SoundType)
 {
 	ACsData_Weapon* Data	   = GetMyData_Weapon();
 	const TCsViewType ViewType = GetCurrentViewType();
 
-	Data->PlaySound(GetWorld(), ViewType, FireType, SoundType, GetMyPawn(), GetSoundParent());
+	Data->PlaySound(GetWorld(), ViewType, FireMode, SoundType, GetMyPawn(), GetSoundParent());
 }
 
-void ACsWeapon::StopSound(const TCsWeaponFire &FireType, const TCsWeaponSound &SoundType)
+void ACsWeapon::StopSound(const TCsWeaponFireMode &FireMode, const TCsWeaponSound &SoundType)
 {
 	ACsData_Weapon* Data	   = GetMyData_Weapon();
 	const TCsViewType ViewType = GetCurrentViewType();
 
-	Data->StopSound(GetWorld(), ViewType, FireType, SoundType, GetMyPawn(), GetSoundParent());
+	Data->StopSound(GetWorld(), ViewType, FireMode, SoundType, GetMyPawn(), GetSoundParent());
 }
 
 #pragma endregion Sound
@@ -977,24 +977,24 @@ void ACsWeapon::IncrementCurrentAmmo(const int32 &Index)
 	CurrentAmmo = FMath::Min(CurrentAmmo, GetMaxAmmo(Index));
 }
 void ACsWeapon::ResetCurrentAmmo(const int32 &Index) { CurrentAmmo = GetMaxAmmo(Index); }
-uint8 ACsWeapon::GetProjectilesPerShot(const TCsWeaponFire &FireType) { return ProjectilesPerShot.Get(FireType); }
-float ACsWeapon::GetTimeBetweenProjectilesPerShot(const TCsWeaponFire &FireType) { return TimeBetweenProjectilesPerShot.Get(FireType); }
-float ACsWeapon::GetTimeBetweenShots(const TCsWeaponFire &FireType) { return TimeBetweenShots.Get(FireType); }
-float ACsWeapon::GetTimeBetweenAutoShots(const TCsWeaponFire &FireType) { return TimeBetweenAutoShots.Get(FireType); }
+uint8 ACsWeapon::GetProjectilesPerShot(const TCsWeaponFireMode &FireMode) { return ProjectilesPerShot.Get(FireMode); }
+float ACsWeapon::GetTimeBetweenProjectilesPerShot(const TCsWeaponFireMode &FireMode) { return TimeBetweenProjectilesPerShot.Get(FireMode); }
+float ACsWeapon::GetTimeBetweenShots(const TCsWeaponFireMode &FireMode) { return TimeBetweenShots.Get(FireMode); }
+float ACsWeapon::GetTimeBetweenAutoShots(const TCsWeaponFireMode &FireMode) { return TimeBetweenAutoShots.Get(FireMode); }
 
-void ACsWeapon::SetIsFirePressed(const TCsWeaponFire &FireType, const bool &Value, const bool &DoOnTick)
+void ACsWeapon::SetIsFirePressed(const TCsWeaponFireMode &FireMode, const bool &Value, const bool &DoOnTick)
 {
-	IsFirePressed.Set(FireType, Value);
+	IsFirePressed.Set(FireMode, Value);
 
 	const float TimeSeconds = GetWorld()->GetTimeSeconds();
 
 	if (Value)
 	{
-		IsFirePressed_StartTime.Set(FireType, TimeSeconds);
+		IsFirePressed_StartTime.Set(FireMode, TimeSeconds);
 	}
 	else
 	{
-		IsFireReleased_StartTime.Set(FireType, TimeSeconds);
+		IsFireReleased_StartTime.Set(FireMode, TimeSeconds);
 	}
 
 #if WITH_EDITOR 
@@ -1016,25 +1016,25 @@ void ACsWeapon::SetIsFirePressed(const TCsWeaponFire &FireType, const bool &Valu
 	// Charge
 #pragma region
 
-float ACsWeapon::GetMaxChargeFireTime(const TCsWeaponFire &FireType) { return MaxChargeFireTime.Get(FireType); }
+float ACsWeapon::GetMaxChargeFireTime(const TCsWeaponFireMode &FireMode) { return MaxChargeFireTime.Get(FireMode); }
 
 void ACsWeapon::HandleChargeFire()
 {
 	if (PerformingChargeFire)
 		return;
 	
-	for (uint8 I = 0; I < FIRE_TYPE_MAX; I++)
+	for (uint8 I = 0; I < FIRE_MODE_MAX; I++)
 	{
 		if (AllowChargeFire.Get(I) &&
 			IsFirePressed.Get(I))
 		{
-			StartChargeFire((TCsWeaponFire)I);
+			StartChargeFire((TCsWeaponFireMode)I);
 			return;
 		}
 	}
 }
 
-void ACsWeapon::StartChargeFire(const TCsWeaponFire &FireType)
+void ACsWeapon::StartChargeFire(const TCsWeaponFireMode &FireMode)
 {
 	PerformingChargeFire = true;
 	ChargeFire_StartTime = GetWorld()->TimeSeconds;
@@ -1061,7 +1061,7 @@ void ACsWeapon::StartChargeFire(const TCsWeaponFire &FireType)
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 	R->timers[0]  = GetWorld()->GetTimeSeconds();
-	R->ints[0]	  = (uint8)FireType;
+	R->ints[0]	  = (uint8)FireMode;
 
 	Scheduler->StartRoutine(Schedule, R);
 }
@@ -1077,7 +1077,7 @@ PT_THREAD(ACsWeapon::StartChargeFire_Internal(struct FCsRoutine* r))
 	float WaitTime			= r->floats[0];
 	float FireStartLoopTime = FMath::Max(mw->TimeBetweenShots.Max(), mw->TimeBetweenAutoShots.Max());
 
-	const TCsWeaponFire FireType = (TCsWeaponFire)r->ints[0];
+	const TCsWeaponFireMode FireMode = (TCsWeaponFireMode)r->ints[0];
 
 	const float StartToLoopBlendTime = 0.1f;
 
@@ -1086,18 +1086,18 @@ PT_THREAD(ACsWeapon::StartChargeFire_Internal(struct FCsRoutine* r))
 	r->AddMessage(ECsCoroutineMessage::Stop, FName("Stop StartChargeFire_Internal"));
 
 	// ChargeFireStart
-	mw->PlayAnimation(FireType, mw->ChargeFireStartAnim);
+	mw->PlayAnimation(FireMode, mw->ChargeFireStartAnim);
 
 	r->timers[0] = CurrentTime;
 	StartTime = CurrentTime;
 
-	r->floats[0] = mw->GetAnimationLength(FireType, mw->ChargeFireStartAnim);
+	r->floats[0] = mw->GetAnimationLength(FireMode, mw->ChargeFireStartAnim);
 	WaitTime = r->floats[0];
 
 	CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - StartTime >= FMath::Max(WaitTime - StartToLoopBlendTime, 0.0f));
 
 	// ChargeFireLoop
-	mw->PlayAnimation(FireType, mw->ChargeFireLoopAnim);
+	mw->PlayAnimation(FireMode, mw->ChargeFireLoopAnim);
 
 	CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - r->startTime >= FireStartLoopTime);
 
@@ -1108,7 +1108,7 @@ void ACsWeapon::StartChargeFire_StopCondition(struct FCsRoutine* r)
 {
 	ACsWeapon* mw = Cast<ACsWeapon>(r->GetActor());
 
-	const TCsWeaponFire FireType = (TCsWeaponFire)r->ints[0];
+	const TCsWeaponFireMode FireMode = (TCsWeaponFireMode)r->ints[0];
 
 #if WITH_EDITOR 
 	// In Editor Preview Window
@@ -1116,8 +1116,8 @@ void ACsWeapon::StartChargeFire_StopCondition(struct FCsRoutine* r)
 	{
 		if (!mw->GetMyOwner())
 		{
-			mw->StopAnimation(FireType, mw->ChargeFireStartAnim);
-			mw->StopAnimation(FireType, mw->ChargeFireLoopAnim);
+			mw->StopAnimation(FireMode, mw->ChargeFireStartAnim);
+			mw->StopAnimation(FireMode, mw->ChargeFireLoopAnim);
 			r->End(ECsCoroutineEndReason::StopMessage);
 		}
 	}
@@ -1127,8 +1127,8 @@ void ACsWeapon::StartChargeFire_StopCondition(struct FCsRoutine* r)
 	{
 		if (mw)
 		{
-			mw->StopAnimation(FireType, mw->ChargeFireStartAnim);
-			mw->StopAnimation(FireType, mw->ChargeFireLoopAnim);
+			mw->StopAnimation(FireMode, mw->ChargeFireStartAnim);
+			mw->StopAnimation(FireMode, mw->ChargeFireLoopAnim);
 		}
 		r->End(ECsCoroutineEndReason::StopCondition);
 	}
@@ -1139,9 +1139,9 @@ float ACsWeapon::GetChargeFireHeldTime()
 	return GetWorld()->TimeSeconds - ChargeFire_StartTime;
 }
 
-float ACsWeapon::GetChargeFireHeldPercent(const TCsWeaponFire &FireType)
+float ACsWeapon::GetChargeFireHeldPercent(const TCsWeaponFireMode &FireMode)
 {
-	return FMath::Clamp(GetChargeFireHeldTime(), 0.0f, MaxChargeFireTime.GetEX(FireType) / MaxChargeFireTime.GetEX(FireType));
+	return FMath::Clamp(GetChargeFireHeldTime(), 0.0f, MaxChargeFireTime.GetEX(FireMode) / MaxChargeFireTime.GetEX(FireMode));
 }
 
 float ACsWeapon::GetCurrentChargeFireHeldTime()
@@ -1149,14 +1149,14 @@ float ACsWeapon::GetCurrentChargeFireHeldTime()
 	return PerformingChargeFire ? GetWorld()->TimeSeconds - ChargeFire_StartTime : 0.0f;
 }
 
-float ACsWeapon::GetCurrentChargeFireHeldPercent(const TCsWeaponFire &FireType)
+float ACsWeapon::GetCurrentChargeFireHeldPercent(const TCsWeaponFireMode &FireMode)
 {
-	return PerformingChargeFire ? FMath::Clamp(GetChargeFireHeldTime(), 0.0f, MaxChargeFireTime.GetEX(FireType) / MaxChargeFireTime.GetEX(FireType)) : 0.0f;
+	return PerformingChargeFire ? FMath::Clamp(GetChargeFireHeldTime(), 0.0f, MaxChargeFireTime.GetEX(FireMode) / MaxChargeFireTime.GetEX(FireMode)) : 0.0f;
 }
 
-void ACsWeapon::StopChargeFire(const TCsWeaponFire &FireType)
+void ACsWeapon::StopChargeFire(const TCsWeaponFireMode &FireMode)
 {
-	if (!AllowChargeFire.Get(FireType))
+	if (!AllowChargeFire.Get(FireMode))
 		return;
 
 	PerformingChargeFire = false;
@@ -1168,8 +1168,8 @@ void ACsWeapon::StopChargeFire(const TCsWeaponFire &FireType)
 	if (StartChargeFire_Internal_Routine && StartChargeFire_Internal_Routine->IsValid())
 		StartChargeFire_Internal_Routine->End(ECsCoroutineEndReason::UniqueInstance);
 
-	StopAnimation(FireType, ChargeFireStartAnim);
-	StopAnimation(FireType, ChargeFireLoopAnim);
+	StopAnimation(FireMode, ChargeFireStartAnim);
+	StopAnimation(FireMode, ChargeFireLoopAnim);
 }
 
 #pragma endregion Charge
@@ -1177,12 +1177,12 @@ void ACsWeapon::StopChargeFire(const TCsWeaponFire &FireType)
 	// Spread
 #pragma region
 
-float ACsWeapon::GetMinSpread(const TCsWeaponFire &FireType) { return MinSpread.Get(FireType); }
-float ACsWeapon::GetMaxSpread(const TCsWeaponFire &FireType) { return MaxSpread.Get(FireType); }
-float ACsWeapon::GetSpreadAddedPerShot(const TCsWeaponFire &FireType) { return SpreadAddedPerShot.Get(FireType); }
-float ACsWeapon::GetSpreadRecoveryRate(const TCsWeaponFire &FireType) { return SpreadRecoveryRate.Get(FireType); }
-float ACsWeapon::GetFiringSpreadRecoveryDelay(const TCsWeaponFire &FireType) { return FiringSpreadRecoveryDelay.Get(FireType); }
-float ACsWeapon::GetMovingSpreadBonus(const TCsWeaponFire &FireType) { return MovingSpreadBonus.Get(FireType); }
+float ACsWeapon::GetMinSpread(const TCsWeaponFireMode &FireMode) { return MinSpread.Get(FireMode); }
+float ACsWeapon::GetMaxSpread(const TCsWeaponFireMode &FireMode) { return MaxSpread.Get(FireMode); }
+float ACsWeapon::GetSpreadAddedPerShot(const TCsWeaponFireMode &FireMode) { return SpreadAddedPerShot.Get(FireMode); }
+float ACsWeapon::GetSpreadRecoveryRate(const TCsWeaponFireMode &FireMode) { return SpreadRecoveryRate.Get(FireMode); }
+float ACsWeapon::GetFiringSpreadRecoveryDelay(const TCsWeaponFireMode &FireMode) { return FiringSpreadRecoveryDelay.Get(FireMode); }
+float ACsWeapon::GetMovingSpreadBonus(const TCsWeaponFireMode &FireMode) { return MovingSpreadBonus.Get(FireMode); }
 
 #pragma endregion Spread
 
@@ -1196,7 +1196,7 @@ FVector ACsWeapon::GetFireWeaponStartDirection()
 	return FVector::ZeroVector;
 }
 
-FCsProjectileFireCache* ACsWeapon::AllocateProjectileFireCache(const TCsWeaponFire &FireType)
+FCsProjectileFireCache* ACsWeapon::AllocateProjectileFireCache(const TCsWeaponFireMode &FireMode)
 {
 	const uint8 Count = CS_PROJECTILE_FIRE_CACHE_POOL_SIZE;
 	uint8 PoolIndex	  = 0;
@@ -1216,7 +1216,7 @@ FCsProjectileFireCache* ACsWeapon::AllocateProjectileFireCache(const TCsWeaponFi
 
 			Cache->Location		 = GetFireWeaponStartLocation();
 			Cache->Direction	 = GetFireWeaponStartDirection();
-			Cache->ChargePercent = GetCurrentChargeFireHeldPercent((TCsWeaponFire)(uint8)FireType);
+			Cache->ChargePercent = GetCurrentChargeFireHeldPercent((TCsWeaponFireMode)(uint8)FireMode);
 
 			/*
 			ACsGameState* GameState		   = GetWorld()->GetGameState<ACsGameState>();
@@ -1246,7 +1246,7 @@ FCsProjectileFireCache* ACsWeapon::AllocateProjectileFireCache(const TCsWeaponFi
 	return &ProjectileFireCaches[OldestIndex];
 }
 
-void ACsWeapon::FireWeapon(const TCsWeaponFire &FireType)
+void ACsWeapon::FireWeapon(const TCsWeaponFireMode &FireMode)
 {
 #if WITH_EDITOR 
 	if (Override_FireWeapon_ScriptEvent.IsBound())
@@ -1255,7 +1255,7 @@ void ACsWeapon::FireWeapon(const TCsWeaponFire &FireType)
 		{
 			UE_LOG(LogCs, Warning, TEXT("ACsWeapon::FireWeapon (%s): Using Override Function."), *GetName());
 		}
-		Override_FireWeapon_ScriptEvent.Broadcast(WeaponIndex, FireType);
+		Override_FireWeapon_ScriptEvent.Broadcast(WeaponIndex, FireMode);
 		return;
 	}
 #endif // #if WITH_EDITOR
@@ -1282,7 +1282,7 @@ void ACsWeapon::FireWeapon(const TCsWeaponFire &FireType)
 
 	FCsRoutine* R   = Scheduler->Allocate(Payload);
 	R->timers[0]    = GetWorld()->GetTimeSeconds();
-	R->ints[0]	    = (uint8)FireType;
+	R->ints[0]	    = (uint8)FireMode;
 
 	Scheduler->StartRoutine(Schedule, R);
 }
@@ -1293,7 +1293,7 @@ PT_THREAD(ACsWeapon::FireWeapon_Internal(struct FCsRoutine* r))
 	UCsCoroutineScheduler* s = r->scheduler;
 	UWorld* w				 = mw->GetWorld();
 
-	const TCsWeaponFire FireType = (TCsWeaponFire)r->ints[0];
+	const TCsWeaponFireMode FireMode = (TCsWeaponFireMode)r->ints[0];
 
 	const float CurrentTime = w->GetTimeSeconds();
 	float StartTime			= r->timers[0];
@@ -1313,7 +1313,7 @@ PT_THREAD(ACsWeapon::FireWeapon_Internal(struct FCsRoutine* r))
 
 	r->AddMessage(ECsCoroutineMessage::Stop, FName("Stop FireWeapon_Internal"));
 
-	mw->StopChargeFire(FireType);
+	mw->StopChargeFire(FireMode);
 
 	do
 	{
@@ -1323,11 +1323,11 @@ PT_THREAD(ACsWeapon::FireWeapon_Internal(struct FCsRoutine* r))
 			StartTime    = CurrentTime;
 
 			// Play Fire Sound
-			if (!mw->LoopFireSound.Get(FireType))
-				mw->PlaySound(FireType, mw->FireSound);
+			if (!mw->LoopFireSound.Get(FireMode))
+				mw->PlaySound(FireMode, mw->FireSound);
 			// Play Fire Animation
-			if (!mw->LoopFireAnim.Get(FireType))
-				mw->PlayAnimation(FireType, mw->FireAnim);
+			if (!mw->LoopFireAnim.Get(FireMode))
+				mw->PlayAnimation(FireMode, mw->FireAnim);
 
 #if WITH_EDITOR 
 			// In Editor Preview Window
@@ -1338,26 +1338,26 @@ PT_THREAD(ACsWeapon::FireWeapon_Internal(struct FCsRoutine* r))
 			else
 #endif // #if WITH_EDITOR
 			{
-				FCsProjectileFireCache* Cache = mw->AllocateProjectileFireCache(FireType);
+				FCsProjectileFireCache* Cache = mw->AllocateProjectileFireCache(FireMode);
 				/*
-				if (mw->IsHitscan.Get(FireType))
-					mw->FireHitscan(FireType, Cache);
+				if (mw->IsHitscan.Get(FireMode))
+					mw->FireHitscan(FireMode, Cache);
 				else
-					mw->FireProjectile(FireType, Cache);
+					mw->FireProjectile(FireMode, Cache);
 				*/
-				mw->FireProjectile(FireType, Cache);
+				mw->FireProjectile(FireMode, Cache);
 			}
 
-			mw->PlayMuzzleFlash(FireType);
+			mw->PlayMuzzleFlash(FireMode);
 			
-			mw->CurrentProjectilePerShotIndex.Add(FireType, 1);
+			mw->CurrentProjectilePerShotIndex.Add(FireMode, 1);
 		}
 
-		if (mw->CurrentProjectilePerShotIndex.Get(FireType) < mw->ProjectilesPerShot.Get(FireType))
+		if (mw->CurrentProjectilePerShotIndex.Get(FireMode) < mw->ProjectilesPerShot.Get(FireMode))
 		{
-			CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - StartTime >= mw->TimeBetweenProjectilesPerShot.Get(FireType));
+			CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - StartTime >= mw->TimeBetweenProjectilesPerShot.Get(FireMode));
 		}
-	} while (mw->CurrentProjectilePerShotIndex.Get(FireType) < mw->ProjectilesPerShot.Get(FireType));
+	} while (mw->CurrentProjectilePerShotIndex.Get(FireMode) < mw->ProjectilesPerShot.Get(FireMode));
 
 	mw->CurrentState = mw->IdleState;
 	CS_COROUTINE_END(r);
@@ -1365,8 +1365,8 @@ PT_THREAD(ACsWeapon::FireWeapon_Internal(struct FCsRoutine* r))
 
 void ACsWeapon::FireWeapon_StopCondition(struct FCsRoutine* r)
 {
-	ACsWeapon* mw				  = Cast<ACsWeapon>(r->GetActor());
-	const TCsWeaponFire FireType = (TCsWeaponFire)r->ints[0];
+	ACsWeapon* mw				     = Cast<ACsWeapon>(r->GetActor());
+	const TCsWeaponFireMode FireMode = (TCsWeaponFireMode)r->ints[0];
 
 #if WITH_EDITOR 
 	// In Editor Preview Window
@@ -1375,7 +1375,7 @@ void ACsWeapon::FireWeapon_StopCondition(struct FCsRoutine* r)
 	{
 		if (!mw->GetMyOwner())
 		{
-			mw->StopAnimation(FireType, mw->FireAnim);
+			mw->StopAnimation(FireMode, mw->FireAnim);
 
 			r->End(ECsCoroutineEndReason::StopCondition);
 		}
@@ -1387,7 +1387,7 @@ void ACsWeapon::FireWeapon_StopCondition(struct FCsRoutine* r)
 		if (mw &&
 			!mw->GetMyOwner())
 		{
-			mw->StopAnimation(FireType, mw->FireAnim);
+			mw->StopAnimation(FireMode, mw->FireAnim);
 
 			FCsProjectileFireCache* Cache = (FCsProjectileFireCache*)r->voidPointers[0];
 
@@ -1406,7 +1406,7 @@ FVector ACsWeapon::GetOwnerRightVector()
 	return FVector::RightVector;
 }
 
-void ACsWeapon::FireProjectile(const TCsWeaponFire &FireType, FCsProjectileFireCache* Cache)
+void ACsWeapon::FireProjectile(const TCsWeaponFireMode &FireMode, FCsProjectileFireCache* Cache)
 {
 	const FVector RealStart   = Cache->Location;
 	FVector RealDir			  = Cache->Direction;
@@ -1416,16 +1416,16 @@ void ACsWeapon::FireProjectile(const TCsWeaponFire &FireType, FCsProjectileFireC
 	ACsData_Weapon* Data_Weapon = GetMyData_Weapon();
 
 	const TCsViewType ViewType = GetCurrentViewType();
-	const FVector FakeStart	   = GetMuzzleLocation(ViewType, FireType);
+	const FVector FakeStart	   = GetMuzzleLocation(ViewType, FireMode);
 	FVector FakeDir			   = (RealEnd - FakeStart).GetSafeNormal();
 
 	// Spread
-	if (DoSpread.Get(FireType))
+	if (DoSpread.Get(FireMode))
 	{
-		if (CurrentSpread.Get(FireType) > 0.f)
+		if (CurrentSpread.Get(FireMode) > 0.f)
 		{
 			// Real
-			const float SpreadPitch = RandStream.FRand() * CurrentSpread.Get(FireType);
+			const float SpreadPitch = RandStream.FRand() * CurrentSpread.Get(FireMode);
 			const FVector Right		= GetOwnerRightVector();
 			FVector Dir				= RealDir.RotateAngleAxis(SpreadPitch, Right);
 			const float SpreadRoll  = RandStream.FRand() * 360.f;
@@ -1439,16 +1439,16 @@ void ACsWeapon::FireProjectile(const TCsWeaponFire &FireType, FCsProjectileFireC
 
 			FakeDir = Dir;
 		}
-		CurrentBaseSpread.Set(FireType, FMath::Min(CurrentBaseSpread.Get(FireType) + SpreadAddedPerShot.GetEX(FireType), MaxSpread.GetEX(FireType)));
-		LastSpreadFireTime.Set(FireType, GetWorld()->TimeSeconds);
+		CurrentBaseSpread.Set(FireMode, FMath::Min(CurrentBaseSpread.Get(FireMode) + SpreadAddedPerShot.GetEX(FireMode), MaxSpread.GetEX(FireMode)));
+		LastSpreadFireTime.Set(FireMode, GetWorld()->TimeSeconds);
 	}
 	// Update Cache
 
 	ACsGameState* GameState					  = GetWorld()->GetGameState<ACsGameState>();
 	ACsManager_Projectile* Manager_Projectile = GameState->Manager_Projectile;
-	ACsData_Projectile* Data_Projectile		  = Data_Weapon->GetData_Projectile(FireType, Cache->ChargePercent > 0.0f);
+	ACsData_Projectile* Data_Projectile		  = Data_Weapon->GetData_Projectile(FireMode, Cache->ChargePercent > 0.0f);
 
-	const bool UseFakeProjectile = Data_Weapon->UseFakeProjectile(FireType);
+	const bool UseFakeProjectile = Data_Weapon->UseFakeProjectile(FireMode);
 
 	// Real
 	Cache->Location = RealStart;
@@ -1457,7 +1457,7 @@ void ACsWeapon::FireProjectile(const TCsWeaponFire &FireType, FCsProjectileFireC
 	// Fake
 	if (UseFakeProjectile)
 	{
-		FCsProjectileFireCache* FakeCache = AllocateProjectileFireCache(FireType);
+		FCsProjectileFireCache* FakeCache = AllocateProjectileFireCache(FireMode);
 		FakeCache->Location = FakeStart;
 		FakeCache->Direction = FakeDir;
 		ACsProjectile* FakeProjectile = Manager_Projectile->Fire(ECsProjectileRelevance::Fake, Data_Projectile, FakeCache, GetMyOwner(), this);
@@ -1468,24 +1468,24 @@ void ACsWeapon::FireProjectile(const TCsWeaponFire &FireType, FCsProjectileFireC
 	Cache->Reset();
 }
 
-void ACsWeapon::FireProjectile_Script(const uint8 &FireType, FCsProjectileFireCache &Cache)
+void ACsWeapon::FireProjectile_Script(const uint8 &FireMode, FCsProjectileFireCache &Cache)
 {
-	FireProjectile((TCsWeaponFire)FireType, &Cache);
+	FireProjectile((TCsWeaponFireMode)FireMode, &Cache);
 }
 
 	// Hitscan
 #pragma region
 
-int32 ACsWeapon::GetObstaclePenetractions(const TCsWeaponFire &FireType) { return ObstaclePenetrations.Get(FireType); }
-int32 ACsWeapon::GetPawnPenetrations(const TCsWeaponFire &FireType) { return PawnPenetrations.Get(FireType); }
+int32 ACsWeapon::GetObstaclePenetractions(const TCsWeaponFireMode &FireMode) { return ObstaclePenetrations.Get(FireMode); }
+int32 ACsWeapon::GetPawnPenetrations(const TCsWeaponFireMode &FireMode) { return PawnPenetrations.Get(FireMode); }
 
-void ACsWeapon::FireHitscan(const TCsWeaponFire &FireType, const FCsProjectileFireCache* Cache)
+void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjectileFireCache* Cache)
 {
 	/*
 	ACsCharacter* Pawn					 = GetMyPawn();
 	ACsPlayerState* MyPlayerState		 = Cast<ACsPlayerState>(Pawn->PlayerState);
 	ACsData_Weapon* Data_Weapon		 = GetMyData_Weapon();
-	ACsData_Projectile* Data_Projectile = Data_Weapon->GetData_Projectile(FireType, Cache->ChargePercent > 0.0f);
+	ACsData_Projectile* Data_Projectile = Data_Weapon->GetData_Projectile(FireMode, Cache->ChargePercent > 0.0f);
 
 	const FVector Start		  = Cache->Location;
 	const FVector Dir		  = Cache->Direction;
@@ -1504,8 +1504,8 @@ void ACsWeapon::FireHitscan(const TCsWeaponFire &FireType, const FCsProjectileFi
 	bool HitFound					   = true;
 
 	// Hit trace/ Hit simulation
-	while ((PlayerPenetrations.Get(FireType) < 0 || RecordedPlayerPenetrations <= PlayerPenetrations.Get(FireType)) &&
-		   (ObstaclePenetrations.Get(FireType) < 0 || RecordedObstaclePenetrations <= ObstaclePenetrations.Get(FireType)) &&
+	while ((PlayerPenetrations.Get(FireMode) < 0 || RecordedPlayerPenetrations <= PlayerPenetrations.Get(FireMode)) &&
+		   (ObstaclePenetrations.Get(FireMode) < 0 || RecordedObstaclePenetrations <= ObstaclePenetrations.Get(FireMode)) &&
 		    HitFound)
 	{
 		HitFound = false;
@@ -1513,7 +1513,7 @@ void ACsWeapon::FireHitscan(const TCsWeaponFire &FireType, const FCsProjectileFi
 		FHitResult HitResult;
 
 		// Hitscan with cylinder
-		if (DoesHitscanUseRadius.Get(FireType))
+		if (DoesHitscanUseRadius.Get(FireMode))
 		{
 			// See if this line is close enough to hit any enemy characters
 			const int32 HitPawnCount = HittablePawns.Num();
@@ -1573,7 +1573,7 @@ void ACsWeapon::FireHitscan(const TCsWeaponFire &FireType, const FCsProjectileFi
 		}
 		// Hit NOT Found and NO Hitscan with cylinder
 		if (!HitFound || 
-			!DoesHitscanUseRadius.Get(FireType))
+			!DoesHitscanUseRadius.Get(FireMode))
 		{
 			HitFound = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, MBO_COLLISION_PROJECTILE, CollisionParams);
 		}
@@ -1598,7 +1598,7 @@ void ACsWeapon::FireHitscan(const TCsWeaponFire &FireType, const FCsProjectileFi
 			
 			//float TimeUntilHit = HitResult.Distance / Data_Projectile->InitialSpeed;
 
-			//if (DoesHitscanSimulateProjectileDuration.Get(FireType))
+			//if (DoesHitscanSimulateProjectileDuration.Get(FireMode))
 			//{
 			//	FakeProjectile->Lifetime = TimeUntilHit;
 			//}
@@ -1630,13 +1630,13 @@ void ACsWeapon::FireHitscan(const TCsWeaponFire &FireType, const FCsProjectileFi
 				if (!HitPawn)
 					continue;
 
-				const int32 Count = Data_Weapon->FireTypes[(uint8)FireType].Firing.LocationDamageModifiers.Num();
+				const int32 Count = Data_Weapon->FireModes[(uint8)FireMode].Firing.LocationDamageModifiers.Num();
 
 				for (int32 I = 0; I < Count; ++I)
 				{
-					if (HitResult.BoneName.ToString() == Data_Weapon->FireTypes[(uint8)FireType].Firing.LocationDamageModifiers[I].Bone)
+					if (HitResult.BoneName.ToString() == Data_Weapon->FireModes[(uint8)FireMode].Firing.LocationDamageModifiers[I].Bone)
 					{
-						Damage *= Data_Weapon->FireTypes[(uint8)FireType].Firing.LocationDamageModifiers[I].Multiplier;
+						Damage *= Data_Weapon->FireModes[(uint8)FireMode].Firing.LocationDamageModifiers[I].Multiplier;
 						break;
 					}
 				}
@@ -1667,12 +1667,12 @@ void ACsWeapon::FireHitscan(const TCsWeaponFire &FireType, const FCsProjectileFi
 
 UObject* ACsWeapon::GetMuzzleFlashParent() { return nullptr; }
 
-FVector ACsWeapon::GetMuzzleLocation(const TCsViewType &ViewType, const TCsWeaponFire &FireType)
+FVector ACsWeapon::GetMuzzleLocation(const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode)
 {
-	return FVector::ZeroVector; // GetMyData_Weapon()->GetMuzzleLocation(GetMesh(ViewType), ViewType, FireType, CurrentProjectilePerShotIndex.Get(FireType));
+	return FVector::ZeroVector; // GetMyData_Weapon()->GetMuzzleLocation(GetMesh(ViewType), ViewType, FireMode, CurrentProjectilePerShotIndex.Get(FireMode));
 }
 
-void ACsWeapon::PlayMuzzleFlash(const TCsWeaponFire &FireType)
+void ACsWeapon::PlayMuzzleFlash(const TCsWeaponFireMode &FireMode)
 {
 	ACsManager_FX* Manager_FX = nullptr;
 
@@ -1693,7 +1693,7 @@ void ACsWeapon::PlayMuzzleFlash(const TCsWeaponFire &FireType)
 
 	ACsData_Weapon* Data_Weapon = GetMyData_Weapon();
 	const TCsViewType ViewType	= GetCurrentViewType();
-	FCsFxElement* FX			= Data_Weapon->GetMuzzleFX(ViewType, FireType, CurrentProjectilePerShotIndex.Get(FireType));
+	FCsFxElement* FX			= Data_Weapon->GetMuzzleFX(ViewType, FireMode, CurrentProjectilePerShotIndex.Get(FireMode));
 
 	Manager_FX->Play(FX, GetMyPawn(), GetMuzzleFlashParent());
 }
@@ -1723,16 +1723,16 @@ void ACsWeapon::Reload()
 	{
 		UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 
-		for (uint8 I = 0; I < FIRE_TYPE_MAX; I++)
+		for (uint8 I = 0; I < FIRE_MODE_MAX; I++)
 		{
-			StopChargeFire((TCsWeaponFire)I);
+			StopChargeFire((TCsWeaponFireMode)I);
 		}
 
 		Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, FName("Stop FireWeapon_Internal"), this);
 
-		for (uint8 I = 0; I < FIRE_TYPE_MAX; I++)
+		for (uint8 I = 0; I < FIRE_MODE_MAX; I++)
 		{
-			StopAnimation((TCsWeaponFire)I, FireAnim);
+			StopAnimation((TCsWeaponFireMode)I, FireAnim);
 		}
 	}
 

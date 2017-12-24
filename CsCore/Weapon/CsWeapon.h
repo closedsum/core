@@ -16,7 +16,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsWeapon_OnTick, 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsWeapon_Override_CheckStateIdle, const uint8&, WeaponIndex);
 
 // Firing
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsWeapon_Override_FireWeapon, const uint8&, WeaponIndex, const uint8&, FireType);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsWeapon_Override_FireWeapon, const uint8&, WeaponIndex, const uint8&, FireMode);
 // Reloading
 
 // Enums
@@ -292,28 +292,28 @@ struct FCsWeapon_Ref_bool : public FCsPrimitiveType_TArrayRefValue_bool<int32>
 	~FCsWeapon_Ref_bool() {}
 };
 
-struct FCsWeapon_TArray_bool : public FCsPrimitiveType_TArrayValue_bool<TCsWeaponFire>
+struct FCsWeapon_TArray_bool : public FCsPrimitiveType_TArrayValue_bool<TCsWeaponFireMode>
 {
-	FCsWeapon_TArray_bool() : FCsPrimitiveType_TArrayValue_bool<TCsWeaponFire>(){}
+	FCsWeapon_TArray_bool() : FCsPrimitiveType_TArrayValue_bool<TCsWeaponFireMode>(){}
 	~FCsWeapon_TArray_bool() {}
 };
 
-struct FCsWeapon_TArrayRef_bool : public FCsPrimitiveType_TArrayRefValue_bool<TCsWeaponFire>
+struct FCsWeapon_TArrayRef_bool : public FCsPrimitiveType_TArrayRefValue_bool<TCsWeaponFireMode>
 {
-	FCsWeapon_TArrayRef_bool() : FCsPrimitiveType_TArrayRefValue_bool<TCsWeaponFire>(){}
+	FCsWeapon_TArrayRef_bool() : FCsPrimitiveType_TArrayRefValue_bool<TCsWeaponFireMode>(){}
 	~FCsWeapon_TArrayRef_bool() {}
 };
 
 // uint8
-struct FCsWeapon_TArray_uint8 : public FCsIntegralType_TArrayValue_uint8<TCsWeaponFire>
+struct FCsWeapon_TArray_uint8 : public FCsIntegralType_TArrayValue_uint8<TCsWeaponFireMode>
 {
-	FCsWeapon_TArray_uint8() : FCsIntegralType_TArrayValue_uint8<TCsWeaponFire>(){}
+	FCsWeapon_TArray_uint8() : FCsIntegralType_TArrayValue_uint8<TCsWeaponFireMode>(){}
 	~FCsWeapon_TArray_uint8() {}
 };
 
-struct FCsWeapon_TArrayRef_uint8 : public FCsIntegralType_TArrayRefValue_uint8<TCsWeaponFire>
+struct FCsWeapon_TArrayRef_uint8 : public FCsIntegralType_TArrayRefValue_uint8<TCsWeaponFireMode>
 {
-	FCsWeapon_TArrayRef_uint8() : FCsIntegralType_TArrayRefValue_uint8<TCsWeaponFire>(){}
+	FCsWeapon_TArrayRef_uint8() : FCsIntegralType_TArrayRefValue_uint8<TCsWeaponFireMode>(){}
 	~FCsWeapon_TArrayRef_uint8() {}
 };
 
@@ -324,9 +324,9 @@ struct FCsWeapon_Ref_int32 : public FCsIntegralType_TArrayRefValue_int32<int32>
 	~FCsWeapon_Ref_int32() {}
 };
 
-struct FCsWeapon_TArrayRef_int32 : public FCsIntegralType_TArrayRefValue_int32<TCsWeaponFire>
+struct FCsWeapon_TArrayRef_int32 : public FCsIntegralType_TArrayRefValue_int32<TCsWeaponFireMode>
 {
-	FCsWeapon_TArrayRef_int32() : FCsIntegralType_TArrayRefValue_int32<TCsWeaponFire>(){}
+	FCsWeapon_TArrayRef_int32() : FCsIntegralType_TArrayRefValue_int32<TCsWeaponFireMode>(){}
 	~FCsWeapon_TArrayRef_int32() {}
 };
 
@@ -337,15 +337,15 @@ struct FCsWeapon_Ref_float : public FCsIntegralType_TArrayRefValue_float<int32>
 	~FCsWeapon_Ref_float() {}
 };
 
-struct FCsWeapon_TArray_float : public FCsIntegralType_TArrayValue_float<TCsWeaponFire>
+struct FCsWeapon_TArray_float : public FCsIntegralType_TArrayValue_float<TCsWeaponFireMode>
 {
-	FCsWeapon_TArray_float() : FCsIntegralType_TArrayValue_float<TCsWeaponFire>(){}
+	FCsWeapon_TArray_float() : FCsIntegralType_TArrayValue_float<TCsWeaponFireMode>(){}
 	~FCsWeapon_TArray_float() {}
 };
 
-struct FCsWeapon_TArrayRef_float : public FCsIntegralType_TArrayRefValue_float<TCsWeaponFire>
+struct FCsWeapon_TArrayRef_float : public FCsIntegralType_TArrayRefValue_float<TCsWeaponFireMode>
 {
-	FCsWeapon_TArrayRef_float() : FCsIntegralType_TArrayRefValue_float<TCsWeaponFire>(){}
+	FCsWeapon_TArrayRef_float() : FCsIntegralType_TArrayRefValue_float<TCsWeaponFireMode>(){}
 	~FCsWeapon_TArrayRef_float() {}
 };
 
@@ -366,8 +366,8 @@ class CSCORE_API ACsWeapon : public AActor
 // Members
 #pragma region
 
-	TCsWeaponFire FireType_MAX;
-	uint8 FIRE_TYPE_MAX;
+	TCsWeaponFireMode FireMode_MAX;
+	uint8 FIRE_MODE_MAX;
 
 	TCsGetObjectMember_Internal GetObjectMember_Internal;
 	TCsGetStructMember_Internal GetStructMember_Internal;
@@ -385,7 +385,7 @@ class CSCORE_API ACsWeapon : public AActor
 
 		Member.Reset();
 
-		for (uint8 I = 0; I < FIRE_TYPE_MAX; I++)
+		for (uint8 I = 0; I < FIRE_MODE_MAX; I++)
 		{
 			T* DataMember = UCsCommon_Load::GetObjectMember<T>(Data_Weapon, Data_Weapon->GetClass(), MemberName, GetObjectMember_Internal);
 
@@ -396,11 +396,11 @@ class CSCORE_API ACsWeapon : public AActor
 	}
 
 	template<typename T>
-	void SetMemberMultiValue(struct FCsPrimitiveType_TArrayValue<T, TCsWeaponFire> &Member, const T &Value)
+	void SetMemberMultiValue(struct FCsPrimitiveType_TArrayValue<T, TCsWeaponFireMode> &Member, const T &Value)
 	{
 		Member.Reset();
 
-		for (uint8 I = 0; I < FIRE_TYPE_MAX; I++)
+		for (uint8 I = 0; I < FIRE_MODE_MAX; I++)
 		{
 			if (I == 0)
 				Member.Set(Value);
@@ -409,18 +409,18 @@ class CSCORE_API ACsWeapon : public AActor
 	}
 
 	template<typename T>
-	void SetMemberMultiRefValue(struct FCsPrimitiveType_TArrayRefValue<T, TCsWeaponFire> &Member, const TCsData_Weapon_FireType &FireTypeMember, const FString &MemberName)
+	void SetMemberMultiRefValue(struct FCsPrimitiveType_TArrayRefValue<T, TCsWeaponFireMode> &Member, const TCsData_Weapon_FireMode &FireModeMember, const FString &MemberName)
 	{
 		ACsData_Weapon* Data_Weapon = GetMyData_Weapon();
 
 		Member.Reset();
 
-		const FString StructName = ECsData_Weapon_FireType::ToString(FireTypeMember);
+		const FString StructName = ECsData_Weapon_FireMode::ToString(FireModeMember);
 
-		for (uint8 I = 0; I < FIRE_TYPE_MAX; I++)
+		for (uint8 I = 0; I < FIRE_MODE_MAX; I++)
 		{
-			void* Struct				= UCsCommon_Load::GetStructMember<void>(Data_Weapon->GetFireTypeStruct(I), Data_Weapon->GetFireTypeScriptStruct(), StructName, GetStructMember_Internal);
-			UScriptStruct* ScriptStruct = UCsCommon_Load::GetScriptStructMember(Data_Weapon->GetFireTypeStruct(I), Data_Weapon->GetFireTypeScriptStruct(), StructName, GetScriptStructMember_Internal);
+			void* Struct				= UCsCommon_Load::GetStructMember<void>(Data_Weapon->GetFireModeStruct(I), Data_Weapon->GetFireModeScriptStruct(), StructName, GetStructMember_Internal);
+			UScriptStruct* ScriptStruct = UCsCommon_Load::GetScriptStructMember(Data_Weapon->GetFireModeStruct(I), Data_Weapon->GetFireModeScriptStruct(), StructName, GetScriptStructMember_Internal);
 			T* StructMember				= UCsCommon_Load::GetStructMember<T>(Struct, ScriptStruct, MemberName, GetStructMember_Internal);
 
 			if (I == 0)
@@ -563,15 +563,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "State")
 	void OnTick_HandleStates();
 
-	bool CanFire(const TCsWeaponFire &FireType);
-	bool CanFire_Auto(const TCsWeaponFire &FireType);
+	bool CanFire(const TCsWeaponFireMode &FireMode);
+	bool CanFire_Auto(const TCsWeaponFireMode &FireMode);
 
 	void CheckState_Idle();
 
 	UPROPERTY(BlueprintAssignable, Category = "Tick")
 	FBindableDynEvent_CsWeapon_Override_CheckStateIdle Override_CheckState_Idle_ScriptEvent;
 
-	void HandleState_Firing(const TCsWeaponFire &FireType);
+	void HandleState_Firing(const TCsWeaponFireMode &FireMode);
 
 	void Enable();
 	void Disable();
@@ -587,7 +587,7 @@ public:
 #pragma region
 public:
 
-	virtual void PlayAnimation(const TCsWeaponFire &FireType, const TCsWeaponAnim &AnimType, const int32 &Index = 0);
+	virtual void PlayAnimation(const TCsWeaponFireMode &FireMode, const TCsWeaponAnim &AnimType, const int32 &Index = 0);
 
 	TCsWeaponAnim ReloadAnim;
 
@@ -597,8 +597,8 @@ public:
 	struct FCsRoutine* PlayAnimation_Reload_Internal_Routine;
 	static void PlayAnimation_Reload_StopCondition(struct FCsRoutine* r);
 
-	virtual float GetAnimationLength(const TCsWeaponFire &FireType, const TCsWeaponAnim &AnimType, const int32 &Index = 0);
-	virtual void StopAnimation(const TCsWeaponFire &FireType, const TCsWeaponAnim &AnimType, const int32 &Index = 0);
+	virtual float GetAnimationLength(const TCsWeaponFireMode &FireMode, const TCsWeaponAnim &AnimType, const int32 &Index = 0);
+	virtual void StopAnimation(const TCsWeaponFireMode &FireMode, const TCsWeaponAnim &AnimType, const int32 &Index = 0);
 
 #pragma endregion Animation
 
@@ -610,8 +610,8 @@ public:
 	virtual UObject* GetSoundParent();
 	virtual class ACsSound* GetSound(const TCsWeaponSound &SoundType);
 
-	virtual void PlaySound(const TCsWeaponFire &FireType, const TCsWeaponSound &SoundType);
-	virtual void StopSound(const TCsWeaponFire &FireType, const TCsWeaponSound &SoundType);
+	virtual void PlaySound(const TCsWeaponFireMode &FireMode, const TCsWeaponSound &SoundType);
+	virtual void StopSound(const TCsWeaponFireMode &FireMode, const TCsWeaponSound &SoundType);
 
 #pragma endregion Sound
 
@@ -644,7 +644,7 @@ public:
 	bool HasUnlimitedAmmo;
 
 	FCsWeapon_TArrayRef_uint8 ProjectilesPerShot;
-	virtual uint8 GetProjectilesPerShot(const TCsWeaponFire &FireType);
+	virtual uint8 GetProjectilesPerShot(const TCsWeaponFireMode &FireMode);
 
 	FCsWeapon_TArray_uint8 CurrentProjectilePerShotIndex;
 
@@ -652,11 +652,11 @@ public:
 	FCsWeapon_TArrayRef_bool IsFullAuto;
 
 	FCsWeapon_TArrayRef_float TimeBetweenProjectilesPerShot;
-	virtual float GetTimeBetweenProjectilesPerShot(const TCsWeaponFire &FireType);
+	virtual float GetTimeBetweenProjectilesPerShot(const TCsWeaponFireMode &FireMode);
 	FCsWeapon_TArrayRef_float TimeBetweenShots;
-	virtual float GetTimeBetweenShots(const TCsWeaponFire &FireType);
+	virtual float GetTimeBetweenShots(const TCsWeaponFireMode &FireMode);
 	FCsWeapon_TArrayRef_float TimeBetweenAutoShots;
-	virtual float GetTimeBetweenAutoShots(const TCsWeaponFire &FireType);
+	virtual float GetTimeBetweenAutoShots(const TCsWeaponFireMode &FireMode);
 
 	int32 Seed;
 
@@ -668,7 +668,7 @@ public:
 	FCsWeapon_TArray_bool IsFirePressed;
 	FCsWeapon_TArray_bool Last_IsFirePressed;
 
-	void SetIsFirePressed(const TCsWeaponFire &FireType, const bool &Value, const bool &DoOnTick = true);
+	void SetIsFirePressed(const TCsWeaponFireMode &FireMode, const bool &Value, const bool &DoOnTick = true);
 
 	FCsWeapon_TArray_float IsFirePressed_StartTime;
 	FCsWeapon_TArray_float IsFireReleased_StartTime;
@@ -685,12 +685,12 @@ public:
 	bool PerformingChargeFire;
 
 	FCsWeapon_TArrayRef_float MaxChargeFireTime;
-	virtual float GetMaxChargeFireTime(const TCsWeaponFire &FireType);
+	virtual float GetMaxChargeFireTime(const TCsWeaponFireMode &FireMode);
 
 	UFUNCTION(BlueprintCallable, Category = "Firing")
 	void HandleChargeFire();
 
-	void StartChargeFire(const TCsWeaponFire &FireType);
+	void StartChargeFire(const TCsWeaponFireMode &FireMode);
 	static char StartChargeFire_Internal(struct FCsRoutine* r);
 	struct FCsRoutine* StartChargeFire_Internal_Routine;
 
@@ -699,11 +699,11 @@ public:
 	float ChargeFire_StartTime;
 
 	float GetChargeFireHeldTime();
-	float GetChargeFireHeldPercent(const TCsWeaponFire &FireType);
+	float GetChargeFireHeldPercent(const TCsWeaponFireMode &FireMoe);
 	float GetCurrentChargeFireHeldTime();
-	float GetCurrentChargeFireHeldPercent(const TCsWeaponFire &FireType);
+	float GetCurrentChargeFireHeldPercent(const TCsWeaponFireMode &FireMode);
 
-	void StopChargeFire(const TCsWeaponFire &FireType);
+	void StopChargeFire(const TCsWeaponFireMode &FireMode);
 
 #pragma endregion Charge
 
@@ -712,17 +712,17 @@ public:
 
 	FCsWeapon_TArrayRef_bool DoSpread;
 	FCsWeapon_TArrayRef_float MinSpread;
-	virtual float GetMinSpread(const TCsWeaponFire &FireType);
+	virtual float GetMinSpread(const TCsWeaponFireMode &FireMode);
 	FCsWeapon_TArrayRef_float MaxSpread;
-	virtual float GetMaxSpread(const TCsWeaponFire &FireType);
+	virtual float GetMaxSpread(const TCsWeaponFireMode &FireMode);
 	FCsWeapon_TArrayRef_float SpreadAddedPerShot;
-	virtual float GetSpreadAddedPerShot(const TCsWeaponFire &FireType);
+	virtual float GetSpreadAddedPerShot(const TCsWeaponFireMode &FireMode);
 	FCsWeapon_TArrayRef_float SpreadRecoveryRate;
-	virtual float GetSpreadRecoveryRate(const TCsWeaponFire &FireType);
+	virtual float GetSpreadRecoveryRate(const TCsWeaponFireMode &FireMode);
 	FCsWeapon_TArrayRef_float FiringSpreadRecoveryDelay;
-	virtual float GetFiringSpreadRecoveryDelay(const TCsWeaponFire &FireType);
+	virtual float GetFiringSpreadRecoveryDelay(const TCsWeaponFireMode &FireMode);
 	FCsWeapon_TArrayRef_float MovingSpreadBonus;
-	virtual float GetMovingSpreadBonus(const TCsWeaponFire &FireType);
+	virtual float GetMovingSpreadBonus(const TCsWeaponFireMode &FireMode);
 
 	FCsWeapon_TArray_float CurrentBaseSpread;
 	FCsWeapon_TArray_float CurrentSpread;
@@ -749,9 +749,9 @@ public:
 
 	uint8 ProjectileFireCachePoolIndex;
 
-	struct FCsProjectileFireCache* AllocateProjectileFireCache(const TCsWeaponFire &FireType);
+	struct FCsProjectileFireCache* AllocateProjectileFireCache(const TCsWeaponFireMode &FireMode);
 
-	void FireWeapon(const TCsWeaponFire &FireType);
+	void FireWeapon(const TCsWeaponFireMode &FireMode);
 	static char FireWeapon_Internal(struct FCsRoutine* r);
 	struct FCsRoutine* FireWeapon_Internal_Routine;
 
@@ -762,10 +762,10 @@ public:
 
 	virtual FVector GetOwnerRightVector();
 
-	virtual void FireProjectile(const TCsWeaponFire &FireType, FCsProjectileFireCache* Cache);
+	virtual void FireProjectile(const TCsWeaponFireMode &FireMode, FCsProjectileFireCache* Cache);
 
 	UFUNCTION(BlueprintCallable, Category = "Firing")
-	void FireProjectile_Script(const uint8 &FireType, FCsProjectileFireCache &Cache);
+	void FireProjectile_Script(const uint8 &FireMode, FCsProjectileFireCache &Cache);
 
 	// Hitscan
 #pragma region
@@ -775,19 +775,19 @@ public:
 	FCsWeapon_TArrayRef_bool DoesHitscanSimulateProjectileDuration;
 
 	FCsWeapon_TArrayRef_int32 ObstaclePenetrations;
-	virtual int32 GetObstaclePenetractions(const TCsWeaponFire &FireType);
+	virtual int32 GetObstaclePenetractions(const TCsWeaponFireMode &FireMode);
 	FCsWeapon_TArrayRef_int32 PawnPenetrations;
-	virtual int32 GetPawnPenetrations(const TCsWeaponFire &FireType);
+	virtual int32 GetPawnPenetrations(const TCsWeaponFireMode &FireMode);
 
-	void FireHitscan(const TCsWeaponFire &FireType, const FCsProjectileFireCache* Cache);
+	void FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjectileFireCache* Cache);
 
 #pragma endregion Hitscan
 
 	virtual UObject* GetMuzzleFlashParent();
 
-	virtual FVector GetMuzzleLocation(const TCsViewType &ViewType, const TCsWeaponFire &FireType);
+	virtual FVector GetMuzzleLocation(const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode);
 
-	virtual void PlayMuzzleFlash(const TCsWeaponFire &FireType);
+	virtual void PlayMuzzleFlash(const TCsWeaponFireMode &FireMode);
 
 #pragma endregion Firing
 

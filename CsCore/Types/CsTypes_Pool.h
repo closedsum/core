@@ -23,7 +23,7 @@ namespace ECsPoolTransaction
 
 namespace ECsPoolTransaction
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -74,7 +74,7 @@ namespace ECsPooledObjectState
 
 namespace ECsPooledObjectState
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{

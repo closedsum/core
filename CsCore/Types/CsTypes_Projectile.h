@@ -115,7 +115,7 @@ namespace ECsProjectileRelevance
 
 namespace ECsProjectileRelevance
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
@@ -165,7 +165,7 @@ namespace ECsProjectileState
 
 namespace ECsProjectileState
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
@@ -208,7 +208,7 @@ namespace ECsProjectileDeActivate
 
 namespace ECsProjectileDeActivate
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{

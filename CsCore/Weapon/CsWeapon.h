@@ -43,7 +43,7 @@ namespace ECsWeaponRoutine
 
 namespace ECsWeaponRoutine
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -128,7 +128,7 @@ namespace ECsWeaponCacheMultiValueMember
 
 namespace ECsWeaponCacheMultiValueMember
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -286,66 +286,66 @@ typedef TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> TCsWeaponCacheMultiVal
 #pragma region
 
 // bool
-struct FCsWeapon_Ref_bool : public FCsPrimitiveType_TArrayRefValue_bool<int32>
+struct FCsWeapon_Ref_bool : public TCsPrimitiveType_TArrayRefValue_bool<int32>
 {
-	FCsWeapon_Ref_bool() : FCsPrimitiveType_TArrayRefValue_bool<int32>(){}
+	FCsWeapon_Ref_bool() : TCsPrimitiveType_TArrayRefValue_bool<int32>(){}
 	~FCsWeapon_Ref_bool() {}
 };
 
-struct FCsWeapon_TArray_bool : public FCsPrimitiveType_TArrayValue_bool<TCsWeaponFireMode>
+struct FCsWeapon_TArray_bool : public TCsPrimitiveType_TArrayValue_bool<TCsWeaponFireMode>
 {
-	FCsWeapon_TArray_bool() : FCsPrimitiveType_TArrayValue_bool<TCsWeaponFireMode>(){}
+	FCsWeapon_TArray_bool() : TCsPrimitiveType_TArrayValue_bool<TCsWeaponFireMode>(){}
 	~FCsWeapon_TArray_bool() {}
 };
 
-struct FCsWeapon_TArrayRef_bool : public FCsPrimitiveType_TArrayRefValue_bool<TCsWeaponFireMode>
+struct FCsWeapon_TArrayRef_bool : public TCsPrimitiveType_TArrayRefValue_bool<TCsWeaponFireMode>
 {
-	FCsWeapon_TArrayRef_bool() : FCsPrimitiveType_TArrayRefValue_bool<TCsWeaponFireMode>(){}
+	FCsWeapon_TArrayRef_bool() : TCsPrimitiveType_TArrayRefValue_bool<TCsWeaponFireMode>(){}
 	~FCsWeapon_TArrayRef_bool() {}
 };
 
 // uint8
-struct FCsWeapon_TArray_uint8 : public FCsIntegralType_TArrayValue_uint8<TCsWeaponFireMode>
+struct FCsWeapon_TArray_uint8 : public TCsIntegralType_TArrayValue_uint8<TCsWeaponFireMode>
 {
-	FCsWeapon_TArray_uint8() : FCsIntegralType_TArrayValue_uint8<TCsWeaponFireMode>(){}
+	FCsWeapon_TArray_uint8() : TCsIntegralType_TArrayValue_uint8<TCsWeaponFireMode>(){}
 	~FCsWeapon_TArray_uint8() {}
 };
 
-struct FCsWeapon_TArrayRef_uint8 : public FCsIntegralType_TArrayRefValue_uint8<TCsWeaponFireMode>
+struct FCsWeapon_TArrayRef_uint8 : public TCsIntegralType_TArrayRefValue_uint8<TCsWeaponFireMode>
 {
-	FCsWeapon_TArrayRef_uint8() : FCsIntegralType_TArrayRefValue_uint8<TCsWeaponFireMode>(){}
+	FCsWeapon_TArrayRef_uint8() : TCsIntegralType_TArrayRefValue_uint8<TCsWeaponFireMode>(){}
 	~FCsWeapon_TArrayRef_uint8() {}
 };
 
 // int32
-struct FCsWeapon_Ref_int32 : public FCsIntegralType_TArrayRefValue_int32<int32>
+struct FCsWeapon_Ref_int32 : public TCsIntegralType_TArrayRefValue_int32<int32>
 {
-	FCsWeapon_Ref_int32() : FCsIntegralType_TArrayRefValue_int32<int32>(){}
+	FCsWeapon_Ref_int32() : TCsIntegralType_TArrayRefValue_int32<int32>(){}
 	~FCsWeapon_Ref_int32() {}
 };
 
-struct FCsWeapon_TArrayRef_int32 : public FCsIntegralType_TArrayRefValue_int32<TCsWeaponFireMode>
+struct FCsWeapon_TArrayRef_int32 : public TCsIntegralType_TArrayRefValue_int32<TCsWeaponFireMode>
 {
-	FCsWeapon_TArrayRef_int32() : FCsIntegralType_TArrayRefValue_int32<TCsWeaponFireMode>(){}
+	FCsWeapon_TArrayRef_int32() : TCsIntegralType_TArrayRefValue_int32<TCsWeaponFireMode>(){}
 	~FCsWeapon_TArrayRef_int32() {}
 };
 
 // float
-struct FCsWeapon_Ref_float : public FCsIntegralType_TArrayRefValue_float<int32>
+struct FCsWeapon_Ref_float : public TCsIntegralType_TArrayRefValue_float<int32>
 {
-	FCsWeapon_Ref_float() : FCsIntegralType_TArrayRefValue_float<int32>(){}
+	FCsWeapon_Ref_float() : TCsIntegralType_TArrayRefValue_float<int32>(){}
 	~FCsWeapon_Ref_float() {}
 };
 
-struct FCsWeapon_TArray_float : public FCsIntegralType_TArrayValue_float<TCsWeaponFireMode>
+struct FCsWeapon_TArray_float : public TCsIntegralType_TArrayValue_float<TCsWeaponFireMode>
 {
-	FCsWeapon_TArray_float() : FCsIntegralType_TArrayValue_float<TCsWeaponFireMode>(){}
+	FCsWeapon_TArray_float() : TCsIntegralType_TArrayValue_float<TCsWeaponFireMode>(){}
 	~FCsWeapon_TArray_float() {}
 };
 
-struct FCsWeapon_TArrayRef_float : public FCsIntegralType_TArrayRefValue_float<TCsWeaponFireMode>
+struct FCsWeapon_TArrayRef_float : public TCsIntegralType_TArrayRefValue_float<TCsWeaponFireMode>
 {
-	FCsWeapon_TArrayRef_float() : FCsIntegralType_TArrayRefValue_float<TCsWeaponFireMode>(){}
+	FCsWeapon_TArrayRef_float() : TCsIntegralType_TArrayRefValue_float<TCsWeaponFireMode>(){}
 	~FCsWeapon_TArrayRef_float() {}
 };
 
@@ -379,7 +379,7 @@ class CSCORE_API ACsWeapon : public AActor
 #pragma region
 
 	template<typename T>
-	void SetMemberRefValue(struct FCsPrimitiveType_TArrayRefValue<T, int32> &Member, const FString &MemberName)
+	void SetMemberRefValue(struct TCsPrimitiveType_TArrayRefValue<T, int32> &Member, const FString &MemberName)
 	{
 		ACsData_Weapon* Data_Weapon = GetMyData_Weapon();
 
@@ -396,7 +396,7 @@ class CSCORE_API ACsWeapon : public AActor
 	}
 
 	template<typename T>
-	void SetMemberMultiValue(struct FCsPrimitiveType_TArrayValue<T, TCsWeaponFireMode> &Member, const T &Value)
+	void SetMemberMultiValue(struct TCsPrimitiveType_TArrayValue<T, TCsWeaponFireMode> &Member, const T &Value)
 	{
 		Member.Reset();
 
@@ -409,7 +409,7 @@ class CSCORE_API ACsWeapon : public AActor
 	}
 
 	template<typename T>
-	void SetMemberMultiRefValue(struct FCsPrimitiveType_TArrayRefValue<T, TCsWeaponFireMode> &Member, const TCsData_Weapon_FireMode &FireModeMember, const FString &MemberName)
+	void SetMemberMultiRefValue(struct TCsPrimitiveType_TArrayRefValue<T, TCsWeaponFireMode> &Member, const TCsData_Weapon_FireMode &FireModeMember, const FString &MemberName)
 	{
 		ACsData_Weapon* Data_Weapon = GetMyData_Weapon();
 

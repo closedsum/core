@@ -22,7 +22,7 @@ namespace ECsCoroutineSchedule
 
 namespace ECsCoroutineSchedule
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
@@ -65,7 +65,7 @@ namespace ECsCoroutineMessage
 
 namespace ECsCoroutineMessage
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
@@ -112,7 +112,7 @@ namespace ECsCoroutineEndReason
 
 namespace ECsCoroutineEndReason
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{

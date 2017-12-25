@@ -90,7 +90,7 @@ namespace ECsSimpleWidgetType
 
 namespace ECsSimpleWidgetType
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -188,7 +188,7 @@ public:
 
 namespace ECsHorizTextAligment
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -216,7 +216,7 @@ namespace ECsHorizTextAligment
 
 namespace ECsVerticalTextAligment
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -263,7 +263,7 @@ namespace ECsButtonState
 
 namespace ECsButtonState
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -309,125 +309,125 @@ typedef TEnumAsByte<ECsButtonState::Type> TCsButtonState;
 // PrimitiveType
 #pragma region
 
-struct FCsPrimitiveType_ESlateVisibility : public FCsPrimitiveType<ESlateVisibility>
+struct TCsPrimitiveType_ESlateVisibility : public TCsPrimitiveType<ESlateVisibility>
 {
 public:
 
-	FCsPrimitiveType_ESlateVisibility()
+	TCsPrimitiveType_ESlateVisibility()
 	{
 		DefaultValue = ESlateVisibility::Hidden;
 	}
-	~FCsPrimitiveType_ESlateVisibility() {}
+	~TCsPrimitiveType_ESlateVisibility() {}
 
-	FCsPrimitiveType_ESlateVisibility& operator=(const ESlateVisibility& B)
+	TCsPrimitiveType_ESlateVisibility& operator=(const ESlateVisibility& B)
 	{
 		Value = B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FORCEINLINE friend bool operator==(const ESlateVisibility &Lhs, const FCsPrimitiveType_ESlateVisibility &Rhs)
+	FORCEINLINE friend bool operator==(const ESlateVisibility &Lhs, const TCsPrimitiveType_ESlateVisibility &Rhs)
 	{
 		return Lhs == Rhs.Value;
 	}
 
-	FORCEINLINE friend bool operator==(const FCsPrimitiveType_ESlateVisibility &Lhs, const ESlateVisibility &Rhs)
+	FORCEINLINE friend bool operator==(const TCsPrimitiveType_ESlateVisibility &Lhs, const ESlateVisibility &Rhs)
 	{
 		return Lhs.Value == Rhs;
 	}
 
-	FORCEINLINE friend bool operator!=(const ESlateVisibility &Lhs, const FCsPrimitiveType_ESlateVisibility &Rhs)
+	FORCEINLINE friend bool operator!=(const ESlateVisibility &Lhs, const TCsPrimitiveType_ESlateVisibility &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_ESlateVisibility &Lhs, const ESlateVisibility &Rhs)
+	FORCEINLINE friend bool operator!=(const TCsPrimitiveType_ESlateVisibility &Lhs, const ESlateVisibility &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 };
 
-typedef FCsPrimitiveType_ESlateVisibility TCsESlateVisibility;
+typedef TCsPrimitiveType_ESlateVisibility TCsESlateVisibility;
 
-struct FCsPrimitiveType_FSlateColor : public FCsPrimitiveType<FSlateColor>
+struct TCsPrimitiveType_FSlateColor : public TCsPrimitiveType<FSlateColor>
 {
 public:
 
-	FCsPrimitiveType_FSlateColor()
+	TCsPrimitiveType_FSlateColor()
 	{
 		DefaultValue = FSlateColor();
 	}
-	~FCsPrimitiveType_FSlateColor() {}
+	~TCsPrimitiveType_FSlateColor() {}
 
-	FCsPrimitiveType_FSlateColor& operator=(const FSlateColor& B)
+	TCsPrimitiveType_FSlateColor& operator=(const FSlateColor& B)
 	{
 		Value = B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FORCEINLINE friend bool operator==(const FSlateColor &Lhs, const FCsPrimitiveType_FSlateColor &Rhs)
+	FORCEINLINE friend bool operator==(const FSlateColor &Lhs, const TCsPrimitiveType_FSlateColor &Rhs)
 	{
 		return Lhs == Rhs.Value;
 	}
 
-	FORCEINLINE friend bool operator==(const FCsPrimitiveType_FSlateColor &Lhs, const FSlateColor &Rhs)
+	FORCEINLINE friend bool operator==(const TCsPrimitiveType_FSlateColor &Lhs, const FSlateColor &Rhs)
 	{
 		return Lhs.Value == Rhs;
 	}
 
-	FORCEINLINE friend bool operator!=(const FSlateColor &Lhs, const FCsPrimitiveType_FSlateColor &Rhs)
+	FORCEINLINE friend bool operator!=(const FSlateColor &Lhs, const TCsPrimitiveType_FSlateColor &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_FSlateColor &Lhs, const FSlateColor &Rhs)
+	FORCEINLINE friend bool operator!=(const TCsPrimitiveType_FSlateColor &Lhs, const FSlateColor &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 };
 
-typedef FCsPrimitiveType_FSlateColor TCsFSlateColor;
+typedef TCsPrimitiveType_FSlateColor TCsFSlateColor;
 
-struct FCsPrimitiveType_ECheckBoxState : public FCsPrimitiveType<ECheckBoxState>
+struct TCsPrimitiveType_ECheckBoxState : public TCsPrimitiveType<ECheckBoxState>
 {
 public:
 
-	FCsPrimitiveType_ECheckBoxState()
+	TCsPrimitiveType_ECheckBoxState()
 	{
 		DefaultValue = ECheckBoxState::Unchecked;
 	}
-	~FCsPrimitiveType_ECheckBoxState() {}
+	~TCsPrimitiveType_ECheckBoxState() {}
 
-	FCsPrimitiveType_ECheckBoxState& operator=(const ECheckBoxState& B)
+	TCsPrimitiveType_ECheckBoxState& operator=(const ECheckBoxState& B)
 	{
 		Value = B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FORCEINLINE friend bool operator==(const ECheckBoxState &Lhs, const FCsPrimitiveType_ECheckBoxState &Rhs)
+	FORCEINLINE friend bool operator==(const ECheckBoxState &Lhs, const TCsPrimitiveType_ECheckBoxState &Rhs)
 	{
 		return Lhs == Rhs.Value;
 	}
 
-	FORCEINLINE friend bool operator==(const FCsPrimitiveType_ECheckBoxState &Lhs, const ECheckBoxState &Rhs)
+	FORCEINLINE friend bool operator==(const TCsPrimitiveType_ECheckBoxState &Lhs, const ECheckBoxState &Rhs)
 	{
 		return Lhs.Value == Rhs;
 	}
 
-	FORCEINLINE friend bool operator!=(const ECheckBoxState &Lhs, const FCsPrimitiveType_ECheckBoxState &Rhs)
+	FORCEINLINE friend bool operator!=(const ECheckBoxState &Lhs, const TCsPrimitiveType_ECheckBoxState &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_ECheckBoxState &Lhs, const ECheckBoxState &Rhs)
+	FORCEINLINE friend bool operator!=(const TCsPrimitiveType_ECheckBoxState &Lhs, const ECheckBoxState &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 };
 
-typedef FCsPrimitiveType_ECheckBoxState TCsECheckBoxState;
+typedef TCsPrimitiveType_ECheckBoxState TCsECheckBoxState;
 
 #pragma endregion PrimitiveType
 

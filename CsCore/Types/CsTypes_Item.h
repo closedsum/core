@@ -45,7 +45,7 @@ namespace ECsItemCollection
 
 namespace ECsItemCollection
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{

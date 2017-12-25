@@ -45,7 +45,7 @@ namespace ECsLevelState
 
 namespace ECsLevelState
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -100,7 +100,7 @@ namespace ECsEasingType
 
 namespace ECsEasingType
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -181,7 +181,7 @@ namespace ECsAxes_Editor
 
 namespace ECsAxes_Editor
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -240,7 +240,7 @@ namespace ECsTransformMember
 
 namespace ECsTransformMember
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
@@ -1452,7 +1452,7 @@ namespace ECsHMDDeviceType
 
 namespace ECsHMDDeviceType
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -1530,7 +1530,7 @@ namespace ECsGestureDevice
 
 namespace ECsGestureDevice
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -1588,7 +1588,7 @@ namespace ECsControllerHand
 
 namespace ECsControllerHand
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
@@ -1621,7 +1621,7 @@ typedef TEnumAsByte<ECsControllerHand::Type> TCsControllerHand;
 
 namespace ECollisionEnabled
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -1652,7 +1652,7 @@ namespace ECollisionEnabled
 
 namespace ECsCollisionChannel
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -1773,7 +1773,7 @@ namespace ECsCollisionChannel
 
 namespace ECsCollisionResponse
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -1881,7 +1881,7 @@ namespace ECsLinearColor
 
 namespace ECsLinearColor
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
@@ -1963,7 +1963,7 @@ namespace ECsColor
 
 namespace ECsColor
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
@@ -2064,7 +2064,7 @@ namespace ECsAttachmentTransformRules
 
 namespace ECsAttachmentTransformRules
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -2118,7 +2118,7 @@ namespace ECsDetachmentTransformRules
 
 namespace ECsDetachmentTransformRules
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{

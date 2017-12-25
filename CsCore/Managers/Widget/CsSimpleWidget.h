@@ -138,8 +138,8 @@ class CSCORE_API UCsSimpleWidget : public UUserWidget
 
 	FVector2D ParentCanvasSize;
 
-	FCsPrimitiveType<FVector2D> Position;
-	FCsPrimitiveType<FVector2D> Size;
+	TCsPrimitiveType<FVector2D> Position;
+	TCsPrimitiveType<FVector2D> Size;
 
 	virtual void SetPosition(const FVector2D &InPosition);
 	virtual void SetSize(const FVector2D &InSize);

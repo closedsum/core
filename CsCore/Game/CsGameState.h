@@ -23,7 +23,7 @@ namespace ECsGameStateRoutine
 
 namespace ECsGameStateRoutine
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -63,7 +63,7 @@ namespace ECsGameStateOnBoardState
 
 namespace ECsGameStateOnBoardState
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{

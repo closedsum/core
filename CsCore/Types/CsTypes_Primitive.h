@@ -30,7 +30,7 @@ namespace ECsCachedString
 #pragma region
 
 template<typename T>
-struct FCsPrimitiveType
+struct TCsPrimitiveType
 {
 public:
 	T DefaultValue;
@@ -42,8 +42,8 @@ public:
 	TMulticastDelegate<void, const T&> OnChange_Event;
 
 public:
-	FCsPrimitiveType(){}
-	virtual ~FCsPrimitiveType(){}
+	TCsPrimitiveType(){}
+	virtual ~TCsPrimitiveType(){}
 
 	void SetDefaultValue(const T &inDefaultValue)
 	{
@@ -58,7 +58,7 @@ public:
 			OnChange_Event.Broadcast(Value);
 	}
 
-	FCsPrimitiveType& operator=(const T& B)
+	TCsPrimitiveType& operator=(const T& B)
 	{
 		Value = B;
 		UpdateIsDirty();
@@ -100,203 +100,203 @@ public:
 
 };
 
-struct FCsPrimitiveType_Int32 : public FCsPrimitiveType<int32>
+struct TCsPrimitiveType_Int32 : public TCsPrimitiveType<int32>
 {
-	FCsPrimitiveType_Int32()
+	TCsPrimitiveType_Int32()
 	{
 		DefaultValue = 0;
 	}
-	~FCsPrimitiveType_Int32(){}
+	~TCsPrimitiveType_Int32(){}
 
-	FCsPrimitiveType_Int32& operator=(const int32& B)
+	TCsPrimitiveType_Int32& operator=(const int32& B)
 	{
 		Value = B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FORCEINLINE friend bool operator==(const int32 &Lhs, const FCsPrimitiveType_Int32 &Rhs)
+	FORCEINLINE friend bool operator==(const int32 &Lhs, const TCsPrimitiveType_Int32 &Rhs)
 	{
 		return Lhs == Rhs.Value;
 	}
 
-	FORCEINLINE friend bool operator==(const FCsPrimitiveType_Int32 &Lhs, const int32 &Rhs)
+	FORCEINLINE friend bool operator==(const TCsPrimitiveType_Int32 &Lhs, const int32 &Rhs)
 	{
 		return Lhs.Value == Rhs;
 	}
 
-	FORCEINLINE friend bool operator!=(const int32 &Lhs, const FCsPrimitiveType_Int32 &Rhs)
+	FORCEINLINE friend bool operator!=(const int32 &Lhs, const TCsPrimitiveType_Int32 &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_Int32 &Lhs, const int32 &Rhs)
+	FORCEINLINE friend bool operator!=(const TCsPrimitiveType_Int32 &Lhs, const int32 &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FCsPrimitiveType_Int32& operator+=(const int32& B)
+	TCsPrimitiveType_Int32& operator+=(const int32& B)
 	{
 		Value += B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FCsPrimitiveType_Int32& operator-=(const int32& B)
+	TCsPrimitiveType_Int32& operator-=(const int32& B)
 	{
 		Value -= B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FCsPrimitiveType_Int32& operator*=(const int32& B)
+	TCsPrimitiveType_Int32& operator*=(const int32& B)
 	{
 		Value *= B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FORCEINLINE friend bool operator<(const FCsPrimitiveType_Int32 &Lhs, const int32 &Rhs)
+	FORCEINLINE friend bool operator<(const TCsPrimitiveType_Int32 &Lhs, const int32 &Rhs)
 	{
 		return Lhs.Value < Rhs;
 	}
 
-	FORCEINLINE friend bool operator<(const int32 &Lhs, const FCsPrimitiveType_Int32 &Rhs)
+	FORCEINLINE friend bool operator<(const int32 &Lhs, const TCsPrimitiveType_Int32 &Rhs)
 	{
 		return Lhs < Rhs.Value;
 	}
 
-	FORCEINLINE friend bool operator>(const FCsPrimitiveType_Int32 &Lhs, const int32 &Rhs)
+	FORCEINLINE friend bool operator>(const TCsPrimitiveType_Int32 &Lhs, const int32 &Rhs)
 	{
 		return Lhs.Value > Rhs;
 	}
 
-	FORCEINLINE friend bool operator>(const int32 &Lhs, const FCsPrimitiveType_Int32 &Rhs)
+	FORCEINLINE friend bool operator>(const int32 &Lhs, const TCsPrimitiveType_Int32 &Rhs)
 	{
 		return Lhs > Rhs.Value;
 	}
 
-	FORCEINLINE friend float operator/(const FCsPrimitiveType_Int32 &Lhs, const int32 &Rhs)
+	FORCEINLINE friend float operator/(const TCsPrimitiveType_Int32 &Lhs, const int32 &Rhs)
 	{
 		return Lhs.Value / Rhs;
 	}
 
-	FORCEINLINE friend float operator/(const int32 &Lhs, const FCsPrimitiveType_Int32 &Rhs)
+	FORCEINLINE friend float operator/(const int32 &Lhs, const TCsPrimitiveType_Int32 &Rhs)
 	{
 		return Lhs / Rhs.Value;
 	}
 
-	FORCEINLINE friend float operator*(const FCsPrimitiveType_Int32 &Lhs, const int32 &Rhs)
+	FORCEINLINE friend float operator*(const TCsPrimitiveType_Int32 &Lhs, const int32 &Rhs)
 	{
 		return Lhs.Value * Rhs;
 	}
 
-	FORCEINLINE friend float operator*(const int32 &Lhs, const FCsPrimitiveType_Int32 &Rhs)
+	FORCEINLINE friend float operator*(const int32 &Lhs, const TCsPrimitiveType_Int32 &Rhs)
 	{
 		return Lhs * Rhs.Value;
 	}
 };
 
-typedef FCsPrimitiveType_Int32 TCsInt32;
+typedef TCsPrimitiveType_Int32 TCsInt32;
 
-struct FCsPrimitiveType_Float : public FCsPrimitiveType<float>
+struct TCsPrimitiveType_Float : public TCsPrimitiveType<float>
 {
-	FCsPrimitiveType_Float()
+	TCsPrimitiveType_Float()
 	{
 		DefaultValue = 0.0f;
 	}
-	~FCsPrimitiveType_Float(){}
+	~TCsPrimitiveType_Float(){}
 
-	FCsPrimitiveType_Float& operator=(const float& B)
+	TCsPrimitiveType_Float& operator=(const float& B)
 	{
 		Value = B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FORCEINLINE friend bool operator==(const float &Lhs, const FCsPrimitiveType_Float &Rhs)
+	FORCEINLINE friend bool operator==(const float &Lhs, const TCsPrimitiveType_Float &Rhs)
 	{
 		return Lhs == Rhs.Value;
 	}
 
-	FORCEINLINE friend bool operator==(const FCsPrimitiveType_Float &Lhs, const float &Rhs)
+	FORCEINLINE friend bool operator==(const TCsPrimitiveType_Float &Lhs, const float &Rhs)
 	{
 		return Lhs.Value == Rhs;
 	}
 
-	FORCEINLINE friend bool operator!=(const float &Lhs, const FCsPrimitiveType_Float &Rhs)
+	FORCEINLINE friend bool operator!=(const float &Lhs, const TCsPrimitiveType_Float &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_Float &Lhs, const float &Rhs)
+	FORCEINLINE friend bool operator!=(const TCsPrimitiveType_Float &Lhs, const float &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FCsPrimitiveType_Float& operator+=(const float& B)
+	TCsPrimitiveType_Float& operator+=(const float& B)
 	{
 		Value += B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FCsPrimitiveType_Float& operator-=(const float& B)
+	TCsPrimitiveType_Float& operator-=(const float& B)
 	{
 		Value -= B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FCsPrimitiveType_Float& operator*=(const float& B)
+	TCsPrimitiveType_Float& operator*=(const float& B)
 	{
 		Value *= B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FORCEINLINE friend bool operator<(const FCsPrimitiveType_Float &Lhs, const float &Rhs)
+	FORCEINLINE friend bool operator<(const TCsPrimitiveType_Float &Lhs, const float &Rhs)
 	{
 		return Lhs.Value < Rhs;
 	}
 
-	FORCEINLINE friend bool operator<(const float &Lhs, const FCsPrimitiveType_Float &Rhs)
+	FORCEINLINE friend bool operator<(const float &Lhs, const TCsPrimitiveType_Float &Rhs)
 	{
 		return Lhs < Rhs.Value;
 	}
 
-	FORCEINLINE friend bool operator>(const FCsPrimitiveType_Float &Lhs, const float &Rhs)
+	FORCEINLINE friend bool operator>(const TCsPrimitiveType_Float &Lhs, const float &Rhs)
 	{
 		return Lhs.Value > Rhs;
 	}
 
-	FORCEINLINE friend bool operator>(const float &Lhs, const FCsPrimitiveType_Float &Rhs)
+	FORCEINLINE friend bool operator>(const float &Lhs, const TCsPrimitiveType_Float &Rhs)
 	{
 		return Lhs > Rhs.Value;
 	}
 
-	FORCEINLINE friend float operator/(const FCsPrimitiveType_Float &Lhs, const float &Rhs)
+	FORCEINLINE friend float operator/(const TCsPrimitiveType_Float &Lhs, const float &Rhs)
 	{
 		return Lhs.Value / Rhs;
 	}
 
-	FORCEINLINE friend float operator/(const float &Lhs, const FCsPrimitiveType_Float &Rhs)
+	FORCEINLINE friend float operator/(const float &Lhs, const TCsPrimitiveType_Float &Rhs)
 	{
 		return Lhs / Rhs.Value;
 	}
 
-	FORCEINLINE friend float operator*(const FCsPrimitiveType_Float &Lhs, const float &Rhs)
+	FORCEINLINE friend float operator*(const TCsPrimitiveType_Float &Lhs, const float &Rhs)
 	{
 		return Lhs.Value * Rhs;
 	}
 
-	FORCEINLINE friend float operator*(const float &Lhs, const FCsPrimitiveType_Float &Rhs)
+	FORCEINLINE friend float operator*(const float &Lhs, const TCsPrimitiveType_Float &Rhs)
 	{
 		return Lhs * Rhs.Value;
 	}
 };
 
-typedef FCsPrimitiveType_Float TCsFloat;
+typedef TCsPrimitiveType_Float TCsFloat;
 
 #define CS_AXES_2D 2
 #define CS_AXES_3D 3
@@ -305,7 +305,7 @@ typedef FCsPrimitiveType_Float TCsFloat;
 #define CS_AXIS_Z 2
 #define CS_AXES_3D_ALL 3
 
-struct FCsPrimitiveType_FVector2D : public FCsPrimitiveType<FVector2D>
+struct TCsPrimitiveType_FVector2D : public TCsPrimitiveType<FVector2D>
 {
 
 protected:
@@ -313,11 +313,11 @@ protected:
 
 public:
 
-	FCsPrimitiveType_FVector2D() 
+	TCsPrimitiveType_FVector2D() 
 	{
 		DefaultValue = FVector2D::ZeroVector;
 	}
-	~FCsPrimitiveType_FVector2D() {}
+	~TCsPrimitiveType_FVector2D() {}
 
 	virtual void UpdateIsDirty() override
 	{
@@ -329,48 +329,48 @@ public:
 			OnChange_Event.Broadcast(Value);
 	}
 
-	FCsPrimitiveType_FVector2D& operator=(const FVector2D& B)
+	TCsPrimitiveType_FVector2D& operator=(const FVector2D& B)
 	{
 		Value = B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FORCEINLINE friend bool operator==(const FVector2D &Lhs, const FCsPrimitiveType_FVector2D &Rhs)
+	FORCEINLINE friend bool operator==(const FVector2D &Lhs, const TCsPrimitiveType_FVector2D &Rhs)
 	{
 		return Lhs == Rhs.Value;
 	}
 
-	FORCEINLINE friend bool operator==(const FCsPrimitiveType_FVector2D &Lhs, const FVector2D &Rhs)
+	FORCEINLINE friend bool operator==(const TCsPrimitiveType_FVector2D &Lhs, const FVector2D &Rhs)
 	{
 		return Lhs.Value == Rhs;
 	}
 
-	FORCEINLINE friend bool operator!=(const FVector2D &Lhs, const FCsPrimitiveType_FVector2D &Rhs)
+	FORCEINLINE friend bool operator!=(const FVector2D &Lhs, const TCsPrimitiveType_FVector2D &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_FVector2D &Lhs, const FVector2D &Rhs)
+	FORCEINLINE friend bool operator!=(const TCsPrimitiveType_FVector2D &Lhs, const FVector2D &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FCsPrimitiveType_FVector2D& operator+=(const FVector2D& B)
+	TCsPrimitiveType_FVector2D& operator+=(const FVector2D& B)
 	{
 		Value += B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FCsPrimitiveType_FVector2D& operator-=(const FVector2D& B)
+	TCsPrimitiveType_FVector2D& operator-=(const FVector2D& B)
 	{
 		Value -= B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FCsPrimitiveType_FVector2D& operator*=(const FVector2D& B)
+	TCsPrimitiveType_FVector2D& operator*=(const FVector2D& B)
 	{
 		Value *= B;
 		UpdateIsDirty();
@@ -423,9 +423,9 @@ public:
 	}
 };
 
-typedef FCsPrimitiveType_FVector2D TCsFVector2D;
+typedef TCsPrimitiveType_FVector2D TCsFVector2D;
 
-struct FCsPrimitiveType_FVector : public FCsPrimitiveType<FVector>
+struct TCsPrimitiveType_FVector : public TCsPrimitiveType<FVector>
 {
 
 protected:
@@ -433,11 +433,11 @@ protected:
 
 public:
 
-	FCsPrimitiveType_FVector()
+	TCsPrimitiveType_FVector()
 	{
 		DefaultValue = FVector::ZeroVector;
 	}
-	~FCsPrimitiveType_FVector(){}
+	~TCsPrimitiveType_FVector(){}
 
 	virtual void UpdateIsDirty() override
 	{
@@ -450,48 +450,48 @@ public:
 			OnChange_Event.Broadcast(Value);
 	}
 
-	FCsPrimitiveType_FVector& operator=(const FVector& B)
+	TCsPrimitiveType_FVector& operator=(const FVector& B)
 	{
 		Value = B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FORCEINLINE friend bool operator==(const FVector &Lhs, const FCsPrimitiveType_FVector &Rhs)
+	FORCEINLINE friend bool operator==(const FVector &Lhs, const TCsPrimitiveType_FVector &Rhs)
 	{
 		return Lhs == Rhs.Value;
 	}
 
-	FORCEINLINE friend bool operator==(const FCsPrimitiveType_FVector &Lhs, const FVector &Rhs)
+	FORCEINLINE friend bool operator==(const TCsPrimitiveType_FVector &Lhs, const FVector &Rhs)
 	{
 		return Lhs.Value == Rhs;
 	}
 
-	FORCEINLINE friend bool operator!=(const FVector &Lhs, const FCsPrimitiveType_FVector &Rhs)
+	FORCEINLINE friend bool operator!=(const FVector &Lhs, const TCsPrimitiveType_FVector &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_FVector &Lhs, const FVector &Rhs)
+	FORCEINLINE friend bool operator!=(const TCsPrimitiveType_FVector &Lhs, const FVector &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FCsPrimitiveType_FVector& operator+=(const FVector& B)
+	TCsPrimitiveType_FVector& operator+=(const FVector& B)
 	{
 		Value += B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FCsPrimitiveType_FVector& operator-=(const FVector& B)
+	TCsPrimitiveType_FVector& operator-=(const FVector& B)
 	{
 		Value -= B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FCsPrimitiveType_FVector& operator*=(const FVector& B)
+	TCsPrimitiveType_FVector& operator*=(const FVector& B)
 	{
 		Value *= B;
 		UpdateIsDirty();
@@ -549,14 +549,14 @@ public:
 	}
 };
 
-typedef FCsPrimitiveType_FVector TCsFVector;
+typedef TCsPrimitiveType_FVector TCsFVector;
 
 #define CS_AXIS_ROLL 0
 #define CS_AXIS_PITCH 1
 #define CS_AXIS_YAW 2
 
 
-struct FCsPrimitiveType_FRotator : public FCsPrimitiveType<FRotator>
+struct TCsPrimitiveType_FRotator : public TCsPrimitiveType<FRotator>
 {
 
 protected:
@@ -564,11 +564,11 @@ protected:
 
 public:
 
-	FCsPrimitiveType_FRotator()
+	TCsPrimitiveType_FRotator()
 	{
 		DefaultValue = FRotator::ZeroRotator;
 	}
-	~FCsPrimitiveType_FRotator(){}
+	~TCsPrimitiveType_FRotator(){}
 
 	virtual void UpdateIsDirty() override
 	{
@@ -581,41 +581,41 @@ public:
 			OnChange_Event.Broadcast(Value);
 	}
 
-	FCsPrimitiveType_FRotator& operator=(const FRotator& B)
+	TCsPrimitiveType_FRotator& operator=(const FRotator& B)
 	{
 		Value = B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FORCEINLINE friend bool operator==(const FRotator &Lhs, const FCsPrimitiveType_FRotator &Rhs)
+	FORCEINLINE friend bool operator==(const FRotator &Lhs, const TCsPrimitiveType_FRotator &Rhs)
 	{
 		return Lhs == Rhs.Value;
 	}
 
-	FORCEINLINE friend bool operator==(const FCsPrimitiveType_FRotator &Lhs, const FRotator &Rhs)
+	FORCEINLINE friend bool operator==(const TCsPrimitiveType_FRotator &Lhs, const FRotator &Rhs)
 	{
 		return Lhs.Value == Rhs;
 	}
 
-	FORCEINLINE friend bool operator!=(const FRotator &Lhs, const FCsPrimitiveType_FRotator &Rhs)
+	FORCEINLINE friend bool operator!=(const FRotator &Lhs, const TCsPrimitiveType_FRotator &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_FRotator &Lhs, const FRotator &Rhs)
+	FORCEINLINE friend bool operator!=(const TCsPrimitiveType_FRotator &Lhs, const FRotator &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FCsPrimitiveType_FRotator& operator+=(const FRotator& B)
+	TCsPrimitiveType_FRotator& operator+=(const FRotator& B)
 	{
 		Value += B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FCsPrimitiveType_FRotator& operator-=(const FRotator& B)
+	TCsPrimitiveType_FRotator& operator-=(const FRotator& B)
 	{
 		Value -= B;
 		UpdateIsDirty();
@@ -673,93 +673,93 @@ public:
 	}
 };
 
-typedef FCsPrimitiveType_FRotator TCsFRotator;
+typedef TCsPrimitiveType_FRotator TCsFRotator;
 
-struct FCsPrimitiveType_FString : public FCsPrimitiveType<FString>
+struct TCsPrimitiveType_FString : public TCsPrimitiveType<FString>
 {
 public:
 
-	FCsPrimitiveType_FString()
+	TCsPrimitiveType_FString()
 	{
 		DefaultValue = ECsCachedString::Str::Empty;
 	}
-	~FCsPrimitiveType_FString() {}
+	~TCsPrimitiveType_FString() {}
 
-	FCsPrimitiveType_FString& operator=(const FString& B)
+	TCsPrimitiveType_FString& operator=(const FString& B)
 	{
 		Value = B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FORCEINLINE friend bool operator==(const FString &Lhs, const FCsPrimitiveType_FString &Rhs)
+	FORCEINLINE friend bool operator==(const FString &Lhs, const TCsPrimitiveType_FString &Rhs)
 	{
 		return Lhs == Rhs.Value;
 	}
 
-	FORCEINLINE friend bool operator==(const FCsPrimitiveType_FString &Lhs, const FString &Rhs)
+	FORCEINLINE friend bool operator==(const TCsPrimitiveType_FString &Lhs, const FString &Rhs)
 	{
 		return Lhs.Value == Rhs;
 	}
 
-	FORCEINLINE friend bool operator!=(const FString &Lhs, const FCsPrimitiveType_FString &Rhs)
+	FORCEINLINE friend bool operator!=(const FString &Lhs, const TCsPrimitiveType_FString &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_FString &Lhs, const FString &Rhs)
+	FORCEINLINE friend bool operator!=(const TCsPrimitiveType_FString &Lhs, const FString &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 };
 
-typedef FCsPrimitiveType_FString TCsFString;
+typedef TCsPrimitiveType_FString TCsFString;
 
-struct FCsPrimitiveType_FLinearColor : public FCsPrimitiveType<FLinearColor>
+struct TCsPrimitiveType_FLinearColor : public TCsPrimitiveType<FLinearColor>
 {
 public:
 
-	FCsPrimitiveType_FLinearColor()
+	TCsPrimitiveType_FLinearColor()
 	{
 		DefaultValue = FLinearColor::White;
 	}
-	~FCsPrimitiveType_FLinearColor() {}
+	~TCsPrimitiveType_FLinearColor() {}
 
-	FCsPrimitiveType_FLinearColor& operator=(const FLinearColor& B)
+	TCsPrimitiveType_FLinearColor& operator=(const FLinearColor& B)
 	{
 		Value = B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FORCEINLINE friend bool operator==(const FLinearColor &Lhs, const FCsPrimitiveType_FLinearColor &Rhs)
+	FORCEINLINE friend bool operator==(const FLinearColor &Lhs, const TCsPrimitiveType_FLinearColor &Rhs)
 	{
 		return Lhs == Rhs.Value;
 	}
 
-	FORCEINLINE friend bool operator==(const FCsPrimitiveType_FLinearColor &Lhs, const FLinearColor &Rhs)
+	FORCEINLINE friend bool operator==(const TCsPrimitiveType_FLinearColor &Lhs, const FLinearColor &Rhs)
 	{
 		return Lhs.Value == Rhs;
 	}
 
-	FORCEINLINE friend bool operator!=(const FLinearColor &Lhs, const FCsPrimitiveType_FLinearColor &Rhs)
+	FORCEINLINE friend bool operator!=(const FLinearColor &Lhs, const TCsPrimitiveType_FLinearColor &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_FLinearColor &Lhs, const FLinearColor &Rhs)
+	FORCEINLINE friend bool operator!=(const TCsPrimitiveType_FLinearColor &Lhs, const FLinearColor &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 };
 
-typedef FCsPrimitiveType_FLinearColor TCsFLinearColor;
+typedef TCsPrimitiveType_FLinearColor TCsFLinearColor;
 
 // Ref
 #pragma region
 
 template<typename T>
-struct FCsPrimitiveType_Ref
+struct TCsPrimitiveType_Ref
 {
 public:
 	T DefaultValue;
@@ -771,8 +771,8 @@ public:
 	TMulticastDelegate<void, const T&> OnChange_Event;
 
 public:
-	FCsPrimitiveType_Ref(){}
-	virtual ~FCsPrimitiveType_Ref(){}
+	TCsPrimitiveType_Ref(){}
+	virtual ~TCsPrimitiveType_Ref(){}
 
 	void SetDefaultValue(const T &inDefaultValue)
 	{
@@ -787,7 +787,7 @@ public:
 			OnChange_Event.Broadcast(*Value);
 	}
 
-	FCsPrimitiveType_Ref& operator=(const T& B)
+	TCsPrimitiveType_Ref& operator=(const T& B)
 	{
 		*Value = B;
 		UpdateIsDirty();
@@ -840,101 +840,101 @@ public:
 	bool HasChanged() { return IsDirty; }
 };
 
-struct FCsPrimitiveType_Ref_Int32 : public FCsPrimitiveType_Ref<int32>
+struct TCsPrimitiveType_Ref_Int32 : public TCsPrimitiveType_Ref<int32>
 {
-	FCsPrimitiveType_Ref_Int32() {}
-	~FCsPrimitiveType_Ref_Int32() {}
+	TCsPrimitiveType_Ref_Int32() {}
+	~TCsPrimitiveType_Ref_Int32() {}
 
-	FORCEINLINE friend bool operator==(const int32 &Lhs, const FCsPrimitiveType_Ref_Int32 &Rhs)
+	FORCEINLINE friend bool operator==(const int32 &Lhs, const TCsPrimitiveType_Ref_Int32 &Rhs)
 	{
 		return Lhs == *(Rhs.Value);
 	}
 
-	FORCEINLINE friend bool operator==(const FCsPrimitiveType_Ref_Int32 &Lhs, const int32 &Rhs)
+	FORCEINLINE friend bool operator==(const TCsPrimitiveType_Ref_Int32 &Lhs, const int32 &Rhs)
 	{
 		return *(Lhs.Value) == Rhs;
 	}
 
-	FORCEINLINE friend bool operator!=(const int32 &Lhs, const FCsPrimitiveType_Ref_Int32 &Rhs)
+	FORCEINLINE friend bool operator!=(const int32 &Lhs, const TCsPrimitiveType_Ref_Int32 &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_Ref_Int32 &Lhs, const int32 &Rhs)
+	FORCEINLINE friend bool operator!=(const TCsPrimitiveType_Ref_Int32 &Lhs, const int32 &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator<(const FCsPrimitiveType_Ref_Int32 &Lhs, const int32 &Rhs)
+	FORCEINLINE friend bool operator<(const TCsPrimitiveType_Ref_Int32 &Lhs, const int32 &Rhs)
 	{
 		return (*Lhs.Value) < Rhs;
 	}
 
-	FORCEINLINE friend bool operator<(const int32 &Lhs, const FCsPrimitiveType_Ref_Int32 &Rhs)
+	FORCEINLINE friend bool operator<(const int32 &Lhs, const TCsPrimitiveType_Ref_Int32 &Rhs)
 	{
 		return Lhs < (*Rhs.Value);
 	}
 
-	FORCEINLINE friend bool operator>(const FCsPrimitiveType_Ref_Int32 &Lhs, const int32 &Rhs)
+	FORCEINLINE friend bool operator>(const TCsPrimitiveType_Ref_Int32 &Lhs, const int32 &Rhs)
 	{
 		return (*Lhs.Value) > Rhs;
 	}
 
-	FORCEINLINE friend bool operator>(const int32 &Lhs, const FCsPrimitiveType_Ref_Int32 &Rhs)
+	FORCEINLINE friend bool operator>(const int32 &Lhs, const TCsPrimitiveType_Ref_Int32 &Rhs)
 	{
 		return Lhs > (*Rhs.Value);
 	}
 };
 
-typedef FCsPrimitiveType_Ref_Int32 TCsInt32_Ref;
+typedef TCsPrimitiveType_Ref_Int32 TCsInt32_Ref;
 
-struct FCsPrimitiveType_Ref_Float : public FCsPrimitiveType_Ref<float>
+struct TCsPrimitiveType_Ref_Float : public TCsPrimitiveType_Ref<float>
 {
-	FCsPrimitiveType_Ref_Float(){}
-	~FCsPrimitiveType_Ref_Float(){}
+	TCsPrimitiveType_Ref_Float(){}
+	~TCsPrimitiveType_Ref_Float(){}
 
-	FORCEINLINE friend bool operator==(const float &Lhs, const FCsPrimitiveType_Ref_Float &Rhs)
+	FORCEINLINE friend bool operator==(const float &Lhs, const TCsPrimitiveType_Ref_Float &Rhs)
 	{
 		return Lhs == *(Rhs.Value);
 	}
 
-	FORCEINLINE friend bool operator==(const FCsPrimitiveType_Ref_Float &Lhs, const float &Rhs)
+	FORCEINLINE friend bool operator==(const TCsPrimitiveType_Ref_Float &Lhs, const float &Rhs)
 	{
 		return *(Lhs.Value) == Rhs;
 	}
 
-	FORCEINLINE friend bool operator!=(const float &Lhs, const FCsPrimitiveType_Ref_Float &Rhs)
+	FORCEINLINE friend bool operator!=(const float &Lhs, const TCsPrimitiveType_Ref_Float &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_Ref_Float &Lhs, const float &Rhs)
+	FORCEINLINE friend bool operator!=(const TCsPrimitiveType_Ref_Float &Lhs, const float &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator<(const FCsPrimitiveType_Ref_Float &Lhs, const float &Rhs)
+	FORCEINLINE friend bool operator<(const TCsPrimitiveType_Ref_Float &Lhs, const float &Rhs)
 	{
 		return (*Lhs.Value) < Rhs;
 	}
 
-	FORCEINLINE friend bool operator<(const float &Lhs, const FCsPrimitiveType_Ref_Float &Rhs)
+	FORCEINLINE friend bool operator<(const float &Lhs, const TCsPrimitiveType_Ref_Float &Rhs)
 	{
 		return Lhs < (*Rhs.Value);
 	}
 
-	FORCEINLINE friend bool operator>(const FCsPrimitiveType_Ref_Float &Lhs, const float &Rhs)
+	FORCEINLINE friend bool operator>(const TCsPrimitiveType_Ref_Float &Lhs, const float &Rhs)
 	{
 		return (*Lhs.Value) > Rhs;
 	}
 
-	FORCEINLINE friend bool operator>(const float &Lhs, const FCsPrimitiveType_Ref_Float &Rhs)
+	FORCEINLINE friend bool operator>(const float &Lhs, const TCsPrimitiveType_Ref_Float &Rhs)
 	{
 		return Lhs > (*Rhs.Value);
 	}
 };
 
-typedef FCsPrimitiveType_Ref_Float TCsFloat_Ref;
+typedef TCsPrimitiveType_Ref_Float TCsFloat_Ref;
 
 #pragma endregion Ref
 
@@ -946,7 +946,7 @@ typedef FCsPrimitiveType_Ref_Float TCsFloat_Ref;
 
 // DON'T USE int64 for U
 template<typename T, typename U = int32, uint8 SIZE = 1>
-struct FCsPrimitiveType_MultiValue
+struct TCsPrimitiveType_MultiValue
 {
 public:
 	T DefaultValue;
@@ -965,8 +965,8 @@ public:
 
 public:
 
-	FCsPrimitiveType_MultiValue(){}
-	virtual ~FCsPrimitiveType_MultiValue(){}
+	TCsPrimitiveType_MultiValue(){}
+	virtual ~TCsPrimitiveType_MultiValue(){}
 
 	virtual void UpdateIsDirty()
 	{
@@ -984,7 +984,7 @@ public:
 			OnChangeEX_Event.Broadcast((U)(int32)Index, Values[Index]);
 	}
 
-	FCsPrimitiveType_MultiValue& operator=(const T& B)
+	TCsPrimitiveType_MultiValue& operator=(const T& B)
 	{
 		Value = B;
 		UpdateIsDirty();
@@ -997,7 +997,7 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsPrimitiveType_MultiValue& B) const
+	bool operator==(const TCsPrimitiveType_MultiValue& B) const
 	{
 		for (uint8 I = 0; I < SIZE; I++)
 		{
@@ -1007,7 +1007,7 @@ public:
 		return Value == B;
 	}
 
-	bool operator!=(const FCsPrimitiveType_MultiValue& B) const
+	bool operator!=(const TCsPrimitiveType_MultiValue& B) const
 	{
 		return !(*this == B);
 	}
@@ -1076,10 +1076,10 @@ public:
 };
 
 template<typename T, typename U, uint8 SIZE>
-struct FCsIntegralType_MultiValue : public FCsPrimitiveType_MultiValue<T, U, SIZE>
+struct TCsIntegralType_MultiValue : public TCsPrimitiveType_MultiValue<T, U, SIZE>
 {
-	FCsIntegralType_MultiValue(){}
-	~FCsIntegralType_MultiValue(){}
+	TCsIntegralType_MultiValue(){}
+	~TCsIntegralType_MultiValue(){}
 
 	void Add(const T &inValue) 
 	{ 
@@ -1147,13 +1147,13 @@ struct FCsIntegralType_MultiValue : public FCsPrimitiveType_MultiValue<T, U, SIZ
 };
 
 template<typename U, uint8 SIZE>
-struct FCsPrimitiveType_MultiValue_bool : public FCsPrimitiveType_MultiValue<bool, U, SIZE>
+struct TCsPrimitiveType_MultiValue_bool : public TCsPrimitiveType_MultiValue<bool, U, SIZE>
 {
-	FCsPrimitiveType_MultiValue_bool()
+	TCsPrimitiveType_MultiValue_bool()
 	{
 		DefaultValue = false;
 	}
-	~FCsPrimitiveType_MultiValue_bool(){}
+	~TCsPrimitiveType_MultiValue_bool(){}
 
 	bool Or()
 	{
@@ -1179,13 +1179,13 @@ struct FCsPrimitiveType_MultiValue_bool : public FCsPrimitiveType_MultiValue<boo
 };
 
 template<typename U, uint8 SIZE>
-struct FCsPrimitiveType_MultiValue_FString : public FCsPrimitiveType_MultiValue<FString, U, SIZE>
+struct TCsPrimitiveType_MultiValue_FString : public TCsPrimitiveType_MultiValue<FString, U, SIZE>
 {
-	FCsPrimitiveType_MultiValue_FString()
+	TCsPrimitiveType_MultiValue_FString()
 	{
 		DefaultValue = ECsCachedString::Str::Empty;
 	}
-	~FCsPrimitiveType_MultiValue_FString(){}
+	~TCsPrimitiveType_MultiValue_FString(){}
 };
 
 #define CS_FSTRING_ENUM_TWO_PARAMS 2
@@ -1194,15 +1194,15 @@ struct FCsPrimitiveType_MultiValue_FString : public FCsPrimitiveType_MultiValue<
 #define CS_FSTRING_ENUM_LOWER_VALUE 1
 #define CS_FSTRING_ENUM_ALT_1_VALUE 2
 
-struct FCsPrimitiveType_MultiValue_FString_Enum_TwoParams : public FCsPrimitiveType_MultiValue_FString<int32, CS_FSTRING_ENUM_TWO_PARAMS>
+struct TCsPrimitiveType_MultiValue_FString_Enum_TwoParams : public TCsPrimitiveType_MultiValue_FString<int32, CS_FSTRING_ENUM_TWO_PARAMS>
 {
-	FCsPrimitiveType_MultiValue_FString_Enum_TwoParams()
+	TCsPrimitiveType_MultiValue_FString_Enum_TwoParams()
 	{
 		DefaultValue = ECsCachedString::Str::Empty;
 	}
-	~FCsPrimitiveType_MultiValue_FString_Enum_TwoParams(){}
+	~TCsPrimitiveType_MultiValue_FString_Enum_TwoParams(){}
 
-	FCsPrimitiveType_MultiValue_FString_Enum_TwoParams(const FString &inValue1, const FString &inValue2)
+	TCsPrimitiveType_MultiValue_FString_Enum_TwoParams(const FString &inValue1, const FString &inValue2)
 	{
 		Value = inValue1;
 
@@ -1210,7 +1210,7 @@ struct FCsPrimitiveType_MultiValue_FString_Enum_TwoParams : public FCsPrimitiveT
 		Values[CS_FSTRING_ENUM_LOWER_VALUE] = inValue2;
 	}
 
-	FORCEINLINE friend bool operator==(const FString &Lhs, const FCsPrimitiveType_MultiValue_FString_Enum_TwoParams &Rhs)
+	FORCEINLINE friend bool operator==(const FString &Lhs, const TCsPrimitiveType_MultiValue_FString_Enum_TwoParams &Rhs)
 	{
 		const FString Lower = Lhs.ToLower();
 
@@ -1222,7 +1222,7 @@ struct FCsPrimitiveType_MultiValue_FString_Enum_TwoParams : public FCsPrimitiveT
 		return Rhs.Value == Lhs || Rhs.Value == Lower;
 	}
 
-	FORCEINLINE friend bool operator==(const FCsPrimitiveType_MultiValue_FString_Enum_TwoParams &Lhs, const FString &Rhs)
+	FORCEINLINE friend bool operator==(const TCsPrimitiveType_MultiValue_FString_Enum_TwoParams &Lhs, const FString &Rhs)
 	{
 		const FString Lower = Rhs.ToLower();
 
@@ -1234,26 +1234,26 @@ struct FCsPrimitiveType_MultiValue_FString_Enum_TwoParams : public FCsPrimitiveT
 		return Lhs.Value == Rhs || Lhs.Value == Lower;
 	}
 
-	FORCEINLINE friend bool operator!=(const FString &Lhs, const FCsPrimitiveType_MultiValue_FString_Enum_TwoParams &Rhs)
+	FORCEINLINE friend bool operator!=(const FString &Lhs, const TCsPrimitiveType_MultiValue_FString_Enum_TwoParams &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_MultiValue_FString_Enum_TwoParams &Lhs, const FString &Rhs)
+	FORCEINLINE friend bool operator!=(const TCsPrimitiveType_MultiValue_FString_Enum_TwoParams &Lhs, const FString &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 };
 
-struct FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams : public FCsPrimitiveType_MultiValue_FString<int32, CS_FSTRING_ENUM_THREE_PARAMS>
+struct TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams : public TCsPrimitiveType_MultiValue_FString<int32, CS_FSTRING_ENUM_THREE_PARAMS>
 {
-	FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams()
+	TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams()
 	{
 		DefaultValue = ECsCachedString::Str::Empty;
 	}
-	~FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams(){}
+	~TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams(){}
 
-	FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams(const FString &inValue1, const FString &inValue2, const FString &inValue3)
+	TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams(const FString &inValue1, const FString &inValue2, const FString &inValue3)
 	{
 		Value = inValue1;
 
@@ -1262,7 +1262,7 @@ struct FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams : public FCsPrimitiv
 		Values[CS_FSTRING_ENUM_ALT_1_VALUE]   = inValue3;
 	}
 	
-	FORCEINLINE friend bool operator==(const FString &Lhs, const FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams &Rhs)
+	FORCEINLINE friend bool operator==(const FString &Lhs, const TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams &Rhs)
 	{
 		const FString Lower = Lhs.ToLower();
 
@@ -1274,7 +1274,7 @@ struct FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams : public FCsPrimitiv
 		return Rhs.Value == Lhs || Rhs.Value == Lower;
 	}
 
-	FORCEINLINE friend bool operator==(const FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams &Lhs, const FString &Rhs)
+	FORCEINLINE friend bool operator==(const TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams &Lhs, const FString &Rhs)
 	{
 		const FString Lower = Rhs.ToLower();
 
@@ -1286,12 +1286,12 @@ struct FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams : public FCsPrimitiv
 		return Lhs.Value == Rhs || Lhs.Value == Lower;
 	}
 
-	FORCEINLINE friend bool operator!=(const FString &Lhs, const FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams &Rhs)
+	FORCEINLINE friend bool operator!=(const FString &Lhs, const TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams &Lhs, const FString &Rhs)
+	FORCEINLINE friend bool operator!=(const TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams &Lhs, const FString &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
@@ -1304,7 +1304,7 @@ struct FCsPrimitiveType_MultiValue_FString_Enum_ThreeParams : public FCsPrimitiv
 
 // DON'T USE int64 for U
 template<typename T, typename U = int32, uint8 SIZE = 1>
-struct FCsPrimitiveType_MultiRefValue
+struct TCsPrimitiveType_MultiRefValue
 {
 public:
 	T DefaultValue;
@@ -1323,8 +1323,8 @@ public:
 
 public:
 
-	FCsPrimitiveType_MultiRefValue(){}
-	virtual ~FCsPrimitiveType_MultiRefValue(){}
+	TCsPrimitiveType_MultiRefValue(){}
+	virtual ~TCsPrimitiveType_MultiRefValue(){}
 
 	virtual void UpdateIsDirty()
 	{
@@ -1342,7 +1342,7 @@ public:
 			OnChangeEX_Event.Broadcast((U)(int32)Index, *(Values[Index]));
 	}
 
-	FCsPrimitiveType_MultiRefValue& operator=(const T& B)
+	TCsPrimitiveType_MultiRefValue& operator=(const T& B)
 	{
 		Value = B;
 		UpdateIsDirty();
@@ -1355,7 +1355,7 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsPrimitiveType_MultiRefValue& B) const
+	bool operator==(const TCsPrimitiveType_MultiRefValue& B) const
 	{
 		for (uint8 I = 0; I < SIZE; I++)
 		{
@@ -1365,7 +1365,7 @@ public:
 		return Value == B;
 	}
 
-	bool operator!=(const FCsPrimitiveType_MultiRefValue& B) const
+	bool operator!=(const TCsPrimitiveType_MultiRefValue& B) const
 	{
 		return !(*this == B);
 	}
@@ -1438,10 +1438,10 @@ public:
 };
 
 template<typename T, typename U, uint8 SIZE>
-struct FCsIntegralType_MultiRefValue : public FCsPrimitiveType_MultiRefValue<T, U, SIZE>
+struct TCsIntegralType_MultiRefValue : public TCsPrimitiveType_MultiRefValue<T, U, SIZE>
 {
-	FCsIntegralType_MultiRefValue(){}
-	~FCsIntegralType_MultiRefValue(){}
+	TCsIntegralType_MultiRefValue(){}
+	~TCsIntegralType_MultiRefValue(){}
 
 	T Max()
 	{
@@ -1467,13 +1467,13 @@ struct FCsIntegralType_MultiRefValue : public FCsPrimitiveType_MultiRefValue<T, 
 };
 
 template<typename U, uint8 SIZE>
-struct FCsPrimitiveType_MultiRefValue_bool : public FCsPrimitiveType_MultiRefValue<bool, U, SIZE>
+struct TCsPrimitiveType_MultiRefValue_bool : public TCsPrimitiveType_MultiRefValue<bool, U, SIZE>
 {
-	FCsPrimitiveType_MultiRefValue_bool()
+	TCsPrimitiveType_MultiRefValue_bool()
 	{
 		DefaultValue = bool;
 	}
-	~FCsPrimitiveType_MultiRefValue_bool(){}
+	~TCsPrimitiveType_MultiRefValue_bool(){}
 
 	bool Or()
 	{
@@ -1505,7 +1505,7 @@ struct FCsPrimitiveType_MultiRefValue_bool : public FCsPrimitiveType_MultiRefVal
 
 // DON'T USE int64 for U
 template<typename T, typename U = int32>
-struct FCsPrimitiveType_TArrayValue
+struct TCsPrimitiveType_TArrayValue
 {
 public:
 	T DefaultValue;
@@ -1527,8 +1527,8 @@ public:
 
 public:
 
-	FCsPrimitiveType_TArrayValue() {}
-	virtual ~FCsPrimitiveType_TArrayValue() {}
+	TCsPrimitiveType_TArrayValue() {}
+	virtual ~TCsPrimitiveType_TArrayValue() {}
 
 	void SetDefaultValue(const T& inDefaultValue)
 	{
@@ -1551,7 +1551,7 @@ public:
 			OnChangeEX_Event.Broadcast((U)Index, Values[Index]);
 	}
 
-	FCsPrimitiveType_TArrayValue& operator=(const T& B)
+	TCsPrimitiveType_TArrayValue& operator=(const T& B)
 	{
 		Value = B;
 		UpdateIsDirty();
@@ -1564,7 +1564,7 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsPrimitiveType_TArrayValue& B) const
+	bool operator==(const TCsPrimitiveType_TArrayValue& B) const
 	{
 		for (uint8 I = 0; I < SIZE; I++)
 		{
@@ -1574,7 +1574,7 @@ public:
 		return Value == B;
 	}
 
-	bool operator!=(const FCsPrimitiveType_TArrayValue& B) const
+	bool operator!=(const TCsPrimitiveType_TArrayValue& B) const
 	{
 		return !(*this == B);
 	}
@@ -1651,15 +1651,15 @@ public:
 };
 
 template<typename T, typename U>
-struct FCsIntegralType_TArrayValue : public FCsPrimitiveType_TArrayValue<T, U>
+struct TCsIntegralType_TArrayValue : public TCsPrimitiveType_TArrayValue<T, U>
 {
-	FCsIntegralType_TArrayValue() {}
-	~FCsIntegralType_TArrayValue() {}
+	TCsIntegralType_TArrayValue() {}
+	~TCsIntegralType_TArrayValue() {}
 
 	void Add(const T &inValue)
 	{
 		Value += inValue;
-		IsDirty = Value != Last_Value;
+		UpdateIsDirty();
 	}
 
 	void Add(const U &Index, const T &inValue) { Add((int64)Index, inValue); }
@@ -1673,14 +1673,14 @@ struct FCsIntegralType_TArrayValue : public FCsPrimitiveType_TArrayValue<T, U>
 		else
 		{
 			Values[Index] += inValue;
-			IsDirtys[Index] = Values[Index] != Last_Values[Index];
+			UpdateIsDirtys(Index);
 		}
 	}
 
 	void Subtract(const T &inValue)
 	{
 		Value -= inValue;
-		IsDirty = Value != Last_Value;
+		UpdateIsDirty();
 	}
 
 	void Subtract(const U &Index, const T &inValue) { Subtract((int64)Index, inValue); }
@@ -1694,7 +1694,7 @@ struct FCsIntegralType_TArrayValue : public FCsPrimitiveType_TArrayValue<T, U>
 		else
 		{
 			Values[Index] -= inValue;
-			IsDirtys[Index] = Values[Index] != Last_Values[Index];
+			UpdateIsDirtys(Index);
 		}
 	}
 
@@ -1722,33 +1722,33 @@ struct FCsIntegralType_TArrayValue : public FCsPrimitiveType_TArrayValue<T, U>
 };
 
 template<typename U>
-struct FCsIntegralType_TArrayValue_uint8 : public FCsIntegralType_TArrayValue<uint8, U>
+struct TCsIntegralType_TArrayValue_uint8 : public TCsIntegralType_TArrayValue<uint8, U>
 {
-	FCsIntegralType_TArrayValue_uint8()
+	TCsIntegralType_TArrayValue_uint8()
 	{
 		DefaultValue = 0;
 	}
-	~FCsIntegralType_TArrayValue_uint8(){}
+	~TCsIntegralType_TArrayValue_uint8(){}
 };
 
 template<typename U>
-struct FCsIntegralType_TArrayValue_float : public FCsIntegralType_TArrayValue<float, U>
+struct TCsIntegralType_TArrayValue_float : public TCsIntegralType_TArrayValue<float, U>
 {
-	FCsIntegralType_TArrayValue_float()
+	TCsIntegralType_TArrayValue_float()
 	{
 		DefaultValue = 0.0f;
 	}
-	~FCsIntegralType_TArrayValue_float() {}
+	~TCsIntegralType_TArrayValue_float() {}
 };
 
 template<typename U>
-struct FCsPrimitiveType_TArrayValue_bool : public FCsPrimitiveType_TArrayValue<bool, U>
+struct TCsPrimitiveType_TArrayValue_bool : public TCsPrimitiveType_TArrayValue<bool, U>
 {
-	FCsPrimitiveType_TArrayValue_bool() 
+	TCsPrimitiveType_TArrayValue_bool() 
 	{
 		DefaultValue = false;
 	}
-	~FCsPrimitiveType_TArrayValue_bool() {}
+	~TCsPrimitiveType_TArrayValue_bool() {}
 
 	bool Or()
 	{
@@ -1780,7 +1780,7 @@ struct FCsPrimitiveType_TArrayValue_bool : public FCsPrimitiveType_TArrayValue<b
 
 // DON'T USE int64 for U
 template<typename T, typename U = int32>
-struct FCsPrimitiveType_TArrayRefValue
+struct TCsPrimitiveType_TArrayRefValue
 {
 public:
 	T DefaultValue;
@@ -1801,8 +1801,8 @@ public:
 	TMulticastDelegate<void, const U&, const T&> OnChangeEX_Event;
 public:
 
-	FCsPrimitiveType_TArrayRefValue() {}
-	virtual ~FCsPrimitiveType_TArrayRefValue() {}
+	TCsPrimitiveType_TArrayRefValue() {}
+	virtual ~TCsPrimitiveType_TArrayRefValue() {}
 
 	void SetDefaultValue(const T& inDefaultValue)
 	{
@@ -1825,7 +1825,7 @@ public:
 			OnChangeEX_Event.Broadcast((U)Index, *(Values[Index]));
 	}
 
-	FCsPrimitiveType_TArrayRefValue& operator=(const T& B)
+	TCsPrimitiveType_TArrayRefValue& operator=(const T& B)
 	{
 		Value = B;
 		UpdateIsDirty();
@@ -1838,7 +1838,7 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsPrimitiveType_TArrayRefValue& B) const
+	bool operator==(const TCsPrimitiveType_TArrayRefValue& B) const
 	{
 		for (uint8 I = 0; I < SIZE; I++)
 		{
@@ -1848,7 +1848,7 @@ public:
 		return Value == B;
 	}
 
-	bool operator!=(const FCsPrimitiveType_TArrayRefValue& B) const
+	bool operator!=(const TCsPrimitiveType_TArrayRefValue& B) const
 	{
 		return !(*this == B);
 	}
@@ -1932,10 +1932,10 @@ public:
 };
 
 template<typename T, typename U>
-struct FCsIntegralType_TArrayRefValue : public FCsPrimitiveType_TArrayRefValue<T, U>
+struct TCsIntegralType_TArrayRefValue : public TCsPrimitiveType_TArrayRefValue<T, U>
 {
-	FCsIntegralType_TArrayRefValue() {}
-	~FCsIntegralType_TArrayRefValue() {}
+	TCsIntegralType_TArrayRefValue() {}
+	~TCsIntegralType_TArrayRefValue() {}
 
 	T Max()
 	{
@@ -1961,43 +1961,43 @@ struct FCsIntegralType_TArrayRefValue : public FCsPrimitiveType_TArrayRefValue<T
 };
 
 template<typename U>
-struct FCsIntegralType_TArrayRefValue_uint8 : public FCsIntegralType_TArrayRefValue<uint8, U>
+struct TCsIntegralType_TArrayRefValue_uint8 : public TCsIntegralType_TArrayRefValue<uint8, U>
 {
-	FCsIntegralType_TArrayRefValue_uint8() 
+	TCsIntegralType_TArrayRefValue_uint8() 
 	{
 		DefaultValue = 0;
 	}
-	~FCsIntegralType_TArrayRefValue_uint8() {}
+	~TCsIntegralType_TArrayRefValue_uint8() {}
 };
 
 template<typename U>
-struct FCsIntegralType_TArrayRefValue_int32 : public FCsIntegralType_TArrayRefValue<int32, U>
+struct TCsIntegralType_TArrayRefValue_int32 : public TCsIntegralType_TArrayRefValue<int32, U>
 {
-	FCsIntegralType_TArrayRefValue_int32()
+	TCsIntegralType_TArrayRefValue_int32()
 	{
 		DefaultValue = 0;
 	}
-	~FCsIntegralType_TArrayRefValue_int32() {}
+	~TCsIntegralType_TArrayRefValue_int32() {}
 };
 
 template<typename U>
-struct FCsIntegralType_TArrayRefValue_float : public FCsIntegralType_TArrayRefValue<float, U>
+struct TCsIntegralType_TArrayRefValue_float : public TCsIntegralType_TArrayRefValue<float, U>
 {
-	FCsIntegralType_TArrayRefValue_float()
+	TCsIntegralType_TArrayRefValue_float()
 	{
 		DefaultValue = 0.0f;
 	}
-	~FCsIntegralType_TArrayRefValue_float() {}
+	~TCsIntegralType_TArrayRefValue_float() {}
 };
 
 template<typename U>
-struct FCsPrimitiveType_TArrayRefValue_bool : public FCsPrimitiveType_TArrayRefValue<bool, U>
+struct TCsPrimitiveType_TArrayRefValue_bool : public TCsPrimitiveType_TArrayRefValue<bool, U>
 {
-	FCsPrimitiveType_TArrayRefValue_bool() 
+	TCsPrimitiveType_TArrayRefValue_bool() 
 	{
 		DefaultValue = false;
 	}
-	~FCsPrimitiveType_TArrayRefValue_bool() {}
+	~TCsPrimitiveType_TArrayRefValue_bool() {}
 
 	bool Or()
 	{
@@ -2044,7 +2044,7 @@ namespace ECsMemberType
 
 namespace ECsMemberType
 {
-	typedef FCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{

@@ -199,6 +199,10 @@ void ACsInteractiveActor::DeAllocate()
 	CollidableActors.Reset();
 	IgnoredActors.Reset();
 	SetActorTickEnabled(false);
+
+	ScreenPosition.Reset();
+	WorldPosition.Reset();
+
 	Cache.DeAllocate();
 }
 

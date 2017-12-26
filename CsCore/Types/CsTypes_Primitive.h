@@ -94,6 +94,8 @@ public:
 		Value	   = DefaultValue;
 		Last_Value = Value;
 		IsDirty	   = false;
+
+		OnChange_Event.Clear();
 	}
 
 	bool HasChanged() { return IsDirty; }
@@ -829,6 +831,8 @@ public:
 		Value	   = nullptr;
 		Last_Value = DefaultValue;
 		IsDirty	   = false;
+
+		OnChange_Event.Clear();
 	}
 
 	bool IsChanged() 
@@ -1068,6 +1072,9 @@ public:
 			Last_Values[I] = Value;
 			IsDirtys[I]	   = false;
 		}
+
+		OnChange_Event.Clear();
+		OnChangeEX_Event.Clear();
 	}
 
 	bool HasChanged() { return IsDirty; }
@@ -1426,6 +1433,9 @@ public:
 			Last_Values[I] = Value;
 			IsDirtys[I]	   = false;
 		}
+
+		OnChange_Event.Clear();
+		OnChangeEX_Event.Clear();
 	}
 
 	bool HasChanged() { return IsDirty; }
@@ -1643,6 +1653,10 @@ public:
 			Last_Values[I] = Value;
 			IsDirtys[I] = false;
 		}
+
+		GetDelegate.Unbind();
+		OnChange_Event.Clear();
+		OnChangeEX_Event.Clear();
 	}
 
 	bool HasChanged() { return IsDirty; }
@@ -1920,6 +1934,10 @@ public:
 			Last_Values[I] = Value;
 			IsDirtys[I] = false;
 		}
+
+		GetDelegate.Unbind();
+		OnChange_Event.Clear();
+		OnChangeEX_Event.Clear();
 	}
 
 	bool HasChanged() { return IsDirty; }

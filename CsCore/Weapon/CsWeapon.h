@@ -429,19 +429,23 @@ class CSCORE_API ACsWeapon : public AActor
 		}
 	}
 
-	void SetMemberValue_bool(const TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> &Member, const int32 &Index, const bool &Value);
+	virtual void SetMemberValue_bool(const TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> &Member, const int32 &Index, const bool &Value);
+	virtual void SetMemberValue_bool(const uint8 &Member, const int32 &Index, const bool &Value);
 	UFUNCTION(BlueprintCallable, Category = "Member")
 	virtual void SetMemberValue_Script_bool(const FString &MemberName, const int32 &Index, const bool &Value);
 
-	void SetMemberValue_int32(const TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> &Member, const int32 &Index, const int32 &Value);
-	UFUNCTION(BlueprintCallable, Category = "Member")
-	virtual void SetMemberValue_Script_int32(const FString &MemberName, const int32 &Index, const int32 &Value);
-
-	void SetMemberValue_uint8(const TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> &Member, const int32 &Index, const uint8 &Value);
+	virtual void SetMemberValue_uint8(const TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> &Member, const int32 &Index, const uint8 &Value);
+	virtual void SetMemberValue_uint8(const uint8 &Member, const int32 &Index, const uint8 &Value);
 	UFUNCTION(BlueprintCallable, Category = "Member")
 	virtual void SetMemberValue_Script_uint8(const FString &MemberName, const int32 &Index, const uint8 &Value);
 
-	void SetMemberValue_float(const TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> &Member, const int32 &Index, const float &Value);
+	virtual void SetMemberValue_int32(const TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> &Member, const int32 &Index, const int32 &Value);
+	virtual void SetMemberValue_int32(const uint8 &Member, const int32 &Index, const int32 &Value);
+	UFUNCTION(BlueprintCallable, Category = "Member")
+	virtual void SetMemberValue_Script_int32(const FString &MemberName, const int32 &Index, const int32 &Value);
+
+	virtual void SetMemberValue_float(const TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> &Member, const int32 &Index, const float &Value);
+	virtual void SetMemberValue_float(const uint8 &Member, const int32 &Index, const float &Value);
 	UFUNCTION(BlueprintCallable, Category = "Member")
 	virtual void SetMemberValue_Script_float(const FString &MemberName, const int32 &Index, const float &Value);
 
@@ -450,21 +454,25 @@ class CSCORE_API ACsWeapon : public AActor
 	// Get
 #pragma region
 
-	bool GetMemberValue_bool(const TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> &Member, const int32 &Index);
+	virtual bool GetMemberValue_bool(const TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> &Member, const int32 &Index);
+	virtual bool GetMemberValue_bool(const uint8 &Member, const int32 &Index);
 	UFUNCTION(BlueprintCallable, Category = "Member")
-	bool GetMemberValue_Script_bool(const FString &MemberName, const int32 &Index);
+	virtual bool GetMemberValue_Script_bool(const FString &MemberName, const int32 &Index);
 
-	uint8 GetMemberValue_uint8(const TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> &Member, const int32 &Index);
+	virtual uint8 GetMemberValue_uint8(const TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> &Member, const int32 &Index);
+	virtual uint8 GetMemberValue_uint8(const uint8 &Member, const int32 &Index);
 	UFUNCTION(BlueprintCallable, Category = "Member")
-	uint8 GetMemberValue_Script_uint8(const FString &MemberName, const int32 &Index);
+	virtual uint8 GetMemberValue_Script_uint8(const FString &MemberName, const int32 &Index);
 
-	int32 GetMemberValue_int32(const TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> &Member, const int32 &Index);
+	virtual int32 GetMemberValue_int32(const TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> &Member, const int32 &Index);
+	virtual int32 GetMemberValue_int32(const uint8 &Member, const int32 &Index);
 	UFUNCTION(BlueprintCallable, Category = "Member")
-	int32 GetMemberValue_Script_int32(const FString &MemberName, const int32 &Index);
+	virtual int32 GetMemberValue_Script_int32(const FString &MemberName, const int32 &Index);
 
-	float GetMemberValue_float(const TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> &Member, const int32 &Index);
+	virtual float GetMemberValue_float(const TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> &Member, const int32 &Index);
+	virtual float GetMemberValue_float(const uint8 &Member, const int32 &Index);
 	UFUNCTION(BlueprintCallable, Category = "Member")
-	float GetMemberValue_Script_float(const FString &MemberName, const int32 &Index);
+	virtual float GetMemberValue_Script_float(const FString &MemberName, const int32 &Index);
 
 #pragma endregion Get
 

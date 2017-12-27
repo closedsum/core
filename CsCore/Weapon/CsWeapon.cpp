@@ -155,6 +155,11 @@ void ACsWeapon::SetMemberValue_bool(const TEnumAsByte<ECsWeaponCacheMultiValueMe
 	}
 }
 
+void ACsWeapon::SetMemberValue_bool(const uint8 &Member, const int32 &Index, const bool &Value)
+{
+	SetMemberValue_bool((TCsWeaponCacheMultiValueMember)Member, Index, Value);
+}
+
 void ACsWeapon::SetMemberValue_Script_bool(const FString &MemberName, const int32 &Index, const bool &Value)
 {
 #if WITH_EDITOR
@@ -170,6 +175,11 @@ void ACsWeapon::SetMemberValue_uint8(const TEnumAsByte<ECsWeaponCacheMultiValueM
 	}
 }
 
+void ACsWeapon::SetMemberValue_uint8(const uint8 &Member, const int32 &Index, const uint8 &Value)
+{
+	SetMemberValue_uint8((TCsWeaponCacheMultiValueMember)Member, Index, Value);
+}
+
 void ACsWeapon::SetMemberValue_Script_uint8(const FString &MemberName, const int32 &Index, const uint8 &Value)
 {
 #if WITH_EDITOR
@@ -182,6 +192,12 @@ void ACsWeapon::SetMemberValue_int32(const TEnumAsByte<ECsWeaponCacheMultiValueM
 	// Firing
 	{
 	}
+}
+
+
+void ACsWeapon::SetMemberValue_int32(const uint8 &Member, const int32 &Index, const int32 &Value)
+{
+	SetMemberValue_int32((TCsWeaponCacheMultiValueMember)Member, Index, Value);
 }
 
 void ACsWeapon::SetMemberValue_Script_int32(const FString &MemberName, const int32 &Index, const int32 &Value)
@@ -202,6 +218,11 @@ void ACsWeapon::SetMemberValue_float(const TEnumAsByte<ECsWeaponCacheMultiValueM
 		if (Member == ECsWeaponCacheMultiValueMember::CurrentSpread) { CurrentSpread.Set(Index, Value); }
 		if (Member == ECsWeaponCacheMultiValueMember::LastSpreadFireTime) { LastSpreadFireTime.Set(Index, Value); }
 	}
+}
+
+void ACsWeapon::SetMemberValue_float(const uint8 &Member, const int32 &Index, const float &Value)
+{
+	SetMemberValue_float((TCsWeaponCacheMultiValueMember)Member, Index, Value);
 }
 
 void ACsWeapon::SetMemberValue_Script_float(const FString &MemberName, const int32 &Index, const float &Value)
@@ -245,6 +266,11 @@ bool ACsWeapon::GetMemberValue_bool(const TEnumAsByte<ECsWeaponCacheMultiValueMe
 	return false;
 }
 
+bool ACsWeapon::GetMemberValue_bool(const uint8 &Member, const int32 &Index)
+{
+	return GetMemberValue_bool((TCsWeaponCacheMultiValueMember)Member, Index);
+}
+
 bool ACsWeapon::GetMemberValue_Script_bool(const FString &MemberName, const int32 &Index)
 {
 #if WITH_EDITOR
@@ -255,14 +281,17 @@ bool ACsWeapon::GetMemberValue_Script_bool(const FString &MemberName, const int3
 
 uint8 ACsWeapon::GetMemberValue_uint8(const TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> &Member, const int32 &Index)
 {
-#if WITH_EDITOR
 	// Firing
 	{
 		if (Member == ECsWeaponCacheMultiValueMember::ProjectilesPerShot) { return ProjectilesPerShot.GetEX((TCsWeaponFireMode)Index); }
 		if (Member == ECsWeaponCacheMultiValueMember::CurrentProjectilePerShotIndex) { return CurrentProjectilePerShotIndex.Get(Index); }
 	}
-#endif // #if WITH_EDITOR
 	return 0;
+}
+
+uint8 ACsWeapon::GetMemberValue_uint8(const uint8 &Member, const int32 &Index)
+{
+	return GetMemberValue_uint8((TCsWeaponCacheMultiValueMember)Member, Index);
 }
 
 uint8 ACsWeapon::GetMemberValue_Script_uint8(const FString &MemberName, const int32 &Index)
@@ -283,6 +312,11 @@ int32 ACsWeapon::GetMemberValue_int32(const TEnumAsByte<ECsWeaponCacheMultiValue
 		if (Member == ECsWeaponCacheMultiValueMember::PawnPenetrations) { return PawnPenetrations.GetEX((TCsWeaponFireMode)Index); }
 	}
 	return 0;
+}
+
+int32 ACsWeapon::GetMemberValue_int32(const uint8 &Member, const int32 &Index)
+{
+	return GetMemberValue_int32((TCsWeaponCacheMultiValueMember)Member, Index);
 }
 
 int32 ACsWeapon::GetMemberValue_Script_int32(const FString &MemberName, const int32 &Index)
@@ -321,6 +355,11 @@ float ACsWeapon::GetMemberValue_float(const TEnumAsByte<ECsWeaponCacheMultiValue
 		if (Member == ECsWeaponCacheMultiValueMember::RechargeStartupDelay) { return RechargeStartupDelay.GetEX((TCsWeaponFireMode)Index); }
 	}
 	return 0.0f;
+}
+
+float ACsWeapon::GetMemberValue_float(const uint8 &Member, const int32 &Index)
+{
+	return GetMemberValue_float((TCsWeaponCacheMultiValueMember)Member, Index);
 }
 
 float ACsWeapon::GetMemberValue_Script_float(const FString &MemberName, const int32 &Index)

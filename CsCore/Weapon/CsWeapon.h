@@ -77,7 +77,7 @@ namespace ECsWeaponCacheMultiValueMember
 {
 	enum Type
 	{
-		// Firing
+		// Scope
 		MaxAmmo									UMETA(DisplayName = "MaxAmmo"),
 		ProjectilesPerShot						UMETA(DisplayName = "ProjectilesPerShot"),
 		CurrentProjectilePerShotIndex			UMETA(DisplayName = "CurrentProjectilePerShotIndex"),
@@ -366,8 +366,7 @@ class CSCORE_API ACsWeapon : public AActor
 // Members
 #pragma region
 
-	TCsWeaponFireMode FireMode_MAX;
-	uint8 FIRE_MODE_MAX;
+	CS_DECLARE_WEAPON_FIRE_MODE
 
 	TCsGetObjectMember_Internal GetObjectMember_Internal;
 	TCsGetStructMember_Internal GetStructMember_Internal;
@@ -385,7 +384,7 @@ class CSCORE_API ACsWeapon : public AActor
 
 		Member.Reset();
 
-		for (uint8 I = 0; I < FIRE_MODE_MAX; I++)
+		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; I++)
 		{
 			T* DataMember = UCsCommon_Load::GetObjectMember<T>(Data_Weapon, Data_Weapon->GetClass(), MemberName, GetObjectMember_Internal);
 
@@ -400,7 +399,7 @@ class CSCORE_API ACsWeapon : public AActor
 	{
 		Member.Reset();
 
-		for (uint8 I = 0; I < FIRE_MODE_MAX; I++)
+		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; I++)
 		{
 			if (I == 0)
 				Member.Set(Value);
@@ -417,7 +416,7 @@ class CSCORE_API ACsWeapon : public AActor
 
 		const FString StructName = ECsData_Weapon_FireMode::ToString(FireModeMember);
 
-		for (uint8 I = 0; I < FIRE_MODE_MAX; I++)
+		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; I++)
 		{
 			void* Struct				= UCsCommon_Load::GetStructMember<void>(Data_Weapon->GetFireModeStruct(I), Data_Weapon->GetFireModeScriptStruct(), StructName, GetStructMember_Internal);
 			UScriptStruct* ScriptStruct = UCsCommon_Load::GetScriptStructMember(Data_Weapon->GetFireModeStruct(I), Data_Weapon->GetFireModeScriptStruct(), StructName, GetScriptStructMember_Internal);
@@ -535,6 +534,9 @@ public:
 	UObject* GetMyOwner();
 
 	TCsWeaponOwner MyOwnerType;
+
+	UFUNCTION(BlueprintCallable, Category = "Owner")
+	virtual bool IsValidOwnerTypeInGame();
 
 	virtual void SetMyPawn(class ACsPawn* InMyPawn);
 

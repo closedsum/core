@@ -6,7 +6,6 @@
 
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimSequence.h"
-#include "Animation/AnimSequence.h"
 #include "Animation/AnimMontage.h"
 #include "Animation/BlendSpace.h"
 #include "Animation/AimOffsetBlendSpace.h"

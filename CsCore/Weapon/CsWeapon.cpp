@@ -42,8 +42,7 @@ ACsWeapon::ACsWeapon(const FObjectInitializer& ObjectInitializer)
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	//FireMode_MAX  = ECsWeaponFireMode::ECsWeaponFireMode_MAX;
-	//FIRE_MODE_MAX = (uint8)FireMode_MAX;
+	//CS_DEFINE_WEAPON_FIRE_MODE
 
 	//CurrentState = ECsWeaponState::Idle;
 	//LastState	 = CurrentState;
@@ -75,7 +74,7 @@ void ACsWeapon::OutsideWorldBounds()
 
 void ACsWeapon::InitMultiValueMembers()
 {
-	const uint8 SIZE = (uint8)FireMode_MAX;
+	const uint8 SIZE = (uint8)WeaponFireMode_MAX;
 
 	// Firing
 	{
@@ -489,6 +488,11 @@ UObject* ACsWeapon::GetMyOwner()
 	return MyOwner.IsValid() ? MyOwner.Get() : nullptr;
 }
 
+bool ACsWeapon::IsValidOwnerTypeInGame()
+{ 
+	return true; 
+}
+
 void ACsWeapon::SetMyPawn(class ACsPawn* InMyPawn)
 {
 	SetMyOwner(InMyPawn);
@@ -554,7 +558,7 @@ void ACsWeapon::OnTick(const float &DeltaSeconds)
 		const float TimeSeconds = GetWorld()->GetTimeSeconds();
 
 		// Spread
-		for (uint8 I = 0; I < FIRE_MODE_MAX; I++)
+		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; I++)
 		{
 			const TCsWeaponFireMode FireMode = (TCsWeaponFireMode)I;
 
@@ -615,7 +619,7 @@ void ACsWeapon::OnTick_HandleStates()
 	{
 		bool Pass = false;
 
-		for (uint8 I = 0; I < FIRE_MODE_MAX; I++)
+		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; I++)
 		{
 			const TCsWeaponFireMode FireMode = (TCsWeaponFireMode)I;
 
@@ -750,7 +754,7 @@ void ACsWeapon::CheckState_Idle()
 
 		bool Pass_Firing = false;
 
-		for (uint8 I = 0; I < FIRE_MODE_MAX; I++)
+		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; I++)
 		{
 			const TCsWeaponFireMode FireMode = (TCsWeaponFireMode)I;
 
@@ -838,7 +842,7 @@ void ACsWeapon::Disable()
 {
 	if (CurrentState == FiringState || GetSound(FireSound))
 	{
-		for (uint8 I = 0; I < FIRE_MODE_MAX; I++)
+		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; I++)
 		{
 			StopSound((TCsWeaponFireMode)I, FireSound);
 		}
@@ -847,7 +851,7 @@ void ACsWeapon::Disable()
 	LastState    = CurrentState;
 	CurrentState = IdleState;
 
-	for (uint8 I = 0; I < FIRE_MODE_MAX; I++)
+	for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; I++)
 	{
 		IsFirePressed.Set(I, false);
 		Last_IsFirePressed.Set(I, false);
@@ -857,7 +861,7 @@ void ACsWeapon::Disable()
 
 	if (GetMyData_Weapon())
 	{
-		for (uint8 I = 0; I < FIRE_MODE_MAX; I++)
+		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; I++)
 		{
 			if (LoopFireAnim.Get(I))
 				StopAnimation((TCsWeaponFireMode)I, FireAnim);
@@ -921,7 +925,7 @@ void ACsWeapon::PlayAnimation_Reload()
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 	R->timers[0]  = GetWorld()->TimeSeconds;
 	R->ints[0]    = 0;
-	R->floats[0]  = GetAnimationLength(FireMode_MAX, ReloadAnim);
+	R->floats[0]  = GetAnimationLength(WeaponFireMode_MAX, ReloadAnim);
 
 	Scheduler->StartRoutine(Schedule, R);
 }
@@ -942,7 +946,7 @@ PT_THREAD(ACsWeapon::PlayAnimation_Reload_Internal(struct FCsRoutine* r))
 
 	r->AddMessage(ECsCoroutineMessage::Stop, FName("Stop PlayAnimation_Reload_Internal"));
 
-	mw->PlayAnimation(mw->FireMode_MAX, ReloadAnim, 0);
+	mw->PlayAnimation(mw->WeaponFireMode_MAX, ReloadAnim, 0);
 
 	if (ReloadTime > 0)
 		CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - StartTime >= ReloadTime);
@@ -1062,7 +1066,7 @@ void ACsWeapon::HandleChargeFire()
 	if (PerformingChargeFire)
 		return;
 	
-	for (uint8 I = 0; I < FIRE_MODE_MAX; I++)
+	for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; I++)
 	{
 		if (AllowChargeFire.Get(I) &&
 			IsFirePressed.Get(I))
@@ -1762,14 +1766,14 @@ void ACsWeapon::Reload()
 	{
 		UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 
-		for (uint8 I = 0; I < FIRE_MODE_MAX; I++)
+		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; I++)
 		{
 			StopChargeFire((TCsWeaponFireMode)I);
 		}
 
 		Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, FName("Stop FireWeapon_Internal"), this);
 
-		for (uint8 I = 0; I < FIRE_MODE_MAX; I++)
+		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; I++)
 		{
 			StopAnimation((TCsWeaponFireMode)I, FireAnim);
 		}

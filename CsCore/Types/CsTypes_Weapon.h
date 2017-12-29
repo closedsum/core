@@ -61,6 +61,21 @@ namespace ECsWeaponSlot
 
 typedef ECsWeaponSlot::Type TCsWeaponSlot;
 
+// WeaponSlotToString
+typedef FString(*TCsWeaponSlotToString)(const TCsWeaponSlot&);
+// StringToWeaponSlot
+typedef TCsWeaponSlot(*TCsStringToWeaponSlot)(const FString&);
+
+#define CS_DECLARE_WEAPON_SLOT	TCsWeaponSlot WeaponSlot_MAX; \
+								uint8 WEAPON_SLOT_MAX; \
+								TCsWeaponSlotToString WeaponSlotToString; \
+								TCsStringToWeaponSlot StringToWeaponSlot;
+
+#define CS_DEFINE_WEAPON_SLOT	WeaponSlot_MAX = ECsWeaponSlot::ECsWeaponSlot_MAX;\
+								WEAPON_SLOT_MAX = (uint8)WeaponSlot_MAX \
+								WeaponSlotToString = &ECsWeaponSlot::ToString; \
+								StringToWeaponSlot = &ECsWeaponSlot::ToType;
+
 namespace ECsWeaponFireMode
 {
 	enum Type : uint8;
@@ -68,12 +83,64 @@ namespace ECsWeaponFireMode
 
 typedef ECsWeaponFireMode::Type TCsWeaponFireMode;
 
+// WeaponFireModeToString
+typedef FString(*TCsWeaponFireModeToString)(const TCsWeaponFireMode&);
+// StringToWeaponFireMode
+typedef TCsWeaponFireMode(*TCsStringToWeaponFireMode)(const FString&);
+
+#define CS_DECLARE_WEAPON_FIRE_MODE	TCsWeaponFireMode WeaponFireMode_MAX; \
+									uint8 WEAPON_FIRE_MODE_MAX; \
+									TCsWeaponFireModeToString WeaponFireModeToString; \
+									TCsStringToWeaponFireMode StringToWeaponFireMode;
+
+#define CS_DEFINE_WEAPON_FIRE_MODE	WeaponFireMode_MAX = ECsWeaponFireMode::ECsWeaponFireMode_MAX;\
+									WEAPON_FIRE_MODE_MAX = (uint8)WeaponFireMode_MAX \
+									WeaponFireModeToString = &ECsWeaponFireMode::ToString; \
+									StringToWeaponFireMode = &ECsWeaponFireMode::ToType;
+
+namespace ECsWeaponGrip
+{
+	enum Type : uint8;
+}
+
+typedef ECsWeaponGrip::Type TCsWeaponGrip;
+
+// WeaponGripToString
+typedef FString(*TCsWeaponGripToString)(const TCsWeaponGrip&);
+// StringToWeaponGrip
+typedef TCsWeaponGrip(*TCsStringToWeaponGrip)(const FString&);
+
+#define CS_DECLARE_WEAPON_GRIP	TCsWeaponGrip WeaponGrip_MAX; \
+								uint8 WEAPON_GRIP_MAX; \
+								TCsWeaponGripToString WeaponGripToString; \
+								TCsStringToWeaponGrip StringToWeaponGrip;
+
+#define CS_DEFINE_WEAPON_GRIP	WeaponGrip_MAX = ECsWeaponGrip::ECsWeaponGrip_MAX;\
+								WEAPON_GRIP_MAX = (uint8)WeaponGrip_MAX \
+								WeaponGripToString = &ECsWeaponGrip::ToString; \
+								StringToWeaponGrip = &ECsWeaponGrip::ToType;
+
 namespace ECsWeaponAnim
 {
 	enum Type : uint8;
 }
 
 typedef ECsWeaponAnim::Type TCsWeaponAnim;
+
+// WeaponAnimToString
+typedef FString(*TCsWeaponAnimToString)(const TCsWeaponAnim&);
+// StringToWeaponAnim
+typedef TCsWeaponAnim(*TCsStringToWeaponAnim)(const FString&);
+
+#define CS_DECLARE_WEAPON_ANIM	TCsWeaponAnim WeaponAnim_MAX; \
+								uint8 WEAPON_ANIM_MAX; \
+								TCsWeaponAnimToString WeaponAnimToString; \
+								TCsStringToWeaponAnim StringToWeaponAnim;
+
+#define CS_DEFINE_WEAPON_ANIM	WeaponAnim_MAX = ECsWeaponAnim::ECsWeaponAnim_MAX;\
+								WEAPON_ANIM_MAX = (uint8)WeaponAnim_MAX; \
+								WeaponAnimToString = &ECsWeaponAnim::ToString; \
+								StringToWeaponAnim = &ECsWeaponAnim::ToType;
 
 namespace ECsWeaponBlendSpace
 {
@@ -103,6 +170,20 @@ namespace ECsWeaponOwner
 
 typedef ECsWeaponOwner::Type TCsWeaponOwner;
 
+// WeaponOwnerToString
+typedef FString(*TCsWeaponOwnerToString)(const TCsWeaponOwner&);
+// StringToWeaponOwner
+typedef TCsWeaponOwner(*TCsStringToWeaponOwner)(const FString&);
+
+#define CS_DECLARE_WEAPON_OWNER	TCsWeaponOwner WeaponOwner_MAX; \
+								uint8 WEAPON_OWNER_MAX; \
+								TCsWeaponOwnerToString WeaponOwnerToString; \
+								TCsStringToWeaponOwner StringToWeaponOwner;
+
+#define CS_DEFINE_WEAPON_OWNER	WeaponOwner_MAX = ECsWeaponOwner::ECsWeaponOwner_MAX;\
+								WEAPON_OWNER_MAX = (uint8)WeaponOwner_MAX \
+								WeaponOwnerToString = &ECsWeaponOwner::ToString; \
+								StringToWeaponOwner = &ECsWeaponOwner::ToType;
 
 USTRUCT(BlueprintType)
 struct FCsData_Weapon_FireMode_Firing

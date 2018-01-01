@@ -382,7 +382,7 @@ class CSCORE_API ACsWeapon : public AActor
 	{
 		ACsData_Weapon* Data_Weapon = GetMyData_Weapon();
 
-		Member.Reset();
+		Member.ResetValues();
 
 		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; I++)
 		{
@@ -397,7 +397,7 @@ class CSCORE_API ACsWeapon : public AActor
 	template<typename T>
 	void SetMemberMultiValue(struct TCsPrimitiveType_TArrayValue<T, TCsWeaponFireMode> &Member, const T &Value)
 	{
-		Member.Reset();
+		Member.ResetValues();
 
 		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; I++)
 		{
@@ -412,7 +412,7 @@ class CSCORE_API ACsWeapon : public AActor
 	{
 		ACsData_Weapon* Data_Weapon = GetMyData_Weapon();
 
-		Member.Reset();
+		Member.ResetValues();
 
 		const FString StructName = ECsData_Weapon_FireMode::ToString(FireModeMember);
 
@@ -523,7 +523,7 @@ public:
 #pragma region
 public:
 
-private:
+protected:
 	TWeakObjectPtr<class UObject> MyOwner;
 	TWeakObjectPtr<class ACsPawn> MyPawn;
 
@@ -562,7 +562,7 @@ public:
 
 	TCsWeaponState IdleState;
 
-	void OnTick(const float &DeltaSeconds);
+	virtual void OnTick(const float &DeltaSeconds);
 
 	UPROPERTY(BlueprintAssignable, Category = "State")
 	FBindableDynEvent_CsWeapon_OnTick OnTick_ScriptEvent;
@@ -584,7 +584,7 @@ public:
 	void HandleState_Firing(const TCsWeaponFireMode &FireMode);
 
 	void Enable();
-	void Disable();
+	virtual void Disable();
 	void Reset();
 	virtual void Show();
 	virtual void Hide();
@@ -632,7 +632,7 @@ public:
 	bool IsEquipped;
 	bool DoingEquipTransition;
 
-	//bool CanUnEquip();
+	virtual bool CanUnEquip();
 
 #pragma endregion Equip / UnEquip
 
@@ -773,6 +773,7 @@ public:
 	virtual FVector GetOwnerRightVector();
 
 	virtual void FireProjectile(const TCsWeaponFireMode &FireMode, FCsProjectileFireCache* Cache);
+	virtual void FireProjectile_Internal(const TCsWeaponFireMode &FireMode, FCsProjectileFireCache* Cache);
 
 	UFUNCTION(BlueprintCallable, Category = "Firing")
 	void FireProjectile_Script(const uint8 &FireMode, FCsProjectileFireCache &Cache);
@@ -793,7 +794,7 @@ public:
 
 #pragma endregion Hitscan
 
-	virtual UObject* GetMuzzleFlashParent();
+	virtual UObject* GetMuzzleFlashParent(const TCsViewType &ViewType);
 
 	virtual FVector GetMuzzleLocation(const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode);
 

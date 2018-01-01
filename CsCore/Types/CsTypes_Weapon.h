@@ -94,7 +94,7 @@ typedef TCsWeaponFireMode(*TCsStringToWeaponFireMode)(const FString&);
 									TCsStringToWeaponFireMode StringToWeaponFireMode;
 
 #define CS_DEFINE_WEAPON_FIRE_MODE	WeaponFireMode_MAX = ECsWeaponFireMode::ECsWeaponFireMode_MAX;\
-									WEAPON_FIRE_MODE_MAX = (uint8)WeaponFireMode_MAX \
+									WEAPON_FIRE_MODE_MAX = (uint8)WeaponFireMode_MAX; \
 									WeaponFireModeToString = &ECsWeaponFireMode::ToString; \
 									StringToWeaponFireMode = &ECsWeaponFireMode::ToType;
 

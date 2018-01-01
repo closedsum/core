@@ -22,6 +22,11 @@ UScriptStruct* ACsData_Weapon::GetFireModeScriptStruct() { return nullptr; }
 bool ACsData_Weapon::UseFakeProjectile(const TCsWeaponFireMode &FireMode){ return false; }
 ACsData_Projectile* ACsData_Weapon::GetData_Projectile(const TCsWeaponFireMode &FireMode, const bool &IsCharged){ return nullptr; }
 
+FVector ACsData_Weapon::GetMuzzleLocation(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const uint8 &Index /*=0*/)
+{
+	return FVector::ZeroVector;
+}
+
 #pragma endregion Stats
 
 // Mesh

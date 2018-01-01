@@ -524,7 +524,7 @@ TEnumAsByte<ECsViewType::Type> ACsWeapon::GetCurrentViewType()
 		if (ACsPawn* Pawn = GetMyPawn())
 			return UCsCommon::IsLocalPawn(GetWorld(), Pawn) ? ECsViewType::FirstPerson : ECsViewType::ThirdPerson;
 	}
-	return ECsViewType::ThirdPerson;
+	return ECsViewType::ECsViewType_MAX;
 }
 
 #pragma endregion Owner
@@ -1010,6 +1010,26 @@ void ACsWeapon::StopSound(const TCsWeaponFireMode &FireMode, const TCsWeaponSoun
 
 #pragma endregion Sound
 
+// Equip / UnEquip
+#pragma region
+
+bool ACsWeapon::CanUnEquip()
+{
+	if (!IsEquipped)
+		return false;
+	if (DoingEquipTransition)
+		return false;
+
+	for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; I++)
+	{
+		if (CurrentProjectilePerShotIndex.Get(I) < ProjectilesPerShot.Get(I) - 1)
+			return false;
+	}
+	return true;
+}
+
+#pragma endregion Equip / UnEquip
+
 // Firing
 #pragma region
 
@@ -1485,6 +1505,8 @@ void ACsWeapon::FireProjectile(const TCsWeaponFireMode &FireMode, FCsProjectileF
 		CurrentBaseSpread.Set(FireMode, FMath::Min(CurrentBaseSpread.Get(FireMode) + SpreadAddedPerShot.GetEX(FireMode), MaxSpread.GetEX(FireMode)));
 		LastSpreadFireTime.Set(FireMode, GetWorld()->TimeSeconds);
 	}
+	FireProjectile_Internal(FireMode, Cache);
+
 	// Update Cache
 
 	ACsGameState* GameState					  = GetWorld()->GetGameState<ACsGameState>();
@@ -1510,6 +1532,8 @@ void ACsWeapon::FireProjectile(const TCsWeaponFireMode &FireMode, FCsProjectileF
 	}
 	Cache->Reset();
 }
+
+void ACsWeapon::FireProjectile_Internal(const TCsWeaponFireMode &FireMode, FCsProjectileFireCache* Cache) {}
 
 void ACsWeapon::FireProjectile_Script(const uint8 &FireMode, FCsProjectileFireCache &Cache)
 {
@@ -1708,11 +1732,11 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 
 #pragma endregion Hitscan
 
-UObject* ACsWeapon::GetMuzzleFlashParent() { return nullptr; }
+UObject* ACsWeapon::GetMuzzleFlashParent(const TCsViewType &ViewType) { return nullptr; }
 
 FVector ACsWeapon::GetMuzzleLocation(const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode)
 {
-	return FVector::ZeroVector; // GetMyData_Weapon()->GetMuzzleLocation(GetMesh(ViewType), ViewType, FireMode, CurrentProjectilePerShotIndex.Get(FireMode));
+	return FVector::ZeroVector;
 }
 
 void ACsWeapon::PlayMuzzleFlash(const TCsWeaponFireMode &FireMode)
@@ -1738,7 +1762,7 @@ void ACsWeapon::PlayMuzzleFlash(const TCsWeaponFireMode &FireMode)
 	const TCsViewType ViewType	= GetCurrentViewType();
 	FCsFxElement* FX			= Data_Weapon->GetMuzzleFX(ViewType, FireMode, CurrentProjectilePerShotIndex.Get(FireMode));
 
-	Manager_FX->Play(FX, GetMyPawn(), GetMuzzleFlashParent());
+	Manager_FX->Play(FX, GetMyPawn(), GetMuzzleFlashParent(ViewType));
 }
 
 #pragma endregion Firing

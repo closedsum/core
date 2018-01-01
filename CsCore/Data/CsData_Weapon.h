@@ -18,6 +18,8 @@ class CSCORE_API ACsData_Weapon : public ACsData
 	virtual bool UseFakeProjectile(const TCsWeaponFireMode &FireMode);
 	virtual class ACsData_Projectile* GetData_Projectile(const TCsWeaponFireMode &FireMode, const bool &IsCharged = false);
 
+	virtual FVector GetMuzzleLocation(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const uint8 &Index);
+
 #pragma endregion Stats
 
 // Mesh

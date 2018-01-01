@@ -89,11 +89,16 @@ public:
 		IsDirty	   = false;
 	}
 
-	void Reset()
+	void ResetValue()
 	{
 		Value	   = DefaultValue;
 		Last_Value = Value;
 		IsDirty	   = false;
+	}
+
+	void Reset()
+	{
+		ResetValue();
 
 		OnChange_Event.Clear();
 	}
@@ -826,11 +831,16 @@ public:
 		IsDirty	   = false;
 	}
 
-	void Reset()
+	void ResetValue()
 	{
 		Value	   = nullptr;
 		Last_Value = DefaultValue;
 		IsDirty	   = false;
+	}
+
+	void Reset()
+	{
+		ResetValue();
 
 		OnChange_Event.Clear();
 	}
@@ -1060,18 +1070,23 @@ public:
 		}
 	}
 
-	void Reset()
+	void ResetValues()
 	{
-		Value	   = DefaultValue;
+		Value = DefaultValue;
 		Last_Value = Value;
-		IsDirty	   = false;
+		IsDirty = false;
 
 		for (uint8 I = 0; I < SIZE; I++)
 		{
-			Values[I]      = Value;
+			Values[I] = Value;
 			Last_Values[I] = Value;
-			IsDirtys[I]	   = false;
+			IsDirtys[I] = false;
 		}
+	}
+
+	void Reset()
+	{
+		ResetValues();
 
 		OnChange_Event.Clear();
 		OnChangeEX_Event.Clear();
@@ -1421,18 +1436,23 @@ public:
 		}
 	}
 
-	void Reset()
+	void ResetValues()
 	{
-		Value	   = DefaultValue;
+		Value = DefaultValue;
 		Last_Value = Value;
-		IsDirty	   = false;
+		IsDirty = false;
 
 		for (uint8 I = 0; I < SIZE; I++)
 		{
-			Values[I]	   = nullptr;
+			Values[I] = nullptr;
 			Last_Values[I] = Value;
-			IsDirtys[I]	   = false;
+			IsDirtys[I] = false;
 		}
+	}
+
+	void Reset()
+	{
+		ResetValues();
 
 		OnChange_Event.Clear();
 		OnChangeEX_Event.Clear();
@@ -1641,7 +1661,7 @@ public:
 		}
 	}
 
-	void Reset()
+	void ResetValues()
 	{
 		Value = DefaultValue;
 		Last_Value = Value;
@@ -1653,6 +1673,11 @@ public:
 			Last_Values[I] = Value;
 			IsDirtys[I] = false;
 		}
+	}
+
+	void Reset()
+	{
+		ResetValues();
 
 		GetDelegate.Unbind();
 		OnChange_Event.Clear();
@@ -1922,7 +1947,7 @@ public:
 		}
 	}
 
-	void Reset()
+	void ResetValues()
 	{
 		Value = DefaultValue;
 		Last_Value = Value;
@@ -1934,6 +1959,11 @@ public:
 			Last_Values[I] = Value;
 			IsDirtys[I] = false;
 		}
+	}
+
+	void Reset()
+	{
+		ResetValues();
 
 		GetDelegate.Unbind();
 		OnChange_Event.Clear();

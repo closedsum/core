@@ -220,6 +220,9 @@ public:
 	class ACsManager_Projectile* Manager_Projectile;
 
 	UPROPERTY()
+	class ACsManager_Damage* Manager_Damage;
+
+	UPROPERTY()
 	class ACsManager_InteractiveActor* Manager_InteractiveActor;
 
 	UPROPERTY()

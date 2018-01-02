@@ -37,6 +37,16 @@ float ACsData_Projectile::GetGravityMultiplier() { return 0.0f; }
 
 #pragma endregion Movement
 
+// Damage
+#pragma region
+
+int32 ACsData_Projectile::GetDamage() { return 0; }
+float ACsData_Projectile::GetDamageFalloffRate() { return 0.0f; }
+float ACsData_Projectile::GetDamageFalloffFrequency() { return 0.0f; }
+float ACsData_Projectile::GetDamageFalloffMinimum() { return 0.0f; }
+
+#pragma endregion Damage
+
 // Mesh
 #pragma region
 

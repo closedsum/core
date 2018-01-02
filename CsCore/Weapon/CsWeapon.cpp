@@ -1548,14 +1548,16 @@ int32 ACsWeapon::GetPawnPenetrations(const TCsWeaponFireMode &FireMode) { return
 
 void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjectileFireCache* Cache)
 {
-	/*
-	ACsCharacter* Pawn					 = GetMyPawn();
-	ACsPlayerState* MyPlayerState		 = Cast<ACsPlayerState>(Pawn->PlayerState);
+	ACsPawn* Pawn					 = GetMyPawn();
+	ACsPlayerState* MyPlayerState	 = Cast<ACsPlayerState>(Pawn->PlayerState);
 	ACsData_Weapon* Data_Weapon		 = GetMyData_Weapon();
 	ACsData_Projectile* Data_Projectile = Data_Weapon->GetData_Projectile(FireMode, Cache->ChargePercent > 0.0f);
 
+	const ECollisionChannel ProjectileCollision = Data_Projectile->GetCollisionObjectType();
+
 	const FVector Start		  = Cache->Location;
 	const FVector Dir		  = Cache->Direction;
+	// TODO: Get the range from the weapon / projectile
 	const float MaxTraceRange = 30000.0f;
 	const FVector End		  = Start + MaxTraceRange * Dir;
 
@@ -1564,14 +1566,14 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 	CollisionParams.AddIgnoredActor(GetMyPawn());
 
 	// See which characters we can hit and which we should ignore
-	TArray<ACsCharacter*> HittablePawns;
+	TArray<ACsPawn*> HittablePawns;
 	
 	int32 RecordedPlayerPenetrations   = 0;
 	int32 RecordedObstaclePenetrations = 0;
 	bool HitFound					   = true;
 
 	// Hit trace/ Hit simulation
-	while ((PlayerPenetrations.Get(FireMode) < 0 || RecordedPlayerPenetrations <= PlayerPenetrations.Get(FireMode)) &&
+	while ((PawnPenetrations.Get(FireMode) < 0 || RecordedPlayerPenetrations <= PawnPenetrations.Get(FireMode)) &&
 		   (ObstaclePenetrations.Get(FireMode) < 0 || RecordedObstaclePenetrations <= ObstaclePenetrations.Get(FireMode)) &&
 		    HitFound)
 	{
@@ -1587,6 +1589,7 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 
 			for (int32 I = HitPawnCount - 1; I >= 0; I--)
 			{
+				/*
 				ACsCharacter* HitPawn = HittablePawns[I];
 				//AShooterBot* Bot = Cast<AShooterBot>(ThisChar);
 
@@ -1622,7 +1625,7 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 				{
 					const float TraceDist	  = 1.5f * (HeadLocation - Start).Size();
 					const FVector TargetPoint = HeadLocation + TraceDist * (HeadLocation - Start);
-					HitFound				  = GetWorld()->LineTraceSingleByChannel(HitResult, Start, TargetPoint, MBO_COLLISION_PROJECTILE, CollisionParams);
+					HitFound				  = GetWorld()->LineTraceSingleByChannel(HitResult, Start, TargetPoint, ProjectileCollision, CollisionParams);
 					HittablePawns.RemoveAt(I);
 					break;
 				}
@@ -1632,30 +1635,29 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 				{
 					const float TraceDist     = 1.5f * (BodyLocation - Start).Size();
 					const FVector TargetPoint = BodyLocation + TraceDist * (BodyLocation - Start);
-					HitFound				  = GetWorld()->LineTraceSingleByChannel(HitResult, Start, TargetPoint, MBO_COLLISION_PROJECTILE, CollisionParams);
+					HitFound				  = GetWorld()->LineTraceSingleByChannel(HitResult, Start, TargetPoint, ProjectileCollision, CollisionParams);
 					HittablePawns.RemoveAt(I);
 					break;
 				}
+				*/
 			}
 		}
 		// Hit NOT Found and NO Hitscan with cylinder
 		if (!HitFound || 
 			!DoesHitscanUseRadius.Get(FireMode))
 		{
-			HitFound = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, MBO_COLLISION_PROJECTILE, CollisionParams);
+			HitFound = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ProjectileCollision, CollisionParams);
 		}
 		// Hit IS Found. Check penetrations and modifiers
 		if (HitFound)
 		{
-			ACsCharacter* HitPawn = Cast<ACsCharacter>(HitResult.Actor.Get());
+			ACsPawn* HitPawn = Cast<ACsPawn>(HitResult.Actor.Get());
 			CollisionParams.AddIgnoredActor(HitResult.Actor.Get());
 			
 			//if (PawnToHit && UShooterStatics::IsOnSameTeam(GetWorld(), PawnToHit, MyPawn))
 			//{
 			//	continue;
 			//}
-			
-			float Damage = Data_Projectile->Damage;
 
 			if (HitPawn)
 				RecordedPlayerPenetrations++;
@@ -1694,27 +1696,36 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 
 			if (Pawn->Role == ROLE_Authority)
 			{
+				float Damage = Data_Projectile->GetDamage();
+
 				if (!HitPawn)
 					continue;
+				
+				// Location based Damage
+				const uint8 Count = Data_Weapon->GetLocationDamageModifierCount(FireMode);
 
-				const int32 Count = Data_Weapon->FireModes[(uint8)FireMode].Firing.LocationDamageModifiers.Num();
-
-				for (int32 I = 0; I < Count; ++I)
+				for (uint8 I = 0; I < Count; ++I)
 				{
-					if (HitResult.BoneName.ToString() == Data_Weapon->FireModes[(uint8)FireMode].Firing.LocationDamageModifiers[I].Bone)
+					const FName Bone = Data_Weapon->GetLocationDamageModifierBone(FireMode, I);
+
+					if (HitResult.BoneName == Bone)
 					{
-						Damage *= Data_Weapon->FireModes[(uint8)FireMode].Firing.LocationDamageModifiers[I].Multiplier;
+						Damage *= Data_Weapon->GetLocationDamageModifierMultiplier(FireMode, I);
 						break;
 					}
 				}
 
 				// Damage Falloff
+				const float DamageFalloffRate		= Data_Projectile->GetDamageFalloffRate();
+				const float DamageFalloffFrequency  = Data_Projectile->GetDamageFalloffFrequency();
+				const float DamageFalloffMinimum	= Data_Projectile->GetDamageFalloffMinimum();
+
 				float Falloff = 0.f;
 
-				if (Data_Projectile->DamageFalloffRate > 0.f && 
-					Data_Projectile->DamageFalloffFrequency > 0.f)
+				if (DamageFalloffRate > 0.f && 
+					DamageFalloffFrequency > 0.f)
 				{
-					Falloff = FMath::Max(Data_Projectile->DamageFalloffMinimum, 1.f - (Data_Projectile->DamageFalloffRate * FMath::FloorToFloat(HitResult.Distance / Data_Projectile->DamageFalloffFrequency)));
+					Falloff = FMath::Max(DamageFalloffMinimum, 1.f - (DamageFalloffRate * FMath::FloorToFloat(HitResult.Distance / DamageFalloffFrequency)));
 				}
 				else
 				{
@@ -1727,7 +1738,6 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 			}
 		}
 	}
-	*/
 }
 
 #pragma endregion Hitscan

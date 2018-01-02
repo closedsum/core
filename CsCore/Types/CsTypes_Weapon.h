@@ -16,7 +16,7 @@ struct FCsLocationDamageModifier
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stats")
-	FString Bone;
+	FName Bone;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stats")
 	float Multiplier;

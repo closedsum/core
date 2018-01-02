@@ -40,6 +40,23 @@ class CSCORE_API ACsData_Projectile : public ACsData
 
 #pragma endregion Movement
 
+// Damage
+#pragma region
+
+	UFUNCTION(BlueprintCallable, Category = "Damage")
+	virtual int32 GetDamage();
+
+	UFUNCTION(BlueprintCallable, Category = "Damage")
+	virtual float GetDamageFalloffRate();
+
+	UFUNCTION(BlueprintCallable, Category = "Damage")
+	virtual float GetDamageFalloffFrequency();
+
+	UFUNCTION(BlueprintCallable, Category = "Damage")
+	virtual float GetDamageFalloffMinimum();
+
+#pragma endregion Damage
+
 // Mesh
 #pragma region
 

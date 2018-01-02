@@ -19,6 +19,10 @@ ACsData_Weapon::ACsData_Weapon(const FObjectInitializer& ObjectInitializer)
 void* ACsData_Weapon::GetFireModeStruct(const uint8 &Index) { return nullptr; }
 UScriptStruct* ACsData_Weapon::GetFireModeScriptStruct() { return nullptr; }
 
+uint8 ACsData_Weapon::GetLocationDamageModifierCount(const TCsWeaponFireMode &FireMode) { return 0; }
+FName ACsData_Weapon::GetLocationDamageModifierBone(const TCsWeaponFireMode &FireMode, const uint8 &Index) { return NAME_None; }
+float ACsData_Weapon::GetLocationDamageModifierMultiplier(const TCsWeaponFireMode &FireMode, const uint8 &Index) { return 0.0f; }
+
 bool ACsData_Weapon::UseFakeProjectile(const TCsWeaponFireMode &FireMode){ return false; }
 ACsData_Projectile* ACsData_Weapon::GetData_Projectile(const TCsWeaponFireMode &FireMode, const bool &IsCharged){ return nullptr; }
 

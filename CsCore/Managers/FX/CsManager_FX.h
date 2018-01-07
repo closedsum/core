@@ -10,6 +10,15 @@ class CSCORE_API ACsManager_FX : public ACsManager
 {
 	GENERATED_UCLASS_BODY()
 
+private:
+
+	static TWeakObjectPtr<UObject> MyOwner;
+
+	static UObject* GetMyOwner();
+
+public:
+
+	static void Init(UObject* InOwner);
 	static ACsManager_FX* Get(UWorld* InWorld);
 
 	virtual void Clear() override;

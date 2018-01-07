@@ -12,6 +12,15 @@ class CSCORE_API ACsManager_Damage : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
+private:
+
+	static TWeakObjectPtr<UObject> MyOwner;
+
+	static UObject* GetMyOwner();
+
+public:
+
+	static void Init(UObject* InOwner);
 	static ACsManager_Damage* Get(UWorld* InWorld);
 
 	FCsDamageEvent Pool[CS_DAMAGE_POOL_SIZE];

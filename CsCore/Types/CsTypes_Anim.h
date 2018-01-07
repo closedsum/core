@@ -17,6 +17,19 @@
 // Anim
 #pragma region
 
+namespace ECsAnimCachedString
+{
+	namespace Str
+	{
+		const FString Empty = TEXT("");
+
+		const FString AnimSequence = TEXT("AnimSequence");
+		const FString Anim_Sequence = TEXT("Anim Sequence");
+		const FString AnimMontage = TEXT("AnimMontage");
+		const FString Anim_Montage = TEXT("Anim Montage");
+	}
+}
+
 UENUM(BlueprintType)
 namespace ECsFpsAnimMember
 {
@@ -181,6 +194,17 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(AnimVR_LoadFlags, ECsLoadFlags::GameVR);
 	}
 
+	TAssetPtr<UAnimSequence> GetAssetPtr(const TCsViewType &ViewType, const bool &IsLow = false)
+	{
+		if (ViewType == ECsViewType::FirstPerson)
+			return Anim1P;
+		if (ViewType == ECsViewType::ThirdPerson)
+			return IsLow ? Anim3P_Low : Anim3P;
+		if (ViewType == ECsViewType::VR)
+			return AnimVR;
+		return Anim3P;
+	}
+
 	UAnimSequence* Get(const TCsViewType &ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
@@ -330,6 +354,18 @@ public:
 
 		CS_SET_BLUEPRINT_BITFLAG(AnimVR_LoadFlags, ECsLoadFlags::Game);
 		CS_SET_BLUEPRINT_BITFLAG(AnimVR_LoadFlags, ECsLoadFlags::GameVR);
+	}
+
+
+	TAssetPtr<UAnimMontage> GetAssetPtr(const TCsViewType &ViewType, const bool &IsLow = false)
+	{
+		if (ViewType == ECsViewType::FirstPerson)
+			return Anim1P;
+		if (ViewType == ECsViewType::ThirdPerson)
+			return IsLow ? Anim3P_Low : Anim3P;
+		if (ViewType == ECsViewType::VR)
+			return AnimVR;
+		return Anim3P;
 	}
 
 	UAnimMontage* Get(const TCsViewType &ViewType, const bool &IsLow = false)

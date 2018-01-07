@@ -7,14 +7,39 @@
 #include "Managers/FX/CsEmitter.h"
 #include "Game/CsGameState.h"
 
+#include "Animation/CsAnimInstance.h"
+
+// static initializations
+TWeakObjectPtr<UObject> ACsManager_FX::MyOwner;
+
 ACsManager_FX::ACsManager_FX(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	EmitterClass = ACsEmitter::StaticClass();
 }
 
+/*static*/ UObject* ACsManager_FX::GetMyOwner() { return MyOwner.IsValid() ? MyOwner.Get() : nullptr; }
+
+/*static*/ void ACsManager_FX::Init(UObject* InOwner)
+{
+	MyOwner = InOwner;
+}
+
 /*static*/ ACsManager_FX* ACsManager_FX::Get(UWorld* InWorld)
 {
-	return InWorld->GetGameState<ACsGameState>()->Manager_FX;
+#if WITH_EDITOR 
+	// In Editor Preview Window
+	if (UCsCommon::IsPlayInEditorPreview(InWorld))
+	{
+		if (UCsAnimInstance* AnimInstance = Cast<UCsAnimInstance>(GetMyOwner()))
+			return AnimInstance->GetManager_FX();
+	}
+	// In Game
+	else
+#endif // #if WITH_EDITOR
+	{
+		return Cast<ACsGameState>(GetMyOwner())->Manager_FX;
+	}
+	return nullptr;
 }
 
 void ACsManager_FX::Clear()

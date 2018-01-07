@@ -80,7 +80,7 @@ class CSCORE_API ACsData_Weapon : public ACsData
 	virtual FCsSoundElement* GetSound(const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const TCsWeaponSound &SoundType);
 
 	virtual void PlaySound(UWorld* InWorld, const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const TCsWeaponSound &SoundType, UObject* InOwner, UObject* InParent);
-	virtual void PlaySoundEX(UWorld* InWorld, const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const TCsWeaponSound &SoundType, UObject* InOwner, const FVector &Location);
+	virtual void PlaySound(UWorld* InWorld, const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const TCsWeaponSound &SoundType, UObject* InOwner, const FVector &Location);
 	virtual void StopSound(UWorld* InWorld, const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const TCsWeaponSound &SoundType, UObject* InOwner, UObject* InParent);
 
 #pragma endregion Sound

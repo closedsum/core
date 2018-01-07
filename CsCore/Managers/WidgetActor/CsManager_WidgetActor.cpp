@@ -1,15 +1,47 @@
 // Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/WidgetActor/CsManager_WidgetActor.h"
 #include "CsCore.h"
+#include "Common/CsCommon.h"
 #include "Managers/WidgetActor/CsWidgetActor.h"
 #include "UI/CsUserWidget.h"
 #include "Game/CsGameState.h"
 
+// static initializations
+TWeakObjectPtr<UObject> ACsManager_WidgetActor::MyOwner;
+
 ACsManager_WidgetActor::ACsManager_WidgetActor(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	WidgetActorClassToString = nullptr;
+	WidgetActorTypeToString = nullptr;
 
 	PoolSize = 1;
+}
+
+/*static*/ UObject* ACsManager_WidgetActor::GetMyOwner() { return MyOwner.IsValid() ? MyOwner.Get() : nullptr; }
+
+/*static*/ void ACsManager_WidgetActor::Init(UObject* InOwner)
+{
+	MyOwner = InOwner;
+}
+
+/*static*/ ACsManager_WidgetActor* ACsManager_WidgetActor::Get(UWorld* InWorld)
+{
+#if WITH_EDITOR 
+	// In Editor Preview Window
+	if (UCsCommon::IsPlayInEditorPreview(InWorld))
+	{
+	}
+	// In Game
+	else
+#endif // #if WITH_EDITOR
+	{
+		return Cast<ACsGameState>(GetMyOwner())->Manager_WidgetActor;
+	}
+	return nullptr;
+}
+
+void ACsManager_WidgetActor::SetWidgetActorType(TCsWidgetActorTypeToString InWidgetActorTypeToString)
+{
+	WidgetActorTypeToString = InWidgetActorTypeToString;
 }
 
 void ACsManager_WidgetActor::Shutdown()
@@ -46,11 +78,6 @@ void ACsManager_WidgetActor::Destroyed()
 	ActiveWidgetActors.Reset();
 
 	Super::Destroyed();
-}
-
-void ACsManager_WidgetActor::Init(TCsWidgetActorTypeToString InWidgetActorClassToString)
-{
-	WidgetActorClassToString = InWidgetActorClassToString;
 }
 
 void ACsManager_WidgetActor::CreatePool(const TSubclassOf<class UObject> &ObjectClass, const uint8 &Type, const int32 &Size)
@@ -98,11 +125,6 @@ void ACsManager_WidgetActor::OnTick(const float &DeltaSeconds)
 	*/
 }
 
-/*static*/ ACsManager_WidgetActor* ACsManager_WidgetActor::Get(UWorld* InWorld)
-{
-	return InWorld->GetGameState<ACsGameState>()->Manager_WidgetActor;
-}
-
 int32 ACsManager_WidgetActor::GetActivePoolSize(const uint8 &Type)
 {
 	TArray<ACsWidgetActor*>* ActorsPtr = ActiveWidgetActors.Find((TCsWidgetActorType)Type);
@@ -129,7 +151,7 @@ ACsWidgetActor* ACsManager_WidgetActor::Allocate(const TCsWidgetActorType &Class
 			return Widget;
 		}
 	}
-	checkf(0, TEXT("ACsManager_WidgetActor::Allocate: Pool: %s is exhausted"), *(*WidgetActorClassToString(ClassType)));
+	checkf(0, TEXT("ACsManager_WidgetActor::Allocate: Pool: %s is exhausted"), *(*WidgetActorTypeToString(ClassType)));
 	return nullptr;
 }
 
@@ -141,7 +163,7 @@ void ACsManager_WidgetActor::DeAllocate(const uint8 &Type, const int32 &Index)
 
 	if (!WidgetActors)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_WidgetActor::DeAllocate: WidgetActor of Type: %s at Index: %d is already deallocated."), *((*WidgetActorClassToString)(ClassType)), Index);
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_WidgetActor::DeAllocate: WidgetActor of Type: %s at Index: %d is already deallocated."), *((*WidgetActorTypeToString)(ClassType)), Index);
 		return;
 	}
 
@@ -158,7 +180,7 @@ void ACsManager_WidgetActor::DeAllocate(const uint8 &Type, const int32 &Index)
 			return;
 		}
 	}
-	UE_LOG(LogCs, Warning, TEXT("ACsManager_WidgetActor::DeAllocate: WidgetActor of Type: %s at Index: %d is already deallocated."), *((*WidgetActorClassToString)(ClassType)), Index);
+	UE_LOG(LogCs, Warning, TEXT("ACsManager_WidgetActor::DeAllocate: WidgetActor of Type: %s at Index: %d is already deallocated."), *((*WidgetActorTypeToString)(ClassType)), Index);
 }
 
 ACsWidgetActor* ACsManager_WidgetActor::Display(const TCsWidgetActorType &ClassType, UCsUserWidget* InWidget, UObject* InOwner, UObject* Parent)

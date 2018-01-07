@@ -6,6 +6,11 @@
 #include "Common/CsCommon.h"
 #include "Game/CsGameState.h"
 
+#include "Animation/CsAnimInstance.h"
+
+// static initializations
+TWeakObjectPtr<UObject> ACsManager_Sound::MyOwner;
+
 ACsManager_Sound::ACsManager_Sound(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	SoundClass = ACsSound::StaticClass();
@@ -13,9 +18,29 @@ ACsManager_Sound::ACsManager_Sound(const FObjectInitializer& ObjectInitializer) 
 	PoolSize = CS_SOUND_POOL_SIZE;
 }
 
+/*static*/ UObject* ACsManager_Sound::GetMyOwner() { return MyOwner.IsValid() ? MyOwner.Get() : nullptr; }
+
+/*static*/ void ACsManager_Sound::Init(UObject* InOwner)
+{
+	MyOwner = InOwner;
+}
+
 /*static*/ ACsManager_Sound* ACsManager_Sound::Get(UWorld* InWorld)
 {
-	return InWorld->GetGameState<ACsGameState>()->Manager_Sound;
+#if WITH_EDITOR 
+	// In Editor Preview Window
+	if (UCsCommon::IsPlayInEditorPreview(InWorld))
+	{
+		if (UCsAnimInstance* AnimInstance = Cast<UCsAnimInstance>(GetMyOwner()))
+			return AnimInstance->GetManager_Sound();
+	}
+	// In Game
+	else
+#endif // #if WITH_EDITOR
+	{
+		return Cast<ACsGameState>(GetMyOwner())->Manager_Sound;
+	}
+	return nullptr;
 }
 
 void ACsManager_Sound::Clear()

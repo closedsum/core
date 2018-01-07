@@ -46,6 +46,7 @@ class CSCORE_API ACsManager : public AActor
 
 // Allocate
 #pragma region
+public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Pool")
 	FBindableDynEvent_CsManager_OnAllocate OnAllocate_ScriptEvent;
@@ -56,6 +57,7 @@ class CSCORE_API ACsManager : public AActor
 
 // DeAllocate
 #pragma region
+public:
 
 	virtual void DeAllocate(const int32 &Index);
 	UFUNCTION(BlueprintCallable, Category = "Pool")

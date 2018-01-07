@@ -23,6 +23,8 @@ namespace ECsWeaponCachedName
 		const FName PlayAnimation_Reload_Internal = FName("ACsWeapon::PlayAnimation_Reload_Internal");
 		const FName StartChargeFire_Internal = FName("ACsWeapon::StartChargeFire_Internal");
 		const FName FireWeapon_Internal = FName("ACsWeapon::FireWeapon_Internal");
+
+		const FName Stop_FireWeapon_Internal = FName("Stop FireWeapon_Internal");
 	}
 }
 
@@ -50,6 +52,7 @@ ACsWeapon::ACsWeapon(const FObjectInitializer& ObjectInitializer)
 	//IdleState = ECsWeaponState::Idle;
 
 	//FiringState = ECsWeaponState::Firing;
+	//FireAnim = ECsWeaponAnim::Fire;
 	//ChargeFireStartAnim = ECsWeaponAnim::ECsWeaponAnim_MAX;
 	//ChargeFireLoopAnim = ECsWeaponAnim::ECsWeaponAnim_MAX;
 
@@ -783,14 +786,18 @@ void ACsWeapon::HandleState_Firing(const TCsWeaponFireMode &FireMode)
 {
 	CurrentProjectilePerShotIndex.Set(FireMode, CurrentAmmo > ProjectilesPerShot.GetEX(FireMode) ? 0 : ProjectilesPerShot.GetEX(FireMode) - CurrentAmmo);
 
-	FireWeapon(FireMode);
-
-	ACsData_Weapon* Data_Weapon = GetMyData_Weapon();
-
 	const float TimeSeconds = GetWorld()->TimeSeconds;
+
+	Fire_StartTime.Set(FireMode, TimeSeconds);
+	LastState    = CurrentState;
+	CurrentState = FiringState;
+
+	FireWeapon(FireMode);
 
 	if (!HasUnlimitedAmmo)
 	{
+		CurrentAmmo = FMath::Max(0, CurrentAmmo - ProjectilesPerShot.Get(FireMode));
+
 		// Recharge Ammo
 		if (AllowRechargeAmmo.Get(CS_WEAPON_DATA_VALUE))
 		{
@@ -801,10 +808,6 @@ void ACsWeapon::HandleState_Firing(const TCsWeaponFireMode &FireMode)
 			}
 		}
 	}
-
-	Fire_StartTime.Set(FireMode, TimeSeconds);
-	LastState	   = CurrentState;
-	CurrentState   = FiringState;
 }
 
 bool ACsWeapon::CanFire(const TCsWeaponFireMode &FireMode)
@@ -997,7 +1000,17 @@ void ACsWeapon::PlaySound(const TCsWeaponFireMode &FireMode, const TCsWeaponSoun
 	ACsData_Weapon* Data	   = GetMyData_Weapon();
 	const TCsViewType ViewType = GetCurrentViewType();
 
-	Data->PlaySound(GetWorld(), ViewType, FireMode, SoundType, GetMyPawn(), GetSoundParent());
+#if WITH_EDITOR 
+	// In Editor Preview Window
+	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	{
+	}
+	// In Game
+	else
+#endif // #if WITH_EDITOR
+	{
+		Data->PlaySound(GetWorld(), ViewType, FireMode, SoundType, GetMyPawn(), GetSoundParent());
+	}
 }
 
 void ACsWeapon::StopSound(const TCsWeaponFireMode &FireMode, const TCsWeaponSound &SoundType)
@@ -1005,7 +1018,17 @@ void ACsWeapon::StopSound(const TCsWeaponFireMode &FireMode, const TCsWeaponSoun
 	ACsData_Weapon* Data	   = GetMyData_Weapon();
 	const TCsViewType ViewType = GetCurrentViewType();
 
-	Data->StopSound(GetWorld(), ViewType, FireMode, SoundType, GetMyPawn(), GetSoundParent());
+#if WITH_EDITOR 
+	// In Editor Preview Window
+	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	{
+	}
+	// In Game
+	else
+#endif // #if WITH_EDITOR
+	{
+		Data->StopSound(GetWorld(), ViewType, FireMode, SoundType, GetMyPawn(), GetSoundParent());
+	}
 }
 
 #pragma endregion Sound
@@ -1374,7 +1397,7 @@ PT_THREAD(ACsWeapon::FireWeapon_Internal(struct FCsRoutine* r))
 
 	CS_COROUTINE_BEGIN(r);
 
-	r->AddMessage(ECsCoroutineMessage::Stop, FName("Stop FireWeapon_Internal"));
+	r->AddMessage(ECsCoroutineMessage::Stop, ECsWeaponCachedName::Name::Stop_FireWeapon_Internal);
 
 	mw->StopChargeFire(FireMode);
 
@@ -1568,12 +1591,12 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 	// See which characters we can hit and which we should ignore
 	TArray<ACsPawn*> HittablePawns;
 	
-	int32 RecordedPlayerPenetrations   = 0;
+	int32 RecordedPawnPenetrations   = 0;
 	int32 RecordedObstaclePenetrations = 0;
 	bool HitFound					   = true;
 
 	// Hit trace/ Hit simulation
-	while ((PawnPenetrations.Get(FireMode) < 0 || RecordedPlayerPenetrations <= PawnPenetrations.Get(FireMode)) &&
+	while ((PawnPenetrations.Get(FireMode) < 0 || RecordedPawnPenetrations <= PawnPenetrations.Get(FireMode)) &&
 		   (ObstaclePenetrations.Get(FireMode) < 0 || RecordedObstaclePenetrations <= ObstaclePenetrations.Get(FireMode)) &&
 		    HitFound)
 	{
@@ -1660,7 +1683,7 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 			//}
 
 			if (HitPawn)
-				RecordedPlayerPenetrations++;
+				RecordedPawnPenetrations++;
 			else
 				RecordedObstaclePenetrations++;
 
@@ -1805,7 +1828,7 @@ void ACsWeapon::Reload()
 			StopChargeFire((TCsWeaponFireMode)I);
 		}
 
-		Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, FName("Stop FireWeapon_Internal"), this);
+		Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, ECsWeaponCachedName::Name::Stop_FireWeapon_Internal, this);
 
 		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; I++)
 		{

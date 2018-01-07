@@ -53,6 +53,7 @@ class CSCORE_API UCsManager_Widget : public UObject
 
 // Payload
 #pragma region
+public:
 
 	FCsSimpleWidgetPayload Payloads[CS_SIMPLE_WIDGET_PAYLOAD_SIZE];
 
@@ -64,6 +65,7 @@ class CSCORE_API UCsManager_Widget : public UObject
 
 // Show
 #pragma region
+public:
 
 	virtual class UCsSimpleWidget* Show(const TCsSimpleWidgetType &Type, FCsSimpleWidgetPayload* Payload, UObject* InOwner, UObject* InParent);
 

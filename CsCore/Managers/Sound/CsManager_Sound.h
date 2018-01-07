@@ -13,6 +13,15 @@ class CSCORE_API ACsManager_Sound : public ACsManager
 {
 	GENERATED_UCLASS_BODY()
 
+private:
+
+	static TWeakObjectPtr<UObject> MyOwner;
+
+	static UObject* GetMyOwner();
+
+public:
+
+	static void Init(UObject* InOwner);
 	static ACsManager_Sound* Get(UWorld* InWorld);
 
 	virtual void Clear() override;
@@ -41,6 +50,7 @@ class CSCORE_API ACsManager_Sound : public ACsManager
 
 // Play
 #pragma region
+public:
 
 	class ACsSound* Play(FCsSoundElement* InSound, UObject* InOwner, UObject* InParent);
 	class ACsSound* Play(FCsSoundElement* InSound, UObject* InOwner);
@@ -65,6 +75,7 @@ class CSCORE_API ACsManager_Sound : public ACsManager
 
 // Stop
 #pragma region
+public:
 
 	void Stop(FCsSoundElement* InSound, UObject* InOwner, UObject* InParent);
 

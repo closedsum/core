@@ -12,6 +12,15 @@ class CSCORE_API ACsManager_Projectile : public ACsManager
 {
 	GENERATED_UCLASS_BODY()
 
+private:
+
+	static TWeakObjectPtr<UObject> MyOwner;
+
+	static UObject* GetMyOwner();
+
+public:
+
+	static void Init(UObject* InOwner);
 	static ACsManager_Projectile* Get(UWorld* InWorld);
 
 	virtual void Clear() override;
@@ -38,6 +47,7 @@ class CSCORE_API ACsManager_Projectile : public ACsManager
 
 // Fire
 #pragma region
+public: 
 
 	virtual class ACsProjectile* Fire(const TCsProjectileRelevance &Relevance, class ACsData_Projectile* InData, struct FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, UObject* InParent);
 	virtual class ACsProjectile* Fire(const TCsProjectileRelevance &Relevance, class ACsData_Projectile* InData, struct FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner);

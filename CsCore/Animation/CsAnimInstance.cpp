@@ -160,6 +160,7 @@ void UCsAnimInstance::Spawn_Manager_FX()
 		SpawnInfo.ObjectFlags |= RF_Transient;
 
 		Manager_FX = GetWorld()->SpawnActor<ACsManager_FX>(SpawnInfo);
+		ACsManager_FX::Init(this);
 		Manager_FX->CreatePool(4);
 		Manager_FX->ToggleEmitterEditorIcons(false);
 	}
@@ -189,6 +190,7 @@ void UCsAnimInstance::Spawn_Manager_Sound()
 		SpawnInfo.ObjectFlags |= RF_Transient;
 
 		Manager_Sound = GetWorld()->SpawnActor<ACsManager_Sound>(SpawnInfo);
+		ACsManager_Sound::Init(this);
 		Manager_Sound->CreatePool(2);
 	}
 }
@@ -207,11 +209,10 @@ void UCsAnimInstance::NativeUpdateAnimation(float DeltaTimeX)
 		OnTick_HandleEditorIcons();
 		OnTick_HandleGlobalPlayRate();
 
+		if (UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get())
+			Scheduler->OnTick_Update(DeltaTimeX);
 		if (ACsManager_FX* MyManager_FX = GetManager_FX())
 			MyManager_FX->OnTick(DeltaTimeX);
-
-		//if (CoroutineScheduler)
-		//	CoroutineScheduler->OnTick_Update(DeltaTimeX);
 	}
 #endif // #if WITH_EDITOR
 
@@ -229,15 +230,26 @@ void UCsAnimInstance::LoadAnim(const FString& MemberName, FCsAnimInstance_AnimSe
 		UCsCommon_Load::LoadFCsAnimSequence(MemberName, DataAnim);
 
 		if (UAnimSequence* Seq = DataAnim->Get())
+		{
+			Anim.Anim		   = DataAnim->Anim;
 			Anim.Anim_Internal = Seq;
+		}
 		else
-			UCsCommon_Load::LoadTAssetPtr<UAnimSequence>(MemberName, Anim.Anim, Anim.Anim_Internal, TEXT("AnimSequence"), TEXT("Anim Sequence"));
+		{
+			//																					    TEXT("AnimSequence"), TEXT("Anim Sequence")
+			UCsCommon_Load::LoadTAssetPtr<UAnimSequence>(MemberName, Anim.Anim, Anim.Anim_Internal, ECsAnimCachedString::Str::AnimSequence, ECsAnimCachedString::Str::Anim_Sequence);
+		}
 	}
 	else
 	{
-		if (Anim.Anim.ToString() != TEXT(""))
-			UCsCommon_Load::LoadTAssetPtr<UAnimSequence>(MemberName, Anim.Anim, Anim.Anim_Internal, TEXT("AnimSequence"), TEXT("Anim Sequence"));
+		//						 != TEXT("")
+		if (Anim.Anim.ToString() != ECsAnimCachedString::Str::Empty)
+		{
+			//																						TEXT("AnimSequence"), TEXT("Anim Sequence")
+			UCsCommon_Load::LoadTAssetPtr<UAnimSequence>(MemberName, Anim.Anim, Anim.Anim_Internal, ECsAnimCachedString::Str::AnimSequence, ECsAnimCachedString::Str::Anim_Sequence);
+		}
 	}
+	Anim.Update();
 }
 
 void UCsAnimInstance::LoadAnim(const FString& MemberName, FCsAnimInstance_AnimMontage &Anim, FCsAnimMontage* DataAnim)
@@ -248,14 +260,24 @@ void UCsAnimInstance::LoadAnim(const FString& MemberName, FCsAnimInstance_AnimMo
 		UCsCommon_Load::LoadFCsAnimMontage(MemberName, DataAnim);
 
 		if (UAnimMontage* Seq = DataAnim->Get())
+		{
+			Anim.Anim		   = DataAnim->Anim;
 			Anim.Anim_Internal = Seq;
+		}
 		else
-			UCsCommon_Load::LoadTAssetPtr<UAnimMontage>(MemberName, Anim.Anim, Anim.Anim_Internal, TEXT("AnimMontage"), TEXT("Anim Montage"));
+		{
+			//																					   TEXT("AnimMontage"), TEXT("Anim Montage")
+			UCsCommon_Load::LoadTAssetPtr<UAnimMontage>(MemberName, Anim.Anim, Anim.Anim_Internal, ECsAnimCachedString::Str::AnimMontage, ECsAnimCachedString::Str::Anim_Montage);
+		}
 	}
 	else
 	{
-		if (Anim.Anim.ToString() != TEXT(""))
-			UCsCommon_Load::LoadTAssetPtr<UAnimMontage>(MemberName, Anim.Anim, Anim.Anim_Internal, TEXT("AnimMontage"), TEXT("Anim Montage"));
+		//						 != TEXT("")
+		if (Anim.Anim.ToString() != ECsAnimCachedString::Str::Empty)
+		{
+			//																					   TEXT("AnimMontage"), TEXT("Anim Montage")
+			UCsCommon_Load::LoadTAssetPtr<UAnimMontage>(MemberName, Anim.Anim, Anim.Anim_Internal, ECsAnimCachedString::Str::AnimMontage, ECsAnimCachedString::Str::Anim_Montage);
+		}
 	}
 }
 
@@ -267,14 +289,24 @@ void UCsAnimInstance::LoadAnim(const FString& MemberName, const TCsViewType &Vie
 		UCsCommon_Load::LoadFCsFpsAnimSequence(MemberName, DataAnim, ViewType);
 
 		if (UAnimSequence* Seq = DataAnim->Get(ViewType))
+		{
+			Anim.Anim		   = DataAnim->GetAssetPtr(ViewType);
 			Anim.Anim_Internal = Seq;
+		}
 		else
-			UCsCommon_Load::LoadTAssetPtr<UAnimSequence>(MemberName, Anim.Anim, Anim.Anim_Internal, TEXT("AnimSequence"), TEXT("Anim Sequence"));
+		{
+			//																					    TEXT("AnimSequence"), TEXT("Anim Sequence")
+			UCsCommon_Load::LoadTAssetPtr<UAnimSequence>(MemberName, Anim.Anim, Anim.Anim_Internal, ECsAnimCachedString::Str::AnimSequence, ECsAnimCachedString::Str::Anim_Sequence);
+		}
 	}
 	else
 	{
-		if (Anim.Anim.ToString() != TEXT(""))
-			UCsCommon_Load::LoadTAssetPtr<UAnimSequence>(MemberName, Anim.Anim, Anim.Anim_Internal, TEXT("AnimSequence"), TEXT("Anim Sequence"));
+		//						 != TEXT("")
+		if (Anim.Anim.ToString() != ECsAnimCachedString::Str::Empty)
+		{
+			//																					    TEXT("AnimSequence"), TEXT("Anim Sequence")
+			UCsCommon_Load::LoadTAssetPtr<UAnimSequence>(MemberName, Anim.Anim, Anim.Anim_Internal, ECsAnimCachedString::Str::AnimSequence, ECsAnimCachedString::Str::Anim_Sequence);
+		}
 	}
 }
 
@@ -286,14 +318,23 @@ void UCsAnimInstance::LoadAnim(const FString& MemberName, const TCsViewType &Vie
 		UCsCommon_Load::LoadFCsFpsAnimMontage(MemberName, DataAnim, ViewType);
 
 		if (UAnimMontage* Seq = DataAnim->Get(ViewType))
+		{
 			Anim.Anim_Internal = Seq;
+		}
 		else
-			UCsCommon_Load::LoadTAssetPtr<UAnimMontage>(MemberName, Anim.Anim, Anim.Anim_Internal, TEXT("AnimMontage"), TEXT("Anim Montage"));
+		{
+			//																					   TEXT("AnimMontage"), TEXT("Anim Montage")
+			UCsCommon_Load::LoadTAssetPtr<UAnimMontage>(MemberName, Anim.Anim, Anim.Anim_Internal, ECsAnimCachedString::Str::AnimMontage, ECsAnimCachedString::Str::Anim_Montage);
+		}
 	}
 	else
 	{
-		if (Anim.Anim.ToString() != TEXT(""))
-			UCsCommon_Load::LoadTAssetPtr<UAnimMontage>(MemberName, Anim.Anim, Anim.Anim_Internal, TEXT("AnimMontage"), TEXT("Anim Montage"));
+		//						 != TEXT("")
+		if (Anim.Anim.ToString() != ECsAnimCachedString::Str::Empty)
+		{
+			//																					   TEXT("AnimMontage"), TEXT("Anim Montage")
+			UCsCommon_Load::LoadTAssetPtr<UAnimMontage>(MemberName, Anim.Anim, Anim.Anim_Internal, ECsAnimCachedString::Str::AnimMontage, ECsAnimCachedString::Str::Anim_Montage);
+		}
 	}
 }
 

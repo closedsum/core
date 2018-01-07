@@ -12,17 +12,25 @@ class CSCORE_API ACsManager_WidgetActor : public ACsManager
 {
 	GENERATED_UCLASS_BODY()
 
+private:
+
+	static TWeakObjectPtr<UObject> MyOwner;
+
+	static UObject* GetMyOwner();
+
+public:
+
+	static void Init(UObject* InOwner);
+	static ACsManager_WidgetActor* Get(UWorld* InWorld);
+
+	void SetWidgetActorType(TCsWidgetActorTypeToString InWidgetActorTypeToString);
+
+	TCsWidgetActorTypeToString WidgetActorTypeToString;
+
 	virtual void Shutdown() override;
-
-	TCsWidgetActorTypeToString WidgetActorClassToString;
-
-	void Init(TCsWidgetActorTypeToString InWidgetActorClassToString);
-
 	virtual void Destroyed() override;
 	virtual void CreatePool(const TSubclassOf<class UObject> &ObjectClass, const uint8 &Type, const int32 &Size);
 	virtual void OnTick(const float &DeltaSeconds) override;
-
-	static ACsManager_WidgetActor* Get(UWorld* InWorld);
 
 	TMap<TCsWidgetActorType, TArray<class ACsWidgetActor*>> ActiveWidgetActors;
 

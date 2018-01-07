@@ -3,10 +3,14 @@
 #include "CsCore.h"
 #include "CsCVars.h"
 #include "Types/CsTypes.h"
+#include "Common/CsCommon.h"
 #include "Managers/Projectile/CsProjectile.h"
 #include "Game/CsGameState.h"
 // Data
 #include "Data/CsData_Projectile.h"
+
+// static initializations
+TWeakObjectPtr<UObject> ACsManager_Projectile::MyOwner;
 
 ACsManager_Projectile::ACsManager_Projectile(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -14,9 +18,27 @@ ACsManager_Projectile::ACsManager_Projectile(const FObjectInitializer& ObjectIni
 	ProjectileClass = ACsProjectile::StaticClass();
 }
 
+/*static*/ UObject* ACsManager_Projectile::GetMyOwner() { return MyOwner.IsValid() ? MyOwner.Get() : nullptr; }
+
+/*static*/ void ACsManager_Projectile::Init(UObject* InOwner)
+{
+	MyOwner = InOwner;
+}
+
 /*static*/ ACsManager_Projectile* ACsManager_Projectile::Get(UWorld* InWorld)
 {
-	return InWorld->GetGameState<ACsGameState>()->Manager_Projectile;
+#if WITH_EDITOR 
+	// In Editor Preview Window
+	if (UCsCommon::IsPlayInEditorPreview(InWorld))
+	{
+	}
+	// In Game
+	else
+#endif // #if WITH_EDITOR
+	{
+		return Cast<ACsGameState>(GetMyOwner())->Manager_Projectile;
+	}
+	return nullptr;
 }
 
 void ACsManager_Projectile::Clear()

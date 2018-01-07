@@ -48,7 +48,6 @@ struct FCsDataAddToDataMapping
 
 	FCsDataAddToDataMapping()
 	{
-		CS_SET_BLUEPRINT_BITFLAG(LoadFlags, ECsLoadFlags::All);
 		CS_SET_BLUEPRINT_BITFLAG(LoadFlags, ECsLoadFlags::Game);
 	}
 };

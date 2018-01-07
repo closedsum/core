@@ -196,7 +196,7 @@ void ACsData_Weapon::PlaySound(UWorld* InWorld, const TCsViewType &ViewType, con
 	Manager_Sound->Play(SoundElement, InOwner, InParent);
 }
 
-void ACsData_Weapon::PlaySoundEX(UWorld* InWorld, const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const TCsWeaponSound &SoundType, UObject* InOwner, const FVector &Location)
+void ACsData_Weapon::PlaySound(UWorld* InWorld, const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const TCsWeaponSound &SoundType, UObject* InOwner, const FVector &Location)
 {
 	FCsSoundElement* SoundElement   = GetSound(ViewType, FireMode, SoundType);
 	ACsManager_Sound* Manager_Sound = ACsManager_Sound::Get(InWorld);

@@ -4,6 +4,9 @@
 #include "CsCVars.h"
 #include "Game/CsGameState.h"
 
+// static initializations
+TWeakObjectPtr<UObject> ACsManager_Damage::MyOwner;
+
 ACsManager_Damage::ACsManager_Damage(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	for (uint8 I = 0; I < CS_DAMAGE_POOL_SIZE; ++I)
@@ -12,9 +15,27 @@ ACsManager_Damage::ACsManager_Damage(const FObjectInitializer& ObjectInitializer
 	}
 }
 
+/*static*/ UObject* ACsManager_Damage::GetMyOwner() { return MyOwner.IsValid() ? MyOwner.Get() : nullptr; }
+
+/*static*/ void ACsManager_Damage::Init(UObject* InOwner)
+{
+	MyOwner = InOwner;
+}
+
 /*static*/ ACsManager_Damage* ACsManager_Damage::Get(UWorld* InWorld)
 {
-	return nullptr;// InWorld->GetGameState<ACsGameState>()->Manager_Item;
+#if WITH_EDITOR 
+	// In Editor Preview Window
+	if (UCsCommon::IsPlayInEditorPreview(InWorld))
+	{
+	}
+	// In Game
+	else
+#endif // #if WITH_EDITOR
+	{
+		return Cast<ACsGameState>(GetMyOwner())->Manager_Damage;
+	}
+	return nullptr;
 }
 
 FCsDamageEvent* ACsManager_Damage::Allocate()

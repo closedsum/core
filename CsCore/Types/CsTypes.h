@@ -752,6 +752,18 @@ typedef TCsSurfaceType(*TCsStringToSurfaceType)(const FString&);
 // PhysicalSurfaceToSurfaceType
 typedef TCsSurfaceType(*TCsPhysicalSurfaceToSurfaceType)(const TEnumAsByte<EPhysicalSurface>&);
 
+#define CS_DECLARE_SURFACE_TYPE	TCsSurfaceType SurfaceType_MAX; \
+								uint8 SURFACE_TYPE_MAX; \
+								TCsSurfaceTypeToString SurfaceTypeToString; \
+								TCsStringToSurfaceType StringToSurfaceType; \
+								TCsPhysicalSurfaceToSurfaceType PhysicalSurfaceToSurfaceType;
+
+#define CS_DEFINE_SURFACE_TYPE	SurfaceType_MAX = ECsSurfaceType::ECsSurfaceType_MAX; \
+								SURFACE_TYPE_MAX = (uint8)SurfaceType_MAX; \
+								SurfaceTypeToString = &ECsSurfaceType::ToString; \
+								StringToSurfaceType = (TCsSurfaceType (*)(const FString&))(&ECsSurfaceType::ToType); \
+								PhysicalSurfaceToSurfaceType = (TCsSurfaceType (*)(const TEnumAsByte<EPhysicalSurface>&))(&ECsSurfaceType::ToType);
+
 #define CS_DECLARE_SURFACE_TYPE_FUNCTIONS	TCsSurfaceTypeToString SurfaceTypeToString; \
 											TCsStringToSurfaceType StringToSurfaceType; \
 											TCsPhysicalSurfaceToSurfaceType PhysicalSurfaceToSurfaceType;

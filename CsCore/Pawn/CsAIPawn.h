@@ -123,5 +123,5 @@ class CSCORE_API ACsAIPawn : public ACsPawn
 	UPROPERTY(BlueprintAssignable, Category = "AI")
 	FBindableDynEvent_CsAIPawn_Override_OnTick Override_OnTick_ScriptEvent;
 
-	virtual void OnTick_CheckCVars(const float &DeltaSeconds);
+	virtual void OnTick_HandleCVars(const float &DeltaSeconds);
 };

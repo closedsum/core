@@ -139,6 +139,16 @@ void ACsManager_Projectile::OnTick(const float &DeltaSeconds)
 
 			if (I < EarliestIndex)
 				EarliestIndex = I;
+			continue;
+		}
+		// Check DrawDistance
+		if (Projectile->Cache.DrawDistanceSq > 0.0f)
+		{
+			const float DistanceSq = UCsCommon::GetSquaredDistanceToLocalControllerEye(GetWorld(), Projectile->GetActorLocation());
+			const bool Hide		   = DistanceSq > Projectile->Cache.DrawDistanceSq;
+
+			if (Hide != Projectile->bHidden)
+				Projectile->SetActorHiddenInGame(Hide);
 		}
 	}
 	// Update ActiveIndex

@@ -457,6 +457,13 @@ struct FCsData_FpsWeapon_FireMode_FXs
 
 		return MuzzleFXs[Index % Count].Get(ViewType);
 	}
+
+	FName GetMuzzleBone(const TCsViewType &ViewType, const int32 Index = 0)
+	{
+		const int32 Count = MuzzleFXs.Num();
+
+		return MuzzleFXs[Index % Count].GetBone(ViewType);
+	}
 };
 
 USTRUCT(BlueprintType)

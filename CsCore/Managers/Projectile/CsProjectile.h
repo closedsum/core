@@ -32,6 +32,8 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 	float ChargePercent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	float Speed;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	float DrawDistanceSq;
 
 	FCsProjectileCache()
 	{
@@ -148,6 +150,7 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 		Rotation = FRotator::ZeroRotator;
 		ChargePercent = 0.0f;
 		Speed = 0.0f;
+		DrawDistanceSq = 0.0f;
 	}
 
 	ACsProjectile* GetProjectile() { return Projectile.IsValid() ? Projectile.Get() : nullptr; }
@@ -172,6 +175,7 @@ public:
 
 	virtual void PostInitializeComponents() override;
 	virtual void Tick(float DeltaSeconds) override;
+	virtual void OnTick_HandleCVars(const float &DeltaSeconds) override;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Projectile")
 	FCsProjectileCache Cache;

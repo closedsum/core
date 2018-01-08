@@ -22,7 +22,7 @@ class CSCORE_API ACsPooledActor : public AActor
 	FBindableDynEvent_CsPooledActor_Override_OnTick Override_OnTick_ScriptEvent;
 
 	virtual void OnTick(const float &DeltaSeconds);
-	virtual void OnTick_CheckCVars(const float &DeltaSeconds);
+	virtual void OnTick_HandleCVars(const float &DeltaSeconds);
 
 	UPROPERTY(BlueprintReadWrite, Category = "Pool")
 	int32 PoolIndex;

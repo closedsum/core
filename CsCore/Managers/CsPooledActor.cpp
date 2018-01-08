@@ -29,7 +29,7 @@ void ACsPooledActor::OutsideWorldBounds()
 
 void ACsPooledActor::OnTick(const float &DeltaSeconds){}
 
-void ACsPooledActor::OnTick_CheckCVars(const float &DeltaSeconds)
+void ACsPooledActor::OnTick_HandleCVars(const float &DeltaSeconds)
 {
 	if (CsCVarDrawPooledActorRootLocation->GetInt() == CS_CVAR_DRAW)
 	{

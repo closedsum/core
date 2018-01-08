@@ -93,8 +93,6 @@ void ACsInteractiveActor::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 }
 
-void ACsInteractiveActor::OnTick_CheckCVars(const float &DeltaSeconds){}
-
 void ACsInteractiveActor::Init(const int32 &Index, const TCsInteractiveType &InType)
 {
 	PoolIndex   = Index;

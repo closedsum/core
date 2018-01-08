@@ -90,6 +90,23 @@ void ACsProjectile::PostInitializeComponents()
 void ACsProjectile::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	OnTick_HandleCVars(DeltaSeconds);
+}
+
+void ACsProjectile::OnTick_HandleCVars(const float &DeltaSeconds)
+{
+	if (CsCVarDrawProjectileCollision->GetInt() == CS_CVAR_DRAW)
+	{
+		if (Cache.Relevance != ECsProjectileRelevance::Fake)
+		{
+
+			const FVector Location = GetActorLocation();
+			const float Radius	   = CollisionComponent->GetScaledSphereRadius();
+
+			DrawDebugSphere(GetWorld(), Location, Radius, 16, FColor::Green, false, DeltaSeconds + 0.005f, 0, 0.25f);
+		}
+	}
 }
 
 void ACsProjectile::Init(const int32 &Index)
@@ -268,6 +285,7 @@ void ACsProjectile::Allocate_Internal()
 	TeleportTo(Cache.Location, Cache.Rotation, false, true);
 
 	const float DrawDistanceSq = Data_Projectile->GetDrawDistanceSq(ViewType);
+	Cache.DrawDistanceSq	   = DrawDistanceSq;
 
 	if (DrawDistanceSq > 0)
 	{
@@ -327,7 +345,7 @@ void ACsProjectile::DeAllocate()
 
 	if (ACsProjectile* Projectile = GetFakeProjectile())
 		Projectile->DeAllocate();
-	Cache.Reset();
+	Cache.DeAllocate();
 }
 
 ACsProjectile* ACsProjectile::GetFakeProjectile()

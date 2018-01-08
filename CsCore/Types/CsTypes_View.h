@@ -144,11 +144,17 @@ struct FCsFpsDrawDistance
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Draw Distance", meta = (ClampMin = "0", UIMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Draw Distance", meta = (ClampMin = "0", UIMin = "0"))
 	float Distance1P;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Draw Distance", meta = (ClampMin = "0", UIMin = "0"))
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Draw Distance")
+	float Distance1PSq;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Draw Distance", meta = (ClampMin = "0", UIMin = "0"))
 	float Distance3P;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Draw Distance")
+	float Distance3PSq;
 
 	FCsFpsDrawDistance()
 	{
@@ -157,14 +163,16 @@ struct FCsFpsDrawDistance
 
 	FCsFpsDrawDistance& operator=(const FCsFpsDrawDistance& B)
 	{
-		Distance1P = B.Distance1P;
-		Distance3P = B.Distance3P;
+		Distance1P   = B.Distance1P;
+		Distance1PSq = B.Distance1PSq;
+		Distance3P   = B.Distance3P;
+		Distance3PSq = B.Distance3PSq;
 		return *this;
 	}
 
 	bool operator==(const FCsFpsDrawDistance& B) const
 	{
-		return Distance1P == B.Distance1P && Distance3P == B.Distance3P;
+		return Distance1P == B.Distance1P && Distance1PSq == B.Distance1PSq && Distance3P == B.Distance3P && Distance3PSq == B.Distance3PSq;
 	}
 
 	bool operator!=(const FCsFpsDrawDistance& B) const
@@ -184,9 +192,9 @@ struct FCsFpsDrawDistance
 	float GetSquared(const TCsViewType &ViewType) const
 	{
 		if (ViewType == ECsViewType::FirstPerson || ViewType == ECsViewType::VR)
-			return Distance1P * Distance1P;
+			return Distance1PSq;
 		if (ViewType == ECsViewType::ThirdPerson)
-			return Distance3P * Distance3P;
+			return Distance3PSq;
 		return 0.0f;
 	}
 
@@ -197,8 +205,10 @@ struct FCsFpsDrawDistance
 
 	void Reset()
 	{
-		Distance1P = 3000.0f;
-		Distance3P = 3000.0f;
+		Distance1P   = 3000.0f;
+		Distance1PSq = Distance1P * Distance1P;
+		Distance3P   = 3000.0f;
+		Distance3PSq = Distance3P * Distance3P;
 	}
 };
 

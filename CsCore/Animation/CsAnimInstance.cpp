@@ -13,6 +13,8 @@
 UCsAnimInstance::UCsAnimInstance(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	DoSetupInGameSimulationHandle.Set(&DoSetupInGameSimulation);
+
 	GlobalPlayRate = 1.0f;
 }
 
@@ -64,13 +66,18 @@ void UCsAnimInstance::SetupInGameSimulation()
 
 void UCsAnimInstance::OnTick_HandleSetupInGameSimulation()
 {
-	if (DoSetupInGameSimulation && !Last_DoSetupInGameSimulation)
+	if (DoSetupInGameSimulation)
 	{
-		SetupInGameSimulation();
+		DoSetupInGameSimulationHandle.UpdateIsDirty();
 
-		DoSetupInGameSimulation = false;
+		if (DoSetupInGameSimulationHandle.HasChanged())
+		{
+			SetupInGameSimulation();
+	
+			DoSetupInGameSimulationHandle.Set(false);
+			DoSetupInGameSimulationHandle.Clear();
+		}
 	}
-	Last_DoSetupInGameSimulation = DoSetupInGameSimulation;
 }
 
 void UCsAnimInstance::OnTick_HandleEditorIcons()

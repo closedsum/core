@@ -104,6 +104,8 @@ extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawProjectileImpactNormalLe
 extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawProjectileImpactNormalThickness;
 extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawProjectileImpactNormalDuration;
 
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawProjectileCollision;
+
 #pragma endregion Projectile
 
 // Player

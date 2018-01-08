@@ -37,7 +37,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "0 Setup")
 	bool DoSetupInGameSimulation;
 
-	bool Last_DoSetupInGameSimulation;
+	TCsBool_Ref DoSetupInGameSimulationHandle;
 
 	/** Show Emitter Editor Icons */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "0 Setup")

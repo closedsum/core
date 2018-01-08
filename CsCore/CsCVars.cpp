@@ -242,6 +242,13 @@ TAutoConsoleVariable<float> CsCVarDrawProjectileImpactNormalDuration(
 	ECVF_SetByConsole
 );
 
+TAutoConsoleVariable<int32> CsCVarDrawProjectileCollision(
+	TEXT("draw.projectile.collision"),
+	0,
+	TEXT("Draw the Collision for a Projectile."),
+	ECVF_SetByConsole
+);
+
 #pragma endregion Projectile
 
 // Player

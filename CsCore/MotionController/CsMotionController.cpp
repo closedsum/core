@@ -95,7 +95,7 @@ class ACsMotionController* ACsMotionController::GetOtherHand()
 
 void ACsMotionController::OnTick(const float &DeltaSeconds)
 {
-	OnTick_CheckCVars(DeltaSeconds);
+	OnTick_HandleCVars(DeltaSeconds);
 
 	if (State == ECsInteractiveState::Release)
 		State = ECsInteractiveState::None;
@@ -105,7 +105,7 @@ void ACsMotionController::OnTick(const float &DeltaSeconds)
 	OnTick_Handle_FirstHoldAndHold(DeltaSeconds);
 }
 
-void ACsMotionController::OnTick_CheckCVars(const float &DeltaSeconds)
+void ACsMotionController::OnTick_HandleCVars(const float &DeltaSeconds)
 {
 	if (CsCVarDrawMotionControllerMaxTouchSenseRange->GetInt() == CS_CVAR_DRAW)
 	{

@@ -68,4 +68,4 @@ void ACsAIPawn::DeAllocate()
 	SetActorTickEnabled(false);
 }
 
-void ACsAIPawn::OnTick_CheckCVars(const float &DeltaSeconds){}
+void ACsAIPawn::OnTick_HandleCVars(const float &DeltaSeconds){}

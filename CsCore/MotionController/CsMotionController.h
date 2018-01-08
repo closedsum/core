@@ -187,7 +187,7 @@ class CSCORE_API ACsMotionController : public AActor
 	class ACsMotionController* GetOtherHand();
 
 	virtual void OnTick(const float &DeltaSeconds);
-	virtual void OnTick_CheckCVars(const float &DeltaSeconds);
+	virtual void OnTick_HandleCVars(const float &DeltaSeconds);
 	virtual void OnTick_Check_FirstTouch(const float &DeltaSeconds);
 	virtual void OnTick_Handle_FirstHoldAndHold(const float &DeltaSeconds);
 

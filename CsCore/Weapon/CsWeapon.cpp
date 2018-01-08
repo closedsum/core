@@ -1272,12 +1272,12 @@ float ACsWeapon::GetMovingSpreadBonus(const TCsWeaponFireMode &FireMode) { retur
 
 #pragma endregion Spread
 
-FVector ACsWeapon::GetFireWeaponStartLocation()
+FVector ACsWeapon::GetFireWeaponStartLocation(const TCsWeaponFireMode &FireMode)
 {
 	return FVector::ZeroVector;
 }
 
-FVector ACsWeapon::GetFireWeaponStartDirection()
+FVector ACsWeapon::GetFireWeaponStartDirection(const TCsWeaponFireMode &FireMode)
 {
 	return FVector::ZeroVector;
 }
@@ -1296,13 +1296,13 @@ FCsProjectileFireCache* ACsWeapon::AllocateProjectileFireCache(const TCsWeaponFi
 		{
 			Cache->IsAllocated = true;
 
-			Cache->Time = GetWorld()->GetTimeSeconds();
+			Cache->Time		= GetWorld()->GetTimeSeconds();
 			Cache->RealTime = GetWorld()->GetRealTimeSeconds();
-			Cache->Frame = 0;
+			Cache->Frame	= UCsCommon::GetCurrentFrame(GetWorld());
 
-			Cache->Location		 = GetFireWeaponStartLocation();
-			Cache->Direction	 = GetFireWeaponStartDirection();
-			Cache->ChargePercent = GetCurrentChargeFireHeldPercent((TCsWeaponFireMode)(uint8)FireMode);
+			Cache->Location		 = GetFireWeaponStartLocation(FireMode);
+			Cache->Direction	 = GetFireWeaponStartDirection(FireMode);
+			Cache->ChargePercent = GetCurrentChargeFireHeldPercent(FireMode);
 
 			/*
 			ACsGameState* GameState		   = GetWorld()->GetGameState<ACsGameState>();
@@ -1539,16 +1539,16 @@ void ACsWeapon::FireProjectile(const TCsWeaponFireMode &FireMode, FCsProjectileF
 	const bool UseFakeProjectile = Data_Weapon->UseFakeProjectile(FireMode);
 
 	// Real
-	Cache->Location = RealStart;
-	Cache->Direction = RealDir;
+	Cache->Location				  = RealStart;
+	Cache->Direction			  = RealDir;
 	ACsProjectile* RealProjectile = Manager_Projectile->Fire(UseFakeProjectile ? ECsProjectileRelevance::RealInvisible : ECsProjectileRelevance::RealVisible, Data_Projectile, Cache, GetMyOwner(), this);
 	// Fake
 	if (UseFakeProjectile)
 	{
 		FCsProjectileFireCache* FakeCache = AllocateProjectileFireCache(FireMode);
-		FakeCache->Location = FakeStart;
-		FakeCache->Direction = FakeDir;
-		ACsProjectile* FakeProjectile = Manager_Projectile->Fire(ECsProjectileRelevance::Fake, Data_Projectile, FakeCache, GetMyOwner(), this);
+		FakeCache->Location				  = FakeStart;
+		FakeCache->Direction			  = FakeDir;
+		ACsProjectile* FakeProjectile	  = Manager_Projectile->Fire(ECsProjectileRelevance::Fake, Data_Projectile, FakeCache, GetMyOwner(), this);
 
 		RealProjectile->FakeProjectile = FakeProjectile;
 		FakeCache->Reset();

@@ -161,7 +161,6 @@ class CSCORE_API ACsInteractiveActor : public ACsPooledActor
 
 	virtual void PostInitializeComponents() override;
 	virtual void Tick(float DeltaSeconds) override;
-	virtual void OnTick_CheckCVars(const float &DeltaSeconds) override;
 
 protected:
 	bool UseSkeletalMesh;

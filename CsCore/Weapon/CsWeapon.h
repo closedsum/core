@@ -750,10 +750,8 @@ public:
 
 	FCsWeapon_TArrayRef_bool LoopFireSound;
 
-	UFUNCTION(BlueprintCallable, Category = "Firing")
-	virtual FVector GetFireWeaponStartLocation();
-	UFUNCTION(BlueprintCallable, Category = "Firing")
-	virtual FVector GetFireWeaponStartDirection();
+	virtual FVector GetFireWeaponStartLocation(const TCsWeaponFireMode &FireMode);
+	virtual FVector GetFireWeaponStartDirection(const TCsWeaponFireMode &FireMode);
 
 	struct FCsProjectileFireCache ProjectileFireCaches[CS_PROJECTILE_FIRE_CACHE_POOL_SIZE];
 

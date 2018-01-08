@@ -43,18 +43,20 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "0 Setup")
 	bool ShowEmitterEditorIcons;
 
-	bool Last_ShowEmitterEditorIcons;
+	TCsBool_Ref ShowEmitterEditorIconsHandle;
 
 	/** Show Sound Editor Icons */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "0 Setup")
 	bool ShowSoundEditorIcons;
 
-	bool Last_ShowSoundEditorIcons;
+	TCsBool_Ref ShowSoundEditorIconsHandle;
 
 	virtual void OnTick_HandleEditorIcons();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "0 Setup")
 	float GlobalPlayRate;
+
+	TCsFloat_Ref GlobalPlayRateHandle;
 
 	float Last_GlobalPlayRate;
 

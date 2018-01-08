@@ -14,8 +14,12 @@ UCsAnimInstance::UCsAnimInstance(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	DoSetupInGameSimulationHandle.Set(&DoSetupInGameSimulation);
+	ShowEmitterEditorIconsHandle.Set(&ShowEmitterEditorIcons);
+	ShowSoundEditorIconsHandle.Set(&ShowSoundEditorIcons);
 
 	GlobalPlayRate = 1.0f;
+
+	GlobalPlayRateHandle.Set(&GlobalPlayRate);
 }
 
 void UCsAnimInstance::BeginDestroy()
@@ -84,23 +88,28 @@ void UCsAnimInstance::OnTick_HandleEditorIcons()
 {
 #if WITH_EDITOR
 	
-	if (ShowEmitterEditorIcons != Last_ShowEmitterEditorIcons)
+	ShowEmitterEditorIconsHandle.UpdateIsDirty();
+
+	if (ShowEmitterEditorIconsHandle.HasChanged())
 	{
 		if (ACsManager_FX* MyManager_FX = GetManager_FX())
 			MyManager_FX->ToggleEmitterEditorIcons(ShowEmitterEditorIcons);
+		ShowEmitterEditorIconsHandle.Clear();
 	}
-	Last_ShowEmitterEditorIcons = ShowEmitterEditorIcons;
 #endif // #if WITH_EDITOR
 }
 
 void UCsAnimInstance::OnTick_HandleGlobalPlayRate()
 {
-	if (GlobalPlayRate != Last_GlobalPlayRate)
+	GlobalPlayRateHandle.UpdateIsDirty();
+
+	if (GlobalPlayRateHandle.HasChanged())
 	{
 		USkeletalMeshComponent* Mesh = GetSkeletalMeshComponent();
 		Mesh->GlobalAnimRateScale    = GlobalPlayRate;
+
+		GlobalPlayRateHandle.Clear();
 	}
-	Last_GlobalPlayRate = GlobalPlayRate;
 }
 
 #if WITH_EDITOR

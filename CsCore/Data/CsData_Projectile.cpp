@@ -25,6 +25,7 @@ TCsProjectileType ACsData_Projectile::GetBaseProjectileType() { return Projectil
 #pragma region
 
 float ACsData_Projectile::GetLifeTime() { return 0.0f; }
+float ACsData_Projectile::GetMaxRange() { return 0.0f; }
 
 #pragma endregion Stats
 

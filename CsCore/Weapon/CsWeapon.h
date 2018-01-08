@@ -353,7 +353,7 @@ struct FCsWeapon_TArrayRef_float : public TCsIntegralType_TArrayRefValue_float<T
 
 #define CS_WEAPON_DATA_VALUE 0
 #define CS_WEAPON_CUSTOM_VALUE -1
-#define CS_PROJECTILE_FIRE_CACHE_POOL_SIZE 16
+#define CS_PROJECTILE_FIRE_CACHE_POOL_SIZE 64
 
 UCLASS()
 class CSCORE_API ACsWeapon : public AActor
@@ -787,6 +787,8 @@ public:
 	virtual int32 GetObstaclePenetractions(const TCsWeaponFireMode &FireMode);
 	FCsWeapon_TArrayRef_int32 PawnPenetrations;
 	virtual int32 GetPawnPenetrations(const TCsWeaponFireMode &FireMode);
+
+	virtual void GetFireHitscanIgnoreActors(TArray<AActor*> &OutActors);
 
 	void FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjectileFireCache* Cache);
 

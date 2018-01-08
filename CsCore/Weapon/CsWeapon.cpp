@@ -10,6 +10,9 @@
 
 #include "Animation/CsAnimInstance.h"
 
+// Data
+#include "Data/CsData_ProjectileImpact.h"
+
 // Managers
 #include "Managers/FX/CsManager_FX.h"
 #include "Managers/Projectile/CsManager_Projectile.h"
@@ -256,7 +259,7 @@ bool ACsWeapon::GetMemberValue_bool(const TEnumAsByte<ECsWeaponCacheMultiValueMe
 		if (Member == ECsWeaponCacheMultiValueMember::DoScaleFireAnim) { return DoScaleFireAnim.Get(Index); }
 		if (Member == ECsWeaponCacheMultiValueMember::LoopFireSound) { return LoopFireSound.Get(Index); }
 		// Hitscan
-		if (Member == ECsWeaponCacheMultiValueMember::IsHitscan) { return LoopFireAnim.Get(Index); }
+		if (Member == ECsWeaponCacheMultiValueMember::IsHitscan) { return IsHitscan.Get(Index); }
 		if (Member == ECsWeaponCacheMultiValueMember::DoesHitscanUseRadius) { return DoesHitscanUseRadius.Get(Index); }
 		if (Member == ECsWeaponCacheMultiValueMember::DoesHitscanSimulateProjectileDuration) { return DoesHitscanSimulateProjectileDuration.Get(Index); }
 	}
@@ -1286,7 +1289,6 @@ FCsProjectileFireCache* ACsWeapon::AllocateProjectileFireCache(const TCsWeaponFi
 {
 	const uint8 Count = CS_PROJECTILE_FIRE_CACHE_POOL_SIZE;
 	uint8 PoolIndex	  = 0;
-	uint8 OldestIndex = 0;
 
 	for (uint8 I = 0; I < Count; ++I)
 	{
@@ -1320,16 +1322,11 @@ FCsProjectileFireCache* ACsWeapon::AllocateProjectileFireCache(const TCsWeaponFi
 			*/
 			return Cache;
 		}
-
-		if (ProjectileFireCaches[OldestIndex].Time < Cache->Time)
-			OldestIndex = ProjectileFireCachePoolIndex;
 		ProjectileFireCachePoolIndex = (ProjectileFireCachePoolIndex + I) % Count;
 	}
 
 	UE_LOG(LogCs, Warning, TEXT("ACsWeapon::AllocateProjectileFireCache: Warning. Pool is exhausted. Using Oldest Active Projectile Fire Cache."));
-
-	ProjectileFireCaches[OldestIndex].IsAllocated = true;
-	return &ProjectileFireCaches[OldestIndex];
+	return nullptr;
 }
 
 void ACsWeapon::FireWeapon(const TCsWeaponFireMode &FireMode)
@@ -1425,13 +1422,12 @@ PT_THREAD(ACsWeapon::FireWeapon_Internal(struct FCsRoutine* r))
 #endif // #if WITH_EDITOR
 			{
 				FCsProjectileFireCache* Cache = mw->AllocateProjectileFireCache(FireMode);
-				/*
+				
 				if (mw->IsHitscan.Get(FireMode))
 					mw->FireHitscan(FireMode, Cache);
 				else
 					mw->FireProjectile(FireMode, Cache);
-				*/
-				mw->FireProjectile(FireMode, Cache);
+				Cache->Reset();
 			}
 
 			mw->PlayMuzzleFlash(FireMode);
@@ -1569,10 +1565,18 @@ void ACsWeapon::FireProjectile_Script(const uint8 &FireMode, FCsProjectileFireCa
 int32 ACsWeapon::GetObstaclePenetractions(const TCsWeaponFireMode &FireMode) { return ObstaclePenetrations.Get(FireMode); }
 int32 ACsWeapon::GetPawnPenetrations(const TCsWeaponFireMode &FireMode) { return PawnPenetrations.Get(FireMode); }
 
+void ACsWeapon::GetFireHitscanIgnoreActors(TArray<AActor*> &OutActors)
+{ 
+	OutActors.Add(this);
+
+	if (AActor* Actor = Cast<AActor>(GetMyOwner()))
+		OutActors.Add(Actor);
+}
+
 void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjectileFireCache* Cache)
 {
-	ACsPawn* Pawn					 = GetMyPawn();
-	ACsPlayerState* MyPlayerState	 = Cast<ACsPlayerState>(Pawn->PlayerState);
+	//ACsPawn* Pawn					 = GetMyPawn();
+	//ACsPlayerState* MyPlayerState	 = Cast<ACsPlayerState>(Pawn->PlayerState);
 	ACsData_Weapon* Data_Weapon		 = GetMyData_Weapon();
 	ACsData_Projectile* Data_Projectile = Data_Weapon->GetData_Projectile(FireMode, Cache->ChargePercent > 0.0f);
 
@@ -1580,29 +1584,36 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 
 	const FVector Start		  = Cache->Location;
 	const FVector Dir		  = Cache->Direction;
-	// TODO: Get the range from the weapon / projectile
-	const float MaxTraceRange = 30000.0f;
+	const float MaxTraceRange = Data_Projectile->GetMaxRange();
 	const FVector End		  = Start + MaxTraceRange * Dir;
 
 	FCollisionQueryParams CollisionParams   = FCollisionQueryParams();
 	CollisionParams.bReturnPhysicalMaterial = true;
-	CollisionParams.AddIgnoredActor(GetMyPawn());
+	
+	TArray<AActor*> IgnoredActors;
+	GetFireHitscanIgnoreActors(IgnoredActors);
+	CollisionParams.AddIgnoredActors(IgnoredActors);
 
-	// See which characters we can hit and which we should ignore
+	// See which Pawns we can hit and which we should ignore
 	TArray<ACsPawn*> HittablePawns;
 	
-	int32 RecordedPawnPenetrations   = 0;
+	const bool AllowInfinitePawnPenetrations	 = PawnPenetrations.Get(FireMode) < 0;
+	const bool AllowInfiniteObstaclePenetrations = ObstaclePenetrations.Get(FireMode) < 0;
+
+	int32 RecordedPawnPenetrations     = 0;
 	int32 RecordedObstaclePenetrations = 0;
 	bool HitFound					   = true;
 
+	FHitResult HitResult;
+
 	// Hit trace/ Hit simulation
-	while ((PawnPenetrations.Get(FireMode) < 0 || RecordedPawnPenetrations <= PawnPenetrations.Get(FireMode)) &&
-		   (ObstaclePenetrations.Get(FireMode) < 0 || RecordedObstaclePenetrations <= ObstaclePenetrations.Get(FireMode)) &&
+	while ((AllowInfinitePawnPenetrations || RecordedPawnPenetrations <= PawnPenetrations.Get(FireMode)) &&
+		   (AllowInfiniteObstaclePenetrations || RecordedObstaclePenetrations <= ObstaclePenetrations.Get(FireMode)) &&
 		    HitFound)
 	{
 		HitFound = false;
 
-		FHitResult HitResult;
+		HitResult.Reset(0.0f, false);
 
 		// Hitscan with cylinder
 		if (DoesHitscanUseRadius.Get(FireMode))
@@ -1687,7 +1698,69 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 			else
 				RecordedObstaclePenetrations++;
 
-			
+			// Pawn
+			if (HitPawn)
+			{
+				/*
+				if (Pawn->Role == ROLE_Authority)
+				{
+					float Damage = Data_Projectile->GetDamage();
+
+					if (!HitPawn)
+						continue;
+
+					// Location based Damage
+					const uint8 Count = Data_Weapon->GetLocationDamageModifierCount(FireMode);
+
+					for (uint8 I = 0; I < Count; ++I)
+					{
+						const FName Bone = Data_Weapon->GetLocationDamageModifierBone(FireMode, I);
+
+						if (HitResult.BoneName == Bone)
+						{
+							Damage *= Data_Weapon->GetLocationDamageModifierMultiplier(FireMode, I);
+							break;
+						}
+					}
+
+					// Damage Falloff
+					const float DamageFalloffRate = Data_Projectile->GetDamageFalloffRate();
+					const float DamageFalloffFrequency = Data_Projectile->GetDamageFalloffFrequency();
+					const float DamageFalloffMinimum = Data_Projectile->GetDamageFalloffMinimum();
+
+					float Falloff = 0.f;
+
+					if (DamageFalloffRate > 0.f &&
+						DamageFalloffFrequency > 0.f)
+					{
+						Falloff = FMath::Max(DamageFalloffMinimum, 1.f - (DamageFalloffRate * FMath::FloorToFloat(HitResult.Distance / DamageFalloffFrequency)));
+					}
+					else
+					{
+						Falloff = 1.f;
+					}
+
+					Damage *= Falloff;
+
+					//PawnToHit->ShooterTakeDamage(Damage, FShooterDamageEvent(EDamageType::Normal), MyPawn->GetController(), MyPawn);
+				}
+				*/
+			}
+			// World
+			else
+			{
+				// Play Impact FX / Sound
+				UPhysicalMaterial* PhysicalMaterial = HitResult.PhysMaterial.IsValid() ? HitResult.PhysMaterial.Get() : nullptr;
+
+				if (PhysicalMaterial)
+				{
+					// FX
+					Data_Projectile->GetData_Impact()->PlayImpactFX(GetWorld(), PhysicalMaterial->SurfaceType, nullptr, HitResult.Location, HitResult.ImpactNormal);
+					// Sound
+					Data_Projectile->GetData_Impact()->PlayImpactSound(GetWorld(), PhysicalMaterial->SurfaceType, nullptr, HitResult.Location);
+				}
+			}
+
 			//float TimeUntilHit = HitResult.Distance / Data_Projectile->InitialSpeed;
 
 			//if (DoesHitscanSimulateProjectileDuration.Get(FireMode))
@@ -1716,49 +1789,6 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 			//}
 			
 			//FakeProjectile->PlayImpactFX(CurHit.Location, CurHit);
-
-			if (Pawn->Role == ROLE_Authority)
-			{
-				float Damage = Data_Projectile->GetDamage();
-
-				if (!HitPawn)
-					continue;
-				
-				// Location based Damage
-				const uint8 Count = Data_Weapon->GetLocationDamageModifierCount(FireMode);
-
-				for (uint8 I = 0; I < Count; ++I)
-				{
-					const FName Bone = Data_Weapon->GetLocationDamageModifierBone(FireMode, I);
-
-					if (HitResult.BoneName == Bone)
-					{
-						Damage *= Data_Weapon->GetLocationDamageModifierMultiplier(FireMode, I);
-						break;
-					}
-				}
-
-				// Damage Falloff
-				const float DamageFalloffRate		= Data_Projectile->GetDamageFalloffRate();
-				const float DamageFalloffFrequency  = Data_Projectile->GetDamageFalloffFrequency();
-				const float DamageFalloffMinimum	= Data_Projectile->GetDamageFalloffMinimum();
-
-				float Falloff = 0.f;
-
-				if (DamageFalloffRate > 0.f && 
-					DamageFalloffFrequency > 0.f)
-				{
-					Falloff = FMath::Max(DamageFalloffMinimum, 1.f - (DamageFalloffRate * FMath::FloorToFloat(HitResult.Distance / DamageFalloffFrequency)));
-				}
-				else
-				{
-					Falloff = 1.f;
-				}
-
-				Damage *= Falloff;
-
-				//PawnToHit->ShooterTakeDamage(Damage, FShooterDamageEvent(EDamageType::Normal), MyPawn->GetController(), MyPawn);
-			}
 		}
 	}
 }

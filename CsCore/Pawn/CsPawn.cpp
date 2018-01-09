@@ -17,6 +17,29 @@ void ACsPawn::RecordView() {}
 
 #pragma endregion View
 
+// Body / Root
+#pragma region
+
+void ACsPawn::RecordRoot()
+{
+	CurrentRootRotation = GetActorRotation();
+	CurrentRootLocation = GetActorLocation();
+	CurrentRootDir		= CurrentRootRotation.Vector();
+	CurrentRootDirXY	= FRotator(0.0f, CurrentRootRotation.Yaw, 0.0f).Vector();
+
+	FRotator Rotation = CurrentRootRotation;
+
+	FRotationMatrix Matrix = FRotationMatrix(Rotation);
+	CurrentRootRight = Matrix.GetScaledAxis(EAxis::Y);
+
+	Rotation = FRotator(0.0f, CurrentRootRotation.Yaw, 0.0f);
+
+	Matrix = FRotationMatrix(Rotation);
+	CurrentRootRightXY = Matrix.GetScaledAxis(EAxis::Y);
+}
+
+#pragma endregion Body / Root
+
 // Movement
 #pragma region
 

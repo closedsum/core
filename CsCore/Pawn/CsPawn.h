@@ -30,6 +30,26 @@ class CSCORE_API ACsPawn : public ACharacter
 
 #pragma endregion View
 
+// Body / Root
+#pragma region
+
+	UPROPERTY(BlueprintReadOnly, Category = "View")
+	FRotator CurrentRootRotation;
+	UPROPERTY(BlueprintReadOnly, Category = "View")
+	FVector CurrentRootLocation;
+	UPROPERTY(BlueprintReadOnly, Category = "View")
+	FVector CurrentRootDir;
+	UPROPERTY(BlueprintReadOnly, Category = "View")
+	FVector CurrentRootDirXY;
+	UPROPERTY(BlueprintReadOnly, Category = "View")
+	FVector CurrentRootRight;
+	UPROPERTY(BlueprintReadOnly, Category = "View")
+	FVector CurrentRootRightXY;
+
+	virtual void RecordRoot();
+
+#pragma endregion Body / Root
+
 // Movement
 #pragma region
 

@@ -21,6 +21,8 @@ namespace ECsCachedString
 
 #pragma endregion String
 
+#define CS_INVALID_ENUM_TO_STRING ECsCachedString::Str::INVALID
+
 // Enum Union
 #pragma region
 

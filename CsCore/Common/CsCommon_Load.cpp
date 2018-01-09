@@ -206,6 +206,13 @@ void UCsCommon_Load::WriteMemberArrayStructPropertyToJson_Transform(TSharedRef<T
 	InJsonWriter->WriteArrayEnd();
 }
 
+bool UCsCommon_Load::WriteStructToJson_Internal_Helper(TCsWriteStructToJson_Internal Internal, UProperty* Property, TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, void* InStruct, UScriptStruct* const &InScriptStruct)
+{
+	if (Internal)
+		return (*Internal)(Property, InJsonWriter, InStruct, InScriptStruct);
+	return false;
+}
+
 void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, void* InStruct, UScriptStruct* const &InScriptStruct, TCsWriteStructToJson_Internal Internal /*=nullptr*/)
 {
 	for (TFieldIterator<UProperty> It(InScriptStruct); It; ++It)
@@ -249,7 +256,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// UMaterialInstanceConstant
 			if (AssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
 			{
-				if (AssetObjectProperty->ArrayDim == 1)
+				if (AssetObjectProperty->ArrayDim == CS_SINGLETON)
 				{ WriteAssetObjectPropertyToJson<UMaterialInstanceConstant>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
 				if (AssetObjectProperty->ArrayDim == ECS_INTERACTIVE_STATE_MAX)
 				{ WriteFixedArrayAssetObjectPropertyToJson_EnumSize<UMaterialInstanceConstant, ECsInteractiveState::Type, ECS_INTERACTIVE_STATE_MAX>(InJsonWriter, AssetObjectProperty, InStruct, MemberName, &ECsInteractiveState::ToString); continue; }
@@ -294,7 +301,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// UBlueprint
 			if (AssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
 			{
-				if (AssetObjectProperty->ArrayDim == 1)
+				if (AssetObjectProperty->ArrayDim == CS_SINGLETON)
 				{ WriteAssetObjectPropertyToJson_Blueprint(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
 			}
 
@@ -322,7 +329,17 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			{ WriteMemberStructPropertyToJson_Transform(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsStaticMesh>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			{
+				if (StructProperty->ArrayDim == CS_SINGLETON)
+				{ WriteMemberStructPropertyToJson<FCsStaticMesh>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
+						continue;
+				}
+				continue;
+			}
 			// FCsFpsStaticMesh
 			if (StructProperty->Struct == FCsFpsStaticMesh::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsFpsStaticMesh>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
@@ -341,7 +358,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsTArrayMaterialInstanceConstant
 			if (StructProperty->Struct == FCsTArrayMaterialInstanceConstant::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteMemberStructPropertyToJson<FCsTArrayMaterialInstanceConstant>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 
 				if (Internal)
@@ -369,7 +386,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsSoundElement
 			if (StructProperty->Struct == FCsSoundElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteMemberStructPropertyToJson<FCsSoundElement>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 
 				if (Internal)
@@ -382,7 +399,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsFpsSoundElement
 			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteMemberStructPropertyToJson<FCsFpsSoundElement>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 
 				if (Internal)
@@ -395,7 +412,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsFxElement
 			if (StructProperty->Struct == FCsFxElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteMemberStructPropertyToJson<FCsFxElement>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 
 				if (Internal)
@@ -408,7 +425,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsFpsFxElement
 			if (StructProperty->Struct == FCsFpsFxElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteMemberStructPropertyToJson<FCsFpsFxElement>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 
 				if (Internal)
@@ -427,7 +444,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsAnimMontage
 			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteMemberStructPropertyToJson<FCsAnimMontage>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 
 				if (Internal)
@@ -440,7 +457,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsFpsAnimMontage
 			if (StructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteMemberStructPropertyToJson<FCsFpsAnimMontage>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 
 				if (Internal)
@@ -453,7 +470,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsTArrayAnimMontage
 			if (StructProperty->Struct == FCsTArrayAnimMontage::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteMemberStructPropertyToJson<FCsTArrayAnimMontage>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 
 				if (Internal)
@@ -493,7 +510,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsInputActionMappings
 			if (StructProperty->Struct == FCsInputActionMappings::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteMemberStructPropertyToJson<FCsInputActionMappings>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 
 				if (StructProperty->ArrayDim == ECS_INPUT_DEVICE_MAX)
@@ -733,7 +750,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 		// FName
 		if (UNameProperty* NameProperty = Cast<UNameProperty>(*It))
 		{
-			if (NameProperty->ArrayDim == 1)
+			if (NameProperty->ArrayDim == CS_SINGLETON)
 			{
 				if (FName* Member = NameProperty->ContainerPtrToValuePtr<FName>(InStruct))
 				{ InJsonWriter->WriteValue(MemberName, (*Member).ToString()); continue; }
@@ -821,7 +838,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// UMaterialInstanceConstant
 			if (AssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
 			{
-				if (AssetObjectProperty->ArrayDim == 1)
+				if (AssetObjectProperty->ArrayDim == CS_SINGLETON)
 				{ WriteAssetObjectPropertyToJson<UMaterialInstanceConstant>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
 				if (AssetObjectProperty->ArrayDim == ECS_INTERACTIVE_STATE_MAX)
 				{ WriteFixedArrayAssetObjectPropertyToJson_EnumSize<UMaterialInstanceConstant, ECsInteractiveState::Type, ECS_INTERACTIVE_STATE_MAX>(InJsonWriter, AssetObjectProperty, InStruct, MemberName, &ECsInteractiveState::ToString); continue; }
@@ -866,7 +883,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// UBlueprint
 			if (AssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
 			{
-				if (AssetObjectProperty->ArrayDim == 1)
+				if (AssetObjectProperty->ArrayDim == CS_SINGLETON)
 				{ WriteAssetObjectPropertyToJson_Blueprint(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
 			}
 
@@ -894,7 +911,17 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			{ WriteMemberStructPropertyToJson_Transform(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsStaticMesh>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			{ 
+				if (StructProperty->ArrayDim == CS_SINGLETON)
+				{ WriteMemberStructPropertyToJson<FCsStaticMesh>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
+						continue;
+				}
+				continue;
+			}
 			// FCsFpsStaticMesh
 			if (StructProperty->Struct == FCsFpsStaticMesh::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsFpsStaticMesh>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
@@ -913,7 +940,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsTArrayMaterialInstanceConstant
 			if (StructProperty->Struct == FCsTArrayMaterialInstanceConstant::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteMemberStructPropertyToJson<FCsTArrayMaterialInstanceConstant>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 
 				if (Internal)
@@ -941,7 +968,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsSoundElement
 			if (StructProperty->Struct == FCsSoundElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteMemberStructPropertyToJson<FCsSoundElement>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 
 				if (Internal)
@@ -954,7 +981,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsFpsSoundElement
 			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteMemberStructPropertyToJson<FCsFpsSoundElement>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 
 				if (Internal)
@@ -967,7 +994,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsFxElement
 			if (StructProperty->Struct == FCsFxElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteMemberStructPropertyToJson<FCsFxElement>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 
 				if (Internal)
@@ -980,7 +1007,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsFpsFxElement
 			if (StructProperty->Struct == FCsFpsFxElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteMemberStructPropertyToJson<FCsFpsFxElement>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 
 				if (Internal)
@@ -999,7 +1026,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsAnimMontage
 			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteMemberStructPropertyToJson<FCsAnimMontage>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 
 				if (Internal)
@@ -1012,7 +1039,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsFpsAnimMontage
 			if (StructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteMemberStructPropertyToJson<FCsFpsAnimMontage>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 
 				if (Internal)
@@ -1025,7 +1052,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsTArrayAnimMontage
 			if (StructProperty->Struct == FCsTArrayAnimMontage::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteMemberStructPropertyToJson<FCsTArrayAnimMontage>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 
 				if (Internal)
@@ -1068,7 +1095,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsInputActionMappings
 			if (StructProperty->Struct == FCsInputActionMappings::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteMemberStructPropertyToJson<FCsInputActionMappings>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 
 				if (StructProperty->ArrayDim == ECS_INPUT_DEVICE_MAX)
@@ -1319,7 +1346,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 		// FName
 		if (UNameProperty* NameProperty = Cast<UNameProperty>(*It))
 		{
-			if (NameProperty->ArrayDim == 1)
+			if (NameProperty->ArrayDim == CS_SINGLETON)
 			{
 				if (FName* Member = NameProperty->ContainerPtrToValuePtr<FName>(InStruct))
 				{
@@ -1383,9 +1410,9 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				if ((*Internal)(Property, InJsonWriter, InObject, InClass))
 					continue;
 			}
+			continue;
 		}
 		// TAssetPtr
-		else
 		if (UAssetObjectProperty* AssetObjectProperty = Cast<UAssetObjectProperty>(*It))
 		{
 			// UStaticMesh
@@ -1453,7 +1480,17 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			{ WriteMemberStructPropertyToJson_Transform(InJsonWriter, StructProperty, InObject, MemberName); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsStaticMesh>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+			{
+				if (StructProperty->ArrayDim == CS_SINGLETON)
+				{ WriteMemberStructPropertyToJson<FCsStaticMesh>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, InJsonWriter, InObject, InClass))
+						continue;
+				}
+				continue;
+			}
 			// FCsFpsStaticMesh
 			if (StructProperty->Struct == FCsFpsStaticMesh::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsFpsStaticMesh>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
@@ -1478,10 +1515,17 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsTArrayMaterialInstanceConstant
 			if (StructProperty->Struct == FCsTArrayMaterialInstanceConstant::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteMemberStructPropertyToJson<FCsTArrayMaterialInstanceConstant>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
 				if (StructProperty->ArrayDim == ECS_INTERACTIVE_STATE_MAX)
 				{ WriteMemberFixedArrayStructPropertyToJson_EnumSize<FCsTArrayMaterialInstanceConstant, ECsInteractiveState::Type, ECS_INTERACTIVE_STATE_MAX>(InJsonWriter, StructProperty, InObject, MemberName, &ECsInteractiveState::ToString, nullptr); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, InJsonWriter, InObject, InClass))
+						continue;
+				}
+				continue;
 			}
 			// FCsFpsTArrayMaterialInstanceConstant
 			if (StructProperty->Struct == FCsFpsTArrayMaterialInstanceConstant::StaticStruct())
@@ -1504,7 +1548,7 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsSoundElement
 			if (StructProperty->Struct == FCsSoundElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteMemberStructPropertyToJson<FCsSoundElement>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
 
 				if (Internal)
@@ -1512,11 +1556,12 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 					if ((*Internal)(Property, InJsonWriter, InObject, InClass))
 						continue;
 				}
+				continue;
 			}
 			// FCsFpsSoundElement
 			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteMemberStructPropertyToJson<FCsFpsSoundElement>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
 
 				if (Internal)
@@ -1524,6 +1569,7 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 					if ((*Internal)(Property, InJsonWriter, InObject, InClass))
 						continue;
 				}
+				continue;
 			}
 			// FCsParticleSystem
 			if (StructProperty->Struct == FCsParticleSystem::StaticStruct())
@@ -1531,7 +1577,7 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsFxElement
 			if (StructProperty->Struct == FCsFxElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteMemberStructPropertyToJson<FCsFxElement>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
 
 				if (Internal)
@@ -1543,7 +1589,7 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsFpsFxElement
 			if (StructProperty->Struct == FCsFpsFxElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteMemberStructPropertyToJson<FCsFpsFxElement>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
 
 				if (Internal)
@@ -1551,6 +1597,7 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 					if ((*Internal)(Property, InJsonWriter, InObject, InClass))
 						continue;
 				}
+				continue;
 			}
 			// FCsAnimSequence
 			if (StructProperty->Struct == FCsAnimSequence::StaticStruct())
@@ -1561,19 +1608,33 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsAnimMontage
 			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteMemberStructPropertyToJson<FCsAnimMontage>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, InJsonWriter, InObject, InClass))
+						continue;
+				}
+				continue;
 			}
 			// FCsFpsAnimMontage
 			if (StructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteMemberStructPropertyToJson<FCsFpsAnimMontage>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, InJsonWriter, InObject, InClass))
+						continue;
+				}
+				continue;
 			}
 			// FCsTArrayAnimMontage
 			if (StructProperty->Struct == FCsTArrayAnimMontage::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteMemberStructPropertyToJson<FCsTArrayAnimMontage>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
 			}
 			// FCsBlendSpace
@@ -1600,7 +1661,7 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsCollisionPreset
 			if (StructProperty->Struct == FCsCollisionPreset::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteMemberStructPropertyToJson<FCsCollisionPreset>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
 			}
 			// FCsPhysicsPreset
@@ -1744,7 +1805,7 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// ECsInteractiveCollision
 				if (ByteProperty->Enum->CppType.Contains(TEXT("ECsInteractiveCollision")))
 				{
-					if (ByteProperty->ArrayDim == 1)
+					if (ByteProperty->ArrayDim == CS_SINGLETON)
 					{ WriteMemberBytePropertyToJson<ECsInteractiveCollision::Type>(InJsonWriter, ByteProperty, InObject, MemberName, &ECsInteractiveCollision::ToString); continue; }
 				}
 
@@ -1983,7 +2044,7 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// UMaterialInstanceConstant
 			if (AssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
 			{
-				if (AssetObjectProperty->ArrayDim == 1)
+				if (AssetObjectProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToAssetObjectPropertyFromJson<UMaterialInstanceConstant>(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
 				if (AssetObjectProperty->ArrayDim == ECS_INTERACTIVE_STATE_MAX)
 				{ WriteToFixedArrayAssetObjectPropertyFromJson_EnumSize<UMaterialInstanceConstant, ECsInteractiveState::Type, ECS_INTERACTIVE_STATE_MAX>(JsonObject, AssetObjectProperty, InStruct, MemberName, &ECsInteractiveState::ToString); continue; }
@@ -2050,7 +2111,17 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			{ WriteToMemberStructPropertyFromJson_Primitive<FColor>(JsonObject, StructProperty, InStruct, MemberName, &FColor::InitFromString); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
-			{ WriteToMemberStructPropertyFromJson<FCsStaticMesh>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
+			{ 
+				if (StructProperty->ArrayDim == CS_SINGLETON)
+				{ WriteToMemberStructPropertyFromJson<FCsStaticMesh>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, JsonObject, InStruct, InScriptStruct))
+						continue;
+				}
+				continue;
+			}
 			// FCsFpsStaticMesh
 			if (StructProperty->Struct == FCsFpsStaticMesh::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsFpsStaticMesh>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
@@ -2069,7 +2140,7 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FCsTArrayMaterialInstanceConstant
 			if (StructProperty->Struct == FCsTArrayMaterialInstanceConstant::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToMemberStructPropertyFromJson<FCsTArrayMaterialInstanceConstant>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 
 				if (Internal)
@@ -2097,7 +2168,7 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FCsSoundElement
 			if (StructProperty->Struct == FCsSoundElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToMemberStructPropertyFromJson<FCsSoundElement>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 
 				if (Internal)
@@ -2110,7 +2181,7 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FCsFpsSoundElement
 			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToMemberStructPropertyFromJson<FCsFpsSoundElement>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 
 				if (Internal)
@@ -2123,7 +2194,7 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FCsFxElement
 			if (StructProperty->Struct == FCsFxElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToMemberStructPropertyFromJson<FCsFxElement>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 
 				if (Internal)
@@ -2136,7 +2207,7 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FCsFpsFxElement
 			if (StructProperty->Struct == FCsFpsFxElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToMemberStructPropertyFromJson<FCsFpsFxElement>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 
 				if (Internal)
@@ -2155,7 +2226,7 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FCsAnimMontage
 			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToMemberStructPropertyFromJson<FCsAnimMontage>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 
 				if (Internal)
@@ -2168,7 +2239,7 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FCsFpsAnimMontage
 			if (StructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToMemberStructPropertyFromJson<FCsFpsAnimMontage>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 
 				if (Internal)
@@ -2181,7 +2252,7 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FCsTArrayAnimMontage
 			if (StructProperty->Struct == FCsTArrayAnimMontage::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToMemberStructPropertyFromJson<FCsTArrayAnimMontage>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 
 				if (Internal)
@@ -2221,9 +2292,8 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FCsInputActionMappings
 			if (StructProperty->Struct == FCsInputActionMappings::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToMemberStructPropertyFromJson<FCsInputActionMappings>(JsonObject, StructProperty, InStruct, MemberName); continue; }
-				
 				if (StructProperty->ArrayDim == ECS_INPUT_DEVICE_MAX)
 				{ WriteToMemberFixedArrayStructPropertyFromJson_EnumSize<FCsInputActionMappings, ECsInputDevice::Type, ECS_INPUT_DEVICE_MAX>(JsonObject, StructProperty, InStruct, MemberName, &ECsInputDevice::ToString, nullptr); continue; }
 
@@ -2519,7 +2589,7 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 		// FName
 		if (UNameProperty* NameProperty = Cast<UNameProperty>(*It))
 		{
-			if (NameProperty->ArrayDim == 1)
+			if (NameProperty->ArrayDim == CS_SINGLETON)
 			{
 				if (FName* Member = NameProperty->ContainerPtrToValuePtr<FName>(InStruct))
 				{ *Member = FName(*JsonObject->GetStringField(MemberName)); continue; }
@@ -2597,7 +2667,7 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// UMaterialInstanceConstant
 			if (AssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
 			{
-				if (AssetObjectProperty->ArrayDim == 1)
+				if (AssetObjectProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToAssetObjectPropertyFromJson<UMaterialInstanceConstant>(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
 				if (AssetObjectProperty->ArrayDim == ECS_INTERACTIVE_STATE_MAX)
 				{ WriteToFixedArrayAssetObjectPropertyFromJson_EnumSize<UMaterialInstanceConstant, ECsInteractiveState::Type, ECS_INTERACTIVE_STATE_MAX>(JsonObject, AssetObjectProperty, InStruct, MemberName, &ECsInteractiveState::ToString); continue; }
@@ -2664,7 +2734,17 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			{ WriteToMemberStructPropertyFromJson_Primitive<FColor>(JsonObject, StructProperty, InStruct, MemberName, &FColor::InitFromString); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
-			{ WriteToMemberStructPropertyFromJson<FCsStaticMesh>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
+			{ 
+				if (StructProperty->ArrayDim == CS_SINGLETON)
+				{ WriteToMemberStructPropertyFromJson<FCsStaticMesh>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, JsonObject, InStruct, InScriptStruct))
+						continue;
+				}
+				continue;
+			}
 			// FCsFpsStaticMesh
 			if (StructProperty->Struct == FCsFpsStaticMesh::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsFpsStaticMesh>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
@@ -2683,7 +2763,7 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsTArrayMaterialInstanceConstant
 			if (StructProperty->Struct == FCsTArrayMaterialInstanceConstant::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToMemberStructPropertyFromJson<FCsTArrayMaterialInstanceConstant>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 
 				if (Internal)
@@ -2711,7 +2791,7 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsSoundElement
 			if (StructProperty->Struct == FCsSoundElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToMemberStructPropertyFromJson<FCsSoundElement>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 
 				if (Internal)
@@ -2724,7 +2804,7 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsFpsSoundElement
 			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToMemberStructPropertyFromJson<FCsFpsSoundElement>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 
 				if (Internal)
@@ -2737,7 +2817,7 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsFxElement
 			if (StructProperty->Struct == FCsFxElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToMemberStructPropertyFromJson<FCsFxElement>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 
 				if (Internal)
@@ -2750,7 +2830,7 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsFpsFxElement
 			if (StructProperty->Struct == FCsFpsFxElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToMemberStructPropertyFromJson<FCsFpsFxElement>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 
 				if (Internal)
@@ -2769,7 +2849,7 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsAnimMontage
 			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToMemberStructPropertyFromJson<FCsAnimMontage>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 
 				if (Internal)
@@ -2782,7 +2862,7 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsFpsAnimMontage
 			if (StructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToMemberStructPropertyFromJson<FCsFpsAnimMontage>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 
 				if (Internal)
@@ -2795,7 +2875,7 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsTArrayAnimMontage
 			if (StructProperty->Struct == FCsTArrayAnimMontage::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToMemberStructPropertyFromJson<FCsTArrayAnimMontage>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 
 				if (Internal)
@@ -2838,9 +2918,8 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsInputActionMappings
 			if (StructProperty->Struct == FCsInputActionMappings::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToMemberStructPropertyFromJson<FCsInputActionMappings>(JsonObject, StructProperty, InStruct, MemberName); continue; }
-
 				if (StructProperty->ArrayDim == ECS_INPUT_DEVICE_MAX)
 				{ WriteToMemberFixedArrayStructPropertyFromJson_EnumSize<FCsInputActionMappings, ECsInputDevice::Type, ECS_INPUT_DEVICE_MAX>(JsonObject, StructProperty, InStruct, MemberName, &ECsInputDevice::ToString, nullptr); continue; }
 
@@ -3141,7 +3220,7 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 		// FName
 		if (UNameProperty* NameProperty = Cast<UNameProperty>(*It))
 		{
-			if (NameProperty->ArrayDim == 1)
+			if (NameProperty->ArrayDim == CS_SINGLETON)
 			{
 				if (FName* Member = NameProperty->ContainerPtrToValuePtr<FName>(InStruct))
 				{ *Member = FName(*JsonObject->GetStringField(MemberName)); continue; }
@@ -3237,7 +3316,7 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// UBlueprint
 			if (AssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
 			{
-				if (AssetObjectProperty->ArrayDim == 1)
+				if (AssetObjectProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToAssetObjectPropertyFromJson_Blueprint(JsonObject, AssetObjectProperty, InObject, MemberName); continue; }
 
 				if (Internal)
@@ -3274,7 +3353,17 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			{ WriteToMemberStructPropertyFromJson_Primitive<FColor>(JsonObject, StructProperty, InObject, MemberName, &FColor::InitFromString); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
-			{ WriteToMemberStructPropertyFromJson<FCsStaticMesh>(JsonObject, StructProperty, InObject, MemberName, nullptr); continue; }
+			{ 
+				if (StructProperty->ArrayDim == CS_SINGLETON)
+				{ WriteToMemberStructPropertyFromJson<FCsStaticMesh>(JsonObject, StructProperty, InObject, MemberName, nullptr); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, JsonObject, InObject, InClass))
+						continue;
+				}
+				continue;
+			}
 			// FCsFpsStaticMesh
 			if (StructProperty->Struct == FCsFpsStaticMesh::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsFpsStaticMesh>(JsonObject, StructProperty, InObject, MemberName); continue; }
@@ -3299,7 +3388,7 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsTArrayMaterialInstanceConstant
 			if (StructProperty->Struct == FCsTArrayMaterialInstanceConstant::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToMemberStructPropertyFromJson<FCsTArrayMaterialInstanceConstant>(JsonObject, StructProperty, InObject, MemberName); continue; }
 				if (StructProperty->ArrayDim == ECS_INTERACTIVE_STATE_MAX)
 				{ WriteToMemberFixedArrayStructPropertyFromJson_EnumSize<FCsTArrayMaterialInstanceConstant, ECsInteractiveState::Type, ECS_INTERACTIVE_STATE_MAX>(JsonObject, StructProperty, InObject, MemberName, &ECsInteractiveState::ToString, nullptr); continue; }
@@ -3332,7 +3421,7 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsSoundElement
 			if (StructProperty->Struct == FCsSoundElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToMemberStructPropertyFromJson<FCsSoundElement>(JsonObject, StructProperty, InObject, MemberName); continue; }
 
 				if (Internal)
@@ -3345,7 +3434,7 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsFpsSoundElement
 			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToMemberStructPropertyFromJson<FCsFpsSoundElement>(JsonObject, StructProperty, InObject, MemberName); continue; }
 
 				if (Internal)
@@ -3361,7 +3450,7 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsFxElement
 			if (StructProperty->Struct == FCsFxElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToMemberStructPropertyFromJson<FCsFxElement>(JsonObject, StructProperty, InObject, MemberName); continue; }
 
 				if (Internal)
@@ -3374,7 +3463,7 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsFpsFxElement
 			if (StructProperty->Struct == FCsFpsFxElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToMemberStructPropertyFromJson<FCsFpsFxElement>(JsonObject, StructProperty, InObject, MemberName); continue; }
 
 				if (Internal)
@@ -3393,7 +3482,7 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsAnimMontage
 			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToMemberStructPropertyFromJson<FCsAnimMontage>(JsonObject, StructProperty, InObject, MemberName); continue; }
 
 				if (Internal)
@@ -3406,7 +3495,7 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsFpsAnimMontage
 			if (StructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToMemberStructPropertyFromJson<FCsFpsAnimMontage>(JsonObject, StructProperty, InObject, MemberName); continue; }
 
 				if (Internal)
@@ -3419,7 +3508,7 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsTArrayAnimMontage
 			if (StructProperty->Struct == FCsTArrayAnimMontage::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToMemberStructPropertyFromJson<FCsTArrayAnimMontage>(JsonObject, StructProperty, InObject, MemberName); continue; }
 
 				if (Internal)
@@ -3447,7 +3536,7 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsCollisionPreset
 			if (StructProperty->Struct == FCsCollisionPreset::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToMemberStructPropertyFromJson<FCsCollisionPreset>(JsonObject, StructProperty, InObject, MemberName); continue; }
 
 				if (Internal)
@@ -4468,7 +4557,7 @@ void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct*
 			// UMaterialInstanceConstant
 			if (AssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
 			{
-				if (AssetObjectProperty->ArrayDim == 1)
+				if (AssetObjectProperty->ArrayDim == CS_SINGLETON)
 				{ GetAssetReferenceFromAssetObjectProperty_MaterialInstanceConstant(AssetObjectProperty, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes); continue; }
 				if (AssetObjectProperty->ArrayDim == ECS_INTERACTIVE_STATE_MAX)
 				{ GetAssetReferenceFromFixedArrayAssetObjectProperty_EnumSize_MaterialInstanceConstant<ECS_INTERACTIVE_STATE_MAX>(AssetObjectProperty, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes); continue; }
@@ -4513,7 +4602,7 @@ void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct*
 			// UBlueprint
 			if (AssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
 			{
-				if (AssetObjectProperty->ArrayDim == 1)
+				if (AssetObjectProperty->ArrayDim == CS_SINGLETON)
 				{ GetAssetReferenceFromAssetObjectProperty_Blueprint(AssetObjectProperty, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes); continue; }
 			}
 			
@@ -4529,10 +4618,32 @@ void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct*
 		{
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
-			{ GetAssetReferencesFromStructProperty<FCsStaticMesh>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
+			{ 
+				if (StructProperty->ArrayDim == CS_SINGLETON)
+				{ GetAssetReferencesFromStructProperty<FCsStaticMesh>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes))
+						continue;
+				}
+				continue;
+			}
+			// FCsFpsStaticMesh
+			if (StructProperty->Struct == FCsFpsStaticMesh::StaticStruct())
+			{ GetAssetReferencesFromStructProperty<FCsFpsStaticMesh>(StructProperty, InStruct, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
+			// FCsTArrayStaticMesh
+			if (StructProperty->Struct == FCsTArrayStaticMesh::StaticStruct())
+			{ GetAssetReferencesFromStructProperty<FCsTArrayStaticMesh>(StructProperty, InStruct, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
 			// FCsSkeletalMesh
 			if (StructProperty->Struct == FCsSkeletalMesh::StaticStruct())
 			{ GetAssetReferencesFromStructProperty<FCsSkeletalMesh>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
+			// FCsFpsSkeletalMesh
+			if (StructProperty->Struct == FCsFpsSkeletalMesh::StaticStruct())
+			{ GetAssetReferencesFromStructProperty<FCsFpsSkeletalMesh>(StructProperty, InStruct, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
+			// FCsTArraySkeletalMesh
+			if (StructProperty->Struct == FCsTArraySkeletalMesh::StaticStruct())
+			{ GetAssetReferencesFromStructProperty<FCsTArraySkeletalMesh>(StructProperty, InStruct, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
 			// FCsMaterialInstance
 			if (StructProperty->Struct == FCsMaterialInstance::StaticStruct())
 			{ GetAssetReferencesFromStructProperty<FCsMaterialInstance>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
@@ -4545,25 +4656,25 @@ void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct*
 			// FCsSoundElement
 			if (StructProperty->Struct == FCsSoundElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ GetAssetReferencesFromStructProperty<FCsSoundElement>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
 			}
 			// FCsFpsSoundElement
 			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ GetAssetReferencesFromStructProperty<FCsFpsSoundElement>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
 			}
 			// FCsFxElement
 			if (StructProperty->Struct == FCsFxElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ GetAssetReferencesFromStructProperty<FCsFxElement>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
 			}
 			// FCsFpsFxElement
 			if (StructProperty->Struct == FCsFpsFxElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ GetAssetReferencesFromStructProperty<FCsFpsFxElement>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
 			}
 			// FCsAnimSequence
@@ -4729,7 +4840,17 @@ void UCsCommon_Load::GetAssetReferencesFromObject(void* InObject, UClass* const 
 		{
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
-			{ GetAssetReferencesFromStructProperty<FCsStaticMesh>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
+			{ 
+				if (StructProperty->ArrayDim == CS_SINGLETON)
+				{ GetAssetReferencesFromStructProperty<FCsStaticMesh>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, InObject, InClass, LoadFlags, OutAssetReferences, LoadCodes))
+						continue;
+				}
+				continue;
+			}
 			// FCsFpsStaticMesh
 			if (StructProperty->Struct == FCsFpsStaticMesh::StaticStruct())
 			{ GetAssetReferencesFromStructProperty<FCsFpsStaticMesh>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
@@ -4754,7 +4875,7 @@ void UCsCommon_Load::GetAssetReferencesFromObject(void* InObject, UClass* const 
 			// FCsTArrayMaterialInstanceConstant
 			if (StructProperty->Struct == FCsTArrayMaterialInstanceConstant::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ GetAssetReferencesFromStructProperty<FCsTArrayMaterialInstanceConstant>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
 				if (StructProperty->ArrayDim == ECS_INTERACTIVE_STATE_MAX)
 				{ GetAssetReferencesFromFixedArrayStructProperty_EnumSize<FCsTArrayMaterialInstanceConstant, ECS_INTERACTIVE_STATE_MAX>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
@@ -4787,7 +4908,7 @@ void UCsCommon_Load::GetAssetReferencesFromObject(void* InObject, UClass* const 
 			// FCsSoundElement
 			if (StructProperty->Struct == FCsSoundElement::StaticStruct())
 			{ 
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ GetAssetReferencesFromStructProperty<FCsSoundElement>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
 				
 				if (Internal)
@@ -4800,7 +4921,7 @@ void UCsCommon_Load::GetAssetReferencesFromObject(void* InObject, UClass* const 
 			// FCsFpsSoundElement
 			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
 			{ 
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ GetAssetReferencesFromStructProperty<FCsFpsSoundElement>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
 				
 				if (Internal)
@@ -4819,7 +4940,7 @@ void UCsCommon_Load::GetAssetReferencesFromObject(void* InObject, UClass* const 
 			// FCsFxElement
 			if (StructProperty->Struct == FCsFxElement::StaticStruct())
 			{ 
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ GetAssetReferencesFromStructProperty<FCsFxElement>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
 				
 				if (Internal)
@@ -4832,7 +4953,7 @@ void UCsCommon_Load::GetAssetReferencesFromObject(void* InObject, UClass* const 
 			// FCsFpsFxElement
 			if (StructProperty->Struct == FCsFpsFxElement::StaticStruct())
 			{ 
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ GetAssetReferencesFromStructProperty<FCsFpsFxElement>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
 				
 				if (Internal)
@@ -5422,7 +5543,7 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 			// UMaterialInstanceConstant
 			if (AssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
 			{
-				if (AssetObjectProperty->ArrayDim == 1)
+				if (AssetObjectProperty->ArrayDim == CS_SINGLETON)
 				{ LoadAssetObjectProperty<UMaterialInstanceConstant>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, TEXT("MaterialInstanceConstant"), TEXT("MaterialInstanceConstant"), LoadFlags); continue; }
 				if (AssetObjectProperty->ArrayDim == ECS_INTERACTIVE_STATE_MAX)
 				{ LoadFixedArrayAssetObjectProperty_EnumSize<UMaterialInstanceConstant, ECsInteractiveState::Type, ECS_INTERACTIVE_STATE_MAX>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, TEXT("MaterialInstanceConstant"), TEXT("MaterialInstanceConstant"), LoadFlags, &ECsInteractiveState::ToString); continue; }
@@ -5467,7 +5588,7 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 			// UBlueprint
 			if (AssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
 			{ 
-				if (AssetObjectProperty->ArrayDim == 1)
+				if (AssetObjectProperty->ArrayDim == CS_SINGLETON)
 				{ LoadAssetObjectProperty_Blueprint(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, LoadFlags); continue; }
 			}
 
@@ -5492,7 +5613,7 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 			// FCsAnimMontage
 			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ LoadMemberStructProperty<FCsAnimMontage>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
 				
 				if (Internal)
@@ -5505,7 +5626,7 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 			// FCsFpsAnimMontage
 			if (StructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ LoadMemberStructProperty<FCsFpsAnimMontage>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
 				
 				if (Internal)
@@ -5539,7 +5660,7 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 			// FCsSoundElement
 			if (StructProperty->Struct == FCsSoundElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ LoadMemberStructProperty<FCsSoundElement>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
 				
 				if (Internal)
@@ -5552,7 +5673,7 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 			// FCsFpsSoundElement
 			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ LoadMemberStructProperty<FCsFpsSoundElement>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
 				
 				if (Internal)
@@ -5565,7 +5686,7 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 			// FCsFxElement
 			if (StructProperty->Struct == FCsFxElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ LoadMemberStructProperty<FCsFxElement>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
 				
 				if (Internal)
@@ -5578,7 +5699,7 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 			// FCsFpsFxElement
 			if (StructProperty->Struct == FCsFpsFxElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ LoadMemberStructProperty<FCsFpsFxElement>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
 				
 				if (Internal)
@@ -5641,12 +5762,6 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 			// TAssetSubclassOf
 			if (UAssetClassProperty* InnerAssetClassProperty = Cast<UAssetClassProperty>(ArrayProperty->Inner))
 			{
-				// AFosData_Weapon
-				//if (InnerAssetClassProperty->PropertyClass == AFosData_Weapon::StaticClass() || InnerAssetClassProperty->MetaClass == AFosData_Weapon::StaticClass())
-				//{ LoadArrayAssetClassProperty<AFosData_Weapon>(ArrayProperty, ObjectName, InStruct, InScriptStruct, MemberName, TEXT("FosData_Weapon")); continue; }
-				// AFosData_Projectile
-				//if (InnerAssetClassProperty->PropertyClass == AFosData_Projectile::StaticClass() || InnerAssetClassProperty->MetaClass == AFosData_Projectile::StaticClass())
-				//{ LoadArrayAssetClassProperty<AFosData_Projectile>(ArrayProperty, ObjectName, InStruct, InScriptStruct, MemberName, TEXT("FosData_Projectile")); continue; }
 				if (Internal)
 				{
 					if ((*Internal)(Property, ObjectName, InStruct, InScriptStruct, LoadFlags))
@@ -5789,7 +5904,7 @@ void UCsCommon_Load::LoadObjectWithTAssetPtrs(const FString &ObjectName, void* I
 			// UBlueprint
 			if (AssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
 			{
-				if (AssetObjectProperty->ArrayDim == 1)
+				if (AssetObjectProperty->ArrayDim == CS_SINGLETON)
 				{ LoadAssetObjectProperty_Blueprint(AssetObjectProperty, ObjectName, InObject, InClass, MemberName, LoadFlags); continue; }
 			}
 
@@ -5807,7 +5922,17 @@ void UCsCommon_Load::LoadObjectWithTAssetPtrs(const FString &ObjectName, void* I
 
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
-			{ LoadMemberStructProperty<FCsStaticMesh>(StructProperty, InObject, StructName, LoadFlags); continue; }
+			{ 
+				if (StructProperty->ArrayDim == CS_SINGLETON)
+				{ LoadMemberStructProperty<FCsStaticMesh>(StructProperty, InObject, StructName, LoadFlags); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, ObjectName, InObject, InClass, LoadFlags))
+						continue;
+				}
+				continue;
+			}
 			// FCsFpsStaticMesh
 			if (StructProperty->Struct == FCsFpsStaticMesh::StaticStruct())
 			{ LoadMemberStructProperty<FCsFpsStaticMesh>(StructProperty, InObject, StructName, LoadFlags); continue; }
@@ -5832,7 +5957,7 @@ void UCsCommon_Load::LoadObjectWithTAssetPtrs(const FString &ObjectName, void* I
 			// FCsTArrayMaterialInstanceConstant
 			if (StructProperty->Struct == FCsTArrayMaterialInstanceConstant::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ LoadMemberStructProperty<FCsTArrayMaterialInstanceConstant>(StructProperty, InObject, StructName, LoadFlags); continue; }
 				if (StructProperty->ArrayDim == ECS_INTERACTIVE_STATE_MAX)
 				{ LoadMemberFixedArrayStructProperty_EnumSize<FCsTArrayMaterialInstanceConstant, ECsInteractiveState::Type, ECS_INTERACTIVE_STATE_MAX>(StructProperty, InObject, StructName, LoadFlags, &ECsInteractiveState::ToString, nullptr); continue; }
@@ -5865,7 +5990,7 @@ void UCsCommon_Load::LoadObjectWithTAssetPtrs(const FString &ObjectName, void* I
 			// FCsSoundElement
 			if (StructProperty->Struct == FCsSoundElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ LoadMemberStructProperty<FCsSoundElement>(StructProperty, InObject, StructName, LoadFlags); continue; }
 
 				if (Internal)
@@ -5878,7 +6003,7 @@ void UCsCommon_Load::LoadObjectWithTAssetPtrs(const FString &ObjectName, void* I
 			// FCsFpsSoundElement
 			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ LoadMemberStructProperty<FCsFpsSoundElement>(StructProperty, InObject, StructName, LoadFlags); continue; }
 
 				if (Internal)
@@ -5894,7 +6019,7 @@ void UCsCommon_Load::LoadObjectWithTAssetPtrs(const FString &ObjectName, void* I
 			// FCsFxElement
 			if (StructProperty->Struct == FCsFxElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ LoadMemberStructProperty<FCsFxElement>(StructProperty, InObject, StructName, LoadFlags); continue; }
 
 				if (Internal)
@@ -5907,7 +6032,7 @@ void UCsCommon_Load::LoadObjectWithTAssetPtrs(const FString &ObjectName, void* I
 			// FCsFpsFxElement
 			if (StructProperty->Struct == FCsFpsFxElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ LoadMemberStructProperty<FCsFpsFxElement>(StructProperty, InObject, StructName, LoadFlags); continue; }
 
 				if (Internal)
@@ -6135,28 +6260,28 @@ void UCsCommon_Load::UnLoadStructWithTAssetPtrs(void* InStruct, UScriptStruct* c
 			// FCsSoundElement
 			if (StructProperty->Struct == FCsSoundElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ UnLoadMemberStructProperty<FCsSoundElement>(StructProperty, InStruct); continue; }
 				continue;
 			}
 			// FCsFpsSoundElement
 			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ UnLoadMemberStructProperty<FCsFpsSoundElement>(StructProperty, InStruct); continue; }
 				continue;
 			}
 			// FCsFxElement
 			if (StructProperty->Struct == FCsFxElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ UnLoadMemberStructProperty<FCsFxElement>(StructProperty, InStruct); continue; }
 				continue;
 			}
 			// FCsFpsFxElement
 			if (StructProperty->Struct == FCsFpsFxElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ UnLoadMemberStructProperty<FCsFpsFxElement>(StructProperty, InStruct); continue; }
 				continue;
 			}
@@ -6326,28 +6451,28 @@ void UCsCommon_Load::UnLoadObjectWithTAssetPtrs(void* InObject, UClass* const &I
 			// FCsSoundElement
 			if (StructProperty->Struct == FCsSoundElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ UnLoadMemberStructProperty<FCsSoundElement>(StructProperty, InObject); continue; }
 				continue;
 			}
 			// FCsFpsSoundElement
 			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ UnLoadMemberStructProperty<FCsFpsSoundElement>(StructProperty, InObject); continue; }
 				continue;
 			}
 			// FCsFxElement
 			if (StructProperty->Struct == FCsFxElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ UnLoadMemberStructProperty<FCsFxElement>(StructProperty, InObject); continue; }
 				continue;
 			}
 			// FCsFpsFxElement
 			if (StructProperty->Struct == FCsFpsFxElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ UnLoadMemberStructProperty<FCsFpsFxElement>(StructProperty, InObject); continue; }
 				continue;
 			}
@@ -6526,7 +6651,7 @@ bool UCsCommon_Load::IsLoadedStructWithTAssetPtrs(const FString &ObjectName, voi
 			else
 			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 					Pass &= IsLoadedMemberStructProperty<FCsAnimMontage>(StructProperty, InStruct, StructName);
 			}
 			// FCsFpsAnimMontage
@@ -6553,28 +6678,28 @@ bool UCsCommon_Load::IsLoadedStructWithTAssetPtrs(const FString &ObjectName, voi
 			else
 			if (StructProperty->Struct == FCsSoundElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 					Pass &= IsLoadedMemberStructProperty<FCsSoundElement>(StructProperty, InStruct, StructName);
 			}
 			// FCsFpsSoundElement
 			else
 			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 					Pass &= IsLoadedMemberStructProperty<FCsFpsSoundElement>(StructProperty, InStruct, StructName);
 			}
 			// FCsFxElement
 			else
 			if (StructProperty->Struct == FCsFxElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 					Pass &= IsLoadedMemberStructProperty<FCsFxElement>(StructProperty, InStruct, StructName);
 			}
 			// FCsFpsFxElement
 			else
 			if (StructProperty->Struct == FCsFpsFxElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 					Pass &= IsLoadedMemberStructProperty<FCsFpsFxElement>(StructProperty, InStruct, StructName);
 			}
 		}
@@ -6713,7 +6838,7 @@ bool UCsCommon_Load::IsLoadedObjectWithTAssetPtrs(const FString &ObjectName, voi
 			else
 			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 					Pass &= IsLoadedMemberStructProperty<FCsAnimMontage>(StructProperty, InObject, StructName);
 			}
 			// FCsFpsAnimMontage
@@ -6740,28 +6865,28 @@ bool UCsCommon_Load::IsLoadedObjectWithTAssetPtrs(const FString &ObjectName, voi
 			else
 			if (StructProperty->Struct == FCsSoundElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 					Pass &= IsLoadedMemberStructProperty<FCsSoundElement>(StructProperty, InObject, StructName);
 			}
 			// FCsFpsSoundElement
 			else
 			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 					Pass &= IsLoadedMemberStructProperty<FCsFpsSoundElement>(StructProperty, InObject, StructName);
 			}
 			// FCsFxElement
 			else
 			if (StructProperty->Struct == FCsFxElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 					Pass &= IsLoadedMemberStructProperty<FCsFxElement>(StructProperty, InObject, StructName);
 			}
 			// FCsFpsFxElement
 			else
 			if (StructProperty->Struct == FCsFpsFxElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 					Pass &= IsLoadedMemberStructProperty<FCsFpsFxElement>(StructProperty, InObject, StructName);
 			}
 		}
@@ -7310,7 +7435,7 @@ void UCsCommon_Load::SetObjectMembers(void* FromObject, void* ToObject, UClass* 
 			else
 			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 					SetMemberProperty<FCsAnimMontage>(ToObject, Property, MemberValues[Index]);
 			}
 			// FCsFpsAnimMontage
@@ -7337,28 +7462,28 @@ void UCsCommon_Load::SetObjectMembers(void* FromObject, void* ToObject, UClass* 
 			else
 			if (StructProperty->Struct == FCsSoundElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 					SetMemberProperty<FCsSoundElement>(ToObject, Property, MemberValues[Index]);
 			}
 			// FCsFpsSoundElement
 			else
 			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 					SetMemberProperty<FCsFpsSoundElement>(ToObject, Property, MemberValues[Index]);
 			}
 			// FCsFxElement
 			else
 			if (StructProperty->Struct == FCsFxElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 					SetMemberProperty<FCsFxElement>(ToObject, Property, MemberValues[Index]);
 			}
 			// FCsFpsFxElement
 			else
 			if (StructProperty->Struct == FCsFpsFxElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 					SetMemberProperty<FCsFpsFxElement>(ToObject, Property, MemberValues[Index]);
 			}
 		}
@@ -7746,7 +7871,7 @@ void UCsCommon_Load::GetObjectMembers(void* InObject, UClass* const &InClass, co
 			else
 			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 					OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<FCsAnimMontage>(InObject));
 			}
 			// FCsFpsAnimMontage
@@ -7773,28 +7898,28 @@ void UCsCommon_Load::GetObjectMembers(void* InObject, UClass* const &InClass, co
 			else
 			if (StructProperty->Struct == FCsSoundElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 					OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<FCsSoundElement>(InObject));
 			}
 			// FCsFpsSoundElement
 			else
 			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 					OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<FCsFpsSoundElement>(InObject));
 			}
 			// FCsFxElement
 			else
 			if (StructProperty->Struct == FCsFxElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 					OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<FCsFxElement>(InObject));
 			}
 			// FCsFpsFxElement
 			else
 			if (StructProperty->Struct == FCsFpsFxElement::StaticStruct())
 			{
-				if (StructProperty->ArrayDim == 1)
+				if (StructProperty->ArrayDim == CS_SINGLETON)
 					OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<FCsFpsFxElement>(InObject));
 			}
 		}

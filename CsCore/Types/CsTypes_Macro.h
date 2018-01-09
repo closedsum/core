@@ -4,8 +4,7 @@
 
 #define CS_EMPTY 0
 #define CS_FIRST 0
-
-#define CS_INVALID_ENUM_TO_STRING TEXT("INVALID")
+#define CS_SINGLETON 1
 
 #define CS_TEST_BLUEPRINT_BITFLAG(Bitmask, Bit) (((Bitmask) & (1 << static_cast<uint32>(Bit))) > 0)
 #define CS_SET_BLUEPRINT_BITFLAG(Bitmask, Bit) (Bitmask |= 1 << static_cast<uint32>(Bit))

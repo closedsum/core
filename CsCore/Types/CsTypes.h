@@ -1,4 +1,4 @@
-// Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "Coroutine/pt.h"
 #include "Engine.h"
 #include "Materials/MaterialInstanceConstant.h"

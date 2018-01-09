@@ -1,4 +1,4 @@
-// Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "VR/Player/CsPlayerPawn_VR.h"
 #include "CsCore.h"
 #include "MotionControllerComponent.h"

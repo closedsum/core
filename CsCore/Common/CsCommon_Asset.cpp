@@ -1,4 +1,4 @@
-// Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "Common/CsCommon_Asset.h"
 #include "CsCore.h"
 

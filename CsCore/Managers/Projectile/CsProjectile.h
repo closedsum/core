@@ -1,4 +1,4 @@
-// Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Managers/CsPooledActor.h"
 #include "Types/CsTypes_Pool.h"
@@ -22,6 +22,8 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TEnumAsByte<ECsProjectileRelevance::Type> Relevance;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	float ElapsedTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FVector Location;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
@@ -145,6 +147,7 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 		Data.Reset();
 		Data  = nullptr;
 		Relevance = ECsProjectileRelevance::ECsProjectileRelevance_MAX;
+		ElapsedTime = 0.0f;
 		Location = FVector::ZeroVector;
 		Direction = FVector::ZeroVector;
 		Rotation = FRotator::ZeroRotator;

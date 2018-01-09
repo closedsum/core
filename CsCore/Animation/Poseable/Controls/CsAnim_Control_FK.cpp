@@ -1,4 +1,4 @@
-// Copyright 2017 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "Animation/Poseable/Controls/CsAnim_Control_FK.h"
 #include "CsCore.h"
 #include "Common/CsCommon.h"

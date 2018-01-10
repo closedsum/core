@@ -32,6 +32,9 @@ float ACsData_Projectile::GetMaxRange() { return 0.0f; }
 // Movement
 #pragma region
 
+TEnumAsByte<ECsProjectileMovement::Type> ACsData_Projectile::GetMovementType() { return ECsProjectileMovement::Simulated; }
+FCsProjectileMovementFunction* ACsData_Projectile::GetMovementFunction() { return nullptr; }
+
 float ACsData_Projectile::GetInitialSpeed() { return 0.0f; }
 float ACsData_Projectile::GetMaxSpeed() { return 0.0f; }
 float ACsData_Projectile::GetGravityMultiplier() { return 0.0f; }
@@ -77,6 +80,7 @@ float ACsData_Projectile::GetSphereRadius() { return 0.0f; }
 // FX
 #pragma region
 
+bool ACsData_Projectile::GetUseTrailFX() { return false; }
 FCsFxElement* ACsData_Projectile::GetTrailFX(const TCsViewType &ViewType) { return nullptr; }
 
 #pragma endregion FX

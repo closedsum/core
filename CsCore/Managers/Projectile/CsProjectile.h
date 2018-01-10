@@ -23,6 +23,9 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 	TEnumAsByte<ECsProjectileRelevance::Type> Relevance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	TEnumAsByte<ECsProjectileMovement::Type> Movement;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	float ElapsedTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FVector Location;
@@ -30,6 +33,8 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 	FVector Direction;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FRotator Rotation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	FTransform Transform;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	float ChargePercent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
@@ -76,6 +81,9 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 		Location	  = InFireCache->Location;
 		Direction	  = InFireCache->Direction;
 		Rotation	  = Direction.Rotation();
+		Transform.SetLocation(Location);
+		Transform.SetRotation(Rotation.Quaternion());
+
 		ChargePercent = InFireCache->ChargePercent;
 		Speed		  = InData->GetInitialSpeed() + InFireCache->AdditionalSpeed;
 
@@ -126,6 +134,9 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 		Location	  = InFireCache->Location;
 		Direction	  = InFireCache->Direction;
 		Rotation	  = Direction.Rotation();
+		Transform.SetLocation(Location);
+		Transform.SetRotation(Rotation.Quaternion());
+
 		ChargePercent = InFireCache->ChargePercent;
 		Speed		  = InData->GetInitialSpeed() + InFireCache->AdditionalSpeed;
 	}
@@ -147,10 +158,12 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 		Data.Reset();
 		Data  = nullptr;
 		Relevance = ECsProjectileRelevance::ECsProjectileRelevance_MAX;
+		Movement = ECsProjectileMovement::ECsProjectileMovement_MAX;
 		ElapsedTime = 0.0f;
 		Location = FVector::ZeroVector;
 		Direction = FVector::ZeroVector;
 		Rotation = FRotator::ZeroRotator;
+		Transform = FTransform::Identity;
 		ChargePercent = 0.0f;
 		Speed = 0.0f;
 		DrawDistanceSq = 0.0f;
@@ -171,7 +184,7 @@ public:
 	class USphereComponent* CollisionComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Projectile)
-	class UProjectileMovementComponent* MovementComponent;
+	class UCsProjectileMovementComponent* MovementComponent;
 
 	UPROPERTY(VisibleDefaultsOnly, Category = Projectile)
 	class UStaticMeshComponent* MeshComponent;
@@ -179,6 +192,9 @@ public:
 	virtual void PostInitializeComponents() override;
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void OnTick_HandleCVars(const float &DeltaSeconds) override;
+	virtual void OnTick_HandleMovementFunction(const float &DeltaSeconds);
+
+	virtual FVector EvaluateMovementFunction(const float &Time);
 
 	UPROPERTY(BlueprintReadWrite, Category = "Projectile")
 	FCsProjectileCache Cache;

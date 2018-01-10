@@ -249,6 +249,34 @@ TAutoConsoleVariable<int32> CsCVarDrawProjectileCollision(
 	ECVF_SetByConsole
 );
 
+TAutoConsoleVariable<int32> CsCVarDrawProjectilePath(
+	TEXT("draw.projectile.path"),
+	0,
+	TEXT("Draw the Path for a Projectile."),
+	ECVF_SetByConsole
+);
+
+TAutoConsoleVariable<float> CsCVarDrawProjectilePathInterval(
+	TEXT("draw.projectile.pathinterval"),
+	CS_CVAR_DRAW_PROJECTILE_PATH_INTERVAL,
+	TEXT("The interval at which segments are drawn for the Path of a Projectile."),
+	ECVF_SetByConsole
+);
+
+TAutoConsoleVariable<int32> CsCVarDrawProjectilePathSegmentsPerInterval(
+	TEXT("draw.projectile.pathsegmentsperinterval"),
+	CS_CVAR_DRAW_PROJECTILE_PATH_SEGMENTS_PER_INTERVAL,
+	TEXT("Number of segments used to draw the Path for a Projectile."),
+	ECVF_SetByConsole
+);
+
+TAutoConsoleVariable<float> CsCVarDrawProjectilePathThickness(
+	TEXT("draw.projectile.paththickness"),
+	CS_CVAR_DRAW_PROJECTILE_PATH_THICKNESS,
+	TEXT("Thickness of the Path to be drawn for a Projectile."),
+	ECVF_SetByConsole
+);
+
 #pragma endregion Projectile
 
 // Player

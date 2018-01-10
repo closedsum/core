@@ -106,6 +106,15 @@ extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawProjectileImpactNormalDu
 
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawProjectileCollision;
 
+#define CS_CVAR_DRAW_PROJECTILE_PATH_INTERVAL 0.5f
+#define CS_CVAR_DRAW_PROJECTILE_PATH_SEGMENTS_PER_INTERVAL 16
+#define CS_CVAR_DRAW_PROJECTILE_PATH_THICKNESS 1.0f
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawProjectilePath;
+extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawProjectilePathInterval;
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawProjectilePathSegmentsPerInterval;
+extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawProjectilePathThickness;
+
 #pragma endregion Projectile
 
 // Player

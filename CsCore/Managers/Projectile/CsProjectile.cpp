@@ -3,7 +3,7 @@
 #include "CsCore.h"
 #include "CsCVars.h"
 #include "Common/CsCommon.h"
-#include "GameFramework/ProjectileMovementComponent.h"
+#include "Managers/Projectile/CsProjectileMovementComponent.h"
 
 // Data
 #include "Data/CsData_Weapon.h"
@@ -45,7 +45,7 @@ ACsProjectile::ACsProjectile(const FObjectInitializer& ObjectInitializer) : Supe
 	RootComponent = CollisionComponent;
 
 	// Movement Component
-	MovementComponent = ObjectInitializer.CreateDefaultSubobject<UProjectileMovementComponent>(this, TEXT("MovementComponent"));
+	MovementComponent = ObjectInitializer.CreateDefaultSubobject<UCsProjectileMovementComponent>(this, TEXT("MovementComponent"));
 	MovementComponent->UpdatedComponent							  = nullptr;// CollisionComponent;
 	MovementComponent->InitialSpeed								  = 1.f;
 	MovementComponent->MaxSpeed									  = 1.f;
@@ -92,6 +92,10 @@ void ACsProjectile::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 
 	OnTick_HandleCVars(DeltaSeconds);
+
+	Cache.ElapsedTime += DeltaSeconds;
+
+	OnTick_HandleMovementFunction(DeltaSeconds);
 }
 
 void ACsProjectile::OnTick_HandleCVars(const float &DeltaSeconds)
@@ -100,13 +104,71 @@ void ACsProjectile::OnTick_HandleCVars(const float &DeltaSeconds)
 	{
 		if (Cache.Relevance != ECsProjectileRelevance::Fake)
 		{
-
 			const FVector Location = GetActorLocation();
 			const float Radius	   = CollisionComponent->GetScaledSphereRadius();
 
 			DrawDebugSphere(GetWorld(), Location, Radius, 16, FColor::Green, false, DeltaSeconds + 0.005f, 0, 0.25f);
 		}
 	}
+}
+
+void ACsProjectile::OnTick_HandleMovementFunction(const float &DeltaSeconds)
+{
+	ACsData_Projectile* Data				 = Cache.GetData();
+	const TCsProjectileMovement MovementType = Data->GetMovementType();
+
+	if (MovementType != ECsProjectileMovement::Function)
+		return;
+
+	const FVector NextLocation	= EvaluateMovementFunction(Cache.ElapsedTime);
+	const FVector MoveDelta		= NextLocation - GetActorLocation();
+	const FQuat Rotation		= MoveDelta.ToOrientationQuat();
+
+	MovementComponent->MoveUpdatedComponent(MoveDelta, Rotation, true, nullptr);
+
+	if (CsCVarDrawProjectilePath->GetInt() == CS_CVAR_DRAW)
+	{
+		const float Interval			= FMath::Max(CS_CVAR_DRAW_PROJECTILE_PATH_INTERVAL, CsCVarDrawProjectilePathInterval->GetFloat());
+		const uint8 SegmentsPerInterval = FMath::Max(CS_CVAR_DRAW_PROJECTILE_PATH_SEGMENTS_PER_INTERVAL, CsCVarDrawProjectilePathSegmentsPerInterval->GetInt());
+		const float DeltaTime			= Interval / (float)SegmentsPerInterval;
+		const float RemainingTime		= Cache.LifeTime - Cache.ElapsedTime;
+		const uint16 Segments			= FMath::FloorToInt(RemainingTime / DeltaTime) - 1;
+
+		float CurrentTime = Cache.ElapsedTime;
+
+		const float Thickness = FMath::Max(CS_CVAR_DRAW_PROJECTILE_PATH_THICKNESS, CsCVarDrawProjectilePathThickness->GetFloat());
+
+		for (uint16 I = 0; I < Segments; ++I)
+		{
+			const float T0	 = CurrentTime + I * DeltaTime;
+			const FVector P0 = EvaluateMovementFunction(T0);
+			const float T1   = CurrentTime + (I + 1) * DeltaTime;
+			const FVector P1 = EvaluateMovementFunction(T1);
+
+			DrawDebugLine(GetWorld(), P0, P1, FColor::Red, false, DeltaSeconds + 0.005f, 0, Thickness);
+		}
+	}
+}
+
+FVector ACsProjectile::EvaluateMovementFunction(const float &Time)
+{
+	ACsData_Projectile* Data				= Cache.GetData();
+	FCsProjectileMovementFunction* Function = Data->GetMovementFunction();
+
+	FVector Point = Function->Evaluate(Time);
+
+	if (!Function->X.IsActive)
+		Point.X += Cache.Location.X;
+	if (!Function->Y.IsActive)
+		Point.Y += Cache.Location.Y;
+	if (!Function->Z.IsActive)
+		Point.Z += Cache.Location.Z;
+
+	FTransform LocalTransform = FTransform::Identity;
+	LocalTransform.SetTranslation(Point);
+	const FTransform WorldTransform = LocalTransform * Cache.Transform;
+
+	return WorldTransform.GetTranslation();
 }
 
 void ACsProjectile::Init(const int32 &Index)
@@ -172,7 +234,10 @@ void ACsProjectile::Allocate_Internal()
 
 	const TCsProjectileRelevance Relevance = Cache.Relevance;
 
+	SetActorHiddenInGame(false);
+
 	// Move
+	MovementComponent->MovementType = Data_Projectile->GetMovementType();
 
 	// Real Invisible
 	if (Relevance == ECsProjectileRelevance::RealInvisible)
@@ -217,9 +282,12 @@ void ACsProjectile::Allocate_Internal()
 		MeshComponent->SetComponentTickEnabled(true);
 
 		// Trail
-		ACsManager_FX* Manager_FX = ACsManager_FX::Get(GetWorld());
-		ACsEmitter* TrailFX		  = Manager_FX->Play(Data_Projectile->GetTrailFX(ViewType), OwnerWeapon, MeshComponent, Cache.Rotation.GetInverse());
-		TrailFX->Cache.LifeTime   = Data_Projectile->GetLifeTime();
+		if (Data_Projectile->GetUseTrailFX())
+		{
+			ACsManager_FX* Manager_FX = ACsManager_FX::Get(GetWorld());
+			ACsEmitter* TrailFX		  = Manager_FX->Play(Data_Projectile->GetTrailFX(ViewType), OwnerWeapon, MeshComponent, Cache.Rotation.GetInverse());
+			TrailFX->Cache.LifeTime   = Data_Projectile->GetLifeTime();
+		}
 	}
 
 	// Collision
@@ -282,7 +350,13 @@ void ACsProjectile::Allocate_Internal()
 	*/
 	
 	SetActorTickEnabled(true);
-	TeleportTo(Cache.Location, Cache.Rotation, false, true);
+	//TeleportTo(Cache.Location, Cache.Rotation, false, true);
+
+	FTransform LocalTransform = FTransform::Identity;
+	LocalTransform.SetTranslation(FVector(0.0f, 0.0f, Cache.Location.Z));
+	const FTransform WorldTransform = LocalTransform * Cache.Transform;
+
+	TeleportTo(WorldTransform.GetTranslation(), Cache.Rotation, false, true);
 
 	const float DrawDistanceSq = Data_Projectile->GetDrawDistanceSq(ViewType);
 	Cache.DrawDistanceSq	   = DrawDistanceSq;
@@ -296,10 +370,15 @@ void ACsProjectile::Allocate_Internal()
 			SetActorHiddenInGame(Hide);
 	}
 
-	MovementComponent->InitialSpeed			  = Cache.Speed;
-	MovementComponent->MaxSpeed				  = Data_Projectile->GetMaxSpeed();
-	MovementComponent->Velocity				  = MovementComponent->InitialSpeed * Cache.Direction;
-	MovementComponent->ProjectileGravityScale = Data_Projectile->GetGravityMultiplier();
+	const TCsProjectileMovement MovementType = Data_Projectile->GetMovementType();
+	// Simulated
+	if (MovementType == ECsProjectileMovement::Simulated)
+	{
+		MovementComponent->InitialSpeed			  = Cache.Speed;
+		MovementComponent->MaxSpeed				  = Data_Projectile->GetMaxSpeed();
+		MovementComponent->Velocity				  = MovementComponent->InitialSpeed * Cache.Direction;
+		MovementComponent->ProjectileGravityScale = Data_Projectile->GetGravityMultiplier();
+	}
 }
 
 void ACsProjectile::DeAllocate()
@@ -342,6 +421,9 @@ void ACsProjectile::DeAllocate()
 	MeshComponent->SetHiddenInGame(true);
 	MeshComponent->SetComponentTickEnabled(false);
 	MeshComponent->Deactivate();
+
+	SetActorHiddenInGame(true);
+	SetActorTickEnabled(false);
 
 	if (ACsProjectile* Projectile = GetFakeProjectile())
 		Projectile->DeAllocate();

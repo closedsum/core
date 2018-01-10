@@ -237,6 +237,202 @@ namespace ECsProjectileDeActivate
 #define ECS_PROJECTILE_DEACTIVATE_MAX (uint8)ECsProjectileDeActivate::ECsProjectileDeActivate_MAX
 typedef TEnumAsByte<ECsProjectileDeActivate::Type> TCsProjectileDeActivate;
 
+UENUM(BlueprintType)
+namespace ECsProjectileMovement
+{
+	enum Type
+	{
+		Simulated					UMETA(DisplayName = "Simulated"),
+		Function					UMETA(DisplayName = "Function"),
+		ECsProjectileMovement_MAX	UMETA(Hidden),
+	};
+}
+
+namespace ECsProjectileMovement
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+
+	namespace Str
+	{
+		const TCsString Simulated = TCsString(TEXT("Simulated"), TEXT("simulated"));
+		const TCsString Function = TCsString(TEXT("Function"), TEXT("function"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::Simulated) { return Str::Simulated.Value; }
+		if (EType == Type::Function) { return Str::Function.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::Simulated) { return Type::Simulated; }
+		if (String == Str::Function) { return Type::Function; }
+		return Type::ECsProjectileMovement_MAX;
+	}
+}
+
+#define ECS_PROJECTILE_MOVEMENT_MAX (uint8)ECsProjectileMovement::ECsProjectileMovement_MAX
+typedef TEnumAsByte<ECsProjectileMovement::Type> TCsProjectileMovement;
+
+UENUM(BlueprintType)
+namespace ECsProjectileMovementFunctionType
+{
+	enum Type
+	{
+		Linear									UMETA(DisplayName = "t"),
+		Sine									UMETA(DisplayName = "sin(t)"),
+		ECsProjectileMovementFunctionType_MAX	UMETA(Hidden),
+	};
+}
+
+namespace ECsProjectileMovementFunctionType
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+
+	namespace Str
+	{
+		const TCsString Linear = TCsString(TEXT("Linear"), TEXT("linear"));
+		const TCsString Sine = TCsString(TEXT("Sine"), TEXT("sine"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::Linear) { return Str::Linear.Value; }
+		if (EType == Type::Sine) { return Str::Sine.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::Linear) { return Type::Linear; }
+		if (String == Str::Sine) { return Type::Sine; }
+		return Type::ECsProjectileMovementFunctionType_MAX;
+	}
+}
+
+#define ECS_PROJECTILE_MOVEMENT_FUNCTION_TYPE_MAX (uint8)ECsProjectileMovementFunctionType::ECsProjectileMovementFunctionType_MAX
+typedef TEnumAsByte<ECsProjectileMovementFunctionType::Type> TCsProjectileMovementFunctionType;
+
+USTRUCT(BlueprintType)
+struct FCsProjectileMovementFunctionAxis
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function")
+	bool IsActive;
+	/** Types are t, sin(t), ... etc */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function")
+	TEnumAsByte<ECsProjectileMovementFunctionType::Type> Function;
+
+	/** "Axis" F(t) = A * ((B*G(t))^N) + C. G(t) = t, sin(t), ... etc. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function")
+	float A;
+	/** "Axis" F(t) = A * ((B*G(t))^N) + C. G(t) = t, sin(t), ... etc. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function")
+	float B;
+	/** "Axis" F(t) = A * ((B*G(t))^N) + C. G(t) = t, sin(t), ... etc. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function")
+	float N;
+	/** "Axis" F(t) = A * ((B*G(t))^N) + C. G(t) = t, sin(t), ... etc. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function")
+	float C;
+
+	FCsProjectileMovementFunctionAxis()
+	{
+		IsActive = true;
+		Function = ECsProjectileMovementFunctionType::Linear;
+		A = 1.0f;
+		B = 1.0f;
+		N = 1.0f;
+		C = 0.0f;
+	}
+
+	~FCsProjectileMovementFunctionAxis(){}
+
+	FCsProjectileMovementFunctionAxis& operator=(const FCsProjectileMovementFunctionAxis& D)
+	{
+		IsActive = D.IsActive;
+		Function = D.Function;
+		A = D.A;
+		B = D.B;
+		N = D.N;
+		C = D.C;
+		return *this;
+	}
+
+	bool operator==(const FCsProjectileMovementFunctionAxis& D) const
+	{
+		return	IsActive == D.IsActive &&
+				Function == D.Function &&
+				A == D.A &&
+				B == D.B &&
+				N == D.N &&
+				C == D.C;
+	}
+
+	bool operator!=(const FCsProjectileMovementFunctionAxis& D) const
+	{
+		return !(*this == D);
+	}
+
+	float Evaluate(const float &T)
+	{
+		if (!IsActive)
+			return 0.0f;
+		// A * (B*T)^N + C
+		if (Function == ECsProjectileMovementFunctionType::Linear)
+			return A * FMath::Pow(B * T, N) + C;
+		// A * sin((B*T)^N) + C
+		if (Function == ECsProjectileMovementFunctionType::Sine)
+			return A * FMath::Sin(FMath::Pow(B * T, N)) + C;
+		return 0.0f;
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FCsProjectileMovementFunction
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** X = A * ((B*G(t))^N) + C. G(t) = t, sin(t), ... etc. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function")
+	FCsProjectileMovementFunctionAxis X;
+	/** Y = A * ((B*G(t))^N) + C. G(t) = t, sin(t), ... etc. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function")
+	FCsProjectileMovementFunctionAxis Y;
+	/** Z = A * ((B*G(t))^N) + C. G(t) = t, sin(t), ... etc. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function")
+	FCsProjectileMovementFunctionAxis Z;
+
+	FCsProjectileMovementFunction(){}
+	~FCsProjectileMovementFunction(){}
+
+	FCsProjectileMovementFunction& operator=(const FCsProjectileMovementFunction& B)
+	{
+		X = B.X;
+		Y = B.Y;
+		Z = B.Z;
+		return *this;
+	}
+
+	bool operator==(const FCsProjectileMovementFunction& B) const
+	{
+		return	X == B.X && Y == B.Y && Z == B.Z;
+	}
+
+	bool operator!=(const FCsProjectileMovementFunction& B) const
+	{
+		return !(*this == B);
+	}
+
+	FVector Evaluate(const float &T)
+	{
+		return FVector(X.Evaluate(T), Y.Evaluate(T), Z.Evaluate(T));
+	}
+};
+
 USTRUCT(BlueprintType)
 struct FCsProjectileFireCache
 {

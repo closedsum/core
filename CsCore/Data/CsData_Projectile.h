@@ -33,6 +33,11 @@ class CSCORE_API ACsData_Projectile : public ACsData
 #pragma region
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
+	virtual TEnumAsByte<ECsProjectileMovement::Type> GetMovementType();
+
+	virtual FCsProjectileMovementFunction* GetMovementFunction();
+
+	UFUNCTION(BlueprintCallable, Category = "Movement")
 	virtual float GetInitialSpeed();
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
@@ -102,6 +107,9 @@ class CSCORE_API ACsData_Projectile : public ACsData
 
 // FX
 #pragma region
+
+	UFUNCTION(BlueprintCallable, Category = "FX")
+	virtual bool GetUseTrailFX();
 
 	virtual FCsFxElement* GetTrailFX(const TCsViewType &ViewType);
 

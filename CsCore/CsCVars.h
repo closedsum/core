@@ -90,6 +90,13 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerFxTransactions;
 
 #pragma endregion FX
 
+// Weapon
+#pragma region
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawWeaponFireProjectile;
+
+#pragma endregion Weapon
+
 // Projectile
 #pragma region
 
@@ -153,6 +160,8 @@ extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawPlayerPawnRightLength;
 extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawPlayerPawnRightThickness;
 
 #pragma endregion Pawn
+
+//extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawPlayerCalcCameraTraceHitLocation;
 
 #pragma endregion Player
 

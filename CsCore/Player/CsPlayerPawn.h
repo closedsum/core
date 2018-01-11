@@ -5,6 +5,30 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPlayerPawn_OnTick, const uint8&, MappingId, const float&, DeltaSeconds);
 
+USTRUCT(BlueprintType)
+struct FCsPlayerPawnCalcCameraTraceInfo
+{
+	GENERATED_USTRUCT_BODY()
+
+	FCollisionQueryParams QueryParams;
+
+	TArray<TWeakObjectPtr<AActor>> IgnoreActors;
+
+	FCollisionObjectQueryParams ObjectParams;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Trace")
+	float Range;
+	UPROPERTY(BlueprintReadWrite, Category = "Trace")
+	float RangeSq;
+	UPROPERTY(BlueprintReadWrite, Category = "Trace")
+	FVector HitLocation;
+	UPROPERTY(BlueprintReadWrite, Category = "Trace")
+	FHitResult HitResult;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Trace")
+	TArray<FHitResult> OutHits;
+};
+
 UCLASS(config = Game)
 class CSCORE_API ACsPlayerPawn : public ACsPawn
 {
@@ -19,9 +43,19 @@ class CSCORE_API ACsPlayerPawn : public ACsPawn
 #pragma region
 public:
 
+	UPROPERTY(BlueprintReadWrite, Category = "Camera")
 	float EyeHeight;
 
 	virtual void CalcCamera(float DeltaTime, struct FMinimalViewInfo& OutResult) override;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Camera")
+	bool bOnCalcCamera_Trace;
+
+	virtual void OnCalcCamera_Trace(const float &DeltaTime, const struct FMinimalViewInfo& ViewResult);
+
+	UPROPERTY(BlueprintReadWrite, Category = "Camera")
+	FCsPlayerPawnCalcCameraTraceInfo CalcCameraTraceInfo;
+
 	virtual FRotator GetViewRotation() const override;
 	virtual FVector GetPawnViewLocation() const override;
 

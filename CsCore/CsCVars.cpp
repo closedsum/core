@@ -204,6 +204,18 @@ TAutoConsoleVariable<int32> CsCVarLogManagerFxTransactions(
 
 #pragma endregion FX
 
+// Weapon
+#pragma region
+
+TAutoConsoleVariable<int32> CsCVarDrawWeaponFireProjectile(
+	TEXT("draw.weapon.fireprojectile"),
+	0,
+	TEXT("Draw Projectile destinations from Weapon."),
+	ECVF_SetByConsole
+);
+
+#pragma endregion Weapon
+
 // Projectile
 #pragma region
 

@@ -26,8 +26,12 @@ namespace ECsWeaponCachedName
 		const FName PlayAnimation_Reload_Internal = FName("ACsWeapon::PlayAnimation_Reload_Internal");
 		const FName StartChargeFire_Internal = FName("ACsWeapon::StartChargeFire_Internal");
 		const FName FireWeapon_Internal = FName("ACsWeapon::FireWeapon_Internal");
-
+		const FName DrawFireProjectile_Internal = FName("ACsWeapon::DrawFireProjectile_Internal");
+		// Stop Messages
+		const FName Stop_PlayAnimation_Reload_Internal = FName("Stop PlayAnimation_Reload_Internal");
+		const FName Stop_StartChargeFire_Internal = FName("Stop StartCharageFire_Internal");
 		const FName Stop_FireWeapon_Internal = FName("Stop FireWeapon_Internal");
+		const FName Stop_DrawFireProjectile_Internal = FName("Stop DrawFireProjectile_Internal");
 	}
 }
 
@@ -39,6 +43,7 @@ namespace ECsWeaponCachedString
 		const FString PlayAnimation_Reload_Internal = TEXT("ACsWeapon::PlayAnimation_Reload_Internal");
 		const FString StartChargeFire_Internal = TEXT("ACsWeapon::StartChargeFire_Internal");
 		const FString FireWeapon_Internal = TEXT("ACsWeapon::FireWeapon_Internal");
+		const FString DrawFireProjectile_Internal = TEXT("ACsWeapon::DrawFireProjectile_Internal");
 	}
 }
 
@@ -474,9 +479,10 @@ void ACsWeapon::ClearRoutines()
 {
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 
-	Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, FName("Stop PlayAnimation_Reload_Internal"), this);
-	Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, FName("Stop StartChargeFire_Internal"), this);
-	Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, FName("Stop FireWeapon_Internal"), this);
+	Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, ECsWeaponCachedName::Name::Stop_PlayAnimation_Reload_Internal, this);
+	Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, ECsWeaponCachedName::Name::Stop_StartChargeFire_Internal, this);
+	Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, ECsWeaponCachedName::Name::Stop_FireWeapon_Internal, this);
+	Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, ECsWeaponCachedName::Name::Stop_DrawFireProjectile_Internal, this);
 }
 
 #pragma endregion Routines
@@ -950,7 +956,7 @@ PT_THREAD(ACsWeapon::PlayAnimation_Reload_Internal(struct FCsRoutine* r))
 
 	CS_COROUTINE_BEGIN(r);
 
-	r->AddMessage(ECsCoroutineMessage::Stop, FName("Stop PlayAnimation_Reload_Internal"));
+	r->AddMessage(ECsCoroutineMessage::Stop, ECsWeaponCachedName::Name::Stop_PlayAnimation_Reload_Internal);
 
 	mw->PlayAnimation(mw->WeaponFireMode_MAX, ReloadAnim, 0);
 
@@ -1172,7 +1178,7 @@ PT_THREAD(ACsWeapon::StartChargeFire_Internal(struct FCsRoutine* r))
 
 	CS_COROUTINE_BEGIN(r);
 
-	r->AddMessage(ECsCoroutineMessage::Stop, FName("Stop StartChargeFire_Internal"));
+	r->AddMessage(ECsCoroutineMessage::Stop, ECsWeaponCachedName::Name::Stop_StartChargeFire_Internal);
 
 	// ChargeFireStart
 	mw->PlayAnimation(FireMode, mw->ChargeFireStartAnim);
@@ -1252,7 +1258,7 @@ void ACsWeapon::StopChargeFire(const TCsWeaponFireMode &FireMode)
 
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 
-	Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, TEXT("Stop StartChargeFire_Internal"), this);
+	Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, ECsWeaponCachedName::Name::Stop_StartChargeFire_Internal, this);
 
 	if (StartChargeFire_Internal_Routine && StartChargeFire_Internal_Routine->IsValid())
 		StartChargeFire_Internal_Routine->End(ECsCoroutineEndReason::UniqueInstance);
@@ -1351,7 +1357,7 @@ void ACsWeapon::FireWeapon(const TCsWeaponFireMode &FireMode)
 
 	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
-	Payload->Schedule		= ECsCoroutineSchedule::Tick;
+	Payload->Schedule		= Schedule;
 	Payload->Function		= &ACsWeapon::FireWeapon_Internal;
 	Payload->Actor			= this;
 	Payload->Stop			= &ACsWeapon::FireWeapon_StopCondition;
@@ -1488,14 +1494,31 @@ FVector ACsWeapon::GetOwnerRightVector()
 	return FVector::RightVector;
 }
 
+FVector ACsWeapon::GetFireProjectileDestination()
+{
+	return FVector::ZeroVector;
+}
+
 void ACsWeapon::FireProjectile(const TCsWeaponFireMode &FireMode, FCsProjectileFireCache* Cache)
 {
 	const FVector RealStart   = Cache->Location;
 	FVector RealDir			  = Cache->Direction;
-	const float MaxTraceRange = 30000.0f;
-	const FVector RealEnd	  = RealStart + MaxTraceRange * RealDir;
 
-	ACsData_Weapon* Data_Weapon = GetMyData_Weapon();
+	ACsData_Weapon* Data_Weapon			= GetMyData_Weapon();
+	ACsData_Projectile* Data_Projectile = Data_Weapon->GetData_Projectile(FireMode, Cache->ChargePercent > 0.0f);
+	const bool UseFakeProjectile		= Data_Weapon->UseFakeProjectile(FireMode);
+
+	FVector RealEnd = RealStart;
+
+	if (UseFakeProjectile)
+	{
+		RealEnd = GetFireProjectileDestination();
+	}
+	else
+	{
+		const float MaxRange = 30000.0f;
+		RealEnd				 = RealStart + MaxRange * RealDir;
+	}
 
 	const TCsViewType ViewType = GetCurrentViewType();
 	const FVector FakeStart	   = GetMuzzleLocation(ViewType, FireMode);
@@ -1530,14 +1553,17 @@ void ACsWeapon::FireProjectile(const TCsWeaponFireMode &FireMode, FCsProjectileF
 
 	ACsGameState* GameState					  = GetWorld()->GetGameState<ACsGameState>();
 	ACsManager_Projectile* Manager_Projectile = GameState->Manager_Projectile;
-	ACsData_Projectile* Data_Projectile		  = Data_Weapon->GetData_Projectile(FireMode, Cache->ChargePercent > 0.0f);
-
-	const bool UseFakeProjectile = Data_Weapon->UseFakeProjectile(FireMode);
 
 	// Real
 	Cache->Location				  = RealStart;
 	Cache->Direction			  = RealDir;
 	ACsProjectile* RealProjectile = Manager_Projectile->Fire(UseFakeProjectile ? ECsProjectileRelevance::RealInvisible : ECsProjectileRelevance::RealVisible, Data_Projectile, Cache, GetMyOwner(), this);
+	
+	if (CsCVarDrawWeaponFireProjectile->GetInt() == CS_CVAR_DRAW)
+	{
+		DrawFireProjectile(RealProjectile, RealStart, RealEnd);
+	}
+
 	// Fake
 	if (UseFakeProjectile)
 	{
@@ -1548,6 +1574,11 @@ void ACsWeapon::FireProjectile(const TCsWeaponFireMode &FireMode, FCsProjectileF
 
 		RealProjectile->FakeProjectile = FakeProjectile;
 		FakeCache->Reset();
+
+		if (CsCVarDrawWeaponFireProjectile->GetInt() == CS_CVAR_DRAW)
+		{
+			DrawFireProjectile(FakeProjectile, FakeStart, RealEnd);
+		}
 	}
 	Cache->Reset();
 }
@@ -1557,6 +1588,56 @@ void ACsWeapon::FireProjectile_Internal(const TCsWeaponFireMode &FireMode, FCsPr
 void ACsWeapon::FireProjectile_Script(const uint8 &FireMode, FCsProjectileFireCache &Cache)
 {
 	FireProjectile((TCsWeaponFireMode)FireMode, &Cache);
+}
+
+void ACsWeapon::DrawFireProjectile(class ACsProjectile* Projectile, const FVector &Start, const FVector &End)
+{
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	FCsCoroutinePayload* Payload     = Scheduler->AllocatePayload();
+
+	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+
+	Payload->Schedule			= Schedule;
+	Payload->Function			= &ACsWeapon::DrawFireProjectile_Internal;
+	Payload->Actor				= this;
+	Payload->Object				= Projectile;
+	Payload->Stop				= &ACsWeapon::FireWeapon_StopCondition;
+	Payload->DoInit				= true;
+	Payload->PerformFirstRun	= false;
+	Payload->Name				= ECsWeaponCachedName::Name::DrawFireProjectile_Internal;
+	Payload->NameAsString		= ECsWeaponCachedString::Str::DrawFireProjectile_Internal;
+
+	FCsRoutine* R = Scheduler->Allocate(Payload);
+	R->timers[0] = GetWorld()->GetTimeSeconds();
+	R->vectors[0] = Start;
+	R->vectors[1] = End;
+
+	Scheduler->StartRoutine(Schedule, R);
+}
+
+PT_THREAD(ACsWeapon::DrawFireProjectile_Internal(struct FCsRoutine* r))
+{
+	ACsProjectile* p		 = Cast<ACsProjectile>(r->GetRObject());
+	UCsCoroutineScheduler* s = r->scheduler;
+	UWorld* w				 = p->GetWorld();
+
+	const FVector Start		 = r->vectors[0];
+	const FVector End		 = r->vectors[1];
+	const float DeltaSeconds = r->deltaSeconds;
+
+	CS_COROUTINE_BEGIN(r);
+
+	r->AddMessage(ECsCoroutineMessage::Stop, ECsWeaponCachedName::Name::Stop_DrawFireProjectile_Internal);
+
+	do
+	{
+		DrawDebugLine(w, Start, End, FColor::Red, false, DeltaSeconds + 0.005f, 0, 0.25f);
+
+		CS_COROUTINE_YIELD(r);
+
+	} while (p->Cache.IsAllocated);
+
+	CS_COROUTINE_END(r);
 }
 
 	// Hitscan

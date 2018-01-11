@@ -153,7 +153,7 @@ namespace ECsCoroutineEndReason
 #define ECS_COROUTINE_END_REASON_MAX (uint8)ECsCoroutineEndReason::ECsCoroutineEndReason_MAX
 typedef TEnumAsByte<ECsCoroutineEndReason::Type> TCsCoroutineEndReason;
 
-#define CS_ROUTINE_POOL_SIZE 256
+#define CS_ROUTINE_POOL_SIZE 2048
 #define CS_ROUTINE_INDEXER_SIZE 4
 #define CS_ROUTINE_COUNTER_SIZE 4
 #define CS_ROUTINE_FLAG_SIZE 16

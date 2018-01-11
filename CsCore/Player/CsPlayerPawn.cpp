@@ -40,6 +40,17 @@ ACsPlayerPawn::ACsPlayerPawn(const FObjectInitializer& ObjectInitializer)
 	*/
 
 	EyeHeight = 192.0f;
+
+	bOnCalcCamera_Trace = false;
+
+	CalcCameraTraceInfo.QueryParams.TraceTag = FName("OnCalcCamera_Trace");
+	CalcCameraTraceInfo.IgnoreActors.Add(this);
+	CalcCameraTraceInfo.ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Pawn);
+	CalcCameraTraceInfo.ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_PhysicsBody);
+	CalcCameraTraceInfo.ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
+	CalcCameraTraceInfo.ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
+	CalcCameraTraceInfo.Range = 30000.0f;
+	CalcCameraTraceInfo.RangeSq = CalcCameraTraceInfo.Range * CalcCameraTraceInfo.Range;
 }
 
 void ACsPlayerPawn::OnTickActor_HandleCVars(const float &DeltaSeconds)
@@ -99,6 +110,8 @@ void ACsPlayerPawn::OnTickActor_HandleCVars(const float &DeltaSeconds)
 
 void ACsPlayerPawn::CalcCamera(float DeltaTime, struct FMinimalViewInfo& OutResult)
 {
+	Super::CalcCamera(DeltaTime, OutResult);
+
 	// TODO: This should allow another client to look at another clients view point
 
 	AController* ViewingController = Controller;
@@ -106,6 +119,65 @@ void ACsPlayerPawn::CalcCamera(float DeltaTime, struct FMinimalViewInfo& OutResu
 	if (!ViewingController)
 		return;
 	ViewingController->CalcCamera(DeltaTime, OutResult);
+	OnCalcCamera_Trace(DeltaTime, OutResult);
+}
+
+void ACsPlayerPawn::OnCalcCamera_Trace(const float &DeltaTime, const struct FMinimalViewInfo& ViewResult)
+{
+	if (!bOnCalcCamera_Trace)
+		return;
+
+	TArray<FHitResult>& OutHits = CalcCameraTraceInfo.OutHits;
+	OutHits.Reset();
+
+	const FVector Start = ViewResult.Location;
+	const FVector Dir	= ViewResult.Rotation.Vector();
+	const FVector End	= Start + CalcCameraTraceInfo.Range * Dir;
+
+	CalcCameraTraceInfo.HitResult.Reset(0.0f, false);
+
+	const bool HasHitSomething = GetWorld()->LineTraceMultiByObjectType(OutHits, Start, End, CalcCameraTraceInfo.ObjectParams, CalcCameraTraceInfo.QueryParams);
+
+	if (HasHitSomething)
+	{
+		float ClosestDistanceSq = CalcCameraTraceInfo.RangeSq;
+		int32 ClosestIndex		= INDEX_NONE;
+		bool IgnoreActor		= false;
+
+		const int32 HitCount = OutHits.Num();
+
+		for (int32 Index = 0; Index < HitCount; ++Index)
+		{
+			IgnoreActor = false;
+
+			if (!IgnoreActor)
+			{
+				float DistanceSq = FVector::DistSquared(Start, OutHits[Index].Location);
+
+				if (DistanceSq > 0.0f && 
+					DistanceSq < ClosestDistanceSq)
+				{
+					ClosestIndex	  = Index;
+					ClosestDistanceSq = DistanceSq;
+				}
+			}
+		}
+
+		if (ClosestIndex != INDEX_NONE)
+		{
+			CalcCameraTraceInfo.HitLocation = OutHits[ClosestIndex].Location;
+			
+			UCsCommon::CopyHitResult(OutHits[ClosestIndex], CalcCameraTraceInfo.HitResult);
+		}
+		else
+		{
+			CalcCameraTraceInfo.HitLocation = End;
+		}
+	}
+	else
+	{
+		CalcCameraTraceInfo.HitLocation = End;
+	}
 }
 
 FRotator ACsPlayerPawn::GetViewRotation() const

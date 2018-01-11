@@ -360,7 +360,17 @@ void ACsProjectile::Allocate_Internal()
 	// Simulated
 	if (MovementType == ECsProjectileMovement::Simulated)
 	{
-		TeleportTo(Cache.Location, Cache.Rotation, false, true);
+		if (Relevance == ECsProjectileRelevance::Fake)
+		{
+			FRotationMatrix Matrix = FRotationMatrix(Cache.Rotation);
+			const FVector Down	   = Data_Projectile->GetSphereRadius() * -Matrix.GetScaledAxis(EAxis::Z);
+
+			TeleportTo(Cache.Location + Down, Cache.Rotation, false, true);
+		}
+		else
+		{
+			TeleportTo(Cache.Location, Cache.Rotation, false, true);
+		}
 	}
 	// Function
 	else

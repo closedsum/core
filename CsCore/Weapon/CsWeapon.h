@@ -770,11 +770,16 @@ public:
 
 	virtual FVector GetOwnerRightVector();
 
+	virtual FVector GetFireProjectileDestination();
+
 	virtual void FireProjectile(const TCsWeaponFireMode &FireMode, FCsProjectileFireCache* Cache);
 	virtual void FireProjectile_Internal(const TCsWeaponFireMode &FireMode, FCsProjectileFireCache* Cache);
 
 	UFUNCTION(BlueprintCallable, Category = "Firing")
 	void FireProjectile_Script(const uint8 &FireMode, FCsProjectileFireCache &Cache);
+
+	void DrawFireProjectile(class ACsProjectile* Projectile, const FVector &Start, const FVector &End);
+	static char DrawFireProjectile_Internal(struct FCsRoutine* r);
 
 	// Hitscan
 #pragma region

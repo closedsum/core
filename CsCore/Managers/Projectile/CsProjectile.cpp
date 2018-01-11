@@ -245,6 +245,7 @@ void ACsProjectile::Allocate_Internal()
 		MeshComponent->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
 		MeshComponent->SetVisibility(false);
 		
+		RootComponent = CollisionComponent;
 		MovementComponent->UpdatedComponent = CollisionComponent;
 		MovementComponent->Activate();
 		MovementComponent->SetComponentTickEnabled(true);
@@ -253,6 +254,9 @@ void ACsProjectile::Allocate_Internal()
 	// Real Visible
 	if (Relevance == ECsProjectileRelevance::RealVisible)
 	{
+		RootComponent = CollisionComponent;
+		MeshComponent->AttachToComponent(CollisionComponent, FAttachmentTransformRules::KeepRelativeTransform);
+
 		MovementComponent->UpdatedComponent = CollisionComponent;
 		MovementComponent->Activate();
 		MovementComponent->SetComponentTickEnabled(true);
@@ -350,13 +354,20 @@ void ACsProjectile::Allocate_Internal()
 	*/
 	
 	SetActorTickEnabled(true);
-	//TeleportTo(Cache.Location, Cache.Rotation, false, true);
 
-	FTransform LocalTransform = FTransform::Identity;
-	LocalTransform.SetTranslation(FVector(0.0f, 0.0f, Cache.Location.Z));
-	const FTransform WorldTransform = LocalTransform * Cache.Transform;
+	const TCsProjectileMovement MovementType = Data_Projectile->GetMovementType();
 
-	TeleportTo(WorldTransform.GetTranslation(), Cache.Rotation, false, true);
+	// Simulated
+	if (MovementType == ECsProjectileMovement::Simulated)
+	{
+		TeleportTo(Cache.Location, Cache.Rotation, false, true);
+	}
+	// Function
+	else
+	if (MovementType == ECsProjectileMovement::Function)
+	{
+		TeleportTo(EvaluateMovementFunction(0.0f), Cache.Rotation, false, true);
+	}
 
 	const float DrawDistanceSq = Data_Projectile->GetDrawDistanceSq(ViewType);
 	Cache.DrawDistanceSq	   = DrawDistanceSq;
@@ -370,7 +381,6 @@ void ACsProjectile::Allocate_Internal()
 			SetActorHiddenInGame(Hide);
 	}
 
-	const TCsProjectileMovement MovementType = Data_Projectile->GetMovementType();
 	// Simulated
 	if (MovementType == ECsProjectileMovement::Simulated)
 	{
@@ -401,7 +411,7 @@ void ACsProjectile::DeAllocate()
 
 		// DeAllocate attachments
 	const TArray<USceneComponent*>& AttachChildren = MeshComponent->GetAttachChildren();
-	const int32 Count							    = AttachChildren.Num();
+	const int32 Count							   = AttachChildren.Num();
 
 	for (int32 I = 0; I < Count; I++)
 	{
@@ -417,6 +427,8 @@ void ACsProjectile::DeAllocate()
 	}
 
 	// Mesh
+	UCsCommon::ClearOverrideMaterials(MeshComponent);
+	MeshComponent->SetStaticMesh(nullptr);
 	MeshComponent->SetVisibility(false);
 	MeshComponent->SetHiddenInGame(true);
 	MeshComponent->SetComponentTickEnabled(false);

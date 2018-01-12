@@ -194,6 +194,9 @@ public:
 	virtual void OnTick_HandleCVars(const float &DeltaSeconds) override;
 	virtual void OnTick_HandleMovementFunction(const float &DeltaSeconds);
 
+	void DrawPath(const float &DeltaSeconds);
+	void DrawPath_Internal(const float &DeltaSeconds, const float &Interval, const uint8 &SegmentsPerInterval, const float &Thickness);
+
 	virtual FVector EvaluateMovementFunction(const float &Time);
 
 	UPROPERTY(BlueprintReadWrite, Category = "Projectile")

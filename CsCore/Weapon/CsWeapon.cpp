@@ -1559,7 +1559,11 @@ void ACsWeapon::FireProjectile(const TCsWeaponFireMode &FireMode, FCsProjectileF
 	Cache->Direction			  = RealDir;
 	ACsProjectile* RealProjectile = Manager_Projectile->Fire(UseFakeProjectile ? ECsProjectileRelevance::RealInvisible : ECsProjectileRelevance::RealVisible, Data_Projectile, Cache, GetMyOwner(), this);
 	
-	if (CsCVarDrawWeaponFireProjectile->GetInt() == CS_CVAR_DRAW)
+	const bool IsLocalPawn = UCsCommon::IsLocalPawn(GetWorld(), GetMyPawn());
+
+	if ((CsCVarDrawLocalPlayerWeaponFireProjectile->GetInt() == CS_CVAR_DRAW &&
+		 IsLocalPawn) ||
+		CsCVarDrawWeaponFireProjectile->GetInt() == CS_CVAR_DRAW)
 	{
 		DrawFireProjectile(RealProjectile, RealStart, RealEnd);
 	}
@@ -1575,7 +1579,9 @@ void ACsWeapon::FireProjectile(const TCsWeaponFireMode &FireMode, FCsProjectileF
 		RealProjectile->FakeProjectile = FakeProjectile;
 		FakeCache->Reset();
 
-		if (CsCVarDrawWeaponFireProjectile->GetInt() == CS_CVAR_DRAW)
+		if ((CsCVarDrawLocalPlayerWeaponFireProjectile->GetInt() == CS_CVAR_DRAW &&
+			IsLocalPawn) ||
+			CsCVarDrawWeaponFireProjectile->GetInt() == CS_CVAR_DRAW)
 		{
 			DrawFireProjectile(FakeProjectile, FakeStart, RealEnd);
 		}

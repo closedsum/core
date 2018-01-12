@@ -126,27 +126,54 @@ void ACsProjectile::OnTick_HandleMovementFunction(const float &DeltaSeconds)
 
 	MovementComponent->MoveUpdatedComponent(MoveDelta, Rotation, true, nullptr);
 
+	DrawPath(DeltaSeconds);
+}
+
+void ACsProjectile::DrawPath(const float &DeltaSeconds)
+{
+	// Local Player
+	if (CsCVarDrawLocalPlayerProjectilePath->GetInt() == CS_CVAR_DRAW)
+	{
+		APawn* Pawn					 = Cast<APawn>(Cache.GetInstigator());
+		const bool IsLocalInstigator = UCsCommon::IsLocalPawn(GetWorld(), Pawn);
+
+		if (IsLocalInstigator)
+		{
+			const float Interval			= FMath::Max(CS_CVAR_DRAW_LOCAL_PLAYER_PROJECTILE_PATH_INTERVAL, CsCVarDrawLocalPlayerProjectilePathInterval->GetFloat());
+			const uint8 SegmentsPerInterval = FMath::Max(CS_CVAR_DRAW_LOCAL_PLAYER_PROJECTILE_PATH_SEGMENTS_PER_INTERVAL, CsCVarDrawLocalPlayerProjectilePathSegmentsPerInterval->GetInt());
+			const float Thickness			= FMath::Max(CS_CVAR_DRAW_LOCAL_PLAYER_PROJECTILE_PATH_THICKNESS, CsCVarDrawLocalPlayerProjectilePathThickness->GetFloat());
+
+			DrawPath_Internal(DeltaSeconds, Interval, SegmentsPerInterval, Thickness);
+			return;
+		}
+	}
+	// Any Instigator
 	if (CsCVarDrawProjectilePath->GetInt() == CS_CVAR_DRAW)
 	{
 		const float Interval			= FMath::Max(CS_CVAR_DRAW_PROJECTILE_PATH_INTERVAL, CsCVarDrawProjectilePathInterval->GetFloat());
 		const uint8 SegmentsPerInterval = FMath::Max(CS_CVAR_DRAW_PROJECTILE_PATH_SEGMENTS_PER_INTERVAL, CsCVarDrawProjectilePathSegmentsPerInterval->GetInt());
-		const float DeltaTime			= Interval / (float)SegmentsPerInterval;
-		const float RemainingTime		= Cache.LifeTime - Cache.ElapsedTime;
-		const uint16 Segments			= FMath::FloorToInt(RemainingTime / DeltaTime) - 1;
+		const float Thickness			= FMath::Max(CS_CVAR_DRAW_PROJECTILE_PATH_THICKNESS, CsCVarDrawProjectilePathThickness->GetFloat());
 
-		float CurrentTime = Cache.ElapsedTime;
+		DrawPath_Internal(DeltaSeconds, Interval, SegmentsPerInterval, Thickness);
+	}
+}
 
-		const float Thickness = FMath::Max(CS_CVAR_DRAW_PROJECTILE_PATH_THICKNESS, CsCVarDrawProjectilePathThickness->GetFloat());
+void ACsProjectile::DrawPath_Internal(const float &DeltaSeconds, const float &Interval, const uint8 &SegmentsPerInterval, const float &Thickness)
+{
+	const float DeltaTime	  = Interval / (float)SegmentsPerInterval;
+	const float RemainingTime = Cache.LifeTime - Cache.ElapsedTime;
+	const uint16 Segments	  = FMath::FloorToInt(RemainingTime / DeltaTime) - 1;
 
-		for (uint16 I = 0; I < Segments; ++I)
-		{
-			const float T0	 = CurrentTime + I * DeltaTime;
-			const FVector P0 = EvaluateMovementFunction(T0);
-			const float T1   = CurrentTime + (I + 1) * DeltaTime;
-			const FVector P1 = EvaluateMovementFunction(T1);
+	float CurrentTime = Cache.ElapsedTime;
 
-			DrawDebugLine(GetWorld(), P0, P1, FColor::Red, false, DeltaSeconds + 0.005f, 0, Thickness);
-		}
+	for (uint16 I = 0; I < Segments; ++I)
+	{
+		const float T0   = CurrentTime + I * DeltaTime;
+		const FVector P0 = EvaluateMovementFunction(T0);
+		const float T1	 = CurrentTime + (I + 1) * DeltaTime;
+		const FVector P1 = EvaluateMovementFunction(T1);
+
+		DrawDebugLine(GetWorld(), P0, P1, FColor::Red, false, DeltaSeconds + 0.005f, 0, Thickness);
 	}
 }
 

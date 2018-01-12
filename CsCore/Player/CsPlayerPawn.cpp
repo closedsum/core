@@ -178,6 +178,11 @@ void ACsPlayerPawn::OnCalcCamera_Trace(const float &DeltaTime, const struct FMin
 	{
 		CalcCameraTraceInfo.HitLocation = End;
 	}
+
+	if (CsCVarDrawPlayerCalcCameraTraceHitLocation->GetInt() == CS_CVAR_DRAW)
+	{
+		DrawDebugSphere(GetWorld(), CalcCameraTraceInfo.HitLocation, 32.0f, 16, FColor::Green, false, DeltaTime + 0.005f, 0, 1.0f);
+	}
 }
 
 FRotator ACsPlayerPawn::GetViewRotation() const

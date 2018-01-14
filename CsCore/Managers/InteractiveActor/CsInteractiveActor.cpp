@@ -17,6 +17,9 @@
 
 ACsInteractiveActor::ACsInteractiveActor(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+	Warning_FellOutOfWorld	   = TEXT("ACsInteractiveActor::FellOutOfWorld");
+	Warning_OutsideWorldBounds = TEXT("ACsInteractiveActor::OutsideWorldBounds");
+
 	CS_SET_BLUEPRINT_BITFLAG(PhysicsState, ECsInteractivePhysicsState::Grounded);
 
 	WorldCollisionEnabled = ECollisionEnabled::QueryAndPhysics;

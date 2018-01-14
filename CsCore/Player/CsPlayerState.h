@@ -11,45 +11,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPlayerState_OnT
 #pragma region
 
 UENUM(BlueprintType)
-namespace ECsPlayerStateRoutine
-{
-	enum Type
-	{
-		OnBoard_Internal			UMETA(DisplayName = "OnBoard_Internal"),
-		SetupPawn_Internal			UMETA(DisplayName = "SetupPawn_Internal"),
-		ECsPlayerStateRoutine_MAX	UMETA(Hidden),
-	};
-}
-
-namespace ECsPlayerStateRoutine
-{
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-		const TCsString OnBoard_Internal = TCsString(TEXT("OnBoard_Internal"), TEXT("onboard_internal"), TEXT("onboard internal"));
-		const TCsString SetupPawn_Internal = TCsString(TEXT("SetupPawn_Internal"), TEXT("setuppawn_internal"), TEXT("setup pawn internal"));
-	}
-
-	FORCEINLINE FString ToString(const Type &EType)
-	{
-		if (EType == Type::OnBoard_Internal) { return Str::OnBoard_Internal.Value; }
-		if (EType == Type::SetupPawn_Internal) { return Str::SetupPawn_Internal.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::OnBoard_Internal) { return Type::OnBoard_Internal; }
-		if (String == Str::SetupPawn_Internal) { return Type::SetupPawn_Internal; }
-		return Type::ECsPlayerStateRoutine_MAX;
-	}
-}
-
-#define ECS_PLAYER_STATE_ROUTINE_MAX (uint8)ECsPlayerStateRoutine::ECsPlayerStateRoutine_MAX
-typedef ECsPlayerStateRoutine::Type TCsPlayerStateRoutine;
-
-UENUM(BlueprintType)
 namespace ECsPlayerStateOnBoardState
 {
 	enum Type

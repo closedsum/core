@@ -145,10 +145,7 @@ class CSCORE_API ACsDataMapping : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
-	TCsAssetTypeToString AssetTypeToString;
-	TCsStringToAssetType StringToAssetType;
-
-	TCsAssetType AssetType_MAX;
+	CS_DECLARE_ASSET_TYPE
 
 	virtual void ClearLoaded();
 

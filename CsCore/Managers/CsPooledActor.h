@@ -41,4 +41,18 @@ class CSCORE_API ACsPooledActor : public AActor
 	virtual void Show();
 	UFUNCTION(BlueprintCallable, Category = "Pool")
 	virtual void Hide();
+
+	// Routines
+#pragma region
+public:
+
+	static void AddRoutine(UObject* InObject, struct FCsRoutine* Routine, const uint8 &InType);
+	virtual bool AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType);
+
+	static void RemoveRoutine(UObject* InObject, struct FCsRoutine* Routine, const uint8 &InType);
+	virtual bool RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType);
+
+	virtual void ClearRoutines();
+
+#pragma endregion Routines
 };

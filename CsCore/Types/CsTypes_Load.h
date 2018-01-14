@@ -235,7 +235,6 @@ struct FCsTArrayStringAssetReference
 	}
 };
 
-#define CS_INVALID_SHORT_CODE FName("NULL")
 #define CS_INVALID_LOOK_UP_CODE 255
 #define CS_INVALID_LOOK_UP_CODE_MAX 65535
 
@@ -316,6 +315,16 @@ typedef FString(*TCsAssetTypeToString)(const TCsAssetType&);
 // StringToAssetType
 typedef TCsAssetType(*TCsStringToAssetType)(const FString&);
 
+#define CS_DECLARE_ASSET_TYPE	TCsAssetType AssetType_MAX; \
+								uint8 ASSET_TYPE_MAX; \
+								TCsAssetTypeToString AssetTypeToString; \
+								TCsStringToAssetType StringToAssetType;
+
+#define CS_DEFINE_ASSET_TYPE	AssetType_MAX = ECsAssetType::ECsAssetType_MAX;\
+								ASSET_TYPE_MAX = (uint8)AssetType_MAX; \
+								AssetTypeToString = &ECsAssetType::ToString; \
+								StringToAssetType = &ECsAssetType::ToType;
+
 namespace ECsLoadAssetsType
 {
 	enum Type : uint8;
@@ -327,6 +336,16 @@ typedef ECsLoadAssetsType::Type TCsLoadAssetsType;
 typedef FString(*TCsLoadAssetsTypeToString)(const TCsLoadAssetsType&);
 // StringToLoadAssetsType
 typedef TCsLoadAssetsType(*TCsStringToLoadAssetsType)(const FString&);
+
+#define CS_DECLARE_LOAD_ASSETS_TYPE	TCsLoadAssetsType LoadAssetsType_MAX; \
+									uint8 LOAD_ASSETS_TYPE_MAX; \
+									TCsLoadAssetsTypeToString LoadAssetsTypeToString; \
+									TCsStringToLoadAssetsType StringToLoadAssetsType;
+
+#define CS_DEFINE_LOAD_ASSETS_TYPE	LoadAssetsType_MAX = ECsLoadAssetsType::ECsLoadAssetsType_MAX;\
+									LOAD_ASSETS_TYPE_MAX = (uint8)LoadAssetsType_MAX; \
+									LoadAssetsTypeToString = &ECsLoadAssetsType::ToString; \
+									StringToLoadAssetsType = &ECsLoadAssetsType::ToType;
 
 USTRUCT(BlueprintType)
 struct FCsPayload

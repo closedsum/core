@@ -30,49 +30,6 @@ namespace ECsWeaponState
 typedef ECsWeaponState::Type TCsWeaponState;
 
 UENUM(BlueprintType)
-namespace ECsWeaponRoutine
-{
-	enum Type
-	{
-		PlayAnimation_Reload_Internal		UMETA(DisplayName = "PlayAnimation_Reload_Internal"),
-		StartChargeFire_Internal			UMETA(DisplayName = "StartChargeFire_Internal"),
-		FireWeapon_Internal					UMETA(DisplayName = "FireWeapon_Internal"),
-		ECsWeaponRoutine_MAX				UMETA(Hidden),
-	};
-}
-
-namespace ECsWeaponRoutine
-{
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-		const TCsString PlayAnimation_Reload_Internal = TCsString(TEXT("PlayAnimation_Reload_Internal"), TEXT("playanimation_reload_internal"), TEXT("play animation reload internal"));
-		const TCsString StartChargeFire_Internal = TCsString(TEXT("StartChargeFire_Internal"), TEXT("startchargefire_internal"), TEXT("start charge fire internal"));
-		const TCsString FireWeapon_Internal = TCsString(TEXT("FireWeapon_Internal"), TEXT("fireweapon_internal"), TEXT("fire weapon internal"));
-	}
-
-	inline FString ToString(const Type &EType)
-	{
-		if (EType == Type::PlayAnimation_Reload_Internal) { return Str::PlayAnimation_Reload_Internal.Value; }
-		if (EType == Type::StartChargeFire_Internal) { return Str::StartChargeFire_Internal.Value; }
-		if (EType == Type::FireWeapon_Internal) { return Str::FireWeapon_Internal.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	inline Type ToType(const FString &String)
-	{
-		if (String == Str::PlayAnimation_Reload_Internal) { return Type::PlayAnimation_Reload_Internal; }
-		if (String == Str::StartChargeFire_Internal) { return Type::StartChargeFire_Internal; }
-		if (String == Str::FireWeapon_Internal) { return Type::FireWeapon_Internal; }
-		return Type::ECsWeaponRoutine_MAX;
-	}
-}
-
-#define ECS_ROUTINE_WEAPON_MAX (uint8)ECsWeaponRoutine::ECsWeaponRoutine_MAX
-typedef TEnumAsByte<ECsWeaponRoutine::Type> TCsWeaponRoutine;
-
-UENUM(BlueprintType)
 namespace ECsWeaponCacheMultiValueMember
 {
 	enum Type

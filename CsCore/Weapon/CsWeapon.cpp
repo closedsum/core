@@ -18,6 +18,9 @@
 #include "Managers/Projectile/CsManager_Projectile.h"
 #include "Managers/Projectile/CsProjectile.h"
 
+// Cache
+#pragma region
+
 namespace ECsWeaponCachedName
 {
 	namespace Name
@@ -46,6 +49,56 @@ namespace ECsWeaponCachedString
 		const FString DrawFireProjectile_Internal = TEXT("ACsWeapon::DrawFireProjectile_Internal");
 	}
 }
+
+#pragma endregion Cache
+
+// Enums
+#pragma region
+
+UENUM(BlueprintType)
+namespace ECsWeaponRoutine
+{
+	enum Type
+	{
+		PlayAnimation_Reload_Internal		UMETA(DisplayName = "PlayAnimation_Reload_Internal"),
+		StartChargeFire_Internal			UMETA(DisplayName = "StartChargeFire_Internal"),
+		FireWeapon_Internal					UMETA(DisplayName = "FireWeapon_Internal"),
+		ECsWeaponRoutine_MAX				UMETA(Hidden),
+	};
+}
+
+namespace ECsWeaponRoutine
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString PlayAnimation_Reload_Internal = TCsString(TEXT("PlayAnimation_Reload_Internal"), TEXT("playanimation_reload_internal"), TEXT("play animation reload internal"));
+		const TCsString StartChargeFire_Internal = TCsString(TEXT("StartChargeFire_Internal"), TEXT("startchargefire_internal"), TEXT("start charge fire internal"));
+		const TCsString FireWeapon_Internal = TCsString(TEXT("FireWeapon_Internal"), TEXT("fireweapon_internal"), TEXT("fire weapon internal"));
+	}
+
+	inline FString ToString(const Type &EType)
+	{
+		if (EType == Type::PlayAnimation_Reload_Internal) { return Str::PlayAnimation_Reload_Internal.Value; }
+		if (EType == Type::StartChargeFire_Internal) { return Str::StartChargeFire_Internal.Value; }
+		if (EType == Type::FireWeapon_Internal) { return Str::FireWeapon_Internal.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	inline Type ToType(const FString &String)
+	{
+		if (String == Str::PlayAnimation_Reload_Internal) { return Type::PlayAnimation_Reload_Internal; }
+		if (String == Str::StartChargeFire_Internal) { return Type::StartChargeFire_Internal; }
+		if (String == Str::FireWeapon_Internal) { return Type::FireWeapon_Internal; }
+		return Type::ECsWeaponRoutine_MAX;
+	}
+}
+
+#define ECS_WEAPON_ROUTINE_MAX (uint8)ECsWeaponRoutine::ECsWeaponRoutine_MAX
+typedef TEnumAsByte<ECsWeaponRoutine::Type> TCsWeaponRoutine;
+
+#pragma endregion Enums
 
 ACsWeapon::ACsWeapon(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -414,7 +467,7 @@ ACsData_Weapon* ACsWeapon::GetMyData_Weapon()
 
 void ACsWeapon::AddRoutine(UObject* InWeapon, struct FCsRoutine* Routine, const uint8 &Type)
 {
-	Cast<ACsWeapon>(InWeapon)->AddRoutine_Internal(Routine, (TEnumAsByte<ECsWeaponRoutine::Type>)Type);
+	Cast<ACsWeapon>(InWeapon)->AddRoutine_Internal(Routine, Type);
 }
 
 bool ACsWeapon::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
@@ -444,7 +497,7 @@ bool ACsWeapon::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Typ
 
 void ACsWeapon::RemoveRoutine(UObject* InWeapon, struct FCsRoutine* Routine, const uint8 &Type)
 {
-	Cast<ACsWeapon>(InWeapon)->RemoveRoutine_Internal(Routine, (TEnumAsByte<ECsWeaponRoutine::Type>)Type);
+	Cast<ACsWeapon>(InWeapon)->RemoveRoutine_Internal(Routine, Type);
 }
 
 bool ACsWeapon::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)

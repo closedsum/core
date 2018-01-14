@@ -23,6 +23,9 @@
 #include "UI/CsUI.h"
 #include "UI/CsWidget_Fullscreen.h"
 
+// Cache
+#pragma region
+
 namespace ECsGameStateCachedName
 {
 	namespace Name
@@ -38,6 +41,48 @@ namespace ECsGameStateCachedString
 		const FString OnBoard_Internal = TEXT("OnBoard_Internal");
 	};
 }
+
+#pragma endregion Cache
+
+// Enums
+#pragma region
+
+UENUM(BlueprintType)
+namespace ECsGameStateRoutine
+{
+	enum Type
+	{
+		OnBoard_Internal		UMETA(DisplayName = "OnBoard_Internal"),
+		ECsGameStateRoutine_MAX	UMETA(Hidden),
+	};
+}
+
+namespace ECsGameStateRoutine
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString OnBoard_Internal = TCsString(TEXT("OnBoard_Internal"), TEXT("onboard_internal"), TEXT("onboard internal"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::OnBoard_Internal) { return Str::OnBoard_Internal.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::OnBoard_Internal) { return Type::OnBoard_Internal; }
+		return Type::ECsGameStateRoutine_MAX;
+	}
+}
+
+#define ECS_GAME_STATE_ROUTINE_MAX (uint8)ECsGameStateRoutine::ECsGameStateRoutine_MAX
+typedef ECsGameStateRoutine::Type TCsGameStateRoutine;
+
+#pragma endregion Enums
 
 ACsGameState::ACsGameState(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

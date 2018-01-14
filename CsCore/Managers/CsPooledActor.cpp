@@ -46,3 +46,32 @@ void ACsPooledActor::DeAllocate(){}
 void ACsPooledActor::OnCreatePool(){}
 void ACsPooledActor::Show() { Visibility = ECsVisibility::Visible; }
 void ACsPooledActor::Hide() { Visibility = ECsVisibility::Hidden; }
+
+// Routines
+#pragma region
+
+/*static*/ void ACsPooledActor::AddRoutine(UObject* InWeapon, struct FCsRoutine* Routine, const uint8 &InType)
+{
+	Cast<ACsPooledActor>(InWeapon)->AddRoutine_Internal(Routine, InType);
+}
+
+bool ACsPooledActor::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType)
+{
+	return false;
+}
+
+/*static*/ void ACsPooledActor::RemoveRoutine(UObject* InWeapon, struct FCsRoutine* Routine, const uint8 &InType)
+{
+	Cast<ACsPooledActor>(InWeapon)->RemoveRoutine_Internal(Routine, InType);
+}
+
+bool ACsPooledActor::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType)
+{
+	return false;
+}
+
+void ACsPooledActor::ClearRoutines()
+{
+}
+
+#pragma endregion Routines

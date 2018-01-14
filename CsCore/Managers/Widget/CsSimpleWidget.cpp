@@ -2,6 +2,8 @@
 #include "Managers/Widget/CsSimpleWidget.h"
 #include "CsCore.h"
 
+#include "Runtime/Engine/Public/UnrealEngine.h"
+
 UCsSimpleWidget::UCsSimpleWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {

@@ -1,6 +1,7 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_Macro.h"
 #include "Types/CsTypes_Primitive.h"
+#include "Coroutine/pt.h"
 
 #include "CsTypes_Coroutine.generated.h"
 #pragma once

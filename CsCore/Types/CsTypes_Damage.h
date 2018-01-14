@@ -49,6 +49,9 @@ typedef TCsHitType(*TCsStringToHitType)(const FString&);
 							HitTypeToString = &ECsHitType::ToString; \
 							StringToHitType = &ECsHitType::ToType
 
+#define CS_INVALID_DAMAGE_TYPE 255
+#define CS_INVALID_HIT_TYPE 255
+
 USTRUCT(BlueprintType)
 struct FCsDamageEvent
 {
@@ -64,14 +67,20 @@ struct FCsDamageEvent
 	float Damage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
-	AActor* Instigator;
+	UObject* Instigator;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
-	AActor* Causer;
+	UObject* Causer;
 
 	TCsDamageType DamageType;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	uint8 DamageType_Script;
+
 	TCsHitType HitType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	uint8 HitType_Script;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
 	//TEnumAsByte<EProjectileType::Type> ProjectileType;
@@ -82,7 +91,10 @@ struct FCsDamageEvent
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
 	FHitResult HitInfo;
 
-	FCsDamageEvent(){}
+	FCsDamageEvent()
+	{
+		Reset();
+	}
 	virtual ~FCsDamageEvent(){}
 
 	FCsDamageEvent& operator=(const FCsDamageEvent& B)
@@ -91,7 +103,9 @@ struct FCsDamageEvent
 		Instigator = B.Instigator;
 		Causer = B.Causer;
 		DamageType = B.DamageType;
+		DamageType_Script = B.DamageType_Script;
 		HitType = B.HitType;
+		HitType_Script = B.HitType_Script;
 		HasImpulse = B.HasImpulse;
 		HitInfo = B.HitInfo;
 		return *this;
@@ -103,7 +117,9 @@ struct FCsDamageEvent
 			   Instigator == B.Instigator &&
 			   Causer == B.Causer &&
 			   DamageType == B.DamageType &&
+			   DamageType_Script == B.DamageType_Script &&
 		 	   HitType == B.HitType &&
+			   HitType_Script == B.HitType_Script &&
 			   HasImpulse == B.HasImpulse;
 	}
 
@@ -122,9 +138,23 @@ struct FCsDamageEvent
 		Damage = 0.0f;
 		Instigator = nullptr;
 		Causer = nullptr;
-		//DamageType = B.DamageType;
-		//HitType = B.HitType;
+		DamageType = (TCsDamageType)0;
+		DamageType_Script = CS_INVALID_DAMAGE_TYPE;
+		HitType = (TCsHitType)0;
+		HitType_Script = CS_INVALID_HIT_TYPE;
 		HasImpulse = false;
 		HitInfo.Reset(0.0f, false);
+	}
+
+	void SetDamageType(const TCsDamageType &InDamageType)
+	{
+		DamageType		  = InDamageType;
+		DamageType_Script = (uint8)DamageType;
+	}
+
+	void SetHitType(const TCsHitType &InHitType)
+	{
+		HitType		   = InHitType;
+		HitType_Script = (uint8)HitType;
 	}
 };

@@ -13,6 +13,8 @@
 // Managers
 #include "Managers/FX/CsManager_FX.h"
 #include "Managers/FX/CsEmitter.h"
+#include "Managers/Damage/CsManager_Damage.h"
+#include "Managers/InteractiveActor/CsDamageableActor.h"
 
 #include "Pawn/CsPawn.h"
 #include "Weapon/CsWeapon.h"
@@ -21,6 +23,9 @@
 
 ACsProjectile::ACsProjectile(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+	Warning_FellOutOfWorld	   = TEXT("ACsProjectile::FellOutOfWorld");
+	Warning_OutsideWorldBounds = TEXT("ACsProjectile::OutsideWorldBounds");
+
 	// Collision Component
 	CollisionComponent = ObjectInitializer.CreateDefaultSubobject<USphereComponent>(this, TEXT("CollisionComponent"));
 	CollisionComponent->InitSphereRadius(5.0f);
@@ -501,6 +506,22 @@ void ACsProjectile::OnHitCallback(UPrimitiveComponent* HitComp, AActor* OtherAct
 	if (!Cache.IsAllocated)
 		return;
 
+	ACsManager_Damage* Manager_Damage = ACsManager_Damage::Get(GetWorld());
+	FCsDamageEvent* Event			  = Manager_Damage->Allocate();
+
+	Event->Damage	  = Cache.GetData()->GetDamage();
+	Event->Instigator = Cache.GetInstigator();
+	Event->Causer	  = Cache.GetOwner();
+	//Event->SetDamageType();
+	//Event->SetHitType();
+	Event->HitInfo = HitResult;
+
+	// DamageableActor
+	if (ACsDamageableActor* DamageableActor = Cast<ACsDamageableActor>(HitResult.GetActor()))
+	{
+		DamageableActor->ApplyDamage(Event);
+	}
+
 	// Impact Normal
 	if (CsCVarDrawProjectileImpactNormal->GetInt() == CS_CVAR_DRAW)
 	{
@@ -524,7 +545,10 @@ void ACsProjectile::OnHitCallback(UPrimitiveComponent* HitComp, AActor* OtherAct
 		Cache.GetData()->GetData_Impact()->PlayImpactSound(GetWorld(), PhysicalMaterial->SurfaceType, Cache.GetOwner(), HitResult.Location);
 	}
 
-	Cache.LifeTime = 0.0f;
+	Event->Reset();
+
+	Cache.UseLifeTime = true;
+	Cache.LifeTime	  = 0.0f;
 }
 
 // Script

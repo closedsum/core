@@ -19,9 +19,24 @@ namespace ECsCachedString
 	}
 }
 
+#define CS_INVALID_ENUM_TO_STRING ECsCachedString::Str::INVALID
+
 #pragma endregion String
 
-#define CS_INVALID_ENUM_TO_STRING ECsCachedString::Str::INVALID
+// FName
+#pragma region
+
+namespace ECsCachedName
+{
+	namespace Name
+	{
+		const FName Null = FName("NULL");
+	}
+}
+
+#define CS_INVALID_SHORT_CODE ECsCachedName::Name::Null
+
+#pragma endregion FName
 
 // Enum Union
 #pragma region

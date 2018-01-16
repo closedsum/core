@@ -18,6 +18,13 @@ ACsManager_Inventory::ACsManager_Inventory(const FObjectInitializer& ObjectIniti
 
 AActor* ACsManager_Inventory::GetMyOwner() { return MyOwner.IsValid() ? MyOwner.Get() : nullptr; }
 
+bool ACsManager_Inventory::IsEmpty()
+{
+	TArray<uint64> OutKeys;
+	Items.GetKeys(OutKeys);
+	return OutKeys.Num() == CS_EMPTY;
+}
+
 FCsItem* ACsManager_Inventory::GetItem(const uint64 &Id)
 {
 	return *(Items.Find(Id));
@@ -43,6 +50,32 @@ int32 ACsManager_Inventory::GetItemCount(const TCsItemType &ItemType)
 	if (!ItemsPtr)
 		return 0;
 	return ItemsPtr->Num();
+}
+
+void ACsManager_Inventory::AddItem(FCsItem* Item)
+{
+	Items.Add(Item->UniqueId, Item);
+
+	if (TArray<FCsItem*>* ItemsPtr = ItemMap.Find(Item->Type))
+	{
+		ItemsPtr->Add(Item);
+	}
+	else
+	{
+		TArray<FCsItem*> ItemArray;
+		ItemArray.Add(Item);
+		ItemMap.Add(Item->Type, ItemArray);
+	}
+}
+
+void ACsManager_Inventory::AddItems(const TArray<FCsItem*> &ItemsToAdd)
+{
+	const int32 Count = ItemsToAdd.Num();
+
+	for (int32 I = 0; I < Count; I++)
+	{
+		AddItem(ItemsToAdd[I]);
+	}
 }
 
 void ACsManager_Inventory::RemoveItem(const uint64 &Id, const bool &ShouldDestroy)
@@ -73,6 +106,8 @@ void ACsManager_Inventory::RemoveItem(const uint64 &Id, const bool &ShouldDestro
 
 	if (ShouldDestroy)
 	{
+		// TODO: Need to Delete .json file associated with the item
+
 		ACsManager_Item* Manager_Item = ACsManager_Item::Get(GetWorld());
 		Manager_Item->DeAllocate(Item);
 	}

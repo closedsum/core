@@ -15,6 +15,7 @@ class CSCORE_API ACsManager_Item : public AActor
 	static ACsManager_Item* Get(UWorld* InWorld);
 
 	CS_DECLARE_ITEM_TYPE
+	CS_DECLARE_ITEM_OWNER
 
 	UPROPERTY()
 	uint64 UniqueIdIndex;
@@ -30,9 +31,26 @@ class CSCORE_API ACsManager_Item : public AActor
 	virtual FCsItem* Allocate();
 	virtual FCsItem* Allocate(const TCsItemType &ItemType);
 
+	virtual void SetItemOwnerInfo(FCsItem* Item, UObject* ItemOwner);
+
+	virtual FCsItem* Allocate(const TCsItemType &ItemType, UObject* ItemOwner);
+
 	TMap<uint64, FCsItem*> ActiveItems;
+	TMap<uint64, TArray<FCsItem*>> ActiveItemsByOwnerId;
 
 	virtual FCsItem* GetItem(const uint64 &Id);
+
+	void GetItemsByOwnerType(const TCsItemOwner &OwnerTyper, TArray<FCsItem*> &OutItems);
+	void GetItemsByOwnerId(const uint64 &OwnerId, TArray<FCsItem*> &OutItems);
+
+	void SetItemFileName(FCsItem* Item);
+
+	UPROPERTY()
+	FString SavePath;
+
+	FString GetSaveDirectory();
+
+	virtual void Save(FCsItem* Item);
 
 	virtual void DeAllocate(const uint64 &Id);
 	virtual void DeAllocate(FCsItem* Item);

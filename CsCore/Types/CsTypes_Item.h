@@ -81,6 +81,23 @@ namespace ECsItemOwner
 
 typedef ECsItemOwner::Type TCsItemOwner;
 
+// ItemOwnerToString
+typedef FString(*TCsItemOwnerToString)(const TCsItemOwner&);
+// StringToItemOwner
+typedef TCsItemOwner(*TCsStringToItemOwner)(const FString&);
+
+#define CS_DECLARE_ITEM_OWNER	TCsItemOwner ItemOwner_MAX;\
+								uint8 ITEM_OWNER_MAX; \
+								TCsItemOwnerToString ItemOwnerToString; \
+								TCsStringToItemOwner StringToItemOwner;
+
+#define CS_DEFINE_ITEM_OWNER	ItemOwner_MAX = ECsItemOwner::ECsItemOwner_MAX; \
+								ITEM_OWNER_MAX = (uint8)ItemOwner_MAX; \
+								ItemOwnerToString = &ECsItemOwner::ToString; \
+								StringToItemOwner = &ECsItemOwner::ToType;
+
+#define CS_WORLD_OWNER_ID 0
+
 USTRUCT(BlueprintType)
 struct FCsInventoryItemDimension
 {
@@ -205,10 +222,60 @@ struct FCsInventoryItemProperties
 	}
 };
 
+UENUM(BlueprintType)
+namespace ECsItemMemberValueType
+{
+	enum Type
+	{
+		Bool						UMETA(DisplayName = "bool"),
+		Uint8						UMETA(DisplayName = "uint8"),
+		Int32						UMETA(DisplayName = "int32"),
+		Float						UMETA(DisplayName = "float"),
+		ECsItemMemberValueType_MAX	UMETA(Hidden),
+	};
+}
+
+namespace ECsItemMemberValueType
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+
+	namespace Str
+	{
+		const TCsString Bool = TCsString(TEXT("Bool"), TEXT("bool"));
+		const TCsString Uint8 = TCsString(TEXT("Uint8"), TEXT("uint8"));
+		const TCsString Int32 = TCsString(TEXT("Int32"), TEXT("int32"));
+		const TCsString Float = TCsString(TEXT("Float"), TEXT("float"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::Bool) { return Str::Bool.Value; }
+		if (EType == Type::Uint8) { return Str::Uint8.Value; }
+		if (EType == Type::Int32) { return Str::Int32.Value; }
+		if (EType == Type::Float) { return Str::Float.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::Bool) { return Type::Bool; }
+		if (String == Str::Uint8) { return Type::Uint8; }
+		if (String == Str::Int32) { return Type::Int32; }
+		if (String == Str::Float) { return Type::Float; }
+		return Type::ECsItemMemberValueType_MAX;
+	}
+}
+
+#define ECS_ITEM_MEMBER_VALUE_TYPE_MAX (uint8)ECsItemMemberValueType::ECsItemMemberValueType_MAX
+typedef TEnumAsByte<ECsItemMemberValueType::Type> TCsItemMemberValueType;
+
 USTRUCT(BlueprintType)
 struct FCsItemMemberValue
 {
 	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY()
+	TEnumAsByte<ECsItemMemberValueType::Type> Type;
 
 	UPROPERTY()
 	bool Value_bool;
@@ -224,6 +291,7 @@ struct FCsItemMemberValue
 
 	FCsItemMemberValue& operator=(const FCsItemMemberValue& B)
 	{
+		Type = B.Type;
 		Value_bool = B.Value_bool;
 		Value_uint8 = B.Value_uint8;
 		Value_int32 = B.Value_int32;
@@ -233,6 +301,7 @@ struct FCsItemMemberValue
 
 	bool operator==(const FCsItemMemberValue& B) const
 	{
+		if (Type != B.Type) { return false; }
 		if (Value_bool != B.Value_bool) { return false; }
 		if (Value_uint8 != B.Value_uint8) { return false; }
 		if (Value_int32 != B.Value_int32) { return false; }
@@ -251,6 +320,8 @@ struct FCsItemMemberValue
 	float GetFloat() { return Value_float; }
 };
 
+#define CS_INVALID_ITEM_OWNER 255
+
 USTRUCT(BlueprintType)
 struct FCsItemHistory
 {
@@ -260,6 +331,9 @@ struct FCsItemHistory
 	uint64 OwnerId;
 
 	TCsItemOwner OwnerType;
+
+	UPROPERTY()
+	uint8 OwnerType_Script;
 
 	UPROPERTY()
 	FString OwnerName;
@@ -286,11 +360,23 @@ struct FCsItemHistory
 
 	void Reset()
 	{
+		OwnerId = 0;
+		OwnerType = (TCsItemOwner)0;
+		OwnerType_Script = CS_INVALID_ITEM_OWNER;
+		OwnerName = ECsCachedString::Str::Empty;
+
 		Members.Reset();
+	}
+
+	void SetOwnerType(const TCsItemOwner &InOwnerType)
+	{
+		OwnerType		 = InOwnerType;
+		OwnerType_Script = (uint8)OwnerType;
 	}
 };
 
 #define CS_ITEM_POOL_INVALID_INDEX 65535
+#define CS_INVALID_ITEM_TYPE 255
 
 USTRUCT(BlueprintType)
 struct FCsItem
@@ -300,7 +386,9 @@ struct FCsItem
 	UPROPERTY()
 	uint16 Index;
 
+	UPROPERTY()
 	bool IsAllocated;
+	UPROPERTY()
 	bool IsSaved;
 
 	TCsItemType Type;
@@ -316,17 +404,19 @@ struct FCsItem
 	FName Name;
 	UPROPERTY()
 	FString DisplayName;
+	UPROPERTY()
+	FString FileName;
 
 	FDateTime Created;
 	FTimespan LifeTime;
 
-	TWeakObjectPtr<class ACsData_Item> Data;
+	//TWeakObjectPtr<class ACsData_Item> Data;
 
 	UPROPERTY()
 	FCsInventoryItemProperties InventoryProperties;
-
+	UPROPERTY()
 	FCsItemHistory CurrentHistory;
-
+	UPROPERTY()
 	TArray<FCsItemHistory> PreviousHistories;
 
 	FCsItem() 
@@ -377,24 +467,34 @@ struct FCsItem
 	{
 		IsAllocated = false;
 		IsSaved = false;
-		//Type;
-		Type_Script  = 0;
-		TypeAsString = TEXT("");
+		Type = (TCsItemType)0;
+		Type_Script  = CS_INVALID_ITEM_TYPE;
+		TypeAsString = ECsCachedString::Str::Empty;
 		UniqueId = 0;
 		Name = NAME_Name;
-		DisplayName = TEXT("");
+		DisplayName = ECsCachedString::Str::Empty;
+		FileName = ECsCachedString::Str::Empty;
+		LifeTime = FTimespan::Zero();
+		//Data.Reset();
+		//Data = nullptr;
 		InventoryProperties.Reset();
 		CurrentHistory.Reset();
 		PreviousHistories.Reset();
 	}
 
-	class ACsData_Item* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
+	//class ACsData_Item* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
+
+	void SetFileName()
+	{
+		FileName = FString::Printf(TEXT("%llu"), UniqueId) + TEXT("_") + TypeAsString;
+	}
 };
 
 namespace ECsFileItemHeaderCachedString
 {
 	namespace Str
 	{
+		const FString Header = TEXT("Header");
 		const FString UniqueId = TEXT("UniqueId");
 		const FString Name = TEXT("Name");
 		const FString DisplayName = TEXT("DisplayName");
@@ -409,9 +509,11 @@ namespace ECsFileItemHistoryHeaderCachedString
 {
 	namespace Str
 	{
+		const FString CurrentHistory = TEXT("CurrentHistory");
 		const FString OwnerId = TEXT("OwnerId");
 		const FString OwnerName = TEXT("OwnerName");
 		const FString OwnerType = TEXT("OwnerType");
+		const FString Members = TEXT("Members");
 	}
 }
 

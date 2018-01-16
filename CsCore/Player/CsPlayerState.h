@@ -225,4 +225,12 @@ public:
 
 	UPROPERTY()
 	class ACsManager_Inventory* Manager_Inventory;
+
+// Items
+#pragma region
+
+	UPROPERTY()
+	uint64 ItemOwnerId;
+
+#pragma endregion Items
 };

@@ -6,3 +6,10 @@ ACsData_Item::ACsData_Item(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
+
+// Members
+#pragma region
+
+UScriptStruct* ACsData_Item::GetMembersScriptStruct() { return nullptr; }
+
+#pragma endregion Members

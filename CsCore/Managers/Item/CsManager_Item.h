@@ -46,7 +46,14 @@ class CSCORE_API ACsManager_Item : public AActor
 	void SetItemFileName(FCsItem* Item);
 
 	UPROPERTY()
+	FString RootSavePath;
+
+	void SetRootSavePath(const FString &Path);
+
+	UPROPERTY()
 	FString SavePath;
+	UPROPERTY()
+	FString CombinedSavePath;
 
 	FString GetSaveDirectory();
 
@@ -55,9 +62,10 @@ class CSCORE_API ACsManager_Item : public AActor
 	virtual void DeAllocate(const uint64 &Id);
 	virtual void DeAllocate(FCsItem* Item);
 
+	virtual UScriptStruct* GetScriptStructForItemType(const TCsItemType &ItemType);
+
 	virtual void PopulateExistingItems();
-	virtual void LoadCurrentHistory(TSharedPtr<class FJsonObject> &JsonParsed, FCsItem* Item);
-	virtual void LoadPreviousHistories(TSharedPtr<class FJsonObject> &JsonParsed, FCsItem* Item);
+	virtual void LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCsItem* Item, FCsItemHistory* ItemHistory);
 
 	virtual void InitInventory(class ACsManager_Inventory* Manager_Inventory);
 };

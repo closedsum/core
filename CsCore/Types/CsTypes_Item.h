@@ -338,6 +338,7 @@ struct FCsItemHistory
 	UPROPERTY()
 	FString OwnerName;
 
+	UPROPERTY()
 	TMap<FName, FCsItemMemberValue> Members;
 
 	FCsItemHistory(){}
@@ -345,11 +346,43 @@ struct FCsItemHistory
 
 	FCsItemHistory& operator=(const FCsItemHistory& B)
 	{
+		OwnerId = B.OwnerId;
+		OwnerType = B.OwnerType;
+		OwnerType_Script = B.OwnerType_Script;
+		OwnerName = B.OwnerName;
+		Members = B.Members;
 		return *this;
 	}
 
 	bool operator==(const FCsItemHistory& B) const
 	{
+		if (OwnerId != B.OwnerId) { return false; }
+		if (OwnerType != B.OwnerType) { return false; }
+		if (OwnerType_Script != B.OwnerType_Script) { return false; }
+		if (OwnerName != B.OwnerName) { return false; }
+		
+		TArray<FName> OutKeysA;
+		Members.GetKeys(OutKeysA);
+
+		TArray<FName> OutKeysB;
+		B.Members.GetKeys(OutKeysB);
+		
+		if (OutKeysA.Num() != OutKeysB.Num())
+			return false;
+
+		const int32 Count = OutKeysA.Num();
+
+		for (int32 I = 0; I < Count; I++)
+		{
+			if (OutKeysA[I] != OutKeysB[I])
+				return false;
+
+			const FCsItemMemberValue* ValueA = Members.Find(OutKeysA[I]);
+			const FCsItemMemberValue* ValueB = B.Members.Find(OutKeysB[I]);
+
+			if (*ValueA != *ValueB)
+				return false;
+		}
 		return true;
 	}
 
@@ -410,7 +443,7 @@ struct FCsItem
 	FDateTime Created;
 	FTimespan LifeTime;
 
-	//TWeakObjectPtr<class ACsData_Item> Data;
+	TWeakObjectPtr<class ACsData_Item> Data;
 
 	UPROPERTY()
 	FCsInventoryItemProperties InventoryProperties;
@@ -482,12 +515,7 @@ struct FCsItem
 		PreviousHistories.Reset();
 	}
 
-	//class ACsData_Item* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
-
-	void SetFileName()
-	{
-		FileName = FString::Printf(TEXT("%llu"), UniqueId) + TEXT("_") + TypeAsString;
-	}
+	class ACsData_Item* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
 };
 
 namespace ECsFileItemHeaderCachedString
@@ -510,10 +538,12 @@ namespace ECsFileItemHistoryHeaderCachedString
 	namespace Str
 	{
 		const FString CurrentHistory = TEXT("CurrentHistory");
+		const FString PreviousHistories = TEXT("PreviousHistories");
 		const FString OwnerId = TEXT("OwnerId");
 		const FString OwnerName = TEXT("OwnerName");
 		const FString OwnerType = TEXT("OwnerType");
 		const FString Members = TEXT("Members");
+		const FString Value = TEXT("Value");
 	}
 }
 

@@ -136,10 +136,16 @@ void ACsManager_Item::SetItemFileName(FCsItem* Item)
 	Item->FileName   = Id + TEXT("_") + (*ItemTypeToString)(Item->Type);
 }
 
+void ACsManager_Item::SetRootSavePath(const FString &Path)
+{
+	RootSavePath	 = Path + TEXT("/");
+	CombinedSavePath = RootSavePath + SavePath;
+}
+
 FString ACsManager_Item::GetSaveDirectory()
 {
 	const FString GameSaveDir = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir());
-	const FString ItemsDir	  = SavePath;
+	const FString ItemsDir	  = CombinedSavePath;
 	const FString Directory   = GameSaveDir + ItemsDir;
 	return Directory;
 }
@@ -192,26 +198,29 @@ void ACsManager_Item::Save(FCsItem* Item)
 
 				for (int32 I = 0; I < Count; I++)
 				{
-					FCsItemMemberValue* Value = Item->CurrentHistory.Members.Find(OutKeys[I]);
+					JsonWriter->WriteObjectStart();
 
-					const TCsItemMemberValueType ValueType = Value->Type;
-					const FString KeyName				   = OutKeys[I].ToString();
-					// bool
-					if (Value->Type == ECsItemMemberValueType::Bool)
-						JsonWriter->WriteValue(KeyName, Value->GetBool());
-					// uint8
-					else
-					if (Value->Type == ECsItemMemberValueType::Uint8)
-						JsonWriter->WriteValue(KeyName, Value->GetUint8());
-					// int32
-					else
-					if (Value->Type == ECsItemMemberValueType::Int32)
-						JsonWriter->WriteValue(KeyName, Value->GetInt32());
-					// floats
-					else
-					if (Value->Type == ECsItemMemberValueType::Float)
-						JsonWriter->WriteValue(KeyName, Value->GetFloat());
+						FCsItemMemberValue* Value = Item->CurrentHistory.Members.Find(OutKeys[I]);
 
+						const TCsItemMemberValueType ValueType = Value->Type;
+						const FString KeyName				   = OutKeys[I].ToString();
+						// bool
+						if (Value->Type == ECsItemMemberValueType::Bool)
+							JsonWriter->WriteValue(KeyName, Value->GetBool());
+						// uint8
+						else
+						if (Value->Type == ECsItemMemberValueType::Uint8)
+							JsonWriter->WriteValue(KeyName, Value->GetUint8());
+						// int32
+						else
+						if (Value->Type == ECsItemMemberValueType::Int32)
+							JsonWriter->WriteValue(KeyName, Value->GetInt32());
+						// floats
+						else
+						if (Value->Type == ECsItemMemberValueType::Float)
+							JsonWriter->WriteValue(KeyName, Value->GetFloat());
+
+					JsonWriter->WriteObjectEnd();
 				}
 			JsonWriter->WriteObjectEnd();
 
@@ -250,6 +259,11 @@ void ACsManager_Item::DeAllocate(const uint64 &Id)
 	Item->Reset();
 }
 
+UScriptStruct* ACsManager_Item::GetScriptStructForItemType(const TCsItemType &ItemType)
+{
+	return nullptr;
+}
+
 void ACsManager_Item::PopulateExistingItems()
 {
 	TArray<FString> FoundFiles;
@@ -281,18 +295,15 @@ void ACsManager_Item::PopulateExistingItems()
 				VerifyJsonIntegrity();
 #endif // #if WITH_EDITOR
 				*/
-				//UCsCommon_Load::ReadObjectFromJson(JsonParsed, this, GetClass(), CategoryMemberAssociations, ReadObjectFromJson_Internal);
 
 				FCsItem* Item = Allocate();
 
-				// ReadItemFromJson
-
 				// Header
 				{
-					TSharedPtr<FJsonObject> JsonObject = JsonParsed->Values.Find(TEXT("Header"))->Get()->AsObject();
+					TSharedPtr<FJsonObject> JsonObject = JsonParsed->Values.Find(ECsFileItemHeaderCachedString::Str::Header)->Get()->AsObject();
 
 					// UniqueId
-					Item->UniqueId = (uint64)JsonObject->GetNumberField(ECsFileItemHeaderCachedString::Str::UniqueId);
+					Item->UniqueId = FCString::Strtoui64(*(JsonObject->GetStringField(ECsFileItemHeaderCachedString::Str::UniqueId)), NULL, 10);
 					// Name
 					Item->Name = FName(*JsonObject->GetStringField(ECsFileItemHeaderCachedString::Str::Name));
 					// DisplayName
@@ -304,9 +315,23 @@ void ACsManager_Item::PopulateExistingItems()
 					// Timespan
 					FTimespan::Parse(JsonObject->GetStringField(ECsFileItemHeaderCachedString::Str::Timespan), Item->LifeTime);
 				}
-					// Current History
-				LoadCurrentHistory(JsonParsed, Item);
-				LoadPreviousHistories(JsonParsed, Item);
+				// Current History
+				{
+					TSharedPtr<FJsonObject> JsonObject = JsonParsed->Values.Find(ECsFileItemHistoryHeaderCachedString::Str::CurrentHistory)->Get()->AsObject();
+					
+					LoadHistory(JsonObject, Item, &(Item->CurrentHistory));
+				}
+				// Previous Histories
+				{
+					TSharedPtr<FJsonObject> JsonObject = JsonParsed->Values.Find(ECsFileItemHistoryHeaderCachedString::Str::PreviousHistories)->Get()->AsObject();
+
+					const int32 Count = JsonObject->Values.Num();
+
+					for (int32 I = 0; I < Count; I++)
+					{
+						LoadHistory(JsonObject, Item, &(Item->PreviousHistories[I]));
+					}
+				}
 			}
 			else
 			{
@@ -317,7 +342,69 @@ void ACsManager_Item::PopulateExistingItems()
 	}
 }
 
-void ACsManager_Item::LoadCurrentHistory(TSharedPtr<FJsonObject> &JsonParsed, FCsItem* Item){}
-void ACsManager_Item::LoadPreviousHistories(TSharedPtr<FJsonObject> &JsonParsed, FCsItem* Item){}
+void ACsManager_Item::LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCsItem* Item, FCsItemHistory* ItemHistory)
+{
+	// OwnerId
+	ItemHistory->OwnerId = FCString::Strtoui64(*(JsonObject->GetStringField(ECsFileItemHistoryHeaderCachedString::Str::OwnerId)), NULL, 10);
+	// OwnerType
+	ItemHistory->OwnerType = (*StringToItemOwner)(JsonObject->GetStringField(ECsFileItemHistoryHeaderCachedString::Str::OwnerType));
+	// OwnerName
+	ItemHistory->OwnerName = JsonObject->GetStringField(ECsFileItemHistoryHeaderCachedString::Str::OwnerName);
+
+	// Members
+	{
+		TSharedPtr<FJsonObject> Object = JsonObject->Values.Find(ECsFileItemHistoryHeaderCachedString::Str::Members)->Get()->AsObject();
+
+		UScriptStruct* ScriptStruct = GetScriptStructForItemType(Item->Type);
+
+		for (TFieldIterator<UProperty> It(ScriptStruct); It; ++It)
+		{
+			UProperty* Property = Cast<UProperty>(*It);
+
+			const FString MemberNameAsString = Property->GetName();
+			const FName MemberName			 = Property->GetFName();
+
+			// bool
+			if (UBoolProperty* BoolProperty = Cast<UBoolProperty>(*It))
+			{
+				FCsItemMemberValue Value;
+				Value.Value_bool = Object->GetBoolField(MemberNameAsString);
+				ItemHistory->Members.Add(MemberName, Value);
+				continue;
+			}
+			// uint8
+			if (UByteProperty* ByteProperty = Cast<UByteProperty>(*It))
+			{
+				// enum
+				if (ByteProperty->IsEnum())
+				{
+				}
+				else
+				{
+					FCsItemMemberValue Value;
+					Value.Value_uint8 = (uint8)Object->GetIntegerField(MemberNameAsString);
+					ItemHistory->Members.Add(MemberName, Value);
+					continue;
+				}
+			}
+			// int32
+			if (UIntProperty* IntProperty = Cast<UIntProperty>(*It))
+			{
+				FCsItemMemberValue Value;
+				Value.Value_int32 = Object->GetIntegerField(MemberNameAsString);
+				ItemHistory->Members.Add(MemberName, Value);
+				continue;
+			}
+			// float
+			if (UFloatProperty* FloatProperty = Cast<UFloatProperty>(*It))
+			{
+				FCsItemMemberValue Value;
+				Value.Value_float = (float)Object->GetNumberField(MemberNameAsString);
+				ItemHistory->Members.Add(MemberName, Value);
+				continue;
+			}
+		}
+	}
+}
 
 void ACsManager_Item::InitInventory(ACsManager_Inventory* Manager_Inventory){}

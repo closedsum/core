@@ -9,8 +9,10 @@ class CSCORE_API ACsData_Item : public ACsData
 {
 	GENERATED_UCLASS_BODY()
 
-// UI
+// Members
 #pragma region
 
-#pragma endregion UI
+	virtual UScriptStruct* GetMembersScriptStruct();
+
+#pragma endregion Members
 };

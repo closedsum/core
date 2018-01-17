@@ -39,6 +39,7 @@ namespace ECsGameStateCachedString
 	namespace Str
 	{
 		const FString OnBoard_Internal = TEXT("OnBoard_Internal");
+		const FString DefaultPlayerProfileName = TEXT("Player0");
 	};
 }
 
@@ -482,9 +483,9 @@ void ACsGameState::SetPlayerStateMappingRelationshipFlag(const uint8 &ClientMapp
 				ACsPlayerState* ClientPlayerState = GetPlayerState(ClientMappingId);
 				ACsPlayerState* PlayerState		  = GetPlayerState(MappingId);
 
-				const FString ClientName = ClientPlayerState ? ClientPlayerState->PlayerName : TEXT("INVALID");
-				const FString OtherName  = PlayerState ? PlayerState->PlayerName : TEXT("INVALID");
-				const FString Value		 = Relationship.HasBCompletedInitialReplicationAndLoadingForA ? TEXT("True") : TEXT("False");
+				const FString ClientName = ClientPlayerState ? ClientPlayerState->PlayerName : ECsCachedString::Str::INVALID;
+				const FString OtherName  = PlayerState ? PlayerState->PlayerName : ECsCachedString::Str::INVALID;
+				const FString Value		 = Relationship.HasBCompletedInitialReplicationAndLoadingForA ? ECsCachedString::Str::True : ECsCachedString::Str::False;
 
 				UE_LOG(LogCs, Log, TEXT("ACsGameState::SetPlayerStateMappingRelationshipFlag: Relationship: %s(%d) <-> %s(%d) from %s to True."), *ClientName, ClientMappingId, *OtherName, MappingId, *Value);
 			}
@@ -492,6 +493,11 @@ void ACsGameState::SetPlayerStateMappingRelationshipFlag(const uint8 &ClientMapp
 			break;
 		}
 	}
+}
+
+FString ACsGameState::GetLocalPlayerProfileName()
+{
+	return ECsGameStateCachedString::Str::DefaultPlayerProfileName;
 }
 
 #pragma endregion Player State

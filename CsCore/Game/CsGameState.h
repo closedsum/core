@@ -238,5 +238,7 @@ public:
 
 	void SetPlayerStateMappingRelationshipFlag(const uint8 &ClientMappingId, const uint8 &MappingId);
 
+	virtual FString GetLocalPlayerProfileName();
+
 #pragma endregion Player State
 };

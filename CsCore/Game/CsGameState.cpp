@@ -248,6 +248,10 @@ CS_COROUTINE(ACsGameState, OnBoard_Internal)
 
 	gs->LoadData();
 
+	CS_COROUTINE_WAIT_UNTIL(r, gs->OnBoardState == ECsGameStateOnBoardState::LoadItems);
+
+	gs->LoadItems();
+
 	CS_COROUTINE_WAIT_UNTIL(r, gs->OnBoardState == ECsGameStateOnBoardState::SetupScene);
 
 	gs->SetupScene();
@@ -264,9 +268,12 @@ CS_COROUTINE(ACsGameState, OnBoard_Internal)
 	CS_COROUTINE_WAIT_UNTIL(r, gs->JavascriptEntryPoint->HasCompletedSetup);
 
 	gs->OnBoardState = ECsGameStateOnBoardState::Completed;
+
 #else
 	CS_COROUTINE_WAIT_UNTIL(r, gs->OnBoardState == ECsGameStateOnBoardState::Completed);
 #endif // #if WITH_EDITOR
+
+	gs->OnBoard_Completed();
 
 	CS_COROUTINE_END(r);
 }
@@ -276,7 +283,9 @@ void ACsGameState::OnFinishedLoadCommonData(const TArray<UObject*> &LoadedAssets
 void ACsGameState::SetupHUD(){}
 void ACsGameState::LoadData(){}
 void ACsGameState::OnFinishedLoadData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime){}
+void ACsGameState::LoadItems() { OnBoardState = ECsGameStateOnBoardState::SetupScene; }
 void ACsGameState::SetupScene(){}
+void ACsGameState::OnBoard_Completed(){}
 
 #pragma endregion OnBoard
 

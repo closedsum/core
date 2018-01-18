@@ -516,6 +516,12 @@ struct FCsItem
 	}
 
 	class ACsData_Item* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
+
+	void SetType(const TCsItemType &InType)
+	{
+		Type		= InType;
+		Type_Script = (uint8)Type;
+	}
 };
 
 namespace ECsFileItemHeaderCachedString

@@ -73,7 +73,12 @@ FCsItem* ACsManager_Item::Allocate(const TCsItemType &ItemType, UObject* ItemOwn
 	FCsItem* Item = Allocate(ItemType);
 
 	SetItemOwnerInfo(Item, ItemOwner);
+	AddActiveItemByOwnerId(Item);
+	return Item;
+}
 
+void ACsManager_Item::AddActiveItemByOwnerId(FCsItem* Item)
+{
 	const uint64 OwnerId = Item->CurrentHistory.OwnerId;
 
 	if (TArray<FCsItem*>* Items = ActiveItemsByOwnerId.Find(OwnerId))
@@ -86,7 +91,6 @@ FCsItem* ACsManager_Item::Allocate(const TCsItemType &ItemType, UObject* ItemOwn
 		ItemArray.Add(Item);
 		ActiveItemsByOwnerId.Add(OwnerId, ItemArray);
 	}
-	return Item;
 }
 
 FCsItem* ACsManager_Item::GetItem(const uint64 &Id)
@@ -176,55 +180,30 @@ void ACsManager_Item::Save(FCsItem* Item)
 
 		JsonWriter->WriteObjectEnd();
 	}
-
 	// Current History
 	{
 		JsonWriter->WriteObjectStart(ECsFileItemHistoryHeaderCachedString::Str::CurrentHistory);
 
-			// OwnerId
-			JsonWriter->WriteValue(ECsFileItemHistoryHeaderCachedString::Str::OwnerId, FString::Printf(TEXT("%llu"), Item->CurrentHistory.OwnerId));
-			// OwnerType
-			JsonWriter->WriteValue(ECsFileItemHistoryHeaderCachedString::Str::OwnerType, (*ItemOwnerToString)(Item->CurrentHistory.OwnerType));
-			// OwnerName
-			JsonWriter->WriteValue(ECsFileItemHistoryHeaderCachedString::Str::OwnerName, Item->CurrentHistory.OwnerName);
-
-			// Members
-			JsonWriter->WriteObjectStart(ECsFileItemHistoryHeaderCachedString::Str::Members);
-
-				TArray<FName> OutKeys;
-				Item->CurrentHistory.Members.GetKeys(OutKeys);
-
-				const int32 Count = OutKeys.Num();
-
-				for (int32 I = 0; I < Count; I++)
-				{
-					JsonWriter->WriteObjectStart();
-
-						FCsItemMemberValue* Value = Item->CurrentHistory.Members.Find(OutKeys[I]);
-
-						const TCsItemMemberValueType ValueType = Value->Type;
-						const FString KeyName				   = OutKeys[I].ToString();
-						// bool
-						if (Value->Type == ECsItemMemberValueType::Bool)
-							JsonWriter->WriteValue(KeyName, Value->GetBool());
-						// uint8
-						else
-						if (Value->Type == ECsItemMemberValueType::Uint8)
-							JsonWriter->WriteValue(KeyName, Value->GetUint8());
-						// int32
-						else
-						if (Value->Type == ECsItemMemberValueType::Int32)
-							JsonWriter->WriteValue(KeyName, Value->GetInt32());
-						// floats
-						else
-						if (Value->Type == ECsItemMemberValueType::Float)
-							JsonWriter->WriteValue(KeyName, Value->GetFloat());
-
-					JsonWriter->WriteObjectEnd();
-				}
-			JsonWriter->WriteObjectEnd();
+		SaveHistory(JsonWriter, &(Item->CurrentHistory));
 
 		JsonWriter->WriteObjectEnd();
+	}
+	// Previous Histories
+	{
+		JsonWriter->WriteArrayStart(ECsFileItemHistoryHeaderCachedString::Str::PreviousHistories);
+
+		const int32 Count = Item->PreviousHistories.Num();
+
+		for (int32 I = 0; I < Count; I++)
+		{
+			JsonWriter->WriteObjectStart();
+
+			SaveHistory(JsonWriter, &(Item->PreviousHistories[I]));
+
+			JsonWriter->WriteObjectEnd();
+		}
+
+		JsonWriter->WriteArrayEnd();
 	}
 	JsonWriter->WriteObjectEnd();
 
@@ -234,6 +213,54 @@ void ACsManager_Item::Save(FCsItem* Item)
 	const FString Filename  = Directory + Item->FileName + ECsCachedString::Str::Json;
 
 	FFileHelper::SaveStringToFile(OutputString, *Filename);
+
+	Item->IsSaved = true;
+}
+
+void ACsManager_Item::SaveHistory(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FCsItemHistory* ItemHistory)
+{
+	// OwnerId
+	JsonWriter->WriteValue(ECsFileItemHistoryHeaderCachedString::Str::OwnerId, FString::Printf(TEXT("%llu"), ItemHistory->OwnerId));
+	// OwnerType
+	JsonWriter->WriteValue(ECsFileItemHistoryHeaderCachedString::Str::OwnerType, (*ItemOwnerToString)(ItemHistory->OwnerType));
+	// OwnerName
+	JsonWriter->WriteValue(ECsFileItemHistoryHeaderCachedString::Str::OwnerName, ItemHistory->OwnerName);
+
+	// Members
+	JsonWriter->WriteObjectStart(ECsFileItemHistoryHeaderCachedString::Str::Members);
+
+		TArray<FName> OutKeys;
+		ItemHistory->Members.GetKeys(OutKeys);
+
+		const int32 Count = OutKeys.Num();
+
+		for (int32 I = 0; I < Count; I++)
+		{
+			JsonWriter->WriteObjectStart();
+
+			FCsItemMemberValue* Value = ItemHistory->Members.Find(OutKeys[I]);
+
+			const TCsItemMemberValueType ValueType = Value->Type;
+			const FString KeyName				   = OutKeys[I].ToString();
+			// bool
+			if (Value->Type == ECsItemMemberValueType::Bool)
+				JsonWriter->WriteValue(KeyName, Value->GetBool());
+			// uint8
+			else
+			if (Value->Type == ECsItemMemberValueType::Uint8)
+				JsonWriter->WriteValue(KeyName, Value->GetUint8());
+			// int32
+			else
+			if (Value->Type == ECsItemMemberValueType::Int32)
+				JsonWriter->WriteValue(KeyName, Value->GetInt32());
+			// floats
+			else
+			if (Value->Type == ECsItemMemberValueType::Float)
+				JsonWriter->WriteValue(KeyName, Value->GetFloat());
+
+			JsonWriter->WriteObjectEnd();
+		}
+	JsonWriter->WriteObjectEnd();
 }
 
 void ACsManager_Item::DeAllocate(FCsItem* Item)
@@ -280,7 +307,7 @@ void ACsManager_Item::PopulateExistingItems()
 	for (int32 I = 0; I < FileCount; I++)
 	{
 		FString ItemJson;
-		const FString Filename = FoundFiles[I];
+		const FString Filename = Directory + FoundFiles[I];
 
 		if (FFileHelper::LoadFileToString(ItemJson, *Filename))
 		{
@@ -309,7 +336,8 @@ void ACsManager_Item::PopulateExistingItems()
 					// DisplayName
 					Item->DisplayName = JsonObject->GetStringField(ECsFileItemHeaderCachedString::Str::DisplayName);
 					// Type
-					Item->Type = (*StringToItemType)(JsonObject->GetStringField(ECsFileItemHeaderCachedString::Str::Type));
+					Item->TypeAsString = JsonObject->GetStringField(ECsFileItemHeaderCachedString::Str::Type);
+					Item->SetType((*StringToItemType)(Item->TypeAsString));
 					// Created
 					FDateTime::Parse(JsonObject->GetStringField(ECsFileItemHeaderCachedString::Str::Created), Item->Created);
 					// Timespan
@@ -323,15 +351,19 @@ void ACsManager_Item::PopulateExistingItems()
 				}
 				// Previous Histories
 				{
-					TSharedPtr<FJsonObject> JsonObject = JsonParsed->Values.Find(ECsFileItemHistoryHeaderCachedString::Str::PreviousHistories)->Get()->AsObject();
+					const TArray<TSharedPtr<FJsonValue>> JsonArray = JsonParsed->Values.Find(ECsFileItemHistoryHeaderCachedString::Str::PreviousHistories)->Get()->AsArray();
 
-					const int32 Count = JsonObject->Values.Num();
+					const int32 Count = JsonArray.Num();
 
 					for (int32 I = 0; I < Count; I++)
 					{
-						LoadHistory(JsonObject, Item, &(Item->PreviousHistories[I]));
+						TSharedPtr<FJsonObject> Object = JsonArray[I]->AsObject();
+
+						LoadHistory(Object, Item, &(Item->PreviousHistories[I]));
 					}
 				}
+
+				AddActiveItemByOwnerId(Item);
 			}
 			else
 			{
@@ -347,7 +379,7 @@ void ACsManager_Item::LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCs
 	// OwnerId
 	ItemHistory->OwnerId = FCString::Strtoui64(*(JsonObject->GetStringField(ECsFileItemHistoryHeaderCachedString::Str::OwnerId)), NULL, 10);
 	// OwnerType
-	ItemHistory->OwnerType = (*StringToItemOwner)(JsonObject->GetStringField(ECsFileItemHistoryHeaderCachedString::Str::OwnerType));
+	ItemHistory->SetOwnerType((*StringToItemOwner)(JsonObject->GetStringField(ECsFileItemHistoryHeaderCachedString::Str::OwnerType)));
 	// OwnerName
 	ItemHistory->OwnerName = JsonObject->GetStringField(ECsFileItemHistoryHeaderCachedString::Str::OwnerName);
 
@@ -368,6 +400,7 @@ void ACsManager_Item::LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCs
 			if (UBoolProperty* BoolProperty = Cast<UBoolProperty>(*It))
 			{
 				FCsItemMemberValue Value;
+				Value.Type		 = ECsItemMemberValueType::Bool;
 				Value.Value_bool = Object->GetBoolField(MemberNameAsString);
 				ItemHistory->Members.Add(MemberName, Value);
 				continue;
@@ -382,6 +415,7 @@ void ACsManager_Item::LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCs
 				else
 				{
 					FCsItemMemberValue Value;
+					Value.Type		  = ECsItemMemberValueType::Uint8;
 					Value.Value_uint8 = (uint8)Object->GetIntegerField(MemberNameAsString);
 					ItemHistory->Members.Add(MemberName, Value);
 					continue;
@@ -391,6 +425,7 @@ void ACsManager_Item::LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCs
 			if (UIntProperty* IntProperty = Cast<UIntProperty>(*It))
 			{
 				FCsItemMemberValue Value;
+				Value.Type		  = ECsItemMemberValueType::Int32;
 				Value.Value_int32 = Object->GetIntegerField(MemberNameAsString);
 				ItemHistory->Members.Add(MemberName, Value);
 				continue;
@@ -399,6 +434,7 @@ void ACsManager_Item::LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCs
 			if (UFloatProperty* FloatProperty = Cast<UFloatProperty>(*It))
 			{
 				FCsItemMemberValue Value;
+				Value.Type		  = ECsItemMemberValueType::Float;
 				Value.Value_float = (float)Object->GetNumberField(MemberNameAsString);
 				ItemHistory->Members.Add(MemberName, Value);
 				continue;

@@ -38,6 +38,8 @@ class CSCORE_API ACsManager_Item : public AActor
 	TMap<uint64, FCsItem*> ActiveItems;
 	TMap<uint64, TArray<FCsItem*>> ActiveItemsByOwnerId;
 
+	void AddActiveItemByOwnerId(FCsItem* Item);
+
 	virtual FCsItem* GetItem(const uint64 &Id);
 
 	void GetItemsByOwnerType(const TCsItemOwner &OwnerTyper, TArray<FCsItem*> &OutItems);
@@ -58,6 +60,7 @@ class CSCORE_API ACsManager_Item : public AActor
 	FString GetSaveDirectory();
 
 	virtual void Save(FCsItem* Item);
+	virtual void SaveHistory(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FCsItemHistory* ItemHistory);
 
 	virtual void DeAllocate(const uint64 &Id);
 	virtual void DeAllocate(FCsItem* Item);

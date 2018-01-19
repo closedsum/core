@@ -664,6 +664,75 @@ struct FCsWidget_Float : public FCsWidget_Text
 	}
 };
 
+struct FCsWidget_Int32 : public FCsWidget_Text
+{
+	TCsInt32 Value;
+
+	FCsWidget_Int32() {}
+	~FCsWidget_Int32() {}
+
+	virtual void Set(UTextBlock* inText) override
+	{
+		Text = inText;
+		Visibility = Text->Visibility;
+		Visibility.Clear();
+		String = Text->Text.ToString();
+		String.Clear();
+		Value = FCString::Atoi(*(String.Get()));
+		Value.Clear();
+		Color = Text->ColorAndOpacity.GetSpecifiedColor();
+		Color.Clear();
+	}
+
+	virtual void OnNativeTick(const float &InDeltaTime) override
+	{
+		// Visibility
+		if (Visibility.HasChanged())
+		{
+			if (UTextBlock* T = Get())
+				T->SetVisibility(Visibility.Get());
+		}
+		if (Visibility == ESlateVisibility::Collapsed ||
+			Visibility == ESlateVisibility::Hidden)
+		{
+			Visibility.Clear();
+			String.Clear();
+			return;
+		}
+		// Value
+		if (Value.HasChanged())
+		{
+			if (UTextBlock* T = Get())
+				T->SetText(FText::FromString(String.Get()));
+		}
+		// Color
+		if (Color.HasChanged())
+		{
+			if (UTextBlock* T = Get())
+				T->SetColorAndOpacity(Color.Get());
+		}
+		Visibility.Clear();
+		String.Clear();
+		Color.Clear();
+	}
+
+	virtual void SetString(const FString &inString) override
+	{
+		String = inString;
+
+		if (String.HasChanged())
+			Value = FCString::Atoi(*inString);
+	}
+
+	void SetValue(const float &inValue)
+	{
+		Value = inValue;
+
+		if (Value.HasChanged())
+			String = FString::FromInt(inValue);
+	}
+};
+
 struct FCsWidget_Image : public FCsWidget
 {
 public:

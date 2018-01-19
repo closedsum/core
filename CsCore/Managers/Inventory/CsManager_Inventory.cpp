@@ -45,11 +45,34 @@ FCsItem* ACsManager_Inventory::GetFirstItem(const TCsItemType &ItemType)
 
 int32 ACsManager_Inventory::GetItemCount(const TCsItemType &ItemType)
 {
-	TArray<FCsItem*>* ItemsPtr = ItemMap.Find(ItemType);
+	if (uint16* Count = ItemCountMap.Find(ItemType))
+		return *Count;
+	return 0;
+}
 
-	if (!ItemsPtr)
-		return 0;
-	return ItemsPtr->Num();
+void ACsManager_Inventory::IncrementItemCount(const TCsItemType &ItemType)
+{
+	if (uint16* Count = ItemCountMap.Find(ItemType))
+	{
+		(*Count)++;
+	}
+	else
+	{
+		ItemCountMap.Add(ItemType, 1);
+	}
+}
+
+void ACsManager_Inventory::DecrementItemCount(const TCsItemType &ItemType)
+{
+	if (uint16* Count = ItemCountMap.Find(ItemType))
+	{
+		if (*Count > 0)
+			(*Count)--;
+	}
+	else
+	{
+		ItemCountMap.Add(ItemType, 0);
+	}
 }
 
 void ACsManager_Inventory::AddItem(FCsItem* Item)
@@ -66,6 +89,7 @@ void ACsManager_Inventory::AddItem(FCsItem* Item)
 		ItemArray.Add(Item);
 		ItemMap.Add(Item->Type, ItemArray);
 	}
+	IncrementItemCount(Item->Type);
 }
 
 void ACsManager_Inventory::AddItems(const TArray<FCsItem*> &ItemsToAdd)
@@ -103,6 +127,7 @@ void ACsManager_Inventory::RemoveItem(const uint64 &Id, const bool &ShouldDestro
 			break;
 		}
 	}
+	DecrementItemCount(ItemType);
 
 	if (ShouldDestroy)
 	{

@@ -17,7 +17,7 @@ ACsManager_Item::ACsManager_Item(const FObjectInitializer& ObjectInitializer) : 
 {
 	UniqueIdIndex = CS_ITEM_UNIQUE_ID_START_INDEX;
 
-	SavePath = TEXT("Items/");
+	SaveDirectory = TEXT("Items/");
 }
 
 /*static*/ ACsManager_Item* ACsManager_Item::Get(UWorld* InWorld)
@@ -140,16 +140,16 @@ void ACsManager_Item::SetItemFileName(FCsItem* Item)
 	Item->FileName   = Id + TEXT("_") + (*ItemTypeToString)(Item->Type);
 }
 
-void ACsManager_Item::SetRootSavePath(const FString &Path)
+void ACsManager_Item::SetRootSaveDirectory(const FString &Directory)
 {
-	RootSavePath	 = Path + TEXT("/");
-	CombinedSavePath = RootSavePath + SavePath;
+	RootSaveDirectory	   = Directory + TEXT("/");
+	CombinedSaveDirectory  = RootSaveDirectory + SaveDirectory;
 }
 
-FString ACsManager_Item::GetSaveDirectory()
+FString ACsManager_Item::GetSavePath()
 {
 	const FString GameSaveDir = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir());
-	const FString ItemsDir	  = CombinedSavePath;
+	const FString ItemsDir	  = CombinedSaveDirectory;
 	const FString Directory   = GameSaveDir + ItemsDir;
 	return Directory;
 }
@@ -209,8 +209,8 @@ void ACsManager_Item::Save(FCsItem* Item)
 
 	JsonWriter->Close();
 
-	const FString Directory = GetSaveDirectory();
-	const FString Filename  = Directory + Item->FileName + ECsCachedString::Str::Json;
+	const FString Path		= GetSavePath();
+	const FString Filename  = Path + Item->FileName + ECsCachedString::Str::Json;
 
 	FFileHelper::SaveStringToFile(OutputString, *Filename);
 
@@ -295,9 +295,9 @@ void ACsManager_Item::PopulateExistingItems()
 {
 	TArray<FString> FoundFiles;
 
-	const FString Directory = GetSaveDirectory();
+	const FString Path = GetSavePath();
 
-	IFileManager::Get().FindFiles(FoundFiles, *Directory, *ECsCachedString::Str::Json);
+	IFileManager::Get().FindFiles(FoundFiles, *Path, *ECsCachedString::Str::Json);
 
 	const int32 FileCount = FoundFiles.Num();
 
@@ -307,7 +307,7 @@ void ACsManager_Item::PopulateExistingItems()
 	for (int32 I = 0; I < FileCount; I++)
 	{
 		FString ItemJson;
-		const FString Filename = Directory + FoundFiles[I];
+		const FString Filename = Path + FoundFiles[I];
 
 		if (FFileHelper::LoadFileToString(ItemJson, *Filename))
 		{

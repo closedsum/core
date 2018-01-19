@@ -48,16 +48,16 @@ class CSCORE_API ACsManager_Item : public AActor
 	void SetItemFileName(FCsItem* Item);
 
 	UPROPERTY()
-	FString RootSavePath;
+	FString RootSaveDirectory;
 
-	void SetRootSavePath(const FString &Path);
+	void SetRootSaveDirectory(const FString &Directory);
 
 	UPROPERTY()
-	FString SavePath;
+	FString SaveDirectory;
 	UPROPERTY()
-	FString CombinedSavePath;
+	FString CombinedSaveDirectory;
 
-	FString GetSaveDirectory();
+	FString GetSavePath();
 
 	virtual void Save(FCsItem* Item);
 	virtual void SaveHistory(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FCsItemHistory* ItemHistory);

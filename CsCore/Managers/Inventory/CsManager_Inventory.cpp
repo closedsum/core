@@ -35,11 +35,16 @@ FCsItem* ACsManager_Inventory::GetFirstItem(const TCsItemType &ItemType)
 	TArray<FCsItem*>* ItemsPtr = ItemMap.Find(ItemType);
 
 	if (!ItemsPtr)
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetFirstItem: There are NO Items of type: %s."), *((*ItemTypeToString)(ItemType)));
 		return nullptr;
+	}
 	
 	if (ItemsPtr->Num() == CS_EMPTY)
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetFirstItem: There are NO Items of type: %s."), *((*ItemTypeToString)(ItemType)));
 		return nullptr;
-	
+	}
 	return (*ItemsPtr)[CS_FIRST];
 }
 
@@ -152,4 +157,13 @@ void ACsManager_Inventory::ConsumeItem(const uint64 &Id)
 void ACsManager_Inventory::ConsumeItem(FCsItem* Item)
 {
 	ConsumeItem(Item->UniqueId);
+}
+
+FCsItem* ACsManager_Inventory::ConsumeFirstItem(const TCsItemType &ItemType)
+{
+	if (FCsItem* Item = GetFirstItem(ItemType))
+	{
+		ConsumeItem(Item);
+	}
+	return nullptr;
 }

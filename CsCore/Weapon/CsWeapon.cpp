@@ -460,6 +460,11 @@ ACsData_Weapon* ACsWeapon::GetMyData_Weapon()
 	return MyData_Weapon.IsValid() ? MyData_Weapon.Get() : nullptr;
 }
 
+ACsData_Projectile* ACsWeapon::GetMyData_Projectile(const TCsWeaponFireMode &FireMode, const bool &IsCharged)
+{
+	return GetMyData_Weapon()->GetData_Projectile(FireMode, IsCharged);
+}
+
 #pragma endregion Data
 
 // Routines

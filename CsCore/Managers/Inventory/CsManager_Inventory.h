@@ -16,6 +16,8 @@ class CSCORE_API ACsManager_Inventory : public AActor
 
 	AActor* GetMyOwner();
 
+	CS_DECLARE_ITEM_TYPE
+
 	TMap<uint64, FCsItem*> Items;
 	TMap<TCsItemType, TArray<FCsItem*>> ItemMap;
 
@@ -39,4 +41,6 @@ class CSCORE_API ACsManager_Inventory : public AActor
 
 	virtual void ConsumeItem(const uint64 &Id);
 	virtual void ConsumeItem(FCsItem* Item);
+
+	virtual FCsItem* ConsumeFirstItem(const TCsItemType &ItemType);
 };

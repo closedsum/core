@@ -3,6 +3,9 @@
 #include "CsCore.h"
 #include "CsCVars.h"
 
+// Managers
+#include "Managers/Inventory/CsManager_Inventory.h"
+
 ACsPawn::ACsPawn(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -88,7 +91,13 @@ void ACsPawn::RecordVelocityAndSpeed()
 
 	Matrix = FRotationMatrix(Rotation);
 	CurrentCapsuleVelocityRightXY = Matrix.GetScaledAxis(EAxis::Y);
-
 }
 
 #pragma endregion Movement
+
+// Managers
+#pragma region
+
+ACsManager_Inventory* ACsPawn::GetMyManager_Inventory() { return nullptr; }
+
+#pragma endregion Managers

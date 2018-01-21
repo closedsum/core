@@ -29,9 +29,11 @@ void UCsWidget_TextBlock::NativeConstruct()
 	HasNativeContructed = true;
 }
 
-void UCsWidget_TextBlock::OnTick(const float &InDeltaTime)
+void UCsWidget_TextBlock::OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime)
 {
-	Super::OnTick(InDeltaTime);
+	Super::OnNativeTick(MyGeometry, InDeltaTime);
+
+	Text.OnNativeTick(InDeltaTime);
 
 	// Position
 	if (Position.HasChanged())
@@ -54,6 +56,20 @@ void UCsWidget_TextBlock::OnTick(const float &InDeltaTime)
 	Position.Clear();
 	Size.Clear();
 
+}
+
+void UCsWidget_TextBlock::Allocate(const uint16& ActiveIndex, FCsSimpleWidgetPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent)
+{
+	Super::Allocate(ActiveIndex, Payload, Time, RealTime, Frame, InOwner, InParent);
+
+	Text.SetString(Payload->DisplayName);
+}
+
+void UCsWidget_TextBlock::DeAllocate()
+{
+	Super::DeAllocate();
+
+	Text.SetString(ECsCachedString::Str::Empty);
 }
 
 void UCsWidget_TextBlock::OnAddToCanvas()

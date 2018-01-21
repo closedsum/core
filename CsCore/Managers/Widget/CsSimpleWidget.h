@@ -110,8 +110,7 @@ class CSCORE_API UCsSimpleWidget : public UUserWidget
 {
 	GENERATED_UCLASS_BODY()
 
-	virtual void OnNativeTick(const FGeometry& MyGeometry, float InDeltaTime);
-	virtual void OnTick(const float &InDeltaTime);
+	virtual void OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime);
 	virtual void Init(const int32 &Index);
 
 	virtual void Allocate(const uint16& ActiveIndex, FCsSimpleWidgetPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent);

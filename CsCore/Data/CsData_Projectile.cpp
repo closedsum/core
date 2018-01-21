@@ -19,7 +19,7 @@ void ACsData_Projectile::Load(const ECsLoadFlags &LoadFlags /*=ECsLoadFlags::All
 		Data->Load(LoadFlags);
 }
 
-TCsProjectileType ACsData_Projectile::GetBaseProjectileType() { return ProjectileType_Internal; }
+TCsProjectileType ACsData_Projectile::GetBaseProjectileType() { return BaseProjectileType; }
 
 // Stats
 #pragma region

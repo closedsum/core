@@ -10,8 +10,7 @@ UCsSimpleWidget::UCsSimpleWidget(const FObjectInitializer& ObjectInitializer)
 	DefaultVisibility = ESlateVisibility::HitTestInvisible;
 }
 
-void UCsSimpleWidget::OnNativeTick(const FGeometry& MyGeometry, float InDeltaTime){}
-void UCsSimpleWidget::OnTick(const float &InDeltaTime){}
+void UCsSimpleWidget::OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime){}
 
 void UCsSimpleWidget::Init(const int32 &Index)
 {

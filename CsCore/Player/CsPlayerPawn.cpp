@@ -4,6 +4,11 @@
 #include "CsCVars.h"
 #include "Common/CsCommon.h"
 
+// Managers
+#include "Managers/Inventory/CsManager_Inventory.h"
+
+#include "Player/CsPlayerState.h"
+
 ACsPlayerPawn::ACsPlayerPawn(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -226,3 +231,15 @@ void ACsPlayerPawn::RecordView()
 }
 
 #pragma endregion View
+
+// Managers
+#pragma region
+
+ACsManager_Inventory* ACsPlayerPawn::GetMyManager_Inventory()
+{  
+	ACsPlayerState* MyPlayerState = Cast<ACsPlayerState>(PlayerState);
+	
+	return MyPlayerState->Manager_Inventory;
+}
+
+#pragma endregion Managers

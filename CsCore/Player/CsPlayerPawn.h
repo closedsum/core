@@ -69,4 +69,11 @@ public:
 	virtual void RecordView() override;
 
 #pragma endregion View
+
+// Managers
+#pragma region
+
+	virtual class ACsManager_Inventory* GetMyManager_Inventory() override;
+
+#pragma endregion Managers
 };

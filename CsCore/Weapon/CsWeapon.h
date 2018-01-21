@@ -458,6 +458,8 @@ class CSCORE_API ACsWeapon : public AActor
 	UPROPERTY(BlueprintAssignable, Category = "Data")
 	FBindableDynEvent_CsWeapon_OnApplyDataWeapon OnApplyData_Weapon_ScriptEvent;
 
+	class ACsData_Projectile* GetMyData_Projectile(const TCsWeaponFireMode &FireMode, const bool &IsCharged);
+
 #pragma endregion Data
 
 // Routines

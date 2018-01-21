@@ -93,6 +93,29 @@ void ACsManager_Item::AddActiveItemByOwnerId(FCsItem* Item)
 	}
 }
 
+void ACsManager_Item::ChangeActiveItemOwnerInfo(FCsItem* Item, UObject* ItemOwner)
+{
+	// Remove OLD OwnerId
+	const uint64 OwnerId = Item->CurrentHistory.OwnerId;
+
+	if (TArray<FCsItem*>* Items = ActiveItemsByOwnerId.Find(OwnerId))
+	{
+		const int32 Count = Items->Num();
+
+		for (int32 I = Count - 1; I >= 0; --I)
+		{
+			if ((*Items)[I] == Item)
+			{
+				Items->RemoveAt(I);
+				break;
+			}
+		}
+	}
+	// Update with NEW OwnerId
+	SetItemOwnerInfo(Item, ItemOwner);
+	AddActiveItemByOwnerId(Item);
+}
+
 FCsItem* ACsManager_Item::GetItem(const uint64 &Id)
 {
 	return *(ActiveItems.Find(Id));

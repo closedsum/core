@@ -106,4 +106,11 @@ class CSCORE_API ACsPawn : public ACharacter
 	virtual void RecordVelocityAndSpeed();
 
 #pragma endregion Movement
+
+// Managers
+#pragma region
+
+	virtual class ACsManager_Inventory* GetMyManager_Inventory();
+
+#pragma endregion Managers
 };

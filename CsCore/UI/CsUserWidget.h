@@ -65,6 +65,7 @@ public:
 
 	virtual void Init();
 	virtual void OnPostProcessInput(const float &DeltaTime);
+	virtual void OnUpdate(const float &DeltaSeconds);
 	virtual void OnLastTick(const float &DeltaSeconds);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OO Default")
@@ -84,8 +85,14 @@ public:
 	UPROPERTY()
 	bool HasInitFinished;
 
+protected:
+
 	TWeakObjectPtr<AActor> MyOwner;
 
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void SetMyOwner(AActor* InOwner);
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	AActor* GetMyOwner();
 

@@ -19,7 +19,7 @@ class CSCORE_API UCsManager_Widget : public UObject
 	virtual void BeginDestroy() override;
 	virtual void CreatePool(UClass* InClass, const TCsSimpleWidgetType &Type, const int32 &Size);
 	virtual void AddToActivePool(UObject* InObject, const TCsSimpleWidgetType& Type);
-	virtual void OnTick(const float &DeltaSeconds);
+	virtual void OnNativeTick(const FGeometry& MyGeometry, const float &DeltaSeconds);
 
 	UWorld* CurrentWorld;
 

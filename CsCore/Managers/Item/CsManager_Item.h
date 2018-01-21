@@ -40,6 +40,8 @@ class CSCORE_API ACsManager_Item : public AActor
 
 	void AddActiveItemByOwnerId(FCsItem* Item);
 
+	void ChangeActiveItemOwnerInfo(FCsItem* Item, UObject* ItemOwner);
+
 	virtual FCsItem* GetItem(const uint64 &Id);
 
 	void GetItemsByOwnerType(const TCsItemOwner &OwnerTyper, TArray<FCsItem*> &OutItems);

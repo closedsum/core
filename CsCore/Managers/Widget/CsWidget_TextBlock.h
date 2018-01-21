@@ -9,7 +9,10 @@ class CSCORE_API UCsWidget_TextBlock : public UCsSimpleWidget
 	GENERATED_UCLASS_BODY()
 
 	virtual void NativeConstruct() override;
-	virtual void OnTick(const float &InDeltaTime) override;
+	virtual void OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime) override;
+
+	virtual void Allocate(const uint16& ActiveIndex, FCsSimpleWidgetPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent) override;
+	virtual void DeAllocate() override;
 
 	virtual void OnAddToCanvas() override;
 

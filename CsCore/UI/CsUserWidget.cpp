@@ -12,8 +12,14 @@ void UCsUserWidget::Init()
 	HasInitFinished = true;
 }
 
-void UCsUserWidget::OnPostProcessInput(const float &DeltaTime) {}
+void UCsUserWidget::OnPostProcessInput(const float &DeltaTime){}
+void UCsUserWidget::OnUpdate(const float &DeltaSeconds){}
 void UCsUserWidget::OnLastTick(const float &DeltaSeconds){}
+
+void UCsUserWidget::SetMyOwner(AActor* InOwner) 
+{ 
+	MyOwner = InOwner; 
+}
 
 AActor* UCsUserWidget::GetMyOwner() { return MyOwner.IsValid() ? MyOwner.Get() : nullptr; }
 

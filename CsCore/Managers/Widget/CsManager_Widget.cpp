@@ -92,7 +92,7 @@ void UCsManager_Widget::AddToActivePool(UObject* InObject, const TCsSimpleWidget
 	//Widget->Cache.OnDeAllocate_Event.AddUObject(this, &UCsManager_Widget::OnDeAllocate);
 }
 
-void UCsManager_Widget::OnTick(const float &DeltaSeconds)
+void UCsManager_Widget::OnNativeTick(const FGeometry& MyGeometry, const float &DeltaSeconds)
 {
 	const int32 PoolCount = ActiveWidgets.Num();
 
@@ -125,7 +125,7 @@ void UCsManager_Widget::OnTick(const float &DeltaSeconds)
 
 			if (!Widget->Cache.UseLifeTime)
 			{
-				Widget->OnTick(DeltaSeconds);
+				Widget->OnNativeTick(MyGeometry, DeltaSeconds);
 				continue;
 			}
 
@@ -141,7 +141,7 @@ void UCsManager_Widget::OnTick(const float &DeltaSeconds)
 			}
 			else
 			{
-				Widget->OnTick(DeltaSeconds);
+				Widget->OnNativeTick(MyGeometry, DeltaSeconds);
 			}
 		}
 

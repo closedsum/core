@@ -41,6 +41,7 @@ TArray<UMaterialInstanceConstant*>* ACsData_Interactive::GetMaterials() { return
 // UI
 #pragma region
 
+bool ACsData_Interactive::OnSpawnSpawnWidget() { return false; }
 FString ACsData_Interactive::GetDisplayName() { return ECsCachedString::Str::Empty; }
 void ACsData_Interactive::GetScreenSpaceOffset(FIntPoint &OutPoint){ OutPoint = FIntPoint::ZeroValue; }
 

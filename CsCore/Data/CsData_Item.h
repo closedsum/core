@@ -9,10 +9,20 @@ class CSCORE_API ACsData_Item : public ACsData
 {
 	GENERATED_UCLASS_BODY()
 
+	TCsItemType ItemType;
+
 // Members
 #pragma region
 
 	virtual UScriptStruct* GetMembersScriptStruct();
 
 #pragma endregion Members
+
+// Consume
+#pragma region
+
+	UFUNCTION(BlueprintCallable, Category = "Consume")
+	virtual bool OnConsumeSpawnActor();
+
+#pragma endregion Consume
 };

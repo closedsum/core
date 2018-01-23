@@ -37,6 +37,8 @@ class CSCORE_API ACsData_Interactive : public ACsData
 #pragma region
 	
 	UFUNCTION(BlueprintCallable, Category = "UI")
+	virtual bool OnSpawnSpawnWidget();
+	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual FString GetDisplayName();
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual void GetScreenSpaceOffset(FIntPoint &OutPoint);

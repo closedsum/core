@@ -31,7 +31,7 @@
 
 #define CS_ADD_LOADED_DATA_BY_LOOKUPCODE(MAPPING, CLASS, LOG, TYPE)	if (AssetType == ECsAssetType::TYPE) \
 																	{ \
-																		if (ACsData* Data = GetLoadedData(AssetType, LookUpCode)) \
+																		if (LookUpCode < TYPE.Num() && TYPE##_Loaded[LookUpCode]) \
 																		{ \
 																			const FName ShortCode = TYPE[LookUpCode].ShortCode; \
 																			UE_LOG(LOG, Warning, TEXT("%s::AddLoadedData: Attempting to Add AssetType: %s with ShortCode: %s and LookUpCode: %d which has ALREADY been Added."), #MAPPING, *ECsAssetType::ToString(AssetType), *ShortCode.ToString(), LookUpCode); \
@@ -171,8 +171,8 @@ class CSCORE_API ACsDataMapping : public AActor
 
 	virtual TMap<FName, FCsDataMappingEntry>* GetDataMappings_Map(const TCsAssetType &AssetType);
 
-	virtual void GenerateMaps(const TCsAssetType &AssetType);
-	virtual void GenerateMaps();
+	void GenerateMaps(const TCsAssetType &AssetType);
+	void GenerateMaps();
 
 	TCsAssetType GetDataAssetType(const FName &ShortCode);
 
@@ -275,7 +275,7 @@ public:
 	template<typename T>
 	T* LoadData(const TCsAssetType &AssetType, const uint16 &LookUpCode, const ECsLoadFlags &LoadFlags = ECsLoadFlags::Game)
 	{
-		return LoadData<T>(TEXT("ACsDataMapping::LoadData"), AssetType, LookUpCode, LoadFlags);
+		return LoadData<T>(ECsDataMappingStringCache::Str::LoadData, AssetType, LookUpCode, LoadFlags);
 	}
 
 	template<typename T>
@@ -307,7 +307,7 @@ public:
 	template<typename T>
 	T* LoadData(const TCsAssetType &AssetType, const uint8 &LookUpCode, const ECsLoadFlags &LoadFlags = ECsLoadFlags::Game)
 	{
-		return LoadData<T>(TEXT("ACsDataMapping::LoadData"), AssetType, LookUpCode, LoadFlags);
+		return LoadData<T>(ECsDataMappingStringCache::Str::LoadData, AssetType, LookUpCode, LoadFlags);
 	}
 
 	template<typename T>
@@ -350,13 +350,13 @@ public:
 	template<typename T>
 	T* LoadData(const TCsAssetType &AssetType, const FName &ShortCode, const ECsLoadFlags &LoadFlags = ECsLoadFlags::Game)
 	{
-		return LoadData<T>(TEXT("ACsDataMapping::LoadData"), AssetType, ShortCode, LoadFlags);
+		return LoadData<T>(ECsDataMappingStringCache::Str::LoadData, AssetType, ShortCode, LoadFlags);
 	}
 
 	template<typename T>
 	T* LoadData_Internal(const TCsAssetType &AssetType, FCsDataMappingEntry& Mapping, const ECsLoadFlags &LoadFlags = ECsLoadFlags::Game)
 	{
-		return LoadData_Internal<T>(TEXT("ACsDataMapping::LoadData"), AssetType, Mapping, LoadFlags);
+		return LoadData_Internal<T>(ECsDataMappingStringCache::Str::LoadData, AssetType, Mapping, LoadFlags);
 	}
 
 	template<typename T>
@@ -410,7 +410,7 @@ protected:
 	void AddLoadData_Internal(TArray<FCsDataMappingEntry> &Datas, TMap<FName, T*> &Datas_Loaded_Map, TArray<T*> &Datas_Loaded, const FName &ShortCode, ACsData* InData)
 	{
 		const uint16 Count = Datas.Num();
-		uint16 LookUpCode = CS_INVALID_LOOK_UP_CODE_MAX;
+		uint16 LookUpCode  = CS_INVALID_LOOK_UP_CODE_MAX;
 
 		for (uint16 I = 0; I < Count; I++)
 		{
@@ -440,11 +440,12 @@ protected:
 	void AddLoadData_Internal(TArray<FCsDataMappingEntry> &Datas, TMap<FName, T*> &Datas_Loaded_Map, TArray<T*> &Datas_Loaded, const uint16 &LookUpCode, ACsData* InData)
 	{
 		const FName ShortCode = Datas[LookUpCode].ShortCode;
-		T** Data = Datas_Loaded_Map.Find(ShortCode);
+		T** Data			  = Datas_Loaded_Map.Find(ShortCode);
 
 		check(InData == *Data);
 
 		Datas_Loaded_Map.Add(ShortCode, Cast<T>(InData));
+		Datas_Loaded_Map.KeySort(TLess<FName>());
 
 		if (Datas_Loaded.Num() == CS_EMPTY)
 		{

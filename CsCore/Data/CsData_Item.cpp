@@ -13,3 +13,10 @@ ACsData_Item::ACsData_Item(const FObjectInitializer& ObjectInitializer)
 UScriptStruct* ACsData_Item::GetMembersScriptStruct() { return nullptr; }
 
 #pragma endregion Members
+
+// Consume
+#pragma region
+
+bool ACsData_Item::OnConsumeSpawnActor() { return false; }
+
+#pragma endregion Consume

@@ -59,6 +59,9 @@
 
 DECLARE_DELEGATE_TwoParams(FBindableDynEvent_CsDataMapping_OnGetLoadAssetsShortCodes, const TCsLoadAssetsType&, TArray<FName>&);
 
+// Structs
+#pragma region
+
 USTRUCT(BlueprintType)
 struct FCsDataMappingFindEntry
 {
@@ -140,6 +143,21 @@ struct FCsDataMappingValidate
 	FString Output;
 };
 
+#pragma endregion Structs
+
+// Cache
+#pragma region
+
+namespace ECsDataMappingStringCache
+{
+	namespace Str
+	{
+		const FString LoadData = TEXT("ACsDataMapping::LoadData");
+	}
+}
+
+#pragma endregion Cache
+
 UCLASS(hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
 class CSCORE_API ACsDataMapping : public AActor
 {
@@ -153,8 +171,8 @@ class CSCORE_API ACsDataMapping : public AActor
 
 	virtual TMap<FName, FCsDataMappingEntry>* GetDataMappings_Map(const TCsAssetType &AssetType);
 
-	void GenerateMaps(const TCsAssetType &AssetType);
-	void GenerateMaps();
+	virtual void GenerateMaps(const TCsAssetType &AssetType);
+	virtual void GenerateMaps();
 
 	TCsAssetType GetDataAssetType(const FName &ShortCode);
 

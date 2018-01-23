@@ -18,11 +18,21 @@ class CSCORE_API ACsData_Item : public ACsData
 
 #pragma endregion Members
 
-// Consume
+// UI
 #pragma region
 
-	UFUNCTION(BlueprintCallable, Category = "Consume")
-	virtual bool OnConsumeSpawnActor();
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	virtual FString GetDisplayName();
 
-#pragma endregion Consume
+#pragma endregion UI
+
+// Drop
+#pragma region
+
+	UFUNCTION(BlueprintCallable, Category = "Drop")
+	virtual bool OnDropSpawnActor();
+
+	virtual FName GetSpawnedActorDataShortCode();
+
+#pragma endregion Drop
 };

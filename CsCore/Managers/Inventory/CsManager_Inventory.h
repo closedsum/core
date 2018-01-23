@@ -36,11 +36,34 @@ class CSCORE_API ACsManager_Inventory : public AActor
 	virtual void AddItem(FCsItem* Item);
 	virtual void AddItems(const TArray<FCsItem*> &ItemsToAdd);
 
-	virtual void RemoveItem(const uint64 &Id, const bool &ShouldDestroy);
-	virtual void RemoveItem(FCsItem* Item, const bool &ShouldDestroy);
+// Remove
+#pragma region
+private:
+
+	void RemoveItem(const uint64 &Id, const bool &ShouldDestroy);
+	void RemoveItem(FCsItem* Item, const bool &ShouldDestroy);
+
+#pragma endregion Remove
+
+// Consume
+#pragma region
+public:
 
 	virtual void ConsumeItem(const uint64 &Id);
 	virtual void ConsumeItem(FCsItem* Item);
 
 	virtual FCsItem* ConsumeFirstItem(const TCsItemType &ItemType);
+
+#pragma endregion Consume
+
+// Drop
+#pragma region
+public:
+
+	virtual void DropItem(const uint64 &Id);
+	virtual void DropItem(FCsItem* Item);
+
+	virtual FCsItem* DropFirstItem(const TCsItemType &ItemType);
+
+#pragma endregion Drop
 };

@@ -14,9 +14,17 @@ UScriptStruct* ACsData_Item::GetMembersScriptStruct() { return nullptr; }
 
 #pragma endregion Members
 
-// Consume
+// UI
 #pragma region
 
-bool ACsData_Item::OnConsumeSpawnActor() { return false; }
+FString ACsData_Item::GetDisplayName() { return ECsCachedString::Str::INVALID; }
 
-#pragma endregion Consume
+#pragma endregion UI
+
+// Drop
+#pragma region
+
+bool ACsData_Item::OnDropSpawnActor() { return false; }
+FName ACsData_Item::GetSpawnedActorDataShortCode() { return NAME_None; }
+
+#pragma endregion Drop

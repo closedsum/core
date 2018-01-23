@@ -37,7 +37,7 @@ namespace ECsItemCollection
 	enum Type
 	{
 		Single					UMETA(DisplayName = "Single"),
-		GroupHomogeneous			UMETA(DisplayName = "Group Homogeneous"),
+		GroupHomogeneous		UMETA(DisplayName = "Group Homogeneous"),
 		GroupMixed				UMETA(DisplayName = "Group Mixed"),
 		ECsItemCollection_MAX	UMETA(Hidden),
 	};
@@ -73,6 +73,14 @@ namespace ECsItemCollection
 
 #define ECS_ITEM_COLLECTION_MAX (uint8)ECsItemCollection::ECsItemCollection_MAX
 typedef TEnumAsByte<ECsItemCollection::Type> TCsItemCollection;
+
+namespace ECsItemCollectionCachedString
+{
+	namespace Str
+	{
+		const FString Single = TEXT("1x");
+	}
+}
 
 namespace ECsItemOwner
 {
@@ -444,6 +452,8 @@ struct FCsItem
 	FTimespan LifeTime;
 
 	TWeakObjectPtr<class ACsData_Item> Data;
+	/** Data for Actor spawned when Item leaves Inventory */
+	TWeakObjectPtr<class ACsData_Interactive> Data_Actor;
 
 	UPROPERTY()
 	FCsInventoryItemProperties InventoryProperties;
@@ -510,12 +520,15 @@ struct FCsItem
 		LifeTime = FTimespan::Zero();
 		//Data.Reset();
 		//Data = nullptr;
+		//Data_Actor.Reset();
+		//Data_Actor = nullptr;
 		InventoryProperties.Reset();
 		CurrentHistory.Reset();
 		PreviousHistories.Reset();
 	}
 
 	class ACsData_Item* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
+	class ACsData_Interactive* GetData_Actor() { return Data_Actor.IsValid() ? Data_Actor.Get() : nullptr; }
 
 	void SetType(const TCsItemType &InType)
 	{

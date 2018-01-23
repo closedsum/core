@@ -107,6 +107,9 @@ void ACsManager_Inventory::AddItems(const TArray<FCsItem*> &ItemsToAdd)
 	}
 }
 
+// Remove
+#pragma region
+
 void ACsManager_Inventory::RemoveItem(const uint64 &Id, const bool &ShouldDestroy)
 {
 	FCsItem* Item = *(Items.Find(Id));
@@ -149,6 +152,11 @@ void ACsManager_Inventory::RemoveItem(FCsItem* Item, const bool &ShouldDestroy)
 	RemoveItem(Item->UniqueId, ShouldDestroy);
 }
 
+#pragma endregion Remove
+
+// Consume
+#pragma region
+
 void ACsManager_Inventory::ConsumeItem(const uint64 &Id)
 {
 	RemoveItem(Id, true);
@@ -167,3 +175,30 @@ FCsItem* ACsManager_Inventory::ConsumeFirstItem(const TCsItemType &ItemType)
 	}
 	return nullptr;
 }
+
+#pragma endregion Consume
+
+// Drop
+#pragma region
+
+void ACsManager_Inventory::DropItem(const uint64 &Id)
+{
+	RemoveItem(Id, false);
+}
+
+void ACsManager_Inventory::DropItem(FCsItem* Item)
+{
+	ConsumeItem(Item->UniqueId);
+}
+
+FCsItem* ACsManager_Inventory::DropFirstItem(const TCsItemType &ItemType)
+{
+	if (FCsItem* Item = GetFirstItem(ItemType))
+	{
+		DropItem(Item);
+		return Item;
+	}
+	return nullptr;
+}
+
+#pragma endregion Drop

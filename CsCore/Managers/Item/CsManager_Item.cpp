@@ -307,6 +307,10 @@ void ACsManager_Item::DeAllocate(const uint64 &Id)
 	}
 	AvailableUnqiueIds.Add(Item->UniqueId);
 	Item->Reset();
+	Item->Data.Reset();
+	Item->Data = nullptr;
+	Item->Data_Actor.Reset();
+	Item->Data_Actor = nullptr;
 }
 
 UScriptStruct* ACsManager_Item::GetScriptStructForItemType(const TCsItemType &ItemType)

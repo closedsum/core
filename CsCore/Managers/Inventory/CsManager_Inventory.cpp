@@ -188,7 +188,7 @@ void ACsManager_Inventory::DropItem(const uint64 &Id)
 
 void ACsManager_Inventory::DropItem(FCsItem* Item)
 {
-	ConsumeItem(Item->UniqueId);
+	DropItem(Item->UniqueId);
 }
 
 FCsItem* ACsManager_Inventory::DropFirstItem(const TCsItemType &ItemType)

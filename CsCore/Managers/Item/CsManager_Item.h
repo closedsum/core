@@ -42,10 +42,39 @@ class CSCORE_API ACsManager_Item : public AActor
 
 	void ChangeActiveItemOwnerInfo(FCsItem* Item, UObject* ItemOwner);
 
+	virtual void SetActiveItemData(FCsItem* Item);
+
+// Get
+#pragma region
+public:
+
 	virtual FCsItem* GetItem(const uint64 &Id);
 
 	void GetItemsByOwnerType(const TCsItemOwner &OwnerTyper, TArray<FCsItem*> &OutItems);
 	void GetItemsByOwnerId(const uint64 &OwnerId, TArray<FCsItem*> &OutItems);
+
+#pragma endregion Get
+
+// DeAllocate
+#pragma region
+public:
+
+	virtual void DeAllocate(const uint64 &Id);
+	virtual void DeAllocate(FCsItem* Item);
+
+#pragma endregion DeAllocate
+
+// Transfer
+#pragma region
+public:
+
+	virtual void Transfer(FCsItem* Item, UObject* Instigator);
+
+#pragma endregion Transfer
+
+// Save / Load
+#pragma region
+public:
 
 	void SetItemFileName(FCsItem* Item);
 
@@ -64,13 +93,12 @@ class CSCORE_API ACsManager_Item : public AActor
 	virtual void Save(FCsItem* Item);
 	virtual void SaveHistory(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FCsItemHistory* ItemHistory);
 
-	virtual void DeAllocate(const uint64 &Id);
-	virtual void DeAllocate(FCsItem* Item);
-
 	virtual UScriptStruct* GetScriptStructForItemType(const TCsItemType &ItemType);
 
 	virtual void PopulateExistingItems();
 	virtual void LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCsItem* Item, FCsItemHistory* ItemHistory);
 
 	virtual void InitInventory(class ACsManager_Inventory* Manager_Inventory);
+
+#pragma endregion Save / Load
 };

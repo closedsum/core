@@ -116,6 +116,11 @@ void ACsManager_Item::ChangeActiveItemOwnerInfo(FCsItem* Item, UObject* ItemOwne
 	AddActiveItemByOwnerId(Item);
 }
 
+void ACsManager_Item::SetActiveItemData(FCsItem* Item){}
+
+// Get
+#pragma region
+
 FCsItem* ACsManager_Item::GetItem(const uint64 &Id)
 {
 	return *(ActiveItems.Find(Id));
@@ -156,6 +161,53 @@ void ACsManager_Item::GetItemsByOwnerId(const uint64 &OwnerId, TArray<FCsItem*> 
 		OutItems.Add((*Items)[I]);
 	}
 }
+
+#pragma endregion Get
+
+// DeAllocate
+#pragma region
+
+void ACsManager_Item::DeAllocate(FCsItem* Item)
+{
+	DeAllocate(Item->UniqueId);
+}
+
+void ACsManager_Item::DeAllocate(const uint64 &Id)
+{
+	FCsItem* Item = *(ActiveItems.Find(Id));
+
+	if (!Item)
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::DeAllocate: Attempting to deallocate an Item with UniqueId: %d, but it is already deallocated."), Id);
+		return;
+	}
+
+	// If Save EXISTS, Delete it.
+	if (Item->IsSaved)
+	{
+	}
+	AvailableUnqiueIds.Add(Item->UniqueId);
+	Item->Reset();
+	Item->Data.Reset();
+	Item->Data = nullptr;
+	Item->Data_Actor.Reset();
+	Item->Data_Actor = nullptr;
+}
+
+#pragma endregion DeAllocate
+
+// Transfer
+#pragma region
+
+void ACsManager_Item::Transfer(FCsItem* Item, UObject* Instigator)
+{
+	DeAllocate(Item);
+}
+
+#pragma endregion Transfer
+
+// Save / Load
+#pragma region
 
 void ACsManager_Item::SetItemFileName(FCsItem* Item)
 {
@@ -286,33 +338,6 @@ void ACsManager_Item::SaveHistory(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FC
 	JsonWriter->WriteObjectEnd();
 }
 
-void ACsManager_Item::DeAllocate(FCsItem* Item)
-{
-	DeAllocate(Item->UniqueId);
-}
-
-void ACsManager_Item::DeAllocate(const uint64 &Id)
-{
-	FCsItem* Item = *(ActiveItems.Find(Id));
-
-	if (!Item)
-	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::DeAllocate: Attempting to deallocate an Item with UniqueId: %d, but it is already deallocated."), Id);
-		return;
-	}
-
-	// If Save EXISTS, Delete it.
-	if (Item->IsSaved)
-	{
-	}
-	AvailableUnqiueIds.Add(Item->UniqueId);
-	Item->Reset();
-	Item->Data.Reset();
-	Item->Data = nullptr;
-	Item->Data_Actor.Reset();
-	Item->Data_Actor = nullptr;
-}
-
 UScriptStruct* ACsManager_Item::GetScriptStructForItemType(const TCsItemType &ItemType)
 {
 	return nullptr;
@@ -390,6 +415,7 @@ void ACsManager_Item::PopulateExistingItems()
 					}
 				}
 
+				SetActiveItemData(Item);
 				AddActiveItemByOwnerId(Item);
 			}
 			else
@@ -471,3 +497,5 @@ void ACsManager_Item::LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCs
 }
 
 void ACsManager_Item::InitInventory(ACsManager_Inventory* Manager_Inventory){}
+
+#pragma endregion Save / Load

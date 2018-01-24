@@ -38,6 +38,29 @@ ACsData::ACsData(const FObjectInitializer& ObjectInitializer)
 void ACsData::PostLoad()
 {
 	Super::PostLoad();
+#if WITH_EDITOR
+	// Check to verify .json file when codes changes have been made to Data
+	const TIndirectArray<FWorldContext>& WorldContexts = GEngine->GetWorldContexts();
+	
+	const uint8 Count = WorldContexts.Num();
+
+	bool Verify = false;
+
+	for (uint8 I = 0; I < Count; I++)
+	{
+		if (WorldContexts[I].WorldType == EWorldType::Editor ||
+			WorldContexts[I].WorldType == EWorldType::EditorPreview)
+		{
+			Verify = true;
+			break;
+		}
+	}
+
+	if (Verify)
+	{
+		VerifyJsonIntegrity();
+	}
+#endif WITH_EDITOR
 	LoadFromJson();
 }
 

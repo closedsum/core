@@ -18,6 +18,32 @@
 #include "Data/CsData_Projectile.h"
 #include "Data/CsData_ProjectileImpact.h"
 
+// Cache
+#pragma region
+
+namespace ECsCommonLoadCachedString
+{
+	namespace Str
+	{
+		const FString Rotation = TEXT("Rotation");
+		const FString Translation = TEXT("Translation");
+		const FString Scale = TEXT("Scale");
+
+		const FString CollisionEnabled = TEXT("ECollisionEnabled");
+		const FString CollisionChannel = TEXT("ECollisionChannel");
+		const FString CollisionResponse = TEXT("ECollisionResponse");
+		const FString HorizTextAligment = TEXT("EHorizTextAligment");
+		const FString VerticalTextAligment = TEXT("EVerticalTextAligment");
+		const FString CsLoadFlags_Editor = TEXT("ECsLoadFlags_Editor");
+		const FString CsFxPriority = TEXT("ECsFxPriority");
+		const FString CsSoundPriority = TEXT("ECsSoundPriority");
+		const FString CsInteractiveCollision = TEXT("ECsInteractiveCollision");
+		const FString CsLoadFlags = TEXT("ECsLoadFlags");
+	}
+}
+
+#pragma endregion Cache
+
 UCsCommon_Load::UCsCommon_Load(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -1602,7 +1628,6 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			continue;
 		}
 		// Array
-		else
 		if (UArrayProperty* ArrayProperty = Cast<UArrayProperty>(*It))
 		{
 			// TAssetPtr
@@ -1632,7 +1657,6 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				continue;
 			}
 			// Struct
-			else
 			if (UStructProperty* InnerStructProperty = Cast<UStructProperty>(ArrayProperty->Inner))
 			{
 				// FVector
@@ -1674,9 +1698,8 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				continue;
 			}
 			// FName
-			else
 			if (UNameProperty* NameProperty = Cast<UNameProperty>(ArrayProperty->Inner))
-				WriteMemberArrayStructPropertyToJson_Primitive<FName>(InJsonWriter, ArrayProperty, InObject, MemberName, &FName::ToString);
+			{ WriteMemberArrayStructPropertyToJson_Primitive<FName>(InJsonWriter, ArrayProperty, InObject, MemberName, &FName::ToString); continue; }
 
 			if (Internal)
 			{

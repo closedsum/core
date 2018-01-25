@@ -18,6 +18,7 @@ namespace ECsCachedString
 		const FString Dot = TEXT(".");
 		const FString True = TEXT("True");
 		const FString False = TEXT("False");
+		const FString Index = TEXT("Index");
 	}
 }
 

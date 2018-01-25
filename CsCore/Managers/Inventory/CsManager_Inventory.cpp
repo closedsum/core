@@ -30,53 +30,53 @@ FCsItem* ACsManager_Inventory::GetItem(const uint64 &Id)
 	return *(Items.Find(Id));
 }
 
-FCsItem* ACsManager_Inventory::GetFirstItem(const TCsItemType &ItemType)
+FCsItem* ACsManager_Inventory::GetFirstItem(const FName &ShortCode)
 {
-	TArray<FCsItem*>* ItemsPtr = ItemMap.Find(ItemType);
+	TArray<FCsItem*>* ItemsPtr = ItemMap.Find(ShortCode);
 
 	if (!ItemsPtr)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetFirstItem: There are NO Items of type: %s."), *((*ItemTypeToString)(ItemType)));
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetFirstItem: There are NO Items with ShortCode: %s."), *(ShortCode.ToString()));
 		return nullptr;
 	}
 	
 	if (ItemsPtr->Num() == CS_EMPTY)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetFirstItem: There are NO Items of type: %s."), *((*ItemTypeToString)(ItemType)));
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetFirstItem: There are NO Items with ShortCode: %s."), *(ShortCode.ToString()));
 		return nullptr;
 	}
 	return (*ItemsPtr)[CS_FIRST];
 }
 
-int32 ACsManager_Inventory::GetItemCount(const TCsItemType &ItemType)
+int32 ACsManager_Inventory::GetItemCount(const FName &ShortCode)
 {
-	if (uint16* Count = ItemCountMap.Find(ItemType))
+	if (uint16* Count = ItemCountMap.Find(ShortCode))
 		return *Count;
 	return 0;
 }
 
-void ACsManager_Inventory::IncrementItemCount(const TCsItemType &ItemType)
+void ACsManager_Inventory::IncrementItemCount(const FName &ShortCode)
 {
-	if (uint16* Count = ItemCountMap.Find(ItemType))
+	if (uint16* Count = ItemCountMap.Find(ShortCode))
 	{
 		(*Count)++;
 	}
 	else
 	{
-		ItemCountMap.Add(ItemType, 1);
+		ItemCountMap.Add(ShortCode, 1);
 	}
 }
 
-void ACsManager_Inventory::DecrementItemCount(const TCsItemType &ItemType)
+void ACsManager_Inventory::DecrementItemCount(const FName &ShortCode)
 {
-	if (uint16* Count = ItemCountMap.Find(ItemType))
+	if (uint16* Count = ItemCountMap.Find(ShortCode))
 	{
 		if (*Count > 0)
 			(*Count)--;
 	}
 	else
 	{
-		ItemCountMap.Add(ItemType, 0);
+		ItemCountMap.Add(ShortCode, 0);
 	}
 }
 
@@ -84,7 +84,7 @@ void ACsManager_Inventory::AddItem(FCsItem* Item)
 {
 	Items.Add(Item->UniqueId, Item);
 
-	if (TArray<FCsItem*>* ItemsPtr = ItemMap.Find(Item->Type))
+	if (TArray<FCsItem*>* ItemsPtr = ItemMap.Find(Item->ShortCode))
 	{
 		ItemsPtr->Add(Item);
 	}
@@ -92,9 +92,9 @@ void ACsManager_Inventory::AddItem(FCsItem* Item)
 	{
 		TArray<FCsItem*> ItemArray;
 		ItemArray.Add(Item);
-		ItemMap.Add(Item->Type, ItemArray);
+		ItemMap.Add(Item->ShortCode, ItemArray);
 	}
-	IncrementItemCount(Item->Type);
+	IncrementItemCount(Item->ShortCode);
 }
 
 void ACsManager_Inventory::AddItems(const TArray<FCsItem*> &ItemsToAdd)
@@ -122,8 +122,8 @@ void ACsManager_Inventory::RemoveItem(const uint64 &Id, const bool &ShouldDestro
 
 	Items.Remove(Id);
 
-	const TCsItemType ItemType = Item->Type;
-	TArray<FCsItem*>* ItemsPtr = ItemMap.Find(ItemType);
+	const FName& ShortCode	   = Item->ShortCode;
+	TArray<FCsItem*>* ItemsPtr = ItemMap.Find(ShortCode);
 
 	const int32 Count = ItemsPtr->Num();
 
@@ -135,7 +135,7 @@ void ACsManager_Inventory::RemoveItem(const uint64 &Id, const bool &ShouldDestro
 			break;
 		}
 	}
-	DecrementItemCount(ItemType);
+	DecrementItemCount(ShortCode);
 
 	if (ShouldDestroy)
 	{
@@ -167,9 +167,9 @@ void ACsManager_Inventory::ConsumeItem(FCsItem* Item)
 	ConsumeItem(Item->UniqueId);
 }
 
-FCsItem* ACsManager_Inventory::ConsumeFirstItem(const TCsItemType &ItemType)
+FCsItem* ACsManager_Inventory::ConsumeFirstItem(const FName &ShortCode)
 {
-	if (FCsItem* Item = GetFirstItem(ItemType))
+	if (FCsItem* Item = GetFirstItem(ShortCode))
 	{
 		ConsumeItem(Item);
 	}
@@ -191,9 +191,9 @@ void ACsManager_Inventory::DropItem(FCsItem* Item)
 	DropItem(Item->UniqueId);
 }
 
-FCsItem* ACsManager_Inventory::DropFirstItem(const TCsItemType &ItemType)
+FCsItem* ACsManager_Inventory::DropFirstItem(const FName &ShortCode)
 {
-	if (FCsItem* Item = GetFirstItem(ItemType))
+	if (FCsItem* Item = GetFirstItem(ShortCode))
 	{
 		DropItem(Item);
 		return Item;

@@ -442,7 +442,7 @@ struct FCsItem
 	UPROPERTY()
 	uint64 UniqueId;
 	UPROPERTY()
-	FName Name;
+	FName ShortCode;
 	UPROPERTY()
 	FString DisplayName;
 	UPROPERTY()
@@ -478,7 +478,7 @@ struct FCsItem
 		Type_Script = B.Type_Script;
 		TypeAsString = B.TypeAsString;
 		UniqueId = B.UniqueId;
-		Name = B.Name;
+		ShortCode = B.ShortCode;
 		DisplayName = B.DisplayName;
 		InventoryProperties = B.InventoryProperties;
 		return *this;
@@ -490,7 +490,7 @@ struct FCsItem
 		if (Type_Script != B.Type_Script) { return false; }
 		if (TypeAsString != B.TypeAsString) { return false; }
 		if (UniqueId != B.UniqueId) { return false; }
-		if (Name != B.Name) { return false; }
+		if (ShortCode != B.ShortCode) { return false; }
 		if (DisplayName != B.DisplayName) { return false; }
 		if (InventoryProperties != B.InventoryProperties) { return false; }
 		return true;
@@ -514,7 +514,7 @@ struct FCsItem
 		Type_Script  = CS_INVALID_ITEM_TYPE;
 		TypeAsString = ECsCachedString::Str::Empty;
 		UniqueId = 0;
-		Name = NAME_Name;
+		ShortCode = CS_INVALID_SHORT_CODE;
 		DisplayName = ECsCachedString::Str::Empty;
 		FileName = ECsCachedString::Str::Empty;
 		LifeTime = FTimespan::Zero();
@@ -543,7 +543,7 @@ namespace ECsFileItemHeaderCachedString
 	{
 		const FString Header = TEXT("Header");
 		const FString UniqueId = TEXT("UniqueId");
-		const FString Name = TEXT("Name");
+		const FString ShortCode = TEXT("ShortCode");
 		const FString DisplayName = TEXT("DisplayName");
 		const FString Type = TEXT("Type");
 		const FString Created = TEXT("Created");

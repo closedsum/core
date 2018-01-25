@@ -61,16 +61,16 @@ FCsItem* ACsManager_Item::Allocate()
 	return nullptr;
 }
 
-FCsItem* ACsManager_Item::Allocate(const TCsItemType &ItemType)
+FCsItem* ACsManager_Item::Allocate(const FName &ShortCode)
 {
 	return nullptr;
 }
 
 void ACsManager_Item::SetItemOwnerInfo(FCsItem* Item, UObject* ItemOwner){}
 
-FCsItem* ACsManager_Item::Allocate(const TCsItemType &ItemType, UObject* ItemOwner)
+FCsItem* ACsManager_Item::Allocate(const FName &ShortCode, UObject* ItemOwner)
 {
-	FCsItem* Item = Allocate(ItemType);
+	FCsItem* Item = Allocate(ShortCode);
 
 	SetItemOwnerInfo(Item, ItemOwner);
 	AddActiveItemByOwnerId(Item);
@@ -242,8 +242,8 @@ void ACsManager_Item::Save(FCsItem* Item)
 
 			// UniqueId
 			JsonWriter->WriteValue(ECsFileItemHeaderCachedString::Str::UniqueId, FString::Printf(TEXT("%llu"), Item->UniqueId));
-			// Name
-			JsonWriter->WriteValue(ECsFileItemHeaderCachedString::Str::Name, Item->Name.ToString());
+			// ShortCode
+			JsonWriter->WriteValue(ECsFileItemHeaderCachedString::Str::ShortCode, Item->ShortCode.ToString());
 			// DisplayName
 			JsonWriter->WriteValue(ECsFileItemHeaderCachedString::Str::DisplayName, Item->DisplayName);
 			// Type
@@ -383,8 +383,8 @@ void ACsManager_Item::PopulateExistingItems()
 
 					// UniqueId
 					Item->UniqueId = FCString::Strtoui64(*(JsonObject->GetStringField(ECsFileItemHeaderCachedString::Str::UniqueId)), NULL, 10);
-					// Name
-					Item->Name = FName(*JsonObject->GetStringField(ECsFileItemHeaderCachedString::Str::Name));
+					// ShortCode
+					Item->ShortCode = FName(*JsonObject->GetStringField(ECsFileItemHeaderCachedString::Str::ShortCode));
 					// DisplayName
 					Item->DisplayName = JsonObject->GetStringField(ECsFileItemHeaderCachedString::Str::DisplayName);
 					// Type

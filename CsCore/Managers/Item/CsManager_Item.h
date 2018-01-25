@@ -29,11 +29,11 @@ class CSCORE_API ACsManager_Item : public AActor
 	uint16 PoolIndex;
 
 	virtual FCsItem* Allocate();
-	virtual FCsItem* Allocate(const TCsItemType &ItemType);
+	virtual FCsItem* Allocate(const FName &ShortCode);
 
 	virtual void SetItemOwnerInfo(FCsItem* Item, UObject* ItemOwner);
 
-	virtual FCsItem* Allocate(const TCsItemType &ItemType, UObject* ItemOwner);
+	virtual FCsItem* Allocate(const FName &ShortCode, UObject* ItemOwner);
 
 	TMap<uint64, FCsItem*> ActiveItems;
 	TMap<uint64, TArray<FCsItem*>> ActiveItemsByOwnerId;

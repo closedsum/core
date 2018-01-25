@@ -19,19 +19,19 @@ class CSCORE_API ACsManager_Inventory : public AActor
 	CS_DECLARE_ITEM_TYPE
 
 	TMap<uint64, FCsItem*> Items;
-	TMap<TCsItemType, TArray<FCsItem*>> ItemMap;
+	TMap<FName, TArray<FCsItem*>> ItemMap;
 
 	bool IsEmpty();
 
 	virtual FCsItem* GetItem(const uint64 &Id);
-	virtual FCsItem* GetFirstItem(const TCsItemType &ItemType);
+	virtual FCsItem* GetFirstItem(const FName &ShortCode);
 
-	TMap<TCsItemType, uint16> ItemCountMap;
+	TMap<FName, uint16> ItemCountMap;
 
-	virtual int32 GetItemCount(const TCsItemType &ItemType);
+	virtual int32 GetItemCount(const FName &ShortCode);
 
-	void IncrementItemCount(const TCsItemType &ItemType);
-	void DecrementItemCount(const TCsItemType &ItemType);
+	void IncrementItemCount(const FName &ShortCode);
+	void DecrementItemCount(const FName &ShortCode);
 
 	virtual void AddItem(FCsItem* Item);
 	virtual void AddItems(const TArray<FCsItem*> &ItemsToAdd);
@@ -52,7 +52,7 @@ public:
 	virtual void ConsumeItem(const uint64 &Id);
 	virtual void ConsumeItem(FCsItem* Item);
 
-	virtual FCsItem* ConsumeFirstItem(const TCsItemType &ItemType);
+	virtual FCsItem* ConsumeFirstItem(const FName &ShortCode);
 
 #pragma endregion Consume
 
@@ -63,7 +63,7 @@ public:
 	virtual void DropItem(const uint64 &Id);
 	virtual void DropItem(FCsItem* Item);
 
-	virtual FCsItem* DropFirstItem(const TCsItemType &ItemType);
+	virtual FCsItem* DropFirstItem(const FName &ShortCode);
 
 #pragma endregion Drop
 };

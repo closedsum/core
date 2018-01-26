@@ -93,8 +93,6 @@ public:
 	virtual void Save(FCsItem* Item);
 	virtual void SaveHistory(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FCsItemHistory* ItemHistory);
 
-	virtual UScriptStruct* GetScriptStructForItemType(const TCsItemType &ItemType);
-
 	virtual void PopulateExistingItems();
 	virtual void LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCsItem* Item, FCsItemHistory* ItemHistory);
 

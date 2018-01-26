@@ -661,6 +661,8 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 #pragma endregion Javascript
 
 	static FVector ClampVectorComponents(FVector V, float Clamp);
+	static void ClampMinVectorComponents(FVector &V, const float &Min);
+	static void ClampMaxVectorComponents(FVector &V, const float &Max);
 
 	static FString GetProxyAsString(AActor* InActor);
 

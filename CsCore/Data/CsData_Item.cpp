@@ -7,10 +7,14 @@ ACsData_Item::ACsData_Item(const FObjectInitializer& ObjectInitializer)
 {
 }
 
+TCsItemType ACsData_Item::GetBaseItemType() { return BaseItemType; }
+
 // Members
 #pragma region
 
 UScriptStruct* ACsData_Item::GetMembersScriptStruct() { return nullptr; }
+
+TArray<FCsItemMemberDescription>* ACsData_Item::GetMembers() { return nullptr; }
 
 #pragma endregion Members
 

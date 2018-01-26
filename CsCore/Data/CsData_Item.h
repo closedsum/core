@@ -9,12 +9,16 @@ class CSCORE_API ACsData_Item : public ACsData
 {
 	GENERATED_UCLASS_BODY()
 
-	TCsItemType ItemType;
+	TCsItemType BaseItemType;
+
+	TCsItemType GetBaseItemType();
 
 // Members
 #pragma region
 
 	virtual UScriptStruct* GetMembersScriptStruct();
+
+	virtual TArray<FCsItemMemberDescription>* GetMembers();
 
 #pragma endregion Members
 

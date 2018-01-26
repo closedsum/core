@@ -402,3 +402,52 @@ public:
 };
 
 #pragma endregion Interactives
+
+// Pickup
+#pragma region
+
+namespace ECsPickupFX
+{
+	enum Type : uint8;
+}
+
+typedef ECsPickupFX::Type TCsPickupFX;
+
+// PickupFXToString
+typedef FString(*TCsPickupFXToString)(const TCsPickupFX&);
+// StringToPickupFX
+typedef TCsPickupFX(*TCsStringToPickupFX)(const FString&);
+
+#define CS_DECLARE_PICKUP_FX	TCsPickupFX PickupFX_MAX; \
+								uint8 PICKUP_FX_MAX; \
+								TCsPickupFXToString PickupFXToString; \
+								TCsStringToPickupFX StringToPickupFX;
+
+#define CS_DEFINE_PICKUP_FX	PickupFX_MAX = ECsPickupFX::ECsPickupFX_MAX;\
+							PICKUP_FX_MAX = (uint8)PickupFX_MAX \
+							PickupFXToString = &ECsPickupFX::ToString; \
+							StringToPickupFX = &ECsPickupFX::ToType;
+
+namespace ECsPickupSound
+{
+	enum Type : uint8;
+}
+
+typedef ECsPickupSound::Type TCsPickupSound;
+
+// PickupSoundToString
+typedef FString(*TCsPickupSoundToString)(const TCsPickupSound&);
+// StringToPickupSound
+typedef TCsPickupSound(*TCsStringToPickupSound)(const FString&);
+
+#define CS_DECLARE_PICKUP_SOUND	TCsPickupSound PickupSound_MAX; \
+								uint8 PICKUP_SOUND_MAX; \
+								TCsPickupSoundToString PickupSoundToString; \
+								TCsStringToPickupSound StringToPickupSound;
+
+#define CS_DEFINE_PICKUP_SOUND	PickupSound_MAX = ECsPickupSound::ECsPickupSound_MAX;\
+								PICKUP_SOUND_MAX = (uint8)PickupSound_MAX \
+								PickupSoundToString = &ECsPickupSound::ToString; \
+								StringToPickupSound = &ECsPickupSound::ToType;
+
+#pragma endregion Pickup

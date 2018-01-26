@@ -2320,6 +2320,20 @@ FVector UCsCommon::ClampVectorComponents(FVector V, float Clamp)
 	return V;
 }
 
+void UCsCommon::ClampMinVectorComponents(FVector &V, const float &Min)
+{
+	V.X = FMath::Max(V.X, Min);
+	V.Y = FMath::Max(V.Y, Min);
+	V.Z = FMath::Max(V.Z, Min);
+}
+
+void UCsCommon::ClampMaxVectorComponents(FVector &V, const float &Max)
+{
+	V.X = FMath::Min(V.X, Max);
+	V.Y = FMath::Min(V.Y, Max);
+	V.Z = FMath::Min(V.Z, Max);
+}
+
 FString UCsCommon::GetProxyAsString(AActor* InActor)
 {
 	if (InActor->Role < ROLE_Authority)

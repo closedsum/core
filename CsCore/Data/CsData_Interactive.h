@@ -33,6 +33,16 @@ class CSCORE_API ACsData_Interactive : public ACsData
 
 #pragma endregion Mesh
 
+// Collision
+#pragma region
+
+	UFUNCTION(BlueprintCallable, Category = "Collision")
+	virtual float GetCollisionRadius();
+	UFUNCTION(BlueprintCallable, Category = "Collision")
+	virtual float GetCollisionRadiusSq();
+
+#pragma endregion Collision
+
 // UI
 #pragma region
 	

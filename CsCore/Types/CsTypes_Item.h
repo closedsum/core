@@ -328,6 +328,40 @@ struct FCsItemMemberValue
 	float GetFloat() { return Value_float; }
 };
 
+USTRUCT(BlueprintType)
+struct FCsItemMemberDescription
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Member")
+	FName Name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Member")
+	TEnumAsByte<ECsItemMemberValueType::Type> Type;
+
+	FCsItemMemberDescription() {}
+	~FCsItemMemberDescription() {}
+
+	FCsItemMemberDescription& operator=(const FCsItemMemberDescription& B)
+	{
+		Name = B.Name;
+		Type = B.Type;
+		return *this;
+	}
+
+	bool operator==(const FCsItemMemberDescription& B) const
+	{
+		if (Name != B.Name) { return false; }
+		if (Type != B.Type) { return false; }
+		return true;
+	}
+
+	bool operator!=(const FCsItemMemberDescription& B) const
+	{
+		return !(*this == B);
+	}
+};
+
 #define CS_INVALID_ITEM_OWNER 255
 
 USTRUCT(BlueprintType)

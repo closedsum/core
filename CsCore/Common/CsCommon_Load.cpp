@@ -10,6 +10,7 @@
 #include "Types/CsTypes_Projectile.h"
 #include "Types/CsTypes_Weapon.h"
 #include "Types/CsTypes_Interactive.h"
+#include "Types/CsTypes_Item.h"
 #include "CsCVars.h"
 
 #include "Common/CsCommon.h"
@@ -45,6 +46,7 @@ namespace ECsCommonLoadCachedString
 		const FString CsInteractiveCollision = TEXT("ECsInteractiveCollision");
 		const FString CsProjectileMovementFunctionType = TEXT("ECsProjectileMovementFunctionType");
 		const FString CsLoadFlags = TEXT("ECsLoadFlags");
+		const FString CsItemMemberValueType = TEXT("ECsItemMemberValueType");
 
 		const FString BitmaskEnum = TEXT("BitmaskEnum");
 
@@ -599,6 +601,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsProjectileMovementFunctionAxis
 			if (StructProperty->Struct == FCsProjectileMovementFunctionAxis::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsProjectileMovementFunctionAxis>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsItemMemberDescription
+			if (StructProperty->Struct == FCsItemMemberDescription::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsItemMemberDescription>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 
 			if (Internal)
 			{
@@ -727,6 +732,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// ECsProjectileMovementFunctionType
 				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsProjectileMovementFunctionType))
 				{ WriteMemberBytePropertyToJson<ECsProjectileMovementFunctionType::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsProjectileMovementFunctionType::ToString); continue; }
+				// ECsItemMemberValueType
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsProjectileMovementFunctionType))
+				{ WriteMemberBytePropertyToJson<ECsItemMemberValueType::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsItemMemberValueType::ToString); continue; }
 
 				if (Internal)
 				{
@@ -1154,6 +1162,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsProjectileMovementFunctionAxis
 			if (StructProperty->Struct == FCsProjectileMovementFunctionAxis::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsProjectileMovementFunctionAxis>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsItemMemberDescription
+			if (StructProperty->Struct == FCsItemMemberDescription::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsItemMemberDescription>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 
 			if (Internal)
 			{
@@ -1288,6 +1299,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// ECsProjectileMovementFunctionType
 				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsProjectileMovementFunctionType))
 				{ WriteMemberBytePropertyToJson<ECsProjectileMovementFunctionType::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsProjectileMovementFunctionType::ToString); continue; }
+				// ECsItemMemberValueType
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsItemMemberValueType))
+				{ WriteMemberBytePropertyToJson<ECsItemMemberValueType::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsItemMemberValueType::ToString); continue; }
 
 				if (Internal)
 				{
@@ -1739,7 +1753,10 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FCsDataMappingEntry
 				if (InnerStructProperty->Struct == FCsDataMappingEntry::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsDataMappingEntry>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
-	
+				// FCsItemMemberDescription
+				if (InnerStructProperty->Struct == FCsItemMemberDescription::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsItemMemberDescription>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
+
 				if (Internal)
 				{
 					if ((*Internal)(Property, InJsonWriter, InObject, InClass))
@@ -2324,6 +2341,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FCsProjectileMovementFunctionAxis
 			if (StructProperty->Struct == FCsProjectileMovementFunctionAxis::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsProjectileMovementFunctionAxis>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsItemMemberDescription
+			if (StructProperty->Struct == FCsItemMemberDescription::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsItemMemberDescription>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 
 			if (Internal)
 			{
@@ -2485,6 +2505,12 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 				{
 					if (TCsProjectileMovementFunctionType* Member = ByteProperty->ContainerPtrToValuePtr<TCsProjectileMovementFunctionType>(InStruct))
 					{ *Member = ECsProjectileMovementFunctionType::ToType(JsonObject->GetStringField(MemberName)); continue; }
+				}
+				// ECsItemMemberValueType
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsProjectileMovementFunctionType))
+				{
+					if (TCsItemMemberValueType* Member = ByteProperty->ContainerPtrToValuePtr<TCsItemMemberValueType>(InStruct))
+					{ *Member = ECsItemMemberValueType::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
 
 				if (Internal)
@@ -2915,6 +2941,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsProjectileMovementFunctionAxis
 			if (StructProperty->Struct == FCsProjectileMovementFunctionAxis::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsProjectileMovementFunctionAxis>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsItemMemberDescription
+			if (StructProperty->Struct == FCsItemMemberDescription::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsItemMemberDescription>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 
 			if (Internal)
 			{
@@ -3076,6 +3105,12 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				{
 					if (TCsProjectileMovementFunctionType* Member = ByteProperty->ContainerPtrToValuePtr<TCsProjectileMovementFunctionType>(InStruct))
 					{ *Member = ECsProjectileMovementFunctionType::ToType(JsonObject->GetStringField(MemberName)); continue; }
+				}
+				// ECsItemMemberValueType
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsProjectileMovementFunctionType))
+				{
+					if (TCsItemMemberValueType* Member = ByteProperty->ContainerPtrToValuePtr<TCsItemMemberValueType>(InStruct))
+					{ *Member = ECsItemMemberValueType::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
 
 				if (Internal)
@@ -3525,6 +3560,9 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				// FCsDataMappingEntry
 				if (InnerStructProperty->Struct == FCsDataMappingEntry::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsDataMappingEntry>(JsonObject, ArrayProperty, InObject, MemberName, nullptr); continue; }
+				// FCsItemMemberDescription
+				if (InnerStructProperty->Struct == FCsItemMemberDescription::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsItemMemberDescription>(JsonObject, ArrayProperty, InObject, MemberName, nullptr); continue; }
 
 				if (Internal)
 				{

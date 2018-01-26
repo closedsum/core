@@ -12,6 +12,8 @@
 
 // Managers
 #include "Managers/Inventory/CsManager_Inventory.h"
+// Data
+#include "Data/CsData_Item.h"
 
 ACsManager_Item::ACsManager_Item(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -338,11 +340,6 @@ void ACsManager_Item::SaveHistory(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FC
 	JsonWriter->WriteObjectEnd();
 }
 
-UScriptStruct* ACsManager_Item::GetScriptStructForItemType(const TCsItemType &ItemType)
-{
-	return nullptr;
-}
-
 void ACsManager_Item::PopulateExistingItems()
 {
 	TArray<FString> FoundFiles;
@@ -395,6 +392,9 @@ void ACsManager_Item::PopulateExistingItems()
 					// Timespan
 					FTimespan::Parse(JsonObject->GetStringField(ECsFileItemHeaderCachedString::Str::Timespan), Item->LifeTime);
 				}
+
+				SetActiveItemData(Item);
+
 				// Current History
 				{
 					TSharedPtr<FJsonObject> JsonObject = JsonParsed->Values.Find(ECsFileItemHistoryHeaderCachedString::Str::CurrentHistory)->Get()->AsObject();
@@ -415,7 +415,6 @@ void ACsManager_Item::PopulateExistingItems()
 					}
 				}
 
-				SetActiveItemData(Item);
 				AddActiveItemByOwnerId(Item);
 			}
 			else
@@ -440,58 +439,50 @@ void ACsManager_Item::LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCs
 	{
 		TSharedPtr<FJsonObject> Object = JsonObject->Values.Find(ECsFileItemHistoryHeaderCachedString::Str::Members)->Get()->AsObject();
 
-		UScriptStruct* ScriptStruct = GetScriptStructForItemType(Item->Type);
+		TArray<FCsItemMemberDescription>* Members = Item->GetData()->GetMembers();
 
-		for (TFieldIterator<UProperty> It(ScriptStruct); It; ++It)
+		const uint8 Count = Members->Num();
+
+		for (uint8 I = 0; I < Count; I++)
 		{
-			UProperty* Property = Cast<UProperty>(*It);
+			FCsItemMemberDescription& Member = (*Members)[I];
 
-			const FString MemberNameAsString = Property->GetName();
-			const FName MemberName			 = Property->GetFName();
+			const FString MemberNameAsString = Member.Name.ToString();
+			const FName& MemberName			 = Member.Name;
+
+			const TCsItemMemberValueType& Type = Member.Type;
+
+			FCsItemMemberValue Value;
+			Value.Type = Type;
 
 			// bool
-			if (UBoolProperty* BoolProperty = Cast<UBoolProperty>(*It))
+			if (Type == ECsItemMemberValueType::Bool)
 			{
-				FCsItemMemberValue Value;
-				Value.Type		 = ECsItemMemberValueType::Bool;
 				Value.Value_bool = Object->GetBoolField(MemberNameAsString);
-				ItemHistory->Members.Add(MemberName, Value);
-				continue;
 			}
 			// uint8
-			if (UByteProperty* ByteProperty = Cast<UByteProperty>(*It))
+			else
+			if (Type == ECsItemMemberValueType::Uint8)
 			{
-				// enum
-				if (ByteProperty->IsEnum())
-				{
-				}
-				else
-				{
-					FCsItemMemberValue Value;
-					Value.Type		  = ECsItemMemberValueType::Uint8;
-					Value.Value_uint8 = (uint8)Object->GetIntegerField(MemberNameAsString);
-					ItemHistory->Members.Add(MemberName, Value);
-					continue;
-				}
+				Value.Value_uint8 = (uint8)Object->GetIntegerField(MemberNameAsString);
 			}
 			// int32
-			if (UIntProperty* IntProperty = Cast<UIntProperty>(*It))
+			else
+			if (Type == ECsItemMemberValueType::Int32)
 			{
-				FCsItemMemberValue Value;
-				Value.Type		  = ECsItemMemberValueType::Int32;
 				Value.Value_int32 = Object->GetIntegerField(MemberNameAsString);
-				ItemHistory->Members.Add(MemberName, Value);
-				continue;
 			}
 			// float
-			if (UFloatProperty* FloatProperty = Cast<UFloatProperty>(*It))
+			else
+			if (Type == ECsItemMemberValueType::Float)
 			{
-				FCsItemMemberValue Value;
-				Value.Type		  = ECsItemMemberValueType::Float;
 				Value.Value_float = (float)Object->GetNumberField(MemberNameAsString);
-				ItemHistory->Members.Add(MemberName, Value);
-				continue;
 			}
+			else
+			{
+				UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::LoadHistory: INVALID ItemMemberValue Type: %s"), *(ECsItemMemberValueType::ToString(Type)));
+			}
+			ItemHistory->Members.Add(MemberName, Value);
 		}
 	}
 }

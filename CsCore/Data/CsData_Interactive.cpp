@@ -38,6 +38,14 @@ TArray<UMaterialInstanceConstant*>* ACsData_Interactive::GetMaterials() { return
 
 #pragma endregion Mesh
 
+// Collision
+#pragma region
+
+float ACsData_Interactive::GetCollisionRadius() { return 0.0f; }
+float ACsData_Interactive::GetCollisionRadiusSq() { return GetCollisionRadius() * GetCollisionRadius(); }
+
+#pragma endregion Collision
+
 // UI
 #pragma region
 

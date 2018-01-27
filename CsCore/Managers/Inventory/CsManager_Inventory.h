@@ -51,8 +51,7 @@ public:
 
 	virtual void ConsumeItem(const uint64 &Id);
 	virtual void ConsumeItem(FCsItem* Item);
-
-	virtual FCsItem* ConsumeFirstItem(const FName &ShortCode);
+	virtual void ConsumeFirstItem(const FName &ShortCode);
 
 #pragma endregion Consume
 

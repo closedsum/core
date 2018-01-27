@@ -9,6 +9,13 @@ ACsData_Item::ACsData_Item(const FObjectInitializer& ObjectInitializer)
 
 TCsItemType ACsData_Item::GetBaseItemType() { return BaseItemType; }
 
+// Stats
+#pragma region
+
+TArray<FName>* ACsData_Item::GetContents() { return nullptr; }
+
+#pragma endregion Stats
+
 // Members
 #pragma region
 
@@ -32,3 +39,10 @@ bool ACsData_Item::OnDropSpawnActor() { return false; }
 FName ACsData_Item::GetSpawnedActorDataShortCode() { return NAME_None; }
 
 #pragma endregion Drop
+
+// Consume
+#pragma region
+
+bool ACsData_Item::OnConsumeDropContents() { return false; }
+
+#pragma endregion Consume

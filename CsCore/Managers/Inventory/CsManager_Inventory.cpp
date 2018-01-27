@@ -167,13 +167,16 @@ void ACsManager_Inventory::ConsumeItem(FCsItem* Item)
 	ConsumeItem(Item->UniqueId);
 }
 
-FCsItem* ACsManager_Inventory::ConsumeFirstItem(const FName &ShortCode)
+void ACsManager_Inventory::ConsumeFirstItem(const FName &ShortCode)
 {
 	if (FCsItem* Item = GetFirstItem(ShortCode))
 	{
 		ConsumeItem(Item);
 	}
-	return nullptr;
+	else
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::ConsumeFirstItem: There are NO Items with ShortCode: %s to Consume."), *(ShortCode.ToString()));
+	}
 }
 
 #pragma endregion Consume

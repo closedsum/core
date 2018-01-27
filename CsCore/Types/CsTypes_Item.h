@@ -482,8 +482,13 @@ struct FCsItem
 	UPROPERTY()
 	FString FileName;
 
+
 	FDateTime Created;
 	FTimespan LifeTime;
+
+	/** Array of Item UniqueIds this Item is "Holding" */
+	UPROPERTY()
+	TArray<uint64> Contents;
 
 	TWeakObjectPtr<class ACsData_Item> Data;
 	/** Data for Actor spawned when Item leaves Inventory */
@@ -552,6 +557,7 @@ struct FCsItem
 		DisplayName = ECsCachedString::Str::Empty;
 		FileName = ECsCachedString::Str::Empty;
 		LifeTime = FTimespan::Zero();
+		Contents.Reset();
 		//Data.Reset();
 		//Data = nullptr;
 		//Data_Actor.Reset();
@@ -583,6 +589,7 @@ namespace ECsFileItemHeaderCachedString
 		const FString Created = TEXT("Created");
 		const FString LifeTime = TEXT("LifeTime");
 		const FString Timespan = TEXT("Timespan");
+		const FString Contents = TEXT("Contents");
 	}
 }
 

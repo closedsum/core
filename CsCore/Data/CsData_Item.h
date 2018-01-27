@@ -13,8 +13,17 @@ class CSCORE_API ACsData_Item : public ACsData
 
 	TCsItemType GetBaseItemType();
 
+// Stats
+#pragma region
+public:
+
+	virtual TArray<FName>* GetContents();
+
+#pragma endregion Stats
+
 // Members
 #pragma region
+public:
 
 	virtual UScriptStruct* GetMembersScriptStruct();
 
@@ -24,6 +33,7 @@ class CSCORE_API ACsData_Item : public ACsData
 
 // UI
 #pragma region
+public:
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual FString GetDisplayName();
@@ -32,6 +42,7 @@ class CSCORE_API ACsData_Item : public ACsData
 
 // Drop
 #pragma region
+public:
 
 	UFUNCTION(BlueprintCallable, Category = "Drop")
 	virtual bool OnDropSpawnActor();
@@ -39,4 +50,13 @@ class CSCORE_API ACsData_Item : public ACsData
 	virtual FName GetSpawnedActorDataShortCode();
 
 #pragma endregion Drop
+
+// Consume
+#pragma region
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "Consume")
+	virtual bool OnConsumeDropContents();
+
+#pragma endregion Consume
 };

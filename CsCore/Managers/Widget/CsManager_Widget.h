@@ -5,7 +5,7 @@
 #include "Types/CsTypes_Pool.h"
 #include "CsManager_Widget.generated.h"
 
-#define CS_SIMPLE_WIDGET_PAYLOAD_SIZE 256
+#define CS_POOLED_WIDGET_PAYLOAD_SIZE 256
 
 UCLASS()
 class CSCORE_API UCsManager_Widget : public UObject
@@ -28,15 +28,15 @@ class CSCORE_API UCsManager_Widget : public UObject
 	TMap<TCsSimpleWidgetType, uint16> PoolSizes;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Pool")
-	TArray<class UCsSimpleWidget*> Pool;
+	TArray<class UCsPooledWidget*> Pool;
 
-	TMap<TCsSimpleWidgetType, TArray<class UCsSimpleWidget*>> Pools;
+	TMap<TCsSimpleWidgetType, TArray<class UCsPooledWidget*>> Pools;
 
 	TMap<TCsSimpleWidgetType, uint16> PoolIndices;
 
 	uint16 PoolIndex;
 
-	TMap<TCsSimpleWidgetType, TArray<class UCsSimpleWidget*>> ActiveWidgets;
+	TMap<TCsSimpleWidgetType, TArray<class UCsPooledWidget*>> ActiveWidgets;
 
 	virtual int32 GetActivePoolSize(const TCsSimpleWidgetType& Type);
 
@@ -44,7 +44,7 @@ class CSCORE_API UCsManager_Widget : public UObject
 
 	virtual void LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, class UObject* InObject);
 
-	class UCsSimpleWidget* Allocate(const TCsSimpleWidgetType &Type);
+	class UCsPooledWidget* Allocate(const TCsSimpleWidgetType &Type);
 
 	virtual void DeAllocate(const TCsSimpleWidgetType &Type, const int32 &Index);
 	virtual void DeAllocateAll();
@@ -55,11 +55,11 @@ class CSCORE_API UCsManager_Widget : public UObject
 #pragma region
 public:
 
-	FCsSimpleWidgetPayload Payloads[CS_SIMPLE_WIDGET_PAYLOAD_SIZE];
+	FCsPooledWidgetPayload Payloads[CS_POOLED_WIDGET_PAYLOAD_SIZE];
 
 	uint8 PayloadIndex;
 
-	FCsSimpleWidgetPayload* AllocatePayload();
+	FCsPooledWidgetPayload* AllocatePayload();
 
 #pragma endregion Payload
 
@@ -67,7 +67,7 @@ public:
 #pragma region
 public:
 
-	virtual class UCsSimpleWidget* Show(const TCsSimpleWidgetType &Type, FCsSimpleWidgetPayload* Payload, UObject* InOwner, UObject* InParent);
+	virtual class UCsPooledWidget* Show(const TCsSimpleWidgetType &Type, FCsPooledWidgetPayload* Payload, UObject* InOwner, UObject* InParent);
 
 #pragma endregion Show
 };

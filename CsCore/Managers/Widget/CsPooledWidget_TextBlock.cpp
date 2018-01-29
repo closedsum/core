@@ -1,8 +1,8 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Widget/CsWidget_TextBlock.h"
+#include "Managers/Widget/CsPooledWidget_TextBlock.h"
 #include "CsCore.h"
 
-namespace ECsWidgetTextBlockCachedString
+namespace ECsPooledWidgetTextBlockCachedString
 {
 	namespace Str
 	{
@@ -10,12 +10,12 @@ namespace ECsWidgetTextBlockCachedString
 	}
 }
 
-UCsWidget_TextBlock::UCsWidget_TextBlock(const FObjectInitializer& ObjectInitializer)
+UCsPooledWidget_TextBlock::UCsPooledWidget_TextBlock(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
 
-void UCsWidget_TextBlock::NativeConstruct()
+void UCsPooledWidget_TextBlock::NativeConstruct()
 {
 	Super::NativeConstruct();
 
@@ -23,13 +23,13 @@ void UCsWidget_TextBlock::NativeConstruct()
 		return;
 
 	Text.Set(MyText);
-	const FString MemberName = ECsWidgetTextBlockCachedString::Str::Text;
+	const FString MemberName = ECsPooledWidgetTextBlockCachedString::Str::Text;
 	Text.Init(MemberName, MemberName, GetName() + ECsCachedString::Str::Dot + MemberName);
 
 	HasNativeContructed = true;
 }
 
-void UCsWidget_TextBlock::OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime)
+void UCsPooledWidget_TextBlock::OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime)
 {
 	Super::OnNativeTick(MyGeometry, InDeltaTime);
 
@@ -58,21 +58,21 @@ void UCsWidget_TextBlock::OnNativeTick(const FGeometry& MyGeometry, const float 
 
 }
 
-void UCsWidget_TextBlock::Allocate(const uint16& ActiveIndex, FCsSimpleWidgetPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent)
+void UCsPooledWidget_TextBlock::Allocate(const uint16& ActiveIndex, FCsPooledWidgetPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent)
 {
 	Super::Allocate(ActiveIndex, Payload, Time, RealTime, Frame, InOwner, InParent);
 
 	Text.SetString(Payload->DisplayName);
 }
 
-void UCsWidget_TextBlock::DeAllocate()
+void UCsPooledWidget_TextBlock::DeAllocate()
 {
 	Super::DeAllocate();
 
 	Text.SetString(ECsCachedString::Str::Empty);
 }
 
-void UCsWidget_TextBlock::OnAddToCanvas()
+void UCsPooledWidget_TextBlock::OnAddToCanvas()
 {
 	Super::OnAddToCanvas();
 
@@ -81,7 +81,7 @@ void UCsWidget_TextBlock::OnAddToCanvas()
 	ParentSlot->SetAlignment(ChildSlot->GetAlignment());
 }
 
-void UCsWidget_TextBlock::Show()
+void UCsPooledWidget_TextBlock::Show()
 {
 	Super::Show();
 
@@ -89,7 +89,7 @@ void UCsWidget_TextBlock::Show()
 	Text.SetVisibility(DefaultVisibility);
 }
 
-void UCsWidget_TextBlock::Hide()
+void UCsPooledWidget_TextBlock::Hide()
 {
 	Text.SetVisibility(ESlateVisibility::Hidden);
 	Text.SetIsEnabled(false);
@@ -97,7 +97,7 @@ void UCsWidget_TextBlock::Hide()
 	Super::Hide();
 }
 
-void UCsWidget_TextBlock::SetString(const FString &InString)
+void UCsPooledWidget_TextBlock::SetString(const FString &InString)
 {
 	Text.SetString(InString);
 }

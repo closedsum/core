@@ -132,6 +132,7 @@ public:
 
 // Get
 #pragma region
+public:
 
 	virtual UCsUserWidget* GetChildWidget(const TCsWidgetType &WidgetType);
 
@@ -149,6 +150,7 @@ public:
 
 // Open / Close Child
 #pragma region
+public:
 
 	virtual void OpenChild(const TCsWidgetType &WidgetType);
 

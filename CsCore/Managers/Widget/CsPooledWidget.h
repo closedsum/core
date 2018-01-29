@@ -1,37 +1,37 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Runtime/UMG/Public/Blueprint/UserWidget.h"
+#include "UI/Simple/CsSimpleWidget.h"
 #include "Types/CsTypes_Pool.h"
 #include "Types/CsTypes_UI.h"
-#include "CsSimpleWidget.generated.h"
+#include "CsPooledWidget.generated.h"
 
 USTRUCT(BlueprintType)
-struct FCsSimpleWidgetCache : public FCsPooledObjectCache
+struct FCsPooledWidgetCache : public FCsPooledObjectCache
 {
 	GENERATED_USTRUCT_BODY()
 
-	TWeakObjectPtr<class UCsSimpleWidget> Widget;
+	TWeakObjectPtr<class UCsPooledWidget> Widget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FString DisplayName;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FIntPoint Offset;
 
-	FCsSimpleWidgetCache()
+	FCsPooledWidgetCache()
 	{
 		Reset();
 	}
 
-	~FCsSimpleWidgetCache() {}
+	~FCsPooledWidgetCache() {}
 
-	void Set(const uint16 &InIndex, class UCsSimpleWidget* InWidget)
+	void Set(const uint16 &InIndex, class UCsPooledWidget* InWidget)
 	{
 		SetIndex(InIndex);
 		Widget = InWidget;
 	}
 
 	template<typename T>
-	void Init(const uint16& InActiveIndex, FCsSimpleWidgetPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)())
+	void Init(const uint16& InActiveIndex, FCsPooledWidgetPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)())
 	{
 		SetActiveIndex(InActiveIndex);
 
@@ -57,18 +57,18 @@ struct FCsSimpleWidgetCache : public FCsPooledObjectCache
 	}
 
 	template<typename T>
-	void Init(const uint16& InActiveIndex, FCsSimpleWidgetPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, T* InObject, void (T::*OnDeAllocate)())
+	void Init(const uint16& InActiveIndex, FCsPooledWidgetPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, T* InObject, void (T::*OnDeAllocate)())
 	{
 		Init(InActiveIndex, Payload, InTime, InRealTime, InFrame, nullptr, nullptr, InObject, OnDeAllocate);
 	}
 
 	template<typename T>
-	void Init(const uint16& InActiveIndex, FCsSimpleWidgetPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)())
+	void Init(const uint16& InActiveIndex, FCsPooledWidgetPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)())
 	{
 		Init(InActiveIndex, Payload, InTime, InRealTime, InFrame, InOwner, nullptr, InObject, OnDeAllocate);
 	}
 
-	void Init(const uint16& InActiveIndex, FCsSimpleWidgetPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent)
+	void Init(const uint16& InActiveIndex, FCsPooledWidgetPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent)
 	{
 		SetActiveIndex(InActiveIndex);
 
@@ -84,12 +84,12 @@ struct FCsSimpleWidgetCache : public FCsPooledObjectCache
 		SetFrame(InFrame);
 	}
 
-	void Init(const uint16& InActiveIndex, FCsSimpleWidgetPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner)
+	void Init(const uint16& InActiveIndex, FCsPooledWidgetPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner)
 	{
 		Init(InActiveIndex, Payload, InTime, InRealTime, InFrame, InOwner, nullptr);
 	}
 
-	void Init(const uint16& InActiveIndex, FCsSimpleWidgetPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
+	void Init(const uint16& InActiveIndex, FCsPooledWidgetPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
 		Init(InActiveIndex, Payload, InTime, InRealTime, InFrame, nullptr, nullptr);
 	}
@@ -102,38 +102,26 @@ struct FCsSimpleWidgetCache : public FCsPooledObjectCache
 		Offset = FIntPoint::ZeroValue;
 	}
 
-	UCsSimpleWidget* GetWidget() { return Widget.IsValid() ? Widget.Get() : nullptr; }
+	UCsPooledWidget* GetWidget() { return Widget.IsValid() ? Widget.Get() : nullptr; }
 };
 
 UCLASS()
-class CSCORE_API UCsSimpleWidget : public UUserWidget
+class CSCORE_API UCsPooledWidget : public UCsSimpleWidget
 {
 	GENERATED_UCLASS_BODY()
 
-	virtual void OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime);
 	virtual void Init(const int32 &Index);
-
-	virtual void Allocate(const uint16& ActiveIndex, FCsSimpleWidgetPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent);
+ 
+	virtual void Allocate(const uint16& ActiveIndex, FCsPooledWidgetPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent);
 	virtual void DeAllocate();
 
-	UPROPERTY()
-	bool HasNativeContructed;
-
 	UPROPERTY(BlueprintReadWrite, Category = "Widget")
-	FCsSimpleWidgetCache Cache;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Widget")
-	ESlateVisibility DefaultVisibility;
+	FCsPooledWidgetCache Cache;
 
 	UPROPERTY(meta = (BindWidget))
 	UCanvasPanel* Canvas;
 
 	virtual void OnAddToCanvas();
-
-	UFUNCTION(BlueprintCallable, Category = "UI")
-	virtual void Show();
-	UFUNCTION(BlueprintCallable, Category = "UI")
-	virtual void Hide();
 
 	FVector2D ParentCanvasSize;
 

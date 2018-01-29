@@ -5,6 +5,8 @@
 #include "Runtime/UMG/Public/Components/SlateWrapperTypes.h"
 #include "Runtime/UMG/Public/Components/CanvasPanel.h"
 #include "Runtime/UMG/Public/Components/CanvasPanelSlot.h"
+#include "Runtime/UMG/Public/Components/VerticalBox.h"
+#include "Runtime/UMG/Public/Components/GridPanel.h"
 #include "Runtime/UMG/Public/Components/ProgressBar.h"
 #include "Runtime/UMG/Public/Components/TextBlock.h"
 #include "Runtime/UMG/Public/Components/Image.h"
@@ -1718,20 +1720,25 @@ public:
 
 #pragma endregion Structs
 
-struct FCsSimpleWidgetPayload
+struct FCsPooledWidgetPayload
 {
 	bool IsAllocated;
 	FString DisplayName;
+	FVector2D Size;
 	FIntPoint Offset;
 	float LifeTime;
 
-	FCsSimpleWidgetPayload() {}
-	~FCsSimpleWidgetPayload() {}
+	FCsPooledWidgetPayload() 
+	{
+		Reset();
+	}
+	~FCsPooledWidgetPayload() {}
 
 	void Reset()
 	{
 		IsAllocated = false;
 		DisplayName = ECsCachedString::Str::Empty;
+		Size = FVector2D::ZeroVector;
 		Offset = FIntPoint::ZeroValue;
 		LifeTime = 0.0f;
 	}

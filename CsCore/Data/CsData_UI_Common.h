@@ -2,6 +2,7 @@
 #pragma once
 #include "Data/CsData.h"
 #include "Types/CsTypes.h"
+#include "Types/CsTypes_UI.h"
 #include "CsData_UI_Common.generated.h"
 
 /* Current Order of Categories
@@ -18,4 +19,11 @@ class CSCORE_API ACsData_UI_Common : public ACsData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "01 Common")
 	FCsBlueprint LoadingWidget;
+
+// Widgets
+#pragma region
+
+	virtual class UBlueprintGeneratedClass* GetWidget(const TCsWidgetType& WidgetType);
+
+#pragma endregion Widgets
 };

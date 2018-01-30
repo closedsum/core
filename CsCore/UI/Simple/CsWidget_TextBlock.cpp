@@ -7,6 +7,7 @@ namespace ECsWidgetTextBlockCachedString
 	namespace Str
 	{
 		const FString Text = TEXT("Text");
+		const FString MyText = TEXT("MyText");
 	}
 }
 
@@ -23,8 +24,9 @@ void UCsWidget_TextBlock::NativeConstruct()
 		return;
 
 	Text.Set(MyText);
-	const FString& MemberName = ECsWidgetTextBlockCachedString::Str::Text;
-	Text.Init(MemberName, MemberName, GetName() + ECsCachedString::Str::Dot + MemberName);
+	const FString& TextName   = ECsWidgetTextBlockCachedString::Str::Text;
+	const FString& MyTextName = ECsWidgetTextBlockCachedString::Str::MyText;
+	Text.Init(TextName, MyTextName, GetName() + ECsCachedString::Str::Dot + TextName);
 
 	HasNativeContructed = true;
 }

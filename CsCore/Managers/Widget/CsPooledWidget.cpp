@@ -38,8 +38,3 @@ void UCsPooledWidget::SetPosition(const FVector2D &InPosition)
 	FVector2D Resolution = FVector2D(GSystemResolution.ResX, GSystemResolution.ResY);
 	Position			 = (ParentCanvasSize / Resolution) * InPosition;
 }
-
-void UCsPooledWidget::SetSize(const FVector2D &InSize)
-{
-	Size = InSize;
-}

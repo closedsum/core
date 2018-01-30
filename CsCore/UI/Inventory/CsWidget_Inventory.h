@@ -10,10 +10,25 @@ class CSCORE_API UCsWidget_Inventory : public UCsUserWidget
 
 	virtual void NativeConstruct() override;
 
+	UPROPERTY()
+	bool UseDynamicSize;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	FVector2D Size;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	FVector2D GridSize;
+
+	virtual void SetupSize();
+
+	UPROPERTY()
+	bool UseDynamicRowAndColumnSize;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	uint8 RowSize;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	uint8 ColumnSize;
+
+	virtual void SetupRowAndColumnSize();
 
 	UPROPERTY(meta = (BindWidget))
 	UVerticalBox* MyVerticalBox;
@@ -22,7 +37,7 @@ class CSCORE_API UCsWidget_Inventory : public UCsUserWidget
 	UTextBlock* Header_Text;
 
 	UPROPERTY(meta = (BindWidget))
-	UGridPanel* MyGridPawnel;
+	UGridPanel* MyGridPanel;
 
 	UPROPERTY()
 	bool bSpawnSlots;

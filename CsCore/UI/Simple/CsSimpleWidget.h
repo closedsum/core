@@ -22,4 +22,8 @@ class CSCORE_API UCsSimpleWidget : public UUserWidget
 	virtual void Show();
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual void Hide();
+
+	TCsPrimitiveType<FVector2D> Size;
+
+	virtual void SetSize(const FVector2D &InSize);
 };

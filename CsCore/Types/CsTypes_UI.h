@@ -6,6 +6,7 @@
 #include "Runtime/UMG/Public/Components/CanvasPanel.h"
 #include "Runtime/UMG/Public/Components/CanvasPanelSlot.h"
 #include "Runtime/UMG/Public/Components/VerticalBox.h"
+#include "Runtime/UMG/Public/Components/VerticalBoxSlot.h"
 #include "Runtime/UMG/Public/Components/GridPanel.h"
 #include "Runtime/UMG/Public/Components/ProgressBar.h"
 #include "Runtime/UMG/Public/Components/TextBlock.h"
@@ -86,6 +87,7 @@ namespace ECsSimpleWidgetType
 	{
 		Text					UMETA(DisplayName = "Text"),
 		Float					UMETA(DisplayName = "Float"),
+		Button					UMETA(DisplayName = "Button"),
 		ECsSimpleWidgetType_MAX	UMETA(Hidden),
 	};
 }
@@ -96,14 +98,16 @@ namespace ECsSimpleWidgetType
 
 	namespace Str
 	{
-		const TCsString Text = TCsString(TEXT("EHTA_Left"), TEXT("ehta_left"), TEXT("left"));
-		const TCsString Float = TCsString(TEXT("EHTA_Center"), TEXT("ehta_center"), TEXT("center"));
+		const TCsString Text = TCsString(TEXT("Text"), TEXT("text"), TEXT("text"));
+		const TCsString Float = TCsString(TEXT("Float"), TEXT("float"), TEXT("float"));
+		const TCsString Button = TCsString(TEXT("Button"), TEXT("button"), TEXT("button"));
 	}
 
 	FORCEINLINE FString ToString(const Type &EType)
 	{
 		if (EType == Type::Text) { return Str::Text.Value; }
 		if (EType == Type::Float) { return Str::Float.Value; }
+		if (EType == Type::Button) { return Str::Button.Value; }
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
@@ -111,6 +115,7 @@ namespace ECsSimpleWidgetType
 	{
 		if (String == Str::Text) { return Type::Text; }
 		if (String == Str::Float) { return Type::Float; }
+		if (String == Str::Button) { return Type::Button; }
 		return Type::ECsSimpleWidgetType_MAX;
 	}
 }

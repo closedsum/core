@@ -8,7 +8,9 @@ namespace ECsWidgetButtonAndTextCachedString
 	{
 		const FString ButtonAndText = TEXT("ButtonAndText");
 		const FString Button = TEXT("Button");
+		const FString MyButton = TEXT("MyButton");
 		const FString Text = TEXT("Text");
+		const FString MyText = TEXT("MyText");
 	}
 }
 
@@ -27,13 +29,15 @@ void UCsWidget_ButtonAndText::NativeConstruct()
 
 	// Button
 	ButtonAndText.Button.Set(MyButton);
-	const FString& MemberName = ECsWidgetButtonAndTextCachedString::Str::ButtonAndText;
-	const FString& ButtonName = ECsWidgetButtonAndTextCachedString::Str::Button;
-	ButtonAndText.Button.Init(ButtonName, ButtonName, GetName() + ECsCachedString::Str::Dot + MemberName);
+	const FString& MemberName   = ECsWidgetButtonAndTextCachedString::Str::ButtonAndText;
+	const FString& MyButtonName = ECsWidgetButtonAndTextCachedString::Str::MyButton;
+	const FString& ButtonName   = ECsWidgetButtonAndTextCachedString::Str::Button;
+	ButtonAndText.Button.Init(ButtonName, MyButtonName, GetName() + ECsCachedString::Str::Dot + MemberName);
 	// Text
 	ButtonAndText.Text.Set(MyText);
-	const FString& TextName = ECsWidgetButtonAndTextCachedString::Str::Text;
-	ButtonAndText.Text.Init(TextName, TextName, GetName() + ECsCachedString::Str::Dot + MemberName);
+	const FString& MyTextName = ECsWidgetButtonAndTextCachedString::Str::MyText;
+	const FString& TextName   = ECsWidgetButtonAndTextCachedString::Str::Text;
+	ButtonAndText.Text.Init(TextName, MyTextName, GetName() + ECsCachedString::Str::Dot + MemberName);
 
 	HasNativeContructed = true;
 }

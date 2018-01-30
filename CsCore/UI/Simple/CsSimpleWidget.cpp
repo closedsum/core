@@ -23,3 +23,8 @@ void UCsSimpleWidget::Hide()
 	SetVisibility(ESlateVisibility::Hidden);
 	SetIsEnabled(false);
 }
+
+void UCsSimpleWidget::SetSize(const FVector2D &InSize)
+{
+	Size = InSize;
+}

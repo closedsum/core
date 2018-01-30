@@ -7,6 +7,7 @@ namespace ECsWidgetButtonCachedString
 	namespace Str
 	{
 		const FString Button = TEXT("Button");
+		const FString MyButton = TEXT("MyButton");
 	}
 }
 
@@ -24,8 +25,9 @@ void UCsWidget_Button::NativeConstruct()
 		return;
 
 	Button.Set(MyButton);
-	const FString& MemberName = ECsWidgetButtonCachedString::Str::Button;
-	Button.Init(MemberName, MemberName, GetName() + ECsCachedString::Str::Dot + MemberName);
+	const FString& ButtonName   = ECsWidgetButtonCachedString::Str::Button;
+	const FString& MyButtonName = ECsWidgetButtonCachedString::Str::MyButton;
+	Button.Init(ButtonName, MyButtonName, GetName() + ECsCachedString::Str::Dot + ButtonName);
 
 	HasNativeContructed = true;
 }

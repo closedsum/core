@@ -7,3 +7,10 @@ ACsData_UI::ACsData_UI(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
+
+// Widgets
+#pragma region
+
+class UBlueprintGeneratedClass* ACsData_UI::GetWidget(const TCsWidgetType& WidgetType) { return nullptr; }
+
+#pragma endregion Widgets

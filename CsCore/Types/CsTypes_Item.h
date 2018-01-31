@@ -112,23 +112,23 @@ struct FCsInventoryItemDimension
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY()
-	int32 Width;
+	uint8 RowSpan;
 	UPROPERTY()
-	int32 Height;
+	int32 ColumnSpan;
 
 	FCsInventoryItemDimension() {}
 	~FCsInventoryItemDimension() {}
 
 	FCsInventoryItemDimension& operator=(const FCsInventoryItemDimension& B)
 	{
-		Width = B.Width;
-		Height = B.Height;
+		RowSpan = B.RowSpan;
+		ColumnSpan = B.ColumnSpan;
 		return *this;
 	}
 
 	bool operator==(const FCsInventoryItemDimension& B) const
 	{
-		return (Width == B.Width && Height == B.Height);
+		return (RowSpan == B.RowSpan && ColumnSpan == B.ColumnSpan);
 	}
 
 	bool operator!=(const FCsInventoryItemDimension& B) const
@@ -138,8 +138,8 @@ struct FCsInventoryItemDimension
 
 	void Reset()
 	{
-		Width = 0;
-		Height = 0;
+		RowSpan	= 1;
+		ColumnSpan = 1;
 	}
 };
 
@@ -147,25 +147,25 @@ USTRUCT(BlueprintType)
 struct FCsInventoryItemPosition
 {
 	GENERATED_USTRUCT_BODY()
-
+		
 	UPROPERTY()
-	int32 X;
+	uint8 Row;
 	UPROPERTY()
-	int32 Y;
+	uint8 Column;
 
 	FCsInventoryItemPosition() {}
 	~FCsInventoryItemPosition() {}
 
 	FCsInventoryItemPosition& operator=(const FCsInventoryItemPosition& B)
 	{
-		X = B.X;
-		Y = B.Y;
+		Row = B.Row;
+		Column = B.Column;
 		return *this;
 	}
 
 	bool operator==(const FCsInventoryItemPosition& B) const
 	{
-		return (X == B.X && Y == B.Y);
+		return (Row == B.Row && Column == B.Column);
 	}
 
 	bool operator!=(const FCsInventoryItemPosition& B) const
@@ -175,8 +175,8 @@ struct FCsInventoryItemPosition
 
 	void Reset()
 	{
-		X = 0;
-		Y = 0;
+		Row = 0;
+		Column = 0;
 	}
 };
 

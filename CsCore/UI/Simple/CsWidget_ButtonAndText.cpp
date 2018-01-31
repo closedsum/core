@@ -2,6 +2,12 @@
 #include "UI/Simple/CsWidget_ButtonAndText.h"
 #include "CsCore.h"
 
+// Managers
+#include "Managers/Input/CsManager_Input.h"
+
+// Cache
+#pragma region
+
 namespace ECsWidgetButtonAndTextCachedString
 {
 	namespace Str
@@ -13,6 +19,8 @@ namespace ECsWidgetButtonAndTextCachedString
 		const FString MyText = TEXT("MyText");
 	}
 }
+
+#pragma endregion Cache
 
 UCsWidget_ButtonAndText::UCsWidget_ButtonAndText(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -33,6 +41,9 @@ void UCsWidget_ButtonAndText::NativeConstruct()
 	const FString& MyButtonName = ECsWidgetButtonAndTextCachedString::Str::MyButton;
 	const FString& ButtonName   = ECsWidgetButtonAndTextCachedString::Str::Button;
 	ButtonAndText.Button.Init(ButtonName, MyButtonName, GetName() + ECsCachedString::Str::Dot + MemberName);
+
+	MyButton->OnPressed.AddDynamic(this, &UCsWidget_ButtonAndText::MyButton_OnPressed);
+
 	// Text
 	ButtonAndText.Text.Set(MyText);
 	const FString& MyTextName = ECsWidgetButtonAndTextCachedString::Str::MyText;
@@ -66,3 +77,20 @@ void UCsWidget_ButtonAndText::Hide()
 
 	Super::Hide();
 }
+
+void UCsWidget_ButtonAndText::MyButton_OnPressed()
+{
+	ACsManager_Input* Manager_Input = ACsManager_Input::Get(GetWorld());
+
+	Manager_Input->QueueInput(InputAction_OnPressed, ECsInputEvent::FirstPressed);
+
+	MousePosition_OnPressed = Manager_Input->CurrentMousePosition;
+}
+
+void UCsWidget_ButtonAndText::MyButton_OnReleased()
+{
+	ACsManager_Input* Manager_Input = ACsManager_Input::Get(GetWorld());
+	MousePosition_OnReleased		= Manager_Input->CurrentMousePosition;
+}
+
+void UCsWidget_ButtonAndText::MyButton_OnHovered(){}

@@ -16,4 +16,7 @@ class CSCORE_API UCsWidget_Inventory : public UCsUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 	class UCsWidget_Inventory_Grid* MyGrid;
+
+	UPROPERTY(meta = (BindWidget))
+	class UCsWidget_Inventory_Slot* Slot_Draggable;
 };

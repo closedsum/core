@@ -1,6 +1,7 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "UI/Simple/CsSimpleWidget.h"
+#include "Types/CsTypes_Input.h"
 #include "CsWidget_ButtonAndText.generated.h"
 
 UCLASS()
@@ -16,6 +17,21 @@ class CSCORE_API UCsWidget_ButtonAndText : public UCsSimpleWidget
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* MyButton;
+
+	UFUNCTION()
+	virtual void MyButton_OnPressed();
+
+	TCsInputAction InputAction_OnPressed;
+
+	FVector MousePosition_OnPressed;
+
+	UFUNCTION()
+	virtual void MyButton_OnReleased();
+
+	FVector MousePosition_OnReleased;
+
+	UFUNCTION()
+	virtual void MyButton_OnHovered();
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* MyText;

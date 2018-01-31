@@ -9,6 +9,11 @@ UCsPooledWidget::UCsPooledWidget(const FObjectInitializer& ObjectInitializer)
 {
 }
 
+void UCsPooledWidget::Init()
+{
+	Super::Init();
+}
+
 void UCsPooledWidget::Init(const int32 &Index)
 {
 	Cache.Set(Index, this);

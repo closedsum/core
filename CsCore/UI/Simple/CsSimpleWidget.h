@@ -11,6 +11,7 @@ class CSCORE_API UCsSimpleWidget : public UUserWidget
 	GENERATED_UCLASS_BODY()
 
 	virtual void Init();
+	virtual void Init(const int32 &Index);
 
 	UPROPERTY()
 	bool HasInitFinished;

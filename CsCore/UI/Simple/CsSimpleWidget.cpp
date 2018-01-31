@@ -11,6 +11,7 @@ UCsSimpleWidget::UCsSimpleWidget(const FObjectInitializer& ObjectInitializer)
 }
 
 void UCsSimpleWidget::Init(){}
+void UCsSimpleWidget::Init(const int32 &Index){}
 void UCsSimpleWidget::OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime){}
 
 void UCsSimpleWidget::Show()

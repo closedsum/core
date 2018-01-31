@@ -612,6 +612,9 @@ public:
 
 	// Mouse
 
+	UPROPERTY(BlueprintReadOnly, Category = "Input")
+	FVector CurrentMousePosition;
+
 	FBindableCall_CsManagerInput_Location_Raw Mouse_Location_Raw;
 
 	// VR

@@ -10,6 +10,9 @@ class CSCORE_API UCsWidget_Inventory_Slot : public UCsWidget_ButtonAndText
 	GENERATED_UCLASS_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	FVector2D Size;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	uint8 Row;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	uint8 Column;

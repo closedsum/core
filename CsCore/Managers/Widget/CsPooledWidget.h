@@ -118,9 +118,6 @@ class CSCORE_API UCsPooledWidget : public UCsSimpleWidget
 	UPROPERTY(BlueprintReadWrite, Category = "Widget")
 	FCsPooledWidgetCache Cache;
 
-	UPROPERTY(meta = (BindWidget))
-	UCanvasPanel* Canvas;
-
 	virtual void OnAddToCanvas();
 
 	FVector2D ParentCanvasSize;

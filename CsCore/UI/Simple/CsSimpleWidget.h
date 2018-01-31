@@ -10,6 +10,11 @@ class CSCORE_API UCsSimpleWidget : public UUserWidget
 {
 	GENERATED_UCLASS_BODY()
 
+	virtual void Init();
+
+	UPROPERTY()
+	bool HasInitFinished;
+
 	virtual void OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime);
 
 	UPROPERTY()
@@ -26,4 +31,7 @@ class CSCORE_API UCsSimpleWidget : public UUserWidget
 	TCsPrimitiveType<FVector2D> Size;
 
 	virtual void SetSize(const FVector2D &InSize);
+
+	UPROPERTY(meta = (BindWidget))
+	UCanvasPanel* Canvas;
 };

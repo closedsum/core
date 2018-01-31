@@ -130,6 +130,9 @@ public:
 
 	TMap<TCsWidgetType, TArray<UCsUserWidget*>> ActiveChildWidgetsMap;
 
+	UPROPERTY(meta = (BindWidget))
+	UCanvasPanel* Canvas;
+
 // Get
 #pragma region
 public:

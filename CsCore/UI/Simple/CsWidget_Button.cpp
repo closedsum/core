@@ -17,19 +17,14 @@ UCsWidget_Button::UCsWidget_Button(const FObjectInitializer& ObjectInitializer)
 	DefaultVisibility = ESlateVisibility::Visible;
 }
 
-void UCsWidget_Button::NativeConstruct()
+void UCsWidget_Button::OnNativeConstruct()
 {
-	Super::NativeConstruct();
-
-	if (HasNativeContructed)
-		return;
+	Super::OnNativeConstruct();
 
 	Button.Set(MyButton);
 	const FString& ButtonName   = ECsWidgetButtonCachedString::Str::Button;
 	const FString& MyButtonName = ECsWidgetButtonCachedString::Str::MyButton;
 	Button.Init(ButtonName, MyButtonName, GetName() + ECsCachedString::Str::Dot + ButtonName);
-
-	HasNativeContructed = true;
 }
 
 void UCsWidget_Button::OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime)

@@ -10,9 +10,37 @@ UCsSimpleWidget::UCsSimpleWidget(const FObjectInitializer& ObjectInitializer)
 	DefaultVisibility = ESlateVisibility::HitTestInvisible;
 }
 
+void UCsSimpleWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	if (HasNativeContructed)
+		return;
+
+	OnNativeConstruct();
+
+	HasNativeContructed = true;
+}
+
+void UCsSimpleWidget::OnNativeConstruct() {}
+
 void UCsSimpleWidget::Init(){}
 void UCsSimpleWidget::Init(const int32 &Index){}
 void UCsSimpleWidget::OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime){}
+
+void UCsSimpleWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	if (!HasInitFinished)
+	{
+		Init();
+
+		HasInitFinished = true;
+	}
+
+	OnNativeTick(MyGeometry, InDeltaTime);
+}
 
 void UCsSimpleWidget::Show()
 {

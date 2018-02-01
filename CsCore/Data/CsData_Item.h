@@ -38,6 +38,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual FString GetDisplayName();
 
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	virtual UMaterialInstanceConstant* GetMaterial();
+
+	virtual FCsInventoryItemDimension* GetDimension();
+
 #pragma endregion UI
 
 // Drop

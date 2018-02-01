@@ -28,12 +28,9 @@ UCsWidget_ButtonAndText::UCsWidget_ButtonAndText(const FObjectInitializer& Objec
 	DefaultVisibility = ESlateVisibility::Visible;
 }
 
-void UCsWidget_ButtonAndText::NativeConstruct()
+void UCsWidget_ButtonAndText::OnNativeConstruct()
 {
-	Super::NativeConstruct();
-
-	if (HasNativeContructed)
-		return;
+	Super::OnNativeConstruct();
 
 	// Button
 	ButtonAndText.Button.Set(MyButton);
@@ -49,8 +46,6 @@ void UCsWidget_ButtonAndText::NativeConstruct()
 	const FString& MyTextName = ECsWidgetButtonAndTextCachedString::Str::MyText;
 	const FString& TextName   = ECsWidgetButtonAndTextCachedString::Str::Text;
 	ButtonAndText.Text.Init(TextName, MyTextName, GetName() + ECsCachedString::Str::Dot + MemberName);
-
-	HasNativeContructed = true;
 }
 
 void UCsWidget_ButtonAndText::OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime)
@@ -94,3 +89,15 @@ void UCsWidget_ButtonAndText::MyButton_OnReleased()
 }
 
 void UCsWidget_ButtonAndText::MyButton_OnHovered(){}
+
+void UCsWidget_ButtonAndText::SetImage(class UMaterialInstanceConstant* Material)
+{
+	MyButton->WidgetStyle.Normal.SetResourceObject(Material);
+	MyButton->WidgetStyle.Hovered.SetResourceObject(Material);
+	MyButton->WidgetStyle.Pressed.SetResourceObject(Material);
+}
+
+void UCsWidget_ButtonAndText::SetString(const FString& InString)
+{
+	ButtonAndText.Text.SetString(InString);
+}

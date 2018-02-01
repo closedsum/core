@@ -9,7 +9,7 @@ class CSCORE_API UCsWidget_ButtonAndText : public UCsSimpleWidget
 {
 	GENERATED_UCLASS_BODY()
 
-	virtual void NativeConstruct() override;
+	virtual void OnNativeConstruct() override;
 	virtual void OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime) override;
 
 	virtual void Show() override;
@@ -33,8 +33,14 @@ class CSCORE_API UCsWidget_ButtonAndText : public UCsSimpleWidget
 	UFUNCTION()
 	virtual void MyButton_OnHovered();
 
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	virtual void SetImage(class UMaterialInstanceConstant* Material);
+
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* MyText;
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	virtual void SetString(const FString& InString);
 
 	FCsWidget_ButtonAndText ButtonAndText;
 };

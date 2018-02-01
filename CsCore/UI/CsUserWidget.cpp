@@ -7,9 +7,43 @@ UCsUserWidget::UCsUserWidget(const FObjectInitializer& ObjectInitializer)
 {
 }
 
+void UCsUserWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	if (HasNativeContructed)
+		return;
+
+	OnNativeConstruct();
+
+	HasNativeContructed = true;
+}
+
+void UCsUserWidget::OnNativeConstruct(){}
+
 void UCsUserWidget::Init()
 {
 	HasInitFinished = true;
+}
+
+void UCsUserWidget::OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime) {}
+
+void UCsUserWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	if (!HasInitFinished)
+	{
+		Init();
+
+		HasInitFinished = true;
+	}
+
+	OnNativeTick(MyGeometry, InDeltaTime);
+
+#if WITH_EDITOR
+	OnNativeTick_ScriptEvent.Broadcast(MyGeometry, InDeltaTime);
+#endif // #if WITH_EDITOR
 }
 
 void UCsUserWidget::OnPostProcessInput(const float &DeltaTime){}

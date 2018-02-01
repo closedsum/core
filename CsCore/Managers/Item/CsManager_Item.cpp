@@ -358,7 +358,7 @@ void ACsManager_Item::PopulateExistingItems()
 	TArray<FString> FoundFiles;
 
 	const FString Path = GetSavePath();
-
+	// Get all .json files under Path
 	IFileManager::Get().FindFiles(FoundFiles, *Path, *ECsCachedString::Str::Json);
 
 	const int32 FileCount = FoundFiles.Num();

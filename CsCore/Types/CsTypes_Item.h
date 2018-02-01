@@ -111,9 +111,9 @@ struct FCsInventoryItemDimension
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	uint8 RowSpan;
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	int32 ColumnSpan;
 
 	FCsInventoryItemDimension() {}
@@ -141,6 +141,12 @@ struct FCsInventoryItemDimension
 		RowSpan	= 1;
 		ColumnSpan = 1;
 	}
+
+	void Set(const uint8 &InRowSpawn, const uint8 &InColumnSpan)
+	{
+		RowSpan = InRowSpawn;
+		ColumnSpan = InColumnSpan;
+	}
 };
 
 USTRUCT(BlueprintType)
@@ -148,9 +154,9 @@ struct FCsInventoryItemPosition
 {
 	GENERATED_USTRUCT_BODY()
 		
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	uint8 Row;
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	uint8 Column;
 
 	FCsInventoryItemPosition() {}
@@ -178,6 +184,12 @@ struct FCsInventoryItemPosition
 		Row = 0;
 		Column = 0;
 	}
+
+	void Set(const uint8 &InRow, const uint8 &InColumn)
+	{
+		Row = InRow;
+		Column = InColumn;
+	}
 };
 
 USTRUCT(BlueprintType)
@@ -185,14 +197,17 @@ struct FCsInventoryItemProperties
 {
 	GENERATED_USTRUCT_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+	bool Visible;
+
 	UPROPERTY()
 	int32 Count;
 	UPROPERTY()
 	int32 MaxCount;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	FCsInventoryItemDimension Dimension;
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	FCsInventoryItemPosition Position;
 
 	FCsInventoryItemProperties() {}
@@ -200,6 +215,7 @@ struct FCsInventoryItemProperties
 
 	FCsInventoryItemProperties& operator=(const FCsInventoryItemProperties& B)
 	{
+		Visible = B.Visible;
 		Count = B.Count;
 		MaxCount = B.MaxCount;
 		Dimension = B.Dimension;
@@ -209,6 +225,7 @@ struct FCsInventoryItemProperties
 
 	bool operator==(const FCsInventoryItemProperties& B) const
 	{
+		if (Visible != B.Visible) { return false; }
 		if (Count != B.Count) { return false; }
 		if (MaxCount != B.MaxCount) { return false; }
 		if (Dimension != B.Dimension) { return false; }
@@ -223,6 +240,7 @@ struct FCsInventoryItemProperties
 
 	void Reset()
 	{
+		Visible = false;
 		Count = 0;
 		MaxCount = 0;
 		Dimension.Reset();

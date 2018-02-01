@@ -16,19 +16,14 @@ UCsWidget_TextBlock::UCsWidget_TextBlock(const FObjectInitializer& ObjectInitial
 {
 }
 
-void UCsWidget_TextBlock::NativeConstruct()
+void UCsWidget_TextBlock::OnNativeConstruct()
 {
-	Super::NativeConstruct();
-
-	if (HasNativeContructed)
-		return;
+	Super::OnNativeConstruct();
 
 	Text.Set(MyText);
 	const FString& TextName   = ECsWidgetTextBlockCachedString::Str::Text;
 	const FString& MyTextName = ECsWidgetTextBlockCachedString::Str::MyText;
 	Text.Init(TextName, MyTextName, GetName() + ECsCachedString::Str::Dot + TextName);
-
-	HasNativeContructed = true;
 }
 
 void UCsWidget_TextBlock::OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime)

@@ -8,7 +8,7 @@ class CSCORE_API UCsWidget_Button : public UCsSimpleWidget
 {
 	GENERATED_UCLASS_BODY()
 
-	virtual void NativeConstruct() override;
+	virtual void OnNativeConstruct() override;
 	virtual void OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime) override;
 
 	virtual void Show() override;

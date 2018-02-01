@@ -11,25 +11,16 @@ UCsWidget_Fullscreen::UCsWidget_Fullscreen(const FObjectInitializer& ObjectIniti
 	Type = (TCsWidgetType)Type_Script;
 }
 
-void UCsWidget_Fullscreen::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+void UCsWidget_Fullscreen::OnNativeTick(const FGeometry& MyGeometry, const float& InDeltaTime)
 {
-	Super::NativeTick(MyGeometry, InDeltaTime);
-
-	if (!HasInitFinished)
-		Init();
+	Super::OnNativeTick(MyGeometry, InDeltaTime);
 
 	Fullscreen.OnNativeTick(InDeltaTime);
-
-#if WITH_EDITOR
-	OnNativeTick_ScriptEvent.Broadcast(MyGeometry, InDeltaTime);
-#endif // #if WITH_EDITOR
 }
 
 void UCsWidget_Fullscreen::Init()
 {
 	Fullscreen.Set(Fullscreen_Image);
-
-	HasInitFinished = true;
 }
 
 // Routines

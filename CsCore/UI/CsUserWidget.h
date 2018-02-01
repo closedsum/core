@@ -63,7 +63,22 @@ class CSCORE_API UCsUserWidget : public UUserWidget
 
 public:
 
+	virtual void NativeConstruct() override;
+	virtual void OnNativeConstruct();
+
+	UPROPERTY()
+	bool HasNativeContructed;
+
 	virtual void Init();
+	virtual void OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime);
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
+	UPROPERTY(BlueprintAssignable, Category = "UI")
+	FBindableDynEvent_CsUserWidget_OnNativeTick OnNativeTick_ScriptEvent;
+
+	UPROPERTY()
+	bool HasInitFinished;
+
 	virtual void OnPostProcessInput(const float &DeltaTime);
 	virtual void OnUpdate(const float &DeltaSeconds);
 	virtual void OnLastTick(const float &DeltaSeconds);
@@ -75,15 +90,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OO Default")
 	uint8 Type_Script;
-
-	UPROPERTY(BlueprintAssignable, Category = "UI")
-	FBindableDynEvent_CsUserWidget_OnNativeTick OnNativeTick_ScriptEvent;
-
-	UPROPERTY()
-	bool HasNativeContructed;
-
-	UPROPERTY()
-	bool HasInitFinished;
 
 protected:
 

@@ -10,6 +10,12 @@ class CSCORE_API UCsSimpleWidget : public UUserWidget
 {
 	GENERATED_UCLASS_BODY()
 
+	virtual void NativeConstruct() override;
+	virtual void OnNativeConstruct();
+
+	UPROPERTY()
+	bool HasNativeContructed;
+
 	virtual void Init();
 	virtual void Init(const int32 &Index);
 
@@ -17,9 +23,7 @@ class CSCORE_API UCsSimpleWidget : public UUserWidget
 	bool HasInitFinished;
 
 	virtual void OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime);
-
-	UPROPERTY()
-	bool HasNativeContructed;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Widget")
 	ESlateVisibility DefaultVisibility;

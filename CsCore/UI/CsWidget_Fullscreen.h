@@ -52,7 +52,7 @@ class CSCORE_API UCsWidget_Fullscreen : public UCsUserWidget
 {
 	GENERATED_UCLASS_BODY()
 
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	virtual void OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime) override;
 
 	virtual void Init() override;
 

@@ -1683,6 +1683,12 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsProjectileMovementFunction
 			if (StructProperty->Struct == FCsProjectileMovementFunction::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsProjectileMovementFunction>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
+			// FCsInventoryItemDimension
+			if (StructProperty->Struct == FCsInventoryItemDimension::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsInventoryItemDimension>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
+			// FCsInventoryItemPosition
+			if (StructProperty->Struct == FCsInventoryItemPosition::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsInventoryItemPosition>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
 
 			if (Internal)
 			{
@@ -3493,6 +3499,12 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsProjectileMovementFunction
 			if (StructProperty->Struct == FCsProjectileMovementFunction::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsProjectileMovementFunction>(JsonObject, StructProperty, InObject, MemberName); continue; }
+			// FCsInventoryItemDimension
+			if (StructProperty->Struct == FCsInventoryItemDimension::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsInventoryItemDimension>(JsonObject, StructProperty, InObject, MemberName); continue; }
+			// FCsInventoryItemPosition
+			if (StructProperty->Struct == FCsInventoryItemPosition::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsInventoryItemPosition>(JsonObject, StructProperty, InObject, MemberName); continue; }
 
 			if (Internal)
 			{

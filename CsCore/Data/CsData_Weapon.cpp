@@ -68,7 +68,7 @@ void ACsData_Weapon::GetDefaultMaterials(TArray<UMaterialInstanceConstant*> &Out
 
 	const int32 Count = Mesh->Materials.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		OutMaterials.Add(Cast<UMaterialInstanceConstant>(Mesh->Materials[I].MaterialInterface->GetMaterial()));
 	}

@@ -229,7 +229,7 @@ void ACsInteractiveActor::AddInteractedInfo(const TEnumAsByte<ECsInteractiveStat
 	// TODO: Potentially setup code flow that it is NOT possible to Add the same Instigator twice
 	const int32 Count = Infos->Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if ((*Infos)[I].GetInstigator() == Info.GetInstigator())
 			return;
@@ -270,7 +270,7 @@ void ACsInteractiveActor::RemoveInteractedInfo(const TEnumAsByte<ECsInteractiveS
 
 void ACsInteractiveActor::ClearInteractedInfos()
 {
-	for (int32 I = 0; I < ECS_INTERACTIVE_STATE_MAX; I++)
+	for (int32 I = 0; I < ECS_INTERACTIVE_STATE_MAX; ++I)
 	{
 		TArray<FCsInteractedActorInfo>* Infos = InteractedInfos.Find((TCsInteractiveState)I);
 
@@ -295,7 +295,7 @@ void ACsInteractiveActor::GetInteractedInfos_Script(const TEnumAsByte<ECsInterac
 
 	const int32 Count = Infos->Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		OutInfos.AddDefaulted();
 		OutInfos[I] = (*Infos)[I];
@@ -428,7 +428,7 @@ bool ACsInteractiveActor::CanChangeFromAnyState(const TArray<TEnumAsByte<ECsInte
 {
 	const int32 Count = FromStates.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (CanChangeState(FromStates[I], ToState))
 			return true;
@@ -444,7 +444,7 @@ ACsMotionController* ACsInteractiveActor::GetDominantHand_HoldingMe()
 
 	const int32 StateCount = States.Num();
 
-	for (int32 I = 0; I < StateCount; I++)
+	for (int32 I = 0; I < StateCount; ++I)
 	{
 		TArray<FCsInteractedActorInfo>* Infos = InteractedInfos.Find(States[I]);
 

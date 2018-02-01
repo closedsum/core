@@ -289,7 +289,7 @@ FString UCsCommon::LoadFlagsToString(const int32 &LoadFlags)
 	FString String = TEXT("");
 	bool IsFirst = true;
 
-	for (int32 I = 0; I < ECS_LOAD_FLAGS_EDITOR_MAX; I++)
+	for (int32 I = 0; I < ECS_LOAD_FLAGS_EDITOR_MAX; ++I)
 	{
 		if (CS_TEST_BLUEPRINT_BITFLAG(LoadFlags, (ECsLoadFlags)I))
 		{
@@ -309,7 +309,7 @@ FString UCsCommon::InteractivePhysicsStateToString(const int32 &PhysicsState)
 	FString String = TEXT("");
 	bool IsFirst   = true;
 
-	for (int32 I = 0; I < ECS_INTERACTIVE_PHYSICS_STATE_EDITOR_MAX; I++)
+	for (int32 I = 0; I < ECS_INTERACTIVE_PHYSICS_STATE_EDITOR_MAX; ++I)
 	{
 		if (CS_TEST_BLUEPRINT_BITFLAG(PhysicsState, (ECsInteractivePhysicsState)I))
 		{
@@ -333,7 +333,7 @@ int32 UCsCommon::StringtoLoadFlags(const FString &LoadFlags)
 {
 	int32 Flag = 0;
 
-	for (int32 I = 0; I < ECS_LOAD_FLAGS_EDITOR_MAX; I++)
+	for (int32 I = 0; I < ECS_LOAD_FLAGS_EDITOR_MAX; ++I)
 	{
 		const FString EnumAsString = ECsLoadFlags_Editor::ToString((TCsLoadFlags_Editor)I);
 
@@ -825,7 +825,7 @@ int32 UCsCommon::GetNumBitFlags(const int32 &BitMask, const int32 &MaxBits)
 {
 	int32 Bits = 0;
 
-	for (int32 I = 0; I < MaxBits; I++)
+	for (int32 I = 0; I < MaxBits; ++I)
 	{
 		if (CS_TEST_BLUEPRINT_BITFLAG(BitMask, I))
 			Bits++;
@@ -850,7 +850,7 @@ FString UCsCommon::UInt64ToString(const uint64 &Value)
 	FString Zeroes	  = TEXT("");
 	const uint8 Count = MAX_UINT64_DIGITS - Digits;
 
-	for (uint8 I = 0; I < Count; I++)
+	for (uint8 I = 0; I < Count; ++I)
 	{
 		Zeroes += TEXT("0");
 	}
@@ -2129,7 +2129,7 @@ FCsRoutine* UCsCommon::DestroyMaterialInstanceDynamics(const TCsCoroutineSchedul
 
 	int32 Count = InMIDs.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		R = Scheduler->Allocate(ScheduleType, Function, Stop, InMIDs[I], true, false);
 
@@ -2503,7 +2503,7 @@ bool UCsCommon::SetColliionPreset(FCsCollisionPreset &Preset, UPrimitiveComponen
 	// CollisionResponses
 	const int32 Max = ECollisionChannel::ECC_MAX - 1;
 
-	for (int32 I = 0; I < Max; I++)
+	for (int32 I = 0; I < Max; ++I)
 	{
 		const ECollisionChannel Channel = (ECollisionChannel)I;
 
@@ -2529,7 +2529,7 @@ void UCsCommon::SetCollisionFromPreset(FCsCollisionPreset &Preset, UPrimitiveCom
 	// CollisionResponses
 	const int32 Max = ECollisionChannel::ECC_MAX - 1;
 
-	for (int32 I = 0; I < Max; I++)
+	for (int32 I = 0; I < Max; ++I)
 	{
 		const ECollisionChannel Channel = (ECollisionChannel)I;
 

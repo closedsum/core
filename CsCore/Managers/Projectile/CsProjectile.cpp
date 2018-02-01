@@ -342,7 +342,7 @@ void ACsProjectile::Allocate_Internal()
 
 		const int32 Count = IgnoreActors.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			AActor* Actor = IgnoreActors[I].IsValid() ? IgnoreActors[I].Get() : nullptr;
 
@@ -455,7 +455,7 @@ void ACsProjectile::DeAllocate()
 	const TArray<USceneComponent*>& AttachChildren = MeshComponent->GetAttachChildren();
 	const int32 Count							   = AttachChildren.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		USceneComponent* Component = AttachChildren[I];
 		AActor* Actor			   = Component->GetOwner();

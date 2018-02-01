@@ -10,7 +10,7 @@ bool UCsCoroutineScheduler::s_bCoroutineSchedulerHasShutdown = false;
 
 UCsCoroutineScheduler::UCsCoroutineScheduler(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	for (int32 I = 0; I < ECS_COROUTINE_SCHEDULE_MAX; I++)
+	for (int32 I = 0; I < ECS_COROUTINE_SCHEDULE_MAX; ++I)
 	{
 		RoutinePoolIndices.Add(0);
 		RoutinesToInit.AddDefaulted();
@@ -461,7 +461,7 @@ void UCsCoroutineScheduler::EndAll(const TCsCoroutineSchedule &ScheduleType /*= 
 	const uint8 Start = ScheduleType == ECsCoroutineSchedule::ECsCoroutineSchedule_MAX ? 0 : (uint8)ScheduleType;
 	const uint8 End   = ScheduleType == ECsCoroutineSchedule::ECsCoroutineSchedule_MAX ? ECS_COROUTINE_SCHEDULE_MAX : Start + 1;
 
-	for (int32 I = Start; I < End; I++)
+	for (int32 I = Start; I < End; ++I)
 	{
 		int32 Count = RoutinesToInit[I].Num();
 
@@ -494,7 +494,7 @@ void UCsCoroutineScheduler::BroadcastMessage(const TCsCoroutineSchedule &Schedul
 
 	int32 Count = RoutinesToInit[Schedule].Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (InOwner && InOwner != RoutinesToInit[Schedule][I]->GetOwner())
 			continue;
@@ -505,7 +505,7 @@ void UCsCoroutineScheduler::BroadcastMessage(const TCsCoroutineSchedule &Schedul
 
 	Count = RoutinesToRun[Schedule].Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (InOwner && InOwner != RoutinesToRun[Schedule][I]->GetOwner())
 			continue;

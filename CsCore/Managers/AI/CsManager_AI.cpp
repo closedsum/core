@@ -17,7 +17,7 @@ void ACsManager_AI::Shutdown()
 
 	const int32 Count = Pool.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (Pool[I] && !Pool[I]->IsPendingKill())
 			Pool[I]->Destroy(true);
@@ -33,7 +33,7 @@ void ACsManager_AI::Destroyed()
 {
 	const int32 Count = Pool.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (Pool[I] && !Pool[I]->IsPendingKill())
 			Pool[I]->Destroy(true);
@@ -67,7 +67,7 @@ void ACsManager_AI::CreatePool(const TSubclassOf<class UObject> &ObjectClass, co
 
 	TArray<ACsAIPawn*> PawnPool;
 
-	for (int32 I = 0; I < Size; I++)
+	for (int32 I = 0; I < Size; ++I)
 	{
 		ACsAIPawn* Pawn = GetWorld()->SpawnActor<ACsAIPawn>(ObjectClass, SpawnInfo);
 		Pawn->Init(I, ClassType);
@@ -231,7 +231,7 @@ void ACsManager_AI::DeAllocateAll()
 {
 	const uint8 Count = (uint8)AIType_MAX;
 
-	for (uint8 I = 0; I < Count; I++)
+	for (uint8 I = 0; I < Count; ++I)
 	{
 		const TCsAIType Type = (TCsAIType)I;
 

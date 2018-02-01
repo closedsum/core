@@ -1049,7 +1049,7 @@ public:
 		Value = B;
 		UpdateIsDirty();
 
-		for (uint8 I = 0; I < SIZE; I++)
+		for (uint8 I = 0; I < SIZE; ++I)
 		{
 			Values[I] = B.Values[I];
 			UpdateIsDirtys(I);
@@ -1059,7 +1059,7 @@ public:
 
 	bool operator==(const TCsPrimitiveType_MultiValue& B) const
 	{
-		for (uint8 I = 0; I < SIZE; I++)
+		for (uint8 I = 0; I < SIZE; ++I)
 		{
 			if (Values[I] != B.Values[I])
 				return false;
@@ -1109,7 +1109,7 @@ public:
 		Last_Value = Value;
 		IsDirty	   = false;
 
-		for (uint8 I = 0; I < SIZE; I++)
+		for (uint8 I = 0; I < SIZE; ++I)
 		{
 			Last_Values[I] = Values[I];
 			IsDirtys[I]	   = false;
@@ -1122,7 +1122,7 @@ public:
 		Last_Value = Value;
 		IsDirty = false;
 
-		for (uint8 I = 0; I < SIZE; I++)
+		for (uint8 I = 0; I < SIZE; ++I)
 		{
 			Values[I] = Value;
 			Last_Values[I] = Value;
@@ -1195,7 +1195,7 @@ struct TCsIntegralType_MultiValue : public TCsPrimitiveType_MultiValue<T, U, SIZ
 	{
 		T max = Values[0];
 
-		for (uint8 I = 1; I < SIZE; I++)
+		for (uint8 I = 1; I < SIZE; ++I)
 		{
 			max = (T)FMath::Max(max, Values[I]);
 		}
@@ -1206,7 +1206,7 @@ struct TCsIntegralType_MultiValue : public TCsPrimitiveType_MultiValue<T, U, SIZ
 	{
 		T min = Values[0];
 
-		for (uint8 I = 1; I < SIZE; I++)
+		for (uint8 I = 1; I < SIZE; ++I)
 		{
 			min = (T)FMath::Min(min, Values[I]);
 		}
@@ -1227,7 +1227,7 @@ struct TCsPrimitiveType_MultiValue_bool : public TCsPrimitiveType_MultiValue<boo
 	{
 		bool or = Values[0];
 
-		for (uint8 I = 1; I < SIZE; I++)
+		for (uint8 I = 1; I < SIZE; ++I)
 		{
 			or |= Values[I];
 		}
@@ -1238,7 +1238,7 @@ struct TCsPrimitiveType_MultiValue_bool : public TCsPrimitiveType_MultiValue<boo
 	{
 		bool and = Values[0];
 
-		for (uint8 I = 1; I < SIZE; I++)
+		for (uint8 I = 1; I < SIZE; ++I)
 		{
 			and &= Values[I];
 		}
@@ -1282,7 +1282,7 @@ struct TCsPrimitiveType_MultiValue_FString_Enum_TwoParams : public TCsPrimitiveT
 	{
 		const FString Lower = Lhs.ToLower();
 
-		for (uint8 I = 0; I < CS_FSTRING_ENUM_TWO_PARAMS; I++)
+		for (uint8 I = 0; I < CS_FSTRING_ENUM_TWO_PARAMS; ++I)
 		{
 			if (Rhs.Values[I] == Lhs || Rhs.Values[I] == Lower)
 				return true;
@@ -1294,7 +1294,7 @@ struct TCsPrimitiveType_MultiValue_FString_Enum_TwoParams : public TCsPrimitiveT
 	{
 		const FString Lower = Rhs.ToLower();
 
-		for (uint8 I = 0; I < CS_FSTRING_ENUM_TWO_PARAMS; I++)
+		for (uint8 I = 0; I < CS_FSTRING_ENUM_TWO_PARAMS; ++I)
 		{
 			if (Lhs.Values[I] == Rhs || Lhs.Values[I] == Lower)
 				return true;
@@ -1334,7 +1334,7 @@ struct TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams : public TCsPrimitiv
 	{
 		const FString Lower = Lhs.ToLower();
 
-		for (uint8 I = 0; I < CS_FSTRING_ENUM_THREE_PARAMS; I++)
+		for (uint8 I = 0; I < CS_FSTRING_ENUM_THREE_PARAMS; ++I)
 		{
 			if (Rhs.Values[I] == Lhs || Rhs.Values[I] == Lower)
 				return true;
@@ -1346,7 +1346,7 @@ struct TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams : public TCsPrimitiv
 	{
 		const FString Lower = Rhs.ToLower();
 
-		for (uint8 I = 0; I < CS_FSTRING_ENUM_THREE_PARAMS; I++)
+		for (uint8 I = 0; I < CS_FSTRING_ENUM_THREE_PARAMS; ++I)
 		{
 			if (Lhs.Values[I] == Rhs || Lhs.Values[I] == Lower)
 				return true;
@@ -1415,7 +1415,7 @@ public:
 		Value = B;
 		UpdateIsDirty();
 
-		for (uint8 I = 0; I < SIZE; I++)
+		for (uint8 I = 0; I < SIZE; ++I)
 		{
 			Values[I] = B.Values[I];
 			UpdateIsDirtys(I);
@@ -1425,7 +1425,7 @@ public:
 
 	bool operator==(const TCsPrimitiveType_MultiRefValue& B) const
 	{
-		for (uint8 I = 0; I < SIZE; I++)
+		for (uint8 I = 0; I < SIZE; ++I)
 		{
 			if (Values[I] != B.Values[I])
 				return false;
@@ -1475,7 +1475,7 @@ public:
 		Last_Value = Value;
 		IsDirty	   = false;
 
-		for (uint8 I = 0; I < SIZE; I++)
+		for (uint8 I = 0; I < SIZE; ++I)
 		{
 			Last_Values[I] = *(Values[I]);
 			IsDirtys[I]	   = false;
@@ -1488,7 +1488,7 @@ public:
 		Last_Value = Value;
 		IsDirty = false;
 
-		for (uint8 I = 0; I < SIZE; I++)
+		for (uint8 I = 0; I < SIZE; ++I)
 		{
 			Values[I] = nullptr;
 			Last_Values[I] = Value;
@@ -1523,7 +1523,7 @@ struct TCsIntegralType_MultiRefValue : public TCsPrimitiveType_MultiRefValue<T, 
 	{
 		T max = *(Values[0]);
 
-		for (uint8 I = 1; I < SIZE; I++)
+		for (uint8 I = 1; I < SIZE; ++I)
 		{
 			max = (T)FMath::Max(max, *(Values[I]));
 		}
@@ -1534,7 +1534,7 @@ struct TCsIntegralType_MultiRefValue : public TCsPrimitiveType_MultiRefValue<T, 
 	{
 		T min = *(Values[0]);
 
-		for (uint8 I = 1; I < SIZE; I++)
+		for (uint8 I = 1; I < SIZE; ++I)
 		{
 			min = (T)FMath::Min(min, *(Values[I]));
 		}
@@ -1555,7 +1555,7 @@ struct TCsPrimitiveType_MultiRefValue_bool : public TCsPrimitiveType_MultiRefVal
 	{
 		bool or = Values[0];
 
-		for (uint8 I = 1; I < SIZE; I++)
+		for (uint8 I = 1; I < SIZE; ++I)
 		{
 			or |= Values[I];
 		}
@@ -1566,7 +1566,7 @@ struct TCsPrimitiveType_MultiRefValue_bool : public TCsPrimitiveType_MultiRefVal
 	{
 		bool and = Values[0];
 
-		for (uint8 I = 1; I < SIZE; I++)
+		for (uint8 I = 1; I < SIZE; ++I)
 		{
 			and &= Values[I];
 		}
@@ -1632,7 +1632,7 @@ public:
 		Value = B;
 		UpdateIsDirty();
 
-		for (uint8 I = 0; I < SIZE; I++)
+		for (uint8 I = 0; I < SIZE; ++I)
 		{
 			Values[I] = B.Values[I];
 			UpdateIsDirtys(I);
@@ -1642,7 +1642,7 @@ public:
 
 	bool operator==(const TCsPrimitiveType_TArrayValue& B) const
 	{
-		for (uint8 I = 0; I < SIZE; I++)
+		for (uint8 I = 0; I < SIZE; ++I)
 		{
 			if (Values[I] != B.Values[I])
 				return false;
@@ -1700,7 +1700,7 @@ public:
 		Last_Value = Value;
 		IsDirty = false;
 
-		for (uint8 I = 0; I < SIZE; I++)
+		for (uint8 I = 0; I < SIZE; ++I)
 		{
 			Last_Values[I] = Values[I];
 			IsDirtys[I] = false;
@@ -1713,7 +1713,7 @@ public:
 		Last_Value = Value;
 		IsDirty = false;
 
-		for (uint8 I = 0; I < SIZE; I++)
+		for (uint8 I = 0; I < SIZE; ++I)
 		{
 			Values[I] = Value;
 			Last_Values[I] = Value;
@@ -1787,7 +1787,7 @@ struct TCsIntegralType_TArrayValue : public TCsPrimitiveType_TArrayValue<T, U>
 	{
 		T max = Values[0];
 
-		for (uint8 I = 1; I < SIZE; I++)
+		for (uint8 I = 1; I < SIZE; ++I)
 		{
 			max = (T)FMath::Max(max, Values[I]);
 		}
@@ -1798,7 +1798,7 @@ struct TCsIntegralType_TArrayValue : public TCsPrimitiveType_TArrayValue<T, U>
 	{
 		T min = Values[0];
 
-		for (uint8 I = 1; I < SIZE; I++)
+		for (uint8 I = 1; I < SIZE; ++I)
 		{
 			min = (T)FMath::Min(min, Values[I]);
 		}
@@ -1839,7 +1839,7 @@ struct TCsPrimitiveType_TArrayValue_bool : public TCsPrimitiveType_TArrayValue<b
 	{
 		bool or = Values[0];
 
-		for (uint8 I = 1; I < SIZE; I++)
+		for (uint8 I = 1; I < SIZE; ++I)
 		{
 			or |= Values[I];
 		}
@@ -1850,7 +1850,7 @@ struct TCsPrimitiveType_TArrayValue_bool : public TCsPrimitiveType_TArrayValue<b
 	{
 		bool and = Values[0];
 
-		for (uint8 I = 1; I < SIZE; I++)
+		for (uint8 I = 1; I < SIZE; ++I)
 		{
 			and &= Values[I];
 		}
@@ -1915,7 +1915,7 @@ public:
 		Value = B;
 		UpdateIsDirty();
 
-		for (uint8 I = 0; I < SIZE; I++)
+		for (uint8 I = 0; I < SIZE; ++I)
 		{
 			Values[I] = B.Values[I];
 			UpdateIsDirtys(I);
@@ -1925,7 +1925,7 @@ public:
 
 	bool operator==(const TCsPrimitiveType_TArrayRefValue& B) const
 	{
-		for (uint8 I = 0; I < SIZE; I++)
+		for (uint8 I = 0; I < SIZE; ++I)
 		{
 			if (Values[I] != B.Values[I])
 				return false;
@@ -1943,7 +1943,7 @@ public:
 		SIZE = inSIZE;
 		Values.SetNum(SIZE, true);
 
-		for (uint8 I = 0; I < SIZE; I++)
+		for (uint8 I = 0; I < SIZE; ++I)
 		{
 			Values[I] = nullptr;
 		}
@@ -1986,7 +1986,7 @@ public:
 		Last_Value = Value;
 		IsDirty = false;
 
-		for (uint8 I = 0; I < SIZE; I++)
+		for (uint8 I = 0; I < SIZE; ++I)
 		{
 			Last_Values[I] = *(Values[I]);
 			IsDirtys[I] = false;
@@ -1999,7 +1999,7 @@ public:
 		Last_Value = Value;
 		IsDirty = false;
 
-		for (uint8 I = 0; I < SIZE; I++)
+		for (uint8 I = 0; I < SIZE; ++I)
 		{
 			Values[I] = nullptr;
 			Last_Values[I] = Value;
@@ -2035,7 +2035,7 @@ struct TCsIntegralType_TArrayRefValue : public TCsPrimitiveType_TArrayRefValue<T
 	{
 		T max = *(Values[0]);
 
-		for (uint8 I = 1; I < SIZE; I++)
+		for (uint8 I = 1; I < SIZE; ++I)
 		{
 			max = (T)FMath::Max(max, *(Values[I]));
 		}
@@ -2046,7 +2046,7 @@ struct TCsIntegralType_TArrayRefValue : public TCsPrimitiveType_TArrayRefValue<T
 	{
 		T min = *(Values[0]);
 
-		for (uint8 I = 1; I < SIZE; I++)
+		for (uint8 I = 1; I < SIZE; ++I)
 		{
 			min = (T)FMath::Min(min, *(Values[I]));
 		}
@@ -2097,7 +2097,7 @@ struct TCsPrimitiveType_TArrayRefValue_bool : public TCsPrimitiveType_TArrayRefV
 	{
 		bool or = Values[0];
 
-		for (uint8 I = 1; I < SIZE; I++)
+		for (uint8 I = 1; I < SIZE; ++I)
 		{
 			or |= Values[I];
 		}
@@ -2108,7 +2108,7 @@ struct TCsPrimitiveType_TArrayRefValue_bool : public TCsPrimitiveType_TArrayRefV
 	{
 		bool and = Values[0];
 
-		for (uint8 I = 1; I < SIZE; I++)
+		for (uint8 I = 1; I < SIZE; ++I)
 		{
 			and &= Values[I];
 		}

@@ -101,7 +101,7 @@ void ACsManager_Inventory::AddItems(const TArray<FCsItem*> &ItemsToAdd)
 {
 	const int32 Count = ItemsToAdd.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		AddItem(ItemsToAdd[I]);
 	}

@@ -39,7 +39,7 @@ bool ACsData_Payload::PerformFindEntry(const FName &InShortCode, TArray<FCsPaylo
 					if (FCsTArrayPayload(*Member)[MAX] = Property->ContainerPtrToValuePtr<FCsTArrayPayload[MAX]>(this))
 					{
 						// Find LoadAssetsType
-						for (int32 I = 0; I < LOAD_ASSETS_TYPE_MAX; I++)
+						for (int32 I = 0; I < LOAD_ASSETS_TYPE_MAX; ++I)
 						{
 							TArray<FCsPayload>& Array = ((*Member)[I]).Payloads;
 
@@ -99,7 +99,7 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const TCsLoadAss
 
 		UE_LOG(LogCs, Warning, TEXT("ACsData_Payload::PerformAddEntry: Valid LoadAssetsTypes are:"));
 
-		for (int32 I = 0; I < LOAD_ASSETS_TYPE_MAX; I++)
+		for (int32 I = 0; I < LOAD_ASSETS_TYPE_MAX; ++I)
 		{
 			UE_LOG(LogCs, Warning, TEXT("LoadAssetType: %s"), *((*LoadAssetsTypeToString)((TCsLoadAssetsType)I)));
 		}
@@ -232,7 +232,7 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const TCsLoadAss
 			bool IsAssetTypeMismatch   = false;
 			TCsAssetType LastAssetType = OutAssetTypes[CS_FIRST];
 
-			for (int32 I = 0; I < EntryCount; I++)
+			for (int32 I = 0; I < EntryCount; ++I)
 			{
 				const FString AssetTypeAsString = (*AssetTypeToString)(OutAssetTypes[I]);
 
@@ -346,7 +346,7 @@ bool ACsData_Payload::Editor_IsValid(ACsDataMapping* DataMapping)
 					if (FCsTArrayPayload(*Member)[MAX] = Property->ContainerPtrToValuePtr<FCsTArrayPayload[MAX]>(this))
 					{
 						// TArray<FCsPayload>
-						for (int32 I = 0; I < MAX; I++)
+						for (int32 I = 0; I < MAX; ++I)
 						{
 							TArray<FCsPayload>& Array = ((*Member)[I]).Payloads;
 							const int32 ArraySize	  = Array.Num();
@@ -457,7 +457,7 @@ void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 
 		const int32 PayloadCount = OutPayloads.Num();
 
-		for (int32 I = 0; I < PayloadCount; I++)
+		for (int32 I = 0; I < PayloadCount; ++I)
 		{
 			if (I > 0)
 				FindEntry.Output += TEXT(", ");
@@ -547,7 +547,7 @@ void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 
 			UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
 
-			for (int32 I = 0; I < LOAD_ASSETS_TYPE_MAX; I++)
+			for (int32 I = 0; I < LOAD_ASSETS_TYPE_MAX; ++I)
 			{
 				Output = TEXT("LoadAssetType: ") + (*LoadAssetsTypeToString)((TCsLoadAssetsType)I);
 
@@ -585,7 +585,7 @@ void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 						if (FCsTArrayPayload(*Member)[MAX] = Property->ContainerPtrToValuePtr<FCsTArrayPayload[MAX]>(this))
 						{
 							// Find LoadAssetsType
-							for (int32 I = 0; I < LOAD_ASSETS_TYPE_MAX; I++)
+							for (int32 I = 0; I < LOAD_ASSETS_TYPE_MAX; ++I)
 							{
 								TArray<FCsPayload>& Array = ((*Member)[I]).Payloads;
 

@@ -154,7 +154,7 @@ void ACsUI::Close(const TCsWidgetType &WidgetType)
 	{
 		int32 Count = ActiveWidgets.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			UCsUserWidget* Widget = ActiveWidgets[I];
 
@@ -168,7 +168,7 @@ void ACsUI::Close(const TCsWidgetType &WidgetType)
 
 		Count = WidgetTypes.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (TArray<UCsUserWidget*>* WidgetArray = ActiveWidgetsMap.Find(WidgetTypes[I]))
 			{

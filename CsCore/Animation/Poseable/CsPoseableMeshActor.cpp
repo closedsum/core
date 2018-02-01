@@ -59,7 +59,7 @@ void ACsPoseableMeshActor::PostInitializeComponents()
 
 	const int32 Count = Controls_TwoBoneIK.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		Controls_TwoBoneIK_Copy.AddDefaulted();
 		Controls_TwoBoneIK_Copy[I] = Controls_TwoBoneIK[I];
@@ -111,7 +111,7 @@ void ACsPoseableMeshActor::OnTick_Editor(const float &DeltaSeconds)
 	{
 		const int32 ControlCount = Controls_TwoBoneIK.Num();
 
-		for (int32 I = 0; I < ControlCount; I++)
+		for (int32 I = 0; I < ControlCount; ++I)
 		{
 			FCsAnimControlInfo_TwoBoneIK& TwoBoneIK = Controls_TwoBoneIK[I];
 			ACsAnim_Control_TwoBoneIK* Control		= TwoBoneIK.Actor;
@@ -160,7 +160,7 @@ void ACsPoseableMeshActor::OnTick_Editor(const float &DeltaSeconds)
 	{
 		const int32 ControlCount = Controls_FK.Num();
 
-		for (int32 I = 0; I < ControlCount; I++)
+		for (int32 I = 0; I < ControlCount; ++I)
 		{
 			FCsAnimControlInfo_FK& FK = Controls_FK[I];
 			ACsAnim_Control_FK* Control = FK.Actor;
@@ -186,7 +186,7 @@ void ACsPoseableMeshActor::OnTick_Editor(const float &DeltaSeconds)
 	// Bones
 	const int32 BoneCount = Bones.Num();
 
-	for (int32 I = 0; I < BoneCount; I++)
+	for (int32 I = 0; I < BoneCount; ++I)
 	{
 		if (!Bones[I].Actor)
 		{
@@ -230,7 +230,7 @@ bool ACsPoseableMeshActor::IsAssetEditorOpen()
 
 	const int32 Count = AnimLevelSequence.Shots.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		FCsAnimLevelSequenceInfo_Shot& Shot = AnimLevelSequence.Shots[I];
 
@@ -250,7 +250,7 @@ FLevelSequenceEditorToolkit* ACsPoseableMeshActor::GetOpenAssetEditor()
 
 	const int32 Count = AnimLevelSequence.Shots.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		FCsAnimLevelSequenceInfo_Shot& Shot = AnimLevelSequence.Shots[I];
 
@@ -267,7 +267,7 @@ int32 ACsPoseableMeshActor::GetOpenShotIndexInEditor()
 {
 	const int32 Count = AnimLevelSequence.Shots.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		FCsAnimLevelSequenceInfo_Shot& Shot = AnimLevelSequence.Shots[I];
 
@@ -426,7 +426,7 @@ void ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(struct FP
 
 				UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(%s): %s"), *GetName(), *Message);
 
-				for (int32 I = 0; I < SeqCount; I++)
+				for (int32 I = 0; I < SeqCount; ++I)
 				{
 					const FString FullPathName = PackagePaths[I] + TEXT("/") + AssetName;
 					Message						= TEXT("Level Sequence already exists at ") + FullPathName;
@@ -493,7 +493,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_Control_FK(struct FProper
 	{
 		const int32 Delta = ControlCount - CopyCount;
 
-		for (int32 I = 0; I < Delta; I++)
+		for (int32 I = 0; I < Delta; ++I)
 		{
 			const int32 CopyIndex = CopyCount + I;
 
@@ -542,7 +542,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_Control_FK_Connection(str
 	int32 ControlIndex		 = INDEX_NONE;
 	const int32 ControlCount = Controls_FK.Num();
 
-	for (int32 I = 0; I < ControlCount; I++)
+	for (int32 I = 0; I < ControlCount; ++I)
 	{
 		if (Controls_FK[I].Connections.Num() != Controls_FK[I].Connections_Copy.Num())
 		{
@@ -564,7 +564,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_Control_FK_Connection(str
 		{
 			const int32 Delta = ConnectionCount - CopyCount;
 
-			for (int32 I = 0; I < Delta; I++)
+			for (int32 I = 0; I < Delta; ++I)
 			{
 				const int32 CopyIndex = CopyCount + I;
 
@@ -585,7 +585,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_Control_FK_Connection(str
 		return;
 	}
 
-	for (int32 I = 0; I < ControlCount; I++)
+	for (int32 I = 0; I < ControlCount; ++I)
 	{
 		FCsAnimControlInfo_FK& FK = Controls_FK[I];
 		FCsAnimControlInfo_FK_Connection& Connection = FK.Connections[Index];
@@ -637,7 +637,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_Control_FK_Connection(str
 
 		const int32 Count = Bones.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (Bones[I].Bone == BoneName)
 			{
@@ -718,7 +718,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_TwoBoneIK(struct FPropert
 	{
 		const int32 Delta = ControlCount - CopyCount;
 
-		for (int32 I = 0; I < Delta; I++)
+		for (int32 I = 0; I < Delta; ++I)
 		{
 			const int32 CopyIndex = CopyCount + I;
 
@@ -833,7 +833,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots(struc
 	{
 		const int32 Delta = ShotCount - CopyCount;
 
-		for (int32 I = 0; I < Delta; I++)
+		for (int32 I = 0; I < Delta; ++I)
 		{
 			const int32 CopyIndex = CopyCount + I;
 
@@ -948,7 +948,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindO
 			{
 				bool Found = false;
 
-				for (int32 I = 0; I < FolderCount; I++)
+				for (int32 I = 0; I < FolderCount; ++I)
 				{
 					const FString FolderName = Folders[I]->GetFolderName().ToString();
 
@@ -974,7 +974,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindO
 
 			const int32 BoneCount = Bones.Num();
 
-			for (int32 I = 0; I < BoneCount; I++)
+			for (int32 I = 0; I < BoneCount; ++I)
 			{
 				const FString BoneName = Bones[I].Bone.ToString();
 				ACsAnim_Bone* Actor	   = Bones[I].Actor;
@@ -1065,14 +1065,14 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindO
 
 			int32 QueueCount = QueueBindPossessableGuids.Num();
 
-			for (int32 I = 0; I < QueueCount; I++)
+			for (int32 I = 0; I < QueueCount; ++I)
 			{
 				Seq->BindPossessableObject(QueueBindPossessableGuids[I], *(QueueBindPossessableActors[I]), GetWorld());
 			}
 
 			QueueCount = QueueAddGuidsToFolder.Num();
 
-			for (int32 I = 0; I < QueueCount; I++)
+			for (int32 I = 0; I < QueueCount; ++I)
 			{
 				MainFolder->AddChildObjectBinding(QueueAddGuidsToFolder[I]);
 			}
@@ -1100,7 +1100,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindO
 
 			UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindOrCreate(%s): %s"), *GetName(), *Message);
 
-			for (int32 I = 0; I < SeqCount; I++)
+			for (int32 I = 0; I < SeqCount; ++I)
 			{
 				const FString FullPathName = PackagePaths[I] + TEXT("/") + AssetName;
 				Message = TEXT("Level Sequence already exists at ") + FullPathName;
@@ -1142,7 +1142,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindO
 
 		const int32 BoneCount = Bones.Num();
 
-		for (int32 I = 0; I < BoneCount; I++)
+		for (int32 I = 0; I < BoneCount; ++I)
 		{
 			FGuid Guid = MovieScene->AddPossessable(Bones[I].Actor->GetActorLabel(), Bones[I].Actor->GetClass());
 			Seq->BindPossessableObject(Guid, *(Bones[I].Actor), GetWorld());
@@ -1172,7 +1172,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindO
 			{
 				float LastTime = 0.0f;
 
-				for (int32 I = 0; I < SectionCount; I++)
+				for (int32 I = 0; I < SectionCount; ++I)
 				{
 					if (LastTime < Sections[I]->GetEndTime())
 						LastTime = Sections[I]->GetEndTime();
@@ -1270,7 +1270,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_Expor
 
 				UE_LOG(LogCs, Warning, TEXT("ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_Export(%s): %s"), *GetName(), *Message);
 
-				for (int32 I = 0; I < AnimCount; I++)
+				for (int32 I = 0; I < AnimCount; ++I)
 				{
 					const FString FullPathName = PackagePaths[I] + TEXT("/") + AnimName;
 					Message = TEXT("Anim Sequence already exists at ") + FullPathName;
@@ -1369,7 +1369,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_Expor
 
 	const int32 PossessableCount = MovieScene->GetPossessableCount();
 
-	for (int32 I = 0; I < PossessableCount; I++)
+	for (int32 I = 0; I < PossessableCount; ++I)
 	{
 	FMovieScenePossessable& Possessable = MovieScene->GetPossessable(I);
 	const FGuid Guid					= Possessable.GetGuid();
@@ -1426,7 +1426,7 @@ void ACsPoseableMeshActor::AnimLevelSequence_Shot_AddKey(const int32 &Index, AAc
 
 	const int32 PossessableCount = MovieScene->GetPossessableCount();
 
-	for (int32 I = 0; I < PossessableCount; I++)
+	for (int32 I = 0; I < PossessableCount; ++I)
 	{
 		FMovieScenePossessable Possessable = MovieScene->GetPossessable(I);
 		Guid							   = Possessable.GetGuid();
@@ -1498,7 +1498,7 @@ void ACsPoseableMeshActor::GenerateBones()
 
 	const int32 Count = BoneNames.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		ACsAnim_Bone* Bone = GetWorld()->SpawnActor<ACsAnim_Bone>();
 
@@ -1558,7 +1558,7 @@ void ACsPoseableMeshActor::ClearBones()
 {
 	const int32 Count = Bones.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (Bones[I].Actor && !Bones[I].Actor->IsPendingKill())
 			Bones[I].Actor->Destroy();
@@ -1621,7 +1621,7 @@ void ACsPoseableMeshActor::ResetBones()
 {
 	const int32 Count = Bones.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		Bones[I].Actor->ResetRelativeTransform();
 	}
@@ -1631,7 +1631,7 @@ ACsAnim_Bone* ACsPoseableMeshActor::GetBone(const FName &BoneName)
 {
 	const int32 Count = Bones.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (Bones[I].Bone == BoneName)
 			return Bones[I].Actor;
@@ -1656,7 +1656,7 @@ void ACsPoseableMeshActor::DestroyOrphanedControlAnchors()
 
 	const int32 Count = Anchors.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		ACsAnim_ControlAnchor* Anchor = Cast<ACsAnim_ControlAnchor>(Anchors[I]);
 
@@ -1673,7 +1673,7 @@ void ACsPoseableMeshActor::DestroyOrphanedControlHelpers()
 
 	const int32 Count = Helpers.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		ACsAnim_ControlHelper* Helper = Cast<ACsAnim_ControlHelper>(Helpers[I]);
 
@@ -1736,7 +1736,7 @@ void ACsPoseableMeshActor::PerformFK(const int32 &Index)
 
 	const int32 Count = FK.Connections.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		FCsAnimControlInfo_FK_Connection& Connection = FK.Connections[I];
 		const FName BoneName						 = Connection.Bone;
@@ -1892,7 +1892,7 @@ void ACsPoseableMeshActor::ClearControlsFK()
 {
 	const int32 Count = Controls_FK.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		ACsAnim_Control_FK* Control = Controls_FK[I].Actor;
 
@@ -1965,7 +1965,7 @@ void ACsPoseableMeshActor::Create_Control_TwoBoneIK(const int32 &Index)
 	{
 		const int32 Count = Bones.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (Bones[I].Bone == BoneName)
 			{
@@ -2017,7 +2017,7 @@ void ACsPoseableMeshActor::Create_Control_TwoBoneIK(const int32 &Index)
 		{
 			const int32 Count = Bones.Num();
 
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = 0; I < Count; ++I)
 			{
 				if (Bones[I].Bone == StartBoneName)
 				{
@@ -2054,7 +2054,7 @@ void ACsPoseableMeshActor::Create_Control_TwoBoneIK(const int32 &Index)
 		{
 			const int32 Count = Bones.Num();
 
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = 0; I < Count; ++I)
 			{
 				if (Bones[I].Bone == MiddleBoneName)
 				{
@@ -2097,7 +2097,7 @@ void ACsPoseableMeshActor::Create_Control_TwoBoneIK(const int32 &Index)
 		{
 			const int32 Count = Bones.Num();
 
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = 0; I < Count; ++I)
 			{
 				if (Bones[I].Bone == BoneName)
 				{
@@ -2214,7 +2214,7 @@ void ACsPoseableMeshActor::ClearControlsTwoBoneIK()
 {
 	const int32 Count = Controls_TwoBoneIK.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		ACsAnim_Control_TwoBoneIK* Control = Controls_TwoBoneIK[I].Actor;
 

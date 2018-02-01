@@ -628,7 +628,7 @@ void ACsWeapon::OnTick(const float &DeltaSeconds)
 		const float TimeSeconds = GetWorld()->GetTimeSeconds();
 
 		// Spread
-		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; I++)
+		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; ++I)
 		{
 			const TCsWeaponFireMode FireMode = (TCsWeaponFireMode)I;
 
@@ -689,7 +689,7 @@ void ACsWeapon::OnTick_HandleStates()
 	{
 		bool Pass = false;
 
-		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; I++)
+		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; ++I)
 		{
 			const TCsWeaponFireMode FireMode = (TCsWeaponFireMode)I;
 
@@ -824,7 +824,7 @@ void ACsWeapon::CheckState_Idle()
 
 		bool Pass_Firing = false;
 
-		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; I++)
+		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; ++I)
 		{
 			const TCsWeaponFireMode FireMode = (TCsWeaponFireMode)I;
 
@@ -912,7 +912,7 @@ void ACsWeapon::Disable()
 {
 	if (CurrentState == FiringState || GetSound(FireSound))
 	{
-		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; I++)
+		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; ++I)
 		{
 			StopSound((TCsWeaponFireMode)I, FireSound);
 		}
@@ -921,7 +921,7 @@ void ACsWeapon::Disable()
 	LastState    = CurrentState;
 	CurrentState = IdleState;
 
-	for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; I++)
+	for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; ++I)
 	{
 		IsFirePressed.Set(I, false);
 		Last_IsFirePressed.Set(I, false);
@@ -931,7 +931,7 @@ void ACsWeapon::Disable()
 
 	if (GetMyData_Weapon())
 	{
-		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; I++)
+		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; ++I)
 		{
 			if (LoopFireAnim.Get(I))
 				StopAnimation((TCsWeaponFireMode)I, FireAnim);
@@ -1110,7 +1110,7 @@ bool ACsWeapon::CanUnEquip()
 	if (DoingEquipTransition)
 		return false;
 
-	for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; I++)
+	for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; ++I)
 	{
 		if (CurrentProjectilePerShotIndex.Get(I) < ProjectilesPerShot.Get(I) - 1)
 			return false;
@@ -1176,7 +1176,7 @@ void ACsWeapon::HandleChargeFire()
 	if (PerformingChargeFire)
 		return;
 	
-	for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; I++)
+	for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; ++I)
 	{
 		if (AllowChargeFire.Get(I) &&
 			IsFirePressed.Get(I))
@@ -1998,14 +1998,14 @@ void ACsWeapon::Reload()
 	{
 		UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 
-		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; I++)
+		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; ++I)
 		{
 			StopChargeFire((TCsWeaponFireMode)I);
 		}
 
 		Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, ECsWeaponCachedName::Name::Stop_FireWeapon_Internal, this);
 
-		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; I++)
+		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; ++I)
 		{
 			StopAnimation((TCsWeaponFireMode)I, FireAnim);
 		}

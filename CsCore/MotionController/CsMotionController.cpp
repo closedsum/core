@@ -132,7 +132,7 @@ void ACsMotionController::OnTick_Handle_FirstHoldAndHold(const float &DeltaSecon
 
 	const int32 Count = CurrentInteractedActorInfos.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		AActor* Actor					 = CurrentInteractedActorInfos[I].GetActor();
 		ACsInteractiveAIPawn* Pawn		 = Cast<ACsInteractiveAIPawn>(Actor);
@@ -492,7 +492,7 @@ void ACsMotionController::OnCalcCamera_Trace(const uint8 &MappingId, const float
 
 	const uint8 CollisionCount = (uint8)ECollisionChannel::ECC_MAX;
 
-	for (int32 I = 0; I < CollisionCount; I++)
+	for (int32 I = 0; I < CollisionCount; ++I)
 	{
 		const ECollisionResponse Response = CollisionPreset.CollisionResponses.GetResponse((ECollisionChannel)I);
 
@@ -643,7 +643,7 @@ void ACsMotionController::GetCurrentInteractiveActors(const TCsInteractiveState 
 {
 	const int32 Count = CurrentInteractiveActors.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (StateType == CurrentInteractiveActorStates[I])
 		{
@@ -693,7 +693,7 @@ void ACsMotionController::OnInteraction(const TArray<FCsInteractedActorInfo> &In
 		TArray<FCsInteractedActorInfo> OnFirstHoverInfos;
 		TArray<FCsInteractedActorInfo> OnFirstUnHoverInfos;
 
-		for (int32 I = 0; I < InfoCount; I++)
+		for (int32 I = 0; I < InfoCount; ++I)
 		{
 			// Append all actors to the end of the list. After checks, remove the front of the list
 			CurrentInteractedActorInfos.Add(Infos[I]);
@@ -902,7 +902,7 @@ void ACsMotionController::OnInteraction(const TArray<FCsInteractedActorInfo> &In
 		TArray<FCsInteractedActorInfo> OnFirstUnHoverInfos;
 		TArray<FCsInteractedActorInfo> OnReleaseInfos;
 
-		for (int32 I = 0; I < CurrentActorCount; I++)
+		for (int32 I = 0; I < CurrentActorCount; ++I)
 		{
 			AActor* Actor = CurrentInteractedActorInfos[I].GetActor();
 
@@ -938,7 +938,7 @@ void ACsMotionController::OnFirstHold(const TArray<FCsInteractedActorInfo> &Info
 {
 	const int32 Count = Infos.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		// Interactive Actor
 		if (ACsInteractiveActor* Actor = Cast<ACsInteractiveActor>(Infos[I].GetActor()))
@@ -954,7 +954,7 @@ void ACsMotionController::OnHold(const TArray<FCsInteractedActorInfo> &Infos)
 {
 	const int32 Count = Infos.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		// Interactive Actor
 		if (ACsInteractiveActor* Actor = Cast<ACsInteractiveActor>(Infos[I].GetActor()))
@@ -970,7 +970,7 @@ void ACsMotionController::OnRelease(const TArray<FCsInteractedActorInfo> &Infos)
 {
 	const int32 Count = Infos.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		// Interactive Actor
 		if (ACsInteractiveActor* Actor = Cast<ACsInteractiveActor>(Infos[I].GetActor()))
@@ -986,7 +986,7 @@ void ACsMotionController::OnFirstTouch(const TArray<FCsInteractedActorInfo> &Inf
 {
 	const int32 Count = Infos.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		// Interactive Actor
 		if (ACsInteractiveActor* Actor = Cast<ACsInteractiveActor>(Infos[I].GetActor()))
@@ -1002,7 +1002,7 @@ void ACsMotionController::OnTouch(const TArray<FCsInteractedActorInfo> &Infos)
 {
 	const int32 Count = Infos.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		// Interactive Actor
 		if (ACsInteractiveActor* Actor = Cast<ACsInteractiveActor>(Infos[I].GetActor()))
@@ -1018,7 +1018,7 @@ void ACsMotionController::OnFirstHover(const TArray<FCsInteractedActorInfo> &Inf
 {
 	const int32 Count = Infos.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		// Interactive Actor
 		if (ACsInteractiveActor* Actor = Cast<ACsInteractiveActor>(Infos[I].GetActor()))
@@ -1036,7 +1036,7 @@ void ACsMotionController::OnFirstUnHover(const TArray<FCsInteractedActorInfo> &I
 {
 	const int32 Count = Infos.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		// Interactive Actor
 		if (ACsInteractiveActor* Actor = Cast<ACsInteractiveActor>(Infos[I].GetActor()))
@@ -1052,7 +1052,7 @@ void ACsMotionController::OnFirstCollide(const TArray<FCsInteractedActorInfo> &I
 {
 	const int32 Count = Infos.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		// Interactive Actor
 		if (ACsInteractiveActor* Actor = Cast<ACsInteractiveActor>(Infos[I].GetActor()))
@@ -1073,7 +1073,7 @@ bool ACsMotionController::IsInteractingWith(const TEnumAsByte<ECsInteractiveStat
 	AActor* FoundActor = nullptr;
 	const int32 Count  = CurrentInteractedActorInfos.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		AActor* Actor = CurrentInteractedActorInfos[I].GetActor();
 
@@ -1098,7 +1098,7 @@ bool ACsMotionController::IsInteractingWithAny(const TEnumAsByte<ECsInteractiveS
 
 	int32 Count = CurrentInteractedActorInfos.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (CurrentInteractiveActorStates[I] != InState)
 			continue;
@@ -1112,7 +1112,7 @@ bool ACsMotionController::IsInteractingWithAny(const TEnumAsByte<ECsInteractiveS
 	if (Count == CS_EMPTY)
 		return false;
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (ACsInteractiveActor* InteractiveActor = Cast<ACsInteractiveActor>(Actors[I]))
 			return InteractiveActor->State == InState;
@@ -1149,7 +1149,7 @@ void ACsMotionController::GetCurrentButtons(const TEnumAsByte<ECsButtonState::Ty
 {
 	const int32 Count = CurrentButtons.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (StateType == CurrentButtonStates[I])
 		{
@@ -1190,7 +1190,7 @@ void ACsMotionController::OnButtonInteraction(const TArray<USceneComponent*> &Bu
 		TArray<USceneComponent*> OnFirstHoverButtons;
 		TArray<USceneComponent*> OnFirstUnHoverButtons;
 
-		for (int32 I = 0; I < ButtonCount; I++)
+		for (int32 I = 0; I < ButtonCount; ++I)
 		{
 			// Append all actors to the end of the list. After checks, remove the front of the list
 			CurrentButtons.Add(Buttons[I]);
@@ -1295,7 +1295,7 @@ void ACsMotionController::OnButtonInteraction(const TArray<USceneComponent*> &Bu
 		TArray<USceneComponent*> OnFirstUnHoverButtons;
 		TArray<USceneComponent*> OnFirstReleasedButtons;
 
-		for (int32 I = 0; I < CurrentButtonCount; I++)
+		for (int32 I = 0; I < CurrentButtonCount; ++I)
 		{
 			USceneComponent* Component = CurrentButtons[I].IsValid() ? CurrentButtons[I].Get() : nullptr;
 
@@ -1324,7 +1324,7 @@ void ACsMotionController::OnButtonFirstHover(const TArray<USceneComponent*> &But
 {
 	const int32 Count = Buttons.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (UCsButtonComponent* Button = Cast<UCsButtonComponent>(Buttons[I]))
 			Button->OnFirstHover(this);
@@ -1339,7 +1339,7 @@ void ACsMotionController::OnButtonFirstUnHover(const TArray<USceneComponent*> &B
 {
 	const int32 Count = Buttons.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (UCsButtonComponent* Button = Cast<UCsButtonComponent>(Buttons[I]))
 			Button->OnFirstUnHover(this);
@@ -1350,7 +1350,7 @@ void ACsMotionController::OnButtonFirstPressed(const TArray<USceneComponent*> &B
 {
 	const int32 Count = Buttons.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (UCsButtonComponent* Button = Cast<UCsButtonComponent>(Buttons[I]))
 			Button->OnFirstPressed(this);
@@ -1371,7 +1371,7 @@ bool ACsMotionController::IsInteractingWithButton(const TEnumAsByte<ECsButtonSta
 	USceneComponent* FoundButton = nullptr;
 	const int32 Count			 = CurrentButtons.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		USceneComponent* Component = CurrentButtons[I].IsValid() ? CurrentButtons[I].Get() : nullptr;
 
@@ -1396,7 +1396,7 @@ bool ACsMotionController::IsInteractingWithAnyButton(const TEnumAsByte<ECsButton
 
 	int32 Count = CurrentButtons.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (CurrentButtonStates[I] != InState)
 			continue;
@@ -1410,7 +1410,7 @@ bool ACsMotionController::IsInteractingWithAnyButton(const TEnumAsByte<ECsButton
 	if (Count == CS_EMPTY)
 		return false;
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (UCsButtonComponent* Button = Cast<UCsButtonComponent>(Components[I]))
 			return Button->State == InState;

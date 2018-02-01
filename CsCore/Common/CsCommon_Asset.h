@@ -69,7 +69,7 @@ class CSCORE_API UCsCommon_Asset : public UBlueprintFunctionLibrary
 
 		const int32 AssetCount = OutAssetData.Num();
 
-		for (int32 I = 0; I < AssetCount; I++)
+		for (int32 I = 0; I < AssetCount; ++I)
 		{
 			const FString AssetStringName = OutAssetData[I].AssetName.ToString().ToLower();
 
@@ -94,7 +94,7 @@ class CSCORE_API UCsCommon_Asset : public UBlueprintFunctionLibrary
 		const int32 AssetCount = OutAssetData.Num();
 		const int32 Count	   = KeywordsOR.Num();
 
-		for (int32 I = 0; I < AssetCount; I++)
+		for (int32 I = 0; I < AssetCount; ++I)
 		{
 			const FString AssetStringName = OutAssetData[I].AssetName.ToString().ToLower();
 
@@ -125,7 +125,7 @@ class CSCORE_API UCsCommon_Asset : public UBlueprintFunctionLibrary
 
 		const int32 AssetCount = OutAssetData.Num();
 
-		for (int32 I = 0; I < AssetCount; I++)
+		for (int32 I = 0; I < AssetCount; ++I)
 		{
 			const FString AssetStringName = OutAssetData[I].AssetName.ToString().ToLower();
 
@@ -155,13 +155,13 @@ class CSCORE_API UCsCommon_Asset : public UBlueprintFunctionLibrary
 		const int32 AssetCount = OutAssetData.Num();
 		const int32 KeywordCount = KeywordsAND.Num();
 
-		for (int32 I = 0; I < AssetCount; I++)
+		for (int32 I = 0; I < AssetCount; ++I)
 		{
 			const FString AssetStringName = OutAssetData[I].AssetName.ToString().ToLower();
 			
 			bool Pass = true;
 
-			for (int32 I = 0; I < KeywordCount; I++)
+			for (int32 I = 0; I < KeywordCount; ++I)
 			{
 				Pass &= AssetStringName.Contains(KeywordsAND[I]);
 			}
@@ -190,7 +190,7 @@ class CSCORE_API UCsCommon_Asset : public UBlueprintFunctionLibrary
 
 		const int32 AssetCount = OutAssetData.Num();
 
-		for (int32 I = 0; I < AssetCount; I++)
+		for (int32 I = 0; I < AssetCount; ++I)
 		{
 			const FString AssetStringName = OutAssetData[I].AssetName.ToString().ToLower();
 
@@ -217,7 +217,7 @@ class CSCORE_API UCsCommon_Asset : public UBlueprintFunctionLibrary
 
 		const int32 AssetCount = OutAssetData.Num();
 
-		for (int32 I = 0; I < AssetCount; I++)
+		for (int32 I = 0; I < AssetCount; ++I)
 		{
 			if (Name == OutAssetData[I].AssetName)
 			{
@@ -251,7 +251,7 @@ class CSCORE_API UCsCommon_Asset : public UBlueprintFunctionLibrary
 
 		const uint32 Count = OutAssets.Num();
 
-		for (uint32 I = 0; I < Count; I++)
+		for (uint32 I = 0; I < Count; ++I)
 		{
 			if (T* DOb = Cast<UBlueprintCore>(OutAssets[I])->GeneratedClass->GetDefaultObject<T>())
 				OutDefaultObjects.Add(DOb);

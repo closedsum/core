@@ -1164,7 +1164,7 @@ public:
 
 		const int32 Max = 10;
 
-		for (int32 I = 0; I < Max; I++)
+		for (int32 I = 0; I < Max; ++I)
 		{
 			if (inText[0] == FString::FromInt(I)[0])
 			{

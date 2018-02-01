@@ -49,7 +49,7 @@ void ACsManager_InteractiveActor::Shutdown()
 
 	const int32 Count = Pool.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (Pool[I] && !Pool[I]->IsPendingKill())
 			Pool[I]->Destroy(true);
@@ -61,7 +61,7 @@ void ACsManager_InteractiveActor::Destroyed()
 {
 	const int32 Count = Pool.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (Pool[I] && !Pool[I]->IsPendingKill())
 			Pool[I]->Destroy(true);
@@ -92,7 +92,7 @@ void ACsManager_InteractiveActor::CreatePool(const TSubclassOf<class UObject> &O
 
 	TArray<ACsInteractiveActor*> ActorPool;
 
-	for (int32 I = 0; I < Size; I++)
+	for (int32 I = 0; I < Size; ++I)
 	{
 		ACsInteractiveActor* Actor = GetWorld()->SpawnActor<ACsInteractiveActor>(ObjectClass, SpawnInfo);
 		Actor->SetReplicates(false);
@@ -238,7 +238,7 @@ void ACsManager_InteractiveActor::OnTick(const float &DeltaSeconds)
 
 void ACsManager_InteractiveActor::GetAllActiveActors(TArray<class ACsInteractiveActor*> &OutActors)
 {
-	for (int32 I = 0; I < InteractiveType_MAX; I++)
+	for (int32 I = 0; I < InteractiveType_MAX; ++I)
 	{
 		TArray<ACsInteractiveActor*>* Actors = ActiveActors.Find((TCsInteractiveType)I);
 
@@ -379,7 +379,7 @@ void ACsManager_InteractiveActor::DeAllocate(const uint8 &Type, const int32 &Ind
 	}
 
 	// Correct on Cache "Miss"
-	for (int32 I = 1; I < Count; I++)
+	for (int32 I = 1; I < Count; ++I)
 	{
 		ACsInteractiveActor* Actor = (*Actors)[I];
 		// Reset ActiveIndex
@@ -392,7 +392,7 @@ void ACsManager_InteractiveActor::DeAllocateAll()
 {
 	const uint8 Count = (uint8)InteractiveType_MAX;
 
-	for (uint8 I = 0; I < Count; I++)
+	for (uint8 I = 0; I < Count; ++I)
 	{
 		const TCsInteractiveType Type = (TCsInteractiveType)I;
 

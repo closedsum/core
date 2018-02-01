@@ -236,7 +236,7 @@ void UCsUserWidget::CloseAllChildrenExcept(const TCsWidgetType &WidgetType)
 
 	const int32 TypeCount = ChildWidgetTypes.Num();
 
-	for (int32 I = 0; I < TypeCount; I++)
+	for (int32 I = 0; I < TypeCount; ++I)
 	{
 		const TCsWidgetType ActiveType = ChildWidgetTypes[I];
 
@@ -287,7 +287,7 @@ bool UCsUserWidget::ChildWidgets_ProcessGameEvent(const TCsGameEvent &GameEvent)
 {
 	const int32 Count = ChildWidgetTypes.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (IsChildOpened(ChildWidgetTypes[I]))
 		{

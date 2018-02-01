@@ -57,7 +57,7 @@ void ACsManager_Sound::Shutdown()
 
 	const int32 Count = Pool.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (Pool[I] && !Pool[I]->IsPendingKill())
 			Pool[I]->Destroy(true);
@@ -69,7 +69,7 @@ void ACsManager_Sound::Destroyed()
 {
 	const int32 Count = Pool.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (Pool[I] && !Pool[I]->IsPendingKill())
 			Pool[I]->Destroy(true);
@@ -89,7 +89,7 @@ void ACsManager_Sound::CreatePool(const int32 &Size)
 
 	PoolIndex = 0;
 
-	for (int32 I = 0; I < Size; I++)
+	for (int32 I = 0; I < Size; ++I)
 	{
 		ACsSound* Sound = GetWorld()->SpawnActor<ACsSound>(SoundClass, SpawnInfo);
 		Sound->SetReplicates(false);
@@ -153,7 +153,7 @@ void ACsManager_Sound::OnTick(const float &DeltaSeconds)
 	{
 		const uint8 Max = ActiveSounds.Num();
 
-		for (uint8 I = EarliestIndex; I < Max; I++)
+		for (uint8 I = EarliestIndex; I < Max; ++I)
 		{
 			ACsSound* Sound	= ActiveSounds[I];
 			Sound->Cache.SetActiveIndex(I);
@@ -259,7 +259,7 @@ void ACsManager_Sound::DeAllocate(const int32 &Index)
 	}
 
 	// Correct on Cache "Miss"
-	for (int32 I = 1; I < Count; I++)
+	for (int32 I = 1; I < Count; ++I)
 	{
 		ACsSound* Sound = ActiveSounds[I];
 		// Reset ActiveIndex
@@ -466,7 +466,7 @@ void ACsManager_Sound::Stop(FCsSoundElement* InSound, UObject* InOwner, UObject*
 
 	if (EarliestIndex != Count)
 	{
-		for (int32 I = EarliestIndex; I < Count; I++)
+		for (int32 I = EarliestIndex; I < Count; ++I)
 		{
 			ACsSound* Sound = ActiveSounds[I];
 			// Reset ActiveIndex

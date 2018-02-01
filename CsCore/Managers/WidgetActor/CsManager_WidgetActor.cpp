@@ -50,7 +50,7 @@ void ACsManager_WidgetActor::Shutdown()
 
 	const int32 Count = Pool.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (Pool[I] && !Pool[I]->IsPendingKill())
 			Pool[I]->Destroy(true);
@@ -66,7 +66,7 @@ void ACsManager_WidgetActor::Destroyed()
 {
 	const int32 Count = Pool.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (Pool[I] && !Pool[I]->IsPendingKill())
 			Pool[I]->Destroy(true);
@@ -94,7 +94,7 @@ void ACsManager_WidgetActor::CreatePool(const TSubclassOf<class UObject> &Object
 
 	TArray<ACsWidgetActor*> WidgetPool;
 
-	for (int32 I = 0; I < Size; I++)
+	for (int32 I = 0; I < Size; ++I)
 	{
 		ACsWidgetActor* Widget = GetWorld()->SpawnActor<ACsWidgetActor>(ObjectClass, SpawnInfo);
 		Widget->SetReplicates(false);

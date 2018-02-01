@@ -55,7 +55,7 @@ void ACsDataMapping::GenerateMaps(const TCsAssetType &AssetType)
 
 	const uint16 Count = Mapping->Num();
 
-	for (uint16 I = 0; I < Count; I++)
+	for (uint16 I = 0; I < Count; ++I)
 	{
 		Map->Add((*Mapping)[I].ShortCode, (*Mapping)[I]);
 	}
@@ -66,7 +66,7 @@ void ACsDataMapping::GenerateMaps()
 {
 	const uint8 AssetCount = AssetType_MAX;
 
-	for (uint8 I = 0; I < AssetCount; I++)
+	for (uint8 I = 0; I < AssetCount; ++I)
 	{
 		GenerateMaps((TCsAssetType)I);
 	}
@@ -77,7 +77,7 @@ TCsAssetType ACsDataMapping::GetDataAssetType(const FName &ShortCode)
 	// Search TMaps - Populated if GenerateMaps was called
 	const uint8 AssetCount = (uint8)AssetType_MAX;
 
-	for (uint8 I = 0; I < AssetCount; I++)
+	for (uint8 I = 0; I < AssetCount; ++I)
 	{
 		const TCsAssetType AssetType		  = (TCsAssetType)I;
 		TMap<FName, FCsDataMappingEntry>* Map = GetDataMappings_Map(AssetType);
@@ -98,7 +98,7 @@ TCsAssetType ACsDataMapping::GetDataAssetType(const FName &ShortCode)
 		}
 	}
 	// Search TArrays
-	for (uint8 I = 0; I < AssetCount; I++)
+	for (uint8 I = 0; I < AssetCount; ++I)
 	{
 		const TCsAssetType AssetType		 = (TCsAssetType)I;
 		TArray<FCsDataMappingEntry>* Mapping = GetDataMappings(AssetType);
@@ -131,7 +131,7 @@ void ACsDataMapping::PreSave(const class ITargetPlatform* TargetPlatform)
 	// Set LookUpCodes
 	const uint8 AssetCount = (uint8)AssetType_MAX;
 
-	for (uint8 I = 0; I < AssetCount; I++)
+	for (uint8 I = 0; I < AssetCount; ++I)
 	{
 		const TCsAssetType AssetType		 = (TCsAssetType)I;
 		TArray<FCsDataMappingEntry>* Mapping = GetDataMappings(AssetType);
@@ -174,7 +174,7 @@ bool ACsDataMapping::DoesDataAssetReferenceExist(const TCsAssetType &AssetType, 
 	{
 		const uint16 Count = Mapping->Num();
 
-		for (uint16 I = 0; I < Count; I++)
+		for (uint16 I = 0; I < Count; ++I)
 		{
 			if ((*Mapping)[I].ShortCode == ShortCode)
 			{
@@ -197,7 +197,7 @@ bool ACsDataMapping::DoesDataAssetReferenceExist(const FName &ShortCode)
 	bool Exist			   = false;
 	const uint8 AssetCount = (uint8)AssetType_MAX;
 
-	for (uint8 I = 0; I < AssetCount; I++)
+	for (uint8 I = 0; I < AssetCount; ++I)
 	{
 		Exist |= DoesDataAssetReferenceExist((TCsAssetType)I, ShortCode);
 	}
@@ -307,7 +307,7 @@ void ACsDataMapping::PopulateDataAssetReferences()
 					{
 						const int32 EntryCount = Member->Num();
 
-						for (int32 I = 0; I < EntryCount; I++)
+						for (int32 I = 0; I < EntryCount; ++I)
 						{
 							const FStringAssetReference AssetRef = (*Member)[I].Data.ToStringReference();
 							const FString Asset					 = AssetRef.ToString();
@@ -333,7 +333,7 @@ void ACsDataMapping::PopulateAssetReferences()
 {
 	const int32 FlagCount = ECsLoadFlags_Editor::ECsLoadFlags_Editor_MAX;
 
-	for (int32 I = 0; I < FlagCount; I++)
+	for (int32 I = 0; I < FlagCount; ++I)
 	{
 		AssetReferences[I].Reset();
 	}
@@ -365,7 +365,7 @@ void ACsDataMapping::PopulateAssetReferences()
 					{
 						const int32 EntryCount = Member->Num();
 
-						for (int32 I = 0; I < EntryCount; I++)
+						for (int32 I = 0; I < EntryCount; ++I)
 						{
 							ACsData* OutAsset;
 
@@ -427,7 +427,7 @@ void ACsDataMapping::PopulateAssetReferences()
 		}
 	}
 
-	for (int32 I = 0; I < FlagCount; I++)
+	for (int32 I = 0; I < FlagCount; ++I)
 	{
 		AssetReferences[I].CalculateSize();
 	}
@@ -466,7 +466,7 @@ ACsData* ACsDataMapping::LoadData(const FName &ShortCode, const ECsLoadFlags &Lo
 	// Search TMaps - Populated if GenerateMaps was called
 	const uint8 AssetCount = (uint8)AssetType_MAX;
 
-	for (uint8 I = 0; I < AssetCount; I++)
+	for (uint8 I = 0; I < AssetCount; ++I)
 	{
 		TMap<FName, FCsDataMappingEntry>* Map = GetDataMappings_Map((TCsAssetType)I);
 
@@ -482,7 +482,7 @@ ACsData* ACsDataMapping::LoadData(const FName &ShortCode, const ECsLoadFlags &Lo
 			return Data;
 	}
 	// Search TArrays
-	for (uint8 I = 0; I < AssetCount; I++)
+	for (uint8 I = 0; I < AssetCount; ++I)
 	{
 		TArray<FCsDataMappingEntry>* Mapping = GetDataMappings((TCsAssetType)I);
 
@@ -791,7 +791,7 @@ bool ACsDataMapping::PerformFindEntry(const FName &ShortCode, TArray<FCsDataMapp
 					{
 						const int32 EntryCount = Member->Num();
 
-						for (int32 I = 0; I < EntryCount; I++)
+						for (int32 I = 0; I < EntryCount; ++I)
 						{
 							FCsDataMappingEntry& Entry = (*Member)[I];
 
@@ -877,7 +877,7 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const TCsAssetType 
 						// Check if Asset has ALREADY been added
 						const int32 EntryCount = Member->Num();
 
-						for (int32 I = 0; I < EntryCount; I++)
+						for (int32 I = 0; I < EntryCount; ++I)
 						{
 							FCsDataMappingEntry& Entry = (*Member)[I];
 
@@ -957,7 +957,7 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const TCsAssetType 
 
 								const int32 BpCount = Bps.Num();
 
-								for (int32 I = 0; I < BpCount; I++)
+								for (int32 I = 0; I < BpCount; ++I)
 								{
 									UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::PerformAddEntry: %s at %s"), *AssetTypeAsString, *(Bps[I]->GetPathName()));
 								}
@@ -1093,7 +1093,7 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const int32 &LoadFl
 
 		UE_LOG(LogCs, Warning, TEXT("%s"), *Output);
 
-		for (int32 I = 0; I < BpCount; I++)
+		for (int32 I = 0; I < BpCount; ++I)
 		{
 			const FString AdditionalOutput = TEXT("ACsDataMapping::PerformAddEntry: ") + Bps[I]->GetPathName();
 
@@ -1212,7 +1212,7 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const int32 &LoadFl
 						// Check if Asset has ALREADY been added
 						const int32 EntryCount = Member->Num();
 
-						for (int32 I = 0; I < EntryCount; I++)
+						for (int32 I = 0; I < EntryCount; ++I)
 						{
 							FCsDataMappingEntry& Entry = (*Member)[I];
 
@@ -1511,7 +1511,7 @@ void ACsDataMapping::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 
 		const int32 EntryCount = OutEntries.Num();
 
-		for (int32 I = 0; I < EntryCount; I++)
+		for (int32 I = 0; I < EntryCount; ++I)
 		{
 			if (I > 0)
 				FindEntry.Output += TEXT(", ");
@@ -1685,7 +1685,7 @@ bool ACsDataMapping::CheckEntryExists(const FName &ShortCode, const TCsAssetType
 					{
 						const int32 EntryCount = Member->Num();
 
-						for (int32 I = 0; I < EntryCount; I++)
+						for (int32 I = 0; I < EntryCount; ++I)
 						{
 							FCsDataMappingEntry& Entry = (*Member)[I];
 

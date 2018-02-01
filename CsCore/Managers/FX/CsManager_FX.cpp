@@ -56,7 +56,7 @@ void ACsManager_FX::Shutdown()
 
 	const int32 Count = Pool.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (Pool[I] && !Pool[I]->IsPendingKill())
 			Pool[I]->Destroy(true);
@@ -68,7 +68,7 @@ void ACsManager_FX::Destroyed()
 {
 	const int32 Count = Pool.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (Pool[I] && !Pool[I]->IsPendingKill())
 			Pool[I]->Destroy(true);
@@ -88,7 +88,7 @@ void ACsManager_FX::CreatePool(const int32 &Size)
 
 	PoolIndex = 0;
 
-	for (int32 I = 0; I < PoolSize; I++)
+	for (int32 I = 0; I < PoolSize; ++I)
 	{
 		ACsEmitter* Emitter = GetWorld()->SpawnActor<ACsEmitter>(EmitterClass, SpawnInfo);
 		Emitter->SetReplicates(false);
@@ -173,7 +173,7 @@ void ACsManager_FX::OnTick(const float &DeltaSeconds)
 	{
 		const uint16 Max = ActiveEmitters.Num();
 
-		for (uint16 I = EarliestIndex; I < Max; I++)
+		for (uint16 I = EarliestIndex; I < Max; ++I)
 		{
 			ACsEmitter* Emitter = ActiveEmitters[I];
 			Emitter->Cache.SetActiveIndex(I);
@@ -304,7 +304,7 @@ void ACsManager_FX::DeAllocate(const int32 &Index)
 	}
 
 	// Correct on Cache "Miss"
-	for (int32 I = 1; I < Count; I++)
+	for (int32 I = 1; I < Count; ++I)
 	{
 		ACsEmitter* Emitter = ActiveEmitters[I];
 		// Reset ActiveIndex

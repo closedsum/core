@@ -448,7 +448,7 @@ public:
 
 		const int32 Count = B.Meshes.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			Meshes.Add(B.Meshes[I]);
 		}
@@ -464,7 +464,7 @@ public:
 		if (Count != CountB)
 			return false;
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (Meshes[I] != B.Meshes[I])
 				return false;
@@ -476,7 +476,7 @@ public:
 		if (Count != CountB)
 			return false;
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (Meshes_Internal[I] != B.Meshes_Internal[I])
 				return false;
@@ -679,7 +679,7 @@ public:
 
 		const int32 Count = B.Meshes.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			Meshes.Add(B.Meshes[I]);
 		}
@@ -695,7 +695,7 @@ public:
 		if (Count != CountB)
 			return false;
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (Meshes[I] != B.Meshes[I])
 				return false;
@@ -707,7 +707,7 @@ public:
 		if (Count != CountB)
 			return false;
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (Meshes_Internal[I] != B.Meshes_Internal[I])
 				return false;
@@ -858,7 +858,7 @@ public:
 
 		const int32 Count = B.Materials.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			Materials.Add(B.Materials[I]);
 		}
@@ -874,7 +874,7 @@ public:
 		if (Count != CountB)
 			return false;
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (Materials[I] != B.Materials[I])
 				return false;
@@ -886,7 +886,7 @@ public:
 		if (Count != CountB)
 			return false;
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (Materials_Internal[I] != B.Materials_Internal[I])
 				return false;
@@ -975,7 +975,7 @@ public:
 
 		int32 Count = B.Materials1P.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			Materials1P.Add(B.Materials1P[I]);
 		}
@@ -985,7 +985,7 @@ public:
 
 		Count = B.Materials3P.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			Materials3P.Add(B.Materials3P[I]);
 		}
@@ -995,7 +995,7 @@ public:
 
 		Count = B.Materials3P_Low.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			Materials3P_Low.Add(B.Materials3P_Low[I]);
 		}
@@ -1005,7 +1005,7 @@ public:
 
 		Count = B.MaterialsVR.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			MaterialsVR.Add(B.MaterialsVR[I]);
 		}
@@ -1022,7 +1022,7 @@ public:
 		if (Count != CountB)
 			return false;
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (Materials1P[I] != B.Materials1P[I])
 				return false;
@@ -1034,7 +1034,7 @@ public:
 		if (Count != CountB)
 			return false;
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (Materials1P_Internal[I] != B.Materials1P_Internal[I])
 				return false;
@@ -1049,7 +1049,7 @@ public:
 		if (Count != CountB)
 			return false;
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (Materials3P[I] != B.Materials3P[I])
 				return false;
@@ -1061,7 +1061,7 @@ public:
 		if (Count != CountB)
 			return false;
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (Materials3P_Internal[I] != B.Materials3P_Internal[I])
 				return false;
@@ -1076,7 +1076,7 @@ public:
 		if (Count != CountB)
 			return false;
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (Materials3P_Low[I] != B.Materials3P_Low[I])
 				return false;
@@ -1088,7 +1088,7 @@ public:
 		if (Count != CountB)
 			return false;
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (Materials3P_Low_Internal[I] != B.Materials3P_Low_Internal[I])
 				return false;
@@ -1103,7 +1103,7 @@ public:
 		if (Count != CountB)
 			return false;
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (MaterialsVR[I] != B.MaterialsVR[I])
 				return false;
@@ -1115,7 +1115,7 @@ public:
 		if (Count != CountB)
 			return false;
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (MaterialsVR_Internal[I] != B.MaterialsVR_Internal[I])
 				return false;
@@ -1378,7 +1378,7 @@ public:
 
 		const int32 Count = B.Blueprints.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			Blueprints.Add(B.Blueprints[I]);
 		}
@@ -1394,7 +1394,7 @@ public:
 		if (Count != CountB)
 			return false;
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (Blueprints[I] != B.Blueprints[I])
 				return false;
@@ -1406,7 +1406,7 @@ public:
 		if (Count != CountB)
 			return false;
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (Blueprints_Internal[I] != B.Blueprints_Internal[I])
 				return false;

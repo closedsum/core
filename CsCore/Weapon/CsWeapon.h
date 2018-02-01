@@ -341,7 +341,7 @@ class CSCORE_API ACsWeapon : public AActor
 
 		Member.ResetValues();
 
-		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; I++)
+		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; ++I)
 		{
 			T* DataMember = UCsCommon_Load::GetObjectMember<T>(Data_Weapon, Data_Weapon->GetClass(), MemberName, GetObjectMember_Internal);
 
@@ -356,7 +356,7 @@ class CSCORE_API ACsWeapon : public AActor
 	{
 		Member.ResetValues();
 
-		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; I++)
+		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; ++I)
 		{
 			if (I == 0)
 				Member.Set(Value);
@@ -373,7 +373,7 @@ class CSCORE_API ACsWeapon : public AActor
 
 		const FString StructName = ECsData_Weapon_FireMode::ToString(FireModeMember);
 
-		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; I++)
+		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; ++I)
 		{
 			void* Struct				= UCsCommon_Load::GetStructMember<void>(Data_Weapon->GetFireModeStruct(I), Data_Weapon->GetFireModeScriptStruct(), StructName, GetStructMember_Internal);
 			UScriptStruct* ScriptStruct = UCsCommon_Load::GetScriptStructMember(Data_Weapon->GetFireModeStruct(I), Data_Weapon->GetFireModeScriptStruct(), StructName, GetScriptStructMember_Internal);

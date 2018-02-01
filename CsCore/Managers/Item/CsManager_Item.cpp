@@ -135,7 +135,7 @@ void ACsManager_Item::GetItemsByOwnerType(const TCsItemOwner &OwnerType, TArray<
 
 	const int32 Count = OutKeys.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		FCsItem* Item = *(ActiveItems.Find(OutKeys[I]));
 
@@ -158,7 +158,7 @@ void ACsManager_Item::GetItemsByOwnerId(const uint64 &OwnerId, TArray<FCsItem*> 
 
 	const int32 Count = Items->Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		OutItems.Add((*Items)[I]);
 	}
@@ -260,7 +260,7 @@ void ACsManager_Item::Save(FCsItem* Item)
 
 				const int32 Count = Item->Contents.Num();
 
-				for (int32 I = 0; I < Count; I++)
+				for (int32 I = 0; I < Count; ++I)
 				{
 					JsonWriter->WriteObjectStart();
 						JsonWriter->WriteValue(ECsFileItemHeaderCachedString::Str::UniqueId, FString::Printf(TEXT("%llu"), Item->Contents[I]));
@@ -284,7 +284,7 @@ void ACsManager_Item::Save(FCsItem* Item)
 
 		const int32 Count = Item->PreviousHistories.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			JsonWriter->WriteObjectStart();
 
@@ -324,7 +324,7 @@ void ACsManager_Item::SaveHistory(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FC
 
 		const int32 Count = OutKeys.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			JsonWriter->WriteObjectStart();
 
@@ -366,7 +366,7 @@ void ACsManager_Item::PopulateExistingItems()
 	if (FileCount == CS_EMPTY)
 		return;
 
-	for (int32 I = 0; I < FileCount; I++)
+	for (int32 I = 0; I < FileCount; ++I)
 	{
 		FString ItemJson;
 		const FString Filename = Path + FoundFiles[I];
@@ -410,7 +410,7 @@ void ACsManager_Item::PopulateExistingItems()
 
 					const int32 Count = JsonArray.Num();
 
-					for (int32 I = 0; I < Count; I++)
+					for (int32 I = 0; I < Count; ++I)
 					{
 						TSharedPtr<FJsonObject> Object = JsonArray[I]->AsObject();
 
@@ -434,7 +434,7 @@ void ACsManager_Item::PopulateExistingItems()
 
 					const int32 Count = JsonArray.Num();
 
-					for (int32 I = 0; I < Count; I++)
+					for (int32 I = 0; I < Count; ++I)
 					{
 						TSharedPtr<FJsonObject> Object = JsonArray[I]->AsObject();
 
@@ -470,7 +470,7 @@ void ACsManager_Item::LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCs
 
 		const uint8 Count = Members->Num();
 
-		for (uint8 I = 0; I < Count; I++)
+		for (uint8 I = 0; I < Count; ++I)
 		{
 			FCsItemMemberDescription& Member = (*Members)[I];
 

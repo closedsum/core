@@ -486,7 +486,7 @@ struct FCsInputFrame
 		Inputs.Reset();
 		const uint16 Count = B.Inputs.Num();
 
-		for (uint16 I = 0; I < Count; I++)
+		for (uint16 I = 0; I < Count; ++I)
 		{
 			Inputs.Add(B.Inputs[I]);
 		}
@@ -502,7 +502,7 @@ struct FCsInputFrame
 
 		const uint16 Count = Inputs.Num();
 
-		for (uint16 I = 0; I < Count; I++)
+		for (uint16 I = 0; I < Count; ++I)
 		{
 			Inputs[I]->Reset();
 		}
@@ -513,7 +513,7 @@ struct FCsInputFrame
 	{
 		const uint16 Count = Inputs.Num();
 
-		for (uint16 I = 0; I < Count; I++)
+		for (uint16 I = 0; I < Count; ++I)
 		{
 			if ((*(Inputs[I])).Action == Action)
 				return Inputs[I];
@@ -718,7 +718,7 @@ struct FCsInputPhrase
 
 		if (Index >= Count)
 		{
-			for (int32 I = 0; I < Index - Count + 1; I++)
+			for (int32 I = 0; I < Index - Count + 1; ++I)
 			{
 				Words.AddDefaulted();
 			}
@@ -732,7 +732,7 @@ struct FCsInputPhrase
 
 		if (Index >= Count)
 		{
-			for (int32 I = 0; I < Index - Count + 1; I++)
+			for (int32 I = 0; I < Index - Count + 1; ++I)
 			{
 				Words.AddDefaulted();
 			}
@@ -744,7 +744,7 @@ struct FCsInputPhrase
 	{
 		const int32 Count = Words.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			Words[I].Reset();
 		}
@@ -862,7 +862,7 @@ struct FCsInputSentence
 
 		const int32 Count = Phrases.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			Phrases[I].Reset();
 		}
@@ -1002,7 +1002,7 @@ struct FCsInputActionMappings
 
 		const int32 Count = B.Mappings.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			Mappings.AddDefaulted();
 			Mappings[I] = B.Mappings[I];
@@ -1017,7 +1017,7 @@ struct FCsInputActionMappings
 
 		const int32 Count = Mappings.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 
 		}
@@ -1053,7 +1053,7 @@ struct FCsInputProfile
 
 		const int32 Count = Mappings.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			const FCsInputActionMapping& Mapping = Mappings[I];
 
@@ -1070,7 +1070,7 @@ struct FCsInputProfile
 
 		const int32 Count = Mappings.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			const FCsInputActionMapping& Mapping = Mappings[I];
 
@@ -1087,7 +1087,7 @@ struct FCsInputProfile
 
 		const int32 Count = Mappings.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			FCsInputActionMapping& Mapping = Mappings[I];
 
@@ -1116,7 +1116,7 @@ struct FCsInputProfile
 
 	void Reset()
 	{
-		for (int32 I = 0; I < ECS_INPUT_DEVICE_MAX; I++)
+		for (int32 I = 0; I < ECS_INPUT_DEVICE_MAX; ++I)
 		{
 			DeviceMappings[I].Mappings.Reset();
 		}

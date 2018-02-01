@@ -432,7 +432,7 @@ struct FCsItemHistory
 
 		const int32 Count = OutKeysA.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (OutKeysA[I] != OutKeysB[I])
 				return false;

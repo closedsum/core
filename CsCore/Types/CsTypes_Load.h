@@ -216,7 +216,7 @@ struct FCsTArrayStringAssetReference
 	{
 		const int32 Count = References.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			OutReferences.Add(References[I].Reference_Internal);
 		}
@@ -228,7 +228,7 @@ struct FCsTArrayStringAssetReference
 
 		const int32 Count = References.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			Size += References[I].Size;
 		}
@@ -402,7 +402,7 @@ struct FCsTArrayPayload
 
 		const int32 Count = B.Payloads.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			Payloads.Add(B.Payloads[I]);
 		}
@@ -417,7 +417,7 @@ struct FCsTArrayPayload
 		if (CountA != CountB)
 			return false;
 
-		for (int32 I = 0; I < CountA; I++)
+		for (int32 I = 0; I < CountA; ++I)
 		{
 			if (Payloads[I] != B.Payloads[I])
 				return false;

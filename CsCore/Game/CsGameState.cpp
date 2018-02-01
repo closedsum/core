@@ -371,7 +371,7 @@ void ACsGameState::AddPlayerState(class APlayerState* PlayerState)
 	// Sanity check
 	check(NumMappingKeys == NumRelationshipKeys);
 
-	for (int32 I = 0; I < NumMappingKeys; I++)
+	for (int32 I = 0; I < NumMappingKeys; ++I)
 	{
 		const uint8 Key = MappingKeys[I];
 
@@ -426,7 +426,7 @@ void ACsGameState::OnTick_HandleBroadcastingPlayerStateFullyReplicatedAndLoaded(
 	TArray<uint8> RelationshipKeys;
 	const int32 NumRelationshipKeys = PlayerStateMappingRelationships.GetKeys(RelationshipKeys);
 
-	for (int32 I = 0; I < NumRelationshipKeys; I++)
+	for (int32 I = 0; I < NumRelationshipKeys; ++I)
 	{
 		const uint8 Key = RelationshipKeys[I];
 
@@ -481,7 +481,7 @@ void ACsGameState::SetPlayerStateMappingRelationshipFlag(const uint8 &ClientMapp
 	TArray<FCsPlayerStateMappingRelationship>* Relationships = PlayerStateMappingRelationships.Find(ClientMappingId);
 	const int32 NumRelationships							 = Relationships->Num();
 
-	for (int32 I = 0; I < NumRelationships; I++)
+	for (int32 I = 0; I < NumRelationships; ++I)
 	{
 		FCsPlayerStateMappingRelationship& Relationship = (*Relationships)[I];
 

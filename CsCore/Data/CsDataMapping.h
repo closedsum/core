@@ -412,7 +412,7 @@ protected:
 		const uint16 Count = Datas.Num();
 		uint16 LookUpCode  = CS_INVALID_LOOK_UP_CODE_MAX;
 
-		for (uint16 I = 0; I < Count; I++)
+		for (uint16 I = 0; I < Count; ++I)
 		{
 			if (Datas[I].ShortCode == ShortCode)
 			{
@@ -426,7 +426,7 @@ protected:
 
 		if (Datas_Loaded.Num() == CS_EMPTY)
 		{
-			for (uint16 I = 0; I < Count; I++)
+			for (uint16 I = 0; I < Count; ++I)
 			{
 				Datas_Loaded.Add(nullptr);
 			}
@@ -451,7 +451,7 @@ protected:
 		{
 			const uint16 Count = Datas.Num();
 
-			for (uint16 I = 0; I < Count; I++)
+			for (uint16 I = 0; I < Count; ++I)
 			{
 				Datas_Loaded.Add(nullptr);
 			}
@@ -476,7 +476,7 @@ protected:
 		{
 			const uint16 Count = Datas.Num();
 
-			for (uint16 I = 0; I < Count; I++)
+			for (uint16 I = 0; I < Count; ++I)
 			{
 				Datas_Loaded.Add(nullptr);
 			}
@@ -506,7 +506,7 @@ protected:
 		{
 			uint16 Count = Datas.Num();
 
-			for (uint16 I = 0; I < Count; I++)
+			for (uint16 I = 0; I < Count; ++I)
 			{
 				Datas_Loaded.Add(nullptr);
 			}

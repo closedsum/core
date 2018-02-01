@@ -179,7 +179,7 @@ void UCsManager_Loading::OnFinishedLoadingAssetReferences()
 
 	const int32 Count = AssetReferences.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		FStringAssetReference& AssetReference = AssetReferences[I];
 
@@ -211,7 +211,7 @@ void UCsManager_Loading::LoadAssetReferences_Internal(TArray<FStringAssetReferen
 		if (AsyncOrder == ECsLoadAsyncOrder::None ||
 			AsyncOrder == ECsLoadAsyncOrder::Bulk)
 		{
-			for (int32 I = 0; I < Size; I++)
+			for (int32 I = 0; I < Size; ++I)
 			{
 				UE_LOG(LogCs, Log, TEXT("UCsManager_Loading::LoadAssetReferences_Internal: Requesting Load of %s"), *(AssetReferences[I].ToString()));
 			}

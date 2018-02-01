@@ -57,7 +57,7 @@ void UCsManager_Gesture::Clear()
 {
 	const int32 Count = Gestures.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (Gestures[I] && !Gestures[I]->IsPendingKill())
 			Gestures[I]->ConditionalBeginDestroy();
@@ -80,7 +80,7 @@ UCsGesture* UCsManager_Gesture::GetGesture(const TCsGestureType &GestureType)
 {
 	const int32 Count = Gestures.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (Gestures[I]->Type == GestureType)
 			return Gestures[I];
@@ -97,7 +97,7 @@ void UCsManager_Gesture::ProcessInputs(FCsInputFrame &InputFrame)
 {
 	const int32 Count = Gestures.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (Gestures[I]->CanProcessInputs())
 			Gestures[I]->ProcessInputs(InputFrame);

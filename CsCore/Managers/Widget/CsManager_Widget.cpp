@@ -36,7 +36,7 @@ void UCsManager_Widget::Shutdown()
 {
 	const int32 Count = Pool.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (Pool[I] && !Pool[I]->IsPendingKill())
 			Pool[I]->ConditionalBeginDestroy();
@@ -57,7 +57,7 @@ void UCsManager_Widget::CreatePool(UClass* InClass, const TCsSimpleWidgetType &T
 
 	TArray<UCsPooledWidget*> WidgetPool;
 
-	for (int32 I = 0; I < Size; I++)
+	for (int32 I = 0; I < Size; ++I)
 	{
 		UCsPooledWidget* Widget = CreateWidget<UCsPooledWidget>(CurrentWorld, InClass);
 
@@ -281,7 +281,7 @@ void UCsManager_Widget::DeAllocate(const TCsSimpleWidgetType &Type, const int32 
 	}
 
 	// Correct on Cache "Miss"
-	for (int32 I = 1; I < Count; I++)
+	for (int32 I = 1; I < Count; ++I)
 	{
 		UCsPooledWidget* Widget = (*Widgets)[I];
 		// Reset ActiveIndex
@@ -292,7 +292,7 @@ void UCsManager_Widget::DeAllocate(const TCsSimpleWidgetType &Type, const int32 
 
 void UCsManager_Widget::DeAllocateAll()
 {
-	for (uint8 I = 0; I < ECS_SIMPLE_WIDGET_TYPE_MAX; I++)
+	for (uint8 I = 0; I < ECS_SIMPLE_WIDGET_TYPE_MAX; ++I)
 	{
 		const TCsSimpleWidgetType Type = (TCsSimpleWidgetType)I;
 
@@ -322,7 +322,7 @@ void UCsManager_Widget::AddPoolToCanvas(UCanvasPanel* InCanvas, const TCsSimpleW
 
 	const uint16 Count = WidgetsPtr->Num();
 
-	for (uint16 I = 0; I < Count; I++)
+	for (uint16 I = 0; I < Count; ++I)
 	{
 		InCanvas->AddChildToCanvas((*WidgetsPtr)[I]);
 		(*WidgetsPtr)[I]->OnAddToCanvas();
@@ -334,7 +334,7 @@ void UCsManager_Widget::AddPoolToCanvas(UCanvasPanel* InCanvas, const TCsSimpleW
 
 FCsPooledWidgetPayload* UCsManager_Widget::AllocatePayload()
 {
-	for (uint8 I = 0; I < CS_POOLED_WIDGET_PAYLOAD_SIZE; I++)
+	for (uint8 I = 0; I < CS_POOLED_WIDGET_PAYLOAD_SIZE; ++I)
 	{
 		const uint8 Index				= (PayloadIndex + I) % CS_POOLED_WIDGET_PAYLOAD_SIZE;
 		FCsPooledWidgetPayload* Payload = &(Payloads[Index]);

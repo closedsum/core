@@ -438,7 +438,7 @@ public:
 
 		const int32 Count = B.Anims.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			Anims.Add(B.Anims[I]);
 		}
@@ -454,7 +454,7 @@ public:
 		if (Count != CountB)
 			return false;
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (Anims[I] != B.Anims[I])
 				return false;
@@ -466,7 +466,7 @@ public:
 		if (Count != CountB)
 			return false;
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (Anims_Internal[I] != B.Anims_Internal[I])
 				return false;

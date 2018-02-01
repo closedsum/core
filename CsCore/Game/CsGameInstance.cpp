@@ -229,7 +229,7 @@ PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(struct FCsRoutine* r))
 		{
 			const int32 Count = gi->LoadedDataAssets.Num();
 
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = 0; I < Count; ++I)
 			{
 				ACsData* Data = Cast<UBlueprintGeneratedClass>(gi->LoadedDataAssets[I])->GetDefaultObject<ACsData>();
 				Data->LoadFromJson();
@@ -260,7 +260,7 @@ void UCsGameInstance::OnFinishedLoadingDataAssets(const TArray<UObject*> &Loaded
 {
 	const int32 Count = LoadedAssets.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		LoadedDataAssets.Add(LoadedAssets[I]);
 	}

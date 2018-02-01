@@ -30,7 +30,7 @@ void ACsManager_Decal::CreatePool(const int32 &Size)
 	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnInfo.ObjectFlags |= RF_Transient;
 
-	for (int32 I = 0; I < Size; I++)
+	for (int32 I = 0; I < Size; ++I)
 	{
 		ADecalActor* DecalActor = GetWorld()->SpawnActor<ADecalActor>(SpawnInfo);
 		DecalActor->SetActorHiddenInGame(true);

@@ -247,7 +247,7 @@ public:
 
 	FCsInteractiveMaterials& operator=(const FCsInteractiveMaterials& B)
 	{
-		for (int32 I = 0; I < ECS_INTERACTIVE_STATE_MAX; I++)
+		for (int32 I = 0; I < ECS_INTERACTIVE_STATE_MAX; ++I)
 		{
 			Materials[I] = B.Materials[I];
 		}
@@ -257,13 +257,13 @@ public:
 
 	bool operator==(const FCsInteractiveMaterials& B) const
 	{
-		for (int32 I = 0; I < ECS_INTERACTIVE_STATE_MAX; I++)
+		for (int32 I = 0; I < ECS_INTERACTIVE_STATE_MAX; ++I)
 		{
 			if (Materials[I] != B.Materials[I])
 				return false;
 		}
 
-		for (int32 I = 0; I < ECS_INTERACTIVE_STATE_MAX; I++)
+		for (int32 I = 0; I < ECS_INTERACTIVE_STATE_MAX; ++I)
 		{
 			if (Materials_Internal[I] != B.Materials_Internal[I])
 				return false;

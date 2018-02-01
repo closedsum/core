@@ -55,7 +55,7 @@ void ACsManager_Projectile::Shutdown()
 
 	const int32 Count = Pool.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (Pool[I] && !Pool[I]->IsPendingKill())
 			Pool[I]->Destroy(true);
@@ -67,7 +67,7 @@ void ACsManager_Projectile::Destroyed()
 {
 	const int32 Count = Pool.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (Pool[I] && !Pool[I]->IsPendingKill())
 			Pool[I]->Destroy(true);
@@ -85,7 +85,7 @@ void ACsManager_Projectile::CreatePool(const TSubclassOf<class UObject> &ObjectC
 	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnInfo.ObjectFlags |= RF_Transient;
 
-	for (int32 I = 0; I < Size; I++)
+	for (int32 I = 0; I < Size; ++I)
 	{
 		ACsProjectile* Projectile = GetWorld()->SpawnActor<ACsProjectile>(ObjectClass, SpawnInfo);
 
@@ -156,7 +156,7 @@ void ACsManager_Projectile::OnTick(const float &DeltaSeconds)
 	{
 		const uint8 Max = ActiveProjectiles.Num();
 
-		for (uint8 I = EarliestIndex; I < Max; I++)
+		for (uint8 I = EarliestIndex; I < Max; ++I)
 		{
 			ACsProjectile* Projectile = ActiveProjectiles[I];
 			Projectile->Cache.SetActiveIndex(I);
@@ -246,7 +246,7 @@ void ACsManager_Projectile::DeAllocate(const int32 &Index)
 	}
 
 	// Correct on Cache "Miss"
-	for (int32 I = 1; I < Count; I++)
+	for (int32 I = 1; I < Count; ++I)
 	{
 		ACsProjectile* Projectile = ActiveProjectiles[I];
 		// Reset ActiveIndex

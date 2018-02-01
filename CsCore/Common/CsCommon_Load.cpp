@@ -95,7 +95,7 @@ FString UCsCommon_Load::LoadFlagsToString(const int32 &LoadFlags)
 	FString String = ECsCachedString::Str::Empty;
 	bool IsFirst = true;
 
-	for (int32 I = 0; I < ECS_LOAD_FLAGS_EDITOR_MAX; I++)
+	for (int32 I = 0; I < ECS_LOAD_FLAGS_EDITOR_MAX; ++I)
 	{
 		if (CS_TEST_BLUEPRINT_BITFLAG(LoadFlags, (ECsLoadFlags)I))
 		{
@@ -119,7 +119,7 @@ int32 UCsCommon_Load::StringtoLoadFlags(const FString &LoadFlags)
 {
 	int32 Flag = 0;
 
-	for (int32 I = 0; I < ECS_LOAD_FLAGS_EDITOR_MAX; I++)
+	for (int32 I = 0; I < ECS_LOAD_FLAGS_EDITOR_MAX; ++I)
 	{
 		const FString EnumAsString = ECsLoadFlags_Editor::ToString((TCsLoadFlags_Editor)I);
 
@@ -159,7 +159,7 @@ void UCsCommon_Load::JsonWriter(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, co
 
 	const int32 Count = Member.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		JsonWriter_ArrayElement(InJsonWriter, ElementName, Member[I]);
 	}
@@ -258,7 +258,7 @@ void UCsCommon_Load::WriteMemberArrayStructPropertyToJson_Transform(TSharedRef<T
 
 	const int32 Count = Member->Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		FTransform& Element = (*Member)[I];
 
@@ -1969,7 +1969,7 @@ void UCsCommon_Load::WriteToMemberArrayStructPropertyFromJson_Transform(TSharedP
 	const int32 MemberCount = Member->Num();
 	const int32 Count		= FMath::Max(ArrayCount, MemberCount);
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (I >= ArrayCount)
 			break;
@@ -2014,7 +2014,7 @@ void UCsCommon_Load::WriteToMemberArrayStructPropertyFromJson_Name(TSharedPtr<FJ
 	const int32 MemberCount = Member->Num();
 	const int32 Count		= FMath::Max(ArrayCount, MemberCount);
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (I >= ArrayCount)
 			break;
@@ -2556,7 +2556,7 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 					{
 						bool IsInt = false;
 
-						for (int32 I = 0; I < 10; I++)
+						for (int32 I = 0; I < 10; ++I)
 						{
 							if (String[0] == FString::FromInt(I)[0])
 								IsInt |= true;
@@ -3155,7 +3155,7 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 					{
 						bool IsInt = false;
 
-						for (int32 I = 0; I < 10; I++)
+						for (int32 I = 0; I < 10; ++I)
 						{
 							if (String[0] == FString::FromInt(I)[0])
 								IsInt |= true;
@@ -3677,7 +3677,7 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 					{
 						bool IsInt = false;
 
-						for (int32 I = 0; I < 10; I++)
+						for (int32 I = 0; I < 10; ++I)
 						{
 							if (String[0] == FString::FromInt(I)[0])
 								IsInt |= true;
@@ -3780,7 +3780,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_AnimMontage(UAsset
 
 			const int32 Count = AnimationAssets.Num();
 
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = 0; I < Count; ++I)
 			{
 				if (UAnimSequence* Anim = Cast<UAnimSequence>(AnimationAssets[I]))
 				{
@@ -3829,7 +3829,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_AnimMontage(UAsset
 
 			const int32 Count = AnimationAssets.Num();
 
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = 0; I < Count; ++I)
 			{
 				if (UAnimSequence* Anim = Cast<UAnimSequence>(AnimationAssets[I]))
 				{
@@ -3946,7 +3946,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_MaterialInstanceCo
 
 			const int32 Count = Asset->TextureParameterValues.Num();
 
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = 0; I < Count; ++I)
 			{
 				UTexture* Texture = Asset->TextureParameterValues[I].ParameterValue;
 
@@ -3993,7 +3993,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_MaterialInstanceCo
 
 			const int32 Count = Asset->TextureParameterValues.Num();
 
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = 0; I < Count; ++I)
 			{
 				UTexture* Texture = Asset->TextureParameterValues[I].ParameterValue;
 
@@ -4097,7 +4097,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_AnimMontage(U
 	{
 		const int32 Count = Member->Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 			const FString AssetName				 = AssetRef.ToString();
@@ -4151,7 +4151,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_AnimMontage(U
 	{
 		const int32 Count = Member->Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 			const FString AssetName				 = AssetRef.ToString();
@@ -4205,7 +4205,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_AnimSequence(
 	{
 		const int32 Count = Member->Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 			const FString AssetName				 = AssetRef.ToString();
@@ -4246,7 +4246,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_AnimSequence(
 	{
 		const int32 Count = Member->Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 			const FString AssetName				 = AssetRef.ToString();
@@ -4287,7 +4287,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_MaterialInsta
 	{
 		const int32 Count = Member->Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 			const FString AssetName				 = AssetRef.ToString();
@@ -4345,7 +4345,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_MaterialInsta
 	{
 		const int32 Count = Member->Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 			const FString AssetName				 = AssetRef.ToString();
@@ -4397,7 +4397,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_Blueprint(UAr
 	{
 		const int32 Count = Member->Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 			const FString AssetName				 = AssetRef.ToString();
@@ -4439,7 +4439,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_Blueprint(UAr
 	{
 		const int32 Count = Member->Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 			const FString AssetName				 = AssetRef.ToString();
@@ -5204,7 +5204,7 @@ void UCsCommon_Load::LoadTArrayTAssetPtr_Blueprint(const FString &MemberName, TA
 
 	const int32 Count = ArrayAssetPtr.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		TAssetPtr<UBlueprint>& AssetPtr = ArrayAssetPtr[I];
 
@@ -5251,7 +5251,7 @@ void UCsCommon_Load::LoadTArrayTAssetPtr_Blueprint(const FString &MemberName, TA
 
 	const int32 Count = ArrayAssetPtr->Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		TAssetPtr<UBlueprint>& AssetPtr	= (*ArrayAssetPtr)[I];
 
@@ -6927,7 +6927,7 @@ void UCsCommon_Load::IsLoaded_LogMessages(const FString &DataName, TArray<FStrin
 {
 	const int32 Count = OutMessages.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		UE_LOG(LogLoad, Warning, TEXT("IsLoaded (%s): %s"), *DataName, *OutMessages[I]);
 	}
@@ -6980,7 +6980,7 @@ void UCsCommon_Load::GetCategoryMemberAssociations(void* InStruct, UScriptStruct
 
 			const int32 Max = 10;
 
-			for (int32 I = 0; I < Max; I++)
+			for (int32 I = 0; I < Max; ++I)
 			{
 				if (Category[0] == FString::FromInt(I)[0])
 					IsNumberTens |= true;
@@ -7035,7 +7035,7 @@ void UCsCommon_Load::GetCategoryMemberAssociations(void* InObject, UClass* const
 
 			const int32 Max = 10;
 
-			for (int32 I = 0; I < Max; I++)
+			for (int32 I = 0; I < Max; ++I)
 			{
 				if (Category[0] == FString::FromInt(I)[0])
 					IsNumberTens |= true;

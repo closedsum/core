@@ -26,7 +26,7 @@ void UCsButtonComponent_Widget::AddInstigator(const TEnumAsByte<ECsButtonState::
 	// TODO: Potentially setup code flow that it is NOT possible to Add the same Instigator twice
 	const int32 Count = Objects->Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		UObject* Object = (*Objects)[I].IsValid() ? (*Objects)[I].Get() : nullptr;
 
@@ -70,7 +70,7 @@ void UCsButtonComponent_Widget::RemoveInstigator(const TEnumAsByte<ECsButtonStat
 
 void UCsButtonComponent_Widget::ClearInstigators()
 {
-	for (int32 I = 0; I < ECS_BUTTON_STATE_MAX; I++)
+	for (int32 I = 0; I < ECS_BUTTON_STATE_MAX; ++I)
 	{
 		TArray<TWeakObjectPtr<UObject>>* Objects = Instigators.Find((TCsButtonState)I);
 
@@ -95,7 +95,7 @@ void UCsButtonComponent_Widget::GetInstigators_Script(const TEnumAsByte<ECsButto
 
 	const int32 Count = Objects->Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		UObject* Object = (*Objects)[I].IsValid() ? (*Objects)[I].Get() : nullptr;
 
@@ -162,7 +162,7 @@ bool UCsButtonComponent_Widget::CanChangeFromAnyState(const TArray<TEnumAsByte<E
 {
 	const int32 Count = FromStates.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (CanChangeState(FromStates[I], ToState))
 			return true;

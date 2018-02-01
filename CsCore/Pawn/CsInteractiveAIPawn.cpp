@@ -14,7 +14,7 @@ ACsInteractiveAIPawn::ACsInteractiveAIPawn(const FObjectInitializer& ObjectIniti
 
 	PhysicsStateTimers.Reset();
 
-	for (int32 I = 0; I < ECS_INTERACTIVE_PHYSICS_STATE_EDITOR_MAX; I++)
+	for (int32 I = 0; I < ECS_INTERACTIVE_PHYSICS_STATE_EDITOR_MAX; ++I)
 	{
 		PhysicsStateTimers.Add(0.0f);
 	}
@@ -44,7 +44,7 @@ void ACsInteractiveAIPawn::AddInteractedInfo(const TEnumAsByte<ECsInteractiveSta
 	}
 	const int32 Count = Infos->Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if ((*Infos)[I].GetInstigator() == Info.GetInstigator())
 			return;
@@ -85,7 +85,7 @@ void ACsInteractiveAIPawn::RemoveInteractedInfo(const TEnumAsByte<ECsInteractive
 
 void ACsInteractiveAIPawn::ClearInteractedInfos()
 {
-	for (int32 I = 0; I < ECS_INTERACTIVE_STATE_MAX; I++)
+	for (int32 I = 0; I < ECS_INTERACTIVE_STATE_MAX; ++I)
 	{
 		TArray<FCsInteractedActorInfo>* Infos = InteractedInfos.Find((TCsInteractiveState)I);
 
@@ -110,7 +110,7 @@ void ACsInteractiveAIPawn::GetInteractedInfos_Script(const TEnumAsByte<ECsIntera
 
 	const int32 Count = Infos->Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		OutInfos.AddDefaulted();
 		OutInfos[I] = (*Infos)[I];
@@ -239,7 +239,7 @@ bool ACsInteractiveAIPawn::CanChangeFromAnyState(const TArray<TEnumAsByte<ECsInt
 {
 	const int32 Count = FromStates.Num();
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		if (CanChangeState(FromStates[I], ToState))
 			return true;

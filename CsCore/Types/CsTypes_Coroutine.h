@@ -357,63 +357,63 @@ struct FCsRoutine
 		delay = 0.0f;
 		endReason = ECsCoroutineEndReason::ECsCoroutineEndReason_MAX;
 
-		for (int32 i = 0; i < CS_ROUTINE_INDEXER_SIZE; i++)
+		for (int32 i = 0; i < CS_ROUTINE_INDEXER_SIZE; ++i)
 		{
 			indexers[i] = 0;
 		}
 
-		for (int32 i = 0; i < CS_ROUTINE_COUNTER_SIZE; i++)
+		for (int32 i = 0; i < CS_ROUTINE_COUNTER_SIZE; ++i)
 		{
 			counters[i] = 0;
 		}
 
-		for (int32 i = 0; i < CS_ROUTINE_FLAG_SIZE; i++)
+		for (int32 i = 0; i < CS_ROUTINE_FLAG_SIZE; ++i)
 		{
 			flags[i] = false;
 		}
 
-		for (int32 i = 0; i < CS_ROUTINE_TIMER_SIZE; i++)
+		for (int32 i = 0; i < CS_ROUTINE_TIMER_SIZE; ++i)
 		{
 			timers[i] = 0.0f;
 		}
 
-		for (int32 i = 0; i < CS_ROUTINE_INT_SIZE; i++)
+		for (int32 i = 0; i < CS_ROUTINE_INT_SIZE; ++i)
 		{
 			ints[i] = 0;
 		}
 
-		for (int32 i = 0; i < CS_ROUTINE_FLOAT_SIZE; i++)
+		for (int32 i = 0; i < CS_ROUTINE_FLOAT_SIZE; ++i)
 		{
 			floats[i] = 0.0f;
 		}
 
-		for (int32 i = 0; i < CS_ROUTINE_VECTOR_SIZE; i++)
+		for (int32 i = 0; i < CS_ROUTINE_VECTOR_SIZE; ++i)
 		{
 			vectors[i] = FVector::ZeroVector;
 		}
 
-		for (int32 i = 0; i < CS_ROUTINE_COLOR_SIZE; i++)
+		for (int32 i = 0; i < CS_ROUTINE_COLOR_SIZE; ++i)
 		{
 			colors[i] = FLinearColor::White;
 		}
 
-		for (int32 i = 0; i < CS_ROUTINE_STRING_SIZE; i++)
+		for (int32 i = 0; i < CS_ROUTINE_STRING_SIZE; ++i)
 		{
 			strings[i] = TEXT("");
 		}
 
-		for (int32 i = 0; i < CS_ROUTINE_OBJECT_SIZE; i++)
+		for (int32 i = 0; i < CS_ROUTINE_OBJECT_SIZE; ++i)
 		{
 			objects[i].Reset();
 			objects[i] = nullptr;
 		}
 
-		for (int32 i = 0; i < CS_ROUTINE_VOID_POINTER_SIZE; i++)
+		for (int32 i = 0; i < CS_ROUTINE_VOID_POINTER_SIZE; ++i)
 		{
 			voidPointers[i] = nullptr;
 		}
 
-		for (int32 i = 0; i < CS_ROUTINE_VOID_DOUBLE_POINTER_SIZE; i++)
+		for (int32 i = 0; i < CS_ROUTINE_VOID_DOUBLE_POINTER_SIZE; ++i)
 		{
 			voidDoublePointers[i] = nullptr;
 		}
@@ -426,7 +426,7 @@ struct FCsRoutine
 	{
 		const int32 count = stopMessages_recieved.Num();
 
-		for (int32 i = 0; i < count; i++)
+		for (int32 i = 0; i < count; ++i)
 		{
 			if (stopMessages.Find(stopMessages_recieved[i]) != INDEX_NONE)
 			{
@@ -479,7 +479,7 @@ struct FCsRoutine
 	{
 		const int32 count = children.Num();
 
-		for (int32 i = 0; i < count; i++)
+		for (int32 i = 0; i < count; ++i)
 		{
 			children[i]->End(ECsCoroutineEndReason::Parent);
 		}

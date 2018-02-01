@@ -46,7 +46,7 @@ void ACsData::PostLoad()
 
 	bool Verify = false;
 
-	for (uint8 I = 0; I < Count; I++)
+	for (uint8 I = 0; I < Count; ++I)
 	{
 		if (WorldContexts[I].WorldType == EWorldType::Editor ||
 			WorldContexts[I].WorldType == EWorldType::EditorPreview)
@@ -104,7 +104,7 @@ void ACsData::PopulateAssetReferences(const bool &CalculateResourceSizes)
 {
 	const int32 Count = ECsLoadFlags_Editor::ECsLoadFlags_Editor_MAX;
 
-	for (int32 I = 0; I < Count; I++)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		AssetReferences[I].References.Reset();
 
@@ -142,7 +142,7 @@ void ACsData::VerifyJsonIntegrity()
 
 		CategoryMemberAssociations.Reset();
 
-		for (int32 I = 0; I < LatestCount; I++)
+		for (int32 I = 0; I < LatestCount; ++I)
 		{
 			CategoryMemberAssociations.AddDefaulted();
 
@@ -163,7 +163,7 @@ void ACsData::VerifyJsonIntegrity()
 	bool RegenerateJson = false;
 
 	// Check for change in categories names, number of members, or member names
-	for (int32 I = 0; I < CurrentCount; I++)
+	for (int32 I = 0; I < CurrentCount; ++I)
 	{
 		// Change in category name
 		const FString LatestCategory  = LatestCategoryMemberAssociations[I].Category;
@@ -207,7 +207,7 @@ void ACsData::VerifyJsonIntegrity()
 	{
 		CategoryMemberAssociations.Reset();
 
-		for (int32 I = 0; I < LatestCount; I++)
+		for (int32 I = 0; I < LatestCount; ++I)
 		{
 			CategoryMemberAssociations.AddDefaulted();
 
@@ -365,7 +365,7 @@ ACsDataMapping* ACsData::GetDataMapping()
 	{
 		UE_LOG(LogCs, Warning, TEXT("ACsData::GetDataMapping (%s): More than one asset named %s"), *(ShortCode.ToString()), *DataMappingName);
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			UE_LOG(LogCs, Warning, TEXT("ACsData::GetDataMapping (%s): Asset at %s"), *(ShortCode.ToString()), *(Bps[I]->GetPathName()));
 		}
@@ -399,7 +399,7 @@ ACsData_Payload* ACsData::GetPayload()
 	{
 		UE_LOG(LogCs, Warning, TEXT("ACsData::GetPayload (%s): More than one asset named %s"), *(ShortCode.ToString()), *PayloadName);
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			UE_LOG(LogCs, Warning, TEXT("ACsData::GetPayload (%s): Asset at %s"), *(ShortCode.ToString()), *(Bps[I]->GetPathName()));
 		}

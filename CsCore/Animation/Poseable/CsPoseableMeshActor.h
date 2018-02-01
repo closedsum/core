@@ -258,7 +258,7 @@ struct FCsAnimControlInfo_FK
 
 		const int32 Count = B.Connections.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			Connections.AddDefaulted();
 			Connections[I] = B.Connections[I];
@@ -280,7 +280,7 @@ struct FCsAnimControlInfo_FK
 		if (Count != B.Connections.Num())
 			return false;
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (Connections[I] != B.Connections[I])
 				return false;
@@ -827,7 +827,7 @@ struct FCsAnimLevelSequenceInfo_Master
 		Shots.Reset();
 		const int32 Count = B.Shots.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			Shots.AddDefaulted();
 			Shots[I] = B.Shots[I];
@@ -855,7 +855,7 @@ struct FCsAnimLevelSequenceInfo_Master
 
 		const int32 Count = Shots.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (Shots[I] != B.Shots[I])
 				return false;

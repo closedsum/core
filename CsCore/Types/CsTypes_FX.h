@@ -164,13 +164,13 @@ public:
 	{
 		return !(*this == B);
 	}
-
+	
 	void Set(class UParticleSystem* InParticle)
 	{
-		Particle		  = TAssetPtr<UParticleSystem>(InParticle);
+		//Particle		  = TAssetPtr<UParticleSystem>(InParticle);
 		Particle_Internal = InParticle;
 	}
-
+	
 	UParticleSystem* Get() const
 	{
 		return Particle_Internal;
@@ -178,7 +178,7 @@ public:
 
 	void Reset()
 	{
-		Particle = nullptr;
+		//Particle = nullptr;
 		Particle_LoadFlags = 0;
 
 		CS_SET_BLUEPRINT_BITFLAG(Particle_LoadFlags, ECsLoadFlags::Game);

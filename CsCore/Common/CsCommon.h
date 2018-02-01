@@ -419,7 +419,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 
 		const int32 Count = A.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (A[I] != B[I])
 				return false;
@@ -435,7 +435,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 
 		const int32 Count = A.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (A[I] != B[I])
 				return false;
@@ -450,7 +450,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 		
 		const int32 Count = From.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			To.Add(CreateAndCopy ? (*CreateAndCopy)(From[I]) : From[I]);
 		}
@@ -463,7 +463,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 
 		const int32 Count = From.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			To.Add(From[I]);
 		}
@@ -476,7 +476,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 
 		const int32 Count = From->Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			To.Add((*From)[I]);
 		}
@@ -489,7 +489,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 
 		const int32 Count = From.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			To.Add(From[I]);
 		}
@@ -500,7 +500,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	{
 		const int32 Count = A.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			A[I] = nullptr;
 		}
@@ -512,7 +512,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	{
 		const int32 Count = A.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			A[I] = nullptr;
 		}
@@ -524,7 +524,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	{
 		const int32 Count = A.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (!A[I])
 				return true;
@@ -537,7 +537,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	{
 		const int32 Count = A.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (!A[I].IsValid() || !A[I].Get())
 				return true;
@@ -562,7 +562,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	{
 		const int32 Count = A.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (!A[I].IsValid() || !A[I].Get())
 				return true;
@@ -575,7 +575,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	{
 		const int32 Count = A->Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (!(*A)[I].IsValid() || !(*A)[I].Get())
 				return true;
@@ -588,7 +588,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	{
 		const int32 Count = A.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (!A[I].IsValid() || !A[I].Get())
 				return true;
@@ -601,7 +601,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	{
 		const int32 Count = A->Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (!(*A)[I].IsValid() || !(*A)[I].Get())
 				return true;

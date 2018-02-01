@@ -256,7 +256,7 @@ void ACsFpsWeapon::OnTick(const float &DeltaSeconds)
 		ACsPawn* MyPawn = GetMyPawn();
 
 		// Spread
-		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; I++)
+		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; ++I)
 		{
 			const TCsWeaponFireMode FireMode = (TCsWeaponFireMode)I;
 

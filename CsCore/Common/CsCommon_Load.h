@@ -44,7 +44,7 @@ template<typename T>
 
 		const int32 Count = A.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (A[I] != B[I])
 				return false;
@@ -60,7 +60,7 @@ template<typename T>
 
 		const int32 Count = A.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (A[I] != B[I])
 				return false;
@@ -75,7 +75,7 @@ template<typename T>
 
 		const int32 Count = From.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			To.Add(CreateAndCopy ? (*CreateAndCopy)(From[I]) : From[I]);
 		}
@@ -88,7 +88,7 @@ template<typename T>
 
 		const int32 Count = From.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			To.Add(From[I]);
 		}
@@ -101,7 +101,7 @@ template<typename T>
 
 		const int32 Count = From->Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			To.Add((*From)[I]);
 		}
@@ -114,7 +114,7 @@ template<typename T>
 
 		const int32 Count = From.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			To.Add(From[I]);
 		}
@@ -125,7 +125,7 @@ template<typename T>
 	{
 		const int32 Count = A.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			A[I] = nullptr;
 		}
@@ -137,7 +137,7 @@ template<typename T>
 	{
 		const int32 Count = A.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			A[I] = nullptr;
 		}
@@ -149,7 +149,7 @@ template<typename T>
 	{
 		const int32 Count = A.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (!A[I])
 				return true;
@@ -162,7 +162,7 @@ template<typename T>
 	{
 		const int32 Count = A.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (!A[I].IsValid() || !A[I].Get())
 				return true;
@@ -187,7 +187,7 @@ template<typename T>
 	{
 		const int32 Count = A.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (!A[I].IsValid() || !A[I].Get())
 				return true;
@@ -200,7 +200,7 @@ template<typename T>
 	{
 		const int32 Count = A->Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (!(*A)[I].IsValid() || !(*A)[I].Get())
 				return true;
@@ -213,7 +213,7 @@ template<typename T>
 	{
 		const int32 Count = A.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (!A[I].IsValid() || !A[I].Get())
 				return true;
@@ -226,7 +226,7 @@ template<typename T>
 	{
 		const int32 Count = A->Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (!(*A)[I].IsValid() || !(*A)[I].Get())
 				return true;
@@ -321,7 +321,7 @@ template<typename T>
 		
 		const int32 Count = Member.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			WriteTAssetPtrToJson(InJsonWriter, ElementName, Member[I], true);
 		}
@@ -384,7 +384,7 @@ template<typename T>
 		{
 			InJsonWriter->WriteArrayStart(MemberName);
 
-			for (int32 I = 0; I < SIZE; I++)
+			for (int32 I = 0; I < SIZE; ++I)
 			{
 				const FString ElementName = (*ToString)((E)I);
 				WriteTAssetPtrToJson<T>(InJsonWriter, ElementName, (*Member)[I], true);
@@ -422,7 +422,7 @@ template<typename T>
 
 		const int32 Count = Member->Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			InJsonWriter->WriteObjectStart();
 									//   TEXT("Index")
@@ -440,7 +440,7 @@ template<typename T>
 
 		InJsonWriter->WriteObjectStart(MemberName);
 
-		for (int32 I = 0; I < SIZE; I++)
+		for (int32 I = 0; I < SIZE; ++I)
 		{
 			InJsonWriter->WriteObjectStart((*ToString)((E)I));
 			WriteStructToJson(InJsonWriter, (void*)&((*Member)[I]), StructProperty->Struct, Internal);
@@ -465,7 +465,7 @@ template<typename T>
 
 		const int32 Count = Member->Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			InJsonWriter->WriteObjectStart();
 				InJsonWriter->WriteValue(MemberName, ((*Member)[I].*ToString)());
@@ -493,7 +493,7 @@ template<typename T>
 
 			const int32 Count = Member->Num();
 
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = 0; I < Count; ++I)
 			{
 				InJsonWriter->WriteValue(FString::FromInt(I), (*EnumToString)((*Member)[I]));
 			}
@@ -508,7 +508,7 @@ template<typename T>
 		{
 			InJsonWriter->WriteObjectStart(MemberName);
 
-			for (int32 I = 0; I < SIZE; I++)
+			for (int32 I = 0; I < SIZE; ++I)
 			{
 				InJsonWriter->WriteValue((*EnumSizeToString)((E)I), (*EnumToString)((T)((*Member)[I])));
 			}
@@ -523,7 +523,7 @@ template<typename T>
 		{
 			InJsonWriter->WriteObjectStart(MemberName);
 
-			for (int32 I = 0; I < SIZE; I++)
+			for (int32 I = 0; I < SIZE; ++I)
 			{
 				InJsonWriter->WriteValue((*EnumSizeToString)((E)I), ((*Member)[I].*ToString)());
 			}
@@ -571,7 +571,7 @@ template<typename T>
 			const int32 MemberCount	= Member->Num();
 			const int32 Count		= FMath::Max(ArrayCount, MemberCount);
 
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = 0; I < Count; ++I)
 			{
 				if (I >= ArrayCount)
 					break;
@@ -596,7 +596,7 @@ template<typename T>
 			const int32 ArrayCount = JsonArray.Num();
 			const int32 Count	   = FMath::Min(ArrayCount, SIZE);
 
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = 0; I < Count; ++I)
 			{
 				TSharedPtr<class FJsonObject> Object = JsonArray[I]->AsObject();
 				const FString ElementName			 = (*ToString)((E)I);
@@ -623,7 +623,7 @@ template<typename T>
 		const int32 MemberCount = Member->Num();
 		const int32 Count		= FMath::Max(ArrayCount, MemberCount);
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (I >= ArrayCount)
 				break;
@@ -664,7 +664,7 @@ template<typename T>
 		const int32 MemberCount = Member->Num();
 		const int32 Count		= FMath::Max(ArrayCount, MemberCount);
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (I >= ArrayCount)
 				break;
@@ -685,7 +685,7 @@ template<typename T>
 
 		const TSharedPtr<class FJsonObject> JObject = JsonObject->GetObjectField(MemberName);
 
-		for (int32 I = 0; I < SIZE; I++)
+		for (int32 I = 0; I < SIZE; ++I)
 		{
 			TSharedPtr<class FJsonObject> Object = JObject->GetObjectField((*ToString)((E)I));
 			
@@ -710,7 +710,7 @@ template<typename T>
 
 			const int32 Count = Member->Num();
 
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = 0; I < Count; ++I)
 			{
 				const FString Value = JObject->GetStringField(FString::FromInt(I));
 				(*Member)[I]		= (*ToType)(Value);
@@ -725,7 +725,7 @@ template<typename T>
 		{
 			const TSharedPtr<FJsonObject> JObject = JsonObject->GetObjectField(MemberName);
 
-			for (int32 I = 0; I < SIZE; I++)
+			for (int32 I = 0; I < SIZE; ++I)
 			{
 				const FString Value = JObject->GetStringField((*ToString)((E)I));
 				(*Member)[I]		= (*ToType)(Value);
@@ -740,7 +740,7 @@ template<typename T>
 		{
 			const TSharedPtr<FJsonObject> JObject = JsonObject->GetObjectField(MemberName);
 
-			for (int32 I = 0; I < SIZE; I++)
+			for (int32 I = 0; I < SIZE; ++I)
 			{
 				const FString Value = JObject->GetStringField((*ToString)((E)I));
 				(*Member)[I]		= FName(*Value);
@@ -894,7 +894,7 @@ template<typename T>
 						if (Count != FlagCount)
 							return;
 
-						for (int32 I = 0; I < Count; I++)
+						for (int32 I = 0; I < Count; ++I)
 						{
 							const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 							const FString AssetName				 = AssetRef.ToString();
@@ -934,7 +934,7 @@ template<typename T>
 
 			const int32 Count = Member->Num();
 
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = 0; I < Count; ++I)
 			{
 				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 				const FString AssetName				 = AssetRef.ToString();
@@ -983,7 +983,7 @@ template<typename T>
 						if (Count != FlagCount)
 							return;
 
-						for (int32 I = 0; I < Count; I++)
+						for (int32 I = 0; I < Count; ++I)
 						{
 							const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 							const FString AssetName				 = AssetRef.ToString();
@@ -1025,7 +1025,7 @@ template<typename T>
 
 			const int32 Count = Member->Num();
 
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = 0; I < Count; ++I)
 			{
 				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 				const FString AssetName				 = AssetRef.ToString();
@@ -1062,7 +1062,7 @@ template<typename T>
 
 		if (TAssetPtr<T>(*Member)[SIZE] = ArrayAssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<T>[SIZE]>(InObject))
 		{
-			for (int32 I = 0; I < SIZE; I++)
+			for (int32 I = 0; I < SIZE; ++I)
 			{
 				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 				const FString AssetName				 = AssetRef.ToString();
@@ -1111,7 +1111,7 @@ template<typename T>
 
 		if (TAssetPtr<UMaterialInstanceConstant>(*Member)[SIZE] = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UMaterialInstanceConstant>[SIZE]>(InObject))
 		{
-			for (int32 I = 0; I < SIZE; I++)
+			for (int32 I = 0; I < SIZE; ++I)
 			{
 				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 				const FString AssetName				 = AssetRef.ToString();
@@ -1165,7 +1165,7 @@ template<typename T>
 
 		if (TAssetPtr<UBlueprint>(*Member)[SIZE] = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UBlueprint>[SIZE]>(InObject))
 		{
-			for (int32 I = 0; I < SIZE; I++)
+			for (int32 I = 0; I < SIZE; ++I)
 			{
 				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 				const FString AssetName				 = AssetRef.ToString();
@@ -1205,7 +1205,7 @@ template<typename T>
 
 		if (TAssetPtr<UBlueprint>(*Member)[SIZE] = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UBlueprint>[SIZE]>(InObject))
 		{
-			for (int32 I = 0; I < SIZE; I++)
+			for (int32 I = 0; I < SIZE; ++I)
 			{
 				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 				const FString AssetName				 = AssetRef.ToString();
@@ -1240,7 +1240,7 @@ template<typename T>
 	{
 		if (T(*Member)[SIZE] = StructProperty->ContainerPtrToValuePtr<T[SIZE]>(InObject))
 		{
-			for (int32 I = 0; I < SIZE; I++)
+			for (int32 I = 0; I < SIZE; ++I)
 			{
 				GetAssetReferencesFromStruct((void*)&((*Member)[I]), StructProperty->Struct, LoadFlags, OutAssetReferences, Internal, LoadCodes);
 			}
@@ -1333,7 +1333,7 @@ template<typename T>
 		{
 			const int32 Count = Member->Num();
 
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = 0; I < Count; ++I)
 			{
 				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 				const FString AssetName				 = AssetRef.ToString();
@@ -1375,7 +1375,7 @@ template<typename T>
 		{
 			const int32 Count = Member->Num();
 
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = 0; I < Count; ++I)
 			{
 				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
 				const FString AssetName				 = AssetRef.ToString();
@@ -1421,7 +1421,7 @@ template<typename T>
 
 			const int32 Count = Member->Num();
 
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = 0; I < Count; ++I)
 			{
 				GetAssetReferencesFromStruct((void*)&((*Member)[I]), StructProperty->Struct, LoadFlags, OutAssetReferences, Internal, LoadCodes);
 			}
@@ -1727,7 +1727,7 @@ template<typename T>
 
 		const int32 Count = ArrayAssetPtr.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			Array.Add(ArrayAssetPtr[I].Get());
 		}
@@ -1740,7 +1740,7 @@ template<typename T>
 
 		const int32 Count = ArrayAssetPtr->Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			Array.Add((*ArrayAssetPtr)[I].Get());
 		}
@@ -1753,7 +1753,7 @@ template<typename T>
 
 		const int32 Count = ArrayAssetPtr.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			Array.Add(ArrayAssetPtr[I].Get());
 		}
@@ -1766,7 +1766,7 @@ template<typename T>
 
 		const int32 Count = ArrayAssetPtr->Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			Array.Add((*ArrayAssetPtr)[I].Get());
 		}
@@ -1792,7 +1792,7 @@ template<typename T>
 
 			const int32 Count = ArrayAssetPtr.Num();
 
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = 0; I < Count; ++I)
 			{
 				TAssetPtr<T>& AssetPtr				  = ArrayAssetPtr[I];
 				const FStringAssetReference& AssetRef = AssetPtr.ToStringReference();
@@ -1838,7 +1838,7 @@ template<typename T>
 
 			const int32 Count = ArrayAssetPtr->Num();
 
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = 0; I < Count; ++I)
 			{
 				TAssetPtr<T>& AssetPtr				  = (*ArrayAssetPtr)[I];
 				const FStringAssetReference& AssetRef = AssetPtr.ToStringReference();
@@ -1884,7 +1884,7 @@ template<typename T>
 
 			const int32 Count = ArrayAssetPtr.Num();
 
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = 0; I < Count; ++I)
 			{
 				TAssetPtr<T>& AssetPtr				  = ArrayAssetPtr[I];
 				const FStringAssetReference& AssetRef = AssetPtr.ToStringReference();
@@ -1920,7 +1920,7 @@ template<typename T>
 
 		const int32 Count = ArrayAssetSubclassOf.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			Array.Add(ArrayAssetSubclassOf[I].Get()->template GetDefaultObject<T>());
 		}
@@ -1933,7 +1933,7 @@ template<typename T>
 
 		const int32 Count = ArrayAssetSubclassOf->Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			Array.Add((*ArrayAssetSubclassOf)[I].Get()->template GetDefaultObject<T>());
 		}
@@ -1959,7 +1959,7 @@ template<typename T>
 
 			const int32 Count = ArrayAssetSubclassOf->Num();
 
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = 0; I < Count; ++I)
 			{
 				TAssetSubclassOf<T>& AssetSubclassOf  = (*ArrayAssetSubclassOf)[I];
 				const FStringAssetReference& AssetRef = AssetSubclassOf.ToStringReference();
@@ -2196,7 +2196,7 @@ template<typename T>
 			{
 				if (T*(*Internal)[SIZE] = InternalProperty->ContainerPtrToValuePtr<T*[SIZE]>(InObject))
 				{
-					for (int32 I = 0; I < SIZE; I++)
+					for (int32 I = 0; I < SIZE; ++I)
 					{
 						const FString Index		  = (*ToString)((E)I);
 						const FString ElementName = MemberName + TEXT("[") + Index + TEXT("]");
@@ -2226,7 +2226,7 @@ template<typename T>
 			{
 				if (UBlueprintGeneratedClass*(*Internal)[SIZE] = InternalProperty->ContainerPtrToValuePtr<UBlueprintGeneratedClass*[SIZE]>(InObject))
 				{
-					for (int32 I = 0; I < SIZE; I++)
+					for (int32 I = 0; I < SIZE; ++I)
 					{
 						const FString Index		  = (*ToString)((E)I);
 						const FString ElementName = MemberName + TEXT("[") + Index + TEXT("]");
@@ -2252,7 +2252,7 @@ template<typename T>
 			{
 				if (UBlueprintGeneratedClass*(*Internal)[SIZE] = InternalProperty->ContainerPtrToValuePtr<UBlueprintGeneratedClass*[SIZE]>(InObject))
 				{
-					for (int32 I = 0; I < SIZE; I++)
+					for (int32 I = 0; I < SIZE; ++I)
 					{
 						const FString Index		  = (*ToString)((E)I);
 						const FString ElementName = MemberName + TEXT("[") + Index + TEXT("]");
@@ -2279,7 +2279,7 @@ template<typename T>
 
 			const int32 Count = Member->Num();
 
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = 0; I < Count; ++I)
 			{
 				const FString ElementName = MemberName + TEXT("[") + FString::FromInt(I) + TEXT("]");
 				LoadStructWithTAssetPtrs(ElementName, (void*)&((*Member)[I]), StructProperty->Struct, LoadFlags);
@@ -2292,7 +2292,7 @@ template<typename T>
 	{
 		if (T(*Member)[SIZE] = StructProperty->ContainerPtrToValuePtr<T[SIZE]>(InObject))
 		{
-			for (int32 I = 0; I < SIZE; I++)
+			for (int32 I = 0; I < SIZE; ++I)
 			{
 				const FString Index		  = (*ToString)((E)I);
 				const FString ElementName = MemberName + TEXT("[") + Index + TEXT("]");
@@ -2330,7 +2330,7 @@ template<typename T>
 					const int32 AssetPtrCount = AssetPtrs->Num();
 					const int32 AssetCount	  = LoadedAssets.Num();
 
-					for (int32 I = 0; I < AssetPtrCount; I++)
+					for (int32 I = 0; I < AssetPtrCount; ++I)
 					{
 						const FString AssetName = (*AssetPtrs)[I].GetAssetName();
 
@@ -2383,7 +2383,7 @@ template<typename T>
 		{
 			const int32 Count = (int32)EMeleeType::EMeleeType_MAX;
 
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = 0; I < Count; ++I)
 			{
 				UnLoadStructWithTAssetPtrs((void*)&((*Member)[I]), StructProperty->Struct);
 			}
@@ -2398,7 +2398,7 @@ template<typename T>
 		{
 			const int32 Count = (int32)EPickupItem::EPickupItem_MAX;
 
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = 0; I < Count; ++I)
 			{
 				UnLoadStructWithTAssetPtrs((void*)&((*Member)[I]), StructProperty->Struct);
 			}
@@ -2413,7 +2413,7 @@ template<typename T>
 		{
 			const int32 Count = (int32)ESurfaceType::ESurfaceType_MAX;
 
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = 0; I < Count; ++I)
 			{
 				UnLoadStructWithTAssetPtrs((void*)&((*Member)[I]), StructProperty->Struct);
 			}
@@ -2429,7 +2429,7 @@ template<typename T>
 
 			const int32 Count = Member->Num();
 
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = 0; I < Count; ++I)
 			{
 				UnLoadStructWithTAssetPtrs((void*)&((*Member)[I]), StructProperty->Struct);
 			}
@@ -2470,7 +2470,7 @@ template<typename T>
 		bool Pass		  = true;
 		const int32 Count = Internal.Num();
 
-		for (int32 I = 0; I < Count; I++)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			const FString Name = MemberName + TEXT("[") + FString::FromInt(I) + TEXT("]");
 			Pass			  &= IsLoadedMember<T>(Name, Internal[I]);
@@ -2509,7 +2509,7 @@ template<typename T>
 			bool Pass		  = true;
 			const int32 Count = (int32)EMeleeType::EMeleeType_MAX;
 
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = 0; I < Count; ++I)
 			{
 				const FString Index		  = MeleeTypeToString((TEnumAsByte<EMeleeType::Type>)I);
 				const FString ElementName = MemberName + TEXT("[") + Index + TEXT("].");
@@ -2529,7 +2529,7 @@ template<typename T>
 			bool Pass = true;
 			const int32 Count = (int32)EPickupItem::EPickupItem_MAX;
 
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = 0; I < Count; ++I)
 			{
 				const FString Index		  = PickupItemToString((TEnumAsByte<EPickupItem::Type>)I);
 				const FString ElementName = MemberName + TEXT("[") + Index + TEXT("].");
@@ -2549,7 +2549,7 @@ template<typename T>
 			bool Pass		  = true;
 			const int32 Count = (int32)ESurfaceType::ESurfaceType_MAX;
 
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = 0; I < Count; ++I)
 			{
 				const FString Index		  = SurfaceTypeToString((TEnumAsByte<ESurfaceType::Type>)I);
 				const FString ElementName = MemberName + TEXT("[") + Index + TEXT("].");
@@ -2569,7 +2569,7 @@ template<typename T>
 			UStructProperty* StructProperty = Cast<UStructProperty>(ArrayProperty->Inner);
 			const int32 Count				= Member->Num();
 
-			for (int32 I = 0; I < Count; I++)
+			for (int32 I = 0; I < Count; ++I)
 			{
 				const FString ElementName = MemberName + TEXT("[") + FString::FromInt(I) + TEXT("].");
 				Pass &= IsLoadedStructWithTAssetPtrs(ElementName, (void*)&((*Member)[I]), StructProperty->Struct);

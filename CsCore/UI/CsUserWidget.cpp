@@ -218,8 +218,8 @@ void UCsUserWidget::CloseAllChildrenExcept(const TCsWidgetType &WidgetType)
 
 	for (int32 I = Count - 1; I >= 0; I--)
 	{
-		UCsUserWidget* Widget		   = ActiveChildWidgets[I];
-		const TCsWidgetType ActiveType = Widget->Type;
+		UCsUserWidget* Widget		    = ActiveChildWidgets[I];
+		const TCsWidgetType& ActiveType = Widget->Type;
 
 		if (WidgetType == ActiveType)
 			continue;
@@ -238,7 +238,7 @@ void UCsUserWidget::CloseAllChildrenExcept(const TCsWidgetType &WidgetType)
 
 	for (int32 I = 0; I < TypeCount; ++I)
 	{
-		const TCsWidgetType ActiveType = ChildWidgetTypes[I];
+		const TCsWidgetType& ActiveType = ChildWidgetTypes[I];
 
 		if (WidgetType == ActiveType)
 			continue;

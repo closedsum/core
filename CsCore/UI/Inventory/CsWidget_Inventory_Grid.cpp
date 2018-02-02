@@ -12,19 +12,22 @@ UCsWidget_Inventory_Grid::UCsWidget_Inventory_Grid(const FObjectInitializer& Obj
 {
 }
 
+void UCsWidget_Inventory_Grid::OnNativeConstruct()
+{
+	Super::OnNativeConstruct();
+
+	if (!bSpawnSlots)
+	{
+		RowSize	   = MyGridPanel->RowFill.Num();
+		ColumnSize = MyGridPanel->ColumnFill.Num();
+	}
+}
+
 void UCsWidget_Inventory_Grid::Init()
 {
 	Setup();
 
 	HasInitFinished = true;
-}
-
-void UCsWidget_Inventory_Grid::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
-{
-	Super::NativeTick(MyGeometry, InDeltaTime);
-
-	if (!HasInitFinished)
-		Init();
 }
 
 void UCsWidget_Inventory_Grid::Show()
@@ -71,9 +74,6 @@ void UCsWidget_Inventory_Grid::SetupRowsAndColumns()
 	}
 	else
 	{
-		RowSize	   = MyGridPanel->RowFill.Num();
-		ColumnSize = MyGridPanel->ColumnFill.Num();
-
 		SlotSize = FVector2D(Size.X / (float)ColumnSize, Size.Y / (float)RowSize);
 	}
 }

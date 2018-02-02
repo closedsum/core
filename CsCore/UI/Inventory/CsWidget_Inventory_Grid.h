@@ -8,9 +8,9 @@ class CSCORE_API UCsWidget_Inventory_Grid : public UCsWidget_Grid
 {
 	GENERATED_UCLASS_BODY()
 
-	virtual void Init() override;
+	virtual void OnNativeConstruct() override;
 
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	virtual void Init() override;
 
 	virtual void Show() override;
 	virtual void Hide() override;

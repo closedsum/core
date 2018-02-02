@@ -9,6 +9,18 @@
 
 ACsManager_Inventory::ACsManager_Inventory(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+	// TODO: Get BagCount from Data
+	BagCount = 1;
+}
+
+void ACsManager_Inventory::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	for (uint8 I = 0; I < BagCount; ++I)
+	{
+		Bags.AddDefaulted();
+	}
 }
 
 /*static*/ ACsManager_Inventory* ACsManager_Inventory::Get(UWorld* InWorld)
@@ -95,6 +107,7 @@ void ACsManager_Inventory::AddItem(FCsItem* Item)
 		ItemMap.Add(Item->ShortCode, ItemArray);
 	}
 	IncrementItemCount(Item->ShortCode);
+	Bags[Item->InventoryProperties.Bag].Add(Item);
 }
 
 void ACsManager_Inventory::AddItems(const TArray<FCsItem*> &ItemsToAdd)
@@ -136,6 +149,7 @@ void ACsManager_Inventory::RemoveItem(const uint64 &Id, const bool &ShouldDestro
 		}
 	}
 	DecrementItemCount(ShortCode);
+	Bags[Item->InventoryProperties.Bag].Remove(Item);
 
 	if (ShouldDestroy)
 	{

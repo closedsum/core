@@ -2190,3 +2190,203 @@ typedef TEnumAsByte<ECsMemberType::Type> TCsMemberType;
 																		  *ptr = Value;
 
 #pragma endregion Primitive Types
+
+// Vector Types
+#pragma region
+
+// TODO: Look at FIntPoint, FVector ... etc for proper setup
+
+USTRUCT(BlueprintType)
+struct FCsUint8Point
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UInt8Point")
+	uint8 X;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UInt8Point")
+	uint8 Y;
+
+	FCsUint8Point()
+	{
+		Reset();
+	}
+	~FCsUint8Point(){}
+
+	FCsUint8Point& operator=(const FCsUint8Point& B)
+	{
+		X = B.X;
+		Y = B.Y;
+		return *this;
+	}
+
+	bool operator==(const FCsUint8Point& B) const
+	{
+		return X == B.X && Y == B.Y;
+	}
+
+	bool operator!=(const FCsUint8Point& B) const
+	{
+		return !(*this == B);
+	}
+
+	void Reset()
+	{
+		X = 0;
+		Y = 0;
+	}
+
+	FString ToString() const
+	{
+		return FString::Printf(TEXT("X=%d Y=%d"), X, Y);
+	}
+
+	bool InitFromString(const FString& InSourceString)
+	{
+		X = Y = 0;
+
+		// The initialization is only successful if the X and Y values can all be parsed from the string
+		const bool bSuccessful = FParse::Value(*InSourceString, TEXT("X="), X) && FParse::Value(*InSourceString, TEXT("Y="), Y);
+
+		return bSuccessful;
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FCsUint8MatrixDimension
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Uint8MatrixDimension")
+	uint8 RowSpan;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Uint8MatrixDimension")
+	uint8 ColumnSpan;
+
+	FCsUint8MatrixDimension()
+	{
+		Reset();
+	}
+
+	FCsUint8MatrixDimension(const uint8 &InRowSpan, const uint8 &InColumnSpan)
+	{
+		RowSpan	   = InRowSpan;
+		ColumnSpan = InColumnSpan;
+	}
+	~FCsUint8MatrixDimension() {}
+
+	FCsUint8MatrixDimension& operator=(const FCsUint8MatrixDimension& B)
+	{
+		RowSpan	   = B.RowSpan;
+		ColumnSpan = B.ColumnSpan;
+		return *this;
+	}
+
+	bool operator==(const FCsUint8MatrixDimension& B) const
+	{
+		return RowSpan == B.RowSpan && ColumnSpan == B.ColumnSpan;
+	}
+
+	bool operator!=(const FCsUint8MatrixDimension& B) const
+	{
+		return !(*this == B);
+	}
+
+	void Reset()
+	{
+		RowSpan	   = 0;
+		ColumnSpan = 0;
+	}
+
+	FString ToString() const
+	{
+		return FString::Printf(TEXT("RowSpan=%d ColumnSpan=%d"), RowSpan, ColumnSpan);
+	}
+
+	bool InitFromString(const FString& InSourceString)
+	{
+		RowSpan = ColumnSpan = 0;
+
+		// The initialization is only successful if the RowSpan and Y values can all be parsed from the string
+		const bool bSuccessful = FParse::Value(*InSourceString, TEXT("RowSpan="), RowSpan) && FParse::Value(*InSourceString, TEXT("ColumnSpan="), ColumnSpan);
+
+		return bSuccessful;
+	}
+
+	void Set(const uint8 &InRowSpan, const uint8 &InColumnSpan)
+	{
+		RowSpan    = InRowSpan;
+		ColumnSpan = InColumnSpan;
+	}
+
+	uint8 GetRow(const int32 &Index)
+	{
+		return (Index / RowSpan) % RowSpan;
+	}
+
+	uint8 GetColumn(const int32 &Index)
+	{
+		return Index % RowSpan;
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FCsUint8MatrixCoordinate
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Uint8MatrixCoordinate")
+	uint8 Row;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Uint8MatrixCoordinate")
+	uint8 Column;
+
+	FCsUint8MatrixCoordinate()
+	{
+		Reset();
+	}
+	~FCsUint8MatrixCoordinate() {}
+
+	FCsUint8MatrixCoordinate& operator=(const FCsUint8MatrixCoordinate& B)
+	{
+		Row    = B.Row;
+		Column = B.Column;
+		return *this;
+	}
+
+	bool operator==(const FCsUint8MatrixCoordinate& B) const
+	{
+		return Row == B.Row && Column == B.Column;
+	}
+
+	bool operator!=(const FCsUint8MatrixCoordinate& B) const
+	{
+		return !(*this == B);
+	}
+
+	void Reset()
+	{
+		Row	   = 0;
+		Column = 0;
+	}
+
+	FString ToString() const
+	{
+		return FString::Printf(TEXT("Row=%d Column=%d"), Row, Column);
+	}
+
+	bool InitFromString(const FString& InSourceString)
+	{
+		Row = Column = 0;
+
+		// The initialization is only successful if the RowSpan and Y values can all be parsed from the string
+		const bool bSuccessful = FParse::Value(*InSourceString, TEXT("Row="), Row) && FParse::Value(*InSourceString, TEXT("Column="), Column);
+
+		return bSuccessful;
+	}
+
+	void Set(const uint8 &InRow, const uint8 &InColumn)
+	{
+		Row    = InRow;
+		Column = InColumn;
+	}
+};
+
+#pragma endregion Vector Types

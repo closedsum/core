@@ -41,7 +41,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual UMaterialInstanceConstant* GetMaterial();
 
-	virtual FCsInventoryItemDimension* GetDimension();
+	virtual FCsUint8MatrixDimension* GetDimension();
 
 #pragma endregion UI
 

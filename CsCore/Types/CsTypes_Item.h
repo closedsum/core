@@ -200,15 +200,13 @@ struct FCsInventoryItemProperties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	bool Visible;
 
-	UPROPERTY()
-	int32 Count;
-	UPROPERTY()
-	int32 MaxCount;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+	uint8 Bag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
-	FCsInventoryItemDimension Dimension;
+	FCsUint8MatrixDimension Dimension;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
-	FCsInventoryItemPosition Position;
+	FCsUint8MatrixCoordinate Position;
 
 	FCsInventoryItemProperties() {}
 	~FCsInventoryItemProperties() {}
@@ -216,8 +214,7 @@ struct FCsInventoryItemProperties
 	FCsInventoryItemProperties& operator=(const FCsInventoryItemProperties& B)
 	{
 		Visible = B.Visible;
-		Count = B.Count;
-		MaxCount = B.MaxCount;
+		Bag = B.Bag;
 		Dimension = B.Dimension;
 		Position = B.Position;
 		return *this;
@@ -226,8 +223,7 @@ struct FCsInventoryItemProperties
 	bool operator==(const FCsInventoryItemProperties& B) const
 	{
 		if (Visible != B.Visible) { return false; }
-		if (Count != B.Count) { return false; }
-		if (MaxCount != B.MaxCount) { return false; }
+		if (Bag != B.Bag) { return false; }
 		if (Dimension != B.Dimension) { return false; }
 		if (Position != B.Position) { return false; }
 		return true;
@@ -241,8 +237,7 @@ struct FCsInventoryItemProperties
 	void Reset()
 	{
 		Visible = false;
-		Count = 0;
-		MaxCount = 0;
+		Bag = 0;
 		Dimension.Reset();
 		Position.Reset();
 	}

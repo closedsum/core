@@ -400,6 +400,15 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FTransform
 			if (StructProperty->Struct == TBaseStructure<FTransform>::Get())
 			{ WriteMemberStructPropertyToJson_Transform(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+			// FCsUint8Point
+			if (StructProperty->Struct == FCsUint8Point::StaticStruct())
+			{ WriteMemberStructPropertyToJson_Primitive<FCsUint8Point>(InJsonWriter, StructProperty, InStruct, MemberName, &FCsUint8Point::ToString); continue; }
+			// FCsUint8MatrixDimension
+			if (StructProperty->Struct == FCsUint8MatrixDimension::StaticStruct())
+			{ WriteMemberStructPropertyToJson_Primitive<FCsUint8MatrixDimension>(InJsonWriter, StructProperty, InStruct, MemberName, &FCsUint8MatrixDimension::ToString); continue; }
+			// FCsUint8MatrixCoordinate
+			if (StructProperty->Struct == FCsUint8MatrixCoordinate::StaticStruct())
+			{ WriteMemberStructPropertyToJson_Primitive<FCsUint8MatrixCoordinate>(InJsonWriter, StructProperty, InStruct, MemberName, &FCsUint8MatrixCoordinate::ToString); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
 			{
@@ -958,6 +967,15 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FTransform
 			if (StructProperty->Struct == TBaseStructure<FTransform>::Get())
 			{ WriteMemberStructPropertyToJson_Transform(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+			// FCsUint8Point
+			if (StructProperty->Struct == FCsUint8Point::StaticStruct())
+			{ WriteMemberStructPropertyToJson_Primitive<FCsUint8Point>(InJsonWriter, StructProperty, InStruct, MemberName, &FCsUint8Point::ToString); continue; }
+			// FCsUint8MatrixDimension
+			if (StructProperty->Struct == FCsUint8MatrixDimension::StaticStruct())
+			{ WriteMemberStructPropertyToJson_Primitive<FCsUint8MatrixDimension>(InJsonWriter, StructProperty, InStruct, MemberName, &FCsUint8MatrixDimension::ToString); continue; }
+			// FCsUint8MatrixCoordinate
+			if (StructProperty->Struct == FCsUint8MatrixCoordinate::StaticStruct())
+			{ WriteMemberStructPropertyToJson_Primitive<FCsUint8MatrixCoordinate>(InJsonWriter, StructProperty, InStruct, MemberName, &FCsUint8MatrixCoordinate::ToString); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
 			{ 
@@ -1510,6 +1528,15 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FTransform
 			if (StructProperty->Struct == TBaseStructure<FTransform>::Get())
 			{ WriteMemberStructPropertyToJson_Transform(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+			// FCsUint8Point
+			if (StructProperty->Struct == FCsUint8Point::StaticStruct())
+			{ WriteMemberStructPropertyToJson_Primitive<FCsUint8Point>(InJsonWriter, StructProperty, InObject, MemberName, &FCsUint8Point::ToString); continue; }
+			// FCsUint8MatrixDimension
+			if (StructProperty->Struct == FCsUint8MatrixDimension::StaticStruct())
+			{ WriteMemberStructPropertyToJson_Primitive<FCsUint8MatrixDimension>(InJsonWriter, StructProperty, InObject, MemberName, &FCsUint8MatrixDimension::ToString); continue; }
+			// FCsUint8MatrixCoordinate
+			if (StructProperty->Struct == FCsUint8MatrixCoordinate::StaticStruct())
+			{ WriteMemberStructPropertyToJson_Primitive<FCsUint8MatrixCoordinate>(InJsonWriter, StructProperty, InObject, MemberName, &FCsUint8MatrixCoordinate::ToString); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
 			{
@@ -2144,6 +2171,15 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FColor
 			if (StructProperty->Struct == TBaseStructure<FColor>::Get())
 			{ WriteToMemberStructPropertyFromJson_Primitive<FColor>(JsonObject, StructProperty, InStruct, MemberName, &FColor::InitFromString); continue; }
+			// FCsUint8Point
+			if (StructProperty->Struct == FCsUint8Point::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson_Primitive<FCsUint8Point>(JsonObject, StructProperty, InStruct, MemberName, &FCsUint8Point::InitFromString); continue; }
+			// FCsUint8MatrixDimension
+			if (StructProperty->Struct == FCsUint8MatrixDimension::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson_Primitive<FCsUint8MatrixDimension>(JsonObject, StructProperty, InStruct, MemberName, &FCsUint8MatrixDimension::InitFromString); continue; }
+			// FCsUint8MatrixCoordinate
+			if (StructProperty->Struct == FCsUint8MatrixCoordinate::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson_Primitive<FCsUint8MatrixCoordinate>(JsonObject, StructProperty, InStruct, MemberName, &FCsUint8MatrixCoordinate::InitFromString); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
 			{ 
@@ -2741,6 +2777,15 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FColor
 			if (StructProperty->Struct == TBaseStructure<FColor>::Get())
 			{ WriteToMemberStructPropertyFromJson_Primitive<FColor>(JsonObject, StructProperty, InStruct, MemberName, &FColor::InitFromString); continue; }
+			// FCsUint8Point
+			if (StructProperty->Struct == FCsUint8Point::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson_Primitive<FCsUint8Point>(JsonObject, StructProperty, InStruct, MemberName, &FCsUint8Point::InitFromString); continue; }
+			// FCsUint8MatrixDimension
+			if (StructProperty->Struct == FCsUint8MatrixDimension::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson_Primitive<FCsUint8MatrixDimension>(JsonObject, StructProperty, InStruct, MemberName, &FCsUint8MatrixDimension::InitFromString); continue; }
+			// FCsUint8MatrixCoordinate
+			if (StructProperty->Struct == FCsUint8MatrixCoordinate::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson_Primitive<FCsUint8MatrixCoordinate>(JsonObject, StructProperty, InStruct, MemberName, &FCsUint8MatrixCoordinate::InitFromString); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
 			{ 
@@ -3335,6 +3380,15 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FColor
 			if (StructProperty->Struct == TBaseStructure<FColor>::Get())
 			{ WriteToMemberStructPropertyFromJson_Primitive<FColor>(JsonObject, StructProperty, InObject, MemberName, &FColor::InitFromString); continue; }
+			// FCsUint8Point
+			if (StructProperty->Struct == FCsUint8Point::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson_Primitive<FCsUint8Point>(JsonObject, StructProperty, InObject, MemberName, &FCsUint8Point::InitFromString); continue; }
+			// FCsUint8MatrixDimension
+			if (StructProperty->Struct == FCsUint8MatrixDimension::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson_Primitive<FCsUint8MatrixDimension>(JsonObject, StructProperty, InObject, MemberName, &FCsUint8MatrixDimension::InitFromString); continue; }
+			// FCsUint8MatrixCoordinate
+			if (StructProperty->Struct == FCsUint8MatrixCoordinate::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson_Primitive<FCsUint8MatrixCoordinate>(JsonObject, StructProperty, InObject, MemberName, &FCsUint8MatrixCoordinate::InitFromString); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
 			{ 

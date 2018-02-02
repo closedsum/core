@@ -50,7 +50,7 @@ void UCsButtonComponent_SkeletalMesh::RemoveInstigator(const TEnumAsByte<ECsButt
 	bool Found = false;
 	const int32 Count = Objects->Num();
 
-	for (int32 I = Count - 1; I >= 0; I--)
+	for (int32 I = Count - 1; I >= 0; --I)
 	{
 		UObject* Object = (*Objects)[I].IsValid() ? (*Objects)[I].Get() : nullptr;
 

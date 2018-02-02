@@ -109,7 +109,7 @@ void ACsManager_FX::OnTick(const float &DeltaSeconds)
 
 	uint16 EarliestIndex = Count;
 
-	for (int32 I = Count - 1; I >= 0; I--)
+	for (int32 I = Count - 1; I >= 0; --I)
 	{
 		ACsEmitter* Emitter = ActiveEmitters[I];
 
@@ -278,7 +278,7 @@ void ACsManager_FX::DeAllocate(const int32 &Index)
 {
 	const uint8 Count = ActiveEmitters.Num();
 
-	for (int32 I = Count - 1; I >= 0; I--)
+	for (int32 I = Count - 1; I >= 0; --I)
 	{
 		ACsEmitter* Emitter = ActiveEmitters[I];
 

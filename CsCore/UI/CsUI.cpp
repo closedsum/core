@@ -18,7 +18,7 @@ void ACsUI::Destroyed()
 
 	const int32 Count = Widgets.Num();
 
-	for (int32 I = Count - 1; I >= 0; I--)
+	for (int32 I = Count - 1; I >= 0; --I)
 	{
 		UCsUserWidget* Widget = Widgets[I];
 
@@ -188,7 +188,7 @@ void ACsUI::Close(const TCsWidgetType &WidgetType)
 
 	const int32 Count = ActiveWidgets.Num();
 
-	for (int32 I = Count - 1; I >= 0; I--)
+	for (int32 I = Count - 1; I >= 0; --I)
 	{
 		if (ActiveWidgets[I] == Widget)
 		{
@@ -201,7 +201,7 @@ void ACsUI::Close(const TCsWidgetType &WidgetType)
 	{
 		const int32 WidgetCount = WidgetArray->Num();
 
-		for (int32 I = WidgetCount - 1; I >= 0; I--)
+		for (int32 I = WidgetCount - 1; I >= 0; --I)
 		{
 			if ((*WidgetArray)[I] == Widget)
 			{

@@ -180,7 +180,7 @@ void UCsUserWidget::CloseChild(const TCsWidgetType &WidgetType)
 
 	const int32 Count = ActiveChildWidgets.Num();
 
-	for (int32 I = Count - 1; I >= 0; I--)
+	for (int32 I = Count - 1; I >= 0; --I)
 	{
 		if (ActiveChildWidgets[I] == Widget)
 		{
@@ -193,7 +193,7 @@ void UCsUserWidget::CloseChild(const TCsWidgetType &WidgetType)
 	{
 		const int32 WidgetCount = Widgets->Num();
 
-		for (int32 I = WidgetCount - 1; I >= 0; I--)
+		for (int32 I = WidgetCount - 1; I >= 0; --I)
 		{
 			if ((*Widgets)[I] == Widget)
 			{
@@ -216,7 +216,7 @@ void UCsUserWidget::CloseAllChildrenExcept(const TCsWidgetType &WidgetType)
 {
 	const int32 Count = ActiveChildWidgets.Num();
 
-	for (int32 I = Count - 1; I >= 0; I--)
+	for (int32 I = Count - 1; I >= 0; --I)
 	{
 		UCsUserWidget* Widget		    = ActiveChildWidgets[I];
 		const TCsWidgetType& ActiveType = Widget->Type;

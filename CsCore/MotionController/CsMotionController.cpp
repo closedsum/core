@@ -773,7 +773,7 @@ void ACsMotionController::OnInteraction(const TArray<FCsInteractedActorInfo> &In
 		// Remove from front of the list, resolve actors no longer being interacted with
 		bool IsFirstUnHover = false;
 
-		for (int32 I = CurrentActorCount - 1; I >= 0; I--)
+		for (int32 I = CurrentActorCount - 1; I >= 0; --I)
 		{
 			bool Found = false;
 
@@ -837,7 +837,7 @@ void ACsMotionController::OnInteraction(const TArray<FCsInteractedActorInfo> &In
 		bool IsFirstTouch = false; bool IsTouch = false;
 		bool IsFirstHover = false; bool IsHover = false;
 
-		for (int32 I = InfoCount - 1; I >= 0; I--)
+		for (int32 I = InfoCount - 1; I >= 0; --I)
 		{
 			AActor* Actor					 = CurrentInteractedActorInfos[I].GetActor();
 			ACsInteractiveAIPawn* Pawn		 = Cast<ACsInteractiveAIPawn>(Actor);
@@ -1223,7 +1223,7 @@ void ACsMotionController::OnButtonInteraction(const TArray<USceneComponent*> &Bu
 		// Remove from front of the list, resolve buttons no longer being interacted with
 		bool IsFirstUnHover = false;
 
-		for (int32 I = CurrentButtonCount - 1; I >= 0; I--)
+		for (int32 I = CurrentButtonCount - 1; I >= 0; --I)
 		{
 			bool Found = false;
 
@@ -1266,7 +1266,7 @@ void ACsMotionController::OnButtonInteraction(const TArray<USceneComponent*> &Bu
 
 		bool IsFirstHover = false; bool IsHover = false;
 
-		for (int32 I = ButtonCount - 1; I >= 0; I--)
+		for (int32 I = ButtonCount - 1; I >= 0; --I)
 		{
 			USceneComponent* Component = CurrentButtons[I].IsValid() ? CurrentButtons[I].Get() : nullptr;
 			UCsButtonComponent* Button = Cast<UCsButtonComponent>(Component);

@@ -600,7 +600,7 @@ void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 
 								const int32 ArraySize = Array.Num();
 
-								for (int32 J = ArraySize - 1; J >= 0; J--)
+								for (int32 J = ArraySize - 1; J >= 0; --J)
 								{
 									FCsPayload& Payload = Array[J];
 

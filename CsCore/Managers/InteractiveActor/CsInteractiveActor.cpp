@@ -252,7 +252,7 @@ void ACsInteractiveActor::RemoveInteractedInfo(const TEnumAsByte<ECsInteractiveS
 	bool Found		  = false;
 	const int32 Count = Infos->Num();
 
-	for (int32 I = Count - 1; I >= 0; I--)
+	for (int32 I = Count - 1; I >= 0; --I)
 	{
 		if ((*Infos)[I].GetInstigator() == Info.GetInstigator())
 		{

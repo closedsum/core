@@ -1391,7 +1391,7 @@ bool ACsDataMapping::PerformValidate(FString &OutMessage, FString &OutOutput)
 					{
 						const int32 EntryCount = Member->Num();
 
-						for (int32 I = EntryCount - 1; I >= 0; I--)
+						for (int32 I = EntryCount - 1; I >= 0; --I)
 						{
 							FCsDataMappingEntry& Entry = (*Member)[I];
 
@@ -1606,7 +1606,7 @@ void ACsDataMapping::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 						{
 							const int32 EntryCount = Member->Num();
 
-							for (int32 I = EntryCount - 1; I >= 0; I--)
+							for (int32 I = EntryCount - 1; I >= 0; --I)
 							{
 								FCsDataMappingEntry& Entry = (*Member)[I];
 

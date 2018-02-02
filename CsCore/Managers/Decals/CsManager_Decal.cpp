@@ -46,7 +46,7 @@ void ACsManager_Decal::OnTick(const float &DeltaSeconds)
 	/*
 	const uint8 Count = ActiveWidgetActors.Num();
 
-	for (int32 I = Count - 1; I >= 0; I--)
+	for (int32 I = Count - 1; I >= 0; --I)
 	{
 	ACsWidgetActor* Widget = ActiveWidgetActors[I];
 
@@ -90,7 +90,7 @@ void ACsManager_Decal::DeAllocate(const int32 &Index)
 
 void ACsManager_Decal::DeAllocateAll()
 {
-	for (int32 I = ActiveDecals.Num() - 1; I >= 0; I--)
+	for (int32 I = ActiveDecals.Num() - 1; I >= 0; --I)
 	{
 		DeAllocate(I);
 	}

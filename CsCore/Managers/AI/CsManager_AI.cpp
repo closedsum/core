@@ -151,7 +151,7 @@ void ACsManager_AI::OnTick(const float &DeltaSeconds)
 	/*
 	const uint8 Count = ActiveWidgetActors.Num();
 
-	for (int32 I = Count - 1; I >= 0; I--)
+	for (int32 I = Count - 1; I >= 0; --I)
 	{
 	ACsWidgetActor* Widget = ActiveWidgetActors[I];
 
@@ -213,7 +213,7 @@ void ACsManager_AI::DeAllocate(const uint8 &Type, const int32 &Index)
 
 	const uint8 Count = Actors->Num();
 
-	for (int32 I = Count - 1; I >= 0; I--)
+	for (int32 I = Count - 1; I >= 0; --I)
 	{
 		ACsAIPawn* Actor = (*Actors)[I];
 
@@ -242,7 +242,7 @@ void ACsManager_AI::DeAllocateAll()
 
 		const int32 ActorCount = Actors->Num();
 
-		for (int32 J = ActorCount - 1; J >= 0; J--)
+		for (int32 J = ActorCount - 1; J >= 0; --J)
 		{
 			(*Actors)[J]->DeAllocate();
 			Actors->RemoveAt(J);

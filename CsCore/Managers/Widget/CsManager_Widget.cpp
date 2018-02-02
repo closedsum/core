@@ -96,7 +96,7 @@ void UCsManager_Widget::OnNativeTick(const FGeometry& MyGeometry, const float &D
 {
 	const int32 PoolCount = ActiveWidgets.Num();
 
-	for (int32 I = PoolCount - 1; I >= 0; I--)
+	for (int32 I = PoolCount - 1; I >= 0; --I)
 	{
 		const TCsSimpleWidgetType Type		 = (TCsSimpleWidgetType)I;
 		TArray<UCsPooledWidget*>* WidgetsPtr = ActiveWidgets.Find(Type);
@@ -104,7 +104,7 @@ void UCsManager_Widget::OnNativeTick(const FGeometry& MyGeometry, const float &D
 		const int32 WidgetCount = WidgetsPtr->Num();
 		int32 EarliestIndex		= WidgetCount;
 
-		for (int32 J = WidgetCount - 1; J >= 0; J--)
+		for (int32 J = WidgetCount - 1; J >= 0; --J)
 		{
 			UCsPooledWidget* Widget = (*WidgetsPtr)[J];
 
@@ -253,7 +253,7 @@ void UCsManager_Widget::DeAllocate(const TCsSimpleWidgetType &Type, const int32 
 
 	const uint8 Count = Widgets->Num();
 
-	for (int32 I = Count - 1; I >= 0; I--)
+	for (int32 I = Count - 1; I >= 0; --I)
 	{
 		UCsPooledWidget* Widget = (*Widgets)[I];
 
@@ -303,7 +303,7 @@ void UCsManager_Widget::DeAllocateAll()
 
 		const int32 WidgetCount = Widgets->Num();
 
-		for (int32 J = WidgetCount - 1; J >= 0; J--)
+		for (int32 J = WidgetCount - 1; J >= 0; --J)
 		{
 			LogTransaction(ECsManagerWidgetCachedString::Str::DeAllocateAll, ECsPoolTransaction::Deallocate, (*Widgets)[J]);
 

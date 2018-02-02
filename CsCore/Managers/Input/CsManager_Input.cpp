@@ -966,7 +966,7 @@ void ACsManager_Input::UnbindActionMapping(const TCsInputDevice &Device, const T
 	// Remove binding from PlayerInput ActionMapping
 	const int32 MappingCount = PlayerInput->ActionMappings.Num();
 
-	for (int32 I = MappingCount - 1; I >= 0; I--)
+	for (int32 I = MappingCount - 1; I >= 0; --I)
 	{
 		FInputActionKeyMapping& Mapping = PlayerInput->ActionMappings[I];
 
@@ -984,7 +984,7 @@ void ACsManager_Input::UnbindActionMapping(const TCsInputDevice &Device, const T
 	const FString ActionNameAsString = ActionName.ToString();
 	const int32 Count			     = Mappings.Num();
 
-	for (int32 I = Count - 1; I >= 0; I--)
+	for (int32 I = Count - 1; I >= 0; --I)
 	{
 		FCsInputActionMapping& Mapping = Mappings[I];
 
@@ -1008,7 +1008,7 @@ void ACsManager_Input::UnbindAxisMapping(const TCsInputDevice &Device, const TCs
 	// Remove binding from PlayerInput ActionMapping
 	const int32 MappingCount = PlayerInput->AxisMappings.Num();
 
-	for (int32 I = MappingCount - 1; I >= 0; I--)
+	for (int32 I = MappingCount - 1; I >= 0; --I)
 	{
 		FInputAxisKeyMapping& Mapping = PlayerInput->AxisMappings[I];
 
@@ -1026,7 +1026,7 @@ void ACsManager_Input::UnbindAxisMapping(const TCsInputDevice &Device, const TCs
 	const FString ActionNameAsString = ActionName.ToString();
 	const int32 Count				 = Mappings.Num();
 
-	for (int32 I = Count - 1; I >= 0; I--)
+	for (int32 I = Count - 1; I >= 0; --I)
 	{
 		FCsInputActionMapping& Mapping = Mappings[I];
 

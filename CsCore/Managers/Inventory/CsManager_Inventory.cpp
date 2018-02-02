@@ -140,7 +140,7 @@ void ACsManager_Inventory::RemoveItem(const uint64 &Id, const bool &ShouldDestro
 
 	const int32 Count = ItemsPtr->Num();
 
-	for (int32 I = Count - 1; I >= 0; I--)
+	for (int32 I = Count - 1; I >= 0; --I)
 	{
 		if ((*ItemsPtr)[I]->UniqueId == Id)
 		{

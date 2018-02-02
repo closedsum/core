@@ -180,7 +180,7 @@ void ACsManager_InteractiveActor::OnTick(const float &DeltaSeconds)
 {
 	const int32 PoolCount = ActiveActors.Num();
 
-	for (int32 I = PoolCount - 1; I >= 0; I--)
+	for (int32 I = PoolCount - 1; I >= 0; --I)
 	{
 		const TCsInteractiveType Type			= (TCsInteractiveType)I;
 		TArray<ACsInteractiveActor*>* ActorsPtr = ActiveActors.Find(Type);
@@ -188,7 +188,7 @@ void ACsManager_InteractiveActor::OnTick(const float &DeltaSeconds)
 		const int32 ActorCount = ActorsPtr->Num();
 		int32 EarliestIndex    = ActorCount;
 
-		for (int32 J = ActorCount - 1; J >= 0; J--)
+		for (int32 J = ActorCount - 1; J >= 0; --J)
 		{
 			ACsInteractiveActor* Actor = (*ActorsPtr)[J];
 
@@ -353,7 +353,7 @@ void ACsManager_InteractiveActor::DeAllocate(const uint8 &Type, const int32 &Ind
 
 	const uint8 Count = Actors->Num();
 
-	for (int32 I = Count - 1; I >= 0; I--)
+	for (int32 I = Count - 1; I >= 0; --I)
 	{
 		ACsInteractiveActor* Actor = (*Actors)[I];
 
@@ -403,7 +403,7 @@ void ACsManager_InteractiveActor::DeAllocateAll()
 
 		const int32 ActorCount = Actors->Num();
 
-		for (int32 J = ActorCount - 1; J >= 0; J--)
+		for (int32 J = ActorCount - 1; J >= 0; --J)
 		{
 			LogTransaction(ECsManagerInteractiveActorCachedString::Str::DeAllocateAll, ECsPoolTransaction::Deallocate, (*Actors)[J]);
 

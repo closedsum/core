@@ -637,7 +637,7 @@ struct FCsInputWord
 
 		const int32 Count = InputFrame.Inputs.Num();
 
-		for (int32 I = Count - 1; I >= 0; I--)
+		for (int32 I = Count - 1; I >= 0; --I)
 		{
 			FCsInput* Input = InputFrame.Inputs[I];
 

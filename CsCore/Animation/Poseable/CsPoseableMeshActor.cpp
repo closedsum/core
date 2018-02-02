@@ -508,7 +508,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_Control_FK(struct FProper
 	{
 		const int32 Delta = CopyCount - ControlCount;
 
-		for (int32 I = CopyCount - 1; I >= CopyCount - Delta; I--)
+		for (int32 I = CopyCount - 1; I >= CopyCount - Delta; --I)
 		{
 			ACsAnim_Control_FK* Control = Controls_FK_Copy[I].Actor;
 
@@ -577,7 +577,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_Control_FK_Connection(str
 		{
 			const int32 Delta = CopyCount - ConnectionCount;
 
-			for (int32 I = CopyCount - 1; I >= CopyCount - Delta; I--)
+			for (int32 I = CopyCount - 1; I >= CopyCount - Delta; --I)
 			{
 				FK.Connections_Copy.RemoveAt(I);
 			}
@@ -733,7 +733,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_TwoBoneIK(struct FPropert
 	{
 		const int32 Delta = CopyCount - ControlCount;
 
-		for (int32 I = CopyCount - 1; I >= CopyCount - Delta; I--)
+		for (int32 I = CopyCount - 1; I >= CopyCount - Delta; --I)
 		{
 			ACsAnim_Control_TwoBoneIK* Control = Controls_TwoBoneIK_Copy[I].Actor;
 
@@ -846,7 +846,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots(struc
 	{
 		const int32 Delta = CopyCount - ShotCount;
 
-		for (int32 I = CopyCount - 1; I >= CopyCount - Delta; I--)
+		for (int32 I = CopyCount - 1; I >= CopyCount - Delta; --I)
 		{
 			AnimLevelSequence.Shots_Copy.RemoveAt(I);
 		}

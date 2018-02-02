@@ -112,7 +112,7 @@ void ACsManager_WidgetActor::OnTick(const float &DeltaSeconds)
 	/*
 	const uint8 Count = ActiveWidgetActors.Num();
 
-	for (int32 I = Count - 1; I >= 0; I--)
+	for (int32 I = Count - 1; I >= 0; --I)
 	{
 		ACsWidgetActor* Widget = ActiveWidgetActors[I];
 
@@ -169,7 +169,7 @@ void ACsManager_WidgetActor::DeAllocate(const uint8 &Type, const int32 &Index)
 
 	const uint8 Count = WidgetActors->Num();
 
-	for (int32 I = Count - 1; I >= 0; I--)
+	for (int32 I = Count - 1; I >= 0; --I)
 	{
 		ACsWidgetActor* Widget = (*WidgetActors)[I];
 

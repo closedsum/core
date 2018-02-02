@@ -116,7 +116,7 @@ void ACsManager_Sound::OnTick(const float &DeltaSeconds)
 	const uint8 Count   = ActiveSounds.Num();
 	uint8 EarliestIndex = Count;
 
-	for (int32 I = Count - 1; I >= 0; I--)
+	for (int32 I = Count - 1; I >= 0; --I)
 	{
 		ACsSound* Sound = ActiveSounds[I];
 
@@ -233,7 +233,7 @@ void ACsManager_Sound::DeAllocate(const int32 &Index)
 {
 	const uint8 Count = ActiveSounds.Num();
 
-	for (int32 I = Count - 1; I >= 0; I--)
+	for (int32 I = Count - 1; I >= 0; --I)
 	{
 		ACsSound* Sound = ActiveSounds[I];
 
@@ -439,7 +439,7 @@ void ACsManager_Sound::Stop(FCsSoundElement* InSound, UObject* InOwner, UObject*
 	const uint8 Count   = ActiveSounds.Num();
 	uint8 EarliestIndex = Count;
 
-	for (int32 I = Count - 1; I >= 0; I--)
+	for (int32 I = Count - 1; I >= 0; --I)
 	{
 		ACsSound* Sound = ActiveSounds[I];
 

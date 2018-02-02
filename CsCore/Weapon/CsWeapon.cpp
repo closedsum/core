@@ -1766,7 +1766,7 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 			// See if this line is close enough to hit any enemy characters
 			const int32 HitPawnCount = HittablePawns.Num();
 
-			for (int32 I = HitPawnCount - 1; I >= 0; I--)
+			for (int32 I = HitPawnCount - 1; I >= 0; --I)
 			{
 				/*
 				ACsCharacter* HitPawn = HittablePawns[I];

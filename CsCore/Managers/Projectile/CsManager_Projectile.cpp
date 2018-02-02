@@ -108,7 +108,7 @@ void ACsManager_Projectile::OnTick(const float &DeltaSeconds)
 	const int32 Count	 = ActiveProjectiles.Num();
 	uint16 EarliestIndex = Count;
 
-	for (int32 I = Count - 1; I >= 0; I--)
+	for (int32 I = Count - 1; I >= 0; --I)
 	{
 		ACsProjectile* Projectile = ActiveProjectiles[I];
 
@@ -227,7 +227,7 @@ void ACsManager_Projectile::DeAllocate(const int32 &Index)
 	if (Count == CS_EMPTY)
 		return;
 
-	for (int32 I = Count - 1; I >= 0; I--)
+	for (int32 I = Count - 1; I >= 0; --I)
 	{
 		ACsProjectile* Projectile = ActiveProjectiles[I];
 

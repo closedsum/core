@@ -490,7 +490,7 @@ struct FCsRoutine
 	{
 		const int32 count = children.Num();
 
-		for (int32 i = count - 1; i >= 0; i--)
+		for (int32 i = count - 1; i >= 0; --i)
 		{
 			if (child == children[i])
 			{

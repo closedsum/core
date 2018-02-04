@@ -6,6 +6,25 @@
 
 // Managers
 #include "Managers/Item/CsManager_Item.h"
+// Data
+#include "Data/CsData_Item.h"
+#include "Data/CsData_Interactive.h"
+
+// Cache
+#pragma region
+
+namespace ECsManagerInventoryStringCache
+{
+	namespace Str
+	{
+		const FString AddItem = TEXT("ACsManager_Inventory::AddItem");
+		const FString RemoveItem = TEXT("ACsManager_Inventory::RemoveItem");
+		const FString ConsumeItem = TEXT("ACsManager_Inventory::ConsumeItem");
+		const FString DropItem = TEXT("ACsManager_Inventory::DropItem");
+	}
+}
+
+#pragma endregion Cache
 
 ACsManager_Inventory::ACsManager_Inventory(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -92,6 +111,32 @@ void ACsManager_Inventory::DecrementItemCount(const FName &ShortCode)
 	}
 }
 
+void ACsManager_Inventory::LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsInventoryTransaction::Type> &Transaction, const FCsItem* const Item)
+{
+	if (CsCVarLogManagerInventoryTransactions->GetInt() == CS_CVAR_SHOW_LOG)
+	{
+		const FString TransactionAsString = ECsInventoryTransaction::ToActionString(Transaction);
+
+		const FString ItemName				  = Item->ShortCode.ToString();
+		const FString DataName				  = Item->GetData()->ShortCode.ToString();
+		const ACsData_Interactive* Data_Actor = Item->GetData_Actor();
+		const FString DataActorName			  = Data_Actor ? Data_Actor->ShortCode.ToString() : ECsCachedString::Str::Empty;
+		const float CurrentTime				  = GetWorld()->GetTimeSeconds();
+
+		if (Data_Actor)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s Item: %s with Data: %s and with Data_Actor: %s at %f."), *FunctionName, *TransactionAsString, *ItemName, *DataName, *DataActorName, CurrentTime);
+		}
+		else
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s Item: %s with Data: %s at %f."), *FunctionName, *TransactionAsString, *ItemName, *DataName, CurrentTime);
+		}
+	}
+}
+
+// Add
+#pragma region
+
 void ACsManager_Inventory::AddItem(FCsItem* Item)
 {
 	Items.Add(Item->UniqueId, Item);
@@ -108,6 +153,13 @@ void ACsManager_Inventory::AddItem(FCsItem* Item)
 	}
 	IncrementItemCount(Item->ShortCode);
 	Bags[Item->InventoryProperties.Bag].Add(Item);
+
+	LogTransaction(ECsManagerInventoryStringCache::Str::AddItem, ECsInventoryTransaction::Add, Item);
+
+#if WITH_EDITOR
+	OnAddItem_ScriptEvent.Broadcast(*Item);
+#endif // #if WITH_EDITOR
+	OnAddItem_Event.Broadcast(Item);
 }
 
 void ACsManager_Inventory::AddItems(const TArray<FCsItem*> &ItemsToAdd)
@@ -120,10 +172,12 @@ void ACsManager_Inventory::AddItems(const TArray<FCsItem*> &ItemsToAdd)
 	}
 }
 
+#pragma endregion Add
+
 // Remove
 #pragma region
 
-void ACsManager_Inventory::RemoveItem(const uint64 &Id, const bool &ShouldDestroy)
+void ACsManager_Inventory::RemoveItem(const uint64 &Id, const FString &FunctionName, const TEnumAsByte<ECsInventoryTransaction::Type> &Transaction, const bool &ShouldDestroy)
 {
 	FCsItem* Item = *(Items.Find(Id));
 
@@ -151,6 +205,13 @@ void ACsManager_Inventory::RemoveItem(const uint64 &Id, const bool &ShouldDestro
 	DecrementItemCount(ShortCode);
 	Bags[Item->InventoryProperties.Bag].Remove(Item);
 
+	LogTransaction(FunctionName, Transaction, Item);
+
+#if WITH_EDITOR
+	OnRemoveItem_ScriptEvent.Broadcast(*Item);
+#endif // #if WITH_EDITOR
+	OnRemoveItem_Event.Broadcast(Item);
+
 	if (ShouldDestroy)
 	{
 		// TODO: Need to Delete .json file associated with the item
@@ -161,9 +222,9 @@ void ACsManager_Inventory::RemoveItem(const uint64 &Id, const bool &ShouldDestro
 }
 
 
-void ACsManager_Inventory::RemoveItem(FCsItem* Item, const bool &ShouldDestroy)
+void ACsManager_Inventory::RemoveItem(FCsItem* Item, const FString &FunctionName, const TEnumAsByte<ECsInventoryTransaction::Type> &Transaction, const bool &ShouldDestroy)
 {
-	RemoveItem(Item->UniqueId, ShouldDestroy);
+	RemoveItem(Item->UniqueId, FunctionName, Transaction, ShouldDestroy);
 }
 
 #pragma endregion Remove
@@ -173,7 +234,7 @@ void ACsManager_Inventory::RemoveItem(FCsItem* Item, const bool &ShouldDestroy)
 
 void ACsManager_Inventory::ConsumeItem(const uint64 &Id)
 {
-	RemoveItem(Id, true);
+	RemoveItem(Id, ECsManagerInventoryStringCache::Str::ConsumeItem, ECsInventoryTransaction::Consume, true);
 }
 
 void ACsManager_Inventory::ConsumeItem(FCsItem* Item)
@@ -200,7 +261,7 @@ void ACsManager_Inventory::ConsumeFirstItem(const FName &ShortCode)
 
 void ACsManager_Inventory::DropItem(const uint64 &Id)
 {
-	RemoveItem(Id, false);
+	RemoveItem(Id, ECsManagerInventoryStringCache::Str::DropItem, ECsInventoryTransaction::Drop, false);
 }
 
 void ACsManager_Inventory::DropItem(FCsItem* Item)

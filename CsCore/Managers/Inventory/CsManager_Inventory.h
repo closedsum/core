@@ -4,6 +4,74 @@
 #include "Types/CsTypes_Item.h"
 #include "CsManager_Inventory.generated.h"
 
+// Add
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsManagerInventory_OnAddItem, FCsItem, Item);
+DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsManagerInventory_OnAddItem, FCsItem*);
+// Remove
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsManagerInventory_OnRemoveItem, FCsItem, Item);
+DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsManagerInventory_OnRemoveItem, FCsItem*);
+
+// Enums
+#pragma region
+
+UENUM(BlueprintType)
+namespace ECsInventoryTransaction
+{
+	enum Type
+	{
+		Add							UMETA(DisplayName = "Add"),
+		Remove						UMETA(DisplayName = "Remove"),
+		Consume						UMETA(DisplayName = "Consume"),
+		Drop						UMETA(DisplayName = "Drop"),
+		ECsInventoryTransaction_MAX	UMETA(Hidden),
+	};
+}
+
+namespace ECsInventoryTransaction
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString Add = TCsString(TEXT("Add"), TEXT("add"), TEXT("Adding"));
+		const TCsString Remove = TCsString(TEXT("Remove"), TEXT("remove"), TEXT("Removing"));
+		const TCsString Consume = TCsString(TEXT("Consume"), TEXT("consume"), TEXT("Consuming"));
+		const TCsString Drop = TCsString(TEXT("Drop"), TEXT("drop"), TEXT("Dropping"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::Add) { return Str::Add.Value; }
+		if (EType == Type::Remove) { return Str::Remove.Value; }
+		if (EType == Type::Consume) { return Str::Consume.Value; }
+		if (EType == Type::Drop) { return Str::Drop.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE FString ToActionString(const Type &EType)
+	{
+		if (EType == Type::Add) { return Str::Add.Values[CS_FSTRING_ENUM_ALT_1_VALUE]; }
+		if (EType == Type::Remove) { return Str::Remove.Values[CS_FSTRING_ENUM_ALT_1_VALUE]; }
+		if (EType == Type::Consume) { return Str::Consume.Values[CS_FSTRING_ENUM_ALT_1_VALUE]; }
+		if (EType == Type::Drop) { return Str::Drop.Values[CS_FSTRING_ENUM_ALT_1_VALUE]; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::Add) { return Type::Add; }
+		if (String == Str::Remove) { return Type::Remove; }
+		if (String == Str::Consume) { return Type::Consume; }
+		if (String == Str::Drop) { return Type::Drop; }
+		return Type::ECsInventoryTransaction_MAX;
+	}
+}
+
+#define ECS_INVENTORY_TRANSACTION_MAX (uint8)ECsInventoryTransaction::ECsInventoryTransaction_MAX
+typedef TEnumAsByte<ECsInventoryTransaction::Type> TCsInventoryTransaction;
+
+#pragma endregion Enums
+
 // Structs
 #pragma region
 
@@ -153,15 +221,35 @@ class CSCORE_API ACsManager_Inventory : public AActor
 	void IncrementItemCount(const FName &ShortCode);
 	void DecrementItemCount(const FName &ShortCode);
 
+	void LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsInventoryTransaction::Type> &Transaction, const FCsItem* const Item);
+
+// Add
+#pragma region
+public:
+
 	virtual void AddItem(FCsItem* Item);
 	virtual void AddItems(const TArray<FCsItem*> &ItemsToAdd);
+
+	FBindableEvent_CsManagerInventory_OnAddItem OnAddItem_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Add")
+	FBindableDynEvent_CsManagerInventory_OnAddItem OnAddItem_ScriptEvent;
+
+#pragma endregion Add
 
 // Remove
 #pragma region
 private:
 
-	void RemoveItem(const uint64 &Id, const bool &ShouldDestroy);
-	void RemoveItem(FCsItem* Item, const bool &ShouldDestroy);
+	void RemoveItem(const uint64 &Id, const FString &FunctionName, const TEnumAsByte<ECsInventoryTransaction::Type> &Transaction, const bool &ShouldDestroy);
+	void RemoveItem(FCsItem* Item, const FString &FunctionName, const TEnumAsByte<ECsInventoryTransaction::Type> &Transaction, const bool &ShouldDestroy);
+
+public:
+
+	FBindableEvent_CsManagerInventory_OnRemoveItem OnRemoveItem_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Remove")
+	FBindableDynEvent_CsManagerInventory_OnRemoveItem OnRemoveItem_ScriptEvent;
 
 #pragma endregion Remove
 

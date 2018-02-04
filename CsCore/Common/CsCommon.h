@@ -800,4 +800,6 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 #endif // #if WITH_EDITOR
 	
 #pragma endregion Editor Message
+
+	static bool CanAsyncTask();
 };

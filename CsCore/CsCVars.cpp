@@ -482,3 +482,15 @@ TAutoConsoleVariable<int32> CsCVarLogManagerWidgetTransactions(
 #pragma endregion Widget
 
 #pragma endregion UI
+
+// Inventory
+#pragma region
+
+TAutoConsoleVariable<int32> CsCVarLogManagerInventoryTransactions(
+	TEXT("log.manager.inventory.transactions"),
+	0,
+	TEXT("Log Manager Inventory Add, Remove, Consume and Drop."),
+	ECVF_SetByConsole
+);
+
+#pragma endregion Inventory

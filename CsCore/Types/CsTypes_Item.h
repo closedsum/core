@@ -580,8 +580,8 @@ struct FCsItem
 		PreviousHistories.Reset();
 	}
 
-	class ACsData_Item* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
-	class ACsData_Interactive* GetData_Actor() { return Data_Actor.IsValid() ? Data_Actor.Get() : nullptr; }
+	class ACsData_Item* GetData() const { return Data.IsValid() ? Data.Get() : nullptr; }
+	class ACsData_Interactive* GetData_Actor() const { return Data_Actor.IsValid() ? Data_Actor.Get() : nullptr; }
 
 	void SetType(const TCsItemType &InType)
 	{

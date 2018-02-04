@@ -6,3 +6,17 @@ UCsWidget_Inventory_Slot::UCsWidget_Inventory_Slot(const FObjectInitializer& Obj
 	: Super(ObjectInitializer)
 {
 }
+
+void UCsWidget_Inventory_Slot::RemoveItem(const FCsItem* const Item)
+{
+	const int32 Count = Items.Num();
+
+	for (int32 I = Count - 1; I >= 0; --I)
+	{
+		if (Item->UniqueId == Items[I]->UniqueId)
+		{
+			Items.RemoveAt(I);
+			break;
+		}
+	}
+}

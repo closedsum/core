@@ -2,6 +2,7 @@
 #include "Game/CsGameInstance.h"
 #include "CsCore.h"
 #include "CsCVars.h"
+#include "Common/CsCommon.h"
 #include "Managers/CsManager_Loading.h"
 #include "Coroutine/CsCoroutineScheduler.h"
 // Data
@@ -13,13 +14,16 @@
 #include "UI/CsUserWidget.h"
 #include "UI/CsWidget_Fullscreen.h"
 
+#include "Async/AsyncWork.h"
+
 UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	DataMappingAssetPath = TEXT("/Game/AlwaysCook/bp_data_mapping.bp_data_mapping_C");
 	DataMapping			 = nullptr;
 
-	LevelState = ECsLevelState::None;
+	OnBoardState = ECsGameInstanceOnBoardState::LoadDataMapping;
+	LevelState   = ECsLevelState::None;
 }
 
 void UCsGameInstance::InitCVars(){}
@@ -223,21 +227,18 @@ PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(struct FCsRoutine* r))
 		UCsManager_Loading::Get()->LoadAssetReferences(gi->GetWorld(), dataMapping->DataAssetReferences, ECsLoadAsyncOrder::Bulk, gi, &UCsGameInstance::OnFinishedLoadingDataAssets);
 
 		// Wait until Data Assets are LOADED
-		CS_COROUTINE_WAIT_UNTIL(r, gi->HasLoadedDataAssets);
+		CS_COROUTINE_WAIT_UNTIL(r, gi->OnBoardState == ECsGameInstanceOnBoardState::FinishedLoadingDataAssets);
 
-		// TODO: Maybe time slice this for built game 
+		if (UCsCommon::CanAsyncTask())
 		{
-			const int32 Count = gi->LoadedDataAssets.Num();
-
-			for (int32 I = 0; I < Count; ++I)
-			{
-				ACsData* Data = Cast<UBlueprintGeneratedClass>(gi->LoadedDataAssets[I])->GetDefaultObject<ACsData>();
-				Data->LoadFromJson();
-				Data->PopulateAssetReferences(false);
-			}
+			gi->AsyncPopulateAssetReferences();
 		}
-		dataMapping->PopulateAssetReferences();
-		gi->LoadedDataAssets.Reset();
+		else
+		{
+			gi->PopulateAssetReferences();
+		}
+		// Wait until ALL Asset References
+		CS_COROUTINE_WAIT_UNTIL(r, gi->OnBoardState == ECsGameInstanceOnBoardState::FinishedPopulatingAssetReferences);
 	}
 
 #if WITH_EDITOR
@@ -264,7 +265,52 @@ void UCsGameInstance::OnFinishedLoadingDataAssets(const TArray<UObject*> &Loaded
 	{
 		LoadedDataAssets.Add(LoadedAssets[I]);
 	}
-	HasLoadedDataAssets = true;
+	OnBoardState = ECsGameInstanceOnBoardState::FinishedLoadingDataAssets;
+}
+
+void UCsGameInstance::PopulateAssetReferences()
+{
+	// TODO: Maybe time slice this for built game 
+	const int32 Count = LoadedDataAssets.Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		ACsData* Data = Cast<UBlueprintGeneratedClass>(LoadedDataAssets[I])->GetDefaultObject<ACsData>();
+		Data->LoadFromJson();
+		Data->PopulateAssetReferences(false);
+	}
+	DataMapping->PopulateAssetReferences();
+	LoadedDataAssets.Reset();
+
+	OnBoardState = ECsGameInstanceOnBoardState::FinishedPopulatingAssetReferences;
+}
+
+void UCsGameInstance::AsyncPopulateAssetReferences()
+{
+	class FAsyncPopulateAssetReferencesWorker : public FNonAbandonableTask
+	{
+	public:
+
+		friend class FAutoDeleteAsyncTask<FAsyncPopulateAssetReferencesWorker>;
+
+		UCsGameInstance* GameInstance;
+
+		FAsyncPopulateAssetReferencesWorker(UCsGameInstance* InGameInstance)
+		{
+			GameInstance = InGameInstance;
+		}
+
+		void DoWork()
+		{
+			GameInstance->PopulateAssetReferences();
+		}
+
+		FORCEINLINE TStatId GetStatId() const
+		{
+			RETURN_QUICK_DECLARE_CYCLE_STAT(FAsyncPopulateAssetReferencesWorker, STATGROUP_ThreadPoolAsyncTasks);
+		}
+	};
+	(new FAutoDeleteAsyncTask<FAsyncPopulateAssetReferencesWorker>(this))->StartBackgroundTask();
 }
 
 #pragma endregion Data Mapping

@@ -18,4 +18,6 @@ class CSCORE_API UCsWidget_Inventory_Slot : public UCsWidget_ButtonAndText
 	uint8 Column;
 
 	TArray<FCsItem*> Items;
+
+	void RemoveItem(const FCsItem* const Item);
 };

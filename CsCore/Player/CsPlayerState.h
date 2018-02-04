@@ -34,6 +34,10 @@ namespace ECsPlayerStateOnBoardState
 		BeginLoadingPlayerData					UMETA(DisplayName = "Begin Loading PlayerData"),
 		WaitingForFinishLoadingPlayerData		UMETA(DisplayName = "Waiting for Finish Loading PlayerData"),
 		FinishedLoadingPlayerData				UMETA(DisplayName = "Finished Loading PlayerData"),
+		// Setup
+		BeginApplyingPlayerData					UMETA(DisplayName = "Begin Applying PlayerData"),
+		WaitingForFinishApplyingPlayerData		UMETA(DisplayName = "Waiting for Finish Applying PlayerData"),
+		FinishedApplyingPlayerData				UMETA(DisplayName = "Finished Applying PlayerData"),
 		// Handshaking
 		SendOnBoardCompleted					UMETA(DisplayName = "Send OnBoard Completed"),
 		WaitingForOnBoardCompleted				UMETA(DisplayName = "Waiting for OnBoard Completed"),
@@ -66,6 +70,10 @@ namespace ECsPlayerStateOnBoardState
 		const TCsString BeginLoadingPlayerData = TCsString(TEXT("BeginLoadingPlayerData"), TEXT("beginloadingplayerdata"), TEXT("begin loading player data"));
 		const TCsString WaitingForFinishLoadingPlayerData = TCsString(TEXT("WaitingForFinishLoadingPlayerData"), TEXT("waitingforfinishloadingplayerdata"), TEXT("waiting for finish loading player data"));
 		const TCsString FinishedLoadingPlayerData = TCsString(TEXT("FinishedLoadingPlayerData"), TEXT("finishedloadingplayerdata"), TEXT("finished loading player data"));
+		// Setup
+		const TCsString BeginApplyingPlayerData = TCsString(TEXT("BeginApplyingPlayerData"), TEXT("beginapplyingplayerdata"), TEXT("begin applying player data"));
+		const TCsString WaitingForFinishApplyingPlayerData = TCsString(TEXT("WaitingForFinishApplyingPlayerData"), TEXT("waitingforfinishapplyingplayerdata"), TEXT("waiting for finish applying player data"));
+		const TCsString FinishedApplyingPlayerData = TCsString(TEXT("FinishedApplyingPlayerData"), TEXT("finishedapplyingplayerdata"), TEXT("finished applying player data"));
 		// Handshaking
 		const TCsString SendOnBoardCompleted = TCsString(TEXT("SendOnBoardCompleted"), TEXT("sendonboardcompleted"), TEXT("send onboard completed"));
 		const TCsString WaitingForOnBoardCompleted = TCsString(TEXT("WaitingForOnBoardCompleted"), TEXT("waitingforonboardcompleted"), TEXT("waiting for onboard completed"));
@@ -92,6 +100,10 @@ namespace ECsPlayerStateOnBoardState
 		if (EType == Type::BeginLoadingPlayerData) { return Str::BeginLoadingPlayerData.Value; }
 		if (EType == Type::WaitingForFinishLoadingPlayerData) { return Str::WaitingForFinishLoadingPlayerData.Value; }
 		if (EType == Type::FinishedLoadingPlayerData) { return Str::FinishedLoadingPlayerData.Value; }
+		// Setup
+		if (EType == Type::BeginApplyingPlayerData) { return Str::BeginApplyingPlayerData.Value; }
+		if (EType == Type::WaitingForFinishApplyingPlayerData) { return Str::WaitingForFinishApplyingPlayerData.Value; }
+		if (EType == Type::FinishedApplyingPlayerData) { return Str::FinishedApplyingPlayerData.Value; }
 		// Handshaking
 		if (EType == Type::SendOnBoardCompleted) { return Str::SendOnBoardCompleted.Value; }
 		if (EType == Type::WaitingForOnBoardCompleted) { return Str::WaitingForOnBoardCompleted.Value; }
@@ -119,6 +131,10 @@ namespace ECsPlayerStateOnBoardState
 		if (String == Str::BeginLoadingPlayerData) { return Type::BeginLoadingPlayerData; }
 		if (String == Str::WaitingForFinishLoadingPlayerData) { return Type::WaitingForFinishLoadingPlayerData; }
 		if (String == Str::FinishedLoadingPlayerData) { return Type::FinishedLoadingPlayerData; }
+		// Setup
+		if (String == Str::BeginApplyingPlayerData) { return Type::BeginApplyingPlayerData; }
+		if (String == Str::WaitingForFinishApplyingPlayerData) { return Type::WaitingForFinishApplyingPlayerData; }
+		if (String == Str::FinishedApplyingPlayerData) { return Type::FinishedApplyingPlayerData; }
 		// Handshaking
 		if (String == Str::SendOnBoardCompleted) { return Type::SendOnBoardCompleted; }
 		if (String == Str::WaitingForOnBoardCompleted) { return Type::WaitingForOnBoardCompleted; }
@@ -129,6 +145,44 @@ namespace ECsPlayerStateOnBoardState
 
 #define ECS_PLAYER_STATE_ONBOARD_STATE_MAX (uint8)ECsPlayerStateOnBoardState::ECsPlayerStateOnBoardState_MAX
 typedef TEnumAsByte<ECsPlayerStateOnBoardState::Type> TCsPlayerStateOnBoardState;
+
+namespace ECsPlayerStateRoutine
+{
+	enum Type
+	{
+		OnBoard_Internal,
+		SetupPawn_Internal,
+		ECsPlayerStateRoutine_MAX,
+	};
+}
+
+namespace ECsPlayerStateRoutine
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString OnBoard_Internal = TCsString(TEXT("OnBoard_Internal"), TEXT("onboard_internal"), TEXT("onboard internal"));
+		const TCsString SetupPawn_Internal = TCsString(TEXT("SetupPawn_Internal"), TEXT("setuppawn_internal"), TEXT("setup pawn internal"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::OnBoard_Internal) { return Str::OnBoard_Internal.Value; }
+		if (EType == Type::SetupPawn_Internal) { return Str::SetupPawn_Internal.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::OnBoard_Internal) { return Type::OnBoard_Internal; }
+		if (String == Str::SetupPawn_Internal) { return Type::SetupPawn_Internal; }
+		return Type::ECsPlayerStateRoutine_MAX;
+	}
+}
+
+#define ECS_PLAYER_STATE_ROUTINE_MAX (uint8)ECsPlayerStateRoutine::ECsPlayerStateRoutine_MAX
+typedef ECsPlayerStateRoutine::Type TCsPlayerStateRoutine;
 
 #pragma endregion Enums
 
@@ -164,12 +218,14 @@ public:
 
 // OnBoard
 #pragma region
+public:
 
 	CS_COROUTINE_DECLARE(OnBoard)
 
 	virtual void OnTick_OnBoard();
 
-	TCsPlayerStateOnBoardState OnBoardState;
+	UPROPERTY()
+	TEnumAsByte<ECsPlayerStateOnBoardState::Type> OnBoardState;
 
 	UPROPERTY()
 	uint8 UniqueMappingId;
@@ -203,6 +259,10 @@ public:
 	virtual void LoadPlayerData();
 	virtual void OnFinishedLoadingPlayerData(const TArray<UObject*> &LoadedAssets, const float &LoadingTime);
 
+// Setup
+
+	virtual void SetupPlayerData();
+
 // Handshaking
 
 	// SendOnBoardCompleted
@@ -228,6 +288,7 @@ public:
 
 // Items
 #pragma region
+public:
 
 	UPROPERTY()
 	uint64 ItemOwnerId;

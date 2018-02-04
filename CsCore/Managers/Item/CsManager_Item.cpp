@@ -15,6 +15,8 @@
 // Data
 #include "Data/CsData_Item.h"
 
+#include "Async/AsyncWork.h"
+
 ACsManager_Item::ACsManager_Item(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	UniqueIdIndex = CS_ITEM_UNIQUE_ID_START_INDEX;
@@ -451,6 +453,38 @@ void ACsManager_Item::PopulateExistingItems()
 			}
 		}
 	}
+#if WITH_EDITOR
+	OnPopulateExistingItems_ScriptEvent.Broadcast();
+#endif // #if WITH_EDITOR
+	OnPopulateExistingItems_Event.Broadcast();
+}
+
+void ACsManager_Item::AsyncPopulateExistingItems()
+{
+	class FAsyncPopulateExistingItemsWorker : public FNonAbandonableTask
+	{
+	public:
+
+		friend class FAutoDeleteAsyncTask<FAsyncPopulateExistingItemsWorker>;
+
+		ACsManager_Item* Manager_Item;
+
+		FAsyncPopulateExistingItemsWorker(ACsManager_Item* InManager_Item)
+		{
+			Manager_Item = InManager_Item;
+		}
+
+		void DoWork()
+		{
+			Manager_Item->PopulateExistingItems();
+		}
+
+		FORCEINLINE TStatId GetStatId() const
+		{
+			RETURN_QUICK_DECLARE_CYCLE_STAT(FAsyncPopulateExistingItemsWorker, STATGROUP_ThreadPoolAsyncTasks);
+		}
+	};
+	(new FAutoDeleteAsyncTask<FAsyncPopulateExistingItemsWorker>(this))->StartBackgroundTask();
 }
 
 void ACsManager_Item::LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCsItem* Item, FCsItemHistory* ItemHistory)
@@ -515,5 +549,6 @@ void ACsManager_Item::LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCs
 }
 
 void ACsManager_Item::InitInventory(ACsManager_Inventory* Manager_Inventory){}
+void ACsManager_Item::AsyncInitInventory(ACsManager_Inventory* Manager_Inventory) {}
 
 #pragma endregion Save / Load

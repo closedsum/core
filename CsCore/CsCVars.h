@@ -210,3 +210,10 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerWidgetTransactions
 #pragma endregion Widget
 
 #pragma endregion UI
+
+// Inventory
+#pragma region
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerInventoryTransactions;
+
+#pragma endregion Inventory

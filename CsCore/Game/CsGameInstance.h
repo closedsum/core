@@ -60,6 +60,8 @@ namespace ECsGameInstanceOnBoardState
 	enum Type
 	{
 		LoadDataMapping,
+		FinishedLoadingDataAssets,
+		FinishedPopulatingAssetReferences,
 		LoadStartUpData,
 		LoadScreen,
 		Completed,
@@ -167,6 +169,9 @@ public:
 	virtual void OnFinishedLoadingDataAssets(const TArray<UObject*> &LoadedAssets, const float& LoadingTime);
 
 	bool HasLoadedDataAssets;
+
+	void PopulateAssetReferences();
+	void AsyncPopulateAssetReferences();
 
 	UPROPERTY()
 	TArray<UObject*> LoadedDataAssets;

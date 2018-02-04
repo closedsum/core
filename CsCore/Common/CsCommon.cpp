@@ -2605,3 +2605,8 @@ void UCsCommon::DisplayNotificationInfo(const FString &InTextLiteral, const FStr
 #endif // #if WITH_EDITOR
 
 #pragma endregion Editor Message
+
+bool UCsCommon::CanAsyncTask()
+{
+	return FPlatformMisc::NumberOfCoresIncludingHyperthreads() > 1;
+}

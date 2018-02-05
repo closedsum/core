@@ -281,11 +281,8 @@ template<typename T>
 	static void JsonWriter_ArrayElement(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, const FString &MemberName, const FName &Member);
 
 	template<typename T>
-	static void WriteTAssetPtrToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, const FString &MemberName, TAssetPtr<T> &Member, const bool AsJsonObject=false)
+	static void WriteTAssetPtrToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, const FString &MemberName, TAssetPtr<T> &Member)
 	{
-		if (AsJsonObject)
-			InJsonWriter->WriteObjectStart();
-
 		if (Member.IsValid() && Member.Get())
 		{
 			const FString AssetName	= Member.ToString();
@@ -306,26 +303,23 @@ template<typename T>
 											//   TEXT("")
 			InJsonWriter->WriteValue(MemberName, ECsCachedString::Str::Empty);
 		}
-
-		if (AsJsonObject)
-			InJsonWriter->WriteObjectEnd();
 	}
 
 	static void WriteTAssetPtrToJson_AnimBlueprint(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, const FString &MemberName, TAssetPtr<class UAnimBlueprint> &Member);
 	static void WriteTAssetPtrToJson_Blueprint(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, const FString &MemberName, TAssetPtr<class UBlueprint> &Member);
 
 	template<typename T>
-	static void WriteTArrayTAssetPtrToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, const FString &MemberName, TArray<TAssetPtr<T>> &Member, const FString &ElementName)
+	static void WriteTArrayTAssetPtrToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, const FString &MemberName, TArray<TAssetPtr<T>> &Member)
 	{
-		InJsonWriter->WriteArrayStart(MemberName);
+		InJsonWriter->WriteObjectStart(MemberName);
 		
 		const int32 Count = Member.Num();
 
 		for (int32 I = 0; I < Count; ++I)
 		{
-			WriteTAssetPtrToJson(InJsonWriter, ElementName, Member[I], true);
+			WriteTAssetPtrToJson(InJsonWriter, FString::FromInt(I), Member[I]);
 		}
-		InJsonWriter->WriteArrayEnd();
+		InJsonWriter->WriteObjectEnd();
 	}
 
 	template<typename T>
@@ -361,20 +355,20 @@ template<typename T>
 	}
 
 	template<typename T>
-	static void WriteAssetObjectPropertyToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UAssetObjectProperty* &AssetObjectProperty, void* InObject, const FString &MemberName, const bool &AsJsonObject = false)
+	static void WriteAssetObjectPropertyToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UAssetObjectProperty* &AssetObjectProperty, void* InObject, const FString &MemberName)
 	{
 		if (TAssetPtr<T>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<T>>(InObject))
-			WriteTAssetPtrToJson<T>(InJsonWriter, MemberName, *Member, AsJsonObject);
+			WriteTAssetPtrToJson<T>(InJsonWriter, MemberName, *Member);
 	}
 
 	static void WriteAssetObjectPropertyToJson_AnimBlueprint(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UAssetObjectProperty* &AssetObjectProperty, void* InObject, const FString &MemberName);
 	static void WriteAssetObjectPropertyToJson_Blueprint(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UAssetObjectProperty* &AssetObjectProperty, void* InObject, const FString &MemberName);
 
 	template<typename T>
-	static void WriteArrayAssetObjectPropertyToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UArrayProperty* &ArrayProperty, void* InObject, const FString &MemberName, const FString &ElementName)
+	static void WriteArrayAssetObjectPropertyToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UArrayProperty* &ArrayProperty, void* InObject, const FString &MemberName)
 	{
 		if (TArray<TAssetPtr<T>>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<TAssetPtr<T>>>(InObject))
-			WriteTArrayTAssetPtrToJson<T>(InJsonWriter, MemberName, *Member, ElementName);
+			WriteTArrayTAssetPtrToJson<T>(InJsonWriter, MemberName, *Member);
 	}
 
 	template<typename T, typename E, int32 SIZE>
@@ -382,14 +376,14 @@ template<typename T>
 	{
 		if (TAssetPtr<T>(*Member)[SIZE] = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<T>[SIZE]>(InObject))
 		{
-			InJsonWriter->WriteArrayStart(MemberName);
+			InJsonWriter->WriteObjectStart(MemberName);
 
 			for (int32 I = 0; I < SIZE; ++I)
 			{
 				const FString ElementName = (*ToString)((E)I);
-				WriteTAssetPtrToJson<T>(InJsonWriter, ElementName, (*Member)[I], true);
+				WriteTAssetPtrToJson<T>(InJsonWriter, ElementName, (*Member)[I]);
 			}
-			InJsonWriter->WriteArrayEnd();
+			InJsonWriter->WriteObjectEnd();
 		}
 	}
 
@@ -461,17 +455,15 @@ template<typename T>
 	{
 		TArray<T>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<T>>(InObject);
 
-		InJsonWriter->WriteArrayStart(MemberName);
+		InJsonWriter->WriteObjectStart(MemberName);
 
 		const int32 Count = Member->Num();
 
 		for (int32 I = 0; I < Count; ++I)
 		{
-			InJsonWriter->WriteObjectStart();
-				InJsonWriter->WriteValue(MemberName, ((*Member)[I].*ToString)());
-			InJsonWriter->WriteObjectEnd();
+			InJsonWriter->WriteValue(FString::FromInt(I), ((*Member)[I].*ToString)());
 		}
-		InJsonWriter->WriteArrayEnd();
+		InJsonWriter->WriteObjectEnd();
 	}
 
 	static void WriteMemberArrayStructPropertyToJson_uint64(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UArrayProperty* &ArrayProperty, void* InObject, const FString &MemberName);
@@ -563,15 +555,20 @@ template<typename T>
 	static void WriteToAssetObjectPropertyFromJson_Blueprint(TSharedPtr<class FJsonObject> &JsonObject, UAssetObjectProperty* &AssetObjectProperty, void* InObject, const FString &MemberName);
 
 	template<typename T>
-	static void WriteToArrayAssetObjectPropertyFromJson(TSharedPtr<class FJsonObject> &JsonObject, UArrayProperty* &ArrayProperty, void* InObject, const FString &MemberName, const FString &ElementName)
+	static void WriteToArrayAssetObjectPropertyFromJson(TSharedPtr<class FJsonObject> &JsonObject, UArrayProperty* &ArrayProperty, void* InObject, const FString &MemberName)
 	{
 		if (TArray<TAssetPtr<T>>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<TAssetPtr<T>>>(InObject))
 		{
-			const TArray<TSharedPtr<FJsonValue>> JsonArray = JsonObject->GetArrayField(MemberName);
+			const TSharedPtr<FJsonObject>& Object = JsonObject->GetObjectField(MemberName);
 
-			const int32 ArrayCount  = JsonArray.Num();
+			TArray<FString> Keys;
+
+			Object->Values.GetKeys(Keys);
+
+			const int32 ArrayCount  = Keys.Num();
 			const int32 MemberCount	= Member->Num();
 			const int32 Count		= FMath::Max(ArrayCount, MemberCount);
+
 
 			for (int32 I = 0; I < Count; ++I)
 			{
@@ -581,9 +578,11 @@ template<typename T>
 				if (I >= MemberCount)
 					Member->AddDefaulted();
 
-				TSharedPtr<class FJsonObject> Object = JsonArray[I]->AsObject();
-				
-				(*Member)[I] = TAssetPtr<T>(Object->GetStringField(ElementName));
+				const FString& Key			     = Keys[I];
+				TSharedPtr<FJsonValue> JsonValue = *(Object->Values.Find(Key));
+				FString Value					 = JsonValue->AsString();
+
+				(*Member)[I] = TAssetPtr<T>(Value);
 			}
 		}
 	}
@@ -593,16 +592,26 @@ template<typename T>
 	{
 		if (TAssetPtr<T>(*Member)[SIZE] = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<T>[SIZE]>(InObject))
 		{
-			const TArray<TSharedPtr<FJsonValue>> JsonArray = JsonObject->GetArrayField(MemberName);
+			const TSharedPtr<FJsonObject>& Object = JsonObject->GetObjectField(MemberName);
 
-			const int32 ArrayCount = JsonArray.Num();
+			TArray<FString> Keys;
+
+			Object->Values.GetKeys(Keys);
+
+			const int32 ArrayCount = Keys.Num();
 			const int32 Count	   = FMath::Min(ArrayCount, SIZE);
 
 			for (int32 I = 0; I < Count; ++I)
 			{
-				TSharedPtr<class FJsonObject> Object = JsonArray[I]->AsObject();
-				const FString ElementName			 = (*ToString)((E)I);
-				(*Member)[I]						 = TAssetPtr<T>(Object->GetStringField(ElementName));
+				const FString& Key		  = Keys[I];
+				const FString ElementName = (*ToString)((E)I);
+
+				check(Key == ElementName);
+
+				TSharedPtr<FJsonValue> JsonValue = *(Object->Values.Find(Key));
+				FString Value					 = JsonValue->AsString();
+				
+				(*Member)[I] = TAssetPtr<T>(Value);
 			}
 		}
 	}
@@ -619,9 +628,13 @@ template<typename T>
 	{
 		TArray<T>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<T>>(InObject);
 
-		const TArray<TSharedPtr<FJsonValue>> JsonArray = JsonObject->GetArrayField(MemberName);
+		const TSharedPtr<FJsonObject>& Object = JsonObject->GetObjectField(MemberName);
 
-		const int32 ArrayCount  = JsonArray.Num();
+		TArray<FString> Keys;
+
+		Object->Values.GetKeys(Keys);
+
+		const int32 ArrayCount  = Keys.Num();
 		const int32 MemberCount = Member->Num();
 		const int32 Count		= FMath::Max(ArrayCount, MemberCount);
 
@@ -633,9 +646,11 @@ template<typename T>
 			if (I >= MemberCount)
 				Member->AddDefaulted();
 
-			TSharedPtr<FJsonObject> Object = JsonArray[I]->AsObject();
+			const FString& Key				 = Keys[I];
+			TSharedPtr<FJsonValue> JsonValue = *(Object->Values.Find(Key));
+			FString Value					 = JsonValue->AsString();
 
-			((*Member)[I].*InitFromString)(Object->GetStringField(MemberName));
+			((*Member)[I].*InitFromString)(Value);
 		}
 	}
 

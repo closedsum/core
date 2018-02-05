@@ -644,25 +644,25 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			{
 				// UStaticMesh
 				if (InnerAssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UStaticMesh>(InJsonWriter, ArrayProperty, InStruct, MemberName, ECsCommonLoadCachedString::Str::Mesh); continue; }
+				{ WriteArrayAssetObjectPropertyToJson<UStaticMesh>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// USkeletalMesh
 				if (InnerAssetObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<USkeletalMesh>(InJsonWriter, ArrayProperty, InStruct, MemberName, ECsCommonLoadCachedString::Str::Mesh); continue; }
+				{ WriteArrayAssetObjectPropertyToJson<USkeletalMesh>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// UMaterialInstance
 				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UMaterialInstance>(InJsonWriter, ArrayProperty, InStruct, MemberName, ECsCommonLoadCachedString::Str::Mat); continue; }
+				{ WriteArrayAssetObjectPropertyToJson<UMaterialInstance>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// UMaterialInstanceConstant
 				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UMaterialInstanceConstant>(InJsonWriter, ArrayProperty, InStruct, MemberName, ECsCommonLoadCachedString::Str::Mat); continue; }
+				{ WriteArrayAssetObjectPropertyToJson<UMaterialInstanceConstant>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// UAnimSequence
 				if (InnerAssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UAnimSequence>(InJsonWriter, ArrayProperty, InStruct, MemberName, ECsCommonLoadCachedString::Str::Anim); continue; }
+				{ WriteArrayAssetObjectPropertyToJson<UAnimSequence>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// UAnimMontage
 				if (InnerAssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UAnimMontage>(InJsonWriter, ArrayProperty, InStruct, MemberName, ECsCommonLoadCachedString::Str::Anim); continue; }
+				{ WriteArrayAssetObjectPropertyToJson<UAnimMontage>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// UBlueprint
 				if (InnerAssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UBlueprint>(InJsonWriter, ArrayProperty, InStruct, MemberName, ECsCommonLoadCachedString::Str::Bp); continue; }
+				{ WriteArrayAssetObjectPropertyToJson<UBlueprint>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 
 				if (Internal)
 				{
@@ -1230,25 +1230,25 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			{
 				// UStaticMesh
 				if (InnerAssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UStaticMesh>(InJsonWriter, ArrayProperty, InStruct, MemberName, ECsCommonLoadCachedString::Str::Mesh); continue; }
+				{ WriteArrayAssetObjectPropertyToJson<UStaticMesh>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// USkeletalMesh
 				if (InnerAssetObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<USkeletalMesh>(InJsonWriter, ArrayProperty, InStruct, MemberName, ECsCommonLoadCachedString::Str::Mesh); continue; }
+				{ WriteArrayAssetObjectPropertyToJson<USkeletalMesh>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// UMaterialInstance
 				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UMaterialInstance>(InJsonWriter, ArrayProperty, InStruct, MemberName, ECsCommonLoadCachedString::Str::Mat); continue; }
+				{ WriteArrayAssetObjectPropertyToJson<UMaterialInstance>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// UMaterialInstanceConstant
 				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UMaterialInstanceConstant>(InJsonWriter, ArrayProperty, InStruct, MemberName, ECsCommonLoadCachedString::Str::Mat); continue; }
+				{ WriteArrayAssetObjectPropertyToJson<UMaterialInstanceConstant>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// UAnimSequence
 				if (InnerAssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UAnimSequence>(InJsonWriter, ArrayProperty, InStruct, MemberName, ECsCommonLoadCachedString::Str::Anim); continue; }
+				{ WriteArrayAssetObjectPropertyToJson<UAnimSequence>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// UAnimMontage
 				if (InnerAssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UAnimMontage>(InJsonWriter, ArrayProperty, InStruct, MemberName, ECsCommonLoadCachedString::Str::Anim); continue; }
+				{ WriteArrayAssetObjectPropertyToJson<UAnimMontage>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// UBlueprint
 				if (InnerAssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UBlueprint>(InJsonWriter, ArrayProperty, InStruct, MemberName, ECsCommonLoadCachedString::Str::Bp); continue; }
+				{ WriteArrayAssetObjectPropertyToJson<UBlueprint>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 
 				if (Internal)
 				{
@@ -1765,19 +1765,19 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			{
 				// UMaterialInstance
 				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UMaterialInstance>(InJsonWriter, ArrayProperty, InObject, MemberName, ECsCommonLoadCachedString::Str::Mat); continue; }
+				{ WriteArrayAssetObjectPropertyToJson<UMaterialInstance>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
 				// UMaterialInstanceConstant
 				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UMaterialInstanceConstant>(InJsonWriter, ArrayProperty, InObject, MemberName, ECsCommonLoadCachedString::Str::Mat); continue; }
+				{ WriteArrayAssetObjectPropertyToJson<UMaterialInstanceConstant>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
 				// UAnimSequence
 				if (InnerAssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UAnimSequence>(InJsonWriter, ArrayProperty, InObject, MemberName, ECsCommonLoadCachedString::Str::Anim); continue; }
+				{ WriteArrayAssetObjectPropertyToJson<UAnimSequence>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
 				// UAnimMontage
 				if (InnerAssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UAnimMontage>(InJsonWriter, ArrayProperty, InObject, MemberName, ECsCommonLoadCachedString::Str::Anim); continue; }
+				{ WriteArrayAssetObjectPropertyToJson<UAnimMontage>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
 				// UBlueprint
 				if (InnerAssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UBlueprint>(InJsonWriter, ArrayProperty, InObject, MemberName, ECsCommonLoadCachedString::Str::Bp); continue; }
+				{ WriteArrayAssetObjectPropertyToJson<UBlueprint>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
 
 				if (Internal)
 				{
@@ -2070,9 +2070,13 @@ void UCsCommon_Load::WriteToMemberArrayStructPropertyFromJson_Name(TSharedPtr<FJ
 {
 	TArray<FName>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<FName>>(InObject);
 
-	const TArray<TSharedPtr<FJsonValue>> JsonArray = JsonObject->GetArrayField(MemberName);
+	const TSharedPtr<FJsonObject>& Object = JsonObject->GetObjectField(MemberName);
 
-	const int32 ArrayCount  = JsonArray.Num();
+	TArray<FString> Keys;
+
+	Object->Values.GetKeys(Keys);
+
+	const int32 ArrayCount  = Keys.Num();
 	const int32 MemberCount = Member->Num();
 	const int32 Count		= FMath::Max(ArrayCount, MemberCount);
 
@@ -2084,9 +2088,11 @@ void UCsCommon_Load::WriteToMemberArrayStructPropertyFromJson_Name(TSharedPtr<FJ
 		if (I >= MemberCount)
 			Member->AddDefaulted();
 
-		TSharedPtr<FJsonObject> Object = JsonArray[I]->AsObject();
+		const FString& Key				 = Keys[I];
+		TSharedPtr<FJsonValue> JsonValue = *(Object->Values.Find(Key));
+		FString Value					 = JsonValue->AsString();
 
-		(*Member)[I] = FName(*Object->GetStringField(MemberName));
+		(*Member)[I] = FName(*Value);
 	}
 }
 
@@ -2096,7 +2102,11 @@ void UCsCommon_Load::WriteToMemberArrayStructPropertyFromJson_uint64(TSharedPtr<
 
 	const TSharedPtr<FJsonObject>& Object = JsonObject->GetObjectField(MemberName);
 
-	const int32 ArrayCount  = Object->Values.Num();
+	TArray<FString> Keys;
+
+	Object->Values.GetKeys(Keys);
+
+	const int32 ArrayCount  = Keys.Num();
 	const int32 MemberCount = Member->Num();
 	const int32 Count		= FMath::Max(ArrayCount, MemberCount);
 
@@ -2108,8 +2118,8 @@ void UCsCommon_Load::WriteToMemberArrayStructPropertyFromJson_uint64(TSharedPtr<
 		if (I >= MemberCount)
 			Member->Add(0);
 
-		FString Index					 = FString::FromInt(I);
-		TSharedPtr<FJsonValue> JsonValue = *(Object->Values.Find(Index));
+		const FString& Key				 = Keys[I];
+		TSharedPtr<FJsonValue> JsonValue = *(Object->Values.Find(Key));
 		FString Value					 = JsonValue->AsString();
 
 		(*Member)[I] = FCString::Strtoui64(*Value, NULL, 10);
@@ -2463,25 +2473,25 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			{
 				// UStaticMesh
 				if (InnerAssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UStaticMesh>(JsonObject, ArrayProperty, InStruct, MemberName, ECsCommonLoadCachedString::Str::Mesh); continue; }
+				{ WriteToArrayAssetObjectPropertyFromJson<UStaticMesh>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 				// USkeletalMesh
 				if (InnerAssetObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<USkeletalMesh>(JsonObject, ArrayProperty, InStruct, MemberName, ECsCommonLoadCachedString::Str::Mesh); continue; }
+				{ WriteToArrayAssetObjectPropertyFromJson<USkeletalMesh>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 				// UMaterialInstance
 				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UMaterialInstance>(JsonObject, ArrayProperty, InStruct, MemberName, ECsCommonLoadCachedString::Str::Mat); continue; }
+				{ WriteToArrayAssetObjectPropertyFromJson<UMaterialInstance>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 				// UMaterialInstanceConstant
 				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UMaterialInstanceConstant>(JsonObject, ArrayProperty, InStruct, MemberName, ECsCommonLoadCachedString::Str::Mat); continue; }
+				{ WriteToArrayAssetObjectPropertyFromJson<UMaterialInstanceConstant>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 				// UAnimSequence
 				if (InnerAssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UAnimSequence>(JsonObject, ArrayProperty, InStruct, MemberName, ECsCommonLoadCachedString::Str::Anim); continue; }
+				{ WriteToArrayAssetObjectPropertyFromJson<UAnimSequence>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 				// UAnimMontage
 				if (InnerAssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UAnimMontage>(JsonObject, ArrayProperty, InStruct, MemberName, ECsCommonLoadCachedString::Str::Anim); continue; }
+				{ WriteToArrayAssetObjectPropertyFromJson<UAnimMontage>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 				// UBlueprint
 				if (InnerAssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UBlueprint>(JsonObject, ArrayProperty, InStruct, MemberName, ECsCommonLoadCachedString::Str::Bp); continue; }
+				{ WriteToArrayAssetObjectPropertyFromJson<UBlueprint>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 				
 				if (Internal)
 				{
@@ -3081,25 +3091,25 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			{
 				// UStaticMesh
 				if (InnerAssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UStaticMesh>(JsonObject, ArrayProperty, InStruct, MemberName, ECsCommonLoadCachedString::Str::Mesh); continue; }
+				{ WriteToArrayAssetObjectPropertyFromJson<UStaticMesh>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 				// USkeletalMesh
 				if (InnerAssetObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<USkeletalMesh>(JsonObject, ArrayProperty, InStruct, MemberName, ECsCommonLoadCachedString::Str::Mesh); continue; }
+				{ WriteToArrayAssetObjectPropertyFromJson<USkeletalMesh>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 				// UMaterialInstance
 				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UMaterialInstance>(JsonObject, ArrayProperty, InStruct, MemberName, ECsCommonLoadCachedString::Str::Mat); continue; }
+				{ WriteToArrayAssetObjectPropertyFromJson<UMaterialInstance>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 				// UMaterialInstanceConstant
 				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UMaterialInstanceConstant>(JsonObject, ArrayProperty, InStruct, MemberName, ECsCommonLoadCachedString::Str::Mat); continue; }
+				{ WriteToArrayAssetObjectPropertyFromJson<UMaterialInstanceConstant>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 				// UAnimSequence
 				if (InnerAssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UAnimSequence>(JsonObject, ArrayProperty, InStruct, MemberName, ECsCommonLoadCachedString::Str::Anim); continue; }
+				{ WriteToArrayAssetObjectPropertyFromJson<UAnimSequence>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 				// UAnimMontage
 				if (InnerAssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UAnimMontage>(JsonObject, ArrayProperty, InStruct, MemberName, ECsCommonLoadCachedString::Str::Anim); continue; }
+				{ WriteToArrayAssetObjectPropertyFromJson<UAnimMontage>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 				// UBlueprint
 				if (InnerAssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UBlueprint>(JsonObject, ArrayProperty, InStruct, MemberName, ECsCommonLoadCachedString::Str::Bp); continue; }
+				{ WriteToArrayAssetObjectPropertyFromJson<UBlueprint>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 
 				if (Internal)
 				{
@@ -3648,19 +3658,19 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			{
 				// UMaterialInstance
 				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UMaterialInstance>(JsonObject, ArrayProperty, InObject, MemberName, ECsCommonLoadCachedString::Str::Mat); continue; }
+				{ WriteToArrayAssetObjectPropertyFromJson<UMaterialInstance>(JsonObject, ArrayProperty, InObject, MemberName); continue; }
 				// UMaterialInstanceConstant
 				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UMaterialInstanceConstant>(JsonObject, ArrayProperty, InObject, MemberName, ECsCommonLoadCachedString::Str::Mat); continue; }
+				{ WriteToArrayAssetObjectPropertyFromJson<UMaterialInstanceConstant>(JsonObject, ArrayProperty, InObject, MemberName); continue; }
 				// UAnimSequence
 				if (InnerAssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UAnimSequence>(JsonObject, ArrayProperty, InObject, MemberName, ECsCommonLoadCachedString::Str::Anim); continue; }
+				{ WriteToArrayAssetObjectPropertyFromJson<UAnimSequence>(JsonObject, ArrayProperty, InObject, MemberName); continue; }
 				// UAnimMontage
 				if (InnerAssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UAnimMontage>(JsonObject, ArrayProperty, InObject, MemberName, ECsCommonLoadCachedString::Str::Anim); continue; }
+				{ WriteToArrayAssetObjectPropertyFromJson<UAnimMontage>(JsonObject, ArrayProperty, InObject, MemberName); continue; }
 				// UBlueprint
 				if (InnerAssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UBlueprint>(JsonObject, ArrayProperty, InObject, MemberName, ECsCommonLoadCachedString::Str::Bp); continue; }
+				{ WriteToArrayAssetObjectPropertyFromJson<UBlueprint>(JsonObject, ArrayProperty, InObject, MemberName); continue; }
 				
 				if (Internal)
 				{

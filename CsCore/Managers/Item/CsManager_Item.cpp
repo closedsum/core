@@ -258,17 +258,15 @@ void ACsManager_Item::Save(FCsItem* Item)
 			JsonWriter->WriteValue(ECsFileItemHeaderCachedString::Str::Timespan, Item->LifeTime.ToString());
 
 			// Contents
-			JsonWriter->WriteArrayStart(ECsFileItemHeaderCachedString::Str::Contents);
+			JsonWriter->WriteObjectStart(ECsFileItemHeaderCachedString::Str::Contents);
 
 				const int32 Count = Item->Contents.Num();
 
 				for (int32 I = 0; I < Count; ++I)
 				{
-					JsonWriter->WriteObjectStart();
-						JsonWriter->WriteValue(ECsFileItemHeaderCachedString::Str::UniqueId, FString::Printf(TEXT("%llu"), Item->Contents[I]));
-					JsonWriter->WriteObjectEnd();
+					JsonWriter->WriteValue(FString::FromInt(I), FString::Printf(TEXT("%llu"), Item->Contents[I]));
 				}
-			JsonWriter->WriteArrayEnd();
+			JsonWriter->WriteObjectEnd();
 
 		JsonWriter->WriteObjectEnd();
 	}
@@ -414,15 +412,21 @@ void ACsManager_Item::PopulateExistingItems()
 					FTimespan::Parse(JsonObject->GetStringField(ECsFileItemHeaderCachedString::Str::Timespan), Item->LifeTime);
 
 					// Contents
-					const TArray<TSharedPtr<FJsonValue>>& JsonArray = JsonObject->GetArrayField(ECsFileItemHeaderCachedString::Str::Contents);
+					const TSharedPtr<FJsonObject>& Object = JsonObject->GetObjectField(ECsFileItemHeaderCachedString::Str::Contents);
 
-					const int32 Count = JsonArray.Num();
+					TArray<FString> Keys;
+
+					Object->Values.GetKeys(Keys);
+
+					const int32 Count = Keys.Num();
 
 					for (int32 I = 0; I < Count; ++I)
 					{
-						TSharedPtr<FJsonObject> Object = JsonArray[I]->AsObject();
+						const FString& Key				 = Keys[I];
+						TSharedPtr<FJsonValue> JsonValue = *(Object->Values.Find(Key));
+						FString Value					 = JsonValue->AsString();
 
-						const uint64 UniqueId = FCString::Strtoui64(*(Object->GetStringField(ECsFileItemHeaderCachedString::Str::UniqueId)), NULL, 10);
+						const uint64 UniqueId = FCString::Strtoui64(*Value, NULL, 10);
 						
 						Item->Contents.Add(UniqueId);
 					}

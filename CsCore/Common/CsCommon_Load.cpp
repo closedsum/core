@@ -233,6 +233,21 @@ void UCsCommon_Load::WriteAssetObjectPropertyToJson_Blueprint(TSharedRef<TJsonWr
 		WriteTAssetPtrToJson_Blueprint(InJsonWriter, MemberName, *Member);
 }
 
+void UCsCommon_Load::WriteMemberArrayStructPropertyToJson_uint64(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UArrayProperty* &ArrayProperty, void* InObject, const FString &MemberName)
+{
+	TArray<uint64>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<uint64>>(InObject);
+
+	InJsonWriter->WriteObjectStart(MemberName);
+
+	const int32 Count = Member->Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		InJsonWriter->WriteValue(FString::FromInt(I), FString::Printf(TEXT("%llu"), (*Member)[I]));
+	}
+	InJsonWriter->WriteObjectEnd();
+}
+
 void UCsCommon_Load::WriteMemberStructPropertyToJson_Transform(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, UStructProperty* &StructProperty, void* InObject, const FString &MemberName)
 {
 	if (FTransform* Member = StructProperty->ContainerPtrToValuePtr<FTransform>(InObject))
@@ -699,6 +714,15 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FName
 			if (UNameProperty* NameProperty = Cast<UNameProperty>(ArrayProperty->Inner))
 			{ WriteMemberArrayStructPropertyToJson_Primitive<FName>(InJsonWriter, ArrayProperty, InStruct, MemberName, &FName::ToString); continue; }
+			// uint64
+			if (UUInt64Property* IntProperty = Cast<UUInt64Property>(ArrayProperty->Inner))
+			{ WriteMemberArrayStructPropertyToJson_uint64(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+
+			if (Internal)
+			{
+				if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
+					continue;
+			}
 			continue;
 		}
 		// bool
@@ -792,6 +816,13 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 					InJsonWriter->WriteValue(MemberName, *Member);
 				}
 			}
+			continue;
+		}
+		// uint64
+		if (UUInt64Property* IntProperty = Cast<UUInt64Property>(*It))
+		{
+			if (uint64* Member = IntProperty->ContainerPtrToValuePtr<uint64>(InStruct))
+				InJsonWriter->WriteValue(MemberName, FString::Printf(TEXT("%llu"), *Member));
 			continue;
 		}
 		// float
@@ -1269,6 +1300,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FName
 			if (UNameProperty* NameProperty = Cast<UNameProperty>(ArrayProperty->Inner))
 			{ WriteMemberArrayStructPropertyToJson_Primitive<FName>(InJsonWriter, ArrayProperty, InStruct, MemberName, &FName::ToString); continue; }
+			// uint64
+			if (UUInt64Property* IntProperty = Cast<UUInt64Property>(ArrayProperty->Inner))
+			{ WriteMemberArrayStructPropertyToJson_uint64(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 
 			if (Internal)
 			{
@@ -1373,9 +1407,8 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 		// uint64
 		if (UUInt64Property* IntProperty = Cast<UUInt64Property>(*It))
 		{
-			// TODO: In the future may need to write to a string
 			if (uint64* Member = IntProperty->ContainerPtrToValuePtr<uint64>(InStruct))
-				InJsonWriter->WriteValue<int64>(MemberName, (int64)*Member);
+				InJsonWriter->WriteValue(MemberName, FString::Printf(TEXT("%llu"), *Member));
 			continue;
 		}
 		// float
@@ -1800,6 +1833,9 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FName
 			if (UNameProperty* NameProperty = Cast<UNameProperty>(ArrayProperty->Inner))
 			{ WriteMemberArrayStructPropertyToJson_Primitive<FName>(InJsonWriter, ArrayProperty, InObject, MemberName, &FName::ToString); continue; }
+			// uint64
+			if (UUInt64Property* IntProperty = Cast<UUInt64Property>(ArrayProperty->Inner))
+			{ WriteMemberArrayStructPropertyToJson_uint64(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
 
 			if (Internal)
 			{
@@ -1896,9 +1932,8 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 		// uint64
 		if (UUInt64Property* IntProperty = Cast<UUInt64Property>(*It))
 		{
-			// TODO: In the future may need to write to a string
 			if (uint64* Member = IntProperty->ContainerPtrToValuePtr<uint64>(InObject))
-				InJsonWriter->WriteValue<int64>(MemberName, (int64)*Member);
+				InJsonWriter->WriteValue(MemberName, FString::Printf(TEXT("%llu"), *Member));
 			continue;
 		}
 		// float
@@ -2052,6 +2087,32 @@ void UCsCommon_Load::WriteToMemberArrayStructPropertyFromJson_Name(TSharedPtr<FJ
 		TSharedPtr<FJsonObject> Object = JsonArray[I]->AsObject();
 
 		(*Member)[I] = FName(*Object->GetStringField(MemberName));
+	}
+}
+
+void UCsCommon_Load::WriteToMemberArrayStructPropertyFromJson_uint64(TSharedPtr<FJsonObject> &JsonObject, UArrayProperty* &ArrayProperty, void* InObject, const FString &MemberName)
+{
+	TArray<uint64>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<uint64>>(InObject);
+
+	const TSharedPtr<FJsonObject>& Object = JsonObject->GetObjectField(MemberName);
+
+	const int32 ArrayCount  = Object->Values.Num();
+	const int32 MemberCount = Member->Num();
+	const int32 Count		= FMath::Max(ArrayCount, MemberCount);
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		if (I >= ArrayCount)
+			break;
+
+		if (I >= MemberCount)
+			Member->Add(0);
+
+		FString Index					 = FString::FromInt(I);
+		TSharedPtr<FJsonValue> JsonValue = *(Object->Values.Find(Index));
+		FString Value					 = JsonValue->AsString();
+
+		(*Member)[I] = FCString::Strtoui64(*Value, NULL, 10);
 	}
 }
 
@@ -2470,7 +2531,10 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FName
 			if (UNameProperty* NameProperty = Cast<UNameProperty>(ArrayProperty->Inner))
 			{ WriteToMemberArrayStructPropertyFromJson_Name(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
-			
+			// uint64
+			if (UUInt64Property* IntProperty = Cast<UUInt64Property>(ArrayProperty->Inner))
+			{ WriteToMemberArrayStructPropertyFromJson_uint64(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
+
 			if (Internal)
 			{
 				if ((*Internal)(Property, JsonObject, InStruct, InScriptStruct))
@@ -2620,6 +2684,12 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 				}
 			}
 			continue;
+		}
+		// uint64
+		if (UUInt64Property* IntProperty = Cast<UUInt64Property>(*It))
+		{
+			if (uint64* Member = IntProperty->ContainerPtrToValuePtr<uint64>(InStruct))
+			{ *Member = FCString::Strtoui64(*(JsonObject->GetStringField(MemberName)), NULL, 10); continue; }
 		}
 		// float
 		if (UFloatProperty* FloatProperty = Cast<UFloatProperty>(*It))
@@ -3079,6 +3149,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FName
 			if (UNameProperty* NameProperty = Cast<UNameProperty>(ArrayProperty->Inner))
 			{ WriteToMemberArrayStructPropertyFromJson_Name(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
+			// uint64
+			if (UUInt64Property* IntProperty = Cast<UUInt64Property>(ArrayProperty->Inner))
+			{ WriteToMemberArrayStructPropertyFromJson_uint64(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 
 			if (Internal)
 			{
@@ -3233,7 +3306,7 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 		if (UUInt64Property* IntProperty = Cast<UUInt64Property>(*It))
 		{
 			if (uint64* Member = IntProperty->ContainerPtrToValuePtr<uint64>(InStruct))
-			{ *Member = (uint64)JsonObject->GetNumberField(MemberName); continue; }
+			{ *Member = FCString::Strtoui64(*(JsonObject->GetStringField(MemberName)), NULL, 10); continue; }
 		}
 		// float
 		if (UFloatProperty* FloatProperty = Cast<UFloatProperty>(*It))
@@ -3640,6 +3713,9 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FName
 			if (UNameProperty* NameProperty = Cast<UNameProperty>(ArrayProperty->Inner))
 			{ WriteToMemberArrayStructPropertyFromJson_Name(JsonObject, ArrayProperty, InObject, MemberName); continue; }
+			// uint64
+			if (UUInt64Property* IntProperty = Cast<UUInt64Property>(ArrayProperty->Inner))
+			{ WriteToMemberArrayStructPropertyFromJson_uint64(JsonObject, ArrayProperty, InObject, MemberName); continue; }
 
 			if (Internal)
 			{
@@ -3764,7 +3840,7 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 		if (UUInt64Property* IntProperty = Cast<UUInt64Property>(*It))
 		{
 			if (uint64* Member = IntProperty->ContainerPtrToValuePtr<uint64>(InObject))
-			{ *Member = (uint64)JsonObject->GetNumberField(MemberName); continue; }
+			{ *Member = FCString::Strtoui64(*(JsonObject->GetStringField(MemberName)), NULL, 10); continue; }
 		}
 		// float
 		if (UFloatProperty* FloatProperty = Cast<UFloatProperty>(*It))

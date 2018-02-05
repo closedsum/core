@@ -2202,9 +2202,9 @@ struct FCsUint8Point
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UInt8Point")
-	uint8 X;
+	uint8 X; // 8 bits
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UInt8Point")
-	uint8 Y;
+	uint8 Y; // 8 bits
 
 	FCsUint8Point()
 	{
@@ -2249,6 +2249,17 @@ struct FCsUint8Point
 
 		return bSuccessful;
 	}
+
+	uint32 GetBits() const
+	{
+		return 8 // X
+			 + 8;// Y
+	}
+
+	float GetBytes() const
+	{
+		return (float)GetBits() / 8.0f;
+	}
 };
 
 USTRUCT(BlueprintType)
@@ -2257,9 +2268,9 @@ struct FCsUint8MatrixDimension
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Uint8MatrixDimension")
-	uint8 RowSpan;
+	uint8 RowSpan; // 8 bits
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Uint8MatrixDimension")
-	uint8 ColumnSpan;
+	uint8 ColumnSpan; // 8 bits
 
 	FCsUint8MatrixDimension()
 	{
@@ -2326,6 +2337,17 @@ struct FCsUint8MatrixDimension
 	{
 		return Index % RowSpan;
 	}
+
+	uint32 GetBits() const
+	{
+		return 8 // RowSpan
+			 + 8;// ColumnSpan
+	}
+
+	float GetBytes() const
+	{
+		return (float)GetBits() / 8.0f;
+	}
 };
 
 USTRUCT(BlueprintType)
@@ -2334,9 +2356,9 @@ struct FCsUint8MatrixCoordinate
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Uint8MatrixCoordinate")
-	uint8 Row;
+	uint8 Row; // 8 bits
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Uint8MatrixCoordinate")
-	uint8 Column;
+	uint8 Column; // 8 bits
 
 	FCsUint8MatrixCoordinate()
 	{
@@ -2386,6 +2408,17 @@ struct FCsUint8MatrixCoordinate
 	{
 		Row    = InRow;
 		Column = InColumn;
+	}
+
+	uint32 GetBits() const
+	{
+		return 8 // Row
+			 + 8;// Column
+	}
+
+	float GetBytes() const
+	{
+		return (float)GetBits() / 8.0f;
 	}
 };
 

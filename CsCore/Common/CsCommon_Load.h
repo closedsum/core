@@ -474,6 +474,8 @@ template<typename T>
 		InJsonWriter->WriteArrayEnd();
 	}
 
+	static void WriteMemberArrayStructPropertyToJson_uint64(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UArrayProperty* &ArrayProperty, void* InObject, const FString &MemberName);
+
 	static void WriteMemberStructPropertyToJson_Transform(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UStructProperty* &StructProperty, void* InObject, const FString &MemberName);
 	static void WriteMemberArrayStructPropertyToJson_Transform(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UArrayProperty* &ArrayProperty, void* InObject, const FString &MemberName);
 
@@ -641,6 +643,8 @@ template<typename T>
 	static void WriteToMemberArrayStructPropertyFromJson_Transform(TSharedPtr<class FJsonObject> &JsonObject, UArrayProperty* &ArrayProperty, void* InObject, const FString &MemberName);
 
 	static void WriteToMemberArrayStructPropertyFromJson_Name(TSharedPtr<class FJsonObject> &JsonObject, UArrayProperty* &ArrayProperty, void* InObject, const FString &MemberName);
+
+	static void WriteToMemberArrayStructPropertyFromJson_uint64(TSharedPtr<class FJsonObject> &JsonObject, UArrayProperty* &ArrayProperty, void* InObject, const FString &MemberName);
 
 	template<typename T>
 	static void WriteToMemberStructPropertyFromJson(TSharedPtr<class FJsonObject> &JsonObject, UStructProperty* &StructProperty, void* InObject, const FString &MemberName, TCsReadStructFromJson_Internal Internal = nullptr)

@@ -366,7 +366,13 @@ void ACsManager_Item::PopulateExistingItems()
 	const int32 FileCount = FoundFiles.Num();
 
 	if (FileCount == CS_EMPTY)
+	{
+#if WITH_EDITOR
+		OnPopulateExistingItems_ScriptEvent.Broadcast();
+#endif // #if WITH_EDITOR
+		OnPopulateExistingItems_Event.Broadcast();
 		return;
+	}
 
 	for (int32 I = 0; I < FileCount; ++I)
 	{
@@ -449,6 +455,11 @@ void ACsManager_Item::PopulateExistingItems()
 			else
 			{
 				UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::PopulateExistingItems: %s is NOT Valid"), *Filename);
+
+#if WITH_EDITOR
+				OnPopulateExistingItems_ScriptEvent.Broadcast();
+#endif // #if WITH_EDITOR
+				OnPopulateExistingItems_Event.Broadcast();
 				return;
 			}
 		}

@@ -17,6 +17,20 @@
 
 #include "Async/AsyncWork.h"
 
+// Cache
+#pragma region
+
+namespace ECsManagerItemCachedString
+{
+	namespace Str
+	{
+		const FString Allocate = TEXT("ACsManager_Item::Allocate");
+		const FString DeAllocate = TEXT("ACsManager_Item::DeAllocate");
+	}
+}
+
+#pragma endregion Cache
+
 ACsManager_Item::ACsManager_Item(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	UniqueIdIndex = CS_ITEM_UNIQUE_ID_START_INDEX;

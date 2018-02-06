@@ -589,6 +589,37 @@ void ACsManager_Input::QueueInput(const TCsInputAction &Action, const TCsInputEv
 	QueuedInputsForNextFrame.Add(Input);
 }
 
+void ACsManager_Input::ConsumeInput(const TCsInputAction &Action)
+{
+	FCsInputFrame& InputFrame = InputFrames[CurrentInputFrameIndex];
+
+	int32 Count = InputFrame.Inputs.Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		FCsInput* Input = InputFrame.Inputs[I];
+
+		if (Input->Action == Action)
+		{
+			Input->IsConsumed = true;
+			break;
+		}
+	}
+
+	Count = CurrentInputFrame.Inputs.Num();
+
+	for (int32 I = Count - 1; I >= 0; --I)
+	{
+		FCsInput* Input = CurrentInputFrame.Inputs[I];
+
+		if (Input->Action == Action)
+		{
+			CurrentInputFrame.Inputs.RemoveAt(I);
+			break;
+		}
+	}
+}
+
 FCsInput* ACsManager_Input::GetPreviousInputAction(const TCsInputAction &Action)
 {
 	const int32 LastInputFrame = UCsCommon::Mod(CurrentInputFrameIndex - 1, CS_MAX_INPUT_FRAMES);

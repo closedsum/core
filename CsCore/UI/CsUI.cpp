@@ -226,4 +226,16 @@ bool ACsUI::IsClosed_Script(const uint8 &WidgetType) { return IsClosed((TCsWidge
 
 #pragma endregion Open / Close
 
+// Raw Inputs
+#pragma region
+
+bool ACsUI::ProcessInputFrame(FCsInputFrame &InputFrame) { return false; }
+
+#pragma endregion Raw Inputs
+
+// Game Event
+#pragma region
+
 bool ACsUI::ProcessGameEvent(const TCsGameEvent &GameEvent) { return false; }
+
+#pragma endregion Game Event

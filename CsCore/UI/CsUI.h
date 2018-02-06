@@ -167,8 +167,20 @@ public:
 
 #pragma endregion Open / Close
 
+// Raw Inputs
+#pragma region
+
+	virtual bool ProcessInputFrame(FCsInputFrame &InputFrame);
+
+#pragma endregion Raw Inputs
+
+// Game Event
+#pragma region
+
 	virtual bool ProcessGameEvent(const TCsGameEvent &GameEvent);
 
 	UPROPERTY(BlueprintAssignable, Category = "UI")
 	FBindableDynEvent_CsUI_Override_ProcessGameEvent Override_ProcessGameEvent_ScriptEvent;
+
+#pragma endregion Game Event
 };

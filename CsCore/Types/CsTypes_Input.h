@@ -349,6 +349,8 @@ struct FCsInput
 	uint16 PoolIndex;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	bool IsAllocated;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	bool IsConsumed;
 
 	ECsInputAction::Type Action;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Input")
@@ -448,6 +450,7 @@ struct FCsInput
 	void Reset()
 	{
 		IsAllocated   = false;
+		IsConsumed	  = false;
 		//Action	  = ECsInputAction::ECsInputAction_MAX;
 		Action_Script = 255;
 		Event		  = ECsInputEvent::ECsInputEvent_MAX;

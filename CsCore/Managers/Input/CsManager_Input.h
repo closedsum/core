@@ -428,6 +428,8 @@ class CSCORE_API ACsManager_Input : public AActor
 
 	virtual void QueueInput(const TCsInputAction &Action, const TCsInputEvent &Event, const float &Value = 0.0f, const FVector &Location = FVector::ZeroVector, const FRotator &Rotation = FRotator::ZeroRotator);
 
+	void ConsumeInput(const TCsInputAction &Action);
+
 	uint16 CurrentInputPoolIndex;
 
 	FCsInputFrame InputFrames[CS_MAX_INPUT_FRAMES];

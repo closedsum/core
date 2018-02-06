@@ -210,6 +210,18 @@ public:
 
 #pragma endregion Routines
 
+// Raw Inputs
+#pragma region
+
+	virtual bool ProcessInputFrame(FCsInputFrame &InputFrame);
+
+	virtual bool ChildWidgets_ProcessInputFrame(FCsInputFrame &InputFrame);
+
+#pragma endregion Raw Inputs
+
+// Game Event
+#pragma region
+
 	virtual bool ProcessGameEvent(const TCsGameEvent &GameEvent);
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
@@ -222,4 +234,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual bool ChildWidgets_ProcessGameEvent_Script(const uint8 &GameEvent);
+
+#pragma endregion Game Event
 };

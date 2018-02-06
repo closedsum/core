@@ -483,6 +483,17 @@ TAutoConsoleVariable<int32> CsCVarLogManagerWidgetTransactions(
 
 #pragma endregion UI
 
+// Item
+#pragma region
+
+TAutoConsoleVariable<int32> CsCVarLogManagerItemTransactions(
+	TEXT("log.manager.item.transactions"),
+	0,
+	TEXT("Log Manager Item Allocate and DeAllocate."),
+	ECVF_SetByConsole
+);
+
+#pragma endregion Item
 // Inventory
 #pragma region
 

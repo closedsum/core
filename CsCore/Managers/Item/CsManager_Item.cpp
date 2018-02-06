@@ -43,6 +43,29 @@ uint64 ACsManager_Item::GetUniqueId()
 	return UniqueIdIndex;
 }
 
+void ACsManager_Item::LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, const FCsItem* const Item)
+{
+	if (CsCVarLogManagerItemTransactions->GetInt() == CS_CVAR_SHOW_LOG)
+	{
+		const FString TransactionAsString = ECsPoolTransaction::ToActionString(Transaction);
+
+		const FString ItemName				  = Item->ShortCode.ToString();
+		const FString DataName				  = Item->GetData()->ShortCode.ToString();
+		const ACsData_Interactive* Data_Actor = Item->GetData_Actor();
+		const FString DataActorName			  = Data_Actor ? Data_Actor->ShortCode.ToString() : ECsCachedString::Str::Empty;
+		const float CurrentTime				  = GetWorld()->GetTimeSeconds();
+
+		if (Data_Actor)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s Item: %s with Data: %s and with Data_Actor: %s at %f."), *FunctionName, *TransactionAsString, *ItemName, *DataName, *DataActorName, CurrentTime);
+		}
+		else
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s Item: %s with Data: %s at %f."), *FunctionName, *TransactionAsString, *ItemName, *DataName, CurrentTime);
+		}
+	}
+}
+
 FCsItem* ACsManager_Item::Allocate()
 {
 	for (uint16 I = 0; I < CS_ITEM_POOL_SIZE; ++I)

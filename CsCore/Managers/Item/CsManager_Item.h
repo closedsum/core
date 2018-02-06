@@ -1,6 +1,7 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "GameFramework/Actor.h"
+#include "Types/CsTypes_Pool.h"
 #include "Types/CsTypes_Item.h"
 #include "CsManager_Item.generated.h"
 
@@ -34,6 +35,8 @@ class CSCORE_API ACsManager_Item : public AActor
 	FCsItem Pool[CS_ITEM_POOL_SIZE];
 
 	uint16 PoolIndex;
+
+	void LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, const FCsItem* const Item);
 
 	virtual FCsItem* Allocate();
 	virtual FCsItem* Allocate(const FName &ShortCode);

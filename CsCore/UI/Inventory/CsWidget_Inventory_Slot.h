@@ -17,7 +17,16 @@ class CSCORE_API UCsWidget_Inventory_Slot : public UCsWidget_ButtonAndText
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	uint8 Column;
 
+	UPROPERTY(BlueprintReadOnly, Category = "UI")
+	FString DisplayName;
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void SetDisplayName(const FString &InDisplayName);
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void UpdateDisplayNameWithCurrentCount();
+
 	TArray<FCsItem*> Items;
 
+	void AddItem(FCsItem* Item);
 	void RemoveItem(const FCsItem* const Item);
 };

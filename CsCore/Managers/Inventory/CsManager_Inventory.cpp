@@ -214,8 +214,6 @@ void ACsManager_Inventory::RemoveItem(const uint64 &Id, const FString &FunctionN
 
 	if (ShouldDestroy)
 	{
-		// TODO: Need to Delete .json file associated with the item
-
 		ACsManager_Item* Manager_Item = ACsManager_Item::Get(GetWorld());
 		Manager_Item->DeAllocate(Item);
 	}

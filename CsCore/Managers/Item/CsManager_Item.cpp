@@ -260,6 +260,13 @@ void ACsManager_Item::DeAllocate(const uint64 &Id)
 	// If Save EXISTS, Delete it.
 	if (Item->IsSaved)
 	{
+		const FString Path	   = GetSavePath();
+		const FString Filename = Path + Item->FileName + ECsCachedString::Str::Json;
+
+		if (IFileManager::Get().FileExists(*Filename))
+		{
+			IFileManager::Get().Delete(*Filename, true, true, true);
+		}
 	}
 	AvailableUnqiueIds.Add(Item->UniqueId);
 	Item->Reset();
@@ -526,6 +533,9 @@ void ACsManager_Item::PopulateExistingItems()
 				}
 
 				AddActiveItemByOwnerId(Item);
+				SetItemFileName(Item);
+
+				Item->IsSaved = true;
 			}
 			else
 			{

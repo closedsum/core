@@ -38,6 +38,9 @@ class CSCORE_API ACsManager_Item : public AActor
 
 	void LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, const FCsItem* const Item);
 
+	TCsAssetType ItemAssetType;
+	TCsAssetType InteractiveAssetType;
+
 	virtual FCsItem* Allocate();
 	virtual FCsItem* Allocate(const FName &ShortCode);
 

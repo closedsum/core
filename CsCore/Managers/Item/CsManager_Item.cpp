@@ -13,7 +13,9 @@
 // Managers
 #include "Managers/Inventory/CsManager_Inventory.h"
 // Data
+#include "Data/CsDataMapping.h"
 #include "Data/CsData_Item.h"
+#include "Data/CsData_Interactive.h"
 
 #include "Async/AsyncWork.h"
 
@@ -104,7 +106,30 @@ FCsItem* ACsManager_Item::Allocate()
 
 FCsItem* ACsManager_Item::Allocate(const FName &ShortCode)
 {
-	return nullptr;
+	FCsItem* Item = Allocate();
+
+	ACsDataMapping* DataMapping = UCsCommon::GetDataMapping(GetWorld());
+	ACsData_Item* Data			= Cast<ACsData_Item>(DataMapping->GetLoadedData(ItemAssetType, ShortCode));
+	const TCsItemType& ItemType = Data->BaseItemType;
+
+	Item->Type			= ItemType;
+	Item->Type_Script	= (uint8)Item->Type;
+	Item->TypeAsString	= (*ItemTypeToString)(Item->Type);
+	Item->ShortCode		= Data->ShortCode;
+	Item->DisplayName	= Data->GetDisplayName();
+
+	SetItemFileName(Item);
+
+	Item->Created = FDateTime::Now();
+
+	Item->InventoryProperties.Reset();
+	Item->InventoryProperties.Dimension = *(Data->GetDimension());
+
+	Item->Data = Data;
+	// Get Data for Actor when this Item is Dropped
+	Item->Data_Actor = Cast<ACsData_Interactive>(DataMapping->GetLoadedData(InteractiveAssetType, Data->GetSpawnedActorDataShortCode()));
+
+	return Item;
 }
 
 void ACsManager_Item::SetItemOwnerInfo(FCsItem* Item, UObject* ItemOwner){}
@@ -157,7 +182,16 @@ void ACsManager_Item::ChangeActiveItemOwnerInfo(FCsItem* Item, UObject* ItemOwne
 	AddActiveItemByOwnerId(Item);
 }
 
-void ACsManager_Item::SetActiveItemData(FCsItem* Item){}
+void ACsManager_Item::SetActiveItemData(FCsItem* Item)
+{
+	ACsDataMapping* DataMapping = UCsCommon::GetDataMapping(GetWorld());
+	Item->Data					= Cast<ACsData_Item>(DataMapping->GetLoadedData(ItemAssetType, Item->ShortCode));
+
+	Item->InventoryProperties.Dimension = *(Item->Data->GetDimension());
+
+	if (ACsData_Item* Data = Item->GetData())
+		Item->Data_Actor = Cast<ACsData_Interactive>(DataMapping->GetLoadedData(InteractiveAssetType, Data->GetSpawnedActorDataShortCode()));
+}
 
 // Get
 #pragma region

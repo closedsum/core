@@ -8,8 +8,13 @@ class CSCORE_API UCsWidget_Inventory : public UCsUserWidget
 {
 	GENERATED_UCLASS_BODY()
 
+	virtual void Init() override;
+
 	UPROPERTY(meta = (BindWidget))
 	UVerticalBox* MyVerticalBox;
+
+	TCsFVector2D Position;
+	TCsFVector2D Size;
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* Header_Text;

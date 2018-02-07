@@ -2,6 +2,7 @@
 #include "UI/Simple/CsSimpleWidget.h"
 #include "CsCore.h"
 
+#include "Runtime/UMG/Public/Blueprint/SlateBlueprintLibrary.h"
 #include "Runtime/Engine/Public/UnrealEngine.h"
 
 UCsSimpleWidget::UCsSimpleWidget(const FObjectInitializer& ObjectInitializer)
@@ -27,9 +28,13 @@ void UCsSimpleWidget::OnNativeConstruct() {}
 void UCsSimpleWidget::Init(const FGeometry& MyGeometry)
 {
 	// TopLeft
-	Position = MyGeometry.LocalToAbsolute(FVector2D(0, 0));
+	FVector2D PixelPosition;
+	FVector2D ViewportPosition;
+
+	USlateBlueprintLibrary::AbsoluteToViewport(GetWorld(), MyGeometry.GetAbsolutePosition(), PixelPosition, ViewportPosition);
+	Position = PixelPosition;
 	// Size = BotRight - TopLeft
-	Size = MyGeometry.LocalToAbsolute(MyGeometry.GetLocalSize()) - Position; 
+	Size = MyGeometry.GetAbsoluteSize(); 
 }
 
 void UCsSimpleWidget::Init(const int32 &Index){}

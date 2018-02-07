@@ -25,9 +25,9 @@ void UCsWidget_Inventory_Grid::OnNativeConstruct()
 
 void UCsWidget_Inventory_Grid::Init(const FGeometry& MyGeometry)
 {
-	Setup();
+	Super::Init(MyGeometry);
 
-	HasInitFinished = true;
+	Setup();
 }
 
 void UCsWidget_Inventory_Grid::Show()
@@ -62,8 +62,6 @@ void UCsWidget_Inventory_Grid::SetupSize()
 	}
 	else
 	{
-		TSharedPtr<class SConstraintCanvas> ConstraintCanvas = Canvas->GetCanvasWidget();
-		Size												 = ConstraintCanvas->GetDesiredSize();
 	}
 }
 
@@ -74,7 +72,7 @@ void UCsWidget_Inventory_Grid::SetupRowsAndColumns()
 	}
 	else
 	{
-		SlotSize = FVector2D(Size.X / (float)ColumnSize, Size.Y / (float)RowSize);
+		SlotSize = FVector2D(Size.Get().X / (float)ColumnSize, Size.Get().Y / (float)RowSize);
 	}
 }
 

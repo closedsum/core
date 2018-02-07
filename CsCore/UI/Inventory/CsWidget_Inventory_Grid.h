@@ -17,9 +17,6 @@ class CSCORE_API UCsWidget_Inventory_Grid : public UCsWidget_Grid
 
 	bool UseDynamicSize;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
-	FVector2D Size;
-
 	virtual void SetupSize();
 
 	bool UseDynamicRowAndColumnSize;

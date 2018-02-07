@@ -21,10 +21,7 @@ void UCsUserWidget::NativeConstruct()
 
 void UCsUserWidget::OnNativeConstruct(){}
 
-void UCsUserWidget::Init()
-{
-	HasInitFinished = true;
-}
+void UCsUserWidget::Init(){}
 
 void UCsUserWidget::OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime) {}
 

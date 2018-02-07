@@ -383,6 +383,16 @@ public:
 		return !(Lhs == Rhs);
 	}
 
+	FORCEINLINE friend FVector2D operator-(const FVector2D &Lhs, const FCsPrimitiveType_FVector2D &Rhs)
+	{
+		return Lhs - Rhs.Value;
+	}
+
+	FORCEINLINE friend FVector2D operator-(const FCsPrimitiveType_FVector2D &Lhs, const FVector2D &Rhs)
+	{
+		return Lhs.Value - Rhs;
+	}
+
 	FCsPrimitiveType_FVector2D& operator+=(const FVector2D& B)
 	{
 		Value += B;

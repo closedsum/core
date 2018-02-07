@@ -110,7 +110,7 @@ class CSCORE_API UCsPooledWidget : public UCsSimpleWidget
 {
 	GENERATED_UCLASS_BODY()
 
-	virtual void Init() override;
+	virtual void Init(const FGeometry& MyGeometry) override;
 	virtual void Init(const int32 &Index) override;
  
 	virtual void Allocate(const uint16& ActiveIndex, FCsPooledWidgetPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent);

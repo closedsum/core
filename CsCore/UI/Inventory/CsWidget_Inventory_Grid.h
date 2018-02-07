@@ -10,7 +10,7 @@ class CSCORE_API UCsWidget_Inventory_Grid : public UCsWidget_Grid
 
 	virtual void OnNativeConstruct() override;
 
-	virtual void Init() override;
+	virtual void Init(const FGeometry& MyGeometry) override;
 
 	virtual void Show() override;
 	virtual void Hide() override;

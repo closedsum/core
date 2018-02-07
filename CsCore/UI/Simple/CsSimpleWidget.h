@@ -16,7 +16,7 @@ class CSCORE_API UCsSimpleWidget : public UUserWidget
 	UPROPERTY()
 	bool HasNativeContructed;
 
-	virtual void Init();
+	virtual void Init(const FGeometry& MyGeometry);
 	virtual void Init(const int32 &Index);
 
 	UPROPERTY()
@@ -33,11 +33,11 @@ class CSCORE_API UCsSimpleWidget : public UUserWidget
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual void Hide();
 
-	TCsPrimitiveType<FVector2D> Position;
+	TCsFVector2D Position;
 
 	virtual void SetPosition(const FVector2D &InPosition);
 
-	TCsPrimitiveType<FVector2D> Size;
+	TCsFVector2D Size;
 
 	virtual void SetSize(const FVector2D &InSize);
 

@@ -9,9 +9,9 @@ UCsPooledWidget::UCsPooledWidget(const FObjectInitializer& ObjectInitializer)
 {
 }
 
-void UCsPooledWidget::Init()
+void UCsPooledWidget::Init(const FGeometry& MyGeometry)
 {
-	Super::Init();
+	Super::Init(MyGeometry);
 }
 
 void UCsPooledWidget::Init(const int32 &Index)

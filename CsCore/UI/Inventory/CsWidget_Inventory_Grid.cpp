@@ -23,7 +23,7 @@ void UCsWidget_Inventory_Grid::OnNativeConstruct()
 	}
 }
 
-void UCsWidget_Inventory_Grid::Init()
+void UCsWidget_Inventory_Grid::Init(const FGeometry& MyGeometry)
 {
 	Setup();
 

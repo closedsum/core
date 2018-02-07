@@ -24,7 +24,14 @@ void UCsSimpleWidget::NativeConstruct()
 
 void UCsSimpleWidget::OnNativeConstruct() {}
 
-void UCsSimpleWidget::Init(){}
+void UCsSimpleWidget::Init(const FGeometry& MyGeometry)
+{
+	// TopLeft
+	Position = MyGeometry.LocalToAbsolute(FVector2D(0, 0));
+	// Size = BotRight - TopLeft
+	Size = MyGeometry.LocalToAbsolute(MyGeometry.GetLocalSize()) - Position; 
+}
+
 void UCsSimpleWidget::Init(const int32 &Index){}
 void UCsSimpleWidget::OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime){}
 
@@ -34,7 +41,7 @@ void UCsSimpleWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 	if (!HasInitFinished)
 	{
-		Init();
+		Init(MyGeometry);
 
 		HasInitFinished = true;
 	}

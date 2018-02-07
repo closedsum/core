@@ -109,7 +109,7 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 								InputActionMapToString = &ECsInputActionMap::ToString; \
 								StringToInputActionMap = &ECsInputActionMap::ToBitMask;
 
-// Example: CLASS = CsManagerInput (if class is ACsManager_Input), INPUT = TurnAtRate
+// Example: INPUT = TurnAtRate
 #define CS_DECLARE_INPUT_ACTION_MEMBERS(INPUT)	FCsInputInfo INPUT; \
 												void INPUT##_FirstPressed(); \
 												void INPUT##_Pressed(); \
@@ -151,7 +151,7 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 
 #define CS_IS_INPUT_ACTION_FIRST_PRESSED(Input, ACTION) Input->Action == ECsInputAction::ACTION && Input->Event == ECsInputEvent::FirstPressed
 
-// Example: CLASS = CsManagerInput (if class is ACsManager_Input), INPUT = TurnAtRate
+// Example: INPUT = TurnAtRate
 #define CS_DECLARE_INPUT_AXIS_MEMBERS(INPUT)	FCsInputInfo INPUT; \
 												FCsInput Input_Last_##INPUT; \
 												void INPUT##_Raw(float Val); \
@@ -206,10 +206,10 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 															AddInput(ECsInputAction::INPUT, INPUT.Event, Val); \
 														}
 
-// Example: THIS = this, CLASS = CsManagerInput (if class is ACsManager_Input), INPUT = TurnAtRate
+// Example: THIS = this, CLASS = ACsManager_Input (if class is ACsManager_Input), INPUT = TurnAtRate
 #define CS_BIND_AXIS_INPUT(THIS, CLASS, INPUT) InputComponent->BindAxis(#INPUT, THIS, &CLASS::INPUT##_Raw).bConsumeInput = false;
 
-// Example: CLASS = CsManagerInput (if class is ACsManager_Input), INPUT = LeftTrigger
+// Example: CLASS = ACsManager_Input (if class is ACsManager_Input), INPUT = LeftTrigger
 #define CS_DECLARE_INPUT_TRIGGER_MEMBERS(INPUT)	FCsInputInfo INPUT; \
 												void INPUT##_Raw(float Val); \
 												void INPUT##_FirstMoved(const float &Val); \
@@ -265,10 +265,10 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 																AddInput(ECsInputAction::INPUT, INPUT.Event, Val); \
 															}
 
-// Example: THIS = this, CLASS = CsManagerInput (if class is ACsManager_Input), INPUT = LeftTrigger
+// Example: THIS = this, CLASS = ACsManager_Input (if class is ACsManager_Input), INPUT = LeftTrigger
 #define CS_BIND_TRIGGER_INPUT(THIS, CLASS, INPUT) InputComponent->BindAxis(#INPUT, THIS, &CLASS::INPUT##_Raw).bConsumeInput = false;
 
-// Example: CLASS = CsManagerInput (if class is ACsManager_Input), INPUT = RightHandMove
+// Example: INPUT = RightHandMove
 #define CS_DECLARE_INPUT_LOCATION_MEMBERS(INPUT)	FCsInputInfo INPUT; \
 													void INPUT##_Raw(const FVector &Location); \
 													void INPUT##_FirstMoved(const FVector &Location); \
@@ -325,7 +325,7 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 																AddInput(ECsInputAction::INPUT, INPUT.Event, 0.0f, Location); \
 															}
 
-// Example: CLASS = CsManagerInput (if class is ACsManager_Input), INPUT = RightHandRotate
+// Example: INPUT = RightHandRotate
 #define CS_DECLARE_INPUT_ROTATION_MEMBERS(INPUT)	FCsInputInfo INPUT; \
 													void INPUT##_Raw(const FRotator &Rotation); \
 													void INPUT##_FirstMoved(const FRotator &Rotation); \

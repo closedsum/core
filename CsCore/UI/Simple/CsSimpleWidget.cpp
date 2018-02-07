@@ -54,6 +54,11 @@ void UCsSimpleWidget::Hide()
 	SetIsEnabled(false);
 }
 
+void UCsSimpleWidget::SetPosition(const FVector2D &InPosition)
+{
+	Position = InPosition;
+}
+
 void UCsSimpleWidget::SetSize(const FVector2D &InSize)
 {
 	Size = InSize;

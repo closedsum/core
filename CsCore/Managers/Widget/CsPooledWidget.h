@@ -123,7 +123,5 @@ class CSCORE_API UCsPooledWidget : public UCsSimpleWidget
 
 	FVector2D ParentCanvasSize;
 
-	TCsPrimitiveType<FVector2D> Position;
-
-	virtual void SetPosition(const FVector2D &InPosition);
+	virtual void SetPosition(const FVector2D &InPosition) override;
 };

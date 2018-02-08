@@ -122,7 +122,19 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 											 INPUT.Event = ECsInputEvent::Released; \
 											 Last_Actions[ECsInputAction::INPUT] = &INPUT.Last_Event; \
 											 INPUT.Last_Event = ECsInputEvent::Released; \
-											 
+
+#define CS_DEFINE_INPUT_ACTION_VALUES_N(CLASS, INPUT, MAP)	INPUT = NewObject<CLASS>(GetWorld(), CLASS::StaticClass()); \
+															INPUT->Action = ECsInputAction::INPUT; \
+															INPUT->ActionMap = MAP; \
+															Inputs[ECsInputAction::INPUT] = INPUT; \
+															Infos[ECsInputAction::INPUT] = &(INPUT->Info); \
+															INPUT->Info.Type = ECsInputType::Action; \
+															INPUT->Info.ValueType = ECsInputValue::Void; \
+															Actions[ECsInputAction::INPUT] = &(INPUT->Info.Event); \
+															INPUT->Info.Event = ECsInputEvent::Released; \
+															Last_Actions[ECsInputAction::INPUT] = &(INPUT->Info.Last_Event); \
+															INPUT->Info.Last_Event = ECsInputEvent::Released; \
+
 // Example: CLASS = ACsManager_Input (if class is ACsManager_Input), INPUT = TurnAtRate
 #define CS_DEFINE_INPUT_ACTION_MEMBERS(CLASS, INPUT, MAP)	void CLASS::INPUT##_FirstPressed() \
 															{ \
@@ -171,14 +183,17 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 											Last_Actions[ECsInputAction::INPUT] = &INPUT.Last_Event; \
 											INPUT.Last_Event = ECsInputEvent::Stationary; \
 
-#define CS_DEFINE_INPUT_AXIS_VALUES_N(INPUT)	Inputs[ECsInputAction::INPUT] = INPUT; \
-												Infos[ECsInputAction::INPUT] = &(INPUT->Info); \
-												INPUT->Info.Type = ECsInputType::Axis; \
-												INPUT->Info.ValueType = ECsInputValue::Float; \
-												Actions[ECsInputAction::INPUT] = &(INPUT->Info.Event); \
-												INPUT->Info.Event = ECsInputEvent::Stationary; \
-												Last_Actions[ECsInputAction::INPUT] = &(INPUT->Info.Last_Event); \
-												INPUT->Info.Last_Event = ECsInputEvent::Stationary; \
+#define CS_DEFINE_INPUT_AXIS_VALUES_N(CLASS, INPUT, MAP)	INPUT = NewObject<CLASS>(GetWorld(), CLASS::StaticClass()); \
+															INPUT->Action = ECsInputAction::INPUT; \
+															INPUT->ActionMap = MAP; \
+															Inputs[ECsInputAction::INPUT] = INPUT; \
+															Infos[ECsInputAction::INPUT] = &(INPUT->Info); \
+															INPUT->Info.Type = ECsInputType::Axis; \
+															INPUT->Info.ValueType = ECsInputValue::Float; \
+															Actions[ECsInputAction::INPUT] = &(INPUT->Info.Event); \
+															INPUT->Info.Event = ECsInputEvent::Stationary; \
+															Last_Actions[ECsInputAction::INPUT] = &(INPUT->Info.Last_Event); \
+															INPUT->Info.Last_Event = ECsInputEvent::Stationary; \
 
 // Example: CLASS = ACsManager_Input (if class is ACsManager_Input), INPUT = TurnAtRate
 #define CS_DEFINE_INPUT_AXIS_MEMBERS(CLASS, INPUT, MAP)	void CLASS::INPUT##_Raw(float Val) \
@@ -239,14 +254,17 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 												Last_Actions[ECsInputAction::INPUT] = &INPUT.Last_Event; \
 												INPUT.Last_Event = ECsInputEvent::Stationary; \
 
-#define CS_DEFINE_INPUT_TRIGGER_VALUES_N(INPUT)	Inputs[ECsInputAction::INPUT] = INPUT; \
-												Infos[ECsInputAction::INPUT] = &(INPUT->Info); \
-												INPUT->Info.Type = ECsInputType::Trigger; \
-												INPUT->Info.ValueType = ECsInputValue::Float; \
-												Actions[ECsInputAction::INPUT] = &(INPUT->Info.Event); \
-												INPUT->Info.Event = ECsInputEvent::Stationary; \
-												Last_Actions[ECsInputAction::INPUT] = &(INPUT->Info.Last_Event); \
-												INPUT->Info.Last_Event = ECsInputEvent::Stationary; \
+#define CS_DEFINE_INPUT_TRIGGER_VALUES_N(CLASS, INPUT, MAP)	INPUT = NewObject<CLASS>(GetWorld(), CLASS::StaticClass()); \
+															INPUT->Action = ECsInputAction::INPUT; \
+															INPUT->ActionMap = MAP; \
+															Inputs[ECsInputAction::INPUT] = INPUT; \
+															Infos[ECsInputAction::INPUT] = &(INPUT->Info); \
+															INPUT->Info.Type = ECsInputType::Trigger; \
+															INPUT->Info.ValueType = ECsInputValue::Float; \
+															Actions[ECsInputAction::INPUT] = &(INPUT->Info.Event); \
+															INPUT->Info.Event = ECsInputEvent::Stationary; \
+															Last_Actions[ECsInputAction::INPUT] = &(INPUT->Info.Last_Event); \
+															INPUT->Info.Last_Event = ECsInputEvent::Stationary; \
 
 // Example: CLASS = ACsManager_Input (if class is ACsManager_Input), INPUT = LeftTrigger
 #define CS_DEFINE_INPUT_TRIGGER_MEMBERS(CLASS, INPUT, MAP)	void CLASS::INPUT##_Raw(float Val) \
@@ -309,14 +327,17 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 												Last_Actions[ECsInputAction::INPUT] = &INPUT.Last_Event; \
 												INPUT.Last_Event = ECsInputEvent::Stationary; \
 
-#define CS_DEFINE_INPUT_LOCATION_VALUES_N(INPUT)	Inputs[ECsInputAction::INPUT] = INPUT; \
-													Infos[ECsInputAction::INPUT] = &(INPUT->Info); \
-													INPUT->Info.Type = ECsInputType::Location; \
-													INPUT->Info.ValueType = ECsInputValue::Vector; \
-													Actions[ECsInputAction::INPUT] = &(INPUT->Info.Event); \
-													INPUT->Info.Event = ECsInputEvent::Stationary; \
-													Last_Actions[ECsInputAction::INPUT] = &(INPUT->Info.Last_Event); \
-													INPUT->Info.Last_Event = ECsInputEvent::Stationary; \
+#define CS_DEFINE_INPUT_LOCATION_VALUES_N(CLASS, INPUT, MAP)	INPUT = NewObject<CLASS>(GetWorld(), CLASS::StaticClass()); \
+																INPUT->Action = ECsInputAction::INPUT; \
+																INPUT->ActionMap = MAP; \
+																Inputs[ECsInputAction::INPUT] = INPUT; \
+																Infos[ECsInputAction::INPUT] = &(INPUT->Info); \
+																INPUT->Info.Type = ECsInputType::Location; \
+																INPUT->Info.ValueType = ECsInputValue::Vector; \
+																Actions[ECsInputAction::INPUT] = &(INPUT->Info.Event); \
+																INPUT->Info.Event = ECsInputEvent::Stationary; \
+																Last_Actions[ECsInputAction::INPUT] = &(INPUT->Info.Last_Event); \
+																INPUT->Info.Last_Event = ECsInputEvent::Stationary; \
 
 // Example: CLASS = ACsManager_Input (if class is ACsManager_Input), INPUT = RightHandMove
 #define CS_DEFINE_INPUT_LOCATION_MEMBERS(CLASS, INPUT, MAP)	void CLASS::INPUT##_Raw(const FVector &Location) \
@@ -375,14 +396,17 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 												Last_Actions[ECsInputAction::INPUT] = &INPUT.Last_Event; \
 												INPUT.Last_Event = ECsInputEvent::Stationary; \
 
-#define CS_DEFINE_INPUT_ROTATION_VALUES_N(INPUT)	Inputs[ECsInputAction::INPUT] = INPUT; \
-													Infos[ECsInputAction::INPUT] = &(INPUT.Info); \
-													INPUT->Info.Type = ECsInputType::Rotation; \
-													INPUT->Info.ValueType = ECsInputValue::Rotator; \
-													Actions[ECsInputAction::INPUT] = &(INPUT->Info).Event; \
-													INPUT->Info.Event = ECsInputEvent::Stationary; \
-													Last_Actions[ECsInputAction::INPUT] = &(INPUT->Info.Last_Event); \
-													INPUT->Info.Last_Event = ECsInputEvent::Stationary; \
+#define CS_DEFINE_INPUT_ROTATION_VALUES_N(CLASS, INPUT, MAP)	INPUT = NewObject<CLASS>(GetWorld(), CLASS::StaticClass()); \
+																INPUT->Action = ECsInputAction::INPUT; \
+																INPUT->ActionMap = MAP; \
+																Inputs[ECsInputAction::INPUT] = INPUT; \
+																Infos[ECsInputAction::INPUT] = &(INPUT.Info); \
+																INPUT->Info.Type = ECsInputType::Rotation; \
+																INPUT->Info.ValueType = ECsInputValue::Rotator; \
+																Actions[ECsInputAction::INPUT] = &(INPUT->Info).Event; \
+																INPUT->Info.Event = ECsInputEvent::Stationary; \
+																Last_Actions[ECsInputAction::INPUT] = &(INPUT->Info.Last_Event); \
+																INPUT->Info.Last_Event = ECsInputEvent::Stationary; \
 
 // Example: CLASS = ACsManager_Input (if class is ACsManager_Input), INPUT = RightHandRotate
 #define CS_DEFINE_INPUT_ROTATION_MEMBERS(CLASS, INPUT, MAP)	void CLASS::INPUT##_Raw(const FRotator &Rotation) \

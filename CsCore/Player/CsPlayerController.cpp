@@ -30,6 +30,7 @@ void ACsPlayerController::InitInputSystem()
 
 		Manager_Input->InputOwner = this;
 
+		Manager_Input->Init();
 		Manager_Input->SetupInputComponent();
 		BindDelegatesToInputManager();
 

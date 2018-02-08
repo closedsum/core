@@ -25,12 +25,16 @@ ACsManager_Input::ACsManager_Input(const FObjectInitializer& ObjectInitializer) 
 
 	CurrentInputFrameIndex = INDEX_NONE;
 	
+	CurrentInputActionMap = 0;
+
 	InputActionMapToString = nullptr;
 	StringToInputActionMap = nullptr;
 
 	InputActionToString = nullptr;
 	StringToInputAction = nullptr;
 }
+
+void ACsManager_Input::Init() {}
 
 /*static*/ ACsManager_Input* ACsManager_Input::Get(UWorld* InWorld, const int32 &Id /*= INDEX_NONE*/)
 {
@@ -46,9 +50,19 @@ void ACsManager_Input::Shutdown()
 		UCsInput_Base* Input = Inputs[I];
 
 		if (Input && !Input->IsPendingKill())
+		{
+			Input->RemoveFromRoot();
 			Input->ConditionalBeginDestroy();
+		}
 	}
 	Inputs.Reset();
+}
+
+void ACsManager_Input::Destroyed()
+{
+	Shutdown();
+
+	Super::Destroyed();
 }
 
 AActor* ACsManager_Input::GetInputOwner()

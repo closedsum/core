@@ -24,4 +24,8 @@ class CSCORE_API UCsInput_Base : public UObject
 
 	UPROPERTY(BlueprintReadOnly, Category = "Input")
 	class ACsManager_Input* Manager_Input;
+
+#if WITH_EDITOR
+	void OnPrePIEEnded(const bool IsSimulating);
+#endif // #if WITH_EDITOR
 };

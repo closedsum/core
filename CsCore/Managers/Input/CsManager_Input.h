@@ -124,6 +124,7 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 											 INPUT.Last_Event = ECsInputEvent::Released; \
 
 #define CS_DEFINE_INPUT_ACTION_VALUES_N(CLASS, INPUT, MAP)	INPUT = NewObject<CLASS>(GetWorld(), CLASS::StaticClass()); \
+															INPUT->Manager_Input = this; \
 															INPUT->Action = ECsInputAction::INPUT; \
 															INPUT->ActionMap = MAP; \
 															Inputs[ECsInputAction::INPUT] = INPUT; \
@@ -184,6 +185,8 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 											INPUT.Last_Event = ECsInputEvent::Stationary; \
 
 #define CS_DEFINE_INPUT_AXIS_VALUES_N(CLASS, INPUT, MAP)	INPUT = NewObject<CLASS>(GetWorld(), CLASS::StaticClass()); \
+															INPUT->AddToRoot(); \
+															INPUT->Manager_Input = this; \
 															INPUT->Action = ECsInputAction::INPUT; \
 															INPUT->ActionMap = MAP; \
 															Inputs[ECsInputAction::INPUT] = INPUT; \
@@ -255,6 +258,7 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 												INPUT.Last_Event = ECsInputEvent::Stationary; \
 
 #define CS_DEFINE_INPUT_TRIGGER_VALUES_N(CLASS, INPUT, MAP)	INPUT = NewObject<CLASS>(GetWorld(), CLASS::StaticClass()); \
+															INPUT->Manager_Input = this; \
 															INPUT->Action = ECsInputAction::INPUT; \
 															INPUT->ActionMap = MAP; \
 															Inputs[ECsInputAction::INPUT] = INPUT; \
@@ -328,6 +332,7 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 												INPUT.Last_Event = ECsInputEvent::Stationary; \
 
 #define CS_DEFINE_INPUT_LOCATION_VALUES_N(CLASS, INPUT, MAP)	INPUT = NewObject<CLASS>(GetWorld(), CLASS::StaticClass()); \
+																INPUT->Manager_Input = this; \
 																INPUT->Action = ECsInputAction::INPUT; \
 																INPUT->ActionMap = MAP; \
 																Inputs[ECsInputAction::INPUT] = INPUT; \
@@ -397,6 +402,7 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 												INPUT.Last_Event = ECsInputEvent::Stationary; \
 
 #define CS_DEFINE_INPUT_ROTATION_VALUES_N(CLASS, INPUT, MAP)	INPUT = NewObject<CLASS>(GetWorld(), CLASS::StaticClass()); \
+																INPUT->Manager_Input = this; \
 																INPUT->Action = ECsInputAction::INPUT; \
 																INPUT->ActionMap = MAP; \
 																Inputs[ECsInputAction::INPUT] = INPUT; \
@@ -467,9 +473,12 @@ class CSCORE_API ACsManager_Input : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
+	virtual void Init();
+
 	static ACsManager_Input* Get(UWorld* InWorld, const int32 &Id = INDEX_NONE);
 
 	virtual void Shutdown();
+	virtual void Destroyed() override;
 
 	TWeakObjectPtr<AActor> InputOwner;
 
@@ -590,7 +599,6 @@ protected:
 	TCsInputActionToString InputActionToString;
 	TCsStringToInputAction StringToInputAction;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Inputs")
 	TArray<class UCsInput_Base*> Inputs;
 
 	TArray<FCsInputInfo*> Infos;

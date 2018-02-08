@@ -469,6 +469,8 @@ class CSCORE_API ACsManager_Input : public AActor
 
 	static ACsManager_Input* Get(UWorld* InWorld, const int32 &Id = INDEX_NONE);
 
+	virtual void Shutdown();
+
 	TWeakObjectPtr<AActor> InputOwner;
 
 	virtual AActor* GetInputOwner();
@@ -587,6 +589,8 @@ protected:
 
 	TCsInputActionToString InputActionToString;
 	TCsStringToInputAction StringToInputAction;
+
+	TArray<class UCsInput_Base*> Inputs;
 
 	TArray<FCsInputInfo*> Infos;
 

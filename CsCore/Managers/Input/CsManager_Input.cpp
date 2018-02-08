@@ -4,8 +4,12 @@
 #include "CsCVars.h"
 #include "Common/CsCommon.h"
 #include "Common/CsCommon_Load.h"
+
+#include "Managers/Input/CsInput_Base.h"
+
 #include "Player/CsPlayerController.h"
 #include "Player/CsCheatManager.h"
+
 #include "../Engine/Classes/GameFramework/PlayerInput.h"
 #include "../Engine/Classes/Engine/LocalPlayer.h"
 
@@ -31,6 +35,20 @@ ACsManager_Input::ACsManager_Input(const FObjectInitializer& ObjectInitializer) 
 /*static*/ ACsManager_Input* ACsManager_Input::Get(UWorld* InWorld, const int32 &Id /*= INDEX_NONE*/)
 {
 	return UCsCommon::GetLocalPlayerController<ACsPlayerController>(InWorld)->Manager_Input;
+}
+
+void ACsManager_Input::Shutdown()
+{
+	const int32 Count = Inputs.Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		UCsInput_Base* Input = Inputs[I];
+
+		if (Input && !Input->IsPendingKill())
+			Input->ConditionalBeginDestroy();
+	}
+	Inputs.Reset();
 }
 
 AActor* ACsManager_Input::GetInputOwner()

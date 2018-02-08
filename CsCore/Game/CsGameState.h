@@ -247,4 +247,8 @@ public:
 	virtual FString GetLocalPlayerProfileName();
 
 #pragma endregion Player State
+
+#if WITH_EDITOR
+	virtual void OnPrePIEEnded(const bool IsSimulating);
+#endif // #if WITH_EDITO
 };

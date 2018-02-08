@@ -92,6 +92,10 @@ ACsGameState::ACsGameState(const FObjectInitializer& ObjectInitializer)
 	PrimaryActorTick.bStartWithTickEnabled = true;
 
 	JavascriptEntryPointClass = ACsJavascriptEntryPoint::StaticClass();
+
+#if WITH_EDITOR
+	FEditorDelegates::PrePIEEnded.AddUObject(this, &ACsGameState::OnPrePIEEnded);
+#endif // #if WITH_EDITOR
 }
 
 void ACsGameState::Tick(float DeltaSeconds)
@@ -510,3 +514,9 @@ FString ACsGameState::GetLocalPlayerProfileName()
 }
 
 #pragma endregion Player State
+
+#if WITH_EDITOR
+
+void ACsGameState::OnPrePIEEnded(const bool IsSimulating){}
+
+#endif // #if WITH_EDITOR

@@ -11,7 +11,7 @@ UCsInput_Base::UCsInput_Base(const FObjectInitializer& ObjectInitializer) : Supe
 
 #if WITH_EDITOR
 
-void UCsInput_Base::OnPrePIEEnded(const bool IsSimulating)
+void UCsInput_Base::OnPrePIEEnded(const bool bIsSimulating)
 {
 	RemoveFromRoot();
 }

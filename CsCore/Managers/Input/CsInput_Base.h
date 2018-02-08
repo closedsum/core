@@ -26,6 +26,6 @@ class CSCORE_API UCsInput_Base : public UObject
 	class ACsManager_Input* Manager_Input;
 
 #if WITH_EDITOR
-	void OnPrePIEEnded(const bool IsSimulating);
+	virtual void OnPrePIEEnded(const bool bIsSimulating);
 #endif // #if WITH_EDITOR
 };

@@ -49,6 +49,10 @@ ACsPlayerState::ACsPlayerState(const FObjectInitializer& ObjectInitializer)
 
 	OnBoardState	= ECsPlayerStateOnBoardState::WaitingForGameState;
 	UniqueMappingId = CS_INVALID_PLAYER_STATE_UNIQUE_MAPPING_ID;
+
+#if WITH_EDITOR
+	FEditorDelegates::PrePIEEnded.AddUObject(this, &ACsPlayerState::OnPrePIEEnded);
+#endif // #if WITH_EDITOR
 }
 
 void ACsPlayerState::PostActorCreated()
@@ -610,3 +614,9 @@ bool ACsPlayerState::IsOnBoardCompleted_Game()
 }
 
 #pragma endregion OnBoard
+
+#if WITH_EDITOR
+
+void ACsPlayerState::OnPrePIEEnded(const bool bIsSimulating){}
+
+#endif // #if WITH_EDITOR

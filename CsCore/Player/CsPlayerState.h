@@ -294,4 +294,8 @@ public:
 	uint64 ItemOwnerId;
 
 #pragma endregion Items
+
+#if WITH_EDITOR
+	virtual void OnPrePIEEnded(const bool bIsSimulating);
+#endif // #if WITH_EDITOR
 };

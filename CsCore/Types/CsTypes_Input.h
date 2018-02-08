@@ -218,8 +218,16 @@ namespace ECsInputActionMap
 
 typedef ECsInputActionMap::BitMask TCsInputActionMap;
 
+// InputActionMaptoString
 typedef FString(*TCsInputActionMapToString)(const int32&);
+// StringToInputActionMap
 typedef TCsInputActionMap(*TCsStringToInputActionMap)(const FString&);
+
+#define CS_DECLARE_INPUT_ACTION_MAP	TCsInputActionMapToString InputActionMapToString; \
+									TCsStringToInputActionMap StringToInputActionMap;
+
+#define CS_DEFINE_INPUT_ACTION_MAP	InputActionMapToString = &ECsInputActionMap::ToString; \
+									StringToInputActionMap = &ECsInputActionMap::ToBitMask;
 
 namespace ECsInputAction
 {
@@ -228,8 +236,20 @@ namespace ECsInputAction
 
 typedef ECsInputAction::Type TCsInputAction;
 
+// InputActionToString
 typedef FString(*TCsInputActionToString)(const TCsInputAction&);
+// StringToInputAction
 typedef TCsInputAction(*TCsStringToInputAction)(const FString&);
+
+#define CS_DECLARE_INPUT_ACTION	TCsInputAction InputAction_MAX; \
+								uint8 INPUT_ACTION_MAX; \
+								TCsInputActionToString InputActionToString; \
+								TCsStringToInputAction StringToInputAction;
+
+#define CS_DEFINE_INPUT_ACTION	InputAction_MAX = ECsInputAction::ECsInputAction_MAX;\
+								INPUT_ACTION_MAX = (uint8)InputAction_MAX \
+								InputActionToString = &ECsInputAction::ToString; \
+								StringToInputAction = &ECsInputAction::ToType;
 
 #define CS_INVALID_INPUT_POOL_INDEX 65535
 

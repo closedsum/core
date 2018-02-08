@@ -590,6 +590,7 @@ protected:
 	TCsInputActionToString InputActionToString;
 	TCsStringToInputAction StringToInputAction;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Inputs")
 	TArray<class UCsInput_Base*> Inputs;
 
 	TArray<FCsInputInfo*> Infos;

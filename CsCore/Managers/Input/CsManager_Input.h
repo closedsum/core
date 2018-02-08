@@ -126,7 +126,7 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 // Example: CLASS = ACsManager_Input (if class is ACsManager_Input), INPUT = TurnAtRate
 #define CS_DEFINE_INPUT_ACTION_MEMBERS(CLASS, INPUT, MAP)	void CLASS::INPUT##_FirstPressed() \
 															{ \
-																if (((MAP) & CurrentInputActionMap) != CurrentInputActionMap) \
+																if ((CurrentInputActionMap & (MAP)) == 0) \
 																	return; \
 																INPUT.Event = ECsInputEvent::FirstPressed; \
 																AddInput(ECsInputAction::INPUT, ECsInputEvent::FirstPressed); \
@@ -139,7 +139,7 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 															} \
 															void CLASS::INPUT##_FirstReleased() \
 															{ \
-																if (((MAP) & CurrentInputActionMap) != CurrentInputActionMap) \
+																if ((CurrentInputActionMap & (MAP)) == 0) \
 																	return; \
 																INPUT.Event = ECsInputEvent::FirstReleased; \
 																AddInput(ECsInputAction::INPUT, ECsInputEvent::FirstReleased); \
@@ -171,7 +171,7 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 // Example: CLASS = ACsManager_Input (if class is ACsManager_Input), INPUT = TurnAtRate
 #define CS_DEFINE_INPUT_AXIS_MEMBERS(CLASS, INPUT, MAP)	void CLASS::INPUT##_Raw(float Val) \
 														{ \
-															if (((MAP) & CurrentInputActionMap) != CurrentInputActionMap) \
+															if ((CurrentInputActionMap & (MAP)) == 0) \
 																return; \
 															if (Val != 0.0f && INPUT.Value == 0.0f) \
 																INPUT##_FirstMoved(Val); \
@@ -228,7 +228,7 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 // Example: CLASS = ACsManager_Input (if class is ACsManager_Input), INPUT = LeftTrigger
 #define CS_DEFINE_INPUT_TRIGGER_MEMBERS(CLASS, INPUT, MAP)	void CLASS::INPUT##_Raw(float Val) \
 															{ \
-																if (((MAP) & CurrentInputActionMap) != CurrentInputActionMap) \
+																if ((CurrentInputActionMap & (MAP)) == 0) \
 																	return; \
 																FCsInput* Input	= GetPreviousPreviousInputAction(ECsInputAction::INPUT); \
 																\
@@ -287,7 +287,7 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 // Example: CLASS = ACsManager_Input (if class is ACsManager_Input), INPUT = RightHandMove
 #define CS_DEFINE_INPUT_LOCATION_MEMBERS(CLASS, INPUT, MAP)	void CLASS::INPUT##_Raw(const FVector &Location) \
 															{ \
-																if (((MAP) & CurrentInputActionMap) != CurrentInputActionMap) \
+																if ((CurrentInputActionMap & (MAP)) == 0) \
 																	return; \
 																\
 																FCsInput* Input	= GetPreviousPreviousInputAction(ECsInputAction::INPUT); \
@@ -344,7 +344,7 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 // Example: CLASS = ACsManager_Input (if class is ACsManager_Input), INPUT = RightHandRotate
 #define CS_DEFINE_INPUT_ROTATION_MEMBERS(CLASS, INPUT, MAP)	void CLASS::INPUT##_Raw(const FRotator &Rotation) \
 															{ \
-																if (((MAP) & CurrentInputActionMap) != CurrentInputActionMap) \
+																if ((CurrentInputActionMap & (MAP)) == 0) \
 																	return; \
 																\
 																FCsInput* Input	= GetPreviousPreviousInputAction(ECsInputAction::INPUT); \
@@ -439,7 +439,7 @@ class CSCORE_API ACsManager_Input : public AActor
 
 	FCsInputFrame CurrentInputFrame;
 
-	TCsInputActionMap CurrentInputActionMap;
+	int32 CurrentInputActionMap;
 
 	TCsInputActionMapToString InputActionMapToString;
 	TCsStringToInputActionMap StringToInputActionMap;

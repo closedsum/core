@@ -89,12 +89,21 @@ struct FCsItemBagSlot
 	FCsItemBagSlot(){}
 	~FCsItemBagSlot(){}
 
-	void Add(FCsItem* Item)
+	bool Add(FCsItem* Item)
 	{
+		const int32 Count = Items.Num();
+
+		if (Count > CS_EMPTY)
+		{
+			if (Count >= Items[CS_FIRST]->Capacity)
+				return false;
+		}
+
 		Items.Add(Item);
 
 		if (Item->InventoryProperties.Visible)
 			Items_OnlyVisible.Add(Item);
+		return true;
 	}
 
 	void Remove(FCsItem* Item)
@@ -166,13 +175,56 @@ struct FCsItemBag
 		return &(Slots[Index].Items);
 	}
 
-	void Add(FCsItem* Item)
+	int32 GetSlotCount(const uint8 &Row, const uint8 &Column, const bool &OnlyVisible)
 	{
-		const uint8& Row	= Item->InventoryProperties.Position.Row;
-		const uint8& Column = Item->InventoryProperties.Position.Column;
-		const uint16 Index  = Row * Size.ColumnSpan + Column;
+		TArray<FCsItem*>* Items = Get(Row, Column, OnlyVisible);
 
-		Slots[Index].Add(Item);
+		return Items->Num();
+	}
+
+	bool Add(FCsItem* Item)
+	{
+		uint8& Row	  = Item->InventoryProperties.Position.Row;
+		uint8& Column = Item->InventoryProperties.Position.Column;
+
+		// If the Row and Column are NOT set, Find the appropriate Slot
+		if (Row == CS_INVALID_INVENTORY_ITEM_ROW ||
+			Column == CS_INVALID_INVENTORY_ITEM_COLUMN)
+		{
+			int32 AvailableSlot		= INDEX_NONE;
+			bool FilledSlot			= false;
+			const uint8 SLotCount	= Slots.Num();
+
+			for (uint8 I = 0; I < SLotCount; ++I)
+			{
+				if (Slots[I].Items.Num() == CS_EMPTY)
+				{
+					AvailableSlot = I;
+					continue;
+				}
+			
+				FCsItem* FirstItem = Slots[I].Items[CS_FIRST];
+
+				if (Item->Type == FirstItem->Type)
+				{
+					return Slots[I].Add(Item);
+				}
+			}
+
+			if (!FilledSlot)
+			{
+				if (AvailableSlot == INDEX_NONE)
+					return false;
+				return Slots[AvailableSlot].Add(Item);
+			}
+		}
+		else
+		{
+			const uint16 Index = Row * Size.ColumnSpan + Column;
+
+			return Slots[Index].Add(Item);
+		}
+		return false;
 	}
 
 	void Remove(FCsItem* Item)
@@ -208,6 +260,8 @@ class CSCORE_API ACsManager_Inventory : public AActor
 	uint8 BagCount;
 
 	TArray<FCsItemBag> Bags;
+
+	int32 GetSlotCount(const uint8 &Bag, const uint8 &Row, const uint8 &Column, const bool &OnlyVisible);
 
 	bool IsEmpty();
 

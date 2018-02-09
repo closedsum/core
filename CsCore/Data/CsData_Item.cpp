@@ -31,6 +31,7 @@ TArray<FCsItemMemberDescription>* ACsData_Item::GetMembers() { return nullptr; }
 FString ACsData_Item::GetDisplayName() { return ECsCachedString::Str::INVALID; }
 UMaterialInstanceConstant* ACsData_Item::GetMaterial() { return nullptr; }
 FCsUint8MatrixDimension* ACsData_Item::GetDimension() { return nullptr; }
+int32 ACsData_Item::GetCapacity() { return 0; }
 
 #pragma endregion UI
 

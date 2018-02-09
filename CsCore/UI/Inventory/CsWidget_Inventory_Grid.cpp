@@ -18,8 +18,8 @@ void UCsWidget_Inventory_Grid::OnNativeConstruct()
 
 	if (!bSpawnSlots)
 	{
-		RowSize	   = MyGridPanel->RowFill.Num();
-		ColumnSize = MyGridPanel->ColumnFill.Num();
+		Dimension.RowSpan	 = MyGridPanel->RowFill.Num();
+		Dimension.ColumnSpan = MyGridPanel->ColumnFill.Num();
 	}
 }
 
@@ -65,14 +65,14 @@ void UCsWidget_Inventory_Grid::SetupSize()
 	}
 }
 
-void UCsWidget_Inventory_Grid::SetupRowsAndColumns()
+void UCsWidget_Inventory_Grid::SetupDimensions()
 {
-	if (UseDynamicRowAndColumnSize)
+	if (UseDynamicDimensions)
 	{
 	}
 	else
 	{
-		SlotSize = FVector2D(Size.Get().X / (float)ColumnSize, Size.Get().Y / (float)RowSize);
+		SlotSize = FVector2D(Size.Get().X / (float)Dimension.ColumnSpan, Size.Get().Y / (float)Dimension.RowSpan);
 	}
 }
 
@@ -87,7 +87,7 @@ void UCsWidget_Inventory_Grid::SetupSlots()
 void UCsWidget_Inventory_Grid::Setup()
 {
 	SetupSize();
-	SetupRowsAndColumns();
+	SetupDimensions();
 	SetupSlots();
 
 	SynchronizeProperties();

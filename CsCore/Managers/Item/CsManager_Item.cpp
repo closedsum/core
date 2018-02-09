@@ -66,6 +66,7 @@ void ACsManager_Item::LogTransaction(const FString &FunctionName, const TEnumAsB
 		const FString TransactionAsString = ECsPoolTransaction::ToActionString(Transaction);
 
 		const FString ItemName				  = Item->ShortCode.ToString();
+		const FString Id					  = FString::Printf(TEXT("%llu"), Item->UniqueId);
 		const FString DataName				  = Item->GetData()->ShortCode.ToString();
 		const ACsData_Interactive* Data_Actor = Item->GetData_Actor();
 		const FString DataActorName			  = Data_Actor ? Data_Actor->ShortCode.ToString() : ECsCachedString::Str::Empty;
@@ -73,11 +74,11 @@ void ACsManager_Item::LogTransaction(const FString &FunctionName, const TEnumAsB
 
 		if (Data_Actor)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s Item: %s with Data: %s and with Data_Actor: %s at %f."), *FunctionName, *TransactionAsString, *ItemName, *DataName, *DataActorName, CurrentTime);
+			UE_LOG(LogCs, Warning, TEXT("%s: %s Item: %s with ID: %s, Data: %s, and with Data_Actor: %s at %f."), *FunctionName, *TransactionAsString, *ItemName,*Id, *DataName, *DataActorName, CurrentTime);
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s Item: %s with Data: %s at %f."), *FunctionName, *TransactionAsString, *ItemName, *DataName, CurrentTime);
+			UE_LOG(LogCs, Warning, TEXT("%s: %s Item: %s with ID: % and Data: %s at %f."), *FunctionName, *TransactionAsString, *ItemName, *Id, *DataName, CurrentTime);
 		}
 	}
 }
@@ -124,6 +125,7 @@ FCsItem* ACsManager_Item::Allocate(const FName &ShortCode)
 
 	Item->InventoryProperties.Reset();
 	Item->InventoryProperties.Dimension = *(Data->GetDimension());
+	Item->Capacity = Data->GetCapacity();
 
 	Item->Data = Data;
 	// Get Data for Actor when this Item is Dropped

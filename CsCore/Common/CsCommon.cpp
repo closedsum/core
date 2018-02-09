@@ -21,6 +21,7 @@
 #include "Components/CsSphereComponent.h"
 
 // Player
+#include "Player/CsPlayerState.h"
 #include "Player/CsPlayerPawn.h"
 #include "VR/Player/CsPlayerPawn_VR.h"
 #include "../Engine/Classes/GameFramework/PlayerInput.h"
@@ -28,6 +29,9 @@
 #include "Engine/CollisionProfile.h"
 
 #include "Data/CsData.h"
+
+// Managers
+#include "Managers/Inventory/CsManager_Inventory.h"
 
 #if WITH_EDITOR
 
@@ -192,6 +196,13 @@ ACsMotionController* UCsCommon::GetLocalHand(UWorld *InWorld, const TCsControlle
 	if (Hand == ECsControllerHand::Right)
 		return Pawn->RightHand;
 	return nullptr;
+}
+
+ACsManager_Inventory* UCsCommon::GetLocalManager_Inventory(UWorld *InWorld)
+{
+	ACsPlayerState* PlayerState = GetLocalPlayerState<ACsPlayerState>(InWorld);
+
+	return PlayerState ? PlayerState->Manager_Inventory : nullptr;
 }
 
 #pragma endregion Local Client

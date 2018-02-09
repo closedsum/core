@@ -96,6 +96,8 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 
 	static class ACsMotionController* GetLocalHand(UWorld *InWorld, const TCsControllerHand &Hand);
 
+	static class ACsManager_Inventory* GetLocalManager_Inventory(UWorld *InWorld);
+
 #pragma endregion Local Client
 
 // VR

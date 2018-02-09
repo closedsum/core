@@ -106,91 +106,9 @@ typedef TCsItemOwner(*TCsStringToItemOwner)(const FString&);
 
 #define CS_WORLD_OWNER_ID 0
 
-USTRUCT(BlueprintType)
-struct FCsInventoryItemDimension
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
-	uint8 RowSpan;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
-	int32 ColumnSpan;
-
-	FCsInventoryItemDimension() {}
-	~FCsInventoryItemDimension() {}
-
-	FCsInventoryItemDimension& operator=(const FCsInventoryItemDimension& B)
-	{
-		RowSpan = B.RowSpan;
-		ColumnSpan = B.ColumnSpan;
-		return *this;
-	}
-
-	bool operator==(const FCsInventoryItemDimension& B) const
-	{
-		return (RowSpan == B.RowSpan && ColumnSpan == B.ColumnSpan);
-	}
-
-	bool operator!=(const FCsInventoryItemDimension& B) const
-	{
-		return !(*this == B);
-	}
-
-	void Reset()
-	{
-		RowSpan	= 1;
-		ColumnSpan = 1;
-	}
-
-	void Set(const uint8 &InRowSpawn, const uint8 &InColumnSpan)
-	{
-		RowSpan = InRowSpawn;
-		ColumnSpan = InColumnSpan;
-	}
-};
-
-USTRUCT(BlueprintType)
-struct FCsInventoryItemPosition
-{
-	GENERATED_USTRUCT_BODY()
-		
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
-	uint8 Row;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
-	uint8 Column;
-
-	FCsInventoryItemPosition() {}
-	~FCsInventoryItemPosition() {}
-
-	FCsInventoryItemPosition& operator=(const FCsInventoryItemPosition& B)
-	{
-		Row = B.Row;
-		Column = B.Column;
-		return *this;
-	}
-
-	bool operator==(const FCsInventoryItemPosition& B) const
-	{
-		return (Row == B.Row && Column == B.Column);
-	}
-
-	bool operator!=(const FCsInventoryItemPosition& B) const
-	{
-		return !(*this == B);
-	}
-
-	void Reset()
-	{
-		Row = 0;
-		Column = 0;
-	}
-
-	void Set(const uint8 &InRow, const uint8 &InColumn)
-	{
-		Row = InRow;
-		Column = InColumn;
-	}
-};
+#define CS_INVALID_INVENTORY_ITEM_BAG 255
+#define CS_INVALID_INVENTORY_ITEM_ROW 255
+#define CS_INVALID_INVENTORY_ITEM_COLUMN 255
 
 USTRUCT(BlueprintType)
 struct FCsInventoryItemProperties
@@ -237,9 +155,9 @@ struct FCsInventoryItemProperties
 	void Reset()
 	{
 		Visible = false;
-		Bag = 0;
+		Bag = CS_INVALID_INVENTORY_ITEM_BAG;
 		Dimension.Reset();
-		Position.Reset();
+		Position.Set(CS_INVALID_INVENTORY_ITEM_ROW, CS_INVALID_INVENTORY_ITEM_COLUMN);
 	}
 };
 
@@ -495,7 +413,6 @@ struct FCsItem
 	UPROPERTY()
 	FString FileName;
 
-
 	FDateTime Created;
 	FTimespan LifeTime;
 
@@ -509,6 +426,9 @@ struct FCsItem
 
 	UPROPERTY()
 	FCsInventoryItemProperties InventoryProperties;
+	/** How many of this ItemType can be stored in a Slot. Copied from Data->Capacity */
+	UPROPERTY()
+	int32 Capacity;
 	UPROPERTY()
 	FCsItemHistory CurrentHistory;
 	UPROPERTY()
@@ -533,6 +453,7 @@ struct FCsItem
 		ShortCode = B.ShortCode;
 		DisplayName = B.DisplayName;
 		InventoryProperties = B.InventoryProperties;
+		Capacity = B.Capacity;
 		return *this;
 	}
 
@@ -545,6 +466,7 @@ struct FCsItem
 		if (ShortCode != B.ShortCode) { return false; }
 		if (DisplayName != B.DisplayName) { return false; }
 		if (InventoryProperties != B.InventoryProperties) { return false; }
+		if (Capacity != B.Capacity) { return false; }
 		return true;
 	}
 
@@ -576,6 +498,7 @@ struct FCsItem
 		//Data_Actor.Reset();
 		//Data_Actor = nullptr;
 		InventoryProperties.Reset();
+		Capacity = CS_EMPTY;
 		CurrentHistory.Reset();
 		PreviousHistories.Reset();
 	}

@@ -35,13 +35,17 @@ public:
 #pragma region
 public:
 
+	/** Name to show in Inventory */
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual FString GetDisplayName();
-
+	/** Material used in Inventory */
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual UMaterialInstanceConstant* GetMaterial();
-
+	/** Row Span and Column Span of Slot in the Inventory */
 	virtual FCsUint8MatrixDimension* GetDimension();
+	/** Slot Capacity (i.e. Max number of items held in slot) in the Inventory */
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	virtual int32 GetCapacity();
 
 #pragma endregion UI
 

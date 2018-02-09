@@ -49,6 +49,11 @@ void ACsManager_Inventory::PostInitializeComponents()
 
 AActor* ACsManager_Inventory::GetMyOwner() { return MyOwner.IsValid() ? MyOwner.Get() : nullptr; }
 
+int32 ACsManager_Inventory::GetSlotCount(const uint8 &Bag, const uint8 &Row, const uint8 &Column, const bool &OnlyVisible)
+{
+	return Bags[Bag].GetSlotCount(Row, Column, OnlyVisible);
+}
+
 bool ACsManager_Inventory::IsEmpty()
 {
 	TArray<uint64> OutKeys;
@@ -139,6 +144,17 @@ void ACsManager_Inventory::LogTransaction(const FString &FunctionName, const TEn
 
 void ACsManager_Inventory::AddItem(FCsItem* Item)
 {
+	// Try to Add the Item to the Bag. Only Add the Item if there is a Slot free that can hold the Item
+	const bool Success = Bags[Item->InventoryProperties.Bag].Add(Item);
+
+	if (!Success)
+	{
+		const FString ItemName = Item->ShortCode.ToString();
+		const FString Id	   = FString::Printf(TEXT("%llu"), Item->UniqueId);
+
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::AddItem: Failed to Add Item: %s with ID: %s. All Slots for Bag: %d are FULL."), *ItemName, *Id, Item->InventoryProperties.Bag);
+	}
+
 	Items.Add(Item->UniqueId, Item);
 
 	if (TArray<FCsItem*>* ItemsPtr = ItemMap.Find(Item->ShortCode))
@@ -152,8 +168,7 @@ void ACsManager_Inventory::AddItem(FCsItem* Item)
 		ItemMap.Add(Item->ShortCode, ItemArray);
 	}
 	IncrementItemCount(Item->ShortCode);
-	Bags[Item->InventoryProperties.Bag].Add(Item);
-
+	
 	LogTransaction(ECsManagerInventoryStringCache::Str::AddItem, ECsInventoryTransaction::Add, Item);
 
 #if WITH_EDITOR

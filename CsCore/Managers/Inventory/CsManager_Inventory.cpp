@@ -153,6 +153,7 @@ void ACsManager_Inventory::AddItem(FCsItem* Item)
 		const FString Id	   = FString::Printf(TEXT("%llu"), Item->UniqueId);
 
 		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::AddItem: Failed to Add Item: %s with ID: %s. All Slots for Bag: %d are FULL."), *ItemName, *Id, Item->InventoryProperties.Bag);
+		return;
 	}
 
 	Items.Add(Item->UniqueId, Item);

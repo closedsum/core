@@ -190,6 +190,7 @@ void ACsManager_Item::SetActiveItemData(FCsItem* Item)
 	Item->Data					= Cast<ACsData_Item>(DataMapping->GetLoadedData(ItemAssetType, Item->ShortCode));
 
 	Item->InventoryProperties.Dimension = *(Item->Data->GetDimension());
+	Item->Capacity						= Item->Data->GetCapacity();
 
 	if (ACsData_Item* Data = Item->GetData())
 		Item->Data_Actor = Cast<ACsData_Interactive>(DataMapping->GetLoadedData(InteractiveAssetType, Data->GetSpawnedActorDataShortCode()));
@@ -283,9 +284,21 @@ void ACsManager_Item::DeAllocate(const uint64 &Id)
 // Transfer
 #pragma region
 
-void ACsManager_Item::Transfer(FCsItem* Item, UObject* Instigator)
+bool ACsManager_Item::Transfer(FCsItem* Item, UObject* Instigator)
 {
 	DeAllocate(Item);
+	return true;
+}
+
+bool ACsManager_Item::Transfer(TArray<FCsItem*> &Items, UObject* Instigator, const TCsPoolTransactionOrder &Order)
+{
+	const int32 Count = Items.Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		Transfer(Items[I], Instigator);
+	}
+	return true;
 }
 
 #pragma endregion Transfer

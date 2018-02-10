@@ -81,7 +81,8 @@ public:
 #pragma region
 public:
 
-	virtual void Transfer(FCsItem* Item, UObject* Instigator);
+	virtual bool Transfer(FCsItem* Item, UObject* Instigator);
+	virtual bool Transfer(TArray<FCsItem*> &Items, UObject* Instigator, const TCsPoolTransactionOrder &Order);
 
 #pragma endregion Transfer
 

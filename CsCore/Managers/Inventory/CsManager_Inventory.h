@@ -84,7 +84,6 @@ struct FCsItemBagSlot
 	FCsUint8MatrixCoordinate Position;
 
 	TArray<FCsItem*> Items;
-	TArray<FCsItem*> Items_OnlyVisible;
 
 	FCsItemBagSlot(){}
 	~FCsItemBagSlot(){}
@@ -99,10 +98,9 @@ struct FCsItemBagSlot
 				return false;
 		}
 
-		Items.Add(Item);
+		Item->InventoryProperties.Position = Position;
 
-		if (Item->InventoryProperties.Visible)
-			Items_OnlyVisible.Add(Item);
+		Items.Add(Item);
 		return true;
 	}
 
@@ -117,20 +115,6 @@ struct FCsItemBagSlot
 				if (Item->UniqueId == Items[I]->UniqueId)
 				{
 					Items.RemoveAt(I);
-					break;
-				}
-			}
-		}
-		// Only Visible
-		if (Item->InventoryProperties.Visible)
-		{
-			const int32 Count = Items_OnlyVisible.Num();
-
-			for (int32 I = Count - 1; I >= 0; --I)
-			{
-				if (Item->UniqueId == Items_OnlyVisible[I]->UniqueId)
-				{
-					Items_OnlyVisible.RemoveAt(I);
 					break;
 				}
 			}
@@ -166,18 +150,16 @@ struct FCsItemBag
 		}
 	}
 
-	TArray<FCsItem*>* Get(const uint8 &Row, const uint8 &Column, const bool &OnlyVisible)
+	TArray<FCsItem*>* Get(const uint8 &Row, const uint8 &Column)
 	{
 		const uint16 Index = Row * Size.ColumnSpan + Column;
 
-		if (OnlyVisible)
-			return &(Slots[Index].Items_OnlyVisible);
 		return &(Slots[Index].Items);
 	}
 
-	int32 GetSlotCount(const uint8 &Row, const uint8 &Column, const bool &OnlyVisible)
+	int32 GetSlotCount(const uint8 &Row, const uint8 &Column)
 	{
-		TArray<FCsItem*>* Items = Get(Row, Column, OnlyVisible);
+		TArray<FCsItem*>* Items = Get(Row, Column);
 
 		return Items->Num();
 	}
@@ -193,19 +175,19 @@ struct FCsItemBag
 		{
 			int32 AvailableSlot		= INDEX_NONE;
 			bool FilledSlot			= false;
-			const uint8 SLotCount	= Slots.Num();
+			const uint8 SlotCount = Slots.Num();
 
-			for (uint8 I = 0; I < SLotCount; ++I)
+			for (uint8 I = 0; I < SlotCount; ++I)
 			{
 				if (Slots[I].Items.Num() == CS_EMPTY)
 				{
 					AvailableSlot = I;
-					continue;
+					break;
 				}
 			
 				FCsItem* FirstItem = Slots[I].Items[CS_FIRST];
 
-				if (Item->Type == FirstItem->Type)
+				if (Item->ShortCode == FirstItem->ShortCode)
 				{
 					return Slots[I].Add(Item);
 				}
@@ -261,9 +243,10 @@ class CSCORE_API ACsManager_Inventory : public AActor
 
 	TArray<FCsItemBag> Bags;
 
-	int32 GetSlotCount(const uint8 &Bag, const uint8 &Row, const uint8 &Column, const bool &OnlyVisible);
+	int32 GetSlotCount(const uint8 &Bag, const uint8 &Row, const uint8 &Column);
 
 	bool IsEmpty();
+	bool IsFull(const uint8 &Bag, const FName &ShortCode);
 
 	virtual FCsItem* GetItem(const uint64 &Id);
 	virtual FCsItem* GetFirstItem(const FName &ShortCode);

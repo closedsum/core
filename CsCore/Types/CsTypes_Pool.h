@@ -61,6 +61,45 @@ namespace ECsPoolTransaction
 typedef TEnumAsByte<ECsPoolTransaction::Type> TCsPoolTransaction;
 
 UENUM(BlueprintType)
+namespace ECsPoolTransactionOrder
+{
+	enum Type
+	{
+		FillAny						UMETA(DisplayName = "Fill Any"),
+		FillOrKill					UMETA(DisplayName = "Fill Or Kill"),
+		ECsPoolTransactionOrder_MAX	UMETA(Hidden),
+	};
+}
+
+namespace ECsPoolTransactionOrder
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString FillAny = TCsString(TEXT("FillAny"), TEXT("fillany"), TEXT("fill any"));
+		const TCsString FillOrKill = TCsString(TEXT("FillOrKill"), TEXT("fillorkill"), TEXT("fill or kill"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::FillAny) { return Str::FillAny.Value; }
+		if (EType == Type::FillOrKill) { return Str::FillOrKill.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::FillAny) { return Type::FillAny; }
+		if (String == Str::FillOrKill) { return Type::FillOrKill; }
+		return Type::ECsPoolTransactionOrder_MAX;
+	}
+}
+
+#define ECS_POOL_TRANSACTION_ORDER_MAX (uint8)ECsPoolTransactionOrder::ECsPoolTransactionOrder_MAX
+typedef TEnumAsByte<ECsPoolTransactionOrder::Type> TCsPoolTransactionOrder;
+
+UENUM(BlueprintType)
 namespace ECsPooledObjectState
 {
 	enum Type

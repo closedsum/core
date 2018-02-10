@@ -46,6 +46,13 @@ void UCsWidget_Inventory_Slot::UpdateDisplayNameWithCurrentCount()
 
 void UCsWidget_Inventory_Slot::AddItem(FCsItem* Item)
 {
+	if (Count == CS_EMPTY)
+	{
+		MyData = Item->GetData();
+
+		SetImage(MyData->GetMaterial());
+	}
+
 	Count++;
 	UpdateDisplayNameWithCurrentCount();
 }
@@ -58,6 +65,8 @@ void UCsWidget_Inventory_Slot::RemoveItem(const FCsItem* const Item)
 	{
 		MyData.Reset();
 		MyData = nullptr;
+
+		SetImage(nullptr);
 	}
 	UpdateDisplayNameWithCurrentCount();
 }

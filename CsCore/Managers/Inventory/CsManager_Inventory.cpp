@@ -49,9 +49,9 @@ void ACsManager_Inventory::PostInitializeComponents()
 
 AActor* ACsManager_Inventory::GetMyOwner() { return MyOwner.IsValid() ? MyOwner.Get() : nullptr; }
 
-int32 ACsManager_Inventory::GetSlotCount(const uint8 &Bag, const uint8 &Row, const uint8 &Column, const bool &OnlyVisible)
+int32 ACsManager_Inventory::GetSlotCount(const uint8 &Bag, const uint8 &Row, const uint8 &Column)
 {
-	return Bags[Bag].GetSlotCount(Row, Column, OnlyVisible);
+	return Bags[Bag].GetSlotCount(Row, Column);
 }
 
 bool ACsManager_Inventory::IsEmpty()
@@ -59,6 +59,30 @@ bool ACsManager_Inventory::IsEmpty()
 	TArray<uint64> OutKeys;
 	Items.GetKeys(OutKeys);
 	return OutKeys.Num() == CS_EMPTY;
+}
+
+bool ACsManager_Inventory::IsFull(const uint8 &Bag, const FName &ShortCode)
+{
+	const uint8 SlotCount = Bags[Bag].Slots.Num();
+
+	for (uint8 I = 0; I < SlotCount; ++I)
+	{
+		FCsItemBagSlot& Slot = Bags[Bag].Slots[I];
+
+		const uint8 ItemCount = Slot.Items.Num();
+
+		if (ItemCount == CS_EMPTY)
+			return false;
+
+		FCsItem* Item = Slot.Items[CS_FIRST];
+
+		if (ShortCode == Item->ShortCode &&
+			ItemCount < Item->Capacity)
+		{
+			return false;
+		}
+	}
+	return true;
 }
 
 FCsItem* ACsManager_Inventory::GetItem(const uint64 &Id)
@@ -144,16 +168,19 @@ void ACsManager_Inventory::LogTransaction(const FString &FunctionName, const TEn
 
 void ACsManager_Inventory::AddItem(FCsItem* Item)
 {
-	// Try to Add the Item to the Bag. Only Add the Item if there is a Slot free that can hold the Item
-	const bool Success = Bags[Item->InventoryProperties.Bag].Add(Item);
-
-	if (!Success)
+	if (Item->InventoryProperties.Visible)
 	{
-		const FString ItemName = Item->ShortCode.ToString();
-		const FString Id	   = FString::Printf(TEXT("%llu"), Item->UniqueId);
+		// Try to Add the Item to the Bag. Only Add the Item if there is a Slot free that can hold the Item
+		const bool Success = Bags[Item->InventoryProperties.Bag].Add(Item);
 
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::AddItem: Failed to Add Item: %s with ID: %s. All Slots for Bag: %d are FULL."), *ItemName, *Id, Item->InventoryProperties.Bag);
-		return;
+		if (!Success)
+		{
+			const FString ItemName = Item->ShortCode.ToString();
+			const FString Id = FString::Printf(TEXT("%llu"), Item->UniqueId);
+
+			UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::AddItem: Failed to Add Item: %s with ID: %s. All Slots for Bag: %d are FULL."), *ItemName, *Id, Item->InventoryProperties.Bag);
+			return;
+		}
 	}
 
 	Items.Add(Item->UniqueId, Item);
@@ -219,7 +246,9 @@ void ACsManager_Inventory::RemoveItem(const uint64 &Id, const FString &FunctionN
 		}
 	}
 	DecrementItemCount(ShortCode);
-	Bags[Item->InventoryProperties.Bag].Remove(Item);
+
+	if (Item->InventoryProperties.Visible)
+		Bags[Item->InventoryProperties.Bag].Remove(Item);
 
 	LogTransaction(FunctionName, Transaction, Item);
 

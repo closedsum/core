@@ -222,13 +222,15 @@ void ACsManager_Inventory::AddItems(const TArray<FCsItem*> &ItemsToAdd)
 
 void ACsManager_Inventory::RemoveItem(const uint64 &Id, const FString &FunctionName, const TEnumAsByte<ECsInventoryTransaction::Type> &Transaction, const bool &ShouldDestroy)
 {
-	FCsItem* Item = *(Items.Find(Id));
+	FCsItem** ItemPtr = Items.Find(Id);
 
-	if (!Item)
+	if (!ItemPtr)
 	{
 		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::RemoveItem: Failed to remove item with UniqueId: %d"), Id);
 		return;
 	}
+
+	FCsItem* Item = *ItemPtr;
 
 	Items.Remove(Id);
 

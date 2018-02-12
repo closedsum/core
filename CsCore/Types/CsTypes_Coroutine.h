@@ -178,6 +178,8 @@ typedef void(*CsRemoveRoutine)(class UObject*, struct FCsRoutine*, const uint8&)
 
 struct FCsRoutine
 {
+public:
+
 	struct FCsRoutine* self;
 	struct pt pt;
 	struct FCsRoutine* parent;
@@ -240,6 +242,21 @@ struct FCsRoutine
 		poolIndex = inPoolIndex;
 
 		Reset();
+	}
+
+	void SetIndex(const int32 &inIndex)
+	{
+		index = inIndex;
+	}
+
+	int32 GetIndex()
+	{
+		return index;
+	}
+
+	void IncrementIndex()
+	{
+		index++;
 	}
 
 	bool IsValid()

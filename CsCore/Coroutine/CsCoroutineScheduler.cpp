@@ -16,7 +16,7 @@ UCsCoroutineScheduler::UCsCoroutineScheduler(const FObjectInitializer& ObjectIni
 		RoutinesToInit.AddDefaulted();
 		RoutinesToRun.AddDefaulted();
 
-		for (int32 J = 0; J < CS_ROUTINE_POOL_SIZE; J++)
+		for (int32 J = 0; J < CS_ROUTINE_POOL_SIZE; ++J)
 		{
 			RoutinePools[I][J].Init(this, (TCsCoroutineSchedule)I, J);
 		}
@@ -169,11 +169,11 @@ struct FCsRoutine* UCsCoroutineScheduler::Allocate(FCsCoroutinePayload* Payload)
 {
 	const uint8 Schedule = (uint8)Payload->Schedule;
 
-	for (int32 Index = 0; Index < CS_ROUTINE_POOL_SIZE; Index++)
+	for (int32 I = 0; I < CS_ROUTINE_POOL_SIZE; ++I)
 	{
-		RoutinePoolIndices[Schedule] = (RoutinePoolIndices[Schedule] + 1) % CS_ROUTINE_POOL_SIZE;
+		RoutinePoolIndices[Schedule] = (RoutinePoolIndices[Schedule] + I) % CS_ROUTINE_POOL_SIZE;
 
-		FCsRoutine* R = &(RoutinePools[Schedule][Index]);
+		FCsRoutine* R = &(RoutinePools[Schedule][RoutinePoolIndices[Schedule]]);
 
 		if (R->index == CS_ROUTINE_FREE)
 		{
@@ -369,11 +369,11 @@ struct FCsRoutine* UCsCoroutineScheduler::StartChild(FCsCoroutinePayload* Payloa
 {
 	const uint8 Schedule = (uint8)Payload->Schedule;
 
-	for (int32 Index = 0; Index < CS_ROUTINE_POOL_SIZE; Index++)
+	for (int32 I = 0; I < CS_ROUTINE_POOL_SIZE; ++I)
 	{
 		RoutinePoolIndices[Schedule] = (RoutinePoolIndices[Schedule] + 1) % CS_ROUTINE_POOL_SIZE;
 
-		FCsRoutine* R = &(RoutinePools[Schedule][Index]);
+		FCsRoutine* R = &(RoutinePools[Schedule][RoutinePoolIndices[Schedule]]);
 
 		if (R->index == CS_ROUTINE_FREE)
 		{
@@ -527,7 +527,7 @@ void UCsCoroutineScheduler::Update(const TCsCoroutineSchedule &ScheduleType, con
 	// Init
 	int32 Count = RoutinesToInit[Schedule].Num();
 
-	for (int32 Index = 0; Index < Count; Index++)
+	for (int32 Index = 0; Index < Count; ++Index)
 	{
 		FCsRoutine* R = RoutinesToInit[Schedule][Index];
 
@@ -541,7 +541,7 @@ void UCsCoroutineScheduler::Update(const TCsCoroutineSchedule &ScheduleType, con
 	// Remove any Routines executed previous to tick
 	Count = RoutinesToRun[Schedule].Num();
 
-	for (int32 Index = Count - 1; Index >= 0; Index--)
+	for (int32 Index = Count - 1; Index >= 0; --Index)
 	{
 		FCsRoutine* R = RoutinesToRun[Schedule][Index];
 
@@ -558,12 +558,12 @@ void UCsCoroutineScheduler::Update(const TCsCoroutineSchedule &ScheduleType, con
 
 	Count = RoutinesToRun[Schedule].Num();
 
-	for (int32 Index = 0; Index < Count; Index++)
+	for (int32 Index = 0; Index < Count; ++Index)
 	{
 		RoutinesToRun[Schedule][Index]->Run(DeltaSeconds);
 	}
 	// Remove any Routines executed end of tick
-	for (int32 Index = Count - 1; Index >= 0; Index--)
+	for (int32 Index = Count - 1; Index >= 0; --Index)
 	{
 		FCsRoutine* R = RoutinesToRun[Schedule][Index];
 
@@ -689,7 +689,7 @@ void UCsCoroutineScheduler::LogRunning(const TCsCoroutineSchedule &ScheduleType)
 
 	UE_LOG(LogCs, Warning, TEXT("%s: On%s. Running %d Coroutines at %f."), *FunctionName, *ScheduleTypeAsString, Count, CurrentTime);
 
-	for (int32 Index = 0; Index < Count; Index++)
+	for (int32 Index = 0; Index < Count; ++Index)
 	{
 		FCsRoutine* R = RoutinesToRun[Schedule][Index];
 
@@ -730,7 +730,7 @@ void UCsCoroutineScheduler::LogRunning(const TCsCoroutineSchedule &ScheduleType)
 
 FCsCoroutinePayload* UCsCoroutineScheduler::AllocatePayload()
 {
-	for (int32 Index = 0; Index < CS_ROUTINE_POOL_SIZE; Index++)
+	for (int32 I = 0; I < CS_ROUTINE_POOL_SIZE; ++I)
 	{
 		PayloadIndex = (PayloadIndex + 1) % CS_ROUTINE_POOL_SIZE;
 

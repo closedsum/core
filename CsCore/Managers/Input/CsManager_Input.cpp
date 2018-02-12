@@ -21,6 +21,11 @@ ACsManager_Input::ACsManager_Input(const FObjectInitializer& ObjectInitializer) 
 	PrimaryActorTick.bStartWithTickEnabled = false;
 	PrimaryActorTick.TickGroup			   = TG_PrePhysics;
 
+	for (int32 I = 0; I < CS_INPUT_POOL_SIZE; ++I)
+	{
+		InputPool[I].Init(I);
+	}
+
 	ControllerId = INDEX_NONE;
 
 	CurrentInputFrameIndex = INDEX_NONE;
@@ -582,21 +587,11 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 
 FCsInput* ACsManager_Input::AllocateInput(const TCsInputAction &Action, const TCsInputEvent &Event, const float &Value /*=0.0f*/, const FVector &Location /*=FVector::ZeroVector*/, const FRotator &Rotation /*=FRotator::ZeroRotator*/)
 {
-	// Get Input from Pool
-	uint16 LastIndex = FMath::Min((int32)CurrentInputPoolIndex, (int32)CS_INPUT_POOL_SIZE);
-
-	if (CurrentInputPoolIndex >= CS_INPUT_POOL_SIZE)
-		CurrentInputPoolIndex = 0;
-
 	for (int32 I = 0; I < CS_INPUT_POOL_SIZE; ++I)
 	{
-		const uint16 Index = (I + LastIndex) % CS_INPUT_POOL_SIZE;
-		CurrentInputPoolIndex++;
+		CurrentInputPoolIndex = (CurrentInputPoolIndex + I) % CS_INPUT_POOL_SIZE;
+		FCsInput* Input		  = &InputPool[CurrentInputPoolIndex];
 
-		FCsInput* Input = &InputPool[Index];
-
-		if (Input->PoolIndex == CS_INVALID_INPUT_POOL_INDEX)
-			Input->Init(Index);
 		// Add Input to InputFrame
 		if (!Input->IsAllocated)
 		{

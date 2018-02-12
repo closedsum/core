@@ -35,6 +35,11 @@ namespace ECsManagerItemCachedString
 
 ACsManager_Item::ACsManager_Item(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+	for (uint16 I = 0; I < CS_ITEM_POOL_SIZE; ++I)
+	{
+		Pool[I].Init(I);
+	}
+
 	UniqueIdIndex = CS_ITEM_UNIQUE_ID_START_INDEX;
 
 	SaveDirectory = TEXT("Items/");
@@ -83,26 +88,30 @@ void ACsManager_Item::LogTransaction(const FString &FunctionName, const TEnumAsB
 	}
 }
 
-FCsItem* ACsManager_Item::Allocate()
+FCsItem* ACsManager_Item::Allocate_Internal()
 {
 	for (uint16 I = 0; I < CS_ITEM_POOL_SIZE; ++I)
 	{
-		const uint16 Index = (PoolIndex + I) % CS_ITEM_POOL_SIZE;
-		FCsItem* Item	   = &(Pool[Index]);
-
-		if (Item->Index == CS_ITEM_POOL_INVALID_INDEX)
-			Item->Init(I);
+		PoolIndex	  = (PoolIndex + I) % CS_ITEM_POOL_SIZE;
+		FCsItem* Item = &(Pool[PoolIndex]);
 
 		if (!Item->IsAllocated)
 		{
 			Item->IsAllocated = true;
-			Item->UniqueId	  = GetUniqueId();
-			ActiveItems.Add(Item->UniqueId, Item);
 			return Item;
 		}
 	}
-	checkf(0, TEXT("ACsManager_Item::Allocate: Pool is exhausted"));
+	checkf(0, TEXT("ACsManager_Item::Allocate_Internal: Pool is exhausted."));
 	return nullptr;
+}
+
+FCsItem* ACsManager_Item::Allocate()
+{
+	FCsItem* Item  = Allocate_Internal();
+	Item->UniqueId = GetUniqueId();
+
+	ActiveItems.Add(Item->UniqueId, Item);
+	return Item;
 }
 
 FCsItem* ACsManager_Item::Allocate(const FName &ShortCode)
@@ -465,6 +474,8 @@ void ACsManager_Item::PopulateExistingItems()
 		return;
 	}
 
+	TArray<FCsItem*> Items;
+
 	for (int32 I = 0; I < FileCount; ++I)
 	{
 		FString ItemJson;
@@ -484,7 +495,7 @@ void ACsManager_Item::PopulateExistingItems()
 #endif // #if WITH_EDITOR
 				*/
 
-				FCsItem* Item = Allocate();
+				FCsItem* Item = Allocate_Internal();
 
 				// Header
 				{
@@ -551,19 +562,81 @@ void ACsManager_Item::PopulateExistingItems()
 				SetItemFileName(Item);
 
 				Item->IsSaved = true;
+
+				ActiveItems.Add(Item->UniqueId, Item);
+				Items.Add(Item);
 			}
 			else
 			{
 				UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::PopulateExistingItems: %s is NOT Valid"), *Filename);
-
-#if WITH_EDITOR
-				OnPopulateExistingItems_ScriptEvent.Broadcast();
-#endif // #if WITH_EDITOR
-				OnPopulateExistingItems_Event.Broadcast();
-				return;
 			}
 		}
 	}
+
+	// Sort UniqueIds in ascending order
+	Items.Sort([](const FCsItem &A, const FCsItem &B) { return A.UniqueId < B.UniqueId; });
+
+	// Check / Validate Item Contents
+	const int32 ItemCount = Items.Num();
+
+	for (int32 I = 0; I < ItemCount; ++I)
+	{
+		FCsItem* Item = Items[I];
+
+		// Add any UniqueId that were NOT accounted for
+		if (I < ItemCount - 1)
+		{
+			const uint64 CurrentId = Item->UniqueId + 1;
+			FCsItem* NextItem	   = Items[I + 1];
+			const uint64& NextId   = NextItem->UniqueId;
+
+			for (uint64 J = CurrentId; J < NextId; ++J)
+			{
+				AvailableUnqiueIds.Add(J);
+			}
+		}
+
+		// Validate Item Contents
+		const int32 ContentCount = Item->Contents.Num();
+
+		if (ContentCount > CS_EMPTY)
+		{
+			bool ContentMismatch = false;
+
+			for (int32 J = 0; J < ItemCount; ++J)
+			{
+				if (I == J)
+					continue;
+
+				FCsItem* OtherItem			  = Items[J];
+				const int32 OtherContentCount = OtherItem->Contents.Num();
+			
+				if (OtherContentCount > CS_EMPTY)
+				{
+					for (int32 M = 0; M < ContentCount; ++M)
+					{
+						for (int32 N = 0; N < OtherContentCount; ++N)
+						{
+							if (Item->Contents[M] == OtherItem->Contents[N])
+							{
+								UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::PopulateExistingItems: Item Id: %d and Item Id: %d share Content with Id: %d."), Item->UniqueId, OtherItem->UniqueId, Item->Contents[M]);
+
+								ContentMismatch = true;
+							}
+						}
+					}
+				}
+			}
+
+			if (ContentMismatch)
+			{
+				UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::PopulateExistingItems: DeAllocating Item Id: %d because it shares some Content with other Items."), Item->UniqueId);
+
+				DeAllocate(Item);
+			}
+		}
+	}
+
 #if WITH_EDITOR
 	OnPopulateExistingItems_ScriptEvent.Broadcast();
 #endif // #if WITH_EDITOR

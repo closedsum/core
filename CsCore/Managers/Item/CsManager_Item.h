@@ -20,6 +20,8 @@ class CSCORE_API ACsManager_Item : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
+public:
+
 	static ACsManager_Item* Get(UWorld* InWorld);
 
 	CS_DECLARE_ITEM_TYPE
@@ -40,6 +42,12 @@ class CSCORE_API ACsManager_Item : public AActor
 
 	TCsAssetType ItemAssetType;
 	TCsAssetType InteractiveAssetType;
+
+private:
+
+	FCsItem* Allocate_Internal();
+
+public:
 
 	virtual FCsItem* Allocate();
 	virtual FCsItem* Allocate(const FName &ShortCode);

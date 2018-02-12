@@ -11,10 +11,13 @@
 #include "Runtime/UMG/Public/Components/ProgressBar.h"
 #include "Runtime/UMG/Public/Components/TextBlock.h"
 #include "Runtime/UMG/Public/Components/Image.h"
+#include "Runtime/UMG/Public/Components/Border.h"
 #include "Runtime/UMG/Public/Components/Button.h"
 #include "Runtime/UMG/Public/Components/Slider.h"
 #include "Runtime/UMG/Public/Components/EditableTextBox.h"
+#include "Runtime/UMG/Public/Components/ComboBoxString.h"
 #include "Runtime/UMG/Public/Components/CheckBox.h"
+#include "Runtime/UMG/Public/Components/SpinBox.h"
 
 #include "Runtime/Engine/Classes/Components/TextRenderComponent.h"
 
@@ -1355,6 +1358,180 @@ struct FCsWidget_LabelAndSliderAndEditableFloatBox : public FCsWidget
 		FloatBox.SetText(Text.ToString());
 		Slider.SetValue(FloatBox.Value.Get());
 	}
+};
+
+struct FCsWidget_SpinBox : public FCsWidget 
+{
+public:
+	TWeakObjectPtr<class USpinBox> SpinBox;
+
+	TCsFloat Value;
+	TCsFloat MinValue;
+	TCsFloat MaxValue;
+
+	FCsWidget_SpinBox() {}
+	~FCsWidget_SpinBox() {}
+
+	void Set(class USpinBox* inSpinBox)
+	{
+		SpinBox = inSpinBox;
+		Visibility = SpinBox->Visibility;
+		Visibility.Clear();
+		Value = SpinBox->Value;
+		Value.Clear();
+		MinValue = SpinBox->GetMinValue();
+		MinValue.Clear();
+		MaxValue = SpinBox->GetMaxValue();
+		MaxValue.Clear();
+	}
+
+	virtual void OnNativeTick(const float &InDeltaTime) override
+	{
+		// Visibility
+		if (Visibility.HasChanged())
+		{
+			if (USpinBox* S = Get())
+				S->SetVisibility(Visibility.Get());
+		}
+		if (Visibility == ESlateVisibility::Collapsed ||
+			Visibility == ESlateVisibility::Hidden)
+		{
+			Visibility.Clear();
+			return;
+		}
+		// Value
+		if (Value.HasChanged())
+		{
+			if (USpinBox* S = Get())
+				S->SetValue(Value.Get());
+		}
+		// MinValue
+		if (MinValue.HasChanged())
+		{
+			if (USpinBox* S = Get())
+			{
+				S->SetMinValue(MinValue.Get());
+				S->SetMinSliderValue(MinValue.Get());
+			}
+		}
+		// MaxValue
+		if (MaxValue.HasChanged())
+		{
+			if (USpinBox* S = Get())
+			{
+				S->SetMaxValue(MaxValue.Get());
+				S->SetMaxSliderValue(MaxValue.Get());
+			}
+		}
+		Visibility.Clear();
+		Value.Clear();
+		MinValue.Clear();
+		MaxValue.Clear();
+	}
+
+	void SetValue(const float &inValue)
+	{
+		Value = inValue;
+	}
+
+	void SetMinValue(const float &inMinValue)
+	{
+		MinValue = inMinValue;
+	}
+
+	void SetMaxValue(const float &inMaxValue)
+	{
+		MaxValue = inMaxValue;
+	}
+
+	USpinBox* Get() { return SpinBox.IsValid() ? SpinBox.Get() : nullptr; }
+};
+
+struct FCsWidget_SpinIntBox : public FCsWidget
+{
+public:
+	TWeakObjectPtr<class USpinBox> SpinBox;
+
+	TCsInt32 Value;
+	TCsInt32 MinValue;
+	TCsInt32 MaxValue;
+
+	FCsWidget_SpinIntBox() {}
+	~FCsWidget_SpinIntBox() {}
+
+	void Set(class USpinBox* inSpinBox)
+	{
+		SpinBox = inSpinBox;
+		Visibility = SpinBox->Visibility;
+		Visibility.Clear();
+		Value = FMath::FloorToInt(SpinBox->Value);
+		Value.Clear();
+		MinValue = FMath::FloorToInt(SpinBox->GetMinValue());
+		MinValue.Clear();
+		MaxValue = FMath::FloorToInt(SpinBox->GetMaxValue());
+		MaxValue.Clear();
+	}
+
+	virtual void OnNativeTick(const float &InDeltaTime) override
+	{
+		// Visibility
+		if (Visibility.HasChanged())
+		{
+			if (USpinBox* S = Get())
+				S->SetVisibility(Visibility.Get());
+		}
+		if (Visibility == ESlateVisibility::Collapsed ||
+			Visibility == ESlateVisibility::Hidden)
+		{
+			Visibility.Clear();
+			return;
+		}
+		// Value
+		if (Value.HasChanged())
+		{
+			if (USpinBox* S = Get())
+				S->SetValue(Value.Get());
+		}
+		// MinValue
+		if (MinValue.HasChanged())
+		{
+			if (USpinBox* S = Get())
+			{
+				S->SetMinValue(MinValue.Get());
+				S->SetMinSliderValue(MinValue.Get());
+			}
+		}
+		// MaxValue
+		if (MaxValue.HasChanged())
+		{
+			if (USpinBox* S = Get())
+			{
+				S->SetMaxValue(MaxValue.Get());
+				S->SetMaxSliderValue(MaxValue.Get());
+			}
+		}
+		Visibility.Clear();
+		Value.Clear();
+		MinValue.Clear();
+		MaxValue.Clear();
+	}
+
+	void SetValue(const int32 &inValue)
+	{
+		Value = inValue;
+	}
+
+	void SetMinValue(const int32 &inMinValue)
+	{
+		MinValue = inMinValue;
+	}
+
+	void SetMaxValue(const int32 &inMaxValue)
+	{
+		MaxValue = inMaxValue;
+	}
+
+	USpinBox* Get() { return SpinBox.IsValid() ? SpinBox.Get() : nullptr; }
 };
 
 struct FCsWidget_ButtonAndText : public FCsWidget

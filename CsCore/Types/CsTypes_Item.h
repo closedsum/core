@@ -29,8 +29,6 @@ typedef TCsItemType(*TCsStringToItemType)(const FString&);
 							ItemTypeToString = &ECsItemType::ToString; \
 							StringToItemType = &ECsItemType::ToType;
 
-#pragma region
-
 UENUM(BlueprintType)
 namespace ECsItemCollection
 {

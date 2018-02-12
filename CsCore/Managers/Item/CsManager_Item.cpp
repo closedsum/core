@@ -79,11 +79,11 @@ void ACsManager_Item::LogTransaction(const FString &FunctionName, const TEnumAsB
 
 		if (Data_Actor)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s Item: %s with ID: %s, Data: %s, and with Data_Actor: %s at %f."), *FunctionName, *TransactionAsString, *ItemName,*Id, *DataName, *DataActorName, CurrentTime);
+			UE_LOG(LogCs, Warning, TEXT("%s: %s Item: %s with UniqueId: %s, Data: %s, and with Data_Actor: %s at %f."), *FunctionName, *TransactionAsString, *ItemName,*Id, *DataName, *DataActorName, CurrentTime);
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s Item: %s with ID: % and Data: %s at %f."), *FunctionName, *TransactionAsString, *ItemName, *Id, *DataName, CurrentTime);
+			UE_LOG(LogCs, Warning, TEXT("%s: %s Item: %s with UniqueId: % and Data: %s at %f."), *FunctionName, *TransactionAsString, *ItemName, *Id, *DataName, CurrentTime);
 		}
 	}
 }
@@ -568,7 +568,7 @@ void ACsManager_Item::PopulateExistingItems()
 			}
 			else
 			{
-				UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::PopulateExistingItems: %s is NOT Valid"), *Filename);
+				UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::PopulateExistingItems: %s is NOT Valid."), *Filename);
 			}
 		}
 	}
@@ -619,7 +619,10 @@ void ACsManager_Item::PopulateExistingItems()
 						{
 							if (Item->Contents[M] == OtherItem->Contents[N])
 							{
-								UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::PopulateExistingItems: Item Id: %d and Item Id: %d share Content with Id: %d."), Item->UniqueId, OtherItem->UniqueId, Item->Contents[M]);
+								const FString ItemName		= Item->ShortCode.ToString();
+								const FString OtherItemName = OtherItem->ShortCode.ToString();
+
+								UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::PopulateExistingItems: Item: %s with UniqueId: %d and Item: %s with UniqueId: %d share Content with UniqueId: %d."), *ItemName, Item->UniqueId, *OtherItemName, OtherItem->UniqueId, Item->Contents[M]);
 
 								ContentMismatch = true;
 							}
@@ -630,7 +633,9 @@ void ACsManager_Item::PopulateExistingItems()
 
 			if (ContentMismatch)
 			{
-				UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::PopulateExistingItems: DeAllocating Item Id: %d because it shares some Content with other Items."), Item->UniqueId);
+				const FString ItemName = Item->ShortCode.ToString();
+
+				UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::PopulateExistingItems: DeAllocating Item: %s with UniqueId: %d because it shares some Content with other Items."), *ItemName, Item->UniqueId);
 
 				DeAllocate(Item);
 			}
@@ -725,7 +730,7 @@ void ACsManager_Item::LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCs
 			}
 			else
 			{
-				UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::LoadHistory: INVALID ItemMemberValue Type: %s"), *(ECsItemMemberValueType::ToString(Type)));
+				UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::LoadHistory: INVALID ItemMemberValue Type: %s."), *(ECsItemMemberValueType::ToString(Type)));
 			}
 			ItemHistory->Members.Add(MemberName, Value);
 		}

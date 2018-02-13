@@ -55,6 +55,20 @@
 #define CS_GET_LOADED_DATA_BY_LOOKUPCODE(CLASS, TYPE)	if (AssetType == ECsAssetType::TYPE) \
 															return GetLoadedData_Internal<ACsData, CLASS>(TYPE, TYPE##_Loaded_Map, TYPE##_Loaded, LookUpCode);
 
+#define CS_GET_LOADED_DATAS(TYPE)	if (AssetType == ECsAssetType::TYPE) \
+									{ \
+										TArray<FName> Keys; \
+										TYPE##_Loaded_Map.GetKeys(Keys); \
+										\
+										const int32 Count = Keys.Num(); \
+										\
+										for (int32 I = 0; I < Count; ++I) \
+										{ \
+											OutDatas.Add(*(TYPE##_Loaded_Map.Find(Keys[I]))); \
+										} \
+										return; \
+									}
+
 #pragma endregion Macros
 
 DECLARE_DELEGATE_TwoParams(FBindableDynEvent_CsDataMapping_OnGetLoadAssetsShortCodes, const TCsLoadAssetsType&, TArray<FName>&);
@@ -514,6 +528,9 @@ protected:
 		Datas_Loaded[LookUpCode] = *Data;
 		return Cast<T>(*Data);
 	}
+public:
+	virtual void GetLoadedDatas(const TCsAssetType &AssetType, TArray<ACsData*> &OutDatas);
+	virtual void GetLoadedDataShortCodes(const TCsAssetType &AssetType, TArray<FName> &OutShortCodes);
 
 #pragma endregion Get
 

@@ -7,7 +7,15 @@ ACsData_Recipe::ACsData_Recipe(const FObjectInitializer& ObjectInitializer)
 {
 }
 
-TCsRecipe ACsData_Recipe::GetBaseRecipe() { return BaseRecipe; }
+TCsRecipeType ACsData_Recipe::GetBaseRecipeType() { return BaseRecipeType; }
+
+// Ingredients
+#pragma region
+
+TArray<FCsRecipeIngredient>* ACsData_Recipe::GetIngredients() { return nullptr; }
+float ACsData_Recipe::GetTime() { return 0.0f; }
+
+#pragma endregion Ingredients
 
 // UI
 #pragma region

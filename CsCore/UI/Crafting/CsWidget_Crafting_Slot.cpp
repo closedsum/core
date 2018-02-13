@@ -2,7 +2,6 @@
 #include "UI/Crafting/CsWidget_Crafting_Slot.h"
 #include "CsCore.h"
 
-
 // Cache
 #pragma region
 
@@ -26,7 +25,6 @@ void UCsWidget_Crafting_Slot::UpdateDisplayNameWithCurrentCount()
 {
 	if (Count > CS_EMPTY)
 	{ 
-		const FString DisplayName = TEXT("");// GetMyData()->GetDisplayName();
 										//   FString::FromInt(Count) + TEXT("x ") + DisplayName
 		const FString DisplayNameWithCount = FString::FromInt(Count) + ECsWidgeCraftingSlotCachedString::Str::x + DisplayName;
 
@@ -37,7 +35,6 @@ void UCsWidget_Crafting_Slot::UpdateDisplayNameWithCurrentCount()
 				//TEXT("")
 		SetString(ECsCachedString::Str::Empty);
 	}
-	
 }
 
 void UCsWidget_Crafting_Slot::Empty()
@@ -45,4 +42,5 @@ void UCsWidget_Crafting_Slot::Empty()
 	Count = CS_EMPTY;
 
 	UpdateDisplayNameWithCurrentCount();
+	SetImage(nullptr);
 }

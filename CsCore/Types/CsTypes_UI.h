@@ -1518,7 +1518,7 @@ public:
 
 	void SetValue(const int32 &inValue)
 	{
-		Value = inValue;
+		Value = FMath::Clamp(inValue, MinValue.Get(), MaxValue.Get());
 	}
 
 	void SetMinValue(const int32 &inMinValue)

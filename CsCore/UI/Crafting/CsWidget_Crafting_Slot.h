@@ -14,11 +14,14 @@ class CSCORE_API UCsWidget_Crafting_Slot : public UCsWidget_ButtonAndText
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	uint8 Column;
 
-	UFUNCTION(BlueprintCallable, Category = "UI")
-	void UpdateDisplayNameWithCurrentCount();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	FString DisplayName;
 
 	UPROPERTY(BlueprintReadOnly, Category = "UI")
 	int32 Count;
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void UpdateDisplayNameWithCurrentCount();
 
 	void Empty();
 };

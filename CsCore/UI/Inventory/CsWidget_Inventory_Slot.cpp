@@ -83,4 +83,5 @@ void UCsWidget_Inventory_Slot::Empty()
 	MyData = nullptr;
 
 	UpdateDisplayNameWithCurrentCount();
+	SetImage(nullptr);
 }

@@ -2348,6 +2348,11 @@ struct FCsUint8MatrixDimension
 		return Index % RowSpan;
 	}
 
+	uint16 GetSize()
+	{
+		return RowSpan * ColumnSpan;
+	}
+
 	uint32 GetBits() const
 	{
 		return 8 // RowSpan

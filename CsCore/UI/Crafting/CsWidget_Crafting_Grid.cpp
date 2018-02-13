@@ -92,3 +92,13 @@ void UCsWidget_Crafting_Grid::Setup()
 
 	SynchronizeProperties();
 }
+
+void UCsWidget_Crafting_Grid::Clear()
+{
+	const int32 Count = Slots.Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		Slots[I]->Empty();
+	}
+}

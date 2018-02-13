@@ -9,9 +9,20 @@ class CSCORE_API ACsData_Recipe : public ACsData
 {
 	GENERATED_UCLASS_BODY()
 
-	TCsRecipe BaseRecipe;
+	TCsRecipeType BaseRecipeType;
 
-	TCsRecipe GetBaseRecipe();
+	TCsRecipeType GetBaseRecipeType();
+
+// Ingredients
+#pragma region
+public:
+
+	virtual TArray<FCsRecipeIngredient>* GetIngredients();
+
+	UFUNCTION(BlueprintCallable, Category = "Ingredients")
+	virtual float GetTime();
+
+#pragma endregion Ingredients
 
 // UI
 #pragma region

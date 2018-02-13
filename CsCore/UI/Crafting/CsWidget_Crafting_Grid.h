@@ -37,4 +37,5 @@ class CSCORE_API UCsWidget_Crafting_Grid : public UCsWidget_Grid
 	TArray<class UCsWidget_Crafting_Slot*> Slots;
 
 	void Setup();
+	void Clear();
 };

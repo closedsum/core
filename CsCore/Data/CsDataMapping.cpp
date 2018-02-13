@@ -542,6 +542,9 @@ ACsData* ACsDataMapping::GetLoadedData(const TCsAssetType &AssetType, const uint
 	return nullptr;
 }
 
+void ACsDataMapping::GetLoadedDatas(const TCsAssetType &AssetType, TArray<ACsData*> &OutDatas){}
+void ACsDataMapping::GetLoadedDataShortCodes(const TCsAssetType &AssetType, TArray<FName> &OutShortCodes){}
+
 #pragma endregion Get
 
 #pragma endregion Load

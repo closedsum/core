@@ -11,6 +11,7 @@
 #include "Types/CsTypes_Weapon.h"
 #include "Types/CsTypes_Interactive.h"
 #include "Types/CsTypes_Item.h"
+#include "Types/CsTypes_Recipe.h"
 #include "CsCVars.h"
 
 #include "Common/CsCommon.h"
@@ -628,6 +629,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsItemMemberDescription
 			if (StructProperty->Struct == FCsItemMemberDescription::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsItemMemberDescription>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsRecipeIngredient
+			if (StructProperty->Struct == FCsRecipeIngredient::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsRecipeIngredient>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 
 			if (Internal)
 			{
@@ -1214,6 +1218,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsItemMemberDescription
 			if (StructProperty->Struct == FCsItemMemberDescription::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsItemMemberDescription>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsRecipeIngredient
+			if (StructProperty->Struct == FCsRecipeIngredient::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsRecipeIngredient>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 
 			if (Internal)
 			{
@@ -1816,6 +1823,9 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FCsItemMemberDescription
 				if (InnerStructProperty->Struct == FCsItemMemberDescription::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsItemMemberDescription>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
+				// FCsRecipeIngredient
+				if (InnerStructProperty->Struct == FCsRecipeIngredient::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsRecipeIngredient>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
 
 				if (Internal)
 				{
@@ -2451,6 +2461,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FCsItemMemberDescription
 			if (StructProperty->Struct == FCsItemMemberDescription::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsItemMemberDescription>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsRecipeIngredient
+			if (StructProperty->Struct == FCsRecipeIngredient::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsRecipeIngredient>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 
 			if (Internal)
 			{
@@ -3069,6 +3082,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsItemMemberDescription
 			if (StructProperty->Struct == FCsItemMemberDescription::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsItemMemberDescription>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsRecipeIngredient
+			if (StructProperty->Struct == FCsRecipeIngredient::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsRecipeIngredient>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 
 			if (Internal)
 			{
@@ -3700,6 +3716,9 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				// FCsItemMemberDescription
 				if (InnerStructProperty->Struct == FCsItemMemberDescription::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsItemMemberDescription>(JsonObject, ArrayProperty, InObject, MemberName, nullptr); continue; }
+				// FCsRecipeIngredient
+				if (InnerStructProperty->Struct == FCsRecipeIngredient::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsRecipeIngredient>(JsonObject, ArrayProperty, InObject, MemberName, nullptr); continue; }
 
 				if (Internal)
 				{

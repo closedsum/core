@@ -29,49 +29,6 @@ typedef TCsRecipeType(*TCsStringToRecipeType)(const FString&);
 								RecipeTypeToString = &ECsRecipeType::ToString; \
 								StringToRecipeType = &ECsRecipeType::ToType;
 
-UENUM(BlueprintType)
-namespace ECsItemCraftingState
-{
-	enum Type
-	{
-		Single					UMETA(DisplayName = "Single"),
-		GroupHomogeneous		UMETA(DisplayName = "Group Homogeneous"),
-		GroupMixed				UMETA(DisplayName = "Group Mixed"),
-		ECsItemCraftingState_MAX	UMETA(Hidden),
-	};
-}
-
-namespace ECsItemCraftingState
-{
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-		const TCsString Single = TCsString(TEXT("Single"), TEXT("single"), TEXT("single"));
-		const TCsString GroupHomogeneous = TCsString(TEXT("GroupHomogeneous"), TEXT("grouphomogeneous"), TEXT("group homogeneous"));
-		const TCsString GroupMixed = TCsString(TEXT("GroupMixed"), TEXT("groupmixed"), TEXT("group mixed"));
-	}
-
-	FORCEINLINE FString ToString(const Type &EType)
-	{
-		if (EType == Type::Single) { return Str::Single.Value; }
-		if (EType == Type::GroupHomogeneous) { return Str::GroupHomogeneous.Value; }
-		if (EType == Type::GroupMixed) { return Str::GroupMixed.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::Single) { return Type::Single; }
-		if (String == Str::GroupHomogeneous) { return Type::GroupHomogeneous; }
-		if (String == Str::GroupMixed) { return Type::GroupMixed; }
-		return Type::ECsItemCraftingState_MAX;
-	}
-}
-
-#define ECS_ITEM_CRAFTING_STATE_MAX (uint8)ECsItemCraftingState::ECsItemCraftingState_MAX
-typedef TEnumAsByte<ECsItemCraftingState::Type> TCsItemCraftingState;
-
 USTRUCT(BlueprintType)
 struct FCsRecipeIngredient
 {
@@ -83,10 +40,18 @@ struct FCsRecipeIngredient
 	/** Number of Items needed */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Recipe")
 	int32 Count;
+	/** Whether to Consume the Item in the crafting process */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Recipe")
+	bool Consume;
+	/** Whether to Add the Item to the resulting Item's Contents */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Recipe")
+	bool AddToContents;
 
 	FCsRecipeIngredient() 
 	{
 		Count = 1;
+		Consume = true;
+		AddToContents = false;
 	}
 	~FCsRecipeIngredient() {}
 
@@ -94,6 +59,8 @@ struct FCsRecipeIngredient
 	{
 		ShortCode = B.ShortCode;
 		Count = B.Count;
+		Consume = B.Consume;
+		AddToContents = B.AddToContents;
 		return *this;
 	}
 
@@ -101,6 +68,8 @@ struct FCsRecipeIngredient
 	{
 		if (ShortCode != B.ShortCode) { return false; }
 		if (Count != B.Count) { return false; }
+		if (Consume != B.Consume) { return false; }
+		if (AddToContents != B.AddToContents) { return false; }
 		return true;
 	}
 
@@ -111,3 +80,41 @@ struct FCsRecipeIngredient
 };
 
 #pragma endregion Recipe
+
+// Crafting
+#pragma region 
+
+struct FCsCraftingPayload
+{
+	bool IsAllocated;
+	uint64 Id;
+	TWeakObjectPtr<UObject> Instigator;
+	TWeakObjectPtr<class ACsManager_Inventory> Manager_Inventory;
+	TWeakObjectPtr<class ACsData_Recipe> Recipe;
+	uint16 Count;
+	TMap<FName, struct FCsItem*> Items;
+	bool AddToInventory;
+
+	FCsCraftingPayload()
+	{
+		Reset();
+	}
+	~FCsCraftingPayload() {}
+
+	void Reset()
+	{
+		IsAllocated = false;
+		Id = 0;
+		Instigator.Reset();
+		Instigator = nullptr;
+		Count = 0;
+		Items.Reset();
+		AddToInventory = false;
+	}
+
+	class UObject* GetInstigator() { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
+	class ACsManager_Inventory* GetManager_Inventory() { return Manager_Inventory.IsValid() ? Manager_Inventory.Get() : nullptr; }
+	class ACsData_Recipe* GetRecipe() { return Recipe.IsValid() ? Recipe.Get() : nullptr; }
+};
+
+#pragma endregion Crafting

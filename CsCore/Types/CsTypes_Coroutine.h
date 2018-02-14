@@ -317,10 +317,10 @@ public:
 			owner = a;
 		}
 		else
-			if (GetRObject())
-			{
-				owner = o;
-			}
+		if (GetRObject())
+		{
+			owner = o;
+		}
 
 		if (GetOwner() && addRoutine)
 			(*addRoutine)(GetOwner(), self, type);

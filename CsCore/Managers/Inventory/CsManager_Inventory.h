@@ -251,6 +251,8 @@ class CSCORE_API ACsManager_Inventory : public AActor
 	virtual FCsItem* GetItem(const uint64 &Id);
 	virtual FCsItem* GetFirstItem(const FName &ShortCode);
 
+	void GetItems(const FName& ShortCode, const int32& Count, TArray<FCsItem*> &OutItems);
+
 	TMap<FName, uint16> ItemCountMap;
 
 	virtual int32 GetItemCount(const FName &ShortCode);

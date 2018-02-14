@@ -203,6 +203,9 @@ public:
 	class ACsManager_Inventory* Manager_Inventory;
 
 	UPROPERTY()
+	class ACsManager_Crafting* Manager_Crafting;
+
+	UPROPERTY()
 	class ACsManager_AI* Manager_AI;
 
 	UPROPERTY()

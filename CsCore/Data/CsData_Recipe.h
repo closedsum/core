@@ -13,14 +13,31 @@ class CSCORE_API ACsData_Recipe : public ACsData
 
 	TCsRecipeType GetBaseRecipeType();
 
+// Stats
+#pragma region
+public:
+
+	/** ShortCode for the Item created from the Recipe */
+	virtual FName GetCreatedItem();
+
+#pragma endregion Stats
+
 // Ingredients
 #pragma region
 public:
 
+	/** List of all Ingredients (Item, Count, ... etc) used in the Recipe */
 	virtual TArray<FCsRecipeIngredient>* GetIngredients();
 
+	/** Time to process single Recipe */
 	UFUNCTION(BlueprintCallable, Category = "Ingredients")
 	virtual float GetTime();
+	/** Whether to use BulkTime */
+	UFUNCTION(BlueprintCallable, Category = "Ingredients")
+	virtual bool GetUseBulkTime();
+	/** Time to process many Recipes at once (i.e. Bulk)*/
+	UFUNCTION(BlueprintCallable, Category = "Ingredients")
+	virtual float GetBulkTime();
 
 #pragma endregion Ingredients
 

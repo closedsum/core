@@ -108,6 +108,28 @@ FCsItem* ACsManager_Inventory::GetFirstItem(const FName &ShortCode)
 	return (*ItemsPtr)[CS_FIRST];
 }
 
+void ACsManager_Inventory::GetItems(const FName& ShortCode, const int32& Count, TArray<FCsItem*> &OutItems)
+{
+	TArray<FCsItem*>* ItemsPtr = ItemMap.Find(ShortCode);
+
+	if (!ItemsPtr)
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetItems: There are NO Items with ShortCode: %s."), *(ShortCode.ToString()));
+		return;
+	}
+
+	if (Count > ItemsPtr->Num())
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetItems: There are only %d ( < %d requested ) Items with ShortCode: %s "), ItemsPtr->Num(), Count, *(ShortCode.ToString()));
+		return;
+	}
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		OutItems.Add((*ItemsPtr)[I]);
+	}
+}
+
 int32 ACsManager_Inventory::GetItemCount(const FName &ShortCode)
 {
 	if (uint16* Count = ItemCountMap.Find(ShortCode))

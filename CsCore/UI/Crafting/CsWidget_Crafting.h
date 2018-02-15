@@ -11,7 +11,7 @@ namespace ECsWidgetCraftingRoutine
 {
 	enum Type
 	{
-		CraftItem_Internal = ECsUserWidgetRoutine::ECsUserWidgetRoutine_MAX,
+		IncrementCount_Internal = ECsUserWidgetRoutine::ECsUserWidgetRoutine_MAX,
 		ECsWidgetCraftingRoutine_MAX,
 	};
 }
@@ -22,23 +22,23 @@ namespace ECsWidgetCraftingRoutine
 
 	namespace Str
 	{
-		const TCsString CraftItem_Internal = TCsString(TEXT("CraftItem_Internal"), TEXT("craftitem_internal"), TEXT("craft item internal"));
+		const TCsString IncrementCount_Internal = TCsString(TEXT("IncrementCount_Internal"), TEXT("incrementcount_internal"), TEXT("increment count internal"));
 	}
 
 	FORCEINLINE FString ToString(const Type &EType)
 	{
-		if (EType == Type::CraftItem_Internal) { return Str::CraftItem_Internal.Value; }
+		if (EType == Type::IncrementCount_Internal) { return Str::IncrementCount_Internal.Value; }
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
 	FORCEINLINE Type ToType(const FString &String)
 	{
-		if (String == Str::CraftItem_Internal) { return Type::CraftItem_Internal; }
+		if (String == Str::IncrementCount_Internal) { return Type::IncrementCount_Internal; }
 		return Type::ECsWidgetCraftingRoutine_MAX;
 	}
 }
 
-#define ECS_WIDGET_CRAFTING_ROUTINE_MAX (uint8)ECsWidgetCraftingRoutine::ECsWidgetCraftingRoutine_MAX
+#define ECS_WIDGET_CRAFTOMG_ROUTINE_MAX (uint8)ECsWidgetCraftingRoutine::ECsWidgetCraftingRoutine_MAX
 typedef ECsWidgetCraftingRoutine::Type TCsWidgetCraftingRoutine;
 
 #pragma endregion Enums
@@ -60,6 +60,9 @@ class CSCORE_API UCsWidget_Crafting : public UCsUserWidget
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* Header_Text;
 
+// Options
+#pragma region
+
 	UPROPERTY(meta = (BindWidget))
 	UGridPanel* Options_Grid;
 
@@ -70,7 +73,32 @@ class CSCORE_API UCsWidget_Crafting : public UCsUserWidget
 	TCsAssetType ItemAssetType;
 
 	void PopulateRecipes();
+	void SetRecipe(const FName &ShortCode);
+	UFUNCTION()
 	void OnRecipeSelectionChanged(FString SelectedItem, ESelectInfo::Type  SelectionType);
+
+	// Increment
+#pragma region
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* Increment_Button;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* Increment_Text;
+
+	FCsWidget_ButtonAndText Increment;
+
+	UFUNCTION()
+	void OnIncrementButtonPressed();
+	UFUNCTION()
+	void OnIncrementButtonReleased();
+
+	CS_COROUTINE_DECLARE(IncrementCount)
+
+#pragma endregion Increment
+
+	// Count
+#pragma region
 
 	UPROPERTY(meta = (BindWidget))
 	UBorder* Count_Border;
@@ -80,6 +108,36 @@ class CSCORE_API UCsWidget_Crafting : public UCsUserWidget
 
 	FCsWidget_SpinIntBox CurrentCount;
 
+	UFUNCTION()
+	void OnCountValueChanged(float InValue);
+	UFUNCTION()
+	void OnCountValueCommitted(float InValue, ETextCommit::Type CommitMethod);
+
+#pragma endregion Count
+
+	// Decrement
+#pragma region
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* Decrement_Button;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* Decrement_Text;
+
+	FCsWidget_ButtonAndText Decrement;
+
+	UFUNCTION()
+	void OnDecrementButtonPressed();
+	UFUNCTION()
+	void OnDecrementButtonReleased();
+
+	CS_COROUTINE_DECLARE(DecrementCount)
+
+#pragma endregion Decrement
+
+	// Start
+#pragma region
+
 	UPROPERTY(meta = (BindWidget))
 	UButton* Start_Button;
 
@@ -88,6 +146,20 @@ class CSCORE_API UCsWidget_Crafting : public UCsUserWidget
 
 	FCsWidget_ButtonAndText Start;
 
+	UFUNCTION()
+	void OnStartButtonPressed();
+
+#pragma endregion Start
+
+	TWeakObjectPtr<class ACsManager_Inventory> MyManager_Inventory;
+
+	UFUNCTION()
+	class ACsManager_Inventory* GetMyManager_Inventory();
+
+	void CraftItem();
+
+#pragma endregion Options
+
 	UPROPERTY(meta = (BindWidget))
 	UProgressBar* MyProgressBar;
 
@@ -95,15 +167,4 @@ class CSCORE_API UCsWidget_Crafting : public UCsUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 	class UCsWidget_Crafting_Grid* MyGrid;
-
-// Routines
-#pragma region
-public:
-
-	virtual bool AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type) override;
-	virtual bool RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type) override;
-
-#pragma endregion Routines
-	
-	CS_COROUTINE_DECLARE(CraftItem)
 };

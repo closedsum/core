@@ -5,21 +5,23 @@
 #include "Types/CsTypes_Coroutine.h"
 #include "CsManager_Crafting.generated.h"
 
-struct FCsCraftingCache
+struct FCsCraftingProcess
 {
 	bool IsAllocated;
+	uint64 Id;
 	FCsRoutine* R;
 	TWeakObjectPtr<UObject> Instigator;
 
-	FCsCraftingCache()
+	FCsCraftingProcess()
 	{
 		Reset();
 	}
-	~FCsCraftingCache() {}
+	~FCsCraftingProcess() {}
 
 	void Reset()
 	{
 		IsAllocated = false;
+		Id = 0;
 		R = nullptr;
 		Instigator.Reset();
 		Instigator = nullptr;
@@ -51,23 +53,23 @@ public:
 
 #pragma endregion Payload
 
-// Cache
+// Process
 #pragma region 
 protected:
 
-	FCsCraftingCache Caches[CS_CRAFTING_PAYLOAD_SIZE];
+	FCsCraftingProcess Processes[CS_CRAFTING_PAYLOAD_SIZE];
 
-	uint8 CacheIndex;
+	uint8 ProcessIndex;
 
-	FCsCraftingCache* AllocateCache();
+	FCsCraftingProcess* AllocateProcess();
 
-	TMap<uint64, FCsCraftingCache*> CacheMap;
+	TMap<uint64, FCsCraftingProcess*> ProcessMap;
 
-#pragma endregion Cache
+#pragma endregion Process
 
 public:
 
-	uint64 CurrentIdIndex;
+	uint64 CurrentProcessIdIndex;
 
 	virtual void CraftItem(FCsCraftingPayload* Payload);
 	static char CraftItem_Internal(struct FCsRoutine* r);

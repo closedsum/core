@@ -67,27 +67,29 @@ FCsCraftingPayload* ACsManager_Crafting::AllocatePayload()
 
 #pragma endregion Payload
 
-// Cache
+// Process
 #pragma region 
 
-FCsCraftingCache * ACsManager_Crafting::AllocateCache()
+FCsCraftingProcess* ACsManager_Crafting::AllocateProcess()
 {
 	for (uint8 I = 0; I < CS_CRAFTING_PAYLOAD_SIZE; ++I)
 	{
-		const uint8 Index		= (CacheIndex + I) % CS_CRAFTING_PAYLOAD_SIZE;
-		FCsCraftingCache* Cache = &(Caches[Index]);
+		const uint8 Index		    = (ProcessIndex + I) % CS_CRAFTING_PAYLOAD_SIZE;
+		FCsCraftingProcess* Process = &(Processes[Index]);
 
-		if (!Cache->IsAllocated)
+		if (!Process->IsAllocated)
 		{
-			Cache->IsAllocated = true;
-			return Cache;
+			Process->IsAllocated = true;
+			Process->Id			 = CurrentProcessIdIndex;
+			CurrentProcessIdIndex++;
+			return Process;
 		}
 	}
-	checkf(0, TEXT("ACsManager_Crafting::AllocateCache: Pool is exhausted"));
+	checkf(0, TEXT("ACsManager_Crafting::AllocateProcess: Pool is exhausted"));
 	return nullptr;
 }
 
-#pragma endregion Cache
+#pragma endregion Process
 
 void ACsManager_Crafting::CraftItem(FCsCraftingPayload* Payload)
 {
@@ -107,8 +109,7 @@ void ACsManager_Crafting::CraftItem(FCsCraftingPayload* Payload)
 
 	CoroutinePayload->Schedule		  = Schedule;
 	CoroutinePayload->Function		  = &ACsManager_Crafting::CraftItem_Internal;
-	CoroutinePayload->Actor			  = Payload->GetManager_Inventory();
-	CoroutinePayload->Object		  = Payload->GetInstigator();
+	CoroutinePayload->Actor			  = this;
 	//CoroutinePayload->Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
 	//CoroutinePayload->Type = (uint8)ECsWidgetCraftingRoutine::CraftItem_Internal;
 	CoroutinePayload->DoInit		  = true;
@@ -118,39 +119,44 @@ void ACsManager_Crafting::CraftItem(FCsCraftingPayload* Payload)
 
 	FCsRoutine* R = Scheduler->Allocate(CoroutinePayload);
 
-	R->floats[0] = GetWorld()->GetTimeSeconds();
+	R->floats[0]	   = GetWorld()->GetTimeSeconds();
 	R->voidPointers[0] = (void*)Payload;
 
-	// Add to CacheMap
-	CurrentIdIndex++;
+	// Add to ProcessMap
+	FCsCraftingProcess* Process = AllocateProcess();
+	Process->R					= R;
+	Process->Instigator			= Payload->GetInstigator();
 
-	FCsCraftingCache* Cache = AllocateCache();
-	Cache->R				= R;
-	Cache->Instigator		= Payload->GetInstigator();
+	ProcessMap.Add(Process->Id, Process);
 
-	CacheMap.Add(CurrentIdIndex, Cache);
+	R->voidPointers[1] = (void*)Process;
+
 	// Start Routine
 	Scheduler->StartRoutine(Schedule, R);
 }
 
 CS_COROUTINE(ACsManager_Crafting, CraftItem_Internal)
 {
-	ACsManager_Inventory* inventory = Cast<ACsManager_Inventory>(r->GetActor());
-	UCsCoroutineScheduler* s		= r->scheduler;
-	UWorld* w						= inventory->GetWorld();
+	ACsManager_Crafting* c	 = Cast<ACsManager_Crafting>(r->GetActor());
+	UCsCoroutineScheduler* s = r->scheduler;
+	UWorld* w				 = c->GetWorld();
 	
-	FCsCraftingPayload* Payload = (FCsCraftingPayload*)r->voidPointers[0];
-	ACsData_Recipe* Recipe	    = Payload->GetRecipe();
+	ACsManager_Item* Manager_Item			= ACsManager_Item::Get(w);
+	FCsCraftingPayload* Payload				= (FCsCraftingPayload*)r->voidPointers[0];
+	ACsManager_Inventory* Manager_Inventory = Payload->GetManager_Inventory();
+	ACsData_Recipe* Recipe					= Payload->GetRecipe();
 
 	TArray<FCsRecipeIngredient>* Ingredients = Recipe->GetIngredients();
 
-	const uint16& Count		= Payload->Count; 
 	const bool UseBulkTime	= Recipe->GetUseBulkTime();
-	const float Time			= UseBulkTime ? Recipe->GetUseBulkTime() : Recipe->GetTime();
+	const int32 ProcessCount = UseBulkTime ? 1 : Payload->Count;
+	const float Time		= UseBulkTime ? Recipe->GetUseBulkTime() : Recipe->GetTime();
 	const float& StartTime	= r->floats[0];
 	const float CurrentTime	= w->GetTimeSeconds();
 
 	const int32& Index = r->indexers[0];
+
+	FCsCraftingProcess* Process = (FCsCraftingProcess*)r->voidPointers[1];
 
 	CS_COROUTINE_BEGIN(r);
 
@@ -159,47 +165,102 @@ CS_COROUTINE(ACsManager_Crafting, CraftItem_Internal)
 		CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - StartTime < Time);
 
 		{
+			const int32 Count = UseBulkTime ? Payload->Count : 1;
 
-			
+			for (int32 I = 0; I < Count; ++I)
+			{
+				// Create the Item
+				FCsItem* CreatedItem = Manager_Item->Allocate(Recipe->GetCreatedItem(), Payload->AddToInventory ? Payload->GetInstigator() : w);
+
+				const int32 IngredientCount = Ingredients->Num();
+
+				for (int32 J = 0; J < IngredientCount; ++J)
+				{
+					const FCsRecipeIngredient& Ingredient = (*Ingredients)[I];
+					// Process Items
+					TArray<FCsItem*> ProcessedItems;
+					Payload->ProcessItems(Ingredient.ShortCode, Ingredient.Count, ProcessedItems);
+
+					const int32 ProcessedItemCount = ProcessedItems.Num();
+
+					for (int32 K = 0; K < ProcessedItemCount; ++K)
+					{
+						// Consume
+						if (Ingredient.Consume)
+						{
+							Manager_Inventory->ConsumeItem(ProcessedItems[K]);
+						}
+						// Add to Contents
+						if (Ingredient.AddToContents)
+						{
+							CreatedItem->Contents.Add(ProcessedItems[K]->UniqueId);
+						}
+					}
+				}
+				Payload->OutItems.Add(CreatedItem);
+			}
 		}
 		r->indexers[0]++;
-	} while (Index < Count);
+	} while (Index < ProcessCount);
+
+	// Check to Add Crafted Items to the Inventory
+	if (Payload->AddToInventory)
+		Manager_Inventory->AddItems(Payload->OutItems);
+
+	// Free the Payload
+	Payload->Reset();
+	// Free the Process
+	c->ProcessMap.Remove(Process->Id);
+	Process->Reset();
 
 	CS_COROUTINE_END(r);
 }
 
 void ACsManager_Crafting::CancelCraftingItem(const uint64 &Id)
 {
-	FCsCraftingCache** CachePtr = CacheMap.Find(Id);
+	FCsCraftingProcess** ProcessPtr = ProcessMap.Find(Id);
 
-	if (!CachePtr)
+	if (!ProcessPtr)
 	{
 		UE_LOG(LogCs, Warning, TEXT("ACsManager_Crafting::CancelCraftingItem: Attemping to cancel Crafting Process: %d, but it does NOT exist."), Id);
 		return;
 	}
 
-	FCsCraftingCache* Cache = *CachePtr;
+	FCsCraftingProcess* Process	= *ProcessPtr;
+	FCsCraftingPayload* Payload = (FCsCraftingPayload*)(Process->R->voidPointers[0]);
 
-	Cache->R->End(ECsCoroutineEndReason::StopCondition);
-
-	CacheMap.Remove(Id);
+	// Free the Payload
+	Payload->Reset();
+	// End the Routine
+	Process->R->End(ECsCoroutineEndReason::Manual);
+	// Free the Process
+	ProcessMap.Remove(Id);
+	Process->Reset();
 }
 
 void ACsManager_Crafting::CancelCraftingItems(UObject* Instigator)
 {
 	TArray<uint64> Keys;
-	CacheMap.GetKeys(Keys);
+	ProcessMap.GetKeys(Keys);
 
 	const int32 Count = Keys.Num();
 
 	for (int32 I = 0; I < Count; ++I)
 	{
 		const uint64& Id		= Keys[I];
-		FCsCraftingCache* Cache = *(CacheMap.Find(Id));
+		FCsCraftingProcess* Process = *(ProcessMap.Find(Id));
 
-		if (Instigator == Cache->GetInstigator())
+		if (Instigator == Process->GetInstigator())
 		{
-			CacheMap.Remove(Id);
+			FCsCraftingPayload* Payload = (FCsCraftingPayload*)(Process->R->voidPointers[0]);
+
+			// Free the Payload
+			Payload->Reset();
+			// End the Routine
+			Process->R->End(ECsCoroutineEndReason::Manual);
+			// Free the Process
+			ProcessMap.Remove(Id);
+			Process->Reset();
 		}
 	}
 }

@@ -92,8 +92,9 @@ struct FCsCraftingPayload
 	TWeakObjectPtr<class ACsManager_Inventory> Manager_Inventory;
 	TWeakObjectPtr<class ACsData_Recipe> Recipe;
 	uint16 Count;
-	TMap<FName, struct FCsItem*> Items;
+	TMap<FName, TArray<struct FCsItem*>> ItemMap;
 	bool AddToInventory;
+	TArray<struct FCsItem*> OutItems;
 
 	FCsCraftingPayload()
 	{
@@ -108,13 +109,31 @@ struct FCsCraftingPayload
 		Instigator.Reset();
 		Instigator = nullptr;
 		Count = 0;
-		Items.Reset();
+		ItemMap.Reset();
 		AddToInventory = false;
+		OutItems.Reset();
 	}
 
 	class UObject* GetInstigator() { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
 	class ACsManager_Inventory* GetManager_Inventory() { return Manager_Inventory.IsValid() ? Manager_Inventory.Get() : nullptr; }
 	class ACsData_Recipe* GetRecipe() { return Recipe.IsValid() ? Recipe.Get() : nullptr; }
+
+	void ProcessItems(const FName &ShortCode, const int32 &ItemCount, TArray<struct FCsItem*> &OutProcessedItems)
+	{
+		TArray<struct FCsItem*>* ItemsPtr = ItemMap.Find(ShortCode);
+
+		for (int32 I = 0; I < ItemCount; ++I)
+		{
+			OutProcessedItems.Add((*ItemsPtr)[I]);
+		}
+
+		const int32 ItemsPtrCount = ItemsPtr->Num();
+
+		for (int32 I = ItemsPtrCount - ItemCount - 1; I >= 0; --I)
+		{
+			ItemsPtr->RemoveAt(I);
+		}
+	}
 };
 
 #pragma endregion Crafting

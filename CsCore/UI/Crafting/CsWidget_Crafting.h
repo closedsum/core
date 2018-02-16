@@ -12,6 +12,7 @@ namespace ECsWidgetCraftingRoutine
 	enum Type
 	{
 		IncrementCount_Internal = ECsUserWidgetRoutine::ECsUserWidgetRoutine_MAX,
+		DecrementCount_Internal,
 		ECsWidgetCraftingRoutine_MAX,
 	};
 }
@@ -23,17 +24,20 @@ namespace ECsWidgetCraftingRoutine
 	namespace Str
 	{
 		const TCsString IncrementCount_Internal = TCsString(TEXT("IncrementCount_Internal"), TEXT("incrementcount_internal"), TEXT("increment count internal"));
+		const TCsString DecrementCount_Internal = TCsString(TEXT("DecrementCount_Internal"), TEXT("decrementcount_internal"), TEXT("decrement count internal"));
 	}
 
 	FORCEINLINE FString ToString(const Type &EType)
 	{
 		if (EType == Type::IncrementCount_Internal) { return Str::IncrementCount_Internal.Value; }
+		if (EType == Type::DecrementCount_Internal) { return Str::IncrementCount_Internal.Value; }
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
 	FORCEINLINE Type ToType(const FString &String)
 	{
 		if (String == Str::IncrementCount_Internal) { return Type::IncrementCount_Internal; }
+		if (String == Str::DecrementCount_Internal) { return Type::IncrementCount_Internal; }
 		return Type::ECsWidgetCraftingRoutine_MAX;
 	}
 }
@@ -50,6 +54,15 @@ class CSCORE_API UCsWidget_Crafting : public UCsUserWidget
 
 	virtual void OnNativeConstruct() override;
 	virtual void Init() override;
+
+// Routines
+#pragma region
+public:
+
+	virtual bool AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType) override;
+	virtual bool RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType) override;
+
+#pragma endregion Routines
 
 	UPROPERTY(meta = (BindWidget))
 	UVerticalBox* MyVerticalBox;
@@ -74,8 +87,11 @@ class CSCORE_API UCsWidget_Crafting : public UCsUserWidget
 
 	void PopulateRecipes();
 	void SetRecipe(const FName &ShortCode);
+	void UpdateRecipeWithSelectedOption();
 	UFUNCTION()
 	void OnRecipeSelectionChanged(FString SelectedItem, ESelectInfo::Type  SelectionType);
+
+	bool CanCompleteRecipe(const uint32& Count);
 
 	// Increment
 #pragma region
@@ -88,10 +104,16 @@ class CSCORE_API UCsWidget_Crafting : public UCsUserWidget
 
 	FCsWidget_ButtonAndText Increment;
 
+	TCsGameEvent IncrementStartGameEvent;
+	TCsGameEvent IncrementEndGameEvent;
+
 	UFUNCTION()
 	void OnIncrementButtonPressed();
 	UFUNCTION()
 	void OnIncrementButtonReleased();
+
+	UPROPERTY()
+	float AutoIncrementTime;
 
 	CS_COROUTINE_DECLARE(IncrementCount)
 
@@ -106,7 +128,7 @@ class CSCORE_API UCsWidget_Crafting : public UCsUserWidget
 	UPROPERTY(meta = (BindWidget))
 	USpinBox* Count_Spin;
 
-	FCsWidget_SpinIntBox CurrentCount;
+	FCsWidget_SpinBox_uint32 CurrentCount;
 
 	UFUNCTION()
 	void OnCountValueChanged(float InValue);
@@ -126,10 +148,16 @@ class CSCORE_API UCsWidget_Crafting : public UCsUserWidget
 
 	FCsWidget_ButtonAndText Decrement;
 
+	TCsGameEvent DecrementStartGameEvent;
+	TCsGameEvent DecrementEndGameEvent;
+
 	UFUNCTION()
 	void OnDecrementButtonPressed();
 	UFUNCTION()
 	void OnDecrementButtonReleased();
+
+	UPROPERTY()
+	float AutoDecrementTime;
 
 	CS_COROUTINE_DECLARE(DecrementCount)
 
@@ -145,6 +173,8 @@ class CSCORE_API UCsWidget_Crafting : public UCsUserWidget
 	UTextBlock* Start_Text;
 
 	FCsWidget_ButtonAndText Start;
+
+	TCsGameEvent StartGameEvent;
 
 	UFUNCTION()
 	void OnStartButtonPressed();

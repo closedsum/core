@@ -1447,7 +1447,7 @@ public:
 	USpinBox* Get() { return SpinBox.IsValid() ? SpinBox.Get() : nullptr; }
 };
 
-struct FCsWidget_SpinIntBox : public FCsWidget
+struct FCsWidget_SpinBox_int32 : public FCsWidget
 {
 public:
 	TWeakObjectPtr<class USpinBox> SpinBox;
@@ -1456,8 +1456,8 @@ public:
 	TCsInt32 MinValue;
 	TCsInt32 MaxValue;
 
-	FCsWidget_SpinIntBox() {}
-	~FCsWidget_SpinIntBox() {}
+	FCsWidget_SpinBox_int32() {}
+	~FCsWidget_SpinBox_int32() {}
 
 	void Set(class USpinBox* inSpinBox)
 	{
@@ -1521,12 +1521,127 @@ public:
 		Value = FMath::Clamp(inValue, MinValue.Get(), MaxValue.Get());
 	}
 
+	void IncrementValue()
+	{
+		++Value;
+		Value = FMath::Clamp(Value.Get(), MinValue.Get(), MaxValue.Get());
+	}
+
+	void DecrementValue()
+	{
+		--Value;
+		Value = FMath::Clamp(Value.Get(), MinValue.Get(), MaxValue.Get());
+	}
+
 	void SetMinValue(const int32 &inMinValue)
 	{
 		MinValue = inMinValue;
 	}
 
 	void SetMaxValue(const int32 &inMaxValue)
+	{
+		MaxValue = inMaxValue;
+	}
+
+	USpinBox* Get() { return SpinBox.IsValid() ? SpinBox.Get() : nullptr; }
+};
+
+struct FCsWidget_SpinBox_uint32 : public FCsWidget
+{
+public:
+	TWeakObjectPtr<class USpinBox> SpinBox;
+
+	TCsUint32 Value;
+	TCsUint32 MinValue;
+	TCsUint32 MaxValue;
+
+	FCsWidget_SpinBox_uint32() {}
+	~FCsWidget_SpinBox_uint32() {}
+
+	void Set(class USpinBox* inSpinBox)
+	{
+		SpinBox = inSpinBox;
+		Visibility = SpinBox->Visibility;
+		Visibility.Clear();
+		Value = FMath::Max(0, FMath::FloorToInt(SpinBox->Value));
+		Value.Clear();
+		MinValue = FMath::Max(0, FMath::FloorToInt(SpinBox->GetMinValue()));
+		MinValue.Clear();
+		MaxValue = FMath::Max(0, FMath::FloorToInt(SpinBox->GetMaxValue()));
+		MaxValue.Clear();
+	}
+
+	virtual void OnNativeTick(const float &InDeltaTime) override
+	{
+		// Visibility
+		if (Visibility.HasChanged())
+		{
+			if (USpinBox* S = Get())
+				S->SetVisibility(Visibility.Get());
+		}
+		if (Visibility == ESlateVisibility::Collapsed ||
+			Visibility == ESlateVisibility::Hidden)
+		{
+			Visibility.Clear();
+			return;
+		}
+		// Value
+		if (Value.HasChanged())
+		{
+			if (USpinBox* S = Get())
+				S->SetValue(Value.Get());
+		}
+		// MinValue
+		if (MinValue.HasChanged())
+		{
+			if (USpinBox* S = Get())
+			{
+				S->SetMinValue(MinValue.Get());
+				S->SetMinSliderValue(MinValue.Get());
+			}
+		}
+		// MaxValue
+		if (MaxValue.HasChanged())
+		{
+			if (USpinBox* S = Get())
+			{
+				S->SetMaxValue(MaxValue.Get());
+				S->SetMaxSliderValue(MaxValue.Get());
+			}
+		}
+		Visibility.Clear();
+		Value.Clear();
+		MinValue.Clear();
+		MaxValue.Clear();
+	}
+
+	void SetValue(const uint32 &inValue)
+	{
+		Value = FMath::Clamp(inValue, MinValue.Get(), MaxValue.Get());
+	}
+
+	void IncrementValue()
+	{
+		if (Value == UINT32_MAX)
+			return;
+		++Value;
+		Value = FMath::Clamp(Value.Get(), MinValue.Get(), MaxValue.Get());
+	}
+
+	void DecrementValue()
+	{
+		if (Value == 0)
+			return;
+		--Value;
+		Value = FMath::Clamp(Value.Get(), MinValue.Get(), MaxValue.Get());
+	}
+
+	void SetMinValue(const uint32 &inMinValue)
+	{
+		MinValue = inMinValue;
+	}
+
+	void SetMaxValue(const uint32 &inMaxValue)
 	{
 		MaxValue = inMaxValue;
 	}

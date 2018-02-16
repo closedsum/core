@@ -169,11 +169,41 @@ struct FCsPrimitiveType_int32 : public TCsPrimitiveType<int32>
 		return *this;
 	}
 
+	FCsPrimitiveType_int32& operator++()
+	{
+		++Value;
+		UpdateIsDirty();
+		return *this;
+	}
+
+	FCsPrimitiveType_int32 operator++(int)
+	{
+		FCsPrimitiveType_int32 Temp = *this;
+		++*this;
+		UpdateIsDirty();
+		return Temp;
+	}
+
 	FCsPrimitiveType_int32& operator-=(const int32& B)
 	{
 		Value -= B;
 		UpdateIsDirty();
 		return *this;
+	}
+
+	FCsPrimitiveType_int32& operator--()
+	{
+		--Value;
+		UpdateIsDirty();
+		return *this;
+	}
+
+	FCsPrimitiveType_int32 operator--(int)
+	{
+		FCsPrimitiveType_int32 Temp = *this;
+		--*this;
+		UpdateIsDirty();
+		return Temp;
 	}
 
 	FCsPrimitiveType_int32& operator*=(const int32& B)
@@ -225,6 +255,135 @@ struct FCsPrimitiveType_int32 : public TCsPrimitiveType<int32>
 };
 
 typedef FCsPrimitiveType_int32 TCsInt32;
+
+struct FCsPrimitiveType_uint32 : public TCsPrimitiveType<uint32>
+{
+	FCsPrimitiveType_uint32()
+	{
+		DefaultValue = 0;
+	}
+	~FCsPrimitiveType_uint32() {}
+
+	FCsPrimitiveType_uint32& operator=(const uint32& B)
+	{
+		Value = B;
+		UpdateIsDirty();
+		return *this;
+	}
+
+	FORCEINLINE friend bool operator==(const uint32 &Lhs, const FCsPrimitiveType_uint32 &Rhs)
+	{
+		return Lhs == Rhs.Value;
+	}
+
+	FORCEINLINE friend bool operator==(const FCsPrimitiveType_uint32 &Lhs, const uint32 &Rhs)
+	{
+		return Lhs.Value == Rhs;
+	}
+
+	FORCEINLINE friend bool operator!=(const uint32 &Lhs, const FCsPrimitiveType_uint32 &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_uint32 &Lhs, const uint32 &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FCsPrimitiveType_uint32& operator+=(const uint32& B)
+	{
+		Value += B;
+		UpdateIsDirty();
+		return *this;
+	}
+
+	FCsPrimitiveType_uint32& operator++()
+	{
+		++Value;
+		UpdateIsDirty();
+		return *this;
+	}
+
+	FCsPrimitiveType_uint32 operator++(int)
+	{
+		FCsPrimitiveType_uint32 Temp = *this;
+		++*this;
+		UpdateIsDirty();
+		return Temp;
+	}
+
+	FCsPrimitiveType_uint32& operator-=(const uint32& B)
+	{
+		Value -= B;
+		UpdateIsDirty();
+		return *this;
+	}
+
+	FCsPrimitiveType_uint32& operator--()
+	{
+		--Value;
+		UpdateIsDirty();
+		return *this;
+	}
+
+	FCsPrimitiveType_uint32 operator--(int)
+	{
+		FCsPrimitiveType_uint32 Temp = *this;
+		--*this;
+		UpdateIsDirty();
+		return Temp;
+	}
+
+	FCsPrimitiveType_uint32& operator*=(const uint32& B)
+	{
+		Value *= B;
+		UpdateIsDirty();
+		return *this;
+	}
+
+	FORCEINLINE friend bool operator<(const FCsPrimitiveType_uint32 &Lhs, const uint32 &Rhs)
+	{
+		return Lhs.Value < Rhs;
+	}
+
+	FORCEINLINE friend bool operator<(const uint32 &Lhs, const FCsPrimitiveType_uint32 &Rhs)
+	{
+		return Lhs < Rhs.Value;
+	}
+
+	FORCEINLINE friend bool operator>(const FCsPrimitiveType_uint32 &Lhs, const uint32 &Rhs)
+	{
+		return Lhs.Value > Rhs;
+	}
+
+	FORCEINLINE friend bool operator>(const uint32 &Lhs, const FCsPrimitiveType_uint32 &Rhs)
+	{
+		return Lhs > Rhs.Value;
+	}
+
+	FORCEINLINE friend float operator/(const FCsPrimitiveType_uint32 &Lhs, const uint32 &Rhs)
+	{
+		return Lhs.Value / Rhs;
+	}
+
+	FORCEINLINE friend float operator/(const uint32 &Lhs, const FCsPrimitiveType_uint32 &Rhs)
+	{
+		return Lhs / Rhs.Value;
+	}
+
+	FORCEINLINE friend float operator*(const FCsPrimitiveType_uint32 &Lhs, const uint32 &Rhs)
+	{
+		return Lhs.Value * Rhs;
+	}
+
+	FORCEINLINE friend float operator*(const uint32 &Lhs, const FCsPrimitiveType_uint32 &Rhs)
+	{
+		return Lhs * Rhs.Value;
+	}
+};
+
+typedef FCsPrimitiveType_uint32 TCsUint32;
 
 struct FCsPrimitiveType_float : public TCsPrimitiveType<float>
 {

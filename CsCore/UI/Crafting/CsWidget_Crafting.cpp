@@ -28,6 +28,7 @@ namespace ECsWidgetCraftingCachedName
 		// Functions
 		const FName IncrementCount_Internal = FName("UCsWidget_Crafting::IncrementCount_Internal");
 		const FName DecrementCount_Internal = FName("UCsWidget_Crafting::DecrementCount_Internal");
+		const FName UpdateProgress_Internal = FName("UCsWidget_Crafting::UpdateProgress_Internal");
 	};
 }
 
@@ -38,6 +39,7 @@ namespace ECsWidgetCraftingCachedString
 		// Functions
 		const FString IncrementCount_Internal = TEXT("UCsWidget_Crafting::IncrementCount_Internal");
 		const FString DecrementCount_Internal = TEXT("UCsWidget_Crafting::DecrementCount_Internal");
+		const FString UpdateProgress_Internal = TEXT("UCsWidget_Crafting::UpdateProgress_Internal");
 	};
 }
 
@@ -667,7 +669,7 @@ void UCsWidget_Crafting::OnBeginCraftingProcess(const uint64 &ProcessId, const u
 
 void UCsWidget_Crafting::OnCraftItem_Event(const uint64 &ProcessId, const uint64 &PayloadId)
 {
-	UpdateProgress();
+	UpdateProgress(PayloadId);
 }
 
 void UCsWidget_Crafting::OnFinishCraftingProcess(const uint64 &ProcessId, const uint64 &PayloadId)
@@ -682,9 +684,36 @@ void UCsWidget_Crafting::OnFinishCraftingProcess(const uint64 &ProcessId, const 
 // Progress
 #pragma region
 
-void UCsWidget_Crafting::UpdateProgress()
+void UCsWidget_Crafting::UpdateProgress(const uint64 &PayloadId)
 {
 	StopUpdateProgress();
+
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+
+	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+
+	Payload->Schedule		 = Schedule;
+	Payload->Function		 = &UCsWidget_Crafting::UpdateProgress_Internal;
+	Payload->Object			 = this;
+	Payload->Stop			 = &UCsCommon::CoroutineStopCondition_CheckObject;
+	Payload->Add			 = &UCsUserWidget::AddRoutine;
+	Payload->Remove			 = &UCsUserWidget::RemoveRoutine;
+	Payload->Type			 = (uint8)ECsWidgetCraftingRoutine::UpdateProgress_Internal;
+	Payload->DoInit			 = true;
+	Payload->PerformFirstRun = false;
+	Payload->Name			 = ECsWidgetCraftingCachedName::Name::UpdateProgress_Internal;
+	Payload->NameAsString	 = ECsWidgetCraftingCachedString::Str::UpdateProgress_Internal;
+
+	FCsRoutine* R = Scheduler->Allocate(Payload);
+
+	ACsManager_Crafting* Manager_Crafting = ACsManager_Crafting::Get(GetWorld());
+	FCsCraftingPayload* CraftingPayload   = Manager_Crafting->GetPayload(PayloadId);
+	ACsData_Recipe* Recipe				  = CraftingPayload->GetRecipe();
+
+	R->floats[0] = Recipe->GetUseBulkTime() ? Recipe->GetBulkTime() : Recipe->GetTime();
+
+	Scheduler->StartRoutine(Schedule, R);
 }
 
 CS_COROUTINE(UCsWidget_Crafting, UpdateProgress_Internal)
@@ -694,8 +723,8 @@ CS_COROUTINE(UCsWidget_Crafting, UpdateProgress_Internal)
 	UWorld* w				 = c->GetWorld();
 
 	const float CurrentTime = w->GetTimeSeconds();
-	const float& StartTime  = r->floats[0];
-	const float& Time		= r->floats[1];
+	const float& StartTime  = r->startTime;
+	const float& Time		= r->floats[0];
 	const float Percent		= CurrentTime - StartTime / Time;
 
 	CS_COROUTINE_BEGIN(r);
@@ -703,6 +732,7 @@ CS_COROUTINE(UCsWidget_Crafting, UpdateProgress_Internal)
 	do
 	{
 		c->ProgressBar.SetPercent(Percent);
+
 		CS_COROUTINE_YIELD(r);
 	} while (CurrentTime - StartTime < Time);
 

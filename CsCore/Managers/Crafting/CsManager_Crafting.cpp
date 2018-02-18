@@ -69,6 +69,11 @@ FCsCraftingPayload* ACsManager_Crafting::AllocatePayload()
 	return nullptr;
 }
 
+FCsCraftingPayload* ACsManager_Crafting::GetPayload(const uint64 &Id)
+{
+	return *(PayloadMap.Find(Id));
+}
+
 #pragma endregion Payload
 
 // Process

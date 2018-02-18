@@ -285,7 +285,9 @@ public:
 
 	FCsWidget_Bar ProgressBar;
 
-	CS_COROUTINE_DECLARE(UpdateProgress)
+	void UpdateProgress(const uint64 &PayloadId);
+	static char UpdateProgress_Internal(struct FCsRoutine* r);
+	struct FCsRoutine* UpdateProgress_Internal_Routine;
 
 	void StopUpdateProgress();
 

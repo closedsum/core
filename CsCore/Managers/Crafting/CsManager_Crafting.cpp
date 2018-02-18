@@ -95,6 +95,11 @@ FCsCraftingProcess* ACsManager_Crafting::AllocateProcess()
 	return nullptr;
 }
 
+FCsCraftingProcess* ACsManager_Crafting::GetProcess(const uint64 &Id)
+{
+	return *(ProcessMap.Find(Id));
+}
+
 #pragma endregion Process
 
 void ACsManager_Crafting::CraftItems(FCsCraftingPayload* Payload)
@@ -165,10 +170,8 @@ CS_COROUTINE(ACsManager_Crafting, CraftItems_Internal)
 
 	CS_COROUTINE_BEGIN(r);
 
-#if WITH_EDITOR
-	c->OnBeginCraftingProcess_ScriptEvent.Broadcast(Process->Id, Payload->Id);
-#endif // #if WITH_EDITOR
 	c->OnBeginCraftingProcess_Event.Broadcast(Process->Id, Payload->Id);
+	c->OnBeginCraftingProcess_Event.Clear();
 
 	do
 	{
@@ -209,10 +212,7 @@ CS_COROUTINE(ACsManager_Crafting, CraftItems_Internal)
 				}
 				Payload->OutItems.Add(CreatedItem);
 
-#if WITH_EDITOR
-				c->OnCraftItem_ScriptEvent.Broadcast(Process->Id, Payload->Id);
-#endif // #if WITH_EDITOR
-				c->OnCraftItem_Event.Broadcast(Process->Id, Payload->Id);
+				Process->OnCraftItem_Event.Broadcast(Process->Id, Payload->Id);
 			}
 		}
 		r->indexers[0]++;
@@ -222,10 +222,7 @@ CS_COROUTINE(ACsManager_Crafting, CraftItems_Internal)
 	if (Payload->AddToInventory)
 		Manager_Inventory->AddItems(Payload->OutItems);
 
-#if WITH_EDITOR
-	c->OnFinishCraftingProcess_ScriptEvent.Broadcast(Process->Id, Payload->Id);
-#endif // #if WITH_EDITOR
-	c->OnFinishCraftingProcess_Event.Broadcast(Process->Id, Payload->Id);
+	Process->OnFinishCraftingProcess_Event.Broadcast(Process->Id, Payload->Id);
 
 	// Free the Payload
 	c->PayloadMap.Remove(Payload->Id);

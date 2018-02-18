@@ -6,13 +6,10 @@
 #include "CsManager_Crafting.generated.h"
 
 // OnBegin
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerCrafting_OnBeginCraftingProcess, const uint64&, ProcessId, const uint64&, PayloadId);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsManagerCrafting_OnBeginCraftingProcess, const uint64&, const uint64&);
 // OnCraft
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerCrafting_OnCraftItem, const uint64&, ProcessId, const uint64&, PayloadId);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsManagerCrafting_OnCraftItem, const uint64&, const uint64&);
 // OnFinish
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerCrafting_OnFinishCraftingProcess, const uint64&, ProcessId, const uint64&, PayloadId);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsManagerCrafting_OnFinishCraftingProcess, const uint64&, const uint64&);
 
 // Structs
@@ -24,6 +21,9 @@ struct FCsCraftingProcess
 	uint64 Id;
 	FCsRoutine* R;
 	TWeakObjectPtr<UObject> Instigator;
+
+	FBindableEvent_CsManagerCrafting_OnCraftItem OnCraftItem_Event;
+	FBindableEvent_CsManagerCrafting_OnFinishCraftingProcess OnFinishCraftingProcess_Event;
 
 	FCsCraftingProcess()
 	{
@@ -38,6 +38,9 @@ struct FCsCraftingProcess
 		R = nullptr;
 		Instigator.Reset();
 		Instigator = nullptr;
+
+		OnCraftItem_Event.Clear();
+		OnFinishCraftingProcess_Event.Clear();
 	}
 
 	UObject* GetInstigator() { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
@@ -85,6 +88,10 @@ protected:
 
 	TMap<uint64, FCsCraftingProcess*> ProcessMap;
 
+public:
+
+	FCsCraftingProcess* GetProcess(const uint64 &Id);
+
 #pragma endregion Process
 
 public:
@@ -93,19 +100,6 @@ public:
 	static char CraftItems_Internal(struct FCsRoutine* r);
 
 	FBindableEvent_CsManagerCrafting_OnBeginCraftingProcess OnBeginCraftingProcess_Event;
-
-	UPROPERTY(BlueprintAssignable, Category = "Crafting")
-	FBindableDynEvent_CsManagerCrafting_OnBeginCraftingProcess OnBeginCraftingProcess_ScriptEvent;
-
-	FBindableEvent_CsManagerCrafting_OnCraftItem OnCraftItem_Event;
-
-	UPROPERTY(BlueprintAssignable, Category = "Crafting")
-	FBindableDynEvent_CsManagerCrafting_OnCraftItem OnCraftItem_ScriptEvent;
-
-	FBindableEvent_CsManagerCrafting_OnFinishCraftingProcess OnFinishCraftingProcess_Event;
-
-	UPROPERTY(BlueprintAssignable, Category = "Crafting")
-	FBindableDynEvent_CsManagerCrafting_OnFinishCraftingProcess OnFinishCraftingProcess_ScriptEvent;
 
 	void CancelCraftingProcess(const uint64 &Id);
 	void CancelCraftingProcesses(UObject* Instigator);

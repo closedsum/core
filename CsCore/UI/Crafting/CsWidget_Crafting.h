@@ -14,6 +14,7 @@ namespace ECsWidgetCraftingRoutine
 	{
 		IncrementCount_Internal = ECsUserWidgetRoutine::ECsUserWidgetRoutine_MAX,
 		DecrementCount_Internal,
+		UpdateProgress_Internal,
 		ECsWidgetCraftingRoutine_MAX,
 	};
 }
@@ -43,8 +44,51 @@ namespace ECsWidgetCraftingRoutine
 	}
 }
 
-#define ECS_WIDGET_CRAFTOMG_ROUTINE_MAX (uint8)ECsWidgetCraftingRoutine::ECsWidgetCraftingRoutine_MAX
+#define ECS_WIDGET_CRAFTING_ROUTINE_MAX (uint8)ECsWidgetCraftingRoutine::ECsWidgetCraftingRoutine_MAX
 typedef ECsWidgetCraftingRoutine::Type TCsWidgetCraftingRoutine;
+
+UENUM(BlueprintType)
+namespace ECsWidgetCraftingProcessState
+{
+	enum Type
+	{
+		None								UMETA(DisplayName = "None"),
+		InProgress							UMETA(DisplayName = "InProgress"),
+		Finished							UMETA(DisplayName = "Finished"),
+		ECsWidgetCraftingProcessState_MAX	UMETA(Hidden),
+	};
+}
+
+namespace ECsWidgetCraftingProcessState
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+
+	namespace Str
+	{
+		const TCsString None = TCsString(TEXT("None"), TEXT("none"));
+		const TCsString InProgress = TCsString(TEXT("InProgress"), TEXT("inprogress"));
+		const TCsString Finished = TCsString(TEXT("Finished"), TEXT("finished"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::None) { return Str::None.Value; }
+		if (EType == Type::InProgress) { return Str::InProgress.Value; }
+		if (EType == Type::Finished) { return Str::Finished.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::None) { return Type::None; }
+		if (String == Str::InProgress) { return Type::InProgress; }
+		if (String == Str::Finished) { return Type::Finished; }
+		return Type::ECsWidgetCraftingProcessState_MAX;
+	}
+}
+
+#define ECS_WIDGET_CRAFTING_PROCESS_STATE_MAX (uint8)ECsWidgetCraftingProcessState::ECsWidgetCraftingProcessState_MAX
+typedef TEnumAsByte<ECsWidgetCraftingProcessState::Type> TCsWidgetCraftingProcessState;
 
 #pragma endregion Enums
 
@@ -56,6 +100,8 @@ class CSCORE_API UCsWidget_Crafting : public UCsUserWidget
 	virtual void OnNativeConstruct() override;
 	virtual void Init() override;
 	virtual void OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime) override;
+
+	virtual void Hide() override;
 
 // Routines
 #pragma region
@@ -214,16 +260,36 @@ public:
 	UFUNCTION()
 	class ACsManager_Inventory* GetMyManager_Inventory();
 
-	void CraftItem();
+	bool CanCraftItems();
+	void CraftItems();
+
+	void CancelCurrentCraftingProcess();
+
+	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
+	TEnumAsByte<ECsWidgetCraftingProcessState::Type> CraftingProcessState;
+
+	void OnBeginCraftingProcess(const uint64 &ProcessId, const uint64& PayloadId);
+	void OnCraftItem_Event(const uint64 &ProcessId, const uint64 &PayloadId);
+	void OnFinishCraftingProcess(const uint64 &ProcessId, const uint64 &PayloadId);
 
 #pragma endregion Start
 
 #pragma endregion Options
 
+// Progress
+#pragma region
+public:
+
 	UPROPERTY(meta = (BindWidget))
 	UProgressBar* MyProgressBar;
 
 	FCsWidget_Bar ProgressBar;
+
+	CS_COROUTINE_DECLARE(UpdateProgress)
+
+	void StopUpdateProgress();
+
+#pragma endregion Progress
 
 	UPROPERTY(meta = (BindWidget))
 	class UCsWidget_Crafting_Grid* MyGrid;

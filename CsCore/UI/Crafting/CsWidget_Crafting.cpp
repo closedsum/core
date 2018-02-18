@@ -46,8 +46,8 @@ namespace ECsWidgetCraftingCachedString
 UCsWidget_Crafting::UCsWidget_Crafting(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	AutoIncrementTime = 0.05f;
-	AutoDecrementTime = 0.05f;
+	AutoIncrementTime = 0.075f;
+	AutoDecrementTime = 0.075f;
 }
 
 void UCsWidget_Crafting::OnNativeConstruct()
@@ -81,6 +81,9 @@ void UCsWidget_Crafting::OnNativeConstruct()
 	Start.Text.Set(Start_Text);
 	Start.Text.Init(TEXT("Text"), TEXT("Start_Text"), GetName() + TEXT(".Start_Text"));
 	Start_Button->OnPressed.AddDynamic(this, &UCsWidget_Crafting::OnStartButtonPressed);
+	// Progress
+	ProgressBar.Set(MyProgressBar);
+	ProgressBar.Init(TEXT("Bar"), TEXT("MyProgressBar"), GetName() + TEXT(".MyProgressBar"));
 }
 
 void UCsWidget_Crafting::Init()
@@ -104,6 +107,14 @@ void UCsWidget_Crafting::OnNativeTick(const FGeometry& MyGeometry, const float &
 	CurrentCount.OnNativeTick(InDeltaTime);
 	Decrement.OnNativeTick(InDeltaTime);
 	Start.OnNativeTick(InDeltaTime);
+	ProgressBar.OnNativeTick(InDeltaTime);
+}
+
+void UCsWidget_Crafting::Hide()
+{
+	Super::Hide();
+
+	CancelCurrentCraftingProcess();
 }
 
 // Routines
@@ -126,6 +137,12 @@ bool UCsWidget_Crafting::AddRoutine_Internal(struct FCsRoutine* Routine, const u
 	if (RoutineType == ECsWidgetCraftingRoutine::DecrementCount_Internal)
 	{
 		DecrementCount_Internal_Routine = Routine;
+		return true;
+	}
+	// UpdateProgress_Internal
+	if (RoutineType == ECsWidgetCraftingRoutine::UpdateProgress_Internal)
+	{
+		UpdateProgress_Internal_Routine = Routine;
 		return true;
 	}
 	return false;
@@ -152,6 +169,13 @@ bool UCsWidget_Crafting::RemoveRoutine_Internal(struct FCsRoutine* Routine, cons
 		DecrementCount_Internal_Routine = nullptr;
 		return true;
 	}
+	// UpdateProgress_Internal
+	if (RoutineType == ECsWidgetCraftingRoutine::UpdateProgress_Internal)
+	{
+		check(UpdateProgress_Internal_Routine == Routine);
+		UpdateProgress_Internal_Routine = nullptr;
+		return true;
+	}
 	return false;
 }
 
@@ -165,7 +189,7 @@ bool UCsWidget_Crafting::ProcessGameEvent(const TCsGameEvent &GameEvent)
 	// Start
 	if (GameEvent == StartGameEvent)
 	{
-		CraftItem();
+		CraftItems();
 		return true;
 	}
 	// Increment Start
@@ -458,7 +482,7 @@ void UCsWidget_Crafting::OnCountValueCommitted(float InValue, ETextCommit::Type 
 
 #pragma endregion Count
 
-// Decrement
+	// Decrement
 #pragma region
 
 void UCsWidget_Crafting::OnDecrementButtonPressed()
@@ -578,22 +602,27 @@ ACsManager_Inventory* UCsWidget_Crafting::GetMyManager_Inventory()
 	return MyManager_Inventory.IsValid() ? MyManager_Inventory.Get() : nullptr;
 }
 
-void UCsWidget_Crafting::CraftItem()
+bool UCsWidget_Crafting::CanCraftItems()
 {
 	if (CurrentCount.Value.Get() == CS_EMPTY)
+		return false;
+	return true;
+}
+
+void UCsWidget_Crafting::CraftItems()
+{
+	if (!CanCraftItems())
 		return;
 
-	ACsManager_Crafting* Manager_Crafting = ACsManager_Crafting::Get(GetWorld());
-
-	// Cancel any Processes currently executed by the Widget 
-	Manager_Crafting->CancelCraftingProcesses(this);
+	CancelCurrentCraftingProcess();
 
 	// Get Data for selected Recipe
 	ACsDataMapping* DataMapping  = UCsCommon::GetDataMapping(GetWorld());
 	const FName& ShortCode		 = SelectedOptionShortCodes[CurrentSelectedOptionIndex];
 	ACsData_Recipe* Recipe		 = Cast<ACsData_Recipe>(DataMapping->GetLoadedData(RecipeAssetType, ShortCode));
 	// Prepare Payload
-	FCsCraftingPayload* Payload	= Manager_Crafting->AllocatePayload();
+	ACsManager_Crafting* Manager_Crafting = ACsManager_Crafting::Get(GetWorld());
+	FCsCraftingPayload* Payload			  = Manager_Crafting->AllocatePayload();
 
 	ACsManager_Inventory* Manager_Inventory = GetMyManager_Inventory();
 
@@ -603,6 +632,8 @@ void UCsWidget_Crafting::CraftItem()
 	Payload->Count			   = CurrentCount.Value.Get();
 	Payload->AddToInventory    = true;
 
+	Manager_Crafting->OnBeginCraftingProcess_Event.AddUObject(this, &UCsWidget_Crafting::OnBeginCraftingProcess);
+
 	Manager_Crafting->CraftItems(Payload);
 
 	// Reset the CurrentCount
@@ -611,6 +642,79 @@ void UCsWidget_Crafting::CraftItem()
 	UpdateRecipeWithSelectedOption();
 }
 
+void UCsWidget_Crafting::CancelCurrentCraftingProcess()
+{
+	ACsManager_Crafting* Manager_Crafting = ACsManager_Crafting::Get(GetWorld());
+
+	// Cancel any Processes currently executed by the Widget 
+	Manager_Crafting->CancelCraftingProcesses(this);
+
+	CraftingProcessState = ECsWidgetCraftingProcessState::None;
+
+	StopUpdateProgress();
+}
+
+void UCsWidget_Crafting::OnBeginCraftingProcess(const uint64 &ProcessId, const uint64& PayloadId)
+{
+	ACsManager_Crafting* Manager_Crafting = ACsManager_Crafting::Get(GetWorld());
+	FCsCraftingProcess* Process			  = Manager_Crafting->GetProcess(ProcessId);
+
+	Process->OnCraftItem_Event.AddUObject(this, &UCsWidget_Crafting::OnCraftItem_Event);
+	Process->OnFinishCraftingProcess_Event.AddUObject(this, &UCsWidget_Crafting::OnFinishCraftingProcess);
+
+	CraftingProcessState = ECsWidgetCraftingProcessState::InProgress;
+}
+
+void UCsWidget_Crafting::OnCraftItem_Event(const uint64 &ProcessId, const uint64 &PayloadId)
+{
+	UpdateProgress();
+}
+
+void UCsWidget_Crafting::OnFinishCraftingProcess(const uint64 &ProcessId, const uint64 &PayloadId)
+{
+	CraftingProcessState = ECsWidgetCraftingProcessState::Finished;
+}
+
 #pragma endregion Start
 
 #pragma endregion Options
+
+// Progress
+#pragma region
+
+void UCsWidget_Crafting::UpdateProgress()
+{
+	StopUpdateProgress();
+}
+
+CS_COROUTINE(UCsWidget_Crafting, UpdateProgress_Internal)
+{
+	UCsWidget_Crafting* c	 = Cast<UCsWidget_Crafting>(r->GetRObject());
+	UCsCoroutineScheduler* s = r->scheduler;
+	UWorld* w				 = c->GetWorld();
+
+	const float CurrentTime = w->GetTimeSeconds();
+	const float& StartTime  = r->floats[0];
+	const float& Time		= r->floats[1];
+	const float Percent		= CurrentTime - StartTime / Time;
+
+	CS_COROUTINE_BEGIN(r);
+
+	do
+	{
+		c->ProgressBar.SetPercent(Percent);
+		CS_COROUTINE_YIELD(r);
+	} while (CurrentTime - StartTime < Time);
+
+	CS_COROUTINE_END(r);
+}
+
+void UCsWidget_Crafting::StopUpdateProgress()
+{
+	if (UpdateProgress_Internal_Routine && UpdateProgress_Internal_Routine->IsValid())
+		UpdateProgress_Internal_Routine->End(ECsCoroutineEndReason::Manual);
+
+	ProgressBar.SetPercent(0.0f);
+}
+
+#pragma endregion Progress

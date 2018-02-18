@@ -583,23 +583,27 @@ void UCsWidget_Crafting::CraftItem()
 	if (CurrentCount.Value.Get() == CS_EMPTY)
 		return;
 
+	ACsManager_Crafting* Manager_Crafting = ACsManager_Crafting::Get(GetWorld());
+
+	// Cancel any Processes currently executed by the Widget 
+	Manager_Crafting->CancelCraftingProcesses(this);
+
 	// Get Data for selected Recipe
 	ACsDataMapping* DataMapping  = UCsCommon::GetDataMapping(GetWorld());
 	const FName& ShortCode		 = SelectedOptionShortCodes[CurrentSelectedOptionIndex];
 	ACsData_Recipe* Recipe		 = Cast<ACsData_Recipe>(DataMapping->GetLoadedData(RecipeAssetType, ShortCode));
 	// Prepare Payload
-	ACsManager_Crafting* Manager_Crafting = ACsManager_Crafting::Get(GetWorld());
-	FCsCraftingPayload* Payload			  = Manager_Crafting->AllocatePayload();
+	FCsCraftingPayload* Payload	= Manager_Crafting->AllocatePayload();
 
 	ACsManager_Inventory* Manager_Inventory = GetMyManager_Inventory();
 
-	Payload->Instigator		   = Manager_Inventory->GetMyOwner();
+	Payload->Instigator		   = this;
 	Payload->Manager_Inventory = Manager_Inventory;
 	Payload->Recipe			   = Recipe;
 	Payload->Count			   = CurrentCount.Value.Get();
 	Payload->AddToInventory    = true;
 
-	Manager_Crafting->CraftItem(Payload);
+	Manager_Crafting->CraftItems(Payload);
 
 	// Reset the CurrentCount
 	CurrentCount.Value = 0;

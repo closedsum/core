@@ -1622,18 +1622,16 @@ public:
 
 	void IncrementValue()
 	{
-		if (Value == UINT32_MAX)
+		if (Value == UINT32_MAX || Value >= MaxValue)
 			return;
 		++Value;
-		Value = FMath::Clamp(Value.Get(), MinValue.Get(), MaxValue.Get());
 	}
 
 	void DecrementValue()
 	{
-		if (Value == 0)
+		if (Value == 0 || Value <= MinValue)
 			return;
 		--Value;
-		Value = FMath::Clamp(Value.Get(), MinValue.Get(), MaxValue.Get());
 	}
 
 	void SetMinValue(const uint32 &inMinValue)

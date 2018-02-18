@@ -9,12 +9,12 @@ class CSCORE_API UCsWidget_Crafting_Slot : public UCsWidget_ButtonAndText
 {
 	GENERATED_UCLASS_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	UPROPERTY(BlueprintReadWrite, Category = "UI")
 	uint8 Row;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	UPROPERTY(BlueprintReadWrite, Category = "UI")
 	uint8 Column;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	UPROPERTY(BlueprintReadWrite, Category = "UI")
 	FString DisplayName;
 
 	UPROPERTY(BlueprintReadOnly, Category = "UI")

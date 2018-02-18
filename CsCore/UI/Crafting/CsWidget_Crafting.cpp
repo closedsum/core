@@ -11,6 +11,7 @@
 #include "Coroutine/CsCoroutineScheduler.h"
 
 // Managers
+#include "Managers/Input/CsManager_Input.h"
 #include "Managers/Crafting/CsManager_Crafting.h"
 // Data
 #include "Data/CsDataMapping.h"
@@ -55,9 +56,31 @@ void UCsWidget_Crafting::OnNativeConstruct()
 
 	// Options ComboBox
 	Options_ComboBox->OnSelectionChanged.AddDynamic(this, &UCsWidget_Crafting::OnRecipeSelectionChanged);
+	// Increment
+	Increment.Button.Set(Increment_Button);
+	Increment.Button.Init(TEXT("Button"), TEXT("Increment_Button"), GetName() + TEXT(".Increment_Button"));
+	Increment.Text.Set(Increment_Text);
+	Increment.Text.Init(TEXT("Text"), TEXT("Increment_Text"), GetName() + TEXT(".Increment_Text"));
+	Increment_Button->OnPressed.AddDynamic(this, &UCsWidget_Crafting::OnIncrementButtonPressed);
+	Increment_Button->OnReleased.AddDynamic(this, &UCsWidget_Crafting::OnIncrementButtonReleased);
 	// Count Spin
+	CurrentCount.Set(Count_Spin);
+	CurrentCount.Init(TEXT("SpinBox"), TEXT("Count_Spin"), GetName() + TEXT(".Count_Spin"));
 	Count_Spin->OnValueChanged.AddDynamic(this, &UCsWidget_Crafting::OnCountValueChanged);
 	Count_Spin->OnValueCommitted.AddDynamic(this, &UCsWidget_Crafting::OnCountValueCommitted);
+	// Decrement
+	Decrement.Button.Set(Decrement_Button);
+	Decrement.Button.Init(TEXT("Button"), TEXT("Decrement_Button"), GetName() + TEXT(".Decrement_Button"));
+	Decrement.Text.Set(Decrement_Text);
+	Decrement.Text.Init(TEXT("Text"), TEXT("Decrement_Text"), GetName() + TEXT(".Decrement_Text"));
+	Decrement_Button->OnPressed.AddDynamic(this, &UCsWidget_Crafting::OnDecrementButtonPressed);
+	Decrement_Button->OnReleased.AddDynamic(this, &UCsWidget_Crafting::OnDecrementButtonReleased);
+	// Start
+	Start.Button.Set(Start_Button);
+	Start.Button.Init(TEXT("Button"), TEXT("Start_Button"), GetName() + TEXT(".Start_Button"));
+	Start.Text.Set(Start_Text);
+	Start.Text.Init(TEXT("Text"), TEXT("Start_Text"), GetName() + TEXT(".Start_Text"));
+	Start_Button->OnPressed.AddDynamic(this, &UCsWidget_Crafting::OnStartButtonPressed);
 }
 
 void UCsWidget_Crafting::Init()
@@ -71,6 +94,16 @@ void UCsWidget_Crafting::Init()
 	Position = PixelPosition;
 	// Size = BotRight - TopLeft
 	Size = Geometry.LocalToAbsolute(Geometry.GetLocalSize()) - Position;
+}
+
+void UCsWidget_Crafting::OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime)
+{
+	Super::OnNativeTick(MyGeometry, InDeltaTime);
+
+	Increment.OnNativeTick(InDeltaTime);
+	CurrentCount.OnNativeTick(InDeltaTime);
+	Decrement.OnNativeTick(InDeltaTime);
+	Start.OnNativeTick(InDeltaTime);
 }
 
 // Routines
@@ -124,6 +157,46 @@ bool UCsWidget_Crafting::RemoveRoutine_Internal(struct FCsRoutine* Routine, cons
 
 #pragma endregion Routines
 
+// Game Event
+#pragma region
+
+bool UCsWidget_Crafting::ProcessGameEvent(const TCsGameEvent &GameEvent)
+{
+	// Start
+	if (GameEvent == StartGameEvent)
+	{
+		CraftItem();
+		return true;
+	}
+	// Increment Start
+	if (GameEvent == IncrementStartGameEvent)
+	{
+		IncrementCount();
+		return true;
+	}
+	// Increment End
+	if (GameEvent == IncrementEndGameEvent)
+	{
+		StopIncrementCount();
+		return true;
+	}
+	// Decrement Start
+	if (GameEvent == DecrementStartGameEvent)
+	{
+		DecrementCount();
+		return true;
+	}
+	// Decrement End
+	if (GameEvent == DecrementEndGameEvent)
+	{
+		StopDecrementCount();
+		return true;
+	}
+	return false;
+}
+
+#pragma endregion Game Event
+
 // Options
 #pragma region
 
@@ -135,6 +208,7 @@ void UCsWidget_Crafting::PopulateRecipes()
 	DataMapping->GetLoadedDatas(RecipeAssetType, Datas);
 
 	Options_ComboBox->ClearOptions();
+	SelectedOptionShortCodes.Reset();
 
 	const int32 Count = Datas.Num();
 
@@ -143,7 +217,10 @@ void UCsWidget_Crafting::PopulateRecipes()
 		ACsData_Recipe* Data = Cast<ACsData_Recipe>(Datas[I]);
 
 		Options_ComboBox->AddOption(Data->GetDisplayName());
+		SelectedOptionShortCodes.Add(Data->ShortCode);
 	}
+
+	CurrentSelectedOptionIndex = CS_FIRST;
 
 	if (Count > CS_EMPTY)
 	{
@@ -194,14 +271,27 @@ void UCsWidget_Crafting::SetRecipe(const FName &ShortCode)
 
 void UCsWidget_Crafting::UpdateRecipeWithSelectedOption()
 {
-	const FName ShortCode = FName(*(Options_ComboBox->GetSelectedOption()));
+	const FName& ShortCode = SelectedOptionShortCodes[CurrentSelectedOptionIndex];
 
 	SetRecipe(ShortCode);
 }
 
 void UCsWidget_Crafting::OnRecipeSelectionChanged(FString SelectedItem, ESelectInfo::Type  SelectionType)
 {
-	const FName ShortCode = FName(*SelectedItem);
+	// Find ShortCode
+	const int32 Count = SelectedOptionShortCodes.Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		const FString Option = Options_ComboBox->GetOptionAtIndex(I);
+
+		if (SelectedItem == Option)
+		{
+			CurrentSelectedOptionIndex = I;
+			break;
+		}
+	}
+	const FName& ShortCode = SelectedOptionShortCodes[CurrentSelectedOptionIndex];
 
 	SetRecipe(ShortCode);
 }
@@ -211,7 +301,7 @@ bool UCsWidget_Crafting::CanCompleteRecipe(const uint32& Count)
 	if (Count == CS_EMPTY)
 		return false;
 
-	const FName ShortCode		= FName(*(Options_ComboBox->GetSelectedOption()));
+	const FName& ShortCode		= SelectedOptionShortCodes[CurrentSelectedOptionIndex];
 	ACsDataMapping* DataMapping = UCsCommon::GetDataMapping(GetWorld());
 	ACsData_Recipe* Recipe		= Cast<ACsData_Recipe>(DataMapping->GetLoadedData(RecipeAssetType, ShortCode));
 
@@ -241,6 +331,39 @@ bool UCsWidget_Crafting::CanCompleteRecipe(const uint32& Count)
 
 void UCsWidget_Crafting::OnIncrementButtonPressed()
 {
+	ACsManager_Input* Manager_Input = ACsManager_Input::Get(GetWorld());
+
+	Manager_Input->QueueInput(IncrementInputAction, ECsInputEvent::FirstPressed);
+}
+
+void UCsWidget_Crafting::OnIncrementButtonReleased()
+{
+	ACsManager_Input* Manager_Input = ACsManager_Input::Get(GetWorld());
+
+	Manager_Input->QueueInput(IncrementInputAction, ECsInputEvent::FirstReleased);
+}
+
+bool UCsWidget_Crafting::CanIncrement()
+{
+	uint32 OldValue = CurrentCount.Value.Get();
+
+	if (OldValue == UINT32_MAX || OldValue >= CurrentCount.MaxValue)
+		return false;
+
+	++OldValue;
+
+	if (!CanCompleteRecipe(OldValue))
+		return false;
+	return true;
+}
+
+void UCsWidget_Crafting::IncrementCount()
+{
+	if (!CanIncrement())
+		return;
+
+	StopIncrementCount();
+
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
@@ -260,29 +383,9 @@ void UCsWidget_Crafting::OnIncrementButtonPressed()
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
+	R->floats[0] = GetWorld()->GetTimeSeconds();
+
 	Scheduler->StartRoutine(Schedule, R);
-}
-
-void UCsWidget_Crafting::OnIncrementButtonReleased()
-{
-	if (IncrementCount_Internal_Routine && IncrementCount_Internal_Routine->IsValid())
-		IncrementCount_Internal_Routine->End(ECsCoroutineEndReason::Manual);
-}
-
-void UCsWidget_Crafting::IncrementCount()
-{
-	uint32 OldValue = CurrentCount.Value.Get();
-
-	if (OldValue == UINT32_MAX)
-		return;
-
-	++OldValue;
-
-	if (!CanCompleteRecipe(OldValue))
-		return;
-
-	CurrentCount.IncrementValue();
-	UpdateRecipeWithSelectedOption();
 }
 
 CS_COROUTINE(UCsWidget_Crafting, IncrementCount_Internal)
@@ -292,7 +395,7 @@ CS_COROUTINE(UCsWidget_Crafting, IncrementCount_Internal)
 	UWorld* w				 = c->GetWorld();
 
 	const float CurrentTime = w->GetTimeSeconds();
-	const float& StartTime  = r->startTime;
+	const float& StartTime  = r->floats[0];
 
 	const float AutoIncrementTime = c->AutoIncrementTime > 0.0f ? c->AutoIncrementTime : 0.01f;
 
@@ -301,12 +404,29 @@ CS_COROUTINE(UCsWidget_Crafting, IncrementCount_Internal)
 	do
 	{
 		{
-			c->IncrementCount();
+			c->PerformIncrementCount();
 		}
 		CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - StartTime >= AutoIncrementTime);
+
+		r->floats[0] = CurrentTime;
 	} while (true);
 
 	CS_COROUTINE_END(r);
+}
+
+void UCsWidget_Crafting::PerformIncrementCount()
+{
+	if (!CanIncrement())
+		return;
+
+	CurrentCount.IncrementValue();
+	UpdateRecipeWithSelectedOption();
+}
+
+void UCsWidget_Crafting::StopIncrementCount()
+{
+	if (IncrementCount_Internal_Routine && IncrementCount_Internal_Routine->IsValid())
+		IncrementCount_Internal_Routine->End(ECsCoroutineEndReason::Manual);
 }
 
 #pragma endregion Increment
@@ -343,6 +463,39 @@ void UCsWidget_Crafting::OnCountValueCommitted(float InValue, ETextCommit::Type 
 
 void UCsWidget_Crafting::OnDecrementButtonPressed()
 {
+	ACsManager_Input* Manager_Input = ACsManager_Input::Get(GetWorld());
+
+	Manager_Input->QueueInput(DecrementInputAction, ECsInputEvent::FirstPressed);
+}
+
+void UCsWidget_Crafting::OnDecrementButtonReleased()
+{
+	ACsManager_Input* Manager_Input = ACsManager_Input::Get(GetWorld());
+
+	Manager_Input->QueueInput(DecrementInputAction, ECsInputEvent::FirstReleased);
+}
+
+bool UCsWidget_Crafting::CanDecrement()
+{
+	uint32 OldValue = CurrentCount.Value.Get();
+
+	if (OldValue == 0 || OldValue <= CurrentCount.MinValue)
+		return false;
+
+	--OldValue;
+
+	if (!CanCompleteRecipe(OldValue))
+		return false;
+	return true;
+}
+
+void UCsWidget_Crafting::DecrementCount()
+{
+	if (!CanDecrement())
+		return;
+
+	StopDecrementCount();
+
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
@@ -362,29 +515,9 @@ void UCsWidget_Crafting::OnDecrementButtonPressed()
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
+	R->floats[0] = GetWorld()->GetTimeSeconds();
+
 	Scheduler->StartRoutine(Schedule, R);
-}
-
-void UCsWidget_Crafting::OnDecrementButtonReleased()
-{
-	if (DecrementCount_Internal_Routine && DecrementCount_Internal_Routine->IsValid())
-		DecrementCount_Internal_Routine->End(ECsCoroutineEndReason::Manual);
-}
-
-void UCsWidget_Crafting::DecrementCount()
-{
-	uint32 OldValue = CurrentCount.Value.Get();
-
-	if (OldValue == 0)
-		return;
-
-	--OldValue;
-
-	if (!CanCompleteRecipe(OldValue))
-		return;
-
-	CurrentCount.DecrementValue();
-	UpdateRecipeWithSelectedOption();
 }
 
 CS_COROUTINE(UCsWidget_Crafting, DecrementCount_Internal)
@@ -394,7 +527,7 @@ CS_COROUTINE(UCsWidget_Crafting, DecrementCount_Internal)
 	UWorld* w				 = c->GetWorld();
 
 	const float CurrentTime = w->GetTimeSeconds();
-	const float& StartTime  = r->startTime;
+	const float& StartTime  = r->floats[0];
 
 	const float AutoDecrementTime = c->AutoDecrementTime > 0.0f ? c->AutoDecrementTime : 0.01f;
 
@@ -403,12 +536,29 @@ CS_COROUTINE(UCsWidget_Crafting, DecrementCount_Internal)
 	do
 	{
 		{
-			c->DecrementCount();
+			c->PerformDecrementCount();
 		}
 		CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - StartTime >= AutoDecrementTime);
+
+		r->floats[0] = CurrentTime;
 	} while (true);
 
 	CS_COROUTINE_END(r);
+}
+
+void UCsWidget_Crafting::PerformDecrementCount()
+{
+	if (!CanDecrement())
+		return;
+
+	CurrentCount.DecrementValue();
+	UpdateRecipeWithSelectedOption();
+}
+
+void UCsWidget_Crafting::StopDecrementCount()
+{
+	if (DecrementCount_Internal_Routine && DecrementCount_Internal_Routine->IsValid())
+		DecrementCount_Internal_Routine->End(ECsCoroutineEndReason::Manual);
 }
 
 #pragma endregion Decrement
@@ -418,15 +568,10 @@ CS_COROUTINE(UCsWidget_Crafting, DecrementCount_Internal)
 
 void UCsWidget_Crafting::OnStartButtonPressed()
 {
-	/*
-	ACsManager_Crafting* Manager_Crafting = ACsManager_Crafting::Get(GetWorld());
+	ACsManager_Input* Manager_Input = ACsManager_Input::Get(GetWorld());
 
-	Manager_Crafting->CancelCraftingItems(this);
-	CraftItem();
-	*/
+	Manager_Input->QueueInput(StartInputAction, ECsInputEvent::FirstPressed);
 }
-
-#pragma endregion Start
 
 ACsManager_Inventory* UCsWidget_Crafting::GetMyManager_Inventory()
 {
@@ -440,9 +585,8 @@ void UCsWidget_Crafting::CraftItem()
 
 	// Get Data for selected Recipe
 	ACsDataMapping* DataMapping  = UCsCommon::GetDataMapping(GetWorld());
-	const FString SelectedOption = Options_ComboBox->GetSelectedOption();
-	const FName RecipeShortCode  = FName(*SelectedOption);
-	ACsData_Recipe* Recipe		 = Cast<ACsData_Recipe>(DataMapping->GetLoadedData(RecipeAssetType, RecipeShortCode));
+	const FName& ShortCode		 = SelectedOptionShortCodes[CurrentSelectedOptionIndex];
+	ACsData_Recipe* Recipe		 = Cast<ACsData_Recipe>(DataMapping->GetLoadedData(RecipeAssetType, ShortCode));
 	// Prepare Payload
 	ACsManager_Crafting* Manager_Crafting = ACsManager_Crafting::Get(GetWorld());
 	FCsCraftingPayload* Payload			  = Manager_Crafting->AllocatePayload();
@@ -456,6 +600,13 @@ void UCsWidget_Crafting::CraftItem()
 	Payload->AddToInventory    = true;
 
 	Manager_Crafting->CraftItem(Payload);
+
+	// Reset the CurrentCount
+	CurrentCount.Value = 0;
+
+	UpdateRecipeWithSelectedOption();
 }
+
+#pragma endregion Start
 
 #pragma endregion Options

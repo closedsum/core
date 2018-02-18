@@ -2,6 +2,7 @@
 #pragma once
 #include "UI/CsUserWidget.h"
 #include "Types/CsTypes_Coroutine.h"
+#include "Types/CsTypes_Input.h"
 #include "CsWidget_Crafting.generated.h"
 
 // Enums
@@ -54,6 +55,7 @@ class CSCORE_API UCsWidget_Crafting : public UCsUserWidget
 
 	virtual void OnNativeConstruct() override;
 	virtual void Init() override;
+	virtual void OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime) override;
 
 // Routines
 #pragma region
@@ -63,6 +65,13 @@ public:
 	virtual bool RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType) override;
 
 #pragma endregion Routines
+
+// Game Event
+#pragma region
+
+	virtual bool ProcessGameEvent(const TCsGameEvent &GameEvent) override;
+
+#pragma endregion Game Event
 
 	UPROPERTY(meta = (BindWidget))
 	UVerticalBox* MyVerticalBox;
@@ -81,6 +90,11 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	UComboBoxString* Options_ComboBox;
+
+	UPROPERTY(BlueprintReadOnly, Category ="Crafting")
+	int32 CurrentSelectedOptionIndex;
+
+	TArray<FName> SelectedOptionShortCodes;
 
 	TCsAssetType RecipeAssetType;
 	TCsAssetType ItemAssetType;
@@ -115,7 +129,14 @@ public:
 	UPROPERTY()
 	float AutoIncrementTime;
 
+	bool CanIncrement();
+
 	CS_COROUTINE_DECLARE(IncrementCount)
+
+	TCsInputAction IncrementInputAction;
+
+	void PerformIncrementCount();
+	void StopIncrementCount();
 
 #pragma endregion Increment
 
@@ -159,7 +180,14 @@ public:
 	UPROPERTY()
 	float AutoDecrementTime;
 
+	bool CanDecrement();
+
 	CS_COROUTINE_DECLARE(DecrementCount)
+
+	TCsInputAction DecrementInputAction;
+
+	void PerformDecrementCount();
+	void StopDecrementCount();
 
 #pragma endregion Decrement
 
@@ -176,10 +204,10 @@ public:
 
 	TCsGameEvent StartGameEvent;
 
+	TCsInputAction StartInputAction;
+
 	UFUNCTION()
 	void OnStartButtonPressed();
-
-#pragma endregion Start
 
 	TWeakObjectPtr<class ACsManager_Inventory> MyManager_Inventory;
 
@@ -187,6 +215,8 @@ public:
 	class ACsManager_Inventory* GetMyManager_Inventory();
 
 	void CraftItem();
+
+#pragma endregion Start
 
 #pragma endregion Options
 

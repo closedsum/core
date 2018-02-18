@@ -21,12 +21,12 @@ class CSCORE_API UCsWidget_Inventory_Grid : public UCsWidget_Grid
 
 	bool UseDynamicDimensions;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	UPROPERTY(BlueprintReadWrite, Category = "UI")
 	FCsUint8MatrixDimension Dimension;
 
 	virtual void SetupDimensions();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	UPROPERTY(BlueprintReadWrite, Category = "UI")
 	FVector2D SlotSize;
 
 	bool bSpawnSlots;

@@ -647,6 +647,16 @@ void ACsManager_Input::ConsumeInput(const TCsInputAction &Action)
 	}
 }
 
+void ACsManager_Input::SetCurrentInputActionMap(const TCsInputActionMap &ActionMap)
+{
+	CS_SET_BITFLAG(CurrentInputActionMap, ActionMap);
+}
+
+void ACsManager_Input::ClearCurrentInputActionMap(const TCsInputActionMap &ActionMap)
+{
+	CS_CLEAR_BITFLAG(CurrentInputActionMap, ActionMap);
+}
+
 FCsInput* ACsManager_Input::GetPreviousInputAction(const TCsInputAction &Action)
 {
 	const int32 LastInputFrame = UCsCommon::Mod(CurrentInputFrameIndex - 1, CS_MAX_INPUT_FRAMES);

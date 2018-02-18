@@ -130,12 +130,12 @@ void UCsUserWidget::SetChildFocus(const TCsWidgetType &WidgetType, const int32 &
 // Open / Close Child
 #pragma region
 
-void UCsUserWidget::OpenChild(const TCsWidgetType &WidgetType)
+bool UCsUserWidget::OpenChild(const TCsWidgetType &WidgetType)
 {
 	if (UCsUserWidget* Widget = GetActiveChildWidget(WidgetType))
 	{
 		UE_LOG(LogCs, Warning, TEXT("UCsUserWidget::OpenChild: Attempting to open widget: %s but it is already open."), *((*WidgetTypeToString)(WidgetType)));
-		return;
+		return false;
 	}
 
 	UCsUserWidget* Widget = GetChildWidget(WidgetType);
@@ -158,21 +158,22 @@ void UCsUserWidget::OpenChild(const TCsWidgetType &WidgetType)
 	OnOpenChild_ScriptEvent.Broadcast((uint8)WidgetType);
 #endif // #if WITH_EDITOR
 	OnOpenChild_Event.Broadcast(WidgetType);
+	return true;
 }
 
-void UCsUserWidget::OpenChild_Script(const uint8 &WidgetType) { OpenChild((TCsWidgetType)WidgetType); }
+bool UCsUserWidget::OpenChild_Script(const uint8 &WidgetType) { return OpenChild((TCsWidgetType)WidgetType); }
 
 bool UCsUserWidget::IsChildOpened(const TCsWidgetType &WidgetType) { return GetActiveChildWidget(WidgetType) != nullptr; }
 bool UCsUserWidget::IsChildOpened_Script(const uint8 &WidgetType) { return IsChildOpened((TCsWidgetType)WidgetType); }
 
-void UCsUserWidget::CloseChild(const TCsWidgetType &WidgetType)
+bool UCsUserWidget::CloseChild(const TCsWidgetType &WidgetType)
 {
 	UCsUserWidget* Widget = GetActiveChildWidget(WidgetType);
 
 	if (!Widget)
 	{
 		UE_LOG(LogCs, Warning, TEXT("UCsUserWidget::CloseChild: Attempting to close menu: %s but it is NOT open."), *((*WidgetTypeToString)(WidgetType)));
-		return;
+		return false;
 	}
 
 	const int32 Count = ActiveChildWidgets.Num();
@@ -205,9 +206,10 @@ void UCsUserWidget::CloseChild(const TCsWidgetType &WidgetType)
 	OnCloseChild_ScriptEvent.Broadcast((uint8)WidgetType);
 #endif // #if WITH_EDITOR
 	OnCloseChild_Event.Broadcast(WidgetType);
+	return true;
 }
 
-void UCsUserWidget::CloseChild_Script(const uint8 &WidgetType) { CloseChild((TCsWidgetType)WidgetType); }
+bool UCsUserWidget::CloseChild_Script(const uint8 &WidgetType) { return CloseChild((TCsWidgetType)WidgetType); }
 
 void UCsUserWidget::CloseAllChildrenExcept(const TCsWidgetType &WidgetType)
 {

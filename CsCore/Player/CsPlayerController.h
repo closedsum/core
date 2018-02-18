@@ -2,6 +2,7 @@
 #pragma once
 #include "GameFramework/PlayerController.h"
 #include "Types/CsTypes_Primitive.h"
+#include "Types/CsTypes_Input.h"
 #include "CsPlayerController.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPlayerController_OnTickActor, const uint8&, MappingId, const float&, DeltaSeconds);
@@ -43,6 +44,10 @@ public:
 	class ACsManager_Input* Manager_Input;
 	
 	TSubclassOf<class ACsManager_Input> ManagerInputClass;
+
+	int32 GetCurrentInputActionMap();
+	void SetCurrentInputActionMap(const TCsInputActionMap &ActionMap);
+	void ClearCurrentInputActionMap(const TCsInputActionMap &ActionMap);
 
 	virtual void InitInputSystem() override;
 	virtual void BindDelegatesToInputManager();

@@ -2,6 +2,8 @@
 #include "Player/CsPlayerController.h"
 #include "CsCore.h"
 #include "../Engine/Classes/Engine/LocalPlayer.h"
+
+// Managers
 #include "Managers/Input/CsManager_Input.h"
 
 ACsPlayerController::ACsPlayerController(const FObjectInitializer& ObjectInitializer)
@@ -13,6 +15,24 @@ ACsPlayerController::ACsPlayerController(const FObjectInitializer& ObjectInitial
 }
 
 void ACsPlayerController::OnTickActor_HandleCVars(){}
+
+// Input
+#pragma region
+
+int32 ACsPlayerController::GetCurrentInputActionMap()
+{
+	return Manager_Input->CurrentInputActionMap;
+}
+
+void ACsPlayerController::SetCurrentInputActionMap(const TCsInputActionMap &ActionMap)
+{
+	Manager_Input->SetCurrentInputActionMap(ActionMap);
+}
+
+void ACsPlayerController::ClearCurrentInputActionMap(const TCsInputActionMap &ActionMap)
+{
+	Manager_Input->ClearCurrentInputActionMap(ActionMap);
+}
 
 void ACsPlayerController::InitInputSystem()
 {
@@ -67,3 +87,5 @@ void ACsPlayerController::PreProcessInput(const float DeltaTime, const bool bGam
 bool ACsPlayerController::CanPostProcessInput() { return true; }
 
 void ACsPlayerController::PostProcessInput(const float DeltaTime, const bool bGamePaused){}
+
+#pragma endregion Input

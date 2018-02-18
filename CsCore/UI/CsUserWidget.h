@@ -161,10 +161,10 @@ public:
 #pragma region
 public:
 
-	virtual void OpenChild(const TCsWidgetType &WidgetType);
+	virtual bool OpenChild(const TCsWidgetType &WidgetType);
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
-	virtual void OpenChild_Script(const uint8 &WidgetType);
+	virtual bool OpenChild_Script(const uint8 &WidgetType);
 
 	FBindableEvent_CsUserWidget_OnOpenChild OnOpenChild_Event;
 
@@ -176,10 +176,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual bool IsChildOpened_Script(const uint8 &WidgetType);
 
-	virtual void CloseChild(const TCsWidgetType &WidgetType);
+	virtual bool CloseChild(const TCsWidgetType &WidgetType);
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
-	virtual void CloseChild_Script(const uint8 &WidgetType);
+	virtual bool CloseChild_Script(const uint8 &WidgetType);
 
 	FBindableEvent_CsUserWidget_OnCloseChild OnCloseChild_Event;
 

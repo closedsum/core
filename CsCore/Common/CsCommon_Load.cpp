@@ -808,7 +808,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 																//    TEXT("BitmaskEnum")
 					const FString BitmaskEnum = Property->GetMetaData(*(ECsCommonLoadCachedString::Str::BitmaskEnum));
 
-					// (BitmaskEnum == TEXT("ECsLoadFalgs"))
+					// (BitmaskEnum == TEXT("ECsLoadFlags"))
 					if (BitmaskEnum == ECsCommonLoadCachedString::Str::CsLoadFlags)
 					{
 						InJsonWriter->WriteValue(MemberName, LoadFlagsToString(*Member));

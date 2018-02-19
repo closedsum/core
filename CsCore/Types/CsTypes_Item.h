@@ -108,13 +108,96 @@ typedef TCsItemOwner(*TCsStringToItemOwner)(const FString&);
 #define CS_INVALID_INVENTORY_ITEM_ROW 255
 #define CS_INVALID_INVENTORY_ITEM_COLUMN 255
 
+UENUM(BlueprintType, meta = (Bitflags))
+enum class ECsInventoryItemState : uint8
+{
+	Visible		UMETA(DisplayName = "Visible"),
+	Craftable	UMETA(DisplayName = "Craftable"),
+};
+
+								//  (Visible | Craftable)
+#define CS_INVENTORY_ITEM_STATE_ANY ((0<<1) | (0<<2)))
+
+UENUM(BlueprintType)
+namespace ECsInventoryItemState_Editor
+{
+	enum Type
+	{
+		Visible								UMETA(DisplayName = "Visible"),
+		Craftable							UMETA(DisplayName = "Craftable"),
+		ECsInventoryItemState_Editor_MAX	UMETA(Hidden),
+	};
+}
+
+namespace ECsInventoryItemState_Editor
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+
+	namespace Str
+	{
+		const TCsString Visible = TCsString(TEXT("Visible"), TEXT("visible"));
+		const TCsString Craftable = TCsString(TEXT("Craftable"), TEXT("craftable"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::Visible) { return Str::Visible.Value; }
+		if (EType == Type::Craftable) { return Str::Craftable.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE FString ToString(const int32 &State)
+	{
+		FString String = ECsCachedString::Str::Empty;
+		bool IsFirst   = true;
+
+		for (int32 I = 0; I < ECS_LOAD_FLAGS_EDITOR_MAX; ++I)
+		{
+			if (CS_TEST_BLUEPRINT_BITFLAG(State, (ECsInventoryItemState)I))
+			{
+				if (!IsFirst)
+				{
+					String += TEXT(" | ");
+				}
+				String += ToString((TCsLoadFlags_Editor)I);
+				IsFirst = false;
+			}
+		}
+		return String;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::Visible) { return Type::Visible; }
+		if (String == Str::Craftable) { return Type::Craftable; }
+		return Type::ECsInventoryItemState_Editor_MAX;
+	}
+
+	FORCEINLINE ECsInventoryItemState ToBaseType(const Type &EType)
+	{
+		if (EType == Type::Visible) { return ECsInventoryItemState::Visible; }
+		if (EType == Type::Craftable) { return ECsInventoryItemState::Craftable; }
+		return ECsInventoryItemState::Visible;
+	}
+
+	FORCEINLINE ECsInventoryItemState ToFlag(const FString &String)
+	{
+		if (String == Str::Visible) { return ECsInventoryItemState::Visible; }
+		if (String == Str::Craftable) { return ECsInventoryItemState::Craftable; }
+		return ECsInventoryItemState::Visible;;
+	}
+}
+
+#define ECS_INVENTORY_ITEM_STATE_MAX (uint8)ECsInventoryItemState_Editor::ECsInventoryItemState_Editor_MAX
+typedef TEnumAsByte<ECsInventoryItemState_Editor::Type> TCsInventoryItemState_Editor;
+
 USTRUCT(BlueprintType)
 struct FCsInventoryItemProperties
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
-	bool Visible;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item", meta = (Bitmask, BitmaskEnum = "ECsInventoryItemState"))
+	int32 State;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	uint8 Bag;
@@ -129,7 +212,7 @@ struct FCsInventoryItemProperties
 
 	FCsInventoryItemProperties& operator=(const FCsInventoryItemProperties& B)
 	{
-		Visible = B.Visible;
+		State = B.State;
 		Bag = B.Bag;
 		Dimension = B.Dimension;
 		Position = B.Position;
@@ -138,7 +221,7 @@ struct FCsInventoryItemProperties
 
 	bool operator==(const FCsInventoryItemProperties& B) const
 	{
-		if (Visible != B.Visible) { return false; }
+		if (State != B.State) { return false; }
 		if (Bag != B.Bag) { return false; }
 		if (Dimension != B.Dimension) { return false; }
 		if (Position != B.Position) { return false; }
@@ -152,10 +235,41 @@ struct FCsInventoryItemProperties
 
 	void Reset()
 	{
-		Visible = false;
+		State = 0;
 		Bag = CS_INVALID_INVENTORY_ITEM_BAG;
 		Dimension.Reset();
 		Position.Set(CS_INVALID_INVENTORY_ITEM_ROW, CS_INVALID_INVENTORY_ITEM_COLUMN);
+	}
+
+	void SetVisible()
+	{
+		CS_SET_BLUEPRINT_BITFLAG(State, ECsInventoryItemState::Visible);
+	}
+
+	bool IsVisible()
+	{
+		return CS_TEST_BLUEPRINT_BITFLAG(State, ECsInventoryItemState::Visible);
+	}
+
+	void SetCraftable()
+	{
+		CS_SET_BLUEPRINT_BITFLAG(State, ECsInventoryItemState::Craftable);
+	}
+
+	bool IsCraftable()
+	{
+		return CS_TEST_BLUEPRINT_BITFLAG(State, ECsInventoryItemState::Craftable);
+	}
+
+	void SetVisibleAndCraftable()
+	{
+		CS_SET_BLUEPRINT_BITFLAG(State, ECsInventoryItemState::Visible);
+		CS_SET_BLUEPRINT_BITFLAG(State, ECsInventoryItemState::Craftable);
+	}
+
+	bool IsState(const ECsInventoryItemState& InState)
+	{
+		return CS_TEST_BLUEPRINT_BITFLAG(State, InState);
 	}
 };
 

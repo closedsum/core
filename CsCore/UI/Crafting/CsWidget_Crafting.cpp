@@ -342,7 +342,7 @@ bool UCsWidget_Crafting::CanCompleteRecipe(const uint32& Count)
 	{
 		const FCsRecipeIngredient& Ingredient = (*Ingredients)[I];
 
-		const uint32 ItemCount  = Manager_Inventory->GetItemCount(Ingredient.ShortCode);
+		const uint32 ItemCount  = Manager_Inventory->GetItemCount(Ingredient.ShortCode, ECsInventoryItemState::Craftable);
 		const uint32 TotalCount = Ingredient.Count * CreationCount;
 		// If there are NOT enough Items in the Inventory for the requested amount, then 
 		// Recipe can NOT be completed
@@ -633,6 +633,24 @@ void UCsWidget_Crafting::CraftItems()
 	Payload->Recipe			   = Recipe;
 	Payload->Count			   = CurrentCount.Value.Get();
 	Payload->AddToInventory    = true;
+
+		// Populate Payload->ItemMap with Items that need to be Crafted
+	TArray<FCsRecipeIngredient>* Ingredients = Recipe->GetIngredients();
+
+	const int32 IngredientCount = Ingredients->Num();
+
+	for (int32 I = 0; I < IngredientCount; ++I)
+	{
+		const FCsRecipeIngredient& Ingredient = (*Ingredients)[I];
+		const FName& ItemShortCode			  = Ingredient.ShortCode;
+		const int32 ItemCount				  = Payload->Count * Ingredient.Count;
+
+		TArray<FCsItem*> Items;
+		Payload->ItemMap.Add(ItemShortCode, Items);
+		TArray<FCsItem*>* OutItems = Payload->ItemMap.Find(ItemShortCode);
+
+		Manager_Inventory->GetItems(Ingredient.ShortCode, ItemCount, ECsInventoryItemState::Craftable, (*OutItems));
+	}
 
 	Manager_Crafting->OnBeginCraftingProcess_Event.AddUObject(this, &UCsWidget_Crafting::OnBeginCraftingProcess);
 

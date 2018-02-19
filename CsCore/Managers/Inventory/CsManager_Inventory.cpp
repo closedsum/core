@@ -130,11 +130,59 @@ void ACsManager_Inventory::GetItems(const FName& ShortCode, const int32& Count, 
 	}
 }
 
+void ACsManager_Inventory::GetItems(const FName& ShortCode, const int32& Count, const ECsInventoryItemState& State, TArray<FCsItem*> &OutItems)
+{
+	TArray<FCsItem*>* ItemsPtr = ItemMap.Find(ShortCode);
+
+	if (!ItemsPtr)
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetItems: There are NO Items with ShortCode: %s."), *(ShortCode.ToString()));
+		return;
+	}
+
+	if (Count > ItemsPtr->Num())
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetItems: There are only %d ( < %d requested ) Items with ShortCode: %s "), ItemsPtr->Num(), Count, *(ShortCode.ToString()));
+		return;
+	}
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		FCsItem* Item = (*ItemsPtr)[I];
+
+		if (Item->InventoryProperties.IsState(State))
+			OutItems.Add((*ItemsPtr)[I]);
+	}
+}
+
 int32 ACsManager_Inventory::GetItemCount(const FName &ShortCode)
 {
 	if (uint16* Count = ItemCountMap.Find(ShortCode))
 		return *Count;
 	return 0;
+}
+
+int32 ACsManager_Inventory::GetItemCount(const FName &ShortCode, const ECsInventoryItemState& State)
+{
+	TArray<FCsItem*>* ItemsPtr = ItemMap.Find(ShortCode);
+
+	if (!ItemsPtr)
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetItems: There are NO Items with ShortCode: %s."), *(ShortCode.ToString()));
+		return 0;
+	}
+
+	int32 OutCount	  = 0;
+	const int32 Count = ItemsPtr->Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		FCsItem* Item = (*ItemsPtr)[I];
+
+		if (Item->InventoryProperties.IsState(State))
+			++OutCount;
+	}
+	return OutCount;
 }
 
 void ACsManager_Inventory::IncrementItemCount(const FName &ShortCode)
@@ -190,7 +238,7 @@ void ACsManager_Inventory::LogTransaction(const FString &FunctionName, const TEn
 
 void ACsManager_Inventory::AddItem(FCsItem* Item)
 {
-	if (Item->InventoryProperties.Visible)
+	if (Item->InventoryProperties.IsVisible())
 	{
 		// Try to Add the Item to the Bag. Only Add the Item if there is a Slot free that can hold the Item
 		const bool Success = Bags[Item->InventoryProperties.Bag].Add(Item);
@@ -271,7 +319,7 @@ void ACsManager_Inventory::RemoveItem(const uint64 &Id, const FString &FunctionN
 	}
 	DecrementItemCount(ShortCode);
 
-	if (Item->InventoryProperties.Visible)
+	if (Item->InventoryProperties.IsVisible())
 		Bags[Item->InventoryProperties.Bag].Remove(Item);
 
 	LogTransaction(FunctionName, Transaction, Item);

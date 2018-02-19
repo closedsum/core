@@ -65,8 +65,10 @@ void UCsWidget_Inventory::UpdateGrid()
 		{
 			FCsItem* Item = (*ItemsPtr)[J];
 
-			if (!Item->InventoryProperties.Visible)
+			// If NOT Visible, do NOT place in a Bag
+			if (!Item->InventoryProperties.IsVisible())
 				continue;
+			// If NOT the matching Bag, SKIP
 			if (Item->InventoryProperties.Bag != Bag)
 				continue;
 
@@ -99,7 +101,7 @@ void UCsWidget_Inventory::UpdateGrid()
 
 void UCsWidget_Inventory::OnAddItem(FCsItem* Item)
 {
-	if (!Item->InventoryProperties.Visible)
+	if (!Item->InventoryProperties.IsVisible())
 		return;
 
 	const uint8& Row		= Item->InventoryProperties.Position.Row;
@@ -112,7 +114,7 @@ void UCsWidget_Inventory::OnAddItem(FCsItem* Item)
 
 void UCsWidget_Inventory::OnRemoveItem(FCsItem* Item)
 {
-	if (!Item->InventoryProperties.Visible)
+	if (!Item->InventoryProperties.IsVisible())
 		return;
 
 	const uint8& Row		= Item->InventoryProperties.Position.Row;

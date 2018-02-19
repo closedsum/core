@@ -327,6 +327,8 @@ bool UCsWidget_Crafting::CanCompleteRecipe(const uint32& Count)
 	if (Count == CS_EMPTY)
 		return false;
 
+	// TODO: Need to check there is space in the CurrentBag for created Items
+
 	const FName& ShortCode		= SelectedOptionShortCodes[CurrentSelectedOptionIndex];
 	ACsDataMapping* DataMapping = UCsCommon::GetDataMapping(GetWorld());
 	ACsData_Recipe* Recipe		= Cast<ACsData_Recipe>(DataMapping->GetLoadedData(RecipeAssetType, ShortCode));
@@ -336,14 +338,12 @@ bool UCsWidget_Crafting::CanCompleteRecipe(const uint32& Count)
 	TArray<FCsRecipeIngredient>* Ingredients = Recipe->GetIngredients();
 	const int32 IngredientCount				 = Ingredients->Num();
 
-	const uint32 CreationCount = CurrentCount.Value.Get();
-
 	for (int32 I = 0; I < IngredientCount; ++I)
 	{
 		const FCsRecipeIngredient& Ingredient = (*Ingredients)[I];
 
-		const uint32 ItemCount  = Manager_Inventory->GetItemCount(Ingredient.ShortCode, ECsInventoryItemState::Craftable);
-		const uint32 TotalCount = Ingredient.Count * CreationCount;
+		const uint32 ItemCount  = Manager_Inventory->GetItemCount(Ingredient.ShortCode, CS_INVENTORY_ITEM_STATE_VISIBLE_AND_INGREDIENT);
+		const uint32 TotalCount = Ingredient.Count * Count;
 		// If there are NOT enough Items in the Inventory for the requested amount, then 
 		// Recipe can NOT be completed
 		if (TotalCount > ItemCount)
@@ -631,6 +631,7 @@ void UCsWidget_Crafting::CraftItems()
 	Payload->Instigator		   = this;
 	Payload->Manager_Inventory = Manager_Inventory;
 	Payload->Recipe			   = Recipe;
+	Payload->Bag			   = Bag;
 	Payload->Count			   = CurrentCount.Value.Get();
 	Payload->AddToInventory    = true;
 
@@ -649,7 +650,7 @@ void UCsWidget_Crafting::CraftItems()
 		Payload->ItemMap.Add(ItemShortCode, Items);
 		TArray<FCsItem*>* OutItems = Payload->ItemMap.Find(ItemShortCode);
 
-		Manager_Inventory->GetItems(Ingredient.ShortCode, ItemCount, ECsInventoryItemState::Craftable, (*OutItems));
+		Manager_Inventory->GetItems(Ingredient.ShortCode, ItemCount, ECsInventoryGetRequest::FillOrKill, CS_INVENTORY_ITEM_STATE_VISIBLE_AND_INGREDIENT, (*OutItems));
 	}
 
 	Manager_Crafting->OnBeginCraftingProcess_Event.AddUObject(this, &UCsWidget_Crafting::OnBeginCraftingProcess);

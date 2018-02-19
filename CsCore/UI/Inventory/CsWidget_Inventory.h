@@ -41,4 +41,5 @@ class CSCORE_API UCsWidget_Inventory : public UCsUserWidget
 
 	void OnAddItem(FCsItem* Item);
 	void OnRemoveItem(FCsItem* Item);
+	void OnHideItem(FCsItem* Item);
 };

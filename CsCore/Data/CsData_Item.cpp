@@ -13,6 +13,7 @@ TCsItemType ACsData_Item::GetBaseItemType() { return BaseItemType; }
 #pragma region
 
 TArray<FName>* ACsData_Item::GetContents() { return nullptr; }
+bool ACsData_Item::GetIsIngredient() { return false; }
 
 #pragma endregion Stats
 

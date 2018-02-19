@@ -124,3 +124,13 @@ void UCsWidget_Inventory::OnRemoveItem(FCsItem* Item)
 
 	MyGrid->Slots[Index]->RemoveItem(Item);
 }
+
+void UCsWidget_Inventory::OnHideItem(FCsItem* Item)
+{
+	const uint8& Row		= Item->InventoryProperties.Position.Row;
+	const uint8& Column		= Item->InventoryProperties.Position.Column;
+	const uint8& ColumnSpan = MyGrid->Dimension.ColumnSpan;
+	const uint8 Index		= Row * ColumnSpan + Column;
+
+	MyGrid->Slots[Index]->RemoveItem(Item);
+}

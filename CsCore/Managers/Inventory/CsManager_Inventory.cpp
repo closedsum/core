@@ -77,7 +77,7 @@ bool ACsManager_Inventory::IsFull(const uint8 &Bag, const FName &ShortCode)
 		FCsItem* Item = Slot.Items[CS_FIRST];
 
 		if (ShortCode == Item->ShortCode &&
-			ItemCount < Item->Capacity)
+			ItemCount < Item->InventoryProperties.Capacity)
 		{
 			return false;
 		}
@@ -108,7 +108,7 @@ FCsItem* ACsManager_Inventory::GetFirstItem(const FName &ShortCode)
 	return (*ItemsPtr)[CS_FIRST];
 }
 
-void ACsManager_Inventory::GetItems(const FName& ShortCode, const int32& Count, TArray<FCsItem*> &OutItems)
+void ACsManager_Inventory::GetItems(const FName& ShortCode, const int32& Count, const TCsInventoryGetRequest &Request, TArray<FCsItem*> &OutItems)
 {
 	TArray<FCsItem*>* ItemsPtr = ItemMap.Find(ShortCode);
 
@@ -118,19 +118,32 @@ void ACsManager_Inventory::GetItems(const FName& ShortCode, const int32& Count, 
 		return;
 	}
 
-	if (Count > ItemsPtr->Num())
+	const int32 ItemCount = ItemsPtr->Num();
+
+	if (Request == ECsInventoryGetRequest::FillOrKill &&
+		Count > ItemCount)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetItems: There are only %d ( < %d requested ) Items with ShortCode: %s "), ItemsPtr->Num(), Count, *(ShortCode.ToString()));
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetItems: There are only %d ( < %d requested ) Items with ShortCode: %s "), ItemCount, Count, *(ShortCode.ToString()));
 		return;
 	}
 
-	for (int32 I = 0; I < Count; ++I)
+	for (int32 I = 0; I < ItemCount; ++I)
 	{
 		OutItems.Add((*ItemsPtr)[I]);
+
+		if (OutItems.Num() == Count)
+			break;
+	}
+
+	// FillOrKill
+	if (Request == ECsInventoryGetRequest::FillOrKill)
+	{
+		if (OutItems.Num() != Count)
+			OutItems.Reset();
 	}
 }
 
-void ACsManager_Inventory::GetItems(const FName& ShortCode, const int32& Count, const ECsInventoryItemState& State, TArray<FCsItem*> &OutItems)
+void ACsManager_Inventory::GetItems(const FName& ShortCode, const int32& Count, const TCsInventoryGetRequest &Request, const int32& State, TArray<FCsItem*> &OutItems)
 {
 	TArray<FCsItem*>* ItemsPtr = ItemMap.Find(ShortCode);
 
@@ -140,18 +153,31 @@ void ACsManager_Inventory::GetItems(const FName& ShortCode, const int32& Count, 
 		return;
 	}
 
-	if (Count > ItemsPtr->Num())
+	const int32 ItemCount = ItemsPtr->Num();
+
+	if (Request == ECsInventoryGetRequest::FillOrKill &&
+		Count > ItemCount)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetItems: There are only %d ( < %d requested ) Items with ShortCode: %s "), ItemsPtr->Num(), Count, *(ShortCode.ToString()));
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetItems: There are only %d ( < %d requested ) Items with ShortCode: %s "), ItemCount, Count, *(ShortCode.ToString()));
 		return;
 	}
 
-	for (int32 I = 0; I < Count; ++I)
+	for (int32 I = 0; I < ItemCount; ++I)
 	{
 		FCsItem* Item = (*ItemsPtr)[I];
 
 		if (Item->InventoryProperties.IsState(State))
 			OutItems.Add((*ItemsPtr)[I]);
+
+		if (OutItems.Num() == Count)
+			break;
+	}
+
+	// FillOrKill
+	if (Request == ECsInventoryGetRequest::FillOrKill)
+	{
+		if (OutItems.Num() != Count)
+			OutItems.Reset();
 	}
 }
 
@@ -162,7 +188,7 @@ int32 ACsManager_Inventory::GetItemCount(const FName &ShortCode)
 	return 0;
 }
 
-int32 ACsManager_Inventory::GetItemCount(const FName &ShortCode, const ECsInventoryItemState& State)
+int32 ACsManager_Inventory::GetItemCount(const FName &ShortCode, const int32& State)
 {
 	TArray<FCsItem*>* ItemsPtr = ItemMap.Find(ShortCode);
 
@@ -336,7 +362,6 @@ void ACsManager_Inventory::RemoveItem(const uint64 &Id, const FString &FunctionN
 	}
 }
 
-
 void ACsManager_Inventory::RemoveItem(FCsItem* Item, const FString &FunctionName, const TEnumAsByte<ECsInventoryTransaction::Type> &Transaction, const bool &ShouldDestroy)
 {
 	RemoveItem(Item->UniqueId, FunctionName, Transaction, ShouldDestroy);
@@ -395,3 +420,22 @@ FCsItem* ACsManager_Inventory::DropFirstItem(const FName &ShortCode)
 }
 
 #pragma endregion Drop
+
+// Hide
+#pragma region
+
+void ACsManager_Inventory::HideItem(FCsItem* Item)
+{
+	if (!Item->InventoryProperties.IsVisible())
+		return;
+
+	Bags[Item->InventoryProperties.Bag].Remove(Item);
+	Item->InventoryProperties.ClearVisible();
+
+#if WITH_EDITOR
+	OnHideItem_ScriptEvent.Broadcast(*Item);
+#endif // #if WITH_EDITOR
+	OnHideItem_Event.Broadcast(Item);
+}
+
+#pragma endregion Hide

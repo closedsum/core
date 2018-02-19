@@ -145,6 +145,9 @@ public:
 	TCsAssetType RecipeAssetType;
 	TCsAssetType ItemAssetType;
 
+	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
+	uint8 Bag;
+
 	void PopulateRecipes();
 	void SetRecipe(const FName &ShortCode);
 	void UpdateRecipeWithSelectedOption();
@@ -268,9 +271,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
 	TEnumAsByte<ECsWidgetCraftingProcessState::Type> CraftingProcessState;
 
-	void OnBeginCraftingProcess(const uint64 &ProcessId, const uint64& PayloadId);
-	void OnCraftItem_Event(const uint64 &ProcessId, const uint64 &PayloadId);
-	void OnFinishCraftingProcess(const uint64 &ProcessId, const uint64 &PayloadId);
+	virtual void OnBeginCraftingProcess(const uint64 &ProcessId, const uint64& PayloadId);
+	virtual void OnCraftItem_Event(const uint64 &ProcessId, const uint64 &PayloadId);
+	virtual void OnFinishCraftingProcess(const uint64 &ProcessId, const uint64 &PayloadId);
 
 #pragma endregion Start
 

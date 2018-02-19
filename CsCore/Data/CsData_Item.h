@@ -19,6 +19,9 @@ public:
 
 	virtual TArray<FName>* GetContents();
 
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+	virtual bool GetIsIngredient();
+
 #pragma endregion Stats
 
 // Members

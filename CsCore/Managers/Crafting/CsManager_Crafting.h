@@ -72,6 +72,8 @@ public:
 	FCsCraftingPayload* AllocatePayload();
 protected:
 	TMap<uint64, FCsCraftingPayload*> PayloadMap;
+public:
+	FCsCraftingPayload* GetPayload(const uint64 &Id);
 
 #pragma endregion Payload
 

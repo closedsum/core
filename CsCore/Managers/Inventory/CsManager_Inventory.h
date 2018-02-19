@@ -10,6 +10,9 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsManagerInventory_OnAddItem,
 // Remove
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsManagerInventory_OnRemoveItem, FCsItem, Item);
 DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsManagerInventory_OnRemoveItem, FCsItem*);
+// Hide
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsManagerInventory_OnHideItem, FCsItem, Item);
+DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsManagerInventory_OnHideItem, FCsItem*);
 
 // Enums
 #pragma region
@@ -70,6 +73,45 @@ namespace ECsInventoryTransaction
 #define ECS_INVENTORY_TRANSACTION_MAX (uint8)ECsInventoryTransaction::ECsInventoryTransaction_MAX
 typedef TEnumAsByte<ECsInventoryTransaction::Type> TCsInventoryTransaction;
 
+UENUM(BlueprintType)
+namespace ECsInventoryGetRequest
+{
+	enum Type
+	{
+		FillAny						UMETA(DisplayName = "Fill Any"),
+		FillOrKill					UMETA(DisplayName = "Fill Or Kill"),
+		ECsInventoryGetRequest_MAX	UMETA(Hidden),
+	};
+}
+
+namespace ECsInventoryGetRequest
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString FillAny = TCsString(TEXT("FillAny"), TEXT("fillany"), TEXT("fill any"));
+		const TCsString FillOrKill = TCsString(TEXT("FillOrKill"), TEXT("fillorkill"), TEXT("fill or kill"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::FillAny) { return Str::FillAny.Value; }
+		if (EType == Type::FillOrKill) { return Str::FillOrKill.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::FillAny) { return Type::FillAny; }
+		if (String == Str::FillOrKill) { return Type::FillOrKill; }
+		return Type::ECsInventoryGetRequest_MAX;
+	}
+}
+
+#define ECS_INVENTORY_GET_REQUEST_MAX (uint8)ECsInventoryGetRequest::ECsInventoryGetRequest_MAX
+typedef TEnumAsByte<ECsInventoryGetRequest::Type> TCsInventoryGetRequest;
+
 #pragma endregion Enums
 
 // Structs
@@ -94,7 +136,7 @@ struct FCsItemBagSlot
 
 		if (Count > CS_EMPTY)
 		{
-			if (Count >= Items[CS_FIRST]->Capacity)
+			if (Count >= Items[CS_FIRST]->InventoryProperties.Capacity)
 				return false;
 		}
 
@@ -251,11 +293,13 @@ class CSCORE_API ACsManager_Inventory : public AActor
 	virtual FCsItem* GetItem(const uint64 &Id);
 	virtual FCsItem* GetFirstItem(const FName &ShortCode);
 
-	void GetItems(const FName& ShortCode, const int32& Count, TArray<FCsItem*> &OutItems);
+	void GetItems(const FName& ShortCode, const int32& Count, const TCsInventoryGetRequest &Request, TArray<FCsItem*> &OutItems);
+	void GetItems(const FName& ShortCode, const int32& Count, const TCsInventoryGetRequest &Request, const int32& State, TArray<FCsItem*> &OutItems);
 
 	TMap<FName, uint16> ItemCountMap;
 
-	virtual int32 GetItemCount(const FName &ShortCode);
+	int32 GetItemCount(const FName &ShortCode);
+	int32 GetItemCount(const FName &ShortCode, const int32& State);
 
 	void IncrementItemCount(const FName &ShortCode);
 	void DecrementItemCount(const FName &ShortCode);
@@ -312,4 +356,17 @@ public:
 	virtual FCsItem* DropFirstItem(const FName &ShortCode);
 
 #pragma endregion Drop
+
+// Hide
+#pragma region
+public:
+
+	void HideItem(FCsItem* Item);
+
+	FBindableEvent_CsManagerInventory_OnHideItem OnHideItem_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Hide")
+	FBindableDynEvent_CsManagerInventory_OnHideItem OnHideItem_ScriptEvent;
+
+#pragma endregion Hide
 };

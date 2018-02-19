@@ -84,6 +84,8 @@ struct FCsRecipeIngredient
 // Crafting
 #pragma region 
 
+#define CS_INVALID_CRAFTING_PAYLOAD_BAG 255
+
 struct FCsCraftingPayload
 {
 	bool IsAllocated;
@@ -91,6 +93,7 @@ struct FCsCraftingPayload
 	TWeakObjectPtr<UObject> Instigator;
 	TWeakObjectPtr<class ACsManager_Inventory> Manager_Inventory;
 	TWeakObjectPtr<class ACsData_Recipe> Recipe;
+	uint8 Bag;
 	uint16 Count;
 	TMap<FName, TArray<struct FCsItem*>> ItemMap;
 	bool AddToInventory;
@@ -108,7 +111,8 @@ struct FCsCraftingPayload
 		Id = 0;
 		Instigator.Reset();
 		Instigator = nullptr;
-		Count = 0;
+		Bag = CS_INVALID_CRAFTING_PAYLOAD_BAG;
+		Count = CS_EMPTY;
 		ItemMap.Reset();
 		AddToInventory = false;
 		OutItems.Reset();
@@ -126,10 +130,18 @@ struct FCsCraftingPayload
 		{
 			OutProcessedItems.Add((*ItemsPtr)[I]);
 		}
-
+		
+		// Transpose the first ItemCount elements to the end of the array
 		const int32 ItemsPtrCount = ItemsPtr->Num();
 
-		for (int32 I = ItemsPtrCount - ItemCount - 1; I >= 0; --I)
+		for (int32 I = ItemCount; I < ItemsPtrCount; ++I)
+		{
+			FCsItem* Temp			   = (*ItemsPtr)[I - ItemCount];
+			(*ItemsPtr)[I - ItemCount] = (*ItemsPtr)[I];
+			(*ItemsPtr)[I]			   = Temp;
+		}
+		// Remove the last ItemCount elements of the array
+		for (int32 I = ItemsPtrCount - 1; I > ItemsPtrCount - 1 - ItemCount; --I)
 		{
 			ItemsPtr->RemoveAt(I);
 		}

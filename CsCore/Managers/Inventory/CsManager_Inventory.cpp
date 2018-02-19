@@ -77,7 +77,7 @@ bool ACsManager_Inventory::IsFull(const uint8 &Bag, const FName &ShortCode)
 		FCsItem* Item = Slot.Items[CS_FIRST];
 
 		if (ShortCode == Item->ShortCode &&
-			ItemCount < Item->Capacity)
+			ItemCount < Item->InventoryProperties.Capacity)
 		{
 			return false;
 		}
@@ -108,7 +108,7 @@ FCsItem* ACsManager_Inventory::GetFirstItem(const FName &ShortCode)
 	return (*ItemsPtr)[CS_FIRST];
 }
 
-void ACsManager_Inventory::GetItems(const FName& ShortCode, const int32& Count, TArray<FCsItem*> &OutItems)
+void ACsManager_Inventory::GetItems(const FName& ShortCode, const int32& Count, const TCsInventoryGetRequest &Request, TArray<FCsItem*> &OutItems)
 {
 	TArray<FCsItem*>* ItemsPtr = ItemMap.Find(ShortCode);
 
@@ -118,15 +118,66 @@ void ACsManager_Inventory::GetItems(const FName& ShortCode, const int32& Count, 
 		return;
 	}
 
-	if (Count > ItemsPtr->Num())
+	const int32 ItemCount = ItemsPtr->Num();
+
+	if (Request == ECsInventoryGetRequest::FillOrKill &&
+		Count > ItemCount)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetItems: There are only %d ( < %d requested ) Items with ShortCode: %s "), ItemsPtr->Num(), Count, *(ShortCode.ToString()));
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetItems: There are only %d ( < %d requested ) Items with ShortCode: %s "), ItemCount, Count, *(ShortCode.ToString()));
 		return;
 	}
 
-	for (int32 I = 0; I < Count; ++I)
+	for (int32 I = 0; I < ItemCount; ++I)
 	{
 		OutItems.Add((*ItemsPtr)[I]);
+
+		if (OutItems.Num() == Count)
+			break;
+	}
+
+	// FillOrKill
+	if (Request == ECsInventoryGetRequest::FillOrKill)
+	{
+		if (OutItems.Num() != Count)
+			OutItems.Reset();
+	}
+}
+
+void ACsManager_Inventory::GetItems(const FName& ShortCode, const int32& Count, const TCsInventoryGetRequest &Request, const int32& State, TArray<FCsItem*> &OutItems)
+{
+	TArray<FCsItem*>* ItemsPtr = ItemMap.Find(ShortCode);
+
+	if (!ItemsPtr)
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetItems: There are NO Items with ShortCode: %s."), *(ShortCode.ToString()));
+		return;
+	}
+
+	const int32 ItemCount = ItemsPtr->Num();
+
+	if (Request == ECsInventoryGetRequest::FillOrKill &&
+		Count > ItemCount)
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetItems: There are only %d ( < %d requested ) Items with ShortCode: %s "), ItemCount, Count, *(ShortCode.ToString()));
+		return;
+	}
+
+	for (int32 I = 0; I < ItemCount; ++I)
+	{
+		FCsItem* Item = (*ItemsPtr)[I];
+
+		if (Item->InventoryProperties.IsState(State))
+			OutItems.Add((*ItemsPtr)[I]);
+
+		if (OutItems.Num() == Count)
+			break;
+	}
+
+	// FillOrKill
+	if (Request == ECsInventoryGetRequest::FillOrKill)
+	{
+		if (OutItems.Num() != Count)
+			OutItems.Reset();
 	}
 }
 
@@ -135,6 +186,29 @@ int32 ACsManager_Inventory::GetItemCount(const FName &ShortCode)
 	if (uint16* Count = ItemCountMap.Find(ShortCode))
 		return *Count;
 	return 0;
+}
+
+int32 ACsManager_Inventory::GetItemCount(const FName &ShortCode, const int32& State)
+{
+	TArray<FCsItem*>* ItemsPtr = ItemMap.Find(ShortCode);
+
+	if (!ItemsPtr)
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetItems: There are NO Items with ShortCode: %s."), *(ShortCode.ToString()));
+		return 0;
+	}
+
+	int32 OutCount	  = 0;
+	const int32 Count = ItemsPtr->Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		FCsItem* Item = (*ItemsPtr)[I];
+
+		if (Item->InventoryProperties.IsState(State))
+			++OutCount;
+	}
+	return OutCount;
 }
 
 void ACsManager_Inventory::IncrementItemCount(const FName &ShortCode)
@@ -190,7 +264,7 @@ void ACsManager_Inventory::LogTransaction(const FString &FunctionName, const TEn
 
 void ACsManager_Inventory::AddItem(FCsItem* Item)
 {
-	if (Item->InventoryProperties.Visible)
+	if (Item->InventoryProperties.IsVisible())
 	{
 		// Try to Add the Item to the Bag. Only Add the Item if there is a Slot free that can hold the Item
 		const bool Success = Bags[Item->InventoryProperties.Bag].Add(Item);
@@ -271,7 +345,7 @@ void ACsManager_Inventory::RemoveItem(const uint64 &Id, const FString &FunctionN
 	}
 	DecrementItemCount(ShortCode);
 
-	if (Item->InventoryProperties.Visible)
+	if (Item->InventoryProperties.IsVisible())
 		Bags[Item->InventoryProperties.Bag].Remove(Item);
 
 	LogTransaction(FunctionName, Transaction, Item);
@@ -287,7 +361,6 @@ void ACsManager_Inventory::RemoveItem(const uint64 &Id, const FString &FunctionN
 		Manager_Item->DeAllocate(Item);
 	}
 }
-
 
 void ACsManager_Inventory::RemoveItem(FCsItem* Item, const FString &FunctionName, const TEnumAsByte<ECsInventoryTransaction::Type> &Transaction, const bool &ShouldDestroy)
 {
@@ -347,3 +420,22 @@ FCsItem* ACsManager_Inventory::DropFirstItem(const FName &ShortCode)
 }
 
 #pragma endregion Drop
+
+// Hide
+#pragma region
+
+void ACsManager_Inventory::HideItem(FCsItem* Item)
+{
+	if (!Item->InventoryProperties.IsVisible())
+		return;
+
+	Bags[Item->InventoryProperties.Bag].Remove(Item);
+	Item->InventoryProperties.ClearVisible();
+
+#if WITH_EDITOR
+	OnHideItem_ScriptEvent.Broadcast(*Item);
+#endif // #if WITH_EDITOR
+	OnHideItem_Event.Broadcast(Item);
+}
+
+#pragma endregion Hide

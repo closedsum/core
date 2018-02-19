@@ -108,40 +108,131 @@ typedef TCsItemOwner(*TCsStringToItemOwner)(const FString&);
 #define CS_INVALID_INVENTORY_ITEM_ROW 255
 #define CS_INVALID_INVENTORY_ITEM_COLUMN 255
 
+UENUM(BlueprintType, meta = (Bitflags))
+enum class ECsInventoryItemState : uint8
+{
+	Visible		UMETA(DisplayName = "Visible"),
+	Ingredient	UMETA(DisplayName = "Ingredient"),
+};
+
+													// (Visible | Ingredient)
+													// ((1<<0) | (1<<1))
+#define CS_INVENTORY_ITEM_STATE_VISIBLE_AND_INGREDIENT 3
+
+UENUM(BlueprintType)
+namespace ECsInventoryItemState_Editor
+{
+	enum Type
+	{
+		Visible								UMETA(DisplayName = "Visible"),
+		Ingredient							UMETA(DisplayName = "Ingredient"),
+		ECsInventoryItemState_Editor_MAX	UMETA(Hidden),
+	};
+}
+
+namespace ECsInventoryItemState_Editor
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+
+	namespace Str
+	{
+		const TCsString Visible = TCsString(TEXT("Visible"), TEXT("visible"));
+		const TCsString Ingredient = TCsString(TEXT("Ingredient"), TEXT("ingredient"));
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		if (EType == Type::Visible) { return Str::Visible.Value; }
+		if (EType == Type::Ingredient) { return Str::Ingredient.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE FString ToString(const int32 &State)
+	{
+		FString String = ECsCachedString::Str::Empty;
+		bool IsFirst   = true;
+
+		for (int32 I = 0; I < ECS_LOAD_FLAGS_EDITOR_MAX; ++I)
+		{
+			if (CS_TEST_BLUEPRINT_BITFLAG(State, (ECsInventoryItemState)I))
+			{
+				if (!IsFirst)
+				{
+					String += TEXT(" | ");
+				}
+				String += ToString((TCsLoadFlags_Editor)I);
+				IsFirst = false;
+			}
+		}
+		return String;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::Visible) { return Type::Visible; }
+		if (String == Str::Ingredient) { return Type::Ingredient; }
+		return Type::ECsInventoryItemState_Editor_MAX;
+	}
+
+	FORCEINLINE ECsInventoryItemState ToBaseType(const Type &EType)
+	{
+		if (EType == Type::Visible) { return ECsInventoryItemState::Visible; }
+		if (EType == Type::Ingredient) { return ECsInventoryItemState::Ingredient; }
+		return ECsInventoryItemState::Visible;
+	}
+
+	FORCEINLINE ECsInventoryItemState ToFlag(const FString &String)
+	{
+		if (String == Str::Visible) { return ECsInventoryItemState::Visible; }
+		if (String == Str::Ingredient) { return ECsInventoryItemState::Ingredient; }
+		return ECsInventoryItemState::Visible;;
+	}
+}
+
+#define ECS_INVENTORY_ITEM_STATE_MAX (uint8)ECsInventoryItemState_Editor::ECsInventoryItemState_Editor_MAX
+typedef TEnumAsByte<ECsInventoryItemState_Editor::Type> TCsInventoryItemState_Editor;
+
 USTRUCT(BlueprintType)
 struct FCsInventoryItemProperties
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
-	bool Visible;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item", meta = (Bitmask, BitmaskEnum = "ECsInventoryItemState"))
+	int32 State;
+	/** The current Bag in the Inventory */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	uint8 Bag;
 
+	/** The RowSpan, ColumnSpan Slots occupied in the Inventory */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	FCsUint8MatrixDimension Dimension;
+	/** The Row, Column position in the Inventory */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	FCsUint8MatrixCoordinate Position;
+	/** How many of this ItemType can be stored in a Slot. Copied from Data->Capacity */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+	int32 Capacity;
 
 	FCsInventoryItemProperties() {}
 	~FCsInventoryItemProperties() {}
 
 	FCsInventoryItemProperties& operator=(const FCsInventoryItemProperties& B)
 	{
-		Visible = B.Visible;
+		State = B.State;
 		Bag = B.Bag;
 		Dimension = B.Dimension;
 		Position = B.Position;
+		Capacity = B.Capacity;
 		return *this;
 	}
 
 	bool operator==(const FCsInventoryItemProperties& B) const
 	{
-		if (Visible != B.Visible) { return false; }
+		if (State != B.State) { return false; }
 		if (Bag != B.Bag) { return false; }
 		if (Dimension != B.Dimension) { return false; }
 		if (Position != B.Position) { return false; }
+		if (Capacity != B.Capacity) { return false; }
 		return true;
 	}
 
@@ -152,10 +243,55 @@ struct FCsInventoryItemProperties
 
 	void Reset()
 	{
-		Visible = false;
+		State = 0;
 		Bag = CS_INVALID_INVENTORY_ITEM_BAG;
 		Dimension.Reset();
 		Position.Set(CS_INVALID_INVENTORY_ITEM_ROW, CS_INVALID_INVENTORY_ITEM_COLUMN);
+		Capacity = CS_EMPTY;
+	}
+
+	void SetVisible()
+	{
+		CS_SET_BLUEPRINT_BITFLAG(State, ECsInventoryItemState::Visible);
+	}
+
+	void ClearVisible()
+	{
+		CS_CLEAR_BLUEPRINT_BITFLAG(State, ECsInventoryItemState::Visible);
+	}
+
+	bool IsVisible()
+	{
+		return CS_TEST_BLUEPRINT_BITFLAG(State, ECsInventoryItemState::Visible);
+	}
+
+	void SetIngredient()
+	{
+		CS_SET_BLUEPRINT_BITFLAG(State, ECsInventoryItemState::Ingredient);
+	}
+
+	bool IsIngredient()
+	{
+		return CS_TEST_BLUEPRINT_BITFLAG(State, ECsInventoryItemState::Ingredient);
+	}
+
+	void SetVisibleAndIngredient()
+	{
+		CS_SET_BLUEPRINT_BITFLAG(State, ECsInventoryItemState::Visible);
+		CS_SET_BLUEPRINT_BITFLAG(State, ECsInventoryItemState::Ingredient);
+	}
+
+	bool IsState(const int32& InState)
+	{
+		for (int32 I = 0; I < ECS_INVENTORY_ITEM_STATE_MAX; ++I)
+		{
+			if (CS_TEST_BLUEPRINT_BITFLAG(InState, I) &&
+				!CS_TEST_BLUEPRINT_BITFLAG(State, I))
+			{
+				return false;
+			}
+		}
+		return true;
 	}
 };
 
@@ -424,9 +560,6 @@ struct FCsItem
 
 	UPROPERTY()
 	FCsInventoryItemProperties InventoryProperties;
-	/** How many of this ItemType can be stored in a Slot. Copied from Data->Capacity */
-	UPROPERTY()
-	int32 Capacity;
 	UPROPERTY()
 	FCsItemHistory CurrentHistory;
 	UPROPERTY()
@@ -451,7 +584,6 @@ struct FCsItem
 		ShortCode = B.ShortCode;
 		DisplayName = B.DisplayName;
 		InventoryProperties = B.InventoryProperties;
-		Capacity = B.Capacity;
 		return *this;
 	}
 
@@ -464,7 +596,6 @@ struct FCsItem
 		if (ShortCode != B.ShortCode) { return false; }
 		if (DisplayName != B.DisplayName) { return false; }
 		if (InventoryProperties != B.InventoryProperties) { return false; }
-		if (Capacity != B.Capacity) { return false; }
 		return true;
 	}
 
@@ -496,7 +627,6 @@ struct FCsItem
 		//Data_Actor.Reset();
 		//Data_Actor = nullptr;
 		InventoryProperties.Reset();
-		Capacity = CS_EMPTY;
 		CurrentHistory.Reset();
 		PreviousHistories.Reset();
 	}

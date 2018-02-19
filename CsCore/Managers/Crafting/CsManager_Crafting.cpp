@@ -69,6 +69,11 @@ FCsCraftingPayload* ACsManager_Crafting::AllocatePayload()
 	return nullptr;
 }
 
+FCsCraftingPayload* ACsManager_Crafting::GetPayload(const uint64 &Id)
+{
+	return *(PayloadMap.Find(Id));
+}
+
 #pragma endregion Payload
 
 // Process
@@ -185,11 +190,17 @@ CS_COROUTINE(ACsManager_Crafting, CraftItems_Internal)
 				// Create the Item
 				FCsItem* CreatedItem = Manager_Item->Allocate(Recipe->GetCreatedItem(), Payload->AddToInventory ? Cast<UObject>(InventoryOwner) : w);
 
+				if (Payload->AddToInventory)
+				{
+					CreatedItem->InventoryProperties.SetVisible();
+					CreatedItem->InventoryProperties.Bag = Payload->Bag;
+				}
+
 				const int32 IngredientCount = Ingredients->Num();
 
 				for (int32 J = 0; J < IngredientCount; ++J)
 				{
-					const FCsRecipeIngredient& Ingredient = (*Ingredients)[I];
+					const FCsRecipeIngredient& Ingredient = (*Ingredients)[J];
 					// Process Items
 					TArray<FCsItem*> ProcessedItems;
 					Payload->ProcessItems(Ingredient.ShortCode, Ingredient.Count, ProcessedItems);
@@ -207,10 +218,12 @@ CS_COROUTINE(ACsManager_Crafting, CraftItems_Internal)
 						if (Ingredient.AddToContents)
 						{
 							CreatedItem->Contents.Add(ProcessedItems[K]->UniqueId);
+							Manager_Inventory->HideItem(ProcessedItems[K]);
 						}
 					}
 				}
 				Payload->OutItems.Add(CreatedItem);
+				Manager_Item->Save(CreatedItem);
 
 				Process->OnCraftItem_Event.Broadcast(Process->Id, Payload->Id);
 			}

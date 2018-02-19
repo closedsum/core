@@ -134,7 +134,11 @@ FCsItem* ACsManager_Item::Allocate(const FName &ShortCode)
 
 	Item->InventoryProperties.Reset();
 	Item->InventoryProperties.Dimension = *(Data->GetDimension());
-	Item->Capacity = Data->GetCapacity();
+
+	if (Data->GetIsIngredient())
+		Item->InventoryProperties.SetIngredient();
+
+	Item->InventoryProperties.Capacity = Data->GetCapacity();
 
 	Item->Data = Data;
 	// Get Data for Actor when this Item is Dropped
@@ -199,7 +203,7 @@ void ACsManager_Item::SetActiveItemData(FCsItem* Item)
 	Item->Data					= Cast<ACsData_Item>(DataMapping->GetLoadedData(ItemAssetType, Item->ShortCode));
 
 	Item->InventoryProperties.Dimension = *(Item->Data->GetDimension());
-	Item->Capacity						= Item->Data->GetCapacity();
+	Item->InventoryProperties.Capacity	= Item->Data->GetCapacity();
 
 	if (ACsData_Item* Data = Item->GetData())
 		Item->Data_Actor = Cast<ACsData_Interactive>(DataMapping->GetLoadedData(InteractiveAssetType, Data->GetSpawnedActorDataShortCode()));
@@ -608,6 +612,7 @@ void ACsManager_Item::PopulateExistingItems()
 				if (I == J)
 					continue;
 
+				// Compare Item->Contents with OtherItem->Contents
 				FCsItem* OtherItem			  = Items[J];
 				const int32 OtherContentCount = OtherItem->Contents.Num();
 			

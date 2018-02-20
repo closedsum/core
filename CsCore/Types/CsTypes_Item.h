@@ -641,6 +641,91 @@ struct FCsItem
 	}
 };
 
+USTRUCT(BlueprintType)
+struct FCsInventoryLoadoutItem
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** ShortCode for the Item */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	FName ShortCode;
+	/** Number of Items */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	int32 Count;
+
+	FCsInventoryLoadoutItem()
+	{
+		Count = 1;
+	}
+	~FCsInventoryLoadoutItem() {}
+
+	FCsInventoryLoadoutItem& operator=(const FCsInventoryLoadoutItem& B)
+	{
+		ShortCode = B.ShortCode;
+		Count = B.Count;
+		return *this;
+	}
+
+	bool operator==(const FCsInventoryLoadoutItem& B) const
+	{
+		if (ShortCode != B.ShortCode) { return false; }
+		if (Count != B.Count) { return false; }
+		return true;
+	}
+
+	bool operator!=(const FCsInventoryLoadoutItem& B) const
+	{
+		return !(*this == B);
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FCsInventoryLoadout
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	TArray<FCsInventoryLoadoutItem> Items;
+
+	FCsInventoryLoadout() {}
+	~FCsInventoryLoadout() {}
+
+	FCsInventoryLoadout& operator=(const FCsInventoryLoadout& B)
+	{
+		Items.Reset();
+
+		const int32 Count = B.Items.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			Items.AddDefaulted();
+			Items[I] = B.Items[I];
+		}
+		return *this;
+	}
+
+	bool operator==(const FCsInventoryLoadout& B) const
+	{
+		if (Items.Num() != B.Items.Num())
+			return false;
+
+		const int32 Count = B.Items.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			if (Items[I] != B.Items[I])
+				return false;
+		}
+
+		return true;
+	}
+
+	bool operator!=(const FCsInventoryLoadout& B) const
+	{
+		return !(*this == B);
+	}
+};
+
 namespace ECsFileItemHeaderCachedString
 {
 	namespace Str

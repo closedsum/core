@@ -494,6 +494,7 @@ TAutoConsoleVariable<int32> CsCVarLogManagerItemTransactions(
 );
 
 #pragma endregion Item
+
 // Inventory
 #pragma region
 
@@ -505,3 +506,15 @@ TAutoConsoleVariable<int32> CsCVarLogManagerInventoryTransactions(
 );
 
 #pragma endregion Inventory
+
+// Crafting
+#pragma region
+
+TAutoConsoleVariable<int32> CsCVarLogManagerCraftingTransactions(
+	TEXT("log.manager.crafting.transactions"),
+	0,
+	TEXT("Log Manager Crafting Begin, Craft, and Finish."),
+	ECVF_SetByConsole
+);
+
+#pragma endregion Crafting

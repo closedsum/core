@@ -224,3 +224,10 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerItemTransactions;
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerInventoryTransactions;
 
 #pragma endregion Inventory
+
+// Crafting
+#pragma region
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerCraftingTransactions;
+
+#pragma endregion Crafting

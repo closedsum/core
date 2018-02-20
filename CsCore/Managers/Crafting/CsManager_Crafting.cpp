@@ -126,8 +126,7 @@ void ACsManager_Crafting::CraftItems(FCsCraftingPayload* Payload)
 	CoroutinePayload->Schedule		  = Schedule;
 	CoroutinePayload->Function		  = &ACsManager_Crafting::CraftItems_Internal;
 	CoroutinePayload->Actor			  = this;
-	//CoroutinePayload->Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
-	//CoroutinePayload->Type = (uint8)ECsWidgetCraftingRoutine::CraftItem_Internal;
+	CoroutinePayload->Stop			  = &UCsCommon::CoroutineStopCondition_CheckActor;
 	CoroutinePayload->DoInit		  = true;
 	CoroutinePayload->PerformFirstRun = false;
 	CoroutinePayload->Name			  = ECsManagerCraftingCachedName::Name::CraftItems_Internal;
@@ -174,6 +173,15 @@ CS_COROUTINE(ACsManager_Crafting, CraftItems_Internal)
 	FCsCraftingProcess* Process = (FCsCraftingProcess*)r->voidPointers[1];
 
 	CS_COROUTINE_BEGIN(r);
+
+	// Log Begin
+	if (CsCVarLogManagerCraftingTransactions->GetInt() == CS_CVAR_SHOW_LOG)
+	{
+		const FString RecipeName = Recipe->ShortCode.ToString();
+		const FString ItemName   = Recipe->GetCreatedItem().ToString();
+
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Crafting::CraftItems_Internal: Beginning crafting (Process: %d, Payload: %d) for Recipe: %s to create Item: %s."), Process->Id, Payload->Id, *RecipeName, *ItemName);
+	}
 
 	c->OnBeginCraftingProcess_Event.Broadcast(Process->Id, Payload->Id);
 	c->OnBeginCraftingProcess_Event.Clear();
@@ -225,6 +233,15 @@ CS_COROUTINE(ACsManager_Crafting, CraftItems_Internal)
 				Payload->OutItems.Add(CreatedItem);
 				Manager_Item->Save(CreatedItem);
 
+				// Log Craft
+				if (CsCVarLogManagerCraftingTransactions->GetInt() == CS_CVAR_SHOW_LOG)
+				{
+					const FString ItemName   = Recipe->GetCreatedItem().ToString();
+					const FString RecipeName = Recipe->ShortCode.ToString();
+
+					UE_LOG(LogCs, Warning, TEXT("ACsManager_Crafting::CraftItems_Internal: Crafted (Process: %d, Payload: %d) Item: %s for Recipe: %s."), Process->Id, Payload->Id, *ItemName, *RecipeName);
+				}
+
 				Process->OnCraftItem_Event.Broadcast(Process->Id, Payload->Id);
 			}
 		}
@@ -234,6 +251,16 @@ CS_COROUTINE(ACsManager_Crafting, CraftItems_Internal)
 	// Check to Add Crafted Items to the Inventory
 	if (Payload->AddToInventory)
 		Manager_Inventory->AddItems(Payload->OutItems);
+
+	// Log Finish
+	if (CsCVarLogManagerCraftingTransactions->GetInt() == CS_CVAR_SHOW_LOG)
+	{
+		const FString RecipeName = Recipe->ShortCode.ToString();
+		const FString ItemName   = Recipe->GetCreatedItem().ToString();
+		const int32 ItemCount	 = Payload->OutItems.Num();
+
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Crafting::CraftItems_Internal: Finishing crafting (Process: %d, Payload: %d) for Recipe: %s to create %d Items: %s."), Process->Id, Payload->Id, *RecipeName, ItemCount, *ItemName);
+	}
 
 	Process->OnFinishCraftingProcess_Event.Broadcast(Process->Id, Payload->Id);
 
@@ -260,6 +287,17 @@ void ACsManager_Crafting::CancelCraftingProcess(const uint64 &Id)
 	FCsCraftingProcess* Process	= *ProcessPtr;
 	FCsCraftingPayload* Payload = (FCsCraftingPayload*)(Process->R->voidPointers[0]);
 
+	if (CsCVarLogManagerCraftingTransactions->GetInt() == CS_CVAR_SHOW_LOG)
+	{
+		ACsData_Recipe* Recipe	 = Payload->GetRecipe();
+		const FString RecipeName = Recipe->ShortCode.ToString();
+		const FString ItemName	 = Recipe->GetCreatedItem().ToString();
+		UObject* Instigator		 = Process->GetInstigator();
+		const FString InstigatorName = Instigator->GetName();
+
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Crafting::CancelCraftingProcess: Canceling crafting (Process: %d, Payload: %d) for Recipe: %s to create Item: %s started by %s."), Process->Id, Payload->Id, *RecipeName, *ItemName, *InstigatorName);
+	}
+
 	// Free the Payload
 	PayloadMap.Remove(Payload->Id);
 	Payload->Reset();
@@ -279,12 +317,22 @@ void ACsManager_Crafting::CancelCraftingProcesses(UObject* Instigator)
 
 	for (int32 I = 0; I < Count; ++I)
 	{
-		const uint64& Id		= Keys[I];
+		const uint64& Id			= Keys[I];
 		FCsCraftingProcess* Process = *(ProcessMap.Find(Id));
 
 		if (Instigator == Process->GetInstigator())
 		{
 			FCsCraftingPayload* Payload = (FCsCraftingPayload*)(Process->R->voidPointers[0]);
+
+			if (CsCVarLogManagerCraftingTransactions->GetInt() == CS_CVAR_SHOW_LOG)
+			{
+				ACsData_Recipe* Recipe	 = Payload->GetRecipe();
+				const FString RecipeName = Recipe->ShortCode.ToString();
+				const FString ItemName   = Recipe->GetCreatedItem().ToString();
+				const FString InstigatorName = Instigator->GetName();
+
+				UE_LOG(LogCs, Warning, TEXT("ACsManager_Crafting::CancelCraftingProcesses: Canceling crafting (Process: %d, Payload: %d) for Recipe: %s to create Item: %s started by %s."), Process->Id, Payload->Id, *RecipeName, *ItemName, *InstigatorName);
+			}
 
 			// Free the Payload
 			PayloadMap.Remove(Payload->Id);

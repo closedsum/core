@@ -2164,3 +2164,198 @@ namespace ECsDetachmentTransformRules
 typedef TEnumAsByte<ECsDetachmentTransformRules::Type> TCsDetachmentTransformRules;
 
 #pragma endregion Attach / Detach
+
+// Player Data
+#pragma region
+
+USTRUCT(BlueprintType)
+struct FCsPlayerData_Inventory_Slot
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	FCsUint8MatrixCoordinate Position; // 16 bits
+
+	UPROPERTY()
+	TArray<uint64> Contents; // N * 64 bits
+
+	FCsPlayerData_Inventory_Slot() {}
+	~FCsPlayerData_Inventory_Slot() {}
+
+	FCsPlayerData_Inventory_Slot& operator=(const FCsPlayerData_Inventory_Slot& B)
+	{
+		Position = B.Position;
+
+		Contents.Reset();
+
+		const int32 Count = B.Contents.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			Contents.Add(B.Contents[I]);
+		}
+		return *this;
+	}
+
+	bool operator==(const FCsPlayerData_Inventory_Slot& B) const
+	{
+		if (Position != B.Position) { return false; }
+
+		if (Contents.Num() != B.Contents.Num())
+			return false;
+
+
+		const int32 Count = Contents.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			if (Contents[I] != B.Contents[I])
+				return false;
+		}
+		return true;
+	}
+
+	bool operator!=(const FCsPlayerData_Inventory_Slot& B) const
+	{
+		return !(*this == B);
+	}
+
+	uint32 GetBits() const
+	{
+		return 16					// Position
+			+ Contents.Num() * 8;	// Contents
+	}
+
+	float GetBytes() const
+	{
+		return (float)GetBits() / 8.0f;
+	}
+
+	bool Contains(const uint64 &UniqueId)
+	{
+		const int32 Count = Contents.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			if (Contents[I] == UniqueId)
+				return true;
+		}
+		return false;
+	}
+
+	void Add(const uint64 &UniqueId)
+	{
+		Contents.Add(UniqueId);
+	}
+
+	void Remove(const uint64 &UniqueId)
+	{
+		const int32 Count = Contents.Num();
+
+		for (int32 I = Count - 1; I >= 0; --I)
+		{
+			if (Contents[I] == UniqueId)
+			{
+				Contents.RemoveAt(I);
+				break;
+			}
+		}
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FCsPlayerData_Inventory_Bag
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	FCsUint8MatrixDimension Dimension; // 16 bits
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	TArray<FCsPlayerData_Inventory_Slot> Slots; // N * Slot[I].GetBits();
+
+	FCsPlayerData_Inventory_Bag() {}
+	~FCsPlayerData_Inventory_Bag() {}
+
+	FCsPlayerData_Inventory_Bag& operator=(const FCsPlayerData_Inventory_Bag& B)
+	{
+		Dimension = B.Dimension;
+
+		Slots.Reset();
+
+		const int32 Count = B.Slots.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			Slots.AddDefaulted();
+			Slots[I] = B.Slots[I];
+		}
+		return *this;
+	}
+
+	bool operator==(const FCsPlayerData_Inventory_Bag& B) const
+	{
+		if (Dimension != B.Dimension)
+			return false;
+		if (Slots.Num() != B.Slots.Num())
+			return false;
+
+		const int32 Count = Slots.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			if (Slots[I] != B.Slots[I])
+				return false;
+		}
+		return true;
+	}
+
+	bool operator!=(const FCsPlayerData_Inventory_Bag& B) const
+	{
+		return !(*this == B);
+	}
+
+	uint32 GetBits() const
+	{
+		uint32 Bits = Dimension.GetBits(); // Dimension
+
+		const int32 Count = Slots.Num();  // Slot
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			Bits += Slots[I].GetBits();
+		}
+		return Bits;
+	}
+
+	float GetBytes() const
+	{
+		return (float)GetBits() / 8.0f;
+	}
+
+	int32 GetSlotIndexForItem(const uint64 &UniqueId)
+	{
+		const int32 Count = Slots.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			if (Slots[I].Contains(UniqueId))
+				return I;
+		}
+		return INDEX_NONE;
+	}
+
+	int32 GetFirstOpenSlotIndex()
+	{
+		const int32 Count = Slots.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			if (Slots[I].Contents.Num() == CS_EMPTY)
+				return I;
+		}
+		return INDEX_NONE;
+	}
+};
+
+#pragma endregion Player Data

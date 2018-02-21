@@ -563,7 +563,7 @@ void ACsPlayerState::ServerRequestPlayerData_Internal(const uint8 &ClientMapping
 void ACsPlayerState::GetLoadAssetsShortCodes(const TCsLoadAssetsType &AssetsType, TArray<FName> &OutShortCodes){}
 void ACsPlayerState::LoadPlayerData(){}
 void ACsPlayerState::OnFinishedLoadingPlayerData(const TArray<UObject*> &LoadedAssets, const float &LoadingTime){}
-void ACsPlayerState::SetupPlayerData(){}
+void ACsPlayerState::SetupPlayerData() { ECsPlayerStateOnBoardState::FinishedApplyingPlayerData; }
 
 bool ACsPlayerState::ServerSendOnBoardCompleted_Validate(const uint8 &ClientMappingId, const uint8 &MappingId)
 {

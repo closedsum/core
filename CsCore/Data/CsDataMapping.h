@@ -607,6 +607,8 @@ public:
 
 	bool CheckEntryExists(const FName &ShortCode, const TCsAssetType &AssetType, const TCsLoadFlags_Editor &LoadFlags, FString &OutMessage);
 
+	bool AsyncTaskMutex;
+
 #endif // #if WITH_EDITOR
 
 #pragma endregion 99 Editor

@@ -91,6 +91,24 @@ struct FCsPlayerStateMappingRelationship
 	}
 };
 
+struct FCsAIPlayerStateMappingRelationship
+{
+	// A.I.
+	uint8 A;
+	// Player
+	uint8 B;
+
+	bool HasBCompletedInitialReplicationAndLoadingForA;
+
+	FCsAIPlayerStateMappingRelationship()
+	{
+		A = CS_INVALID_AI_PLAYER_STATE_UNIQUE_MAPPING_ID;
+		B = CS_INVALID_AI_PLAYER_STATE_UNIQUE_MAPPING_ID;
+
+		HasBCompletedInitialReplicationAndLoadingForA = false;
+	}
+};
+
 UCLASS()
 class CSCORE_API ACsGameState : public AGameState
 {
@@ -232,8 +250,6 @@ public:
 
 	uint8 CurrentPlayerStateUniqueMappingId;
 
-	bool AllPlayersFullyReplicatedAndLoaded;
-
 	virtual void AddPlayerState(class APlayerState* PlayerState) override;
 	virtual void RemovePlayerState(class APlayerState* PlayerState) override;
 
@@ -247,9 +263,18 @@ public:
 
 	void SetPlayerStateMappingRelationshipFlag(const uint8 &ClientMappingId, const uint8 &MappingId);
 
+	bool bServerRequestLocalUniqueMappingId;
+
 	virtual FString GetLocalPlayerProfileName();
 
 #pragma endregion Player State
+
+// AI Player State
+#pragma region
+
+
+
+#pragma endregion
 
 #if WITH_EDITOR
 	virtual void OnPrePIEEnded(const bool IsSimulating);

@@ -19,6 +19,10 @@
 UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+#if WITH_EDITOR
+	ForcePopulateAssetReferences = true;
+#endif // #if WITH_EDITOR
+
 	DataMappingAssetPath = TEXT("/Game/AlwaysCook/bp_data_mapping.bp_data_mapping_C");
 	DataMapping			 = nullptr;
 
@@ -222,15 +226,23 @@ PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(struct FCsRoutine* r))
 
 	CS_COROUTINE_BEGIN(r);
 
-	if (!gi->ForcePopulateAssetReferences || !dataMapping->ForcePopulateAssetReferences)
+	if (gi->ForcePopulateAssetReferences || dataMapping->ForcePopulateAssetReferences)
 	{
 		UCsManager_Loading::Get()->LoadAssetReferences(gi->GetWorld(), dataMapping->DataAssetReferences, ECsLoadAsyncOrder::Bulk, gi, &UCsGameInstance::OnFinishedLoadingDataAssets);
 
 		// Wait until Data Assets are LOADED
 		CS_COROUTINE_WAIT_UNTIL(r, gi->OnBoardState == ECsGameInstanceOnBoardState::FinishedLoadingDataAssets);
 
+#if WITH_EDITOR
+		CS_COROUTINE_WAIT_UNTIL(r, !dataMapping->AsyncTaskMutex);
+#endif // #if WITH_EDITOR
+
 		if (UCsCommon::CanAsyncTask())
 		{
+#if WITH_EDITOR
+			dataMapping->AsyncTaskMutex = true;
+#endif // #if WITH_EDITOR
+
 			gi->AsyncPopulateAssetReferences();
 		}
 		else
@@ -250,6 +262,10 @@ PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(struct FCsRoutine* r))
 #endif // #if WITH_EDITOR
 
 	dataMapping->GenerateMaps();
+
+#if WITH_EDITOR
+	dataMapping->AsyncTaskMutex = false;
+#endif // #if WITH_EDITOR
 
 	gi->HasLoadedDataMapping = true;
 	gi->OnBoardState = ECsGameInstanceOnBoardState::LoadStartUpData;

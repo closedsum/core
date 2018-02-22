@@ -234,13 +234,13 @@ PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(struct FCsRoutine* r))
 		CS_COROUTINE_WAIT_UNTIL(r, gi->OnBoardState == ECsGameInstanceOnBoardState::FinishedLoadingDataAssets);
 
 #if WITH_EDITOR
-		CS_COROUTINE_WAIT_UNTIL(r, !dataMapping->AsyncTaskMutex);
+		CS_COROUTINE_WAIT_UNTIL(r, !dataMapping->AsyncTaskMutex.IsLocked());
 #endif // #if WITH_EDITOR
 
 		if (UCsCommon::CanAsyncTask())
 		{
 #if WITH_EDITOR
-			dataMapping->AsyncTaskMutex = true;
+			dataMapping->AsyncTaskMutex.Lock();
 #endif // #if WITH_EDITOR
 
 			gi->AsyncPopulateAssetReferences();
@@ -264,7 +264,7 @@ PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(struct FCsRoutine* r))
 	dataMapping->GenerateMaps();
 
 #if WITH_EDITOR
-	dataMapping->AsyncTaskMutex = false;
+	dataMapping->AsyncTaskMutex.Unlock();
 #endif // #if WITH_EDITOR
 
 	gi->HasLoadedDataMapping = true;

@@ -4,6 +4,7 @@
 #include "Types/CsTypes_Load.h"
 #include "Common/CsCommon_Load.h"
 #include "Managers/CsManager_Loading.h"
+#include "Types/CsTypes_Async.h"
 #include "CsDataMapping.generated.h"
 
 // Macros - Only use for CHILD of ACsDataMapping
@@ -607,7 +608,7 @@ public:
 
 	bool CheckEntryExists(const FName &ShortCode, const TCsAssetType &AssetType, const TCsLoadFlags_Editor &LoadFlags, FString &OutMessage);
 
-	bool AsyncTaskMutex;
+	FCsMutex AsyncTaskMutex;
 
 #endif // #if WITH_EDITOR
 

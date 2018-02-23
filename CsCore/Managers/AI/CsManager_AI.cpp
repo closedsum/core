@@ -47,6 +47,11 @@ void ACsManager_AI::Destroyed()
 	Super::Destroyed();
 }
 
+/*static*/ ACsManager_AI* ACsManager_AI::Get(UWorld* InWorld)
+{
+	return InWorld->GetGameState<ACsGameState>()->Manager_AI;
+}
+
 void ACsManager_AI::Init(const TCsAIType &InAIType_MAX, TCsAITypeToString InAITypeToString)
 {
 	AIType_MAX     = InAIType_MAX;
@@ -119,7 +124,6 @@ void ACsManager_AI::AddToPool(UObject* InObject, const uint8& Type)
 	Actor->Init(ActorPoolPtr->Num() - 1, ClassType);
 }
 
-
 void ACsManager_AI::AddToActivePool(UObject* InObject, const uint8& Type)
 {
 	checkf(InObject, TEXT("ACsManager_AI::AddToActivePool: InObject is NULL."));
@@ -162,11 +166,6 @@ void ACsManager_AI::OnTick(const float &DeltaSeconds)
 	}
 	}
 	*/
-}
-
-/*static*/ ACsManager_AI* ACsManager_AI::Get(UWorld* InWorld)
-{
-	return InWorld->GetGameState<ACsGameState>()->Manager_AI;
 }
 
 int32 ACsManager_AI::GetActivePoolSize(const uint8 &Type)

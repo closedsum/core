@@ -12,18 +12,18 @@ class CSCORE_API ACsManager_AI : public ACsManager
 	GENERATED_UCLASS_BODY()
 
 	virtual void Shutdown() override;
+	virtual void Destroyed() override;
+
+	static ACsManager_AI* Get(UWorld* InWorld);
 
 	CS_DECLARE_AI_TYPE
 
 	void Init(const TCsAIType &InAIType_MAX, TCsAITypeToString InAITypeToString);
 
-	virtual void Destroyed() override;
 	virtual void CreatePool(const TSubclassOf<class UObject> &ObjectClass, const uint8 &Type, const int32 &Size);
 	virtual void AddToPool(UObject* InObject, const uint8& Type);
 	virtual void AddToActivePool(UObject* InObject, const uint8& Type);
 	virtual void OnTick(const float &DeltaSeconds) override;
-
-	static ACsManager_AI* Get(UWorld* InWorld);
 
 	TMap<TCsAIType, uint8> PoolSizes;
 

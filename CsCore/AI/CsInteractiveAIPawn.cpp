@@ -1,5 +1,5 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
-#include "Pawn/CsInteractiveAIPawn.h"
+#include "AI/CsInteractiveAIPawn.h"
 #include "CsCore.h"
 #include "CsCVars.h"
 #include "Common/CsCommon.h"

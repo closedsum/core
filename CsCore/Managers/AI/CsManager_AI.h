@@ -42,6 +42,8 @@ class CSCORE_API ACsManager_AI : public ACsManager
 
 	virtual int32 GetActivePoolSize(const uint8 &Type) override;
 
+	virtual void LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, class UObject* InObject) override;
+
 	class ACsAIPawn* Allocate(const TCsAIType &Type);
 
 	virtual void DeAllocate(const uint8 &Type, const int32 &Index) override;
@@ -65,16 +67,16 @@ public:
 #pragma region
 public:
 
-	class ACsAIPawn* WakeUp(const TCsAIType &Type, UObject* InOwner, UObject* Parent);
-	class ACsAIPawn* WakeUp(const TCsAIType &Type, UObject* InOwner);
-	class ACsAIPawn* WakeUp(const TCsAIType &Type);
+	class ACsAIPawn* WakeUp(const TCsAIType &Type, FCsAIPawnPayload* Payload, UObject* InOwner, UObject* Parent);
+	class ACsAIPawn* WakeUp(const TCsAIType &Type, FCsAIPawnPayload* Payload, UObject* InOwner);
+	class ACsAIPawn* WakeUp(const TCsAIType &Type, FCsAIPawnPayload* Payload);
 
 	template<typename T>
-	void WakeUp(const TCsAIType &Type, class ACsAIPawn* &OutPawn, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	void WakeUp(const TCsAIType &Type, class ACsAIPawn* &OutPawn, FCsAIPawnPayload* Payload, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 	template<typename T>
-	void WakeUp(const TCsAIType &Type, class ACsAIPawn* &OutPawn, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	void WakeUp(const TCsAIType &Type, class ACsAIPawn* &OutPawn, FCsAIPawnPayload* Payload, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 	template<typename T>
-	void WakeUp(const TCsAIType &Type, class ACsAIPawn* &OutPawn, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	void WakeUp(const TCsAIType &Type, class ACsAIPawn* &OutPawn, FCsAIPawnPayload* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 
 #pragma endregion Wake Up
 };

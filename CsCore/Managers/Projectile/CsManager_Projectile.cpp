@@ -12,6 +12,22 @@
 // static initializations
 TWeakObjectPtr<UObject> ACsManager_Projectile::MyOwner;
 
+// Cache
+#pragma region
+
+namespace ECsManagerProjectileCachedString
+{
+	namespace Str
+	{
+		// Functions
+		const FString OnTick = TEXT("ACsManager_Projectile::OnTick");
+		const FString Fire = TEXT("ACsManager_Projectile::Fire");
+		const FString DeAllocate = TEXT("ACsManager_Projectile::DeAllocate");
+	};
+}
+
+#pragma endregion Cache
+
 ACsManager_Projectile::ACsManager_Projectile(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -121,7 +137,7 @@ void ACsManager_Projectile::OnTick(const float &DeltaSeconds)
 				UE_LOG(LogCs, Warning, TEXT("ACsManager_Projectile::OnTick: Projectile: %s at PoolIndex: %s was prematurely deallocted NOT in a normal way."), *(Projectile->GetName()), Projectile->Cache.Index);
 			}
 
-			LogTransaction(TEXT("ACsManager_Projectile::OnTick"), ECsPoolTransaction::Deallocate, Projectile);
+			LogTransaction(ECsManagerProjectileCachedString::Str::OnTick, ECsPoolTransaction::Deallocate, Projectile);
 
 			ActiveProjectiles.RemoveAt(I);
 
@@ -132,7 +148,7 @@ void ACsManager_Projectile::OnTick(const float &DeltaSeconds)
 
 		if (GetWorld()->GetTimeSeconds() - Projectile->Cache.Time > Projectile->Cache.LifeTime)
 		{
-			LogTransaction(TEXT("ACsManager_Projectile::OnTick"), ECsPoolTransaction::Deallocate, Projectile);
+			LogTransaction(ECsManagerProjectileCachedString::Str::OnTick, ECsPoolTransaction::Deallocate, Projectile);
 
 			Projectile->DeAllocate();
 			ActiveProjectiles.RemoveAt(I);
@@ -176,9 +192,9 @@ void ACsManager_Projectile::LogTransaction(const FString &FunctionName, const TE
 		const FString DataName		   = Projectile->Cache.GetData()->ShortCode.ToString();
 		const float CurrentTime		   = GetWorld()->GetTimeSeconds();
 		const UObject* ProjectileOwner = Projectile->Cache.GetOwner();
-		const FString OwnerName		   = ProjectileOwner ? ProjectileOwner->GetName() : TEXT("None");
+		const FString OwnerName		   = ProjectileOwner ? ProjectileOwner->GetName() : ECsCachedString::Str::None;
 		const UObject* Parent		   = Projectile->Cache.GetParent();
-		const FString ParentName	   = Parent ? Parent->GetName() : TEXT("None");
+		const FString ParentName	   = Parent ? Parent->GetName() : ECsCachedString::Str::None;
 		const FString LocationAsString = Projectile->GetActorLocation().ToString();
 		const FString DirectionAsString = Projectile->GetActorRotation().Vector().GetSafeNormal().ToString();
 
@@ -239,6 +255,8 @@ void ACsManager_Projectile::DeAllocate(const int32 &Index)
 
 		if (Projectile->Cache.Index == Index)
 		{
+			LogTransaction(ECsManagerProjectileCachedString::Str::DeAllocate, ECsPoolTransaction::Deallocate, Projectile);
+
 			Projectile->DeAllocate();
 			ActiveProjectiles.RemoveAt(I);
 			return;
@@ -265,7 +283,7 @@ ACsProjectile* ACsManager_Projectile::Fire(const TCsProjectileRelevance &Relevan
 
 	Projectile->Allocate((uint16)Count, Relevance, InData, Cache, InInstigator, InOwner, InParent);
 
-	LogTransaction(TEXT("ACsManager_Projectile::Fire"), ECsPoolTransaction::Allocate, Projectile);
+	LogTransaction(ECsManagerProjectileCachedString::Str::Fire, ECsPoolTransaction::Allocate, Projectile);
 
 	ActiveProjectiles.Add(Projectile);
 	return Projectile;
@@ -284,7 +302,14 @@ ACsProjectile* ACsManager_Projectile::Fire(const TCsProjectileRelevance &Relevan
 template<typename T>
 void ACsManager_Projectile::Fire(ACsProjectile* OutProjectile, const TCsProjectileRelevance &Relevance, ACsData_Projectile* InData, FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)())
 {
-	OutProjectile = nullptr;
+	OutProjectile	  = Allocate();
+	const int32 Count = ActiveProjectiles.Num();
+
+	OutProjectile->Allocate((uint16)Count, Relevance, InData, Cache, InInstigator, InOwner, InParent);
+
+	LogTransaction(ECsManagerProjectileCachedString::Str::Fire, ECsPoolTransaction::Allocate, OutProjectile);
+
+	ActiveProjectiles.Add(OutProjectile);
 }
 template<typename T>
 void ACsManager_Projectile::Fire(ACsProjectile* OutProjectile, const TCsProjectileRelevance &Relevance, ACsData_Projectile* InData, FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)())

@@ -156,7 +156,17 @@ TAutoConsoleVariable<int32> CsCVarLogManagerInteractiveActorTransactions(
 
 #pragma endregion Interactive Actor
 
-// Interactive AI Pawn
+// AI
+#pragma region
+
+TAutoConsoleVariable<int32> CsCVarLogManagerAITransactions(
+	TEXT("log.manager.ai.transactions"),
+	0,
+	TEXT("Log Manager A.I. Allocation and DeAllocation."),
+	ECVF_SetByConsole
+);
+
+	// Interactive AI Pawn
 #pragma region
 
 TAutoConsoleVariable<int32> CsCVarLogInteractiveAIPawnPhysicsStateChange(
@@ -167,6 +177,8 @@ TAutoConsoleVariable<int32> CsCVarLogInteractiveAIPawnPhysicsStateChange(
 );
 
 #pragma endregion Interactive AI Pawn
+
+#pragma endregion AI
 
 // Script
 #pragma region

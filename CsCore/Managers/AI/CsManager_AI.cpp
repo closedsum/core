@@ -1,11 +1,28 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/AI/CsManager_AI.h"
 #include "CsCore.h"
+#include "CsCVars.h"
 #include "Common/CsCommon.h"
 
 #include "AI/CsAIController.h"
 #include "AI/CsAIPawn.h"
 #include "Game/CsGameState.h"
+
+// Cache
+#pragma region
+
+namespace ECsManagerAICachedString
+{
+	namespace Str
+	{
+		// Functions
+		const FString WakeUp = TEXT("ACsManager_AI::WakeUp");
+		const FString DeAllocate = TEXT("ACsManager_AI::DeAllocate");
+		const FString DeAllocateAll = TEXT("ACsManager_AI::DeAllocateAll");
+	};
+}
+
+#pragma endregion Cache
 
 ACsManager_AI::ACsManager_AI(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -190,6 +207,45 @@ int32 ACsManager_AI::GetActivePoolSize(const uint8 &Type)
 	return PawnsPtr->Num();
 }
 
+void ACsManager_AI::LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, class UObject* InObject)
+{
+	if (CsCVarLogManagerAITransactions->GetInt() == CS_CVAR_SHOW_LOG)
+	{
+		ACsAIPawn* Pawn = Cast<ACsAIPawn>(InObject);
+
+		const FString TransactionAsString = ECsPoolTransaction::ToActionString(Transaction);
+
+		const FString PawnName			= Pawn->GetName();
+		//const FString DataName		= Pawn->Cache.GetData()->ShortCode.ToString();
+		const float CurrentTime			= GetWorld()->GetTimeSeconds();
+		const UObject* PawnOwner		= Pawn->Cache.GetOwner();
+		const FString OwnerName			= PawnOwner ? PawnOwner->GetName() : TEXT("None");
+		const UObject* Parent			= Pawn->Cache.GetParent();
+		const FString ParentName		= Parent ? Parent->GetName() : TEXT("None");
+		const FString LocationAsString	= Pawn->GetActorLocation().ToString();
+		const FString RotationAsString	= Pawn->GetActorRotation().ToString();
+
+		if (PawnOwner && Parent)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s Pawn: %s at %f for %s attached to %s at %s facing %s."), *FunctionName, *TransactionAsString, *PawnName, CurrentTime, *OwnerName, *ParentName, *LocationAsString, *RotationAsString);
+		}
+		else
+		if (PawnOwner)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s Pawn: %s at %f for %s at %s facing %s."), *FunctionName, *TransactionAsString, *PawnName, CurrentTime, *OwnerName, *LocationAsString, *RotationAsString);
+		}
+		else
+		if (Parent)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s Pawn: %s at %f attached to %s at %s facing %s."), *TransactionAsString, *FunctionName, *PawnName, CurrentTime, *ParentName, *LocationAsString, *RotationAsString);
+		}
+		else
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: %s Pawn: %s at %f at %s facing %s."), *FunctionName, *TransactionAsString, *PawnName, CurrentTime, *LocationAsString, *RotationAsString);
+		}
+}
+}
+
 ACsAIPawn* ACsManager_AI::Allocate(const TCsAIType &Type)
 {
 	TArray<ACsAIPawn*>* ActorPool = Pools.Find(Type);
@@ -231,6 +287,8 @@ void ACsManager_AI::DeAllocate(const uint8 &Type, const int32 &Index)
 
 		if (Actor->PoolIndex == Index)
 		{
+			LogTransaction(ECsManagerAICachedString::Str::DeAllocate, ECsPoolTransaction::Deallocate, Actor);
+
 			Actor->DeAllocate();
 			Actors->RemoveAt(I);
 			return;
@@ -256,6 +314,8 @@ void ACsManager_AI::DeAllocateAll()
 
 		for (int32 J = ActorCount - 1; J >= 0; --J)
 		{
+			LogTransaction(ECsManagerAICachedString::Str::DeAllocateAll, ECsPoolTransaction::Deallocate, (*Actors)[J]);
+
 			(*Actors)[J]->DeAllocate();
 			Actors->RemoveAt(J);
 		}
@@ -287,44 +347,50 @@ FCsAIPawnPayload* ACsManager_AI::AllocatePayload()
 // Wake Up
 #pragma region
 
-ACsAIPawn* ACsManager_AI::WakeUp(const TCsAIType &Type, UObject* InOwner, UObject* Parent)
+ACsAIPawn* ACsManager_AI::WakeUp(const TCsAIType &Type, FCsAIPawnPayload* Payload, UObject* InOwner, UObject* Parent)
 {
 	ACsAIPawn* Actor = Allocate(Type);
 
 	Actor->Allocate(GetActivePoolSize((uint8)Type), GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InOwner, Parent);
+
+	LogTransaction(ECsManagerAICachedString::Str::WakeUp, ECsPoolTransaction::Allocate, Actor);
+
 	AddToActivePool(Actor, (uint8)Type);
 	return Actor;
 }
 
-ACsAIPawn* ACsManager_AI::WakeUp(const TCsAIType &Type, UObject* InOwner)
+ACsAIPawn* ACsManager_AI::WakeUp(const TCsAIType &Type, FCsAIPawnPayload* Payload, UObject* InOwner)
 {
-	return WakeUp(Type, InOwner, nullptr);
+	return WakeUp(Type, Payload, InOwner, nullptr);
 }
 
-ACsAIPawn* ACsManager_AI::WakeUp(const TCsAIType &Type)
+ACsAIPawn* ACsManager_AI::WakeUp(const TCsAIType &Type, FCsAIPawnPayload* Payload)
 {
-	return WakeUp(Type, nullptr, nullptr);
+	return WakeUp(Type, Payload, nullptr, nullptr);
 }
 
 template<typename T>
-void ACsManager_AI::WakeUp(const TCsAIType &Type, ACsAIPawn* &OutPawn, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsManager_AI::WakeUp(const TCsAIType &Type, ACsAIPawn* &OutPawn, FCsAIPawnPayload* Payload, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
 	OutPawn = Allocate(Type);
 
 	OutPawn->Allocate<T>(GetActivePoolSize((uint8)Type), GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InOwner, Parent, InObject, OnDeAllocate);
+
+	LogTransaction(ECsManagerAICachedString::Str::WakeUp, ECsPoolTransaction::Allocate, OutPawn);
+
 	AddToActivePool(Actor, (uint8)Type);
 }
 
 template<typename T>
-void ACsManager_AI::WakeUp(const TCsAIType &Type, ACsAIPawn* &OutPawn, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsManager_AI::WakeUp(const TCsAIType &Type, ACsAIPawn* &OutPawn, FCsAIPawnPayload* Payload, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
-	WakeUp<T>(Type, OutPawn, nullptr, InOwner, InObject, OnDeAllocate);
+	WakeUp<T>(Type, OutPawn, Payload, nullptr, InOwner, InObject, OnDeAllocate);
 }
 
 template<typename T>
-void ACsManager_AI::WakeUp(const TCsAIType &ClassType, ACsAIPawn* &OutPawn, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsManager_AI::WakeUp(const TCsAIType &ClassType, ACsAIPawn* &OutPawn, FCsAIPawnPayload* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
-	WakeUp<T>(Type, OutPawn, nullptr, nullptr, InObject, OnDeAllocate);
+	WakeUp<T>(Type, OutPawn, Payload, nullptr, nullptr, InObject, OnDeAllocate);
 }
 
 #pragma endregion Wake Up

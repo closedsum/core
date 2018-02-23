@@ -3,7 +3,7 @@
 #include "Data/CsData.h"
 #include "CsData_Interactive.generated.h"
 
-UCLASS(hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
+UCLASS(Abstract, hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
 class CSCORE_API ACsData_Interactive : public ACsData
 {
 	GENERATED_UCLASS_BODY()

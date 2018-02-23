@@ -4,7 +4,7 @@
 #include "Types/CsTypes_Recipe.h"
 #include "CsData_Recipe.generated.h"
 
-UCLASS(hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
+UCLASS(Abstract, hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
 class CSCORE_API ACsData_Recipe : public ACsData
 {
 	GENERATED_UCLASS_BODY()

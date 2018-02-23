@@ -84,7 +84,7 @@ struct FCsDataLoadFromJson
 
 #pragma endregion Structs
 
-UCLASS(hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
+UCLASS(Abstract, NotBlueprintable, hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
 class CSCORE_API ACsData : public AActor
 {
 	GENERATED_UCLASS_BODY()

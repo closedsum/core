@@ -4,7 +4,7 @@
 #include "Types/CsTypes_View.h"
 #include "CsData_WeaponMaterialSkin.generated.h"
 
-UCLASS(hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
+UCLASS(Abstract, hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
 class CSCORE_API ACsData_WeaponMaterialSkin : public ACsData
 {
 	GENERATED_UCLASS_BODY()

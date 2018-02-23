@@ -1,7 +1,7 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Pawn/CsPawn.h"
-#include "Types/CsTypes.h"
+#include "Types/CsTypes_AI.h"
 #include "Types/CsTypes_Pool.h"
 #include "CsAIPawn.generated.h"
 
@@ -108,15 +108,15 @@ class CSCORE_API ACsAIPawn : public ACsPawn
 	virtual void OnPostCreatePool();
 
 	template<typename T>
-	void Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	void Allocate(const uint16 &ActiveIndex, FCsAIPawnPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 
 	template<typename T>
-	void Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	void Allocate(const uint16 &ActiveIndex, FCsAIPawnPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 
-	void Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent);
-	void Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame);
+	void Allocate(const uint16 &ActiveIndex, FCsAIPawnPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent);
+	void Allocate(const uint16 &ActiveIndex, FCsAIPawnPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame);
 
-	virtual void Allocate_Internal();
+	virtual void Allocate_Internal(FCsAIPawnPayload* Payload);
 
 	virtual void DeAllocate();
 

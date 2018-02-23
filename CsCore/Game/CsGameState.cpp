@@ -15,9 +15,13 @@
 #include "Javascript/CsJavascriptEntryPoint.h"
 #include "Data/CsDataMapping.h"
 
+// Player
 #include "Player/CsPlayerController.h"
 #include "Player/CsPlayerState.h"
 #include "Player/CsPlayerPawn.h"
+
+// A.I.
+#include "AI/CsAIPlayerState.h"
 
 // UI
 #include "UI/CsUI.h"
@@ -91,6 +95,9 @@ ACsGameState::ACsGameState(const FObjectInitializer& ObjectInitializer)
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
 
+	CurrentPlayerStateUniqueMappingId = 0;
+	CurrentAIPlayerStateUniqueMappingId = 0;
+
 	JavascriptEntryPointClass = ACsJavascriptEntryPoint::StaticClass();
 
 #if WITH_EDITOR
@@ -103,6 +110,7 @@ void ACsGameState::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 
 	OnTick_HandleBroadcastingPlayerStateFullyReplicatedAndLoaded();
+	OnTick_HandleBroadcastingAIPlayerStateFullyReplicatedAndLoaded();
 }
 
 void ACsGameState::PostActorCreated()
@@ -355,11 +363,13 @@ void ACsGameState::AddPlayerState(class APlayerState* PlayerState)
 	if (Role < ROLE_Authority)
 		return;
 
-	ACsPlayerState* NewPlayerState = Cast<ACsPlayerState>(PlayerState);
+	// Player
+	if (ACsPlayerState* NewPlayerState = Cast<ACsPlayerState>(PlayerState))
+		AddPlayerStateMapping(NewPlayerState);
+}
 
-	if (!NewPlayerState)
-		return;
-
+void ACsGameState::AddPlayerStateMapping(ACsPlayerState* NewPlayerState)
+{
 	NewPlayerState->UniqueMappingId = CurrentPlayerStateUniqueMappingId;
 
 	PlayerStateMappings.Add(NewPlayerState->UniqueMappingId, NewPlayerState);
@@ -377,14 +387,14 @@ void ACsGameState::AddPlayerState(class APlayerState* PlayerState)
 
 	for (int32 I = 0; I < NumMappingKeys; ++I)
 	{
-		const uint8 Key = MappingKeys[I];
+		const uint8& Key = MappingKeys[I];
 
 		// For a NEW entry, add ALL relationships
 		if (Key == CurrentPlayerStateUniqueMappingId)
 		{
 			TArray<FCsPlayerStateMappingRelationship>* Relationships = PlayerStateMappingRelationships.Find(Key);
 
-			for (int32 J = 0; J < NumMappingKeys; J++)
+			for (int32 J = 0; J < NumMappingKeys; ++J)
 			{
 				Relationships->AddDefaulted(1);
 
@@ -407,6 +417,24 @@ void ACsGameState::AddPlayerState(class APlayerState* PlayerState)
 		}
 	}
 	HasPlayerStateFullyReplicatedAndLoadedBroadcastFlags.Add(NewPlayerState->UniqueMappingId, false);
+
+	// Add to AIPlayerStateMappingRelationships
+
+	TArray<uint8> AIRelationshipKeys;
+	const int32 NumAIRelationshipKeys = AIPlayerStateMappingRelationships.GetKeys(AIRelationshipKeys);
+
+	for (int32 I = 0; I < NumAIRelationshipKeys; ++I)
+	{
+		const uint8& Key = AIRelationshipKeys[I];
+
+		TArray<FCsAIPlayerStateMappingRelationship>* Relationships = AIPlayerStateMappingRelationships.Find(Key);
+
+		Relationships->AddDefaulted(1);
+
+		FCsAIPlayerStateMappingRelationship& Relationship = (*Relationships)[I];
+		Relationship.A = Key;
+		Relationship.B = CurrentPlayerStateUniqueMappingId;
+	}
 
 	CurrentPlayerStateUniqueMappingId++;
 }
@@ -432,7 +460,7 @@ void ACsGameState::OnTick_HandleBroadcastingPlayerStateFullyReplicatedAndLoaded(
 
 	for (int32 I = 0; I < NumRelationshipKeys; ++I)
 	{
-		const uint8 Key = RelationshipKeys[I];
+		const uint8& Key = RelationshipKeys[I];
 
 		ACsPlayerState* PlayerState = GetPlayerState(Key);
 
@@ -482,14 +510,14 @@ void ACsGameState::OnTick_HandleBroadcastingPlayerStateFullyReplicatedAndLoaded(
 
 void ACsGameState::SetPlayerStateMappingRelationshipFlag(const uint8 &ClientMappingId, const uint8 &MappingId)
 {
-	TArray<FCsPlayerStateMappingRelationship>* Relationships = PlayerStateMappingRelationships.Find(ClientMappingId);
+	TArray<FCsPlayerStateMappingRelationship>* Relationships = PlayerStateMappingRelationships.Find(MappingId);
 	const int32 NumRelationships							 = Relationships->Num();
 
 	for (int32 I = 0; I < NumRelationships; ++I)
 	{
 		FCsPlayerStateMappingRelationship& Relationship = (*Relationships)[I];
 
-		if (Relationship.B == MappingId)
+		if (Relationship.B == ClientMappingId)
 		{
 			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 			{
@@ -500,7 +528,7 @@ void ACsGameState::SetPlayerStateMappingRelationshipFlag(const uint8 &ClientMapp
 				const FString OtherName  = PlayerState ? PlayerState->PlayerName : ECsCachedString::Str::INVALID;
 				const FString Value		 = Relationship.HasBCompletedInitialReplicationAndLoadingForA ? ECsCachedString::Str::True : ECsCachedString::Str::False;
 
-				UE_LOG(LogCs, Log, TEXT("ACsGameState::SetPlayerStateMappingRelationshipFlag: Relationship: %s(%d) <-> %s(%d) from %s to True."), *ClientName, ClientMappingId, *OtherName, MappingId, *Value);
+				UE_LOG(LogCs, Log, TEXT("ACsGameState::SetPlayerStateMappingRelationshipFlag: Relationship: %s(%d) <-> %s(%d) from %s to True."), *OtherName, MappingId, *ClientName, ClientMappingId, *Value);
 			}
 			Relationship.HasBCompletedInitialReplicationAndLoadingForA = true;
 			break;
@@ -514,6 +542,134 @@ FString ACsGameState::GetLocalPlayerProfileName()
 }
 
 #pragma endregion Player State
+
+// A.I. Player State
+#pragma region
+
+void ACsGameState::AddAIPlayerStateMapping(ACsAIPlayerState* NewPlayerState)
+{
+	NewPlayerState->UniqueMappingId = CurrentAIPlayerStateUniqueMappingId;
+
+	AIPlayerStateMappings.Add(NewPlayerState->UniqueMappingId, NewPlayerState);
+
+	TArray<uint8> MappingKeys;
+	const int32 NumMappingKeys = AIPlayerStateMappings.GetKeys(MappingKeys);
+
+	AIPlayerStateMappingRelationships.Add(NewPlayerState->UniqueMappingId);
+
+	// For a NEW entry, add ALL relationships
+	TArray<uint8> PlayerStateKeys;
+	const int32 NumPlayerStateKeys = PlayerStateMappings.GetKeys(PlayerStateKeys);
+
+	TArray<FCsAIPlayerStateMappingRelationship>* Relationships = AIPlayerStateMappingRelationships.Find(CurrentPlayerStateUniqueMappingId);
+
+	for (int32 I = 0; I < NumPlayerStateKeys; ++I)
+	{
+		Relationships->AddDefaulted(1);
+
+		FCsAIPlayerStateMappingRelationship& Relationship = (*Relationships)[I];
+		Relationship.A = CurrentPlayerStateUniqueMappingId;
+		Relationship.B = PlayerStateKeys[I];
+	}
+
+	HasAIPlayerStateFullyReplicatedAndLoadedBroadcastFlags.Add(NewPlayerState->UniqueMappingId, false);
+
+	CurrentAIPlayerStateUniqueMappingId++;
+}
+
+class ACsAIPlayerState* ACsGameState::GetAIPlayerState(const uint8 &MappingId)
+{
+	TWeakObjectPtr<ACsAIPlayerState>* PtrPlayerState = AIPlayerStateMappings.Find(MappingId);
+
+	if (!PtrPlayerState)
+		return nullptr;
+	return (*PtrPlayerState).IsValid() ? (*PtrPlayerState).Get() : nullptr;
+}
+
+void ACsGameState::OnTick_HandleBroadcastingAIPlayerStateFullyReplicatedAndLoaded()
+{
+	TArray<uint8> RelationshipKeys;
+	const int32 NumRelationshipKeys = AIPlayerStateMappingRelationships.GetKeys(RelationshipKeys);
+
+	for (int32 I = 0; I < NumRelationshipKeys; ++I)
+	{
+		const uint8& Key = RelationshipKeys[I];
+
+		ACsAIPlayerState* PlayerState = GetAIPlayerState(Key);
+
+		// Check if PlayerState is still VALID (i.e. Player could have Disconnected)
+		if (!PlayerState)
+			continue;
+
+		TArray<FCsPlayerStateMappingRelationship>* Relationships = PlayerStateMappingRelationships.Find(Key);
+		const int32 NumRelationships							 = Relationships->Num();
+
+		bool ShouldBroadcast = true;
+
+		for (int32 J = 0; J < NumRelationships; J++)
+		{
+			FCsPlayerStateMappingRelationship& Relationship = (*Relationships)[J];
+
+			// If PlayerState is NOT VALID, Skip
+			if (!GetPlayerState(Relationship.B))
+				continue;
+
+			ShouldBroadcast &= Relationship.HasBCompletedInitialReplicationAndLoadingForA;
+		}
+
+		bool* BroadcastFlag = HasAIPlayerStateFullyReplicatedAndLoadedBroadcastFlags.Find(Key);
+
+		// If SHOULD Broadcast and Has NOT Broadcasted before, BROADCAST
+		if (ShouldBroadcast && !(*BroadcastFlag))
+		{
+			*BroadcastFlag = true;
+
+			PlayerState->MulticastSetIsOnBoardCompleted();
+
+		}
+		// If Should NOT Broadcast and HAS Broadcasted before, SET BroadcastFlag to FALSE
+
+		// TODO: See if this is necessary
+		/*
+		if (!ShouldBroadcast && *BroadcastFlag)
+		{
+		*BroadcastFlag = false;
+
+		PlayerState->MulticastUnSetIsOnBoardCompleted();
+		}
+		*/
+	}
+}
+
+void ACsGameState::SetAIPlayerStateMappingRelationshipFlag(const uint8 &ClientMappingId, const uint8 &MappingId)
+{
+	TArray<FCsAIPlayerStateMappingRelationship>* Relationships = AIPlayerStateMappingRelationships.Find(MappingId);
+	const int32 NumRelationships							   = Relationships->Num();
+
+	for (int32 I = 0; I < NumRelationships; ++I)
+	{
+		FCsAIPlayerStateMappingRelationship& Relationship = (*Relationships)[I];
+
+		if (Relationship.B == ClientMappingId)
+		{
+			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
+			{
+				ACsPlayerState* ClientPlayerState = GetPlayerState(ClientMappingId);
+				ACsAIPlayerState* PlayerState	  = GetAIPlayerState(MappingId);
+
+				const FString ClientName = ClientPlayerState ? ClientPlayerState->PlayerName : ECsCachedString::Str::INVALID;
+				const FString OtherName  = PlayerState ? PlayerState->PlayerName : ECsCachedString::Str::INVALID;
+				const FString Value		 = Relationship.HasBCompletedInitialReplicationAndLoadingForA ? ECsCachedString::Str::True : ECsCachedString::Str::False;
+
+				UE_LOG(LogCs, Log, TEXT("ACsGameState::SetAIPlayerStateMappingRelationshipFlag: Relationship: %s(%d) <-> %s(%d) from %s to True."), *OtherName, MappingId, *ClientName, ClientMappingId, *Value);
+			}
+			Relationship.HasBCompletedInitialReplicationAndLoadingForA = true;
+			break;
+		}
+	}
+}
+
+#pragma endregion A.I. Player State
 
 #if WITH_EDITOR
 

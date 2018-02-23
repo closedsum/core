@@ -53,11 +53,13 @@ class CSCORE_API UCsManager_Widget : public UObject
 
 // Payload
 #pragma region
-public:
+private:
 
 	FCsPooledWidgetPayload Payloads[CS_POOLED_WIDGET_PAYLOAD_SIZE];
 
 	uint8 PayloadIndex;
+
+public:
 
 	FCsPooledWidgetPayload* AllocatePayload();
 

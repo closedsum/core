@@ -7,7 +7,7 @@
 #include "MotionControllerComponent.h"
 #include "../InputCore/Classes/InputCoreTypes.h"
 #include "Managers/InteractiveActor/CsInteractiveActor.h"
-#include "Pawn/CsInteractiveAIPawn.h"
+#include "AI/CsInteractiveAIPawn.h"
 #include "Player/CsPlayerController.h"
 // UI
 #include "UI/Button/CsButtonComponent.h"

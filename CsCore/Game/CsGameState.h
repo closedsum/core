@@ -247,10 +247,15 @@ public:
 
 // Player State
 #pragma region
+private:
 
 	uint8 CurrentPlayerStateUniqueMappingId;
 
+public:
+
 	virtual void AddPlayerState(class APlayerState* PlayerState) override;
+	void AddPlayerStateMapping(class ACsPlayerState* NewPlayerState);
+
 	virtual void RemovePlayerState(class APlayerState* PlayerState) override;
 
 	TMap<uint8, TWeakObjectPtr<class ACsPlayerState>> PlayerStateMappings;
@@ -269,12 +274,27 @@ public:
 
 #pragma endregion Player State
 
-// AI Player State
+// A.I. Player State
 #pragma region
+private:
 
+	uint8 CurrentAIPlayerStateUniqueMappingId;
 
+public:
 
-#pragma endregion
+	void AddAIPlayerStateMapping(class ACsAIPlayerState* NewPlayerState);
+
+	TMap<uint8, TWeakObjectPtr<class ACsAIPlayerState>> AIPlayerStateMappings;
+	TMap<uint8, TArray<FCsAIPlayerStateMappingRelationship>> AIPlayerStateMappingRelationships;
+	TMap<uint8, bool> HasAIPlayerStateFullyReplicatedAndLoadedBroadcastFlags;
+
+	class ACsAIPlayerState* GetAIPlayerState(const uint8 &MappingId);
+
+	void OnTick_HandleBroadcastingAIPlayerStateFullyReplicatedAndLoaded();
+
+	void SetAIPlayerStateMappingRelationshipFlag(const uint8 &ClientMappingId, const uint8 &MappingId);
+
+#pragma endregion A.I. Player State
 
 #if WITH_EDITOR
 	virtual void OnPrePIEEnded(const bool IsSimulating);

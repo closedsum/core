@@ -62,12 +62,19 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerInteractiveActorTr
 
 #pragma endregion Interactive Actor
 
-// Interactive AI Pawn
+// AI
+#pragma region
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerAITransactions;
+
+	// Interactive AI Pawn
 #pragma region
 
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInteractiveAIPawnPhysicsStateChange;
 
 #pragma endregion Interactive AI Pawn
+
+#pragma endregion AI
 
 // Script
 #pragma region

@@ -1433,18 +1433,6 @@ public:
 
 #pragma endregion Blueprint
 
-// AI
-#pragma region
-
-namespace ECsAIType
-{
-	enum Type : uint8;
-}
-
-typedef ECsAIType::Type TCsAIType;
-
-#pragma endregion AI
-
 // VR
 #pragma region
 

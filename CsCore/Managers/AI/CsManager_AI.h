@@ -1,7 +1,7 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Managers/CsManager.h"
-#include "Types/CsTypes.h"
+#include "Types/CsTypes_AI.h"
 #include "CsManager_AI.generated.h"
 
 typedef FString(*TCsAITypeToString)(const ECsAIType::Type&);

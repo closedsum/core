@@ -1,7 +1,7 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "AI/CsAIPawn.h"
 #include "CsCore.h"
-#include "../AIModule/Classes/AIController.h"
+#include "AI/CsAIController.h"
 
 ACsAIPawn::ACsAIPawn(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -10,7 +10,7 @@ ACsAIPawn::ACsAIPawn(const FObjectInitializer& ObjectInitializer)
 
 	AutoPossessPlayer = EAutoReceiveInput::Disabled;
 	AutoPossessAI	  = EAutoPossessAI::PlacedInWorldOrSpawned;
-	AIControllerClass = AAIController::StaticClass();
+	AIControllerClass = ACsAIController::StaticClass();
 }
 
 

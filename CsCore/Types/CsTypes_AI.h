@@ -28,4 +28,30 @@ typedef TCsAIType(*TCsStringToAIType)(const FString&);
 							AITypeToString = &ECsAIType::ToString; \
 							StringToAIType = &ECsAIType::ToType;
 
+
+
+struct FCsAIPawnPayload
+{
+	bool IsAllocated;
+	bool TeleportLocation;
+	FVector Location;
+	bool TeleportRotation;
+	FRotator Rotation;
+
+	FCsAIPawnPayload()
+	{
+		Reset();
+	}
+	~FCsAIPawnPayload() {}
+
+	void Reset()
+	{
+		IsAllocated = false;
+		TeleportLocation = false;
+		Location = FVector::ZeroVector;
+		TeleportRotation = false;
+		Rotation = FRotator::ZeroRotator;
+	}
+};
+
 #pragma endregion AI

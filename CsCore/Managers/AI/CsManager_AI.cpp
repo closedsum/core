@@ -1,6 +1,9 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/AI/CsManager_AI.h"
 #include "CsCore.h"
+#include "Common/CsCommon.h"
+
+#include "AI/CsAIController.h"
 #include "AI/CsAIPawn.h"
 #include "Game/CsGameState.h"
 
@@ -15,7 +18,21 @@ void ACsManager_AI::Shutdown()
 {
 	Super::Shutdown();
 
-	const int32 Count = Pool.Num();
+	int32 Count = ControllerPool.Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		if (ControllerPool[I] && !ControllerPool[I]->IsPendingKill())
+		{
+			ControllerPool[I]->UnPossess();
+			ControllerPool[I]->Destroy(true);
+		}
+	}
+	ControllerPool.Reset();
+	ControllerPools.Reset();
+	ActiveControllers.Reset();
+
+	Count = Pool.Num();
 
 	for (int32 I = 0; I < Count; ++I)
 	{
@@ -26,23 +43,12 @@ void ACsManager_AI::Shutdown()
 	Pools.Reset();
 	PoolSizes.Reset();
 	PoolIndices.Reset();
-	ActiveAIPawns.Reset();
+	ActivePawns.Reset();
 }
 
 void ACsManager_AI::Destroyed()
 {
-	const int32 Count = Pool.Num();
-
-	for (int32 I = 0; I < Count; ++I)
-	{
-		if (Pool[I] && !Pool[I]->IsPendingKill())
-			Pool[I]->Destroy(true);
-	}
-	Pool.Reset();
-	Pools.Reset();
-	PoolSizes.Reset();
-	PoolIndices.Reset();
-	ActiveAIPawns.Reset();
+	Shutdown();
 
 	Super::Destroyed();
 }
@@ -71,6 +77,7 @@ void ACsManager_AI::CreatePool(const TSubclassOf<class UObject> &ObjectClass, co
 	PoolIndices.Add(ClassType, 0);
 
 	TArray<ACsAIPawn*> PawnPool;
+	TArray<ACsAIController*> TempControllerPool;
 
 	for (int32 I = 0; I < Size; ++I)
 	{
@@ -79,8 +86,14 @@ void ACsManager_AI::CreatePool(const TSubclassOf<class UObject> &ObjectClass, co
 		Pawn->OnCreatePool();
 		Pool.Add(Pawn);
 		PawnPool.Add(Pawn);
+
+		ACsAIController* Controller = Cast<ACsAIController>(Pawn->Controller);
+
+		ControllerPool.Add(Controller);
+		TempControllerPool.Add(Controller);
 	}
 	Pools.Add(ClassType, PawnPool);
+	ControllerPools.Add(ClassType, TempControllerPool);
 }
 
 void ACsManager_AI::AddToPool(UObject* InObject, const uint8& Type)
@@ -134,7 +147,7 @@ void ACsManager_AI::AddToActivePool(UObject* InObject, const uint8& Type)
 
 	const TCsAIType ClassType = (TCsAIType)Type;
 
-	TArray<ACsAIPawn*>* ActorPoolPtr = ActiveAIPawns.Find(ClassType);
+	TArray<ACsAIPawn*>* ActorPoolPtr = ActivePawns.Find(ClassType);
 
 	Actor->Cache.IsAllocated = true;
 
@@ -146,7 +159,7 @@ void ACsManager_AI::AddToActivePool(UObject* InObject, const uint8& Type)
 	{
 		TArray<ACsAIPawn*> ActorPool;
 		ActorPool.Add(Actor);
-		ActiveAIPawns.Add(ClassType, ActorPool);
+		ActivePawns.Add(ClassType, ActorPool);
 	}
 }
 
@@ -170,7 +183,7 @@ void ACsManager_AI::OnTick(const float &DeltaSeconds)
 
 int32 ACsManager_AI::GetActivePoolSize(const uint8 &Type)
 {
-	TArray<ACsAIPawn*>* PawnsPtr = ActiveAIPawns.Find((TCsAIType)Type);
+	TArray<ACsAIPawn*>* PawnsPtr = ActivePawns.Find((TCsAIType)Type);
 
 	if (!PawnsPtr)
 		return CS_EMPTY;
@@ -202,7 +215,7 @@ void ACsManager_AI::DeAllocate(const uint8 &Type, const int32 &Index)
 {
 	const TCsAIType ClassType = (TCsAIType)Type;
 
-	TArray<ACsAIPawn*>* Actors = ActiveAIPawns.Find(ClassType);
+	TArray<ACsAIPawn*>* Actors = ActivePawns.Find(ClassType);
 
 	if (!Actors)
 	{
@@ -234,7 +247,7 @@ void ACsManager_AI::DeAllocateAll()
 	{
 		const TCsAIType Type = (TCsAIType)I;
 
-		TArray<ACsAIPawn*>* Actors = ActiveAIPawns.Find(Type);
+		TArray<ACsAIPawn*>* Actors = ActivePawns.Find(Type);
 
 		if (!Actors)
 			continue;
@@ -249,11 +262,36 @@ void ACsManager_AI::DeAllocateAll()
 	}
 }
 
+// Payload
+#pragma region
+
+FCsAIPawnPayload* ACsManager_AI::AllocatePayload()
+{
+	for (uint8 I = 0; I < CS_AI_PAWN_PAYLOAD_SIZE; ++I)
+	{
+		const uint8 Index		  = (PayloadIndex + I) % CS_AI_PAWN_PAYLOAD_SIZE;
+		FCsAIPawnPayload* Payload = &(Payloads[Index]);
+
+		if (!Payload->IsAllocated)
+		{
+			Payload->IsAllocated = true;
+			return Payload;
+		}
+	}
+	checkf(0, TEXT("UCsManager_Widget::AllocatePayload: Pool is exhausted"));
+	return nullptr;
+}
+
+#pragma endregion Payload
+
+// Wake Up
+#pragma region
+
 ACsAIPawn* ACsManager_AI::WakeUp(const TCsAIType &Type, UObject* InOwner, UObject* Parent)
 {
 	ACsAIPawn* Actor = Allocate(Type);
 
-	Actor->Allocate(GetActivePoolSize((uint8)Type), GetWorld()->TimeSeconds, GetWorld()->RealTimeSeconds, 0, InOwner, Parent);
+	Actor->Allocate(GetActivePoolSize((uint8)Type), GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InOwner, Parent);
 	AddToActivePool(Actor, (uint8)Type);
 	return Actor;
 }
@@ -273,7 +311,7 @@ void ACsManager_AI::WakeUp(const TCsAIType &Type, ACsAIPawn* &OutPawn, UObject* 
 {
 	OutPawn = Allocate(Type);
 
-	OutPawn->Allocate<T>(GetActivePoolSize((uint8)Type), GetWorld()->TimeSeconds, GetWorld()->RealTimeSeconds, 0, InOwner, Parent, InObject, OnDeAllocate);
+	OutPawn->Allocate<T>(GetActivePoolSize((uint8)Type), GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InOwner, Parent, InObject, OnDeAllocate);
 	AddToActivePool(Actor, (uint8)Type);
 }
 
@@ -288,3 +326,5 @@ void ACsManager_AI::WakeUp(const TCsAIType &ClassType, ACsAIPawn* &OutPawn, T* I
 {
 	WakeUp<T>(Type, OutPawn, nullptr, nullptr, InObject, OnDeAllocate);
 }
+
+#pragma endregion Wake Up

@@ -4,7 +4,7 @@
 #include "Types/CsTypes_AI.h"
 #include "CsManager_AI.generated.h"
 
-typedef FString(*TCsAITypeToString)(const ECsAIType::Type&);
+#define CS_AI_PAWN_PAYLOAD_SIZE 256
 
 UCLASS()
 class CSCORE_API ACsManager_AI : public ACsManager
@@ -28,13 +28,17 @@ class CSCORE_API ACsManager_AI : public ACsManager
 	TMap<TCsAIType, uint8> PoolSizes;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Pool")
+	TArray<class ACsAIController*> ControllerPool;
+
+	TMap<TCsAIType, TArray<class ACsAIController*>> ControllerPools;
+	TMap<TCsAIType, TArray<class ACsAIController*>> ActiveControllers;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Pool")
 	TArray<class ACsAIPawn*> Pool;
 
 	TMap<TCsAIType, TArray<class ACsAIPawn*>> Pools;
-
+	TMap<TCsAIType, TArray<class ACsAIPawn*>> ActivePawns;
 	TMap<TCsAIType, uint8> PoolIndices;
-
-	TMap<TCsAIType, TArray<class ACsAIPawn*>> ActiveAIPawns;
 
 	virtual int32 GetActivePoolSize(const uint8 &Type) override;
 
@@ -42,6 +46,24 @@ class CSCORE_API ACsManager_AI : public ACsManager
 
 	virtual void DeAllocate(const uint8 &Type, const int32 &Index) override;
 	virtual void DeAllocateAll() override;
+
+// Payload
+#pragma region
+private:
+
+	FCsAIPawnPayload Payloads[CS_AI_PAWN_PAYLOAD_SIZE];
+
+	uint8 PayloadIndex;
+
+public:
+
+	FCsAIPawnPayload* AllocatePayload();
+
+#pragma endregion Payload
+
+// Wake Up
+#pragma region
+public:
 
 	class ACsAIPawn* WakeUp(const TCsAIType &Type, UObject* InOwner, UObject* Parent);
 	class ACsAIPawn* WakeUp(const TCsAIType &Type, UObject* InOwner);
@@ -53,4 +75,6 @@ class CSCORE_API ACsManager_AI : public ACsManager
 	void WakeUp(const TCsAIType &Type, class ACsAIPawn* &OutPawn, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 	template<typename T>
 	void WakeUp(const TCsAIType &Type, class ACsAIPawn* &OutPawn, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+
+#pragma endregion Wake Up
 };

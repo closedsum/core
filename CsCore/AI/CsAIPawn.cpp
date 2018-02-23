@@ -23,41 +23,43 @@ void ACsAIPawn::Init(const int32 &Index, const TCsAIType &InType)
 	Cache.Set(Index, this);
 }
 
-void ACsAIPawn::OnCreatePool(){}
+void ACsAIPawn::OnCreatePool()
+{
+	SetActorHiddenInGame(true);
+	SetActorTickEnabled(false);
+}
+
 void ACsAIPawn::OnPostCreatePool(){}
 
 template<typename T>
-void ACsAIPawn::Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsAIPawn::Allocate(const uint16 &ActiveIndex, FCsAIPawnPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
 	Cache.Init<T>(ActiveIndex, Time, RealTime, Frame, InOwner, InParent, InObject, OnDeAllocate);
 
-	Allocate_Internal();
+	Allocate_Internal(Payload);
 }
 
 template<typename T>
-void ACsAIPawn::Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsAIPawn::Allocate(const uint16 &ActiveIndex, FCsAIPawnPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
-	Cache.Init<T>(ActiveIndex, Time, RealTime, Frame, InObject, OnDeAllocate);
-
-	Allocate_Internal();
+	Allocate<T>(ActiveIndex, Payload, Time, RealTime, Frame, nullptr, nullptr, InObject, OnDeAllocate);
 }
 
-void ACsAIPawn::Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent)
+void ACsAIPawn::Allocate(const uint16 &ActiveIndex, FCsAIPawnPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent)
 {
 	Cache.Init(ActiveIndex, Time, RealTime, Frame, InOwner, InParent);
 
-	Allocate_Internal();
+	Allocate_Internal(Payload);
 }
 
-void ACsAIPawn::Allocate(const uint16 &ActiveIndex, const float &Time, const float &RealTime, const uint64 &Frame)
+void ACsAIPawn::Allocate(const uint16 &ActiveIndex, FCsAIPawnPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame)
 {
-	Cache.Init(ActiveIndex, Time, RealTime, Frame);
-
-	Allocate_Internal();
+	Allocate(ActiveIndex, Payload, Time, RealTime, Frame, nullptr, nullptr);
 }
 
-void ACsAIPawn::Allocate_Internal()
+void ACsAIPawn::Allocate_Internal(FCsAIPawnPayload* Payload)
 {
+	SetActorHiddenInGame(false);
 	SetActorTickEnabled(true);
 }
 

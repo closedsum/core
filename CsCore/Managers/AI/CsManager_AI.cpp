@@ -351,11 +351,12 @@ ACsAIPawn* ACsManager_AI::WakeUp(const TCsAIType &Type, FCsAIPawnPayload* Payloa
 {
 	ACsAIPawn* Actor = Allocate(Type);
 
-	Actor->Allocate(GetActivePoolSize((uint8)Type), GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InOwner, Parent);
+	Actor->Allocate(GetActivePoolSize((uint8)Type), Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InOwner, Parent);
 
 	LogTransaction(ECsManagerAICachedString::Str::WakeUp, ECsPoolTransaction::Allocate, Actor);
 
 	AddToActivePool(Actor, (uint8)Type);
+	Payload->Reset();
 	return Actor;
 }
 
@@ -374,11 +375,12 @@ void ACsManager_AI::WakeUp(const TCsAIType &Type, ACsAIPawn* &OutPawn, FCsAIPawn
 {
 	OutPawn = Allocate(Type);
 
-	OutPawn->Allocate<T>(GetActivePoolSize((uint8)Type), GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InOwner, Parent, InObject, OnDeAllocate);
+	OutPawn->Allocate<T>(GetActivePoolSize((uint8)Type), Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InOwner, Parent, InObject, OnDeAllocate);
 
 	LogTransaction(ECsManagerAICachedString::Str::WakeUp, ECsPoolTransaction::Allocate, OutPawn);
 
 	AddToActivePool(Actor, (uint8)Type);
+	Payload->Reset();
 }
 
 template<typename T>

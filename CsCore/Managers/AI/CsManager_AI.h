@@ -13,9 +13,7 @@ class CSCORE_API ACsManager_AI : public ACsManager
 
 	virtual void Shutdown() override;
 
-	TCsAIType AIType_MAX;
-
-	TCsAITypeToString AITypeToString;
+	CS_DECLARE_AI_TYPE
 
 	void Init(const TCsAIType &InAIType_MAX, TCsAITypeToString InAITypeToString);
 

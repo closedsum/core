@@ -130,6 +130,10 @@ namespace ECsInventoryItemState_Editor
 	};
 }
 
+
+#define ECS_INVENTORY_ITEM_STATE_MAX (uint8)ECsInventoryItemState_Editor::ECsInventoryItemState_Editor_MAX
+typedef TEnumAsByte<ECsInventoryItemState_Editor::Type> TCsInventoryItemState_Editor;
+
 namespace ECsInventoryItemState_Editor
 {
 	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
@@ -152,7 +156,7 @@ namespace ECsInventoryItemState_Editor
 		FString String = ECsCachedString::Str::Empty;
 		bool IsFirst   = true;
 
-		for (int32 I = 0; I < ECS_LOAD_FLAGS_EDITOR_MAX; ++I)
+		for (int32 I = 0; I < ECS_INVENTORY_ITEM_STATE_MAX; ++I)
 		{
 			if (CS_TEST_BLUEPRINT_BITFLAG(State, (ECsInventoryItemState)I))
 			{
@@ -160,7 +164,7 @@ namespace ECsInventoryItemState_Editor
 				{
 					String += TEXT(" | ");
 				}
-				String += ToString((TCsLoadFlags_Editor)I);
+				String += ToString((TCsInventoryItemState_Editor)I);
 				IsFirst = false;
 			}
 		}
@@ -188,9 +192,6 @@ namespace ECsInventoryItemState_Editor
 		return ECsInventoryItemState::Visible;;
 	}
 }
-
-#define ECS_INVENTORY_ITEM_STATE_MAX (uint8)ECsInventoryItemState_Editor::ECsInventoryItemState_Editor_MAX
-typedef TEnumAsByte<ECsInventoryItemState_Editor::Type> TCsInventoryItemState_Editor;
 
 USTRUCT(BlueprintType)
 struct FCsInventoryItemProperties

@@ -163,6 +163,9 @@ public:
 
 #pragma endregion OnBoard
 
+	UPROPERTY()
+	int32 NumberOfClients;
+
 // LastTickActor
 #pragma region
 public:

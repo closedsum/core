@@ -11,7 +11,7 @@
 
 */
 
-UCLASS(hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
+UCLASS(Abstract, hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
 class CSCORE_API ACsData_Impact : public ACsData
 {
 	GENERATED_UCLASS_BODY()

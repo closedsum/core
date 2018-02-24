@@ -6,7 +6,7 @@
 #include "Types/CsTypes_FX.h"
 #include "CsData_Projectile.generated.h"
 
-UCLASS(hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
+UCLASS(Abstract, hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
 class CSCORE_API ACsData_Projectile : public ACsData
 {
 	GENERATED_UCLASS_BODY()

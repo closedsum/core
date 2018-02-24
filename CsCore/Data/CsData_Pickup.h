@@ -4,7 +4,7 @@
 #include "Types/CsTypes_Interactive.h"
 #include "CsData_Pickup.generated.h"
 
-UCLASS(hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
+UCLASS(Abstract, hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
 class CSCORE_API ACsData_Pickup : public ACsData_Interactive
 {
 	GENERATED_UCLASS_BODY()

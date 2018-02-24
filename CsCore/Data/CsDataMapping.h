@@ -173,7 +173,7 @@ namespace ECsDataMappingStringCache
 
 #pragma endregion Cache
 
-UCLASS(hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
+UCLASS(Abstract, NotBlueprintable, hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
 class CSCORE_API ACsDataMapping : public AActor
 {
 	GENERATED_UCLASS_BODY()

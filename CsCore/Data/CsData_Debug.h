@@ -8,7 +8,7 @@
 
 */
 
-UCLASS(hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
+UCLASS(Blueprintable, hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
 class CSCORE_API ACsData_Debug : public ACsData
 {
 	GENERATED_UCLASS_BODY()

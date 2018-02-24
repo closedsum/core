@@ -8,9 +8,6 @@
 #pragma region
 
 #define CS_DATA_DEFINE_TYPE(TYPE)	Type = ECsAssetType::TYPE; \
-									Type_MAX = ECsAssetType::ECsAssetType_MAX; \
-									AssetTypeToString = &ECsAssetType::ToString; \
-									StringToAssetType = &ECsAssetType::ToType; \
 									Type_Script = (uint8)Type; \
 									TypeAsString = (*AssetTypeToString)(Type);
 
@@ -18,11 +15,6 @@
 																LoadObjectWithTAssetPtrs_Internal = &CLASS::LoadObjectWithTAssetPtrs_Internal; \
 																WriteObjectToJson_Internal = &CLASS::WriteObjectToJson_Internal; \
 																ReadObjectFromJson_Internal = &CLASS::ReadObjectFromJson_Internal;
-
-#define CS_DATA_DEFINE_LOAD_ASSETS_TYPE	LoadAssetType_MAX = ECsLoadAssetsType::ECsLoadAssetsType_MAX; \
-										LOAD_ASSETS_TYPE_MAX = (uint8)ECsLoadAssetsType::ECsLoadAssetsType_MAX; \
-										LoadAssetsTypeToString = &ECsLoadAssetsType::ToString; \
-										StringToLoadAssetsType = &ECsLoadAssetsType::ToType;
 
 #pragma endregion Macros
 
@@ -84,7 +76,7 @@ struct FCsDataLoadFromJson
 
 #pragma endregion Structs
 
-UCLASS(hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
+UCLASS(Abstract, NotBlueprintable, hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
 class CSCORE_API ACsData : public AActor
 {
 	GENERATED_UCLASS_BODY()
@@ -92,16 +84,9 @@ class CSCORE_API ACsData : public AActor
 	// Default
 
 	TCsAssetType Type;
-	TCsAssetType Type_MAX;
 
-	TCsAssetTypeToString AssetTypeToString;
-	TCsStringToAssetType StringToAssetType;
-
-	TCsLoadAssetsType LoadAssetType_MAX;
-	uint8 LOAD_ASSETS_TYPE_MAX;
-
-	TCsLoadAssetsTypeToString LoadAssetsTypeToString;
-	TCsStringToLoadAssetsType StringToLoadAssetsType;
+	CS_DECLARE_ASSET_TYPE
+	CS_DECLARE_LOAD_ASSETS_TYPE
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "00 Default")
 	uint8 Type_Script;

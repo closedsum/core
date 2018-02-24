@@ -436,7 +436,7 @@ void ACsData::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 		AddToDataMapping.Message = TEXT("");
 		AddToDataMapping.Output  = TEXT("");
 
-		if (Type == Type_MAX)
+		if (Type == AssetType_MAX)
 		{
 			AddToDataMapping.Message = TEXT("INVALID Type.");
 			AddToDataMapping.Output  = TEXT("ERROR");
@@ -475,7 +475,7 @@ void ACsData::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 		AddToPayload.Message = TEXT("");
 		AddToPayload.Output  = TEXT("");
 
-		if (Type == Type_MAX)
+		if (Type == AssetType_MAX)
 		{
 			AddToPayload.Message = TEXT("INVALID Type.");
 			AddToPayload.Output = TEXT("ERROR");

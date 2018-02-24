@@ -13,9 +13,9 @@ namespace ECsAIType
 
 typedef ECsAIType::Type TCsAIType;
 
-// InputActionToString
+// AITypeToString
 typedef FString(*TCsAITypeToString)(const TCsAIType&);
-// StringToInputAction
+// StringToAIType
 typedef TCsAIType(*TCsStringToAIType)(const FString&);
 
 #define CS_DECLARE_AI_TYPE	TCsAIType AIType_MAX; \

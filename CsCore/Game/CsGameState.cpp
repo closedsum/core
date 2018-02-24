@@ -27,6 +27,10 @@
 #include "UI/CsUI.h"
 #include "UI/CsWidget_Fullscreen.h"
 
+#if WITH_EDITOR
+#include "Settings/LevelEditorPlaySettings.h"
+#endif // #if WITH_EDITOR
+
 // Cache
 #pragma region
 
@@ -99,6 +103,8 @@ ACsGameState::ACsGameState(const FObjectInitializer& ObjectInitializer)
 	CurrentAIPlayerStateUniqueMappingId = 0;
 
 	JavascriptEntryPointClass = ACsJavascriptEntryPoint::StaticClass();
+
+	NumberOfClients = 1;
 
 #if WITH_EDITOR
 	FEditorDelegates::PrePIEEnded.AddUObject(this, &ACsGameState::OnPrePIEEnded);
@@ -297,7 +303,18 @@ void ACsGameState::LoadData(){}
 void ACsGameState::OnFinishedLoadData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime){}
 void ACsGameState::LoadItems() { OnBoardState = ECsGameStateOnBoardState::SetupScene; }
 void ACsGameState::SetupScene(){}
-void ACsGameState::OnBoard_Completed(){}
+
+void ACsGameState::OnBoard_Completed()
+{
+#if WITH_EDITOR
+	const ULevelEditorPlaySettings* PlayInSettings = GetDefault<ULevelEditorPlaySettings>();
+
+	if (PlayInSettings)
+	{
+		PlayInSettings->GetPlayNumberOfClients(NumberOfClients);
+	}
+#endif // #if WITH_EDITOR
+}
 
 #pragma endregion OnBoard
 

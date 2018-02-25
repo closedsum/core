@@ -5,10 +5,18 @@
 #include "AI/CsAIPlayerState.h"
 #include "GameFramework/GameStateBase.h"
 
+#include "Perception/AIPerceptionComponent.h"
+
 ACsAIController::ACsAIController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	PlayerStateClass = ACsAIPlayerState::StaticClass();
+}
+
+void ACsAIController::OnConstructor(const FObjectInitializer& ObjectInitializer)
+{
+	if (UseAIPerceptionComponent)
+		PerceptionComponent = ObjectInitializer.CreateDefaultSubobject<UAIPerceptionComponent>(this, TEXT("PerceptionComponent"));
 }
 
 // Copied from AController::InitPlayerState. Only change is PlayerStateClass.

@@ -8,6 +8,10 @@ class CSCORE_API ACsAIController : public AAIController
 {
 	GENERATED_UCLASS_BODY()
 
+	virtual void OnConstructor(const FObjectInitializer& ObjectInitializer);
+	
+	bool UseAIPerceptionComponent;
+
 	/** A PlayerState of this class will be associated with every player to replicate relevant player information to all clients. */
 	UPROPERTY(EditAnywhere, NoClear, BlueprintReadOnly, Category = Classes)
 	TSubclassOf<APlayerState> PlayerStateClass;

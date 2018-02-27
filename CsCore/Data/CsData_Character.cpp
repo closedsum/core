@@ -16,6 +16,13 @@ int32 ACsData_Character::GetHealth() { return 0; }
 
 #pragma endregion Stats
 
+// Inventory
+#pragma region
+
+FCsInventoryLoadout* ACsData_Character::GetLoadout() { return nullptr; }
+
+#pragma endregion Inventory
+
 // Collision
 #pragma region
 
@@ -79,7 +86,12 @@ UAnimSequence* ACsData_Character::GetAnimSequence(const TCsViewType &ViewType, c
 	return nullptr;
 }
 
-UAnimSequence* ACsData_Character::GetAnimSequence(const TCsCharacterAnim &AnimType, const bool &IsLow /*=false*/) { return nullptr; }
+UAnimSequence* ACsData_Character::GetAnimSequence(const TCsCharacterAnim &AnimType, const bool &IsLow /*=false*/) 
+{ 
+	if (FCsAnimSequence* Anim = GetFCsAnimSequence(AnimType))
+		return Anim->Get();
+	return nullptr; 
+}
 
 UAnimMontage* ACsData_Character::GetAnimMontage(const TCsViewType &ViewType, const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType, const int32 &Index /*=0*/, const bool &IsLow /*=false*/)
 {
@@ -93,8 +105,19 @@ UAnimMontage* ACsData_Character::GetAnimMontage(const TCsViewType &ViewType, con
 	return GetAnimMontage(ViewType, GripType, AnimType, 0, IsLow);
 }
 
-UAnimMontage* ACsData_Character::GetAnimMontage(const TCsViewType &ViewType, const TCsCharacterAnim &AnimType, const int32 &Index /*=0*/, const bool &IsLow /*=false*/) { return nullptr; }
-UAnimMontage* ACsData_Character::GetAnimMontage(const TCsCharacterAnim &AnimType, const int32 &Index /*=0*/, const bool &IsLow /*=false*/) { return nullptr; }
+UAnimMontage* ACsData_Character::GetAnimMontage(const TCsViewType &ViewType, const TCsCharacterAnim &AnimType, const int32 &Index /*=0*/, const bool &IsLow /*=false*/) 
+{ 
+	if (FCsFpsAnimMontage* Anim = GetFCsFpsAnimMontage(AnimType))
+		return Anim->Get(ViewType, IsLow);
+	return nullptr;
+}
+
+UAnimMontage* ACsData_Character::GetAnimMontage(const TCsCharacterAnim &AnimType, const int32 &Index /*=0*/, const bool &IsLow /*=false*/) 
+{ 
+	if (FCsAnimMontage* Anim = GetFCsAnimMontage(AnimType))
+		return Anim->Get();
+	return nullptr; 
+}
 
 bool ACsData_Character::IsBlendMemberStruct(const TCsCharacterBlendSpace &BlendType){ return false; }
 
@@ -504,6 +527,9 @@ void ACsData_Character::StopAnimation(class UObject* InObject, const TCsCharacte
 	if (ASkeletalMeshActor* Actor = Cast<ASkeletalMeshActor>(InObject))
 		StopAnimation(Actor, AnimType, Index, BlendOutTime, IsLow);
 }
+
+FCsAnimMontage* ACsData_Character::GetFCsAnimMontage(const TCsCharacterAnim &AnimType) { return nullptr; }
+FCsAnimSequence* ACsData_Character::GetFCsAnimSequence(const TCsCharacterAnim &AnimType) { return nullptr;  }
 
 FCsFpsAnimSequence* ACsData_Character::GetFCsFpsAnimSequence(const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType) { return nullptr; }
 FCsFpsAnimSequence* ACsData_Character::GetFCsFpsAnimSequence(const TCsCharacterAnim &AnimType) { return nullptr; }

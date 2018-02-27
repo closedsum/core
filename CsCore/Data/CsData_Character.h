@@ -5,6 +5,7 @@
 #include "Types/CsTypes_Character.h"
 #include "Types/CsTypes_Weapon.h"
 #include "Types/CsTypes_Anim.h"
+#include "Types/CsTypes_Item.h"
 #include "CsData_Character.generated.h"
 
 UCLASS(Abstract, hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
@@ -20,6 +21,13 @@ public:
 	virtual int32 GetHealth();
 
 #pragma endregion Stats
+
+// Inventory
+#pragma region
+
+	virtual FCsInventoryLoadout* GetLoadout();
+
+#pragma endregion Inventory
 
 // Collision
 #pragma region
@@ -137,6 +145,9 @@ public:
 	virtual void StopAnimation(class UObject* InObject, const TCsViewType &ViewType, const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType, const int32 &Index, const float &BlendOutTime = 0.0f, const bool &IsLow = false);
 	virtual void StopAnimation(class UObject* InObject, const TCsViewType &ViewType, const TCsCharacterAnim &AnimType, const int32 &Index, const float &BlendOutTime = 0.0f, const bool &IsLow = false);
 	virtual void StopAnimation(class UObject* InObject, const TCsCharacterAnim &AnimType, const int32 &Index, const float &BlendOutTime = 0.0f, const bool &IsLow = false);
+
+	virtual FCsAnimSequence* GetFCsAnimSequence(const TCsCharacterAnim &AnimType);
+	virtual FCsAnimMontage* GetFCsAnimMontage(const TCsCharacterAnim &AnimType);
 
 	virtual FCsFpsAnimSequence* GetFCsFpsAnimSequence(const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType);
 	virtual FCsFpsAnimSequence* GetFCsFpsAnimSequence(const TCsCharacterAnim &AnimType);

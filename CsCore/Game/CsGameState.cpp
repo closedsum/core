@@ -262,9 +262,9 @@ CS_COROUTINE(ACsGameState, OnBoard_Internal)
 
 	gs->SetupHUD();
 
-	CS_COROUTINE_WAIT_UNTIL(r, gs->OnBoardState == ECsGameStateOnBoardState::LoadData);
+	CS_COROUTINE_WAIT_UNTIL(r, gs->OnBoardState == ECsGameStateOnBoardState::LoadGameData);
 
-	gs->LoadData();
+	gs->LoadGameData();
 
 	CS_COROUTINE_WAIT_UNTIL(r, gs->OnBoardState == ECsGameStateOnBoardState::LoadItems);
 
@@ -305,8 +305,8 @@ void ACsGameState::GetLoadAssetsShortCodes(const TCsLoadAssetsType &AssetsType, 
 void ACsGameState::LoadCommonData(){}
 void ACsGameState::OnFinishedLoadCommonData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime){}
 void ACsGameState::SetupHUD(){}
-void ACsGameState::LoadData(){}
-void ACsGameState::OnFinishedLoadData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime){}
+void ACsGameState::LoadGameData(){}
+void ACsGameState::OnFinishedLoadGameData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime){}
 void ACsGameState::LoadItems() { OnBoardState = ECsGameStateOnBoardState::LoadSceneData; }
 void ACsGameState::LoadSceneData(){ OnBoardState = ECsGameStateOnBoardState::SetupScene; }
 void ACsGameState::OnFinishedLoadSceneData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime){}

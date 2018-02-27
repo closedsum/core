@@ -55,7 +55,7 @@ namespace ECsFpsWeaponCacheMultiValueMember
 		const TCsString KickbackStrength = TCsString(TEXT("KickbackStrength"), TEXT("kickbackstrength"), TEXT("kickback strength"));
 	}
 
-	inline FString ToString(const Type &EType)
+	FORCEINLINE FString ToString(const Type &EType)
 	{
 		// Spread
 		if (EType == Type::MovingSpreadBonus) { return Str::MovingSpreadBonus.Value; }
@@ -76,7 +76,7 @@ namespace ECsFpsWeaponCacheMultiValueMember
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	inline Type ToType(const FString &String)
+	FORCEINLINE Type ToType(const FString &String)
 	{
 		// Spread
 		if (String == Str::MovingSpreadBonus) { return Type::MovingSpreadBonus; }
@@ -142,6 +142,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Data")
 	class ACsData_WeaponMaterialSkin* GetMyData_WeaponMaterialSkin();
+
+	template<typename T>
+	T* GetMyData_WeaponMaterialSkin()
+	{
+		return Cast<T>(GetMyData_WeaponMaterialSkin());
+	}
 
 #pragma endregion Data
 

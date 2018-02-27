@@ -37,23 +37,23 @@ void UCsAnimInstance_Character::NativeInitializeAnimation()
 
 	if (!MyPawn)
 		return;
-	/*
+	
 	// Data_Character
-	Data_Character.Data = TAssetSubclassOf<AMboData_Character>(MyPawn->GetMyData_Character());
+	Data_Character.Data = TAssetSubclassOf<ACsData_Character>(MyPawn->GetMyData_Character());
 	Data_Character.Data_Internal = MyPawn->GetMyData_Character();
 	// Data_CharacterMeshSkin
-	Data_CharacterMeshSkin.Data = TAssetSubclassOf<AMboData_CharacterMeshSkin>(MyPawn->GetMyData_CharacterMeshSkin());
+	Data_CharacterMeshSkin.Data = TAssetSubclassOf<ACsData_CharacterMeshSkin>(MyPawn->GetMyData_CharacterMeshSkin());
 	Data_CharacterMeshSkin.Data_Internal = MyPawn->GetMyData_CharacterMeshSkin();
 	// Data_CharacterMaterialSkin
-	Data_CharacterMaterialSkin.Data = TAssetSubclassOf<AMboData_CharacterMaterialSkin>(MyPawn->GetMyData_CharacterMaterialSkin());
+	Data_CharacterMaterialSkin.Data = TAssetSubclassOf<ACsData_CharacterMaterialSkin>(MyPawn->GetMyData_CharacterMaterialSkin());
 	Data_CharacterMaterialSkin.Data_Internal = MyPawn->GetMyData_CharacterMaterialSkin();
 	// Data_Weapon
-	Data_Weapon.Data = TAssetSubclassOf<AMboData_Weapon>(MyPawn->GetCurrentData_Weapon());
+	Data_Weapon.Data = TAssetSubclassOf<ACsData_Weapon>(MyPawn->GetCurrentData_Weapon());
 	Data_Weapon.Data_Internal = MyPawn->GetCurrentData_Weapon();
 	// Data_WeaponMaterialSkin
-	Data_WeaponMaterialSkin.Data = TAssetSubclassOf<AMboData_WeaponMaterialSkin>(MyPawn->GetCurrentData_WeaponMaterialSkin());
+	Data_WeaponMaterialSkin.Data = TAssetSubclassOf<ACsData_WeaponMaterialSkin>(MyPawn->GetCurrentData_WeaponMaterialSkin());
 	Data_WeaponMaterialSkin.Data_Internal = MyPawn->GetCurrentData_WeaponMaterialSkin();
-	*/
+	
 	LoadAnims();
 }
 
@@ -101,9 +101,6 @@ void UCsAnimInstance_Character::SetupInGameSimulation()
 
 	// Weapon
 	ApplyData_Weapon();
-
-	//if (AMboData_Weapon* MyData_Weapon = GetData_Weapon())
-	//	GetWeapon()->ApplyData_Weapon(EMboWeaponSlot::Weapon1, MyData_Weapon, GetData_WeaponMaterialSkin(), true);
 #endif // #if WITH_EDITOR
 }
 
@@ -141,10 +138,10 @@ void UCsAnimInstance_Character::ApplyData_Weapon(){}
 
 #pragma endregion Setup
 
+/*
 void UCsAnimInstance_Character::NativeUpdateAnimation(float DeltaTimeX)
 {
 	Super::NativeUpdateAnimation(DeltaTimeX);
-	/*
 #if WITH_EDITOR
 	if (!UCsCommon::IsPlayInEditorPreview(GetWorld()))
 		return;
@@ -158,8 +155,9 @@ void UCsAnimInstance_Character::NativeUpdateAnimation(float DeltaTimeX)
 	if (ACsWeapon* MyWeapon = GetWeapon())
 		MyWeapon->OnTick(DeltaTimeX);
 #endif // #if WITH_EDITOR
-*/
+
 }
+*/
 
 // Data
 #pragma region
@@ -235,5 +233,22 @@ void UCsAnimInstance_Character::OnTick_Handle_Data_WeaponMaterialSkin()
 #pragma region
 
 void UCsAnimInstance_Character::LoadAnims(){}
+
+UAnimMontage* UCsAnimInstance_Character::GetAnimMontage(const TCsCharacterAnim &AnimType, const int32 &Index /*=0*/) const
+{
+	return nullptr;
+}
+
+UAnimSequence* UCsAnimInstance_Character::GetAnimSequence(const TCsCharacterAnim &AnimType) const
+{
+	return nullptr;
+}
+
+UBlendSpace* UCsAnimInstance_Character::GetBlendSpace(const TCsCharacterBlendSpace &BlendType) const
+{
+	return nullptr;
+}
+
+void UCsAnimInstance_Character::StopAnimation(const TCsCharacterAnim &AnimType, const int32 &Index /*0*/, const float BlendOutTime /*=0.0f*/){}
 
 #pragma endregion Anims

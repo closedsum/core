@@ -4,7 +4,8 @@
 #include "Common/CsCommon.h"
 
 #include "Pawn/CsPawn.h"
-#include "Animation/CsAnimInstance.h"
+#include "Animation/CsAnimInstance_Character.h"
+#include "Animation/CsAnimInstance_Weapon.h"
 
 // Data
 #include "Data/CsData_WeaponMaterialSkin.h"
@@ -358,24 +359,36 @@ void ACsFpsWeapon::SetMesh1P()
 	// In Editor Preview Window
 	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
 	{
-		if (UCsAnimInstance* AnimInstance = Cast<UCsAnimInstance>(GetMyOwner()))
+		USkeletalMeshComponent* Mesh = nullptr;
+
+		// Character
+		if (UCsAnimInstance_Character* AnimInstance = Cast<UCsAnimInstance_Character>(GetMyOwner()))
 		{
+			USkeletalMeshComponent* Mesh = Mesh1P;
+
+			Data_Weapon->SetMesh(Mesh1P, ECsViewType::FirstPerson);
+			Data_Weapon->SetAnimBlueprint(Mesh1P, ECsViewType::FirstPerson);
+		}
+		// Weapon
+		if (UCsAnimInstance_Weapon* AnimInstance = Cast<UCsAnimInstance_Weapon>(GetMyOwner()))
 			USkeletalMeshComponent* Mesh = AnimInstance->GetSkeletalMeshComponent();
 
-			if (ACsData_WeaponMaterialSkin* Skin = GetMyData_WeaponMaterialSkin())
-			{
-				Skin->SetMaterials(Mesh, ECsViewType::FirstPerson);
-				UCsCommon::SetMIDs(Mesh, MeshMIDs1P, *Skin->GetMaterials(ECsViewType::FirstPerson));
-			}
-			else
-			{
-				TArray<UMaterialInstanceConstant*> Materials;
-				Data_Weapon->GetDefaultMaterials(Materials, ECsViewType::FirstPerson);
-
-				UCsCommon::SetMIDs(Mesh, MeshMIDs1P, Materials);
-			}
+		if (!Mesh)
 			return;
+
+		if (ACsData_WeaponMaterialSkin* Skin = GetMyData_WeaponMaterialSkin())
+		{
+			Skin->SetMaterials(Mesh, ECsViewType::FirstPerson);
+			UCsCommon::SetMIDs(Mesh, MeshMIDs1P, *Skin->GetMaterials(ECsViewType::FirstPerson));
 		}
+		else
+		{
+			TArray<UMaterialInstanceConstant*> Materials;
+			Data_Weapon->GetDefaultMaterials(Materials, ECsViewType::FirstPerson);
+
+			UCsCommon::SetMIDs(Mesh, MeshMIDs1P, Materials);
+		}
+		return;
 	}
 	// In Game
 #endif // #if WITH_EDITOR
@@ -409,24 +422,36 @@ void ACsFpsWeapon::SetMesh3P()
 	// In Editor Preview Window
 	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
 	{
-		if (UCsAnimInstance* AnimInstance = Cast<UCsAnimInstance>(GetMyOwner()))
+		USkeletalMeshComponent* Mesh = nullptr;
+
+		// Character
+		if (UCsAnimInstance_Character* AnimInstance = Cast<UCsAnimInstance_Character>(GetMyOwner()))
 		{
+			USkeletalMeshComponent* Mesh = Mesh3P;
+
+			Data_Weapon->SetMesh(Mesh3P, ECsViewType::ThirdPerson, UseMesh3PLow);
+			Data_Weapon->SetAnimBlueprint(Mesh3P, ECsViewType::ThirdPerson, UseMesh3PLow);
+		}
+		// Weapon
+		if (UCsAnimInstance_Weapon* AnimInstance = Cast<UCsAnimInstance_Weapon>(GetMyOwner()))
 			USkeletalMeshComponent* Mesh = AnimInstance->GetSkeletalMeshComponent();
 
-			if (ACsData_WeaponMaterialSkin* Skin = GetMyData_WeaponMaterialSkin())
-			{
-				Skin->SetMaterials(Mesh, ECsViewType::ThirdPerson);
-				UCsCommon::SetMIDs(Mesh, MeshMIDs3P, *Skin->GetMaterials(ECsViewType::ThirdPerson));
-			}
-			else
-			{
-				TArray<UMaterialInstanceConstant*> Materials;
-				Data_Weapon->GetDefaultMaterials(Materials, ECsViewType::ThirdPerson);
-
-				UCsCommon::SetMIDs(Mesh, MeshMIDs3P, Materials);
-			}
+		if (!Mesh)
 			return;
+
+		if (ACsData_WeaponMaterialSkin* Skin = GetMyData_WeaponMaterialSkin())
+		{
+			Skin->SetMaterials(Mesh, ECsViewType::ThirdPerson);
+			UCsCommon::SetMIDs(Mesh, MeshMIDs3P, *Skin->GetMaterials(ECsViewType::ThirdPerson));
 		}
+		else
+		{
+			TArray<UMaterialInstanceConstant*> Materials;
+			Data_Weapon->GetDefaultMaterials(Materials, ECsViewType::ThirdPerson);
+
+			UCsCommon::SetMIDs(Mesh, MeshMIDs3P, Materials);
+		}
+		return;
 	}
 	// In Game
 #endif // #if WITH_EDITOR
@@ -457,8 +482,16 @@ USkeletalMeshComponent* ACsFpsWeapon::GetMesh(const TCsViewType &ViewType)
 	// In Editor Preview Window
 	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
 	{
-		// 1P / 3P
-		if (UCsAnimInstance* AnimInstance = Cast<UCsAnimInstance>(GetMyOwner()))
+		// Character
+		if (UCsAnimInstance_Character* AnimInstance = Cast<UCsAnimInstance_Character>(GetMyOwner()))
+		{
+			if (ViewType == ECsViewType::FirstPerson)
+				return Mesh1P;
+			if (ViewType == ECsViewType::ThirdPerson)
+				return Mesh3P;
+		}
+		// Weapon
+		if (UCsAnimInstance_Weapon* AnimInstance = Cast<UCsAnimInstance_Weapon>(GetMyOwner()))
 			return AnimInstance->GetSkeletalMeshComponent();
 	}
 #endif // #if WITH_EDITOR

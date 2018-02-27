@@ -46,6 +46,8 @@ class CSCORE_API ACsData_Character : public ACsData
 	CS_DECLARE_CHARACTER_BLEND_SPACE
 	CS_DECLARE_CHARACTER_ANIM_BLUEPRINT
 
+	virtual bool IsAnimMemberAStruct(const TCsCharacterAnim &AnimType);
+
 	virtual void GetAnim(UAnimSequence* &OutAnimSequence, UAnimMontage* &OutAnimMontage, const TCsViewType &ViewType, const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
 	virtual void GetAnim(UAnimSequence* &OutAnimSequence, UAnimMontage* &OutAnimMontage, const TCsViewType &ViewType, const TCsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
 	virtual void GetAnim(UAnimSequence* &OutAnimSequence, UAnimMontage* &OutAnimMontage, const TCsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
@@ -58,7 +60,9 @@ class CSCORE_API ACsData_Character : public ACsData
 	virtual UAnimMontage* GetAnimMontage(const TCsViewType &ViewType, const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType, const bool &IsLow = false);
 	virtual UAnimMontage* GetAnimMontage(const TCsViewType &ViewType, const TCsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
 	virtual UAnimMontage* GetAnimMontage(const TCsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
-
+	
+	virtual bool IsBlendMemberStruct(const TCsCharacterBlendSpace &BlendType);
+	
 	virtual UBlendSpace* GetBlendSpace(const TCsViewType &ViewType, const TCsCharacterBlendSpace &BlendType, const bool &IsLow = false);
 	virtual UBlendSpace* GetBlendSpace(const TCsCharacterBlendSpace &BlendType, const bool &IsLow = false);
 
@@ -66,6 +70,8 @@ class CSCORE_API ACsData_Character : public ACsData
 	virtual USkeleton* GetSkeleton(const TCsCharacterBlendSpace &BlendType, const bool &IsLow = false);
 	virtual USkeleton* GetSkeleton(const TCsViewType &ViewType, const TCsCharacterAnimBlueprint &BlueprintType, const bool &IsLow = false);
 	virtual USkeleton* GetSkeleton(const TCsCharacterAnimBlueprint &BlueprintType, const bool &IsLow = false);
+
+	virtual bool IsAnimBlueprintMemberStruct(const TCsCharacterAnimBlueprint &BlueprintType);
 
 	virtual UAnimBlueprintGeneratedClass* GetAnimBlueprint(const TCsViewType &ViewType, const TCsCharacterAnimBlueprint &BlueprintType, const bool &IsLow = false);
 	virtual UAnimBlueprintGeneratedClass* GetAnimBlueprint(const TCsCharacterAnimBlueprint &BlueprintType, const bool &IsLow = false);
@@ -93,6 +99,9 @@ class CSCORE_API ACsData_Character : public ACsData
 	virtual void Montage_JumpToSection(class ASkeletalMeshActor* InActor, const TCsViewType &ViewType, const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType, const FName &SectionName, const int32 &Index = 0, const bool &IsLow = false);
 	virtual void Montage_JumpToSection(class ASkeletalMeshActor* InActor, const TCsViewType &ViewType, const TCsCharacterAnim &AnimType, const FName &SectionName, const int32 &Index = 0, const bool &IsLow = false);
 	virtual void Montage_JumpToSection(class ASkeletalMeshActor* InActor, const TCsCharacterAnim &AnimType, const FName &SectionName, const int32 &Index = 0, const bool &IsLow = false);
+	virtual void Montage_JumpToSection(UObject* InObject, const TCsViewType &ViewType, const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType, const FName &SectionName, const int32 &Index = 0, const bool &IsLow = false);
+	virtual void Montage_JumpToSection(UObject* InObject, const TCsViewType &ViewType, const TCsCharacterAnim &AnimType, const FName &SectionName, const int32 &Index = 0, const bool &IsLow = false);
+	virtual void Montage_JumpToSection(UObject* InObject, const TCsCharacterAnim &AnimType, const FName &SectionName, const int32 &Index = 0, const bool &IsLow = false);
 
 	virtual void StopAnimation(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType, const int32 &Index, const float &BlendOutTime = 0.0f, const bool &IsLow = false);
 	virtual void StopAnimation(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const TCsCharacterAnim &AnimType, const int32 &Index, const float &BlendOutTime = 0.0f, const bool &IsLow = false);

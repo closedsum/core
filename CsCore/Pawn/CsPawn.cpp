@@ -2,9 +2,17 @@
 #include "Pawn/CsPawn.h"
 #include "CsCore.h"
 #include "CsCVars.h"
+#include "Common/CsCommon.h"
 
+// Data
+#include "Data/CsDataMapping.h"
+#include "Data/CsData_Character.h"
+#include "Data/CsData_CharacterMeshSkin.h"
+#include "Data/CsData_CharacterMaterialSkin.h"
 // Managers
 #include "Managers/Inventory/CsManager_Inventory.h"
+
+#include "Weapon/CsWeapon.h"
 
 ACsPawn::ACsPawn(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -94,6 +102,70 @@ void ACsPawn::RecordVelocityAndSpeed()
 }
 
 #pragma endregion Movement
+
+// Data
+#pragma region
+
+ACsDataMapping* ACsPawn::GetDataMapping()
+{
+	return UCsCommon::GetDataMapping(GetWorld());
+}
+
+ACsData_Character* ACsPawn::GetMyData_Character()
+{
+	return MyData_Character.IsValid() ? MyData_Character.Get() : nullptr;
+}
+
+ACsData_CharacterMeshSkin* ACsPawn::GetMyData_CharacterMeshSkin()
+{
+	return MyData_CharacterMeshSkin.IsValid() ? MyData_CharacterMeshSkin.Get() : nullptr;
+}
+
+ACsData_CharacterMaterialSkin* ACsPawn::GetMyData_CharacterMaterialSkin()
+{
+	return MyData_CharacterMaterialSkin.IsValid() ? MyData_CharacterMaterialSkin.Get() : nullptr;
+}
+
+void ACsPawn::ApplyData_Character(){}
+
+#pragma endregion Data
+
+// Weapons
+#pragma region
+
+ACsWeapon* ACsPawn::GetWeapon(const TCsWeaponSlot &Slot)
+{
+	return Weapons[(uint8)Slot];
+}
+
+ACsWeapon* ACsPawn::GetCurrentWeapon()
+{
+	return GetWeapon(CurrentWeaponSlot);
+}
+
+ACsData_Weapon* ACsPawn::GetData_Weapon(const TCsWeaponSlot &Slot)
+{
+	return Data_Weapons[(uint8)Slot].IsValid() ? Data_Weapons[(uint8)Slot].Get() : nullptr;
+}
+
+ACsData_Weapon* ACsPawn::GetCurrentData_Weapon()
+{
+	return GetData_Weapon(CurrentWeaponSlot);
+}
+
+ACsData_WeaponMaterialSkin* ACsPawn::GetData_WeaponMaterialSkin(const TCsWeaponSlot &Slot)
+{
+	return Data_WeaponMaterialSkins[(uint8)Slot].IsValid() ? Data_WeaponMaterialSkins[(uint8)Slot].Get() : nullptr;
+}
+
+ACsData_WeaponMaterialSkin* ACsPawn::GetCurrentData_WeaponMaterialSkin()
+{
+	return GetData_WeaponMaterialSkin(CurrentWeaponSlot);
+}
+
+void ACsPawn::ApplyData_Weapon(){}
+
+#pragma endregion Weapons
 
 // Managers
 #pragma region

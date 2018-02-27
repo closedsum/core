@@ -14,6 +14,7 @@ class CSCORE_API ACsData_Character : public ACsData
 
 // Stats
 #pragma region
+public:
 
 	UFUNCTION(BlueprintCallable, Category = "Character Data")
 	virtual int32 GetHealth();
@@ -22,6 +23,7 @@ class CSCORE_API ACsData_Character : public ACsData
 
 // Collision
 #pragma region
+public:
 
 	UFUNCTION(BlueprintCallable, Category = "Character Data")
 	virtual float GetCapsuleRadius();
@@ -31,8 +33,30 @@ class CSCORE_API ACsData_Character : public ACsData
 
 #pragma endregion Collision
 
+// Movement
+#pragma region
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "Character Data")
+	virtual float GetMaxWalkSpeed();
+
+	UFUNCTION(BlueprintCallable, Category = "Character Data")
+	virtual float GetMaxAcceleration();
+
+	UFUNCTION(BlueprintCallable, Category = "Character Data")
+	virtual float GetJumpZVelocity();
+
+	UFUNCTION(BlueprintCallable, Category = "Character Data")
+	virtual float GetGravityScale();
+
+	UFUNCTION(BlueprintCallable, Category = "Character Data")
+	virtual float GetAirControl();
+
+#pragma endregion Movement
+
 // Weapon
 #pragma region
+public:
 
 	UFUNCTION(BlueprintCallable, Category = "Character Data")
 	virtual FName GetBoneToAttachWeaponTo();
@@ -41,6 +65,7 @@ class CSCORE_API ACsData_Character : public ACsData
 
 // Animation
 #pragma region
+public:
 
 	CS_DECLARE_CHARACTER_ANIM
 	CS_DECLARE_CHARACTER_BLEND_SPACE

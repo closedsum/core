@@ -24,6 +24,17 @@ float ACsData_Character::GetCapsuleHalfHeight() { return 0.0f; }
 
 #pragma endregion Collision
 
+// Movement
+#pragma region
+
+float ACsData_Character::GetMaxWalkSpeed() { return 0.0f; }
+float ACsData_Character::GetMaxAcceleration() { return 0.0f; }
+float ACsData_Character::GetJumpZVelocity() { return 0.0f; }
+float ACsData_Character::GetGravityScale() { return 0.0f; }
+float ACsData_Character::GetAirControl() { return 0.0f; }
+
+#pragma endregion Movement
+
 // Weapon
 #pragma region
 

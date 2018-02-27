@@ -126,7 +126,7 @@ void ACsAIPlayerState::ServerSendOnBoardCompleted_Internal(const uint8 &ClientMa
 {
 	ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
 
-	GameState->SetPlayerStateMappingRelationshipFlag(ClientMappingId, MappingId);
+	GameState->SetAIPlayerStateMappingRelationshipFlag(ClientMappingId, MappingId);
 }
 
 bool ACsAIPlayerState::IsOnBoardCompleted_Game()

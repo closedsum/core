@@ -16,15 +16,15 @@ class CSCORE_API ACsData_CharacterMeshSkin : public ACsData
 	// Skin
 #pragma region
 
-	virtual void SetMesh(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType);
-	virtual void SetMesh(class ASkeletalMeshActor* InActor, const TCsViewType &ViewType);
+	virtual void SetMesh(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const bool &IsLow = false);
+	virtual void SetMesh(class ASkeletalMeshActor* InActor, const TCsViewType &ViewType, const bool &IsLow = false);
 
 	UFUNCTION(BlueprintCallable, Category = "Character Mesh Skin")
-	virtual void SetMesh(UObject* InObject, const TEnumAsByte<ECsViewType::Type> &ViewType);
+	virtual void SetMesh(UObject* InObject, const TEnumAsByte<ECsViewType::Type> &ViewType, const bool &IsLow = false);
 
-	virtual void SetMesh(USkeletalMeshComponent* InMesh);
-	virtual void SetMesh(class ASkeletalMeshActor* InActor);
-	virtual void SetMesh(UObject* InObject);
+	virtual void SetMesh(USkeletalMeshComponent* InMesh, const bool &IsLow = false);
+	virtual void SetMesh(class ASkeletalMeshActor* InActor, const bool &IsLow = false);
+	virtual void SetMesh(UObject* InObject, const bool &IsLow = false);
 
 #pragma endregion Skin
 };

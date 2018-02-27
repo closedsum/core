@@ -234,7 +234,7 @@ void UCsCommon_Load::WriteAssetObjectPropertyToJson_Blueprint(TSharedRef<TJsonWr
 		WriteTAssetPtrToJson_Blueprint(InJsonWriter, MemberName, *Member);
 }
 
-void UCsCommon_Load::WriteMemberArrayStructPropertyToJson_uint64(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UArrayProperty* &ArrayProperty, void* InObject, const FString &MemberName)
+void UCsCommon_Load::WriteMemberIntegralArrayPropertyToJson_uint64(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UArrayProperty* &ArrayProperty, void* InObject, const FString &MemberName)
 {
 	TArray<uint64>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<uint64>>(InObject);
 
@@ -729,7 +729,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			{ WriteMemberArrayStructPropertyToJson_Primitive<FName>(InJsonWriter, ArrayProperty, InStruct, MemberName, &FName::ToString); continue; }
 			// uint64
 			if (UUInt64Property* IntProperty = Cast<UUInt64Property>(ArrayProperty->Inner))
-			{ WriteMemberArrayStructPropertyToJson_uint64(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+			{ WriteMemberIntegralArrayPropertyToJson_uint64(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 
 			if (Internal)
 			{
@@ -1327,7 +1327,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			{ WriteMemberArrayStructPropertyToJson_Primitive<FName>(InJsonWriter, ArrayProperty, InStruct, MemberName, &FName::ToString); continue; }
 			// uint64
 			if (UUInt64Property* IntProperty = Cast<UUInt64Property>(ArrayProperty->Inner))
-			{ WriteMemberArrayStructPropertyToJson_uint64(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+			{ WriteMemberIntegralArrayPropertyToJson_uint64(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 
 			if (Internal)
 			{
@@ -1860,7 +1860,7 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			{ WriteMemberArrayStructPropertyToJson_Primitive<FName>(InJsonWriter, ArrayProperty, InObject, MemberName, &FName::ToString); continue; }
 			// uint64
 			if (UUInt64Property* IntProperty = Cast<UUInt64Property>(ArrayProperty->Inner))
-			{ WriteMemberArrayStructPropertyToJson_uint64(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
+			{ WriteMemberIntegralArrayPropertyToJson_uint64(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
 
 			if (Internal)
 			{

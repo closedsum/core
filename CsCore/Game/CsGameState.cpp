@@ -242,7 +242,7 @@ CS_COROUTINE(ACsGameState, OnBoard_Internal)
 	UCsGameInstance* gi		 = Cast<UCsGameInstance>(gs->GetGameInstance());
 	UCsCoroutineScheduler* s = r->scheduler;
 	UWorld* w				 = gs->GetWorld();
-
+	
 	ACsPlayerController* pc = UCsCommon::GetLocalPlayerController<ACsPlayerController>(w);
 	ACsUI* hud				= pc ? Cast<ACsUI>(pc->MyHUD) : nullptr;
 

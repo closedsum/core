@@ -23,3 +23,20 @@ void ACsData_CharacterMeshSkin::SetMesh(UObject* InObject, const TEnumAsByte<ECs
 	if (ASkeletalMeshActor* Actor = Cast<ASkeletalMeshActor>(InObject))
 		SetMesh(Actor, ViewType);
 }
+
+void ACsData_CharacterMeshSkin::SetMesh(USkeletalMeshComponent* InMesh) {}
+
+void ACsData_CharacterMeshSkin::SetMesh(ASkeletalMeshActor* InActor)
+{
+	SetMesh(InActor->GetSkeletalMeshComponent());
+}
+
+void ACsData_CharacterMeshSkin::SetMesh(UObject* InObject)
+{
+	// Skeletal Mesh Component
+	if (USkeletalMeshComponent* Mesh = Cast<USkeletalMeshComponent>(InObject))
+		SetMesh(Mesh);
+	// Skeletal Mesh Actor
+	if (ASkeletalMeshActor* Actor = Cast<ASkeletalMeshActor>(InObject))
+		SetMesh(Actor);
+}

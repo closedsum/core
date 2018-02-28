@@ -25,9 +25,20 @@ class CSCORE_API ACsData_ProjectileWeapon : public ACsData_Weapon
 	virtual FVector GetMuzzleLocation(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const uint8 &Index = 0);
 	virtual FVector GetMuzzleLocation(USkeletalMeshComponent* InMesh, const TCsWeaponFireMode &FireMode, const uint8 &Index = 0);
 
+	UFUNCTION(BlueprintCallable, Category = "Weapon Data")
+	virtual int32 GetMaxAmmo();
 	virtual int32* GetMaxAmmoAddr();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon Data")
+	virtual float GetRechargeStartupDelay();
 	virtual float* GetRechargeStartupDelayAddr();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon Data")
+	virtual float GetRechargeSecondsPerAmmo();
 	virtual float* GetRechargeSecondsPerAmmoAddr();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon Data")
+	virtual float GetReloadTime();
 	virtual float* GetReloadTimeAddr();
 
 #pragma endregion Stats

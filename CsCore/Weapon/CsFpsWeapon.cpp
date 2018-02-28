@@ -124,6 +124,45 @@ void ACsFpsWeapon::SetMemberValue_Script_float(const FString &MemberName, const 
 #endif // #if WITH_EDITOR
 }
 
+void ACsFpsWeapon::SetMultiValueMembers()
+{
+	Super::SetMultiValueMembers();
+
+	// Movement
+	{
+		// DoSlowWhileFiring
+		SetMemberMultiRefValue<bool>(DoSlowWhileFiring, MovementDataFireMode, TEXT("DoSlowWhileFiring"));
+		// SlowWhileFiringRate
+		SetMemberMultiRefValue<float>(SlowWhileFiringRate, MovementDataFireMode, TEXT("SlowWhileFiringRate"));
+		// DoKickback
+		SetMemberMultiRefValue<bool>(DoKickback, MovementDataFireMode, TEXT("DoKickback"));
+		// DoKickbackOnGround
+		SetMemberMultiRefValue<bool>(DoKickbackOnGround, MovementDataFireMode, TEXT("DoKickbackOnGround"));
+		// KickbackStrength
+		SetMemberMultiRefValue<float>(KickbackStrength, MovementDataFireMode, TEXT("KickbackStrength"));
+	}
+	// Aiming
+	{
+		// MovingSpreadBonus
+		SetMemberMultiRefValue<float>(MovingSpreadBonus, AimingDataFireMode, TEXT("MovingSpreadBonus"));
+		// JumpSpreadImpulse
+		SetMemberMultiRefValue<float>(JumpSpreadImpulse, AimingDataFireMode, TEXT("JumpSpreadImpulse"));
+		// ScopeAccuracyBonus
+		SetMemberMultiRefValue<float>(ScopeAccuracyBonus, AimingDataFireMode, TEXT("ScopeAccuracyBonus"));
+	}
+	// Scope
+	{
+		// DoScopePower
+		SetMemberMultiRefValue<bool>(DoScopePower, ScopeDataFireMode, TEXT("DoScopePower"));
+		// MaxScopePower
+		SetMemberMultiRefValue<float>(MaxScopePower, ScopeDataFireMode, TEXT("MaxScopePower"));
+		// ScopePowerGrowthRate
+		SetMemberMultiRefValue<float>(ScopePowerGrowthRate, ScopeDataFireMode, TEXT("ScopePowerGrowthRate"));
+		// CurrentScopePower
+		SetMemberMultiValue<float>(CurrentScopePower, 0.0f);
+	}
+}
+
 #pragma endregion Set
 
 	// Get

@@ -28,9 +28,13 @@ ACsData_Projectile* ACsData_ProjectileWeapon::GetData_Projectile(const TCsWeapon
 FVector ACsData_ProjectileWeapon::GetMuzzleLocation(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const uint8 &Index /*=0*/){ return FVector::ZeroVector; }
 FVector ACsData_ProjectileWeapon::GetMuzzleLocation(USkeletalMeshComponent* InMesh, const TCsWeaponFireMode &FireMode, const uint8 &Index /*=0*/){ return FVector::ZeroVector; }
 
+int32 ACsData_ProjectileWeapon::GetMaxAmmo() { return 0; }
 int32* ACsData_ProjectileWeapon::GetMaxAmmoAddr() { return nullptr; }
+float ACsData_ProjectileWeapon::GetRechargeStartupDelay() { return 0.0f; }
 float* ACsData_ProjectileWeapon::GetRechargeStartupDelayAddr() { return nullptr; }
+float ACsData_ProjectileWeapon::GetRechargeSecondsPerAmmo() { return 0.0f; }
 float* ACsData_ProjectileWeapon::GetRechargeSecondsPerAmmoAddr() { return nullptr; }
+float ACsData_ProjectileWeapon::GetReloadTime() { return 0.0f;; }
 float* ACsData_ProjectileWeapon::GetReloadTimeAddr() { return nullptr; }
 
 #pragma endregion Stats

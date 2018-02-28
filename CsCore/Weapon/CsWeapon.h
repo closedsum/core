@@ -324,6 +324,7 @@ class CSCORE_API ACsWeapon : public AActor
 #pragma region
 
 	CS_DECLARE_WEAPON_FIRE_MODE
+	CS_DECLARE_DATA_WEAPON_FIRE_MODE
 
 	TCsGetObjectMember_Internal GetObjectMember_Internal;
 	TCsGetStructMember_Internal GetStructMember_Internal;
@@ -371,7 +372,7 @@ class CSCORE_API ACsWeapon : public AActor
 
 		Member.ResetValues();
 
-		const FString StructName = ECsData_Weapon_FireMode::ToString(FireModeMember);
+		const FString StructName = (*DataWeaponFireModeToString)(FireModeMember);
 
 		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; ++I)
 		{
@@ -404,6 +405,8 @@ class CSCORE_API ACsWeapon : public AActor
 	virtual void SetMemberValue_float(const uint8 &Member, const int32 &Index, const float &Value);
 	UFUNCTION(BlueprintCallable, Category = "Member")
 	virtual void SetMemberValue_Script_float(const FString &MemberName, const int32 &Index, const float &Value);
+
+	virtual void SetMultiValueMembers();
 
 #pragma endregion Set
 
@@ -611,6 +614,8 @@ public:
 #pragma region
 public:
 
+	TCsData_Weapon_FireMode FiringDataFireMode;
+
 	TCsWeaponState FiringState;
 
 	FCsWeapon_Ref_int32 MaxAmmo;
@@ -691,6 +696,8 @@ public:
 	// Spread
 #pragma region
 
+	TCsData_Weapon_FireMode AimingDataFireMode;
+
 	FCsWeapon_TArrayRef_bool DoSpread;
 	FCsWeapon_TArrayRef_float MinSpread;
 	virtual float GetMinSpread(const TCsWeaponFireMode &FireMode);
@@ -712,12 +719,15 @@ public:
 #pragma endregion Spread
 
 	// Anim
+	TCsData_Weapon_FireMode AnimationDataFireMode;
+
 	TCsWeaponAnim FireAnim;
 
 	FCsWeapon_TArrayRef_bool LoopFireAnim;
 	FCsWeapon_TArrayRef_bool DoScaleFireAnim;
 
 	// Sound
+	TCsData_Weapon_FireMode SoundsDataFireMode;
 
 	FCsWeapon_TArrayRef_bool LoopFireSound;
 

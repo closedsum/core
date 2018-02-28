@@ -295,6 +295,114 @@ void ACsWeapon::SetMemberValue_Script_float(const FString &MemberName, const int
 #endif // #if WITH_EDITOR
 }
 
+void ACsWeapon::SetMultiValueMembers()
+{
+	ACsData_ProjectileWeapon* Data = GetMyData_Weapon<ACsData_ProjectileWeapon>();
+
+	// MaxAmmo
+	MaxAmmo.ResetValues();
+	int32 iVal = Data->GetMaxAmmo();
+	MaxAmmo.Set(iVal);
+	MaxAmmo.Set(CS_WEAPON_DATA_VALUE, Data->GetMaxAmmoAddr());
+
+	CurrentAmmo = MaxAmmo.Get(CS_WEAPON_DATA_VALUE);
+
+	// Firing
+	{
+		// DoFireOnRelease
+		SetMemberMultiRefValue<bool>(DoFireOnRelease, FiringDataFireMode, TEXT("DoFireOnRelease"));
+		// IsFullAuto
+		SetMemberMultiRefValue<bool>(IsFullAuto, FiringDataFireMode, TEXT("IsFullAuto"));
+		// AllowChargeFire
+		SetMemberMultiRefValue<bool>(AllowChargeFire, FiringDataFireMode, TEXT("AllowChargeFire"));
+		// MaxChargeFireTime
+		SetMemberMultiRefValue<float>(MaxChargeFireTime, FiringDataFireMode, TEXT("MaxChargeFireTime"));
+		// ProjectilesPerShot
+		SetMemberMultiRefValue<uint8>(ProjectilesPerShot, FiringDataFireMode, TEXT("ProjectilesPerShot"));
+		// CurrentProjectilePerShotIndex
+		SetMemberMultiValue<uint8>(CurrentProjectilePerShotIndex, 0);
+		// TimeBetweenProjectilesPerShot
+		SetMemberMultiRefValue<float>(TimeBetweenProjectilesPerShot, FiringDataFireMode, TEXT("TimeBetweenProjectilesPerShot"));
+		// TimeBetweenShots
+		SetMemberMultiRefValue<float>(TimeBetweenShots, FiringDataFireMode, TEXT("TimeBetweenShots"));
+		// TimeBetweenAutoShots
+		SetMemberMultiRefValue<float>(TimeBetweenAutoShots, FiringDataFireMode, TEXT("TimeBetweenAutoShots"));
+		// IsFirePressed
+		SetMemberMultiValue<bool>(IsFirePressed, false);
+		// Last_IsFirePressed
+		SetMemberMultiValue<bool>(Last_IsFirePressed, false);
+		// IsFirePressed_StartTime
+		SetMemberMultiValue<float>(IsFirePressed_StartTime, 0.0f);
+		// IsFireReleased_StartTime
+		SetMemberMultiValue<float>(IsFireReleased_StartTime, 0.0f);
+		// Fire_StartTime
+		SetMemberMultiValue<float>(Fire_StartTime, 0.0f);
+		// IsHitScan
+		SetMemberMultiRefValue<bool>(IsHitscan, FiringDataFireMode, TEXT("IsHitScan"));
+		// DoesHitscanUseRadius
+		SetMemberMultiRefValue<bool>(DoesHitscanUseRadius, FiringDataFireMode, TEXT("DoesHitscanUseRadius"));
+		// DoesHitscanSimulateProjectileDuration
+		SetMemberMultiRefValue<bool>(DoesHitscanSimulateProjectileDuration, FiringDataFireMode, TEXT("DoesHitscanSimulateProjectileDuration"));
+		// ObstaclePenetrations
+		SetMemberMultiRefValue<int32>(ObstaclePenetrations, FiringDataFireMode, TEXT("ObstaclePenetrations"));
+		// SetMemberMultiRefValue
+		SetMemberMultiRefValue<int32>(PawnPenetrations, FiringDataFireMode, TEXT("PawnPenetrations"));
+
+	}
+	// Animation
+	{
+		// LoopFireAnim
+		SetMemberMultiRefValue<bool>(LoopFireAnim, AnimationDataFireMode, TEXT("LoopFireAnim"));
+		// DoScaleFireAnim
+		SetMemberMultiRefValue<bool>(DoScaleFireAnim, AnimationDataFireMode, TEXT("DoScaleFireAnim"));
+	}
+	// Aiming
+	{
+		// DoSpread
+		SetMemberMultiRefValue<bool>(DoSpread, AimingDataFireMode, TEXT("DoSpread"));
+		// MinSpread
+		SetMemberMultiRefValue<float>(MinSpread, AimingDataFireMode, TEXT("MinSpread"));
+		// MaxSpread
+		SetMemberMultiRefValue<float>(MaxSpread, AimingDataFireMode, TEXT("MaxSpread"));
+		// SpreadAddedPerShot
+		SetMemberMultiRefValue<float>(SpreadAddedPerShot, AimingDataFireMode, TEXT("SpreadAddedPerShot"));
+		// SpreadRecoveryRate
+		SetMemberMultiRefValue<float>(SpreadRecoveryRate, AimingDataFireMode, TEXT("SpreadRecoveryRate"));
+		// FiringSpreadRecoveryDelay
+		SetMemberMultiRefValue<float>(FiringSpreadRecoveryDelay, AimingDataFireMode, TEXT("FiringSpreadRecoveryDelay"));
+		// MovingSpreadBonus
+		SetMemberMultiRefValue<float>(MovingSpreadBonus, AimingDataFireMode, TEXT("MovingSpreadBonus"));
+	}
+	// Sounds
+	{
+		// LoopFireSound
+		SetMemberMultiRefValue<bool>(LoopFireSound, SoundsDataFireMode, TEXT("LoopFireSound"));
+	}
+	// Stats
+	{
+		// AllowRechargeAmmo
+		SetMemberRefValue<bool>(AllowRechargeAmmo, TEXT("AllowRechargeAmmo"));
+		// AllowRechargeAmmoDuringFire
+		SetMemberRefValue<bool>(AllowRechargeAmmoDuringFire, TEXT("AllowRechargeAmmoDuringFire"));
+
+		// RechargeSecondsPerAmmo
+		RechargeSecondsPerAmmo.ResetValues();
+		float fVal = Data->GetRechargeSecondsPerAmmo();
+		RechargeSecondsPerAmmo.Set(fVal);
+		RechargeSecondsPerAmmo.Set(CS_WEAPON_DATA_VALUE, Data->GetRechargeSecondsPerAmmoAddr());
+		// RechargeStartupDelay
+		RechargeStartupDelay.ResetValues();
+		fVal = Data->GetRechargeStartupDelay();
+		RechargeStartupDelay.Set(fVal);
+		RechargeStartupDelay.Set(CS_WEAPON_DATA_VALUE, Data->GetRechargeStartupDelayAddr());
+		// ReloadTime
+		ReloadTime.ResetValues();
+		fVal = Data->GetReloadTime();
+		ReloadTime.Set(fVal);
+		ReloadTime.Set(CS_WEAPON_DATA_VALUE, Data->GetReloadTimeAddr());
+	}
+}
+
 #pragma endregion Set
 
 	// Get

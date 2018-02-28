@@ -119,6 +119,8 @@ class CSCORE_API ACsFpsWeapon : public ACsWeapon
 	virtual void SetMemberValue_float(const uint8 &Member, const int32 &Index, const float &Value) override;
 	virtual void SetMemberValue_Script_float(const FString &MemberName, const int32 &Index, const float &Value) override;
 
+	virtual void SetMultiValueMembers() override;
+
 #pragma endregion Set
 
 	// Get
@@ -213,6 +215,8 @@ protected:
 
 	// Scope
 
+	TCsData_Weapon_FireMode ScopeDataFireMode;
+
 	bool IsScopeActive;
 	bool Last_IsScopeActive;
 	bool IsScopeActive_Toggle;
@@ -233,6 +237,8 @@ protected:
 
 // Movement
 #pragma region
+
+	TCsData_Weapon_FireMode MovementDataFireMode;
 
 	FCsWeapon_TArrayRef_bool DoSlowWhileFiring;
 	FCsWeapon_TArrayRef_float SlowWhileFiringRate;

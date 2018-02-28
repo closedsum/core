@@ -466,6 +466,12 @@ class CSCORE_API ACsWeapon : public AActor
 
 	class ACsData_Projectile* GetMyData_Projectile(const TCsWeaponFireMode &FireMode, const bool &IsCharged);
 
+	template<typename T>
+	T* GetMyData_Projectile(const TCsWeaponFireMode, const bool &IsCharged)
+	{
+		return Cast<T>(GetMyData_Projectile(FireMode, IsCharged));
+	}
+
 #pragma endregion Data
 
 // Routines

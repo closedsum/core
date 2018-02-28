@@ -4,7 +4,7 @@
 #include "Types/CsTypes.h"
 #include "Types/CsTypes_Weapon.h"
 #include "Common/CsCommon_Load.h"
-#include "Data/CsData_Weapon.h"
+#include "Data/CsData_ProjectileWeapon.h"
 #include "CsWeapon.generated.h"
 
 // Data
@@ -367,7 +367,7 @@ class CSCORE_API ACsWeapon : public AActor
 	template<typename T>
 	void SetMemberMultiRefValue(struct TCsPrimitiveType_TArrayRefValue<T, TCsWeaponFireMode> &Member, const TCsData_Weapon_FireMode &FireModeMember, const FString &MemberName)
 	{
-		ACsData_Weapon* Data_Weapon = GetMyData_Weapon();
+		ACsData_ProjectileWeapon* Data_Weapon = GetMyData_Weapon<ACsData_ProjectileWeapon>();
 
 		Member.ResetValues();
 

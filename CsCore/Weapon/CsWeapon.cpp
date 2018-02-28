@@ -11,7 +11,6 @@
 #include "Animation/CsAnimInstance.h"
 
 // Data
-#include "Data/CsData_ProjectileWeapon.h"
 #include "Data/CsData_ProjectileImpact.h"
 
 // Managers
@@ -1065,8 +1064,8 @@ ACsSound* ACsWeapon::GetSound(const TCsWeaponSound &SoundType){ return nullptr; 
 
 void ACsWeapon::PlaySound(const TCsWeaponFireMode &FireMode, const TCsWeaponSound &SoundType)
 {
-	ACsData_Weapon* Data	   = GetMyData_Weapon();
-	const TCsViewType ViewType = GetCurrentViewType();
+	ACsData_ProjectileWeapon* Data	= GetMyData_Weapon<ACsData_ProjectileWeapon>();
+	const TCsViewType ViewType		= GetCurrentViewType();
 
 #if WITH_EDITOR 
 	// In Editor Preview Window
@@ -1083,8 +1082,8 @@ void ACsWeapon::PlaySound(const TCsWeaponFireMode &FireMode, const TCsWeaponSoun
 
 void ACsWeapon::StopSound(const TCsWeaponFireMode &FireMode, const TCsWeaponSound &SoundType)
 {
-	ACsData_Weapon* Data	   = GetMyData_Weapon();
-	const TCsViewType ViewType = GetCurrentViewType();
+	ACsData_ProjectileWeapon* Data  = GetMyData_Weapon<ACsData_ProjectileWeapon>();
+	const TCsViewType ViewType		= GetCurrentViewType();
 
 #if WITH_EDITOR 
 	// In Editor Preview Window

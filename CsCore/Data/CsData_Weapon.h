@@ -19,10 +19,11 @@ class CSCORE_API ACsData_Weapon : public ACsData
 	virtual FName GetLocationDamageModifierBone(const TCsWeaponFireMode &FireMode, const uint8 &Index);
 	virtual float GetLocationDamageModifierMultiplier(const TCsWeaponFireMode &FireMode, const uint8 &Index);
 
-	virtual bool UseFakeProjectile(const TCsWeaponFireMode &FireMode);
-	virtual class ACsData_Projectile* GetData_Projectile(const TCsWeaponFireMode &FireMode, const bool &IsCharged = false);
+	//virtual bool UseFakeProjectile(const TCsWeaponFireMode &FireMode);
+	//virtual class ACsData_Projectile* GetData_Projectile(const TCsWeaponFireMode &FireMode, const bool &IsCharged = false);
 
-	virtual FVector GetMuzzleLocation(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const uint8 &Index);
+	//virtual FVector GetMuzzleLocation(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const uint8 &Index = 0);
+	//virtual FVector GetMuzzleLocation(USkeletalMeshComponent* InMesh, const TCsWeaponFireMode &FireMode, const uint8 &Index = 0);
 
 #pragma endregion Stats
 
@@ -30,13 +31,19 @@ class CSCORE_API ACsData_Weapon : public ACsData
 #pragma region
 
 	virtual USkeletalMesh* GetMesh(const TCsViewType &ViewType, const bool &IsLow = false);
+	virtual USkeletalMesh* GetMesh();
 
 	virtual void SetMesh(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const bool &IsLow = false);
 	virtual void SetMesh(class ASkeletalMeshActor* InActor, const TCsViewType &ViewType, const bool &IsLow = false);
 	UFUNCTION(BlueprintCallable, Category = "Mesh")
 	virtual void SetMesh(UObject* InObject, const TEnumAsByte<ECsViewType::Type> &ViewType, const bool &IsLow = false);
 
+	virtual void SetMesh(USkeletalMeshComponent* InMesh);
+	virtual void SetMesh(class ASkeletalMeshActor* InActor);
+	virtual void SetMesh(UObject* InObject);
+
 	virtual void GetDefaultMaterials(TArray<class UMaterialInstanceConstant*> &OutMaterials, const TCsViewType &ViewType, const bool &IsLow = false);
+	virtual void GetDefaultMaterials(TArray<class UMaterialInstanceConstant*> &OutMaterials);
 
 #pragma endregion Mesh
 
@@ -70,7 +77,7 @@ class CSCORE_API ACsData_Weapon : public ACsData
 // FX
 #pragma region
 
-	virtual FCsFxElement* GetMuzzleFX(const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const int32 &Index = 0);
+	//virtual FCsFxElement* GetMuzzleFX(const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const int32 &Index = 0);
 
 #pragma endregion FX
 

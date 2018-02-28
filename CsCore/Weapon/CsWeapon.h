@@ -450,6 +450,12 @@ class CSCORE_API ACsWeapon : public AActor
 	UFUNCTION(BlueprintCallable, Category = "Data")
 	class ACsData_Weapon* GetMyData_Weapon();
 
+	template<typename T>
+	T* GetMyData_Weapon()
+	{
+		return Cast<T>(GetMyData_Weapon());
+	}
+
 	/* Declare / Implement in Child class */
 	// ApplyData_Weapon
 

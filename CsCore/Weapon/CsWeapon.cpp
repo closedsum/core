@@ -11,6 +11,7 @@
 #include "Animation/CsAnimInstance.h"
 
 // Data
+#include "Data/CsData_ProjectileWeapon.h"
 #include "Data/CsData_ProjectileImpact.h"
 
 // Managers
@@ -462,7 +463,7 @@ ACsData_Weapon* ACsWeapon::GetMyData_Weapon()
 
 ACsData_Projectile* ACsWeapon::GetMyData_Projectile(const TCsWeaponFireMode &FireMode, const bool &IsCharged)
 {
-	return GetMyData_Weapon()->GetData_Projectile(FireMode, IsCharged);
+	return GetMyData_Weapon<ACsData_ProjectileWeapon>()->GetData_Projectile(FireMode, IsCharged);
 }
 
 #pragma endregion Data
@@ -1562,9 +1563,9 @@ void ACsWeapon::FireProjectile(const TCsWeaponFireMode &FireMode, FCsProjectileF
 	const FVector RealStart   = Cache->Location;
 	FVector RealDir			  = Cache->Direction;
 
-	ACsData_Weapon* Data_Weapon			= GetMyData_Weapon();
-	ACsData_Projectile* Data_Projectile = Data_Weapon->GetData_Projectile(FireMode, Cache->ChargePercent > 0.0f);
-	const bool UseFakeProjectile		= Data_Weapon->UseFakeProjectile(FireMode);
+	ACsData_ProjectileWeapon* Data_Weapon	= GetMyData_Weapon<ACsData_ProjectileWeapon>();
+	ACsData_Projectile* Data_Projectile		= Data_Weapon->GetData_Projectile(FireMode, Cache->ChargePercent > 0.0f);
+	const bool UseFakeProjectile			= Data_Weapon->UseFakeProjectile(FireMode);
 
 	FVector RealEnd = RealStart;
 
@@ -1722,8 +1723,8 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 {
 	//ACsPawn* Pawn					 = GetMyPawn();
 	//ACsPlayerState* MyPlayerState	 = Cast<ACsPlayerState>(Pawn->PlayerState);
-	ACsData_Weapon* Data_Weapon		 = GetMyData_Weapon();
-	ACsData_Projectile* Data_Projectile = Data_Weapon->GetData_Projectile(FireMode, Cache->ChargePercent > 0.0f);
+	ACsData_ProjectileWeapon* Data_Weapon	= GetMyData_Weapon<ACsData_ProjectileWeapon>();
+	ACsData_Projectile* Data_Projectile		= Data_Weapon->GetData_Projectile(FireMode, Cache->ChargePercent > 0.0f);
 
 	const ECollisionChannel ProjectileCollision = Data_Projectile->GetCollisionObjectType();
 
@@ -1966,9 +1967,9 @@ void ACsWeapon::PlayMuzzleFlash(const TCsWeaponFireMode &FireMode)
 		Manager_FX				 = GameState->Manager_FX;
 	}
 
-	ACsData_Weapon* Data_Weapon = GetMyData_Weapon();
-	const TCsViewType ViewType	= GetCurrentViewType();
-	FCsFxElement* FX			= Data_Weapon->GetMuzzleFX(ViewType, FireMode, CurrentProjectilePerShotIndex.Get(FireMode));
+	ACsData_ProjectileWeapon* Data_Weapon = GetMyData_Weapon<ACsData_ProjectileWeapon>();
+	const TCsViewType ViewType			  = GetCurrentViewType();
+	FCsFxElement* FX					  = Data_Weapon->GetMuzzleFX(ViewType, FireMode, CurrentProjectilePerShotIndex.Get(FireMode));
 
 	Manager_FX->Play(FX, GetMyPawn(), GetMuzzleFlashParent(ViewType));
 }

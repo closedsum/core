@@ -23,23 +23,19 @@ uint8 ACsData_Weapon::GetLocationDamageModifierCount(const TCsWeaponFireMode &Fi
 FName ACsData_Weapon::GetLocationDamageModifierBone(const TCsWeaponFireMode &FireMode, const uint8 &Index) { return NAME_None; }
 float ACsData_Weapon::GetLocationDamageModifierMultiplier(const TCsWeaponFireMode &FireMode, const uint8 &Index) { return 0.0f; }
 
-bool ACsData_Weapon::UseFakeProjectile(const TCsWeaponFireMode &FireMode){ return false; }
-ACsData_Projectile* ACsData_Weapon::GetData_Projectile(const TCsWeaponFireMode &FireMode, const bool &IsCharged){ return nullptr; }
+//bool ACsData_Weapon::UseFakeProjectile(const TCsWeaponFireMode &FireMode){ return false; }
+//ACsData_Projectile* ACsData_Weapon::GetData_Projectile(const TCsWeaponFireMode &FireMode, const bool &IsCharged){ return nullptr; }
 
-FVector ACsData_Weapon::GetMuzzleLocation(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const uint8 &Index /*=0*/)
-{
-	return FVector::ZeroVector;
-}
+//FVector ACsData_Weapon::GetMuzzleLocation(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const uint8 &Index /*=0*/){ return FVector::ZeroVector; }
+//FVector ACsData_Weapon::GetMuzzleLocation(USkeletalMeshComponent* InMesh, const TCsWeaponFireMode &FireMode, const uint8 &Index /*=0*/){ return FVector::ZeroVector; }
 
 #pragma endregion Stats
 
 // Mesh
 #pragma region
 
-USkeletalMesh* ACsData_Weapon::GetMesh(const TCsViewType &ViewType, const bool &IsLow /*=false*/)
-{
-	return nullptr;
-}
+USkeletalMesh* ACsData_Weapon::GetMesh(const TCsViewType &ViewType, const bool &IsLow /*=false*/){ return nullptr; }
+USkeletalMesh* ACsData_Weapon::GetMesh() { return nullptr; }
 
 void ACsData_Weapon::SetMesh(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const bool &IsLow /*=false*/)
 {
@@ -53,24 +49,57 @@ void ACsData_Weapon::SetMesh(ASkeletalMeshActor* InActor, const TCsViewType &Vie
 
 void ACsData_Weapon::SetMesh(UObject* InObject, const TEnumAsByte<ECsViewType::Type> &ViewType, const bool &IsLow /*=false*/)
 {
-	if (USkeletalMeshComponent* mesh = Cast<USkeletalMeshComponent>(InObject))
-		SetMesh(mesh, ViewType, IsLow);
+	if (USkeletalMeshComponent* InMesh = Cast<USkeletalMeshComponent>(InObject))
+		SetMesh(InMesh, ViewType, IsLow);
 	else
 	if (ASkeletalMeshActor* Actor = Cast<ASkeletalMeshActor>(InObject))
 		SetMesh(Actor, ViewType, IsLow);
 }
 
+void ACsData_Weapon::SetMesh(USkeletalMeshComponent* InMesh)
+{
+	InMesh->SetSkeletalMesh(GetMesh());
+}
+
+void ACsData_Weapon::SetMesh(ASkeletalMeshActor* InActor)
+{
+	SetMesh(InActor->GetSkeletalMeshComponent());
+}
+
+void ACsData_Weapon::SetMesh(UObject* InObject)
+{
+	if (USkeletalMeshComponent* InMesh = Cast<USkeletalMeshComponent>(InObject))
+		SetMesh(InMesh);
+	else
+	if (ASkeletalMeshActor* Actor = Cast<ASkeletalMeshActor>(InObject))
+		SetMesh(Actor);
+}
+
 void ACsData_Weapon::GetDefaultMaterials(TArray<UMaterialInstanceConstant*> &OutMaterials, const TCsViewType &ViewType, const bool &IsLow /*=false*/)
 {
-	USkeletalMesh* Mesh = GetMesh(ViewType, IsLow);
+	USkeletalMesh* InMesh = GetMesh(ViewType, IsLow);
 
 	OutMaterials.Reset();
 
-	const int32 Count = Mesh->Materials.Num();
+	const int32 Count = InMesh->Materials.Num();
 
 	for (int32 I = 0; I < Count; ++I)
 	{
-		OutMaterials.Add(Cast<UMaterialInstanceConstant>(Mesh->Materials[I].MaterialInterface->GetMaterial()));
+		OutMaterials.Add(Cast<UMaterialInstanceConstant>(InMesh->Materials[I].MaterialInterface->GetMaterial()));
+	}
+}
+
+void ACsData_Weapon::GetDefaultMaterials(TArray<UMaterialInstanceConstant*> &OutMaterials)
+{
+	USkeletalMesh* InMesh = GetMesh();
+
+	OutMaterials.Reset();
+
+	const int32 Count = InMesh->Materials.Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		OutMaterials.Add(Cast<UMaterialInstanceConstant>(InMesh->Materials[I].MaterialInterface->GetMaterial()));
 	}
 }
 
@@ -179,7 +208,7 @@ FCsFpsAnimMontage* ACsData_Weapon::GetFCsFpsAnimMontage(const TCsWeaponFireMode 
 // FX
 #pragma region
 
-FCsFxElement* ACsData_Weapon::GetMuzzleFX(const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const int32 &Index /*=0*/){ return nullptr; }
+//FCsFxElement* ACsData_Weapon::GetMuzzleFX(const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const int32 &Index /*=0*/){ return nullptr; }
 
 #pragma endregion FX
 

@@ -8,6 +8,7 @@
 #include "Animation/CsAnimInstance_Weapon.h"
 
 // Data
+#include "Data/CsData_ProjectileWeapon.h"
 #include "Data/CsData_WeaponMaterialSkin.h"
 
 ACsFpsWeapon::ACsFpsWeapon(const FObjectInitializer& ObjectInitializer)
@@ -517,7 +518,7 @@ USkeletalMeshComponent* ACsFpsWeapon::GetCurrentMesh()
 
 FVector ACsFpsWeapon::GetMuzzleLocation(const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode)
 {
-	return GetMyData_Weapon()->GetMuzzleLocation(GetMesh(ViewType), ViewType, FireMode, CurrentProjectilePerShotIndex.Get(FireMode));
+	return GetMyData_Weapon<ACsData_ProjectileWeapon>()->GetMuzzleLocation(GetMesh(ViewType), ViewType, FireMode, CurrentProjectilePerShotIndex.Get(FireMode));
 }
 
 float ACsFpsWeapon::GetMovingSpreadBonus(const TCsWeaponFireMode &FireMode) { return MovingSpreadBonus.Get(FireMode); }

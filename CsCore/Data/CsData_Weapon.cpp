@@ -23,12 +23,6 @@ uint8 ACsData_Weapon::GetLocationDamageModifierCount(const TCsWeaponFireMode &Fi
 FName ACsData_Weapon::GetLocationDamageModifierBone(const TCsWeaponFireMode &FireMode, const uint8 &Index) { return NAME_None; }
 float ACsData_Weapon::GetLocationDamageModifierMultiplier(const TCsWeaponFireMode &FireMode, const uint8 &Index) { return 0.0f; }
 
-//bool ACsData_Weapon::UseFakeProjectile(const TCsWeaponFireMode &FireMode){ return false; }
-//ACsData_Projectile* ACsData_Weapon::GetData_Projectile(const TCsWeaponFireMode &FireMode, const bool &IsCharged){ return nullptr; }
-
-//FVector ACsData_Weapon::GetMuzzleLocation(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const uint8 &Index /*=0*/){ return FVector::ZeroVector; }
-//FVector ACsData_Weapon::GetMuzzleLocation(USkeletalMeshComponent* InMesh, const TCsWeaponFireMode &FireMode, const uint8 &Index /*=0*/){ return FVector::ZeroVector; }
-
 #pragma endregion Stats
 
 // Mesh
@@ -204,13 +198,6 @@ FCsFpsAnimSequence* ACsData_Weapon::GetFCsFpsAnimSequence(const TCsWeaponFireMod
 FCsFpsAnimMontage* ACsData_Weapon::GetFCsFpsAnimMontage(const TCsWeaponFireMode &FireMode, const TCsWeaponAnim &AnimType){ return nullptr; }
 
 #pragma endregion Anims
-
-// FX
-#pragma region
-
-//FCsFxElement* ACsData_Weapon::GetMuzzleFX(const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const int32 &Index /*=0*/){ return nullptr; }
-
-#pragma endregion FX
 
 // Sounds
 #pragma region

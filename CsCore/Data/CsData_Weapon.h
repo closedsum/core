@@ -19,12 +19,6 @@ class CSCORE_API ACsData_Weapon : public ACsData
 	virtual FName GetLocationDamageModifierBone(const TCsWeaponFireMode &FireMode, const uint8 &Index);
 	virtual float GetLocationDamageModifierMultiplier(const TCsWeaponFireMode &FireMode, const uint8 &Index);
 
-	//virtual bool UseFakeProjectile(const TCsWeaponFireMode &FireMode);
-	//virtual class ACsData_Projectile* GetData_Projectile(const TCsWeaponFireMode &FireMode, const bool &IsCharged = false);
-
-	//virtual FVector GetMuzzleLocation(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const uint8 &Index = 0);
-	//virtual FVector GetMuzzleLocation(USkeletalMeshComponent* InMesh, const TCsWeaponFireMode &FireMode, const uint8 &Index = 0);
-
 #pragma endregion Stats
 
 // Mesh
@@ -73,13 +67,6 @@ class CSCORE_API ACsData_Weapon : public ACsData
 	virtual FCsFpsAnimMontage* GetFCsFpsAnimMontage(const TCsWeaponFireMode &FireMode, const TCsWeaponAnim &AnimType);
 
 #pragma endregion Anims
-
-// FX
-#pragma region
-
-	//virtual FCsFxElement* GetMuzzleFX(const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const int32 &Index = 0);
-
-#pragma endregion FX
 
 // Sound
 #pragma region

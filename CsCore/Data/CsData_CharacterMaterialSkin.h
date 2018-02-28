@@ -17,7 +17,7 @@ class CSCORE_API ACsData_CharacterMaterialSkin : public ACsData
 #pragma region
 
 	virtual TArray<class UMaterialInstanceConstant*>* GetMaterials(const TCsViewType &ViewType, const bool &IsLow = false);
-	virtual TArray<class UMaterialInstanceConstant*>* GetMaterials(const bool &IsLow = false);
+	virtual TArray<class UMaterialInstanceConstant*>* GetMaterials();
 
 	virtual void SetMaterials(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const bool &IsLow = false);
 	virtual void SetMaterials(class ASkeletalMeshActor* InActor, const TCsViewType &ViewType, const bool &IsLow = false);
@@ -25,9 +25,9 @@ class CSCORE_API ACsData_CharacterMaterialSkin : public ACsData
 	UFUNCTION(BlueprintCallable, Category = "Character Material Skin")
 	virtual void SetMaterials(UObject* InObject, const TEnumAsByte<ECsViewType::Type> &ViewType, const bool &IsLow = false);
 
-	virtual void SetMaterials(USkeletalMeshComponent* InMesh, const bool &IsLow = false);
-	virtual void SetMaterials(class ASkeletalMeshActor* InActor, const bool &IsLow = false);
-	virtual void SetMaterials(UObject* InObject, const bool &IsLow = false);
+	virtual void SetMaterials(USkeletalMeshComponent* InMesh);
+	virtual void SetMaterials(class ASkeletalMeshActor* InActor);
+	virtual void SetMaterials(UObject* InObject);
 
 #pragma endregion Skin
 };

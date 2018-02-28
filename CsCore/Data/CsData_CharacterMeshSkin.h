@@ -22,9 +22,9 @@ class CSCORE_API ACsData_CharacterMeshSkin : public ACsData
 	UFUNCTION(BlueprintCallable, Category = "Character Mesh Skin")
 	virtual void SetMesh(UObject* InObject, const TEnumAsByte<ECsViewType::Type> &ViewType, const bool &IsLow = false);
 
-	virtual void SetMesh(USkeletalMeshComponent* InMesh, const bool &IsLow = false);
-	virtual void SetMesh(class ASkeletalMeshActor* InActor, const bool &IsLow = false);
-	virtual void SetMesh(UObject* InObject, const bool &IsLow = false);
+	virtual void SetMesh(USkeletalMeshComponent* InMesh);
+	virtual void SetMesh(class ASkeletalMeshActor* InActor);
+	virtual void SetMesh(UObject* InObject);
 
 #pragma endregion Skin
 };

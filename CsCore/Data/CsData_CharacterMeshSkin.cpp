@@ -24,19 +24,19 @@ void ACsData_CharacterMeshSkin::SetMesh(UObject* InObject, const TEnumAsByte<ECs
 		SetMesh(Actor, ViewType, IsLow);
 }
 
-void ACsData_CharacterMeshSkin::SetMesh(USkeletalMeshComponent* InMesh, const bool &IsLow /*=false*/) {}
+void ACsData_CharacterMeshSkin::SetMesh(USkeletalMeshComponent* InMesh) {}
 
-void ACsData_CharacterMeshSkin::SetMesh(ASkeletalMeshActor* InActor, const bool &IsLow /*=false*/)
+void ACsData_CharacterMeshSkin::SetMesh(ASkeletalMeshActor* InActor)
 {
-	SetMesh(InActor->GetSkeletalMeshComponent(), IsLow);
+	SetMesh(InActor->GetSkeletalMeshComponent());
 }
 
-void ACsData_CharacterMeshSkin::SetMesh(UObject* InObject, const bool &IsLow /*=false*/)
+void ACsData_CharacterMeshSkin::SetMesh(UObject* InObject)
 {
 	// Skeletal Mesh Component
 	if (USkeletalMeshComponent* InMesh = Cast<USkeletalMeshComponent>(InObject))
-		SetMesh(InMesh, IsLow);
+		SetMesh(InMesh);
 	// Skeletal Mesh Actor
 	if (ASkeletalMeshActor* Actor = Cast<ASkeletalMeshActor>(InObject))
-		SetMesh(Actor, IsLow);
+		SetMesh(Actor);
 }

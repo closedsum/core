@@ -2672,10 +2672,11 @@ template<typename T>
 			// Struct
 			if (UStructProperty* StructProperty = Cast<UStructProperty>(*It))
 			{
+				if (void* Ptr = GetStructMemberEX(Property, InStruct, InScriptStruct, MemberName))
+					return (T*)Ptr;
+
 				if (Internal)
 				{
-					if (void* Ptr = GetStructMemberEX(Property, InStruct, InScriptStruct, MemberName))
-						return (T*)Ptr;
 					if (void* Ptr = (*Internal)(Property, InStruct, InScriptStruct, MemberName))
 						return (T*)Ptr;
 				}

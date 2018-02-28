@@ -7,19 +7,36 @@ ACsData_CharacterMeshSkin::ACsData_CharacterMeshSkin(const FObjectInitializer& O
 {
 }
 
-void ACsData_CharacterMeshSkin::SetMesh(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType){}
+void ACsData_CharacterMeshSkin::SetMesh(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const bool &IsLow /*=false*/){}
 
-void ACsData_CharacterMeshSkin::SetMesh(ASkeletalMeshActor* InActor, const TCsViewType &ViewType)
+void ACsData_CharacterMeshSkin::SetMesh(ASkeletalMeshActor* InActor, const TCsViewType &ViewType, const bool &IsLow /*=false*/)
 {
-	SetMesh(InActor->GetSkeletalMeshComponent(), ViewType);
+	SetMesh(InActor->GetSkeletalMeshComponent(), ViewType, IsLow);
 }
 
-void ACsData_CharacterMeshSkin::SetMesh(UObject* InObject, const TEnumAsByte<ECsViewType::Type> &ViewType)
+void ACsData_CharacterMeshSkin::SetMesh(UObject* InObject, const TEnumAsByte<ECsViewType::Type> &ViewType, const bool &IsLow /*=false*/)
 {
 	// Skeletal Mesh Component
-	if (USkeletalMeshComponent* Mesh = Cast<USkeletalMeshComponent>(InObject))
-		SetMesh(Mesh, ViewType);
+	if (USkeletalMeshComponent* InMesh = Cast<USkeletalMeshComponent>(InObject))
+		SetMesh(InMesh, ViewType, IsLow);
 	// Skeletal Mesh Actor
 	if (ASkeletalMeshActor* Actor = Cast<ASkeletalMeshActor>(InObject))
-		SetMesh(Actor, ViewType);
+		SetMesh(Actor, ViewType, IsLow);
+}
+
+void ACsData_CharacterMeshSkin::SetMesh(USkeletalMeshComponent* InMesh) {}
+
+void ACsData_CharacterMeshSkin::SetMesh(ASkeletalMeshActor* InActor)
+{
+	SetMesh(InActor->GetSkeletalMeshComponent());
+}
+
+void ACsData_CharacterMeshSkin::SetMesh(UObject* InObject)
+{
+	// Skeletal Mesh Component
+	if (USkeletalMeshComponent* InMesh = Cast<USkeletalMeshComponent>(InObject))
+		SetMesh(InMesh);
+	// Skeletal Mesh Actor
+	if (ASkeletalMeshActor* Actor = Cast<ASkeletalMeshActor>(InObject))
+		SetMesh(Actor);
 }

@@ -180,6 +180,12 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 
 	static class ACsDataMapping* GetDataMapping(UWorld* InWorld);
 
+	template<typename T>
+	static T* GetDataMapping(UWorld* InWorld)
+	{
+		return Cast<T>(GetDataMapping(InWorld));
+	}
+
 #pragma endregion 
 
 // Materials

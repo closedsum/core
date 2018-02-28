@@ -15,10 +15,15 @@ namespace ECsGameStateOnBoardState
 {
 	enum Type
 	{
+		/** Any Data that is Common to ALL Game Modes. This is usually UI. */
 		LoadCommonData,
 		SetupHUD,
-		LoadData,
+		/** Any Data that is specific to the Game Mode. */
+		LoadGameData,
+		/** Any Items Data loaded from disk or from a Server / Backend. */
 		LoadItems,
+		/** Any Data that is specific to the Level. */
+		LoadSceneData,
 		SetupScene,
 		SetupLastTickActor,
 		SetupJavascriptEntryPoint,
@@ -35,8 +40,9 @@ namespace ECsGameStateOnBoardState
 	{
 		const TCsString LoadCommonData = TCsString(TEXT("LoadCommonData"), TEXT("loadcommondata"), TEXT("load common data"));
 		const TCsString SetupHUD = TCsString(TEXT("SetupHUD"), TEXT("setuphud"), TEXT("setup hud"));
-		const TCsString LoadData = TCsString(TEXT("LoadData"), TEXT("loaddata"), TEXT("load data"));
+		const TCsString LoadGameData = TCsString(TEXT("LoadGameData"), TEXT("loadgamedata"), TEXT("load game data"));
 		const TCsString LoadItems = TCsString(TEXT("LoadItems"), TEXT("loaditems"), TEXT("load items"));
+		const TCsString LoadSceneData = TCsString(TEXT("LoadSceneData"), TEXT("loadscenedata"), TEXT("load scene data"));
 		const TCsString SetupScene = TCsString(TEXT("SetupScene"), TEXT("setupscene"), TEXT("setup scene"));
 		const TCsString SetupLastTickActor = TCsString(TEXT("SetupLastTickActor"), TEXT("setuplasttickactor"), TEXT("setup last tick actor"));
 		const TCsString SetupJavascriptEntryPoint = TCsString(TEXT("SetupJavascriptEntryPoint"), TEXT("setupjavascriptentrypoint"), TEXT("setup javascript entry point"));
@@ -47,8 +53,9 @@ namespace ECsGameStateOnBoardState
 	{
 		if (EType == Type::LoadCommonData) { return Str::LoadCommonData.Value; }
 		if (EType == Type::SetupHUD) { return Str::SetupHUD.Value; }
-		if (EType == Type::LoadData) { return Str::LoadData.Value; }
+		if (EType == Type::LoadGameData) { return Str::LoadGameData.Value; }
 		if (EType == Type::LoadItems) { return Str::LoadItems.Value; }
+		if (EType == Type::LoadSceneData) { return Str::LoadSceneData.Value; }
 		if (EType == Type::SetupScene) { return Str::SetupScene.Value; }
 		if (EType == Type::SetupLastTickActor) { return Str::SetupLastTickActor.Value; }
 		if (EType == Type::SetupJavascriptEntryPoint) { return Str::SetupJavascriptEntryPoint.Value; }
@@ -60,8 +67,9 @@ namespace ECsGameStateOnBoardState
 	{
 		if (String == Str::LoadCommonData) { return Type::LoadCommonData; }
 		if (String == Str::SetupHUD) { return Type::SetupHUD; }
-		if (String == Str::LoadData) { return Type::LoadData; }
+		if (String == Str::LoadGameData) { return Type::LoadGameData; }
 		if (String == Str::LoadItems) { return Type::LoadItems; }
+		if (String == Str::LoadSceneData) { return Type::LoadSceneData; }
 		if (String == Str::SetupScene) { return Type::SetupScene; }
 		if (String == Str::SetupLastTickActor) { return Type::SetupLastTickActor; }
 		if (String == Str::SetupJavascriptEntryPoint) { return Type::SetupJavascriptEntryPoint; }
@@ -152,12 +160,16 @@ public:
 
 	CS_COROUTINE_DECLARE(OnBoard)
 
+	virtual void GetLoadAssetsShortCodes(const TCsLoadAssetsType &AssetsType, TArray<FName> &OutShortCodes);
+
 	virtual void LoadCommonData();
 	virtual void OnFinishedLoadCommonData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime);
 	virtual void SetupHUD();
-	virtual void LoadData();
-	virtual void OnFinishedLoadData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime);
+	virtual void LoadGameData();
+	virtual void OnFinishedLoadGameData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime);
 	virtual void LoadItems();
+	virtual void LoadSceneData();
+	virtual void OnFinishedLoadSceneData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime);
 	virtual void SetupScene();
 	virtual void OnBoard_Completed();
 

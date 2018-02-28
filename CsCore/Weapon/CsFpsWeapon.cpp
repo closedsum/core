@@ -4,9 +4,11 @@
 #include "Common/CsCommon.h"
 
 #include "Pawn/CsPawn.h"
-#include "Animation/CsAnimInstance.h"
+#include "Animation/CsAnimInstance_Character.h"
+#include "Animation/CsAnimInstance_Weapon.h"
 
 // Data
+#include "Data/CsData_ProjectileWeapon.h"
 #include "Data/CsData_WeaponMaterialSkin.h"
 
 ACsFpsWeapon::ACsFpsWeapon(const FObjectInitializer& ObjectInitializer)
@@ -122,6 +124,45 @@ void ACsFpsWeapon::SetMemberValue_Script_float(const FString &MemberName, const 
 #endif // #if WITH_EDITOR
 }
 
+void ACsFpsWeapon::SetMultiValueMembers()
+{
+	Super::SetMultiValueMembers();
+
+	// Movement
+	{
+		// DoSlowWhileFiring
+		SetMemberMultiRefValue<bool>(DoSlowWhileFiring, MovementDataFireMode, TEXT("DoSlowWhileFiring"));
+		// SlowWhileFiringRate
+		SetMemberMultiRefValue<float>(SlowWhileFiringRate, MovementDataFireMode, TEXT("SlowWhileFiringRate"));
+		// DoKickback
+		SetMemberMultiRefValue<bool>(DoKickback, MovementDataFireMode, TEXT("DoKickback"));
+		// DoKickbackOnGround
+		SetMemberMultiRefValue<bool>(DoKickbackOnGround, MovementDataFireMode, TEXT("DoKickbackOnGround"));
+		// KickbackStrength
+		SetMemberMultiRefValue<float>(KickbackStrength, MovementDataFireMode, TEXT("KickbackStrength"));
+	}
+	// Aiming
+	{
+		// MovingSpreadBonus
+		SetMemberMultiRefValue<float>(MovingSpreadBonus, AimingDataFireMode, TEXT("MovingSpreadBonus"));
+		// JumpSpreadImpulse
+		SetMemberMultiRefValue<float>(JumpSpreadImpulse, AimingDataFireMode, TEXT("JumpSpreadImpulse"));
+		// ScopeAccuracyBonus
+		SetMemberMultiRefValue<float>(ScopeAccuracyBonus, AimingDataFireMode, TEXT("ScopeAccuracyBonus"));
+	}
+	// Scope
+	{
+		// DoScopePower
+		SetMemberMultiRefValue<bool>(DoScopePower, ScopeDataFireMode, TEXT("DoScopePower"));
+		// MaxScopePower
+		SetMemberMultiRefValue<float>(MaxScopePower, ScopeDataFireMode, TEXT("MaxScopePower"));
+		// ScopePowerGrowthRate
+		SetMemberMultiRefValue<float>(ScopePowerGrowthRate, ScopeDataFireMode, TEXT("ScopePowerGrowthRate"));
+		// CurrentScopePower
+		SetMemberMultiValue<float>(CurrentScopePower, 0.0f);
+	}
+}
+
 #pragma endregion Set
 
 	// Get
@@ -235,7 +276,7 @@ void ACsFpsWeapon::OnTick(const float &DeltaSeconds)
 	{
 		if (CsCVarLogOverrideFunctions->GetInt() == CS_CVAR_DISPLAY)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsWeapon::OnTick (%s): Using Override Function."), *GetName());
+			UE_LOG(LogCs, Warning, TEXT("ACsFpsWeapon::OnTick (%s): Using Override Function."), *GetName());
 		}
 		Override_OnTick_ScriptEvent.Broadcast(WeaponIndex, DeltaSeconds);
 		return;
@@ -358,24 +399,36 @@ void ACsFpsWeapon::SetMesh1P()
 	// In Editor Preview Window
 	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
 	{
-		if (UCsAnimInstance* AnimInstance = Cast<UCsAnimInstance>(GetMyOwner()))
+		USkeletalMeshComponent* Mesh = nullptr;
+
+		// Character
+		if (UCsAnimInstance_Character* AnimInstance = Cast<UCsAnimInstance_Character>(GetMyOwner()))
 		{
+			USkeletalMeshComponent* Mesh = Mesh1P;
+
+			Data_Weapon->SetMesh(Mesh1P, ECsViewType::FirstPerson);
+			Data_Weapon->SetAnimBlueprint(Mesh1P, ECsViewType::FirstPerson);
+		}
+		// Weapon
+		if (UCsAnimInstance_Weapon* AnimInstance = Cast<UCsAnimInstance_Weapon>(GetMyOwner()))
 			USkeletalMeshComponent* Mesh = AnimInstance->GetSkeletalMeshComponent();
 
-			if (ACsData_WeaponMaterialSkin* Skin = GetMyData_WeaponMaterialSkin())
-			{
-				Skin->SetMaterials(Mesh, ECsViewType::FirstPerson);
-				UCsCommon::SetMIDs(Mesh, MeshMIDs1P, *Skin->GetMaterials(ECsViewType::FirstPerson));
-			}
-			else
-			{
-				TArray<UMaterialInstanceConstant*> Materials;
-				Data_Weapon->GetDefaultMaterials(Materials, ECsViewType::FirstPerson);
-
-				UCsCommon::SetMIDs(Mesh, MeshMIDs1P, Materials);
-			}
+		if (!Mesh)
 			return;
+
+		if (ACsData_WeaponMaterialSkin* Skin = GetMyData_WeaponMaterialSkin())
+		{
+			Skin->SetMaterials(Mesh, ECsViewType::FirstPerson);
+			UCsCommon::SetMIDs(Mesh, MeshMIDs1P, *Skin->GetMaterials(ECsViewType::FirstPerson));
 		}
+		else
+		{
+			TArray<UMaterialInstanceConstant*> Materials;
+			Data_Weapon->GetDefaultMaterials(Materials, ECsViewType::FirstPerson);
+
+			UCsCommon::SetMIDs(Mesh, MeshMIDs1P, Materials);
+		}
+		return;
 	}
 	// In Game
 #endif // #if WITH_EDITOR
@@ -409,24 +462,36 @@ void ACsFpsWeapon::SetMesh3P()
 	// In Editor Preview Window
 	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
 	{
-		if (UCsAnimInstance* AnimInstance = Cast<UCsAnimInstance>(GetMyOwner()))
+		USkeletalMeshComponent* Mesh = nullptr;
+
+		// Character
+		if (UCsAnimInstance_Character* AnimInstance = Cast<UCsAnimInstance_Character>(GetMyOwner()))
 		{
+			USkeletalMeshComponent* Mesh = Mesh3P;
+
+			Data_Weapon->SetMesh(Mesh3P, ECsViewType::ThirdPerson, UseMesh3PLow);
+			Data_Weapon->SetAnimBlueprint(Mesh3P, ECsViewType::ThirdPerson, UseMesh3PLow);
+		}
+		// Weapon
+		if (UCsAnimInstance_Weapon* AnimInstance = Cast<UCsAnimInstance_Weapon>(GetMyOwner()))
 			USkeletalMeshComponent* Mesh = AnimInstance->GetSkeletalMeshComponent();
 
-			if (ACsData_WeaponMaterialSkin* Skin = GetMyData_WeaponMaterialSkin())
-			{
-				Skin->SetMaterials(Mesh, ECsViewType::ThirdPerson);
-				UCsCommon::SetMIDs(Mesh, MeshMIDs3P, *Skin->GetMaterials(ECsViewType::ThirdPerson));
-			}
-			else
-			{
-				TArray<UMaterialInstanceConstant*> Materials;
-				Data_Weapon->GetDefaultMaterials(Materials, ECsViewType::ThirdPerson);
-
-				UCsCommon::SetMIDs(Mesh, MeshMIDs3P, Materials);
-			}
+		if (!Mesh)
 			return;
+
+		if (ACsData_WeaponMaterialSkin* Skin = GetMyData_WeaponMaterialSkin())
+		{
+			Skin->SetMaterials(Mesh, ECsViewType::ThirdPerson);
+			UCsCommon::SetMIDs(Mesh, MeshMIDs3P, *Skin->GetMaterials(ECsViewType::ThirdPerson));
 		}
+		else
+		{
+			TArray<UMaterialInstanceConstant*> Materials;
+			Data_Weapon->GetDefaultMaterials(Materials, ECsViewType::ThirdPerson);
+
+			UCsCommon::SetMIDs(Mesh, MeshMIDs3P, Materials);
+		}
+		return;
 	}
 	// In Game
 #endif // #if WITH_EDITOR
@@ -457,8 +522,16 @@ USkeletalMeshComponent* ACsFpsWeapon::GetMesh(const TCsViewType &ViewType)
 	// In Editor Preview Window
 	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
 	{
-		// 1P / 3P
-		if (UCsAnimInstance* AnimInstance = Cast<UCsAnimInstance>(GetMyOwner()))
+		// Character
+		if (UCsAnimInstance_Character* AnimInstance = Cast<UCsAnimInstance_Character>(GetMyOwner()))
+		{
+			if (ViewType == ECsViewType::FirstPerson)
+				return Mesh1P;
+			if (ViewType == ECsViewType::ThirdPerson)
+				return Mesh3P;
+		}
+		// Weapon
+		if (UCsAnimInstance_Weapon* AnimInstance = Cast<UCsAnimInstance_Weapon>(GetMyOwner()))
 			return AnimInstance->GetSkeletalMeshComponent();
 	}
 #endif // #if WITH_EDITOR
@@ -484,7 +557,7 @@ USkeletalMeshComponent* ACsFpsWeapon::GetCurrentMesh()
 
 FVector ACsFpsWeapon::GetMuzzleLocation(const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode)
 {
-	return GetMyData_Weapon()->GetMuzzleLocation(GetMesh(ViewType), ViewType, FireMode, CurrentProjectilePerShotIndex.Get(FireMode));
+	return GetMyData_Weapon<ACsData_ProjectileWeapon>()->GetMuzzleLocation(GetMesh(ViewType), ViewType, FireMode, CurrentProjectilePerShotIndex.Get(FireMode));
 }
 
 float ACsFpsWeapon::GetMovingSpreadBonus(const TCsWeaponFireMode &FireMode) { return MovingSpreadBonus.Get(FireMode); }

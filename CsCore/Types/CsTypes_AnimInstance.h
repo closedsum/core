@@ -151,6 +151,138 @@ public:
 };
 
 USTRUCT(BlueprintType)
+struct FCsDataAnimInstance_CharacterPtr
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, Category = "Data")
+	TAssetSubclassOf<class ACsData_Character> Data;
+
+	TAssetSubclassOf<class ACsData_Character> Last_Data;
+
+	UPROPERTY(Transient)
+	TWeakObjectPtr<class ACsData_Character> Data_Internal;
+
+public:
+	FCsDataAnimInstance_CharacterPtr()
+	{
+	}
+
+	FCsDataAnimInstance_CharacterPtr& operator=(const FCsDataAnimInstance_CharacterPtr& B)
+	{
+		Data = B.Data;
+		Data_Internal = B.Data_Internal;
+		return *this;
+	}
+
+	bool operator==(const FCsDataAnimInstance_CharacterPtr& B) const
+	{
+		return Data == B.Data && Data_Internal == B.Data_Internal;
+	}
+
+	bool operator!=(const FCsDataAnimInstance_CharacterPtr& B) const
+	{
+		return !(*this == B);
+	}
+
+	class ACsData_Character* Get() const
+	{
+		return Data_Internal.IsValid() ? Data_Internal.Get() : NULL;
+	}
+
+	bool HasChanged() { return Data != Last_Data; }
+	void Update() { Last_Data = Data; }
+};
+
+USTRUCT(BlueprintType)
+struct FCsDataAnimInstance_CharacterMeshSkinPtr
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, Category = "Data")
+	TAssetSubclassOf<class ACsData_CharacterMeshSkin> Data;
+
+	TAssetSubclassOf<class ACsData_CharacterMeshSkin> Last_Data;
+
+	UPROPERTY(Transient)
+	TWeakObjectPtr<class ACsData_CharacterMeshSkin> Data_Internal;
+
+public:
+	FCsDataAnimInstance_CharacterMeshSkinPtr()
+	{
+	}
+
+	FCsDataAnimInstance_CharacterMeshSkinPtr& operator=(const FCsDataAnimInstance_CharacterMeshSkinPtr& B)
+	{
+		Data = B.Data;
+		Data_Internal = B.Data_Internal;
+		return *this;
+	}
+
+	bool operator==(const FCsDataAnimInstance_CharacterMeshSkinPtr& B) const
+	{
+		return Data == B.Data && Data_Internal == B.Data_Internal;
+	}
+
+	bool operator!=(const FCsDataAnimInstance_CharacterMeshSkinPtr& B) const
+	{
+		return !(*this == B);
+	}
+
+	class ACsData_CharacterMeshSkin* Get() const
+	{
+		return Data_Internal.IsValid() ? Data_Internal.Get() : NULL;
+	}
+
+	bool HasChanged() { return Data != Last_Data; }
+	void Update() { Last_Data = Data; }
+};
+
+USTRUCT(BlueprintType)
+struct FCsDataAnimInstance_CharacterMaterialSkinPtr
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, Category = "Data")
+	TAssetSubclassOf<class ACsData_CharacterMaterialSkin> Data;
+
+	TAssetSubclassOf<class ACsData_CharacterMaterialSkin> Last_Data;
+
+	UPROPERTY(Transient)
+	TWeakObjectPtr<class ACsData_CharacterMaterialSkin> Data_Internal;
+
+public:
+	FCsDataAnimInstance_CharacterMaterialSkinPtr()
+	{
+	}
+
+	FCsDataAnimInstance_CharacterMaterialSkinPtr& operator=(const FCsDataAnimInstance_CharacterMaterialSkinPtr& B)
+	{
+		Data = B.Data;
+		Data_Internal = B.Data_Internal;
+		return *this;
+	}
+
+	bool operator==(const FCsDataAnimInstance_CharacterMaterialSkinPtr& B) const
+	{
+		return Data == B.Data && Data_Internal == B.Data_Internal;
+	}
+
+	bool operator!=(const FCsDataAnimInstance_CharacterMaterialSkinPtr& B) const
+	{
+		return !(*this == B);
+	}
+
+	class ACsData_CharacterMaterialSkin* Get() const
+	{
+		return Data_Internal.IsValid() ? Data_Internal.Get() : NULL;
+	}
+
+	bool HasChanged() { return Data != Last_Data; }
+	void Update() { Last_Data = Data; }
+};
+
+USTRUCT(BlueprintType)
 struct FCsDataAnimInstance_WeaponPtr
 {
 	GENERATED_USTRUCT_BODY()

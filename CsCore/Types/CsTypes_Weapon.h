@@ -521,4 +521,19 @@ namespace ECsData_Weapon_FireMode
 
 typedef ECsData_Weapon_FireMode::Type TCsData_Weapon_FireMode;
 
+// DataWeaponFireModeToString
+typedef FString(*TCsDataWeaponFireModeToString)(const TCsData_Weapon_FireMode&);
+// StringToDataWeaponFireMode
+typedef TCsData_Weapon_FireMode(*TCsStringToDataWeaponFireMode)(const FString&);
+
+#define CS_DECLARE_DATA_WEAPON_FIRE_MODE	TCsData_Weapon_FireMode Data_Weapon_FireMode_MAX; \
+											uint8 DATA_WEAPON_FIRE_MODE_MAX; \
+											TCsDataWeaponFireModeToString DataWeaponFireModeToString; \
+											TCsStringToDataWeaponFireMode StringToDataWeaponFireMode;
+
+#define CS_DEFINE_DATA_WEAPON_FIRE_MODE		Data_Weapon_FireMode_MAX = ECsData_Weapon_FireMode::ECsData_Weapon_FireMode_MAX;\
+											DATA_WEAPON_FIRE_MODE_MAX = (uint8)Data_Weapon_FireMode_MAX; \
+											DataWeaponFireModeToString = &ECsData_Weapon_FireMode::ToString; \
+											StringToDataWeaponFireMode = &ECsData_Weapon_FireMode::ToType;
+
 #pragma endregion Weapon

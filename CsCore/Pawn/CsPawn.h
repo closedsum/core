@@ -1,6 +1,7 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "GameFramework/Character.h"
+#include "Types/CsTypes_Weapon.h"
 #include "CsPawn.generated.h"
 
 UCLASS()
@@ -12,6 +13,7 @@ class CSCORE_API ACsPawn : public ACharacter
 
 // View
 #pragma region
+public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "View")
 	FRotator CurrentViewRotation;
@@ -32,6 +34,7 @@ class CSCORE_API ACsPawn : public ACharacter
 
 // Body / Root
 #pragma region
+public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "View")
 	FRotator CurrentRootRotation;
@@ -52,6 +55,7 @@ class CSCORE_API ACsPawn : public ACharacter
 
 // Movement
 #pragma region
+public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	FVector CurrentVelocity;
@@ -107,8 +111,132 @@ class CSCORE_API ACsPawn : public ACharacter
 
 #pragma endregion Movement
 
+// Data
+#pragma region
+public:
+
+	class ACsDataMapping* GetDataMapping();
+
+	template<typename T>
+	T* GetDataMapping()
+	{
+		return Cast<T>(GetDataMapping());
+	}
+
+	TWeakObjectPtr<class ACsData_Character> MyData_Character;
+
+	UFUNCTION(BlueprintCallable, Category = "Datas")
+	class ACsData_Character* GetMyData_Character();
+
+	template<typename T>
+	T* GetMyData_Character()
+	{
+		return Cast<T>(GetMyData_Character());
+	}
+
+	TWeakObjectPtr<class ACsData_CharacterMeshSkin> MyData_CharacterMeshSkin;
+
+	UFUNCTION(BlueprintCallable, Category = "Datas")
+	class ACsData_CharacterMeshSkin* GetMyData_CharacterMeshSkin();
+
+	template<typename T>
+	T* GetMyData_CharacterMeshSkin()
+	{
+		return Cast<T>(GetMyData_CharacterMeshSkin());
+	}
+
+	TWeakObjectPtr<class ACsData_CharacterMaterialSkin> MyData_CharacterMaterialSkin;
+
+	UFUNCTION(BlueprintCallable, Category = "Datas")
+	class ACsData_CharacterMaterialSkin* GetMyData_CharacterMaterialSkin();
+
+	template<typename T>
+	T* GetMyData_CharacterMaterialSkin()
+	{
+		return Cast<T>(GetMyData_CharacterMaterialSkin());
+	}
+
+	virtual void ApplyData_Character();
+
+#pragma endregion Data
+
+// Weapons
+#pragma region
+public:
+
+	TCsWeaponSlot CurrentWeaponSlot;
+	uint8 CurrentWeaponIndex;
+	TCsWeaponSlot LastWeaponSlot;
+	uint8 LastWeaponIndex;
+	uint8 CurrentWeaponCount;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Weapons")
+	TArray<class ACsWeapon*> Weapons;
+
+	class ACsWeapon* GetWeapon(const TCsWeaponSlot &Slot);
+
+	template<typename T>
+	T* GetWeapon(const TCsWeaponSlot &Slot)
+	{
+		return Cast<T>(GetWeapon(Slot));
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "Weapons")
+	class ACsWeapon* GetCurrentWeapon();
+
+	template<typename T>
+	T* GetCurrentWeapon()
+	{
+		return Cast<T>(GetCurrentWeapon());
+	}
+
+	UPROPERTY(Transient)
+	TArray<TWeakObjectPtr<class ACsData_Weapon>> Data_Weapons;
+
+	class ACsData_Weapon* GetData_Weapon(const TCsWeaponSlot &Slot);
+	
+	template<typename T>
+	T* GetData_Weapon(const TCsWeaponSlot &Slot)
+	{
+		return Cast<T>(GetData_Weapon(Slot));
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "Weapons")
+	class ACsData_Weapon* GetCurrentData_Weapon();
+
+	template<typename T>
+	T* GetCurrentData_Weapon()
+	{
+		return Cast<T>(GetCurrentData_Weapon());
+	}
+
+	UPROPERTY(Transient)
+	TArray<TWeakObjectPtr<class ACsData_WeaponMaterialSkin>> Data_WeaponMaterialSkins;
+
+	class ACsData_WeaponMaterialSkin* GetData_WeaponMaterialSkin(const TCsWeaponSlot &Slot);
+
+	template<typename T>
+	T* GetData_WeaponMaterialSkin(const TCsWeaponSlot &Slot)
+	{
+		return Cast<T>(GetData_WeaponMaterialSkin(Slot));
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "Weapons")
+	class ACsData_WeaponMaterialSkin* GetCurrentData_WeaponMaterialSkin();
+
+	template<typename T>
+	T* GetCurrentData_WeaponMaterialSkin()
+	{
+		return Cast<T>(GetCurrentData_WeaponMaterialSkin());
+	}
+
+	virtual void ApplyData_Weapon();
+
+#pragma endregion Weapons
+
 // Managers
 #pragma region
+public:
 
 	virtual class ACsManager_Inventory* GetMyManager_Inventory();
 

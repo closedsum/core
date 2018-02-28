@@ -55,7 +55,7 @@ namespace ECsFpsWeaponCacheMultiValueMember
 		const TCsString KickbackStrength = TCsString(TEXT("KickbackStrength"), TEXT("kickbackstrength"), TEXT("kickback strength"));
 	}
 
-	inline FString ToString(const Type &EType)
+	FORCEINLINE FString ToString(const Type &EType)
 	{
 		// Spread
 		if (EType == Type::MovingSpreadBonus) { return Str::MovingSpreadBonus.Value; }
@@ -76,7 +76,7 @@ namespace ECsFpsWeaponCacheMultiValueMember
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	inline Type ToType(const FString &String)
+	FORCEINLINE Type ToType(const FString &String)
 	{
 		// Spread
 		if (String == Str::MovingSpreadBonus) { return Type::MovingSpreadBonus; }
@@ -119,6 +119,8 @@ class CSCORE_API ACsFpsWeapon : public ACsWeapon
 	virtual void SetMemberValue_float(const uint8 &Member, const int32 &Index, const float &Value) override;
 	virtual void SetMemberValue_Script_float(const FString &MemberName, const int32 &Index, const float &Value) override;
 
+	virtual void SetMultiValueMembers() override;
+
 #pragma endregion Set
 
 	// Get
@@ -142,6 +144,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Data")
 	class ACsData_WeaponMaterialSkin* GetMyData_WeaponMaterialSkin();
+
+	template<typename T>
+	T* GetMyData_WeaponMaterialSkin()
+	{
+		return Cast<T>(GetMyData_WeaponMaterialSkin());
+	}
 
 #pragma endregion Data
 
@@ -207,6 +215,8 @@ protected:
 
 	// Scope
 
+	TCsData_Weapon_FireMode ScopeDataFireMode;
+
 	bool IsScopeActive;
 	bool Last_IsScopeActive;
 	bool IsScopeActive_Toggle;
@@ -227,6 +237,8 @@ protected:
 
 // Movement
 #pragma region
+
+	TCsData_Weapon_FireMode MovementDataFireMode;
 
 	FCsWeapon_TArrayRef_bool DoSlowWhileFiring;
 	FCsWeapon_TArrayRef_float SlowWhileFiringRate;

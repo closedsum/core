@@ -1727,7 +1727,7 @@ public:
 		return !(*this == B);
 	}
 
-	void Set(T &inValue)
+	void Set(const T &inValue)
 	{
 		Value = inValue;
 		UpdateIsDirty();

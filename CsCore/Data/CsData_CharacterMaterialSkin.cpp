@@ -17,6 +17,11 @@ TArray<class UMaterialInstanceConstant*>* ACsData_CharacterMaterialSkin::GetMate
 	return nullptr;
 }
 
+TArray<class UMaterialInstanceConstant*>* ACsData_CharacterMaterialSkin::GetMaterials()
+{
+	return nullptr;
+}
+
 void ACsData_CharacterMaterialSkin::SetMaterials(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const bool &IsLow /*=false*/)
 {
 	UCsCommon::SetMaterials(InMesh, *GetMaterials(ViewType, IsLow));
@@ -35,6 +40,26 @@ void ACsData_CharacterMaterialSkin::SetMaterials(UObject* InObject, const TEnumA
 	// Skeletal Mesh Actor
 	if (ASkeletalMeshActor* Actor = Cast<ASkeletalMeshActor>(InObject))
 		SetMaterials(Actor, ViewType, IsLow);
+}
+
+void ACsData_CharacterMaterialSkin::SetMaterials(USkeletalMeshComponent* InMesh)
+{
+	UCsCommon::SetMaterials(InMesh, *GetMaterials());
+}
+
+void ACsData_CharacterMaterialSkin::SetMaterials(ASkeletalMeshActor* InActor)
+{
+	SetMaterials(InActor->GetSkeletalMeshComponent());
+}
+
+void ACsData_CharacterMaterialSkin::SetMaterials(UObject* InObject)
+{
+	// Skeletal Mesh Component
+	if (USkeletalMeshComponent* Mesh = Cast<USkeletalMeshComponent>(InObject))
+		SetMaterials(Mesh);
+	// Skeletal Mesh Actor
+	if (ASkeletalMeshActor* Actor = Cast<ASkeletalMeshActor>(InObject))
+		SetMaterials(Actor);
 }
 
 #pragma endregion Skin

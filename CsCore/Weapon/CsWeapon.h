@@ -4,7 +4,7 @@
 #include "Types/CsTypes.h"
 #include "Types/CsTypes_Weapon.h"
 #include "Common/CsCommon_Load.h"
-#include "Data/CsData_Weapon.h"
+#include "Data/CsData_ProjectileWeapon.h"
 #include "CsWeapon.generated.h"
 
 // Data
@@ -324,6 +324,7 @@ class CSCORE_API ACsWeapon : public AActor
 #pragma region
 
 	CS_DECLARE_WEAPON_FIRE_MODE
+	CS_DECLARE_DATA_WEAPON_FIRE_MODE
 
 	TCsGetObjectMember_Internal GetObjectMember_Internal;
 	TCsGetStructMember_Internal GetStructMember_Internal;
@@ -367,11 +368,11 @@ class CSCORE_API ACsWeapon : public AActor
 	template<typename T>
 	void SetMemberMultiRefValue(struct TCsPrimitiveType_TArrayRefValue<T, TCsWeaponFireMode> &Member, const TCsData_Weapon_FireMode &FireModeMember, const FString &MemberName)
 	{
-		ACsData_Weapon* Data_Weapon = GetMyData_Weapon();
+		ACsData_ProjectileWeapon* Data_Weapon = GetMyData_Weapon<ACsData_ProjectileWeapon>();
 
 		Member.ResetValues();
 
-		const FString StructName = ECsData_Weapon_FireMode::ToString(FireModeMember);
+		const FString StructName = (*DataWeaponFireModeToString)(FireModeMember);
 
 		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; ++I)
 		{
@@ -404,6 +405,8 @@ class CSCORE_API ACsWeapon : public AActor
 	virtual void SetMemberValue_float(const uint8 &Member, const int32 &Index, const float &Value);
 	UFUNCTION(BlueprintCallable, Category = "Member")
 	virtual void SetMemberValue_Script_float(const FString &MemberName, const int32 &Index, const float &Value);
+
+	virtual void SetMultiValueMembers();
 
 #pragma endregion Set
 
@@ -450,6 +453,12 @@ class CSCORE_API ACsWeapon : public AActor
 	UFUNCTION(BlueprintCallable, Category = "Data")
 	class ACsData_Weapon* GetMyData_Weapon();
 
+	template<typename T>
+	T* GetMyData_Weapon()
+	{
+		return Cast<T>(GetMyData_Weapon());
+	}
+
 	/* Declare / Implement in Child class */
 	// ApplyData_Weapon
 
@@ -459,6 +468,12 @@ class CSCORE_API ACsWeapon : public AActor
 	FBindableDynEvent_CsWeapon_OnApplyDataWeapon OnApplyData_Weapon_ScriptEvent;
 
 	class ACsData_Projectile* GetMyData_Projectile(const TCsWeaponFireMode &FireMode, const bool &IsCharged);
+
+	template<typename T>
+	T* GetMyData_Projectile(const TCsWeaponFireMode, const bool &IsCharged)
+	{
+		return Cast<T>(GetMyData_Projectile(FireMode, IsCharged));
+	}
 
 #pragma endregion Data
 
@@ -599,6 +614,8 @@ public:
 #pragma region
 public:
 
+	TCsData_Weapon_FireMode FiringDataFireMode;
+
 	TCsWeaponState FiringState;
 
 	FCsWeapon_Ref_int32 MaxAmmo;
@@ -679,6 +696,8 @@ public:
 	// Spread
 #pragma region
 
+	TCsData_Weapon_FireMode AimingDataFireMode;
+
 	FCsWeapon_TArrayRef_bool DoSpread;
 	FCsWeapon_TArrayRef_float MinSpread;
 	virtual float GetMinSpread(const TCsWeaponFireMode &FireMode);
@@ -700,12 +719,15 @@ public:
 #pragma endregion Spread
 
 	// Anim
+	TCsData_Weapon_FireMode AnimationDataFireMode;
+
 	TCsWeaponAnim FireAnim;
 
 	FCsWeapon_TArrayRef_bool LoopFireAnim;
 	FCsWeapon_TArrayRef_bool DoScaleFireAnim;
 
 	// Sound
+	TCsData_Weapon_FireMode SoundsDataFireMode;
 
 	FCsWeapon_TArrayRef_bool LoopFireSound;
 

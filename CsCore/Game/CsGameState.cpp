@@ -242,7 +242,7 @@ CS_COROUTINE(ACsGameState, OnBoard_Internal)
 	UCsGameInstance* gi		 = Cast<UCsGameInstance>(gs->GetGameInstance());
 	UCsCoroutineScheduler* s = r->scheduler;
 	UWorld* w				 = gs->GetWorld();
-
+	
 	ACsPlayerController* pc = UCsCommon::GetLocalPlayerController<ACsPlayerController>(w);
 	ACsUI* hud				= pc ? Cast<ACsUI>(pc->MyHUD) : nullptr;
 
@@ -262,13 +262,17 @@ CS_COROUTINE(ACsGameState, OnBoard_Internal)
 
 	gs->SetupHUD();
 
-	CS_COROUTINE_WAIT_UNTIL(r, gs->OnBoardState == ECsGameStateOnBoardState::LoadData);
+	CS_COROUTINE_WAIT_UNTIL(r, gs->OnBoardState == ECsGameStateOnBoardState::LoadGameData);
 
-	gs->LoadData();
+	gs->LoadGameData();
 
 	CS_COROUTINE_WAIT_UNTIL(r, gs->OnBoardState == ECsGameStateOnBoardState::LoadItems);
 
 	gs->LoadItems();
+
+	CS_COROUTINE_WAIT_UNTIL(r, gs->OnBoardState == ECsGameStateOnBoardState::LoadSceneData);
+
+	gs->LoadSceneData();
 
 	CS_COROUTINE_WAIT_UNTIL(r, gs->OnBoardState == ECsGameStateOnBoardState::SetupScene);
 
@@ -296,12 +300,16 @@ CS_COROUTINE(ACsGameState, OnBoard_Internal)
 	CS_COROUTINE_END(r);
 }
 
+void ACsGameState::GetLoadAssetsShortCodes(const TCsLoadAssetsType &AssetsType, TArray<FName> &OutShortCodes){}
+
 void ACsGameState::LoadCommonData(){}
 void ACsGameState::OnFinishedLoadCommonData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime){}
 void ACsGameState::SetupHUD(){}
-void ACsGameState::LoadData(){}
-void ACsGameState::OnFinishedLoadData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime){}
-void ACsGameState::LoadItems() { OnBoardState = ECsGameStateOnBoardState::SetupScene; }
+void ACsGameState::LoadGameData(){}
+void ACsGameState::OnFinishedLoadGameData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime){}
+void ACsGameState::LoadItems() { OnBoardState = ECsGameStateOnBoardState::LoadSceneData; }
+void ACsGameState::LoadSceneData(){ OnBoardState = ECsGameStateOnBoardState::SetupScene; }
+void ACsGameState::OnFinishedLoadSceneData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime){}
 void ACsGameState::SetupScene(){}
 
 void ACsGameState::OnBoard_Completed()

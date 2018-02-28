@@ -25,6 +25,11 @@ class CSCORE_API ACsData_ProjectileWeapon : public ACsData_Weapon
 	virtual FVector GetMuzzleLocation(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const uint8 &Index = 0);
 	virtual FVector GetMuzzleLocation(USkeletalMeshComponent* InMesh, const TCsWeaponFireMode &FireMode, const uint8 &Index = 0);
 
+	virtual int32* GetMaxAmmoAddr();
+	virtual float* GetRechargeStartupDelayAddr();
+	virtual float* GetRechargeSecondsPerAmmoAddr();
+	virtual float* GetReloadTimeAddr();
+
 #pragma endregion Stats
 
 	// Anims

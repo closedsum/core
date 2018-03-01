@@ -67,6 +67,8 @@ ACsFpsPawn::ACsFpsPawn(const FObjectInitializer& ObjectInitializer)
 	NetDormancy			   = ENetDormancy::DORM_Never;
 	NetCullDistanceSquared = FMath::Square(100000);
 	*/
+
+	bOnCalcCamera_Trace = true;
 }
 
 void ACsFpsPawn::PostInitializeComponents()

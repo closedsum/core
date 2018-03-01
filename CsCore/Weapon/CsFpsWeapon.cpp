@@ -4,7 +4,7 @@
 #include "CsCVars.h"
 #include "Common/CsCommon.h"
 
-#include "Pawn/CsPawn.h"
+#include "Player/CsFpsPawn.h"
 #include "Animation/CsAnimInstance_Character.h"
 #include "Animation/CsAnimInstance_Weapon.h"
 
@@ -368,12 +368,10 @@ USkeletalMeshComponent* ACsFpsWeapon::GetCharacterMesh(const TEnumAsByte<ECsView
 	else
 #endif // #if WITH_EDITOR
 	{
-		/*
-		AMboCharacter* Pawn = GetMyPawn<AMboCharacter>();
+		ACsFpsPawn* Pawn = GetMyPawn<ACsFpsPawn>();
 
-		if (MyOwnerType == ECsWeaponOwner::Character)
+		if (MyOwnerType == PawnWeaponOwner)
 			return ViewType == ECsViewType::FirstPerson ? Pawn->Mesh1P : Pawn->GetMesh();
-			*/
 	}
 	return nullptr;
 }

@@ -13,21 +13,6 @@ class CSCORE_API ACsGunWeapon : public ACsWeapon
 {
 	GENERATED_UCLASS_BODY()
 
-// Members
-#pragma region
-
-	// Set
-#pragma region
-
-#pragma endregion Set
-
-	// Get
-#pragma region
-
-#pragma endregion Get
-
-#pragma endregion Members
-
 // Data
 #pragma region
 public:
@@ -56,38 +41,11 @@ public:
 
 #pragma endregion Data
 
-// State
+// Owner
 #pragma region
 
-	virtual void OnTick(const float &DeltaSeconds) override;
-	virtual void Show() override;
-	virtual void Hide() override;
+	UFUNCTION(BlueprintCallable, Category = "Owner")
+	virtual void AttachMeshToPawn();
 
-#pragma endregion State
-
-// Mesh
-#pragma region
-public:
-
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Mesh")
-	USkeletalMeshComponent* Mesh;
-
-	void SetMesh();
-
-	USkeletalMeshComponent* GetMesh();
-
-	bool UseMeshLow;
-
-protected:
-
-	TArray<class UMaterialInstanceDynamic*> MeshMIDs;
-
-#pragma endregion Mesh
-
-// Firing
-#pragma region
-
-	virtual FVector GetMuzzleLocation(const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode) override;
-
-#pragma endregion Firing
+#pragma endregion Owner
 };

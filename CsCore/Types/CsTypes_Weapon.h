@@ -460,6 +460,13 @@ struct FCsData_Weapon_FireMode_FXs
 
 		return Count > CS_EMPTY ? &(MuzzleFXs[Index % Count]) : nullptr;
 	}
+
+	FName GetMuzzleBone(const int32 Index = 0)
+	{
+		const int32 Count = MuzzleFXs.Num();
+
+		return MuzzleFXs[Index % Count].Bone;
+	}
 };
 
 USTRUCT(BlueprintType)

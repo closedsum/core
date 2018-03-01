@@ -160,6 +160,8 @@ class CSCORE_API ACsFpsWeapon : public ACsGunWeapon
 #pragma region
 public:
 
+	virtual void SetMesh() override;
+
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Mesh")
 	USkeletalMeshComponent* Mesh1P;
 

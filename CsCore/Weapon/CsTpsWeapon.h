@@ -32,7 +32,7 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Mesh")
 	USkeletalMeshComponent* Mesh;
 
-	void SetMesh();
+	virtual void SetMesh() override;
 
 	USkeletalMeshComponent* GetMesh();
 

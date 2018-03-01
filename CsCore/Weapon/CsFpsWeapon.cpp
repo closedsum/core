@@ -501,6 +501,18 @@ void ACsFpsWeapon::Hide()
 // Mesh
 #pragma region
 
+void ACsFpsWeapon::SetMesh()
+{
+	const TCsViewType ViewType = GetCurrentViewType();
+
+	// 1P
+	if (ViewType == ECsViewType::FirstPerson)
+		SetMesh1P();
+	// 3P
+	if (ViewType == ECsViewType::ThirdPerson)
+		SetMesh3P();
+}
+
 void ACsFpsWeapon::SetMesh1P()
 {
 	Mesh1P->SetAnimInstanceClass(nullptr);

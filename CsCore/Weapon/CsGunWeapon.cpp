@@ -18,7 +18,46 @@ ACsGunWeapon::ACsGunWeapon(const FObjectInitializer& ObjectInitializer)
 // Data
 #pragma region
 
-void ACsGunWeapon::ApplyData_Weapon(const TCsWeaponSlot &Slot, class ACsData_Weapon* InData, class ACsData_WeaponMaterialSkin* InSkin, const bool &Equipped /*=true*/){}
+void ACsGunWeapon::ApplyData_Weapon(const TCsWeaponSlot &Slot, ACsData_Weapon* InData, class ACsData_WeaponMaterialSkin* InSkin, const bool &Equipped)
+{
+	Reset();
+
+	WeaponSlot = Slot;
+	WeaponIndex = (uint8)Slot;
+
+	MyData_Weapon = InData;
+
+	ACsData_ProjectileWeapon* Data_Weapon = Cast<ACsData_ProjectileWeapon>(InData);
+	GripType = Data_Weapon->GetGripType();
+
+	MyData_WeaponMaterialSkin = InSkin;
+	IsEquipped = Equipped;
+
+	CurrentState = IdleState;
+	LastState = CurrentState;
+
+	// UseMeshLow
+#if WITH_EDITOR 
+	// In Editor Preview Window
+	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	{
+	}
+	// In Game
+	else
+#endif // #if WITH_EDITOR
+	{
+		//UseMesh3PLow = false;// Pawn->UseMesh3PLow && InData->HasMesh3PLow;
+	}
+
+	SetMesh();
+	AttachMeshToPawn();
+	SetMultiValueMembers();
+
+	OnApplyData_Weapon_Event.Broadcast(WeaponIndex);
+#if WITH_EDITOR
+	OnApplyData_Weapon_ScriptEvent.Broadcast(WeaponIndex);
+#endif // #if WITH_EDITOR
+}
 
 ACsData_WeaponMaterialSkin* ACsGunWeapon::GetMyData_WeaponMaterialSkin()
 {
@@ -53,3 +92,10 @@ ACsData_Character* ACsGunWeapon::GetMyData_Character()
 void ACsGunWeapon::AttachMeshToPawn() {}
 
 #pragma endregion Owner
+
+// Mesh
+#pragma region
+
+void ACsGunWeapon::SetMesh() {}
+
+#pragma endregion Mesh

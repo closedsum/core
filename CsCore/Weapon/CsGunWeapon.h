@@ -56,4 +56,11 @@ public:
 	TCsWeaponGrip GripType;
 
 #pragma endregion State
+
+// Mesh
+#pragma region
+
+	virtual void SetMesh();
+
+#pragma endregion Mesh
 };

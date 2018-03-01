@@ -95,11 +95,27 @@ void ACsData_Weapon::SetAnimBlueprint(ASkeletalMeshActor* InActor, const TCsView
 
 void ACsData_Weapon::SetAnimBlueprint(UObject* InObject, const TEnumAsByte<ECsViewType::Type> &ViewType, const bool &IsLow /*=false*/)
 {
-	if (USkeletalMeshComponent* mesh = Cast<USkeletalMeshComponent>(InObject))
-		SetAnimBlueprint(mesh, ViewType, IsLow);
+	if (USkeletalMeshComponent* InMesh = Cast<USkeletalMeshComponent>(InObject))
+		SetAnimBlueprint(InMesh, ViewType, IsLow);
 	else
 	if (ASkeletalMeshActor* Actor = Cast<ASkeletalMeshActor>(InObject))
 		SetAnimBlueprint(Actor, ViewType, IsLow);
+}
+
+void ACsData_Weapon::SetAnimBlueprint(USkeletalMeshComponent* InMesh) {}
+
+void ACsData_Weapon::SetAnimBlueprint(ASkeletalMeshActor* InActor)
+{
+	SetAnimBlueprint(InActor->GetSkeletalMeshComponent());
+}
+
+void ACsData_Weapon::SetAnimBlueprint(UObject* InObject)
+{
+	if (USkeletalMeshComponent* InMesh = Cast<USkeletalMeshComponent>(InObject))
+		SetAnimBlueprint(InMesh);
+	else
+	if (ASkeletalMeshActor* Actor = Cast<ASkeletalMeshActor>(InObject))
+		SetAnimBlueprint(Actor);
 }
 
 #pragma endregion Anims

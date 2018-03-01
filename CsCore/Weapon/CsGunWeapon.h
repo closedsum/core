@@ -60,11 +60,29 @@ public:
 #pragma region
 
 	virtual void OnTick(const float &DeltaSeconds) override;
-	virtual void Disable() override;
 	virtual void Show() override;
 	virtual void Hide() override;
 
 #pragma endregion State
+
+// Mesh
+#pragma region
+public:
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Mesh")
+	USkeletalMeshComponent* Mesh;
+
+	void SetMesh();
+
+	USkeletalMeshComponent* GetMesh();
+
+	bool UseMeshLow;
+
+protected:
+
+	TArray<class UMaterialInstanceDynamic*> MeshMIDs;
+
+#pragma endregion Mesh
 
 // Firing
 #pragma region

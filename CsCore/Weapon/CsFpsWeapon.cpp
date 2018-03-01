@@ -1,6 +1,7 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "Weapon/CsFpsWeapon.h"
 #include "CsCore.h"
+#include "CsCVars.h"
 #include "Common/CsCommon.h"
 
 #include "Pawn/CsPawn.h"
@@ -404,14 +405,14 @@ void ACsFpsWeapon::SetMesh1P()
 		// Character
 		if (UCsAnimInstance_Character* AnimInstance = Cast<UCsAnimInstance_Character>(GetMyOwner()))
 		{
-			USkeletalMeshComponent* Mesh = Mesh1P;
+			Mesh = Mesh1P;
 
-			Data_Weapon->SetMesh(Mesh1P, ECsViewType::FirstPerson);
-			Data_Weapon->SetAnimBlueprint(Mesh1P, ECsViewType::FirstPerson);
+			Data_Weapon->SetMesh(Mesh, ECsViewType::FirstPerson);
+			Data_Weapon->SetAnimBlueprint(Mesh, ECsViewType::FirstPerson);
 		}
 		// Weapon
 		if (UCsAnimInstance_Weapon* AnimInstance = Cast<UCsAnimInstance_Weapon>(GetMyOwner()))
-			USkeletalMeshComponent* Mesh = AnimInstance->GetSkeletalMeshComponent();
+			Mesh = AnimInstance->GetSkeletalMeshComponent();
 
 		if (!Mesh)
 			return;
@@ -467,14 +468,14 @@ void ACsFpsWeapon::SetMesh3P()
 		// Character
 		if (UCsAnimInstance_Character* AnimInstance = Cast<UCsAnimInstance_Character>(GetMyOwner()))
 		{
-			USkeletalMeshComponent* Mesh = Mesh3P;
+			Mesh = Mesh3P;
 
 			Data_Weapon->SetMesh(Mesh3P, ECsViewType::ThirdPerson, UseMesh3PLow);
 			Data_Weapon->SetAnimBlueprint(Mesh3P, ECsViewType::ThirdPerson, UseMesh3PLow);
 		}
 		// Weapon
 		if (UCsAnimInstance_Weapon* AnimInstance = Cast<UCsAnimInstance_Weapon>(GetMyOwner()))
-			USkeletalMeshComponent* Mesh = AnimInstance->GetSkeletalMeshComponent();
+			Mesh = AnimInstance->GetSkeletalMeshComponent();
 
 		if (!Mesh)
 			return;

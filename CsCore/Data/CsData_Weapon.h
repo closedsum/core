@@ -39,5 +39,9 @@ class CSCORE_API ACsData_Weapon : public ACsData
 	UFUNCTION(BlueprintCallable, Category = Animation)
 	virtual void SetAnimBlueprint(class UObject* InActor, const TEnumAsByte<ECsViewType::Type> &ViewType, const bool &IsLow = false);
 
+	virtual void SetAnimBlueprint(USkeletalMeshComponent* InMesh);
+	virtual void SetAnimBlueprint(class ASkeletalMeshActor* InActor);
+	virtual void SetAnimBlueprint(class UObject* InActor);
+
 #pragma endregion Anims
 };

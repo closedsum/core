@@ -507,6 +507,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Owner")
 	UObject* GetMyOwner();
 
+	template<typename T>
+	T* GetMyOwner()
+	{
+		return Cast<T>(GetMyOwner());
+	}
+
 	TCsWeaponOwner MyOwnerType;
 
 	UFUNCTION(BlueprintCallable, Category = "Owner")
@@ -516,6 +522,14 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Owner")
 	class ACsPawn* GetMyPawn();
+
+	template<typename T>
+	T* GetMyPawn()
+	{
+		return Cast<T>(GetMyPawn());
+	}
+
+	TCsWeaponOwner PawnWeaponOwner;
 
 	UFUNCTION(BlueprintCallable, Category = "Owner")
 	virtual TEnumAsByte<ECsViewType::Type> GetCurrentViewType();

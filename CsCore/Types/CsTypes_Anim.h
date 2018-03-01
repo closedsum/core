@@ -84,7 +84,7 @@ namespace ECsFpsAnimMember
 }
 
 #define ECS_FPS_ANIM_MEMBER_MAX (uint8)ECsFpsAnimMember::ECsFpsAnimMember_MAX
-typedef TEnumAsByte<ECsFpsAnimMember::Type> TCsFpsAnimMember;
+typedef ECsFpsAnimMember::Type TCsFpsAnimMember;
 
 USTRUCT(BlueprintType)
 struct FCsAnimSequence
@@ -553,7 +553,7 @@ namespace ECsFpsAnimBlueprintMember
 }
 
 #define ECS_FPS_ANIM_BLUEPRINT_MEMBER_MAX (uint8)ECsFpsAnimBlueprintMember::ECsFpsAnimBlueprintMember_MAX
-typedef TEnumAsByte<ECsFpsAnimBlueprintMember::Type> TCsFpsAnimBlueprintMember;
+typedef ECsFpsAnimBlueprintMember::Type TCsFpsAnimBlueprintMember;
 
 USTRUCT(BlueprintType)
 struct FCsAnimBlueprint
@@ -760,7 +760,7 @@ namespace ECsFpsAnimBlendSpaceMember
 }
 
 #define ECS_FPS_ANIM_BLEND_SPACE_MEMBER_MAX (uint8)ECsFpsAnimBlendSpaceMember::ECsFpsAnimBlendSpaceMember_MAX
-typedef TEnumAsByte<ECsFpsAnimBlendSpaceMember::Type> TCsFpsAnimBlendSpaceMember;
+typedef ECsFpsAnimBlendSpaceMember::Type TCsFpsAnimBlendSpaceMember;
 
 USTRUCT(BlueprintType)
 struct FCsBlendSpace
@@ -979,7 +979,7 @@ namespace ECsAdditiveBasePoseType
 }
 
 #define ECS_ADDITIVE_BASE_POSE_TYPE_MAX (uint8)ECsAdditiveBasePoseType::ABPT_MAX
-typedef TEnumAsByte<ECsAdditiveBasePoseType::Type> TCsAdditiveBasePoseType;
+typedef ECsAdditiveBasePoseType::Type TCsAdditiveBasePoseType;
 
 UENUM(BlueprintType)
 namespace ECsAdditiveAnimationType
@@ -1041,6 +1041,6 @@ namespace ECsAdditiveAnimationType
 }
 
 #define ECS_ADDITIVE_ANIMATION_TYPE_MAX (uint8)ECsAdditiveAnimationType::AAT_MAX
-typedef TEnumAsByte<ECsAdditiveAnimationType::Type> TCsAdditiveAnimationType;
+typedef ECsAdditiveAnimationType::Type TCsAdditiveAnimationType;
 
 #pragma endregion Anim

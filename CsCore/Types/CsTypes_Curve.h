@@ -165,7 +165,7 @@ namespace ECsRichCurveInterpMode
 }
 
 #define ECS_RICH_CURVE_INTERP_MODE_MAX (uint8)ECsRichCurveInterpMode::ABPT_MAX
-typedef TEnumAsByte<ECsRichCurveInterpMode::Type> TCsRichCurveInterpMode;
+typedef ECsRichCurveInterpMode::Type TCsRichCurveInterpMode;
 
 UENUM(BlueprintType)
 namespace ECsRichCurveTangentMode
@@ -230,6 +230,6 @@ namespace ECsRichCurveTangentMode
 }
 
 #define ECS_RICH_CURVE_TANGENT_MODE_MAX (uint8)ECsRichCurveTangentMode::ABPT_MAX
-typedef TEnumAsByte<ECsRichCurveTangentMode::Type> TCsRichCurveTangentMode;
+typedef ECsRichCurveTangentMode::Type TCsRichCurveTangentMode;
 
 #pragma endregion Curves

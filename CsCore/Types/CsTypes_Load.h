@@ -128,7 +128,7 @@ namespace ECsLoadFlags_Editor
 }
 
 #define ECS_LOAD_FLAGS_EDITOR_MAX (uint8)ECsLoadFlags_Editor::ECsLoadFlags_Editor_MAX
-typedef TEnumAsByte<ECsLoadFlags_Editor::Type> TCsLoadFlags_Editor;
+typedef ECsLoadFlags_Editor::Type TCsLoadFlags_Editor;
 
 USTRUCT()
 struct FCsResourceSize
@@ -472,7 +472,7 @@ namespace ECsLoadAsyncOrder
 }
 
 #define ECS_LOADING_ASYNC_ORDER_MAX (uint8)ECsLoadAsyncOrder::ECsLoadAsyncOrder_MAX
-typedef TEnumAsByte<ECsLoadAsyncOrder::Type> TCsLoadAsyncOrder;
+typedef ECsLoadAsyncOrder::Type TCsLoadAsyncOrder;
 
 #pragma endregion Load
 

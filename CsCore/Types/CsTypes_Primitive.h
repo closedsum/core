@@ -2473,7 +2473,7 @@ namespace ECsMemberType
 }
 
 #define ECS_MEMBER_TYPE_MAX (uint8)ECsMemberType::ECsMemberType_MAX
-typedef TEnumAsByte<ECsMemberType::Type> TCsMemberType;
+typedef ECsMemberType::Type TCsMemberType;
 
 #define CS_DECLARE_AND_DEFINE_CONST_INTEGRAL_VALUE(Type, Integral, Value) const Type Integral = 1; \
 																		  Type* ptr = (Type*)(&Integral); \

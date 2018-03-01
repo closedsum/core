@@ -77,7 +77,7 @@ namespace ECsFxPriority
 }
 
 #define ECS_FX_PRIORITY_MAX (uint8)ECsFxPriority::ECsFxPriority_MAX
-typedef TEnumAsByte<ECsFxPriority::Type> TCsFxPriority;
+typedef ECsFxPriority::Type TCsFxPriority;
 
 USTRUCT(BlueprintType)
 struct FCsFxElement

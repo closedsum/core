@@ -124,7 +124,7 @@ namespace ECsSimpleWidgetType
 }
 
 #define ECS_SIMPLE_WIDGET_TYPE_MAX (uint8)ECsSimpleWidgetType::ECsSimpleWidgetType_MAX
-typedef TEnumAsByte<ECsSimpleWidgetType::Type> TCsSimpleWidgetType;
+typedef ECsSimpleWidgetType::Type TCsSimpleWidgetType;
 
 USTRUCT(BlueprintType)
 struct FCsWidgetActorInfo
@@ -312,7 +312,7 @@ namespace ECsButtonState
 }
 
 #define ECS_BUTTON_STATE_MAX (uint8)ECsButtonState::ECsButtonState_MAX
-typedef TEnumAsByte<ECsButtonState::Type> TCsButtonState;
+typedef ECsButtonState::Type TCsButtonState;
 
 #pragma endregion UI
 

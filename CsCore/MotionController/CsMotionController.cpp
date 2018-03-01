@@ -167,7 +167,7 @@ void ACsMotionController::OnTick_Handle_FirstHoldAndHold(const float &DeltaSecon
 			if (CurrentInteractiveActorStates[I] != ECsInteractiveState::FirstCollide &&
 				CurrentInteractiveActorStates[I] != ECsInteractiveState::Collide)
 			{
-				TArray<TCsInteractiveState> States;
+				TArray<TEnumAsByte<ECsInteractiveState::Type>> States;
 				States.Add(ECsInteractiveState::FirstHold);
 				States.Add(ECsInteractiveState::Hold);
 
@@ -208,7 +208,7 @@ void ACsMotionController::OnTick_Handle_FirstHoldAndHold(const float &DeltaSecon
 			if (CurrentInteractiveActorStates[I] == ECsInteractiveState::FirstCollide ||
 				CurrentInteractiveActorStates[I] == ECsInteractiveState::Collide)
 			{
-				TArray<TCsInteractiveState> States;
+				TArray<TEnumAsByte<ECsInteractiveState::Type>> States;
 				States.Add(ECsInteractiveState::FirstCollide);
 				States.Add(ECsInteractiveState::Collide);
 
@@ -639,7 +639,7 @@ void ACsMotionController::ResetCurrentInteractedActorInfos()
 	CurrentInteractedActorInfos.Reset();
 }
 
-void ACsMotionController::GetCurrentInteractiveActors(const TCsInteractiveState &StateType, TArray<AActor*> &OutActors)
+void ACsMotionController::GetCurrentInteractiveActors(const TEnumAsByte<ECsInteractiveState::Type> &StateType, TArray<AActor*> &OutActors)
 {
 	const int32 Count = CurrentInteractiveActors.Num();
 
@@ -796,7 +796,7 @@ void ACsMotionController::OnInteraction(const TArray<FCsInteractedActorInfo> &In
 				if (CurrentInteractiveActorStates[I] == ECsInteractiveState::FirstTouch ||
 					CurrentInteractiveActorStates[I] == ECsInteractiveState::Touch)
 				{
-					TArray<TCsInteractiveState> States;
+					TArray<TEnumAsByte<ECsInteractiveState::Type>> States;
 					States.Add(ECsInteractiveState::FirstTouch);
 					States.Add(ECsInteractiveState::Touch);
 
@@ -813,7 +813,7 @@ void ACsMotionController::OnInteraction(const TArray<FCsInteractedActorInfo> &In
 				if (CurrentInteractiveActorStates[I] == ECsInteractiveState::FirstHover ||
 					CurrentInteractiveActorStates[I] == ECsInteractiveState::Hover)
 				{
-					TArray<TCsInteractiveState> States;
+					TArray<TEnumAsByte<ECsInteractiveState::Type>> States;
 					States.Add(ECsInteractiveState::FirstHover);
 					States.Add(ECsInteractiveState::Hover);
 
@@ -846,7 +846,7 @@ void ACsMotionController::OnInteraction(const TArray<FCsInteractedActorInfo> &In
 			// ('CurrentState' | FirstHover | Hover | None) -> FirstTouch
 			if (CurrentInteractiveActorStates[I] == ECsInteractiveState::FirstTouch)
 			{
-				TArray<TCsInteractiveState> States;
+				TArray<TEnumAsByte<ECsInteractiveState::Type>> States;
 				States.Add(ECsInteractiveState::FirstHover);
 				States.Add(ECsInteractiveState::Hover);
 				States.Add(ECsInteractiveState::None);
@@ -1245,7 +1245,7 @@ void ACsMotionController::OnButtonInteraction(const TArray<USceneComponent*> &Bu
 				if (CurrentButtonStates[I] == ECsButtonState::FirstHover ||
 					CurrentButtonStates[I] == ECsButtonState::Hover)
 				{
-					TArray<TCsButtonState> States;
+					TArray<TEnumAsByte<ECsButtonState::Type>> States;
 					States.Add(ECsButtonState::FirstHover);
 					States.Add(ECsButtonState::Hover);
 

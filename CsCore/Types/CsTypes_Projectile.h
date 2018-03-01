@@ -142,7 +142,7 @@ namespace ECsProjectileRelevance
 }
 
 #define ECS_PROJECTILE_RELEVANCE_MAX (uint8)ECsProjectileRelevance::ECsProjectileRelevance_MAX
-typedef TEnumAsByte<ECsProjectileRelevance::Type> TCsProjectileRelevance;
+typedef ECsProjectileRelevance::Type TCsProjectileRelevance;
 
 namespace ECsProjectileType
 {
@@ -192,7 +192,7 @@ namespace ECsProjectileState
 }
 
 #define ECS_PROJECTILE_STATE_MAX (uint8)ECsProjectileState::ECsProjectileState_MAX
-typedef TEnumAsByte<ECsProjectileState::Type> TCsProjectileState;
+typedef ECsProjectileState::Type TCsProjectileState;
 
 UENUM(BlueprintType)
 namespace ECsProjectileDeActivate
@@ -235,7 +235,7 @@ namespace ECsProjectileDeActivate
 }
 
 #define ECS_PROJECTILE_DEACTIVATE_MAX (uint8)ECsProjectileDeActivate::ECsProjectileDeActivate_MAX
-typedef TEnumAsByte<ECsProjectileDeActivate::Type> TCsProjectileDeActivate;
+typedef ECsProjectileDeActivate::Type TCsProjectileDeActivate;
 
 UENUM(BlueprintType)
 namespace ECsProjectileMovement
@@ -274,7 +274,7 @@ namespace ECsProjectileMovement
 }
 
 #define ECS_PROJECTILE_MOVEMENT_MAX (uint8)ECsProjectileMovement::ECsProjectileMovement_MAX
-typedef TEnumAsByte<ECsProjectileMovement::Type> TCsProjectileMovement;
+typedef ECsProjectileMovement::Type TCsProjectileMovement;
 
 UENUM(BlueprintType)
 namespace ECsProjectileMovementFunctionType
@@ -313,7 +313,7 @@ namespace ECsProjectileMovementFunctionType
 }
 
 #define ECS_PROJECTILE_MOVEMENT_FUNCTION_TYPE_MAX (uint8)ECsProjectileMovementFunctionType::ECsProjectileMovementFunctionType_MAX
-typedef TEnumAsByte<ECsProjectileMovementFunctionType::Type> TCsProjectileMovementFunctionType;
+typedef ECsProjectileMovementFunctionType::Type TCsProjectileMovementFunctionType;
 
 USTRUCT(BlueprintType)
 struct FCsProjectileMovementFunctionAxis

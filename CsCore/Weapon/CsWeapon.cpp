@@ -96,7 +96,7 @@ namespace ECsWeaponRoutine
 }
 
 #define ECS_WEAPON_ROUTINE_MAX (uint8)ECsWeaponRoutine::ECsWeaponRoutine_MAX
-typedef TEnumAsByte<ECsWeaponRoutine::Type> TCsWeaponRoutine;
+typedef ECsWeaponRoutine::Type TCsWeaponRoutine;
 
 #pragma endregion Enums
 

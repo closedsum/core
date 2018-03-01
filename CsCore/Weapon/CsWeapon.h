@@ -228,7 +228,7 @@ namespace ECsWeaponCacheMultiValueMember
 }
 
 #define ECS_WEAPON_CACHE_MULTI_VALUE_MEMBER_MAX (uint8)ECsWeaponCacheMultiValueMember::ECsWeaponCacheMultiValueMember_MAX
-typedef TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> TCsWeaponCacheMultiValueMember;
+typedef ECsWeaponCacheMultiValueMember::Type TCsWeaponCacheMultiValueMember;
 
 #pragma endregion Enums
 

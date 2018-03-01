@@ -162,7 +162,7 @@ namespace ECsInputEvent
 }
 
 #define ECS_INPUT_EVENT_MAX (uint8)ECsInputEvent::ECsInputEvent_MAX
-typedef TEnumAsByte<ECsInputEvent::Type> TCsInputEvent;
+typedef ECsInputEvent::Type TCsInputEvent;
 
 UENUM()
 namespace ECsInputValue

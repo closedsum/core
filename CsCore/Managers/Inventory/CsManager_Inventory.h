@@ -71,7 +71,7 @@ namespace ECsInventoryTransaction
 }
 
 #define ECS_INVENTORY_TRANSACTION_MAX (uint8)ECsInventoryTransaction::ECsInventoryTransaction_MAX
-typedef TEnumAsByte<ECsInventoryTransaction::Type> TCsInventoryTransaction;
+typedef ECsInventoryTransaction::Type TCsInventoryTransaction;
 
 UENUM(BlueprintType)
 namespace ECsInventoryGetRequest
@@ -110,7 +110,7 @@ namespace ECsInventoryGetRequest
 }
 
 #define ECS_INVENTORY_GET_REQUEST_MAX (uint8)ECsInventoryGetRequest::ECsInventoryGetRequest_MAX
-typedef TEnumAsByte<ECsInventoryGetRequest::Type> TCsInventoryGetRequest;
+typedef ECsInventoryGetRequest::Type TCsInventoryGetRequest;
 
 #pragma endregion Enums
 

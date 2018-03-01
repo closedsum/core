@@ -1,13 +1,13 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "MotionController/CsMotionController.h"
 #include "CsCore.h"
-#include "Common/CsCommon.h"
 #include "CsCVars.h"
+#include "Common/CsCommon.h"
 #include "Coroutine/CsCoroutineScheduler.h"
 #include "MotionControllerComponent.h"
 #include "../InputCore/Classes/InputCoreTypes.h"
 #include "Managers/InteractiveActor/CsInteractiveActor.h"
-#include "AI/CsInteractiveAIPawn.h"
+#include "AI/Pawn/CsInteractiveAIPawn.h"
 #include "Player/CsPlayerController.h"
 // UI
 #include "UI/Button/CsButtonComponent.h"

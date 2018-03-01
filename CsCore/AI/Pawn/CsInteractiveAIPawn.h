@@ -1,6 +1,6 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "AI/CsAIPawn.h"
+#include "AI/Pawn/CsAIPawn.h"
 #include "Types/CsTypes.h"
 #include "Types/CsTypes_Interactive.h"
 #include "CsInteractiveAIPawn.generated.h"

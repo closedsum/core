@@ -1,5 +1,5 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
-#include "AI/CsInteractiveAIPawn.h"
+#include "AI/Pawn/CsInteractiveAIPawn.h"
 #include "CsCore.h"
 #include "CsCVars.h"
 #include "Common/CsCommon.h"
@@ -10,7 +10,6 @@ ACsInteractiveAIPawn::ACsInteractiveAIPawn(const FObjectInitializer& ObjectIniti
 	bUseControllerRotationYaw = true;
 
 	State = ECsInteractiveState::ECsInteractiveState_MAX;
-
 
 	PhysicsStateTimers.Reset();
 

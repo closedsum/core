@@ -22,13 +22,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsWeapon_Override
 // Enums
 #pragma region
 
-namespace ECsWeaponState
-{
-	enum Type : uint8;
-}
-
-typedef ECsWeaponState::Type TCsWeaponState;
-
 UENUM(BlueprintType)
 namespace ECsWeaponCacheMultiValueMember
 {

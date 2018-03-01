@@ -28,10 +28,10 @@ void ACsData_Weapon::SetMesh(ASkeletalMeshActor* InActor, const TCsViewType &Vie
 void ACsData_Weapon::SetMesh(UObject* InObject, const TEnumAsByte<ECsViewType::Type> &ViewType, const bool &IsLow /*=false*/)
 {
 	if (USkeletalMeshComponent* InMesh = Cast<USkeletalMeshComponent>(InObject))
-		SetMesh(InMesh, ViewType, IsLow);
+		SetMesh(InMesh, (TCsViewType)ViewType, IsLow);
 	else
 	if (ASkeletalMeshActor* Actor = Cast<ASkeletalMeshActor>(InObject))
-		SetMesh(Actor, ViewType, IsLow);
+		SetMesh(Actor, (TCsViewType)ViewType, IsLow);
 }
 
 void ACsData_Weapon::SetMesh(USkeletalMeshComponent* InMesh)
@@ -96,10 +96,10 @@ void ACsData_Weapon::SetAnimBlueprint(ASkeletalMeshActor* InActor, const TCsView
 void ACsData_Weapon::SetAnimBlueprint(UObject* InObject, const TEnumAsByte<ECsViewType::Type> &ViewType, const bool &IsLow /*=false*/)
 {
 	if (USkeletalMeshComponent* InMesh = Cast<USkeletalMeshComponent>(InObject))
-		SetAnimBlueprint(InMesh, ViewType, IsLow);
+		SetAnimBlueprint(InMesh, (TCsViewType)ViewType, IsLow);
 	else
 	if (ASkeletalMeshActor* Actor = Cast<ASkeletalMeshActor>(InObject))
-		SetAnimBlueprint(Actor, ViewType, IsLow);
+		SetAnimBlueprint(Actor, (TCsViewType)ViewType, IsLow);
 }
 
 void ACsData_Weapon::SetAnimBlueprint(USkeletalMeshComponent* InMesh) {}

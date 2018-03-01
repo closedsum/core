@@ -18,10 +18,10 @@ void ACsData_CharacterMeshSkin::SetMesh(UObject* InObject, const TEnumAsByte<ECs
 {
 	// Skeletal Mesh Component
 	if (USkeletalMeshComponent* InMesh = Cast<USkeletalMeshComponent>(InObject))
-		SetMesh(InMesh, ViewType, IsLow);
+		SetMesh(InMesh, (TCsViewType)ViewType, IsLow);
 	// Skeletal Mesh Actor
 	if (ASkeletalMeshActor* Actor = Cast<ASkeletalMeshActor>(InObject))
-		SetMesh(Actor, ViewType, IsLow);
+		SetMesh(Actor, (TCsViewType)ViewType, IsLow);
 }
 
 void ACsData_CharacterMeshSkin::SetMesh(USkeletalMeshComponent* InMesh) {}

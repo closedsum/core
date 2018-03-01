@@ -33,12 +33,42 @@ ACsTpsWeapon::ACsTpsWeapon(const FObjectInitializer& ObjectInitializer)
 	RootComponent = Mesh;
 }
 
+void ACsTpsWeapon::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	Mesh->SetComponentTickEnabled(false);
+}
+
 // Data
 #pragma region
 
 void ACsTpsWeapon::ApplyData_Weapon(const TCsWeaponSlot &Slot, class ACsData_Weapon* InData, class ACsData_WeaponMaterialSkin* InSkin, const bool &Equipped /*=true*/){}
 
 #pragma endregion Data
+
+// Owner
+#pragma region
+
+USkeletalMeshComponent* ACsTpsWeapon::GetCharacterMesh()
+{
+#if WITH_EDITOR 
+	// In Editor Preview Window
+	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	{
+		if (UCsAnimInstance_Character* AnimInstance = GetMyOwner<UCsAnimInstance_Character>())
+			return AnimInstance->GetSkeletalMeshComponent();
+	}
+	else
+#endif // #if WITH_EDITOR
+	{
+		if (MyOwnerType == PawnWeaponOwner)
+			return GetMyPawn()->GetMesh();
+	}
+	return nullptr;
+}
+
+#pragma endregion Owner
 
 // State
 #pragma region

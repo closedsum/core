@@ -54,6 +54,28 @@ struct FCsLocationDamageModifier
 // Weapon
 #pragma region
 
+namespace ECsWeaponState
+{
+	enum Type : uint8;
+}
+
+typedef ECsWeaponState::Type TCsWeaponState;
+
+// WeaponStateToString
+typedef FString(*TCsWeaponStateToString)(const TCsWeaponState&);
+// StringToWeaponState
+typedef TCsWeaponState(*TCsStringToWeaponState)(const FString&);
+
+#define CS_DECLARE_WEAPON_STATE	TCsWeaponState WeaponState_MAX; \
+								uint8 WEAPON_STATE_MAX; \
+								TCsWeaponStateToString WeaponStateToString; \
+								TCsStringToWeaponState StringToWeaponState;
+
+#define CS_DEFINE_WEAPON_STATE	WeaponState_MAX = ECsWeaponState::ECsWeaponState_MAX;\
+								WEAPON_STATE_MAX = (uint8)WeaponState_MAX \
+								WeaponStateToString = &ECsWeaponState::ToString; \
+								StringToWeaponState = &ECsWeaponState::ToType;
+
 namespace ECsWeaponSlot
 {
 	enum Type : uint8;

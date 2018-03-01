@@ -136,6 +136,16 @@ class CSCORE_API ACsFpsWeapon : public ACsGunWeapon
 
 #pragma endregion Members
 
+// Owner
+#pragma region
+
+	virtual void AttachMeshToPawn() override;
+
+	UFUNCTION(BlueprintCallable, Category = "Owner")
+	virtual USkeletalMeshComponent* GetCharacterMesh(const TEnumAsByte<ECsViewType::Type> &ViewType);
+
+#pragma endregion Owner
+
 // State
 #pragma region
 

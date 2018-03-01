@@ -112,7 +112,7 @@ void ACsTpsWeapon::SetMesh()
 		USkeletalMeshComponent* AltMesh = nullptr;
 
 		// Character
-		if (UCsAnimInstance_Character* AnimInstance = Cast<UCsAnimInstance_Character>(GetMyOwner()))
+		if (UCsAnimInstance_Character* AnimInstance = GetMyOwner<UCsAnimInstance_Character>())
 		{
 			AltMesh = Mesh;
 
@@ -120,7 +120,7 @@ void ACsTpsWeapon::SetMesh()
 			Data_Weapon->SetAnimBlueprint(AltMesh);
 		}
 		// Weapon
-		if (UCsAnimInstance_Weapon* AnimInstance = Cast<UCsAnimInstance_Weapon>(GetMyOwner()))
+		if (UCsAnimInstance_Weapon* AnimInstance = GetMyOwner<UCsAnimInstance_Weapon>())
 			AltMesh = AnimInstance->GetSkeletalMeshComponent();
 
 		if (!AltMesh)
@@ -170,10 +170,10 @@ USkeletalMeshComponent* ACsTpsWeapon::GetMesh()
 	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
 	{
 		// Character
-		if (UCsAnimInstance_Character* AnimInstance = Cast<UCsAnimInstance_Character>(GetMyOwner()))
+		if (UCsAnimInstance_Character* AnimInstance = GetMyOwner<UCsAnimInstance_Character>())
 			return Mesh;
 		// Weapon
-		if (UCsAnimInstance_Weapon* AnimInstance = Cast<UCsAnimInstance_Weapon>(GetMyOwner()))
+		if (UCsAnimInstance_Weapon* AnimInstance = GetMyOwner<UCsAnimInstance_Weapon>())
 			return AnimInstance->GetSkeletalMeshComponent();
 	}
 #endif // #if WITH_EDITOR

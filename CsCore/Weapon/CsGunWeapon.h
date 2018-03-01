@@ -1,6 +1,7 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Weapon/CsWeapon.h"
+#include "Types/CsTypes_Weapon.h"
 #include "CsGunWeapon.generated.h"
 
 // Enums
@@ -48,4 +49,11 @@ public:
 	virtual void AttachMeshToPawn();
 
 #pragma endregion Owner
+
+// State
+#pragma region
+
+	TCsWeaponGrip GripType;
+
+#pragma endregion State
 };

@@ -257,16 +257,6 @@ float ACsFpsWeapon::GetMemberValue_Script_float(const FString &MemberName, const
 
 #pragma endregion Members
 
-// Data
-#pragma region
-
-ACsData_WeaponMaterialSkin* ACsFpsWeapon::GetMyData_WeaponMaterialSkin()
-{
-	return MyData_WeaponMaterialSkin.IsValid() ? MyData_WeaponMaterialSkin.Get() : nullptr;
-}
-
-#pragma endregion Data
-
 // State
 #pragma region
 

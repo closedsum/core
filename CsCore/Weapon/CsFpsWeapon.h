@@ -1,6 +1,6 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Weapon/CsWeapon.h"
+#include "Weapon/CsGunWeapon.h"
 #include "CsFpsWeapon.generated.h"
 
 // Enums
@@ -104,7 +104,7 @@ typedef ECsFpsWeaponCacheMultiValueMember::Type TCsFpsWeaponCacheMultiValueMembe
 #pragma endregion Enums
 
 UCLASS()
-class CSCORE_API ACsFpsWeapon : public ACsWeapon
+class CSCORE_API ACsFpsWeapon : public ACsGunWeapon
 {
 	GENERATED_UCLASS_BODY()
 
@@ -135,23 +135,6 @@ class CSCORE_API ACsFpsWeapon : public ACsWeapon
 #pragma endregion Get
 
 #pragma endregion Members
-
-// Data
-#pragma region
-public:
-
-	TWeakObjectPtr<class ACsData_WeaponMaterialSkin> MyData_WeaponMaterialSkin;
-
-	UFUNCTION(BlueprintCallable, Category = "Data")
-	class ACsData_WeaponMaterialSkin* GetMyData_WeaponMaterialSkin();
-
-	template<typename T>
-	T* GetMyData_WeaponMaterialSkin()
-	{
-		return Cast<T>(GetMyData_WeaponMaterialSkin());
-	}
-
-#pragma endregion Data
 
 // State
 #pragma region

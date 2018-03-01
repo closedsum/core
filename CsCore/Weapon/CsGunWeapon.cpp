@@ -93,9 +93,30 @@ void ACsGunWeapon::AttachMeshToPawn() {}
 
 #pragma endregion Owner
 
+// State
+#pragma region
+
+void ACsGunWeapon::OnPawnDeActivate()
+{
+	Hide();
+	Disable();
+
+	IsReloading = false;
+	ReloadStartTime = GetWorld()->TimeSeconds + ReloadTime.Get(CS_WEAPON_DATA_VALUE) + 1.0f;
+}
+
+#pragma endregion State
+
 // Mesh
 #pragma region
 
 void ACsGunWeapon::SetMesh() {}
 
 #pragma endregion Mesh
+
+// Animation
+#pragma region
+
+TCsCharacterAnim ACsGunWeapon::GetCharacterAnimType(const TCsWeaponAnim &AnimType) { return TCsCharacterAnim(0); }
+
+#pragma endregion Animation

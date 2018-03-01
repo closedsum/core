@@ -2,6 +2,7 @@
 #pragma once
 #include "Weapon/CsWeapon.h"
 #include "Types/CsTypes_Weapon.h"
+#include "Types/CsTypes_Character.h"
 #include "CsGunWeapon.generated.h"
 
 // Enums
@@ -55,6 +56,8 @@ public:
 
 	TCsWeaponGrip GripType;
 
+	virtual void OnPawnDeActivate();
+
 #pragma endregion State
 
 // Mesh
@@ -63,4 +66,11 @@ public:
 	virtual void SetMesh();
 
 #pragma endregion Mesh
+
+// Animation
+#pragma region
+
+	virtual TCsCharacterAnim GetCharacterAnimType(const TCsWeaponAnim &AnimType);
+
+#pragma endregion Animation
 };

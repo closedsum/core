@@ -78,44 +78,44 @@ void ACsData_Character::GetAnim(UAnimSequence* &OutAnimSequence, UAnimMontage* &
 	OutAnimMontage = GetAnimMontage(AnimType, Index, IsLow);
 }
 
-UAnimSequence* ACsData_Character::GetAnimSequence(const TCsViewType &ViewType, const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType, const bool &IsLow /*=false*/) 
+UAnimSequence* ACsData_Character::GetAnimSequence(const TCsViewType &ViewType, const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType, const int32 &Index /*=0*/, const bool &IsLow /*=false*/) 
 { 
-	if (FCsFpsAnimSequence* Anim = GetFCsFpsAnimSequence(GripType, AnimType))
+	if (FCsFpsAnimSequence* Anim = GetFCsFpsAnimSequence(GripType, AnimType, Index))
 		return Anim->Get(ViewType, IsLow);
 	return nullptr; 
 }
 
-UAnimSequence* ACsData_Character::GetAnimSequence(const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType, const bool &IsLow /*=false*/)
+UAnimSequence* ACsData_Character::GetAnimSequence(const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType, const int32 &Index /*=0*/, const bool &IsLow /*=false*/)
 {
-	if (FCsAnimSequence* Anim = GetFCsAnimSequence(GripType, AnimType))
+	if (FCsAnimSequence* Anim = GetFCsAnimSequence(GripType, AnimType, Index))
 		return Anim->Get();
 	return nullptr;
 }
 
-UAnimSequence* ACsData_Character::GetAnimSequence(const TCsViewType &ViewType, const TCsCharacterAnim &AnimType, const bool &IsLow /*=false*/)
+UAnimSequence* ACsData_Character::GetAnimSequence(const TCsViewType &ViewType, const TCsCharacterAnim &AnimType, const int32 &Index /*=0*/, const bool &IsLow /*=false*/)
 {
-	if (FCsFpsAnimSequence* Anim = GetFCsFpsAnimSequence(AnimType))
+	if (FCsFpsAnimSequence* Anim = GetFCsFpsAnimSequence(AnimType, Index))
 		return Anim->Get(ViewType, IsLow);
 	return nullptr;
 }
 
-UAnimSequence* ACsData_Character::GetAnimSequence(const TCsCharacterAnim &AnimType, const bool &IsLow /*=false*/) 
+UAnimSequence* ACsData_Character::GetAnimSequence(const TCsCharacterAnim &AnimType, const int32 &Index /*=0*/, const bool &IsLow /*=false*/) 
 { 
-	if (FCsAnimSequence* Anim = GetFCsAnimSequence(AnimType))
+	if (FCsAnimSequence* Anim = GetFCsAnimSequence(AnimType, Index))
 		return Anim->Get();
 	return nullptr; 
 }
 
 UAnimMontage* ACsData_Character::GetAnimMontage(const TCsViewType &ViewType, const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType, const int32 &Index /*=0*/, const bool &IsLow /*=false*/)
 {
-	if (FCsFpsAnimMontage* Anim = GetFCsFpsAnimMontage(GripType, AnimType))
+	if (FCsFpsAnimMontage* Anim = GetFCsFpsAnimMontage(GripType, AnimType, Index))
 		return Anim->Get(ViewType, IsLow);
 	return nullptr;
 }
 
 UAnimMontage* ACsData_Character::GetAnimMontage(const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType, const int32 &Index /*=0*/, const bool &IsLow /*=false*/)
 {
-	if (FCsAnimMontage* Anim = GetFCsAnimMontage(GripType, AnimType))
+	if (FCsAnimMontage* Anim = GetFCsAnimMontage(GripType, AnimType, Index))
 		return Anim->Get();
 	return nullptr;
 }
@@ -127,14 +127,14 @@ UAnimMontage* ACsData_Character::GetAnimMontage(const TCsViewType &ViewType, con
 
 UAnimMontage* ACsData_Character::GetAnimMontage(const TCsViewType &ViewType, const TCsCharacterAnim &AnimType, const int32 &Index /*=0*/, const bool &IsLow /*=false*/) 
 { 
-	if (FCsFpsAnimMontage* Anim = GetFCsFpsAnimMontage(AnimType))
+	if (FCsFpsAnimMontage* Anim = GetFCsFpsAnimMontage(AnimType, Index))
 		return Anim->Get(ViewType, IsLow);
 	return nullptr;
 }
 
 UAnimMontage* ACsData_Character::GetAnimMontage(const TCsCharacterAnim &AnimType, const int32 &Index /*=0*/, const bool &IsLow /*=false*/) 
 { 
-	if (FCsAnimMontage* Anim = GetFCsAnimMontage(AnimType))
+	if (FCsAnimMontage* Anim = GetFCsAnimMontage(AnimType, Index))
 		return Anim->Get();
 	return nullptr; 
 }
@@ -657,14 +657,14 @@ void ACsData_Character::StopAnimation(class UObject* InObject, const TCsCharacte
 		StopAnimation(Actor, AnimType, Index, BlendOutTime, IsLow);
 }
 
-FCsAnimMontage* ACsData_Character::GetFCsAnimMontage(const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType) { return nullptr; }
-FCsAnimMontage* ACsData_Character::GetFCsAnimMontage(const TCsCharacterAnim &AnimType) { return nullptr; }
-FCsAnimSequence* ACsData_Character::GetFCsAnimSequence(const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType) { return nullptr; }
-FCsAnimSequence* ACsData_Character::GetFCsAnimSequence(const TCsCharacterAnim &AnimType) { return nullptr;  }
+FCsAnimMontage* ACsData_Character::GetFCsAnimMontage(const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType, const int32 &Index /*=0*/) { return nullptr; }
+FCsAnimMontage* ACsData_Character::GetFCsAnimMontage(const TCsCharacterAnim &AnimType, const int32 &Index /*=0*/) { return nullptr; }
+FCsAnimSequence* ACsData_Character::GetFCsAnimSequence(const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType, const int32 &Index /*=0*/) { return nullptr; }
+FCsAnimSequence* ACsData_Character::GetFCsAnimSequence(const TCsCharacterAnim &AnimType, const int32 &Index /*=0*/) { return nullptr;  }
 
-FCsFpsAnimSequence* ACsData_Character::GetFCsFpsAnimSequence(const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType) { return nullptr; }
-FCsFpsAnimSequence* ACsData_Character::GetFCsFpsAnimSequence(const TCsCharacterAnim &AnimType) { return nullptr; }
-FCsFpsAnimMontage* ACsData_Character::GetFCsFpsAnimMontage(const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType) { return nullptr; }
-FCsFpsAnimMontage* ACsData_Character::GetFCsFpsAnimMontage(const TCsCharacterAnim &AnimType) { return nullptr; }
+FCsFpsAnimSequence* ACsData_Character::GetFCsFpsAnimSequence(const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType, const int32 &Index /*=0*/) { return nullptr; }
+FCsFpsAnimSequence* ACsData_Character::GetFCsFpsAnimSequence(const TCsCharacterAnim &AnimType, const int32 &Index /*=0*/) { return nullptr; }
+FCsFpsAnimMontage* ACsData_Character::GetFCsFpsAnimMontage(const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType, const int32 &Index /*=0*/) { return nullptr; }
+FCsFpsAnimMontage* ACsData_Character::GetFCsFpsAnimMontage(const TCsCharacterAnim &AnimType, const int32 &Index /*=0*/) { return nullptr; }
 
 #pragma endregion Animation

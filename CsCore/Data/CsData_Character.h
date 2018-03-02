@@ -86,10 +86,10 @@ public:
 	virtual void GetAnim(UAnimSequence* &OutAnimSequence, UAnimMontage* &OutAnimMontage, const TCsViewType &ViewType, const TCsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
 	virtual void GetAnim(UAnimSequence* &OutAnimSequence, UAnimMontage* &OutAnimMontage, const TCsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
 
-	virtual UAnimSequence* GetAnimSequence(const TCsViewType &ViewType, const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType, const bool &IsLow = false);
-	virtual UAnimSequence* GetAnimSequence(const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType, const bool &IsLow = false);
-	virtual UAnimSequence* GetAnimSequence(const TCsViewType &ViewType, const TCsCharacterAnim &AnimType, const bool &IsLow = false);
-	virtual UAnimSequence* GetAnimSequence(const TCsCharacterAnim &AnimType, const bool &IsLow = false);
+	virtual UAnimSequence* GetAnimSequence(const TCsViewType &ViewType, const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
+	virtual UAnimSequence* GetAnimSequence(const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
+	virtual UAnimSequence* GetAnimSequence(const TCsViewType &ViewType, const TCsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
+	virtual UAnimSequence* GetAnimSequence(const TCsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
 
 	virtual UAnimMontage* GetAnimMontage(const TCsViewType &ViewType, const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
 	virtual UAnimMontage* GetAnimMontage(const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
@@ -158,15 +158,15 @@ public:
 	virtual void StopAnimation(class UObject* InObject, const TCsViewType &ViewType, const TCsCharacterAnim &AnimType, const int32 &Index, const float &BlendOutTime = 0.0f, const bool &IsLow = false);
 	virtual void StopAnimation(class UObject* InObject, const TCsCharacterAnim &AnimType, const int32 &Index, const float &BlendOutTime = 0.0f, const bool &IsLow = false);
 
-	virtual FCsAnimSequence* GetFCsAnimSequence(const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType);
-	virtual FCsAnimSequence* GetFCsAnimSequence(const TCsCharacterAnim &AnimType);
-	virtual FCsAnimMontage* GetFCsAnimMontage(const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType);
-	virtual FCsAnimMontage* GetFCsAnimMontage(const TCsCharacterAnim &AnimType);
+	virtual FCsAnimSequence* GetFCsAnimSequence(const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType, const int32 &Index = 0);
+	virtual FCsAnimSequence* GetFCsAnimSequence(const TCsCharacterAnim &AnimType, const int32 &Index = 0);
+	virtual FCsAnimMontage* GetFCsAnimMontage(const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType, const int32 &Index = 0);
+	virtual FCsAnimMontage* GetFCsAnimMontage(const TCsCharacterAnim &AnimType, const int32 &Index = 0);
 
-	virtual FCsFpsAnimSequence* GetFCsFpsAnimSequence(const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType);
-	virtual FCsFpsAnimSequence* GetFCsFpsAnimSequence(const TCsCharacterAnim &AnimType);
-	virtual FCsFpsAnimMontage* GetFCsFpsAnimMontage(const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType);
-	virtual FCsFpsAnimMontage* GetFCsFpsAnimMontage(const TCsCharacterAnim &AnimType);
+	virtual FCsFpsAnimSequence* GetFCsFpsAnimSequence(const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType, const int32 &Index = 0);
+	virtual FCsFpsAnimSequence* GetFCsFpsAnimSequence(const TCsCharacterAnim &AnimType, const int32 &Index = 0);
+	virtual FCsFpsAnimMontage* GetFCsFpsAnimMontage(const TCsWeaponGrip &GripType, const TCsCharacterAnim &AnimType, const int32 &Index = 0);
+	virtual FCsFpsAnimMontage* GetFCsFpsAnimMontage(const TCsCharacterAnim &AnimType, const int32 &Index = 0);
 
 #pragma endregion Animation
 };

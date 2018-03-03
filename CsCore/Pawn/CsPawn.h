@@ -9,6 +9,8 @@ class CSCORE_API ACsPawn : public ACharacter
 {
 	GENERATED_UCLASS_BODY()
 
+	virtual void PostActorCreated() override;
+	virtual void Destroyed() override;
 	virtual void OnTickActor_HandleCVars(const float &DeltaSeconds);
 
 // View
@@ -169,6 +171,9 @@ public:
 	TCsWeaponSlot LastWeaponSlot;
 	uint8 LastWeaponIndex;
 	uint8 CurrentWeaponCount;
+	uint8 MaxWeaponCount;
+
+	TSubclassOf<class ACsWeapon> WeaponClass;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Weapons")
 	TArray<class ACsWeapon*> Weapons;

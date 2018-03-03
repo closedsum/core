@@ -63,7 +63,7 @@ namespace ECsCoroutineTransaction
 }
 
 #define ECS_COROUTINE_TRANSACTION_MAX (uint8)ECsCoroutineTransaction::ECsCoroutineTransaction_MAX
-typedef TEnumAsByte<ECsCoroutineTransaction::Type> TCsCoroutineTransaction;
+typedef ECsCoroutineTransaction::Type TCsCoroutineTransaction;
 
 #pragma endregion Enums
 

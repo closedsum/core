@@ -58,7 +58,7 @@ namespace ECsPoolTransaction
 }
 
 #define ECS_POOL_TRANSACTION_MAX (uint8)ECsPoolTransaction::ECsPoolTransaction_MAX
-typedef TEnumAsByte<ECsPoolTransaction::Type> TCsPoolTransaction;
+typedef ECsPoolTransaction::Type TCsPoolTransaction;
 
 UENUM(BlueprintType)
 namespace ECsPoolTransactionOrder
@@ -97,7 +97,7 @@ namespace ECsPoolTransactionOrder
 }
 
 #define ECS_POOL_TRANSACTION_ORDER_MAX (uint8)ECsPoolTransactionOrder::ECsPoolTransactionOrder_MAX
-typedef TEnumAsByte<ECsPoolTransactionOrder::Type> TCsPoolTransactionOrder;
+typedef ECsPoolTransactionOrder::Type TCsPoolTransactionOrder;
 
 UENUM(BlueprintType)
 namespace ECsPooledObjectState
@@ -140,7 +140,7 @@ namespace ECsPooledObjectState
 }
 
 #define ECS_POOLED_OBJECT_STATE_MAX (uint8)ECsPooledObjectState::ECsPooledObjectState_MAX
-typedef TEnumAsByte<ECsPooledObjectState::Type> TCsPooledObjectState;
+typedef ECsPooledObjectState::Type TCsPooledObjectState;
 
 #define CS_POOLED_OBJECT_CACHE_INVALID_TYPE 255
 

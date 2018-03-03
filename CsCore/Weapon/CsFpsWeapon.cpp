@@ -1,14 +1,16 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "Weapon/CsFpsWeapon.h"
 #include "CsCore.h"
+#include "CsCVars.h"
 #include "Common/CsCommon.h"
 
-#include "Pawn/CsPawn.h"
+#include "Player/CsFpsPawn.h"
 #include "Animation/CsAnimInstance_Character.h"
 #include "Animation/CsAnimInstance_Weapon.h"
 
 // Data
 #include "Data/CsData_ProjectileWeapon.h"
+#include "Data/CsData_Character.h"
 #include "Data/CsData_WeaponMaterialSkin.h"
 
 ACsFpsWeapon::ACsFpsWeapon(const FObjectInitializer& ObjectInitializer)
@@ -256,15 +258,125 @@ float ACsFpsWeapon::GetMemberValue_Script_float(const FString &MemberName, const
 
 #pragma endregion Members
 
-// Data
+// Owner
 #pragma region
 
-ACsData_WeaponMaterialSkin* ACsFpsWeapon::GetMyData_WeaponMaterialSkin()
+void ACsFpsWeapon::AttachMeshToPawn()
 {
-	return MyData_WeaponMaterialSkin.IsValid() ? MyData_WeaponMaterialSkin.Get() : nullptr;
+	ACsData_Character* Data_Character	  = nullptr;
+	const TCsViewType ViewType			  = GetCurrentViewType();
+	USkeletalMeshComponent* CharacterMesh = GetCharacterMesh(ViewType);
+
+#if WITH_EDITOR 
+	// In Editor Preview Window
+	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	{
+		if (UCsAnimInstance_Character* AnimInstance = GetMyOwner<UCsAnimInstance_Character>())
+			Data_Character = AnimInstance->GetData();
+	}
+	else
+#endif // #if WITH_EDITOR
+	{
+		if (MyOwnerType == PawnWeaponOwner)
+			Data_Character = GetMyPawn()->GetMyData_Character();
+	}
+
+	if (!Data_Character)
+		return;
+
+	const FName WeaponBone = Data_Character->GetBoneToAttachWeaponTo();
+	//const FName MeleeBone = Data_Character->BoneToAttachMeleeItemTo;
+
+	// 1P
+	if (ViewType == ECsViewType::FirstPerson)
+	{
+#if WITH_EDITOR 
+		// In Editor Preview Window
+		if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+		{
+			Mesh1P->MeshComponentUpdateFlag = EMeshComponentUpdateFlag::AlwaysTickPoseAndRefreshBones;
+			Mesh1P->SetOnlyOwnerSee(false);
+			Mesh1P->SetOwnerNoSee(false);
+		}
+#endif // #if WITH_EDITOR
+
+		Mesh3P->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
+		SetRootComponent(Mesh1P);
+
+		if (IsEquipped)
+		{
+			Mesh1P->SetHiddenInGame(false);
+			Mesh1P->SetVisibility(true);
+		}
+
+		Mesh1P->AttachToComponent(CharacterMesh, FAttachmentTransformRules::KeepRelativeTransform, WeaponBone);
+		//Mesh1P->SetAnimInstanceClass(WeaponData->AnimBlueprints.Blueprint1P);
+		//MeleeAttachment1P->AttachToComponent(PawnMesh1P, FAttachmentTransformRules::KeepRelativeTransform, MeleeAttachmentPoint);
+
+		if (IsEquipped)
+		{
+			Mesh1P->Activate();
+			Mesh1P->SetComponentTickEnabled(true);
+			Mesh1P->UpdateComponentToWorld(EUpdateTransformFlags::None, ETeleportType::None);
+		}
+		Mesh3P->SetHiddenInGame(true);
+	}
+	// 3P
+	if (ViewType == ECsViewType::ThirdPerson)
+	{
+#if WITH_EDITOR 
+		// In Editor Preview Window
+		if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+		{
+			Mesh3P->MeshComponentUpdateFlag = EMeshComponentUpdateFlag::AlwaysTickPoseAndRefreshBones;
+			Mesh3P->SetOnlyOwnerSee(false);
+			Mesh3P->SetOwnerNoSee(false);
+		}
+#endif // #if WITH_EDITOR
+
+		Mesh1P->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
+		SetRootComponent(Mesh3P);
+
+		if (IsEquipped)
+		{
+			Mesh3P->SetHiddenInGame(false);
+			Mesh3P->SetVisibility(true);
+			Mesh3P->SetCastShadow(true);
+		}
+		Mesh3P->AttachToComponent(CharacterMesh, FAttachmentTransformRules::KeepRelativeTransform, WeaponBone);
+		//MeleeAttachment3P->AttachToComponent(PawnMesh1P, FAttachmentTransformRules::KeepRelativeTransform, MeleeAttachmentPoint);
+
+		if (IsEquipped)
+		{
+			Mesh3P->Activate();
+			Mesh3P->SetComponentTickEnabled(true);
+			Mesh3P->UpdateComponentToWorld(EUpdateTransformFlags::None, ETeleportType::None);
+		}
+		Mesh1P->SetHiddenInGame(true);
+	}
 }
 
-#pragma endregion Data
+USkeletalMeshComponent* ACsFpsWeapon::GetCharacterMesh(const TEnumAsByte<ECsViewType::Type> &ViewType)
+{
+#if WITH_EDITOR 
+	// In Editor Preview Window
+	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	{
+		if (UCsAnimInstance_Character* AnimInstance = GetMyOwner<UCsAnimInstance_Character>())
+			return AnimInstance->GetSkeletalMeshComponent();
+	}
+	else
+#endif // #if WITH_EDITOR
+	{
+		ACsFpsPawn* Pawn = GetMyPawn<ACsFpsPawn>();
+
+		if (MyOwnerType == PawnWeaponOwner)
+			return ViewType == ECsViewType::FirstPerson ? Pawn->Mesh1P : Pawn->GetMesh();
+	}
+	return nullptr;
+}
+
+#pragma endregion Owner
 
 // State
 #pragma region
@@ -389,6 +501,18 @@ void ACsFpsWeapon::Hide()
 // Mesh
 #pragma region
 
+void ACsFpsWeapon::SetMesh()
+{
+	const TCsViewType ViewType = GetCurrentViewType();
+
+	// 1P
+	if (ViewType == ECsViewType::FirstPerson)
+		SetMesh1P();
+	// 3P
+	if (ViewType == ECsViewType::ThirdPerson)
+		SetMesh3P();
+}
+
 void ACsFpsWeapon::SetMesh1P()
 {
 	Mesh1P->SetAnimInstanceClass(nullptr);
@@ -402,16 +526,16 @@ void ACsFpsWeapon::SetMesh1P()
 		USkeletalMeshComponent* Mesh = nullptr;
 
 		// Character
-		if (UCsAnimInstance_Character* AnimInstance = Cast<UCsAnimInstance_Character>(GetMyOwner()))
+		if (UCsAnimInstance_Character* AnimInstance = GetMyOwner<UCsAnimInstance_Character>())
 		{
-			USkeletalMeshComponent* Mesh = Mesh1P;
+			Mesh = Mesh1P;
 
-			Data_Weapon->SetMesh(Mesh1P, ECsViewType::FirstPerson);
-			Data_Weapon->SetAnimBlueprint(Mesh1P, ECsViewType::FirstPerson);
+			Data_Weapon->SetMesh(Mesh, ECsViewType::FirstPerson);
+			Data_Weapon->SetAnimBlueprint(Mesh, ECsViewType::FirstPerson);
 		}
 		// Weapon
-		if (UCsAnimInstance_Weapon* AnimInstance = Cast<UCsAnimInstance_Weapon>(GetMyOwner()))
-			USkeletalMeshComponent* Mesh = AnimInstance->GetSkeletalMeshComponent();
+		if (UCsAnimInstance_Weapon* AnimInstance = GetMyOwner<UCsAnimInstance_Weapon>())
+			Mesh = AnimInstance->GetSkeletalMeshComponent();
 
 		if (!Mesh)
 			return;
@@ -465,16 +589,16 @@ void ACsFpsWeapon::SetMesh3P()
 		USkeletalMeshComponent* Mesh = nullptr;
 
 		// Character
-		if (UCsAnimInstance_Character* AnimInstance = Cast<UCsAnimInstance_Character>(GetMyOwner()))
+		if (UCsAnimInstance_Character* AnimInstance = GetMyOwner<UCsAnimInstance_Character>())
 		{
-			USkeletalMeshComponent* Mesh = Mesh3P;
+			Mesh = Mesh3P;
 
 			Data_Weapon->SetMesh(Mesh3P, ECsViewType::ThirdPerson, UseMesh3PLow);
 			Data_Weapon->SetAnimBlueprint(Mesh3P, ECsViewType::ThirdPerson, UseMesh3PLow);
 		}
 		// Weapon
-		if (UCsAnimInstance_Weapon* AnimInstance = Cast<UCsAnimInstance_Weapon>(GetMyOwner()))
-			USkeletalMeshComponent* Mesh = AnimInstance->GetSkeletalMeshComponent();
+		if (UCsAnimInstance_Weapon* AnimInstance = GetMyOwner<UCsAnimInstance_Weapon>())
+			Mesh = AnimInstance->GetSkeletalMeshComponent();
 
 		if (!Mesh)
 			return;
@@ -523,7 +647,7 @@ USkeletalMeshComponent* ACsFpsWeapon::GetMesh(const TCsViewType &ViewType)
 	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
 	{
 		// Character
-		if (UCsAnimInstance_Character* AnimInstance = Cast<UCsAnimInstance_Character>(GetMyOwner()))
+		if (UCsAnimInstance_Character* AnimInstance = GetMyOwner<UCsAnimInstance_Character>())
 		{
 			if (ViewType == ECsViewType::FirstPerson)
 				return Mesh1P;
@@ -531,7 +655,7 @@ USkeletalMeshComponent* ACsFpsWeapon::GetMesh(const TCsViewType &ViewType)
 				return Mesh3P;
 		}
 		// Weapon
-		if (UCsAnimInstance_Weapon* AnimInstance = Cast<UCsAnimInstance_Weapon>(GetMyOwner()))
+		if (UCsAnimInstance_Weapon* AnimInstance = GetMyOwner<UCsAnimInstance_Weapon>())
 			return AnimInstance->GetSkeletalMeshComponent();
 	}
 #endif // #if WITH_EDITOR

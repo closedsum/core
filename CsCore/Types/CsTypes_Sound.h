@@ -47,7 +47,7 @@ namespace ECsSoundType
 }
 
 #define ECS_SOUND_TYPE_MAX (uint8)ECsSoundType::ECsSoundType_MAX
-typedef TEnumAsByte<ECsSoundType::Type> TCsSoundType;
+typedef ECsSoundType::Type TCsSoundType;
 
 UENUM(BlueprintType)
 namespace ECsSoundPriority
@@ -98,7 +98,7 @@ namespace ECsSoundPriority
 }
 
 #define ECS_SOUND_PRIORITY_MAX (uint8)ECsSoundPriority::ECsSoundPriority_MAX
-typedef TEnumAsByte<ECsSoundPriority::Type> TCsSoundPriority;
+typedef ECsSoundPriority::Type TCsSoundPriority;
 
 USTRUCT(BlueprintType)
 struct FCsSoundElement

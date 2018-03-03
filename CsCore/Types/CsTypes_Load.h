@@ -1,5 +1,4 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
-#include "Types/CsTypes_Macro.h"
 #include "Types/CsTypes_Primitive.h"
 
 #include "Json.h"
@@ -128,7 +127,7 @@ namespace ECsLoadFlags_Editor
 }
 
 #define ECS_LOAD_FLAGS_EDITOR_MAX (uint8)ECsLoadFlags_Editor::ECsLoadFlags_Editor_MAX
-typedef TEnumAsByte<ECsLoadFlags_Editor::Type> TCsLoadFlags_Editor;
+typedef ECsLoadFlags_Editor::Type TCsLoadFlags_Editor;
 
 USTRUCT()
 struct FCsResourceSize
@@ -234,9 +233,6 @@ struct FCsTArrayStringAssetReference
 		}
 	}
 };
-
-#define CS_INVALID_LOOK_UP_CODE 255
-#define CS_INVALID_LOOK_UP_CODE_MAX 65535
 
 USTRUCT(BlueprintType)
 struct FCsDataMappingEntry
@@ -472,7 +468,7 @@ namespace ECsLoadAsyncOrder
 }
 
 #define ECS_LOADING_ASYNC_ORDER_MAX (uint8)ECsLoadAsyncOrder::ECsLoadAsyncOrder_MAX
-typedef TEnumAsByte<ECsLoadAsyncOrder::Type> TCsLoadAsyncOrder;
+typedef ECsLoadAsyncOrder::Type TCsLoadAsyncOrder;
 
 #pragma endregion Load
 

@@ -123,7 +123,7 @@ namespace ECsInteractiveState
 }
 
 #define ECS_INTERACTIVE_STATE_MAX (uint8)ECsInteractiveState::ECsInteractiveState_MAX
-typedef TEnumAsByte<ECsInteractiveState::Type> TCsInteractiveState;
+typedef ECsInteractiveState::Type TCsInteractiveState;
 
 UENUM()
 namespace ECsInteractiveInstigator
@@ -170,7 +170,7 @@ namespace ECsInteractiveInstigator
 }
 
 #define ECS_INTERACTIVE_INSTIGATOR_MAX (uint8)ECsInteractiveInstigator::ECsInteractiveInstigator_MAX
-typedef TEnumAsByte<ECsInteractiveInstigator::Type> TCsInteractiveInstigator;
+typedef ECsInteractiveInstigator::Type TCsInteractiveInstigator;
 
 UENUM()
 namespace ECsInteractiveCollision
@@ -221,7 +221,7 @@ namespace ECsInteractiveCollision
 }
 
 #define ECS_INTERACTIVE_COLLISION_MAX (uint8)ECsInteractiveCollision::ECsInteractiveCollision_MAX
-typedef TEnumAsByte<ECsInteractiveCollision::Type> TCsInteractiveCollision;
+typedef ECsInteractiveCollision::Type TCsInteractiveCollision;
 
 USTRUCT()
 struct FCsInteractiveMaterials
@@ -356,7 +356,7 @@ namespace ECsInteractivePhysicsState_Editor
 }
 
 #define ECS_INTERACTIVE_PHYSICS_STATE_EDITOR_MAX (uint8)ECsInteractivePhysicsState_Editor::ECsInteractivePhysicsState_Editor_MAX
-typedef TEnumAsByte<ECsInteractivePhysicsState_Editor::Type> TCsInteractivePhysicsState_Editor;
+typedef ECsInteractivePhysicsState_Editor::Type TCsInteractivePhysicsState_Editor;
 
 USTRUCT(BlueprintType)
 struct FCsInteractedActorInfo

@@ -20,6 +20,8 @@ UCsAnimInstance::UCsAnimInstance(const FObjectInitializer& ObjectInitializer)
 	GlobalPlayRate = 1.0f;
 
 	GlobalPlayRateHandle.Set(&GlobalPlayRate);
+
+	CurrentViewType = ECsViewType::ThirdPerson;
 }
 
 void UCsAnimInstance::BeginDestroy()

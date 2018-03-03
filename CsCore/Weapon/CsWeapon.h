@@ -22,13 +22,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsWeapon_Override
 // Enums
 #pragma region
 
-namespace ECsWeaponState
-{
-	enum Type : uint8;
-}
-
-typedef ECsWeaponState::Type TCsWeaponState;
-
 UENUM(BlueprintType)
 namespace ECsWeaponCacheMultiValueMember
 {
@@ -235,7 +228,7 @@ namespace ECsWeaponCacheMultiValueMember
 }
 
 #define ECS_WEAPON_CACHE_MULTI_VALUE_MEMBER_MAX (uint8)ECsWeaponCacheMultiValueMember::ECsWeaponCacheMultiValueMember_MAX
-typedef TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> TCsWeaponCacheMultiValueMember;
+typedef ECsWeaponCacheMultiValueMember::Type TCsWeaponCacheMultiValueMember;
 
 #pragma endregion Enums
 
@@ -507,6 +500,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Owner")
 	UObject* GetMyOwner();
 
+	template<typename T>
+	T* GetMyOwner()
+	{
+		return Cast<T>(GetMyOwner());
+	}
+
 	TCsWeaponOwner MyOwnerType;
 
 	UFUNCTION(BlueprintCallable, Category = "Owner")
@@ -516,6 +515,14 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Owner")
 	class ACsPawn* GetMyPawn();
+
+	template<typename T>
+	T* GetMyPawn()
+	{
+		return Cast<T>(GetMyPawn());
+	}
+
+	TCsWeaponOwner PawnWeaponOwner;
 
 	UFUNCTION(BlueprintCallable, Category = "Owner")
 	virtual TEnumAsByte<ECsViewType::Type> GetCurrentViewType();

@@ -144,7 +144,7 @@ namespace ECsPlayerStateBaseOnBoardState
 }
 
 #define ECS_PLAYER_STATE_BASE_ONBOARD_STATE_MAX (uint8)ECsPlayerStateBaseOnBoardState::ECsPlayerStateBaseOnBoardState_MAX
-typedef TEnumAsByte<ECsPlayerStateBaseOnBoardState::Type> TCsPlayerStateBaseOnBoardState;
+typedef ECsPlayerStateBaseOnBoardState::Type TCsPlayerStateBaseOnBoardState;
 
 namespace ECsPlayerStateBaseRoutine
 {

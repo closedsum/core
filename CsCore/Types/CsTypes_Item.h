@@ -70,7 +70,7 @@ namespace ECsItemCollection
 }
 
 #define ECS_ITEM_COLLECTION_MAX (uint8)ECsItemCollection::ECsItemCollection_MAX
-typedef TEnumAsByte<ECsItemCollection::Type> TCsItemCollection;
+typedef ECsItemCollection::Type TCsItemCollection;
 
 namespace ECsItemCollectionCachedString
 {
@@ -132,7 +132,7 @@ namespace ECsInventoryItemState_Editor
 
 
 #define ECS_INVENTORY_ITEM_STATE_MAX (uint8)ECsInventoryItemState_Editor::ECsInventoryItemState_Editor_MAX
-typedef TEnumAsByte<ECsInventoryItemState_Editor::Type> TCsInventoryItemState_Editor;
+typedef ECsInventoryItemState_Editor::Type TCsInventoryItemState_Editor;
 
 namespace ECsInventoryItemState_Editor
 {
@@ -341,7 +341,7 @@ namespace ECsItemMemberValueType
 }
 
 #define ECS_ITEM_MEMBER_VALUE_TYPE_MAX (uint8)ECsItemMemberValueType::ECsItemMemberValueType_MAX
-typedef TEnumAsByte<ECsItemMemberValueType::Type> TCsItemMemberValueType;
+typedef ECsItemMemberValueType::Type TCsItemMemberValueType;
 
 USTRUCT(BlueprintType)
 struct FCsItemMemberValue

@@ -135,7 +135,7 @@ namespace ECsRoutineMotionController
 }
 
 #define ECS_ROUTINE_MOTION_CONTROLLER_MAX (uint8)ECsRoutineMotionController::ECsRoutineMotionController_MAX
-typedef TEnumAsByte<ECsRoutineMotionController::Type> TCsRoutineMotionController;
+typedef ECsRoutineMotionController::Type TCsRoutineMotionController;
 
 #pragma endregion Enums
 

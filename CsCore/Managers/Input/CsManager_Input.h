@@ -606,8 +606,8 @@ protected:
 
 	TArray<FCsInputInfo*> Infos;
 
-	TArray<TCsInputEvent*> Actions;
-	TArray<TCsInputEvent*> Last_Actions;
+	TArray<TEnumAsByte<ECsInputEvent::Type>*> Actions;
+	TArray<TEnumAsByte<ECsInputEvent::Type>*> Last_Actions;
 
 	// Pressed Events
 #pragma region

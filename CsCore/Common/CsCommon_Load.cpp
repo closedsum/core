@@ -707,6 +707,18 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FCsFpsSoundElement
 				if (InnerStructProperty->Struct == FCsFpsSoundElement::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsFpsSoundElement>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsAnimSequence
+				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsAnimSequence>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsFpsAnimSequence
+				if (InnerStructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsFpsAnimSequence>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsAnimMontage
+				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsAnimMontage>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsFpsAnimMontage
+				if (InnerStructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsFpsAnimMontage>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// FCsInputActionMapping
 				if (InnerStructProperty->Struct == FCsInputActionMapping::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsInputActionMapping>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
@@ -1305,6 +1317,18 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FCsFpsSoundElement
 				if (InnerStructProperty->Struct == FCsFpsSoundElement::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsFpsSoundElement>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsAnimSequence
+				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsAnimSequence>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsFpsAnimSequence
+				if (InnerStructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsFpsAnimSequence>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsAnimMontage
+				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsAnimMontage>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsFpsAnimMontage
+				if (InnerStructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsFpsAnimMontage>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// FCsInputActionMapping
 				if (InnerStructProperty->Struct == FCsInputActionMapping::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsInputActionMapping>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
@@ -1838,6 +1862,18 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FCsFpsSoundElement
 				if (InnerStructProperty->Struct == FCsFpsSoundElement::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsFpsSoundElement>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
+				// FCsAnimSequence
+				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsAnimSequence>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
+				// FCsFpsAnimSequence
+				if (InnerStructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsFpsAnimSequence>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
+				// FCsAnimMontage
+				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsAnimMontage>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
+				// FCsFpsAnimMontage
+				if (InnerStructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsFpsAnimMontage>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
 				// FCsDataMappingEntry
 				if (InnerStructProperty->Struct == FCsDataMappingEntry::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsDataMappingEntry>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
@@ -2558,6 +2594,18 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 				// FCsFpsSoundElement
 				if (InnerStructProperty->Struct == FCsFpsSoundElement::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsFpsSoundElement>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
+				// FCsAnimSequence
+				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsAnimSequence>(JsonObject, ArrayProperty, InStruct, MemberName, nullptr); continue; }
+				// FCsFpsAnimSequence
+				if (InnerStructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsFpsAnimSequence>(JsonObject, ArrayProperty, InStruct, MemberName, nullptr); continue; }
+				// FCsAnimMontage
+				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsAnimMontage>(JsonObject, ArrayProperty, InStruct, MemberName, nullptr); continue; }
+				// FCsFpsAnimMontage
+				if (InnerStructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsFpsAnimMontage>(JsonObject, ArrayProperty, InStruct, MemberName, nullptr); continue; }
 				// FCsInputActionMapping
 				if (InnerStructProperty->Struct == FCsInputActionMapping::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsInputActionMapping>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
@@ -3185,6 +3233,18 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				// FCsFpsSoundElement
 				if (InnerStructProperty->Struct == FCsFpsSoundElement::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsFpsSoundElement>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
+				// FCsAnimSequence
+				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsAnimSequence>(JsonObject, ArrayProperty, InStruct, MemberName, nullptr); continue; }
+				// FCsFpsAnimSequence
+				if (InnerStructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsFpsAnimSequence>(JsonObject, ArrayProperty, InStruct, MemberName, nullptr); continue; }
+				// FCsAnimMontage
+				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsAnimMontage>(JsonObject, ArrayProperty, InStruct, MemberName, nullptr); continue; }
+				// FCsFpsAnimMontage
+				if (InnerStructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsFpsAnimMontage>(JsonObject, ArrayProperty, InStruct, MemberName, nullptr); continue; }
 				// FCsInputActionMapping
 				if (InnerStructProperty->Struct == FCsInputActionMapping::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsInputActionMapping>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
@@ -3746,6 +3806,18 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				// FCsFpsSoundElement
 				if (InnerStructProperty->Struct == FCsFpsSoundElement::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsFpsSoundElement>(JsonObject, ArrayProperty, InObject, MemberName, nullptr); continue; }
+				// FCsAnimSequence
+				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsAnimSequence>(JsonObject, ArrayProperty, InObject, MemberName, nullptr); continue; }
+				// FCsFpsAnimSequence
+				if (InnerStructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsFpsAnimSequence>(JsonObject, ArrayProperty, InObject, MemberName, nullptr); continue; }
+				// FCsAnimMontage
+				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsAnimMontage>(JsonObject, ArrayProperty, InObject, MemberName, nullptr); continue; }
+				// FCsFpsAnimMontage
+				if (InnerStructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsFpsAnimMontage>(JsonObject, ArrayProperty, InObject, MemberName, nullptr); continue; }
 				// FCsDataMappingEntry
 				if (InnerStructProperty->Struct == FCsDataMappingEntry::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsDataMappingEntry>(JsonObject, ArrayProperty, InObject, MemberName, nullptr); continue; }
@@ -4952,7 +5024,19 @@ void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct*
 				// FCsFpsSoundElement
 				if (InnerStructProperty->Struct == FCsFpsSoundElement::StaticStruct())
 				{ GetAssetReferencesFromArrayStructProperty<FCsFpsSoundElement>(ArrayProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
-				
+				// FCsAnimSequence
+				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
+				{ GetAssetReferencesFromArrayStructProperty<FCsAnimSequence>(ArrayProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
+				// FCsFpsAnimSequence
+				if (InnerStructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
+				{ GetAssetReferencesFromArrayStructProperty<FCsFpsAnimSequence>(ArrayProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
+				// FCsAnimMontage
+				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
+				{ GetAssetReferencesFromArrayStructProperty<FCsAnimMontage>(ArrayProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
+				// FCsFpsAnimMontage
+				if (InnerStructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
+				{ GetAssetReferencesFromArrayStructProperty<FCsFpsAnimMontage>(ArrayProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
+
 				if (Internal)
 				{
 					if ((*Internal)(Property, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes))
@@ -5169,9 +5253,15 @@ void UCsCommon_Load::GetAssetReferencesFromObject(void* InObject, UClass* const 
 				// FCsFpsSoundElement
 				if (InnerStructProperty->Struct == FCsFpsSoundElement::StaticStruct())
 				{ GetAssetReferencesFromArrayStructProperty<FCsFpsSoundElement>(ArrayProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
+				// FCsAnimSequence
+				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
+				{ GetAssetReferencesFromArrayStructProperty<FCsAnimSequence>(ArrayProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
 				// FCsFpsAnimSequence
 				if (InnerStructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
 				{ GetAssetReferencesFromArrayStructProperty<FCsFpsAnimSequence>(ArrayProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
+				// FCsAnimMontage
+				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
+				{ GetAssetReferencesFromArrayStructProperty<FCsAnimMontage>(ArrayProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
 				// FCsFpsAnimMontage
 				if (InnerStructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
 				{ GetAssetReferencesFromArrayStructProperty<FCsFpsAnimMontage>(ArrayProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
@@ -5984,6 +6074,18 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 				// FCsFpsSoundElement
 				if (InnerStructProperty->Struct == FCsFpsSoundElement::StaticStruct())
 				{ LoadMemberArrayStructProperty<FCsFpsSoundElement>(ArrayProperty, InStruct, StructName, LoadFlags); continue; }
+				// FCsAnimSequence
+				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
+				{ LoadMemberArrayStructProperty<FCsAnimSequence>(ArrayProperty, InStruct, StructName, LoadFlags); continue; }
+				// FCsFpsAnimSequence
+				if (InnerStructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
+				{ LoadMemberArrayStructProperty<FCsFpsAnimSequence>(ArrayProperty, InStruct, StructName, LoadFlags); continue; }
+				// FCsAnimMontage
+				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
+				{ LoadMemberArrayStructProperty<FCsAnimMontage>(ArrayProperty, InStruct, StructName, LoadFlags); continue; }
+				// FCsFpsAnimMontage
+				if (InnerStructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
+				{ LoadMemberArrayStructProperty<FCsFpsAnimMontage>(ArrayProperty, InStruct, StructName, LoadFlags); continue; }
 
 				if (Internal)
 				{
@@ -6317,9 +6419,15 @@ void UCsCommon_Load::LoadObjectWithTAssetPtrs(const FString &ObjectName, void* I
 				// FCsFpsSoundElement
 				if (InnerStructProperty->Struct == FCsFpsSoundElement::StaticStruct())
 				{ LoadMemberArrayStructProperty<FCsFpsSoundElement>(ArrayProperty, InObject, StructName, LoadFlags); continue; }
+				// FCsAnimSequence
+				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
+				{ LoadMemberArrayStructProperty<FCsAnimSequence>(ArrayProperty, InObject, StructName, LoadFlags); continue; }
 				// FCsFpsAnimSequence
 				if (InnerStructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
 				{ LoadMemberArrayStructProperty<FCsFpsAnimSequence>(ArrayProperty, InObject, StructName, LoadFlags); continue; }
+				// FCsAnimMontage
+				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
+				{ LoadMemberArrayStructProperty<FCsAnimMontage>(ArrayProperty, InObject, StructName, LoadFlags); continue; }
 				// FCsFpsAnimMontage
 				if (InnerStructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
 				{ LoadMemberArrayStructProperty<FCsFpsAnimMontage>(ArrayProperty, InObject, StructName, LoadFlags); continue; }

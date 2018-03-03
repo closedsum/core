@@ -76,7 +76,7 @@ namespace ECsLevelState
 }
 
 #define ECS_LEVEL_STATE (uint8)ECsLevelState::ECsLevelState_MAX
-typedef TEnumAsByte<ECsLevelState::Type> TCsLevelState;
+typedef ECsLevelState::Type TCsLevelState;
 
 #pragma endregion Level
 
@@ -149,7 +149,7 @@ namespace ECsEasingType
 }
 
 #define ECS_EASING_TYPE_MAX (uint8)ECsEasingType::ECsEasingType_MAX
-typedef TEnumAsByte<ECsEasingType::Type> TCsEasingType;
+typedef ECsEasingType::Type TCsEasingType;
 
 // Transform
 #pragma region
@@ -225,7 +225,7 @@ namespace ECsAxes_Editor
 }
 
 #define ECS_AXES_EDITOR_MAX (uint8)ECsAxes_Editor::ECsAxes_Editor_MAX
-typedef TEnumAsByte<ECsAxes_Editor::Type> TCsAxes_Editor;
+typedef ECsAxes_Editor::Type TCsAxes_Editor;
 
 UENUM(BlueprintType)
 namespace ECsTransformMember
@@ -268,7 +268,7 @@ namespace ECsTransformMember
 }
 
 #define ECS_TRANSFORM_MEMBER_MAX (uint8)ECsTransformMember::ECsTransformMember_MAX
-typedef TEnumAsByte<ECsTransformMember::Type> TCsTransformMember;
+typedef ECsTransformMember::Type TCsTransformMember;
 
 #pragma endregion Transform
 
@@ -1511,7 +1511,7 @@ namespace ECsHMDDeviceType
 }
 
 #define ECS_HMD_DEVICE_TYPE_MAX (uint8)ECsHMDDeviceType::ECsHMDDeviceType_MAX
-typedef TEnumAsByte<ECsHMDDeviceType::Type> TCsHMDDeviceType;
+typedef ECsHMDDeviceType::Type TCsHMDDeviceType;
 
 #pragma  endregion VR
 
@@ -1555,7 +1555,7 @@ namespace ECsGestureDevice
 }
 
 #define ECS_GESTURE_DEVICE_MAX (uint8)ECsGestureDevice::ECsGestureDevice_MAX
-typedef TEnumAsByte<ECsGestureDevice::Type> TCsGestureDevice;
+typedef ECsGestureDevice::Type TCsGestureDevice;
 
 namespace ECsGestureType
 {
@@ -1613,7 +1613,7 @@ namespace ECsControllerHand
 }
 
 #define ECS_CONTROLLER_HAND_MAX (uint8)ECsControllerHand::ECsControllerHand_MAX
-typedef TEnumAsByte<ECsControllerHand::Type> TCsControllerHand;
+typedef ECsControllerHand::Type TCsControllerHand;
 
 #pragma endregion Motion Controller
 
@@ -1937,7 +1937,7 @@ namespace ECsLinearColor
 }
 
 #define ECS_LINEAR_COLOR_MAX (uint8)ECsLinearColor::ECsLinearColor_MAX
-typedef TEnumAsByte<ECsLinearColor::Type> TCsLinearColor;
+typedef ECsLinearColor::Type TCsLinearColor;
 
 UENUM(BlueprintType)
 namespace ECsColor
@@ -2043,7 +2043,7 @@ namespace ECsColor
 }
 
 #define ECS_COLOR_MAX (uint8)ECsColor::ECsColor_MAX
-typedef TEnumAsByte<ECsColor::Type> TCsColor;
+typedef ECsColor::Type TCsColor;
 
 #pragma endregion Color
 
@@ -2104,7 +2104,7 @@ namespace ECsAttachmentTransformRules
 }
 
 #define ECS_ATTACHMENT_TRANSFORM_RULES_MAX (uint8)ECsAttachmentTransformRules::ECsAttachmentTransformRules_MAX
-typedef TEnumAsByte<ECsAttachmentTransformRules::Type> TCsAttachmentTransformRules;
+typedef ECsAttachmentTransformRules::Type TCsAttachmentTransformRules;
 
 UENUM(BlueprintType)
 namespace ECsDetachmentTransformRules
@@ -2150,7 +2150,7 @@ namespace ECsDetachmentTransformRules
 }
 
 #define ECS_DETACHMENT_TRANSFORM_RULES_MAX (uint8)ECsDetachmentTransformRules::ECsDetachmentTransformRules_MAX
-typedef TEnumAsByte<ECsDetachmentTransformRules::Type> TCsDetachmentTransformRules;
+typedef ECsDetachmentTransformRules::Type TCsDetachmentTransformRules;
 
 #pragma endregion Attach / Detach
 

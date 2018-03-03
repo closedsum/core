@@ -3,7 +3,7 @@
 #include "CsCore.h"
 
 #include "AI/CsAIController.h"
-#include "AI/CsAIPawn.h"
+#include "AI/Pawn/CsAIPawn.h"
 
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"

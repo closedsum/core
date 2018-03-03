@@ -41,7 +41,7 @@ namespace ECsRoutineJavascriptEntryPoint
 }
 
 #define EMBO_ROUTINE_JAVASCRIPT_ENTRY_POINT_MAX (uint8)ECsRoutineJavascriptEntryPoint::ECsRoutineJavascriptEntryPoint_MAX
-typedef TEnumAsByte<ECsRoutineJavascriptEntryPoint::Type> TCsRoutineJavascriptEntryPoint;
+typedef ECsRoutineJavascriptEntryPoint::Type TCsRoutineJavascriptEntryPoint;
 
 #pragma endregion Enums
 

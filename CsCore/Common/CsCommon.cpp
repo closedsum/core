@@ -280,7 +280,7 @@ void UCsCommon::GetHMDWorldViewPoint(UWorld* InWorld, FVector &OutLocation, FRot
 	}
 }
 
-ACsMotionController* UCsCommon::GetMotionController(UWorld* InWorld, const TCsControllerHand &Hand)
+ACsMotionController* UCsCommon::GetMotionController(UWorld* InWorld, const TEnumAsByte<ECsControllerHand::Type> &Hand)
 {
 	ACsPlayerPawn_VR* Pawn = GetLocalPawn<ACsPlayerPawn_VR>(InWorld);
 

@@ -1,6 +1,8 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Weapon/CsWeapon.h"
+#include "Types/CsTypes_Weapon.h"
+#include "Types/CsTypes_Character.h"
 #include "CsGunWeapon.generated.h"
 
 // Enums
@@ -12,21 +14,6 @@ UCLASS()
 class CSCORE_API ACsGunWeapon : public ACsWeapon
 {
 	GENERATED_UCLASS_BODY()
-
-// Members
-#pragma region
-
-	// Set
-#pragma region
-
-#pragma endregion Set
-
-	// Get
-#pragma region
-
-#pragma endregion Get
-
-#pragma endregion Members
 
 // Data
 #pragma region
@@ -56,20 +43,34 @@ public:
 
 #pragma endregion Data
 
+// Owner
+#pragma region
+
+	UFUNCTION(BlueprintCallable, Category = "Owner")
+	virtual void AttachMeshToPawn();
+
+#pragma endregion Owner
+
 // State
 #pragma region
 
-	virtual void OnTick(const float &DeltaSeconds) override;
-	virtual void Disable() override;
-	virtual void Show() override;
-	virtual void Hide() override;
+	TCsWeaponGrip GripType;
+
+	virtual void OnPawnDeActivate();
 
 #pragma endregion State
 
-// Firing
+// Mesh
 #pragma region
 
-	virtual FVector GetMuzzleLocation(const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode) override;
+	virtual void SetMesh();
 
-#pragma endregion Firing
+#pragma endregion Mesh
+
+// Animation
+#pragma region
+
+	virtual TCsCharacterAnim GetCharacterAnimType(const TCsWeaponAnim &AnimType);
+
+#pragma endregion Animation
 };

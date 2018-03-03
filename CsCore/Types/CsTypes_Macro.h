@@ -6,6 +6,9 @@
 #define CS_FIRST 0
 #define CS_SINGLETON 1
 
+#define CS_INVALID_LOOK_UP_CODE 255
+#define CS_INVALID_LOOK_UP_CODE_MAX 65535
+
 #define CS_TEST_BLUEPRINT_BITFLAG(Bitmask, Bit) (((Bitmask) & (1 << static_cast<uint32>(Bit))) > 0)
 #define CS_SET_BLUEPRINT_BITFLAG(Bitmask, Bit) (Bitmask |= 1 << static_cast<uint32>(Bit))
 #define CS_CLEAR_BLUEPRINT_BITFLAG(Bitmask, Bit) (Bitmask &= ~(1 << static_cast<uint32>(Bit)))

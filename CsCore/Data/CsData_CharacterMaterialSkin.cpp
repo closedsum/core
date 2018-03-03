@@ -36,10 +36,10 @@ void ACsData_CharacterMaterialSkin::SetMaterials(UObject* InObject, const TEnumA
 {
 	// Skeletal Mesh Component
 	if (USkeletalMeshComponent* Mesh = Cast<USkeletalMeshComponent>(InObject))
-		SetMaterials(Mesh, ViewType, IsLow);
+		SetMaterials(Mesh, (TCsViewType)ViewType, IsLow);
 	// Skeletal Mesh Actor
 	if (ASkeletalMeshActor* Actor = Cast<ASkeletalMeshActor>(InObject))
-		SetMaterials(Actor, ViewType, IsLow);
+		SetMaterials(Actor, (TCsViewType)ViewType, IsLow);
 }
 
 void ACsData_CharacterMaterialSkin::SetMaterials(USkeletalMeshComponent* InMesh)

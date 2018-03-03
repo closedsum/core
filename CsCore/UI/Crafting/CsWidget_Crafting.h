@@ -88,7 +88,7 @@ namespace ECsWidgetCraftingProcessState
 }
 
 #define ECS_WIDGET_CRAFTING_PROCESS_STATE_MAX (uint8)ECsWidgetCraftingProcessState::ECsWidgetCraftingProcessState_MAX
-typedef TEnumAsByte<ECsWidgetCraftingProcessState::Type> TCsWidgetCraftingProcessState;
+typedef ECsWidgetCraftingProcessState::Type TCsWidgetCraftingProcessState;
 
 #pragma endregion Enums
 

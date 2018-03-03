@@ -17,6 +17,33 @@
 ACsPawn::ACsPawn(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	WeaponClass = ACsWeapon::StaticClass();
+}
+
+void ACsPawn::PostActorCreated()
+{
+	Super::PostActorCreated();
+
+	FActorSpawnParameters SpawnInfo;
+	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnInfo.ObjectFlags |= RF_Transient;
+
+	for (int32 I = 0; I < MaxWeaponCount; I++)
+	{
+		Weapons[I] = GetWorld()->SpawnActor<ACsWeapon>(WeaponClass, SpawnInfo);
+		Weapons[I]->SetMyPawn(this);
+	}
+}
+
+void ACsPawn::Destroyed()
+{
+	Super::Destroyed();
+
+	for (int32 I = 0; I < MaxWeaponCount; I++)
+	{
+		if (!Weapons[I] && !Weapons[I]->IsPendingKill())
+			Weapons[I]->Destroy();
+	}
 }
 
 void ACsPawn::OnTickActor_HandleCVars(const float &DeltaSeconds) {};

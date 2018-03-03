@@ -54,6 +54,28 @@ struct FCsLocationDamageModifier
 // Weapon
 #pragma region
 
+namespace ECsWeaponState
+{
+	enum Type : uint8;
+}
+
+typedef ECsWeaponState::Type TCsWeaponState;
+
+// WeaponStateToString
+typedef FString(*TCsWeaponStateToString)(const TCsWeaponState&);
+// StringToWeaponState
+typedef TCsWeaponState(*TCsStringToWeaponState)(const FString&);
+
+#define CS_DECLARE_WEAPON_STATE	TCsWeaponState WeaponState_MAX; \
+								uint8 WEAPON_STATE_MAX; \
+								TCsWeaponStateToString WeaponStateToString; \
+								TCsStringToWeaponState StringToWeaponState;
+
+#define CS_DEFINE_WEAPON_STATE	WeaponState_MAX = ECsWeaponState::ECsWeaponState_MAX;\
+								WEAPON_STATE_MAX = (uint8)WeaponState_MAX \
+								WeaponStateToString = &ECsWeaponState::ToString; \
+								StringToWeaponState = &ECsWeaponState::ToType;
+
 namespace ECsWeaponSlot
 {
 	enum Type : uint8;
@@ -437,6 +459,13 @@ struct FCsData_Weapon_FireMode_FXs
 		const int32 Count = MuzzleFXs.Num();
 
 		return Count > CS_EMPTY ? &(MuzzleFXs[Index % Count]) : nullptr;
+	}
+
+	FName GetMuzzleBone(const int32 Index = 0)
+	{
+		const int32 Count = MuzzleFXs.Num();
+
+		return MuzzleFXs[Index % Count].Bone;
 	}
 };
 

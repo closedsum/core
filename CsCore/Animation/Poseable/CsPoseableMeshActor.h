@@ -693,7 +693,7 @@ namespace ECsSequencerTimeSnapInterval
 }
 
 #define ECS_SEQUENCER_TIME_SNAP_INTERVAL_MAX (uint8)ECsSequencerTimeSnapInterval::ECsSequencerTimeSnapInterval_MAX
-typedef TEnumAsByte<ECsSequencerTimeSnapInterval::Type> TCsSequencerTimeSnapInterval;
+typedef ECsSequencerTimeSnapInterval::Type TCsSequencerTimeSnapInterval;
 
 USTRUCT(BlueprintType)
 struct FCsAnimLevelSequenceInfo_Shot

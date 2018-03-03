@@ -73,4 +73,26 @@ typedef TCsCharacterAnimBlueprint(*TCsStringToCharacterAnimBlueprint)(const FStr
 											CharacterAnimBlueprintToString = &ECsCharacterAnimBlueprint::ToString; \
 											StringToCharacterAnimBlueprint = &ECsCharacterAnimBlueprint::ToType;
 
+namespace ECsCharacterAnimVariation
+{
+	enum Type : uint8;
+}
+
+typedef ECsCharacterAnimVariation::Type TCsCharacterAnimVariation;
+
+// CharacterAnimVariationToString
+typedef FString(*TCsCharacterAnimVariationToString)(const TCsCharacterAnimVariation&);
+// StringToCharacterAnim
+typedef TCsCharacterAnimVariation(*TCsStringToCharacterAnimVariation)(const FString&);
+
+#define CS_DECLARE_CHARACTER_ANIM_VARIATION	TCsCharacterAnimVariation CharacterAnimVariation_MAX; \
+											uint8 CHARACTER_ANIM_VARIATION_MAX; \
+											TCsCharacterAnimVariationToString CharacterAnimVariationToString; \
+											TCsStringToCharacterAnimVariation StringToCharacterAnimVariation;
+
+#define CS_DEFINE_CHARACTER_ANIM_VARIATION	CharacterAnimVariation_MAX = ECsCharacterAnimVariation::ECsCharacterAnimVariation_MAX;\
+											CHARACTER_ANIM_VARIATION_MAX = (uint8)CharacterAnimVariation_MAX \
+											CharacterAnimVariationToString = &ECsCharacterAnimVariation::ToString; \
+											StringToCharacterAnimVariation = &ECsCharacterAnimVariation::ToType;
+
 #pragma endregion Character

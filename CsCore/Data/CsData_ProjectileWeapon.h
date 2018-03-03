@@ -25,6 +25,8 @@ class CSCORE_API ACsData_ProjectileWeapon : public ACsData_Weapon
 	virtual FVector GetMuzzleLocation(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const uint8 &Index = 0);
 	virtual FVector GetMuzzleLocation(USkeletalMeshComponent* InMesh, const TCsWeaponFireMode &FireMode, const uint8 &Index = 0);
 
+	virtual TCsWeaponGrip GetGripType();
+
 	UFUNCTION(BlueprintCallable, Category = "Weapon Data")
 	virtual int32 GetMaxAmmo();
 	virtual int32* GetMaxAmmoAddr();

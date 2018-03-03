@@ -5,7 +5,7 @@
 #include "Common/CsCommon.h"
 
 #include "AI/CsAIController.h"
-#include "AI/CsAIPawn.h"
+#include "AI/Pawn/CsAIPawn.h"
 #include "Game/CsGameState.h"
 
 // Cache

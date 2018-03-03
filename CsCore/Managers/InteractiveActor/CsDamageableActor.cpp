@@ -65,7 +65,7 @@ namespace ECsDamageableActorRoutine
 }
 
 #define ECS_DAMAGEABLE_ACTOR_ROUTINE_MAX (uint8)ECsDamageableActorRoutine::ECsDamageableActorRoutine_MAX
-typedef TEnumAsByte<ECsDamageableActorRoutine::Type> TCsDamageableActorRoutine;
+typedef ECsDamageableActorRoutine::Type TCsDamageableActorRoutine;
 
 #pragma endregion Enums
 

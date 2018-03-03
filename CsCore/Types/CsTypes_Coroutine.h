@@ -50,7 +50,7 @@ namespace ECsCoroutineSchedule
 }
 
 #define ECS_COROUTINE_SCHEDULE_MAX (uint8)ECsCoroutineSchedule::ECsCoroutineSchedule_MAX
-typedef TEnumAsByte<ECsCoroutineSchedule::Type> TCsCoroutineSchedule;
+typedef ECsCoroutineSchedule::Type TCsCoroutineSchedule;
 
 UENUM(BlueprintType)
 namespace ECsCoroutineMessage
@@ -93,7 +93,7 @@ namespace ECsCoroutineMessage
 }
 
 #define ECS_COROUTINE_MESSAGE_MAX (uint8)ECsCoroutineMessage::ECsCoroutineMessage_MAX
-typedef TEnumAsByte<ECsCoroutineMessage::Type> TCsCoroutineMessage;
+typedef ECsCoroutineMessage::Type TCsCoroutineMessage;
 
 UENUM(BlueprintType)
 namespace ECsCoroutineEndReason
@@ -152,7 +152,7 @@ namespace ECsCoroutineEndReason
 }
 
 #define ECS_COROUTINE_END_REASON_MAX (uint8)ECsCoroutineEndReason::ECsCoroutineEndReason_MAX
-typedef TEnumAsByte<ECsCoroutineEndReason::Type> TCsCoroutineEndReason;
+typedef ECsCoroutineEndReason::Type TCsCoroutineEndReason;
 
 #define CS_ROUTINE_POOL_SIZE 2048
 #define CS_ROUTINE_INDEXER_SIZE 4

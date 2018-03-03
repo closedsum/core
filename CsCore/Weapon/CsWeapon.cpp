@@ -96,7 +96,7 @@ namespace ECsWeaponRoutine
 }
 
 #define ECS_WEAPON_ROUTINE_MAX (uint8)ECsWeaponRoutine::ECsWeaponRoutine_MAX
-typedef TEnumAsByte<ECsWeaponRoutine::Type> TCsWeaponRoutine;
+typedef ECsWeaponRoutine::Type TCsWeaponRoutine;
 
 #pragma endregion Enums
 
@@ -692,7 +692,7 @@ TEnumAsByte<ECsViewType::Type> ACsWeapon::GetCurrentViewType()
 	// In Editor Preview Window
 	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
 	{
-		if (UCsAnimInstance* AnimInstance = Cast<UCsAnimInstance>(GetMyOwner()))
+		if (UCsAnimInstance* AnimInstance = GetMyOwner<UCsAnimInstance>())
 			return AnimInstance->CurrentViewType;
 	}
 	// In Game
@@ -1653,9 +1653,9 @@ void ACsWeapon::FireWeapon_StopCondition(struct FCsRoutine* r)
 
 FVector ACsWeapon::GetOwnerRightVector()
 {
-	if (AActor* Actor = Cast<AActor>(GetMyOwner()))
+	if (AActor* Actor = GetMyOwner<AActor>())
 		return Actor->GetActorRightVector();
-	if (USceneComponent* Component = Cast<USceneComponent>(GetMyOwner()))
+	if (USceneComponent* Component = GetMyOwner<USceneComponent>())
 		return Component->GetRightVector();
 	return FVector::RightVector;
 }
@@ -1822,7 +1822,7 @@ void ACsWeapon::GetFireHitscanIgnoreActors(TArray<AActor*> &OutActors)
 { 
 	OutActors.Add(this);
 
-	if (AActor* Actor = Cast<AActor>(GetMyOwner()))
+	if (AActor* Actor = GetMyOwner<AActor>())
 		OutActors.Add(Actor);
 }
 
@@ -2063,7 +2063,7 @@ void ACsWeapon::PlayMuzzleFlash(const TCsWeaponFireMode &FireMode)
 	// In Editor Preview Window
 	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
 	{
-		if (UCsAnimInstance* AnimInstance = Cast<UCsAnimInstance>(GetMyOwner()))
+		if (UCsAnimInstance* AnimInstance = GetMyOwner<UCsAnimInstance>())
 			Manager_FX = AnimInstance->GetManager_FX();
 	}
 	// In Game

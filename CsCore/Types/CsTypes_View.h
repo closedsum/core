@@ -49,7 +49,7 @@ namespace ECsViewType
 }
 
 #define ECS_VIEW_TYPE_MAX (uint8)ECsViewType::ECsViewType_MAX
-typedef TEnumAsByte<ECsViewType::Type> TCsViewType;
+typedef ECsViewType::Type TCsViewType;
 
 USTRUCT(BlueprintType)
 struct FCsViewFlags
@@ -137,7 +137,7 @@ namespace ECsVisibility
 }
 
 #define ECS_VISIBILITY_MAX (uint8)ECsVisibility::ECsVisibility_MAX
-typedef TEnumAsByte<ECsVisibility::Type> TCsVisibility;
+typedef ECsVisibility::Type TCsVisibility;
 
 USTRUCT(BlueprintType)
 struct FCsFpsDrawDistance

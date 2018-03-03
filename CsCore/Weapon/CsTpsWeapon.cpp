@@ -40,15 +40,60 @@ void ACsTpsWeapon::PostInitializeComponents()
 	Mesh->SetComponentTickEnabled(false);
 }
 
-// Data
-#pragma region
-
-void ACsTpsWeapon::ApplyData_Weapon(const TCsWeaponSlot &Slot, class ACsData_Weapon* InData, class ACsData_WeaponMaterialSkin* InSkin, const bool &Equipped /*=true*/){}
-
-#pragma endregion Data
-
 // Owner
 #pragma region
+
+void ACsTpsWeapon::AttachMeshToPawn()
+{
+	ACsData_Character* Data_Character	  = nullptr;
+	USkeletalMeshComponent* CharacterMesh = GetCharacterMesh();
+
+#if WITH_EDITOR 
+	// In Editor Preview Window
+	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	{
+		if (UCsAnimInstance_Character* AnimInstance = GetMyOwner<UCsAnimInstance_Character>())
+			Data_Character = AnimInstance->GetData();
+	}
+	else
+#endif // #if WITH_EDITOR
+	{
+		if (MyOwnerType == PawnWeaponOwner)
+			Data_Character = GetMyPawn()->GetMyData_Character();
+	}
+
+	if (!Data_Character)
+		return;
+
+	const FName WeaponBone = Data_Character->GetBoneToAttachWeaponTo();
+	//const FName MeleeBone = Data_Character->BoneToAttachMeleeItemTo;
+
+#if WITH_EDITOR 
+	// In Editor Preview Window
+	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	{
+		Mesh->MeshComponentUpdateFlag = EMeshComponentUpdateFlag::AlwaysTickPoseAndRefreshBones;
+		Mesh->SetOnlyOwnerSee(false);
+		Mesh->SetOwnerNoSee(false);
+	}
+#endif // #if WITH_EDITOR
+
+	if (IsEquipped)
+	{
+		Mesh->SetHiddenInGame(false);
+		Mesh->SetVisibility(true);
+		Mesh->SetCastShadow(true);
+	}
+	Mesh->AttachToComponent(CharacterMesh, FAttachmentTransformRules::KeepRelativeTransform, WeaponBone);
+	//MeleeAttachment3P->AttachToComponent(PawnMesh1P, FAttachmentTransformRules::KeepRelativeTransform, MeleeAttachmentPoint);
+
+	if (IsEquipped)
+	{
+		Mesh->Activate();
+		Mesh->SetComponentTickEnabled(true);
+		Mesh->UpdateComponentToWorld(EUpdateTransformFlags::None, ETeleportType::None);
+	}
+}
 
 USkeletalMeshComponent* ACsTpsWeapon::GetCharacterMesh()
 {
@@ -158,7 +203,7 @@ void ACsTpsWeapon::SetMesh()
 
 		if (ACsData_WeaponMaterialSkin* Skin = GetMyData_WeaponMaterialSkin())
 		{
-			Skin->SetMaterials(AltMesh, ECsViewType::ThirdPerson);
+			Skin->SetMaterials(AltMesh);
 			UCsCommon::SetMIDs(AltMesh, MeshMIDs, *Skin->GetMaterials());
 		}
 		else

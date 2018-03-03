@@ -10,16 +10,10 @@ class CSCORE_API ACsTpsWeapon : public ACsGunWeapon
 
 	virtual void PostInitializeComponents() override;
 
-// Data
-#pragma region
-public:
-
-	virtual void ApplyData_Weapon(const TCsWeaponSlot &Slot, class ACsData_Weapon* InData, class ACsData_WeaponMaterialSkin* InSkin, const bool &Equipped = true) override;
-
-#pragma endregion Data
-
 // Owner
 #pragma region
+
+	virtual void AttachMeshToPawn() override;
 
 	UFUNCTION(BlueprintCallable, Category = "Owner")
 	virtual USkeletalMeshComponent* GetCharacterMesh();

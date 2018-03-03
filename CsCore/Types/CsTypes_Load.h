@@ -1,5 +1,4 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
-#include "Types/CsTypes_Macro.h"
 #include "Types/CsTypes_Primitive.h"
 
 #include "Json.h"
@@ -234,9 +233,6 @@ struct FCsTArrayStringAssetReference
 		}
 	}
 };
-
-#define CS_INVALID_LOOK_UP_CODE 255
-#define CS_INVALID_LOOK_UP_CODE_MAX 65535
 
 USTRUCT(BlueprintType)
 struct FCsDataMappingEntry

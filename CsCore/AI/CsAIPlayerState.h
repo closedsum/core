@@ -18,6 +18,8 @@ class CSCORE_API ACsAIPlayerState : public ACsPlayerStateBase
 #pragma region
 public:
 
+	virtual void OnTick_OnBoard() override;
+
 // Requesting Player State on Client
 
 	virtual void ServerRequestUniqueMappingId_Internal(const uint8 &ClientMappingId, ACsPlayerStateBase* RequestingPlayerState) override;

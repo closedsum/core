@@ -429,10 +429,14 @@ void ACsPlayerStateBase::OnTick_OnBoard()
 		// Waiting for Finished Replication and Loading
 		if (OnBoardState == ECsPlayerStateBaseOnBoardState::WaitingForOnBoardCompleted)
 		{
+			IsOnBoardCompleted = true;
+			OnBoardState	   = ECsPlayerStateBaseOnBoardState::Completed;
+			/*
 			if (IsOnBoardCompleted)
 			{
 				OnBoardState = ECsPlayerStateBaseOnBoardState::Completed;
 			}
+			*/
 		}
 	}
 }

@@ -2,6 +2,7 @@
 #include "AI/CsAIPlayerState.h"
 #include "CsCore.h"
 #include "CsCVars.h"
+#include "Common/CsCommon.h"
 #include "Game/CsGameState.h"
 
 #include "Player/CsPlayerController.h"
@@ -55,6 +56,170 @@ ACsPawn* ACsAIPlayerState::GetMyPawn()
 
 // OnBoard
 #pragma region
+
+void ACsAIPlayerState::OnTick_OnBoard()
+{
+	// Waiting for GameState
+	if (OnBoardState == ECsPlayerStateBaseOnBoardState::WaitingForGameState)
+	{
+		if (ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>())
+		{
+			OnBoardState = ECsPlayerStateBaseOnBoardState::WaitingForFinishLoadingCommonData;
+
+			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
+			{
+				UE_LOG(LogCs, Log, TEXT("ACsAIPlayerState::OnTick_OnBoard: State Change: WaitingForGameState -> WaitingForFinishLoadingCommonData"));
+			}
+		}
+	}
+	// Waiting for Finish Loading Common Data
+	if (OnBoardState == ECsPlayerStateBaseOnBoardState::WaitingForFinishLoadingCommonData)
+	{
+		ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
+
+		if (GameState->OnBoardState > ECsGameStateOnBoardState::LoadCommonData)
+		{
+			OnBoardState = ECsPlayerStateBaseOnBoardState::WaitingForLocalPlayerState;
+
+			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
+			{
+				UE_LOG(LogCs, Log, TEXT("ACsAIPlayerState::OnTick_HandleInitialReplicationAndLoading: State Change: WaitingForFinishLoadingCommonData -> WaitingForLocalPlayerState"));
+			}
+		}
+	}
+	// Client
+	{
+		// Waiting for Local PlayerState
+		if (OnBoardState == ECsPlayerStateBaseOnBoardState::WaitingForLocalPlayerState)
+		{
+			if (ACsPlayerStateBase* LocalPlayerState = UCsCommon::GetLocalPlayerState<ACsPlayerStateBase>(GetWorld()))
+			{
+				OnBoardState = ECsPlayerStateBaseOnBoardState::RequestLocalUniqueMappingId;
+
+				if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
+				{
+					UE_LOG(LogCs, Log, TEXT("ACsAIPlayerState::OnTick_HandleInitialReplicationAndLoading: State Change: WaitingForLocalPlayerState -> RequestUniqueMappingId"));
+				}
+			}
+		}
+		// Request Local Unique Mapping Id
+		if (OnBoardState == ECsPlayerStateBaseOnBoardState::RequestLocalUniqueMappingId)
+		{
+			ACsPlayerStateBase* LocalPlayerState = UCsCommon::GetLocalPlayerState<ACsPlayerStateBase>(GetWorld());
+
+			if (LocalPlayerState->UniqueMappingId == CS_INVALID_PLAYER_STATE_UNIQUE_MAPPING_ID)
+			{
+				OnBoardState = ECsPlayerStateBaseOnBoardState::WaitingForLocalUniqueMappingId;
+
+				// Only Request ONCE from Server
+				ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
+
+				if (!GameState->bServerRequestLocalUniqueMappingId)
+				{
+					GameState->bServerRequestLocalUniqueMappingId = true;
+
+					if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
+					{
+						UE_LOG(LogCs, Log, TEXT("ACsAIPlayerState::OnTick_HandleInitialReplicationAndLoading: State Change: RequestLocalUniqueMappingId -> WaitingForLocalUniqueMappingId"));
+					}
+					LocalPlayerState->ServerRequestLocalUniqueMappingId(LocalPlayerState, this);
+				}
+			}
+			else
+			{
+				OnBoardState = ECsPlayerStateBaseOnBoardState::RequestUniqueMappingId;
+
+				if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
+				{
+					UE_LOG(LogCs, Log, TEXT("ACsAIPlayerState::OnTick_HandleInitialReplicationAndLoading: State Change: RequestLocalUniqueMappingId -> RequestUniqueMappingId"));
+				}
+			}
+		}
+		// Waiting for Local Unique Mapping Id
+		if (OnBoardState == ECsPlayerStateBaseOnBoardState::WaitingForLocalUniqueMappingId)
+		{
+			ACsPlayerStateBase* LocalPlayerState = UCsCommon::GetLocalPlayerState<ACsPlayerStateBase>(GetWorld());
+
+			if (LocalPlayerState->UniqueMappingId < CS_INVALID_PLAYER_STATE_UNIQUE_MAPPING_ID)
+			{
+				OnBoardState = ECsPlayerStateBaseOnBoardState::RequestUniqueMappingId;
+
+				if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
+				{
+					UE_LOG(LogCs, Log, TEXT("ACsAIPlayerState::OnTick_HandleInitialReplicationAndLoading: State Change: RequestLocalUniqueMappingId -> RequestUniqueMappingId"));
+				}
+			}
+		}
+		// Received Local Unique Mapping Id
+		if (OnBoardState == ECsPlayerStateBaseOnBoardState::RecievedLocalUniqueMappingId)
+		{
+			OnBoardState = ECsPlayerStateBaseOnBoardState::RequestUniqueMappingId;
+
+			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
+			{
+				UE_LOG(LogCs, Log, TEXT("ACsAIPlayerState::OnTick_HandleInitialReplicationAndLoading: State Change: RecievedLocalUniqueMappingId -> RequestUniqueMappingId"));
+			}
+		}
+	}
+	// Requesting Player State on Client
+	{
+		// Request Unique Mapping Id
+		if (OnBoardState == ECsPlayerStateBaseOnBoardState::RequestUniqueMappingId)
+		{
+			OnBoardState = ECsPlayerStateBaseOnBoardState::WaitingForUniqueMappingId;
+
+			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
+			{
+				UE_LOG(LogCs, Log, TEXT("ACsAIPlayerState::OnTick_HandleInitialReplicationAndLoading: State Change: RequestUniqueMappingId -> WaitingForUniqueMappingId"));
+			}
+			ACsPlayerStateBase* LocalPlayerState = UCsCommon::GetLocalPlayerState<ACsPlayerStateBase>(GetWorld());
+
+			LocalPlayerState->ServerRequestUniqueMappingId(LocalPlayerState->UniqueMappingId, this);
+		}
+		// Waiting for Unique Mapping Id
+		if (OnBoardState == ECsPlayerStateBaseOnBoardState::WaitingForUniqueMappingId)
+		{
+		}
+		// Received Unique Mapping Id
+		if (OnBoardState == ECsPlayerStateBaseOnBoardState::RecievedUniqueMappingId)
+		{
+			OnBoardState = ECsPlayerStateBaseOnBoardState::SendOnBoardCompleted;
+
+			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
+			{
+				UE_LOG(LogCs, Log, TEXT("ACsAIPlayerState::OnTick_HandleInitialReplicationAndLoading: State Change: RecievedUniqueMappingId -> RequestPlayerData"));
+			}
+		}
+	}
+	// Handshaking
+	{
+		// Send Finished Replication and Loading
+		if (OnBoardState == ECsPlayerStateBaseOnBoardState::SendOnBoardCompleted)
+		{
+			OnBoardState = ECsPlayerStateBaseOnBoardState::WaitingForOnBoardCompleted;
+
+			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
+			{
+				UE_LOG(LogCs, Log, TEXT("ACsAIPlayerState::OnTick_HandleInitialReplicationAndLoading: State Change: SendOnBoardCompleted -> WaitingForOnBoardCompleted"));
+			}
+			ACsPlayerStateBase* LocalPlayerState = UCsCommon::GetLocalPlayerState<ACsPlayerStateBase>(GetWorld());
+
+			LocalPlayerState->ServerSendOnBoardCompleted(LocalPlayerState->UniqueMappingId, UniqueMappingId);
+		}
+		// Waiting for Finished Replication and Loading
+		if (OnBoardState == ECsPlayerStateBaseOnBoardState::WaitingForOnBoardCompleted)
+		{
+			IsOnBoardCompleted = true;
+			OnBoardState	   = ECsPlayerStateBaseOnBoardState::Completed;
+			/*
+			if (IsOnBoardCompleted)
+			{
+			OnBoardState = ECsPlayerStateBaseOnBoardState::Completed;
+			}
+			*/
+		}
+	}
+}
 
 void ACsAIPlayerState::ServerRequestUniqueMappingId_Internal(const uint8 &ClientMappingId, ACsPlayerStateBase* RequestingPlayerState)
 {

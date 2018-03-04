@@ -115,8 +115,8 @@ void ACsGameState::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	OnTick_HandleBroadcastingPlayerStateFullyReplicatedAndLoaded();
-	OnTick_HandleBroadcastingAIPlayerStateFullyReplicatedAndLoaded();
+	//OnTick_HandleBroadcastingPlayerStateFullyReplicatedAndLoaded();
+	//OnTick_HandleBroadcastingAIPlayerStateFullyReplicatedAndLoaded();
 }
 
 void ACsGameState::PostActorCreated()

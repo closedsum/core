@@ -47,6 +47,16 @@ void ACsPawn::Destroyed()
 	}
 }
 
+void ACsPawn::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	if (!IsPendingKill())
+	{
+		IsPlacedInWorld = GetWorld()->bStartup;
+	}
+}
+
 void ACsPawn::OnTickActor_HandleCVars(const float &DeltaSeconds) {};
 
 bool ACsPawn::IsOnBoardCompleted_Game()

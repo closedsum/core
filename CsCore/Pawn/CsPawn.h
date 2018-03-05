@@ -14,6 +14,11 @@ class CSCORE_API ACsPawn : public ACharacter
 	virtual void PostActorCreated() override;
 	virtual void Destroyed() override;
 
+	virtual void PostInitializeComponents() override;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Pawn")
+	bool IsPlacedInWorld;
+
 	UPROPERTY(BlueprintAssignable, Category = "Tick")
 	FBindableDynEvent_CsPawn_OnTick OnTick_ScriptEvent;
 

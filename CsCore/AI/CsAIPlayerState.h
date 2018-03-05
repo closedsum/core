@@ -23,11 +23,11 @@ public:
 // Requesting Player State on Client
 
 	virtual void ServerRequestUniqueMappingId_Internal(const uint8 &ClientMappingId, ACsPlayerStateBase* RequestingPlayerState) override;
-	virtual void ClientRecieveUniqueMappingId_Internal(ACsPlayerStateBase* RequestingPlayerState, const uint8 &MappingId) override;
+	virtual void ClientRecieveUniqueMappingId_Internal(const uint8 &MappingId) override;
 
 // Handshaking
 
-	virtual void ServerSendOnBoardCompleted_Internal(const uint8 &ClientMappingId, const uint8 &MappingId) override;
+	virtual void ServerSendOnBoardCompleted_AI_Internal(const uint8 &ClientMappingId, const uint8 &MappingId) override;
 
 	virtual bool IsOnBoardCompleted_Game() override;
 

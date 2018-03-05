@@ -183,11 +183,56 @@ void ACsAIPlayerState::OnTick_OnBoard()
 		// Received Unique Mapping Id
 		if (OnBoardState == ECsPlayerStateBaseOnBoardState::RecievedUniqueMappingId)
 		{
-			OnBoardState = ECsPlayerStateBaseOnBoardState::SendOnBoardCompleted;
+			OnBoardState = ECsPlayerStateBaseOnBoardState::RequestAIData;
 
 			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 			{
-				UE_LOG(LogCs, Log, TEXT("ACsAIPlayerState::OnTick_HandleInitialReplicationAndLoading: State Change: RecievedUniqueMappingId -> RequestPlayerData"));
+				UE_LOG(LogCs, Log, TEXT("ACsAIPlayerState::OnTick_HandleInitialReplicationAndLoading: State Change: RecievedUniqueMappingId -> RequestAIData"));
+			}
+		}
+		// Request AIData
+		if (OnBoardState == ECsPlayerStateBaseOnBoardState::RequestAIData)
+		{
+			OnBoardState = ECsPlayerStateBaseOnBoardState::WaitingForAIData;
+
+			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
+			{
+				UE_LOG(LogCs, Log, TEXT("ACsAIPlayerState::OnTick_HandleInitialReplicationAndLoading: State Change: RequestAIData -> WaitingForAIData"));
+			}
+			ACsPlayerStateBase* LocalPlayerState = UCsCommon::GetLocalPlayerState<ACsPlayerStateBase>(GetWorld());
+
+			LocalPlayerState->ServerRequestAIData(LocalPlayerState->UniqueMappingId, UniqueMappingId);
+		}
+		// Waiting for AIData
+		if (OnBoardState == ECsPlayerStateBaseOnBoardState::WaitingForAIData)
+		{
+		}
+		// Received AIData
+		if (OnBoardState == ECsPlayerStateBaseOnBoardState::ReceivedAIData)
+		{
+			OnBoardState = ECsPlayerStateBaseOnBoardState::WaitingForGameStateOnBoardCompleted;
+
+			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
+			{
+				UE_LOG(LogCs, Log, TEXT("ACsAIPlayerState::OnTick_HandleInitialReplicationAndLoading: State Change: ReceivedAIData -> WaitingForGameStateOnBoardCompleted"));
+			}
+		}
+	}
+	// Loading
+	{
+		// Waiting for GameState OnBoard to Complete
+		if (OnBoardState == ECsPlayerStateBaseOnBoardState::WaitingForGameStateOnBoardCompleted)
+		{
+			ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
+
+			if (GameState->OnBoardState == ECsGameStateOnBoardState::Completed)
+			{
+				OnBoardState = ECsPlayerStateBaseOnBoardState::SendOnBoardCompleted;
+
+				if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
+				{
+					UE_LOG(LogCs, Log, TEXT("ACsAIPlayerState::OnTick_HandleInitialReplicationAndLoading: State Change: WaitingForGameStateOnBoardCompleted -> BeginLoadingPlayerData"));
+				}
 			}
 		}
 	}
@@ -204,7 +249,7 @@ void ACsAIPlayerState::OnTick_OnBoard()
 			}
 			ACsPlayerStateBase* LocalPlayerState = UCsCommon::GetLocalPlayerState<ACsPlayerStateBase>(GetWorld());
 
-			LocalPlayerState->ServerSendOnBoardCompleted(LocalPlayerState->UniqueMappingId, UniqueMappingId);
+			LocalPlayerState->ServerSendOnBoardCompleted_AI(LocalPlayerState->UniqueMappingId, UniqueMappingId);
 		}
 		// Waiting for Finished Replication and Loading
 		if (OnBoardState == ECsPlayerStateBaseOnBoardState::WaitingForOnBoardCompleted)
@@ -266,28 +311,28 @@ void ACsAIPlayerState::ServerRequestUniqueMappingId_Internal(const uint8 &Client
 
 	if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		UE_LOG(LogCs, Log, TEXT("ACsPlayerState::ServerRequestUniqueMappingId: %s is requesting %s's UniqueMappingId: %d"), *ClientPlayerState->PlayerName, *RequestingPlayerState->PlayerName, RequestingPlayerState->UniqueMappingId);
+		UE_LOG(LogCs, Log, TEXT("ACsAIPlayerState::ServerRequestUniqueMappingId: %s is requesting %s's UniqueMappingId: %d"), *ClientPlayerState->PlayerName, *RequestingPlayerState->PlayerName, RequestingPlayerState->UniqueMappingId);
 	}
 	ClientPlayerState->ClientRecieveUniqueMappingId(RequestingPlayerState, RequestingPlayerState->UniqueMappingId);
 }
 
-void ACsAIPlayerState::ClientRecieveUniqueMappingId_Internal(ACsPlayerStateBase* RequestingPlayerState, const uint8 &MappingId)
+void ACsAIPlayerState::ClientRecieveUniqueMappingId_Internal(const uint8 &MappingId)
 {
-	RequestingPlayerState->UniqueMappingId = MappingId;
+	UniqueMappingId = MappingId;
 
 	ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
 
-	GameState->PlayerStateMappings.Add(MappingId, Cast<ACsPlayerState>(RequestingPlayerState));
+	GameState->AIPlayerStateMappings.Add(MappingId, this);
 
 	if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		UE_LOG(LogCs, Log, TEXT("ACsPlayerState::ClientRecieveUniqueMappingId: %s recieved UniqueMappingId: %d"), *RequestingPlayerState->PlayerName, MappingId);
-		UE_LOG(LogCs, Log, TEXT("ACsPlayerState::ClientRecieveUniqueMappingId: State Change: WaitingForUniqueMappingId -> RecievedUniqueMappingId"));
+		UE_LOG(LogCs, Log, TEXT("ACsAIPlayerState::ClientRecieveUniqueMappingId: %s recieved UniqueMappingId: %d"), *PlayerName, MappingId);
+		UE_LOG(LogCs, Log, TEXT("ACsAIPlayerState::ClientRecieveUniqueMappingId: State Change: WaitingForUniqueMappingId -> RecievedUniqueMappingId"));
 	}
-	RequestingPlayerState->OnBoardState = ECsPlayerStateBaseOnBoardState::RecievedUniqueMappingId;
+	OnBoardState = ECsPlayerStateBaseOnBoardState::RecievedUniqueMappingId;
 }
 
-void ACsAIPlayerState::ServerSendOnBoardCompleted_Internal(const uint8 &ClientMappingId, const uint8 &MappingId)
+void ACsAIPlayerState::ServerSendOnBoardCompleted_AI_Internal(const uint8 &ClientMappingId, const uint8 &MappingId)
 {
 	ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
 

@@ -121,20 +121,20 @@ void ACsPlayerState::ServerRequestUniqueMappingId_Internal(const uint8 &ClientMa
 	ClientPlayerState->ClientRecieveUniqueMappingId(RequestingPlayerState, RequestingPlayerState->UniqueMappingId);
 }
 
-void ACsPlayerState::ClientRecieveUniqueMappingId_Internal(ACsPlayerStateBase* RequestingPlayerState, const uint8 &MappingId)
+void ACsPlayerState::ClientRecieveUniqueMappingId_Internal(const uint8 &MappingId)
 {
-	RequestingPlayerState->UniqueMappingId = MappingId;
+	UniqueMappingId = MappingId;
 
 	ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
 
-	GameState->PlayerStateMappings.Add(MappingId, Cast<ACsPlayerState>(RequestingPlayerState));
+	GameState->PlayerStateMappings.Add(MappingId, this);
 
 	if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		UE_LOG(LogCs, Log, TEXT("ACsPlayerState::ClientRecieveUniqueMappingId: %s recieved UniqueMappingId: %d"), *RequestingPlayerState->PlayerName, MappingId);
+		UE_LOG(LogCs, Log, TEXT("ACsPlayerState::ClientRecieveUniqueMappingId: %s recieved UniqueMappingId: %d"), *PlayerName, MappingId);
 		UE_LOG(LogCs, Log, TEXT("ACsPlayerState::ClientRecieveUniqueMappingId: State Change: WaitingForUniqueMappingId -> RecievedUniqueMappingId"));
 	}
-	RequestingPlayerState->OnBoardState = ECsPlayerStateBaseOnBoardState::RecievedUniqueMappingId;
+	OnBoardState = ECsPlayerStateBaseOnBoardState::RecievedUniqueMappingId;
 }
 
 void ACsPlayerState::ServerSendOnBoardCompleted_Internal(const uint8 &ClientMappingId, const uint8 &MappingId)

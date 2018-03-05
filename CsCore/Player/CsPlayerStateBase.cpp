@@ -330,13 +330,13 @@ void ACsPlayerStateBase::OnTick_OnBoard()
 		{
 		}
 		// Received PlayerData
-		if (OnBoardState == ECsPlayerStateBaseOnBoardState::RecievedPlayerData)
+		if (OnBoardState == ECsPlayerStateBaseOnBoardState::ReceivedPlayerData)
 		{
 			OnBoardState = ECsPlayerStateBaseOnBoardState::WaitingForGameStateOnBoardCompleted;
 
 			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 			{
-				UE_LOG(LogCs, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: RecievedPlayerData -> WaitingForGameStateOnBoardCompleted"));
+				UE_LOG(LogCs, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: ReceivedPlayerData -> WaitingForGameStateOnBoardCompleted"));
 			}
 		}
 	}
@@ -494,10 +494,10 @@ void ACsPlayerStateBase::ServerRequestUniqueMappingId_Internal(const uint8 &Clie
 
 void ACsPlayerStateBase::ClientRecieveUniqueMappingId_Implementation(ACsPlayerStateBase* RequestingPlayerState, const uint8 &MappingId)
 {
-	ClientRecieveUniqueMappingId_Internal(RequestingPlayerState, MappingId);
+	RequestingPlayerState->ClientRecieveUniqueMappingId_Internal(MappingId);
 }
 
-void ACsPlayerStateBase::ClientRecieveUniqueMappingId_Internal(ACsPlayerStateBase* RequestingPlayerState, const uint8 &MappingId){}
+void ACsPlayerStateBase::ClientRecieveUniqueMappingId_Internal(const uint8 &MappingId){}
 
 bool ACsPlayerStateBase::ServerRequestPlayerData_Validate(const uint8 &ClientMappingId, const uint8 &MappingId)
 {
@@ -510,6 +510,19 @@ void ACsPlayerStateBase::ServerRequestPlayerData_Implementation(const uint8 &Cli
 }
 
 void ACsPlayerStateBase::ServerRequestPlayerData_Internal(const uint8 &ClientMappingId, const uint8 &MappingId){}
+
+bool ACsPlayerStateBase::ServerRequestAIData_Validate(const uint8 &ClientMappingId, const uint8 &MappingId)
+{
+	return true;
+}
+
+void ACsPlayerStateBase::ServerRequestAIData_Implementation(const uint8 &ClientMappingId, const uint8 &MappingId)
+{
+	ServerRequestAIData_Internal(ClientMappingId, MappingId);
+}
+
+void ACsPlayerStateBase::ServerRequestAIData_Internal(const uint8 &ClientMappingId, const uint8 &MappingId) {}
+
 void ACsPlayerStateBase::GetLoadAssetsShortCodes(const TCsLoadAssetsType &AssetsType, TArray<FName> &OutShortCodes){}
 void ACsPlayerStateBase::LoadPlayerData(){}
 void ACsPlayerStateBase::OnFinishedLoadingPlayerData(const TArray<UObject*> &LoadedAssets, const float &LoadingTime){}
@@ -526,6 +539,18 @@ void ACsPlayerStateBase::ServerSendOnBoardCompleted_Implementation(const uint8 &
 }
 
 void ACsPlayerStateBase::ServerSendOnBoardCompleted_Internal(const uint8 &ClientMappingId, const uint8 &MappingId){}
+
+bool ACsPlayerStateBase::ServerSendOnBoardCompleted_AI_Validate(const uint8 &ClientMappingId, const uint8 &MappingId)
+{
+	return true;
+}
+
+void ACsPlayerStateBase::ServerSendOnBoardCompleted_AI_Implementation(const uint8 &ClientMappingId, const uint8 &MappingId)
+{
+	ServerSendOnBoardCompleted_AI_Internal(ClientMappingId, MappingId);
+}
+
+void ACsPlayerStateBase::ServerSendOnBoardCompleted_AI_Internal(const uint8 &ClientMappingId, const uint8 &MappingId) {}
 
 void ACsPlayerStateBase::MulticastSetIsOnBoardCompleted_Implementation()
 {

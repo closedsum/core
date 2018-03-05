@@ -21,14 +21,19 @@ namespace ECsPlayerStateBaseOnBoardState
 		// Client
 		RequestLocalUniqueMappingId				UMETA(DisplayName = "Request Local Unique Mapping Id"),
 		WaitingForLocalUniqueMappingId			UMETA(DisplayName = "Waiting For Local Unique Mapping Id"),
-		RecievedLocalUniqueMappingId			UMETA(DisplayName = "Recieved Local Unique Mapping Id"),
+		RecievedLocalUniqueMappingId			UMETA(DisplayName = "Received Local Unique Mapping Id"),
 		// Requesting Player State on Client
 		RequestUniqueMappingId					UMETA(DisplayName = "Request Unique Mapping Id"),
 		WaitingForUniqueMappingId				UMETA(DisplayName = "Waiting for Unique Mapping Id"),
-		RecievedUniqueMappingId					UMETA(DisplayName = "Recieved Unique Mapping Id"),
+		RecievedUniqueMappingId					UMETA(DisplayName = "Received Unique Mapping Id"),
+			// Player
 		RequestPlayerData						UMETA(DisplayName = "Request PlayerData"),
 		WaitingForPlayerData					UMETA(DisplayName = "Waiting for PlayerData"),
-		RecievedPlayerData						UMETA(DisplayName = "Recieved PlayerData"),
+		ReceivedPlayerData						UMETA(DisplayName = "Received PlayerData"),
+			// AI
+		RequestAIData							UMETA(DisplayName = "Request AIData"),
+		WaitingForAIData						UMETA(DisplayName = "Waiting for AIData"),
+		ReceivedAIData							UMETA(DisplayName = "Received AIData"),
 		// Loading
 		WaitingForGameStateOnBoardCompleted		UMETA(DisplayName = "Waiting for GameState OnBoard Completed"),
 		BeginLoadingPlayerData					UMETA(DisplayName = "Begin Loading PlayerData"),
@@ -65,7 +70,7 @@ namespace ECsPlayerStateBaseOnBoardState
 		const TCsString RecievedUniqueMappingId = TCsString(TEXT("RecievedUniqueMappingId"), TEXT("recievedunqiuemappingid"), TEXT("recieved unique mapping id"));
 		const TCsString RequestPlayerData = TCsString(TEXT("RequestPlayerData"), TEXT("requestplayerdata"), TEXT("request player data"));
 		const TCsString WaitingForPlayerData = TCsString(TEXT("WaitingForPlayerData"), TEXT("waitingforplayerdata"), TEXT("waiting for player data"));
-		const TCsString RecievedPlayerData = TCsString(TEXT("RecievedPlayerData"), TEXT("recievedplayerdata"), TEXT("recieved player data"));
+		const TCsString ReceivedPlayerData = TCsString(TEXT("ReceivedPlayerData"), TEXT("receivedplayerdata"), TEXT("received player data"));
 		// Loading
 		const TCsString BeginLoadingPlayerData = TCsString(TEXT("BeginLoadingPlayerData"), TEXT("beginloadingplayerdata"), TEXT("begin loading player data"));
 		const TCsString WaitingForFinishLoadingPlayerData = TCsString(TEXT("WaitingForFinishLoadingPlayerData"), TEXT("waitingforfinishloadingplayerdata"), TEXT("waiting for finish loading player data"));
@@ -95,7 +100,7 @@ namespace ECsPlayerStateBaseOnBoardState
 		if (EType == Type::RecievedUniqueMappingId) { return Str::RecievedUniqueMappingId.Value; }
 		if (EType == Type::RequestPlayerData) { return Str::RequestPlayerData.Value; }
 		if (EType == Type::WaitingForPlayerData) { return Str::WaitingForPlayerData.Value; }
-		if (EType == Type::RecievedPlayerData) { return Str::RecievedPlayerData.Value; }
+		if (EType == Type::ReceivedPlayerData) { return Str::ReceivedPlayerData.Value; }
 		// Loading
 		if (EType == Type::BeginLoadingPlayerData) { return Str::BeginLoadingPlayerData.Value; }
 		if (EType == Type::WaitingForFinishLoadingPlayerData) { return Str::WaitingForFinishLoadingPlayerData.Value; }
@@ -126,7 +131,7 @@ namespace ECsPlayerStateBaseOnBoardState
 		if (String == Str::RecievedUniqueMappingId) { return Type::RecievedUniqueMappingId; }
 		if (String == Str::RequestPlayerData) { return Type::RequestPlayerData; }
 		if (String == Str::WaitingForPlayerData) { return Type::WaitingForPlayerData; }
-		if (String == Str::RecievedPlayerData) { return Type::RecievedPlayerData; }
+		if (String == Str::ReceivedPlayerData) { return Type::ReceivedPlayerData; }
 		// Loading
 		if (String == Str::BeginLoadingPlayerData) { return Type::BeginLoadingPlayerData; }
 		if (String == Str::WaitingForFinishLoadingPlayerData) { return Type::WaitingForFinishLoadingPlayerData; }
@@ -255,13 +260,19 @@ public:
 	UFUNCTION(reliable, client)
 	void ClientRecieveUniqueMappingId(ACsPlayerStateBase* RequestingPlayerState, const uint8 &MappingId);
 
-	virtual void ClientRecieveUniqueMappingId_Internal(ACsPlayerStateBase* RequestingPlayerState, const uint8 &MappingId);
+	/** Called by RequestingPlayerState */
+	virtual void ClientRecieveUniqueMappingId_Internal(const uint8 &MappingId);
 
 	// RequestPlayerData
 	UFUNCTION(reliable, server, WithValidation)
 	void ServerRequestPlayerData(const uint8 &ClientMappingId, const uint8 &MappingId);
 
 	virtual void ServerRequestPlayerData_Internal(const uint8 &ClientMappingId, const uint8 &MappingId);
+
+	UFUNCTION(reliable, server, WithValidation)
+	void ServerRequestAIData(const uint8 &ClientMappingId, const uint8 &MappingId);
+
+	virtual void ServerRequestAIData_Internal(const uint8 &ClientMappingId, const uint8 &MappingId);
 
 // Loading
 
@@ -280,6 +291,12 @@ public:
 	void ServerSendOnBoardCompleted(const uint8 &ClientMappingId, const uint8 &MappingId);
 
 	virtual void ServerSendOnBoardCompleted_Internal(const uint8 &ClientMappingId, const uint8 &MappingId);
+
+	// SendOnBoardCompleted AI
+	UFUNCTION(reliable, server, WithValidation)
+	void ServerSendOnBoardCompleted_AI(const uint8 &ClientMappingId, const uint8 &MappingId);
+
+	virtual void ServerSendOnBoardCompleted_AI_Internal(const uint8 &ClientMappingId, const uint8 &MappingId);
 
 	bool IsOnBoardCompleted;
 

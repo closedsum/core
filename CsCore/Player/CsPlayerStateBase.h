@@ -47,7 +47,7 @@ namespace ECsPlayerStateBaseOnBoardState
 		SendOnBoardCompleted					UMETA(DisplayName = "Send OnBoard Completed"),
 		WaitingForOnBoardCompleted				UMETA(DisplayName = "Waiting for OnBoard Completed"),
 		Completed								UMETA(DisplayName = "Completed"),
-		ECsPlayerStateBaseOnBoardState_MAX			UMETA(Hidden),
+		ECsPlayerStateBaseOnBoardState_MAX		UMETA(Hidden),
 	};
 }
 

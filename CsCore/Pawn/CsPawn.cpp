@@ -12,6 +12,7 @@
 // Managers
 #include "Managers/Inventory/CsManager_Inventory.h"
 
+#include "Player/CsPlayerStateBase.h"
 #include "Weapon/CsWeapon.h"
 
 ACsPawn::ACsPawn(const FObjectInitializer& ObjectInitializer)
@@ -47,6 +48,17 @@ void ACsPawn::Destroyed()
 }
 
 void ACsPawn::OnTickActor_HandleCVars(const float &DeltaSeconds) {};
+
+bool ACsPawn::IsOnBoardCompleted_Game()
+{
+	ACsPlayerStateBase* MyPlayerState = Cast<ACsPlayerStateBase>(PlayerState);
+
+	if (!MyPlayerState)
+		return false;
+	return MyPlayerState->IsOnBoardCompleted_Game();
+}
+
+void ACsPawn::OnTick_HandleSetup() {}
 
 // View
 #pragma region

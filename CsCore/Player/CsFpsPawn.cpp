@@ -120,17 +120,6 @@ void ACsFpsPawn::PostInitializeComponents()
 	//SetActorTickEnabled(true);
 }
 
-bool ACsFpsPawn::IsOnBoardCompleted_Game()
-{
-	ACsPlayerState* MyPlayerState = Cast<ACsPlayerState>(PlayerState);
-
-	if (!MyPlayerState)
-		return false;
-	return MyPlayerState->IsOnBoardCompleted_Game();
-}
-
-void ACsFpsPawn::OnTick_HandleSetup(){}
-
 // Camera
 #pragma region
 

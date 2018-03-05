@@ -9,10 +9,6 @@ class CSCORE_API ACsFpsPawn : public ACsPlayerPawn
 
 	virtual void PostInitializeComponents() override;
 
-	virtual bool IsOnBoardCompleted_Game();
-
-	virtual void OnTick_HandleSetup();
-
 	UPROPERTY(BlueprintReadWrite, Category = "Pawn")
 	class USceneComponent* Eye;
 

@@ -26,7 +26,6 @@ void ACsAIPawn::Init(const int32 &Index, const TCsAIType &InType)
 void ACsAIPawn::OnCreatePool()
 {
 	SetActorHiddenInGame(true);
-	SetActorTickEnabled(false);
 }
 
 void ACsAIPawn::OnPostCreatePool(){}
@@ -60,14 +59,13 @@ void ACsAIPawn::Allocate(const uint16 &ActiveIndex, FCsAIPawnPayload* Payload, c
 void ACsAIPawn::Allocate_Internal(FCsAIPawnPayload* Payload)
 {
 	SetActorHiddenInGame(false);
-	SetActorTickEnabled(true);
 }
 
 void ACsAIPawn::DeAllocate()
 {
 	Cache.Reset();
 
-	SetActorTickEnabled(false);
+	SetActorHiddenInGame(true);
 }
 
 void ACsAIPawn::OnTick_HandleCVars(const float &DeltaSeconds){}

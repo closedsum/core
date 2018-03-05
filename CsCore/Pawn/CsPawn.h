@@ -4,6 +4,8 @@
 #include "Types/CsTypes_Weapon.h"
 #include "CsPawn.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnTick, const uint8&, MappingId, const float&, DeltaSeconds);
+
 UCLASS()
 class CSCORE_API ACsPawn : public ACharacter
 {
@@ -11,7 +13,14 @@ class CSCORE_API ACsPawn : public ACharacter
 
 	virtual void PostActorCreated() override;
 	virtual void Destroyed() override;
+
+	UPROPERTY(BlueprintAssignable, Category = "Tick")
+	FBindableDynEvent_CsPawn_OnTick OnTick_ScriptEvent;
+
 	virtual void OnTickActor_HandleCVars(const float &DeltaSeconds);
+
+	virtual bool IsOnBoardCompleted_Game();
+	virtual void OnTick_HandleSetup();
 
 // View
 #pragma region

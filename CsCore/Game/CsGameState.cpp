@@ -391,6 +391,9 @@ void ACsGameState::AddPlayerState(class APlayerState* PlayerState)
 	// Player
 	if (ACsPlayerState* NewPlayerState = Cast<ACsPlayerState>(PlayerState))
 		AddPlayerStateMapping(NewPlayerState);
+	// AI
+	if (ACsAIPlayerState* NewPlayerState = Cast<ACsAIPlayerState>(PlayerState))
+		AddAIPlayerStateMapping(NewPlayerState);
 }
 
 void ACsGameState::AddPlayerStateMapping(ACsPlayerState* NewPlayerState)
@@ -586,14 +589,14 @@ void ACsGameState::AddAIPlayerStateMapping(ACsAIPlayerState* NewPlayerState)
 	TArray<uint8> PlayerStateKeys;
 	const int32 NumPlayerStateKeys = PlayerStateMappings.GetKeys(PlayerStateKeys);
 
-	TArray<FCsAIPlayerStateMappingRelationship>* Relationships = AIPlayerStateMappingRelationships.Find(CurrentPlayerStateUniqueMappingId);
+	TArray<FCsAIPlayerStateMappingRelationship>* Relationships = AIPlayerStateMappingRelationships.Find(CurrentAIPlayerStateUniqueMappingId);
 
 	for (int32 I = 0; I < NumPlayerStateKeys; ++I)
 	{
 		Relationships->AddDefaulted(1);
 
 		FCsAIPlayerStateMappingRelationship& Relationship = (*Relationships)[I];
-		Relationship.A = CurrentPlayerStateUniqueMappingId;
+		Relationship.A = CurrentAIPlayerStateUniqueMappingId;
 		Relationship.B = PlayerStateKeys[I];
 	}
 

@@ -58,6 +58,13 @@ void ACsAIPawn::Allocate(const uint16 &ActiveIndex, FCsAIPawnPayload* Payload, c
 
 void ACsAIPawn::Allocate_Internal(FCsAIPawnPayload* Payload)
 {
+	if (Payload->TeleportLocation || Payload->TeleportRotation)
+	{
+		const FVector Location  = Payload->TeleportLocation ? Payload->Location : GetActorLocation();
+		const FRotator Rotation = Payload->TeleportRotation ? Payload->Rotation : GetActorRotation();
+
+		TeleportTo(Location, Rotation, false, false);
+	}
 	SetActorHiddenInGame(false);
 }
 

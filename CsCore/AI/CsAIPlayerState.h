@@ -20,10 +20,12 @@ public:
 
 	virtual void OnTick_OnBoard() override;
 
-// Requesting Player State on Client
+	// Requesting Player State on Client
+#pragma region
 
-	virtual void ServerRequestUniqueMappingId_Internal(const uint8 &ClientMappingId, ACsPlayerStateBase* RequestingPlayerState) override;
-	virtual void ClientRecieveUniqueMappingId_Internal(const uint8 &MappingId) override;
+	virtual void ClientRecieveUniqueMappingId_AI_Internal(const uint8 &MappingId) override;
+
+#pragma endregion Requesting Player State on Client
 
 // Handshaking
 

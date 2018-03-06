@@ -42,6 +42,8 @@ class CSCORE_API ACsManager_AI : public ACsManager
 
 	virtual int32 GetActivePoolSize(const uint8 &Type) override;
 
+private:
+
 	virtual void LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, class UObject* InObject) override;
 
 	class ACsAIPawn* Allocate(const TCsAIType &Type);

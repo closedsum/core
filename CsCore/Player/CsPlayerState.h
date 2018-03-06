@@ -23,10 +23,25 @@ public:
 
 	virtual void ClientRecieveLocalUniqueMappingId_Internal(const uint8 &ClientMappingId, ACsPlayerStateBase* RequestingPlayerState) override;
 
-// Requesting Player State on Client
+	// Requesting Player State on Client
+#pragma region
+
+		// Player
+#pragma region
 
 	virtual void ServerRequestUniqueMappingId_Internal(const uint8 &ClientMappingId, ACsPlayerStateBase* RequestingPlayerState) override;
 	virtual void ClientRecieveUniqueMappingId_Internal(const uint8 &MappingId) override;
+
+#pragma endregion Player
+
+		// AI
+#pragma region
+
+	virtual void ServerRequestUniqueMappingId_AI_Internal(const uint8 &ClientMappingId, ACsPlayerStateBase* RequestingPlayerState) override;
+
+#pragma endregion AI
+
+#pragma endregion Requesting Player State on Client
 
 // Handshaking
 

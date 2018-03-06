@@ -23,7 +23,7 @@ namespace ECsPlayerStateBaseCachedName
 	{
 		// Functions
 		const FName OnBoard_Internal = FName("ACsPlayerStateBase::OnBoard_Internal");
-		const FName SetupPawn_Internal = FName("ACsPlayerStateBase::SetupPawn_Internal");
+		const FName RequestUniqueMappingId_AI_Internal = FName("ACsPlayerStateBase::RequestUniqueMappingId_AI_Internal");
 	};
 }
 
@@ -33,7 +33,7 @@ namespace ECsPlayerStateBaseCachedString
 	{
 		// Functions
 		const FString OnBoard_Internal = TEXT("ACsPlayerStateBase::OnBoard_Internal");
-		const FString SetupPawn_Internal = TEXT("ACsPlayerStateBase::SetupPawn_Internal");
+		const FString RequestUniqueMappingId_AI_Internal = TEXT("ACsPlayerStateBase::RequestUniqueMappingId_AI_Internal");
 	};
 }
 
@@ -157,7 +157,7 @@ void ACsPlayerStateBase::OnBoard()
 
 CS_COROUTINE(ACsPlayerStateBase, OnBoard_Internal)
 {
-	ACsPlayerStateBase* ps	 = Cast<ACsPlayerStateBase>(r->GetActor());
+	ACsPlayerStateBase* ps	 = r->GetActor<ACsPlayerStateBase>();
 	UCsCoroutineScheduler* s = r->scheduler;
 	UWorld* w				 = ps->GetWorld();
 	UCsGameInstance* gi		 = Cast<UCsGameInstance>(ps->GetGameInstance());
@@ -480,6 +480,12 @@ void ACsPlayerStateBase::ClientRecieveLocalUniqueMappingId_Implementation(const 
 
 void ACsPlayerStateBase::ClientRecieveLocalUniqueMappingId_Internal(const uint8 &ClientMappingId, ACsPlayerStateBase* RequestingPlayerState){}
 
+	// Requesting Player State on Client
+#pragma region
+
+		// Player
+#pragma region
+
 bool ACsPlayerStateBase::ServerRequestUniqueMappingId_Validate(const uint8 &ClientMappingId, ACsPlayerStateBase* RequestingPlayerState)
 {
 	return true;
@@ -511,6 +517,75 @@ void ACsPlayerStateBase::ServerRequestPlayerData_Implementation(const uint8 &Cli
 
 void ACsPlayerStateBase::ServerRequestPlayerData_Internal(const uint8 &ClientMappingId, const uint8 &MappingId){}
 
+#pragma endregion Player
+
+		// AI
+#pragma region
+
+bool ACsPlayerStateBase::ServerRequestUniqueMappingId_AI_Validate(const uint8 &ClientMappingId, ACsPlayerStateBase* RequestingPlayerState)
+{
+	return true;
+}
+
+void ACsPlayerStateBase::ServerRequestUniqueMappingId_AI_Implementation(const uint8 &ClientMappingId, ACsPlayerStateBase* RequestingPlayerState)
+{
+	ServerRequestUniqueMappingId_AI_Internal(ClientMappingId, RequestingPlayerState);
+}
+
+void ACsPlayerStateBase::ServerRequestUniqueMappingId_AI_Internal(const uint8 &ClientMappingId, ACsPlayerStateBase* RequestingPlayerState) {}
+
+void ACsPlayerStateBase::RequestUniqueMappingId_AI(ACsPlayerStateBase* RequestingPlayerState)
+{
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+
+	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+
+	Payload->Schedule		 = Schedule;
+	Payload->Function		 = &ACsPlayerStateBase::RequestUniqueMappingId_AI_Internal;
+	Payload->Actor			 = this;
+	Payload->Stop			 = &UCsCommon::CoroutineStopCondition_CheckActor;
+	Payload->Add			 = &ACsPlayerStateBase::AddRoutine;
+	Payload->Remove			 = &ACsPlayerStateBase::RemoveRoutine;
+	Payload->Type			 = (uint8)ECsPlayerStateBaseRoutine::RequestUniqueMappingId_AI_Internal;
+	Payload->DoInit			 = true;
+	Payload->PerformFirstRun = false;
+	Payload->Name			 = ECsPlayerStateBaseCachedName::Name::RequestUniqueMappingId_AI_Internal;
+	Payload->NameAsString	 = ECsPlayerStateBaseCachedString::Str::RequestUniqueMappingId_AI_Internal;
+
+	FCsRoutine* R = Scheduler->Allocate(Payload);
+
+	R->objects[0] = this;
+	R->objects[1] = RequestingPlayerState;
+
+	Scheduler->StartRoutine(Schedule, R);
+}
+
+CS_COROUTINE(ACsPlayerStateBase, RequestUniqueMappingId_AI_Internal)
+{
+	ACsPlayerStateBase* ps   = r->GetActor<ACsPlayerStateBase>();
+	UCsCoroutineScheduler* s = r->scheduler;
+	UWorld* w				 = ps->GetWorld();
+
+	ACsPlayerStateBase* ClientPlayerState	  = r->GetObjectAt<ACsPlayerStateBase>(0);
+	ACsPlayerStateBase* RequestingPlayerState = r->GetObjectAt<ACsPlayerStateBase>(1);
+
+	CS_COROUTINE_BEGIN(r);
+
+	CS_COROUTINE_WAIT_UNTIL(r, RequestingPlayerState->UniqueMappingId != CS_INVALID_PLAYER_STATE_UNIQUE_MAPPING_ID);
+	
+	ClientPlayerState->ClientRecieveUniqueMappingId_AI(RequestingPlayerState, RequestingPlayerState->UniqueMappingId);
+
+	CS_COROUTINE_END(r);
+}
+
+void ACsPlayerStateBase::ClientRecieveUniqueMappingId_AI_Implementation(ACsPlayerStateBase* RequestingPlayerState, const uint8 &MappingId)
+{
+	RequestingPlayerState->ClientRecieveUniqueMappingId_AI_Internal(MappingId);
+}
+
+void ACsPlayerStateBase::ClientRecieveUniqueMappingId_AI_Internal(const uint8 &MappingId) {}
+
 bool ACsPlayerStateBase::ServerRequestAIData_Validate(const uint8 &ClientMappingId, const uint8 &MappingId)
 {
 	return true;
@@ -522,6 +597,10 @@ void ACsPlayerStateBase::ServerRequestAIData_Implementation(const uint8 &ClientM
 }
 
 void ACsPlayerStateBase::ServerRequestAIData_Internal(const uint8 &ClientMappingId, const uint8 &MappingId) {}
+
+#pragma endregion AI
+
+#pragma endregion Requesting Player State on Client
 
 void ACsPlayerStateBase::GetLoadAssetsShortCodes(const TCsLoadAssetsType &AssetsType, TArray<FName> &OutShortCodes){}
 void ACsPlayerStateBase::LoadPlayerData(){}

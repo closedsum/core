@@ -240,6 +240,8 @@ public:
 
 	FBindableDynEvent_CsDataMapping_OnGetLoadAssetsShortCodes OnGetLoadAssetsShortCodes_Event;
 
+	virtual TCsAssetType GetAssetTypeFromShortCode(const FName &ShortCode);
+
 	virtual void GetLoadStringAssetReferences(const TCsLoadAssetsType &AssetsType, TArray<FStringAssetReference> &OutAssetReferences);
 
 	template<typename T>

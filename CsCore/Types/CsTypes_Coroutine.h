@@ -476,14 +476,43 @@ public:
 		return a.IsValid() ? a.Get() : nullptr;
 	}
 
+	template<typename T>
+	T* GetActor()
+	{
+		return Cast<T>(GetActor());
+	}
+
 	UObject* GetRObject()
 	{
 		return o.IsValid() ? o.Get() : nullptr;
 	}
 
+	template<typename T>
+	T* GetRObject()
+	{
+		Cast<T>(GetRObject());
+	}
+
 	UObject* GetOwner()
 	{
 		return owner.IsValid() ? owner.Get() : nullptr;
+	}
+
+	template<typename T>
+	T* GetOwner()
+	{
+		Cast<T>(GetOwner());
+	}
+
+	UObject* GetObjectAt(const uint8 &inIndex)
+	{
+		return objects[inIndex].IsValid() ? objects[inIndex].Get() : nullptr;
+	}
+
+	template<typename T>
+	T* GetObjectAt(const uint8 &inIndex)
+	{
+		return Cast<T>(GetObjectAt(inIndex));
 	}
 
 	void AddChild(struct FCsRoutine* child)

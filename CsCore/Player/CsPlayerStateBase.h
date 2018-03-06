@@ -171,7 +171,7 @@ namespace ECsPlayerStateBaseRoutine
 	enum Type
 	{
 		OnBoard_Internal,
-		SetupPawn_Internal,
+		RequestUniqueMappingId_AI_Internal,
 		ECsPlayerStateBaseRoutine_MAX,
 	};
 }
@@ -183,20 +183,20 @@ namespace ECsPlayerStateBaseRoutine
 	namespace Str
 	{
 		const TCsString OnBoard_Internal = TCsString(TEXT("OnBoard_Internal"), TEXT("onboard_internal"), TEXT("onboard internal"));
-		const TCsString SetupPawn_Internal = TCsString(TEXT("SetupPawn_Internal"), TEXT("setuppawn_internal"), TEXT("setup pawn internal"));
+		const TCsString RequestUniqueMappingId_AI_Internal = TCsString(TEXT("RequestUniqueMappingId_AI_Internal"), TEXT("requestuniquemappingid_ai_internal"), TEXT("request unique mappind id ai internal"));
 	}
 
 	FORCEINLINE FString ToString(const Type &EType)
 	{
 		if (EType == Type::OnBoard_Internal) { return Str::OnBoard_Internal.Value; }
-		if (EType == Type::SetupPawn_Internal) { return Str::SetupPawn_Internal.Value; }
+		if (EType == Type::RequestUniqueMappingId_AI_Internal) { return Str::RequestUniqueMappingId_AI_Internal.Value; }
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
 	FORCEINLINE Type ToType(const FString &String)
 	{
 		if (String == Str::OnBoard_Internal) { return Type::OnBoard_Internal; }
-		if (String == Str::SetupPawn_Internal) { return Type::SetupPawn_Internal; }
+		if (String == Str::RequestUniqueMappingId_AI_Internal) { return Type::RequestUniqueMappingId_AI_Internal; }
 		return Type::ECsPlayerStateBaseRoutine_MAX;
 	}
 }
@@ -263,7 +263,11 @@ public:
 
 	virtual void ClientRecieveLocalUniqueMappingId_Internal(const uint8 &ClientMappingId, ACsPlayerStateBase* RequestingPlayerState);
 
-// Requesting Player State on Client
+	// Requesting Player State on Client
+#pragma region
+
+		// Player
+#pragma region
 
 	// RequestUniqueMappingId
 	UFUNCTION(reliable, server, WithValidation)
@@ -284,10 +288,37 @@ public:
 
 	virtual void ServerRequestPlayerData_Internal(const uint8 &ClientMappingId, const uint8 &MappingId);
 
+#pragma endregion Player
+
+		// AI
+#pragma region
+
+	// RequestUniqueMappingId AI
+	UFUNCTION(reliable, server, WithValidation)
+	void ServerRequestUniqueMappingId_AI(const uint8 &ClientMappingId, ACsPlayerStateBase* RequestingPlayerState);
+
+	virtual void ServerRequestUniqueMappingId_AI_Internal(const uint8 &ClientMappingId, ACsPlayerStateBase* RequestingPlayerState);
+
+	void RequestUniqueMappingId_AI(ACsPlayerStateBase* RequestingPlayerState);
+	static char RequestUniqueMappingId_AI_Internal(struct FCsRoutine* r);
+	struct FCsRoutine* RequestUniqueMappingId_AI_Internal_Routine;
+
+	// RecieveUniqueMappingId AI
+	UFUNCTION(reliable, client)
+	void ClientRecieveUniqueMappingId_AI(ACsPlayerStateBase* RequestingPlayerState, const uint8 &MappingId);
+
+	/** Called by RequestingPlayerState */
+	virtual void ClientRecieveUniqueMappingId_AI_Internal(const uint8 &MappingId);
+
+	// RequestAIData
 	UFUNCTION(reliable, server, WithValidation)
 	void ServerRequestAIData(const uint8 &ClientMappingId, const uint8 &MappingId);
 
 	virtual void ServerRequestAIData_Internal(const uint8 &ClientMappingId, const uint8 &MappingId);
+
+#pragma endregion AI
+
+#pragma endregion Requesting Player State on Client
 
 // Loading
 

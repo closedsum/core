@@ -34,6 +34,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "View")
 	FRotator CurrentViewRotation;
 	UPROPERTY(BlueprintReadOnly, Category = "View")
+	FRotator CurrentViewRotationDelta;
+
+	UPROPERTY(BlueprintReadOnly, Category = "View")
 	FVector CurrentViewLocation;
 	UPROPERTY(BlueprintReadOnly, Category = "View")
 	FVector CurrentViewDir;

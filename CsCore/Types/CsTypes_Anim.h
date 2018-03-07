@@ -7,6 +7,7 @@
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimSequence.h"
 #include "Animation/AnimMontage.h"
+#include "Animation/BlendSpace1D.h"
 #include "Animation/BlendSpace.h"
 #include "Animation/AimOffsetBlendSpace.h"
 #include "Animation/AnimBlueprint.h"
@@ -27,6 +28,10 @@ namespace ECsAnimCachedString
 		const FString Anim_Sequence = TEXT("Anim Sequence");
 		const FString AnimMontage = TEXT("AnimMontage");
 		const FString Anim_Montage = TEXT("Anim Montage");
+		const FString BlendSpace1D = TEXT("BlendSpace1D");
+		const FString Blend_Space_1D = TEXT("Blend Space 1D");
+		const FString BlendSpace = TEXT("BlendSpace");
+		const FString Blend_Space = TEXT("Blend Space");
 	}
 }
 
@@ -763,6 +768,167 @@ namespace ECsFpsAnimBlendSpaceMember
 typedef ECsFpsAnimBlendSpaceMember::Type TCsFpsAnimBlendSpaceMember;
 
 USTRUCT(BlueprintType)
+struct FCsBlendSpace1D
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
+	TAssetPtr<UBlendSpace1D> Blend;
+
+	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	int32 Blend_LoadFlags;
+
+public:
+
+	UPROPERTY(Transient)
+	class UBlendSpace1D* Blend_Internal;
+
+public:
+
+	FCsBlendSpace1D()
+	{
+		CS_SET_BLUEPRINT_BITFLAG(Blend_LoadFlags, ECsLoadFlags::Game);
+	}
+
+	UBlendSpace1D* Get()
+	{
+		return Blend_Internal;
+	}
+
+	FCsBlendSpace1D& operator=(const FCsBlendSpace1D& B)
+	{
+		Blend = B.Blend;
+		Blend_LoadFlags = B.Blend_LoadFlags;
+		Blend_Internal = B.Blend_Internal;
+		return *this;
+	}
+
+	bool operator==(const FCsBlendSpace1D& B) const
+	{
+		return Blend == B.Blend && Blend_LoadFlags == B.Blend_LoadFlags && Blend_Internal == B.Blend_Internal;
+	}
+
+	bool operator!=(const FCsBlendSpace1D& B) const
+	{
+		return !(*this == B);
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FCsFpsBlendSpace1D
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
+	TAssetPtr<UBlendSpace1D> Blend1P;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
+	TAssetPtr<UBlendSpace1D> Blend3P;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
+	TAssetPtr<UBlendSpace1D> Blend3P_Low;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
+	TAssetPtr<UBlendSpace1D> BlendVR;
+
+	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	int32 Blend1P_LoadFlags;
+
+	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	int32 Blend3P_LoadFlags;
+
+	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	int32 Blend3P_Low_LoadFlags;
+
+	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	int32 BlendVR_LoadFlags;
+
+public:
+
+	UPROPERTY(Transient)
+	class UBlendSpace1D* Blend1P_Internal;
+
+	UPROPERTY(Transient)
+	class UBlendSpace1D* Blend3P_Internal;
+
+	UPROPERTY(Transient)
+	class UBlendSpace1D* Blend3P_Low_Internal;
+
+	UPROPERTY(Transient)
+	class UBlendSpace1D* BlendVR_Internal;
+
+public:
+
+	FCsFpsBlendSpace1D()
+	{
+		CS_SET_BLUEPRINT_BITFLAG(Blend1P_LoadFlags, ECsLoadFlags::Game);
+		CS_SET_BLUEPRINT_BITFLAG(Blend1P_LoadFlags, ECsLoadFlags::Game1P);
+
+		CS_SET_BLUEPRINT_BITFLAG(Blend3P_LoadFlags, ECsLoadFlags::Game);
+		CS_SET_BLUEPRINT_BITFLAG(Blend3P_LoadFlags, ECsLoadFlags::Game3P);
+
+		CS_SET_BLUEPRINT_BITFLAG(Blend3P_Low_LoadFlags, ECsLoadFlags::Game);
+		CS_SET_BLUEPRINT_BITFLAG(Blend3P_Low_LoadFlags, ECsLoadFlags::Game3PLow);
+
+		CS_SET_BLUEPRINT_BITFLAG(BlendVR_LoadFlags, ECsLoadFlags::Game);
+		CS_SET_BLUEPRINT_BITFLAG(BlendVR_LoadFlags, ECsLoadFlags::GameVR);
+	}
+
+	UBlendSpace1D* Get(const TCsViewType &ViewType, const bool &IsLow = false)
+	{
+		if (ViewType == ECsViewType::FirstPerson)
+			return Blend1P_Internal;
+		if (ViewType == ECsViewType::ThirdPerson)
+			return IsLow ? Blend3P_Low_Internal : Blend3P_Internal;
+		if (ViewType == ECsViewType::VR)
+			return BlendVR_Internal;
+		return Blend3P_Internal;
+	}
+
+	TAssetPtr<UBlendSpace1D> GetAssetPtr(const TCsViewType &ViewType, const bool &IsLow = false)
+	{
+		if (ViewType == ECsViewType::FirstPerson)
+			return Blend1P;
+		if (ViewType == ECsViewType::ThirdPerson)
+			return IsLow ? Blend3P_Low : Blend3P;
+		if (ViewType == ECsViewType::VR)
+			return BlendVR;
+		return Blend3P;
+	}
+
+	FCsFpsBlendSpace1D& operator=(const FCsFpsBlendSpace1D& B)
+	{
+		Blend1P = B.Blend1P;
+		Blend3P = B.Blend3P;
+		Blend3P_Low = B.Blend3P_Low;
+		BlendVR = B.BlendVR;
+
+		Blend1P_LoadFlags = B.Blend1P_LoadFlags;
+		Blend3P_LoadFlags = B.Blend3P_LoadFlags;
+		Blend3P_Low_LoadFlags = B.Blend3P_Low_LoadFlags;
+		BlendVR_LoadFlags = B.BlendVR_LoadFlags;
+
+		Blend1P_Internal = B.Blend1P_Internal;
+		Blend3P_Internal = B.Blend3P_Internal;
+		Blend3P_Low_Internal = B.Blend3P_Low_Internal;
+		BlendVR_Internal = B.BlendVR_Internal;
+		return *this;
+	}
+
+	bool operator==(const FCsFpsBlendSpace1D& B) const
+	{
+		return Blend1P == B.Blend1P && Blend3P == B.Blend3P && Blend3P_Low == B.Blend3P_Low && BlendVR == B.BlendVR &&
+			   Blend1P_LoadFlags == B.Blend1P_LoadFlags && Blend3P_LoadFlags == B.Blend3P_LoadFlags && Blend3P_Low_LoadFlags == B.Blend3P_Low_LoadFlags && BlendVR_LoadFlags == B.BlendVR_LoadFlags &&
+			   Blend1P_Internal == B.Blend1P_Internal && Blend3P_Internal == B.Blend3P_Internal && Blend3P_Low_Internal == B.Blend3P_Low_Internal && BlendVR_Internal == B.BlendVR_Internal;
+	}
+
+	bool operator!=(const FCsFpsBlendSpace1D& B) const
+	{
+		return !(*this == B);
+	}
+};
+
+USTRUCT(BlueprintType)
 struct FCsBlendSpace
 {
 	GENERATED_USTRUCT_BODY()
@@ -878,6 +1044,17 @@ public:
 		if (ViewType == ECsViewType::VR)
 			return BlendVR_Internal;
 		return Blend3P_Internal;
+	}
+
+	TAssetPtr<UBlendSpace> GetAssetPtr(const TCsViewType &ViewType, const bool &IsLow = false)
+	{
+		if (ViewType == ECsViewType::FirstPerson)
+			return Blend1P;
+		if (ViewType == ECsViewType::ThirdPerson)
+			return IsLow ? Blend3P_Low : Blend3P;
+		if (ViewType == ECsViewType::VR)
+			return BlendVR;
+		return Blend3P;
 	}
 
 	FCsFpsBlendSpace& operator=(const FCsFpsBlendSpace& B)

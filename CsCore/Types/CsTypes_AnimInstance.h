@@ -7,6 +7,8 @@
 #include "Animation/AnimSequence.h"
 #include "Animation/AnimMontage.h"
 #include "Animation/AnimBlueprint.h"
+#include "Animation/BlendSpace.h"
+#include "Animation/BlendSpace1D.h"
 
 #include "CsTypes_AnimInstance.generated.h"
 #pragma once
@@ -115,6 +117,108 @@ public:
 };
 
 USTRUCT(BlueprintType)
+struct FCsAnimInstance_BlendSpace1D
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	TAssetPtr<UBlendSpace1D> Blend;
+
+	TAssetPtr<UBlendSpace1D> Last_Blend;
+
+	UPROPERTY(Transient, VisibleDefaultsOnly, Category = Animation)
+	TWeakObjectPtr<UBlendSpace1D> Blend_Internal;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	bool UseDataValueAsDefault;
+
+public:
+
+	FCsAnimInstance_BlendSpace1D()
+	{
+		UseDataValueAsDefault = true;
+	}
+
+	UBlendSpace1D* Get() const
+	{
+		return Blend_Internal.IsValid() ? Blend_Internal.Get() : nullptr;
+	}
+
+	FCsAnimInstance_BlendSpace1D& operator=(const FCsAnimInstance_BlendSpace1D& B)
+	{
+		Blend = B.Blend;
+		Last_Blend = B.Last_Blend;
+		Blend_Internal = B.Blend_Internal;
+		UseDataValueAsDefault = B.UseDataValueAsDefault;
+		return *this;
+	}
+
+	bool operator==(const FCsAnimInstance_BlendSpace1D& B) const
+	{
+		return Blend == B.Blend && Last_Blend == B.Last_Blend && Blend_Internal == B.Blend_Internal && UseDataValueAsDefault == B.UseDataValueAsDefault;
+	}
+
+	bool operator!=(const FCsAnimInstance_BlendSpace1D& B) const
+	{
+		return !(*this == B);
+	}
+
+	bool HasChanged() { return Blend != Last_Blend; }
+	void Update() { Last_Blend = Blend; }
+};
+
+USTRUCT(BlueprintType)
+struct FCsAnimInstance_BlendSpace
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	TAssetPtr<UBlendSpace> Blend;
+
+	TAssetPtr<UBlendSpace> Last_Blend;
+
+	UPROPERTY(Transient, VisibleDefaultsOnly, Category = Animation)
+	TWeakObjectPtr<UBlendSpace> Blend_Internal;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	bool UseDataValueAsDefault;
+
+public:
+
+	FCsAnimInstance_BlendSpace()
+	{
+		UseDataValueAsDefault = true;
+	}
+
+	UBlendSpace* Get() const
+	{
+		return Blend_Internal.IsValid() ? Blend_Internal.Get() : nullptr;
+	}
+
+	FCsAnimInstance_BlendSpace& operator=(const FCsAnimInstance_BlendSpace& B)
+	{
+		Blend = B.Blend;
+		Last_Blend = B.Last_Blend;
+		Blend_Internal = B.Blend_Internal;
+		UseDataValueAsDefault = B.UseDataValueAsDefault;
+		return *this;
+	}
+
+	bool operator==(const FCsAnimInstance_BlendSpace& B) const
+	{
+		return Blend == B.Blend && Last_Blend == B.Last_Blend && Blend_Internal == B.Blend_Internal && UseDataValueAsDefault == B.UseDataValueAsDefault;
+	}
+
+	bool operator!=(const FCsAnimInstance_BlendSpace& B) const
+	{
+		return !(*this == B);
+	}
+
+	bool HasChanged() { return Blend != Last_Blend; }
+	void Update() { Last_Blend = Blend; }
+};
+
+USTRUCT(BlueprintType)
 struct FCsAnimInstance_Blueprint
 {
 	GENERATED_USTRUCT_BODY()
@@ -187,9 +291,15 @@ public:
 
 	class ACsData_Character* Get() const
 	{
-		return Data_Internal.IsValid() ? Data_Internal.Get() : NULL;
+		return Data_Internal.IsValid() ? Data_Internal.Get() : nullptr;
 	}
 
+	template<typename T>
+	T* Get() const 
+	{
+		return Cast<T>(Get());
+	}
+	
 	bool HasChanged() { return Data != Last_Data; }
 	void Update() { Last_Data = Data; }
 };
@@ -231,7 +341,13 @@ public:
 
 	class ACsData_CharacterMeshSkin* Get() const
 	{
-		return Data_Internal.IsValid() ? Data_Internal.Get() : NULL;
+		return Data_Internal.IsValid() ? Data_Internal.Get() : nullptr;
+	}
+
+	template<typename T>
+	T* Get() const 
+	{
+		return Cast<T>(Get());
 	}
 
 	bool HasChanged() { return Data != Last_Data; }
@@ -275,7 +391,13 @@ public:
 
 	class ACsData_CharacterMaterialSkin* Get() const
 	{
-		return Data_Internal.IsValid() ? Data_Internal.Get() : NULL;
+		return Data_Internal.IsValid() ? Data_Internal.Get() : nullptr;
+	}
+
+	template<typename T>
+	T* Get() const
+	{
+		return Cast<T>(Get());
 	}
 
 	bool HasChanged() { return Data != Last_Data; }
@@ -319,7 +441,13 @@ public:
 
 	class ACsData_Weapon* Get() const
 	{
-		return Data_Internal.IsValid() ? Data_Internal.Get() : NULL;
+		return Data_Internal.IsValid() ? Data_Internal.Get() : nullptr;
+	}
+
+	template<typename T>
+	T* Get() const 
+	{
+		return Cast<T>(Get());
 	}
 
 	bool HasChanged() { return Data != Last_Data; }
@@ -363,7 +491,13 @@ public:
 
 	class ACsData_WeaponMaterialSkin* Get() const
 	{
-		return Data_Internal.IsValid() ? Data_Internal.Get() : NULL;
+		return Data_Internal.IsValid() ? Data_Internal.Get() : nullptr;
+	}
+
+	template<typename T>
+	T* Get() const 
+	{
+		return Cast<T>(Get());
 	}
 
 	bool HasChanged() { return Data != Last_Data; }

@@ -214,7 +214,11 @@ FVector ACsPlayerPawn::GetFeetLocation() const
 
 void ACsPlayerPawn::RecordView()
 {
-	CurrentViewRotation = GetViewRotation();
+	const FRotator Last_CurrentViewRotation = CurrentViewRotation;
+
+	CurrentViewRotation		 = GetViewRotation();
+	CurrentViewRotationDelta = UCsCommon::GetAngleDelta(Last_CurrentViewRotation, CurrentViewRotation);
+
 	CurrentViewLocation = GetPawnViewLocation();
 	CurrentViewDir		= CurrentViewRotation.Vector();
 	CurrentViewDirXY	= FRotator(0.0f, CurrentViewRotation.Yaw, 0.0f).Vector();

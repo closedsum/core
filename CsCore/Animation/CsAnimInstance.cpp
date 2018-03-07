@@ -337,6 +337,7 @@ void UCsAnimInstance::LoadAnim(const FString& MemberName, const TCsViewType &Vie
 
 		if (UAnimMontage* Seq = DataAnim->Get(ViewType))
 		{
+			Anim.Anim		   = DataAnim->GetAssetPtr(ViewType);
 			Anim.Anim_Internal = Seq;
 		}
 		else
@@ -352,6 +353,123 @@ void UCsAnimInstance::LoadAnim(const FString& MemberName, const TCsViewType &Vie
 		{
 			//																					   TEXT("AnimMontage"), TEXT("Anim Montage")
 			UCsCommon_Load::LoadTAssetPtr<UAnimMontage>(MemberName, Anim.Anim, Anim.Anim_Internal, ECsAnimCachedString::Str::AnimMontage, ECsAnimCachedString::Str::Anim_Montage);
+		}
+	}
+}
+
+void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, FCsAnimInstance_BlendSpace1D &Blend, FCsBlendSpace1D* DataBlend)
+{
+	if (DataBlend &&
+		Blend.UseDataValueAsDefault)
+	{
+		UCsCommon_Load::LoadFCsBlendSpace1D(MemberName, DataBlend);
+
+		if (UBlendSpace1D* Space = DataBlend->Get())
+		{
+			Blend.Blend = DataBlend->Blend;
+			Blend.Blend_Internal = Space;
+		}
+		else
+		{
+			//																							TEXT("BlendSpace1D"), TEXT("Blend Space 1D")
+			UCsCommon_Load::LoadTAssetPtr<UBlendSpace1D>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCachedString::Str::BlendSpace1D, ECsAnimCachedString::Str::Blend_Space_1D);
+		}
+	}
+	else
+	{
+		//						 != TEXT("")
+		if (Blend.Blend.ToString() != ECsAnimCachedString::Str::Empty)
+		{
+			//																							TEXT("BlendSpace1D"), TEXT("Blend Space 1D")
+			UCsCommon_Load::LoadTAssetPtr<UBlendSpace1D>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCachedString::Str::BlendSpace1D, ECsAnimCachedString::Str::Blend_Space_1D);
+		}
+	}
+	Blend.Update();
+}
+
+void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, FCsAnimInstance_BlendSpace &Blend, FCsBlendSpace* DataBlend)
+{
+	if (DataBlend &&
+		Blend.UseDataValueAsDefault)
+	{
+		UCsCommon_Load::LoadFCsBlendSpace(MemberName, DataBlend);
+
+		if (UBlendSpace* Space = DataBlend->Get())
+		{
+			Blend.Blend = DataBlend->Blend;
+			Blend.Blend_Internal = Space;
+		}
+		else
+		{
+			//																						  TEXT("BlendSpace"), TEXT("Blend Space")
+			UCsCommon_Load::LoadTAssetPtr<UBlendSpace>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCachedString::Str::BlendSpace, ECsAnimCachedString::Str::Blend_Space);
+		}
+	}
+	else
+	{
+		//						 != TEXT("")
+		if (Blend.Blend.ToString() != ECsAnimCachedString::Str::Empty)
+		{
+			//																						  TEXT("BlendSpace"), TEXT("Blend Space")
+			UCsCommon_Load::LoadTAssetPtr<UBlendSpace>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCachedString::Str::BlendSpace, ECsAnimCachedString::Str::Blend_Space);
+		}
+	}
+}
+
+void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, const TCsViewType &ViewType, FCsAnimInstance_BlendSpace1D &Blend, FCsFpsBlendSpace1D* DataBlend)
+{
+	if (DataBlend &&
+		Blend.UseDataValueAsDefault)
+	{
+		UCsCommon_Load::LoadFCsFpsBlendSpace1D(MemberName, DataBlend, ViewType);
+
+		if (UBlendSpace1D* Space = DataBlend->Get(ViewType))
+		{
+			Blend.Blend			 = DataBlend->GetAssetPtr(ViewType);
+			Blend.Blend_Internal = Space;
+		}
+		else
+		{
+			//																							TEXT("BlendSpace1D"), TEXT("Blend Space 1D")
+			UCsCommon_Load::LoadTAssetPtr<UBlendSpace1D>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCachedString::Str::BlendSpace1D, ECsAnimCachedString::Str::Blend_Space_1D);
+		}
+	}
+	else
+	{
+		//						 != TEXT("")
+		if (Blend.Blend.ToString() != ECsAnimCachedString::Str::Empty)
+		{
+			//																							TEXT("BlendSpace1D"), TEXT("Anim Sequence")
+			UCsCommon_Load::LoadTAssetPtr<UBlendSpace1D>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCachedString::Str::BlendSpace1D, ECsAnimCachedString::Str::Blend_Space_1D);
+		}
+	}
+}
+
+void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, const TCsViewType &ViewType, FCsAnimInstance_BlendSpace &Blend, FCsFpsBlendSpace* DataBlend)
+{
+	if (DataBlend &&
+		Blend.UseDataValueAsDefault)
+	{
+		UCsCommon_Load::LoadFCsFpsBlendSpace(MemberName, DataBlend, ViewType);
+
+		if (UBlendSpace* Space = DataBlend->Get(ViewType))
+		{
+			Blend.Blend			 = DataBlend->GetAssetPtr(ViewType);
+			Blend.Blend_Internal = Space;
+		}
+		else
+		{
+			//																						  TEXT("BlendSpace"), TEXT("Blend Space")
+			UCsCommon_Load::LoadTAssetPtr<UBlendSpace>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCachedString::Str::BlendSpace, ECsAnimCachedString::Str::Blend_Space);
+		}
+	}
+	else
+	{
+		//						 != TEXT("")
+		if (Blend.Blend.ToString() != ECsAnimCachedString::Str::Empty)
+		{
+			//																					      TEXT("BlendSpace"), TEXT("Blend Space")
+			UCsCommon_Load::LoadTAssetPtr<UBlendSpace>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCachedString::Str::BlendSpace, ECsAnimCachedString::Str::Blend_Space);
 		}
 	}
 }

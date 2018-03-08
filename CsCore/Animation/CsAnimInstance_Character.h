@@ -10,6 +10,7 @@ class CSCORE_API UCsAnimInstance_Character : public UCsAnimInstance
 	
 // Event Graph
 #pragma region
+public:
 
 	virtual void NativeInitializeAnimation() override;
 
@@ -17,7 +18,9 @@ class CSCORE_API UCsAnimInstance_Character : public UCsAnimInstance
 #pragma region
 public:
 
+#if WITH_EDITOR
 	virtual void SetupInGameSimulation() override;
+#endif // #if WITH_EDITOR
 
 	// Weapon
 
@@ -44,7 +47,7 @@ public:
 #pragma region
 public:
 
-	// Character
+		// Character
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "01 Data")
 	FCsDataAnimInstance_CharacterPtr Data_Character;
@@ -57,9 +60,15 @@ public:
 		return Cast<T>(GetData());
 	}
 
-	void OnTick_Handle_Data_Character();
+private:
+	void LoadData_Character();
 
-	// CharacterMeshSkin
+public:
+#if WITH_EDITOR
+	void OnTick_Handle_Data_Character();
+#endif // #if WITH_EDITOR
+
+		// CharacterMeshSkin
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "01 Data")
 	FCsDataAnimInstance_CharacterMeshSkinPtr Data_CharacterMeshSkin;
@@ -72,9 +81,15 @@ public:
 		return Cast<T>(GetData_CharacterMeshSkin());
 	}
 
-	void OnTick_Handle_Data_CharacterMeshSkin();
+private:
+	void LoadData_CharacterMeshSkin();
 
-	// CharacterMaterialSkin
+public:
+#if WITH_EDITOR
+	void OnTick_Handle_Data_CharacterMeshSkin();
+#endif // #if WITH_EDITOR
+
+		// CharacterMaterialSkin
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "01 Data")
 	FCsDataAnimInstance_CharacterMaterialSkinPtr Data_CharacterMaterialSkin;
@@ -87,9 +102,15 @@ public:
 		return Cast<T>(GetData_CharacterMaterialSkin());
 	}
 
-	void OnTick_Handle_Data_CharacterMaterialSkin();
+private:
+	void LoadData_CharacterMaterialSkin();
 
-	// Weapon
+public:
+#if WITH_EDITOR
+	void OnTick_Handle_Data_CharacterMaterialSkin();
+#endif // #if WITH_EDITOR
+
+		// Weapon
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "01 Data")
 	FCsDataAnimInstance_WeaponPtr Data_Weapon;
@@ -102,9 +123,15 @@ public:
 		return Cast<T>(GetData_Weapon());
 	}
 
-	void OnTick_Handle_Data_Weapon();
+private:
+	void LoadData_Weapon();
 
-	// WeaponMaterialSkin
+public:
+#if WITH_EDITOR
+	void OnTick_Handle_Data_Weapon();
+#endif // #if WITH_EDITOR
+
+		// WeaponMaterialSkin
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "01 Data")
 	FCsDataAnimInstance_WeaponMaterialSkinPtr Data_WeaponMaterialSkin;
@@ -117,7 +144,13 @@ public:
 		return Cast<T>(GetData_WeaponMaterialSkin());
 	}
 
+private:
+	void LoadData_WeaponMaterialSkin();
+
+public:
+#if WITH_EDITOR
 	void OnTick_Handle_Data_WeaponMaterialSkin();
+#endif // #if WITH_EDITOR
 
 #pragma endregion Data
 
@@ -129,6 +162,7 @@ public:
 
 	virtual class UAnimMontage* GetAnimMontage(const TCsCharacterAnim &AnimType, const int32 &Index = 0) const;
 	virtual class UAnimSequence* GetAnimSequence(const TCsCharacterAnim &AnimType) const;
+	virtual class UBlendSpace1D* GetBlendSpace1D(const TCsCharacterBlendSpace &BlendType) const;
 	virtual class UBlendSpace* GetBlendSpace(const TCsCharacterBlendSpace &BlendType) const;
 
 	virtual void StopAnimation(const TCsCharacterAnim &AnimType, const int32 &Index = 0, const float BlendOutTime = 0.0f);

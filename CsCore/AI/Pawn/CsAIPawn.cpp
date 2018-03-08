@@ -26,7 +26,6 @@ void ACsAIPawn::Init(const int32 &Index, const TCsAIType &InType)
 void ACsAIPawn::OnCreatePool()
 {
 	SetActorHiddenInGame(true);
-	SetActorTickEnabled(false);
 }
 
 void ACsAIPawn::OnPostCreatePool(){}
@@ -59,15 +58,21 @@ void ACsAIPawn::Allocate(const uint16 &ActiveIndex, FCsAIPawnPayload* Payload, c
 
 void ACsAIPawn::Allocate_Internal(FCsAIPawnPayload* Payload)
 {
+	if (Payload->TeleportLocation || Payload->TeleportRotation)
+	{
+		const FVector Location  = Payload->TeleportLocation ? Payload->Location : GetActorLocation();
+		const FRotator Rotation = Payload->TeleportRotation ? Payload->Rotation : GetActorRotation();
+
+		TeleportTo(Location, Rotation, false, false);
+	}
 	SetActorHiddenInGame(false);
-	SetActorTickEnabled(true);
 }
 
 void ACsAIPawn::DeAllocate()
 {
 	Cache.Reset();
 
-	SetActorTickEnabled(false);
+	SetActorHiddenInGame(true);
 }
 
 void ACsAIPawn::OnTick_HandleCVars(const float &DeltaSeconds){}

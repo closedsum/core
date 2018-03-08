@@ -9,11 +9,19 @@ class CSCORE_API UCsAnimInstance_Weapon : public UCsAnimInstance
 {
 	GENERATED_UCLASS_BODY()
 
+// Event Graph
+#pragma region
+public:
+
+	virtual void NativeInitializeAnimation() override;
+
 	// Setup
 #pragma region
 public:
 
+#if WITH_EDITOR
 	virtual void SetupInGameSimulation() override;
+#endif // #if WITH_EDITOR
 
 	TWeakObjectPtr<class ACsWeapon> Weapon;
 
@@ -80,4 +88,6 @@ public:
 	virtual void StopAnimation(const TCsWeaponAnim &AnimType, const int32 &Index = 0, const float BlendOutTime = 0.0f);
 
 #pragma endregion Anims
+
+#pragma endregion Event Graph
 };

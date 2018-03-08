@@ -25,47 +25,84 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "AnimInstance")
 	class APawn* GetOwningPawn();
 
+	template<typename T>
+	T* GetOwningPawn()
+	{
+		return Cast<T>(GetOwningPawn());
+	}
+
+	UPROPERTY(BlueprintReadOnly, Category = "AnimInstance")
+	TWeakObjectPtr<class AActor> MyOwningActor;
+
+	UFUNCTION(BlueprintCallable, Category = "AnimInstance")
+	class AActor* GetMyOwningActor();
+
+	template<typename T>
+	T* GetMyOwningActor()
+	{
+		return Cast<T>(GetMyOwningActor());
+	}
+
 	USkeletalMeshComponent* GetSkeletalMeshComponent();
 
 	// 0 Setup
 #pragma region
 public:
 
+#if WITH_EDITOR
 	virtual void SetupInGameSimulation();
-	virtual void OnTick_HandleSetupInGameSimulation();
+	virtual void OnTick_Handle_SetupInGameSimulation();
+#endif // #if WITH_EDITOR
 
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "0 Setup")
 	bool DoSetupInGameSimulation;
+#endif // #if WITH_EDITORONLY_DATA
 
+#if WITH_EDITOR
 	TCsBool_Ref DoSetupInGameSimulationHandle;
+#endif // #if WITH_EDITOR
 
+#if WITH_EDITORONLY_DATA
 	/** Show Emitter Editor Icons */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "0 Setup")
 	bool ShowEmitterEditorIcons;
+#endif // #if WITH_EDITORONLY_DATA
 
+#if WITH_EDITOR
 	TCsBool_Ref ShowEmitterEditorIconsHandle;
+#endif // #if WITH_EDITOR
 
+#if WITH_EDITORONLY_DATA
 	/** Show Sound Editor Icons */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "0 Setup")
 	bool ShowSoundEditorIcons;
+#endif // #if WITH_EDITORONLY_DATA
 
+#if WITH_EDITOR
 	TCsBool_Ref ShowSoundEditorIconsHandle;
 
-	virtual void OnTick_HandleEditorIcons();
+	virtual void OnTick_Handle_ShowEditorIcons();
+#endif // #if WITH_EDITOR
 
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "0 Setup")
 	float GlobalPlayRate;
+#endif // #if WITH_EDITORONLY_DATA
+
+#if WITH_EDITOR
 
 	TCsFloat_Ref GlobalPlayRateHandle;
 
 	float Last_GlobalPlayRate;
 
-	virtual void OnTick_HandleGlobalPlayRate();
+	virtual void OnTick_Handle_GlobalPlayRate();
+
+#endif // #if WITH_EDITOR
 
 	TCsViewType CurrentViewType;
 
 #if WITH_EDITOR
-
 	// Coroutine Scheduler
 
 	void Spawn_CoroutineScheduler();
@@ -100,6 +137,11 @@ public:
 	void LoadAnim(const FString& MemberName, FCsAnimInstance_AnimMontage &Anim, FCsAnimMontage* DataAnim);
 	void LoadAnim(const FString& MemberName, const TCsViewType &ViewType, FCsAnimInstance_AnimSequence &Anim, FCsFpsAnimSequence* DataAnim);
 	void LoadAnim(const FString& MemberName, const TCsViewType &ViewType, FCsAnimInstance_AnimMontage &Anim, FCsFpsAnimMontage* DataAnim);
+
+	void LoadBlendSpace(const FString& MemberName, FCsAnimInstance_BlendSpace1D &Blend, FCsBlendSpace1D* DataBlend);
+	void LoadBlendSpace(const FString& MemberName, FCsAnimInstance_BlendSpace &Blend, FCsBlendSpace* DataBlend);
+	void LoadBlendSpace(const FString& MemberName, const TCsViewType &ViewType, FCsAnimInstance_BlendSpace1D &Blend, FCsFpsBlendSpace1D* DataBlend);
+	void LoadBlendSpace(const FString& MemberName, const TCsViewType &ViewType, FCsAnimInstance_BlendSpace &Blend, FCsFpsBlendSpace* DataBlend);
 
 #pragma endregion Anims
 

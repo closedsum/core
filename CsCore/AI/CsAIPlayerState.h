@@ -18,14 +18,18 @@ class CSCORE_API ACsAIPlayerState : public ACsPlayerStateBase
 #pragma region
 public:
 
-// Requesting Player State on Client
+	virtual void OnTick_OnBoard() override;
 
-	virtual void ServerRequestUniqueMappingId_Internal(const uint8 &ClientMappingId, ACsPlayerStateBase* RequestingPlayerState) override;
-	virtual void ClientRecieveUniqueMappingId_Internal(ACsPlayerStateBase* RequestingPlayerState, const uint8 &MappingId) override;
+	// Requesting Player State on Client
+#pragma region
+
+	virtual void ClientRecieveUniqueMappingId_AI_Internal(const uint8 &MappingId) override;
+
+#pragma endregion Requesting Player State on Client
 
 // Handshaking
 
-	virtual void ServerSendOnBoardCompleted_Internal(const uint8 &ClientMappingId, const uint8 &MappingId) override;
+	virtual void ServerSendOnBoardCompleted_AI_Internal(const uint8 &ClientMappingId, const uint8 &MappingId) override;
 
 	virtual bool IsOnBoardCompleted_Game() override;
 

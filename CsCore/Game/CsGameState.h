@@ -279,6 +279,12 @@ public:
 
 	class ACsPlayerState* GetPlayerState(const uint8 &MappingId);
 
+	template<typename T>
+	T* GetPlayerState(const uint8 &MappingId)
+	{
+		return Cast<T>(GetPlayerState(MappingId));
+	}
+
 	void OnTick_HandleBroadcastingPlayerStateFullyReplicatedAndLoaded();
 
 	void SetPlayerStateMappingRelationshipFlag(const uint8 &ClientMappingId, const uint8 &MappingId);
@@ -304,6 +310,12 @@ public:
 	TMap<uint8, bool> HasAIPlayerStateFullyReplicatedAndLoadedBroadcastFlags;
 
 	class ACsAIPlayerState* GetAIPlayerState(const uint8 &MappingId);
+
+	template<typename T>
+	T* GetAIPlayerState(const uint8 &MappingId)
+	{
+		return Cast<T>(GetAIPlayerState(MappingId));
+	}
 
 	void OnTick_HandleBroadcastingAIPlayerStateFullyReplicatedAndLoaded();
 

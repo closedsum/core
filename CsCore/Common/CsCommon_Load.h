@@ -2031,6 +2031,16 @@ template<typename T>
 	static void LoadFCsFpsAnimMontage(const FString &MemberName, struct FCsFpsAnimMontage* Anim, const ECsLoadFlags &LoadFlags);
 	static void LoadFCsFpsAnimMontage(const FString &MemberName, struct FCsFpsAnimMontage* Anim, const TCsViewType &ViewType);
 
+	static void LoadFCsBlendSpace1D(const FString &MemberName, struct FCsBlendSpace1D *Blend, const ECsLoadFlags &LoadFlags);
+	static void LoadFCsBlendSpace1D(const FString &MemberName, struct FCsBlendSpace1D* Blend);
+	static void LoadFCsFpsBlendSpace1D(const FString &MemberName, struct FCsFpsBlendSpace1D* Blend, const ECsLoadFlags &LoadFlags);
+	static void LoadFCsFpsBlendSpace1D(const FString &MemberName, struct FCsFpsBlendSpace1D* Blend, const TCsViewType &ViewType);
+
+	static void LoadFCsBlendSpace(const FString &MemberName, struct FCsBlendSpace* Blend, const ECsLoadFlags &LoadFlags);
+	static void LoadFCsBlendSpace(const FString &MemberName, struct FCsBlendSpace* Blend);
+	static void LoadFCsFpsBlendSpace(const FString &MemberName, struct FCsFpsBlendSpace* Blend, const ECsLoadFlags &LoadFlags);
+	static void LoadFCsFpsBlendSpace(const FString &MemberName, struct FCsFpsBlendSpace* Blend, const TCsViewType &ViewType);
+
 	static bool CanLoad(void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags, const int32 &LoadCodes);
 	static bool CanLoad(void* InObject, UClass* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags, const int32 &LoadCodes);
 

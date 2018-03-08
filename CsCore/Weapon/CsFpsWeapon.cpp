@@ -455,13 +455,13 @@ void ACsFpsWeapon::Disable()
 
 void ACsFpsWeapon::Show()
 {
-	const bool IsControlledByClient = UCsCommon::IsLocalPawn(GetWorld(), GetMyPawn());
+	const TCsViewType ViewType = GetCurrentViewType();
+
+	Mesh1P->SetHiddenInGame(ViewType != ECsViewType::FirstPerson);
+	Mesh1P->SetComponentTickEnabled(ViewType == ECsViewType::FirstPerson);
 
 	// 1P
-	Mesh1P->SetHiddenInGame(!IsControlledByClient);
-	Mesh1P->SetComponentTickEnabled(IsControlledByClient);
-
-	if (IsControlledByClient)
+	if (ViewType == ECsViewType::FirstPerson)
 	{
 		Mesh1P->Activate();
 		Mesh1P->MeshComponentUpdateFlag = EMeshComponentUpdateFlag::AlwaysTickPoseAndRefreshBones;
@@ -469,10 +469,10 @@ void ACsFpsWeapon::Show()
 	}
 
 	// 3P
-	if (!IsControlledByClient ||
+	if (ViewType == ECsViewType::ThirdPerson ||
 		Role == ROLE_Authority)
 	{
-		if (!IsControlledByClient)
+		if (ViewType == ECsViewType::ThirdPerson)
 		{
 			Mesh3P->SetHiddenInGame(false);
 		}

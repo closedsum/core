@@ -18,11 +18,11 @@ UCsBTService_SetRandomLocation::UCsBTService_SetRandomLocation(const FObjectInit
 	BlackboardKey.AddVectorFilter(this, GET_MEMBER_NAME_CHECKED(UCsBTService_SetRandomLocation, BlackboardKey));
 }
 
-void UCsBTService_SetRandomLocation::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+void UCsBTService_SetRandomLocation::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	//SCOPE_CYCLE_COUNTER(STAT_UCsBTService_SetRandomLocation);
 
-	Super::OnBecomeRelevant(OwnerComp, NodeMemory);
+	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
 	UBlackboardComponent* Blackboard = OwnerComp.GetBlackboardComponent();
 	ACsAIController*  Controller	 = Cast<ACsAIController>(OwnerComp.GetOwner());
@@ -42,15 +42,15 @@ void UCsBTService_SetRandomLocation::OnBecomeRelevant(UBehaviorTreeComponent& Ow
 
 			const bool bResult = NavSys->GetRandomPointInNavigableRadius(Origin, Radius, OutLocation, NavData, UNavigationQueryFilter::GetQueryFilter(*NavData, Pawn, FilterClass));
 
-			Blackboard->SetValue<UBlackboardKeyType_Vector>(BlackboardKey.GetSelectedKeyID(), bResult ? OutLocation.Location : Origin);
+			Blackboard->SetValue<UBlackboardKeyType_Vector>(BlackboardKey.SelectedKeyName, bResult ? OutLocation.Location : Origin);
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsBTService_SetRandomLocation::OnBecomeRelevant: No NavigationData found."));
+			UE_LOG(LogCs, Warning, TEXT("UCsBTService_SetRandomLocation::TickNode: No NavigationData found."));
 		}
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsBTService_SetRandomLocation::OnBecomeRelevant: No NavigationSystem found."));
+		UE_LOG(LogCs, Warning, TEXT("UCsBTService_SetRandomLocation::TickNode: No NavigationSystem found."));
 	}
 }

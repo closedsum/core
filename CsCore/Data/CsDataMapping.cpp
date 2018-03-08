@@ -447,6 +447,8 @@ void ACsDataMapping::GetLoadAssetsShortCodes(const TCsLoadAssetsType &AssetsType
 {
 }
 
+TCsAssetType ACsDataMapping::GetAssetTypeFromShortCode(const FName &ShortCode) { return AssetType_MAX; }
+
 void ACsDataMapping::GetLoadStringAssetReferences(const TCsLoadAssetsType &AssetsType, TArray<FStringAssetReference> &OutAssetReferences)
 {
 }

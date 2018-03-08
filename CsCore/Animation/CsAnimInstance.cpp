@@ -13,6 +13,7 @@
 UCsAnimInstance::UCsAnimInstance(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+#if WITH_EDITOR
 	DoSetupInGameSimulationHandle.Set(&DoSetupInGameSimulation);
 	ShowEmitterEditorIconsHandle.Set(&ShowEmitterEditorIcons);
 	ShowSoundEditorIconsHandle.Set(&ShowSoundEditorIcons);
@@ -20,6 +21,7 @@ UCsAnimInstance::UCsAnimInstance(const FObjectInitializer& ObjectInitializer)
 	GlobalPlayRate = 1.0f;
 
 	GlobalPlayRateHandle.Set(&GlobalPlayRate);
+#endif // #if WITH_EDITOR
 
 	CurrentViewType = ECsViewType::ThirdPerson;
 }
@@ -49,28 +51,29 @@ void UCsAnimInstance::NativeInitializeAnimation()
 #endif // #if WITH_EDITOR
 
 	OwningPawn = TryGetPawnOwner();
+	MyOwningActor = GetOwningActor();
 }
 
 APawn* UCsAnimInstance::GetOwningPawn() { return OwningPawn.IsValid() ? OwningPawn.Get() : nullptr; }
+AActor* UCsAnimInstance::GetMyOwningActor() { return MyOwningActor.IsValid() ? MyOwningActor.Get() : nullptr; }
 
 USkeletalMeshComponent* UCsAnimInstance::GetSkeletalMeshComponent(){ return GetSkelMeshComponent(); }
 
 // Setup
 #pragma region
 
+#if WITH_EDITOR
 void UCsAnimInstance::SetupInGameSimulation()
 {
-#if WITH_EDITOR
 	if (!UCsCommon::IsPlayInEditorPreview(GetWorld()))
 		return;
 
 	Spawn_CoroutineScheduler();
 	Spawn_Manager_FX();
 	Spawn_Manager_Sound();
-#endif // #if WITH_EDITOR
 }
 
-void UCsAnimInstance::OnTick_HandleSetupInGameSimulation()
+void UCsAnimInstance::OnTick_Handle_SetupInGameSimulation()
 {
 	if (DoSetupInGameSimulation)
 	{
@@ -86,10 +89,8 @@ void UCsAnimInstance::OnTick_HandleSetupInGameSimulation()
 	}
 }
 
-void UCsAnimInstance::OnTick_HandleEditorIcons()
+void UCsAnimInstance::OnTick_Handle_ShowEditorIcons()
 {
-#if WITH_EDITOR
-	
 	ShowEmitterEditorIconsHandle.UpdateIsDirty();
 
 	if (ShowEmitterEditorIconsHandle.HasChanged())
@@ -98,10 +99,9 @@ void UCsAnimInstance::OnTick_HandleEditorIcons()
 			MyManager_FX->ToggleEmitterEditorIcons(ShowEmitterEditorIcons);
 		ShowEmitterEditorIconsHandle.Clear();
 	}
-#endif // #if WITH_EDITOR
 }
 
-void UCsAnimInstance::OnTick_HandleGlobalPlayRate()
+void UCsAnimInstance::OnTick_Handle_GlobalPlayRate()
 {
 	GlobalPlayRateHandle.UpdateIsDirty();
 
@@ -114,12 +114,8 @@ void UCsAnimInstance::OnTick_HandleGlobalPlayRate()
 	}
 }
 
-#if WITH_EDITOR
-
 void UCsAnimInstance::Spawn_CoroutineScheduler()
 {
-	// Check if CoroutineScheduler was already created. This may be the case when Refreshing Nodes for the AnimInstance
-
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 
 	if (!Scheduler)
@@ -128,30 +124,7 @@ void UCsAnimInstance::Spawn_CoroutineScheduler()
 
 		Scheduler = UCsCoroutineScheduler::Get();
 	}
-
 	Scheduler->MyOwner = this;
-
-	/*
-	for (TActorIterator<ACsCoroutineScheduler> Itr(GetWorld()); Itr; ++Itr)
-	{
-		if (Itr &&
-			Itr->GetMyOwner() == this)
-		{
-			CoroutineScheduler = *Itr;
-			break;
-		}
-	}
-
-	if (!CoroutineScheduler)
-	{
-		FActorSpawnParameters SpawnInfo;
-		SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		SpawnInfo.ObjectFlags |= RF_Transient;
-
-		CoroutineScheduler = GetWorld()->SpawnActor<ACsCoroutineScheduler>(SpawnInfo);
-		CoroutineScheduler->MyOwner = this;
-	}
-	*/
 }
 
 ACsManager_FX* UCsAnimInstance::GetManager_FX()
@@ -220,21 +193,21 @@ void UCsAnimInstance::Spawn_Manager_Sound()
 // Tick
 void UCsAnimInstance::NativeUpdateAnimation(float DeltaTimeX)
 {
-#if WITH_EDITOR
-	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
-	{
-		OnTick_HandleSetupInGameSimulation();
-		OnTick_HandleEditorIcons();
-		OnTick_HandleGlobalPlayRate();
-
-		if (UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get())
-			Scheduler->OnTick_Update(DeltaTimeX);
-		if (ACsManager_FX* MyManager_FX = GetManager_FX())
-			MyManager_FX->OnTick(DeltaTimeX);
-	}
-#endif // #if WITH_EDITOR
-
 	Super::NativeUpdateAnimation(DeltaTimeX);
+
+#if WITH_EDITOR
+	if (!UCsCommon::IsPlayInEditorPreview(GetWorld()))
+		return;
+
+	OnTick_Handle_SetupInGameSimulation();
+	OnTick_Handle_ShowEditorIcons();
+	OnTick_Handle_GlobalPlayRate();
+
+	if (UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get())
+		Scheduler->OnTick_Update(DeltaTimeX);
+	if (ACsManager_FX* MyManager_FX = GetManager_FX())
+		MyManager_FX->OnTick(DeltaTimeX);
+#endif // #if WITH_EDITOR
 }
 
 // Anims
@@ -337,6 +310,7 @@ void UCsAnimInstance::LoadAnim(const FString& MemberName, const TCsViewType &Vie
 
 		if (UAnimMontage* Seq = DataAnim->Get(ViewType))
 		{
+			Anim.Anim		   = DataAnim->GetAssetPtr(ViewType);
 			Anim.Anim_Internal = Seq;
 		}
 		else
@@ -352,6 +326,123 @@ void UCsAnimInstance::LoadAnim(const FString& MemberName, const TCsViewType &Vie
 		{
 			//																					   TEXT("AnimMontage"), TEXT("Anim Montage")
 			UCsCommon_Load::LoadTAssetPtr<UAnimMontage>(MemberName, Anim.Anim, Anim.Anim_Internal, ECsAnimCachedString::Str::AnimMontage, ECsAnimCachedString::Str::Anim_Montage);
+		}
+	}
+}
+
+void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, FCsAnimInstance_BlendSpace1D &Blend, FCsBlendSpace1D* DataBlend)
+{
+	if (DataBlend &&
+		Blend.UseDataValueAsDefault)
+	{
+		UCsCommon_Load::LoadFCsBlendSpace1D(MemberName, DataBlend);
+
+		if (UBlendSpace1D* Space = DataBlend->Get())
+		{
+			Blend.Blend = DataBlend->Blend;
+			Blend.Blend_Internal = Space;
+		}
+		else
+		{
+			//																							TEXT("BlendSpace1D"), TEXT("Blend Space 1D")
+			UCsCommon_Load::LoadTAssetPtr<UBlendSpace1D>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCachedString::Str::BlendSpace1D, ECsAnimCachedString::Str::Blend_Space_1D);
+		}
+	}
+	else
+	{
+		//						 != TEXT("")
+		if (Blend.Blend.ToString() != ECsAnimCachedString::Str::Empty)
+		{
+			//																							TEXT("BlendSpace1D"), TEXT("Blend Space 1D")
+			UCsCommon_Load::LoadTAssetPtr<UBlendSpace1D>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCachedString::Str::BlendSpace1D, ECsAnimCachedString::Str::Blend_Space_1D);
+		}
+	}
+	Blend.Update();
+}
+
+void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, FCsAnimInstance_BlendSpace &Blend, FCsBlendSpace* DataBlend)
+{
+	if (DataBlend &&
+		Blend.UseDataValueAsDefault)
+	{
+		UCsCommon_Load::LoadFCsBlendSpace(MemberName, DataBlend);
+
+		if (UBlendSpace* Space = DataBlend->Get())
+		{
+			Blend.Blend = DataBlend->Blend;
+			Blend.Blend_Internal = Space;
+		}
+		else
+		{
+			//																						  TEXT("BlendSpace"), TEXT("Blend Space")
+			UCsCommon_Load::LoadTAssetPtr<UBlendSpace>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCachedString::Str::BlendSpace, ECsAnimCachedString::Str::Blend_Space);
+		}
+	}
+	else
+	{
+		//						 != TEXT("")
+		if (Blend.Blend.ToString() != ECsAnimCachedString::Str::Empty)
+		{
+			//																						  TEXT("BlendSpace"), TEXT("Blend Space")
+			UCsCommon_Load::LoadTAssetPtr<UBlendSpace>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCachedString::Str::BlendSpace, ECsAnimCachedString::Str::Blend_Space);
+		}
+	}
+}
+
+void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, const TCsViewType &ViewType, FCsAnimInstance_BlendSpace1D &Blend, FCsFpsBlendSpace1D* DataBlend)
+{
+	if (DataBlend &&
+		Blend.UseDataValueAsDefault)
+	{
+		UCsCommon_Load::LoadFCsFpsBlendSpace1D(MemberName, DataBlend, ViewType);
+
+		if (UBlendSpace1D* Space = DataBlend->Get(ViewType))
+		{
+			Blend.Blend			 = DataBlend->GetAssetPtr(ViewType);
+			Blend.Blend_Internal = Space;
+		}
+		else
+		{
+			//																							TEXT("BlendSpace1D"), TEXT("Blend Space 1D")
+			UCsCommon_Load::LoadTAssetPtr<UBlendSpace1D>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCachedString::Str::BlendSpace1D, ECsAnimCachedString::Str::Blend_Space_1D);
+		}
+	}
+	else
+	{
+		//						 != TEXT("")
+		if (Blend.Blend.ToString() != ECsAnimCachedString::Str::Empty)
+		{
+			//																							TEXT("BlendSpace1D"), TEXT("Anim Sequence")
+			UCsCommon_Load::LoadTAssetPtr<UBlendSpace1D>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCachedString::Str::BlendSpace1D, ECsAnimCachedString::Str::Blend_Space_1D);
+		}
+	}
+}
+
+void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, const TCsViewType &ViewType, FCsAnimInstance_BlendSpace &Blend, FCsFpsBlendSpace* DataBlend)
+{
+	if (DataBlend &&
+		Blend.UseDataValueAsDefault)
+	{
+		UCsCommon_Load::LoadFCsFpsBlendSpace(MemberName, DataBlend, ViewType);
+
+		if (UBlendSpace* Space = DataBlend->Get(ViewType))
+		{
+			Blend.Blend			 = DataBlend->GetAssetPtr(ViewType);
+			Blend.Blend_Internal = Space;
+		}
+		else
+		{
+			//																						  TEXT("BlendSpace"), TEXT("Blend Space")
+			UCsCommon_Load::LoadTAssetPtr<UBlendSpace>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCachedString::Str::BlendSpace, ECsAnimCachedString::Str::Blend_Space);
+		}
+	}
+	else
+	{
+		//						 != TEXT("")
+		if (Blend.Blend.ToString() != ECsAnimCachedString::Str::Empty)
+		{
+			//																					      TEXT("BlendSpace"), TEXT("Blend Space")
+			UCsCommon_Load::LoadTAssetPtr<UBlendSpace>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCachedString::Str::BlendSpace, ECsAnimCachedString::Str::Blend_Space);
 		}
 	}
 }

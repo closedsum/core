@@ -10,6 +10,7 @@
 ACsAIController::ACsAIController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	bWantsPlayerState = true;
 	PlayerStateClass = ACsAIPlayerState::StaticClass();
 }
 

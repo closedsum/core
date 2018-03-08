@@ -71,6 +71,12 @@ void ACsPlayerState::ClientRecieveLocalUniqueMappingId_Internal(const uint8 &Cli
 	RequestingPlayerState->OnBoardState = ECsPlayerStateBaseOnBoardState::RecievedLocalUniqueMappingId;
 }
 
+	// Requesting Player State on Client
+#pragma region
+
+		// Player
+#pragma region
+
 void ACsPlayerState::ServerRequestUniqueMappingId_Internal(const uint8 &ClientMappingId, ACsPlayerStateBase* RequestingPlayerState)
 {
 	// Check Valid ClientMappingId
@@ -121,21 +127,81 @@ void ACsPlayerState::ServerRequestUniqueMappingId_Internal(const uint8 &ClientMa
 	ClientPlayerState->ClientRecieveUniqueMappingId(RequestingPlayerState, RequestingPlayerState->UniqueMappingId);
 }
 
-void ACsPlayerState::ClientRecieveUniqueMappingId_Internal(ACsPlayerStateBase* RequestingPlayerState, const uint8 &MappingId)
+void ACsPlayerState::ClientRecieveUniqueMappingId_Internal(const uint8 &MappingId)
 {
-	RequestingPlayerState->UniqueMappingId = MappingId;
+	UniqueMappingId = MappingId;
 
 	ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
 
-	GameState->PlayerStateMappings.Add(MappingId, Cast<ACsPlayerState>(RequestingPlayerState));
+	GameState->PlayerStateMappings.Add(MappingId, this);
 
 	if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		UE_LOG(LogCs, Log, TEXT("ACsPlayerState::ClientRecieveUniqueMappingId: %s recieved UniqueMappingId: %d"), *RequestingPlayerState->PlayerName, MappingId);
+		UE_LOG(LogCs, Log, TEXT("ACsPlayerState::ClientRecieveUniqueMappingId: %s recieved UniqueMappingId: %d"), *PlayerName, MappingId);
 		UE_LOG(LogCs, Log, TEXT("ACsPlayerState::ClientRecieveUniqueMappingId: State Change: WaitingForUniqueMappingId -> RecievedUniqueMappingId"));
 	}
-	RequestingPlayerState->OnBoardState = ECsPlayerStateBaseOnBoardState::RecievedUniqueMappingId;
+	OnBoardState = ECsPlayerStateBaseOnBoardState::RecievedUniqueMappingId;
 }
+
+#pragma endregion Player
+		
+		// AI
+#pragma region
+
+void ACsPlayerState::ServerRequestUniqueMappingId_AI_Internal(const uint8 &ClientMappingId, ACsPlayerStateBase* RequestingPlayerState)
+{
+	// Check Valid ClientMappingId
+	if (ClientMappingId == CS_INVALID_PLAYER_STATE_UNIQUE_MAPPING_ID)
+	{
+		if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
+		{
+			UE_LOG(LogCs, Warning, TEXT("ACsAIPlayerState::ServerRequestUniqueMappingId_AI: ClientMappingId is INVALID."));
+		}
+		return;
+	}
+
+	ACsGameState* GameState			  = GetWorld()->GetGameState<ACsGameState>();
+	ACsPlayerState* ClientPlayerState = GameState->GetPlayerState(ClientMappingId);
+
+	// Check VALID ClientPlayerState
+	if (!ClientPlayerState)
+	{
+		if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
+		{
+			UE_LOG(LogCs, Warning, TEXT("ACsAIPlayerState::ServerRequestUniqueMappingId_AI: Client PlayerState is nullptr."));
+		}
+		return;
+	}
+	// Check VALID RequestingPlayerState
+	if (!RequestingPlayerState)
+	{
+		if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
+		{
+			UE_LOG(LogCs, Warning, TEXT("ACsAIPlayerState::ServerRequestUniqueMappingId_AI: %s is requesting PlayerState that is nullptr."), *ClientPlayerState->PlayerName);
+		}
+		return;
+	}
+	// Check VALID UniqueMappingId
+	if (RequestingPlayerState->UniqueMappingId == CS_INVALID_PLAYER_STATE_UNIQUE_MAPPING_ID)
+	{
+		if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
+		{
+			UE_LOG(LogCs, Warning, TEXT("ACsAIPlayerState::ServerRequestUniqueMappingId_AI: %s is requesting %s's UniqueMappingId is INVALID."), *ClientPlayerState->PlayerName, *RequestingPlayerState->PlayerName);
+		}
+		ClientPlayerState->RequestUniqueMappingId_AI(RequestingPlayerState);
+		return;
+	}
+
+	if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
+	{
+		UE_LOG(LogCs, Log, TEXT("ACsAIPlayerState::ServerRequestUniqueMappingId_AI: %s is requesting %s's UniqueMappingId: %d"), *ClientPlayerState->PlayerName, *RequestingPlayerState->PlayerName, RequestingPlayerState->UniqueMappingId);
+	}
+	ClientPlayerState->ClientRecieveUniqueMappingId_AI(RequestingPlayerState, RequestingPlayerState->UniqueMappingId);
+}
+
+#pragma endregion AI
+
+#pragma endregion Requesting Player State on Client
 
 void ACsPlayerState::ServerSendOnBoardCompleted_Internal(const uint8 &ClientMappingId, const uint8 &MappingId)
 {

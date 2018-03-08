@@ -28,11 +28,6 @@ void UCsAnimInstance_Character::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
 
-#if WITH_EDITOR 
-	DoSetupInGameSimulation = false;
-#endif // #if WITH_EDITOR
-
-	OwningPawn		= TryGetPawnOwner();
 	ACsPawn* MyPawn = Cast<ACsPawn>(GetOwningPawn());
 
 	if (!MyPawn)
@@ -60,49 +55,30 @@ void UCsAnimInstance_Character::NativeInitializeAnimation()
 // Setup
 #pragma region
 
+#if WITH_EDITOR
+
 void UCsAnimInstance_Character::SetupInGameSimulation()
 {
-#if WITH_EDITOR
+	Super::SetupInGameSimulation();
+
 	if (!UCsCommon::IsPlayInEditorPreview(GetWorld()))
 		return;
 
-	Super::SetupInGameSimulation();
-
-	Spawn_Manager_FX();
 	Spawn_Weapon();
 
-	// Data_Character
-	UCsCommon_Load::LoadTAssetSubclassOf(TEXT("Data_Character"), Data_Character.Data, Data_Character.Data_Internal, TEXT("MboData_Character"));
-
-	if (ACsData_Character* MyData_Charater = GetData())
-		MyData_Charater->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
-	// Data_CharacterMeshSkin
-	UCsCommon_Load::LoadTAssetSubclassOf(TEXT("Data_CharacterMeshSkin"), Data_CharacterMeshSkin.Data, Data_CharacterMeshSkin.Data_Internal, TEXT("MboData_CharacterMeshSkin"));
-
-	if (ACsData_CharacterMeshSkin* MyData_CharacterMeshSkin = GetData_CharacterMeshSkin())
-		MyData_CharacterMeshSkin->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
-	// Data_CharacterMaterialSkin
-	UCsCommon_Load::LoadTAssetSubclassOf(TEXT("Data_CharacterMaterialSkin"), Data_CharacterMaterialSkin.Data, Data_CharacterMaterialSkin.Data_Internal, TEXT("MboData_CharacterMaterialSkin"));
-
-	if (ACsData_CharacterMaterialSkin* MyData_CharacterMaterialSkin = GetData_CharacterMaterialSkin())
-		MyData_CharacterMaterialSkin->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
-	// Data_Weapon
-	UCsCommon_Load::LoadTAssetSubclassOf(TEXT("Data_Weapon"), Data_Weapon.Data, Data_Weapon.Data_Internal, TEXT("MboData_Weapon"));
-
-	if (ACsData_Weapon* MyData_Weapon = GetData_Weapon())
-		MyData_Weapon->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
-	// Data_WeaponMaterialSkin
-	UCsCommon_Load::LoadTAssetSubclassOf(TEXT("Data_WeaponMaterialSkin"), Data_WeaponMaterialSkin.Data, Data_WeaponMaterialSkin.Data_Internal, TEXT("MboData_WeaponMaterialSkin"));
-
-	if (ACsData_WeaponMaterialSkin* MyData_WeaponMaterialSkin = GetData_WeaponMaterialSkin())
-		MyData_WeaponMaterialSkin->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
+	LoadData_Character();
+	LoadData_CharacterMeshSkin();
+	LoadData_CharacterMaterialSkin();
+	LoadData_Weapon();
+	LoadData_WeaponMaterialSkin();
 
 	LoadAnims();
 
 	// Weapon
 	ApplyData_Weapon();
-#endif // #if WITH_EDITOR
 }
+
+#endif // #if WITH_EDITOR
 
 ACsWeapon* UCsAnimInstance_Character::GetWeapon()
 {
@@ -167,65 +143,130 @@ ACsData_Character* UCsAnimInstance_Character::GetData()
 	return Data_Character.Get();
 }
 
+void UCsAnimInstance_Character::LoadData_Character()
+{
+	UCsCommon_Load::LoadTAssetSubclassOf(TEXT("Data_Character"), Data_Character.Data, Data_Character.Data_Internal, TEXT("MboData_Character"));
+
+	if (ACsData_Character* MyData_Charater = GetData())
+		MyData_Charater->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
+}
+
+#if WITH_EDITOR
+
 void UCsAnimInstance_Character::OnTick_Handle_Data_Character()
 {
 	if (Data_Character.HasChanged())
 	{
+		LoadData_Character();
 		Data_Character.Update();
 	}
 }
+
+#endif // #if WITH_EDITOR
 
 ACsData_CharacterMeshSkin* UCsAnimInstance_Character::GetData_CharacterMeshSkin()
 {
 	return Data_CharacterMeshSkin.Get();
 }
 
+void UCsAnimInstance_Character::LoadData_CharacterMeshSkin()
+{
+	UCsCommon_Load::LoadTAssetSubclassOf(TEXT("Data_CharacterMeshSkin"), Data_CharacterMeshSkin.Data, Data_CharacterMeshSkin.Data_Internal, TEXT("CsData_CharacterMeshSkin"));
+
+	if (ACsData_CharacterMeshSkin* MyData_CharacterMeshSkin = GetData_CharacterMeshSkin())
+		MyData_CharacterMeshSkin->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
+}
+
+#if WITH_EDITOR
+
 void UCsAnimInstance_Character::OnTick_Handle_Data_CharacterMeshSkin()
 {
 	if (Data_CharacterMeshSkin.HasChanged())
 	{
+		LoadData_CharacterMeshSkin();
 		Data_CharacterMeshSkin.Update();
 	}
 }
+
+#endif // #if WITH_EDITOR
 
 ACsData_CharacterMaterialSkin* UCsAnimInstance_Character::GetData_CharacterMaterialSkin()
 {
 	return Data_CharacterMaterialSkin.Get();
 }
 
+void UCsAnimInstance_Character::LoadData_CharacterMaterialSkin()
+{
+	UCsCommon_Load::LoadTAssetSubclassOf(TEXT("Data_CharacterMaterialSkin"), Data_CharacterMaterialSkin.Data, Data_CharacterMaterialSkin.Data_Internal, TEXT("CsData_CharacterMaterialSkin"));
+
+	if (ACsData_CharacterMaterialSkin* MyData_CharacterMaterialSkin = GetData_CharacterMaterialSkin())
+		MyData_CharacterMaterialSkin->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
+}
+
+#if WITH_EDITOR
+
 void UCsAnimInstance_Character::OnTick_Handle_Data_CharacterMaterialSkin()
 {
 	if (Data_CharacterMaterialSkin.HasChanged())
 	{
+		LoadData_CharacterMaterialSkin();
 		Data_CharacterMaterialSkin.Update();
 	}
 }
+
+#endif // #if WITH_EDITOR
 
 ACsData_Weapon* UCsAnimInstance_Character::GetData_Weapon()
 {
 	return Data_Weapon.Get();
 }
 
+void UCsAnimInstance_Character::LoadData_Weapon()
+{
+	UCsCommon_Load::LoadTAssetSubclassOf(TEXT("Data_Weapon"), Data_Weapon.Data, Data_Weapon.Data_Internal, TEXT("CsData_Weapon"));
+
+	if (ACsData_Weapon* MyData_Weapon = GetData_Weapon())
+		MyData_Weapon->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
+}
+
+#if WITH_EDITOR
+
 void UCsAnimInstance_Character::OnTick_Handle_Data_Weapon()
 {
 	if (Data_Weapon.HasChanged())
 	{
+		LoadData_Weapon();
 		Data_Weapon.Update();
 	}
 }
+
+#endif // #if WITH_EDITOR
 
 ACsData_WeaponMaterialSkin* UCsAnimInstance_Character::GetData_WeaponMaterialSkin()
 {
 	return Data_WeaponMaterialSkin.Get();
 }
 
+void UCsAnimInstance_Character::LoadData_WeaponMaterialSkin()
+{
+	UCsCommon_Load::LoadTAssetSubclassOf(TEXT("Data_WeaponMaterialSkin"), Data_WeaponMaterialSkin.Data, Data_WeaponMaterialSkin.Data_Internal, TEXT("CsData_WeaponMaterialSkin"));
+
+	if (ACsData_WeaponMaterialSkin* MyData_WeaponMaterialSkin = GetData_WeaponMaterialSkin())
+		MyData_WeaponMaterialSkin->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
+}
+
+#if WITH_EDITOR
+
 void UCsAnimInstance_Character::OnTick_Handle_Data_WeaponMaterialSkin()
 {
 	if (Data_WeaponMaterialSkin.HasChanged())
 	{
+		LoadData_WeaponMaterialSkin();
 		Data_WeaponMaterialSkin.Update();
 	}
 }
+
+#endif // #if WITH_EDITOR
 
 #pragma endregion Data
 
@@ -240,6 +281,11 @@ UAnimMontage* UCsAnimInstance_Character::GetAnimMontage(const TCsCharacterAnim &
 }
 
 UAnimSequence* UCsAnimInstance_Character::GetAnimSequence(const TCsCharacterAnim &AnimType) const
+{
+	return nullptr;
+}
+
+UBlendSpace1D* UCsAnimInstance_Character::GetBlendSpace1D(const TCsCharacterBlendSpace &BlendType) const
 {
 	return nullptr;
 }

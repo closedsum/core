@@ -51,7 +51,7 @@ public:
 
 #if WITH_EDITOR
 	virtual void SetupInGameSimulation();
-	virtual void OnTick_HandleSetupInGameSimulation();
+	virtual void OnTick_Handle_SetupInGameSimulation();
 #endif // #if WITH_EDITOR
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "0 Setup")
@@ -76,7 +76,7 @@ public:
 #if WITH_EDITOR
 	TCsBool_Ref ShowSoundEditorIconsHandle;
 
-	virtual void OnTick_HandleEditorIcons();
+	virtual void OnTick_Handle_ShowEditorIcons();
 #endif // #if WITH_EDITOR
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "0 Setup")
@@ -88,7 +88,7 @@ public:
 
 	float Last_GlobalPlayRate;
 
-	virtual void OnTick_HandleGlobalPlayRate();
+	virtual void OnTick_Handle_GlobalPlayRate();
 
 #endif // #if WITH_EDITOR
 

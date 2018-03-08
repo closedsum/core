@@ -73,7 +73,7 @@ void UCsAnimInstance::SetupInGameSimulation()
 	Spawn_Manager_Sound();
 }
 
-void UCsAnimInstance::OnTick_HandleSetupInGameSimulation()
+void UCsAnimInstance::OnTick_Handle_SetupInGameSimulation()
 {
 	if (DoSetupInGameSimulation)
 	{
@@ -89,7 +89,7 @@ void UCsAnimInstance::OnTick_HandleSetupInGameSimulation()
 	}
 }
 
-void UCsAnimInstance::OnTick_HandleEditorIcons()
+void UCsAnimInstance::OnTick_Handle_ShowEditorIcons()
 {
 	ShowEmitterEditorIconsHandle.UpdateIsDirty();
 
@@ -101,7 +101,7 @@ void UCsAnimInstance::OnTick_HandleEditorIcons()
 	}
 }
 
-void UCsAnimInstance::OnTick_HandleGlobalPlayRate()
+void UCsAnimInstance::OnTick_Handle_GlobalPlayRate()
 {
 	GlobalPlayRateHandle.UpdateIsDirty();
 
@@ -199,9 +199,9 @@ void UCsAnimInstance::NativeUpdateAnimation(float DeltaTimeX)
 	if (!UCsCommon::IsPlayInEditorPreview(GetWorld()))
 		return;
 
-	OnTick_HandleSetupInGameSimulation();
-	OnTick_HandleEditorIcons();
-	OnTick_HandleGlobalPlayRate();
+	OnTick_Handle_SetupInGameSimulation();
+	OnTick_Handle_ShowEditorIcons();
+	OnTick_Handle_GlobalPlayRate();
 
 	if (UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get())
 		Scheduler->OnTick_Update(DeltaTimeX);

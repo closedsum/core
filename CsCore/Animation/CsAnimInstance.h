@@ -54,24 +54,30 @@ public:
 	virtual void OnTick_Handle_SetupInGameSimulation();
 #endif // #if WITH_EDITOR
 
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "0 Setup")
 	bool DoSetupInGameSimulation;
+#endif // #if WITH_EDITORONLY_DATA
 
 #if WITH_EDITOR
 	TCsBool_Ref DoSetupInGameSimulationHandle;
 #endif // #if WITH_EDITOR
 
+#if WITH_EDITORONLY_DATA
 	/** Show Emitter Editor Icons */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "0 Setup")
 	bool ShowEmitterEditorIcons;
+#endif // #if WITH_EDITORONLY_DATA
 
 #if WITH_EDITOR
 	TCsBool_Ref ShowEmitterEditorIconsHandle;
 #endif // #if WITH_EDITOR
 
+#if WITH_EDITORONLY_DATA
 	/** Show Sound Editor Icons */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "0 Setup")
 	bool ShowSoundEditorIcons;
+#endif // #if WITH_EDITORONLY_DATA
 
 #if WITH_EDITOR
 	TCsBool_Ref ShowSoundEditorIconsHandle;
@@ -79,8 +85,10 @@ public:
 	virtual void OnTick_Handle_ShowEditorIcons();
 #endif // #if WITH_EDITOR
 
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "0 Setup")
 	float GlobalPlayRate;
+#endif // #if WITH_EDITORONLY_DATA
 
 #if WITH_EDITOR
 

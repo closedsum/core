@@ -8,7 +8,7 @@
 #include "Data/CsData_Weapon.h"
 #include "Data/CsData_WeaponMaterialSkin.h"
 
-#include "Weapon/CsWeapon.h"
+#include "Weapon/CsGunWeapon.h"
 
 UCsAnimInstance_Weapon::UCsAnimInstance_Weapon(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -16,12 +16,44 @@ UCsAnimInstance_Weapon::UCsAnimInstance_Weapon(const FObjectInitializer& ObjectI
 	WeaponClass = ACsWeapon::StaticClass();
 }
 
+// Init
+void UCsAnimInstance_Weapon::NativeInitializeAnimation()
+{
+	Super::NativeInitializeAnimation();
+
+#if WITH_EDITOR
+	if (!UCsCommon::IsPlayInEditorPreview(GetWorld()))
+		return;
+
+	ACsWeapon* MyWeapon = GetMyOwningActor<ACsWeapon>();
+
+	if (!MyWeapon)
+		return;
+
+	if (UCsAnimInstance* AnimInstance = MyWeapon->GetMyOwner<UCsAnimInstance>())
+	{
+		// Data_Weapon
+		Data_Weapon.Data		  = TAssetSubclassOf<ACsData_Weapon>(MyWeapon->GetMyData_Weapon());
+		Data_Weapon.Data_Internal = MyWeapon->GetMyData_Weapon();
+
+		if (ACsGunWeapon* MyGunWeapon = Cast<ACsGunWeapon>(MyWeapon))
+		{
+			// Data_WeaponMaterialSkin
+			Data_WeaponMaterialSkin.Data		  = TAssetSubclassOf<ACsData_WeaponMaterialSkin>(MyGunWeapon->GetMyData_WeaponMaterialSkin());
+			Data_WeaponMaterialSkin.Data_Internal = MyGunWeapon->GetMyData_WeaponMaterialSkin();
+		}
+		LoadAnims();
+	}
+#endif // #if WITH_EDITOR
+}
+
 // Setup
 #pragma region
 
+#if WITH_EDITOR
+
 void UCsAnimInstance_Weapon::SetupInGameSimulation()
 {
-#if WITH_EDITOR
 	if (!UCsCommon::IsPlayInEditorPreview(GetWorld()))
 		return;
 
@@ -61,9 +93,9 @@ void UCsAnimInstance_Weapon::SetupInGameSimulation()
 
 	LoadAnims();
 	ApplyData_Weapon();
+}
 
 #endif // #if WITH_EDITOR
-}
 
 ACsWeapon* UCsAnimInstance_Weapon::GetWeapon()
 {

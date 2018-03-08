@@ -5374,7 +5374,7 @@ void UCsCommon_Load::LoadTAssetPtr_AnimBlueprint(const FString &MemberName, TAss
 	else
 	{
 																			//TEXT("_C")
-		const FString AssetDescription = TEXT("AnimBlueprint'") + AssetName + ECsLoadCachedString::Str::_C;
+		const FString AssetDescription = TEXT("AnimBlueprint'") + AssetName + ECsLoadCachedString::Str::_C + TEXT("'");
 		Internal					    = (UAnimBlueprintGeneratedClass*)StaticLoadObject(UClass::StaticClass(), NULL, *AssetDescription, NULL, LOAD_None, NULL);
 
 		if (!Internal)
@@ -5410,7 +5410,7 @@ void UCsCommon_Load::LoadTAssetPtr_AnimBlueprint(const FString &MemberName, TAss
 	else
 	{
 																			//TEXT("_C")
-		const FString AssetDescription = TEXT("AnimBlueprint'") + AssetName + ECsLoadCachedString::Str::_C;
+		const FString AssetDescription = TEXT("AnimBlueprint'") + AssetName + ECsLoadCachedString::Str::_C + TEXT("'");
 		Internal					   = (UAnimBlueprintGeneratedClass*)StaticLoadObject(UClass::StaticClass(), NULL, *AssetDescription, NULL, LOAD_None, NULL);
 
 		if (!Internal)
@@ -5484,7 +5484,7 @@ void UCsCommon_Load::LoadTAssetPtr_Blueprint(const FString &MemberName, TAssetPt
 	else
 	{
 																		//TEXT("_C")
-		const FString AssetDescription = TEXT("Blueprint'") + AssetName + ECsLoadCachedString::Str::_C;
+		const FString AssetDescription = TEXT("Blueprint'") + AssetName + ECsLoadCachedString::Str::_C + TEXT("'");
 		Internal					   = (UBlueprintGeneratedClass*)StaticLoadObject(UClass::StaticClass(), NULL, *AssetDescription, NULL, LOAD_None, NULL);
 
 		if (!Internal)
@@ -5520,7 +5520,7 @@ void UCsCommon_Load::LoadTAssetPtr_Blueprint(const FString &MemberName, TAssetPt
 	else
 	{
 																		//TEXT("_C")
-		const FString AssetDescription = TEXT("Blueprint'") + AssetName + ECsLoadCachedString::Str::_C;
+		const FString AssetDescription = TEXT("Blueprint'") + AssetName + ECsLoadCachedString::Str::_C + TEXT("'");
 		Internal					   = (UBlueprintGeneratedClass*)StaticLoadObject(UClass::StaticClass(), NULL, *AssetDescription, NULL, LOAD_None, NULL);
 
 		if (!Internal)
@@ -5561,7 +5561,7 @@ void UCsCommon_Load::LoadTArrayTAssetPtr_Blueprint(const FString &MemberName, TA
 		if (AssetName != ECsCachedString::Str::Empty)
 		{
 																			//TEXT("_C")
-			const FString AssetDescription = TEXT("Blueprint'") + AssetName + ECsLoadCachedString::Str::_C;
+			const FString AssetDescription = TEXT("Blueprint'") + AssetName + ECsLoadCachedString::Str::_C + TEXT("'");
 			UBlueprintGeneratedClass* Data = (UBlueprintGeneratedClass*)StaticLoadObject(UClass::StaticClass(), NULL, *AssetDescription, NULL, LOAD_None, NULL);
 
 			if (!Data)
@@ -5608,7 +5608,7 @@ void UCsCommon_Load::LoadTArrayTAssetPtr_Blueprint(const FString &MemberName, TA
 		if (AssetName != ECsCachedString::Str::Empty)
 		{
 																			//TEXT("_C")
-			const FString AssetDescription = TEXT("Blueprint'") + AssetName + ECsLoadCachedString::Str::_C;
+			const FString AssetDescription = TEXT("Blueprint'") + AssetName + ECsLoadCachedString::Str::_C + TEXT("'");
 			UBlueprintGeneratedClass* Data = (UBlueprintGeneratedClass*)StaticLoadObject(UClass::StaticClass(), NULL, *AssetDescription, NULL, LOAD_None, NULL);
 
 			if (!Data)
@@ -5983,6 +5983,58 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 		{
 			const FString StructName = FString::Printf(TEXT("%s.%s"), *ObjectName, *MemberName);
 
+			// FCsStaticMesh
+			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
+			{
+				if (StructProperty->ArrayDim == CS_SINGLETON)
+				{ LoadMemberStructProperty<FCsStaticMesh>(StructProperty, InStruct, StructName, LoadFlags); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, ObjectName, InStruct, InScriptStruct, LoadFlags))
+						continue;
+				}
+				continue;
+			}
+			// FCsFpsStaticMesh
+			if (StructProperty->Struct == FCsFpsStaticMesh::StaticStruct())
+			{ LoadMemberStructProperty<FCsFpsStaticMesh>(StructProperty, InStruct, StructName, LoadFlags); continue; }
+			// FCsTArrayStaticMesh
+			if (StructProperty->Struct == FCsTArrayStaticMesh::StaticStruct())
+			{ LoadMemberStructProperty<FCsTArrayStaticMesh>(StructProperty, InStruct, StructName, LoadFlags); continue; }
+			// FCsSkeletalMesh
+			if (StructProperty->Struct == FCsSkeletalMesh::StaticStruct())
+			{ LoadMemberStructProperty<FCsSkeletalMesh>(StructProperty, InStruct, StructName, LoadFlags); continue; }
+			// FCsFpsSkeletalMesh
+			if (StructProperty->Struct == FCsFpsSkeletalMesh::StaticStruct())
+			{ LoadMemberStructProperty<FCsFpsSkeletalMesh>(StructProperty, InStruct, StructName, LoadFlags); continue; }
+			// FCsTArraySkeletalMesh
+			if (StructProperty->Struct == FCsTArraySkeletalMesh::StaticStruct())
+			{ LoadMemberStructProperty<FCsTArraySkeletalMesh>(StructProperty, InStruct, StructName, LoadFlags); continue; }
+			// FCsMaterialInstance
+			if (StructProperty->Struct == FCsMaterialInstance::StaticStruct())
+			{ LoadMemberStructProperty<FCsMaterialInstance>(StructProperty, InStruct, StructName, LoadFlags); continue; }
+			// FCsMaterialInstanceConstant
+			if (StructProperty->Struct == FCsMaterialInstanceConstant::StaticStruct())
+			{ LoadMemberStructProperty<FCsMaterialInstanceConstant>(StructProperty, InStruct, StructName, LoadFlags); continue; }
+			// FCsTArrayMaterialInstanceConstant
+			if (StructProperty->Struct == FCsTArrayMaterialInstanceConstant::StaticStruct())
+			{
+				if (StructProperty->ArrayDim == CS_SINGLETON)
+				{ LoadMemberStructProperty<FCsTArrayMaterialInstanceConstant>(StructProperty, InStruct, StructName, LoadFlags); continue; }
+				if (StructProperty->ArrayDim == ECS_INTERACTIVE_STATE_MAX)
+				{ LoadMemberFixedArrayStructProperty_EnumSize<FCsTArrayMaterialInstanceConstant, ECsInteractiveState::Type, ECS_INTERACTIVE_STATE_MAX>(StructProperty, InStruct, StructName, LoadFlags, &ECsInteractiveState::ToString, nullptr); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, ObjectName, InStruct, InScriptStruct, LoadFlags))
+						continue;
+				}
+				continue;
+			}
+			// FCsFpsTArrayMaterialInstanceConstant
+			if (StructProperty->Struct == FCsFpsTArrayMaterialInstanceConstant::StaticStruct())
+			{ LoadMemberStructProperty<FCsFpsTArrayMaterialInstanceConstant>(StructProperty, InStruct, StructName, LoadFlags); continue; }
 			// FCsAnimSequence
 			if (StructProperty->Struct == FCsAnimSequence::StaticStruct())
 			{ LoadMemberStructProperty<FCsAnimSequence>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
@@ -6015,6 +6067,9 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 				}
 				continue;
 			}
+			// FCsTArrayAnimMontage
+			if (StructProperty->Struct == FCsTArrayAnimMontage::StaticStruct())
+			{ LoadMemberStructProperty<FCsTArrayAnimMontage>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
 			// FCsBlendSpace1D
 			if (StructProperty->Struct == FCsBlendSpace1D::StaticStruct())
 			{ LoadMemberStructProperty<FCsBlendSpace1D>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
@@ -6027,9 +6082,6 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 			// FCsFpsBlendSpace
 			if (StructProperty->Struct == FCsFpsBlendSpace::StaticStruct())
 			{ LoadMemberStructProperty<FCsFpsBlendSpace>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
-			// FCsTArrayAnimMontage
-			if (StructProperty->Struct == FCsTArrayAnimMontage::StaticStruct())
-			{ LoadMemberStructProperty<FCsTArrayAnimMontage>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
 			// FCsAnimBlueprint
 			if (StructProperty->Struct == FCsAnimBlueprint::StaticStruct())
 			{ LoadMemberStructProperty<FCsAnimBlueprint>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }

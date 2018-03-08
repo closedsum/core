@@ -10,6 +10,7 @@ class CSCORE_API UCsAnimInstance_Character : public UCsAnimInstance
 	
 // Event Graph
 #pragma region
+public:
 
 	virtual void NativeInitializeAnimation() override;
 
@@ -17,7 +18,9 @@ class CSCORE_API UCsAnimInstance_Character : public UCsAnimInstance
 #pragma region
 public:
 
+#if WITH_EDITOR
 	virtual void SetupInGameSimulation() override;
+#endif // #if WITH_EDITOR
 
 	// Weapon
 

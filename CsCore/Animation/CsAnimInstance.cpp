@@ -13,6 +13,7 @@
 UCsAnimInstance::UCsAnimInstance(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+#if WITH_EDITOR
 	DoSetupInGameSimulationHandle.Set(&DoSetupInGameSimulation);
 	ShowEmitterEditorIconsHandle.Set(&ShowEmitterEditorIcons);
 	ShowSoundEditorIconsHandle.Set(&ShowSoundEditorIcons);
@@ -20,6 +21,7 @@ UCsAnimInstance::UCsAnimInstance(const FObjectInitializer& ObjectInitializer)
 	GlobalPlayRate = 1.0f;
 
 	GlobalPlayRateHandle.Set(&GlobalPlayRate);
+#endif // #if WITH_EDITOR
 
 	CurrentViewType = ECsViewType::ThirdPerson;
 }
@@ -49,25 +51,26 @@ void UCsAnimInstance::NativeInitializeAnimation()
 #endif // #if WITH_EDITOR
 
 	OwningPawn = TryGetPawnOwner();
+	MyOwningActor = GetOwningActor();
 }
 
 APawn* UCsAnimInstance::GetOwningPawn() { return OwningPawn.IsValid() ? OwningPawn.Get() : nullptr; }
+AActor* UCsAnimInstance::GetMyOwningActor() { return MyOwningActor.IsValid() ? MyOwningActor.Get() : nullptr; }
 
 USkeletalMeshComponent* UCsAnimInstance::GetSkeletalMeshComponent(){ return GetSkelMeshComponent(); }
 
 // Setup
 #pragma region
 
+#if WITH_EDITOR
 void UCsAnimInstance::SetupInGameSimulation()
 {
-#if WITH_EDITOR
 	if (!UCsCommon::IsPlayInEditorPreview(GetWorld()))
 		return;
 
 	Spawn_CoroutineScheduler();
 	Spawn_Manager_FX();
 	Spawn_Manager_Sound();
-#endif // #if WITH_EDITOR
 }
 
 void UCsAnimInstance::OnTick_HandleSetupInGameSimulation()
@@ -88,8 +91,6 @@ void UCsAnimInstance::OnTick_HandleSetupInGameSimulation()
 
 void UCsAnimInstance::OnTick_HandleEditorIcons()
 {
-#if WITH_EDITOR
-	
 	ShowEmitterEditorIconsHandle.UpdateIsDirty();
 
 	if (ShowEmitterEditorIconsHandle.HasChanged())
@@ -98,7 +99,6 @@ void UCsAnimInstance::OnTick_HandleEditorIcons()
 			MyManager_FX->ToggleEmitterEditorIcons(ShowEmitterEditorIcons);
 		ShowEmitterEditorIconsHandle.Clear();
 	}
-#endif // #if WITH_EDITOR
 }
 
 void UCsAnimInstance::OnTick_HandleGlobalPlayRate()
@@ -114,12 +114,8 @@ void UCsAnimInstance::OnTick_HandleGlobalPlayRate()
 	}
 }
 
-#if WITH_EDITOR
-
 void UCsAnimInstance::Spawn_CoroutineScheduler()
 {
-	// Check if CoroutineScheduler was already created. This may be the case when Refreshing Nodes for the AnimInstance
-
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 
 	if (!Scheduler)
@@ -128,30 +124,7 @@ void UCsAnimInstance::Spawn_CoroutineScheduler()
 
 		Scheduler = UCsCoroutineScheduler::Get();
 	}
-
 	Scheduler->MyOwner = this;
-
-	/*
-	for (TActorIterator<ACsCoroutineScheduler> Itr(GetWorld()); Itr; ++Itr)
-	{
-		if (Itr &&
-			Itr->GetMyOwner() == this)
-		{
-			CoroutineScheduler = *Itr;
-			break;
-		}
-	}
-
-	if (!CoroutineScheduler)
-	{
-		FActorSpawnParameters SpawnInfo;
-		SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		SpawnInfo.ObjectFlags |= RF_Transient;
-
-		CoroutineScheduler = GetWorld()->SpawnActor<ACsCoroutineScheduler>(SpawnInfo);
-		CoroutineScheduler->MyOwner = this;
-	}
-	*/
 }
 
 ACsManager_FX* UCsAnimInstance::GetManager_FX()
@@ -220,21 +193,21 @@ void UCsAnimInstance::Spawn_Manager_Sound()
 // Tick
 void UCsAnimInstance::NativeUpdateAnimation(float DeltaTimeX)
 {
-#if WITH_EDITOR
-	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
-	{
-		OnTick_HandleSetupInGameSimulation();
-		OnTick_HandleEditorIcons();
-		OnTick_HandleGlobalPlayRate();
-
-		if (UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get())
-			Scheduler->OnTick_Update(DeltaTimeX);
-		if (ACsManager_FX* MyManager_FX = GetManager_FX())
-			MyManager_FX->OnTick(DeltaTimeX);
-	}
-#endif // #if WITH_EDITOR
-
 	Super::NativeUpdateAnimation(DeltaTimeX);
+
+#if WITH_EDITOR
+	if (!UCsCommon::IsPlayInEditorPreview(GetWorld()))
+		return;
+
+	OnTick_HandleSetupInGameSimulation();
+	OnTick_HandleEditorIcons();
+	OnTick_HandleGlobalPlayRate();
+
+	if (UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get())
+		Scheduler->OnTick_Update(DeltaTimeX);
+	if (ACsManager_FX* MyManager_FX = GetManager_FX())
+		MyManager_FX->OnTick(DeltaTimeX);
+#endif // #if WITH_EDITOR
 }
 
 // Anims

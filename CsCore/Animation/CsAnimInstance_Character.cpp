@@ -28,11 +28,6 @@ void UCsAnimInstance_Character::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
 
-#if WITH_EDITOR 
-	DoSetupInGameSimulation = false;
-#endif // #if WITH_EDITOR
-
-	OwningPawn		= TryGetPawnOwner();
 	ACsPawn* MyPawn = Cast<ACsPawn>(GetOwningPawn());
 
 	if (!MyPawn)
@@ -60,15 +55,15 @@ void UCsAnimInstance_Character::NativeInitializeAnimation()
 // Setup
 #pragma region
 
+#if WITH_EDITOR
+
 void UCsAnimInstance_Character::SetupInGameSimulation()
 {
-#if WITH_EDITOR
+	Super::SetupInGameSimulation();
+
 	if (!UCsCommon::IsPlayInEditorPreview(GetWorld()))
 		return;
 
-	Super::SetupInGameSimulation();
-
-	Spawn_Manager_FX();
 	Spawn_Weapon();
 
 	LoadData_Character();
@@ -81,8 +76,9 @@ void UCsAnimInstance_Character::SetupInGameSimulation()
 
 	// Weapon
 	ApplyData_Weapon();
-#endif // #if WITH_EDITOR
 }
+
+#endif // #if WITH_EDITOR
 
 ACsWeapon* UCsAnimInstance_Character::GetWeapon()
 {

@@ -25,36 +25,64 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "AnimInstance")
 	class APawn* GetOwningPawn();
 
+	template<typename T>
+	T* GetOwningPawn()
+	{
+		return Cast<T>(GetOwningPawn());
+	}
+
+	UPROPERTY(BlueprintReadOnly, Category = "AnimInstance")
+	TWeakObjectPtr<class AActor> MyOwningActor;
+
+	UFUNCTION(BlueprintCallable, Category = "AnimInstance")
+	class AActor* GetMyOwningActor();
+
+	template<typename T>
+	T* GetMyOwningActor()
+	{
+		return Cast<T>(GetMyOwningActor());
+	}
+
 	USkeletalMeshComponent* GetSkeletalMeshComponent();
 
 	// 0 Setup
 #pragma region
 public:
 
+#if WITH_EDITOR
 	virtual void SetupInGameSimulation();
 	virtual void OnTick_HandleSetupInGameSimulation();
+#endif // #if WITH_EDITOR
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "0 Setup")
 	bool DoSetupInGameSimulation;
 
+#if WITH_EDITOR
 	TCsBool_Ref DoSetupInGameSimulationHandle;
+#endif // #if WITH_EDITOR
 
 	/** Show Emitter Editor Icons */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "0 Setup")
 	bool ShowEmitterEditorIcons;
 
+#if WITH_EDITOR
 	TCsBool_Ref ShowEmitterEditorIconsHandle;
+#endif // #if WITH_EDITOR
 
 	/** Show Sound Editor Icons */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "0 Setup")
 	bool ShowSoundEditorIcons;
 
+#if WITH_EDITOR
 	TCsBool_Ref ShowSoundEditorIconsHandle;
 
 	virtual void OnTick_HandleEditorIcons();
+#endif // #if WITH_EDITOR
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "0 Setup")
 	float GlobalPlayRate;
+
+#if WITH_EDITOR
 
 	TCsFloat_Ref GlobalPlayRateHandle;
 
@@ -62,10 +90,11 @@ public:
 
 	virtual void OnTick_HandleGlobalPlayRate();
 
+#endif // #if WITH_EDITOR
+
 	TCsViewType CurrentViewType;
 
 #if WITH_EDITOR
-
 	// Coroutine Scheduler
 
 	void Spawn_CoroutineScheduler();

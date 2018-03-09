@@ -5,6 +5,7 @@
 #include "Types/CsTypes.h"
 #include "Types/CsTypes_Anim.h"
 #include "Types/CsTypes_Coroutine.h"
+#include "Types/CsTypes_Interpolation.h"
 #include "Player/CsPlayerController.h"
 
 #include "CsCommon.generated.h"

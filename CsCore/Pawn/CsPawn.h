@@ -128,6 +128,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	FVector CurrentCapsuleVelocityRightXY;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	float CurrentMoveRightLeftValue;
+
 	virtual void RecordVelocityAndSpeed();
 
 #pragma endregion Movement

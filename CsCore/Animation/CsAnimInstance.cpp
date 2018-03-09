@@ -23,7 +23,8 @@ UCsAnimInstance::UCsAnimInstance(const FObjectInitializer& ObjectInitializer)
 	GlobalPlayRateHandle.Set(&GlobalPlayRate);
 #endif // #if WITH_EDITOR
 
-	CurrentViewType = ECsViewType::ThirdPerson;
+	CurrentViewType  = ECsViewType::ThirdPerson;
+	DefaultLoadFlags = ECsLoadFlags::All;
 }
 
 void UCsAnimInstance::BeginDestroy()
@@ -218,7 +219,7 @@ void UCsAnimInstance::LoadAnim(const FString& MemberName, FCsAnimInstance_AnimSe
 	if (DataAnim &&
 		Anim.UseDataValueAsDefault)
 	{
-		UCsCommon_Load::LoadFCsAnimSequence(MemberName, DataAnim);
+		UCsCommon_Load::LoadFCsAnimSequence(MemberName, DataAnim, DefaultLoadFlags);
 
 		if (UAnimSequence* Seq = DataAnim->Get())
 		{
@@ -248,7 +249,7 @@ void UCsAnimInstance::LoadAnim(const FString& MemberName, FCsAnimInstance_AnimMo
 	if (DataAnim &&
 		Anim.UseDataValueAsDefault)
 	{
-		UCsCommon_Load::LoadFCsAnimMontage(MemberName, DataAnim);
+		UCsCommon_Load::LoadFCsAnimMontage(MemberName, DataAnim, DefaultLoadFlags);
 
 		if (UAnimMontage* Seq = DataAnim->Get())
 		{
@@ -335,7 +336,7 @@ void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, FCsAnimInstance_
 	if (DataBlend &&
 		Blend.UseDataValueAsDefault)
 	{
-		UCsCommon_Load::LoadFCsBlendSpace1D(MemberName, DataBlend);
+		UCsCommon_Load::LoadFCsBlendSpace1D(MemberName, DataBlend, DefaultLoadFlags);
 
 		if (UBlendSpace1D* Space = DataBlend->Get())
 		{
@@ -365,7 +366,7 @@ void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, FCsAnimInstance_
 	if (DataBlend &&
 		Blend.UseDataValueAsDefault)
 	{
-		UCsCommon_Load::LoadFCsBlendSpace(MemberName, DataBlend);
+		UCsCommon_Load::LoadFCsBlendSpace(MemberName, DataBlend, DefaultLoadFlags);
 
 		if (UBlendSpace* Space = DataBlend->Get())
 		{

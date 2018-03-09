@@ -57,6 +57,14 @@ void ACsPawn::PostInitializeComponents()
 	}
 }
 
+void ACsPawn::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	RecordRoot();
+	RecordVelocityAndSpeed();
+}
+
 void ACsPawn::OnTickActor_HandleCVars(const float &DeltaSeconds) {};
 
 bool ACsPawn::IsOnBoardCompleted_Game()

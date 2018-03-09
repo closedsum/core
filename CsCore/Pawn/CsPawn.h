@@ -19,6 +19,8 @@ class CSCORE_API ACsPawn : public ACharacter
 	UPROPERTY(BlueprintReadOnly, Category = "Pawn")
 	bool IsPlacedInWorld;
 
+	virtual void Tick(float DeltaSeconds) override;
+
 	UPROPERTY(BlueprintAssignable, Category = "Tick")
 	FBindableDynEvent_CsPawn_OnTick OnTick_ScriptEvent;
 

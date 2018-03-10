@@ -35,6 +35,14 @@ public:
 
 #pragma endregion Camera
 
+// Mesh
+#pragma region
+public:
+
+	virtual USkeletalMeshComponent* GetCurrentMesh();
+
+#pragma endregion Mesh
+
 // Weapons
 #pragma region
 public:

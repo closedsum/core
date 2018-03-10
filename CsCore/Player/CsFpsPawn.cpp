@@ -146,6 +146,16 @@ FVector ACsFpsPawn::GetFeetLocation() const
 
 #pragma endregion Camera
 
+// Mesh
+#pragma region
+
+USkeletalMeshComponent* ACsFpsPawn::GetCurrentMesh()
+{
+	return UCsCommon::IsLocalPawn(GetWorld(), this) ? Cast<USkeletalMeshComponent>(Mesh1P) : GetMesh();
+}
+
+#pragma endregion Mesh
+
 // Weapons
 #pragma region
 

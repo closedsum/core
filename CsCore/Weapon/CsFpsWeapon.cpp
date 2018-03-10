@@ -458,6 +458,7 @@ void ACsFpsWeapon::Show()
 	const TCsViewType ViewType = GetCurrentViewType();
 
 	Mesh1P->SetHiddenInGame(ViewType != ECsViewType::FirstPerson);
+	Mesh1P->SetVisibility(ViewType == ECsViewType::FirstPerson);
 	Mesh1P->SetComponentTickEnabled(ViewType == ECsViewType::FirstPerson);
 
 	// 1P
@@ -475,6 +476,7 @@ void ACsFpsWeapon::Show()
 		if (ViewType == ECsViewType::ThirdPerson)
 		{
 			Mesh3P->SetHiddenInGame(false);
+			Mesh3P->SetVisibility(true);
 		}
 		Mesh3P->Activate();
 		Mesh3P->SetComponentTickEnabled(true);
@@ -486,13 +488,17 @@ void ACsFpsWeapon::Hide()
 {
 	// 1P
 	Mesh1P->SetHiddenInGame(true);
+	Mesh1P->SetVisibility(false);
 	Mesh1P->Deactivate();
 	Mesh1P->SetComponentTickEnabled(false);
+	//Cast<UCsAnimInstance>(Mesh1P->GetAnimInstance())->StopAllMontagesEX(0.0f);
 	Mesh1P->MeshComponentUpdateFlag = EMeshComponentUpdateFlag::OnlyTickPoseWhenRendered;
 	// 3P
 	Mesh3P->SetHiddenInGame(true);
+	Mesh3P->SetVisibility(false);
 	Mesh3P->Deactivate();
 	Mesh3P->SetComponentTickEnabled(false);
+	//Cast<UCsAnimInstance>(Mesh3P->GetAnimInstance())->StopAllMontagesEX(0.0f);
 	Mesh3P->MeshComponentUpdateFlag = EMeshComponentUpdateFlag::OnlyTickPoseWhenRendered;
 }
 

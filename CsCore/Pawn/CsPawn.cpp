@@ -80,6 +80,31 @@ bool ACsPawn::IsOnBoardCompleted_Game()
 
 void ACsPawn::OnTick_HandleSetup() {}
 
+// Routines
+#pragma region
+
+/*static*/ void ACsPawn::AddRoutine(UObject* InPawn, struct FCsRoutine* Routine, const uint8 &Type)
+{
+	Cast<ACsPawn>(InPawn)->AddRoutine_Internal(Routine, Type);
+}
+
+bool ACsPawn::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
+{
+	return false;
+}
+
+/*static*/ void ACsPawn::RemoveRoutine(UObject* InPawn, struct FCsRoutine* Routine, const uint8 &Type)
+{
+	Cast<ACsPawn>(InPawn)->RemoveRoutine_Internal(Routine, Type);
+}
+
+bool ACsPawn::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
+{
+	return false;
+}
+
+#pragma endregion Routines
+
 // View
 #pragma region
 

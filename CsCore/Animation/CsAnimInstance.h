@@ -132,6 +132,7 @@ public:
 
 	// Anims
 #pragma region
+public:
 
 	ECsLoadFlags DefaultLoadFlags;
 

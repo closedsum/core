@@ -2,6 +2,7 @@
 #pragma once
 #include "GameFramework/Character.h"
 #include "Types/CsTypes_Weapon.h"
+#include "Types/CsTypes_Coroutine.h"
 #include "CsPawn.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnTick, const uint8&, MappingId, const float&, DeltaSeconds);
@@ -28,6 +29,18 @@ class CSCORE_API ACsPawn : public ACharacter
 
 	virtual bool IsOnBoardCompleted_Game();
 	virtual void OnTick_HandleSetup();
+
+// Routines
+#pragma region
+public:
+
+	static void AddRoutine(UObject* InPawn, struct FCsRoutine* Routine, const uint8 &Type);
+	virtual bool AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type);
+
+	static void RemoveRoutine(UObject* InPawn, struct FCsRoutine* Routine, const uint8 &Type);
+	virtual bool RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type);
+
+#pragma endregion Routines
 
 // View
 #pragma region

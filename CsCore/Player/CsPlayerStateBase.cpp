@@ -89,9 +89,9 @@ ACsPawn* ACsPlayerStateBase::GetMyPawn()
 // Routines
 #pragma region
 
-/*static*/ void ACsPlayerStateBase::AddRoutine(UObject* InGameState, struct FCsRoutine* Routine, const uint8 &Type)
+/*static*/ void ACsPlayerStateBase::AddRoutine(UObject* InPlayerState, struct FCsRoutine* Routine, const uint8 &Type)
 {
-	Cast<ACsPlayerStateBase>(InGameState)->AddRoutine_Internal(Routine, Type);
+	Cast<ACsPlayerStateBase>(InPlayerState)->AddRoutine_Internal(Routine, Type);
 }
 
 bool ACsPlayerStateBase::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)

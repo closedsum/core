@@ -170,7 +170,12 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 	}
 
 	ACsProjectile* GetProjectile() { return Projectile.IsValid() ? Projectile.Get() : nullptr; }
+	template<typename T>
+	T* GetProjectile() { return Cast<T>(GetProjectile()); }
+
 	ACsData_Projectile* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
+	template<typename T>
+	T* GetData() { return Cast<T>(GetData()); }
 };
 
 UCLASS()

@@ -1,7 +1,7 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "UI/CsUserWidget.h"
-#include "Types/CsTypes.h"
+#include "Types/CsTypes_Interpolation.h"
 #include "CsWidget_Fullscreen.generated.h"
 
 // Enums

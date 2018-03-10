@@ -278,9 +278,20 @@ public:
 	}
 
 	UObject* GetInstigator() { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
+	template<typename T>
+	T* GetInstigator() { return Cast<T>(GetInstigator()); }
+
 	UObject* GetOwner() { return Owner.IsValid() ? Owner.Get() : nullptr; }
+	template<typename T>
+	T* GetOwner() { return Cast<T>(GetOwner()); }
+
 	UObject* GetParent() { return Parent.IsValid() ? Parent.Get() : nullptr; }
+	template<typename T>
+	T* GetParent() { return Cast<T>(GetParent()); }
+
 	UObject* GetDelegateInvoker() { return DelegateInvoker.IsValid() ? DelegateInvoker.Get() : nullptr; }
+	template<typename T>
+	T* GetDelegateInvoker() { return Cast<T>(GetDelegateInvoker()); }
 
 	void DeAllocate()
 	{

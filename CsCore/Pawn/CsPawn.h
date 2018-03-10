@@ -2,6 +2,8 @@
 #pragma once
 #include "GameFramework/Character.h"
 #include "Types/CsTypes_Weapon.h"
+#include "Types/CsTypes_Coroutine.h"
+#include "Types/CsTypes_Damage.h"
 #include "CsPawn.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnTick, const uint8&, MappingId, const float&, DeltaSeconds);
@@ -19,6 +21,8 @@ class CSCORE_API ACsPawn : public ACharacter
 	UPROPERTY(BlueprintReadOnly, Category = "Pawn")
 	bool IsPlacedInWorld;
 
+	virtual void Tick(float DeltaSeconds) override;
+
 	UPROPERTY(BlueprintAssignable, Category = "Tick")
 	FBindableDynEvent_CsPawn_OnTick OnTick_ScriptEvent;
 
@@ -27,9 +31,26 @@ class CSCORE_API ACsPawn : public ACharacter
 	virtual bool IsOnBoardCompleted_Game();
 	virtual void OnTick_HandleSetup();
 
+// Routines
+#pragma region
+public:
+
+	static void AddRoutine(UObject* InPawn, struct FCsRoutine* Routine, const uint8 &Type);
+	virtual bool AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type);
+
+	static void RemoveRoutine(UObject* InPawn, struct FCsRoutine* Routine, const uint8 &Type);
+	virtual bool RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type);
+
+#pragma endregion Routines
+
 // View
 #pragma region
 public:
+
+	UPROPERTY(BlueprintReadWrite, Category = "View")
+	TEnumAsByte<ECsViewType::Type> CurrentViewType;
+
+	virtual TEnumAsByte<ECsViewType::Type> GetCurrentViewType();
 
 	UPROPERTY(BlueprintReadOnly, Category = "View")
 	FRotator CurrentViewRotation;
@@ -125,6 +146,9 @@ public:
 	FVector CurrentCapsuleVelocityRight;
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	FVector CurrentCapsuleVelocityRightXY;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	float CurrentMoveRightLeftValue;
 
 	virtual void RecordVelocityAndSpeed();
 
@@ -255,6 +279,13 @@ public:
 	virtual void ApplyData_Weapon();
 
 #pragma endregion Weapons
+
+// Damage
+#pragma region
+
+	virtual void ApplyDamage(FCsDamageEvent* Event);
+
+#pragma endregion Damage
 
 // Managers
 #pragma region

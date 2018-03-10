@@ -125,6 +125,7 @@ void ACsPlayerPawn::CalcCamera(float DeltaTime, struct FMinimalViewInfo& OutResu
 		return;
 	ViewingController->CalcCamera(DeltaTime, OutResult);
 	OnCalcCamera_Trace(DeltaTime, OutResult);
+	RecordView();
 }
 
 void ACsPlayerPawn::OnCalcCamera_Trace(const float &DeltaTime, const struct FMinimalViewInfo& ViewResult)

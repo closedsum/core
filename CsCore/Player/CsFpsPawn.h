@@ -15,6 +15,14 @@ class CSCORE_API ACsFpsPawn : public ACsPlayerPawn
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Mesh)
 	class UCsSkeletalMeshComponent* Mesh1P;
 
+// View
+#pragma region
+public:
+
+	virtual TEnumAsByte<ECsViewType::Type> GetCurrentViewType() override;
+
+#pragma endregion View
+
 // Camera
 #pragma region
 public:
@@ -26,6 +34,14 @@ public:
 	virtual FVector GetFeetLocation() const;
 
 #pragma endregion Camera
+
+// Mesh
+#pragma region
+public:
+
+	virtual USkeletalMeshComponent* GetCurrentMesh();
+
+#pragma endregion Mesh
 
 // Weapons
 #pragma region

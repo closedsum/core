@@ -21,30 +21,22 @@ void UCsAnimInstance_Weapon::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
 
-#if WITH_EDITOR
-	if (!UCsCommon::IsPlayInEditorPreview(GetWorld()))
-		return;
-
 	ACsWeapon* MyWeapon = GetMyOwningActor<ACsWeapon>();
 
 	if (!MyWeapon)
 		return;
 
-	if (UCsAnimInstance* AnimInstance = MyWeapon->GetMyOwner<UCsAnimInstance>())
-	{
-		// Data_Weapon
-		Data_Weapon.Data		  = TAssetSubclassOf<ACsData_Weapon>(MyWeapon->GetMyData_Weapon());
-		Data_Weapon.Data_Internal = MyWeapon->GetMyData_Weapon();
+	// Data_Weapon
+	Data_Weapon.Data		  = TAssetSubclassOf<ACsData_Weapon>(MyWeapon->GetMyData_Weapon());
+	Data_Weapon.Data_Internal = MyWeapon->GetMyData_Weapon();
 
-		if (ACsGunWeapon* MyGunWeapon = Cast<ACsGunWeapon>(MyWeapon))
-		{
-			// Data_WeaponMaterialSkin
-			Data_WeaponMaterialSkin.Data		  = TAssetSubclassOf<ACsData_WeaponMaterialSkin>(MyGunWeapon->GetMyData_WeaponMaterialSkin());
-			Data_WeaponMaterialSkin.Data_Internal = MyGunWeapon->GetMyData_WeaponMaterialSkin();
-		}
-		LoadAnims();
+	if (ACsGunWeapon* MyGunWeapon = Cast<ACsGunWeapon>(MyWeapon))
+	{
+		// Data_WeaponMaterialSkin
+		Data_WeaponMaterialSkin.Data		  = TAssetSubclassOf<ACsData_WeaponMaterialSkin>(MyGunWeapon->GetMyData_WeaponMaterialSkin());
+		Data_WeaponMaterialSkin.Data_Internal = MyGunWeapon->GetMyData_WeaponMaterialSkin();
 	}
-#endif // #if WITH_EDITOR
+	LoadAnims();
 }
 
 // Setup

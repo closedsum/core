@@ -67,10 +67,10 @@ struct FCsDamageEvent
 	float Damage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
-	UObject* Instigator;
+	TWeakObjectPtr<UObject> Instigator;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
-	UObject* Causer;
+	TWeakObjectPtr<UObject> Causer;
 
 	TCsDamageType DamageType;
 
@@ -136,7 +136,9 @@ struct FCsDamageEvent
 	void Reset()
 	{
 		Damage = 0.0f;
+		Instigator.Reset();
 		Instigator = nullptr;
+		Causer.Reset();
 		Causer = nullptr;
 		DamageType = (TCsDamageType)0;
 		DamageType_Script = CS_INVALID_DAMAGE_TYPE;
@@ -157,4 +159,12 @@ struct FCsDamageEvent
 		HitType		   = InHitType;
 		HitType_Script = (uint8)HitType;
 	}
+
+	UObject* GetInstigator() { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
+	template<typename T>
+	T* GetInstigator() { return Cast<T>(GetInstigator()); }
+
+	UObject* GetCauser() { return Causer.IsValid() ? Causer.Get() : nullptr; }
+	template<typename T>
+	T* GetCauser() { return Cast<T>(GetCauser()); }
 };

@@ -132,6 +132,9 @@ public:
 
 	// Anims
 #pragma region
+public:
+
+	ECsLoadFlags DefaultLoadFlags;
 
 	void LoadAnim(const FString& MemberName, FCsAnimInstance_AnimSequence &Anim, FCsAnimSequence* DataAnim);
 	void LoadAnim(const FString& MemberName, FCsAnimInstance_AnimMontage &Anim, FCsAnimMontage* DataAnim);

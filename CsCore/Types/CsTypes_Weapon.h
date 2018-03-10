@@ -566,3 +566,30 @@ typedef TCsData_Weapon_FireMode(*TCsStringToDataWeaponFireMode)(const FString&);
 											StringToDataWeaponFireMode = &ECsData_Weapon_FireMode::ToType;
 
 #pragma endregion Weapon
+
+// Melee
+#pragma region
+
+namespace ECsMeleeStyle
+{
+	enum Type : uint8;
+}
+
+typedef ECsMeleeStyle::Type TCsMeleeStyle;
+
+// MeleeStyleToString
+typedef FString(*TCsMeleeStyleToString)(const TCsMeleeStyle&);
+// StringToMeleeStyle
+typedef TCsMeleeStyle(*TCsStringToMeleeStyle)(const FString&);
+
+#define CS_DECLARE_MELEE_STYLE	TCsMeleeStyle MeleeStyle_MAX; \
+								uint8 MELEE_STYLE_MAX; \
+								TCsMeleeStyleToString MeleeStyleToString; \
+								TCsStringToMeleeStyle StringToMeleeStyle;
+
+#define CS_DEFINE_MELEE_STYLE	MeleeStyle_MAX = ECsWeaponSlot::ECsWeaponSlot_MAX;\
+								MELEE_STYLE_MAX = (uint8)WeaponSlot_MAX \
+								MeleeStyleToString = &ECsMeleeStyle::ToString; \
+								StringToMeleeStyle = &ECsMeleeStyle::ToType;
+
+#pragma endregion Melee

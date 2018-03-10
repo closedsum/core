@@ -18,6 +18,8 @@
 ACsPawn::ACsPawn(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	CurrentViewType = ECsViewType::ThirdPerson;
+
 	WeaponClass = ACsWeapon::StaticClass();
 }
 
@@ -57,6 +59,14 @@ void ACsPawn::PostInitializeComponents()
 	}
 }
 
+void ACsPawn::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	RecordRoot();
+	RecordVelocityAndSpeed();
+}
+
 void ACsPawn::OnTickActor_HandleCVars(const float &DeltaSeconds) {};
 
 bool ACsPawn::IsOnBoardCompleted_Game()
@@ -70,8 +80,38 @@ bool ACsPawn::IsOnBoardCompleted_Game()
 
 void ACsPawn::OnTick_HandleSetup() {}
 
+// Routines
+#pragma region
+
+/*static*/ void ACsPawn::AddRoutine(UObject* InPawn, struct FCsRoutine* Routine, const uint8 &Type)
+{
+	Cast<ACsPawn>(InPawn)->AddRoutine_Internal(Routine, Type);
+}
+
+bool ACsPawn::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
+{
+	return false;
+}
+
+/*static*/ void ACsPawn::RemoveRoutine(UObject* InPawn, struct FCsRoutine* Routine, const uint8 &Type)
+{
+	Cast<ACsPawn>(InPawn)->RemoveRoutine_Internal(Routine, Type);
+}
+
+bool ACsPawn::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
+{
+	return false;
+}
+
+#pragma endregion Routines
+
 // View
 #pragma region
+
+TEnumAsByte<ECsViewType::Type> ACsPawn::GetCurrentViewType()
+{
+	return CurrentViewType;
+}
 
 void ACsPawn::RecordView() {}
 
@@ -215,6 +255,15 @@ ACsData_WeaponMaterialSkin* ACsPawn::GetCurrentData_WeaponMaterialSkin()
 void ACsPawn::ApplyData_Weapon(){}
 
 #pragma endregion Weapons
+
+// Damage
+#pragma region
+
+void ACsPawn::ApplyDamage(FCsDamageEvent* Event)
+{
+}
+
+#pragma endregion Damage
 
 // Managers
 #pragma region

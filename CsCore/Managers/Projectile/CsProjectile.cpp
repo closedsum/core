@@ -516,10 +516,19 @@ void ACsProjectile::OnHitCallback(UPrimitiveComponent* HitComp, AActor* OtherAct
 	//Event->SetHitType();
 	Event->HitInfo = HitResult;
 
-	// DamageableActor
-	if (ACsDamageableActor* DamageableActor = Cast<ACsDamageableActor>(HitResult.GetActor()))
+	// Process Damage on SERVER Only
+	if (Role == ROLE_Authority)
 	{
-		DamageableActor->ApplyDamage(Event);
+		// DamageableActor
+		if (ACsDamageableActor* DamageableActor = Cast<ACsDamageableActor>(HitResult.GetActor()))
+		{
+			DamageableActor->ApplyDamage(Event);
+		}
+		// Pawn
+		if (ACsPawn* Pawn = Cast<ACsPawn>(HitResult.GetActor()))
+		{
+			Pawn->ApplyDamage(Event);
+		}
 	}
 
 	// Impact Normal

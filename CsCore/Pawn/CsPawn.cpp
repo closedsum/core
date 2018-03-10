@@ -256,6 +256,15 @@ void ACsPawn::ApplyData_Weapon(){}
 
 #pragma endregion Weapons
 
+// Damage
+#pragma region
+
+void ACsPawn::ApplyDamage(FCsDamageEvent* Event)
+{
+}
+
+#pragma endregion Damage
+
 // Managers
 #pragma region
 

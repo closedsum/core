@@ -3,6 +3,7 @@
 #include "GameFramework/Character.h"
 #include "Types/CsTypes_Weapon.h"
 #include "Types/CsTypes_Coroutine.h"
+#include "Types/CsTypes_Damage.h"
 #include "CsPawn.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnTick, const uint8&, MappingId, const float&, DeltaSeconds);
@@ -278,6 +279,13 @@ public:
 	virtual void ApplyData_Weapon();
 
 #pragma endregion Weapons
+
+// Damage
+#pragma region
+
+	virtual void ApplyDamage(FCsDamageEvent* Event);
+
+#pragma endregion Damage
 
 // Managers
 #pragma region

@@ -33,6 +33,11 @@ class CSCORE_API ACsPawn : public ACharacter
 #pragma region
 public:
 
+	UPROPERTY(BlueprintReadWrite, Category = "View")
+	TEnumAsByte<ECsViewType::Type> CurrentViewType;
+
+	virtual TEnumAsByte<ECsViewType::Type> GetCurrentViewType();
+
 	UPROPERTY(BlueprintReadOnly, Category = "View")
 	FRotator CurrentViewRotation;
 	UPROPERTY(BlueprintReadOnly, Category = "View")

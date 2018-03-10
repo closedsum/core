@@ -18,6 +18,8 @@
 ACsPawn::ACsPawn(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	CurrentViewType = ECsViewType::ThirdPerson;
+
 	WeaponClass = ACsWeapon::StaticClass();
 }
 
@@ -80,6 +82,11 @@ void ACsPawn::OnTick_HandleSetup() {}
 
 // View
 #pragma region
+
+TEnumAsByte<ECsViewType::Type> ACsPawn::GetCurrentViewType()
+{
+	return CurrentViewType;
+}
 
 void ACsPawn::RecordView() {}
 

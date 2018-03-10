@@ -1,5 +1,6 @@
 #include "Player/CsFpsPawn.h"
 #include "CsCore.h"
+#include "Common/CsCommon.h"
 
 // Component
 #include "Components/CsSkeletalMeshComponent.h"
@@ -119,6 +120,16 @@ void ACsFpsPawn::PostInitializeComponents()
 
 	//SetActorTickEnabled(true);
 }
+
+// View
+#pragma region
+
+TEnumAsByte<ECsViewType::Type> ACsFpsPawn::GetCurrentViewType()
+{
+	return UCsCommon::IsLocalPawn(GetWorld(), this) ? ECsViewType::FirstPerson : ECsViewType::ThirdPerson;
+}
+
+#pragma endregion View
 
 // Camera
 #pragma region

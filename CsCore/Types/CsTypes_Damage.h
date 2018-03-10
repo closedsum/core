@@ -159,4 +159,12 @@ struct FCsDamageEvent
 		HitType		   = InHitType;
 		HitType_Script = (uint8)HitType;
 	}
+
+	UObject* GetInstigator() { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
+	template<typename T>
+	T* GetInstigator() { return Cast<T>(GetInstigator()); }
+
+	UObject* GetCauser() { return Causer.IsValid() ? Causer.Get() : nullptr; }
+	template<typename T>
+	T* GetCauser() { return Cast<T>(GetCauser()); }
 };

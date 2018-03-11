@@ -13,7 +13,9 @@
 UCsAnimInstance_Weapon::UCsAnimInstance_Weapon(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+#if WITH_EDITOR
 	WeaponClass = ACsWeapon::StaticClass();
+#endif // #if WITH_EDITOR
 }
 
 // Init
@@ -87,14 +89,14 @@ void UCsAnimInstance_Weapon::SetupInGameSimulation()
 	ApplyData_Weapon();
 }
 
-#endif // #if WITH_EDITOR
-
 ACsWeapon* UCsAnimInstance_Weapon::GetWeapon()
 {
 	return Weapon.IsValid() ? Weapon.Get() : nullptr;
 }
 
 void UCsAnimInstance_Weapon::ApplyData_Weapon(){}
+
+#endif // #if WITH_EDITOR
 
 #pragma endregion Setup
 
@@ -122,6 +124,8 @@ ACsData_Weapon* UCsAnimInstance_Weapon::GetData_Weapon()
 	return Data_Weapon.Get();
 }
 
+#if WITH_EDITOR
+
 void UCsAnimInstance_Weapon::OnTick_Handle_Data_Weapon()
 {
 	if (Data_Weapon.HasChanged())
@@ -132,10 +136,14 @@ void UCsAnimInstance_Weapon::OnTick_Handle_Data_Weapon()
 	}
 }
 
+#endif // #if WITH_EDITOR
+
 ACsData_WeaponMaterialSkin* UCsAnimInstance_Weapon::GetData_WeaponMaterialSkin()
 {
 	return Data_WeaponMaterialSkin.Get();
 }
+
+#if WITH_EDITOR
 
 void UCsAnimInstance_Weapon::OnTick_Handle_Data_WeaponMaterialSkin()
 {
@@ -144,6 +152,8 @@ void UCsAnimInstance_Weapon::OnTick_Handle_Data_WeaponMaterialSkin()
 		Data_WeaponMaterialSkin.Update();
 	}
 }
+
+#endif // #if WITH_EDITOR
 
 #pragma endregion Data
 

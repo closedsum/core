@@ -31,6 +31,18 @@ class CSCORE_API ACsPawn : public ACharacter
 	virtual bool IsOnBoardCompleted_Game();
 	virtual void OnTick_HandleSetup();
 
+// State
+#pragma region
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
+	float Health;
+
+	virtual void ApplyDamage(FCsDamageEvent* Event);
+
+	virtual void Die();
+
+#pragma endregion State
+
 // Routines
 #pragma region
 public:
@@ -279,13 +291,6 @@ public:
 	virtual void ApplyData_Weapon();
 
 #pragma endregion Weapons
-
-// Damage
-#pragma region
-
-	virtual void ApplyDamage(FCsDamageEvent* Event);
-
-#pragma endregion Damage
 
 // Managers
 #pragma region

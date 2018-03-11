@@ -80,6 +80,23 @@ bool ACsPawn::IsOnBoardCompleted_Game()
 
 void ACsPawn::OnTick_HandleSetup() {}
 
+// State
+#pragma region
+
+void ACsPawn::ApplyDamage(FCsDamageEvent* Event)
+{
+	Health -= FMath::CeilToInt(Event->Damage);
+
+	if (Health <= 0)
+	{
+		Health = 0.0f;
+	}
+}
+
+void ACsPawn::Die(){}
+
+#pragma endregion State
+
 // Routines
 #pragma region
 
@@ -255,15 +272,6 @@ ACsData_WeaponMaterialSkin* ACsPawn::GetCurrentData_WeaponMaterialSkin()
 void ACsPawn::ApplyData_Weapon(){}
 
 #pragma endregion Weapons
-
-// Damage
-#pragma region
-
-void ACsPawn::ApplyDamage(FCsDamageEvent* Event)
-{
-}
-
-#pragma endregion Damage
 
 // Managers
 #pragma region

@@ -43,7 +43,7 @@ public:
 
 #pragma endregion Setup
 
-	//virtual void NativeUpdateAnimation(float DeltaTimeX) override;
+	virtual void NativeUpdateAnimation(float DeltaTimeX) override;
 
 	// Data
 #pragma region

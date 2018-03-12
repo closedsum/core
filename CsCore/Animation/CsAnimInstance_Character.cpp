@@ -116,7 +116,7 @@ void UCsAnimInstance_Character::ApplyData_Weapon(){}
 
 #pragma endregion Setup
 
-/*
+
 void UCsAnimInstance_Character::NativeUpdateAnimation(float DeltaTimeX)
 {
 	Super::NativeUpdateAnimation(DeltaTimeX);
@@ -133,9 +133,7 @@ void UCsAnimInstance_Character::NativeUpdateAnimation(float DeltaTimeX)
 	if (ACsWeapon* MyWeapon = GetWeapon())
 		MyWeapon->OnTick(DeltaTimeX);
 #endif // #if WITH_EDITOR
-
 }
-*/
 
 // Data
 #pragma region

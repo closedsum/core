@@ -45,10 +45,9 @@ float ACsData_Projectile::GetGravityMultiplier() { return 0.0f; }
 #pragma region
 
 int32 ACsData_Projectile::GetDamage() { return 0; }
+bool ACsData_Projectile::CanDamageFalloff() { return false; }
 float ACsData_Projectile::GetDamageFalloff(const float &Distance) { return 1.0f; }
-float ACsData_Projectile::GetDamageFalloffRate() { return 0.0f; }
-float ACsData_Projectile::GetDamageFalloffFrequency() { return 0.0f; }
-float ACsData_Projectile::GetDamageFalloffMinimum() { return 0.0f; }
+bool ACsData_Projectile::CanDamageRadial() { return false; }
 float ACsData_Projectile::GetDamageRadial(const FVector &Origin, const FVector &Location) { return 0.0f; }
 
 #pragma endregion Damage

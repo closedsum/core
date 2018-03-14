@@ -55,16 +55,13 @@ class CSCORE_API ACsData_Projectile : public ACsData
 	virtual int32 GetDamage();
 
 	UFUNCTION(BlueprintCallable, Category = "Damage")
+	virtual bool CanDamageFalloff();
+	
+	UFUNCTION(BlueprintCallable, Category = "Damage")
 	virtual float GetDamageFalloff(const float &Distance);
 
 	UFUNCTION(BlueprintCallable, Category = "Damage")
-	virtual float GetDamageFalloffRate();
-
-	UFUNCTION(BlueprintCallable, Category = "Damage")
-	virtual float GetDamageFalloffFrequency();
-
-	UFUNCTION(BlueprintCallable, Category = "Damage")
-	virtual float GetDamageFalloffMinimum();
+	virtual bool CanDamageRadial();
 
 	UFUNCTION(BlueprintCallable, Category = "Damage")
 	virtual float GetDamageRadial(const FVector &Origin, const FVector &Location);

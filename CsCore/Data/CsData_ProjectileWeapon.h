@@ -15,9 +15,7 @@ class CSCORE_API ACsData_ProjectileWeapon : public ACsData_Weapon
 	virtual void* GetFireModeStruct(const uint8 &Index);
 	virtual UScriptStruct* GetFireModeScriptStruct();
 
-	virtual uint8 GetLocationDamageModifierCount(const TCsWeaponFireMode &FireMode);
-	virtual FName GetLocationDamageModifierBone(const TCsWeaponFireMode &FireMode, const uint8 &Index);
-	virtual float GetLocationDamageModifierMultiplier(const TCsWeaponFireMode &FireMode, const uint8 &Index);
+	virtual float GetLocationDamageModifier(const TCsWeaponFireMode &FireMode, const FName &Bone);
 
 	virtual bool UseFakeProjectile(const TCsWeaponFireMode &FireMode);
 	virtual class ACsData_Projectile* GetData_Projectile(const TCsWeaponFireMode &FireMode, const bool &IsCharged = false);

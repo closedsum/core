@@ -1460,7 +1460,7 @@ template<typename T>
 	template<typename T>
 	static void LoadTAssetPtr(const FString &MemberName, TAssetPtr<T> AssetPtr, T* &Internal, const FString &AssetType, const FString &AssetErrorMessageType)
 	{
-		const FString AssetName = AssetPtr.ToString();
+		const FString& AssetName = AssetPtr.ToString();
 
 		// (AssetName == TEXT(""))
 		if (AssetName == ECsCachedString::Str::Empty)
@@ -1501,7 +1501,7 @@ template<typename T>
 	template<typename T>
 	static void LoadTAssetPtr(const FString &MemberName, TAssetPtr<T>* AssetPtr, T* &Internal, const FString &AssetType, const FString &AssetErrorMessageType)
 	{
-		const FString AssetName = AssetPtr->ToString();
+		const FString& AssetName = AssetPtr->ToString();
 
 		// (AssetName == TEXT(""))
 		if (AssetName == ECsCachedString::Str::Empty)
@@ -1542,7 +1542,7 @@ template<typename T>
 	template<typename T>
 	static void LoadTAssetPtr(const FString &MemberName, TAssetPtr<T> AssetPtr, TWeakObjectPtr<T> &Internal, const FString &AssetType, const FString &AssetErrorMessageType)
 	{
-		const FString AssetName = AssetPtr.ToString();
+		const FString& AssetName = AssetPtr.ToString();
 
 		// (AssetName == TEXT(""))
 		if (AssetName == ECsCachedString::Str::Empty)
@@ -1589,7 +1589,7 @@ template<typename T>
 	template<typename T>
 	static void LoadTAssetSubclassOf(const FString &MemberName, TAssetSubclassOf<T> &AssetSubclassOf, T* &Internal, const FString &AssetErrorMessageType)
 	{
-		const FString AssetName = AssetSubclassOf.ToString();
+		const FString& AssetName = AssetSubclassOf.ToString();
 
 		// (AssetName == TEXT(""))
 		if (AssetName == ECsCachedString::Str::Empty)
@@ -1630,7 +1630,7 @@ template<typename T>
 	template<typename T>
 	static void LoadTAssetSubclassOf(const FString &MemberName, TAssetSubclassOf<T>* &AssetSubclassOf, T* &Internal, const FString &AssetErrorMessageType)
 	{
-		const FString AssetName = AssetSubclassOf->ToString();
+		const FString& AssetName = AssetSubclassOf->ToString();
 
 		// (AssetName == TEXT(""))
 		if (AssetName == ECsCachedString::Str::Empty)
@@ -1671,7 +1671,7 @@ template<typename T>
 	template<typename T>
 	static void LoadTAssetSubclassOf(const FString &MemberName, TAssetSubclassOf<T> &AssetSubclassOf, TWeakObjectPtr<T> &Internal, const FString &AssetErrorMessageType)
 	{
-		const FString AssetName = AssetSubclassOf.ToString();
+		const FString& AssetName = AssetSubclassOf.ToString();
 
 		// (AssetName == TEXT(""))
 		if (AssetName == ECsCachedString::Str::Empty)
@@ -1714,7 +1714,7 @@ template<typename T>
 	{
 		OutAsset = nullptr;
 
-		const FString AssetName = AssetSubclassOf.ToString();
+		const FString& AssetName = AssetSubclassOf.ToString();
 
 		// (AssetName == TEXT(""))
 		if (AssetName == ECsCachedString::Str::Empty)
@@ -1815,7 +1815,7 @@ template<typename T>
 			{
 				TAssetPtr<T>& AssetPtr				  = ArrayAssetPtr[I];
 				const FStringAssetReference& AssetRef = AssetPtr.ToStringReference();
-				const FString AssetName				  = AssetRef.ToString();
+				const FString& AssetName			  = AssetRef.ToString();
 
 				// (AssetName != TEXT(""))
 				if (AssetName != ECsCachedString::Str::Empty)
@@ -1861,7 +1861,7 @@ template<typename T>
 			{
 				TAssetPtr<T>& AssetPtr				  = (*ArrayAssetPtr)[I];
 				const FStringAssetReference& AssetRef = AssetPtr.ToStringReference();
-				const FString AssetName				  = AssetRef.ToString();
+				const FString& AssetName			  = AssetRef.ToString();
 
 				// (AssetName != TEXT(""))
 				if (AssetName != ECsCachedString::Str::Empty)
@@ -1907,7 +1907,7 @@ template<typename T>
 			{
 				TAssetPtr<T>& AssetPtr				  = ArrayAssetPtr[I];
 				const FStringAssetReference& AssetRef = AssetPtr.ToStringReference();
-				const FString AssetName				  = AssetRef.ToString();
+				const FString& AssetName			  = AssetRef.ToString();
 
 				// (AssetName != TEXT(""))
 				if (AssetName != ECsCachedString::Str::Empty)
@@ -1982,7 +1982,7 @@ template<typename T>
 			{
 				TAssetSubclassOf<T>& AssetSubclassOf  = (*ArrayAssetSubclassOf)[I];
 				const FStringAssetReference& AssetRef = AssetSubclassOf.ToStringReference();
-				const FString AssetName				  = AssetRef.ToString();
+				const FString& AssetName			  = AssetRef.ToString();
 
 				// (AssetName != TEXT(""))
 				if (AssetName != ECsCachedString::Str::Empty)

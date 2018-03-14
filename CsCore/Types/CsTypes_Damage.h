@@ -56,6 +56,72 @@ USTRUCT(BlueprintType)
 struct FCsDamageFalloff
 {
 	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float Rate;
+	/** Distance interval at which Falloff Rate occurs */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float Frequency;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float Minimum;
+
+	/** Maximum Distance at which Falloff happens */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float MaxDistance;
+
+	/** Whether to use an Easing Function to determine the Falloff */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (InlineEditConditionToggle))
+	bool bEasingType;
+	/** Easing method for interpolating values between the Maximum Distance and the Current Distance */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (editcondition = "bEasingType"))
+	TEnumAsByte<ECsEasingType::Type> EasingType;
+
+	TCsEasingFunction EasingFunction;
+
+	/** Whether to use a Curve [0,1] determine the Falloff */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (InlineEditConditionToggle))
+	bool bCurve;
+	/** Curve [0,1] for interpolating values between the Maximum Distance and the Current Distance*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (editcondition = "bCurve"))
+	FCsCurveFloat Curve;
+
+	FCsDamageFalloff()
+	{
+		EasingType = ECsEasingType::Linear;
+	}
+
+	~FCsDamageFalloff() {}
+
+	float GetFalloff(const float &Distance)
+	{
+		if (MaxDistance > 0.0f && Distance > MaxDistance)
+			return Minimum;
+
+		// Easing
+		if (bEasingType)
+		{
+			const float Percent = Distance / MaxDistance;
+
+			return FMath::Max(Minimum, (*EasingFunction)(Percent, 0.0f, 1.0f, 1.0f));
+		}
+		// Curve
+		else
+		if (bCurve)
+		{
+			const float Percent = Distance / MaxDistance;
+
+			return FMath::Max(Minimum, Curve.Get()->GetFloatValue(Percent));
+		}
+		// Default
+		else
+		{
+			if (Rate == 0.0f || Frequency == 0.0f)
+				return 1.0f;
+
+			return FMath::Max(Minimum, 1.0f - (Rate * FMath::FloorToFloat(Distance / Frequency)));
+		}
+	}
 };
 
 USTRUCT(BlueprintType)
@@ -79,7 +145,7 @@ struct FCsDamageRadial
 	TCsEasingFunction EasingFunction;
 
 	/** Whether to use a Curve [0,1] instead of an Easing method to interpolate values between Min and Max */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (InlineEditConditionToggle))
 	bool bCurve;
 	/** Curve [0,1] for interpolating values between Min and Max */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (editcondition = "bCurve"))
@@ -93,7 +159,7 @@ struct FCsDamageRadial
 	float DeltaRadius;
 
 	/** Whether the Damage also afflicts the Owner */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (InlineEditConditionToggle))
 	bool ApplyToOwner;
 	/** Percentage of Damage to apply to the Owner */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (editcondition = "ApplyToOwner"), meta = (ClampMin = "0.0", UIMin = "0.0"))
@@ -141,6 +207,16 @@ struct FCsDamageRadial
 		if (bCurve)
 			return Curve.Get()->GetFloatValue(Percent) * Delta + Min;
 		return (*EasingFunction)(Percent, 0.0f, 1.0f, 1.0f) * Delta + Min;
+	}
+
+	float GetOwnerDamage(const FVector &Origin, const FVector &Location)
+	{
+		if (!ApplyToOwner)
+			return 0.0f;
+		if (OwnerPercent == 0.0f)
+			return 0.0f;
+
+		return OwnerPercent * GetDamage(Origin, Location);
 	}
 };
 

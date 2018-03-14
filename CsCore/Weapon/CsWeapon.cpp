@@ -1971,91 +1971,21 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 				if (HitPawn->Role == ROLE_Authority)
 				{
 					// Apply Damage Modifiers
-					float Damage = Data_Projectile->GetDamage();
+					float& Damage = Event->Damage;
 
 					// Location based Damage
-					const uint8 Count = Data_Weapon->GetLocationDamageModifierCount(FireMode);
-
-					for (uint8 I = 0; I < Count; ++I)
-					{
-						const FName Bone = Data_Weapon->GetLocationDamageModifierBone(FireMode, I);
-
-						if (HitResult.BoneName == Bone)
-						{
-							Damage *= Data_Weapon->GetLocationDamageModifierMultiplier(FireMode, I);
-							break;
-						}
-					}
+					Damage *= Data_Weapon->GetLocationDamageModifier(FireMode, HitResult.BoneName);
 
 					// Damage Falloff
-					const float DamageFalloffRate	   = Data_Projectile->GetDamageFalloffRate();
-					const float DamageFalloffFrequency = Data_Projectile->GetDamageFalloffFrequency();
-					const float DamageFalloffMinimum   = Data_Projectile->GetDamageFalloffMinimum();
-
-					float Falloff = 0.f;
-
-					if (DamageFalloffRate > 0.f &&
-						DamageFalloffFrequency > 0.f)
-					{
-						Falloff = FMath::Max(DamageFalloffMinimum, 1.f - (DamageFalloffRate * FMath::FloorToFloat(HitResult.Distance / DamageFalloffFrequency)));
-					}
-					// NO Falloff
+					if (Data_Projectile->CanDamageFalloff())
+						Damage *= Data_Projectile->GetDamageFalloff(HitResult.Distance);
+					// Damage Radial
 					else
-					{
-						Falloff = 1.f;
-					}
-
-					Damage *= Falloff;
-
-
+					if (Data_Projectile->CanDamageRadial())
+						Damage = Data_Projectile->GetDamageRadial(HitResult.Location, HitPawn->GetActorLocation());
 
 					HitPawn->ApplyDamage(Event);
 				}
-
-				/*
-				if (Pawn->Role == ROLE_Authority)
-				{
-					float Damage = Data_Projectile->GetDamage();
-
-					if (!HitPawn)
-						continue;
-
-					// Location based Damage
-					const uint8 Count = Data_Weapon->GetLocationDamageModifierCount(FireMode);
-
-					for (uint8 I = 0; I < Count; ++I)
-					{
-						const FName Bone = Data_Weapon->GetLocationDamageModifierBone(FireMode, I);
-
-						if (HitResult.BoneName == Bone)
-						{
-							Damage *= Data_Weapon->GetLocationDamageModifierMultiplier(FireMode, I);
-							break;
-						}
-					}
-
-					// Damage Falloff
-					const float DamageFalloffRate = Data_Projectile->GetDamageFalloffRate();
-					const float DamageFalloffFrequency = Data_Projectile->GetDamageFalloffFrequency();
-					const float DamageFalloffMinimum = Data_Projectile->GetDamageFalloffMinimum();
-
-					float Falloff = 0.f;
-
-					if (DamageFalloffRate > 0.f &&
-						DamageFalloffFrequency > 0.f)
-					{
-						Falloff = FMath::Max(DamageFalloffMinimum, 1.f - (DamageFalloffRate * FMath::FloorToFloat(HitResult.Distance / DamageFalloffFrequency)));
-					}
-					else
-					{
-						Falloff = 1.f;
-					}
-
-					Damage *= Falloff;
-
-					//PawnToHit->ShooterTakeDamage(Damage, FShooterDamageEvent(EDamageType::Normal), MyPawn->GetController(), MyPawn);
-				}
-				*/
 			}
 			// World
 			else

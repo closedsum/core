@@ -9,6 +9,7 @@
 #include "Types/CsTypes_Anim.h"
 #include "Types/CsTypes_Projectile.h"
 #include "Types/CsTypes_Weapon.h"
+#include "Types/CsTypes_Damage.h"
 #include "Types/CsTypes_Interactive.h"
 #include "Types/CsTypes_Item.h"
 #include "Types/CsTypes_Recipe.h"
@@ -1818,6 +1819,12 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsProjectileMovementFunction
 			if (StructProperty->Struct == FCsProjectileMovementFunction::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsProjectileMovementFunction>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
+			// FCsDamageFalloff
+			if (StructProperty->Struct == FCsDamageFalloff::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsDamageFalloff>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
+			// FCsDamageRadial
+			if (StructProperty->Struct == FCsDamageRadial::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsDamageRadial>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
 			// FCsInventoryLoadout
 			if (StructProperty->Struct == FCsInventoryLoadout::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsInventoryLoadout>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
@@ -3789,6 +3796,12 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsProjectileMovementFunction
 			if (StructProperty->Struct == FCsProjectileMovementFunction::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsProjectileMovementFunction>(JsonObject, StructProperty, InObject, MemberName); continue; }
+			// FCsDamageFalloff
+			if (StructProperty->Struct == FCsDamageFalloff::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsDamageFalloff>(JsonObject, StructProperty, InObject, MemberName); continue; }
+			// FCsDamageRadial
+			if (StructProperty->Struct == FCsDamageRadial::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsDamageRadial>(JsonObject, StructProperty, InObject, MemberName); continue; }
 			// FCsInventoryLoadout
 			if (StructProperty->Struct == FCsInventoryLoadout::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsInventoryLoadout>(JsonObject, StructProperty, InObject, MemberName); continue; }
@@ -5289,6 +5302,12 @@ void UCsCommon_Load::GetAssetReferencesFromObject(void* InObject, UClass* const 
 			// FCsData_ProjectileImpactPtr
 			if (StructProperty->Struct == FCsData_ProjectileImpactPtr::StaticStruct())
 			{ GetAssetReferencesFromStructProperty<FCsData_ProjectileImpactPtr>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
+			// FCsDamageFalloff
+			if (StructProperty->Struct == FCsDamageFalloff::StaticStruct())
+			{ GetAssetReferencesFromStructProperty<FCsDamageFalloff>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
+			// FCsDamageRadial
+			if (StructProperty->Struct == FCsDamageRadial::StaticStruct())
+			{ GetAssetReferencesFromStructProperty<FCsDamageRadial>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
 
 			if (Internal)
 			{
@@ -5350,7 +5369,7 @@ void UCsCommon_Load::GetAssetReferencesFromObject(void* InObject, UClass* const 
 
 void UCsCommon_Load::LoadTAssetPtr_AnimBlueprint(const FString &MemberName, TAssetPtr<UAnimBlueprint> AssetPtr, UAnimBlueprintGeneratedClass* &Internal)
 {
-	const FString AssetName = AssetPtr.ToString();
+	const FString& AssetName = AssetPtr.ToString();
 
 	// (AssetName == TEXT(""))
 	if (AssetName == ECsCachedString::Str::Empty)
@@ -5386,7 +5405,7 @@ void UCsCommon_Load::LoadTAssetPtr_AnimBlueprint(const FString &MemberName, TAss
 
 void UCsCommon_Load::LoadTAssetPtr_AnimBlueprint(const FString &MemberName, TAssetPtr<UAnimBlueprint>* AssetPtr, UAnimBlueprintGeneratedClass* &Internal)
 {
-	const FString AssetName = AssetPtr->ToString();
+	const FString& AssetName = AssetPtr->ToString();
 
 	// (AssetName == TEXT("")
 	if (AssetName == ECsCachedString::Str::Empty)
@@ -5460,7 +5479,7 @@ void UCsCommon_Load::LoadAssetObjectProperty_AnimBlueprint(UAssetObjectProperty*
 
 void UCsCommon_Load::LoadTAssetPtr_Blueprint(const FString &MemberName, TAssetPtr<UBlueprint> AssetPtr, UBlueprintGeneratedClass* &Internal)
 {
-	const FString AssetName = AssetPtr.ToString();
+	const FString& AssetName = AssetPtr.ToString();
 
 	// (AssetName == TEXT(""))
 	if (AssetName == ECsCachedString::Str::Empty)
@@ -5496,7 +5515,7 @@ void UCsCommon_Load::LoadTAssetPtr_Blueprint(const FString &MemberName, TAssetPt
 
 void UCsCommon_Load::LoadTAssetPtr_Blueprint(const FString &MemberName, TAssetPtr<UBlueprint>* AssetPtr, UBlueprintGeneratedClass* &Internal)
 {
-	const FString AssetName = AssetPtr->ToString();
+	const FString& AssetName = AssetPtr->ToString();
 
 	// (AssetName == TEXT(""))
 	if (AssetName == ECsCachedString::Str::Empty)
@@ -5555,7 +5574,7 @@ void UCsCommon_Load::LoadTArrayTAssetPtr_Blueprint(const FString &MemberName, TA
 			continue;
 		}
 		
-		const FString AssetName = AssetPtr.ToString();
+		const FString& AssetName = AssetPtr.ToString();
 
 		// (AssetName != TEXT(""))
 		if (AssetName != ECsCachedString::Str::Empty)
@@ -5602,7 +5621,7 @@ void UCsCommon_Load::LoadTArrayTAssetPtr_Blueprint(const FString &MemberName, TA
 			continue;
 		}
 
-		const FString AssetName = AssetPtr.ToString();
+		const FString& AssetName = AssetPtr.ToString();
 
 		// (AssetName != TEXT(""))
 		if (AssetName != ECsCachedString::Str::Empty)
@@ -6537,6 +6556,12 @@ void UCsCommon_Load::LoadObjectWithTAssetPtrs(const FString &ObjectName, void* I
 			// FCsData_ProjectileImpactPtr
 			if (StructProperty->Struct == FCsData_ProjectileImpactPtr::StaticStruct())
 			{ LoadMemberStructProperty<FCsData_ProjectileImpactPtr>(StructProperty, InObject, StructName, LoadFlags, nullptr); continue; }
+			// FCsDamageFalloff
+			if (StructProperty->Struct == FCsDamageFalloff::StaticStruct())
+			{ LoadMemberStructProperty<FCsDamageFalloff>(StructProperty, InObject, StructName, LoadFlags, nullptr); continue; }
+			// FCsDamageRadial
+			if (StructProperty->Struct == FCsDamageRadial::StaticStruct())
+			{ LoadMemberStructProperty<FCsDamageRadial>(StructProperty, InObject, StructName, LoadFlags, nullptr); continue; }
 
 			if (Internal)
 			{

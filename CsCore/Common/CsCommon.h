@@ -321,15 +321,18 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	static float Ease(const TEnumAsByte<ECsEasingType::Type> &EasingType, const float &Time, const float &Start, const float &Final, const float &Duration);
 	
 	static float Linear(const float &Time, const float &Start, const float &Final, const float &Duration);
-	static float BounceEaseOut(float Time, const float &Start, const float &Final, const float &Duration);
+	static float BounceEaseOut(const float &Time, const float &Start, const float &Final, const float &Duration);
 	static float BounceEaseIn(const float &Time, const float &Start, const float &Final, const float &Duration);
 	static float BounceEaseInOut(const float &Time, const float &Start, const float &Final, const float &Duration);
-	static float CubicEaseIn(float Time, const float &Start, const float &Final, const float &Duration);
-	static float CubicEaseOut(float Time, const float &Start, const float &Final, const float &Duration);
-	static float CubicEaseInOut(float Time, const float &Start, const float &Final, const float &Duration);
+	static float CubicEaseIn(const float &Time, const float &Start, const float &Final, const float &Duration);
+	static float CubicEaseOut(const float &Time, const float &Start, const float &Final, const float &Duration);
+	static float CubicEaseInOut(const float &Time, const float &Start, const float &Final, const float &Duration);
 	static float ExpoEaseIn(const float &Time, const float &Start, const float &Final, const float &Duration);
 	static float ExpoEaseOut(const float &Time, const float &Start, const float &Final, const float &Duration);
-	static float ExpoEaseInOut(float Time, const float &Start, const float &Final, const float &Duration);
+	static float ExpoEaseInOut(const float &Time, const float &Start, const float &Final, const float &Duration);
+
+	static TCsEasingFunction GetEasingFunction(const TCsEasingType &EasingType);
+	static TCsEasingFunction GetEasingFunction(const TEnumAsByte<ECsEasingType::Type> &EasingType);
 
 #pragma endregion Easing
 

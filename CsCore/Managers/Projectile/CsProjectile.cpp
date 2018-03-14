@@ -184,9 +184,7 @@ void ACsProjectile::DrawPath_Internal(const float &DeltaSeconds, const float &In
 
 FVector ACsProjectile::EvaluateMovementFunction(const float &Time)
 {
-	ACsData_Projectile* Data = Cache.GetData();
-
-	return Data->EvaluateMovementFunction(Time, Cache.Location, Cache.Transform);
+	return Cache.GetData()->EvaluateMovementFunction(Time, Cache.Location, Cache.Transform);
 }
 
 void ACsProjectile::Init(const int32 &Index)

@@ -33,7 +33,7 @@ float ACsData_Projectile::GetMaxRange() { return 0.0f; }
 #pragma region
 
 TEnumAsByte<ECsProjectileMovement::Type> ACsData_Projectile::GetMovementType() { return ECsProjectileMovement::Simulated; }
-FCsProjectileMovementFunction* ACsData_Projectile::GetMovementFunction() { return nullptr; }
+FVector ACsData_Projectile::EvaluateMovementFunction(const float &Time, const FVector &Location, const FTransform &Transform) { return Location; }
 
 float ACsData_Projectile::GetInitialSpeed() { return 0.0f; }
 float ACsData_Projectile::GetMaxSpeed() { return 0.0f; }
@@ -45,9 +45,11 @@ float ACsData_Projectile::GetGravityMultiplier() { return 0.0f; }
 #pragma region
 
 int32 ACsData_Projectile::GetDamage() { return 0; }
+float ACsData_Projectile::GetDamageFalloff(const float &Distance) { return 1.0f; }
 float ACsData_Projectile::GetDamageFalloffRate() { return 0.0f; }
 float ACsData_Projectile::GetDamageFalloffFrequency() { return 0.0f; }
 float ACsData_Projectile::GetDamageFalloffMinimum() { return 0.0f; }
+float ACsData_Projectile::GetDamageRadial(const FVector &Origin, const FVector &Location) { return 0.0f; }
 
 #pragma endregion Damage
 

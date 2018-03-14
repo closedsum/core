@@ -39,6 +39,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Character Data")
 	virtual float GetCapsuleHalfHeight();
 
+	FCollisionResponseContainer DefaultCollisionResponseContainer;
+	UFUNCTION(BlueprintCallable, Category = "Collision")
+	virtual FCollisionResponseContainer& GetCollisionResponseContainer();
+
 #pragma endregion Collision
 
 // Movement

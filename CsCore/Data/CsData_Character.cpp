@@ -28,6 +28,7 @@ FCsInventoryLoadout* ACsData_Character::GetLoadout() { return nullptr; }
 
 float ACsData_Character::GetCapsuleRadius() { return 0.0f; }
 float ACsData_Character::GetCapsuleHalfHeight() { return 0.0f; }
+FCollisionResponseContainer& ACsData_Character::GetCollisionResponseContainer() { return DefaultCollisionResponseContainer; }
 
 #pragma endregion Collision
 

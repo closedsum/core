@@ -117,4 +117,7 @@ namespace ECsEasingType
 #define ECS_EASING_TYPE_MAX (uint8)ECsEasingType::ECsEasingType_MAX
 typedef ECsEasingType::Type TCsEasingType;
 
+// Easing Function (Time, Start, Final, Duration)
+typedef float(*TCsEasingFunction)(const float&, const float&, const float&, const float&);
+
 #pragma endregion View

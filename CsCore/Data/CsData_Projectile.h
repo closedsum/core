@@ -34,7 +34,8 @@ class CSCORE_API ACsData_Projectile : public ACsData
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	virtual TEnumAsByte<ECsProjectileMovement::Type> GetMovementType();
 
-	virtual FCsProjectileMovementFunction* GetMovementFunction();
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	virtual FVector EvaluateMovementFunction(const float &Time, const FVector &Location, const FTransform &Transform);
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	virtual float GetInitialSpeed();
@@ -54,6 +55,9 @@ class CSCORE_API ACsData_Projectile : public ACsData
 	virtual int32 GetDamage();
 
 	UFUNCTION(BlueprintCallable, Category = "Damage")
+	virtual float GetDamageFalloff(const float &Distance);
+
+	UFUNCTION(BlueprintCallable, Category = "Damage")
 	virtual float GetDamageFalloffRate();
 
 	UFUNCTION(BlueprintCallable, Category = "Damage")
@@ -61,6 +65,9 @@ class CSCORE_API ACsData_Projectile : public ACsData
 
 	UFUNCTION(BlueprintCallable, Category = "Damage")
 	virtual float GetDamageFalloffMinimum();
+
+	UFUNCTION(BlueprintCallable, Category = "Damage")
+	virtual float GetDamageRadial(const FVector &Origin, const FVector &Location);
 
 #pragma endregion Damage
 

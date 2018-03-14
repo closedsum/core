@@ -184,23 +184,9 @@ void ACsProjectile::DrawPath_Internal(const float &DeltaSeconds, const float &In
 
 FVector ACsProjectile::EvaluateMovementFunction(const float &Time)
 {
-	ACsData_Projectile* Data				= Cache.GetData();
-	FCsProjectileMovementFunction* Function = Data->GetMovementFunction();
+	ACsData_Projectile* Data = Cache.GetData();
 
-	FVector Point = Function->Evaluate(Time);
-
-	if (!Function->X.IsActive)
-		Point.X += Cache.Location.X;
-	if (!Function->Y.IsActive)
-		Point.Y += Cache.Location.Y;
-	if (!Function->Z.IsActive)
-		Point.Z += Cache.Location.Z;
-
-	FTransform LocalTransform = FTransform::Identity;
-	LocalTransform.SetTranslation(Point);
-	const FTransform WorldTransform = LocalTransform * Cache.Transform;
-
-	return WorldTransform.GetTranslation();
+	return Data->EvaluateMovementFunction(Time, Cache.Location, Cache.Transform);
 }
 
 void ACsProjectile::Init(const int32 &Index)

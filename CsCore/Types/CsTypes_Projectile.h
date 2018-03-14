@@ -431,6 +431,25 @@ struct FCsProjectileMovementFunction
 	{
 		return FVector(X.Evaluate(T), Y.Evaluate(T), Z.Evaluate(T));
 	}
+
+	FVector Evaluate(const float &Time, const FVector &Location, const FTransform &Transform)
+	{
+		FVector Point = Evaluate(Time);
+
+		// Override the Components that are NOT Active
+		if (!X.IsActive)
+			Point.X += Location.X;
+		if (!Y.IsActive)
+			Point.Y += Location.Y;
+		if (!Z.IsActive)
+			Point.Z += Location.Z;
+
+		FTransform LocalTransform = FTransform::Identity;
+		LocalTransform.SetTranslation(Point);
+		const FTransform WorldTransform = LocalTransform * Transform;
+
+		return WorldTransform.GetTranslation();
+	}
 };
 
 USTRUCT(BlueprintType)

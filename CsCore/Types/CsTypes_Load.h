@@ -21,6 +21,10 @@ namespace ECsLoadCachedString
 	{
 		const FString _Internal = TEXT("_Internal");
 		const FString _LoadFlags = TEXT("_LoadFlags");
+		const FString _1P_LoadFlags = TEXT("1P_LoadFlags");
+		const FString _3P_LoadFlags = TEXT("3P_LoadFlags");
+		const FString _3P_Low_LoadFlags = TEXT("3P_Low_LoadFlags");
+		const FString VR_LoadFlags = TEXT("VR_LoadFlags");
 		const FString _C = TEXT("_C");
 	}
 }
@@ -45,6 +49,8 @@ enum class ECsLoadFlags : uint8
 	UI			UMETA(DisplayName = "UI"),
 	All			UMETA(DisplayName = "All"),
 };
+
+#define CS_LOAD_FLAGS_NONE 0
 
 UENUM(BlueprintType)
 namespace ECsLoadFlags_Editor
@@ -490,3 +496,6 @@ typedef void*(*TCsGetStructMember_Internal)(UProperty*, void*, UScriptStruct* co
 typedef UScriptStruct*(*TCsGetScriptStructMember_Internal)(UProperty*, void*, UScriptStruct* const &, const FString &);
 
 typedef void*(*TCsGetObjectMember_Internal)(UProperty*, void*, UClass* const &, const FString &);
+// Enums
+typedef bool(*TCsCheckStructWithEnum_Internal)(UProperty*, const FString&, void*, UScriptStruct* const &);
+typedef bool(*TCsCheckObjectWithEnum_Internal)(UProperty*, const FString&, void*, UClass* const &);

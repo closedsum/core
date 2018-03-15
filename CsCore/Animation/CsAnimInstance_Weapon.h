@@ -20,8 +20,8 @@ public:
 public:
 
 #if WITH_EDITOR
+
 	virtual void SetupInGameSimulation() override;
-#endif // #if WITH_EDITOR
 
 	TWeakObjectPtr<class ACsWeapon> Weapon;
 
@@ -36,6 +36,8 @@ public:
 	TSubclassOf<class ACsWeapon> WeaponClass;
 
 	virtual void ApplyData_Weapon();
+
+#endif // #if WITH_EDITOR
 
 #pragma endregion Setup
 
@@ -58,7 +60,9 @@ public:
 		return Cast<T>(GetData_Weapon());
 	}
 
+#if WITH_EDITOR
 	void OnTick_Handle_Data_Weapon();
+#endif // #if WITH_EDITOR
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "01 Data")
 	FCsDataAnimInstance_WeaponMaterialSkinPtr Data_WeaponMaterialSkin;
@@ -71,7 +75,9 @@ public:
 		return Cast<T>(GetData_WeaponMaterialSkin());
 	}
 
+#if WITH_EDITOR
 	void OnTick_Handle_Data_WeaponMaterialSkin();
+#endif // #if WITH_EDITOR
 
 #pragma endregion Data
 

@@ -1045,28 +1045,30 @@ float UCsCommon::Linear(const float &Time, const float &Start, const float &Fina
 	return ((Final * Time) / Duration) + Start;
 }
 
-float UCsCommon::BounceEaseOut(float Time, const float &Start, const float &Final, const float &Duration)
+float UCsCommon::BounceEaseOut(const float &Time, const float &Start, const float &Final, const float &Duration)
 {
-	Time /= Duration;
+	float T = Time;
 
-	if (Time < (1 / 2.75f))
+	T /= Duration;
+
+	if (T < (1 / 2.75f))
 	{
-		return Final * (7.5625f * Time * Time) + Start;
+		return Final * (7.5625f * T * T) + Start;
 	}
 	else if (Time < (2.0f / 2.75f))
 	{
-		Time -= (1.5f / 2.75f);
-		return Final * (7.5625f * Time * Time + 0.75f) + Start;
+		T -= (1.5f / 2.75f);
+		return Final * (7.5625f * T * T + 0.75f) + Start;
 	}
 	else if (Time < (2.5f / 2.75f))
 	{
-		Time -= (2.25f / 2.75f);
-		return Final * (7.5625f * Time * Time + 0.9375f) + Start;
+		T -= (2.25f / 2.75f);
+		return Final * (7.5625f * T * T + 0.9375f) + Start;
 	}
 	else
 	{
-		Time -= (2.625f / 2.75f);
-		return Final * (7.5625f * Time * Time + 0.984375f) + Start;
+		T -= (2.625f / 2.75f);
+		return Final * (7.5625f * T * T + 0.984375f) + Start;
 	}
 }
 
@@ -1083,27 +1085,31 @@ float UCsCommon::BounceEaseInOut(const float &Time, const float &Start, const fl
 		return (BounceEaseOut(Time * 2 - Duration, 0, Final, Duration) * 0.5f) + Final * 0.5f + Start;
 }
 
-float UCsCommon::CubicEaseIn(float Time, const float &Start, const float &Final, const float &Duration)
+float UCsCommon::CubicEaseIn(const float &Time, const float &Start, const float &Final, const float &Duration)
 {
-	Time /= Duration;
-	return Final * Time * Time *Time + Start;
+	float T = Time;
+	T /= Duration;
+	return Final * T * T * T + Start;
 }
 
-float UCsCommon::CubicEaseOut(float Time, const float &Start, const float &Final, const float &Duration)
+float UCsCommon::CubicEaseOut(const float &Time, const float &Start, const float &Final, const float &Duration)
 {
-	Time = (Time / Duration) - 1.0f;
-	return Final * ((Time *  Time * Time) + 1) + Start;
+	float T = Time;
+	T = (T / Duration) - 1.0f;
+	return Final * ((T *  T * T) + 1) + Start;
 }
 
-float UCsCommon::CubicEaseInOut(float Time, const float &Start, const float &Final, const float &Duration)
+float UCsCommon::CubicEaseInOut(const float &Time, const float &Start, const float &Final, const float &Duration)
 {
-	if ((Time / (Duration / 2.0f)) < 1)
+	float T = Time;
+
+	if ((T / (Duration / 2.0f)) < 1)
 	{
-		Time /= Duration / 2.0f;
-		return (Final / (2.0f * Time * Time * Time)) + Start;
+		T /= Duration / 2.0f;
+		return (Final / (2.0f * T * T * T)) + Start;
 	}
-	Time -= 2.0f;
-	return (Final / (2 * Time * Time * Time + 2)) + Start;
+	T -= 2.0f;
+	return (Final / (2 * T * T * T + 2)) + Start;
 }
 
 float UCsCommon::ExpoEaseIn(const float &Time, const float &Start, const float &Final, const float &Duration)
@@ -1116,19 +1122,71 @@ float UCsCommon::ExpoEaseOut(const float &Time, const float &Start, const float 
 	return (Time == Duration) ? Start + Final : Final * (-1.0f * FMath::Pow(2.0f, -10.0f * Time / Duration) + 1.0f) + Start;
 }
 
-float UCsCommon::ExpoEaseInOut(float Time, const float &Start, const float &Final, const float &Duration)
+float UCsCommon::ExpoEaseInOut(const float &Time, const float &Start, const float &Final, const float &Duration)
 {
-	if (Time == 0)
+	float T = Time;
+
+	if (T == 0)
 		return Start;
-	if (Time == Duration)
+	if (T == Duration)
 		return Start + Final;
 	if (Duration / 2.0f < 1.0f)
 	{
-		Time /= Duration / 2.0f;
-		return (Final / 2.0f) * FMath::Pow(2.0f, 10 * (Time - 1.0f)) + Start;
+		T /= Duration / 2.0f;
+		return (Final / 2.0f) * FMath::Pow(2.0f, 10 * (T - 1.0f)) + Start;
 	}
-	Time--;
-	return (Final / 2.0f) * (-FMath::Pow(2.0f, -10.0f * Time) + 2.0f) + Start;
+	T--;
+	return (Final / 2.0f) * (-FMath::Pow(2.0f, -10.0f * T) + 2.0f) + Start;
+}
+
+TCsEasingFunction UCsCommon::GetEasingFunction(const TCsEasingType &EasingType)
+{
+	if (EasingType == ECsEasingType::Linear)
+		return &UCsCommon::Linear;
+	if (EasingType == ECsEasingType::BounceIn)
+		return &UCsCommon::BounceEaseIn;
+	if (EasingType == ECsEasingType::BounceOut)
+		return &UCsCommon::BounceEaseOut;
+	if (EasingType == ECsEasingType::BounceInOut)
+		return &UCsCommon::BounceEaseInOut;
+	if (EasingType == ECsEasingType::CubicIn)
+		return &UCsCommon::CubicEaseIn;
+	if (EasingType == ECsEasingType::CubicOut)
+		return &UCsCommon::CubicEaseOut;
+	if (EasingType == ECsEasingType::CubicInOut)
+		return &UCsCommon::CubicEaseInOut;
+	if (EasingType == ECsEasingType::ExpoIn)
+		return &UCsCommon::ExpoEaseIn;
+	if (EasingType == ECsEasingType::ExpoOut)
+		return &UCsCommon::ExpoEaseOut;
+	if (EasingType == ECsEasingType::ExpoInOut)
+		return &UCsCommon::ExpoEaseInOut;
+	return &UCsCommon::Linear;
+}
+
+TCsEasingFunction UCsCommon::GetEasingFunction(const TEnumAsByte<ECsEasingType::Type> &EasingType)
+{
+	if (EasingType == ECsEasingType::Linear)
+		return &UCsCommon::Linear;
+	if (EasingType == ECsEasingType::BounceIn)
+		return &UCsCommon::BounceEaseIn;
+	if (EasingType == ECsEasingType::BounceOut)
+		return &UCsCommon::BounceEaseOut;
+	if (EasingType == ECsEasingType::BounceInOut)
+		return &UCsCommon::BounceEaseInOut;
+	if (EasingType == ECsEasingType::CubicIn)
+		return &UCsCommon::CubicEaseIn;
+	if (EasingType == ECsEasingType::CubicOut)
+		return &UCsCommon::CubicEaseOut;
+	if (EasingType == ECsEasingType::CubicInOut)
+		return &UCsCommon::CubicEaseInOut;
+	if (EasingType == ECsEasingType::ExpoIn)
+		return &UCsCommon::ExpoEaseIn;
+	if (EasingType == ECsEasingType::ExpoOut)
+		return &UCsCommon::ExpoEaseOut;
+	if (EasingType == ECsEasingType::ExpoInOut)
+		return &UCsCommon::ExpoEaseInOut;
+	return &UCsCommon::Linear;
 }
 
 #pragma endregion Easing

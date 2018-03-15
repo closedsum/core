@@ -4,9 +4,6 @@
 #include "CsCVars.h"
 #include "Common/CsCommon.h"
 #include "Coroutine/CsCoroutineScheduler.h"
-#include "Game/CsGameState.h"
-#include "Player/CsPlayerState.h"
-#include "Pawn/CsPawn.h"
 
 #include "Animation/CsAnimInstance.h"
 
@@ -17,6 +14,13 @@
 #include "Managers/FX/CsManager_FX.h"
 #include "Managers/Projectile/CsManager_Projectile.h"
 #include "Managers/Projectile/CsProjectile.h"
+#include "Managers/Damage/CsManager_Damage.h"
+
+#include "Game/CsGameState.h"
+#include "Player/CsPlayerState.h"
+#include "Pawn/CsPawn.h"
+
+#include "Managers/InteractiveActor/CsDamageableActor.h"
 
 // Cache
 #pragma region
@@ -1934,10 +1938,29 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 			!DoesHitscanUseRadius.Get(FireMode))
 		{
 			HitFound = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ProjectileCollision, CollisionParams);
+
+			if ((CsCVarDrawLocalPlayerWeaponFireProjectile->GetInt() == CS_CVAR_DRAW &&
+				UCsCommon::IsLocalPawn(GetWorld(), GetMyPawn())) ||
+				CsCVarDrawWeaponFireProjectile->GetInt() == CS_CVAR_DRAW)
+			{
+				const float DrawTime = FMath::Max(TimeBetweenAutoShots.GetEX(FireMode), TimeBetweenShots.GetEX(FireMode));
+
+				DrawDebugLine(GetWorld(), Start, HitFound ? HitResult.Location : End, FColor::Red, false, DrawTime, 0, 1.0f);
+			}
 		}
 		// Hit IS Found. Check penetrations and modifiers
 		if (HitFound)
 		{
+			ACsManager_Damage* Manager_Damage = ACsManager_Damage::Get(GetWorld());
+			FCsDamageEvent* Event			  = Manager_Damage->Allocate();
+
+			Event->Damage	  = Data_Projectile->GetDamage();
+			Event->Instigator = GetMyOwner();
+			Event->Causer	  = this;
+			//Event->SetDamageType();
+			//Event->SetHitType();
+			Event->HitInfo = HitResult;
+
 			ACsPawn* HitPawn = Cast<ACsPawn>(HitResult.Actor.Get());
 			CollisionParams.AddIgnoredActor(HitResult.Actor.Get());
 			
@@ -1954,64 +1977,39 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 			// Pawn
 			if (HitPawn)
 			{
-				/*
-				if (Pawn->Role == ROLE_Authority)
+				if (HitPawn->Role == ROLE_Authority)
 				{
-					float Damage = Data_Projectile->GetDamage();
-
-					if (!HitPawn)
-						continue;
+					// Apply Damage Modifiers
+					float& Damage = Event->Damage;
 
 					// Location based Damage
-					const uint8 Count = Data_Weapon->GetLocationDamageModifierCount(FireMode);
-
-					for (uint8 I = 0; I < Count; ++I)
-					{
-						const FName Bone = Data_Weapon->GetLocationDamageModifierBone(FireMode, I);
-
-						if (HitResult.BoneName == Bone)
-						{
-							Damage *= Data_Weapon->GetLocationDamageModifierMultiplier(FireMode, I);
-							break;
-						}
-					}
+					Damage *= Data_Weapon->GetLocationDamageModifier(FireMode, HitResult.BoneName);
 
 					// Damage Falloff
-					const float DamageFalloffRate = Data_Projectile->GetDamageFalloffRate();
-					const float DamageFalloffFrequency = Data_Projectile->GetDamageFalloffFrequency();
-					const float DamageFalloffMinimum = Data_Projectile->GetDamageFalloffMinimum();
-
-					float Falloff = 0.f;
-
-					if (DamageFalloffRate > 0.f &&
-						DamageFalloffFrequency > 0.f)
-					{
-						Falloff = FMath::Max(DamageFalloffMinimum, 1.f - (DamageFalloffRate * FMath::FloorToFloat(HitResult.Distance / DamageFalloffFrequency)));
-					}
+					if (Data_Projectile->CanDamageFalloff())
+						Damage *= Data_Projectile->GetDamageFalloff(HitResult.Distance);
+					// Damage Radial
 					else
-					{
-						Falloff = 1.f;
-					}
+					if (Data_Projectile->CanDamageRadial())
+						Damage = Data_Projectile->GetDamageRadial(HitResult.Location, HitPawn->GetActorLocation());
 
-					Damage *= Falloff;
-
-					//PawnToHit->ShooterTakeDamage(Damage, FShooterDamageEvent(EDamageType::Normal), MyPawn->GetController(), MyPawn);
+					HitPawn->ApplyDamage(Event);
 				}
-				*/
 			}
 			// World
 			else
 			{
-				// Play Impact FX / Sound
-				UPhysicalMaterial* PhysicalMaterial = HitResult.PhysMaterial.IsValid() ? HitResult.PhysMaterial.Get() : nullptr;
+			}
 
-				if (PhysicalMaterial)
-				{
-					// FX
-					Data_Projectile->GetData_Impact()->PlayImpactFX(GetWorld(), PhysicalMaterial->SurfaceType, nullptr, HitResult.Location, HitResult.ImpactNormal);
-					// Sound
-					Data_Projectile->GetData_Impact()->PlayImpactSound(GetWorld(), PhysicalMaterial->SurfaceType, nullptr, HitResult.Location);
-				}
+			// Play Impact FX / Sound
+			UPhysicalMaterial* PhysicalMaterial = HitResult.PhysMaterial.IsValid() ? HitResult.PhysMaterial.Get() : nullptr;
+
+			if (PhysicalMaterial)
+			{
+				// FX
+				Data_Projectile->GetData_Impact()->PlayImpactFX(GetWorld(), PhysicalMaterial->SurfaceType, nullptr, HitResult.Location, HitResult.ImpactNormal);
+				// Sound
+				Data_Projectile->GetData_Impact()->PlayImpactSound(GetWorld(), PhysicalMaterial->SurfaceType, nullptr, HitResult.Location);
 			}
 
 			//float TimeUntilHit = HitResult.Distance / Data_Projectile->InitialSpeed;

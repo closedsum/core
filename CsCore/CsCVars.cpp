@@ -178,6 +178,25 @@ TAutoConsoleVariable<int32> CsCVarLogInteractiveAIPawnPhysicsStateChange(
 
 #pragma endregion Interactive AI Pawn
 
+	// Behavior Tree
+#pragma region
+
+TAutoConsoleVariable<int32> CsCVarDrawAIBTMoveTo(
+	TEXT("draw.ai.bt.moveto"),
+	0,
+	TEXT("Draw A.I. Behavior Tree MoveTo Task."),
+	ECVF_SetByConsole
+);
+
+TAutoConsoleVariable<int32> CsCVarDrawAIBTRotateToFaceBBEntry(
+	TEXT("draw.ai.bt.rotatetofacebbentry"),
+	0,
+	TEXT("Draw A.I. Behavior Tree RotateToFaceBBEntry Task."),
+	ECVF_SetByConsole
+);
+
+#pragma endregion Behavior Tree
+
 #pragma endregion AI
 
 // Script

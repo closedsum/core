@@ -19,8 +19,8 @@ public:
 public:
 
 #if WITH_EDITOR
+
 	virtual void SetupInGameSimulation() override;
-#endif // #if WITH_EDITOR
 
 	// Weapon
 
@@ -39,9 +39,11 @@ public:
 	void Spawn_Weapon();
 	virtual void ApplyData_Weapon();
 
+#endif // #if WITH_EDITOR
+
 #pragma endregion Setup
 
-	//virtual void NativeUpdateAnimation(float DeltaTimeX) override;
+	virtual void NativeUpdateAnimation(float DeltaTimeX) override;
 
 	// Data
 #pragma region

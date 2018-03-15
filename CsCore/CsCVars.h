@@ -74,6 +74,14 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInteractiveAIPawnPhysicsS
 
 #pragma endregion Interactive AI Pawn
 
+	// Behavior Tree
+#pragma region
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawAIBTMoveTo;
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawAIBTRotateToFaceBBEntry;
+
+#pragma endregion Behavior Tree
+
 #pragma endregion AI
 
 // Script

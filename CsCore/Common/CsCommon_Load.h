@@ -1460,7 +1460,7 @@ template<typename T>
 	template<typename T>
 	static void LoadTAssetPtr(const FString &MemberName, TAssetPtr<T> AssetPtr, T* &Internal, const FString &AssetType, const FString &AssetErrorMessageType)
 	{
-		const FString AssetName = AssetPtr.ToString();
+		const FString& AssetName = AssetPtr.ToString();
 
 		// (AssetName == TEXT(""))
 		if (AssetName == ECsCachedString::Str::Empty)
@@ -1501,7 +1501,7 @@ template<typename T>
 	template<typename T>
 	static void LoadTAssetPtr(const FString &MemberName, TAssetPtr<T>* AssetPtr, T* &Internal, const FString &AssetType, const FString &AssetErrorMessageType)
 	{
-		const FString AssetName = AssetPtr->ToString();
+		const FString& AssetName = AssetPtr->ToString();
 
 		// (AssetName == TEXT(""))
 		if (AssetName == ECsCachedString::Str::Empty)
@@ -1542,7 +1542,7 @@ template<typename T>
 	template<typename T>
 	static void LoadTAssetPtr(const FString &MemberName, TAssetPtr<T> AssetPtr, TWeakObjectPtr<T> &Internal, const FString &AssetType, const FString &AssetErrorMessageType)
 	{
-		const FString AssetName = AssetPtr.ToString();
+		const FString& AssetName = AssetPtr.ToString();
 
 		// (AssetName == TEXT(""))
 		if (AssetName == ECsCachedString::Str::Empty)
@@ -1589,7 +1589,7 @@ template<typename T>
 	template<typename T>
 	static void LoadTAssetSubclassOf(const FString &MemberName, TAssetSubclassOf<T> &AssetSubclassOf, T* &Internal, const FString &AssetErrorMessageType)
 	{
-		const FString AssetName = AssetSubclassOf.ToString();
+		const FString& AssetName = AssetSubclassOf.ToString();
 
 		// (AssetName == TEXT(""))
 		if (AssetName == ECsCachedString::Str::Empty)
@@ -1630,7 +1630,7 @@ template<typename T>
 	template<typename T>
 	static void LoadTAssetSubclassOf(const FString &MemberName, TAssetSubclassOf<T>* &AssetSubclassOf, T* &Internal, const FString &AssetErrorMessageType)
 	{
-		const FString AssetName = AssetSubclassOf->ToString();
+		const FString& AssetName = AssetSubclassOf->ToString();
 
 		// (AssetName == TEXT(""))
 		if (AssetName == ECsCachedString::Str::Empty)
@@ -1671,7 +1671,7 @@ template<typename T>
 	template<typename T>
 	static void LoadTAssetSubclassOf(const FString &MemberName, TAssetSubclassOf<T> &AssetSubclassOf, TWeakObjectPtr<T> &Internal, const FString &AssetErrorMessageType)
 	{
-		const FString AssetName = AssetSubclassOf.ToString();
+		const FString& AssetName = AssetSubclassOf.ToString();
 
 		// (AssetName == TEXT(""))
 		if (AssetName == ECsCachedString::Str::Empty)
@@ -1714,7 +1714,7 @@ template<typename T>
 	{
 		OutAsset = nullptr;
 
-		const FString AssetName = AssetSubclassOf.ToString();
+		const FString& AssetName = AssetSubclassOf.ToString();
 
 		// (AssetName == TEXT(""))
 		if (AssetName == ECsCachedString::Str::Empty)
@@ -1815,7 +1815,7 @@ template<typename T>
 			{
 				TAssetPtr<T>& AssetPtr				  = ArrayAssetPtr[I];
 				const FStringAssetReference& AssetRef = AssetPtr.ToStringReference();
-				const FString AssetName				  = AssetRef.ToString();
+				const FString& AssetName			  = AssetRef.ToString();
 
 				// (AssetName != TEXT(""))
 				if (AssetName != ECsCachedString::Str::Empty)
@@ -1861,7 +1861,7 @@ template<typename T>
 			{
 				TAssetPtr<T>& AssetPtr				  = (*ArrayAssetPtr)[I];
 				const FStringAssetReference& AssetRef = AssetPtr.ToStringReference();
-				const FString AssetName				  = AssetRef.ToString();
+				const FString& AssetName			  = AssetRef.ToString();
 
 				// (AssetName != TEXT(""))
 				if (AssetName != ECsCachedString::Str::Empty)
@@ -1907,7 +1907,7 @@ template<typename T>
 			{
 				TAssetPtr<T>& AssetPtr				  = ArrayAssetPtr[I];
 				const FStringAssetReference& AssetRef = AssetPtr.ToStringReference();
-				const FString AssetName				  = AssetRef.ToString();
+				const FString& AssetName			  = AssetRef.ToString();
 
 				// (AssetName != TEXT(""))
 				if (AssetName != ECsCachedString::Str::Empty)
@@ -1982,7 +1982,7 @@ template<typename T>
 			{
 				TAssetSubclassOf<T>& AssetSubclassOf  = (*ArrayAssetSubclassOf)[I];
 				const FStringAssetReference& AssetRef = AssetSubclassOf.ToStringReference();
-				const FString AssetName				  = AssetRef.ToString();
+				const FString& AssetName			  = AssetRef.ToString();
 
 				// (AssetName != TEXT(""))
 				if (AssetName != ECsCachedString::Str::Empty)
@@ -2622,6 +2622,114 @@ template<typename T>
 #pragma endregion IsLoaded
 
 	static TCsLoadAsyncOrder GetLoadAsyncOrder();
+
+	// Enum
+#pragma region
+
+#if WITH_EDITOR
+
+	static void CheckEnumLoadFlags(int32* LoadFlags, const FString &ObjectName, const FString &MemberName);
+
+	template<typename T>
+	static void CheckEnumAssetObjectProperty(UAssetObjectProperty* &AssetObjectProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName)
+	{
+		if (TAssetPtr<T>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<T>>(InObject))
+		{
+			// MemberName + TEXT("_LoadFlags")
+			const FString LoadFlagsMemberName = MemberName + ECsLoadCachedString::Str::_LoadFlags;
+
+			if (UProperty* LoadFlagsProperty = FindField<UProperty>(InClass, *LoadFlagsMemberName))
+			{
+				if (int32* LoadFlags = LoadFlagsProperty->ContainerPtrToValuePtr<int32>(InObject))
+				{
+					const FString FullLoadFlagsMemberName = ObjectName + ECsLoadCachedString::Str::_LoadFlags;
+
+					CheckEnumLoadFlags(LoadFlags, FullLoadFlagsMemberName, LoadFlagsMemberName);
+				}
+			}
+		}
+	}
+
+	template<typename T>
+	static void CheckEnumAssetObjectProperty(UAssetObjectProperty* &AssetObjectProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName)
+	{
+		if (TAssetPtr<T>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<T>>(InObject))
+		{
+			// MemberName + TEXT("_LoadFlags")
+			const FString LoadFlagsMemberName = MemberName + ECsLoadCachedString::Str::_LoadFlags;
+
+			if (UProperty* LoadFlagsProperty = FindField<UProperty>(InClass, *LoadFlagsMemberName))
+			{
+				if (int32* LoadFlags = InternalProperty->ContainerPtrToValuePtr<int32>(InObject))
+				{
+					const FString FullLoadFlagsMemberName = ObjectName + ECsLoadCachedString::Str::_LoadFlags;
+
+					CheckEnumLoadFlags(LoadFlags, FullLoadFlagsMemberName, LoadFlagsMemberName);
+				}
+			}
+		}
+	}
+
+	template<typename T>
+	static void CheckEnumArrayAssetObjectProperty(UArrayProperty* &ArrayProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName)
+	{
+		if (TArray<TAssetPtr<T>>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<TAssetPtr<T>>>(InObject))
+		{
+			// MemberName + TEXT("_LoadFlags")
+			const FString LoadFlagsMemberName = MemberName + ECsLoadCachedString::Str::_LoadFlags;
+
+			if (UProperty* LoadFlagsProperty = FindField<UProperty>(InClass, *LoadFlagsMemberName))
+			{
+				if (int32* LoadFlags = LoadFlagsProperty->ContainerPtrToValuePtr<int32>(InObject))
+				{
+					const FString FullLoadFlagsMemberName = ObjectName + ECsLoadCachedString::Str::_LoadFlags;
+
+					CheckEnumLoadFlags(LoadFlags, FullLoadFlagsMemberName, LoadFlagsMemberName);
+				}
+			}
+		}
+	}
+
+	template<typename T>
+	static void CheckEnumStructProperty(UStructProperty* &StructProperty, void* InObject, const FString &MemberName, TCsCheckStructWithEnum_Internal Internal = nullptr)
+	{
+		if (T* Member = StructProperty->ContainerPtrToValuePtr<T>(InObject))
+			CheckStructWithEnum(MemberName, (void*)Member, StructProperty->Struct, Internal);
+	}
+
+	template<typename T>
+	static void CheckEnumArrayStructProperty(UArrayProperty* &ArrayProperty, void* InObject, const FString &MemberName)
+	{
+		if (TArray<T>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<T>>(InObject))
+		{
+			UStructProperty* StructProperty = Cast<UStructProperty>(ArrayProperty->Inner);
+
+			const int32 Count = Member->Num();
+
+			for (int32 I = 0; I < Count; ++I)
+			{
+				const FString ElementName = MemberName + TEXT("[") + FString::FromInt(I) + TEXT("]");
+				CheckStructWithEnum(ElementName, (void*)&((*Member)[I]), StructProperty->Struct);
+			}
+		}
+	}
+
+	template<typename T>
+	static void CheckEnumByteProperty(UByteProperty* &ByteProperty, void* InObject, const FString &MemberName, const T &Enum_MAX)
+	{
+		if (TEnumAsByte<T>* Member = ByteProperty->ContainerPtrToValuePtr<TEnumAsByte<T>>(InObject))
+		{
+			if (*Member == Enum_MAX)
+				*Member = (T)0;
+		}
+	}
+
+	static void CheckStructWithEnum(const FString &ObjectName, void* InStruct, UScriptStruct* const &InScriptStruct, TCsCheckStructWithEnum_Internal Internal = nullptr);
+	static void CheckObjectWithEnum(const FString &ObjectName, void* InObject, UClass* const &InClass, TCsCheckObjectWithEnum_Internal Internal = nullptr);
+
+#endif // #if WITH_EDITOR
+
+#pragma endregion Enum
 
 #pragma endregion Loading
 	

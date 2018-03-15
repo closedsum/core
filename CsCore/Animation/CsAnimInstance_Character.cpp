@@ -20,7 +20,9 @@
 UCsAnimInstance_Character::UCsAnimInstance_Character(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+#if WITH_EDITOR
 	WeaponClass = ACsWeapon::StaticClass();
+#endif // #if WITH_EDITOR
 }
 
 // Init
@@ -78,8 +80,6 @@ void UCsAnimInstance_Character::SetupInGameSimulation()
 	ApplyData_Weapon();
 }
 
-#endif // #if WITH_EDITOR
-
 ACsWeapon* UCsAnimInstance_Character::GetWeapon()
 {
 	return Weapon.IsValid() ? Weapon.Get() : nullptr;
@@ -112,9 +112,11 @@ void UCsAnimInstance_Character::Spawn_Weapon()
 
 void UCsAnimInstance_Character::ApplyData_Weapon(){}
 
+#endif // #if WITH_EDITOR
+
 #pragma endregion Setup
 
-/*
+
 void UCsAnimInstance_Character::NativeUpdateAnimation(float DeltaTimeX)
 {
 	Super::NativeUpdateAnimation(DeltaTimeX);
@@ -131,9 +133,7 @@ void UCsAnimInstance_Character::NativeUpdateAnimation(float DeltaTimeX)
 	if (ACsWeapon* MyWeapon = GetWeapon())
 		MyWeapon->OnTick(DeltaTimeX);
 #endif // #if WITH_EDITOR
-
 }
-*/
 
 // Data
 #pragma region

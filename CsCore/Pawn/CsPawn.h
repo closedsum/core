@@ -6,6 +6,7 @@
 #include "Types/CsTypes_Damage.h"
 #include "CsPawn.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_Override_OnTick, const uint8&, MappingId, const float&, DeltaSeconds);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnTick, const uint8&, MappingId, const float&, DeltaSeconds);
 
 UCLASS()
@@ -26,10 +27,25 @@ class CSCORE_API ACsPawn : public ACharacter
 	UPROPERTY(BlueprintAssignable, Category = "Tick")
 	FBindableDynEvent_CsPawn_OnTick OnTick_ScriptEvent;
 
+	UPROPERTY(BlueprintAssignable, Category = "Tick")
+	FBindableDynEvent_CsPawn_Override_OnTick Override_OnTick_ScriptEvent;
+
 	virtual void OnTickActor_HandleCVars(const float &DeltaSeconds);
 
 	virtual bool IsOnBoardCompleted_Game();
 	virtual void OnTick_HandleSetup();
+
+// State
+#pragma region
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
+	float Health;
+
+	virtual void ApplyDamage(FCsDamageEvent* Event);
+
+	virtual void Die();
+
+#pragma endregion State
 
 // Routines
 #pragma region
@@ -279,13 +295,6 @@ public:
 	virtual void ApplyData_Weapon();
 
 #pragma endregion Weapons
-
-// Damage
-#pragma region
-
-	virtual void ApplyDamage(FCsDamageEvent* Event);
-
-#pragma endregion Damage
 
 // Managers
 #pragma region

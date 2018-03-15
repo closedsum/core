@@ -2778,7 +2778,6 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 		// int32
 		if (UIntProperty* IntProperty = Cast<UIntProperty>(*It))
 		{
-			
 			if (int32* Member = IntProperty->ContainerPtrToValuePtr<int32>(InStruct))
 			{
 				FString String;
@@ -5902,9 +5901,7 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 	{
 		UProperty* Property = Cast<UProperty>(*It);
 
-		const FString MemberName		 = Property->GetName();
-										// Property->GetName() + TEXT("_Internal")
-		const FString InternalMemberName = MemberName + ECsLoadCachedString::Str::_Internal;
+		const FString MemberName = Property->GetName();
 
 		// TAssetSubclassOf
 		if (UAssetClassProperty* AssetClassProperty = Cast<UAssetClassProperty>(*It))
@@ -6311,9 +6308,7 @@ void UCsCommon_Load::LoadObjectWithTAssetPtrs(const FString &ObjectName, void* I
 	{
 		UProperty* Property = Cast<UProperty>(*It);
 
-		const FString MemberName		 = Property->GetName();
-										// MemberName + TEXT("_Internal")
-		const FString InternalMemberName = MemberName + ECsLoadCachedString::Str::_Internal;
+		const FString MemberName = Property->GetName();
 
 		// TAssetSubclassOf
 		if (UAssetClassProperty* AssetClassProperty = Cast<UAssetClassProperty>(*It))
@@ -6575,9 +6570,6 @@ void UCsCommon_Load::LoadObjectWithTAssetPtrs(const FString &ObjectName, void* I
 			// TAssetSubclassOf
 			if (UAssetClassProperty* InnerAssetClassProperty = Cast<UAssetClassProperty>(ArrayProperty->Inner))
 			{
-				// AShooterWeaponData
-				//if (InnerAssetClassProperty->PropertyClass == AShooterWeaponData::StaticClass() || InnerAssetClassProperty->MetaClass == AShooterWeaponData::StaticClass())
-				//{ LoadArrayAssetClassProperty<AShooterWeaponData>(ArrayProperty, ObjectName, InObject, InClass, MemberName, TEXT("ShooterWeaponData")); continue; }
 				if (Internal)
 				{
 					if ((*Internal)(Property, ObjectName, InObject, InClass, LoadFlags))
@@ -7448,6 +7440,470 @@ TCsLoadAsyncOrder UCsCommon_Load::GetLoadAsyncOrder()
 		return (TCsLoadAsyncOrder)CsCVarManagerLoadingAsyncOrder->GetInt();
 	return ECsLoadAsyncOrder::Bulk;
 }
+
+// Enum
+#pragma region
+
+#if WITH_EDITOR
+
+void UCsCommon_Load::CheckEnumLoadFlags(int32* LoadFlags, const FString &ObjectName, const FString &MemberName)
+{
+	if (*LoadFlags == CS_LOAD_FLAGS_NONE)
+	{
+		// 1P_LoadFlags
+		if (MemberName.EndsWith(ECsLoadCachedString::Str::_1P_LoadFlags))
+		{
+			CS_SET_BLUEPRINT_BITFLAG(*LoadFlags, ECsLoadFlags::Game);
+			CS_SET_BLUEPRINT_BITFLAG(*LoadFlags, ECsLoadFlags::Game1P);
+		}
+		// 3P_LoadFlags
+		else
+		if (MemberName.EndsWith(ECsLoadCachedString::Str::_3P_LoadFlags))
+		{
+			CS_SET_BLUEPRINT_BITFLAG(*LoadFlags, ECsLoadFlags::Game);
+			CS_SET_BLUEPRINT_BITFLAG(*LoadFlags, ECsLoadFlags::Game3P);
+		}
+		// 3P_Low_LoadFlags
+		else
+		if (MemberName.EndsWith(ECsLoadCachedString::Str::_3P_Low_LoadFlags))
+		{
+			CS_SET_BLUEPRINT_BITFLAG(*LoadFlags, ECsLoadFlags::Game);
+			CS_SET_BLUEPRINT_BITFLAG(*LoadFlags, ECsLoadFlags::Game3PLow);
+		}
+		// VR_LoadFlags
+		else
+		if (MemberName.EndsWith(ECsLoadCachedString::Str::VR_LoadFlags))
+		{
+			CS_SET_BLUEPRINT_BITFLAG(*LoadFlags, ECsLoadFlags::Game);
+			CS_SET_BLUEPRINT_BITFLAG(*LoadFlags, ECsLoadFlags::GameVR);
+		}
+		// _LoadFlags
+		else
+		{
+			CS_SET_BLUEPRINT_BITFLAG(*LoadFlags, ECsLoadFlags::Game);
+		}
+
+		const FString LoadFlagsAsString = LoadFlagsToString(*LoadFlags);
+
+		UE_LOG(LogCs, Warning, TEXT("UCsCommon_Load::CheckEnumLoadFlags: %s was 0. Setting %s to %s."), *ObjectName, *MemberName, *LoadFlagsAsString);
+	}
+}
+
+void UCsCommon_Load::CheckStructWithEnum(const FString &ObjectName, void* InStruct, UScriptStruct* const &InScriptStruct, TCsCheckStructWithEnum_Internal Internal /*=nullptr*/)
+{
+}
+
+void UCsCommon_Load::CheckObjectWithEnum(const FString &ObjectName, void* InObject, UClass* const &InClass, TCsCheckObjectWithEnum_Internal Internal /*=nullptr*/)
+{
+	for (TFieldIterator<UProperty> It(InClass); It; ++It)
+	{
+		UProperty* Property = Cast<UProperty>(*It);
+
+		const FString MemberName = Property->GetName();
+
+		// TAssetSubclassOf
+		if (UAssetClassProperty* AssetClassProperty = Cast<UAssetClassProperty>(*It))
+		{
+			if (Internal)
+			{
+				if ((*Internal)(Property, ObjectName, InObject, InClass))
+					continue;
+			}
+			continue;
+		}
+		// TAssetPtr
+		if (UAssetObjectProperty* AssetObjectProperty = Cast<UAssetObjectProperty>(*It))
+		{
+			// UStaticMesh
+			if (AssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
+			{ CheckEnumAssetObjectProperty<UStaticMesh>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
+			// USkeletalMesh
+			if (AssetObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
+			{ CheckEnumAssetObjectProperty<USkeletalMesh>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
+			// UMaterialInstance
+			if (AssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
+			{ CheckEnumAssetObjectProperty<UMaterialInstance>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
+			// UMaterialInstanceConstant
+			if (AssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
+			{ CheckEnumAssetObjectProperty<UMaterialInstanceConstant>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
+			// UPhysicalMaterial
+			if (AssetObjectProperty->PropertyClass == UPhysicalMaterial::StaticClass())
+			{ CheckEnumAssetObjectProperty<UPhysicalMaterial>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
+			// UPhysicsAsset
+			if (AssetObjectProperty->PropertyClass == UPhysicsAsset::StaticClass())
+			{ CheckEnumAssetObjectProperty<UPhysicsAsset>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
+			// UAnimSequence
+			if (AssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
+			{ CheckEnumAssetObjectProperty<UAnimSequence>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
+			// UAnimMontage
+			if (AssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+			{ CheckEnumAssetObjectProperty<UAnimMontage>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
+			// UBlendSpace
+			if (AssetObjectProperty->PropertyClass == UBlendSpace::StaticClass())
+			{ CheckEnumAssetObjectProperty<UBlendSpace>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
+			// UAnimBlueprint
+			//if (AssetObjectProperty->PropertyClass == UAnimBlueprint::StaticClass())
+			//{ CheckEnumAssetObjectProperty(AssetObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
+			// USoundCue
+			if (AssetObjectProperty->PropertyClass == USoundCue::StaticClass())
+			{ CheckEnumAssetObjectProperty<USoundCue>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
+			// UParticleSystem
+			if (AssetObjectProperty->PropertyClass == UParticleSystem::StaticClass())
+			{ CheckEnumAssetObjectProperty<UParticleSystem>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
+			// UCurveFloat
+			if (AssetObjectProperty->PropertyClass == UCurveFloat::StaticClass())
+			{ CheckEnumAssetObjectProperty<UCurveFloat>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
+			// UCurveVector
+			if (AssetObjectProperty->PropertyClass == UCurveVector::StaticClass())
+			{ CheckEnumAssetObjectProperty<UCurveVector>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
+			// UBlueprint
+			if (AssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
+			{
+				if (AssetObjectProperty->ArrayDim == CS_SINGLETON)
+				{
+					//LoadAssetObjectProperty_Blueprint(AssetObjectProperty, ObjectName, InObject, InClass, MemberName, LoadFlags); continue;
+				}
+			}
+
+			if (Internal)
+			{
+				if ((*Internal)(Property, ObjectName, InObject, InClass))
+					continue;
+			}
+			continue;
+		}
+		// Structs
+		if (UStructProperty* StructProperty = Cast<UStructProperty>(*It))
+		{
+			const FString StructName = FString::Printf(TEXT("%s.%s"), *ObjectName, *MemberName);
+
+			// FCsStaticMesh
+			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
+			{
+				if (StructProperty->ArrayDim == CS_SINGLETON)
+				{ CheckEnumStructProperty<FCsStaticMesh>(StructProperty, InObject, StructName, nullptr); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, ObjectName, InObject, InClass))
+						continue;
+				}
+				continue;
+			}
+			// FCsFpsStaticMesh
+			if (StructProperty->Struct == FCsFpsStaticMesh::StaticStruct())
+			{ CheckEnumStructProperty<FCsFpsStaticMesh>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsTArrayStaticMesh
+			if (StructProperty->Struct == FCsTArrayStaticMesh::StaticStruct())
+			{ CheckEnumStructProperty<FCsTArrayStaticMesh>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsSkeletalMesh
+			if (StructProperty->Struct == FCsSkeletalMesh::StaticStruct())
+			{ CheckEnumStructProperty<FCsSkeletalMesh>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsFpsSkeletalMesh
+			if (StructProperty->Struct == FCsFpsSkeletalMesh::StaticStruct())
+			{ CheckEnumStructProperty<FCsFpsSkeletalMesh>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsTArraySkeletalMesh
+			if (StructProperty->Struct == FCsTArraySkeletalMesh::StaticStruct())
+			{ CheckEnumStructProperty<FCsTArraySkeletalMesh>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsMaterialInstance
+			if (StructProperty->Struct == FCsMaterialInstance::StaticStruct())
+			{ CheckEnumStructProperty<FCsMaterialInstance>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsMaterialInstanceConstant
+			if (StructProperty->Struct == FCsMaterialInstanceConstant::StaticStruct())
+			{ CheckEnumStructProperty<FCsMaterialInstanceConstant>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsTArrayMaterialInstanceConstant
+			if (StructProperty->Struct == FCsTArrayMaterialInstanceConstant::StaticStruct())
+			{
+				if (StructProperty->ArrayDim == CS_SINGLETON)
+				{ CheckEnumStructProperty<FCsTArrayMaterialInstanceConstant>(StructProperty, InObject, StructName, nullptr); continue; }
+				if (StructProperty->ArrayDim == ECS_INTERACTIVE_STATE_MAX)
+				{
+					//LoadMemberFixedArrayStructProperty_EnumSize<FCsTArrayMaterialInstanceConstant, ECsInteractiveState::Type, ECS_INTERACTIVE_STATE_MAX>(StructProperty, InObject, StructName, LoadFlags, &ECsInteractiveState::ToString, nullptr); continue;
+				}
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, ObjectName, InObject, InClass))
+						continue;
+				}
+				continue;
+			}
+			// FCsFpsTArrayMaterialInstanceConstant
+			if (StructProperty->Struct == FCsFpsTArrayMaterialInstanceConstant::StaticStruct())
+			{ CheckEnumStructProperty<FCsFpsTArrayMaterialInstanceConstant>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsInteractiveMaterials
+			if (StructProperty->Struct == FCsInteractiveMaterials::StaticStruct())
+			{ CheckEnumStructProperty<FCsInteractiveMaterials>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsPhysicalMaterial
+			if (StructProperty->Struct == FCsPhysicalMaterial::StaticStruct())
+			{ CheckEnumStructProperty<FCsPhysicalMaterial>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsPhysicsAsset
+			if (StructProperty->Struct == FCsPhysicsAsset::StaticStruct())
+			{ CheckEnumStructProperty<FCsPhysicsAsset>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsCurveFloat
+			if (StructProperty->Struct == FCsCurveFloat::StaticStruct())
+			{ CheckEnumStructProperty<FCsCurveFloat>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsCurveVector
+			if (StructProperty->Struct == FCsCurveVector::StaticStruct())
+			{ CheckEnumStructProperty<FCsCurveVector>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsSoundElement
+			if (StructProperty->Struct == FCsSoundElement::StaticStruct())
+			{
+				if (StructProperty->ArrayDim == CS_SINGLETON)
+				{ CheckEnumStructProperty<FCsSoundElement>(StructProperty, InObject, StructName, nullptr); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, ObjectName, InObject, InClass))
+						continue;
+				}
+				continue;
+			}
+			// FCsFpsSoundElement
+			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
+			{
+				if (StructProperty->ArrayDim == CS_SINGLETON)
+				{ CheckEnumStructProperty<FCsFpsSoundElement>(StructProperty, InObject, StructName, nullptr); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, ObjectName, InObject, InClass))
+						continue;
+				}
+				continue;
+			}
+			// FCsParticleSystem
+			if (StructProperty->Struct == FCsParticleSystem::StaticStruct())
+			{ CheckEnumStructProperty<FCsParticleSystem>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsFxElement
+			if (StructProperty->Struct == FCsFxElement::StaticStruct())
+			{
+				if (StructProperty->ArrayDim == CS_SINGLETON)
+				{ CheckEnumStructProperty<FCsFxElement>(StructProperty, InObject, StructName, nullptr); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, ObjectName, InObject, InClass))
+						continue;
+				}
+				continue;
+			}
+			// FCsFpsFxElement
+			if (StructProperty->Struct == FCsFpsFxElement::StaticStruct())
+			{
+				if (StructProperty->ArrayDim == CS_SINGLETON)
+				{ CheckEnumStructProperty<FCsFpsFxElement>(StructProperty, InObject, StructName, nullptr); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, ObjectName, InObject, InClass))
+						continue;
+				}
+				continue;
+			}
+			// FCsAnimSequence
+			if (StructProperty->Struct == FCsAnimSequence::StaticStruct())
+			{ CheckEnumStructProperty<FCsAnimSequence>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsFpsAnimSequence
+			if (StructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
+			{ CheckEnumStructProperty<FCsFpsAnimSequence>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsAnimMontage
+			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
+			{ CheckEnumStructProperty<FCsAnimMontage>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsFpsAnimMontage
+			if (StructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
+			{ CheckEnumStructProperty<FCsFpsAnimMontage>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsTArrayAnimMontage
+			if (StructProperty->Struct == FCsTArrayAnimMontage::StaticStruct())
+			{ CheckEnumStructProperty<FCsTArrayAnimMontage>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsAnimBlueprint
+			if (StructProperty->Struct == FCsAnimBlueprint::StaticStruct())
+			{ CheckEnumStructProperty<FCsAnimBlueprint>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsFpsAnimBlueprint
+			if (StructProperty->Struct == FCsFpsAnimBlueprint::StaticStruct())
+			{ CheckEnumStructProperty<FCsFpsAnimBlueprint>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsBlendSpace1D
+			if (StructProperty->Struct == FCsBlendSpace1D::StaticStruct())
+			{ CheckEnumStructProperty<FCsBlendSpace1D>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsFpsBlendSpace1D
+			if (StructProperty->Struct == FCsFpsBlendSpace1D::StaticStruct())
+			{ CheckEnumStructProperty<FCsFpsBlendSpace1D>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsBlendSpace
+			if (StructProperty->Struct == FCsBlendSpace::StaticStruct())
+			{ CheckEnumStructProperty<FCsBlendSpace>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsFpsBlendSpace
+			if (StructProperty->Struct == FCsFpsBlendSpace::StaticStruct())
+			{ CheckEnumStructProperty<FCsFpsBlendSpace>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsBlueprint
+			if (StructProperty->Struct == FCsBlueprint::StaticStruct())
+			{ CheckEnumStructProperty<FCsBlueprint>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsTArrayBlueprint
+			if (StructProperty->Struct == FCsTArrayBlueprint::StaticStruct())
+			{ CheckEnumStructProperty<FCsTArrayBlueprint>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsWidgetActorInfo
+			if (StructProperty->Struct == FCsWidgetActorInfo::StaticStruct())
+			{ CheckEnumStructProperty<FCsWidgetActorInfo>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsData_ProjectileImpactPtr
+			if (StructProperty->Struct == FCsData_ProjectileImpactPtr::StaticStruct())
+			{ CheckEnumStructProperty<FCsData_ProjectileImpactPtr>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsDamageFalloff
+			if (StructProperty->Struct == FCsDamageFalloff::StaticStruct())
+			{ CheckEnumStructProperty<FCsDamageFalloff>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsDamageRadial
+			if (StructProperty->Struct == FCsDamageRadial::StaticStruct())
+			{ CheckEnumStructProperty<FCsDamageRadial>(StructProperty, InObject, StructName, nullptr); continue; }
+
+			if (Internal)
+			{
+				if ((*Internal)(Property, ObjectName, InObject, InClass))
+					continue;
+			}
+		}
+		// Array
+		if (UArrayProperty* ArrayProperty = Cast<UArrayProperty>(*It))
+		{
+			// TAssetSubclassOf
+			if (UAssetClassProperty* InnerAssetClassProperty = Cast<UAssetClassProperty>(ArrayProperty->Inner))
+			{
+				if (Internal)
+				{
+					if ((*Internal)(Property, ObjectName, InObject, InClass))
+						continue;
+				}
+				continue;
+			}
+			// TAssetPtr
+			if (UAssetObjectProperty* InnerAssetObjectProperty = Cast<UAssetObjectProperty>(ArrayProperty->Inner))
+			{
+				// UStaticMesh
+				if (InnerAssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
+				{ CheckEnumArrayAssetObjectProperty<UStaticMesh>(ArrayProperty, ObjectName, InObject, InClass, MemberName); continue; }
+				// USkeletalMesh
+				if (InnerAssetObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
+				{ CheckEnumArrayAssetObjectProperty<USkeletalMesh>(ArrayProperty, ObjectName, InObject, InClass, MemberName); continue; }
+				// UMaterialInstance
+				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
+				{ CheckEnumArrayAssetObjectProperty<UMaterialInstance>(ArrayProperty, ObjectName, InObject, InClass, MemberName); continue; }
+				// UMaterialInstanceConstant
+				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
+				{ CheckEnumArrayAssetObjectProperty<UMaterialInstanceConstant>(ArrayProperty, ObjectName, InObject, InClass, MemberName); continue; }
+				// UAnimSequence
+				if (InnerAssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
+				{ CheckEnumArrayAssetObjectProperty<UAnimSequence>(ArrayProperty, ObjectName, InObject, InClass, MemberName); continue; }
+				// UAnimMontage
+				if (InnerAssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+				{ CheckEnumArrayAssetObjectProperty<UAnimMontage>(ArrayProperty, ObjectName, InObject, InClass, MemberName); continue; }
+				// UBlueprint
+				//if (InnerAssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+				//{ CheckEnumArrayAssetObjectProperty(ArrayProperty, ObjectName, InObject, InClass, MemberName); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, ObjectName, InObject, InClass))
+						continue;
+				}
+				continue;
+			}
+			// Struct
+			if (UStructProperty* InnerStructProperty = Cast<UStructProperty>(ArrayProperty->Inner))
+			{
+				const FString StructName = FString::Printf(TEXT("%s.%s"), *ObjectName, *MemberName);
+
+				// FCsMaterialInstance
+				if (InnerStructProperty->Struct == FCsMaterialInstance::StaticStruct())
+				{ CheckEnumArrayStructProperty<FCsMaterialInstance>(ArrayProperty, InObject, StructName); continue; }
+				// FCsMaterialInstanceConstant
+				if (InnerStructProperty->Struct == FCsMaterialInstanceConstant::StaticStruct())
+				{ CheckEnumArrayStructProperty<FCsMaterialInstanceConstant>(ArrayProperty, InObject, StructName); continue; }
+				// FCsFpsFxElement
+				if (InnerStructProperty->Struct == FCsFpsFxElement::StaticStruct())
+				{ CheckEnumArrayStructProperty<FCsFpsFxElement>(ArrayProperty, InObject, StructName); continue; }
+				// FCsFpsSoundElement
+				if (InnerStructProperty->Struct == FCsFpsSoundElement::StaticStruct())
+				{ CheckEnumArrayStructProperty<FCsFpsSoundElement>(ArrayProperty, InObject, StructName); continue; }
+				// FCsAnimSequence
+				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
+				{ CheckEnumArrayStructProperty<FCsAnimSequence>(ArrayProperty, InObject, StructName); continue; }
+				// FCsFpsAnimSequence
+				if (InnerStructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
+				{ CheckEnumArrayStructProperty<FCsFpsAnimSequence>(ArrayProperty, InObject, StructName); continue; }
+				// FCsAnimMontage
+				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
+				{ CheckEnumArrayStructProperty<FCsAnimMontage>(ArrayProperty, InObject, StructName); continue; }
+				// FCsFpsAnimMontage
+				if (InnerStructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
+				{ CheckEnumArrayStructProperty<FCsFpsAnimMontage>(ArrayProperty, InObject, StructName); continue; }
+
+				if (Internal)
+				{
+					if ((*Internal)(Property, ObjectName, InObject, InClass))
+						continue;
+				}
+				continue;
+			}
+			// Byte / Enum
+			if (UByteProperty* ByteProperty = Cast<UByteProperty>(*It))
+			{
+				// enum
+				if (ByteProperty->IsEnum())
+				{
+					// ECollisionChannel
+					if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CollisionChannel))
+					{ CheckEnumByteProperty<ECollisionChannel>(ByteProperty, InObject, MemberName, ECollisionChannel::ECC_MAX); continue; }
+					// ECsLoadFlags_Editor
+					if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsLoadFlags_Editor))
+					{ CheckEnumByteProperty<ECsLoadFlags_Editor::Type>(ByteProperty, InObject, MemberName, ECsLoadFlags_Editor::ECsLoadFlags_Editor_MAX); continue; }
+					// ECsFxPriority
+					if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsFxPriority))
+					{ CheckEnumByteProperty<ECsFxPriority::Type>(ByteProperty, InObject, MemberName, ECsFxPriority::ECsFxPriority_MAX); continue; }
+					// ECsSoundPriority
+					if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsSoundPriority))
+					{ CheckEnumByteProperty<ECsSoundPriority::Type>(ByteProperty, InObject, MemberName, ECsSoundPriority::ECsSoundPriority_MAX); continue; }
+					// ECsInteractiveCollision
+					if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsInteractiveCollision))
+					{
+						if (ByteProperty->ArrayDim == CS_SINGLETON)
+						{ CheckEnumByteProperty<ECsInteractiveCollision::Type>(ByteProperty, InObject, MemberName, ECsInteractiveCollision::ECsInteractiveCollision_MAX); continue; }
+					}
+
+					if (Internal)
+					{
+						if ((*Internal)(Property, ObjectName, InObject, InClass))
+							continue;
+					}
+					continue;
+				}
+				continue;
+			}
+			// int32
+			if (UIntProperty* IntProperty = Cast<UIntProperty>(*It))
+			{
+				if (int32* Member = IntProperty->ContainerPtrToValuePtr<int32>(InObject))
+				{
+										//    TEXT("BitmaskEnum")
+					if (Property->HasMetaData(*(ECsCommonLoadCachedString::Str::BitmaskEnum)))
+					{
+																	//    TEXT("BitmaskEnum")
+						const FString BitmaskEnum = Property->GetMetaData(*(ECsCommonLoadCachedString::Str::BitmaskEnum));
+
+						// (BitmaskEnum == TEXT("ECsLoadFlags"))
+						if (BitmaskEnum == ECsCommonLoadCachedString::Str::CsLoadFlags)
+						{
+							const FString FullLoadFlagsMemberName = FString::Printf(TEXT("%s.%s"), *ObjectName, *MemberName);
+
+							CheckEnumLoadFlags(Member, FullLoadFlagsMemberName, MemberName);
+						}
+					}
+				}
+				continue;
+			}
+		}
+	}
+}
+
+#endif // #if WITH_EDITOR
+
+#pragma endregion Enum
 
 #pragma endregion Loading
 

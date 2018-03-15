@@ -6,6 +6,7 @@
 #include "Types/CsTypes_Damage.h"
 #include "CsPawn.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_Override_OnTick, const uint8&, MappingId, const float&, DeltaSeconds);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnTick, const uint8&, MappingId, const float&, DeltaSeconds);
 
 UCLASS()
@@ -25,6 +26,9 @@ class CSCORE_API ACsPawn : public ACharacter
 
 	UPROPERTY(BlueprintAssignable, Category = "Tick")
 	FBindableDynEvent_CsPawn_OnTick OnTick_ScriptEvent;
+
+	UPROPERTY(BlueprintAssignable, Category = "Tick")
+	FBindableDynEvent_CsPawn_Override_OnTick Override_OnTick_ScriptEvent;
 
 	virtual void OnTickActor_HandleCVars(const float &DeltaSeconds);
 

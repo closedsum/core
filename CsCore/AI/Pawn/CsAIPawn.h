@@ -5,7 +5,7 @@
 #include "Types/CsTypes_Pool.h"
 #include "CsAIPawn.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsAIPawn_Override_OnTick, const int32&, Index, const float&, DeltaSeconds);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry, const uint8&, MappingId, const float&, DeltaSeconds);
 
 USTRUCT(BlueprintType)
 struct FCsAIPawnCache : public FCsPooledObjectCache
@@ -119,9 +119,6 @@ class CSCORE_API ACsAIPawn : public ACsPawn
 	virtual void Allocate_Internal(FCsAIPawnPayload* Payload);
 
 	virtual void DeAllocate();
-
-	UPROPERTY(BlueprintAssignable, Category = "AI")
-	FBindableDynEvent_CsAIPawn_Override_OnTick Override_OnTick_ScriptEvent;
 
 	virtual void OnTick_HandleCVars(const float &DeltaSeconds);
 };

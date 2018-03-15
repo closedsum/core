@@ -10,6 +10,8 @@
 
 #include "Common/CsCommon.h"
 
+#include "AI/Pawn/CsAIPawn.h"
+
 UCsBTTask_CustomRotateToFaceBBEntry::UCsBTTask_CustomRotateToFaceBBEntry(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 	, AngleDeltaForSuccessDot(10.f)

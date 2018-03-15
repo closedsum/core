@@ -1938,6 +1938,15 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 			!DoesHitscanUseRadius.Get(FireMode))
 		{
 			HitFound = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ProjectileCollision, CollisionParams);
+
+			if ((CsCVarDrawLocalPlayerWeaponFireProjectile->GetInt() == CS_CVAR_DRAW &&
+				UCsCommon::IsLocalPawn(GetWorld(), GetMyPawn())) ||
+				CsCVarDrawWeaponFireProjectile->GetInt() == CS_CVAR_DRAW)
+			{
+				const float DrawTime = FMath::Max(TimeBetweenAutoShots.GetEX(FireMode), TimeBetweenShots.GetEX(FireMode));
+
+				DrawDebugLine(GetWorld(), Start, HitFound ? HitResult.Location : End, FColor::Red, false, DrawTime, 0, 1.0f);
+			}
 		}
 		// Hit IS Found. Check penetrations and modifiers
 		if (HitFound)

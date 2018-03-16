@@ -28,7 +28,7 @@ namespace ECsBlendDirection
 		const TCsString Out = TCsString(TEXT("Out"), TEXT("out"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::In) { return Str::In.Value; }
 		if (EType == Type::Out) { return Str::Out.Value; }

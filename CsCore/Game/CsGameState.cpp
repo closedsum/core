@@ -75,7 +75,7 @@ namespace ECsGameStateRoutine
 		const TCsString OnBoard_Internal = TCsString(TEXT("OnBoard_Internal"), TEXT("onboard_internal"), TEXT("onboard internal"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::OnBoard_Internal) { return Str::OnBoard_Internal.Value; }
 		return CS_INVALID_ENUM_TO_STRING;

@@ -42,7 +42,7 @@ namespace ECsInventoryTransaction
 		const TCsString Drop = TCsString(TEXT("Drop"), TEXT("drop"), TEXT("Dropping"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Add) { return Str::Add.Value; }
 		if (EType == Type::Remove) { return Str::Remove.Value; }
@@ -94,7 +94,7 @@ namespace ECsInventoryGetRequest
 		const TCsString FillOrKill = TCsString(TEXT("FillOrKill"), TEXT("fillorkill"), TEXT("fill or kill"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::FillAny) { return Str::FillAny.Value; }
 		if (EType == Type::FillOrKill) { return Str::FillOrKill.Value; }

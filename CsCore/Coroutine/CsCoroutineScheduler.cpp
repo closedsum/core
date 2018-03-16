@@ -617,7 +617,7 @@ void UCsCoroutineScheduler::LogTransaction(const FString &FunctionName, const TE
 		if (Transaction == ECsCoroutineTransaction::End)
 			TransactionAsString = ECsCoroutineTransaction::ToActionString(Transaction) + TEXT("(Reason=") + ECsCoroutineEndReason::ToString(R->endReason) + TEXT(")");
 
-		const FString ScheduleTypeAsString = ECsCoroutineSchedule::ToString(R->scheduleType);
+		const FString& ScheduleTypeAsString = ECsCoroutineSchedule::ToString(R->scheduleType);
 
 		AActor* Actor			= R->GetActor();
 		const FString ActorName = Actor ? Actor->GetName() : ECsCachedString::Str::Empty;
@@ -684,8 +684,8 @@ void UCsCoroutineScheduler::LogRunning(const TCsCoroutineSchedule &ScheduleType)
 
 	float CurrentTime = World ? World->GetTimeSeconds() : UCsCommon::GetCurrentDateTimeSeconds();
 
-	const FString FunctionName		   = ECsCoroutineCachedString::Str::Update;
-	const FString ScheduleTypeAsString = ECsCoroutineSchedule::ToString(ScheduleType);
+	const FString& FunctionName		    = ECsCoroutineCachedString::Str::Update;
+	const FString& ScheduleTypeAsString = ECsCoroutineSchedule::ToString(ScheduleType);
 
 	UE_LOG(LogCs, Warning, TEXT("%s: On%s. Running %d Coroutines at %f."), *FunctionName, *ScheduleTypeAsString, Count, CurrentTime);
 

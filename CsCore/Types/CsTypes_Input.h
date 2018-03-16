@@ -30,7 +30,7 @@ namespace ECsInputDevice
 		const TCsString MotionController = TCsString(TEXT("MotionController"), TEXT("motioncontroller"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::MouseAndKeyboard) { return Str::MouseAndKeyboard.Value; }
 		if (EType == Type::Gamepad) { return Str::Gamepad.Value; }
@@ -77,7 +77,7 @@ namespace ECsInputType
 		const TCsString Rotation = TCsString(TEXT("Rotation"), TEXT("rotation"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Action) { return Str::Action.Value; }
 		if (EType == Type::Axis) { return Str::Axis.Value; }
@@ -134,7 +134,7 @@ namespace ECsInputEvent
 		const TCsString Stationary = TCsString(TEXT("Stationary"), TEXT("stationary"), TEXT("stationary"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::FirstPressed) { return Str::FirstPressed.Value; }
 		if (EType == Type::Pressed) { return Str::Pressed.Value; }
@@ -189,7 +189,7 @@ namespace ECsInputValue
 		const TCsString Rotator = TCsString(TEXT("Rotator"), TEXT("rotator"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Void) { return Str::Void.Value; }
 		if (EType == Type::Float) { return Str::Float.Value; }
@@ -218,15 +218,15 @@ namespace ECsInputActionMap
 
 typedef ECsInputActionMap::BitMask TCsInputActionMap;
 
-// InputActionMaptoString
-typedef FString(*TCsInputActionMapToString)(const int32&);
+// InputActionMapMasktoString
+typedef FString(*TCsInputActionMapMaskToString)(const int32&);
 // StringToInputActionMap
 typedef TCsInputActionMap(*TCsStringToInputActionMap)(const FString&);
 
-#define CS_DECLARE_INPUT_ACTION_MAP	TCsInputActionMapToString InputActionMapToString; \
+#define CS_DECLARE_INPUT_ACTION_MAP	TCsInputActionMapMaskToString InputActionMapMaskToString; \
 									TCsStringToInputActionMap StringToInputActionMap;
 
-#define CS_DEFINE_INPUT_ACTION_MAP	InputActionMapToString = &ECsInputActionMap::ToString; \
+#define CS_DEFINE_INPUT_ACTION_MAP	InputActionMapMaskToString = &ECsInputActionMap::MaskToString; \
 									StringToInputActionMap = &ECsInputActionMap::ToBitMask;
 
 namespace ECsInputAction
@@ -237,7 +237,7 @@ namespace ECsInputAction
 typedef ECsInputAction::Type TCsInputAction;
 
 // InputActionToString
-typedef FString(*TCsInputActionToString)(const TCsInputAction&);
+typedef const FString&(*TCsInputActionToString)(const TCsInputAction&);
 // StringToInputAction
 typedef TCsInputAction(*TCsStringToInputAction)(const FString&);
 

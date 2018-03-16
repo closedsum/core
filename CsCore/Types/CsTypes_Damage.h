@@ -13,7 +13,7 @@ namespace ECsDamageType
 typedef ECsDamageType::Type TCsDamageType;
 
 // DamageTypeToString
-typedef FString(*TCsDamageTypeToString)(const TCsDamageType&);
+typedef const FString&(*TCsDamageTypeToString)(const TCsDamageType&);
 // StringToDamageType
 typedef TCsDamageType(*TCsStringToDamageType)(const FString&);
 
@@ -35,7 +35,7 @@ namespace ECsHitType
 typedef ECsHitType::Type TCsHitType;
 
 // HitTypeToString
-typedef FString(*TCsHitTypeToString)(const TCsHitType&);
+typedef const FString&(*TCsHitTypeToString)(const TCsHitType&);
 // StringToHitType
 typedef TCsHitType(*TCsStringToHitType)(const FString&);
 

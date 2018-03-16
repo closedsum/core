@@ -90,7 +90,7 @@ namespace ECsPlayerStateBaseOnBoardState
 		const TCsString Completed = TCsString(TEXT("Completed"), TEXT("completed"), TEXT("completed"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::WaitingForGameState) { return Str::WaitingForGameState.Value; }
 		if (EType == Type::WaitingForFinishLoadingCommonData) { return Str::WaitingForFinishLoadingCommonData.Value; }
@@ -186,7 +186,7 @@ namespace ECsPlayerStateBaseRoutine
 		const TCsString RequestUniqueMappingId_AI_Internal = TCsString(TEXT("RequestUniqueMappingId_AI_Internal"), TEXT("requestuniquemappingid_ai_internal"), TEXT("request unique mappind id ai internal"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::OnBoard_Internal) { return Str::OnBoard_Internal.Value; }
 		if (EType == Type::RequestUniqueMappingId_AI_Internal) { return Str::RequestUniqueMappingId_AI_Internal.Value; }

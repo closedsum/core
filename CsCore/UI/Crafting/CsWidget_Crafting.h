@@ -29,7 +29,7 @@ namespace ECsWidgetCraftingRoutine
 		const TCsString DecrementCount_Internal = TCsString(TEXT("DecrementCount_Internal"), TEXT("decrementcount_internal"), TEXT("decrement count internal"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::IncrementCount_Internal) { return Str::IncrementCount_Internal.Value; }
 		if (EType == Type::DecrementCount_Internal) { return Str::IncrementCount_Internal.Value; }
@@ -70,7 +70,7 @@ namespace ECsWidgetCraftingProcessState
 		const TCsString Finished = TCsString(TEXT("Finished"), TEXT("finished"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::None) { return Str::None.Value; }
 		if (EType == Type::InProgress) { return Str::InProgress.Value; }

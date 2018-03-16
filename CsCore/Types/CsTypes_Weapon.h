@@ -62,7 +62,7 @@ namespace ECsWeaponState
 typedef ECsWeaponState::Type TCsWeaponState;
 
 // WeaponStateToString
-typedef FString(*TCsWeaponStateToString)(const TCsWeaponState&);
+typedef const FString&(*TCsWeaponStateToString)(const TCsWeaponState&);
 // StringToWeaponState
 typedef TCsWeaponState(*TCsStringToWeaponState)(const FString&);
 
@@ -84,7 +84,7 @@ namespace ECsWeaponSlot
 typedef ECsWeaponSlot::Type TCsWeaponSlot;
 
 // WeaponSlotToString
-typedef FString(*TCsWeaponSlotToString)(const TCsWeaponSlot&);
+typedef const FString&(*TCsWeaponSlotToString)(const TCsWeaponSlot&);
 // StringToWeaponSlot
 typedef TCsWeaponSlot(*TCsStringToWeaponSlot)(const FString&);
 
@@ -106,7 +106,7 @@ namespace ECsWeaponFireMode
 typedef ECsWeaponFireMode::Type TCsWeaponFireMode;
 
 // WeaponFireModeToString
-typedef FString(*TCsWeaponFireModeToString)(const TCsWeaponFireMode&);
+typedef const FString&(*TCsWeaponFireModeToString)(const TCsWeaponFireMode&);
 // StringToWeaponFireMode
 typedef TCsWeaponFireMode(*TCsStringToWeaponFireMode)(const FString&);
 
@@ -128,7 +128,7 @@ namespace ECsWeaponGrip
 typedef ECsWeaponGrip::Type TCsWeaponGrip;
 
 // WeaponGripToString
-typedef FString(*TCsWeaponGripToString)(const TCsWeaponGrip&);
+typedef const FString&(*TCsWeaponGripToString)(const TCsWeaponGrip&);
 // StringToWeaponGrip
 typedef TCsWeaponGrip(*TCsStringToWeaponGrip)(const FString&);
 
@@ -150,7 +150,7 @@ namespace ECsWeaponAnim
 typedef ECsWeaponAnim::Type TCsWeaponAnim;
 
 // WeaponAnimToString
-typedef FString(*TCsWeaponAnimToString)(const TCsWeaponAnim&);
+typedef const FString&(*TCsWeaponAnimToString)(const TCsWeaponAnim&);
 // StringToWeaponAnim
 typedef TCsWeaponAnim(*TCsStringToWeaponAnim)(const FString&);
 
@@ -193,7 +193,7 @@ namespace ECsWeaponOwner
 typedef ECsWeaponOwner::Type TCsWeaponOwner;
 
 // WeaponOwnerToString
-typedef FString(*TCsWeaponOwnerToString)(const TCsWeaponOwner&);
+typedef const FString&(*TCsWeaponOwnerToString)(const TCsWeaponOwner&);
 // StringToWeaponOwner
 typedef TCsWeaponOwner(*TCsStringToWeaponOwner)(const FString&);
 
@@ -551,7 +551,7 @@ namespace ECsData_Weapon_FireMode
 typedef ECsData_Weapon_FireMode::Type TCsData_Weapon_FireMode;
 
 // DataWeaponFireModeToString
-typedef FString(*TCsDataWeaponFireModeToString)(const TCsData_Weapon_FireMode&);
+typedef const FString&(*TCsDataWeaponFireModeToString)(const TCsData_Weapon_FireMode&);
 // StringToDataWeaponFireMode
 typedef TCsData_Weapon_FireMode(*TCsStringToDataWeaponFireMode)(const FString&);
 
@@ -578,7 +578,7 @@ namespace ECsMeleeStyle
 typedef ECsMeleeStyle::Type TCsMeleeStyle;
 
 // MeleeStyleToString
-typedef FString(*TCsMeleeStyleToString)(const TCsMeleeStyle&);
+typedef const FString&(*TCsMeleeStyleToString)(const TCsMeleeStyle&);
 // StringToMeleeStyle
 typedef TCsMeleeStyle(*TCsStringToMeleeStyle)(const FString&);
 

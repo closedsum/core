@@ -59,7 +59,7 @@ namespace ECsFxPriority
 		const TCsString High = TCsString(TEXT("High"), TEXT("high"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Low) { return Str::Low.Value; }
 		if (EType == Type::Medium) { return Str::Medium.Value; }

@@ -32,7 +32,7 @@ namespace ECsCoroutineSchedule
 		const TCsString LastTick = TCsString(TEXT("LastTick"), TEXT("lasttick"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Tick) { return Str::Tick.Value; }
 		if (EType == Type::CalcCamera) { return Str::CalcCamera.Value; }
@@ -75,7 +75,7 @@ namespace ECsCoroutineMessage
 		const TCsString Stop = TCsString(TEXT("Stop"), TEXT("stop"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Notify) { return Str::Notify.Value; }
 		if (EType == Type::Listen) { return Str::Listen.Value; }
@@ -126,7 +126,7 @@ namespace ECsCoroutineEndReason
 		const TCsString Manual = TCsString(TEXT("Manual"), TEXT("manual"), TEXT("manual"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::EndOfExecution) { return Str::EndOfExecution.Value; }
 		if (EType == Type::StopMessage) { return Str::StopMessage.Value; }

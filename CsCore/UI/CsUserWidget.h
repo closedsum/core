@@ -40,7 +40,7 @@ namespace ECsUserWidgetRoutine
 	{
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		return CS_INVALID_ENUM_TO_STRING;
 	}

@@ -127,7 +127,7 @@ namespace ECsRichCurveInterpMode
 		const TCsString RCIM_None = TCsString(TEXT("RCIM_None"), TEXT("rcim_none"), TEXT("none"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::RCIM_Linear) { return Str::RCIM_Linear.Value; }
 		if (EType == Type::RCIM_Constant) { return Str::RCIM_Constant.Value; }
@@ -136,7 +136,7 @@ namespace ECsRichCurveInterpMode
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE FString ToString(const ERichCurveInterpMode &EType)
+	FORCEINLINE const FString& ToString(const ERichCurveInterpMode &EType)
 	{
 		if (EType == ERichCurveInterpMode::RCIM_Linear) { return Str::RCIM_Linear.Value; }
 		if (EType == ERichCurveInterpMode::RCIM_Constant) { return Str::RCIM_Constant.Value; }
@@ -192,7 +192,7 @@ namespace ECsRichCurveTangentMode
 		const TCsString RCTM_None = TCsString(TEXT("RCTM_None"), TEXT("rctm_none"), TEXT("none"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::RCTM_Auto) { return Str::RCTM_Auto.Value; }
 		if (EType == Type::RCTM_User) { return Str::RCTM_User.Value; }
@@ -201,7 +201,7 @@ namespace ECsRichCurveTangentMode
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE FString ToString(const ERichCurveTangentMode &EType)
+	FORCEINLINE const FString& ToString(const ERichCurveTangentMode &EType)
 	{
 		if (EType == ERichCurveTangentMode::RCTM_Auto) { return Str::RCTM_Auto.Value; }
 		if (EType == ERichCurveTangentMode::RCTM_User) { return Str::RCTM_User.Value; }

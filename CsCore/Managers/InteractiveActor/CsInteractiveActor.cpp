@@ -584,7 +584,7 @@ void ACsInteractiveActor::SetPhysicsState(const ECsInteractivePhysicsState &Stat
 
 	if (CsCVarLogInteractiveActorPhysicsStateChange->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		const FString StateAsString			   = ECsInteractivePhysicsState_Editor::ToString(StateType);
+		const FString& StateAsString		   = ECsInteractivePhysicsState_Editor::ToString(StateType);
 		const FString LastPhysicsStateAsString = UCsCommon::InteractivePhysicsStateToString(Last_PhysicsState);
 		const FString PhysicsStateAsString	   = UCsCommon::InteractivePhysicsStateToString(PhysicsState);
 
@@ -600,7 +600,7 @@ void ACsInteractiveActor::ClearPhysicsState(const ECsInteractivePhysicsState &St
 
 	if (CsCVarLogInteractiveActorPhysicsStateChange->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		const FString StateAsString			   = ECsInteractivePhysicsState_Editor::ToString(StateType);
+		const FString& StateAsString		   = ECsInteractivePhysicsState_Editor::ToString(StateType);
 		const FString LastPhysicsStateAsString = UCsCommon::InteractivePhysicsStateToString(Last_PhysicsState);
 		const FString PhysicsStateAsString	   = UCsCommon::InteractivePhysicsStateToString(PhysicsState);
 

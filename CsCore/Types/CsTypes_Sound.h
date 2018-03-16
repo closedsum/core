@@ -31,7 +31,7 @@ namespace ECsSoundType
 		const TCsString s3D = TCsString(TEXT("s3D"), TEXT("s3d"), TEXT("3d"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::s2D) { return Str::s2D.Value; }
 		if (EType == Type::s3D) { return Str::s3D.Value; }
@@ -76,7 +76,7 @@ namespace ECsSoundPriority
 		const TCsString VeryHigh = TCsString(TEXT("VeryHigh"), TEXT("veryhigh"), TEXT("very high"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::VeryLow) { return Str::VeryLow.Value; }
 		if (EType == Type::Low) { return Str::Low.Value; }

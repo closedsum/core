@@ -56,7 +56,7 @@ namespace ECsLevelState
 		const TCsString InTransition = TCsString(TEXT("InTransition"), TEXT("intransition"), TEXT("in transition"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::None) { return Str::None.Value; }
 		if (EType == Type::Loaded) { return Str::Loaded.Value; }
@@ -120,7 +120,7 @@ namespace ECsAxes_Editor
 		const TCsString Z = TCsString(TEXT("Z"), TEXT("z"), TEXT("yaw"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::X) { return Str::X.Value; }
 		if (EType == Type::Y) { return Str::Y.Value; }
@@ -179,7 +179,7 @@ namespace ECsTransformMember
 		const TCsString Scale = TCsString(TEXT("Scale"), TEXT("scale"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Location) { return Str::Location.Value; }
 		if (EType == Type::Rotation) { return Str::Rotation.Value; }
@@ -676,7 +676,7 @@ namespace ECsSurfaceType
 typedef ECsSurfaceType::Type TCsSurfaceType;
 
 // SurfaceTypeToString
-typedef FString(*TCsSurfaceTypeToString)(const TCsSurfaceType&);
+typedef const FString&(*TCsSurfaceTypeToString)(const TCsSurfaceType&);
 // StringToSurfaceType
 typedef TCsSurfaceType(*TCsStringToSurfaceType)(const FString&);
 // PhysicalSurfaceToSurfaceType
@@ -1394,7 +1394,7 @@ namespace ECsHMDDeviceType
 		const TCsString DT_GoogleVR = TCsString(TEXT("DT_GoogleVR"), TEXT("dt_googlevr"), TEXT("goolgevr"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::DT_OculusRift) { return Str::DT_OculusRift.Value; }
 		if (EType == Type::DT_Morpheus) { return Str::DT_Morpheus.Value; }
@@ -1468,7 +1468,7 @@ namespace ECsGestureDevice
 		const TCsString MotionController = TCsString(TEXT("MotionController"), TEXT("motioncontroller"), TEXT("motion controller"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Mouse) { return Str::Mouse.Value; }
 		if (EType == Type::MotionController) { return Str::MotionController.Value; }
@@ -1526,7 +1526,7 @@ namespace ECsControllerHand
 		const TCsString Right = TCsString(TEXT("Right"), TEXT("right"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Left) { return Str::Left.Value; }
 		if (EType == Type::Right) { return Str::Right.Value; }
@@ -1561,7 +1561,7 @@ namespace ECollisionEnabled
 		const TCsString QueryAndPhysics = TCsString(TEXT("QueryAndPhysics"), TEXT("queryandphysics"), TEXT("query and physics"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::NoCollision) { return Str::NoCollision.Value; }
 		if (EType == Type::QueryOnly) { return Str::QueryOnly.Value; }
@@ -1622,7 +1622,7 @@ namespace ECsCollisionChannel
 		const TCsString ECC_GameTraceChannel18 = TCsString(TEXT("ECC_GameTraceChannel18"), TEXT("ecc_gametracechannel18"), TEXT("gametracechannel 18"));
 	}
 
-	FORCEINLINE FString ToString(const ECollisionChannel &EType)
+	FORCEINLINE const FString& ToString(const ECollisionChannel &EType)
 	{
 		if (EType == ECollisionChannel::ECC_WorldStatic) { return Str::ECC_WorldStatic.Value; }
 		if (EType == ECollisionChannel::ECC_WorldDynamic) { return Str::ECC_WorldDynamic.Value; }
@@ -1712,7 +1712,7 @@ namespace ECsCollisionResponse
 		const TCsString ECR_Block = TCsString(TEXT("ECR_Block"), TEXT("ecr_block"), TEXT("block"));
 	}
 
-	FORCEINLINE FString ToString(const ECollisionResponse &EType)
+	FORCEINLINE const FString& ToString(const ECollisionResponse &EType)
 	{
 		if (EType == ECollisionResponse::ECR_Ignore) { return Str::ECR_Ignore.Value; }
 		if (EType == ECollisionResponse::ECR_Overlap) { return Str::ECR_Overlap.Value; }
@@ -1825,7 +1825,7 @@ namespace ECsLinearColor
 		const TCsString Yellow = TCsString(TEXT("Yellow"), TEXT("yellow"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::White) { return Str::White.Value; }
 		if (EType == Type::Gray) { return Str::Gray.Value; }
@@ -1913,7 +1913,7 @@ namespace ECsColor
 		const TCsString Emerald = TCsString(TEXT("Emerald"), TEXT("emerald"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::White) { return Str::White.Value; }
 		if (EType == Type::Black) { return Str::Black.Value; }
@@ -2004,7 +2004,7 @@ namespace ECsAttachmentTransformRules
 		const TCsString SnapToTargetIncludingScale = TCsString(TEXT("SnapToTargetIncludingScale"), TEXT("snaptotargetincludingscale"), TEXT("snap to target including scale"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::KeepRelativeTransform) { return Str::KeepRelativeTransform.Value; }
 		if (EType == Type::KeepWorldTransform) { return Str::KeepWorldTransform.Value; }
@@ -2056,7 +2056,7 @@ namespace ECsDetachmentTransformRules
 		const TCsString KeepWorldTransform = TCsString(TEXT("KeepWorldTransform"), TEXT("keepworldtransform"), TEXT("keep world transform"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::KeepRelativeTransform) { return Str::KeepRelativeTransform.Value; }
 		if (EType == Type::KeepWorldTransform) { return Str::KeepWorldTransform.Value; }

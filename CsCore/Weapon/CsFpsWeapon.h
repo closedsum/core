@@ -55,7 +55,7 @@ namespace ECsFpsWeaponCacheMultiValueMember
 		const TCsString KickbackStrength = TCsString(TEXT("KickbackStrength"), TEXT("kickbackstrength"), TEXT("kickback strength"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		// Spread
 		if (EType == Type::MovingSpreadBonus) { return Str::MovingSpreadBonus.Value; }

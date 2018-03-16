@@ -32,7 +32,7 @@ namespace ECsPoolTransaction
 		const TCsString Deallocate = TCsString(TEXT("Deallocate"), TEXT("deallocate"), TEXT("Deallocating"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Allocate) { return Str::Allocate.Value; }
 		if (EType == Type::PreDeallocate) { return Str::PreDeallocate.Value; }
@@ -81,7 +81,7 @@ namespace ECsPoolTransactionOrder
 		const TCsString FillOrKill = TCsString(TEXT("FillOrKill"), TEXT("fillorkill"), TEXT("fill or kill"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::FillAny) { return Str::FillAny.Value; }
 		if (EType == Type::FillOrKill) { return Str::FillOrKill.Value; }
@@ -122,7 +122,7 @@ namespace ECsPooledObjectState
 		const TCsString Inactive = TCsString(TEXT("Inactive"), TEXT("inactive"), TEXT("inactive"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::WarmUp) { return Str::WarmUp.Value; }
 		if (EType == Type::Active) { return Str::Active.Value; }

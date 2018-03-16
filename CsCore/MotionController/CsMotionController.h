@@ -121,7 +121,7 @@ namespace ECsRoutineMotionController
 		const TCsString Setup_OnCalcCamera_Internal = TCsString(TEXT("Setup_OnCalcCamera_Internal"), TEXT("setup_oncalccamera_internal"), TEXT("setup on calc camera internal"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Setup_OnCalcCamera_Internal) { return Str::Setup_OnCalcCamera_Internal.Value; }
 		return CS_INVALID_ENUM_TO_STRING;

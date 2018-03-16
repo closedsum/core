@@ -124,7 +124,7 @@ namespace ECsProjectileRelevance
 		const TCsString Fake = TCsString(TEXT("Fake"), TEXT("fake"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::RealVisible) { return Str::RealVisible.Value; }
 		if (EType == Type::RealInvisible) { return Str::RealInvisible.Value; }
@@ -174,7 +174,7 @@ namespace ECsProjectileState
 		const TCsString InActive = TCsString(TEXT("InActive"), TEXT("inactive"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Active) { return Str::Active.Value; }
 		if (EType == Type::DeActivating) { return Str::DeActivating.Value; }
@@ -217,7 +217,7 @@ namespace ECsProjectileDeActivate
 		const TCsString Mesh = TCsString(TEXT("Mesh"), TEXT("mesh"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Collision) { return Str::Collision.Value; }
 		if (EType == Type::Movement) { return Str::Movement.Value; }
@@ -258,7 +258,7 @@ namespace ECsProjectileMovement
 		const TCsString Function = TCsString(TEXT("Function"), TEXT("function"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Simulated) { return Str::Simulated.Value; }
 		if (EType == Type::Function) { return Str::Function.Value; }
@@ -297,7 +297,7 @@ namespace ECsProjectileMovementFunctionType
 		const TCsString Sine = TCsString(TEXT("Sine"), TEXT("sine"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Linear) { return Str::Linear.Value; }
 		if (EType == Type::Sine) { return Str::Sine.Value; }

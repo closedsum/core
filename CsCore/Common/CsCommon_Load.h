@@ -372,7 +372,7 @@ template<typename T>
 	}
 
 	template<typename T, typename E, int32 SIZE>
-	static void WriteFixedArrayAssetObjectPropertyToJson_EnumSize(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UAssetObjectProperty* &AssetObjectProperty, void* InObject, const FString &MemberName, FString(*ToString)(const E&))
+	static void WriteFixedArrayAssetObjectPropertyToJson_EnumSize(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UAssetObjectProperty* &AssetObjectProperty, void* InObject, const FString &MemberName, const FString&(*ToString)(const E&))
 	{
 		if (TAssetPtr<T>(*Member)[SIZE] = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<T>[SIZE]>(InObject))
 		{
@@ -428,7 +428,7 @@ template<typename T>
 	}
 
 	template<typename T, typename E, uint8 SIZE>
-	static void WriteMemberFixedArrayStructPropertyToJson_EnumSize(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UStructProperty* &StructProperty, void* InObject, const FString &MemberName, FString(*ToString)(const E&), TCsWriteStructToJson_Internal Internal = nullptr)
+	static void WriteMemberFixedArrayStructPropertyToJson_EnumSize(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UStructProperty* &StructProperty, void* InObject, const FString &MemberName, const FString&(*ToString)(const E&), TCsWriteStructToJson_Internal Internal = nullptr)
 	{
 		T(*Member)[SIZE] = StructProperty->ContainerPtrToValuePtr<T[SIZE]>(InObject);
 
@@ -472,7 +472,7 @@ template<typename T>
 	static void WriteMemberArrayStructPropertyToJson_Transform(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UArrayProperty* &ArrayProperty, void* InObject, const FString &MemberName);
 
 	template<typename T>
-	static void WriteMemberBytePropertyToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UByteProperty* &ByteProperty, void* InObject, const FString &MemberName, FString (*EnumToString)(const T&))
+	static void WriteMemberBytePropertyToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UByteProperty* &ByteProperty, void* InObject, const FString &MemberName, const FString& (*EnumToString)(const T&))
 	{
 		if (TEnumAsByte<T>* Member = ByteProperty->ContainerPtrToValuePtr<TEnumAsByte<T>>(InObject))
 			InJsonWriter->WriteValue(MemberName, (*EnumToString)(*Member));
@@ -588,7 +588,7 @@ template<typename T>
 	}
 
 	template<typename T, typename E, int32 SIZE>
-	static void WriteToFixedArrayAssetObjectPropertyFromJson_EnumSize(TSharedPtr<class FJsonObject> &JsonObject, UAssetObjectProperty* &AssetObjectProperty, void* InObject, const FString &MemberName, FString(*ToString)(const E&))
+	static void WriteToFixedArrayAssetObjectPropertyFromJson_EnumSize(TSharedPtr<class FJsonObject> &JsonObject, UAssetObjectProperty* &AssetObjectProperty, void* InObject, const FString &MemberName, const FString&(*ToString)(const E&))
 	{
 		if (TAssetPtr<T>(*Member)[SIZE] = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<T>[SIZE]>(InObject))
 		{
@@ -698,7 +698,7 @@ template<typename T>
 	}
 
 	template<typename T, typename E, uint8 SIZE>
-	static void WriteToMemberFixedArrayStructPropertyFromJson_EnumSize(TSharedPtr<class FJsonObject> &JsonObject, UStructProperty* &StructProperty, void* InObject, const FString &MemberName, FString(*ToString)(const E&), TCsReadStructFromJson_Internal Internal = nullptr)
+	static void WriteToMemberFixedArrayStructPropertyFromJson_EnumSize(TSharedPtr<class FJsonObject> &JsonObject, UStructProperty* &StructProperty, void* InObject, const FString &MemberName, const FString&(*ToString)(const E&), TCsReadStructFromJson_Internal Internal = nullptr)
 	{
 		T(*Member)[SIZE] = StructProperty->ContainerPtrToValuePtr<T[SIZE]>(InObject);
 
@@ -2211,7 +2211,7 @@ template<typename T>
 	}
 
 	template<typename T, typename E, int32 SIZE>
-	static void LoadFixedArrayAssetObjectProperty_EnumSize(UAssetObjectProperty* &AssetObjectProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const FString &AssetType, const FString &AssetErrorMessageType, const ECsLoadFlags &LoadFlags, FString(*ToString)(const E&))
+	static void LoadFixedArrayAssetObjectProperty_EnumSize(UAssetObjectProperty* &AssetObjectProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const FString &AssetType, const FString &AssetErrorMessageType, const ECsLoadFlags &LoadFlags, const FString&(*ToString)(const E&))
 	{
 		if (TAssetPtr<T>(*Member)[SIZE] = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<T>[SIZE]>(InObject))
 		{
@@ -2317,7 +2317,7 @@ template<typename T>
 	}
 
 	template<typename T, typename E, int32 SIZE>
-	static void LoadMemberFixedArrayStructProperty_EnumSize(UStructProperty* &StructProperty, void* InObject, const FString &MemberName, const ECsLoadFlags &LoadFlags, FString(*ToString)(const E&), TCsLoadStructWithTAssetPtrs_Internal Internal = nullptr)
+	static void LoadMemberFixedArrayStructProperty_EnumSize(UStructProperty* &StructProperty, void* InObject, const FString &MemberName, const ECsLoadFlags &LoadFlags, const FString&(*ToString)(const E&), TCsLoadStructWithTAssetPtrs_Internal Internal = nullptr)
 	{
 		if (T(*Member)[SIZE] = StructProperty->ContainerPtrToValuePtr<T[SIZE]>(InObject))
 		{

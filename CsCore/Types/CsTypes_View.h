@@ -31,7 +31,7 @@ namespace ECsViewType
 		const TCsString VR = TCsString(TEXT("VR"), TEXT("vr"), TEXT("vr"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::FirstPerson) { return Str::FirstPerson.Value; }
 		if (EType == Type::ThirdPerson) { return Str::ThirdPerson.Value; }
@@ -121,7 +121,7 @@ namespace ECsVisibility
 		const TCsString Visible = TCsString(TEXT("Visible"), TEXT("visible"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Hidden) { return Str::Hidden.Value; }
 		if (EType == Type::Visible) { return Str::Visible.Value; }

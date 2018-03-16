@@ -83,7 +83,7 @@ namespace ECsLoadFlags_Editor
 		const TCsString All = TCsString(TEXT("All"), TEXT("all"), TEXT("all"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Game) { return Str::Game.Value; }
 		if (EType == Type::Game1P) { return Str::Game1P.Value; }
@@ -313,7 +313,7 @@ namespace ECsAssetType
 typedef ECsAssetType::Type TCsAssetType;
 
 // AssetTypeToString
-typedef FString(*TCsAssetTypeToString)(const TCsAssetType&);
+typedef const FString&(*TCsAssetTypeToString)(const TCsAssetType&);
 // StringToAssetType
 typedef TCsAssetType(*TCsStringToAssetType)(const FString&);
 
@@ -335,7 +335,7 @@ namespace ECsLoadAssetsType
 typedef ECsLoadAssetsType::Type TCsLoadAssetsType;
 
 // LoadAssetsTypeToString
-typedef FString(*TCsLoadAssetsTypeToString)(const TCsLoadAssetsType&);
+typedef const FString&(*TCsLoadAssetsTypeToString)(const TCsLoadAssetsType&);
 // StringToLoadAssetsType
 typedef TCsLoadAssetsType(*TCsStringToLoadAssetsType)(const FString&);
 
@@ -458,7 +458,7 @@ namespace ECsLoadAsyncOrder
 		const TCsString FirstToLast = TCsString(TEXT("FirstToLast"), TEXT("firsttolast"), TEXT("first to last"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::None) { return Str::None.Value; }
 		if (EType == Type::FirstToLast) { return Str::FirstToLast.Value; }

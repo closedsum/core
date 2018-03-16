@@ -15,7 +15,7 @@ namespace ECsRecipeType
 typedef ECsRecipeType::Type TCsRecipeType;
 
 // RecipeToString
-typedef FString(*TCsRecipeTypeToString)(const TCsRecipeType&);
+typedef const FString&(*TCsRecipeTypeToString)(const TCsRecipeType&);
 // StringToRecipe
 typedef TCsRecipeType(*TCsStringToRecipeType)(const FString&);
 

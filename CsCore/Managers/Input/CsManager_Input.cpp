@@ -32,7 +32,7 @@ ACsManager_Input::ACsManager_Input(const FObjectInitializer& ObjectInitializer) 
 	
 	CurrentInputActionMap = 0;
 
-	InputActionMapToString = nullptr;
+	InputActionMapMaskToString = nullptr;
 	StringToInputActionMap = nullptr;
 
 	InputActionToString = nullptr;
@@ -332,7 +332,7 @@ void ACsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 	// Log Actions
 	if (CsCVarLogInputs->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		const FString InputActionMapAsString = (*InputActionMapToString)(CurrentInputActionMap);
+		const FString InputActionMapAsString = (*InputActionMapMaskToString)(CurrentInputActionMap);
 
 		UE_LOG(LogCs, Log, TEXT("ACsManager_Input::PostProcessInput: ActionMap: %s Frame: %d Time: %f DeltaTime: %f Count: %d"), *InputActionMapAsString, InputFrame.Frame, InputFrame.Time, InputFrame.DeltaTime, InputFrame.Inputs.Num());
 
@@ -340,8 +340,8 @@ void ACsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 		{
 			const FCsInput* Input = InputFrame.Inputs[I];
 
-			const FString Action = (*InputActionToString)(Input->Action);
-			const FString Event = ECsInputEvent::ToString(Input->Event);
+			const FString& Action = (*InputActionToString)(Input->Action);
+			const FString& Event  = ECsInputEvent::ToString(Input->Event);
 
 			// Void - No Value
 			if ((CsCVarLogInputAll->GetInt() == CS_CVAR_SHOW_LOG || CsCVarLogInputActions->GetInt() == CS_CVAR_SHOW_LOG) &&

@@ -15,7 +15,7 @@ namespace ECsCharacterAnim
 typedef ECsCharacterAnim::Type TCsCharacterAnim;
 
 // CharacterAnimToString
-typedef FString(*TCsCharacterAnimToString)(const TCsCharacterAnim&);
+typedef const FString&(*TCsCharacterAnimToString)(const TCsCharacterAnim&);
 // StringToCharacterAnim
 typedef TCsCharacterAnim(*TCsStringToCharacterAnim)(const FString&);
 
@@ -37,7 +37,7 @@ namespace ECsCharacterBlendSpace
 typedef ECsCharacterBlendSpace::Type TCsCharacterBlendSpace;
 
 // CharacterBlendSpaceToString
-typedef FString(*TCsCharacterBlendSpaceToString)(const TCsCharacterBlendSpace&);
+typedef const FString&(*TCsCharacterBlendSpaceToString)(const TCsCharacterBlendSpace&);
 // StringToCharacterBlendSpace
 typedef TCsCharacterBlendSpace(*TCsStringToCharacterBlendSpace)(const FString&);
 
@@ -59,7 +59,7 @@ namespace ECsCharacterAnimBlueprint
 typedef ECsCharacterAnimBlueprint::Type TCsCharacterAnimBlueprint;
 
 // CharacterAnimBlueprintToString
-typedef FString(*TCsCharacterAnimBlueprintToString)(const TCsCharacterAnimBlueprint&);
+typedef const FString&(*TCsCharacterAnimBlueprintToString)(const TCsCharacterAnimBlueprint&);
 // StringToCharacterAnimBlueprint
 typedef TCsCharacterAnimBlueprint(*TCsStringToCharacterAnimBlueprint)(const FString&);
 
@@ -81,7 +81,7 @@ namespace ECsCharacterAnimVariation
 typedef ECsCharacterAnimVariation::Type TCsCharacterAnimVariation;
 
 // CharacterAnimVariationToString
-typedef FString(*TCsCharacterAnimVariationToString)(const TCsCharacterAnimVariation&);
+typedef const FString&(*TCsCharacterAnimVariationToString)(const TCsCharacterAnimVariation&);
 // StringToCharacterAnim
 typedef TCsCharacterAnimVariation(*TCsStringToCharacterAnimVariation)(const FString&);
 

@@ -37,7 +37,7 @@ namespace ECsCoroutineTransaction
 		const TCsString End = TCsString(TEXT("End"), TEXT("end"), TEXT("Ending"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Allocate) { return Str::Allocate.Value; }
 		if (EType == Type::Start) { return Str::Start.Value; }

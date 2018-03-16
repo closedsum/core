@@ -15,7 +15,7 @@ namespace ECsItemType
 typedef ECsItemType::Type TCsItemType;
 
 // ItemTypeToString
-typedef FString(*TCsItemTypeToString)(const TCsItemType&);
+typedef const FString&(*TCsItemTypeToString)(const TCsItemType&);
 // StringToItemType
 typedef TCsItemType(*TCsStringToItemType)(const FString&);
 
@@ -52,7 +52,7 @@ namespace ECsItemCollection
 		const TCsString GroupMixed = TCsString(TEXT("GroupMixed"), TEXT("groupmixed"), TEXT("group mixed"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Single) { return Str::Single.Value; }
 		if (EType == Type::GroupHomogeneous) { return Str::GroupHomogeneous.Value; }
@@ -88,7 +88,7 @@ namespace ECsItemOwner
 typedef ECsItemOwner::Type TCsItemOwner;
 
 // ItemOwnerToString
-typedef FString(*TCsItemOwnerToString)(const TCsItemOwner&);
+typedef const FString&(*TCsItemOwnerToString)(const TCsItemOwner&);
 // StringToItemOwner
 typedef TCsItemOwner(*TCsStringToItemOwner)(const FString&);
 
@@ -144,14 +144,14 @@ namespace ECsInventoryItemState_Editor
 		const TCsString Ingredient = TCsString(TEXT("Ingredient"), TEXT("ingredient"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Visible) { return Str::Visible.Value; }
 		if (EType == Type::Ingredient) { return Str::Ingredient.Value; }
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE FString ToString(const int32 &State)
+	FORCEINLINE const FString& ToString(const int32 &State)
 	{
 		FString String = ECsCachedString::Str::Empty;
 		bool IsFirst   = true;
@@ -321,7 +321,7 @@ namespace ECsItemMemberValueType
 		const TCsString Float = TCsString(TEXT("Float"), TEXT("float"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Bool) { return Str::Bool.Value; }
 		if (EType == Type::Uint8) { return Str::Uint8.Value; }

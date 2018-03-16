@@ -14,7 +14,7 @@ namespace ECsAIType
 typedef ECsAIType::Type TCsAIType;
 
 // AITypeToString
-typedef FString(*TCsAITypeToString)(const TCsAIType&);
+typedef const FString&(*TCsAITypeToString)(const TCsAIType&);
 // StringToAIType
 typedef TCsAIType(*TCsStringToAIType)(const FString&);
 

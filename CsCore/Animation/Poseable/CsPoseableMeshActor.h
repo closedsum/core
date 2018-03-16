@@ -603,7 +603,7 @@ namespace ECsSequencerTimeSnapInterval
 		const TCsString STSI_Custom = TCsString(TEXT("STSI_Custom"), TEXT("stsi_custom"), TEXT("custom"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::STSI_0_001) { return Str::STSI_0_001.Value; }
 		if (EType == Type::STSI_0_01) { return Str::STSI_0_01.Value; }

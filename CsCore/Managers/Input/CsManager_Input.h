@@ -106,7 +106,7 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 #define CS_INPUT_DEFINE_TYPES	InputActionToString = &ECsInputAction::ToString; \
 								StringToInputAction = &ECsInputAction::ToType; \
 								InputAction_MAX = ECsInputAction::ECsInputAction_MAX; \
-								InputActionMapToString = &ECsInputActionMap::ToString; \
+								InputActionMapMaskToString = &ECsInputActionMap::MaskToString; \
 								StringToInputActionMap = &ECsInputActionMap::ToBitMask;
 
 // Example: INPUT = TurnAtRate
@@ -519,7 +519,7 @@ class CSCORE_API ACsManager_Input : public AActor
 
 	int32 CurrentInputActionMap;
 
-	TCsInputActionMapToString InputActionMapToString;
+	TCsInputActionMapMaskToString InputActionMapMaskToString;
 	TCsStringToInputActionMap StringToInputActionMap;
 
 	void SetCurrentInputActionMap(const TCsInputActionMap &ActionMap);

@@ -60,7 +60,7 @@ namespace ECsFpsAnimMember
 		const TCsString AnimVR = TCsString(TEXT("AnimVR"), TEXT("animvr"), TEXT("anim vr"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Anim1P) { return Str::Anim1P.Value; }
 		if (EType == Type::Anim3P) { return Str::Anim3P.Value; }
@@ -69,7 +69,7 @@ namespace ECsFpsAnimMember
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE FString ToStringFromViewType(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE const FString& ToStringFromViewType(const TCsViewType &ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson) { return Str::Anim1P.Value; }
 		if (ViewType == ECsViewType::ThirdPerson && !IsLow) { return Str::Anim3P.Value; }
@@ -529,7 +529,7 @@ namespace ECsFpsAnimBlueprintMember
 		const TCsString BlueprintVR = TCsString(TEXT("BlueprintVR"), TEXT("blueprintvr"), TEXT("blueprint vr"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Blueprint1P) { return Str::Blueprint1P.Value; }
 		if (EType == Type::Blueprint3P) { return Str::Blueprint3P.Value; }
@@ -538,7 +538,7 @@ namespace ECsFpsAnimBlueprintMember
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE FString ToStringFromViewType(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE const FString& ToStringFromViewType(const TCsViewType &ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson) { return Str::Blueprint1P.Value; }
 		if (ViewType == ECsViewType::ThirdPerson && !IsLow) { return Str::Blueprint3P.Value; }
@@ -736,7 +736,7 @@ namespace ECsFpsAnimBlendSpaceMember
 		const TCsString BlendVR = TCsString(TEXT("BlendVR"), TEXT("blendvr"), TEXT("blend vr"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Blend1P) { return Str::Blend1P.Value; }
 		if (EType == Type::Blend3P) { return Str::Blend3P.Value; }
@@ -745,7 +745,7 @@ namespace ECsFpsAnimBlendSpaceMember
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE FString ToStringFromViewType(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE const FString& ToStringFromViewType(const TCsViewType &ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson) { return Str::Blend1P.Value; }
 		if (ViewType == ECsViewType::ThirdPerson && !IsLow) { return Str::Blend3P.Value; }
@@ -1118,7 +1118,7 @@ namespace ECsAdditiveBasePoseType
 		const TCsString ABPT_AnimFrame = TCsString(TEXT("ABPT_AnimFrame"), TEXT("abpt_animframe"), TEXT("anim frame"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::ABPT_None) { return Str::ABPT_None.Value; }
 		if (EType == Type::ABPT_RefPose) { return Str::ABPT_RefPose.Value; }
@@ -1127,7 +1127,7 @@ namespace ECsAdditiveBasePoseType
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE FString ToString(const EAdditiveBasePoseType &EType)
+	FORCEINLINE const FString& ToString(const EAdditiveBasePoseType &EType)
 	{
 		if (EType == EAdditiveBasePoseType::ABPT_None) { return Str::ABPT_None.Value; }
 		if (EType == EAdditiveBasePoseType::ABPT_RefPose) { return Str::ABPT_RefPose.Value; }
@@ -1184,7 +1184,7 @@ namespace ECsAdditiveAnimationType
 		const TCsString AAT_RotationOffsetMeshSpace = TCsString(TEXT("AAT_RotationOffsetMeshSpace"), TEXT("aat_rotationoffsetmeshspace"), TEXT("rotation offset mesh space"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::AAT_None) { return Str::AAT_None.Value; }
 		if (EType == Type::AAT_LocalSpaceBase) { return Str::AAT_LocalSpaceBase.Value; }
@@ -1192,7 +1192,7 @@ namespace ECsAdditiveAnimationType
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE FString ToString(const EAdditiveAnimationType &EType)
+	FORCEINLINE const FString& ToString(const EAdditiveAnimationType &EType)
 	{
 		if (EType == EAdditiveAnimationType::AAT_None) { return Str::AAT_None.Value; }
 		if (EType == EAdditiveAnimationType::AAT_LocalSpaceBase) { return Str::AAT_LocalSpaceBase.Value; }

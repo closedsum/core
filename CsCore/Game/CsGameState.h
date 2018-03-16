@@ -49,7 +49,7 @@ namespace ECsGameStateOnBoardState
 		const TCsString Completed = TCsString(TEXT("Completed"), TEXT("completed"), TEXT("completed"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::LoadCommonData) { return Str::LoadCommonData.Value; }
 		if (EType == Type::SetupHUD) { return Str::SetupHUD.Value; }

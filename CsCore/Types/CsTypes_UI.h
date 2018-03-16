@@ -47,7 +47,7 @@ namespace ECsWidgetActorType
 typedef ECsWidgetActorType::Type TCsWidgetActorType;
 
 // WidgetActorTypeToString
-typedef FString(*TCsWidgetActorTypeToString)(const TCsWidgetActorType&);
+typedef const FString&(*TCsWidgetActorTypeToString)(const TCsWidgetActorType&);
 // StringToWidgetActorType
 typedef TCsWidgetActorType(*TCsStringToWidgetActorType)(const FString&);
 
@@ -69,7 +69,7 @@ namespace ECsWidgetType
 typedef ECsWidgetType::Type TCsWidgetType;
 
 // WidgetTypeToString
-typedef FString(*TCsWidgetTypeToString)(const TCsWidgetType&);
+typedef const FString&(*TCsWidgetTypeToString)(const TCsWidgetType&);
 // StringToWidgetType
 typedef TCsWidgetType(*TCsStringToWidgetType)(const FString&);
 
@@ -106,7 +106,7 @@ namespace ECsSimpleWidgetType
 		const TCsString Button = TCsString(TEXT("Button"), TEXT("button"), TEXT("button"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Text) { return Str::Text.Value; }
 		if (EType == Type::Float) { return Str::Float.Value; }
@@ -207,7 +207,7 @@ namespace ECsHorizTextAligment
 		const TCsString EHTA_Right = TCsString(TEXT("EHTA_Right"), TEXT("ehta_right"), TEXT("right"));
 	}
 
-	FORCEINLINE FString ToString(const EHorizTextAligment &EType)
+	FORCEINLINE const FString& ToString(const EHorizTextAligment &EType)
 	{
 		if (EType == EHorizTextAligment::EHTA_Left) { return Str::EHTA_Left.Value; }
 		if (EType == EHorizTextAligment::EHTA_Center) { return Str::EHTA_Center.Value; }
@@ -236,7 +236,7 @@ namespace ECsVerticalTextAligment
 		const TCsString EVRTA_QuadTop = TCsString(TEXT("EVRTA_QuadTop"), TEXT("evrta_quadtop"), TEXT("quad top"));
 	}
 
-	FORCEINLINE FString ToString(const EVerticalTextAligment &EType)
+	FORCEINLINE const FString& ToString(const EVerticalTextAligment &EType)
 	{
 		if (EType == EVerticalTextAligment::EVRTA_TextTop) { return Str::EVRTA_TextTop.Value; }
 		if (EType == EVerticalTextAligment::EVRTA_TextCenter) { return Str::EVRTA_TextCenter.Value; }
@@ -286,7 +286,7 @@ namespace ECsButtonState
 		const TCsString FirstReleased = TCsString(TEXT("FirstReleased"), TEXT("firstreleased"), TEXT("first released"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::None) { return Str::None.Value; }
 		if (EType == Type::FirstHover) { return Str::FirstHover.Value; }

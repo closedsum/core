@@ -27,7 +27,7 @@ namespace ECsRoutineJavascriptEntryPoint
 		const TCsString Setup_Internal = TCsString(TEXT("Setup_Internal"), TEXT("setup_internal"), TEXT("setup internal"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Setup_Internal) { return Str::Setup_Internal.Value; }
 		return CS_INVALID_ENUM_TO_STRING;

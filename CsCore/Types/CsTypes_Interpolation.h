@@ -83,7 +83,7 @@ namespace ECsEasingType
 		const TCsString ExpoInOut = TCsString(TEXT("ExpoInOut"), TEXT("expoinout"), TEXT("expo in out"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Linear) { return Str::Linear.Value; }
 		if (EType == Type::BounceIn) { return Str::BounceIn.Value; }

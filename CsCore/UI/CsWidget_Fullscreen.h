@@ -27,7 +27,7 @@ namespace ECsWidgetFullscreenRoutine
 		const TCsString FadeIn_Internal = TCsString(TEXT("LoadDataMapping_Internal"), TEXT("loaddatamapping_internal"), TEXT("load data mapping internal"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::FadeOut_Internal) { return Str::FadeOut_Internal.Value; }
 		if (EType == Type::FadeIn_Internal) { return Str::FadeIn_Internal.Value; }

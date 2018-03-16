@@ -271,7 +271,7 @@ void ACsInteractiveAIPawn::SetPhysicsState(const ECsInteractivePhysicsState &Sta
 
 	if (CsCVarLogInteractiveAIPawnPhysicsStateChange->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		const FString StateAsString			   = ECsInteractivePhysicsState_Editor::ToString(StateType);
+		const FString& StateAsString		   = ECsInteractivePhysicsState_Editor::ToString(StateType);
 		const FString LastPhysicsStateAsString = UCsCommon::InteractivePhysicsStateToString(Last_PhysicsState);
 		const FString PhysicsStateAsString	   = UCsCommon::InteractivePhysicsStateToString(PhysicsState);
 
@@ -287,7 +287,7 @@ void ACsInteractiveAIPawn::ClearPhysicsState(const ECsInteractivePhysicsState &S
 
 	if (CsCVarLogInteractiveAIPawnPhysicsStateChange->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		const FString StateAsString			   = ECsInteractivePhysicsState_Editor::ToString(StateType);
+		const FString& StateAsString		   = ECsInteractivePhysicsState_Editor::ToString(StateType);
 		const FString LastPhysicsStateAsString = UCsCommon::InteractivePhysicsStateToString(Last_PhysicsState);
 		const FString PhysicsStateAsString	   = UCsCommon::InteractivePhysicsStateToString(PhysicsState);
 

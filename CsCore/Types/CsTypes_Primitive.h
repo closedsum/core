@@ -2443,7 +2443,7 @@ namespace ECsMemberType
 		const TCsString FColor = TCsString(TEXT("FColor"), TEXT("fcolor"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Bool) { return Str::Bool.Value; }
 		if (EType == Type::Uint8) { return Str::Uint8.Value; }

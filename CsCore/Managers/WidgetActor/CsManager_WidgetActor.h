@@ -5,8 +5,6 @@
 #include "Types/CsTypes_UI.h"
 #include "CsManager_WidgetActor.generated.h"
 
-typedef FString(*TCsWidgetActorTypeToString)(const ECsWidgetActorType::Type&);
-
 UCLASS()
 class CSCORE_API ACsManager_WidgetActor : public ACsManager
 {

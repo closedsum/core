@@ -125,7 +125,7 @@ int32 UCsCommon_Load::StringtoLoadFlags(const FString &LoadFlags)
 
 	for (int32 I = 0; I < ECS_LOAD_FLAGS_EDITOR_MAX; ++I)
 	{
-		const FString EnumAsString = ECsLoadFlags_Editor::ToString((TCsLoadFlags_Editor)I);
+		const FString& EnumAsString = ECsLoadFlags_Editor::ToString((TCsLoadFlags_Editor)I);
 
 		if (LoadFlags.Contains(EnumAsString))
 			CS_SET_BLUEPRINT_BITFLAG(Flag, ECsLoadFlags_Editor::ToFlag(EnumAsString));

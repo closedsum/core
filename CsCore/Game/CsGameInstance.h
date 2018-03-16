@@ -35,7 +35,7 @@ namespace ECsGameInstanceRoutine
 		const TCsString PerformLevelTransition_Internal = TCsString(TEXT("PerformLevelTransition_Internal"), TEXT("performleveltransition_internal"), TEXT("perform level transition internal"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::OnBoard_Internal) { return Str::OnBoard_Internal.Value; }
 		if (EType == Type::LoadDataMapping_Internal) { return Str::LoadDataMapping_Internal.Value; }
@@ -81,7 +81,7 @@ namespace ECsGameInstanceOnBoardState
 		const TCsString Completed = TCsString(TEXT("Completed"), TEXT("completed"), TEXT("completed"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::LoadDataMapping) { return Str::LoadDataMapping.Value; }
 		if (EType == Type::LoadStartUpData) { return Str::LoadStartUpData.Value; }

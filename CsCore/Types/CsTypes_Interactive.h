@@ -16,7 +16,7 @@ namespace ECsInteractiveType
 typedef ECsInteractiveType::Type TCsInteractiveType;
 
 // InteractiveTypeToString
-typedef FString(*TCsInteractiveTypeToString)(const TCsInteractiveType&);
+typedef const FString&(*TCsInteractiveTypeToString)(const TCsInteractiveType&);
 // StringToInteractiveType
 typedef TCsInteractiveType(*TCsStringToInteractiveType)(const FString&);
 
@@ -79,7 +79,7 @@ namespace ECsInteractiveState
 		const TCsString Remove = TCsString(TEXT("Remove"), TEXT("remove"), TEXT("remove"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::None) { return Str::None.Value; }
 		if (EType == Type::FirstFreeze) { return Str::FirstFreeze.Value; }
@@ -150,7 +150,7 @@ namespace ECsInteractiveInstigator
 		const TCsString Actor = TCsString(TEXT("Actor"), TEXT("actor"), TEXT("actor"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Look) { return Str::Look.Value; }
 		if (EType == Type::LeftHand) { return Str::LeftHand.Value; }
@@ -199,7 +199,7 @@ namespace ECsInteractiveCollision
 		const TCsString Mesh = TCsString(TEXT("Mesh"), TEXT("mesh"), TEXT("mesh"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Box) { return Str::Box.Value; }
 		if (EType == Type::Sphere) { return Str::Sphere.Value; }
@@ -324,7 +324,7 @@ namespace ECsInteractivePhysicsState_Editor
 		const TCsString Held = TCsString(TEXT("Held"), TEXT("held"));
 	}
 
-	FORCEINLINE FString ToString(const Type &EType)
+	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Grounded) { return Str::Grounded.Value; }
 		if (EType == Type::Airborne) { return Str::Airborne.Value; }
@@ -334,7 +334,7 @@ namespace ECsInteractivePhysicsState_Editor
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE FString ToString(const ECsInteractivePhysicsState &EType)
+	FORCEINLINE const FString& ToString(const ECsInteractivePhysicsState &EType)
 	{
 		if (EType == ECsInteractivePhysicsState::Grounded) { return Str::Grounded.Value; }
 		if (EType == ECsInteractivePhysicsState::Airborne) { return Str::Airborne.Value; }
@@ -414,7 +414,7 @@ namespace ECsPickupFX
 typedef ECsPickupFX::Type TCsPickupFX;
 
 // PickupFXToString
-typedef FString(*TCsPickupFXToString)(const TCsPickupFX&);
+typedef const FString&(*TCsPickupFXToString)(const TCsPickupFX&);
 // StringToPickupFX
 typedef TCsPickupFX(*TCsStringToPickupFX)(const FString&);
 
@@ -436,7 +436,7 @@ namespace ECsPickupSound
 typedef ECsPickupSound::Type TCsPickupSound;
 
 // PickupSoundToString
-typedef FString(*TCsPickupSoundToString)(const TCsPickupSound&);
+typedef const FString&(*TCsPickupSoundToString)(const TCsPickupSound&);
 // StringToPickupSound
 typedef TCsPickupSound(*TCsStringToPickupSound)(const FString&);
 

@@ -13,6 +13,7 @@ ACsData_Character::ACsData_Character(const FObjectInitializer& ObjectInitializer
 #pragma region
 
 int32 ACsData_Character::GetHealth() { return 0; }
+float ACsData_Character::GetRespawnTime() { return 0.0f; }
 
 #pragma endregion Stats
 

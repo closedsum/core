@@ -37,6 +37,7 @@ class CSCORE_API ACsPawn : public ACharacter
 
 // State
 #pragma region
+public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
 	float Health;
@@ -44,6 +45,12 @@ class CSCORE_API ACsPawn : public ACharacter
 	virtual void ApplyDamage(FCsDamageEvent* Event);
 
 	virtual void Die();
+
+	UPROPERTY(BlueprintReadWrite, Category = "State")
+	bool bFirstSpawn;
+
+	UPROPERTY(BlueprintReadWrite, Category = "State")
+	int32 SpawnCount;
 
 #pragma endregion State
 
@@ -174,6 +181,9 @@ public:
 #pragma region
 public:
 
+	UPROPERTY(BlueprintReadWrite, Category = "Data")
+	bool bCacheData;
+
 	class ACsDataMapping* GetDataMapping();
 
 	template<typename T>
@@ -215,7 +225,9 @@ public:
 		return Cast<T>(GetMyData_CharacterMaterialSkin());
 	}
 
+	virtual void SetDatas();
 	virtual void ApplyData_Character();
+	virtual void OnRespawn_ApplyData_Character();
 
 #pragma endregion Data
 
@@ -293,6 +305,7 @@ public:
 	}
 
 	virtual void ApplyData_Weapon();
+	virtual void OnRespawn_Setup_Weapon();
 
 #pragma endregion Weapons
 

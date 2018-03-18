@@ -232,7 +232,9 @@ ACsData_CharacterMaterialSkin* ACsPawn::GetMyData_CharacterMaterialSkin()
 	return MyData_CharacterMaterialSkin.IsValid() ? MyData_CharacterMaterialSkin.Get() : nullptr;
 }
 
+void ACsPawn::SetDatas(){}
 void ACsPawn::ApplyData_Character(){}
+void ACsPawn::OnRespawn_ApplyData_Character(){}
 
 #pragma endregion Data
 
@@ -270,6 +272,7 @@ ACsData_WeaponMaterialSkin* ACsPawn::GetCurrentData_WeaponMaterialSkin()
 }
 
 void ACsPawn::ApplyData_Weapon(){}
+void ACsPawn::OnRespawn_Setup_Weapon(){}
 
 #pragma endregion Weapons
 

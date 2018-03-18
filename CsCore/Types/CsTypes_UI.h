@@ -481,6 +481,7 @@ public:
 	TWeakObjectPtr<class UProgressBar> Bar;
 
 	TCsFloat Percent;
+	TCsFLinearColor Color;
 
 public:
 	FCsWidget_Bar()
@@ -496,6 +497,8 @@ public:
 		Visibility.Clear();
 		Percent = Bar->Percent;
 		Percent.Clear();
+		Color = Bar->FillColorAndOpacity;
+		Color.Clear();
 	}
 
 	virtual void OnNativeTick(const float &InDeltaTime) override
@@ -519,13 +522,25 @@ public:
 			if (UProgressBar* B = Get())
 				B->SetPercent(Percent.Get());
 		}
+		// Color
+		if (Color.HasChanged())
+		{
+			if (UProgressBar* B = Get())
+				B->SetFillColorAndOpacity(Color.Get());
+		}
 		Visibility.Clear();
 		Percent.Clear();
+		Color.Clear();
 	}
 
 	void SetPercent(const float &inPercent)
 	{
 		Percent = inPercent;
+	}
+
+	void SetColor(const FLinearColor &inColor)
+	{
+		Color = inColor;
 	}
 
 	UProgressBar* Get() { return Bar.IsValid() ? Bar.Get() : nullptr; }

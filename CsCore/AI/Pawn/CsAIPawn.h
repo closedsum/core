@@ -6,7 +6,11 @@
 #include "Types/CsTypes_Coroutine.h"
 #include "CsAIPawn.generated.h"
 
-//DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry, const uint8&, MappingId, const float&, DeltaSeconds);
+// RotateToFaceBBEntry
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Start, const uint8&, MappingId, const float&, AngleDelta, const float&, RotationRate);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Start, const uint8&, const float&, const float&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Finish, const uint8&, MappingId);
+DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Finish, const uint8&);
 
 USTRUCT(BlueprintType)
 struct FCsAIPawnCache : public FCsPooledObjectCache
@@ -123,12 +127,18 @@ class CSCORE_API ACsAIPawn : public ACsPawn
 
 	virtual void OnTick_HandleCVars(const float &DeltaSeconds);
 
-// Routines
+// Behavior Tree
 #pragma region
-public:
 
-	virtual bool AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type) override;
-	virtual bool RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type) override;
+	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
+	FBindableDynEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Start OnBTTask_RotateToFaceBBEntry_Start_ScriptEvent;
 
-#pragma endregion Routines
+	FBindableEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Start OnBTTask_RotateToFaceBBEntry_Start_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
+	FBindableDynEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Finish OnBTTask_RotateToFaceBBEntry_Finish_ScriptEvent;
+
+	FBindableEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Finish OnBTTask_RotateToFaceBBEntry_Finish_Event;
+
+#pragma endregion Behavior Tree
 };

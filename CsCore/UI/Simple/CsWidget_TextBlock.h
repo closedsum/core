@@ -19,5 +19,7 @@ class CSCORE_API UCsWidget_TextBlock : public UCsSimpleWidget
 
 	FCsWidget_Text Text;
 
+	virtual UPanelSlot* GetChildSlot() override;
+
 	virtual void SetString(const FString &InString);
 };

@@ -24,5 +24,7 @@ class CSCORE_API UCsPooledWidget_TextBlock : public UCsPooledWidget
 
 	FCsWidget_Text Text;
 
+	virtual UPanelSlot* GetChildSlot() override;
+
 	virtual void SetString(const FString &InString);
 };

@@ -24,5 +24,7 @@ class CSCORE_API UCsPooledWidget_ProgressBar : public UCsPooledWidget
 
 	FCsWidget_Bar Bar;
 
+	virtual UPanelSlot* GetChildSlot() override;
+
 	virtual void SetPercent(const float &Value);
 };

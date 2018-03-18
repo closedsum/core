@@ -97,6 +97,11 @@ void UCsPooledWidget_TextBlock::Hide()
 	Super::Hide();
 }
 
+UPanelSlot* UCsPooledWidget_TextBlock::GetChildSlot()
+{
+	return MyText->Slot;
+}
+
 void UCsPooledWidget_TextBlock::SetString(const FString &InString)
 {
 	Text.SetString(InString);

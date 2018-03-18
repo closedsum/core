@@ -18,4 +18,6 @@ class CSCORE_API UCsWidget_ProgressBar : public UCsSimpleWidget
 	UProgressBar* MyBar;
 
 	FCsWidget_Bar Bar;
+
+	virtual UPanelSlot* GetChildSlot() override;
 };

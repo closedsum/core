@@ -106,3 +106,8 @@ void UCsPooledWidget_ProgressBar::SetPercent(const float &Value)
 {
 	Bar.SetPercent(Value);
 }
+
+UPanelSlot* UCsPooledWidget_ProgressBar::GetChildSlot()
+{
+	return MyBar->Slot;
+}

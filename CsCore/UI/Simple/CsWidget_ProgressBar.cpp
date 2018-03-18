@@ -48,3 +48,8 @@ void UCsWidget_ProgressBar::Hide()
 
 	Super::Hide();
 }
+
+UPanelSlot* UCsWidget_ProgressBar::GetChildSlot()
+{
+	return MyBar->Slot;
+}

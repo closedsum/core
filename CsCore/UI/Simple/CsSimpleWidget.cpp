@@ -66,6 +66,8 @@ void UCsSimpleWidget::Hide()
 	SetIsEnabled(false);
 }
 
+UPanelSlot* UCsSimpleWidget::GetChildSlot() { return nullptr; }
+
 void UCsSimpleWidget::SetPosition(const FVector2D &InPosition)
 {
 	Position = InPosition;

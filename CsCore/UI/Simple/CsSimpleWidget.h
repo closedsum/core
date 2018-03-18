@@ -33,6 +33,8 @@ class CSCORE_API UCsSimpleWidget : public UUserWidget
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual void Hide();
 
+	virtual UPanelSlot* GetChildSlot();
+
 	TCsFVector2D Position;
 
 	virtual void SetPosition(const FVector2D &InPosition);

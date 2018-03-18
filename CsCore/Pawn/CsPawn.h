@@ -6,8 +6,50 @@
 #include "Types/CsTypes_Damage.h"
 #include "CsPawn.generated.h"
 
+// Tick
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_Override_OnTick, const uint8&, MappingId, const float&, DeltaSeconds);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnTick, const uint8&, MappingId, const float&, DeltaSeconds);
+// Respawn
+DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsAIPawn_OnHandleRespawnTimerFinished, const uint8&);
+
+// Enums
+#pragma region
+
+namespace ECsPawnRoutine
+{
+	enum Type
+	{
+		HandleRespawnTimer_Internal,
+		ECsPawnRoutine_MAX,
+	};
+}
+
+namespace ECsPawnRoutine
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString HandleRespawnTimer_Internal = TCsString(TEXT("HandleRespawnTimer_Internal"), TEXT("handlerespawntimer_internal"), TEXT("handle respawn timer internal"));
+	}
+
+	FORCEINLINE const FString& ToString(const Type &EType)
+	{
+		if (EType == Type::HandleRespawnTimer_Internal) { return Str::HandleRespawnTimer_Internal.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::HandleRespawnTimer_Internal) { return Type::HandleRespawnTimer_Internal; }
+		return Type::ECsPawnRoutine_MAX;
+	}
+}
+
+#define ECS_PAWN_ROUTINE_MAX (uint8)ECsPawnRoutine::ECsPawnRoutine_MAX
+typedef ECsPawnRoutine::Type TCsPawnRoutine;
+
+#pragma endregion Enums
 
 UCLASS()
 class CSCORE_API ACsPawn : public ACharacter
@@ -51,6 +93,21 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, Category = "State")
 	int32 SpawnCount;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
+	FVector SpawnLocation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
+	FRotator SpawnRotation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
+	float RespawnTime;
+
+	CS_COROUTINE_DECLARE(HandleRespawnTimer)
+
+	virtual void OnHandleRespawnTimerFinished(const uint8 &MappingId);
+
+	FBindableEvent_CsAIPawn_OnHandleRespawnTimerFinished OnHandleRespawnTimerFinished_Event;
 
 #pragma endregion State
 

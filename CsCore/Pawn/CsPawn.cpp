@@ -15,12 +15,37 @@
 #include "Player/CsPlayerStateBase.h"
 #include "Weapon/CsWeapon.h"
 
+// Cache
+#pragma region
+
+namespace ECsPawnCachedName
+{
+	namespace Name
+	{
+		// Functions
+		const FName HandleRespawnTimer_Internal = FName("ACsPawn::HandleRespawnTimer_Internal");
+	};
+}
+
+namespace ECsPawnCachedString
+{
+	namespace Str
+	{
+		// Functions
+		const FString HandleRespawnTimer_Internal = TEXT("ACsPawn::HandleRespawnTimer_Internal");
+	};
+}
+
+#pragma endregion Cache
+
 ACsPawn::ACsPawn(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	CurrentViewType = ECsViewType::ThirdPerson;
 
 	WeaponClass = ACsWeapon::StaticClass();
+
+	OnHandleRespawnTimerFinished_Event.AddUObject(this, &ACsPawn::OnHandleRespawnTimerFinished);
 }
 
 void ACsPawn::PostActorCreated()
@@ -95,6 +120,54 @@ void ACsPawn::ApplyDamage(FCsDamageEvent* Event)
 
 void ACsPawn::Die(){}
 
+void ACsPawn::HandleRespawnTimer()
+{
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+
+	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+
+	Payload->Schedule		= Schedule;
+	Payload->Function		= &ACsPawn::HandleRespawnTimer_Internal;
+	Payload->Actor			= this;
+	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
+	Payload->Add			= &ACsPawn::AddRoutine;
+	Payload->Remove			= &ACsPawn::RemoveRoutine;
+	Payload->Type			= (uint8)ECsPawnRoutine::HandleRespawnTimer_Internal;
+	Payload->DoInit			= true;
+	Payload->PerformFirstRun = false;
+	Payload->Name			= ECsPawnCachedName::Name::HandleRespawnTimer_Internal;
+	Payload->NameAsString	= ECsPawnCachedString::Str::HandleRespawnTimer_Internal;
+
+	FCsRoutine* R = Scheduler->Allocate(Payload);
+
+	Scheduler->StartRoutine(Schedule, R);
+}
+
+CS_COROUTINE(ACsPawn, HandleRespawnTimer_Internal)
+{
+	ACsPawn* p				 = r->GetActor<ACsPawn>();
+	UCsCoroutineScheduler* s = r->scheduler;
+	UWorld* w				 = p->GetWorld();
+	ACsPlayerStateBase* ps	 = Cast<ACsPlayerStateBase>(p->PlayerState);
+
+	ACsData_Character* Data_Character = p->GetMyData_Character();
+
+	const float CurrentTime = w->GetTimeSeconds();
+	const float& StartTime  = r->startTime;
+	const float RespawnTime = Data_Character->GetRespawnTime();
+
+	CS_COROUTINE_BEGIN(r);
+
+	CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - StartTime >= RespawnTime);
+
+	p->OnHandleRespawnTimerFinished_Event.Broadcast(ps->UniqueMappingId);
+
+	CS_COROUTINE_END(r);
+}
+
+void ACsPawn::OnHandleRespawnTimerFinished(const uint8 &MappingId) {}
+
 #pragma endregion State
 
 // Routines
@@ -107,6 +180,14 @@ void ACsPawn::Die(){}
 
 bool ACsPawn::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
 {
+	const TCsPawnRoutine RoutineType = (TCsPawnRoutine)Type;
+
+	// HandleRespawnTimer_Internal
+	if (RoutineType == ECsPawnRoutine::HandleRespawnTimer_Internal)
+	{
+		HandleRespawnTimer_Internal_Routine = Routine;
+		return true;
+	}
 	return false;
 }
 
@@ -117,6 +198,15 @@ bool ACsPawn::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
 
 bool ACsPawn::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
 {
+	const TCsPawnRoutine RoutineType = (TCsPawnRoutine)Type;
+
+	// HandleRespawnTimer_Internal
+	if (RoutineType == ECsPawnRoutine::HandleRespawnTimer_Internal)
+	{
+		check(HandleRespawnTimer_Internal_Routine == Routine);
+		HandleRespawnTimer_Internal_Routine = nullptr;
+		return true;
+	}
 	return false;
 }
 

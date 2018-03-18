@@ -8,47 +8,6 @@
 
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry, const uint8&, MappingId, const float&, DeltaSeconds);
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsAIPawn_OnHandleRespawnTimerFinished, const uint8&);
-
-// Enums
-#pragma region
-
-namespace ECsAIPawnRoutine
-{
-	enum Type
-	{
-		HandleRespawnTimer_Internal,
-		ECsAIPawnRoutine_MAX,
-	};
-}
-
-namespace ECsAIPawnRoutine
-{
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-		const TCsString HandleRespawnTimer_Internal = TCsString(TEXT("HandleRespawnTimer_Internal"), TEXT("handlerespawntimer_internal"), TEXT("handle respawn timer internal"));
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::HandleRespawnTimer_Internal) { return Str::HandleRespawnTimer_Internal.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::HandleRespawnTimer_Internal) { return Type::HandleRespawnTimer_Internal; }
-		return Type::ECsAIPawnRoutine_MAX;
-	}
-}
-
-#define ECS_AI_PAWN_ROUTINE_MAX (uint8)ECsAIPawnRoutine::ECsAIPawnRoutine_MAX
-typedef ECsAIPawnRoutine::Type TCsAIPawnRoutine;
-
-#pragma endregion Enums
-
 USTRUCT(BlueprintType)
 struct FCsAIPawnCache : public FCsPooledObjectCache
 {
@@ -163,27 +122,6 @@ class CSCORE_API ACsAIPawn : public ACsPawn
 	virtual void DeAllocate();
 
 	virtual void OnTick_HandleCVars(const float &DeltaSeconds);
-
-// State
-#pragma region
-public:
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
-	FVector SpawnLocation;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
-	FRotator SpawnRotation;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
-	float RespawnTime;
-
-	CS_COROUTINE_DECLARE(HandleRespawnTimer)
-
-	virtual void OnHandleRespawnTimerFinished(const uint8 &MappingId);
-
-	FBindableEvent_CsAIPawn_OnHandleRespawnTimerFinished OnHandleRespawnTimerFinished_Event;
-
-#pragma endregion State
 
 // Routines
 #pragma region

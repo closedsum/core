@@ -68,7 +68,7 @@ void ACsManager_Item::LogTransaction(const FString &FunctionName, const TEnumAsB
 {
 	if (CsCVarLogManagerItemTransactions->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		const FString TransactionAsString = ECsPoolTransaction::ToActionString(Transaction);
+		const FString& TransactionAsString = ECsPoolTransaction::ToActionString(Transaction);
 
 		const FString ItemName				  = Item->ShortCode.ToString();
 		const FString Id					  = FString::Printf(TEXT("%llu"), Item->UniqueId);

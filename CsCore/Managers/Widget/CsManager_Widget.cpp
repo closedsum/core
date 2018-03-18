@@ -184,7 +184,7 @@ void UCsManager_Widget::LogTransaction(const FString &FunctionName, const TEnumA
 	{
 		UCsPooledWidget* Widget = Cast<UCsPooledWidget>(InObject);
 
-		const FString TransactionAsString = ECsPoolTransaction::ToActionString(Transaction);
+		const FString& TransactionAsString = ECsPoolTransaction::ToActionString(Transaction);
 
 		const FString WidgetName	   = Widget->GetName();
 		const float CurrentTime		   = Widget->GetWorld()->GetTimeSeconds();

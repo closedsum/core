@@ -186,7 +186,7 @@ void ACsManager_Projectile::LogTransaction(const FString &FunctionName, const TE
 	{
 		ACsProjectile* Projectile = Cast<ACsProjectile>(InObject);
 
-		const FString TransactionAsString = ECsPoolTransaction::ToActionString(Transaction);
+		const FString& TransactionAsString = ECsPoolTransaction::ToActionString(Transaction);
 
 		const FString ProjectileName   = Projectile->GetName();
 		const FString DataName		   = Projectile->Cache.GetData()->ShortCode.ToString();

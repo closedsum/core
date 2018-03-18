@@ -213,7 +213,7 @@ void ACsManager_AI::LogTransaction(const FString &FunctionName, const TEnumAsByt
 	{
 		ACsAIPawn* Pawn = Cast<ACsAIPawn>(InObject);
 
-		const FString TransactionAsString = ECsPoolTransaction::ToActionString(Transaction);
+		const FString& TransactionAsString = ECsPoolTransaction::ToActionString(Transaction);
 
 		const FString PawnName			= Pawn->GetName();
 		//const FString DataName		= Pawn->Cache.GetData()->ShortCode.ToString();

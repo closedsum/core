@@ -73,6 +73,11 @@ void UCsWidget_ButtonAndText::Hide()
 	Super::Hide();
 }
 
+UPanelSlot* UCsWidget_ButtonAndText::GetChildSlot()
+{
+	return MyButton->Slot;
+}
+
 void UCsWidget_ButtonAndText::MyButton_OnPressed()
 {
 	ACsManager_Input* Manager_Input = ACsManager_Input::Get(GetWorld());

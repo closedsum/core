@@ -28,3 +28,8 @@ void UCsWidget_Grid::Hide()
 
 	Super::Hide();
 }
+
+UPanelSlot* UCsWidget_Grid::GetChildSlot()
+{
+	return MyGridPanel->Slot;
+}

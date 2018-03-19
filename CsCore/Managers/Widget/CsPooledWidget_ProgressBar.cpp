@@ -28,7 +28,7 @@ void UCsPooledWidget_ProgressBar::NativeConstruct()
 		return;
 
 	Bar.Set(MyBar);
-	const FString MemberName = ECsPooledWidgetProgressBarCachedString::Str::Bar;
+	const FString& MemberName = ECsPooledWidgetProgressBarCachedString::Str::Bar;
 	Bar.Init(MemberName, MemberName, GetName() + ECsCachedString::Str::Dot + MemberName);
 
 	HasNativeContructed = true;
@@ -39,28 +39,6 @@ void UCsPooledWidget_ProgressBar::OnNativeTick(const FGeometry& MyGeometry, cons
 	Super::OnNativeTick(MyGeometry, InDeltaTime);
 
 	Bar.OnNativeTick(InDeltaTime);
-
-	// Position
-	if (Position.HasChanged())
-	{
-		UCanvasPanelSlot* ParentSlot = Cast<UCanvasPanelSlot>(Slot);
-		ParentSlot->SetPosition(Position.Get());
-	}
-	// Size
-	if (!Size.HasChanged())
-	{
-		//SetDesiredSizeInViewport(Size.Get());
-
-		// Set Size of TextBlock
-		UCanvasPanelSlot* ChildSlot = Cast<UCanvasPanelSlot>(MyBar->Slot);
-		ChildSlot->SetSize(Size.Get());
-		// Set Size of Widget
-		UCanvasPanelSlot* ParentSlot = Cast<UCanvasPanelSlot>(Slot);
-		ParentSlot->SetSize(Size.Get());
-	}
-	Position.Clear();
-	Size.Clear();
-
 }
 
 void UCsPooledWidget_ProgressBar::Allocate(const uint16& ActiveIndex, FCsPooledWidgetPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent)

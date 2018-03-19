@@ -18,4 +18,6 @@ class CSCORE_API UCsWidget_Button : public UCsSimpleWidget
 	UButton* MyButton;
 
 	FCsWidget_Button Button;
+
+	virtual UPanelSlot* GetChildSlot() override;
 };

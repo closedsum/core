@@ -15,4 +15,6 @@ class CSCORE_API UCsWidget_Grid : public UCsSimpleWidget
 
 	UPROPERTY(meta = (BindWidget))
 	UGridPanel* MyGridPanel;
+
+	virtual UPanelSlot* GetChildSlot() override;
 };

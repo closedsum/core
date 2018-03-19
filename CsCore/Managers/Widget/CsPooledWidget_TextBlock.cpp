@@ -23,7 +23,7 @@ void UCsPooledWidget_TextBlock::NativeConstruct()
 		return;
 
 	Text.Set(MyText);
-	const FString MemberName = ECsPooledWidgetTextBlockCachedString::Str::Text;
+	const FString& MemberName = ECsPooledWidgetTextBlockCachedString::Str::Text;
 	Text.Init(MemberName, MemberName, GetName() + ECsCachedString::Str::Dot + MemberName);
 
 	HasNativeContructed = true;
@@ -34,28 +34,6 @@ void UCsPooledWidget_TextBlock::OnNativeTick(const FGeometry& MyGeometry, const 
 	Super::OnNativeTick(MyGeometry, InDeltaTime);
 
 	Text.OnNativeTick(InDeltaTime);
-
-	// Position
-	if (Position.HasChanged())
-	{
-		UCanvasPanelSlot* ParentSlot = Cast<UCanvasPanelSlot>(Slot);
-		ParentSlot->SetPosition(Position.Get());
-	}
-	// Size
-	if (!Size.HasChanged())
-	{
-		//SetDesiredSizeInViewport(Size.Get());
-
-		// Set Size of TextBlock
-		UCanvasPanelSlot* ChildSlot = Cast<UCanvasPanelSlot>(MyText->Slot);
-		ChildSlot->SetSize(Size.Get());
-		// Set Size of Widget
-		UCanvasPanelSlot* ParentSlot = Cast<UCanvasPanelSlot>(Slot);
-		ParentSlot->SetSize(Size.Get());
-	}
-	Position.Clear();
-	Size.Clear();
-
 }
 
 void UCsPooledWidget_TextBlock::Allocate(const uint16& ActiveIndex, FCsPooledWidgetPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent)

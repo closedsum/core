@@ -49,3 +49,8 @@ void UCsWidget_Button::Hide()
 
 	Super::Hide();
 }
+
+UPanelSlot* UCsWidget_Button::GetChildSlot()
+{
+	return MyButton->Slot;
+}

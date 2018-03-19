@@ -141,4 +141,25 @@ class CSCORE_API ACsAIPawn : public ACsPawn
 	FBindableEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Finish OnBTTask_RotateToFaceBBEntry_Finish_Event;
 
 #pragma endregion Behavior Tree
+
+// Player
+#pragma region
+
+	UPROPERTY(BlueprintReadOnly, Category = "Player")
+	float PlayerToMeDot;
+
+	//void CalculatePlayerToMeDot();
+
+	UPROPERTY(BlueprintReadWrite, Category = "Player")
+	float PlayerSeesBodyMinDot;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Player")
+	float PlayerSeesBodyAngle;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Player")
+	bool bPlayerSeesBody;
+
+	//void CheckPlayerSeesBody();
+
+#pragma endregion Player
 };

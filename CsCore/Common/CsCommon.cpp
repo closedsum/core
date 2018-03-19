@@ -2460,7 +2460,7 @@ float UCsCommon::GetCurrentDateTimeSeconds()
 	return Seconds;
 }
 
-// TODO: Get InputManager and then get CurrentFrame. Possibly move CurrentFrame to GameInstnace since
+// TODO: Get InputManager and then get CurrentFrame. Possibly move CurrentFrame to GameInstance since
 //		 there is an InputManager for each Player
 uint64 UCsCommon::GetCurrentFrame(UWorld* InWorld) { return 0; }
 

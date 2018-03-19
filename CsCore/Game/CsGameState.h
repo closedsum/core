@@ -244,6 +244,9 @@ public:
 	UPROPERTY()
 	class ACsManager_Decal* Manager_Decal;
 
+	UPROPERTY()
+	class ACsManager_Trace* Manager_Trace;
+
 #pragma endregion Managers
 
 // Match State

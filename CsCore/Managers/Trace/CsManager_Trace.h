@@ -383,10 +383,10 @@ public:
 	FCsTraceRequest* AllocateRequest();
 
 	TArray<FCsTraceRequest*> PendingRequests;
-	TMap<uint64, FCsTraceRequest*> PendingRequestsById;
-	TMap<TCsTraceType, FCsTraceRequest*> PendingRequestsByType;
-	TMap<TCsTraceMethod, FCsTraceRequest*> PendingRequestsByMethod;
-	TMap<TCsTraceQuery, FCsTraceRequest*> PendingRequestsByQuery;
+	TMap<uint64, TArray<FCsTraceRequest*>> PendingRequestsById;
+	TMap<TCsTraceType, TArray<FCsTraceRequest*>> PendingRequestsByType;
+	TMap<TCsTraceMethod, TArray<FCsTraceRequest*>> PendingRequestsByMethod;
+	TMap<TCsTraceQuery, TArray<FCsTraceRequest*>> PendingRequestsByQuery;
 
 #pragma endregion Request
 
@@ -401,6 +401,8 @@ private:
 public:
 
 	FCsTraceResponse * AllocateResponse();
+
+	FTraceDelegate TraceDelegate;
 
 	void OnResponse(const FTraceHandle& Handle, FTraceDatum& Datum);
 

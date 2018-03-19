@@ -37,6 +37,26 @@ ACsManager_Trace::ACsManager_Trace(const FObjectInitializer& ObjectInitializer) 
 	{
 		Requests[I].Id = I;
 	}
+
+	for (uint8 I = 0; I < ECS_TRACE_TYPE_MAX; ++I)
+	{
+		TArray<FCsTraceRequest*> AddRequests;
+		PendingRequestsByType.Add((TCsTraceType)I, AddRequests);
+	}
+
+	for (uint8 I = 0; I < ECS_TRACE_METHOD_MAX; ++I)
+	{
+		TArray<FCsTraceRequest*> AddRequests;
+		PendingRequestsByMethod.Add((TCsTraceMethod)I, AddRequests);
+	}
+
+	for (uint8 I = 0; I < ECS_TRACE_QUERY_MAX; ++I)
+	{
+		TArray<FCsTraceRequest*> AddRequests;
+		PendingRequestsByQuery.Add((TCsTraceQuery)I, AddRequests);
+	}
+
+	TraceDelegate.BindUObject(this, &ACsManager_Trace::OnResponse);
 }
 
 void ACsManager_Trace::Clear()
@@ -129,35 +149,74 @@ FCsTraceResponse*  ACsManager_Trace::Trace(FCsTraceRequest* Request)
 		// TODO: Print warning for a normal trace moved to Async
 		if (AddPending && !Request->bAsync)
 		{
-			// Line
-			if (Request->Type == ECsTraceType::Line)
-			{
-				// Test
-				if (Request->Method == ECsTraceMethod::Test)
-				{
-					// TODO: Print Warning
-				}
-				// Single
-				else
-				if (Request->Method == ECsTraceMethod::Single)
-				{
-				}
-				// Multi
-				else
-				if (Request->Method == ECsTraceMethod::Multi)
-				{
-					// TODO:: Print Warning
-				}
-			}
-			/*
-			FTraceHandle	AsyncLineTraceByChannel(EAsyncTraceType InTraceType, const FVector& Start, const FVector& End, ECollisionChannel TraceChannel, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams& ResponseParam = FCollisionResponseParams::DefaultResponseParam, FTraceDelegate * InDelegate = NULL, uint32 UserData = 0);
-			FTraceHandle	AsyncLineTraceByObjectType(EAsyncTraceType InTraceType, const FVector& Start, const FVector& End, const FCollisionObjectQueryParams& ObjectQueryParams, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, FTraceDelegate * InDelegate = NULL, uint32 UserData = 0);
-			FTraceHandle	AsyncSweepByChannel(EAsyncTraceType InTraceType, const FVector& Start, const FVector& End, ECollisionChannel TraceChannel, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams& ResponseParam = FCollisionResponseParams::DefaultResponseParam, FTraceDelegate * InDelegate = NULL, uint32 UserData = 0);
-			FTraceHandle	AsyncSweepByObjectType(EAsyncTraceType InTraceType, const FVector& Start, const FVector& End, const FCollisionObjectQueryParams& ObjectQueryParams, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, FTraceDelegate * InDelegate = NULL, uint32 UserData = 0);
-			FTraceHandle	AsyncOverlapByChannel(const FVector& Pos, const FQuat& Rot, ECollisionChannel TraceChannel, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams& ResponseParam = FCollisionResponseParams::DefaultResponseParam, FOverlapDelegate * InDelegate = NULL, uint32 UserData = 0);
-			FTraceHandle	AsyncOverlapByObjectType(const FVector& Pos, const FQuat& Rot, const FCollisionObjectQueryParams& ObjectQueryParams, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, FOverlapDelegate * InDelegate = NULL, uint32 UserData = 0);
-			*/
 		}
+
+		// Line
+		if (Request->Type == ECsTraceType::Line)
+		{
+			// Test
+			if (Request->Method == ECsTraceMethod::Test)
+			{
+				UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::Trace: There is NO Async Line Trace Test Method."));
+				return nullptr;
+			}
+			// Single
+			else
+			if (Request->Method == ECsTraceMethod::Single)
+			{
+				// AsyncLineTraceByChannel
+				if (Request->Query == ECsTraceQuery::Channel)
+					Request->CopyHandle(GetWorld()->AsyncLineTraceByChannel(EAsyncTraceType::Single, Request->Start, Request->End, Request->Channel, Request->Params, Request->ResponseParam, &TraceDelegate));
+				// AsyncLineTraceByObjectType
+				else
+				if (Request->Query == ECsTraceQuery::ObjectType)
+					Request->CopyHandle(GetWorld()->AsyncLineTraceByObjectType(EAsyncTraceType::Single, Request->Start, Request->End, Request->ObjectParams, Request->Params, &TraceDelegate));
+			}
+			// Multi
+			else
+			if (Request->Method == ECsTraceMethod::Multi)
+			{
+				UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::Trace: There is NO Async Line Trace Multi Method."));
+				return nullptr;
+			}
+		}
+		// Sweep
+		else
+		if (Request->Type == ECsTraceType::Sweep)
+		{
+		}
+		else
+		if (Request->Type == ECsTraceType::Overlap)
+		{
+		}
+		/*
+		FTraceHandle	AsyncLineTraceByChannel(EAsyncTraceType InTraceType, const FVector& Start, const FVector& End, ECollisionChannel TraceChannel, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams& ResponseParam = FCollisionResponseParams::DefaultResponseParam, FTraceDelegate * InDelegate = NULL, uint32 UserData = 0);
+		FTraceHandle	AsyncLineTraceByObjectType(EAsyncTraceType InTraceType, const FVector& Start, const FVector& End, const FCollisionObjectQueryParams& ObjectQueryParams, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, FTraceDelegate * InDelegate = NULL, uint32 UserData = 0);
+		FTraceHandle	AsyncSweepByChannel(EAsyncTraceType InTraceType, const FVector& Start, const FVector& End, ECollisionChannel TraceChannel, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams& ResponseParam = FCollisionResponseParams::DefaultResponseParam, FTraceDelegate * InDelegate = NULL, uint32 UserData = 0);
+		FTraceHandle	AsyncSweepByObjectType(EAsyncTraceType InTraceType, const FVector& Start, const FVector& End, const FCollisionObjectQueryParams& ObjectQueryParams, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, FTraceDelegate * InDelegate = NULL, uint32 UserData = 0);
+		FTraceHandle	AsyncOverlapByChannel(const FVector& Pos, const FQuat& Rot, ECollisionChannel TraceChannel, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams& ResponseParam = FCollisionResponseParams::DefaultResponseParam, FOverlapDelegate * InDelegate = NULL, uint32 UserData = 0);
+		FTraceHandle	AsyncOverlapByObjectType(const FVector& Pos, const FQuat& Rot, const FCollisionObjectQueryParams& ObjectQueryParams, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, FOverlapDelegate * InDelegate = NULL, uint32 UserData = 0);
+		*/
+
+		PendingRequests.Add(Request);
+
+		if (TArray<FCsTraceRequest*>* Requests = PendingRequestsById.Find(Request->CallerId))
+		{
+			Requests->Add(Request);
+		}
+		else
+		{
+			TArray<FCsTraceRequest*> NewRequests;
+			NewRequests.Add(Request);
+			PendingRequestsById.Add(Request->CallerId, NewRequests);
+		}
+
+		TArray<FCsTraceRequest*>* RequestsType = PendingRequestsByType.Find(Request->Type);
+		RequestsType->Add(Request);
+		TArray<FCsTraceRequest*>* RequestsMethod = PendingRequestsByMethod.Find(Request->Method);
+		RequestsMethod->Add(Request);
+		TArray<FCsTraceRequest*>* RequestsQuery = PendingRequestsByQuery.Find(Request->Query);
+		RequestsQuery->Add(Request);
 	}
 	else
 	{
@@ -260,8 +319,10 @@ FCsTraceResponse*  ACsManager_Trace::Trace(FCsTraceRequest* Request)
 		bool OverlapMultiByObjectType(TArray<struct FOverlapResult>& OutOverlaps, const FVector& Pos, const FQuat& Rot, const FCollisionObjectQueryParams& ObjectQueryParams, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
 		bool OverlapMultiByProfile(TArray<struct FOverlapResult>& OutOverlaps, const FVector& Pos, const FQuat& Rot, FName ProfileName, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
 		*/
+		Request->Reset();
 		return Response;
 	}
+	Request->Reset();
 	return nullptr;
 }
 

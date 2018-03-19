@@ -45,23 +45,14 @@ void UCsPooledWidget_ProgressBar::Allocate(const uint16& ActiveIndex, FCsPooledW
 {
 	Super::Allocate(ActiveIndex, Payload, Time, RealTime, Frame, InOwner, InParent);
 
-	//Bar.SetString(Payload->DisplayName);
+	Bar.SetPercent(1.0f);
 }
 
 void UCsPooledWidget_ProgressBar::DeAllocate()
 {
 	Super::DeAllocate();
 
-	//Bar.SetString(ECsCachedString::Str::Empty);
-}
-
-void UCsPooledWidget_ProgressBar::OnAddToCanvas()
-{
-	Super::OnAddToCanvas();
-
-	UCanvasPanelSlot* ChildSlot = Cast<UCanvasPanelSlot>(MyBar->Slot);
-	UCanvasPanelSlot* ParentSlot = Cast<UCanvasPanelSlot>(Slot);
-	ParentSlot->SetAlignment(ChildSlot->GetAlignment());
+	Bar.SetPercent(1.0f);
 }
 
 void UCsPooledWidget_ProgressBar::Show()

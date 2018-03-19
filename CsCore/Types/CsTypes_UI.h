@@ -91,6 +91,7 @@ namespace ECsSimpleWidgetType
 		Text					UMETA(DisplayName = "Text"),
 		Float					UMETA(DisplayName = "Float"),
 		Button					UMETA(DisplayName = "Button"),
+		Bar						UMETA(DisplayName = "Bar"),
 		ECsSimpleWidgetType_MAX	UMETA(Hidden),
 	};
 }
@@ -104,6 +105,7 @@ namespace ECsSimpleWidgetType
 		const TCsString Text = TCsString(TEXT("Text"), TEXT("text"), TEXT("text"));
 		const TCsString Float = TCsString(TEXT("Float"), TEXT("float"), TEXT("float"));
 		const TCsString Button = TCsString(TEXT("Button"), TEXT("button"), TEXT("button"));
+		const TCsString Bar = TCsString(TEXT("Bar"), TEXT("bar"), TEXT("bar"));
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -111,6 +113,7 @@ namespace ECsSimpleWidgetType
 		if (EType == Type::Text) { return Str::Text.Value; }
 		if (EType == Type::Float) { return Str::Float.Value; }
 		if (EType == Type::Button) { return Str::Button.Value; }
+		if (EType == Type::Bar) { return Str::Bar.Value; }
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
@@ -119,6 +122,7 @@ namespace ECsSimpleWidgetType
 		if (String == Str::Text) { return Type::Text; }
 		if (String == Str::Float) { return Type::Float; }
 		if (String == Str::Button) { return Type::Button; }
+		if (String == Str::Bar) { return Type::Bar; }
 		return Type::ECsSimpleWidgetType_MAX;
 	}
 }

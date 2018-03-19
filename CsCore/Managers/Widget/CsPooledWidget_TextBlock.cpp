@@ -50,15 +50,6 @@ void UCsPooledWidget_TextBlock::DeAllocate()
 	Text.SetString(ECsCachedString::Str::Empty);
 }
 
-void UCsPooledWidget_TextBlock::OnAddToCanvas()
-{
-	Super::OnAddToCanvas();
-
-	UCanvasPanelSlot* ChildSlot = Cast<UCanvasPanelSlot>(MyText->Slot);
-	UCanvasPanelSlot* ParentSlot = Cast<UCanvasPanelSlot>(Slot);
-	ParentSlot->SetAlignment(ChildSlot->GetAlignment());
-}
-
 void UCsPooledWidget_TextBlock::Show()
 {
 	Super::Show();

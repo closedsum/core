@@ -36,7 +36,12 @@ void UCsPooledWidget::DeAllocate()
 	SetSize(FVector2D::UnitVector);
 }
 
-void UCsPooledWidget::OnAddToCanvas(){}
+void UCsPooledWidget::OnAddToCanvas()
+{
+	UCanvasPanelSlot* ChildSlot  = Cast<UCanvasPanelSlot>(GetChildSlot());
+	UCanvasPanelSlot* ParentSlot = Cast<UCanvasPanelSlot>(Slot);
+	ParentSlot->SetAlignment(ChildSlot->GetAlignment());
+}
 
 void UCsPooledWidget::SetPosition(const FVector2D &InPosition)
 {

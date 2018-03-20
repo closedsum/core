@@ -174,7 +174,6 @@ void ACsAIPawn::OnTick_CheckPlayerSeesBody()
 	Request->Query		= ECsTraceQuery::ObjectType;
 	Request->ObjectParams.AddObjectTypesToQuery(ECC_Pawn);
 	Request->Params.AddIgnoredActor(this);
-	//Request->Params.AddIgnoredActor(LocalPawn);
 
 	Manager_Trace->Trace(Request);
 }

@@ -19,6 +19,10 @@ ACsAIPawn::ACsAIPawn(const FObjectInitializer& ObjectInitializer)
 	AutoPossessPlayer = EAutoReceiveInput::Disabled;
 	AutoPossessAI	  = EAutoPossessAI::PlacedInWorldOrSpawned;
 	AIControllerClass = ACsAIController::StaticClass();
+
+	PlayerSeesBodyAngle			= 70.0f;
+	PlayerSeesBodyMinDot		= FMath::Cos(FMath::DegreesToRadians(70.0f));
+	CheckPlayerSeesBodyInterval = 0.1f;
 }
 
 
@@ -106,7 +110,10 @@ void ACsAIPawn::CalculatePlayerToMeDot()
 void ACsAIPawn::CheckPlayerSeesBody()
 {
 	if (PlayerToMeDot < PlayerSeesBodyMinDot)
+	{
+		bPlayerSeesBody = false;
 		return;
+	}
 
 	if (GetWorld()->GetTimeSeconds() - CheckPlayerSeesBodyStartTime < CheckPlayerSeesBodyInterval)
 		return;
@@ -121,6 +128,7 @@ void ACsAIPawn::CheckPlayerSeesBody()
 
 	Request->Caller		= this;
 	Request->CallerId	= UniqueObjectId;
+	Request->OnResponse_Event.AddUObject(this, &ACsAIPawn::CheckPlayerSeesBody_Response);
 	Request->Start		= GetActorLocation();
 	Request->End		= LocalPawn->GetActorLocation();
 	Request->bAsync		= true;
@@ -132,6 +140,39 @@ void ACsAIPawn::CheckPlayerSeesBody()
 	Request->Params.AddIgnoredActor(LocalPawn);
 
 	Manager_Trace->Trace(Request);
+}
+
+void ACsAIPawn::CheckPlayerSeesBody_Response(FCsTraceResponse* Response)
+{
+	if (PlayerToMeDot < PlayerSeesBodyMinDot)
+	{
+		bPlayerSeesBody = false;
+		Response->Reset();
+		return;
+	}
+
+	if (!Response->bResult)
+	{
+		Response->Reset();
+		return;
+	}
+
+	ACsPawn* LocalPawn = UCsCommon::GetLocalPawn<ACsPawn>(GetWorld());
+
+	const uint8 Count = Response->OutHits.Num();
+
+	for (uint8 I = 0; I < Count; ++I)
+	{
+		ACsPawn* Pawn = Cast<ACsPawn>(Response->OutHits[I].GetActor());
+
+		if (LocalPawn == Pawn)
+		{
+			bPlayerSeesBody = true;
+			Response->Reset();
+			return;
+		}
+	}
+	Response->Reset();
 }
 
 #pragma endregion Player

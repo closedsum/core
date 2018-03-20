@@ -380,14 +380,27 @@ FCsTraceResponse* ACsManager_Trace::AllocateResponse()
 void ACsManager_Trace::OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& Datum)
 {
 	const TCsTraceHandleId& HandleId = Handle._Handle;
-
+	// Get Request
 	FCsTraceRequest** RequestPtr = PendingRequests.Find(HandleId);
 	FCsTraceRequest* Request	 = *RequestPtr;
-
+	// Setup Response
 	FCsTraceResponse* Response = AllocateResponse();
 
 	Response->bResult	  = Datum.OutHits.Num() > CS_EMPTY && Datum.OutHits[CS_FIRST].bBlockingHit;
 	Response->ElapsedTime = GetWorld()->GetTimeSeconds() - Request->StartTime;
+
+	const uint8 Count = Datum.OutHits.Num();
+
+	for (uint8 I = 0; I < Count; ++I)
+	{
+		Response->OutHits.AddDefaulted();
+
+		UCsCommon::CopyHitResult(Datum.OutHits[I], Response->OutHits[I]);
+	}
+	// Broadcast Response
+	Request->OnResponse_Event.Broadcast(Response);
+
+	// LOG RESPONSE
 
 	RemovePendingRequest(Request);
 }

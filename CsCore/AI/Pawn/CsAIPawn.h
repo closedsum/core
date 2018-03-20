@@ -4,6 +4,7 @@
 #include "Types/CsTypes_AI.h"
 #include "Types/CsTypes_Pool.h"
 #include "Types/CsTypes_Coroutine.h"
+#include "Types/CsTypes_Trace.h"
 #include "CsAIPawn.generated.h"
 
 // RotateToFaceBBEntry
@@ -167,6 +168,7 @@ class CSCORE_API ACsAIPawn : public ACsPawn
 	float CheckPlayerSeesBodyStartTime;
 
 	void CheckPlayerSeesBody();
+	void CheckPlayerSeesBody_Response(FCsTraceResponse* Response);
 
 #pragma endregion Player
 };

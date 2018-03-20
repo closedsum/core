@@ -16,6 +16,7 @@
 #include "Managers/Projectile/CsProjectile.h"
 #include "Managers/Damage/CsManager_Damage.h"
 
+#include "Game/CsGameInstance.h"
 #include "Game/CsGameState.h"
 #include "Player/CsPlayerState.h"
 #include "Pawn/CsPawn.h"
@@ -135,6 +136,14 @@ void ACsWeapon::PostInitializeComponents()
 void ACsWeapon::OutsideWorldBounds()
 {
 	return;
+}
+
+void ACsWeapon::PostActorCreated()
+{
+	Super::PostActorCreated();
+
+	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+	UniqueObjectId				  = GameInstance->GetUniqueObjectId();
 }
 
 // Members

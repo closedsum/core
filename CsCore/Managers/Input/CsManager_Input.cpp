@@ -101,12 +101,10 @@ void ACsManager_Input::SetupInputComponent()
 
 void ACsManager_Input::PreProcessInput(const float DeltaTime, const bool bGamePaused)
 {
-	CurrentGameFrame++;
-
 	CurrentDeltaTime	   = DeltaTime;
 	CurrentInputFrameIndex = (CurrentInputFrameIndex + 1) % CS_MAX_INPUT_FRAMES;
 
-	InputFrames[CurrentInputFrameIndex].Init(GetWorld()->TimeSeconds, GetWorld()->RealTimeSeconds, DeltaTime, CurrentGameFrame);
+	InputFrames[CurrentInputFrameIndex].Init(GetWorld()->TimeSeconds, GetWorld()->RealTimeSeconds, DeltaTime, UCsCommon::GetCurrentFrame(GetWorld()));
 
 	// Cache Raw Pressed Inputs
 	PressedKeys.Reset();

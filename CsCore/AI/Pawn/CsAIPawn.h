@@ -129,8 +129,17 @@ class CSCORE_API ACsAIPawn : public ACsPawn
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void OnTick_HandleCVars(const float &DeltaSeconds);
 
+// State
+#pragma region
+public:
+
+	virtual void OnTick_Handle_HealthBar();
+
+#pragma endregion State
+
 // Behavior Tree
 #pragma region
+public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
 	FBindableDynEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Start OnBTTask_RotateToFaceBBEntry_Start_ScriptEvent;
@@ -146,6 +155,7 @@ class CSCORE_API ACsAIPawn : public ACsPawn
 
 // Player
 #pragma region
+public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Player")
 	float PlayerToMeDot;
@@ -160,6 +170,12 @@ class CSCORE_API ACsAIPawn : public ACsPawn
 
 	UPROPERTY(BlueprintReadOnly, Category = "Player")
 	bool bPlayerSeesBody;
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+	virtual void SetPlayerSeesBody(const bool &Value);
+
+	TCsBool_Ref bPlayerSeesBodyHandle;
+	virtual void OnChange_bPlayerSeesBody(const bool &Value);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float CheckPlayerSeesBodyInterval;

@@ -11,6 +11,8 @@
 // Managers
 #include "Managers/Trace/CsManager_Trace.h"
 
+#include "Components/CsWidgetComponent.h"
+
 ACsAIPawn::ACsAIPawn(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -19,6 +21,9 @@ ACsAIPawn::ACsAIPawn(const FObjectInitializer& ObjectInitializer)
 	AutoPossessPlayer = EAutoReceiveInput::Disabled;
 	AutoPossessAI	  = EAutoPossessAI::PlacedInWorldOrSpawned;
 	AIControllerClass = ACsAIController::StaticClass();
+
+	bPlayerSeesBodyHandle.Set(&bPlayerSeesBody);
+	bPlayerSeesBodyHandle.OnChange_Event.AddUObject(this, &ACsAIPawn::OnChange_bPlayerSeesBody);
 
 	PlayerSeesBodyAngle			= 70.0f;
 	PlayerSeesBodyMinDot		= FMath::Cos(FMath::DegreesToRadians(70.0f));
@@ -96,22 +101,61 @@ void ACsAIPawn::Tick(float DeltaSeconds)
 
 void ACsAIPawn::OnTick_HandleCVars(const float &DeltaSeconds){}
 
+// State
+#pragma region
+
+void ACsAIPawn::OnTick_Handle_HealthBar()
+{
+	if (!bHealthBar)
+		return;
+	if (!bPlayerSeesBody)
+		return;
+
+	ACsPawn* LocalPawn		 = UCsCommon::GetLocalPawn<ACsPawn>(GetWorld());
+	const FVector MeToPlayer = (LocalPawn->GetActorLocation() - GetActorLocation()).GetSafeNormal2D();
+	const FRotator Rotation	 = MeToPlayer.Rotation();
+
+	HealthBarComponent->SetWorldRotation(Rotation);
+}
+
+#pragma endregion State
+
 // Player
 #pragma region
 
 void ACsAIPawn::CalculatePlayerToMeDot()
 {
-	ACsPawn* LocalPawn = UCsCommon::GetLocalPawn<ACsPawn>(GetWorld());
-	FVector PlayerToMe = GetActorLocation() - LocalPawn->GetActorLocation();
-	PlayerToMe.Z	   = 0.0f;
-	PlayerToMeDot	   = FVector::DotProduct(LocalPawn->CurrentRootDirXY, PlayerToMe);
+	ACsPawn* LocalPawn		 = UCsCommon::GetLocalPawn<ACsPawn>(GetWorld());
+	const FVector PlayerToMe = (GetActorLocation() - LocalPawn->GetActorLocation()).GetSafeNormal2D();
+	PlayerToMeDot			 = FVector::DotProduct(LocalPawn->CurrentRootDirXY, PlayerToMe);
+}
+
+void ACsAIPawn::SetPlayerSeesBody(const bool &Value)
+{
+	bPlayerSeesBody = Value;
+
+	bPlayerSeesBodyHandle.UpdateIsDirty();
+
+	if (bPlayerSeesBodyHandle.HasChanged())
+	{
+		bPlayerSeesBodyHandle.Clear();
+	}
+}
+
+void ACsAIPawn::OnChange_bPlayerSeesBody(const bool &Value)
+{
+	if (!bHealthBar)
+		return;
+
+	HealthBarComponent->SetVisibility(Value);
+	HealthBarComponent->SetHiddenInGame(!Value);
 }
 
 void ACsAIPawn::CheckPlayerSeesBody()
 {
 	if (PlayerToMeDot < PlayerSeesBodyMinDot)
 	{
-		bPlayerSeesBody = false;
+		SetPlayerSeesBody(false);
 		return;
 	}
 
@@ -146,7 +190,7 @@ void ACsAIPawn::CheckPlayerSeesBody_Response(FCsTraceResponse* Response)
 {
 	if (PlayerToMeDot < PlayerSeesBodyMinDot)
 	{
-		bPlayerSeesBody = false;
+		SetPlayerSeesBody(false);
 		Response->Reset();
 		return;
 	}
@@ -167,7 +211,7 @@ void ACsAIPawn::CheckPlayerSeesBody_Response(FCsTraceResponse* Response)
 
 		if (LocalPawn == Pawn)
 		{
-			bPlayerSeesBody = true;
+			SetPlayerSeesBody(true);
 			Response->Reset();
 			return;
 		}

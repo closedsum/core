@@ -12,6 +12,8 @@
 // Managers
 #include "Managers/Inventory/CsManager_Inventory.h"
 
+#include "Components/CsWidgetComponent.h"
+
 #include "Game/CsGameInstance.h"
 #include "Player/CsPlayerStateBase.h"
 #include "Weapon/CsWeapon.h"
@@ -47,6 +49,15 @@ ACsPawn::ACsPawn(const FObjectInitializer& ObjectInitializer)
 	WeaponClass = ACsWeapon::StaticClass();
 
 	OnHandleRespawnTimerFinished_Event.AddUObject(this, &ACsPawn::OnHandleRespawnTimerFinished);
+}
+
+void ACsPawn::OnConstructor(const FObjectInitializer& ObjectInitializer)
+{
+	if (bHealthBar)
+	{
+		HealthBarComponent = ObjectInitializer.CreateDefaultSubobject<UCsWidgetComponent>(this, TEXT("HealthBarComponent"));
+		HealthBarComponent->SetupAttachment(GetRootComponent());
+	}
 }
 
 void ACsPawn::PostActorCreated()
@@ -111,6 +122,14 @@ void ACsPawn::OnTick_HandleSetup() {}
 
 // State
 #pragma region
+
+void ACsPawn::OnTick_Handle_HealthBar()
+{
+	if (!bHealthBar)
+		return;
+	
+	//ACsPawn* LocalPawn
+}
 
 void ACsPawn::ApplyDamage(FCsDamageEvent* Event)
 {

@@ -56,6 +56,8 @@ class CSCORE_API ACsPawn : public ACharacter
 {
 	GENERATED_UCLASS_BODY()
 
+	virtual void OnConstructor(const FObjectInitializer& ObjectInitializer);
+
 	virtual void PostActorCreated() override;
 	virtual void Destroyed() override;
 
@@ -86,6 +88,14 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
 	float Health;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
+	bool bHealthBar;
+
+	UPROPERTY(BlueprintReadOnly, Category = "State")
+	class UCsWidgetComponent* HealthBarComponent;
+
+	virtual void OnTick_Handle_HealthBar();
 
 	virtual void ApplyDamage(FCsDamageEvent* Event);
 

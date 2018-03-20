@@ -12,6 +12,7 @@
 // Managers
 #include "Managers/Inventory/CsManager_Inventory.h"
 
+#include "Game/CsGameInstance.h"
 #include "Player/CsPlayerStateBase.h"
 #include "Weapon/CsWeapon.h"
 
@@ -51,6 +52,9 @@ ACsPawn::ACsPawn(const FObjectInitializer& ObjectInitializer)
 void ACsPawn::PostActorCreated()
 {
 	Super::PostActorCreated();
+
+	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+	UniqueObjectId				  = GameInstance->GetUniqueObjectId();
 
 	FActorSpawnParameters SpawnInfo;
 	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;

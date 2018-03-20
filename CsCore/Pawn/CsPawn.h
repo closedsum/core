@@ -61,6 +61,9 @@ class CSCORE_API ACsPawn : public ACharacter
 
 	virtual void PostInitializeComponents() override;
 
+	UPROPERTY()
+	uint64 UniqueObjectId;
+
 	UPROPERTY(BlueprintReadOnly, Category = "Pawn")
 	bool IsPlacedInWorld;
 

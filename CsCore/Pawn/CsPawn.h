@@ -8,7 +8,12 @@
 
 // Tick
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_Override_OnTick, const uint8&, MappingId, const float&, DeltaSeconds);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnTick, const uint8&, MappingId, const float&, DeltaSeconds);
+	// Pre
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnPreTick, const uint8&, MappingId, const float&, DeltaSeconds);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsPawn_OnPreTick, const uint8&, const float&);
+	// Post
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnPostTick, const uint8&, MappingId, const float&, DeltaSeconds);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsPawn_OnPostTick, const uint8&, const float&);
 // Respawn
 DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsAIPawn_OnHandleRespawnTimerFinished, const uint8&);
 
@@ -56,6 +61,7 @@ class CSCORE_API ACsPawn : public ACharacter
 {
 	GENERATED_UCLASS_BODY()
 
+	/** ONLY Call in the child class in which you want to implement this functionality */
 	virtual void OnConstructor(const FObjectInitializer& ObjectInitializer);
 
 	virtual void PostActorCreated() override;
@@ -69,10 +75,21 @@ class CSCORE_API ACsPawn : public ACharacter
 	UPROPERTY(BlueprintReadOnly, Category = "Pawn")
 	bool IsPlacedInWorld;
 
-	virtual void Tick(float DeltaSeconds) override;
+	/** ONLY Call in the child class in which you want to implement this functionality */
+	virtual void PreTick(const float &DeltaSeconds);
 
 	UPROPERTY(BlueprintAssignable, Category = "Tick")
-	FBindableDynEvent_CsPawn_OnTick OnTick_ScriptEvent;
+	FBindableDynEvent_CsPawn_OnPreTick OnPreTick_ScriptEvent;
+
+	FBindableEvent_CsPawn_OnPreTick OnPreTick_Event;
+
+	/** ONLY Call in the child class in which you want to implement this functionality */
+	virtual void PostTick(const float &DeltaSeconds);
+
+	UPROPERTY(BlueprintAssignable, Category = "Tick")
+	FBindableDynEvent_CsPawn_OnPostTick OnPostTick_ScriptEvent;
+
+	FBindableEvent_CsPawn_OnPostTick OnPostTick_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "Tick")
 	FBindableDynEvent_CsPawn_Override_OnTick Override_OnTick_ScriptEvent;

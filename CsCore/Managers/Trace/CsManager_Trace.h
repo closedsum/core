@@ -5,8 +5,8 @@
 #include "Types/CsTypes_Trace.h"
 #include "CsManager_Trace.generated.h"
 
-#define CS_POOLED_TRACE_REQUEST_SIZE 256
-#define CS_POOLED_TRACE_RESPONSE_SIZE 256
+#define CS_POOLED_TRACE_REQUEST_SIZE 255
+#define CS_POOLED_TRACE_RESPONSE_SIZE 255
 
 // For Clarity
 typedef uint64 TCsTraceHandleId;

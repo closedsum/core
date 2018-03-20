@@ -126,7 +126,6 @@ class CSCORE_API ACsAIPawn : public ACsPawn
 
 	virtual void DeAllocate();
 
-	virtual void Tick(float DeltaSeconds) override;
 	virtual void OnTick_HandleCVars(const float &DeltaSeconds);
 
 // State
@@ -160,7 +159,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Player")
 	float PlayerToMeDot;
 
-	void CalculatePlayerToMeDot();
+	void OnTick_CalculatePlayerToMeDot();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player", meta = (ClampMin = "0.0", UIMin = "0.0", ClampMax = "1.0", UIMax = "1.0"))
 	float PlayerSeesBodyMinDot;
@@ -183,7 +182,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Player")
 	float CheckPlayerSeesBodyStartTime;
 
-	void CheckPlayerSeesBody();
+	void OnTick_CheckPlayerSeesBody();
 	void CheckPlayerSeesBody_Response(FCsTraceResponse* Response);
 
 #pragma endregion Player

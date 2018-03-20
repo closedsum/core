@@ -99,13 +99,13 @@ void ACsPawn::PostInitializeComponents()
 	}
 }
 
-void ACsPawn::Tick(float DeltaSeconds)
+void ACsPawn::PreTick(const float &DeltaSeconds)
 {
-	Super::Tick(DeltaSeconds);
-
 	RecordRoot();
 	RecordVelocityAndSpeed();
 }
+
+void ACsPawn::PostTick(const float &DeltaSeconds){}
 
 void ACsPawn::OnTickActor_HandleCVars(const float &DeltaSeconds) {};
 

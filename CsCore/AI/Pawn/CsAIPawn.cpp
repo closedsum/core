@@ -92,13 +92,6 @@ void ACsAIPawn::DeAllocate()
 	SetActorHiddenInGame(true);
 }
 
-void ACsAIPawn::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-
-	CalculatePlayerToMeDot();
-}
-
 void ACsAIPawn::OnTick_HandleCVars(const float &DeltaSeconds){}
 
 // State
@@ -123,7 +116,7 @@ void ACsAIPawn::OnTick_Handle_HealthBar()
 // Player
 #pragma region
 
-void ACsAIPawn::CalculatePlayerToMeDot()
+void ACsAIPawn::OnTick_CalculatePlayerToMeDot()
 {
 	ACsPawn* LocalPawn		 = UCsCommon::GetLocalPawn<ACsPawn>(GetWorld());
 	const FVector PlayerToMe = (GetActorLocation() - LocalPawn->GetActorLocation()).GetSafeNormal2D();
@@ -151,7 +144,7 @@ void ACsAIPawn::OnChange_bPlayerSeesBody(const bool &Value)
 	HealthBarComponent->SetHiddenInGame(!Value);
 }
 
-void ACsAIPawn::CheckPlayerSeesBody()
+void ACsAIPawn::OnTick_CheckPlayerSeesBody()
 {
 	if (PlayerToMeDot < PlayerSeesBodyMinDot)
 	{
@@ -181,7 +174,7 @@ void ACsAIPawn::CheckPlayerSeesBody()
 	Request->Query		= ECsTraceQuery::ObjectType;
 	Request->ObjectParams.AddObjectTypesToQuery(ECC_Pawn);
 	Request->Params.AddIgnoredActor(this);
-	Request->Params.AddIgnoredActor(LocalPawn);
+	//Request->Params.AddIgnoredActor(LocalPawn);
 
 	Manager_Trace->Trace(Request);
 }

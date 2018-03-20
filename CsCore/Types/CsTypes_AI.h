@@ -28,7 +28,49 @@ typedef TCsAIType(*TCsStringToAIType)(const FString&);
 							AITypeToString = &ECsAIType::ToString; \
 							StringToAIType = &ECsAIType::ToType;
 
+namespace ECsAIState
+{
+	enum Type : uint8;
+}
 
+typedef ECsAIState::Type TCsAIState;
+
+// AIStateToString
+typedef const FString&(*TCsAIStateToString)(const TCsAIState&);
+// StringToAIState
+typedef TCsAIState(*TCsStringToAIState)(const FString&);
+
+#define CS_DECLARE_AI_STATE	TCsAIState AIState_MAX; \
+							uint8 AI_STATE_MAX; \
+							TCsAIStateToString AIStateToString; \
+							TCsStringToAIState StringToAIState;
+
+#define CS_DEFINE_AI_STATE	AIState_MAX = ECsAIState::ECsAIState_MAX;\
+							AI_STATE_MAX = (uint8)AIState_MAX \
+							AIStateToString = &ECsAIState::ToString; \
+							StringToAIState = &ECsAIState::ToType;
+
+namespace ECsAISetup
+{
+	enum Type : uint8;
+}
+
+typedef ECsAISetup::Type TCsAISetup;
+
+// AISetupToString
+typedef const FString&(*TCsAISetupToString)(const TCsAISetup&);
+// StringToAISetup
+typedef TCsAISetup(*TCsStringToAISetup)(const FString&);
+
+#define CS_DECLARE_AI_SETUP	TCsAISetup AISetup_MAX; \
+							uint8 AI_SETUP_MAX; \
+							TCsAISetupToString AISetupToString; \
+							TCsStringToAISetup StringToAISetup;
+
+#define CS_DEFINE_AI_SETUP	AISetup_MAX = ECsAISetup::ECsAISetup_MAX;\
+							AI_SETUP_MAX = (uint8)AISetup_MAX \
+							AISetupToString = &ECsAISetup::ToString; \
+							StringToAISetup = &ECsAISetup::ToType;
 
 struct FCsAIPawnPayload
 {

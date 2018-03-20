@@ -447,3 +447,14 @@ CS_COROUTINE(UCsGameInstance, PerformLevelTransition_Internal)
 }
 
 #pragma endregion Level
+
+// Object
+#pragma region
+
+uint64 UCsGameInstance::GetUniqueObjectId()
+{
+	++UniqueObjectIdIndex;
+	return UniqueObjectIdIndex;
+}
+
+#pragma endregion Object

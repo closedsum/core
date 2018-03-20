@@ -233,4 +233,15 @@ public:
 	struct FCsRoutine* PerformLevelTransition_Internal_Routine;
 
 #pragma endregion Level
+
+// Object
+#pragma region
+public:
+
+	UPROPERTY()
+	uint64 UniqueObjectIdIndex;
+
+	uint64 GetUniqueObjectId();
+
+#pragma endregion Object
 };

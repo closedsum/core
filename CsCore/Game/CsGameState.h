@@ -134,6 +134,8 @@ class CSCORE_API ACsGameState : public AGameState
 	/** Called during seamless travel transition twice (once when the transition map is loaded, once when destination map is loaded) */
 	virtual void SeamlessTravelTransitionCheckpoint(bool bToTransitionMap) override;
 
+	virtual void OnTick_GameInstance(const float &DeltaSeconds);
+
 #if WITH_EDITOR
 	//virtual void OnLevelTravelTransition();
 #endif // #if WITH_EDITOR

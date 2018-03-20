@@ -19,6 +19,8 @@
 UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	CurrentGameFrame = 0;
+
 #if WITH_EDITOR
 	ForcePopulateAssetReferences = true;
 #endif // #if WITH_EDITOR

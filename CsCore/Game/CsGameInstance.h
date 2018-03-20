@@ -133,6 +133,8 @@ class CSCORE_API UCsGameInstance : public UGameInstance
 	UPROPERTY(BlueprintAssignable, Category = "Input")
 	FBindableDynEvent_CsGameInstance_OnTick OnTick_ScriptEvent;
 
+	uint64 CurrentGameFrame;
+
 // Routines
 #pragma region
 public:

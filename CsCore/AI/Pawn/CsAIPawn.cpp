@@ -8,6 +8,8 @@
 
 // Data
 #include "Data/CsData_Character.h"
+// Managers
+#include "Managers/Trace/CsManager_Trace.h"
 
 ACsAIPawn::ACsAIPawn(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -81,4 +83,55 @@ void ACsAIPawn::DeAllocate()
 	SetActorHiddenInGame(true);
 }
 
+void ACsAIPawn::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	CalculatePlayerToMeDot();
+}
+
 void ACsAIPawn::OnTick_HandleCVars(const float &DeltaSeconds){}
+
+// Player
+#pragma region
+
+void ACsAIPawn::CalculatePlayerToMeDot()
+{
+	ACsPawn* LocalPawn = UCsCommon::GetLocalPawn<ACsPawn>(GetWorld());
+	FVector PlayerToMe = GetActorLocation() - LocalPawn->GetActorLocation();
+	PlayerToMe.Z	   = 0.0f;
+	PlayerToMeDot	   = FVector::DotProduct(LocalPawn->CurrentRootDirXY, PlayerToMe);
+}
+
+void ACsAIPawn::CheckPlayerSeesBody()
+{
+	if (PlayerToMeDot < PlayerSeesBodyMinDot)
+		return;
+
+	if (GetWorld()->GetTimeSeconds() - CheckPlayerSeesBodyStartTime < CheckPlayerSeesBodyInterval)
+		return;
+
+	CheckPlayerSeesBodyStartTime = GetWorld()->GetTimeSeconds();
+
+	ACsManager_Trace* Manager_Trace = ACsManager_Trace::Get(GetWorld());
+
+	FCsTraceRequest* Request = Manager_Trace->AllocateRequest();
+
+	ACsPawn* LocalPawn = UCsCommon::GetLocalPawn<ACsPawn>(GetWorld());
+
+	Request->Caller		= this;
+	Request->CallerId	= UniqueObjectId;
+	Request->Start		= GetActorLocation();
+	Request->End		= LocalPawn->GetActorLocation();
+	Request->bAsync		= true;
+	Request->Type		= ECsTraceType::Line;
+	Request->Method		= ECsTraceMethod::Multi;
+	Request->Query		= ECsTraceQuery::ObjectType;
+	Request->ObjectParams.AddObjectTypesToQuery(ECC_Pawn);
+	Request->Params.AddIgnoredActor(this);
+	Request->Params.AddIgnoredActor(LocalPawn);
+
+	Manager_Trace->Trace(Request);
+}
+
+#pragma endregion Player

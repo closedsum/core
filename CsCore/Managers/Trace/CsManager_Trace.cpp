@@ -30,29 +30,29 @@ ACsManager_Trace::ACsManager_Trace(const FObjectInitializer& ObjectInitializer) 
 
 	for (uint8 I = 0; I < ECS_TRACE_TYPE_MAX; ++I)
 	{
-		TraceCountLifetimeByType.Add((TCsTraceType)I, 0);
-		TraceCountThisFrameByType.Add((TCsTraceType)I, 0);
+		TraceCountLifetimeByType[I] = 0;
+		TraceCountThisFrameByType[I] = 0;
 
-		TArray<FCsTraceRequest*> AddRequests;
-		PendingRequestsByType.Add((TCsTraceType)I, AddRequests);
+		TMap<TCsTraceHandleId, FCsTraceRequest*> AddMap;
+		PendingRequestsByType.Add((TCsTraceType)I, AddMap);
 	}
 
 	for (uint8 I = 0; I < ECS_TRACE_METHOD_MAX; ++I)
 	{
-		TraceCountLifetimeByMethod.Add((TCsTraceMethod)I, 0);
-		TraceCountThisFrameByMethod.Add((TCsTraceMethod)I, 0);
+		TraceCountLifetimeByMethod[I] = 0;
+		TraceCountThisFrameByMethod[I] = 0;
 
-		TArray<FCsTraceRequest*> AddRequests;
-		PendingRequestsByMethod.Add((TCsTraceMethod)I, AddRequests);
+		TMap<TCsTraceHandleId, FCsTraceRequest*> AddMap;
+		PendingRequestsByMethod.Add((TCsTraceMethod)I, AddMap);
 	}
 
 	for (uint8 I = 0; I < ECS_TRACE_QUERY_MAX; ++I)
 	{
-		TraceCountLifetimeByQuery.Add((TCsTraceQuery)I, 0);
-		TraceCountThisFrameByQuery.Add((TCsTraceQuery)I, 0);
+		TraceCountLifetimeByQuery[I] = 0;
+		TraceCountThisFrameByQuery[I] = 0;
 
-		TArray<FCsTraceRequest*> AddRequests;
-		PendingRequestsByQuery.Add((TCsTraceQuery)I, AddRequests);
+		TMap<TCsTraceHandleId, FCsTraceRequest*> AddMap;
+		PendingRequestsByQuery.Add((TCsTraceQuery)I, AddMap);
 	}
 
 	TraceDelegate.BindUObject(this, &ACsManager_Trace::OnTraceResponse);
@@ -61,27 +61,47 @@ ACsManager_Trace::ACsManager_Trace(const FObjectInitializer& ObjectInitializer) 
 
 void ACsManager_Trace::Clear()
 {
-	//Pool.Reset();
-	//ActiveWidgets.Reset();
+	TraceCountLifetime = 0;
+	TraceCountThisFrame = 0;
+
+	for (uint8 I = 0; I < ECS_TRACE_TYPE_MAX; ++I)
+	{
+		TraceCountLifetimeByType[I] = 0;
+		TraceCountThisFrameByType[I] = 0;
+	}
+
+	for (uint8 I = 0; I < ECS_TRACE_METHOD_MAX; ++I)
+	{
+		TraceCountLifetimeByMethod[I] = 0;
+		TraceCountThisFrameByMethod[I] = 0;
+	}
+
+	for (uint8 I = 0; I < ECS_TRACE_QUERY_MAX; ++I)
+	{
+		TraceCountLifetimeByQuery[I] = 0;
+		TraceCountThisFrameByQuery[I] = 0;
+	}
+
+	for (uint8 I = 0; I < CS_POOLED_TRACE_REQUEST_SIZE; ++I)
+	{
+		Requests[I].Reset();
+	}
+
+	PendingRequests.Reset();
+	PendingRequestsById.Reset();
+	PendingRequestsByType.Reset();
+	PendingRequestsByMethod.Reset();
+	PendingRequestsByQuery.Reset();
 }
 
 void ACsManager_Trace::Shutdown()
 {
-	/*
-	const int32 Count = Pool.Num();
-
-	for (int32 I = 0; I < Count; ++I)
-	{
-		if (Pool[I] && !Pool[I]->IsPendingKill())
-			Pool[I]->ConditionalBeginDestroy();
-	}
-	*/
 	Clear();
 }
 
 void ACsManager_Trace::BeginDestroy()
 {
-	//Shutdown();
+	Shutdown();
 	Super::BeginDestroy();
 }
 
@@ -92,20 +112,62 @@ void ACsManager_Trace::BeginDestroy()
 
 void ACsManager_Trace::OnTick(const float &DeltaSeconds)
 {
-	const uint8 ProcessCountMax = FMath::Max(0, RequestsProcessedPerTick - TraceCountThisFrame);
-	const uint8 Count			= (uint8)FMath::Min(PendingRequests.Num(), (int32)ProcessCountMax);
+	// Reset TraceCountThisFrame
+	TraceCountThisFrame = 0;
 
-	for (uint8 I = 0; I < Count; ++I)
+	for (uint8 I = 0; I < ECS_TRACE_TYPE_MAX; ++I)
 	{
-		FCsTraceRequest* Request = PendingRequests[I];
+		TraceCountThisFrameByType[I] = 0;
+	}
 
-		if (!Request->bProcessing)
-			ProcessRequest(Request);
+	for (uint8 I = 0; I < ECS_TRACE_METHOD_MAX; ++I)
+	{
+		TraceCountThisFrameByMethod[I] = 0;
+	}
+
+	for (uint8 I = 0; I < ECS_TRACE_QUERY_MAX; ++I)
+	{
+		TraceCountThisFrameByQuery[I] = 0;
+	}
+	// Process Requests
+	const uint8 ProcessCountMax = FMath::Max(0, RequestsProcessedPerTick - TraceCountThisFrame);
+
+	TArray<TCsTraceHandleId> Keys;
+	PendingRequests.GetKeys(Keys);
+
+	const int32 KeyCount = Keys.Num();
+	const uint8 Count    = (uint8)FMath::Min(KeyCount, (int32)ProcessCountMax);
+
+	const float CurrentTime = GetWorld()->GetTimeSeconds();
+
+	for (uint8 I = 0; I < KeyCount; ++I)
+	{
+		const TCsTraceHandleId& HandleId = Keys[I];
+		FCsTraceRequest** RequestPtr	 = PendingRequests.Find(HandleId);
+		FCsTraceRequest* Request		 = *RequestPtr;
+
+		// Check to remove STALE Request
+		if (Request->StaleTime > 0.0f &&
+			CurrentTime - Request->StartTime >= Request->StaleTime)
+		{
+			RemovePendingRequest(Request);
+			continue;
+		}
+		// PROCESS Request
+		if (I < Count)
+		{
+			if (!Request->bProcessing)
+			{
+				ProcessRequest(Request);
+				IncrementTraceCount(Request);
+			}
+		}
 	}
 }
 
 void ACsManager_Trace::IncrementTraceCount(FCsTraceRequest* Request)
 {
+	// Lifetime
 	++TraceCountLifetime;
 
 	if (uint64* CountById = TraceCountLifetimeById.Find(Request->CallerId))
@@ -117,14 +179,24 @@ void ACsManager_Trace::IncrementTraceCount(FCsTraceRequest* Request)
 		TraceCountLifetimeById.Add(Request->CallerId, 1);
 	}
 
-	uint64* LifetimeCountByType = TraceCountLifetimeByType.Find(Request->Type);
-	++(*LifetimeCountByType);
-	uint64* LifetimeCountByMethod = TraceCountLifetimeByMethod.Find(Request->Method);
-	++(*LifetimeCountByMethod);
-	uint64* LifetimeCountByQuery = TraceCountLifetimeByQuery.Find(Request->Query);
-	++(*LifetimeCountByQuery);
-
+	++(TraceCountLifetimeByType[(uint8)Request->Type]);
+	++(TraceCountLifetimeByMethod[(uint8)Request->Method]);
+	++(TraceCountLifetimeByQuery[(uint8)Request->Query]);
+	// Frame
 	++TraceCountThisFrame;
+
+	if (uint16* CountById = TraceCountThisFrameById.Find(Request->CallerId))
+	{
+		++(*CountById);
+	}
+	else
+	{
+		TraceCountThisFrameById.Add(Request->CallerId, 1);
+	}
+
+	++(TraceCountThisFrameByType[(uint8)Request->Type]);
+	++(TraceCountThisFrameByMethod[(uint8)Request->Method]);
+	++(TraceCountThisFrameByQuery[(uint8)Request->Query]);
 }
 
 // Request
@@ -145,6 +217,58 @@ FCsTraceRequest* ACsManager_Trace::AllocateRequest()
 	}
 	checkf(0, TEXT("ACsManager_Trace::AllocateRequest: Pool is exhausted"));
 	return nullptr;
+}
+
+void ACsManager_Trace::AddPendingRequest(FCsTraceRequest* Request)
+{
+	const TCsTraceHandleId& HandleId = Request->Handle._Handle;
+
+	PendingRequests.Add(HandleId, Request);
+	// Id
+	if (TMap<TCsTraceHandleId, FCsTraceRequest*>* Map = PendingRequestsById.Find(Request->CallerId))
+	{
+		Map->Add(HandleId, Request);
+	}
+	else
+	{
+		TMap<TCsTraceHandleId, FCsTraceRequest*> NewMap;
+		NewMap.Add(HandleId, Request);
+		PendingRequestsById.Add(Request->CallerId, NewMap);
+	}
+	// Type
+	TMap<TCsTraceHandleId, FCsTraceRequest*>* MapType = PendingRequestsByType.Find(Request->Type);
+	MapType->Add(HandleId, Request);
+	// Method
+	TMap<TCsTraceHandleId, FCsTraceRequest*>* MapMethod = PendingRequestsByMethod.Find(Request->Method);
+	MapMethod->Add(HandleId, Request);
+	// Query
+	TMap<TCsTraceHandleId, FCsTraceRequest*>* MapQuery = PendingRequestsByQuery.Find(Request->Query);
+	MapQuery->Add(HandleId, Request);
+
+	// LOG TRANSACTION
+}
+
+void ACsManager_Trace::RemovePendingRequest(FCsTraceRequest* Request)
+{
+	const TCsTraceHandleId& HandleId = Request->Handle._Handle;
+
+	PendingRequests.Remove(HandleId);
+	// Id
+	TMap<TCsTraceHandleId, FCsTraceRequest*>* MapId = PendingRequestsById.Find(Request->CallerId);
+	MapId->Remove(HandleId);
+	// Type
+	TMap<TCsTraceHandleId, FCsTraceRequest*>* MapType = PendingRequestsByType.Find(Request->Type);
+	MapType->Remove(HandleId);
+	// Method
+	TMap<TCsTraceHandleId, FCsTraceRequest*>* MapMethod = PendingRequestsByMethod.Find(Request->Method);
+	MapMethod->Remove(HandleId);
+	// Query
+	TMap<TCsTraceHandleId, FCsTraceRequest*>* MapQuery = PendingRequestsByQuery.Find(Request->Query);
+	MapQuery->Remove(HandleId);
+
+	// LOG TRANSACTION
+
+	Request->Reset();
 }
 
 bool ACsManager_Trace::ProcessRequest(FCsTraceRequest* Request)
@@ -228,7 +352,6 @@ bool ACsManager_Trace::ProcessRequest(FCsTraceRequest* Request)
 			return false;
 		}
 	}
-	IncrementTraceCount(Request);
 	return true;
 }
 
@@ -256,6 +379,17 @@ FCsTraceResponse* ACsManager_Trace::AllocateResponse()
 
 void ACsManager_Trace::OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& Datum)
 {
+	const TCsTraceHandleId& HandleId = Handle._Handle;
+
+	FCsTraceRequest** RequestPtr = PendingRequests.Find(HandleId);
+	FCsTraceRequest* Request	 = *RequestPtr;
+
+	FCsTraceResponse* Response = AllocateResponse();
+
+	Response->bResult	  = Datum.OutHits.Num() > CS_EMPTY && Datum.OutHits[CS_FIRST].bBlockingHit;
+	Response->ElapsedTime = GetWorld()->GetTimeSeconds() - Request->StartTime;
+
+	RemovePendingRequest(Request);
 }
 
 void ACsManager_Trace::OnOverlapResponse(const FTraceHandle& Handle, FOverlapDatum& Datum)
@@ -285,31 +419,18 @@ FCsTraceResponse*  ACsManager_Trace::Trace(FCsTraceRequest* Request)
 		// if NOT Pending, Start Async
 		if (!AddPending)
 		{
-			// if NOT Successful in processing Request, EXIT
-			if (!ProcessRequest(Request))
+			// if Successful in processing Request, EXIT
+			if (ProcessRequest(Request))
+			{
+				AddPendingRequest(Request);
+				IncrementTraceCount(Request);
 				return nullptr;
+			}
 		}
 
 		// ADD Pending Request
-		PendingRequests.Add(Request);
-
-		if (TArray<FCsTraceRequest*>* Requests = PendingRequestsById.Find(Request->CallerId))
-		{
-			Requests->Add(Request);
-		}
-		else
-		{
-			TArray<FCsTraceRequest*> NewRequests;
-			NewRequests.Add(Request);
-			PendingRequestsById.Add(Request->CallerId, NewRequests);
-		}
-
-		TArray<FCsTraceRequest*>* RequestsType = PendingRequestsByType.Find(Request->Type);
-		RequestsType->Add(Request);
-		TArray<FCsTraceRequest*>* RequestsMethod = PendingRequestsByMethod.Find(Request->Method);
-		RequestsMethod->Add(Request);
-		TArray<FCsTraceRequest*>* RequestsQuery = PendingRequestsByQuery.Find(Request->Query);
-		RequestsQuery->Add(Request);
+		AddPendingRequest(Request);
+		return nullptr;
 	}
 	// Normal
 	else

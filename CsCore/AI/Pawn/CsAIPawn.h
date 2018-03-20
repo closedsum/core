@@ -125,6 +125,7 @@ class CSCORE_API ACsAIPawn : public ACsPawn
 
 	virtual void DeAllocate();
 
+	virtual void Tick(float DeltaSeconds) override;
 	virtual void OnTick_HandleCVars(const float &DeltaSeconds);
 
 // Behavior Tree
@@ -148,18 +149,24 @@ class CSCORE_API ACsAIPawn : public ACsPawn
 	UPROPERTY(BlueprintReadOnly, Category = "Player")
 	float PlayerToMeDot;
 
-	//void CalculatePlayerToMeDot();
+	void CalculatePlayerToMeDot();
 
-	UPROPERTY(BlueprintReadWrite, Category = "Player")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player", meta = (ClampMin = "0.0", UIMin = "0.0", ClampMax = "1.0", UIMax = "1.0"))
 	float PlayerSeesBodyMinDot;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Player")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player", meta = (ClampMin = "0.0", UIMin = "0.0", ClampMax = "90.0", UIMax = "80.0"))
 	float PlayerSeesBodyAngle;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Player")
 	bool bPlayerSeesBody;
 
-	//void CheckPlayerSeesBody();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float CheckPlayerSeesBodyInterval;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Player")
+	float CheckPlayerSeesBodyStartTime;
+
+	void CheckPlayerSeesBody();
 
 #pragma endregion Player
 };

@@ -160,9 +160,11 @@ struct FCsTraceResponse
 	UPROPERTY(BlueprintReadOnly, Category = "Trace")
 	TArray<struct FHitResult> OutHits;
 
-	FCsTraceResponse() {}
+	TArray<struct FOverlapResult> OutOverlaps;
+
 	~FCsTraceResponse() {}
 
+	FCsTraceResponse() {}
 	FCsTraceResponse& operator=(const FCsTraceResponse& B)
 	{
 		IsAllocated = B.IsAllocated;
@@ -170,11 +172,20 @@ struct FCsTraceResponse
 
 		OutHits.Reset();
 
-		const int32 Count = B.OutHits.Num();
+		const int32 HitCount = B.OutHits.Num();
 
-		for (int32 I = 0; I < Count; ++I)
+		for (int32 I = 0; I < HitCount; ++I)
 		{
 			OutHits.Add(B.OutHits[I]);
+		}
+
+		OutOverlaps.Reset();
+
+		const int32 OverlapCount = B.OutOverlaps.Num();
+
+		for (int32 I = 0; I < OverlapCount; ++I)
+		{
+			OutOverlaps.Add(B.OutOverlaps[I]);
 		}
 		ElapsedTime = B.ElapsedTime;
 		return *this;
@@ -186,9 +197,11 @@ struct FCsTraceResponse
 			return false;
 		if (bResult != B.bResult)
 			return false;
+		if (ElapsedTime != B.ElapsedTime)
+			return false;
 		if (OutHits.Num() != B.OutHits.Num())
 			return false;
-		if (ElapsedTime != B.ElapsedTime)
+		if (OutOverlaps.Num() != B.OutOverlaps.Num())
 			return false;
 		return true;
 	}
@@ -205,6 +218,7 @@ struct FCsTraceResponse
 		ElapsedTime = 0.0f;
 
 		OutHits.Reset();
+		OutOverlaps.Reset();
 	}
 };
 
@@ -216,14 +230,20 @@ struct FCsTraceRequest
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
+	UPROPERTY(BlueprintReadOnly, Category = "Trace")
 	uint8 Id;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
+	UPROPERTY(BlueprintReadOnly, Category = "Trace")
 	bool IsAllocated;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Trace")
+	bool bProcessing;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Trace")
 	float StartTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
+	float StaleTime;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
 	TWeakObjectPtr<UObject> Caller;
@@ -254,11 +274,15 @@ struct FCsTraceRequest
 	FVector End;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
+	FRotator Rotation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
 	TEnumAsByte<ECollisionChannel> Channel;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
 	FName ProfileName;
 
+	FCollisionShape Shape;
 	FCollisionQueryParams Params;
 	FCollisionObjectQueryParams ObjectParams;
 	FCollisionResponseParams ResponseParam;
@@ -271,14 +295,17 @@ struct FCsTraceRequest
 	FCsTraceRequest& operator=(const FCsTraceRequest& B)
 	{
 		IsAllocated = B.IsAllocated;
+		StaleTime = B.StaleTime;
 		bAsync = B.bAsync;
 		Type = B.Type;
 		Method = B.Method;
 		Query = B.Query;
 		Start = B.Start;
 		End = B.End;
+		Rotation = B.Rotation;
 		Channel = B.Channel;
 		ProfileName = B.ProfileName;
+		Shape = B.Shape;
 		Params = B.Params;
 		ObjectParams = B.ObjectParams;
 		ResponseParam = B.ResponseParam;
@@ -288,12 +315,14 @@ struct FCsTraceRequest
 	bool operator==(const FCsTraceRequest& B) const
 	{
 		return	IsAllocated == B.IsAllocated &&
+				StaleTime == B.StaleTime &&
 				bAsync == B.bAsync &&
 				Type == B.Type &&
 				Method == B.Method &&
 				Query == B.Query &&
 				Start == B.Start &&
 				End == B.End &&
+				Rotation == B.Rotation &&
 				Channel == B.Channel &&
 				ProfileName == B.ProfileName;
 	}
@@ -305,8 +334,10 @@ struct FCsTraceRequest
 
 	void Reset()
 	{
+		bProcessing = false;
 		IsAllocated = false;
 		StartTime = 0.0f;
+		StaleTime = 0.0f;
 		Caller.Reset();
 		Caller = nullptr;
 		CallerId = UINT64_MAX;
@@ -322,8 +353,10 @@ struct FCsTraceRequest
 		Query = ECsTraceQuery::ECsTraceQuery_MAX;
 		Start = FVector::ZeroVector;
 		End = FVector::ZeroVector;
+		Rotation = FRotator::ZeroRotator;
 		Channel = ECollisionChannel::ECC_MAX;
 		ProfileName = NAME_None;
+		Shape.ShapeType = ECollisionShape::Line;
 		Params = FCollisionQueryParams::DefaultQueryParam;
 		ObjectParams = FCollisionObjectQueryParams::DefaultObjectQueryParam;
 		ResponseParam = FCollisionResponseParams::DefaultResponseParam;
@@ -364,11 +397,28 @@ public:
 
 	static ACsManager_Trace* Get(UWorld* InWorld);
 
+	virtual void OnTick(const float &DeltaSeconds);
+
 	UPROPERTY(BlueprintReadWrite, Category = "Trace")
 	int32 RequestsProcessedPerTick;
 
 	uint64 TraceCountLifetime;
+
+	TMap<uint64, uint64> TraceCountLifetimeById;
+	TMap<TCsTraceType, uint64> TraceCountLifetimeByType;
+	TMap<TCsTraceMethod, uint64> TraceCountLifetimeByMethod;
+	TMap<TCsTraceQuery, uint64> TraceCountLifetimeByQuery;
+
 	uint16 TraceCountThisFrame;
+
+	TMap<uint64, uint16> TraceCountThisFrameById;
+	TMap<TCsTraceType, uint16> TraceCountThisFrameByType;
+	TMap<TCsTraceMethod, uint16> TraceCountThisFrameByMethod;
+	TMap<TCsTraceQuery, uint16> TraceCountThisFrameByQuery;
+
+private:
+
+	void IncrementTraceCount(FCsTraceRequest* Request);
 
 // Request
 #pragma region
@@ -388,6 +438,10 @@ public:
 	TMap<TCsTraceMethod, TArray<FCsTraceRequest*>> PendingRequestsByMethod;
 	TMap<TCsTraceQuery, TArray<FCsTraceRequest*>> PendingRequestsByQuery;
 
+private:
+
+	bool ProcessRequest(FCsTraceRequest* Request);
+
 #pragma endregion Request
 
 // Response
@@ -403,10 +457,14 @@ public:
 	FCsTraceResponse * AllocateResponse();
 
 	FTraceDelegate TraceDelegate;
+	FOverlapDelegate OverlapDelegate;
 
-	void OnResponse(const FTraceHandle& Handle, FTraceDatum& Datum);
+	void OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& Datum);
+	void OnOverlapResponse(const FTraceHandle& Handle, FOverlapDatum& Datum);
 
 #pragma endregion Response
+
+public:
 
 	FCsTraceResponse* Trace(FCsTraceRequest* Request);
 

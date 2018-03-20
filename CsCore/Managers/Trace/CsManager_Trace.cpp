@@ -21,16 +21,6 @@ namespace ECsManagerTraceCachedString
 
 ACsManager_Trace::ACsManager_Trace(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	/*
-	for (uint16 I = 0; I < CS_ITEM_POOL_SIZE; ++I)
-	{
-		Pool[I].Init(I);
-	}
-
-	UniqueIdIndex = CS_ITEM_UNIQUE_ID_START_INDEX;
-
-	SaveDirectory = TEXT("Items/");
-	*/
 	RequestsProcessedPerTick = 64;
 
 	for (uint8 I = 0; I < CS_POOLED_TRACE_REQUEST_SIZE; ++I)
@@ -40,23 +30,33 @@ ACsManager_Trace::ACsManager_Trace(const FObjectInitializer& ObjectInitializer) 
 
 	for (uint8 I = 0; I < ECS_TRACE_TYPE_MAX; ++I)
 	{
+		TraceCountLifetimeByType.Add((TCsTraceType)I, 0);
+		TraceCountThisFrameByType.Add((TCsTraceType)I, 0);
+
 		TArray<FCsTraceRequest*> AddRequests;
 		PendingRequestsByType.Add((TCsTraceType)I, AddRequests);
 	}
 
 	for (uint8 I = 0; I < ECS_TRACE_METHOD_MAX; ++I)
 	{
+		TraceCountLifetimeByMethod.Add((TCsTraceMethod)I, 0);
+		TraceCountThisFrameByMethod.Add((TCsTraceMethod)I, 0);
+
 		TArray<FCsTraceRequest*> AddRequests;
 		PendingRequestsByMethod.Add((TCsTraceMethod)I, AddRequests);
 	}
 
 	for (uint8 I = 0; I < ECS_TRACE_QUERY_MAX; ++I)
 	{
+		TraceCountLifetimeByQuery.Add((TCsTraceQuery)I, 0);
+		TraceCountThisFrameByQuery.Add((TCsTraceQuery)I, 0);
+
 		TArray<FCsTraceRequest*> AddRequests;
 		PendingRequestsByQuery.Add((TCsTraceQuery)I, AddRequests);
 	}
 
-	TraceDelegate.BindUObject(this, &ACsManager_Trace::OnResponse);
+	TraceDelegate.BindUObject(this, &ACsManager_Trace::OnTraceResponse);
+	OverlapDelegate.BindUObject(this, &ACsManager_Trace::OnOverlapResponse);
 }
 
 void ACsManager_Trace::Clear()
@@ -90,6 +90,43 @@ void ACsManager_Trace::BeginDestroy()
 	return InWorld->GetGameState<ACsGameState>()->Manager_Trace;
 }
 
+void ACsManager_Trace::OnTick(const float &DeltaSeconds)
+{
+	const uint8 ProcessCountMax = FMath::Max(0, RequestsProcessedPerTick - TraceCountThisFrame);
+	const uint8 Count			= (uint8)FMath::Min(PendingRequests.Num(), (int32)ProcessCountMax);
+
+	for (uint8 I = 0; I < Count; ++I)
+	{
+		FCsTraceRequest* Request = PendingRequests[I];
+
+		if (!Request->bProcessing)
+			ProcessRequest(Request);
+	}
+}
+
+void ACsManager_Trace::IncrementTraceCount(FCsTraceRequest* Request)
+{
+	++TraceCountLifetime;
+
+	if (uint64* CountById = TraceCountLifetimeById.Find(Request->CallerId))
+	{
+		++(*CountById);
+	}
+	else
+	{
+		TraceCountLifetimeById.Add(Request->CallerId, 1);
+	}
+
+	uint64* LifetimeCountByType = TraceCountLifetimeByType.Find(Request->Type);
+	++(*LifetimeCountByType);
+	uint64* LifetimeCountByMethod = TraceCountLifetimeByMethod.Find(Request->Method);
+	++(*LifetimeCountByMethod);
+	uint64* LifetimeCountByQuery = TraceCountLifetimeByQuery.Find(Request->Query);
+	++(*LifetimeCountByQuery);
+
+	++TraceCountThisFrame;
+}
+
 // Request
 #pragma region
 
@@ -108,6 +145,91 @@ FCsTraceRequest* ACsManager_Trace::AllocateRequest()
 	}
 	checkf(0, TEXT("ACsManager_Trace::AllocateRequest: Pool is exhausted"));
 	return nullptr;
+}
+
+bool ACsManager_Trace::ProcessRequest(FCsTraceRequest* Request)
+{
+	Request->bProcessing = true;
+
+	EAsyncTraceType AsyncTraceType	   = EAsyncTraceType::Single;
+	const FString& TraceMethodAsString = ECsTraceMethod::ToString(Request->Method);
+
+	// Test
+	if (Request->Method == ECsTraceMethod::Test)
+	{
+		AsyncTraceType = EAsyncTraceType::Test;
+	}
+	// Single
+	else
+	if (Request->Method == ECsTraceMethod::Single)
+	{
+		AsyncTraceType = EAsyncTraceType::Single;
+	}
+	// Multi
+	else
+	if (Request->Method == ECsTraceMethod::Multi)
+	{
+		AsyncTraceType = EAsyncTraceType::Multi;
+	}
+
+	// Line
+	if (Request->Type == ECsTraceType::Line)
+	{
+		// AsyncLineTraceByChannel
+		if (Request->Query == ECsTraceQuery::Channel)
+			Request->CopyHandle(GetWorld()->AsyncLineTraceByChannel(AsyncTraceType, Request->Start, Request->End, Request->Channel, Request->Params, Request->ResponseParam, &TraceDelegate));
+		// AsyncLineTraceByObjectType
+		else
+		if (Request->Query == ECsTraceQuery::ObjectType)
+			Request->CopyHandle(GetWorld()->AsyncLineTraceByObjectType(AsyncTraceType, Request->Start, Request->End, Request->ObjectParams, Request->Params, &TraceDelegate));
+		else
+		if (Request->Query == ECsTraceQuery::Profile)
+		{
+			UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::ProcessRequest: There is NO Async Line Trace %s By Profile Method. Use TraceMethod: Channel or ObjectType."), *TraceMethodAsString);
+			Request->Reset();
+			return false;
+		}
+	}
+	// Sweep
+	else
+	if (Request->Type == ECsTraceType::Sweep)
+	{
+		// AsyncSweepByChannel
+		if (Request->Query == ECsTraceQuery::Channel)
+			Request->CopyHandle(GetWorld()->AsyncSweepByChannel(AsyncTraceType, Request->Start, Request->End, Request->Channel, Request->Shape, Request->Params,  Request->ResponseParam, &TraceDelegate));
+		// AsyncSweepByObjectType
+		else
+		if (Request->Query == ECsTraceQuery::ObjectType)
+			Request->CopyHandle(GetWorld()->AsyncSweepByObjectType(AsyncTraceType, Request->Start, Request->End, Request->ObjectParams, Request->Shape, Request->Params, &TraceDelegate));
+		else
+		if (Request->Query == ECsTraceQuery::Profile)
+		{
+			UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::ProcessRequest: There is NO Async Sweep Trace %s By Profile Method. Use TraceMethod: Channel or ObjectType."), *TraceMethodAsString);
+			Request->Reset();
+			return false;
+		}
+	}
+	// Overlap
+	else
+	if (Request->Type == ECsTraceType::Overlap)
+	{
+		// AsyncOverlapByChannel
+		if (Request->Query == ECsTraceQuery::Channel)
+			Request->CopyHandle(GetWorld()->AsyncOverlapByChannel(Request->Start, Request->Rotation.Quaternion(), Request->Channel, Request->Shape, Request->Params, Request->ResponseParam, &OverlapDelegate));
+		// AsyncOverlapByObjectType
+		else
+		if (Request->Query == ECsTraceQuery::ObjectType)
+			Request->CopyHandle(GetWorld()->AsyncOverlapByObjectType(Request->Start, Request->Rotation.Quaternion(), Request->ObjectParams, Request->Shape, Request->Params, &OverlapDelegate));
+		else
+		if (Request->Query == ECsTraceQuery::Profile)
+		{
+			UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::ProcessRequest: There is NO Async Sweep Trace %s By Profile Method. Use TraceMethod: Channel or ObjectType."), *TraceMethodAsString);
+			Request->Reset();
+			return false;
+		}
+	}
+	IncrementTraceCount(Request);
+	return true;
 }
 
 #pragma endregion Request
@@ -132,72 +254,43 @@ FCsTraceResponse* ACsManager_Trace::AllocateResponse()
 	return nullptr;
 }
 
-void ACsManager_Trace::OnResponse(const FTraceHandle& Handle, FTraceDatum& Datum)
+void ACsManager_Trace::OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& Datum)
+{
+}
+
+void ACsManager_Trace::OnOverlapResponse(const FTraceHandle& Handle, FOverlapDatum& Datum)
 {
 }
 
 #pragma endregion Response
 
+
 FCsTraceResponse*  ACsManager_Trace::Trace(FCsTraceRequest* Request)
 {
+	Request->StartTime = GetWorld()->GetTimeSeconds();
+
 	bool AddPending = TraceCountThisFrame >= RequestsProcessedPerTick;
+
+	// TODO: Print warning for a normal trace moved to Async
+	if (AddPending && !Request->bAsync)
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::Trace: Reached maximum RequestsProcessedPerTick: %d and Request is NOT Async. Abandoning Request."), RequestsProcessedPerTick);
+		return nullptr;
+	}
 
 	// Async
 	if (Request->bAsync ||
 		AddPending)
 	{
-		// TODO: Print warning for a normal trace moved to Async
-		if (AddPending && !Request->bAsync)
+		// if NOT Pending, Start Async
+		if (!AddPending)
 		{
+			// if NOT Successful in processing Request, EXIT
+			if (!ProcessRequest(Request))
+				return nullptr;
 		}
 
-		// Line
-		if (Request->Type == ECsTraceType::Line)
-		{
-			// Test
-			if (Request->Method == ECsTraceMethod::Test)
-			{
-				UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::Trace: There is NO Async Line Trace Test Method."));
-				return nullptr;
-			}
-			// Single
-			else
-			if (Request->Method == ECsTraceMethod::Single)
-			{
-				// AsyncLineTraceByChannel
-				if (Request->Query == ECsTraceQuery::Channel)
-					Request->CopyHandle(GetWorld()->AsyncLineTraceByChannel(EAsyncTraceType::Single, Request->Start, Request->End, Request->Channel, Request->Params, Request->ResponseParam, &TraceDelegate));
-				// AsyncLineTraceByObjectType
-				else
-				if (Request->Query == ECsTraceQuery::ObjectType)
-					Request->CopyHandle(GetWorld()->AsyncLineTraceByObjectType(EAsyncTraceType::Single, Request->Start, Request->End, Request->ObjectParams, Request->Params, &TraceDelegate));
-			}
-			// Multi
-			else
-			if (Request->Method == ECsTraceMethod::Multi)
-			{
-				UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::Trace: There is NO Async Line Trace Multi Method."));
-				return nullptr;
-			}
-		}
-		// Sweep
-		else
-		if (Request->Type == ECsTraceType::Sweep)
-		{
-		}
-		else
-		if (Request->Type == ECsTraceType::Overlap)
-		{
-		}
-		/*
-		FTraceHandle	AsyncLineTraceByChannel(EAsyncTraceType InTraceType, const FVector& Start, const FVector& End, ECollisionChannel TraceChannel, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams& ResponseParam = FCollisionResponseParams::DefaultResponseParam, FTraceDelegate * InDelegate = NULL, uint32 UserData = 0);
-		FTraceHandle	AsyncLineTraceByObjectType(EAsyncTraceType InTraceType, const FVector& Start, const FVector& End, const FCollisionObjectQueryParams& ObjectQueryParams, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, FTraceDelegate * InDelegate = NULL, uint32 UserData = 0);
-		FTraceHandle	AsyncSweepByChannel(EAsyncTraceType InTraceType, const FVector& Start, const FVector& End, ECollisionChannel TraceChannel, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams& ResponseParam = FCollisionResponseParams::DefaultResponseParam, FTraceDelegate * InDelegate = NULL, uint32 UserData = 0);
-		FTraceHandle	AsyncSweepByObjectType(EAsyncTraceType InTraceType, const FVector& Start, const FVector& End, const FCollisionObjectQueryParams& ObjectQueryParams, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, FTraceDelegate * InDelegate = NULL, uint32 UserData = 0);
-		FTraceHandle	AsyncOverlapByChannel(const FVector& Pos, const FQuat& Rot, ECollisionChannel TraceChannel, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams& ResponseParam = FCollisionResponseParams::DefaultResponseParam, FOverlapDelegate * InDelegate = NULL, uint32 UserData = 0);
-		FTraceHandle	AsyncOverlapByObjectType(const FVector& Pos, const FQuat& Rot, const FCollisionObjectQueryParams& ObjectQueryParams, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, FOverlapDelegate * InDelegate = NULL, uint32 UserData = 0);
-		*/
-
+		// ADD Pending Request
 		PendingRequests.Add(Request);
 
 		if (TArray<FCsTraceRequest*>* Requests = PendingRequestsById.Find(Request->CallerId))
@@ -218,9 +311,12 @@ FCsTraceResponse*  ACsManager_Trace::Trace(FCsTraceRequest* Request)
 		TArray<FCsTraceRequest*>* RequestsQuery = PendingRequestsByQuery.Find(Request->Query);
 		RequestsQuery->Add(Request);
 	}
+	// Normal
 	else
 	{
 		FCsTraceResponse* Response = AllocateResponse();
+
+		Response->ElapsedTime = GetWorld()->GetTimeSeconds() - Request->StartTime;
 
 		// Line
 		if (Request->Type == ECsTraceType::Line)
@@ -319,6 +415,7 @@ FCsTraceResponse*  ACsManager_Trace::Trace(FCsTraceRequest* Request)
 		bool OverlapMultiByObjectType(TArray<struct FOverlapResult>& OutOverlaps, const FVector& Pos, const FQuat& Rot, const FCollisionObjectQueryParams& ObjectQueryParams, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
 		bool OverlapMultiByProfile(TArray<struct FOverlapResult>& OutOverlaps, const FVector& Pos, const FQuat& Rot, FName ProfileName, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
 		*/
+		IncrementTraceCount(Request);
 		Request->Reset();
 		return Response;
 	}

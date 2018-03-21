@@ -19,6 +19,9 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsPawn_OnHandleRespawnTimerFi
 // Setup
 DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsPawn_OnSetupFinished, const uint8&);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsPawn_OnSetupFinished, const uint8&, MappingId);
+// ApplyDamage
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsPawn_OnApplyDamage_Result, const uint8&, FCsDamageResult*);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnApplyDamage_Result, const uint8&, MappingId, FCsDamageResult, Event);
 
 // Enums
 #pragma region
@@ -117,6 +120,10 @@ class CSCORE_API ACsPawn : public ACharacter
 #pragma region
 public:
 
+	// Health
+#pragma region
+public:
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
 	float Health;
 
@@ -139,9 +146,22 @@ public:
 	UPROPERTY()
 	class UCsWidget_ProgressBar* HealthBarWidget;
 
+#pragma endregion Health
+
+public:
+
 	virtual void ApplyDamage(FCsDamageEvent* Event);
 
+	UPROPERTY(BlueprintAssignable, Category = "State")
+	FBindableDynEvent_CsPawn_OnApplyDamage_Result OnApplyDamage_Result_ScriptEvent;
+
+	FBindableEvent_CsPawn_OnApplyDamage_Result OnApplyDamage_Result_Event;
+
 	virtual void Die();
+
+	// Spawn
+#pragma region
+public:
 
 	UPROPERTY(BlueprintReadWrite, Category = "State")
 	bool bFirstSpawn;
@@ -163,6 +183,8 @@ public:
 	virtual void OnHandleRespawnTimerFinished(const uint8 &MappingId);
 
 	FBindableEvent_CsPawn_OnHandleRespawnTimerFinished OnHandleRespawnTimerFinished_Event;
+
+#pragma endregion Spawn
 
 #pragma endregion State
 

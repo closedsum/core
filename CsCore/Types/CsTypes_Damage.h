@@ -336,3 +336,101 @@ struct FCsDamageEvent
 	template<typename T>
 	T* GetCauser() { return Cast<T>(GetCauser()); }
 };
+
+USTRUCT(BlueprintType)
+struct FCsDamageResult
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	uint8 Index;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	bool IsAllocated;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	float Damage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	TWeakObjectPtr<UObject> Victim;
+
+	TCsDamageType DamageType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	uint8 DamageType_Script;
+
+	TCsHitType HitType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	uint8 HitType_Script;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	FHitResult HitInfo;
+
+	FCsDamageResult()
+	{
+		Reset();
+	}
+	virtual ~FCsDamageResult() {}
+
+	FCsDamageResult& operator=(const FCsDamageResult& B)
+	{
+		Damage = B.Damage;
+		
+		Victim = B.Victim;
+		DamageType = B.DamageType;
+		DamageType_Script = B.DamageType_Script;
+		HitType = B.HitType;
+		HitType_Script = B.HitType_Script;
+		HitInfo = B.HitInfo;
+		return *this;
+	}
+
+	bool operator==(const FCsDamageResult& B) const
+	{
+		return	Damage == B.Damage &&
+				Victim == B.Victim &&
+				DamageType == B.DamageType &&
+				DamageType_Script == B.DamageType_Script &&
+				HitType == B.HitType &&
+				HitType_Script == B.HitType_Script;
+	}
+
+	bool operator!=(const FCsDamageResult& B) const
+	{
+		return !(*this == B);
+	}
+
+	void Init(const uint8 &InIndex)
+	{
+		Index = InIndex;
+	}
+
+	void Reset()
+	{
+		Damage = 0.0f;
+		Victim.Reset();
+		Victim = nullptr;
+		DamageType = (TCsDamageType)0;
+		DamageType_Script = CS_INVALID_DAMAGE_TYPE;
+		HitType = (TCsHitType)0;
+		HitType_Script = CS_INVALID_HIT_TYPE;
+		HitInfo.Reset(0.0f, false);
+	}
+
+	void SetDamageType(const TCsDamageType &InDamageType)
+	{
+		DamageType = InDamageType;
+		DamageType_Script = (uint8)DamageType;
+	}
+
+	void SetHitType(const TCsHitType &InHitType)
+	{
+		HitType = InHitType;
+		HitType_Script = (uint8)HitType;
+	}
+
+	UObject* GetVictim() { return Victim.IsValid() ? Victim.Get() : nullptr; }
+	template<typename T>
+	T* GetVictim() { return Cast<T>(GetVictim()); }
+};

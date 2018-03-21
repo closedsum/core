@@ -17,9 +17,17 @@ namespace ECsCachedString
 		const FString INVALID = TEXT("INVALID");
 		const FString Dot = TEXT(".");
 		const FString True = TEXT("True");
+		const FString _true = TEXT("true");
 		const FString False = TEXT("False");
+		const FString _false = TEXT("false");
 		const FString Index = TEXT("Index");
 		const FString PREVIEW = TEXT("PREVIEW");
+		const FString Zero = TEXT("0");
+		const FString One = TEXT("1");
+		// Vector to String
+		const FString XEquals = TEXT("X=");
+		const FString YEquals = TEXT("Y=");
+		const FString ZEquals = TEXT("Z=");
 	}
 }
 
@@ -2709,6 +2717,119 @@ struct FCsUint8MatrixCoordinate
 	{
 		return 8 // Row
 			 + 8;// Column
+	}
+
+	float GetBytes() const
+	{
+		return (float)GetBits() / 8.0f;
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FCsVectorFlag
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VectorFlag")
+	bool X; // 1 bits
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VectorFlag")
+	bool Y; // 1 bits
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VectorFlag")
+	bool Z; // 1 bits
+
+	FCsVectorFlag()
+	{
+		Reset();
+	}
+	~FCsVectorFlag() {}
+
+	FCsVectorFlag& operator=(const FCsVectorFlag& B)
+	{
+		X = B.X;
+		Y = B.Y;
+		Z = B.Z;
+		return *this;
+	}
+
+	bool operator==(const FCsVectorFlag& B) const
+	{
+		return X == B.X && Y == B.Y && Z == B.Z;
+	}
+
+	bool operator!=(const FCsVectorFlag& B) const
+	{
+		return !(*this == B);
+	}
+
+	void Reset()
+	{
+		X = false;
+		Y = false;
+		Z = false;
+	}
+	
+	FString ToString() const
+	{
+		return FString::Printf(TEXT("X=%s Y=%s Z=%s"), (*ToString_Internal(X)), (*ToString_Internal(Y)), (*ToString_Internal(Z)));
+	}
+	
+private:
+
+	const FString& ToString_Internal(const bool &Value) const 
+	{
+		return Value ? ECsCachedString::Str::True : ECsCachedString::Str::False;
+	}
+
+public:
+
+	bool InitFromString(const FString& InSourceString)
+	{
+		X = Y = Z = false;
+
+		// The initialization is only successful if the X, Y and Z values can all be parsed from the string
+		const bool bSuccessful = InitFromString_Internal(InSourceString, ECsCachedString::Str::XEquals, X) && 
+								 InitFromString_Internal(InSourceString, ECsCachedString::Str::YEquals, Y) &&
+								 InitFromString_Internal(InSourceString, ECsCachedString::Str::ZEquals, Z);
+
+		return bSuccessful;
+	}
+
+private:
+
+	bool InitFromString_Internal(const FString& InSourceString, const FString& SearchString, bool &Value)
+	{
+		FString Bool;
+		FParse::Value(*InSourceString, *SearchString, Bool);
+
+		Bool = Bool.ToLower();
+
+		if (Bool == ECsCachedString::Str::_true || Bool == ECsCachedString::Str::One)
+		{
+			Value = true;
+			return true;
+		}
+		if (Bool == ECsCachedString::Str::_false || Bool == ECsCachedString::Str::Zero)
+		{
+			Value = false;
+			return true;
+		}
+		return false;
+	}
+
+public:
+
+	void Set(const bool &InX, const bool &InY, const bool &InZ)
+	{
+		X = InX;
+		Y = InY;
+		Z = InZ;
+	}
+
+	uint32 GetBits() const
+	{
+		return 1 // X
+			 + 1 // Y
+			 + 1;// Z
 	}
 
 	float GetBytes() const

@@ -434,6 +434,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsVectorFlag
 			if (StructProperty->Struct == FCsVectorFlag::StaticStruct())
 			{ WriteMemberStructPropertyToJson_Primitive<FCsVectorFlag>(InJsonWriter, StructProperty, InStruct, MemberName, &FCsVectorFlag::ToString); continue; }
+			// FCsRotatorFlag
+			if (StructProperty->Struct == FCsRotatorFlag::StaticStruct())
+			{ WriteMemberStructPropertyToJson_Primitive<FCsRotatorFlag>(InJsonWriter, StructProperty, InStruct, MemberName, &FCsRotatorFlag::ToString); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
 			{
@@ -1053,6 +1056,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsVectorFlag
 			if (StructProperty->Struct == FCsVectorFlag::StaticStruct())
 			{ WriteMemberStructPropertyToJson_Primitive<FCsVectorFlag>(InJsonWriter, StructProperty, InStruct, MemberName, &FCsVectorFlag::ToString); continue; }
+			// FCsRotatorFlag
+			if (StructProperty->Struct == FCsRotatorFlag::StaticStruct())
+			{ WriteMemberStructPropertyToJson_Primitive<FCsRotatorFlag>(InJsonWriter, StructProperty, InStruct, MemberName, &FCsRotatorFlag::ToString); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
 			{ 
@@ -1649,6 +1655,9 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsVectorFlag
 			if (StructProperty->Struct == FCsVectorFlag::StaticStruct())
 			{ WriteMemberStructPropertyToJson_Primitive<FCsVectorFlag>(InJsonWriter, StructProperty, InObject, MemberName, &FCsVectorFlag::ToString); continue; }
+			// FCsRotatorFlag
+			if (StructProperty->Struct == FCsRotatorFlag::StaticStruct())
+			{ WriteMemberStructPropertyToJson_Primitive<FCsRotatorFlag>(InJsonWriter, StructProperty, InObject, MemberName, &FCsRotatorFlag::ToString); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
 			{
@@ -2363,6 +2372,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FCsVectorFlag
 			if (StructProperty->Struct == FCsVectorFlag::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson_Primitive<FCsVectorFlag>(JsonObject, StructProperty, InStruct, MemberName, &FCsVectorFlag::InitFromString); continue; }
+			// FCsRotatorFlag
+			if (StructProperty->Struct == FCsRotatorFlag::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson_Primitive<FCsRotatorFlag>(JsonObject, StructProperty, InStruct, MemberName, &FCsRotatorFlag::InitFromString); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
 			{ 
@@ -3010,6 +3022,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsVectorFlag
 			if (StructProperty->Struct == FCsVectorFlag::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson_Primitive<FCsVectorFlag>(JsonObject, StructProperty, InStruct, MemberName, &FCsVectorFlag::InitFromString); continue; }
+			// FCsRotatorFlag
+			if (StructProperty->Struct == FCsRotatorFlag::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson_Primitive<FCsRotatorFlag>(JsonObject, StructProperty, InStruct, MemberName, &FCsRotatorFlag::InitFromString); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
 			{ 
@@ -3646,6 +3661,9 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsVectorFlag
 			if (StructProperty->Struct == FCsVectorFlag::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson_Primitive<FCsVectorFlag>(JsonObject, StructProperty, InObject, MemberName, &FCsVectorFlag::InitFromString); continue; }
+			// FCsRotatorFlag
+			if (StructProperty->Struct == FCsRotatorFlag::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson_Primitive<FCsRotatorFlag>(JsonObject, StructProperty, InObject, MemberName, &FCsRotatorFlag::InitFromString); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
 			{ 

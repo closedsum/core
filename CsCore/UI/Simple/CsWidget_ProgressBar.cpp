@@ -53,3 +53,8 @@ UPanelSlot* UCsWidget_ProgressBar::GetChildSlot()
 {
 	return MyBar->Slot;
 }
+
+void UCsWidget_ProgressBar::SetPercent(const float &Value)
+{
+	Bar.SetPercent(Value);
+}

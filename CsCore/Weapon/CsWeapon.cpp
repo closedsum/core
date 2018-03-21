@@ -2049,6 +2049,7 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 			//}
 			
 			//FakeProjectile->PlayImpactFX(CurHit.Location, CurHit);
+			Event->Reset();
 		}
 	}
 }

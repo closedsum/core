@@ -2829,6 +2829,13 @@ public:
 		Z = InZ;
 	}
 
+	void ApplyLock(FVector &V)
+	{
+		V.X = X ? 0.0f : V.X;
+		V.Y = Y ? 0.0f : V.Y;
+		V.Z = Z ? 0.0f : V.Z;
+	}
+
 	uint32 GetBits() const
 	{
 		return 1 // X
@@ -2940,6 +2947,13 @@ public:
 		Roll = InRoll;
 		Pitch = InPitch;
 		Yaw = InYaw;
+	}
+
+	void ApplyLock(FRotator &R)
+	{
+		R.Roll = Roll ? 0.0f : R.Roll;
+		R.Pitch = Pitch ? 0.0f : R.Pitch;
+		R.Yaw = Yaw ? 0.0f : R.Yaw;
 	}
 
 	uint32 GetBits() const

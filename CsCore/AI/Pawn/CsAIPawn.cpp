@@ -10,8 +10,9 @@
 #include "Data/CsData_Character.h"
 // Managers
 #include "Managers/Trace/CsManager_Trace.h"
-
+// UI
 #include "Components/CsWidgetComponent.h"
+#include "UI/Simple/CsWidget_ProgressBar.h"
 
 ACsAIPawn::ACsAIPawn(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -97,18 +98,14 @@ void ACsAIPawn::OnTick_HandleCVars(const float &DeltaSeconds){}
 // State
 #pragma region
 
-void ACsAIPawn::OnTick_Handle_HealthBar()
+void ACsAIPawn::OnChange_Health(const float &Value)
 {
 	if (!bHealthBar)
 		return;
-	if (!bPlayerSeesBody)
-		return;
 
-	ACsPawn* LocalPawn		 = UCsCommon::GetLocalPawn<ACsPawn>(GetWorld());
-	const FVector MeToPlayer = (LocalPawn->GetActorLocation() - GetActorLocation()).GetSafeNormal2D();
-	const FRotator Rotation	 = MeToPlayer.Rotation();
+	const float Percent = Health / MaxHealth;
 
-	HealthBarComponent->SetWorldRotation(Rotation);
+	HealthBarWidget->SetPercent(Percent);
 }
 
 #pragma endregion State
@@ -140,8 +137,10 @@ void ACsAIPawn::OnChange_bPlayerSeesBody(const bool &Value)
 	if (!bHealthBar)
 		return;
 
-	HealthBarComponent->SetVisibility(Value);
-	HealthBarComponent->SetHiddenInGame(!Value);
+	if (Value)
+		HealthBarComponent->Show();
+	else
+		HealthBarComponent->Hide();
 }
 
 void ACsAIPawn::OnTick_CheckPlayerSeesBody()
@@ -183,13 +182,11 @@ void ACsAIPawn::CheckPlayerSeesBody_Response(FCsTraceResponse* Response)
 	if (PlayerToMeDot < PlayerSeesBodyMinDot)
 	{
 		SetPlayerSeesBody(false);
-		Response->Reset();
 		return;
 	}
 
 	if (!Response->bResult)
 	{
-		Response->Reset();
 		return;
 	}
 
@@ -204,11 +201,9 @@ void ACsAIPawn::CheckPlayerSeesBody_Response(FCsTraceResponse* Response)
 		if (LocalPawn == Pawn)
 		{
 			SetPlayerSeesBody(true);
-			Response->Reset();
 			return;
 		}
 	}
-	Response->Reset();
 }
 
 #pragma endregion Player

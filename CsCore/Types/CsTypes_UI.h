@@ -221,8 +221,14 @@ struct FCsWidgetComponentInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
 	bool FollowCamera;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float DistanceProjectedOutFromCamera;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
 	bool LookAtCamera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+	FCsRotatorFlag LockAxes;
 
 private:
 	UPROPERTY(Transient)
@@ -248,6 +254,7 @@ public:
 		Transform = B.Transform;
 		FollowCamera = B.FollowCamera;
 		LookAtCamera = B.LookAtCamera;
+		LockAxes = B.LockAxes;
 		return *this;
 	}
 
@@ -258,7 +265,8 @@ public:
 				Blueprint_Internal == B.Blueprint_Internal &&
 				DrawSize == B.DrawSize &&
 				FollowCamera == B.FollowCamera &&
-				LookAtCamera == B.LookAtCamera;
+				LookAtCamera == B.LookAtCamera &&
+				LockAxes == B.LockAxes;
 	}
 
 	bool operator!=(const FCsWidgetComponentInfo& B) const

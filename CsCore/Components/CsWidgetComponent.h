@@ -14,6 +14,15 @@ class CSCORE_API UCsWidgetComponent : public UWidgetComponent
 	UFUNCTION()
 	class UCsUserWidget* GetWidget();
 
+	template<typename T>
+	T* GetWidget()
+	{
+		return Cast<T>(GetWidget());
+	}
+
+// Camera
+#pragma region
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
 	bool bOnCalcCamera;
 
@@ -22,10 +31,18 @@ class CSCORE_API UCsWidgetComponent : public UWidgetComponent
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
 	bool FollowLocalCamera;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float DistanceProjectedOutFromCamera;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
 	bool LookAtLocalCamera;
 
-	void OnTick_Handle_LocalCamera();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+	FCsRotatorFlag CameraLockAxes;
+
+	void OnTick_Handle_LocalCamera(const FVector &ViewLocation, const FRotator &ViewRotation);
+
+#pragma endregion Camera
 
 	UFUNCTION(BlueprintCallable, Category = "Widget")
 	void SetInfo(const FVector2D &Size, const FTransform &Transform, const bool &InFollowLocalCamera, const bool &InLookAtLocalCamera);

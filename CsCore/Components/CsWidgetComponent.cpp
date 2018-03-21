@@ -2,7 +2,12 @@
 #include "Components/CsWidgetComponent.h"
 #include "CsCore.h"
 #include "Types/CsTypes.h"
+#include "Common/CsCommon.h"
+
 #include "UI/CsUserWidget.h"
+
+#include "Pawn/CsPawn.h"
+#include "Player/CsPlayerController.h"
 
 UCsWidgetComponent::UCsWidgetComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -14,7 +19,10 @@ void UCsWidgetComponent::TickComponent(float DeltaTime, enum ELevelTick TickType
 
 	if (bOnCalcCamera)
 		return;
-	OnTick_Handle_LocalCamera();
+
+	ACsPlayerController* LocalController = UCsCommon::GetLocalPlayerController<ACsPlayerController>(GetWorld());
+
+	OnTick_Handle_LocalCamera(LocalController->MinimalViewInfoCache.Location, LocalController->MinimalViewInfoCache.Rotation);
 }
 
 UCsUserWidget* UCsWidgetComponent::GetWidget()
@@ -24,20 +32,53 @@ UCsUserWidget* UCsWidgetComponent::GetWidget()
 
 void UCsWidgetComponent::OnCalcCamera(const uint8 &MappingId, const float &DeltaTime, const struct FMinimalViewInfo &OutResult)
 {
-	OnTick_Handle_LocalCamera();
+	OnTick_Handle_LocalCamera(OutResult.Location, OutResult.Rotation);
 }
-
-void UCsWidgetComponent::OnTick_Handle_LocalCamera()
+																			  
+void UCsWidgetComponent::OnTick_Handle_LocalCamera(const FVector &ViewLocation, const FRotator &ViewRotation)
 {
 	if (bHiddenInGame || !bVisible)
 		return;
 	if (!FollowLocalCamera && !LookAtLocalCamera)
 		return;
+
+	FVector CameraLocation = ViewLocation;
+	FRotator CameraRotation = ViewRotation;
+
+	if (FollowLocalCamera)
+	{
+		if (UCsCommon::IsVR())
+		{
+			UCsCommon::GetHMDWorldViewPoint(GetWorld(), CameraLocation, CameraRotation);
+		}
+		CameraRotation.Roll = 0.f;
+
+		const FVector Forward = ViewRotation.Vector();
+		const FVector Location = ViewLocation + DistanceProjectedOutFromCamera * Forward;
+
+		SetWorldLocation(Location);
+
+		FRotator Rotation = (-Forward).Rotation();
+		CameraLockAxes.ApplyLock(Rotation);
+		//Rotation.Roll = 0.0f;
+		//const FRotator Rotation = FRotator(-ViewRotation.Pitch, ViewRotation.Yaw + 180.0f, 0.0f);
+
+		SetWorldRotation(Rotation);
+	}
+	else
+	if (LookAtLocalCamera)
+	{
+		//ViewRotation.Roll = 0.f;
+		FRotator Rotation = FRotator(-ViewRotation.Pitch, ViewRotation.Yaw + 180.0f, 0.0f);
+		CameraLockAxes.ApplyLock(Rotation);
+
+		SetWorldRotation(Rotation);
+	}
 }
 
 void UCsWidgetComponent::SetInfo(const FVector2D &Size, const FTransform &Transform, const bool &InFollowLocalCamera, const bool &InLookAtLocalCamera)
 {
-	SetDrawSize(DrawSize);
+	SetDrawSize(Size);
 	SetRelativeTransform(Transform);
 
 	FollowLocalCamera = InFollowLocalCamera;
@@ -47,6 +88,9 @@ void UCsWidgetComponent::SetInfo(const FVector2D &Size, const FTransform &Transf
 void UCsWidgetComponent::SetInfo(const FCsWidgetComponentInfo &Info)
 {
 	SetInfo(Info.DrawSize, Info.Transform, Info.FollowCamera, Info.LookAtCamera);
+	
+	DistanceProjectedOutFromCamera = Info.DistanceProjectedOutFromCamera;
+	CameraLockAxes				   = Info.LockAxes;
 }
 
 void UCsWidgetComponent::SetInfo(const FCsWidgetActorInfo &Info)

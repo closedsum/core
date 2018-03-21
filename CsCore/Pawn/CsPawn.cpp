@@ -3,6 +3,7 @@
 #include "CsCore.h"
 #include "CsCVars.h"
 #include "Common/CsCommon.h"
+#include "Coroutine/CsCoroutineScheduler.h"
 
 // Data
 #include "Data/CsDataMapping.h"
@@ -48,6 +49,8 @@ ACsPawn::ACsPawn(const FObjectInitializer& ObjectInitializer)
 
 	WeaponClass = ACsWeapon::StaticClass();
 
+	HealthHandle.Set(&Health);
+	HealthHandle.OnChange_Event.AddUObject(this, &ACsPawn::OnChange_Health);
 	OnHandleRespawnTimerFinished_Event.AddUObject(this, &ACsPawn::OnHandleRespawnTimerFinished);
 }
 
@@ -56,7 +59,14 @@ void ACsPawn::OnConstructor(const FObjectInitializer& ObjectInitializer)
 	if (bHealthBar)
 	{
 		HealthBarComponent = ObjectInitializer.CreateDefaultSubobject<UCsWidgetComponent>(this, TEXT("HealthBarComponent"));
+		HealthBarComponent->SetVisibility(false);
+		HealthBarComponent->SetHiddenInGame(true);
+		HealthBarComponent->SetCollisionObjectType(ECC_Visibility);
+		HealthBarComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		HealthBarComponent->SetCastShadow(false);
+		HealthBarComponent->SetMobility(EComponentMobility::Movable);
 		HealthBarComponent->SetupAttachment(GetRootComponent());
+		HealthBarComponent->Deactivate();
 	}
 }
 
@@ -123,13 +133,19 @@ void ACsPawn::OnTick_HandleSetup() {}
 // State
 #pragma region
 
-void ACsPawn::OnTick_Handle_HealthBar()
+void ACsPawn::SetHealth(const float& InHealth)
 {
-	if (!bHealthBar)
-		return;
-	
-	//ACsPawn* LocalPawn
+	Health = FMath::Max(0.0f, InHealth);
+
+	HealthHandle.UpdateIsDirty();
+
+	if (HealthHandle.HasChanged())
+	{
+		HealthHandle.Clear();
+	}
 }
+
+void ACsPawn::OnChange_Health(const float &Value){}
 
 void ACsPawn::ApplyDamage(FCsDamageEvent* Event)
 {

@@ -143,7 +143,7 @@ public:
 #pragma region
 public:
 
-	virtual void OnTick_Handle_HealthBar();
+	virtual void OnChange_Health(const float &Value) override;
 
 #pragma endregion State
 

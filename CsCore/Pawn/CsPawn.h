@@ -120,13 +120,24 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
 	float Health;
 
+	UFUNCTION(BlueprintCallable, Category = "State")
+	virtual void SetHealth(const float& InHealth);
+
+	TCsFloat_Ref HealthHandle;
+
+	virtual void OnChange_Health(const float &Value);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
+	float MaxHealth;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
 	bool bHealthBar;
 
 	UPROPERTY(BlueprintReadOnly, Category = "State")
 	class UCsWidgetComponent* HealthBarComponent;
 
-	virtual void OnTick_Handle_HealthBar();
+	UPROPERTY()
+	class UCsWidget_ProgressBar* HealthBarWidget;
 
 	virtual void ApplyDamage(FCsDamageEvent* Event);
 

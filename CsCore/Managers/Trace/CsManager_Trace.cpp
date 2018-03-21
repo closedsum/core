@@ -397,10 +397,11 @@ void ACsManager_Trace::OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& 
 
 		UCsCommon::CopyHitResult(Datum.OutHits[I], Response->OutHits[I]);
 	}
+	// LOG RESPONSE
+
 	// Broadcast Response
 	Request->OnResponse_Event.Broadcast(Response);
-
-	// LOG RESPONSE
+	Response->Reset();
 
 	RemovePendingRequest(Request);
 }

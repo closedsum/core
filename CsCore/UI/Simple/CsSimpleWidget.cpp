@@ -40,6 +40,10 @@ void UCsSimpleWidget::Init(const FGeometry& MyGeometry)
 void UCsSimpleWidget::Init(const int32 &Index){}
 void UCsSimpleWidget::OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime)
 {
+	// TODO: When the widget is part of a WidgetComponent, there is NO Slot
+	if (!Slot)
+		return;
+
 	// Position
 	if (Position.HasChanged())
 	{

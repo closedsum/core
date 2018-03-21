@@ -431,6 +431,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsUint8MatrixCoordinate
 			if (StructProperty->Struct == FCsUint8MatrixCoordinate::StaticStruct())
 			{ WriteMemberStructPropertyToJson_Primitive<FCsUint8MatrixCoordinate>(InJsonWriter, StructProperty, InStruct, MemberName, &FCsUint8MatrixCoordinate::ToString); continue; }
+			// FCsVectorFlag
+			if (StructProperty->Struct == FCsVectorFlag::StaticStruct())
+			{ WriteMemberStructPropertyToJson_Primitive<FCsVectorFlag>(InJsonWriter, StructProperty, InStruct, MemberName, &FCsVectorFlag::ToString); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
 			{
@@ -1047,6 +1050,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsUint8MatrixCoordinate
 			if (StructProperty->Struct == FCsUint8MatrixCoordinate::StaticStruct())
 			{ WriteMemberStructPropertyToJson_Primitive<FCsUint8MatrixCoordinate>(InJsonWriter, StructProperty, InStruct, MemberName, &FCsUint8MatrixCoordinate::ToString); continue; }
+			// FCsVectorFlag
+			if (StructProperty->Struct == FCsVectorFlag::StaticStruct())
+			{ WriteMemberStructPropertyToJson_Primitive<FCsVectorFlag>(InJsonWriter, StructProperty, InStruct, MemberName, &FCsVectorFlag::ToString); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
 			{ 
@@ -1640,6 +1646,9 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsUint8MatrixCoordinate
 			if (StructProperty->Struct == FCsUint8MatrixCoordinate::StaticStruct())
 			{ WriteMemberStructPropertyToJson_Primitive<FCsUint8MatrixCoordinate>(InJsonWriter, StructProperty, InObject, MemberName, &FCsUint8MatrixCoordinate::ToString); continue; }
+			// FCsVectorFlag
+			if (StructProperty->Struct == FCsVectorFlag::StaticStruct())
+			{ WriteMemberStructPropertyToJson_Primitive<FCsVectorFlag>(InJsonWriter, StructProperty, InObject, MemberName, &FCsVectorFlag::ToString); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
 			{
@@ -2351,6 +2360,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FCsUint8MatrixCoordinate
 			if (StructProperty->Struct == FCsUint8MatrixCoordinate::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson_Primitive<FCsUint8MatrixCoordinate>(JsonObject, StructProperty, InStruct, MemberName, &FCsUint8MatrixCoordinate::InitFromString); continue; }
+			// FCsVectorFlag
+			if (StructProperty->Struct == FCsVectorFlag::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson_Primitive<FCsVectorFlag>(JsonObject, StructProperty, InStruct, MemberName, &FCsVectorFlag::InitFromString); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
 			{ 
@@ -2995,6 +3007,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsUint8MatrixCoordinate
 			if (StructProperty->Struct == FCsUint8MatrixCoordinate::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson_Primitive<FCsUint8MatrixCoordinate>(JsonObject, StructProperty, InStruct, MemberName, &FCsUint8MatrixCoordinate::InitFromString); continue; }
+			// FCsVectorFlag
+			if (StructProperty->Struct == FCsVectorFlag::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson_Primitive<FCsVectorFlag>(JsonObject, StructProperty, InStruct, MemberName, &FCsVectorFlag::InitFromString); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
 			{ 
@@ -3628,6 +3643,9 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsUint8MatrixCoordinate
 			if (StructProperty->Struct == FCsUint8MatrixCoordinate::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson_Primitive<FCsUint8MatrixCoordinate>(JsonObject, StructProperty, InObject, MemberName, &FCsUint8MatrixCoordinate::InitFromString); continue; }
+			// FCsVectorFlag
+			if (StructProperty->Struct == FCsVectorFlag::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson_Primitive<FCsVectorFlag>(JsonObject, StructProperty, InObject, MemberName, &FCsVectorFlag::InitFromString); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
 			{ 

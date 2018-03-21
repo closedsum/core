@@ -28,6 +28,10 @@ namespace ECsCachedString
 		const FString XEquals = TEXT("X=");
 		const FString YEquals = TEXT("Y=");
 		const FString ZEquals = TEXT("Z=");
+		// Rotator to String
+		const FString RollEquals = TEXT("Roll=");
+		const FString PitchEquals = TEXT("Pitch=");
+		const FString YawEquals = TEXT("Yaw=");
 	}
 }
 
@@ -2730,11 +2734,11 @@ struct FCsVectorFlag
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VectorFlag")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vector")
 	bool X; // 1 bits
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VectorFlag")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vector")
 	bool Y; // 1 bits
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VectorFlag")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vector")
 	bool Z; // 1 bits
 
 	FCsVectorFlag()
@@ -2830,6 +2834,119 @@ public:
 		return 1 // X
 			 + 1 // Y
 			 + 1;// Z
+	}
+
+	float GetBytes() const
+	{
+		return (float)GetBits() / 8.0f;
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FCsRotatorFlag
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rotator")
+	bool Roll; // 1 bits
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rotator")
+	bool Pitch; // 1 bits
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rotator")
+	bool Yaw; // 1 bits
+
+	FCsRotatorFlag()
+	{
+		Reset();
+	}
+	~FCsRotatorFlag() {}
+
+	FCsRotatorFlag& operator=(const FCsRotatorFlag& B)
+	{
+		Roll  = B.Roll;
+		Pitch = B.Pitch;
+		Yaw   = B.Yaw;
+		return *this;
+	}
+
+	bool operator==(const FCsRotatorFlag& B) const
+	{
+		return Roll == B.Roll && Pitch == B.Pitch && Yaw == B.Yaw;
+	}
+
+	bool operator!=(const FCsRotatorFlag& B) const
+	{
+		return !(*this == B);
+	}
+
+	void Reset()
+	{
+		Roll = false;
+		Pitch = false;
+		Yaw = false;
+	}
+
+	FString ToString() const
+	{
+		return FString::Printf(TEXT("Roll=%s Pitch=%s Yaw=%s"), (*ToString_Internal(Roll)), (*ToString_Internal(Pitch)), (*ToString_Internal(Yaw)));
+	}
+
+private:
+
+	const FString& ToString_Internal(const bool &Value) const
+	{
+		return Value ? ECsCachedString::Str::True : ECsCachedString::Str::False;
+	}
+
+public:
+
+	bool InitFromString(const FString& InSourceString)
+	{
+		Roll = Pitch = Yaw = false;
+
+		// The initialization is only successful if the Roll, Pitch and Yaw values can all be parsed from the string
+		const bool bSuccessful = InitFromString_Internal(InSourceString, ECsCachedString::Str::RollEquals, Roll) &&
+								 InitFromString_Internal(InSourceString, ECsCachedString::Str::PitchEquals, Pitch) &&
+								 InitFromString_Internal(InSourceString, ECsCachedString::Str::YawEquals, Yaw);
+
+		return bSuccessful;
+	}
+
+private:
+
+	bool InitFromString_Internal(const FString& InSourceString, const FString& SearchString, bool &Value)
+	{
+		FString Bool;
+		FParse::Value(*InSourceString, *SearchString, Bool);
+
+		Bool = Bool.ToLower();
+
+		if (Bool == ECsCachedString::Str::_true || Bool == ECsCachedString::Str::One)
+		{
+			Value = true;
+			return true;
+		}
+		if (Bool == ECsCachedString::Str::_false || Bool == ECsCachedString::Str::Zero)
+		{
+			Value = false;
+			return true;
+		}
+		return false;
+	}
+
+public:
+
+	void Set(const bool &InRoll, const bool &InPitch, const bool &InYaw)
+	{
+		Roll = InRoll;
+		Pitch = InPitch;
+		Yaw = InYaw;
+	}
+
+	uint32 GetBits() const
+	{
+		return 1 // Roll
+			 + 1 // Pitch
+			 + 1;// Yaw
 	}
 
 	float GetBytes() const

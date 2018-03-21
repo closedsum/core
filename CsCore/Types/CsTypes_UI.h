@@ -166,6 +166,7 @@ public:
 		DrawSize = FVector2D(100.0f, 100.0f);
 		Transform = FTransform::Identity;
 	}
+	~FCsWidgetActorInfo(){}
 
 	FCsWidgetActorInfo& operator=(const FCsWidgetActorInfo& B)
 	{
@@ -181,15 +182,86 @@ public:
 
 	bool operator==(const FCsWidgetActorInfo& B) const
 	{
-		return Blueprint == B.Blueprint &&
-			Blueprint_LoadFlags == B.Blueprint_LoadFlags &&
-			Blueprint_Internal == B.Blueprint_Internal &&
-			DrawSize == B.DrawSize &&
-			FollowCamera == B.FollowCamera &&
-			LookAtCamera == B.LookAtCamera;
+		return	Blueprint == B.Blueprint &&
+				Blueprint_LoadFlags == B.Blueprint_LoadFlags &&
+				Blueprint_Internal == B.Blueprint_Internal &&
+				DrawSize == B.DrawSize &&
+				FollowCamera == B.FollowCamera &&
+				LookAtCamera == B.LookAtCamera;
 	}
 
 	bool operator!=(const FCsWidgetActorInfo& B) const
+	{
+		return !(*this == B);
+	}
+
+	UBlueprintGeneratedClass* Get() const
+	{
+		return Blueprint_Internal;
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FCsWidgetComponentInfo
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blueprint")
+	TAssetPtr<class UBlueprint> Blueprint;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blueprint", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	int32 Blueprint_LoadFlags;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+	FVector2D DrawSize;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+	FTransform Transform;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+	bool FollowCamera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+	bool LookAtCamera;
+
+private:
+	UPROPERTY(Transient)
+	class UBlueprintGeneratedClass* Blueprint_Internal;
+
+public:
+	FCsWidgetComponentInfo()
+	{
+		CS_SET_BLUEPRINT_BITFLAG(Blueprint_LoadFlags, ECsLoadFlags::Game);
+		CS_SET_BLUEPRINT_BITFLAG(Blueprint_LoadFlags, ECsLoadFlags::UI);
+
+		DrawSize = FVector2D(100.0f, 100.0f);
+		Transform = FTransform::Identity;
+	}
+	~FCsWidgetComponentInfo(){}
+
+	FCsWidgetComponentInfo& operator=(const FCsWidgetComponentInfo& B)
+	{
+		Blueprint = B.Blueprint;
+		Blueprint_LoadFlags = B.Blueprint_LoadFlags;
+		Blueprint_Internal = B.Blueprint_Internal;
+		DrawSize = B.DrawSize;
+		Transform = B.Transform;
+		FollowCamera = B.FollowCamera;
+		LookAtCamera = B.LookAtCamera;
+		return *this;
+	}
+
+	bool operator==(const FCsWidgetComponentInfo& B) const
+	{
+		return	Blueprint == B.Blueprint &&
+				Blueprint_LoadFlags == B.Blueprint_LoadFlags &&
+				Blueprint_Internal == B.Blueprint_Internal &&
+				DrawSize == B.DrawSize &&
+				FollowCamera == B.FollowCamera &&
+				LookAtCamera == B.LookAtCamera;
+	}
+
+	bool operator!=(const FCsWidgetComponentInfo& B) const
 	{
 		return !(*this == B);
 	}

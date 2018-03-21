@@ -9,6 +9,8 @@ class CSCORE_API UCsWidgetComponent : public UWidgetComponent
 {
 	GENERATED_UCLASS_BODY()
 
+	// virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction);
+
 	UFUNCTION()
 	class UCsUserWidget* GetWidget();
 

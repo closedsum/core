@@ -1810,6 +1810,9 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsPhysicsPreset
 			if (StructProperty->Struct == FCsPhysicsPreset::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsPhysicsPreset>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
+			// FCsWidgetComponentInfo
+			if (StructProperty->Struct == FCsWidgetComponentInfo::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsWidgetComponentInfo>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
 			// FCsWidgetActorInfo
 			if (StructProperty->Struct == FCsWidgetActorInfo::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsWidgetActorInfo>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
@@ -3786,6 +3789,9 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				if (ReadObjectFromJson_Internal_Helper(Internal, Property, JsonObject, InObject, InClass)) { continue; }
 				continue;
 			}
+			// FCsWidgetComponentInfo
+			if (StructProperty->Struct == FCsWidgetComponentInfo::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsWidgetComponentInfo>(JsonObject, StructProperty, InObject, MemberName); continue; }
 			// FCsWidgetActorInfo
 			if (StructProperty->Struct == FCsWidgetActorInfo::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsWidgetActorInfo>(JsonObject, StructProperty, InObject, MemberName); continue; }
@@ -5295,6 +5301,9 @@ void UCsCommon_Load::GetAssetReferencesFromObject(void* InObject, UClass* const 
 			// FCsTArrayBlueprint
 			if (StructProperty->Struct == FCsTArrayBlueprint::StaticStruct())
 			{ GetAssetReferencesFromStructProperty<FCsTArrayBlueprint>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
+			// FCsWidgetComponentInfo
+			if (StructProperty->Struct == FCsWidgetComponentInfo::StaticStruct())
+			{ GetAssetReferencesFromStructProperty<FCsWidgetComponentInfo>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
 			// FCsWidgetActorInfo
 			if (StructProperty->Struct == FCsWidgetActorInfo::StaticStruct())
 			{ GetAssetReferencesFromStructProperty<FCsWidgetActorInfo>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
@@ -6545,6 +6554,9 @@ void UCsCommon_Load::LoadObjectWithTAssetPtrs(const FString &ObjectName, void* I
 			// FCsTArrayBlueprint
 			if (StructProperty->Struct == FCsTArrayBlueprint::StaticStruct())
 			{ LoadMemberStructProperty<FCsTArrayBlueprint>(StructProperty, InObject, StructName, LoadFlags); continue; }
+			// FCsWidgetComponentInfo
+			if (StructProperty->Struct == FCsWidgetComponentInfo::StaticStruct())
+			{ LoadMemberStructProperty<FCsWidgetComponentInfo>(StructProperty, InObject, StructName, LoadFlags); continue; }
 			// FCsWidgetActorInfo
 			if (StructProperty->Struct == FCsWidgetActorInfo::StaticStruct())
 			{ LoadMemberStructProperty<FCsWidgetActorInfo>(StructProperty, InObject, StructName, LoadFlags); continue; }
@@ -7740,6 +7752,9 @@ void UCsCommon_Load::CheckObjectWithEnum(const FString &ObjectName, void* InObje
 			// FCsTArrayBlueprint
 			if (StructProperty->Struct == FCsTArrayBlueprint::StaticStruct())
 			{ CheckEnumStructProperty<FCsTArrayBlueprint>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsWidgetComponentInfo
+			if (StructProperty->Struct == FCsWidgetComponentInfo::StaticStruct())
+			{ CheckEnumStructProperty<FCsWidgetComponentInfo>(StructProperty, InObject, StructName, nullptr); continue; }
 			// FCsWidgetActorInfo
 			if (StructProperty->Struct == FCsWidgetActorInfo::StaticStruct())
 			{ CheckEnumStructProperty<FCsWidgetActorInfo>(StructProperty, InObject, StructName, nullptr); continue; }

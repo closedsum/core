@@ -15,7 +15,10 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsPawn_OnPreTick, const uint
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnPostTick, const uint8&, MappingId, const float&, DeltaSeconds);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsPawn_OnPostTick, const uint8&, const float&);
 // Respawn
-DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsAIPawn_OnHandleRespawnTimerFinished, const uint8&);
+DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsPawn_OnHandleRespawnTimerFinished, const uint8&);
+// Setup
+DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsPawn_OnSetupFinished, const uint8&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsPawn_OnSetupFinished, const uint8&, MappingId);
 
 // Enums
 #pragma region
@@ -97,7 +100,18 @@ class CSCORE_API ACsPawn : public ACharacter
 	virtual void OnTickActor_HandleCVars(const float &DeltaSeconds);
 
 	virtual bool IsOnBoardCompleted_Game();
+
+// Setup
+#pragma region
+
 	virtual void OnTick_HandleSetup();
+
+	FBindableEvent_CsPawn_OnSetupFinished OnSetup_Finished_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Setup")
+	FBindableDynEvent_CsPawn_OnSetupFinished OnSetup_Finished_ScriptEvent;
+
+#pragma endregion Setup
 
 // State
 #pragma region
@@ -137,7 +151,7 @@ public:
 
 	virtual void OnHandleRespawnTimerFinished(const uint8 &MappingId);
 
-	FBindableEvent_CsAIPawn_OnHandleRespawnTimerFinished OnHandleRespawnTimerFinished_Event;
+	FBindableEvent_CsPawn_OnHandleRespawnTimerFinished OnHandleRespawnTimerFinished_Event;
 
 #pragma endregion State
 

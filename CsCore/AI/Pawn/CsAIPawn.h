@@ -128,6 +128,17 @@ class CSCORE_API ACsAIPawn : public ACsPawn
 
 	virtual void OnTick_HandleCVars(const float &DeltaSeconds);
 
+// Setup
+#pragma region
+public:
+
+	TCsAIState CurrentState;
+	TCsAIState SpawnedState;
+
+	TCsAISetup CurrentSetup;
+
+#pragma endregion Setup
+
 // State
 #pragma region
 public:

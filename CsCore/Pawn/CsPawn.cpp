@@ -133,6 +133,9 @@ void ACsPawn::OnTick_HandleSetup() {}
 // State
 #pragma region
 
+	// Health
+#pragma region
+
 void ACsPawn::SetHealth(const float& InHealth)
 {
 	Health = FMath::Max(0.0f, InHealth);
@@ -147,6 +150,8 @@ void ACsPawn::SetHealth(const float& InHealth)
 
 void ACsPawn::OnChange_Health(const float &Value){}
 
+#pragma endregion Health
+
 void ACsPawn::ApplyDamage(FCsDamageEvent* Event)
 {
 	Health -= FMath::CeilToInt(Event->Damage);
@@ -157,7 +162,12 @@ void ACsPawn::ApplyDamage(FCsDamageEvent* Event)
 	}
 }
 
+void ACsPawn::OnApplyDamage_Result(FCsDamageResult* Result){}
+
 void ACsPawn::Die(){}
+
+	// Spawn
+#pragma region
 
 void ACsPawn::HandleRespawnTimer()
 {
@@ -206,6 +216,8 @@ CS_COROUTINE(ACsPawn, HandleRespawnTimer_Internal)
 }
 
 void ACsPawn::OnHandleRespawnTimerFinished(const uint8 &MappingId) {}
+
+#pragma endregion Spawn
 
 #pragma endregion State
 

@@ -21,7 +21,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsPawn_OnSetupFinished, const
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsPawn_OnSetupFinished, const uint8&, MappingId);
 // ApplyDamage
 DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsPawn_OnApplyDamage_Result, const uint8&, FCsDamageResult*);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnApplyDamage_Result, const uint8&, MappingId, FCsDamageResult, Event);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnApplyDamage_Result, const uint8&, MappingId, FCsDamageResult, Result);
 
 // Enums
 #pragma region
@@ -151,6 +151,7 @@ public:
 public:
 
 	virtual void ApplyDamage(FCsDamageEvent* Event);
+	virtual void OnApplyDamage_Result(FCsDamageResult* Result);
 
 	UPROPERTY(BlueprintAssignable, Category = "State")
 	FBindableDynEvent_CsPawn_OnApplyDamage_Result OnApplyDamage_Result_ScriptEvent;

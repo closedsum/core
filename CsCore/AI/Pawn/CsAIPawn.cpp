@@ -11,8 +11,8 @@
 // Managers
 #include "Managers/Trace/CsManager_Trace.h"
 // UI
-#include "Components/CsWidgetComponent.h"
-#include "UI/Simple/CsWidget_ProgressBar.h"
+//#include "Components/CsWidgetComponent.h"
+//#include "UI/Simple/CsWidget_ProgressBar.h"
 
 ACsAIPawn::ACsAIPawn(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -100,12 +100,12 @@ void ACsAIPawn::OnTick_HandleCVars(const float &DeltaSeconds){}
 
 void ACsAIPawn::OnChange_Health(const float &Value)
 {
-	if (!bHealthBar)
-		return;
+	ACsAIPlayerState* MyPlayerState = Cast<ACsAIPlayerState>(PlayerState);
 
-	const float Percent = Health / MaxHealth;
-
-	HealthBarWidget->SetPercent(Percent);
+	OnChange_Health_Event.Broadcast(MyPlayerState->UniqueMappingId, Health, MaxHealth);
+#if WITH_EDITOR
+	OnChange_Health_ScriptEvent.Broadcast(MyPlayerState->UniqueMappingId, Health, MaxHealth);
+#endif // #if WITH_EDITOR
 }
 
 #pragma endregion State
@@ -134,13 +134,12 @@ void ACsAIPawn::SetPlayerSeesBody(const bool &Value)
 
 void ACsAIPawn::OnChange_bPlayerSeesBody(const bool &Value)
 {
-	if (!bHealthBar)
-		return;
+	ACsAIPlayerState* MyPlayerState = Cast<ACsAIPlayerState>(PlayerState);
 
-	if (Value)
-		HealthBarComponent->Show();
-	else
-		HealthBarComponent->Hide();
+	OnPlayerSeesBody_Event.Broadcast(MyPlayerState->UniqueMappingId, Value);
+#if WITH_EDITOR
+	OnPlayerSeesBody_ScriptEvent.Broadcast(MyPlayerState->UniqueMappingId, Value);
+#endif // #if WITH_EDITOR
 }
 
 void ACsAIPawn::OnTick_CheckPlayerSeesBody()

@@ -13,7 +13,7 @@
 // Managers
 #include "Managers/Inventory/CsManager_Inventory.h"
 
-#include "Components/CsWidgetComponent.h"
+#include "UI/State/CsHealthBarComponent.h"
 
 #include "Game/CsGameInstance.h"
 #include "Player/CsPlayerStateBase.h"
@@ -58,7 +58,7 @@ void ACsPawn::OnConstructor(const FObjectInitializer& ObjectInitializer)
 {
 	if (bHealthBar)
 	{
-		HealthBarComponent = ObjectInitializer.CreateDefaultSubobject<UCsWidgetComponent>(this, TEXT("HealthBarComponent"));
+		HealthBarComponent = ObjectInitializer.CreateDefaultSubobject<UCsHealthBarComponent>(this, TEXT("HealthBarComponent"));
 		HealthBarComponent->SetVisibility(false);
 		HealthBarComponent->SetHiddenInGame(true);
 		HealthBarComponent->SetCollisionObjectType(ECC_Visibility);

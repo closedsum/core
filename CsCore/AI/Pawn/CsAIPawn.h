@@ -12,6 +12,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsAIPawn_OnBTTa
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Start, const uint8&, const float&, const float&);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Finish, const uint8&, MappingId);
 DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Finish, const uint8&);
+// PlayerSeesBody
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsAIPawn_OnPlayerSeesBody, const uint8&, MappingId, const bool, Value);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsAIPawn_OnPlayerSeesBody, const uint8&, const bool&);
 
 USTRUCT(BlueprintType)
 struct FCsAIPawnCache : public FCsPooledObjectCache
@@ -186,6 +189,11 @@ public:
 
 	TCsBool_Ref bPlayerSeesBodyHandle;
 	virtual void OnChange_bPlayerSeesBody(const bool &Value);
+
+	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
+	FBindableDynEvent_CsAIPawn_OnPlayerSeesBody OnPlayerSeesBody_ScriptEvent;
+
+	FBindableEvent_CsAIPawn_OnPlayerSeesBody OnPlayerSeesBody_Event;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float CheckPlayerSeesBodyInterval;

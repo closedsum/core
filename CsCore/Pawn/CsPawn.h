@@ -20,8 +20,8 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsPawn_OnHandleRespawnTimerFi
 DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsPawn_OnSetupFinished, const uint8&);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsPawn_OnSetupFinished, const uint8&, MappingId);
 // Health
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsPawn_OnChangeHealth, const float&, const float&);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnChangeHealth, const float&, InHealth, const float&, InMaxHealth);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsPawn_OnChangeHealth, const uint8&, const float&, const float&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsPawn_OnChangeHealth, const uint8&, MappingId, const float&, CurrentHealth, const float&, CurrentMaxHealth);
 
 // Enums
 #pragma region
@@ -146,10 +146,10 @@ public:
 	bool bHealthBar;
 
 	UPROPERTY(BlueprintReadOnly, Category = "State")
-	class UCsWidgetComponent* HealthBarComponent;
+	class UCsHealthBarComponent* HealthBarComponent;
 
 	UPROPERTY()
-	class UCsWidget_ProgressBar* HealthBarWidget;
+	class UCsWidget_HealthBar* HealthBarWidget;
 
 #pragma endregion Health
 

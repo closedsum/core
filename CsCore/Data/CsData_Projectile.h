@@ -22,6 +22,10 @@ class CSCORE_API ACsData_Projectile : public ACsData
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Stats")
+	virtual FName GetItemShortCode();
+	virtual const FName& GetItemShortCodeRef();
+
+	UFUNCTION(BlueprintCallable, Category = "Stats")
 	virtual float GetLifeTime();
 
 	UFUNCTION(BlueprintCallable, Category = "Stats")

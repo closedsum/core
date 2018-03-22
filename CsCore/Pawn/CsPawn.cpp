@@ -74,6 +74,10 @@ void ACsPawn::PostActorCreated()
 {
 	Super::PostActorCreated();
 
+	// TODO: Test placing actors in the level and see how this affects spawning weapons
+	if (UCsCommon::IsPlayInEditor(GetWorld()) || UCsCommon::IsPlayInEditorPreview(GetWorld()))
+		return;
+
 	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
 	UniqueObjectId				  = GameInstance->GetUniqueObjectId();
 

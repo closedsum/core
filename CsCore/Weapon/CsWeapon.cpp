@@ -142,6 +142,9 @@ void ACsWeapon::PostActorCreated()
 {
 	Super::PostActorCreated();
 
+	if (UCsCommon::IsPlayInEditor(GetWorld()) || UCsCommon::IsPlayInEditorPreview(GetWorld()))
+		return;
+
 	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
 	UniqueObjectId				  = GameInstance->GetUniqueObjectId();
 }
@@ -1262,7 +1265,7 @@ void ACsWeapon::ResetCurrentAmmo(const int32 &Index) { CurrentAmmo = GetMaxAmmo(
 
 const FName& ACsWeapon::GetAmmoShortCode(const TCsWeaponFireMode &FireMode, const bool &IsCharged) 
 { 
-	return GetMyData_Projectile<ACsData_ProjectileWeapon>(FireMode, IsCharged)->GetItemShortCodeRef(); 
+	return GetMyData_Projectile<ACsData_Projectile>(FireMode, IsCharged)->GetItemShortCodeRef();
 }
 
 uint8 ACsWeapon::GetProjectilesPerShot(const TCsWeaponFireMode &FireMode) { return ProjectilesPerShot.Get(FireMode); }

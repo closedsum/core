@@ -14,7 +14,6 @@ class CSCORE_API ACsData_ProjectileWeapon : public ACsData_Weapon
 
 	virtual void* GetFireModeStruct(const uint8 &Index);
 	virtual UScriptStruct* GetFireModeScriptStruct();
-
 	virtual float GetLocationDamageModifier(const TCsWeaponFireMode &FireMode, const FName &Bone);
 
 	virtual bool UseFakeProjectile(const TCsWeaponFireMode &FireMode);
@@ -40,10 +39,6 @@ class CSCORE_API ACsData_ProjectileWeapon : public ACsData_Weapon
 	UFUNCTION(BlueprintCallable, Category = "Weapon Data")
 	virtual float GetReloadTime();
 	virtual float* GetReloadTimeAddr();
-
-	UFUNCTION(BlueprintCallable, Category = "Weapon Data")
-	virtual FName GetItemShortCode();
-	virtual const FName& GetItemShortCodeRef();
 
 #pragma endregion Stats
 

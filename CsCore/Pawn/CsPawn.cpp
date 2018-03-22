@@ -49,9 +49,15 @@ ACsPawn::ACsPawn(const FObjectInitializer& ObjectInitializer)
 
 	WeaponClass = ACsWeapon::StaticClass();
 
+	// State
 	HealthHandle.Set(&Health);
 	HealthHandle.OnChange_Event.AddUObject(this, &ACsPawn::OnChange_Health);
+
+	bFirstSpawn = true;
+
 	OnHandleRespawnTimerFinished_Event.AddUObject(this, &ACsPawn::OnHandleRespawnTimerFinished);
+	// Data
+	bCacheData = true;
 }
 
 void ACsPawn::OnConstructor(const FObjectInitializer& ObjectInitializer)

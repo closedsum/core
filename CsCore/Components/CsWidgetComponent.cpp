@@ -4,7 +4,7 @@
 #include "Types/CsTypes.h"
 #include "Common/CsCommon.h"
 
-#include "UI/CsUserWidget.h"
+#include "Runtime/UMG/Public/Blueprint/UserWidget.h"
 
 #include "Pawn/CsPawn.h"
 #include "Player/CsPlayerController.h"
@@ -25,9 +25,9 @@ void UCsWidgetComponent::TickComponent(float DeltaTime, enum ELevelTick TickType
 	OnTick_Handle_LocalCamera(LocalController->MinimalViewInfoCache.Location, LocalController->MinimalViewInfoCache.Rotation);
 }
 
-UCsUserWidget* UCsWidgetComponent::GetWidget()
+UUserWidget* UCsWidgetComponent::GetWidget()
 {
-	return Cast<UCsUserWidget>(Widget);
+	return Widget;
 }
 
 void UCsWidgetComponent::OnCalcCamera(const uint8 &MappingId, const float &DeltaTime, const struct FMinimalViewInfo &OutResult)

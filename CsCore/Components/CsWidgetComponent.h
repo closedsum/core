@@ -12,7 +12,7 @@ class CSCORE_API UCsWidgetComponent : public UWidgetComponent
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
 	UFUNCTION()
-	class UCsUserWidget* GetWidget();
+	class UUserWidget* GetWidget();
 
 	template<typename T>
 	T* GetWidget()

@@ -19,6 +19,9 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsPawn_OnHandleRespawnTimerFi
 // Setup
 DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsPawn_OnSetupFinished, const uint8&);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsPawn_OnSetupFinished, const uint8&, MappingId);
+// Health
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsPawn_OnChangeHealth, const float&, const float&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnChangeHealth, const float&, InHealth, const float&, InMaxHealth);
 
 // Enums
 #pragma region
@@ -130,6 +133,11 @@ public:
 	TCsFloat_Ref HealthHandle;
 
 	virtual void OnChange_Health(const float &Value);
+
+	UPROPERTY(BlueprintAssignable, Category = "State")
+	FBindableDynEvent_CsPawn_OnChangeHealth OnChange_Health_ScriptEvent;
+
+	FBindableEvent_CsPawn_OnChangeHealth OnChange_Health_Event;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
 	float MaxHealth;

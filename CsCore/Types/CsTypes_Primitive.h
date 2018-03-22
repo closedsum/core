@@ -46,6 +46,7 @@ namespace ECsCachedName
 {
 	namespace Name
 	{
+		const FName None = NAME_None;
 		const FName Null = FName("NULL");
 	}
 }

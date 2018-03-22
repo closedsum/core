@@ -15,6 +15,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsWeapon_OnApplyDa
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsWeapon_OnTick, const uint8&, WeaponIndex, const float&, DeltaSeconds);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsWeapon_Override_CheckStateIdle, const uint8&, WeaponIndex);
 
+// Ammo
+DECLARE_MULTICAST_DELEGATE_FourParams(FBindableEvent_CsWeapon_OnConsumeAmmo, const TCsWeaponSlot&, const int32&, const int32&, const FName&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FBindableDynEvent_CsWeapon_OnConsumeAmmo, const uint8&, WeaponIndex, const int32&, Ammo, const int32&, MaxAmmo, const FName&, AmmoShortCode);
+
 // Firing
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsWeapon_Override_FireWeapon, const uint8&, WeaponIndex, const uint8&, FireMode);
 // Reloading
@@ -467,7 +471,7 @@ class CSCORE_API ACsWeapon : public AActor
 	class ACsData_Projectile* GetMyData_Projectile(const TCsWeaponFireMode &FireMode, const bool &IsCharged);
 
 	template<typename T>
-	T* GetMyData_Projectile(const TCsWeaponFireMode, const bool &IsCharged)
+	T* GetMyData_Projectile(const TCsWeaponFireMode &FireMode, const bool &IsCharged)
 	{
 		return Cast<T>(GetMyData_Projectile(FireMode, IsCharged));
 	}
@@ -639,6 +643,13 @@ public:
 	virtual void ResetCurrentAmmo(const int32 &Index);
 
 	bool HasUnlimitedAmmo;
+
+	virtual const FName& GetAmmoShortCode(const TCsWeaponFireMode &FireMode, const bool &IsCharged);
+
+	FBindableEvent_CsWeapon_OnConsumeAmmo OnConsumeAmmo_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Firing")
+	FBindableDynEvent_CsWeapon_OnConsumeAmmo OnConsumeAmmo_ScriptEvent;
 
 	FCsWeapon_TArrayRef_uint8 ProjectilesPerShot;
 	virtual uint8 GetProjectilesPerShot(const TCsWeaponFireMode &FireMode);

@@ -37,6 +37,9 @@ float* ACsData_ProjectileWeapon::GetRechargeSecondsPerAmmoAddr() { return nullpt
 float ACsData_ProjectileWeapon::GetReloadTime() { return 0.0f;; }
 float* ACsData_ProjectileWeapon::GetReloadTimeAddr() { return nullptr; }
 
+FName ACsData_ProjectileWeapon::GetItemShortCode() { return NAME_None; }
+const FName& ACsData_ProjectileWeapon::GetItemShortCodeRef() { return ECsCachedName::Name::None; }
+
 #pragma endregion Stats
 
 // Anims

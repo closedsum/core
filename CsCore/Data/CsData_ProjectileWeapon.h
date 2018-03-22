@@ -41,6 +41,10 @@ class CSCORE_API ACsData_ProjectileWeapon : public ACsData_Weapon
 	virtual float GetReloadTime();
 	virtual float* GetReloadTimeAddr();
 
+	UFUNCTION(BlueprintCallable, Category = "Weapon Data")
+	virtual FName GetItemShortCode();
+	virtual const FName& GetItemShortCodeRef();
+
 #pragma endregion Stats
 
 	// Anims

@@ -974,7 +974,7 @@ void ACsWeapon::HandleState_Firing(const TCsWeaponFireMode &FireMode)
 {
 	CurrentProjectilePerShotIndex.Set(FireMode, CurrentAmmo > ProjectilesPerShot.GetEX(FireMode) ? 0 : ProjectilesPerShot.GetEX(FireMode) - CurrentAmmo);
 
-	const float TimeSeconds = GetWorld()->TimeSeconds;
+	const float TimeSeconds = GetWorld()->GetTimeSeconds();
 
 	Fire_StartTime.Set(FireMode, TimeSeconds);
 	LastState    = CurrentState;
@@ -985,6 +985,14 @@ void ACsWeapon::HandleState_Firing(const TCsWeaponFireMode &FireMode)
 	if (!HasUnlimitedAmmo)
 	{
 		CurrentAmmo = FMath::Max(0, CurrentAmmo - ProjectilesPerShot.Get(FireMode));
+
+		const float ChargePercent = GetCurrentChargeFireHeldPercent(FireMode);
+		const bool IsCharged	  = ChargePercent > 0.0f;
+
+		OnConsumeAmmo_Event.Broadcast(WeaponSlot, CurrentAmmo, GetMaxAmmo(0), GetAmmoShortCode(FireMode, IsCharged));
+#if WITH_EDITOR
+		OnConsumeAmmo_ScriptEvent.Broadcast(WeaponIndex, CurrentAmmo, GetMaxAmmo(0), GetAmmoShortCode(FireMode, IsCharged));
+#endif // #if WITH_EDITOR
 
 		// Recharge Ammo
 		if (AllowRechargeAmmo.Get(CS_WEAPON_DATA_VALUE))
@@ -1251,6 +1259,12 @@ void ACsWeapon::IncrementCurrentAmmo(const int32 &Index)
 	CurrentAmmo = FMath::Min(CurrentAmmo, GetMaxAmmo(Index));
 }
 void ACsWeapon::ResetCurrentAmmo(const int32 &Index) { CurrentAmmo = GetMaxAmmo(Index); }
+
+const FName& ACsWeapon::GetAmmoShortCode(const TCsWeaponFireMode &FireMode, const bool &IsCharged) 
+{ 
+	return GetMyData_Projectile<ACsData_ProjectileWeapon>(FireMode, IsCharged)->GetItemShortCodeRef(); 
+}
+
 uint8 ACsWeapon::GetProjectilesPerShot(const TCsWeaponFireMode &FireMode) { return ProjectilesPerShot.Get(FireMode); }
 float ACsWeapon::GetTimeBetweenProjectilesPerShot(const TCsWeaponFireMode &FireMode) { return TimeBetweenProjectilesPerShot.Get(FireMode); }
 float ACsWeapon::GetTimeBetweenShots(const TCsWeaponFireMode &FireMode) { return TimeBetweenShots.Get(FireMode); }

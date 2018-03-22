@@ -676,6 +676,9 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	static void ClampMinVectorComponents(FVector &V, const float &Min);
 	static void ClampMaxVectorComponents(FVector &V, const float &Max);
 
+	UFUNCTION(BlueprintCallable, Category = "Common")
+	static bool IsDedicatedServer(AActor* InActor);
+
 	static FString GetProxyAsString(AActor* InActor);
 
 	UFUNCTION(BlueprintCallable, Category = "Common")

@@ -2403,13 +2403,18 @@ void UCsCommon::ClampMaxVectorComponents(FVector &V, const float &Max)
 	V.Z = FMath::Min(V.Z, Max);
 }
 
+bool UCsCommon::IsDedicatedServer(AActor* InActor)
+{
+	return IsRunningDedicatedServer() || InActor->GetNetMode() == NM_DedicatedServer;
+}
+
 FString UCsCommon::GetProxyAsString(AActor* InActor)
 {
 	if (InActor->Role < ROLE_Authority)
 		return TEXT("Client");
 	if (InActor->Role == ROLE_Authority)
 	{
-		if (IsRunningDedicatedServer() || InActor->GetNetMode() == NM_DedicatedServer)
+		if (IsDedicatedServer(InActor))
 			return TEXT("Server-Dedicated");
 		return TEXT("Server");
 	}

@@ -9,9 +9,15 @@ TWeakObjectPtr<UObject> ACsManager_Damage::MyOwner;
 
 ACsManager_Damage::ACsManager_Damage(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	for (uint8 I = 0; I < CS_DAMAGE_POOL_SIZE; ++I)
+	// Event
+	for (uint8 I = 0; I < CS_DAMAGE_EVENT_POOL_SIZE; ++I)
 	{
-		Pool[I].Init(I);
+		EventPool[I].Init(I);
+	}
+	// Result
+	for (uint8 I = 0; I < CS_DAMAGE_RESULT_POOL_SIZE; ++I)
+	{
+		ResultPool[I].Init(I);
 	}
 }
 
@@ -38,44 +44,46 @@ ACsManager_Damage::ACsManager_Damage(const FObjectInitializer& ObjectInitializer
 	return nullptr;
 }
 
-FCsDamageEvent* ACsManager_Damage::Allocate()
-{
-	for (uint8 I = 0; I < CS_DAMAGE_POOL_SIZE; ++I)
-	{
-		const uint8 Index	   = (PoolIndex + I) % CS_DAMAGE_POOL_SIZE;
-		FCsDamageEvent* Event = &(Pool[Index]);
+// Event
+#pragma region
 
-		//if (Event->Index == CS_DAMAGE_POOL_INVALID_INDEX)
-		//	Event->Init(I);
+FCsDamageEvent* ACsManager_Damage::AllocateEvent()
+{
+	for (uint8 I = 0; I < CS_DAMAGE_EVENT_POOL_SIZE; ++I)
+	{
+		const uint8 Index	   = (EventPoolIndex + I) % CS_DAMAGE_EVENT_POOL_SIZE;
+		FCsDamageEvent* Event = &(EventPool[Index]);
 
 		if (!Event->IsAllocated)
 		{
 			Event->IsAllocated = true;
-			ActiveEvents.Add(Event);
 			return Event;
 		}
 	}
-	checkf(0, TEXT("ACsManager_Damage::Allocate: Pool is exhausted"));
+	checkf(0, TEXT("ACsManager_Damage::AllocateEvent: Pool is exhausted"));
 	return nullptr;
 }
 
-void ACsManager_Damage::DeAllocate(const uint8 &Index)
-{
-	for (int32 I = CS_DAMAGE_POOL_SIZE - 1; I >= 0; --I)
-	{
-		FCsDamageEvent* Event = ActiveEvents[I];
+#pragma endregion Event
 
-		if (Index == Event->Index)
+// Result
+#pragma region
+
+FCsDamageResult* ACsManager_Damage::AllocateResult()
+{
+	for (uint8 I = 0; I < CS_DAMAGE_RESULT_POOL_SIZE; ++I)
+	{
+		const uint8 Index       = (ResultPoolIndex + I) % CS_DAMAGE_RESULT_POOL_SIZE;
+		FCsDamageResult* Result = &(ResultPool[Index]);
+
+		if (!Result->IsAllocated)
 		{
-			Event->Reset();
-			ActiveEvents.RemoveAt(I);
-			break;
+			Result->IsAllocated = true;
+			return Result;
 		}
 	}
-	UE_LOG(LogCs, Warning, TEXT("ACsManager_Damage::DeAllocate: Attempting to deallocate a DamageEvent with Index: %d, but it is already deallocated."), Index);
+	checkf(0, TEXT("ACsManager_Damage::AllocateResult: Pool is exhausted"));
+	return nullptr;
 }
 
-void ACsManager_Damage::DeAllocate(FCsDamageEvent* InEvent)
-{
-	DeAllocate(InEvent->Index);
-}
+#pragma endregion Result

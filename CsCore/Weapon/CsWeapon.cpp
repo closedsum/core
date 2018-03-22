@@ -1961,7 +1961,7 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 		if (HitFound)
 		{
 			ACsManager_Damage* Manager_Damage = ACsManager_Damage::Get(GetWorld());
-			FCsDamageEvent* Event			  = Manager_Damage->Allocate();
+			FCsDamageEvent* Event			  = Manager_Damage->AllocateEvent();
 
 			Event->Damage	  = Data_Projectile->GetDamage();
 			Event->Instigator = GetMyOwner();

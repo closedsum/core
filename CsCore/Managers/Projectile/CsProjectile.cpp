@@ -491,7 +491,7 @@ void ACsProjectile::OnHitCallback(UPrimitiveComponent* HitComp, AActor* OtherAct
 		return;
 
 	ACsManager_Damage* Manager_Damage = ACsManager_Damage::Get(GetWorld());
-	FCsDamageEvent* Event			  = Manager_Damage->Allocate();
+	FCsDamageEvent* Event			  = Manager_Damage->AllocateEvent();
 
 	Event->Damage	  = Cache.GetData()->GetDamage();
 	Event->Instigator = Cache.GetInstigator();

@@ -50,6 +50,8 @@
 
 #endif // #if WITH_EDITOR
 
+// Cache
+#pragma region
 
 namespace ECsCommonCachedName
 {
@@ -74,8 +76,15 @@ namespace ECsCommonCachedString
 		const FString MoveActorOverTime_Internal = TEXT("UCsCommon::MoveActorOverTime_Internal");
 		const FString DestroyMaterialInstanceDynamic_Internal = TEXT("UCsCommon::DestroyMaterialInstanceDynamic_Internal");
 		const FString FadeCameraOverTime_Internal = TEXT("UCsCommon::FadeCameraOverTime_Internal");
+
+		const FString Client = TEXT("Client");
+		const FString Server_Dedicated = TEXT("Server-Dedicated");
+		const FString Server = TEXT("Server");
+		const FString Unknown = TEXT("Unknown");
 	}
 }
+
+#pragma endregion Cache
 
 UCsCommon::UCsCommon(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -2411,14 +2420,14 @@ bool UCsCommon::IsDedicatedServer(AActor* InActor)
 FString UCsCommon::GetProxyAsString(AActor* InActor)
 {
 	if (InActor->Role < ROLE_Authority)
-		return TEXT("Client");
+		return ECsCommonCachedString::Str::Client;
 	if (InActor->Role == ROLE_Authority)
 	{
 		if (IsDedicatedServer(InActor))
-			return TEXT("Server-Dedicated");
-		return TEXT("Server");
+			return ECsCommonCachedString::Str::Server_Dedicated;
+		return ECsCommonCachedString::Str::Server;
 	}
-	return TEXT("Unknown");
+	return ECsCommonCachedString::Str::Unknown;
 }
 
 bool UCsCommon::IsPlayInGame(UWorld* InWorld)

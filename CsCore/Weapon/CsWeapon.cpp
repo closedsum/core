@@ -9,6 +9,7 @@
 
 // Data
 #include "Data/CsData_ProjectileImpact.h"
+#include "Data/CsData_Character.h"
 
 // Managers
 #include "Managers/FX/CsManager_FX.h"
@@ -1934,48 +1935,52 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 
 			for (int32 I = HitPawnCount - 1; I >= 0; --I)
 			{
-				/*
-				ACsCharacter* HitPawn = HittablePawns[I];
-				//AShooterBot* Bot = Cast<AShooterBot>(ThisChar);
+				ACsPawn* HitPawn				  = HittablePawns[I];
+				ACsData_Character* Data_Character = HitPawn->GetMyData_Character();
 
-				ACsData_Character* Data_Character = HitPawn->GetMyData_Ship();
+				const float ProjectileRadius = Data_Projectile->GetSphereRadius();
 
-				const float HeadRadius = Data_Character->HeadCollision.Radius;
-				const FName BoneName   = Data_Character->HeadCollision.BoneName;
-				const FVector Offset   = Data_Character->HeadCollision.Offset;
+				// Head
+				if (FCsHeadCollision* HeadCollision = Data_Character->GetHeadCollision())
+				{
+					const float HeadRadius	= HeadCollision->Radius;
+					const FName BoneName	= HeadCollision->BoneName;
+					const FVector Offset	= HeadCollision->Offset;
 
-				const FVector HeadLocation = HitPawn->GetMesh()->GetBoneLocation(BoneName) + Offset;
+					const FVector HeadLocation = HitPawn->GetMesh()->GetBoneLocation(BoneName) + Offset;
+					const FVector HeadPoint    = FMath::ClosestPointOnSegment(HeadLocation, Start, End);
+
+					const float DistanceToHead = FVector::Dist(HeadPoint, HeadLocation);
+
+					// Head is close enough to potential trace. Try tracing directly to the Head
+					if (DistanceToHead < HeadRadius + ProjectileRadius)
+					{
+						const float TraceDist	  = 1.5f * (HeadLocation - Start).Size();
+						const FVector TargetPoint = HeadLocation + TraceDist * (HeadLocation - Start);
+						HitFound				  = GetWorld()->LineTraceSingleByChannel(HitResult, Start, TargetPoint, ProjectileCollision, CollisionParams);
+						HittablePawns.RemoveAt(I);
+						break;
+					}
+				}
+
+				// Body
 				const FVector BodyLocation = HitPawn->GetCapsuleComponent()->GetComponentLocation();
 
 				const FVector BodyLocationXY = FVector(BodyLocation.X, BodyLocation.Y, 0);
 				const float BodyLocationZ    = BodyLocation.Z;
 
-				const FVector HeadPoint = FMath::ClosestPointOnSegment(HeadLocation, Start, End);
 				const FVector BodyPoint = FMath::ClosestPointOnSegment(BodyLocation, Start, End);
 
 				const FVector BodyPointXY = FVector(BodyPoint.X, BodyPoint.Y, 0);
 				const float BodyPointZ    = BodyPoint.Z;
-
-				const float DistanceToHead = FVector::Dist(HeadPoint, HeadLocation);
 
 				const float BodyXYDistFromLine = FVector::Dist(BodyPointXY, BodyLocationXY);
 				const float BodyZDistFromLine  = FMath::Abs(BodyLocationZ - BodyPointZ);
 
 				const float CharacterRadius  = HittablePawns[I]->GetCapsuleComponent()->GetScaledCapsuleRadius();
 				const float CharacterHeight  = HittablePawns[I]->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
-				const float ProjectileRadius = Data_Projectile->SphereRadius;
 
-				// Head is close enough to potential trace. Try tracing directly to the Head
-				if (DistanceToHead < HeadRadius + ProjectileRadius)
-				{
-					const float TraceDist	  = 1.5f * (HeadLocation - Start).Size();
-					const FVector TargetPoint = HeadLocation + TraceDist * (HeadLocation - Start);
-					HitFound				  = GetWorld()->LineTraceSingleByChannel(HitResult, Start, TargetPoint, ProjectileCollision, CollisionParams);
-					HittablePawns.RemoveAt(I);
-					break;
-				}
 				// Body is close enough to potential trace. Try tracing directly to the body
-				else 
 				if (BodyXYDistFromLine < CharacterRadius + ProjectileRadius && BodyZDistFromLine < CharacterHeight + ProjectileRadius)
 				{
 					const float TraceDist     = 1.5f * (BodyLocation - Start).Size();
@@ -1984,7 +1989,6 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 					HittablePawns.RemoveAt(I);
 					break;
 				}
-				*/
 			}
 		}
 		// Hit NOT Found and NO Hitscan with cylinder

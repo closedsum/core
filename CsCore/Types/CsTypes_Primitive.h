@@ -24,6 +24,11 @@ namespace ECsCachedString
 		const FString PREVIEW = TEXT("PREVIEW");
 		const FString Zero = TEXT("0");
 		const FString One = TEXT("1");
+
+		const FString Text = TEXT("Text");
+		const FString Button = TEXT("Button");
+		const FString Image = TEXT("Image");
+
 		// Vector to String
 		const FString XEquals = TEXT("X=");
 		const FString YEquals = TEXT("Y=");

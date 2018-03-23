@@ -58,6 +58,9 @@ ACsPawn::ACsPawn(const FObjectInitializer& ObjectInitializer)
 	OnHandleRespawnTimerFinished_Event.AddUObject(this, &ACsPawn::OnHandleRespawnTimerFinished);
 	// Data
 	bCacheData = true;
+	// Weapon
+	CurrentWeaponSlotHandle.Set(&CurrentWeaponSlot);
+	CurrentWeaponSlotHandle.OnChange_Event.AddUObject(this, &ACsPawn::OnChange_CurrentWeaponSlot);
 }
 
 void ACsPawn::OnConstructor(const FObjectInitializer& ObjectInitializer)
@@ -391,6 +394,16 @@ void ACsPawn::OnRespawn_ApplyData_Character(){}
 
 // Weapons
 #pragma region
+
+void ACsPawn::OnChange_CurrentWeaponSlot(const TCsWeaponSlot &Slot)
+{
+	ACsPlayerStateBase* MyPlayerState = Cast<ACsPlayerStateBase>(PlayerState);
+
+	OnChange_CurrentWeaponSlot_Event.Broadcast(MyPlayerState->UniqueMappingId, LastWeaponSlot, CurrentWeaponSlot);
+#if WITH_EDITOR
+	OnChange_CurrentWeaponSlot_ScriptEvent.Broadcast(MyPlayerState->UniqueMappingId, LastWeaponIndex, CurrentWeaponIndex);
+#endif // #if WITH_EDITOR
+}
 
 ACsWeapon* ACsPawn::GetWeapon(const TCsWeaponSlot &Slot)
 {

@@ -646,10 +646,10 @@ public:
 
 	virtual void OnChange_CurrentAmmo(const int32 &Value);
 
-	FBindableEvent_CsWeapon_OnChangeCurrentAmmo OnChangeCurrentAmmo_Event;
+	FBindableEvent_CsWeapon_OnChangeCurrentAmmo OnChange_CurrentAmmo_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "Firing")
-	FBindableDynEvent_CsWeapon_OnChangeCurrentAmmo OnChangeCurrentAmmo_ScriptEvent;
+	FBindableDynEvent_CsWeapon_OnChangeCurrentAmmo OnChange_CurrentAmmo_ScriptEvent;
 
 	virtual void IncrementCurrentAmmo(const int32 &Index);
 	virtual void ResetCurrentAmmo(const int32 &Index);

@@ -1257,9 +1257,9 @@ int32 ACsWeapon::GetMaxAmmo(const int32 &Index) { return MaxAmmo.Get(Index); }
 
 void ACsWeapon::OnChange_CurrentAmmo(const int32 &Value)
 {
-	OnChangeCurrentAmmo_Event.Broadcast(WeaponSlot, CurrentAmmo, GetMaxAmmo(CS_WEAPON_DATA_VALUE), GetAmmoReserve(CS_WEAPON_DATA_VALUE));
+	OnChange_CurrentAmmo_Event.Broadcast(WeaponSlot, CurrentAmmo, GetMaxAmmo(CS_WEAPON_DATA_VALUE), GetAmmoReserve(CS_WEAPON_DATA_VALUE));
 #if WITH_EDITOR
-	OnChangeCurrentAmmo_ScriptEvent.Broadcast(WeaponIndex, CurrentAmmo, GetMaxAmmo(CS_WEAPON_DATA_VALUE), GetAmmoReserve(CS_WEAPON_DATA_VALUE));
+	OnChange_CurrentAmmo_ScriptEvent.Broadcast(WeaponIndex, CurrentAmmo, GetMaxAmmo(CS_WEAPON_DATA_VALUE), GetAmmoReserve(CS_WEAPON_DATA_VALUE));
 #endif // #if WITH_EDITOR
 }
 

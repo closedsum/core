@@ -10,6 +10,7 @@
 #include "Types/CsTypes_Projectile.h"
 #include "Types/CsTypes_Weapon.h"
 #include "Types/CsTypes_Damage.h"
+#include "Types/CsTypes_Character.h"
 #include "Types/CsTypes_Interactive.h"
 #include "Types/CsTypes_Item.h"
 #include "Types/CsTypes_Recipe.h"
@@ -1828,6 +1829,9 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsPhysicsPreset
 			if (StructProperty->Struct == FCsPhysicsPreset::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsPhysicsPreset>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
+			// FCsHeadCollision
+			if (StructProperty->Struct == FCsHeadCollision::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsHeadCollision>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
 			// FCsWidgetComponentInfo
 			if (StructProperty->Struct == FCsWidgetComponentInfo::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsWidgetComponentInfo>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
@@ -3825,6 +3829,9 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				if (ReadObjectFromJson_Internal_Helper(Internal, Property, JsonObject, InObject, InClass)) { continue; }
 				continue;
 			}
+			// FCsHeadCollision
+			if (StructProperty->Struct == FCsHeadCollision::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsHeadCollision>(JsonObject, StructProperty, InObject, MemberName); continue; }
 			// FCsWidgetComponentInfo
 			if (StructProperty->Struct == FCsWidgetComponentInfo::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsWidgetComponentInfo>(JsonObject, StructProperty, InObject, MemberName); continue; }

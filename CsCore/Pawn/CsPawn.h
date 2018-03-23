@@ -22,6 +22,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsPawn_OnSetupFini
 // Health
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsPawn_OnChangeHealth, const uint8&, const float&, const float&);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsPawn_OnChangeHealth, const uint8&, MappingId, const float&, CurrentHealth, const float&, CurrentMaxHealth);
+// Weapon
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsPawn_OnChangeCurrentWeaponSlot, const uint8&, const TCsWeaponSlot&, const TCsWeaponSlot&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsPawn_OnChangeCurrentWeaponSlot, const uint8&, MappingId, const uint8&, LastWeaponSlot, const uint8&, CurrentWeaponSlot);
 
 // Enums
 #pragma region
@@ -371,6 +374,16 @@ public:
 public:
 
 	TCsWeaponSlot CurrentWeaponSlot;
+
+	TCsPrimitiveType_Ref<TCsWeaponSlot> CurrentWeaponSlotHandle;
+
+	virtual void OnChange_CurrentWeaponSlot(const TCsWeaponSlot &Slot);
+
+	UPROPERTY(BlueprintAssignable, Category = "Tick")
+	FBindableDynEvent_CsPawn_OnChangeCurrentWeaponSlot OnChange_CurrentWeaponSlot_ScriptEvent;
+
+	FBindableEvent_CsPawn_OnChangeCurrentWeaponSlot OnChange_CurrentWeaponSlot_Event;
+
 	uint8 CurrentWeaponIndex;
 	TCsWeaponSlot LastWeaponSlot;
 	uint8 LastWeaponIndex;

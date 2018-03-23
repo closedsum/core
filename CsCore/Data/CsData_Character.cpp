@@ -31,6 +31,8 @@ float ACsData_Character::GetCapsuleRadius() { return 0.0f; }
 float ACsData_Character::GetCapsuleHalfHeight() { return 0.0f; }
 FCollisionResponseContainer& ACsData_Character::GetCollisionResponseContainer() { return DefaultCollisionResponseContainer; }
 
+FCsHeadCollision* ACsData_Character::GetHeadCollision() { return nullptr; }
+
 #pragma endregion Collision
 
 // Movement

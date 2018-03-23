@@ -51,6 +51,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Collision")
 	virtual FCollisionResponseContainer& GetCollisionResponseContainer();
 
+	virtual FCsHeadCollision* GetHeadCollision();
+
 #pragma endregion Collision
 
 // Movement

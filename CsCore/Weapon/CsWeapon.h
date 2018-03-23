@@ -16,8 +16,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsWeapon_OnTick, 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsWeapon_Override_CheckStateIdle, const uint8&, WeaponIndex);
 
 // Ammo
-DECLARE_MULTICAST_DELEGATE_FourParams(FBindableEvent_CsWeapon_OnConsumeAmmo, const TCsWeaponSlot&, const int32&, const int32&, const FName&);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FBindableDynEvent_CsWeapon_OnConsumeAmmo, const uint8&, WeaponIndex, const int32&, Ammo, const int32&, MaxAmmo, const FName&, AmmoShortCode);
+DECLARE_MULTICAST_DELEGATE_FourParams(FBindableEvent_CsWeapon_OnChangeCurrentAmmo, const TCsWeaponSlot&, const int32&, const int32&, const int32&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FBindableDynEvent_CsWeapon_OnChangeCurrentAmmo, const uint8&, WeaponIndex, const int32&, Ammo, const int32&, MaxAmmo, const int32&, AmmoReserve);
 
 // Firing
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsWeapon_Override_FireWeapon, const uint8&, WeaponIndex, const uint8&, FireMode);
@@ -633,11 +633,23 @@ public:
 
 	TCsWeaponState FiringState;
 
+	// Ammo
+#pragma region
+
 	FCsWeapon_Ref_int32 MaxAmmo;
 	virtual int32 GetMaxAmmo(const int32 &Index);
 
 	UPROPERTY(BlueprintReadWrite, Category = "Firing")
 	int32 CurrentAmmo;
+
+	TCsInt32_Ref CurrentAmmoHandle;
+
+	virtual void OnChange_CurrentAmmo(const int32 &Value);
+
+	FBindableEvent_CsWeapon_OnChangeCurrentAmmo OnChangeCurrentAmmo_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Firing")
+	FBindableDynEvent_CsWeapon_OnChangeCurrentAmmo OnChangeCurrentAmmo_ScriptEvent;
 
 	virtual void IncrementCurrentAmmo(const int32 &Index);
 	virtual void ResetCurrentAmmo(const int32 &Index);
@@ -645,11 +657,11 @@ public:
 	bool HasUnlimitedAmmo;
 
 	virtual const FName& GetAmmoShortCode(const TCsWeaponFireMode &FireMode, const bool &IsCharged);
+	virtual int32 GetAmmoReserve(const int32 &Index);
 
-	FBindableEvent_CsWeapon_OnConsumeAmmo OnConsumeAmmo_Event;
+	virtual void ConsumeAmmo();
 
-	UPROPERTY(BlueprintAssignable, Category = "Firing")
-	FBindableDynEvent_CsWeapon_OnConsumeAmmo OnConsumeAmmo_ScriptEvent;
+#pragma endregion Ammo
 
 	FCsWeapon_TArrayRef_uint8 ProjectilesPerShot;
 	virtual uint8 GetProjectilesPerShot(const TCsWeaponFireMode &FireMode);

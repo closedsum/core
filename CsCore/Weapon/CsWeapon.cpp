@@ -126,6 +126,9 @@ ACsWeapon::ACsWeapon(const FObjectInitializer& ObjectInitializer)
 	//ReloadAnim = ECsWeaponAnim::Reload;
 
 	// Make sure to call InitMultiValueMembers() in the Child Class
+
+	CurrentAmmoHandle.Set(&CurrentAmmo);
+	CurrentAmmoHandle.OnChange_Event.AddUObject(this, &ACsWeapon::OnChange_CurrentAmmo);
 }
 
 void ACsWeapon::PostInitializeComponents()
@@ -321,7 +324,7 @@ void ACsWeapon::SetMultiValueMembers()
 	MaxAmmo.Set(iVal);
 	MaxAmmo.Set(CS_WEAPON_DATA_VALUE, Data->GetMaxAmmoAddr());
 
-	CurrentAmmo = MaxAmmo.Get(CS_WEAPON_DATA_VALUE);
+	ResetCurrentAmmo(CS_WEAPON_DATA_VALUE);
 
 	// Firing
 	{
@@ -987,15 +990,7 @@ void ACsWeapon::HandleState_Firing(const TCsWeaponFireMode &FireMode)
 
 	if (!HasUnlimitedAmmo)
 	{
-		CurrentAmmo = FMath::Max(0, CurrentAmmo - ProjectilesPerShot.Get(FireMode));
-
-		const float ChargePercent = GetCurrentChargeFireHeldPercent(FireMode);
-		const bool IsCharged	  = ChargePercent > 0.0f;
-
-		OnConsumeAmmo_Event.Broadcast(WeaponSlot, CurrentAmmo, GetMaxAmmo(0), GetAmmoShortCode(FireMode, IsCharged));
-#if WITH_EDITOR
-		OnConsumeAmmo_ScriptEvent.Broadcast(WeaponIndex, CurrentAmmo, GetMaxAmmo(0), GetAmmoShortCode(FireMode, IsCharged));
-#endif // #if WITH_EDITOR
+		//CurrentAmmo = FMath::Max(0, CurrentAmmo - ProjectilesPerShot.Get(FireMode));
 
 		// Recharge Ammo
 		if (AllowRechargeAmmo.Get(CS_WEAPON_DATA_VALUE))
@@ -1255,18 +1250,49 @@ bool ACsWeapon::CanUnEquip()
 // Firing
 #pragma region
 
+	// Ammo
+#pragma region
+
 int32 ACsWeapon::GetMaxAmmo(const int32 &Index) { return MaxAmmo.Get(Index); }
+
+void ACsWeapon::OnChange_CurrentAmmo(const int32 &Value)
+{
+	OnChangeCurrentAmmo_Event.Broadcast(WeaponSlot, CurrentAmmo, GetMaxAmmo(CS_WEAPON_DATA_VALUE), GetAmmoReserve(CS_WEAPON_DATA_VALUE));
+#if WITH_EDITOR
+	OnChangeCurrentAmmo_ScriptEvent.Broadcast(WeaponIndex, CurrentAmmo, GetMaxAmmo(CS_WEAPON_DATA_VALUE), GetAmmoReserve(CS_WEAPON_DATA_VALUE));
+#endif // #if WITH_EDITOR
+}
+
 void ACsWeapon::IncrementCurrentAmmo(const int32 &Index)
 {
-	CurrentAmmo++;
+	++CurrentAmmo;
 	CurrentAmmo = FMath::Min(CurrentAmmo, GetMaxAmmo(Index));
+
+	CurrentAmmoHandle.Resolve();
 }
-void ACsWeapon::ResetCurrentAmmo(const int32 &Index) { CurrentAmmo = GetMaxAmmo(Index); }
+void ACsWeapon::ResetCurrentAmmo(const int32 &Index) 
+{ 
+	CurrentAmmo = GetMaxAmmo(Index);
+	CurrentAmmoHandle.Resolve();
+}
 
 const FName& ACsWeapon::GetAmmoShortCode(const TCsWeaponFireMode &FireMode, const bool &IsCharged) 
 { 
 	return GetMyData_Projectile<ACsData_Projectile>(FireMode, IsCharged)->GetItemShortCodeRef();
 }
+
+int32 ACsWeapon::GetAmmoReserve(const int32 &Index)
+{
+	return GetMaxAmmo(Index);
+}
+
+void ACsWeapon::ConsumeAmmo()
+{
+	--CurrentAmmo;
+	CurrentAmmoHandle.Resolve();
+}
+
+#pragma endregion Ammo
 
 uint8 ACsWeapon::GetProjectilesPerShot(const TCsWeaponFireMode &FireMode) { return ProjectilesPerShot.Get(FireMode); }
 float ACsWeapon::GetTimeBetweenProjectilesPerShot(const TCsWeaponFireMode &FireMode) { return TimeBetweenProjectilesPerShot.Get(FireMode); }
@@ -1630,6 +1656,8 @@ PT_THREAD(ACsWeapon::FireWeapon_Internal(struct FCsRoutine* r))
 				else
 					mw->FireProjectile(FireMode, Cache);
 				Cache->Reset();
+
+				mw->ConsumeAmmo();
 			}
 
 			mw->PlayMuzzleFlash(FireMode);

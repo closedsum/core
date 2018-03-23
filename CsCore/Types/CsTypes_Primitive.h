@@ -139,6 +139,12 @@ public:
 
 	bool HasChanged() { return IsDirty; }
 	void MarkDirty() { IsDirty = true; }
+
+	void Resolve()
+	{
+		UpdateIsDirty();
+		Clear();
+	}
 };
 
 struct FCsPrimitiveType_int32 : public TCsPrimitiveType<int32>
@@ -1164,6 +1170,12 @@ public:
 	}
 
 	bool HasChanged() { return IsDirty; }
+
+	void Resolve()
+	{
+		UpdateIsDirty();
+		Clear();
+	}
 };
 
 struct FCsPrimitiveType_Ref_bool : public TCsPrimitiveType_Ref<bool>
@@ -1444,6 +1456,17 @@ public:
 	bool HasChanged() { return IsDirty; }
 	bool HasChanged(const U &Index) { return HasChanged((int64)Index); }
 	bool HasChanged(const int64 &Index) { return Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE ? IsDirty : IsDirtys[Index]; }
+
+	void Resolve()
+	{
+		UpdateIsDirty();
+
+		for (uint8 I = 0; I < SIZE; ++I)
+		{
+			UpdateIsDirtys(I);
+		}
+		Clear();
+	}
 };
 
 template<typename T, typename U, uint8 SIZE>
@@ -1814,6 +1837,17 @@ public:
 		const int32 I = (int32)Index;
 		return I <= CS_PRIMITIVE_TYPE_DEFAULT || I >= SIZE ? IsDirty : IsDirtys[I];
 	}
+
+	void Resolve()
+	{
+		UpdateIsDirty();
+
+		for (uint8 I = 0; I < SIZE; ++I)
+		{
+			UpdateIsDirtys(I);
+		}
+		Clear();
+	}
 };
 
 template<typename T, typename U, uint8 SIZE>
@@ -2036,6 +2070,17 @@ public:
 	bool HasChanged() { return IsDirty; }
 	bool HasChanged(const U &Index) { return HasChanged((int64)Index); }
 	bool HasChanged(const int64 &Index) { return Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE ? IsDirty : IsDirtys[Index]; }
+
+	void Resolve()
+	{
+		UpdateIsDirty();
+
+		for (uint8 I = 0; I < SIZE; ++I)
+		{
+			UpdateIsDirtys(I);
+		}
+		Clear();
+	}
 };
 
 template<typename T, typename U>
@@ -2325,6 +2370,17 @@ public:
 	{
 		const int32 I = (int32)Index;
 		return I <= CS_PRIMITIVE_TYPE_DEFAULT || I >= SIZE ? IsDirty : IsDirtys[I];
+	}
+
+	void Resolve()
+	{
+		UpdateIsDirty();
+
+		for (uint8 I = 0; I < SIZE; ++I)
+		{
+			UpdateIsDirtys(I);
+		}
+		Clear();
 	}
 };
 

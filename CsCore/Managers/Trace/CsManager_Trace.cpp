@@ -422,6 +422,7 @@ FCsTraceResponse*  ACsManager_Trace::Trace(FCsTraceRequest* Request)
 	// TODO: Print warning for a normal trace moved to Async
 	if (AddPending && !Request->bAsync)
 	{
+		Request->Reset();
 		UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::Trace: Reached maximum RequestsProcessedPerTick: %d and Request is NOT Async. Abandoning Request."), RequestsProcessedPerTick);
 		return nullptr;
 	}

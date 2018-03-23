@@ -16,6 +16,7 @@
 #include "Managers/Projectile/CsManager_Projectile.h"
 #include "Managers/Projectile/CsProjectile.h"
 #include "Managers/Damage/CsManager_Damage.h"
+#include "Managers/Trace/CsManager_Trace.h"
 
 #include "Game/CsGameInstance.h"
 #include "Game/CsGameState.h"
@@ -1891,6 +1892,7 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 	//ACsPlayerState* MyPlayerState	 = Cast<ACsPlayerState>(Pawn->PlayerState);
 	ACsData_ProjectileWeapon* Data_Weapon	= GetMyData_Weapon<ACsData_ProjectileWeapon>();
 	ACsData_Projectile* Data_Projectile		= Data_Weapon->GetData_Projectile(FireMode, Cache->ChargePercent > 0.0f);
+	ACsManager_Trace* Manager_Trace			= ACsManager_Trace::Get(GetWorld());
 
 	const ECollisionChannel ProjectileCollision = Data_Projectile->GetCollisionObjectType();
 
@@ -1957,7 +1959,29 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 					{
 						const float TraceDist	  = 1.5f * (HeadLocation - Start).Size();
 						const FVector TargetPoint = HeadLocation + TraceDist * (HeadLocation - Start);
-						HitFound				  = GetWorld()->LineTraceSingleByChannel(HitResult, Start, TargetPoint, ProjectileCollision, CollisionParams);
+
+						FCsTraceRequest* Request = Manager_Trace->AllocateRequest();
+
+						Request->Caller		= this;
+						Request->CallerId	= UniqueObjectId;
+						Request->Start		= Start;
+						Request->End		= TargetPoint;
+						Request->bAsync		= false;
+						Request->Type		= ECsTraceType::Line;
+						Request->Method		= ECsTraceMethod::Single;
+						Request->Query		= ECsTraceQuery::Channel;
+						Request->Params.bReturnPhysicalMaterial = true;
+						Request->Params.AddIgnoredActors(IgnoredActors);
+
+						FCsTraceResponse* Response = Manager_Trace->Trace(Request);
+
+						HitFound = Response->bResult;
+
+						if (Response->OutHits.Num() > CS_EMPTY)
+							UCsCommon::CopyHitResult(Response->OutHits[CS_FIRST], HitResult);
+
+						Response->Reset();
+
 						HittablePawns.RemoveAt(I);
 						break;
 					}
@@ -1985,7 +2009,29 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 				{
 					const float TraceDist     = 1.5f * (BodyLocation - Start).Size();
 					const FVector TargetPoint = BodyLocation + TraceDist * (BodyLocation - Start);
-					HitFound				  = GetWorld()->LineTraceSingleByChannel(HitResult, Start, TargetPoint, ProjectileCollision, CollisionParams);
+					
+					FCsTraceRequest* Request = Manager_Trace->AllocateRequest();
+
+					Request->Caller		= this;
+					Request->CallerId	= UniqueObjectId;
+					Request->Start		= Start;
+					Request->End		= TargetPoint;
+					Request->bAsync		= false;
+					Request->Type		= ECsTraceType::Line;
+					Request->Method		= ECsTraceMethod::Single;
+					Request->Query		= ECsTraceQuery::Channel;
+					Request->Params.bReturnPhysicalMaterial = true;
+					Request->Params.AddIgnoredActors(IgnoredActors);
+
+					FCsTraceResponse* Response = Manager_Trace->Trace(Request);
+
+					HitFound = Response->bResult;
+
+					if (Response->OutHits.Num() > CS_EMPTY)
+						UCsCommon::CopyHitResult(Response->OutHits[CS_FIRST], HitResult);
+
+					Response->Reset();
+
 					HittablePawns.RemoveAt(I);
 					break;
 				}
@@ -1995,7 +2041,27 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 		if (!HitFound || 
 			!DoesHitscanUseRadius.Get(FireMode))
 		{
-			HitFound = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ProjectileCollision, CollisionParams);
+			FCsTraceRequest* Request = Manager_Trace->AllocateRequest();
+
+			Request->Caller		= this;
+			Request->CallerId	= UniqueObjectId;
+			Request->Start		= Start;
+			Request->End		= End;
+			Request->bAsync		= false;
+			Request->Type		= ECsTraceType::Line;
+			Request->Method		= ECsTraceMethod::Single;
+			Request->Query		= ECsTraceQuery::Channel;
+			Request->Params.bReturnPhysicalMaterial = true;
+			Request->Params.AddIgnoredActors(IgnoredActors);
+
+			FCsTraceResponse* Response = Manager_Trace->Trace(Request);
+
+			HitFound = Response->bResult;
+
+			if (Response->OutHits.Num() > CS_EMPTY)
+				UCsCommon::CopyHitResult(Response->OutHits[CS_FIRST], HitResult);
+
+			Response->Reset();
 
 			if ((CsCVarDrawLocalPlayerWeaponFireProjectile->GetInt() == CS_CVAR_DRAW &&
 				UCsCommon::IsLocalPawn(GetWorld(), GetMyPawn())) ||

@@ -200,6 +200,7 @@ public:
 	CsAddRoutine addRoutine;
 	CsRemoveRoutine removeRoutine;
 	float startTime;
+	float elapsedTime;
 	float deltaSeconds;
 	int32 tickCount;
 	float delay;
@@ -370,6 +371,7 @@ public:
 		removeRoutine = nullptr;
 		ownerMemberRoutine = nullptr;
 		startTime = 0.0f;
+		elapsedTime = 0.0f;
 		tickCount = 0;
 		delay = 0.0f;
 		endReason = ECsCoroutineEndReason::ECsCoroutineEndReason_MAX;
@@ -464,6 +466,7 @@ public:
 			return;
 		}
 		deltaSeconds = inDeltaSeconds;
+		elapsedTime += deltaSeconds;
 		tickCount++;
 		(*coroutine)(self);
 

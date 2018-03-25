@@ -1196,17 +1196,7 @@ void ACsWeapon::PlaySound(const TCsWeaponFireMode &FireMode, const TCsWeaponSoun
 	ACsData_ProjectileWeapon* Data	= GetMyData_Weapon<ACsData_ProjectileWeapon>();
 	const TCsViewType ViewType		= GetCurrentViewType();
 
-#if WITH_EDITOR 
-	// In Editor Preview Window
-	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
-	{
-	}
-	// In Game
-	else
-#endif // #if WITH_EDITOR
-	{
-		Data->PlaySound(GetWorld(), ViewType, FireMode, SoundType, GetMyPawn(), GetSoundParent());
-	}
+	Data->PlaySound(GetWorld(), ViewType, FireMode, SoundType, GetMyOwner(), GetSoundParent());
 }
 
 void ACsWeapon::StopSound(const TCsWeaponFireMode &FireMode, const TCsWeaponSound &SoundType)
@@ -1214,17 +1204,7 @@ void ACsWeapon::StopSound(const TCsWeaponFireMode &FireMode, const TCsWeaponSoun
 	ACsData_ProjectileWeapon* Data  = GetMyData_Weapon<ACsData_ProjectileWeapon>();
 	const TCsViewType ViewType		= GetCurrentViewType();
 
-#if WITH_EDITOR 
-	// In Editor Preview Window
-	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
-	{
-	}
-	// In Game
-	else
-#endif // #if WITH_EDITOR
-	{
-		Data->StopSound(GetWorld(), ViewType, FireMode, SoundType, GetMyPawn(), GetSoundParent());
-	}
+	Data->StopSound(GetWorld(), ViewType, FireMode, SoundType, GetMyOwner(), GetSoundParent());
 }
 
 #pragma endregion Sound

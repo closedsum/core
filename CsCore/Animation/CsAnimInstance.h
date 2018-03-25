@@ -6,6 +6,41 @@
 #include "Types/CsTypes_Coroutine.h"
 #include "CsAnimInstance.generated.h"
 
+// Enums
+#pragma region
+
+namespace ECsAnimInstanceRoutine
+{
+	enum Type
+	{
+		ECsAnimInstanceRoutine_MAX,
+	};
+}
+
+namespace ECsAnimInstanceRoutine
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+	}
+
+	FORCEINLINE const FString& ToString(const Type &EType)
+	{
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		return Type::ECsAnimInstanceRoutine_MAX;
+	}
+}
+
+#define ECS_ANIM_INSTANCE_ROUTINE_MAX (uint8)ECsAnimInstanceRoutine::ECsAnimInstanceRoutine_MAX
+typedef ECsAnimInstanceRoutine::Type TCsAnimInstanceRoutine;
+
+#pragma endregion Enums
+
 UCLASS()
 class CSCORE_API UCsAnimInstance : public UAnimInstance
 {

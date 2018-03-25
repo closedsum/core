@@ -1594,7 +1594,7 @@ void ACsWeapon::FireWeapon(const TCsWeaponFireMode &FireMode)
 	Payload->NameAsString	= ECsWeaponCachedString::Str::FireWeapon_Internal;
 
 	FCsRoutine* R   = Scheduler->Allocate(Payload);
-	R->timers[0]    = GetWorld()->GetTimeSeconds();
+	R->timers[0]    = 0;
 	R->ints[0]	    = (uint8)FireMode;
 
 	Scheduler->StartRoutine(Schedule, R);
@@ -1608,8 +1608,8 @@ PT_THREAD(ACsWeapon::FireWeapon_Internal(struct FCsRoutine* r))
 
 	const TCsWeaponFireMode FireMode = (TCsWeaponFireMode)r->ints[0];
 
-	const float CurrentTime = w->GetTimeSeconds();
-	float StartTime			= r->timers[0];
+	r->timers[0]			+= r->deltaSeconds;
+	const float& ElapsedTime = r->timers[0];
 
 #if WITH_EDITOR 
 	// In Editor Preview Window
@@ -1632,8 +1632,7 @@ PT_THREAD(ACsWeapon::FireWeapon_Internal(struct FCsRoutine* r))
 	{
 		{
 			// Set the StartTime
-			r->timers[0] = CurrentTime;
-			StartTime    = CurrentTime;
+			r->timers[0] = 0;
 
 			// Play Fire Sound
 			if (!mw->LoopFireSound.Get(FireMode))
@@ -1658,10 +1657,8 @@ PT_THREAD(ACsWeapon::FireWeapon_Internal(struct FCsRoutine* r))
 				else
 					mw->FireProjectile(FireMode, Cache);
 				Cache->Reset();
-
-				mw->ConsumeAmmo();
 			}
-
+			mw->ConsumeAmmo();
 			mw->PlayMuzzleFlash(FireMode);
 			
 			mw->CurrentProjectilePerShotIndex.Add(FireMode, 1);
@@ -1669,7 +1666,7 @@ PT_THREAD(ACsWeapon::FireWeapon_Internal(struct FCsRoutine* r))
 
 		if (mw->CurrentProjectilePerShotIndex.Get(FireMode) < mw->ProjectilesPerShot.Get(FireMode))
 		{
-			CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - StartTime >= mw->TimeBetweenProjectilesPerShot.Get(FireMode));
+			CS_COROUTINE_WAIT_UNTIL(r, ElapsedTime >= mw->TimeBetweenProjectilesPerShot.Get(FireMode));
 		}
 	} while (mw->CurrentProjectilePerShotIndex.Get(FireMode) < mw->ProjectilesPerShot.Get(FireMode));
 

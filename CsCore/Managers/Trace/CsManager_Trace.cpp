@@ -12,8 +12,9 @@ namespace ECsManagerTraceCachedString
 {
 	namespace Str
 	{
-		const FString Allocate = TEXT("ACsManager_Trace::Allocate");
-		const FString DeAllocate = TEXT("ACsManager_Trace::DeAllocate");
+		const FString Trace = TEXT("ACsManager_Trace::Trace");
+		const FString ProcessRequest = TEXT("ACsManager_Trace::ProcessRequest");
+		const FString OnTraceResponse = TEXT("ACsManager_Trace::OnTraceResponse");
 	}
 }
 
@@ -273,6 +274,10 @@ void ACsManager_Trace::RemovePendingRequest(FCsTraceRequest* Request)
 
 bool ACsManager_Trace::ProcessRequest(FCsTraceRequest* Request)
 {
+	if (CsCVarDrawManagerTraceRequests->GetInt() == CS_CVAR_DRAW)
+	{
+	}
+
 	Request->bProcessing = true;
 
 	EAsyncTraceType AsyncTraceType	   = EAsyncTraceType::Single;
@@ -397,7 +402,12 @@ void ACsManager_Trace::OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& 
 
 		UCsCommon::CopyHitResult(Datum.OutHits[I], Response->OutHits[I]);
 	}
-	// LOG RESPONSE
+	
+	if (CsCVarDrawManagerTraceResponses->GetInt() == CS_CVAR_DRAW)
+	{
+	}
+
+	LogTransaction(ECsManagerTraceCachedString::Str::OnTraceResponse, ECsTraceTransaction::Complete, Request, Response);
 
 	// Broadcast Response
 	Request->OnResponse_Event.Broadcast(Response);
@@ -411,7 +421,6 @@ void ACsManager_Trace::OnOverlapResponse(const FTraceHandle& Handle, FOverlapDat
 }
 
 #pragma endregion Response
-
 
 FCsTraceResponse*  ACsManager_Trace::Trace(FCsTraceRequest* Request)
 {
@@ -450,6 +459,10 @@ FCsTraceResponse*  ACsManager_Trace::Trace(FCsTraceRequest* Request)
 	// Normal
 	else
 	{
+		if (CsCVarDrawManagerTraceRequests->GetInt() == CS_CVAR_DRAW)
+		{
+		}
+
 		FCsTraceResponse* Response = AllocateResponse();
 
 		Response->ElapsedTime = GetWorld()->GetTimeSeconds() - Request->StartTime;
@@ -553,17 +566,21 @@ FCsTraceResponse*  ACsManager_Trace::Trace(FCsTraceRequest* Request)
 		*/
 		IncrementTraceCount(Request);
 		Request->Reset();
+
+		if (CsCVarDrawManagerTraceResponses->GetInt() == CS_CVAR_DRAW)
+		{
+		}
 		return Response;
 	}
 	Request->Reset();
 	return nullptr;
 }
 
-/*
-void ACsManager_Item::LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, const FCsItem* const Item)
+void ACsManager_Trace::LogTransaction(const FString &FunctionName, const TCsTraceTransaction &Transaction, FCsTraceRequest* Request, FCsTraceResponse* Response)
 {
-	if (CsCVarLogManagerItemTransactions->GetInt() == CS_CVAR_SHOW_LOG)
+	if (CsCVarLogManagerTraceTransactions->GetInt() == CS_CVAR_SHOW_LOG)
 	{
+		/*
 		const FString& TransactionAsString = ECsPoolTransaction::ToActionString(Transaction);
 
 		const FString ItemName				  = Item->ShortCode.ToString();
@@ -581,6 +598,6 @@ void ACsManager_Item::LogTransaction(const FString &FunctionName, const TEnumAsB
 		{
 			UE_LOG(LogCs, Warning, TEXT("%s: %s Item: %s with UniqueId: % and Data: %s at %f."), *FunctionName, *TransactionAsString, *ItemName, *Id, *DataName, CurrentTime);
 		}
+		*/
 	}
 }
-*/

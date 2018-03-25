@@ -549,3 +549,35 @@ TAutoConsoleVariable<int32> CsCVarLogManagerCraftingTransactions(
 );
 
 #pragma endregion Crafting
+
+// Collision
+#pragma region
+
+	// Trace
+#pragma region
+
+TAutoConsoleVariable<int32> CsCVarLogManagerTraceTransactions(
+	TEXT("log.manager.trace.transactions"),
+	0,
+	TEXT("Log Manager Trace Add and Complete."),
+	ECVF_SetByConsole
+);
+
+TAutoConsoleVariable<int32> CsCVarDrawManagerTraceRequests(
+	TEXT("draw.manager.trace.requests"),
+	0,
+	TEXT("Draw Manager Trace Requests. A Line from Start to End of the Trace Request"),
+	ECVF_SetByConsole
+);
+
+TAutoConsoleVariable<int32> CsCVarDrawManagerTraceResponses(
+	TEXT("draw.manager.trace.responses"),
+	0,
+	TEXT("Draw Manager Trace Responses. A Line from Start to End of the Trace Result / Response."),
+	ECVF_SetByConsole
+);
+
+
+#pragma endregion Trace
+
+#pragma endregion Collision

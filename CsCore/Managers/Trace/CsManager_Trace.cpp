@@ -276,6 +276,10 @@ bool ACsManager_Trace::ProcessRequest(FCsTraceRequest* Request)
 {
 	if (CsCVarDrawManagerTraceRequests->GetInt() == CS_CVAR_DRAW)
 	{
+		// Sphere around Start
+		DrawDebugSphere(GetWorld(), Request->Start, 16.0f, 16, FColor::Green, false, 0.1f, 0, 1.0f);
+		// Line from Start to End
+		DrawDebugLine(GetWorld(), Request->Start, Request->End, FColor::Red, false, 0.1f, 0, 1.0f);
 	}
 
 	Request->bProcessing = true;
@@ -405,6 +409,13 @@ void ACsManager_Trace::OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& 
 	
 	if (CsCVarDrawManagerTraceResponses->GetInt() == CS_CVAR_DRAW)
 	{
+		if (Response->bResult)
+		{
+			// Sphere around Start
+			DrawDebugSphere(GetWorld(), Response->OutHits[CS_FIRST].TraceStart, 16.0f, 16, FColor::Green, false, 0.1f, 0, 1.0f);
+			// Line from Start to End
+			DrawDebugLine(GetWorld(), Response->OutHits[CS_FIRST].TraceStart, Response->OutHits[CS_FIRST].Location, FColor::Red, false, 0.1f, 0, 1.0f);
+		}
 	}
 
 	LogTransaction(ECsManagerTraceCachedString::Str::OnTraceResponse, ECsTraceTransaction::Complete, Request, Response);
@@ -461,6 +472,10 @@ FCsTraceResponse*  ACsManager_Trace::Trace(FCsTraceRequest* Request)
 	{
 		if (CsCVarDrawManagerTraceRequests->GetInt() == CS_CVAR_DRAW)
 		{
+			// Sphere around Start
+			DrawDebugSphere(GetWorld(), Request->Start, 16.0f, 16, FColor::Green, false, 0.1f, 0, 1.0f);
+			// Line from Start to End
+			DrawDebugLine(GetWorld(), Request->Start, Request->End, FColor::Red, false, 0.1f, 0, 1.0f);
 		}
 
 		FCsTraceResponse* Response = AllocateResponse();
@@ -569,6 +584,13 @@ FCsTraceResponse*  ACsManager_Trace::Trace(FCsTraceRequest* Request)
 
 		if (CsCVarDrawManagerTraceResponses->GetInt() == CS_CVAR_DRAW)
 		{
+			if (Response->bResult)
+			{
+				// Sphere around Start
+				DrawDebugSphere(GetWorld(), Response->OutHits[CS_FIRST].TraceStart, 16.0f, 16, FColor::Green, false, 0.1f, 0, 1.0f);
+				// Line from Start to End
+				DrawDebugLine(GetWorld(), Response->OutHits[CS_FIRST].TraceStart, Response->OutHits[CS_FIRST].Location, FColor::Red, false, 0.1f, 0, 1.0f);
+			}
 		}
 		return Response;
 	}

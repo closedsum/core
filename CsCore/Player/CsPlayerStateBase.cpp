@@ -14,6 +14,10 @@
 // UI
 #include "UI/CsWidget_Fullscreen.h"
 
+#if WITH_EDITOR
+#include "Editor/UnrealEd/Public/Editor.h"
+#endif // #if WITH_EDITOR
+
 // Cache
 #pragma region
 

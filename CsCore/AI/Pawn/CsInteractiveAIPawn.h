@@ -55,6 +55,41 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsInteractiveAIPawn_OnFirstU
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsInteractiveAIPawn_Override_OnRemove, const int32&, Index, const FCsInteractedActorInfo&, Info);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsInteractiveAIPawn_OnRemove, const uint16&, const FCsInteractedActorInfo&);
 
+// Enums
+#pragma region
+
+namespace ECsInteractiveAIPawnRoutine
+{
+	enum Type
+	{
+		ECsInteractiveAIPawnRoutine_MAX = ECsAIPawnRoutine::ECsAIPawnRoutine_MAX,
+	};
+}
+
+namespace ECsInteractiveAIPawnRoutine
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+	}
+
+	FORCEINLINE const FString& ToString(const Type &EType)
+	{
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		return Type::ECsInteractiveAIPawnRoutine_MAX;
+	}
+}
+
+#define ECS_INTERACTIVE_AI_PAWN_ROUTINE_MAX (uint8)ECsInteractiveAIPawnRoutine::ECsInteractiveAIPawnRoutine_MAX
+typedef ECsInteractiveAIPawnRoutine::Type TCsInteractiveAIPawnRoutine;
+
+#pragma endregion Enums
+
 UCLASS()
 class CSCORE_API ACsInteractiveAIPawn : public ACsAIPawn
 {

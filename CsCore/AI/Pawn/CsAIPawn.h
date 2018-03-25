@@ -16,6 +16,41 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsAIPawn_OnBTTask_RotateToFac
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsAIPawn_OnPlayerSeesBody, const uint8&, MappingId, const bool, Value);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsAIPawn_OnPlayerSeesBody, const uint8&, const bool&);
 
+// Enums
+#pragma region
+
+namespace ECsAIPawnRoutine
+{
+	enum Type
+	{
+		ECsAIPawnRoutine_MAX = ECsPawnRoutine::ECsPawnRoutine_MAX,
+	};
+}
+
+namespace ECsAIPawnRoutine
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+	}
+
+	FORCEINLINE const FString& ToString(const Type &EType)
+	{
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		return Type::ECsAIPawnRoutine_MAX;
+	}
+}
+
+#define ECS_AI_PAWN_ROUTINE_MAX (uint8)ECsAIPawnRoutine::ECsAIPawnRoutine_MAX
+typedef ECsAIPawnRoutine::Type TCsAIPawnRoutine;
+
+#pragma endregion Enums
+
 USTRUCT(BlueprintType)
 struct FCsAIPawnCache : public FCsPooledObjectCache
 {

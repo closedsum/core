@@ -1,6 +1,8 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_Primitive.h"
 
+#include "Runtime/Engine/Public/WorldCollision.h"
+
 #include "CsTypes_Trace.generated.h"
 #pragma once
 

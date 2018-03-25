@@ -3,6 +3,7 @@
 #include "Animation/AnimInstance.h"
 #include "Types/CsTypes_Anim.h"
 #include "Types/CsTypes_AnimInstance.h"
+#include "Types/CsTypes_Coroutine.h"
 #include "CsAnimInstance.generated.h"
 
 UCLASS()
@@ -10,11 +11,23 @@ class CSCORE_API UCsAnimInstance : public UAnimInstance
 {
 	GENERATED_UCLASS_BODY()
 
-// Event Graph
+	virtual void BeginDestroy() override;
+
+// Routine
 #pragma region
 public:
 
-	virtual void BeginDestroy() override;
+	static void AddRoutine(UObject* InAnimInstance, struct FCsRoutine* Routine, const uint8 &Type);
+	virtual bool AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type);
+
+	static void RemoveRoutine(UObject* InAnimInstance, struct FCsRoutine* Routine, const uint8 &Type);
+	virtual bool RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type);
+
+#pragma endregion Routine
+
+// Event Graph
+#pragma region
+public:
 
 	/** Init */
 	virtual void NativeInitializeAnimation() override;

@@ -17,6 +17,28 @@
 
 #include "Weapon/CsWeapon.h"
 
+// Cache
+#pragma region
+
+namespace ECsAnimInstanceCharacterCachedString
+{
+	namespace Str
+	{
+		const FString Data_Character = TEXT("Data_Character");
+		const FString CsData_Character = TEXT("CsData_Character");
+		const FString Data_CharacterMeshSkin = TEXT("Data_CharacterMeshSkin");
+		const FString CsData_CharacterMeshSkin = TEXT("CsData_CharacterMeshSkin");
+		const FString Data_CharacterMaterialSkin = TEXT("Data_CharacterMaterialSkin");
+		const FString CsData_CharacterMaterialSkin = TEXT("CsData_CharacterMaterialSkin");
+		const FString Data_Weapon = TEXT("Data_Weapon");
+		const FString CsData_Weapon = TEXT("CsData_Weapon");
+		const FString Data_WeaponMaterialSkin = TEXT("Data_WeaponMaterialSkin");
+		const FString CsData_WeaponMaterialSkin = TEXT("CsData_WeaponMaterialSkin");
+	}
+}
+
+#pragma endregion Cache
+
 UCsAnimInstance_Character::UCsAnimInstance_Character(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -130,12 +152,24 @@ void UCsAnimInstance_Character::NativeUpdateAnimation(float DeltaTimeX)
 	OnTick_Handle_Data_Weapon();
 	OnTick_Handle_Data_WeaponMaterialSkin();
 
-	if (ACsWeapon* MyWeapon = GetWeapon())
-		MyWeapon->OnTick(DeltaTimeX);
+	OnTick_Handle_Weapon(DeltaTimeX);
 #endif // #if WITH_EDITOR
 }
 
+#if WITH_EDITOR
+
+void UCsAnimInstance_Character::OnTick_Handle_Weapon(const float &DeltaTimeX)
+{
+	if (ACsWeapon* MyWeapon = GetWeapon())
+		MyWeapon->OnTick(DeltaTimeX);
+}
+
+#endif // #if WITH_EDITOR
+
 // Data
+#pragma region
+	
+	// Character
 #pragma region
 
 ACsData_Character* UCsAnimInstance_Character::GetData()
@@ -145,7 +179,10 @@ ACsData_Character* UCsAnimInstance_Character::GetData()
 
 void UCsAnimInstance_Character::LoadData_Character()
 {
-	UCsCommon_Load::LoadTAssetSubclassOf(TEXT("Data_Character"), Data_Character.Data, Data_Character.Data_Internal, TEXT("MboData_Character"));
+	const FString& DataString   = ECsAnimInstanceCharacterCachedString::Str::Data_Character;
+	const FString& CsDataString = ECsAnimInstanceCharacterCachedString::Str::CsData_Character;
+
+	UCsCommon_Load::LoadTAssetSubclassOf(DataString, Data_Character.Data, Data_Character.Data_Internal, CsDataString);
 
 	if (ACsData_Character* MyData_Charater = GetData())
 		MyData_Charater->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
@@ -164,6 +201,11 @@ void UCsAnimInstance_Character::OnTick_Handle_Data_Character()
 
 #endif // #if WITH_EDITOR
 
+#pragma endregion Character
+
+	// CharacterMeshSkin
+#pragma region
+
 ACsData_CharacterMeshSkin* UCsAnimInstance_Character::GetData_CharacterMeshSkin()
 {
 	return Data_CharacterMeshSkin.Get();
@@ -171,7 +213,10 @@ ACsData_CharacterMeshSkin* UCsAnimInstance_Character::GetData_CharacterMeshSkin(
 
 void UCsAnimInstance_Character::LoadData_CharacterMeshSkin()
 {
-	UCsCommon_Load::LoadTAssetSubclassOf(TEXT("Data_CharacterMeshSkin"), Data_CharacterMeshSkin.Data, Data_CharacterMeshSkin.Data_Internal, TEXT("CsData_CharacterMeshSkin"));
+	const FString& DataString   = ECsAnimInstanceCharacterCachedString::Str::Data_CharacterMeshSkin;
+	const FString& CsDataString = ECsAnimInstanceCharacterCachedString::Str::CsData_CharacterMeshSkin;
+
+	UCsCommon_Load::LoadTAssetSubclassOf(DataString, Data_CharacterMeshSkin.Data, Data_CharacterMeshSkin.Data_Internal, CsDataString);
 
 	if (ACsData_CharacterMeshSkin* MyData_CharacterMeshSkin = GetData_CharacterMeshSkin())
 		MyData_CharacterMeshSkin->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
@@ -190,6 +235,11 @@ void UCsAnimInstance_Character::OnTick_Handle_Data_CharacterMeshSkin()
 
 #endif // #if WITH_EDITOR
 
+#pragma endregion CharacterMeshSkin
+
+	// CharacterMaterialSkin
+#pragma region
+
 ACsData_CharacterMaterialSkin* UCsAnimInstance_Character::GetData_CharacterMaterialSkin()
 {
 	return Data_CharacterMaterialSkin.Get();
@@ -197,7 +247,10 @@ ACsData_CharacterMaterialSkin* UCsAnimInstance_Character::GetData_CharacterMater
 
 void UCsAnimInstance_Character::LoadData_CharacterMaterialSkin()
 {
-	UCsCommon_Load::LoadTAssetSubclassOf(TEXT("Data_CharacterMaterialSkin"), Data_CharacterMaterialSkin.Data, Data_CharacterMaterialSkin.Data_Internal, TEXT("CsData_CharacterMaterialSkin"));
+	const FString& DataString   = ECsAnimInstanceCharacterCachedString::Str::Data_CharacterMaterialSkin;
+	const FString& CsDataString = ECsAnimInstanceCharacterCachedString::Str::CsData_CharacterMaterialSkin;
+
+	UCsCommon_Load::LoadTAssetSubclassOf(DataString, Data_CharacterMaterialSkin.Data, Data_CharacterMaterialSkin.Data_Internal, CsDataString);
 
 	if (ACsData_CharacterMaterialSkin* MyData_CharacterMaterialSkin = GetData_CharacterMaterialSkin())
 		MyData_CharacterMaterialSkin->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
@@ -216,6 +269,11 @@ void UCsAnimInstance_Character::OnTick_Handle_Data_CharacterMaterialSkin()
 
 #endif // #if WITH_EDITOR
 
+#pragma endregion CharacterMaterialSkin
+
+	// Weapon
+#pragma region
+
 ACsData_Weapon* UCsAnimInstance_Character::GetData_Weapon()
 {
 	return Data_Weapon.Get();
@@ -223,7 +281,10 @@ ACsData_Weapon* UCsAnimInstance_Character::GetData_Weapon()
 
 void UCsAnimInstance_Character::LoadData_Weapon()
 {
-	UCsCommon_Load::LoadTAssetSubclassOf(TEXT("Data_Weapon"), Data_Weapon.Data, Data_Weapon.Data_Internal, TEXT("CsData_Weapon"));
+	const FString& DataString   = ECsAnimInstanceCharacterCachedString::Str::Data_Weapon;
+	const FString& CsDataString = ECsAnimInstanceCharacterCachedString::Str::CsData_Weapon;
+
+	UCsCommon_Load::LoadTAssetSubclassOf(DataString, Data_Weapon.Data, Data_Weapon.Data_Internal, CsDataString);
 
 	if (ACsData_Weapon* MyData_Weapon = GetData_Weapon())
 		MyData_Weapon->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
@@ -242,6 +303,11 @@ void UCsAnimInstance_Character::OnTick_Handle_Data_Weapon()
 
 #endif // #if WITH_EDITOR
 
+#pragma endregion Weapon
+
+	// WeaponMaterialSkin
+#pragma region
+
 ACsData_WeaponMaterialSkin* UCsAnimInstance_Character::GetData_WeaponMaterialSkin()
 {
 	return Data_WeaponMaterialSkin.Get();
@@ -249,7 +315,10 @@ ACsData_WeaponMaterialSkin* UCsAnimInstance_Character::GetData_WeaponMaterialSki
 
 void UCsAnimInstance_Character::LoadData_WeaponMaterialSkin()
 {
-	UCsCommon_Load::LoadTAssetSubclassOf(TEXT("Data_WeaponMaterialSkin"), Data_WeaponMaterialSkin.Data, Data_WeaponMaterialSkin.Data_Internal, TEXT("CsData_WeaponMaterialSkin"));
+	const FString& DataString   = ECsAnimInstanceCharacterCachedString::Str::Data_WeaponMaterialSkin;
+	const FString& CsDataString = ECsAnimInstanceCharacterCachedString::Str::CsData_WeaponMaterialSkin;
+
+	UCsCommon_Load::LoadTAssetSubclassOf(DataString, Data_WeaponMaterialSkin.Data, Data_WeaponMaterialSkin.Data_Internal, CsDataString);
 
 	if (ACsData_WeaponMaterialSkin* MyData_WeaponMaterialSkin = GetData_WeaponMaterialSkin())
 		MyData_WeaponMaterialSkin->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
@@ -267,6 +336,8 @@ void UCsAnimInstance_Character::OnTick_Handle_Data_WeaponMaterialSkin()
 }
 
 #endif // #if WITH_EDITOR
+
+#pragma endregion WeaponMaterialSkin
 
 #pragma endregion Data
 

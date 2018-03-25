@@ -36,7 +36,7 @@ public:
 
 	TSubclassOf<class ACsWeapon> WeaponClass;
 
-	void Spawn_Weapon();
+	virtual void Spawn_Weapon();
 	virtual void ApplyData_Weapon();
 
 #endif // #if WITH_EDITOR
@@ -45,11 +45,17 @@ public:
 
 	virtual void NativeUpdateAnimation(float DeltaTimeX) override;
 
+#if WITH_EDITOR
+	virtual void OnTick_Handle_Weapon(const float &DeltaTimeX);
+#endif // #if WITH_EDITOR
+
 	// Data
 #pragma region
 public:
 
 		// Character
+#pragma region 
+public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "01 Data")
 	FCsDataAnimInstance_CharacterPtr Data_Character;
@@ -70,7 +76,11 @@ public:
 	void OnTick_Handle_Data_Character();
 #endif // #if WITH_EDITOR
 
+#pragma endregion Character
+
 		// CharacterMeshSkin
+#pragma region 
+public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "01 Data")
 	FCsDataAnimInstance_CharacterMeshSkinPtr Data_CharacterMeshSkin;
@@ -91,7 +101,11 @@ public:
 	void OnTick_Handle_Data_CharacterMeshSkin();
 #endif // #if WITH_EDITOR
 
+#pragma endregion CharacterMeshSkin
+
 		// CharacterMaterialSkin
+#pragma region
+public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "01 Data")
 	FCsDataAnimInstance_CharacterMaterialSkinPtr Data_CharacterMaterialSkin;
@@ -112,7 +126,11 @@ public:
 	void OnTick_Handle_Data_CharacterMaterialSkin();
 #endif // #if WITH_EDITOR
 
+#pragma endregion CharacterMaterialSkin
+
 		// Weapon
+#pragma region
+public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "01 Data")
 	FCsDataAnimInstance_WeaponPtr Data_Weapon;
@@ -125,15 +143,19 @@ public:
 		return Cast<T>(GetData_Weapon());
 	}
 
-private:
-	void LoadData_Weapon();
+protected:
+	virtual void LoadData_Weapon();
 
 public:
 #if WITH_EDITOR
-	void OnTick_Handle_Data_Weapon();
+	virtual void OnTick_Handle_Data_Weapon();
 #endif // #if WITH_EDITOR
 
+#pragma endregion Weapon
+
 		// WeaponMaterialSkin
+#pragma region
+public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "01 Data")
 	FCsDataAnimInstance_WeaponMaterialSkinPtr Data_WeaponMaterialSkin;
@@ -146,13 +168,15 @@ public:
 		return Cast<T>(GetData_WeaponMaterialSkin());
 	}
 
-private:
-	void LoadData_WeaponMaterialSkin();
+protected:
+	virtual void LoadData_WeaponMaterialSkin();
 
 public:
 #if WITH_EDITOR
-	void OnTick_Handle_Data_WeaponMaterialSkin();
+	virtual void OnTick_Handle_Data_WeaponMaterialSkin();
 #endif // #if WITH_EDITOR
+
+#pragma endregion WeaponMaterialSkin
 
 #pragma endregion Data
 

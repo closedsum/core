@@ -493,7 +493,7 @@ public:
 	template<typename T>
 	T* GetRObject()
 	{
-		Cast<T>(GetRObject());
+		return Cast<T>(GetRObject());
 	}
 
 	UObject* GetOwner()

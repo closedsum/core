@@ -1121,25 +1121,25 @@ void ACsWeapon::PlayAnimation_Reload()
 	Payload->NameAsString	= ECsWeaponCachedString::Str::PlayAnimation_Reload_Internal;
 	
 
-	FCsRoutine* R = Scheduler->Allocate(Payload);
-	R->timers[0]  = GetWorld()->TimeSeconds;
-	R->ints[0]    = 0;
-	R->floats[0]  = GetAnimationLength(WeaponFireMode_MAX, ReloadAnim);
+	FCsRoutine* R		 = Scheduler->Allocate(Payload);
+	R->timers[CS_FIRST]  = 0;
+	R->ints[CS_FIRST]    = 0;
+	R->floats[CS_FIRST]  = GetAnimationLength(WeaponFireMode_MAX, ReloadAnim);
 
 	Scheduler->StartRoutine(Schedule, R);
 }
 
-PT_THREAD(ACsWeapon::PlayAnimation_Reload_Internal(struct FCsRoutine* r))
+CS_COROUTINE(ACsWeapon, PlayAnimation_Reload_Internal)
 {
 	ACsWeapon* mw			 = Cast<ACsWeapon>(r->GetActor());
 	UCsCoroutineScheduler* s = r->scheduler;
 	UWorld* w				 = mw->GetWorld();
 
 	const TCsWeaponAnim ReloadAnim = mw->ReloadAnim;
-	const float ReloadTime		   = r->floats[0];
+	const float ReloadTime		   = r->floats[CS_FIRST];
 
-	const float CurrentTime = w->GetTimeSeconds();
-	const float StartTime   = r->startTime;
+	r->timers[CS_FIRST]		 += r->deltaSeconds;
+	const float& ElapsedTime  = r->timers[CS_FIRST];
 
 	CS_COROUTINE_BEGIN(r);
 
@@ -1148,7 +1148,7 @@ PT_THREAD(ACsWeapon::PlayAnimation_Reload_Internal(struct FCsRoutine* r))
 	mw->PlayAnimation(mw->WeaponFireMode_MAX, ReloadAnim, 0);
 
 	if (ReloadTime > 0)
-		CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - StartTime >= ReloadTime);
+		CS_COROUTINE_WAIT_UNTIL(r, ElapsedTime >= ReloadTime);
 	
 	CS_COROUTINE_END(r);
 }
@@ -1385,16 +1385,16 @@ void ACsWeapon::StartChargeFire(const TCsWeaponFireMode &FireMode)
 	Scheduler->StartRoutine(Schedule, R);
 }
 
-PT_THREAD(ACsWeapon::StartChargeFire_Internal(struct FCsRoutine* r))
+CS_COROUTINE(ACsWeapon, StartChargeFire_Internal)
 {
 	ACsWeapon* mw			 = Cast<ACsWeapon>(r->GetActor());
 	UCsCoroutineScheduler* s = r->scheduler;
 	UWorld* w				 = mw->GetWorld();
 
-	const float CurrentTime = w->TimeSeconds;
-	float StartTime			= r->timers[0];
-	float WaitTime			= r->floats[0];
-	float FireStartLoopTime = FMath::Max(mw->TimeBetweenShots.Max(), mw->TimeBetweenAutoShots.Max());
+	r->timers[CS_FIRST]		+= r->deltaSeconds;
+	const float& ElapsedTime = r->timers[CS_FIRST];
+	const float& WaitTime	 = r->floats[CS_FIRST];
+	float FireStartLoopTime  = FMath::Max(mw->TimeBetweenShots.Max(), mw->TimeBetweenAutoShots.Max());
 
 	const TCsWeaponFireMode FireMode = (TCsWeaponFireMode)r->ints[0];
 
@@ -1407,18 +1407,17 @@ PT_THREAD(ACsWeapon::StartChargeFire_Internal(struct FCsRoutine* r))
 	// ChargeFireStart
 	mw->PlayAnimation(FireMode, mw->ChargeFireStartAnim);
 
-	r->timers[0] = CurrentTime;
-	StartTime = CurrentTime;
+	r->timers[CS_FIRST] = 0;
+	r->floats[CS_FIRST] = mw->GetAnimationLength(FireMode, mw->ChargeFireStartAnim);
 
-	r->floats[0] = mw->GetAnimationLength(FireMode, mw->ChargeFireStartAnim);
-	WaitTime = r->floats[0];
-
-	CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - StartTime >= FMath::Max(WaitTime - StartToLoopBlendTime, 0.0f));
+	CS_COROUTINE_WAIT_UNTIL(r, ElapsedTime >= FMath::Max(WaitTime - StartToLoopBlendTime, 0.0f));
 
 	// ChargeFireLoop
 	mw->PlayAnimation(FireMode, mw->ChargeFireLoopAnim);
 
-	CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - r->startTime >= FireStartLoopTime);
+	r->timers[CS_FIRST] = 0;
+
+	CS_COROUTINE_WAIT_UNTIL(r, ElapsedTime >= FireStartLoopTime);
 
 	CS_COROUTINE_END(r);
 }
@@ -1593,14 +1592,14 @@ void ACsWeapon::FireWeapon(const TCsWeaponFireMode &FireMode)
 	Payload->Name			= ECsWeaponCachedName::Name::FireWeapon_Internal;
 	Payload->NameAsString	= ECsWeaponCachedString::Str::FireWeapon_Internal;
 
-	FCsRoutine* R   = Scheduler->Allocate(Payload);
-	R->timers[0]    = 0;
-	R->ints[0]	    = (uint8)FireMode;
+	FCsRoutine* R		= Scheduler->Allocate(Payload);
+	R->timers[CS_FIRST] = 0;
+	R->ints[CS_FIRST]	= (uint8)FireMode;
 
 	Scheduler->StartRoutine(Schedule, R);
 }
 
-PT_THREAD(ACsWeapon::FireWeapon_Internal(struct FCsRoutine* r))
+CS_COROUTINE(ACsWeapon, FireWeapon_Internal)
 {
 	ACsWeapon* mw			 = Cast<ACsWeapon>(r->GetActor());
 	UCsCoroutineScheduler* s = r->scheduler;
@@ -1608,8 +1607,8 @@ PT_THREAD(ACsWeapon::FireWeapon_Internal(struct FCsRoutine* r))
 
 	const TCsWeaponFireMode FireMode = (TCsWeaponFireMode)r->ints[0];
 
-	r->timers[0]			+= r->deltaSeconds;
-	const float& ElapsedTime = r->timers[0];
+	r->timers[CS_FIRST]		+= r->deltaSeconds;
+	const float& ElapsedTime = r->timers[CS_FIRST];
 
 #if WITH_EDITOR 
 	// In Editor Preview Window
@@ -1632,7 +1631,7 @@ PT_THREAD(ACsWeapon::FireWeapon_Internal(struct FCsRoutine* r))
 	{
 		{
 			// Set the StartTime
-			r->timers[0] = 0;
+			r->timers[CS_FIRST] = 0;
 
 			// Play Fire Sound
 			if (!mw->LoopFireSound.Get(FireMode))
@@ -1837,22 +1836,21 @@ void ACsWeapon::DrawFireProjectile(class ACsProjectile* Projectile, const FVecto
 	Payload->NameAsString		= ECsWeaponCachedString::Str::DrawFireProjectile_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
-	R->timers[0] = GetWorld()->GetTimeSeconds();
 	R->vectors[0] = Start;
 	R->vectors[1] = End;
 
 	Scheduler->StartRoutine(Schedule, R);
 }
 
-PT_THREAD(ACsWeapon::DrawFireProjectile_Internal(struct FCsRoutine* r))
+CS_COROUTINE(ACsWeapon, DrawFireProjectile_Internal)
 {
 	ACsProjectile* p		 = Cast<ACsProjectile>(r->GetRObject());
 	UCsCoroutineScheduler* s = r->scheduler;
 	UWorld* w				 = p->GetWorld();
 
-	const FVector Start		 = r->vectors[0];
-	const FVector End		 = r->vectors[1];
-	const float DeltaSeconds = r->deltaSeconds;
+	const FVector& Start	  = r->vectors[0];
+	const FVector& End		  = r->vectors[1];
+	const float& DeltaSeconds = r->deltaSeconds;
 
 	CS_COROUTINE_BEGIN(r);
 

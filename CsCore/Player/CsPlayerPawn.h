@@ -27,6 +27,41 @@ struct FCsPlayerPawnCalcCameraTraceInfo
 	TArray<FHitResult> OutHits;
 };
 
+// Enums
+#pragma region
+
+namespace ECsPlayerPawnRoutine
+{
+	enum Type
+	{
+		ECsPlayerPawnRoutine_MAX = ECsPawnRoutine::ECsPawnRoutine_MAX,
+	};
+}
+
+namespace ECsPlayerPawnRoutine
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+	}
+
+	FORCEINLINE const FString& ToString(const Type &EType)
+	{
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		return Type::ECsPlayerPawnRoutine_MAX;
+	}
+}
+
+#define ECS_PLAYER_PAWN_ROUTINE_MAX (uint8)ECsPlayerPawnRoutine::ECsPlayerPawnRoutine_MAX
+typedef ECsPlayerPawnRoutine::Type TCsPlayerPawnRoutine;
+
+#pragma endregion Enums
+
 UCLASS(config = Game)
 class CSCORE_API ACsPlayerPawn : public ACsPawn
 {

@@ -24,6 +24,10 @@ TCsProjectileType ACsData_Projectile::GetBaseProjectileType() { return BaseProje
 // Stats
 #pragma region
 
+
+FName ACsData_Projectile::GetItemShortCode() { return NAME_None; }
+const FName& ACsData_Projectile::GetItemShortCodeRef() { return ECsCachedName::Name::None; }
+
 float ACsData_Projectile::GetLifeTime() { return 0.0f; }
 float ACsData_Projectile::GetMaxRange() { return 0.0f; }
 

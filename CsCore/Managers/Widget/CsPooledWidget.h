@@ -103,6 +103,9 @@ struct FCsPooledWidgetCache : public FCsPooledObjectCache
 	}
 
 	UCsPooledWidget* GetWidget() { return Widget.IsValid() ? Widget.Get() : nullptr; }
+	
+	template<typename T>
+	T* GetWidget() { return Cast<T>(GetWidget()); }
 };
 
 UCLASS()

@@ -130,6 +130,10 @@ void ACsGameState::PostActorCreated()
 	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
 	GameInstance->LevelState	  = ECsLevelState::Loaded;
 
+	GameInstance->CurrentGameFrame = 0;
+	GameInstance->OnTick_Event.Clear();
+	GameInstance->OnTick_Event.AddUObject(this, &ACsGameState::OnTick_GameInstance);
+
 	// Coroutine Scheduler
 	UCsCoroutineScheduler::Get()->MyOwner = this;
 	OnTick_Event.AddUObject(UCsCoroutineScheduler::Get(), &UCsCoroutineScheduler::OnTick_Update);
@@ -165,6 +169,13 @@ void ACsGameState::SeamlessTravelTransitionCheckpoint(bool bToTransitionMap)
 		JavascriptEntryPoint = nullptr;
 	}
 #endif // #if WITH_EDITOR
+}
+
+void ACsGameState::OnTick_GameInstance(const float &DeltaSeconds)
+{
+	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+
+	++(GameInstance->CurrentGameFrame);
 }
 
 // Routines

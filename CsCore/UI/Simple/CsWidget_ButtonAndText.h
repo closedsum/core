@@ -18,6 +18,8 @@ class CSCORE_API UCsWidget_ButtonAndText : public UCsSimpleWidget
 	UPROPERTY(meta = (BindWidget))
 	UButton* MyButton;
 
+	virtual UPanelSlot* GetChildSlot() override;
+
 	UFUNCTION()
 	virtual void MyButton_OnPressed();
 

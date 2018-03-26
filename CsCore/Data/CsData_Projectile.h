@@ -19,6 +19,11 @@ class CSCORE_API ACsData_Projectile : public ACsData
 
 // Stats
 #pragma region
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+	virtual FName GetItemShortCode();
+	virtual const FName& GetItemShortCodeRef();
 
 	UFUNCTION(BlueprintCallable, Category = "Stats")
 	virtual float GetLifeTime();
@@ -30,6 +35,7 @@ class CSCORE_API ACsData_Projectile : public ACsData
 
 // Movement
 #pragma region
+public:
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	virtual TEnumAsByte<ECsProjectileMovement::Type> GetMovementType();
@@ -50,6 +56,7 @@ class CSCORE_API ACsData_Projectile : public ACsData
 
 // Damage
 #pragma region
+public:
 
 	UFUNCTION(BlueprintCallable, Category = "Damage")
 	virtual int32 GetDamage();
@@ -70,6 +77,7 @@ class CSCORE_API ACsData_Projectile : public ACsData
 
 // Mesh
 #pragma region
+public:
 
 	UFUNCTION(BlueprintCallable, Category = "Mesh")
 	virtual UStaticMesh* GetMesh(const TEnumAsByte<ECsViewType::Type> &ViewType);
@@ -84,6 +92,7 @@ class CSCORE_API ACsData_Projectile : public ACsData
 
 // Transform
 #pragma region
+public:
 
 	UFUNCTION(BlueprintCallable, Category = "Transform")
 	virtual FTransform GetTransform();
@@ -92,6 +101,7 @@ class CSCORE_API ACsData_Projectile : public ACsData
 
 // Collision
 #pragma region
+public:
 
 	UFUNCTION(BlueprintCallable, Category = "Collision")
 	virtual TEnumAsByte<ECollisionEnabled::Type> GetCollisionEnabled();
@@ -99,7 +109,11 @@ class CSCORE_API ACsData_Projectile : public ACsData
 	UFUNCTION(BlueprintCallable, Category = "Collision")
 	virtual TEnumAsByte<ECollisionChannel> GetCollisionObjectType();
 
+private:
 	FCollisionResponseContainer DefaultCollisionResponseContainer;
+
+public:
+
 	UFUNCTION(BlueprintCallable, Category = "Collision")
 	virtual FCollisionResponseContainer& GetCollisionResponseContainer();
 
@@ -110,6 +124,7 @@ class CSCORE_API ACsData_Projectile : public ACsData
 
 // FX
 #pragma region
+public:
 
 	UFUNCTION(BlueprintCallable, Category = "FX")
 	virtual bool GetUseTrailFX();
@@ -120,6 +135,7 @@ class CSCORE_API ACsData_Projectile : public ACsData
 
 // Impact
 #pragma region
+public:
 
 	virtual class ACsData_ProjectileImpact* GetData_Impact();
 

@@ -246,3 +246,17 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerInventoryTransacti
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerCraftingTransactions;
 
 #pragma endregion Crafting
+
+// Collision
+#pragma region
+
+	// Trace
+#pragma region
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerTraceTransactions;
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawManagerTraceRequests;
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawManagerTraceResponses;
+
+#pragma endregion Trace
+
+#pragma endregion Collision

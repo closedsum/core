@@ -38,7 +38,33 @@ void UCsSimpleWidget::Init(const FGeometry& MyGeometry)
 }
 
 void UCsSimpleWidget::Init(const int32 &Index){}
-void UCsSimpleWidget::OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime){}
+void UCsSimpleWidget::OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime)
+{
+	// TODO: When the widget is part of a WidgetComponent, there is NO Slot
+	if (!Slot)
+		return;
+
+	// Position
+	if (Position.HasChanged())
+	{
+		UCanvasPanelSlot* ParentSlot = Cast<UCanvasPanelSlot>(Slot);
+		ParentSlot->SetPosition(Position.Get());
+	}
+	// Size
+	if (Size.HasChanged())
+	{
+		//SetDesiredSizeInViewport(Size.Get());
+
+		// Set Size of TextBlock
+		UCanvasPanelSlot* ChildSlot = Cast<UCanvasPanelSlot>(GetChildSlot());
+		ChildSlot->SetSize(Size.Get());
+		// Set Size of Widget
+		UCanvasPanelSlot* ParentSlot = Cast<UCanvasPanelSlot>(Slot);
+		ParentSlot->SetSize(Size.Get());
+	}
+	Position.Clear();
+	Size.Clear();
+}
 
 void UCsSimpleWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
@@ -65,6 +91,8 @@ void UCsSimpleWidget::Hide()
 	SetVisibility(ESlateVisibility::Hidden);
 	SetIsEnabled(false);
 }
+
+UPanelSlot* UCsSimpleWidget::GetChildSlot() { return nullptr; }
 
 void UCsSimpleWidget::SetPosition(const FVector2D &InPosition)
 {

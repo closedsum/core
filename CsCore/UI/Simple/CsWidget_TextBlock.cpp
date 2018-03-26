@@ -49,6 +49,11 @@ void UCsWidget_TextBlock::Hide()
 	Super::Hide();
 }
 
+UPanelSlot* UCsWidget_TextBlock::GetChildSlot()
+{
+	return MyText->Slot;
+}
+
 void UCsWidget_TextBlock::SetString(const FString &InString)
 {
 	Text.SetString(InString);

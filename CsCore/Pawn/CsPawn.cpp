@@ -3,6 +3,7 @@
 #include "CsCore.h"
 #include "CsCVars.h"
 #include "Common/CsCommon.h"
+#include "Coroutine/CsCoroutineScheduler.h"
 
 // Data
 #include "Data/CsDataMapping.h"
@@ -12,8 +13,34 @@
 // Managers
 #include "Managers/Inventory/CsManager_Inventory.h"
 
+#include "UI/State/CsHealthBarComponent.h"
+
+#include "Game/CsGameInstance.h"
 #include "Player/CsPlayerStateBase.h"
 #include "Weapon/CsWeapon.h"
+
+// Cache
+#pragma region
+
+namespace ECsPawnCachedName
+{
+	namespace Name
+	{
+		// Functions
+		const FName HandleRespawnTimer_Internal = FName("ACsPawn::HandleRespawnTimer_Internal");
+	};
+}
+
+namespace ECsPawnCachedString
+{
+	namespace Str
+	{
+		// Functions
+		const FString HandleRespawnTimer_Internal = TEXT("ACsPawn::HandleRespawnTimer_Internal");
+	};
+}
+
+#pragma endregion Cache
 
 ACsPawn::ACsPawn(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -21,11 +48,47 @@ ACsPawn::ACsPawn(const FObjectInitializer& ObjectInitializer)
 	CurrentViewType = ECsViewType::ThirdPerson;
 
 	WeaponClass = ACsWeapon::StaticClass();
+
+	// State
+	HealthHandle.Set(&Health);
+	HealthHandle.OnChange_Event.AddUObject(this, &ACsPawn::OnChange_Health);
+
+	bFirstSpawn = true;
+
+	OnHandleRespawnTimerFinished_Event.AddUObject(this, &ACsPawn::OnHandleRespawnTimerFinished);
+	// Data
+	bCacheData = true;
+	// Weapon
+	CurrentWeaponSlotHandle.Set(&CurrentWeaponSlot);
+	CurrentWeaponSlotHandle.OnChange_Event.AddUObject(this, &ACsPawn::OnChange_CurrentWeaponSlot);
+}
+
+void ACsPawn::OnConstructor(const FObjectInitializer& ObjectInitializer)
+{
+	if (bHealthBar)
+	{
+		HealthBarComponent = ObjectInitializer.CreateDefaultSubobject<UCsHealthBarComponent>(this, TEXT("HealthBarComponent"));
+		HealthBarComponent->SetVisibility(false);
+		HealthBarComponent->SetHiddenInGame(true);
+		HealthBarComponent->SetCollisionObjectType(ECC_Visibility);
+		HealthBarComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		HealthBarComponent->SetCastShadow(false);
+		HealthBarComponent->SetMobility(EComponentMobility::Movable);
+		HealthBarComponent->SetupAttachment(GetRootComponent());
+		HealthBarComponent->Deactivate();
+	}
 }
 
 void ACsPawn::PostActorCreated()
 {
 	Super::PostActorCreated();
+
+	// TODO: Test placing actors in the level and see how this affects spawning weapons
+	if (UCsCommon::IsPlayInEditor(GetWorld()) || UCsCommon::IsPlayInEditorPreview(GetWorld()))
+		return;
+
+	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+	UniqueObjectId				  = GameInstance->GetUniqueObjectId();
 
 	FActorSpawnParameters SpawnInfo;
 	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
@@ -59,13 +122,13 @@ void ACsPawn::PostInitializeComponents()
 	}
 }
 
-void ACsPawn::Tick(float DeltaSeconds)
+void ACsPawn::PreTick(const float &DeltaSeconds)
 {
-	Super::Tick(DeltaSeconds);
-
 	RecordRoot();
 	RecordVelocityAndSpeed();
 }
+
+void ACsPawn::PostTick(const float &DeltaSeconds){}
 
 void ACsPawn::OnTickActor_HandleCVars(const float &DeltaSeconds) {};
 
@@ -83,6 +146,25 @@ void ACsPawn::OnTick_HandleSetup() {}
 // State
 #pragma region
 
+	// Health
+#pragma region
+
+void ACsPawn::SetHealth(const float& InHealth)
+{
+	Health = FMath::Max(0.0f, InHealth);
+
+	HealthHandle.UpdateIsDirty();
+
+	if (HealthHandle.HasChanged())
+	{
+		HealthHandle.Clear();
+	}
+}
+
+void ACsPawn::OnChange_Health(const float &Value){}
+
+#pragma endregion Health
+
 void ACsPawn::ApplyDamage(FCsDamageEvent* Event)
 {
 	Health -= FMath::CeilToInt(Event->Damage);
@@ -93,7 +175,62 @@ void ACsPawn::ApplyDamage(FCsDamageEvent* Event)
 	}
 }
 
+void ACsPawn::OnApplyDamage_Result(FCsDamageResult* Result){}
+
 void ACsPawn::Die(){}
+
+	// Spawn
+#pragma region
+
+void ACsPawn::HandleRespawnTimer()
+{
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+
+	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+
+	Payload->Schedule		= Schedule;
+	Payload->Function		= &ACsPawn::HandleRespawnTimer_Internal;
+	Payload->Actor			= this;
+	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
+	Payload->Add			= &ACsPawn::AddRoutine;
+	Payload->Remove			= &ACsPawn::RemoveRoutine;
+	Payload->Type			= (uint8)ECsPawnRoutine::HandleRespawnTimer_Internal;
+	Payload->DoInit			= true;
+	Payload->PerformFirstRun = false;
+	Payload->Name			= ECsPawnCachedName::Name::HandleRespawnTimer_Internal;
+	Payload->NameAsString	= ECsPawnCachedString::Str::HandleRespawnTimer_Internal;
+
+	FCsRoutine* R = Scheduler->Allocate(Payload);
+
+	Scheduler->StartRoutine(Schedule, R);
+}
+
+CS_COROUTINE(ACsPawn, HandleRespawnTimer_Internal)
+{
+	ACsPawn* p				 = r->GetActor<ACsPawn>();
+	UCsCoroutineScheduler* s = r->scheduler;
+	UWorld* w				 = p->GetWorld();
+	ACsPlayerStateBase* ps	 = Cast<ACsPlayerStateBase>(p->PlayerState);
+
+	ACsData_Character* Data_Character = p->GetMyData_Character();
+
+	const float CurrentTime = w->GetTimeSeconds();
+	const float& StartTime  = r->startTime;
+	const float RespawnTime = Data_Character->GetRespawnTime();
+
+	CS_COROUTINE_BEGIN(r);
+
+	CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - StartTime >= RespawnTime);
+
+	p->OnHandleRespawnTimerFinished_Event.Broadcast(ps->UniqueMappingId);
+
+	CS_COROUTINE_END(r);
+}
+
+void ACsPawn::OnHandleRespawnTimerFinished(const uint8 &MappingId) {}
+
+#pragma endregion Spawn
 
 #pragma endregion State
 
@@ -107,6 +244,14 @@ void ACsPawn::Die(){}
 
 bool ACsPawn::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
 {
+	const TCsPawnRoutine RoutineType = (TCsPawnRoutine)Type;
+
+	// HandleRespawnTimer_Internal
+	if (RoutineType == ECsPawnRoutine::HandleRespawnTimer_Internal)
+	{
+		HandleRespawnTimer_Internal_Routine = Routine;
+		return true;
+	}
 	return false;
 }
 
@@ -117,6 +262,15 @@ bool ACsPawn::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
 
 bool ACsPawn::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
 {
+	const TCsPawnRoutine RoutineType = (TCsPawnRoutine)Type;
+
+	// HandleRespawnTimer_Internal
+	if (RoutineType == ECsPawnRoutine::HandleRespawnTimer_Internal)
+	{
+		check(HandleRespawnTimer_Internal_Routine == Routine);
+		HandleRespawnTimer_Internal_Routine = nullptr;
+		return true;
+	}
 	return false;
 }
 
@@ -232,12 +386,24 @@ ACsData_CharacterMaterialSkin* ACsPawn::GetMyData_CharacterMaterialSkin()
 	return MyData_CharacterMaterialSkin.IsValid() ? MyData_CharacterMaterialSkin.Get() : nullptr;
 }
 
+void ACsPawn::SetDatas(){}
 void ACsPawn::ApplyData_Character(){}
+void ACsPawn::OnRespawn_ApplyData_Character(){}
 
 #pragma endregion Data
 
 // Weapons
 #pragma region
+
+void ACsPawn::OnChange_CurrentWeaponSlot(const TCsWeaponSlot &Slot)
+{
+	ACsPlayerStateBase* MyPlayerState = Cast<ACsPlayerStateBase>(PlayerState);
+
+	OnChange_CurrentWeaponSlot_Event.Broadcast(MyPlayerState->UniqueMappingId, LastWeaponSlot, CurrentWeaponSlot);
+#if WITH_EDITOR
+	OnChange_CurrentWeaponSlot_ScriptEvent.Broadcast(MyPlayerState->UniqueMappingId, LastWeaponIndex, CurrentWeaponIndex);
+#endif // #if WITH_EDITOR
+}
 
 ACsWeapon* ACsPawn::GetWeapon(const TCsWeaponSlot &Slot)
 {
@@ -270,6 +436,7 @@ ACsData_WeaponMaterialSkin* ACsPawn::GetCurrentData_WeaponMaterialSkin()
 }
 
 void ACsPawn::ApplyData_Weapon(){}
+void ACsPawn::OnRespawn_Setup_Weapon(){}
 
 #pragma endregion Weapons
 

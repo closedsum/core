@@ -19,6 +19,8 @@
 UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	CurrentGameFrame = 0;
+
 #if WITH_EDITOR
 	ForcePopulateAssetReferences = true;
 #endif // #if WITH_EDITOR
@@ -445,3 +447,14 @@ CS_COROUTINE(UCsGameInstance, PerformLevelTransition_Internal)
 }
 
 #pragma endregion Level
+
+// Object
+#pragma region
+
+uint64 UCsGameInstance::GetUniqueObjectId()
+{
+	++UniqueObjectIdIndex;
+	return UniqueObjectIdIndex;
+}
+
+#pragma endregion Object

@@ -4,8 +4,8 @@
 #include "Types/CsTypes_Damage.h"
 #include "CsManager_Damage.generated.h"
 
-#define CS_DAMAGE_POOL_SIZE 255
-#define CS_DAMAGE_POOL_INVALID_INDEX 255
+#define CS_DAMAGE_EVENT_POOL_SIZE 255
+#define CS_DAMAGE_RESULT_POOL_SIZE 255
 
 UCLASS()
 class CSCORE_API ACsManager_Damage : public AActor
@@ -23,14 +23,25 @@ public:
 	static void Init(UObject* InOwner);
 	static ACsManager_Damage* Get(UWorld* InWorld);
 
-	FCsDamageEvent Pool[CS_DAMAGE_POOL_SIZE];
+// Event
+#pragma region
 
-	uint8 PoolIndex;
+	FCsDamageEvent EventPool[CS_DAMAGE_EVENT_POOL_SIZE];
 
-	virtual FCsDamageEvent* Allocate();
+	uint8 EventPoolIndex;
 
-	TArray<FCsDamageEvent*> ActiveEvents;
+	virtual FCsDamageEvent* AllocateEvent();
 
-	virtual void DeAllocate(const uint8 &Index);
-	virtual void DeAllocate(FCsDamageEvent* InEvent);
+#pragma endregion Event
+
+// Event
+#pragma region
+
+	FCsDamageResult ResultPool[CS_DAMAGE_RESULT_POOL_SIZE];
+
+	uint8 ResultPoolIndex;
+
+	virtual FCsDamageResult* AllocateResult();
+
+#pragma endregion Event
 };

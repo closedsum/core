@@ -13,6 +13,7 @@ ACsData_Character::ACsData_Character(const FObjectInitializer& ObjectInitializer
 #pragma region
 
 int32 ACsData_Character::GetHealth() { return 0; }
+float ACsData_Character::GetRespawnTime() { return 0.0f; }
 
 #pragma endregion Stats
 
@@ -29,6 +30,8 @@ FCsInventoryLoadout* ACsData_Character::GetLoadout() { return nullptr; }
 float ACsData_Character::GetCapsuleRadius() { return 0.0f; }
 float ACsData_Character::GetCapsuleHalfHeight() { return 0.0f; }
 FCollisionResponseContainer& ACsData_Character::GetCollisionResponseContainer() { return DefaultCollisionResponseContainer; }
+
+FCsHeadCollision* ACsData_Character::GetHeadCollision() { return nullptr; }
 
 #pragma endregion Collision
 

@@ -40,7 +40,7 @@ namespace ECsPoolTransaction
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE FString ToActionString(const Type &EType)
+	FORCEINLINE const FString& ToActionString(const Type &EType)
 	{
 		if (EType == Type::Allocate) { return Str::Allocate.Values[CS_FSTRING_ENUM_ALT_1_VALUE]; }
 		if (EType == Type::PreDeallocate) { return Str::PreDeallocate.Values[CS_FSTRING_ENUM_ALT_1_VALUE]; }

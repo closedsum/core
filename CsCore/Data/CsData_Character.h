@@ -20,6 +20,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Character Data")
 	virtual int32 GetHealth();
 
+	UFUNCTION(BlueprintCallable, Category = "Character Data")
+	virtual float GetRespawnTime();
+
 #pragma endregion Stats
 
 // Inventory
@@ -39,9 +42,16 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Character Data")
 	virtual float GetCapsuleHalfHeight();
 
+private:
+
 	FCollisionResponseContainer DefaultCollisionResponseContainer;
+
+public:
+
 	UFUNCTION(BlueprintCallable, Category = "Collision")
 	virtual FCollisionResponseContainer& GetCollisionResponseContainer();
+
+	virtual FCsHeadCollision* GetHeadCollision();
 
 #pragma endregion Collision
 

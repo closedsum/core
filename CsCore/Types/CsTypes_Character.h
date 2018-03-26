@@ -1,7 +1,7 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_Primitive.h"
 
-//#include "CsTypes_Weapon.generated.h"
+#include "CsTypes_Character.generated.h"
 #pragma once
 
 // Character
@@ -94,5 +94,44 @@ typedef TCsCharacterAnimVariation(*TCsStringToCharacterAnimVariation)(const FStr
 											CHARACTER_ANIM_VARIATION_MAX = (uint8)CharacterAnimVariation_MAX \
 											CharacterAnimVariationToString = &ECsCharacterAnimVariation::ToString; \
 											StringToCharacterAnimVariation = &ECsCharacterAnimVariation::ToType;
+
+USTRUCT(BlueprintType)
+struct FCsHeadCollision
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** Radius of collision sphere around head. Used for in Big Head Mode */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float Radius;
+
+	/** Name of the bone / joint where the head collision will be checked */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
+	FName BoneName;
+
+	/** Offset from BoneName from where the head collision will be checked */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
+	FVector Offset;
+
+	FCsHeadCollision() {}
+	~FCsHeadCollision() {}
+
+	FCsHeadCollision& operator=(const FCsHeadCollision& B)
+	{
+		Radius = B.Radius;
+		BoneName = B.BoneName;
+		Offset = B.Offset;
+		return *this;
+	}
+
+	bool operator==(const FCsHeadCollision& B) const
+	{
+		return Radius != B.Radius && BoneName != BoneName && Offset == B.Offset;
+	}
+
+	bool operator!=(const FCsHeadCollision& B) const
+	{
+		return !(*this == B);		
+	}
+};
 
 #pragma endregion Character

@@ -3,9 +3,53 @@
 #include "Pawn/CsPawn.h"
 #include "Types/CsTypes_AI.h"
 #include "Types/CsTypes_Pool.h"
+#include "Types/CsTypes_Coroutine.h"
+#include "Types/CsTypes_Trace.h"
 #include "CsAIPawn.generated.h"
 
-//DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry, const uint8&, MappingId, const float&, DeltaSeconds);
+// RotateToFaceBBEntry
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Start, const uint8&, MappingId, const float&, AngleDelta, const float&, RotationRate);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Start, const uint8&, const float&, const float&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Finish, const uint8&, MappingId);
+DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Finish, const uint8&);
+// PlayerSeesBody
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsAIPawn_OnPlayerSeesBody, const uint8&, MappingId, const bool, Value);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsAIPawn_OnPlayerSeesBody, const uint8&, const bool&);
+
+// Enums
+#pragma region
+
+namespace ECsAIPawnRoutine
+{
+	enum Type
+	{
+		ECsAIPawnRoutine_MAX = ECsPawnRoutine::ECsPawnRoutine_MAX,
+	};
+}
+
+namespace ECsAIPawnRoutine
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+	}
+
+	FORCEINLINE const FString& ToString(const Type &EType)
+	{
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		return Type::ECsAIPawnRoutine_MAX;
+	}
+}
+
+#define ECS_AI_PAWN_ROUTINE_MAX (uint8)ECsAIPawnRoutine::ECsAIPawnRoutine_MAX
+typedef ECsAIPawnRoutine::Type TCsAIPawnRoutine;
+
+#pragma endregion Enums
 
 USTRUCT(BlueprintType)
 struct FCsAIPawnCache : public FCsPooledObjectCache
@@ -99,7 +143,7 @@ class CSCORE_API ACsAIPawn : public ACsPawn
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "AI")
 	uint8 Type_Script;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+	UPROPERTY(BlueprintReadWrite, Category = "AI")
 	struct FCsAIPawnCache Cache;
 
 	void Init(const int32 &Index, const TCsAIType &InType);
@@ -121,4 +165,79 @@ class CSCORE_API ACsAIPawn : public ACsPawn
 	virtual void DeAllocate();
 
 	virtual void OnTick_HandleCVars(const float &DeltaSeconds);
+
+// Setup
+#pragma region
+public:
+
+	TCsAIState CurrentState;
+	TCsAIState SpawnedState;
+
+	TCsAISetup CurrentSetup;
+
+#pragma endregion Setup
+
+// State
+#pragma region
+public:
+
+	virtual void OnChange_Health(const float &Value) override;
+
+#pragma endregion State
+
+// Behavior Tree
+#pragma region
+public:
+
+	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
+	FBindableDynEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Start OnBTTask_RotateToFaceBBEntry_Start_ScriptEvent;
+
+	FBindableEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Start OnBTTask_RotateToFaceBBEntry_Start_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
+	FBindableDynEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Finish OnBTTask_RotateToFaceBBEntry_Finish_ScriptEvent;
+
+	FBindableEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Finish OnBTTask_RotateToFaceBBEntry_Finish_Event;
+
+#pragma endregion Behavior Tree
+
+// Player
+#pragma region
+public:
+
+	UPROPERTY(BlueprintReadOnly, Category = "Player")
+	float PlayerToMeDot;
+
+	void OnTick_CalculatePlayerToMeDot();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player", meta = (ClampMin = "0.0", UIMin = "0.0", ClampMax = "1.0", UIMax = "1.0"))
+	float PlayerSeesBodyMinDot;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player", meta = (ClampMin = "0.0", UIMin = "0.0", ClampMax = "90.0", UIMax = "80.0"))
+	float PlayerSeesBodyAngle;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Player")
+	bool bPlayerSeesBody;
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+	virtual void SetPlayerSeesBody(const bool &Value);
+
+	TCsBool_Ref bPlayerSeesBodyHandle;
+	virtual void OnChange_bPlayerSeesBody(const bool &Value);
+
+	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
+	FBindableDynEvent_CsAIPawn_OnPlayerSeesBody OnPlayerSeesBody_ScriptEvent;
+
+	FBindableEvent_CsAIPawn_OnPlayerSeesBody OnPlayerSeesBody_Event;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float CheckPlayerSeesBodyInterval;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Player")
+	float CheckPlayerSeesBodyStartTime;
+
+	void OnTick_CheckPlayerSeesBody();
+	void CheckPlayerSeesBody_Response(FCsTraceResponse* Response);
+
+#pragma endregion Player
 };

@@ -133,6 +133,8 @@ class CSCORE_API UCsGameInstance : public UGameInstance
 	UPROPERTY(BlueprintAssignable, Category = "Input")
 	FBindableDynEvent_CsGameInstance_OnTick OnTick_ScriptEvent;
 
+	uint64 CurrentGameFrame;
+
 // Routines
 #pragma region
 public:
@@ -231,4 +233,15 @@ public:
 	struct FCsRoutine* PerformLevelTransition_Internal_Routine;
 
 #pragma endregion Level
+
+// Object
+#pragma region
+public:
+
+	UPROPERTY()
+	uint64 UniqueObjectIdIndex;
+
+	uint64 GetUniqueObjectId();
+
+#pragma endregion Object
 };

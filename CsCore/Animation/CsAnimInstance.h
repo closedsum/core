@@ -3,18 +3,66 @@
 #include "Animation/AnimInstance.h"
 #include "Types/CsTypes_Anim.h"
 #include "Types/CsTypes_AnimInstance.h"
+#include "Types/CsTypes_Coroutine.h"
 #include "CsAnimInstance.generated.h"
+
+// Enums
+#pragma region
+
+namespace ECsAnimInstanceRoutine
+{
+	enum Type
+	{
+		ECsAnimInstanceRoutine_MAX,
+	};
+}
+
+namespace ECsAnimInstanceRoutine
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+	}
+
+	FORCEINLINE const FString& ToString(const Type &EType)
+	{
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		return Type::ECsAnimInstanceRoutine_MAX;
+	}
+}
+
+#define ECS_ANIM_INSTANCE_ROUTINE_MAX (uint8)ECsAnimInstanceRoutine::ECsAnimInstanceRoutine_MAX
+typedef ECsAnimInstanceRoutine::Type TCsAnimInstanceRoutine;
+
+#pragma endregion Enums
 
 UCLASS()
 class CSCORE_API UCsAnimInstance : public UAnimInstance
 {
 	GENERATED_UCLASS_BODY()
 
-// Event Graph
+	virtual void BeginDestroy() override;
+
+// Routine
 #pragma region
 public:
 
-	virtual void BeginDestroy() override;
+	static void AddRoutine(UObject* InAnimInstance, struct FCsRoutine* Routine, const uint8 &Type);
+	virtual bool AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type);
+
+	static void RemoveRoutine(UObject* InAnimInstance, struct FCsRoutine* Routine, const uint8 &Type);
+	virtual bool RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type);
+
+#pragma endregion Routine
+
+// Event Graph
+#pragma region
+public:
 
 	/** Init */
 	virtual void NativeInitializeAnimation() override;

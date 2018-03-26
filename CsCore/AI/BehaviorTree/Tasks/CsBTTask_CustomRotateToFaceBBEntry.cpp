@@ -11,6 +11,7 @@
 #include "Common/CsCommon.h"
 
 #include "AI/Pawn/CsAIPawn.h"
+#include "AI/CsAIPlayerState.h"
 
 UCsBTTask_CustomRotateToFaceBBEntry::UCsBTTask_CustomRotateToFaceBBEntry(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -56,10 +57,13 @@ EBTNodeResult::Type UCsBTTask_CustomRotateToFaceBBEntry::ExecuteTask(UBehaviorTr
 
 	EBTNodeResult::Type Result = EBTNodeResult::Failed;
 
-	APawn* Pawn								 = AIController->GetPawn();
+	ACsAIPawn* Pawn							 = Cast<ACsAIPawn>(AIController->GetPawn());
 	const FVector PawnLocation				 = Pawn->GetActorLocation();
 	const FVector PawnForward				 = Pawn->GetActorForwardVector();
 	const UBlackboardComponent* MyBlackboard = OwnerComp.GetBlackboardComponent();
+
+	float AngleDifference = 0.0f;
+
 	// Object
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Object::StaticClass())
 	{
@@ -68,7 +72,7 @@ EBTNodeResult::Type UCsBTTask_CustomRotateToFaceBBEntry::ExecuteTask(UBehaviorTr
 
 		if (ActorValue != NULL)
 		{
-			const float AngleDifference = CalculateAngleDifferenceDot(Pawn->GetActorForwardVector(), (ActorValue->GetActorLocation() - PawnLocation).GetSafeNormal2D());
+			AngleDifference = CalculateAngleDifferenceDot(Pawn->GetActorForwardVector(), (ActorValue->GetActorLocation() - PawnLocation).GetSafeNormal2D());
 			
 			if (AngleDifference >= AngleDeltaForSuccessDot)
 			{
@@ -93,7 +97,7 @@ EBTNodeResult::Type UCsBTTask_CustomRotateToFaceBBEntry::ExecuteTask(UBehaviorTr
 		
 		if (FAISystem::IsValidLocation(KeyValue))
 		{
-			const float AngleDifference = CalculateAngleDifferenceDot(PawnForward, (KeyValue - PawnLocation).GetSafeNormal2D());
+			AngleDifference = CalculateAngleDifferenceDot(PawnForward, (KeyValue - PawnLocation).GetSafeNormal2D());
 
 			if (AngleDifference >= AngleDeltaForSuccessDot)
 			{
@@ -117,7 +121,7 @@ EBTNodeResult::Type UCsBTTask_CustomRotateToFaceBBEntry::ExecuteTask(UBehaviorTr
 		if (FAISystem::IsValidRotation(KeyValue))
 		{
 			const FVector DirectionVector = KeyValue.Vector();
-			const float AngleDifference	  = CalculateAngleDifferenceDot(PawnForward, DirectionVector);
+			AngleDifference				  = CalculateAngleDifferenceDot(PawnForward, DirectionVector);
 
 			if (AngleDifference >= AngleDeltaForSuccessDot)
 			{
@@ -135,6 +139,15 @@ EBTNodeResult::Type UCsBTTask_CustomRotateToFaceBBEntry::ExecuteTask(UBehaviorTr
 		}
 	}
 
+	if (Result == EBTNodeResult::InProgress)
+	{
+		ACsAIPlayerState* PlayerState = Cast<ACsAIPlayerState>(Pawn->PlayerState);
+
+		Pawn->OnBTTask_RotateToFaceBBEntry_Start_Event.Broadcast(PlayerState->UniqueMappingId, AngleDifference, RotationRate);
+#if WITH_EDITOR
+		Pawn->OnBTTask_RotateToFaceBBEntry_Start_ScriptEvent.Broadcast(PlayerState->UniqueMappingId, AngleDifference, RotationRate);
+#endif // #if WITH_EDITOR
+	}
 	return Result;
 }
 
@@ -148,7 +161,7 @@ void UCsBTTask_CustomRotateToFaceBBEntry::TickTask(UBehaviorTreeComponent& Owner
 	}
 	else
 	{
-		APawn* Pawn = AIController->GetPawn();
+		ACsAIPawn* Pawn = Cast<ACsAIPawn>(AIController->GetPawn());
 
 		FCsBTTask_CustomRotateToFaceBBEntryMemory* MyMemory = (FCsBTTask_CustomRotateToFaceBBEntryMemory*)NodeMemory;
 		check(MyMemory);
@@ -166,6 +179,13 @@ void UCsBTTask_CustomRotateToFaceBBEntry::TickTask(UBehaviorTreeComponent& Owner
 		{
 			CleanUp(*AIController, NodeMemory);
 			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+
+			ACsAIPlayerState* PlayerState = Cast<ACsAIPlayerState>(Pawn->PlayerState);
+
+			Pawn->OnBTTask_RotateToFaceBBEntry_Finish_Event.Broadcast(PlayerState->UniqueMappingId);
+#if WITH_EDITOR
+			Pawn->OnBTTask_RotateToFaceBBEntry_Finish_ScriptEvent.Broadcast(PlayerState->UniqueMappingId);
+#endif // #if WITH_EDITOR
 		}
 		// LERP to goal Angle
 		else

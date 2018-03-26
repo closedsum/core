@@ -42,6 +42,31 @@ void UCsAnimInstance::BeginDestroy()
 #endif // #if WITH_EDITOR
 }
 
+// Routine
+#pragma region
+
+/*static*/ void UCsAnimInstance::AddRoutine(UObject* InAnimInstance, struct FCsRoutine* Routine, const uint8 &Type)
+{
+	Cast<UCsAnimInstance>(InAnimInstance)->AddRoutine_Internal(Routine, Type);
+}
+
+bool UCsAnimInstance::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
+{
+	return false;
+}
+
+/*static*/ void UCsAnimInstance::RemoveRoutine(UObject* InAnimInstance, struct FCsRoutine* Routine, const uint8 &Type)
+{
+	Cast<UCsAnimInstance>(InAnimInstance)->RemoveRoutine_Internal(Routine, Type);
+}
+
+bool UCsAnimInstance::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
+{
+	return false;
+}
+
+#pragma endregion Routine
+
 // Init
 void UCsAnimInstance::NativeInitializeAnimation()
 {

@@ -1,10 +1,10 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "UI/Simple/CsSimpleWidget.h"
-#include "CsWidget_TextBlock.generated.h"
+#include "CsWidget_ProgressBar.generated.h"
 
 UCLASS()
-class CSCORE_API UCsWidget_TextBlock : public UCsSimpleWidget
+class CSCORE_API UCsWidget_ProgressBar : public UCsSimpleWidget
 {
 	GENERATED_UCLASS_BODY()
 
@@ -15,11 +15,11 @@ class CSCORE_API UCsWidget_TextBlock : public UCsSimpleWidget
 	virtual void Hide() override;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* MyText;
+	UProgressBar* MyBar;
 
-	FCsWidget_Text Text;
+	FCsWidget_Bar Bar;
 
 	virtual UPanelSlot* GetChildSlot() override;
 
-	virtual void SetString(const FString &InString);
+	void SetPercent(const float &Value);
 };

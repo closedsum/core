@@ -2,10 +2,11 @@
 #include "Managers/Sound/CsManager_Sound.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Managers/Sound/CsSound.h"
 #include "Common/CsCommon.h"
-#include "Game/CsGameState.h"
 
+#include "Managers/Sound/CsSound.h"
+
+#include "Game/CsGameState.h"
 #include "Animation/CsAnimInstance.h"
 
 // static initializations
@@ -279,6 +280,38 @@ ACsSound* ACsManager_Sound::Play(FCsSoundElement* InSound, UObject* InOwner, UOb
 		return nullptr;
 	}
 
+#if WITH_EDITOR
+	// Play in Preview
+	if (InOwner)
+	{
+		if (UWorld* CurrentWorld = InOwner->GetWorld())
+		{
+			const bool IsPreview = UCsCommon::IsPlayInEditorPreview(CurrentWorld) || UCsCommon::IsPlayInEditor(CurrentWorld);
+
+			if (IsPreview)
+			{
+				if (InSound->Bone != NAME_None)
+				{
+					if (USceneComponent* InComponent = Cast<USceneComponent>(InOwner))
+						UGameplayStatics::SpawnSoundAttached(InSound->Get(), InComponent, InSound->Bone, FVector(ForceInit), EAttachLocation::KeepRelativeOffset, false, InSound->VolumeMultiplier, InSound->PitchMultiplier);
+				}
+				else
+				{
+					FVector Location = FVector::ZeroVector;
+
+					if (AActor* InActor = Cast<AActor>(InOwner))
+						Location = InActor->GetActorLocation();
+					if (USceneComponent* InComponent = Cast<USceneComponent>(InOwner))
+						Location = InComponent->GetComponentLocation();
+
+					UGameplayStatics::PlaySoundAtLocation(CurrentWorld, InSound->Get(), Location, InSound->VolumeMultiplier, InSound->PitchMultiplier);
+				}
+				return nullptr;
+			}
+		}
+	}
+#endif // #if WITH_EDITOR
+
 	ACsSound* Sound	  = Allocate();
 	const int32 Count = ActiveSounds.Num();
 
@@ -318,6 +351,23 @@ ACsSound* ACsManager_Sound::Play(FCsSoundElement* InSound, UObject* InOwner, con
 		UE_LOG(LogCs, Warning, TEXT("ACsManager_Sound::Play: Attemping to Play a NULL Sound."));
 		return nullptr;
 	}
+
+#if WITH_EDITOR
+	// Play in Preview
+	if (InOwner)
+	{
+		if (UWorld* CurrentWorld = InOwner->GetWorld())
+		{
+			const bool IsPreview = UCsCommon::IsPlayInEditorPreview(CurrentWorld) || UCsCommon::IsPlayInEditor(CurrentWorld);
+
+			if (IsPreview)
+			{
+				UGameplayStatics::PlaySoundAtLocation(CurrentWorld, InSound->Get(), Location, InSound->VolumeMultiplier, InSound->PitchMultiplier);
+				return nullptr;
+			}
+		}
+	}
+#endif // #if WITH_EDITOR
 
 	ACsSound* Sound	  = Allocate();
 	const int32 Count = ActiveSounds.Num();
@@ -435,6 +485,18 @@ void ACsManager_Sound::Stop(FCsSoundElement* InSound, UObject* InOwner, UObject*
 		UE_LOG(LogCs, Warning, TEXT("ACsManager_Sound::Stop: Attemping to Stop a NULL Sound."));
 		return;
 	}
+
+#if WITH_EDITOR
+	// For Play in Preview
+	if (InOwner)
+	{
+		if (UWorld* CurrentWorld = InOwner->GetWorld())
+		{
+			if (UCsCommon::IsPlayInEditorPreview(CurrentWorld) || UCsCommon::IsPlayInEditor(CurrentWorld))
+				return;
+		}
+	}
+#endif // #if WITH_EDITOR
 
 	const uint8 Count   = ActiveSounds.Num();
 	uint8 EarliestIndex = Count;

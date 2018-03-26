@@ -149,7 +149,12 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 	}
 
 	class ACsInteractiveActor* GetActor() { return Actor.IsValid() ? Actor.Get() : nullptr; }
+	template<typename T>
+	T* GetActor() { return Cast<T>(GetActor()); }
+
 	class ACsData_Interactive* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
+	template<typename T>
+	T* GetData() { return Cast<T>(GetData()); }
 };
 
 UCLASS()

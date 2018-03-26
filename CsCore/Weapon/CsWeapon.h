@@ -15,6 +15,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsWeapon_OnApplyDa
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsWeapon_OnTick, const uint8&, WeaponIndex, const float&, DeltaSeconds);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsWeapon_Override_CheckStateIdle, const uint8&, WeaponIndex);
 
+// Ammo
+DECLARE_MULTICAST_DELEGATE_FourParams(FBindableEvent_CsWeapon_OnChangeCurrentAmmo, const TCsWeaponSlot&, const int32&, const int32&, const int32&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FBindableDynEvent_CsWeapon_OnChangeCurrentAmmo, const uint8&, WeaponIndex, const int32&, Ammo, const int32&, MaxAmmo, const int32&, AmmoReserve);
+
 // Firing
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsWeapon_Override_FireWeapon, const uint8&, WeaponIndex, const uint8&, FireMode);
 // Reloading
@@ -312,6 +316,10 @@ class CSCORE_API ACsWeapon : public AActor
 
 	virtual void PostInitializeComponents() override;
 	virtual void OutsideWorldBounds() override;
+	virtual void PostActorCreated() override;
+
+	UPROPERTY()
+	uint64 UniqueObjectId;
 
 // Members
 #pragma region
@@ -463,7 +471,7 @@ class CSCORE_API ACsWeapon : public AActor
 	class ACsData_Projectile* GetMyData_Projectile(const TCsWeaponFireMode &FireMode, const bool &IsCharged);
 
 	template<typename T>
-	T* GetMyData_Projectile(const TCsWeaponFireMode, const bool &IsCharged)
+	T* GetMyData_Projectile(const TCsWeaponFireMode &FireMode, const bool &IsCharged)
 	{
 		return Cast<T>(GetMyData_Projectile(FireMode, IsCharged));
 	}
@@ -625,16 +633,35 @@ public:
 
 	TCsWeaponState FiringState;
 
+	// Ammo
+#pragma region
+
 	FCsWeapon_Ref_int32 MaxAmmo;
 	virtual int32 GetMaxAmmo(const int32 &Index);
 
 	UPROPERTY(BlueprintReadWrite, Category = "Firing")
 	int32 CurrentAmmo;
 
+	TCsInt32_Ref CurrentAmmoHandle;
+
+	virtual void OnChange_CurrentAmmo(const int32 &Value);
+
+	FBindableEvent_CsWeapon_OnChangeCurrentAmmo OnChange_CurrentAmmo_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Firing")
+	FBindableDynEvent_CsWeapon_OnChangeCurrentAmmo OnChange_CurrentAmmo_ScriptEvent;
+
 	virtual void IncrementCurrentAmmo(const int32 &Index);
 	virtual void ResetCurrentAmmo(const int32 &Index);
 
 	bool HasUnlimitedAmmo;
+
+	virtual const FName& GetAmmoShortCode(const TCsWeaponFireMode &FireMode, const bool &IsCharged);
+	virtual int32 GetAmmoReserve(const int32 &Index);
+
+	virtual void ConsumeAmmo();
+
+#pragma endregion Ammo
 
 	FCsWeapon_TArrayRef_uint8 ProjectilesPerShot;
 	virtual uint8 GetProjectilesPerShot(const TCsWeaponFireMode &FireMode);

@@ -9,13 +9,16 @@
 
 // Data
 #include "Data/CsData_ProjectileImpact.h"
+#include "Data/CsData_Character.h"
 
 // Managers
 #include "Managers/FX/CsManager_FX.h"
 #include "Managers/Projectile/CsManager_Projectile.h"
 #include "Managers/Projectile/CsProjectile.h"
 #include "Managers/Damage/CsManager_Damage.h"
+#include "Managers/Trace/CsManager_Trace.h"
 
+#include "Game/CsGameInstance.h"
 #include "Game/CsGameState.h"
 #include "Player/CsPlayerState.h"
 #include "Pawn/CsPawn.h"
@@ -125,6 +128,9 @@ ACsWeapon::ACsWeapon(const FObjectInitializer& ObjectInitializer)
 	//ReloadAnim = ECsWeaponAnim::Reload;
 
 	// Make sure to call InitMultiValueMembers() in the Child Class
+
+	CurrentAmmoHandle.Set(&CurrentAmmo);
+	CurrentAmmoHandle.OnChange_Event.AddUObject(this, &ACsWeapon::OnChange_CurrentAmmo);
 }
 
 void ACsWeapon::PostInitializeComponents()
@@ -135,6 +141,17 @@ void ACsWeapon::PostInitializeComponents()
 void ACsWeapon::OutsideWorldBounds()
 {
 	return;
+}
+
+void ACsWeapon::PostActorCreated()
+{
+	Super::PostActorCreated();
+
+	if (UCsCommon::IsPlayInEditor(GetWorld()) || UCsCommon::IsPlayInEditorPreview(GetWorld()))
+		return;
+
+	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+	UniqueObjectId				  = GameInstance->GetUniqueObjectId();
 }
 
 // Members
@@ -309,7 +326,7 @@ void ACsWeapon::SetMultiValueMembers()
 	MaxAmmo.Set(iVal);
 	MaxAmmo.Set(CS_WEAPON_DATA_VALUE, Data->GetMaxAmmoAddr());
 
-	CurrentAmmo = MaxAmmo.Get(CS_WEAPON_DATA_VALUE);
+	ResetCurrentAmmo(CS_WEAPON_DATA_VALUE);
 
 	// Firing
 	{
@@ -965,7 +982,7 @@ void ACsWeapon::HandleState_Firing(const TCsWeaponFireMode &FireMode)
 {
 	CurrentProjectilePerShotIndex.Set(FireMode, CurrentAmmo > ProjectilesPerShot.GetEX(FireMode) ? 0 : ProjectilesPerShot.GetEX(FireMode) - CurrentAmmo);
 
-	const float TimeSeconds = GetWorld()->TimeSeconds;
+	const float TimeSeconds = GetWorld()->GetTimeSeconds();
 
 	Fire_StartTime.Set(FireMode, TimeSeconds);
 	LastState    = CurrentState;
@@ -975,7 +992,7 @@ void ACsWeapon::HandleState_Firing(const TCsWeaponFireMode &FireMode)
 
 	if (!HasUnlimitedAmmo)
 	{
-		CurrentAmmo = FMath::Max(0, CurrentAmmo - ProjectilesPerShot.Get(FireMode));
+		//CurrentAmmo = FMath::Max(0, CurrentAmmo - ProjectilesPerShot.Get(FireMode));
 
 		// Recharge Ammo
 		if (AllowRechargeAmmo.Get(CS_WEAPON_DATA_VALUE))
@@ -1104,25 +1121,25 @@ void ACsWeapon::PlayAnimation_Reload()
 	Payload->NameAsString	= ECsWeaponCachedString::Str::PlayAnimation_Reload_Internal;
 	
 
-	FCsRoutine* R = Scheduler->Allocate(Payload);
-	R->timers[0]  = GetWorld()->TimeSeconds;
-	R->ints[0]    = 0;
-	R->floats[0]  = GetAnimationLength(WeaponFireMode_MAX, ReloadAnim);
+	FCsRoutine* R		 = Scheduler->Allocate(Payload);
+	R->timers[CS_FIRST]  = 0;
+	R->ints[CS_FIRST]    = 0;
+	R->floats[CS_FIRST]  = GetAnimationLength(WeaponFireMode_MAX, ReloadAnim);
 
 	Scheduler->StartRoutine(Schedule, R);
 }
 
-PT_THREAD(ACsWeapon::PlayAnimation_Reload_Internal(struct FCsRoutine* r))
+CS_COROUTINE(ACsWeapon, PlayAnimation_Reload_Internal)
 {
 	ACsWeapon* mw			 = Cast<ACsWeapon>(r->GetActor());
 	UCsCoroutineScheduler* s = r->scheduler;
 	UWorld* w				 = mw->GetWorld();
 
 	const TCsWeaponAnim ReloadAnim = mw->ReloadAnim;
-	const float ReloadTime		   = r->floats[0];
+	const float ReloadTime		   = r->floats[CS_FIRST];
 
-	const float CurrentTime = w->GetTimeSeconds();
-	const float StartTime   = r->startTime;
+	r->timers[CS_FIRST]		 += r->deltaSeconds;
+	const float& ElapsedTime  = r->timers[CS_FIRST];
 
 	CS_COROUTINE_BEGIN(r);
 
@@ -1131,7 +1148,7 @@ PT_THREAD(ACsWeapon::PlayAnimation_Reload_Internal(struct FCsRoutine* r))
 	mw->PlayAnimation(mw->WeaponFireMode_MAX, ReloadAnim, 0);
 
 	if (ReloadTime > 0)
-		CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - StartTime >= ReloadTime);
+		CS_COROUTINE_WAIT_UNTIL(r, ElapsedTime >= ReloadTime);
 	
 	CS_COROUTINE_END(r);
 }
@@ -1179,17 +1196,7 @@ void ACsWeapon::PlaySound(const TCsWeaponFireMode &FireMode, const TCsWeaponSoun
 	ACsData_ProjectileWeapon* Data	= GetMyData_Weapon<ACsData_ProjectileWeapon>();
 	const TCsViewType ViewType		= GetCurrentViewType();
 
-#if WITH_EDITOR 
-	// In Editor Preview Window
-	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
-	{
-	}
-	// In Game
-	else
-#endif // #if WITH_EDITOR
-	{
-		Data->PlaySound(GetWorld(), ViewType, FireMode, SoundType, GetMyPawn(), GetSoundParent());
-	}
+	Data->PlaySound(GetWorld(), ViewType, FireMode, SoundType, GetMyOwner(), GetSoundParent());
 }
 
 void ACsWeapon::StopSound(const TCsWeaponFireMode &FireMode, const TCsWeaponSound &SoundType)
@@ -1197,17 +1204,7 @@ void ACsWeapon::StopSound(const TCsWeaponFireMode &FireMode, const TCsWeaponSoun
 	ACsData_ProjectileWeapon* Data  = GetMyData_Weapon<ACsData_ProjectileWeapon>();
 	const TCsViewType ViewType		= GetCurrentViewType();
 
-#if WITH_EDITOR 
-	// In Editor Preview Window
-	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
-	{
-	}
-	// In Game
-	else
-#endif // #if WITH_EDITOR
-	{
-		Data->StopSound(GetWorld(), ViewType, FireMode, SoundType, GetMyPawn(), GetSoundParent());
-	}
+	Data->StopSound(GetWorld(), ViewType, FireMode, SoundType, GetMyOwner(), GetSoundParent());
 }
 
 #pragma endregion Sound
@@ -1235,13 +1232,50 @@ bool ACsWeapon::CanUnEquip()
 // Firing
 #pragma region
 
+	// Ammo
+#pragma region
+
 int32 ACsWeapon::GetMaxAmmo(const int32 &Index) { return MaxAmmo.Get(Index); }
+
+void ACsWeapon::OnChange_CurrentAmmo(const int32 &Value)
+{
+	OnChange_CurrentAmmo_Event.Broadcast(WeaponSlot, CurrentAmmo, GetMaxAmmo(CS_WEAPON_DATA_VALUE), GetAmmoReserve(CS_WEAPON_DATA_VALUE));
+#if WITH_EDITOR
+	OnChange_CurrentAmmo_ScriptEvent.Broadcast(WeaponIndex, CurrentAmmo, GetMaxAmmo(CS_WEAPON_DATA_VALUE), GetAmmoReserve(CS_WEAPON_DATA_VALUE));
+#endif // #if WITH_EDITOR
+}
+
 void ACsWeapon::IncrementCurrentAmmo(const int32 &Index)
 {
-	CurrentAmmo++;
+	++CurrentAmmo;
 	CurrentAmmo = FMath::Min(CurrentAmmo, GetMaxAmmo(Index));
+
+	CurrentAmmoHandle.Resolve();
 }
-void ACsWeapon::ResetCurrentAmmo(const int32 &Index) { CurrentAmmo = GetMaxAmmo(Index); }
+void ACsWeapon::ResetCurrentAmmo(const int32 &Index) 
+{ 
+	CurrentAmmo = GetMaxAmmo(Index);
+	CurrentAmmoHandle.Resolve();
+}
+
+const FName& ACsWeapon::GetAmmoShortCode(const TCsWeaponFireMode &FireMode, const bool &IsCharged) 
+{ 
+	return GetMyData_Projectile<ACsData_Projectile>(FireMode, IsCharged)->GetItemShortCodeRef();
+}
+
+int32 ACsWeapon::GetAmmoReserve(const int32 &Index)
+{
+	return GetMaxAmmo(Index);
+}
+
+void ACsWeapon::ConsumeAmmo()
+{
+	--CurrentAmmo;
+	CurrentAmmoHandle.Resolve();
+}
+
+#pragma endregion Ammo
+
 uint8 ACsWeapon::GetProjectilesPerShot(const TCsWeaponFireMode &FireMode) { return ProjectilesPerShot.Get(FireMode); }
 float ACsWeapon::GetTimeBetweenProjectilesPerShot(const TCsWeaponFireMode &FireMode) { return TimeBetweenProjectilesPerShot.Get(FireMode); }
 float ACsWeapon::GetTimeBetweenShots(const TCsWeaponFireMode &FireMode) { return TimeBetweenShots.Get(FireMode); }
@@ -1331,16 +1365,16 @@ void ACsWeapon::StartChargeFire(const TCsWeaponFireMode &FireMode)
 	Scheduler->StartRoutine(Schedule, R);
 }
 
-PT_THREAD(ACsWeapon::StartChargeFire_Internal(struct FCsRoutine* r))
+CS_COROUTINE(ACsWeapon, StartChargeFire_Internal)
 {
 	ACsWeapon* mw			 = Cast<ACsWeapon>(r->GetActor());
 	UCsCoroutineScheduler* s = r->scheduler;
 	UWorld* w				 = mw->GetWorld();
 
-	const float CurrentTime = w->TimeSeconds;
-	float StartTime			= r->timers[0];
-	float WaitTime			= r->floats[0];
-	float FireStartLoopTime = FMath::Max(mw->TimeBetweenShots.Max(), mw->TimeBetweenAutoShots.Max());
+	r->timers[CS_FIRST]		+= r->deltaSeconds;
+	const float& ElapsedTime = r->timers[CS_FIRST];
+	const float& WaitTime	 = r->floats[CS_FIRST];
+	float FireStartLoopTime  = FMath::Max(mw->TimeBetweenShots.Max(), mw->TimeBetweenAutoShots.Max());
 
 	const TCsWeaponFireMode FireMode = (TCsWeaponFireMode)r->ints[0];
 
@@ -1353,18 +1387,17 @@ PT_THREAD(ACsWeapon::StartChargeFire_Internal(struct FCsRoutine* r))
 	// ChargeFireStart
 	mw->PlayAnimation(FireMode, mw->ChargeFireStartAnim);
 
-	r->timers[0] = CurrentTime;
-	StartTime = CurrentTime;
+	r->timers[CS_FIRST] = 0;
+	r->floats[CS_FIRST] = mw->GetAnimationLength(FireMode, mw->ChargeFireStartAnim);
 
-	r->floats[0] = mw->GetAnimationLength(FireMode, mw->ChargeFireStartAnim);
-	WaitTime = r->floats[0];
-
-	CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - StartTime >= FMath::Max(WaitTime - StartToLoopBlendTime, 0.0f));
+	CS_COROUTINE_WAIT_UNTIL(r, ElapsedTime >= FMath::Max(WaitTime - StartToLoopBlendTime, 0.0f));
 
 	// ChargeFireLoop
 	mw->PlayAnimation(FireMode, mw->ChargeFireLoopAnim);
 
-	CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - r->startTime >= FireStartLoopTime);
+	r->timers[CS_FIRST] = 0;
+
+	CS_COROUTINE_WAIT_UNTIL(r, ElapsedTime >= FireStartLoopTime);
 
 	CS_COROUTINE_END(r);
 }
@@ -1539,14 +1572,14 @@ void ACsWeapon::FireWeapon(const TCsWeaponFireMode &FireMode)
 	Payload->Name			= ECsWeaponCachedName::Name::FireWeapon_Internal;
 	Payload->NameAsString	= ECsWeaponCachedString::Str::FireWeapon_Internal;
 
-	FCsRoutine* R   = Scheduler->Allocate(Payload);
-	R->timers[0]    = GetWorld()->GetTimeSeconds();
-	R->ints[0]	    = (uint8)FireMode;
+	FCsRoutine* R		= Scheduler->Allocate(Payload);
+	R->timers[CS_FIRST] = 0;
+	R->ints[CS_FIRST]	= (uint8)FireMode;
 
 	Scheduler->StartRoutine(Schedule, R);
 }
 
-PT_THREAD(ACsWeapon::FireWeapon_Internal(struct FCsRoutine* r))
+CS_COROUTINE(ACsWeapon, FireWeapon_Internal)
 {
 	ACsWeapon* mw			 = Cast<ACsWeapon>(r->GetActor());
 	UCsCoroutineScheduler* s = r->scheduler;
@@ -1554,8 +1587,8 @@ PT_THREAD(ACsWeapon::FireWeapon_Internal(struct FCsRoutine* r))
 
 	const TCsWeaponFireMode FireMode = (TCsWeaponFireMode)r->ints[0];
 
-	const float CurrentTime = w->GetTimeSeconds();
-	float StartTime			= r->timers[0];
+	r->timers[CS_FIRST]		+= r->deltaSeconds;
+	const float& ElapsedTime = r->timers[CS_FIRST];
 
 #if WITH_EDITOR 
 	// In Editor Preview Window
@@ -1578,8 +1611,7 @@ PT_THREAD(ACsWeapon::FireWeapon_Internal(struct FCsRoutine* r))
 	{
 		{
 			// Set the StartTime
-			r->timers[0] = CurrentTime;
-			StartTime    = CurrentTime;
+			r->timers[CS_FIRST] = 0;
 
 			// Play Fire Sound
 			if (!mw->LoopFireSound.Get(FireMode))
@@ -1605,7 +1637,7 @@ PT_THREAD(ACsWeapon::FireWeapon_Internal(struct FCsRoutine* r))
 					mw->FireProjectile(FireMode, Cache);
 				Cache->Reset();
 			}
-
+			mw->ConsumeAmmo();
 			mw->PlayMuzzleFlash(FireMode);
 			
 			mw->CurrentProjectilePerShotIndex.Add(FireMode, 1);
@@ -1613,7 +1645,7 @@ PT_THREAD(ACsWeapon::FireWeapon_Internal(struct FCsRoutine* r))
 
 		if (mw->CurrentProjectilePerShotIndex.Get(FireMode) < mw->ProjectilesPerShot.Get(FireMode))
 		{
-			CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - StartTime >= mw->TimeBetweenProjectilesPerShot.Get(FireMode));
+			CS_COROUTINE_WAIT_UNTIL(r, ElapsedTime >= mw->TimeBetweenProjectilesPerShot.Get(FireMode));
 		}
 	} while (mw->CurrentProjectilePerShotIndex.Get(FireMode) < mw->ProjectilesPerShot.Get(FireMode));
 
@@ -1784,22 +1816,21 @@ void ACsWeapon::DrawFireProjectile(class ACsProjectile* Projectile, const FVecto
 	Payload->NameAsString		= ECsWeaponCachedString::Str::DrawFireProjectile_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
-	R->timers[0] = GetWorld()->GetTimeSeconds();
 	R->vectors[0] = Start;
 	R->vectors[1] = End;
 
 	Scheduler->StartRoutine(Schedule, R);
 }
 
-PT_THREAD(ACsWeapon::DrawFireProjectile_Internal(struct FCsRoutine* r))
+CS_COROUTINE(ACsWeapon, DrawFireProjectile_Internal)
 {
 	ACsProjectile* p		 = Cast<ACsProjectile>(r->GetRObject());
 	UCsCoroutineScheduler* s = r->scheduler;
 	UWorld* w				 = p->GetWorld();
 
-	const FVector Start		 = r->vectors[0];
-	const FVector End		 = r->vectors[1];
-	const float DeltaSeconds = r->deltaSeconds;
+	const FVector& Start	  = r->vectors[0];
+	const FVector& End		  = r->vectors[1];
+	const float& DeltaSeconds = r->deltaSeconds;
 
 	CS_COROUTINE_BEGIN(r);
 
@@ -1836,6 +1867,7 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 	//ACsPlayerState* MyPlayerState	 = Cast<ACsPlayerState>(Pawn->PlayerState);
 	ACsData_ProjectileWeapon* Data_Weapon	= GetMyData_Weapon<ACsData_ProjectileWeapon>();
 	ACsData_Projectile* Data_Projectile		= Data_Weapon->GetData_Projectile(FireMode, Cache->ChargePercent > 0.0f);
+	ACsManager_Trace* Manager_Trace			= ACsManager_Trace::Get(GetWorld());
 
 	const ECollisionChannel ProjectileCollision = Data_Projectile->GetCollisionObjectType();
 
@@ -1880,64 +1912,131 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 
 			for (int32 I = HitPawnCount - 1; I >= 0; --I)
 			{
-				/*
-				ACsCharacter* HitPawn = HittablePawns[I];
-				//AShooterBot* Bot = Cast<AShooterBot>(ThisChar);
+				ACsPawn* HitPawn				  = HittablePawns[I];
+				ACsData_Character* Data_Character = HitPawn->GetMyData_Character();
 
-				ACsData_Character* Data_Character = HitPawn->GetMyData_Ship();
+				const float ProjectileRadius = Data_Projectile->GetSphereRadius();
 
-				const float HeadRadius = Data_Character->HeadCollision.Radius;
-				const FName BoneName   = Data_Character->HeadCollision.BoneName;
-				const FVector Offset   = Data_Character->HeadCollision.Offset;
+				// Head
+				if (FCsHeadCollision* HeadCollision = Data_Character->GetHeadCollision())
+				{
+					const float HeadRadius	= HeadCollision->Radius;
+					const FName BoneName	= HeadCollision->BoneName;
+					const FVector Offset	= HeadCollision->Offset;
 
-				const FVector HeadLocation = HitPawn->GetMesh()->GetBoneLocation(BoneName) + Offset;
+					const FVector HeadLocation = HitPawn->GetMesh()->GetBoneLocation(BoneName) + Offset;
+					const FVector HeadPoint    = FMath::ClosestPointOnSegment(HeadLocation, Start, End);
+
+					const float DistanceToHead = FVector::Dist(HeadPoint, HeadLocation);
+
+					// Head is close enough to potential trace. Try tracing directly to the Head
+					if (DistanceToHead < HeadRadius + ProjectileRadius)
+					{
+						const float TraceDist	  = 1.5f * (HeadLocation - Start).Size();
+						const FVector TargetPoint = HeadLocation + TraceDist * (HeadLocation - Start);
+
+						FCsTraceRequest* Request = Manager_Trace->AllocateRequest();
+
+						Request->Caller		= this;
+						Request->CallerId	= UniqueObjectId;
+						Request->Start		= Start;
+						Request->End		= TargetPoint;
+						Request->bAsync		= false;
+						Request->Type		= ECsTraceType::Line;
+						Request->Method		= ECsTraceMethod::Single;
+						Request->Query		= ECsTraceQuery::Channel;
+						Request->Params.bReturnPhysicalMaterial = true;
+						Request->Params.AddIgnoredActors(IgnoredActors);
+
+						FCsTraceResponse* Response = Manager_Trace->Trace(Request);
+
+						HitFound = Response->bResult;
+
+						if (Response->OutHits.Num() > CS_EMPTY)
+							UCsCommon::CopyHitResult(Response->OutHits[CS_FIRST], HitResult);
+
+						Response->Reset();
+
+						HittablePawns.RemoveAt(I);
+						break;
+					}
+				}
+
+				// Body
 				const FVector BodyLocation = HitPawn->GetCapsuleComponent()->GetComponentLocation();
 
 				const FVector BodyLocationXY = FVector(BodyLocation.X, BodyLocation.Y, 0);
 				const float BodyLocationZ    = BodyLocation.Z;
 
-				const FVector HeadPoint = FMath::ClosestPointOnSegment(HeadLocation, Start, End);
 				const FVector BodyPoint = FMath::ClosestPointOnSegment(BodyLocation, Start, End);
 
 				const FVector BodyPointXY = FVector(BodyPoint.X, BodyPoint.Y, 0);
 				const float BodyPointZ    = BodyPoint.Z;
-
-				const float DistanceToHead = FVector::Dist(HeadPoint, HeadLocation);
 
 				const float BodyXYDistFromLine = FVector::Dist(BodyPointXY, BodyLocationXY);
 				const float BodyZDistFromLine  = FMath::Abs(BodyLocationZ - BodyPointZ);
 
 				const float CharacterRadius  = HittablePawns[I]->GetCapsuleComponent()->GetScaledCapsuleRadius();
 				const float CharacterHeight  = HittablePawns[I]->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
-				const float ProjectileRadius = Data_Projectile->SphereRadius;
 
-				// Head is close enough to potential trace. Try tracing directly to the Head
-				if (DistanceToHead < HeadRadius + ProjectileRadius)
-				{
-					const float TraceDist	  = 1.5f * (HeadLocation - Start).Size();
-					const FVector TargetPoint = HeadLocation + TraceDist * (HeadLocation - Start);
-					HitFound				  = GetWorld()->LineTraceSingleByChannel(HitResult, Start, TargetPoint, ProjectileCollision, CollisionParams);
-					HittablePawns.RemoveAt(I);
-					break;
-				}
 				// Body is close enough to potential trace. Try tracing directly to the body
-				else 
 				if (BodyXYDistFromLine < CharacterRadius + ProjectileRadius && BodyZDistFromLine < CharacterHeight + ProjectileRadius)
 				{
 					const float TraceDist     = 1.5f * (BodyLocation - Start).Size();
 					const FVector TargetPoint = BodyLocation + TraceDist * (BodyLocation - Start);
-					HitFound				  = GetWorld()->LineTraceSingleByChannel(HitResult, Start, TargetPoint, ProjectileCollision, CollisionParams);
+					
+					FCsTraceRequest* Request = Manager_Trace->AllocateRequest();
+
+					Request->Caller		= this;
+					Request->CallerId	= UniqueObjectId;
+					Request->Start		= Start;
+					Request->End		= TargetPoint;
+					Request->bAsync		= false;
+					Request->Type		= ECsTraceType::Line;
+					Request->Method		= ECsTraceMethod::Single;
+					Request->Query		= ECsTraceQuery::Channel;
+					Request->Params.bReturnPhysicalMaterial = true;
+					Request->Params.AddIgnoredActors(IgnoredActors);
+
+					FCsTraceResponse* Response = Manager_Trace->Trace(Request);
+
+					HitFound = Response->bResult;
+
+					if (Response->OutHits.Num() > CS_EMPTY)
+						UCsCommon::CopyHitResult(Response->OutHits[CS_FIRST], HitResult);
+
+					Response->Reset();
+
 					HittablePawns.RemoveAt(I);
 					break;
 				}
-				*/
 			}
 		}
 		// Hit NOT Found and NO Hitscan with cylinder
 		if (!HitFound || 
 			!DoesHitscanUseRadius.Get(FireMode))
 		{
-			HitFound = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ProjectileCollision, CollisionParams);
+			FCsTraceRequest* Request = Manager_Trace->AllocateRequest();
+
+			Request->Caller		= this;
+			Request->CallerId	= UniqueObjectId;
+			Request->Start		= Start;
+			Request->End		= End;
+			Request->bAsync		= false;
+			Request->Type		= ECsTraceType::Line;
+			Request->Method		= ECsTraceMethod::Single;
+			Request->Query		= ECsTraceQuery::Channel;
+			Request->Params.bReturnPhysicalMaterial = true;
+			Request->Params.AddIgnoredActors(IgnoredActors);
+
+			FCsTraceResponse* Response = Manager_Trace->Trace(Request);
+
+			HitFound = Response->bResult;
+
+			if (Response->OutHits.Num() > CS_EMPTY)
+				UCsCommon::CopyHitResult(Response->OutHits[CS_FIRST], HitResult);
+
+			Response->Reset();
 
 			if ((CsCVarDrawLocalPlayerWeaponFireProjectile->GetInt() == CS_CVAR_DRAW &&
 				UCsCommon::IsLocalPawn(GetWorld(), GetMyPawn())) ||
@@ -1952,7 +2051,7 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 		if (HitFound)
 		{
 			ACsManager_Damage* Manager_Damage = ACsManager_Damage::Get(GetWorld());
-			FCsDamageEvent* Event			  = Manager_Damage->Allocate();
+			FCsDamageEvent* Event			  = Manager_Damage->AllocateEvent();
 
 			Event->Damage	  = Data_Projectile->GetDamage();
 			Event->Instigator = GetMyOwner();
@@ -2040,6 +2139,7 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 			//}
 			
 			//FakeProjectile->PlayImpactFX(CurHit.Location, CurHit);
+			Event->Reset();
 		}
 	}
 }

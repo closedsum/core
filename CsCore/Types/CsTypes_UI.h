@@ -91,6 +91,7 @@ namespace ECsSimpleWidgetType
 		Text					UMETA(DisplayName = "Text"),
 		Float					UMETA(DisplayName = "Float"),
 		Button					UMETA(DisplayName = "Button"),
+		Bar						UMETA(DisplayName = "Bar"),
 		ECsSimpleWidgetType_MAX	UMETA(Hidden),
 	};
 }
@@ -104,6 +105,7 @@ namespace ECsSimpleWidgetType
 		const TCsString Text = TCsString(TEXT("Text"), TEXT("text"), TEXT("text"));
 		const TCsString Float = TCsString(TEXT("Float"), TEXT("float"), TEXT("float"));
 		const TCsString Button = TCsString(TEXT("Button"), TEXT("button"), TEXT("button"));
+		const TCsString Bar = TCsString(TEXT("Bar"), TEXT("bar"), TEXT("bar"));
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -111,6 +113,7 @@ namespace ECsSimpleWidgetType
 		if (EType == Type::Text) { return Str::Text.Value; }
 		if (EType == Type::Float) { return Str::Float.Value; }
 		if (EType == Type::Button) { return Str::Button.Value; }
+		if (EType == Type::Bar) { return Str::Bar.Value; }
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
@@ -119,6 +122,7 @@ namespace ECsSimpleWidgetType
 		if (String == Str::Text) { return Type::Text; }
 		if (String == Str::Float) { return Type::Float; }
 		if (String == Str::Button) { return Type::Button; }
+		if (String == Str::Bar) { return Type::Bar; }
 		return Type::ECsSimpleWidgetType_MAX;
 	}
 }
@@ -162,6 +166,7 @@ public:
 		DrawSize = FVector2D(100.0f, 100.0f);
 		Transform = FTransform::Identity;
 	}
+	~FCsWidgetActorInfo(){}
 
 	FCsWidgetActorInfo& operator=(const FCsWidgetActorInfo& B)
 	{
@@ -177,15 +182,94 @@ public:
 
 	bool operator==(const FCsWidgetActorInfo& B) const
 	{
-		return Blueprint == B.Blueprint &&
-			Blueprint_LoadFlags == B.Blueprint_LoadFlags &&
-			Blueprint_Internal == B.Blueprint_Internal &&
-			DrawSize == B.DrawSize &&
-			FollowCamera == B.FollowCamera &&
-			LookAtCamera == B.LookAtCamera;
+		return	Blueprint == B.Blueprint &&
+				Blueprint_LoadFlags == B.Blueprint_LoadFlags &&
+				Blueprint_Internal == B.Blueprint_Internal &&
+				DrawSize == B.DrawSize &&
+				FollowCamera == B.FollowCamera &&
+				LookAtCamera == B.LookAtCamera;
 	}
 
 	bool operator!=(const FCsWidgetActorInfo& B) const
+	{
+		return !(*this == B);
+	}
+
+	UBlueprintGeneratedClass* Get() const
+	{
+		return Blueprint_Internal;
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FCsWidgetComponentInfo
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blueprint")
+	TAssetPtr<class UBlueprint> Blueprint;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blueprint", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	int32 Blueprint_LoadFlags;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+	FVector2D DrawSize;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+	FTransform Transform;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+	bool FollowCamera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float DistanceProjectedOutFromCamera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+	bool LookAtCamera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+	FCsRotatorFlag LockAxes;
+
+private:
+	UPROPERTY(Transient)
+	class UBlueprintGeneratedClass* Blueprint_Internal;
+
+public:
+	FCsWidgetComponentInfo()
+	{
+		CS_SET_BLUEPRINT_BITFLAG(Blueprint_LoadFlags, ECsLoadFlags::Game);
+		CS_SET_BLUEPRINT_BITFLAG(Blueprint_LoadFlags, ECsLoadFlags::UI);
+
+		DrawSize = FVector2D(100.0f, 100.0f);
+		Transform = FTransform::Identity;
+	}
+	~FCsWidgetComponentInfo(){}
+
+	FCsWidgetComponentInfo& operator=(const FCsWidgetComponentInfo& B)
+	{
+		Blueprint = B.Blueprint;
+		Blueprint_LoadFlags = B.Blueprint_LoadFlags;
+		Blueprint_Internal = B.Blueprint_Internal;
+		DrawSize = B.DrawSize;
+		Transform = B.Transform;
+		FollowCamera = B.FollowCamera;
+		LookAtCamera = B.LookAtCamera;
+		LockAxes = B.LockAxes;
+		return *this;
+	}
+
+	bool operator==(const FCsWidgetComponentInfo& B) const
+	{
+		return	Blueprint == B.Blueprint &&
+				Blueprint_LoadFlags == B.Blueprint_LoadFlags &&
+				Blueprint_Internal == B.Blueprint_Internal &&
+				DrawSize == B.DrawSize &&
+				FollowCamera == B.FollowCamera &&
+				LookAtCamera == B.LookAtCamera &&
+				LockAxes == B.LockAxes;
+	}
+
+	bool operator!=(const FCsWidgetComponentInfo& B) const
 	{
 		return !(*this == B);
 	}
@@ -481,6 +565,7 @@ public:
 	TWeakObjectPtr<class UProgressBar> Bar;
 
 	TCsFloat Percent;
+	TCsFLinearColor Color;
 
 public:
 	FCsWidget_Bar()
@@ -496,6 +581,8 @@ public:
 		Visibility.Clear();
 		Percent = Bar->Percent;
 		Percent.Clear();
+		Color = Bar->FillColorAndOpacity;
+		Color.Clear();
 	}
 
 	virtual void OnNativeTick(const float &InDeltaTime) override
@@ -519,13 +606,25 @@ public:
 			if (UProgressBar* B = Get())
 				B->SetPercent(Percent.Get());
 		}
+		// Color
+		if (Color.HasChanged())
+		{
+			if (UProgressBar* B = Get())
+				B->SetFillColorAndOpacity(Color.Get());
+		}
 		Visibility.Clear();
 		Percent.Clear();
+		Color.Clear();
 	}
 
 	void SetPercent(const float &inPercent)
 	{
 		Percent = inPercent;
+	}
+
+	void SetColor(const FLinearColor &inColor)
+	{
+		Color = inColor;
 	}
 
 	UProgressBar* Get() { return Bar.IsValid() ? Bar.Get() : nullptr; }

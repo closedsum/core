@@ -17,9 +17,26 @@ namespace ECsCachedString
 		const FString INVALID = TEXT("INVALID");
 		const FString Dot = TEXT(".");
 		const FString True = TEXT("True");
+		const FString _true = TEXT("true");
 		const FString False = TEXT("False");
+		const FString _false = TEXT("false");
 		const FString Index = TEXT("Index");
 		const FString PREVIEW = TEXT("PREVIEW");
+		const FString Zero = TEXT("0");
+		const FString One = TEXT("1");
+
+		const FString Text = TEXT("Text");
+		const FString Button = TEXT("Button");
+		const FString Image = TEXT("Image");
+
+		// Vector to String
+		const FString XEquals = TEXT("X=");
+		const FString YEquals = TEXT("Y=");
+		const FString ZEquals = TEXT("Z=");
+		// Rotator to String
+		const FString RollEquals = TEXT("Roll=");
+		const FString PitchEquals = TEXT("Pitch=");
+		const FString YawEquals = TEXT("Yaw=");
 	}
 }
 
@@ -34,6 +51,7 @@ namespace ECsCachedName
 {
 	namespace Name
 	{
+		const FName None = NAME_None;
 		const FName Null = FName("NULL");
 	}
 }
@@ -126,6 +144,12 @@ public:
 
 	bool HasChanged() { return IsDirty; }
 	void MarkDirty() { IsDirty = true; }
+
+	void Resolve()
+	{
+		UpdateIsDirty();
+		Clear();
+	}
 };
 
 struct FCsPrimitiveType_int32 : public TCsPrimitiveType<int32>
@@ -1151,6 +1175,12 @@ public:
 	}
 
 	bool HasChanged() { return IsDirty; }
+
+	void Resolve()
+	{
+		UpdateIsDirty();
+		Clear();
+	}
 };
 
 struct FCsPrimitiveType_Ref_bool : public TCsPrimitiveType_Ref<bool>
@@ -1431,6 +1461,17 @@ public:
 	bool HasChanged() { return IsDirty; }
 	bool HasChanged(const U &Index) { return HasChanged((int64)Index); }
 	bool HasChanged(const int64 &Index) { return Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE ? IsDirty : IsDirtys[Index]; }
+
+	void Resolve()
+	{
+		UpdateIsDirty();
+
+		for (uint8 I = 0; I < SIZE; ++I)
+		{
+			UpdateIsDirtys(I);
+		}
+		Clear();
+	}
 };
 
 template<typename T, typename U, uint8 SIZE>
@@ -1801,6 +1842,17 @@ public:
 		const int32 I = (int32)Index;
 		return I <= CS_PRIMITIVE_TYPE_DEFAULT || I >= SIZE ? IsDirty : IsDirtys[I];
 	}
+
+	void Resolve()
+	{
+		UpdateIsDirty();
+
+		for (uint8 I = 0; I < SIZE; ++I)
+		{
+			UpdateIsDirtys(I);
+		}
+		Clear();
+	}
 };
 
 template<typename T, typename U, uint8 SIZE>
@@ -2023,6 +2075,17 @@ public:
 	bool HasChanged() { return IsDirty; }
 	bool HasChanged(const U &Index) { return HasChanged((int64)Index); }
 	bool HasChanged(const int64 &Index) { return Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE ? IsDirty : IsDirtys[Index]; }
+
+	void Resolve()
+	{
+		UpdateIsDirty();
+
+		for (uint8 I = 0; I < SIZE; ++I)
+		{
+			UpdateIsDirtys(I);
+		}
+		Clear();
+	}
 };
 
 template<typename T, typename U>
@@ -2312,6 +2375,17 @@ public:
 	{
 		const int32 I = (int32)Index;
 		return I <= CS_PRIMITIVE_TYPE_DEFAULT || I >= SIZE ? IsDirty : IsDirtys[I];
+	}
+
+	void Resolve()
+	{
+		UpdateIsDirty();
+
+		for (uint8 I = 0; I < SIZE; ++I)
+		{
+			UpdateIsDirtys(I);
+		}
+		Clear();
 	}
 };
 
@@ -2709,6 +2783,246 @@ struct FCsUint8MatrixCoordinate
 	{
 		return 8 // Row
 			 + 8;// Column
+	}
+
+	float GetBytes() const
+	{
+		return (float)GetBits() / 8.0f;
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FCsVectorFlag
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vector")
+	bool X; // 1 bits
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vector")
+	bool Y; // 1 bits
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vector")
+	bool Z; // 1 bits
+
+	FCsVectorFlag()
+	{
+		Reset();
+	}
+	~FCsVectorFlag() {}
+
+	FCsVectorFlag& operator=(const FCsVectorFlag& B)
+	{
+		X = B.X;
+		Y = B.Y;
+		Z = B.Z;
+		return *this;
+	}
+
+	bool operator==(const FCsVectorFlag& B) const
+	{
+		return X == B.X && Y == B.Y && Z == B.Z;
+	}
+
+	bool operator!=(const FCsVectorFlag& B) const
+	{
+		return !(*this == B);
+	}
+
+	void Reset()
+	{
+		X = false;
+		Y = false;
+		Z = false;
+	}
+	
+	FString ToString() const
+	{
+		return FString::Printf(TEXT("X=%s Y=%s Z=%s"), (*ToString_Internal(X)), (*ToString_Internal(Y)), (*ToString_Internal(Z)));
+	}
+	
+private:
+
+	const FString& ToString_Internal(const bool &Value) const 
+	{
+		return Value ? ECsCachedString::Str::True : ECsCachedString::Str::False;
+	}
+
+public:
+
+	bool InitFromString(const FString& InSourceString)
+	{
+		X = Y = Z = false;
+
+		// The initialization is only successful if the X, Y and Z values can all be parsed from the string
+		const bool bSuccessful = InitFromString_Internal(InSourceString, ECsCachedString::Str::XEquals, X) && 
+								 InitFromString_Internal(InSourceString, ECsCachedString::Str::YEquals, Y) &&
+								 InitFromString_Internal(InSourceString, ECsCachedString::Str::ZEquals, Z);
+
+		return bSuccessful;
+	}
+
+private:
+
+	bool InitFromString_Internal(const FString& InSourceString, const FString& SearchString, bool &Value)
+	{
+		FString Bool;
+		FParse::Value(*InSourceString, *SearchString, Bool);
+
+		Bool = Bool.ToLower();
+
+		if (Bool == ECsCachedString::Str::_true || Bool == ECsCachedString::Str::One)
+		{
+			Value = true;
+			return true;
+		}
+		if (Bool == ECsCachedString::Str::_false || Bool == ECsCachedString::Str::Zero)
+		{
+			Value = false;
+			return true;
+		}
+		return false;
+	}
+
+public:
+
+	void Set(const bool &InX, const bool &InY, const bool &InZ)
+	{
+		X = InX;
+		Y = InY;
+		Z = InZ;
+	}
+
+	void ApplyLock(FVector &V)
+	{
+		V.X = X ? 0.0f : V.X;
+		V.Y = Y ? 0.0f : V.Y;
+		V.Z = Z ? 0.0f : V.Z;
+	}
+
+	uint32 GetBits() const
+	{
+		return 1 // X
+			 + 1 // Y
+			 + 1;// Z
+	}
+
+	float GetBytes() const
+	{
+		return (float)GetBits() / 8.0f;
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FCsRotatorFlag
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rotator")
+	bool Roll; // 1 bits
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rotator")
+	bool Pitch; // 1 bits
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rotator")
+	bool Yaw; // 1 bits
+
+	FCsRotatorFlag()
+	{
+		Reset();
+	}
+	~FCsRotatorFlag() {}
+
+	FCsRotatorFlag& operator=(const FCsRotatorFlag& B)
+	{
+		Roll  = B.Roll;
+		Pitch = B.Pitch;
+		Yaw   = B.Yaw;
+		return *this;
+	}
+
+	bool operator==(const FCsRotatorFlag& B) const
+	{
+		return Roll == B.Roll && Pitch == B.Pitch && Yaw == B.Yaw;
+	}
+
+	bool operator!=(const FCsRotatorFlag& B) const
+	{
+		return !(*this == B);
+	}
+
+	void Reset()
+	{
+		Roll = false;
+		Pitch = false;
+		Yaw = false;
+	}
+
+	FString ToString() const
+	{
+		return FString::Printf(TEXT("Roll=%s Pitch=%s Yaw=%s"), (*ToString_Internal(Roll)), (*ToString_Internal(Pitch)), (*ToString_Internal(Yaw)));
+	}
+
+private:
+
+	const FString& ToString_Internal(const bool &Value) const
+	{
+		return Value ? ECsCachedString::Str::True : ECsCachedString::Str::False;
+	}
+
+public:
+
+	bool InitFromString(const FString& InSourceString)
+	{
+		Roll = Pitch = Yaw = false;
+
+		// The initialization is only successful if the Roll, Pitch and Yaw values can all be parsed from the string
+		const bool bSuccessful = InitFromString_Internal(InSourceString, ECsCachedString::Str::RollEquals, Roll) &&
+								 InitFromString_Internal(InSourceString, ECsCachedString::Str::PitchEquals, Pitch) &&
+								 InitFromString_Internal(InSourceString, ECsCachedString::Str::YawEquals, Yaw);
+
+		return bSuccessful;
+	}
+
+private:
+
+	bool InitFromString_Internal(const FString& InSourceString, const FString& SearchString, bool &Value)
+	{
+		FString Bool;
+		FParse::Value(*InSourceString, *SearchString, Bool);
+
+		Bool = Bool.ToLower();
+
+		if (Bool == ECsCachedString::Str::_true || Bool == ECsCachedString::Str::One)
+		{
+			Value = true;
+			return true;
+		}
+		if (Bool == ECsCachedString::Str::_false || Bool == ECsCachedString::Str::Zero)
+		{
+			Value = false;
+			return true;
+		}
+		return false;
+	}
+
+public:
+
+	void Set(const bool &InRoll, const bool &InPitch, const bool &InYaw)
+	{
+		Roll = InRoll;
+		Pitch = InPitch;
+		Yaw = InYaw;
+	}
+
+	void ApplyLock(FRotator &R)
+	{
+		R.Roll = Roll ? 0.0f : R.Roll;
+		R.Pitch = Pitch ? 0.0f : R.Pitch;
+		R.Yaw = Yaw ? 0.0f : R.Yaw;
+	}
+
+	uint32 GetBits() const
+	{
+		return 1 // Roll
+			 + 1 // Pitch
+			 + 1;// Yaw
 	}
 
 	float GetBytes() const

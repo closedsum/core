@@ -494,8 +494,6 @@ class CSCORE_API ACsManager_Input : public AActor
 
 	float CurrentDeltaTime;
 
-	uint64 CurrentGameFrame;
-
 	FCsInput InputPool[CS_INPUT_POOL_SIZE];
 
 	FCsInput* AllocateInput(const TCsInputAction &Action, const TCsInputEvent &Event, const float &Value = 0.0f, const FVector &Location = FVector::ZeroVector, const FRotator &Rotation = FRotator::ZeroRotator);

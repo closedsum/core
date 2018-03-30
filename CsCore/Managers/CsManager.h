@@ -13,6 +13,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsManager_OnDeAllo
 DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsManager_OnDeAllocate, const uint16&);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsManager_OnDeAllocateEX, const int32&, PoolIndex, const int32&, ActiveIndex, const uint8&, Type);
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManager_OnDeAllocateEX, const uint16&, const uint16&, const uint8&);
+// OnCreatePool
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManager_OnCreatePool, UObject*, Object, const uint8&, Type);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsManager_OnCreatePool, UObject*, const uint8&);
 
 UCLASS()
 class CSCORE_API ACsManager : public AActor
@@ -30,6 +33,12 @@ class CSCORE_API ACsManager : public AActor
 	virtual void CreatePool(const int32 &Size);
 	UFUNCTION(BlueprintCallable, Category = "Pool")
 	void CreatePool_Script(const int32 &Size);
+
+	UPROPERTY(BlueprintAssignable, Category = "Pool")
+	FBindableDynEvent_CsManager_OnCreatePool OnCreatePool_ScriptEvent;
+
+	FBindableEvent_CsManager_OnCreatePool OnCreatePool_Event;
+
 	UFUNCTION(BlueprintCallable, Category = "Pool")
 	virtual void AddToPool(UObject* InObject, const uint8 &Type);
 	virtual void AddToPool(const TSubclassOf<class UObject> &ObjectClass, const uint8 &Type, const int32 &Size);

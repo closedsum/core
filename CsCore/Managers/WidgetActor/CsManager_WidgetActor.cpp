@@ -121,6 +121,12 @@ void ACsManager_WidgetActor::CreatePool(const TSubclassOf<class UObject> &Object
 		Widget->Role = ROLE_None;
 		GetWorld()->RemoveNetworkActor(Widget);
 		Widget->Init(I, ClassType);
+
+		OnCreatePool_Event.Broadcast(Widget, Type);
+#if WITH_EDITOR
+		OnCreatePool_ScriptEvent.Broadcast(Widget, Type);
+#endif // #if WITH_EDITOR
+
 		Pool.Add(Widget);
 		WidgetPool.Add(Widget);
 	}
@@ -219,6 +225,11 @@ int32 ACsManager_WidgetActor::GetActivePoolSize(const uint8 &Type)
 	if (!ActorsPtr)
 		return CS_EMPTY;
 	return ActorsPtr->Num();
+}
+
+const TArray<class ACsWidgetActor*>* ACsManager_WidgetActor::GetWidgetActors(const TCsWidgetActorType& Type)
+{
+	return Pools.Find(Type);
 }
 
 bool ACsManager_WidgetActor::IsExhausted(const uint8 &Type)

@@ -36,6 +36,8 @@ public:
 
 	virtual int32 GetActivePoolSize(const uint8 &Type) override;
 
+protected:
+
 	TMap<TCsWidgetActorType, uint8> PoolSizes;
 
 	UPROPERTY()
@@ -44,6 +46,10 @@ public:
 	TMap<TCsWidgetActorType, TArray<class ACsWidgetActor*>> Pools;
 
 	TMap<TCsWidgetActorType, uint8> PoolIndices;
+	
+public:
+
+	const TArray<class ACsWidgetActor*>* GetWidgetActors(const TCsWidgetActorType& Type);
 
 	virtual bool IsExhausted(const uint8 &Type) override;
 
@@ -51,8 +57,11 @@ public:
 
 // Allocate / DeAllocate
 #pragma region
+protected:
 
 	class ACsWidgetActor* Allocate(const TCsWidgetActorType &ClassType);
+
+public:
 
 	virtual void DeAllocate(const uint8 &Type, const int32 &Index) override;
 	virtual void DeAllocateAll() override;
@@ -61,6 +70,7 @@ public:
 
 // Display
 #pragma region
+public:
 
 	class ACsWidgetActor* Display(const TCsWidgetActorType &Type, FCsWidgetActorPayload* Payload, UObject* InOwner, UObject* Parent);
 	class ACsWidgetActor* Display(const TCsWidgetActorType &Type, FCsWidgetActorPayload* Payload, UObject* InOwner);

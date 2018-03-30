@@ -10,18 +10,20 @@
 // Data
 DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsWeapon_OnApplyDataWeapon, const uint8&);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsWeapon_OnApplyDataWeapon, const uint8&, WeaponIndex);
-
 // State
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsWeapon_OnTick, const uint8&, WeaponIndex, const float&, DeltaSeconds);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsWeapon_Override_CheckStateIdle, const uint8&, WeaponIndex);
-
 // Ammo
 DECLARE_MULTICAST_DELEGATE_FourParams(FBindableEvent_CsWeapon_OnChangeCurrentAmmo, const TCsWeaponSlot&, const int32&, const int32&, const int32&);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FBindableDynEvent_CsWeapon_OnChangeCurrentAmmo, const uint8&, WeaponIndex, const int32&, Ammo, const int32&, MaxAmmo, const int32&, AmmoReserve);
-
 // Firing
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsWeapon_Override_FireWeapon, const uint8&, WeaponIndex, const uint8&, FireMode);
-// Reloading
+// Equip
+DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsWeapon_OnEquip, const TCsWeaponSlot&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsWeapon_OnEquip, const uint8&, WeaponIndex);
+// UnEquip
+DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsWeapon_OnUnEquip, const TCsWeaponSlot&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsWeapon_OnUnEquip, const uint8&, WeaponIndex);
 
 // Enums
 #pragma region
@@ -619,6 +621,21 @@ public:
 public:
 
 	bool IsEquipped;
+
+	virtual void Equip();
+
+	FBindableEvent_CsWeapon_OnEquip OnEquip_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Eqiup")
+	FBindableDynEvent_CsWeapon_OnEquip OnEquip_ScriptEvent;
+
+	virtual void UnEquip();
+
+	FBindableEvent_CsWeapon_OnUnEquip OnUnEquip_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Eqiup")
+	FBindableDynEvent_CsWeapon_OnUnEquip OnUnEquip_ScriptEvent;
+
 	bool DoingEquipTransition;
 
 	virtual bool CanUnEquip();

@@ -1212,6 +1212,26 @@ void ACsWeapon::StopSound(const TCsWeaponFireMode &FireMode, const TCsWeaponSoun
 // Equip / UnEquip
 #pragma region
 
+void ACsWeapon::Equip()
+{
+	IsEquipped = true;
+
+	OnEquip_Event.Broadcast(WeaponSlot);
+#if WITH_EDITOR
+	OnEquip_ScriptEvent.Broadcast(WeaponIndex);
+#endif // #if WITH_EDITOR
+}
+
+void ACsWeapon::UnEquip()
+{
+	IsEquipped = false;
+
+	OnUnEquip_Event.Broadcast(WeaponSlot);
+#if WITH_EDITOR
+	OnUnEquip_ScriptEvent.Broadcast(WeaponIndex);
+#endif // #if WITH_EDITOR
+}
+
 bool ACsWeapon::CanUnEquip()
 {
 	if (!IsEquipped)

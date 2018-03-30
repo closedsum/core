@@ -148,6 +148,41 @@ ECsLoadFlags UCsCommon_Load::ViewTypeToLoadFlags(const TCsViewType &ViewType, co
 
 #pragma endregion Enum to Enum Conversion
 
+// Base Structure
+#pragma region
+
+FString UCsCommon_Load::ToString_FInt32Interval(const FInt32Interval &Interval)
+{
+	return FString::Printf(TEXT("Min=%d Max=%d"), Interval.Min, Interval.Max);
+}
+
+bool UCsCommon_Load::InitFromString_FInt32Interval(const FString& InSourceString, FInt32Interval &OutInterval)
+{
+	OutInterval.Min = OutInterval.Max = 0;
+
+	// The initialization is only successful if the Min and Max values can all be parsed from the string
+	const bool bSuccessful = FParse::Value(*InSourceString, TEXT("Min="), OutInterval.Min) && FParse::Value(*InSourceString, TEXT("Max="), OutInterval.Max);
+
+	return bSuccessful;
+}
+
+FString UCsCommon_Load::ToString_FFloatInterval(const FFloatInterval &Interval)
+{
+	return FString::Printf(TEXT("Min=%f Max=%f"), Interval.Min, Interval.Max);
+}
+
+bool UCsCommon_Load::InitFromString_FFloatInterval(const FString& InSourceString, FFloatInterval &OutInterval)
+{
+	OutInterval.Min = OutInterval.Max = 0.0f;
+
+	// The initialization is only successful if the Min and Max values can all be parsed from the string
+	const bool bSuccessful = FParse::Value(*InSourceString, TEXT("Min="), OutInterval.Min) && FParse::Value(*InSourceString, TEXT("Max="), OutInterval.Max);
+
+	return bSuccessful;
+}
+
+#pragma endregion Base Structure
+
 // Json
 #pragma region
 

@@ -33,6 +33,17 @@ class CSCORE_API UCsCommon_Load : public UBlueprintFunctionLibrary
 
 #pragma endregion Enum to Enum Conversion
 
+// Base Structure
+#pragma region
+
+	static FString ToString_FInt32Interval(const FInt32Interval &Interval);
+	static bool InitFromString_FInt32Interval(const FString& InSourceString, FInt32Interval &OutInterval);
+
+	static FString ToString_FFloatInterval(const FFloatInterval &Interval);
+	static bool InitFromString_FFloatInterval(const FString& InSourceString, FFloatInterval &OutInterval);
+
+#pragma endregion Base Structure
+
 // TArray
 #pragma region
 
@@ -466,6 +477,13 @@ template<typename T>
 		InJsonWriter->WriteObjectEnd();
 	}
 
+	template<typename T>
+	static void WriteMemberStructPropertyToJson_BaseStructure(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UStructProperty* &StructProperty, void* InObject, const FString &MemberName, FString(*ToString)(const T&))
+	{
+		if (T* Member = StructProperty->ContainerPtrToValuePtr<T>(InObject))
+			InJsonWriter->WriteValue(MemberName, (*ToString)(*Member));
+	}
+
 	static void WriteMemberIntegralArrayPropertyToJson_uint64(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UArrayProperty* &ArrayProperty, void* InObject, const FString &MemberName);
 
 	static void WriteMemberStructPropertyToJson_Transform(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UStructProperty* &StructProperty, void* InObject, const FString &MemberName);
@@ -652,6 +670,13 @@ template<typename T>
 
 			((*Member)[I].*InitFromString)(Value);
 		}
+	}
+
+	template<typename T>
+	static void WriteToMemberStructPropertyFromJson_BaseStructure(TSharedPtr<class FJsonObject> &JsonObject, UStructProperty* &StructProperty, void* InObject, const FString &MemberName, bool(*InitFromString)(const FString&, T&))
+	{
+		if (T* Member = StructProperty->ContainerPtrToValuePtr<T>(InObject))
+			(*InitFromString)(JsonObject->GetStringField(MemberName), *Member);
 	}
 
 	static void WriteToMemberStructPropertyFromJson_Transform(TSharedPtr<class FJsonObject> &JsonObject, UStructProperty* &StructProperty, void* InObject, const FString &MemberName);

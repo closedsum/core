@@ -459,6 +459,12 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FTransform
 			if (StructProperty->Struct == TBaseStructure<FTransform>::Get())
 			{ WriteMemberStructPropertyToJson_Transform(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+			// FInt32Interval
+			if (StructProperty->Struct == TBaseStructure<FInt32Interval>::Get())
+			{ WriteMemberStructPropertyToJson_BaseStructure<FInt32Interval>(InJsonWriter, StructProperty, InStruct, MemberName, &UCsCommon_Load::ToString_FInt32Interval); continue; }
+			// FFloatInterval
+			if (StructProperty->Struct == TBaseStructure<FFloatInterval>::Get())
+			{ WriteMemberStructPropertyToJson_BaseStructure<FFloatInterval>(InJsonWriter, StructProperty, InStruct, MemberName, &UCsCommon_Load::ToString_FFloatInterval); continue; }
 			// FCsUint8Point
 			if (StructProperty->Struct == FCsUint8Point::StaticStruct())
 			{ WriteMemberStructPropertyToJson_Primitive<FCsUint8Point>(InJsonWriter, StructProperty, InStruct, MemberName, &FCsUint8Point::ToString); continue; }
@@ -1087,6 +1093,12 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FTransform
 			if (StructProperty->Struct == TBaseStructure<FTransform>::Get())
 			{ WriteMemberStructPropertyToJson_Transform(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+			// FInt32Interval
+			if (StructProperty->Struct == TBaseStructure<FInt32Interval>::Get())
+			{ WriteMemberStructPropertyToJson_BaseStructure<FInt32Interval>(InJsonWriter, StructProperty, InStruct, MemberName, &UCsCommon_Load::ToString_FInt32Interval); continue; }
+			// FFloatInterval
+			if (StructProperty->Struct == TBaseStructure<FFloatInterval>::Get())
+			{ WriteMemberStructPropertyToJson_BaseStructure<FFloatInterval>(InJsonWriter, StructProperty, InStruct, MemberName, &UCsCommon_Load::ToString_FFloatInterval); continue; }
 			// FCsUint8Point
 			if (StructProperty->Struct == FCsUint8Point::StaticStruct())
 			{ WriteMemberStructPropertyToJson_Primitive<FCsUint8Point>(InJsonWriter, StructProperty, InStruct, MemberName, &FCsUint8Point::ToString); continue; }
@@ -1692,6 +1704,12 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FTransform
 			if (StructProperty->Struct == TBaseStructure<FTransform>::Get())
 			{ WriteMemberStructPropertyToJson_Transform(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+			// FInt32Interval
+			if (StructProperty->Struct == TBaseStructure<FInt32Interval>::Get())
+			{ WriteMemberStructPropertyToJson_BaseStructure<FInt32Interval>(InJsonWriter, StructProperty, InObject, MemberName, &UCsCommon_Load::ToString_FInt32Interval); continue; }
+			// FFloatInterval
+			if (StructProperty->Struct == TBaseStructure<FFloatInterval>::Get())
+			{ WriteMemberStructPropertyToJson_BaseStructure<FFloatInterval>(InJsonWriter, StructProperty, InObject, MemberName, &UCsCommon_Load::ToString_FFloatInterval); continue; }
 			// FCsUint8Point
 			if (StructProperty->Struct == FCsUint8Point::StaticStruct())
 			{ WriteMemberStructPropertyToJson_Primitive<FCsUint8Point>(InJsonWriter, StructProperty, InObject, MemberName, &FCsUint8Point::ToString); continue; }
@@ -2418,6 +2436,12 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FColor
 			if (StructProperty->Struct == TBaseStructure<FColor>::Get())
 			{ WriteToMemberStructPropertyFromJson_Primitive<FColor>(JsonObject, StructProperty, InStruct, MemberName, &FColor::InitFromString); continue; }
+			// FInt32Interval
+			if (StructProperty->Struct == TBaseStructure<FInt32Interval>::Get())
+			{ WriteToMemberStructPropertyFromJson_BaseStructure<FInt32Interval>(JsonObject, StructProperty, InStruct, MemberName, &UCsCommon_Load::InitFromString_FInt32Interval); continue; }
+			// FFloatInterval
+			if (StructProperty->Struct == TBaseStructure<FFloatInterval>::Get())
+			{ WriteToMemberStructPropertyFromJson_BaseStructure<FFloatInterval>(JsonObject, StructProperty, InStruct, MemberName, &UCsCommon_Load::InitFromString_FFloatInterval); continue; }
 			// FCsUint8Point
 			if (StructProperty->Struct == FCsUint8Point::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson_Primitive<FCsUint8Point>(JsonObject, StructProperty, InStruct, MemberName, &FCsUint8Point::InitFromString); continue; }
@@ -3074,6 +3098,12 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FColor
 			if (StructProperty->Struct == TBaseStructure<FColor>::Get())
 			{ WriteToMemberStructPropertyFromJson_Primitive<FColor>(JsonObject, StructProperty, InStruct, MemberName, &FColor::InitFromString); continue; }
+			// FInt32Interval
+			if (StructProperty->Struct == TBaseStructure<FInt32Interval>::Get())
+			{ WriteToMemberStructPropertyFromJson_BaseStructure<FInt32Interval>(JsonObject, StructProperty, InStruct, MemberName, &UCsCommon_Load::InitFromString_FInt32Interval); continue; }
+			// FFloatInterval
+			if (StructProperty->Struct == TBaseStructure<FFloatInterval>::Get())
+			{ WriteToMemberStructPropertyFromJson_BaseStructure<FFloatInterval>(JsonObject, StructProperty, InStruct, MemberName, &UCsCommon_Load::InitFromString_FFloatInterval); continue; }
 			// FCsUint8Point
 			if (StructProperty->Struct == FCsUint8Point::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson_Primitive<FCsUint8Point>(JsonObject, StructProperty, InStruct, MemberName, &FCsUint8Point::InitFromString); continue; }
@@ -3719,6 +3749,12 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FColor
 			if (StructProperty->Struct == TBaseStructure<FColor>::Get())
 			{ WriteToMemberStructPropertyFromJson_Primitive<FColor>(JsonObject, StructProperty, InObject, MemberName, &FColor::InitFromString); continue; }
+			// FInt32Interval
+			if (StructProperty->Struct == TBaseStructure<FInt32Interval>::Get())
+			{ WriteToMemberStructPropertyFromJson_BaseStructure<FInt32Interval>(JsonObject, StructProperty, InObject, MemberName, &UCsCommon_Load::InitFromString_FInt32Interval); continue; }
+			// FFloatInterval
+			if (StructProperty->Struct == TBaseStructure<FFloatInterval>::Get())
+			{ WriteToMemberStructPropertyFromJson_BaseStructure<FFloatInterval>(JsonObject, StructProperty, InObject, MemberName, &UCsCommon_Load::InitFromString_FFloatInterval); continue; }
 			// FCsUint8Point
 			if (StructProperty->Struct == FCsUint8Point::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson_Primitive<FCsUint8Point>(JsonObject, StructProperty, InObject, MemberName, &FCsUint8Point::InitFromString); continue; }

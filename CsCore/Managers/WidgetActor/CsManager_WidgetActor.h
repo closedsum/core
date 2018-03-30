@@ -47,14 +47,19 @@ public:
 
 	virtual void DeAllocate(const uint8 &Type, const int32 &Index) override;
 
-	class ACsWidgetActor* Display(const TCsWidgetActorType &ClassType, class UCsUserWidget* InWidget, UObject* InOwner, UObject* Parent);
-	class ACsWidgetActor* Display(const TCsWidgetActorType &ClassType, class UCsUserWidget* InWidget, UObject* InOwner);
-	class ACsWidgetActor* Display(const TCsWidgetActorType &ClassType, class UCsUserWidget* InWidget);
+// Display
+#pragma region
+
+	class ACsWidgetActor* Display(const TCsWidgetActorType &ClassType, FCsWidgetActorPayload* Payload, UObject* InOwner, UObject* Parent);
+	class ACsWidgetActor* Display(const TCsWidgetActorType &ClassType, FCsWidgetActorPayload* Payload, UObject* InOwner);
+	class ACsWidgetActor* Display(const TCsWidgetActorType &ClassType, FCsWidgetActorPayload* Payload);
 
 	template<typename T>
-	void Display(const TCsWidgetActorType &ClassType, class ACsWidgetActor* OutWidgetActor, class UCsUserWidget* InWidget, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	void Display(const TCsWidgetActorType &ClassType, class ACsWidgetActor* OutWidgetActor, FCsWidgetActorPayload* Payload, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 	template<typename T>
-	void Display(const TCsWidgetActorType &ClassType, class ACsWidgetActor* OutWidgetActor, class UCsUserWidget* InWidget, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	void Display(const TCsWidgetActorType &ClassType, class ACsWidgetActor* OutWidgetActor, FCsWidgetActorPayload* Payload, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 	template<typename T>
-	void Display(const TCsWidgetActorType &ClassType, class ACsWidgetActor* OutWidgetActor, class UCsUserWidget* InWidget, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	void Display(const TCsWidgetActorType &ClassType, class ACsWidgetActor* OutWidgetActor, FCsWidgetActorPayload* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+
+#pragma endregion Display
 };

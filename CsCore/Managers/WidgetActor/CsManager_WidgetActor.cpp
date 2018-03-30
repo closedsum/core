@@ -2,8 +2,13 @@
 #include "Managers/WidgetActor/CsManager_WidgetActor.h"
 #include "CsCore.h"
 #include "Common/CsCommon.h"
+
 #include "Managers/WidgetActor/CsWidgetActor.h"
+
+// UI
 #include "UI/CsUserWidget.h"
+#include "UI/Simple/CsSimpleWidget.h"
+
 #include "Game/CsGameState.h"
 
 // static initializations
@@ -183,13 +188,14 @@ void ACsManager_WidgetActor::DeAllocate(const uint8 &Type, const int32 &Index)
 	UE_LOG(LogCs, Warning, TEXT("ACsManager_WidgetActor::DeAllocate: WidgetActor of Type: %s at Index: %d is already deallocated."), *((*WidgetActorTypeToString)(ClassType)), Index);
 }
 
-ACsWidgetActor* ACsManager_WidgetActor::Display(const TCsWidgetActorType &ClassType, UCsUserWidget* InWidget, UObject* InOwner, UObject* Parent)
+// Display
+#pragma region
+
+ACsWidgetActor* ACsManager_WidgetActor::Display(const TCsWidgetActorType &ClassType, FCsWidgetActorPayload* Payload, UObject* InOwner, UObject* Parent)
 {
 	ACsWidgetActor* Widget = Allocate(ClassType);
 
-	InWidget->SetIsEnabled(true);
-	InWidget->SetVisibility(ESlateVisibility::Visible);
-	Widget->Allocate(GetActivePoolSize((uint8)ClassType), InWidget, GetWorld()->TimeSeconds, GetWorld()->RealTimeSeconds, 0, InOwner, Parent);
+	Widget->Allocate(GetActivePoolSize((uint8)ClassType), Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InOwner, Parent);
 
 	if (TArray<ACsWidgetActor*>* WidgetActors = ActiveWidgetActors.Find(ClassType))
 	{
@@ -204,24 +210,22 @@ ACsWidgetActor* ACsManager_WidgetActor::Display(const TCsWidgetActorType &ClassT
 	return Widget;
 }
 
-ACsWidgetActor* ACsManager_WidgetActor::Display(const TCsWidgetActorType &ClassType, UCsUserWidget* InWidget, UObject* InOwner)
+ACsWidgetActor* ACsManager_WidgetActor::Display(const TCsWidgetActorType &ClassType, FCsWidgetActorPayload* Payload, UObject* InOwner)
 {
-	return Display(ClassType, InWidget, InOwner, nullptr);
+	return Display(ClassType, Payload, InOwner, nullptr);
 }
 
-ACsWidgetActor* ACsManager_WidgetActor::Display(const TCsWidgetActorType &ClassType, UCsUserWidget* InWidget)
+ACsWidgetActor* ACsManager_WidgetActor::Display(const TCsWidgetActorType &ClassType, FCsWidgetActorPayload* Payload)
 {
-	return Display(ClassType, InWidget, nullptr, nullptr);
+	return Display(ClassType, Payload, nullptr, nullptr);
 }
 
 template<typename T>
-void ACsManager_WidgetActor::Display(const TCsWidgetActorType &ClassType, ACsWidgetActor* OutWidgetActor, UCsUserWidget* InWidget, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsManager_WidgetActor::Display(const TCsWidgetActorType &ClassType, ACsWidgetActor* OutWidgetActor, FCsWidgetActorPayload* Payload, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
 	OutWidgetActor = Allocate(ClassType);
 
-	InWidget->SetIsEnabled(true);
-	InWidget->SetVisibility(ESlateVisibility::Visible);
-	OutWidgetActor->Allocate<T>(GetActivePoolSize((uint8)ClassType), InWidget, GetWorld()->TimeSeconds, GetWorld()->RealTimeSeconds, 0, InOwner, Parent, InObject, OnDeAllocate);
+	OutWidgetActor->Allocate<T>(GetActivePoolSize((uint8)ClassType), Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InOwner, Parent, InObject, OnDeAllocate);
 
 	if (TArray<ACsWidgetActor*>* WidgetActors = ActiveWidgetActors.Find(ClassType))
 	{
@@ -236,13 +240,15 @@ void ACsManager_WidgetActor::Display(const TCsWidgetActorType &ClassType, ACsWid
 }
 
 template<typename T>
-void ACsManager_WidgetActor::Display(const TCsWidgetActorType &ClassType, ACsWidgetActor* OutWidgetActor, UCsUserWidget* InWidget, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsManager_WidgetActor::Display(const TCsWidgetActorType &ClassType, ACsWidgetActor* OutWidgetActor, FCsWidgetActorPayload* Payload, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
-	Display<T>(ClassType, OutWidgetActor, InWidget, nullptr, InOwner, InObject, OnDeAllocate);
+	Display<T>(ClassType, OutWidgetActor, Payload, nullptr, InOwner, InObject, OnDeAllocate);
 }
 
 template<typename T>
-void ACsManager_WidgetActor::Display(const TCsWidgetActorType &ClassType, ACsWidgetActor* OutWidgetActor, UCsUserWidget* InWidget, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsManager_WidgetActor::Display(const TCsWidgetActorType &ClassType, ACsWidgetActor* OutWidgetActor, FCsWidgetActorPayload* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
-	Display<T>(ClassType, OutWidgetActor, InWidget, nullptr, nullptr, InObject, OnDeAllocate);
+	Display<T>(ClassType, OutWidgetActor, Payload, nullptr, nullptr, InObject, OnDeAllocate);
 }
+
+#pragma endregion Display

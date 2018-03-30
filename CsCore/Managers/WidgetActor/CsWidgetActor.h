@@ -64,9 +64,40 @@ struct FCsWidgetActorCache : public FCsPooledObjectCache
 	GENERATED_USTRUCT_BODY()
 
 	TWeakObjectPtr<class ACsWidgetActor> WidgetActor;
-	TWeakObjectPtr<class UCsUserWidget> Widget;
+	TWeakObjectPtr<class UUserWidget> Widget;
 
-	// TODO: LifeTime. Need a struct for holding WidgetActor information (FCsWidgetActor?)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	FVector2D DrawSize;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	bool bMinDrawDistance;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	FCsDrawDistance MinDrawDistance;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	bool ScaleByDistance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	FTransform Transform;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	FRotator Rotation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	FVector Location;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	FVector Scale;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	bool FollowCamera;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	float DistanceProjectedOutFromCamera;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	bool LookAtCamera;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	FCsRotatorFlag CameraLockAxes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	bool bMovementFunction;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	FCsParametricFunction MovementFunction;
 
 	FCsWidgetActorCache()
 	{
@@ -80,14 +111,28 @@ struct FCsWidgetActorCache : public FCsPooledObjectCache
 	}
 
 	template<typename T>
-	void Init(const uint16& InActiveIndex, class UCsUserWidget* InWidget, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+	void Init(const uint16& InActiveIndex, FCsWidgetActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 	{
 		SetActiveIndex(InActiveIndex);
 
 		IsAllocated = true;
 
 		Owner	 = InOwner;
-		Widget   = InWidget;
+		Widget   = Payload->GetWidget();
+		DrawSize = Payload->Size;
+		bMinDrawDistance = Payload->bMinDrawDistance;
+		MinDrawDistance = Payload->MinDrawDistance;
+		ScaleByDistance = Payload->ScaleByDistance;
+		Transform = Payload->Transform;
+		Rotation = Transform.GetRotation().Rotator();
+		Location = Transform.GetTranslation();
+		Scale = Transform.GetScale3D();
+		FollowCamera = Payload->FollowCamera;
+		DistanceProjectedOutFromCamera = Payload->DistanceProjectedOutFromCamera;
+		LookAtCamera = Payload->LookAtCamera;
+		CameraLockAxes = Payload->LockAxes;
+		bMovementFunction = Payload->bMovementFunction;
+		MovementFunction = Payload->MovementFunction;
 		Parent   = InParent;
 		Time	 = InTime;
 		RealTime = InRealTime;
@@ -104,28 +149,42 @@ struct FCsWidgetActorCache : public FCsPooledObjectCache
 	}
 
 	template<typename T>
-	void Init(const uint16& InActiveIndex, class UCsUserWidget* InWidget, const float &InTime, const float &InRealTime, const uint64 &InFrame, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+	void Init(const uint16& InActiveIndex, FCsWidgetActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 	{
-		Init(InActiveIndex, InWidget, InTime, InRealTime, InFrame, nullptr, nullptr, InObject, OnDeAllocate);
+		Init(InActiveIndex, Payload, InTime, InRealTime, InFrame, nullptr, nullptr, InObject, OnDeAllocate);
 	}
 
-	void Init(const uint16& InActiveIndex, class UCsUserWidget* InWidget, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent)
+	void Init(const uint16& InActiveIndex, FCsWidgetActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent)
 	{
 		SetActiveIndex(InActiveIndex);
 
 		IsAllocated = true;
 
 		Owner	 = InOwner;
-		Widget	 = InWidget;
+		Widget = Payload->GetWidget();
+		DrawSize = Payload->Size;
+		bMinDrawDistance = Payload->bMinDrawDistance;
+		MinDrawDistance = Payload->MinDrawDistance;
+		ScaleByDistance = Payload->ScaleByDistance;
+		Transform = Payload->Transform;
+		Rotation = Transform.GetRotation().Rotator();
+		Location = Transform.GetTranslation();
+		Scale = Transform.GetScale3D();
+		FollowCamera = Payload->FollowCamera;
+		DistanceProjectedOutFromCamera = Payload->DistanceProjectedOutFromCamera;
+		LookAtCamera = Payload->LookAtCamera;
+		CameraLockAxes = Payload->LockAxes;
+		bMovementFunction = Payload->bMovementFunction;
+		MovementFunction = Payload->MovementFunction;
 		Parent	 = InParent;
 		Time	 = InTime;
 		RealTime = InRealTime;
 		SetFrame(InFrame);
 	}
 
-	void Init(const uint16& InActiveIndex, class UCsUserWidget* InWidget, const float &InTime, const float &InRealTime, const uint64 &InFrame)
+	void Init(const uint16& InActiveIndex, FCsWidgetActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
-		Init(InActiveIndex, InWidget, InTime, InRealTime, InFrame, nullptr, nullptr);
+		Init(InActiveIndex, Payload, InTime, InRealTime, InFrame, nullptr, nullptr);
 	}
 
 	virtual void Reset() override
@@ -134,10 +193,27 @@ struct FCsWidgetActorCache : public FCsPooledObjectCache
 
 		Widget.Reset();
 		Widget = nullptr;
+		DrawSize = FVector2D::ZeroVector;
+		bMinDrawDistance = false;
+		MinDrawDistance.Reset();
+		ScaleByDistance = false;
+		Transform = FTransform::Identity;
+		Rotation = FRotator::ZeroRotator;
+		Location = FVector::ZeroVector;
+		Scale = FVector::OneVector;
+		FollowCamera = false;
+		DistanceProjectedOutFromCamera = 0.0f;;
+		LookAtCamera = false;
+		bMovementFunction = false;
 	}
 
 	ACsWidgetActor* GetWidgetActor() { return WidgetActor.IsValid() ? WidgetActor.Get() : nullptr; }
-	class UCsUserWidget* GetWidget() { return Widget.IsValid() ? Widget.Get() : nullptr; }
+	template<typename T>
+	T* GetWidgetActor(){ return Cast<T>(GetWidgetActor()) }
+
+	class UUserWidget* GetWidget() { return Widget.IsValid() ? Widget.Get() : nullptr; }
+	template<typename T>
+	T* GetWidget() { return Cast<T>(GetWidget()); }
 };
 
 UCLASS()
@@ -146,15 +222,10 @@ class CSCORE_API ACsWidgetActor : public ACsPooledActor
 	GENERATED_UCLASS_BODY()
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widget")
-	class UWidgetComponent* WidgetComponent;
+	class UCsWidgetComponent* WidgetComponent;
 
 	virtual void PostInitializeComponents() override;
 	virtual void Tick(float DeltaSeconds) override;
-
-	void OnCalcCamera(const uint8 &MappingId, const float &DeltaTime, const struct FMinimalViewInfo &OutResult);
-
-	UPROPERTY(BlueprintAssignable, Category = "Camera")
-	FBindableDynEvent_CsWidgetActor_Override_OnCalcCamera Override_OnCalcCamera_ScriptEvent;
 
 	TCsWidgetActorType Type;
 
@@ -166,18 +237,24 @@ class CSCORE_API ACsWidgetActor : public ACsPooledActor
 
 	void Init(const int32 &Index, const TCsWidgetActorType &InType);
 
-	template<typename T>
-	void Allocate(const uint16 &ActiveIndex, class UCsUserWidget* InWidget, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+// Allocate / DeAllocate
+#pragma region
+public:
 
 	template<typename T>
-	void Allocate(const uint16 &ActiveIndex, class UCsUserWidget* InWidget, const float &Time, const float &RealTime, const uint64 &Frame, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	void Allocate(const uint16 &ActiveIndex, FCsWidgetActorPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 
-	void Allocate(const uint16 &ActiveIndex, class UCsUserWidget* InWidget, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent);
-	void Allocate(const uint16 &ActiveIndex, class UCsUserWidget* InWidget, const float &Time, const float &RealTime, const uint64 &Frame);
+	template<typename T>
+	void Allocate(const uint16 &ActiveIndex, FCsWidgetActorPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 
-	virtual void Allocate_Internal(class UCsUserWidget* InWidget);
+	void Allocate(const uint16 &ActiveIndex, FCsWidgetActorPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent);
+	void Allocate(const uint16 &ActiveIndex, FCsWidgetActorPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame);
+
+	virtual void Allocate_Internal(FCsWidgetActorPayload* Payload);
 
 	virtual void DeAllocate() override;
+
+#pragma endregion Allocate / DeAllocate
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
 	bool FollowLocalCamera;
@@ -188,7 +265,32 @@ class CSCORE_API ACsWidgetActor : public ACsPooledActor
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
 	bool LookAtLocalCamera;
 
-	// State
+// Widget
+#pragma region
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+	class UUserWidget* MyWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+	bool bCacheWidget;
+
+#pragma endregion Widget
+
+// Camera
+#pragma region
+public:
+
+	void OnCalcCamera(const uint8 &MappingId, const float &DeltaTime, const struct FMinimalViewInfo &OutResult);
+
+	UPROPERTY(BlueprintAssignable, Category = "Camera")
+	FBindableDynEvent_CsWidgetActor_Override_OnCalcCamera Override_OnCalcCamera_ScriptEvent;
+
+	void OnTick_Handle_LocalCamera(const FVector &ViewLocation, const FRotator &ViewRotation);
+
+#pragma endregion Camera
+
+// State
 #pragma region
 public:
 
@@ -270,6 +372,11 @@ public:
 
 #pragma endregion State
 
+// Visibility
+#pragma region
+
 	virtual void Show() override;
 	virtual void Hide() override;
+
+#pragma endregion Visiblity
 };

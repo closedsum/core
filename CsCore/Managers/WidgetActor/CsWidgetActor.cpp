@@ -2,13 +2,20 @@
 #include "Managers/WidgetActor/CsWidgetActor.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Runtime/UMG/Public/Components/WidgetComponent.h"
-#include "UI/CsUserWidget.h"
 #include "Common/CsCommon.h"
+
+// Managers
+#include "Managers/Widget/CsPooledWidget.h"
+
+#include "Components/CsWidgetComponent.h"
+
+#include "UI/CsUserWidget.h"
+
+#include "Player/CsPlayerController.h"
 
 ACsWidgetActor::ACsWidgetActor(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	WidgetComponent = ObjectInitializer.CreateDefaultSubobject<UWidgetComponent>(this, TEXT("WidgetComponent"));
+	WidgetComponent = ObjectInitializer.CreateDefaultSubobject<UCsWidgetComponent>(this, TEXT("WidgetComponent"));
 
 	WidgetComponent->SetVisibility(false);
 	WidgetComponent->SetHiddenInGame(true);
@@ -31,7 +38,139 @@ void ACsWidgetActor::Tick(float DeltaSeconds)
 {
 	if (!Cache.IsAllocated)
 		return;
+	if (Visibility == ECsVisibility::Hidden)
+		return;
+
+	ACsPlayerController* LocalController = UCsCommon::GetLocalPlayerController<ACsPlayerController>(GetWorld());
+
+	OnTick_Handle_LocalCamera(LocalController->MinimalViewInfoCache.Location, LocalController->MinimalViewInfoCache.Rotation);
 }
+
+void ACsWidgetActor::Init(const int32 &Index, const TCsWidgetActorType &InType)
+{
+	PoolIndex	= Index;
+	Type		= InType;
+	Type_Script = (uint8)Type;
+
+	Cache.Set(Index, this);
+}
+
+// Allocate / DeAllocate
+#pragma region
+
+template<typename T>
+void ACsWidgetActor::Allocate(const uint16 &ActiveIndex, FCsWidgetActorPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+{
+	Cache.Init<T>(ActiveIndex, Payload, Time, RealTime, Frame, InOwner, InParent, InObject, OnDeAllocate);
+
+	Allocate_Internal(Payload);
+}
+
+template<typename T>
+void ACsWidgetActor::Allocate(const uint16 &ActiveIndex, FCsWidgetActorPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+{
+	Cache.Init<T>(ActiveIndex, Payload, Time, RealTime, Frame, InObject, OnDeAllocate);
+
+	Allocate_Internal(Payload);
+}
+
+void ACsWidgetActor::Allocate(const uint16 &ActiveIndex, FCsWidgetActorPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent)
+{
+	Cache.Init(ActiveIndex, Payload, Time, RealTime, Frame, InOwner, InParent);
+
+	Allocate_Internal(Payload);
+}
+
+void ACsWidgetActor::Allocate(const uint16 &ActiveIndex, FCsWidgetActorPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame)
+{
+	Cache.Init(ActiveIndex, Payload, Time, RealTime, Frame);
+
+	Allocate_Internal(Payload);
+}
+
+void ACsWidgetActor::Allocate_Internal(FCsWidgetActorPayload* Payload)
+{
+	if (bCacheWidget)
+	{
+		Cache.Widget = MyWidget;
+	}
+	else
+	{
+		MyWidget = Cache.GetWidget();
+		WidgetComponent->SetWidget(MyWidget);
+	}
+
+	if (UCsUserWidget* UserWidget = Cast<UCsUserWidget>(MyWidget))
+	{
+		UserWidget->Hide();
+	}
+	else
+	if (UCsPooledWidget* PooledWidget = Cast<UCsPooledWidget>(MyWidget))
+	{
+		PooledWidget->Hide();
+	}
+	else
+	{
+		MyWidget->SetVisibility(ESlateVisibility::Hidden);
+		MyWidget->SetIsEnabled(false);
+	}
+
+	SetActorTickEnabled(true);
+	WidgetComponent->Activate();
+	WidgetComponent->SetComponentTickEnabled(true);
+	
+	WidgetComponent->SetHiddenInGame(false);
+	WidgetComponent->SetVisibility(true);
+	Visibility = ECsVisibility::Visible;
+
+	//InWidget->Init();
+}
+
+void ACsWidgetActor::DeAllocate()
+{
+	Super::DeAllocate();
+
+	Cache.Reset();
+
+	Visibility = ECsVisibility::Hidden;
+	WidgetComponent->SetVisibility(false);
+	WidgetComponent->SetHiddenInGame(true);
+	WidgetComponent->SetComponentTickEnabled(false);
+	WidgetComponent->Deactivate();
+
+	if (UCsUserWidget* UserWidget = Cast<UCsUserWidget>(MyWidget))
+	{
+		UserWidget->Hide();
+	}
+	else
+	if (UCsPooledWidget* PooledWidget = Cast<UCsPooledWidget>(MyWidget))
+	{
+		PooledWidget->Hide();
+	}
+	else
+	{
+		MyWidget->SetVisibility(ESlateVisibility::Hidden);
+		MyWidget->SetIsEnabled(false);
+	}
+
+	if (!bCacheWidget)
+	{
+		WidgetComponent->SetWidget(nullptr);
+
+		if (UCsPooledWidget* PooledWidget = Cast<UCsPooledWidget>(MyWidget))
+		{
+			PooledWidget->Cache.bLifeTime = true;
+			PooledWidget->Cache.LifeTime = 0.0f;
+		}
+		MyWidget = nullptr;
+	}
+	SetActorTickEnabled(false);
+}
+
+#pragma endregion Allocate / DeAllocate
+
+// Camera
+#pragma region
 
 void ACsWidgetActor::OnCalcCamera(const uint8 &MappingId, const float &DeltaTime, const struct FMinimalViewInfo &OutResult)
 {
@@ -49,20 +188,24 @@ void ACsWidgetActor::OnCalcCamera(const uint8 &MappingId, const float &DeltaTime
 
 	if (!Cache.IsAllocated)
 		return;
-
 	if (Visibility == ECsVisibility::Hidden)
 		return;
 
-	if (FollowLocalCamera)
+	OnTick_Handle_LocalCamera(OutResult.Location, OutResult.Rotation);
+}
+
+void ACsWidgetActor::OnTick_Handle_LocalCamera(const FVector &ViewLocation, const FRotator &ViewRotation)
+{
+	FVector CameraLocation = ViewLocation;
+	FRotator CameraRotation = ViewRotation;
+
+	if (Cache.FollowCamera)
 	{
-		FVector ViewLocation  = OutResult.Location;
-		FRotator ViewRotation = OutResult.Rotation;
-		
 		if (UCsCommon::IsVR())
 		{
-			UCsCommon::GetHMDWorldViewPoint(GetWorld(), ViewLocation, ViewRotation);
+			UCsCommon::GetHMDWorldViewPoint(GetWorld(), CameraLocation, CameraRotation);
 		}
-		ViewRotation.Roll = 0.f;
+		CameraRotation.Roll = 0.f;
 
 		const FVector Forward = ViewRotation.Vector();
 		const FVector Location = ViewLocation + DistanceProjectedOutFromCamera * Forward;
@@ -70,92 +213,23 @@ void ACsWidgetActor::OnCalcCamera(const uint8 &MappingId, const float &DeltaTime
 		SetActorLocation(Location);
 
 		FRotator Rotation = (-Forward).Rotation();
-		Rotation.Roll     = 0.0f;
+		Cache.CameraLockAxes.ApplyLock(Rotation);
+		//Rotation.Roll = 0.0f;
 		//const FRotator Rotation = FRotator(-ViewRotation.Pitch, ViewRotation.Yaw + 180.0f, 0.0f);
 
 		SetActorRotation(Rotation);
 	}
-
-	if (LookAtLocalCamera)
+	else
+	if (Cache.LookAtCamera)
 	{
-		FRotator ViewRotation   = OutResult.Rotation;
-		ViewRotation.Roll	    = 0.f;
-		const FRotator Rotation = FRotator(-ViewRotation.Pitch, ViewRotation.Yaw + 180.0f, 0.0f);
+		FRotator Rotation = FRotator(-ViewRotation.Pitch, ViewRotation.Yaw + 180.0f, 0.0f);
+		Cache.CameraLockAxes.ApplyLock(Rotation);
 
 		SetActorRotation(Rotation);
 	}
 }
 
-void ACsWidgetActor::Init(const int32 &Index, const TCsWidgetActorType &InType)
-{
-	PoolIndex	= Index;
-	Type		= InType;
-	Type_Script = (uint8)Type;
-
-	Cache.Set(Index, this);
-}
-
-template<typename T>
-void ACsWidgetActor::Allocate(const uint16 &ActiveIndex, UCsUserWidget* InWidget, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
-{
-	Cache.Init<T>(ActiveIndex, InWidget, Time, RealTime, Frame, InOwner, InParent, InObject, OnDeAllocate);
-
-	Allocate_Internal(InWidget);
-}
-
-template<typename T>
-void ACsWidgetActor::Allocate(const uint16 &ActiveIndex, UCsUserWidget* InWidget, const float &Time, const float &RealTime, const uint64 &Frame, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
-{
-	Cache.Init<T>(ActiveIndex, InWidget, Time, RealTime, Frame, InObject, OnDeAllocate);
-
-	Allocate_Internal(InWidget);
-}
-
-void ACsWidgetActor::Allocate(const uint16 &ActiveIndex, UCsUserWidget* InWidget, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent)
-{
-	Cache.Init(ActiveIndex, InWidget, Time, RealTime, Frame, InOwner, InParent);
-
-	Allocate_Internal(InWidget);
-}
-
-void ACsWidgetActor::Allocate(const uint16 &ActiveIndex, UCsUserWidget* InWidget, const float &Time, const float &RealTime, const uint64 &Frame)
-{
-	Cache.Init(ActiveIndex, InWidget, Time, RealTime, Frame);
-
-	Allocate_Internal(InWidget);
-}
-
-void ACsWidgetActor::Allocate_Internal(class UCsUserWidget* InWidget)
-{
-	SetActorTickEnabled(true);
-	WidgetComponent->Activate();
-	WidgetComponent->SetComponentTickEnabled(true);
-	WidgetComponent->SetWidget(InWidget);
-	WidgetComponent->SetHiddenInGame(false);
-	WidgetComponent->SetVisibility(true);
-	Visibility = ECsVisibility::Visible;
-
-	InWidget->Init();
-}
-
-void ACsWidgetActor::DeAllocate()
-{
-	Super::DeAllocate();
-
-	UCsUserWidget* Widget = Cache.GetWidget();
-	Widget->SetVisibility(ESlateVisibility::Hidden);
-	Widget->SetIsEnabled(false);
-
-	Cache.Reset();
-
-	Visibility = ECsVisibility::Hidden;
-	WidgetComponent->SetVisibility(false);
-	WidgetComponent->SetHiddenInGame(true);
-	WidgetComponent->SetComponentTickEnabled(false);
-	WidgetComponent->Deactivate();
-	WidgetComponent->SetWidget(nullptr);
-	SetActorTickEnabled(false);
-}
+#pragma endregion Camera
 
 // State
 #pragma region
@@ -262,13 +336,16 @@ void ACsWidgetActor::OnRemove(const FCsInteractedActorInfo &Info)
 
 #pragma endregion State
 
+// Visibility
+#pragma region
+
 void ACsWidgetActor::Show()
 {
 	Super::Show();
 
 	SetActorTickEnabled(true);
 
-	UCsUserWidget* Widget = Cache.GetWidget();
+	UUserWidget* Widget = Cache.GetWidget();
 
 	Widget->SetIsEnabled(true);
 	Widget->SetVisibility(ESlateVisibility::Visible);
@@ -282,7 +359,7 @@ void ACsWidgetActor::Hide()
 {
 	Super::Hide();
 
-	UCsUserWidget* Widget = Cache.GetWidget();
+	UUserWidget* Widget = Cache.GetWidget();
 
 	Widget->SetIsEnabled(false);
 	Widget->SetVisibility(ESlateVisibility::Hidden);
@@ -292,3 +369,5 @@ void ACsWidgetActor::Hide()
 	WidgetComponent->Deactivate();
 	SetActorTickEnabled(false);
 }
+
+#pragma endregion Visiblity

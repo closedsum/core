@@ -166,6 +166,9 @@ struct FCsWidgetActorInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
 	bool LookAtCamera;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+	FCsRotatorFlag LockAxes;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget", meta = (InlineEditConditionToggle))
 	bool bMovementFunction;
 
@@ -200,6 +203,7 @@ public:
 		FollowCamera = B.FollowCamera;
 		DistanceProjectedOutFromCamera = B.DistanceProjectedOutFromCamera;
 		LookAtCamera = B.LookAtCamera;
+		LockAxes = B.LockAxes;
 		bMovementFunction = B.bMovementFunction;
 		MovementFunction = B.MovementFunction;
 		return *this;
@@ -217,6 +221,7 @@ public:
 				FollowCamera == B.FollowCamera &&
 				DistanceProjectedOutFromCamera == B.DistanceProjectedOutFromCamera &&
 				LookAtCamera == B.LookAtCamera &&
+				LockAxes == B.LockAxes &&
 				bMovementFunction == B.bMovementFunction &&
 				MovementFunction == B.MovementFunction;
 	}
@@ -2172,6 +2177,7 @@ struct FCsPooledWidgetPayload
 struct FCsWidgetActorPayload
 {
 	bool IsAllocated;
+	TWeakObjectPtr<class UUserWidget> Widget;
 	FVector2D Size;
 	float LifeTime;
 	bool bMinDrawDistance;
@@ -2181,6 +2187,7 @@ struct FCsWidgetActorPayload
 	bool FollowCamera;
 	float DistanceProjectedOutFromCamera;
 	bool LookAtCamera;
+	FCsRotatorFlag LockAxes;
 	bool bMovementFunction;
 	FCsParametricFunction MovementFunction;
 
@@ -2193,6 +2200,8 @@ struct FCsWidgetActorPayload
 	void Reset()
 	{
 		IsAllocated = false;
+		Widget.Reset();
+		Widget = nullptr;
 		Size = FVector2D::ZeroVector;
 		LifeTime = 0.0f;
 		bMinDrawDistance = false;
@@ -2202,6 +2211,11 @@ struct FCsWidgetActorPayload
 		FollowCamera = false;
 		DistanceProjectedOutFromCamera = 0.0f;
 		LookAtCamera = false;
+		LockAxes.Reset();
 		bMovementFunction = false;
 	}
+
+	class UUserWidget* GetWidget() { return Widget.IsValid() ? Widget.Get() : nullptr; }
+	template<typename T>
+	T* GetWidget() { return Cast<T>(GetWidget()); }
 };

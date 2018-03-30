@@ -8,18 +8,18 @@
 #pragma region
 
 UENUM(BlueprintType)
-namespace ECsParametricMovementFunctionType
+namespace ECsParametricFunctionType
 {
 	enum Type
 	{
-		Linear									UMETA(DisplayName = "Polynomial Degree 1"),
-		Quadratic								UMETA(DisplayName = "Polynomial Degree 2"),
-		Sine									UMETA(DisplayName = "Sine"),
-		ECsParametricMovementFunctionType_MAX	UMETA(Hidden),
+		Linear							UMETA(DisplayName = "Polynomial Degree 1"),
+		Quadratic						UMETA(DisplayName = "Polynomial Degree 2"),
+		Sine							UMETA(DisplayName = "Sine"),
+		ECsParametricFunctionType_MAX	UMETA(Hidden),
 	};
 }
 
-namespace ECsParametricMovementFunctionType
+namespace ECsParametricFunctionType
 {
 	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
 
@@ -43,21 +43,21 @@ namespace ECsParametricMovementFunctionType
 		if (String == Str::Linear) { return Type::Linear; }
 		if (String == Str::Quadratic) { return Type::Quadratic; }
 		if (String == Str::Sine) { return Type::Sine; }
-		return Type::ECsParametricMovementFunctionType_MAX;
+		return Type::ECsParametricFunctionType_MAX;
 	}
 }
 
-#define ECS_PARAMETRIC_MOVEMENT_FUNCTION_TYPE_MAX (uint8)ECsParametricMovementFunctionType::ECsParametricMovementFunctionType_MAX
-typedef ECsParametricMovementFunctionType::Type TCsParametricMovementFunctionType;
+#define ECS_PARAMETRIC_FUNCTION_TYPE_MAX (uint8)ECsParametricFunctionType::ECsParametricFunctionType_MAX
+typedef ECsParametricFunctionType::Type TCsParametricFunctionType;
 
 USTRUCT(BlueprintType)
-struct FCsParametricMovementFunctionAxis
+struct FCsParametricFunctionAxis
 {
 	GENERATED_USTRUCT_BODY()
 
-	/** Types are Polynomial Degree 1 (Linear), Polynomial Degree 2 (Quadtratic), Sine, ... etc */
+	/** Types are Polynomial Degree 1 (Linear), Polynomial Degree 2 (Quadratic), Sine, ... etc */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function")
-	TEnumAsByte<ECsParametricMovementFunctionType::Type> Function;
+	TEnumAsByte<ECsParametricFunctionType::Type> Function;
 
 	/** "Axis" F(T) = A * T + B
 	 *  "Axis" F(T) = A * T^2 + B * T + C
@@ -67,7 +67,7 @@ struct FCsParametricMovementFunctionAxis
 	float A;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function", meta = (InlineEditConditionToggle))
 	bool bIntervalA;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function", meta = (editcondition = "bIntervalA"))
+	UPROPERTY(EditAnywhere, Category = "Function", meta = (editcondition = "bIntervalA"))
 	FFloatInterval IntervalA;
 
 	/** "Axis" F(T) = A * T + B
@@ -78,7 +78,7 @@ struct FCsParametricMovementFunctionAxis
 	float B;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function", meta = (InlineEditConditionToggle))
 	bool bIntervalB;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function", meta = (editcondition = "bIntervalB"))
+	UPROPERTY(EditAnywhere, Category = "Function", meta = (editcondition = "bIntervalB"))
 	FFloatInterval IntervalB;
 
 	/** "Axis" F(T) = A * T + B
@@ -89,7 +89,7 @@ struct FCsParametricMovementFunctionAxis
 	float C;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function", meta = (InlineEditConditionToggle))
 	bool bIntervalC;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function", meta = (editcondition = "bIntervalC"))
+	UPROPERTY(EditAnywhere, Category = "Function", meta = (editcondition = "bIntervalC"))
 	FFloatInterval IntervalC;
 
 	/** "Axis" F(T) = A * T + B
@@ -100,116 +100,169 @@ struct FCsParametricMovementFunctionAxis
 	float D;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function", meta = (InlineEditConditionToggle))
 	bool bIntervalD;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function", meta = (editcondition = "bIntervalD"))
+	UPROPERTY(EditAnywhere, Category = "Function", meta = (editcondition = "bIntervalD"))
 	FFloatInterval IntervalD;
 
-	FCsParametricMovementFunctionAxis()
+	FCsParametricFunctionAxis()
 	{
-		IsActive = true;
-		Function = ECsParametricMovementFunctionType::Linear;
+		Function = ECsParametricFunctionType::Linear;
 		A = 1.0f;
 		bIntervalA = false;
 		IntervalA.Min = 0.0f;
 		IntervalA.Max = 0.0f;
 		B = 1.0f;
-		C = 1.0f;
+		bIntervalB = false;
+		IntervalB.Min = 0.0f;
+		IntervalB.Max = 0.0f;
+		C = 0.0f;
+		bIntervalC = false;
+		IntervalC.Min = 0.0f;
+		IntervalC.Max = 0.0f;
 		D = 0.0f;
+		bIntervalD = false;
+		IntervalD.Min = 0.0f;
+		IntervalD.Max = 0.0f;
 	}
 
-	~FCsProjectileMovementFunctionAxis() {}
+	~FCsParametricFunctionAxis() {}
 
-	FCsProjectileMovementFunctionAxis& operator=(const FCsProjectileMovementFunctionAxis& D)
+	FCsParametricFunctionAxis& operator=(const FCsParametricFunctionAxis& Axis)
 	{
-		IsActive = D.IsActive;
-		Function = D.Function;
-		A = D.A;
-		B = D.B;
-		N = D.N;
-		C = D.C;
+		Function = Axis.Function;
+		A = Axis.A;
+		bIntervalA = Axis.bIntervalA;
+		IntervalA.Min = Axis.IntervalA.Min;
+		IntervalA.Max = Axis.IntervalA.Max;
+		B = Axis.B;
+		bIntervalB = Axis.bIntervalB;
+		IntervalB.Min = Axis.IntervalB.Min;
+		IntervalB.Max = Axis.IntervalB.Max;
+		C = Axis.C;
+		bIntervalC = Axis.bIntervalC;
+		IntervalC.Min = Axis.IntervalC.Min;
+		IntervalC.Max = Axis.IntervalC.Max;
+		D = Axis.D;
+		bIntervalD = Axis.bIntervalD;
+		IntervalD.Min = Axis.IntervalD.Min;
+		IntervalD.Max = Axis.IntervalD.Max;
 		return *this;
 	}
 
-	bool operator==(const FCsProjectileMovementFunctionAxis& D) const
+	bool operator==(const FCsParametricFunctionAxis& Axis) const
 	{
-		return	IsActive == D.IsActive &&
-			Function == D.Function &&
-			A == D.A &&
-			B == D.B &&
-			N == D.N &&
-			C == D.C;
+		return	Function == Axis.Function &&
+				A == Axis.A &&
+				B == Axis.B &&
+				C == Axis.C &&
+				D == Axis.D;
 	}
 
-	bool operator!=(const FCsProjectileMovementFunctionAxis& D) const
+	bool operator!=(const FCsParametricFunctionAxis& Axis) const
 	{
-		return !(*this == D);
+		return !(*this == Axis);
+	}
+
+	void Seed()
+	{
+		A = bIntervalA ? FMath::RandRange(IntervalA.Min, IntervalA.Max) : A;
+		B = bIntervalB ? FMath::RandRange(IntervalB.Min, IntervalB.Max) : B;
+		C = bIntervalC ? FMath::RandRange(IntervalC.Min, IntervalC.Max) : C;
+		D = bIntervalD ? FMath::RandRange(IntervalD.Min, IntervalD.Max) : D;
 	}
 
 	float Evaluate(const float &T)
 	{
-		if (!IsActive)
-			return 0.0f;
-		// A * (B*T)^N + C
-		if (Function == ECsProjectileMovementFunctionType::Linear)
-			return A * FMath::Pow(B * T, N) + C;
-		// A * sin((B*T)^N) + C
-		if (Function == ECsProjectileMovementFunctionType::Sine)
-			return A * FMath::Sin(FMath::Pow(B * T, N)) + C;
+		// Linear
+		if (Function == ECsParametricFunctionType::Linear)
+			return A * T + B;
+		// Quadratic
+		if (Function == ECsParametricFunctionType::Quadratic)
+			return A * T * T + B * T + C;
+		// Sine
+		if (Function == ECsParametricFunctionType::Sine)
+			return A * FMath::Sin(B * T + C) + D;
 		return 0.0f;
 	}
 };
 
 USTRUCT(BlueprintType)
-struct FCsProjectileMovementFunction
+struct FCsParametricFunction
 {
 	GENERATED_USTRUCT_BODY()
 
-		/** X = A * ((B*G(t))^N) + C. G(t) = t, sin(t), ... etc. */
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function")
-		FCsProjectileMovementFunctionAxis X;
-	/** Y = A * ((B*G(t))^N) + C. G(t) = t, sin(t), ... etc. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function")
-		FCsProjectileMovementFunctionAxis Y;
-	/** Z = A * ((B*G(t))^N) + C. G(t) = t, sin(t), ... etc. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function")
-		FCsProjectileMovementFunctionAxis Z;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function", meta = (InlineEditConditionToggle))
+	bool bX;
+	/** X = A * T + B
+	 *  X = A * T^2 + B * T + C
+	 *  X = A * sin(B * T + C) + D
+	*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function", meta = (editcondition = "bX"))
+	FCsParametricFunctionAxis X;
 
-	FCsProjectileMovementFunction() {}
-	~FCsProjectileMovementFunction() {}
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function", meta = (InlineEditConditionToggle))
+	bool bY;
+	/** Y = A * T + B
+	 *  Y = A * T^2 + B * T + C
+	 *  Y = A * sin(B * T + C) + D
+	*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function", meta = (editcondition = "bY"))
+	FCsParametricFunctionAxis Y;
 
-	FCsProjectileMovementFunction& operator=(const FCsProjectileMovementFunction& B)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function", meta = (InlineEditConditionToggle))
+	bool bZ;
+	/** Z = A * T + B
+	 *  Z = A * T^2 + B * T + C
+	 *  Z = A * sin(B * T + C) + D
+	*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function", meta = (editcondition = "bZ"))
+	FCsParametricFunctionAxis Z;
+
+	FCsParametricFunction() {}
+	~FCsParametricFunction() {}
+
+	FCsParametricFunction& operator=(const FCsParametricFunction& B)
 	{
+		bX = B.bX;
 		X = B.X;
+		bY = B.bY;
 		Y = B.Y;
+		bZ = B.bZ;
 		Z = B.Z;
 		return *this;
 	}
 
-	bool operator==(const FCsProjectileMovementFunction& B) const
+	bool operator==(const FCsParametricFunction& B) const
 	{
-		return	X == B.X && Y == B.Y && Z == B.Z;
+		return	bX == B.bX && X == B.X && bY == B.bY && Y == B.Y && bZ == B.bZ && Z == B.Z;
 	}
 
-	bool operator!=(const FCsProjectileMovementFunction& B) const
+	bool operator!=(const FCsParametricFunction& B) const
 	{
 		return !(*this == B);
 	}
 
+	void Seed()
+	{
+		X.Seed();
+		Y.Seed();
+		Z.Seed();
+	}
+
 	FVector Evaluate(const float &T)
 	{
-		return FVector(X.Evaluate(T), Y.Evaluate(T), Z.Evaluate(T));
+		return FVector(bX ? X.Evaluate(T) : 0.0f, bY ? Y.Evaluate(T) : 0.0f, bZ ? Z.Evaluate(T) : 0.0f);
 	}
 
 	FVector Evaluate(const float &Time, const FVector &Location, const FTransform &Transform)
 	{
-		FVector Point = Evaluate(Time);
+		FVector Point = Location;
 
-		// Override the Components that are NOT Active
-		if (!X.IsActive)
-			Point.X += Location.X;
-		if (!Y.IsActive)
-			Point.Y += Location.Y;
-		if (!Z.IsActive)
-			Point.Z += Location.Z;
+		if (bX)
+			Point.X += X.Evaluate(Time);
+		if (bY)
+			Point.Y += Y.Evaluate(Time);
+		if (bZ)
+			Point.Z += Z.Evaluate(Time);
 
 		FTransform LocalTransform = FTransform::Identity;
 		LocalTransform.SetTranslation(Point);

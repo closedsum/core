@@ -2168,3 +2168,40 @@ struct FCsPooledWidgetPayload
 		LifeTime = 0.0f;
 	}
 };
+
+struct FCsWidgetActorPayload
+{
+	bool IsAllocated;
+	FVector2D Size;
+	float LifeTime;
+	bool bMinDrawDistance;
+	FCsDrawDistance MinDrawDistance;
+	bool ScaleByDistance;
+	FTransform Transform;
+	bool FollowCamera;
+	float DistanceProjectedOutFromCamera;
+	bool LookAtCamera;
+	bool bMovementFunction;
+	FCsParametricFunction MovementFunction;
+
+	FCsWidgetActorPayload()
+	{
+		Reset();
+	}
+	~FCsWidgetActorPayload() {}
+
+	void Reset()
+	{
+		IsAllocated = false;
+		Size = FVector2D::ZeroVector;
+		LifeTime = 0.0f;
+		bMinDrawDistance = false;
+		MinDrawDistance.Reset();
+		ScaleByDistance = false;
+		Transform = FTransform::Identity;
+		FollowCamera = false;
+		DistanceProjectedOutFromCamera = 0.0f;
+		LookAtCamera = false;
+		bMovementFunction = false;
+	}
+};

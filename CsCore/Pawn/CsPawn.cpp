@@ -175,7 +175,15 @@ void ACsPawn::ApplyDamage(FCsDamageEvent* Event)
 	}
 }
 
-void ACsPawn::OnApplyDamage_Result(FCsDamageResult* Result){}
+void ACsPawn::OnApplyDamage_Result(FCsDamageResult* Result)
+{
+	ACsPlayerStateBase* MyPlayerState = Cast<ACsPlayerStateBase>(PlayerState);
+
+	OnApplyDamage_Result_Event.Broadcast(MyPlayerState->UniqueMappingId, Result);
+#if WITH_EDITOR
+	OnApplyDamage_Result_ScriptEvent.Broadcast(MyPlayerState->UniqueMappingId, *Result);
+#endif // #if WITH_EDITOR
+}
 
 void ACsPawn::Die(){}
 

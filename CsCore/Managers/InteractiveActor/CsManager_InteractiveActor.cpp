@@ -304,16 +304,16 @@ void ACsManager_InteractiveActor::LogTransaction(const FString &FunctionName, co
 		else
 		if (ActorOwner)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s Emitter: %s of Type: %s at %f for %s."), *FunctionName, *TransactionAsString, *ActorName, *TypeAsString, CurrentTime, *OwnerName);
+			UE_LOG(LogCs, Warning, TEXT("%s: %s InteractiveActor: %s of Type: %s at %f for %s."), *FunctionName, *TransactionAsString, *ActorName, *TypeAsString, CurrentTime, *OwnerName);
 		}
 		else
 		if (Parent)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s Emitter: %s of Type: %s at %f attached to %s."), *TransactionAsString, *FunctionName, *ActorName, *TypeAsString, CurrentTime, *ParentName);
+			UE_LOG(LogCs, Warning, TEXT("%s: %s InteractiveActor: %s of Type: %s at %f attached to %s."), *TransactionAsString, *FunctionName, *ActorName, *TypeAsString, CurrentTime, *ParentName);
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s Emitter: %s of Type: %s at %f."), *FunctionName, *TransactionAsString, *ActorName, *TypeAsString, CurrentTime);
+			UE_LOG(LogCs, Warning, TEXT("%s: %s InteractiveActor: %s of Type: %s at %f."), *FunctionName, *TransactionAsString, *ActorName, *TypeAsString, CurrentTime);
 		}
 	}
 }

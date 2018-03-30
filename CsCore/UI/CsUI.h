@@ -76,6 +76,7 @@ public:
 
 // Add
 #pragma region
+public:
 
 	virtual void AddWidget(const TCsWidgetType &WidgetType);
 
@@ -92,6 +93,7 @@ public:
 
 // Get
 #pragma region
+public:
 
 	virtual class UCsUserWidget* GetWidget(const TCsWidgetType &WidgetType);
 	
@@ -108,6 +110,7 @@ public:
 
 // WidgetActor
 #pragma region
+public:
 
 	TArray<TWeakObjectPtr<class ACsWidgetActor>> WidgetActors;
 	TArray<TWeakObjectPtr<class ACsWidgetActor>> ActiveWidgetActors;
@@ -129,6 +132,7 @@ public:
 
 // Open / Close
 #pragma region
+public:
 
 	virtual void Open(const TCsWidgetType &WidgetType);
 
@@ -169,6 +173,7 @@ public:
 
 // Raw Inputs
 #pragma region
+public:
 
 	virtual bool ProcessInputFrame(FCsInputFrame &InputFrame);
 
@@ -176,6 +181,7 @@ public:
 
 // Game Event
 #pragma region
+public:
 
 	virtual bool ProcessGameEvent(const TCsGameEvent &GameEvent);
 

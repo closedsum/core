@@ -1216,9 +1216,9 @@ void ACsWeapon::Equip()
 {
 	IsEquipped = true;
 
-	OnEquip_Event.Broadcast(WeaponSlot);
+	OnEquip_Event.Broadcast(WeaponSlot, CurrentAmmo, GetMaxAmmo(CS_WEAPON_DATA_VALUE), GetAmmoReserve(CS_WEAPON_DATA_VALUE));
 #if WITH_EDITOR
-	OnEquip_ScriptEvent.Broadcast(WeaponIndex);
+	OnEquip_ScriptEvent.Broadcast(WeaponIndex, CurrentAmmo, GetMaxAmmo(CS_WEAPON_DATA_VALUE), GetAmmoReserve(CS_WEAPON_DATA_VALUE));
 #endif // #if WITH_EDITOR
 }
 

@@ -19,8 +19,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FBindableDynEvent_CsWeapon_OnChang
 // Firing
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsWeapon_Override_FireWeapon, const uint8&, WeaponIndex, const uint8&, FireMode);
 // Equip
-DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsWeapon_OnEquip, const TCsWeaponSlot&);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsWeapon_OnEquip, const uint8&, WeaponIndex);
+DECLARE_MULTICAST_DELEGATE_FourParams(FBindableEvent_CsWeapon_OnEquip, const TCsWeaponSlot&, const int32&, const int32&, const int32&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FBindableDynEvent_CsWeapon_OnEquip, const uint8&, WeaponIndex, const int32&, Ammo, const int32&, MaxAmmo, const int32&, AmmoReserve);
 // UnEquip
 DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsWeapon_OnUnEquip, const TCsWeaponSlot&);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsWeapon_OnUnEquip, const uint8&, WeaponIndex);

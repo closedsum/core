@@ -1,8 +1,11 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
-#include "UI/Simple/CsWidget_TextBlock.h"
+#include "UI/Simple/CsWidget_Int32.h"
 #include "CsCore.h"
 
-namespace ECsWidgetTextBlockCachedString
+// Cache
+#pragma region
+
+namespace ECsWidgetInt32CachedString
 {
 	namespace Str
 	{
@@ -10,29 +13,31 @@ namespace ECsWidgetTextBlockCachedString
 	}
 }
 
-UCsWidget_TextBlock::UCsWidget_TextBlock(const FObjectInitializer& ObjectInitializer)
+#pragma endregion Cache
+
+UCsWidget_Int32::UCsWidget_Int32(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
 
-void UCsWidget_TextBlock::OnNativeConstruct()
+void UCsWidget_Int32::OnNativeConstruct()
 {
 	Super::OnNativeConstruct();
 
 	Text.Set(MyText);
 	const FString& TextName   = ECsCachedString::Str::Text;
-	const FString& MyTextName = ECsWidgetTextBlockCachedString::Str::MyText;
+	const FString& MyTextName = ECsWidgetInt32CachedString::Str::MyText;
 	Text.Init(TextName, MyTextName, GetName() + ECsCachedString::Str::Dot + TextName);
 }
 
-void UCsWidget_TextBlock::OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime)
+void UCsWidget_Int32::OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime)
 {
 	Super::OnNativeTick(MyGeometry, InDeltaTime);
 
 	Text.OnNativeTick(InDeltaTime);
 }
 
-void UCsWidget_TextBlock::Show()
+void UCsWidget_Int32::Show()
 {
 	Super::Show();
 
@@ -40,7 +45,7 @@ void UCsWidget_TextBlock::Show()
 	Text.SetVisibility(DefaultVisibility);
 }
 
-void UCsWidget_TextBlock::Hide()
+void UCsWidget_Int32::Hide()
 {
 	Text.SetVisibility(ESlateVisibility::Hidden);
 	Text.SetIsEnabled(false);
@@ -48,12 +53,12 @@ void UCsWidget_TextBlock::Hide()
 	Super::Hide();
 }
 
-UPanelSlot* UCsWidget_TextBlock::GetChildSlot()
+UPanelSlot* UCsWidget_Int32::GetChildSlot()
 {
 	return MyText->Slot;
 }
 
-void UCsWidget_TextBlock::SetString(const FString &InString)
+void UCsWidget_Int32::SetValue(const int32 &Value)
 {
-	Text.SetString(InString);
+	Text.SetValue(Value);
 }

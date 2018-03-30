@@ -232,6 +232,8 @@ class CSCORE_API ACsWidgetActor : public ACsPooledActor
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widget")
 	uint8 Type_Script;
 
+	void SetType(const TCsWidgetActorType &InType);
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widget")
 	FCsWidgetActorCache Cache;
 

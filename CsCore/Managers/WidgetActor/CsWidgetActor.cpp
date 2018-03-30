@@ -46,6 +46,12 @@ void ACsWidgetActor::Tick(float DeltaSeconds)
 	OnTick_Handle_LocalCamera(LocalController->MinimalViewInfoCache.Location, LocalController->MinimalViewInfoCache.Rotation);
 }
 
+void ACsWidgetActor::SetType(const TCsWidgetActorType &InType)
+{
+	Type		= InType;
+	Type_Script = (uint8)Type;
+}
+
 void ACsWidgetActor::Init(const int32 &Index, const TCsWidgetActorType &InType)
 {
 	PoolIndex	= Index;

@@ -14,6 +14,7 @@
 #include "Types/CsTypes_Interactive.h"
 #include "Types/CsTypes_Item.h"
 #include "Types/CsTypes_Recipe.h"
+#include "Types/CsTypes_Math.h"
 #include "CsCVars.h"
 
 #include "Common/CsCommon.h"
@@ -645,6 +646,12 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsProjectileMovementFunctionAxis
 			if (StructProperty->Struct == FCsProjectileMovementFunctionAxis::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsProjectileMovementFunctionAxis>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsParametricFunction
+			if (StructProperty->Struct == FCsParametricFunction::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsParametricFunction>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsParametricFunctionAxis
+			if (StructProperty->Struct == FCsParametricFunctionAxis::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsParametricFunctionAxis>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 			// FCsItemMemberDescription
 			if (StructProperty->Struct == FCsItemMemberDescription::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsItemMemberDescription>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
@@ -1270,6 +1277,12 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsProjectileMovementFunctionAxis
 			if (StructProperty->Struct == FCsProjectileMovementFunctionAxis::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsProjectileMovementFunctionAxis>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsParametricFunction
+			if (StructProperty->Struct == FCsParametricFunction::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsParametricFunction>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsParametricFunctionAxis
+			if (StructProperty->Struct == FCsParametricFunctionAxis::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsParametricFunctionAxis>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 			// FCsItemMemberDescription
 			if (StructProperty->Struct == FCsItemMemberDescription::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsItemMemberDescription>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
@@ -1844,6 +1857,12 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsProjectileMovementFunction
 			if (StructProperty->Struct == FCsProjectileMovementFunction::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsProjectileMovementFunction>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
+			// FCsParametricFunction
+			if (StructProperty->Struct == FCsParametricFunction::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsParametricFunction>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
+			// FCsParametricFunctionAxis
+			if (StructProperty->Struct == FCsParametricFunctionAxis::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsParametricFunctionAxis>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
 			// FCsDamageFalloff
 			if (StructProperty->Struct == FCsDamageFalloff::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsDamageFalloff>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
@@ -2588,6 +2607,12 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FCsProjectileMovementFunctionAxis
 			if (StructProperty->Struct == FCsProjectileMovementFunctionAxis::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsProjectileMovementFunctionAxis>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsParametricFunction
+			if (StructProperty->Struct == FCsParametricFunction::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsParametricFunction>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsParametricFunctionAxis
+			if (StructProperty->Struct == FCsParametricFunctionAxis::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsParametricFunctionAxis>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 			// FCsItemMemberDescription
 			if (StructProperty->Struct == FCsItemMemberDescription::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsItemMemberDescription>(JsonObject, StructProperty, InStruct, MemberName); continue; }
@@ -3241,6 +3266,12 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsProjectileMovementFunctionAxis
 			if (StructProperty->Struct == FCsProjectileMovementFunctionAxis::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsProjectileMovementFunctionAxis>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsParametricFunction
+			if (StructProperty->Struct == FCsParametricFunction::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsParametricFunction>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsParametricFunctionAxis
+			if (StructProperty->Struct == FCsParametricFunctionAxis::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsParametricFunctionAxis>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 			// FCsItemMemberDescription
 			if (StructProperty->Struct == FCsItemMemberDescription::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsItemMemberDescription>(JsonObject, StructProperty, InStruct, MemberName); continue; }
@@ -3844,6 +3875,12 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsProjectileMovementFunction
 			if (StructProperty->Struct == FCsProjectileMovementFunction::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsProjectileMovementFunction>(JsonObject, StructProperty, InObject, MemberName); continue; }
+			// FCsParametricFunction
+			if (StructProperty->Struct == FCsParametricFunction::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsParametricFunction>(JsonObject, StructProperty, InObject, MemberName); continue; }
+			// FCsParametricFunctionAxis
+			if (StructProperty->Struct == FCsParametricFunctionAxis::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsParametricFunctionAxis>(JsonObject, StructProperty, InObject, MemberName); continue; }
 			// FCsDamageFalloff
 			if (StructProperty->Struct == FCsDamageFalloff::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsDamageFalloff>(JsonObject, StructProperty, InObject, MemberName); continue; }

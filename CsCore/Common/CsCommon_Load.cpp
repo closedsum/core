@@ -644,6 +644,12 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsInputActionMapping
 			if (StructProperty->Struct == FCsInputActionMapping::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsInputActionMapping>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsDrawDistance
+			if (StructProperty->Struct == FCsDrawDistance::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsDrawDistance>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsFpsDrawDistance
+			if (StructProperty->Struct == FCsFpsDrawDistance::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsFpsDrawDistance>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 			// Weapon_FireMode
 			{
 				// FCsData_Weapon_FireMode_Firing
@@ -1284,6 +1290,12 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsInputActionMapping
 			if (StructProperty->Struct == FCsInputActionMapping::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsInputActionMapping>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsDrawDistance
+			if (StructProperty->Struct == FCsDrawDistance::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsDrawDistance>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsFpsDrawDistance
+			if (StructProperty->Struct == FCsFpsDrawDistance::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsFpsDrawDistance>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 			// Weapon_FireMode
 			{
 				// FCsData_Weapon_FireMode_Firing
@@ -1906,6 +1918,12 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsHeadCollision
 			if (StructProperty->Struct == FCsHeadCollision::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsHeadCollision>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
+			// FCsDrawDistance
+			if (StructProperty->Struct == FCsDrawDistance::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsDrawDistance>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
+			// FCsFpsDrawDistance
+			if (StructProperty->Struct == FCsFpsDrawDistance::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsFpsDrawDistance>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
 			// FCsWidgetComponentInfo
 			if (StructProperty->Struct == FCsWidgetComponentInfo::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsWidgetComponentInfo>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
@@ -2641,6 +2659,12 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FCsInputActionMapping
 			if (StructProperty->Struct == FCsInputActionMapping::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsInputActionMapping>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsDrawDistance
+			if (StructProperty->Struct == FCsDrawDistance::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsDrawDistance>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsFpsDrawDistance
+			if (StructProperty->Struct == FCsFpsDrawDistance::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsFpsDrawDistance>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 			// Weapon_FireMode
 			{
 				// FCsData_Weapon_FireMode_Firing
@@ -3318,6 +3342,12 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsInputActionMapping
 			if (StructProperty->Struct == FCsInputActionMapping::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsInputActionMapping>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsDrawDistance
+			if (StructProperty->Struct == FCsDrawDistance::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsDrawDistance>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsFpsDrawDistance
+			if (StructProperty->Struct == FCsFpsDrawDistance::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsFpsDrawDistance>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 			// Weapon_FireMode
 			{
 				// FCsData_Weapon_FireMode_Firing
@@ -3978,6 +4008,12 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsHeadCollision
 			if (StructProperty->Struct == FCsHeadCollision::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsHeadCollision>(JsonObject, StructProperty, InObject, MemberName); continue; }
+			// FCsDrawDistance
+			if (StructProperty->Struct == FCsDrawDistance::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsDrawDistance>(JsonObject, StructProperty, InObject, MemberName); continue; }
+			// FCsFpsDrawDistance
+			if (StructProperty->Struct == FCsFpsDrawDistance::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsFpsDrawDistance>(JsonObject, StructProperty, InObject, MemberName); continue; }
 			// FCsWidgetComponentInfo
 			if (StructProperty->Struct == FCsWidgetComponentInfo::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsWidgetComponentInfo>(JsonObject, StructProperty, InObject, MemberName); continue; }

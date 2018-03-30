@@ -20,10 +20,10 @@ public:
 
 	CS_DECLARE_WIDGET_ACTOR_TYPE
 
-	void SetMyOwner(UObject* InOwner);
+	static void Init(UObject* InOwner);
 	static ACsManager_WidgetActor* Get(UWorld* InWorld);
 
-	void Init(const TCsWidgetActorType &InWidgetActorType_MAX, TCsWidgetActorTypeToString InWidgetActorTypeToString);
+	void SetWidgetActorType(const TCsWidgetActorType &InWidgetActorType_MAX, TCsWidgetActorTypeToString InWidgetActorTypeToString);
 
 	virtual void Clear() override;
 	virtual void Shutdown() override;

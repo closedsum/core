@@ -40,7 +40,7 @@ ACsManager_WidgetActor::ACsManager_WidgetActor(const FObjectInitializer& ObjectI
 
 /*static*/ UObject* ACsManager_WidgetActor::GetMyOwner() { return MyOwner.IsValid() ? MyOwner.Get() : nullptr; }
 
-/*static*/ void ACsManager_WidgetActor::SetMyOwner(UObject* InOwner)
+/*static*/ void ACsManager_WidgetActor::Init(UObject* InOwner)
 {
 	MyOwner = InOwner;
 }
@@ -61,7 +61,7 @@ ACsManager_WidgetActor::ACsManager_WidgetActor(const FObjectInitializer& ObjectI
 	return nullptr;
 }
 
-void ACsManager_WidgetActor::Init(const TCsWidgetActorType &InWidgetActorType_MAX, TCsWidgetActorTypeToString InWidgetActorTypeToString)
+void ACsManager_WidgetActor::SetWidgetActorType(const TCsWidgetActorType &InWidgetActorType_MAX, TCsWidgetActorTypeToString InWidgetActorTypeToString)
 {
 	WidgetActorType_MAX		= InWidgetActorType_MAX;
 	WIDGET_ACTOR_TYPE_MAX   = (uint8)InWidgetActorType_MAX;

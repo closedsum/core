@@ -123,7 +123,7 @@ void UCsManager_Widget::OnNativeTick(const FGeometry& MyGeometry, const float &D
 				continue;
 			}
 
-			if (!Widget->Cache.UseLifeTime)
+			if (!Widget->Cache.bLifeTime)
 			{
 				Widget->OnNativeTick(MyGeometry, DeltaSeconds);
 				continue;

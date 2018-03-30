@@ -186,7 +186,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	float WarmUpTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
-	bool UseLifeTime;
+	bool bLifeTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	float LifeTime;
 
@@ -199,6 +199,9 @@ public:
 	uint64 Frame;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	int32 Frame_Script;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	float ElapsedTime;
 
 public:
 
@@ -244,6 +247,7 @@ protected:
 		Time = 0.0f;
 		RealTime = 0.0f;
 		SetFrame(0);
+		ElapsedTime = 0.0f;
 	}
 
 public:
@@ -274,7 +278,7 @@ public:
 	void SetLifeTime(const float &InLifeTime)
 	{
 		LifeTime = InLifeTime;
-		UseLifeTime = LifeTime > 0.0f;
+		bLifeTime = LifeTime > 0.0f;
 	}
 
 	UObject* GetInstigator() { return Instigator.IsValid() ? Instigator.Get() : nullptr; }

@@ -127,7 +127,7 @@ void ACsManager_FX::OnTick(const float &DeltaSeconds)
 			continue;
 		}
 
-		if (!Emitter->Cache.UseLifeTime)
+		if (!Emitter->Cache.bLifeTime)
 			continue;
 
 		// Check Dying

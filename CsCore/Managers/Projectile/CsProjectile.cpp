@@ -447,8 +447,8 @@ void ACsProjectile::DeAllocate()
 		// FX
 		if (ACsEmitter* FX = Cast<ACsEmitter>(Actor))
 		{
-			FX->Cache.LifeTime    = 0.0f;
-			FX->Cache.UseLifeTime = true;
+			FX->Cache.LifeTime  = 0.0f;
+			FX->Cache.bLifeTime = true;
 		}
 	}
 
@@ -540,8 +540,8 @@ void ACsProjectile::OnHitCallback(UPrimitiveComponent* HitComp, AActor* OtherAct
 
 	Event->Reset();
 
-	Cache.UseLifeTime = true;
-	Cache.LifeTime	  = 0.0f;
+	Cache.bLifeTime = true;
+	Cache.LifeTime	= 0.0f;
 }
 
 // Script

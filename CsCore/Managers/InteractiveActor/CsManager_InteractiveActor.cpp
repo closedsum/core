@@ -207,7 +207,7 @@ void ACsManager_InteractiveActor::OnTick(const float &DeltaSeconds)
 				continue;
 			}
 
-			if (!Actor->Cache.UseLifeTime)
+			if (!Actor->Cache.bLifeTime)
 				continue;
 
 			if (GetWorld()->GetTimeSeconds() - Actor->Cache.Time > Actor->Cache.LifeTime)

@@ -26,8 +26,6 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 	TEnumAsByte<ECsProjectileMovement::Type> Movement;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
-	float ElapsedTime;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FVector Location;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FVector Direction;

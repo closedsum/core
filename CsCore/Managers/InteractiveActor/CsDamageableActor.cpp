@@ -205,8 +205,8 @@ void ACsDamageableActor::ApplyDamage(FCsDamageEvent* Event)
 		// DeAllocate
 		if (RespawnTime <= 0.0f)
 		{
-			Cache.UseLifeTime = true;
-			Cache.LifeTime	  = 0.0f;
+			Cache.bLifeTime = true;
+			Cache.LifeTime	= 0.0f;
 		}
 		// Setup Respawn
 		else

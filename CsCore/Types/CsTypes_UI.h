@@ -1,6 +1,7 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_View.h"
 #include "Types/CsTypes_Load.h"
+#include "Types/CsTypes_Math.h"
 
 #include "Runtime/UMG/Public/Components/SlateWrapperTypes.h"
 #include "Runtime/UMG/Public/Components/CanvasPanel.h"
@@ -144,14 +145,32 @@ struct FCsWidgetActorInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
 	FVector2D DrawSize;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget", meta = (InlineEditConditionToggle))
+	bool bMinDrawDistance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget", meta = (editcondition = "bMinDrawDistance"))
+	FCsDrawDistance MinDrawDistance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+	bool ScaleByDistance;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
 	FTransform Transform;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
 	bool FollowCamera;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float DistanceProjectedOutFromCamera;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
 	bool LookAtCamera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget", meta = (InlineEditConditionToggle))
+	bool bMovementFunction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget", meta = (editcondition = "bMovementFunction"))
+	FCsParametricFunction MovementFunction;
 
 private:
 	UPROPERTY(Transient)
@@ -174,9 +193,15 @@ public:
 		Blueprint_LoadFlags = B.Blueprint_LoadFlags;
 		Blueprint_Internal = B.Blueprint_Internal;
 		DrawSize = B.DrawSize;
+		bMinDrawDistance = B.bMinDrawDistance;
+		MinDrawDistance = B.MinDrawDistance;
+		ScaleByDistance = B.ScaleByDistance;
 		Transform = B.Transform;
 		FollowCamera = B.FollowCamera;
+		DistanceProjectedOutFromCamera = B.DistanceProjectedOutFromCamera;
 		LookAtCamera = B.LookAtCamera;
+		bMovementFunction = B.bMovementFunction;
+		MovementFunction = B.MovementFunction;
 		return *this;
 	}
 
@@ -186,8 +211,14 @@ public:
 				Blueprint_LoadFlags == B.Blueprint_LoadFlags &&
 				Blueprint_Internal == B.Blueprint_Internal &&
 				DrawSize == B.DrawSize &&
+				bMinDrawDistance == B.bMinDrawDistance &&
+				MinDrawDistance == B.MinDrawDistance &&
+				ScaleByDistance == B.ScaleByDistance &&
 				FollowCamera == B.FollowCamera &&
-				LookAtCamera == B.LookAtCamera;
+				DistanceProjectedOutFromCamera == B.DistanceProjectedOutFromCamera &&
+				LookAtCamera == B.LookAtCamera &&
+				bMovementFunction == B.bMovementFunction &&
+				MovementFunction == B.MovementFunction;
 	}
 
 	bool operator!=(const FCsWidgetActorInfo& B) const

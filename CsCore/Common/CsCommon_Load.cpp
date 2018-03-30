@@ -50,6 +50,7 @@ namespace ECsCommonLoadCachedString
 		const FString CsSoundPriority = TEXT("ECsSoundPriority");
 		const FString CsInteractiveCollision = TEXT("ECsInteractiveCollision");
 		const FString CsProjectileMovementFunctionType = TEXT("ECsProjectileMovementFunctionType");
+		const FString CsParametricFunctionType = TEXT("ECsParametricFunctionType");
 		const FString CsLoadFlags = TEXT("ECsLoadFlags");
 		const FString CsItemMemberValueType = TEXT("ECsItemMemberValueType");
 
@@ -858,8 +859,11 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// ECsProjectileMovementFunctionType
 				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsProjectileMovementFunctionType))
 				{ WriteMemberBytePropertyToJson<ECsProjectileMovementFunctionType::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsProjectileMovementFunctionType::ToString); continue; }
+				// ECsParametricFunctionType
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsParametricFunctionType))
+				{ WriteMemberBytePropertyToJson<ECsParametricFunctionType::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsParametricFunctionType::ToString); continue; }
 				// ECsItemMemberValueType
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsProjectileMovementFunctionType))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsItemMemberValueType))
 				{ WriteMemberBytePropertyToJson<ECsItemMemberValueType::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsItemMemberValueType::ToString); continue; }
 
 				if (Internal)
@@ -1495,6 +1499,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// ECsProjectileMovementFunctionType
 				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsProjectileMovementFunctionType))
 				{ WriteMemberBytePropertyToJson<ECsProjectileMovementFunctionType::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsProjectileMovementFunctionType::ToString); continue; }
+				// ECsParametricFunctionType
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsParametricFunctionType))
+				{ WriteMemberBytePropertyToJson<ECsParametricFunctionType::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsParametricFunctionType::ToString); continue; }
 				// ECsItemMemberValueType
 				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsItemMemberValueType))
 				{ WriteMemberBytePropertyToJson<ECsItemMemberValueType::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsItemMemberValueType::ToString); continue; }
@@ -2073,6 +2080,12 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// ECsSoundPriority
 				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsSoundPriority))
 				{ WriteMemberBytePropertyToJson<ECsSoundPriority::Type>(InJsonWriter, ByteProperty, InObject, MemberName, &ECsSoundPriority::ToString); continue; }
+				// ECsParametricFunctionType
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsParametricFunctionType))
+				{ WriteMemberBytePropertyToJson<ECsParametricFunctionType::Type>(InJsonWriter, ByteProperty, InObject, MemberName, &ECsParametricFunctionType::ToString); continue; }
+				// ECsItemMemberValueType
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsItemMemberValueType))
+				{ WriteMemberBytePropertyToJson<ECsItemMemberValueType::Type>(InJsonWriter, ByteProperty, InObject, MemberName, &ECsItemMemberValueType::ToString); continue; }
 				// ECsInteractiveCollision
 				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsInteractiveCollision))
 				{
@@ -2871,6 +2884,12 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 					if (TCsProjectileMovementFunctionType* Member = ByteProperty->ContainerPtrToValuePtr<TCsProjectileMovementFunctionType>(InStruct))
 					{ *Member = ECsProjectileMovementFunctionType::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
+				// ECsParametricFunctionType
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsParametricFunctionType))
+				{
+					if (TCsParametricFunctionType* Member = ByteProperty->ContainerPtrToValuePtr<TCsParametricFunctionType>(InStruct))
+					{ *Member = ECsParametricFunctionType::ToType(JsonObject->GetStringField(MemberName)); continue; }
+				}
 				// ECsItemMemberValueType
 				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsProjectileMovementFunctionType))
 				{
@@ -3542,6 +3561,12 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 					if (TCsProjectileMovementFunctionType* Member = ByteProperty->ContainerPtrToValuePtr<TCsProjectileMovementFunctionType>(InStruct))
 					{ *Member = ECsProjectileMovementFunctionType::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
+				// ECsParametricFunctionType
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsParametricFunctionType))
+				{
+					if (TCsParametricFunctionType* Member = ByteProperty->ContainerPtrToValuePtr<TCsParametricFunctionType>(InStruct))
+					{ *Member = ECsParametricFunctionType::ToType(JsonObject->GetStringField(MemberName)); continue; }
+				}
 				// ECsItemMemberValueType
 				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsProjectileMovementFunctionType))
 				{
@@ -4144,6 +4169,18 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				{
 					if (TCsSoundPriority* Member = ByteProperty->ContainerPtrToValuePtr<TCsSoundPriority>(InObject))
 					{ *Member = ECsSoundPriority::ToType(JsonObject->GetStringField(MemberName)); continue; }
+				}
+				// ECsParametricFunctionType
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsParametricFunctionType))
+				{
+					if (TCsParametricFunctionType* Member = ByteProperty->ContainerPtrToValuePtr<TCsParametricFunctionType>(InObject))
+					{ *Member = ECsParametricFunctionType::ToType(JsonObject->GetStringField(MemberName)); continue; }
+				}
+				// ECsItemMemberValueType
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsItemMemberValueType))
+				{
+					if (TCsItemMemberValueType* Member = ByteProperty->ContainerPtrToValuePtr<TCsItemMemberValueType>(InObject))
+					{ *Member = ECsItemMemberValueType::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
 
 				if (Internal)

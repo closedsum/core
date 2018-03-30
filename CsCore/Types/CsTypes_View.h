@@ -140,6 +140,68 @@ namespace ECsVisibility
 typedef ECsVisibility::Type TCsVisibility;
 
 USTRUCT(BlueprintType)
+struct FCsDrawDistance
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Draw Distance", meta = (ClampMin = "0", UIMin = "0"))
+	float Distance;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Draw Distance")
+	float DistanceSq;
+
+	FCsDrawDistance()
+	{
+		Reset();
+	}
+
+	FCsDrawDistance& operator=(const FCsDrawDistance& B)
+	{
+		Distance = B.Distance;
+		DistanceSq = B.DistanceSq;
+		return *this;
+	}
+
+	bool operator==(const FCsDrawDistance& B) const
+	{
+		return Distance == B.Distance && DistanceSq == B.DistanceSq;
+	}
+
+	bool operator!=(const FCsDrawDistance& B) const
+	{
+		return !(*this == B);
+	}
+
+	void Square()
+	{
+		DistanceSq = Distance * Distance;
+	}
+
+	FString ToString() const
+	{
+		return FString::Printf(TEXT("Distance=%3.3f"), Distance);
+	}
+
+	bool InitFromString(const FString& InSourceString)
+	{
+		Distance = 0.0f;
+
+		// The initialization is only successful if the Distance values can all be parsed from the string
+		const bool bSuccessful = FParse::Value(*InSourceString, TEXT("Distance="), Distance);
+
+		Square();
+
+		return bSuccessful;
+	}
+
+	void Reset()
+	{
+		Distance = 3000.0f;
+		Square();
+	}
+};
+
+USTRUCT(BlueprintType)
 struct FCsFpsDrawDistance
 {
 	GENERATED_USTRUCT_BODY()
@@ -180,6 +242,12 @@ struct FCsFpsDrawDistance
 		return !(*this == B);
 	}
 
+	void Square()
+	{
+		Distance1PSq = Distance1P * Distance1P;
+		Distance3PSq = Distance3P * Distance3P;
+	}
+
 	float Get(const TCsViewType &ViewType) const
 	{
 		if (ViewType == ECsViewType::FirstPerson || ViewType == ECsViewType::VR)
@@ -203,12 +271,23 @@ struct FCsFpsDrawDistance
 		return FString::Printf(TEXT("1P=%3.3f 3P=%3.3f"), Distance1P, Distance3P);
 	}
 
+	bool InitFromString(const FString& InSourceString)
+	{
+		Distance1P = Distance3P = 0.0f;
+
+		// The initialization is only successful if the Distance1P and Distance3P values can all be parsed from the string
+		const bool bSuccessful = FParse::Value(*InSourceString, TEXT("1P="), Distance1P) && FParse::Value(*InSourceString, TEXT("3P="), Distance3P);
+
+		Square();
+
+		return bSuccessful;
+	}
+
 	void Reset()
 	{
-		Distance1P   = 3000.0f;
-		Distance1PSq = Distance1P * Distance1P;
-		Distance3P   = 3000.0f;
-		Distance3PSq = Distance3P * Distance3P;
+		Distance1P = 3000.0f;
+		Distance3P = 3000.0f;
+		Square();
 	}
 };
 

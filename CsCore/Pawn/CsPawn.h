@@ -25,6 +25,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsPawn_OnChange
 // Weapon
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsPawn_OnChangeCurrentWeaponSlot, const uint8&, const TCsWeaponSlot&, const TCsWeaponSlot&);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsPawn_OnChangeCurrentWeaponSlot, const uint8&, MappingId, const uint8&, LastWeaponSlot, const uint8&, CurrentWeaponSlot);
+// Damage
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsPawn_OnApplyDamage_Result, const uint8&, FCsDamageResult*);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnApplyDamage_Result, const uint8&, MappingId, const FCsDamageResult&, Result);
 
 // Enums
 #pragma region
@@ -160,6 +163,11 @@ public:
 
 	virtual void ApplyDamage(FCsDamageEvent* Event);
 	virtual void OnApplyDamage_Result(FCsDamageResult* Result);
+
+	UPROPERTY(BlueprintAssignable, Category = "State")
+	FBindableDynEvent_CsPawn_OnApplyDamage_Result OnApplyDamage_Result_ScriptEvent;
+
+	FBindableEvent_CsPawn_OnApplyDamage_Result OnApplyDamage_Result_Event;
 
 	virtual void Die();
 

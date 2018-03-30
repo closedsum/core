@@ -30,6 +30,7 @@ namespace ECsCommonLoadCachedString
 {
 	namespace Str
 	{
+		const FString Transform = TEXT("Transform");
 		const FString Rotation = TEXT("Rotation");
 		const FString Translation = TEXT("Translation");
 		const FString Scale = TEXT("Scale");
@@ -300,7 +301,7 @@ void UCsCommon_Load::WriteMemberStructPropertyToJson_Transform(TSharedRef<TJsonW
 		// Translation
 		InJsonWriter->WriteValue(ECsCommonLoadCachedString::Str::Translation, *(Member->GetTranslation().ToString()));
 		// Scale
-		InJsonWriter->WriteValue(ECsCommonLoadCachedString::Str::Translation, *(Member->GetScale3D().ToString()));
+		InJsonWriter->WriteValue(ECsCommonLoadCachedString::Str::Scale, *(Member->GetScale3D().ToString()));
 
 		InJsonWriter->WriteObjectEnd();
 	}
@@ -325,7 +326,7 @@ void UCsCommon_Load::WriteMemberArrayStructPropertyToJson_Transform(TSharedRef<T
 		// Translation
 		InJsonWriter->WriteValue(ECsCommonLoadCachedString::Str::Translation, *(Element.GetTranslation().ToString()));
 		// Scale
-		InJsonWriter->WriteValue(ECsCommonLoadCachedString::Str::Translation, *(Element.GetScale3D().ToString()));
+		InJsonWriter->WriteValue(ECsCommonLoadCachedString::Str::Scale, *(Element.GetScale3D().ToString()));
 
 		InJsonWriter->WriteObjectEnd();
 	}
@@ -2189,10 +2190,12 @@ void UCsCommon_Load::WriteToMemberStructPropertyFromJson_Transform(TSharedPtr<FJ
 {
 	if (FTransform* Member = StructProperty->ContainerPtrToValuePtr<FTransform>(InObject))
 	{
+		TSharedPtr<FJsonObject> Object = JsonObject->Values.Find(ECsCommonLoadCachedString::Str::Transform)->Get()->AsObject();
+
 		// Rotation
 		FRotator Rotation;
 														// TEXT("Rotation")
-		Rotation.InitFromString(JsonObject->GetStringField(ECsCommonLoadCachedString::Str::Rotation));
+		Rotation.InitFromString(Object->GetStringField(ECsCommonLoadCachedString::Str::Rotation));
 		FVector RotationAsVector = FVector(Rotation.Pitch, Rotation.Yaw, Rotation.Roll);
 		FQuat Quat = FQuat::MakeFromEuler(RotationAsVector);
 
@@ -2200,13 +2203,13 @@ void UCsCommon_Load::WriteToMemberStructPropertyFromJson_Transform(TSharedPtr<FJ
 		// Translation
 		FVector Translation;
 															//TEXT("Translation")
-		Translation.InitFromString(JsonObject->GetStringField(ECsCommonLoadCachedString::Str::Translation));
+		Translation.InitFromString(Object->GetStringField(ECsCommonLoadCachedString::Str::Translation));
 
 		Member->SetTranslation(Translation);
 		// Scale
 		FVector Scale;
 													//  TEXT("Scale")
-		Scale.InitFromString(JsonObject->GetStringField(ECsCommonLoadCachedString::Str::Scale));
+		Scale.InitFromString(Object->GetStringField(ECsCommonLoadCachedString::Str::Scale));
 
 		Member->SetScale3D(Scale);
 	}
@@ -2230,7 +2233,8 @@ void UCsCommon_Load::WriteToMemberArrayStructPropertyFromJson_Transform(TSharedP
 		if (I >= MemberCount)
 			Member->AddDefaulted();
 
-		TSharedPtr<FJsonObject> Object = JsonArray[I]->AsObject();
+		TSharedPtr<FJsonObject> ArrayObject = JsonArray[I]->AsObject();
+		TSharedPtr<FJsonObject> Object		= ArrayObject->Values.Find(ECsCommonLoadCachedString::Str::Transform)->Get()->AsObject();
 
 		FTransform& Element = (*Member)[I];
 
@@ -2436,6 +2440,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FColor
 			if (StructProperty->Struct == TBaseStructure<FColor>::Get())
 			{ WriteToMemberStructPropertyFromJson_Primitive<FColor>(JsonObject, StructProperty, InStruct, MemberName, &FColor::InitFromString); continue; }
+			// FTransform
+			if (StructProperty->Struct == TBaseStructure<FTransform>::Get())
+			{ WriteToMemberStructPropertyFromJson_Transform(JsonObject, StructProperty, InStruct, MemberName); continue; }
 			// FInt32Interval
 			if (StructProperty->Struct == TBaseStructure<FInt32Interval>::Get())
 			{ WriteToMemberStructPropertyFromJson_BaseStructure<FInt32Interval>(JsonObject, StructProperty, InStruct, MemberName, &UCsCommon_Load::InitFromString_FInt32Interval); continue; }
@@ -2736,6 +2743,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 				// FColor
 				if (InnerStructProperty->Struct == TBaseStructure<FColor>::Get())
 				{ WriteToMemberArrayStructPropertyFromJson_Primitive<FColor>(JsonObject, ArrayProperty, InStruct, MemberName, &FColor::InitFromString); continue; }
+				// FTransform
+				if (InnerStructProperty->Struct == TBaseStructure<FTransform>::Get())
+				{ WriteToMemberArrayStructPropertyFromJson_Transform(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 				// FCsAnimMontage
 				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsAnimMontage>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
@@ -3098,6 +3108,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FColor
 			if (StructProperty->Struct == TBaseStructure<FColor>::Get())
 			{ WriteToMemberStructPropertyFromJson_Primitive<FColor>(JsonObject, StructProperty, InStruct, MemberName, &FColor::InitFromString); continue; }
+			// FTransform
+			if (StructProperty->Struct == TBaseStructure<FTransform>::Get())
+			{ WriteToMemberStructPropertyFromJson_Transform(JsonObject, StructProperty, InStruct, MemberName); continue; }
 			// FInt32Interval
 			if (StructProperty->Struct == TBaseStructure<FInt32Interval>::Get())
 			{ WriteToMemberStructPropertyFromJson_BaseStructure<FInt32Interval>(JsonObject, StructProperty, InStruct, MemberName, &UCsCommon_Load::InitFromString_FInt32Interval); continue; }
@@ -3401,6 +3414,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				// FColor
 				if (InnerStructProperty->Struct == TBaseStructure<FColor>::Get())
 				{ WriteToMemberArrayStructPropertyFromJson_Primitive<FColor>(JsonObject, ArrayProperty, InStruct, MemberName, &FColor::InitFromString); continue; }
+				// FTransform
+				if (InnerStructProperty->Struct == TBaseStructure<FTransform>::Get())
+				{ WriteToMemberArrayStructPropertyFromJson_Transform(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 				// FCsAnimMontage
 				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsAnimMontage>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
@@ -3749,6 +3765,9 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FColor
 			if (StructProperty->Struct == TBaseStructure<FColor>::Get())
 			{ WriteToMemberStructPropertyFromJson_Primitive<FColor>(JsonObject, StructProperty, InObject, MemberName, &FColor::InitFromString); continue; }
+			// FTransform
+			if (StructProperty->Struct == TBaseStructure<FTransform>::Get())
+			{ WriteToMemberStructPropertyFromJson_Transform(JsonObject, StructProperty, InObject, MemberName); continue; }
 			// FInt32Interval
 			if (StructProperty->Struct == TBaseStructure<FInt32Interval>::Get())
 			{ WriteToMemberStructPropertyFromJson_BaseStructure<FInt32Interval>(JsonObject, StructProperty, InObject, MemberName, &UCsCommon_Load::InitFromString_FInt32Interval); continue; }
@@ -4010,6 +4029,9 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				// FColor
 				if (InnerStructProperty->Struct == TBaseStructure<FColor>::Get())
 				{ WriteToMemberArrayStructPropertyFromJson_Primitive<FColor>(JsonObject, ArrayProperty, InObject, MemberName, &FColor::InitFromString); continue; }
+				// FTransform
+				if (InnerStructProperty->Struct == TBaseStructure<FTransform>::Get())
+				{ WriteToMemberArrayStructPropertyFromJson_Transform(JsonObject, ArrayProperty, InObject, MemberName); continue; }
 				// FCsAnimMontage
 				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsAnimMontage>(JsonObject, ArrayProperty, InObject, MemberName, nullptr); continue; }

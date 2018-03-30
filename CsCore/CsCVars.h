@@ -62,6 +62,13 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerInteractiveActorTr
 
 #pragma endregion Interactive Actor
 
+// Widget Actor
+#pragma region
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerWidgetActorTransactions;
+
+#pragma endregion Widget Actor
+
 // AI
 #pragma region
 

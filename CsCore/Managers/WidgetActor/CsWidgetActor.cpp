@@ -345,10 +345,21 @@ void ACsWidgetActor::Show()
 
 	SetActorTickEnabled(true);
 
-	UUserWidget* Widget = Cache.GetWidget();
+	if (UCsUserWidget* UserWidget = Cast<UCsUserWidget>(MyWidget))
+	{
+		UserWidget->Show();
+	}
+	else
+	if (UCsPooledWidget* PooledWidget = Cast<UCsPooledWidget>(MyWidget))
+	{
+		PooledWidget->Show();
+	}
+	else
+	{
+		MyWidget->SetIsEnabled(true);
+		MyWidget->SetVisibility(ESlateVisibility::Visible);
+	}
 
-	Widget->SetIsEnabled(true);
-	Widget->SetVisibility(ESlateVisibility::Visible);
 	WidgetComponent->Activate();
 	WidgetComponent->SetComponentTickEnabled(true);
 	WidgetComponent->SetHiddenInGame(false);
@@ -359,10 +370,21 @@ void ACsWidgetActor::Hide()
 {
 	Super::Hide();
 
-	UUserWidget* Widget = Cache.GetWidget();
+	if (UCsUserWidget* UserWidget = Cast<UCsUserWidget>(MyWidget))
+	{
+		UserWidget->Show();
+	}
+	else
+	if (UCsPooledWidget* PooledWidget = Cast<UCsPooledWidget>(MyWidget))
+	{
+		PooledWidget->Show();
+	}
+	else
+	{
+		MyWidget->SetIsEnabled(false);
+		MyWidget->SetVisibility(ESlateVisibility::Hidden);
+	}
 
-	Widget->SetIsEnabled(false);
-	Widget->SetVisibility(ESlateVisibility::Hidden);
 	WidgetComponent->SetVisibility(false);
 	WidgetComponent->SetHiddenInGame(true);
 	WidgetComponent->SetComponentTickEnabled(false);

@@ -3,11 +3,15 @@
 #include "CsCore.h"
 #include "CsCVars.h"
 #include "Common/CsCommon.h"
+
 #include "Managers/InteractiveActor/CsInteractiveActor.h"
 #include "Game/CsGameState.h"
 
 // Data
 #include "Data/CsData_Interactive.h"
+
+// Cache
+#pragma region
 
 namespace ECsManagerInteractiveActorCachedString
 {
@@ -19,6 +23,8 @@ namespace ECsManagerInteractiveActorCachedString
 		const FString WakeUp = TEXT("ACsManager_InteractiveActor::WakeUp");
 	}
 }
+
+#pragma endregion Cache
 
 ACsManager_InteractiveActor::ACsManager_InteractiveActor(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -238,7 +244,7 @@ void ACsManager_InteractiveActor::OnTick(const float &DeltaSeconds)
 
 void ACsManager_InteractiveActor::GetAllActiveActors(TArray<class ACsInteractiveActor*> &OutActors)
 {
-	for (int32 I = 0; I < InteractiveType_MAX; ++I)
+	for (int32 I = 0; I < INTERACTIVE_TYPE_MAX; ++I)
 	{
 		TArray<ACsInteractiveActor*>* Actors = ActiveActors.Find((TCsInteractiveType)I);
 
@@ -390,9 +396,7 @@ void ACsManager_InteractiveActor::DeAllocate(const uint8 &Type, const int32 &Ind
 
 void ACsManager_InteractiveActor::DeAllocateAll()
 {
-	const uint8 Count = (uint8)InteractiveType_MAX;
-
-	for (uint8 I = 0; I < Count; ++I)
+	for (uint8 I = 0; I < INTERACTIVE_TYPE_MAX; ++I)
 	{
 		const TCsInteractiveType Type = (TCsInteractiveType)I;
 

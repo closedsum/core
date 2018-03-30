@@ -21,9 +21,9 @@ class CSCORE_API ACsManager_InteractiveActor : public ACsManager
 	void Init(const TCsInteractiveType &InInteractiveType_MAX, TCsInteractiveTypeToString InInteractiveTypeToString);
 
 	virtual void Destroyed() override;
-	virtual void CreatePool(const TSubclassOf<class UObject> &ObjectClass, const uint8 &Type, const int32 &Size);
-	virtual void AddToPool(UObject* InObject, const uint8& Type);
-	virtual void AddToActivePool(UObject* InObject, const uint8& Type);
+	virtual void CreatePool(const TSubclassOf<class UObject> &ObjectClass, const uint8 &Type, const int32 &Size) override;
+	virtual void AddToPool(UObject* InObject, const uint8& Type) override;
+	virtual void AddToActivePool(UObject* InObject, const uint8& Type) override;
 	virtual void OnTick(const float &DeltaSeconds) override;
 
 	TMap<TCsInteractiveType, uint16> PoolSizes;

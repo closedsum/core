@@ -156,6 +156,18 @@ TAutoConsoleVariable<int32> CsCVarLogManagerInteractiveActorTransactions(
 
 #pragma endregion Interactive Actor
 
+// Widget Actor
+#pragma region
+
+TAutoConsoleVariable<int32> CsCVarLogManagerWidgetActorTransactions(
+	TEXT("log.manager.widget.actor.transactions"),
+	0,
+	TEXT("Log Manager Widget Actor Allocation and DeAllocation."),
+	ECVF_SetByConsole
+);
+
+#pragma endregion Widget Actor
+
 // AI
 #pragma region
 

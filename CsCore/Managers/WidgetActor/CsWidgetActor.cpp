@@ -12,6 +12,7 @@
 #include "UI/CsUserWidget.h"
 
 #include "Player/CsPlayerController.h"
+#include "Pawn/CsPawn.h"
 
 ACsWidgetActor::ACsWidgetActor(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -38,8 +39,15 @@ void ACsWidgetActor::Tick(float DeltaSeconds)
 {
 	if (!Cache.IsAllocated)
 		return;
+
+	if (Cache.bMinDrawDistance)
+		OnTick_Handle_DrawDistance();
+
 	if (Visibility == ECsVisibility::Hidden)
 		return;
+
+	if (Cache.ScaleByDistance)
+		OnTick_Handle_Scale();
 
 	ACsPlayerController* LocalController = UCsCommon::GetLocalPlayerController<ACsPlayerController>(GetWorld());
 
@@ -340,6 +348,15 @@ void ACsWidgetActor::OnRemove(const FCsInteractedActorInfo &Info)
 	State = ECsInteractiveState::Remove;
 }
 
+void ACsWidgetActor::OnTick_Handle_Scale()
+{
+	ACsPawn* LocalPawn   = UCsCommon::GetLocalPawn<ACsPawn>(GetWorld());
+	const float Distance = (LocalPawn->GetActorLocation() - GetActorLocation()).Size2D();
+	const float Scale	 = Cache.MinDrawDistance.Distance > 0 ? Distance / Cache.MinDrawDistance.Distance : 1.0f;
+
+	SetActorScale3D(Scale * Cache.Scale);
+}
+
 #pragma endregion State
 
 // Visibility
@@ -350,52 +367,34 @@ void ACsWidgetActor::Show()
 	Super::Show();
 
 	SetActorTickEnabled(true);
-
-	if (UCsUserWidget* UserWidget = Cast<UCsUserWidget>(MyWidget))
-	{
-		UserWidget->Show();
-	}
-	else
-	if (UCsPooledWidget* PooledWidget = Cast<UCsPooledWidget>(MyWidget))
-	{
-		PooledWidget->Show();
-	}
-	else
-	{
-		MyWidget->SetIsEnabled(true);
-		MyWidget->SetVisibility(ESlateVisibility::Visible);
-	}
-
-	WidgetComponent->Activate();
-	WidgetComponent->SetComponentTickEnabled(true);
-	WidgetComponent->SetHiddenInGame(false);
-	WidgetComponent->SetVisibility(true);
+	SetActorHiddenInGame(false);
+	WidgetComponent->Show();
 }
 
 void ACsWidgetActor::Hide()
 {
 	Super::Hide();
 
-	if (UCsUserWidget* UserWidget = Cast<UCsUserWidget>(MyWidget))
-	{
-		UserWidget->Show();
-	}
-	else
-	if (UCsPooledWidget* PooledWidget = Cast<UCsPooledWidget>(MyWidget))
-	{
-		PooledWidget->Show();
-	}
-	else
-	{
-		MyWidget->SetIsEnabled(false);
-		MyWidget->SetVisibility(ESlateVisibility::Hidden);
-	}
-
-	WidgetComponent->SetVisibility(false);
-	WidgetComponent->SetHiddenInGame(true);
-	WidgetComponent->SetComponentTickEnabled(false);
-	WidgetComponent->Deactivate();
+	WidgetComponent->Hide();
+	SetActorHiddenInGame(true);
 	SetActorTickEnabled(false);
+}
+
+void ACsWidgetActor::OnTick_Handle_DrawDistance()
+{
+	ACsPawn* LocalPawn	   = UCsCommon::GetLocalPawn<ACsPawn>(GetWorld());
+	const float DistanceSq = (LocalPawn->GetActorLocation() - GetActorLocation()).SizeSquared2D();
+
+	if (DistanceSq < Cache.MinDrawDistance.DistanceSq)
+	{
+		if (Visibility == ECsVisibility::Visible)
+			Hide();
+	}
+	else
+	{
+		if (Visibility == ECsVisibility::Hidden)
+			Show();
+	}
 }
 
 #pragma endregion Visiblity

@@ -4,7 +4,9 @@
 #include "Types/CsTypes.h"
 #include "Common/CsCommon.h"
 
-#include "Runtime/UMG/Public/Blueprint/UserWidget.h"
+// UI
+#include "UI/CsUserWidget.h"
+#include "UI/Simple/CsSimpleWidget.h"
 
 #include "Pawn/CsPawn.h"
 #include "Player/CsPlayerController.h"
@@ -100,8 +102,20 @@ void UCsWidgetComponent::SetInfo(const FCsWidgetActorInfo &Info)
 
 void UCsWidgetComponent::Show()
 {
-	Widget->SetIsEnabled(true);
-	Widget->SetVisibility(ESlateVisibility::Visible);
+	if (UCsUserWidget* UserWidget = Cast<UCsUserWidget>(Widget))
+	{
+		UserWidget->Show();
+	}
+	else
+	if (UCsSimpleWidget* SimpleWidget = Cast<UCsSimpleWidget>(Widget))
+	{
+		SimpleWidget->Show();
+	}
+	else
+	{
+		Widget->SetIsEnabled(true);
+		Widget->SetVisibility(ESlateVisibility::Visible);
+	}
 	Activate();
 	SetComponentTickEnabled(true);
 	SetHiddenInGame(false);
@@ -110,8 +124,20 @@ void UCsWidgetComponent::Show()
 
 void UCsWidgetComponent::Hide()
 {
-	Widget->SetIsEnabled(false);
-	Widget->SetVisibility(ESlateVisibility::Hidden);
+	if (UCsUserWidget* UserWidget = Cast<UCsUserWidget>(Widget))
+	{
+		UserWidget->Hide();
+	}
+	else
+	if (UCsSimpleWidget* SimpleWidget = Cast<UCsSimpleWidget>(Widget))
+	{
+		SimpleWidget->Hide();
+	}
+	else
+	{
+		Widget->SetIsEnabled(false);
+		Widget->SetVisibility(ESlateVisibility::Hidden);
+	}
 	SetVisibility(false);
 	SetHiddenInGame(true);
 	SetComponentTickEnabled(false);

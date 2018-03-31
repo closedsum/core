@@ -372,6 +372,8 @@ public:
 	virtual void OnFirstUnCollide(const FCsInteractedActorInfo &Info);
 	virtual void OnRemove(const FCsInteractedActorInfo &Info);
 
+	void OnTick_Handle_Scale();
+
 #pragma endregion State
 
 // Visibility
@@ -379,6 +381,8 @@ public:
 
 	virtual void Show() override;
 	virtual void Hide() override;
+
+	void OnTick_Handle_DrawDistance();
 
 #pragma endregion Visiblity
 };

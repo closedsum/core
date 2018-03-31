@@ -381,6 +381,28 @@ void ACsManager_WidgetActor::DeAllocateAll()
 
 #pragma endregion Allocate / DeAllocate
 
+// Payload
+#pragma region
+
+FCsWidgetActorPayload* ACsManager_WidgetActor::AllocatePayload()
+{
+	for (uint8 I = 0; I < CS_WIDGET_ACTOR_PAYLOAD_SIZE; ++I)
+	{
+		const uint8 Index			   = (PayloadIndex + I) % CS_WIDGET_ACTOR_PAYLOAD_SIZE;
+		FCsWidgetActorPayload* Payload = &(Payloads[Index]);
+
+		if (!Payload->IsAllocated)
+		{
+			Payload->IsAllocated = true;
+			return Payload;
+		}
+	}
+	checkf(0, TEXT("ACsManager_WidgetActor::AllocatePayload: Pool is exhausted"));
+	return nullptr;
+}
+
+#pragma endregion Payload
+
 // Display
 #pragma region
 

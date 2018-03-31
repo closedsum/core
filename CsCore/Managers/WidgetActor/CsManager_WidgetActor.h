@@ -5,6 +5,8 @@
 #include "Types/CsTypes_UI.h"
 #include "CsManager_WidgetActor.generated.h"
 
+#define CS_WIDGET_ACTOR_PAYLOAD_SIZE 255
+
 UCLASS()
 class CSCORE_API ACsManager_WidgetActor : public ACsManager
 {
@@ -67,6 +69,20 @@ public:
 	virtual void DeAllocateAll() override;
 
 #pragma endregion Allocate / DeAllocate
+
+// Payload
+#pragma region
+private:
+
+	FCsWidgetActorPayload Payloads[CS_WIDGET_ACTOR_PAYLOAD_SIZE];
+
+	uint8 PayloadIndex;
+
+public:
+
+	FCsWidgetActorPayload * AllocatePayload();
+
+#pragma endregion Payload
 
 // Display
 #pragma region

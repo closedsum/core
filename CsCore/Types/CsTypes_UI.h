@@ -142,6 +142,9 @@ struct FCsWidgetActorInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blueprint", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Blueprint_LoadFlags;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float LifeTime;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
 	FVector2D DrawSize;
 
@@ -195,6 +198,7 @@ public:
 		Blueprint = B.Blueprint;
 		Blueprint_LoadFlags = B.Blueprint_LoadFlags;
 		Blueprint_Internal = B.Blueprint_Internal;
+		LifeTime = B.LifeTime;
 		DrawSize = B.DrawSize;
 		bMinDrawDistance = B.bMinDrawDistance;
 		MinDrawDistance = B.MinDrawDistance;
@@ -214,6 +218,7 @@ public:
 		return	Blueprint == B.Blueprint &&
 				Blueprint_LoadFlags == B.Blueprint_LoadFlags &&
 				Blueprint_Internal == B.Blueprint_Internal &&
+				LifeTime == B.LifeTime &&
 				DrawSize == B.DrawSize &&
 				bMinDrawDistance == B.bMinDrawDistance &&
 				MinDrawDistance == B.MinDrawDistance &&
@@ -2191,6 +2196,10 @@ struct FCsWidgetActorPayload
 	bool bMovementFunction;
 	FCsParametricFunction MovementFunction;
 
+	int32 Int32;
+	float Float;
+	FString String;
+
 	FCsWidgetActorPayload()
 	{
 		Reset();
@@ -2213,6 +2222,10 @@ struct FCsWidgetActorPayload
 		LookAtCamera = false;
 		LockAxes.Reset();
 		bMovementFunction = false;
+
+		Int32 = 0;
+		Float = 0.0f;
+		String = ECsCachedString::Str::Empty;
 	}
 
 	class UUserWidget* GetWidget() { return Widget.IsValid() ? Widget.Get() : nullptr; }

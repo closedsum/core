@@ -7,4 +7,6 @@ UCLASS()
 class CSCORE_API ACsWidgetActor_Damage : public ACsWidgetActor
 {
 	GENERATED_UCLASS_BODY()
+
+	virtual void Allocate_Internal(FCsWidgetActorPayload* Payload) override;
 };	

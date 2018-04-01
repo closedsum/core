@@ -18,6 +18,10 @@ public:
 	static void Init();
 	static void Shutdown();
 
+	TWeakObjectPtr<UWorld> CurrentWorld;
+	
+	UWorld* GetCurrentWorld();
+	
 	/** Delegate for callbacks to Tick */
 	FTickerDelegate	TickDelegate;
 

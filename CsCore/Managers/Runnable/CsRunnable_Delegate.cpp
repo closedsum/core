@@ -32,7 +32,6 @@ FCsRunnable_Delegate::~FCsRunnable_Delegate()
 
 bool FCsRunnable_Delegate::Init()
 {
-	bExit = false;
 	return true;
 }
 
@@ -51,9 +50,6 @@ void FCsRunnable_Delegate::Exit()
 {
 	Delegate_OnExit.Broadcast();
 
-	if (Thread)
-		delete Thread;
-	Thread = nullptr;
 	bExit = true;
 }
 
@@ -68,6 +64,8 @@ void FCsRunnable_Delegate::Setup(const uint8& InIndex)
 void FCsRunnable_Delegate::Allocate(const uint8 &ActiveIndex, FCsRunnablePayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame)
 {
 	Cache.Init(ActiveIndex, Payload, Time, RealTime, Frame);
+
+	bExit = false;
 }
 
 void FCsRunnable_Delegate::Start()
@@ -86,7 +84,10 @@ void FCsRunnable_Delegate::EnsureCompletion()
 
 void FCsRunnable_Delegate::DeAllocate()
 {
-	EnsureCompletion();
+	if (Thread)
+		delete Thread;
+	Thread = nullptr;
+
 	Delegate.Clear();
 	Delegate_OnExit.Clear();
 }

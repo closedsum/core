@@ -3,8 +3,12 @@
 #include "CsCore.h"
 #include "CsCVars.h"
 #include "Common/CsCommon.h"
-#include "Managers/CsManager_Loading.h"
+
 #include "Coroutine/CsCoroutineScheduler.h"
+
+// Managers
+#include "Managers/CsManager_Loading.h"
+#include "Managers/Runnable/CsManager_Runnable.h"
 // Data
 #include "Data/CsDataMapping.h"
 #include "Data/CsData_Payload.h"
@@ -43,6 +47,7 @@ void UCsGameInstance::Init()
 	TickDelegateHandle = FTicker::GetCoreTicker().AddTicker(TickDelegate);
 
 	UCsManager_Loading::Init();
+	UCsManager_Runnable::Init();
 	UCsCoroutineScheduler::Init();
 	OnBoard();
 
@@ -57,6 +62,7 @@ void UCsGameInstance::Shutdown()
 	FTicker::GetCoreTicker().RemoveTicker(TickDelegateHandle);
 
 	UCsManager_Loading::Shutdown();
+	UCsManager_Runnable::Shutdown();
 	UCsCoroutineScheduler::Shutdown();
 }
 
@@ -245,7 +251,16 @@ PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(struct FCsRoutine* r))
 			dataMapping->AsyncTaskMutex.Lock();
 #endif // #if WITH_EDITOR
 
-			gi->AsyncPopulateAssetReferences();
+			//gi->AsyncPopulateAssetReferences();
+			UCsManager_Runnable* Manager_Runnable = UCsManager_Runnable::Get();
+
+			FCsRunnablePayload* Payload = Manager_Runnable->AllocatePayload();
+			Payload->Owner				= gi;
+			Payload->ThreadPriority		= EThreadPriority::TPri_Normal;
+
+			FCsRunnable_Delegate* Runnable = Manager_Runnable->Prep(Payload);
+			Runnable->Delegate.AddUObject(gi, &UCsGameInstance::PopulateAssetReferences);
+			Runnable->Start();
 		}
 		else
 		{
@@ -303,6 +318,7 @@ void UCsGameInstance::PopulateAssetReferences()
 	OnBoardState = ECsGameInstanceOnBoardState::FinishedPopulatingAssetReferences;
 }
 
+/*
 void UCsGameInstance::AsyncPopulateAssetReferences()
 {
 	class FAsyncPopulateAssetReferencesWorker : public FNonAbandonableTask
@@ -330,6 +346,7 @@ void UCsGameInstance::AsyncPopulateAssetReferences()
 	};
 	(new FAutoDeleteAsyncTask<FAsyncPopulateAssetReferencesWorker>(this))->StartBackgroundTask();
 }
+*/
 
 #pragma endregion Data Mapping
 

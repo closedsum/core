@@ -66,6 +66,11 @@ UCsManager_Runnable::UCsManager_Runnable(const FObjectInitializer& ObjectInitial
 	s_bManagerHasShutdown = true;
 }
 
+UWorld* UCsManager_Runnable::GetCurrentWorld()
+{
+	return CurrentWorld.IsValid() ? CurrentWorld.Get() : nullptr;
+}
+
 bool UCsManager_Runnable::Tick(float DeltaSeconds)
 {
 	const int32 Count	= ActiveRunnables.Num();
@@ -214,7 +219,11 @@ FCsRunnable_Delegate * UCsManager_Runnable::Prep(FCsRunnablePayload* Payload)
 	FCsRunnable_Delegate* Runnable = Allocate();
 	ActiveRunnables.Add(Runnable);
 	const uint8 ActiveIndex = ActiveRunnables.Num();
-	Runnable->Allocate(ActiveIndex, Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
+
+	if (UWorld* World = GetCurrentWorld())
+		Runnable->Allocate(ActiveIndex, Payload, World->GetTimeSeconds(), World->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(World));
+	else
+		Runnable->Allocate(ActiveIndex, Payload, UCsCommon::GetCurrentDateTimeSeconds(), UCsCommon::GetCurrentDateTimeSeconds(), 0);
 
 	//LogTransaction(ECsManagerWidgetActorCachedString::Str::Prep, ECsPoolTransaction::Allocate, Runnable);
 	return Runnable;

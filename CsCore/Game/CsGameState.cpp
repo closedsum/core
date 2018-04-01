@@ -331,24 +331,29 @@ void ACsGameState::StartSetAssetReferencesCommonData()
 {
 	if (UCsCommon::CanAsyncTask())
 	{
-#if WITH_EDITOR
-		UCsCommon::GetDataMapping(GetWorld())->AsyncTaskMutex.Lock();
-#endif // #if WITH_EDITOR
-
-		UCsManager_Runnable* Manager_Runnable = UCsManager_Runnable::Get();
-
-		FCsRunnablePayload* Payload = Manager_Runnable->AllocatePayload();
-		Payload->Owner				= this;
-		Payload->ThreadPriority		= EThreadPriority::TPri_Normal;
-
-		FCsRunnable_Delegate* Runnable = Manager_Runnable->Prep(Payload);
-		Runnable->Delegate.AddUObject(this, &ACsGameState::SetAssetReferencesCommonData);
-		Runnable->Start();
+		AsyncSetAssetReferencesCommonData();
 	}
 	else
 	{
 		SetAssetReferencesCommonData();
 	}
+}
+
+void ACsGameState::AsyncSetAssetReferencesCommonData()
+{
+#if WITH_EDITOR
+	UCsCommon::GetDataMapping(GetWorld())->AsyncTaskMutex.Lock();
+#endif // #if WITH_EDITOR
+
+	UCsManager_Runnable* Manager_Runnable = UCsManager_Runnable::Get();
+
+	FCsRunnablePayload* Payload = Manager_Runnable->AllocatePayload();
+	Payload->Owner				= this;
+	Payload->ThreadPriority		= EThreadPriority::TPri_Normal;
+
+	FCsRunnable_Delegate* Runnable = Manager_Runnable->Prep(Payload);
+	Runnable->Delegate.AddUObject(this, &ACsGameState::SetAssetReferencesCommonData);
+	Runnable->Start();
 }
 
 void ACsGameState::SetAssetReferencesCommonData() {}

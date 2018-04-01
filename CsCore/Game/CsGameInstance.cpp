@@ -247,10 +247,6 @@ PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(struct FCsRoutine* r))
 
 		if (UCsCommon::CanAsyncTask())
 		{
-#if WITH_EDITOR
-			dataMapping->AsyncTaskMutex.Lock();
-#endif // #if WITH_EDITOR
-
 			gi->AsyncPopulateAssetReferences();
 		}
 		else
@@ -311,6 +307,10 @@ void UCsGameInstance::PopulateAssetReferences()
 
 void UCsGameInstance::AsyncPopulateAssetReferences()
 {
+#if WITH_EDITOR
+	DataMapping->AsyncTaskMutex.Lock();
+#endif // #if WITH_EDITOR
+
 	UCsManager_Runnable* Manager_Runnable = UCsManager_Runnable::Get();
 
 	FCsRunnablePayload* Payload = Manager_Runnable->AllocatePayload();

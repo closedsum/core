@@ -162,7 +162,6 @@ public:
 #pragma region
 public:
 
-
 	ECsGameStateOnBoardState::Type OnBoardState;
 
 	CS_COROUTINE_DECLARE(OnBoard)
@@ -171,7 +170,10 @@ public:
 
 	virtual void LoadCommonData();
 	virtual void OnFinishedLoadCommonData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime);
+private:
 	void StartSetAssetReferencesCommonData();
+	void AsyncSetAssetReferencesCommonData();
+public:
 	virtual void SetAssetReferencesCommonData();
 	virtual void SetupHUD();
 	virtual void LoadGameData();

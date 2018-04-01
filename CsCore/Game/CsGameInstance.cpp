@@ -251,15 +251,7 @@ PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(struct FCsRoutine* r))
 			dataMapping->AsyncTaskMutex.Lock();
 #endif // #if WITH_EDITOR
 
-			UCsManager_Runnable* Manager_Runnable = UCsManager_Runnable::Get();
-
-			FCsRunnablePayload* Payload = Manager_Runnable->AllocatePayload();
-			Payload->Owner				= gi;
-			Payload->ThreadPriority		= EThreadPriority::TPri_Normal;
-
-			FCsRunnable_Delegate* Runnable = Manager_Runnable->Prep(Payload);
-			Runnable->Delegate.AddUObject(gi, &UCsGameInstance::PopulateAssetReferences);
-			Runnable->Start();
+			gi->AsyncPopulateAssetReferences();
 		}
 		else
 		{
@@ -315,6 +307,19 @@ void UCsGameInstance::PopulateAssetReferences()
 	LoadedDataAssets.Reset();
 
 	OnBoardState = ECsGameInstanceOnBoardState::FinishedPopulatingAssetReferences;
+}
+
+void UCsGameInstance::AsyncPopulateAssetReferences()
+{
+	UCsManager_Runnable* Manager_Runnable = UCsManager_Runnable::Get();
+
+	FCsRunnablePayload* Payload = Manager_Runnable->AllocatePayload();
+	Payload->Owner				= this;
+	Payload->ThreadPriority		= EThreadPriority::TPri_Normal;
+
+	FCsRunnable_Delegate* Runnable = Manager_Runnable->Prep(Payload);
+	Runnable->Delegate.AddUObject(this, &UCsGameInstance::PopulateAssetReferences);
+	Runnable->Start();
 }
 
 /*

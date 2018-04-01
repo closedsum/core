@@ -2689,5 +2689,5 @@ void UCsCommon::DisplayNotificationInfo(const FString &InTextLiteral, const FStr
 
 bool UCsCommon::CanAsyncTask()
 {
-	return FPlatformMisc::NumberOfCoresIncludingHyperthreads() > 1;
+	return FPlatformProcess::SupportsMultithreading() && FPlatformMisc::NumberOfCoresIncludingHyperthreads() > 1;
 }

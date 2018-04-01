@@ -21,6 +21,7 @@ namespace ECsGameStateOnBoardState
 		SetupHUD,
 		/** Any Data that is specific to the Game Mode. */
 		LoadGameData,
+		SetAssetReferencesGameData,
 		/** Any Items Data loaded from disk or from a Server / Backend. */
 		LoadItems,
 		/** Any Data that is specific to the Level. */

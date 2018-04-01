@@ -826,6 +826,7 @@ public:
 	virtual int32 GetPawnPenetrations(const TCsWeaponFireMode &FireMode);
 
 	virtual void GetFireHitscanIgnoreActors(TArray<AActor*> &OutActors);
+	virtual void GetFireHitscanIgnoreComponents(TArray<UPrimitiveComponent*> &OutComponents);
 
 	void FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjectileFireCache* Cache);
 

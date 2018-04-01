@@ -1881,6 +1881,8 @@ void ACsWeapon::GetFireHitscanIgnoreActors(TArray<AActor*> &OutActors)
 		OutActors.Add(Actor);
 }
 
+void ACsWeapon::GetFireHitscanIgnoreComponents(TArray<UPrimitiveComponent*> &OutComponents){}
+
 void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjectileFireCache* Cache)
 {
 	//ACsPawn* Pawn					 = GetMyPawn();
@@ -1896,12 +1898,12 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 	const float MaxTraceRange = Data_Projectile->GetMaxRange();
 	const FVector End		  = Start + MaxTraceRange * Dir;
 
-	FCollisionQueryParams CollisionParams   = FCollisionQueryParams();
-	CollisionParams.bReturnPhysicalMaterial = true;
-	
+		// Ignored Actors
 	TArray<AActor*> IgnoredActors;
 	GetFireHitscanIgnoreActors(IgnoredActors);
-	CollisionParams.AddIgnoredActors(IgnoredActors);
+		// Ignored Components
+	TArray<UPrimitiveComponent*> IgnoredComponents;
+	GetFireHitscanIgnoreComponents(IgnoredComponents);
 
 	// See which Pawns we can hit and which we should ignore
 	TArray<ACsPawn*> HittablePawns;
@@ -1965,8 +1967,10 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 						Request->Type		= ECsTraceType::Line;
 						Request->Method		= ECsTraceMethod::Single;
 						Request->Query		= ECsTraceQuery::Channel;
+						Request->Channel	= ProjectileCollision;
 						Request->Params.bReturnPhysicalMaterial = true;
 						Request->Params.AddIgnoredActors(IgnoredActors);
+						Request->Params.AddIgnoredComponents(IgnoredComponents);
 
 						FCsTraceResponse* Response = Manager_Trace->Trace(Request);
 
@@ -2015,8 +2019,10 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 					Request->Type		= ECsTraceType::Line;
 					Request->Method		= ECsTraceMethod::Single;
 					Request->Query		= ECsTraceQuery::Channel;
+					Request->Channel	= ProjectileCollision;
 					Request->Params.bReturnPhysicalMaterial = true;
 					Request->Params.AddIgnoredActors(IgnoredActors);
+					Request->Params.AddIgnoredComponents(IgnoredComponents);
 
 					FCsTraceResponse* Response = Manager_Trace->Trace(Request);
 
@@ -2046,8 +2052,10 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 			Request->Type		= ECsTraceType::Line;
 			Request->Method		= ECsTraceMethod::Single;
 			Request->Query		= ECsTraceQuery::Channel;
+			Request->Channel	= ProjectileCollision;
 			Request->Params.bReturnPhysicalMaterial = true;
 			Request->Params.AddIgnoredActors(IgnoredActors);
+			Request->Params.AddIgnoredComponents(IgnoredComponents);
 
 			FCsTraceResponse* Response = Manager_Trace->Trace(Request);
 
@@ -2078,15 +2086,15 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 			Event->Causer	  = this;
 			//Event->SetDamageType();
 			//Event->SetHitType();
-			Event->HitInfo = HitResult;
-
-			ACsPawn* HitPawn = Cast<ACsPawn>(HitResult.Actor.Get());
-			CollisionParams.AddIgnoredActor(HitResult.Actor.Get());
+			
+			UCsCommon::CopyHitResult(HitResult, Event->HitInfo);
 			
 			//if (PawnToHit && UShooterStatics::IsOnSameTeam(GetWorld(), PawnToHit, MyPawn))
 			//{
 			//	continue;
 			//}
+
+			ACsPawn* HitPawn = Cast<ACsPawn>(HitResult.GetActor());
 
 			if (HitPawn)
 				RecordedPawnPenetrations++;

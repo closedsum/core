@@ -10,6 +10,7 @@
 // Managers
 #include "Managers/CsManager_Loading.h"
 #include "Managers/Input/CsManager_Input.h"
+#include "Managers/Runnable/CsManager_Runnable.h"
 
 #include "Game/CsGameInstance.h"
 #include "Javascript/CsJavascriptEntryPoint.h"
@@ -257,6 +258,8 @@ CS_COROUTINE(ACsGameState, OnBoard_Internal)
 	ACsPlayerController* pc = UCsCommon::GetLocalPlayerController<ACsPlayerController>(w);
 	ACsUI* hud				= pc ? Cast<ACsUI>(pc->MyHUD) : nullptr;
 
+	ACsDataMapping* dataMapping = UCsCommon::GetDataMapping(w);
+
 	CS_COROUTINE_BEGIN(r);
 
 	CS_COROUTINE_WAIT_UNTIL(r, gi->OnBoardState == ECsGameInstanceOnBoardState::Completed);
@@ -268,6 +271,14 @@ CS_COROUTINE(ACsGameState, OnBoard_Internal)
 
 	// Wait until HUD is VALID
 	CS_COROUTINE_WAIT_UNTIL(r, hud);
+
+	CS_COROUTINE_WAIT_UNTIL(r, gs->OnBoardState == ECsGameStateOnBoardState::SetAssetReferencesCommonData);
+
+#if WITH_EDITOR
+	CS_COROUTINE_WAIT_UNTIL(r, !dataMapping->AsyncTaskMutex.IsLocked());
+#endif // #if WITH_EDITOR
+
+	gs->StartSetAssetReferencesCommonData();
 
 	CS_COROUTINE_WAIT_UNTIL(r, gs->OnBoardState == ECsGameStateOnBoardState::SetupHUD);
 
@@ -315,6 +326,32 @@ void ACsGameState::GetLoadAssetsShortCodes(const TCsLoadAssetsType &AssetsType, 
 
 void ACsGameState::LoadCommonData(){}
 void ACsGameState::OnFinishedLoadCommonData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime){}
+
+void ACsGameState::StartSetAssetReferencesCommonData()
+{
+	if (UCsCommon::CanAsyncTask())
+	{
+#if WITH_EDITOR
+		UCsCommon::GetDataMapping(GetWorld())->AsyncTaskMutex.Lock();
+#endif // #if WITH_EDITOR
+
+		UCsManager_Runnable* Manager_Runnable = UCsManager_Runnable::Get();
+
+		FCsRunnablePayload* Payload = Manager_Runnable->AllocatePayload();
+		Payload->Owner				= this;
+		Payload->ThreadPriority		= EThreadPriority::TPri_Normal;
+
+		FCsRunnable_Delegate* Runnable = Manager_Runnable->Prep(Payload);
+		Runnable->Delegate.AddUObject(this, &ACsGameState::SetAssetReferencesCommonData);
+		Runnable->Start();
+	}
+	else
+	{
+		SetAssetReferencesCommonData();
+	}
+}
+
+void ACsGameState::SetAssetReferencesCommonData() {}
 void ACsGameState::SetupHUD(){}
 void ACsGameState::LoadGameData(){}
 void ACsGameState::OnFinishedLoadGameData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime){}
@@ -332,6 +369,24 @@ void ACsGameState::OnBoard_Completed()
 	{
 		PlayInSettings->GetPlayNumberOfClients(NumberOfClients);
 	}
+#endif // #if WITH_EDITOR
+}
+
+void ACsGameState::SetTransientLoadedAssets(const TArray<UObject*> &LoadedAssets)
+{
+	const int32 Count = LoadedAssets.Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		TransientLoadedAssets.Add(LoadedAssets[I]);
+	}
+}
+
+void ACsGameState::ClearTransientLoadedAssets()
+{
+	TransientLoadedAssets.Reset();
+#if WITH_EDITOR
+	UCsCommon::GetDataMapping(GetWorld())->AsyncTaskMutex.Unlock();
 #endif // #if WITH_EDITOR
 }
 

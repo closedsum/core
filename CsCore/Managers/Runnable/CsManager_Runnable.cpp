@@ -226,5 +226,6 @@ FCsRunnable_Delegate * UCsManager_Runnable::Prep(FCsRunnablePayload* Payload)
 		Runnable->Allocate(ActiveIndex, Payload, UCsCommon::GetCurrentDateTimeSeconds(), UCsCommon::GetCurrentDateTimeSeconds(), 0);
 
 	//LogTransaction(ECsManagerWidgetActorCachedString::Str::Prep, ECsPoolTransaction::Allocate, Runnable);
+	Payload->Reset();
 	return Runnable;
 }

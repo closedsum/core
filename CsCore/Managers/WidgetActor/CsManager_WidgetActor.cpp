@@ -415,6 +415,7 @@ ACsWidgetActor* ACsManager_WidgetActor::Display(const TCsWidgetActorType &Type, 
 	LogTransaction(ECsManagerWidgetActorCachedString::Str::Display, ECsPoolTransaction::Allocate, Widget);
 
 	AddToActivePool(Widget, (uint8)Type);
+	Payload->Reset();
 	return Widget;
 }
 

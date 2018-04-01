@@ -251,7 +251,6 @@ PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(struct FCsRoutine* r))
 			dataMapping->AsyncTaskMutex.Lock();
 #endif // #if WITH_EDITOR
 
-			//gi->AsyncPopulateAssetReferences();
 			UCsManager_Runnable* Manager_Runnable = UCsManager_Runnable::Get();
 
 			FCsRunnablePayload* Payload = Manager_Runnable->AllocatePayload();

@@ -17,6 +17,7 @@ namespace ECsGameStateOnBoardState
 	{
 		/** Any Data that is Common to ALL Game Modes. This is usually UI. */
 		LoadCommonData,
+		SetAssetReferencesCommonData,
 		SetupHUD,
 		/** Any Data that is specific to the Game Mode. */
 		LoadGameData,
@@ -39,6 +40,7 @@ namespace ECsGameStateOnBoardState
 	namespace Str
 	{
 		const TCsString LoadCommonData = TCsString(TEXT("LoadCommonData"), TEXT("loadcommondata"), TEXT("load common data"));
+		const TCsString SetAssetReferencesCommonData = TCsString(TEXT("SetAssetReferencesCommonData"), TEXT("setassetreferencescommondata"), TEXT("set asset references common data"));
 		const TCsString SetupHUD = TCsString(TEXT("SetupHUD"), TEXT("setuphud"), TEXT("setup hud"));
 		const TCsString LoadGameData = TCsString(TEXT("LoadGameData"), TEXT("loadgamedata"), TEXT("load game data"));
 		const TCsString LoadItems = TCsString(TEXT("LoadItems"), TEXT("loaditems"), TEXT("load items"));
@@ -52,6 +54,7 @@ namespace ECsGameStateOnBoardState
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::LoadCommonData) { return Str::LoadCommonData.Value; }
+		if (EType == Type::SetAssetReferencesCommonData) { return Str::SetAssetReferencesCommonData.Value; }
 		if (EType == Type::SetupHUD) { return Str::SetupHUD.Value; }
 		if (EType == Type::LoadGameData) { return Str::LoadGameData.Value; }
 		if (EType == Type::LoadItems) { return Str::LoadItems.Value; }
@@ -66,6 +69,7 @@ namespace ECsGameStateOnBoardState
 	FORCEINLINE Type ToType(const FString &String)
 	{
 		if (String == Str::LoadCommonData) { return Type::LoadCommonData; }
+		if (String == Str::SetAssetReferencesCommonData) { return Type::SetAssetReferencesCommonData; }
 		if (String == Str::SetupHUD) { return Type::SetupHUD; }
 		if (String == Str::LoadGameData) { return Type::LoadGameData; }
 		if (String == Str::LoadItems) { return Type::LoadItems; }
@@ -166,6 +170,8 @@ public:
 
 	virtual void LoadCommonData();
 	virtual void OnFinishedLoadCommonData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime);
+	void StartSetAssetReferencesCommonData();
+	virtual void SetAssetReferencesCommonData();
 	virtual void SetupHUD();
 	virtual void LoadGameData();
 	virtual void OnFinishedLoadGameData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime);
@@ -174,6 +180,14 @@ public:
 	virtual void OnFinishedLoadSceneData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime);
 	virtual void SetupScene();
 	virtual void OnBoard_Completed();
+
+protected:
+
+	UPROPERTY()
+	TArray<UObject*> TransientLoadedAssets;
+
+	void SetTransientLoadedAssets(const TArray<UObject*> &LoadedAssets);
+	void ClearTransientLoadedAssets();
 
 #pragma endregion OnBoard
 

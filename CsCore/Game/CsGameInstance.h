@@ -173,7 +173,7 @@ public:
 	bool HasLoadedDataAssets;
 
 	void PopulateAssetReferences();
-	void AsyncPopulateAssetReferences();
+	//void AsyncPopulateAssetReferences();
 
 	UPROPERTY()
 	TArray<UObject*> LoadedDataAssets;

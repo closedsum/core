@@ -44,6 +44,7 @@ namespace ECsGameStateOnBoardState
 		const TCsString SetAssetReferencesCommonData = TCsString(TEXT("SetAssetReferencesCommonData"), TEXT("setassetreferencescommondata"), TEXT("set asset references common data"));
 		const TCsString SetupHUD = TCsString(TEXT("SetupHUD"), TEXT("setuphud"), TEXT("setup hud"));
 		const TCsString LoadGameData = TCsString(TEXT("LoadGameData"), TEXT("loadgamedata"), TEXT("load game data"));
+		const TCsString SetAssetReferencesGameData = TCsString(TEXT("SetAssetReferencesGameData"), TEXT("setassetreferencesgamedata"), TEXT("set asset references game data"));
 		const TCsString LoadItems = TCsString(TEXT("LoadItems"), TEXT("loaditems"), TEXT("load items"));
 		const TCsString LoadSceneData = TCsString(TEXT("LoadSceneData"), TEXT("loadscenedata"), TEXT("load scene data"));
 		const TCsString SetupScene = TCsString(TEXT("SetupScene"), TEXT("setupscene"), TEXT("setup scene"));
@@ -58,6 +59,7 @@ namespace ECsGameStateOnBoardState
 		if (EType == Type::SetAssetReferencesCommonData) { return Str::SetAssetReferencesCommonData.Value; }
 		if (EType == Type::SetupHUD) { return Str::SetupHUD.Value; }
 		if (EType == Type::LoadGameData) { return Str::LoadGameData.Value; }
+		if (EType == Type::SetAssetReferencesGameData) { return Str::SetAssetReferencesGameData.Value; }
 		if (EType == Type::LoadItems) { return Str::LoadItems.Value; }
 		if (EType == Type::LoadSceneData) { return Str::LoadSceneData.Value; }
 		if (EType == Type::SetupScene) { return Str::SetupScene.Value; }
@@ -73,6 +75,7 @@ namespace ECsGameStateOnBoardState
 		if (String == Str::SetAssetReferencesCommonData) { return Type::SetAssetReferencesCommonData; }
 		if (String == Str::SetupHUD) { return Type::SetupHUD; }
 		if (String == Str::LoadGameData) { return Type::LoadGameData; }
+		if (String == Str::SetAssetReferencesGameData) { return Type::SetAssetReferencesGameData; }
 		if (String == Str::LoadItems) { return Type::LoadItems; }
 		if (String == Str::LoadSceneData) { return Type::LoadSceneData; }
 		if (String == Str::SetupScene) { return Type::SetupScene; }
@@ -178,6 +181,11 @@ public:
 	virtual void SetupHUD();
 	virtual void LoadGameData();
 	virtual void OnFinishedLoadGameData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime);
+private:
+	void StartSetAssetReferencesGameData();
+	void AsyncSetAssetReferencesGameData();
+public:
+	virtual void SetAssetReferencesGameData();
 	virtual void LoadItems();
 	virtual void LoadSceneData();
 	virtual void OnFinishedLoadSceneData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime);

@@ -488,6 +488,11 @@ void ACsGameState::SetupLastTickActor()
 #else
 	OnBoardState = ECsGameStateOnBoardState::Completed;
 #endif // #if WITH_EDITOR
+
+	if (CsCVarLogGameStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
+	{
+		UE_LOG(LogCs, Log, TEXT("ACsGameState::SetupLastTickActor: State Change: SetupLastTickActor -> %s"), *(ECsGameStateOnBoardState::ToString(OnBoardState)));
+	}
 }
 
 void ACsGameState::SetupLastTickActor_BindEvents() {}

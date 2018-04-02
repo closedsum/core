@@ -31,6 +31,13 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogPlayerStateOnBoard;
 
 #pragma endregion OnBoard
 
+// GameState
+#pragma region
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogGameStateOnBoard;
+
+#pragma endregion GameState
+
 // Json
 #pragma region
 

@@ -87,6 +87,18 @@ TAutoConsoleVariable<int32> CsCVarLogPlayerStateOnBoard(
 
 #pragma endregion OnBoard
 
+// GameState
+#pragma region
+
+TAutoConsoleVariable<int32> CsCVarLogGameStateOnBoard(
+	TEXT("log.gamestate.onboard"),
+	0,
+	TEXT("Log GameState OnBoard"),
+	ECVF_SetByConsole
+);
+
+#pragma endregion GameState
+
 // Json
 #pragma region
 

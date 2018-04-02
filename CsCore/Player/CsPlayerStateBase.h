@@ -39,6 +39,9 @@ namespace ECsPlayerStateBaseOnBoardState
 		BeginLoadingPlayerData					UMETA(DisplayName = "Begin Loading PlayerData"),
 		WaitingForFinishLoadingPlayerData		UMETA(DisplayName = "Waiting for Finish Loading PlayerData"),
 		FinishedLoadingPlayerData				UMETA(DisplayName = "Finished Loading PlayerData"),
+		SetAssetReferencesPlayerData			UMETA(DisplayName = "Set Asset References PlayerData"),
+		WaitingForSetAssetReferencesPlayerData	UMETA(DisplayName = "Waiting for Set Asset References PlayerData"),
+		FinishedSetAssetReferencesPlayerData	UMETA(DisplayName = "Finished Set Asset References PlayerData"),
 		// Setup
 		BeginApplyingPlayerData					UMETA(DisplayName = "Begin Applying PlayerData"),
 		WaitingForFinishApplyingPlayerData		UMETA(DisplayName = "Waiting for Finish Applying PlayerData"),
@@ -80,6 +83,9 @@ namespace ECsPlayerStateBaseOnBoardState
 		const TCsString BeginLoadingPlayerData = TCsString(TEXT("BeginLoadingPlayerData"), TEXT("beginloadingplayerdata"), TEXT("begin loading player data"));
 		const TCsString WaitingForFinishLoadingPlayerData = TCsString(TEXT("WaitingForFinishLoadingPlayerData"), TEXT("waitingforfinishloadingplayerdata"), TEXT("waiting for finish loading player data"));
 		const TCsString FinishedLoadingPlayerData = TCsString(TEXT("FinishedLoadingPlayerData"), TEXT("finishedloadingplayerdata"), TEXT("finished loading player data"));
+		const TCsString SetAssetReferencesPlayerData = TCsString(TEXT("SetAssetReferencesPlayerData"), TEXT("setassetreferencesplayerdata"), TEXT("set asset references player data"));
+		const TCsString WaitingForSetAssetReferencesPlayerData = TCsString(TEXT("WaitingForSetAssetReferencesPlayerData"), TEXT("waitingforsetassetreferencesplayerdata"), TEXT("waiting for set asset references player data"));
+		const TCsString FinishedSetAssetReferencesPlayerData = TCsString(TEXT("FinishedSetAssetReferencesPlayerData"), TEXT("finishedsetassetreferencesplayerdata"), TEXT("finished set asset references player data"));
 		// Setup
 		const TCsString BeginApplyingPlayerData = TCsString(TEXT("BeginApplyingPlayerData"), TEXT("beginapplyingplayerdata"), TEXT("begin applying player data"));
 		const TCsString WaitingForFinishApplyingPlayerData = TCsString(TEXT("WaitingForFinishApplyingPlayerData"), TEXT("waitingforfinishapplyingplayerdata"), TEXT("waiting for finish applying player data"));
@@ -115,6 +121,9 @@ namespace ECsPlayerStateBaseOnBoardState
 		if (EType == Type::BeginLoadingPlayerData) { return Str::BeginLoadingPlayerData.Value; }
 		if (EType == Type::WaitingForFinishLoadingPlayerData) { return Str::WaitingForFinishLoadingPlayerData.Value; }
 		if (EType == Type::FinishedLoadingPlayerData) { return Str::FinishedLoadingPlayerData.Value; }
+		if (EType == Type::SetAssetReferencesPlayerData) { return Str::SetAssetReferencesPlayerData.Value; }
+		if (EType == Type::WaitingForSetAssetReferencesPlayerData) { return Str::WaitingForSetAssetReferencesPlayerData.Value; }
+		if (EType == Type::FinishedSetAssetReferencesPlayerData) { return Str::FinishedSetAssetReferencesPlayerData.Value; }
 		// Setup
 		if (EType == Type::BeginApplyingPlayerData) { return Str::BeginApplyingPlayerData.Value; }
 		if (EType == Type::WaitingForFinishApplyingPlayerData) { return Str::WaitingForFinishApplyingPlayerData.Value; }
@@ -151,6 +160,9 @@ namespace ECsPlayerStateBaseOnBoardState
 		if (String == Str::BeginLoadingPlayerData) { return Type::BeginLoadingPlayerData; }
 		if (String == Str::WaitingForFinishLoadingPlayerData) { return Type::WaitingForFinishLoadingPlayerData; }
 		if (String == Str::FinishedLoadingPlayerData) { return Type::FinishedLoadingPlayerData; }
+		if (String == Str::SetAssetReferencesPlayerData) { return Type::SetAssetReferencesPlayerData; }
+		if (String == Str::WaitingForSetAssetReferencesPlayerData) { return Type::WaitingForSetAssetReferencesPlayerData; }
+		if (String == Str::FinishedSetAssetReferencesPlayerData) { return Type::FinishedSetAssetReferencesPlayerData; }
 		// Setup
 		if (String == Str::BeginApplyingPlayerData) { return Type::BeginApplyingPlayerData; }
 		if (String == Str::WaitingForFinishApplyingPlayerData) { return Type::WaitingForFinishApplyingPlayerData; }
@@ -268,6 +280,7 @@ public:
 
 		// Player
 #pragma region
+public:
 
 	// RequestUniqueMappingId
 	UFUNCTION(reliable, server, WithValidation)
@@ -292,6 +305,7 @@ public:
 
 		// AI
 #pragma region
+public:
 
 	// RequestUniqueMappingId AI
 	UFUNCTION(reliable, server, WithValidation)
@@ -319,12 +333,18 @@ public:
 #pragma endregion AI
 
 #pragma endregion Requesting Player State on Client
+public:
 
 // Loading
 
 	virtual void GetLoadAssetsShortCodes(const TCsLoadAssetsType &AssetsType, TArray<FName> &OutShortCodes);
 	virtual void LoadPlayerData();
 	virtual void OnFinishedLoadingPlayerData(const TArray<UObject*> &LoadedAssets, const float &LoadingTime);
+private:
+	void StartSetAssetReferencesPlayerData();
+	void AsyncSetAssetReferencesPlayerData();
+public:
+	virtual void SetAssetReferencesPlayerData();
 
 // Setup
 
@@ -356,7 +376,17 @@ public:
 
 	virtual bool IsOnBoardCompleted_Game();
 
+protected:
+
+	UPROPERTY()
+	TArray<UObject*> TransientLoadedAssets;
+
+	void SetTransientLoadedAssets(const TArray<UObject*> &LoadedAssets);
+	void ClearTransientLoadedAssets();
+
 #pragma endregion OnBoard
+
+public:
 
 	UPROPERTY()
 	class ACsManager_Inventory* Manager_Inventory;

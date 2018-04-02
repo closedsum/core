@@ -2,14 +2,19 @@
 #include "Player/CsPlayerStateBase.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Game/CsGameInstance.h"
-#include "Game/CsGameState.h"
+#include "Common/CsCommon.h"
 #include "Coroutine/CsCoroutineScheduler.h"
 
+// Managers
 #include "Managers/CsManager_Loading.h"
+#include "Managers/Runnable/CsManager_Runnable.h"
+// Data
 #include "Data/CsDataMapping.h"
 
 #include "Pawn/CsPawn.h"
+
+#include "Game/CsGameInstance.h"
+#include "Game/CsGameState.h"
 
 // UI
 #include "UI/CsWidget_Fullscreen.h"
@@ -379,11 +384,39 @@ void ACsPlayerStateBase::OnTick_OnBoard()
 		// Finished Loading PlayerData
 		if (OnBoardState == ECsPlayerStateBaseOnBoardState::FinishedLoadingPlayerData)
 		{
+			OnBoardState = ECsPlayerStateBaseOnBoardState::SetAssetReferencesPlayerData;
+
+			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
+			{
+				UE_LOG(LogCs, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: FinishedLoadingPlayerData -> SetAssetReferencesPlayerData"));
+			}
+		}
+		// Set Asset References PlayerData
+		if (OnBoardState == ECsPlayerStateBaseOnBoardState::SetAssetReferencesPlayerData)
+		{
+			if (!UCsCommon::GetDataMapping(GetWorld())->AsyncTaskMutex.IsLocked())
+			{
+				OnBoardState = ECsPlayerStateBaseOnBoardState::WaitingForSetAssetReferencesPlayerData;
+
+				if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
+				{
+					UE_LOG(LogCs, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: SetAssetReferencesPlayerData -> WaitingForSetAssetReferencesPlayerData"));
+				}
+				StartSetAssetReferencesPlayerData();
+			}
+		}
+		// Waiting for Set Asset References PlayerData
+		if (OnBoardState == ECsPlayerStateBaseOnBoardState::WaitingForSetAssetReferencesPlayerData)
+		{
+		}
+		// Finished Set Asset References PlayerData
+		if (OnBoardState == ECsPlayerStateBaseOnBoardState::FinishedSetAssetReferencesPlayerData)
+		{
 			OnBoardState = ECsPlayerStateBaseOnBoardState::BeginApplyingPlayerData;
 
 			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 			{
-				UE_LOG(LogCs, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: FinishedLoadingPlayerData -> BeginApplyingPlayerData"));
+				UE_LOG(LogCs, Log, TEXT("ACsPlayerStateBase::OnTick_HandleInitialReplicationAndLoading: State Change: FinishedSetAssetReferencesPlayerData -> BeginApplyingPlayerData"));
 			}
 		}
 	}
@@ -608,8 +641,38 @@ void ACsPlayerStateBase::ServerRequestAIData_Internal(const uint8 &ClientMapping
 
 void ACsPlayerStateBase::GetLoadAssetsShortCodes(const TCsLoadAssetsType &AssetsType, TArray<FName> &OutShortCodes){}
 void ACsPlayerStateBase::LoadPlayerData(){}
+
+void ACsPlayerStateBase::StartSetAssetReferencesPlayerData() 
+{
+	if (UCsCommon::CanAsyncTask())
+	{
+		AsyncSetAssetReferencesPlayerData();
+	}
+	else
+	{
+		SetAssetReferencesPlayerData();
+	}
+}
+
+void ACsPlayerStateBase::AsyncSetAssetReferencesPlayerData() 
+{
+	UCsCommon::GetDataMapping(GetWorld())->AsyncTaskMutex.Lock();
+
+	UCsManager_Runnable* Manager_Runnable = UCsManager_Runnable::Get();
+
+	FCsRunnablePayload* Payload = Manager_Runnable->AllocatePayload();
+	Payload->Owner				= this;
+	Payload->ThreadPriority		= EThreadPriority::TPri_Normal;
+
+	FCsRunnable_Delegate* Runnable = Manager_Runnable->Prep(Payload);
+	Runnable->Delegate.AddUObject(this, &ACsPlayerStateBase::SetAssetReferencesPlayerData);
+	Runnable->Start();
+}
+
+void ACsPlayerStateBase::SetAssetReferencesPlayerData() { OnBoardState = ECsPlayerStateBaseOnBoardState::FinishedSetAssetReferencesPlayerData; }
+
 void ACsPlayerStateBase::OnFinishedLoadingPlayerData(const TArray<UObject*> &LoadedAssets, const float &LoadingTime){}
-void ACsPlayerStateBase::SetupPlayerData() { ECsPlayerStateBaseOnBoardState::FinishedApplyingPlayerData; }
+void ACsPlayerStateBase::SetupPlayerData() { OnBoardState = ECsPlayerStateBaseOnBoardState::FinishedApplyingPlayerData; }
 
 bool ACsPlayerStateBase::ServerSendOnBoardCompleted_Validate(const uint8 &ClientMappingId, const uint8 &MappingId)
 {
@@ -661,6 +724,22 @@ bool ACsPlayerStateBase::IsOnBoardCompleted_Game()
 	if (Cast<ACsPlayerStateBase>(MyPawn->PlayerState) != this)
 		return false;
 	return true;
+}
+
+void ACsPlayerStateBase::SetTransientLoadedAssets(const TArray<UObject*> &LoadedAssets)
+{
+	const int32 Count = LoadedAssets.Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		TransientLoadedAssets.Add(LoadedAssets[I]);
+	}
+}
+
+void ACsPlayerStateBase::ClearTransientLoadedAssets()
+{
+	TransientLoadedAssets.Reset();
+	UCsCommon::GetDataMapping(GetWorld())->AsyncTaskMutex.Unlock();
 }
 
 #pragma endregion OnBoard

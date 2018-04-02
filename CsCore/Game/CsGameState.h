@@ -26,6 +26,7 @@ namespace ECsGameStateOnBoardState
 		LoadItems,
 		/** Any Data that is specific to the Level. */
 		LoadSceneData,
+		SetAssetReferencesSceneData,
 		SetupScene,
 		SetupLastTickActor,
 		SetupJavascriptEntryPoint,
@@ -47,6 +48,7 @@ namespace ECsGameStateOnBoardState
 		const TCsString SetAssetReferencesGameData = TCsString(TEXT("SetAssetReferencesGameData"), TEXT("setassetreferencesgamedata"), TEXT("set asset references game data"));
 		const TCsString LoadItems = TCsString(TEXT("LoadItems"), TEXT("loaditems"), TEXT("load items"));
 		const TCsString LoadSceneData = TCsString(TEXT("LoadSceneData"), TEXT("loadscenedata"), TEXT("load scene data"));
+		const TCsString SetAssetReferencesSceneData = TCsString(TEXT("SetAssetReferencesSceneData"), TEXT("setassetreferencesscenedata"), TEXT("set asset references scene data"));
 		const TCsString SetupScene = TCsString(TEXT("SetupScene"), TEXT("setupscene"), TEXT("setup scene"));
 		const TCsString SetupLastTickActor = TCsString(TEXT("SetupLastTickActor"), TEXT("setuplasttickactor"), TEXT("setup last tick actor"));
 		const TCsString SetupJavascriptEntryPoint = TCsString(TEXT("SetupJavascriptEntryPoint"), TEXT("setupjavascriptentrypoint"), TEXT("setup javascript entry point"));
@@ -62,6 +64,7 @@ namespace ECsGameStateOnBoardState
 		if (EType == Type::SetAssetReferencesGameData) { return Str::SetAssetReferencesGameData.Value; }
 		if (EType == Type::LoadItems) { return Str::LoadItems.Value; }
 		if (EType == Type::LoadSceneData) { return Str::LoadSceneData.Value; }
+		if (EType == Type::SetAssetReferencesSceneData) { return Str::SetAssetReferencesSceneData.Value; }
 		if (EType == Type::SetupScene) { return Str::SetupScene.Value; }
 		if (EType == Type::SetupLastTickActor) { return Str::SetupLastTickActor.Value; }
 		if (EType == Type::SetupJavascriptEntryPoint) { return Str::SetupJavascriptEntryPoint.Value; }
@@ -78,6 +81,7 @@ namespace ECsGameStateOnBoardState
 		if (String == Str::SetAssetReferencesGameData) { return Type::SetAssetReferencesGameData; }
 		if (String == Str::LoadItems) { return Type::LoadItems; }
 		if (String == Str::LoadSceneData) { return Type::LoadSceneData; }
+		if (String == Str::SetAssetReferencesSceneData) { return Type::SetAssetReferencesSceneData; }
 		if (String == Str::SetupScene) { return Type::SetupScene; }
 		if (String == Str::SetupLastTickActor) { return Type::SetupLastTickActor; }
 		if (String == Str::SetupJavascriptEntryPoint) { return Type::SetupJavascriptEntryPoint; }
@@ -189,6 +193,11 @@ public:
 	virtual void LoadItems();
 	virtual void LoadSceneData();
 	virtual void OnFinishedLoadSceneData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime);
+private:
+	void StartSetAssetReferencesSceneData();
+	void AsyncSetAssetReferencesSceneData();
+public:
+	virtual void SetAssetReferencesSceneData();
 	virtual void SetupScene();
 	virtual void OnBoard_Completed();
 

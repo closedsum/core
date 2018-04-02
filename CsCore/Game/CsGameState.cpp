@@ -304,6 +304,14 @@ CS_COROUTINE(ACsGameState, OnBoard_Internal)
 
 	gs->LoadSceneData();
 
+	CS_COROUTINE_WAIT_UNTIL(r, gs->OnBoardState == ECsGameStateOnBoardState::SetAssetReferencesSceneData);
+
+#if WITH_EDITOR
+	CS_COROUTINE_WAIT_UNTIL(r, !dataMapping->AsyncTaskMutex.IsLocked());
+#endif // #if WITH_EDITOR
+
+	gs->StartSetAssetReferencesSceneData();
+
 	CS_COROUTINE_WAIT_UNTIL(r, gs->OnBoardState == ECsGameStateOnBoardState::SetupScene);
 
 	gs->SetupScene();
@@ -402,6 +410,38 @@ void ACsGameState::SetAssetReferencesGameData() {}
 void ACsGameState::LoadItems() { OnBoardState = ECsGameStateOnBoardState::LoadSceneData; }
 void ACsGameState::LoadSceneData(){ OnBoardState = ECsGameStateOnBoardState::SetupScene; }
 void ACsGameState::OnFinishedLoadSceneData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime){}
+
+void ACsGameState::StartSetAssetReferencesSceneData()
+{
+	if (UCsCommon::CanAsyncTask())
+	{
+		AsyncSetAssetReferencesSceneData();
+	}
+	else
+	{
+		SetAssetReferencesSceneData();
+	}
+}
+
+void ACsGameState::AsyncSetAssetReferencesSceneData()
+{
+#if WITH_EDITOR
+	UCsCommon::GetDataMapping(GetWorld())->AsyncTaskMutex.Lock();
+#endif // #if WITH_EDITOR
+
+	UCsManager_Runnable* Manager_Runnable = UCsManager_Runnable::Get();
+
+	FCsRunnablePayload* Payload = Manager_Runnable->AllocatePayload();
+	Payload->Owner = this;
+	Payload->ThreadPriority = EThreadPriority::TPri_Normal;
+
+	FCsRunnable_Delegate* Runnable = Manager_Runnable->Prep(Payload);
+	Runnable->Delegate.AddUObject(this, &ACsGameState::SetAssetReferencesSceneData);
+	Runnable->Start();
+}
+
+void ACsGameState::SetAssetReferencesSceneData() {}
+
 void ACsGameState::SetupScene(){}
 
 void ACsGameState::OnBoard_Completed()

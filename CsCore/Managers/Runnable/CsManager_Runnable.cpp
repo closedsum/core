@@ -80,12 +80,12 @@ bool UCsManager_Runnable::Tick(float DeltaSeconds)
 	{
 		FCsRunnable_Delegate* Runnable = ActiveRunnables[I];
 
-		// Check if Projectile was DeAllocated NOT in a normal way (i.e. Out of Bounds)
+		// Check if Runnable was DeAllocated NOT in a normal way
 		if (!Runnable->Cache.IsAllocated)
 		{
-			//UE_LOG(LogCs, Warning, TEXT("UCsManager_Runnable::OnTick: Runnable: %s at PoolIndex: %s was prematurely deallocted NOT in a normal way."), *(Runnable->Cache.Name), Runnable->Cache.Index);
+			UE_LOG(LogCs, Warning, TEXT("UCsManager_Runnable::OnTick: Runnable: %s at PoolIndex: %s was prematurely deallocted NOT in a normal way."), *(Runnable->Cache.Name), Runnable->Cache.Index);
 
-			//LogTransaction(ECsManagerProjectileCachedString::Str::OnTick, ECsPoolTransaction::Deallocate, Runnable);
+			LogTransaction(ECsManagerRunnableCachedString::Str::OnTick, ECsPoolTransaction::Deallocate, Runnable);
 
 			ActiveRunnables.RemoveAt(I);
 
@@ -96,7 +96,7 @@ bool UCsManager_Runnable::Tick(float DeltaSeconds)
 
 		if (Runnable->bExit)
 		{
-			//LogTransaction(ECsManagerProjectileCachedString::Str::OnTick, ECsPoolTransaction::Deallocate, Runnable);
+			LogTransaction(ECsManagerRunnableCachedString::Str::OnTick, ECsPoolTransaction::Deallocate, Runnable);
 
 			Runnable->DeAllocate();
 			ActiveRunnables.RemoveAt(I);
@@ -158,44 +158,28 @@ FCsRunnablePayload* UCsManager_Runnable::AllocatePayload()
 
 #pragma endregion Payload
 
-/*
-void ACsManager_WidgetActor::LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, FCsRunnable_Delegate* Runnable)
-{
-	if (CsCVarLogManagerWidgetActorTransactions->GetInt() == CS_CVAR_SHOW_LOG)
-	{
-		ACsWidgetActor* Actor = Cast<ACsWidgetActor>(InObject);
 
+void UCsManager_Runnable::LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, FCsRunnable_Delegate* Runnable)
+{
+	if (CsCVarLogManagerRunnableTransactions->GetInt() == CS_CVAR_SHOW_LOG)
+	{
 		const FString& TransactionAsString = ECsPoolTransaction::ToActionString(Transaction);
 
-		const FString ActorName = Actor->GetName();
-		const FString TypeAsString = (*WidgetActorTypeToString)((TCsWidgetActorType)Actor->Cache.Type);
-		const float CurrentTime = GetWorld()->GetTimeSeconds();
-		const UObject* ActorOwner = Actor->Cache.GetOwner();
-		const FString OwnerName = ActorOwner ? ActorOwner->GetName() : ECsCachedString::Str::None;
-		const UObject* Parent = Actor->Cache.GetParent();
-		const FString ParentName = Parent ? Parent->GetName() : ECsCachedString::Str::None;
+		const FString& RunnableName  = Runnable->Cache.Name;
+		const float CurrentTime		 = GetCurrentWorld() ? GetCurrentWorld()->GetTimeSeconds() : UCsCommon::GetCurrentDateTimeSeconds();
+		const UObject* RunnableOwner = Runnable->Cache.GetOwner();
+		const FString OwnerName		 = RunnableOwner ? RunnableOwner->GetName() : ECsCachedString::Str::None;
 
-		if (ActorOwner && Parent)
+		if (RunnableOwner)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s InteractiveActor: %s of Type: %s at %f for %s attached to %s."), *FunctionName, *TransactionAsString, *ActorName, *TypeAsString, CurrentTime, *OwnerName, *ParentName);
-		}
-		else
-		if (ActorOwner)
-		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s WidgetActor: %s of Type: %s at %f for %s."), *FunctionName, *TransactionAsString, *ActorName, *TypeAsString, CurrentTime, *OwnerName);
-		}
-		else
-		if (Parent)
-		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s WidgetActor: %s of Type: %s at %f attached to %s."), *TransactionAsString, *FunctionName, *ActorName, *TypeAsString, CurrentTime, *ParentName);
+			UE_LOG(LogCs, Warning, TEXT("%s: %s Runnable: %s at %f for %s."), *FunctionName, *TransactionAsString, *RunnableName, CurrentTime, *OwnerName);
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s WidgetActor: %s of Type: %s at %f."), *FunctionName, *TransactionAsString, *ActorName, *TypeAsString, CurrentTime);
+			UE_LOG(LogCs, Warning, TEXT("%s: %s Runnable: %s at %f."), *FunctionName, *TransactionAsString, *RunnableName, CurrentTime);
 		}
 	}
 }
-*/
 
 FCsRunnable_Delegate* UCsManager_Runnable::Allocate()
 {
@@ -225,7 +209,7 @@ FCsRunnable_Delegate * UCsManager_Runnable::Prep(FCsRunnablePayload* Payload)
 	else
 		Runnable->Allocate(ActiveIndex, Payload, UCsCommon::GetCurrentDateTimeSeconds(), UCsCommon::GetCurrentDateTimeSeconds(), 0);
 
-	//LogTransaction(ECsManagerWidgetActorCachedString::Str::Prep, ECsPoolTransaction::Allocate, Runnable);
+	LogTransaction(ECsManagerRunnableCachedString::Str::Prep, ECsPoolTransaction::Allocate, Runnable);
 	Payload->Reset();
 	return Runnable;
 }

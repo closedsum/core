@@ -4,6 +4,7 @@
 #include "Runtime/Core/Public/Delegates/IDelegateInstance.h"
 #include "Managers/Runnable/CsRunnable_Delegate.h"
 #include "Types/CsTypes_Runnable.h"
+#include "Types/CsTypes_Pool.h"
 #include "CsManager_Runnable.generated.h"
 
 #define CS_RUNNABLE_DELEGATE_POOL_SIZE 32		
@@ -59,7 +60,7 @@ private:
 
 public:
 
-	//void LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, FCsRunnable_Delegate* Runnable);
+	void LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, FCsRunnable_Delegate* Runnable);
 
 protected:
 

@@ -605,3 +605,15 @@ TAutoConsoleVariable<int32> CsCVarDrawManagerTraceResponses(
 #pragma endregion Trace
 
 #pragma endregion Collision
+
+// Runnable
+#pragma region
+
+TAutoConsoleVariable<int32> CsCVarLogManagerRunnableTransactions(
+	TEXT("log.manager.runnable.transactions"),
+	0,
+	TEXT("Log Manager Runnable Add and Complete."),
+	ECVF_SetByConsole
+);
+
+#pragma endregion Runnable

@@ -10,17 +10,18 @@
 // Data
 #include "Data/CsData_ProjectileImpact.h"
 #include "Data/CsData_Character.h"
-
 // Managers
 #include "Managers/FX/CsManager_FX.h"
 #include "Managers/Projectile/CsManager_Projectile.h"
 #include "Managers/Projectile/CsProjectile.h"
 #include "Managers/Damage/CsManager_Damage.h"
 #include "Managers/Trace/CsManager_Trace.h"
-
+#include "Managers/Inventory/CsManager_Inventory.h"
+// Game
 #include "Game/CsGameInstance.h"
 #include "Game/CsGameState.h"
-#include "Player/CsPlayerState.h"
+// Player
+#include "Player/CsPlayerStateBase.h"
 #include "Pawn/CsPawn.h"
 
 #include "Managers/InteractiveActor/CsDamageableActor.h"
@@ -580,6 +581,21 @@ void ACsWeapon::AddMemberValue_uint8(const int32 &Index, const FString &MemberNa
 #pragma endregion Add
 
 #pragma endregion Members
+
+// Managers
+#pragma region
+
+ACsManager_Inventory* ACsWeapon::GetMyManager_Inventory()
+{
+	if (ACsPawn* Pawn = GetMyOwner<ACsPawn>())
+	{
+		ACsPlayerStateBase* PlayerState = Cast<ACsPlayerStateBase>(Pawn->PlayerState);
+		return PlayerState->Manager_Inventory;
+	}
+	return nullptr;
+}
+
+#pragma endregion Managers
 
 // Data
 #pragma region

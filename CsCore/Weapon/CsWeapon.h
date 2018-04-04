@@ -485,6 +485,22 @@ public:
 
 #pragma endregion Data
 
+// Managers
+#pragma region
+public:
+
+	bool UseManager_Inventory;
+
+	class ACsManager_Inventory* GetMyManager_Inventory();
+
+	template<typename T>
+	T* GetMyManager_Inventory()
+	{
+		return Cast<T>(GetMyManager_Inventory());
+	}
+
+#pragma endregion Managers
+
 // Routines
 #pragma region
 public:

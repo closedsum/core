@@ -325,6 +325,7 @@ class CSCORE_API ACsWeapon : public AActor
 
 // Members
 #pragma region
+public:
 
 	CS_DECLARE_WEAPON_FIRE_MODE
 	CS_DECLARE_DATA_WEAPON_FIRE_MODE
@@ -337,6 +338,7 @@ class CSCORE_API ACsWeapon : public AActor
 
 	// Set
 #pragma region
+public:
 
 	template<typename T>
 	void SetMemberRefValue(struct TCsPrimitiveType_TArrayRefValue<T, int32> &Member, const FString &MemberName)
@@ -415,6 +417,7 @@ class CSCORE_API ACsWeapon : public AActor
 
 	// Get
 #pragma region
+public:
 
 	virtual bool GetMemberValue_bool(const TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> &Member, const int32 &Index);
 	virtual bool GetMemberValue_bool(const uint8 &Member, const int32 &Index);
@@ -440,6 +443,7 @@ class CSCORE_API ACsWeapon : public AActor
 
 	// Add
 #pragma region
+public:
 
 	UFUNCTION(BlueprintCallable, Category = "Member")
 	void AddMemberValue_uint8(const int32 &Index, const FString &MemberName, const uint8 &Value);
@@ -450,6 +454,7 @@ class CSCORE_API ACsWeapon : public AActor
 
 // Data
 #pragma region
+public:
 
 	TWeakObjectPtr<class ACsData_Weapon> MyData_Weapon;
 
@@ -605,6 +610,7 @@ public:
 
 // Sound
 #pragma region
+public:
 
 	TCsWeaponSound FireSound;
 
@@ -652,6 +658,7 @@ public:
 
 	// Ammo
 #pragma region
+public:
 
 	FCsWeapon_Ref_int32 MaxAmmo;
 	virtual int32 GetMaxAmmo(const int32 &Index);
@@ -713,6 +720,7 @@ public:
 
 	// Charge
 #pragma region
+public:
 
 	TCsWeaponAnim ChargeFireStartAnim;
 	TCsWeaponAnim ChargeFireLoopAnim;
@@ -746,6 +754,7 @@ public:
 
 	// Spread
 #pragma region
+public:
 
 	TCsData_Weapon_FireMode AimingDataFireMode;
 
@@ -815,6 +824,7 @@ public:
 
 	// Hitscan
 #pragma region
+public:
 
 	FCsWeapon_TArrayRef_bool IsHitscan;
 	FCsWeapon_TArrayRef_bool DoesHitscanUseRadius;

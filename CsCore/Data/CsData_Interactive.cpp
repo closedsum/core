@@ -41,10 +41,22 @@ TArray<UMaterialInstanceConstant*>* ACsData_Interactive::GetMaterials() { return
 // Collision
 #pragma region
 
+bool ACsData_Interactive::UseCollisionPreset() { return false; }
+void ACsData_Interactive::SetCollisionFromPreset(UPrimitiveComponent* InComponent) {}
 float ACsData_Interactive::GetCollisionRadius() { return 0.0f; }
 float ACsData_Interactive::GetCollisionRadiusSq() { return GetCollisionRadius() * GetCollisionRadius(); }
 
 #pragma endregion Collision
+
+// Movement
+#pragma region
+
+bool ACsData_Interactive::UsePhysicsPreset(){ return false; }
+void ACsData_Interactive::SetPhysicsFromPreset(UPrimitiveComponent* InComponent) {}
+bool ACsData_Interactive::UseSpawnPhysicsImpulse() { return false; }
+void ACsData_Interactive::ApplySpawnPhysicsImpulse(UPrimitiveComponent* InComponent){}
+
+#pragma endregion Movement
 
 // UI
 #pragma region

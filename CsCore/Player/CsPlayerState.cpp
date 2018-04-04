@@ -52,6 +52,26 @@ ACsPawn* ACsPlayerState::GetMyPawn()
 	return LinkedPawn.Get();
 }
 
+// Routines
+#pragma region
+
+
+bool ACsPlayerState::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
+{
+	if (Super::AddRoutine_Internal(Routine, Type))
+		return true;
+	return false;
+}
+
+bool ACsPlayerState::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
+{
+	if (Super::RemoveRoutine_Internal(Routine, Type))
+		return true;
+	return false;
+}
+
+#pragma endregion Routines
+
 // OnBoard
 #pragma region
 

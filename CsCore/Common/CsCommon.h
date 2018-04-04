@@ -781,16 +781,16 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 #pragma region
 
 	static bool SetPhysicsPreset(FCsPhysicsPreset &Preset, UPrimitiveComponent* Component);
-	static void SetPhysicsFromPreset(FCsPhysicsPreset &Preset, UPrimitiveComponent* Component);
+	static void SetPhysicsFromPreset(const FCsPhysicsPreset &Preset, UPrimitiveComponent* Component);
 
 #pragma endregion Physics
 
 // Collision
 #pragma  region
 
-	static bool SetColliionPreset(FCsCollisionPreset &Preset, UPrimitiveComponent* Component);
-	static void SetCollisionFromPreset(FCsCollisionPreset &Preset, UPrimitiveComponent* Component, bool SetCollisionEnabled = true);
-	static void SetCollisionFromTemplate(const FName &TemplateName, UPrimitiveComponent* Component, bool SetCollisionEnabled = true);
+	static bool SetCollisionPreset(FCsCollisionPreset &Preset, UPrimitiveComponent* Component);
+	static void SetCollisionFromPreset(const FCsCollisionPreset &Preset, UPrimitiveComponent* Component, const bool &SetCollisionEnabled = true);
+	static void SetCollisionFromTemplate(const FName &TemplateName, UPrimitiveComponent* Component, const bool &SetCollisionEnabled = true);
 
 #pragma endregion Collision
 

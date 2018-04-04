@@ -2541,7 +2541,7 @@ bool UCsCommon::SetPhysicsPreset(FCsPhysicsPreset &Preset, UPrimitiveComponent* 
 	return IsDirty;
 }
 
-void UCsCommon::SetPhysicsFromPreset(FCsPhysicsPreset &Preset, UPrimitiveComponent* Component)
+void UCsCommon::SetPhysicsFromPreset(const FCsPhysicsPreset &Preset, UPrimitiveComponent* Component)
 {
 	// bSimulatePhysics
 	Component->SetSimulatePhysics(Preset.bSimulatePhysics);
@@ -2560,7 +2560,7 @@ void UCsCommon::SetPhysicsFromPreset(FCsPhysicsPreset &Preset, UPrimitiveCompone
 // Collision
 #pragma  region
 
-bool UCsCommon::SetColliionPreset(FCsCollisionPreset &Preset, UPrimitiveComponent* Component)
+bool UCsCommon::SetCollisionPreset(FCsCollisionPreset &Preset, UPrimitiveComponent* Component)
 {
 	bool IsDirty = false;
 	
@@ -2595,7 +2595,7 @@ bool UCsCommon::SetColliionPreset(FCsCollisionPreset &Preset, UPrimitiveComponen
 	return IsDirty;
 }
 
-void UCsCommon::SetCollisionFromPreset(FCsCollisionPreset &Preset, UPrimitiveComponent* Component, bool SetCollisionEnabled)
+void UCsCommon::SetCollisionFromPreset(const FCsCollisionPreset &Preset, UPrimitiveComponent* Component, const bool &SetCollisionEnabled /*=true*/)
 {
 	FBodyInstance& BodyInstance = Component->BodyInstance;
 
@@ -2621,7 +2621,7 @@ void UCsCommon::SetCollisionFromPreset(FCsCollisionPreset &Preset, UPrimitiveCom
 		Component->SetCollisionEnabled(Preset.CollisionEnabled);
 }
 
-void UCsCommon::SetCollisionFromTemplate(const FName &TemplateName, UPrimitiveComponent* Component, bool SetCollisionEnabled)
+void UCsCommon::SetCollisionFromTemplate(const FName &TemplateName, UPrimitiveComponent* Component, const bool &SetCollisionEnabled /*=true*/)
 {
 	FCollisionResponseTemplate Template;
 

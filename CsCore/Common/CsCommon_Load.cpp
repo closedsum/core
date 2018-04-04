@@ -692,6 +692,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsData_ProjectileImpactPtr
 			if (StructProperty->Struct == FCsData_ProjectileImpactPtr::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsData_ProjectileImpactPtr>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsRadius
+			if (StructProperty->Struct == FCsRadius::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsRadius>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 			// FCsProjectileMovementFunctionAxis
 			if (StructProperty->Struct == FCsProjectileMovementFunctionAxis::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsProjectileMovementFunctionAxis>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
@@ -1338,6 +1341,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsData_ProjectileImpactPtr
 			if (StructProperty->Struct == FCsData_ProjectileImpactPtr::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsData_ProjectileImpactPtr>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsRadius
+			if (StructProperty->Struct == FCsRadius::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsRadius>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 			// FCsProjectileMovementFunctionAxis
 			if (StructProperty->Struct == FCsProjectileMovementFunctionAxis::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsProjectileMovementFunctionAxis>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
@@ -1798,6 +1804,12 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsPhysicsAsset
 			if (StructProperty->Struct == FCsPhysicsAsset::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsPhysicsAsset>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+			// FCsPhysicsPreset
+			if (StructProperty->Struct == FCsPhysicsPreset::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsPhysicsPreset>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
+			// FCsPhysicsImpulse
+			if (StructProperty->Struct == FCsPhysicsImpulse::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsPhysicsImpulse>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
 			// FCsCurveFloat
 			if (StructProperty->Struct == FCsCurveFloat::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsCurveFloat>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
@@ -1912,9 +1924,6 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				if (WriteObjectToJson_Internal_Helper(Internal, Property, InJsonWriter, InObject, InClass)) { continue; }
 				continue;
 			}
-			// FCsPhysicsPreset
-			if (StructProperty->Struct == FCsPhysicsPreset::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsPhysicsPreset>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
 			// FCsHeadCollision
 			if (StructProperty->Struct == FCsHeadCollision::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsHeadCollision>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
@@ -1933,6 +1942,9 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsData_ProjectileImpactPtr
 			if (StructProperty->Struct == FCsData_ProjectileImpactPtr::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsData_ProjectileImpactPtr>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
+			// FCsRadius
+			if (StructProperty->Struct == FCsRadius::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsRadius>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
 			// FCsProjectileMovementFunction
 			if (StructProperty->Struct == FCsProjectileMovementFunction::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsProjectileMovementFunction>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
@@ -2707,6 +2719,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FCsData_ProjectileImpactPtr
 			if (StructProperty->Struct == FCsData_ProjectileImpactPtr::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsData_ProjectileImpactPtr>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsRadius
+			if (StructProperty->Struct == FCsRadius::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsRadius>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 			// FCsProjectileMovementFunctionAxis
 			if (StructProperty->Struct == FCsProjectileMovementFunctionAxis::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsProjectileMovementFunctionAxis>(JsonObject, StructProperty, InStruct, MemberName); continue; }
@@ -3390,6 +3405,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsData_ProjectileImpactPtr
 			if (StructProperty->Struct == FCsData_ProjectileImpactPtr::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsData_ProjectileImpactPtr>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsRadius
+			if (StructProperty->Struct == FCsRadius::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsRadius>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 			// FCsProjectileMovementFunctionAxis
 			if (StructProperty->Struct == FCsProjectileMovementFunctionAxis::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsProjectileMovementFunctionAxis>(JsonObject, StructProperty, InStruct, MemberName); continue; }
@@ -3897,6 +3915,12 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsPhysicsAsset
 			if (StructProperty->Struct == FCsPhysicsAsset::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsPhysicsAsset>(JsonObject, StructProperty, InObject, MemberName); continue; }
+			// FCsPhysicsPreset
+			if (StructProperty->Struct == FCsPhysicsPreset::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsPhysicsPreset>(JsonObject, StructProperty, InObject, MemberName); continue; }
+			// FCsPhysicsImpulse
+			if (StructProperty->Struct == FCsPhysicsImpulse::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsPhysicsImpulse>(JsonObject, StructProperty, InObject, MemberName); continue; }
 			// FCsCurveFloat
 			if (StructProperty->Struct == FCsCurveFloat::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsCurveFloat>(JsonObject, StructProperty, InObject, MemberName); continue; }
@@ -4023,6 +4047,9 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsData_ProjectileImpactPtr
 			if (StructProperty->Struct == FCsData_ProjectileImpactPtr::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsData_ProjectileImpactPtr>(JsonObject, StructProperty, InObject, MemberName); continue; }
+			// FCsRadius
+			if (StructProperty->Struct == FCsRadius::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsRadius>(JsonObject, StructProperty, InObject, MemberName); continue; }
 			// FCsProjectileMovementFunction
 			if (StructProperty->Struct == FCsProjectileMovementFunction::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsProjectileMovementFunction>(JsonObject, StructProperty, InObject, MemberName); continue; }

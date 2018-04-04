@@ -60,6 +60,27 @@ namespace ECsCachedName
 
 #pragma endregion FName
 
+// Primitive References
+namespace ECsCachedReferences
+{
+	namespace Ref
+	{
+		const bool True = true;
+		const bool False = false;
+		const uint8 Byte = 0;
+		const int8 SByte = 0;
+		const uint16 Short = 0;
+		const int16 SShort = 0;
+		const uint32 Int = 0;
+		const int32 SInt = 0;
+		const uint64 Long = 0;
+		const int32 SLong = 0;
+		const float Float = 0.0f;
+		const FString String = TEXT("");
+		const FName Name = NAME_None;
+	}
+}
+
 // Enum Union
 #pragma region
 

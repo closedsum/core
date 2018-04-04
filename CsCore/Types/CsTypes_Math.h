@@ -7,6 +7,68 @@
 // Math
 #pragma region
 
+USTRUCT(BlueprintType)
+struct FCsRadius
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Radius", meta = (ClampMin = "0", UIMin = "0"))
+	float Radius;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Radius")
+	float RadiusSq;
+
+	FCsRadius()
+	{
+		Reset();
+	}
+
+	FCsRadius& operator=(const FCsRadius& B)
+	{
+		Radius = B.Radius;
+		RadiusSq = B.RadiusSq;
+		return *this;
+	}
+
+	bool operator==(const FCsRadius& B) const
+	{
+		return Radius == B.Radius && RadiusSq == B.RadiusSq;
+	}
+
+	bool operator!=(const FCsRadius& B) const
+	{
+		return !(*this == B);
+	}
+
+	void Square()
+	{
+		RadiusSq = Radius * Radius;
+	}
+
+	FString ToString() const
+	{
+		return FString::Printf(TEXT("Radius=%3.3f"), Radius);
+	}
+
+	bool InitFromString(const FString& InSourceString)
+	{
+		Radius = 0.0f;
+
+		// The initialization is only successful if the Radius values can all be parsed from the string
+		const bool bSuccessful = FParse::Value(*InSourceString, TEXT("Radius="), Radius);
+
+		Square();
+
+		return bSuccessful;
+	}
+
+	void Reset()
+	{
+		Radius = 0.0f;
+		Square();
+	}
+};
+
 UENUM(BlueprintType)
 namespace ECsParametricFunctionType
 {

@@ -10,6 +10,7 @@ class CSCORE_API ACsData_Interactive : public ACsData
 
 // Stats
 #pragma region
+public:
 
 	UFUNCTION(BlueprintCallable, Category = "Stats")
 	virtual float GetWarmUpTime();
@@ -20,6 +21,7 @@ class CSCORE_API ACsData_Interactive : public ACsData
 
 // Mesh
 #pragma region
+public:
 
 	UFUNCTION(BlueprintCallable, Category = "Mesh")
 	virtual class UStaticMesh* GetStaticMesh();
@@ -35,7 +37,12 @@ class CSCORE_API ACsData_Interactive : public ACsData
 
 // Collision
 #pragma region
+public:
 
+	UFUNCTION(BlueprintCallable, Category = "Collision")
+	virtual bool UseCollisionPreset();
+	UFUNCTION(BlueprintCallable, Category = "Collision")
+	virtual void SetCollisionFromPreset(UPrimitiveComponent* InComponent);
 	UFUNCTION(BlueprintCallable, Category = "Collision")
 	virtual float GetCollisionRadius();
 	UFUNCTION(BlueprintCallable, Category = "Collision")
@@ -43,9 +50,26 @@ class CSCORE_API ACsData_Interactive : public ACsData
 
 #pragma endregion Collision
 
+// Movement
+#pragma region
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "Collision")
+	virtual bool UsePhysicsPreset();
+	UFUNCTION(BlueprintCallable, Category = "Collision")
+	virtual void SetPhysicsFromPreset(UPrimitiveComponent* InComponent);
+
+	UFUNCTION(BlueprintCallable, Category = "Collision")
+	virtual bool UseSpawnPhysicsImpulse();
+	UFUNCTION(BlueprintCallable, Category = "Collision")
+	virtual void ApplySpawnPhysicsImpulse(UPrimitiveComponent* InComponent);
+
+#pragma endregion Movement
+
 // UI
 #pragma region
-	
+public:
+
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual bool OnSpawnSpawnWidget();
 	UFUNCTION(BlueprintCallable, Category = "UI")

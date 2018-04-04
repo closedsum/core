@@ -1249,6 +1249,128 @@ struct FCsPhysicsPreset
 	}
 };
 
+UENUM(BlueprintType)
+namespace ECsPhysicsImpulseType
+{
+	enum Type
+	{
+		AddForce					UMETA(DisplayName = "Add Force"),
+		AddForceAtPosition			UMETA(DisplayName = "Add Force At Position"),
+		AddTorque					UMETA(DisplayName = "Add Torque"),
+		AddAngularImpulse			UMETA(DisplayName = "Add Angular Impulse"),
+		AddImpulse					UMETA(DisplayName = "Add Impulse"),
+		AddImpulseAtPosition		UMETA(DisplayName = "Add Impulse At Position"),
+		ECsPhysicsImpulseType_MAX	UMETA(Hidden),
+	};
+}
+
+namespace ECsPhysicsImpulseType
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString AddForce = TCsString(TEXT("AddForce"), TEXT("addforce"), TEXT("add force"));
+		const TCsString AddForceAtPosition = TCsString(TEXT("AddForceAtPosition"), TEXT("addforceatposition"), TEXT("add force at position"));
+		const TCsString AddTorque = TCsString(TEXT("AddTorque"), TEXT("addtorque"), TEXT("add torque"));
+		const TCsString AddAngularImpulse = TCsString(TEXT("AddAngularImpulse"), TEXT("addangularimpulse"), TEXT("add angular impulse"));
+		const TCsString AddImpulse = TCsString(TEXT("AddImpulse"), TEXT("addimpulse"), TEXT("add impulse"));
+		const TCsString AddImpulseAtPosition = TCsString(TEXT("AddImpulseAtPosition"), TEXT("addimpulseatposition"), TEXT("add impulse at position"));
+	}
+
+	FORCEINLINE const FString& ToString(const Type &EType)
+	{
+		if (EType == Type::AddForce) { return Str::AddForce.Value; }
+		if (EType == Type::AddForceAtPosition) { return Str::AddForceAtPosition.Value; }
+		if (EType == Type::AddTorque) { return Str::AddTorque.Value; }
+		if (EType == Type::AddAngularImpulse) { return Str::AddAngularImpulse.Value; }
+		if (EType == Type::AddImpulse) { return Str::AddImpulse.Value; }
+		if (EType == Type::AddImpulseAtPosition) { return Str::AddImpulseAtPosition.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE Type ToType(const FString &String)
+	{
+		if (String == Str::AddForce) { return Type::AddForce; }
+		if (String == Str::AddForceAtPosition) { return Type::AddForceAtPosition; }
+		if (String == Str::AddTorque) { return Type::AddTorque; }
+		if (String == Str::AddAngularImpulse) { return Type::AddAngularImpulse; }
+		if (String == Str::AddImpulse) { return Type::AddImpulse; }
+		if (String == Str::AddImpulseAtPosition) { return Type::AddImpulseAtPosition; }
+		return Type::ECsPhysicsImpulseType_MAX;
+	}
+
+}
+
+#define ECS_PHYSICS_IMPULSE_TYPE_MAX (uint8)ECsPhysicsImpulseType::ECsPhysicsImpulseType_MAX
+typedef ECsPhysicsImpulseType::Type TCsPhysicsImpulseType;
+
+USTRUCT(BlueprintType)
+struct FCsPhysicsImpulse
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
+	TEnumAsByte<ECsPhysicsImpulseType::Type> Type;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
+	FVector Impulse;
+
+	/** Used in AddForceAtPosition and AddImpulseAtPosition */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
+	FVector Position;
+	/** Used in AddForce, AddForceAtPosition, and AddTorque */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
+	bool bAllowSubstepping;
+	/** Used in AddForce and AddTorque */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
+	bool bAccelChange;
+	/** Used in AddAngularImpulse and AddImpulse */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
+	bool bVelChange;
+	/** Used in AddForceAtPosition */
+	bool bIsLocalForce;
+
+	FCsPhysicsImpulse()
+	{
+		Impulse = FVector::ZeroVector;
+		Position = FVector::ZeroVector;
+		bAllowSubstepping = true;
+		bAccelChange = false;
+		bVelChange = false;
+		bIsLocalForce = false;
+	}
+	~FCsPhysicsImpulse(){}
+
+	FCsPhysicsImpulse& operator=(const FCsPhysicsImpulse& B)
+	{
+		Type = B.Type;
+		Impulse = B.Impulse;
+		Position = B.Position;
+		bAllowSubstepping = B.bAllowSubstepping;
+		bAccelChange = B.bAccelChange;
+		bVelChange = B.bVelChange;
+		bIsLocalForce = B.bIsLocalForce;
+		return *this;
+	}
+
+	bool operator==(const FCsPhysicsImpulse& B) const
+	{
+		return	Type == B.Type &&
+				Impulse == B.Impulse &&
+				Position == B.Position &&
+				bAllowSubstepping == B.bAllowSubstepping &&
+				bAccelChange == B.bAccelChange &&
+				bVelChange == B.bVelChange &&
+				bIsLocalForce == B.bIsLocalForce;
+	}
+
+	bool operator!=(const FCsPhysicsImpulse& B) const
+	{
+		return !(*this == B);
+	}
+};
+
 #pragma endregion Physics
 
 // Blueprint

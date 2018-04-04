@@ -2,6 +2,14 @@
 #include "UI/CsUserWidget.h"
 #include "CsCore.h"
 
+// Managers
+#include "Managers/Inventory/CsManager_Inventory.h"
+// UI
+#include "UI/CsUI.h"
+// Player
+#include "Player/CsPlayerController.h"
+#include "Player/CsPlayerStateBase.h"
+
 UCsUserWidget::UCsUserWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -53,6 +61,12 @@ void UCsUserWidget::SetMyOwner(AActor* InOwner)
 }
 
 AActor* UCsUserWidget::GetMyOwner() { return MyOwner.IsValid() ? MyOwner.Get() : nullptr; }
+
+ACsPlayerController* UCsUserWidget::GetMyController()
+{
+	ACsUI* HUD = GetMyOwner<ACsUI>();
+	return HUD ? HUD->GetMyOwner<ACsPlayerController>() : nullptr;
+}
 
 void UCsUserWidget::SetFocus(const ECsWidgetFocus &InFocus)
 {
@@ -130,6 +144,9 @@ void UCsUserWidget::SetChildFocus(const TCsWidgetType &WidgetType, const int32 &
 // Open / Close Child
 #pragma region
 
+	// Open
+#pragma region
+
 bool UCsUserWidget::OpenChild(const TCsWidgetType &WidgetType)
 {
 	if (UCsUserWidget* Widget = GetActiveChildWidget(WidgetType))
@@ -153,6 +170,15 @@ bool UCsUserWidget::OpenChild(const TCsWidgetType &WidgetType)
 		ActiveChildWidgetsMap.Add(WidgetType, Array);
 	}
 
+	if (ACsPlayerController* Controller = GetMyController())
+	{
+		if (FCsInputActionMapRule* Rule = OpenChildActionMapRules.Find(WidgetType))
+		{
+			Controller->ClearCurrentInputActionMap(Rule->Clear);
+			Controller->SetCurrentInputActionMap(Rule->Set);
+		}
+	}
+
 	Widget->Show();
 #if WITH_EDITOR
 	OnOpenChild_ScriptEvent.Broadcast((uint8)WidgetType);
@@ -162,6 +188,11 @@ bool UCsUserWidget::OpenChild(const TCsWidgetType &WidgetType)
 }
 
 bool UCsUserWidget::OpenChild_Script(const uint8 &WidgetType) { return OpenChild((TCsWidgetType)WidgetType); }
+
+#pragma endregion Open
+
+	// Close
+#pragma region
 
 bool UCsUserWidget::IsChildOpened(const TCsWidgetType &WidgetType) { return GetActiveChildWidget(WidgetType) != nullptr; }
 bool UCsUserWidget::IsChildOpened_Script(const uint8 &WidgetType) { return IsChildOpened((TCsWidgetType)WidgetType); }
@@ -198,6 +229,15 @@ bool UCsUserWidget::CloseChild(const TCsWidgetType &WidgetType)
 				Widgets->RemoveAt(I);
 				break;
 			}
+		}
+	}
+
+	if (ACsPlayerController* Controller = GetMyController())
+	{
+		if (FCsInputActionMapRule* Rule = CloseChildActionMapRules.Find(WidgetType))
+		{
+			Controller->ClearCurrentInputActionMap(Rule->Clear);
+			Controller->SetCurrentInputActionMap(Rule->Set);
 		}
 	}
 
@@ -251,6 +291,8 @@ void UCsUserWidget::CloseAllChildrenExcept_Script(const uint8 &WidgetType) { Clo
 
 bool UCsUserWidget::IsChildClosed(const TCsWidgetType &WidgetType) { return GetActiveChildWidget(WidgetType) == nullptr; }
 bool UCsUserWidget::IsChildClosed_Script(const uint8 &WidgetType) { return IsChildClosed((TCsWidgetType)WidgetType); }
+
+#pragma endregion Close
 
 #pragma endregion Open / Close Child
 
@@ -329,3 +371,18 @@ bool UCsUserWidget::ChildWidgets_ProcessGameEvent(const TCsGameEvent &GameEvent)
 bool UCsUserWidget::ChildWidgets_ProcessGameEvent_Script(const uint8 &GameEvent) { return ChildWidgets_ProcessGameEvent((TCsGameEvent)GameEvent); }
 
 #pragma endregion Game Event
+
+// Inventory
+#pragma region
+
+ACsManager_Inventory* UCsUserWidget::GetMyManager_Inventory()
+{
+	if (ACsPlayerController* Controller = GetMyController())
+	{
+		ACsPlayerStateBase* PlayerStateBase = Cast<ACsPlayerStateBase>(Controller->PlayerState);
+		return PlayerStateBase->Manager_Inventory;
+	}
+	return nullptr;
+}
+
+#pragma endregion Inventory

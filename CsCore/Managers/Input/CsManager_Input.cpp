@@ -650,7 +650,17 @@ void ACsManager_Input::SetCurrentInputActionMap(const TCsInputActionMap &ActionM
 	CS_SET_BITFLAG(CurrentInputActionMap, ActionMap);
 }
 
+void ACsManager_Input::SetCurrentInputActionMap(const int32 &ActionMap)
+{
+	CS_SET_BITFLAG(CurrentInputActionMap, ActionMap);
+}
+
 void ACsManager_Input::ClearCurrentInputActionMap(const TCsInputActionMap &ActionMap)
+{
+	CS_CLEAR_BITFLAG(CurrentInputActionMap, ActionMap);
+}
+
+void ACsManager_Input::ClearCurrentInputActionMap(const int32 &ActionMap)
 {
 	CS_CLEAR_BITFLAG(CurrentInputActionMap, ActionMap);
 }

@@ -102,6 +102,21 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	AActor* GetMyOwner();
 
+	template<typename T>
+	T* GetMyOwner()
+	{
+		return Cast<T>(GetMyOwner());
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	class ACsPlayerController* GetMyController();
+
+	template<typename T>
+	T* GetMyController()
+	{
+		return Cast<T>(GetMyController());
+	}
+
 	UPROPERTY()
 	int32 Focus;
 
@@ -161,6 +176,10 @@ public:
 #pragma region
 public:
 
+	// Open
+#pragma region
+public:
+
 	virtual bool OpenChild(const TCsWidgetType &WidgetType);
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
@@ -171,10 +190,17 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "UI")
 	FBindableDynEvent_CsUserWidget_OnOpenChild OnOpenChild_ScriptEvent;
 
+	TMap<TCsWidgetType, FCsInputActionMapRule> OpenChildActionMapRules;
+
 	virtual bool IsChildOpened(const TCsWidgetType &WidgetType);
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual bool IsChildOpened_Script(const uint8 &WidgetType);
+
+#pragma endregion Open
+
+	// Close
+#pragma region
 
 	virtual bool CloseChild(const TCsWidgetType &WidgetType);
 
@@ -186,6 +212,8 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "UI")
 	FBindableDynEvent_CsUserWidget_OnCloseChild OnCloseChild_ScriptEvent;
 
+	TMap<TCsWidgetType, FCsInputActionMapRule> CloseChildActionMapRules;
+
 	virtual void CloseAllChildrenExcept(const TCsWidgetType &WidgetType);
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
@@ -195,6 +223,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual bool IsChildClosed_Script(const uint8 &WidgetType);
+
+#pragma endregion Close
 
 #pragma endregion Open / Close Child
 
@@ -212,6 +242,7 @@ public:
 
 // Raw Inputs
 #pragma region
+public:
 
 	virtual bool ProcessInputFrame(FCsInputFrame &InputFrame);
 
@@ -221,6 +252,7 @@ public:
 
 // Game Event
 #pragma region
+public:
 
 	virtual bool ProcessGameEvent(const TCsGameEvent &GameEvent);
 
@@ -236,4 +268,18 @@ public:
 	virtual bool ChildWidgets_ProcessGameEvent_Script(const uint8 &GameEvent);
 
 #pragma endregion Game Event
+
+// Inventory
+#pragma region
+public:
+
+	class ACsManager_Inventory* GetMyManager_Inventory();
+
+	template<typename T>
+	T* GetMyManager_Inventory()
+	{
+		return Cast<T>(GetMyManager_Inventory());
+	}
+
+#pragma endregion Inventory
 };

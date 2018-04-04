@@ -57,6 +57,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	AActor* GetMyOwner();
 
+	template<typename T>
+	T* GetMyOwner()
+	{
+		return Cast<T>(GetMyOwner());
+	}
+
 	TArray<TCsWidgetType> WidgetTypes;
 
 	UPROPERTY(BlueprintReadWrite, Category = "UI")

@@ -245,7 +245,7 @@ CS_COROUTINE(ACsManager_Crafting, CraftItems_Internal)
 				Process->OnCraftItem_Event.Broadcast(Process->Id, Payload->Id);
 			}
 		}
-		r->indexers[0]++;
+		++(r->indexers[0]);
 	} while (Index < ProcessCount);
 
 	// Check to Add Crafted Items to the Inventory

@@ -47,7 +47,9 @@ public:
 
 	int32 GetCurrentInputActionMap();
 	void SetCurrentInputActionMap(const TCsInputActionMap &ActionMap);
+	void SetCurrentInputActionMap(const int32 &ActionMap);
 	void ClearCurrentInputActionMap(const TCsInputActionMap &ActionMap);
+	void ClearCurrentInputActionMap(const int32 &ActionMap);
 
 	virtual void InitInputSystem() override;
 	virtual void BindDelegatesToInputManager();

@@ -29,7 +29,17 @@ void ACsPlayerController::SetCurrentInputActionMap(const TCsInputActionMap &Acti
 	Manager_Input->SetCurrentInputActionMap(ActionMap);
 }
 
+void ACsPlayerController::SetCurrentInputActionMap(const int32 &ActionMap)
+{
+	Manager_Input->SetCurrentInputActionMap(ActionMap);
+}
+
 void ACsPlayerController::ClearCurrentInputActionMap(const TCsInputActionMap &ActionMap)
+{
+	Manager_Input->ClearCurrentInputActionMap(ActionMap);
+}
+
+void ACsPlayerController::ClearCurrentInputActionMap(const int32 &ActionMap)
 {
 	Manager_Input->ClearCurrentInputActionMap(ActionMap);
 }

@@ -229,6 +229,21 @@ typedef TCsInputActionMap(*TCsStringToInputActionMap)(const FString&);
 #define CS_DEFINE_INPUT_ACTION_MAP	InputActionMapMaskToString = &ECsInputActionMap::MaskToString; \
 									StringToInputActionMap = &ECsInputActionMap::ToBitMask;
 
+struct FCsInputActionMapRule
+{
+	int32 Clear;
+	int32 Set;
+
+	FCsInputActionMapRule()
+	{
+		Clear = 0;
+		Set = 0;
+	}
+	~FCsInputActionMapRule(){}
+};
+
+
+
 namespace ECsInputAction
 {
 	enum Type : uint8;

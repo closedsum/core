@@ -242,7 +242,7 @@ void ACsProjectile::Allocate_Internal()
 
 	ACsPawn* InstigatingPawn   = Cast<ACsPawn>(Cache.GetInstigator());
 	const bool IsLocalClient   = UCsCommon::IsLocalPawn(GetWorld(), InstigatingPawn);
-	const TCsViewType ViewType = IsLocalClient ? ECsViewType::FirstPerson : ECsViewType::ThirdPerson;
+	const TCsViewType& ViewType = IsLocalClient ? ECsViewType::FirstPerson : ECsViewType::ThirdPerson;
 
 	ACsWeapon* OwnerWeapon				= Cast<ACsWeapon>(Cache.GetOwner());
 	ACsData_Weapon* Data_Weapon			= OwnerWeapon ? OwnerWeapon->GetMyData_Weapon() : nullptr;

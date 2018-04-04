@@ -574,6 +574,8 @@ public:
 
 	TCsWeaponState IdleState;
 
+	TCsWeaponFireMode PrimaryFireMode;
+
 	virtual void OnTick(const float &DeltaSeconds);
 
 	UPROPERTY(BlueprintAssignable, Category = "State")

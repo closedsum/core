@@ -22,14 +22,19 @@ class CSCORE_API ACsData_Projectile : public ACsData
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-	virtual FName GetItemShortCode();
-	virtual const FName& GetItemShortCodeRef();
+	virtual const FName& GetItemShortCode();
 
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-	virtual float GetLifeTime();
+	virtual const bool& GetOnAllocateDropItem();
 
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-	virtual float GetMaxRange();
+	virtual const bool& GetOnAllocateConsumeItem();
+
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+	virtual const float& GetLifeTime();
+
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+	virtual const float& GetMaxRange();
 
 #pragma endregion Stats
 
@@ -44,13 +49,13 @@ public:
 	virtual FVector EvaluateMovementFunction(const float &Time, const FVector &Location, const FTransform &Transform);
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
-	virtual float GetInitialSpeed();
+	virtual const float& GetInitialSpeed();
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
-	virtual float GetMaxSpeed();
+	virtual const float& GetMaxSpeed();
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
-	virtual float GetGravityMultiplier();
+	virtual const float& GetGravityMultiplier();
 
 #pragma endregion Movement
 
@@ -59,16 +64,16 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Damage")
-	virtual int32 GetDamage();
+	virtual const int32& GetDamage();
 
 	UFUNCTION(BlueprintCallable, Category = "Damage")
-	virtual bool CanDamageFalloff();
+	virtual const bool& CanDamageFalloff();
 	
 	UFUNCTION(BlueprintCallable, Category = "Damage")
 	virtual float GetDamageFalloff(const float &Distance);
 
 	UFUNCTION(BlueprintCallable, Category = "Damage")
-	virtual bool CanDamageRadial();
+	virtual const bool& CanDamageRadial();
 
 	UFUNCTION(BlueprintCallable, Category = "Damage")
 	virtual float GetDamageRadial(const FVector &Origin, const FVector &Location);
@@ -95,7 +100,7 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Transform")
-	virtual FTransform GetTransform();
+	virtual const FTransform& GetTransform();
 
 #pragma endregion Transform
 
@@ -118,7 +123,7 @@ public:
 	virtual FCollisionResponseContainer& GetCollisionResponseContainer();
 
 	UFUNCTION(BlueprintCallable, Category = "Collision")
-	virtual float GetSphereRadius();
+	virtual const float& GetSphereRadius();
 
 #pragma endregion Collision
 
@@ -127,7 +132,7 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "FX")
-	virtual bool GetUseTrailFX();
+	virtual const bool& GetUseTrailFX();
 
 	virtual FCsFxElement* GetTrailFX(const TCsViewType &ViewType);
 

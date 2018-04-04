@@ -1283,20 +1283,47 @@ void ACsWeapon::OnChange_CurrentAmmo(const int32 &Value)
 
 void ACsWeapon::IncrementCurrentAmmo(const int32 &Index)
 {
-	++CurrentAmmo;
-	CurrentAmmo = FMath::Min(CurrentAmmo, GetMaxAmmo(Index));
+	if (UseManager_Inventory)
+	{
+		// TODO: Later might need a way to store the LastFireMode used
+		ACsManager_Inventory* Manager_Inventory = GetMyManager_Inventory();
+		const int32 AmmoReserve					= Manager_Inventory->GetItemCount(GetAmmoShortCode(PrimaryFireMode, false));
 
+		if (CurrentAmmo < GetMaxAmmo(Index) &&
+			CurrentAmmo < AmmoReserve)
+		{
+			++CurrentAmmo;
+		}
+	}
+	else
+	{
+		if (CurrentAmmo < GetMaxAmmo(Index))
+			++CurrentAmmo;
+	}
 	CurrentAmmoHandle.Resolve();
 }
+
 void ACsWeapon::ResetCurrentAmmo(const int32 &Index) 
 { 
-	CurrentAmmo = GetMaxAmmo(Index);
+	if (UseManager_Inventory)
+	{
+		// TODO: Later might need a way to store the LastFireMode used
+		ACsManager_Inventory* Manager_Inventory = GetMyManager_Inventory();
+		const int32 AmmoReserve					= Manager_Inventory->GetItemCount(GetAmmoShortCode(PrimaryFireMode, false));
+		const int32 maxAmmo						= GetMaxAmmo(Index);
+
+		CurrentAmmo = AmmoReserve > maxAmmo ? AmmoReserve % maxAmmo : AmmoReserve;
+	}
+	else
+	{
+		CurrentAmmo = GetMaxAmmo(Index);
+	}
 	CurrentAmmoHandle.Resolve();
 }
 
 const FName& ACsWeapon::GetAmmoShortCode(const TCsWeaponFireMode &FireMode, const bool &IsCharged) 
 { 
-	return GetMyData_Projectile<ACsData_Projectile>(FireMode, IsCharged)->GetItemShortCodeRef();
+	return GetMyData_Projectile<ACsData_Projectile>(FireMode, IsCharged)->GetItemShortCode();
 }
 
 int32 ACsWeapon::GetAmmoReserve(const int32 &Index)
@@ -1307,6 +1334,24 @@ int32 ACsWeapon::GetAmmoReserve(const int32 &Index)
 void ACsWeapon::ConsumeAmmo()
 {
 	--CurrentAmmo;
+
+	if (UseManager_Inventory)
+	{
+		ACsManager_Inventory* Manager_Inventory = GetMyManager_Inventory();
+		ACsData_Projectile* Data_Projectile		= GetMyData_Projectile<ACsData_Projectile>(PrimaryFireMode, false);
+
+		// Consume Item
+		if (Data_Projectile->GetOnAllocateConsumeItem())
+		{
+			Manager_Inventory->ConsumeFirstItem(Data_Projectile->GetItemShortCode());
+		}
+		// Drop Item
+		else
+		if (Data_Projectile->GetOnAllocateDropItem())
+		{
+			Manager_Inventory->DropFirstItem(Data_Projectile->GetItemShortCode());
+		}
+	}
 	CurrentAmmoHandle.Resolve();
 }
 
@@ -1909,10 +1954,10 @@ void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjecti
 
 	const ECollisionChannel ProjectileCollision = Data_Projectile->GetCollisionObjectType();
 
-	const FVector Start		  = Cache->Location;
-	const FVector Dir		  = Cache->Direction;
-	const float MaxTraceRange = Data_Projectile->GetMaxRange();
-	const FVector End		  = Start + MaxTraceRange * Dir;
+	const FVector& Start	   = Cache->Location;
+	const FVector& Dir		   = Cache->Direction;
+	const float& MaxTraceRange = Data_Projectile->GetMaxRange();
+	const FVector End		   = Start + MaxTraceRange * Dir;
 
 		// Ignored Actors
 	TArray<AActor*> IgnoredActors;

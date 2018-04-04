@@ -25,11 +25,13 @@ TCsProjectileType ACsData_Projectile::GetBaseProjectileType() { return BaseProje
 #pragma region
 
 
-FName ACsData_Projectile::GetItemShortCode() { return NAME_None; }
-const FName& ACsData_Projectile::GetItemShortCodeRef() { return ECsCachedName::Name::None; }
+const FName& ACsData_Projectile::GetItemShortCode() { return ECsCachedName::Name::None; }
 
-float ACsData_Projectile::GetLifeTime() { return 0.0f; }
-float ACsData_Projectile::GetMaxRange() { return 0.0f; }
+const bool& ACsData_Projectile::GetOnAllocateDropItem() { return ECsCachedReferences::Ref::False;  }
+const bool& ACsData_Projectile::GetOnAllocateConsumeItem() { return ECsCachedReferences::Ref::False; }
+
+const float& ACsData_Projectile::GetLifeTime() { return ECsCachedReferences::Ref::Float; }
+const float& ACsData_Projectile::GetMaxRange() { return ECsCachedReferences::Ref::Float; }
 
 #pragma endregion Stats
 
@@ -39,19 +41,19 @@ float ACsData_Projectile::GetMaxRange() { return 0.0f; }
 TEnumAsByte<ECsProjectileMovement::Type> ACsData_Projectile::GetMovementType() { return ECsProjectileMovement::Simulated; }
 FVector ACsData_Projectile::EvaluateMovementFunction(const float &Time, const FVector &Location, const FTransform &Transform) { return Location; }
 
-float ACsData_Projectile::GetInitialSpeed() { return 0.0f; }
-float ACsData_Projectile::GetMaxSpeed() { return 0.0f; }
-float ACsData_Projectile::GetGravityMultiplier() { return 0.0f; }
+const float& ACsData_Projectile::GetInitialSpeed() { return ECsCachedReferences::Ref::Float; }
+const float& ACsData_Projectile::GetMaxSpeed() { return ECsCachedReferences::Ref::Float; }
+const float& ACsData_Projectile::GetGravityMultiplier() { return ECsCachedReferences::Ref::Float; }
 
 #pragma endregion Movement
 
 // Damage
 #pragma region
 
-int32 ACsData_Projectile::GetDamage() { return 0; }
-bool ACsData_Projectile::CanDamageFalloff() { return false; }
+const int32& ACsData_Projectile::GetDamage() { return ECsCachedReferences::Ref::SInt; }
+const bool& ACsData_Projectile::CanDamageFalloff() { return ECsCachedReferences::Ref::False; }
 float ACsData_Projectile::GetDamageFalloff(const float &Distance) { return 1.0f; }
-bool ACsData_Projectile::CanDamageRadial() { return false; }
+const bool& ACsData_Projectile::CanDamageRadial() { return ECsCachedReferences::Ref::False; }
 float ACsData_Projectile::GetDamageRadial(const FVector &Origin, const FVector &Location) { return 0.0f; }
 
 #pragma endregion Damage
@@ -68,7 +70,7 @@ float ACsData_Projectile::GetDrawDistanceSq(const TEnumAsByte<ECsViewType::Type>
 // Transform
 #pragma region
 
-FTransform ACsData_Projectile::GetTransform() { return FTransform::Identity; }
+const FTransform& ACsData_Projectile::GetTransform() { return FTransform::Identity; }
 
 #pragma endregion Transform
 
@@ -78,14 +80,14 @@ FTransform ACsData_Projectile::GetTransform() { return FTransform::Identity; }
 TEnumAsByte<ECollisionEnabled::Type> ACsData_Projectile::GetCollisionEnabled() { return ECollisionEnabled::NoCollision; }
 TEnumAsByte<ECollisionChannel> ACsData_Projectile::GetCollisionObjectType() { return ECollisionChannel::ECC_MAX; }
 FCollisionResponseContainer& ACsData_Projectile::GetCollisionResponseContainer() { return DefaultCollisionResponseContainer; }
-float ACsData_Projectile::GetSphereRadius() { return 0.0f; }
+const float& ACsData_Projectile::GetSphereRadius() { return ECsCachedReferences::Ref::Float; }
 
 #pragma endregion Collision
 
 // FX
 #pragma region
 
-bool ACsData_Projectile::GetUseTrailFX() { return false; }
+const bool& ACsData_Projectile::GetUseTrailFX() { return ECsCachedReferences::Ref::False; }
 FCsFxElement* ACsData_Projectile::GetTrailFX(const TCsViewType &ViewType) { return nullptr; }
 
 #pragma endregion FX

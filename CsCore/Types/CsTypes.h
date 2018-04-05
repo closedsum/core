@@ -1314,11 +1314,11 @@ struct FCsPhysicsImpulse
 	TEnumAsByte<ECsPhysicsImpulseType::Type> Type;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
-	FVector Impulse;
+	FCsOptionalVectorInterval Impulse;
 
 	/** Used in AddForceAtPosition and AddImpulseAtPosition */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
-	FVector Position;
+	FCsOptionalVectorInterval Position;
 	/** Used in AddForce, AddForceAtPosition, and AddTorque */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
 	bool bAllowSubstepping;
@@ -1333,8 +1333,8 @@ struct FCsPhysicsImpulse
 
 	FCsPhysicsImpulse()
 	{
-		Impulse = FVector::ZeroVector;
-		Position = FVector::ZeroVector;
+		Impulse.Reset();
+		Position.Reset();
 		bAllowSubstepping = true;
 		bAccelChange = false;
 		bVelChange = false;

@@ -43,13 +43,13 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Collision")
-	virtual const bool& UseCollisionPreset();
+	virtual const bool& UseWorldCollisionPreset();
 	UFUNCTION(BlueprintCallable, Category = "Collision")
-	virtual void SetCollisionFromPreset(UPrimitiveComponent* InComponent);
+	virtual void SetWorldCollisionFromPreset(UPrimitiveComponent* InComponent);
 	UFUNCTION(BlueprintCallable, Category = "Collision")
-	virtual const float& GetCollisionRadius();
+	virtual const float& GetInteractiveCollisionRadius();
 	UFUNCTION(BlueprintCallable, Category = "Collision")
-	virtual const float& GetCollisionRadiusSq();
+	virtual const float& GetInteractiveCollisionRadiusSq();
 
 #pragma endregion Collision
 

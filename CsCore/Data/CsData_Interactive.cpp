@@ -43,10 +43,10 @@ TArray<UMaterialInstanceConstant*>* ACsData_Interactive::GetMaterials() { return
 // Collision
 #pragma region
 
-const bool& ACsData_Interactive::UseCollisionPreset() { return ECsCachedReferences::Ref::False; }
-void ACsData_Interactive::SetCollisionFromPreset(UPrimitiveComponent* InComponent) {}
-const float& ACsData_Interactive::GetCollisionRadius() { return ECsCachedReferences::Ref::Float; }
-const float& ACsData_Interactive::GetCollisionRadiusSq() { return ECsCachedReferences::Ref::Float; }
+const bool& ACsData_Interactive::UseWorldCollisionPreset() { return ECsCachedReferences::Ref::False; }
+void ACsData_Interactive::SetWorldCollisionFromPreset(UPrimitiveComponent* InComponent) {}
+const float& ACsData_Interactive::GetInteractiveCollisionRadius() { return ECsCachedReferences::Ref::Float; }
+const float& ACsData_Interactive::GetInteractiveCollisionRadiusSq() { return ECsCachedReferences::Ref::Float; }
 
 #pragma endregion Collision
 

@@ -142,7 +142,8 @@ FCsItem* ACsManager_Item::Allocate(const FName &ShortCode)
 
 	Item->Data = Data;
 	// Get Data for Actor when this Item is Dropped
-	Item->Data_Actor = Cast<ACsData_Interactive>(DataMapping->GetLoadedData(InteractiveAssetType, Data->GetSpawnedActorDataShortCode()));
+	if (Data->OnDropSpawnActor())
+		Item->Data_Actor = Cast<ACsData_Interactive>(DataMapping->GetLoadedData(InteractiveAssetType, Data->GetSpawnedActorDataShortCode()));
 
 	return Item;
 }

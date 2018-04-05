@@ -18,7 +18,8 @@ class CSCORE_API ACsData_Recipe : public ACsData
 public:
 
 	/** ShortCode for the Item created from the Recipe */
-	virtual FName GetCreatedItem();
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+	virtual const FName& GetCreatedItem();
 
 #pragma endregion Stats
 
@@ -31,13 +32,13 @@ public:
 
 	/** Time to process single Recipe */
 	UFUNCTION(BlueprintCallable, Category = "Ingredients")
-	virtual float GetTime();
+	virtual const float& GetTime();
 	/** Whether to use BulkTime */
 	UFUNCTION(BlueprintCallable, Category = "Ingredients")
-	virtual bool GetUseBulkTime();
+	virtual const bool& GetUseBulkTime();
 	/** Time to process many Recipes at once (i.e. Bulk)*/
 	UFUNCTION(BlueprintCallable, Category = "Ingredients")
-	virtual float GetBulkTime();
+	virtual const float& GetBulkTime();
 
 #pragma endregion Ingredients
 
@@ -47,7 +48,7 @@ public:
 
 	/** Name to show in the Crafting Menu */
 	UFUNCTION(BlueprintCallable, Category = "UI")
-	virtual FString GetDisplayName();
+	virtual const FString& GetDisplayName();
 
 #pragma endregion UI
 };

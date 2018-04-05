@@ -12,6 +12,8 @@
 #include "Data/CsData_ProjectileWeapon.h"
 #include "Data/CsData_Character.h"
 #include "Data/CsData_WeaponMaterialSkin.h"
+// Components
+#include "Components/CsSkeletalMeshComponent.h"
 
 ACsFpsWeapon::ACsFpsWeapon(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -371,7 +373,7 @@ USkeletalMeshComponent* ACsFpsWeapon::GetCharacterMesh(const TEnumAsByte<ECsView
 		ACsFpsPawn* Pawn = GetMyPawn<ACsFpsPawn>();
 
 		if (MyOwnerType == PawnWeaponOwner)
-			return ViewType == ECsViewType::FirstPerson ? Pawn->Mesh1P : Pawn->GetMesh();
+			return ViewType == ECsViewType::FirstPerson ? Cast<USkeletalMeshComponent>(Pawn->Mesh1P) : Pawn->GetMesh();
 	}
 	return nullptr;
 }

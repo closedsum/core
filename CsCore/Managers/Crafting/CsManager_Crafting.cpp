@@ -162,7 +162,7 @@ CS_COROUTINE(ACsManager_Crafting, CraftItems_Internal)
 
 	TArray<FCsRecipeIngredient>* Ingredients = Recipe->GetIngredients();
 
-	const bool UseBulkTime	= Recipe->GetUseBulkTime();
+	const bool& UseBulkTime	 = Recipe->GetUseBulkTime();
 	const int32 ProcessCount = UseBulkTime ? 1 : Payload->Count;
 	const float Time		= UseBulkTime ? Recipe->GetUseBulkTime() : Recipe->GetTime();
 	const float& StartTime	= r->floats[0];

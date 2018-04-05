@@ -20,7 +20,7 @@ public:
 	virtual TArray<FName>* GetContents();
 
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-	virtual bool GetIsIngredient();
+	virtual const bool& GetIsIngredient();
 
 #pragma endregion Stats
 
@@ -40,7 +40,7 @@ public:
 
 	/** Name to show in Inventory */
 	UFUNCTION(BlueprintCallable, Category = "UI")
-	virtual FString GetDisplayName();
+	virtual const FString& GetDisplayName();
 	/** Material used in Inventory */
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual UMaterialInstanceConstant* GetMaterial();
@@ -48,7 +48,7 @@ public:
 	virtual FCsUint8MatrixDimension* GetDimension();
 	/** Slot Capacity (i.e. Max number of items held in slot) in the Inventory */
 	UFUNCTION(BlueprintCallable, Category = "UI")
-	virtual int32 GetCapacity();
+	virtual const int32& GetCapacity();
 
 #pragma endregion UI
 
@@ -57,9 +57,9 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Drop")
-	virtual bool OnDropSpawnActor();
-
-	virtual FName GetSpawnedActorDataShortCode();
+	virtual const bool& OnDropSpawnActor();
+	UFUNCTION(BlueprintCallable, Category = "Drop")
+	virtual const FName& GetSpawnedActorDataShortCode();
 
 #pragma endregion Drop
 
@@ -68,7 +68,7 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Consume")
-	virtual bool OnConsumeDropContents();
+	virtual const bool& OnConsumeDropContents();
 
 #pragma endregion Consume
 };

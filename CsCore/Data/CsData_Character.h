@@ -18,10 +18,10 @@ class CSCORE_API ACsData_Character : public ACsData
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Character Data")
-	virtual int32 GetHealth();
+	virtual const int32& GetHealth();
 
 	UFUNCTION(BlueprintCallable, Category = "Character Data")
-	virtual float GetRespawnTime();
+	virtual const float& GetRespawnTime();
 
 #pragma endregion Stats
 
@@ -37,10 +37,10 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Character Data")
-	virtual float GetCapsuleRadius();
+	virtual const float& GetCapsuleRadius();
 
 	UFUNCTION(BlueprintCallable, Category = "Character Data")
-	virtual float GetCapsuleHalfHeight();
+	virtual const float& GetCapsuleHalfHeight();
 
 private:
 
@@ -60,19 +60,19 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Character Data")
-	virtual float GetMaxWalkSpeed();
+	virtual const float& GetMaxWalkSpeed();
 
 	UFUNCTION(BlueprintCallable, Category = "Character Data")
-	virtual float GetMaxAcceleration();
+	virtual const float& GetMaxAcceleration();
 
 	UFUNCTION(BlueprintCallable, Category = "Character Data")
-	virtual float GetJumpZVelocity();
+	virtual const float& GetJumpZVelocity();
 
 	UFUNCTION(BlueprintCallable, Category = "Character Data")
-	virtual float GetGravityScale();
+	virtual const float& GetGravityScale();
 
 	UFUNCTION(BlueprintCallable, Category = "Character Data")
-	virtual float GetAirControl();
+	virtual const float& GetAirControl();
 
 #pragma endregion Movement
 
@@ -81,7 +81,7 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Character Data")
-	virtual FName GetBoneToAttachWeaponTo();
+	virtual const FName& GetBoneToAttachWeaponTo();
 
 #pragma endregion Weapon
 

@@ -485,6 +485,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsOptionalVectorInterval
 			if (StructProperty->Struct == FCsOptionalVectorInterval::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsOptionalVectorInterval>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsOptionalRotatorInterval
+			if (StructProperty->Struct == FCsOptionalRotatorInterval::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsOptionalRotatorInterval>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
 			{
@@ -1140,6 +1143,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsOptionalVectorInterval
 			if (StructProperty->Struct == FCsOptionalVectorInterval::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsOptionalVectorInterval>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsOptionalRotatorInterval
+			if (StructProperty->Struct == FCsOptionalRotatorInterval::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsOptionalRotatorInterval>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
 			{ 
@@ -1772,6 +1778,9 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsOptionalVectorInterval
 			if (StructProperty->Struct == FCsOptionalVectorInterval::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsOptionalVectorInterval>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+			// FCsOptionalRotatorInterval
+			if (StructProperty->Struct == FCsOptionalRotatorInterval::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsOptionalRotatorInterval>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
 			{
@@ -2531,6 +2540,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FCsOptionalVectorInterval
 			if (StructProperty->Struct == FCsOptionalVectorInterval::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsOptionalVectorInterval>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
+			// FCsOptionalRotatorInterval
+			if (StructProperty->Struct == FCsOptionalRotatorInterval::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsOptionalRotatorInterval>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
 			{ 
@@ -3223,6 +3235,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsOptionalVectorInterval
 			if (StructProperty->Struct == FCsOptionalVectorInterval::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsOptionalVectorInterval>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
+			// FCsOptionalRotatorInterval
+			if (StructProperty->Struct == FCsOptionalRotatorInterval::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsOptionalRotatorInterval>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
 			{ 
@@ -3904,6 +3919,9 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsOptionalVectorInterval
 			if (StructProperty->Struct == FCsOptionalVectorInterval::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsOptionalVectorInterval>(JsonObject, StructProperty, InObject, MemberName); continue; }
+			// FCsOptionalRotatorInterval
+			if (StructProperty->Struct == FCsOptionalRotatorInterval::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsOptionalRotatorInterval>(JsonObject, StructProperty, InObject, MemberName); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
 			{ 

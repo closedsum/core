@@ -342,12 +342,11 @@ void ACsProjectile::Allocate_Internal()
 
 		CollisionComponent->SetCollisionObjectType(Data_Projectile->GetCollisionObjectType());
 		CollisionComponent->SetCollisionResponseToChannels(Data_Projectile->GetCollisionResponseContainer());
+		CollisionComponent->SetSphereRadius(Data_Projectile->GetSphereRadius());
 		CollisionComponent->SetCollisionEnabled(Data_Projectile->GetCollisionEnabled());
 		CollisionComponent->SetNotifyRigidBodyCollision(true);
 
 		CollisionComponent->SetComponentTickEnabled(true);
-
-		CollisionComponent->SetSphereRadius(Data_Projectile->GetSphereRadius());
 	}
 	// Fake
 	if (Relevance == ECsProjectileRelevance::Fake)

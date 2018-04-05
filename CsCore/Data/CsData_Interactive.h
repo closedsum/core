@@ -13,9 +13,12 @@ class CSCORE_API ACsData_Interactive : public ACsData
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-	virtual float GetWarmUpTime();
+	virtual const float& GetWarmUpTime();
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-	virtual float GetLifeTime();
+	virtual const float& GetLifeTime();
+
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+	virtual const FVector& GetScale();
 
 #pragma endregion Stats
 
@@ -40,13 +43,13 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Collision")
-	virtual bool UseCollisionPreset();
+	virtual const bool& UseCollisionPreset();
 	UFUNCTION(BlueprintCallable, Category = "Collision")
 	virtual void SetCollisionFromPreset(UPrimitiveComponent* InComponent);
 	UFUNCTION(BlueprintCallable, Category = "Collision")
-	virtual float GetCollisionRadius();
+	virtual const float& GetCollisionRadius();
 	UFUNCTION(BlueprintCallable, Category = "Collision")
-	virtual float GetCollisionRadiusSq();
+	virtual const float& GetCollisionRadiusSq();
 
 #pragma endregion Collision
 
@@ -55,12 +58,12 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Collision")
-	virtual bool UsePhysicsPreset();
+	virtual const bool& UsePhysicsPreset();
 	UFUNCTION(BlueprintCallable, Category = "Collision")
 	virtual void SetPhysicsFromPreset(UPrimitiveComponent* InComponent);
 
 	UFUNCTION(BlueprintCallable, Category = "Collision")
-	virtual bool UseSpawnPhysicsImpulse();
+	virtual const bool& UseSpawnPhysicsImpulse();
 	UFUNCTION(BlueprintCallable, Category = "Collision")
 	virtual void ApplySpawnPhysicsImpulse(UPrimitiveComponent* InComponent);
 
@@ -71,9 +74,9 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
-	virtual bool OnSpawnSpawnWidget();
+	virtual const bool& OnSpawnSpawnWidget();
 	UFUNCTION(BlueprintCallable, Category = "UI")
-	virtual FString GetDisplayName();
+	virtual const FString& GetDisplayName();
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual void GetScreenSpaceOffset(FIntPoint &OutPoint);
 

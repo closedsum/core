@@ -69,6 +69,12 @@ struct FCsRadius
 	}
 };
 
+// PostEditChangeProperty FCsRadius
+#define CS_PECP_FCS_RADIUS(PropertyName, MemberName)	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsRadius, Radius)) \
+														{ \
+															MemberName.Square(); \
+														}
+
 UENUM(BlueprintType)
 namespace ECsParametricFunctionType
 {

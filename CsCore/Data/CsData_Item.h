@@ -17,8 +17,6 @@ class CSCORE_API ACsData_Item : public ACsData
 #pragma region
 public:
 
-	virtual TArray<FName>* GetContents();
-
 	UFUNCTION(BlueprintCallable, Category = "Stats")
 	virtual const bool& GetIsIngredient();
 

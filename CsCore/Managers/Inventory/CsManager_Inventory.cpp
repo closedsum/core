@@ -272,7 +272,7 @@ void ACsManager_Inventory::AddItem(FCsItem* Item)
 		if (!Success)
 		{
 			const FString ItemName = Item->ShortCode.ToString();
-			const FString Id = FString::Printf(TEXT("%llu"), Item->UniqueId);
+			const FString Id	   = FString::Printf(TEXT("%llu"), Item->UniqueId);
 
 			UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::AddItem: Failed to Add Item: %s with ID: %s. All Slots for Bag: %d are FULL."), *ItemName, *Id, Item->InventoryProperties.Bag);
 			return;

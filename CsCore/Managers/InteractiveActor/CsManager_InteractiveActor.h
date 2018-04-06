@@ -50,6 +50,7 @@ class CSCORE_API ACsManager_InteractiveActor : public ACsManager
 
 // Allocate / DeAllocate
 #pragma region
+public:
 
 	class ACsInteractiveActor* Allocate(const TCsInteractiveType &Type);
 
@@ -62,7 +63,7 @@ class CSCORE_API ACsManager_InteractiveActor : public ACsManager
 
 #pragma endregion Allocate / DeAllocate
 
-	// Payload
+// Payload
 #pragma region
 private:
 
@@ -76,15 +77,19 @@ public:
 
 #pragma endregion Payload
 
-	class ACsInteractiveActor* WakeUp(const TCsInteractiveType &Type, class ACsData_Interactive* InData, void* Payload, UObject* InOwner, UObject* Parent);
-	class ACsInteractiveActor* WakeUp(const TCsInteractiveType &Type, class ACsData_Interactive* InData, void* Payload, UObject* InOwner);
-	class ACsInteractiveActor* WakeUp(const TCsInteractiveType &Type, class ACsData_Interactive* InData, void* Payload);
-	class ACsInteractiveActor* WakeUp(const TCsInteractiveType &Type, class ACsData_Interactive* InData);
+// WakeUp
+#pragma region
+
+	class ACsInteractiveActor* WakeUp(const TCsInteractiveType &Type, FCsInteractiveActorPayload* Payload, UObject* InOwner, UObject* Parent);
+	class ACsInteractiveActor* WakeUp(const TCsInteractiveType &Type, FCsInteractiveActorPayload* Payload, UObject* InOwner);
+	class ACsInteractiveActor* WakeUp(const TCsInteractiveType &Type, FCsInteractiveActorPayload* Payload);
 
 	template<typename T>
-	void WakeUp(const TCsInteractiveType &Type, class ACsInteractiveActor* &OutActor, class ACsData_Interactive* InData, void* Payload, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	void WakeUp(const TCsInteractiveType &Type, class ACsInteractiveActor* &OutActor, FCsInteractiveActorPayload* Payload, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 	template<typename T>
-	void WakeUp(const TCsInteractiveType &Type, class ACsInteractiveActor* &OutActor, class ACsData_Interactive* InData, void* Payload, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	void WakeUp(const TCsInteractiveType &Type, class ACsInteractiveActor* &OutActor, FCsInteractiveActorPayload* Payload, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 	template<typename T>
-	void WakeUp(const TCsInteractiveType &Type, class ACsInteractiveActor* &OutActor, class ACsData_Interactive* InData, void* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	void WakeUp(const TCsInteractiveType &Type, class ACsInteractiveActor* &OutActor, FCsInteractiveActorPayload* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+
+#pragma endregion WakeUp
 };

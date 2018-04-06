@@ -105,42 +105,40 @@ void ACsInteractiveActor::Init(const int32 &Index, const TCsInteractiveType &InT
 	Cache.Type_Script = Type;
 }
 
-template<typename T>
-void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, ACsData_Interactive* InData, void* Payload, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
-{
-	Cache.Init<T>(ActiveIndex, InData, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InOwner, InParent, InObject, OnDeAllocate);
-
-	Allocate_Internal(Payload);
-}
+// Allocate / DeAllocate
+#pragma region
 
 template<typename T>
-void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, ACsData_Interactive* InData, void* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, FCsInteractiveActorPayload* Payload, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
-	Cache.Init<T>(ActiveIndex, InData, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InObject, OnDeAllocate);
+	Cache.Init<T>(ActiveIndex, Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InOwner, InParent, InObject, OnDeAllocate);
 
 	Allocate_Internal(Payload);
 }
 
-void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, ACsData_Interactive* InData, void* Payload, UObject* InOwner, UObject* InParent)
+template<typename T>
+void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, FCsInteractiveActorPayload* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
-	Cache.Init(ActiveIndex, InData, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InOwner, InParent);
+	Cache.Init<T>(ActiveIndex, Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InObject, OnDeAllocate);
 
 	Allocate_Internal(Payload);
 }
 
-void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, ACsData_Interactive* InData, void* Payload)
+void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, FCsInteractiveActorPayload* Payload, UObject* InOwner, UObject* InParent)
 {
-	Cache.Init(ActiveIndex, InData, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
+	Cache.Init(ActiveIndex, Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InOwner, InParent);
 
 	Allocate_Internal(Payload);
 }
 
-void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, ACsData_Interactive* InData)
+void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, FCsInteractiveActorPayload* Payload)
 {
-	Allocate(ActiveIndex, InData, nullptr);
+	Cache.Init(ActiveIndex, Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
+
+	Allocate_Internal(Payload);
 }
 
-void ACsInteractiveActor::Allocate_Internal(void* Payload)
+void ACsInteractiveActor::Allocate_Internal(FCsInteractiveActorPayload* Payload)
 {
 	ACsData_Interactive* Data = Cache.GetData();
 
@@ -218,6 +216,8 @@ void ACsInteractiveActor::DeAllocate()
 
 	Cache.DeAllocate();
 }
+
+#pragma endregion Allocate / DeAllocate
 
 // State
 #pragma region

@@ -46,6 +46,7 @@ public:
 	virtual const bool& UseWorldCollisionPreset();
 	UFUNCTION(BlueprintCallable, Category = "Collision")
 	virtual void SetWorldCollisionFromPreset(UPrimitiveComponent* InComponent);
+
 	UFUNCTION(BlueprintCallable, Category = "Collision")
 	virtual const float& GetInteractiveCollisionRadius();
 	UFUNCTION(BlueprintCallable, Category = "Collision")
@@ -57,15 +58,17 @@ public:
 #pragma region
 public:
 
-	UFUNCTION(BlueprintCallable, Category = "Collision")
+	UFUNCTION(BlueprintCallable, Category = "Movement")
 	virtual const bool& UsePhysicsPreset();
-	UFUNCTION(BlueprintCallable, Category = "Collision")
+	UFUNCTION(BlueprintCallable, Category = "Movement")
 	virtual void SetPhysicsFromPreset(UPrimitiveComponent* InComponent);
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	virtual const bool& WorldCollisionSimulatePhysics();
 
-	UFUNCTION(BlueprintCallable, Category = "Collision")
+	UFUNCTION(BlueprintCallable, Category = "Movement")
 	virtual const bool& UseSpawnPhysicsImpulse();
-	UFUNCTION(BlueprintCallable, Category = "Collision")
-	virtual void ApplySpawnPhysicsImpulse(UPrimitiveComponent* InComponent);
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	virtual void ApplySpawnPhysicsImpulse(UPrimitiveComponent* InComponent, const bool& bSeed = true);
 
 #pragma endregion Movement
 

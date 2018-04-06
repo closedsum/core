@@ -3,13 +3,15 @@
 #include "CsCore.h"
 #include "CsCVars.h"
 #include "Common/CsCommon.h"
+
+// Components
 #include "Components/CsSkeletalMeshComponent.h"
 #include "Components/CsStaticMeshComponent.h"
 #include "Components/CsBoxComponent.h"
 #include "Components/CsSphereComponent.h"
 
 #include "MotionController/CsMotionController.h"
-
+// Player
 #include "Player/CsPlayerController.h"
 
 // Data
@@ -144,19 +146,26 @@ void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, ACsData_Interactiv
 
 void ACsInteractiveActor::Allocate_Internal(void* Payload)
 {
+	ACsData_Interactive* Data = Cache.GetData();
+
 	if (WorldCollisionComponent)
 	{
-		WorldCollisionComponent->SetCollisionEnabled(WorldCollisionEnabled);
-
-		if (WorldCollisionSimulatesPhysics)
+		// Collision
+		if (Data->UseWorldCollisionPreset())
 		{
-			CS_SET_BLUEPRINT_BITFLAG(PhysicsState, ECsInteractivePhysicsState::Grounded);
-
-			WorldCollisionComponent->SetNotifyRigidBodyCollision(true);
-			WorldCollisionComponent->SetEnableGravity(true);
-			WorldCollisionComponent->SetSimulatePhysics(true);
+			Data->SetWorldCollisionFromPreset(WorldCollisionComponent);
 		}
-		WorldCollisionComponent->WakeAllRigidBodies();
+		// Physics
+		if (Data->UsePhysicsPreset())
+		{
+			Data->SetPhysicsFromPreset(WorldCollisionComponent);
+
+			if (Data->WorldCollisionSimulatePhysics())
+			{
+				CS_SET_BLUEPRINT_BITFLAG(PhysicsState, ECsInteractivePhysicsState::Grounded);
+			}
+			WorldCollisionComponent->WakeAllRigidBodies();
+		}
 
 		WorldCollisionComponent->SetVisibility(true);
 		WorldCollisionComponent->SetHiddenInGame(false);
@@ -169,6 +178,11 @@ void ACsInteractiveActor::Allocate_Internal(void* Payload)
 		InteractiveCollisionComponent->SetComponentTickEnabled(true);
 	}
 	SetActorTickEnabled(true);
+
+	if (Data->UseSpawnPhysicsImpulse())
+	{
+		Data->ApplySpawnPhysicsImpulse(WorldCollisionComponent, true);
+	}
 }
 
 void ACsInteractiveActor::DeAllocate()

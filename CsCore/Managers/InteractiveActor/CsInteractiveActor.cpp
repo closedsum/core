@@ -14,9 +14,6 @@
 // Player
 #include "Player/CsPlayerController.h"
 
-// Data
-#include "Data/CsData_Interactive.h"
-
 ACsInteractiveActor::ACsInteractiveActor(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	Warning_FellOutOfWorld	   = TEXT("ACsInteractiveActor::FellOutOfWorld");

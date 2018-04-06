@@ -450,4 +450,39 @@ typedef TCsPickupSound(*TCsStringToPickupSound)(const FString&);
 								PickupSoundToString = &ECsPickupSound::ToString; \
 								StringToPickupSound = &ECsPickupSound::ToType;
 
+
+struct FCsInteractiveActorPayload
+{
+	bool IsAllocated;
+	TWeakObjectPtr<class ACsData_Interactive> Data;
+	float LifeTime;
+	bool bLocation;
+	bool bRotation;
+	bool bScale;
+	FTransform Transform;
+
+	void* Blob;
+
+	FCsInteractiveActorPayload()
+	{
+		Reset();
+	}
+	~FCsInteractiveActorPayload() {}
+
+	void Reset()
+	{
+		IsAllocated = false;
+		LifeTime = 0.0f;
+		bLocation = false;
+		bRotation = false;
+		bScale = false;
+		Transform = FTransform::Identity;
+		Blob = nullptr;
+	}
+
+	class ACsData_Interactive* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
+	template<typename T>
+	T* GetData() { return Cast<T>(GetData()); }
+};
+
 #pragma endregion Pickup

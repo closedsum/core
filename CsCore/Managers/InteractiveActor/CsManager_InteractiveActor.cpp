@@ -318,6 +318,9 @@ void ACsManager_InteractiveActor::LogTransaction(const FString &FunctionName, co
 	}
 }
 
+// Allocate / DeAllocate
+#pragma region
+
 ACsInteractiveActor* ACsManager_InteractiveActor::Allocate(const TCsInteractiveType &Type)
 {
 	TArray<ACsInteractiveActor*>* ActorPool = Pools.Find(Type);
@@ -425,6 +428,33 @@ void ACsManager_InteractiveActor::OnDeAllocate(const uint16& Index, const uint16
 	OnDeAllocateEX_Internal_Event.Broadcast(Index, ActiveIndex, (TCsInteractiveType)Type);
 }
 
+#pragma endregion Allocate / DeAllocate
+
+// Payload
+#pragma region
+
+FCsInteractiveActorPayload* ACsManager_InteractiveActor::AllocatePayload()
+{
+	for (uint8 I = 0; I < CS_INTERACTIVE_ACTOR_PAYLOAD_SIZE; ++I)
+	{
+		const uint8 Index					= (PayloadIndex + I) % CS_INTERACTIVE_ACTOR_PAYLOAD_SIZE;
+		FCsInteractiveActorPayload* Payload = &(Payloads[Index]);
+
+		if (!Payload->IsAllocated)
+		{
+			Payload->IsAllocated = true;
+			return Payload;
+		}
+	}
+	checkf(0, TEXT("ACsManager_InteractiveActor::AllocatePayload: Pool is exhausted"));
+	return nullptr;
+}
+
+#pragma endregion Payload
+
+// WakeUp
+#pragma region
+
 ACsInteractiveActor* ACsManager_InteractiveActor::WakeUp(const TCsInteractiveType &Type, ACsData_Interactive* InData, void* Payload, UObject* InOwner, UObject* Parent)
 {
 	ACsInteractiveActor* Actor = Allocate(Type);
@@ -475,3 +505,5 @@ void ACsManager_InteractiveActor::WakeUp(const TCsInteractiveType &ClassType, AC
 {
 	WakeUp<T>(Type, OutActor, InData, Payload, nullptr, nullptr, InObject, OnDeAllocate);
 }
+
+#pragma endregion WakeUp

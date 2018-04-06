@@ -6,6 +6,8 @@
 
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInteractiveActor_OnDeAllocateEX_Internal, const uint16&, const uint16&, const ECsInteractiveType::Type&);
 
+#define CS_INTERACTIVE_ACTOR_PAYLOAD_SIZE 255
+
 UCLASS()
 class CSCORE_API ACsManager_InteractiveActor : public ACsManager
 {
@@ -46,6 +48,9 @@ class CSCORE_API ACsManager_InteractiveActor : public ACsManager
 
 	virtual void LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, class UObject* InObject) override;
 
+// Allocate / DeAllocate
+#pragma region
+
 	class ACsInteractiveActor* Allocate(const TCsInteractiveType &Type);
 
 	virtual void DeAllocate(const uint8 &Type, const int32 &Index) override;
@@ -54,6 +59,22 @@ class CSCORE_API ACsManager_InteractiveActor : public ACsManager
 	virtual void OnDeAllocate(const uint16 &Index, const uint16 &ActiveIndex, const uint8 &Type);
 
 	FBindableEvent_CsManagerInteractiveActor_OnDeAllocateEX_Internal OnDeAllocateEX_Internal_Event;
+
+#pragma endregion Allocate / DeAllocate
+
+	// Payload
+#pragma region
+private:
+
+	FCsInteractiveActorPayload Payloads[CS_INTERACTIVE_ACTOR_PAYLOAD_SIZE];
+
+	uint8 PayloadIndex;
+
+public:
+
+	FCsInteractiveActorPayload* AllocatePayload();
+
+#pragma endregion Payload
 
 	class ACsInteractiveActor* WakeUp(const TCsInteractiveType &Type, class ACsData_Interactive* InData, void* Payload, UObject* InOwner, UObject* Parent);
 	class ACsInteractiveActor* WakeUp(const TCsInteractiveType &Type, class ACsData_Interactive* InData, void* Payload, UObject* InOwner);

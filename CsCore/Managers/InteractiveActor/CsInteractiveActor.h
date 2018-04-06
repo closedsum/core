@@ -70,6 +70,15 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 
 	TCsInteractiveType Type_Script;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	FTransform Transform;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	FRotator Rotation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	FVector Location;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	FVector Scale;
+
 	FCsInteractiveActorCache()
 	{
 		Reset();

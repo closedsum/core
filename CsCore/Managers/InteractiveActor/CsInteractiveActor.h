@@ -103,6 +103,11 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 		WarmUpTime = Data->GetWarmUpTime();
 		State = WarmUpTime > 0.0f ? ECsPooledObjectState::WarmUp : ECsPooledObjectState::Active;
 
+		Transform = Payload->Transform;
+		Rotation = Transform.GetRotation().Rotator();
+		Location = Transform.GetTranslation();
+		Scale = Transform.GetScale3D();
+
 		SetLifeTime(Data->GetLifeTime());
 
 		Time = InTime;
@@ -135,6 +140,11 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 		WarmUpTime = Data->GetWarmUpTime();
 		State = WarmUpTime > 0.0f ? ECsPooledObjectState::WarmUp : ECsPooledObjectState::Active;
 
+		Transform = Payload->Transform;
+		Rotation = Transform.GetRotation().Rotator();
+		Location = Transform.GetTranslation();
+		Scale = Transform.GetScale3D();
+
 		SetLifeTime(Data->GetLifeTime());
 
 		Time = InTime;
@@ -155,6 +165,11 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 		Actor = nullptr;
 		Data.Reset();
 		Data = nullptr;
+
+		Transform = FTransform::Identity;
+		Rotation = FRotator::ZeroRotator;
+		Location = FVector::ZeroVector;
+		Scale = FVector::OneVector;
 	}
 
 	class ACsInteractiveActor* GetActor() { return Actor.IsValid() ? Actor.Get() : nullptr; }

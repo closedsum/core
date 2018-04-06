@@ -175,6 +175,14 @@ void ACsInteractiveActor::Allocate_Internal(FCsInteractiveActorPayload* Payload)
 	}
 	SetActorTickEnabled(true);
 
+	const FVector Location = Payload->bLocation ? Cache.Location : GetActorLocation();
+	const FRotator Rotation = Payload->bRotation ? Cache.Rotation : GetActorRotation();
+
+	TeleportTo(Location, Rotation, false, true);
+
+	if (Payload->bScale)
+		SetActorScale3D(Cache.Scale);
+
 	if (Data->UseSpawnPhysicsImpulse())
 	{
 		Data->ApplySpawnPhysicsImpulse(WorldCollisionComponent, true);

@@ -77,7 +77,7 @@ void ACsManager_InteractiveActor::Destroyed()
 	Super::Destroyed();
 }
 
-void ACsManager_InteractiveActor::Init(const TCsInteractiveType &InInteractiveType_MAX, TCsInteractiveTypeToString InInteractiveTypeToString)
+void ACsManager_InteractiveActor::SetInteractiveActorType(const TCsInteractiveType &InInteractiveType_MAX, TCsInteractiveTypeToString InInteractiveTypeToString)
 {
 	InteractiveType_MAX     = InInteractiveType_MAX;
 	INTERACTIVE_TYPE_MAX	= (uint8)InInteractiveType_MAX;
@@ -258,6 +258,11 @@ void ACsManager_InteractiveActor::GetAllActiveActors(TArray<class ACsInteractive
 			OutActors.Add((*Actors)[J]);
 		}
 	}
+}
+
+const TArray<class ACsInteractiveActor*>* ACsManager_InteractiveActor::GetActors(const TCsInteractiveType& Type)
+{
+	return Pools.Find(Type);
 }
 
 int32 ACsManager_InteractiveActor::GetActivePoolSize(const uint8& Type)

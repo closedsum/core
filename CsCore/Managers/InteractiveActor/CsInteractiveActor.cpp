@@ -537,6 +537,9 @@ ACsMotionController* ACsInteractiveActor::GetLastHand_HoveringOverMe()
 
 #pragma endregion State
 
+// Visibility
+#pragma region
+
 void ACsInteractiveActor::Show()
 {
 	Super::Show();
@@ -584,6 +587,8 @@ void ACsInteractiveActor::Hide()
 	}
 	SetActorTickEnabled(false);
 }
+
+#pragma endregion Visibility
 
 // Collision
 #pragma region

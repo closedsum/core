@@ -20,7 +20,7 @@ class CSCORE_API ACsManager_InteractiveActor : public ACsManager
 
 	CS_DECLARE_INTERACTIVE_TYPE
 
-	void Init(const TCsInteractiveType &InInteractiveType_MAX, TCsInteractiveTypeToString InInteractiveTypeToString);
+	void SetInteractiveActorType(const TCsInteractiveType &InInteractiveType_MAX, TCsInteractiveTypeToString InInteractiveTypeToString);
 
 	virtual void Destroyed() override;
 	virtual void CreatePool(const TSubclassOf<class UObject> &ObjectClass, const uint8 &Type, const int32 &Size) override;
@@ -39,8 +39,12 @@ class CSCORE_API ACsManager_InteractiveActor : public ACsManager
 
 	TMap<TCsInteractiveType, TArray<class ACsInteractiveActor*>> ActiveActors;
 
+public:
+
 	UFUNCTION(BlueprintCallable, Category = "Pool")
 	void GetAllActiveActors(TArray<class ACsInteractiveActor*> &OutActors);
+
+	const TArray<class ACsInteractiveActor*>* GetActors(const TCsInteractiveType& Type);
 
 	virtual int32 GetActivePoolSize(const uint8& Type) override;
 

@@ -26,7 +26,7 @@ typedef TCsInteractiveType(*TCsStringToInteractiveType)(const FString&);
 									TCsStringToInteractiveType StringToInteractiveType;
 
 #define CS_DEFINE_INTERACTIVE_TYPE	InteractiveType_MAX = ECsInteractiveType::ECsInteractiveType_MAX;\
-									INTERACTIVE_TYPE_MAX = (uint8)InteractiveType_MAX \
+									INTERACTIVE_TYPE_MAX = (uint8)InteractiveType_MAX; \
 									InteractiveTypeToString = &ECsInteractiveType::ToString; \
 									StringToInteractiveType = &ECsInteractiveType::ToType;
 

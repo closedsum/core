@@ -256,6 +256,15 @@ struct FCsWidgetComponentInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
 	FVector2D DrawSize;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget", meta = (InlineEditConditionToggle))
+	bool bMinDrawDistance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget", meta = (editcondition = "bMinDrawDistance"))
+	FCsDrawDistance MinDrawDistance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+	bool ScaleByDistance;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
 	FTransform Transform;
 
@@ -292,6 +301,9 @@ public:
 		Blueprint_LoadFlags = B.Blueprint_LoadFlags;
 		Blueprint_Internal = B.Blueprint_Internal;
 		DrawSize = B.DrawSize;
+		bMinDrawDistance = B.bMinDrawDistance;
+		MinDrawDistance = B.MinDrawDistance;
+		ScaleByDistance = B.ScaleByDistance;
 		Transform = B.Transform;
 		FollowCamera = B.FollowCamera;
 		LookAtCamera = B.LookAtCamera;
@@ -305,6 +317,9 @@ public:
 				Blueprint_LoadFlags == B.Blueprint_LoadFlags &&
 				Blueprint_Internal == B.Blueprint_Internal &&
 				DrawSize == B.DrawSize &&
+				bMinDrawDistance == B.bMinDrawDistance &&
+				MinDrawDistance == B.MinDrawDistance &&
+				ScaleByDistance == B.ScaleByDistance &&
 				FollowCamera == B.FollowCamera &&
 				LookAtCamera == B.LookAtCamera &&
 				LockAxes == B.LockAxes;

@@ -19,12 +19,21 @@ void UCsWidgetComponent::TickComponent(float DeltaTime, enum ELevelTick TickType
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (bOnCalcCamera)
+	if (bMinDrawDistance)
+		OnTick_Handle_DrawDistance();
+
+	if (Visibility == ECsVisibility::Hidden)
 		return;
 
-	ACsPlayerController* LocalController = UCsCommon::GetLocalPlayerController<ACsPlayerController>(GetWorld());
+	if (ScaleByDistance)
+		OnTick_Handle_Scale();
 
-	OnTick_Handle_LocalCamera(LocalController->MinimalViewInfoCache.Location, LocalController->MinimalViewInfoCache.Rotation);
+	if (!bOnCalcCamera)
+	{
+		ACsPlayerController* LocalController = UCsCommon::GetLocalPlayerController<ACsPlayerController>(GetWorld());
+
+		OnTick_Handle_LocalCamera(LocalController->MinimalViewInfoCache.Location, LocalController->MinimalViewInfoCache.Rotation);
+	}
 }
 
 UUserWidget* UCsWidgetComponent::GetWidget()
@@ -32,15 +41,19 @@ UUserWidget* UCsWidgetComponent::GetWidget()
 	return Widget;
 }
 
+// Camera
+#pragma region
+
 void UCsWidgetComponent::OnCalcCamera(const uint8 &MappingId, const float &DeltaTime, const struct FMinimalViewInfo &OutResult)
 {
+	if (Visibility == ECsVisibility::Hidden)
+		return;
+
 	OnTick_Handle_LocalCamera(OutResult.Location, OutResult.Rotation);
 }
 																			  
 void UCsWidgetComponent::OnTick_Handle_LocalCamera(const FVector &ViewLocation, const FRotator &ViewRotation)
 {
-	if (bHiddenInGame || !bVisible)
-		return;
 	if (!FollowLocalCamera && !LookAtLocalCamera)
 		return;
 
@@ -78,6 +91,11 @@ void UCsWidgetComponent::OnTick_Handle_LocalCamera(const FVector &ViewLocation, 
 	}
 }
 
+#pragma endregion Camera
+
+// Info
+#pragma region
+
 void UCsWidgetComponent::SetInfo(const FVector2D &Size, const FTransform &Transform, const bool &InFollowLocalCamera, const bool &InLookAtLocalCamera)
 {
 	SetDrawSize(Size);
@@ -93,6 +111,9 @@ void UCsWidgetComponent::SetInfo(const FCsWidgetComponentInfo &Info)
 	
 	DistanceProjectedOutFromCamera = Info.DistanceProjectedOutFromCamera;
 	CameraLockAxes				   = Info.LockAxes;
+	bMinDrawDistance			   = Info.bMinDrawDistance;
+	MyMinDrawDistance			   = Info.MinDrawDistance;
+	ScaleByDistance				   = Info.ScaleByDistance;
 }
 
 void UCsWidgetComponent::SetInfo(const FCsWidgetActorInfo &Info)
@@ -100,8 +121,15 @@ void UCsWidgetComponent::SetInfo(const FCsWidgetActorInfo &Info)
 	SetInfo(Info.DrawSize, Info.Transform, false, false);
 }
 
+#pragma endregion Info
+
+// Visibility
+#pragma region
+
 void UCsWidgetComponent::Show()
 {
+	Visibility = ECsVisibility::Visible;
+
 	if (UCsUserWidget* UserWidget = Cast<UCsUserWidget>(Widget))
 	{
 		UserWidget->Show();
@@ -124,6 +152,8 @@ void UCsWidgetComponent::Show()
 
 void UCsWidgetComponent::Hide()
 {
+	Visibility = ECsVisibility::Hidden;
+
 	if (UCsUserWidget* UserWidget = Cast<UCsUserWidget>(Widget))
 	{
 		UserWidget->Hide();
@@ -143,3 +173,31 @@ void UCsWidgetComponent::Hide()
 	SetComponentTickEnabled(false);
 	Deactivate();
 }
+
+void UCsWidgetComponent::OnTick_Handle_Scale()
+{
+	ACsPawn* LocalPawn	 = UCsCommon::GetLocalPawn<ACsPawn>(GetWorld());
+	const float Distance = (LocalPawn->GetActorLocation() - GetComponentLocation()).Size2D();
+	const float Scale	 = MyMinDrawDistance.Distance > 0 ? Distance / MyMinDrawDistance.Distance : 1.0f;
+
+	SetRelativeScale3D(Scale * FVector::OneVector);
+}
+
+void UCsWidgetComponent::OnTick_Handle_DrawDistance()
+{
+	ACsPawn* LocalPawn	   = UCsCommon::GetLocalPawn<ACsPawn>(GetWorld());
+	const float DistanceSq = (LocalPawn->GetActorLocation() - GetComponentLocation()).SizeSquared2D();
+
+	if (DistanceSq < MyMinDrawDistance.DistanceSq)
+	{
+		if (Visibility == ECsVisibility::Visible)
+			Hide();
+	}
+	else
+	{
+		if (Visibility == ECsVisibility::Hidden)
+			Show();
+	}
+}
+
+#pragma endregion Visibility

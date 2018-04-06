@@ -22,6 +22,7 @@ class CSCORE_API UCsWidgetComponent : public UWidgetComponent
 
 // Camera
 #pragma region
+public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
 	bool bOnCalcCamera;
@@ -44,14 +45,41 @@ class CSCORE_API UCsWidgetComponent : public UWidgetComponent
 
 #pragma endregion Camera
 
+// Info
+#pragma region
+public:
+
 	UFUNCTION(BlueprintCallable, Category = "Widget")
 	void SetInfo(const FVector2D &Size, const FTransform &Transform, const bool &InFollowLocalCamera, const bool &InLookAtLocalCamera);
 
 	void SetInfo(const FCsWidgetComponentInfo &Info);
 	void SetInfo(const FCsWidgetActorInfo &Info);
 
+#pragma endregion Info
+
+// Visibility
+#pragma region
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Widget")
+	TEnumAsByte<ECsVisibility::Type> Visibility;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget", meta = (InlineEditConditionToggle))
+	bool bMinDrawDistance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget", meta = (editcondition = "bMinDrawDistance"))
+	FCsDrawDistance MyMinDrawDistance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+	bool ScaleByDistance;
+
 	UFUNCTION(BlueprintCallable, Category = "Widget")
 	void Show();
 	UFUNCTION(BlueprintCallable, Category = "Widget")
 	void Hide();
+
+	void OnTick_Handle_Scale();
+	void OnTick_Handle_DrawDistance();
+
+#pragma endregion Visiblity
 };

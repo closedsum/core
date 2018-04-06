@@ -370,8 +370,14 @@ public:
 
 #pragma endregion State
 
+// Visibility
+#pragma region
+public:
+
 	virtual void Show() override;
 	virtual void Hide() override;
+
+#pragma endregion Visibility
 
 // Collision
 #pragma region

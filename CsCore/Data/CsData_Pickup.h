@@ -2,6 +2,8 @@
 #pragma once
 #include "Data/CsData_Interactive.h"
 #include "Types/CsTypes_Interactive.h"
+#include "Types/CsTypes_FX.h"
+#include "Types/CsTypes_Sound.h"
 #include "CsData_Pickup.generated.h"
 
 UCLASS(Abstract, hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))

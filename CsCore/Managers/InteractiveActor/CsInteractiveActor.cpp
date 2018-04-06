@@ -24,7 +24,6 @@ ACsInteractiveActor::ACsInteractiveActor(const FObjectInitializer& ObjectInitial
 
 	CS_SET_BLUEPRINT_BITFLAG(PhysicsState, ECsInteractivePhysicsState::Grounded);
 
-	WorldCollisionEnabled = ECollisionEnabled::QueryAndPhysics;
 	InteractiveCollisionEnabled = ECollisionEnabled::QueryOnly;
 
 	MinPhysicsLinearVelocityForMovement = CS_MIN_PHYSICS_LINEAR_VELOCITY_FOR_MOVEMENT;
@@ -160,7 +159,9 @@ void ACsInteractiveActor::Allocate_Internal(void* Payload)
 		{
 			Data->SetPhysicsFromPreset(WorldCollisionComponent);
 
-			if (Data->WorldCollisionSimulatePhysics())
+			WorldCollisionSimulatesPhysics = Data->SimulatePhysics();
+
+			if (WorldCollisionSimulatesPhysics)
 			{
 				CS_SET_BLUEPRINT_BITFLAG(PhysicsState, ECsInteractivePhysicsState::Grounded);
 			}
@@ -535,16 +536,12 @@ void ACsInteractiveActor::Show()
 {
 	Super::Show();
 
+	ACsData_Interactive* Data = Cache.GetData();
+
 	if (WorldCollisionComponent)
 	{
-		WorldCollisionComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		Data->ToggleWorldCollisionAndPhysics(WorldCollisionComponent, true);
 
-		if (WorldCollisionSimulatesPhysics)
-		{
-			WorldCollisionComponent->SetNotifyRigidBodyCollision(true);
-			WorldCollisionComponent->SetEnableGravity(true);
-			WorldCollisionComponent->SetSimulatePhysics(true);
-		}
 		WorldCollisionComponent->WakeAllRigidBodies();
 
 		WorldCollisionComponent->SetVisibility(true);
@@ -564,11 +561,12 @@ void ACsInteractiveActor::Hide()
 {
 	Super::Hide();
 
+	ACsData_Interactive* Data = Cache.GetData();
+
 	if (WorldCollisionComponent)
 	{
-		WorldCollisionComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		WorldCollisionComponent->SetEnableGravity(false);
-		WorldCollisionComponent->SetSimulatePhysics(false);
+		Data->ToggleWorldCollisionAndPhysics(WorldCollisionComponent, false);
+
 		WorldCollisionComponent->SetVisibility(false);
 		WorldCollisionComponent->SetHiddenInGame(true);
 		WorldCollisionComponent->SetComponentTickEnabled(false);

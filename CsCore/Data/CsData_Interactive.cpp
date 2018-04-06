@@ -55,7 +55,8 @@ const float& ACsData_Interactive::GetInteractiveCollisionRadiusSq() { return ECs
 
 const bool& ACsData_Interactive::UsePhysicsPreset(){ return ECsCachedReferences::Ref::False; }
 void ACsData_Interactive::SetPhysicsFromPreset(UPrimitiveComponent* InComponent) {}
-const bool& ACsData_Interactive::WorldCollisionSimulatePhysics() { return ECsCachedReferences::Ref::False; }
+const bool& ACsData_Interactive::SimulatePhysics() { return ECsCachedReferences::Ref::False; }
+void ACsData_Interactive::ToggleWorldCollisionAndPhysics(UPrimitiveComponent* InComponent, const bool& Toggle){}
 const bool& ACsData_Interactive::UseSpawnPhysicsImpulse() { return ECsCachedReferences::Ref::False; }
 void ACsData_Interactive::ApplySpawnPhysicsImpulse(UPrimitiveComponent* InComponent, const bool& bSeed /*=true*/){}
 

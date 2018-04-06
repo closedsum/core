@@ -181,9 +181,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Collision")
 	class UPrimitiveComponent* WorldCollisionComponent;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Collision")
-	TEnumAsByte<ECollisionEnabled::Type> WorldCollisionEnabled;
-
 	bool WorldCollisionSimulatesPhysics;
 
 protected:

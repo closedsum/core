@@ -63,7 +63,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	virtual void SetPhysicsFromPreset(UPrimitiveComponent* InComponent);
 	UFUNCTION(BlueprintCallable, Category = "Movement")
-	virtual const bool& WorldCollisionSimulatePhysics();
+	virtual const bool& SimulatePhysics();
+
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	virtual void ToggleWorldCollisionAndPhysics(UPrimitiveComponent* InComponent, const bool& Toggle);
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	virtual const bool& UseSpawnPhysicsImpulse();

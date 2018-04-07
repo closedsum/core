@@ -117,6 +117,8 @@ struct FCsWidgetActorCache : public FCsPooledObjectCache
 
 		IsAllocated = true;
 
+		SetLifeTime(Payload->LifeTime);
+
 		Owner	 = InOwner;
 		Widget   = Payload->GetWidget();
 		DrawSize = Payload->Size;
@@ -133,6 +135,7 @@ struct FCsWidgetActorCache : public FCsPooledObjectCache
 		CameraLockAxes = Payload->LockAxes;
 		bMovementFunction = Payload->bMovementFunction;
 		MovementFunction = Payload->MovementFunction;
+		MovementFunction.Seed();
 		Parent   = InParent;
 		Time	 = InTime;
 		RealTime = InRealTime;
@@ -160,6 +163,8 @@ struct FCsWidgetActorCache : public FCsPooledObjectCache
 
 		IsAllocated = true;
 
+		SetLifeTime(Payload->LifeTime);
+
 		Owner	 = InOwner;
 		Widget = Payload->GetWidget();
 		DrawSize = Payload->Size;
@@ -176,6 +181,7 @@ struct FCsWidgetActorCache : public FCsPooledObjectCache
 		CameraLockAxes = Payload->LockAxes;
 		bMovementFunction = Payload->bMovementFunction;
 		MovementFunction = Payload->MovementFunction;
+		MovementFunction.Seed();
 		Parent	 = InParent;
 		Time	 = InTime;
 		RealTime = InRealTime;
@@ -378,6 +384,7 @@ public:
 
 // Visibility
 #pragma region
+public:
 
 	virtual void Show() override;
 	virtual void Hide() override;
@@ -385,4 +392,12 @@ public:
 	void OnTick_Handle_DrawDistance();
 
 #pragma endregion Visiblity
+
+// Movement
+#pragma region
+public:
+
+	void OnTick_HandleMovementFunction();
+
+#pragma endregion Movement
 };

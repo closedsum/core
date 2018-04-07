@@ -10,6 +10,7 @@
 UCsWidget_Inventory_Grid::UCsWidget_Inventory_Grid(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	Slots.Reset();
 }
 
 void UCsWidget_Inventory_Grid::OnNativeConstruct()

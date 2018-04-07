@@ -66,7 +66,7 @@ public:
 	virtual void NativeConstruct() override;
 	virtual void OnNativeConstruct();
 
-	UPROPERTY()
+	UPROPERTY(Transient)
 	bool HasNativeContructed;
 
 	virtual void Init();
@@ -76,7 +76,7 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "UI")
 	FBindableDynEvent_CsUserWidget_OnNativeTick OnNativeTick_ScriptEvent;
 
-	UPROPERTY()
+	UPROPERTY(Transient)
 	bool HasInitFinished;
 
 	virtual void OnPostProcessInput(const float &DeltaTime);
@@ -88,7 +88,7 @@ public:
 
 	TCsWidgetType Type;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OO Default")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "OO Default")
 	uint8 Type_Script;
 
 protected:

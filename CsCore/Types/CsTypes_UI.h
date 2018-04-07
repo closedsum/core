@@ -242,6 +242,18 @@ public:
 	}
 };
 
+// PostEditChangeProperty FCsWidgetActorInfo
+#define CS_PECEP_FCS_WIDGET_ACTOR_INFO(e, PropertyName, MemberName)	if (UStructProperty* StructProperty = Cast<UStructProperty>(e.MemberProperty)) \
+																	{ \
+																		if (StructProperty->Struct == FCsWidgetActorInfo::StaticStruct()) \
+																		{ \
+																			if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsDrawDistance, Distance)) \
+																			{ \
+																				MemberName.Square(); \
+																			} \
+																		} \
+																	}
+
 USTRUCT(BlueprintType)
 struct FCsWidgetComponentInfo
 {
@@ -335,6 +347,18 @@ public:
 		return Blueprint_Internal;
 	}
 };
+
+// PostEditChangeProperty FCsWidgetComponentInfo
+#define CS_PECEP_FCS_WIDGET_COMPONENT_INFO(e, PropertyName, MemberName)	if (UStructProperty* StructProperty = Cast<UStructProperty>(e.MemberProperty)) \
+																		{ \
+																			if (StructProperty->Struct == FCsWidgetComponentInfo::StaticStruct()) \
+																			{ \
+																				if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsDrawDistance, Distance)) \
+																				{ \
+																					MemberName.Square(); \
+																				} \
+																			} \
+																		}
 
 namespace ECsHorizTextAligment
 {

@@ -40,6 +40,8 @@ void ACsWidgetActor::Tick(float DeltaSeconds)
 	if (!Cache.IsAllocated)
 		return;
 
+	Cache.ElapsedTime += DeltaSeconds;
+
 	if (Cache.bMinDrawDistance)
 		OnTick_Handle_DrawDistance();
 
@@ -52,6 +54,9 @@ void ACsWidgetActor::Tick(float DeltaSeconds)
 	ACsPlayerController* LocalController = UCsCommon::GetLocalPlayerController<ACsPlayerController>(GetWorld());
 
 	OnTick_Handle_LocalCamera(LocalController->MinimalViewInfoCache.Location, LocalController->MinimalViewInfoCache.Rotation);
+
+	if (Cache.bMovementFunction)
+		OnTick_HandleMovementFunction();
 }
 
 void ACsWidgetActor::SetType(const TCsWidgetActorType &InType)
@@ -361,3 +366,16 @@ void ACsWidgetActor::OnTick_Handle_DrawDistance()
 }
 
 #pragma endregion Visiblity
+
+// Movement
+#pragma region
+
+void ACsWidgetActor::OnTick_HandleMovementFunction()
+{
+	const float Percent = Cache.LifeTime > 0.0f ? Cache.ElapsedTime / Cache.LifeTime : 1.0f;
+	FVector Location	= Cache.MovementFunction.Evaluate(Percent, Cache.Location, FTransform::Identity);
+
+	SetActorLocation(Location);
+}
+
+#pragma endregion Movement

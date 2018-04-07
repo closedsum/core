@@ -8,6 +8,9 @@
 UCsSimpleWidget::UCsSimpleWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	HasNativeContructed = false;
+	HasInitFinished = false;
+
 	DefaultVisibility = ESlateVisibility::HitTestInvisible;
 }
 

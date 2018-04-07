@@ -13,13 +13,13 @@ class CSCORE_API UCsSimpleWidget : public UUserWidget
 	virtual void NativeConstruct() override;
 	virtual void OnNativeConstruct();
 
-	UPROPERTY()
+	UPROPERTY(Transient)
 	bool HasNativeContructed;
 
 	virtual void Init(const FGeometry& MyGeometry);
 	virtual void Init(const int32 &Index);
 
-	UPROPERTY()
+	UPROPERTY(Transient)
 	bool HasInitFinished;
 
 	virtual void OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime);

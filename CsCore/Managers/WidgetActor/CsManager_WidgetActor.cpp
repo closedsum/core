@@ -121,6 +121,8 @@ void ACsManager_WidgetActor::CreatePool(const TSubclassOf<class UObject> &Object
 		Widget->Role = ROLE_None;
 		GetWorld()->RemoveNetworkActor(Widget);
 		Widget->Init(I, ClassType);
+		Widget->DeAllocate();
+		Widget->OnCreatePool();
 
 		OnCreatePool_Event.Broadcast(Widget, Type);
 #if WITH_EDITOR

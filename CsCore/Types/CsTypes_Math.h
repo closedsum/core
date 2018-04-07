@@ -245,7 +245,7 @@ struct FCsParametricFunctionAxis
 			return A * T + B;
 		// Quadratic
 		if (Function == ECsParametricFunctionType::Quadratic)
-			return A * T * T + B * T + C;
+			return (A * T * T) + (B * T) + C;
 		// Sine
 		if (Function == ECsParametricFunctionType::Sine)
 			return A * FMath::Sin(B * T + C) + D;

@@ -140,6 +140,7 @@ void UCsWidgetComponent::Show()
 		SimpleWidget->Show();
 	}
 	else
+	if (Widget)
 	{
 		Widget->SetIsEnabled(true);
 		Widget->SetVisibility(ESlateVisibility::Visible);
@@ -164,6 +165,7 @@ void UCsWidgetComponent::Hide()
 		SimpleWidget->Hide();
 	}
 	else
+	if (Widget)
 	{
 		Widget->SetIsEnabled(false);
 		Widget->SetVisibility(ESlateVisibility::Hidden);

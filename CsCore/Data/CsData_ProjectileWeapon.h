@@ -16,7 +16,7 @@ class CSCORE_API ACsData_ProjectileWeapon : public ACsData_Weapon
 	virtual UScriptStruct* GetFireModeScriptStruct();
 	virtual float GetLocationDamageModifier(const TCsWeaponFireMode &FireMode, const FName &Bone);
 
-	virtual bool UseFakeProjectile(const TCsWeaponFireMode &FireMode);
+	virtual const bool& UseFakeProjectile(const TCsWeaponFireMode &FireMode);
 	virtual class ACsData_Projectile* GetData_Projectile(const TCsWeaponFireMode &FireMode, const bool &IsCharged = false);
 
 	virtual FVector GetMuzzleLocation(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const uint8 &Index = 0);
@@ -25,19 +25,19 @@ class CSCORE_API ACsData_ProjectileWeapon : public ACsData_Weapon
 	virtual TCsWeaponGrip GetGripType();
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon Data")
-	virtual int32 GetMaxAmmo();
+	virtual const int32& GetMaxAmmo();
 	virtual int32* GetMaxAmmoAddr();
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon Data")
-	virtual float GetRechargeStartupDelay();
+	virtual const float& GetRechargeStartupDelay();
 	virtual float* GetRechargeStartupDelayAddr();
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon Data")
-	virtual float GetRechargeSecondsPerAmmo();
+	virtual const float& GetRechargeSecondsPerAmmo();
 	virtual float* GetRechargeSecondsPerAmmoAddr();
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon Data")
-	virtual float GetReloadTime();
+	virtual const float& GetReloadTime();
 	virtual float* GetReloadTimeAddr();
 
 #pragma endregion Stats

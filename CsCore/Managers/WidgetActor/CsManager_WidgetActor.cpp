@@ -441,6 +441,7 @@ void ACsManager_WidgetActor::Display(const TCsWidgetActorType &Type, ACsWidgetAc
 	LogTransaction(ECsManagerWidgetActorCachedString::Str::Display, ECsPoolTransaction::Allocate, OutWidgetActor);
 
 	AddToActivePool(Widget, (uint8)Type);
+	Payload->Reset();
 }
 
 template<typename T>

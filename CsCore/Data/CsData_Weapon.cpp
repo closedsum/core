@@ -9,6 +9,13 @@ ACsData_Weapon::ACsData_Weapon(const FObjectInitializer& ObjectInitializer)
 {
 }
 
+// Stats
+#pragma region
+
+const bool& ACsData_Weapon::GetUseInventory() { return ECsCachedReferences::Ref::False; }
+
+#pragma endregion Stats
+
 // Mesh
 #pragma region
 

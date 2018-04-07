@@ -9,8 +9,18 @@ class CSCORE_API ACsData_Weapon : public ACsData
 {
 	GENERATED_UCLASS_BODY()
 
+// Stats
+#pragma region
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+	virtual const bool& GetUseInventory();
+
+#pragma endregion Stats
+
 // Mesh
 #pragma region
+public:
 
 	virtual USkeletalMesh* GetMesh(const TCsViewType &ViewType, const bool &IsLow = false);
 	virtual USkeletalMesh* GetMesh();
@@ -31,6 +41,7 @@ class CSCORE_API ACsData_Weapon : public ACsData
 
 // Anims
 #pragma region
+public:
 
 	CS_DECLARE_WEAPON_ANIM
 

@@ -232,12 +232,36 @@ bool UCsUserWidget::CloseChild(const TCsWidgetType &WidgetType)
 		}
 	}
 
+	// Apply InputActionMapRules
 	if (ACsPlayerController* Controller = GetMyController())
 	{
+		// First Apply Close
 		if (FCsInputActionMapRule* Rule = CloseChildActionMapRules.Find(WidgetType))
 		{
 			Controller->ClearCurrentInputActionMap(Rule->Clear);
 			Controller->SetCurrentInputActionMap(Rule->Set);
+		}
+		// ReApply Open for any Widgets that are still open
+		TArray<TCsWidgetType> Keys;
+		ActiveChildWidgetsMap.GetKeys(Keys);
+
+		const int32 KeyCount = Keys.Num();
+
+		for (int32 I = 0; I < KeyCount; ++I)
+		{
+			const TCsWidgetType& Key = Keys[I];
+
+			if (Key == WidgetType)
+				continue;
+
+			if (TArray<UCsUserWidget*>* Widgets = ActiveChildWidgetsMap.Find(Key))
+			{
+				if (FCsInputActionMapRule* Rule = OpenChildActionMapRules.Find(Key))
+				{
+					Controller->ClearCurrentInputActionMap(Rule->Clear);
+					Controller->SetCurrentInputActionMap(Rule->Set);
+				}
+			}
 		}
 	}
 

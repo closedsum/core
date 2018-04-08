@@ -123,7 +123,8 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 												 Last_Actions[ECsInputAction::INPUT] = &INPUT.Last_Event; \
 												 INPUT.Last_Event = ECsInputEvent::Released; \
 
-#define CS_DEFINE_INPUT_ACTION_VALUES(CLASS, INPUT, MAP)	INPUT = NewObject<CLASS>(GetWorld(), CLASS::StaticClass()); \
+#define CS_DEFINE_INPUT_ACTION_VALUES(CLASS, INPUT, MAP)	INPUT = NewObject<CLASS>(GetWorld(), CLASS::StaticClass(), #INPUT, RF_Transient); \
+															INPUT->AddToRoot(); \
 															INPUT->Manager_Input = this; \
 															INPUT->Action = ECsInputAction::INPUT; \
 															INPUT->ActionMap = MAP; \
@@ -184,7 +185,7 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 												Last_Actions[ECsInputAction::INPUT] = &INPUT.Last_Event; \
 												INPUT.Last_Event = ECsInputEvent::Stationary; \
 
-#define CS_DEFINE_INPUT_AXIS_VALUES(CLASS, INPUT, MAP)	INPUT = NewObject<CLASS>(GetWorld(), CLASS::StaticClass()); \
+#define CS_DEFINE_INPUT_AXIS_VALUES(CLASS, INPUT, MAP)	INPUT = NewObject<CLASS>(GetWorld(), CLASS::StaticClass(), #INPUT, RF_Transient); \
 														INPUT->AddToRoot(); \
 														INPUT->Manager_Input = this; \
 														INPUT->Action = ECsInputAction::INPUT; \
@@ -257,7 +258,8 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 													Last_Actions[ECsInputAction::INPUT] = &INPUT.Last_Event; \
 													INPUT.Last_Event = ECsInputEvent::Stationary; \
 
-#define CS_DEFINE_INPUT_TRIGGER_VALUES(CLASS, INPUT, MAP)	INPUT = NewObject<CLASS>(GetWorld(), CLASS::StaticClass()); \
+#define CS_DEFINE_INPUT_TRIGGER_VALUES(CLASS, INPUT, MAP)	INPUT = NewObject<CLASS>(GetWorld(), CLASS::StaticClass(), #INPUT, RF_Transient); \
+															INPUT->AddToRoot(); \
 															INPUT->Manager_Input = this; \
 															INPUT->Action = ECsInputAction::INPUT; \
 															INPUT->ActionMap = MAP; \
@@ -331,7 +333,8 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 													Last_Actions[ECsInputAction::INPUT] = &INPUT.Last_Event; \
 													INPUT.Last_Event = ECsInputEvent::Stationary; \
 
-#define CS_DEFINE_INPUT_LOCATION_VALUES(CLASS, INPUT, MAP)	INPUT = NewObject<CLASS>(GetWorld(), CLASS::StaticClass()); \
+#define CS_DEFINE_INPUT_LOCATION_VALUES(CLASS, INPUT, MAP)	INPUT = NewObject<CLASS>(GetWorld(), CLASS::StaticClass(), #INPUT, RF_Transient); \
+															INPUT->AddToRoot(); \
 															INPUT->Manager_Input = this; \
 															INPUT->Action = ECsInputAction::INPUT; \
 															INPUT->ActionMap = MAP; \
@@ -401,7 +404,8 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 													Last_Actions[ECsInputAction::INPUT] = &INPUT.Last_Event; \
 													INPUT.Last_Event = ECsInputEvent::Stationary; \
 
-#define CS_DEFINE_INPUT_ROTATION_VALUES(CLASS, INPUT, MAP)	INPUT = NewObject<CLASS>(GetWorld(), CLASS::StaticClass()); \
+#define CS_DEFINE_INPUT_ROTATION_VALUES(CLASS, INPUT, MAP)	INPUT = NewObject<CLASS>(GetWorld(), CLASS::StaticClass(), #INPUT, RF_Transient); \
+															INPUT->AddToRoot(); \
 															INPUT->Manager_Input = this; \
 															INPUT->Action = ECsInputAction::INPUT; \
 															INPUT->ActionMap = MAP; \

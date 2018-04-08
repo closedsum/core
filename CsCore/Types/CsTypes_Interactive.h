@@ -26,7 +26,7 @@ typedef TCsInteractiveType(*TCsStringToInteractiveType)(const FString&);
 									TCsStringToInteractiveType StringToInteractiveType;
 
 #define CS_DEFINE_INTERACTIVE_TYPE	InteractiveType_MAX = ECsInteractiveType::ECsInteractiveType_MAX;\
-									INTERACTIVE_TYPE_MAX = (uint8)InteractiveType_MAX \
+									INTERACTIVE_TYPE_MAX = (uint8)InteractiveType_MAX; \
 									InteractiveTypeToString = &ECsInteractiveType::ToString; \
 									StringToInteractiveType = &ECsInteractiveType::ToType;
 
@@ -449,5 +449,40 @@ typedef TCsPickupSound(*TCsStringToPickupSound)(const FString&);
 								PICKUP_SOUND_MAX = (uint8)PickupSound_MAX \
 								PickupSoundToString = &ECsPickupSound::ToString; \
 								StringToPickupSound = &ECsPickupSound::ToType;
+
+
+struct FCsInteractiveActorPayload
+{
+	bool IsAllocated;
+	TWeakObjectPtr<class ACsData_Interactive> Data;
+	float LifeTime;
+	bool bLocation;
+	bool bRotation;
+	bool bScale;
+	FTransform Transform;
+
+	void* Blob;
+
+	FCsInteractiveActorPayload()
+	{
+		Reset();
+	}
+	~FCsInteractiveActorPayload() {}
+
+	void Reset()
+	{
+		IsAllocated = false;
+		LifeTime = 0.0f;
+		bLocation = false;
+		bRotation = false;
+		bScale = false;
+		Transform = FTransform::Identity;
+		Blob = nullptr;
+	}
+
+	class ACsData_Interactive* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
+	template<typename T>
+	T* GetData() { return Cast<T>(GetData()); }
+};
 
 #pragma endregion Pickup

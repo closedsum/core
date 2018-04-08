@@ -6,6 +6,8 @@
 
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInteractiveActor_OnDeAllocateEX_Internal, const uint16&, const uint16&, const ECsInteractiveType::Type&);
 
+#define CS_INTERACTIVE_ACTOR_PAYLOAD_SIZE 255
+
 UCLASS()
 class CSCORE_API ACsManager_InteractiveActor : public ACsManager
 {
@@ -18,7 +20,7 @@ class CSCORE_API ACsManager_InteractiveActor : public ACsManager
 
 	CS_DECLARE_INTERACTIVE_TYPE
 
-	void Init(const TCsInteractiveType &InInteractiveType_MAX, TCsInteractiveTypeToString InInteractiveTypeToString);
+	void SetInteractiveActorType(const TCsInteractiveType &InInteractiveType_MAX, TCsInteractiveTypeToString InInteractiveTypeToString);
 
 	virtual void Destroyed() override;
 	virtual void CreatePool(const TSubclassOf<class UObject> &ObjectClass, const uint8 &Type, const int32 &Size) override;
@@ -37,14 +39,22 @@ class CSCORE_API ACsManager_InteractiveActor : public ACsManager
 
 	TMap<TCsInteractiveType, TArray<class ACsInteractiveActor*>> ActiveActors;
 
+public:
+
 	UFUNCTION(BlueprintCallable, Category = "Pool")
 	void GetAllActiveActors(TArray<class ACsInteractiveActor*> &OutActors);
+
+	const TArray<class ACsInteractiveActor*>* GetActors(const TCsInteractiveType& Type);
 
 	virtual int32 GetActivePoolSize(const uint8& Type) override;
 
 	virtual bool IsExhausted(const uint8 &Type) override;
 
 	virtual void LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, class UObject* InObject) override;
+
+// Allocate / DeAllocate
+#pragma region
+public:
 
 	class ACsInteractiveActor* Allocate(const TCsInteractiveType &Type);
 
@@ -55,15 +65,35 @@ class CSCORE_API ACsManager_InteractiveActor : public ACsManager
 
 	FBindableEvent_CsManagerInteractiveActor_OnDeAllocateEX_Internal OnDeAllocateEX_Internal_Event;
 
-	class ACsInteractiveActor* WakeUp(const TCsInteractiveType &Type, class ACsData_Interactive* InData, void* Payload, UObject* InOwner, UObject* Parent);
-	class ACsInteractiveActor* WakeUp(const TCsInteractiveType &Type, class ACsData_Interactive* InData, void* Payload, UObject* InOwner);
-	class ACsInteractiveActor* WakeUp(const TCsInteractiveType &Type, class ACsData_Interactive* InData, void* Payload);
-	class ACsInteractiveActor* WakeUp(const TCsInteractiveType &Type, class ACsData_Interactive* InData);
+#pragma endregion Allocate / DeAllocate
+
+// Payload
+#pragma region
+private:
+
+	FCsInteractiveActorPayload Payloads[CS_INTERACTIVE_ACTOR_PAYLOAD_SIZE];
+
+	uint8 PayloadIndex;
+
+public:
+
+	FCsInteractiveActorPayload* AllocatePayload();
+
+#pragma endregion Payload
+
+// WakeUp
+#pragma region
+
+	class ACsInteractiveActor* WakeUp(const TCsInteractiveType &Type, FCsInteractiveActorPayload* Payload, UObject* InOwner, UObject* Parent);
+	class ACsInteractiveActor* WakeUp(const TCsInteractiveType &Type, FCsInteractiveActorPayload* Payload, UObject* InOwner);
+	class ACsInteractiveActor* WakeUp(const TCsInteractiveType &Type, FCsInteractiveActorPayload* Payload);
 
 	template<typename T>
-	void WakeUp(const TCsInteractiveType &Type, class ACsInteractiveActor* &OutActor, class ACsData_Interactive* InData, void* Payload, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	void WakeUp(const TCsInteractiveType &Type, class ACsInteractiveActor* &OutActor, FCsInteractiveActorPayload* Payload, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 	template<typename T>
-	void WakeUp(const TCsInteractiveType &Type, class ACsInteractiveActor* &OutActor, class ACsData_Interactive* InData, void* Payload, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	void WakeUp(const TCsInteractiveType &Type, class ACsInteractiveActor* &OutActor, FCsInteractiveActorPayload* Payload, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 	template<typename T>
-	void WakeUp(const TCsInteractiveType &Type, class ACsInteractiveActor* &OutActor, class ACsData_Interactive* InData, void* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	void WakeUp(const TCsInteractiveType &Type, class ACsInteractiveActor* &OutActor, FCsInteractiveActorPayload* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+
+#pragma endregion WakeUp
 };

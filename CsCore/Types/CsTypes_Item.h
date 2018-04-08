@@ -643,6 +643,44 @@ struct FCsItem
 };
 
 USTRUCT(BlueprintType)
+struct FCsInventoryLoadoutRecipe
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** ShortCode for the Recipe */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	FName ShortCode;
+	/** Number of Recipes / Items */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	int32 Count;
+
+	FCsInventoryLoadoutRecipe()
+	{
+		Count = 1;
+	}
+	~FCsInventoryLoadoutRecipe() {}
+
+	FCsInventoryLoadoutRecipe& operator=(const FCsInventoryLoadoutRecipe& B)
+	{
+		ShortCode = B.ShortCode;
+		Count = B.Count;
+		return *this;
+	}
+
+	bool operator==(const FCsInventoryLoadoutRecipe& B) const
+	{
+		if (ShortCode != B.ShortCode) { return false; }
+		if (Count != B.Count) { return false; }
+		return true;
+	}
+
+	bool operator!=(const FCsInventoryLoadoutRecipe& B) const
+	{
+		return !(*this == B);
+	}
+};
+
+USTRUCT(BlueprintType)
 struct FCsInventoryLoadoutItem
 {
 	GENERATED_USTRUCT_BODY()
@@ -686,6 +724,9 @@ struct FCsInventoryLoadout
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	TArray<FCsInventoryLoadoutRecipe> Recipes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
 	TArray<FCsInventoryLoadoutItem> Items;
 
 	FCsInventoryLoadout() {}
@@ -695,12 +736,22 @@ struct FCsInventoryLoadout
 	{
 		Items.Reset();
 
-		const int32 Count = B.Items.Num();
+		const int32 ItemCount = B.Items.Num();
 
-		for (int32 I = 0; I < Count; ++I)
+		for (int32 I = 0; I < ItemCount; ++I)
 		{
 			Items.AddDefaulted();
 			Items[I] = B.Items[I];
+		}
+
+		Recipes.Reset();
+
+		const int32 RecipeCount = B.Recipes.Num();
+
+		for (int32 I = 0; I < RecipeCount; ++I)
+		{
+			Recipes.AddDefaulted();
+			Recipes[I] = B.Recipes[I];
 		}
 		return *this;
 	}
@@ -709,15 +760,25 @@ struct FCsInventoryLoadout
 	{
 		if (Items.Num() != B.Items.Num())
 			return false;
+		if (Recipes.Num() != B.Recipes.Num())
+			return false;
 
-		const int32 Count = B.Items.Num();
+		const int32 ItemCount = B.Items.Num();
 
-		for (int32 I = 0; I < Count; ++I)
+		for (int32 I = 0; I < ItemCount; ++I)
 		{
 			if (Items[I] != B.Items[I])
 				return false;
 		}
 
+
+		const int32 RecipeCount = B.Recipes.Num();
+
+		for (int32 I = 0; I < RecipeCount; ++I)
+		{
+			if (Recipes[I] != B.Recipes[I])
+				return false;
+		}
 		return true;
 	}
 

@@ -33,7 +33,7 @@ class CSCORE_API UCsWidget_Inventory_Grid : public UCsWidget_Grid
 
 	virtual void SetupSlots();
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly)
 	TArray<class UCsWidget_Inventory_Slot*> Slots;
 
 	void Setup();

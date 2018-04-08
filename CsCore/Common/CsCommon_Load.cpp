@@ -482,6 +482,12 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsRotatorFlag
 			if (StructProperty->Struct == FCsRotatorFlag::StaticStruct())
 			{ WriteMemberStructPropertyToJson_Primitive<FCsRotatorFlag>(InJsonWriter, StructProperty, InStruct, MemberName, &FCsRotatorFlag::ToString); continue; }
+			// FCsOptionalVectorInterval
+			if (StructProperty->Struct == FCsOptionalVectorInterval::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsOptionalVectorInterval>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsOptionalRotatorInterval
+			if (StructProperty->Struct == FCsOptionalRotatorInterval::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsOptionalRotatorInterval>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
 			{
@@ -707,12 +713,21 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsItemMemberDescription
 			if (StructProperty->Struct == FCsItemMemberDescription::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsItemMemberDescription>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsInventoryLoadoutRecipe
+			if (StructProperty->Struct == FCsInventoryLoadoutRecipe::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsInventoryLoadoutRecipe>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 			// FCsInventoryLoadoutItem
 			if (StructProperty->Struct == FCsInventoryLoadoutItem::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsInventoryLoadoutItem>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 			// FCsRecipeIngredient
 			if (StructProperty->Struct == FCsRecipeIngredient::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsRecipeIngredient>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsPlayerData_Inventory_Bag
+			if (StructProperty->Struct == FCsPlayerData_Inventory_Bag::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsPlayerData_Inventory_Bag>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsPlayerData_Inventory_Slot
+			if (StructProperty->Struct == FCsPlayerData_Inventory_Slot::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsPlayerData_Inventory_Slot>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 
 			if (Internal)
 			{
@@ -800,12 +815,21 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FCsInputActionMapping
 				if (InnerStructProperty->Struct == FCsInputActionMapping::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsInputActionMapping>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsInventoryLoadoutRecipe
+				if (InnerStructProperty->Struct == FCsInventoryLoadoutRecipe::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsInventoryLoadoutRecipe>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// FCsInventoryLoadoutItem
 				if (InnerStructProperty->Struct == FCsInventoryLoadoutItem::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsInventoryLoadoutItem>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// FCsRecipeIngredient
 				if (InnerStructProperty->Struct == FCsRecipeIngredient::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsRecipeIngredient>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsPlayerData_Inventory_Bag
+				if (InnerStructProperty->Struct == FCsPlayerData_Inventory_Bag::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsPlayerData_Inventory_Bag>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsPlayerData_Inventory_Slot
+				if (InnerStructProperty->Struct == FCsPlayerData_Inventory_Slot::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsPlayerData_Inventory_Slot>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 
 				if (Internal)
 				{
@@ -1128,6 +1152,12 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsRotatorFlag
 			if (StructProperty->Struct == FCsRotatorFlag::StaticStruct())
 			{ WriteMemberStructPropertyToJson_Primitive<FCsRotatorFlag>(InJsonWriter, StructProperty, InStruct, MemberName, &FCsRotatorFlag::ToString); continue; }
+			// FCsOptionalVectorInterval
+			if (StructProperty->Struct == FCsOptionalVectorInterval::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsOptionalVectorInterval>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsOptionalRotatorInterval
+			if (StructProperty->Struct == FCsOptionalRotatorInterval::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsOptionalRotatorInterval>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
 			{ 
@@ -1356,12 +1386,21 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsItemMemberDescription
 			if (StructProperty->Struct == FCsItemMemberDescription::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsItemMemberDescription>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsInventoryLoadoutRecipe
+			if (StructProperty->Struct == FCsInventoryLoadoutRecipe::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsInventoryLoadoutRecipe>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 			// FCsInventoryLoadoutItem
 			if (StructProperty->Struct == FCsInventoryLoadoutItem::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsInventoryLoadoutItem>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 			// FCsRecipeIngredient
 			if (StructProperty->Struct == FCsRecipeIngredient::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsRecipeIngredient>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsPlayerData_Inventory_Bag
+			if (StructProperty->Struct == FCsPlayerData_Inventory_Bag::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsPlayerData_Inventory_Bag>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsPlayerData_Inventory_Slot
+			if (StructProperty->Struct == FCsPlayerData_Inventory_Slot::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsPlayerData_Inventory_Slot>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 
 			if (Internal)
 			{
@@ -1449,12 +1488,21 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FCsInputActionMapping
 				if (InnerStructProperty->Struct == FCsInputActionMapping::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsInputActionMapping>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsInventoryLoadoutRecipe
+				if (InnerStructProperty->Struct == FCsInventoryLoadoutRecipe::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsInventoryLoadoutRecipe>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// FCsInventoryLoadoutItem
 				if (InnerStructProperty->Struct == FCsInventoryLoadoutItem::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsInventoryLoadoutItem>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// FCsRecipeIngredient
 				if (InnerStructProperty->Struct == FCsRecipeIngredient::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsRecipeIngredient>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsPlayerData_Inventory_Bag
+				if (InnerStructProperty->Struct == FCsPlayerData_Inventory_Bag::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsPlayerData_Inventory_Bag>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsPlayerData_Inventory_Slot
+				if (InnerStructProperty->Struct == FCsPlayerData_Inventory_Slot::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsPlayerData_Inventory_Slot>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 
 				if (Internal)
 				{
@@ -1751,6 +1799,12 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsRotatorFlag
 			if (StructProperty->Struct == FCsRotatorFlag::StaticStruct())
 			{ WriteMemberStructPropertyToJson_Primitive<FCsRotatorFlag>(InJsonWriter, StructProperty, InObject, MemberName, &FCsRotatorFlag::ToString); continue; }
+			// FCsOptionalVectorInterval
+			if (StructProperty->Struct == FCsOptionalVectorInterval::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsOptionalVectorInterval>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+			// FCsOptionalRotatorInterval
+			if (StructProperty->Struct == FCsOptionalRotatorInterval::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsOptionalRotatorInterval>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
 			{
@@ -2507,6 +2561,12 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FCsRotatorFlag
 			if (StructProperty->Struct == FCsRotatorFlag::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson_Primitive<FCsRotatorFlag>(JsonObject, StructProperty, InStruct, MemberName, &FCsRotatorFlag::InitFromString); continue; }
+			// FCsOptionalVectorInterval
+			if (StructProperty->Struct == FCsOptionalVectorInterval::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsOptionalVectorInterval>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
+			// FCsOptionalRotatorInterval
+			if (StructProperty->Struct == FCsOptionalRotatorInterval::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsOptionalRotatorInterval>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
 			{ 
@@ -2734,12 +2794,21 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FCsItemMemberDescription
 			if (StructProperty->Struct == FCsItemMemberDescription::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsItemMemberDescription>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsInventoryLoadoutRecipe
+			if (StructProperty->Struct == FCsInventoryLoadoutRecipe::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsInventoryLoadoutRecipe>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 			// FCsInventoryLoadoutItem
 			if (StructProperty->Struct == FCsInventoryLoadoutItem::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsInventoryLoadoutItem>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 			// FCsRecipeIngredient
 			if (StructProperty->Struct == FCsRecipeIngredient::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsRecipeIngredient>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsPlayerData_Inventory_Bag
+			if (StructProperty->Struct == FCsPlayerData_Inventory_Bag::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsPlayerData_Inventory_Bag>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsPlayerData_Inventory_Slot
+			if (StructProperty->Struct == FCsPlayerData_Inventory_Slot::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsPlayerData_Inventory_Slot>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 
 			if (Internal)
 			{
@@ -2828,9 +2897,18 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 				// FCsInputActionMapping
 				if (InnerStructProperty->Struct == FCsInputActionMapping::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsInputActionMapping>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
+				// FCsInventoryLoadoutRecipe
+				if (InnerStructProperty->Struct == FCsInventoryLoadoutRecipe::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsInventoryLoadoutRecipe>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
 				// FCsInventoryLoadoutItem
 				if (InnerStructProperty->Struct == FCsInventoryLoadoutItem::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsInventoryLoadoutItem>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
+				// FCsPlayerData_Inventory_Bag
+				if (InnerStructProperty->Struct == FCsPlayerData_Inventory_Bag::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsPlayerData_Inventory_Bag>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
+				// FCsPlayerData_Inventory_Slot
+				if (InnerStructProperty->Struct == FCsPlayerData_Inventory_Slot::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsPlayerData_Inventory_Slot>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
 
 				if (Internal)
 				{
@@ -3190,6 +3268,12 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsRotatorFlag
 			if (StructProperty->Struct == FCsRotatorFlag::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson_Primitive<FCsRotatorFlag>(JsonObject, StructProperty, InStruct, MemberName, &FCsRotatorFlag::InitFromString); continue; }
+			// FCsOptionalVectorInterval
+			if (StructProperty->Struct == FCsOptionalVectorInterval::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsOptionalVectorInterval>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
+			// FCsOptionalRotatorInterval
+			if (StructProperty->Struct == FCsOptionalRotatorInterval::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsOptionalRotatorInterval>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
 			{ 
@@ -3420,12 +3504,21 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsItemMemberDescription
 			if (StructProperty->Struct == FCsItemMemberDescription::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsItemMemberDescription>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsInventoryLoadoutRecipe
+			if (StructProperty->Struct == FCsInventoryLoadoutRecipe::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsInventoryLoadoutRecipe>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 			// FCsInventoryLoadoutItem
 			if (StructProperty->Struct == FCsInventoryLoadoutItem::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsInventoryLoadoutItem>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 			// FCsRecipeIngredient
 			if (StructProperty->Struct == FCsRecipeIngredient::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsRecipeIngredient>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsPlayerData_Inventory_Bag
+			if (StructProperty->Struct == FCsPlayerData_Inventory_Bag::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsPlayerData_Inventory_Bag>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsPlayerData_Inventory_Slot
+			if (StructProperty->Struct == FCsPlayerData_Inventory_Slot::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsPlayerData_Inventory_Slot>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 
 			if (Internal)
 			{
@@ -3514,9 +3607,21 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				// FCsInputActionMapping
 				if (InnerStructProperty->Struct == FCsInputActionMapping::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsInputActionMapping>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
+				// FCsInventoryLoadoutRecipe
+				if (InnerStructProperty->Struct == FCsInventoryLoadoutRecipe::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsInventoryLoadoutRecipe>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
 				// FCsInventoryLoadoutItem
 				if (InnerStructProperty->Struct == FCsInventoryLoadoutItem::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsInventoryLoadoutItem>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
+				// FCsRecipeIngredient
+				if (InnerStructProperty->Struct == FCsRecipeIngredient::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsRecipeIngredient>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
+				// FCsPlayerData_Inventory_Bag
+				if (InnerStructProperty->Struct == FCsPlayerData_Inventory_Bag::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsPlayerData_Inventory_Bag>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
+				// FCsPlayerData_Inventory_Slot
+				if (InnerStructProperty->Struct == FCsPlayerData_Inventory_Slot::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsPlayerData_Inventory_Slot>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
 
 				if (Internal)
 				{
@@ -3862,6 +3967,12 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsRotatorFlag
 			if (StructProperty->Struct == FCsRotatorFlag::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson_Primitive<FCsRotatorFlag>(JsonObject, StructProperty, InObject, MemberName, &FCsRotatorFlag::InitFromString); continue; }
+			// FCsOptionalVectorInterval
+			if (StructProperty->Struct == FCsOptionalVectorInterval::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsOptionalVectorInterval>(JsonObject, StructProperty, InObject, MemberName); continue; }
+			// FCsOptionalRotatorInterval
+			if (StructProperty->Struct == FCsOptionalRotatorInterval::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsOptionalRotatorInterval>(JsonObject, StructProperty, InObject, MemberName); continue; }
 			// FCsStaticMesh
 			if (StructProperty->Struct == FCsStaticMesh::StaticStruct())
 			{ 

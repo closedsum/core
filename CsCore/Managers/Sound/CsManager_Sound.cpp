@@ -114,8 +114,8 @@ void ACsManager_Sound::PostActorCreated()
 
 void ACsManager_Sound::OnTick(const float &DeltaSeconds)
 {
-	const uint8 Count   = ActiveSounds.Num();
-	uint8 EarliestIndex = Count;
+	const int32 Count   = ActiveSounds.Num();
+	int32 EarliestIndex = Count;
 
 	for (int32 I = Count - 1; I >= 0; --I)
 	{

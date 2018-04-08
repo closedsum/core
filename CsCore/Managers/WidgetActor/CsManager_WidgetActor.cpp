@@ -76,7 +76,7 @@ void ACsManager_WidgetActor::Clear()
 	Pools.Reset();
 	PoolSizes.Reset();
 	PoolIndices.Reset();
-	ActiveWidgetActors.Reset();
+	ActiveActors.Reset();
 }
 
 void ACsManager_WidgetActor::Shutdown()
@@ -121,6 +121,8 @@ void ACsManager_WidgetActor::CreatePool(const TSubclassOf<class UObject> &Object
 		Widget->Role = ROLE_None;
 		GetWorld()->RemoveNetworkActor(Widget);
 		Widget->Init(I, ClassType);
+		Widget->DeAllocate();
+		Widget->OnCreatePool();
 
 		OnCreatePool_Event.Broadcast(Widget, Type);
 #if WITH_EDITOR
@@ -145,7 +147,7 @@ void ACsManager_WidgetActor::AddToActivePool(UObject* InObject, const uint8& Typ
 
 	Actor->Cache.IsAllocated = true;
 
-	if (TArray<ACsWidgetActor*>* ActorsPtr = ActiveWidgetActors.Find(ClassType))
+	if (TArray<ACsWidgetActor*>* ActorsPtr = ActiveActors.Find(ClassType))
 	{
 		ActorsPtr->Add(Actor);
 	}
@@ -153,19 +155,19 @@ void ACsManager_WidgetActor::AddToActivePool(UObject* InObject, const uint8& Typ
 	{
 		TArray<ACsWidgetActor*> Actors;
 		Actors.Add(Actor);
-		ActiveWidgetActors.Add(ClassType, Actors);
+		ActiveActors.Add(ClassType, Actors);
 	}
 	//Actor->Cache.OnDeAllocate_Event.AddUObject(this, &ACsManager_WidgetActor::OnDeAllocate);
 }
 
 void ACsManager_WidgetActor::OnTick(const float &DeltaSeconds)
 {
-	const int32 PoolCount = ActiveWidgetActors.Num();
+	const int32 PoolCount = ActiveActors.Num();
 
 	for (int32 I = PoolCount - 1; I >= 0; --I)
 	{
 		const TCsWidgetActorType Type	   = (TCsWidgetActorType)I;
-		TArray<ACsWidgetActor*>* ActorsPtr = ActiveWidgetActors.Find(Type);
+		TArray<ACsWidgetActor*>* ActorsPtr = ActiveActors.Find(Type);
 
 		const int32 ActorCount = ActorsPtr->Num();
 		int32 EarliestIndex    = ActorCount;
@@ -220,14 +222,14 @@ void ACsManager_WidgetActor::OnTick(const float &DeltaSeconds)
 
 int32 ACsManager_WidgetActor::GetActivePoolSize(const uint8 &Type)
 {
-	TArray<ACsWidgetActor*>* ActorsPtr = ActiveWidgetActors.Find((TCsWidgetActorType)Type);
+	TArray<ACsWidgetActor*>* ActorsPtr = ActiveActors.Find((TCsWidgetActorType)Type);
 
 	if (!ActorsPtr)
 		return CS_EMPTY;
 	return ActorsPtr->Num();
 }
 
-const TArray<class ACsWidgetActor*>* ACsManager_WidgetActor::GetWidgetActors(const TCsWidgetActorType& Type)
+const TArray<class ACsWidgetActor*>* ACsManager_WidgetActor::GetActors(const TCsWidgetActorType& Type)
 {
 	return Pools.Find(Type);
 }
@@ -309,7 +311,7 @@ void ACsManager_WidgetActor::DeAllocate(const uint8 &Type, const int32 &Index)
 {
 	const TCsWidgetActorType ClassType = (TCsWidgetActorType)Type;
 
-	TArray<ACsWidgetActor*>* Actors = ActiveWidgetActors.Find(ClassType);
+	TArray<ACsWidgetActor*>* Actors = ActiveActors.Find(ClassType);
 
 	if (!Actors)
 	{
@@ -362,7 +364,7 @@ void ACsManager_WidgetActor::DeAllocateAll()
 	{
 		const TCsWidgetActorType Type = (TCsWidgetActorType)I;
 
-		TArray<ACsWidgetActor*>* Actors = ActiveWidgetActors.Find(Type);
+		TArray<ACsWidgetActor*>* Actors = ActiveActors.Find(Type);
 
 		if (!Actors)
 			continue;
@@ -439,6 +441,7 @@ void ACsManager_WidgetActor::Display(const TCsWidgetActorType &Type, ACsWidgetAc
 	LogTransaction(ECsManagerWidgetActorCachedString::Str::Display, ECsPoolTransaction::Allocate, OutWidgetActor);
 
 	AddToActivePool(Widget, (uint8)Type);
+	Payload->Reset();
 }
 
 template<typename T>

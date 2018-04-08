@@ -70,6 +70,15 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 
 	TCsInteractiveType Type_Script;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	FTransform Transform;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	FRotator Rotation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	FVector Location;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	FVector Scale;
+
 	FCsInteractiveActorCache()
 	{
 		Reset();
@@ -84,17 +93,22 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 	}
 
 	template<typename T>
-	void Init(const uint16& InActiveIndex, class ACsData_Interactive* InData, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint8&))
+	void Init(const uint16& InActiveIndex, FCsInteractiveActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint8&))
 	{
 		SetActiveIndex(InActiveIndex);
-		Data = InData;
+		Data = Payload->GetData();
 		Owner = InOwner;
 		Parent = InParent;
 
-		WarmUpTime = InData->GetWarmUpTime();
+		WarmUpTime = Data->GetWarmUpTime();
 		State = WarmUpTime > 0.0f ? ECsPooledObjectState::WarmUp : ECsPooledObjectState::Active;
 
-		SetLifeTime(InData->GetLifeTime());
+		Transform = Payload->Transform;
+		Rotation = Transform.GetRotation().Rotator();
+		Location = Transform.GetTranslation();
+		Scale = Transform.GetScale3D();
+
+		SetLifeTime(Data->GetLifeTime());
 
 		Time = InTime;
 		RealTime = InRealTime;
@@ -111,31 +125,36 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 	}
 
 	template<typename T>
-	void Init(const uint16& InActiveIndex, class ACsData_Interactive* InData, const float &InTime, const float &InRealTime, const uint64 &InFrame, T* InObject, void (T::*OnDeAllocate)(const uint8&))
+	void Init(const uint16& InActiveIndex, FCsInteractiveActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, T* InObject, void (T::*OnDeAllocate)(const uint8&))
 	{
-		Init(InActiveIndex, InData, InTime, InRealTime, InFrame, nullptr, nullptr, InObject, OnDeAllocate);
+		Init(InActiveIndex, Payload, InTime, InRealTime, InFrame, nullptr, nullptr, InObject, OnDeAllocate);
 	}
 
-	void Init(const uint16& InActiveIndex, class ACsData_Interactive* InData, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent)
+	void Init(const uint16& InActiveIndex, FCsInteractiveActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent)
 	{
 		SetActiveIndex(InActiveIndex);
-		Data = InData;
+		Data = Payload->GetData();
 		Owner = InOwner;
 		Parent = InParent;
 
-		WarmUpTime = InData->GetWarmUpTime();
+		WarmUpTime = Data->GetWarmUpTime();
 		State = WarmUpTime > 0.0f ? ECsPooledObjectState::WarmUp : ECsPooledObjectState::Active;
 
-		SetLifeTime(InData->GetLifeTime());
+		Transform = Payload->Transform;
+		Rotation = Transform.GetRotation().Rotator();
+		Location = Transform.GetTranslation();
+		Scale = Transform.GetScale3D();
+
+		SetLifeTime(Data->GetLifeTime());
 
 		Time = InTime;
 		RealTime = InRealTime;
 		SetFrame(InFrame);
 	}
 
-	void Init(const uint16& InActiveIndex, class ACsData_Interactive* InData, const float &InTime, const float &InRealTime, const uint64 &InFrame)
+	void Init(const uint16& InActiveIndex, FCsInteractiveActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
-		Init(InActiveIndex, InData, InTime, InRealTime, InFrame, nullptr, nullptr);
+		Init(InActiveIndex, Payload, InTime, InRealTime, InFrame, nullptr, nullptr);
 	}
 
 	virtual void Reset() override
@@ -146,6 +165,11 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 		Actor = nullptr;
 		Data.Reset();
 		Data = nullptr;
+
+		Transform = FTransform::Identity;
+		Rotation = FRotator::ZeroRotator;
+		Location = FVector::ZeroVector;
+		Scale = FVector::OneVector;
 	}
 
 	class ACsInteractiveActor* GetActor() { return Actor.IsValid() ? Actor.Get() : nullptr; }
@@ -180,9 +204,6 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, Category = "Collision")
 	class UPrimitiveComponent* WorldCollisionComponent;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Collision")
-	TEnumAsByte<ECollisionEnabled::Type> WorldCollisionEnabled;
 
 	bool WorldCollisionSimulatesPhysics;
 
@@ -221,19 +242,24 @@ public:
 
 	void Init(const int32 &Index, const TCsInteractiveType &InType);
 
-	template<typename T>
-	void Allocate(const uint16 &ActiveIndex, class ACsData_Interactive* InData, void* Payload, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+// Allocate / DeAllocate
+#pragma region
+public:
 
 	template<typename T>
-	void Allocate(const uint16 &ActiveIndex, class ACsData_Interactive* InData, void* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	void Allocate(const uint16 &ActiveIndex, FCsInteractiveActorPayload* Payload, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 
-	void Allocate(const uint16 &ActiveIndex, class ACsData_Interactive* InData, void* Payload, UObject* InOwner, UObject* InParent);
-	void Allocate(const uint16 &ActiveIndex, class ACsData_Interactive* InData, void* Payload);
-	void Allocate(const uint16 &ActiveIndex, class ACsData_Interactive* InData);
+	template<typename T>
+	void Allocate(const uint16 &ActiveIndex, FCsInteractiveActorPayload* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 
-	virtual void Allocate_Internal(void* Payload);
+	void Allocate(const uint16 &ActiveIndex, FCsInteractiveActorPayload* Payload, UObject* InOwner, UObject* InParent);
+	void Allocate(const uint16 &ActiveIndex, FCsInteractiveActorPayload* Payload);
+
+	virtual void Allocate_Internal(FCsInteractiveActorPayload* Payload);
 
 	virtual void DeAllocate() override;
+
+#pragma endregion Allocate / DeAllocate
 
 // State
 #pragma region
@@ -344,8 +370,14 @@ public:
 
 #pragma endregion State
 
+// Visibility
+#pragma region
+public:
+
 	virtual void Show() override;
 	virtual void Hide() override;
+
+#pragma endregion Visibility
 
 // Collision
 #pragma region

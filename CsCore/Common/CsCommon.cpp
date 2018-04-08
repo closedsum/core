@@ -2600,7 +2600,8 @@ void UCsCommon::SetCollisionFromPreset(const FCsCollisionPreset &Preset, UPrimit
 	FBodyInstance& BodyInstance = Component->BodyInstance;
 
 	// bSimulationGeneratesHitEvents
-	BodyInstance.bNotifyRigidBodyCollision = Preset.bSimulationGeneratesHitEvents;
+	//BodyInstance.bNotifyRigidBodyCollision = Preset.bSimulationGeneratesHitEvents;
+	Component->SetNotifyRigidBodyCollision(Preset.bSimulationGeneratesHitEvents);
 	// PhysMaterialOverride
 	BodyInstance.SetPhysMaterialOverride(Preset.PhysMaterialOverride.Get());
 	// bGenerateOverlapEvents

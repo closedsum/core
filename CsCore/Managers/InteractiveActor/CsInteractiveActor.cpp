@@ -3,17 +3,16 @@
 #include "CsCore.h"
 #include "CsCVars.h"
 #include "Common/CsCommon.h"
+
+// Components
 #include "Components/CsSkeletalMeshComponent.h"
 #include "Components/CsStaticMeshComponent.h"
 #include "Components/CsBoxComponent.h"
 #include "Components/CsSphereComponent.h"
 
 #include "MotionController/CsMotionController.h"
-
+// Player
 #include "Player/CsPlayerController.h"
-
-// Data
-#include "Data/CsData_Interactive.h"
 
 ACsInteractiveActor::ACsInteractiveActor(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -22,7 +21,6 @@ ACsInteractiveActor::ACsInteractiveActor(const FObjectInitializer& ObjectInitial
 
 	CS_SET_BLUEPRINT_BITFLAG(PhysicsState, ECsInteractivePhysicsState::Grounded);
 
-	WorldCollisionEnabled = ECollisionEnabled::QueryAndPhysics;
 	InteractiveCollisionEnabled = ECollisionEnabled::QueryOnly;
 
 	MinPhysicsLinearVelocityForMovement = CS_MIN_PHYSICS_LINEAR_VELOCITY_FOR_MOVEMENT;
@@ -107,56 +105,63 @@ void ACsInteractiveActor::Init(const int32 &Index, const TCsInteractiveType &InT
 	Cache.Type_Script = Type;
 }
 
-template<typename T>
-void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, ACsData_Interactive* InData, void* Payload, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
-{
-	Cache.Init<T>(ActiveIndex, InData, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InOwner, InParent, InObject, OnDeAllocate);
-
-	Allocate_Internal(Payload);
-}
+// Allocate / DeAllocate
+#pragma region
 
 template<typename T>
-void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, ACsData_Interactive* InData, void* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, FCsInteractiveActorPayload* Payload, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
-	Cache.Init<T>(ActiveIndex, InData, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InObject, OnDeAllocate);
+	Cache.Init<T>(ActiveIndex, Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InOwner, InParent, InObject, OnDeAllocate);
 
 	Allocate_Internal(Payload);
 }
 
-void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, ACsData_Interactive* InData, void* Payload, UObject* InOwner, UObject* InParent)
+template<typename T>
+void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, FCsInteractiveActorPayload* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
-	Cache.Init(ActiveIndex, InData, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InOwner, InParent);
+	Cache.Init<T>(ActiveIndex, Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InObject, OnDeAllocate);
 
 	Allocate_Internal(Payload);
 }
 
-void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, ACsData_Interactive* InData, void* Payload)
+void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, FCsInteractiveActorPayload* Payload, UObject* InOwner, UObject* InParent)
 {
-	Cache.Init(ActiveIndex, InData, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
+	Cache.Init(ActiveIndex, Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InOwner, InParent);
 
 	Allocate_Internal(Payload);
 }
 
-void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, ACsData_Interactive* InData)
+void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, FCsInteractiveActorPayload* Payload)
 {
-	Allocate(ActiveIndex, InData, nullptr);
+	Cache.Init(ActiveIndex, Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
+
+	Allocate_Internal(Payload);
 }
 
-void ACsInteractiveActor::Allocate_Internal(void* Payload)
+void ACsInteractiveActor::Allocate_Internal(FCsInteractiveActorPayload* Payload)
 {
+	ACsData_Interactive* Data = Cache.GetData();
+
 	if (WorldCollisionComponent)
 	{
-		WorldCollisionComponent->SetCollisionEnabled(WorldCollisionEnabled);
-
-		if (WorldCollisionSimulatesPhysics)
+		// Collision
+		if (Data->UseWorldCollisionPreset())
 		{
-			CS_SET_BLUEPRINT_BITFLAG(PhysicsState, ECsInteractivePhysicsState::Grounded);
-
-			WorldCollisionComponent->SetNotifyRigidBodyCollision(true);
-			WorldCollisionComponent->SetEnableGravity(true);
-			WorldCollisionComponent->SetSimulatePhysics(true);
+			Data->SetWorldCollisionFromPreset(WorldCollisionComponent);
 		}
-		WorldCollisionComponent->WakeAllRigidBodies();
+		// Physics
+		if (Data->UsePhysicsPreset())
+		{
+			Data->SetPhysicsFromPreset(WorldCollisionComponent);
+
+			WorldCollisionSimulatesPhysics = Data->SimulatePhysics();
+
+			if (WorldCollisionSimulatesPhysics)
+			{
+				CS_SET_BLUEPRINT_BITFLAG(PhysicsState, ECsInteractivePhysicsState::Grounded);
+			}
+			WorldCollisionComponent->WakeAllRigidBodies();
+		}
 
 		WorldCollisionComponent->SetVisibility(true);
 		WorldCollisionComponent->SetHiddenInGame(false);
@@ -169,6 +174,19 @@ void ACsInteractiveActor::Allocate_Internal(void* Payload)
 		InteractiveCollisionComponent->SetComponentTickEnabled(true);
 	}
 	SetActorTickEnabled(true);
+
+	const FVector Location = Payload->bLocation ? Cache.Location : GetActorLocation();
+	const FRotator Rotation = Payload->bRotation ? Cache.Rotation : GetActorRotation();
+
+	TeleportTo(Location, Rotation, false, true);
+
+	if (Payload->bScale)
+		SetActorScale3D(Cache.Scale);
+
+	if (Data->UseSpawnPhysicsImpulse())
+	{
+		Data->ApplySpawnPhysicsImpulse(WorldCollisionComponent, true);
+	}
 }
 
 void ACsInteractiveActor::DeAllocate()
@@ -206,6 +224,8 @@ void ACsInteractiveActor::DeAllocate()
 
 	Cache.DeAllocate();
 }
+
+#pragma endregion Allocate / DeAllocate
 
 // State
 #pragma region
@@ -517,20 +537,19 @@ ACsMotionController* ACsInteractiveActor::GetLastHand_HoveringOverMe()
 
 #pragma endregion State
 
+// Visibility
+#pragma region
+
 void ACsInteractiveActor::Show()
 {
 	Super::Show();
 
+	ACsData_Interactive* Data = Cache.GetData();
+
 	if (WorldCollisionComponent)
 	{
-		WorldCollisionComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		Data->ToggleWorldCollisionAndPhysics(WorldCollisionComponent, true);
 
-		if (WorldCollisionSimulatesPhysics)
-		{
-			WorldCollisionComponent->SetNotifyRigidBodyCollision(true);
-			WorldCollisionComponent->SetEnableGravity(true);
-			WorldCollisionComponent->SetSimulatePhysics(true);
-		}
 		WorldCollisionComponent->WakeAllRigidBodies();
 
 		WorldCollisionComponent->SetVisibility(true);
@@ -550,11 +569,12 @@ void ACsInteractiveActor::Hide()
 {
 	Super::Hide();
 
+	ACsData_Interactive* Data = Cache.GetData();
+
 	if (WorldCollisionComponent)
 	{
-		WorldCollisionComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		WorldCollisionComponent->SetEnableGravity(false);
-		WorldCollisionComponent->SetSimulatePhysics(false);
+		Data->ToggleWorldCollisionAndPhysics(WorldCollisionComponent, false);
+
 		WorldCollisionComponent->SetVisibility(false);
 		WorldCollisionComponent->SetHiddenInGame(true);
 		WorldCollisionComponent->SetComponentTickEnabled(false);
@@ -567,6 +587,8 @@ void ACsInteractiveActor::Hide()
 	}
 	SetActorTickEnabled(false);
 }
+
+#pragma endregion Visibility
 
 // Collision
 #pragma region

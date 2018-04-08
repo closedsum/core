@@ -69,6 +69,12 @@ struct FCsRadius
 	}
 };
 
+// PostEditChangeProperty FCsRadius
+#define CS_PECP_FCS_RADIUS(PropertyName, MemberName)	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsRadius, Radius)) \
+														{ \
+															MemberName.Square(); \
+														}
+
 UENUM(BlueprintType)
 namespace ECsParametricFunctionType
 {
@@ -239,7 +245,7 @@ struct FCsParametricFunctionAxis
 			return A * T + B;
 		// Quadratic
 		if (Function == ECsParametricFunctionType::Quadratic)
-			return A * T * T + B * T + C;
+			return (A * T * T) + (B * T) + C;
 		// Sine
 		if (Function == ECsParametricFunctionType::Sine)
 			return A * FMath::Sin(B * T + C) + D;

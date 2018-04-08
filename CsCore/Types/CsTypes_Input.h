@@ -239,6 +239,18 @@ struct FCsInputActionMapRule
 		Clear = 0;
 		Set = 0;
 	}
+
+	FCsInputActionMapRule(const int32& InClear, const int32& InSet)
+	{
+		Clear = InClear;
+		Set = InSet;
+	}
+
+	FCsInputActionMapRule(const TCsInputActionMap& InClear, const TCsInputActionMap& InSet)
+	{
+		Clear = (int32)InClear;
+		Set = (int32)InSet;
+	}
 	~FCsInputActionMapRule(){}
 };
 

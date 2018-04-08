@@ -12,7 +12,6 @@ TCsItemType ACsData_Item::GetBaseItemType() { return BaseItemType; }
 // Stats
 #pragma region
 
-TArray<FName>* ACsData_Item::GetContents() { return nullptr; }
 const bool& ACsData_Item::GetIsIngredient() { return ECsCachedReferences::Ref::False; }
 
 #pragma endregion Stats

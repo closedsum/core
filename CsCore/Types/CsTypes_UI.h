@@ -242,6 +242,18 @@ public:
 	}
 };
 
+// PostEditChangeProperty FCsWidgetActorInfo
+#define CS_PECEP_FCS_WIDGET_ACTOR_INFO(e, PropertyName, MemberName)	if (UStructProperty* StructProperty = Cast<UStructProperty>(e.MemberProperty)) \
+																	{ \
+																		if (StructProperty->Struct == FCsWidgetActorInfo::StaticStruct()) \
+																		{ \
+																			if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsDrawDistance, Distance)) \
+																			{ \
+																				MemberName.Square(); \
+																			} \
+																		} \
+																	}
+
 USTRUCT(BlueprintType)
 struct FCsWidgetComponentInfo
 {
@@ -255,6 +267,15 @@ struct FCsWidgetComponentInfo
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
 	FVector2D DrawSize;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget", meta = (InlineEditConditionToggle))
+	bool bMinDrawDistance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget", meta = (editcondition = "bMinDrawDistance"))
+	FCsDrawDistance MinDrawDistance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+	bool ScaleByDistance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
 	FTransform Transform;
@@ -292,6 +313,9 @@ public:
 		Blueprint_LoadFlags = B.Blueprint_LoadFlags;
 		Blueprint_Internal = B.Blueprint_Internal;
 		DrawSize = B.DrawSize;
+		bMinDrawDistance = B.bMinDrawDistance;
+		MinDrawDistance = B.MinDrawDistance;
+		ScaleByDistance = B.ScaleByDistance;
 		Transform = B.Transform;
 		FollowCamera = B.FollowCamera;
 		LookAtCamera = B.LookAtCamera;
@@ -305,6 +329,9 @@ public:
 				Blueprint_LoadFlags == B.Blueprint_LoadFlags &&
 				Blueprint_Internal == B.Blueprint_Internal &&
 				DrawSize == B.DrawSize &&
+				bMinDrawDistance == B.bMinDrawDistance &&
+				MinDrawDistance == B.MinDrawDistance &&
+				ScaleByDistance == B.ScaleByDistance &&
 				FollowCamera == B.FollowCamera &&
 				LookAtCamera == B.LookAtCamera &&
 				LockAxes == B.LockAxes;
@@ -320,6 +347,18 @@ public:
 		return Blueprint_Internal;
 	}
 };
+
+// PostEditChangeProperty FCsWidgetComponentInfo
+#define CS_PECEP_FCS_WIDGET_COMPONENT_INFO(e, PropertyName, MemberName)	if (UStructProperty* StructProperty = Cast<UStructProperty>(e.MemberProperty)) \
+																		{ \
+																			if (StructProperty->Struct == FCsWidgetComponentInfo::StaticStruct()) \
+																			{ \
+																				if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsDrawDistance, Distance)) \
+																				{ \
+																					MemberName.Square(); \
+																				} \
+																			} \
+																		}
 
 namespace ECsHorizTextAligment
 {

@@ -1314,11 +1314,15 @@ struct FCsPhysicsImpulse
 	TEnumAsByte<ECsPhysicsImpulseType::Type> Type;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
+	FCsOptionalRotatorInterval ImpulseRotation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
+	float ImpulseMagnitude;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Physics")
 	FVector Impulse;
 
 	/** Used in AddForceAtPosition and AddImpulseAtPosition */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
-	FVector Position;
+	FCsOptionalVectorInterval Position;
 	/** Used in AddForce, AddForceAtPosition, and AddTorque */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
 	bool bAllowSubstepping;
@@ -1333,8 +1337,10 @@ struct FCsPhysicsImpulse
 
 	FCsPhysicsImpulse()
 	{
+		ImpulseRotation.Reset();
+		ImpulseMagnitude = 0.0f;
 		Impulse = FVector::ZeroVector;
-		Position = FVector::ZeroVector;
+		Position.Reset();
 		bAllowSubstepping = true;
 		bAccelChange = false;
 		bVelChange = false;
@@ -1345,7 +1351,9 @@ struct FCsPhysicsImpulse
 	FCsPhysicsImpulse& operator=(const FCsPhysicsImpulse& B)
 	{
 		Type = B.Type;
-		Impulse = B.Impulse;
+		ImpulseRotation = B.ImpulseRotation;
+		ImpulseMagnitude = B.ImpulseMagnitude;
+		Impulse = Impulse;
 		Position = B.Position;
 		bAllowSubstepping = B.bAllowSubstepping;
 		bAccelChange = B.bAccelChange;
@@ -1357,6 +1365,8 @@ struct FCsPhysicsImpulse
 	bool operator==(const FCsPhysicsImpulse& B) const
 	{
 		return	Type == B.Type &&
+				ImpulseRotation == B.ImpulseRotation &&
+				ImpulseMagnitude == B.ImpulseMagnitude &&
 				Impulse == B.Impulse &&
 				Position == B.Position &&
 				bAllowSubstepping == B.bAllowSubstepping &&
@@ -1369,7 +1379,32 @@ struct FCsPhysicsImpulse
 	{
 		return !(*this == B);
 	}
+
+	void Seed()
+	{
+		ImpulseRotation.Seed();
+		Impulse = ImpulseMagnitude * ImpulseRotation.Get().Vector();
+		Position.Seed();
+	}
 };
+
+// PostEditChangeProperty FCsPhysicsImpulse
+#define CS_PECEP_FCS_PHYSICS_IMPULSE(e, PropertyName, MemberName)	if (UStructProperty* StructProperty = Cast<UStructProperty>(e.MemberProperty)) \
+																	{ \
+																		if (StructProperty->Struct == FCsPhysicsImpulse::StaticStruct()) \
+																		{ \
+																			if (PropertyName == GET_MEMBER_NAME_CHECKED(FRotator, Roll) || \
+																				PropertyName == GET_MEMBER_NAME_CHECKED(FRotator, Pitch) || \
+																				PropertyName == GET_MEMBER_NAME_CHECKED(FRotator, Yaw)) \
+																				{ \
+																					MemberName.Impulse = MemberName.ImpulseMagnitude * MemberName.ImpulseRotation.Get().Vector(); \
+																				} \
+																		} \
+																	} \
+																	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsPhysicsImpulse, ImpulseMagnitude)) \
+																	{ \
+																		MemberName.Impulse = MemberName.ImpulseMagnitude * MemberName.ImpulseRotation.Get().Vector(); \
+																	}
 
 #pragma endregion Physics
 

@@ -34,7 +34,7 @@ public:
 	virtual void AddToActivePool(UObject* InObject, const uint8& Type) override;
 	virtual void OnTick(const float &DeltaSeconds) override;
 
-	TMap<TCsWidgetActorType, TArray<class ACsWidgetActor*>> ActiveWidgetActors;
+	TMap<TCsWidgetActorType, TArray<class ACsWidgetActor*>> ActiveActors;
 
 	virtual int32 GetActivePoolSize(const uint8 &Type) override;
 
@@ -51,7 +51,7 @@ protected:
 	
 public:
 
-	const TArray<class ACsWidgetActor*>* GetWidgetActors(const TCsWidgetActorType& Type);
+	const TArray<class ACsWidgetActor*>* GetActors(const TCsWidgetActorType& Type);
 
 	virtual bool IsExhausted(const uint8 &Type) override;
 

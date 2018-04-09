@@ -18,6 +18,9 @@ namespace ECsWidgeCraftingSlotCachedString
 UCsWidget_Crafting_Slot::UCsWidget_Crafting_Slot(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	bUpdatePosition = false;
+	bUpdateSize = false;
+
 	Count = CS_EMPTY;
 }
 

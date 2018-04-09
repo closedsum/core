@@ -36,10 +36,12 @@ class CSCORE_API UCsSimpleWidget : public UUserWidget
 	virtual UPanelSlot* GetChildSlot();
 
 	TCsFVector2D Position;
+	bool bUpdatePosition;
 
 	virtual void SetPosition(const FVector2D &InPosition);
 
 	TCsFVector2D Size;
+	bool bUpdateSize;
 
 	virtual void SetSize(const FVector2D &InSize);
 

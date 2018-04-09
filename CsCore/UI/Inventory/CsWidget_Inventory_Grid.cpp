@@ -10,6 +10,9 @@
 UCsWidget_Inventory_Grid::UCsWidget_Inventory_Grid(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	bUpdatePosition = false;
+	bUpdateSize = false;
+
 	Slots.Reset();
 }
 

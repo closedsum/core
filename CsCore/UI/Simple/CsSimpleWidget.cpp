@@ -12,6 +12,9 @@ UCsSimpleWidget::UCsSimpleWidget(const FObjectInitializer& ObjectInitializer)
 	HasInitFinished = false;
 
 	DefaultVisibility = ESlateVisibility::HitTestInvisible;
+
+	bUpdatePosition = true;
+	bUpdateSize = true;
 }
 
 void UCsSimpleWidget::NativeConstruct()
@@ -48,22 +51,24 @@ void UCsSimpleWidget::OnNativeTick(const FGeometry& MyGeometry, const float &InD
 		return;
 
 	// Position
-	if (Position.HasChanged())
+	if (bUpdatePosition &&
+		Position.HasChanged())
 	{
-		UCanvasPanelSlot* ParentSlot = Cast<UCanvasPanelSlot>(Slot);
-		ParentSlot->SetPosition(Position.Get());
+		if (UCanvasPanelSlot* ParentSlot = Cast<UCanvasPanelSlot>(Slot))
+			ParentSlot->SetPosition(Position.Get());
 	}
 	// Size
-	if (Size.HasChanged())
+	if (bUpdateSize &&
+		Size.HasChanged())
 	{
 		//SetDesiredSizeInViewport(Size.Get());
 
 		// Set Size of TextBlock
-		UCanvasPanelSlot* ChildSlot = Cast<UCanvasPanelSlot>(GetChildSlot());
-		ChildSlot->SetSize(Size.Get());
+		if (UCanvasPanelSlot* ChildSlot = Cast<UCanvasPanelSlot>(GetChildSlot()))
+			ChildSlot->SetSize(Size.Get());
 		// Set Size of Widget
-		UCanvasPanelSlot* ParentSlot = Cast<UCanvasPanelSlot>(Slot);
-		ParentSlot->SetSize(Size.Get());
+		if (UCanvasPanelSlot* ParentSlot = Cast<UCanvasPanelSlot>(Slot))
+			ParentSlot->SetSize(Size.Get());
 	}
 	Position.Clear();
 	Size.Clear();

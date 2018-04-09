@@ -17,9 +17,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUserWidget_Overr
 
 #define CS_WIDGET_DEFINE_TYPE(TYPE)	Type = ECsWidgetType::TYPE; \
 									Type_Script = (uint8)Type; \
-									WidgetType_MAX = ECsWidgetType::ECsWidgetType_MAX; \
-									WidgetTypeToString = &ECsWidgetType::ToString; \
-									StringToWidgetType = &ECsWidgetType::ToType;
+									CS_DEFINE_WIDGET_TYPE
 
 // Enums
 #pragma region
@@ -134,10 +132,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual void Hide();
 
-	TCsWidgetType WidgetType_MAX;
-
-	TCsWidgetTypeToString WidgetTypeToString;
-	TCsStringToWidgetType StringToWidgetType;
+	CS_DECLARE_WIDGET_TYPE
 
 	TArray<TCsWidgetType> ChildWidgetTypes;
 

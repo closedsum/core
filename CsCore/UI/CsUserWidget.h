@@ -191,6 +191,7 @@ public:
 	FBindableDynEvent_CsUserWidget_OnOpenChild OnOpenChild_ScriptEvent;
 
 	TMap<TCsWidgetType, FCsInputActionMapRule> OpenChildActionMapRules;
+	TMap<TCsWidgetType, bool> OpenChildShowMouseCursorRules;
 
 	virtual bool IsChildOpened(const TCsWidgetType &WidgetType);
 
@@ -213,6 +214,7 @@ public:
 	FBindableDynEvent_CsUserWidget_OnCloseChild OnCloseChild_ScriptEvent;
 
 	TMap<TCsWidgetType, FCsInputActionMapRule> CloseChildActionMapRules;
+	TMap<TCsWidgetType, bool> CloseChildShowMouseCursorRules;
 
 	virtual void CloseAllChildrenExcept(const TCsWidgetType &WidgetType);
 

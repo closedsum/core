@@ -236,7 +236,7 @@ void ACsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 
 			bool Found = false;
 
-			for (uint8 J = 0; J < InputCount; J++)
+			for (uint8 J = 0; J < InputCount; ++J)
 			{
 				if (InputFrame.Inputs[J]->Action == Action)
 				{
@@ -257,7 +257,7 @@ void ACsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 
 			bool Found = false;
 
-			for (uint8 J = 0; J < InputCount; J++)
+			for (uint8 J = 0; J < InputCount; ++J)
 			{
 				if (InputFrame.Inputs[J]->Action == Action)
 				{
@@ -278,7 +278,7 @@ void ACsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 
 			bool Found = false;
 
-			for (uint8 J = 0; J < InputCount; J++)
+			for (uint8 J = 0; J < InputCount; ++J)
 			{
 				if (InputFrame.Inputs[J]->Action == Action)
 				{
@@ -299,7 +299,7 @@ void ACsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 
 			bool Found = false;
 
-			for (uint8 J = 0; J < InputCount; J++)
+			for (uint8 J = 0; J < InputCount; ++J)
 			{
 				if (InputFrame.Inputs[J]->Action == Action)
 				{

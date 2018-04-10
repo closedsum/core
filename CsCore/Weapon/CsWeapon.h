@@ -489,8 +489,6 @@ public:
 #pragma region
 public:
 
-	bool UseManager_Inventory;
-
 	class ACsManager_Inventory* GetMyManager_Inventory();
 
 	template<typename T>

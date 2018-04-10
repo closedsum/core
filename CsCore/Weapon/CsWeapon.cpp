@@ -1283,11 +1283,12 @@ void ACsWeapon::OnChange_CurrentAmmo(const int32 &Value)
 
 void ACsWeapon::IncrementCurrentAmmo(const int32 &Index)
 {
-	if (UseManager_Inventory)
+	if (GetMyData_Weapon()->GetUseInventory())
 	{
 		// TODO: Later might need a way to store the LastFireMode used
 		ACsManager_Inventory* Manager_Inventory = GetMyManager_Inventory();
-		const int32 AmmoReserve					= Manager_Inventory->GetItemCount(GetAmmoShortCode(PrimaryFireMode, false));
+		const FName& ShortCode					= GetAmmoShortCode(PrimaryFireMode, false);
+		const int32 AmmoReserve					= Manager_Inventory->GetItemCount(ShortCode);
 
 		if (CurrentAmmo < GetMaxAmmo(Index) &&
 			CurrentAmmo < AmmoReserve)
@@ -1305,11 +1306,12 @@ void ACsWeapon::IncrementCurrentAmmo(const int32 &Index)
 
 void ACsWeapon::ResetCurrentAmmo(const int32 &Index) 
 { 
-	if (UseManager_Inventory)
+	if (GetMyData_Weapon()->GetUseInventory())
 	{
 		// TODO: Later might need a way to store the LastFireMode used
 		ACsManager_Inventory* Manager_Inventory = GetMyManager_Inventory();
-		const int32 AmmoReserve					= Manager_Inventory->GetItemCount(GetAmmoShortCode(PrimaryFireMode, false));
+		const FName& ShortCode					= GetAmmoShortCode(PrimaryFireMode, false);
+		const int32 AmmoReserve					= Manager_Inventory->GetItemCount(ShortCode);
 		const int32 maxAmmo						= GetMaxAmmo(Index);
 
 		CurrentAmmo = AmmoReserve > maxAmmo ? AmmoReserve % maxAmmo : AmmoReserve;
@@ -1335,21 +1337,22 @@ void ACsWeapon::ConsumeAmmo()
 {
 	--CurrentAmmo;
 
-	if (UseManager_Inventory)
+	if (GetMyData_Weapon()->GetUseInventory())
 	{
 		ACsManager_Inventory* Manager_Inventory = GetMyManager_Inventory();
 		ACsData_Projectile* Data_Projectile		= GetMyData_Projectile<ACsData_Projectile>(PrimaryFireMode, false);
+		const FName& ShortCode					= Data_Projectile->GetItemShortCode();
 
 		// Consume Item
 		if (Data_Projectile->GetOnAllocateConsumeItem())
 		{
-			Manager_Inventory->ConsumeFirstItem(Data_Projectile->GetItemShortCode());
+			Manager_Inventory->ConsumeFirstItem(ShortCode);
 		}
 		// Drop Item
 		else
 		if (Data_Projectile->GetOnAllocateDropItem())
 		{
-			Manager_Inventory->DropFirstItem(Data_Projectile->GetItemShortCode());
+			Manager_Inventory->DropFirstItem(ShortCode);
 		}
 	}
 	CurrentAmmoHandle.Resolve();

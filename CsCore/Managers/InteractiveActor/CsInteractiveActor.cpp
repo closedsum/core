@@ -180,8 +180,7 @@ void ACsInteractiveActor::Allocate_Internal(FCsInteractiveActorPayload* Payload)
 
 	TeleportTo(Location, Rotation, false, true);
 
-	if (Payload->bScale)
-		SetActorScale3D(Cache.Scale);
+	SetActorScale3D(Payload->bScale ? Cache.Scale : FVector::OneVector);
 
 	if (Data->UseSpawnPhysicsImpulse())
 	{

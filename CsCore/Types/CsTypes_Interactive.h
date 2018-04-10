@@ -18,7 +18,7 @@ typedef ECsInteractiveType::Type TCsInteractiveType;
 // InteractiveTypeToString
 typedef const FString&(*TCsInteractiveTypeToString)(const TCsInteractiveType&);
 // StringToInteractiveType
-typedef TCsInteractiveType(*TCsStringToInteractiveType)(const FString&);
+typedef const TCsInteractiveType&(*TCsStringToInteractiveType)(const FString&);
 
 #define CS_DECLARE_INTERACTIVE_TYPE	TCsInteractiveType InteractiveType_MAX; \
 									uint8 INTERACTIVE_TYPE_MAX; \

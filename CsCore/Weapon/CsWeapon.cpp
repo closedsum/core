@@ -1314,7 +1314,7 @@ void ACsWeapon::ResetCurrentAmmo(const int32 &Index)
 		const int32 AmmoReserve					= Manager_Inventory->GetItemCount(ShortCode);
 		const int32 maxAmmo						= GetMaxAmmo(Index);
 
-		CurrentAmmo = AmmoReserve > maxAmmo ? AmmoReserve % maxAmmo : AmmoReserve;
+		CurrentAmmo = AmmoReserve > maxAmmo ? maxAmmo : AmmoReserve;
 	}
 	else
 	{
@@ -1330,6 +1330,13 @@ const FName& ACsWeapon::GetAmmoShortCode(const TCsWeaponFireMode &FireMode, cons
 
 int32 ACsWeapon::GetAmmoReserve(const int32 &Index)
 {
+	if (GetMyData_Weapon()->GetUseInventory())
+	{
+		// TODO: Later might need a way to store the LastFireMode used
+		ACsManager_Inventory* Manager_Inventory = GetMyManager_Inventory();
+		const FName& ShortCode					= GetAmmoShortCode(PrimaryFireMode, false);
+		return Manager_Inventory->GetItemCount(ShortCode);
+	}
 	return GetMaxAmmo(Index);
 }
 

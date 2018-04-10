@@ -141,7 +141,7 @@ public:
 		UpdateIsDirty();
 	}
 
-	T Get() { return Value; }
+	const T& Get() { return Value; }
 
 	virtual void Clear()
 	{
@@ -1173,7 +1173,7 @@ public:
 		UpdateIsDirty();
 	}
 
-	T Get() { return *Value; }
+	const T& Get() { return *Value; }
 
 	void Clear()
 	{
@@ -1437,10 +1437,10 @@ public:
 		}
 	}
 
-	T Get() { return Value; }
-	T Get(const U &Index) { return Get((int64)Index); }
+	const T& Get() { return Value; }
+	const T& Get(const U &Index) { return Get((int64)Index); }
 
-	T Get(const int64 &Index)
+	const T& Get(const int64 &Index)
 	{
 		return Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE ? Value : Values[Index];
 	}
@@ -1814,10 +1814,10 @@ public:
 		}
 	}
 
-	T Get() { return Value; }
-	T Get(const U &Index) { return Get((int64)Index); }
+	const T& Get() { return Value; }
+	const T& Get(const U &Index) { return Get((int64)Index); }
 
-	T Get(const int64 &Index)
+	const T& Get(const int64 &Index)
 	{
 		return Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE ? Value : *(Values[Index]);
 	}
@@ -2052,9 +2052,9 @@ public:
 		}
 	}
 
-	T Get() { return Value; }
-	T Get(const U &Index) { return Get((int64)Index); }
-	T Get(const int64 &Index){ return Index <= CS_PRIMITIVE_TYPE_DEFAULT ? Value : Values[Index]; }
+	const T& Get() { return Value; }
+	const T& Get(const U &Index) { return Get((int64)Index); }
+	const T& Get(const int64 &Index){ return Index <= CS_PRIMITIVE_TYPE_DEFAULT ? Value : Values[Index]; }
 
 	T GetEX(const U &Index) { return GetDelegate.Execute(Index); }
 
@@ -2349,9 +2349,9 @@ public:
 		}
 	}
 
-	T Get() { return Value; }
-	T Get(const U &Index) { return Get((int64)Index); }
-	T Get(const int64 &Index){ return Index <= CS_PRIMITIVE_TYPE_DEFAULT ? Value : *(Values[Index]); }
+	const T& Get() { return Value; }
+	const T& Get(const U &Index) { return Get((int64)Index); }
+	const T& Get(const int64 &Index){ return Index <= CS_PRIMITIVE_TYPE_DEFAULT ? Value : *(Values[Index]); }
 
 	T GetEX(const U &Index) { return GetDelegate.Execute(Index); }
 

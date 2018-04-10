@@ -6,7 +6,7 @@
 #include "Types/CsTypes_Input.h"
 #include "CsUserWidget.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsUserWidget_OnNativeTick, const FGeometry&, MyGeometry, float, InDeltaTime);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsUserWidget_OnNativeTick, const FGeometry&, MyGeometry, const float&, InDeltaTime);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUserWidget_OnOpenChild, const uint8&, WidgetType);
 DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsUserWidget_OnOpenChild, const TEnumAsByte<ECsWidgetType::Type>&);

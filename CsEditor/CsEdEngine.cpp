@@ -65,7 +65,7 @@ bool UCsEdEngine::Check_MarkDatasDirty(const TCHAR* Stream)
 	{
 		// AssetType
 		const FString AssetTypeAsString = UCsCommon::Stream_GetString(Stream, false);
-		const TCsAssetType* AssetType   = (*StringToAssetType)(AssetTypeAsString);
+		const TCsAssetType AssetType    = (*StringToAssetType)(AssetTypeAsString);
 
 		MarkDatasDirty();
 		return true;

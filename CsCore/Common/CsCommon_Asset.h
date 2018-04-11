@@ -21,6 +21,7 @@ class CSCORE_API UCsCommon_Asset : public UBlueprintFunctionLibrary
 
 // Asset Registry
 #pragma region
+public:
 
 #if WITH_EDITOR
 
@@ -242,6 +243,27 @@ class CSCORE_API UCsCommon_Asset : public UBlueprintFunctionLibrary
 				OutPackagePaths.Add(OutAssetData[I].PackagePath);
 			}
 		}
+	}
+
+	template<typename T>
+	static T* GetDefaultObject(UBlueprint* Bp, UClass* InParentClass)
+	{
+		UClass* ParentClass = InParentClass ? InParentClass : T::StaticClass();
+		UBlueprintCore* BpC = Cast<UBlueprintCore>(OutAssets[I]);
+
+		if (!BpC)
+			return nullptr;
+		if (!BpC->GeneratedClass)
+			return nullptr;
+
+		UClass* Class = Bp->ParentClass.Get();
+
+		if (!Class)
+			return nullptr;
+		if (!Class->IsChildOf(ParentClass))
+			return nullptr;
+
+		return BpC->GeneratedClass->GetDefaultObject<T>();
 	}
 
 	template<typename T>

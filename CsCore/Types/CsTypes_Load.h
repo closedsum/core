@@ -315,7 +315,7 @@ typedef ECsAssetType::Type TCsAssetType;
 // AssetTypeToString
 typedef const FString&(*TCsAssetTypeToString)(const TCsAssetType&);
 // StringToAssetType
-typedef TCsAssetType(*TCsStringToAssetType)(const FString&);
+typedef const TCsAssetType&(*TCsStringToAssetType)(const FString&);
 
 #define CS_DECLARE_ASSET_TYPE	TCsAssetType AssetType_MAX; \
 								uint8 ASSET_TYPE_MAX; \
@@ -328,7 +328,7 @@ typedef TCsAssetType(*TCsStringToAssetType)(const FString&);
 								StringToAssetType = &ECsAssetType::ToType;
 
 // GetAssetTypeStaticClass
-typedef UClass*(TCsGetAssetTypeStaticClass)(const TCsAssetType&);
+typedef UClass*(*TCsGetAssetTypeStaticClass)(const TCsAssetType&);
 
 namespace ECsLoadAssetsType
 {

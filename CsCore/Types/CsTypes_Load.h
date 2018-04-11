@@ -340,7 +340,7 @@ typedef ECsLoadAssetsType::Type TCsLoadAssetsType;
 // LoadAssetsTypeToString
 typedef const FString&(*TCsLoadAssetsTypeToString)(const TCsLoadAssetsType&);
 // StringToLoadAssetsType
-typedef TCsLoadAssetsType(*TCsStringToLoadAssetsType)(const FString&);
+typedef const TCsLoadAssetsType&(*TCsStringToLoadAssetsType)(const FString&);
 
 #define CS_DECLARE_LOAD_ASSETS_TYPE	TCsLoadAssetsType LoadAssetsType_MAX; \
 									uint8 LOAD_ASSETS_TYPE_MAX; \

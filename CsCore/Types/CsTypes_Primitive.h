@@ -141,7 +141,7 @@ public:
 		UpdateIsDirty();
 	}
 
-	T Get() { return Value; }
+	const T& Get() { return Value; }
 
 	virtual void Clear()
 	{
@@ -1173,7 +1173,7 @@ public:
 		UpdateIsDirty();
 	}
 
-	T Get() { return *Value; }
+	const T& Get() { return *Value; }
 
 	void Clear()
 	{
@@ -1437,10 +1437,10 @@ public:
 		}
 	}
 
-	T Get() { return Value; }
-	T Get(const U &Index) { return Get((int64)Index); }
+	const T& Get() { return Value; }
+	const T& Get(const U &Index) { return Get((int64)Index); }
 
-	T Get(const int64 &Index)
+	const T& Get(const int64 &Index)
 	{
 		return Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE ? Value : Values[Index];
 	}
@@ -1814,10 +1814,10 @@ public:
 		}
 	}
 
-	T Get() { return Value; }
-	T Get(const U &Index) { return Get((int64)Index); }
+	const T& Get() { return Value; }
+	const T& Get(const U &Index) { return Get((int64)Index); }
 
-	T Get(const int64 &Index)
+	const T& Get(const int64 &Index)
 	{
 		return Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE ? Value : *(Values[Index]);
 	}
@@ -2052,9 +2052,9 @@ public:
 		}
 	}
 
-	T Get() { return Value; }
-	T Get(const U &Index) { return Get((int64)Index); }
-	T Get(const int64 &Index){ return Index <= CS_PRIMITIVE_TYPE_DEFAULT ? Value : Values[Index]; }
+	const T& Get() { return Value; }
+	const T& Get(const U &Index) { return Get((int64)Index); }
+	const T& Get(const int64 &Index){ return Index <= CS_PRIMITIVE_TYPE_DEFAULT ? Value : Values[Index]; }
 
 	T GetEX(const U &Index) { return GetDelegate.Execute(Index); }
 
@@ -2349,9 +2349,9 @@ public:
 		}
 	}
 
-	T Get() { return Value; }
-	T Get(const U &Index) { return Get((int64)Index); }
-	T Get(const int64 &Index){ return Index <= CS_PRIMITIVE_TYPE_DEFAULT ? Value : *(Values[Index]); }
+	const T& Get() { return Value; }
+	const T& Get(const U &Index) { return Get((int64)Index); }
+	const T& Get(const int64 &Index){ return Index <= CS_PRIMITIVE_TYPE_DEFAULT ? Value : *(Values[Index]); }
 
 	T GetEX(const U &Index) { return GetDelegate.Execute(Index); }
 
@@ -3277,3 +3277,67 @@ struct FCsOptionalRotatorInterval
 };
 
 #pragma endregion Vector Types
+
+namespace ECsStringCompare
+{
+	enum Type
+	{
+		Equals,
+		StartsWith,
+		EndsWith,
+		Contains,
+		ECsStringCompare_MAX,
+	};
+}
+
+namespace ECsStringCompare
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString Equals = TCsString(TEXT("Equals"), TEXT("equals"), TEXT("equals"));
+		const TCsString StartsWith = TCsString(TEXT("StartsWith"), TEXT("startswith"), TEXT("starts with"));
+		const TCsString EndsWith = TCsString(TEXT("EndsWith"), TEXT("endswith"), TEXT("ends with"));
+		const TCsString Contains = TCsString(TEXT("Contains"), TEXT("contains"), TEXT("contains"));
+	}
+
+	namespace Ref
+	{
+		const ECsStringCompare::Type Equals = Type::Equals;
+		const ECsStringCompare::Type StartsWith = Type::StartsWith;
+		const ECsStringCompare::Type EndsWith = Type::EndsWith;
+		const ECsStringCompare::Type Contains = Type::Contains;
+		const ECsStringCompare::Type ECsStringCompare_MAX = Type::ECsStringCompare_MAX;
+	}
+
+	FORCEINLINE const FString& ToString(const Type &EType)
+	{
+		if (EType == Type::Equals) { return Str::Equals.Value; }
+		if (EType == Type::StartsWith) { return Str::StartsWith.Value; }
+		if (EType == Type::EndsWith) { return Str::EndsWith.Value; }
+		if (EType == Type::Contains) { return Str::Contains.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE const Type& ToType(const FString &String)
+	{
+		if (String == Str::Equals) { return Ref::Equals; }
+		if (String == Str::StartsWith) { return Ref::StartsWith; }
+		if (String == Str::EndsWith) { return Ref::EndsWith; }
+		if (String == Str::Contains) { return Ref::Contains; }
+		return Ref::ECsStringCompare_MAX;
+	}
+
+	FORCEINLINE bool Compare(const FString &Source, const FString &String, const Type &EType)
+	{
+		if (EType == Type::Equals) { return Source == String; }
+		if (EType == Type::StartsWith) { return Source.StartsWith(String); }
+		if (EType == Type::EndsWith) { return Source.EndsWith(String); }
+		if (EType == Type::Contains) { return Source.Contains(String); }
+		return false;
+	}
+}
+
+#define ECS_STRING_COMPARE_MAX (uint8)ECsStringCompare::ECsStringCompare_MAX
+typedef ECsStringCompare::Type TCsStringCompare;

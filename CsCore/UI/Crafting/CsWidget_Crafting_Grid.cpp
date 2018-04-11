@@ -10,6 +10,8 @@
 UCsWidget_Crafting_Grid::UCsWidget_Crafting_Grid(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	bUpdatePosition = false;
+	bUpdateSize = false;
 }
 
 void UCsWidget_Crafting_Grid::OnNativeConstruct()

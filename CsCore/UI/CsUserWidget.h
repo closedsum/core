@@ -6,7 +6,7 @@
 #include "Types/CsTypes_Input.h"
 #include "CsUserWidget.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsUserWidget_OnNativeTick, const FGeometry&, MyGeometry, float, InDeltaTime);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsUserWidget_OnNativeTick, const FGeometry&, MyGeometry, const float&, InDeltaTime);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUserWidget_OnOpenChild, const uint8&, WidgetType);
 DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsUserWidget_OnOpenChild, const TEnumAsByte<ECsWidgetType::Type>&);
@@ -17,9 +17,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUserWidget_Overr
 
 #define CS_WIDGET_DEFINE_TYPE(TYPE)	Type = ECsWidgetType::TYPE; \
 									Type_Script = (uint8)Type; \
-									WidgetType_MAX = ECsWidgetType::ECsWidgetType_MAX; \
-									WidgetTypeToString = &ECsWidgetType::ToString; \
-									StringToWidgetType = &ECsWidgetType::ToType;
+									CS_DEFINE_WIDGET_TYPE
 
 // Enums
 #pragma region
@@ -134,10 +132,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual void Hide();
 
-	TCsWidgetType WidgetType_MAX;
-
-	TCsWidgetTypeToString WidgetTypeToString;
-	TCsStringToWidgetType StringToWidgetType;
+	CS_DECLARE_WIDGET_TYPE
 
 	TArray<TCsWidgetType> ChildWidgetTypes;
 
@@ -191,6 +186,7 @@ public:
 	FBindableDynEvent_CsUserWidget_OnOpenChild OnOpenChild_ScriptEvent;
 
 	TMap<TCsWidgetType, FCsInputActionMapRule> OpenChildActionMapRules;
+	TMap<TCsWidgetType, bool> OpenChildShowMouseCursorRules;
 
 	virtual bool IsChildOpened(const TCsWidgetType &WidgetType);
 
@@ -213,6 +209,7 @@ public:
 	FBindableDynEvent_CsUserWidget_OnCloseChild OnCloseChild_ScriptEvent;
 
 	TMap<TCsWidgetType, FCsInputActionMapRule> CloseChildActionMapRules;
+	TMap<TCsWidgetType, bool> CloseChildShowMouseCursorRules;
 
 	virtual void CloseAllChildrenExcept(const TCsWidgetType &WidgetType);
 

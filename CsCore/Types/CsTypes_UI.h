@@ -80,7 +80,7 @@ typedef TCsWidgetType(*TCsStringToWidgetType)(const FString&);
 								TCsStringToWidgetType StringToWidgetType;
 
 #define CS_DEFINE_WIDGET_TYPE	WidgetType_MAX = ECsWidgetType::ECsWidgetType_MAX;\
-								WIDGET_TYPE_MAX = (uint8)WidgetType_MAX \
+								WIDGET_TYPE_MAX = (uint8)WidgetType_MAX; \
 								WidgetTypeToString = &ECsWidgetType::ToString; \
 								StringToWidgetType = &ECsWidgetType::ToType;
 

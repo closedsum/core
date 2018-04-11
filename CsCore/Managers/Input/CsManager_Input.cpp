@@ -236,7 +236,7 @@ void ACsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 
 			bool Found = false;
 
-			for (uint8 J = 0; J < InputCount; J++)
+			for (uint8 J = 0; J < InputCount; ++J)
 			{
 				if (InputFrame.Inputs[J]->Action == Action)
 				{
@@ -257,7 +257,7 @@ void ACsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 
 			bool Found = false;
 
-			for (uint8 J = 0; J < InputCount; J++)
+			for (uint8 J = 0; J < InputCount; ++J)
 			{
 				if (InputFrame.Inputs[J]->Action == Action)
 				{
@@ -278,7 +278,7 @@ void ACsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 
 			bool Found = false;
 
-			for (uint8 J = 0; J < InputCount; J++)
+			for (uint8 J = 0; J < InputCount; ++J)
 			{
 				if (InputFrame.Inputs[J]->Action == Action)
 				{
@@ -299,7 +299,7 @@ void ACsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 
 			bool Found = false;
 
-			for (uint8 J = 0; J < InputCount; J++)
+			for (uint8 J = 0; J < InputCount; ++J)
 			{
 				if (InputFrame.Inputs[J]->Action == Action)
 				{
@@ -790,6 +790,16 @@ bool ACsManager_Input::CanSaveInputActionMapping(const TCsInputDevice &Device, c
 	return true;
 }
 
+FString ACsManager_Input::GetSavePath()
+{
+	return FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + TEXT("/");
+}
+
+FString ACsManager_Input::GetInputProfileFilenameAndPath()
+{
+	return GetSavePath() + TEXT("InputProfile") + FString::FromInt(ControllerId) + TEXT(".json");
+}
+
 void ACsManager_Input::SaveInputProfile()
 {
 	FString OutputString;
@@ -803,10 +813,7 @@ void ACsManager_Input::SaveInputProfile()
 
 	JsonWriter->Close();
 
-	const FString GameContentDir = FPaths::ConvertRelativePathToFull(FPaths::GameContentDir());
-	const FString SaveDir		 = TEXT("Save/");
-	const FString Path			 = GameContentDir + SaveDir;
-	const FString Filename		 = Path + TEXT("InputProfile") + FString::FromInt(ControllerId) + TEXT(".json");
+	const FString Filename = GetInputProfileFilenameAndPath();
 
 	FFileHelper::SaveStringToFile(OutputString, *Filename);
 }
@@ -880,11 +887,7 @@ void ACsManager_Input::LoadDefaultInputProfile()
 
 void ACsManager_Input::LoadInputProfile()
 {
-	const FString GameContentDir = FPaths::ConvertRelativePathToFull(FPaths::GameContentDir());
-	const FString SaveDir		 = TEXT("Save/");
-	const FString Path			 = GameContentDir + SaveDir;
-
-	const FString InputProfileFilename = Path + TEXT("InputProfile") + FString::FromInt(ControllerId) + TEXT(".json");
+	const FString InputProfileFilename = GetInputProfileFilenameAndPath();
 
 	FString DataJson;
 

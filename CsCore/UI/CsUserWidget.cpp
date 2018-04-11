@@ -170,12 +170,23 @@ bool UCsUserWidget::OpenChild(const TCsWidgetType &WidgetType)
 		ActiveChildWidgetsMap.Add(WidgetType, Array);
 	}
 
+	// Apply Rules 
 	if (ACsPlayerController* Controller = GetMyController())
 	{
-		if (FCsInputActionMapRule* Rule = OpenChildActionMapRules.Find(WidgetType))
+		// InputActionMapRules
 		{
-			Controller->ClearCurrentInputActionMap(Rule->Clear);
-			Controller->SetCurrentInputActionMap(Rule->Set);
+			if (FCsInputActionMapRule* Rule = OpenChildActionMapRules.Find(WidgetType))
+			{
+				Controller->ClearCurrentInputActionMap(Rule->Clear);
+				Controller->SetCurrentInputActionMap(Rule->Set);
+			}
+		}
+		// ShowMouseCursorRules
+		{
+			if (bool* Rule = OpenChildShowMouseCursorRules.Find(WidgetType))
+			{
+				Controller->bShowMouseCursor = *Rule;
+			}
 		}
 	}
 
@@ -232,34 +243,78 @@ bool UCsUserWidget::CloseChild(const TCsWidgetType &WidgetType)
 		}
 	}
 
-	// Apply InputActionMapRules
+	if (ActiveChildWidgets.Num() == CS_EMPTY)
+	{
+		if (ACsPlayerController* MyController = GetMyController())
+			SetUserFocus(MyController);
+	}
+
+	// Apply Rules 
 	if (ACsPlayerController* Controller = GetMyController())
 	{
-		// First Apply Close
-		if (FCsInputActionMapRule* Rule = CloseChildActionMapRules.Find(WidgetType))
+		// InputActionMapRules
 		{
-			Controller->ClearCurrentInputActionMap(Rule->Clear);
-			Controller->SetCurrentInputActionMap(Rule->Set);
-		}
-		// ReApply Open for any Widgets that are still open
-		TArray<TCsWidgetType> Keys;
-		ActiveChildWidgetsMap.GetKeys(Keys);
-
-		const int32 KeyCount = Keys.Num();
-
-		for (int32 I = 0; I < KeyCount; ++I)
-		{
-			const TCsWidgetType& Key = Keys[I];
-
-			if (Key == WidgetType)
-				continue;
-
-			if (TArray<UCsUserWidget*>* Widgets = ActiveChildWidgetsMap.Find(Key))
+			// First Apply Close
+			if (FCsInputActionMapRule* Rule = CloseChildActionMapRules.Find(WidgetType))
 			{
-				if (FCsInputActionMapRule* Rule = OpenChildActionMapRules.Find(Key))
+				Controller->ClearCurrentInputActionMap(Rule->Clear);
+				Controller->SetCurrentInputActionMap(Rule->Set);
+			}
+			// ReApply Open for any Widgets that are still open
+			TArray<TCsWidgetType> Keys;
+			ActiveChildWidgetsMap.GetKeys(Keys);
+
+			const int32 KeyCount = Keys.Num();
+
+			for (int32 I = 0; I < KeyCount; ++I)
+			{
+				const TCsWidgetType& Key = Keys[I];
+
+				if (Key == WidgetType)
+					continue;
+
+				if (TArray<UCsUserWidget*>* Widgets = ActiveChildWidgetsMap.Find(Key))
 				{
-					Controller->ClearCurrentInputActionMap(Rule->Clear);
-					Controller->SetCurrentInputActionMap(Rule->Set);
+					if (Widgets->Num() == CS_EMPTY)
+						continue;
+
+					if (FCsInputActionMapRule* Rule = OpenChildActionMapRules.Find(Key))
+					{
+						Controller->ClearCurrentInputActionMap(Rule->Clear);
+						Controller->SetCurrentInputActionMap(Rule->Set);
+					}
+				}
+			}
+		}
+		// ShowMouseCursorRules
+		{
+			// First Apply Close
+			if (bool* Rule = CloseChildShowMouseCursorRules.Find(WidgetType))
+			{
+				Controller->bShowMouseCursor = *Rule;
+			}
+			// ReApply Open for any Widgets that are still open
+			TArray<TCsWidgetType> Keys;
+			ActiveChildWidgetsMap.GetKeys(Keys);
+
+			const int32 KeyCount = Keys.Num();
+
+			for (int32 I = 0; I < KeyCount; ++I)
+			{
+				const TCsWidgetType& Key = Keys[I];
+
+				if (Key == WidgetType)
+					continue;
+
+				if (TArray<UCsUserWidget*>* Widgets = ActiveChildWidgetsMap.Find(Key))
+				{
+					if (Widgets->Num() == CS_EMPTY)
+						continue;
+
+					if (bool* Rule = OpenChildShowMouseCursorRules.Find(Key))
+					{
+						Controller->bShowMouseCursor = *Rule;
+					}
 				}
 			}
 		}

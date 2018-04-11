@@ -8,4 +8,19 @@ class CSEDITOR_API UCsEdEngine : public UUnrealEdEngine
 {
 public:
 	GENERATED_BODY()
+
+	virtual void Init(IEngineLoop* InEngineLoop) override;
+
+	// Begin FExec Interface
+	virtual bool Exec(UWorld* InWorld, const TCHAR* Cmd, FOutputDevice& Ar = *GLog) override;
+	// End FExec Interface
+
+// Data
+#pragma region
+public:
+
+	bool Check_MarkAllDatasDirty(const TCHAR* Stream);
+	void MarkAllDatasDirty();
+
+#pragma endregion Data
 };

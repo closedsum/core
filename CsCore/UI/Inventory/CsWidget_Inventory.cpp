@@ -17,6 +17,13 @@ UCsWidget_Inventory::UCsWidget_Inventory(const FObjectInitializer& ObjectInitial
 {
 }
 
+void UCsWidget_Inventory::OnNativeConstruct()
+{
+	Super::OnNativeConstruct();
+
+	Slot_Draggable->SetVisibility(ESlateVisibility::Hidden);
+}
+
 void UCsWidget_Inventory::Init()
 {
 	const FGeometry& Geometry = MyVerticalBox->GetCachedGeometry();

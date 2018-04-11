@@ -6838,6 +6838,9 @@ void UCsCommon_Load::LoadObjectWithTAssetPtrs(const FString &ObjectName, void* I
 			// FCsPhysicsAsset
 			if (StructProperty->Struct == FCsPhysicsAsset::StaticStruct())
 			{ LoadMemberStructProperty<FCsPhysicsAsset>(StructProperty, InObject, StructName, LoadFlags); continue; }
+			// FCsCollisionPreset
+			if (StructProperty->Struct == FCsCollisionPreset::StaticStruct())
+			{ LoadMemberStructProperty<FCsCollisionPreset>(StructProperty, InObject, StructName, LoadFlags); continue; }
 			// FCsCurveFloat
 			if (StructProperty->Struct == FCsCurveFloat::StaticStruct())
 			{ LoadMemberStructProperty<FCsCurveFloat>(StructProperty, InObject, StructName, LoadFlags); continue; }

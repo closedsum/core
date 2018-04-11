@@ -21,6 +21,9 @@ namespace ECsWidgetInventorySlotCachedString
 UCsWidget_Inventory_Slot::UCsWidget_Inventory_Slot(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	bUpdatePosition = false;
+	bUpdateSize = false;
+
 	Count = CS_EMPTY;
 	MyData.Reset();
 	MyData = nullptr;

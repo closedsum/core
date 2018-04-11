@@ -1,5 +1,6 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
+#include "Types/CsTypes_Primitive.h"
 
 #include "Kismet/BlueprintFunctionLibrary.h"
 
@@ -18,10 +19,12 @@ class CSCORE_API UCsCommon_Asset : public UBlueprintFunctionLibrary
 {
 	GENERATED_UCLASS_BODY()
 
-// Asset Registry
+		// Asset Registry
 #pragma region
 
 #if WITH_EDITOR
+
+	static IAssetRegistry& GetAssetRegistry();
 
 	template<typename T>
 	static void SetObjectFromAssetData(FAssetData& InAssetData, const FName& AssetName, T*& OutObject, FString& OutPackagePath)
@@ -58,112 +61,126 @@ class CSCORE_API UCsCommon_Asset : public UBlueprintFunctionLibrary
 	}
 
 	template<typename T>
-	static T* GetAsset(const FString &Name)
+	static T* GetAsset(const FString &Name, const TCsStringCompare& CompareType)
 	{
-		FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(FName("AssetRegistry"));
-		IAssetRegistry& AssetRegistry = AssetRegistryModule.Get();
-
-		TArray<FAssetData> OutAssetData;
-
-		AssetRegistry.GetAssetsByClass(T::StaticClass()->GetFName(), OutAssetData);
-
-		const int32 AssetCount = OutAssetData.Num();
-
-		for (int32 I = 0; I < AssetCount; ++I)
-		{
-			const FString AssetStringName = OutAssetData[I].AssetName.ToString().ToLower();
-
-			if (Name == AssetStringName)
-			{
-				return Cast<T>(OutAssetData[I].GetAsset());
-			}
-		}
-		return NULL;
-	}
-
-	template<typename T>
-	static T* GetAsset(const TArray<FString> &KeywordsOR)
-	{
-		FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(FName("AssetRegistry"));
-		IAssetRegistry& AssetRegistry = AssetRegistryModule.Get();
-
-		TArray<FAssetData> OutAssetData;
-
-		AssetRegistry.GetAssetsByClass(T::StaticClass()->GetFName(), OutAssetData);
-
-		const int32 AssetCount = OutAssetData.Num();
-		const int32 Count	   = KeywordsOR.Num();
-
-		for (int32 I = 0; I < AssetCount; ++I)
-		{
-			const FString AssetStringName = OutAssetData[I].AssetName.ToString().ToLower();
-
-			for (int32 J = 0; J < Count; J++)
-			{
-				if (KeywordsOR[J] == AssetStringName)
-				{
-					return Cast<T>(OutAssetData[I].GetAsset());
-				}
-			}
-		}
-		return NULL;
-	}
-
-	template<typename T>
-	static void GetAssets(const FString &Name, TArray<T*> &OutAssets)
-	{
-		OutAssets.Reset();
-
-		FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(FName("AssetRegistry"));
-		IAssetRegistry& AssetRegistry = AssetRegistryModule.Get();
+		IAssetRegistry& AssetRegistry = GetAssetRegistry();
 
 		TArray<FAssetData> OutAssetData;
 
 		AssetRegistry.GetAssetsByClass(T::StaticClass()->GetFName(), OutAssetData);
 
 		const FString NameLower = Name.ToLower();
-
-		const int32 AssetCount = OutAssetData.Num();
+		const int32 AssetCount  = OutAssetData.Num();
 
 		for (int32 I = 0; I < AssetCount; ++I)
 		{
 			const FString AssetStringName = OutAssetData[I].AssetName.ToString().ToLower();
 
-			if (NameLower == AssetStringName)
-				OutAssets.Add(Cast<T>(OutAssetData[I].GetAsset()));
+			if (ECsStringCompare::Compare(AssetStringName, NameLower, CompareType))
+				return Cast<T>(OutAssetData[I].GetAsset());
 		}
+		return nullptr;
 	}
 
 	template<typename T>
-	static void GetAssets(const FName &Name, TArray<T*> &OutAssets)
+	static T* GetAsset(const TArray<FString> &KeywordsOR, const TCsStringCompare& CompareType)
 	{
-		GetAssets<T>(Name.ToString(), OutAssets);
+		IAssetRegistry& AssetRegistry = GetAssetRegistry();
+
+		TArray<FAssetData> OutAssetDatas;
+
+		AssetRegistry.GetAssetsByClass(T::StaticClass()->GetFName(), OutAssetDatas);
+
+		const int32 AssetCount   = OutAssetDatas.Num();
+		const int32 KeywordCount = KeywordsOR.Num();
+
+		TArray<FString> KeywordsORLower;
+
+		for (int32 I = 0; I < KeywordCount; ++I)
+		{
+			KeywordsORLower.Add(KeywordsOR[I].ToLower());
+		}
+
+		for (int32 I = 0; I < AssetCount; ++I)
+		{
+			const FString AssetStringName = OutAssetDatas[I].AssetName.ToString().ToLower();
+			bool Pass = false;
+
+			for (int32 J = 0; J < KeywordCount; ++J)
+			{
+				Pass |= ECsStringCompare::Compare(AssetStringName, KeywordsORLower[J], CompareType);
+
+				if (Pass)
+					break;
+			}
+
+			if (Pass)
+				return Cast<T>(OutAssetData[I].GetAsset());
+		}
+		return nullptr;
 	}
 
 	template<typename T>
-	static void GetAssets(const TArray<FString> &KeywordsAND, TArray<T*> &OutAssets)
+	static void GetAssets(const FString &Name, TArray<T*> &OutAssets, const TCsStringCompare& CompareType)
 	{
 		OutAssets.Reset();
 
-		FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(FName("AssetRegistry"));
-		IAssetRegistry& AssetRegistry			  = AssetRegistryModule.Get();
+		IAssetRegistry& AssetRegistry = GetAssetRegistry();
 
 		TArray<FAssetData> OutAssetData;
 
 		AssetRegistry.GetAssetsByClass(T::StaticClass()->GetFName(), OutAssetData);
 
-		const int32 AssetCount = OutAssetData.Num();
-		const int32 KeywordCount = KeywordsAND.Num();
+		const FString NameLower = Name.ToLower();
+		const int32 AssetCount  = OutAssetData.Num();
 
 		for (int32 I = 0; I < AssetCount; ++I)
 		{
 			const FString AssetStringName = OutAssetData[I].AssetName.ToString().ToLower();
 			
+			if (ECsStringCompare::Compare(AssetStringName, NameLower, CompareType))
+				OutAssets.Add(Cast<T>(OutAssetData[I].GetAsset()));
+		}
+	}
+
+	template<typename T>
+	static void GetAssets(const FName &Name, TArray<T*> &OutAssets, const TCsStringCompare& CompareType)
+	{
+		GetAssets<T>(Name.ToString(), OutAssets, CompareType);
+	}
+
+	template<typename T>
+	static void GetAssets(const TArray<FString> &KeywordsAND, TArray<T*> &OutAssets, const TCsStringCompare& CompareType)
+	{
+		OutAssets.Reset();
+
+		IAssetRegistry& AssetRegistry = GetAssetRegistry();
+
+		TArray<FAssetData> OutAssetData;
+
+		AssetRegistry.GetAssetsByClass(T::StaticClass()->GetFName(), OutAssetData);
+
+		const int32 AssetCount   = OutAssetData.Num();
+		const int32 KeywordCount = KeywordsAND.Num();
+
+		TArray<FString> KeywordsANDLower;
+
+		for (int32 I = 0; I < KeywordCount; ++I)
+		{
+			KeywordsANDLower.Add(KeywordsAND[I].ToLower());
+		}
+
+		for (int32 I = 0; I < AssetCount; ++I)
+		{
+			const FString AssetStringName = OutAssetData[I].AssetName.ToString().ToLower();
 			bool Pass = true;
 
 			for (int32 I = 0; I < KeywordCount; ++I)
 			{
-				Pass &= AssetStringName.Contains(KeywordsAND[I]);
+				Pass &= ECsStringCompare::Compare(AssetStringName, KeywordsORLower[J], CompareType);
+
+				if (!Pass)
+					break;
 			}
 
 			if (Pass)
@@ -174,27 +191,25 @@ class CSCORE_API UCsCommon_Asset : public UBlueprintFunctionLibrary
 	}
 
 	template<typename T>
-	static void GetAssets(const FString &Name, TArray<T*> &OutAssets, TArray<FString> &OutPackagePaths)
+	static void GetAssets(const FString &Name, TArray<T*> &OutAssets, TArray<FString> &OutPackagePaths, const TCsStringCompare& CompareType)
 	{
 		OutAssets.Reset();
 		OutPackagePaths.Reset();
 
-		FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(FName("AssetRegistry"));
-		IAssetRegistry& AssetRegistry = AssetRegistryModule.Get();
+		IAssetRegistry& AssetRegistry = GetAssetRegistry();
 
 		TArray<FAssetData> OutAssetData;
 
 		AssetRegistry.GetAssetsByClass(T::StaticClass()->GetFName(), OutAssetData);
 
 		const FString NameLower = Name.ToLower();
-
-		const int32 AssetCount = OutAssetData.Num();
+		const int32 AssetCount  = OutAssetData.Num();
 
 		for (int32 I = 0; I < AssetCount; ++I)
 		{
 			const FString AssetStringName = OutAssetData[I].AssetName.ToString().ToLower();
 
-			if (NameLower == AssetStringName)
+			if (ECsStringCompare::Compare(AssetStringName, NameLower, CompareType))
 			{
 				OutAssets.Add(Cast<T>(OutAssetData[I].GetAsset()));
 				OutPackagePaths.Add(OutAssetData[I].PackagePath.ToString());
@@ -203,23 +218,25 @@ class CSCORE_API UCsCommon_Asset : public UBlueprintFunctionLibrary
 	}
 
 	template<typename T>
-	static void GetAssets(const FName &Name, TArray<T*> &OutAssets, TArray<FName> &OutPackagePaths)
+	static void GetAssets(const FName &Name, TArray<T*> &OutAssets, TArray<FName> &OutPackagePaths, const TCsStringCompare& CompareType)
 	{
 		OutAssets.Reset();
 		OutPackagePaths.Reset();
 
-		FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(FName("AssetRegistry"));
-		IAssetRegistry& AssetRegistry			  = AssetRegistryModule.Get();
+		IAssetRegistry& AssetRegistry = GetAssetRegistry();
 
 		TArray<FAssetData> OutAssetData;
 
 		AssetRegistry.GetAssetsByClass(T::StaticClass()->GetFName(), OutAssetData);
 
-		const int32 AssetCount = OutAssetData.Num();
+		const FString NameLower = Name.ToString().ToLower();
+		const int32 AssetCount  = OutAssetData.Num();
 
 		for (int32 I = 0; I < AssetCount; ++I)
 		{
-			if (Name == OutAssetData[I].AssetName)
+			const FString AssetStringName = OutAssetData[I].AssetName.ToString().ToLower();
+
+			if (ECsStringCompare::Compare(AssetStringName, NameLower, CompareType))
 			{
 				OutAssets.Add(Cast<T>(OutAssetData[I].GetAsset()));
 				OutPackagePaths.Add(OutAssetData[I].PackagePath);
@@ -228,24 +245,24 @@ class CSCORE_API UCsCommon_Asset : public UBlueprintFunctionLibrary
 	}
 
 	template<typename T>
-	static T* GetBlueprintDefaultObject(const FString &Name)
+	static T* GetBlueprintDefaultObject(const FString &Name, const TCsStringCompare& CompareType)
 	{
-		UBlueprint* Bp = GetAsset<UBlueprint>(Name);
+		UBlueprint* Bp = GetAsset<UBlueprint>(Name, CompareType);
 
 		return Bp ? Cast<UBlueprintCore>(Bp)->GeneratedClass->GetDefaultObject<T>() : NULL;
 	}
 
 	template<typename T>
-	static T* GetBlueprintDefaultObject(const FName &Name)
+	static T* GetBlueprintDefaultObject(const FName &Name, const TCsStringCompare& CompareType)
 	{
-		return GetBlueprintDefaultObject<T>(Name.ToString());
+		return GetBlueprintDefaultObject<T>(Name.ToString(), CompareType);
 	}
 
 	template<typename T>
-	static void GetBlueprintDefaultObjects(TArray<T*> &OutDefaultObjects, const TArray<FString>& KeywordsAND)
+	static void GetBlueprintDefaultObjects(const TArray<FString>& KeywordsAND, TArray<T*> &OutDefaultObjects, const TCsStringCompare& CompareType)
 	{
 		TArray<UBlueprint*> OutAssets;
-		GetAssets<UBlueprint>(OutAssets, KeywordsAND);
+		GetAssets<UBlueprint>(KeywordsAND, OutAssets, CompareType);
 
 		OutDefaultObjects.Reset();
 

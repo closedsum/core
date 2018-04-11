@@ -804,7 +804,7 @@ struct FCsInputPhrase
 
 	void ProcessInput(FCsInputFrame &InputFrame)
 	{
-		const float CurrentTime = InputFrame.Time;
+		const float& CurrentTime = InputFrame.Time;
 
 		// Check if ALL Words are Completed
 		const int32 Count = Words.Num();
@@ -815,7 +815,7 @@ struct FCsInputPhrase
 			float ElapsedTime			= 0.0f;
 			float EarliestCompletedTime = CurrentTime;
 
-			for (Index = 0; Index < Count; Index++)
+			for (Index = 0; Index < Count; ++Index)
 			{
 				if (Words[Index].Completed)
 				{
@@ -839,7 +839,7 @@ struct FCsInputPhrase
 		}
 		else
 		{
-			for (Index = 0; Index < Count; Index++)
+			for (Index = 0; Index < Count; ++Index)
 			{
 				if (Words[Index].Completed)
 					continue;
@@ -921,7 +921,7 @@ struct FCsInputSentence
 
 	void ProcessInput(FCsInputFrame &InputFrame)
 	{
-		const float CurrentTime = InputFrame.Time;
+		const float& CurrentTime = InputFrame.Time;
 
 		// Check if Cooldown has Expired
 		if (!Active)
@@ -940,7 +940,7 @@ struct FCsInputSentence
 			float ElapsedTime			= 0.0f;
 			float EarliestCompletedTime = CurrentTime;
 
-			for (Index = 0; Index < Count; Index++)
+			for (Index = 0; Index < Count; ++Index)
 			{
 				if (Phrases[Index].Completed)
 				{
@@ -964,7 +964,7 @@ struct FCsInputSentence
 		}
 		else
 		{
-			for (Index = 0; Index < Count; Index++)
+			for (Index = 0; Index < Count; ++Index)
 			{
 				if (Phrases[Index].Completed)
 					continue;

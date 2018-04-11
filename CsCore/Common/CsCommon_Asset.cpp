@@ -29,6 +29,12 @@ UCsCommon_Asset::UCsCommon_Asset(const FObjectInitializer& ObjectInitializer)
 
 #if WITH_EDITOR
 
+IAssetRegistry& UCsCommon_Asset::GetAssetRegistry()
+{
+	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(FName("AssetRegistry"));
+	return AssetRegistryModule.Get();
+}
+
 void UCsCommon_Asset::SyncBrowserToAsset(UObject* InObject)
 {
 	TArray<UObject*> ObjectsToSync;

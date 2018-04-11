@@ -191,6 +191,9 @@ void ACsManager_InteractiveActor::OnTick(const float &DeltaSeconds)
 		const TCsInteractiveType Type			= (TCsInteractiveType)I;
 		TArray<ACsInteractiveActor*>* ActorsPtr = ActiveActors.Find(Type);
 
+		if (!ActorsPtr)
+			continue;
+
 		const int32 ActorCount = ActorsPtr->Num();
 		int32 EarliestIndex    = ActorCount;
 

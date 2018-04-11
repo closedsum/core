@@ -559,6 +559,9 @@ class CSCORE_API ACsManager_Input : public AActor
 
 	FCsInputProfile InputProfile;
 
+	FString GetSavePath();
+	FString GetInputProfileFilenameAndPath();
+
 	void SaveInputProfile();
 	void LoadDefaultInputProfile();
 	void LoadInputProfile();

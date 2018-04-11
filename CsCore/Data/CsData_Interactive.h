@@ -1,6 +1,7 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Data/CsData.h"
+#include "Types/CsTypes_Interactive.h"
 #include "CsData_Interactive.generated.h"
 
 UCLASS(Abstract, hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
@@ -11,6 +12,10 @@ class CSCORE_API ACsData_Interactive : public ACsData
 // Stats
 #pragma region
 public:
+
+	CS_DECLARE_INTERACTIVE_TYPE
+
+	virtual const TCsInteractiveType& GetInteractiveType();
 
 	UFUNCTION(BlueprintCallable, Category = "Stats")
 	virtual const float& GetWarmUpTime();

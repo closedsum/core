@@ -9,6 +9,7 @@ class CSCORE_API UCsWidget_Inventory : public UCsUserWidget
 {
 	GENERATED_UCLASS_BODY()
 
+	virtual void OnNativeConstruct() override;
 	virtual void Init() override;
 
 	UPROPERTY(meta = (BindWidget))

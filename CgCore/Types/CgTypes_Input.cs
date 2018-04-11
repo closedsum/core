@@ -13,9 +13,19 @@
 
     #endregion
 
-    public abstract class ECgInputAction : ECgEnum<byte>
+    public abstract class ECgInputAction : ECgEnum_Byte
     {
-        public static readonly ECgInputAction NULL = null;
+        #region "Delegates"
+
+        public delegate ECgInputAction Getter(byte b);
+
+        #endregion // Delegates
+
+        #region "Data Members"
+
+        public static Getter Get;
+
+        #endregion // Data Members
     }
 
     public enum ECgInputDevice : byte
@@ -45,17 +55,20 @@
     {
     }
 
-    public struct CgKeyInputHandler
+    public class CgKeyInputHandler
     {
-        public static readonly CgKeyInputHandler NULL = new CgKeyInputHandler(null);
-
         #region "Data Members"
 
         public ECgInputAction Action;
 
         public CgDelegate_Void[] Events;
 
-        #endregion
+        #endregion // Data Members
+
+        public CgKeyInputHandler()
+        {
+            Action = null;
+        }
 
         public CgKeyInputHandler(ECgInputAction action)
         {
@@ -93,7 +106,7 @@
         }
     }
 
-    public struct CgKeyInput
+    public class CgKeyInput
     {
         #region "Data Members"
 
@@ -104,13 +117,21 @@
         public float DeltaTime;
         public ulong Frame;
 
-        #endregion
-
-        #region "Delegates"
-
         List<CgKeyInputHandler> HandlerList;
 
-        #endregion
+        #endregion // Data Members
+
+        public CgKeyInput()
+        {
+            Key = KeyCode.None;
+            Event = ECgInputEvent.MAX;
+            Time = 0f;
+            RealTime = 0f;
+            DeltaTime = 0f;
+            Frame = 0;
+
+            HandlerList = new List<CgKeyInputHandler>();
+        }
 
         public CgKeyInput(KeyCode key)
         {
@@ -170,9 +191,8 @@
             {
                 CgKeyInputHandler handler = HandlerList[i];
 
-                if (handler == CgKeyInputHandler.NULL)
+                if (handler == null)
                     continue;
-
                 if (handler.Events[(byte)e] == null)
                     continue;
 
@@ -181,10 +201,8 @@
         }
     }
 
-    public struct CgInput
+    public class CgInput
     {
-        public static readonly CgInput NULL = new CgInput(0);
-
         #region "Data Members"
 
         public ushort PoolIndex;
@@ -197,7 +215,7 @@
         public Vector3 Rotation;
         public float Duration;
 
-        #endregion
+        #endregion // Data Members
 
         public CgInput(ushort poolIndex)
         {
@@ -246,7 +264,8 @@
 
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            int hash = Event.GetHashCode() ^ Value.GetHashCode() ^ Location.GetHashCode() ^ Rotation.GetHashCode() ^ Duration.GetHashCode();
+            return Action != null ? Action.GetHashCode() ^ hash : hash;
         }
 
         public void Init(ushort poolIndex)
@@ -320,13 +339,96 @@
         }
 }
 
-    public struct CgInputFrame
+    public class CgInputFrame
     {
+        #region "Data Members"
+
         public float Time;
         public float RealTime;
         public float DeltaTime;
         public ulong Frame;
         public List<CgInput> Inputs;
+
+        #endregion // Data Members
+
+        public CgInputFrame()
+        {
+            Time = 0f;
+            RealTime = 0f;
+            DeltaTime = 0f;
+            Frame = 0;
+            Inputs = new List<CgInput>();
+        }
+
+        public static bool operator ==(CgInputFrame lhs, CgInputFrame rhs)
+        {
+            if (lhs.Time != rhs.Time) return false;
+            if (lhs.RealTime != rhs.RealTime) return false;
+            if (lhs.DeltaTime != rhs.DeltaTime) return false;
+            if (lhs.Frame != rhs.Frame) return false;
+
+            if (lhs.Inputs.Capacity != rhs.Inputs.Capacity) return false;
+
+            int count = lhs.Inputs.Capacity;
+
+            for (int i = 0; i < count; ++i)
+            {
+                if (lhs.Inputs[i] != rhs.Inputs[i])
+                    return false;
+            }
+            return true;
+        }
+
+        public static bool operator !=(CgInputFrame lhs, CgInputFrame rhs)
+        {
+            return !(lhs == rhs);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is CgInputFrame))
+                return false;
+
+            CgInputFrame rhs = (CgInputFrame)obj;
+
+            if (Time != rhs.Time) return false;
+            if (RealTime != rhs.RealTime) return false;
+            if (DeltaTime != rhs.DeltaTime) return false;
+            if (Frame != rhs.Frame) return false;
+
+            if (Inputs.Capacity != rhs.Inputs.Capacity) return false;
+
+            int count = Inputs.Capacity;
+
+            for (int i = 0; i < count; ++i)
+            {
+                if (Inputs[i] != rhs.Inputs[i])
+                    return false;
+            }
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            return Time.GetHashCode() ^ RealTime.GetHashCode() ^ DeltaTime.GetHashCode() ^ Frame.GetHashCode();
+        }
+
+        public void Copy(CgInputFrame rhs)
+        {
+            Time = rhs.Time;
+            RealTime = rhs.RealTime;
+            DeltaTime = rhs.DeltaTime;
+            Frame = rhs.Frame;
+
+            Inputs.Clear();
+
+            int count = rhs.Inputs.Capacity;
+
+            for (int i = 0; i < count; ++i)
+            {
+                Inputs.Add(rhs.Inputs[i]);
+            }
+        }
 
         public void Init(float time, float realTime, float deltaTime, ulong frame)
         {
@@ -353,38 +455,43 @@
                 if (Inputs[i].Action == action)
                     return Inputs[i];
             }
-            return CgInput.NULL;
+            return null;
         }
 
         public CgInput GetInput(ECgInputAction action, ECgInputEvent e)
         {
             CgInput input = GetInput(action);
 
-            if (input != CgInput.NULL)
-                return input.Event == e ? input : CgInput.NULL;
-            return CgInput.NULL;
+            if (input != null)
+                return input.Event == e ? input : null;
+            return null;
         }
         
         public CgInput GetInput(ECgInputAction action, List<ECgInputEvent> events)
 	    {
             CgInput input = GetInput(action);
 
-            if (input != CgInput.NULL)
-                return events.IndexOf(input.Event) != CgTypes.INDEX_NONE ? input : CgInput.NULL;
-            return CgInput.NULL;
+            if (input != null)
+                return events.IndexOf(input.Event) != CgTypes.INDEX_NONE ? input : null;
+            return null;
         }
     }
 
-    public struct CgInputInfo
+    public class CgInputInfo
     {
+        #region "Data Members"
+
         public ECgInputType Type;
         public ECgInputValue ValueType;
         public ECgInputEvent Event;
         public ECgInputEvent Last_Event;
         public float Value;
         public Vector3 Location;
-        public Vector3 Rotation;
+        public Quaternion Rotation;
+        public Vector3 Euler;
         public float Duration;
+
+        #endregion // Data Members
 
         public CgInputInfo(ECgInputType type, ECgInputValue valueType)
         {
@@ -394,54 +501,74 @@
             Last_Event = ECgInputEvent.MAX;
             Value = 0f;
             Location = Vector3.zero;
-            Rotation = Vector3.zero;
+            Rotation = Quaternion.identity;
+            Euler = Vector3.zero;
             Duration = 0f;
         }
-        /*
-        CgInputInfo& operator=(const FCsInputInfo& B)
-	    {
-		    Type = B.Type;
-		    ValueType = B.ValueType;
-		    Event = B.Event;
-		    Last_Event = B.Last_Event;
-		    Value = B.Value;
-		    Location = B.Location;
-		    Rotation = B.Rotation;
-		    Duration = B.Duration;
-		    return *this;
-	    }
 
-        bool operator ==(const FCsInputInfo& B) const
-	    {
-		    return Type == B.Type && ValueType == B.ValueType && 
-			       Event == B.Event && Last_Event == B.Last_Event &&
-			       Value == B.Value && Location == B.Location && Rotation == B.Rotation &&
-			       Duration == B.Duration;
-	    }
-
-        bool operator !=(const FCsInputInfo& B) const
-	    {
-		        return !(*this == B);
-        }
-
-        void Set(const TCsInputEvent &inEvent, const float &inValue)
+        public static bool operator ==(CgInputInfo lhs, CgInputInfo rhs)
         {
-            Event = inEvent;
-            Value = inValue;
+            if (lhs.Type != rhs.Type) return false;
+            if (lhs.ValueType != rhs.ValueType) return false;
+            if (lhs.Event != rhs.Event) return false;
+            if (lhs.Last_Event != rhs.Last_Event) return false;
+            if (lhs.Value != rhs.Value) return false;
+            if (lhs.Location != rhs.Location) return false;
+            if (lhs.Rotation != rhs.Rotation) return false;
+            if (lhs.Euler != rhs.Euler) return false;
+            if (lhs.Duration != rhs.Duration) return false;
+            return true;
         }
 
-        void Set(const TCsInputEvent &inEvent, const FVector &inLocation)
+        public static bool operator !=(CgInputInfo lhs, CgInputInfo rhs)
         {
-            Event = inEvent;
-            Location = inLocation;
+            return !(lhs == rhs);
         }
 
-        void Set(const TCsInputEvent &inEvent, const FRotator &inRotation)
+        public override bool Equals(object obj)
         {
-            Event = inEvent;
-            Rotation = inRotation;
+            if (!(obj is CgInputInfo))
+                return false;
+
+            CgInputInfo rhs = (CgInputInfo)obj;
+
+            if (Type != rhs.Type) return false;
+            if (ValueType != rhs.ValueType) return false;
+            if (Event != rhs.Event) return false;
+            if (Last_Event != rhs.Last_Event) return false;
+            if (Value != rhs.Value) return false;
+            if (Location != rhs.Location) return false;
+            if (Rotation != rhs.Rotation) return false;
+            if (Euler != rhs.Euler) return false;
+            if (Duration != rhs.Duration) return false;
+            return true;
         }
-        */
+
+        public override int GetHashCode()
+        {
+            int a = Type.GetHashCode() ^ ValueType.GetHashCode() ^ Event.GetHashCode() ^ Last_Event.GetHashCode();
+            int b = Value.GetHashCode() ^ Location.GetHashCode() ^ Rotation.GetHashCode() ^ Euler.GetHashCode() ^ Duration.GetHashCode();
+            return a ^ b;
+        }
+
+        public void Set(ECgInputEvent e, float value)
+        {
+            Event = e;
+            Value = value;
+        }
+
+        public void Set(ECgInputEvent e, Vector3 location)
+        {
+            Event = e;
+            Location = location;
+        }
+
+        public void Set(ECgInputEvent e, Quaternion rotation)
+        {
+            Event = e;
+            Rotation = rotation;
+            Euler = Rotation.eulerAngles;
+        }
     }
 }
 

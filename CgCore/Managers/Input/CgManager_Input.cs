@@ -12,7 +12,7 @@
         public static readonly ushort CG_INPUT_POOL_SIZE = 65535;
         public static readonly ushort CS_MAX_INPUT_FRAMES = 300;
 
-        #endregion
+        #endregion // Constants
 
         #region "Delegates"
 
@@ -20,7 +20,7 @@
         public delegate void CgManagerInput_Axis(ECgInputAction action, float val);
         public delegate void CgManagerInput_Location_Raw(Vector3 v);
 
-        #endregion
+        #endregion // Delegates
 
         #region "Data Members"
 
@@ -29,9 +29,16 @@
         private CgKeyInput[] RawKeyInputs;
         public List<CgKeyInput> RawKeyInputsPressed;
 
-        public CgInput[] InputPool = new CgInput[CG_INPUT_POOL_SIZE];
+        protected ECgInputAction InputAction_MAX;
+        protected byte INPUT_ACTION_MAX;
+
+        public CgInput[] InputPool;
+
+        public List<CgInput> QueuedInputsForNextFrame;
 
         private ushort CurrentInputPoolIndex;
+
+        public CgInputFrame[] InputFrames;
 
         public int CurrentInputFrameIndex;
 
@@ -39,27 +46,29 @@
 
         public int CurrentInputActionMap;
 
-            #region "Actions"
+        #region "Actions"
 
-        List<CgInput_Base> Inputs;
-        List<CgInputInfo> Info;
+        protected List<CgInput_Base> Inputs;
+        protected List<CgInputInfo> Infos;
+        protected List<ECgInputEvent> Actions;
+        protected List<ECgInputEvent> Last_Actions;
 
                 #region "Pressed Events"
 
-        CgManagerInput_Action Default_Event;
-        CgManagerInput_Action FirstPressed_Event;
-        CgManagerInput_Action Pressed_Event;
-        CgManagerInput_Action FirstReleased_Event;
+        public CgManagerInput_Action Default_Event;
+        public CgManagerInput_Action FirstPressed_Event;
+        public CgManagerInput_Action Pressed_Event;
+        public CgManagerInput_Action FirstReleased_Event;
 
                 #endregion // Pressed Events
 
                 #region "Axis Events
 
-        CgManagerInput_Axis Axis_Event;
-        CgManagerInput_Axis Axis_FirstMoved_Event;
-        CgManagerInput_Axis Axis_Moved_Event;
-        CgManagerInput_Axis Axis_FirstStationary_Event;
-        CgManagerInput_Axis Axis_Stationary_Event;
+        public CgManagerInput_Axis Axis_Event;
+        public CgManagerInput_Axis Axis_FirstMoved_Event;
+        public CgManagerInput_Axis Axis_Moved_Event;
+        public CgManagerInput_Axis Axis_FirstStationary_Event;
+        public CgManagerInput_Axis Axis_Stationary_Event;
 
                 #endregion // Axis Events
 
@@ -82,6 +91,24 @@
 
         public CgManager_Input()
         {
+            // InputPool
+            InputPool = new CgInput[CG_INPUT_POOL_SIZE];
+
+            for (ushort i = 0; i < CG_INPUT_POOL_SIZE; ++i)
+            {
+                InputPool[i] = new CgInput(i);
+            }
+
+            QueuedInputsForNextFrame = new List<CgInput>();
+
+            // InputFrames
+            InputFrames = new CgInputFrame[CS_MAX_INPUT_FRAMES];
+
+            for (ushort i = 0; i < CS_MAX_INPUT_FRAMES; ++i)
+            {
+                InputFrames[i] = new CgInputFrame();
+            }
+
             // Initialize array of RawKeyInputs
             Array keyValues = Enum.GetValues(typeof(KeyCode));
             int keyCodeCount = keyValues.Length;
@@ -144,12 +171,168 @@
 
         public virtual void PostProcessInput(float deltaTime)
         {
+            // TODO: Potentially also capture sustained "released" inputs
 
+            // TODO: This would be the place to process an action that is a combination of multiple inputs in a frame (or over multiple frames)
+
+            CgInputFrame InputFrame = InputFrames[CurrentInputFrameIndex];
+
+            // Add Queued Inputs
+            int QueuedInputCount = QueuedInputsForNextFrame.Capacity;
+
+            for (int i = 0; i < QueuedInputCount; ++i)
+            {
+                InputFrame.Inputs.Add(QueuedInputsForNextFrame[i]);
+            }
+            QueuedInputsForNextFrame.Clear();
+
+            // Set FirstReleased Events to Released after 1 Frame
+
+            // TODO: Potentially Optimize to O(n) versus O(n^2)
+            for (byte i = 0; i < INPUT_ACTION_MAX; ++i)
+            {
+                CgInputInfo info      = Infos[i];
+                ECgInputAction action = ECgInputAction.Get(i);
+                int inputCount        = InputFrame.Inputs.Capacity;
+
+                // Transition From FirstPressed to Pressed
+                if (info.Event == ECgInputEvent.FirstPressed &&
+                    info.Last_Event == ECgInputEvent.FirstPressed)
+                {
+                    bool Found = false;
+
+                    for (byte j = 0; j < inputCount; ++j)
+                    {
+                        if (InputFrame.Inputs[j].Action == action)
+                        {
+                            Found = true;
+                            break;
+                        }
+                    }
+
+                    if (!Found)
+                        info.Event = ECgInputEvent.Pressed;
+                }
+                // Transition from FirstReleased to Released
+                if (info.Event == ECgInputEvent.FirstReleased &&
+                    info.Last_Event == ECgInputEvent.FirstReleased)
+                {
+                    bool Found = false;
+
+                    for (byte j = 0; j < inputCount; ++j)
+                    {
+                        if (InputFrame.Inputs[j].Action == action)
+                        {
+                            Found = true;
+                            break;
+                        }
+                    }
+
+                    if (!Found)
+                        info.Event = ECgInputEvent.Released;
+                }
+                // Transition From FireMoved to Moved
+                if (info.Event == ECgInputEvent.FirstMoved &&
+                    info.Last_Event == ECgInputEvent.FirstMoved)
+                {
+                    bool Found = false;
+
+                    for (byte j = 0; j < inputCount; ++j)
+                    {
+                        if (InputFrame.Inputs[j].Action == action)
+                        {
+                            Found = true;
+                            break;
+                        }
+                    }
+
+                    if (!Found)
+                        info.Event = ECgInputEvent.Moved;
+                }
+                // Transition from FirstStationary to Stationary
+                if (info.Event == ECgInputEvent.FirstStationary &&
+                    info.Last_Event == ECgInputEvent.FirstStationary)
+                {
+                    bool Found = false;
+
+                    for (byte j = 0; j < inputCount; ++j)
+                    {
+                        if (InputFrame.Inputs[j].Action == action)
+                        {
+                            Found = true;
+                            break;
+                        }
+                    }
+
+                    if (!Found)
+                        info.Event = ECgInputEvent.Stationary;
+                }
+                // Update Last_Actions.
+                info.Last_Event = info.Event;
+
+                // Currently NO Bindings for PRESSED Inputs, so manually add them
+                if (info.Event == ECgInputEvent.Pressed)
+                    AddInput(action, ECgInputEvent.Pressed);
+            }
+            // Process Inputs
+            int _inputCount = InputFrame.Inputs.Capacity;
+
+            for (byte i = 0; i < _inputCount; ++i)
+            {
+                ProcessInput(InputOwner, null, InputFrame.Inputs[i], deltaTime);
+            }
+
+            /*
+            // Log Actions
+            if (CsCVarLogInputs->GetInt() == CS_CVAR_SHOW_LOG)
+            {
+                const FString InputActionMapAsString = (*InputActionMapMaskToString)(CurrentInputActionMap);
+
+                UE_LOG(LogCs, Log, TEXT("ACsManager_Input::PostProcessInput: ActionMap: %s Frame: %d Time: %f DeltaTime: %f Count: %d"), *InputActionMapAsString, InputFrame.Frame, InputFrame.Time, InputFrame.DeltaTime, InputFrame.Inputs.Num());
+
+                for (uint8 I = 0; I < InputCount; ++I)
+                {
+                    const FCsInput* Input = InputFrame.Inputs[I];
+
+                    const FString&Action = (*InputActionToString)(Input->Action);
+                    const FString&Event = ECsInputEvent::ToString(Input->Event);
+
+                    // Void - No Value
+                    if ((CsCVarLogInputAll->GetInt() == CS_CVAR_SHOW_LOG || CsCVarLogInputActions->GetInt() == CS_CVAR_SHOW_LOG) &&
+                        Infos[(uint8)Input->Action]->ValueType == ECsInputValue::Void)
+                    {
+                        UE_LOG(LogCs, Log, TEXT("ACsManager_Input::PostProcessInput: %s: %s"), *Action, *Event);
+                    }
+                    // Float
+                    if ((CsCVarLogInputAll->GetInt() == CS_CVAR_SHOW_LOG || CsCVarLogInputAxis->GetInt() == CS_CVAR_SHOW_LOG) &&
+                        Infos[(uint8)Input->Action]->ValueType == ECsInputValue::Float)
+                    {
+                        UE_LOG(LogCs, Log, TEXT("ACsManager_Input::PostProcessInput: %s: %s Value: %f"), *Action, *Event, Input->Value);
+                    }
+                    // Vector
+                    if ((CsCVarLogInputAll->GetInt() == CS_CVAR_SHOW_LOG || CsCVarLogInputLocations->GetInt() == CS_CVAR_SHOW_LOG) &&
+                        Infos[(uint8)Input->Action]->ValueType == ECsInputValue::Vector)
+                    {
+                        UE_LOG(LogCs, Log, TEXT("ACsManager_Input::PostProcessInput: %s: %s Value: %s"), *Action, *Event, *Input->Location.ToString());
+                    }
+                    // Rotator
+                    if ((CsCVarLogInputAll->GetInt() == CS_CVAR_SHOW_LOG || CsCVarLogInputRotations->GetInt() == CS_CVAR_SHOW_LOG) &&
+                        Infos[(uint8)Input->Action]->ValueType == ECsInputValue::Rotator)
+                    {
+                        UE_LOG(LogCs, Log, TEXT("ACsManager_Input::PostProcessInput: %s: %s Value: %s"), *Action, *Event, *Input->Rotation.ToString());
+                    }
+                }
+            }
+            */
+            // Copy the Current Input Frame
+            CurrentInputFrame = InputFrame;
+            // Determine Game Events
+            //DetermineGameEvents(InputFrame.Inputs);
         }
 
         public virtual void ProcessInput(MonoBehaviour actionOwner, CgInput previousInput, CgInput currentInput, float deltaTime)
         {
-            if (currentInput == CgInput.NULL)
+            if (currentInput == null)
                 return;
         }
 

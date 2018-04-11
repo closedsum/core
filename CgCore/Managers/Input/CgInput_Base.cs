@@ -9,7 +9,7 @@
 
         public CgInput_Base()
         {
-            Action = ECgInputAction.NULL;
+            Action = null;
             ActionMap = 0;
             Manager_Input = null;
         }

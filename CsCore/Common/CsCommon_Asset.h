@@ -19,7 +19,7 @@ class CSCORE_API UCsCommon_Asset : public UBlueprintFunctionLibrary
 {
 	GENERATED_UCLASS_BODY()
 
-		// Asset Registry
+// Asset Registry
 #pragma region
 
 #if WITH_EDITOR
@@ -259,6 +259,39 @@ class CSCORE_API UCsCommon_Asset : public UBlueprintFunctionLibrary
 	}
 
 	template<typename T>
+	static void GetBlueprintDefaultObjects(const FString &Name, const TCsStringCompare& CompareType, TArray<T*> &OutDefaultObjects,  UClass* InParentClass)
+	{
+		TArray<UBlueprint*> OutAssets;
+		GetAssets<UBlueprint>(Name, OutAssets, CompareType);
+
+		OutDefaultObjects.Reset();
+
+		UClass* ParentClass = InParentClass ? InParentClass : T::StaticClass();
+
+		const int32 Count = OutAssets.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			UBlueprintCore* BpC = Cast<UBlueprintCore>(OutAssets[I]);
+
+			if (!BpC)
+				continue;
+			if (!BpC->GeneratedClass)
+				continue;
+
+			UClass* Class = OutAssets[I]->ParentClass.Get();
+
+			if (!Class)
+				continue;
+			if (!Class->IsChildOf(ParentClass))
+				continue;
+
+			if (T* DOb = BpC->GeneratedClass->GetDefaultObject<T>())
+				OutDefaultObjects.Add(DOb);
+		}
+	}
+
+	template<typename T>
 	static void GetBlueprintDefaultObjects(const TArray<FString>& KeywordsAND, TArray<T*> &OutDefaultObjects, const TCsStringCompare& CompareType)
 	{
 		TArray<UBlueprint*> OutAssets;
@@ -266,9 +299,9 @@ class CSCORE_API UCsCommon_Asset : public UBlueprintFunctionLibrary
 
 		OutDefaultObjects.Reset();
 
-		const uint32 Count = OutAssets.Num();
+		const int32 Count = OutAssets.Num();
 
-		for (uint32 I = 0; I < Count; ++I)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (T* DOb = Cast<UBlueprintCore>(OutAssets[I])->GeneratedClass->GetDefaultObject<T>())
 				OutDefaultObjects.Add(DOb);

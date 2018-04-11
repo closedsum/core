@@ -2,6 +2,7 @@
 #include "CsEdEngine.h"
 #include "CsEditor.h"
 
+#include "Common/CsCommon.h"
 #include "Common/CsCommon_Asset.h"
 
 // Asset Registry
@@ -27,65 +28,70 @@ bool UCsEdEngine::Exec(UWorld* InWorld, const TCHAR* Stream, FOutputDevice& Ar)
 
 	// Data
 	{
-		if (Check_MarkAllDatasDirty(Stream))
+		if (Check_MarkDatasDirty(Stream))
 			return true;
 	}
 	return true;
 }
 
+// Stream
+#pragma region
+
+bool UCsEdEngine::Stream_GetString(const TCHAR*& Str, const FString &StringType, FString &OutString, const FString &Check, const FString &Format)
+{
+	OutString = UCsCommon::Stream_GetString(Str, false);
+
+	if (OutString == TEXT(""))
+	{
+		UE_LOG(LogCsEditor, Warning, TEXT("Check_%s: No %s set."), *Check, *StringType);
+		UE_LOG(LogCsEditor, Warning, TEXT("Check_%s: The correct format is %s"), *Check, *Format);
+		return false;
+	}
+	return true;
+}
+
+#pragma endregion
+
 // Data
 #pragma region
 
-bool UCsEdEngine::Check_MarkAllDatasDirty(const TCHAR* Stream)
+bool UCsEdEngine::Check_MarkDatasDirty(const TCHAR* Stream)
 {
-	const FString Command	 = TEXT("MarkAllDatasDirty");
-	const FString Parameters = TEXT("");
+	const FString Command	 = TEXT("MarkDatasDirty");
+	const FString Parameters = TEXT("[assetType=optional]");
 	const FString Format	 = Command + TEXT(" ") + Parameters;
 
 	if (FParse::Command(&Stream, *Command))
 	{
-		MarkAllDatasDirty();
+		// AssetType
+		const FString AssetTypeAsString = UCsCommon::Stream_GetString(Stream, false);
+		const TCsAssetType* AssetType   = (*StringToAssetType)(AssetTypeAsString);
+
+		MarkDatasDirty();
 		return true;
 	}
 	return false;
 }
 
-void UCsEdEngine::MarkAllDatasDirty()
+void UCsEdEngine::MarkDatasDirty()
 {
-	IAssetRegistry& AssetRegistry = UCsCommon_Asset::GetAssetRegistry();
+	TArray<ACsData*> Datas;
 
-	TArray<FAssetData> OutAssetDatas;
+	UCsCommon_Asset::GetBlueprintDefaultObjects<ACsData>(TEXT("bp_"), ECsStringCompare::StartsWith, Datas, nullptr);
 
-	AssetRegistry.GetAssetsByClass(UBlueprint::StaticClass()->GetFName(), OutAssetDatas);
+	const int32 Count = Datas.Num();
 
-	const int32 AssetCount = OutAssetDatas.Num();
-
-	for (int32 I = 0; I < AssetCount; ++I)
+	for (int32 I = 0; I < Count; ++I)
 	{
-		const FString Name = OutAssetDatas[I].AssetName.ToString();
+		ACsData* Data = Datas[I];
 
-		if (!Name.StartsWith(TEXT("bp")))
-			continue;
+		Data->MarkPackageDirty();
 
-		if (UBlueprint* Bp = Cast<UBlueprint>(OutAssetDatas[I].GetAsset()))
-		{
-			UBlueprintCore* BpC = Cast<UBlueprintCore>(Bp);
+		const FString Name = TEXT(".") + Data->GetName();
+		FString Path	   = Data->GetPathName();
+		Path.RemoveFromEnd(Name);
 
-			if (!BpC)
-				continue;
-			if (!BpC->GeneratedClass)
-				continue;
-
-			if (ACsData* Data = BpC->GeneratedClass->GetDefaultObject<ACsData>())
-			{
-				Data->MarkPackageDirty();
-
-				const FString Path		  = OutAssetDatas[I].PackagePath.ToString();
-				const FString NameAndPath = Path + Name;
-
-				UE_LOG(LogCsEditor, Log, TEXT("MarkAllDatasDirty: %s is marked DIRTY."), *NameAndPath);
-			}
-		}
+		UE_LOG(LogCsEditor, Log, TEXT("MarkAllDatasDirty: %s is marked DIRTY."), *Path);
 	}
 }
 

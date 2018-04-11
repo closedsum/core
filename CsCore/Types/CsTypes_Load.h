@@ -327,6 +327,9 @@ typedef TCsAssetType(*TCsStringToAssetType)(const FString&);
 								AssetTypeToString = &ECsAssetType::ToString; \
 								StringToAssetType = &ECsAssetType::ToType;
 
+// GetAssetTypeStaticClass
+typedef UClass*(TCsGetAssetTypeStaticClass)(const TCsAssetType&);
+
 namespace ECsLoadAssetsType
 {
 	enum Type : uint8;

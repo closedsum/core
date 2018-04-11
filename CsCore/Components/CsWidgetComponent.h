@@ -82,4 +82,18 @@ public:
 	void OnTick_Handle_DrawDistance();
 
 #pragma endregion Visiblity
+
+// Movement
+#pragma region
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+	bool FollowOwner;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+	FVector LocationOffset;
+
+	void OnTick_Handle_Movement();
+
+#pragma endregion Movement
 };

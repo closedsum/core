@@ -34,6 +34,9 @@ void UCsWidgetComponent::TickComponent(float DeltaTime, enum ELevelTick TickType
 
 		OnTick_Handle_LocalCamera(LocalController->MinimalViewInfoCache.Location, LocalController->MinimalViewInfoCache.Rotation);
 	}
+
+	if (!FollowLocalCamera && FollowOwner)
+		OnTick_Handle_Movement();
 }
 
 UUserWidget* UCsWidgetComponent::GetWidget()
@@ -109,11 +112,13 @@ void UCsWidgetComponent::SetInfo(const FCsWidgetComponentInfo &Info)
 {
 	SetInfo(Info.DrawSize, Info.Transform, Info.FollowCamera, Info.LookAtCamera);
 	
-	DistanceProjectedOutFromCamera = Info.DistanceProjectedOutFromCamera;
-	CameraLockAxes				   = Info.LockAxes;
-	bMinDrawDistance			   = Info.bMinDrawDistance;
-	MyMinDrawDistance			   = Info.MinDrawDistance;
-	ScaleByDistance				   = Info.ScaleByDistance;
+	DistanceProjectedOutFromCamera	= Info.DistanceProjectedOutFromCamera;
+	CameraLockAxes					= Info.LockAxes;
+	bMinDrawDistance				= Info.bMinDrawDistance;
+	MyMinDrawDistance				= Info.MinDrawDistance;
+	ScaleByDistance					= Info.ScaleByDistance;
+	FollowOwner						= Info.FollowOwner;
+	LocationOffset					= Info.Transform.GetTranslation();
 }
 
 void UCsWidgetComponent::SetInfo(const FCsWidgetActorInfo &Info)
@@ -203,3 +208,15 @@ void UCsWidgetComponent::OnTick_Handle_DrawDistance()
 }
 
 #pragma endregion Visibility
+
+// Movement
+#pragma region
+
+void UCsWidgetComponent::OnTick_Handle_Movement()
+{
+	const FVector Location = GetOwner()->GetActorLocation() + LocationOffset;
+
+	SetWorldLocation(Location);
+}
+
+#pragma endregion Movement

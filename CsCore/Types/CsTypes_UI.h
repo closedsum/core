@@ -278,6 +278,9 @@ struct FCsWidgetComponentInfo
 	bool ScaleByDistance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+	bool FollowOwner;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
 	FTransform Transform;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
@@ -316,8 +319,10 @@ public:
 		bMinDrawDistance = B.bMinDrawDistance;
 		MinDrawDistance = B.MinDrawDistance;
 		ScaleByDistance = B.ScaleByDistance;
+		FollowOwner = B.FollowOwner;
 		Transform = B.Transform;
 		FollowCamera = B.FollowCamera;
+		DistanceProjectedOutFromCamera = B.DistanceProjectedOutFromCamera;
 		LookAtCamera = B.LookAtCamera;
 		LockAxes = B.LockAxes;
 		return *this;
@@ -332,7 +337,9 @@ public:
 				bMinDrawDistance == B.bMinDrawDistance &&
 				MinDrawDistance == B.MinDrawDistance &&
 				ScaleByDistance == B.ScaleByDistance &&
+				FollowOwner == B.FollowOwner &&
 				FollowCamera == B.FollowCamera &&
+				DistanceProjectedOutFromCamera == B.DistanceProjectedOutFromCamera &&
 				LookAtCamera == B.LookAtCamera &&
 				LockAxes == B.LockAxes;
 	}

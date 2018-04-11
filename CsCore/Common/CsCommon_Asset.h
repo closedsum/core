@@ -122,7 +122,7 @@ public:
 	}
 
 	template<typename T>
-	static void GetAssets(const FString &Name, TArray<T*> &OutAssets, const TCsStringCompare& CompareType)
+	static void GetAssets(const FString &Name, const TCsStringCompare& CompareType, TArray<T*> &OutAssets)
 	{
 		OutAssets.Reset();
 
@@ -145,13 +145,13 @@ public:
 	}
 
 	template<typename T>
-	static void GetAssets(const FName &Name, TArray<T*> &OutAssets, const TCsStringCompare& CompareType)
+	static void GetAssets(const FName &Name, const TCsStringCompare& CompareType, TArray<T*> &OutAssets)
 	{
-		GetAssets<T>(Name.ToString(), OutAssets, CompareType);
+		GetAssets<T>(Name.ToString(), CompareType, OutAssets);
 	}
 
 	template<typename T>
-	static void GetAssets(const TArray<FString> &KeywordsAND, TArray<T*> &OutAssets, const TCsStringCompare& CompareType)
+	static void GetAssets(const TArray<FString> &KeywordsAND, const TCsStringCompare& CompareType, TArray<T*> &OutAssets)
 	{
 		OutAssets.Reset();
 
@@ -176,7 +176,7 @@ public:
 			const FString AssetStringName = OutAssetData[I].AssetName.ToString().ToLower();
 			bool Pass = true;
 
-			for (int32 I = 0; I < KeywordCount; ++I)
+			for (int32 J = 0; J < KeywordCount; ++J)
 			{
 				Pass &= ECsStringCompare::Compare(AssetStringName, KeywordsORLower[J], CompareType);
 
@@ -192,7 +192,7 @@ public:
 	}
 
 	template<typename T>
-	static void GetAssets(const FString &Name, TArray<T*> &OutAssets, TArray<FString> &OutPackagePaths, const TCsStringCompare& CompareType)
+	static void GetAssets(const FString &Name, const TCsStringCompare& CompareType, TArray<T*> &OutAssets, TArray<FString> &OutPackagePaths)
 	{
 		OutAssets.Reset();
 		OutPackagePaths.Reset();
@@ -219,7 +219,7 @@ public:
 	}
 
 	template<typename T>
-	static void GetAssets(const FName &Name, TArray<T*> &OutAssets, TArray<FName> &OutPackagePaths, const TCsStringCompare& CompareType)
+	static void GetAssets(const FName &Name, const TCsStringCompare& CompareType, TArray<T*> &OutAssets, TArray<FName> &OutPackagePaths)
 	{
 		OutAssets.Reset();
 		OutPackagePaths.Reset();
@@ -249,7 +249,7 @@ public:
 	static T* GetDefaultObject(UBlueprint* Bp, UClass* InParentClass)
 	{
 		UClass* ParentClass = InParentClass ? InParentClass : T::StaticClass();
-		UBlueprintCore* BpC = Cast<UBlueprintCore>(OutAssets[I]);
+		UBlueprintCore* BpC = Cast<UBlueprintCore>(Bp);
 
 		if (!BpC)
 			return nullptr;
@@ -267,24 +267,24 @@ public:
 	}
 
 	template<typename T>
-	static T* GetBlueprintDefaultObject(const FString &Name, const TCsStringCompare& CompareType)
+	static T* GetBlueprintDefaultObject(const FString &Name, const TCsStringCompare& CompareType, UClass* InParentClass)
 	{
 		UBlueprint* Bp = GetAsset<UBlueprint>(Name, CompareType);
 
-		return Bp ? Cast<UBlueprintCore>(Bp)->GeneratedClass->GetDefaultObject<T>() : NULL;
+		return GetDefaultObject<T>(Bp, InParentClass);
 	}
 
 	template<typename T>
-	static T* GetBlueprintDefaultObject(const FName &Name, const TCsStringCompare& CompareType)
+	static T* GetBlueprintDefaultObject(const FName &Name, const TCsStringCompare& CompareType, UClass* InParentClass)
 	{
-		return GetBlueprintDefaultObject<T>(Name.ToString(), CompareType);
+		return GetBlueprintDefaultObject<T>(Name.ToString(), CompareType, InParentClass);
 	}
 
 	template<typename T>
-	static void GetBlueprintDefaultObjects(const FString &Name, const TCsStringCompare& CompareType, TArray<T*> &OutDefaultObjects,  UClass* InParentClass)
+	static void GetBlueprintDefaultObjects(const FString &Name, const TCsStringCompare& CompareType, TArray<T*> &OutDefaultObjects, UClass* InParentClass)
 	{
 		TArray<UBlueprint*> OutAssets;
-		GetAssets<UBlueprint>(Name, OutAssets, CompareType);
+		GetAssets<UBlueprint>(Name, CompareType, OutAssets);
 
 		OutDefaultObjects.Reset();
 
@@ -294,27 +294,15 @@ public:
 
 		for (int32 I = 0; I < Count; ++I)
 		{
-			UBlueprintCore* BpC = Cast<UBlueprintCore>(OutAssets[I]);
+			UBlueprint* Bp = Cast<UBlueprint>(OutAssets[I]);
 
-			if (!BpC)
-				continue;
-			if (!BpC->GeneratedClass)
-				continue;
-
-			UClass* Class = OutAssets[I]->ParentClass.Get();
-
-			if (!Class)
-				continue;
-			if (!Class->IsChildOf(ParentClass))
-				continue;
-
-			if (T* DOb = BpC->GeneratedClass->GetDefaultObject<T>())
+			if (T* DOb = GetDefaultObject<T>(Bp, InParentClass))
 				OutDefaultObjects.Add(DOb);
 		}
 	}
 
 	template<typename T>
-	static void GetBlueprintDefaultObjects(const TArray<FString>& KeywordsAND, TArray<T*> &OutDefaultObjects, const TCsStringCompare& CompareType)
+	static void GetBlueprintDefaultObjects(const TArray<FString>& KeywordsAND, const TCsStringCompare& CompareType, TArray<T*> &OutDefaultObjects, UClass* InParentClass)
 	{
 		TArray<UBlueprint*> OutAssets;
 		GetAssets<UBlueprint>(KeywordsAND, OutAssets, CompareType);
@@ -325,7 +313,9 @@ public:
 
 		for (int32 I = 0; I < Count; ++I)
 		{
-			if (T* DOb = Cast<UBlueprintCore>(OutAssets[I])->GeneratedClass->GetDefaultObject<T>())
+			UBlueprint* Bp = Cast<UBlueprint>(OutAssets[I]);
+
+			if (T* DOb = GetDefaultObject<T>(Bp, InParentClass))
 				OutDefaultObjects.Add(DOb);
 		}
 	}

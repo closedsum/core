@@ -953,7 +953,7 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const TCsAssetType 
 						{
 							TArray<UBlueprint*> Bps;
 
-							UCsCommon_Asset::GetAssets<UBlueprint>(ShortCode, Bps, ECsStringCompare::Equals);
+							UCsCommon_Asset::GetAssets<UBlueprint>(ShortCode, ECsStringCompare::Equals, Bps);
 
 							// Multiple Assets with the same name.
 							if (Bps.Num() > 1)
@@ -1081,7 +1081,7 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const int32 &LoadFl
 	// Search for Asset
 	TArray<UBlueprint*> Bps;
 
-	UCsCommon_Asset::GetAssets<UBlueprint>(ShortCode, Bps, ECsStringCompare::Equals);
+	UCsCommon_Asset::GetAssets<UBlueprint>(ShortCode, ECsStringCompare::Equals, Bps);
 
 	TSubclassOf<UObject> Data = nullptr;
 	ACsData* DataDOb		  = nullptr;
@@ -1403,7 +1403,7 @@ bool ACsDataMapping::PerformValidate(FString &OutMessage, FString &OutOutput)
 							TArray<UBlueprint*> Bps;
 							TArray<FName> PackagePaths;
 
-							UCsCommon_Asset::GetAssets<UBlueprint>(Entry.ShortCode, Bps, PackagePaths, ECsStringCompare::Equals);
+							UCsCommon_Asset::GetAssets<UBlueprint>(Entry.ShortCode, ECsStringCompare::Equals, Bps, PackagePaths);
 
 							const int32 BpCount = Bps.Num();
 							// ShortCode NO longer EXISTS in AssetRegistry

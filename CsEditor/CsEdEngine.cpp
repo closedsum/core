@@ -67,17 +67,19 @@ bool UCsEdEngine::Check_MarkDatasDirty(const TCHAR* Stream)
 		const FString AssetTypeAsString = UCsCommon::Stream_GetString(Stream, false);
 		const TCsAssetType AssetType    = (*StringToAssetType)(AssetTypeAsString);
 
-		MarkDatasDirty();
+		MarkDatasDirty(AssetType);
 		return true;
 	}
 	return false;
 }
 
-void UCsEdEngine::MarkDatasDirty()
+void UCsEdEngine::MarkDatasDirty(const TCsAssetType &AssetType)
 {
 	TArray<ACsData*> Datas;
 
-	UCsCommon_Asset::GetBlueprintDefaultObjects<ACsData>(TEXT("bp_"), ECsStringCompare::StartsWith, Datas, nullptr);
+	UClass* Class = (*GetAssetTypeStaticClass)(AssetType);
+
+	UCsCommon_Asset::GetBlueprintDefaultObjects<ACsData>(TEXT("bp_"), ECsStringCompare::StartsWith, Datas, Class);
 
 	const int32 Count = Datas.Num();
 

@@ -408,7 +408,7 @@ void ACsPoseableMeshActor::PostEditChangeProperty_LevelSequence_Master(struct FP
 
 		TArray<ULevelSequence*> Sequences;
 		TArray<FString> PackagePaths;
-		UCsCommon_Asset::GetAssets<ULevelSequence>(AssetName, Sequences, PackagePaths, ECsStringCompare::Equals);
+		UCsCommon_Asset::GetAssets<ULevelSequence>(AssetName, ECsStringCompare::Equals, Sequences, PackagePaths);
 
 		const int32 SeqCount = Sequences.Num();
 
@@ -914,7 +914,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindO
 
 	TArray<ULevelSequence*> Sequences;
 	TArray<FString> PackagePaths;
-	UCsCommon_Asset::GetAssets<ULevelSequence>(AssetName, Sequences, PackagePaths, ECsStringCompare::Equals);
+	UCsCommon_Asset::GetAssets<ULevelSequence>(AssetName, ECsStringCompare::Equals, Sequences, PackagePaths);
 
 	const int32 SeqCount = Sequences.Num();
 	// Found
@@ -1248,7 +1248,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_Expor
 
 		TArray<UAnimSequence*> Anims;
 		TArray<FString> PackagePaths;
-		UCsCommon_Asset::GetAssets<UAnimSequence>(AnimName, Anims, PackagePaths, ECsStringCompare::Equals);
+		UCsCommon_Asset::GetAssets<UAnimSequence>(AnimName, ECsStringCompare::Equals, Anims, PackagePaths);
 
 		const int32 AnimCount = Anims.Num();
 

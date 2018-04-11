@@ -38,7 +38,7 @@ public:
 public:
 
 	bool Check_MarkDatasDirty(const TCHAR* Stream);
-	void MarkDatasDirty();
+	void MarkDatasDirty(const TCsAssetType &AssetType);
 
 #pragma endregion Data
 };

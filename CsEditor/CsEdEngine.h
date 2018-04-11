@@ -21,6 +21,8 @@ public:
 
 	CS_DECLARE_ASSET_TYPE
 
+	TCsGetAssetTypeStaticClass GetAssetTypeStaticClass;
+
 #pragma endregion Types
 
 // Stream

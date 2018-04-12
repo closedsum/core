@@ -15,7 +15,7 @@
  * A numerical entry box that allows for direct entry of the number or allows the user to click and slide the number.
  */
 UCLASS()
-class CSCORE_API USpinBox_Int32 : public UWidget
+class CSCORE_API UCsSpinBox_Int32 : public UWidget
 {
 	GENERATED_UCLASS_BODY()
 

@@ -9,7 +9,7 @@
 /////////////////////////////////////////////////////
 // USpinBox
 
-USpinBox_Int32::USpinBox_Int32(const FObjectInitializer& ObjectInitializer)
+UCsSpinBox_Int32::UCsSpinBox_Int32(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	if (!IsRunningDedicatedServer())
@@ -36,14 +36,14 @@ USpinBox_Int32::USpinBox_Int32(const FObjectInitializer& ObjectInitializer)
 	ForegroundColor = FSlateColor(FLinearColor::Black);
 }
 
-void USpinBox_Int32::ReleaseSlateResources(bool bReleaseChildren)
+void UCsSpinBox_Int32::ReleaseSlateResources(bool bReleaseChildren)
 {
 	Super::ReleaseSlateResources(bReleaseChildren);
 
 	MySpinBox.Reset();
 }
 
-TSharedRef<SWidget> USpinBox_Int32::RebuildWidget()
+TSharedRef<SWidget> UCsSpinBox_Int32::RebuildWidget()
 {
 	MySpinBox = SNew(SSpinBox<int32>)
 	.Style(&WidgetStyle)
@@ -59,7 +59,7 @@ TSharedRef<SWidget> USpinBox_Int32::RebuildWidget()
 	return MySpinBox.ToSharedRef();
 }
 
-void USpinBox_Int32::SynchronizeProperties()
+void UCsSpinBox_Int32::SynchronizeProperties()
 {
 	Super::SynchronizeProperties();
 
@@ -80,7 +80,7 @@ void USpinBox_Int32::SynchronizeProperties()
 	MySpinBox->SetValue(ValueBinding);
 }
 
-int32 USpinBox_Int32::GetValue() const
+int32 UCsSpinBox_Int32::GetValue() const
 {
 	if (MySpinBox.IsValid())
 	{
@@ -90,7 +90,7 @@ int32 USpinBox_Int32::GetValue() const
 	return Value;
 }
 
-void USpinBox_Int32::SetValue(const int32 &InValue)
+void UCsSpinBox_Int32::SetValue(const int32 &InValue)
 {
 	Value = InValue;
 	if (MySpinBox.IsValid())
@@ -100,7 +100,7 @@ void USpinBox_Int32::SetValue(const int32 &InValue)
 }
 
 // MIN VALUE
-int32 USpinBox_Int32::GetMinValue() const
+int32 UCsSpinBox_Int32::GetMinValue() const
 {
 	int32 ReturnVal = TNumericLimits<int32>::Lowest();
 
@@ -116,7 +116,7 @@ int32 USpinBox_Int32::GetMinValue() const
 	return ReturnVal;
 }
 
-void USpinBox_Int32::SetMinValue(const int32 &InMinValue)
+void UCsSpinBox_Int32::SetMinValue(const int32 &InMinValue)
 {
 	bOverride_MinValue = true;
 	MinValue = InMinValue;
@@ -126,7 +126,7 @@ void USpinBox_Int32::SetMinValue(const int32 &InMinValue)
 	}
 }
 
-void USpinBox_Int32::ClearMinValue()
+void UCsSpinBox_Int32::ClearMinValue()
 {
 	bOverride_MinValue = false;
 	if (MySpinBox.IsValid())
@@ -136,7 +136,7 @@ void USpinBox_Int32::ClearMinValue()
 }
 
 // MAX VALUE
-int32 USpinBox_Int32::GetMaxValue() const
+int32 UCsSpinBox_Int32::GetMaxValue() const
 {
 	int32 ReturnVal = TNumericLimits<int32>::Max();
 
@@ -152,7 +152,7 @@ int32 USpinBox_Int32::GetMaxValue() const
 	return ReturnVal;
 }
 
-void USpinBox_Int32::SetMaxValue(const int32 &InMaxValue)
+void UCsSpinBox_Int32::SetMaxValue(const int32 &InMaxValue)
 {
 	bOverride_MaxValue = true;
 	MaxValue = InMaxValue;
@@ -161,7 +161,7 @@ void USpinBox_Int32::SetMaxValue(const int32 &InMaxValue)
 		MySpinBox->SetMaxValue(InMaxValue);
 	}
 }
-void USpinBox_Int32::ClearMaxValue()
+void UCsSpinBox_Int32::ClearMaxValue()
 {
 	bOverride_MaxValue = false;
 	if (MySpinBox.IsValid())
@@ -171,7 +171,7 @@ void USpinBox_Int32::ClearMaxValue()
 }
 
 // MIN SLIDER VALUE
-int32 USpinBox_Int32::GetMinSliderValue() const
+int32 UCsSpinBox_Int32::GetMinSliderValue() const
 {
 	int32 ReturnVal = TNumericLimits<int32>::Min();
 
@@ -187,7 +187,7 @@ int32 USpinBox_Int32::GetMinSliderValue() const
 	return ReturnVal;
 }
 
-void USpinBox_Int32::SetMinSliderValue(const int32 &InMinSliderValue)
+void UCsSpinBox_Int32::SetMinSliderValue(const int32 &InMinSliderValue)
 {
 	bOverride_MinSliderValue = true;
 	MinSliderValue = InMinSliderValue;
@@ -197,7 +197,7 @@ void USpinBox_Int32::SetMinSliderValue(const int32 &InMinSliderValue)
 	}
 }
 
-void USpinBox_Int32::ClearMinSliderValue()
+void UCsSpinBox_Int32::ClearMinSliderValue()
 {
 	bOverride_MinSliderValue = false;
 	if (MySpinBox.IsValid())
@@ -207,7 +207,7 @@ void USpinBox_Int32::ClearMinSliderValue()
 }
 
 // MAX SLIDER VALUE
-int32 USpinBox_Int32::GetMaxSliderValue() const
+int32 UCsSpinBox_Int32::GetMaxSliderValue() const
 {
 	int32 ReturnVal = TNumericLimits<int32>::Max();
 
@@ -223,7 +223,7 @@ int32 USpinBox_Int32::GetMaxSliderValue() const
 	return ReturnVal;
 }
 
-void USpinBox_Int32::SetMaxSliderValue(const int32 &InMaxSliderValue)
+void UCsSpinBox_Int32::SetMaxSliderValue(const int32 &InMaxSliderValue)
 {
 	bOverride_MaxSliderValue = true;
 	MaxSliderValue = InMaxSliderValue;
@@ -233,7 +233,7 @@ void USpinBox_Int32::SetMaxSliderValue(const int32 &InMaxSliderValue)
 	}
 }
 
-void USpinBox_Int32::ClearMaxSliderValue()
+void UCsSpinBox_Int32::ClearMaxSliderValue()
 {
 	bOverride_MaxSliderValue = false;
 	if (MySpinBox.IsValid())
@@ -242,7 +242,7 @@ void USpinBox_Int32::ClearMaxSliderValue()
 	}
 }
 
-void USpinBox_Int32::SetForegroundColor(const FSlateColor &InForegroundColor)
+void UCsSpinBox_Int32::SetForegroundColor(const FSlateColor &InForegroundColor)
 {
 	ForegroundColor = InForegroundColor;
 	if ( MySpinBox.IsValid() )
@@ -252,7 +252,7 @@ void USpinBox_Int32::SetForegroundColor(const FSlateColor &InForegroundColor)
 }
 
 // Event handlers
-void USpinBox_Int32::HandleOnValueChanged(int32 InValue)
+void UCsSpinBox_Int32::HandleOnValueChanged(int32 InValue)
 {
 	if ( !IsDesignTime() )
 	{
@@ -260,7 +260,7 @@ void USpinBox_Int32::HandleOnValueChanged(int32 InValue)
 	}
 }
 
-void USpinBox_Int32::HandleOnValueCommitted(int32 InValue, ETextCommit::Type CommitMethod)
+void UCsSpinBox_Int32::HandleOnValueCommitted(int32 InValue, ETextCommit::Type CommitMethod)
 {
 	if ( !IsDesignTime() )
 	{
@@ -268,7 +268,7 @@ void USpinBox_Int32::HandleOnValueCommitted(int32 InValue, ETextCommit::Type Com
 	}
 }
 
-void USpinBox_Int32::HandleOnBeginSliderMovement()
+void UCsSpinBox_Int32::HandleOnBeginSliderMovement()
 {
 	if ( !IsDesignTime() )
 	{
@@ -276,7 +276,7 @@ void USpinBox_Int32::HandleOnBeginSliderMovement()
 	}
 }
 
-void USpinBox_Int32::HandleOnEndSliderMovement(int32 InValue)
+void UCsSpinBox_Int32::HandleOnEndSliderMovement(int32 InValue)
 {
 	if ( !IsDesignTime() )
 	{
@@ -284,7 +284,7 @@ void USpinBox_Int32::HandleOnEndSliderMovement(int32 InValue)
 	}
 }
 
-void USpinBox_Int32::PostLoad()
+void UCsSpinBox_Int32::PostLoad()
 {
 	Super::PostLoad();
 
@@ -306,7 +306,7 @@ void USpinBox_Int32::PostLoad()
 
 #if WITH_EDITOR
 
-const FText USpinBox_Int32::GetPaletteCategory()
+const FText UCsSpinBox_Int32::GetPaletteCategory()
 {
 	return LOCTEXT("Input", "Input");
 }

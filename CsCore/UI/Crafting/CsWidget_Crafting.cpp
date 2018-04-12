@@ -460,9 +460,9 @@ void UCsWidget_Crafting::StopIncrementCount()
 	// Count
 #pragma region
 
-void UCsWidget_Crafting::OnCountValueChanged(float InValue)
+void UCsWidget_Crafting::OnCountValueChanged(int32 InValue)
 {
-	const uint32 NewValue = FMath::Max(0, FMath::FloorToInt(InValue));
+	const uint32 NewValue = FMath::Max(0, InValue);
 
 	if (!CanCompleteRecipe(NewValue))
 		return;
@@ -471,9 +471,9 @@ void UCsWidget_Crafting::OnCountValueChanged(float InValue)
 	UpdateRecipeWithSelectedOption();
 }
 
-void UCsWidget_Crafting::OnCountValueCommitted(float InValue, ETextCommit::Type CommitMethod)
+void UCsWidget_Crafting::OnCountValueCommitted(int32 InValue, ETextCommit::Type CommitMethod)
 {
-	const uint32 NewValue = FMath::Max(0, FMath::FloorToInt(InValue));
+	const uint32 NewValue = FMath::Max(0, InValue);
 
 	if (!CanCompleteRecipe(NewValue))
 		return;

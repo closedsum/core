@@ -315,6 +315,27 @@ bool ACsManager_Item::Transfer(TArray<FCsItem*> &Items, UObject* Instigator, con
 	return true;
 }
 
+bool ACsManager_Item::Transfer_Internal(FCsItem* Item, UObject* Instigator, ACsManager_Inventory* Manager_Inventory)
+{
+	const uint8 BAG = 0;
+	// TODO: Need a way to determine correct Bag
+	if (Manager_Inventory->IsFull(BAG, Item->ShortCode))
+		return false;
+
+	// TODO: Need a way to determine the State
+	if (Item->GetData()->GetIsIngredient())
+		Item->InventoryProperties.SetVisibleAndIngredient();
+	else
+		Item->InventoryProperties.SetVisible();
+	// TODO: Need a way to determine correct Bag
+	Item->InventoryProperties.Bag = BAG;
+
+	// TODO: Potentially evaluate having ChangeActiveItemOwnerInfo within AddItem
+	ChangeActiveItemOwnerInfo(Item, Instigator);
+	Manager_Inventory->AddItem(Item);
+	return true;
+}
+
 #pragma endregion Transfer
 
 // Save / Load

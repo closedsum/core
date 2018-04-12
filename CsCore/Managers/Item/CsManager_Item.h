@@ -3,6 +3,7 @@
 #include "GameFramework/Actor.h"
 #include "Types/CsTypes_Pool.h"
 #include "Types/CsTypes_Item.h"
+#include "Types/CsTypes_Load.h"
 #include "CsManager_Item.generated.h"
 
 // PopulateExistingItems
@@ -91,6 +92,7 @@ public:
 
 	virtual bool Transfer(FCsItem* Item, UObject* Instigator);
 	virtual bool Transfer(TArray<FCsItem*> &Items, UObject* Instigator, const TCsPoolTransactionOrder &Order);
+	bool Transfer_Internal(FCsItem* Item, UObject* Instigator, class ACsManager_Inventory* Manager_Inventory);
 
 #pragma endregion Transfer
 

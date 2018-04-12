@@ -102,7 +102,7 @@ void UCsWidget_Inventory::UpdateGrid()
 	{
 		UCsWidget_Inventory_Slot* CurrentSlot = MyGrid->Slots[I];
 
-		CurrentSlot->UpdateDisplayNameWithCurrentCount();
+		CurrentSlot->UpdateCurrentCount();
 	}
 }
 

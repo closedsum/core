@@ -15,7 +15,7 @@ class CSCORE_API UCsWidget_Inventory_Slot : public UCsWidget_ButtonAndText
 	uint8 Column;
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
-	void UpdateDisplayNameWithCurrentCount();
+	void UpdateCurrentCount();
 
 	UPROPERTY(BlueprintReadOnly, Category = "UI")
 	int32 Count;

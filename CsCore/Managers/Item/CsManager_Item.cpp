@@ -320,22 +320,30 @@ bool ACsManager_Item::Transfer(TArray<FCsItem*> &Items, UObject* Instigator, con
 
 bool ACsManager_Item::Transfer_Internal(FCsItem* Item, UObject* Instigator, ACsManager_Inventory* Manager_Inventory)
 {
-	const uint8 BAG = 0;
-	// TODO: Need a way to determine correct Bag
-	if (Manager_Inventory->IsFull(BAG, Item->ShortCode))
-		return false;
+	if (Manager_Inventory)
+	{
+		const uint8 BAG = 0;
+		// TODO: Need a way to determine correct Bag
+		if (Manager_Inventory->IsFull(BAG, Item->ShortCode))
+		{
+			const FString OwnerName = Instigator->GetName();
+			const FString& Type		= Item->TypeAsString;
 
-	// TODO: Need a way to determine the State
-	if (Item->GetData()->GetIsIngredient())
-		Item->InventoryProperties.SetVisibleAndIngredient();
-	else
+			UE_LOG(LogCs, Warning, TEXT("Transfer_Internal: %s's Inventory is FULL. DeAllocating %s with Id: %d"), *OwnerName, *Type, Item->UniqueId);
+			DeAllocate(Item);
+			return false;
+		}
+
 		Item->InventoryProperties.SetVisible();
-	// TODO: Need a way to determine correct Bag
-	Item->InventoryProperties.Bag = BAG;
+		// TODO: Need a way to determine correct Bag
+		Item->InventoryProperties.Bag = BAG;
+	}
 
 	// TODO: Potentially evaluate having ChangeActiveItemOwnerInfo within AddItem
 	ChangeActiveItemOwnerInfo(Item, Instigator);
-	Manager_Inventory->AddItem(Item);
+
+	if (Manager_Inventory)
+		Manager_Inventory->AddItem(Item);
 	return true;
 }
 

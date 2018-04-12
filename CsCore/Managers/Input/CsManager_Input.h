@@ -621,9 +621,9 @@ protected:
 public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Input")
-	FBindableDynEvent_CsManagerInput Default_ScriptEvent;
+	FBindableDynEvent_CsManagerInput Action_ScriptEvent;
 
-	FBindableEvent_CsManagerInput Default_Event;
+	FBindableEvent_CsManagerInput Action_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "Input")
 	FBindableDynEvent_CsManagerInput_FirstPressed FirstPressed_ScriptEvent;

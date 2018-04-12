@@ -401,9 +401,9 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 			Info->Duration = 0.0f;
 		}
 
-		Default_Event.Broadcast(ActionOwner, (uint8)Action, Event);
+		Action_Event.Broadcast(ActionOwner, (uint8)Action, Event);
 #if WITH_EDITOR
-		Default_ScriptEvent.Broadcast((uint8)Action, Event);
+		Action_ScriptEvent.Broadcast((uint8)Action, Event);
 #endif // #if WITH_EDITOR
 
 		// FirstPressed

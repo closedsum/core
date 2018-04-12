@@ -44,15 +44,21 @@ void ACsPooledActor::OnTick_HandleCVars(const float &DeltaSeconds)
 
 void ACsPooledActor::DeAllocate(){}
 void ACsPooledActor::OnCreatePool(){}
+
+// Visibility
+#pragma region
+
 void ACsPooledActor::Show() { Visibility = ECsVisibility::Visible; }
 void ACsPooledActor::Hide() { Visibility = ECsVisibility::Hidden; }
+
+#pragma endregion Visibility
 
 // Routines
 #pragma region
 
-/*static*/ void ACsPooledActor::AddRoutine(UObject* InWeapon, struct FCsRoutine* Routine, const uint8 &InType)
+/*static*/ void ACsPooledActor::AddRoutine(UObject* InActor, struct FCsRoutine* Routine, const uint8 &InType)
 {
-	Cast<ACsPooledActor>(InWeapon)->AddRoutine_Internal(Routine, InType);
+	Cast<ACsPooledActor>(InActor)->AddRoutine_Internal(Routine, InType);
 }
 
 bool ACsPooledActor::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType)
@@ -60,9 +66,9 @@ bool ACsPooledActor::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8
 	return false;
 }
 
-/*static*/ void ACsPooledActor::RemoveRoutine(UObject* InWeapon, struct FCsRoutine* Routine, const uint8 &InType)
+/*static*/ void ACsPooledActor::RemoveRoutine(UObject* InActor, struct FCsRoutine* Routine, const uint8 &InType)
 {
-	Cast<ACsPooledActor>(InWeapon)->RemoveRoutine_Internal(Routine, InType);
+	Cast<ACsPooledActor>(InActor)->RemoveRoutine_Internal(Routine, InType);
 }
 
 bool ACsPooledActor::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType)

@@ -6,6 +6,9 @@
 #include "Data/CsData_Interactive.h"
 #include "CsInteractiveActor.generated.h"
 
+// Macros
+#pragma region
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsInteractiveActor_Override_OnTickOverlap, const int32&, Index, const float&, DeltaSeconds);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_SevenParams(FBindableDynEvent_CsInteractiveActor_Override_OnBeginOverlap, const int32&, Index, UPrimitiveComponent*, OverlappedComponent, AActor*, OtherActor, UPrimitiveComponent*, OtherComp, int32, OtherBodyIndex, bool, bFromSweep, const FHitResult &, SweepResult);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(FBindableDynEvent_CsInteractiveActor_Override_OnEndOverlap, const int32&, Index, UPrimitiveComponent*, OverlappedComponent, AActor*, OtherActor, UPrimitiveComponent*, OtherComp, int32, OtherBodyIndex);
@@ -59,6 +62,48 @@ DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsInteractiveActor_OnFirst
 // Remove
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsInteractiveActor_Override_OnRemove, const int32&, Index, UObject*, InInstigator, USceneComponent*, InComponent);
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsInteractiveActor_OnRemove, const uint16&, UObject*, USceneComponent*);
+
+#pragma endregion Macros
+
+// Enums
+#pragma region
+
+namespace ECsInteractiveActorRoutine
+{
+	enum Type
+	{
+		ECsInteractiveActorRoutine_MAX = ECsPooledActorRoutine::ECsPooledActorRoutine_MAX,
+	};
+}
+
+#define ECS_INTERACTIVE_ACTOR_ROUTINE_MAX (uint8)ECsInteractiveActorRoutine::ECsInteractiveActorRoutine_MAX
+typedef ECsInteractiveActorRoutine::Type TCsInteractiveActorRoutine;
+
+namespace ECsInteractiveActorRoutine
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+	}
+
+	namespace Ref
+	{
+		const TCsInteractiveActorRoutine ECsInteractiveActorRoutine_MAX = Type::ECsInteractiveActorRoutine_MAX;
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE const Type& ToType(const FString &String)
+	{
+		return Ref::ECsInteractiveActorRoutine_MAX;
+	}
+}
+
+#pragma endregion Enums
 
 USTRUCT(BlueprintType)
 struct FCsInteractiveActorCache : public FCsPooledObjectCache
@@ -370,6 +415,15 @@ public:
 
 #pragma endregion State
 
+// Routines
+#pragma region
+public:
+
+	virtual bool AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type) override;
+	virtual bool RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type) override;
+
+#pragma endregion Routines
+
 // Visibility
 #pragma region
 public:
@@ -402,7 +456,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
 	bool CheckIsAirborne;
 
-	virtual void OnTick_HandlePhysicsState();
+	virtual void OnTick_Handle_PhysicsState();
 	virtual void OnTick_Overlap(const float DeltaSeconds);
 
 	UPROPERTY(BlueprintAssignable, Category = "Collision")

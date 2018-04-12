@@ -536,6 +536,25 @@ ACsMotionController* ACsInteractiveActor::GetLastHand_HoveringOverMe()
 
 #pragma endregion State
 
+// Routines
+#pragma region
+
+bool ACsInteractiveActor::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
+{
+	if (Super::AddRoutine_Internal(Routine, Type))
+		return true;
+	return false;
+}
+
+bool ACsInteractiveActor::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
+{
+	if (Super::RemoveRoutine_Internal(Routine, Type))
+		return true;
+	return false;
+}
+
+#pragma endregion Routines
+
 // Visibility
 #pragma region
 
@@ -629,7 +648,7 @@ void ACsInteractiveActor::ClearPhysicsState(const ECsInteractivePhysicsState &St
 	}
 }
 
-void ACsInteractiveActor::OnTick_HandlePhysicsState()
+void ACsInteractiveActor::OnTick_Handle_PhysicsState()
 {
 	if (!WorldCollisionSimulatesPhysics)
 		return;

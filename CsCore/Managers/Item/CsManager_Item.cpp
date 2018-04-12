@@ -203,11 +203,13 @@ void ACsManager_Item::SetActiveItemData(FCsItem* Item)
 	ACsDataMapping* DataMapping = UCsCommon::GetDataMapping(GetWorld());
 	Item->Data					= Cast<ACsData_Item>(DataMapping->GetLoadedData(ItemAssetType, Item->ShortCode));
 
+	if (Item->Data->GetIsIngredient())
+		Item->InventoryProperties.SetIngredient();
+
 	Item->InventoryProperties.Dimension = *(Item->Data->GetDimension());
 	Item->InventoryProperties.Capacity	= Item->Data->GetCapacity();
 
-	if (ACsData_Item* Data = Item->GetData())
-		Item->Data_Actor = Cast<ACsData_Interactive>(DataMapping->GetLoadedData(InteractiveAssetType, Data->GetSpawnedActorDataShortCode()));
+	Item->Data_Actor = Cast<ACsData_Interactive>(DataMapping->GetLoadedData(InteractiveAssetType, Data->GetSpawnedActorDataShortCode()));
 }
 
 // Get

@@ -379,24 +379,26 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 	if (!CurrentInput)
 		return;
 
-	const TCsInputAction Action	   = CurrentInput->Action;
-	const TCsInputEvent Event	   = CurrentInput->Event;
-	const TCsInputEvent Last_Event = Infos[(uint8)Action]->Last_Event;
-	const float Value			   = CurrentInput->Value;
-	const FVector Location		   = CurrentInput->Location;
-	const FRotator Rotation		   = CurrentInput->Rotation;
+	const TCsInputAction& Action	= CurrentInput->Action;
+	const TCsInputEvent& Event	    = CurrentInput->Event;
+	const TCsInputEvent& Last_Event = Infos[(uint8)Action]->Last_Event;
+	const float& Value			    = CurrentInput->Value;
+	const FVector& Location		    = CurrentInput->Location;
+	const FRotator& Rotation		= CurrentInput->Rotation;
 
-	// Pressed
-	if (Infos[(uint8)Action]->Type == ECsInputType::Action)
+	FCsInputInfo* Info = Infos[(uint8)Action];
+
+	// Action
+	if (Info->Type == ECsInputType::Action)
 	{
 		if (Event == ECsInputEvent::Pressed &&
 			(Last_Event == ECsInputEvent::FirstPressed || Last_Event == ECsInputEvent::Pressed))
 		{
-			Infos[(uint8)Action]->Duration += DeltaTime;
+			Info->Duration += DeltaTime;
 		}
 		else
 		{
-			Infos[(uint8)Action]->Duration = 0.0f;
+			Info->Duration = 0.0f;
 		}
 
 		Default_Event.Broadcast(ActionOwner, (uint8)Action, Event);
@@ -434,16 +436,16 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		return;
 	}
 	// Axis
-	if (Infos[(uint8)Action]->Type == ECsInputType::Axis)
+	if (Info->Type == ECsInputType::Axis)
 	{
 		if ((Event == ECsInputEvent::FirstMoved || Event == ECsInputEvent::Moved) &&
 			(Last_Event == ECsInputEvent::FirstMoved || Last_Event == ECsInputEvent::Moved))
 		{
-			Infos[(uint8)Action]->Duration += DeltaTime;
+			Info->Duration += DeltaTime;
 		}
 		else
 		{
-			Infos[(uint8)Action]->Duration = 0.0f;
+			Info->Duration = 0.0f;
 		}
 
 		Axis_Event.Broadcast(ActionOwner, (uint8)Action, Event, Value);
@@ -490,7 +492,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		return;
 	}
 	// Location
-	if (Infos[(uint8)Action]->Type == ECsInputType::Location)
+	if (Info->Type == ECsInputType::Location)
 	{
 		Location_Event.Broadcast(ActionOwner, (uint8)Action, Event, Location);
 #if WITH_EDITOR
@@ -536,7 +538,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		return;
 	}
 	// Rotation
-	if (Infos[(uint8)Action]->Type == ECsInputType::Rotation)
+	if (Info->Type == ECsInputType::Rotation)
 	{
 		Rotation_Event.Broadcast(ActionOwner, (uint8)Action, Event, Rotation);
 #if WITH_EDITOR

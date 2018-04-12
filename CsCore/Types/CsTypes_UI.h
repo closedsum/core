@@ -19,6 +19,7 @@
 #include "Runtime/UMG/Public/Components/ComboBoxString.h"
 #include "Runtime/UMG/Public/Components/CheckBox.h"
 #include "Runtime/UMG/Public/Components/SpinBox.h"
+#include "UI/Components/CsSpinBox_Int32.h"
 
 #include "Runtime/Engine/Classes/Components/TextRenderComponent.h"
 
@@ -278,6 +279,9 @@ struct FCsWidgetComponentInfo
 	bool ScaleByDistance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+	bool FollowOwner;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
 	FTransform Transform;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
@@ -316,8 +320,10 @@ public:
 		bMinDrawDistance = B.bMinDrawDistance;
 		MinDrawDistance = B.MinDrawDistance;
 		ScaleByDistance = B.ScaleByDistance;
+		FollowOwner = B.FollowOwner;
 		Transform = B.Transform;
 		FollowCamera = B.FollowCamera;
+		DistanceProjectedOutFromCamera = B.DistanceProjectedOutFromCamera;
 		LookAtCamera = B.LookAtCamera;
 		LockAxes = B.LockAxes;
 		return *this;
@@ -332,7 +338,9 @@ public:
 				bMinDrawDistance == B.bMinDrawDistance &&
 				MinDrawDistance == B.MinDrawDistance &&
 				ScaleByDistance == B.ScaleByDistance &&
+				FollowOwner == B.FollowOwner &&
 				FollowCamera == B.FollowCamera &&
+				DistanceProjectedOutFromCamera == B.DistanceProjectedOutFromCamera &&
 				LookAtCamera == B.LookAtCamera &&
 				LockAxes == B.LockAxes;
 	}
@@ -1629,7 +1637,7 @@ public:
 struct FCsWidget_SpinBox_int32 : public FCsWidget
 {
 public:
-	TWeakObjectPtr<class USpinBox> SpinBox;
+	TWeakObjectPtr<class UCsSpinBox_Int32> SpinBox;
 
 	TCsInt32 Value;
 	TCsInt32 MinValue;
@@ -1638,7 +1646,7 @@ public:
 	FCsWidget_SpinBox_int32() {}
 	~FCsWidget_SpinBox_int32() {}
 
-	void Set(class USpinBox* inSpinBox)
+	void Set(class UCsSpinBox_Int32* inSpinBox)
 	{
 		SpinBox = inSpinBox;
 		Visibility = SpinBox->Visibility;
@@ -1656,7 +1664,7 @@ public:
 		// Visibility
 		if (Visibility.HasChanged())
 		{
-			if (USpinBox* S = Get())
+			if (UCsSpinBox_Int32* S = Get())
 				S->SetVisibility(Visibility.Get());
 		}
 		if (Visibility == ESlateVisibility::Collapsed ||
@@ -1668,13 +1676,13 @@ public:
 		// Value
 		if (Value.HasChanged())
 		{
-			if (USpinBox* S = Get())
+			if (UCsSpinBox_Int32* S = Get())
 				S->SetValue(Value.Get());
 		}
 		// MinValue
 		if (MinValue.HasChanged())
 		{
-			if (USpinBox* S = Get())
+			if (UCsSpinBox_Int32* S = Get())
 			{
 				S->SetMinValue(MinValue.Get());
 				S->SetMinSliderValue(MinValue.Get());
@@ -1683,7 +1691,7 @@ public:
 		// MaxValue
 		if (MaxValue.HasChanged())
 		{
-			if (USpinBox* S = Get())
+			if (UCsSpinBox_Int32* S = Get())
 			{
 				S->SetMaxValue(MaxValue.Get());
 				S->SetMaxSliderValue(MaxValue.Get());
@@ -1722,13 +1730,13 @@ public:
 		MaxValue = inMaxValue;
 	}
 
-	USpinBox* Get() { return SpinBox.IsValid() ? SpinBox.Get() : nullptr; }
+	UCsSpinBox_Int32* Get() { return SpinBox.IsValid() ? SpinBox.Get() : nullptr; }
 };
 
 struct FCsWidget_SpinBox_uint32 : public FCsWidget
 {
 public:
-	TWeakObjectPtr<class USpinBox> SpinBox;
+	TWeakObjectPtr<class UCsSpinBox_Int32> SpinBox;
 
 	TCsUint32 Value;
 	TCsUint32 MinValue;
@@ -1737,7 +1745,7 @@ public:
 	FCsWidget_SpinBox_uint32() {}
 	~FCsWidget_SpinBox_uint32() {}
 
-	void Set(class USpinBox* inSpinBox)
+	void Set(class UCsSpinBox_Int32* inSpinBox)
 	{
 		SpinBox = inSpinBox;
 		Visibility = SpinBox->Visibility;
@@ -1755,7 +1763,7 @@ public:
 		// Visibility
 		if (Visibility.HasChanged())
 		{
-			if (USpinBox* S = Get())
+			if (UCsSpinBox_Int32* S = Get())
 				S->SetVisibility(Visibility.Get());
 		}
 		if (Visibility == ESlateVisibility::Collapsed ||
@@ -1767,13 +1775,13 @@ public:
 		// Value
 		if (Value.HasChanged())
 		{
-			if (USpinBox* S = Get())
+			if (UCsSpinBox_Int32* S = Get())
 				S->SetValue(Value.Get());
 		}
 		// MinValue
 		if (MinValue.HasChanged())
 		{
-			if (USpinBox* S = Get())
+			if (UCsSpinBox_Int32* S = Get())
 			{
 				S->SetMinValue(MinValue.Get());
 				S->SetMinSliderValue(MinValue.Get());
@@ -1782,7 +1790,7 @@ public:
 		// MaxValue
 		if (MaxValue.HasChanged())
 		{
-			if (USpinBox* S = Get())
+			if (UCsSpinBox_Int32* S = Get())
 			{
 				S->SetMaxValue(MaxValue.Get());
 				S->SetMaxSliderValue(MaxValue.Get());
@@ -1823,7 +1831,7 @@ public:
 		MaxValue = inMaxValue;
 	}
 
-	USpinBox* Get() { return SpinBox.IsValid() ? SpinBox.Get() : nullptr; }
+	UCsSpinBox_Int32* Get() { return SpinBox.IsValid() ? SpinBox.Get() : nullptr; }
 };
 
 struct FCsWidget_ButtonAndText : public FCsWidget

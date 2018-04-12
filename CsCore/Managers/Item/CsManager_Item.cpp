@@ -201,13 +201,16 @@ void ACsManager_Item::ChangeActiveItemOwnerInfo(FCsItem* Item, UObject* ItemOwne
 void ACsManager_Item::SetActiveItemData(FCsItem* Item)
 {
 	ACsDataMapping* DataMapping = UCsCommon::GetDataMapping(GetWorld());
-	Item->Data					= Cast<ACsData_Item>(DataMapping->GetLoadedData(ItemAssetType, Item->ShortCode));
+	ACsData_Item* Data			= Cast<ACsData_Item>(DataMapping->GetLoadedData(ItemAssetType, Item->ShortCode));
+	Item->Data					= Data;
 
-	Item->InventoryProperties.Dimension = *(Item->Data->GetDimension());
-	Item->InventoryProperties.Capacity	= Item->Data->GetCapacity();
+	if (Data->GetIsIngredient())
+		Item->InventoryProperties.SetIngredient();
 
-	if (ACsData_Item* Data = Item->GetData())
-		Item->Data_Actor = Cast<ACsData_Interactive>(DataMapping->GetLoadedData(InteractiveAssetType, Data->GetSpawnedActorDataShortCode()));
+	Item->InventoryProperties.Dimension = *(Data->GetDimension());
+	Item->InventoryProperties.Capacity	= Data->GetCapacity();
+
+	Item->Data_Actor = Cast<ACsData_Interactive>(DataMapping->GetLoadedData(InteractiveAssetType, Data->GetSpawnedActorDataShortCode()));
 }
 
 // Get
@@ -312,6 +315,27 @@ bool ACsManager_Item::Transfer(TArray<FCsItem*> &Items, UObject* Instigator, con
 	{
 		Transfer(Items[I], Instigator);
 	}
+	return true;
+}
+
+bool ACsManager_Item::Transfer_Internal(FCsItem* Item, UObject* Instigator, ACsManager_Inventory* Manager_Inventory)
+{
+	const uint8 BAG = 0;
+	// TODO: Need a way to determine correct Bag
+	if (Manager_Inventory->IsFull(BAG, Item->ShortCode))
+		return false;
+
+	// TODO: Need a way to determine the State
+	if (Item->GetData()->GetIsIngredient())
+		Item->InventoryProperties.SetVisibleAndIngredient();
+	else
+		Item->InventoryProperties.SetVisible();
+	// TODO: Need a way to determine correct Bag
+	Item->InventoryProperties.Bag = BAG;
+
+	// TODO: Potentially evaluate having ChangeActiveItemOwnerInfo within AddItem
+	ChangeActiveItemOwnerInfo(Item, Instigator);
+	Manager_Inventory->AddItem(Item);
 	return true;
 }
 

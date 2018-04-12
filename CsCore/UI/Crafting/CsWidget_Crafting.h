@@ -196,14 +196,14 @@ public:
 	UBorder* Count_Border;
 
 	UPROPERTY(meta = (BindWidget))
-	USpinBox* Count_Spin;
+	class UCsSpinBox_Int32* Count_Spin;
 
 	FCsWidget_SpinBox_uint32 CurrentCount;
 
 	UFUNCTION()
-	void OnCountValueChanged(float InValue);
+	void OnCountValueChanged(int32 InValue);
 	UFUNCTION()
-	void OnCountValueCommitted(float InValue, ETextCommit::Type CommitMethod);
+	void OnCountValueCommitted(int32 InValue, ETextCommit::Type CommitMethod);
 
 #pragma endregion Count
 

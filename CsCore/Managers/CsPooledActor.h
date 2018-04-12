@@ -7,6 +7,46 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPooledActor_Override_OnTick, const int32&, Index, const float&, DeltaSeconds);
 
+// Enums
+#pragma region
+
+namespace ECsPooledActorRoutine
+{
+	enum Type
+	{
+		ECsPooledActorRoutine_MAX,
+	};
+}
+
+#define ECS_POOLED_ACTOR_ROUTINE_MAX (uint8)ECsPooledActorRoutine::ECsPooledActorRoutine_MAX
+typedef ECsPooledActorRoutine::Type TCsPooledActorRoutine;
+
+namespace ECsPooledActorRoutine
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+	}
+
+	namespace Ref
+	{
+		const TCsPooledActorRoutine ECsPooledActorRoutine_MAX = Type::ECsPooledActorRoutine_MAX;
+	}
+
+	FORCEINLINE FString ToString(const Type &EType)
+	{
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE const Type& ToType(const FString &String)
+	{
+		return Ref::ECsPooledActorRoutine_MAX;
+	}
+}
+
+#pragma endregion Enums
+
 UCLASS()
 class CSCORE_API ACsPooledActor : public AActor
 {
@@ -37,12 +77,18 @@ class CSCORE_API ACsPooledActor : public AActor
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pool")
 	TEnumAsByte<ECsVisibility::Type> Visibility;
 
+// Visibility
+#pragma region
+public:
+
 	UFUNCTION(BlueprintCallable, Category = "Pool")
 	virtual void Show();
 	UFUNCTION(BlueprintCallable, Category = "Pool")
 	virtual void Hide();
 
-	// Routines
+#pragma endregion Visiblity
+
+// Routines
 #pragma region
 public:
 

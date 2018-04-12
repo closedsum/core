@@ -184,9 +184,7 @@ void ACsManager_InteractiveActor::AddToActivePool(UObject* InObject, const uint8
 
 void ACsManager_InteractiveActor::OnTick(const float &DeltaSeconds)
 {
-	const int32 PoolCount = ActiveActors.Num();
-
-	for (int32 I = PoolCount - 1; I >= 0; --I)
+	for (int32 I = 0; I < INTERACTIVE_TYPE_MAX; ++I)
 	{
 		const TCsInteractiveType Type			= (TCsInteractiveType)I;
 		TArray<ACsInteractiveActor*>* ActorsPtr = ActiveActors.Find(Type);
@@ -236,7 +234,7 @@ void ACsManager_InteractiveActor::OnTick(const float &DeltaSeconds)
 		{
 			const uint16 Max = ActorsPtr->Num();
 
-			for (uint16 J = EarliestIndex; J < Max; J++)
+			for (uint16 J = EarliestIndex; J < Max; ++J)
 			{
 				ACsInteractiveActor* Actor = (*ActorsPtr)[J];
 				Actor->Cache.SetActiveIndex(J);

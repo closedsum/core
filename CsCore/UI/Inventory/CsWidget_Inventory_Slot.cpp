@@ -29,15 +29,11 @@ UCsWidget_Inventory_Slot::UCsWidget_Inventory_Slot(const FObjectInitializer& Obj
 	MyData = nullptr;
 }
 
-void UCsWidget_Inventory_Slot::UpdateDisplayNameWithCurrentCount()
+void UCsWidget_Inventory_Slot::UpdateCurrentCount()
 {
-	if (Count > CS_EMPTY)
+	if (Count > 1)
 	{ 
-		const FString DisplayName = GetMyData()->GetDisplayName();
-										//   FString::FromInt(Count) + TEXT("x ") + DisplayName
-		const FString DisplayNameWithCount = FString::FromInt(Count) + ECsWidgetInventorySlotCachedString::Str::x + DisplayName;
-
-		SetString(DisplayNameWithCount);
+		SetString(FString::FromInt(Count));
 	}
 	else
 	{
@@ -56,8 +52,8 @@ void UCsWidget_Inventory_Slot::AddItem(FCsItem* Item)
 		SetImage(MyData->GetMaterial());
 	}
 
-	Count++;
-	UpdateDisplayNameWithCurrentCount();
+	++Count;
+	UpdateCurrentCount();
 }
 
 void UCsWidget_Inventory_Slot::RemoveItem(const FCsItem* const Item)
@@ -71,7 +67,7 @@ void UCsWidget_Inventory_Slot::RemoveItem(const FCsItem* const Item)
 
 		SetImage(nullptr);
 	}
-	UpdateDisplayNameWithCurrentCount();
+	UpdateCurrentCount();
 }
 
 class ACsData_Item* UCsWidget_Inventory_Slot::GetMyData()
@@ -85,6 +81,6 @@ void UCsWidget_Inventory_Slot::Empty()
 	MyData.Reset();
 	MyData = nullptr;
 
-	UpdateDisplayNameWithCurrentCount();
+	UpdateCurrentCount();
 	SetImage(nullptr);
 }

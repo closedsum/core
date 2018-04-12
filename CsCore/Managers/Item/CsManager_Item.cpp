@@ -257,6 +257,17 @@ void ACsManager_Item::GetItemsByOwnerId(const uint64 &OwnerId, TArray<FCsItem*> 
 	}
 }
 
+void ACsManager_Item::GetItems(const TArray<uint64> &Ids, TArray<FCsItem*> &OutItems)
+{
+	const int32 Count = Ids.Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		if (FCsItem** ItemPtr = (ActiveItems.Find(Ids[I])))
+			OutItems.Add(*ItemPtr);
+	}
+}
+
 #pragma endregion Get
 
 // DeAllocate
@@ -344,6 +355,16 @@ bool ACsManager_Item::Transfer_Internal(FCsItem* Item, UObject* Instigator, ACsM
 
 	if (Manager_Inventory)
 		Manager_Inventory->AddItem(Item);
+
+	// Transfer Contents
+	/*
+	const int32 ContentCount = Item->Contents.Num();
+
+	for (int32 I = 0; I < ContentCount; ++I)
+	{
+		FCsItem* ContentItem = Item->Contents[I];
+	}
+	*/
 	return true;
 }
 

@@ -75,6 +75,8 @@ public:
 	void GetItemsByOwnerType(const TCsItemOwner &OwnerTyper, TArray<FCsItem*> &OutItems);
 	void GetItemsByOwnerId(const uint64 &OwnerId, TArray<FCsItem*> &OutItems);
 
+	void GetItems(const TArray<uint64> &Ids, TArray<FCsItem*> &OutItems);
+
 #pragma endregion Get
 
 // DeAllocate

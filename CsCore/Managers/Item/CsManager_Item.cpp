@@ -218,7 +218,14 @@ void ACsManager_Item::SetActiveItemData(FCsItem* Item)
 
 FCsItem* ACsManager_Item::GetItem(const uint64 &Id)
 {
-	return *(ActiveItems.Find(Id));
+	if (FCsItem** ItemPtr = ActiveItems.Find(Id))
+		return *ItemPtr;
+
+	if (CsCVarLogManagerItemActionGet->GetInt() == CS_CVAR_SHOW_LOG)
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::GetItem: Failed to find an Item with Id: %d"), Id);
+	}
+	return nullptr;
 }
 
 void ACsManager_Item::GetItemsByOwnerType(const TCsItemOwner &OwnerType, TArray<FCsItem*> &OutItems)
@@ -245,6 +252,10 @@ void ACsManager_Item::GetItemsByOwnerId(const uint64 &OwnerId, TArray<FCsItem*> 
 
 	if (!Items)
 	{
+		if (CsCVarLogManagerItemActionGet->GetInt() == CS_CVAR_SHOW_LOG)
+		{
+			UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::GetItemsByOwnerId: Failed to find any ActiveItems with OwnerId: %d"), OwnerId);
+		}
 		OutItems.Reset();
 		return;
 	}
@@ -264,7 +275,16 @@ void ACsManager_Item::GetItems(const TArray<uint64> &Ids, TArray<FCsItem*> &OutI
 	for (int32 I = 0; I < Count; ++I)
 	{
 		if (FCsItem** ItemPtr = (ActiveItems.Find(Ids[I])))
+		{
 			OutItems.Add(*ItemPtr);
+		}
+		else
+		{
+			if (CsCVarLogManagerItemActionGet->GetInt() == CS_CVAR_SHOW_LOG)
+			{
+				UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::GetItems: Failed to find an Item with Id: %d"), Ids[I]);
+			}
+		}
 	}
 }
 

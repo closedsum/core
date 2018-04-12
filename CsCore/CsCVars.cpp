@@ -548,6 +548,13 @@ TAutoConsoleVariable<int32> CsCVarLogManagerItemTransactions(
 	ECVF_SetByConsole
 );
 
+TAutoConsoleVariable<int32> CsCVarLogManagerItemActionGet(
+	TEXT("log.manager.item.action.get"),
+	0,
+	TEXT("Log Manager Item GetItem(s)."),
+	ECVF_SetByConsole
+);
+
 #pragma endregion Item
 
 // Inventory

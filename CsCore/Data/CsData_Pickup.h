@@ -32,7 +32,11 @@ class CSCORE_API ACsData_Pickup : public ACsData_Interactive
 // Sound
 #pragma region
 
+	UFUNCTION(BlueprintCallable, Category = "Sound")
+	virtual const bool& UseCollectSound();
+
 	virtual FCsSoundElement* GetSound(const TCsPickupSound &SoundType);
+	virtual void PlaySound(UWorld* InWorld, const TCsPickupSound &SoundType, UObject* InOwner, UObject* InParent);
 
 #pragma endregion Sound
 };

@@ -201,13 +201,14 @@ void ACsManager_Item::ChangeActiveItemOwnerInfo(FCsItem* Item, UObject* ItemOwne
 void ACsManager_Item::SetActiveItemData(FCsItem* Item)
 {
 	ACsDataMapping* DataMapping = UCsCommon::GetDataMapping(GetWorld());
-	Item->Data					= Cast<ACsData_Item>(DataMapping->GetLoadedData(ItemAssetType, Item->ShortCode));
+	ACsData_Item* Data			= Cast<ACsData_Item>(DataMapping->GetLoadedData(ItemAssetType, Item->ShortCode));
+	Item->Data					= Data;
 
-	if (Item->Data->GetIsIngredient())
+	if (Data->GetIsIngredient())
 		Item->InventoryProperties.SetIngredient();
 
-	Item->InventoryProperties.Dimension = *(Item->Data->GetDimension());
-	Item->InventoryProperties.Capacity	= Item->Data->GetCapacity();
+	Item->InventoryProperties.Dimension = *(Data->GetDimension());
+	Item->InventoryProperties.Capacity	= Data->GetCapacity();
 
 	Item->Data_Actor = Cast<ACsData_Interactive>(DataMapping->GetLoadedData(InteractiveAssetType, Data->GetSpawnedActorDataShortCode()));
 }

@@ -1,5 +1,7 @@
 ﻿namespace CgCore
 {
+    using System.Collections.Generic;
+
     public abstract class TCgEnum<T>
     {
         #region "Data Members"
@@ -35,7 +37,7 @@
 
     public class ECgEnum_Byte : TCgEnum<byte>
     {
-        public ECgEnum_Byte() : base(){}
+        public ECgEnum_Byte() : base() { }
         public ECgEnum_Byte(byte value) : base(value) { }
         public ECgEnum_Byte(byte value, string name) : base(value, name) { }
 

@@ -30,12 +30,20 @@
 
     public enum ECgInputDevice : byte
     {
-
+        MouseAndKeyboard,
+        Gamepad,
+        MotionController,
+        MAX
     }
 
     public enum ECgInputType : byte
     {
-
+        Action,
+        Axis,
+        Trigger,
+        Location,
+        Rotation,
+        MAX
     }
 
     public enum ECgInputEvent : byte
@@ -148,7 +156,7 @@
         public void Bind(ECgInputAction action, ECgInputEvent e, CgDelegate_Void handler)
         {
             bool found = false;
-            
+
             // Check if Handler has been already created for the action
             int len = HandlerList.Capacity;
 
@@ -168,7 +176,7 @@
             if (!found)
             {
                 CgKeyInputHandler inputHandler = new CgKeyInputHandler(action);
-                inputHandler.Events[(byte)e]  += handler;
+                inputHandler.Events[(byte)e] += handler;
 
                 HandlerList.Add(inputHandler);
             }
@@ -306,9 +314,9 @@
         }
 
         public void Allocate(ECgInputAction action, ECgInputEvent e, float value, Vector3 location, Vector3 rotation)
-	    {
-		    IsAllocated = true;
-		    Set(action, e, value, location, rotation);
+        {
+            IsAllocated = true;
+            Set(action, e, value, location, rotation);
         }
 
         public void Allocate(ECgInputAction action, ECgInputEvent e, Vector3 location, Vector3 rotation)
@@ -337,7 +345,7 @@
             Rotation = Vector3.zero;
             Duration = 0f;
         }
-}
+    }
 
     public class CgInputFrame
     {
@@ -466,9 +474,9 @@
                 return input.Event == e ? input : null;
             return null;
         }
-        
+
         public CgInput GetInput(ECgInputAction action, List<ECgInputEvent> events)
-	    {
+        {
             CgInput input = GetInput(action);
 
             if (input != null)

@@ -5,6 +5,17 @@
     using System.Collections.Generic;
     using UnityEngine;
 
+    public class CgManagerInput_Action_Default : TCgDelegate_TwoParams<ECgInputAction, ECgInputEvent> { }
+    public class CgManagerInput_Action : TCgDelegate_OneParam<ECgInputAction> { }
+    public class CgManagerInput_Axis_Default : TCgDelegate_ThreeParams<ECgInputAction, ECgInputEvent, float> { }
+    public class CgManagerInput_Axis : TCgDelegate_TwoParams<ECgInputAction, float> { }
+    public class CgManagerInput_Location_Default : TCgDelegate_ThreeParams<ECgInputAction, ECgInputEvent, Vector3> { }
+    public class CgManagerInput_Location : TCgDelegate_TwoParams<ECgInputAction, Vector3> { }
+    public class CgManagerInput_Location_Raw : TCgDelegate_OneParam<Vector3> { }
+    public class CgManagerInput_Rotation_Default : TCgDelegate_ThreeParams<ECgInputAction, ECgInputEvent, Vector3> { }
+    public class CgManagerInput_Rotation : TCgDelegate_TwoParams<ECgInputAction, Vector3> { }
+    public class CgManagerInput_Rotation_Raw : TCgDelegate_OneParam<Vector3> { }
+
     public class CgManager_Input
     {
         #region "Constants"
@@ -15,10 +26,6 @@
         #endregion // Constants
 
         #region "Delegates"
-
-        public delegate void CgManagerInput_Action(ECgInputAction action);
-        public delegate void CgManagerInput_Axis(ECgInputAction action, float val);
-        public delegate void CgManagerInput_Location_Raw(Vector3 v);
 
         #endregion // Delegates
 
@@ -55,7 +62,7 @@
 
                 #region "Pressed Events"
 
-        public CgManagerInput_Action Default_Event;
+        public CgManagerInput_Action_Default Action_Event;
         public CgManagerInput_Action FirstPressed_Event;
         public CgManagerInput_Action Pressed_Event;
         public CgManagerInput_Action FirstReleased_Event;
@@ -64,7 +71,7 @@
 
                 #region "Axis Events
 
-        public CgManagerInput_Axis Axis_Event;
+        public CgManagerInput_Axis_Default Axis_Event;
         public CgManagerInput_Axis Axis_FirstMoved_Event;
         public CgManagerInput_Axis Axis_Moved_Event;
         public CgManagerInput_Axis Axis_FirstStationary_Event;
@@ -74,6 +81,12 @@
 
                 #region "Location Events"
 
+        public CgManagerInput_Location_Default Location_Event;
+        public CgManagerInput_Location Location_FirstMoved_Event;
+        public CgManagerInput_Location Location_Moved_Event;
+        public CgManagerInput_Location Location_FirstStationary_Event;
+        public CgManagerInput_Location Location_Stationary_Event;
+
                     // Mouse
 
         public Vector3 CurrentMousePosition;
@@ -82,10 +95,29 @@
 
                     // VR
 
+        public CgManagerInput_Location_Raw HMD_Location_Raw;
+        public CgManagerInput_Location_Raw LeftHand_Location_Raw;
+        public CgManagerInput_Location_Raw RightHand_Location_Raw;
 
                 #endregion // Location Events
 
-            #endregion // Action
+                #region "Rotation Events"
+
+        public CgManagerInput_Rotation_Default Rotation_Event;
+        public CgManagerInput_Rotation Rotation_FirstMoved_Event;
+        public CgManagerInput_Rotation Rotation_Moved_Event;
+        public CgManagerInput_Rotation Rotation_FirstStationary_Event;
+        public CgManagerInput_Rotation Rotation_Stationary_Event;
+
+                    // VR
+
+        public CgManagerInput_Rotation_Raw HMD_Rotation_Raw;
+        public CgManagerInput_Rotation_Raw LeftHand_Rotation_Raw;
+        public CgManagerInput_Rotation_Raw RigthHand_Rotation_Raw;
+
+                #endregion // Rotation Events
+
+        #endregion // Action
 
         #endregion // Data Members
 
@@ -123,6 +155,40 @@
             }
 
             RawKeyInputsPressed = new List<CgKeyInput>();
+
+            // Events
+            Action_Event = new CgManagerInput_Action_Default();
+            FirstPressed_Event = new CgManagerInput_Action();
+            Pressed_Event = new CgManagerInput_Action();
+            FirstReleased_Event = new CgManagerInput_Action();
+
+            Axis_Event = new CgManagerInput_Axis_Default();
+            Axis_FirstMoved_Event = new CgManagerInput_Axis();
+            Axis_Moved_Event = new CgManagerInput_Axis();
+            Axis_FirstStationary_Event = new CgManagerInput_Axis();
+            Axis_Stationary_Event = new CgManagerInput_Axis();
+
+            Location_Event = new CgManagerInput_Location_Default();
+            Location_FirstMoved_Event = new CgManagerInput_Location();
+            Location_Moved_Event = new CgManagerInput_Location();
+            Location_FirstStationary_Event = new CgManagerInput_Location();
+            Location_Stationary_Event = new CgManagerInput_Location();
+
+            Mouse_Location_Raw = new CgManagerInput_Location_Raw();
+
+            HMD_Location_Raw = new CgManagerInput_Location_Raw();
+            LeftHand_Location_Raw = new CgManagerInput_Location_Raw();
+            RightHand_Location_Raw = new CgManagerInput_Location_Raw();
+
+            Rotation_Event = new CgManagerInput_Rotation_Default();
+            Rotation_FirstMoved_Event = new CgManagerInput_Rotation();
+            Rotation_Moved_Event = new CgManagerInput_Rotation();
+            Rotation_FirstStationary_Event = new CgManagerInput_Rotation();
+            Rotation_Stationary_Event = new CgManagerInput_Rotation();
+
+            HMD_Rotation_Raw = new CgManagerInput_Rotation_Raw();
+            LeftHand_Rotation_Raw = new CgManagerInput_Rotation_Raw();
+            RigthHand_Rotation_Raw = new CgManagerInput_Rotation_Raw();
         }
 
         private void RecordRawInputs()
@@ -164,7 +230,7 @@
             CurrentMousePosition = Input.mousePosition;
 
             if (Mouse_Location_Raw != null)
-                Mouse_Location_Raw(CurrentMousePosition);
+                Mouse_Location_Raw.Broadcast(CurrentMousePosition);
 
             // VR
         }
@@ -334,6 +400,118 @@
         {
             if (currentInput == null)
                 return;
+
+            ECgInputAction action   = currentInput.Action;
+            ECgInputEvent e         = currentInput.Event;
+            ECgInputEvent last_e    = Infos[(byte)action].Last_Event;
+            float value             = currentInput.Value;
+            Vector3 location        = currentInput.Location;
+            Vector3 rotation        = currentInput.Rotation;
+
+            CgInputInfo info = Infos[(byte)action];
+
+            // Action
+            if (info.Type == ECgInputType.Action)
+            {
+                if (e == ECgInputEvent.Pressed &&
+                    (last_e == ECgInputEvent.FirstPressed || last_e == ECgInputEvent.Pressed))
+                {
+                    info.Duration += deltaTime;
+                }
+                else
+                {
+                    info.Duration = 0.0f;
+                }
+
+                Action_Event.Broadcast(action, e);
+
+                // FirstPressed
+                if (e == ECgInputEvent.FirstPressed)
+                    FirstPressed_Event.Broadcast(action);
+                // Pressed
+                else
+                if (e == ECgInputEvent.Pressed)
+                    Pressed_Event.Broadcast(action);
+                // FirstReleased
+                else
+                if (e == ECgInputEvent.FirstReleased)
+                    FirstReleased_Event.Broadcast(action);
+            }
+            // Axis
+            if (info.Type == ECgInputType.Axis)
+            {
+                if ((e == ECgInputEvent.FirstMoved || e == ECgInputEvent.Moved) &&
+                    (last_e == ECgInputEvent.FirstMoved || last_e == ECgInputEvent.Moved))
+                {
+                    info.Duration += deltaTime;
+                }
+                else
+                {
+                    info.Duration = 0.0f;
+                }
+
+                Axis_Event.Broadcast(action, e, value);
+
+                // FirstMoved
+                if (e == ECgInputEvent.FirstMoved)
+                    Axis_FirstMoved_Event.Broadcast(action, value);
+                // Moved
+                else
+                if (e == ECgInputEvent.Moved)
+                    Axis_Moved_Event.Broadcast(action, value);
+                // FirstStationary
+                else
+                if (e == ECgInputEvent.FirstStationary)
+                    Axis_FirstStationary_Event.Broadcast(action, value);
+                // Stationary
+                else
+                if (e == ECgInputEvent.Stationary)
+                    Axis_Stationary_Event.Broadcast(action, value);
+            }
+            // Location
+            else
+            if (info.Type == ECgInputType.Location)
+            {
+                Location_Event.Broadcast(action, e, location);
+
+                // FirstMoved
+                if (e == ECgInputEvent.FirstMoved)
+                    Location_FirstMoved_Event.Broadcast(action, location);
+                // Moved
+                else
+                if (e == ECgInputEvent.Moved)
+                    Location_Moved_Event.Broadcast(action, location);
+                // FirstStationary
+                else
+                if (e == ECgInputEvent.FirstStationary)
+                    Location_FirstStationary_Event.Broadcast(action, location);
+                // Stationary
+                else
+                if (e == ECgInputEvent.Stationary)
+                    Location_Stationary_Event.Broadcast(action, location);
+            }
+            // Rotation
+            else
+            if (info.Type == ECgInputType.Rotation)
+            {
+                Rotation_Event.Broadcast(action, e, rotation);
+
+                // FirstMoved
+                if (e == ECgInputEvent.FirstMoved)
+                    Rotation_FirstMoved_Event.Broadcast(action, rotation);
+                // Moved
+                else
+                if (e == ECgInputEvent.Moved)
+                    Rotation_Moved_Event.Broadcast(action, rotation);
+                // FirstStationary
+                else
+                if (e == ECgInputEvent.FirstStationary)
+                    Rotation_FirstStationary_Event.Broadcast(action, rotation);
+                // Stationary
+                else
+                if (e == ECgInputEvent.Stationary)
+                    Rotation_Stationary_Event.Broadcast(action, rotation);
+            }
         }
 
         public void AllocateInput(ECgInputAction action, ECgInputEvent e, float value = 0f, Vector3 Location = new Vector3(), Vector3 Rotation = new Vector3())

@@ -360,7 +360,7 @@ bool ACsManager_Item::Transfer_Internal(FCsItem* Item, UObject* Instigator, ACsM
 			const FString OwnerName = Instigator->GetName();
 			const FString& Type		= Item->TypeAsString;
 
-			UE_LOG(LogCs, Warning, TEXT("Transfer_Internal: %s's Inventory is FULL. DeAllocating %s with Id: %d"), *OwnerName, *Type, Item->UniqueId);
+			UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::Transfer_Internal: %s's Inventory is FULL. DeAllocating %s with Id: %d"), *OwnerName, *Type, Item->UniqueId);
 			DeAllocate(Item);
 			return false;
 		}
@@ -377,14 +377,20 @@ bool ACsManager_Item::Transfer_Internal(FCsItem* Item, UObject* Instigator, ACsM
 		Manager_Inventory->AddItem(Item);
 
 	// Transfer Contents
-	/*
-	const int32 ContentCount = Item->Contents.Num();
+	TArray<FCsItem*> Items;
+	GetItems(Item->Contents, Items);
+
+	const int32 ContentCount = Items.Num();
 
 	for (int32 I = 0; I < ContentCount; ++I)
 	{
-		FCsItem* ContentItem = Item->Contents[I];
+		FCsItem* ContentItem = Items[I];
+
+		ChangeActiveItemOwnerInfo(ContentItem, Instigator);
+
+		if (Manager_Inventory)
+			Manager_Inventory->AddItem(ContentItem);
 	}
-	*/
 	return true;
 }
 

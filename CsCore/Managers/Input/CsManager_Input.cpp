@@ -401,7 +401,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 			Info->Duration = 0.0f;
 		}
 
-		Action_Event.Broadcast(ActionOwner, (uint8)Action, Event);
+		Action_Event.Broadcast(ActionOwner, Action, Event);
 #if WITH_EDITOR
 		Action_ScriptEvent.Broadcast((uint8)Action, Event);
 #endif // #if WITH_EDITOR
@@ -409,7 +409,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		// FirstPressed
 		if (Event == ECsInputEvent::FirstPressed)
 		{
-			FirstPressed_Event.Broadcast(ActionOwner, (uint8)Action);
+			FirstPressed_Event.Broadcast(ActionOwner, Action);
 #if WITH_EDITOR
 			FirstPressed_ScriptEvent.Broadcast((uint8)Action);
 #endif // #if WITH_EDITOR
@@ -418,7 +418,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		// Pressed
 		if (Event == ECsInputEvent::Pressed)
 		{
-			Pressed_Event.Broadcast(ActionOwner, (uint8)Action);
+			Pressed_Event.Broadcast(ActionOwner, Action);
 #if WITH_EDITOR
 			Pressed_ScriptEvent.Broadcast((uint8)Action);
 #endif // #if WITH_EDITOR
@@ -427,7 +427,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		// FirstReleased
 		if (Event == ECsInputEvent::FirstReleased)
 		{
-			FirstReleased_Event.Broadcast(ActionOwner, (uint8)Action);
+			FirstReleased_Event.Broadcast(ActionOwner, Action);
 #if WITH_EDITOR
 			FirstReleased_ScriptEvent.Broadcast((uint8)Action);
 #endif // #if WITH_EDITOR
@@ -448,7 +448,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 			Info->Duration = 0.0f;
 		}
 
-		Axis_Event.Broadcast(ActionOwner, (uint8)Action, Event, Value);
+		Axis_Event.Broadcast(ActionOwner, Action, Event, Value);
 #if WITH_EDITOR
 		Axis_ScriptEvent.Broadcast((uint8)Action, Event, Value);
 #endif // #if WITH_EDITOR
@@ -456,7 +456,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		// FirstMoved
 		if (Event == ECsInputEvent::FirstMoved)
 		{
-			Axis_FirstMoved_Event.Broadcast(ActionOwner, (uint8)Action, Value);
+			Axis_FirstMoved_Event.Broadcast(ActionOwner, Action, Value);
 #if WITH_EDITOR
 			Axis_FirstMoved_ScriptEvent.Broadcast((uint8)Action, Value);
 #endif // #if WITH_EDITOR
@@ -465,7 +465,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		// Moved
 		if (Event == ECsInputEvent::Moved)
 		{
-			Axis_Moved_Event.Broadcast(ActionOwner, (uint8)Action, Value);
+			Axis_Moved_Event.Broadcast(ActionOwner, Action, Value);
 #if WITH_EDITOR
 			Axis_Moved_ScriptEvent.Broadcast((uint8)Action, Value);
 #endif // #if WITH_EDITOR
@@ -474,7 +474,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		// FirstStationary
 		if (Event == ECsInputEvent::FirstStationary)
 		{
-			Axis_FirstStationary_Event.Broadcast(ActionOwner, (uint8)Action, Value);
+			Axis_FirstStationary_Event.Broadcast(ActionOwner, Action, Value);
 #if WITH_EDITOR
 			Axis_FirstStationary_ScriptEvent.Broadcast((uint8)Action, Value);
 #endif // #if WITH_EDITOR
@@ -483,7 +483,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		// Stationary
 		if (Event == ECsInputEvent::Stationary)
 		{
-			Axis_Stationary_Event.Broadcast(ActionOwner, (uint8)Action, Value);
+			Axis_Stationary_Event.Broadcast(ActionOwner, Action, Value);
 #if WITH_EDITOR
 			Axis_Stationary_ScriptEvent.Broadcast((uint8)Action, Value);
 #endif // #if WITH_EDITOR
@@ -494,7 +494,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 	// Location
 	if (Info->Type == ECsInputType::Location)
 	{
-		Location_Event.Broadcast(ActionOwner, (uint8)Action, Event, Location);
+		Location_Event.Broadcast(ActionOwner, Action, Event, Location);
 #if WITH_EDITOR
 		Location_ScriptEvent.Broadcast((uint8)Action, Event, Location);
 #endif // #if WITH_EDITOR
@@ -502,7 +502,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		// FirstMoved
 		if (Event == ECsInputEvent::FirstMoved)
 		{
-			Location_FirstMoved_Event.Broadcast(ActionOwner, (uint8)Action, Location);
+			Location_FirstMoved_Event.Broadcast(ActionOwner, Action, Location);
 #if WITH_EDITOR
 			Location_FirstMoved_ScriptEvent.Broadcast((uint8)Action, Location);
 #endif // #if WITH_EDITOR
@@ -511,7 +511,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		// Moved
 		if (Event == ECsInputEvent::Moved)
 		{
-			Location_Moved_Event.Broadcast(ActionOwner, (uint8)Action, Location);
+			Location_Moved_Event.Broadcast(ActionOwner, Action, Location);
 #if WITH_EDITOR
 			Location_Moved_ScriptEvent.Broadcast((uint8)Action, Location);
 #endif // #if WITH_EDITOR
@@ -520,7 +520,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		// FirstStationary
 		if (Event == ECsInputEvent::FirstStationary)
 		{
-			Location_FirstStationary_Event.Broadcast(ActionOwner, (uint8)Action, Location);
+			Location_FirstStationary_Event.Broadcast(ActionOwner, Action, Location);
 #if WITH_EDITOR
 			Location_FirstStationary_ScriptEvent.Broadcast((uint8)Action, Location);
 #endif // #if WITH_EDITOR
@@ -529,7 +529,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		// Stationary
 		if (Event == ECsInputEvent::Stationary)
 		{
-			Location_Stationary_Event.Broadcast(ActionOwner, (uint8)Action, Location);
+			Location_Stationary_Event.Broadcast(ActionOwner, Action, Location);
 #if WITH_EDITOR
 			Location_Stationary_ScriptEvent.Broadcast((uint8)Action, Location);
 #endif // #if WITH_EDITOR
@@ -540,7 +540,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 	// Rotation
 	if (Info->Type == ECsInputType::Rotation)
 	{
-		Rotation_Event.Broadcast(ActionOwner, (uint8)Action, Event, Rotation);
+		Rotation_Event.Broadcast(ActionOwner, Action, Event, Rotation);
 #if WITH_EDITOR
 		Rotation_ScriptEvent.Broadcast((uint8)Action, Event, Rotation);
 #endif // #if WITH_EDITOR
@@ -548,7 +548,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		// FirstMoved
 		if (Event == ECsInputEvent::FirstMoved)
 		{
-			Rotation_FirstMoved_Event.Broadcast(ActionOwner, (uint8)Action, Rotation);
+			Rotation_FirstMoved_Event.Broadcast(ActionOwner, Action, Rotation);
 #if WITH_EDITOR
 			Rotation_FirstMoved_ScriptEvent.Broadcast((uint8)Action, Rotation);
 #endif // #if WITH_EDITOR
@@ -557,7 +557,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		// Moved
 		if (Event == ECsInputEvent::Moved)
 		{
-			Rotation_Moved_Event.Broadcast(ActionOwner, (uint8)Action, Rotation);
+			Rotation_Moved_Event.Broadcast(ActionOwner, Action, Rotation);
 #if WITH_EDITOR
 			Rotation_Moved_ScriptEvent.Broadcast((uint8)Action, Rotation);
 #endif // #if WITH_EDITOR
@@ -566,7 +566,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		// FirstStationary
 		if (Event == ECsInputEvent::FirstStationary)
 		{
-			Rotation_FirstStationary_Event.Broadcast(ActionOwner, (uint8)Action, Rotation);
+			Rotation_FirstStationary_Event.Broadcast(ActionOwner, Action, Rotation);
 #if WITH_EDITOR
 			Rotation_FirstStationary_ScriptEvent.Broadcast((uint8)Action, Rotation);
 #endif // #if WITH_EDITOR
@@ -575,7 +575,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		// Stationary
 		if (Event == ECsInputEvent::Stationary)
 		{
-			Rotation_Stationary_Event.Broadcast(ActionOwner, (uint8)Action, Rotation);
+			Rotation_Stationary_Event.Broadcast(ActionOwner, Action, Rotation);
 #if WITH_EDITOR
 			Rotation_Stationary_ScriptEvent.Broadcast((uint8)Action, Rotation);
 #endif // #if WITH_EDITOR

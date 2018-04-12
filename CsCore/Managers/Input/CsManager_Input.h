@@ -15,55 +15,55 @@
 
 	// Pressed
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput, const uint8&, Action, const TEnumAsByte<ECsInputEvent::Type>&, Event);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput, AActor*, const uint8&, const TEnumAsByte<ECsInputEvent::Type>&);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput, AActor*, const TCsInputAction&, const TEnumAsByte<ECsInputEvent::Type>&);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsManagerInput_FirstPressed, const uint8&, Action);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsManagerInput_Pressed, const uint8&, Action);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsManagerInput_FirstReleased, const uint8&, Action);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsManagerInput_FirstPressed, AActor*, const uint8&);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsManagerInput_Pressed, AActor*, const uint8&);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsManagerInput_FirstReleased, AActor*, const uint8&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsManagerInput_FirstPressed, AActor*, const TCsInputAction&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsManagerInput_Pressed, AActor*, const TCsInputAction&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsManagerInput_FirstReleased, AActor*, const TCsInputAction&);
 
 	// Axis
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsManagerInput_Axis, const uint8&, Action, const TEnumAsByte<ECsInputEvent::Type>&, Event, const float&, Val);
-DECLARE_MULTICAST_DELEGATE_FourParams(FBindableEvent_CsManagerInput_Axis, AActor*, const uint8&, const TEnumAsByte<ECsInputEvent::Type>&, const float&);
+DECLARE_MULTICAST_DELEGATE_FourParams(FBindableEvent_CsManagerInput_Axis, AActor*, const TCsInputAction&, const TEnumAsByte<ECsInputEvent::Type>&, const float&);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Axis_FirstMoved, const uint8&, Action, const float&, Val);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Axis_Moved, const uint8&, Action, const float&, Val);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Axis_FirstStationary, const uint8&, Action, const float&, Val);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Axis_Stationary, const uint8&, Action, const float&, Val);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Axis_FirstMoved, AActor*, const uint8&, const float&);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Axis_Moved, AActor*, const uint8&, const float&);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Axis_FirstStationary, AActor*, const uint8&, const float&);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Axis_Stationary, AActor*, const uint8&, const float&);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Axis_FirstMoved, AActor*, const TCsInputAction&, const float&);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Axis_Moved, AActor*, const TCsInputAction&, const float&);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Axis_FirstStationary, AActor*, const TCsInputAction&, const float&);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Axis_Stationary, AActor*, const TCsInputAction&, const float&);
 
 	// Location
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsManagerInput_Location, const uint8&, Action, const TEnumAsByte<ECsInputEvent::Type>&, Event, const FVector&, Location);
-DECLARE_MULTICAST_DELEGATE_FourParams(FBindableEvent_CsManagerInput_Location, AActor*, const uint8&, const TEnumAsByte<ECsInputEvent::Type>&, const FVector&);
+DECLARE_MULTICAST_DELEGATE_FourParams(FBindableEvent_CsManagerInput_Location, AActor*, const TCsInputAction&, const TEnumAsByte<ECsInputEvent::Type>&, const FVector&);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Location_FirstMoved, const uint8&, Action, const FVector&, Location);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Location_Moved, const uint8&, Action, const FVector&, Location);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Location_FirstStationary, const uint8&, Action, const FVector&, Location);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Location_Stationary, const uint8&, Action, const FVector&, Location);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Location_FirstMoved, AActor*, const uint8&, const FVector&);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Location_Moved, AActor*, const uint8&, const FVector&);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Location_FirstStationary, AActor*, const uint8&, const FVector&);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Location_Stationary, AActor*, const uint8&, const FVector&);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Location_FirstMoved, AActor*, const TCsInputAction&, const FVector&);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Location_Moved, AActor*, const TCsInputAction&, const FVector&);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Location_FirstStationary, AActor*, const TCsInputAction&, const FVector&);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Location_Stationary, AActor*, const TCsInputAction&, const FVector&);
 
 DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Location_Raw, const FVector&);
 
 	// Rotation
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsManagerInput_Rotation, const uint8&, Action, const TEnumAsByte<ECsInputEvent::Type>&, Event, const FRotator&, Rotation);
-DECLARE_MULTICAST_DELEGATE_FourParams(FBindableEvent_CsManagerInput_Rotation, AActor*, const uint8&, const TEnumAsByte<ECsInputEvent::Type>&, const FRotator&);
+DECLARE_MULTICAST_DELEGATE_FourParams(FBindableEvent_CsManagerInput_Rotation, AActor*, const TCsInputAction&, const TEnumAsByte<ECsInputEvent::Type>&, const FRotator&);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Rotation_FirstMoved, const uint8&, Action, const FRotator&, Rotation);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Rotation_Moved, const uint8&, Action, const FRotator&, Rotation);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Rotation_FirstStationary, const uint8&, Action, const FRotator&, Rotation);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Rotation_Stationary, const uint8&, Action, const FRotator&, Rotation);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Rotation_FirstMoved, AActor*, const uint8&, const FRotator&);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Rotation_Moved, AActor*, const uint8&, const FRotator&);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Rotation_FirstStationary, AActor*, const uint8&, const FRotator&);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Rotation_Stationary, AActor*, const uint8&, const FRotator&);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Rotation_FirstMoved, AActor*, const TCsInputAction&, const FRotator&);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Rotation_Moved, AActor*, const TCsInputAction&, const FRotator&);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Rotation_FirstStationary, AActor*, const TCsInputAction&, const FRotator&);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Rotation_Stationary, AActor*, const TCsInputAction&, const FRotator&);
 
 DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRotator&);
 

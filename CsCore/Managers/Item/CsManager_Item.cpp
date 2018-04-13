@@ -823,6 +823,35 @@ void ACsManager_Item::LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCs
 }
 
 void ACsManager_Item::InitInventory(ACsManager_Inventory* Manager_Inventory){}
-void ACsManager_Item::AsyncInitInventory(ACsManager_Inventory* Manager_Inventory) {}
+
+void ACsManager_Item::AsyncInitInventory(ACsManager_Inventory* Manager_Inventory) 
+{
+	class FAsyncInitInventoryWorker : public FNonAbandonableTask
+	{
+	public:
+
+		friend class FAutoDeleteAsyncTask<FAsyncInitInventoryWorker>;
+
+		ACsManager_Item* Manager_Item;
+		ACsManager_Inventory* Manager_Inventory;
+
+		FAsyncInitInventoryWorker(ACsManager_Item* InManager_Item, ACsManager_Inventory* InManager_Inventory)
+		{
+			Manager_Item	  = InManager_Item;
+			Manager_Inventory = InManager_Inventory;
+		}
+
+		void DoWork()
+		{
+			Manager_Item->InitInventory(Manager_Inventory);
+		}
+
+		FORCEINLINE TStatId GetStatId() const
+		{
+			RETURN_QUICK_DECLARE_CYCLE_STAT(FAsyncInitInventoryWorker, STATGROUP_ThreadPoolAsyncTasks);
+		}
+	};
+	(new FAutoDeleteAsyncTask<FAsyncInitInventoryWorker>(this, Manager_Inventory))->StartBackgroundTask();
+}
 
 #pragma endregion Save / Load

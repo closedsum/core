@@ -839,6 +839,41 @@ namespace ECsItemOnConsumeContentAction
 	}
 }
 
+USTRUCT(BlueprintType)
+struct FCsItemOnConsumeContentRule
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** ShortCode for the Item */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	FName ShortCode;
+	/** Action (Consume, Drop, Retain, ... etc) to execute on the Item when the Parent Item is Consumed */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	TEnumAsByte<ECsItemOnConsumeContentAction::Type> Action;
+
+	FCsItemOnConsumeContentRule(){}
+	~FCsItemOnConsumeContentRule() {}
+
+	FCsItemOnConsumeContentRule& operator=(const FCsItemOnConsumeContentRule& B)
+	{
+		ShortCode = B.ShortCode;
+		Action = B.Action;
+		return *this;
+	}
+
+	bool operator==(const FCsItemOnConsumeContentRule& B) const
+	{
+		if (ShortCode != B.ShortCode) { return false; }
+		if (Action != B.Action) { return false; }
+		return true;
+	}
+
+	bool operator!=(const FCsItemOnConsumeContentRule& B) const
+	{
+		return !(*this == B);
+	}
+};
+
 namespace ECsFileItemHeaderCachedString
 {
 	namespace Str

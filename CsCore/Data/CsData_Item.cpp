@@ -46,6 +46,8 @@ const FName& ACsData_Item::GetSpawnedActorDataShortCode() { return ECsCachedName
 // Consume
 #pragma region
 
+const TArray<FCsItemOnConsumeContentRule>* ACsData_Item::GetOnConsumeContentRules() { return nullptr; }
+
 const bool& ACsData_Item::OnConsumeDropContents() { return ECsCachedReferences::Ref::False; }
 
 #pragma endregion Consume

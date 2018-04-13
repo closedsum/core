@@ -65,6 +65,9 @@ public:
 #pragma region
 public:
 
+	virtual const TArray<FCsItemOnConsumeContentRule>* GetOnConsumeContentRules();
+
+	/** If NO Content Consume Rules, whether to Drop Contents when the Item is Consumed */
 	UFUNCTION(BlueprintCallable, Category = "Consume")
 	virtual const bool& OnConsumeDropContents();
 

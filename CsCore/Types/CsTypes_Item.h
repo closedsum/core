@@ -788,6 +788,57 @@ struct FCsInventoryLoadout
 	}
 };
 
+UENUM(BlueprintType)
+namespace ECsItemOnConsumeContentAction
+{
+	enum Type
+	{
+		Consume								UMETA(DisplayName = "Cnnsume"),
+		Drop								UMETA(DisplayName = "Drop"),
+		Retain								UMETA(DisplayName = "Retain"),
+		ECsItemOnConsumeContentAction_MAX	UMETA(Hidden),
+	};
+}
+
+#define ECS_ITEM_ON_CONSUME_CONTENT_ACTION_MAX (uint8)ECsItemOnConsumeContentAction::ECsItemOnConsumeContentAction_MAX
+typedef ECsItemOnConsumeContentAction::Type TCsItemOnConsumeContentAction;
+
+namespace ECsItemOnConsumeContentAction
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+
+	namespace Str
+	{
+		const TCsString Consume = TCsString(TEXT("Consume"), TEXT("consume"));
+		const TCsString Drop = TCsString(TEXT("Drop"), TEXT("drop"));
+		const TCsString Retain = TCsString(TEXT("Retain"), TEXT("retain"));
+	}
+
+	namespace Ref
+	{
+		const TCsItemOnConsumeContentAction Consume = Type::Consume;
+		const TCsItemOnConsumeContentAction Drop = Type::Drop;
+		const TCsItemOnConsumeContentAction Retain = Type::Retain;
+		const TCsItemOnConsumeContentAction ECsItemOnConsumeContentAction_MAX = Type::ECsItemOnConsumeContentAction_MAX;
+	}
+
+	FORCEINLINE const FString& ToString(const Type &EType)
+	{
+		if (EType == Type::Consume) { return Str::Consume.Value; }
+		if (EType == Type::Drop) { return Str::Drop.Value; }
+		if (EType == Type::Retain) { return Str::Retain.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE const Type& ToType(const FString &String)
+	{
+		if (String == Str::Consume) { return Ref::Consume; }
+		if (String == Str::Drop) { return Ref::Drop; }
+		if (String == Str::Retain) { return Ref::Retain; }
+		return Ref::ECsItemOnConsumeContentAction_MAX;
+	}
+}
+
 namespace ECsFileItemHeaderCachedString
 {
 	namespace Str

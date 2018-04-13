@@ -398,7 +398,7 @@ void ACsManager_Inventory::ConsumeItem_Internal(const uint64 &Id)
 	RemoveItem(Id, ECsManagerInventoryStringCache::Str::ConsumeItem_Internal, ECsInventoryTransaction::Consume, true);
 }
 
-void ACsManager_Inventory::ConsumeItem(FCsItem* Item)
+void ACsManager_Inventory::ConsumeItem(FCsItem* Item, TArray<FCsItem*> &OutResultingItems)
 {
 	ACsData_Item* Data = Item->GetData();
 	
@@ -450,16 +450,28 @@ void ACsManager_Inventory::ConsumeItem(FCsItem* Item)
 	ConsumeItem_Internal(Item->UniqueId);
 }
 
-void ACsManager_Inventory::ConsumeFirstItem(const FName &ShortCode)
+void ACsManager_Inventory::ConsumeItem(FCsItem* Item)
+{
+	TArray<FCsItem*> OutResultingItems;
+	ConsumeItem(Item, OutResultingItems);
+}
+
+void ACsManager_Inventory::ConsumeFirstItem(const FName &ShortCode, TArray<FCsItem*> &OutResultingItems)
 {
 	if (FCsItem* Item = GetFirstItem(ShortCode))
 	{
-		ConsumeItem(Item);
+		ConsumeItem(Item, OutResultingItems);
 	}
 	else
 	{
 		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::ConsumeFirstItem: There are NO Items with ShortCode: %s to Consume."), *(ShortCode.ToString()));
 	}
+}
+
+void ACsManager_Inventory::ConsumeFirstItem(const FName &ShortCode)
+{
+	TArray<FCsItem*> OutResultingItems;
+	ConsumeFirstItem(ShortCode, OutResultingItems);
 }
 
 #pragma endregion Consume

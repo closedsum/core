@@ -3,6 +3,7 @@
 #include "GameFramework/Actor.h"
 #include "Types/CsTypes.h"
 #include "Types/CsTypes_Weapon.h"
+#include "Types/CsTypes_Item.h"
 #include "Common/CsCommon_Load.h"
 #include "Data/CsData_ProjectileWeapon.h"
 #include "CsWeapon.generated.h"
@@ -700,6 +701,7 @@ public:
 	virtual int32 GetAmmoReserve(const int32 &Index);
 
 	virtual void ConsumeAmmo();
+	void ConsumeAmmoItem(TArray<FCsItem*> &OutItems);
 
 #pragma endregion Ammo
 

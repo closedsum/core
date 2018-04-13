@@ -345,7 +345,9 @@ private:
 
 public:
 
+	virtual void ConsumeItem(FCsItem* Item, TArray<FCsItem*> &OutResultingItems);
 	virtual void ConsumeItem(FCsItem* Item);
+	virtual void ConsumeFirstItem(const FName &ShortCode, TArray<FCsItem*> &OutResultingItems);
 	virtual void ConsumeFirstItem(const FName &ShortCode);
 
 #pragma endregion Consume

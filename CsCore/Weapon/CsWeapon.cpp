@@ -1343,7 +1343,11 @@ int32 ACsWeapon::GetAmmoReserve(const int32 &Index)
 void ACsWeapon::ConsumeAmmo()
 {
 	--CurrentAmmo;
+	CurrentAmmoHandle.Resolve();
+}
 
+void ACsWeapon::ConsumeAmmoItem(TArray<FCsItem*> &OutItems)
+{
 	if (GetMyData_Weapon()->GetUseInventory())
 	{
 		ACsManager_Inventory* Manager_Inventory = GetMyManager_Inventory();
@@ -1353,7 +1357,7 @@ void ACsWeapon::ConsumeAmmo()
 		// Consume Item
 		if (Data_Projectile->GetOnAllocateConsumeItem())
 		{
-			Manager_Inventory->ConsumeFirstItem(ShortCode);
+			Manager_Inventory->ConsumeFirstItem(ShortCode, OutItems);
 		}
 		// Drop Item
 		else
@@ -1362,7 +1366,6 @@ void ACsWeapon::ConsumeAmmo()
 			Manager_Inventory->DropFirstItem(ShortCode);
 		}
 	}
-	CurrentAmmoHandle.Resolve();
 }
 
 #pragma endregion Ammo
@@ -1711,6 +1714,8 @@ CS_COROUTINE(ACsWeapon, FireWeapon_Internal)
 			if (!mw->LoopFireAnim.Get(FireMode))
 				mw->PlayAnimation(FireMode, mw->FireAnim);
 
+			mw->ConsumeAmmo();
+
 #if WITH_EDITOR 
 			// In Editor Preview Window
 			if (UCsCommon::IsPlayInEditorPreview(w))
@@ -1722,13 +1727,15 @@ CS_COROUTINE(ACsWeapon, FireWeapon_Internal)
 			{
 				FCsProjectileFireCache* Cache = mw->AllocateProjectileFireCache(FireMode);
 				
+				TArray<FCsItem*> OutItems;
+				mw->ConsumeAmmoItem(OutItems);
+
 				if (mw->IsHitscan.Get(FireMode))
 					mw->FireHitscan(FireMode, Cache);
 				else
 					mw->FireProjectile(FireMode, Cache);
 				Cache->Reset();
 			}
-			mw->ConsumeAmmo();
 			mw->PlayMuzzleFlash(FireMode);
 			
 			mw->CurrentProjectilePerShotIndex.Add(FireMode, 1);

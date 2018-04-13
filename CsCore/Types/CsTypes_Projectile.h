@@ -171,6 +171,9 @@ namespace ECsProjectileState
 	};
 }
 
+#define ECS_PROJECTILE_STATE_MAX (uint8)ECsProjectileState::ECsProjectileState_MAX
+typedef ECsProjectileState::Type TCsProjectileState;
+
 namespace ECsProjectileState
 {
 	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
@@ -182,6 +185,14 @@ namespace ECsProjectileState
 		const TCsString InActive = TCsString(TEXT("InActive"), TEXT("inactive"));
 	}
 
+	namespace Ref
+	{
+		const TCsProjectileState Active = Type::Active;
+		const TCsProjectileState DeActivating = Type::DeActivating;
+		const TCsProjectileState InActive = Type::InActive;
+		const TCsProjectileState ECsProjectileState_MAX = Type::ECsProjectileState_MAX;
+	}
+
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Active) { return Str::Active.Value; }
@@ -190,17 +201,14 @@ namespace ECsProjectileState
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE Type ToType(const FString &String)
+	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::Active) { return Type::Active; }
-		if (String == Str::DeActivating) { return Type::DeActivating; }
-		if (String == Str::InActive) { return Type::InActive; }
-		return Type::ECsProjectileState_MAX;
+		if (String == Str::Active) { return Ref::Active; }
+		if (String == Str::DeActivating) { return Ref::DeActivating; }
+		if (String == Str::InActive) { return Ref::InActive; }
+		return Ref::ECsProjectileState_MAX;
 	}
 }
-
-#define ECS_PROJECTILE_STATE_MAX (uint8)ECsProjectileState::ECsProjectileState_MAX
-typedef ECsProjectileState::Type TCsProjectileState;
 
 UENUM(BlueprintType)
 namespace ECsProjectileDeActivate

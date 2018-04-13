@@ -183,7 +183,24 @@ void ACsManager_Inventory::GetItems(const FName& ShortCode, const int32& Count, 
 
 void ACsManager_Inventory::GetItems(const TArray<uint64> &Ids, TArray<FCsItem*> &OutItems)
 {
+	const int32 Count = Ids.Num();
 
+	for (int32 I = 0; I < Count; ++I)
+	{
+		if (FCsItem** ItemPtr = (Items.Find(Ids[I])))
+		{
+			OutItems.Add(*ItemPtr);
+		}
+		else
+		{
+			/*
+			if (CsCVarLogManagerItemActionGetFail->GetInt() == CS_CVAR_SHOW_LOG)
+			{
+				UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::GetItems: Failed to find an Item with Id: %d"), Ids[I]);
+			}
+			*/
+		}
+	}
 }
 
 int32 ACsManager_Inventory::GetItemCount(const FName &ShortCode)

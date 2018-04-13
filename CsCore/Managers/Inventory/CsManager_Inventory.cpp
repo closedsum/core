@@ -400,6 +400,53 @@ void ACsManager_Inventory::ConsumeItem(const uint64 &Id)
 
 void ACsManager_Inventory::ConsumeItem(FCsItem* Item)
 {
+	ACsData_Item* Data = Item->GetData();
+	
+	// Handle Contents
+	const TArray<FCsItemOnConsumeContentRule>* Rules = Data->GetOnConsumeContentRules();
+
+	TArray<FCsItem*> OutItems;
+	GetItems(Item->Contents, OutItems);
+	
+	int32 ContentCount = OutItems.Num();
+
+	for (int32 I = ContentCount - 1; I >= 0; --I)
+	{
+		FCsItem* ContentItem = OutItems[I];
+		// By Default CONSUME
+		TCsItemOnConsumeContentAction Action = ECsItemOnConsumeContentAction::Consume;
+		
+		// Check Rules
+		if (Rules)
+		{
+			int32 RuleCount = Rules->Num();
+
+			for (int32 J = 0; J < RuleCount; ++J)
+			{
+				const FCsItemOnConsumeContentRule& Rule = (*Rules)[J];
+
+				if (ContentItem->ShortCode == Rule.ShortCode)
+				{
+					Action = (TCsItemOnConsumeContentAction)Rule.Action;
+					break;
+				}
+			}
+		}
+		// Check to DROP
+		else
+		if (Data->OnConsumeDropContents())
+		{
+			Action = ECsItemOnConsumeContentAction::Drop;
+		}
+		
+		// CONSUME
+		if (Action == ECsItemOnConsumeContentAction::Consume)
+			ConsumeItem(ContentItem);
+		// DROP
+		else
+		if (Action == ECsItemOnConsumeContentAction::Drop)
+			DropItem(ContentItem);
+	}
 	ConsumeItem(Item->UniqueId);
 }
 
@@ -407,20 +454,6 @@ void ACsManager_Inventory::ConsumeFirstItem(const FName &ShortCode)
 {
 	if (FCsItem* Item = GetFirstItem(ShortCode))
 	{
-		ACsData_Item* Data = Item->GetData();
-		/*
-		TArray<FCsItem*> OutItems;
-		GetItems(Item->Contents, OutItems);
-		*/
-		if (Data->OnConsumeDropContents())
-		{
-			const uint8 Count = Item->Contents.Num();
-
-			for (uint8 I = 0; I < Count; ++I)
-			{
-				DropItem(Item->Contents[I]);
-			}
-		}
 		ConsumeItem(Item);
 	}
 	else

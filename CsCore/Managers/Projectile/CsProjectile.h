@@ -54,36 +54,36 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 	}
 
 	template<typename T>
-	void Init(const uint16& InActiveIndex, const TCsProjectileRelevance &InRelevance, ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InInstigator, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)())
+	void Init(const uint16& InActiveIndex, FCsProjectilePayload* Payload, float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InInstigator, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)())
 	{
 		SetActiveIndex(InActiveIndex);
-		Relevance = InRelevance;
+		Relevance = Payload->Relevance;
 
 		IsAllocated = true;
 
 		Instigator = InInstigator;
 		Owner	   = InOwner;
-		Data	   = InData;
+		Data	   = Payload->Data;
 
-		Type_Script = InData->GetBaseProjectileType();
+		Type_Script = Data->GetBaseProjectileType();
 		Type		= (uint8)Type_Script;
 
 		Parent	    = InParent;
 
-		SetLifeTime(InData->GetLifeTime());
+		SetLifeTime(Data->GetLifeTime());
 
 		Time	    = InTime;
 		RealTime    = InRealTime;
 		SetFrame(InFrame);
 
-		Location	  = InFireCache->Location;
-		Direction	  = InFireCache->Direction;
+		Location	  = Payload->Location;
+		Direction	  = Payload->Direction;
 		Rotation	  = Direction.Rotation();
 		Transform.SetLocation(Location);
 		Transform.SetRotation(Rotation.Quaternion());
 
-		ChargePercent = InFireCache->ChargePercent;
-		Speed		  = InData->GetInitialSpeed() + InFireCache->AdditionalSpeed;
+		ChargePercent = Payload->ChargePercent;
+		Speed		  = Data->GetInitialSpeed() + Payload->AdditionalSpeed;
 
 		if (InObject && OnDeAllocate)
 		{
@@ -96,57 +96,57 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 	}
 
 	template<typename T>
-	void Init(const uint16& InActiveIndex, const TCsProjectileRelevance &InRelevance, ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, const float &InTime, const float &InRealTime, const uint64 &InFrame, T* InObject, void (T::*OnDeAllocate)())
+	void Init(const uint16& InActiveIndex, FCsProjectilePayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, T* InObject, void (T::*OnDeAllocate)())
 	{
-		Init(InActiveIndex, InRelevance, InData, InFireCache, InTime, InRealTime, InFrame, nullptr, nullptr, nullptr, InObject, OnDeAllocate);
+		Init(InActiveIndex, Payload, InTime, InRealTime, InFrame, nullptr, nullptr, nullptr, InObject, OnDeAllocate);
 	}
 
 	template<typename T>
-	void Init(const uint16& InActiveIndex, const TCsProjectileRelevance &InRelevance, ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)())
+	void Init(const uint16& InActiveIndex, FCsProjectilePayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)())
 	{
-		Init(InActiveIndex, InRelevance, InData, InFireCache, InTime, InRealTime, InFrame, Instigator, InOwner, nullptr, InObject, OnDeAllocate);
+		Init(InActiveIndex, Payload, InTime, InRealTime, InFrame, Instigator, InOwner, nullptr, InObject, OnDeAllocate);
 	}
 
-	void Init(const uint16& InActiveIndex, const TCsProjectileRelevance &InRelevance, ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InInstigator, UObject* InOwner, UObject* InParent)
+	void Init(const uint16& InActiveIndex, FCsProjectilePayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InInstigator, UObject* InOwner, UObject* InParent)
 	{
 		SetActiveIndex(InActiveIndex);
-		Relevance = InRelevance;
+		Relevance = Payload->Relevance;
 
 		IsAllocated = true;
 
 		Instigator = InInstigator;
 		Owner	   = InOwner;
-		Data	   = InData;
+		Data	   = Payload->Data;
 
-		Type_Script = InData->GetBaseProjectileType();
+		Type_Script = Data->GetBaseProjectileType();
 		Type		= (uint8)Type_Script;
 
 		Parent	   = InParent;
 
-		SetLifeTime(InData->GetLifeTime());
+		SetLifeTime(Data->GetLifeTime());
 
 		Time	   = InTime;
 		RealTime   = InRealTime;
 		SetFrame(InFrame);
 
-		Location	  = InFireCache->Location;
-		Direction	  = InFireCache->Direction;
+		Location	  = Payload->Location;
+		Direction	  = Payload->Direction;
 		Rotation	  = Direction.Rotation();
 		Transform.SetLocation(Location);
 		Transform.SetRotation(Rotation.Quaternion());
 
-		ChargePercent = InFireCache->ChargePercent;
-		Speed		  = InData->GetInitialSpeed() + InFireCache->AdditionalSpeed;
+		ChargePercent = Payload->ChargePercent;
+		Speed		  = Data->GetInitialSpeed() + Payload->AdditionalSpeed;
 	}
 
-	void Init(const uint16& InActiveIndex, const TCsProjectileRelevance &InRelevance, ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InInstigator, UObject* InOwner)
+	void Init(const uint16& InActiveIndex, FCsProjectilePayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InInstigator, UObject* InOwner)
 	{
-		Init(InActiveIndex, InRelevance, InData, InFireCache, InTime, InRealTime, InFrame, InInstigator, InOwner, nullptr);
+		Init(InActiveIndex, Payload, InTime, InRealTime, InFrame, InInstigator, InOwner, nullptr);
 	}
 
-	void Init(const uint16& InActiveIndex, const TCsProjectileRelevance &InRelevance, ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, const float &InTime, const float &InRealTime, const uint64 &InFrame)
+	void Init(const uint16& InActiveIndex, FCsProjectilePayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
-		Init(InActiveIndex, InRelevance, InData, InFireCache, InTime, InRealTime, InFrame, nullptr, nullptr, nullptr);
+		Init(InActiveIndex, Payload, InTime, InRealTime, InFrame, nullptr, nullptr, nullptr);
 	}
 
 	void Reset()
@@ -208,18 +208,18 @@ public:
 	void Init(const int32 &Index);
 
 	template<typename T>
-	void Allocate(const uint16& ActiveIndex, const TCsProjectileRelevance &Relevance, class ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)());
+	void Allocate(const uint16& ActiveIndex, FCsProjectilePayload* Payload, UObject* InInstigator, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)());
 
 	template<typename T>
-	void Allocate(const uint16& ActiveIndex, const TCsProjectileRelevance &Relevance, class ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, T* InObject, void (T::*OnDeAllocate)());
+	void Allocate(const uint16& ActiveIndex, FCsProjectilePayload* Payload, T* InObject, void (T::*OnDeAllocate)());
 
 	template<typename T>
-	void Allocate(const uint16& ActiveIndex, const TCsProjectileRelevance &Relevance, class ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)());
+	void Allocate(const uint16& ActiveIndex, FCsProjectilePayload* Payload, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)());
 
-	virtual void Allocate(const uint16& ActiveIndex, const TCsProjectileRelevance &Relevance, class ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, UObject* InParent = nullptr);
-	virtual void Allocate(const uint16& ActiveIndex, const TCsProjectileRelevance &Relevance, class ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache);
+	virtual void Allocate(const uint16& ActiveIndex, FCsProjectilePayload* Payload, UObject* InInstigator, UObject* InOwner, UObject* InParent = nullptr);
+	virtual void Allocate(const uint16& ActiveIndex, FCsProjectilePayload* Payload);
 
-	virtual void Allocate_Internal();
+	virtual void Allocate_Internal(FCsProjectilePayload* Payload);
 
 	UPROPERTY(BlueprintAssignable, Category = "Projectile")
 	FBindableDynEvent_CsProjectile_Override_Allocate_Internal Override_Allocate_Internal_ScriptEvent;

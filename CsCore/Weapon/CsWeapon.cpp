@@ -1727,8 +1727,7 @@ CS_COROUTINE(ACsWeapon, FireWeapon_Internal)
 			{
 				FCsProjectileFireCache* Cache = mw->AllocateProjectileFireCache(FireMode);
 				
-				TArray<FCsItem*> OutItems;
-				mw->ConsumeAmmoItem(OutItems);
+				mw->ConsumeAmmoItem(Cache->Items);
 
 				if (mw->IsHitscan.Get(FireMode))
 					mw->FireHitscan(FireMode, Cache);
@@ -1849,16 +1848,25 @@ void ACsWeapon::FireProjectile(const TCsWeaponFireMode &FireMode, FCsProjectileF
 	}
 	FireProjectile_Internal(FireMode, Cache);
 
-	// Update Cache
-
+	// Allocate Projectiles
 	ACsGameState* GameState					  = GetWorld()->GetGameState<ACsGameState>();
 	ACsManager_Projectile* Manager_Projectile = GameState->Manager_Projectile;
-
-	// Real
-	Cache->Location				  = RealStart;
-	Cache->Direction			  = RealDir;
-	ACsProjectile* RealProjectile = Manager_Projectile->Fire(UseFakeProjectile ? ECsProjectileRelevance::RealInvisible : ECsProjectileRelevance::RealVisible, Data_Projectile, Cache, GetMyOwner(), this);
 	
+	// Real
+	FCsProjectilePayload* Payload = Manager_Projectile->AllocatePayload();
+
+	Payload->Relevance = UseFakeProjectile ? ECsProjectileRelevance::RealInvisible : ECsProjectileRelevance::RealVisible;
+	Payload->Data	   = Data_Projectile;
+
+	Cache->Location  = RealStart;
+	Cache->Direction = RealDir;
+
+	Payload->Set(Cache);
+
+	ACsProjectile* RealProjectile = Manager_Projectile->Fire(Payload, GetMyOwner(), this);
+	
+	Cache->Reset();
+
 	const bool IsLocalPawn = UCsCommon::IsLocalPawn(GetWorld(), GetMyPawn());
 
 	if ((CsCVarDrawLocalPlayerWeaponFireProjectile->GetInt() == CS_CVAR_DRAW &&
@@ -1871,14 +1879,23 @@ void ACsWeapon::FireProjectile(const TCsWeaponFireMode &FireMode, FCsProjectileF
 	// Fake
 	if (UseFakeProjectile)
 	{
+		FCsProjectilePayload* FakePayload = Manager_Projectile->AllocatePayload();
+
+		Payload->Relevance = ECsProjectileRelevance::Fake;
+		Payload->Data	   = Data_Projectile;
+
 		FCsProjectileFireCache* FakeCache = AllocateProjectileFireCache(FireMode);
 		FakeCache->Location				  = FakeStart;
 		FakeCache->Direction			  = FakeDir;
-		ACsProjectile* FakeProjectile	  = Manager_Projectile->Fire(ECsProjectileRelevance::Fake, Data_Projectile, FakeCache, GetMyOwner(), this);
 
-		RealProjectile->FakeProjectile = FakeProjectile;
+		Payload->Set(FakeCache);
+
+		ACsProjectile* FakeProjectile = Manager_Projectile->Fire(Payload, GetMyOwner(), this);
+
 		FakeCache->Reset();
 
+		RealProjectile->FakeProjectile = FakeProjectile;
+		
 		if ((CsCVarDrawLocalPlayerWeaponFireProjectile->GetInt() == CS_CVAR_DRAW &&
 			IsLocalPawn) ||
 			CsCVarDrawWeaponFireProjectile->GetInt() == CS_CVAR_DRAW)
@@ -1886,7 +1903,6 @@ void ACsWeapon::FireProjectile(const TCsWeaponFireMode &FireMode, FCsProjectileF
 			DrawFireProjectile(FakeProjectile, FakeStart, RealEnd);
 		}
 	}
-	Cache->Reset();
 }
 
 void ACsWeapon::FireProjectile_Internal(const TCsWeaponFireMode &FireMode, FCsProjectileFireCache* Cache) {}

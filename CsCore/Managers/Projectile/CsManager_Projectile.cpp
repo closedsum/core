@@ -298,51 +298,54 @@ FCsProjectilePayload* ACsManager_Projectile::AllocatePayload()
 // Fire
 #pragma region
 
-ACsProjectile* ACsManager_Projectile::Fire(const TCsProjectileRelevance &Relevance, ACsData_Projectile* InData, FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, UObject* InParent)
+ACsProjectile* ACsManager_Projectile::Fire(FCsProjectilePayload* Payload, UObject* InInstigator, UObject* InOwner, UObject* InParent)
 {
 	ACsProjectile* Projectile = Allocate();
 	const int32 Count		  = ActiveProjectiles.Num();
 
-	Projectile->Allocate((uint16)Count, Relevance, InData, Cache, InInstigator, InOwner, InParent);
+	Projectile->Allocate((uint16)Count, Payload, InInstigator, InOwner, InParent);
 
 	LogTransaction(ECsManagerProjectileCachedString::Str::Fire, ECsPoolTransaction::Allocate, Projectile);
 
 	ActiveProjectiles.Add(Projectile);
+	Payload->Reset();
 	return Projectile;
 }
 
-ACsProjectile* ACsManager_Projectile::Fire(const TCsProjectileRelevance &Relevance, ACsData_Projectile* InData, FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner)
+ACsProjectile* ACsManager_Projectile::Fire(FCsProjectilePayload* Payload, UObject* InInstigator, UObject* InOwner)
 {
-	return Fire(Relevance, InData, Cache, InInstigator, InOwner, nullptr);
+	return Fire(Payload, InInstigator, InOwner, nullptr);
 }
 
-ACsProjectile* ACsManager_Projectile::Fire(const TCsProjectileRelevance &Relevance, ACsData_Projectile* InData, FCsProjectileFireCache* Cache)
+ACsProjectile* ACsManager_Projectile::Fire(FCsProjectilePayload* Payload)
 {
-	return Fire(Relevance, InData, Cache, nullptr, nullptr, nullptr);;
+	return Fire(Payload, nullptr, nullptr, nullptr);;
 }
 
 template<typename T>
-void ACsManager_Projectile::Fire(ACsProjectile* OutProjectile, const TCsProjectileRelevance &Relevance, ACsData_Projectile* InData, FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)())
+void ACsManager_Projectile::Fire(ACsProjectile* OutProjectile, FCsProjectilePayload* Payload, UObject* InInstigator, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)())
 {
 	OutProjectile	  = Allocate();
 	const int32 Count = ActiveProjectiles.Num();
 
-	OutProjectile->Allocate((uint16)Count, Relevance, InData, Cache, InInstigator, InOwner, InParent);
+	OutProjectile->Allocate((uint16)Count, Payload, InInstigator, InOwner, InParent);
 
 	LogTransaction(ECsManagerProjectileCachedString::Str::Fire, ECsPoolTransaction::Allocate, OutProjectile);
 
 	ActiveProjectiles.Add(OutProjectile);
-}
-template<typename T>
-void ACsManager_Projectile::Fire(ACsProjectile* OutProjectile, const TCsProjectileRelevance &Relevance, ACsData_Projectile* InData, FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)())
-{
-	Fire<T>(OutProjectile, Relevance, InData, Cache, InInstigator, InOwner, nullptr, InObject, OnDeAllocate);
+	Payload->Reset();
 }
 
 template<typename T>
-void ACsManager_Projectile::Fire(ACsProjectile* OutProjectile, const TCsProjectileRelevance &Relevance, ACsData_Projectile* InData, FCsProjectileFireCache* Cache, UObject* InInstigator, T* InObject, void (T::*OnDeAllocate)())
+void ACsManager_Projectile::Fire(ACsProjectile* OutProjectile, FCsProjectilePayload* Payload, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)())
 {
-	Fire<T>(OutProjectile, Relevance, InData, Cache, InInstigator, nullptr, nullptr, InObject, OnDeAllocate);
+	Fire<T>(OutProjectile, Payload, InInstigator, InOwner, nullptr, InObject, OnDeAllocate);
+}
+
+template<typename T>
+void ACsManager_Projectile::Fire(ACsProjectile* OutProjectile, FCsProjectilePayload* Payload, UObject* InInstigator, T* InObject, void (T::*OnDeAllocate)())
+{
+	Fire<T>(OutProjectile, Payload, InInstigator, nullptr, nullptr, InObject, OnDeAllocate);
 }
 
 #pragma endregion Fire

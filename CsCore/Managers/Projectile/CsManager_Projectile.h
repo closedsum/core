@@ -64,16 +64,16 @@ public:
 #pragma region
 public: 
 
-	virtual class ACsProjectile* Fire(const TCsProjectileRelevance &Relevance, class ACsData_Projectile* InData, struct FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, UObject* InParent);
-	virtual class ACsProjectile* Fire(const TCsProjectileRelevance &Relevance, class ACsData_Projectile* InData, struct FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner);
-	virtual class ACsProjectile* Fire(const TCsProjectileRelevance &Relevance, class ACsData_Projectile* InData, struct FCsProjectileFireCache* Cache);
+	virtual class ACsProjectile* Fire(FCsProjectilePayload* Payload, UObject* InInstigator, UObject* InOwner, UObject* InParent);
+	virtual class ACsProjectile* Fire(FCsProjectilePayload* Payload, UObject* InInstigator, UObject* InOwner);
+	virtual class ACsProjectile* Fire(FCsProjectilePayload* Payload);
 
 	template<typename T>
-	void Fire(class ACsProjectile* OutProjectile, const TCsProjectileRelevance &Relevance, class ACsData_Projectile* InData, struct FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)());
+	void Fire(class ACsProjectile* OutProjectile, FCsProjectilePayload* Payload, UObject* InInstigator, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)());
 	template<typename T>
-	void Fire(class ACsProjectile* OutProjectile, const TCsProjectileRelevance &Relevance, class ACsData_Projectile* InData, struct FCsProjectileFireCache* Cache, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)());
+	void Fire(class ACsProjectile* OutProjectile, FCsProjectilePayload* Payload, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)());
 	template<typename T>
-	void Fire(class ACsProjectile* OutProjectile, const TCsProjectileRelevance &Relevance, class ACsData_Projectile* InData, struct FCsProjectileFireCache* Cache, UObject* InInstigator, T* InObject, void (T::*OnDeAllocate)());
+	void Fire(class ACsProjectile* OutProjectile, FCsProjectilePayload* Payload, UObject* InInstigator, T* InObject, void (T::*OnDeAllocate)());
 
 #pragma endregion Fire
 };

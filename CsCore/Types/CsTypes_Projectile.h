@@ -519,6 +519,8 @@ struct FCsProjectileFireCache
 	UPROPERTY()
 	float HomingAccelerationMagnitude;
 
+	TArray<struct FCsItem*> Items;
+
 	FCsProjectileFireCache()
 	{
 		Reset();
@@ -574,6 +576,7 @@ struct FCsProjectileFireCache
 		HomingTarget = NULL;
 		HomingBoneName = NAME_None;
 		HomingAccelerationMagnitude = 0.0f;
+		Items.Reset();
 	}
 
 	AActor* GetHomingTarget() const

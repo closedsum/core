@@ -295,6 +295,7 @@ class CSCORE_API ACsManager_Inventory : public AActor
 
 	void GetItems(const FName& ShortCode, const int32& Count, const TCsInventoryGetRequest &Request, TArray<FCsItem*> &OutItems);
 	void GetItems(const FName& ShortCode, const int32& Count, const TCsInventoryGetRequest &Request, const int32& State, TArray<FCsItem*> &OutItems);
+	void GetItems(const TArray<uint64> &Ids, TArray<FCsItem*> &OutItems);
 
 	TMap<FName, uint16> ItemCountMap;
 

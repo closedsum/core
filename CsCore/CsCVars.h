@@ -244,7 +244,7 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerWidgetTransactions
 #pragma region
 
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerItemTransactions;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerItemActionGet;
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerItemActionGetFail;
 
 #pragma endregion Item
 

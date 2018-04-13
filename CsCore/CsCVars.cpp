@@ -548,10 +548,10 @@ TAutoConsoleVariable<int32> CsCVarLogManagerItemTransactions(
 	ECVF_SetByConsole
 );
 
-TAutoConsoleVariable<int32> CsCVarLogManagerItemActionGet(
-	TEXT("log.manager.item.action.get"),
+TAutoConsoleVariable<int32> CsCVarLogManagerItemActionGetFail(
+	TEXT("log.manager.item.action.get.fail"),
 	0,
-	TEXT("Log Manager Item GetItem(s)."),
+	TEXT("Log Manager Item GetItem(s) failed retrieval of item."),
 	ECVF_SetByConsole
 );
 

@@ -181,6 +181,11 @@ void ACsManager_Inventory::GetItems(const FName& ShortCode, const int32& Count, 
 	}
 }
 
+void ACsManager_Inventory::GetItems(const TArray<uint64> &Ids, TArray<FCsItem*> &OutItems)
+{
+
+}
+
 int32 ACsManager_Inventory::GetItemCount(const FName &ShortCode)
 {
 	if (uint16* Count = ItemCountMap.Find(ShortCode))
@@ -387,7 +392,10 @@ void ACsManager_Inventory::ConsumeFirstItem(const FName &ShortCode)
 	if (FCsItem* Item = GetFirstItem(ShortCode))
 	{
 		ACsData_Item* Data = Item->GetData();
-
+		/*
+		TArray<FCsItem*> OutItems;
+		GetItems(Item->Contents, OutItems);
+		*/
 		if (Data->OnConsumeDropContents())
 		{
 			const uint8 Count = Item->Contents.Num();

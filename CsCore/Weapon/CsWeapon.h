@@ -310,7 +310,7 @@ struct FCsWeapon_TArrayRef_float : public TCsIntegralType_TArrayRefValue_float<T
 
 #define CS_WEAPON_DATA_VALUE 0
 #define CS_WEAPON_CUSTOM_VALUE -1
-#define CS_PROJECTILE_FIRE_CACHE_POOL_SIZE 64
+#define CS_PROJECTILE_FIRE_PAYLOAD_POOL_SIZE 64
 
 UCLASS()
 class CSCORE_API ACsWeapon : public AActor
@@ -812,11 +812,11 @@ public:
 	virtual FVector GetFireWeaponStartLocation(const TCsWeaponFireMode &FireMode);
 	virtual FVector GetFireWeaponStartDirection(const TCsWeaponFireMode &FireMode);
 
-	struct FCsProjectileFireCache ProjectileFireCaches[CS_PROJECTILE_FIRE_CACHE_POOL_SIZE];
+	struct FCsProjectileFirePayload ProjectileFirePayloads[CS_PROJECTILE_FIRE_PAYLOAD_POOL_SIZE];
 
-	uint8 ProjectileFireCachePoolIndex;
+	uint8 ProjectileFirePayloadPoolIndex;
 
-	struct FCsProjectileFireCache* AllocateProjectileFireCache(const TCsWeaponFireMode &FireMode);
+	struct FCsProjectileFirePayload* AllocateProjectileFirePayload(const TCsWeaponFireMode &FireMode);
 
 	void FireWeapon(const TCsWeaponFireMode &FireMode);
 	static char FireWeapon_Internal(struct FCsRoutine* r);
@@ -831,11 +831,11 @@ public:
 
 	virtual FVector GetFireProjectileDestination();
 
-	virtual void FireProjectile(const TCsWeaponFireMode &FireMode, FCsProjectileFireCache* Cache);
-	virtual void FireProjectile_Internal(const TCsWeaponFireMode &FireMode, FCsProjectileFireCache* Cache);
+	virtual void FireProjectile(const TCsWeaponFireMode &FireMode, FCsProjectileFirePayload* FirePayload);
+	virtual void FireProjectile_Internal(const TCsWeaponFireMode &FireMode, FCsProjectileFirePayload* Payload);
 
 	UFUNCTION(BlueprintCallable, Category = "Firing")
-	void FireProjectile_Script(const uint8 &FireMode, FCsProjectileFireCache &Cache);
+	void FireProjectile_Script(const uint8 &FireMode, FCsProjectileFirePayload &Payload);
 
 	void DrawFireProjectile(class ACsProjectile* Projectile, const FVector &Start, const FVector &End);
 	static char DrawFireProjectile_Internal(struct FCsRoutine* r);
@@ -856,7 +856,7 @@ public:
 	virtual void GetFireHitscanIgnoreActors(TArray<AActor*> &OutActors);
 	virtual void GetFireHitscanIgnoreComponents(TArray<UPrimitiveComponent*> &OutComponents);
 
-	void FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjectileFireCache* Cache);
+	void FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjectileFirePayload* Payload);
 
 #pragma endregion Hitscan
 

@@ -484,7 +484,7 @@ struct FCsProjectileMovementFunction
 };
 
 USTRUCT(BlueprintType)
-struct FCsProjectileFireCache
+struct FCsProjectileFirePayload
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -521,12 +521,12 @@ struct FCsProjectileFireCache
 
 	TArray<struct FCsItem*> Items;
 
-	FCsProjectileFireCache()
+	FCsProjectileFirePayload()
 	{
 		Reset();
 	}
 
-	FCsProjectileFireCache& operator=(const FCsProjectileFireCache& B)
+	FCsProjectileFirePayload& operator=(const FCsProjectileFirePayload& B)
 	{
 		IsAllocated = B.IsAllocated;
 		Time = B.Time;
@@ -542,22 +542,22 @@ struct FCsProjectileFireCache
 		return *this;
 	}
 
-	bool operator==(const FCsProjectileFireCache& B) const
+	bool operator==(const FCsProjectileFirePayload& B) const
 	{
-		return IsAllocated == B.IsAllocated &&
-			Time == B.Time &&
-			RealTime == B.RealTime &&
-			Frame == B.Frame &&
-			ChargePercent == B.ChargePercent &&
-			Location == B.Location &&
-			Direction == B.Direction &&
-			AdditionalSpeed == B.AdditionalSpeed &&
-			HomingTarget == B.HomingTarget &&
-			HomingBoneName == B.HomingBoneName &&
-			HomingAccelerationMagnitude == B.HomingAccelerationMagnitude;
+		return	IsAllocated == B.IsAllocated &&
+				Time == B.Time &&
+				RealTime == B.RealTime &&
+				Frame == B.Frame &&
+				ChargePercent == B.ChargePercent &&
+				Location == B.Location &&
+				Direction == B.Direction &&
+				AdditionalSpeed == B.AdditionalSpeed &&
+				HomingTarget == B.HomingTarget &&
+				HomingBoneName == B.HomingBoneName &&
+				HomingAccelerationMagnitude == B.HomingAccelerationMagnitude;
 	}
 
-	bool operator!=(const FCsProjectileFireCache& B) const
+	bool operator!=(const FCsProjectileFirePayload& B) const
 	{
 		return !(*this == B);
 	}
@@ -582,6 +582,12 @@ struct FCsProjectileFireCache
 	AActor* GetHomingTarget() const
 	{
 		return HomingTarget.IsValid() ? HomingTarget.Get() : NULL;
+	}
+
+	template<typename T>
+	T* GetHomingTarget() const 
+	{
+		return Cast<T>(GetHomingTarget());
 	}
 };
 
@@ -657,7 +663,7 @@ struct FCsProjectilePayload
 		return !(*this == B);
 	}
 
-	void Set(FCsProjectileFireCache* Payload)
+	void Set(FCsProjectileFirePayload* Payload)
 	{
 		ChargePercent = Payload->ChargePercent;
 		Location = Payload->Location;

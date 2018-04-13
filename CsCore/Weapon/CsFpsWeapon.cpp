@@ -698,7 +698,7 @@ float ACsFpsWeapon::GetScopeAccuracyBonus(const TCsWeaponFireMode &FireMode) { r
 float ACsFpsWeapon::GetMaxScopePower(const TCsWeaponFireMode &FireMode) { return MaxScopePower.Get(FireMode); }
 float ACsFpsWeapon::GetScopePowerGrowthRate(const TCsWeaponFireMode &FireMode) { return ScopePowerGrowthRate.Get(FireMode); }
 
-void ACsFpsWeapon::FireProjectile_Internal(const TCsWeaponFireMode &FireMode, FCsProjectileFireCache* Cache)
+void ACsFpsWeapon::FireProjectile_Internal(const TCsWeaponFireMode &FireMode, FCsProjectileFirePayload* Payload)
 {
 	ACsPawn* MyPawn = GetMyPawn();
 

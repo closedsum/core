@@ -226,7 +226,7 @@ protected:
 	FCsWeapon_TArray_float CurrentScopePower;
 	FCsWeapon_TArray_float LastScopePower;
 
-	virtual void FireProjectile_Internal(const TCsWeaponFireMode &FireMode, FCsProjectileFireCache* Cache) override;
+	virtual void FireProjectile_Internal(const TCsWeaponFireMode &FireMode, FCsProjectileFirePayload* Payload) override;
 
 #pragma endregion Firing
 

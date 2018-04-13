@@ -53,6 +53,7 @@ namespace ECsCommonLoadCachedString
 		const FString CsParametricFunctionType = TEXT("ECsParametricFunctionType");
 		const FString CsLoadFlags = TEXT("ECsLoadFlags");
 		const FString CsItemMemberValueType = TEXT("ECsItemMemberValueType");
+		const FString CsItemOnConsumeContentAction = TEXT("ECsItemOnConsumeContentAction");
 
 		const FString BitmaskEnum = TEXT("BitmaskEnum");
 
@@ -728,6 +729,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsPlayerData_Inventory_Slot
 			if (StructProperty->Struct == FCsPlayerData_Inventory_Slot::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsPlayerData_Inventory_Slot>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsItemOnConsumeContentRule
+			if (StructProperty->Struct == FCsItemOnConsumeContentRule::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsItemOnConsumeContentRule>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 
 			if (Internal)
 			{
@@ -898,6 +902,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// ECsItemMemberValueType
 				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsItemMemberValueType))
 				{ WriteMemberBytePropertyToJson<ECsItemMemberValueType::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsItemMemberValueType::ToString); continue; }
+				// ECsItemOnConsumeContentAction
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsItemOnConsumeContentAction))
+				{ WriteMemberBytePropertyToJson<ECsItemOnConsumeContentAction::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsItemOnConsumeContentAction::ToString); continue; }
 
 				if (Internal)
 				{
@@ -1401,6 +1408,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsPlayerData_Inventory_Slot
 			if (StructProperty->Struct == FCsPlayerData_Inventory_Slot::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsPlayerData_Inventory_Slot>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsItemOnConsumeContentRule
+			if (StructProperty->Struct == FCsItemOnConsumeContentRule::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsItemOnConsumeContentRule>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 
 			if (Internal)
 			{
@@ -1571,6 +1581,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// ECsItemMemberValueType
 				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsItemMemberValueType))
 				{ WriteMemberBytePropertyToJson<ECsItemMemberValueType::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsItemMemberValueType::ToString); continue; }
+				// ECsItemOnConsumeContentAction
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsItemOnConsumeContentAction))
+				{ WriteMemberBytePropertyToJson<ECsItemOnConsumeContentAction::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsItemOnConsumeContentAction::ToString); continue; }
 
 				if (Internal)
 				{
@@ -2105,6 +2118,9 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FCsRecipeIngredient
 				if (InnerStructProperty->Struct == FCsRecipeIngredient::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsRecipeIngredient>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
+				// FCsItemOnConsumeContentRule
+				if (InnerStructProperty->Struct == FCsItemOnConsumeContentRule::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsItemOnConsumeContentRule>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
 
 				if (Internal)
 				{
@@ -2809,6 +2825,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FCsPlayerData_Inventory_Slot
 			if (StructProperty->Struct == FCsPlayerData_Inventory_Slot::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsPlayerData_Inventory_Slot>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsItemOnConsumeContentRule
+			if (StructProperty->Struct == FCsItemOnConsumeContentRule::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsItemOnConsumeContentRule>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 
 			if (Internal)
 			{
@@ -3012,6 +3031,12 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 				{
 					if (TCsItemMemberValueType* Member = ByteProperty->ContainerPtrToValuePtr<TCsItemMemberValueType>(InStruct))
 					{ *Member = ECsItemMemberValueType::ToType(JsonObject->GetStringField(MemberName)); continue; }
+				}
+				// ECsItemOnConsumeContentAction
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsItemOnConsumeContentAction))
+				{
+					if (TCsItemOnConsumeContentAction* Member = ByteProperty->ContainerPtrToValuePtr<TCsItemOnConsumeContentAction>(InStruct))
+					{ *Member = ECsItemOnConsumeContentAction::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
 
 				if (Internal)
@@ -3519,6 +3544,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsPlayerData_Inventory_Slot
 			if (StructProperty->Struct == FCsPlayerData_Inventory_Slot::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsPlayerData_Inventory_Slot>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsItemOnConsumeContentRule
+			if (StructProperty->Struct == FCsItemOnConsumeContentRule::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsItemOnConsumeContentRule>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 
 			if (Internal)
 			{
@@ -3725,6 +3753,12 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				{
 					if (TCsItemMemberValueType* Member = ByteProperty->ContainerPtrToValuePtr<TCsItemMemberValueType>(InStruct))
 					{ *Member = ECsItemMemberValueType::ToType(JsonObject->GetStringField(MemberName)); continue; }
+				}
+				// ECsItemOnConsumeContentAction
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsItemOnConsumeContentAction))
+				{
+					if (TCsItemOnConsumeContentAction* Member = ByteProperty->ContainerPtrToValuePtr<TCsItemOnConsumeContentAction>(InStruct))
+					{ *Member = ECsItemOnConsumeContentAction::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
 
 				if (Internal)
@@ -4267,6 +4301,9 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				// FCsRecipeIngredient
 				if (InnerStructProperty->Struct == FCsRecipeIngredient::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsRecipeIngredient>(JsonObject, ArrayProperty, InObject, MemberName, nullptr); continue; }
+				// FCsItemOnConsumeContentRule
+				if (InnerStructProperty->Struct == FCsItemOnConsumeContentRule::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsItemOnConsumeContentRule>(JsonObject, ArrayProperty, InObject, MemberName, nullptr); continue; }
 
 				if (Internal)
 				{

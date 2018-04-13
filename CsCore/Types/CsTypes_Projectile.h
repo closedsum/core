@@ -551,4 +551,116 @@ struct FCsProjectileFireCache
 	}
 };
 
+USTRUCT(BlueprintType)
+struct FCsProjectilePayload
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY()
+	bool IsAllocated;
+
+	UPROPERTY()
+	TEnumAsByte<ECsProjectileRelevance::Type> Relevance;
+
+	UPROPERTY()
+	TWeakObjectPtr<class ACsData_Projectile> Data;
+
+	UPROPERTY()
+	float ChargePercent;
+
+	UPROPERTY()
+	FVector Direction;
+
+	UPROPERTY()
+	FVector Location;
+
+	UPROPERTY()
+	float AdditionalSpeed;
+
+	UPROPERTY()
+	TWeakObjectPtr<AActor> HomingTarget;
+
+	UPROPERTY()
+	FName HomingBone;
+
+	UPROPERTY()
+	float HomingAccelerationMagnitude;
+
+	FCsProjectilePayload(){}
+	~FCsProjectilePayload(){}
+
+	FCsProjectilePayload& operator=(const FCsProjectilePayload& B)
+	{
+		IsAllocated = B.IsAllocated;
+		Relevance = B.Relevance;
+		Data = B.Data;
+		ChargePercent = B.ChargePercent;
+		Location = B.Location;
+		Direction = B.Direction;
+		AdditionalSpeed = B.AdditionalSpeed;
+		HomingTarget = B.HomingTarget;
+		HomingBone = B.HomingBone;
+		HomingAccelerationMagnitude = B.HomingAccelerationMagnitude;
+		return *this;
+	}
+
+	bool operator==(const FCsProjectilePayload& B) const
+	{
+		return	IsAllocated == B.IsAllocated &&
+				Relevance == B.Relevance &&
+				Data == B.Data &&
+				ChargePercent == B.ChargePercent &&
+				Location == B.Location &&
+				Direction == B.Direction &&
+				AdditionalSpeed == B.AdditionalSpeed &&
+				HomingTarget == B.HomingTarget &&
+				HomingBone == B.HomingBone &&
+				HomingAccelerationMagnitude == B.HomingAccelerationMagnitude;
+	}
+
+	bool operator!=(const FCsProjectilePayload& B) const
+	{
+		return !(*this == B);
+	}
+
+	void Set(FCsProjectileFireCache* Payload)
+	{
+		ChargePercent = Payload->ChargePercent;
+		Location = Payload->Location;
+		Direction = Payload->Direction;
+		AdditionalSpeed = Payload->AdditionalSpeed;
+		HomingTarget = Payload->HomingTarget;
+		HomingBone = Payload->HomingBoneName;
+		HomingAccelerationMagnitude = Payload->HomingAccelerationMagnitude;
+	}
+
+	void Reset()
+	{
+		Relevance = ECsProjectileRelevance::ECsProjectileRelevance_MAX;
+		ChargePercent = 0.0f;
+		Location = FVector::ZeroVector;
+		Direction = FVector::ZeroVector;
+		AdditionalSpeed = 0.0f;
+		HomingTarget.Reset();
+		HomingTarget = nullptr;
+		HomingBone = NAME_None;
+		HomingAccelerationMagnitude = 0.0f;
+	}
+
+	ACsData_Projectile* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
+	template<typename T>
+	T* GetData() { return Cast<T>(GetData()); }
+
+	AActor* GetHomingTarget() const
+	{
+		return HomingTarget.IsValid() ? HomingTarget.Get() : nullptr;
+	}
+
+	template<typename T>
+	T* GetHomingTarget() const
+	{
+		return Cast<T>(GetHomingTarget());
+	}
+};
+
 #pragma endregion Projectile

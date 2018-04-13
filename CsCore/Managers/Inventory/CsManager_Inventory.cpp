@@ -386,6 +386,17 @@ void ACsManager_Inventory::ConsumeFirstItem(const FName &ShortCode)
 {
 	if (FCsItem* Item = GetFirstItem(ShortCode))
 	{
+		ACsData_Item* Data = Item->GetData();
+
+		if (Data->OnConsumeDropContents())
+		{
+			const uint8 Count = Item->Contents.Num();
+
+			for (uint8 I = 0; I < Count; ++I)
+			{
+				DropItem(Item->Contents[I]);
+			}
+		}
 		ConsumeItem(Item);
 	}
 	else

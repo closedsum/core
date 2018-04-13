@@ -87,7 +87,11 @@ bool ACsManager_Inventory::IsFull(const uint8 &Bag, const FName &ShortCode)
 
 FCsItem* ACsManager_Inventory::GetItem(const uint64 &Id)
 {
-	return *(Items.Find(Id));
+	if (FCsItem** ItemPtr = Items.Find(Id))
+		return *ItemPtr;
+
+	UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetItem: Failed to find an Item with Id: %d"), Id);
+	return nullptr;
 }
 
 FCsItem* ACsManager_Inventory::GetFirstItem(const FName &ShortCode)
@@ -193,12 +197,7 @@ void ACsManager_Inventory::GetItems(const TArray<uint64> &Ids, TArray<FCsItem*> 
 		}
 		else
 		{
-			/*
-			if (CsCVarLogManagerItemActionGetFail->GetInt() == CS_CVAR_SHOW_LOG)
-			{
-				UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::GetItems: Failed to find an Item with Id: %d"), Ids[I]);
-			}
-			*/
+			UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetItems: Failed to find an Item with Id: %d"), Ids[I]);
 		}
 	}
 }

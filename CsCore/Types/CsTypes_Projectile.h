@@ -113,6 +113,9 @@ namespace ECsProjectileRelevance
 	};
 }
 
+#define ECS_PROJECTILE_RELEVANCE_MAX (uint8)ECsProjectileRelevance::ECsProjectileRelevance_MAX
+typedef ECsProjectileRelevance::Type TCsProjectileRelevance;
+
 namespace ECsProjectileRelevance
 {
 	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
@@ -124,6 +127,14 @@ namespace ECsProjectileRelevance
 		const TCsString Fake = TCsString(TEXT("Fake"), TEXT("fake"));
 	}
 
+	namespace Ref
+	{
+		const TCsProjectileRelevance RealVisible = Type::RealInvisible;
+		const TCsProjectileRelevance RealInvisible = Type::RealInvisible;
+		const TCsProjectileRelevance Fake = Type::Fake;
+		const TCsProjectileRelevance ECsProjectileRelevance_MAX = Type::ECsProjectileRelevance_MAX;
+	}
+
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::RealVisible) { return Str::RealVisible.Value; }
@@ -132,17 +143,14 @@ namespace ECsProjectileRelevance
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE Type ToType(const FString &String)
+	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::RealVisible) { return Type::RealVisible; }
-		if (String == Str::RealInvisible) { return Type::RealInvisible; }
-		if (String == Str::Fake) { return Type::Fake; }
-		return Type::ECsProjectileRelevance_MAX;
+		if (String == Str::RealVisible) { return Ref::RealVisible; }
+		if (String == Str::RealInvisible) { return Ref::RealInvisible; }
+		if (String == Str::Fake) { return Ref::Fake; }
+		return Ref::ECsProjectileRelevance_MAX;
 	}
 }
-
-#define ECS_PROJECTILE_RELEVANCE_MAX (uint8)ECsProjectileRelevance::ECsProjectileRelevance_MAX
-typedef ECsProjectileRelevance::Type TCsProjectileRelevance;
 
 namespace ECsProjectileType
 {

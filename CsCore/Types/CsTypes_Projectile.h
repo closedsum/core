@@ -272,6 +272,9 @@ namespace ECsProjectileMovement
 	};
 }
 
+#define ECS_PROJECTILE_MOVEMENT_MAX (uint8)ECsProjectileMovement::ECsProjectileMovement_MAX
+typedef ECsProjectileMovement::Type TCsProjectileMovement;
+
 namespace ECsProjectileMovement
 {
 	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
@@ -282,6 +285,13 @@ namespace ECsProjectileMovement
 		const TCsString Function = TCsString(TEXT("Function"), TEXT("function"));
 	}
 
+	namespace Ref
+	{
+		const TCsProjectileMovement Simulated = Type::Simulated;
+		const TCsProjectileMovement Function = Type::Function;
+		const TCsProjectileMovement ECsProjectileMovement_MAX = Type::ECsProjectileMovement_MAX;
+	}
+
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Simulated) { return Str::Simulated.Value; }
@@ -289,16 +299,13 @@ namespace ECsProjectileMovement
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE Type ToType(const FString &String)
+	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::Simulated) { return Type::Simulated; }
-		if (String == Str::Function) { return Type::Function; }
-		return Type::ECsProjectileMovement_MAX;
+		if (String == Str::Simulated) { return Ref::Simulated; }
+		if (String == Str::Function) { return Ref::Function; }
+		return Ref::ECsProjectileMovement_MAX;
 	}
 }
-
-#define ECS_PROJECTILE_MOVEMENT_MAX (uint8)ECsProjectileMovement::ECsProjectileMovement_MAX
-typedef ECsProjectileMovement::Type TCsProjectileMovement;
 
 UENUM(BlueprintType)
 namespace ECsProjectileMovementFunctionType

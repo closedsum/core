@@ -393,7 +393,7 @@ void ACsManager_Inventory::RemoveItem(FCsItem* Item, const FString &FunctionName
 // Consume
 #pragma region
 
-void ACsManager_Inventory::ConsumeItem(const uint64 &Id)
+void ACsManager_Inventory::ConsumeItem_Internal(const uint64 &Id)
 {
 	RemoveItem(Id, ECsManagerInventoryStringCache::Str::ConsumeItem, ECsInventoryTransaction::Consume, true);
 }
@@ -441,13 +441,13 @@ void ACsManager_Inventory::ConsumeItem(FCsItem* Item)
 		
 		// CONSUME
 		if (Action == ECsItemOnConsumeContentAction::Consume)
-			ConsumeItem(ContentItem);
+			ConsumeItem_Internal(ContentItem->UniqueId);
 		// DROP
 		else
 		if (Action == ECsItemOnConsumeContentAction::Drop)
 			DropItem(ContentItem);
 	}
-	ConsumeItem(Item->UniqueId);
+	ConsumeItem_Internal(Item->UniqueId);
 }
 
 void ACsManager_Inventory::ConsumeFirstItem(const FName &ShortCode)

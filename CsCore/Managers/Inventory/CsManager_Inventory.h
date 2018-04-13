@@ -339,9 +339,12 @@ public:
 
 // Consume
 #pragma region
+private:
+
+	void ConsumeItem_Internal(const uint64 &Id);
+
 public:
 
-	virtual void ConsumeItem(const uint64 &Id);
 	virtual void ConsumeItem(FCsItem* Item);
 	virtual void ConsumeFirstItem(const FName &ShortCode);
 

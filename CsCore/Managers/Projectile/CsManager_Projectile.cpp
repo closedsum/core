@@ -273,6 +273,28 @@ void ACsManager_Projectile::DeAllocate(const int32 &Index)
 	UE_LOG(LogCs, Warning, TEXT("ACsManager_Projectile::DeAllocate: Projectile at PoolIndex: %d is already deallocated."), Index);
 }
 
+// Payload
+#pragma region
+
+FCsProjectilePayload* ACsManager_Projectile::AllocatePayload()
+{
+	for (uint8 I = 0; I < CS_PROJECTILE_PAYLOAD_SIZE; ++I)
+	{
+		const uint8 Index			  = (PayloadIndex + I) % CS_PROJECTILE_PAYLOAD_SIZE;
+		FCsProjectilePayload* Payload = &(Payloads[Index]);
+
+		if (!Payload->IsAllocated)
+		{
+			Payload->IsAllocated = true;
+			return Payload;
+		}
+	}
+	checkf(0, TEXT("ACsManager_Projectile::AllocatePayload: Pool is exhausted"));
+	return nullptr;
+}
+
+#pragma endregion Payload
+
 // Fire
 #pragma region
 

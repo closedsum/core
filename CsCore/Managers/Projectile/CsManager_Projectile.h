@@ -6,6 +6,7 @@
 #include "CsManager_Projectile.generated.h"
 
 #define CS_PROJECTILE_POOL_SIZE 400
+#define CS_PROJECTILE_PAYLOAD_SIZE 255
 
 UCLASS()
 class CSCORE_API ACsManager_Projectile : public ACsManager
@@ -44,6 +45,20 @@ public:
 	class ACsProjectile* Allocate();
 
 	virtual void DeAllocate(const int32 &Index) override;
+
+// Payload
+#pragma region
+private:
+
+	FCsProjectilePayload Payloads[CS_PROJECTILE_PAYLOAD_SIZE];
+
+	uint8 PayloadIndex;
+
+public:
+
+	FCsProjectilePayload * AllocatePayload();
+
+#pragma endregion Payload
 
 // Fire
 #pragma region

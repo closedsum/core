@@ -90,7 +90,7 @@ typedef ECsItemOwner::Type TCsItemOwner;
 // ItemOwnerToString
 typedef const FString&(*TCsItemOwnerToString)(const TCsItemOwner&);
 // StringToItemOwner
-typedef TCsItemOwner(*TCsStringToItemOwner)(const FString&);
+typedef const TCsItemOwner&(*TCsStringToItemOwner)(const FString&);
 
 #define CS_DECLARE_ITEM_OWNER	TCsItemOwner ItemOwner_MAX;\
 								uint8 ITEM_OWNER_MAX; \

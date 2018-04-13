@@ -16,6 +16,9 @@
 #include "Data/CsDataMapping.h"
 #include "Data/CsData_Item.h"
 #include "Data/CsData_Interactive.h"
+// Player
+#include "Pawn/CsPawn.h"
+#include "Player/CsPlayerState.h"
 
 #include "Async/AsyncWork.h"
 
@@ -334,19 +337,74 @@ void ACsManager_Item::DeAllocate(const uint64 &Id)
 
 bool ACsManager_Item::Transfer(FCsItem* Item, UObject* Instigator)
 {
-	DeAllocate(Item);
-	return true;
+	if (ACsPawn* Pawn = Cast<ACsPawn>(Instigator))
+	{
+		// Player
+		if (ACsPlayerState* PlayerState = Cast<ACsPlayerState>(Pawn->PlayerState))
+		{
+			ACsManager_Inventory* Manager_Inventory = Cast<ACsManager_Inventory>(PlayerState->Manager_Inventory);
+
+			if (Transfer_Internal(Item, Instigator, Manager_Inventory))
+				return true;
+		}
+	}
+	UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::Transfer: Failed to Trasfer Item: %s with Id: %d"), *(Item->TypeAsString), Item->UniqueId);
+	return false;
 }
 
 bool ACsManager_Item::Transfer(TArray<FCsItem*> &Items, UObject* Instigator, const TCsPoolTransactionOrder &Order)
 {
-	const int32 Count = Items.Num();
-
-	for (int32 I = 0; I < Count; ++I)
+	// Character
+	if (ACsPawn* Pawn = Cast<ACsPawn>(Instigator))
 	{
-		Transfer(Items[I], Instigator);
+		// Player
+		if (ACsPlayerState* PlayerState = Cast<ACsPlayerState>(Pawn->PlayerState))
+		{
+			ACsManager_Inventory* Manager_Inventory = Cast<ACsManager_Inventory>(PlayerState->Manager_Inventory);
+
+			const int32 Count = Items.Num();
+
+			// Fill Any
+			if (Order == ECsPoolTransactionOrder::FillAny)
+			{
+				bool Success = false;
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					FCsItem* Item = Items[I];
+
+					Success |= Transfer_Internal(Item, Instigator, Manager_Inventory);
+				}
+				return Success;
+			}
+			// Fill Or Kill
+			if (Order == ECsPoolTransactionOrder::FillOrKill)
+			{
+				bool Success = true;
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					FCsItem* Item = Items[I];
+
+					if (Manager_Inventory->IsFull(0, Item->ShortCode))
+						Success &= false;
+				}
+
+				if (Success)
+				{
+					for (int32 I = 0; I < Count; ++I)
+					{
+						FCsItem* Item = Items[I];
+
+						Transfer_Internal(Item, Instigator, Manager_Inventory);
+					}
+				}
+				return Success;
+			}
+		}
 	}
-	return true;
+	UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::Transfer: Failed to Trasfer Items."));
+	return false;
 }
 
 bool ACsManager_Item::Transfer_Internal(FCsItem* Item, UObject* Instigator, ACsManager_Inventory* Manager_Inventory)

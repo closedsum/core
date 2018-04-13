@@ -19,7 +19,7 @@ namespace ECsManagerInventoryStringCache
 	{
 		const FString AddItem = TEXT("ACsManager_Inventory::AddItem");
 		const FString RemoveItem = TEXT("ACsManager_Inventory::RemoveItem");
-		const FString ConsumeItem = TEXT("ACsManager_Inventory::ConsumeItem");
+		const FString ConsumeItem_Internal = TEXT("ACsManager_Inventory::ConsumeItem_Internal");
 		const FString DropItem = TEXT("ACsManager_Inventory::DropItem");
 	}
 }
@@ -395,7 +395,7 @@ void ACsManager_Inventory::RemoveItem(FCsItem* Item, const FString &FunctionName
 
 void ACsManager_Inventory::ConsumeItem_Internal(const uint64 &Id)
 {
-	RemoveItem(Id, ECsManagerInventoryStringCache::Str::ConsumeItem, ECsInventoryTransaction::Consume, true);
+	RemoveItem(Id, ECsManagerInventoryStringCache::Str::ConsumeItem_Internal, ECsInventoryTransaction::Consume, true);
 }
 
 void ACsManager_Inventory::ConsumeItem(FCsItem* Item)

@@ -222,6 +222,9 @@ namespace ECsProjectileDeActivate
 	};
 }
 
+#define ECS_PROJECTILE_DEACTIVATE_MAX (uint8)ECsProjectileDeActivate::ECsProjectileDeActivate_MAX
+typedef ECsProjectileDeActivate::Type TCsProjectileDeActivate;
+
 namespace ECsProjectileDeActivate
 {
 	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
@@ -233,6 +236,14 @@ namespace ECsProjectileDeActivate
 		const TCsString Mesh = TCsString(TEXT("Mesh"), TEXT("mesh"));
 	}
 
+	namespace Ref
+	{
+		const TCsProjectileDeActivate Collision = Type::Collision;
+		const TCsProjectileDeActivate Movement = Type::Movement;
+		const TCsProjectileDeActivate Mesh = Type::Mesh;
+		const TCsProjectileDeActivate ECsProjectileDeActivate_MAX = Type::ECsProjectileDeActivate_MAX;
+	}
+
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Collision) { return Str::Collision.Value; }
@@ -241,17 +252,14 @@ namespace ECsProjectileDeActivate
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE Type ToType(const FString &String)
+	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::Collision) { return Type::Collision; }
-		if (String == Str::Movement) { return Type::Movement; }
-		if (String == Str::Mesh) { return Type::Mesh; }
-		return Type::ECsProjectileDeActivate_MAX;
+		if (String == Str::Collision) { return Ref::Collision; }
+		if (String == Str::Movement) { return Ref::Movement; }
+		if (String == Str::Mesh) { return Ref::Mesh; }
+		return Ref::ECsProjectileDeActivate_MAX;
 	}
 }
-
-#define ECS_PROJECTILE_DEACTIVATE_MAX (uint8)ECsProjectileDeActivate::ECsProjectileDeActivate_MAX
-typedef ECsProjectileDeActivate::Type TCsProjectileDeActivate;
 
 UENUM(BlueprintType)
 namespace ECsProjectileMovement

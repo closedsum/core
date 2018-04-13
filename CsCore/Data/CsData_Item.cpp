@@ -12,7 +12,7 @@ TCsItemType ACsData_Item::GetBaseItemType() { return BaseItemType; }
 // Stats
 #pragma region
 
-const bool& ACsData_Item::GetIsIngredient() { return ECsCachedReferences::Ref::False; }
+const bool& ACsData_Item::IsIngredient() { return ECsCachedReferences::Ref::False; }
 
 #pragma endregion Stats
 

@@ -18,7 +18,7 @@ class CSCORE_API ACsData_Item : public ACsData
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-	virtual const bool& GetIsIngredient();
+	virtual const bool& IsIngredient();
 
 #pragma endregion Stats
 

@@ -135,7 +135,7 @@ FCsItem* ACsManager_Item::Allocate(const FName &ShortCode)
 	Item->InventoryProperties.Reset();
 	Item->InventoryProperties.Dimension = *(Data->GetDimension());
 
-	if (Data->GetIsIngredient())
+	if (Data->IsIngredient())
 		Item->InventoryProperties.SetIngredient();
 
 	Item->InventoryProperties.Capacity = Data->GetCapacity();
@@ -204,7 +204,7 @@ void ACsManager_Item::SetActiveItemData(FCsItem* Item)
 	ACsData_Item* Data			= Cast<ACsData_Item>(DataMapping->GetLoadedData(ItemAssetType, Item->ShortCode));
 	Item->Data					= Data;
 
-	if (Data->GetIsIngredient())
+	if (Data->IsIngredient())
 		Item->InventoryProperties.SetIngredient();
 
 	Item->InventoryProperties.Dimension = *(Data->GetDimension());

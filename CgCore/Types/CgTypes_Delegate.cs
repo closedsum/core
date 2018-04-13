@@ -1,8 +1,9 @@
 ﻿namespace CgCore
 {
+    using System;
     using System.Collections.Generic;
 
-    public struct CgDelegateHandle
+    public struct CgDelegateHandle : IEquatable<CgDelegateHandle>
     {
         public object Object;
         public ulong Id;
@@ -23,6 +24,13 @@
             return !(lhs == rhs);
         }
 
+        public bool Equals(CgDelegateHandle rhs)
+        {
+            if (Object != rhs.Object) return false;
+            if (Id != rhs.Id) return false;
+            return true;
+        }
+
         public override bool Equals(object obj)
         {
             if (!(obj is CgDelegateHandle))
@@ -38,6 +46,61 @@
         public override int GetHashCode()
         {
             return Id.GetHashCode();
+        }
+
+
+    }
+
+    public abstract class CgDelegate
+    {
+        public delegate void Event();
+
+        private Dictionary<CgDelegateHandle, Event> InvocationMap;
+        private ulong IdIndex;
+
+        public CgDelegate()
+        {
+            InvocationMap = new Dictionary<CgDelegateHandle, Event>();
+            IdIndex = 0;
+        }
+
+        private ulong GetId()
+        {
+            ++IdIndex;
+            return IdIndex;
+        }
+
+        public CgDelegateHandle AddObject(object o, Event e)
+        {
+            CgDelegateHandle handle = new CgDelegateHandle(o, GetId());
+
+            InvocationMap.Add(handle, e);
+            return handle;
+        }
+
+        public CgDelegateHandle Add(Event e)
+        {
+            return AddObject(null, e);
+        }
+
+        public bool Remove(CgDelegateHandle handle)
+        {
+            return InvocationMap.Remove(handle);
+        }
+
+        public void Clear()
+        {
+            InvocationMap.Clear();
+        }
+
+        public void Broadcast()
+        {
+            Dictionary<CgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
+
+            foreach (Event e in events)
+            {
+                e();
+            }
         }
     }
 
@@ -60,16 +123,22 @@
             return IdIndex;
         }
 
-        public void AddObject(object o, Event_OneParam e)
+        public CgDelegateHandle AddObject(object o, Event_OneParam e)
         {
             CgDelegateHandle handle = new CgDelegateHandle(o, GetId());
 
             InvocationMap.Add(handle, e);
+            return handle;
         }
 
-        public void Remove(CgDelegateHandle handle)
+        public CgDelegateHandle Add(Event_OneParam e)
         {
-            InvocationMap.Remove(handle);
+            return AddObject(null, e);
+        }
+
+        public bool Remove(CgDelegateHandle handle)
+        {
+            return InvocationMap.Remove(handle);
         }
 
         public void Clear()
@@ -107,16 +176,22 @@
             return IdIndex;
         }
 
-        public void AddObject(object o, Event_TwoParams e)
+        public CgDelegateHandle AddObject(object o, Event_TwoParams e)
         {
             CgDelegateHandle handle = new CgDelegateHandle(o, GetId());
 
             InvocationMap.Add(handle, e);
+            return handle;
         }
 
-        public void Remove(CgDelegateHandle handle)
+        public CgDelegateHandle Add(Event_TwoParams e)
         {
-            InvocationMap.Remove(handle);
+            return AddObject(null, e);
+        }
+
+        public bool Remove(CgDelegateHandle handle)
+        {
+            return InvocationMap.Remove(handle);
         }
 
         public void Clear()
@@ -154,16 +229,22 @@
             return IdIndex;
         }
 
-        public void AddObject(object o, Event_ThreeParams e)
+        public CgDelegateHandle AddObject(object o, Event_ThreeParams e)
         {
             CgDelegateHandle handle = new CgDelegateHandle(o, GetId());
 
             InvocationMap.Add(handle, e);
+            return handle;
         }
 
-        public void Remove(CgDelegateHandle handle)
+        public CgDelegateHandle Add(Event_ThreeParams e)
         {
-            InvocationMap.Remove(handle);
+            return AddObject(null, e);
+        }
+
+        public bool Remove(CgDelegateHandle handle)
+        {
+            return InvocationMap.Remove(handle);
         }
 
         public void Clear()

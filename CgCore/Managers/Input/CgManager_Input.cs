@@ -20,8 +20,8 @@
     {
         #region "Constants"
 
-        public static readonly ushort CG_INPUT_POOL_SIZE = 65535;
-        public static readonly ushort CS_MAX_INPUT_FRAMES = 300;
+        public static readonly int INPUT_POOL_SIZE = 65535;
+        public static readonly int MAX_INPUT_FRAMES = 300;
 
         #endregion // Constants
 
@@ -43,7 +43,7 @@
 
         public List<CgInput> QueuedInputsForNextFrame;
 
-        private ushort CurrentInputPoolIndex;
+        private int CurrentInputPoolIndex;
 
         public CgInputFrame[] InputFrames;
 
@@ -124,9 +124,9 @@
         public CgManager_Input()
         {
             // InputPool
-            InputPool = new CgInput[CG_INPUT_POOL_SIZE];
+            InputPool = new CgInput[INPUT_POOL_SIZE];
 
-            for (ushort i = 0; i < CG_INPUT_POOL_SIZE; ++i)
+            for (ushort i = 0; i < INPUT_POOL_SIZE; ++i)
             {
                 InputPool[i] = new CgInput(i);
             }
@@ -134,9 +134,9 @@
             QueuedInputsForNextFrame = new List<CgInput>();
 
             // InputFrames
-            InputFrames = new CgInputFrame[CS_MAX_INPUT_FRAMES];
+            InputFrames = new CgInputFrame[MAX_INPUT_FRAMES];
 
-            for (ushort i = 0; i < CS_MAX_INPUT_FRAMES; ++i)
+            for (ushort i = 0; i < MAX_INPUT_FRAMES; ++i)
             {
                 InputFrames[i] = new CgInputFrame();
             }
@@ -514,12 +514,66 @@
             }
         }
 
-        public void AllocateInput(ECgInputAction action, ECgInputEvent e, float value = 0f, Vector3 Location = new Vector3(), Vector3 Rotation = new Vector3())
+        public CgInput AllocateInput(ECgInputAction action, ECgInputEvent e, float value = 0f, Vector3 location = new Vector3(), Vector3 rotation = new Vector3())
         {
+            for (int i = 0; i < INPUT_POOL_SIZE; ++i)
+            {
+                CurrentInputPoolIndex = (CurrentInputPoolIndex + i) % INPUT_POOL_SIZE;
+                CgInput input         = InputPool[CurrentInputPoolIndex];
+
+                // Add Input to InputFrame
+                if (!input.IsAllocated)
+                {
+                    input.Allocate(action, e, value, location, rotation);
+                    return input;
+                }
+            }
+            Debug.LogError("CgManager_Input::AllocateInput: Input Pool has been exhaused.");
+            return null;
         }
 
-        public virtual void AddInput(ECgInputAction action, ECgInputEvent e, float value = 0f, Vector3 Location = new Vector3(), Vector3 Rotation = new Vector3())
+        public virtual void AddInput(ECgInputAction action, ECgInputEvent e, float value = 0f, Vector3 location = new Vector3(), Vector3 rotation = new Vector3())
         {
+            CgInput input = AllocateInput(action, e, value, location, rotation);
+            InputFrames[CurrentInputFrameIndex].Inputs.Add(input);
+        }
+
+        public virtual void QueueInput(ECgInputAction action, ECgInputEvent e, float value = 0f, Vector3 location = new Vector3(), Vector3 rotation = new Vector3())
+        {
+	        CgInput input = AllocateInput(action, e, value, location, rotation);
+
+            QueuedInputsForNextFrame.Add(input);
+        }
+
+        public void ConsumeInput(ECgInputAction action)
+        {
+            CgInputFrame inputFrame = InputFrames[CurrentInputFrameIndex];
+
+            int count = inputFrame.Inputs.Capacity;
+
+            for (int i = 0; i < count; ++i)
+            {
+                CgInput input = inputFrame.Inputs[i];
+
+                if (input.Action == action)
+                {
+                    input.IsConsumed = true;
+                    break;
+                }
+            }
+
+            count = CurrentInputFrame.Inputs.Capacity;
+
+            for (int i = count - 1; i >= 0; --i)
+            {
+                CgInput input = CurrentInputFrame.Inputs[i];
+
+                if (input.Action == action)
+                {
+                    CurrentInputFrame.Inputs.RemoveAt(i);
+                    break;
+                }
+            }
         }
     }
 }

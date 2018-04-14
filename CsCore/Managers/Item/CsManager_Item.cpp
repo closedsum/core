@@ -924,6 +924,16 @@ void ACsManager_Item::AsyncInitInventory(ACsManager_Inventory* Manager_Inventory
 // Action
 #pragma region
 
+void ACsManager_Item::RecordItemsAction(const TArray<FCsItem*> &Items, const TCsItemAction &Action)
+{
+	const int32 Count = Items.Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		RecordItemAction(Items[I], Action);
+	}
+}
+
 void ACsManager_Item::RecordItemAction(FCsItem* Item, const TCsItemAction& Action){}
 
 #pragma endregion Action

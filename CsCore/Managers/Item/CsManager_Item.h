@@ -148,6 +148,7 @@ public:
 #pragma region
 public:
 
+	void RecordItemsAction(const TArray<FCsItem*> &Items, const TCsItemAction &Action);
 	virtual void RecordItemAction(FCsItem* Item, const TCsItemAction& Action);
 
 #pragma endregion Action

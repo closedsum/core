@@ -1365,6 +1365,7 @@ void ACsWeapon::ConsumeAmmoItem(TArray<FCsItem*> &OutItems)
 		{
 			Manager_Inventory->DropFirstItem(ShortCode);
 		}
+		OnConsumeAmmoItem_Event.Broadcast(OutItems);
 	}
 }
 

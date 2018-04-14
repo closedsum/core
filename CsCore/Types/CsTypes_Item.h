@@ -412,6 +412,14 @@ struct FCsItemMemberValue
 	int32 GetInt32() { return Value_int32; }
 	float GetFloat() { return Value_float; }
 
+	void Increment()
+	{
+		if (Type == ECsItemMemberValueType::Uint8)
+			++Value_uint8;
+		if (Type == ECsItemMemberValueType::Int32)
+			++Value_int32;
+	}
+
 	void ResetValues()
 	{
 		Value_bool = false;
@@ -545,6 +553,7 @@ struct FCsItemHistory
 
 #define CS_ITEM_POOL_INVALID_INDEX 65535
 #define CS_INVALID_ITEM_TYPE 255
+#define CS_CURRENT_HISTORY -1
 
 USTRUCT(BlueprintType)
 struct FCsItem
@@ -637,6 +646,21 @@ struct FCsItem
 		Index = InIndex;
 	}
 
+	void SetType(const TCsItemType &InType)
+	{
+		Type = InType;
+		Type_Script = (uint8)Type;
+	}
+
+	FCsItemMemberValue* GetMemberValue(const int32 &HistoryIndex, const FName& Name)
+	{
+		if (HistoryIndex == CS_CURRENT_HISTORY)
+			return CurrentHistory.Members.Find(Name);
+		if (HistoryIndex < PreviousHistories.Num())
+			return PreviousHistories[HistoryIndex].Members.Find(Name);
+		return nullptr;
+	}
+
 	void Reset()
 	{
 		IsAllocated = false;
@@ -661,12 +685,6 @@ struct FCsItem
 
 	class ACsData_Item* GetData() const { return Data.IsValid() ? Data.Get() : nullptr; }
 	class ACsData_Interactive* GetData_Actor() const { return Data_Actor.IsValid() ? Data_Actor.Get() : nullptr; }
-
-	void SetType(const TCsItemType &InType)
-	{
-		Type		= InType;
-		Type_Script = (uint8)Type;
-	}
 };
 
 USTRUCT(BlueprintType)

@@ -138,4 +138,12 @@ public:
 	FBindableDynEvent_CsManagerItem_OnInitInventory OnInitInventory_ScriptEvent;
 
 #pragma endregion Save / Load
+
+// Action
+#pragma region
+public:
+
+	virtual void RecordItemAction(FCsItem* Item, const TCsItemAction& Action);
+
+#pragma endregion Action
 };

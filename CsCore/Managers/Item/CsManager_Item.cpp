@@ -913,3 +913,12 @@ void ACsManager_Item::AsyncInitInventory(ACsManager_Inventory* Manager_Inventory
 }
 
 #pragma endregion Save / Load
+
+// Action
+#pragma region
+
+void ACsManager_Item::RecordItemAction(FCsItem* Item, const TCsItemAction& Action)
+{
+}
+
+#pragma endregion Action

@@ -874,6 +874,52 @@ struct FCsItemOnConsumeContentRule
 	}
 };
 
+UENUM(BlueprintType)
+namespace ECsItemAction
+{
+	enum Type
+	{
+		FireWeapon			UMETA(DisplayName = "Fire Weapon"),
+		HitEnemy			UMETA(DisplayName = "Hit Enemy"),
+		ECsItemAction_MAX	UMETA(Hidden),
+	};
+}
+
+#define ECS_ITEM_ACTION_MAX (uint8)ECsItemAction::ECsItemAction_MAX
+typedef ECsItemAction::Type TCsItemAction;
+
+namespace ECsItemAction
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString FireWeapon = TCsString(TEXT("FireWeapon"), TEXT("fireweapon"), TEXT("fire weapon"));
+		const TCsString HitEnemy = TCsString(TEXT("HitEnemy"), TEXT("hitenemy"), TEXT("hit enemy"));
+	}
+
+	namespace Ref
+	{
+		const TCsItemAction FireWeapon = Type::FireWeapon;
+		const TCsItemAction HitEnemy = Type::HitEnemy;
+		const TCsItemAction ECsItemAction_MAX = Type::ECsItemAction_MAX;
+	}
+
+	FORCEINLINE const FString& ToString(const Type &EType)
+	{
+		if (EType == Type::FireWeapon) { return Str::FireWeapon.Value; }
+		if (EType == Type::HitEnemy) { return Str::HitEnemy.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE const Type& ToType(const FString &String)
+	{
+		if (String == Str::FireWeapon) { return Ref::FireWeapon; }
+		if (String == Str::HitEnemy) { return Ref::HitEnemy; }
+		return Ref::ECsItemAction_MAX;
+	}
+}
+
 namespace ECsFileItemHeaderCachedString
 {
 	namespace Str

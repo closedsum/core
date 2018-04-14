@@ -376,7 +376,10 @@ struct FCsItemMemberValue
 	UPROPERTY()
 	float Value_float;
 
-	FCsItemMemberValue() {}
+	FCsItemMemberValue() 
+	{
+		ResetValues();
+	}
 	~FCsItemMemberValue() {}
 
 	FCsItemMemberValue& operator=(const FCsItemMemberValue& B)
@@ -408,6 +411,14 @@ struct FCsItemMemberValue
 	uint8 GetUint8() { return Value_uint8; }
 	int32 GetInt32() { return Value_int32; }
 	float GetFloat() { return Value_float; }
+
+	void ResetValues()
+	{
+		Value_bool = false;
+		Value_uint8 = 0;
+		Value_int32 = 0;
+		Value_float = 0.0f;
+	}
 };
 
 USTRUCT(BlueprintType)

@@ -23,6 +23,24 @@ UScriptStruct* ACsData_Item::GetMembersScriptStruct() { return nullptr; }
 
 TArray<FCsItemMemberDescription>* ACsData_Item::GetMembers() { return nullptr; }
 
+void ACsData_Item::SetMembers(FCsItemHistory& History)
+{
+	if (TArray<FCsItemMemberDescription>* Members = GetMembers())
+	{
+		const int32 Count = Members->Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			FCsItemMemberDescription& Description = (*Members)[I];
+
+			FCsItemMemberValue Value;
+			Value.Type = Description.Type;
+
+			History.Members.Add(Description.Name, Value);
+		}
+	}
+}
+
 #pragma endregion Members
 
 // UI

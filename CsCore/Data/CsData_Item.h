@@ -29,6 +29,7 @@ public:
 	virtual UScriptStruct* GetMembersScriptStruct();
 
 	virtual TArray<FCsItemMemberDescription>* GetMembers();
+	void SetMembers(FCsItemHistory& History);
 
 #pragma endregion Members
 

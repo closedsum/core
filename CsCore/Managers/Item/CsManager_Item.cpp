@@ -924,16 +924,16 @@ void ACsManager_Item::AsyncInitInventory(ACsManager_Inventory* Manager_Inventory
 // Action
 #pragma region
 
-void ACsManager_Item::RecordItemsAction(const TArray<FCsItem*> &Items, const TCsItemAction &Action)
+void ACsManager_Item::RecordItemsInteraction(const TArray<FCsItem*> &Items, const TCsItemInteraction &Interaction)
 {
 	const int32 Count = Items.Num();
 
 	for (int32 I = 0; I < Count; ++I)
 	{
-		RecordItemAction(Items[I], Action);
+		RecordItemInteraction(Items[I], Interaction);
 	}
 }
 
-void ACsManager_Item::RecordItemAction(FCsItem* Item, const TCsItemAction& Action){}
+void ACsManager_Item::RecordItemInteraction(FCsItem* Item, const TCsItemInteraction& Interaction){}
 
 #pragma endregion Action

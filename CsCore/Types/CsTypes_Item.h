@@ -920,20 +920,20 @@ struct FCsItemOnConsumeContentRule
 };
 
 UENUM(BlueprintType)
-namespace ECsItemAction
+namespace ECsItemInteraction
 {
 	enum Type
 	{
-		FireWeapon			UMETA(DisplayName = "Fire Weapon"),
-		HitEnemy			UMETA(DisplayName = "Hit Enemy"),
-		ECsItemAction_MAX	UMETA(Hidden),
+		FireWeapon				UMETA(DisplayName = "Fire Weapon"),
+		HitEnemy				UMETA(DisplayName = "Hit Enemy"),
+		ECsItemInteraction_MAX	UMETA(Hidden),
 	};
 }
 
-#define ECS_ITEM_ACTION_MAX (uint8)ECsItemAction::ECsItemAction_MAX
-typedef ECsItemAction::Type TCsItemAction;
+#define ECS_ITEM_INTERACTION_MAX (uint8)ECsItemInteraction::ECsItemInteraction_MAX
+typedef ECsItemInteraction::Type TCsItemInteraction;
 
-namespace ECsItemAction
+namespace ECsItemInteraction
 {
 	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
 
@@ -945,9 +945,9 @@ namespace ECsItemAction
 
 	namespace Ref
 	{
-		const TCsItemAction FireWeapon = Type::FireWeapon;
-		const TCsItemAction HitEnemy = Type::HitEnemy;
-		const TCsItemAction ECsItemAction_MAX = Type::ECsItemAction_MAX;
+		const TCsItemInteraction FireWeapon = Type::FireWeapon;
+		const TCsItemInteraction HitEnemy = Type::HitEnemy;
+		const TCsItemInteraction ECsItemInteraction_MAX = Type::ECsItemInteraction_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -961,7 +961,7 @@ namespace ECsItemAction
 	{
 		if (String == Str::FireWeapon) { return Ref::FireWeapon; }
 		if (String == Str::HitEnemy) { return Ref::HitEnemy; }
-		return Ref::ECsItemAction_MAX;
+		return Ref::ECsItemInteraction_MAX;
 	}
 }
 

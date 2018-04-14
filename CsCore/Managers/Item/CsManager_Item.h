@@ -44,6 +44,9 @@ public:
 	TCsAssetType ItemAssetType;
 	TCsAssetType InteractiveAssetType;
 
+// Allocate
+#pragma region
+
 private:
 
 	FCsItem* Allocate_Internal();
@@ -65,6 +68,8 @@ public:
 	void ChangeActiveItemOwnerInfo(FCsItem* Item, UObject* ItemOwner);
 
 	virtual void SetActiveItemData(FCsItem* Item);
+
+#pragma endregion Allocate
 
 // Get
 #pragma region

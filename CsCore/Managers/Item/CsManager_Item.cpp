@@ -91,6 +91,9 @@ void ACsManager_Item::LogTransaction(const FString &FunctionName, const TEnumAsB
 	}
 }
 
+// Allocate
+#pragma region
+
 FCsItem* ACsManager_Item::Allocate_Internal()
 {
 	for (uint16 I = 0; I < CS_ITEM_POOL_SIZE; ++I)
@@ -142,6 +145,8 @@ FCsItem* ACsManager_Item::Allocate(const FName &ShortCode)
 		Item->InventoryProperties.SetIngredient();
 
 	Item->InventoryProperties.Capacity = Data->GetCapacity();
+
+	Data->SetMembers(Item->CurrentHistory);
 
 	Item->Data = Data;
 	// Get Data for Actor when this Item is Dropped
@@ -215,6 +220,8 @@ void ACsManager_Item::SetActiveItemData(FCsItem* Item)
 
 	Item->Data_Actor = Cast<ACsData_Interactive>(DataMapping->GetLoadedData(InteractiveAssetType, Data->GetSpawnedActorDataShortCode()));
 }
+
+#pragma endregion Allocate
 
 // Get
 #pragma region

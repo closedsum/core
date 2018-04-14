@@ -917,8 +917,6 @@ void ACsManager_Item::AsyncInitInventory(ACsManager_Inventory* Manager_Inventory
 // Action
 #pragma region
 
-void ACsManager_Item::RecordItemAction(FCsItem* Item, const TCsItemAction& Action)
-{
-}
+void ACsManager_Item::RecordItemAction(FCsItem* Item, const TCsItemAction& Action){}
 
 #pragma endregion Action

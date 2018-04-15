@@ -389,70 +389,91 @@ bool ACsManager_Item::Transfer_Internal(FCsItem* Item, UObject* Instigator, ACsM
 
 bool ACsManager_Item::Transfer(FCsItem* Item, UObject* Instigator)
 {
+	// Get Manager_Inventory from Instigator
+	ACsManager_Inventory* Manager_Inventory = nullptr;
+
+	// Character
 	if (ACsPawn* Pawn = Cast<ACsPawn>(Instigator))
 	{
 		// Player
-		if (ACsPlayerState* PlayerState = Cast<ACsPlayerState>(Pawn->PlayerState))
+		if (ACsPlayerStateBase* PlayerState = Cast<ACsPlayerStateBase>(Pawn->PlayerState))
 		{
-			ACsManager_Inventory* Manager_Inventory = Cast<ACsManager_Inventory>(PlayerState->Manager_Inventory);
-
-			if (Transfer_Internal(Item, Instigator, Manager_Inventory))
-				return true;
+			Manager_Inventory = PlayerState->Manager_Inventory;
 		}
 	}
+	// Manager_Inventory
+	else
+	{
+		Manager_Inventory = Cast<ACsManager_Inventory>(Instigator);
+	}
+
+	if (Transfer_Internal(Item, Instigator, Manager_Inventory))
+		return true;
+
 	UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::Transfer: Failed to Trasfer Item: %s with Id: %d"), *(Item->TypeAsString), Item->UniqueId);
 	return false;
 }
 
 bool ACsManager_Item::Transfer(TArray<FCsItem*> &Items, UObject* Instigator, const TCsPoolTransactionOrder &Order)
 {
+	// Get Manager_Inventory from Instigator
+	ACsManager_Inventory* Manager_Inventory = nullptr;
+
 	// Character
 	if (ACsPawn* Pawn = Cast<ACsPawn>(Instigator))
 	{
 		// Player
-		if (ACsPlayerState* PlayerState = Cast<ACsPlayerState>(Pawn->PlayerState))
+		if (ACsPlayerStateBase* PlayerState = Cast<ACsPlayerStateBase>(Pawn->PlayerState))
 		{
-			ACsManager_Inventory* Manager_Inventory = Cast<ACsManager_Inventory>(PlayerState->Manager_Inventory);
+			Manager_Inventory = PlayerState->Manager_Inventory;
+		}
+	}
+	// Manager_Inventory
+	else
+	{
+		Manager_Inventory = Cast<ACsManager_Inventory>(Instigator);
+	}
 
-			const int32 Count = Items.Num();
+	if (Manager_Inventory)
+	{
+		const int32 Count = Items.Num();
 
-			// Fill Any
-			if (Order == ECsPoolTransactionOrder::FillAny)
+		// Fill Any
+		if (Order == ECsPoolTransactionOrder::FillAny)
+		{
+			bool Success = false;
+
+			for (int32 I = 0; I < Count; ++I)
 			{
-				bool Success = false;
+				FCsItem* Item = Items[I];
 
+				Success |= Transfer_Internal(Item, Instigator, Manager_Inventory);
+			}
+			return Success;
+		}
+		// Fill Or Kill
+		if (Order == ECsPoolTransactionOrder::FillOrKill)
+		{
+			bool Success = true;
+
+			for (int32 I = 0; I < Count; ++I)
+			{
+				FCsItem* Item = Items[I];
+
+				if (Manager_Inventory->IsFull(0, Item->ShortCode))
+					Success &= false;
+			}
+
+			if (Success)
+			{
 				for (int32 I = 0; I < Count; ++I)
 				{
 					FCsItem* Item = Items[I];
 
-					Success |= Transfer_Internal(Item, Instigator, Manager_Inventory);
+					Transfer_Internal(Item, Instigator, Manager_Inventory);
 				}
-				return Success;
 			}
-			// Fill Or Kill
-			if (Order == ECsPoolTransactionOrder::FillOrKill)
-			{
-				bool Success = true;
-
-				for (int32 I = 0; I < Count; ++I)
-				{
-					FCsItem* Item = Items[I];
-
-					if (Manager_Inventory->IsFull(0, Item->ShortCode))
-						Success &= false;
-				}
-
-				if (Success)
-				{
-					for (int32 I = 0; I < Count; ++I)
-					{
-						FCsItem* Item = Items[I];
-
-						Transfer_Internal(Item, Instigator, Manager_Inventory);
-					}
-				}
-				return Success;
-			}
+			return Success;
 		}
 	}
 	UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::Transfer: Failed to Trasfer Items."));

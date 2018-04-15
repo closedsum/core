@@ -568,7 +568,7 @@ void ACsManager_Item::SaveHistory(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FC
 	JsonWriter->WriteValue(ECsFileItemHistoryHeaderCachedString::Str::OwnerName, ItemHistory->OwnerName);
 
 	// Members
-	JsonWriter->WriteObjectStart(ECsFileItemHistoryHeaderCachedString::Str::Members);
+	JsonWriter->WriteArrayStart(ECsFileItemHistoryHeaderCachedString::Str::Members);
 
 		TArray<FName> OutKeys;
 		ItemHistory->Members.GetKeys(OutKeys);
@@ -601,7 +601,7 @@ void ACsManager_Item::SaveHistory(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FC
 
 			JsonWriter->WriteObjectEnd();
 		}
-	JsonWriter->WriteObjectEnd();
+	JsonWriter->WriteArrayEnd();
 }
 
 void ACsManager_Item::PopulateExistingItems()
@@ -837,14 +837,19 @@ void ACsManager_Item::LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCs
 
 	// Members
 	{
-		TSharedPtr<FJsonObject> Object = JsonObject->Values.Find(ECsFileItemHistoryHeaderCachedString::Str::Members)->Get()->AsObject();
+		const TArray<TSharedPtr<FJsonValue>>& JsonArray = JsonObject->Values.Find(ECsFileItemHistoryHeaderCachedString::Str::Members)->Get()->AsArray();
 
 		TArray<FCsItemMemberDescription>* Members = Item->GetData()->GetMembers();
 
-		const uint8 Count = Members->Num();
+		const uint8 ArrayCount  = JsonArray.Num();
+		const uint8 MemberCount	= Members->Num();
+		const uint8 Count		= FMath::Max(ArrayCount, MemberCount);
 
 		for (uint8 I = 0; I < Count; ++I)
 		{
+			if (I >= MemberCount)
+				continue;
+
 			FCsItemMemberDescription& Member = (*Members)[I];
 
 			const FString MemberNameAsString = Member.Name.ToString();
@@ -855,32 +860,41 @@ void ACsManager_Item::LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCs
 			FCsItemMemberValue Value;
 			Value.Type = Type;
 
-			// bool
-			if (Type == ECsItemMemberValueType::Bool)
-			{
-				Value.Value_bool = Object->GetBoolField(MemberNameAsString);
+			if (I < ArrayCount)
+			{ 
+				TSharedPtr<FJsonObject> Object = JsonArray[I]->AsObject();
+
+				// bool
+				if (Type == ECsItemMemberValueType::Bool)
+				{
+					Value.Value_bool =  Object->GetBoolField(MemberNameAsString);
+				}
+				// uint8
+				else
+				if (Type == ECsItemMemberValueType::Uint8)
+				{
+					Value.Value_uint8 = (uint8)Object->GetIntegerField(MemberNameAsString);
+				}
+				// int32
+				else
+				if (Type == ECsItemMemberValueType::Int32)
+				{
+					Value.Value_int32 = Object->GetIntegerField(MemberNameAsString);
+				}
+				// float
+				else
+				if (Type == ECsItemMemberValueType::Float)
+				{
+					Value.Value_float = (float)Object->GetNumberField(MemberNameAsString);
+				}
+				else
+				{
+					UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::LoadHistory: INVALID ItemMemberValue Type: %s."), *(ECsItemMemberValueType::ToString(Type)));
+				}
 			}
-			// uint8
-			else
-			if (Type == ECsItemMemberValueType::Uint8)
-			{
-				Value.Value_uint8 = (uint8)Object->GetIntegerField(MemberNameAsString);
-			}
-			// int32
-			else
-			if (Type == ECsItemMemberValueType::Int32)
-			{
-				Value.Value_int32 = Object->GetIntegerField(MemberNameAsString);
-			}
-			// float
-			else
-			if (Type == ECsItemMemberValueType::Float)
-			{
-				Value.Value_float = (float)Object->GetNumberField(MemberNameAsString);
-			}
 			else
 			{
-				UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::LoadHistory: INVALID ItemMemberValue Type: %s."), *(ECsItemMemberValueType::ToString(Type)));
+				UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::LoadHistory: Change in Member Count from %d -> %d. Using default value for Member: %s."), ArrayCount, MemberCount, *MemberNameAsString);
 			}
 			ItemHistory->Members.Add(MemberName, Value);
 		}

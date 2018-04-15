@@ -441,11 +441,22 @@ void ACsManager_Inventory::ConsumeItem(FCsItem* Item, TArray<FCsItem*> &OutResul
 		
 		// CONSUME
 		if (Action == ECsItemOnConsumeContentAction::Consume)
+		{
 			ConsumeItem_Internal(ContentItem->UniqueId);
+		}
 		// DROP
 		else
 		if (Action == ECsItemOnConsumeContentAction::Drop)
+		{
 			DropItem(ContentItem);
+			OutResultingItems.Add(ContentItem);
+		}
+		// RETAIN
+		else
+		if (Action == ECsItemOnConsumeContentAction::Retain)
+		{
+			OutResultingItems.Add(ContentItem);
+		}
 	}
 	ConsumeItem_Internal(Item->UniqueId);
 }

@@ -57,15 +57,16 @@ ACsPlayerStateBase::ACsPlayerStateBase(const FObjectInitializer& ObjectInitializ
 
 	OnBoardState	= ECsPlayerStateBaseOnBoardState::WaitingForGameState;
 	UniqueMappingId = CS_INVALID_PLAYER_STATE_UNIQUE_MAPPING_ID;
-
-#if WITH_EDITOR
-	FEditorDelegates::PrePIEEnded.AddUObject(this, &ACsPlayerStateBase::OnPrePIEEnded);
-#endif // #if WITH_EDITOR
 }
 
 void ACsPlayerStateBase::PostActorCreated()
 {
 	Super::PostActorCreated();
+
+#if WITH_EDITOR
+	FEditorDelegates::PrePIEEnded.Remove(OnPrePIEEndedDelegateHandle);
+	OnPrePIEEndedDelegateHandle = FEditorDelegates::PrePIEEnded.AddUObject(this, &ACsPlayerStateBase::OnPrePIEEnded);
+#endif // #if WITH_EDITOR
 
 	OnBoard();
 }

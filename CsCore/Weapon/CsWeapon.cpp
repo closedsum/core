@@ -1083,12 +1083,12 @@ void ACsWeapon::Disable()
 		}
 	}
 
-	for (uint8 I = 0; I < CS_PROJECTILE_FIRE_CACHE_POOL_SIZE; ++I)
+	for (uint8 I = 0; I < CS_PROJECTILE_FIRE_PAYLOAD_POOL_SIZE; ++I)
 	{
-		ProjectileFireCaches[I].Reset();
+		ProjectileFirePayloads[I].Reset();
 	}
 
-	ProjectileFireCachePoolIndex = 0;
+	ProjectileFirePayloadPoolIndex = 0;
 
 	ClearRoutines();
 }
@@ -1343,7 +1343,11 @@ int32 ACsWeapon::GetAmmoReserve(const int32 &Index)
 void ACsWeapon::ConsumeAmmo()
 {
 	--CurrentAmmo;
+	CurrentAmmoHandle.Resolve();
+}
 
+void ACsWeapon::ConsumeAmmoItem(TArray<FCsItem*> &OutItems)
+{
 	if (GetMyData_Weapon()->GetUseInventory())
 	{
 		ACsManager_Inventory* Manager_Inventory = GetMyManager_Inventory();
@@ -1353,7 +1357,7 @@ void ACsWeapon::ConsumeAmmo()
 		// Consume Item
 		if (Data_Projectile->GetOnAllocateConsumeItem())
 		{
-			Manager_Inventory->ConsumeFirstItem(ShortCode);
+			Manager_Inventory->ConsumeFirstItem(ShortCode, OutItems);
 		}
 		// Drop Item
 		else
@@ -1361,8 +1365,8 @@ void ACsWeapon::ConsumeAmmo()
 		{
 			Manager_Inventory->DropFirstItem(ShortCode);
 		}
+		OnConsumeAmmoItem_Event.Broadcast(OutItems);
 	}
-	CurrentAmmoHandle.Resolve();
 }
 
 #pragma endregion Ammo
@@ -1585,26 +1589,26 @@ FVector ACsWeapon::GetFireWeaponStartDirection(const TCsWeaponFireMode &FireMode
 	return FVector::ZeroVector;
 }
 
-FCsProjectileFireCache* ACsWeapon::AllocateProjectileFireCache(const TCsWeaponFireMode &FireMode)
+FCsProjectileFirePayload* ACsWeapon::AllocateProjectileFirePayload(const TCsWeaponFireMode &FireMode)
 {
-	const uint8 Count = CS_PROJECTILE_FIRE_CACHE_POOL_SIZE;
+	const uint8 Count = CS_PROJECTILE_FIRE_PAYLOAD_POOL_SIZE;
 	uint8 PoolIndex	  = 0;
 
 	for (uint8 I = 0; I < Count; ++I)
 	{
-		FCsProjectileFireCache* Cache = &ProjectileFireCaches[ProjectileFireCachePoolIndex];
+		FCsProjectileFirePayload* Payload = &ProjectileFirePayloads[ProjectileFirePayloadPoolIndex];
 
-		if (!Cache->IsAllocated)
+		if (!Payload->IsAllocated)
 		{
-			Cache->IsAllocated = true;
+			Payload->IsAllocated = true;
 
-			Cache->Time		= GetWorld()->GetTimeSeconds();
-			Cache->RealTime = GetWorld()->GetRealTimeSeconds();
-			Cache->Frame	= UCsCommon::GetCurrentFrame(GetWorld());
+			Payload->Time		= GetWorld()->GetTimeSeconds();
+			Payload->RealTime = GetWorld()->GetRealTimeSeconds();
+			Payload->Frame	= UCsCommon::GetCurrentFrame(GetWorld());
 
-			Cache->Location		 = GetFireWeaponStartLocation(FireMode);
-			Cache->Direction	 = GetFireWeaponStartDirection(FireMode);
-			Cache->ChargePercent = GetCurrentChargeFireHeldPercent(FireMode);
+			Payload->Location		 = GetFireWeaponStartLocation(FireMode);
+			Payload->Direction	 = GetFireWeaponStartDirection(FireMode);
+			Payload->ChargePercent = GetCurrentChargeFireHeldPercent(FireMode);
 
 			/*
 			ACsGameState* GameState		   = GetWorld()->GetGameState<ACsGameState>();
@@ -1620,12 +1624,12 @@ FCsProjectileFireCache* ACsWeapon::AllocateProjectileFireCache(const TCsWeaponFi
 
 			Cache->HomingBoneName = BoneName;
 			*/
-			return Cache;
+			return Payload;
 		}
-		ProjectileFireCachePoolIndex = (ProjectileFireCachePoolIndex + I) % Count;
+		ProjectileFirePayloadPoolIndex = (ProjectileFirePayloadPoolIndex + I) % Count;
 	}
 
-	UE_LOG(LogCs, Warning, TEXT("ACsWeapon::AllocateProjectileFireCache: Warning. Pool is exhausted. Using Oldest Active Projectile Fire Cache."));
+	UE_LOG(LogCs, Warning, TEXT("ACsWeapon::AllocateProjectileFirePayload: Warning. Pool is exhausted. Using Oldest Active Projectile Fire Payload."));
 	return nullptr;
 }
 
@@ -1715,20 +1719,23 @@ CS_COROUTINE(ACsWeapon, FireWeapon_Internal)
 			// In Editor Preview Window
 			if (UCsCommon::IsPlayInEditorPreview(w))
 			{
+				mw->ConsumeAmmo();
 			}
 			// In Game
 			else
 #endif // #if WITH_EDITOR
 			{
-				FCsProjectileFireCache* Cache = mw->AllocateProjectileFireCache(FireMode);
+				FCsProjectileFirePayload* Payload = mw->AllocateProjectileFirePayload(FireMode);
 				
+				mw->ConsumeAmmoItem(Payload->Items);
+				mw->ConsumeAmmo();
+
 				if (mw->IsHitscan.Get(FireMode))
-					mw->FireHitscan(FireMode, Cache);
+					mw->FireHitscan(FireMode, Payload);
 				else
-					mw->FireProjectile(FireMode, Cache);
-				Cache->Reset();
+					mw->FireProjectile(FireMode, Payload);
+				Payload->Reset();
 			}
-			mw->ConsumeAmmo();
 			mw->PlayMuzzleFlash(FireMode);
 			
 			mw->CurrentProjectilePerShotIndex.Add(FireMode, 1);
@@ -1770,9 +1777,9 @@ void ACsWeapon::FireWeapon_StopCondition(struct FCsRoutine* r)
 		{
 			mw->StopAnimation(FireMode, mw->FireAnim);
 
-			FCsProjectileFireCache* Cache = (FCsProjectileFireCache*)r->voidPointers[0];
+			FCsProjectileFirePayload* Payload = (FCsProjectileFirePayload*)r->voidPointers[0];
 
-			Cache->Reset();
+			Payload->Reset();
 			r->End(ECsCoroutineEndReason::StopCondition);
 		}
 	}
@@ -1792,13 +1799,13 @@ FVector ACsWeapon::GetFireProjectileDestination()
 	return FVector::ZeroVector;
 }
 
-void ACsWeapon::FireProjectile(const TCsWeaponFireMode &FireMode, FCsProjectileFireCache* Cache)
+void ACsWeapon::FireProjectile(const TCsWeaponFireMode &FireMode, FCsProjectileFirePayload* FirePayload)
 {
-	const FVector RealStart   = Cache->Location;
-	FVector RealDir			  = Cache->Direction;
+	const FVector RealStart   = FirePayload->Location;
+	FVector RealDir			  = FirePayload->Direction;
 
 	ACsData_ProjectileWeapon* Data_Weapon	= GetMyData_Weapon<ACsData_ProjectileWeapon>();
-	ACsData_Projectile* Data_Projectile		= Data_Weapon->GetData_Projectile(FireMode, Cache->ChargePercent > 0.0f);
+	ACsData_Projectile* Data_Projectile		= Data_Weapon->GetData_Projectile(FireMode, FirePayload->ChargePercent > 0.0f);
 	const bool UseFakeProjectile			= Data_Weapon->UseFakeProjectile(FireMode);
 
 	FVector RealEnd = RealStart;
@@ -1840,18 +1847,25 @@ void ACsWeapon::FireProjectile(const TCsWeaponFireMode &FireMode, FCsProjectileF
 		CurrentBaseSpread.Set(FireMode, FMath::Min(CurrentBaseSpread.Get(FireMode) + SpreadAddedPerShot.GetEX(FireMode), MaxSpread.GetEX(FireMode)));
 		LastSpreadFireTime.Set(FireMode, GetWorld()->TimeSeconds);
 	}
-	FireProjectile_Internal(FireMode, Cache);
+	FireProjectile_Internal(FireMode, FirePayload);
 
-	// Update Cache
-
+	// Allocate Projectiles
 	ACsGameState* GameState					  = GetWorld()->GetGameState<ACsGameState>();
 	ACsManager_Projectile* Manager_Projectile = GameState->Manager_Projectile;
-
-	// Real
-	Cache->Location				  = RealStart;
-	Cache->Direction			  = RealDir;
-	ACsProjectile* RealProjectile = Manager_Projectile->Fire(UseFakeProjectile ? ECsProjectileRelevance::RealInvisible : ECsProjectileRelevance::RealVisible, Data_Projectile, Cache, GetMyOwner(), this);
 	
+	// Real
+	FCsProjectilePayload* Payload = Manager_Projectile->AllocatePayload();
+
+	Payload->Relevance = UseFakeProjectile ? ECsProjectileRelevance::RealInvisible : ECsProjectileRelevance::RealVisible;
+	Payload->Data	   = Data_Projectile;
+
+	FirePayload->Location  = RealStart;
+	FirePayload->Direction = RealDir;
+
+	Payload->Set(FirePayload);
+
+	ACsProjectile* RealProjectile = Manager_Projectile->Fire(Payload, GetMyOwner(), this);
+
 	const bool IsLocalPawn = UCsCommon::IsLocalPawn(GetWorld(), GetMyPawn());
 
 	if ((CsCVarDrawLocalPlayerWeaponFireProjectile->GetInt() == CS_CVAR_DRAW &&
@@ -1864,14 +1878,23 @@ void ACsWeapon::FireProjectile(const TCsWeaponFireMode &FireMode, FCsProjectileF
 	// Fake
 	if (UseFakeProjectile)
 	{
-		FCsProjectileFireCache* FakeCache = AllocateProjectileFireCache(FireMode);
-		FakeCache->Location				  = FakeStart;
-		FakeCache->Direction			  = FakeDir;
-		ACsProjectile* FakeProjectile	  = Manager_Projectile->Fire(ECsProjectileRelevance::Fake, Data_Projectile, FakeCache, GetMyOwner(), this);
+		FCsProjectilePayload* FakePayload = Manager_Projectile->AllocatePayload();
+
+		Payload->Relevance = ECsProjectileRelevance::Fake;
+		Payload->Data	   = Data_Projectile;
+
+		FCsProjectileFirePayload* FakeFirePayload = AllocateProjectileFirePayload(FireMode);
+		FakeFirePayload->Location				  = FakeStart;
+		FakeFirePayload->Direction			      = FakeDir;
+
+		Payload->Set(FakeFirePayload);
+
+		ACsProjectile* FakeProjectile = Manager_Projectile->Fire(Payload, GetMyOwner(), this);
+
+		FakeFirePayload->Reset();
 
 		RealProjectile->FakeProjectile = FakeProjectile;
-		FakeCache->Reset();
-
+		
 		if ((CsCVarDrawLocalPlayerWeaponFireProjectile->GetInt() == CS_CVAR_DRAW &&
 			IsLocalPawn) ||
 			CsCVarDrawWeaponFireProjectile->GetInt() == CS_CVAR_DRAW)
@@ -1879,14 +1902,13 @@ void ACsWeapon::FireProjectile(const TCsWeaponFireMode &FireMode, FCsProjectileF
 			DrawFireProjectile(FakeProjectile, FakeStart, RealEnd);
 		}
 	}
-	Cache->Reset();
 }
 
-void ACsWeapon::FireProjectile_Internal(const TCsWeaponFireMode &FireMode, FCsProjectileFireCache* Cache) {}
+void ACsWeapon::FireProjectile_Internal(const TCsWeaponFireMode &FireMode, FCsProjectileFirePayload* Payload) {}
 
-void ACsWeapon::FireProjectile_Script(const uint8 &FireMode, FCsProjectileFireCache &Cache)
+void ACsWeapon::FireProjectile_Script(const uint8 &FireMode, FCsProjectileFirePayload &Payload)
 {
-	FireProjectile((TCsWeaponFireMode)FireMode, &Cache);
+	FireProjectile((TCsWeaponFireMode)FireMode, &Payload);
 }
 
 void ACsWeapon::DrawFireProjectile(class ACsProjectile* Projectile, const FVector &Start, const FVector &End)
@@ -1954,18 +1976,18 @@ void ACsWeapon::GetFireHitscanIgnoreActors(TArray<AActor*> &OutActors)
 
 void ACsWeapon::GetFireHitscanIgnoreComponents(TArray<UPrimitiveComponent*> &OutComponents){}
 
-void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjectileFireCache* Cache)
+void ACsWeapon::FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjectileFirePayload* Payload)
 {
 	//ACsPawn* Pawn					 = GetMyPawn();
 	//ACsPlayerState* MyPlayerState	 = Cast<ACsPlayerState>(Pawn->PlayerState);
 	ACsData_ProjectileWeapon* Data_Weapon	= GetMyData_Weapon<ACsData_ProjectileWeapon>();
-	ACsData_Projectile* Data_Projectile		= Data_Weapon->GetData_Projectile(FireMode, Cache->ChargePercent > 0.0f);
+	ACsData_Projectile* Data_Projectile		= Data_Weapon->GetData_Projectile(FireMode, Payload->ChargePercent > 0.0f);
 	ACsManager_Trace* Manager_Trace			= ACsManager_Trace::Get(GetWorld());
 
 	const ECollisionChannel ProjectileCollision = Data_Projectile->GetCollisionObjectType();
 
-	const FVector& Start	   = Cache->Location;
-	const FVector& Dir		   = Cache->Direction;
+	const FVector& Start	   = Payload->Location;
+	const FVector& Dir		   = Payload->Direction;
 	const float& MaxTraceRange = Data_Projectile->GetMaxRange();
 	const FVector End		   = Start + MaxTraceRange * Dir;
 

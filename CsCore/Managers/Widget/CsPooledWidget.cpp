@@ -1,6 +1,7 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Widget/CsPooledWidget.h"
 #include "CsCore.h"
+#include "Common/CsCommon.h"
 
 #include "Runtime/Engine/Public/UnrealEngine.h"
 
@@ -19,9 +20,9 @@ void UCsPooledWidget::Init(const int32 &Index)
 	Cache.Set(Index, this);
 }
 
-void UCsPooledWidget::Allocate(const uint16& ActiveIndex, FCsPooledWidgetPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent)
+void UCsPooledWidget::Allocate(const uint16& ActiveIndex, FCsPooledWidgetPayload* Payload, UObject* InOwner, UObject* InParent)
 {
-	Cache.Init(ActiveIndex, Payload, Time, RealTime, Frame, InOwner, InParent);
+	Cache.Init(ActiveIndex, Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InOwner, InParent);
 
 	SetSize(Payload->Size);
 	Show();

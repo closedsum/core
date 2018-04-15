@@ -28,12 +28,38 @@
         #endregion // Data Members
     }
 
+    public sealed class ECgInputActionEqualityComparer : IEqualityComparer<ECgInputAction>
+    {
+        public bool Equals(ECgInputAction lhs, ECgInputAction rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(ECgInputAction x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
     public enum ECgInputDevice : byte
     {
         MouseAndKeyboard,
         Gamepad,
         MotionController,
         MAX
+    }
+
+    public sealed class CgInputDeviceEqualityComparer : IEqualityComparer<ECgInputDevice>
+    {
+        public bool Equals(ECgInputDevice lhs, ECgInputDevice rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(ECgInputDevice x)
+        {
+            return x.GetHashCode();
+        }
     }
 
     public enum ECgInputType : byte
@@ -44,6 +70,19 @@
         Location,
         Rotation,
         MAX
+    }
+
+    public sealed class ECgInputTypeEqualityComparer : IEqualityComparer<ECgInputType>
+    {
+        public bool Equals(ECgInputType lhs, ECgInputType rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(ECgInputType x)
+        {
+            return x.GetHashCode();
+        }
     }
 
     public enum ECgInputEvent : byte
@@ -59,17 +98,51 @@
         MAX
     }
 
+    public sealed class ECgInputEventEqualityComparer : IEqualityComparer<ECgInputEvent>
+    {
+        public bool Equals(ECgInputEvent lhs, ECgInputEvent rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(ECgInputEvent x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
     public enum ECgInputValue : byte
     {
+        Action,
+		Axis,
+		Trigger,
+		Location,
+		Rotation,
+        MAX
+    }
+
+    public sealed class ECgInputValueEqualityComparer : IEqualityComparer<ECgInputValue>
+    {
+        public bool Equals(ECgInputValue lhs, ECgInputValue rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(ECgInputValue x)
+        {
+            return x.GetHashCode();
+        }
     }
 
     public class CgKeyInputHandler
     {
+        public class CgKeyInputHandler_Event : CgDelegate { }
+
         #region "Data Members"
 
         public ECgInputAction Action;
 
-        public CgDelegate_Void[] Events;
+        public CgKeyInputHandler_Event Event;
 
         #endregion // Data Members
 
@@ -81,13 +154,13 @@
         public CgKeyInputHandler(ECgInputAction action)
         {
             Action = action;
-            Events = new CgDelegate_Void[(byte)ECgInputEvent.MAX];
+            Event = new CgKeyInputHandler_Event();
         }
 
         public static bool operator ==(CgKeyInputHandler lhs, CgKeyInputHandler rhs)
         {
             if (lhs.Action != rhs.Action) return false;
-            if (lhs.Events != rhs.Events) return false;
+            if (lhs.Event != rhs.Event) return false;
             return true;
         }
 
@@ -101,16 +174,31 @@
             if (!(obj is CgKeyInputHandler))
                 return false;
 
-            CgKeyInputHandler input = (CgKeyInputHandler)obj;
+            CgKeyInputHandler rhs = (CgKeyInputHandler)obj;
 
-            if (Action != input.Action) return false;
-            if (Events != input.Events) return false;
+            if (Action != rhs.Action) return false;
+            if (Event != rhs.Event) return false;
             return true;
         }
 
         public override int GetHashCode()
         {
             return base.GetHashCode();
+        }
+
+        public CgDelegateHandle Add(CgDelegate.Event e)
+        {
+            return Event.Add(e);
+        }
+
+        public bool Remove(CgDelegateHandle handle)
+        {
+            return Event.Remove(handle);
+        }
+
+        public void Broadcast()
+        {
+            Event.Broadcast();
         }
     }
 
@@ -125,7 +213,7 @@
         public float DeltaTime;
         public ulong Frame;
 
-        List<CgKeyInputHandler> HandlerList;
+        private Dictionary<ECgInputAction, CgKeyInputHandler>[] HandlerMap;
 
         #endregion // Data Members
 
@@ -138,7 +226,14 @@
             DeltaTime = 0f;
             Frame = 0;
 
-            HandlerList = new List<CgKeyInputHandler>();
+            HandlerMap = new Dictionary<ECgInputAction, CgKeyInputHandler>[(byte)ECgInputEvent.MAX];
+
+            int len = (int)ECgInputEvent.MAX;
+
+            for (int i = 0; i < len; ++i)
+            {
+                HandlerMap[i] = new Dictionary<ECgInputAction, CgKeyInputHandler>(new ECgInputActionEqualityComparer());
+            }
         }
 
         public CgKeyInput(KeyCode key)
@@ -150,36 +245,50 @@
             DeltaTime = 0f;
             Frame = 0;
 
-            HandlerList = new List<CgKeyInputHandler>();
-        }
+            HandlerMap = new Dictionary<ECgInputAction, CgKeyInputHandler>[(byte)ECgInputEvent.MAX];
 
-        public void Bind(ECgInputAction action, ECgInputEvent e, CgDelegate_Void handler)
-        {
-            bool found = false;
-
-            // Check if Handler has been already created for the action
-            int len = HandlerList.Capacity;
+            int len = (int)ECgInputEvent.MAX;
 
             for (int i = 0; i < len; ++i)
             {
-                CgKeyInputHandler inputHandler = HandlerList[i];
-
-                if (inputHandler.Action == action)
-                {
-                    found = true;
-
-                    inputHandler.Events[(byte)e] += handler;
-                    break;
-                }
+                HandlerMap[i] = new Dictionary<ECgInputAction, CgKeyInputHandler>(new ECgInputActionEqualityComparer());
             }
+        }
 
-            if (!found)
+        public CgDelegateHandle Bind(ECgInputAction action, ECgInputEvent e, CgDelegate.Event del)
+        {
+            Dictionary<ECgInputAction, CgKeyInputHandler> map = HandlerMap[(byte)e];
+
+            CgKeyInputHandler handle = null;
+            bool found               = map.TryGetValue(action, out handle);
+
+            if (found)
             {
-                CgKeyInputHandler inputHandler = new CgKeyInputHandler(action);
-                inputHandler.Events[(byte)e] += handler;
-
-                HandlerList.Add(inputHandler);
+                return handle.Add(del);
             }
+            else
+            {
+                handle = new CgKeyInputHandler(action);
+                
+                map.Add(action, handle);
+
+                return handle.Add(del);
+            }
+        }
+
+        public bool UnBind(ECgInputEvent e, CgDelegateHandle handle)
+        {
+            Dictionary<ECgInputAction, CgKeyInputHandler> map = HandlerMap[(byte)e];
+
+            Dictionary<ECgInputAction, CgKeyInputHandler>.ValueCollection handles = map.Values;
+
+            bool success = false;
+
+            foreach (CgKeyInputHandler h in handles)
+            {
+                success |= h.Remove(handle);
+            }
+            return success;
         }
 
         public void Set(ECgInputEvent e, float time, float realTime, ulong frame)
@@ -193,18 +302,13 @@
 
         public void Execute(ECgInputEvent e)
         {
-            int len = HandlerList.Capacity;
+            Dictionary<ECgInputAction, CgKeyInputHandler> map = HandlerMap[(byte)e];
 
-            for (int i = 0; i < len; ++i)
+            Dictionary<ECgInputAction, CgKeyInputHandler>.ValueCollection handles = map.Values;
+
+            foreach (CgKeyInputHandler h in handles)
             {
-                CgKeyInputHandler handler = HandlerList[i];
-
-                if (handler == null)
-                    continue;
-                if (handler.Events[(byte)e] == null)
-                    continue;
-
-                handler.Events[(byte)e]();
+                h.Broadcast();
             }
         }
     }

@@ -19,7 +19,7 @@ namespace ECsManagerInventoryStringCache
 	{
 		const FString AddItem = TEXT("ACsManager_Inventory::AddItem");
 		const FString RemoveItem = TEXT("ACsManager_Inventory::RemoveItem");
-		const FString ConsumeItem = TEXT("ACsManager_Inventory::ConsumeItem");
+		const FString ConsumeItem_Internal = TEXT("ACsManager_Inventory::ConsumeItem_Internal");
 		const FString DropItem = TEXT("ACsManager_Inventory::DropItem");
 	}
 }
@@ -87,7 +87,11 @@ bool ACsManager_Inventory::IsFull(const uint8 &Bag, const FName &ShortCode)
 
 FCsItem* ACsManager_Inventory::GetItem(const uint64 &Id)
 {
-	return *(Items.Find(Id));
+	if (FCsItem** ItemPtr = Items.Find(Id))
+		return *ItemPtr;
+
+	UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetItem: Failed to find an Item with Id: %d"), Id);
+	return nullptr;
 }
 
 FCsItem* ACsManager_Inventory::GetFirstItem(const FName &ShortCode)
@@ -193,12 +197,7 @@ void ACsManager_Inventory::GetItems(const TArray<uint64> &Ids, TArray<FCsItem*> 
 		}
 		else
 		{
-			/*
-			if (CsCVarLogManagerItemActionGetFail->GetInt() == CS_CVAR_SHOW_LOG)
-			{
-				UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::GetItems: Failed to find an Item with Id: %d"), Ids[I]);
-			}
-			*/
+			UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetItems: Failed to find an Item with Id: %d"), Ids[I]);
 		}
 	}
 }
@@ -394,35 +393,85 @@ void ACsManager_Inventory::RemoveItem(FCsItem* Item, const FString &FunctionName
 // Consume
 #pragma region
 
-void ACsManager_Inventory::ConsumeItem(const uint64 &Id)
+void ACsManager_Inventory::ConsumeItem_Internal(const uint64 &Id)
 {
-	RemoveItem(Id, ECsManagerInventoryStringCache::Str::ConsumeItem, ECsInventoryTransaction::Consume, true);
+	RemoveItem(Id, ECsManagerInventoryStringCache::Str::ConsumeItem_Internal, ECsInventoryTransaction::Consume, true);
+}
+
+void ACsManager_Inventory::ConsumeItem(FCsItem* Item, TArray<FCsItem*> &OutResultingItems)
+{
+	ACsData_Item* Data = Item->GetData();
+	
+	// Handle Contents
+	const TArray<FCsItemOnConsumeContentRule>* Rules = Data->GetOnConsumeContentRules();
+
+	TArray<FCsItem*> OutItems;
+	GetItems(Item->Contents, OutItems);
+	
+	int32 ContentCount = OutItems.Num();
+
+	for (int32 I = ContentCount - 1; I >= 0; --I)
+	{
+		FCsItem* ContentItem = OutItems[I];
+		// By Default CONSUME
+		TCsItemOnConsumeContentAction Action = ECsItemOnConsumeContentAction::Consume;
+		
+		// Check Rules
+		if (Rules)
+		{
+			int32 RuleCount = Rules->Num();
+
+			for (int32 J = 0; J < RuleCount; ++J)
+			{
+				const FCsItemOnConsumeContentRule& Rule = (*Rules)[J];
+
+				if (ContentItem->ShortCode == Rule.ShortCode)
+				{
+					Action = (TCsItemOnConsumeContentAction)Rule.Action;
+					break;
+				}
+			}
+		}
+		// Check to DROP
+		else
+		if (Data->OnConsumeDropContents())
+		{
+			Action = ECsItemOnConsumeContentAction::Drop;
+		}
+		
+		// CONSUME
+		if (Action == ECsItemOnConsumeContentAction::Consume)
+		{
+			ConsumeItem_Internal(ContentItem->UniqueId);
+		}
+		// DROP
+		else
+		if (Action == ECsItemOnConsumeContentAction::Drop)
+		{
+			DropItem(ContentItem);
+			OutResultingItems.Add(ContentItem);
+		}
+		// RETAIN
+		else
+		if (Action == ECsItemOnConsumeContentAction::Retain)
+		{
+			OutResultingItems.Add(ContentItem);
+		}
+	}
+	ConsumeItem_Internal(Item->UniqueId);
 }
 
 void ACsManager_Inventory::ConsumeItem(FCsItem* Item)
 {
-	ConsumeItem(Item->UniqueId);
+	TArray<FCsItem*> OutResultingItems;
+	ConsumeItem(Item, OutResultingItems);
 }
 
-void ACsManager_Inventory::ConsumeFirstItem(const FName &ShortCode)
+void ACsManager_Inventory::ConsumeFirstItem(const FName &ShortCode, TArray<FCsItem*> &OutResultingItems)
 {
 	if (FCsItem* Item = GetFirstItem(ShortCode))
 	{
-		ACsData_Item* Data = Item->GetData();
-		/*
-		TArray<FCsItem*> OutItems;
-		GetItems(Item->Contents, OutItems);
-		*/
-		if (Data->OnConsumeDropContents())
-		{
-			const uint8 Count = Item->Contents.Num();
-
-			for (uint8 I = 0; I < Count; ++I)
-			{
-				DropItem(Item->Contents[I]);
-			}
-		}
-		ConsumeItem(Item);
+		ConsumeItem(Item, OutResultingItems);
 	}
 	else
 	{
@@ -430,19 +479,25 @@ void ACsManager_Inventory::ConsumeFirstItem(const FName &ShortCode)
 	}
 }
 
+void ACsManager_Inventory::ConsumeFirstItem(const FName &ShortCode)
+{
+	TArray<FCsItem*> OutResultingItems;
+	ConsumeFirstItem(ShortCode, OutResultingItems);
+}
+
 #pragma endregion Consume
 
 // Drop
 #pragma region
 
-void ACsManager_Inventory::DropItem(const uint64 &Id)
+void ACsManager_Inventory::DropItem_Internal(const uint64 &Id)
 {
 	RemoveItem(Id, ECsManagerInventoryStringCache::Str::DropItem, ECsInventoryTransaction::Drop, false);
 }
 
 void ACsManager_Inventory::DropItem(FCsItem* Item)
 {
-	DropItem(Item->UniqueId);
+	DropItem_Internal(Item->UniqueId);
 }
 
 FCsItem* ACsManager_Inventory::DropFirstItem(const FName &ShortCode)

@@ -113,6 +113,9 @@ namespace ECsProjectileRelevance
 	};
 }
 
+#define ECS_PROJECTILE_RELEVANCE_MAX (uint8)ECsProjectileRelevance::ECsProjectileRelevance_MAX
+typedef ECsProjectileRelevance::Type TCsProjectileRelevance;
+
 namespace ECsProjectileRelevance
 {
 	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
@@ -124,6 +127,14 @@ namespace ECsProjectileRelevance
 		const TCsString Fake = TCsString(TEXT("Fake"), TEXT("fake"));
 	}
 
+	namespace Ref
+	{
+		const TCsProjectileRelevance RealVisible = Type::RealInvisible;
+		const TCsProjectileRelevance RealInvisible = Type::RealInvisible;
+		const TCsProjectileRelevance Fake = Type::Fake;
+		const TCsProjectileRelevance ECsProjectileRelevance_MAX = Type::ECsProjectileRelevance_MAX;
+	}
+
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::RealVisible) { return Str::RealVisible.Value; }
@@ -132,17 +143,14 @@ namespace ECsProjectileRelevance
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE Type ToType(const FString &String)
+	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::RealVisible) { return Type::RealVisible; }
-		if (String == Str::RealInvisible) { return Type::RealInvisible; }
-		if (String == Str::Fake) { return Type::Fake; }
-		return Type::ECsProjectileRelevance_MAX;
+		if (String == Str::RealVisible) { return Ref::RealVisible; }
+		if (String == Str::RealInvisible) { return Ref::RealInvisible; }
+		if (String == Str::Fake) { return Ref::Fake; }
+		return Ref::ECsProjectileRelevance_MAX;
 	}
 }
-
-#define ECS_PROJECTILE_RELEVANCE_MAX (uint8)ECsProjectileRelevance::ECsProjectileRelevance_MAX
-typedef ECsProjectileRelevance::Type TCsProjectileRelevance;
 
 namespace ECsProjectileType
 {
@@ -163,6 +171,9 @@ namespace ECsProjectileState
 	};
 }
 
+#define ECS_PROJECTILE_STATE_MAX (uint8)ECsProjectileState::ECsProjectileState_MAX
+typedef ECsProjectileState::Type TCsProjectileState;
+
 namespace ECsProjectileState
 {
 	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
@@ -174,6 +185,14 @@ namespace ECsProjectileState
 		const TCsString InActive = TCsString(TEXT("InActive"), TEXT("inactive"));
 	}
 
+	namespace Ref
+	{
+		const TCsProjectileState Active = Type::Active;
+		const TCsProjectileState DeActivating = Type::DeActivating;
+		const TCsProjectileState InActive = Type::InActive;
+		const TCsProjectileState ECsProjectileState_MAX = Type::ECsProjectileState_MAX;
+	}
+
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Active) { return Str::Active.Value; }
@@ -182,17 +201,14 @@ namespace ECsProjectileState
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE Type ToType(const FString &String)
+	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::Active) { return Type::Active; }
-		if (String == Str::DeActivating) { return Type::DeActivating; }
-		if (String == Str::InActive) { return Type::InActive; }
-		return Type::ECsProjectileState_MAX;
+		if (String == Str::Active) { return Ref::Active; }
+		if (String == Str::DeActivating) { return Ref::DeActivating; }
+		if (String == Str::InActive) { return Ref::InActive; }
+		return Ref::ECsProjectileState_MAX;
 	}
 }
-
-#define ECS_PROJECTILE_STATE_MAX (uint8)ECsProjectileState::ECsProjectileState_MAX
-typedef ECsProjectileState::Type TCsProjectileState;
 
 UENUM(BlueprintType)
 namespace ECsProjectileDeActivate
@@ -206,6 +222,9 @@ namespace ECsProjectileDeActivate
 	};
 }
 
+#define ECS_PROJECTILE_DEACTIVATE_MAX (uint8)ECsProjectileDeActivate::ECsProjectileDeActivate_MAX
+typedef ECsProjectileDeActivate::Type TCsProjectileDeActivate;
+
 namespace ECsProjectileDeActivate
 {
 	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
@@ -217,6 +236,14 @@ namespace ECsProjectileDeActivate
 		const TCsString Mesh = TCsString(TEXT("Mesh"), TEXT("mesh"));
 	}
 
+	namespace Ref
+	{
+		const TCsProjectileDeActivate Collision = Type::Collision;
+		const TCsProjectileDeActivate Movement = Type::Movement;
+		const TCsProjectileDeActivate Mesh = Type::Mesh;
+		const TCsProjectileDeActivate ECsProjectileDeActivate_MAX = Type::ECsProjectileDeActivate_MAX;
+	}
+
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Collision) { return Str::Collision.Value; }
@@ -225,17 +252,14 @@ namespace ECsProjectileDeActivate
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE Type ToType(const FString &String)
+	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::Collision) { return Type::Collision; }
-		if (String == Str::Movement) { return Type::Movement; }
-		if (String == Str::Mesh) { return Type::Mesh; }
-		return Type::ECsProjectileDeActivate_MAX;
+		if (String == Str::Collision) { return Ref::Collision; }
+		if (String == Str::Movement) { return Ref::Movement; }
+		if (String == Str::Mesh) { return Ref::Mesh; }
+		return Ref::ECsProjectileDeActivate_MAX;
 	}
 }
-
-#define ECS_PROJECTILE_DEACTIVATE_MAX (uint8)ECsProjectileDeActivate::ECsProjectileDeActivate_MAX
-typedef ECsProjectileDeActivate::Type TCsProjectileDeActivate;
 
 UENUM(BlueprintType)
 namespace ECsProjectileMovement
@@ -248,6 +272,9 @@ namespace ECsProjectileMovement
 	};
 }
 
+#define ECS_PROJECTILE_MOVEMENT_MAX (uint8)ECsProjectileMovement::ECsProjectileMovement_MAX
+typedef ECsProjectileMovement::Type TCsProjectileMovement;
+
 namespace ECsProjectileMovement
 {
 	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
@@ -258,6 +285,13 @@ namespace ECsProjectileMovement
 		const TCsString Function = TCsString(TEXT("Function"), TEXT("function"));
 	}
 
+	namespace Ref
+	{
+		const TCsProjectileMovement Simulated = Type::Simulated;
+		const TCsProjectileMovement Function = Type::Function;
+		const TCsProjectileMovement ECsProjectileMovement_MAX = Type::ECsProjectileMovement_MAX;
+	}
+
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Simulated) { return Str::Simulated.Value; }
@@ -265,16 +299,13 @@ namespace ECsProjectileMovement
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE Type ToType(const FString &String)
+	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::Simulated) { return Type::Simulated; }
-		if (String == Str::Function) { return Type::Function; }
-		return Type::ECsProjectileMovement_MAX;
+		if (String == Str::Simulated) { return Ref::Simulated; }
+		if (String == Str::Function) { return Ref::Function; }
+		return Ref::ECsProjectileMovement_MAX;
 	}
 }
-
-#define ECS_PROJECTILE_MOVEMENT_MAX (uint8)ECsProjectileMovement::ECsProjectileMovement_MAX
-typedef ECsProjectileMovement::Type TCsProjectileMovement;
 
 UENUM(BlueprintType)
 namespace ECsProjectileMovementFunctionType
@@ -453,7 +484,7 @@ struct FCsProjectileMovementFunction
 };
 
 USTRUCT(BlueprintType)
-struct FCsProjectileFireCache
+struct FCsProjectileFirePayload
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -488,12 +519,14 @@ struct FCsProjectileFireCache
 	UPROPERTY()
 	float HomingAccelerationMagnitude;
 
-	FCsProjectileFireCache()
+	TArray<struct FCsItem*> Items;
+
+	FCsProjectileFirePayload()
 	{
 		Reset();
 	}
 
-	FCsProjectileFireCache& operator=(const FCsProjectileFireCache& B)
+	FCsProjectileFirePayload& operator=(const FCsProjectileFirePayload& B)
 	{
 		IsAllocated = B.IsAllocated;
 		Time = B.Time;
@@ -509,22 +542,22 @@ struct FCsProjectileFireCache
 		return *this;
 	}
 
-	bool operator==(const FCsProjectileFireCache& B) const
+	bool operator==(const FCsProjectileFirePayload& B) const
 	{
-		return IsAllocated == B.IsAllocated &&
-			Time == B.Time &&
-			RealTime == B.RealTime &&
-			Frame == B.Frame &&
-			ChargePercent == B.ChargePercent &&
-			Location == B.Location &&
-			Direction == B.Direction &&
-			AdditionalSpeed == B.AdditionalSpeed &&
-			HomingTarget == B.HomingTarget &&
-			HomingBoneName == B.HomingBoneName &&
-			HomingAccelerationMagnitude == B.HomingAccelerationMagnitude;
+		return	IsAllocated == B.IsAllocated &&
+				Time == B.Time &&
+				RealTime == B.RealTime &&
+				Frame == B.Frame &&
+				ChargePercent == B.ChargePercent &&
+				Location == B.Location &&
+				Direction == B.Direction &&
+				AdditionalSpeed == B.AdditionalSpeed &&
+				HomingTarget == B.HomingTarget &&
+				HomingBoneName == B.HomingBoneName &&
+				HomingAccelerationMagnitude == B.HomingAccelerationMagnitude;
 	}
 
-	bool operator!=(const FCsProjectileFireCache& B) const
+	bool operator!=(const FCsProjectileFirePayload& B) const
 	{
 		return !(*this == B);
 	}
@@ -543,11 +576,130 @@ struct FCsProjectileFireCache
 		HomingTarget = NULL;
 		HomingBoneName = NAME_None;
 		HomingAccelerationMagnitude = 0.0f;
+		Items.Reset();
 	}
 
 	AActor* GetHomingTarget() const
 	{
 		return HomingTarget.IsValid() ? HomingTarget.Get() : NULL;
+	}
+
+	template<typename T>
+	T* GetHomingTarget() const 
+	{
+		return Cast<T>(GetHomingTarget());
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FCsProjectilePayload
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY()
+	bool IsAllocated;
+
+	UPROPERTY()
+	TEnumAsByte<ECsProjectileRelevance::Type> Relevance;
+
+	UPROPERTY()
+	TWeakObjectPtr<class ACsData_Projectile> Data;
+
+	UPROPERTY()
+	float ChargePercent;
+
+	UPROPERTY()
+	FVector Direction;
+
+	UPROPERTY()
+	FVector Location;
+
+	UPROPERTY()
+	float AdditionalSpeed;
+
+	UPROPERTY()
+	TWeakObjectPtr<AActor> HomingTarget;
+
+	UPROPERTY()
+	FName HomingBone;
+
+	UPROPERTY()
+	float HomingAccelerationMagnitude;
+
+	FCsProjectilePayload(){}
+	~FCsProjectilePayload(){}
+
+	FCsProjectilePayload& operator=(const FCsProjectilePayload& B)
+	{
+		IsAllocated = B.IsAllocated;
+		Relevance = B.Relevance;
+		Data = B.Data;
+		ChargePercent = B.ChargePercent;
+		Location = B.Location;
+		Direction = B.Direction;
+		AdditionalSpeed = B.AdditionalSpeed;
+		HomingTarget = B.HomingTarget;
+		HomingBone = B.HomingBone;
+		HomingAccelerationMagnitude = B.HomingAccelerationMagnitude;
+		return *this;
+	}
+
+	bool operator==(const FCsProjectilePayload& B) const
+	{
+		return	IsAllocated == B.IsAllocated &&
+				Relevance == B.Relevance &&
+				Data == B.Data &&
+				ChargePercent == B.ChargePercent &&
+				Location == B.Location &&
+				Direction == B.Direction &&
+				AdditionalSpeed == B.AdditionalSpeed &&
+				HomingTarget == B.HomingTarget &&
+				HomingBone == B.HomingBone &&
+				HomingAccelerationMagnitude == B.HomingAccelerationMagnitude;
+	}
+
+	bool operator!=(const FCsProjectilePayload& B) const
+	{
+		return !(*this == B);
+	}
+
+	void Set(FCsProjectileFirePayload* Payload)
+	{
+		ChargePercent = Payload->ChargePercent;
+		Location = Payload->Location;
+		Direction = Payload->Direction;
+		AdditionalSpeed = Payload->AdditionalSpeed;
+		HomingTarget = Payload->HomingTarget;
+		HomingBone = Payload->HomingBoneName;
+		HomingAccelerationMagnitude = Payload->HomingAccelerationMagnitude;
+	}
+
+	void Reset()
+	{
+		Relevance = ECsProjectileRelevance::ECsProjectileRelevance_MAX;
+		ChargePercent = 0.0f;
+		Location = FVector::ZeroVector;
+		Direction = FVector::ZeroVector;
+		AdditionalSpeed = 0.0f;
+		HomingTarget.Reset();
+		HomingTarget = nullptr;
+		HomingBone = NAME_None;
+		HomingAccelerationMagnitude = 0.0f;
+	}
+
+	ACsData_Projectile* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
+	template<typename T>
+	T* GetData() { return Cast<T>(GetData()); }
+
+	AActor* GetHomingTarget() const
+	{
+		return HomingTarget.IsValid() ? HomingTarget.Get() : nullptr;
+	}
+
+	template<typename T>
+	T* GetHomingTarget() const
+	{
+		return Cast<T>(GetHomingTarget());
 	}
 };
 

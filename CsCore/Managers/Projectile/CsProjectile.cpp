@@ -195,38 +195,38 @@ void ACsProjectile::Init(const int32 &Index)
 }
 
 template<typename T>
-void ACsProjectile::Allocate(const uint16& ActiveIndex, const TCsProjectileRelevance &Relevance, ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)())
+void ACsProjectile::Allocate(const uint16& ActiveIndex, FCsProjectilePayload* Payload, UObject* InInstigator, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)())
 {
-	Cache.Init<T>(ActiveIndex, Relevance, InData, InFireCache, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), 0, InInstigator, InOwner, InParent, InObject, OnDeAllocate);
+	Cache.Init<T>(ActiveIndex, Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InInstigator, InOwner, InParent, InObject, OnDeAllocate);
 
-	Allocate_Internal();
+	Allocate_Internal(Payload);
 }
 
 template<typename T>
-void ACsProjectile::Allocate(const uint16& ActiveIndex, const TCsProjectileRelevance &Relevance, ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, T* InObject, void (T::*OnDeAllocate)())
+void ACsProjectile::Allocate(const uint16& ActiveIndex, FCsProjectilePayload* Payload, T* InObject, void (T::*OnDeAllocate)())
 {
-	Allocate<T>(ActiveIndex, Relevance, InData, InFireCache, nullptr, nullptr, InObject, OnDeAllocate);
+	Allocate<T>(ActiveIndex, Payload, nullptr, nullptr, InObject, OnDeAllocate);
 }
 
 template<typename T>
-void ACsProjectile::Allocate(const uint16& ActiveIndex, const TCsProjectileRelevance &Relevance, ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)())
+void ACsProjectile::Allocate(const uint16& ActiveIndex, FCsProjectilePayload* Payload, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)())
 {
-	Allocate<T>(ActiveIndex, Relevance, InData, InFireCache, nullptr, InOwner, InObject, OnDeAllocate);
+	Allocate<T>(ActiveIndex, Payload, nullptr, InOwner, InObject, OnDeAllocate);
 }
 
-void ACsProjectile::Allocate(const uint16& ActiveIndex, const TCsProjectileRelevance &Relevance, ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache, UObject* InInstigator, UObject* InOwner, UObject* InParent /*=nullptr*/)
+void ACsProjectile::Allocate(const uint16& ActiveIndex, FCsProjectilePayload* Payload, UObject* InInstigator, UObject* InOwner, UObject* InParent /*=nullptr*/)
 {
-	Cache.Init(ActiveIndex, Relevance, InData, InFireCache, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), 0, InInstigator, InOwner, InParent);
+	Cache.Init(ActiveIndex, Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InInstigator, InOwner, InParent);
 
-	Allocate_Internal();
+	Allocate_Internal(Payload);
 }
 
-void ACsProjectile::Allocate(const uint16& ActiveIndex, const TCsProjectileRelevance &Relevance, ACsData_Projectile* InData, FCsProjectileFireCache* InFireCache)
+void ACsProjectile::Allocate(const uint16& ActiveIndex, FCsProjectilePayload* Payload)
 {
-	Allocate(ActiveIndex, Relevance, InData, InFireCache, nullptr, nullptr, nullptr);
+	Allocate(ActiveIndex, Payload, nullptr, nullptr, nullptr);
 }
 
-void ACsProjectile::Allocate_Internal()
+void ACsProjectile::Allocate_Internal(FCsProjectilePayload* Payload)
 {
 #if WITH_EDITOR 
 	if (Override_Allocate_Internal_ScriptEvent.IsBound())

@@ -44,6 +44,9 @@ public:
 	TCsAssetType ItemAssetType;
 	TCsAssetType InteractiveAssetType;
 
+// Allocate
+#pragma region
+
 private:
 
 	FCsItem* Allocate_Internal();
@@ -65,6 +68,8 @@ public:
 	void ChangeActiveItemOwnerInfo(FCsItem* Item, UObject* ItemOwner);
 
 	virtual void SetActiveItemData(FCsItem* Item);
+
+#pragma endregion Allocate
 
 // Get
 #pragma region
@@ -92,9 +97,9 @@ public:
 #pragma region
 public:
 
+	bool Transfer_Internal(FCsItem* Item, UObject* Instigator, class ACsManager_Inventory* Manager_Inventory);
 	virtual bool Transfer(FCsItem* Item, UObject* Instigator);
 	virtual bool Transfer(TArray<FCsItem*> &Items, UObject* Instigator, const TCsPoolTransactionOrder &Order);
-	bool Transfer_Internal(FCsItem* Item, UObject* Instigator, class ACsManager_Inventory* Manager_Inventory);
 
 #pragma endregion Transfer
 
@@ -119,6 +124,8 @@ public:
 	virtual void Save(FCsItem* Item);
 	virtual void SaveHistory(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FCsItemHistory* ItemHistory);
 
+	void SaveActiveItems();
+
 	virtual void PopulateExistingItems();
 	virtual void AsyncPopulateExistingItems();
 
@@ -138,4 +145,13 @@ public:
 	FBindableDynEvent_CsManagerItem_OnInitInventory OnInitInventory_ScriptEvent;
 
 #pragma endregion Save / Load
+
+// Action
+#pragma region
+public:
+
+	void RecordItemsInteraction(const TArray<FCsItem*> &Items, const TCsItemInteraction &Interaction);
+	virtual void RecordItemInteraction(FCsItem* Item, const TCsItemInteraction& Interaction);
+
+#pragma endregion Action
 };

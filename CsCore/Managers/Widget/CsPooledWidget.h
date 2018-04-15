@@ -116,7 +116,7 @@ class CSCORE_API UCsPooledWidget : public UCsSimpleWidget
 	virtual void Init(const FGeometry& MyGeometry) override;
 	virtual void Init(const int32 &Index) override;
  
-	virtual void Allocate(const uint16& ActiveIndex, FCsPooledWidgetPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent);
+	virtual void Allocate(const uint16& ActiveIndex, FCsPooledWidgetPayload* Payload, UObject* InOwner, UObject* InParent);
 	virtual void DeAllocate();
 
 	UPROPERTY(BlueprintReadWrite, Category = "Widget")

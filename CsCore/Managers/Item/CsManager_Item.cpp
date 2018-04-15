@@ -16,6 +16,9 @@
 #include "Data/CsDataMapping.h"
 #include "Data/CsData_Item.h"
 #include "Data/CsData_Interactive.h"
+// Player
+#include "Pawn/CsPawn.h"
+#include "Player/CsPlayerState.h"
 
 #include "Async/AsyncWork.h"
 
@@ -88,6 +91,9 @@ void ACsManager_Item::LogTransaction(const FString &FunctionName, const TEnumAsB
 	}
 }
 
+// Allocate
+#pragma region
+
 FCsItem* ACsManager_Item::Allocate_Internal()
 {
 	for (uint16 I = 0; I < CS_ITEM_POOL_SIZE; ++I)
@@ -139,6 +145,8 @@ FCsItem* ACsManager_Item::Allocate(const FName &ShortCode)
 		Item->InventoryProperties.SetIngredient();
 
 	Item->InventoryProperties.Capacity = Data->GetCapacity();
+
+	Data->SetMembers(Item->CurrentHistory);
 
 	Item->Data = Data;
 	// Get Data for Actor when this Item is Dropped
@@ -212,6 +220,8 @@ void ACsManager_Item::SetActiveItemData(FCsItem* Item)
 
 	Item->Data_Actor = Cast<ACsData_Interactive>(DataMapping->GetLoadedData(InteractiveAssetType, Data->GetSpawnedActorDataShortCode()));
 }
+
+#pragma endregion Allocate
 
 // Get
 #pragma region
@@ -332,23 +342,6 @@ void ACsManager_Item::DeAllocate(const uint64 &Id)
 // Transfer
 #pragma region
 
-bool ACsManager_Item::Transfer(FCsItem* Item, UObject* Instigator)
-{
-	DeAllocate(Item);
-	return true;
-}
-
-bool ACsManager_Item::Transfer(TArray<FCsItem*> &Items, UObject* Instigator, const TCsPoolTransactionOrder &Order)
-{
-	const int32 Count = Items.Num();
-
-	for (int32 I = 0; I < Count; ++I)
-	{
-		Transfer(Items[I], Instigator);
-	}
-	return true;
-}
-
 bool ACsManager_Item::Transfer_Internal(FCsItem* Item, UObject* Instigator, ACsManager_Inventory* Manager_Inventory)
 {
 	if (Manager_Inventory)
@@ -358,7 +351,7 @@ bool ACsManager_Item::Transfer_Internal(FCsItem* Item, UObject* Instigator, ACsM
 		if (Manager_Inventory->IsFull(BAG, Item->ShortCode))
 		{
 			const FString OwnerName = Instigator->GetName();
-			const FString& Type		= Item->TypeAsString;
+			const FString& Type = Item->TypeAsString;
 
 			UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::Transfer_Internal: %s's Inventory is FULL. DeAllocating %s with Id: %d"), *OwnerName, *Type, Item->UniqueId);
 			DeAllocate(Item);
@@ -392,6 +385,99 @@ bool ACsManager_Item::Transfer_Internal(FCsItem* Item, UObject* Instigator, ACsM
 			Manager_Inventory->AddItem(ContentItem);
 	}
 	return true;
+}
+
+bool ACsManager_Item::Transfer(FCsItem* Item, UObject* Instigator)
+{
+	// Get Manager_Inventory from Instigator
+	ACsManager_Inventory* Manager_Inventory = nullptr;
+
+	// Character
+	if (ACsPawn* Pawn = Cast<ACsPawn>(Instigator))
+	{
+		// Player
+		if (ACsPlayerStateBase* PlayerState = Cast<ACsPlayerStateBase>(Pawn->PlayerState))
+		{
+			Manager_Inventory = PlayerState->Manager_Inventory;
+		}
+	}
+	// Manager_Inventory
+	else
+	{
+		Manager_Inventory = Cast<ACsManager_Inventory>(Instigator);
+	}
+
+	if (Transfer_Internal(Item, Instigator, Manager_Inventory))
+		return true;
+
+	UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::Transfer: Failed to Trasfer Item: %s with Id: %d"), *(Item->TypeAsString), Item->UniqueId);
+	return false;
+}
+
+bool ACsManager_Item::Transfer(TArray<FCsItem*> &Items, UObject* Instigator, const TCsPoolTransactionOrder &Order)
+{
+	// Get Manager_Inventory from Instigator
+	ACsManager_Inventory* Manager_Inventory = nullptr;
+
+	// Character
+	if (ACsPawn* Pawn = Cast<ACsPawn>(Instigator))
+	{
+		// Player
+		if (ACsPlayerStateBase* PlayerState = Cast<ACsPlayerStateBase>(Pawn->PlayerState))
+		{
+			Manager_Inventory = PlayerState->Manager_Inventory;
+		}
+	}
+	// Manager_Inventory
+	else
+	{
+		Manager_Inventory = Cast<ACsManager_Inventory>(Instigator);
+	}
+
+	if (Manager_Inventory)
+	{
+		const int32 Count = Items.Num();
+
+		// Fill Any
+		if (Order == ECsPoolTransactionOrder::FillAny)
+		{
+			bool Success = false;
+
+			for (int32 I = 0; I < Count; ++I)
+			{
+				FCsItem* Item = Items[I];
+
+				Success |= Transfer_Internal(Item, Instigator, Manager_Inventory);
+			}
+			return Success;
+		}
+		// Fill Or Kill
+		if (Order == ECsPoolTransactionOrder::FillOrKill)
+		{
+			bool Success = true;
+
+			for (int32 I = 0; I < Count; ++I)
+			{
+				FCsItem* Item = Items[I];
+
+				if (Manager_Inventory->IsFull(0, Item->ShortCode))
+					Success &= false;
+			}
+
+			if (Success)
+			{
+				for (int32 I = 0; I < Count; ++I)
+				{
+					FCsItem* Item = Items[I];
+
+					Transfer_Internal(Item, Instigator, Manager_Inventory);
+				}
+			}
+			return Success;
+		}
+	}
+	UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::Transfer: Failed to Trasfer Items."));
+	return false;
 }
 
 #pragma endregion Transfer
@@ -503,7 +589,7 @@ void ACsManager_Item::SaveHistory(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FC
 	JsonWriter->WriteValue(ECsFileItemHistoryHeaderCachedString::Str::OwnerName, ItemHistory->OwnerName);
 
 	// Members
-	JsonWriter->WriteObjectStart(ECsFileItemHistoryHeaderCachedString::Str::Members);
+	JsonWriter->WriteArrayStart(ECsFileItemHistoryHeaderCachedString::Str::Members);
 
 		TArray<FName> OutKeys;
 		ItemHistory->Members.GetKeys(OutKeys);
@@ -536,7 +622,23 @@ void ACsManager_Item::SaveHistory(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FC
 
 			JsonWriter->WriteObjectEnd();
 		}
-	JsonWriter->WriteObjectEnd();
+	JsonWriter->WriteArrayEnd();
+}
+
+void ACsManager_Item::SaveActiveItems()
+{
+	TArray<uint64> Keys;
+	ActiveItems.GetKeys(Keys);
+
+	const int32 Count = Keys.Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		const uint64& Key = Keys[I];
+		FCsItem** ItemPtr = ActiveItems.Find(Key);
+
+		Save(*ItemPtr);
+	}
 }
 
 void ACsManager_Item::PopulateExistingItems()
@@ -772,14 +874,19 @@ void ACsManager_Item::LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCs
 
 	// Members
 	{
-		TSharedPtr<FJsonObject> Object = JsonObject->Values.Find(ECsFileItemHistoryHeaderCachedString::Str::Members)->Get()->AsObject();
+		const TArray<TSharedPtr<FJsonValue>>& JsonArray = JsonObject->Values.Find(ECsFileItemHistoryHeaderCachedString::Str::Members)->Get()->AsArray();
 
 		TArray<FCsItemMemberDescription>* Members = Item->GetData()->GetMembers();
 
-		const uint8 Count = Members->Num();
+		const uint8 ArrayCount  = JsonArray.Num();
+		const uint8 MemberCount	= Members->Num();
+		const uint8 Count		= FMath::Max(ArrayCount, MemberCount);
 
 		for (uint8 I = 0; I < Count; ++I)
 		{
+			if (I >= MemberCount)
+				continue;
+
 			FCsItemMemberDescription& Member = (*Members)[I];
 
 			const FString MemberNameAsString = Member.Name.ToString();
@@ -790,32 +897,41 @@ void ACsManager_Item::LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCs
 			FCsItemMemberValue Value;
 			Value.Type = Type;
 
-			// bool
-			if (Type == ECsItemMemberValueType::Bool)
-			{
-				Value.Value_bool = Object->GetBoolField(MemberNameAsString);
+			if (I < ArrayCount)
+			{ 
+				TSharedPtr<FJsonObject> Object = JsonArray[I]->AsObject();
+
+				// bool
+				if (Type == ECsItemMemberValueType::Bool)
+				{
+					Value.Value_bool =  Object->GetBoolField(MemberNameAsString);
+				}
+				// uint8
+				else
+				if (Type == ECsItemMemberValueType::Uint8)
+				{
+					Value.Value_uint8 = (uint8)Object->GetIntegerField(MemberNameAsString);
+				}
+				// int32
+				else
+				if (Type == ECsItemMemberValueType::Int32)
+				{
+					Value.Value_int32 = Object->GetIntegerField(MemberNameAsString);
+				}
+				// float
+				else
+				if (Type == ECsItemMemberValueType::Float)
+				{
+					Value.Value_float = (float)Object->GetNumberField(MemberNameAsString);
+				}
+				else
+				{
+					UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::LoadHistory: INVALID ItemMemberValue Type: %s."), *(ECsItemMemberValueType::ToString(Type)));
+				}
 			}
-			// uint8
-			else
-			if (Type == ECsItemMemberValueType::Uint8)
-			{
-				Value.Value_uint8 = (uint8)Object->GetIntegerField(MemberNameAsString);
-			}
-			// int32
-			else
-			if (Type == ECsItemMemberValueType::Int32)
-			{
-				Value.Value_int32 = Object->GetIntegerField(MemberNameAsString);
-			}
-			// float
-			else
-			if (Type == ECsItemMemberValueType::Float)
-			{
-				Value.Value_float = (float)Object->GetNumberField(MemberNameAsString);
-			}
 			else
 			{
-				UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::LoadHistory: INVALID ItemMemberValue Type: %s."), *(ECsItemMemberValueType::ToString(Type)));
+				UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::LoadHistory: Change in Member Count from %d -> %d. Using default value for Member: %s."), ArrayCount, MemberCount, *MemberNameAsString);
 			}
 			ItemHistory->Members.Add(MemberName, Value);
 		}
@@ -823,6 +939,52 @@ void ACsManager_Item::LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCs
 }
 
 void ACsManager_Item::InitInventory(ACsManager_Inventory* Manager_Inventory){}
-void ACsManager_Item::AsyncInitInventory(ACsManager_Inventory* Manager_Inventory) {}
+
+void ACsManager_Item::AsyncInitInventory(ACsManager_Inventory* Manager_Inventory) 
+{
+	class FAsyncInitInventoryWorker : public FNonAbandonableTask
+	{
+	public:
+
+		friend class FAutoDeleteAsyncTask<FAsyncInitInventoryWorker>;
+
+		ACsManager_Item* Manager_Item;
+		ACsManager_Inventory* Manager_Inventory;
+
+		FAsyncInitInventoryWorker(ACsManager_Item* InManager_Item, ACsManager_Inventory* InManager_Inventory)
+		{
+			Manager_Item	  = InManager_Item;
+			Manager_Inventory = InManager_Inventory;
+		}
+
+		void DoWork()
+		{
+			Manager_Item->InitInventory(Manager_Inventory);
+		}
+
+		FORCEINLINE TStatId GetStatId() const
+		{
+			RETURN_QUICK_DECLARE_CYCLE_STAT(FAsyncInitInventoryWorker, STATGROUP_ThreadPoolAsyncTasks);
+		}
+	};
+	(new FAutoDeleteAsyncTask<FAsyncInitInventoryWorker>(this, Manager_Inventory))->StartBackgroundTask();
+}
 
 #pragma endregion Save / Load
+
+// Action
+#pragma region
+
+void ACsManager_Item::RecordItemsInteraction(const TArray<FCsItem*> &Items, const TCsItemInteraction &Interaction)
+{
+	const int32 Count = Items.Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		RecordItemInteraction(Items[I], Interaction);
+	}
+}
+
+void ACsManager_Item::RecordItemInteraction(FCsItem* Item, const TCsItemInteraction& Interaction){}
+
+#pragma endregion Action

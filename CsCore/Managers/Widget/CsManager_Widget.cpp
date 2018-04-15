@@ -358,7 +358,7 @@ UCsPooledWidget* UCsManager_Widget::Show(const TCsSimpleWidgetType &Type, FCsPoo
 {
 	UCsPooledWidget* Widget = Allocate(Type);
 
-	Widget->Allocate(GetActivePoolSize(Type), Payload, CurrentWorld->GetTimeSeconds(), CurrentWorld->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(CurrentWorld), InOwner, InParent);
+	Widget->Allocate(GetActivePoolSize(Type), Payload, InOwner, InParent);
 
 	LogTransaction(ECsManagerWidgetCachedString::Str::Show, ECsPoolTransaction::Allocate, Widget);
 

@@ -339,19 +339,27 @@ public:
 
 // Consume
 #pragma region
+private:
+
+	void ConsumeItem_Internal(const uint64 &Id);
+
 public:
 
-	virtual void ConsumeItem(const uint64 &Id);
+	virtual void ConsumeItem(FCsItem* Item, TArray<FCsItem*> &OutResultingItems);
 	virtual void ConsumeItem(FCsItem* Item);
+	virtual void ConsumeFirstItem(const FName &ShortCode, TArray<FCsItem*> &OutResultingItems);
 	virtual void ConsumeFirstItem(const FName &ShortCode);
 
 #pragma endregion Consume
 
 // Drop
 #pragma region
+private:
+
+	virtual void DropItem_Internal(const uint64 &Id);
+
 public:
 
-	virtual void DropItem(const uint64 &Id);
 	virtual void DropItem(FCsItem* Item);
 
 	virtual FCsItem* DropFirstItem(const FName &ShortCode);

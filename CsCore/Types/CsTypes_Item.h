@@ -41,6 +41,9 @@ namespace ECsItemCollection
 	};
 }
 
+#define ECS_ITEM_COLLECTION_MAX (uint8)ECsItemCollection::ECsItemCollection_MAX
+typedef ECsItemCollection::Type TCsItemCollection;
+
 namespace ECsItemCollection
 {
 	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
@@ -52,6 +55,14 @@ namespace ECsItemCollection
 		const TCsString GroupMixed = TCsString(TEXT("GroupMixed"), TEXT("groupmixed"), TEXT("group mixed"));
 	}
 
+	namespace Ref
+	{
+		const TCsItemCollection Single = Type::Single;
+		const TCsItemCollection GroupHomogeneous = Type::GroupHomogeneous;
+		const TCsItemCollection GroupMixed = Type::GroupMixed;
+		const TCsItemCollection ECsItemCollection_MAX = Type::ECsItemCollection_MAX;
+	}
+
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Single) { return Str::Single.Value; }
@@ -60,17 +71,14 @@ namespace ECsItemCollection
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE Type ToType(const FString &String)
+	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::Single) { return Type::Single; }
-		if (String == Str::GroupHomogeneous) { return Type::GroupHomogeneous; }
-		if (String == Str::GroupMixed) { return Type::GroupMixed; }
-		return Type::ECsItemCollection_MAX;
+		if (String == Str::Single) { return Ref::Single; }
+		if (String == Str::GroupHomogeneous) { return Ref::GroupHomogeneous; }
+		if (String == Str::GroupMixed) { return Ref::GroupMixed; }
+		return Ref::ECsItemCollection_MAX;
 	}
 }
-
-#define ECS_ITEM_COLLECTION_MAX (uint8)ECsItemCollection::ECsItemCollection_MAX
-typedef ECsItemCollection::Type TCsItemCollection;
 
 namespace ECsItemCollectionCachedString
 {
@@ -129,7 +137,6 @@ namespace ECsInventoryItemState_Editor
 		ECsInventoryItemState_Editor_MAX	UMETA(Hidden),
 	};
 }
-
 
 #define ECS_INVENTORY_ITEM_STATE_MAX (uint8)ECsInventoryItemState_Editor::ECsInventoryItemState_Editor_MAX
 typedef ECsInventoryItemState_Editor::Type TCsInventoryItemState_Editor;
@@ -309,6 +316,9 @@ namespace ECsItemMemberValueType
 	};
 }
 
+#define ECS_ITEM_MEMBER_VALUE_TYPE_MAX (uint8)ECsItemMemberValueType::ECsItemMemberValueType_MAX
+typedef ECsItemMemberValueType::Type TCsItemMemberValueType;
+
 namespace ECsItemMemberValueType
 {
 	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
@@ -321,6 +331,15 @@ namespace ECsItemMemberValueType
 		const TCsString Float = TCsString(TEXT("Float"), TEXT("float"));
 	}
 
+	namespace Ref
+	{
+		const TCsItemMemberValueType Bool = Type::Bool;
+		const TCsItemMemberValueType Uint8 = Type::Uint8;
+		const TCsItemMemberValueType Int32 = Type::Int32;
+		const TCsItemMemberValueType Float = Type::Float;
+		const TCsItemMemberValueType ECsItemMemberValueType_MAX = Type::ECsItemMemberValueType_MAX;
+	}
+
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::Bool) { return Str::Bool.Value; }
@@ -330,18 +349,15 @@ namespace ECsItemMemberValueType
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE Type ToType(const FString &String)
+	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::Bool) { return Type::Bool; }
-		if (String == Str::Uint8) { return Type::Uint8; }
-		if (String == Str::Int32) { return Type::Int32; }
-		if (String == Str::Float) { return Type::Float; }
-		return Type::ECsItemMemberValueType_MAX;
+		if (String == Str::Bool) { return Ref::Bool; }
+		if (String == Str::Uint8) { return Ref::Uint8; }
+		if (String == Str::Int32) { return Ref::Int32; }
+		if (String == Str::Float) { return Ref::Float; }
+		return Ref::ECsItemMemberValueType_MAX;
 	}
 }
-
-#define ECS_ITEM_MEMBER_VALUE_TYPE_MAX (uint8)ECsItemMemberValueType::ECsItemMemberValueType_MAX
-typedef ECsItemMemberValueType::Type TCsItemMemberValueType;
 
 USTRUCT(BlueprintType)
 struct FCsItemMemberValue
@@ -360,7 +376,10 @@ struct FCsItemMemberValue
 	UPROPERTY()
 	float Value_float;
 
-	FCsItemMemberValue() {}
+	FCsItemMemberValue() 
+	{
+		ResetValues();
+	}
 	~FCsItemMemberValue() {}
 
 	FCsItemMemberValue& operator=(const FCsItemMemberValue& B)
@@ -392,6 +411,22 @@ struct FCsItemMemberValue
 	uint8 GetUint8() { return Value_uint8; }
 	int32 GetInt32() { return Value_int32; }
 	float GetFloat() { return Value_float; }
+
+	void Increment()
+	{
+		if (Type == ECsItemMemberValueType::Uint8)
+			++Value_uint8;
+		if (Type == ECsItemMemberValueType::Int32)
+			++Value_int32;
+	}
+
+	void ResetValues()
+	{
+		Value_bool = false;
+		Value_uint8 = 0;
+		Value_int32 = 0;
+		Value_float = 0.0f;
+	}
 };
 
 USTRUCT(BlueprintType)
@@ -518,6 +553,7 @@ struct FCsItemHistory
 
 #define CS_ITEM_POOL_INVALID_INDEX 65535
 #define CS_INVALID_ITEM_TYPE 255
+#define CS_CURRENT_HISTORY -1
 
 USTRUCT(BlueprintType)
 struct FCsItem
@@ -610,6 +646,21 @@ struct FCsItem
 		Index = InIndex;
 	}
 
+	void SetType(const TCsItemType &InType)
+	{
+		Type = InType;
+		Type_Script = (uint8)Type;
+	}
+
+	FCsItemMemberValue* GetMemberValue(const int32 &HistoryIndex, const FName& Name)
+	{
+		if (HistoryIndex == CS_CURRENT_HISTORY)
+			return CurrentHistory.Members.Find(Name);
+		if (HistoryIndex < PreviousHistories.Num())
+			return PreviousHistories[HistoryIndex].Members.Find(Name);
+		return nullptr;
+	}
+
 	void Reset()
 	{
 		IsAllocated = false;
@@ -634,12 +685,6 @@ struct FCsItem
 
 	class ACsData_Item* GetData() const { return Data.IsValid() ? Data.Get() : nullptr; }
 	class ACsData_Interactive* GetData_Actor() const { return Data_Actor.IsValid() ? Data_Actor.Get() : nullptr; }
-
-	void SetType(const TCsItemType &InType)
-	{
-		Type		= InType;
-		Type_Script = (uint8)Type;
-	}
 };
 
 USTRUCT(BlueprintType)
@@ -873,6 +918,52 @@ struct FCsItemOnConsumeContentRule
 		return !(*this == B);
 	}
 };
+
+UENUM(BlueprintType)
+namespace ECsItemInteraction
+{
+	enum Type
+	{
+		FireWeapon				UMETA(DisplayName = "Fire Weapon"),
+		HitEnemy				UMETA(DisplayName = "Hit Enemy"),
+		ECsItemInteraction_MAX	UMETA(Hidden),
+	};
+}
+
+#define ECS_ITEM_INTERACTION_MAX (uint8)ECsItemInteraction::ECsItemInteraction_MAX
+typedef ECsItemInteraction::Type TCsItemInteraction;
+
+namespace ECsItemInteraction
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString FireWeapon = TCsString(TEXT("FireWeapon"), TEXT("fireweapon"), TEXT("fire weapon"));
+		const TCsString HitEnemy = TCsString(TEXT("HitEnemy"), TEXT("hitenemy"), TEXT("hit enemy"));
+	}
+
+	namespace Ref
+	{
+		const TCsItemInteraction FireWeapon = Type::FireWeapon;
+		const TCsItemInteraction HitEnemy = Type::HitEnemy;
+		const TCsItemInteraction ECsItemInteraction_MAX = Type::ECsItemInteraction_MAX;
+	}
+
+	FORCEINLINE const FString& ToString(const Type &EType)
+	{
+		if (EType == Type::FireWeapon) { return Str::FireWeapon.Value; }
+		if (EType == Type::HitEnemy) { return Str::HitEnemy.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE const Type& ToType(const FString &String)
+	{
+		if (String == Str::FireWeapon) { return Ref::FireWeapon; }
+		if (String == Str::HitEnemy) { return Ref::HitEnemy; }
+		return Ref::ECsItemInteraction_MAX;
+	}
+}
 
 namespace ECsFileItemHeaderCachedString
 {

@@ -3,6 +3,7 @@
 #include "GameFramework/Actor.h"
 #include "Types/CsTypes.h"
 #include "Types/CsTypes_Weapon.h"
+#include "Types/CsTypes_Item.h"
 #include "Common/CsCommon_Load.h"
 #include "Data/CsData_ProjectileWeapon.h"
 #include "CsWeapon.generated.h"
@@ -14,8 +15,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsWeapon_OnApplyDa
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsWeapon_OnTick, const uint8&, WeaponIndex, const float&, DeltaSeconds);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsWeapon_Override_CheckStateIdle, const uint8&, WeaponIndex);
 // Ammo
+
+	// OnChangeCurrentAmmo
 DECLARE_MULTICAST_DELEGATE_FourParams(FBindableEvent_CsWeapon_OnChangeCurrentAmmo, const TCsWeaponSlot&, const int32&, const int32&, const int32&);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FBindableDynEvent_CsWeapon_OnChangeCurrentAmmo, const uint8&, WeaponIndex, const int32&, Ammo, const int32&, MaxAmmo, const int32&, AmmoReserve);
+	// OnConsumeAmmoItem
+DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsWeapon_OnConsumeAmmoItem, const TArray<FCsItem*>&);
 // Firing
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsWeapon_Override_FireWeapon, const uint8&, WeaponIndex, const uint8&, FireMode);
 // Equip
@@ -309,7 +314,7 @@ struct FCsWeapon_TArrayRef_float : public TCsIntegralType_TArrayRefValue_float<T
 
 #define CS_WEAPON_DATA_VALUE 0
 #define CS_WEAPON_CUSTOM_VALUE -1
-#define CS_PROJECTILE_FIRE_CACHE_POOL_SIZE 64
+#define CS_PROJECTILE_FIRE_PAYLOAD_POOL_SIZE 64
 
 UCLASS()
 class CSCORE_API ACsWeapon : public AActor
@@ -700,6 +705,9 @@ public:
 	virtual int32 GetAmmoReserve(const int32 &Index);
 
 	virtual void ConsumeAmmo();
+	void ConsumeAmmoItem(TArray<FCsItem*> &OutItems);
+
+	FBindableEvent_CsWeapon_OnConsumeAmmoItem OnConsumeAmmoItem_Event;
 
 #pragma endregion Ammo
 
@@ -810,11 +818,11 @@ public:
 	virtual FVector GetFireWeaponStartLocation(const TCsWeaponFireMode &FireMode);
 	virtual FVector GetFireWeaponStartDirection(const TCsWeaponFireMode &FireMode);
 
-	struct FCsProjectileFireCache ProjectileFireCaches[CS_PROJECTILE_FIRE_CACHE_POOL_SIZE];
+	struct FCsProjectileFirePayload ProjectileFirePayloads[CS_PROJECTILE_FIRE_PAYLOAD_POOL_SIZE];
 
-	uint8 ProjectileFireCachePoolIndex;
+	uint8 ProjectileFirePayloadPoolIndex;
 
-	struct FCsProjectileFireCache* AllocateProjectileFireCache(const TCsWeaponFireMode &FireMode);
+	struct FCsProjectileFirePayload* AllocateProjectileFirePayload(const TCsWeaponFireMode &FireMode);
 
 	void FireWeapon(const TCsWeaponFireMode &FireMode);
 	static char FireWeapon_Internal(struct FCsRoutine* r);
@@ -829,11 +837,11 @@ public:
 
 	virtual FVector GetFireProjectileDestination();
 
-	virtual void FireProjectile(const TCsWeaponFireMode &FireMode, FCsProjectileFireCache* Cache);
-	virtual void FireProjectile_Internal(const TCsWeaponFireMode &FireMode, FCsProjectileFireCache* Cache);
+	virtual void FireProjectile(const TCsWeaponFireMode &FireMode, FCsProjectileFirePayload* FirePayload);
+	virtual void FireProjectile_Internal(const TCsWeaponFireMode &FireMode, FCsProjectileFirePayload* Payload);
 
 	UFUNCTION(BlueprintCallable, Category = "Firing")
-	void FireProjectile_Script(const uint8 &FireMode, FCsProjectileFireCache &Cache);
+	void FireProjectile_Script(const uint8 &FireMode, FCsProjectileFirePayload &Payload);
 
 	void DrawFireProjectile(class ACsProjectile* Projectile, const FVector &Start, const FVector &End);
 	static char DrawFireProjectile_Internal(struct FCsRoutine* r);
@@ -854,7 +862,7 @@ public:
 	virtual void GetFireHitscanIgnoreActors(TArray<AActor*> &OutActors);
 	virtual void GetFireHitscanIgnoreComponents(TArray<UPrimitiveComponent*> &OutComponents);
 
-	void FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjectileFireCache* Cache);
+	void FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjectileFirePayload* Payload);
 
 #pragma endregion Hitscan
 

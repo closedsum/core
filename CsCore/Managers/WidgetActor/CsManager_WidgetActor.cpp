@@ -412,7 +412,7 @@ ACsWidgetActor* ACsManager_WidgetActor::Display(const TCsWidgetActorType &Type, 
 {
 	ACsWidgetActor* Widget = Allocate(Type);
 
-	Widget->Allocate(GetActivePoolSize((uint8)Type), Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InOwner, Parent);
+	Widget->Allocate(GetActivePoolSize((uint8)Type), Payload, InOwner, Parent);
 	
 	LogTransaction(ECsManagerWidgetActorCachedString::Str::Display, ECsPoolTransaction::Allocate, Widget);
 
@@ -436,7 +436,7 @@ void ACsManager_WidgetActor::Display(const TCsWidgetActorType &Type, ACsWidgetAc
 {
 	OutWidgetActor = Allocate(Type);
 
-	OutWidgetActor->Allocate<T>(GetActivePoolSize((uint8)Type), Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InOwner, Parent, InObject, OnDeAllocate);
+	OutWidgetActor->Allocate<T>(GetActivePoolSize((uint8)Type), Payload, InOwner, Parent, InObject, OnDeAllocate);
 
 	LogTransaction(ECsManagerWidgetActorCachedString::Str::Display, ECsPoolTransaction::Allocate, OutWidgetActor);
 

@@ -363,6 +363,8 @@ public:
 #pragma endregion A.I. Player State
 
 #if WITH_EDITOR
+	FDelegateHandle OnPrePIEEndedDelegateHandle;
+
 	virtual void OnPrePIEEnded(const bool IsSimulating);
 #endif // #if WITH_EDITO
 };

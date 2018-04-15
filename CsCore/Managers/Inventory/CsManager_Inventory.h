@@ -354,9 +354,12 @@ public:
 
 // Drop
 #pragma region
+private:
+
+	virtual void DropItem_Internal(const uint64 &Id);
+
 public:
 
-	virtual void DropItem(const uint64 &Id);
 	virtual void DropItem(FCsItem* Item);
 
 	virtual FCsItem* DropFirstItem(const FName &ShortCode);

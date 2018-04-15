@@ -479,14 +479,14 @@ void ACsManager_Inventory::ConsumeFirstItem(const FName &ShortCode)
 // Drop
 #pragma region
 
-void ACsManager_Inventory::DropItem(const uint64 &Id)
+void ACsManager_Inventory::DropItem_Internal(const uint64 &Id)
 {
 	RemoveItem(Id, ECsManagerInventoryStringCache::Str::DropItem, ECsInventoryTransaction::Drop, false);
 }
 
 void ACsManager_Inventory::DropItem(FCsItem* Item)
 {
-	DropItem(Item->UniqueId);
+	DropItem_Internal(Item->UniqueId);
 }
 
 FCsItem* ACsManager_Inventory::DropFirstItem(const FName &ShortCode)

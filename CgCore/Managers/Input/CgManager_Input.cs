@@ -53,6 +53,8 @@
 
         public int CurrentInputActionMap;
 
+        List<ECgGameEvent> QueuedGameEventsForNextFrame;
+
         #region "Actions"
 
         protected List<CgInput_Base> Inputs;
@@ -155,6 +157,8 @@
             }
 
             RawKeyInputsPressed = new List<CgKeyInput>();
+
+            QueuedGameEventsForNextFrame = new List<ECgGameEvent>();
 
             // Events
             Action_Event = new CgManagerInput_Action_Default();
@@ -574,6 +578,141 @@
                     break;
                 }
             }
+        }
+
+        public void SetCurrentInputActionMap(ECgInputActionMap actionMap)
+        {
+	        CurrentInputActionMap |= actionMap;
+        }
+
+        public void SetCurrentInputActionMap(int actionMap)
+        {
+            CurrentInputActionMap |= actionMap;
+        }
+
+        public void ClearCurrentInputActionMap(ECgInputActionMap actionMap)
+        {
+            CurrentInputActionMap &= actionMap;
+        }
+
+        public void ClearCurrentInputActionMap(int actionMap)
+        {
+            CurrentInputActionMap &= actionMap;
+        }
+
+        public CgInput GetPreviousInputAction(ECgInputAction action)
+        {
+	        int lastInputFrame  = CgMath.Mod(CurrentInputFrameIndex - 1, MAX_INPUT_FRAMES);
+            CgInput input       = InputFrames[lastInputFrame].GetInput(action);
+
+	        return input;
+        }
+
+        public CgInput GetPreviousInputAction(ECgInputAction action, ECgInputEvent e)
+        {
+            int lastInputFrame  = CgMath.Mod(CurrentInputFrameIndex - 1, MAX_INPUT_FRAMES);
+            CgInput input       = InputFrames[lastInputFrame].GetInput(action, e);
+
+            return input;
+        }
+
+        public CgInput GetPreviousInputAction(ECgInputAction action, List<ECgInputEvent> events)
+        {
+            int lastInputFrame  = CgMath.Mod(CurrentInputFrameIndex - 1, MAX_INPUT_FRAMES);
+            CgInput input       = InputFrames[lastInputFrame].GetInput(action, events);
+
+            return input;
+        }
+
+        public CgInput GetPreviousPreviousInputAction(ECgInputAction action)
+        {
+	        int lastInputFrame  = CgMath.Mod(CurrentInputFrameIndex - 2, MAX_INPUT_FRAMES);
+            CgInput input       = InputFrames[lastInputFrame].GetInput(action);
+
+	        return input;
+        }
+
+        public void QueueGameEvent(ECgGameEvent e)
+        {
+            QueuedGameEventsForNextFrame.Add(e);
+        }
+
+        public void ClearQueuedGameEvents()
+        {
+            QueuedGameEventsForNextFrame.Clear();
+        }
+
+        public void DetermineGameEvents(List<CgInput> inputs)
+        {
+        }
+
+        public bool HasActionEventOccured(ECgInputAction action, ECgInputEvent e)
+        {
+            CgInputFrame inputFrame = InputFrames[CurrentInputFrameIndex];
+
+            int count = inputFrame.Inputs.Capacity;
+
+            for (int i = 0; i < count; ++i)
+            {
+                CgInput input = inputFrame.Inputs[i];
+
+                if (input.Action == action && input.Event == e)
+                    return true;
+            }
+            return false;
+        }
+
+        public float GetInputValue(ECgInputAction action)
+        {
+	        CgInputFrame inputFrame = InputFrames[CurrentInputFrameIndex];
+
+	        int count = inputFrame.Inputs.Capacity;
+
+	        for (int i = 0; i < count; ++i)
+	        {
+		        CgInput input = inputFrame.Inputs[i];
+
+		        if (input.Action == action)
+			        return input.Value;
+	        }
+	        return 0.0f;
+        }
+
+        public Vector3 GetInputLocation(ECgInputAction action)
+        {
+            CgInputFrame inputFrame = InputFrames[CurrentInputFrameIndex];
+
+            int count = inputFrame.Inputs.Capacity;
+
+            for (int i = 0; i < count; ++i)
+            {
+                CgInput input = inputFrame.Inputs[i];
+
+                if (input.Action == action)
+                    return input.Location;
+            }
+            return Vector3.zero;
+        }
+
+        public ECgInputEvent GetInputEvent(ECgInputAction action)
+        {
+            CgInputFrame inputFrame = InputFrames[CurrentInputFrameIndex];
+
+            int count = inputFrame.Inputs.Capacity;
+
+            for (int i = 0; i < count; ++i)
+            {
+                CgInput input = inputFrame.Inputs[i];
+
+                if (input.Action == action)
+                    return input.Event;
+            }
+            return ECgInputEvent.MAX;
+        }
+
+        public float GetInputDuration(ECgInputAction action)
+        {
+            return Infos[(byte)action].Duration;
         }
     }
 }

@@ -8,12 +8,30 @@
 
     public static class CgTypes_Input
     {
-        public static ushort CG_INVALID_INPUT_POOL_INDEX = 65535;
+        public static ushort INVALID_INPUT_POOL_INDEX = 65535;
     }
 
     #endregion
 
-    public abstract class ECgInputAction : ECgEnum_Byte
+    public abstract class ECgInputActionMap : ECgEnum_int
+    {
+
+    }
+
+    public sealed class ECgInputActionMapEqualityComparer : IEqualityComparer<ECgInputActionMap>
+    {
+        public bool Equals(ECgInputActionMap lhs, ECgInputActionMap rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(ECgInputActionMap x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
+    public abstract class ECgInputAction : ECgEnum_byte
     {
         #region "Delegates"
 
@@ -129,6 +147,34 @@
         }
 
         public int GetHashCode(ECgInputValue x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
+    public abstract class ECgGameEvent : ECgEnum_byte
+    {
+        #region "Delegates"
+
+        public delegate ECgGameEvent Getter(byte b);
+
+        #endregion // Delegates
+
+        #region "Data Members"
+
+        public static Getter Get;
+
+        #endregion // Data Members
+    }
+
+    public sealed class ECgGameEventEqualityComparer : IEqualityComparer<ECgGameEvent>
+    {
+        public bool Equals(ECgGameEvent lhs, ECgGameEvent rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(ECgGameEvent x)
         {
             return x.GetHashCode();
         }

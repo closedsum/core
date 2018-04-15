@@ -342,6 +342,51 @@ void ACsManager_Item::DeAllocate(const uint64 &Id)
 // Transfer
 #pragma region
 
+bool ACsManager_Item::Transfer_Internal(FCsItem* Item, UObject* Instigator, ACsManager_Inventory* Manager_Inventory)
+{
+	if (Manager_Inventory)
+	{
+		const uint8 BAG = 0;
+		// TODO: Need a way to determine correct Bag
+		if (Manager_Inventory->IsFull(BAG, Item->ShortCode))
+		{
+			const FString OwnerName = Instigator->GetName();
+			const FString& Type = Item->TypeAsString;
+
+			UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::Transfer_Internal: %s's Inventory is FULL. DeAllocating %s with Id: %d"), *OwnerName, *Type, Item->UniqueId);
+			DeAllocate(Item);
+			return false;
+		}
+
+		Item->InventoryProperties.SetVisible();
+		// TODO: Need a way to determine correct Bag
+		Item->InventoryProperties.Bag = BAG;
+	}
+
+	// TODO: Potentially evaluate having ChangeActiveItemOwnerInfo within AddItem
+	ChangeActiveItemOwnerInfo(Item, Instigator);
+
+	if (Manager_Inventory)
+		Manager_Inventory->AddItem(Item);
+
+	// Transfer Contents
+	TArray<FCsItem*> Items;
+	GetItems(Item->Contents, Items);
+
+	const int32 ContentCount = Items.Num();
+
+	for (int32 I = 0; I < ContentCount; ++I)
+	{
+		FCsItem* ContentItem = Items[I];
+
+		ChangeActiveItemOwnerInfo(ContentItem, Instigator);
+
+		if (Manager_Inventory)
+			Manager_Inventory->AddItem(ContentItem);
+	}
+	return true;
+}
+
 bool ACsManager_Item::Transfer(FCsItem* Item, UObject* Instigator)
 {
 	if (ACsPawn* Pawn = Cast<ACsPawn>(Instigator))
@@ -412,51 +457,6 @@ bool ACsManager_Item::Transfer(TArray<FCsItem*> &Items, UObject* Instigator, con
 	}
 	UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::Transfer: Failed to Trasfer Items."));
 	return false;
-}
-
-bool ACsManager_Item::Transfer_Internal(FCsItem* Item, UObject* Instigator, ACsManager_Inventory* Manager_Inventory)
-{
-	if (Manager_Inventory)
-	{
-		const uint8 BAG = 0;
-		// TODO: Need a way to determine correct Bag
-		if (Manager_Inventory->IsFull(BAG, Item->ShortCode))
-		{
-			const FString OwnerName = Instigator->GetName();
-			const FString& Type		= Item->TypeAsString;
-
-			UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::Transfer_Internal: %s's Inventory is FULL. DeAllocating %s with Id: %d"), *OwnerName, *Type, Item->UniqueId);
-			DeAllocate(Item);
-			return false;
-		}
-
-		Item->InventoryProperties.SetVisible();
-		// TODO: Need a way to determine correct Bag
-		Item->InventoryProperties.Bag = BAG;
-	}
-
-	// TODO: Potentially evaluate having ChangeActiveItemOwnerInfo within AddItem
-	ChangeActiveItemOwnerInfo(Item, Instigator);
-
-	if (Manager_Inventory)
-		Manager_Inventory->AddItem(Item);
-
-	// Transfer Contents
-	TArray<FCsItem*> Items;
-	GetItems(Item->Contents, Items);
-
-	const int32 ContentCount = Items.Num();
-
-	for (int32 I = 0; I < ContentCount; ++I)
-	{
-		FCsItem* ContentItem = Items[I];
-
-		ChangeActiveItemOwnerInfo(ContentItem, Instigator);
-
-		if (Manager_Inventory)
-			Manager_Inventory->AddItem(ContentItem);
-	}
-	return true;
 }
 
 #pragma endregion Transfer

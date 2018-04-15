@@ -97,9 +97,9 @@ public:
 #pragma region
 public:
 
+	bool Transfer_Internal(FCsItem* Item, UObject* Instigator, class ACsManager_Inventory* Manager_Inventory);
 	virtual bool Transfer(FCsItem* Item, UObject* Instigator);
 	virtual bool Transfer(TArray<FCsItem*> &Items, UObject* Instigator, const TCsPoolTransactionOrder &Order);
-	bool Transfer_Internal(FCsItem* Item, UObject* Instigator, class ACsManager_Inventory* Manager_Inventory);
 
 #pragma endregion Transfer
 

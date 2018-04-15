@@ -70,8 +70,16 @@ void FCsRunnable_Delegate::Allocate(const uint8 &ActiveIndex, FCsRunnablePayload
 
 void FCsRunnable_Delegate::Start()
 {
+	// TODO: BUG: Issue with STAT groups being created and needing a unique name. This is a problem on NON-SHIPPING Builds
+#if UE_BUILD_SHIPPING
+	const FString& ThreadName = Cache.Name;
+#else
+	const uint64 UniqueId    = (uint64)FMath::RandRange(0, INT32_MAX - 1) + (uint64)FMath::RandRange(0, INT32_MAX - 1);
+	const FString ThreadName = Cache.Name + TEXT("_") + FString::Printf(TEXT("%llu"), UniqueId);
+#endif // #if UE_BUILD_SHIPPING
+
 	// Windows default = 8mb for thread, could specify more
-	Thread = FRunnableThread::Create(this, *(Cache.Name), 0, TPri_Normal);
+	Thread = FRunnableThread::Create(this, *ThreadName, 0, TPri_Normal);
 }
 
 void FCsRunnable_Delegate::EnsureCompletion()

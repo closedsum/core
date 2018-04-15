@@ -124,6 +124,8 @@ public:
 	virtual void Save(FCsItem* Item);
 	virtual void SaveHistory(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FCsItemHistory* ItemHistory);
 
+	void SaveActiveItems();
+
 	virtual void PopulateExistingItems();
 	virtual void AsyncPopulateExistingItems();
 

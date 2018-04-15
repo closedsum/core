@@ -1715,12 +1715,11 @@ CS_COROUTINE(ACsWeapon, FireWeapon_Internal)
 			if (!mw->LoopFireAnim.Get(FireMode))
 				mw->PlayAnimation(FireMode, mw->FireAnim);
 
-			mw->ConsumeAmmo();
-
 #if WITH_EDITOR 
 			// In Editor Preview Window
 			if (UCsCommon::IsPlayInEditorPreview(w))
 			{
+				mw->ConsumeAmmo();
 			}
 			// In Game
 			else
@@ -1729,6 +1728,7 @@ CS_COROUTINE(ACsWeapon, FireWeapon_Internal)
 				FCsProjectileFirePayload* Payload = mw->AllocateProjectileFirePayload(FireMode);
 				
 				mw->ConsumeAmmoItem(Payload->Items);
+				mw->ConsumeAmmo();
 
 				if (mw->IsHitscan.Get(FireMode))
 					mw->FireHitscan(FireMode, Payload);

@@ -106,10 +106,6 @@ ACsGameState::ACsGameState(const FObjectInitializer& ObjectInitializer)
 	JavascriptEntryPointClass = ACsJavascriptEntryPoint::StaticClass();
 
 	NumberOfClients = 1;
-
-#if WITH_EDITOR
-	FEditorDelegates::PrePIEEnded.AddUObject(this, &ACsGameState::OnPrePIEEnded);
-#endif // #if WITH_EDITOR
 }
 
 void ACsGameState::Tick(float DeltaSeconds)
@@ -127,6 +123,11 @@ void ACsGameState::PostActorCreated()
 	if (GetWorld()->WorldType == EWorldType::Editor ||
 		GetWorld()->WorldType == EWorldType::EditorPreview)
 		return;
+
+#if WITH_EDITOR
+	FEditorDelegates::PrePIEEnded.Remove(OnPrePIEEndedDelegateHandle);
+	OnPrePIEEndedDelegateHandle = FEditorDelegates::PrePIEEnded.AddUObject(this, &ACsGameState::OnPrePIEEnded);
+#endif // #if WITH_EDITOR
 
 	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
 	GameInstance->LevelState	  = ECsLevelState::Loaded;

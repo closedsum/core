@@ -401,6 +401,8 @@ public:
 #pragma endregion Items
 
 #if WITH_EDITOR
+	FDelegateHandle OnPrePIEEndedDelegateHandle;
+
 	virtual void OnPrePIEEnded(const bool bIsSimulating);
 #endif // #if WITH_EDITOR
 };

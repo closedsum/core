@@ -625,6 +625,22 @@ void ACsManager_Item::SaveHistory(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FC
 	JsonWriter->WriteArrayEnd();
 }
 
+void ACsManager_Item::SaveActiveItems()
+{
+	TArray<uint64> Keys;
+	ActiveItems.GetKeys(Keys);
+
+	const int32 Count = Keys.Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		const uint64& Key = Keys[I];
+		FCsItem** ItemPtr = ActiveItems.Find(Key);
+
+		Save(*ItemPtr);
+	}
+}
+
 void ACsManager_Item::PopulateExistingItems()
 {
 	TArray<FString> FoundFiles;

@@ -699,7 +699,7 @@ struct FCsInputWord
 				if (Input->Action == AndInputs[J].Action &&
 					Input->Event == AndInputs[J].Event)
 				{
-					And++;
+					++And;
 				}
 			}
 			// Check Or

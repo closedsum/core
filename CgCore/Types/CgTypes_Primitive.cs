@@ -45,6 +45,8 @@
 
         public static bool operator ==(ECgEnum_byte lhs, ECgEnum_byte rhs)
         {
+            if (lhs == null && rhs == null) return true;
+            if (lhs == null || rhs == null) return false;
             return lhs.Value == rhs.Value && lhs.Name == rhs.Name;
         }
 
@@ -99,6 +101,8 @@
 
         public static bool operator ==(ECgEnum_int lhs, ECgEnum_int rhs)
         {
+            if (lhs == null && rhs == null) return true;
+            if (lhs == null || rhs == null) return false;
             return lhs.Value == rhs.Value && lhs.Name == rhs.Name;
         }
 
@@ -153,6 +157,8 @@
 
         public static bool operator ==(ECgEnum_uint lhs, ECgEnum_uint rhs)
         {
+            if (lhs == null && rhs == null) return true;
+            if (lhs == null || rhs == null) return false;
             return lhs.Value == rhs.Value && lhs.Name == rhs.Name;
         }
 

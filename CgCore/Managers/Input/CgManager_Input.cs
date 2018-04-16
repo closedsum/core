@@ -714,5 +714,477 @@
         {
             return Infos[(byte)action].Duration;
         }
+
+        #region "Profile"
+
+        public bool CanSaveInputActionMapping(ECgInputDevice device, ECgInputAction action)
+        {
+	        return true;
+        }
+
+        public string GetSavePath()
+        {
+            //return FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + TEXT("/");
+            return "";
+        }
+
+        public string GetInputProfileFilenameAndPath()
+        {
+            //return GetSavePath() + TEXT("InputProfile") + FString::FromInt(ControllerId) + TEXT(".json");
+            return "";
+        }
+
+        public void SaveInputProfile()
+        {
+            /*
+            FString OutputString;
+            TSharedRef<TJsonWriter<TCHAR>> JsonWriter = TJsonWriterFactory <>::Create(&OutputString);
+
+            JsonWriter->WriteObjectStart();
+
+            UCsCommon_Load::WriteStructToJson(JsonWriter, (void*)(&InputProfile), FCsInputProfile::StaticStruct(), nullptr);
+
+            JsonWriter->WriteObjectEnd();
+
+            JsonWriter->Close();
+
+            const FString Filename = GetInputProfileFilenameAndPath();
+
+            FFileHelper::SaveStringToFile(OutputString, *Filename);
+            */
+        }
+
+        public void LoadDefaultInputProfile()
+        {
+            /*
+            InputProfile.Reset();
+
+            ACsPlayerController* Controller = Cast<ACsPlayerController>(GetInputOwner());
+            UPlayerInput* PlayerInput = Controller->PlayerInput;
+
+            // ActionMappings
+            int actionCount = PlayerInput->ActionMappings.Capacity;
+
+            for (int i = 0; i < actionCount; ++i)
+            {
+                FInputActionKeyMapping & Mapping = PlayerInput->ActionMappings[i];
+
+                ECgInputAction action = ECgInputAction.ToType(Mapping.ActionName);
+
+                if (Action == InputAction_MAX)
+                    continue;
+
+                string actionName     = action.name;;
+                KeyCode key           = Mapping.Key;
+                const FString keyName = key.ToString();
+
+                // MouseAndKeyboard
+                if (CanSaveInputActionMapping(ECgInputDevice.MouseAndKeyboard, action) &&
+                    IsValidKey(ECgInputDevice.MouseAndKeyboard, key))
+                {
+                    InputProfile.AddMapping(ECgInputDevice.MouseAndKeyboard, actionName, action, keyName, Key);
+                }
+                // Gamepad
+                if (CanSaveInputActionMapping(ECgInputDevice.Gamepad, action) &&
+                    IsValidKey(ECgInputDevice.Gamepad, key))
+                {
+                    InputProfile.AddMapping(ECgInputDevice.Gamepad, actionName, action, keyName, key);
+                }
+            }
+            // AxisMappings
+            int axisCount = PlayerInput->AxisMappings.Capacity;
+
+            for (int i = 0; i < axisCount; ++i)
+            {
+                FInputAxisKeyMapping & Mapping = PlayerInput->AxisMappings[i];
+
+                ECgInputAction action = ECgInputAction.ToType(Mapping.AxisName);
+
+                if (action == null)
+                    continue;
+
+                string actionName   = ECgInputAction.ToStr(Action);
+                KeyCode key         = Mapping.Key;
+                string keyName      = key.ToString();
+
+                // MouseAndKeyboard
+                if (CanSaveInputActionMapping(ECgInputDevice.MouseAndKeyboard, action) &&
+                    IsValidKey(ECgInputDevice.MouseAndKeyboard, key))
+                {
+                    InputProfile.AddMapping(ECgInputDevice.MouseAndKeyboard, actionName, action, keyName, key);
+                }
+                // Gamepad
+                if (CanSaveInputActionMapping(ECgInputDevice.Gamepad, action) &&
+                    IsValidKey(ECgInputDevice.Gamepad, key))
+                {
+                    InputProfile.AddMapping(ECgInputDevice.Gamepad, actionName, action, keyName, key);
+                }
+            }
+            */
+        }
+
+        public void LoadInputProfile()
+        {
+            /*
+            string inputProfileFilename = GetInputProfileFilenameAndPath();
+
+            string dataJson;
+
+            if (FFileHelper::LoadFileToString(DataJson, *InputProfileFilename))
+            {
+                TSharedRef<TJsonReader<TCHAR>> JsonReader = TJsonReaderFactory < TCHAR >::Create(DataJson);
+
+                TSharedPtr<FJsonObject> JsonParsed;
+
+                if (FJsonSerializer::Deserialize(JsonReader, JsonParsed) && JsonParsed.IsValid())
+                {
+                    UCsCommon_Load::ReadStructFromJson(JsonParsed, &InputProfile, FCsInputProfile::StaticStruct(), nullptr);
+                    // Update Action and Key members
+
+                    for (int32 I = 0; I < ECS_INPUT_DEVICE_MAX; ++I)
+                    {
+                        FCsInputActionMappings & DeviceMapping = InputProfile.DeviceMappings[I];
+                        TArray<FCsInputActionMapping> & Mappings = DeviceMapping.Mappings;
+
+                        const int32 Count = Mappings.Num();
+
+                        for (int32 J = 0; J < Count; J++)
+                        {
+                            FCsInputActionMapping & Mapping = Mappings[J];
+
+                            Mapping.Action = (*StringToInputAction)(Mapping.ActionName);
+                            Mapping.Key = GetKey(Mapping.KeyName);
+                        }
+                    }
+                }
+                else
+                {
+                    UE_LOG(LogCs, Warning, TEXT("ACsManager_Input::LoadInputProfile: %s is NOT Valid"), *InputProfileFilename);
+                }
+            }
+            else
+            {
+                UE_LOG(LogCs, Warning, TEXT("ACsManager_Input::LoadInputProfile: %s NOT found. Loading Default Input Profile."), *InputProfileFilename);
+
+                LoadDefaultInputProfile();
+            }
+            */
+        }
+
+        public bool IsValidKey(ECgInputDevice device, KeyCode key)
+        {
+	        if (key == KeyCode.None)
+		        return false;
+
+	        // MouseAndKeyboard
+	        if (device == ECgInputDevice.MouseAndKeyboard)
+	        {
+		        if (CgKey.IsGamepadKey(key))
+			        return false;
+	        }
+	        // Gamepad
+	        if (device == ECgInputDevice.Gamepad)
+	        {
+		        if (!CgKey.IsGamepadKey(key))
+			        return false;
+	        }
+	        return true;
+        }
+
+        public KeyCode GetKey(string keyName)
+        {
+            if (keyName == "")
+                return KeyCode.None;
+
+            return (KeyCode)Enum.Parse(typeof(KeyCode), keyName);
+        }
+
+        public ECgInputAction GetActionFromKey(ECgInputDevice device, KeyCode key)
+        {
+            /*
+            FCsInputActionMappings & DeviceMapping   = InputProfile.DeviceMappings[(uint8)Device];
+            TArray<FCsInputActionMapping> & Mappings = DeviceMapping.Mappings;
+
+            count = Mappings.Capacity;
+
+            for (int i = 0; i < count; ++i)
+            {
+                FCsInputActionMapping & Mapping = Mappings[i];
+
+                if (Mapping.Key == key)
+                    return Mapping.Action;
+            }
+            */
+            return null;
+        }
+
+        public KeyCode GetKeyFromAction(ECgInputDevice device, ECgInputAction action)
+        {
+            /*
+            FCsInputActionMappings & DeviceMapping = InputProfile.DeviceMappings[(uint8)Device];
+            TArray<FCsInputActionMapping> & Mappings = DeviceMapping.Mappings;
+
+            const count = Mappings.Capacity;
+
+            for (int i = 0; i < count; ++i)
+            {
+                FCsInputActionMapping & Mapping = Mappings[i];
+
+                if (Mapping.Action == action)
+                    return Mapping.Key;
+            }
+            */
+            return KeyCode.None;
+        }
+
+        public KeyCode GetKeyFromAction(ECgInputAction action)
+        {
+            /*
+            UPlayerInput* PlayerInput = UCsCommon::GetLocalPlayerInput(GetWorld());
+
+            string ActionName = ECgInputAction.ToStr(action);
+
+            int actionCount = PlayerInput->ActionMappings.Capacity;
+
+            for (int i = 0; i < actionCount; ++i)
+            {
+                FInputActionKeyMapping & Mapping = PlayerInput->ActionMappings[i];
+
+                if (actionName == Mapping.ActionName)
+                    return Mapping.Key;
+            }
+
+            int axisCount = PlayerInput->AxisMappings.Capacity;
+
+            for (int i = 0; i < axisCount; ++i)
+            {
+                FInputAxisKeyMapping & Mapping = PlayerInput->AxisMappings[i];
+
+                if (actionName == Mapping.AxisName)
+                    return Mapping.Key;
+            }
+            */
+            return KeyCode.None;
+        }
+
+        public void UnbindActionMapping(ECgInputDevice device, ECgInputAction action, KeyCode key)
+        {
+            /*
+            ACsPlayerController* Controller = Cast<ACsPlayerController>(GetInputOwner());
+            UPlayerInput* PlayerInput       = Controller->PlayerInput;
+
+            string actionName = ECgInputAction.ToStr(action);
+            // Remove binding from PlayerInput ActionMapping
+            int mappingCount = PlayerInput->ActionMappings.Capacity;
+
+            for (int i = mappingCount - 1; i >= 0; --i)
+            {
+                FInputActionKeyMapping & Mapping = PlayerInput->ActionMappings[I];
+
+                if (actionName == Mapping.ActionName &&
+                    key == Mapping.Key)
+                {
+                    PlayerInput->ActionMappings.RemoveAt(i);
+                    break;
+                }
+            }
+            // Clear Key on Mapping from InputProfile
+            FCsInputActionMappings & DeviceMapping = InputProfile.DeviceMappings[(uint8)Device];
+            TArray<FCsInputActionMapping> & Mappings = DeviceMapping.Mappings;
+
+            int count = Mappings.Capacity;
+
+            for (i = count - 1; i >= 0; --i)
+            {
+                FCsInputActionMapping & Mapping = Mappings[i];
+
+                if (actionName == Mapping.ActionName &&
+                    Key == Mapping.Key)
+                {
+                    Mapping.KeyName = "";
+                    Mapping.Key = KeyCode.None;
+                    break;
+                }
+            }
+            PlayerInput->ForceRebuildingKeyMaps(false);
+            */
+        }
+
+        public void UnbindAxisMapping(ECgInputDevice device, ECgInputAction action, KeyCode key)
+        {
+            /*
+            ACsPlayerController* Controller = Cast<ACsPlayerController>(GetInputOwner());
+            UPlayerInput* PlayerInput = Controller->PlayerInput;
+
+            string actionName = ECgInputAction.ToStr(action);
+            // Remove binding from PlayerInput ActionMapping
+            int mappingCount = PlayerInput->AxisMappings.Capacity;
+
+            for (int i = mappingCount - 1; i >= 0; --i)
+            {
+                FInputAxisKeyMapping & Mapping = PlayerInput->AxisMappings[i];
+
+                if (actionName == Mapping.AxisName &&
+                    key == Mapping.Key)
+                {
+                    PlayerInput->AxisMappings.RemoveAt(i);
+                    break;
+                }
+            }
+            // Clear Key on Mapping from InputProfile
+            FCsInputActionMappings & DeviceMapping = InputProfile.DeviceMappings[(byte)device];
+            TArray<FCsInputActionMapping> & Mappings = DeviceMapping.Mappings;
+
+            int count = Mappings.Capacity;
+
+            for (int i = count - 1; i >= 0; --i)
+            {
+                FCsInputActionMapping & Mapping = Mappings[i];
+
+                if (actionName == Mapping.ActionName &&
+                    key == Mapping.Key)
+                {
+                    Mapping.KeyName = "";
+                    Mapping.Key = KeyCode.None;
+                    break;
+                }
+            }
+            PlayerInput->ForceRebuildingKeyMaps(false);
+            */
+        }
+
+        public void UnbindMapping(ECgInputDevice device, ECgInputAction action, KeyCode key)
+        {
+            if (Infos[(byte)action].Type == ECgInputType.Action)
+                UnbindActionMapping(device, action, key);
+            if (Infos[(byte)action].Type == ECgInputType.Axis)
+                UnbindAxisMapping(device, action, key);
+        }
+
+        // TODO: Need to store the original Key "Keyboard" mappings for Input. Do similar for control setup
+
+        public void RebindActionMapping(ECgInputDevice device, ECgInputAction action, KeyCode key)
+        {
+            if (!IsValidKey(device, key))
+                return;
+            /*
+            ACsPlayerController* Controller = Cast<ACsPlayerController>(GetInputOwner());
+            UPlayerInput* PlayerInput = Controller->PlayerInput;
+
+            FCsInputActionMapping & Mapping = InputProfile.GetMapping(device, action);
+            KeyCode previousKey = Mapping.Key;
+
+            // If it is the SAME Key, Do Nothing
+            if (key == previousKey)
+                return;
+
+            // Check if another Action is already mapped to the Key
+            ECgInputAction otherAction = GetActionFromKey(device, key);
+
+            // Unbind ActionMapping for OtherAction bound to Key
+            if (otherAction != ECgInputAction.GetMAX())
+            {
+                UnbindMapping(Device, OtherAction, Key);
+            }
+
+            string actionName = ECgInputAction.ToStr(action);
+            int count         = PlayerInput->ActionMappings.Capacity;
+
+            bool found = false;
+
+            for (int i = 0; i < count; ++i)
+            {
+                FInputActionKeyMapping & ActionMapping = PlayerInput->ActionMappings[i];
+
+                if (actionName == ActionMapping.ActionName &&
+                    previousKey == ActionMapping.Key)
+                {
+                    ActionMapping.Key = key;
+                    found = true;
+                    break;
+                }
+            }
+            // Add Mapping if it is NOT found
+            if (!found)
+            {
+                PlayerInput->ActionMappings.AddDefaulted();
+
+                FInputActionKeyMapping & ActionMapping = PlayerInput->ActionMappings[count];
+                ActionMapping.ActionName = Mapping.ActionName;
+                ActionMapping.Key = Mapping.Key;
+            }
+
+            InputProfile.SetKey(device, action, key);
+
+            PlayerInput->ForceRebuildingKeyMaps(false);
+            */
+        }
+
+        public void RebindAxisMapping(ECgInputDevice device, ECgInputAction action, KeyCode key)
+        {
+            if (!IsValidKey(device, key))
+                return;
+            /*
+            ACsPlayerController* Controller = Cast<ACsPlayerController>(GetInputOwner());
+            UPlayerInput* PlayerInput = Controller->PlayerInput;
+
+            FCsInputActionMapping & Mapping = InputProfile.GetMapping(device, action);
+            KeyCode previousKey = Mapping.Key;
+
+            // If it is the SAME Key, Do Nothing
+            if (key == previousKey)
+                return;
+
+            // Check if another Action is already mapped to the Key
+            ECgInputAction otherAction = GetActionFromKey(device, key);
+
+            // Unbind ActionMapping for OtherAction bound to Key
+            if (otherAction != ECgInputAction.GetMAX())
+            {
+                UnbindMapping(device, otherAction, key);
+            }
+
+            string actionName = ECgInputAction.ToStr(action);
+            int count         = PlayerInput->AxisMappings.Capacity;
+
+            bool found = false;
+
+            for (int i = 0; i < count; ++i)
+            {
+                FInputAxisKeyMapping & AxisMapping = PlayerInput->AxisMappings[i];
+
+                if (actionName == AxisMapping.AxisName &&
+                    previousKey == AxisMapping.Key)
+                {
+                    AxisMapping.Key = key;
+                    found = true;
+                    break;
+                }
+            }
+            // Add Mapping if it is NOT found
+            if (!found)
+            {
+                PlayerInput->AxisMappings.AddDefaulted();
+
+                FInputAxisKeyMapping & AxisMapping = PlayerInput->AxisMappings[dount];
+                AxisMapping.AxisName = Mapping.ActionName;
+                AxisMapping.Key = Mapping.Key;
+                AxisMapping.Scale = Mapping.Scale;
+            }
+            InputProfile.SetKey(device, action, key);
+
+            PlayerInput->ForceRebuildingKeyMaps(false);
+            */
+        }
+
+        public void RebindMapping(ECgInputDevice device, ECgInputAction action, KeyCode key)
+        {
+            if (Infos[(byte)action].Type == ECgInputType.Action)
+                RebindActionMapping(device, action, key);
+            if (Infos[(byte)action].Type == ECgInputType.Axis)
+                RebindAxisMapping(device, action, key);
+        }
+
+        #endregion // Profile
     }
 }

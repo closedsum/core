@@ -31,17 +31,23 @@
         }
     }
 
-    public abstract class ECgInputAction : ECgEnum_byte
+    public class ECgInputAction : ECgEnum_byte
     {
         #region "Delegates"
 
-        public delegate ECgInputAction Getter(byte b);
+        public delegate ECgInputAction GetDelegate(byte b);
+        public delegate ECgInputAction GetMAXDelegate();
+        public delegate ECgInputAction ToTypeDelegate(string s);
+        public delegate string ToStringDelegate(ECgInputAction aciton);
 
         #endregion // Delegates
 
         #region "Data Members"
 
-        public static Getter Get;
+        public static GetDelegate Get;
+        public static GetMAXDelegate GetMAX;
+        public static ToTypeDelegate ToType;
+        public static ToStringDelegate ToStr;
 
         #endregion // Data Members
     }
@@ -132,10 +138,10 @@
     public enum ECgInputValue : byte
     {
         Action,
-		Axis,
-		Trigger,
-		Location,
-		Rotation,
+        Axis,
+        Trigger,
+        Location,
+        Rotation,
         MAX
     }
 
@@ -177,6 +183,22 @@
         public int GetHashCode(ECgGameEvent x)
         {
             return x.GetHashCode();
+        }
+    }
+
+    public static class CgKey
+    {
+        public static bool IsJoystickKey(KeyCode key)
+        {
+            if ((int)key >= (int)KeyCode.JoystickButton0 &&
+                (int)key <= (int)KeyCode.Joystick8Button19)
+                return true;
+            return false;
+        }
+
+        public static bool IsGamepadKey(KeyCode key)
+        {
+            return IsJoystickKey(key);
         }
     }
 

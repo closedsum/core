@@ -694,7 +694,7 @@ struct FCsInputWord
 			// Check And
 			const int32 AndCount = AndInputs.Num();
 
-			for (int32 J = And; J < AndCount; J++)
+			for (int32 J = And; J < AndCount; ++J)
 			{
 				if (Input->Action == AndInputs[J].Action &&
 					Input->Event == AndInputs[J].Event)
@@ -705,7 +705,7 @@ struct FCsInputWord
 			// Check Or
 			const int32 OrCount = OrInputs.Num();
 
-			for (int32 J = 0; J < OrCount; J++)
+			for (int32 J = 0; J < OrCount; ++J)
 			{
 				Or |= Input->Action == OrInputs[J].Action && Input->Event == OrInputs[J].Event;
 

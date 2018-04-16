@@ -555,6 +555,10 @@ class CSCORE_API ACsManager_Input : public AActor
 
 	float GetInputDuration(const TCsInputAction &Action);
 
+// Profile
+#pragma region
+public:
+
 	virtual bool CanSaveInputActionMapping(const TCsInputDevice &Device, const TCsInputAction &Action);
 
 	FCsInputProfile InputProfile;
@@ -581,6 +585,8 @@ class CSCORE_API ACsManager_Input : public AActor
 	void RebindActionMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key);
 	void RebindAxisMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key);
 	void RebindMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key);
+
+#pragma endregion Profile
 
 #if WITH_EDITOR
 

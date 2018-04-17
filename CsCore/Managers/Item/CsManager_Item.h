@@ -148,6 +148,7 @@ public:
 	void AsyncSave();
 
 	bool PerformingAsyncSave;
+	TCsBool_Ref PerformingAsyncSaveHandle;
 
 	void OnTick_Handle_AsyncSave();
 

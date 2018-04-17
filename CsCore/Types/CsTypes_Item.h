@@ -1,5 +1,6 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_Primitive.h"
+#include "Types/CsTypes_Async.h"
 
 #include "CsTypes_Item.generated.h"
 #pragma once
@@ -618,6 +619,8 @@ struct FCsItem
 	UPROPERTY()
 	TArray<FCsItemHistory> PreviousHistories;
 
+	FCsMutex AsycTaskMutex;
+
 	FCsItem() 
 	{
 		Index = CS_ITEM_POOL_INVALID_INDEX;
@@ -748,6 +751,7 @@ struct FCsItem
 		InventoryProperties.Reset();
 		CurrentHistory.Reset();
 		PreviousHistories.Reset();
+		AsycTaskMutex.Reset();
 	}
 
 	class ACsData_Item* GetData() const { return Data.IsValid() ? Data.Get() : nullptr; }

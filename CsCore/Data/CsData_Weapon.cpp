@@ -12,7 +12,7 @@ ACsData_Weapon::ACsData_Weapon(const FObjectInitializer& ObjectInitializer)
 // Stats
 #pragma region
 
-const bool& ACsData_Weapon::GetUseInventory() { return ECsCachedReferences::Ref::False; }
+const bool& ACsData_Weapon::UseInventory() { return ECsCachedReferences::Ref::False; }
 
 #pragma endregion Stats
 

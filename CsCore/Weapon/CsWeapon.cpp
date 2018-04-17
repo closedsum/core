@@ -848,7 +848,7 @@ void ACsWeapon::OnTick_HandleStates()
 				Pass |= true;
 
 				// If out of ammo, Reload
-				if (CurrentAmmo == 0)
+				if (ShouldAutoReload(FireMode))
 				{
 					StopSound(FireMode, FireSound);
 
@@ -952,9 +952,7 @@ void ACsWeapon::CheckState_Idle()
 			IsReloading = false;
 		}
 
-		if (!IsReloading &&
-			CurrentAmmo == 0 &&
-			TimeSeconds - Fire_StartTime.Min() > FMath::Max(TimeBetweenShots.Max(), TimeBetweenAutoShots.Max()))
+		if (ShouldAutoReload(WeaponFireMode_MAX))
 		{
 			ReloadStartTime = TimeSeconds;
 			IsReloading		= true;
@@ -1283,12 +1281,22 @@ void ACsWeapon::OnChange_CurrentAmmo(const int32 &Value)
 
 void ACsWeapon::IncrementCurrentAmmo(const int32 &Index)
 {
-	if (GetMyData_Weapon()->GetUseInventory())
+	if (GetMyData_Weapon()->UseInventory())
 	{
 		// TODO: Later might need a way to store the LastFireMode used
 		ACsManager_Inventory* Manager_Inventory = GetMyManager_Inventory();
-		const FName& ShortCode					= GetAmmoShortCode(PrimaryFireMode, false);
-		const int32 AmmoReserve					= Manager_Inventory->GetItemCount(ShortCode);
+
+		const FName& ShortCode = GetAmmoShortCode(PrimaryFireMode, false);
+
+		if (ShortCode == NAME_None)
+		{
+			ACsData_Projectile* Data_Projectile = GetMyData_Projectile(PrimaryFireMode, false);
+
+			UE_LOG(LogCs, Warning, TEXT("ACsWeapon::IncrementCurrentAmmo: No ItemShortCode set for Projectile: %s"), *(Data_Projectile->ShortCode.ToString()));
+			check(0);
+		}
+
+		const int32 AmmoReserve	= Manager_Inventory->GetItemCount(ShortCode);
 
 		if (CurrentAmmo < GetMaxAmmo(Index) &&
 			CurrentAmmo < AmmoReserve)
@@ -1306,13 +1314,23 @@ void ACsWeapon::IncrementCurrentAmmo(const int32 &Index)
 
 void ACsWeapon::ResetCurrentAmmo(const int32 &Index) 
 { 
-	if (GetMyData_Weapon()->GetUseInventory())
+	if (GetMyData_Weapon()->UseInventory())
 	{
 		// TODO: Later might need a way to store the LastFireMode used
 		ACsManager_Inventory* Manager_Inventory = GetMyManager_Inventory();
-		const FName& ShortCode					= GetAmmoShortCode(PrimaryFireMode, false);
-		const int32 AmmoReserve					= Manager_Inventory->GetItemCount(ShortCode);
-		const int32 maxAmmo						= GetMaxAmmo(Index);
+
+		const FName& ShortCode = GetAmmoShortCode(PrimaryFireMode, false);
+
+		if (ShortCode == NAME_None)
+		{
+			ACsData_Projectile* Data_Projectile = GetMyData_Projectile(PrimaryFireMode, false);
+
+			UE_LOG(LogCs, Warning, TEXT("ACsWeapon::ResetCurrentAmmo: No ItemShortCode set for Projectile: %s"), *(Data_Projectile->ShortCode.ToString()));
+			check(0);
+		}
+
+		const int32 AmmoReserve	= Manager_Inventory->GetItemCount(ShortCode);
+		const int32 maxAmmo		= GetMaxAmmo(Index);
 
 		CurrentAmmo = AmmoReserve > maxAmmo ? maxAmmo : AmmoReserve;
 	}
@@ -1330,11 +1348,20 @@ const FName& ACsWeapon::GetAmmoShortCode(const TCsWeaponFireMode &FireMode, cons
 
 int32 ACsWeapon::GetAmmoReserve(const int32 &Index)
 {
-	if (GetMyData_Weapon()->GetUseInventory())
+	if (GetMyData_Weapon()->UseInventory())
 	{
 		// TODO: Later might need a way to store the LastFireMode used
 		ACsManager_Inventory* Manager_Inventory = GetMyManager_Inventory();
-		const FName& ShortCode					= GetAmmoShortCode(PrimaryFireMode, false);
+
+		const FName& ShortCode = GetAmmoShortCode(PrimaryFireMode, false);
+
+		if (ShortCode == NAME_None)
+		{
+			ACsData_Projectile* Data_Projectile = GetMyData_Projectile(PrimaryFireMode, false);
+
+			UE_LOG(LogCs, Warning, TEXT("ACsWeapon::GetAmmoReserve: No ItemShortCode set for Projectile: %s"), *(Data_Projectile->ShortCode.ToString()));
+			check(0);
+		}
 		return Manager_Inventory->GetItemCount(ShortCode);
 	}
 	return GetMaxAmmo(Index);
@@ -1348,11 +1375,17 @@ void ACsWeapon::ConsumeAmmo()
 
 void ACsWeapon::ConsumeAmmoItem(TArray<FCsItem*> &OutItems)
 {
-	if (GetMyData_Weapon()->GetUseInventory())
+	if (GetMyData_Weapon()->UseInventory())
 	{
 		ACsManager_Inventory* Manager_Inventory = GetMyManager_Inventory();
 		ACsData_Projectile* Data_Projectile		= GetMyData_Projectile<ACsData_Projectile>(PrimaryFireMode, false);
 		const FName& ShortCode					= Data_Projectile->GetItemShortCode();
+
+		if (ShortCode == NAME_None)
+		{
+			UE_LOG(LogCs, Warning, TEXT("ACsWeapon::ConsumeAmmoItem: No ItemShortCode set for Projectile: %s"), *(Data_Projectile->ShortCode.ToString()));
+			check(0);
+		}
 
 		// Consume Item
 		if (Data_Projectile->GetOnAllocateConsumeItem())
@@ -2309,15 +2342,59 @@ float ACsWeapon::GetReloadTime(const int32 &Index) { return ReloadTime.Get(Index
 float ACsWeapon::GetRechargeSecondsPerAmmo(const int32 &Index) { return RechargeSecondsPerAmmo.Get(Index); }
 float ACsWeapon::GetRechargeStartupDelay(const int32 &Index) { return RechargeStartupDelay.Get(Index); }
 
-void ACsWeapon::Reload()
+bool ACsWeapon::CanReload()
 {
 	if (CurrentState == ReloadingState || IsReloading)
+		return false;
+
+	// Check Ammo
+	const int32 AmmoReserve = GetAmmoReserve(CS_WEAPON_DATA_VALUE);
+
+	if (AmmoReserve == CS_EMPTY)
+		return false;
+	return true;
+}
+
+bool ACsWeapon::CanAutoReload(const TCsWeaponFireMode &FireMode)
+{
+	if (!CanReload())
+		return false;
+
+	// Check time since last Fire
+	const float TimeSeconds = GetWorld()->GetTimeSeconds();
+
+	if (FireMode == WeaponFireMode_MAX)
+	{
+		if (TimeSeconds - Fire_StartTime.Min() < FMath::Max(TimeBetweenShots.Max(), TimeBetweenAutoShots.Max()))
+			return false;
+	}
+	else
+	{
+		const bool Pass_AutoShots = IsFullAuto.Get(FireMode) && TimeSeconds - Fire_StartTime.Get(FireMode) > TimeBetweenAutoShots.GetEX(FireMode);
+		const bool Pass_Shots = TimeSeconds - Fire_StartTime.Get(FireMode) > TimeBetweenShots.GetEX(FireMode);
+
+		if (!Pass_AutoShots && !Pass_Shots)
+			return false;
+	}
+	return true;
+}
+
+bool ACsWeapon::ShouldAutoReload(const TCsWeaponFireMode &FireMode)
+{
+	if (CurrentAmmo > CS_EMPTY)
+		return false;
+	return CanAutoReload(FireMode);
+}
+
+void ACsWeapon::Reload()
+{
+	if (!CanReload())
 		return;
 
 	// Idle
 	if (CurrentState == IdleState)
 	{
-		if (CurrentAmmo == MaxAmmo.Get(CS_WEAPON_DATA_VALUE))
+		if (CurrentAmmo == MaxAmmo.GetEX(CS_WEAPON_DATA_VALUE))
 			return;
 	}
 	// Firing

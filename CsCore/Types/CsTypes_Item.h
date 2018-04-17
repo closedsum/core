@@ -1,5 +1,6 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_Primitive.h"
+#include "Types/CsTypes_Async.h"
 
 #include "CsTypes_Item.generated.h"
 #pragma once
@@ -205,6 +206,7 @@ struct FCsInventoryItemProperties
 {
 	GENERATED_USTRUCT_BODY()
 
+	/** Whether the Item has the flags Visible, Ingredient, ... etc */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item", meta = (Bitmask, BitmaskEnum = "ECsInventoryItemState"))
 	int32 State;
 	/** The current Bag in the Inventory */
@@ -364,6 +366,7 @@ struct FCsItemMemberValue
 {
 	GENERATED_USTRUCT_BODY()
 
+	/** bool, uint8, int32, or float */
 	UPROPERTY()
 	TEnumAsByte<ECsItemMemberValueType::Type> Type;
 
@@ -434,6 +437,7 @@ struct FCsItemMemberDescription
 {
 	GENERATED_USTRUCT_BODY()
 
+	/** Name */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Member")
 	FName Name;
 
@@ -470,6 +474,7 @@ struct FCsItemHistory
 {
 	GENERATED_USTRUCT_BODY()
 
+	/** OwnerId */
 	UPROPERTY()
 	uint64 OwnerId;
 
@@ -576,6 +581,7 @@ struct FCsItem
 {
 	GENERATED_USTRUCT_BODY()
 
+	/** Pool Index */
 	UPROPERTY()
 	uint16 Index;
 
@@ -617,6 +623,8 @@ struct FCsItem
 	FCsItemHistory CurrentHistory;
 	UPROPERTY()
 	TArray<FCsItemHistory> PreviousHistories;
+
+	FCsMutex AsycTaskMutex;
 
 	FCsItem() 
 	{
@@ -748,6 +756,7 @@ struct FCsItem
 		InventoryProperties.Reset();
 		CurrentHistory.Reset();
 		PreviousHistories.Reset();
+		AsycTaskMutex.Reset();
 	}
 
 	class ACsData_Item* GetData() const { return Data.IsValid() ? Data.Get() : nullptr; }
@@ -840,6 +849,7 @@ struct FCsInventoryLoadout
 {
 	GENERATED_USTRUCT_BODY()
 
+	/** Recipes */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
 	TArray<FCsInventoryLoadoutRecipe> Recipes;
 

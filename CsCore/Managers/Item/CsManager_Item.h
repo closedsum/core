@@ -94,6 +94,10 @@ public:
 	virtual void DeAllocate(const uint64 &Id);
 	virtual void DeAllocate(FCsItem* Item);
 
+	TArray<FCsItem*> DeAllocateQueue;
+
+	void OnTick_Handle_DeAllocateQueue();
+
 #pragma endregion DeAllocate
 
 // Transfer
@@ -143,11 +147,13 @@ public:
 
 	TArray<FCsItem*> AsyncSaveItems;
 	TArray<FCsItem*> ActiveAsyncSaveItems;
+	TArray<FCsItem*> CopiedAsyncSaveItems;
 
 	void AddAsyncSave(FCsItem* Item);
 	void AsyncSave();
 
 	bool PerformingAsyncSave;
+	TCsBool_Ref PerformingAsyncSaveHandle;
 
 	void OnTick_Handle_AsyncSave();
 

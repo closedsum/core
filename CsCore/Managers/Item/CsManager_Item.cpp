@@ -47,6 +47,8 @@ ACsManager_Item::ACsManager_Item(const FObjectInitializer& ObjectInitializer) : 
 	UniqueIdIndex = CS_ITEM_UNIQUE_ID_START_INDEX;
 
 	SaveDirectory = TEXT("Items/");
+	
+	PerformingAsyncSaveHandle.Set(&PerformingAsyncSave);
 }
 
 /*static*/ ACsManager_Item* ACsManager_Item::Get(UWorld* InWorld)
@@ -57,6 +59,7 @@ ACsManager_Item::ACsManager_Item(const FObjectInitializer& ObjectInitializer) : 
 void ACsManager_Item::OnTick(const float &DeltaSeconds)
 {
 	OnTick_Handle_AsyncSave();
+	OnTick_Handle_DeAllocateQueue();
 }
 
 uint64 ACsManager_Item::GetUniqueId()
@@ -309,11 +312,6 @@ void ACsManager_Item::GetItems(const TArray<uint64> &Ids, TArray<FCsItem*> &OutI
 // DeAllocate
 #pragma region
 
-void ACsManager_Item::DeAllocate(FCsItem* Item)
-{
-	DeAllocate(Item->UniqueId);
-}
-
 void ACsManager_Item::DeAllocate(const uint64 &Id)
 {
 	FCsItem* Item = *(ActiveItems.Find(Id));
@@ -324,10 +322,19 @@ void ACsManager_Item::DeAllocate(const uint64 &Id)
 		return;
 	}
 
+	ActiveItems.Remove(Id);
+
+	// If Async Saving Item, Queue DeAllocate
+	if (Item->AsycTaskMutex.IsLocked())
+	{
+		DeAllocateQueue.Add(Item);
+		return;
+	}
+
 	// If Save EXISTS, Delete it.
 	if (Item->IsSaved)
 	{
-		const FString Path	   = GetSavePath();
+		const FString Path = GetSavePath();
 		const FString Filename = Path + Item->FileName + ECsCachedString::Str::Json;
 
 		if (IFileManager::Get().FileExists(*Filename))
@@ -341,6 +348,47 @@ void ACsManager_Item::DeAllocate(const uint64 &Id)
 	Item->Data = nullptr;
 	Item->Data_Actor.Reset();
 	Item->Data_Actor = nullptr;
+}
+
+void ACsManager_Item::DeAllocate(FCsItem* Item)
+{
+	DeAllocate(Item->UniqueId);
+}
+
+void ACsManager_Item::OnTick_Handle_DeAllocateQueue()
+{
+	if (DeAllocateQueue.Num() == CS_EMPTY)
+		return;
+
+	const int32 Count = DeAllocateQueue.Num();
+
+	for (int32 I = Count - 1; I >= 0; --I)
+	{
+		FCsItem* Item = DeAllocateQueue[I];
+
+		if (Item->AsycTaskMutex.IsLocked())
+			continue;
+
+		// If Save EXISTS, Delete it.
+		if (Item->IsSaved)
+		{
+			const FString Path = GetSavePath();
+			const FString Filename = Path + Item->FileName + ECsCachedString::Str::Json;
+
+			if (IFileManager::Get().FileExists(*Filename))
+			{
+				IFileManager::Get().Delete(*Filename, true, true, true);
+			}
+		}
+		AvailableUnqiueIds.Add(Item->UniqueId);
+		Item->Reset();
+		Item->Data.Reset();
+		Item->Data = nullptr;
+		Item->Data_Actor.Reset();
+		Item->Data_Actor = nullptr;
+
+		DeAllocateQueue.RemoveAt(I);
+	}
 }
 
 #pragma endregion DeAllocate
@@ -652,9 +700,9 @@ void ACsManager_Item::SaveActiveItems()
 
 FCsItem* ACsManager_Item::AllocateAsyncSave()
 {
-	for (uint8 I = 0; I < CS_INTERACTIVE_ACTOR_PAYLOAD_SIZE; ++I)
+	for (uint8 I = 0; I < CS_ITEM_ASYNC_SAVE_POOL_SIZE; ++I)
 	{
-		const uint8 Index = (AsyncSavePoolIndex + I) % CS_INTERACTIVE_ACTOR_PAYLOAD_SIZE;
+		const uint8 Index = (AsyncSavePoolIndex + I) % CS_ITEM_ASYNC_SAVE_POOL_SIZE;
 		FCsItem* Item = &(AsyncSavePool[Index]);
 
 		if (!Item->IsAllocated)
@@ -669,31 +717,46 @@ FCsItem* ACsManager_Item::AllocateAsyncSave()
 
 void ACsManager_Item::AddAsyncSave(FCsItem* Item)
 {
-	FCsItem* AsyncItem = AllocateAsyncSave();
-	*AsyncItem		   = *Item;
-
-	AsyncSaveItems.Add(AsyncItem);
+	AsyncSaveItems.Add(Item);
 }
 
 void ACsManager_Item::AsyncSave()
 {
-	const int32 Count = ActiveAsyncSaveItems.Num();
+	const int32 Count = CopiedAsyncSaveItems.Num();
 
 	for (int32 I = 0; I < Count; ++I)
 	{
-		FCsItem* Item = ActiveAsyncSaveItems[I];
+		FCsItem* Item = CopiedAsyncSaveItems[I];
 
 		Save(Item);
+		Item->Reset();
 	}
-	ActiveAsyncSaveItems.Reset();
+	CopiedAsyncSaveItems.Reset();
 
 	PerformingAsyncSave = false;
 }
 
 void ACsManager_Item::OnTick_Handle_AsyncSave()
 {
+	PerformingAsyncSaveHandle.UpdateIsDirty();
+
 	if (PerformingAsyncSave)
 		return;
+
+	// If an Async Save just completed, Clear Mutex
+	if (PerformingAsyncSaveHandle.HasChanged())
+	{
+		const int32 Count = ActiveAsyncSaveItems.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			FCsItem* Item = ActiveAsyncSaveItems[I];
+			Item->AsycTaskMutex.Unlock();
+		}
+		ActiveAsyncSaveItems.Reset();
+		PerformingAsyncSaveHandle.Clear();
+	}
+
 	if (AsyncSaveItems.Num() == CS_EMPTY)
 		return;
 
@@ -701,11 +764,22 @@ void ACsManager_Item::OnTick_Handle_AsyncSave()
 
 	for (int32 I = 0; I < Count; ++I)
 	{
-		ActiveAsyncSaveItems.Add(AsyncSaveItems[I]);
+		FCsItem* Item = AsyncSaveItems[I];
+		// Lock for Async Save
+		Item->AsycTaskMutex.Lock();
+		// Add to Active List
+		ActiveAsyncSaveItems.Add(Item);
+		// Copy for Async Save
+		FCsItem* AsyncItem	= AllocateAsyncSave();
+		*AsyncItem			= *Item;
+
+		CopiedAsyncSaveItems.Add(AsyncItem);
 	}
+
 	AsyncSaveItems.Reset();
 
 	PerformingAsyncSave = true;
+	PerformingAsyncSaveHandle.Resolve();
 
 	UCsManager_Runnable* Manager_Runnable = UCsManager_Runnable::Get();
 

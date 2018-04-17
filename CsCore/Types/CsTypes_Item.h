@@ -206,6 +206,7 @@ struct FCsInventoryItemProperties
 {
 	GENERATED_USTRUCT_BODY()
 
+	/** Whether the Item has the flags Visible, Ingredient, ... etc */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item", meta = (Bitmask, BitmaskEnum = "ECsInventoryItemState"))
 	int32 State;
 	/** The current Bag in the Inventory */
@@ -365,6 +366,7 @@ struct FCsItemMemberValue
 {
 	GENERATED_USTRUCT_BODY()
 
+	/** bool, uint8, int32, or float */
 	UPROPERTY()
 	TEnumAsByte<ECsItemMemberValueType::Type> Type;
 
@@ -435,6 +437,7 @@ struct FCsItemMemberDescription
 {
 	GENERATED_USTRUCT_BODY()
 
+	/** Name */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Member")
 	FName Name;
 
@@ -471,6 +474,7 @@ struct FCsItemHistory
 {
 	GENERATED_USTRUCT_BODY()
 
+	/** OwnerId */
 	UPROPERTY()
 	uint64 OwnerId;
 
@@ -577,6 +581,7 @@ struct FCsItem
 {
 	GENERATED_USTRUCT_BODY()
 
+	/** Pool Index */
 	UPROPERTY()
 	uint16 Index;
 

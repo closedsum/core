@@ -326,6 +326,8 @@ void ACsManager_Item::DeAllocate(const uint64 &Id)
 		return;
 	}
 
+	ActiveItems.Remove(Id);
+
 	// If Save EXISTS, Delete it.
 	if (Item->IsSaved)
 	{
@@ -654,9 +656,9 @@ void ACsManager_Item::SaveActiveItems()
 
 FCsItem* ACsManager_Item::AllocateAsyncSave()
 {
-	for (uint8 I = 0; I < CS_INTERACTIVE_ACTOR_PAYLOAD_SIZE; ++I)
+	for (uint8 I = 0; I < CS_ITEM_ASYNC_SAVE_POOL_SIZE; ++I)
 	{
-		const uint8 Index = (AsyncSavePoolIndex + I) % CS_INTERACTIVE_ACTOR_PAYLOAD_SIZE;
+		const uint8 Index = (AsyncSavePoolIndex + I) % CS_ITEM_ASYNC_SAVE_POOL_SIZE;
 		FCsItem* Item = &(AsyncSavePool[Index]);
 
 		if (!Item->IsAllocated)

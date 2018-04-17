@@ -15,6 +15,7 @@ DECLARE_MULTICAST_DELEGATE(FBindableEvent_CsManagerItem_OnInitInventory);
 
 #define CS_ITEM_POOL_SIZE 65535
 #define CS_ITEM_UNIQUE_ID_START_INDEX 65535
+#define CS_ITEM_ASYNC_SAVE_POOL_SIZE 256
 
 UCLASS()
 class CSCORE_API ACsManager_Item : public AActor
@@ -24,6 +25,8 @@ class CSCORE_API ACsManager_Item : public AActor
 public:
 
 	static ACsManager_Item* Get(UWorld* InWorld);
+
+	virtual void OnTick(const float &DeltaSeconds);
 
 	CS_DECLARE_ITEM_TYPE
 	CS_DECLARE_ITEM_OWNER
@@ -125,6 +128,32 @@ public:
 	virtual void SaveHistory(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FCsItemHistory* ItemHistory);
 
 	void SaveActiveItems();
+	
+	// Async
+#pragma region
+private:
+
+	FCsItem AsyncSavePool[CS_ITEM_ASYNC_SAVE_POOL_SIZE];
+
+	uint8 AsyncSavePoolIndex;
+
+public:
+
+	FCsItem* AllocateAsyncSave();
+
+	TArray<FCsItem*> AsyncSaveItems;
+	TArray<FCsItem*> ActiveAsyncSaveItems;
+
+	void AddAsyncSave(FCsItem* Item);
+	void AsyncSave();
+
+	bool PerformingAsyncSave;
+
+	void OnTick_Handle_AsyncSave();
+
+#pragma endregion Async
+
+public:
 
 	virtual void PopulateExistingItems();
 	virtual void AsyncPopulateExistingItems();

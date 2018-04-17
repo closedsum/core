@@ -8,22 +8,46 @@
 
     public static class CgTypes_Input
     {
-        public static ushort CG_INVALID_INPUT_POOL_INDEX = 65535;
+        public static ushort INVALID_INPUT_POOL_INDEX = 65535;
     }
 
     #endregion
 
-    public abstract class ECgInputAction : ECgEnum_Byte
+    public abstract class ECgInputActionMap : ECgEnum_int
+    {
+
+    }
+
+    public sealed class ECgInputActionMapEqualityComparer : IEqualityComparer<ECgInputActionMap>
+    {
+        public bool Equals(ECgInputActionMap lhs, ECgInputActionMap rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(ECgInputActionMap x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
+    public class ECgInputAction : ECgEnum_byte
     {
         #region "Delegates"
 
-        public delegate ECgInputAction Getter(byte b);
+        public delegate ECgInputAction GetDelegate(byte b);
+        public delegate ECgInputAction GetMAXDelegate();
+        public delegate ECgInputAction ToTypeDelegate(string s);
+        public delegate string ToStringDelegate(ECgInputAction aciton);
 
         #endregion // Delegates
 
         #region "Data Members"
 
-        public static Getter Get;
+        public static GetDelegate Get;
+        public static GetMAXDelegate GetMAX;
+        public static ToTypeDelegate ToType;
+        public static ToStringDelegate ToStr;
 
         #endregion // Data Members
     }
@@ -114,10 +138,10 @@
     public enum ECgInputValue : byte
     {
         Action,
-		Axis,
-		Trigger,
-		Location,
-		Rotation,
+        Axis,
+        Trigger,
+        Location,
+        Rotation,
         MAX
     }
 
@@ -131,6 +155,50 @@
         public int GetHashCode(ECgInputValue x)
         {
             return x.GetHashCode();
+        }
+    }
+
+    public abstract class ECgGameEvent : ECgEnum_byte
+    {
+        #region "Delegates"
+
+        public delegate ECgGameEvent Getter(byte b);
+
+        #endregion // Delegates
+
+        #region "Data Members"
+
+        public static Getter Get;
+
+        #endregion // Data Members
+    }
+
+    public sealed class ECgGameEventEqualityComparer : IEqualityComparer<ECgGameEvent>
+    {
+        public bool Equals(ECgGameEvent lhs, ECgGameEvent rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(ECgGameEvent x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
+    public static class CgKey
+    {
+        public static bool IsJoystickKey(KeyCode key)
+        {
+            if ((int)key >= (int)KeyCode.JoystickButton0 &&
+                (int)key <= (int)KeyCode.Joystick8Button19)
+                return true;
+            return false;
+        }
+
+        public static bool IsGamepadKey(KeyCode key)
+        {
+            return IsJoystickKey(key);
         }
     }
 
@@ -328,6 +396,19 @@
         public float Duration;
 
         #endregion // Data Members
+
+        public CgInput()
+        {
+            PoolIndex = CgTypes_Input.INVALID_INPUT_POOL_INDEX;
+            IsAllocated = false;
+            IsConsumed = false;
+            Action = null;
+            Event = ECgInputEvent.MAX;
+            Value = Mathf.Infinity;
+            Location = Vector3.zero;
+            Rotation = Vector3.zero;
+            Duration = 0f;
+        }
 
         public CgInput(ushort poolIndex)
         {
@@ -680,6 +761,560 @@
             Event = e;
             Rotation = rotation;
             Euler = Rotation.eulerAngles;
+        }
+    }
+
+    public class CgInputWord
+    {
+        public bool Completed;
+        public float CompletedTime;
+        public bool Consume;
+        public List<CgInput> AndInputs;
+        public List<CgInput> OrInputs;
+
+        public CgInputWord()
+        {
+            Completed = false;
+            CompletedTime = 0.0f;
+            Consume = false;
+            AndInputs = new List<CgInput>();
+            OrInputs = new List<CgInput>();
+        }
+
+        public void AddAndInput(ECgInputAction action, ECgInputEvent e, float value, Vector3 location, Vector3 rotation)
+	    {
+            AndInputs.Add(new CgInput());
+		    int index = AndInputs.Capacity - 1;
+            AndInputs[index].Action = action;
+		    AndInputs[index].Event = e;
+		    AndInputs[index].Value = value;
+		    AndInputs[index].Location = location;
+		    AndInputs[index].Rotation = rotation;
+	    }
+
+        public void AddAndInput(ECgInputAction action, ECgInputEvent e)
+        {
+            AddAndInput(action, e, 0.0f, Vector3.zero, Vector3.zero);
+        }
+
+        public void AddAndInput(ECgInputAction action, ECgInputEvent e, float value)
+        {
+            AddAndInput(action, e, value, Vector3.zero, Vector3.zero);
+        }
+
+        public void AddAndInput(ECgInputAction action, ECgInputEvent e, Vector3 location)
+        {
+            AddAndInput(action, e, 0.0f, location, Vector3.zero);
+        }
+
+        public void AddAndInput(ECgInputAction action, ECgInputEvent e, Quaternion rotation)
+        {
+            AddAndInput(action, e, 0.0f, Vector3.zero, rotation.eulerAngles);
+        }
+
+        public void AddOrInput(ECgInputAction action, ECgInputEvent e, float value, Vector3 location, Vector3 rotation)
+        {
+            OrInputs.Add(new CgInput());
+            int index = OrInputs.Capacity - 1;
+            OrInputs[index].Action = action;
+            OrInputs[index].Event = e;
+            OrInputs[index].Value = value;
+            OrInputs[index].Location = location;
+            OrInputs[index].Rotation = rotation;
+        }
+
+        public void AddOrInput(ECgInputAction action, ECgInputEvent e)
+        {
+            AddOrInput(action, e, 0.0f, Vector3.zero, Vector3.zero);
+        }
+
+        public void AddOrInput(ECgInputAction action, ECgInputEvent e, float value)
+        {
+            AddOrInput(action, e, value, Vector3.zero, Vector3.zero);
+        }
+
+        public void AddOrInput(ECgInputAction action, ECgInputEvent e, Vector3 location)
+        {
+            AddOrInput(action, e, 0.0f, location, Vector3.zero);
+        }
+
+        public void AddOrInput(ECgInputAction action, ECgInputEvent e, Quaternion rotation)
+        {
+            AddOrInput(action, e, 0.0f, Vector3.zero, rotation.eulerAngles);
+        }
+
+        public void Reset()
+        {
+            Completed = false;
+        }
+
+        public void ProcessInput(CgInputFrame inputFrame)
+        {
+            int and = 0;
+            bool or = false;
+
+            int count = inputFrame.Inputs.Capacity;
+
+            for (int i = count - 1; i >= 0; --i)
+            {
+                CgInput input = inputFrame.Inputs[i];
+
+                // Check And
+                int andCount = AndInputs.Capacity;
+
+                for (int j = and; j < andCount; ++j)
+                {
+                    if (input.Action == AndInputs[j].Action &&
+                        input.Event == AndInputs[j].Event)
+                    {
+                        ++and;
+                    }
+                }
+                // Check Or
+                int orCount = OrInputs.Capacity;
+
+                for (int j = 0; j < orCount; ++j)
+                {
+                    or |= input.Action == OrInputs[j].Action && input.Event == OrInputs[j].Event;
+
+                    if (or)
+                        break;
+                }
+
+                Completed = (and > 0 && and == andCount) || or;
+
+                if (Completed)
+                {
+                    if (Consume)
+                        inputFrame.Inputs.RemoveAt(i);
+                    CompletedTime = inputFrame.Time;
+                    break;
+                }
+            }
+        }
+    }
+
+    public class CgInputPhrase
+    {
+        public bool Completed;
+        public float CompletedTime;
+        public bool UseInterval;
+        public float Interval;
+        public bool UseFrames;
+        public int Frames;
+        public List<CgInputWord> Words;
+
+        public CgInputPhrase()
+        {
+            Completed = false;
+            CompletedTime = 0.0f;
+            UseInterval = false;
+            Interval = 0.0f;
+            UseFrames = false;
+            Frames = 0;
+        }
+
+        public void AddAndInputToWord(int index, ECgInputAction action, ECgInputEvent e, float value = 0.0f, Vector3 location = new Vector3(), Vector3 rotation = new Vector3())
+	    {
+		    int count = Words.Capacity;
+
+		    if (index >= count)
+		    {
+			    for (int i = 0; i < index - count + 1; ++i)
+			    {
+				    Words.Add(new CgInputWord());
+			    }
+		    }
+		    Words[index].AddAndInput(action, e, value, location, rotation);
+	    }
+
+	    public void AddOrInputToWord(int index, ECgInputAction action, ECgInputEvent e, float value = 0.0f, Vector3 location = new Vector3(), Vector3 rotation = new Vector3())
+        {
+            int count = Words.Capacity;
+
+            if (index >= count)
+            {
+                for (int i = 0; i < index - count + 1; ++i)
+                {
+                    Words.Add(new CgInputWord());
+                }
+            }
+            Words[index].AddOrInput(action, e, value, location, rotation);
+        }
+
+        public void Reset()
+        {
+            int count = Words.Capacity;
+
+            for (int i = 0; i < count; ++i)
+            {
+                Words[i].Reset();
+            }
+            Completed = false;
+            CompletedTime = 0.0f;
+        }
+
+        public void ProcessInput(CgInputFrame inputFrame)
+        {
+            float currentTime = inputFrame.Time;
+
+            // Check if ALL Words are Completed
+            int count = Words.Capacity;
+            int index = 0;
+
+            if (UseInterval)
+            {
+                //float elapsedTime = 0.0f;
+                float earliestCompletedTime = currentTime;
+
+                for (index = 0; index < count; ++index)
+                {
+                    if (Words[index].Completed)
+                    {
+                        if (Words[index].CompletedTime < earliestCompletedTime)
+                            earliestCompletedTime = Words[index].CompletedTime;
+
+                        if (currentTime - earliestCompletedTime > Interval)
+                        {
+                            Reset();
+
+                            index = 0;
+                            break;
+                        }
+                    }
+
+                    Words[index].ProcessInput(inputFrame);
+
+                    if (index < count - 1 || !Words[index].Completed)
+                        break;
+                }
+            }
+            else
+            {
+                for (index = 0; index < count; ++index)
+                {
+                    if (Words[index].Completed)
+                        continue;
+
+                    Words[index].ProcessInput(inputFrame);
+
+                    if (index < count - 1 || !Words[index].Completed)
+                        break;
+                }
+
+                if (index != count)
+                    Reset();
+            }
+            // Check if Completed
+            if (index > 0 && index == count)
+            {
+                Completed     = true;
+                CompletedTime = currentTime;
+            }
+        }
+    }
+
+    public class CgInputSentence
+    {
+        public bool Active;
+        public bool Completed;
+        public float CompletedTime;
+        public float Cooldown;
+        public bool UseInterval;
+        public float Interval;
+        public bool UseFrames;
+        public int Frames;
+        public List<CgInputPhrase> Phrases;
+
+        public CgInputSentence()
+        {
+            Active = true;
+            Completed = false;
+            CompletedTime = 0.0f;
+            Cooldown = 0.0f;
+            UseInterval = false;
+            Interval = 0.0f;
+            UseFrames = false;
+            Frames = 0;
+        }
+
+        public void Reset()
+        {
+            Active = true;
+
+            int count = Phrases.Capacity;
+
+            for (int i = 0; i < count; ++i)
+            {
+                Phrases[i].Reset();
+            }
+            Completed = false;
+        }
+
+        public void ProcessInput(CgInputFrame inputFrame)
+        {
+            float currentTime = inputFrame.Time;
+
+            // Check if Cooldown has Expired
+            if (!Active)
+            {
+                if (currentTime - CompletedTime >= Cooldown)
+                    Reset();
+                else
+                    return;
+            }
+            // Check if ALL Phrases are Completed
+            int count = Phrases.Capacity;
+            int index = 0;
+
+            if (UseInterval)
+            {
+                //float elapsedTime = 0.0f;
+                float earliestCompletedTime = currentTime;
+
+                for (index = 0; index < count; ++index)
+                {
+                    if (Phrases[index].Completed)
+                    {
+                        if (Phrases[index].CompletedTime < earliestCompletedTime)
+                            earliestCompletedTime = Phrases[index].CompletedTime;
+
+                        if (currentTime - earliestCompletedTime > Interval)
+                        {
+                            Reset();
+
+                            index = 0;
+                            break;
+                        }
+                    }
+
+                    Phrases[index].ProcessInput(inputFrame);
+
+                    if (index < count - 1 || !Phrases[index].Completed)
+                        break;
+                }
+            }
+            else
+            {
+                for (index = 0; index < count; ++index)
+                {
+                    if (Phrases[index].Completed)
+                        continue;
+
+                    Phrases[index].ProcessInput(inputFrame);
+
+                    if (index < count - 1 || !Phrases[index].Completed)
+                        break;
+                }
+
+                if (index != count)
+                    Reset();
+            }
+            // Check if Completed
+            if (index == count)
+            {
+                Completed     = true;
+                CompletedTime = currentTime;
+                Active        = false;
+            }
+        }
+    }
+
+    public class CgInputActionMapping
+    {
+        public string ActionName;
+        public ECgInputAction Action;
+        public string KeyName;
+        public KeyCode Key;
+        public float Scale;
+
+        public CgInputActionMapping()
+        {
+            ActionName = "";
+            Action = ECgInputAction.GetMAX();
+            KeyName = "";
+            Key = KeyCode.None;
+            Scale = 1.0f;
+        }
+
+        public static bool operator ==(CgInputActionMapping lhs, CgInputActionMapping rhs)
+        {
+            if (lhs.ActionName != rhs.ActionName) return false;
+            if (lhs.Action != rhs.Action) return false;
+            if (lhs.KeyName != rhs.KeyName) return false;
+            if (lhs.Key != rhs.Key) return false;
+            if (lhs.Scale != rhs.Scale) return false;
+            return true;
+        }
+
+        public static bool operator !=(CgInputActionMapping lhs, CgInputActionMapping rhs)
+        {
+            return !(lhs == rhs);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is CgInputActionMapping))
+                return false;
+
+            CgInputActionMapping rhs = (CgInputActionMapping)obj;
+
+            if (ActionName != rhs.ActionName) return false;
+            if (Action != rhs.Action) return false;
+            if (KeyName != rhs.KeyName) return false;
+            if (Key != rhs.Key) return false;
+            if (Scale != rhs.Scale) return false;
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            return ActionName.GetHashCode() ^ Action.GetHashCode() ^ KeyName.GetHashCode() ^ Key.GetHashCode() ^ Scale.GetHashCode();
+        }
+    }
+
+    public class CgInputActionMappings
+    {
+        public List<CgInputActionMapping> Mappings;
+
+        public static bool operator ==(CgInputActionMappings lhs, CgInputActionMappings rhs)
+        {
+            if (lhs.Mappings.Capacity != rhs.Mappings.Capacity) return false;
+
+            int count = lhs.Mappings.Capacity;
+
+            for (int i = 0; i < count; ++i)
+            {
+                if (lhs.Mappings[i] != rhs.Mappings[i])
+                    return false;
+            }
+            return true;
+        }
+
+        public static bool operator !=(CgInputActionMappings lhs, CgInputActionMappings rhs)
+        {
+            return !(lhs == rhs);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is CgInputActionMappings))
+                return false;
+
+            CgInputActionMappings rhs = (CgInputActionMappings)obj;
+
+            if (Mappings.Capacity != rhs.Mappings.Capacity) return false;
+
+            int count = Mappings.Capacity;
+
+            for (int i = 0; i < count; ++i)
+            {
+                if (Mappings[i] != rhs.Mappings[i])
+                    return false;
+            }
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            int count = Mappings.Capacity;
+            int value = count > 0 ? Mappings[CgTypes.FIRST].GetHashCode() : base.GetHashCode();
+
+            for (int i = 1; i < count; ++i)
+            {
+                value ^= Mappings[i].GetHashCode();
+            }
+            return value;
+        }
+    }
+
+    public class CgInputProfile
+    {
+        public byte Player;
+        public CgInputActionMappings[] DeviceMappings;
+
+        CgInputProfile()
+        {
+            Player = 0;
+            DeviceMappings = new CgInputActionMappings[(byte)ECgInputDevice.MAX];
+        }
+
+        public CgInputActionMapping GetMapping(ECgInputDevice device, ECgInputAction action)
+	    {
+		    CgInputActionMappings deviceMapping = DeviceMappings[(byte)device];
+		    List<CgInputActionMapping> mappings = deviceMapping.Mappings;
+
+		    int count = mappings.Capacity;
+
+		    for (int i = 0; i < count; ++i)
+		    {
+			    CgInputActionMapping mapping = mappings[i];
+
+			    if (action == mapping.Action)
+				    return deviceMapping.Mappings[i];
+		    }
+		    return mappings[CgTypes.FIRST];
+	    }
+
+	    public KeyCode GetKey(ECgInputDevice device, ECgInputAction action)
+        {
+            CgInputActionMappings deviceMapping = DeviceMappings[(byte)device];
+            List<CgInputActionMapping> mappings = deviceMapping.Mappings;
+
+            int count = mappings.Capacity;
+
+            for (int i = 0; i < count; ++i)
+            {
+                CgInputActionMapping mapping = mappings[i];
+
+                if (action == mapping.Action)
+                    return mapping.Key;
+            }
+            return KeyCode.None;
+        }
+
+        public void SetKey(ECgInputDevice device, ECgInputAction action, KeyCode key)
+        {
+            CgInputActionMappings deviceMapping = DeviceMappings[(byte)device];
+            List<CgInputActionMapping> mappings = deviceMapping.Mappings;
+
+            int count = mappings.Capacity;
+
+            for (int i = 0; i < count; ++i)
+            {
+                CgInputActionMapping mapping = mappings[i];
+
+                if (action == mapping.Action)
+                {
+                    mapping.KeyName = key == KeyCode.None ? "" : key.ToString();
+                    mapping.Key     = key;
+                    break;
+                }
+            }
+        }
+
+        public void AddMapping(ECgInputDevice device, string actionName, ECgInputAction action, string keyName, KeyCode key)
+        {
+            CgInputActionMappings deviceMapping = DeviceMappings[(byte)device];
+            List<CgInputActionMapping> mappings = deviceMapping.Mappings;
+
+            int count = mappings.Capacity;
+            mappings.Add(new CgInputActionMapping());
+            CgInputActionMapping mapping = mappings[count];
+            mapping.ActionName          = actionName;
+            mapping.Action              = action;
+            mapping.KeyName             = keyName;
+            mapping.Key                 = key;
+        }
+
+        public void Reset()
+        {
+            int count = (byte)ECgInputDevice.MAX;
+
+            for (int i = 0; i < count; ++i)
+            {
+                DeviceMappings[i].Mappings.Clear();
+            }
         }
     }
 }

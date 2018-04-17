@@ -12,6 +12,7 @@
 
 // Managers
 #include "Managers/Inventory/CsManager_Inventory.h"
+#include "Managers/Runnable/CsManager_Runnable.h"
 // Data
 #include "Data/CsDataMapping.h"
 #include "Data/CsData_Item.h"
@@ -51,6 +52,11 @@ ACsManager_Item::ACsManager_Item(const FObjectInitializer& ObjectInitializer) : 
 /*static*/ ACsManager_Item* ACsManager_Item::Get(UWorld* InWorld)
 {
 	return InWorld->GetGameState<ACsGameState>()->Manager_Item;
+}
+
+void ACsManager_Item::OnTick(const float &DeltaSeconds)
+{
+	OnTick_Handle_AsyncSave();
 }
 
 uint64 ACsManager_Item::GetUniqueId()
@@ -640,6 +646,79 @@ void ACsManager_Item::SaveActiveItems()
 		Save(*ItemPtr);
 	}
 }
+
+// Async
+#pragma region
+
+FCsItem* ACsManager_Item::AllocateAsyncSave()
+{
+	for (uint8 I = 0; I < CS_INTERACTIVE_ACTOR_PAYLOAD_SIZE; ++I)
+	{
+		const uint8 Index = (AsyncSavePoolIndex + I) % CS_INTERACTIVE_ACTOR_PAYLOAD_SIZE;
+		FCsItem* Item = &(AsyncSavePool[Index]);
+
+		if (!Item->IsAllocated)
+		{
+			Item->IsAllocated = true;
+			return Item;
+		}
+	}
+	checkf(0, TEXT("ACsManager_Item::AllocatePayload: AsyncSavePool is exhausted"));
+	return nullptr;
+}
+
+void ACsManager_Item::AddAsyncSave(FCsItem* Item)
+{
+	FCsItem* AsyncItem = AllocateAsyncSave();
+	*AsyncItem		   = *Item;
+
+	AsyncSaveItems.Add(AsyncItem);
+}
+
+void ACsManager_Item::AsyncSave()
+{
+	const int32 Count = ActiveAsyncSaveItems.Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		FCsItem* Item = ActiveAsyncSaveItems[I];
+
+		Save(Item);
+	}
+	ActiveAsyncSaveItems.Reset();
+
+	PerformingAsyncSave = false;
+}
+
+void ACsManager_Item::OnTick_Handle_AsyncSave()
+{
+	if (PerformingAsyncSave)
+		return;
+	if (AsyncSaveItems.Num() == CS_EMPTY)
+		return;
+
+	const int32 Count = AsyncSaveItems.Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		ActiveAsyncSaveItems.Add(AsyncSaveItems[I]);
+	}
+	AsyncSaveItems.Reset();
+
+	PerformingAsyncSave = true;
+
+	UCsManager_Runnable* Manager_Runnable = UCsManager_Runnable::Get();
+
+	FCsRunnablePayload* Payload = Manager_Runnable->AllocatePayload();
+	Payload->Owner				= this;
+	Payload->ThreadPriority		= EThreadPriority::TPri_Normal;
+
+	FCsRunnable_Delegate* Runnable = Manager_Runnable->Prep(Payload);
+	Runnable->Delegate.AddUObject(this, &ACsManager_Item::AsyncSave);
+	Runnable->Start();
+}
+
+#pragma endregion Async
 
 void ACsManager_Item::PopulateExistingItems()
 {

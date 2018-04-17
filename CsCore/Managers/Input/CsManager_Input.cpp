@@ -787,6 +787,9 @@ float ACsManager_Input::GetInputDuration(const TCsInputAction &Action)
 	return Infos[(uint8)Action]->Duration;
 }
 
+// Profile
+#pragma region
+
 bool ACsManager_Input::CanSaveInputActionMapping(const TCsInputDevice &Device, const TCsInputAction &Action)
 {
 	return true;
@@ -1251,6 +1254,8 @@ void ACsManager_Input::RebindMapping(const TCsInputDevice &Device, const TCsInpu
 	if (Infos[(uint8)Action]->Type == ECsInputType::Axis)
 		RebindAxisMapping(Device, Action, Key);
 }
+
+#pragma endregion Profile
 
 #if WITH_EDITOR
 

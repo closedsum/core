@@ -903,6 +903,10 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Reload")
 	bool IsRechargingAmmo;
 
+	bool CanReload();
+	bool CanAutoReload(const TCsWeaponFireMode &FireMode);
+	bool ShouldAutoReload(const TCsWeaponFireMode &FireMode);
+
 	void Reload();
 
 #pragma endregion Reload

@@ -1283,7 +1283,7 @@ void ACsWeapon::OnChange_CurrentAmmo(const int32 &Value)
 
 void ACsWeapon::IncrementCurrentAmmo(const int32 &Index)
 {
-	if (GetMyData_Weapon()->GetUseInventory())
+	if (GetMyData_Weapon()->UseInventory())
 	{
 		// TODO: Later might need a way to store the LastFireMode used
 		ACsManager_Inventory* Manager_Inventory = GetMyManager_Inventory();
@@ -1306,7 +1306,7 @@ void ACsWeapon::IncrementCurrentAmmo(const int32 &Index)
 
 void ACsWeapon::ResetCurrentAmmo(const int32 &Index) 
 { 
-	if (GetMyData_Weapon()->GetUseInventory())
+	if (GetMyData_Weapon()->UseInventory())
 	{
 		// TODO: Later might need a way to store the LastFireMode used
 		ACsManager_Inventory* Manager_Inventory = GetMyManager_Inventory();
@@ -1330,7 +1330,7 @@ const FName& ACsWeapon::GetAmmoShortCode(const TCsWeaponFireMode &FireMode, cons
 
 int32 ACsWeapon::GetAmmoReserve(const int32 &Index)
 {
-	if (GetMyData_Weapon()->GetUseInventory())
+	if (GetMyData_Weapon()->UseInventory())
 	{
 		// TODO: Later might need a way to store the LastFireMode used
 		ACsManager_Inventory* Manager_Inventory = GetMyManager_Inventory();
@@ -1348,7 +1348,7 @@ void ACsWeapon::ConsumeAmmo()
 
 void ACsWeapon::ConsumeAmmoItem(TArray<FCsItem*> &OutItems)
 {
-	if (GetMyData_Weapon()->GetUseInventory())
+	if (GetMyData_Weapon()->UseInventory())
 	{
 		ACsManager_Inventory* Manager_Inventory = GetMyManager_Inventory();
 		ACsData_Projectile* Data_Projectile		= GetMyData_Projectile<ACsData_Projectile>(PrimaryFireMode, false);

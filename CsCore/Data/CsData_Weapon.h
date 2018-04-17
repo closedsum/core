@@ -14,7 +14,7 @@ class CSCORE_API ACsData_Weapon : public ACsData
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-	virtual const bool& GetUseInventory();
+	virtual const bool& UseInventory();
 
 #pragma endregion Stats
 

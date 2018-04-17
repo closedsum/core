@@ -849,6 +849,7 @@ struct FCsInventoryLoadout
 {
 	GENERATED_USTRUCT_BODY()
 
+	/** Recipes */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
 	TArray<FCsInventoryLoadoutRecipe> Recipes;
 

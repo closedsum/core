@@ -311,11 +311,6 @@ void ACsManager_Item::GetItems(const TArray<uint64> &Ids, TArray<FCsItem*> &OutI
 // DeAllocate
 #pragma region
 
-void ACsManager_Item::DeAllocate(FCsItem* Item)
-{
-	DeAllocate(Item->UniqueId);
-}
-
 void ACsManager_Item::DeAllocate(const uint64 &Id)
 {
 	FCsItem* Item = *(ActiveItems.Find(Id));
@@ -331,7 +326,7 @@ void ACsManager_Item::DeAllocate(const uint64 &Id)
 	// If Save EXISTS, Delete it.
 	if (Item->IsSaved)
 	{
-		const FString Path	   = GetSavePath();
+		const FString Path = GetSavePath();
 		const FString Filename = Path + Item->FileName + ECsCachedString::Str::Json;
 
 		if (IFileManager::Get().FileExists(*Filename))
@@ -345,6 +340,11 @@ void ACsManager_Item::DeAllocate(const uint64 &Id)
 	Item->Data = nullptr;
 	Item->Data_Actor.Reset();
 	Item->Data_Actor = nullptr;
+}
+
+void ACsManager_Item::DeAllocate(FCsItem* Item)
+{
+	DeAllocate(Item->UniqueId);
 }
 
 #pragma endregion DeAllocate

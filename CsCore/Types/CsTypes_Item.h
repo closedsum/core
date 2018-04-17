@@ -493,7 +493,23 @@ struct FCsItemHistory
 		OwnerType = B.OwnerType;
 		OwnerType_Script = B.OwnerType_Script;
 		OwnerName = B.OwnerName;
-		Members = B.Members;
+
+		Members.Empty();
+
+		TArray<FName> Keys;
+		B.Members.GetKeys(Keys);
+
+		const int32 KeyCount = Keys.Num();
+
+		for (int32 I = 0; I < KeyCount; ++I)
+		{
+			const FName& Key					= Keys[I];
+			const FCsItemMemberValue* MemberPtr = B.Members.Find(Key);
+
+			FCsItemMemberValue Member;
+			Member = *MemberPtr;
+			Members.Add(Key, Member);
+		}
 		return *this;
 	}
 
@@ -620,7 +636,32 @@ struct FCsItem
 		UniqueId = B.UniqueId;
 		ShortCode = B.ShortCode;
 		DisplayName = B.DisplayName;
+		FileName = B.FileName;
+		Created = B.Created;
+		LifeTime = B.LifeTime;
+
+		Contents.Reset();
+
+		const int32 ContentCount = B.Contents.Num();
+
+		for (int32 I = 0; I < ContentCount; ++I)
+		{
+			Contents.Add(B.Contents[I]);
+		}
+		Data = B.Data;
+		Data_Actor = B.Data_Actor;
 		InventoryProperties = B.InventoryProperties;
+		CurrentHistory = B.CurrentHistory;
+
+		PreviousHistories.Reset();
+
+		const int32 HistoryCount = B.PreviousHistories.Num();
+
+		for (int32 I = 0; I < HistoryCount; ++I)
+		{
+			PreviousHistories.AddDefaulted();
+			PreviousHistories[I] = B.PreviousHistories[I];
+		}
 		return *this;
 	}
 
@@ -632,7 +673,33 @@ struct FCsItem
 		if (UniqueId != B.UniqueId) { return false; }
 		if (ShortCode != B.ShortCode) { return false; }
 		if (DisplayName != B.DisplayName) { return false; }
+		if (Created != B.Created) { return false; }
+		if (LifeTime != B.LifeTime) { return false; }
+
+		if (Contents.Num() != B.Contents.Num()) { return false; }
+
+		const int32 ContentCount = B.Contents.Num();
+
+		for (int32 I = 0; I < ContentCount; ++I)
+		{
+			if (Contents[I]!= B.Contents[I])
+				return false;
+		}
+
+		if (Data != B.Data) { return false; }
+		if (Data_Actor != B.Data_Actor) { return false; }
 		if (InventoryProperties != B.InventoryProperties) { return false; }
+		if (CurrentHistory != B.CurrentHistory) { return false; }
+
+		if (PreviousHistories.Num() != B.PreviousHistories.Num()) { return false; }
+
+		const int32 HistoryCount = B.PreviousHistories.Num();
+
+		for (int32 I = 0; I < HistoryCount; ++I)
+		{
+			if (PreviousHistories[I] != B.PreviousHistories[I])
+				return false;
+		}
 		return true;
 	}
 
@@ -684,7 +751,12 @@ struct FCsItem
 	}
 
 	class ACsData_Item* GetData() const { return Data.IsValid() ? Data.Get() : nullptr; }
+	template<typename T>
+	T* GetData() { return Cast<T>(GetData()); }
+
 	class ACsData_Interactive* GetData_Actor() const { return Data_Actor.IsValid() ? Data_Actor.Get() : nullptr; }
+	template<typename T>
+	T* GetData_Actor() const { return Cast<T>(GetData_Actor()); }
 };
 
 USTRUCT(BlueprintType)

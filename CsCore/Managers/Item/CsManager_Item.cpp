@@ -59,6 +59,7 @@ ACsManager_Item::ACsManager_Item(const FObjectInitializer& ObjectInitializer) : 
 void ACsManager_Item::OnTick(const float &DeltaSeconds)
 {
 	OnTick_Handle_AsyncSave();
+	OnTick_Handle_DeAllocateQueue();
 }
 
 uint64 ACsManager_Item::GetUniqueId()
@@ -323,6 +324,13 @@ void ACsManager_Item::DeAllocate(const uint64 &Id)
 
 	ActiveItems.Remove(Id);
 
+	// If Async Saving Item, Queue DeAllocate
+	if (Item->AsycTaskMutex.IsLocked())
+	{
+		DeAllocateQueue.Add(Item);
+		return;
+	}
+
 	// If Save EXISTS, Delete it.
 	if (Item->IsSaved)
 	{
@@ -345,6 +353,42 @@ void ACsManager_Item::DeAllocate(const uint64 &Id)
 void ACsManager_Item::DeAllocate(FCsItem* Item)
 {
 	DeAllocate(Item->UniqueId);
+}
+
+void ACsManager_Item::OnTick_Handle_DeAllocateQueue()
+{
+	if (DeAllocateQueue.Num() == CS_EMPTY)
+		return;
+
+	const int32 Count = DeAllocateQueue.Num();
+
+	for (int32 I = Count - 1; I >= 0; --I)
+	{
+		FCsItem* Item = DeAllocateQueue[I];
+
+		if (Item->AsycTaskMutex.IsLocked())
+			continue;
+
+		// If Save EXISTS, Delete it.
+		if (Item->IsSaved)
+		{
+			const FString Path = GetSavePath();
+			const FString Filename = Path + Item->FileName + ECsCachedString::Str::Json;
+
+			if (IFileManager::Get().FileExists(*Filename))
+			{
+				IFileManager::Get().Delete(*Filename, true, true, true);
+			}
+		}
+		AvailableUnqiueIds.Add(Item->UniqueId);
+		Item->Reset();
+		Item->Data.Reset();
+		Item->Data = nullptr;
+		Item->Data_Actor.Reset();
+		Item->Data_Actor = nullptr;
+
+		DeAllocateQueue.RemoveAt(I);
+	}
 }
 
 #pragma endregion DeAllocate

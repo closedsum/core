@@ -94,6 +94,10 @@ public:
 	virtual void DeAllocate(const uint64 &Id);
 	virtual void DeAllocate(FCsItem* Item);
 
+	TArray<FCsItem*> DeAllocateQueue;
+
+	void OnTick_Handle_DeAllocateQueue();
+
 #pragma endregion DeAllocate
 
 // Transfer

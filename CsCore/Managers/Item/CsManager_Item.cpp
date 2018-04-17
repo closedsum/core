@@ -722,16 +722,16 @@ void ACsManager_Item::AddAsyncSave(FCsItem* Item)
 
 void ACsManager_Item::AsyncSave()
 {
-	const int32 Count = ActiveAsyncSaveItems.Num();
+	const int32 Count = CopiedAsyncSaveItems.Num();
 
 	for (int32 I = 0; I < Count; ++I)
 	{
-		FCsItem* Item = ActiveAsyncSaveItems[I];
+		FCsItem* Item = CopiedAsyncSaveItems[I];
 
 		Save(Item);
 		Item->Reset();
 	}
-	ActiveAsyncSaveItems.Reset();
+	CopiedAsyncSaveItems.Reset();
 
 	PerformingAsyncSave = false;
 }
@@ -746,14 +746,14 @@ void ACsManager_Item::OnTick_Handle_AsyncSave()
 	// If an Async Save just completed, Clear Mutex
 	if (PerformingAsyncSaveHandle.HasChanged())
 	{
-		const int32 Count = AsyncSaveItems.Num();
+		const int32 Count = ActiveAsyncSaveItems.Num();
 
 		for (int32 I = 0; I < Count; ++I)
 		{
-			FCsItem* Item = AsyncSaveItems[I];
+			FCsItem* Item = ActiveAsyncSaveItems[I];
 			Item->AsycTaskMutex.Unlock();
 		}
-		AsyncSaveItems.Reset();
+		ActiveAsyncSaveItems.Reset();
 		PerformingAsyncSaveHandle.Clear();
 	}
 
@@ -764,14 +764,19 @@ void ACsManager_Item::OnTick_Handle_AsyncSave()
 
 	for (int32 I = 0; I < Count; ++I)
 	{
+		FCsItem* Item = AsyncSaveItems[I];
+		// Lock for Async Save
+		Item->AsycTaskMutex.Lock();
+		// Add to Active List
+		ActiveAsyncSaveItems.Add(Item);
+		// Copy for Async Save
 		FCsItem* AsyncItem	= AllocateAsyncSave();
-		FCsItem* Item		= AsyncSaveItems[I];
 		*AsyncItem			= *Item;
 
-		ActiveAsyncSaveItems.Add(AsyncItem);
-
-		Item->AsycTaskMutex.Lock();
+		CopiedAsyncSaveItems.Add(AsyncItem);
 	}
+
+	AsyncSaveItems.Reset();
 
 	PerformingAsyncSave = true;
 	PerformingAsyncSaveHandle.Resolve();

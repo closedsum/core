@@ -147,6 +147,7 @@ public:
 
 	TArray<FCsItem*> AsyncSaveItems;
 	TArray<FCsItem*> ActiveAsyncSaveItems;
+	TArray<FCsItem*> CopiedAsyncSaveItems;
 
 	void AddAsyncSave(FCsItem* Item);
 	void AsyncSave();

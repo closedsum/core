@@ -98,4 +98,5 @@ void FCsRunnable_Delegate::DeAllocate()
 
 	Delegate.Clear();
 	Delegate_OnExit.Clear();
+	Cache.Reset();
 }

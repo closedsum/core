@@ -1383,12 +1383,12 @@ void ACsWeapon::ConsumeAmmo(const TCsWeaponFireMode& FireMode, const bool& IsCha
 #endif // #if WITH_EDITOR
 }
 
-void ACsWeapon::ConsumeAmmoItem(TArray<FCsItem*> &OutItems)
+void ACsWeapon::ConsumeAmmoItem(const TCsWeaponFireMode &FireMode, const bool &IsCharged, TArray<FCsItem*> &OutItems)
 {
 	if (GetMyData_Weapon()->UseInventory())
 	{
 		ACsManager_Inventory* Manager_Inventory = GetMyManager_Inventory();
-		ACsData_Projectile* Data_Projectile		= GetMyData_Projectile<ACsData_Projectile>(PrimaryFireMode, false);
+		ACsData_Projectile* Data_Projectile		= GetMyData_Projectile<ACsData_Projectile>(FireMode, IsCharged);
 		const FName& ShortCode					= Data_Projectile->GetItemShortCode();
 
 		if (ShortCode == NAME_None)
@@ -1770,7 +1770,7 @@ CS_COROUTINE(ACsWeapon, FireWeapon_Internal)
 			{
 				FCsProjectileFirePayload* Payload = mw->AllocateProjectileFirePayload(FireMode);
 				
-				mw->ConsumeAmmoItem(Payload->Items);
+				mw->ConsumeAmmoItem(FireMode, Payload->ChargePercent > 0.0f, Payload->Items);
 				mw->ConsumeAmmo(FireMode, Payload->ChargePercent > 0.0f);
 
 				if (mw->IsHitscan.Get(FireMode))

@@ -714,7 +714,7 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Firing")
 	FBindableDynEvent_CsWeapon_OnConsumeAmmo OnConsumeAmmo_ScriptEvent;
 
-	void ConsumeAmmoItem(TArray<FCsItem*> &OutItems);
+	void ConsumeAmmoItem(const TCsWeaponFireMode &FireMode, const bool &IsCharged, TArray<FCsItem*> &OutItems);
 
 	FBindableEvent_CsWeapon_OnConsumeAmmoItem OnConsumeAmmoItem_Event;
 

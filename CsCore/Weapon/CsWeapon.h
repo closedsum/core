@@ -705,7 +705,7 @@ public:
 	bool HasUnlimitedAmmo;
 
 	virtual const FName& GetAmmoShortCode(const TCsWeaponFireMode &FireMode, const bool &IsCharged);
-	virtual int32 GetAmmoReserve(const int32 &Index);
+	virtual int32 GetAmmoReserve(const int32 &Index, const TCsWeaponFireMode &FireMode, const bool &IsCharged);
 
 	virtual void ConsumeAmmo(const TCsWeaponFireMode &FireMode, const bool &IsCharged);
 

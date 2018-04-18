@@ -1232,9 +1232,9 @@ void ACsWeapon::Equip()
 {
 	IsEquipped = true;
 
-	OnEquip_Event.Broadcast(WeaponSlot, CurrentAmmo, GetMaxAmmo(CS_WEAPON_DATA_VALUE), GetAmmoReserve(CS_WEAPON_DATA_VALUE));
+	OnEquip_Event.Broadcast(WeaponSlot, CurrentAmmo, GetMaxAmmo(CS_WEAPON_DATA_VALUE), GetAmmoReserve(CS_WEAPON_DATA_VALUE, PrimaryFireMode, false));
 #if WITH_EDITOR
-	OnEquip_ScriptEvent.Broadcast(WeaponIndex, CurrentAmmo, GetMaxAmmo(CS_WEAPON_DATA_VALUE), GetAmmoReserve(CS_WEAPON_DATA_VALUE));
+	OnEquip_ScriptEvent.Broadcast(WeaponIndex, CurrentAmmo, GetMaxAmmo(CS_WEAPON_DATA_VALUE), GetAmmoReserve(CS_WEAPON_DATA_VALUE, PrimaryFireMode, false));
 #endif // #if WITH_EDITOR
 }
 
@@ -1275,9 +1275,9 @@ int32 ACsWeapon::GetMaxAmmo(const int32 &Index) { return MaxAmmo.Get(Index); }
 
 void ACsWeapon::OnChange_CurrentAmmo(const int32 &Value)
 {
-	OnChange_CurrentAmmo_Event.Broadcast(WeaponSlot, CurrentAmmo, GetMaxAmmo(CS_WEAPON_DATA_VALUE), GetAmmoReserve(CS_WEAPON_DATA_VALUE));
+	OnChange_CurrentAmmo_Event.Broadcast(WeaponSlot, CurrentAmmo, GetMaxAmmo(CS_WEAPON_DATA_VALUE), GetAmmoReserve(CS_WEAPON_DATA_VALUE, PrimaryFireMode, false));
 #if WITH_EDITOR
-	OnChange_CurrentAmmo_ScriptEvent.Broadcast(WeaponIndex, CurrentAmmo, GetMaxAmmo(CS_WEAPON_DATA_VALUE), GetAmmoReserve(CS_WEAPON_DATA_VALUE));
+	OnChange_CurrentAmmo_ScriptEvent.Broadcast(WeaponIndex, CurrentAmmo, GetMaxAmmo(CS_WEAPON_DATA_VALUE), GetAmmoReserve(CS_WEAPON_DATA_VALUE, PrimaryFireMode, false));
 #endif // #if WITH_EDITOR
 }
 
@@ -1348,18 +1348,17 @@ const FName& ACsWeapon::GetAmmoShortCode(const TCsWeaponFireMode &FireMode, cons
 	return GetMyData_Projectile<ACsData_Projectile>(FireMode, IsCharged)->GetItemShortCode();
 }
 
-int32 ACsWeapon::GetAmmoReserve(const int32 &Index)
+int32 ACsWeapon::GetAmmoReserve(const int32 &Index, const TCsWeaponFireMode &FireMode, const bool &IsCharged)
 {
 	if (GetMyData_Weapon()->UseInventory())
 	{
-		// TODO: Later might need a way to store the LastFireMode used
 		ACsManager_Inventory* Manager_Inventory = GetMyManager_Inventory();
 
-		const FName& ShortCode = GetAmmoShortCode(PrimaryFireMode, false);
+		const FName& ShortCode = GetAmmoShortCode(FireMode, IsCharged);
 
 		if (ShortCode == NAME_None)
 		{
-			ACsData_Projectile* Data_Projectile = GetMyData_Projectile(PrimaryFireMode, false);
+			ACsData_Projectile* Data_Projectile = GetMyData_Projectile(FireMode, IsCharged);
 
 			UE_LOG(LogCs, Warning, TEXT("ACsWeapon::GetAmmoReserve: No ItemShortCode set for Projectile: %s"), *(Data_Projectile->ShortCode.ToString()));
 			check(0);
@@ -2358,7 +2357,7 @@ bool ACsWeapon::CanReload()
 		return false;
 
 	// Check Ammo
-	const int32 AmmoReserve = GetAmmoReserve(CS_WEAPON_DATA_VALUE);
+	const int32 AmmoReserve = GetAmmoReserve(CS_WEAPON_DATA_VALUE, PrimaryFireMode, false);
 
 	if (AmmoReserve == CS_EMPTY)
 		return false;

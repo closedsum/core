@@ -38,6 +38,9 @@ ACsData::ACsData(const FObjectInitializer& ObjectInitializer)
 void ACsData::PostLoad()
 {
 	Super::PostLoad();
+
+	ShortCodeAsString = ShortCode.ToString();
+
 #if WITH_EDITOR
 	// Check to verify .json file when codes changes have been made to Data
 	const TIndirectArray<FWorldContext>& WorldContexts = GEngine->GetWorldContexts();
@@ -229,12 +232,12 @@ void ACsData::VerifyJsonIntegrity()
 
 void ACsData::Load(const ECsLoadFlags &LoadFlags /*=ECsLoadFlags::All*/)
 {
-	const FString DataName = ShortCode.ToString();
+	ShortCodeAsString = ShortCode.ToString();
 
 	if (!HasLoadedFromJson)
 		LoadFromJson();
 
-	UCsCommon_Load::LoadObjectWithTAssetPtrs(DataName, (void*)this, GetClass(), LoadFlags, LoadObjectWithTAssetPtrs_Internal);
+	UCsCommon_Load::LoadObjectWithTAssetPtrs(ShortCodeAsString, (void*)this, GetClass(), LoadFlags, LoadObjectWithTAssetPtrs_Internal);
 }
 
 void ACsData::UnLoad()

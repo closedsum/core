@@ -18,7 +18,7 @@ typedef ECsItemType::Type TCsItemType;
 // ItemTypeToString
 typedef const FString&(*TCsItemTypeToString)(const TCsItemType&);
 // StringToItemType
-typedef TCsItemType(*TCsStringToItemType)(const FString&);
+typedef const TCsItemType&(*TCsStringToItemType)(const FString&);
 
 #define CS_DECLARE_ITEM_TYPE	TCsItemType ItemType_MAX;\
 								uint8 ITEM_TYPE_MAX; \

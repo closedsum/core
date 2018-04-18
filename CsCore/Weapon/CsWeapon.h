@@ -707,9 +707,9 @@ public:
 	virtual const FName& GetAmmoShortCode(const TCsWeaponFireMode &FireMode, const bool &IsCharged);
 	virtual int32 GetAmmoReserve(const int32 &Index);
 
-	virtual void ConsumeAmmo();
+	virtual void ConsumeAmmo(const TCsWeaponFireMode &FireMode, const bool &IsCharged);
 
-	FBindableEvent_CsWeapon_OnConsumeAmmo OnCurrentAmmo_Event;
+	FBindableEvent_CsWeapon_OnConsumeAmmo OnConsumeAmmo_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "Firing")
 	FBindableDynEvent_CsWeapon_OnConsumeAmmo OnConsumeAmmo_ScriptEvent;

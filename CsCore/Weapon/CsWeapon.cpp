@@ -120,6 +120,8 @@ ACsWeapon::ACsWeapon(const FObjectInitializer& ObjectInitializer)
 
 	//IdleState = ECsWeaponState::Idle;
 
+	//PrimaryFireMode
+
 	//FiringState = ECsWeaponState::Firing;
 	//FireAnim = ECsWeaponAnim::Fire;
 	//ChargeFireStartAnim = ECsWeaponAnim::ECsWeaponAnim_MAX;
@@ -1367,10 +1369,18 @@ int32 ACsWeapon::GetAmmoReserve(const int32 &Index)
 	return GetMaxAmmo(Index);
 }
 
-void ACsWeapon::ConsumeAmmo()
+void ACsWeapon::ConsumeAmmo(const TCsWeaponFireMode& FireMode, const bool& IsCharged)
 {
 	--CurrentAmmo;
 	CurrentAmmoHandle.Resolve();
+	
+	ACsData_Projectile* Data_Projectile = GetMyData_Projectile<ACsData_Projectile>(PrimaryFireMode, false);
+	const FName& ShortCode				= Data_Projectile->GetItemShortCode();
+
+	OnConsumeAmmo_Event.Broadcast(ShortCode);
+#if WITH_EDITOR
+	OnConsumeAmmo_ScriptEvent.Broadcast(ShortCode);
+#endif // #if WITH_EDITOR
 }
 
 void ACsWeapon::ConsumeAmmoItem(TArray<FCsItem*> &OutItems)
@@ -1752,7 +1762,7 @@ CS_COROUTINE(ACsWeapon, FireWeapon_Internal)
 			// In Editor Preview Window
 			if (UCsCommon::IsPlayInEditorPreview(w))
 			{
-				mw->ConsumeAmmo();
+				mw->ConsumeAmmo(FireMode, false);
 			}
 			// In Game
 			else
@@ -1761,7 +1771,7 @@ CS_COROUTINE(ACsWeapon, FireWeapon_Internal)
 				FCsProjectileFirePayload* Payload = mw->AllocateProjectileFirePayload(FireMode);
 				
 				mw->ConsumeAmmoItem(Payload->Items);
-				mw->ConsumeAmmo();
+				mw->ConsumeAmmo(FireMode, Payload->ChargePercent > 0.0f);
 
 				if (mw->IsHitscan.Get(FireMode))
 					mw->FireHitscan(FireMode, Payload);

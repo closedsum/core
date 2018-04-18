@@ -736,6 +736,12 @@ struct FCsItem
 		return nullptr;
 	}
 
+	void IncrementMemberValue(const int32 &HistoryIndex, const FName& Name)
+	{
+		FCsItemMemberValue* Value = GetMemberValue(HistoryIndex, Name);
+		Value->Increment();
+	}
+
 	void Reset()
 	{
 		IsAllocated = false;

@@ -14,6 +14,9 @@ class CSCORE_API ACsData_Weapon : public ACsData
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Stats")
+	virtual const FName& GetItemShortCode();
+
+	UFUNCTION(BlueprintCallable, Category = "Stats")
 	virtual const bool& UseInventory();
 
 #pragma endregion Stats

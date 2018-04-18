@@ -1407,7 +1407,7 @@ void ACsWeapon::ConsumeAmmoItem(const TCsWeaponFireMode &FireMode, const bool &I
 		{
 			Manager_Inventory->DropFirstItem(ShortCode);
 		}
-		OnConsumeAmmoItem_Event.Broadcast(OutItems);
+		OnConsumeAmmoItem_Event.Broadcast(ShortCode, OutItems);
 	}
 }
 

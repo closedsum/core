@@ -23,7 +23,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FBindableDynEvent_CsWeapon_OnChang
 DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsWeapon_OnConsumeAmmo, const FName&);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsWeapon_OnConsumeAmmo, const FName&, ShortCode);
 	// OnConsumeAmmoItem
-DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsWeapon_OnConsumeAmmoItem, const TArray<FCsItem*>&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsWeapon_OnConsumeAmmoItem, const FName&, const TArray<FCsItem*>&);
 // Firing
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsWeapon_Override_FireWeapon, const uint8&, WeaponIndex, const uint8&, FireMode);
 // Equip

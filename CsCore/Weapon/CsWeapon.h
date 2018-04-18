@@ -19,6 +19,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsWeapon_Override_
 	// OnChangeCurrentAmmo
 DECLARE_MULTICAST_DELEGATE_FourParams(FBindableEvent_CsWeapon_OnChangeCurrentAmmo, const TCsWeaponSlot&, const int32&, const int32&, const int32&);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FBindableDynEvent_CsWeapon_OnChangeCurrentAmmo, const uint8&, WeaponIndex, const int32&, Ammo, const int32&, MaxAmmo, const int32&, AmmoReserve);
+	// OnConsumeAmmo
+DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsWeapon_OnConsumeAmmo, const FName&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsWeapon_OnConsumeAmmo, const FName&, ShortCode);
 	// OnConsumeAmmoItem
 DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsWeapon_OnConsumeAmmoItem, const TArray<FCsItem*>&);
 // Firing
@@ -705,6 +708,12 @@ public:
 	virtual int32 GetAmmoReserve(const int32 &Index);
 
 	virtual void ConsumeAmmo();
+
+	FBindableEvent_CsWeapon_OnConsumeAmmo OnCurrentAmmo_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Firing")
+	FBindableDynEvent_CsWeapon_OnConsumeAmmo OnConsumeAmmo_ScriptEvent;
+
 	void ConsumeAmmoItem(TArray<FCsItem*> &OutItems);
 
 	FBindableEvent_CsWeapon_OnConsumeAmmoItem OnConsumeAmmoItem_Event;

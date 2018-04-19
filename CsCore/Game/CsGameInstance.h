@@ -7,8 +7,12 @@
 #include "Types/CsTypes_Coroutine.h"
 #include "CsGameInstance.generated.h"
 
+// OnTick
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsGameInstance_OnTick, const float&, DeltaSeconds);
 DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsGameInstance_OnTick, const float&);
+// OnServerTravel
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBindableDynEvent_CsGameInstance_OnServerTravel);
+DECLARE_MULTICAST_DELEGATE(FBindableEvent_CsGameInstance_OnServerTravel);
 
 // Enums
 #pragma region
@@ -130,7 +134,7 @@ class CSCORE_API UCsGameInstance : public UGameInstance
 
 	FBindableEvent_CsGameInstance_OnTick OnTick_Event;
 
-	UPROPERTY(BlueprintAssignable, Category = "Input")
+	UPROPERTY(BlueprintAssignable, Category = "Tick")
 	FBindableDynEvent_CsGameInstance_OnTick OnTick_ScriptEvent;
 
 	uint64 CurrentGameFrame;
@@ -199,7 +203,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Game Instance")
 	class UCsUserWidget* FullscreenWidget;
 
+	void CreateFullscreenWidget();
 	virtual void SetupFullscreenWidget();
+	void CheckFullscreenWidget();
 
 #pragma endregion Fullscreen Widget
 
@@ -221,16 +227,23 @@ public:
 
 // Level
 #pragma region
+public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Game Instance")
 	TEnumAsByte<ECsLevelState::Type> LevelState;
 
+	void OnPostWorldInitialization(UWorld* InWorld, const UWorld::InitializationValues);
 	void OnLevelAddedToWorld(ULevel* InLevel, UWorld* InWorld);
 	void OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld);
 
 	virtual void PerformLevelTransition(const FString &Level, const FString &GameMode);
 	static char PerformLevelTransition_Internal(struct FCsRoutine* r);
 	struct FCsRoutine* PerformLevelTransition_Internal_Routine;
+
+	FBindableEvent_CsGameInstance_OnServerTravel OnServerTravel_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Level")
+	FBindableDynEvent_CsGameInstance_OnServerTravel OnServerTravel_ScriptEvent;
 
 #pragma endregion Level
 

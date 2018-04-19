@@ -670,7 +670,12 @@ void ACsPlayerStateBase::AsyncSetAssetReferencesPlayerData()
 	Runnable->Start();
 }
 
-void ACsPlayerStateBase::SetAssetReferencesPlayerData() { OnBoardState = ECsPlayerStateBaseOnBoardState::FinishedSetAssetReferencesPlayerData; }
+void ACsPlayerStateBase::SetAssetReferencesPlayerData() 
+{
+	ClearTransientLoadedAssets();
+
+	OnBoardState = ECsPlayerStateBaseOnBoardState::FinishedSetAssetReferencesPlayerData; 
+}
 
 void ACsPlayerStateBase::OnFinishedLoadingPlayerData(const TArray<UObject*> &LoadedAssets, const float &LoadingTime){}
 void ACsPlayerStateBase::SetupPlayerData() { OnBoardState = ECsPlayerStateBaseOnBoardState::FinishedApplyingPlayerData; }

@@ -14,6 +14,8 @@ class CSCORE_API ACsPlayerController : public APlayerController
 {
 	GENERATED_UCLASS_BODY()
 
+	virtual void Destroyed() override;
+
 	UPROPERTY(BlueprintAssignable, Category = "Tick")
 	FBindableDynEvent_CsPlayerController_OnTickActor OnTickActor_ScriptEvent;
 

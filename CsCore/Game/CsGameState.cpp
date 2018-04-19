@@ -373,7 +373,13 @@ void ACsGameState::AsyncSetAssetReferencesCommonData()
 	Runnable->Start();
 }
 
-void ACsGameState::SetAssetReferencesCommonData() {}
+void ACsGameState::SetAssetReferencesCommonData() 
+{ 
+	ClearTransientLoadedAssets();
+
+	OnBoardState = ECsGameStateOnBoardState::SetupHUD; 
+}
+
 void ACsGameState::SetupHUD(){}
 void ACsGameState::LoadGameData(){}
 void ACsGameState::OnFinishedLoadGameData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime){}
@@ -407,9 +413,15 @@ void ACsGameState::AsyncSetAssetReferencesGameData()
 	Runnable->Start();
 }
 
-void ACsGameState::SetAssetReferencesGameData() {}
+void ACsGameState::SetAssetReferencesGameData() 
+{
+	ClearTransientLoadedAssets();
+
+	OnBoardState = ECsGameStateOnBoardState::LoadItems;
+}
+
 void ACsGameState::LoadItems() { OnBoardState = ECsGameStateOnBoardState::LoadSceneData; }
-void ACsGameState::LoadSceneData(){ OnBoardState = ECsGameStateOnBoardState::SetupScene; }
+void ACsGameState::LoadSceneData(){ OnBoardState = ECsGameStateOnBoardState::SetAssetReferencesSceneData; }
 void ACsGameState::OnFinishedLoadSceneData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime){}
 
 void ACsGameState::StartSetAssetReferencesSceneData()
@@ -441,9 +453,17 @@ void ACsGameState::AsyncSetAssetReferencesSceneData()
 	Runnable->Start();
 }
 
-void ACsGameState::SetAssetReferencesSceneData() {}
+void ACsGameState::SetAssetReferencesSceneData() 
+{
+	ClearTransientLoadedAssets();
 
-void ACsGameState::SetupScene(){}
+	OnBoardState = ECsGameStateOnBoardState::SetupScene;
+}
+
+void ACsGameState::SetupScene()
+{
+	OnBoardState = ECsGameStateOnBoardState::SetupLastTickActor;
+}
 
 void ACsGameState::OnBoard_Completed()
 {

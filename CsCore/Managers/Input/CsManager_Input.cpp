@@ -63,6 +63,11 @@ void ACsManager_Input::Shutdown()
 	Inputs.Reset();
 }
 
+void ACsManager_Input::OnServerTravel()
+{
+	Shutdown();
+}
+
 void ACsManager_Input::Destroyed()
 {
 	Shutdown();

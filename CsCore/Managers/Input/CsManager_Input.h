@@ -482,6 +482,7 @@ class CSCORE_API ACsManager_Input : public AActor
 	static ACsManager_Input* Get(UWorld* InWorld, const int32 &Id = INDEX_NONE);
 
 	virtual void Shutdown();
+	virtual void OnServerTravel();
 	virtual void Destroyed() override;
 
 	TWeakObjectPtr<AActor> InputOwner;

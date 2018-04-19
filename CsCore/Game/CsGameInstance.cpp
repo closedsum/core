@@ -178,6 +178,7 @@ CS_COROUTINE(UCsGameInstance, OnBoard_Internal)
 
 	gi->SetupFullscreenWidget();
 
+	FWorldDelegates::OnPostWorldInitialization.AddUObject(gi, &UCsGameInstance::OnPostWorldInitialization);
 	FWorldDelegates::LevelAddedToWorld.AddUObject(gi, &UCsGameInstance::OnLevelAddedToWorld);
 	FWorldDelegates::LevelRemovedFromWorld.AddUObject(gi, &UCsGameInstance::OnLevelRemovedFromWorld);
 
@@ -365,23 +366,40 @@ void UCsGameInstance::OnFinishedLoadingStartUpDataAssets(const TArray<UObject*> 
 	// Fullscreen Widget
 #pragma region
 
+void UCsGameInstance::CreateFullscreenWidget()
+{
+	ACsData_UI_Common* bp_ui_common = Cast<ACsData_UI_Common>(DataMapping->LoadData(FName("bp_ui_common")));
+
+	if (!bp_ui_common)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsGameInstance::CreateFullscreenWidget: Failed to Load bp_ui_common (ACsData_UI_Common)."));
+		return;
+	}
+	FullscreenWidget = CreateWidget<UCsUserWidget>(this, bp_ui_common->FullscreenWidget.Get());
+	FullscreenWidget->AddToViewport();
+}
+
 void UCsGameInstance::SetupFullscreenWidget()
 {
 	if (!FullscreenWidget)
 	{
-		ACsData_UI_Common* bp_ui_common = Cast<ACsData_UI_Common>(DataMapping->LoadData(FName("bp_ui_common")));
-
-		if (!bp_ui_common)
-		{
-			UE_LOG(LogCs, Warning, TEXT("UCsGameInstance::SetupFullscreenWidget: Failed to Load bp_ui_common (ACsData_UI_Common)."));
-			return;
-		}
-		FullscreenWidget = CreateWidget<UCsUserWidget>(this, bp_ui_common->FullscreenWidget.Get());
-		FullscreenWidget->AddToViewport();
+		CreateFullscreenWidget();
 	}
 	FullscreenWidget->Show();
 
 	OnBoardState = ECsGameInstanceOnBoardState::Completed;
+}
+
+void UCsGameInstance::CheckFullscreenWidget()
+{
+	// Make sure FullscreenWidget is attached to Viewport
+	if (FullscreenWidget &&
+		!FullscreenWidget->GetParent() &&
+		!FullscreenWidget->IsInViewport())
+	{
+		FullscreenWidget->MarkPendingKill();
+		CreateFullscreenWidget();
+	}
 }
 
 #pragma endregion Fullscreen Widget
@@ -391,26 +409,19 @@ void UCsGameInstance::SetupFullscreenWidget()
 // Level
 #pragma region
 
+void UCsGameInstance::OnPostWorldInitialization(UWorld* InWorld, const UWorld::InitializationValues)
+{
+	CheckFullscreenWidget();
+}
+
 void UCsGameInstance::OnLevelAddedToWorld(ULevel* InLevel, UWorld* InWorld)
 {
-	// Make sure FullscreenWidget is attached to Viewport
-	if (FullscreenWidget &&
-		!FullscreenWidget->GetParent() &&
-		!FullscreenWidget->IsInViewport())
-	{
-		FullscreenWidget->AddToViewport();
-	}
+	CheckFullscreenWidget();
 }
 
 void UCsGameInstance::OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld)
 {
-	// Make sure FullscreenWidget is attached to Viewport
-	if (FullscreenWidget &&
-		!FullscreenWidget->GetParent() &&
-		!FullscreenWidget->IsInViewport())
-	{
-		FullscreenWidget->AddToViewport();
-	}
+	CheckFullscreenWidget();
 }
 
 void UCsGameInstance::PerformLevelTransition(const FString &Level, const FString &GameMode)
@@ -461,6 +472,10 @@ CS_COROUTINE(UCsGameInstance, PerformLevelTransition_Internal)
 		const FString Level	   = r->strings[0];
 		const FString GameMode = r->strings[1];
 
+		gi->OnServerTravel_Event.Broadcast();
+#if WITH_EDITOR
+		gi->OnServerTravel_ScriptEvent.Broadcast();
+#endif // #if WITH_EDITOR
 		w->ServerTravel(Level + TEXT("?game=") + GameMode);
 	}
 

@@ -36,7 +36,7 @@ namespace CgCore
 
         public MonoBehaviour InputOwner;
 
-        float CurrentDeltaTime;
+        //public float CurrentDeltaTime;
 
         private Dictionary<KeyCode, CgKeyInput> RawKeyInputs;
         public List<CgKeyInput> RawKeyInputsPressed;
@@ -266,7 +266,7 @@ namespace CgCore
 
         public virtual void PreProcessInput(float deltaTime)
         {
-            CurrentDeltaTime       = deltaTime;
+            //CurrentDeltaTime       = deltaTime;
             CurrentInputFrameIndex = (CurrentInputFrameIndex + 1) % MAX_INPUT_FRAMES;
             InputFrames[CurrentInputFrameIndex].Init(Time.time, Time.unscaledTime, deltaTime, (ulong)Time.frameCount);
 

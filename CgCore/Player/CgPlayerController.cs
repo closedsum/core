@@ -12,6 +12,8 @@
 
         public List<ECgGameEvent> GameEventPriorityList;
 
+        public CgPlayerState PlayerState;
+
         #endregion // Data Members
 
         // Use this for initialization
@@ -23,6 +25,11 @@
         public virtual void Init()
         {
             GameEventPriorityList = new List<ECgGameEvent>();
+        }
+
+        public virtual void OnUpdate(float deltaTime)
+        {
+            PlayerState.OnUpdate(deltaTime);
         }
 
         protected virtual void PreProcessInput(float deltaTime)
@@ -38,6 +45,11 @@
         {
             PreProcessInput(deltaTime);
             PostProcessInput(deltaTime);
+        }
+
+        public virtual void ProcessGameEvents()
+        {
+            PlayerState.ProcessGameEvents(GameEventPriorityList);
         }
     }
 }

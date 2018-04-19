@@ -209,7 +209,7 @@ public:
 
 #pragma endregion Fullscreen Widget
 
-#pragma region OnBoard
+#pragma endregion OnBoard
 
 	bool IsVR;
 
@@ -251,6 +251,8 @@ public:
 	FBindableDynEvent_CsGameInstance_OnServerTravel OnServerTravel_ScriptEvent;
 
 #pragma endregion Level
+
+	virtual void ExitGame();
 
 // Object
 #pragma region

@@ -506,6 +506,15 @@ CS_COROUTINE(UCsGameInstance, PerformLevelTransition_Internal)
 
 #pragma endregion Level
 
+void UCsGameInstance::ExitGame()
+{
+#if WITH_EDITOR
+	GEditor->RequestEndPlayMap();
+#else
+	FGenericPlatformMisc::RequestExit(false);
+#endif // #if WITH_EDITOR
+}
+
 // Object
 #pragma region
 

@@ -362,6 +362,8 @@ public:
 
 #pragma endregion A.I. Player State
 
+	virtual void ExitGame();
+
 #if WITH_EDITOR
 	FDelegateHandle OnPrePIEEndedDelegateHandle;
 

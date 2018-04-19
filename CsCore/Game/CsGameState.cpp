@@ -2,6 +2,7 @@
 #include "Game/CsGameState.h"
 #include "CsCore.h"
 #include "CsCVars.h"
+
 #include "Coroutine/CsCoroutineScheduler.h"
 #include "CsLastTickActor.h"
 
@@ -11,22 +12,31 @@
 #include "Managers/CsManager_Loading.h"
 #include "Managers/Input/CsManager_Input.h"
 #include "Managers/Runnable/CsManager_Runnable.h"
-
-#include "Game/CsGameInstance.h"
-#include "Javascript/CsJavascriptEntryPoint.h"
+#include "Managers/WidgetActor/CsManager_WidgetActor.h"
+#include "Managers/FX/CsManager_FX.h"
+#include "Managers/Sound/CsManager_Sound.h"
+#include "Managers/Projectile/CsManager_Projectile.h"
+#include "Managers/Damage/CsManager_Damage.h"
+#include "Managers/InteractiveActor/CsManager_InteractiveActor.h"
+#include "Managers/Item/CsManager_Item.h"
+#include "Managers/Inventory/CsManager_Inventory.h"
+#include "Managers/Crafting/CsManager_Crafting.h"
+#include "Managers/AI/CsManager_AI.h"
+#include "Managers/Decals/CsManager_Decal.h"
+#include "Managers/Trace/CsManager_Trace.h"
+// Data
 #include "Data/CsDataMapping.h"
-
 // Player
 #include "Player/CsPlayerController.h"
 #include "Player/CsPlayerState.h"
 #include "Player/CsPlayerPawn.h"
-
 // A.I.
 #include "AI/CsAIPlayerState.h"
-
 // UI
 #include "UI/CsUI.h"
 #include "UI/CsWidget_Fullscreen.h"
+
+#include "Javascript/CsJavascriptEntryPoint.h"
 
 #if WITH_EDITOR
 #include "Settings/LevelEditorPlaySettings.h"
@@ -157,6 +167,94 @@ void ACsGameState::SeamlessTravelTransitionCheckpoint(bool bToTransitionMap)
 	//UCsCoroutineScheduler::Get()->EndAll();
 	//UCsCoroutineScheduler::Get()->CalcCamera_EndAll();
 	UCsCoroutineScheduler::Get()->MyOwner = nullptr;
+
+	OnTick_Event.Clear();
+	OnTick_ScriptEvent.Clear();
+
+	// Manager WidgetActor
+	if (Manager_WidgetActor && !Manager_WidgetActor->IsPendingKill())
+	{
+		Manager_WidgetActor->Destroy(true);
+		Manager_WidgetActor = nullptr;
+
+	}
+	// Manager FX
+	if (Manager_FX && !Manager_FX->IsPendingKill())
+	{
+		Manager_FX->Destroy(true);
+		Manager_FX = nullptr;
+
+	}
+	// Manager Sound
+	if (Manager_Sound && !Manager_Sound->IsPendingKill())
+	{
+		Manager_Sound->Destroy(true);
+		Manager_Sound = nullptr;
+
+	}
+	// Manager Projectile
+	if (Manager_Projectile && !Manager_Projectile->IsPendingKill())
+	{
+		Manager_Projectile->Destroy(true);
+		Manager_Projectile = nullptr;
+
+	}
+	// Manager Damage
+	if (Manager_Damage && !Manager_Damage->IsPendingKill())
+	{
+		Manager_Damage->Destroy(true);
+		Manager_Damage = nullptr;
+
+	}
+	// Manager InteractiveActor
+	if (Manager_InteractiveActor && !Manager_InteractiveActor->IsPendingKill())
+	{
+		Manager_InteractiveActor->Destroy(true);
+		Manager_InteractiveActor = nullptr;
+
+	}
+	// Manager Item
+	if (Manager_Item && !Manager_Item->IsPendingKill())
+	{
+		Manager_Item->Destroy(true);
+		Manager_Item = nullptr;
+
+	}
+	// Manager Inventory
+	if (Manager_Inventory && !Manager_Inventory->IsPendingKill())
+	{
+		Manager_Inventory->Destroy(true);
+		Manager_Inventory = nullptr;
+
+	}
+	// Manager Crafting
+	if (Manager_Crafting && !Manager_Crafting->IsPendingKill())
+	{
+		Manager_Crafting->Destroy(true);
+		Manager_Crafting = nullptr;
+
+	}
+	// Manager AI
+	if (Manager_AI && !Manager_AI->IsPendingKill())
+	{
+		Manager_AI->Destroy(true);
+		Manager_AI = nullptr;
+
+	}
+	// Manager Decal
+	if (Manager_Decal && !Manager_Decal->IsPendingKill())
+	{
+		Manager_Decal->Destroy(true);
+		Manager_Decal = nullptr;
+
+	}
+	// Manager Trace
+	if (Manager_Trace && !Manager_Trace->IsPendingKill())
+	{
+		Manager_Trace->Destroy(true);
+		Manager_Trace = nullptr;
+
+	}
 
 	if (LastTickActor && !LastTickActor->IsPendingKill())
 	{
@@ -874,6 +972,11 @@ void ACsGameState::SetAIPlayerStateMappingRelationshipFlag(const uint8 &ClientMa
 }
 
 #pragma endregion A.I. Player State
+
+void ACsGameState::ExitGame()
+{
+	Cast<UCsGameInstance>(GetGameInstance())->ExitGame();
+}
 
 #if WITH_EDITOR
 

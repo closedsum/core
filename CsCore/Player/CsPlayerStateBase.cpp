@@ -714,6 +714,13 @@ void ACsPlayerStateBase::MulticastUnSetIsOnBoardCompleted_Implementation()
 	IsOnBoardCompleted = false;
 }
 
+void ACsPlayerStateBase::ClearFullscreenWidget()
+{
+	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+	UCsWidget_Fullscreen* Widget  = Cast<UCsWidget_Fullscreen>(GameInstance->FullscreenWidget);
+	Widget->Fullscreen.SetColorAndOpacity(FLinearColor(0.0f, 0.0f, 0.0f, 0.0f));
+}
+
 void ACsPlayerStateBase::OnBoard_Completed() {}
 
 bool ACsPlayerStateBase::IsOnBoardCompleted_Game()

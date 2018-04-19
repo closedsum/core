@@ -61,6 +61,9 @@ void UCsGameInstance::Shutdown()
 	// Unregister ticker delegate
 	FTicker::GetCoreTicker().RemoveTicker(TickDelegateHandle);
 
+	if (FullscreenWidget && !FullscreenWidget->IsPendingKill())
+		FullscreenWidget->MarkPendingKill();
+
 	UCsManager_Loading::Shutdown();
 	UCsManager_Runnable::Shutdown();
 	UCsCoroutineScheduler::Shutdown();

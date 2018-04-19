@@ -1,43 +1,42 @@
-﻿namespace CgCore
+﻿// Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
+namespace CgCore
 {
+    using System;
+    using System.Collections.Generic;
     using UnityEngine;
 
     public class CgInput_Action : CgInput_Base
     {
-        #region "Constants"
-
-        private static readonly byte ACTION_COUNT = 3;
-
-        #endregion
-
-        #region "Delegates"
-
-        public delegate void Event(MonoBehaviour mb);
-
-        private Event[] Events;
-
-        #endregion
+        public class CgInputAction_Event : TCgDelegate_OneParam<MonoBehaviour> { }
 
         #region "Data Members"
 
+        private Dictionary<ECgInputEvent, CgInputAction_Event> Events;
+
+        #endregion // Data Members
+
         public CgInput_Action()
         {
-            Events = new Event[ACTION_COUNT];
-        }
+            Info = new CgInputInfo(ECgInputType.Action, ECgInputValue.Void);
+            Info.Event = ECgInputEvent.Released;
+            Info.Last_Event = Info.Event;
 
-        #endregion
+            Events = new Dictionary<ECgInputEvent, CgInputAction_Event>(new ECgInputEventEqualityComparer());
+            Events.Add(ECgInputEvent.FirstPressed, new CgInputAction_Event());
+            Events.Add(ECgInputEvent.Pressed, new CgInputAction_Event());
+            Events.Add(ECgInputEvent.FirstReleased, new CgInputAction_Event());
+        }
 
         public void FirstPressed()
         {
-            if ((Manager_Input.CurrentInputActionMap & ActionMap) == 0)
+            if ((Manager_Input.CurrentInputActionMap & ActionMap) == ECgInputActionMap.NONE)
                 return;
-
+            
             ECgInputEvent e = ECgInputEvent.FirstPressed;
             Info.Event = e;
             Manager_Input.AddInput(Action, e);
 
-            if (Events[(byte)e] != null)
-                Events[(byte)e](Manager_Input.InputOwner);
+            Broadcast(e, Manager_Input.InputOwner);
         }
 
         public void Pressed()
@@ -48,27 +47,33 @@
                 Info.Event = e;
             Manager_Input.AddInput(Action, e);
 
-            if (Events[(byte)e] != null)
-                Events[(byte)e](Manager_Input.InputOwner);
+            Broadcast(e, Manager_Input.InputOwner);
         }
 
         public void FirstReleased()
         {
-            if ((Manager_Input.CurrentInputActionMap & ActionMap) == 0)
+            if ((Manager_Input.CurrentInputActionMap & ActionMap) == ECgInputActionMap.NONE)
                 return;
 
             ECgInputEvent e = ECgInputEvent.FirstReleased;
             Info.Event = e;
             Manager_Input.AddInput(Action, e);
 
-            if (Events[(byte)e] != null)
-                Events[(byte)e](Manager_Input.InputOwner);
+            Broadcast(e, Manager_Input.InputOwner);
         }
 
-        public void SetEvent(ECgInputEvent e, Event del)
+        public void AddEvent(ECgInputEvent e, CgInputAction_Event.Event_OneParam del)
         {
-            if (e == ECgInputEvent.FirstPressed)
-                Events[(byte)e] += del;
+            CgInputAction_Event handler;
+            Events.TryGetValue(e, out handler);
+            handler.Add(del);
+        }
+
+        private void Broadcast(ECgInputEvent e, MonoBehaviour mb)
+        {
+            CgInputAction_Event del;
+            Events.TryGetValue(e, out del);
+            del.Broadcast(mb);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿namespace CgCore
+﻿// Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
+namespace CgCore
 {
     public static class CgTypes
     {

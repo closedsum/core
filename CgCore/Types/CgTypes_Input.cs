@@ -1,4 +1,5 @@
-﻿namespace CgCore
+﻿// Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
+namespace CgCore
 {
     using System.Collections;
     using System.Collections.Generic;
@@ -13,9 +14,11 @@
 
     #endregion
 
-    public abstract class ECgInputActionMap : ECgEnum_int
+    public class ECgInputActionMap : ECgEnum_int
     {
+        public static readonly ECgInputActionMap NONE = new ECgInputActionMap(0, "None");
 
+        public ECgInputActionMap(int value, string name) : base(value, name) { }
     }
 
     public sealed class ECgInputActionMapEqualityComparer : IEqualityComparer<ECgInputActionMap>
@@ -31,25 +34,17 @@
         }
     }
 
-    public class ECgInputAction : ECgEnum_byte
+    public sealed class ECgInputAction : ECgEnum_byte
     {
-        #region "Delegates"
+        public ECgInputAction(byte value, string name) : base(value, name) { }
+    }
 
-        public delegate ECgInputAction GetDelegate(byte b);
-        public delegate ECgInputAction GetMAXDelegate();
-        public delegate ECgInputAction ToTypeDelegate(string s);
-        public delegate string ToStringDelegate(ECgInputAction aciton);
-
-        #endregion // Delegates
-
-        #region "Data Members"
-
-        public static GetDelegate Get;
-        public static GetMAXDelegate GetMAX;
-        public static ToTypeDelegate ToType;
-        public static ToStringDelegate ToStr;
-
-        #endregion // Data Members
+    public sealed class ECgInputActionHelper
+    {
+        public ECgInputAction.Get Get;
+        public ECgInputAction.GetMAX GetMAX;
+        public ECgInputAction.ToType ToType;
+        public ECgInputAction.ToStr ToStr;
     }
 
     public sealed class ECgInputActionEqualityComparer : IEqualityComparer<ECgInputAction>
@@ -137,11 +132,10 @@
 
     public enum ECgInputValue : byte
     {
-        Action,
-        Axis,
-        Trigger,
-        Location,
-        Rotation,
+        Void,
+        Float,
+        Vector,
+        Rotator,
         MAX
     }
 
@@ -153,34 +147,6 @@
         }
 
         public int GetHashCode(ECgInputValue x)
-        {
-            return x.GetHashCode();
-        }
-    }
-
-    public abstract class ECgGameEvent : ECgEnum_byte
-    {
-        #region "Delegates"
-
-        public delegate ECgGameEvent Getter(byte b);
-
-        #endregion // Delegates
-
-        #region "Data Members"
-
-        public static Getter Get;
-
-        #endregion // Data Members
-    }
-
-    public sealed class ECgGameEventEqualityComparer : IEqualityComparer<ECgGameEvent>
-    {
-        public bool Equals(ECgGameEvent lhs, ECgGameEvent rhs)
-        {
-            return lhs == rhs;
-        }
-
-        public int GetHashCode(ECgGameEvent x)
         {
             return x.GetHashCode();
         }
@@ -199,6 +165,19 @@
         public static bool IsGamepadKey(KeyCode key)
         {
             return IsJoystickKey(key);
+        }
+    }
+
+    public sealed class KeyCodeEqualityComparer : IEqualityComparer<KeyCode>
+    {
+        public bool Equals(KeyCode lhs, KeyCode rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(KeyCode x)
+        {
+            return x.GetHashCode();
         }
     }
 
@@ -339,7 +318,6 @@
                 handle = new CgKeyInputHandler(action);
                 
                 map.Add(action, handle);
-
                 return handle.Add(del);
             }
         }
@@ -375,7 +353,7 @@
             Dictionary<ECgInputAction, CgKeyInputHandler>.ValueCollection handles = map.Values;
 
             foreach (CgKeyInputHandler h in handles)
-            {
+            { 
                 h.Broadcast();
             }
         }
@@ -425,6 +403,11 @@
 
         public static bool operator ==(CgInput lhs, CgInput rhs)
         {
+            if (object.ReferenceEquals(lhs, null))
+                return object.ReferenceEquals(rhs, null);
+            if (object.ReferenceEquals(rhs, null))
+                return false;
+
             if (lhs.Action != rhs.Action) return false;
             if (lhs.Event != rhs.Event) return false;
             if (lhs.Value != rhs.Value) return false;
@@ -560,9 +543,9 @@
             if (lhs.DeltaTime != rhs.DeltaTime) return false;
             if (lhs.Frame != rhs.Frame) return false;
 
-            if (lhs.Inputs.Capacity != rhs.Inputs.Capacity) return false;
+            if (lhs.Inputs.Count != rhs.Inputs.Count) return false;
 
-            int count = lhs.Inputs.Capacity;
+            int count = lhs.Inputs.Count;
 
             for (int i = 0; i < count; ++i)
             {
@@ -589,9 +572,9 @@
             if (DeltaTime != rhs.DeltaTime) return false;
             if (Frame != rhs.Frame) return false;
 
-            if (Inputs.Capacity != rhs.Inputs.Capacity) return false;
+            if (Inputs.Count != rhs.Inputs.Count) return false;
 
-            int count = Inputs.Capacity;
+            int count = Inputs.Count;
 
             for (int i = 0; i < count; ++i)
             {
@@ -615,7 +598,7 @@
 
             Inputs.Clear();
 
-            int count = rhs.Inputs.Capacity;
+            int count = rhs.Inputs.Count;
 
             for (int i = 0; i < count; ++i)
             {
@@ -630,7 +613,7 @@
             DeltaTime = deltaTime;
             Frame = frame;
 
-            int count = Inputs.Capacity;
+            int count = Inputs.Count;
 
             for (int i = 0; i < count; ++i)
             {
@@ -641,7 +624,7 @@
 
         public CgInput GetInput(ECgInputAction action)
         {
-            int count = Inputs.Capacity;
+            int count = Inputs.Count;
 
             for (int i = 0; i < count; ++i)
             {
@@ -784,7 +767,7 @@
         public void AddAndInput(ECgInputAction action, ECgInputEvent e, float value, Vector3 location, Vector3 rotation)
 	    {
             AndInputs.Add(new CgInput());
-		    int index = AndInputs.Capacity - 1;
+		    int index = AndInputs.Count - 1;
             AndInputs[index].Action = action;
 		    AndInputs[index].Event = e;
 		    AndInputs[index].Value = value;
@@ -815,7 +798,7 @@
         public void AddOrInput(ECgInputAction action, ECgInputEvent e, float value, Vector3 location, Vector3 rotation)
         {
             OrInputs.Add(new CgInput());
-            int index = OrInputs.Capacity - 1;
+            int index = OrInputs.Count - 1;
             OrInputs[index].Action = action;
             OrInputs[index].Event = e;
             OrInputs[index].Value = value;
@@ -852,15 +835,15 @@
         {
             int and = 0;
             bool or = false;
-
-            int count = inputFrame.Inputs.Capacity;
+            
+            int count = inputFrame.Inputs.Count;
 
             for (int i = count - 1; i >= 0; --i)
             {
                 CgInput input = inputFrame.Inputs[i];
-
+                
                 // Check And
-                int andCount = AndInputs.Capacity;
+                int andCount = AndInputs.Count;
 
                 for (int j = and; j < andCount; ++j)
                 {
@@ -871,12 +854,12 @@
                     }
                 }
                 // Check Or
-                int orCount = OrInputs.Capacity;
+                int orCount = OrInputs.Count;
 
                 for (int j = 0; j < orCount; ++j)
                 {
                     or |= input.Action == OrInputs[j].Action && input.Event == OrInputs[j].Event;
-
+                    
                     if (or)
                         break;
                 }
@@ -912,11 +895,12 @@
             Interval = 0.0f;
             UseFrames = false;
             Frames = 0;
+            Words = new List<CgInputWord>();
         }
 
         public void AddAndInputToWord(int index, ECgInputAction action, ECgInputEvent e, float value = 0.0f, Vector3 location = new Vector3(), Vector3 rotation = new Vector3())
 	    {
-		    int count = Words.Capacity;
+		    int count = Words.Count;
 
 		    if (index >= count)
 		    {
@@ -930,7 +914,7 @@
 
 	    public void AddOrInputToWord(int index, ECgInputAction action, ECgInputEvent e, float value = 0.0f, Vector3 location = new Vector3(), Vector3 rotation = new Vector3())
         {
-            int count = Words.Capacity;
+            int count = Words.Count;
 
             if (index >= count)
             {
@@ -944,7 +928,7 @@
 
         public void Reset()
         {
-            int count = Words.Capacity;
+            int count = Words.Count;
 
             for (int i = 0; i < count; ++i)
             {
@@ -959,7 +943,7 @@
             float currentTime = inputFrame.Time;
 
             // Check if ALL Words are Completed
-            int count = Words.Capacity;
+            int count = Words.Count;
             int index = 0;
 
             if (UseInterval)
@@ -1036,13 +1020,14 @@
             Interval = 0.0f;
             UseFrames = false;
             Frames = 0;
+            Phrases = new List<CgInputPhrase>();
         }
 
         public void Reset()
         {
             Active = true;
 
-            int count = Phrases.Capacity;
+            int count = Phrases.Count;
 
             for (int i = 0; i < count; ++i)
             {
@@ -1064,7 +1049,7 @@
                     return;
             }
             // Check if ALL Phrases are Completed
-            int count = Phrases.Capacity;
+            int count = Phrases.Count;
             int index = 0;
 
             if (UseInterval)
@@ -1131,7 +1116,7 @@
         public CgInputActionMapping()
         {
             ActionName = "";
-            Action = ECgInputAction.GetMAX();
+            Action = null;
             KeyName = "";
             Key = KeyCode.None;
             Scale = 1.0f;
@@ -1179,9 +1164,9 @@
 
         public static bool operator ==(CgInputActionMappings lhs, CgInputActionMappings rhs)
         {
-            if (lhs.Mappings.Capacity != rhs.Mappings.Capacity) return false;
+            if (lhs.Mappings.Count != rhs.Mappings.Count) return false;
 
-            int count = lhs.Mappings.Capacity;
+            int count = lhs.Mappings.Count;
 
             for (int i = 0; i < count; ++i)
             {
@@ -1203,9 +1188,9 @@
 
             CgInputActionMappings rhs = (CgInputActionMappings)obj;
 
-            if (Mappings.Capacity != rhs.Mappings.Capacity) return false;
+            if (Mappings.Count != rhs.Mappings.Count) return false;
 
-            int count = Mappings.Capacity;
+            int count = Mappings.Count;
 
             for (int i = 0; i < count; ++i)
             {
@@ -1217,7 +1202,7 @@
 
         public override int GetHashCode()
         {
-            int count = Mappings.Capacity;
+            int count = Mappings.Count;
             int value = count > 0 ? Mappings[CgTypes.FIRST].GetHashCode() : base.GetHashCode();
 
             for (int i = 1; i < count; ++i)
@@ -1244,7 +1229,7 @@
 		    CgInputActionMappings deviceMapping = DeviceMappings[(byte)device];
 		    List<CgInputActionMapping> mappings = deviceMapping.Mappings;
 
-		    int count = mappings.Capacity;
+		    int count = mappings.Count;
 
 		    for (int i = 0; i < count; ++i)
 		    {
@@ -1261,7 +1246,7 @@
             CgInputActionMappings deviceMapping = DeviceMappings[(byte)device];
             List<CgInputActionMapping> mappings = deviceMapping.Mappings;
 
-            int count = mappings.Capacity;
+            int count = mappings.Count;
 
             for (int i = 0; i < count; ++i)
             {
@@ -1278,7 +1263,7 @@
             CgInputActionMappings deviceMapping = DeviceMappings[(byte)device];
             List<CgInputActionMapping> mappings = deviceMapping.Mappings;
 
-            int count = mappings.Capacity;
+            int count = mappings.Count;
 
             for (int i = 0; i < count; ++i)
             {
@@ -1298,7 +1283,7 @@
             CgInputActionMappings deviceMapping = DeviceMappings[(byte)device];
             List<CgInputActionMapping> mappings = deviceMapping.Mappings;
 
-            int count = mappings.Capacity;
+            int count = mappings.Count;
             mappings.Add(new CgInputActionMapping());
             CgInputActionMapping mapping = mappings[count];
             mapping.ActionName          = actionName;
@@ -1315,6 +1300,43 @@
             {
                 DeviceMappings[i].Mappings.Clear();
             }
+        }
+    }
+
+    public sealed class ECgGameEvent : ECgEnum_byte
+    {
+        public ECgGameEvent(byte value, string name) : base(value, name) { }
+    }
+
+    public sealed class ECgGameEventEqualityComparer : IEqualityComparer<ECgGameEvent>
+    {
+        public bool Equals(ECgGameEvent lhs, ECgGameEvent rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(ECgGameEvent x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
+    public sealed class ECgGameEventHelper
+    {
+        public ECgGameEvent.Get Get;
+        public ECgGameEvent.GetMAX GetMAX;
+        public ECgGameEvent.ToType ToType;
+        public ECgGameEvent.ToStr ToStr;
+    }
+
+    public class CgGameEventDefinition
+    {
+        public CgInputSentence Sentence;
+        public ECgGameEvent Event;
+
+        public CgGameEventDefinition()
+        {
+            Sentence = new CgInputSentence();
         }
     }
 }

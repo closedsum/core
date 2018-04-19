@@ -1,4 +1,5 @@
-﻿namespace CgCore
+﻿// Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
+namespace CgCore
 {
     using System.Collections.Generic;
 
@@ -6,6 +7,15 @@
 
     public abstract class TCgEnum<T>
     {
+        #region "Delegates"
+
+        public delegate TCgEnum<T> Get(T t);
+        public delegate TCgEnum<T> GetMAX();
+        public delegate TCgEnum<T> ToType(string s);
+        public delegate string ToStr(TCgEnum<T> e);
+
+        #endregion // Delegates
+
         #region "Data Members"
 
         public readonly T Value;
@@ -45,8 +55,10 @@
 
         public static bool operator ==(ECgEnum_byte lhs, ECgEnum_byte rhs)
         {
-            if (lhs == null && rhs == null) return true;
-            if (lhs == null || rhs == null) return false;
+            if (object.ReferenceEquals(lhs, null))
+                return object.ReferenceEquals(rhs, null);
+            if (object.ReferenceEquals(rhs, null))
+                return false;
             return lhs.Value == rhs.Value && lhs.Name == rhs.Name;
         }
 
@@ -101,8 +113,10 @@
 
         public static bool operator ==(ECgEnum_int lhs, ECgEnum_int rhs)
         {
-            if (lhs == null && rhs == null) return true;
-            if (lhs == null || rhs == null) return false;
+            if (object.ReferenceEquals(lhs, null))
+                return object.ReferenceEquals(rhs, null);
+            if (object.ReferenceEquals(rhs, null))
+                return false;
             return lhs.Value == rhs.Value && lhs.Name == rhs.Name;
         }
 
@@ -157,8 +171,10 @@
 
         public static bool operator ==(ECgEnum_uint lhs, ECgEnum_uint rhs)
         {
-            if (lhs == null && rhs == null) return true;
-            if (lhs == null || rhs == null) return false;
+            if (object.ReferenceEquals(lhs, null))
+                return object.ReferenceEquals(rhs, null);
+            if (object.ReferenceEquals(rhs, null))
+                return false;
             return lhs.Value == rhs.Value && lhs.Name == rhs.Name;
         }
 

@@ -1,4 +1,5 @@
-﻿namespace CgCore
+﻿// Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
+namespace CgCore
 {
     using System;
     using System.Collections;
@@ -31,9 +32,13 @@
 
         #region "Data Members"
 
+        public ECgInputActionHelper InputActionHelper;
+
         public MonoBehaviour InputOwner;
 
-        private CgKeyInput[] RawKeyInputs;
+        float CurrentDeltaTime;
+
+        private Dictionary<KeyCode, CgKeyInput> RawKeyInputs;
         public List<CgKeyInput> RawKeyInputsPressed;
 
         protected ECgInputAction InputAction_MAX;
@@ -49,18 +54,18 @@
 
         public int CurrentInputFrameIndex;
 
-        CgInputFrame CurrentInputFrame;
+        public CgInputFrame CurrentInputFrame;
 
         public int CurrentInputActionMap;
 
-        List<ECgGameEvent> QueuedGameEventsForNextFrame;
+        public List<ECgGameEvent> QueuedGameEventsForNextFrame;
+
+        public CgInputProfile InputProfile;
 
         #region "Actions"
 
         protected List<CgInput_Base> Inputs;
         protected List<CgInputInfo> Infos;
-        protected List<ECgInputEvent> Actions;
-        protected List<ECgInputEvent> Last_Actions;
 
                 #region "Pressed Events"
 
@@ -125,6 +130,8 @@
 
         public CgManager_Input()
         {
+            InputActionHelper = new ECgInputActionHelper();
+
             // InputPool
             InputPool = new CgInput[INPUT_POOL_SIZE];
 
@@ -144,24 +151,29 @@
             }
 
             // Initialize array of RawKeyInputs
-            Array keyValues = Enum.GetValues(typeof(KeyCode));
+            Array keyValues  = Enum.GetValues(typeof(KeyCode));
             int keyCodeCount = keyValues.Length;
 
-            RawKeyInputs = new CgKeyInput[keyCodeCount];
+            RawKeyInputs = new Dictionary<KeyCode, CgKeyInput>(new KeyCodeEqualityComparer());
 
             for (int i = 0; i < keyCodeCount; ++i)
             {
                 KeyCode key = (KeyCode)keyValues.GetValue(i);
-
-                RawKeyInputs[i] = new CgKeyInput(key);
+                // RightCommand and RightApple have the same value
+                if (RawKeyInputs.ContainsKey(key))
+                    continue;
+                RawKeyInputs.Add(key, new CgKeyInput(key));
             }
 
             RawKeyInputsPressed = new List<CgKeyInput>();
 
             QueuedGameEventsForNextFrame = new List<ECgGameEvent>();
 
+            Inputs = new List<CgInput_Base>();
+            Infos = new List<CgInputInfo>();
+
             // Events
-            Action_Event = new CgManagerInput_Action_Default();
+             Action_Event = new CgManagerInput_Action_Default();
             FirstPressed_Event = new CgManagerInput_Action();
             Pressed_Event = new CgManagerInput_Action();
             FirstReleased_Event = new CgManagerInput_Action();
@@ -195,22 +207,47 @@
             RigthHand_Rotation_Raw = new CgManagerInput_Rotation_Raw();
         }
 
+        protected void DefineInputActionValue(CgInput_Action input, ECgInputAction action, int ActionMap)
+        {
+            input.Manager_Input = this;
+            input.Action = action;
+            input.ActionMap = ActionMap;
+            Inputs[(byte)action] = input;
+            Infos[(byte)action] = input.Info;
+        }
+
+        protected virtual void BindInputs()
+        {
+        }
+
+        protected void BindInput(KeyCode key, ECgInputAction action, ECgInputEvent e, CgDelegate.Event del)
+        {
+            CgKeyInput keyInput;
+            RawKeyInputs.TryGetValue(key, out keyInput);
+            keyInput.Bind(action, e, del);
+        }
+
+        protected void BindInputAction(KeyCode key, CgInput_Action input)
+        {
+            BindInput(key, input.Action, ECgInputEvent.FirstPressed, input.FirstPressed);
+            BindInput(key, input.Action, ECgInputEvent.FirstReleased, input.FirstReleased);
+        }
+
         private void RecordRawInputs()
         {
             RawKeyInputsPressed.Clear();
 
-            int len = RawKeyInputs.Length;
+            Dictionary<KeyCode, CgKeyInput>.ValueCollection keyInputs = RawKeyInputs.Values;
 
-            for (int i = 0; i < len; ++i)
+            foreach (CgKeyInput keyInput in keyInputs)
             {
-                CgKeyInput keyInput = RawKeyInputs[i];
-                KeyCode key         = keyInput.Key;
-                ECgInputEvent e     = keyInput.Event;
+                KeyCode key     = keyInput.Key;
+                ECgInputEvent e = keyInput.Event;
 
                 // Pressed
                 if (Input.GetKey(key))
                 {
-                    if (e == ECgInputEvent.FirstPressed)
+                    if (e == ECgInputEvent.FirstPressed || e == ECgInputEvent.Pressed)
                         keyInput.Set(ECgInputEvent.Pressed, Time.time, Time.unscaledTime, 0);
                     else
                         keyInput.Set(ECgInputEvent.FirstPressed, Time.time, Time.unscaledTime, 0);
@@ -219,16 +256,20 @@
                 // Released
                 else
                 {
-                    if (e == ECgInputEvent.FirstStationary)
-                        keyInput.Set(ECgInputEvent.FirstReleased, Time.time, Time.unscaledTime, 0);
-                    else
+                    if (e == ECgInputEvent.FirstReleased || e == ECgInputEvent.Released)
                         keyInput.Set(ECgInputEvent.Released, Time.time, Time.unscaledTime, 0);
+                    else
+                        keyInput.Set(ECgInputEvent.FirstReleased, Time.time, Time.unscaledTime, 0);
                 }
             }
         }
 
         public virtual void PreProcessInput(float deltaTime)
         {
+            CurrentDeltaTime       = deltaTime;
+            CurrentInputFrameIndex = (CurrentInputFrameIndex + 1) % MAX_INPUT_FRAMES;
+            InputFrames[CurrentInputFrameIndex].Init(Time.time, Time.unscaledTime, deltaTime, (ulong)Time.frameCount);
+
             RecordRawInputs();
 
             CurrentMousePosition = Input.mousePosition;
@@ -245,14 +286,14 @@
 
             // TODO: This would be the place to process an action that is a combination of multiple inputs in a frame (or over multiple frames)
 
-            CgInputFrame InputFrame = InputFrames[CurrentInputFrameIndex];
+            CgInputFrame inputFrame = InputFrames[CurrentInputFrameIndex];
 
             // Add Queued Inputs
-            int QueuedInputCount = QueuedInputsForNextFrame.Capacity;
+            int queuedInputCount = QueuedInputsForNextFrame.Count;
 
-            for (int i = 0; i < QueuedInputCount; ++i)
+            for (int i = 0; i < queuedInputCount; ++i)
             {
-                InputFrame.Inputs.Add(QueuedInputsForNextFrame[i]);
+                inputFrame.Inputs.Add(QueuedInputsForNextFrame[i]);
             }
             QueuedInputsForNextFrame.Clear();
 
@@ -262,8 +303,8 @@
             for (byte i = 0; i < INPUT_ACTION_MAX; ++i)
             {
                 CgInputInfo info      = Infos[i];
-                ECgInputAction action = ECgInputAction.Get(i);
-                int inputCount        = InputFrame.Inputs.Capacity;
+                ECgInputAction action = (ECgInputAction)InputActionHelper.Get(i);
+                int inputCount        = inputFrame.Inputs.Count;
 
                 // Transition From FirstPressed to Pressed
                 if (info.Event == ECgInputEvent.FirstPressed &&
@@ -273,7 +314,7 @@
 
                     for (byte j = 0; j < inputCount; ++j)
                     {
-                        if (InputFrame.Inputs[j].Action == action)
+                        if (inputFrame.Inputs[j].Action == action)
                         {
                             Found = true;
                             break;
@@ -291,7 +332,7 @@
 
                     for (byte j = 0; j < inputCount; ++j)
                     {
-                        if (InputFrame.Inputs[j].Action == action)
+                        if (inputFrame.Inputs[j].Action == action)
                         {
                             Found = true;
                             break;
@@ -309,7 +350,7 @@
 
                     for (byte j = 0; j < inputCount; ++j)
                     {
-                        if (InputFrame.Inputs[j].Action == action)
+                        if (inputFrame.Inputs[j].Action == action)
                         {
                             Found = true;
                             break;
@@ -327,7 +368,7 @@
 
                     for (byte j = 0; j < inputCount; ++j)
                     {
-                        if (InputFrame.Inputs[j].Action == action)
+                        if (inputFrame.Inputs[j].Action == action)
                         {
                             Found = true;
                             break;
@@ -345,11 +386,11 @@
                     AddInput(action, ECgInputEvent.Pressed);
             }
             // Process Inputs
-            int _inputCount = InputFrame.Inputs.Capacity;
+            int _inputCount = inputFrame.Inputs.Count;
 
             for (byte i = 0; i < _inputCount; ++i)
             {
-                ProcessInput(InputOwner, null, InputFrame.Inputs[i], deltaTime);
+                ProcessInput(InputOwner, null, inputFrame.Inputs[i], deltaTime);
             }
 
             /*
@@ -395,7 +436,7 @@
             }
             */
             // Copy the Current Input Frame
-            CurrentInputFrame = InputFrame;
+            CurrentInputFrame = inputFrame;
             // Determine Game Events
             //DetermineGameEvents(InputFrame.Inputs);
         }
@@ -553,7 +594,7 @@
         {
             CgInputFrame inputFrame = InputFrames[CurrentInputFrameIndex];
 
-            int count = inputFrame.Inputs.Capacity;
+            int count = inputFrame.Inputs.Count;
 
             for (int i = 0; i < count; ++i)
             {
@@ -566,7 +607,7 @@
                 }
             }
 
-            count = CurrentInputFrame.Inputs.Capacity;
+            count = CurrentInputFrame.Inputs.Count;
 
             for (int i = count - 1; i >= 0; --i)
             {
@@ -650,7 +691,7 @@
         {
             CgInputFrame inputFrame = InputFrames[CurrentInputFrameIndex];
 
-            int count = inputFrame.Inputs.Capacity;
+            int count = inputFrame.Inputs.Count;
 
             for (int i = 0; i < count; ++i)
             {
@@ -666,7 +707,7 @@
         {
 	        CgInputFrame inputFrame = InputFrames[CurrentInputFrameIndex];
 
-	        int count = inputFrame.Inputs.Capacity;
+	        int count = inputFrame.Inputs.Count;
 
 	        for (int i = 0; i < count; ++i)
 	        {
@@ -682,7 +723,7 @@
         {
             CgInputFrame inputFrame = InputFrames[CurrentInputFrameIndex];
 
-            int count = inputFrame.Inputs.Capacity;
+            int count = inputFrame.Inputs.Count;
 
             for (int i = 0; i < count; ++i)
             {
@@ -698,7 +739,7 @@
         {
             CgInputFrame inputFrame = InputFrames[CurrentInputFrameIndex];
 
-            int count = inputFrame.Inputs.Capacity;
+            int count = inputFrame.Inputs.Count;
 
             for (int i = 0; i < count; ++i)
             {
@@ -763,7 +804,7 @@
             UPlayerInput* PlayerInput = Controller->PlayerInput;
 
             // ActionMappings
-            int actionCount = PlayerInput->ActionMappings.Capacity;
+            int actionCount = PlayerInput->ActionMappings.Count;
 
             for (int i = 0; i < actionCount; ++i)
             {
@@ -792,7 +833,7 @@
                 }
             }
             // AxisMappings
-            int axisCount = PlayerInput->AxisMappings.Capacity;
+            int axisCount = PlayerInput->AxisMappings.Count;
 
             for (int i = 0; i < axisCount; ++i)
             {
@@ -905,7 +946,7 @@
             FCsInputActionMappings & DeviceMapping   = InputProfile.DeviceMappings[(uint8)Device];
             TArray<FCsInputActionMapping> & Mappings = DeviceMapping.Mappings;
 
-            count = Mappings.Capacity;
+            count = Mappings.Count;
 
             for (int i = 0; i < count; ++i)
             {
@@ -924,7 +965,7 @@
             FCsInputActionMappings & DeviceMapping = InputProfile.DeviceMappings[(uint8)Device];
             TArray<FCsInputActionMapping> & Mappings = DeviceMapping.Mappings;
 
-            const count = Mappings.Capacity;
+            const count = Mappings.Count;
 
             for (int i = 0; i < count; ++i)
             {
@@ -944,7 +985,7 @@
 
             string ActionName = ECgInputAction.ToStr(action);
 
-            int actionCount = PlayerInput->ActionMappings.Capacity;
+            int actionCount = PlayerInput->ActionMappings.Count;
 
             for (int i = 0; i < actionCount; ++i)
             {
@@ -954,7 +995,7 @@
                     return Mapping.Key;
             }
 
-            int axisCount = PlayerInput->AxisMappings.Capacity;
+            int axisCount = PlayerInput->AxisMappings.Count;
 
             for (int i = 0; i < axisCount; ++i)
             {
@@ -975,7 +1016,7 @@
 
             string actionName = ECgInputAction.ToStr(action);
             // Remove binding from PlayerInput ActionMapping
-            int mappingCount = PlayerInput->ActionMappings.Capacity;
+            int mappingCount = PlayerInput->ActionMappings.Count;
 
             for (int i = mappingCount - 1; i >= 0; --i)
             {
@@ -992,7 +1033,7 @@
             FCsInputActionMappings & DeviceMapping = InputProfile.DeviceMappings[(uint8)Device];
             TArray<FCsInputActionMapping> & Mappings = DeviceMapping.Mappings;
 
-            int count = Mappings.Capacity;
+            int count = Mappings.Count;
 
             for (i = count - 1; i >= 0; --i)
             {
@@ -1018,7 +1059,7 @@
 
             string actionName = ECgInputAction.ToStr(action);
             // Remove binding from PlayerInput ActionMapping
-            int mappingCount = PlayerInput->AxisMappings.Capacity;
+            int mappingCount = PlayerInput->AxisMappings.Count;
 
             for (int i = mappingCount - 1; i >= 0; --i)
             {
@@ -1035,7 +1076,7 @@
             FCsInputActionMappings & DeviceMapping = InputProfile.DeviceMappings[(byte)device];
             TArray<FCsInputActionMapping> & Mappings = DeviceMapping.Mappings;
 
-            int count = Mappings.Capacity;
+            int count = Mappings.Count;
 
             for (int i = count - 1; i >= 0; --i)
             {
@@ -1088,7 +1129,7 @@
             }
 
             string actionName = ECgInputAction.ToStr(action);
-            int count         = PlayerInput->ActionMappings.Capacity;
+            int count         = PlayerInput->ActionMappings.Count;
 
             bool found = false;
 
@@ -1145,7 +1186,7 @@
             }
 
             string actionName = ECgInputAction.ToStr(action);
-            int count         = PlayerInput->AxisMappings.Capacity;
+            int count         = PlayerInput->AxisMappings.Count;
 
             bool found = false;
 
@@ -1186,5 +1227,31 @@
         }
 
         #endregion // Profile
+
+        #region "Game Events"
+
+        public void CreateGameEventDefinitionSimple(List<CgGameEventDefinition> definitions, ECgGameEvent gameEvent, ECgInputAction action, ECgInputEvent e)
+        {
+            definitions.Add(new CgGameEventDefinition());
+            CgGameEventDefinition def = definitions[definitions.Count - 1];
+	        def.Event = gameEvent;
+	        // Sentence
+	        {
+		        CgInputSentence sentence = def.Sentence;
+		        sentence.Phrases.Add(new CgInputPhrase());
+		        // Phrase
+		        {
+			        CgInputPhrase phrase = sentence.Phrases[sentence.Phrases.Count - 1];
+			        phrase.Words.Add(new CgInputWord());
+			        // Word
+			        {
+				        CgInputWord word = phrase.Words[phrase.Words.Count - 1];
+				        word.AddOrInput(action, e);
+			        }
+                }
+	        }
+        }
+
+        #endregion // Game Events
     }
 }

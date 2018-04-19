@@ -46,6 +46,11 @@ void UCsGameInstance::Init()
 	TickDelegate	   = FTickerDelegate::CreateUObject(this, &UCsGameInstance::Tick);
 	TickDelegateHandle = FTicker::GetCoreTicker().AddTicker(TickDelegate);
 
+	OnPreWorldInitializationHandle	= FWorldDelegates::OnPreWorldInitialization.AddUObject(this, &UCsGameInstance::OnPreWorldInitialization);
+	OnPostWorldInitializationHandle = FWorldDelegates::OnPostWorldInitialization.AddUObject(this, &UCsGameInstance::OnPostWorldInitialization);
+	OnLevelAddedToWorldHandle		= FWorldDelegates::LevelAddedToWorld.AddUObject(this, &UCsGameInstance::OnLevelAddedToWorld);
+	OnLevelRemovedFromWorldHandle	= FWorldDelegates::LevelRemovedFromWorld.AddUObject(this, &UCsGameInstance::OnLevelRemovedFromWorld);
+
 	UCsManager_Loading::Init();
 	UCsManager_Runnable::Init();
 	UCsCoroutineScheduler::Init();
@@ -63,6 +68,11 @@ void UCsGameInstance::Shutdown()
 
 	if (FullscreenWidget && !FullscreenWidget->IsPendingKill())
 		FullscreenWidget->MarkPendingKill();
+
+	FWorldDelegates::OnPreWorldInitialization.Remove(OnPreWorldInitializationHandle);
+	FWorldDelegates::OnPostWorldInitialization.Remove(OnPostWorldInitializationHandle);
+	FWorldDelegates::LevelAddedToWorld.Remove(OnLevelAddedToWorldHandle);
+	FWorldDelegates::LevelRemovedFromWorld.Remove(OnLevelRemovedFromWorldHandle);
 
 	UCsManager_Loading::Shutdown();
 	UCsManager_Runnable::Shutdown();
@@ -180,10 +190,6 @@ CS_COROUTINE(UCsGameInstance, OnBoard_Internal)
 	CS_COROUTINE_WAIT_UNTIL(r, w);
 
 	gi->SetupFullscreenWidget();
-
-	FWorldDelegates::OnPostWorldInitialization.AddUObject(gi, &UCsGameInstance::OnPostWorldInitialization);
-	FWorldDelegates::LevelAddedToWorld.AddUObject(gi, &UCsGameInstance::OnLevelAddedToWorld);
-	FWorldDelegates::LevelRemovedFromWorld.AddUObject(gi, &UCsGameInstance::OnLevelRemovedFromWorld);
 
 	CS_COROUTINE_WAIT_UNTIL(r, gi->OnBoardState == ECsGameInstanceOnBoardState::Completed);
 
@@ -371,6 +377,15 @@ void UCsGameInstance::OnFinishedLoadingStartUpDataAssets(const TArray<UObject*> 
 
 void UCsGameInstance::CreateFullscreenWidget()
 {
+	if (FullscreenWidget)
+	{
+		if (!FullscreenWidget->IsPendingKill())
+		{
+			FullscreenWidget->RemoveFromViewport();
+			FullscreenWidget->MarkPendingKill();
+		}
+	}
+
 	ACsData_UI_Common* bp_ui_common = Cast<ACsData_UI_Common>(DataMapping->LoadData(FName("bp_ui_common")));
 
 	if (!bp_ui_common)
@@ -400,7 +415,6 @@ void UCsGameInstance::CheckFullscreenWidget()
 		!FullscreenWidget->GetParent() &&
 		!FullscreenWidget->IsInViewport())
 	{
-		FullscreenWidget->MarkPendingKill();
 		CreateFullscreenWidget();
 	}
 }
@@ -411,6 +425,11 @@ void UCsGameInstance::CheckFullscreenWidget()
 
 // Level
 #pragma region
+
+void UCsGameInstance::OnPreWorldInitialization(UWorld* InWorld, const UWorld::InitializationValues)
+{
+	CreateFullscreenWidget();
+}
 
 void UCsGameInstance::OnPostWorldInitialization(UWorld* InWorld, const UWorld::InitializationValues)
 {

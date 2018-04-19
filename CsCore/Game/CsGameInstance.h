@@ -232,8 +232,13 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Game Instance")
 	TEnumAsByte<ECsLevelState::Type> LevelState;
 
+	FDelegateHandle OnPreWorldInitializationHandle;
+	void OnPreWorldInitialization(UWorld* InWorld, const UWorld::InitializationValues);
+	FDelegateHandle OnPostWorldInitializationHandle;
 	void OnPostWorldInitialization(UWorld* InWorld, const UWorld::InitializationValues);
+	FDelegateHandle OnLevelAddedToWorldHandle;
 	void OnLevelAddedToWorld(ULevel* InLevel, UWorld* InWorld);
+	FDelegateHandle OnLevelRemovedFromWorldHandle;
 	void OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld);
 
 	virtual void PerformLevelTransition(const FString &Level, const FString &GameMode);

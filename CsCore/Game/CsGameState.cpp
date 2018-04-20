@@ -962,6 +962,20 @@ void ACsGameState::SetAIPlayerStateMappingRelationshipFlag(const uint8 &ClientMa
 
 #pragma endregion A.I. Player State
 
+void ACsGameState::StartLevelTransition()
+{
+	ACsPlayerController* MyController = UCsCommon::GetLocalPlayerController<ACsPlayerController>(GetWorld());
+	UCsGameInstance* GameInstance	 = Cast<UCsGameInstance>(GetGameInstance());
+
+	GameInstance->FullscreenWidget->SetUserFocus(MyController);
+
+	MyController->bShowMouseCursor = false;
+
+	GEngine->GameViewport->Viewport->ShowCursor(false);
+
+	GameInstance->LevelState = ECsLevelState::BeginTransition;
+}
+
 void ACsGameState::ExitGame()
 {
 	Cast<UCsGameInstance>(GetGameInstance())->ExitGame();

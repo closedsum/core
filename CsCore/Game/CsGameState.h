@@ -362,6 +362,7 @@ public:
 
 public:
 
+	virtual void StartLevelTransition();
 	virtual void ExitGame();
 
 #if WITH_EDITOR

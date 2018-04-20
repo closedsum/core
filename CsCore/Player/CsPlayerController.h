@@ -36,6 +36,20 @@ public:
 	TCsFRotator ViewRotation;
 	TCsFVector ViewLocation;
 
+	UFUNCTION(BlueprintCallable, Category = "Caemra")
+	virtual void SetTargetActor(AActor* InActor);
+
+	TWeakObjectPtr<AActor> TargetActor;
+
+	UFUNCTION(BlueprintCallable, Category = "Camera")
+	AActor* GetTargetActor();
+
+	template<typename T>
+	T* GetTargetActor()
+	{
+		return Cast<T>(GetTargetActor());
+	}
+
 #pragma endregion Camera
 
 // Input

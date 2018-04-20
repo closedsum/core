@@ -26,6 +26,22 @@ void ACsPlayerController::Destroyed()
 
 void ACsPlayerController::OnTickActor_HandleCVars(){}
 
+// Camera
+#pragma region
+
+void ACsPlayerController::SetTargetActor(AActor* InActor)
+{
+	TargetActor = InActor;
+}
+
+AActor* ACsPlayerController::GetTargetActor()
+{
+	return TargetActor.IsValid() ? TargetActor.Get() : nullptr;
+}
+
+
+#pragma endregion Camera
+
 // Input
 #pragma region
 

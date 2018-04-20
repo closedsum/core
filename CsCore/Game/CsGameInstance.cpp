@@ -20,6 +20,35 @@
 
 #include "Async/AsyncWork.h"
 
+// Cache
+#pragma region
+
+namespace ECsGameInstanceCachedName
+{
+	namespace Name
+	{
+		// Functions
+		const FName OnBoard_Internal = FName("UCsGameInstance::OnBoard_Internal");
+		const FName LoadDataMapping_Internal = FName("UCsGameInstance::LoadDataMapping_Internal");
+		const FName PerformLevelTransition_Internal = FName("UCsGameInstance::PerformLevelTransition_Internal");
+		const FName CreateFullscreenWidget_Internal = FName("UCsGameInstance::CreateFullscreenWidget_Internal");
+	};
+}
+
+namespace ECsGameInstanceCachedString
+{
+	namespace Str
+	{
+		// Functions
+		const FString OnBoard_Internal = TEXT("UCsGameInstance::OnBoard_Internal");
+		const FString LoadDataMapping_Internal = TEXT("UCsGameInstance::LoadDataMapping_Internal");
+		const FString PerformLevelTransition_Internal = TEXT("UCsGameInstance::PerformLevelTransition_Internal");
+		const FString CreateFullscreenWidget_Internal = TEXT("UCsGameInstance::CreateFullscreenWidget_Internal");
+	};
+}
+
+#pragma endregion Cache
+
 UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -54,6 +83,9 @@ void UCsGameInstance::Init()
 	UCsManager_Loading::Init();
 	UCsManager_Runnable::Init();
 	UCsCoroutineScheduler::Init();
+
+	OnTick_Event.AddUObject(UCsCoroutineScheduler::Get(), &UCsCoroutineScheduler::OnTick_Update);
+
 	OnBoard();
 
 	IsVR = GEngine->HMDDevice.IsValid() && GEngine->IsStereoscopic3D();
@@ -95,6 +127,12 @@ FGameInstancePIEResult UCsGameInstance::StartPlayInEditorGameInstance(ULocalPlay
 
 bool UCsGameInstance::Tick(float DeltaSeconds)
 {
+	++CurrentGameFrame;
+
+	OnTick_Event.Broadcast(DeltaSeconds);
+#if WITH_EDITOR
+	OnTick_ScriptEvent.Broadcast(DeltaSeconds);
+#endif // #if WITH_EDITOR
 	return true;
 }
 
@@ -122,6 +160,12 @@ bool UCsGameInstance::AddRoutine_Internal(struct FCsRoutine* Routine, const uint
 		PerformLevelTransition_Internal_Routine = Routine;
 		return true;
 	}
+	// CreateFullscreenWidget_Internal
+	if (RoutineType == ECsGameInstanceRoutine::CreateFullscreenWidget_Internal)
+	{
+		CreateFullscreenWidget_Internal_Routine = Routine;
+		return true;
+	}
 	return false;
 }
 
@@ -146,6 +190,13 @@ bool UCsGameInstance::RemoveRoutine_Internal(struct FCsRoutine* Routine, const u
 	{
 		check(PerformLevelTransition_Internal_Routine == Routine);
 		PerformLevelTransition_Internal_Routine = nullptr;
+		return true;
+	}
+	// CreateFullscreenWidget_Internal
+	if (RoutineType == ECsGameInstanceRoutine::CreateFullscreenWidget_Internal)
+	{
+		check(CreateFullscreenWidget_Internal_Routine == Routine);
+		CreateFullscreenWidget_Internal_Routine = nullptr;
 		return true;
 	}
 	return false;
@@ -186,10 +237,11 @@ CS_COROUTINE(UCsGameInstance, OnBoard_Internal)
 
 	gi->LoadStartUpData();
 
-	// Wait till the World is VALID
-	CS_COROUTINE_WAIT_UNTIL(r, w);
+	gi->CreateFullscreenWidget();
 
-	gi->SetupFullscreenWidget();
+	CS_COROUTINE_WAIT_UNTIL(r, gi->FullscreenWidget);
+
+	gi->OnBoardState = ECsGameInstanceOnBoardState::Completed;
 
 	CS_COROUTINE_WAIT_UNTIL(r, gi->OnBoardState == ECsGameInstanceOnBoardState::Completed);
 
@@ -377,45 +429,73 @@ void UCsGameInstance::OnFinishedLoadingStartUpDataAssets(const TArray<UObject*> 
 
 void UCsGameInstance::CreateFullscreenWidget()
 {
-	if (FullscreenWidget)
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	FCsCoroutinePayload* Payload = Scheduler->AllocatePayload();
+
+	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+
+	Payload->Schedule		= Schedule;
+	Payload->Function		= &UCsGameInstance::CreateFullscreenWidget_Internal;
+	Payload->Object			= this;
+	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckObject;
+	Payload->Add			= &UCsGameInstance::AddRoutine;
+	Payload->Remove			= &UCsGameInstance::RemoveRoutine;
+	Payload->Type			= (uint8)ECsGameInstanceRoutine::CreateFullscreenWidget_Internal;
+	Payload->DoInit			= true;
+	Payload->PerformFirstRun = false;
+	Payload->Name			= ECsGameInstanceCachedName::Name::CreateFullscreenWidget_Internal;
+	Payload->NameAsString	= ECsGameInstanceCachedString::Str::CreateFullscreenWidget_Internal;
+
+	FCsRoutine* R = Scheduler->Allocate(Payload);
+
+	Scheduler->StartRoutine(Schedule, R);
+}
+
+CS_COROUTINE(UCsGameInstance, CreateFullscreenWidget_Internal)
+{
+	UCsGameInstance* gi		 = r->GetRObject<UCsGameInstance>();
+	UCsCoroutineScheduler* s = r->scheduler;
+	UWorld* w				 = gi->GetWorld();
+
+	CS_COROUTINE_BEGIN(r);
+
+	// Wait till the World is VALID
+	CS_COROUTINE_WAIT_UNTIL(r, w);
+
 	{
-		if (!FullscreenWidget->IsPendingKill())
+		if (gi->FullscreenWidget)
 		{
-			FullscreenWidget->RemoveFromViewport();
-			FullscreenWidget->MarkPendingKill();
+			if (!gi->FullscreenWidget->IsPendingKill())
+			{
+				gi->FullscreenWidget->RemoveFromViewport();
+				gi->FullscreenWidget->ConditionalBeginDestroy();
+			}
+		}
+
+		if (ACsData_UI_Common* bp_ui_common = Cast<ACsData_UI_Common>(gi->DataMapping->LoadData(FName("bp_ui_common"))))
+		{
+			gi->FullscreenWidget = CreateWidget<UCsUserWidget>(gi, bp_ui_common->FullscreenWidget.Get());
+			gi->FullscreenWidget->AddToViewport();
+		}
+		else
+		{
+			UE_LOG(LogCs, Warning, TEXT("UCsGameInstance::CreateFullscreenWidget_Internal: Failed to Load bp_ui_common (ACsData_UI_Common)."));
 		}
 	}
 
-	ACsData_UI_Common* bp_ui_common = Cast<ACsData_UI_Common>(DataMapping->LoadData(FName("bp_ui_common")));
-
-	if (!bp_ui_common)
-	{
-		UE_LOG(LogCs, Warning, TEXT("UCsGameInstance::CreateFullscreenWidget: Failed to Load bp_ui_common (ACsData_UI_Common)."));
-		return;
-	}
-	FullscreenWidget = CreateWidget<UCsUserWidget>(this, bp_ui_common->FullscreenWidget.Get());
-	FullscreenWidget->AddToViewport();
-}
-
-void UCsGameInstance::SetupFullscreenWidget()
-{
-	if (!FullscreenWidget)
-	{
-		CreateFullscreenWidget();
-	}
-	FullscreenWidget->Show();
-
-	OnBoardState = ECsGameInstanceOnBoardState::Completed;
+	CS_COROUTINE_END(r);
 }
 
 void UCsGameInstance::CheckFullscreenWidget()
 {
 	// Make sure FullscreenWidget is attached to Viewport
-	if (FullscreenWidget &&
-		!FullscreenWidget->GetParent() &&
-		!FullscreenWidget->IsInViewport())
+	if (FullscreenWidget)
 	{
-		CreateFullscreenWidget();
+		if (!FullscreenWidget->GetParent() &&
+			!FullscreenWidget->IsInViewport())
+		{
+			CreateFullscreenWidget();
+		}
 	}
 }
 
@@ -433,7 +513,7 @@ void UCsGameInstance::OnPreWorldInitialization(UWorld* InWorld, const UWorld::In
 
 void UCsGameInstance::OnPostWorldInitialization(UWorld* InWorld, const UWorld::InitializationValues)
 {
-	CheckFullscreenWidget();
+	//CreateFullscreenWidget();
 }
 
 void UCsGameInstance::OnLevelAddedToWorld(ULevel* InLevel, UWorld* InWorld)

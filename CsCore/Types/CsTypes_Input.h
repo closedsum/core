@@ -224,10 +224,10 @@ typedef FString(*TCsInputActionMapMaskToString)(const int32&);
 typedef TCsInputActionMap(*TCsStringToInputActionMap)(const FString&);
 
 #define CS_DECLARE_INPUT_ACTION_MAP	TCsInputActionMapMaskToString InputActionMapMaskToString; \
-									TCsStringToInputActionMap StringToInputActionMap;
+									TCsStringToInputActionMap StringToInputActionMap; \
 
 #define CS_DEFINE_INPUT_ACTION_MAP	InputActionMapMaskToString = &ECsInputActionMap::MaskToString; \
-									StringToInputActionMap = &ECsInputActionMap::ToBitMask;
+									StringToInputActionMap = &ECsInputActionMap::ToBitMask; \
 
 struct FCsInputActionMapRule
 {

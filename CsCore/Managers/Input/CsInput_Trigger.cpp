@@ -11,7 +11,7 @@ UCsInput_Trigger::UCsInput_Trigger(const FObjectInitializer& ObjectInitializer) 
 
 void UCsInput_Trigger::Raw(float Val)
 {
-	if ((Manager_Input->CurrentInputActionMap & (ActionMap)) == 0)
+	if ((Manager_Input->CurrentInputActionMap & ActionMap) == 0)
 		return;
 	FCsInput* Input	= Manager_Input->GetPreviousPreviousInputAction(Action);
 																

@@ -11,7 +11,7 @@ UCsInput_Rotation::UCsInput_Rotation(const FObjectInitializer& ObjectInitializer
 
 void UCsInput_Rotation::Raw(const FRotator &Rotation)
 {
-	if ((Manager_Input->CurrentInputActionMap & (ActionMap)) == 0)
+	if ((Manager_Input->CurrentInputActionMap & ActionMap) == 0)
 		return;
 																
 	FCsInput* Input	= Manager_Input->GetPreviousPreviousInputAction(Action);

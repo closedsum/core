@@ -25,6 +25,7 @@ namespace ECsGameInstanceRoutine
 		LoadDataMapping_Internal		UMETA(DisplayName = "LoadDataMapping_Internal"),
 		PerformLevelTransition_Internal	UMETA(DisplayName = "PerformLevelTransition_Internal"),
 		CreateFullscreenWidget_Internal UMETA(DisplayName = "CreateFullscreenWidget_Internal"),
+		HideMouseCursor_Internal		UMETA(DisplayName = "HideMouseCursor_Internal"),
 		ECsGameInstanceRoutine_MAX		UMETA(Hidden),
 	};
 }
@@ -42,6 +43,7 @@ namespace ECsGameInstanceRoutine
 		const TCsString LoadDataMapping_Internal = TCsString(TEXT("LoadDataMapping_Internal"), TEXT("loaddatamapping_internal"), TEXT("load data mapping internal"));
 		const TCsString PerformLevelTransition_Internal = TCsString(TEXT("PerformLevelTransition_Internal"), TEXT("performleveltransition_internal"), TEXT("perform level transition internal"));
 		const TCsString CreateFullscreenWidget_Internal = TCsString(TEXT("CreateFullscreenWidget_Internal"), TEXT("createfullscreenwidget_internal"), TEXT("create fullscreen widget internal"));
+		const TCsString HideMouseCursor_Internal = TCsString(TEXT("HideMouseCursor_Internal"), TEXT("hidemousecursor_internal"), TEXT("hide mouse cursor internal"));
 	}
 
 	namespace Ref
@@ -50,6 +52,7 @@ namespace ECsGameInstanceRoutine
 		const TCsGameInstanceRoutine LoadDataMapping_Internal = Type::LoadDataMapping_Internal;
 		const TCsGameInstanceRoutine PerformLevelTransition_Internal = Type::PerformLevelTransition_Internal;
 		const TCsGameInstanceRoutine CreateFullscreenWidget_Internal = Type::CreateFullscreenWidget_Internal;
+		const TCsGameInstanceRoutine HideMouseCursor_Internal = Type::HideMouseCursor_Internal;
 		const TCsGameInstanceRoutine ECsGameInstanceRoutine_MAX = Type::ECsGameInstanceRoutine_MAX;
 	}
 
@@ -59,6 +62,7 @@ namespace ECsGameInstanceRoutine
 		if (EType == Type::LoadDataMapping_Internal) { return Str::LoadDataMapping_Internal.Value; }
 		if (EType == Type::PerformLevelTransition_Internal) { return Str::PerformLevelTransition_Internal.Value; }
 		if (EType == Type::CreateFullscreenWidget_Internal) { return Str::CreateFullscreenWidget_Internal.Value; }
+		if (EType == Type::HideMouseCursor_Internal) { return Str::HideMouseCursor_Internal.Value; }
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
@@ -68,6 +72,7 @@ namespace ECsGameInstanceRoutine
 		if (String == Str::LoadDataMapping_Internal) { return Ref::LoadDataMapping_Internal; }
 		if (String == Str::PerformLevelTransition_Internal) { return Ref::PerformLevelTransition_Internal; }
 		if (String == Str::CreateFullscreenWidget_Internal) { return Ref::CreateFullscreenWidget_Internal; }
+		if (String == Str::HideMouseCursor_Internal) { return Ref::HideMouseCursor_Internal; }
 		return Ref::ECsGameInstanceRoutine_MAX;
 	}
 }
@@ -216,13 +221,19 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Game Instance")
 	class UCsUserWidget* FullscreenWidget;
 
-	void CreateFullscreenWidget();
-	static char CreateFullscreenWidget_Internal(struct FCsRoutine* r);
-	struct FCsRoutine* CreateFullscreenWidget_Internal_Routine;
+	CS_COROUTINE_DECLARE(CreateFullscreenWidget);
 
 	void CheckFullscreenWidget();
 
 #pragma endregion Fullscreen Widget
+
+	// Mouse Cursor
+#pragma region
+public:
+
+	CS_COROUTINE_DECLARE(HideMouseCursor);
+
+#pragma endregion Mouse Cursor
 
 #pragma endregion OnBoard
 

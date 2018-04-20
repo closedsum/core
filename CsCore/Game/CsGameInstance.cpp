@@ -32,6 +32,7 @@ namespace ECsGameInstanceCachedName
 		const FName LoadDataMapping_Internal = FName("UCsGameInstance::LoadDataMapping_Internal");
 		const FName PerformLevelTransition_Internal = FName("UCsGameInstance::PerformLevelTransition_Internal");
 		const FName CreateFullscreenWidget_Internal = FName("UCsGameInstance::CreateFullscreenWidget_Internal");
+		const FName HideMouseCursor_Internal = FName("UCsGameInstance::HideMouseCursor_Internal");
 	};
 }
 
@@ -44,6 +45,7 @@ namespace ECsGameInstanceCachedString
 		const FString LoadDataMapping_Internal = TEXT("UCsGameInstance::LoadDataMapping_Internal");
 		const FString PerformLevelTransition_Internal = TEXT("UCsGameInstance::PerformLevelTransition_Internal");
 		const FString CreateFullscreenWidget_Internal = TEXT("UCsGameInstance::CreateFullscreenWidget_Internal");
+		const FString HideMouseCursor_Internal = TEXT("UCsGameInstance::HideMouseCursor_Internal");
 	};
 }
 
@@ -85,7 +87,8 @@ void UCsGameInstance::Init()
 	UCsCoroutineScheduler::Init();
 
 	OnTick_Event.AddUObject(UCsCoroutineScheduler::Get(), &UCsCoroutineScheduler::OnTick_Update);
-
+	
+	HideMouseCursor();
 	OnBoard();
 
 	IsVR = GEngine->HMDDevice.IsValid() && GEngine->IsStereoscopic3D();
@@ -166,6 +169,12 @@ bool UCsGameInstance::AddRoutine_Internal(struct FCsRoutine* Routine, const uint
 		CreateFullscreenWidget_Internal_Routine = Routine;
 		return true;
 	}
+	// HideMouseCursor_Internal
+	if (RoutineType == ECsGameInstanceRoutine::HideMouseCursor_Internal)
+	{
+		HideMouseCursor_Internal_Routine = Routine;
+		return true;
+	}
 	return false;
 }
 
@@ -197,6 +206,13 @@ bool UCsGameInstance::RemoveRoutine_Internal(struct FCsRoutine* Routine, const u
 	{
 		check(CreateFullscreenWidget_Internal_Routine == Routine);
 		CreateFullscreenWidget_Internal_Routine = nullptr;
+		return true;
+	}
+	// HideMouseCursor_Internal
+	if (RoutineType == ECsGameInstanceRoutine::HideMouseCursor_Internal)
+	{
+		check(HideMouseCursor_Internal_Routine == Routine);
+		HideMouseCursor_Internal_Routine = nullptr;
 		return true;
 	}
 	return false;
@@ -236,6 +252,8 @@ CS_COROUTINE(UCsGameInstance, OnBoard_Internal)
 	CS_COROUTINE_WAIT_UNTIL(r, gi->OnBoardState == ECsGameInstanceOnBoardState::LoadStartUpData);
 
 	gi->LoadStartUpData();
+
+	CS_COROUTINE_WAIT_UNTIL(r, gi->OnBoardState == ECsGameInstanceOnBoardState::LoadScreen);
 
 	gi->CreateFullscreenWidget();
 
@@ -419,7 +437,7 @@ void UCsGameInstance::AsyncPopulateAssetReferences()
 	// Load StartUp Data
 #pragma region
 
-void UCsGameInstance::LoadStartUpData(){}
+void UCsGameInstance::LoadStartUpData(){ OnBoardState = ECsGameInstanceOnBoardState::LoadScreen; }
 void UCsGameInstance::OnFinishedLoadingStartUpDataAssets(const TArray<UObject*> &LoadedAssets, const float& LoadingTime){}
 
 #pragma endregion Load StartUp Data
@@ -501,6 +519,49 @@ void UCsGameInstance::CheckFullscreenWidget()
 
 #pragma endregion Fullscreen Widget
 
+void UCsGameInstance::HideMouseCursor()
+{
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+
+	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+
+	Payload->Schedule		= Schedule;
+	Payload->Function		= &UCsGameInstance::HideMouseCursor_Internal;
+	Payload->Object			= this;
+	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckObject;
+	Payload->Add			= &UCsGameInstance::AddRoutine;
+	Payload->Remove			= &UCsGameInstance::RemoveRoutine;
+	Payload->Type			= (uint8)ECsGameInstanceRoutine::HideMouseCursor_Internal;
+	Payload->DoInit			= true;
+	Payload->PerformFirstRun = false;
+	Payload->Name			= ECsGameInstanceCachedName::Name::HideMouseCursor_Internal;
+	Payload->NameAsString	= ECsGameInstanceCachedString::Str::HideMouseCursor_Internal;
+
+	FCsRoutine* R = Scheduler->Allocate(Payload);
+
+	Scheduler->StartRoutine(Schedule, R);
+}
+
+CS_COROUTINE(UCsGameInstance, HideMouseCursor_Internal)
+{
+	UCsGameInstance* gi		 = r->GetRObject<UCsGameInstance>();
+	UCsCoroutineScheduler* s = r->scheduler;
+
+	CS_COROUTINE_BEGIN(r);
+
+	// Wait till GEngine is VALID
+	CS_COROUTINE_WAIT_UNTIL(r, GEngine);
+	// Wait till GEngine->GameViewport is VALID
+	CS_COROUTINE_WAIT_UNTIL(r, GEngine->GameViewport);
+	// Wait till GEngine->GameViewport->Viewport is VALID
+	CS_COROUTINE_WAIT_UNTIL(r, GEngine->GameViewport->Viewport);
+
+	GEngine->GameViewport->Viewport->ShowCursor(false);
+
+	CS_COROUTINE_END(r);
+}
+
 #pragma endregion OnBoard
 
 // Level
@@ -550,7 +611,7 @@ void UCsGameInstance::PerformLevelTransition(const FString &Level, const FString
 
 CS_COROUTINE(UCsGameInstance, PerformLevelTransition_Internal)
 {
-	UCsGameInstance* gi		 = Cast<UCsGameInstance>(r->GetRObject());
+	UCsGameInstance* gi		 = r->GetRObject<UCsGameInstance>();
 	UCsCoroutineScheduler* s = r->scheduler;
 	UWorld* w				 = gi->GetWorld();
 

@@ -360,6 +360,8 @@ public:
 
 #pragma endregion A.I. Player State
 
+public:
+
 	virtual void ExitGame();
 
 #if WITH_EDITOR

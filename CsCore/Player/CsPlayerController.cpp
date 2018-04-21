@@ -5,6 +5,8 @@
 
 // Managers
 #include "Managers/Input/CsManager_Input.h"
+// Game
+#include "Game/CsGameInstance.h"
 
 ACsPlayerController::ACsPlayerController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -14,7 +16,31 @@ ACsPlayerController::ACsPlayerController(const FObjectInitializer& ObjectInitial
 	bEnableMouseOverEvents = true;
 }
 
+void ACsPlayerController::Destroyed()
+{
+	Super::Destroyed();
+
+	if (!Manager_Input && !Manager_Input->IsPendingKill())
+		Manager_Input->Destroy();
+}
+
 void ACsPlayerController::OnTickActor_HandleCVars(){}
+
+// Camera
+#pragma region
+
+void ACsPlayerController::SetTargetActor(AActor* InActor)
+{
+	TargetActor = InActor;
+}
+
+AActor* ACsPlayerController::GetTargetActor()
+{
+	return TargetActor.IsValid() ? TargetActor.Get() : nullptr;
+}
+
+
+#pragma endregion Camera
 
 // Input
 #pragma region
@@ -68,6 +94,8 @@ void ACsPlayerController::InitInputSystem()
 		Manager_Input->ControllerId = LocalPlayer->GetControllerId();
 
 		Manager_Input->LoadInputProfile();
+
+		Cast<UCsGameInstance>(GetGameInstance())->OnServerTravel_Event.AddUObject(Manager_Input, &ACsManager_Input::OnServerTravel);
 	}
 }
 

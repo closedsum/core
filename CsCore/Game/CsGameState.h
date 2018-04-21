@@ -146,8 +146,6 @@ class CSCORE_API ACsGameState : public AGameState
 	/** Called during seamless travel transition twice (once when the transition map is loaded, once when destination map is loaded) */
 	virtual void SeamlessTravelTransitionCheckpoint(bool bToTransitionMap) override;
 
-	virtual void OnTick_GameInstance(const float &DeltaSeconds);
-
 #if WITH_EDITOR
 	//virtual void OnLevelTravelTransition();
 #endif // #if WITH_EDITOR
@@ -361,6 +359,11 @@ public:
 	void SetAIPlayerStateMappingRelationshipFlag(const uint8 &ClientMappingId, const uint8 &MappingId);
 
 #pragma endregion A.I. Player State
+
+public:
+
+	virtual void StartLevelTransition();
+	virtual void ExitGame();
 
 #if WITH_EDITOR
 	FDelegateHandle OnPrePIEEndedDelegateHandle;

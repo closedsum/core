@@ -11,7 +11,7 @@ UCsInput_Axis::UCsInput_Axis(const FObjectInitializer& ObjectInitializer) : Supe
 
 void UCsInput_Axis::Raw(float Val) 
 {
-	if ((Manager_Input->CurrentInputActionMap & (ActionMap)) == 0)
+	if ((Manager_Input->CurrentInputActionMap & ActionMap) == 0)
 		return;
 	if (Val != 0.0f && Info.Value == 0.0f)
 		FirstMoved(Val);

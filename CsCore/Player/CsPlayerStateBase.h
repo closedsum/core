@@ -364,6 +364,8 @@ public:
 
 	virtual void ServerSendOnBoardCompleted_AI_Internal(const uint8 &ClientMappingId, const uint8 &MappingId);
 
+	virtual void ClearFullscreenWidget();
+
 	bool IsOnBoardCompleted;
 
 	UFUNCTION(reliable, netmulticast)

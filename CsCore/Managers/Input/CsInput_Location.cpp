@@ -11,7 +11,7 @@ UCsInput_Location::UCsInput_Location(const FObjectInitializer& ObjectInitializer
 
 void UCsInput_Location::Raw(const FVector &Location)
 {
-	if ((Manager_Input->CurrentInputActionMap & (ActionMap)) == 0)
+	if ((Manager_Input->CurrentInputActionMap & ActionMap) == 0)
 		return;
 																
 	FCsInput* Input	= Manager_Input->GetPreviousPreviousInputAction(Action);

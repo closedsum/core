@@ -106,8 +106,6 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 #define CS_INPUT_DEFINE_TYPES	InputActionToString = &ECsInputAction::ToString; \
 								StringToInputAction = &ECsInputAction::ToType; \
 								InputAction_MAX = ECsInputAction::ECsInputAction_MAX; \
-								InputActionMapMaskToString = &ECsInputActionMap::MaskToString; \
-								StringToInputActionMap = &ECsInputActionMap::ToBitMask;
 
 // Example: INPUT = TurnAtRate
 #define CS_DECLARE_INPUT_ACTION_MEMBERS_OLD(INPUT)	FCsInputInfo INPUT; \
@@ -482,6 +480,7 @@ class CSCORE_API ACsManager_Input : public AActor
 	static ACsManager_Input* Get(UWorld* InWorld, const int32 &Id = INDEX_NONE);
 
 	virtual void Shutdown();
+	virtual void OnServerTravel();
 	virtual void Destroyed() override;
 
 	TWeakObjectPtr<AActor> InputOwner;
@@ -521,8 +520,7 @@ class CSCORE_API ACsManager_Input : public AActor
 
 	int32 CurrentInputActionMap;
 
-	TCsInputActionMapMaskToString InputActionMapMaskToString;
-	TCsStringToInputActionMap StringToInputActionMap;
+	CS_DECLARE_INPUT_ACTION_MAP
 
 	void SetCurrentInputActionMap(const TCsInputActionMap &ActionMap);
 	void SetCurrentInputActionMap(const int32 &ActionMap);

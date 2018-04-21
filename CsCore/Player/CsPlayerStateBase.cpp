@@ -169,20 +169,12 @@ CS_COROUTINE(ACsPlayerStateBase, OnBoard_Internal)
 {
 	ACsPlayerStateBase* ps	 = r->GetActor<ACsPlayerStateBase>();
 	UCsCoroutineScheduler* s = r->scheduler;
-	UWorld* w				 = ps->GetWorld();
-	UCsGameInstance* gi		 = Cast<UCsGameInstance>(ps->GetGameInstance());
 
 	ps->OnTick_OnBoard();
 
 	CS_COROUTINE_BEGIN(r);
 
 	CS_COROUTINE_WAIT_UNTIL(r, ps->OnBoardState == ECsPlayerStateBaseOnBoardState::Completed);
-
-	if (ps == UCsCommon::GetLocalPlayerState<ACsPlayerStateBase>(w))
-	{
-		UCsWidget_Fullscreen* Widget = Cast<UCsWidget_Fullscreen>(gi->FullscreenWidget);
-		Widget->Fullscreen.SetColorAndOpacity(FLinearColor(0.0f, 0.0f, 0.0f, 0.0f));
-	}
 
 	ps->OnBoard_Completed();
 
@@ -670,7 +662,12 @@ void ACsPlayerStateBase::AsyncSetAssetReferencesPlayerData()
 	Runnable->Start();
 }
 
-void ACsPlayerStateBase::SetAssetReferencesPlayerData() { OnBoardState = ECsPlayerStateBaseOnBoardState::FinishedSetAssetReferencesPlayerData; }
+void ACsPlayerStateBase::SetAssetReferencesPlayerData() 
+{
+	ClearTransientLoadedAssets();
+
+	OnBoardState = ECsPlayerStateBaseOnBoardState::FinishedSetAssetReferencesPlayerData; 
+}
 
 void ACsPlayerStateBase::OnFinishedLoadingPlayerData(const TArray<UObject*> &LoadedAssets, const float &LoadingTime){}
 void ACsPlayerStateBase::SetupPlayerData() { OnBoardState = ECsPlayerStateBaseOnBoardState::FinishedApplyingPlayerData; }
@@ -709,7 +706,23 @@ void ACsPlayerStateBase::MulticastUnSetIsOnBoardCompleted_Implementation()
 	IsOnBoardCompleted = false;
 }
 
-void ACsPlayerStateBase::OnBoard_Completed() {}
+void ACsPlayerStateBase::ClearFullscreenWidget()
+{
+	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+	UCsWidget_Fullscreen* Widget  = Cast<UCsWidget_Fullscreen>(GameInstance->FullscreenWidget);
+	Widget->Fullscreen.SetColorAndOpacity(FLinearColor(0.0f, 0.0f, 0.0f, 0.0f));
+}
+
+void ACsPlayerStateBase::OnBoard_Completed() 
+{
+	if (this == UCsCommon::GetLocalPlayerState<ACsPlayerStateBase>(GetWorld()))
+	{
+		// Clear FullscreenWidget
+		UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+		UCsWidget_Fullscreen* Widget  = Cast<UCsWidget_Fullscreen>(GameInstance->FullscreenWidget);
+		Widget->Fullscreen.SetColorAndOpacity(FLinearColor(0.0f, 0.0f, 0.0f, 0.0f));
+	}
+}
 
 bool ACsPlayerStateBase::IsOnBoardCompleted_Game()
 {

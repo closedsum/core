@@ -18,7 +18,7 @@ typedef ECsItemType::Type TCsItemType;
 // ItemTypeToString
 typedef const FString&(*TCsItemTypeToString)(const TCsItemType&);
 // StringToItemType
-typedef TCsItemType(*TCsStringToItemType)(const FString&);
+typedef const TCsItemType&(*TCsStringToItemType)(const FString&);
 
 #define CS_DECLARE_ITEM_TYPE	TCsItemType ItemType_MAX;\
 								uint8 ITEM_TYPE_MAX; \
@@ -736,6 +736,12 @@ struct FCsItem
 		return nullptr;
 	}
 
+	void IncrementMemberValue(const int32 &HistoryIndex, const FName& Name)
+	{
+		FCsItemMemberValue* Value = GetMemberValue(HistoryIndex, Name);
+		Value->Increment();
+	}
+
 	void Reset()
 	{
 		IsAllocated = false;
@@ -1001,51 +1007,28 @@ struct FCsItemOnConsumeContentRule
 	}
 };
 
-UENUM(BlueprintType)
 namespace ECsItemInteraction
 {
-	enum Type
-	{
-		FireWeapon				UMETA(DisplayName = "Fire Weapon"),
-		HitEnemy				UMETA(DisplayName = "Hit Enemy"),
-		ECsItemInteraction_MAX	UMETA(Hidden),
-	};
+	enum Type : uint8;
 }
 
-#define ECS_ITEM_INTERACTION_MAX (uint8)ECsItemInteraction::ECsItemInteraction_MAX
 typedef ECsItemInteraction::Type TCsItemInteraction;
 
-namespace ECsItemInteraction
-{
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+// ItemInteractionToString
+typedef const FString&(*TCsItemInteractionToString)(const TCsItemInteraction&);
+// StringToItemInteraction
+typedef const TCsItemInteraction&(*TCsStringToItemInteraction)(const FString&);
 
-	namespace Str
-	{
-		const TCsString FireWeapon = TCsString(TEXT("FireWeapon"), TEXT("fireweapon"), TEXT("fire weapon"));
-		const TCsString HitEnemy = TCsString(TEXT("HitEnemy"), TEXT("hitenemy"), TEXT("hit enemy"));
-	}
+#define CS_DECLARE_ITEM_INTERACTION	TCsItemInteraction ItemInteraction_MAX;\
+									uint8 ITEM_INTERACTION_MAX; \
+									TCsItemInteractionToString ItemInteractionToString; \
+									TCsStringToItemInteraction StringToItemInteraction;
 
-	namespace Ref
-	{
-		const TCsItemInteraction FireWeapon = Type::FireWeapon;
-		const TCsItemInteraction HitEnemy = Type::HitEnemy;
-		const TCsItemInteraction ECsItemInteraction_MAX = Type::ECsItemInteraction_MAX;
-	}
+#define CS_DEFINE_ITEM_INTERACTION	ItemInteraction_MAX = ECsItemInteraction::ECsItemInteraction_MAX; \
+									ITEM_INTERACTION_MAX = (uint8)ItemInteraction_MAX; \
+									ItemInteractionToString = &ECsItemInteraction::ToString; \
+									StringToItemInteraction = &ECsItemInteraction::ToType;
 
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::FireWeapon) { return Str::FireWeapon.Value; }
-		if (EType == Type::HitEnemy) { return Str::HitEnemy.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE const Type& ToType(const FString &String)
-	{
-		if (String == Str::FireWeapon) { return Ref::FireWeapon; }
-		if (String == Str::HitEnemy) { return Ref::HitEnemy; }
-		return Ref::ECsItemInteraction_MAX;
-	}
-}
 
 namespace ECsFileItemHeaderCachedString
 {

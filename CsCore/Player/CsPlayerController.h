@@ -14,6 +14,8 @@ class CSCORE_API ACsPlayerController : public APlayerController
 {
 	GENERATED_UCLASS_BODY()
 
+	virtual void Destroyed() override;
+
 	UPROPERTY(BlueprintAssignable, Category = "Tick")
 	FBindableDynEvent_CsPlayerController_OnTickActor OnTickActor_ScriptEvent;
 
@@ -33,6 +35,20 @@ public:
 
 	TCsFRotator ViewRotation;
 	TCsFVector ViewLocation;
+
+	UFUNCTION(BlueprintCallable, Category = "Caemra")
+	virtual void SetTargetActor(AActor* InActor);
+
+	TWeakObjectPtr<AActor> TargetActor;
+
+	UFUNCTION(BlueprintCallable, Category = "Camera")
+	AActor* GetTargetActor();
+
+	template<typename T>
+	T* GetTargetActor()
+	{
+		return Cast<T>(GetTargetActor());
+	}
 
 #pragma endregion Camera
 

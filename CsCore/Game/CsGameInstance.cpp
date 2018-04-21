@@ -20,6 +20,37 @@
 
 #include "Async/AsyncWork.h"
 
+// Cache
+#pragma region
+
+namespace ECsGameInstanceCachedName
+{
+	namespace Name
+	{
+		// Functions
+		const FName OnBoard_Internal = FName("UCsGameInstance::OnBoard_Internal");
+		const FName LoadDataMapping_Internal = FName("UCsGameInstance::LoadDataMapping_Internal");
+		const FName PerformLevelTransition_Internal = FName("UCsGameInstance::PerformLevelTransition_Internal");
+		const FName CreateFullscreenWidget_Internal = FName("UCsGameInstance::CreateFullscreenWidget_Internal");
+		const FName HideMouseCursor_Internal = FName("UCsGameInstance::HideMouseCursor_Internal");
+	};
+}
+
+namespace ECsGameInstanceCachedString
+{
+	namespace Str
+	{
+		// Functions
+		const FString OnBoard_Internal = TEXT("UCsGameInstance::OnBoard_Internal");
+		const FString LoadDataMapping_Internal = TEXT("UCsGameInstance::LoadDataMapping_Internal");
+		const FString PerformLevelTransition_Internal = TEXT("UCsGameInstance::PerformLevelTransition_Internal");
+		const FString CreateFullscreenWidget_Internal = TEXT("UCsGameInstance::CreateFullscreenWidget_Internal");
+		const FString HideMouseCursor_Internal = TEXT("UCsGameInstance::HideMouseCursor_Internal");
+	};
+}
+
+#pragma endregion Cache
+
 UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -46,9 +77,18 @@ void UCsGameInstance::Init()
 	TickDelegate	   = FTickerDelegate::CreateUObject(this, &UCsGameInstance::Tick);
 	TickDelegateHandle = FTicker::GetCoreTicker().AddTicker(TickDelegate);
 
+	OnPreWorldInitializationHandle	= FWorldDelegates::OnPreWorldInitialization.AddUObject(this, &UCsGameInstance::OnPreWorldInitialization);
+	OnPostWorldInitializationHandle = FWorldDelegates::OnPostWorldInitialization.AddUObject(this, &UCsGameInstance::OnPostWorldInitialization);
+	OnLevelAddedToWorldHandle		= FWorldDelegates::LevelAddedToWorld.AddUObject(this, &UCsGameInstance::OnLevelAddedToWorld);
+	OnLevelRemovedFromWorldHandle	= FWorldDelegates::LevelRemovedFromWorld.AddUObject(this, &UCsGameInstance::OnLevelRemovedFromWorld);
+
 	UCsManager_Loading::Init();
 	UCsManager_Runnable::Init();
 	UCsCoroutineScheduler::Init();
+
+	OnTick_Event.AddUObject(UCsCoroutineScheduler::Get(), &UCsCoroutineScheduler::OnTick_Update);
+	
+	HideMouseCursor();
 	OnBoard();
 
 	IsVR = GEngine->HMDDevice.IsValid() && GEngine->IsStereoscopic3D();
@@ -60,6 +100,14 @@ void UCsGameInstance::Shutdown()
 
 	// Unregister ticker delegate
 	FTicker::GetCoreTicker().RemoveTicker(TickDelegateHandle);
+
+	if (FullscreenWidget && !FullscreenWidget->IsPendingKill())
+		FullscreenWidget->MarkPendingKill();
+
+	FWorldDelegates::OnPreWorldInitialization.Remove(OnPreWorldInitializationHandle);
+	FWorldDelegates::OnPostWorldInitialization.Remove(OnPostWorldInitializationHandle);
+	FWorldDelegates::LevelAddedToWorld.Remove(OnLevelAddedToWorldHandle);
+	FWorldDelegates::LevelRemovedFromWorld.Remove(OnLevelRemovedFromWorldHandle);
 
 	UCsManager_Loading::Shutdown();
 	UCsManager_Runnable::Shutdown();
@@ -82,6 +130,12 @@ FGameInstancePIEResult UCsGameInstance::StartPlayInEditorGameInstance(ULocalPlay
 
 bool UCsGameInstance::Tick(float DeltaSeconds)
 {
+	++CurrentGameFrame;
+
+	OnTick_Event.Broadcast(DeltaSeconds);
+#if WITH_EDITOR
+	OnTick_ScriptEvent.Broadcast(DeltaSeconds);
+#endif // #if WITH_EDITOR
 	return true;
 }
 
@@ -109,6 +163,18 @@ bool UCsGameInstance::AddRoutine_Internal(struct FCsRoutine* Routine, const uint
 		PerformLevelTransition_Internal_Routine = Routine;
 		return true;
 	}
+	// CreateFullscreenWidget_Internal
+	if (RoutineType == ECsGameInstanceRoutine::CreateFullscreenWidget_Internal)
+	{
+		CreateFullscreenWidget_Internal_Routine = Routine;
+		return true;
+	}
+	// HideMouseCursor_Internal
+	if (RoutineType == ECsGameInstanceRoutine::HideMouseCursor_Internal)
+	{
+		HideMouseCursor_Internal_Routine = Routine;
+		return true;
+	}
 	return false;
 }
 
@@ -133,6 +199,20 @@ bool UCsGameInstance::RemoveRoutine_Internal(struct FCsRoutine* Routine, const u
 	{
 		check(PerformLevelTransition_Internal_Routine == Routine);
 		PerformLevelTransition_Internal_Routine = nullptr;
+		return true;
+	}
+	// CreateFullscreenWidget_Internal
+	if (RoutineType == ECsGameInstanceRoutine::CreateFullscreenWidget_Internal)
+	{
+		check(CreateFullscreenWidget_Internal_Routine == Routine);
+		CreateFullscreenWidget_Internal_Routine = nullptr;
+		return true;
+	}
+	// HideMouseCursor_Internal
+	if (RoutineType == ECsGameInstanceRoutine::HideMouseCursor_Internal)
+	{
+		check(HideMouseCursor_Internal_Routine == Routine);
+		HideMouseCursor_Internal_Routine = nullptr;
 		return true;
 	}
 	return false;
@@ -173,13 +253,13 @@ CS_COROUTINE(UCsGameInstance, OnBoard_Internal)
 
 	gi->LoadStartUpData();
 
-	// Wait till the World is VALID
-	CS_COROUTINE_WAIT_UNTIL(r, w);
+	CS_COROUTINE_WAIT_UNTIL(r, gi->OnBoardState == ECsGameInstanceOnBoardState::LoadScreen);
 
-	gi->SetupFullscreenWidget();
+	gi->CreateFullscreenWidget();
 
-	FWorldDelegates::LevelAddedToWorld.AddUObject(gi, &UCsGameInstance::OnLevelAddedToWorld);
-	FWorldDelegates::LevelRemovedFromWorld.AddUObject(gi, &UCsGameInstance::OnLevelRemovedFromWorld);
+	CS_COROUTINE_WAIT_UNTIL(r, gi->FullscreenWidget);
+
+	gi->OnBoardState = ECsGameInstanceOnBoardState::Completed;
 
 	CS_COROUTINE_WAIT_UNTIL(r, gi->OnBoardState == ECsGameInstanceOnBoardState::Completed);
 
@@ -357,7 +437,7 @@ void UCsGameInstance::AsyncPopulateAssetReferences()
 	// Load StartUp Data
 #pragma region
 
-void UCsGameInstance::LoadStartUpData(){}
+void UCsGameInstance::LoadStartUpData(){ OnBoardState = ECsGameInstanceOnBoardState::LoadScreen; }
 void UCsGameInstance::OnFinishedLoadingStartUpDataAssets(const TArray<UObject*> &LoadedAssets, const float& LoadingTime){}
 
 #pragma endregion Load StartUp Data
@@ -365,52 +445,146 @@ void UCsGameInstance::OnFinishedLoadingStartUpDataAssets(const TArray<UObject*> 
 	// Fullscreen Widget
 #pragma region
 
-void UCsGameInstance::SetupFullscreenWidget()
+void UCsGameInstance::CreateFullscreenWidget()
 {
-	if (!FullscreenWidget)
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	FCsCoroutinePayload* Payload = Scheduler->AllocatePayload();
+
+	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+
+	Payload->Schedule		= Schedule;
+	Payload->Function		= &UCsGameInstance::CreateFullscreenWidget_Internal;
+	Payload->Object			= this;
+	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckObject;
+	Payload->Add			= &UCsGameInstance::AddRoutine;
+	Payload->Remove			= &UCsGameInstance::RemoveRoutine;
+	Payload->Type			= (uint8)ECsGameInstanceRoutine::CreateFullscreenWidget_Internal;
+	Payload->DoInit			= true;
+	Payload->PerformFirstRun = false;
+	Payload->Name			= ECsGameInstanceCachedName::Name::CreateFullscreenWidget_Internal;
+	Payload->NameAsString	= ECsGameInstanceCachedString::Str::CreateFullscreenWidget_Internal;
+
+	FCsRoutine* R = Scheduler->Allocate(Payload);
+
+	Scheduler->StartRoutine(Schedule, R);
+}
+
+CS_COROUTINE(UCsGameInstance, CreateFullscreenWidget_Internal)
+{
+	UCsGameInstance* gi		 = r->GetRObject<UCsGameInstance>();
+	UCsCoroutineScheduler* s = r->scheduler;
+	UWorld* w				 = gi->GetWorld();
+
+	CS_COROUTINE_BEGIN(r);
+
+	// Wait till the World is VALID
+	CS_COROUTINE_WAIT_UNTIL(r, w);
+
 	{
-		ACsData_UI_Common* bp_ui_common = Cast<ACsData_UI_Common>(DataMapping->LoadData(FName("bp_ui_common")));
-
-		if (!bp_ui_common)
+		if (gi->FullscreenWidget)
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsGameInstance::SetupFullscreenWidget: Failed to Load bp_ui_common (ACsData_UI_Common)."));
-			return;
+			if (!gi->FullscreenWidget->IsPendingKill())
+			{
+				gi->FullscreenWidget->RemoveFromViewport();
+				gi->FullscreenWidget->ConditionalBeginDestroy();
+			}
 		}
-		FullscreenWidget = CreateWidget<UCsUserWidget>(this, bp_ui_common->FullscreenWidget.Get());
-		FullscreenWidget->AddToViewport();
-	}
-	FullscreenWidget->Show();
 
-	OnBoardState = ECsGameInstanceOnBoardState::Completed;
+		if (ACsData_UI_Common* bp_ui_common = Cast<ACsData_UI_Common>(gi->DataMapping->LoadData(FName("bp_ui_common"))))
+		{
+			gi->FullscreenWidget = CreateWidget<UCsUserWidget>(gi, bp_ui_common->FullscreenWidget.Get());
+			gi->FullscreenWidget->AddToViewport();
+		}
+		else
+		{
+			UE_LOG(LogCs, Warning, TEXT("UCsGameInstance::CreateFullscreenWidget_Internal: Failed to Load bp_ui_common (ACsData_UI_Common)."));
+		}
+	}
+
+	CS_COROUTINE_END(r);
+}
+
+void UCsGameInstance::CheckFullscreenWidget()
+{
+	// Make sure FullscreenWidget is attached to Viewport
+	if (FullscreenWidget)
+	{
+		if (!FullscreenWidget->GetParent() &&
+			!FullscreenWidget->IsInViewport())
+		{
+			CreateFullscreenWidget();
+		}
+	}
 }
 
 #pragma endregion Fullscreen Widget
+
+void UCsGameInstance::HideMouseCursor()
+{
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+
+	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+
+	Payload->Schedule		= Schedule;
+	Payload->Function		= &UCsGameInstance::HideMouseCursor_Internal;
+	Payload->Object			= this;
+	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckObject;
+	Payload->Add			= &UCsGameInstance::AddRoutine;
+	Payload->Remove			= &UCsGameInstance::RemoveRoutine;
+	Payload->Type			= (uint8)ECsGameInstanceRoutine::HideMouseCursor_Internal;
+	Payload->DoInit			= true;
+	Payload->PerformFirstRun = false;
+	Payload->Name			= ECsGameInstanceCachedName::Name::HideMouseCursor_Internal;
+	Payload->NameAsString	= ECsGameInstanceCachedString::Str::HideMouseCursor_Internal;
+
+	FCsRoutine* R = Scheduler->Allocate(Payload);
+
+	Scheduler->StartRoutine(Schedule, R);
+}
+
+CS_COROUTINE(UCsGameInstance, HideMouseCursor_Internal)
+{
+	UCsGameInstance* gi		 = r->GetRObject<UCsGameInstance>();
+	UCsCoroutineScheduler* s = r->scheduler;
+
+	CS_COROUTINE_BEGIN(r);
+
+	// Wait till GEngine is VALID
+	CS_COROUTINE_WAIT_UNTIL(r, GEngine);
+	// Wait till GEngine->GameViewport is VALID
+	CS_COROUTINE_WAIT_UNTIL(r, GEngine->GameViewport);
+	// Wait till GEngine->GameViewport->Viewport is VALID
+	CS_COROUTINE_WAIT_UNTIL(r, GEngine->GameViewport->Viewport);
+
+	GEngine->GameViewport->Viewport->ShowCursor(false);
+
+	CS_COROUTINE_END(r);
+}
 
 #pragma endregion OnBoard
 
 // Level
 #pragma region
 
+void UCsGameInstance::OnPreWorldInitialization(UWorld* InWorld, const UWorld::InitializationValues)
+{
+	CreateFullscreenWidget();
+}
+
+void UCsGameInstance::OnPostWorldInitialization(UWorld* InWorld, const UWorld::InitializationValues)
+{
+	//CreateFullscreenWidget();
+}
+
 void UCsGameInstance::OnLevelAddedToWorld(ULevel* InLevel, UWorld* InWorld)
 {
-	// Make sure FullscreenWidget is attached to Viewport
-	if (FullscreenWidget &&
-		!FullscreenWidget->GetParent() &&
-		!FullscreenWidget->IsInViewport())
-	{
-		FullscreenWidget->AddToViewport();
-	}
+	CheckFullscreenWidget();
 }
 
 void UCsGameInstance::OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld)
 {
-	// Make sure FullscreenWidget is attached to Viewport
-	if (FullscreenWidget &&
-		!FullscreenWidget->GetParent() &&
-		!FullscreenWidget->IsInViewport())
-	{
-		FullscreenWidget->AddToViewport();
-	}
+	CheckFullscreenWidget();
 }
 
 void UCsGameInstance::PerformLevelTransition(const FString &Level, const FString &GameMode)
@@ -437,7 +611,7 @@ void UCsGameInstance::PerformLevelTransition(const FString &Level, const FString
 
 CS_COROUTINE(UCsGameInstance, PerformLevelTransition_Internal)
 {
-	UCsGameInstance* gi		 = Cast<UCsGameInstance>(r->GetRObject());
+	UCsGameInstance* gi		 = r->GetRObject<UCsGameInstance>();
 	UCsCoroutineScheduler* s = r->scheduler;
 	UWorld* w				 = gi->GetWorld();
 
@@ -461,6 +635,10 @@ CS_COROUTINE(UCsGameInstance, PerformLevelTransition_Internal)
 		const FString Level	   = r->strings[0];
 		const FString GameMode = r->strings[1];
 
+		gi->OnServerTravel_Event.Broadcast();
+#if WITH_EDITOR
+		gi->OnServerTravel_ScriptEvent.Broadcast();
+#endif // #if WITH_EDITOR
 		w->ServerTravel(Level + TEXT("?game=") + GameMode);
 	}
 
@@ -468,6 +646,15 @@ CS_COROUTINE(UCsGameInstance, PerformLevelTransition_Internal)
 }
 
 #pragma endregion Level
+
+void UCsGameInstance::ExitGame()
+{
+#if WITH_EDITOR
+	GEditor->RequestEndPlayMap();
+#else
+	FGenericPlatformMisc::RequestExit(false);
+#endif // #if WITH_EDITOR
+}
 
 // Object
 #pragma region

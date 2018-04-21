@@ -19,7 +19,6 @@
         // Use this for initialization
         void Start()
         {
-            Init();
         }
 
         public virtual void Init()

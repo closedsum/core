@@ -85,8 +85,14 @@
 
         public string Set(params string[] args)
         {
+            // Check at least ONE argument is passed
             if (args.Length == 0)
                 return "Failed to set " + Name;
+            // Check argument is of type T
+            object o = Convert.ChangeType((object)args[0], typeof(T));
+
+            if (o == null)
+                return "Invalid argument for " + Name + ". Must be type of " + typeof(T);
 
             Value.Set((T)Convert.ChangeType((object)args[0], typeof(T)));
 

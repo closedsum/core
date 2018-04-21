@@ -25,7 +25,7 @@ namespace CgCore
         public static readonly int MAX_INPUT_FRAMES = 300;
 
         #endregion // Constants
-
+        
         #region "Delegates"
 
         #endregion // Delegates

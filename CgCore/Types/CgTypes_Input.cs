@@ -21,6 +21,16 @@ namespace CgCore
         public ECgInputActionMap(int value, string name) : base(value, name) { }
     }
 
+    public sealed class ECgInputActionMapHelper
+    {
+        public ECgInputActionMap.Get Get;
+        public ECgInputActionMap.ToType ToType;
+        public ECgInputActionMap.ToStr ToStr;
+
+        public ECgInputActionMap.ToMask ToMask;
+        public ECgInputActionMap.MaskToStr MaskToStr;
+    }
+
     public sealed class ECgInputActionMapEqualityComparer : IEqualityComparer<ECgInputActionMap>
     {
         public bool Equals(ECgInputActionMap lhs, ECgInputActionMap rhs)
@@ -45,6 +55,9 @@ namespace CgCore
         public ECgInputAction.GetMAX GetMAX;
         public ECgInputAction.ToType ToType;
         public ECgInputAction.ToStr ToStr;
+
+        public ECgInputAction MAX;
+        public byte Max;
     }
 
     public sealed class ECgInputActionEqualityComparer : IEqualityComparer<ECgInputAction>

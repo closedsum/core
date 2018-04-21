@@ -33,6 +33,7 @@ namespace CgCore
         #region "Data Members"
 
         public ECgInputActionHelper InputActionHelper;
+        public ECgInputActionMapHelper InputActionMapHelper;
 
         public MonoBehaviour InputOwner;
 
@@ -40,9 +41,6 @@ namespace CgCore
 
         private Dictionary<KeyCode, CgKeyInput> RawKeyInputs;
         public List<CgKeyInput> RawKeyInputsPressed;
-
-        protected ECgInputAction InputAction_MAX;
-        protected byte INPUT_ACTION_MAX;
 
         public CgInput[] InputPool;
 
@@ -131,6 +129,7 @@ namespace CgCore
         public CgManager_Input()
         {
             InputActionHelper = new ECgInputActionHelper();
+            InputActionMapHelper = new ECgInputActionMapHelper();
 
             // InputPool
             InputPool = new CgInput[INPUT_POOL_SIZE];
@@ -300,7 +299,7 @@ namespace CgCore
             // Set FirstReleased Events to Released after 1 Frame
 
             // TODO: Potentially Optimize to O(n) versus O(n^2)
-            for (byte i = 0; i < INPUT_ACTION_MAX; ++i)
+            for (byte i = 0; i < InputActionHelper.Max; ++i)
             {
                 CgInputInfo info      = Infos[i];
                 ECgInputAction action = (ECgInputAction)InputActionHelper.Get(i);
@@ -393,48 +392,47 @@ namespace CgCore
                 ProcessInput(InputOwner, null, inputFrame.Inputs[i], deltaTime);
             }
 
-            /*
             // Log Actions
-            if (CsCVarLogInputs->GetInt() == CS_CVAR_SHOW_LOG)
+            if (CgCVars.LogInputs.Log())
             {
-                const FString InputActionMapAsString = (*InputActionMapMaskToString)(CurrentInputActionMap);
+                string inputActionMapAsString = InputActionMapHelper.MaskToStr(CurrentInputActionMap);
 
-                UE_LOG(LogCs, Log, TEXT("ACsManager_Input::PostProcessInput: ActionMap: %s Frame: %d Time: %f DeltaTime: %f Count: %d"), *InputActionMapAsString, InputFrame.Frame, InputFrame.Time, InputFrame.DeltaTime, InputFrame.Inputs.Num());
+                Debug.Log("CgManager_Input.PostProcessInput: ActionMap: " + inputActionMapAsString + " Frame: " + inputFrame.Frame + " Time: " + inputFrame.Time + " DeltaTime: " + inputFrame.DeltaTime + " Count: " + inputFrame.Inputs.Count);
 
-                for (uint8 I = 0; I < InputCount; ++I)
+                for (byte i = 0; i < _inputCount; ++i)
                 {
-                    const FCsInput* Input = InputFrame.Inputs[I];
+                    CgInput input = inputFrame.Inputs[i];
 
-                    const FString&Action = (*InputActionToString)(Input->Action);
-                    const FString&Event = ECsInputEvent::ToString(Input->Event);
+                    string action = InputActionHelper.ToStr(input.Action);
+                    string e      = input.Event.ToString();
 
                     // Void - No Value
-                    if ((CsCVarLogInputAll->GetInt() == CS_CVAR_SHOW_LOG || CsCVarLogInputActions->GetInt() == CS_CVAR_SHOW_LOG) &&
-                        Infos[(uint8)Input->Action]->ValueType == ECsInputValue::Void)
+                    if ((CgCVars.LogInputAll.Log() || CgCVars.LogInputActions.Log()) &&
+                        Infos[(byte)input.Action].ValueType == ECgInputValue.Void)
                     {
-                        UE_LOG(LogCs, Log, TEXT("ACsManager_Input::PostProcessInput: %s: %s"), *Action, *Event);
+                        Debug.Log("CgManager_Input.PostProcessInput: " + action + ": " + e);
                     }
                     // Float
-                    if ((CsCVarLogInputAll->GetInt() == CS_CVAR_SHOW_LOG || CsCVarLogInputAxis->GetInt() == CS_CVAR_SHOW_LOG) &&
-                        Infos[(uint8)Input->Action]->ValueType == ECsInputValue::Float)
+                    if ((CgCVars.LogInputAll.Log() || CgCVars.LogInputAxis.Log()) &&
+                        Infos[(byte)input.Action].ValueType == ECgInputValue.Float)
                     {
-                        UE_LOG(LogCs, Log, TEXT("ACsManager_Input::PostProcessInput: %s: %s Value: %f"), *Action, *Event, Input->Value);
+                        Debug.Log("CsManager_Input.PostProcessInput: " + action + ": " + e + " Value: " + input.Value);
                     }
                     // Vector
-                    if ((CsCVarLogInputAll->GetInt() == CS_CVAR_SHOW_LOG || CsCVarLogInputLocations->GetInt() == CS_CVAR_SHOW_LOG) &&
-                        Infos[(uint8)Input->Action]->ValueType == ECsInputValue::Vector)
+                    if ((CgCVars.LogInputAll.Log() || CgCVars.LogInputLocations.Log()) &&
+                        Infos[(byte)input.Action].ValueType == ECgInputValue.Vector)
                     {
-                        UE_LOG(LogCs, Log, TEXT("ACsManager_Input::PostProcessInput: %s: %s Value: %s"), *Action, *Event, *Input->Location.ToString());
+                        Debug.Log("CsManager_Input.PostProcessInput: " + action + ": " + e + " Value: " + input.Location.ToString());
                     }
                     // Rotator
-                    if ((CsCVarLogInputAll->GetInt() == CS_CVAR_SHOW_LOG || CsCVarLogInputRotations->GetInt() == CS_CVAR_SHOW_LOG) &&
-                        Infos[(uint8)Input->Action]->ValueType == ECsInputValue::Rotator)
+                    if ((CgCVars.LogInputAll.Log() || CgCVars.LogInputRotations.Log()) &&
+                        Infos[(byte)input.Action].ValueType == ECgInputValue.Rotator)
                     {
-                        UE_LOG(LogCs, Log, TEXT("ACsManager_Input::PostProcessInput: %s: %s Value: %s"), *Action, *Event, *Input->Rotation.ToString());
+                        Debug.Log("CsManager_Input.PostProcessInput: " + action + ": " + e + " Value: " + input.Rotation.ToString());
                     }
                 }
             }
-            */
+            
             // Copy the Current Input Frame
             CurrentInputFrame = inputFrame;
             // Determine Game Events

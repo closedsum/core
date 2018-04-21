@@ -15,6 +15,9 @@ namespace CgCore
         public delegate TCgEnum<T> ToType(string s);
         public delegate string ToStr(TCgEnum<T> e);
 
+        public delegate int ToMask(string s);
+        public delegate string MaskToStr(int m);
+
         #endregion // Delegates
 
         #region "Data Members"

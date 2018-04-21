@@ -66,6 +66,7 @@
         public TCgConsoleVariable(string inName, T inValue, string inDescription, int inFlag)
         {
             Name = inName;
+            Value = new TCgPrimitiveType<T>();
             Set(inValue);
             Description = inDescription;
             Flag = inFlag;
@@ -109,7 +110,7 @@
     {
         public CgConsoleVariableLog(string inName, bool inValue, string inDescription, int inFlag) : base(inName, inValue, inDescription, inFlag) { }
 
-        public bool Show()
+        public bool Log()
         {
             return Get();
         }

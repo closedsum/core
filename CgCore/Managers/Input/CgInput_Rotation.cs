@@ -84,7 +84,7 @@ namespace CgCore
             Broadcast(e, Manager_Input.InputOwner, rotation);
         }
 
-        public void AddEvent(ECgInputEvent e, CgInputRotation_Event.Event_TwoParams del)
+        public void AddEvent(ECgInputEvent e, CgInputRotation_Event.Event del)
         {
             CgInputRotation_Event handler;
             Events.TryGetValue(e, out handler);

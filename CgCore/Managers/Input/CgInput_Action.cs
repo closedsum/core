@@ -62,7 +62,7 @@ namespace CgCore
             Broadcast(e, Manager_Input.InputOwner);
         }
 
-        public void AddEvent(ECgInputEvent e, CgInputAction_Event.Event_OneParam del)
+        public void AddEvent(ECgInputEvent e, CgInputAction_Event.Event del)
         {
             CgInputAction_Event handler;
             Events.TryGetValue(e, out handler);

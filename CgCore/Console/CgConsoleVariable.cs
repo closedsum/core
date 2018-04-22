@@ -100,7 +100,7 @@
             return Name + " set to " + Value.ToString();
         }
 
-        public void AddEvent(TCgDelegate_OneParam<T>.Event_OneParam del)
+        public void AddEvent(TCgDelegate_OneParam<T>.Event del)
         {
             Value.OnChange_Event.Add(del);
         }

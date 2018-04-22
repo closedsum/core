@@ -120,21 +120,21 @@ namespace CgCore
     public enum ECgInputEvent : byte
     {
         // Action
-        FirstPressed = 0,
-        Pressed = 1,
-        FirstReleased = 2,
-        Released = 3,
+        FirstPressed,
+        Pressed,
+        FirstReleased,
+        Released,
         // Axis, Location, Rotation, Trigger
-        FirstMoved = 0,
-        Moved = 1,
-        FirstStationary = 2,
-        Stationary = 3,
+        FirstMoved,
+        Moved,
+        FirstStationary,
+        Stationary,
         // Touch
-        Began = 0,
-        //Moved = 1,
-        Ended = 2,
-        //Stationary = 3,
-        MAX = 4
+        Began,
+        //Moved,
+        Ended,
+        //Stationary,
+        MAX
     }
 
     public sealed class ECgInputEventEqualityComparer : IEqualityComparer<ECgInputEvent>

@@ -7,7 +7,7 @@ namespace CgCore
 
     public class CgInput_Location : CgInput_Base
     {
-        public class CgInputLocation_Event : TCgDelegate_TwoParams<MonoBehaviour, Vector3> { }
+        public class CgInputLocation_Event : TCgMulticastDelegate_TwoParams<MonoBehaviour, Vector3> { }
 
         #region "Data Members"
 

@@ -15,12 +15,12 @@ namespace CgCore
 
     public sealed class CgRoutine
     {
-        public class CoroutineStopCondition : TCgDelegate_RetOrBool_OneParam<CgRoutine> { }
-        // TODO: Regular Delegate
-        public delegate void AddRoutine(CgRoutine r);
-        // TODO: Regular Delegate
-        public delegate void RemoveRoutine(CgRoutine r);
+        public sealed class CoroutineStopCondition : TCgMulticastDelegate_RetOrBool_OneParam<CgRoutine> { }
+        public sealed class AddRoutine : TCgDelegate_OneParam<CgRoutine> { }
+        public sealed class RemoveRoutine : TCgDelegate_OneParam<CgRoutine> { }
         public delegate void SetScheduleTail(ECgCoroutineSchedule schedule, CgRoutine r);
+
+        public static readonly byte INVALID_TYPE = 255;
 
         #region "Data Members"
 
@@ -44,12 +44,15 @@ namespace CgCore
         public CgRoutine Parent;
         public List<CgRoutine> Children;
 
-        public object Owner;
+        public CgAttribute Owner;
         public string OwnerName;
         public CoroutineStopCondition StopCondition;
 
         public List<string> StopMessages;
         public List<string> StopMessages_Recieved;
+
+        public AddRoutine Add;
+        public RemoveRoutine Remove;
 
         public float StartTime;
         public float ElapsedTime;
@@ -79,12 +82,24 @@ namespace CgCore
 
             StopMessages = new List<string>();
             StopMessages_Recieved = new List<string>();
+
+            Add = new AddRoutine();
+            Remove = new RemoveRoutine();
         }
 
         // Functions
 
-        public void Start(IEnumerator fiber, CoroutineStopCondition.Event stop, object owner, float currentTime)
+        public void Start(CgCoroutinePayload payload, float currentType)
         {
+            Fiber = payload.Fiber;
+            Owner.Set(payload.Owner);
+            OwnerName = payload.OwnerName;
+
+            Add.Bind(payload.Add);
+            Remove.Bind(payload.Remove);
+
+            if (Owner.IsValid())
+                Add.Broacast(this);
         }
 
         public void Run(float deltaTime)
@@ -187,25 +202,60 @@ namespace CgCore
 
         public void End(ECgCoroutineEndReason endReason)
         {
+            if (Owner.IsValid())
+                Remove.Broacast(this);
+            // EndChildren();
+            EndReason = endReason;
+        }
+
+        public void EndChildren()
+        {
+            int count = Children.Count;
+
+            for (int i = 0; i < count; ++i)
+            {
+                Children[i].End(ECgCoroutineEndReason.Parent);
+            }
+            Children.Clear();
+        }
+
+        public void AddMessage(string msg)
+        {
+            StopMessages.Add(msg);
+        }
+
+        public void ReceiveMessage(string msg)
+        {
+            StopMessages_Recieved.Add(msg);
         }
 
         public void Reset()
         {
+            Prev = null;
+            Next = null;
             State = ECgRoutineState.Free;
 
             Fiber = null;
             Name = "";
+            RoutineType = INVALID_TYPE;
             WaitingFor = null;
             Blocking = null;
             Parent = null;
             Children.Clear();
-            Owner = null;
+            Owner.UnSet();
+            OwnerName = "";
             StopCondition = null;
+            StopMessages.Clear();
+            StopMessages_Recieved.Clear();
+            Add.UnBind();
+            Remove.UnBind();
             StartTime = 0.0f;
             ElapsedTime = 0.0f;
             DeltaTime = 0.0f;
             TickCount = 0;
             Delay = 0.0f;
+            WaitForFrame = 0;
+            WaitForTime = 0.0f;
         }
     }
 }

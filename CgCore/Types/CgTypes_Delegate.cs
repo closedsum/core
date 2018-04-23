@@ -4,8 +4,6 @@ namespace CgCore
     using System;
     using System.Collections.Generic;
 
-    #region "Multicast"
-
     public struct CgDelegateHandle : IEquatable<CgDelegateHandle>
     {
         public object Object;
@@ -52,26 +50,88 @@ namespace CgCore
         }
     }
 
-    // TODO: Rename to CgMulticastDelegate
-    // TODO: Add CgMulticastDelegate_Base
+    #region "Single"
 
     public abstract class CgDelegate
     {
         public delegate void Event();
 
-        private Dictionary<CgDelegateHandle, Event> InvocationMap;
-        private ulong IdIndex;
+        private Event e;
 
-        public CgDelegate()
+        public void Bind(Event inEvent)
         {
-            InvocationMap = new Dictionary<CgDelegateHandle, Event>();
-            IdIndex = 0;
+            e = inEvent;
         }
 
-        private ulong GetId()
+        public void UnBind()
+        {
+            e = null;
+        }
+
+        public bool IsBound()
+        {
+            return e != null;
+        }
+
+        public void Broacast()
+        {
+            if (e != null)
+                e();
+        }
+    }
+
+    public abstract class TCgDelegate_OneParam<T>
+    {
+        public delegate void Event(T t);
+
+        private Event e;
+
+        public void Bind(Event inEvent)
+        {
+            e = inEvent;
+        }
+
+        public void UnBind()
+        {
+            e = null;
+        }
+
+        public bool IsBound()
+        {
+            return e != null;
+        }
+
+        public void Broacast(T t)
+        {
+            if (e != null)
+                e(t);
+        }
+    }
+
+    #endregion // Single
+
+    #region "Multicast"
+
+    public abstract class CgMulticastDelegate_Base
+    {
+        private static ulong IdIndex = 0;
+
+        protected ulong GetId()
         {
             ++IdIndex;
             return IdIndex;
+        }
+    }
+
+    public abstract class CgMulticastDelegate : CgMulticastDelegate_Base
+    {
+        public delegate void Event();
+
+        private Dictionary<CgDelegateHandle, Event> InvocationMap;
+
+        public CgMulticastDelegate()
+        {
+            InvocationMap = new Dictionary<CgDelegateHandle, Event>();
         }
 
         public CgDelegateHandle AddObject(object o, Event e)
@@ -95,6 +155,11 @@ namespace CgCore
         public void Clear()
         {
             InvocationMap.Clear();
+        }
+
+        public bool IsBound()
+        {
+            return InvocationMap.Values.Count > 0;
         }
 
         public void Broadcast()
@@ -106,25 +171,30 @@ namespace CgCore
                 e();
             }
         }
+
+        public void CopyTo(CgMulticastDelegate to)
+        {
+            to.Clear();
+
+            Dictionary<CgDelegateHandle, Event>.KeyCollection keys     = InvocationMap.Keys;
+            Dictionary<CgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
+
+            foreach (CgDelegateHandle key in keys)
+            {
+                to.AddObject(key.Object, InvocationMap[key]);
+            }
+        }
     }
 
-    public abstract class TCgDelegate_OneParam<T>
+    public abstract class TCgMulticastDelegate_OneParam<T> : CgMulticastDelegate_Base
     {
         public delegate void Event(T t);
 
         private Dictionary<CgDelegateHandle, Event> InvocationMap;
-        private ulong IdIndex;
 
-        public TCgDelegate_OneParam()
+        public TCgMulticastDelegate_OneParam()
         {
             InvocationMap = new Dictionary<CgDelegateHandle, Event>();
-            IdIndex = 0;
-        }
-
-        private ulong GetId()
-        {
-            ++IdIndex;
-            return IdIndex;
         }
 
         public CgDelegateHandle AddObject(object o, Event e)
@@ -148,6 +218,11 @@ namespace CgCore
         public void Clear()
         {
             InvocationMap.Clear();
+        }
+
+        public bool IsBound()
+        {
+            return InvocationMap.Values.Count > 0;
         }
 
         public void Broadcast(T t)
@@ -161,23 +236,15 @@ namespace CgCore
         }
     }
 
-    public abstract class TCgDelegate_TwoParams<T1, T2>
+    public abstract class TCgMulticastDelegate_TwoParams<T1, T2> : CgMulticastDelegate_Base
     {
         public delegate void Event(T1 t1, T2 t2);
 
         private Dictionary<CgDelegateHandle, Event> InvocationMap;
-        private ulong IdIndex;
 
-        public TCgDelegate_TwoParams()
+        public TCgMulticastDelegate_TwoParams()
         {
             InvocationMap = new Dictionary<CgDelegateHandle, Event>();
-            IdIndex = 0;
-        }
-
-        private ulong GetId()
-        {
-            ++IdIndex;
-            return IdIndex;
         }
 
         public CgDelegateHandle AddObject(object o, Event e)
@@ -203,6 +270,11 @@ namespace CgCore
             InvocationMap.Clear();
         }
 
+        public bool IsBound()
+        {
+            return InvocationMap.Values.Count > 0;
+        }
+
         public void Broadcast(T1 t1, T2 t2)
         {
             Dictionary<CgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
@@ -214,23 +286,15 @@ namespace CgCore
         }
     }
 
-    public abstract class TCgDelegate_ThreeParams<T1, T2, T3>
+    public abstract class TCgMulticastDelegate_ThreeParams<T1, T2, T3> : CgMulticastDelegate_Base
     {
         public delegate void Event(T1 t1, T2 t2, T3 t3);
 
         private Dictionary<CgDelegateHandle, Event> InvocationMap;
-        private ulong IdIndex;
 
-        public TCgDelegate_ThreeParams()
+        public TCgMulticastDelegate_ThreeParams()
         {
             InvocationMap = new Dictionary<CgDelegateHandle, Event>();
-            IdIndex = 0;
-        }
-
-        private ulong GetId()
-        {
-            ++IdIndex;
-            return IdIndex;
         }
 
         public CgDelegateHandle AddObject(object o, Event e)
@@ -267,23 +331,15 @@ namespace CgCore
         }
     }
 
-    public abstract class TCgDelegate_RetOrBool_OneParam<T>
+    public abstract class TCgMulticastDelegate_RetOrBool_OneParam<T> : CgMulticastDelegate_Base
     {
         public delegate bool Event(T t);
 
         private Dictionary<CgDelegateHandle, Event> InvocationMap;
-        private ulong IdIndex;
 
-        public TCgDelegate_RetOrBool_OneParam()
+        public TCgMulticastDelegate_RetOrBool_OneParam()
         {
             InvocationMap = new Dictionary<CgDelegateHandle, Event>();
-            IdIndex = 0;
-        }
-
-        private ulong GetId()
-        {
-            ++IdIndex;
-            return IdIndex;
         }
 
         public CgDelegateHandle AddObject(object o, Event e)
@@ -307,6 +363,11 @@ namespace CgCore
         public void Clear()
         {
             InvocationMap.Clear();
+        }
+
+        public bool IsBound()
+        {
+            return InvocationMap.Values.Count > 0;
         }
 
         public bool Broadcast(T t)
@@ -322,23 +383,15 @@ namespace CgCore
         }
     }
 
-    public abstract class TCgDelegate_RetAndBool_OneParam<T>
+    public abstract class TCgMulticastDelegate_RetAndBool_OneParam<T> : CgMulticastDelegate_Base
     {
         public delegate bool Event(T t);
 
         private Dictionary<CgDelegateHandle, Event> InvocationMap;
-        private ulong IdIndex;
 
-        public TCgDelegate_RetAndBool_OneParam()
+        public TCgMulticastDelegate_RetAndBool_OneParam()
         {
             InvocationMap = new Dictionary<CgDelegateHandle, Event>();
-            IdIndex = 0;
-        }
-
-        private ulong GetId()
-        {
-            ++IdIndex;
-            return IdIndex;
         }
 
         public CgDelegateHandle AddObject(object o, Event e)
@@ -362,6 +415,11 @@ namespace CgCore
         public void Clear()
         {
             InvocationMap.Clear();
+        }
+
+        public bool IsBound()
+        {
+            return InvocationMap.Values.Count > 0;
         }
 
         public bool Broadcast(T t)

@@ -203,7 +203,7 @@ namespace CgCore
 
     public class CgKeyInputHandler
     {
-        public class CgKeyInputHandler_Event : CgDelegate { }
+        public class CgKeyInputHandler_Event : CgMulticastDelegate { }
 
         #region "Data Members"
 
@@ -253,7 +253,7 @@ namespace CgCore
             return base.GetHashCode();
         }
 
-        public CgDelegateHandle Add(CgDelegate.Event e)
+        public CgDelegateHandle Add(CgMulticastDelegate.Event e)
         {
             return Event.Add(e);
         }
@@ -322,7 +322,7 @@ namespace CgCore
             }
         }
 
-        public CgDelegateHandle Bind(ECgInputAction action, ECgInputEvent e, CgDelegate.Event del)
+        public CgDelegateHandle Bind(ECgInputAction action, ECgInputEvent e, CgMulticastDelegate.Event del)
         {
             Dictionary<ECgInputAction, CgKeyInputHandler> map = HandlerMap[(byte)e];
 

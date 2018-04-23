@@ -11,7 +11,31 @@ namespace CgCore
         public ECgCoroutineSchedule Schedule;
 
         public IEnumerator Fiber;
-        object Owner;
+        public object Owner;
+        public string OwnerName;
+        public byte RoutineType;
+        public CgRoutine.CoroutineStopCondition StopCondition;
+
+        public CgRoutine.AddRoutine.Event Add;
+        public CgRoutine.RemoveRoutine.Event Remove;
+
+        public CgCoroutinePayload()
+        {
+            StopCondition = new CgRoutine.CoroutineStopCondition();
+        }
+
+        public void Reset()
+        {
+            IsAllocated = false;
+            Schedule = ECgCoroutineSchedule.MAX;
+            Fiber = null;
+            Owner = null;
+            OwnerName = "";
+            RoutineType = CgRoutine.INVALID_TYPE;
+            StopCondition.Clear();
+            Add = null;
+            Remove = null;
+        }
     }
 
     public class CgCoroutineScheduler

@@ -7,7 +7,7 @@ namespace CgCore
 
     public class CgInput_Trigger : CgInput_Base
     {
-        public class CgInputTrigger_Event : TCgDelegate_TwoParams<MonoBehaviour, float> { }
+        public class CgInputTrigger_Event : TCgMulticastDelegate_TwoParams<MonoBehaviour, float> { }
 
         #region "Data Members"
 

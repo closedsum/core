@@ -6,16 +6,16 @@ namespace CgCore
     using System.Collections.Generic;
     using UnityEngine;
 
-    public class CgManagerInput_Action_Default : TCgDelegate_TwoParams<ECgInputAction, ECgInputEvent> { }
-    public class CgManagerInput_Action : TCgDelegate_OneParam<ECgInputAction> { }
-    public class CgManagerInput_Axis_Default : TCgDelegate_ThreeParams<ECgInputAction, ECgInputEvent, float> { }
-    public class CgManagerInput_Axis : TCgDelegate_TwoParams<ECgInputAction, float> { }
-    public class CgManagerInput_Location_Default : TCgDelegate_ThreeParams<ECgInputAction, ECgInputEvent, Vector3> { }
-    public class CgManagerInput_Location : TCgDelegate_TwoParams<ECgInputAction, Vector3> { }
-    public class CgManagerInput_Location_Raw : TCgDelegate_OneParam<Vector3> { }
-    public class CgManagerInput_Rotation_Default : TCgDelegate_ThreeParams<ECgInputAction, ECgInputEvent, Vector3> { }
-    public class CgManagerInput_Rotation : TCgDelegate_TwoParams<ECgInputAction, Vector3> { }
-    public class CgManagerInput_Rotation_Raw : TCgDelegate_OneParam<Vector3> { }
+    public class CgManagerInput_Action_Default : TCgMulticastDelegate_TwoParams<ECgInputAction, ECgInputEvent> { }
+    public class CgManagerInput_Action : TCgMulticastDelegate_OneParam<ECgInputAction> { }
+    public class CgManagerInput_Axis_Default : TCgMulticastDelegate_ThreeParams<ECgInputAction, ECgInputEvent, float> { }
+    public class CgManagerInput_Axis : TCgMulticastDelegate_TwoParams<ECgInputAction, float> { }
+    public class CgManagerInput_Location_Default : TCgMulticastDelegate_ThreeParams<ECgInputAction, ECgInputEvent, Vector3> { }
+    public class CgManagerInput_Location : TCgMulticastDelegate_TwoParams<ECgInputAction, Vector3> { }
+    public class CgManagerInput_Location_Raw : TCgMulticastDelegate_OneParam<Vector3> { }
+    public class CgManagerInput_Rotation_Default : TCgMulticastDelegate_ThreeParams<ECgInputAction, ECgInputEvent, Vector3> { }
+    public class CgManagerInput_Rotation : TCgMulticastDelegate_TwoParams<ECgInputAction, Vector3> { }
+    public class CgManagerInput_Rotation_Raw : TCgMulticastDelegate_OneParam<Vector3> { }
 
     public class CgManager_Input
     {
@@ -219,7 +219,7 @@ namespace CgCore
         {
         }
 
-        protected void BindInput(KeyCode key, ECgInputAction action, ECgInputEvent e, CgDelegate.Event del)
+        protected void BindInput(KeyCode key, ECgInputAction action, ECgInputEvent e, CgMulticastDelegate.Event del)
         {
             CgKeyInput keyInput;
             RawKeyInputs.TryGetValue(key, out keyInput);

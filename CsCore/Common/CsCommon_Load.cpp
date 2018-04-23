@@ -732,6 +732,12 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsItemOnConsumeContentRule
 			if (StructProperty->Struct == FCsItemOnConsumeContentRule::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsItemOnConsumeContentRule>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsTArrayPayload
+			if (StructProperty->Struct == FCsTArrayPayload::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsTArrayPayload>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsPayload
+			if (StructProperty->Struct == FCsPayload::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsPayload>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 
 			if (Internal)
 			{
@@ -834,6 +840,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FCsPlayerData_Inventory_Slot
 				if (InnerStructProperty->Struct == FCsPlayerData_Inventory_Slot::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsPlayerData_Inventory_Slot>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsPayload
+				if (InnerStructProperty->Struct == FCsPayload::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsPayload>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 
 				if (Internal)
 				{
@@ -1411,6 +1420,12 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsItemOnConsumeContentRule
 			if (StructProperty->Struct == FCsItemOnConsumeContentRule::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsItemOnConsumeContentRule>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsTArrayPayload
+			if (StructProperty->Struct == FCsTArrayPayload::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsTArrayPayload>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsPayload
+			if (StructProperty->Struct == FCsPayload::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsPayload>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 
 			if (Internal)
 			{
@@ -1513,6 +1528,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FCsPlayerData_Inventory_Slot
 				if (InnerStructProperty->Struct == FCsPlayerData_Inventory_Slot::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsPlayerData_Inventory_Slot>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsPayload
+				if (InnerStructProperty->Struct == FCsPayload::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsPayload>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 
 				if (Internal)
 				{
@@ -2030,6 +2048,12 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsInventoryLoadout
 			if (StructProperty->Struct == FCsInventoryLoadout::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsInventoryLoadout>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
+			// FCsTArrayPayload
+			if (StructProperty->Struct == FCsTArrayPayload::StaticStruct())
+			{
+				if (WriteObjectToJson_Internal_Helper(Internal, Property, InJsonWriter, InObject, InClass)) { continue; }
+				continue;
+			}
 
 			if (Internal)
 			{
@@ -2828,6 +2852,12 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FCsItemOnConsumeContentRule
 			if (StructProperty->Struct == FCsItemOnConsumeContentRule::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsItemOnConsumeContentRule>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsTArrayPayload
+			if (StructProperty->Struct == FCsTArrayPayload::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsTArrayPayload>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsPayload
+			if (StructProperty->Struct == FCsPayload::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsPayload>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 
 			if (Internal)
 			{
@@ -2928,6 +2958,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 				// FCsPlayerData_Inventory_Slot
 				if (InnerStructProperty->Struct == FCsPlayerData_Inventory_Slot::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsPlayerData_Inventory_Slot>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
+				// FCsPayload
+				if (InnerStructProperty->Struct == FCsPayload::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsPayload>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
 
 				if (Internal)
 				{
@@ -3547,6 +3580,12 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsItemOnConsumeContentRule
 			if (StructProperty->Struct == FCsItemOnConsumeContentRule::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsItemOnConsumeContentRule>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsTArrayPayload
+			if (StructProperty->Struct == FCsTArrayPayload::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsTArrayPayload>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsPayload
+			if (StructProperty->Struct == FCsPayload::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsPayload>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 
 			if (Internal)
 			{
@@ -3650,6 +3689,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				// FCsPlayerData_Inventory_Slot
 				if (InnerStructProperty->Struct == FCsPlayerData_Inventory_Slot::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsPlayerData_Inventory_Slot>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
+				// FCsPayload
+				if (InnerStructProperty->Struct == FCsPayload::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsPayload>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
 
 				if (Internal)
 				{
@@ -4213,6 +4255,12 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsInventoryLoadout
 			if (StructProperty->Struct == FCsInventoryLoadout::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsInventoryLoadout>(JsonObject, StructProperty, InObject, MemberName); continue; }
+			// FCsTArrayPayload
+			if (StructProperty->Struct == FCsTArrayPayload::StaticStruct())
+			{
+				if (ReadObjectFromJson_Internal_Helper(Internal, Property, JsonObject, InObject, InClass)) { continue; }
+				continue;
+			}
 
 			if (Internal)
 			{

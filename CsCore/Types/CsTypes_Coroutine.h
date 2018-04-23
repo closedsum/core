@@ -184,7 +184,6 @@ public:
 	struct pt pt;
 	struct FCsRoutine* parent;
 	TArray<struct FCsRoutine*> children;
-	class UCsCoroutineScheduler* scheduler;
 	TCsCoroutineSchedule scheduleType;
 	CsCoroutine coroutine;
 	CsCoroutineStopCondition stopCondition;
@@ -230,15 +229,12 @@ public:
 
 		children.Reset();
 
-		scheduler = nullptr;
-
 		Reset();
 	}
 
-	void Init(UCsCoroutineScheduler* inScheduler, const TCsCoroutineSchedule &inScheduleType, const int32 &inPoolIndex)
+	void Init(const TCsCoroutineSchedule &inScheduleType, const int32 &inPoolIndex)
 	{
 		self = this;
-		scheduler = inScheduler;
 		scheduleType = inScheduleType;
 		poolIndex = inPoolIndex;
 

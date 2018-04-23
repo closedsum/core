@@ -7,6 +7,10 @@
 
 UCsInput_Action::UCsInput_Action(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+	Info.Type		= ECsInputType::Action;
+	Info.ValueType	= ECsInputValue::Void;
+	Info.Event		= ECsInputEvent::Released;
+	Info.Last_Event = ECsInputEvent::Released;
 }
 
 void UCsInput_Action::FirstPressed()

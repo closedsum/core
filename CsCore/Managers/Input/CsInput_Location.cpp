@@ -7,6 +7,10 @@
 
 UCsInput_Location::UCsInput_Location(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+	Info.Type		= ECsInputType::Location;
+	Info.ValueType	= ECsInputValue::Vector;
+	Info.Event		= ECsInputEvent::Stationary;
+	Info.Last_Event = ECsInputEvent::Stationary;
 }
 
 void UCsInput_Location::Raw(const FVector &Location)

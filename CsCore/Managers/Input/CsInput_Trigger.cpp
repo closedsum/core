@@ -7,6 +7,10 @@
 
 UCsInput_Trigger::UCsInput_Trigger(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+	Info.Type		= ECsInputType::Trigger;
+	Info.ValueType	= ECsInputValue::Float;
+	Info.Event		= ECsInputEvent::Stationary;
+	Info.Last_Event = ECsInputEvent::Stationary;
 }
 
 void UCsInput_Trigger::Raw(float Val)

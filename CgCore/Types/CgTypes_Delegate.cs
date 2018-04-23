@@ -7,17 +7,19 @@ namespace CgCore
     public struct CgDelegateHandle : IEquatable<CgDelegateHandle>
     {
         public object Object;
-        public ulong Id;
+        public string Name;
+        public Guid Id;
 
-        public CgDelegateHandle(object o, ulong id)
+        public CgDelegateHandle(object o, string name, Guid id)
         {
             Object = o;
+            Name = name;
             Id = id;
         }
-
+               
         public static bool operator ==(CgDelegateHandle lhs, CgDelegateHandle rhs)
         {
-            return lhs.Object == rhs.Object && lhs.Id == rhs.Id;
+            return lhs.Object == rhs.Object && lhs.Name == rhs.Name && lhs.Id == rhs.Id;
         }
 
         public static bool operator !=(CgDelegateHandle lhs, CgDelegateHandle rhs)
@@ -28,6 +30,7 @@ namespace CgCore
         public bool Equals(CgDelegateHandle rhs)
         {
             if (Object != rhs.Object) return false;
+            if (Name != rhs.Name) return false;
             if (Id != rhs.Id) return false;
             return true;
         }
@@ -40,6 +43,7 @@ namespace CgCore
             CgDelegateHandle rhs = (CgDelegateHandle)obj;
 
             if (Object != rhs.Object) return false;
+            if (Name != rhs.Name) return false;
             if (Id != rhs.Id) return false;
             return true;
         }
@@ -112,18 +116,11 @@ namespace CgCore
 
     #region "Multicast"
 
-    public abstract class CgMulticastDelegate_Base
+    public interface ICgMulticastDelegate
     {
-        private static ulong IdIndex = 0;
-
-        protected ulong GetId()
-        {
-            ++IdIndex;
-            return IdIndex;
-        }
     }
 
-    public abstract class CgMulticastDelegate : CgMulticastDelegate_Base
+    public abstract class CgMulticastDelegate : ICgMulticastDelegate
     {
         public delegate void Event();
 
@@ -136,7 +133,7 @@ namespace CgCore
 
         public CgDelegateHandle AddObject(object o, Event e)
         {
-            CgDelegateHandle handle = new CgDelegateHandle(o, GetId());
+            CgDelegateHandle handle = new CgDelegateHandle(o, "", Guid.NewGuid());
 
             InvocationMap.Add(handle, e);
             return handle;
@@ -186,7 +183,7 @@ namespace CgCore
         }
     }
 
-    public abstract class TCgMulticastDelegate_OneParam<T> : CgMulticastDelegate_Base
+    public abstract class TCgMulticastDelegate_OneParam<T> : ICgMulticastDelegate
     {
         public delegate void Event(T t);
 
@@ -199,7 +196,7 @@ namespace CgCore
 
         public CgDelegateHandle AddObject(object o, Event e)
         {
-            CgDelegateHandle handle = new CgDelegateHandle(o, GetId());
+            CgDelegateHandle handle = new CgDelegateHandle(o, "", Guid.NewGuid());
 
             InvocationMap.Add(handle, e);
             return handle;
@@ -236,7 +233,7 @@ namespace CgCore
         }
     }
 
-    public abstract class TCgMulticastDelegate_TwoParams<T1, T2> : CgMulticastDelegate_Base
+    public abstract class TCgMulticastDelegate_TwoParams<T1, T2> : ICgMulticastDelegate
     {
         public delegate void Event(T1 t1, T2 t2);
 
@@ -249,7 +246,7 @@ namespace CgCore
 
         public CgDelegateHandle AddObject(object o, Event e)
         {
-            CgDelegateHandle handle = new CgDelegateHandle(o, GetId());
+            CgDelegateHandle handle = new CgDelegateHandle(o, "", Guid.NewGuid());
 
             InvocationMap.Add(handle, e);
             return handle;
@@ -286,7 +283,7 @@ namespace CgCore
         }
     }
 
-    public abstract class TCgMulticastDelegate_ThreeParams<T1, T2, T3> : CgMulticastDelegate_Base
+    public abstract class TCgMulticastDelegate_ThreeParams<T1, T2, T3> : ICgMulticastDelegate
     {
         public delegate void Event(T1 t1, T2 t2, T3 t3);
 
@@ -299,7 +296,7 @@ namespace CgCore
 
         public CgDelegateHandle AddObject(object o, Event e)
         {
-            CgDelegateHandle handle = new CgDelegateHandle(o, GetId());
+            CgDelegateHandle handle = new CgDelegateHandle(o, "", Guid.NewGuid());
 
             InvocationMap.Add(handle, e);
             return handle;
@@ -331,7 +328,7 @@ namespace CgCore
         }
     }
 
-    public abstract class TCgMulticastDelegate_RetOrBool_OneParam<T> : CgMulticastDelegate_Base
+    public abstract class TCgMulticastDelegate_RetOrBool_OneParam<T> : ICgMulticastDelegate
     {
         public delegate bool Event(T t);
 
@@ -344,7 +341,7 @@ namespace CgCore
 
         public CgDelegateHandle AddObject(object o, Event e)
         {
-            CgDelegateHandle handle = new CgDelegateHandle(o, GetId());
+            CgDelegateHandle handle = new CgDelegateHandle(o, "", Guid.NewGuid());
 
             InvocationMap.Add(handle, e);
             return handle;
@@ -383,7 +380,7 @@ namespace CgCore
         }
     }
 
-    public abstract class TCgMulticastDelegate_RetAndBool_OneParam<T> : CgMulticastDelegate_Base
+    public abstract class TCgMulticastDelegate_RetAndBool_OneParam<T> : ICgMulticastDelegate
     {
         public delegate bool Event(T t);
 
@@ -396,7 +393,7 @@ namespace CgCore
 
         public CgDelegateHandle AddObject(object o, Event e)
         {
-            CgDelegateHandle handle = new CgDelegateHandle(o, GetId());
+            CgDelegateHandle handle = new CgDelegateHandle(o, "", Guid.NewGuid());
 
             InvocationMap.Add(handle, e);
             return handle;

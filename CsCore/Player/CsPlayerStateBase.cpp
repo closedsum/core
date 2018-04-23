@@ -114,6 +114,13 @@ bool ACsPlayerStateBase::AddRoutine_Internal(struct FCsRoutine* Routine, const u
 		OnBoard_Internal_Routine = Routine;
 		return true;
 	}
+	// TODO: This may cause issues with more than 1 AI
+	// RequestUniqueMappingId_AI_Internal
+	if (RoutineType == ECsPlayerStateBaseRoutine::RequestUniqueMappingId_AI_Internal)
+	{
+		RequestUniqueMappingId_AI_Internal_Routine = Routine;
+		return true;
+	}
 	return false;
 }
 
@@ -131,6 +138,14 @@ bool ACsPlayerStateBase::RemoveRoutine_Internal(struct FCsRoutine* Routine, cons
 	{
 		check(OnBoard_Internal_Routine == Routine);
 		OnBoard_Internal_Routine = nullptr;
+		return true;
+	}
+	// TODO: This may cause issues with more than 1 AI
+	// RequestUniqueMappingId_AI_Internal
+	if (RoutineType == ECsPlayerStateBaseRoutine::RequestUniqueMappingId_AI_Internal)
+	{
+		check(RequestUniqueMappingId_AI_Internal_Routine == Routine);
+		RequestUniqueMappingId_AI_Internal_Routine = nullptr;
 		return true;
 	}
 	return false;

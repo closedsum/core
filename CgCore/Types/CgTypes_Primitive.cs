@@ -15,6 +15,9 @@ namespace CgCore
         public delegate TCgEnum<T> ToType(string s);
         public delegate string ToStr(TCgEnum<T> e);
 
+        public delegate int ToMask(string s);
+        public delegate string MaskToStr(int m);
+
         #endregion // Delegates
 
         #region "Data Members"
@@ -135,7 +138,7 @@ namespace CgCore
 
         #endregion // Data Members
 
-        public TCgDelegate_OneParam<T> OnChange_Event;
+        public TCgMulticastDelegate_OneParam<T> OnChange_Event;
 
         #region "Operators"
 
@@ -205,19 +208,19 @@ namespace CgCore
             UpdateIsDirty();
         }
 
-        public T Get(){ return Value; }
+        public T Get() { return Value; }
 
         public void Clear()
         {
-            Last_Value  = Value;
-            IsDirty     = false;
+            Last_Value = Value;
+            IsDirty = false;
         }
 
         public void ResetValue()
         {
-            Value       = default(T);
-            Last_Value  = Value;
-            IsDirty     = false;
+            Value = default(T);
+            Last_Value = Value;
+            IsDirty = false;
         }
 
         public void Reset()
@@ -227,7 +230,7 @@ namespace CgCore
             OnChange_Event.Clear();
         }
 
-        public bool HasChanged(){ return IsDirty; }
+        public bool HasChanged() { return IsDirty; }
         public void MarkDirty() { IsDirty = true; }
 
         public void Resolve()
@@ -238,4 +241,123 @@ namespace CgCore
     }
 
     #endregion // Primitive Types
+
+    #region "Attribute"
+
+    public class TCgAttributeValue<T> where T : struct
+    {
+        public T Value;
+        public T UnSetValue;
+        public bool IsSet;
+
+        public TCgAttributeValue(T value)
+        {
+            Value = value;
+            UnSetValue = default(T);
+            IsSet = true;
+        }
+
+        public void Set(T value)
+        {
+            Value = value;
+            IsSet = true;
+        }
+
+        public void UnSet()
+        {
+            Value = UnSetValue;
+            IsSet = false;
+        }
+
+        public bool IsValid()
+        {
+            return IsSet ? !Value.Equals(UnSetValue) : true;
+        }
+    }
+
+    public class TCgAttributeRef<T> where T : class
+    {
+        public T Ref;
+        public T UnSetRef;
+        public bool IsSet;
+
+        public TCgAttributeRef(T inRef)
+        {
+            Ref = inRef;
+            UnSetRef = default(T);
+            IsSet = true;
+        }
+
+        public void Set(T inRef)
+        {
+            Ref = inRef;
+            IsSet = true;
+        }
+
+        public void UnSet()
+        {
+            Ref = UnSetRef;
+            IsSet = false;
+        }
+
+        public bool IsValid()
+        {
+            return IsSet ? Ref != UnSetRef : true;
+        }
+    }
+
+    public sealed class CgAttribute
+    {
+        private Type ValueType;
+        private object Value;
+        private object UnSetValue;
+        private bool IsSet;
+
+        public CgAttribute()
+        {
+            ValueType = null;
+            Value = null;
+            UnSetValue = null;
+            IsSet = false;
+        }
+
+        public void Set(object value)
+        {
+            Value      = value;
+            ValueType  = value.GetType();
+            UnSetValue = default(ValueType);
+
+            if (ValueType.IsClass)
+            {
+                if (value.Equals(null))
+                {
+                    IsSet = false;
+                }
+                else
+                {
+                    IsSet = true;
+                }
+            }
+        }
+
+        public void UnSet()
+        {
+            ValueType  = null;
+            Value      = null;
+            UnSetValue = null;
+            IsSet      = false;
+        }
+
+        public bool IsValid()
+        {
+            return IsSet ? !Value.Equals(UnSetValue) : true;
+        }
+
+        public object Get()
+        {
+            return Value;
+        }
+    }
+
+    #endregion // Attribute
 }

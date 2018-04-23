@@ -21,6 +21,16 @@ namespace CgCore
         public ECgInputActionMap(int value, string name) : base(value, name) { }
     }
 
+    public sealed class ECgInputActionMapHelper
+    {
+        public ECgInputActionMap.Get Get;
+        public ECgInputActionMap.ToType ToType;
+        public ECgInputActionMap.ToStr ToStr;
+
+        public ECgInputActionMap.ToMask ToMask;
+        public ECgInputActionMap.MaskToStr MaskToStr;
+    }
+
     public sealed class ECgInputActionMapEqualityComparer : IEqualityComparer<ECgInputActionMap>
     {
         public bool Equals(ECgInputActionMap lhs, ECgInputActionMap rhs)
@@ -45,6 +55,9 @@ namespace CgCore
         public ECgInputAction.GetMAX GetMAX;
         public ECgInputAction.ToType ToType;
         public ECgInputAction.ToStr ToStr;
+
+        public ECgInputAction MAX;
+        public byte Max;
     }
 
     public sealed class ECgInputActionEqualityComparer : IEqualityComparer<ECgInputAction>
@@ -107,21 +120,21 @@ namespace CgCore
     public enum ECgInputEvent : byte
     {
         // Action
-        FirstPressed = 0,
-        Pressed = 1,
-        FirstReleased = 2,
-        Released = 3,
+        FirstPressed,
+        Pressed,
+        FirstReleased,
+        Released,
         // Axis, Location, Rotation, Trigger
-        FirstMoved = 0,
-        Moved = 1,
-        FirstStationary = 2,
-        Stationary = 3,
+        FirstMoved,
+        Moved,
+        FirstStationary,
+        Stationary,
         // Touch
-        Began = 0,
-        //Moved = 1,
-        Ended = 2,
-        //Stationary = 3,
-        MAX = 4
+        Began,
+        //Moved,
+        Ended,
+        //Stationary,
+        MAX
     }
 
     public sealed class ECgInputEventEqualityComparer : IEqualityComparer<ECgInputEvent>
@@ -190,7 +203,7 @@ namespace CgCore
 
     public class CgKeyInputHandler
     {
-        public class CgKeyInputHandler_Event : CgDelegate { }
+        public class CgKeyInputHandler_Event : CgMulticastDelegate { }
 
         #region "Data Members"
 
@@ -240,7 +253,7 @@ namespace CgCore
             return base.GetHashCode();
         }
 
-        public CgDelegateHandle Add(CgDelegate.Event e)
+        public CgDelegateHandle Add(CgMulticastDelegate.Event e)
         {
             return Event.Add(e);
         }
@@ -309,7 +322,7 @@ namespace CgCore
             }
         }
 
-        public CgDelegateHandle Bind(ECgInputAction action, ECgInputEvent e, CgDelegate.Event del)
+        public CgDelegateHandle Bind(ECgInputAction action, ECgInputEvent e, CgMulticastDelegate.Event del)
         {
             Dictionary<ECgInputAction, CgKeyInputHandler> map = HandlerMap[(byte)e];
 

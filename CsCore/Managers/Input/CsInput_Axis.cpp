@@ -7,6 +7,10 @@
 
 UCsInput_Axis::UCsInput_Axis(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+	Info.Type		= ECsInputType::Axis;
+	Info.ValueType	= ECsInputValue::Float;
+	Info.Event		= ECsInputEvent::Stationary;
+	Info.Last_Event = ECsInputEvent::Stationary;
 }
 
 void UCsInput_Axis::Raw(float Val) 

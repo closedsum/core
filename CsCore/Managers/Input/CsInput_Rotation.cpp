@@ -7,6 +7,10 @@
 
 UCsInput_Rotation::UCsInput_Rotation(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+	Info.Type		= ECsInputType::Rotation;
+	Info.ValueType	= ECsInputValue::Rotator;
+	Info.Event		= ECsInputEvent::Stationary;
+	Info.Last_Event = ECsInputEvent::Stationary;
 }
 
 void UCsInput_Rotation::Raw(const FRotator &Rotation)

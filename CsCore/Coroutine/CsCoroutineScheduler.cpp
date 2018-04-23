@@ -186,7 +186,7 @@ struct FCsRoutine* UCsCoroutineScheduler::Allocate(FCsCoroutinePayload* Payload)
 				World = Payload->Actor->GetWorld();
 			if (Payload->Object)
 				World = Payload->Object->GetWorld();
-
+			
 			const float CurrentTime = World ? World->GetTimeSeconds() : UCsCommon::GetCurrentDateTimeSeconds();
 
 			if (Payload->Routine)

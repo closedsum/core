@@ -7,7 +7,7 @@ namespace CgCore
 
     public class CgInput_Rotation : CgInput_Base
     {
-        public class CgInputRotation_Event : TCgDelegate_TwoParams<MonoBehaviour, Vector3> { }
+        public class CgInputRotation_Event : TCgMulticastDelegate_TwoParams<MonoBehaviour, Vector3> { }
 
         #region "Data Members"
 
@@ -84,7 +84,7 @@ namespace CgCore
             Broadcast(e, Manager_Input.InputOwner, rotation);
         }
 
-        public void AddEvent(ECgInputEvent e, CgInputRotation_Event.Event_TwoParams del)
+        public void AddEvent(ECgInputEvent e, CgInputRotation_Event.Event del)
         {
             CgInputRotation_Event handler;
             Events.TryGetValue(e, out handler);

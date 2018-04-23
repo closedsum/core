@@ -66,6 +66,7 @@
         public TCgConsoleVariable(string inName, T inValue, string inDescription, int inFlag)
         {
             Name = inName;
+            Value = new TCgPrimitiveType<T>();
             Set(inValue);
             Description = inDescription;
             Flag = inFlag;
@@ -85,15 +86,21 @@
 
         public string Set(params string[] args)
         {
+            // Check at least ONE argument is passed
             if (args.Length == 0)
                 return "Failed to set " + Name;
+            // Check argument is of type T
+            object o = Convert.ChangeType((object)args[0], typeof(T));
+
+            if (o == null)
+                return "Invalid argument for " + Name + ". Must be type of " + typeof(T);
 
             Value.Set((T)Convert.ChangeType((object)args[0], typeof(T)));
 
             return Name + " set to " + Value.ToString();
         }
 
-        public void AddEvent(TCgDelegate_OneParam<T>.Event_OneParam del)
+        public void AddEvent(TCgMulticastDelegate_OneParam<T>.Event del)
         {
             Value.OnChange_Event.Add(del);
         }
@@ -103,7 +110,7 @@
     {
         public CgConsoleVariableLog(string inName, bool inValue, string inDescription, int inFlag) : base(inName, inValue, inDescription, inFlag) { }
 
-        public bool Show()
+        public bool Log()
         {
             return Get();
         }

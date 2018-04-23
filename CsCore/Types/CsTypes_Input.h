@@ -274,7 +274,7 @@ typedef TCsInputAction(*TCsStringToInputAction)(const FString&);
 								TCsStringToInputAction StringToInputAction;
 
 #define CS_DEFINE_INPUT_ACTION	InputAction_MAX = ECsInputAction::ECsInputAction_MAX;\
-								INPUT_ACTION_MAX = (uint8)InputAction_MAX \
+								INPUT_ACTION_MAX = (uint8)InputAction_MAX; \
 								InputActionToString = &ECsInputAction::ToString; \
 								StringToInputAction = &ECsInputAction::ToType;
 

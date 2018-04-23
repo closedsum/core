@@ -7,8 +7,6 @@ public delegate string ConsoleCommandCallback(params string[] args);
 public class ConsoleCommandsRepository
 {
     private static ConsoleCommandsRepository instance;
-    private Dictionary<string, ConsoleCommandCallback> repository;
-
     public static ConsoleCommandsRepository Instance
     {
         get
@@ -21,26 +19,28 @@ public class ConsoleCommandsRepository
         }
     }
 
+    private Dictionary<string, ConsoleCommandCallback> Repository;
+
     public ConsoleCommandsRepository()
     {
-        repository = new Dictionary<string, ConsoleCommandCallback>();
+        Repository = new Dictionary<string, ConsoleCommandCallback>();
     }
 
     public void RegisterCommand(string command, ConsoleCommandCallback callback)
     {
-        repository[command] = new ConsoleCommandCallback(callback);
+        Repository[command] = new ConsoleCommandCallback(callback);
     }
 
     public bool HasCommand(string command)
     {
-        return repository.ContainsKey(command);
+        return Repository.ContainsKey(command);
     }
 
     public List<string> SearchCommands(string str)
     {
-        string[] keys = new string[repository.Count];
+        string[] keys = new string[Repository.Count];
 
-        repository.Keys.CopyTo(keys, 0);
+        Repository.Keys.CopyTo(keys, 0);
 
         List<string> output = new List<string>();
 
@@ -56,7 +56,7 @@ public class ConsoleCommandsRepository
     {
         if (HasCommand(command))
         {
-            return repository[command](args);
+            return Repository[command](args);
         }
         else
         {

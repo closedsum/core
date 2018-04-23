@@ -467,7 +467,7 @@ public:
 		}
 		deltaSeconds = inDeltaSeconds;
 		elapsedTime += deltaSeconds;
-		tickCount++;
+		++tickCount;
 		(*coroutine)(self);
 
 		if (index == CS_ROUTINE_END)

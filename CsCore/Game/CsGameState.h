@@ -93,6 +93,46 @@ namespace ECsGameStateOnBoardState
 #define ECS_GAME_STATE_ONBOARD_STATE_MAX (uint8)ECsGameStateOnBoardState::ECsGameStateOnBoardState_MAX
 typedef ECsGameStateOnBoardState::Type TCsGameStateOnBoardState;
 
+namespace ECsGameStateRoutine
+{
+	enum Type
+	{
+		OnBoard_Internal,
+		ECsGameStateRoutine_MAX,
+	};
+}
+
+#define ECS_ROUTINE_GAME_STATE_MAX (uint8)ECsGameStateRoutine::ECsGameStateRoutine_MAX
+typedef ECsGameStateRoutine::Type TCsGameStateRoutine;
+
+namespace ECsGameStateRoutine
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString OnBoard_Internal = TCsString(TEXT("OnBoard_Internal"), TEXT("onboard_internal"), TEXT("onboard internal"));
+	}
+
+	namespace Ref
+	{
+		const TCsGameStateRoutine OnBoard_Internal = Type::OnBoard_Internal;
+		const TCsGameStateRoutine ECsGameStateRoutine_MAX = Type::ECsGameStateRoutine_MAX;
+	}
+
+	FORCEINLINE const FString& ToString(const Type &EType)
+	{
+		if (EType == Type::OnBoard_Internal) { return Str::OnBoard_Internal.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE const Type& ToType(const FString &String)
+	{
+		if (String == Str::OnBoard_Internal) { return Ref::OnBoard_Internal; }
+		return Ref::ECsGameStateRoutine_MAX;
+	}
+}
+
 #pragma endregion Enums
 
 struct FCsPlayerStateMappingRelationship

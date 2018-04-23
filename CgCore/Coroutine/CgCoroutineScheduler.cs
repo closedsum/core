@@ -263,6 +263,9 @@ namespace CgCore
 
         public void LogTransaction(string functionName, ECgCoroutineTransaction transaction, CgRoutine r)
         {
+            if (!CgCVars.LogCoroutineTransactions.Log())
+                return;
+
             string transactionAsString = transaction.ToString() + "ing (Reason=" + r.EndReason.ToString() + ")";
             string schedule            = r.Schedule.ToString();
 

@@ -1895,10 +1895,10 @@ FCsRoutine* UCsCommon::ScaleActorOverTime(const TCsCoroutineSchedule &ScheduleTy
 PT_THREAD(UCsCommon::ScaleActorOverTime_Internal(struct FCsRoutine* r))
 {
 	AActor* a			     = r->GetActor();
-	UCsCoroutineScheduler* s = r->scheduler;
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 	UWorld* w			     = a->GetWorld();
 
-	const float CurrentTime = w->TimeSeconds;
+	const float CurrentTime = w->GetTimeSeconds();
 	const float StartTime	= r->timers[0];
 	const float MaxTime		= r->floats[2];
 
@@ -2000,10 +2000,10 @@ FCsRoutine* UCsCommon::ScaleActorOverTime_AsCurve(const TCsCoroutineSchedule &Sc
 PT_THREAD(UCsCommon::ScaleActorOverTime_AsCurve_Internal(struct FCsRoutine* r))
 {
 	AActor* a				 = r->GetActor();
-	UCsCoroutineScheduler* s = r->scheduler;
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 	UWorld* w				 = a->GetWorld();
 
-	const float CurrentTime = w->TimeSeconds;
+	const float CurrentTime = w->GetTimeSeconds();
 	const float StartTime   = r->timers[0];
 	const float MaxTime     = r->floats[2];
 
@@ -2104,10 +2104,10 @@ FCsRoutine* UCsCommon::MoveActorOverTime(const TCsCoroutineSchedule &ScheduleTyp
 PT_THREAD(UCsCommon::MoveActorOverTime_Internal(struct FCsRoutine* r))
 {
 	AActor* a			     = r->GetActor();
-	UCsCoroutineScheduler* s = r->scheduler;
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 	UWorld* w			     = a->GetWorld();
 
-	const float CurrentTime = w->TimeSeconds;
+	const float CurrentTime = w->GetTimeSeconds();
 	const float StartTime   = r->timers[0];
 	const float MaxTime     = r->floats[0];
 
@@ -2174,10 +2174,10 @@ FCsRoutine* UCsCommon::DestroyMaterialInstanceDynamic(const TCsCoroutineSchedule
 PT_THREAD(UCsCommon::DestroyMaterialInstanceDynamic_Internal(struct FCsRoutine* r))
 {
 	UMaterialInstanceDynamic* m = Cast<UMaterialInstanceDynamic>(r->GetRObject());
-	UCsCoroutineScheduler* s	= r->scheduler;
+	UCsCoroutineScheduler* s	= UCsCoroutineScheduler::Get();
 	UWorld* w					= m->GetWorld();
 
-	const float CurrentTime = w->TimeSeconds;
+	const float CurrentTime = w->GetTimeSeconds();
 	const float StartTime   = r->startTime;
 
 	CS_COROUTINE_BEGIN(r);
@@ -2261,10 +2261,10 @@ FCsRoutine* UCsCommon::FadeCameraOverTime(const TCsCoroutineSchedule &ScheduleTy
 PT_THREAD(UCsCommon::FadeCameraOverTime_Internal(struct FCsRoutine* r))
 {
 	APlayerController* pc    = Cast<APlayerController>(r->GetRObject());
-	UCsCoroutineScheduler* s = r->scheduler;
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 	UWorld* w			     = pc->GetWorld();
 
-	const float CurrentTime = w->TimeSeconds;
+	const float CurrentTime = w->GetTimeSeconds();
 	const float StartTime   = r->timers[0];
 	const float MaxTime		= r->floats[2];
 

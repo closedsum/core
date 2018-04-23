@@ -305,7 +305,7 @@ CS_COROUTINE(ACsGameState, OnBoard_Internal)
 {
 	ACsGameState* gs		 = Cast<ACsGameState>(r->GetActor());
 	UCsGameInstance* gi		 = Cast<UCsGameInstance>(gs->GetGameInstance());
-	UCsCoroutineScheduler* s = r->scheduler;
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 	UWorld* w				 = gs->GetWorld();
 	
 	ACsPlayerController* pc = UCsCommon::GetLocalPlayerController<ACsPlayerController>(w);

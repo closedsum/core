@@ -1148,7 +1148,7 @@ void ACsWeapon::PlayAnimation_Reload()
 CS_COROUTINE(ACsWeapon, PlayAnimation_Reload_Internal)
 {
 	ACsWeapon* mw			 = Cast<ACsWeapon>(r->GetActor());
-	UCsCoroutineScheduler* s = r->scheduler;
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 	UWorld* w				 = mw->GetWorld();
 
 	const TCsWeaponAnim ReloadAnim = mw->ReloadAnim;
@@ -1505,7 +1505,7 @@ void ACsWeapon::StartChargeFire(const TCsWeaponFireMode &FireMode)
 CS_COROUTINE(ACsWeapon, StartChargeFire_Internal)
 {
 	ACsWeapon* mw			 = Cast<ACsWeapon>(r->GetActor());
-	UCsCoroutineScheduler* s = r->scheduler;
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 	UWorld* w				 = mw->GetWorld();
 
 	r->timers[CS_FIRST]		+= r->deltaSeconds;
@@ -1719,7 +1719,7 @@ void ACsWeapon::FireWeapon(const TCsWeaponFireMode &FireMode)
 CS_COROUTINE(ACsWeapon, FireWeapon_Internal)
 {
 	ACsWeapon* mw			 = Cast<ACsWeapon>(r->GetActor());
-	UCsCoroutineScheduler* s = r->scheduler;
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 	UWorld* w				 = mw->GetWorld();
 
 	const TCsWeaponFireMode FireMode = (TCsWeaponFireMode)r->ints[0];
@@ -1980,7 +1980,7 @@ void ACsWeapon::DrawFireProjectile(class ACsProjectile* Projectile, const FVecto
 CS_COROUTINE(ACsWeapon, DrawFireProjectile_Internal)
 {
 	ACsProjectile* p		 = Cast<ACsProjectile>(r->GetRObject());
-	UCsCoroutineScheduler* s = r->scheduler;
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 	UWorld* w				 = p->GetWorld();
 
 	const FVector& Start	  = r->vectors[0];

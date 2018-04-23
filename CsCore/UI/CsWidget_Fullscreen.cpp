@@ -124,10 +124,10 @@ void UCsWidget_Fullscreen::FadeIn(const TEnumAsByte<ECsEasingType::Type> &Easing
 CS_COROUTINE(UCsWidget_Fullscreen, Fade_Internal)
 {
 	UCsWidget_Fullscreen* wd = Cast<UCsWidget_Fullscreen>(r->GetRObject());
-	UCsCoroutineScheduler* s = r->scheduler;
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 	UWorld* w				 = wd->GetWorld();
 
-	const float CurrentTime = w->TimeSeconds;
+	const float CurrentTime = w->GetTimeSeconds();
 	const float StartTime   = r->startTime;
 	const float MaxTime     = r->floats[2];
 

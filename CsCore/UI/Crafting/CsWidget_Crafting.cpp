@@ -417,7 +417,7 @@ void UCsWidget_Crafting::IncrementCount()
 CS_COROUTINE(UCsWidget_Crafting, IncrementCount_Internal)
 {
 	UCsWidget_Crafting* c	 = Cast<UCsWidget_Crafting>(r->GetRObject());
-	UCsCoroutineScheduler* s = r->scheduler;
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 	UWorld* w				 = c->GetWorld();
 
 	const float CurrentTime = w->GetTimeSeconds();
@@ -549,7 +549,7 @@ void UCsWidget_Crafting::DecrementCount()
 CS_COROUTINE(UCsWidget_Crafting, DecrementCount_Internal)
 {
 	UCsWidget_Crafting* c	 = Cast<UCsWidget_Crafting>(r->GetRObject());
-	UCsCoroutineScheduler* s = r->scheduler;
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 	UWorld* w				 = c->GetWorld();
 
 	const float CurrentTime = w->GetTimeSeconds();
@@ -738,7 +738,7 @@ void UCsWidget_Crafting::UpdateProgress(const uint64 &PayloadId)
 CS_COROUTINE(UCsWidget_Crafting, UpdateProgress_Internal)
 {
 	UCsWidget_Crafting* c	 = Cast<UCsWidget_Crafting>(r->GetRObject());
-	UCsCoroutineScheduler* s = r->scheduler;
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 	UWorld* w				 = c->GetWorld();
 
 	const float CurrentTime = w->GetTimeSeconds();

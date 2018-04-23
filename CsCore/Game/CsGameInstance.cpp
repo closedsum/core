@@ -242,8 +242,7 @@ void UCsGameInstance::OnBoard()
 CS_COROUTINE(UCsGameInstance, OnBoard_Internal)
 {
 	UCsGameInstance* gi		 = Cast<UCsGameInstance>(r->GetRObject());
-	UCsCoroutineScheduler* s = r->scheduler;
-	UWorld* w				 = gi->GetWorld();
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 
 	CS_COROUTINE_BEGIN(r);
 
@@ -309,7 +308,7 @@ void UCsGameInstance::LoadDataMapping()
 PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(struct FCsRoutine* r))
 {
 	UCsGameInstance* gi			= Cast<UCsGameInstance>(r->GetRObject());
-	UCsCoroutineScheduler* s	= r->scheduler;
+	UCsCoroutineScheduler* s	= UCsCoroutineScheduler::Get();
 	ACsDataMapping* dataMapping = gi->DataMapping;
 
 	CS_COROUTINE_BEGIN(r);
@@ -472,7 +471,7 @@ void UCsGameInstance::CreateFullscreenWidget()
 CS_COROUTINE(UCsGameInstance, CreateFullscreenWidget_Internal)
 {
 	UCsGameInstance* gi		 = r->GetRObject<UCsGameInstance>();
-	UCsCoroutineScheduler* s = r->scheduler;
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 	UWorld* w				 = gi->GetWorld();
 
 	CS_COROUTINE_BEGIN(r);
@@ -546,7 +545,7 @@ void UCsGameInstance::HideMouseCursor()
 CS_COROUTINE(UCsGameInstance, HideMouseCursor_Internal)
 {
 	UCsGameInstance* gi		 = r->GetRObject<UCsGameInstance>();
-	UCsCoroutineScheduler* s = r->scheduler;
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 
 	CS_COROUTINE_BEGIN(r);
 
@@ -612,7 +611,7 @@ void UCsGameInstance::PerformLevelTransition(const FString &Level, const FString
 CS_COROUTINE(UCsGameInstance, PerformLevelTransition_Internal)
 {
 	UCsGameInstance* gi		 = r->GetRObject<UCsGameInstance>();
-	UCsCoroutineScheduler* s = r->scheduler;
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 	UWorld* w				 = gi->GetWorld();
 
 	UCsWidget_Fullscreen* Widget = Cast<UCsWidget_Fullscreen>(gi->FullscreenWidget);

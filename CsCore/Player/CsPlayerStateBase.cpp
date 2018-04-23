@@ -168,7 +168,7 @@ void ACsPlayerStateBase::OnBoard()
 CS_COROUTINE(ACsPlayerStateBase, OnBoard_Internal)
 {
 	ACsPlayerStateBase* ps	 = r->GetActor<ACsPlayerStateBase>();
-	UCsCoroutineScheduler* s = r->scheduler;
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 
 	ps->OnTick_OnBoard();
 
@@ -594,7 +594,7 @@ void ACsPlayerStateBase::RequestUniqueMappingId_AI(ACsPlayerStateBase* Requestin
 CS_COROUTINE(ACsPlayerStateBase, RequestUniqueMappingId_AI_Internal)
 {
 	ACsPlayerStateBase* ps   = r->GetActor<ACsPlayerStateBase>();
-	UCsCoroutineScheduler* s = r->scheduler;
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 	UWorld* w				 = ps->GetWorld();
 
 	ACsPlayerStateBase* ClientPlayerState	  = r->GetObjectAt<ACsPlayerStateBase>(0);

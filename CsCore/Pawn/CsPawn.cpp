@@ -217,7 +217,7 @@ void ACsPawn::HandleRespawnTimer()
 CS_COROUTINE(ACsPawn, HandleRespawnTimer_Internal)
 {
 	ACsPawn* p				 = r->GetActor<ACsPawn>();
-	UCsCoroutineScheduler* s = r->scheduler;
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 	UWorld* w				 = p->GetWorld();
 	ACsPlayerStateBase* ps	 = Cast<ACsPlayerStateBase>(p->PlayerState);
 

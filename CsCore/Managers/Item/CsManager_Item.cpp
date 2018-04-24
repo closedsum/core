@@ -643,7 +643,7 @@ void ACsManager_Item::SaveHistory(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FC
 	JsonWriter->WriteValue(ECsFileItemHistoryHeaderCachedString::Str::OwnerName, ItemHistory->OwnerName);
 
 	// Members
-	JsonWriter->WriteArrayStart(ECsFileItemHistoryHeaderCachedString::Str::Members);
+	JsonWriter->WriteObjectStart(ECsFileItemHistoryHeaderCachedString::Str::Members);
 
 		TArray<FName> OutKeys;
 		ItemHistory->Members.GetKeys(OutKeys);
@@ -652,8 +652,6 @@ void ACsManager_Item::SaveHistory(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FC
 
 		for (int32 I = 0; I < Count; ++I)
 		{
-			JsonWriter->WriteObjectStart();
-
 			FCsItemMemberValue* Value = ItemHistory->Members.Find(OutKeys[I]);
 
 			const TCsItemMemberValueType ValueType = Value->Type;
@@ -673,10 +671,8 @@ void ACsManager_Item::SaveHistory(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FC
 			else
 			if (Value->Type == ECsItemMemberValueType::Float)
 				JsonWriter->WriteValue(KeyName, Value->GetFloat());
-
-			JsonWriter->WriteObjectEnd();
 		}
-	JsonWriter->WriteArrayEnd();
+	JsonWriter->WriteObjectEnd();
 }
 
 void ACsManager_Item::SaveActiveItems()
@@ -1027,33 +1023,36 @@ void ACsManager_Item::LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCs
 
 	// Members
 	{
-		const TArray<TSharedPtr<FJsonValue>>& JsonArray = JsonObject->Values.Find(ECsFileItemHistoryHeaderCachedString::Str::Members)->Get()->AsArray();
+		const TSharedPtr<FJsonObject>& Object = JsonObject->Values.Find(ECsFileItemHistoryHeaderCachedString::Str::Members)->Get()->AsObject();
 
 		TArray<FCsItemMemberDescription>* Members = Item->GetData()->GetMembers();
 
-		const uint8 ArrayCount  = JsonArray.Num();
+		TArray<FString> Keys;
+		Object->Values.GetKeys(Keys);
+		const uint8 KeyCount    = Keys.Num();
 		const uint8 MemberCount	= Members->Num();
-		const uint8 Count		= FMath::Max(ArrayCount, MemberCount);
-
+		const uint8 Count		= FMath::Max(KeyCount, MemberCount);
+	
 		for (uint8 I = 0; I < Count; ++I)
 		{
 			if (I >= MemberCount)
 				continue;
-
+			
 			FCsItemMemberDescription& Member = (*Members)[I];
-
-			const FString MemberNameAsString = Member.Name.ToString();
-			const FName& MemberName			 = Member.Name;
 
 			const TCsItemMemberValueType& Type = Member.Type;
 
 			FCsItemMemberValue Value;
 			Value.Type = Type;
 
-			if (I < ArrayCount)
-			{ 
-				TSharedPtr<FJsonObject> Object = JsonArray[I]->AsObject();
+			const FName& MemberName			 = Member.Name;
+			const FString MemberNameAsString = MemberName.ToString();
 
+			const TSharedPtr<FJsonValue>* JsonValue = Object->Values.Find(MemberNameAsString);
+			bool IsValidKey							= JsonValue != nullptr && I < KeyCount;
+
+			if (IsValidKey)
+			{ 
 				// bool
 				if (Type == ECsItemMemberValueType::Bool)
 				{
@@ -1084,7 +1083,7 @@ void ACsManager_Item::LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCs
 			}
 			else
 			{
-				UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::LoadHistory: Change in Member Count from %d -> %d. Using default value for Member: %s."), ArrayCount, MemberCount, *MemberNameAsString);
+				UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::LoadHistory: Change in Member Count from %d -> %d. Using default value for Member: %s."), KeyCount, MemberCount, *MemberNameAsString);
 			}
 			ItemHistory->Members.Add(MemberName, Value);
 		}

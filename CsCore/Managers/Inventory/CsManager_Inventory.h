@@ -307,6 +307,8 @@ class CSCORE_API ACsManager_Inventory : public AActor
 
 	void LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsInventoryTransaction::Type> &Transaction, const FCsItem* const Item);
 
+	virtual uint8 GetFirstAvailableBagIndex(const TCsItemType &ItemType);
+
 // Add
 #pragma region
 public:

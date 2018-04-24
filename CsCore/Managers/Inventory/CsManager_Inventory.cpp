@@ -280,6 +280,11 @@ void ACsManager_Inventory::LogTransaction(const FString &FunctionName, const TEn
 	}
 }
 
+uint8 ACsManager_Inventory::GetFirstAvailableBagIndex(const TCsItemType &ItemType)
+{
+	return 0;
+}
+
 // Add
 #pragma region
 

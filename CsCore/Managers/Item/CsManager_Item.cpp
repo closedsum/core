@@ -47,8 +47,6 @@ ACsManager_Item::ACsManager_Item(const FObjectInitializer& ObjectInitializer) : 
 		Pool[I].Init(I);
 	}
 
-	UniqueIdIndex = CS_ITEM_UNIQUE_ID_START_INDEX;
-
 	SaveDirectory = TEXT("Items/");
 	
 	PerformingAsyncSaveHandle.Set(&PerformingAsyncSave);
@@ -65,8 +63,9 @@ void ACsManager_Item::OnTick(const float &DeltaSeconds)
 	OnTick_Handle_DeAllocateQueue();
 }
 
-uint64 ACsManager_Item::GetUniqueId()
+FGuid ACsManager_Item::GetUniqueId()
 {
+	/*
 	const uint64 Size = AvailableUnqiueIds.Num();
 
 	if (Size > CS_EMPTY)
@@ -77,6 +76,8 @@ uint64 ACsManager_Item::GetUniqueId()
 	}
 	UniqueIdIndex++;
 	return UniqueIdIndex;
+	*/
+	return FGuid::NewGuid();
 }
 
 void ACsManager_Item::LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, const FCsItem* const Item)
@@ -86,7 +87,7 @@ void ACsManager_Item::LogTransaction(const FString &FunctionName, const TEnumAsB
 		const FString& TransactionAsString = ECsPoolTransaction::ToActionString(Transaction);
 
 		const FString ItemName				  = Item->ShortCode.ToString();
-		const FString Id					  = FString::Printf(TEXT("%llu"), Item->UniqueId);
+		const FString Id					  = Item->Id.ToString();
 		const FString DataName				  = Item->GetData()->ShortCode.ToString();
 		const ACsData_Interactive* Data_Actor = Item->GetData_Actor();
 		const FString DataActorName			  = Data_Actor ? Data_Actor->ShortCode.ToString() : ECsCachedString::Str::Empty;
@@ -131,9 +132,9 @@ FCsItem* ACsManager_Item::Allocate_Internal()
 FCsItem* ACsManager_Item::Allocate()
 {
 	FCsItem* Item  = Allocate_Internal();
-	Item->UniqueId = GetUniqueId();
+	Item->Id	   = GetUniqueId();
 
-	ActiveItems.Add(Item->UniqueId, Item);
+	ActiveItems.Add(Item->Id, Item);
 	return Item;
 }
 
@@ -186,7 +187,7 @@ FCsItem* ACsManager_Item::Allocate(const FName &ShortCode, UObject* ItemOwner)
 
 void ACsManager_Item::AddActiveItemByOwnerId(FCsItem* Item)
 {
-	const uint64& OwnerId = Item->GetCurrentHistory(ProductId).OwnerId;
+	const TCsItemId& OwnerId = Item->GetCurrentHistory(ProductId).OwnerId;
 
 	if (TArray<FCsItem*>* Items = ActiveItemsByOwnerId.Find(OwnerId))
 	{
@@ -203,7 +204,7 @@ void ACsManager_Item::AddActiveItemByOwnerId(FCsItem* Item)
 void ACsManager_Item::ChangeActiveItemOwnerInfo(FCsItem* Item, UObject* ItemOwner)
 {
 	// Remove OLD OwnerId
-	const uint64& OwnerId = Item->GetCurrentHistory(ProductId).OwnerId;
+	const TCsItemId& OwnerId = Item->GetCurrentHistory(ProductId).OwnerId;
 
 	if (TArray<FCsItem*>* Items = ActiveItemsByOwnerId.Find(OwnerId))
 	{
@@ -243,21 +244,21 @@ void ACsManager_Item::SetActiveItemData(FCsItem* Item)
 // Get
 #pragma region
 
-FCsItem* ACsManager_Item::GetItem(const uint64 &Id)
+FCsItem* ACsManager_Item::GetItem(const TCsItemId &Id)
 {
 	if (FCsItem** ItemPtr = ActiveItems.Find(Id))
 		return *ItemPtr;
 
 	if (CsCVarLogManagerItemActionGetFail->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::GetItem: Failed to find an Item with Id: %d"), Id);
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::GetItem: Failed to find an Item with Id: %s"), *(Id.ToString()));
 	}
 	return nullptr;
 }
 
 void ACsManager_Item::GetItemsByOwnerType(const TCsItemOwner &OwnerType, TArray<FCsItem*> &OutItems)
 {
-	TArray<uint64> OutKeys;
+	TArray<TCsItemId> OutKeys;
 	ActiveItems.GetKeys(OutKeys);
 
 	const int32 Count = OutKeys.Num();
@@ -275,7 +276,7 @@ void ACsManager_Item::GetItemsByOwnerType(const TCsItemOwner &OwnerType, TArray<
 	}
 }
 
-void ACsManager_Item::GetItemsByOwnerId(const uint64 &OwnerId, TArray<FCsItem*> &OutItems)
+void ACsManager_Item::GetItemsByOwnerId(const TCsItemOwnerId &OwnerId, TArray<FCsItem*> &OutItems)
 {
 	TArray<FCsItem*>* Items = ActiveItemsByOwnerId.Find(OwnerId);
 
@@ -283,7 +284,7 @@ void ACsManager_Item::GetItemsByOwnerId(const uint64 &OwnerId, TArray<FCsItem*> 
 	{
 		if (CsCVarLogManagerItemActionGetFail->GetInt() == CS_CVAR_SHOW_LOG)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::GetItemsByOwnerId: Failed to find any ActiveItems with OwnerId: %d"), OwnerId);
+			UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::GetItemsByOwnerId: Failed to find any ActiveItems with OwnerId: %s"), *(OwnerId.ToString()));
 		}
 		OutItems.Reset();
 		return;
@@ -297,7 +298,7 @@ void ACsManager_Item::GetItemsByOwnerId(const uint64 &OwnerId, TArray<FCsItem*> 
 	}
 }
 
-void ACsManager_Item::GetItems(const TArray<uint64> &Ids, TArray<FCsItem*> &OutItems)
+void ACsManager_Item::GetItems(const TArray<TCsItemId> &Ids, TArray<FCsItem*> &OutItems)
 {
 	const int32 Count = Ids.Num();
 
@@ -311,7 +312,7 @@ void ACsManager_Item::GetItems(const TArray<uint64> &Ids, TArray<FCsItem*> &OutI
 		{
 			if (CsCVarLogManagerItemActionGetFail->GetInt() == CS_CVAR_SHOW_LOG)
 			{
-				UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::GetItems: Failed to find an Item with Id: %d"), Ids[I]);
+				UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::GetItems: Failed to find an Item with Id: %d"), *(Ids[I].ToString()));
 			}
 		}
 	}
@@ -322,13 +323,13 @@ void ACsManager_Item::GetItems(const TArray<uint64> &Ids, TArray<FCsItem*> &OutI
 // DeAllocate
 #pragma region
 
-void ACsManager_Item::DeAllocate(const uint64 &Id)
+void ACsManager_Item::DeAllocate(const FGuid &Id)
 {
 	FCsItem* Item = *(ActiveItems.Find(Id));
 
 	if (!Item)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::DeAllocate: Attempting to deallocate an Item with UniqueId: %d, but it is already deallocated."), Id);
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::DeAllocate: Attempting to deallocate an Item with Id: %s, but it is already deallocated."), *(Id.ToString()));
 		return;
 	}
 
@@ -352,7 +353,7 @@ void ACsManager_Item::DeAllocate(const uint64 &Id)
 			IFileManager::Get().Delete(*Filename, true, true, true);
 		}
 	}
-	AvailableUnqiueIds.Add(Item->UniqueId);
+
 	Item->Reset();
 	Item->Data.Reset();
 	Item->Data = nullptr;
@@ -362,7 +363,7 @@ void ACsManager_Item::DeAllocate(const uint64 &Id)
 
 void ACsManager_Item::DeAllocate(FCsItem* Item)
 {
-	DeAllocate(Item->UniqueId);
+	DeAllocate(Item->Id);
 }
 
 void ACsManager_Item::OnTick_Handle_DeAllocateQueue()
@@ -390,7 +391,7 @@ void ACsManager_Item::OnTick_Handle_DeAllocateQueue()
 				IFileManager::Get().Delete(*Filename, true, true, true);
 			}
 		}
-		AvailableUnqiueIds.Add(Item->UniqueId);
+
 		Item->Reset();
 		Item->Data.Reset();
 		Item->Data = nullptr;
@@ -417,7 +418,7 @@ bool ACsManager_Item::Transfer_Internal(FCsItem* Item, UObject* Instigator, ACsM
 			const FString OwnerName = Instigator->GetName();
 			const FString& Type = Item->TypeAsString;
 
-			UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::Transfer_Internal: %s's Inventory is FULL. DeAllocating %s with Id: %d"), *OwnerName, *Type, Item->UniqueId);
+			UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::Transfer_Internal: %s's Inventory is FULL. DeAllocating %s with Id: %s"), *OwnerName, *Type, *(Item->Id.ToString()));
 			DeAllocate(Item);
 			return false;
 		}
@@ -474,7 +475,7 @@ bool ACsManager_Item::Transfer(FCsItem* Item, UObject* Instigator)
 	if (Transfer_Internal(Item, Instigator, Manager_Inventory))
 		return true;
 
-	UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::Transfer: Failed to Trasfer Item: %s with Id: %d"), *(Item->TypeAsString), Item->UniqueId);
+	UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::Transfer: Failed to Trasfer Item: %s with Id: %d"), *(Item->TypeAsString), *(Item->Id.ToString()));
 	return false;
 }
 
@@ -551,7 +552,7 @@ bool ACsManager_Item::Transfer(TArray<FCsItem*> &Items, UObject* Instigator, con
 
 void ACsManager_Item::SetItemFileName(FCsItem* Item)
 {
-	const FString Id = UCsCommon::UInt64ToString(Item->UniqueId);
+	const FString Id = Item->Id.ToString();
 	Item->FileName   = Id + TEXT("_") + (*ItemTypeToString)(Item->Type);
 }
 
@@ -580,8 +581,8 @@ void ACsManager_Item::Save(FCsItem* Item)
 	{
 		JsonWriter->WriteObjectStart(ECsFileItemHeaderCachedString::Str::Header);
 
-			// UniqueId
-			JsonWriter->WriteValue(ECsFileItemHeaderCachedString::Str::UniqueId, FString::Printf(TEXT("%llu"), Item->UniqueId));
+			// Id
+			JsonWriter->WriteValue(ECsFileItemHeaderCachedString::Str::Id, Item->Id.ToString());
 			// ShortCode
 			JsonWriter->WriteValue(ECsFileItemHeaderCachedString::Str::ShortCode, Item->ShortCode.ToString());
 			// DisplayName
@@ -600,7 +601,7 @@ void ACsManager_Item::Save(FCsItem* Item)
 
 				for (int32 I = 0; I < Count; ++I)
 				{
-					JsonWriter->WriteValue(FString::FromInt(I), FString::Printf(TEXT("%llu"), Item->Contents[I]));
+					JsonWriter->WriteValue(FString::FromInt(I), Item->Contents[I].ToString());
 				}
 			JsonWriter->WriteObjectEnd();
 
@@ -678,7 +679,7 @@ void ACsManager_Item::SaveProduct(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FC
 void ACsManager_Item::SaveHistory(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FCsItemHistory* ItemHistory)
 {
 	// OwnerId
-	JsonWriter->WriteValue(ECsFileItemHistoryHeaderCachedString::Str::OwnerId, FString::Printf(TEXT("%llu"), ItemHistory->OwnerId));
+	JsonWriter->WriteValue(ECsFileItemHistoryHeaderCachedString::Str::OwnerId, ItemHistory->OwnerId.ToString());
 	// OwnerType
 	JsonWriter->WriteValue(ECsFileItemHistoryHeaderCachedString::Str::OwnerType, (*ItemOwnerToString)(ItemHistory->OwnerType));
 	// OwnerName
@@ -719,15 +720,15 @@ void ACsManager_Item::SaveHistory(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FC
 
 void ACsManager_Item::SaveActiveItems()
 {
-	TArray<uint64> Keys;
+	TArray<TCsItemId> Keys;
 	ActiveItems.GetKeys(Keys);
 
 	const int32 Count = Keys.Num();
 
 	for (int32 I = 0; I < Count; ++I)
 	{
-		const uint64& Key = Keys[I];
-		FCsItem** ItemPtr = ActiveItems.Find(Key);
+		const TCsItemId& Key = Keys[I];
+		FCsItem** ItemPtr	 = ActiveItems.Find(Key);
 
 		Save(*ItemPtr);
 	}
@@ -878,8 +879,8 @@ void ACsManager_Item::PopulateExistingItems()
 				{
 					TSharedPtr<FJsonObject> JsonObject = JsonParsed->Values.Find(ECsFileItemHeaderCachedString::Str::Header)->Get()->AsObject();
 
-					// UniqueId
-					Item->UniqueId = FCString::Strtoui64(*(JsonObject->GetStringField(ECsFileItemHeaderCachedString::Str::UniqueId)), NULL, 10);
+					// Id
+					FGuid::Parse(JsonObject->GetStringField(ECsFileItemHeaderCachedString::Str::Id), Item->Id);
 					// ShortCode
 					Item->ShortCode = FName(*JsonObject->GetStringField(ECsFileItemHeaderCachedString::Str::ShortCode));
 					// DisplayName
@@ -903,13 +904,14 @@ void ACsManager_Item::PopulateExistingItems()
 
 					for (int32 I = 0; I < Count; ++I)
 					{
-						const FString& Key = Keys[I];
+						const FString& Key				 = Keys[I];
 						TSharedPtr<FJsonValue> JsonValue = *(Object->Values.Find(Key));
-						FString Value = JsonValue->AsString();
+						FString Value					 = JsonValue->AsString();
 
-						const uint64 UniqueId = FCString::Strtoui64(*Value, NULL, 10);
+						TCsItemId Id;
+						FGuid::Parse(Value, Id);
 
-						Item->Contents.Add(UniqueId);
+						Item->Contents.Add(Id);
 					}
 				}
 
@@ -940,7 +942,7 @@ void ACsManager_Item::PopulateExistingItems()
 
 				Item->IsSaved = true;
 
-				ActiveItems.Add(Item->UniqueId, Item);
+				ActiveItems.Add(Item->Id, Item);
 				Items.Add(Item);
 			}
 			else
@@ -950,28 +952,12 @@ void ACsManager_Item::PopulateExistingItems()
 		}
 	}
 
-	// Sort UniqueIds in ascending order
-	Items.Sort([](const FCsItem &A, const FCsItem &B) { return A.UniqueId < B.UniqueId; });
-
 	// Check / Validate Item Contents
 	const int32 ItemCount = Items.Num();
 
 	for (int32 I = 0; I < ItemCount; ++I)
 	{
 		FCsItem* Item = Items[I];
-
-		// Add any UniqueId that were NOT accounted for
-		if (I < ItemCount - 1)
-		{
-			const uint64 CurrentId = Item->UniqueId + 1;
-			FCsItem* NextItem	   = Items[I + 1];
-			const uint64& NextId   = NextItem->UniqueId;
-
-			for (uint64 J = CurrentId; J < NextId; ++J)
-			{
-				AvailableUnqiueIds.Add(J);
-			}
-		}
 
 		// Validate Item Contents
 		const int32 ContentCount = Item->Contents.Num();
@@ -1000,7 +986,7 @@ void ACsManager_Item::PopulateExistingItems()
 								const FString ItemName		= Item->ShortCode.ToString();
 								const FString OtherItemName = OtherItem->ShortCode.ToString();
 
-								UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::PopulateExistingItems: Item: %s with UniqueId: %d and Item: %s with UniqueId: %d share Content with UniqueId: %d."), *ItemName, Item->UniqueId, *OtherItemName, OtherItem->UniqueId, Item->Contents[M]);
+								UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::PopulateExistingItems: Item: %s with Id: %s and Item: %s with Id: %s share Content with UniqueId: %d."), *ItemName, *(Item->Id.ToString()), *OtherItemName, *(OtherItem->Id.ToString()), *(Item->Contents[M].ToString()));
 
 								ContentMismatch = true;
 							}
@@ -1013,7 +999,7 @@ void ACsManager_Item::PopulateExistingItems()
 			{
 				const FString ItemName = Item->ShortCode.ToString();
 
-				UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::PopulateExistingItems: DeAllocating Item: %s with UniqueId: %d because it shares some Content with other Items."), *ItemName, Item->UniqueId);
+				UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::PopulateExistingItems: DeAllocating Item: %s with Id: %s because it shares some Content with other Items."), *ItemName, *(Item->Id.ToString()));
 
 				DeAllocate(Item);
 			}
@@ -1085,7 +1071,7 @@ void ACsManager_Item::LoadProduct(TSharedPtr<class FJsonObject> &JsonObject, FCs
 void ACsManager_Item::LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCsItem* Item, FCsItemHistory* ItemHistory)
 {
 	// OwnerId
-	ItemHistory->OwnerId = FCString::Strtoui64(*(JsonObject->GetStringField(ECsFileItemHistoryHeaderCachedString::Str::OwnerId)), NULL, 10);
+	FGuid::Parse(JsonObject->GetStringField(ECsFileItemHistoryHeaderCachedString::Str::OwnerId), ItemHistory->OwnerId);
 	// OwnerType
 	ItemHistory->SetOwnerType((*StringToItemOwner)(JsonObject->GetStringField(ECsFileItemHistoryHeaderCachedString::Str::OwnerType)));
 	// OwnerName

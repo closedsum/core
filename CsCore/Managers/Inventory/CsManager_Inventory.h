@@ -154,7 +154,7 @@ struct FCsItemBagSlot
 
 			for (int32 I = Count - 1; I >= 0; --I)
 			{
-				if (Item->UniqueId == Items[I]->UniqueId)
+				if (Item->Id == Items[I]->Id)
 				{
 					Items.RemoveAt(I);
 					break;
@@ -278,7 +278,7 @@ class CSCORE_API ACsManager_Inventory : public AActor
 
 	CS_DECLARE_ITEM_TYPE
 
-	TMap<uint64, FCsItem*> Items;
+	TMap<TCsItemId, FCsItem*> Items;
 	TMap<FName, TArray<FCsItem*>> ItemMap;
 
 	uint8 BagCount;
@@ -290,12 +290,12 @@ class CSCORE_API ACsManager_Inventory : public AActor
 	bool IsEmpty();
 	bool IsFull(const uint8 &Bag, const FName &ShortCode);
 
-	virtual FCsItem* GetItem(const uint64 &Id);
+	virtual FCsItem* GetItem(const TCsItemId &Id);
 	virtual FCsItem* GetFirstItem(const FName &ShortCode);
 
 	void GetItems(const FName& ShortCode, const int32& Count, const TCsInventoryGetRequest &Request, TArray<FCsItem*> &OutItems);
 	void GetItems(const FName& ShortCode, const int32& Count, const TCsInventoryGetRequest &Request, const int32& State, TArray<FCsItem*> &OutItems);
-	void GetItems(const TArray<uint64> &Ids, TArray<FCsItem*> &OutItems);
+	void GetItems(const TArray<TCsItemId> &Ids, TArray<FCsItem*> &OutItems);
 
 	TMap<FName, uint16> ItemCountMap;
 
@@ -327,7 +327,7 @@ public:
 #pragma region
 private:
 
-	void RemoveItem(const uint64 &Id, const FString &FunctionName, const TEnumAsByte<ECsInventoryTransaction::Type> &Transaction, const bool &ShouldDestroy);
+	void RemoveItem(const TCsItemId &Id, const FString &FunctionName, const TEnumAsByte<ECsInventoryTransaction::Type> &Transaction, const bool &ShouldDestroy);
 	void RemoveItem(FCsItem* Item, const FString &FunctionName, const TEnumAsByte<ECsInventoryTransaction::Type> &Transaction, const bool &ShouldDestroy);
 
 public:
@@ -343,7 +343,7 @@ public:
 #pragma region
 private:
 
-	void ConsumeItem_Internal(const uint64 &Id);
+	void ConsumeItem_Internal(const TCsItemId &Id);
 
 public:
 
@@ -358,7 +358,7 @@ public:
 #pragma region
 private:
 
-	virtual void DropItem_Internal(const uint64 &Id);
+	virtual void DropItem_Internal(const TCsItemId &Id);
 
 public:
 

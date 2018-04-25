@@ -398,7 +398,7 @@ public:
 public:
 
 	UPROPERTY()
-	uint64 ItemOwnerId;
+	FGuid ItemOwnerId;
 
 #pragma endregion Items
 

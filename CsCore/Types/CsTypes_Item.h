@@ -111,7 +111,13 @@ typedef const TCsItemOwner&(*TCsStringToItemOwner)(const FString&);
 								ItemOwnerToString = &ECsItemOwner::ToString; \
 								StringToItemOwner = &ECsItemOwner::ToType;
 
-#define CS_WORLD_OWNER_ID 0
+namespace ECsItemOwnerId
+{
+	const FGuid None = FGuid();
+	const FGuid World = FGuid();
+}
+
+#define CS_WORLD_OWNER_ID ECsItemOwnerId::World
 
 #define CS_INVALID_INVENTORY_ITEM_BAG 255
 #define CS_INVALID_INVENTORY_ITEM_ROW 255
@@ -467,6 +473,8 @@ struct FCsItemMemberDescription
 	}
 };
 
+typedef FGuid TCsItemOwnerId;
+
 #define CS_INVALID_ITEM_OWNER 255
 
 USTRUCT(BlueprintType)
@@ -476,7 +484,7 @@ struct FCsItemHistory
 
 	/** OwnerId */
 	UPROPERTY()
-	uint64 OwnerId;
+	FGuid OwnerId;
 
 	TCsItemOwner OwnerType;
 
@@ -557,7 +565,7 @@ struct FCsItemHistory
 
 	void Reset()
 	{
-		OwnerId = 0;
+		OwnerId = ECsItemOwnerId::None;
 		OwnerType = (TCsItemOwner)0;
 		OwnerType_Script = CS_INVALID_ITEM_OWNER;
 		OwnerName = ECsCachedString::Str::Empty;
@@ -662,11 +670,13 @@ struct FCsItemProduct
 	void Reset()
 	{
 		Name = ECsCachedString::Str::Empty;
-		Id	 = FGuid();
+		Id	 = ECsItemOwnerId::None;
 		CurrentHistory.Reset();
 		PreviousHistories.Reset();
 	}
 };
+
+typedef FGuid TCsItemId;
 
 USTRUCT(BlueprintType)
 struct FCsItem
@@ -690,7 +700,7 @@ struct FCsItem
 	FString TypeAsString;
 
 	UPROPERTY()
-	uint64 UniqueId;
+	FGuid Id;
 	UPROPERTY()
 	FName ShortCode;
 	UPROPERTY()
@@ -703,7 +713,7 @@ struct FCsItem
 
 	/** Array of Item UniqueIds this Item is "Holding" */
 	UPROPERTY()
-	TArray<uint64> Contents;
+	TArray<FGuid> Contents;
 
 	TWeakObjectPtr<class ACsData_Item> Data;
 	/** Data for Actor spawned when Item leaves Inventory */
@@ -729,7 +739,7 @@ struct FCsItem
 		Type = B.Type;
 		Type_Script = B.Type_Script;
 		TypeAsString = B.TypeAsString;
-		UniqueId = B.UniqueId;
+		Id = B.Id;
 		ShortCode = B.ShortCode;
 		DisplayName = B.DisplayName;
 		FileName = B.FileName;
@@ -772,7 +782,7 @@ struct FCsItem
 		if (Type != B.Type) { return false; }
 		if (Type_Script != B.Type_Script) { return false; }
 		if (TypeAsString != B.TypeAsString) { return false; }
-		if (UniqueId != B.UniqueId) { return false; }
+		if (Id != B.Id) { return false; }
 		if (ShortCode != B.ShortCode) { return false; }
 		if (DisplayName != B.DisplayName) { return false; }
 		if (Created != B.Created) { return false; }
@@ -862,7 +872,7 @@ struct FCsItem
 		Type = (TCsItemType)0;
 		Type_Script  = CS_INVALID_ITEM_TYPE;
 		TypeAsString = ECsCachedString::Str::Empty;
-		UniqueId = 0;
+		Id = ECsItemOwnerId::None;
 		ShortCode = CS_INVALID_SHORT_CODE;
 		DisplayName = ECsCachedString::Str::Empty;
 		FileName = ECsCachedString::Str::Empty;
@@ -1156,7 +1166,7 @@ namespace ECsFileItemHeaderCachedString
 	namespace Str
 	{
 		const FString Header = TEXT("Header");
-		const FString UniqueId = TEXT("UniqueId");
+		const FString Id = TEXT("Id");
 		const FString ShortCode = TEXT("ShortCode");
 		const FString DisplayName = TEXT("DisplayName");
 		const FString Type = TEXT("Type");

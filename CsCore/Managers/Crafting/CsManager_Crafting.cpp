@@ -225,7 +225,7 @@ CS_COROUTINE(ACsManager_Crafting, CraftItems_Internal)
 						// Add to Contents
 						if (Ingredient.AddToContents)
 						{
-							CreatedItem->Contents.Add(ProcessedItems[K]->UniqueId);
+							CreatedItem->Contents.Add(ProcessedItems[K]->Id);
 							Manager_Inventory->HideItem(ProcessedItems[K]);
 						}
 					}

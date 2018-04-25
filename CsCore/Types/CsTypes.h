@@ -2252,7 +2252,7 @@ struct FCsPlayerData_Inventory_Slot
 	FCsUint8MatrixCoordinate Position; // 16 bits
 
 	UPROPERTY()
-	TArray<uint64> Contents; // N * 64 bits
+	TArray<FGuid> Contents; // N * 64 bits
 
 	FCsPlayerData_Inventory_Slot() {}
 	~FCsPlayerData_Inventory_Slot() {}
@@ -2306,30 +2306,30 @@ struct FCsPlayerData_Inventory_Slot
 		return (float)GetBits() / 8.0f;
 	}
 
-	bool Contains(const uint64 &UniqueId)
+	bool Contains(const FGuid &Id)
 	{
 		const int32 Count = Contents.Num();
 
 		for (int32 I = 0; I < Count; ++I)
 		{
-			if (Contents[I] == UniqueId)
+			if (Contents[I] == Id)
 				return true;
 		}
 		return false;
 	}
 
-	void Add(const uint64 &UniqueId)
+	void Add(const FGuid &Id)
 	{
-		Contents.Add(UniqueId);
+		Contents.Add(Id);
 	}
 
-	void Remove(const uint64 &UniqueId)
+	void Remove(const FGuid &Id)
 	{
 		const int32 Count = Contents.Num();
 
 		for (int32 I = Count - 1; I >= 0; --I)
 		{
-			if (Contents[I] == UniqueId)
+			if (Contents[I] == Id)
 			{
 				Contents.RemoveAt(I);
 				break;
@@ -2408,13 +2408,13 @@ struct FCsPlayerData_Inventory_Bag
 		return (float)GetBits() / 8.0f;
 	}
 
-	int32 GetSlotIndexForItem(const uint64 &UniqueId)
+	int32 GetSlotIndexForItem(const FGuid &Id)
 	{
 		const int32 Count = Slots.Num();
 
 		for (int32 I = 0; I < Count; ++I)
 		{
-			if (Slots[I].Contains(UniqueId))
+			if (Slots[I].Contains(Id))
 				return I;
 		}
 		return INDEX_NONE;

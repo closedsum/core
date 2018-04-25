@@ -679,6 +679,37 @@ template<typename T>
 			(*InitFromString)(JsonObject->GetStringField(MemberName), *Member);
 	}
 
+	template<typename T>
+	static void WriteToMemberArrayStructPropertyFromJson_BaseStructure(TSharedPtr<class FJsonObject> &JsonObject, UArrayProperty* &ArrayProperty, void* InObject, const FString &MemberName, bool(*InitFromString)(const FString&, T&))
+	{
+		TArray<T>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<T>>(InObject);
+
+		const TSharedPtr<FJsonObject>& Object = JsonObject->GetObjectField(MemberName);
+
+		TArray<FString> Keys;
+
+		Object->Values.GetKeys(Keys);
+
+		const int32 ArrayCount	= Keys.Num();
+		const int32 MemberCount = Member->Num();
+		const int32 Count		= FMath::Max(ArrayCount, MemberCount);
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			if (I >= ArrayCount)
+				break;
+
+			if (I >= MemberCount)
+				Member->AddDefaulted();
+
+			const FString& Key				 = Keys[I];
+			TSharedPtr<FJsonValue> JsonValue = *(Object->Values.Find(Key));
+			FString Value					 = JsonValue->AsString();
+
+			(*InitFromString)(Value, (*Member)[I]);
+		}
+	}
+
 	static void WriteToMemberStructPropertyFromJson_Transform(TSharedPtr<class FJsonObject> &JsonObject, UStructProperty* &StructProperty, void* InObject, const FString &MemberName);
 	static void WriteToMemberArrayStructPropertyFromJson_Transform(TSharedPtr<class FJsonObject> &JsonObject, UArrayProperty* &ArrayProperty, void* InObject, const FString &MemberName);
 

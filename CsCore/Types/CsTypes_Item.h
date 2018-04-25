@@ -577,6 +577,81 @@ struct FCsItemHistory
 #define CS_CURRENT_HISTORY -1
 
 USTRUCT(BlueprintType)
+struct FCsItemProduct
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** Name */
+	UPROPERTY()
+	FString Name;
+
+	UPROPERTY()
+	FGuid Id;
+
+	UPROPERTY()
+	FCsItemHistory CurrentHistory;
+	UPROPERTY()
+	TArray<FCsItemHistory> PreviousHistories;
+
+	FCsItemProduct()
+	{
+		PreviousHistories.SetNum(0);
+	}
+
+	~FCsItemProduct() {}
+
+	FCsItemProduct& operator=(const FCsItemProduct& B)
+	{
+		Name = B.Name;
+		Id = B.Id;
+
+		CurrentHistory = B.CurrentHistory;
+
+		PreviousHistories.Reset();
+
+		const int32 HistoryCount = B.PreviousHistories.Num();
+
+		for (int32 I = 0; I < HistoryCount; ++I)
+		{
+			PreviousHistories.AddDefaulted();
+			PreviousHistories[I] = B.PreviousHistories[I];
+		}
+		return *this;
+	}
+
+	bool operator==(const FCsItemProduct& B) const
+	{
+		if (Name != B.Name) { return false; }
+		if (Id != B.Id) { return false; }
+		if (CurrentHistory != B.CurrentHistory) { return false; }
+
+		if (PreviousHistories.Num() != B.PreviousHistories.Num()) { return false; }
+
+		const int32 HistoryCount = B.PreviousHistories.Num();
+
+		for (int32 I = 0; I < HistoryCount; ++I)
+		{
+			if (PreviousHistories[I] != B.PreviousHistories[I])
+				return false;
+		}
+		return true;
+	}
+
+	bool operator!=(const FCsItemProduct& B) const
+	{
+		return !(*this == B);
+	}
+
+	void Reset()
+	{
+		Name = ECsCachedString::Str::Empty;
+		Id	 = FGuid();
+		CurrentHistory.Reset();
+		PreviousHistories.Reset();
+	}
+};
+
+USTRUCT(BlueprintType)
 struct FCsItem
 {
 	GENERATED_USTRUCT_BODY()

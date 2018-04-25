@@ -39,6 +39,9 @@ namespace ECsManagerItemCachedString
 
 ACsManager_Item::ACsManager_Item(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+	ProductName = TEXT("Mega Block One");
+	ProductId = FGuid(1, 1, 1, 1);
+
 	for (uint16 I = 0; I < CS_ITEM_POOL_SIZE; ++I)
 	{
 		Pool[I].Init(I);
@@ -113,6 +116,11 @@ FCsItem* ACsManager_Item::Allocate_Internal()
 		if (!Item->IsAllocated)
 		{
 			Item->IsAllocated = true;
+
+			FCsItemProduct Product;
+			Product.Name = ProductName;
+			Product.Id	 = ProductId;
+			Item->Products.Add(ProductId, Product);
 			return Item;
 		}
 	}
@@ -155,7 +163,7 @@ FCsItem* ACsManager_Item::Allocate(const FName &ShortCode)
 
 	Item->InventoryProperties.Capacity = Data->GetCapacity();
 
-	Data->SetMembers(Item->CurrentHistory);
+	Data->SetMembers(Item->GetCurrentHistory(ProductId));
 
 	Item->Data = Data;
 	// Get Data for Actor when this Item is Dropped
@@ -178,7 +186,7 @@ FCsItem* ACsManager_Item::Allocate(const FName &ShortCode, UObject* ItemOwner)
 
 void ACsManager_Item::AddActiveItemByOwnerId(FCsItem* Item)
 {
-	const uint64 OwnerId = Item->CurrentHistory.OwnerId;
+	const uint64& OwnerId = Item->GetCurrentHistory(ProductId).OwnerId;
 
 	if (TArray<FCsItem*>* Items = ActiveItemsByOwnerId.Find(OwnerId))
 	{
@@ -195,7 +203,7 @@ void ACsManager_Item::AddActiveItemByOwnerId(FCsItem* Item)
 void ACsManager_Item::ChangeActiveItemOwnerInfo(FCsItem* Item, UObject* ItemOwner)
 {
 	// Remove OLD OwnerId
-	const uint64 OwnerId = Item->CurrentHistory.OwnerId;
+	const uint64& OwnerId = Item->GetCurrentHistory(ProductId).OwnerId;
 
 	if (TArray<FCsItem*>* Items = ActiveItemsByOwnerId.Find(OwnerId))
 	{
@@ -258,7 +266,9 @@ void ACsManager_Item::GetItemsByOwnerType(const TCsItemOwner &OwnerType, TArray<
 	{
 		FCsItem* Item = *(ActiveItems.Find(OutKeys[I]));
 
-		if (Item->CurrentHistory.OwnerType == OwnerType)
+		const FCsItemHistory& CurrentHistory = Item->GetCurrentHistory(ProductId);
+
+		if (CurrentHistory.OwnerType == OwnerType)
 		{
 			OutItems.Add(Item);
 		}
@@ -596,25 +606,23 @@ void ACsManager_Item::Save(FCsItem* Item)
 
 		JsonWriter->WriteObjectEnd();
 	}
-	// Current History
+	// Products
 	{
-		JsonWriter->WriteObjectStart(ECsFileItemHistoryHeaderCachedString::Str::CurrentHistory);
+		JsonWriter->WriteArrayStart(ECsFileItemProductHeaderCachedString::Str::Products);
 
-		SaveHistory(JsonWriter, &(Item->CurrentHistory));
+		TArray<TCsItemProductId> Keys;
+		Item->Products.GetKeys(Keys);
 
-		JsonWriter->WriteObjectEnd();
-	}
-	// Previous Histories
-	{
-		JsonWriter->WriteArrayStart(ECsFileItemHistoryHeaderCachedString::Str::PreviousHistories);
-
-		const int32 Count = Item->PreviousHistories.Num();
+		const int32 Count = Keys.Num();
 
 		for (int32 I = 0; I < Count; ++I)
 		{
 			JsonWriter->WriteObjectStart();
 
-			SaveHistory(JsonWriter, &(Item->PreviousHistories[I]));
+			const TCsItemProductId& Key = Keys[I];
+			FCsItemProduct* Product		= Item->Products.Find(Key);
+
+			SaveProduct(JsonWriter, Product);
 
 			JsonWriter->WriteObjectEnd();
 		}
@@ -631,6 +639,40 @@ void ACsManager_Item::Save(FCsItem* Item)
 	FFileHelper::SaveStringToFile(OutputString, *Filename);
 
 	Item->IsSaved = true;
+}
+
+void ACsManager_Item::SaveProduct(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FCsItemProduct* Product)
+{
+	// Name
+	JsonWriter->WriteValue(ECsFileItemProductHeaderCachedString::Str::Name, Product->Name);
+	// Id
+	JsonWriter->WriteValue(ECsFileItemProductHeaderCachedString::Str::Id, Product->Id.ToString());
+
+	// Current History
+	{
+		JsonWriter->WriteObjectStart(ECsFileItemHistoryHeaderCachedString::Str::CurrentHistory);
+
+		SaveHistory(JsonWriter, &(Product->CurrentHistory));
+
+		JsonWriter->WriteObjectEnd();
+	}
+	// Previous Histories
+	{
+		JsonWriter->WriteArrayStart(ECsFileItemHistoryHeaderCachedString::Str::PreviousHistories);
+
+		const int32 Count = Product->PreviousHistories.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			JsonWriter->WriteObjectStart();
+
+			SaveHistory(JsonWriter, &(Product->PreviousHistories[I]));
+
+			JsonWriter->WriteObjectEnd();
+		}
+
+		JsonWriter->WriteArrayEnd();
+	}
 }
 
 void ACsManager_Item::SaveHistory(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FCsItemHistory* ItemHistory)
@@ -861,35 +903,35 @@ void ACsManager_Item::PopulateExistingItems()
 
 					for (int32 I = 0; I < Count; ++I)
 					{
-						const FString& Key				 = Keys[I];
+						const FString& Key = Keys[I];
 						TSharedPtr<FJsonValue> JsonValue = *(Object->Values.Find(Key));
-						FString Value					 = JsonValue->AsString();
+						FString Value = JsonValue->AsString();
 
 						const uint64 UniqueId = FCString::Strtoui64(*Value, NULL, 10);
-						
+
 						Item->Contents.Add(UniqueId);
 					}
 				}
 
 				SetActiveItemData(Item);
 
-				// Current History
+				// Products
 				{
-					TSharedPtr<FJsonObject> JsonObject = JsonParsed->Values.Find(ECsFileItemHistoryHeaderCachedString::Str::CurrentHistory)->Get()->AsObject();
-					
-					LoadHistory(JsonObject, Item, &(Item->CurrentHistory));
-				}
-				// Previous Histories
-				{
-					const TArray<TSharedPtr<FJsonValue>> JsonArray = JsonParsed->Values.Find(ECsFileItemHistoryHeaderCachedString::Str::PreviousHistories)->Get()->AsArray();
+					const TArray<TSharedPtr<FJsonValue>> JsonArray = JsonParsed->Values.Find(ECsFileItemProductHeaderCachedString::Str::Products)->Get()->AsArray();
 
-					const int32 Count = JsonArray.Num();
+					TArray<TCsItemProductId> Keys;
+					Item->Products.GetKeys(Keys);
+
+					const int32 Count = Keys.Num();
 
 					for (int32 I = 0; I < Count; ++I)
 					{
 						TSharedPtr<FJsonObject> Object = JsonArray[I]->AsObject();
 
-						LoadHistory(Object, Item, &(Item->PreviousHistories[I]));
+						const TCsItemProductId& Key = Keys[I];
+						FCsItemProduct* Product		= Item->Products.Find(Key);
+
+						LoadProduct(Object, Item, Product);
 					}
 				}
 
@@ -1010,6 +1052,34 @@ void ACsManager_Item::AsyncPopulateExistingItems()
 		}
 	};
 	(new FAutoDeleteAsyncTask<FAsyncPopulateExistingItemsWorker>(this))->StartBackgroundTask();
+}
+
+void ACsManager_Item::LoadProduct(TSharedPtr<class FJsonObject> &JsonObject, FCsItem* Item, FCsItemProduct* Product)
+{
+	// Name
+	Product->Name = JsonObject->GetStringField(ECsFileItemProductHeaderCachedString::Str::Name);
+	// Id
+	FGuid::Parse(JsonObject->GetStringField(ECsFileItemProductHeaderCachedString::Str::Id), Product->Id);
+
+	// Current History
+	{
+		TSharedPtr<FJsonObject> Object = JsonObject->Values.Find(ECsFileItemHistoryHeaderCachedString::Str::CurrentHistory)->Get()->AsObject();
+
+		LoadHistory(Object, Item, &(Product->CurrentHistory));
+	}
+	// Previous Histories
+	{
+		const TArray<TSharedPtr<FJsonValue>> JsonArray = JsonObject->Values.Find(ECsFileItemHistoryHeaderCachedString::Str::PreviousHistories)->Get()->AsArray();
+
+		const int32 Count = JsonArray.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			TSharedPtr<FJsonObject> Object = JsonArray[I]->AsObject();
+
+			LoadHistory(Object, Item, &(Product->PreviousHistories[I]));
+		}
+	}
 }
 
 void ACsManager_Item::LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCsItem* Item, FCsItemHistory* ItemHistory)

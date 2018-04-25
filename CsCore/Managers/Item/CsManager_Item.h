@@ -31,6 +31,20 @@ public:
 	CS_DECLARE_ITEM_TYPE
 	CS_DECLARE_ITEM_OWNER
 
+// Product
+#pragma region
+public:
+
+	// TODO: Maybe this should be in the GameInstance?
+	
+	UPROPERTY()
+	FString ProductName;
+		
+	UPROPERTY()
+	FGuid ProductId;
+
+#pragma endregion Product
+
 	UPROPERTY()
 	uint64 UniqueIdIndex;
 
@@ -129,6 +143,7 @@ public:
 	FString GetSavePath();
 
 	virtual void Save(FCsItem* Item);
+	virtual void SaveProduct(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FCsItemProduct* Product);
 	virtual void SaveHistory(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FCsItemHistory* ItemHistory);
 
 	void SaveActiveItems();
@@ -169,6 +184,7 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Load")
 	FBindableDynEvent_CsManagerItem_OnPopulateExistingItems OnPopulateExistingItems_ScriptEvent;
 
+	virtual void LoadProduct(TSharedPtr<class FJsonObject> &JsonObject, FCsItem* Item, FCsItemProduct* Product);
 	virtual void LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCsItem* Item, FCsItemHistory* ItemHistory);
 
 	virtual void InitInventory(class ACsManager_Inventory* Manager_Inventory);

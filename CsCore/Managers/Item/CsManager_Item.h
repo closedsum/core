@@ -31,12 +31,21 @@ public:
 	CS_DECLARE_ITEM_TYPE
 	CS_DECLARE_ITEM_OWNER
 
+// Product
+#pragma region
+public:
+
+	// TODO: Maybe this should be in the GameInstance?
+	
 	UPROPERTY()
-	uint64 UniqueIdIndex;
+	FString ProductName;
+		
+	UPROPERTY()
+	FGuid ProductId;
 
-	TArray<uint64> AvailableUnqiueIds;
+#pragma endregion Product
 
-	virtual uint64 GetUniqueId();
+	virtual FGuid GetUniqueId();
 
 	FCsItem Pool[CS_ITEM_POOL_SIZE];
 
@@ -63,8 +72,8 @@ public:
 
 	virtual FCsItem* Allocate(const FName &ShortCode, UObject* ItemOwner);
 
-	TMap<uint64, FCsItem*> ActiveItems;
-	TMap<uint64, TArray<FCsItem*>> ActiveItemsByOwnerId;
+	TMap<TCsItemId, FCsItem*> ActiveItems;
+	TMap<TCsItemOwnerId, TArray<FCsItem*>> ActiveItemsByOwnerId;
 
 	void AddActiveItemByOwnerId(FCsItem* Item);
 
@@ -78,12 +87,12 @@ public:
 #pragma region
 public:
 
-	virtual FCsItem* GetItem(const uint64 &Id);
+	virtual FCsItem* GetItem(const TCsItemId &Id);
 
 	void GetItemsByOwnerType(const TCsItemOwner &OwnerTyper, TArray<FCsItem*> &OutItems);
-	void GetItemsByOwnerId(const uint64 &OwnerId, TArray<FCsItem*> &OutItems);
+	void GetItemsByOwnerId(const TCsItemOwnerId &OwnerId, TArray<FCsItem*> &OutItems);
 
-	void GetItems(const TArray<uint64> &Ids, TArray<FCsItem*> &OutItems);
+	void GetItems(const TArray<TCsItemId> &Ids, TArray<FCsItem*> &OutItems);
 
 #pragma endregion Get
 
@@ -91,7 +100,7 @@ public:
 #pragma region
 public:
 
-	virtual void DeAllocate(const uint64 &Id);
+	virtual void DeAllocate(const TCsItemId &Id);
 	virtual void DeAllocate(FCsItem* Item);
 
 	TArray<FCsItem*> DeAllocateQueue;
@@ -129,6 +138,7 @@ public:
 	FString GetSavePath();
 
 	virtual void Save(FCsItem* Item);
+	virtual void SaveProduct(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FCsItemProduct* Product);
 	virtual void SaveHistory(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FCsItemHistory* ItemHistory);
 
 	void SaveActiveItems();
@@ -169,6 +179,7 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Load")
 	FBindableDynEvent_CsManagerItem_OnPopulateExistingItems OnPopulateExistingItems_ScriptEvent;
 
+	virtual void LoadProduct(TSharedPtr<class FJsonObject> &JsonObject, FCsItem* Item, FCsItemProduct* Product);
 	virtual void LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCsItem* Item, FCsItemHistory* ItemHistory);
 
 	virtual void InitInventory(class ACsManager_Inventory* Manager_Inventory);

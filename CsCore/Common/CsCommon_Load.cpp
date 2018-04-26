@@ -450,6 +450,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 		// Structs
 		if (UStructProperty* StructProperty = Cast<UStructProperty>(*It))
 		{
+			// FGuid
+			if (StructProperty->Struct == TBaseStructure<FGuid>::Get())
+			{ WriteMemberStructPropertyToJson_Primitive<FGuid>(InJsonWriter, StructProperty, InStruct, MemberName, &FGuid::ToString); continue; }
 			// FVector
 			if (StructProperty->Struct == TBaseStructure<FVector>::Get())
 			{ WriteMemberStructPropertyToJson_Primitive<FVector>(InJsonWriter, StructProperty, InStruct, MemberName, &FVector::ToString); continue; }
@@ -732,6 +735,12 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsItemOnConsumeContentRule
 			if (StructProperty->Struct == FCsItemOnConsumeContentRule::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsItemOnConsumeContentRule>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsTArrayPayload
+			if (StructProperty->Struct == FCsTArrayPayload::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsTArrayPayload>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsPayload
+			if (StructProperty->Struct == FCsPayload::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsPayload>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 
 			if (Internal)
 			{
@@ -777,6 +786,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// Struct
 			if (UStructProperty* InnerStructProperty = Cast<UStructProperty>(ArrayProperty->Inner))
 			{
+				// FGuid
+				if (InnerStructProperty->Struct == TBaseStructure<FGuid>::Get())
+				{ WriteMemberArrayStructPropertyToJson_Primitive<FGuid>(InJsonWriter, ArrayProperty, InStruct, MemberName, &FGuid::ToString); continue; }
 				// FVector
 				if (InnerStructProperty->Struct == TBaseStructure<FVector>::Get())
 				{ WriteMemberArrayStructPropertyToJson_Primitive<FVector>(InJsonWriter, ArrayProperty, InStruct, MemberName, &FVector::ToString); continue; }
@@ -834,6 +846,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FCsPlayerData_Inventory_Slot
 				if (InnerStructProperty->Struct == FCsPlayerData_Inventory_Slot::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsPlayerData_Inventory_Slot>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsPayload
+				if (InnerStructProperty->Struct == FCsPayload::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsPayload>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 
 				if (Internal)
 				{
@@ -1126,6 +1141,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 		// Structs
 		if (UStructProperty* StructProperty = Cast<UStructProperty>(*It))
 		{
+			// FGuid
+			if (StructProperty->Struct == TBaseStructure<FGuid>::Get())
+			{ WriteMemberStructPropertyToJson_Primitive<FGuid>(InJsonWriter, StructProperty, InStruct, MemberName, &FGuid::ToString); continue; }
 			// FVector
 			if (StructProperty->Struct == TBaseStructure<FVector>::Get())
 			{ WriteMemberStructPropertyToJson_Primitive<FVector>(InJsonWriter, StructProperty, InStruct, MemberName, &FVector::ToString); continue; }
@@ -1411,6 +1429,12 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsItemOnConsumeContentRule
 			if (StructProperty->Struct == FCsItemOnConsumeContentRule::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsItemOnConsumeContentRule>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsTArrayPayload
+			if (StructProperty->Struct == FCsTArrayPayload::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsTArrayPayload>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
+			// FCsPayload
+			if (StructProperty->Struct == FCsPayload::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsPayload>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 
 			if (Internal)
 			{
@@ -1456,6 +1480,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// Struct
 			if (UStructProperty* InnerStructProperty = Cast<UStructProperty>(ArrayProperty->Inner))
 			{
+				// FGuid
+				if (InnerStructProperty->Struct == TBaseStructure<FGuid>::Get())
+				{ WriteMemberArrayStructPropertyToJson_Primitive<FGuid>(InJsonWriter, ArrayProperty, InStruct, MemberName, &FGuid::ToString); continue; }
 				// FVector
 				if (InnerStructProperty->Struct == TBaseStructure<FVector>::Get())
 				{ WriteMemberArrayStructPropertyToJson_Primitive<FVector>(InJsonWriter, ArrayProperty, InStruct, MemberName, &FVector::ToString); continue; }
@@ -1513,6 +1540,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FCsPlayerData_Inventory_Slot
 				if (InnerStructProperty->Struct == FCsPlayerData_Inventory_Slot::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsPlayerData_Inventory_Slot>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsPayload
+				if (InnerStructProperty->Struct == FCsPayload::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsPayload>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 
 				if (Internal)
 				{
@@ -1779,6 +1809,9 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 		else
 		if (UStructProperty* StructProperty = Cast<UStructProperty>(*It))
 		{
+			// FGuid
+			if (StructProperty->Struct == TBaseStructure<FGuid>::Get())
+			{ WriteMemberStructPropertyToJson_Primitive<FGuid>(InJsonWriter, StructProperty, InObject, MemberName, &FGuid::ToString); continue; }
 			// FVector
 			if (StructProperty->Struct == TBaseStructure<FVector>::Get())
 			{ WriteMemberStructPropertyToJson_Primitive<FVector>(InJsonWriter, StructProperty, InObject, MemberName, &FVector::ToString); continue; }
@@ -2030,6 +2063,12 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsInventoryLoadout
 			if (StructProperty->Struct == FCsInventoryLoadout::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsInventoryLoadout>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
+			// FCsTArrayPayload
+			if (StructProperty->Struct == FCsTArrayPayload::StaticStruct())
+			{
+				if (WriteObjectToJson_Internal_Helper(Internal, Property, InJsonWriter, InObject, InClass)) { continue; }
+				continue;
+			}
 
 			if (Internal)
 			{
@@ -2070,6 +2109,9 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// Struct
 			if (UStructProperty* InnerStructProperty = Cast<UStructProperty>(ArrayProperty->Inner))
 			{
+				// FGuid
+				if (InnerStructProperty->Struct == TBaseStructure<FGuid>::Get())
+				{ WriteMemberArrayStructPropertyToJson_Primitive<FGuid>(InJsonWriter, ArrayProperty, InObject, MemberName, &FGuid::ToString); continue; }
 				// FVector
 				if (InnerStructProperty->Struct == TBaseStructure<FVector>::Get())
 				{ WriteMemberArrayStructPropertyToJson_Primitive<FVector>(InJsonWriter, ArrayProperty, InObject, MemberName, &FVector::ToString); continue; }
@@ -2544,6 +2586,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 		// Structs
 		if (UStructProperty* StructProperty = Cast<UStructProperty>(*It))
 		{
+			// FGuid
+			if (StructProperty->Struct == TBaseStructure<FGuid>::Get())
+			{ WriteToMemberStructPropertyFromJson_BaseStructure<FGuid>(JsonObject, StructProperty, InStruct, MemberName, &FGuid::Parse); continue; }
 			// FVector
 			if (StructProperty->Struct == TBaseStructure<FVector>::Get())
 			{ WriteToMemberStructPropertyFromJson_Primitive<FVector>(JsonObject, StructProperty, InStruct, MemberName, &FVector::InitFromString); continue; }
@@ -2828,6 +2873,12 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FCsItemOnConsumeContentRule
 			if (StructProperty->Struct == FCsItemOnConsumeContentRule::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsItemOnConsumeContentRule>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsTArrayPayload
+			if (StructProperty->Struct == FCsTArrayPayload::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsTArrayPayload>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsPayload
+			if (StructProperty->Struct == FCsPayload::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsPayload>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 
 			if (Internal)
 			{
@@ -2874,6 +2925,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// Struct
 			if (UStructProperty* InnerStructProperty = Cast<UStructProperty>(ArrayProperty->Inner))
 			{
+				// FGuid
+				if (InnerStructProperty->Struct == TBaseStructure<FGuid>::Get())
+				{ WriteToMemberArrayStructPropertyFromJson_BaseStructure<FGuid>(JsonObject, ArrayProperty, InStruct, MemberName, &FGuid::Parse); continue; }
 				// FVector
 				if (InnerStructProperty->Struct == TBaseStructure<FVector>::Get())
 				{ WriteToMemberArrayStructPropertyFromJson_Primitive<FVector>(JsonObject, ArrayProperty, InStruct, MemberName, &FVector::InitFromString); continue; }
@@ -2928,6 +2982,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 				// FCsPlayerData_Inventory_Slot
 				if (InnerStructProperty->Struct == FCsPlayerData_Inventory_Slot::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsPlayerData_Inventory_Slot>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
+				// FCsPayload
+				if (InnerStructProperty->Struct == FCsPayload::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsPayload>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
 
 				if (Internal)
 				{
@@ -3260,6 +3317,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 		// Structs
 		if (UStructProperty* StructProperty = Cast<UStructProperty>(*It))
 		{
+			// FGuid
+			if (StructProperty->Struct == TBaseStructure<FGuid>::Get())
+			{ WriteToMemberStructPropertyFromJson_BaseStructure<FGuid>(JsonObject, StructProperty, InStruct, MemberName, &FGuid::Parse); continue; }
 			// FVector
 			if (StructProperty->Struct == TBaseStructure<FVector>::Get())
 			{ WriteToMemberStructPropertyFromJson_Primitive<FVector>(JsonObject, StructProperty, InStruct, MemberName, &FVector::InitFromString); continue; }
@@ -3547,6 +3607,12 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsItemOnConsumeContentRule
 			if (StructProperty->Struct == FCsItemOnConsumeContentRule::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsItemOnConsumeContentRule>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsTArrayPayload
+			if (StructProperty->Struct == FCsTArrayPayload::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsTArrayPayload>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			// FCsPayload
+			if (StructProperty->Struct == FCsPayload::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsPayload>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 
 			if (Internal)
 			{
@@ -3593,6 +3659,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// Struct
 			if (UStructProperty* InnerStructProperty = Cast<UStructProperty>(ArrayProperty->Inner))
 			{
+				// FGuid
+				if (InnerStructProperty->Struct == TBaseStructure<FGuid>::Get())
+				{ WriteToMemberArrayStructPropertyFromJson_BaseStructure<FGuid>(JsonObject, ArrayProperty, InStruct, MemberName, &FGuid::Parse); continue; }
 				// FVector
 				if (InnerStructProperty->Struct == TBaseStructure<FVector>::Get())
 				{ WriteToMemberArrayStructPropertyFromJson_Primitive<FVector>(JsonObject, ArrayProperty, InStruct, MemberName, &FVector::InitFromString); continue; }
@@ -3650,6 +3719,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				// FCsPlayerData_Inventory_Slot
 				if (InnerStructProperty->Struct == FCsPlayerData_Inventory_Slot::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsPlayerData_Inventory_Slot>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
+				// FCsPayload
+				if (InnerStructProperty->Struct == FCsPayload::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsPayload>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
 
 				if (Internal)
 				{
@@ -3968,6 +4040,9 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 		// Structs
 		if (UStructProperty* StructProperty = Cast<UStructProperty>(*It))
 		{
+			// FGuid
+			if (StructProperty->Struct == TBaseStructure<FGuid>::Get())
+			{ WriteToMemberStructPropertyFromJson_BaseStructure<FGuid>(JsonObject, StructProperty, InObject, MemberName, &FGuid::Parse); continue; }
 			// FVector
 			if (StructProperty->Struct == TBaseStructure<FVector>::Get())
 			{ WriteToMemberStructPropertyFromJson_Primitive<FVector>(JsonObject, StructProperty, InObject, MemberName, &FVector::InitFromString); continue; }
@@ -4213,6 +4288,12 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsInventoryLoadout
 			if (StructProperty->Struct == FCsInventoryLoadout::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsInventoryLoadout>(JsonObject, StructProperty, InObject, MemberName); continue; }
+			// FCsTArrayPayload
+			if (StructProperty->Struct == FCsTArrayPayload::StaticStruct())
+			{
+				if (ReadObjectFromJson_Internal_Helper(Internal, Property, JsonObject, InObject, InClass)) { continue; }
+				continue;
+			}
 
 			if (Internal)
 			{
@@ -4253,6 +4334,9 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// Struct
 			if (UStructProperty* InnerStructProperty = Cast<UStructProperty>(ArrayProperty->Inner))
 			{
+				// FGuid
+				if (InnerStructProperty->Struct == TBaseStructure<FGuid>::Get())
+				{ WriteToMemberArrayStructPropertyFromJson_BaseStructure<FGuid>(JsonObject, ArrayProperty, InObject, MemberName, &FGuid::Parse); continue; }
 				// FVector
 				if (InnerStructProperty->Struct == TBaseStructure<FVector>::Get())
 				{ WriteToMemberArrayStructPropertyFromJson_Primitive<FVector>(JsonObject, ArrayProperty, InObject, MemberName, &FVector::InitFromString); continue; }
@@ -8480,24 +8564,24 @@ bool UCsCommon_Load::SetObjectMember(void* InObject, UClass* const &InClass, con
 		// Struct
 		if (UStructProperty* StructProperty = Cast<UStructProperty>(*It))
 		{
+			// FGuid
+			if (StructProperty->Struct == TBaseStructure<FGuid>::Get())
+				return SetMemberProperty<FGuid>(InObject, Property, MemberValue);
 			// FVector
 			if (StructProperty->Struct == TBaseStructure<FVector>::Get())
 				return SetMemberProperty<FVector>(InObject, Property, MemberValue);
 			// FRotator
-			else
 			if (StructProperty->Struct == TBaseStructure<FRotator>::Get())
 				return SetMemberProperty<FRotator>(InObject, Property, MemberValue);
 			// FColor
-			else
 			if (StructProperty->Struct == TBaseStructure<FColor>::Get())
 				return SetMemberProperty<FColor>(InObject, Property, MemberValue);
+			continue;
 		}
 		// bool
-		else
 		if (UBoolProperty* BoolProperty = Cast<UBoolProperty>(*It))
 			return SetMemberProperty<bool>(InObject, Property, MemberValue);
 		// Byte / Enum
-		else
 		if (UByteProperty* ByteProperty = Cast<UByteProperty>(*It))
 		{
 			if (ByteProperty->IsEnum())
@@ -8506,21 +8590,18 @@ bool UCsCommon_Load::SetObjectMember(void* InObject, UClass* const &InClass, con
 				//if (ByteProperty->Enum->CppType.Contains(TEXT("ECharacterClass")))
 				//	return SetMemberProperty<TEnumAsByte<ECharacterClass::Type>>(InObject, Property, MemberValue);
 			}
+			continue;
 		}
 		// int32
-		else
 		if (UIntProperty* IntProperty = Cast<UIntProperty>(*It))
 			return SetMemberProperty<int32>(InObject, Property, MemberValue);
 		// float
-		else
 		if (UFloatProperty* FloatProperty = Cast<UFloatProperty>(*It))
 			return SetMemberProperty<int32>(InObject, Property, MemberValue);
 		// FString
-		else
 		if (UStrProperty* StrProperty = Cast<UStrProperty>(*It))
 			return SetMemberProperty<FString>(InObject, Property, MemberValue);
 		// FName
-		else
 		if (UNameProperty* NameProperty = Cast<UNameProperty>(*It))
 			return SetMemberProperty<FName>(InObject, Property, MemberValue);
 	}
@@ -8541,24 +8622,24 @@ bool UCsCommon_Load::SetStructMember(void* InStruct, UScriptStruct* const &InScr
 		// Struct
 		if (UStructProperty* StructProperty = Cast<UStructProperty>(*It))
 		{
+			// FGuid
+			if (StructProperty->Struct == TBaseStructure<FGuid>::Get())
+				return SetMemberProperty<FGuid>(InStruct, Property, MemberValue);
 			// FVector
 			if (StructProperty->Struct == TBaseStructure<FVector>::Get())
 				return SetMemberProperty<FVector>(InStruct, Property, MemberValue);
 			// FRotator
-			else
 			if (StructProperty->Struct == TBaseStructure<FRotator>::Get())
 				return SetMemberProperty<FRotator>(InStruct, Property, MemberValue);
 			// FColor
-			else
 			if (StructProperty->Struct == TBaseStructure<FColor>::Get())
 				return SetMemberProperty<FColor>(InStruct, Property, MemberValue);
+			continue;
 		}
 		// bool
-		else
 		if (UBoolProperty* BoolProperty = Cast<UBoolProperty>(*It))
 			return SetMemberProperty<bool>(InStruct, Property, MemberValue);
 		// Byte / Enum
-		else
 		if (UByteProperty* ByteProperty = Cast<UByteProperty>(*It))
 		{
 			if (ByteProperty->IsEnum())
@@ -8567,21 +8648,18 @@ bool UCsCommon_Load::SetStructMember(void* InStruct, UScriptStruct* const &InScr
 				//if (ByteProperty->Enum->CppType.Contains(TEXT("ECharacterClass")))
 				//	return SetMemberProperty<TEnumAsByte<ECharacterClass::Type>>(InStruct, Property, MemberValue);
 			}
+			continue;
 		}
 		// int32
-		else
 		if (UIntProperty* IntProperty = Cast<UIntProperty>(*It))
 			return SetMemberProperty<int32>(InStruct, Property, MemberValue);
 		// float
-		else
 		if (UFloatProperty* FloatProperty = Cast<UFloatProperty>(*It))
 			return SetMemberProperty<int32>(InStruct, Property, MemberValue);
 		// FString
-		else
 		if (UStrProperty* StrProperty = Cast<UStrProperty>(*It))
 			return SetMemberProperty<FString>(InStruct, Property, MemberValue);
 		// FName
-		else
 		if (UNameProperty* NameProperty = Cast<UNameProperty>(*It))
 			return SetMemberProperty<FName>(InStruct, Property, MemberValue);
 	}
@@ -8607,24 +8685,24 @@ bool UCsCommon_Load::SetObjectMember(void* InObject, UClass* const &InClass, con
 		// Struct
 		if (UStructProperty* StructProperty = Cast<UStructProperty>(*It))
 		{
+			// FGuid
+			if (StructProperty->Struct == TBaseStructure<FGuid>::Get())
+				return SetMemberProperty<FGuid>(InObject, Property, MemberValue);
 			// FVector
 			if (StructProperty->Struct == TBaseStructure<FVector>::Get())
 				return SetMemberProperty<FVector>(InObject, Property, MemberValue);
 			// FRotator
-			else
 			if (StructProperty->Struct == TBaseStructure<FRotator>::Get())
 				return SetMemberProperty<FRotator>(InObject, Property, MemberValue);
 			// FColor
-			else
 			if (StructProperty->Struct == TBaseStructure<FColor>::Get())
 				return SetMemberProperty<FColor>(InObject, Property, MemberValue);
+			continue;
 		}
 		// bool
-		else
 		if (UBoolProperty* BoolProperty = Cast<UBoolProperty>(*It))
 			return SetMemberProperty<bool>(InObject, Property, MemberValue);
 		// Byte / Enum
-		else
 		if (UByteProperty* ByteProperty = Cast<UByteProperty>(*It))
 		{
 			if (ByteProperty->IsEnum())
@@ -8633,21 +8711,18 @@ bool UCsCommon_Load::SetObjectMember(void* InObject, UClass* const &InClass, con
 				//if (ByteProperty->Enum->CppType.Contains(TEXT("ECharacterClass")))
 				//	return SetMemberProperty<TEnumAsByte<ECharacterClass::Type>>(InObject, Property, MemberValue);
 			}
+			continue;
 		}
 		// int32
-		else
 		if (UIntProperty* IntProperty = Cast<UIntProperty>(*It))
 			return SetMemberProperty<int32>(InObject, Property, MemberValue);
 		// float
-		else
 		if (UFloatProperty* FloatProperty = Cast<UFloatProperty>(*It))
 			return SetMemberProperty<int32>(InObject, Property, MemberValue);
 		// FString
-		else
 		if (UStrProperty* StrProperty = Cast<UStrProperty>(*It))
 			return SetMemberProperty<FString>(InObject, Property, MemberValue);
 		// FName
-		else
 		if (UNameProperty* NameProperty = Cast<UNameProperty>(*It))
 			return SetMemberProperty<FName>(InObject, Property, MemberValue);
 	}
@@ -8673,20 +8748,21 @@ bool UCsCommon_Load::SetStructMember(void* InStruct, UScriptStruct* const &InScr
 		// Struct
 		if (UStructProperty* StructProperty = Cast<UStructProperty>(*It))
 		{
+			// FGuid
+			if (StructProperty->Struct == TBaseStructure<FVector>::Get())
+				return SetMemberProperty<FVector>(InStruct, Property, MemberValue);
 			// FVector
 			if (StructProperty->Struct == TBaseStructure<FVector>::Get())
 				return SetMemberProperty<FVector>(InStruct, Property, MemberValue);
 			// FRotator
-			else
 			if (StructProperty->Struct == TBaseStructure<FRotator>::Get())
 				return SetMemberProperty<FRotator>(InStruct, Property, MemberValue);
 			// FColor
-			else
 			if (StructProperty->Struct == TBaseStructure<FColor>::Get())
 				return SetMemberProperty<FColor>(InStruct, Property, MemberValue);
+			continue;
 		}
 		// bool
-		else
 		if (UBoolProperty* BoolProperty = Cast<UBoolProperty>(*It))
 			return SetMemberProperty<bool>(InStruct, Property, MemberValue);
 		// Byte / Enum
@@ -8699,21 +8775,18 @@ bool UCsCommon_Load::SetStructMember(void* InStruct, UScriptStruct* const &InScr
 				//if (ByteProperty->Enum->CppType.Contains(TEXT("ECharacterClass")))
 				//	return SetMemberProperty<TEnumAsByte<ECharacterClass::Type>>(InStruct, Property, MemberValue);
 			}
+			continue;
 		}
 		// int32
-		else
 		if (UIntProperty* IntProperty = Cast<UIntProperty>(*It))
 			return SetMemberProperty<int32>(InStruct, Property, MemberValue);
 		// float
-		else
 		if (UFloatProperty* FloatProperty = Cast<UFloatProperty>(*It))
 			return SetMemberProperty<int32>(InStruct, Property, MemberValue);
 		// FString
-		else
 		if (UStrProperty* StrProperty = Cast<UStrProperty>(*It))
 			return SetMemberProperty<FString>(InStruct, Property, MemberValue);
 		// FName
-		else
 		if (UNameProperty* NameProperty = Cast<UNameProperty>(*It))
 			return SetMemberProperty<FName>(InStruct, Property, MemberValue);
 	}
@@ -9040,16 +9113,14 @@ TEnumAsByte<EMemberType::Type> UCsCommon::GetObjectMemberType(UClass* const &InC
 			if (StructProperty->Struct == TBaseStructure<FVector>::Get())
 				return EMemberType::FVector;
 			// FRotator
-			else
 			if (StructProperty->Struct == TBaseStructure<FRotator>::Get())
 				return EMemberType::FRotator;
 			// FColor
-			else
 			if (StructProperty->Struct == TBaseStructure<FColor>::Get())
 				return EMemberType::FColor;
+			continue;
 		}
 		// bool
-		else
 		if (UBoolProperty* BoolProperty = Cast<UBoolProperty>(*It))
 			return EMemberType::Bool;
 		// Byte / Enum
@@ -9062,21 +9133,18 @@ TEnumAsByte<EMemberType::Type> UCsCommon::GetObjectMemberType(UClass* const &InC
 				//if (ByteProperty->Enum->CppType.Contains(TEXT("ECharacterClass")))
 				//	return EMemberType::ECharacterClass;
 			}
+			continue;
 		}
 		// int32
-		else
 		if (UIntProperty* IntProperty = Cast<UIntProperty>(*It))
 			return EMemberType::Int32;
 		// float
-		else
 		if (UFloatProperty* FloatProperty = Cast<UFloatProperty>(*It))
 			return EMemberType::Float;
 		// FString
-		else
 		if (UStrProperty* StrProperty = Cast<UStrProperty>(*It))
 			return EMemberType::FString;
 		// FName
-		else
 		if (UNameProperty* NameProperty = Cast<UNameProperty>(*It))
 			return EMemberType::FName;
 	}
@@ -9101,20 +9169,17 @@ TEnumAsByte<EMemberType::Type> UCsCommon::GetStructMemberType(UScriptStruct* con
 			if (StructProperty->Struct == TBaseStructure<FVector>::Get())
 				return EMemberType::FVector;
 			// FRotator
-			else
 			if (StructProperty->Struct == TBaseStructure<FRotator>::Get())
 				return EMemberType::FRotator;
 			// FColor
-			else
 			if (StructProperty->Struct == TBaseStructure<FColor>::Get())
 				return EMemberType::FColor;
+			continue;
 		}
 		// bool
-		else
 		if (UBoolProperty* BoolProperty = Cast<UBoolProperty>(*It))
 			return EMemberType::Bool;
 		// Byte / Enum
-		else
 		if (UByteProperty* ByteProperty = Cast<UByteProperty>(*It))
 		{
 			if (ByteProperty->IsEnum())
@@ -9123,21 +9188,18 @@ TEnumAsByte<EMemberType::Type> UCsCommon::GetStructMemberType(UScriptStruct* con
 				//if (ByteProperty->Enum->CppType.Contains(TEXT("ECharacterClass")))
 				//	return EMemberType::ECharacterClass;
 			}
+			continue;
 		}
 		// int32
-		else
 		if (UIntProperty* IntProperty = Cast<UIntProperty>(*It))
 			return EMemberType::Int32;
 		// float
-		else
 		if (UFloatProperty* FloatProperty = Cast<UFloatProperty>(*It))
 			return EMemberType::Float;
 		// FString
-		else
 		if (UStrProperty* StrProperty = Cast<UStrProperty>(*It))
 			return EMemberType::FString;
 		// FName
-		else
 		if (UNameProperty* NameProperty = Cast<UNameProperty>(*It))
 			return EMemberType::FName;
 	}
@@ -9328,7 +9390,11 @@ void UCsCommon_Load::GetObjectMembers(void* InObject, UClass* const &InClass, co
 			else
 			if (UStructProperty* InnerStructProperty = Cast<UStructProperty>(ArrayProperty->Inner))
 			{
+				// FGuid
+				if (InnerStructProperty->Struct == TBaseStructure<FGuid>::Get())
+					OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<TArray<FGuid>>(InObject));
 				// FVector
+				else
 				if (InnerStructProperty->Struct == TBaseStructure<FVector>::Get())
 					OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<TArray<FVector>>(InObject));
 				// FRotator
@@ -9340,6 +9406,7 @@ void UCsCommon_Load::GetObjectMembers(void* InObject, UClass* const &InClass, co
 				if (InnerStructProperty->Struct == TBaseStructure<FColor>::Get())
 					OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<TArray<FColor>>(InObject));
 				// FCsAnimMontage
+				else
 				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
 					OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<TArray<FCsAnimMontage>>(InObject));
 				// FCsSoundElement

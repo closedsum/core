@@ -86,9 +86,9 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const TCsLoadAss
 		return false;
 	}
 	// Check for VALID LoadAssetsType
-	if (LoadAssetsType == LoadAssetType_MAX)
+	if (LoadAssetsType == LoadAssetsType_MAX)
 	{
-		OutMessage = TEXT("INVALID LoadAssetType. See Output Log.");
+		OutMessage = TEXT("INVALID LoadAssetsType. See Output Log.");
 		OutOutput  = TEXT("ERROR");
 
 		if (UCsCommon::IsDefaultObject(this))
@@ -101,7 +101,7 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const TCsLoadAss
 
 		for (int32 I = 0; I < LOAD_ASSETS_TYPE_MAX; ++I)
 		{
-			UE_LOG(LogCs, Warning, TEXT("LoadAssetType: %s"), *((*LoadAssetsTypeToString)((TCsLoadAssetsType)I)));
+			UE_LOG(LogCs, Warning, TEXT("LoadAssetsType: %s"), *((*LoadAssetsTypeToString)((TCsLoadAssetsType)I)));
 		}
 		return false;
 	}
@@ -528,9 +528,9 @@ void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 		// Check for VALID LoadAssetsType
 		const TCsLoadAssetsType LoadAssetsType = (*StringToLoadAssetsType)(RemoveEntry.LoadAssetsType);
 
-		if (LoadAssetsType == LoadAssetType_MAX)
+		if (LoadAssetsType == LoadAssetsType_MAX)
 		{
-			RemoveEntry.Message = TEXT("INVALID LoadAssetType. See Output Log.");
+			RemoveEntry.Message = TEXT("INVALID LoadAssetsType. See Output Log.");
 			RemoveEntry.Output  = TEXT("ERROR");
 			RemoveEntry.Remove	= false;
 
@@ -549,7 +549,7 @@ void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 
 			for (int32 I = 0; I < LOAD_ASSETS_TYPE_MAX; ++I)
 			{
-				Output = TEXT("LoadAssetType: ") + (*LoadAssetsTypeToString)((TCsLoadAssetsType)I);
+				Output = TEXT("LoadAssetsType: ") + (*LoadAssetsTypeToString)((TCsLoadAssetsType)I);
 
 				if (UCsCommon::IsDefaultObject(this))
 				{

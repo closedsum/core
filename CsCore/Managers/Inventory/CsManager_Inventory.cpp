@@ -56,7 +56,7 @@ int32 ACsManager_Inventory::GetSlotCount(const uint8 &Bag, const uint8 &Row, con
 
 bool ACsManager_Inventory::IsEmpty()
 {
-	TArray<uint64> OutKeys;
+	TArray<TCsItemId> OutKeys;
 	Items.GetKeys(OutKeys);
 	return OutKeys.Num() == CS_EMPTY;
 }
@@ -85,12 +85,12 @@ bool ACsManager_Inventory::IsFull(const uint8 &Bag, const FName &ShortCode)
 	return true;
 }
 
-FCsItem* ACsManager_Inventory::GetItem(const uint64 &Id)
+FCsItem* ACsManager_Inventory::GetItem(const TCsItemId &Id)
 {
 	if (FCsItem** ItemPtr = Items.Find(Id))
 		return *ItemPtr;
 
-	UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetItem: Failed to find an Item with Id: %d"), Id);
+	UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetItem: Failed to find an Item with Id: %s"), *(Id.ToString()));
 	return nullptr;
 }
 
@@ -185,7 +185,7 @@ void ACsManager_Inventory::GetItems(const FName& ShortCode, const int32& Count, 
 	}
 }
 
-void ACsManager_Inventory::GetItems(const TArray<uint64> &Ids, TArray<FCsItem*> &OutItems)
+void ACsManager_Inventory::GetItems(const TArray<TCsItemId> &Ids, TArray<FCsItem*> &OutItems)
 {
 	const int32 Count = Ids.Num();
 
@@ -197,7 +197,7 @@ void ACsManager_Inventory::GetItems(const TArray<uint64> &Ids, TArray<FCsItem*> 
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetItems: Failed to find an Item with Id: %d"), Ids[I]);
+			UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::GetItems: Failed to find an Item with Id: %s"), *(Ids[I].ToString()));
 		}
 	}
 }
@@ -280,6 +280,11 @@ void ACsManager_Inventory::LogTransaction(const FString &FunctionName, const TEn
 	}
 }
 
+uint8 ACsManager_Inventory::GetFirstAvailableBagIndex(const TCsItemType &ItemType)
+{
+	return 0;
+}
+
 // Add
 #pragma region
 
@@ -293,14 +298,14 @@ void ACsManager_Inventory::AddItem(FCsItem* Item)
 		if (!Success)
 		{
 			const FString ItemName = Item->ShortCode.ToString();
-			const FString Id	   = FString::Printf(TEXT("%llu"), Item->UniqueId);
+			const FString Id	   = Item->Id.ToString();
 
 			UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::AddItem: Failed to Add Item: %s with ID: %s. All Slots for Bag: %d are FULL."), *ItemName, *Id, Item->InventoryProperties.Bag);
 			return;
 		}
 	}
 
-	Items.Add(Item->UniqueId, Item);
+	Items.Add(Item->Id, Item);
 
 	if (TArray<FCsItem*>* ItemsPtr = ItemMap.Find(Item->ShortCode))
 	{
@@ -337,13 +342,13 @@ void ACsManager_Inventory::AddItems(const TArray<FCsItem*> &ItemsToAdd)
 // Remove
 #pragma region
 
-void ACsManager_Inventory::RemoveItem(const uint64 &Id, const FString &FunctionName, const TEnumAsByte<ECsInventoryTransaction::Type> &Transaction, const bool &ShouldDestroy)
+void ACsManager_Inventory::RemoveItem(const TCsItemId &Id, const FString &FunctionName, const TEnumAsByte<ECsInventoryTransaction::Type> &Transaction, const bool &ShouldDestroy)
 {
 	FCsItem** ItemPtr = Items.Find(Id);
 
 	if (!ItemPtr)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::RemoveItem: Failed to remove item with UniqueId: %d"), Id);
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Inventory::RemoveItem: Failed to remove item with UniqueId: %s"), *(Id.ToString()));
 		return;
 	}
 
@@ -358,7 +363,7 @@ void ACsManager_Inventory::RemoveItem(const uint64 &Id, const FString &FunctionN
 
 	for (int32 I = Count - 1; I >= 0; --I)
 	{
-		if ((*ItemsPtr)[I]->UniqueId == Id)
+		if ((*ItemsPtr)[I]->Id == Id)
 		{
 			ItemsPtr->RemoveAt(I);
 			break;
@@ -385,7 +390,7 @@ void ACsManager_Inventory::RemoveItem(const uint64 &Id, const FString &FunctionN
 
 void ACsManager_Inventory::RemoveItem(FCsItem* Item, const FString &FunctionName, const TEnumAsByte<ECsInventoryTransaction::Type> &Transaction, const bool &ShouldDestroy)
 {
-	RemoveItem(Item->UniqueId, FunctionName, Transaction, ShouldDestroy);
+	RemoveItem(Item->Id, FunctionName, Transaction, ShouldDestroy);
 }
 
 #pragma endregion Remove
@@ -393,7 +398,7 @@ void ACsManager_Inventory::RemoveItem(FCsItem* Item, const FString &FunctionName
 // Consume
 #pragma region
 
-void ACsManager_Inventory::ConsumeItem_Internal(const uint64 &Id)
+void ACsManager_Inventory::ConsumeItem_Internal(const TCsItemId &Id)
 {
 	RemoveItem(Id, ECsManagerInventoryStringCache::Str::ConsumeItem_Internal, ECsInventoryTransaction::Consume, true);
 }
@@ -442,7 +447,7 @@ void ACsManager_Inventory::ConsumeItem(FCsItem* Item, TArray<FCsItem*> &OutResul
 		// CONSUME
 		if (Action == ECsItemOnConsumeContentAction::Consume)
 		{
-			ConsumeItem_Internal(ContentItem->UniqueId);
+			ConsumeItem_Internal(ContentItem->Id);
 		}
 		// DROP
 		else
@@ -458,7 +463,7 @@ void ACsManager_Inventory::ConsumeItem(FCsItem* Item, TArray<FCsItem*> &OutResul
 			OutResultingItems.Add(ContentItem);
 		}
 	}
-	ConsumeItem_Internal(Item->UniqueId);
+	ConsumeItem_Internal(Item->Id);
 }
 
 void ACsManager_Inventory::ConsumeItem(FCsItem* Item)
@@ -490,14 +495,14 @@ void ACsManager_Inventory::ConsumeFirstItem(const FName &ShortCode)
 // Drop
 #pragma region
 
-void ACsManager_Inventory::DropItem_Internal(const uint64 &Id)
+void ACsManager_Inventory::DropItem_Internal(const TCsItemId &Id)
 {
 	RemoveItem(Id, ECsManagerInventoryStringCache::Str::DropItem, ECsInventoryTransaction::Drop, false);
 }
 
 void ACsManager_Inventory::DropItem(FCsItem* Item)
 {
-	DropItem_Internal(Item->UniqueId);
+	DropItem_Internal(Item->Id);
 }
 
 FCsItem* ACsManager_Inventory::DropFirstItem(const FName &ShortCode)

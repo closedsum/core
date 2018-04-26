@@ -18,7 +18,7 @@ UCsCoroutineScheduler::UCsCoroutineScheduler(const FObjectInitializer& ObjectIni
 
 		for (int32 J = 0; J < CS_ROUTINE_POOL_SIZE; ++J)
 		{
-			RoutinePools[I][J].Init(this, (TCsCoroutineSchedule)I, J);
+			RoutinePools[I][J].Init((TCsCoroutineSchedule)I, J);
 		}
 	}
 }

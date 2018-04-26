@@ -91,12 +91,6 @@ class CSCORE_API ACsData_Payload : public ACsData
 {
 	GENERATED_UCLASS_BODY()
 
-	TCsLoadAssetsType LoadAssetType_MAX;
-	uint8 LOAD_ASSETS_TYPE_MAX;
-
-	TCsLoadAssetsTypeToString LoadAssetsTypeToString;
-	TCsStringToLoadAssetsType StringToLoadAssetsType;
-
 // 98 Editor
 #pragma region
 

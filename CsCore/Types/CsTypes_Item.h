@@ -111,7 +111,13 @@ typedef const TCsItemOwner&(*TCsStringToItemOwner)(const FString&);
 								ItemOwnerToString = &ECsItemOwner::ToString; \
 								StringToItemOwner = &ECsItemOwner::ToType;
 
-#define CS_WORLD_OWNER_ID 0
+namespace ECsItemOwnerId
+{
+	const FGuid None = FGuid();
+	const FGuid World = FGuid();
+}
+
+#define CS_WORLD_OWNER_ID ECsItemOwnerId::World
 
 #define CS_INVALID_INVENTORY_ITEM_BAG 255
 #define CS_INVALID_INVENTORY_ITEM_ROW 255
@@ -467,6 +473,8 @@ struct FCsItemMemberDescription
 	}
 };
 
+typedef FGuid TCsItemOwnerId;
+
 #define CS_INVALID_ITEM_OWNER 255
 
 USTRUCT(BlueprintType)
@@ -476,7 +484,7 @@ struct FCsItemHistory
 
 	/** OwnerId */
 	UPROPERTY()
-	uint64 OwnerId;
+	FGuid OwnerId;
 
 	TCsItemOwner OwnerType;
 
@@ -557,7 +565,7 @@ struct FCsItemHistory
 
 	void Reset()
 	{
-		OwnerId = 0;
+		OwnerId = ECsItemOwnerId::None;
 		OwnerType = (TCsItemOwner)0;
 		OwnerType_Script = CS_INVALID_ITEM_OWNER;
 		OwnerName = ECsCachedString::Str::Empty;
@@ -575,6 +583,100 @@ struct FCsItemHistory
 #define CS_ITEM_POOL_INVALID_INDEX 65535
 #define CS_INVALID_ITEM_TYPE 255
 #define CS_CURRENT_HISTORY -1
+
+typedef FGuid TCsItemProductId;
+
+USTRUCT(BlueprintType)
+struct FCsItemProduct
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** Name */
+	UPROPERTY()
+	FString Name;
+
+	UPROPERTY()
+	FGuid Id;
+
+	UPROPERTY()
+	FCsItemHistory CurrentHistory;
+	UPROPERTY()
+	TArray<FCsItemHistory> PreviousHistories;
+
+	FCsItemProduct()
+	{
+		PreviousHistories.SetNum(0);
+	}
+
+	~FCsItemProduct() {}
+
+	FCsItemProduct& operator=(const FCsItemProduct& B)
+	{
+		Name = B.Name;
+		Id = B.Id;
+
+		CurrentHistory = B.CurrentHistory;
+
+		PreviousHistories.Reset();
+
+		const int32 HistoryCount = B.PreviousHistories.Num();
+
+		for (int32 I = 0; I < HistoryCount; ++I)
+		{
+			PreviousHistories.AddDefaulted();
+			PreviousHistories[I] = B.PreviousHistories[I];
+		}
+		return *this;
+	}
+
+	bool operator==(const FCsItemProduct& B) const
+	{
+		if (Name != B.Name) { return false; }
+		if (Id != B.Id) { return false; }
+		if (CurrentHistory != B.CurrentHistory) { return false; }
+
+		if (PreviousHistories.Num() != B.PreviousHistories.Num()) { return false; }
+
+		const int32 HistoryCount = B.PreviousHistories.Num();
+
+		for (int32 I = 0; I < HistoryCount; ++I)
+		{
+			if (PreviousHistories[I] != B.PreviousHistories[I])
+				return false;
+		}
+		return true;
+	}
+
+	bool operator!=(const FCsItemProduct& B) const
+	{
+		return !(*this == B);
+	}
+
+	FCsItemMemberValue* GetMemberValue(const int32 &HistoryIndex, const FName& Name)
+	{
+		if (HistoryIndex == CS_CURRENT_HISTORY)
+			return CurrentHistory.Members.Find(Name);
+		if (HistoryIndex < PreviousHistories.Num())
+			return PreviousHistories[HistoryIndex].Members.Find(Name);
+		return nullptr;
+	}
+
+	void IncrementMemberValue(const int32 &HistoryIndex, const FName& Name)
+	{
+		FCsItemMemberValue* Value = GetMemberValue(HistoryIndex, Name);
+		Value->Increment();
+	}
+
+	void Reset()
+	{
+		Name = ECsCachedString::Str::Empty;
+		Id	 = ECsItemOwnerId::None;
+		CurrentHistory.Reset();
+		PreviousHistories.Reset();
+	}
+};
+
+typedef FGuid TCsItemId;
 
 USTRUCT(BlueprintType)
 struct FCsItem
@@ -598,7 +700,7 @@ struct FCsItem
 	FString TypeAsString;
 
 	UPROPERTY()
-	uint64 UniqueId;
+	FGuid Id;
 	UPROPERTY()
 	FName ShortCode;
 	UPROPERTY()
@@ -611,7 +713,7 @@ struct FCsItem
 
 	/** Array of Item UniqueIds this Item is "Holding" */
 	UPROPERTY()
-	TArray<uint64> Contents;
+	TArray<FGuid> Contents;
 
 	TWeakObjectPtr<class ACsData_Item> Data;
 	/** Data for Actor spawned when Item leaves Inventory */
@@ -620,17 +722,13 @@ struct FCsItem
 	UPROPERTY()
 	FCsInventoryItemProperties InventoryProperties;
 	UPROPERTY()
-	FCsItemHistory CurrentHistory;
-	UPROPERTY()
-	TArray<FCsItemHistory> PreviousHistories;
+	TMap<FGuid, FCsItemProduct> Products;
 
 	FCsMutex AsycTaskMutex;
 
 	FCsItem() 
 	{
 		Index = CS_ITEM_POOL_INVALID_INDEX;
-
-		PreviousHistories.SetNum(0);
 		Reset();
 	}
 
@@ -641,7 +739,7 @@ struct FCsItem
 		Type = B.Type;
 		Type_Script = B.Type_Script;
 		TypeAsString = B.TypeAsString;
-		UniqueId = B.UniqueId;
+		Id = B.Id;
 		ShortCode = B.ShortCode;
 		DisplayName = B.DisplayName;
 		FileName = B.FileName;
@@ -659,16 +757,22 @@ struct FCsItem
 		Data = B.Data;
 		Data_Actor = B.Data_Actor;
 		InventoryProperties = B.InventoryProperties;
-		CurrentHistory = B.CurrentHistory;
 
-		PreviousHistories.Reset();
+		Products.Reset();
 
-		const int32 HistoryCount = B.PreviousHistories.Num();
+		TArray<FGuid> Keys;
+		B.Products.GetKeys(Keys);
 
-		for (int32 I = 0; I < HistoryCount; ++I)
+		const int32 ProductCount = Keys.Num();
+
+		for (int32 I = 0; I < ProductCount; ++I)
 		{
-			PreviousHistories.AddDefaulted();
-			PreviousHistories[I] = B.PreviousHistories[I];
+			const FGuid& Key = Keys[I];
+			
+			const FCsItemProduct* ProductPtr = B.Products.Find(Key);
+			FCsItemProduct Product			 = *ProductPtr;
+
+			Products.Add(Key, Product);
 		}
 		return *this;
 	}
@@ -678,7 +782,7 @@ struct FCsItem
 		if (Type != B.Type) { return false; }
 		if (Type_Script != B.Type_Script) { return false; }
 		if (TypeAsString != B.TypeAsString) { return false; }
-		if (UniqueId != B.UniqueId) { return false; }
+		if (Id != B.Id) { return false; }
 		if (ShortCode != B.ShortCode) { return false; }
 		if (DisplayName != B.DisplayName) { return false; }
 		if (Created != B.Created) { return false; }
@@ -697,15 +801,24 @@ struct FCsItem
 		if (Data != B.Data) { return false; }
 		if (Data_Actor != B.Data_Actor) { return false; }
 		if (InventoryProperties != B.InventoryProperties) { return false; }
-		if (CurrentHistory != B.CurrentHistory) { return false; }
 
-		if (PreviousHistories.Num() != B.PreviousHistories.Num()) { return false; }
+		if (Products.Num() != B.Products.Num()) { return false; }
 
-		const int32 HistoryCount = B.PreviousHistories.Num();
+		TArray<TCsItemProductId> Keys;
+		B.Products.GetKeys(Keys);
 
-		for (int32 I = 0; I < HistoryCount; ++I)
+		const int32 ProductCount = Keys.Num();
+
+		for (int32 I = 0; I < ProductCount; ++I)
 		{
-			if (PreviousHistories[I] != B.PreviousHistories[I])
+			const TCsItemProductId& Key = Keys[I];
+
+			const FCsItemProduct* P1 = Products.Find(Key);
+			const FCsItemProduct* P2 = B.Products.Find(Key);
+
+			if ((P1 && !P2) || (!P1 && P2))
+				return false;
+			if (*P1 != *P2)
 				return false;
 		}
 		return true;
@@ -727,19 +840,29 @@ struct FCsItem
 		Type_Script = (uint8)Type;
 	}
 
-	FCsItemMemberValue* GetMemberValue(const int32 &HistoryIndex, const FName& Name)
+
+	FCsItemProduct* GetProduct(const TCsItemProductId &ProductId)
 	{
-		if (HistoryIndex == CS_CURRENT_HISTORY)
-			return CurrentHistory.Members.Find(Name);
-		if (HistoryIndex < PreviousHistories.Num())
-			return PreviousHistories[HistoryIndex].Members.Find(Name);
+		return Products.Find(ProductId);
+	}
+
+	FCsItemHistory& GetCurrentHistory(const TCsItemProductId &ProductId)
+	{
+		FCsItemProduct* Product = Products.Find(ProductId);
+		return Product->CurrentHistory;
+	}
+
+	FCsItemMemberValue* GetMemberValue(const TCsItemProductId &ProductId, const int32 &HistoryIndex, const FName& Name)
+	{
+		if (FCsItemProduct* Product = Products.Find(ProductId))
+			return Product->GetMemberValue(HistoryIndex, Name);
 		return nullptr;
 	}
 
-	void IncrementMemberValue(const int32 &HistoryIndex, const FName& Name)
+	void IncrementMemberValue(const TCsItemProductId &ProductId, const int32 &HistoryIndex, const FName& Name)
 	{
-		FCsItemMemberValue* Value = GetMemberValue(HistoryIndex, Name);
-		Value->Increment();
+		if (FCsItemProduct* Product = Products.Find(ProductId))
+			Product->IncrementMemberValue(HistoryIndex, Name);
 	}
 
 	void Reset()
@@ -749,7 +872,7 @@ struct FCsItem
 		Type = (TCsItemType)0;
 		Type_Script  = CS_INVALID_ITEM_TYPE;
 		TypeAsString = ECsCachedString::Str::Empty;
-		UniqueId = 0;
+		Id = ECsItemOwnerId::None;
 		ShortCode = CS_INVALID_SHORT_CODE;
 		DisplayName = ECsCachedString::Str::Empty;
 		FileName = ECsCachedString::Str::Empty;
@@ -760,8 +883,7 @@ struct FCsItem
 		//Data_Actor.Reset();
 		//Data_Actor = nullptr;
 		InventoryProperties.Reset();
-		CurrentHistory.Reset();
-		PreviousHistories.Reset();
+		Products.Reset();
 		AsycTaskMutex.Reset();
 	}
 
@@ -1029,13 +1151,22 @@ typedef const TCsItemInteraction&(*TCsStringToItemInteraction)(const FString&);
 									ItemInteractionToString = &ECsItemInteraction::ToString; \
 									StringToItemInteraction = &ECsItemInteraction::ToType;
 
+namespace ECsFileItemProductHeaderCachedString
+{
+	namespace Str
+	{
+		const FString Products = TEXT("Products");
+		const FString Name = TEXT("Name");
+		const FString Id = TEXT("Id");
+	}
+}
 
 namespace ECsFileItemHeaderCachedString
 {
 	namespace Str
 	{
 		const FString Header = TEXT("Header");
-		const FString UniqueId = TEXT("UniqueId");
+		const FString Id = TEXT("Id");
 		const FString ShortCode = TEXT("ShortCode");
 		const FString DisplayName = TEXT("DisplayName");
 		const FString Type = TEXT("Type");

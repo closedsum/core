@@ -151,7 +151,7 @@ void ACsManager_Crafting::CraftItems(FCsCraftingPayload* Payload)
 CS_COROUTINE(ACsManager_Crafting, CraftItems_Internal)
 {
 	ACsManager_Crafting* c	 = Cast<ACsManager_Crafting>(r->GetActor());
-	UCsCoroutineScheduler* s = r->scheduler;
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 	UWorld* w				 = c->GetWorld();
 	
 	ACsManager_Item* Manager_Item			= ACsManager_Item::Get(w);
@@ -225,7 +225,7 @@ CS_COROUTINE(ACsManager_Crafting, CraftItems_Internal)
 						// Add to Contents
 						if (Ingredient.AddToContents)
 						{
-							CreatedItem->Contents.Add(ProcessedItems[K]->UniqueId);
+							CreatedItem->Contents.Add(ProcessedItems[K]->Id);
 							Manager_Inventory->HideItem(ProcessedItems[K]);
 						}
 					}

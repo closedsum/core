@@ -254,6 +254,9 @@ public:
 		if (References.Num() == 0)
 		{
 			UE_LOG(LogLoad, Warning, TEXT("ACsDataMapping::AsyncLoadAssets: Trying to load 0 assets."));
+
+			TArray<UObject*> LoadedAssets;
+			(CallbackCaller->*Callback)(LoadedAssets, 0.0f);
 			return;
 		}
 		UCsManager_Loading::Get()->LoadAssetReferences<T>(Cast<UObject>(CallbackCaller)->GetWorld(), References, AsyncOrder, CallbackCaller, Callback);

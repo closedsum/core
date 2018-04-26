@@ -172,7 +172,7 @@ void ACsDamageableActor::Respawn()
 PT_THREAD(ACsDamageableActor::Respawn_Internal(struct FCsRoutine* r))
 {
 	ACsDamageableActor* d	 = Cast<ACsDamageableActor>(r->GetActor());
-	UCsCoroutineScheduler* s = r->scheduler;
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 	UWorld* w			     = d->GetWorld();
 
 	ACsData_Damageable* data = Cast<ACsData_Damageable>(d->Cache.GetData());

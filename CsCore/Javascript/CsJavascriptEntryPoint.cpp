@@ -57,7 +57,7 @@ PT_THREAD(ACsJavascriptEntryPoint::Setup_Internal(FCsRoutine* r))
 	UWorld* w					= js->GetWorld();
 	UCsGameInstance* gi			= Cast<UCsGameInstance>(w->GetGameInstance());
 	ACsGameState* gs			= w->GetGameState<ACsGameState>();
-	UCsCoroutineScheduler* s	= r->scheduler;
+	UCsCoroutineScheduler* s	= UCsCoroutineScheduler::Get();
 	ACsPlayerController* pc		= UCsCommon::GetLocalPlayerController<ACsPlayerController>(w);
 	ACsUI* hud					= pc ? Cast<ACsUI>(pc->MyHUD) : nullptr;
 	ACsPlayerState* ps			= UCsCommon::GetLocalPlayerState<ACsPlayerState>(w);

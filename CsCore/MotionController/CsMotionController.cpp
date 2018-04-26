@@ -417,7 +417,7 @@ void ACsMotionController::Setup_OnCalcCamera()
 PT_THREAD(ACsMotionController::Setup_OnCalcCamera_Internal(struct FCsRoutine* r))
 {
 	ACsMotionController* mc  = Cast<ACsMotionController>(r->GetActor());
-	UCsCoroutineScheduler* s = r->scheduler;
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 	UWorld* w				 = mc->GetWorld();
 	ACsPlayerController* pc  = UCsCommon::GetLocalPlayerController<ACsPlayerController>(w);
 

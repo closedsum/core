@@ -12,6 +12,13 @@
         MAX
     }
 
+    public enum ECgBlockchainProcessType
+    {
+        RunningInstance,
+        Console,
+        MAX
+    }
+
     public interface ICgBlockchain
     {
         #region "Data Members"
@@ -22,23 +29,45 @@
 
         string RootDirectory { get; set; }
         string ChainDirectory { get; set; }
+
+                #region "Running Instance"
+
+        bool IsRunningInstance { get; set; }
+
+        Process RunningInstance { get; set; }
+
+                #endregion // Running Instance
+
+                #region "Shell"
+
         string ShellFilename { get; set; }
         string ShellArguments { get; set; }
         string ConsoleFilename { get; set; }
         string ConsoleDirectory { get; set; }
+
         bool IsShellOpen { get; set; }
         bool IsConsoleOpen { get; set; }
         bool IsMining { get; set; }
 
         Process Shell { get; set; }
 
+                #endregion // Shell
+
             #endregion // Private / Local Storage
 
+        ICgBlockchainGenesis Genesis { get; set; }
         Dictionary<CgBlockchainContractKey, ICgBlockchainContract> Contracts { get; set; }
 
         #endregion // Data Members
 
         void Init();
+
+        void StartProcess(ECgBlockchainProcessType ProcessType);
+
+        /* Setup chaindata and genesis.json for private chain */
+        void CreatePrivateChain();
+        /* Start running / polling the current private chain */
+        void StartPrivateChain();
 
         /* Opens the shell from which to start any Blockchain program */
         void OpenShell();
@@ -59,7 +88,7 @@
     public abstract class CgBlockchain : ICgBlockchain
     {
         public static CgConsoleVariableLog LogIO = new CgConsoleVariableLog("log.blockchain.io", false, "Log Blockchain Input / Output Messages", (int)ECgConsoleVariableFlag.Console);
-        public static TCgConsoleVariable<bool> ShowShellWindow = new CgConsoleVariableLog("show.blockchain.shellwindow", false, "Show Blockchain Shell Window", (int)ECgConsoleVariableFlag.Console);
+        public static TCgConsoleVariable<bool> ShowShellWindow = new TCgConsoleVariable<bool>("show.blockchain.shellwindow", false, "Show Blockchain Shell Window", (int)ECgConsoleVariableFlag.Console);
 
         public delegate CgBlockchain Getter();
 
@@ -71,7 +100,7 @@
 
         #region "Data Members"
 
-        #region "Interface"
+            #region "Interface"
 
         private ECgBlockchainStorageType _StorageType;
         public ECgBlockchainStorageType StorageType
@@ -93,6 +122,24 @@
             get { return _ChainDirectory; }
             set { _ChainDirectory = value; }
         }
+
+        #region "Running Instance"
+
+        private bool _IsRunningInstance;
+        public bool IsRunningInstance
+        {
+            get { return _IsRunningInstance; }
+            set { _IsRunningInstance = value; }
+        }
+
+        private Process _RunningInstance;
+        public Process RunningInstance
+        {
+            get { return _RunningInstance; }
+            set { _RunningInstance = value; }
+        }
+
+            #endregion // Running Instance
 
         private string _ShellFilename;
         public string ShellFilename
@@ -150,6 +197,13 @@
             set { _Shell = value; }
         }
 
+        private ICgBlockchainGenesis _Genesis;
+        public ICgBlockchainGenesis Genesis
+        {
+            get { return _Genesis; }
+            set { _Genesis = value; }
+        }
+
         private Dictionary<CgBlockchainContractKey, ICgBlockchainContract> _Contracts;
         public Dictionary<CgBlockchainContractKey, ICgBlockchainContract> Contracts
         {
@@ -157,19 +211,21 @@
             set { Contracts = _Contracts; }
         }
 
-        #endregion // Interface
+            #endregion // Interface
 
-        public Getter Get;
+        public static Getter Get;
 
         #endregion // Data Members
 
         public abstract void Init();
+        public abstract void StartProcess(ECgBlockchainProcessType ProcessType);
+        public abstract void CreatePrivateChain();
+        public abstract void StartPrivateChain();
         public abstract void OpenShell();
         public abstract void CloseShell();
         public abstract void OpenConsole();
         public abstract void CloseConsole();
         public abstract void ProcessCommand(string command);
-        public abstract void CreatePrivateChain();
         public abstract void StartMiner();
         public abstract void StopMiner();
     }

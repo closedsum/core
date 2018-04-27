@@ -4,6 +4,17 @@
     using System.IO;
     using UnityEngine;
 
+    public static class ECgEthereumCommand
+    {
+        /*
+        public static readonly ECgInputAction MoveForward = new ECgInputAction(0, "MoveForward");
+        public static readonly ECgInputAction MoveBackward = new ECgInputAction(1, "MoveBackward");
+        public static readonly ECgInputAction MoveRight = new ECgInputAction(2, "MoveRight");
+        public static readonly ECgInputAction MoveLeft = new ECgInputAction(3, "MoveLeft");
+        public static readonly ECgInputAction MAX = new ECgInputAction(4, "MAX");
+        */
+    }
+
     public class CgEthereum : CgBlockchain
     {
         #region "Data Members"
@@ -88,7 +99,7 @@
 
             p.BeginOutputReadLine();
 
-            ProcessCommand("cd /d " + RootDirectory);
+            RunCommand("cd /d " + RootDirectory);
 
             if (ProcessType == ECgBlockchainProcessType.RunningInstance)
                 RunningInstance = p;
@@ -116,7 +127,7 @@
                 string[] files = Directory.GetFiles(ChainDirectory, "genesis*");
                 GenesisExists = files.Length > EMPTY;
             }
-            // Link chain
+            // Link chaindata
            // if (GenesisExists)
             //    ProcessCommand(ConsoleDirectory + " --datadir=" + ChainDirectory);
            // else
@@ -154,14 +165,14 @@
 
             Shell.BeginOutputReadLine();
 
-            ProcessCommand("cd /d " + RootDirectory);
+            RunCommand("cd /d " + RootDirectory);
         }
 
         static public void ShellOutputRecieved(object sender, DataReceivedEventArgs e)
         {
             if (LogIO.Log())
             {
-                UnityEngine.Debug.Log("Blockchain(Output): " + e.Data);
+                UnityEngine.Debug.Log("Blockchain (Output): " + e.Data);
             }
         }
 
@@ -190,7 +201,7 @@
             if (Shell == null)
                 OpenShell();
 
-            ProcessCommand(ConsoleFullPath + " attach ipc:\\\\.\\pipe\\geth.ipc");
+            RunCommand(ConsoleFullPath + " attach ipc:\\\\.\\pipe\\geth.ipc");
 
             IsConsoleOpen = true;
         }
@@ -201,13 +212,18 @@
             if (!IsConsoleOpen)
                 return;
 
-            ProcessCommand("exit");
+            RunCommand("exit");
         }
 
-        public override void ProcessCommand(string command)
+        public override void RunCommand(string command)
         {
             if (!IsConsoleOpen)
                 OpenConsole();
+
+            if (LogIO.Log())
+            {
+                UnityEngine.Debug.Log("Blockchain (Input): " + command);
+            }
 
             // Convert string command to bytes
             byte[] buffer = System.Text.Encoding.ASCII.GetBytes(command);
@@ -226,7 +242,7 @@
             if (!IsConsoleOpen)
                 OpenConsole();
 
-            ProcessCommand("miner.start();");
+            RunCommand("miner.start();");
             IsMining = true;
         }
 
@@ -235,7 +251,7 @@
             if (!IsMining)
                 return;
 
-            ProcessCommand("miner.stop();");
+            RunCommand("miner.stop();");
 
             IsMining = false;
         }

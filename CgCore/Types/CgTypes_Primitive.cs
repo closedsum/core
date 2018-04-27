@@ -129,6 +129,7 @@ namespace CgCore
 
     public class TCgPrimitiveType<T> where T : struct
     {
+        public sealed class OnChange : TCgMulticastDelegate_OneParam<T> { }
         #region "Data Members"
 
         public T Value;
@@ -138,9 +139,14 @@ namespace CgCore
 
         #endregion // Data Members
 
-        public TCgMulticastDelegate_OneParam<T> OnChange_Event;
+        public OnChange OnChange_Event;
 
         #region "Operators"
+
+        public TCgPrimitiveType()
+        {
+            OnChange_Event = new OnChange();
+        }
 
         public static bool operator ==(TCgPrimitiveType<T> lhs, TCgPrimitiveType<T> rhs)
         {

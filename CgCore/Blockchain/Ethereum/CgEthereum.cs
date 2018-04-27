@@ -34,6 +34,8 @@
         {
             Get = _Get;
 
+            Genesis = (ICgBlockchainGenesis)(new CgEthereumGenesis());
+
             StorageType = ECgBlockchainStorageType.Private;
             // TODO: Need to check platform
             ShellFilename = "cmd.exe";
@@ -56,21 +58,96 @@
             UnityEngine.Debug.Log(msg);
         }
 
+        public override void StartProcess(ECgBlockchainProcessType ProcessType)
+        {
+            if (ProcessType == ECgBlockchainProcessType.RunningInstance &&
+                RunningInstance != null)
+            {
+                return;
+            }
+            if (ProcessType == ECgBlockchainProcessType.Console &&
+                Shell != null)
+            {
+                return;
+            }
+
+            Process p = new Process();
+            // ProcessStartInfo
+            ProcessStartInfo psi    = p.StartInfo;
+            psi.CreateNoWindow      = ShowShellWindow.Get();
+            psi.UseShellExecute     = false;
+            psi.FileName            = ShellFilename;
+            psi.Arguments           = ShellArguments;
+            psi.RedirectStandardInput = true;
+            psi.RedirectStandardOutput = true;
+            p.OutputDataReceived    += ShellOutputRecieved;
+
+            p.Start();
+
+            IsShellOpen = true;
+
+            p.BeginOutputReadLine();
+
+            ProcessCommand("cd /d " + RootDirectory);
+
+            if (ProcessType == ECgBlockchainProcessType.RunningInstance)
+                RunningInstance = p;
+            if (ProcessType == ECgBlockchainProcessType.Console)
+                Shell = p;
+        }
+
+        public override void CreatePrivateChain()
+        {
+            // Check if Blockchain directory exists
+            if (!Directory.Exists(Application.dataPath + "\\Blockchain"))
+            {
+                Directory.CreateDirectory(Application.dataPath + "\\Blockchain");
+            }
+            // Check if Ethereum director exists
+            if (!Directory.Exists(Application.dataPath + "\\Blockchain\\Ethereum"))
+            {
+                Directory.CreateDirectory(Application.dataPath + "\\Blockchain\\Ethereum");
+            }
+            // Check if genesis.json has been created
+            bool GenesisExists = false;
+
+            if (Directory.Exists(ChainDirectory))
+            {
+                string[] files = Directory.GetFiles(ChainDirectory, "genesis*");
+                GenesisExists = files.Length > EMPTY;
+            }
+            // Link chain
+           // if (GenesisExists)
+            //    ProcessCommand(ConsoleDirectory + " --datadir=" + ChainDirectory);
+           // else
+            {
+                UnityEngine.Debug.Log(ConsoleDirectory + "\\" + ConsoleFilename + " --datadir=" + ChainDirectory + " init " + RootDirectory + "\\genesis.json");
+               // ProcessCommand(ConsoleDirectory + " --datadir=" + ChainDirectory + " init " + ChainDirectory + "\\genesis.json");
+            }
+        }
+
+        public override void StartPrivateChain()
+        {
+            StartProcess(ECgBlockchainProcessType.RunningInstance);
+            //CreatePrivateChain();
+            //Genesis.Parse(ChainDirectory + "/genesis.json");
+        }
+
         public override void OpenShell()
         {
             if (Shell != null)
                 return;
 
             Shell = new Process();
-            ProcessStartInfo psi = Shell.StartInfo;
 
-            psi.CreateNoWindow = ShowShellWindow.Get();
-            psi.UseShellExecute = false;
-            psi.FileName = ShellFilename;
-            psi.Arguments = ShellArguments;
-            psi.RedirectStandardInput = true;
-            psi.RedirectStandardOutput = true;
-            Shell.OutputDataReceived += ShellOutputRecieved;
+            ProcessStartInfo psi        = Shell.StartInfo;
+            psi.CreateNoWindow          = ShowShellWindow.Get();
+            psi.UseShellExecute         = false;
+            psi.FileName                = ShellFilename;
+            psi.Arguments               = ShellArguments;
+            psi.RedirectStandardInput   = true;
+            psi.RedirectStandardOutput  = true;
+            Shell.OutputDataReceived   += ShellOutputRecieved;
             Shell.Start();
 
             IsShellOpen = true;
@@ -140,19 +217,6 @@
             Shell.StandardInput.BaseStream.Write(buffer, 0, buffer.Length);
             // Flush command to be processed
             Shell.StandardInput.BaseStream.Flush();
-        }
-
-        public override void CreatePrivateChain()
-        {
-            // Check if genesis.json has been created
-            bool GenesisExists  = false;
-            string[] files      = Directory.GetFiles(ChainDirectory, "genesis*");
-            GenesisExists       = files.Length > EMPTY;
-            // Link chain
-            if (GenesisExists)
-                ProcessCommand(ConsoleDirectory + " --datadir=" + ChainDirectory);
-            else
-                ProcessCommand(ConsoleDirectory + " --datadir=" + ChainDirectory + " init " + ChainDirectory + "\\genesis.json");
         }
          
         public override void StartMiner()

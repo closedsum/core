@@ -19,6 +19,24 @@
         MAX
     }
 
+    public sealed class ECgBlockchainCommand : ECgEnum_byte
+    {
+        public ECgBlockchainCommand(byte value, string name) : base(value, name) { }
+    }
+
+    public sealed class ECgBlockchainCommandEqualityComparer : IEqualityComparer<ECgBlockchainCommand>
+    {
+        public bool Equals(ECgBlockchainCommand lhs, ECgBlockchainCommand rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(ECgBlockchainCommand x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
     public interface ICgBlockchain
     {
         #region "Data Members"
@@ -57,6 +75,7 @@
 
         ICgBlockchainGenesis Genesis { get; set; }
         Dictionary<CgBlockchainContractKey, ICgBlockchainContract> Contracts { get; set; }
+        Dictionary<ECgBlockchainCommand, string> Commands { get; set; }
 
         #endregion // Data Members
 
@@ -77,7 +96,7 @@
         */
         void OpenConsole();
         void CloseConsole();
-        void ProcessCommand(string command);
+        void RunCommand(string command);
 
         /* Starts a miner */
         void StartMiner();
@@ -211,6 +230,13 @@
             set { Contracts = _Contracts; }
         }
 
+        private Dictionary<ECgBlockchainCommand, string> _Commands;
+        public Dictionary<ECgBlockchainCommand, string> Commands
+        {
+            get { return _Commands; }
+            set { _Commands = value; }
+        }
+
             #endregion // Interface
 
         public static Getter Get;
@@ -225,7 +251,7 @@
         public abstract void CloseShell();
         public abstract void OpenConsole();
         public abstract void CloseConsole();
-        public abstract void ProcessCommand(string command);
+        public abstract void RunCommand(string command);
         public abstract void StartMiner();
         public abstract void StopMiner();
     }

@@ -4,7 +4,7 @@
     using System.Collections;
     using System.Collections.Generic;
 
-    public enum ECgBlockchainStorageType
+    public enum ECgBlockchainStorageType : byte
     {
         Private,
         Local,
@@ -12,7 +12,7 @@
         MAX
     }
 
-    public enum ECgBlockchainProcessType
+    public enum ECgBlockchainProcessType : byte
     {
         RunningInstance,
         Console,
@@ -34,6 +34,40 @@
         public int GetHashCode(ECgBlockchainCommand x)
         {
             return x.GetHashCode();
+        }
+    }
+
+    public enum ECgBlockchainCommandArgumentType : byte
+    {
+        Number,
+        String,
+        StringString,
+        MAX
+    }
+
+    public struct CgBlockchainCommandArgument
+    {
+        public ECgBlockchainCommandArgumentType ValueType;
+        public object Value;
+
+        public CgBlockchainCommandArgument(ECgBlockchainCommandArgumentType valueType, object value)
+        {
+            ValueType = valueType;
+            Value     = value;
+        }
+
+        public string ToStr()
+        {
+            // Number
+            if (ValueType == ECgBlockchainCommandArgumentType.Number)
+                return CgCommon.NumericTypeToString(Value);
+            // String
+            if (ValueType == ECgBlockchainCommandArgumentType.String)
+                return (string)Value;
+            // StringString
+            if (ValueType == ECgBlockchainCommandArgumentType.StringString)
+                return "\"" + (string)Value + "\"";
+            return "";
         }
     }
 
@@ -76,11 +110,11 @@
         ICgBlockchainGenesis Genesis { get; set; }
         Dictionary<CgBlockchainContractKey, ICgBlockchainContract> Contracts { get; set; }
         Dictionary<ECgBlockchainCommand, string> Commands { get; set; }
+        Dictionary<string, ICgBlockchainAccount> Accounts { get; set; }
 
         #endregion // Data Members
 
-        void Init();
-
+        void SetCommand(ECgBlockchainCommand command, string str);
         void StartProcess(ECgBlockchainProcessType ProcessType);
 
         /* Setup chaindata and genesis.json for private chain */
@@ -97,6 +131,10 @@
         void OpenConsole();
         void CloseConsole();
         void RunCommand(string command);
+        void RunCommand(ECgBlockchainCommand command, CgBlockchainCommandArgument[] args = null);
+
+        void NewAccount(object payload);
+        void UnlockAccount(object payload);
 
         /* Starts a miner */
         void StartMiner();
@@ -114,6 +152,7 @@
         #region "Constants"
 
         protected static readonly int EMPTY = 0;
+        protected static readonly string INVALID_COMMAND = "";
 
         #endregion // Constants
 
@@ -142,7 +181,7 @@
             set { _ChainDirectory = value; }
         }
 
-        #region "Running Instance"
+                #region "Running Instance"
 
         private bool _IsRunningInstance;
         public bool IsRunningInstance
@@ -158,7 +197,7 @@
             set { _RunningInstance = value; }
         }
 
-            #endregion // Running Instance
+                #endregion // Running Instance
 
         private string _ShellFilename;
         public string ShellFilename
@@ -227,7 +266,7 @@
         public Dictionary<CgBlockchainContractKey, ICgBlockchainContract> Contracts
         {
             get { return _Contracts; }
-            set { Contracts = _Contracts; }
+            set { _Contracts = value; }
         }
 
         private Dictionary<ECgBlockchainCommand, string> _Commands;
@@ -237,13 +276,21 @@
             set { _Commands = value; }
         }
 
+        private Dictionary<string, ICgBlockchainAccount> _Accounts;
+        public Dictionary<string, ICgBlockchainAccount> Accounts
+        {
+            get { return _Accounts; }
+            set { _Accounts = value; }
+        }
+
             #endregion // Interface
 
         public static Getter Get;
 
         #endregion // Data Members
 
-        public abstract void Init();
+        protected abstract void Init();
+        public abstract void SetCommand(ECgBlockchainCommand command, string str);
         public abstract void StartProcess(ECgBlockchainProcessType ProcessType);
         public abstract void CreatePrivateChain();
         public abstract void StartPrivateChain();
@@ -252,6 +299,11 @@
         public abstract void OpenConsole();
         public abstract void CloseConsole();
         public abstract void RunCommand(string command);
+        public abstract void RunCommand(ECgBlockchainCommand command, CgBlockchainCommandArgument[] args = null);
+
+        public abstract void NewAccount(object payload);
+        public abstract void UnlockAccount(object payload);
+
         public abstract void StartMiner();
         public abstract void StopMiner();
     }

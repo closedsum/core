@@ -1,18 +1,21 @@
 ﻿namespace CgCore
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
     using UnityEngine;
 
     public static class ECgEthereumCommand
     {
-        /*
-        public static readonly ECgInputAction MoveForward = new ECgInputAction(0, "MoveForward");
-        public static readonly ECgInputAction MoveBackward = new ECgInputAction(1, "MoveBackward");
-        public static readonly ECgInputAction MoveRight = new ECgInputAction(2, "MoveRight");
-        public static readonly ECgInputAction MoveLeft = new ECgInputAction(3, "MoveLeft");
-        public static readonly ECgInputAction MAX = new ECgInputAction(4, "MAX");
-        */
+        public static readonly ECgBlockchainCommand InitBlockchain = new ECgBlockchainCommand(0, "InitBlockchain");
+        public static readonly ECgBlockchainCommand SetDataDirectory = new ECgBlockchainCommand(1, "SetDataDirectory");
+        public static readonly ECgBlockchainCommand ChangeToRootDirectory = new ECgBlockchainCommand(2, "ChangeToRootDirectory");
+        public static readonly ECgBlockchainCommand AttachToConsole = new ECgBlockchainCommand(3, "AttachToConsole");
+        public static readonly ECgBlockchainCommand ExitConsole = new ECgBlockchainCommand(4, "ExitConsole");
+        public static readonly ECgBlockchainCommand NewAccount = new ECgBlockchainCommand(5, "NewAccount");
+        public static readonly ECgBlockchainCommand UnlockAccount = new ECgBlockchainCommand(6, "UnlockAccount");
     }
 
     public class CgEthereum : CgBlockchain
@@ -41,22 +44,34 @@
             Init();
         }
 
-        public override void Init()
+        protected override void Init()
         {
             Get = _Get;
 
             Genesis = (ICgBlockchainGenesis)(new CgEthereumGenesis());
 
             StorageType = ECgBlockchainStorageType.Private;
+            
             // TODO: Need to check platform
             ShellFilename = "cmd.exe";
             // Run Command and then return to the CMD prompt.
             ShellArguments  = "/K";
             ConsoleFilename = "geth.exe";
             ConsoleDirectory = Application.dataPath + "\\Blockchain\\Ethereum\\Geth";
-            ConsoleFullPath = ConsoleDirectory + "\\" + ConsoleFullPath;
+            ConsoleFullPath = ConsoleDirectory + "\\" + ConsoleFilename;
             RootDirectory   = Application.dataPath + "\\Blockchain\\Ethereum";
             ChainDirectory  = Application.dataPath + "\\Blockchain\\Ethereum\\chaindata";
+
+            Commands = new Dictionary<ECgBlockchainCommand, string>(new ECgBlockchainCommandEqualityComparer());
+            Accounts = new Dictionary<string, ICgBlockchainAccount>();
+
+            SetCommand(ECgEthereumCommand.InitBlockchain, ConsoleDirectory + "\\" + ConsoleFilename + " --datadir=" + ChainDirectory + " init " + RootDirectory + "\\genesis.json");
+            SetCommand(ECgEthereumCommand.SetDataDirectory, ConsoleDirectory + " --datadir=" + ChainDirectory);
+            SetCommand(ECgEthereumCommand.ChangeToRootDirectory, "cd /d " + RootDirectory);
+            SetCommand(ECgEthereumCommand.AttachToConsole, ConsoleFullPath + " attach ipc:\\\\.\\pipe\\geth.ipc");
+            SetCommand(ECgEthereumCommand.ExitConsole, "exit");
+            SetCommand(ECgEthereumCommand.NewAccount, "personal.newAccount(%s)");
+            SetCommand(ECgEthereumCommand.UnlockAccount, "personal.unlockAccount(%s,%s,%s)");
         }
 
         private CgBlockchain _Get()
@@ -67,6 +82,21 @@
         public void Log(string msg)
         {
             UnityEngine.Debug.Log(msg);
+        }
+
+        public override void SetCommand(ECgBlockchainCommand command, string str)
+        {
+            string value;
+            Commands.TryGetValue(command, out value);
+
+            if (value == "")
+            {
+                Commands.Add(command, str);
+            }
+            else
+            {
+                Commands[command] = str;
+            }
         }
 
         public override void StartProcess(ECgBlockchainProcessType ProcessType)
@@ -99,7 +129,7 @@
 
             p.BeginOutputReadLine();
 
-            RunCommand("cd /d " + RootDirectory);
+            RunCommand(ECgEthereumCommand.ChangeToRootDirectory);
 
             if (ProcessType == ECgBlockchainProcessType.RunningInstance)
                 RunningInstance = p;
@@ -128,13 +158,10 @@
                 GenesisExists = files.Length > EMPTY;
             }
             // Link chaindata
-           // if (GenesisExists)
-            //    ProcessCommand(ConsoleDirectory + " --datadir=" + ChainDirectory);
-           // else
-            {
-                UnityEngine.Debug.Log(ConsoleDirectory + "\\" + ConsoleFilename + " --datadir=" + ChainDirectory + " init " + RootDirectory + "\\genesis.json");
-               // ProcessCommand(ConsoleDirectory + " --datadir=" + ChainDirectory + " init " + ChainDirectory + "\\genesis.json");
-            }
+            if (GenesisExists)
+                RunCommand(ECgEthereumCommand.SetDataDirectory);
+            else
+                RunCommand(ECgEthereumCommand.InitBlockchain);
         }
 
         public override void StartPrivateChain()
@@ -146,26 +173,7 @@
 
         public override void OpenShell()
         {
-            if (Shell != null)
-                return;
-
-            Shell = new Process();
-
-            ProcessStartInfo psi        = Shell.StartInfo;
-            psi.CreateNoWindow          = ShowShellWindow.Get();
-            psi.UseShellExecute         = false;
-            psi.FileName                = ShellFilename;
-            psi.Arguments               = ShellArguments;
-            psi.RedirectStandardInput   = true;
-            psi.RedirectStandardOutput  = true;
-            Shell.OutputDataReceived   += ShellOutputRecieved;
-            Shell.Start();
-
-            IsShellOpen = true;
-
-            Shell.BeginOutputReadLine();
-
-            RunCommand("cd /d " + RootDirectory);
+            StartProcess(ECgBlockchainProcessType.Console); ;
         }
 
         static public void ShellOutputRecieved(object sender, DataReceivedEventArgs e)
@@ -191,9 +199,6 @@
             IsShellOpen = false;
         }
 
-        /* Opens the console for the Blockchain program.
-         * From the console the user may execute any console commands.
-        */
         public override void OpenConsole()
         {
             if (IsConsoleOpen)
@@ -201,18 +206,17 @@
             if (Shell == null)
                 OpenShell();
 
-            RunCommand(ConsoleFullPath + " attach ipc:\\\\.\\pipe\\geth.ipc");
+            RunCommand(ECgEthereumCommand.AttachToConsole);
 
             IsConsoleOpen = true;
         }
-
 
         public override void CloseConsole()
         {
             if (!IsConsoleOpen)
                 return;
 
-            RunCommand("exit");
+            RunCommand(ECgEthereumCommand.ExitConsole);
         }
 
         public override void RunCommand(string command)
@@ -234,7 +238,106 @@
             // Flush command to be processed
             Shell.StandardInput.BaseStream.Flush();
         }
-         
+
+        public override void RunCommand(ECgBlockchainCommand command, CgBlockchainCommandArgument[] args = null)
+        {
+            string value;
+            Commands.TryGetValue(command, out value);
+
+            if (value == INVALID_COMMAND)
+            {
+                UnityEngine.Debug.LogWarning("CgEthereum.RunCommand: No command set for " + command.Name);
+                return;
+            }
+
+            // Rebuild command if arguments where passed in
+            if (args != null && args.Length > EMPTY)
+            {
+                // Create list of all string parts
+                List<string> parts = new List<string>();
+                parts.Add("");
+                int index = 0;
+
+                int commandLength = value.Length;
+
+                for (int i = 0; i < commandLength; ++i)
+                {
+                    char c = value[i];
+
+                    // Check for Wildcards
+                    if (c == '%')
+                    {
+                        // Check for type
+                        if (i < commandLength - 1)
+                        {
+                            char w = value[i + 1];
+
+                            if (w == 's')
+                            {
+                                parts.Add("");
+                                ++index;
+                            }
+                        }
+                        else
+                        {
+                            parts[index] += c;
+                        }
+                    }
+                    else
+                    {
+                        parts[index] += c;
+                    }
+                }
+
+                // Add in arguments
+                if (parts.Count == args.Length)
+                {
+                    value = "";
+
+                    int argumentLength = args.Length;
+
+                    for (int i = 0; i < argumentLength; ++i)
+                    {
+                        value += parts[i] + args[i].ToStr();
+                    }
+                }
+                else
+                {
+                    UnityEngine.Debug.Log("CgEthereum.RunCommand: Failed to run command: " + command.Name + ". Wildcard count != Argument count ("+ parts.Count + "," + args.Length + ")");
+                }
+            }
+            RunCommand(value);
+        }
+
+        public override void NewAccount(object payload)
+        {
+            /*
+            ICgBlockchainAccount account;
+            Accounts.TryGetValue(nickname, out account);
+
+            if (account != null)
+                return;
+
+            CgBlockchainCommandArgument[] args = new CgBlockchainCommandArgument[1];
+            args[0]                            = new CgBlockchainCommandArgument(ECgBlockchainCommandArgumentType.StringString, nickname);
+
+            RunCommand(ECgEthereumCommand.NewAccount, args);
+            // TODO: Need to fill in account details in ShellOutputRecieved
+            Accounts.Add(nickname, new CgEthereumAccount(nickname));
+            */
+        }
+
+        public override void UnlockAccount(object payload)
+        {
+            /*
+            ICgBlockchainAccount account;
+            Accounts.TryGetValue(nickname, out account);
+
+            if (account != null)
+                return;
+                */
+        }
+
         public override void StartMiner()
         {
             if (IsMining)

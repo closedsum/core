@@ -9,12 +9,12 @@
 
         #region "Data Members"
 
-        #region "Interface"
+            #region "Interface"
 
         public string Address;
         public string PassPhrase;
 
-        #endregion // Interface
+            #endregion // Interface
 
         #endregion // Data Members
 

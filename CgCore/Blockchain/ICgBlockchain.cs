@@ -1,8 +1,8 @@
 ﻿namespace CgCore
 {
-    using System.Diagnostics;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Diagnostics;
 
     public enum ECgBlockchainStorageType : byte
     {
@@ -115,8 +115,13 @@
         #endregion // Data Members
 
         void SetCommand(ECgBlockchainCommand command, string str);
-        void StartProcess(ECgBlockchainProcessType ProcessType);
+        void RunCommand(ECgBlockchainProcessType processType, string command);
+        void RunCommand(ECgBlockchainProcessType processType, ECgBlockchainCommand command, CgBlockchainCommandArgument[] args = null);
 
+        Process GetProcess(ECgBlockchainProcessType processType);
+        void StartProcess(ECgBlockchainProcessType processType);
+
+        void OpenRunningInstance();
         /* Setup chaindata and genesis.json for private chain */
         void CreatePrivateChain();
         /* Start running / polling the current private chain */
@@ -130,8 +135,6 @@
         */
         void OpenConsole();
         void CloseConsole();
-        void RunCommand(string command);
-        void RunCommand(ECgBlockchainCommand command, CgBlockchainCommandArgument[] args = null);
 
         void NewAccount(object payload);
         void UnlockAccount(object payload);
@@ -290,16 +293,22 @@
         #endregion // Data Members
 
         protected abstract void Init();
+
         public abstract void SetCommand(ECgBlockchainCommand command, string str);
-        public abstract void StartProcess(ECgBlockchainProcessType ProcessType);
+        public abstract void RunCommand(ECgBlockchainProcessType processType, string command);
+        public abstract void RunCommand(ECgBlockchainProcessType processType, ECgBlockchainCommand command, CgBlockchainCommandArgument[] args = null);
+
+        public abstract Process GetProcess(ECgBlockchainProcessType processType);
+        public abstract void StartProcess(ECgBlockchainProcessType processType);
+
+        public abstract void OpenRunningInstance();
         public abstract void CreatePrivateChain();
         public abstract void StartPrivateChain();
+
         public abstract void OpenShell();
         public abstract void CloseShell();
         public abstract void OpenConsole();
         public abstract void CloseConsole();
-        public abstract void RunCommand(string command);
-        public abstract void RunCommand(ECgBlockchainCommand command, CgBlockchainCommandArgument[] args = null);
 
         public abstract void NewAccount(object payload);
         public abstract void UnlockAccount(object payload);

@@ -355,6 +355,14 @@ namespace CgCore
             }
         }
 
+        public static void ShellOutputRecieved(object sender, DataReceivedEventArgs e)
+        {
+            if (LogIO.Log())
+            {
+                UnityEngine.Debug.Log("Blockchain (Output): " + e.Data);
+            }
+        }
+
         public override void CloseShell()
         {
             if (GetProcess(ECgBlockchainProcessType.Console) == null)

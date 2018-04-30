@@ -1,5 +1,6 @@
 ﻿namespace CgCore
 {
+    using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -98,6 +99,34 @@
         }
     }
 
+    public struct CgBlockchainCommandPending
+    {
+        public float StartTime;
+        public ECgBlockchainCommand Command;
+        public CgBlockchainCommandArgument[] Arguments;
+
+        public CgBlockchainCommandPending(float startTime, ECgBlockchainCommand command, CgBlockchainCommandArgument[] arguments = null)
+        {
+            StartTime = startTime;
+            Command   = command;
+
+            if (arguments == null || arguments.Length == 0)
+            {
+                Arguments = null;
+            }
+            else
+            {
+                int len   = arguments.Length;
+                Arguments = new CgBlockchainCommandArgument[len];
+
+                for (int i = 0; i < len; ++i)
+                {
+                    Arguments[i] = arguments[i];
+                }
+            }
+        }
+    }
+
     public static class ICgBlockchainFactory
     {
         public static ICgBlockchain Get()
@@ -146,6 +175,7 @@
         ICgBlockchainGenesis Genesis { get; set; }
         Dictionary<CgBlockchainContractKey, ICgBlockchainContract> Contracts { get; set; }
         Dictionary<ECgBlockchainCommand, string> Commands { get; set; }
+        Dictionary<ECgBlockchainProcessType, Queue<CgBlockchainCommandPending>> PendingCommands { get; set; }
         Dictionary<string, ICgBlockchainAccount> Accounts { get; set; }
 
         #endregion // Data Members
@@ -319,6 +349,13 @@
         {
             get { return _Commands; }
             set { _Commands = value; }
+        }
+
+        private Dictionary<ECgBlockchainProcessType, Queue<CgBlockchainCommandPending>> _PendingCommands;
+        public Dictionary<ECgBlockchainProcessType, Queue<CgBlockchainCommandPending>> PendingCommands
+        {
+            get { return _PendingCommands; }
+            set { _PendingCommands = value; }
         }
 
         private Dictionary<string, ICgBlockchainAccount> _Accounts;

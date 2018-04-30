@@ -249,8 +249,14 @@ namespace CgCore
             // Check WaitingFor
             if (bWaitingFor)
             {
-                move        = WaitingFor == null || WaitingFor.State != ECgRoutineState.Running;
-                bWaitingFor = !move;
+                move = WaitingFor.State != ECgRoutineState.Running;
+
+                if (move)
+                {
+                    WaitingFor.Blocking = null;
+                    WaitingFor  = null;
+                    bWaitingFor = false;
+                }
             }
             // Check WaitForFlag
             if (bWaitForFlag)

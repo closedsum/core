@@ -13,12 +13,5 @@ namespace CgCore
         public static CgConsoleVariableLog LogInputRotations = new CgConsoleVariableLog("log.input.rotations", false, "Log Input Rotations", (int)ECgConsoleVariableFlag.Console);
 
         #endregion // Input
-
-        #region "Coroutine"
-
-        public static CgConsoleVariableLog LogCoroutineTransactions = new CgConsoleVariableLog("log.coroutine.transactions", false, "Log Coroutine Scheduler Allocation and DeAllocation.", (int)ECgConsoleVariableFlag.Console);
-        public static CgConsoleVariableLog LogCoroutineRunning = new CgConsoleVariableLog("log.coroutine.running", false, "Log Coroutines currently running.", (int)ECgConsoleVariableFlag.Console);
-
-        #endregion // Coroutine
     }
 }

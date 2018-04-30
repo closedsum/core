@@ -5,7 +5,7 @@ namespace CgCore
     using System.Collections.Generic;
     using UnityEngine;
 
-    public enum ECgRoutineState
+    public enum ECgRoutineState : byte
     {
         Free,
         Running,
@@ -13,14 +13,42 @@ namespace CgCore
         MAX
     }
 
+    public enum ECgCoroutineMessage : byte
+    {
+        Notify,
+        Listen,
+        Stop,
+        MAX
+    }
+
+    public sealed class ECgCoroutineMessageEqualityComparer : IEqualityComparer<ECgCoroutineMessage>
+    {
+        public bool Equals(ECgCoroutineMessage lhs, ECgCoroutineMessage rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(ECgCoroutineMessage x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
     public sealed class CgRoutine
     {
         public sealed class CoroutineStopCondition : TCgMulticastDelegate_RetOrBool_OneParam<CgRoutine> { }
         public sealed class AddRoutine : TCgDelegate_OneParam<CgRoutine> { }
         public sealed class RemoveRoutine : TCgDelegate_OneParam<CgRoutine> { }
-        public delegate void SetScheduleTail(ECgCoroutineSchedule schedule, CgRoutine r);
+        public sealed class Flag : TCgPrimitiveType<bool> { }
+
+        public delegate void InsertRoutineAheadOf(ECgCoroutineSchedule schedule, CgRoutine pivot, CgRoutine insert);
+
+        #region "Constants"
 
         public static readonly byte INVALID_TYPE = 255;
+        public static readonly string INVALID_LISTEN_MESSAGE = "";
+
+        #endregion // Constants
 
         #region "Data Members"
 
@@ -40,7 +68,7 @@ namespace CgCore
         public CgRoutine WaitingFor;
         public CgRoutine Blocking;
 
-        public readonly SetScheduleTail SetTail;
+        public readonly InsertRoutineAheadOf InsertRoutine;
 
         public CgRoutine Parent;
         public List<CgRoutine> Children;
@@ -50,7 +78,7 @@ namespace CgCore
         public CoroutineStopCondition StopCondition;
 
         public List<string> StopMessages;
-        public List<string> StopMessages_Recieved;
+        public Dictionary<ECgCoroutineMessage, List<string>> Messages_Recieved;
 
         public AddRoutine Add;
         public RemoveRoutine Remove;
@@ -65,6 +93,10 @@ namespace CgCore
         public int WaitForFrame;
         public bool bWaitForTime;
         public float WaitForTime;
+        public bool bWaitForFlag;
+        public Flag WaitForFlag;
+        public bool bWaitForListenMessage;
+        public string WaitForListenMessage;
 
         public ECgCoroutineEndReason EndReason;
 
@@ -74,7 +106,7 @@ namespace CgCore
 
         // Constructor
 
-        public CgRoutine(int index, ECgCoroutineSchedule schedule, SetScheduleTail setTail)
+        public CgRoutine(int index, ECgCoroutineSchedule schedule, InsertRoutineAheadOf insertRoutine)
         {
             Index = index;
             Schedule = schedule;
@@ -92,7 +124,7 @@ namespace CgCore
             WaitingFor = null;
             Blocking = null;
 
-            SetTail = setTail;
+            InsertRoutine = insertRoutine;
 
             Parent = null;
             Children = new List<CgRoutine>();
@@ -102,7 +134,12 @@ namespace CgCore
             StopCondition = new CoroutineStopCondition();
 
             StopMessages = new List<string>();
-            StopMessages_Recieved = new List<string>();
+            Messages_Recieved = new Dictionary<ECgCoroutineMessage, List<string>>(new ECgCoroutineMessageEqualityComparer());
+
+            for (byte i = 0; i < (byte)ECgCoroutineMessage.MAX; ++i)
+            {
+                Messages_Recieved[(ECgCoroutineMessage)i] = new List<string>();
+            }
 
             Add = new AddRoutine();
             Remove = new RemoveRoutine();
@@ -117,6 +154,10 @@ namespace CgCore
             WaitForFrame = 0;
             bWaitForTime = false;
             WaitForTime = 0.0f;
+            bWaitForFlag = false;
+            WaitForFlag = null;
+            bWaitForListenMessage = false;
+            WaitForListenMessage = INVALID_LISTEN_MESSAGE;
 
             EndReason = ECgCoroutineEndReason.MAX;
         }
@@ -156,18 +197,18 @@ namespace CgCore
         public void Run(float deltaTime)
         {
             // Check Stop Messages
-            int count = StopMessages_Recieved.Count;
+            int count = Messages_Recieved[ECgCoroutineMessage.Stop].Count;
 
             for (int i = 0; i < count; ++i)
             {
-                if (StopMessages.FindIndex(s => s == StopMessages_Recieved[i]) != CgTypes.INDEX_NONE)
+                if (StopMessages.FindIndex(s => s == Messages_Recieved[ECgCoroutineMessage.Stop][i]) != CgTypes.INDEX_NONE)
                 {
                     StopMessages.Clear();
                     End(ECgCoroutineEndReason.StopMessage);
                     break;
                 }
             }
-            StopMessages_Recieved.Clear();
+            Messages_Recieved[ECgCoroutineMessage.Stop].Clear();
 
             if (State == ECgRoutineState.End)
                 return;
@@ -208,8 +249,14 @@ namespace CgCore
             // Check WaitingFor
             if (bWaitingFor)
             {
-                move        = WaitingFor == null;
+                move        = WaitingFor == null || WaitingFor.State != ECgRoutineState.Running;
                 bWaitingFor = !move;
+            }
+            // Check WaitForFlag
+            if (bWaitForFlag)
+            {
+                move         = WaitForFlag.Get();
+                bWaitForFlag = !move;
             }
 
             if (!move)
@@ -223,14 +270,34 @@ namespace CgCore
                 if (type == typeof(int))
                 {
                     WaitForFrame = (int)yieldCommand;
-                    bWaitForFrame = true;
+
+                    if (WaitForFrame < 0)
+                    {
+                        WaitForFrame = 0;
+
+                        Debug.LogWarning("CgRoutine.Run: yield return value of type 'int' is used for WaitForFrame. yield return value must be >= 0.");
+                    }
+                    else
+                    {
+                        bWaitForFrame = true;
+                    }
                 }
                 // WaitForTime
                 else
                 if (type == typeof(float))
                 {
                     WaitForTime = (float)yieldCommand;
-                    bWaitForTime = true;
+
+                    if (WaitForTime < 0.0f)
+                    {
+                        WaitForTime = 0.0f;
+
+                        Debug.LogWarning("CgRoutine.Run: yield return value of type 'float' is used for WaitForTime. yield return value must be >= 0.0f.");
+                    }
+                    else
+                    {
+                        bWaitForTime = true;
+                    }
                 }
                 // WaitingFor
                 else
@@ -241,23 +308,34 @@ namespace CgCore
                     bWaitingFor         = true;
 
                     // Fix linkage. Prev / Next
-                    CgRoutine Tail = WaitingFor.Prev;
+                    InsertRoutine(Schedule, this, WaitingFor);
+                }
+                // WaitForFlag
+                else
+                if (type == typeof(Flag))
+                {
+                    WaitForFlag = (Flag)yieldCommand;
+                    bWaitForFlag = true;
+                }
+                // WaitForListenMessage
+                else
+                if (type == typeof(string))
+                {
+                    WaitForListenMessage = (string)yieldCommand;
 
-                    if (Prev != null)
+                    if (WaitForListenMessage == INVALID_LISTEN_MESSAGE)
                     {
-                        Prev.Next       = WaitingFor;
-                        WaitingFor.Prev = Prev;
+                        Debug.LogWarning("CgRoutine.Run: yield return value of type 'string' is used for WaitForListenMessage. yield return value must NOT be empty.");
                     }
-
-                    WaitingFor.Next = this;
-                    Prev            = WaitingFor;
-
-                    SetTail(Schedule, Tail);
+                    else
+                    {
+                        bWaitForListenMessage = true;
+                    }
                 }
                 // INVALID Type
                 else
                 {
-                    Debug.LogError("");
+                    Debug.LogError("CgRoutine.Run: Invalid type for yield. yield return value must be of type: int, float, CgRoutine, CgRoutine.Flag, or string.");
                 }
             }
             // Finished
@@ -292,9 +370,9 @@ namespace CgCore
             StopMessages.Add(msg);
         }
 
-        public void ReceiveMessage(string msg)
+        public void ReceiveMessage(ECgCoroutineMessage msgType, string msg)
         {
-            StopMessages_Recieved.Add(msg);
+            Messages_Recieved[msgType].Add(msg);
         }
 
         public void Reset()
@@ -314,7 +392,12 @@ namespace CgCore
             OwnerName = "";
             StopCondition = null;
             StopMessages.Clear();
-            StopMessages_Recieved.Clear();
+
+            for (byte i = 0; i < (byte)ECgCoroutineMessage.MAX; ++i)
+            {
+                Messages_Recieved[(ECgCoroutineMessage)i].Clear();
+            }
+
             Add.UnBind();
             Remove.UnBind();
             StartTime = 0.0f;
@@ -322,8 +405,14 @@ namespace CgCore
             DeltaTime = 0.0f;
             TickCount = 0;
             Delay = 0.0f;
+            bWaitForFrame = false;
             WaitForFrame = 0;
+            bWaitForTime = false;
             WaitForTime = 0.0f;
+            bWaitForFlag = false;
+            WaitForFlag = null;
+            bWaitForListenMessage = false;
+            WaitForListenMessage = INVALID_LISTEN_MESSAGE;
         }
     }
 }

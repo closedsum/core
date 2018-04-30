@@ -41,6 +41,10 @@ namespace CgCore
 
     public class CgCoroutineScheduler
     {
+
+        public static CgConsoleVariableLog LogTransactions = new CgConsoleVariableLog("log.coroutine.transactions", false, "Log Coroutine Scheduler Allocation and DeAllocation.", (int)ECgConsoleVariableFlag.Console);
+        public static CgConsoleVariableLog LogRunning = new CgConsoleVariableLog("log.coroutine.running", false, "Log Coroutines currently running.", (int)ECgConsoleVariableFlag.Console);
+
         #region "Constants"
 
         private const int EMPTY = 0;
@@ -96,7 +100,7 @@ namespace CgCore
 
                 for (ushort j = 0; j < POOL_SIZE; ++j)
                 {
-                    routines.Add(new CgRoutine(j, schedule, SetTail));
+                    routines.Add(new CgRoutine(j, schedule, InsertRoutine));
                 }
                 Pools[(ECgCoroutineSchedule)i] = routines;
             }
@@ -159,13 +163,44 @@ namespace CgCore
             return null;
         }
 
-        public void SetTail(ECgCoroutineSchedule schedule, CgRoutine r)
+        public void InsertRoutine(ECgCoroutineSchedule schedule, CgRoutine pivot, CgRoutine insert)
         {
-            Tails[schedule] = r;
+            // Detach insert
+
+                // insert is the Tail
+            if (insert.Next == null)
+            {
+                Tails[schedule] = insert.Prev;
+            }
+            else
+            {
+                insert.Next.Prev = insert.Prev;
+            }
+            insert.Prev.Next = insert.Next;
+
+            // Insert insert ahead of pivot
+
+                // pivot is the Head
+            if (pivot.Prev == null)
+            {
+                Heads[schedule] = insert;
+
+                pivot.Prev = insert;
+                insert.Next = pivot;
+                insert.Prev = null;
+            }
+            else
+            {
+                pivot.Prev.Next = insert;
+                insert.Prev = pivot.Prev;
+                insert.Next = pivot;
+                pivot.Prev = insert;
+            }
         }
 
         public CgRoutine Start(CgCoroutinePayload payload)
         {
+            Debug.Log("Adding");
             ECgCoroutineSchedule schedule = payload.Schedule;
 
             CgRoutine r = Allocate(schedule);
@@ -219,41 +254,6 @@ namespace CgCore
             return Heads[schedule] != null;
         }
 
-        private void UpdateEndingRoutineLinkage(string functionName, ECgCoroutineSchedule schedule, CgRoutine current)
-        {
-            if (current.State == ECgRoutineState.End)
-            {
-                // Remove from List, Update Linkage. Prev / Next
-                if (current.Prev != null)
-                {
-                    current.Prev.Next = current.Next;
-
-                    if (current.Next != null)
-                        current.Next.Prev = current.Prev;
-                    // Update Tail
-                    else
-                        Tails[schedule] = current.Prev;
-                }
-                // Update Head
-                else
-                {
-                    if (current.Next != null)
-                    {
-                        current.Next.Prev = null;
-                        Heads[schedule] = current.Next;
-                    }
-                    // Last node in List
-                    else
-                    {
-                        Heads[schedule] = null;
-                        Tails[schedule] = null;
-                    }
-                }
-                LogTransaction("CgRoutine.Update", ECgCoroutineTransaction.End, current);
-                current.Reset();
-            }
-        }
-
         public void Update(ECgCoroutineSchedule schedule, float deltaTime)
         {
             // Iterate through List
@@ -295,9 +295,15 @@ namespace CgCore
                         }
                     }
                     LogTransaction("CgRoutine.Update", ECgCoroutineTransaction.End, current);
-                    current.Reset();
+
+                    CgRoutine r = current;
+                    current     = current.Next;
+                    r.Reset();
                 }
-                current = current.Next;
+                else
+                {
+                    current = current.Next;
+                }
             }
 
             // Check RoutinesRunning for any Routines that have Ended
@@ -328,7 +334,7 @@ namespace CgCore
 
         public void LogTransaction(string functionName, ECgCoroutineTransaction transaction, CgRoutine r)
         {
-            if (!CgCVars.LogCoroutineTransactions.Log())
+            if (!LogTransactions.Log())
                 return;
 
             string transactionAsString = transaction.ToString() + "ing (Reason=" + r.EndReason.ToString() + ")";

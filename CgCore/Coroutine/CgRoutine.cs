@@ -36,6 +36,7 @@ namespace CgCore
         public string Name;
         public byte RoutineType;
 
+        public bool bWaitingFor;
         public CgRoutine WaitingFor;
         public CgRoutine Blocking;
 
@@ -60,7 +61,9 @@ namespace CgCore
         public int TickCount;
         public float Delay;
 
+        public bool bWaitForFrame;
         public int WaitForFrame;
+        public bool bWaitForTime;
         public float WaitForTime;
 
         public ECgCoroutineEndReason EndReason;
@@ -75,9 +78,27 @@ namespace CgCore
         {
             Index = index;
             Schedule = schedule;
-            SetTail = setTail;
+
+            Prev = null;
+            Next = null;
+        
             State = ECgRoutineState.Free;
 
+            Fiber = null;
+            Name = "";
+            RoutineType = INVALID_TYPE;
+
+            bWaitingFor = false;
+            WaitingFor = null;
+            Blocking = null;
+
+            SetTail = setTail;
+
+            Parent = null;
+            Children = new List<CgRoutine>();
+
+            Owner = new CgAttribute();
+            OwnerName = "";
             StopCondition = new CoroutineStopCondition();
 
             StopMessages = new List<string>();
@@ -85,21 +106,51 @@ namespace CgCore
 
             Add = new AddRoutine();
             Remove = new RemoveRoutine();
+
+            StartTime = 0.0f;
+            ElapsedTime = 0.0f;
+            DeltaTime = 0.0f;
+            TickCount = 0;
+            Delay = 0.0f;
+
+            bWaitForFrame = false;
+            WaitForFrame = 0;
+            bWaitForTime = false;
+            WaitForTime = 0.0f;
+
+            EndReason = ECgCoroutineEndReason.MAX;
         }
 
         // Functions
 
-        public void Start(CgCoroutinePayload payload, float currentType)
+        public void Start(IEnumerator fiber, CoroutineStopCondition stopCondition, object owner, string ownerName, float startTime, AddRoutine.Event add, RemoveRoutine.Event remove, byte routineType)
         {
-            Fiber = payload.Fiber;
-            Owner.Set(payload.Owner);
-            OwnerName = payload.OwnerName;
+            Fiber = fiber;
+            Owner.Set(owner);
+            OwnerName = ownerName;
 
-            Add.Bind(payload.Add);
-            Remove.Bind(payload.Remove);
+            StartTime = startTime;
+
+            Add.Bind(add);
+            Remove.Bind(remove);
 
             if (Owner.IsValid())
                 Add.Broacast(this);
+        }
+
+        public void Start(IEnumerator fiber, CoroutineStopCondition stopCondition, object owner, string ownerName, float startTime)
+        {
+            Start(fiber, stopCondition, owner, ownerName, startTime, null, null, INVALID_TYPE);
+        }
+
+        public void Start(IEnumerator fiber, object owner, string ownerName, float startTime)
+        {
+            Start(fiber, null, owner, ownerName, startTime, null, null, INVALID_TYPE);
+        }
+
+        public void Start(IEnumerator fiber, float startTime)
+        {
+            Start(fiber, null, null, "", startTime, null, null, INVALID_TYPE);
         }
 
         public void Run(float deltaTime)
@@ -131,22 +182,35 @@ namespace CgCore
             ElapsedTime += deltaTime;
             ++TickCount;
 
-            bool move = false;
-
-            if (WaitForFrame > TickCount)
+            bool move = true;
+            // Check WaitForFrame
+            if (bWaitForFrame)
             {
-                WaitForFrame = 0;
-                move         = true;
-            }
+                move = TickCount >= WaitForFrame;
 
-            if (WaitForTime > ElapsedTime)
+                if (move)
+                {
+                    WaitForFrame = 0;
+                    bWaitForFrame = false;
+                }
+            }
+            // Check WaitForTime
+            if (bWaitForTime)
             {
-                WaitForTime = 0;
-                move        = true;
-            }
+                move = ElapsedTime >= WaitForTime;
 
-            if (WaitingFor == null)
-                move = true;
+                if (move)
+                {
+                    WaitForTime = 0;
+                    bWaitForTime = false;
+                }
+            }
+            // Check WaitingFor
+            if (bWaitingFor)
+            {
+                move        = WaitingFor == null;
+                bWaitingFor = !move;
+            }
 
             if (!move)
                 return;
@@ -159,12 +223,14 @@ namespace CgCore
                 if (type == typeof(int))
                 {
                     WaitForFrame = (int)yieldCommand;
+                    bWaitForFrame = true;
                 }
                 // WaitForTime
                 else
                 if (type == typeof(float))
                 {
                     WaitForTime = (float)yieldCommand;
+                    bWaitForTime = true;
                 }
                 // WaitingFor
                 else
@@ -172,6 +238,7 @@ namespace CgCore
                 {
                     WaitingFor          = (CgRoutine)yieldCommand;
                     WaitingFor.Blocking = this;
+                    bWaitingFor         = true;
 
                     // Fix linkage. Prev / Next
                     CgRoutine Tail = WaitingFor.Prev;
@@ -206,6 +273,7 @@ namespace CgCore
                 Remove.Broacast(this);
             // EndChildren();
             EndReason = endReason;
+            State = ECgRoutineState.End;
         }
 
         public void EndChildren()

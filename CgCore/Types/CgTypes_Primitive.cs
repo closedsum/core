@@ -330,10 +330,11 @@ namespace CgCore
         public void Set(object value)
         {
             Value      = value;
-            ValueType  = value.GetType();
-            UnSetValue = default(ValueType);
+            ValueType  = value != null ? value.GetType() : null;
+            UnSetValue = ValueType != null ? default(ValueType) : null;
 
-            if (ValueType.IsClass)
+            if (ValueType != null &&
+                ValueType.IsClass)
             {
                 if (value.Equals(null))
                 {

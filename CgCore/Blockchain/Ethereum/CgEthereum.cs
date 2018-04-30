@@ -1,4 +1,5 @@
-﻿namespace CgCore
+﻿// Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
+namespace CgCore
 {
     using System;
     using System.Collections;
@@ -51,7 +52,21 @@
             Genesis = (ICgBlockchainGenesis)(new CgEthereumGenesis());
 
             StorageType = ECgBlockchainStorageType.Private;
-            
+
+            Processes = new Dictionary<ECgBlockchainProcessType, Process>(new ECgBlockchainProcessTypeEqualityComparer());
+
+            for (byte i = 0; i < (byte)ECgBlockchainProcessType.MAX; ++i)
+            {
+                Processes.Add((ECgBlockchainProcessType)i, null);
+            }
+
+            ProcessFlags = new Dictionary<ECgBlockchainProcessType, bool>(new ECgBlockchainProcessTypeEqualityComparer());
+
+            for (byte i = 0; i < (byte)ECgBlockchainProcessType.MAX; ++i)
+            {
+                ProcessFlags.Add((ECgBlockchainProcessType)i, false);
+            }
+
             // TODO: Need to check platform
             ShellFilename = "cmd.exe";
             // Run Command and then return to the CMD prompt.
@@ -65,8 +80,10 @@
             Commands = new Dictionary<ECgBlockchainCommand, string>(new ECgBlockchainCommandEqualityComparer());
             Accounts = new Dictionary<string, ICgBlockchainAccount>();
 
-            SetCommand(ECgEthereumCommand.InitBlockchain, "\"" + ConsoleFullPath + "\" --datadir=\"" + ChainDirectory + "\" init \"" + RootDirectory + "\\genesis.json\"");
-            SetCommand(ECgEthereumCommand.SetDataDirectory, "\"" + ConsoleFullPath + "\" --datadir=\"" + ChainDirectory + "\"");
+            //SetCommand(ECgEthereumCommand.InitBlockchain, "\"" + ConsoleFullPath + "\" --datadir=\"" + ChainDirectory + "\" init \"" + RootDirectory + "\\genesis.json\"");
+            //SetCommand(ECgEthereumCommand.SetDataDirectory, "\"" + ConsoleFullPath + "\" --datadir=\"" + ChainDirectory + "\" --networkid 15");
+            SetCommand(ECgEthereumCommand.InitBlockchain, "--datadir=\"" + ChainDirectory + "\" init \"" + RootDirectory + "\\genesis.json\"");
+            SetCommand(ECgEthereumCommand.SetDataDirectory, "--datadir=\"" + ChainDirectory + "\" --networkid 15");
             SetCommand(ECgEthereumCommand.ChangeToRootDirectory, "cd /d \"" + RootDirectory + "\"");
             SetCommand(ECgEthereumCommand.AttachToConsole, "\"" + ConsoleFullPath + "\" attach ipc:\\\\.\\pipe\\geth.ipc");
             SetCommand(ECgEthereumCommand.ExitConsole, "exit");
@@ -74,7 +91,7 @@
             SetCommand(ECgEthereumCommand.UnlockAccount, "personal.unlockAccount(%s,%s,%s)");
         }
 
-        private CgBlockchain _Get()
+        private ICgBlockchain _Get()
         {
             return Instance;
         }
@@ -82,6 +99,20 @@
         public void Log(string msg)
         {
             UnityEngine.Debug.Log(msg);
+        }
+
+        public override void Shutdown()
+        {
+            for (byte i = 0; i < (byte)ECgBlockchainProcessType.MAX; ++i)
+            {
+                ECgBlockchainProcessType processType = (ECgBlockchainProcessType)i;
+                Process p                            = Processes[processType];
+                
+                if (p != null)
+                    p.Kill();
+
+                ProcessFlags[processType] = false;
+            }
         }
 
         public override void SetCommand(ECgBlockchainCommand command, string str)
@@ -101,25 +132,33 @@
 
         public override void RunCommand(ECgBlockchainProcessType processType, string command)
         {
+            Process p = GetProcess(processType);
+
             // RunningInstance
             if (processType == ECgBlockchainProcessType.RunningInstance)
             {
-                if (RunningInstance == null)
-                    OpenRunningInstance();
+                if (p == null)
+                {
+                    Log("CgEthereum.RunCommand: Failed to run command: " + command + ". Process " + processType.ToString() + " has NOT started. Call StartPrivateChain().");
+                    return;
+                }
             }
             // Console
             if (processType == ECgBlockchainProcessType.Console)
             {
-                if (!IsConsoleOpen)
-                    OpenConsole();
+                if (p == null)
+                {
+                    Log("CgEthereum.RunCommand: Failed to run command: " + command + ". Process " + processType.ToString() + " has NOT started. Call OpenShell().");
+                    return;
+                }
             }
 
             if (LogIO.Log())
             {
-                UnityEngine.Debug.Log("Blockchain (Input): " + command);
+                Log("Blockchain (Input): " + command);
             }
 
-            Process p = GetProcess(processType);
+            p = GetProcess(processType);
 
             // Convert string command to bytes
             byte[] buffer = System.Text.Encoding.ASCII.GetBytes(command);
@@ -201,99 +240,114 @@
             RunCommand(processType, value);
         }
 
-        public override Process GetProcess(ECgBlockchainProcessType processType)
+        public override void SetProcess(ECgBlockchainProcessType processType, Process p)
         {
-            if (processType == ECgBlockchainProcessType.RunningInstance)
-                return RunningInstance;
-            if (processType == ECgBlockchainProcessType.Console)
-                return Shell;
-            return null;
+            Processes[processType]    = p;
+            ProcessFlags[processType] = true;
         }
 
-        public override void StartProcess(ECgBlockchainProcessType processType)
+        public override Process GetProcess(ECgBlockchainProcessType processType)
         {
-            if (processType == ECgBlockchainProcessType.RunningInstance &&
-                RunningInstance != null)
-            {
-                return;
-            }
-            if (processType == ECgBlockchainProcessType.Console &&
-                Shell != null)
-            {
-                return;
-            }
+            return Processes[processType];
+        }
 
-            Process p = new Process();
+        public override void StartProcess(ECgBlockchainProcessType processType, CgBlockchainProcessStartInfo startInfo)
+        {
+            Process p = GetProcess(processType);
 
-            if (processType == ECgBlockchainProcessType.RunningInstance)
-            {
-                RunningInstance = p;
-                IsRunningInstance = true;
-            }
-            if (processType == ECgBlockchainProcessType.Console)
-            {
-                Shell = p;
-                IsShellOpen = true;
-            }
+            if (p != null)
+                return;
+
+            p = new Process();
+
+            SetProcess(processType, p);
 
             // ProcessStartInfo
             ProcessStartInfo psi    = p.StartInfo;
-            psi.CreateNoWindow      = ShowShellWindow.Get();
+            psi.CreateNoWindow      = ShowProcessWindow.Get();
             psi.UseShellExecute     = false;
-            psi.FileName            = ShellFilename;
-            psi.Arguments           = ShellArguments;
-            psi.RedirectStandardInput = true;
+            psi.FileName            = startInfo.FileName;
+            psi.Arguments           = startInfo.Arguments;
+            psi.RedirectStandardInput = startInfo.RedirectStandardInput;
             psi.RedirectStandardOutput = true;
-            p.OutputDataReceived    += ShellOutputRecieved;
+            p.OutputDataReceived    += ProcessOutputRecieved;
 
             p.Start();
             p.BeginOutputReadLine();
+        }
 
-            RunCommand(processType, ECgEthereumCommand.ChangeToRootDirectory);
+        public override void StopProcess(ECgBlockchainProcessType processType)
+        {
+            if (Processes[processType] == null)
+                return;
+            Processes[processType].Kill();
+            Processes[processType]    = null;
+            ProcessFlags[processType] = false;
         }
 
         public override void OpenRunningInstance()
         {
-            StartProcess(ECgBlockchainProcessType.RunningInstance);
+            if (IsRunningInstanceOpen)
+                return;
+
+            CgBlockchainProcessStartInfo startInfo = new CgBlockchainProcessStartInfo();
+            startInfo.FileName              = ConsoleFullPath;
+            startInfo.Arguments             = Commands[ECgEthereumCommand.SetDataDirectory];
+            startInfo.RedirectStandardInput = false;
+
+            StartProcess(ECgBlockchainProcessType.RunningInstance, startInfo);
+
+            IsRunningInstanceOpen = true;
         }
 
         public override void CreatePrivateChain()
         {
-            if (RunningInstance == null)
-                OpenRunningInstance();
-
-            // Check if Blockchain directory exists
-            if (!Directory.Exists(Application.dataPath + "\\Blockchain"))
-            {
-                Directory.CreateDirectory(Application.dataPath + "\\Blockchain");
-            }
-            // Check if Ethereum director exists
-            if (!Directory.Exists(RootDirectory))
-            {
-                Directory.CreateDirectory(RootDirectory);
-            }
             // Check if genesis.json has been created
-            bool GenesisExists = File.Exists(RootDirectory + "/genesis.json");
+            string genesisFullPath = RootDirectory + "/genesis.json";
+            bool GenesisExists     = File.Exists(genesisFullPath);
 
-            // Link chaindata
             if (GenesisExists)
-                RunCommand(ECgBlockchainProcessType.RunningInstance, ECgEthereumCommand.SetDataDirectory);
+            {
+                if (GetProcess(ECgBlockchainProcessType.RunningInstance) == null)
+                    OpenRunningInstance();
+            }
             else
-                RunCommand(ECgBlockchainProcessType.RunningInstance, ECgEthereumCommand.InitBlockchain);
+            {
+                // Create genesis.json
+                string json = Genesis.ToStr();
+
+                File.WriteAllText(genesisFullPath, json, System.Text.Encoding.ASCII);
+
+                CgBlockchainProcessStartInfo startInfo = new CgBlockchainProcessStartInfo();
+                startInfo.FileName              = ConsoleFullPath;
+                startInfo.Arguments             = Commands[ECgEthereumCommand.InitBlockchain];
+                startInfo.RedirectStandardInput = false;
+
+                StartProcess(ECgBlockchainProcessType.RunningInstance, startInfo);
+            }
         }
 
         public override void StartPrivateChain()
         {
             CreatePrivateChain();
-            //Genesis.Parse(ChainDirectory + "/genesis.json");
+            Genesis.ParseFromFile(RootDirectory + "/genesis.json");
         }
 
         public override void OpenShell()
         {
-            StartProcess(ECgBlockchainProcessType.Console); ;
+            CgBlockchainProcessStartInfo startInfo = new CgBlockchainProcessStartInfo();
+            startInfo.FileName              = ShellFilename;
+            startInfo.Arguments             = ShellArguments;
+            startInfo.RedirectStandardInput = true;
+
+            StartProcess(ECgBlockchainProcessType.Console, startInfo);
+
+            IsShellOpen = true;
+
+            RunCommand(ECgBlockchainProcessType.Console, ECgEthereumCommand.ChangeToRootDirectory);
         }
 
-        static public void ShellOutputRecieved(object sender, DataReceivedEventArgs e)
+        static public void ProcessOutputRecieved(object sender, DataReceivedEventArgs e)
         {
             if (LogIO.Log())
             {
@@ -303,7 +357,7 @@
 
         public override void CloseShell()
         {
-            if (Shell == null)
+            if (GetProcess(ECgBlockchainProcessType.Console) == null)
                 return;
 
             if (IsMining)
@@ -311,7 +365,7 @@
             if (IsConsoleOpen)
                 CloseConsole();
 
-            Shell.Kill();
+            StopProcess(ECgBlockchainProcessType.Console);
 
             IsShellOpen = false;
         }
@@ -320,10 +374,10 @@
         {
             if (IsConsoleOpen)
                 return;
-            if (Shell == null)
+            if (GetProcess(ECgBlockchainProcessType.Console) == null)
                 OpenShell();
 
-            RunCommand(ECgBlockchainProcessType.RunningInstance, ECgEthereumCommand.AttachToConsole);
+            RunCommand(ECgBlockchainProcessType.Console, ECgEthereumCommand.AttachToConsole);
 
             IsConsoleOpen = true;
         }
@@ -353,7 +407,7 @@
             args[0]                            = new CgBlockchainCommandArgument(ECgBlockchainCommandArgumentType.StringString, nickname);
 
             RunCommand(ECgBlockchainProcessType.Console, ECgEthereumCommand.NewAccount, args);
-            // TODO: Need to fill in account details in ShellOutputRecieved
+            // TODO: Need to fill in account details in ProcessOutputRecieved
             Accounts.Add(nickname, new CgEthereumAccount(nickname));
         }
 

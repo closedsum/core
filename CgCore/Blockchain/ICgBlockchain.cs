@@ -19,6 +19,33 @@
         MAX
     }
 
+    public sealed class ECgBlockchainProcessTypeEqualityComparer : IEqualityComparer<ECgBlockchainProcessType>
+    {
+        public bool Equals(ECgBlockchainProcessType lhs, ECgBlockchainProcessType rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(ECgBlockchainProcessType x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
+    public struct CgBlockchainProcessStartInfo
+    {
+        public string FileName;
+        public string Arguments;
+        public bool RedirectStandardInput;
+
+        public CgBlockchainProcessStartInfo(string fileName, string arguments, bool redirectedStandardInput)
+        {
+            FileName = fileName;
+            Arguments = arguments;
+            RedirectStandardInput = redirectedStandardInput;
+        }
+    }
+
     public sealed class ECgBlockchainCommand : ECgEnum_byte
     {
         public ECgBlockchainCommand(byte value, string name) : base(value, name) { }
@@ -71,6 +98,16 @@
         }
     }
 
+    public static class ICgBlockchainFactory
+    {
+        public static ICgBlockchain Get()
+        {
+            if (CgBlockchain.Get != null)
+                return CgBlockchain.Get();
+            return null;
+        }
+    }
+
     public interface ICgBlockchain
     {
         #region "Data Members"
@@ -82,11 +119,12 @@
         string RootDirectory { get; set; }
         string ChainDirectory { get; set; }
 
+        Dictionary<ECgBlockchainProcessType, Process> Processes { get; set; }
+        Dictionary<ECgBlockchainProcessType, bool> ProcessFlags { get; set; }
+
                 #region "Running Instance"
 
-        bool IsRunningInstance { get; set; }
-
-        Process RunningInstance { get; set; }
+        bool IsRunningInstanceOpen { get; set; }
 
                 #endregion // Running Instance
 
@@ -101,8 +139,6 @@
         bool IsConsoleOpen { get; set; }
         bool IsMining { get; set; }
 
-        Process Shell { get; set; }
-
                 #endregion // Shell
 
             #endregion // Private / Local Storage
@@ -114,12 +150,16 @@
 
         #endregion // Data Members
 
+        void Shutdown();
+
         void SetCommand(ECgBlockchainCommand command, string str);
         void RunCommand(ECgBlockchainProcessType processType, string command);
         void RunCommand(ECgBlockchainProcessType processType, ECgBlockchainCommand command, CgBlockchainCommandArgument[] args = null);
 
+        void SetProcess(ECgBlockchainProcessType processType, Process p);
         Process GetProcess(ECgBlockchainProcessType processType);
-        void StartProcess(ECgBlockchainProcessType processType);
+        void StartProcess(ECgBlockchainProcessType processType, CgBlockchainProcessStartInfo startInfo);
+        void StopProcess(ECgBlockchainProcessType processType);
 
         void OpenRunningInstance();
         /* Setup chaindata and genesis.json for private chain */
@@ -148,9 +188,9 @@
     public abstract class CgBlockchain : ICgBlockchain
     {
         public static CgConsoleVariableLog LogIO = new CgConsoleVariableLog("log.blockchain.io", false, "Log Blockchain Input / Output Messages", (int)ECgConsoleVariableFlag.Console);
-        public static TCgConsoleVariable<bool> ShowShellWindow = new TCgConsoleVariable<bool>("show.blockchain.shellwindow", false, "Show Blockchain Shell Window", (int)ECgConsoleVariableFlag.Console);
+        public static TCgConsoleVariable<bool> ShowProcessWindow = new TCgConsoleVariable<bool>("show.blockchain.processwindow", false, "Show Blockchain Process Window", (int)ECgConsoleVariableFlag.Console);
 
-        public delegate CgBlockchain Getter();
+        public delegate ICgBlockchain Getter();
 
         #region "Constants"
 
@@ -184,23 +224,32 @@
             set { _ChainDirectory = value; }
         }
 
-                #region "Running Instance"
-
-        private bool _IsRunningInstance;
-        public bool IsRunningInstance
+        private Dictionary<ECgBlockchainProcessType, Process> _Processes;
+        public Dictionary<ECgBlockchainProcessType, Process> Processes
         {
-            get { return _IsRunningInstance; }
-            set { _IsRunningInstance = value; }
+            get { return _Processes; }
+            set { _Processes = value; }
         }
 
-        private Process _RunningInstance;
-        public Process RunningInstance
+        private Dictionary<ECgBlockchainProcessType, bool> _ProcessFlags;
+        public Dictionary<ECgBlockchainProcessType, bool> ProcessFlags
         {
-            get { return _RunningInstance; }
-            set { _RunningInstance = value; }
+            get { return _ProcessFlags; }
+            set { _ProcessFlags = value; }
+        }
+
+                #region "Running Instance"
+
+        private bool _IsRunningInstanceOpen;
+        public bool IsRunningInstanceOpen
+        {
+            get { return _IsRunningInstanceOpen; }
+            set { _IsRunningInstanceOpen = value; }
         }
 
                 #endregion // Running Instance
+
+                #region "Shell"
 
         private string _ShellFilename;
         public string ShellFilename
@@ -251,13 +300,6 @@
             set { _IsMining = value; }
         }
 
-        private Process _Shell;
-        public Process Shell
-        {
-            get { return _Shell; }
-            set { _Shell = value; }
-        }
-
         private ICgBlockchainGenesis _Genesis;
         public ICgBlockchainGenesis Genesis
         {
@@ -286,6 +328,8 @@
             set { _Accounts = value; }
         }
 
+                #endregion // Shell
+
             #endregion // Interface
 
         public static Getter Get;
@@ -294,12 +338,16 @@
 
         protected abstract void Init();
 
+        public abstract void Shutdown();
+
         public abstract void SetCommand(ECgBlockchainCommand command, string str);
         public abstract void RunCommand(ECgBlockchainProcessType processType, string command);
         public abstract void RunCommand(ECgBlockchainProcessType processType, ECgBlockchainCommand command, CgBlockchainCommandArgument[] args = null);
 
+        public abstract void SetProcess(ECgBlockchainProcessType processType, Process p);
         public abstract Process GetProcess(ECgBlockchainProcessType processType);
-        public abstract void StartProcess(ECgBlockchainProcessType processType);
+        public abstract void StartProcess(ECgBlockchainProcessType processType, CgBlockchainProcessStartInfo startInfo);
+        public abstract void StopProcess(ECgBlockchainProcessType processType);
 
         public abstract void OpenRunningInstance();
         public abstract void CreatePrivateChain();

@@ -231,6 +231,19 @@ namespace CgCore
                 e(t);
             }
         }
+
+        public void CopyTo(TCgMulticastDelegate_OneParam<T> to)
+        {
+            to.Clear();
+
+            Dictionary<CgDelegateHandle, Event>.KeyCollection keys = InvocationMap.Keys;
+            Dictionary<CgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
+
+            foreach (CgDelegateHandle key in keys)
+            {
+                to.AddObject(key.Object, InvocationMap[key]);
+            }
+        }
     }
 
     public abstract class TCgMulticastDelegate_TwoParams<T1, T2> : ICgMulticastDelegate
@@ -281,6 +294,19 @@ namespace CgCore
                 e(t1, t2);
             }
         }
+
+        public void CopyTo(TCgMulticastDelegate_TwoParams<T1, T2> to)
+        {
+            to.Clear();
+
+            Dictionary<CgDelegateHandle, Event>.KeyCollection keys = InvocationMap.Keys;
+            Dictionary<CgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
+
+            foreach (CgDelegateHandle key in keys)
+            {
+                to.AddObject(key.Object, InvocationMap[key]);
+            }
+        }
     }
 
     public abstract class TCgMulticastDelegate_ThreeParams<T1, T2, T3> : ICgMulticastDelegate
@@ -324,6 +350,19 @@ namespace CgCore
             foreach (Event e in events)
             {
                 e(t1, t2, t3);
+            }
+        }
+
+        public void CopyTo(TCgMulticastDelegate_ThreeParams<T1, T2, T3> to)
+        {
+            to.Clear();
+
+            Dictionary<CgDelegateHandle, Event>.KeyCollection keys = InvocationMap.Keys;
+            Dictionary<CgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
+
+            foreach (CgDelegateHandle key in keys)
+            {
+                to.AddObject(key.Object, InvocationMap[key]);
             }
         }
     }
@@ -378,6 +417,19 @@ namespace CgCore
             }
             return false;
         }
+
+        public void CopyTo(TCgMulticastDelegate_RetOrBool_OneParam<T> to)
+        {
+            to.Clear();
+
+            Dictionary<CgDelegateHandle, Event>.KeyCollection keys = InvocationMap.Keys;
+            Dictionary<CgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
+
+            foreach (CgDelegateHandle key in keys)
+            {
+                to.AddObject(key.Object, InvocationMap[key]);
+            }
+        }
     }
 
     public abstract class TCgMulticastDelegate_RetAndBool_OneParam<T> : ICgMulticastDelegate
@@ -430,6 +482,19 @@ namespace CgCore
                 ret &= e(t);
             }
             return (events.Count > 0) & ret;
+        }
+
+        public void CopyTo(TCgMulticastDelegate_RetAndBool_OneParam<T> to)
+        {
+            to.Clear();
+
+            Dictionary<CgDelegateHandle, Event>.KeyCollection keys = InvocationMap.Keys;
+            Dictionary<CgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
+
+            foreach (CgDelegateHandle key in keys)
+            {
+                to.AddObject(key.Object, InvocationMap[key]);
+            }
         }
     }
 

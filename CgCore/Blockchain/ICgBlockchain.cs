@@ -4,6 +4,7 @@
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Reflection;
 
     public enum ECgBlockchainStorageType : byte
     {
@@ -99,13 +100,52 @@
         }
     }
 
-    public struct CgBlockchainCommandPending
+    public enum ECgBlockchainCommandFullfillmentRule : byte
+    {
+        None,
+        Contain,
+        Match,
+        MAX
+    }
+
+    public class CgBlockchainCommandFullfillment
+    {
+        public bool Completed;
+        public ECgBlockchainCommandFullfillmentRule Rule;
+        public string Response;
+
+        public CgBlockchainCommandFullfillment(ECgBlockchainCommandFullfillmentRule rule, string response)
+        {
+            Completed = false;
+            Rule = rule;
+            Response = response.ToLower();
+        }
+
+        public bool HasCompleted(string input)
+        {
+            if (Completed)
+                return Completed;
+
+            if (Rule == ECgBlockchainCommandFullfillmentRule.None)
+                Completed = true;
+            else
+            if (Rule == ECgBlockchainCommandFullfillmentRule.Contain)
+                Completed = input.ToLower().Contains(Response);
+            else
+            if (Rule == ECgBlockchainCommandFullfillmentRule.Match)
+                Completed = Response == input.ToLower();
+            return Completed;
+        }
+    }
+
+    public class CgBlockchainCommandRequest
     {
         public float StartTime;
         public ECgBlockchainCommand Command;
         public CgBlockchainCommandArgument[] Arguments;
+        public Queue<List<CgBlockchainCommandFullfillment>> FullfillmentQueue;
 
-        public CgBlockchainCommandPending(float startTime, ECgBlockchainCommand command, CgBlockchainCommandArgument[] arguments = null)
+        public CgBlockchainCommandRequest(float startTime, ECgBlockchainCommand command, CgBlockchainCommandArgument[] arguments = null)
         {
             StartTime = startTime;
             Command   = command;
@@ -124,11 +164,50 @@
                     Arguments[i] = arguments[i];
                 }
             }
+
+            FullfillmentQueue = new Queue<List<CgBlockchainCommandFullfillment>>();
+        }
+
+        public void AddFullfillment(ECgBlockchainCommandFullfillmentRule rule, string response)
+        {
+            List<CgBlockchainCommandFullfillment> fullfillments = new List<CgBlockchainCommandFullfillment>();
+            fullfillments.Add(new CgBlockchainCommandFullfillment(rule, response));
+            FullfillmentQueue.Enqueue(fullfillments);
+        }
+
+        public bool HasCompleted(string input)
+        {
+            List<CgBlockchainCommandFullfillment> head = FullfillmentQueue.Peek();
+
+            bool completed = true;
+
+            int count = head.Count;
+
+            for (int i = 0; i < count; ++i)
+            {
+                completed |= head[i].HasCompleted(input);
+            }
+
+            if (completed)
+                FullfillmentQueue.Dequeue();
+            return completed;
         }
     }
 
-    public static class ICgBlockchainFactory
+    public static class ICgBlockchainInterface
     {
+        public static void Init(Type type)
+        {
+            if (Get() != null)
+                return;
+
+            PropertyInfo p   = type.GetProperty("Instance", BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+            ICgBlockchain bc = (ICgBlockchain)(p.GetValue(null, null));
+
+            if (bc != null)
+                return;
+        }
+
         public static ICgBlockchain Get()
         {
             if (CgBlockchain.Get != null)
@@ -157,25 +236,25 @@
 
                 #endregion // Running Instance
 
-                #region "Shell"
+                #region "Console"
 
-        string ShellFilename { get; set; }
-        string ShellArguments { get; set; }
         string ConsoleFilename { get; set; }
         string ConsoleDirectory { get; set; }
 
-        bool IsShellOpen { get; set; }
         bool IsConsoleOpen { get; set; }
         bool IsMining { get; set; }
 
-                #endregion // Shell
+                #endregion // Console
 
             #endregion // Private / Local Storage
 
         ICgBlockchainGenesis Genesis { get; set; }
         Dictionary<CgBlockchainContractKey, ICgBlockchainContract> Contracts { get; set; }
         Dictionary<ECgBlockchainCommand, string> Commands { get; set; }
-        Dictionary<ECgBlockchainProcessType, Queue<CgBlockchainCommandPending>> PendingCommands { get; set; }
+
+        Dictionary<ECgBlockchainProcessType, Queue<CgBlockchainCommandRequest>> CommandRequests { get; set; }
+        CgBlockchainCommandRequest CurrentCommandRequest { get; set; }
+
         Dictionary<string, ICgBlockchainAccount> Accounts { get; set; }
 
         #endregion // Data Members
@@ -197,9 +276,6 @@
         /* Start running / polling the current private chain */
         void StartPrivateChain();
 
-        /* Opens the shell from which to start any Blockchain program */
-        void OpenShell();
-        void CloseShell();
         /* Opens the console for the Blockchain program.
          * From the console the user may execute any console commands.
         */
@@ -219,6 +295,7 @@
     {
         public static CgConsoleVariableLog LogIO = new CgConsoleVariableLog("log.blockchain.io", false, "Log Blockchain Input / Output Messages", (int)ECgConsoleVariableFlag.Console);
         public static TCgConsoleVariable<bool> ShowProcessWindow = new TCgConsoleVariable<bool>("show.blockchain.processwindow", false, "Show Blockchain Process Window", (int)ECgConsoleVariableFlag.Console);
+        public static CgConsoleVariableLog LogOnBoard = new CgConsoleVariableLog("log.blockchain.onboard", false, "Log Blockchain OnBoard Process", (int)ECgConsoleVariableFlag.Console);
 
         public delegate ICgBlockchain Getter();
 
@@ -279,21 +356,7 @@
 
                 #endregion // Running Instance
 
-                #region "Shell"
-
-        private string _ShellFilename;
-        public string ShellFilename
-        {
-            get { return _ShellFilename; }
-            set { _ShellFilename = value; }
-        }
-
-        private string _ShellArguments;
-        public string ShellArguments
-        {
-            get { return _ShellArguments; }
-            set { _ShellArguments = value; }
-        }
+                #region "Console"
 
         private string _ConsoleFilename;
         public string ConsoleFilename
@@ -309,13 +372,6 @@
             set { _ConsoleDirectory = value; }
         }
 
-        private bool _IsShellOpen;
-        public bool IsShellOpen
-        {
-            get { return _IsShellOpen; }
-            set { _IsShellOpen = value; }
-        }
-
         private bool _IsConsoleOpen;
         public bool IsConsoleOpen
         {
@@ -329,6 +385,8 @@
             get { return _IsMining; }
             set { _IsMining = value; }
         }
+
+                #endregion // Console
 
         private ICgBlockchainGenesis _Genesis;
         public ICgBlockchainGenesis Genesis
@@ -351,11 +409,18 @@
             set { _Commands = value; }
         }
 
-        private Dictionary<ECgBlockchainProcessType, Queue<CgBlockchainCommandPending>> _PendingCommands;
-        public Dictionary<ECgBlockchainProcessType, Queue<CgBlockchainCommandPending>> PendingCommands
+        private Dictionary<ECgBlockchainProcessType, Queue<CgBlockchainCommandRequest>> _CommandRequests;
+        public Dictionary<ECgBlockchainProcessType, Queue<CgBlockchainCommandRequest>> CommandRequests
         {
-            get { return _PendingCommands; }
-            set { _PendingCommands = value; }
+            get { return _CommandRequests; }
+            set { _CommandRequests = value; }
+        }
+
+        private CgBlockchainCommandRequest _CurrentCommandRequest;
+        public CgBlockchainCommandRequest CurrentCommandRequest
+        {
+            get { return _CurrentCommandRequest; }
+            set { _CurrentCommandRequest = value; }
         }
 
         private Dictionary<string, ICgBlockchainAccount> _Accounts;
@@ -364,8 +429,6 @@
             get { return _Accounts; }
             set { _Accounts = value; }
         }
-
-                #endregion // Shell
 
             #endregion // Interface
 
@@ -380,6 +443,7 @@
         public abstract void SetCommand(ECgBlockchainCommand command, string str);
         public abstract void RunCommand(ECgBlockchainProcessType processType, string command);
         public abstract void RunCommand(ECgBlockchainProcessType processType, ECgBlockchainCommand command, CgBlockchainCommandArgument[] args = null);
+        public abstract void AddCommandRequest(ECgBlockchainProcessType processType, CgBlockchainCommandRequest request);
 
         public abstract void SetProcess(ECgBlockchainProcessType processType, Process p);
         public abstract Process GetProcess(ECgBlockchainProcessType processType);
@@ -390,8 +454,6 @@
         public abstract void CreatePrivateChain();
         public abstract void StartPrivateChain();
 
-        public abstract void OpenShell();
-        public abstract void CloseShell();
         public abstract void OpenConsole();
         public abstract void CloseConsole();
 

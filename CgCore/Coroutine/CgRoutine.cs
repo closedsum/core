@@ -39,9 +39,13 @@ namespace CgCore
         public sealed class CoroutineStopCondition : TCgMulticastDelegate_RetOrBool_OneParam<CgRoutine> { }
         public sealed class AddRoutine : TCgDelegate_OneParam<CgRoutine> { }
         public sealed class RemoveRoutine : TCgDelegate_OneParam<CgRoutine> { }
-        public sealed class Flag : TCgPrimitiveType<bool> { }
 
         public delegate void InsertRoutineAheadOf(ECgCoroutineSchedule schedule, CgRoutine pivot, CgRoutine insert);
+
+        public sealed class FrameType : TCgPrimitiveType<int> { }
+        public sealed class TimeType : TCgPrimitiveType<float> { }
+        public sealed class BoolType : TCgPrimitiveType<bool> { }
+        public sealed class ListenMessageType : TCgPrimitiveClass<string> { }
 
         #region "Constants"
 
@@ -89,18 +93,26 @@ namespace CgCore
         public int TickCount;
         public float Delay;
 
+        // Frame
         public bool bWaitForFrame;
+        public int WaitForFrameCounter;
         public int WaitForFrame;
+        public FrameType WaitForFrameType;
+        // Time
         public bool bWaitForTime;
+        public float WaitForTimeTimer;
         public float WaitForTime;
+        public TimeType WaitForTimeType;
+        // Flag
         public bool bWaitForFlag;
-        public Flag WaitForFlag;
+        public BoolType WaitForBoolType;
+        public ICgFlag WaitForFlagType;
+        // Message
         public bool bWaitForListenMessage;
         public string WaitForListenMessage;
+        public ListenMessageType WaitForListenMessageType;
 
         public ECgCoroutineEndReason EndReason;
-
-        // Lock
 
         #endregion // Data Members
 
@@ -151,13 +163,19 @@ namespace CgCore
             Delay = 0.0f;
 
             bWaitForFrame = false;
+            WaitForFrameCounter = 0;
             WaitForFrame = 0;
+            WaitForFrameType = null;
             bWaitForTime = false;
             WaitForTime = 0.0f;
+            WaitForTimeTimer = 0.0f;
+            WaitForTimeType = null;
             bWaitForFlag = false;
-            WaitForFlag = null;
+            WaitForBoolType = null;
+            WaitForFlagType = null;
             bWaitForListenMessage = false;
             WaitForListenMessage = INVALID_LISTEN_MESSAGE;
+            WaitForListenMessageType = null;
 
             EndReason = ECgCoroutineEndReason.MAX;
         }
@@ -227,23 +245,55 @@ namespace CgCore
             // Check WaitForFrame
             if (bWaitForFrame)
             {
-                move = TickCount >= WaitForFrame;
+                if (WaitForFrameType != null)
+                {
+                    WaitForFrame = WaitForFrameType.Get();
+
+                    if (WaitForFrame < 0)
+                    {
+                        WaitForFrame  = 0;
+                        WaitForFrameType = null;
+
+                        Debug.LogWarning("CgRoutine.Run: yield return value of type 'CgRoutine.FrameType' is used for WaitForFrame. yield return value must be >= 0.");
+                    }
+                }
+
+                ++WaitForFrameCounter;
+
+                move = WaitForFrameCounter >= WaitForFrame;
 
                 if (move)
                 {
                     WaitForFrame = 0;
                     bWaitForFrame = false;
+                    WaitForFrameCounter = 0;
                 }
             }
             // Check WaitForTime
             if (bWaitForTime)
             {
-                move = ElapsedTime >= WaitForTime;
+                if (WaitForTimeType != null)
+                {
+                    WaitForTime = WaitForTimeType.Get();
+
+                    if (WaitForTime < 0.0f)
+                    {
+                        WaitForTime = 0.0f;
+                        WaitForTimeType = null;
+
+                        Debug.LogWarning("CgRoutine.Run: yield return value of type 'CgRoutine.TimeType' is used for WaitForTime. yield return value must be >= 0.0f.");
+                    }
+                }
+
+                WaitForTimeTimer += deltaTime;
+
+                move = WaitForTimeTimer >= WaitForTime;
 
                 if (move)
                 {
                     WaitForTime = 0;
                     bWaitForTime = false;
+                    WaitForTimeTimer = 0.0f;
                 }
             }
             // Check WaitingFor
@@ -261,8 +311,35 @@ namespace CgCore
             // Check WaitForFlag
             if (bWaitForFlag)
             {
-                move         = WaitForFlag.Get();
-                bWaitForFlag = !move;
+                move = (WaitForBoolType != null && WaitForBoolType.Get()) || (WaitForFlagType != null && WaitForFlagType.IsEqual());
+
+                if (move)
+                {
+                    WaitForBoolType = null;
+                    bWaitForFlag = false;
+                }
+            }
+            // WaitForListenMessage
+            if (bWaitForListenMessage)
+            {
+                // TODO: Need to overload != operator correctly
+                if (!object.ReferenceEquals(WaitForListenMessageType, null))
+                {
+                    WaitForListenMessage = WaitForListenMessageType.Get();
+
+                    if (WaitForListenMessage == INVALID_LISTEN_MESSAGE)
+                    {
+                        Debug.LogWarning("CgRoutine.Run: yield return value of type 'CgRoutine.ListenMessageType' is used for WaitForListenMessage. yield return value must NOT be empty.");
+                    }
+                }
+
+                move = WaitForListenMessage == INVALID_LISTEN_MESSAGE;// ||
+
+                if (move)
+                {
+                    WaitForListenMessage = INVALID_LISTEN_MESSAGE;
+                    bWaitForListenMessage = false;
+                }
             }
 
             if (!move)
@@ -286,6 +363,24 @@ namespace CgCore
                     else
                     {
                         bWaitForFrame = true;
+                        WaitForFrameCounter = 0;
+                    }
+                }
+                else
+                if (type == typeof(FrameType))
+                {
+                    WaitForFrameType = (FrameType)yieldCommand;
+
+                    if (WaitForFrameType.Get() < 0)
+                    {
+                        WaitForFrameType = null;
+
+                        Debug.LogWarning("CgRoutine.Run: yield return value of type 'CgRoutine.FrameType' is used for WaitForFrame. yield return value must be >= 0.");
+                    }
+                    else
+                    {
+                        bWaitForFrame = true;
+                        WaitForFrameCounter = 0;
                     }
                 }
                 // WaitForTime
@@ -303,25 +398,53 @@ namespace CgCore
                     else
                     {
                         bWaitForTime = true;
+                        WaitForTimeTimer = 0.0f;
+                    }
+                }
+                else
+                if (type == typeof(TimeType))
+                {
+                    WaitForTimeType = (TimeType)yieldCommand;
+
+                    if (WaitForTimeType.Get() < 0.0f)
+                    {
+                        WaitForTimeType = null;
+
+                        Debug.LogWarning("CgRoutine.Run: yield return value of type 'CgRoutine.TimeType' is used for WaitForTime. yield return value must be >= 0.0f.");
+                    }
+                    else
+                    {
+                        bWaitForTime = true;
+                        WaitForTimeTimer = 0.0f;
                     }
                 }
                 // WaitingFor
                 else
                 if (type == typeof(CgRoutine))
                 {
-                    WaitingFor          = (CgRoutine)yieldCommand;
+                    WaitingFor = (CgRoutine)yieldCommand;
                     WaitingFor.Blocking = this;
-                    bWaitingFor         = true;
+                    bWaitingFor = true;
 
                     // Fix linkage. Prev / Next
                     InsertRoutine(Schedule, this, WaitingFor);
                 }
                 // WaitForFlag
                 else
-                if (type == typeof(Flag))
+                if (type == typeof(BoolType))
                 {
-                    WaitForFlag = (Flag)yieldCommand;
-                    bWaitForFlag = true;
+                    WaitForBoolType = (BoolType)yieldCommand;
+
+                    if (!WaitForBoolType.Get())
+                        bWaitForFlag = true;
+                }
+                else
+                if (type == typeof(ICgFlag))
+                {
+                    WaitForFlagType = (ICgFlag)yieldCommand;
+
+                    if (!WaitForFlagType.IsEqual())
+                        bWaitForFlag = true;
                 }
                 // WaitForListenMessage
                 else
@@ -338,10 +461,24 @@ namespace CgCore
                         bWaitForListenMessage = true;
                     }
                 }
+                else
+                if (type == typeof(ListenMessageType))
+                {
+                    WaitForListenMessageType = (ListenMessageType)yieldCommand;
+
+                    if (WaitForListenMessageType.Get() == INVALID_LISTEN_MESSAGE)
+                    {
+                        Debug.LogWarning("CgRoutine.Run: yield return value of type 'string' is used for WaitForListenMessage. yield return value must NOT be empty.");
+                    }
+                    else
+                    {
+                        bWaitForListenMessage = true;
+                    }
+                }
                 // INVALID Type
                 else
                 {
-                    Debug.LogError("CgRoutine.Run: Invalid type for yield. yield return value must be of type: int, float, CgRoutine, CgRoutine.Flag, or string.");
+                    Debug.LogError("CgRoutine.Run: Invalid type for yield. yield return value must be of type: int, CgRoutine.FrameType, float, CgRoutine.TimeType, CgRoutine, CgRoutine.BoolType, ICgFlag, string, or CgRoutine.ListenMessageType.");
                 }
             }
             // Finished
@@ -412,13 +549,19 @@ namespace CgCore
             TickCount = 0;
             Delay = 0.0f;
             bWaitForFrame = false;
+            WaitForFrameCounter = 0;
             WaitForFrame = 0;
+            WaitForFrameType = null;
             bWaitForTime = false;
+            WaitForTimeTimer = 0.0f;
             WaitForTime = 0.0f;
+            WaitForTimeType = null;
             bWaitForFlag = false;
-            WaitForFlag = null;
+            WaitForBoolType = null;
+            WaitForFlagType = null;
             bWaitForListenMessage = false;
             WaitForListenMessage = INVALID_LISTEN_MESSAGE;
+            WaitForListenMessageType = null;
         }
     }
 }

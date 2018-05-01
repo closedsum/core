@@ -200,7 +200,6 @@ namespace CgCore
 
         public CgRoutine Start(CgCoroutinePayload payload)
         {
-            Debug.Log("Adding");
             ECgCoroutineSchedule schedule = payload.Schedule;
 
             CgRoutine r = Allocate(schedule);

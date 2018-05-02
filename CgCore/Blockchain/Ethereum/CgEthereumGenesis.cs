@@ -1,9 +1,13 @@
-﻿namespace CgCore
+﻿// Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
+namespace CgCore
 {
     using System;
+    using System.IO;
     using System.Collections;
     using System.Collections.Generic;
     using UnityEngine;
+
+    using Newtonsoft.Json;
 
     [Serializable]
     public struct CgEthereumGenesisConfig
@@ -27,15 +31,10 @@
     {
         public string balance;
 
-        public void Init()
+        public CgEthereumGenesisAddressBalance(string _balance)
         {
-            balance = "0";
+            balance = _balance;
         }
-    }
-
-    [Serializable]
-    public struct CgEthereumGenesisAllocTemp
-    {
     }
 
     [Serializable]
@@ -44,29 +43,28 @@
         public CgEthereumGenesisConfig config;
         public string difficulty = "20";
         public string gasLimit = "2100000";
-        // TODO: Need to be able to Serialize / Deserialize Dictionary
-        public CgEthereumGenesisAllocTemp alloc;
-        //public Dictionary<string, CgEthereumGenesisAddressBalance> alloc;
+        public Dictionary<string, CgEthereumGenesisAddressBalance> alloc;
 
         public CgEthereumGenesis()
         {
             config.Init();
-            //alloc = new Dictionary<string, CgEthereumGenesisAddressBalance>();
-            alloc = new CgEthereumGenesisAllocTemp();
+            alloc = new Dictionary<string, CgEthereumGenesisAddressBalance>();
+        }
+
+        public override string ToStr()
+        {
+            return JsonConvert.SerializeObject(this);
         }
 
         public override void Parse(string str)
         {
-            CgEthereumGenesis genesis = JsonUtility.FromJson<CgEthereumGenesis>(str);
-            Copy(genesis);
+            JsonConvert.PopulateObject(str, (object)this);
         }
 
-        public void Copy(CgEthereumGenesis copy)
+        public override void ParseFromFile(string filename)
         {
-            config      = copy.config;
-            difficulty  = copy.difficulty;
-            gasLimit    = copy.gasLimit;
-            alloc       = copy.alloc;
+            if (File.Exists(filename))
+                Parse(File.ReadAllText(filename));
         }
     }
 }

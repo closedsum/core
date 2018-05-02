@@ -3,10 +3,16 @@ namespace CgCore
 {
     using System;
     using System.Collections.Generic;
+    using System.Reflection;
 
     #region "Enums"
 
-    public abstract class TCgEnum<T> where T : struct
+    public interface ICgEnum
+    {
+        string GetName();
+    }
+
+    public abstract class TCgEnum<T> : ICgEnum where T : struct, IConvertible
     {
         #region "Delegates"
 
@@ -100,6 +106,11 @@ namespace CgCore
         {
             return Value.GetHashCode() ^ Name.GetHashCode();
         }
+
+        public string GetName()
+        {
+            return Name;
+        }
     }
 
     public class ECgEnum_byte : TCgEnum<byte>
@@ -123,13 +134,259 @@ namespace CgCore
         public ECgEnum_uint(uint value, string name) : base(value, name) { }
     }
 
+    public class ECgEnumMap<EnumClass, EnumType> 
+        where EnumClass : TCgEnum<EnumType>
+        where EnumType : struct, IConvertible
+    {
+        protected sealed class EnumTypeEqualityComparer : IEqualityComparer<EnumType>
+        {
+            public bool Equals(EnumType lhs, EnumType rhs)
+            {
+                return lhs.Equals(rhs);
+            }
+
+            public int GetHashCode(EnumType x)
+            {
+                return x.GetHashCode();
+            }
+        }
+
+        private List<EnumClass> Enums;
+        private Dictionary<string, EnumClass> StringMap;
+        private Dictionary<EnumType, EnumClass> TypeMap;
+
+        public int Count
+        {
+            get { return Enums.Count; }
+        }
+
+        public ECgEnumMap()
+        {
+            Enums = new List<EnumClass>();
+            StringMap = new Dictionary<string, EnumClass>();
+            TypeMap = new Dictionary<EnumType, EnumClass>(new EnumTypeEqualityComparer());
+        }
+
+        public EnumClass Create(string name)
+        {
+            EnumClass e = null;
+
+            StringMap.TryGetValue(name, out e);
+
+            if (e != null)
+            {
+                CgDebug.LogError(this.GetType().Name + ".Create: Enum with name: " + name + " already exists. It is being defined in move than one place.");
+                return e;
+            }
+
+            Type type = typeof(EnumClass);
+            // Get Constructor
+            Type[] types = new Type[2];
+            types[0]     = typeof(EnumType);
+            types[1]     = typeof(string);
+            ConstructorInfo constructor = type.GetConstructor(types);
+
+            // Get Params for Constructor and create EnumClass
+            object[] param  = new object[2];
+            param[0]        = (EnumType)Convert.ChangeType(Enums.Count, typeof(EnumType));
+            param[1]        = name;
+            e               = (EnumClass)constructor.Invoke(param);
+
+            // Add to List and Maps
+            EnumType index = (EnumType)Convert.ChangeType(Enums.Count, typeof(EnumType));
+
+            Enums.Add(e);
+            StringMap.Add(name, e);
+            TypeMap.Add(index, e);
+
+            return e;
+        }
+
+        public EnumClass this[string key]
+        {
+            get
+            {
+                EnumClass e = null;
+                StringMap.TryGetValue(key, out e);
+
+                if (e == null)
+                    CgDebug.LogError(this.GetType().Name + ".Get: No enum created of type: " + typeof(EnumClass).Name + " and name: " + key);
+                return e;
+            }
+        }
+
+        public EnumClass this[EnumType key]
+        {
+            get
+            {
+                EnumClass e = null;
+                TypeMap.TryGetValue(key, out e);
+
+                if (e == null)
+                    CgDebug.LogError(this.GetType().Name + ".Get: No enum created of type: " + typeof(EnumClass).Name + " and name: " + key);
+                return e;
+            }
+        }
+    }
+
+    public class ECgEnumMaskMap<EnumClass, EnumType>
+        where EnumClass : TCgEnum<EnumType>
+        where EnumType : struct, IConvertible
+    {
+        protected sealed class EnumTypeEqualityComparer : IEqualityComparer<EnumType>
+        {
+            public bool Equals(EnumType lhs, EnumType rhs)
+            {
+                return lhs.Equals(rhs);
+            }
+
+            public int GetHashCode(EnumType x)
+            {
+                return x.GetHashCode();
+            }
+        }
+
+        private List<EnumClass> Enums;
+        private Dictionary<string, EnumClass> StringMap;
+        private Dictionary<EnumType, EnumClass> TypeMap;
+
+        public int Count
+        {
+            get { return Enums.Count; }
+        }
+
+        public ECgEnumMaskMap()
+        {
+            Enums = new List<EnumClass>();
+            StringMap = new Dictionary<string, EnumClass>();
+            TypeMap = new Dictionary<EnumType, EnumClass>(new EnumTypeEqualityComparer());
+        }
+
+        public EnumClass Create(string name)
+        {
+            EnumClass e = null;
+
+            StringMap.TryGetValue(name, out e);
+
+            if (e != null)
+            {
+                CgDebug.LogError(this.GetType().Name + ".Create: Enum with name: " + name + " already exists. It is being defined in move than one place.");
+                return e;
+            }
+
+            Type type = typeof(EnumClass);
+            // Get Constructor
+            Type[] types = new Type[2];
+            types[0] = typeof(EnumType);
+            types[1] = typeof(string);
+            ConstructorInfo constructor = type.GetConstructor(types);
+
+            // Get Params for Constructor and create EnumClass
+            object[] param = new object[2];
+            param[0] = (EnumType)Convert.ChangeType(Enums.Count, typeof(EnumType));
+            param[1] = name;
+            e = (EnumClass)constructor.Invoke(param);
+
+            // Add to List and Maps
+            EnumType index = (EnumType)Convert.ChangeType(Enums.Count, typeof(EnumType));
+
+            Enums.Add(e);
+            StringMap.Add(name, e);
+            TypeMap.Add(index, e);
+
+            return e;
+        }
+
+        public EnumClass this[string key]
+        {
+            get
+            {
+                EnumClass e = null;
+                StringMap.TryGetValue(key, out e);
+
+                if (e == null)
+                    CgDebug.LogError(this.GetType().Name + ".Get: No enum created of type: " + typeof(EnumClass).Name + " and name: " + key);
+                return e;
+            }
+        }
+
+        public EnumClass this[EnumType key]
+        {
+            get
+            {
+                EnumClass e = null;
+                TypeMap.TryGetValue(key, out e);
+
+                if (e == null)
+                    CgDebug.LogError(this.GetType().Name + ".Get: No enum created of type: " + typeof(EnumClass).Name + " and name: " + key);
+                return e;
+            }
+        }
+
+        public int ToMask(string s)
+        {
+            int mask = 0;
+
+            Dictionary<string, EnumClass>.KeyCollection keys = StringMap.Keys;
+
+            foreach (string key in keys)
+            {
+                if (s.Contains(key))
+                {
+                    int value = (int)Convert.ChangeType(StringMap[key].Value, typeof(int));
+                    mask     |= value;
+                }
+            }
+            return mask;
+        }
+
+        public string MaskToStr(int m)
+        {
+            string s = "";
+
+            Dictionary<string, EnumClass>.KeyCollection keys = StringMap.Keys;
+
+            foreach (string key in keys)
+            {
+                int value = (int)Convert.ChangeType(StringMap[key].Value, typeof(int));
+
+                if ((m & value) == value)
+                    s += s == "" ? key : " | " + key;
+            }
+            return s;
+        }
+    }
+
     #endregion // Enums
 
     #region "Primitive Types"
 
-    public class TCgPrimitiveType<T> where T : struct
+    public interface ICgPrimitive
+    {
+        void UpdateIsDirty();
+        void Clear();
+        void ResetValue();
+        void Reset();
+        bool HasChanged();
+        void MarkDirty();
+        void Resolve();
+    }
+
+    public abstract class CgPrimitive : ICgPrimitive
+    {
+        public abstract void UpdateIsDirty();
+        public abstract void Clear();
+        public abstract void ResetValue();
+        public abstract void Reset();
+        public abstract bool HasChanged();
+        public abstract void MarkDirty();
+        public abstract void Resolve();
+    }
+
+    public class TCgPrimitiveType<T> : CgPrimitive where T : struct
     {
         public sealed class OnChange : TCgMulticastDelegate_OneParam<T> { }
+
         #region "Data Members"
 
         public T Value;
@@ -137,16 +394,16 @@ namespace CgCore
 
         protected bool IsDirty;
 
-        #endregion // Data Members
-
         public OnChange OnChange_Event;
 
-        #region "Operators"
+        #endregion // Data Members
 
         public TCgPrimitiveType()
         {
             OnChange_Event = new OnChange();
         }
+
+        #region "Operators"
 
         public static bool operator ==(TCgPrimitiveType<T> lhs, TCgPrimitiveType<T> rhs)
         {
@@ -200,7 +457,7 @@ namespace CgCore
 
         #endregion // Operators
 
-        public void UpdateIsDirty()
+        public override void UpdateIsDirty()
         {
             IsDirty = !Value.Equals(Last_Value);
 
@@ -216,30 +473,30 @@ namespace CgCore
 
         public T Get() { return Value; }
 
-        public void Clear()
+        public override void Clear()
         {
             Last_Value = Value;
             IsDirty = false;
         }
 
-        public void ResetValue()
+        public override void ResetValue()
         {
             Value = default(T);
             Last_Value = Value;
             IsDirty = false;
         }
 
-        public void Reset()
+        public override void Reset()
         {
             ResetValue();
 
             OnChange_Event.Clear();
         }
 
-        public bool HasChanged() { return IsDirty; }
-        public void MarkDirty() { IsDirty = true; }
+        public override bool HasChanged() { return IsDirty; }
+        public override void MarkDirty() { IsDirty = true; }
 
-        public void Resolve()
+        public override void Resolve()
         {
             UpdateIsDirty();
             Clear();
@@ -247,6 +504,256 @@ namespace CgCore
     }
 
     #endregion // Primitive Types
+
+    #region "Primitive Classes"
+
+    public class TCgPrimitiveClass<T> : CgPrimitive where T : class
+    {
+        public sealed class OnChange : TCgMulticastDelegate_OneParam<T> { }
+
+        #region "Data Members"
+
+        public T Value;
+        public T Last_Value;
+
+        protected bool IsDirty;
+
+        public OnChange OnChange_Event;
+
+        #endregion // Data Members
+
+        public TCgPrimitiveClass()
+        {
+            OnChange_Event = new OnChange();
+        }
+
+        #region "Operators"
+
+        public static bool operator ==(TCgPrimitiveClass<T> lhs, TCgPrimitiveClass<T> rhs)
+        {
+            if (object.ReferenceEquals(lhs, null))
+                return object.ReferenceEquals(rhs, null);
+            if (object.ReferenceEquals(rhs, null))
+                return false;
+            return lhs.Value.Equals(rhs.Value);
+        }
+
+        public static bool operator !=(TCgPrimitiveClass<T> lhs, TCgPrimitiveClass<T> rhs)
+        {
+            return !(lhs == rhs);
+        }
+
+        public static bool operator ==(TCgPrimitiveClass<T> lhs, T rhs)
+        {
+            return lhs.Value.Equals(rhs);
+        }
+
+        public static bool operator !=(TCgPrimitiveClass<T> lhs, T rhs)
+        {
+            return !(lhs == rhs);
+        }
+
+        public static bool operator ==(T lhs, TCgPrimitiveClass<T> rhs)
+        {
+            return lhs.Equals(rhs.Value);
+        }
+
+        public static bool operator !=(T lhs, TCgPrimitiveClass<T> rhs)
+        {
+            return !(lhs == rhs);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is TCgPrimitiveClass<T>))
+                return false;
+
+            TCgPrimitiveClass<T> rhs = (TCgPrimitiveClass<T>)obj;
+
+            if (!Value.Equals(rhs.Value)) return false;
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            return Value.GetHashCode();
+        }
+
+        #endregion // Operators
+
+        public override void UpdateIsDirty()
+        {
+            IsDirty = !Value.Equals(Last_Value);
+
+            if (IsDirty)
+                OnChange_Event.Broadcast(Value);
+        }
+
+        public void Set(T inValue)
+        {
+            Value = inValue;
+            UpdateIsDirty();
+        }
+
+        public T Get() { return Value; }
+
+        public override void Clear()
+        {
+            Last_Value = Value;
+            IsDirty = false;
+        }
+
+        public override void ResetValue()
+        {
+            Value = default(T);
+            Last_Value = Value;
+            IsDirty = false;
+        }
+
+        public override void Reset()
+        {
+            ResetValue();
+
+            OnChange_Event.Clear();
+        }
+
+        public override bool HasChanged() { return IsDirty; }
+        public override void MarkDirty() { IsDirty = true; }
+
+        public override void Resolve()
+        {
+            UpdateIsDirty();
+            Clear();
+        }
+    }
+
+    #endregion // Primitive Classes
+
+    #region "Flags"
+
+    public interface ICgFlag
+    {
+        bool IsEqual();
+    }
+
+    public abstract class CgFlag : ICgFlag
+    {
+        public abstract bool IsEqual();
+    }
+
+    public class TCgFlagType<T> : CgFlag where T : struct
+    {
+        public sealed class OnEqual : CgMulticastDelegate { }
+
+        #region "Data Members"
+
+        public T StartValue;
+        public T EndValue;
+
+        public OnEqual OnEqual_Event;
+
+        #endregion // Data Members
+
+        public TCgFlagType(T startValue, T endValue)
+        {
+            StartValue    = startValue;
+            EndValue      = endValue;
+            OnEqual_Event = new OnEqual();
+        }
+
+        #region "Operators"
+
+        public static bool operator ==(TCgFlagType<T> lhs, TCgFlagType<T> rhs)
+        {
+            if (object.ReferenceEquals(lhs, null))
+                return object.ReferenceEquals(rhs, null);
+            if (object.ReferenceEquals(rhs, null))
+                return false;
+            return lhs.StartValue.Equals(rhs.StartValue);
+        }
+
+        public static bool operator !=(TCgFlagType<T> lhs, TCgFlagType<T> rhs)
+        {
+            return !(lhs == rhs);
+        }
+
+        public static bool operator ==(TCgFlagType<T> lhs, T rhs)
+        {
+            return lhs.StartValue.Equals(rhs);
+        }
+
+        public static bool operator !=(TCgFlagType<T> lhs, T rhs)
+        {
+            return !(lhs == rhs);
+        }
+
+        public static bool operator ==(T lhs, TCgFlagType<T> rhs)
+        {
+            return lhs.Equals(rhs.StartValue);
+        }
+
+        public static bool operator !=(T lhs, TCgFlagType<T> rhs)
+        {
+            return !(lhs == rhs);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is TCgFlagType<T>))
+                return false;
+
+            TCgFlagType<T> rhs = (TCgFlagType<T>)obj;
+
+            if (!StartValue.Equals(rhs.StartValue)) return false;
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            return StartValue.GetHashCode();
+        }
+
+        #endregion // Operators
+
+        public void Init(T startValue, T endValue)
+        {
+            StartValue = startValue;
+            EndValue = endValue;
+        }
+
+        public void SetStart(T startValue)
+        {
+            StartValue = startValue;
+        }
+
+        public void SetEnd(T endValue)
+        {
+            EndValue = endValue;
+
+            if (StartValue.Equals(EndValue))
+                OnEqual_Event.Broadcast();
+        }
+
+        public T GetStart() { return StartValue; }
+        public T GetEnd() { return EndValue; }
+
+        public void ResetValues()
+        {
+            StartValue = default(T);
+            EndValue = default(T);
+        }
+
+        public void Reset()
+        {
+            ResetValues();
+
+            OnEqual_Event.Clear();
+        }
+
+        public override bool IsEqual() { return StartValue.Equals(EndValue); }
+    }
+
+    #endregion "Flags"
 
     #region "Attribute"
 
@@ -311,7 +818,7 @@ namespace CgCore
             return IsSet ? Ref != UnSetRef : true;
         }
     }
-
+    
     public sealed class CgAttribute
     {
         private Type ValueType;
@@ -330,10 +837,11 @@ namespace CgCore
         public void Set(object value)
         {
             Value      = value;
-            ValueType  = value.GetType();
-            UnSetValue = default(ValueType);
+            ValueType  = value != null ? value.GetType() : null;
+            UnSetValue = ValueType != null ? default(ValueType) : null;
 
-            if (ValueType.IsClass)
+            if (ValueType != null &&
+                ValueType.IsClass)
             {
                 if (value.Equals(null))
                 {

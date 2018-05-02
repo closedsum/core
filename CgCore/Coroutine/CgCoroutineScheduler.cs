@@ -1,3 +1,4 @@
+// Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 namespace CgCore
 {
     using System.Collections;
@@ -40,6 +41,10 @@ namespace CgCore
 
     public class CgCoroutineScheduler
     {
+
+        public static CgConsoleVariableLog LogTransactions = new CgConsoleVariableLog("log.coroutine.transactions", false, "Log Coroutine Scheduler Allocation and DeAllocation.", (int)ECgConsoleVariableFlag.Console);
+        public static CgConsoleVariableLog LogRunning = new CgConsoleVariableLog("log.coroutine.running", false, "Log Coroutines currently running.", (int)ECgConsoleVariableFlag.Console);
+
         #region "Constants"
 
         private const int EMPTY = 0;
@@ -72,6 +77,14 @@ namespace CgCore
         public Dictionary<ECgCoroutineSchedule, CgRoutine> Heads;
         public Dictionary<ECgCoroutineSchedule, CgRoutine> Tails;
 
+            #region "Payload"
+
+        private List<CgCoroutinePayload> Payloads;
+
+        private int PayloadIndex;
+
+            #endregion // Payload
+
         #endregion // Data Members
 
         // Constructor
@@ -87,7 +100,7 @@ namespace CgCore
 
                 for (ushort j = 0; j < POOL_SIZE; ++j)
                 {
-                    routines.Add(new CgRoutine(j, schedule, SetTail));
+                    routines.Add(new CgRoutine(j, schedule, InsertRoutine));
                 }
                 Pools[(ECgCoroutineSchedule)i] = routines;
             }
@@ -119,6 +132,13 @@ namespace CgCore
             {
                 Tails[(ECgCoroutineSchedule)i] = null;
             }
+
+            Payloads = new List<CgCoroutinePayload>();
+
+            for (byte i = 0; i < (byte)ECgCoroutineSchedule.MAX; ++i)
+            {
+                Payloads.Add(new CgCoroutinePayload());
+            }
         }
 
         public static CgCoroutineScheduler Get()
@@ -126,7 +146,7 @@ namespace CgCore
             return Instance;
         }
 
-        public CgRoutine Allocate(ECgCoroutineSchedule schedule, IEnumerator fiber)
+        public CgRoutine Allocate(ECgCoroutineSchedule schedule)
         {
             for (ushort i = 0; i < POOL_SIZE; ++i)
             {
@@ -143,14 +163,46 @@ namespace CgCore
             return null;
         }
 
-        public void SetTail(ECgCoroutineSchedule schedule, CgRoutine r)
+        public void InsertRoutine(ECgCoroutineSchedule schedule, CgRoutine pivot, CgRoutine insert)
         {
-            Tails[schedule] = r;
+            // Detach insert
+
+                // insert is the Tail
+            if (insert.Next == null)
+            {
+                Tails[schedule] = insert.Prev;
+            }
+            else
+            {
+                insert.Next.Prev = insert.Prev;
+            }
+            insert.Prev.Next = insert.Next;
+
+            // Insert insert ahead of pivot
+
+                // pivot is the Head
+            if (pivot.Prev == null)
+            {
+                Heads[schedule] = insert;
+
+                pivot.Prev = insert;
+                insert.Next = pivot;
+                insert.Prev = null;
+            }
+            else
+            {
+                pivot.Prev.Next = insert;
+                insert.Prev = pivot.Prev;
+                insert.Next = pivot;
+                pivot.Prev = insert;
+            }
         }
 
-        public CgRoutine Start(ECgCoroutineSchedule schedule, IEnumerator fiber)
+        public CgRoutine Start(CgCoroutinePayload payload)
         {
-            CgRoutine r = Allocate(schedule, fiber);
+            ECgCoroutineSchedule schedule = payload.Schedule;
+
+            CgRoutine r = Allocate(schedule);
 
             if (r == null)
                 return null;
@@ -164,9 +216,9 @@ namespace CgCore
             // Add r end of the list, Make r the Tail
             else
             {
-                CgRoutine tail  = Tails[schedule];
-                tail.Next       = r;
-                r.Prev          = tail;
+                CgRoutine tail = Tails[schedule];
+                tail.Next = r;
+                r.Prev = tail;
                 Tails[schedule] = r;
             }
 
@@ -174,8 +226,22 @@ namespace CgCore
 
             LogTransaction("CgRoutine.Start", ECgCoroutineTransaction.Start, r);
 
+            // TODO: get Time from Manager_Time
+            r.Start(payload.Fiber, payload.StopCondition, payload.Owner, payload.OwnerName, Time.timeSinceLevelLoad, payload.Add, payload.Remove, payload.RoutineType);
+            r.State = ECgRoutineState.Running;
+            payload.Reset();
             r.Run(0.0f);
             return r;
+        }
+
+        public CgRoutine Start(ECgCoroutineSchedule schedule, IEnumerator fiber)
+        {
+            CgCoroutinePayload payload = AllocatePayload();
+
+            payload.Schedule = schedule;
+            payload.Fiber = fiber;
+
+            return Start(payload);
         }
 
         public void EndAll()
@@ -194,7 +260,11 @@ namespace CgCore
 
             while (current != null)
             {
-                // Routine finished in 1 frame
+                if (current.State == ECgRoutineState.Running)
+                {
+                    current.Run(deltaTime);
+                }
+
                 if (current.State == ECgRoutineState.End)
                 {
                     // Remove from List, Update Linkage. Prev / Next
@@ -223,16 +293,16 @@ namespace CgCore
                             Tails[schedule] = null;
                         }
                     }
-
                     LogTransaction("CgRoutine.Update", ECgCoroutineTransaction.End, current);
 
-                    current.Reset();
+                    CgRoutine r = current;
+                    current     = current.Next;
+                    r.Reset();
                 }
                 else
                 {
-                    current.Run(deltaTime);
+                    current = current.Next;
                 }
-                current = current.Next;
             }
 
             // Check RoutinesRunning for any Routines that have Ended
@@ -263,7 +333,7 @@ namespace CgCore
 
         public void LogTransaction(string functionName, ECgCoroutineTransaction transaction, CgRoutine r)
         {
-            if (!CgCVars.LogCoroutineTransactions.Log())
+            if (!LogTransactions.Log())
                 return;
 
             string transactionAsString = transaction.ToString() + "ing (Reason=" + r.EndReason.ToString() + ")";
@@ -283,6 +353,23 @@ namespace CgCore
                 Debug.Log(functionName + ": On" + schedule + " " + transactionAsString + " Routine with Coroutine: " + r.Name + " at " + currentTime + ". Using Owner: " + r.OwnerName + ". " + elapsed);
             else
                 Debug.Log(functionName + ": On" + schedule + " " + transactionAsString + " Routine with Coroutine: " + r.Name + " at " + currentTime + ". " + elapsed);
+        }
+
+        public CgCoroutinePayload AllocatePayload()
+        {
+            for (int i = 0; i < POOL_SIZE; ++i)
+            {
+                PayloadIndex = (PayloadIndex + 1) % POOL_SIZE;
+
+                CgCoroutinePayload p = Payloads[PayloadIndex];
+
+                if (!p.IsAllocated)
+                {
+                    return p;
+                }
+            }
+            Debug.LogWarning("CgCoroutineScheduler.AllocatePayload: No free Payloads. Look for Runaway Coroutines or consider raising the pool size.");
+            return null;
         }
     }
 }

@@ -439,7 +439,7 @@ namespace CgCore
                         bWaitForFlag = true;
                 }
                 else
-                if (type == typeof(ICgFlag))
+                if (typeof(ICgFlag).IsAssignableFrom(type))
                 {
                     WaitForFlagType = (ICgFlag)yieldCommand;
 
@@ -478,7 +478,7 @@ namespace CgCore
                 // INVALID Type
                 else
                 {
-                    Debug.LogError("CgRoutine.Run: Invalid type for yield. yield return value must be of type: int, CgRoutine.FrameType, float, CgRoutine.TimeType, CgRoutine, CgRoutine.BoolType, ICgFlag, string, or CgRoutine.ListenMessageType.");
+                    Debug.LogError("CgRoutine.Run: Invalid Type: " + type.GetType() + " for yield. yield return value must be of type: int, CgRoutine.FrameType, float, CgRoutine.TimeType, CgRoutine, CgRoutine.BoolType, ICgFlag, string, or CgRoutine.ListenMessageType.");
                 }
             }
             // Finished

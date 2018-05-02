@@ -1,7 +1,6 @@
 ﻿namespace CgCore
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Reflection;
@@ -110,7 +109,7 @@
 
     public class CgBlockchainCommandFullfillment
     {
-        public bool Completed;
+        private bool Completed;
         public ECgBlockchainCommandFullfillmentRule Rule;
         public string Response;
 
@@ -136,18 +135,38 @@
                 Completed = Response == input.ToLower();
             return Completed;
         }
+
+        public void Clear()
+        {
+            Completed = false;
+        }
     }
 
     public class CgBlockchainCommandRequest
     {
+        public sealed class Completed : TCgMulticastDelegate_OneParam<CgBlockchainCommandRequest>{}
+
+        #region "Constants"
+
+        private static readonly int EMPTY = 0;
+
+        #endregion // Constants
+
+        #region "Data Members
+
         public float StartTime;
         public ECgBlockchainCommand Command;
         public CgBlockchainCommandArgument[] Arguments;
-        public Queue<List<CgBlockchainCommandFullfillment>> FullfillmentQueue;
+        public List<List<CgBlockchainCommandFullfillment>> FullfillmentList;
+        private int Index;
 
-        public CgBlockchainCommandRequest(float startTime, ECgBlockchainCommand command, CgBlockchainCommandArgument[] arguments = null)
+        public Completed Completed_Event;
+
+        #endregion // Data Members
+
+        public CgBlockchainCommandRequest(ECgBlockchainCommand command, CgBlockchainCommandArgument[] arguments = null)
         {
-            StartTime = startTime;
+            StartTime = 0.0f;
             Command   = command;
 
             if (arguments == null || arguments.Length == 0)
@@ -165,32 +184,61 @@
                 }
             }
 
-            FullfillmentQueue = new Queue<List<CgBlockchainCommandFullfillment>>();
+            FullfillmentList = new List<List<CgBlockchainCommandFullfillment>>();
+            Index = 0;
+            Completed_Event = new Completed();
         }
 
         public void AddFullfillment(ECgBlockchainCommandFullfillmentRule rule, string response)
         {
             List<CgBlockchainCommandFullfillment> fullfillments = new List<CgBlockchainCommandFullfillment>();
             fullfillments.Add(new CgBlockchainCommandFullfillment(rule, response));
-            FullfillmentQueue.Enqueue(fullfillments);
+            FullfillmentList.Add(fullfillments);
+        }
+
+        public void AddFullfillments(List<CgBlockchainCommandFullfillment> fullfillments)
+        {
+            FullfillmentList.Add(fullfillments);
         }
 
         public bool HasCompleted(string input)
         {
-            List<CgBlockchainCommandFullfillment> head = FullfillmentQueue.Peek();
+            if (FullfillmentList.Count == EMPTY)
+                return true;
+
+            List<CgBlockchainCommandFullfillment> current = FullfillmentList[Index];
 
             bool completed = true;
 
-            int count = head.Count;
+            int count = current.Count;
 
             for (int i = 0; i < count; ++i)
             {
-                completed |= head[i].HasCompleted(input);
+                completed &= current[i].HasCompleted(input);
             }
 
             if (completed)
-                FullfillmentQueue.Dequeue();
+                ++Index;
+
+            if (Index >= FullfillmentList.Count)
+                Completed_Event.Broadcast(this);
             return completed;
+        }
+
+        public void Clear()
+        {
+            int iMax = FullfillmentList.Count;
+
+            for (int i = 0; i < iMax; ++i)
+            {
+                int jMax = FullfillmentList[i].Count;
+
+                for (int j = 0; j < jMax; ++j)
+                {
+                    FullfillmentList[i][j].Clear();
+                }
+            }
+            Index = 0;
         }
     }
 
@@ -201,16 +249,12 @@
             if (Get() != null)
                 return;
 
-            PropertyInfo p   = type.GetProperty("Instance", BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
-            ICgBlockchain bc = (ICgBlockchain)(p.GetValue(null, null));
-
-            if (bc != null)
-                return;
+            CgBlockchain.Init(type);
         }
 
         public static ICgBlockchain Get()
         {
-            if (CgBlockchain.Get != null)
+            if (CgBlockchain.Get() != null)
                 return CgBlockchain.Get();
             return null;
         }
@@ -227,8 +271,7 @@
         string RootDirectory { get; set; }
         string ChainDirectory { get; set; }
 
-        Dictionary<ECgBlockchainProcessType, Process> Processes { get; set; }
-        Dictionary<ECgBlockchainProcessType, bool> ProcessFlags { get; set; }
+        Dictionary<ECgBlockchainProcessType, CgProcess> Processes { get; set; }
 
                 #region "Running Instance"
 
@@ -252,8 +295,9 @@
         Dictionary<CgBlockchainContractKey, ICgBlockchainContract> Contracts { get; set; }
         Dictionary<ECgBlockchainCommand, string> Commands { get; set; }
 
-        Dictionary<ECgBlockchainProcessType, Queue<CgBlockchainCommandRequest>> CommandRequests { get; set; }
-        CgBlockchainCommandRequest CurrentCommandRequest { get; set; }
+        Dictionary<ECgBlockchainProcessType, Dictionary<ECgBlockchainCommand, CgBlockchainCommandRequest>> CommandRequests { get; set; }
+        Dictionary<ECgBlockchainProcessType, CgBlockchainCommandRequest> CurrentCommandRequests { get; set; }
+        Dictionary<ECgBlockchainProcessType, Queue<CgBlockchainCommandRequest>> CommandRequestQueue { get; set; }
 
         Dictionary<string, ICgBlockchainAccount> Accounts { get; set; }
 
@@ -265,8 +309,8 @@
         void RunCommand(ECgBlockchainProcessType processType, string command);
         void RunCommand(ECgBlockchainProcessType processType, ECgBlockchainCommand command, CgBlockchainCommandArgument[] args = null);
 
-        void SetProcess(ECgBlockchainProcessType processType, Process p);
-        Process GetProcess(ECgBlockchainProcessType processType);
+        void SetProcess(ECgBlockchainProcessType processType, CgProcess p);
+        CgProcess GetProcess(ECgBlockchainProcessType processType);
         void StartProcess(ECgBlockchainProcessType processType, CgBlockchainProcessStartInfo startInfo);
         void StopProcess(ECgBlockchainProcessType processType);
 
@@ -296,8 +340,7 @@
         public static CgConsoleVariableLog LogIO = new CgConsoleVariableLog("log.blockchain.io", false, "Log Blockchain Input / Output Messages", (int)ECgConsoleVariableFlag.Console);
         public static TCgConsoleVariable<bool> ShowProcessWindow = new TCgConsoleVariable<bool>("show.blockchain.processwindow", false, "Show Blockchain Process Window", (int)ECgConsoleVariableFlag.Console);
         public static CgConsoleVariableLog LogOnBoard = new CgConsoleVariableLog("log.blockchain.onboard", false, "Log Blockchain OnBoard Process", (int)ECgConsoleVariableFlag.Console);
-
-        public delegate ICgBlockchain Getter();
+        public static CgConsoleVariableLog LogCommandCompleted = new CgConsoleVariableLog("log.blockchain.command.completed", false, "Log Blockchain Command Completed", (int)ECgConsoleVariableFlag.Console);
 
         #region "Constants"
 
@@ -331,18 +374,11 @@
             set { _ChainDirectory = value; }
         }
 
-        private Dictionary<ECgBlockchainProcessType, Process> _Processes;
-        public Dictionary<ECgBlockchainProcessType, Process> Processes
+        private Dictionary<ECgBlockchainProcessType, CgProcess> _Processes;
+        public Dictionary<ECgBlockchainProcessType, CgProcess> Processes
         {
             get { return _Processes; }
             set { _Processes = value; }
-        }
-
-        private Dictionary<ECgBlockchainProcessType, bool> _ProcessFlags;
-        public Dictionary<ECgBlockchainProcessType, bool> ProcessFlags
-        {
-            get { return _ProcessFlags; }
-            set { _ProcessFlags = value; }
         }
 
                 #region "Running Instance"
@@ -409,18 +445,25 @@
             set { _Commands = value; }
         }
 
-        private Dictionary<ECgBlockchainProcessType, Queue<CgBlockchainCommandRequest>> _CommandRequests;
-        public Dictionary<ECgBlockchainProcessType, Queue<CgBlockchainCommandRequest>> CommandRequests
+        private Dictionary<ECgBlockchainProcessType, Dictionary<ECgBlockchainCommand, CgBlockchainCommandRequest>> _CommandRequests;
+        public Dictionary<ECgBlockchainProcessType, Dictionary<ECgBlockchainCommand, CgBlockchainCommandRequest>> CommandRequests
         {
             get { return _CommandRequests; }
             set { _CommandRequests = value; }
         }
 
-        private CgBlockchainCommandRequest _CurrentCommandRequest;
-        public CgBlockchainCommandRequest CurrentCommandRequest
+        private Dictionary<ECgBlockchainProcessType, CgBlockchainCommandRequest> _CurrentCommandRequests;
+        public Dictionary<ECgBlockchainProcessType, CgBlockchainCommandRequest> CurrentCommandRequests
         {
-            get { return _CurrentCommandRequest; }
-            set { _CurrentCommandRequest = value; }
+            get { return _CurrentCommandRequests; }
+            set { _CurrentCommandRequests = value; }
+        }
+
+        private Dictionary<ECgBlockchainProcessType, Queue<CgBlockchainCommandRequest>> _CommandRequestQueue;
+        public Dictionary<ECgBlockchainProcessType, Queue<CgBlockchainCommandRequest>> CommandRequestQueue
+        {
+            get { return _CommandRequestQueue; }
+            set { _CommandRequestQueue = value; }
         }
 
         private Dictionary<string, ICgBlockchainAccount> _Accounts;
@@ -432,11 +475,33 @@
 
             #endregion // Interface
 
-        public static Getter Get;
+        private static ICgBlockchain _Instance;
 
         #endregion // Data Members
 
-        protected abstract void Init();
+        public static ICgBlockchain Get()
+        {
+            return _Instance;
+        }
+
+        public static T Get<T>() where T : ICgBlockchain
+        {
+            return (T)_Instance;
+        }
+
+        public static void Init(Type type)
+        {
+            if (_Instance != null)
+                return;
+
+            if (!type.IsSubclassOf(typeof(CgBlockchain)))
+            {
+                CgDebug.Log("CgBlockchain.Init: Passed in Type of " + type.GetType().Name + " is NOT a SubclassOf CgBlockchain");
+                return;
+            }
+            ConstructorInfo constructor = type.GetConstructor(Type.EmptyTypes);
+            _Instance                   = (ICgBlockchain)constructor.Invoke(Type.EmptyTypes);
+        }
 
         public abstract void Shutdown();
 
@@ -445,8 +510,8 @@
         public abstract void RunCommand(ECgBlockchainProcessType processType, ECgBlockchainCommand command, CgBlockchainCommandArgument[] args = null);
         public abstract void AddCommandRequest(ECgBlockchainProcessType processType, CgBlockchainCommandRequest request);
 
-        public abstract void SetProcess(ECgBlockchainProcessType processType, Process p);
-        public abstract Process GetProcess(ECgBlockchainProcessType processType);
+        public abstract void SetProcess(ECgBlockchainProcessType processType, CgProcess p);
+        public abstract CgProcess GetProcess(ECgBlockchainProcessType processType);
         public abstract void StartProcess(ECgBlockchainProcessType processType, CgBlockchainProcessStartInfo startInfo);
         public abstract void StopProcess(ECgBlockchainProcessType processType);
 

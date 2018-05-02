@@ -1,18 +1,22 @@
 ﻿namespace CgCore
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
+    using System.Reflection;
     using UnityEngine;
 
     public interface ICgPooledObjectPayload
     {
         bool IsAllocated { get; set; }
 
+        object Instigator { get; set; }
+        object Owner { get; set; }
+        object Parent { get; set; }
+
         void Reset();
     }
 
-    public abstract class CgPooledObjectPayload
+    public abstract class CgPooledObjectPayload : ICgPooledObjectPayload
     {
         private bool _IsAllocated;
         public bool IsAllocated
@@ -21,7 +25,33 @@
             set { _IsAllocated = value; }
         }
 
-        public abstract void Reset();
+        private object _Instigator;
+        public object Instigator
+        {
+            get { return _Instigator; }
+            set { _Instigator = value; }
+        }
+
+        private object _Owner;
+        public object Owner
+        {
+            get { return _Owner; }
+            set { _Owner = value; }
+        }
+
+        private object _Parent;
+        public object Parent
+        {
+            get { return _Parent; }
+            set { _Parent = value; }
+        }
+
+        public virtual void Reset()
+        {
+            Instigator = null;
+            Owner = null;
+            Parent = null;
+        }
     }
 
     public interface ICgManager
@@ -44,6 +74,8 @@
                 return x.GetHashCode();
             }
         }
+
+        public sealed class OnAddToPool : TCgMulticastDelegate_TwoParams<EnumType, ObjectType> { }
 
         protected static int EMPTY = 0;
         protected static int FIRST = 0;
@@ -72,6 +104,8 @@
         protected List<ICgPooledObjectPayload> Payloads;
         protected int PayloadIndex;
 
+        public OnAddToPool OnAddToPool_Event;
+
         #endregion // Data Members
 
         public TCgManager()
@@ -83,12 +117,23 @@
             ActiveObjects = new Dictionary<EnumType, List<ObjectType>>(new EnumTypeEqualityComparer());
 
             Payloads = new List<ICgPooledObjectPayload>();
+
+            OnAddToPool_Event = new OnAddToPool();
         }
 
         public void Clear()
         {
             PoolSizes.Clear();
+
+            int count = Pool.Count;
+
+            for (int i = 0; i < count; ++i)
+            {
+                Pool[i].DeAllocate();
+            }
+
             Pool.Clear();
+
             Pools.Clear();
             PoolIndices.Clear();
             ActiveObjects.Clear();
@@ -97,12 +142,20 @@
 
         public void Shutdown()
         {
-            int count = Pool.Count;
+            Type type          = typeof(ObjectType);
+            bool IsUnityObject = type.IsSubclassOf(typeof(MonoBehaviour));
 
-            for (int i = 0; i < count; ++i)
+            if (IsUnityObject)
             {
-                // Check for Unity GameObjects
+                int count = Pool.Count;
+
+                for (int i = 0; i < count; ++i)
+                {
+                    MonoBehaviour mb = (MonoBehaviour)(object)Pool[i];
+                    MonoBehaviour.Destroy(mb.gameObject);
+                }
             }
+            Clear();
         }
 
         public virtual void CreatePool(EnumType e, int size)
@@ -112,20 +165,34 @@
 
             List<ObjectType> pool = new List<ObjectType>();
 
+            Type type                   = typeof(ObjectType);
+            bool IsUnityObject          = type.IsSubclassOf(typeof(MonoBehaviour));
+            ConstructorInfo constructor = type.GetConstructor(Type.EmptyTypes);
+
             for (int i = 0; i < size; ++i)
             {
-                // Spawn Unity Object
+                ObjectType o = null;
 
-                ObjectType o = Activator.CreateInstance<ObjectType>();
+                if (IsUnityObject)
+                {
+                    GameObject go = new GameObject(type.ToString());
+                    o             = (ObjectType)(object)go.AddComponent(type);
+                }
+                else
+                {
+                    o = (ObjectType)constructor.Invoke(Type.EmptyTypes);
+                }
                 o.Init(i, e);
+                o.OnCreatePool();
                 o.DeAllocate();
                 Pool.Add(o);
                 pool.Add(o);
+                OnAddToPool_Event.Broadcast(e, o);
             }
             Pools.Add(e, pool);
         }
 
-        public virtual void AddToPool(ObjectType o, EnumType e)
+        public virtual void AddToPool(EnumType e, ObjectType o)
         {
             int size;
 
@@ -161,10 +228,11 @@
             }
 
             o.Init(pool.Count - 1, e);
-            o.Cache.Init(0, null, 0.0f, 0.0f, 0, null, null, null);
+            o.Cache.Init(0, null, 0.0f, 0.0f, 0, null);
+            OnAddToPool_Event.Broadcast(e, o);
         }
 
-        public virtual void AddToActivePool(ObjectType o, EnumType e)
+        public virtual void AddToActivePool(EnumType e, ObjectType o)
         {
             o.Cache.IsAllocated = true;
 
@@ -272,15 +340,16 @@
 
             if (!PoolSizes.TryGetValue(e, out size))
             {
-                Debug.LogError("CsManager.Allocate: Pool: " + e.ToString() + " is exhausted.");
+                CgDebug.LogError(this.GetType().Name + ".Allocate: Pool: " + EnumTypeToString(e) + " is exhausted.");
                 return null;
             }
 
             for (int i = 0; i < size; ++i)
             {
-                int index    = PoolIndices[e];
-                index        = (index + 1) % size;
-                ObjectType o = pool[index];
+                int index      = PoolIndices[e];
+                index          = (index + 1) % size;
+                PoolIndices[e] = index;
+                ObjectType o   = pool[index];
 
                 if (!o.Cache.IsAllocated)
                 {
@@ -288,7 +357,7 @@
                     return o;
                 }
             }
-            Debug.LogError("CsManager.Allocate: Pool: " + e.ToString() + " is exhausted.");
+            CgDebug.LogError(this.GetType().Name + ".Allocate: Pool: " + EnumTypeToString(e) + " is exhausted.");
             return null;
         }
 
@@ -298,7 +367,7 @@
 
             if (!ActiveObjects.TryGetValue(e, out pool))
             {
-                Debug.LogError("CgManager.DeAllocate: Object of Type: " + e.ToString() + " at " + index + " is already deallocated.");
+                CgDebug.LogError(this.GetType().Name + ".DeAllocate: Object of Type: " + EnumTypeToString(e) + " at " + index + " is already deallocated.");
                 return false;
             }
 
@@ -330,7 +399,8 @@
                 ObjectType o        = pool[i];
                 o.Cache.ActiveIndex = i;
             }
-            Debug.LogError("CgManager.DeAllocate: Object of Type: " + e.ToString() + " at " + index + " is already deallocated.");
+
+            CgDebug.LogError(this.GetType().Name + ".DeAllocate: Object of Type: " + EnumTypeToString(e) + " at " + index + " is already deallocated.");
             return false;
         }
 
@@ -375,10 +445,32 @@
                     return payload;
                 }
             }
-            Debug.LogError("CgManager.AllocatePayload: Pool is exhausted");
+            CgDebug.LogError(this.GetType().Name + ".AllocatePayload: Pool is exhausted.");
             return null;
         }
 
         #endregion // Payload
+
+        public ObjectType Spawn(EnumType e, ICgPooledObjectPayload payload)
+        {
+            ObjectType o = Allocate(e);
+
+            o.Allocate(GetActivePoolSize(e), payload);
+            payload.Reset();
+            AddToActivePool(e, o);
+            return o;
+        }
+
+        protected string EnumTypeToString(EnumType e)
+        {
+            // Enum
+            if (typeof(EnumType).IsEnum)
+                return Enum.GetName(typeof(EnumType), e);
+            // EnumClass
+            else
+            if (e is ICgEnum)
+                return ((ICgEnum)e).GetName();
+            return e.ToString();
+        }
     }
 }

@@ -3,10 +3,16 @@ namespace CgCore
 {
     using System;
     using System.Collections.Generic;
+    using System.Reflection;
 
     #region "Enums"
 
-    public abstract class TCgEnum<T> where T : struct
+    public interface ICgEnum
+    {
+        string GetName();
+    }
+
+    public abstract class TCgEnum<T> : ICgEnum where T : struct, IConvertible
     {
         #region "Delegates"
 
@@ -100,6 +106,11 @@ namespace CgCore
         {
             return Value.GetHashCode() ^ Name.GetHashCode();
         }
+
+        public string GetName()
+        {
+            return Name;
+        }
     }
 
     public class ECgEnum_byte : TCgEnum<byte>
@@ -121,6 +132,229 @@ namespace CgCore
         public ECgEnum_uint() : base() { }
         public ECgEnum_uint(uint value) : base(value) { }
         public ECgEnum_uint(uint value, string name) : base(value, name) { }
+    }
+
+    public class ECgEnumMap<EnumClass, EnumType> 
+        where EnumClass : TCgEnum<EnumType>
+        where EnumType : struct, IConvertible
+    {
+        protected sealed class EnumTypeEqualityComparer : IEqualityComparer<EnumType>
+        {
+            public bool Equals(EnumType lhs, EnumType rhs)
+            {
+                return lhs.Equals(rhs);
+            }
+
+            public int GetHashCode(EnumType x)
+            {
+                return x.GetHashCode();
+            }
+        }
+
+        private List<EnumClass> Enums;
+        private Dictionary<string, EnumClass> StringMap;
+        private Dictionary<EnumType, EnumClass> TypeMap;
+
+        public int Count
+        {
+            get { return Enums.Count; }
+        }
+
+        public ECgEnumMap()
+        {
+            Enums = new List<EnumClass>();
+            StringMap = new Dictionary<string, EnumClass>();
+            TypeMap = new Dictionary<EnumType, EnumClass>(new EnumTypeEqualityComparer());
+        }
+
+        public EnumClass Create(string name)
+        {
+            EnumClass e = null;
+
+            StringMap.TryGetValue(name, out e);
+
+            if (e != null)
+            {
+                CgDebug.LogError(this.GetType().Name + ".Create: Enum with name: " + name + " already exists. It is being defined in move than one place.");
+                return e;
+            }
+
+            Type type = typeof(EnumClass);
+            // Get Constructor
+            Type[] types = new Type[2];
+            types[0]     = typeof(EnumType);
+            types[1]     = typeof(string);
+            ConstructorInfo constructor = type.GetConstructor(types);
+
+            // Get Params for Constructor and create EnumClass
+            object[] param  = new object[2];
+            param[0]        = (EnumType)Convert.ChangeType(Enums.Count, typeof(EnumType));
+            param[1]        = name;
+            e               = (EnumClass)constructor.Invoke(param);
+
+            // Add to List and Maps
+            EnumType index = (EnumType)Convert.ChangeType(Enums.Count, typeof(EnumType));
+
+            Enums.Add(e);
+            StringMap.Add(name, e);
+            TypeMap.Add(index, e);
+
+            return e;
+        }
+
+        public EnumClass this[string key]
+        {
+            get
+            {
+                EnumClass e = null;
+                StringMap.TryGetValue(key, out e);
+
+                if (e == null)
+                    CgDebug.LogError(this.GetType().Name + ".Get: No enum created of type: " + typeof(EnumClass).Name + " and name: " + key);
+                return e;
+            }
+        }
+
+        public EnumClass this[EnumType key]
+        {
+            get
+            {
+                EnumClass e = null;
+                TypeMap.TryGetValue(key, out e);
+
+                if (e == null)
+                    CgDebug.LogError(this.GetType().Name + ".Get: No enum created of type: " + typeof(EnumClass).Name + " and name: " + key);
+                return e;
+            }
+        }
+    }
+
+    public class ECgEnumMaskMap<EnumClass, EnumType>
+        where EnumClass : TCgEnum<EnumType>
+        where EnumType : struct, IConvertible
+    {
+        protected sealed class EnumTypeEqualityComparer : IEqualityComparer<EnumType>
+        {
+            public bool Equals(EnumType lhs, EnumType rhs)
+            {
+                return lhs.Equals(rhs);
+            }
+
+            public int GetHashCode(EnumType x)
+            {
+                return x.GetHashCode();
+            }
+        }
+
+        private List<EnumClass> Enums;
+        private Dictionary<string, EnumClass> StringMap;
+        private Dictionary<EnumType, EnumClass> TypeMap;
+
+        public int Count
+        {
+            get { return Enums.Count; }
+        }
+
+        public ECgEnumMaskMap()
+        {
+            Enums = new List<EnumClass>();
+            StringMap = new Dictionary<string, EnumClass>();
+            TypeMap = new Dictionary<EnumType, EnumClass>(new EnumTypeEqualityComparer());
+        }
+
+        public EnumClass Create(string name)
+        {
+            EnumClass e = null;
+
+            StringMap.TryGetValue(name, out e);
+
+            if (e != null)
+            {
+                CgDebug.LogError(this.GetType().Name + ".Create: Enum with name: " + name + " already exists. It is being defined in move than one place.");
+                return e;
+            }
+
+            Type type = typeof(EnumClass);
+            // Get Constructor
+            Type[] types = new Type[2];
+            types[0] = typeof(EnumType);
+            types[1] = typeof(string);
+            ConstructorInfo constructor = type.GetConstructor(types);
+
+            // Get Params for Constructor and create EnumClass
+            object[] param = new object[2];
+            param[0] = (EnumType)Convert.ChangeType(Enums.Count, typeof(EnumType));
+            param[1] = name;
+            e = (EnumClass)constructor.Invoke(param);
+
+            // Add to List and Maps
+            EnumType index = (EnumType)Convert.ChangeType(Enums.Count, typeof(EnumType));
+
+            Enums.Add(e);
+            StringMap.Add(name, e);
+            TypeMap.Add(index, e);
+
+            return e;
+        }
+
+        public EnumClass this[string key]
+        {
+            get
+            {
+                EnumClass e = null;
+                StringMap.TryGetValue(key, out e);
+
+                if (e == null)
+                    CgDebug.LogError(this.GetType().Name + ".Get: No enum created of type: " + typeof(EnumClass).Name + " and name: " + key);
+                return e;
+            }
+        }
+
+        public EnumClass this[EnumType key]
+        {
+            get
+            {
+                EnumClass e = null;
+                TypeMap.TryGetValue(key, out e);
+
+                if (e == null)
+                    CgDebug.LogError(this.GetType().Name + ".Get: No enum created of type: " + typeof(EnumClass).Name + " and name: " + key);
+                return e;
+            }
+        }
+
+        public int ToMask(string s)
+        {
+            int mask = 0;
+
+            Dictionary<string, EnumClass>.KeyCollection keys = StringMap.Keys;
+
+            foreach (string key in keys)
+            {
+                if (s.Contains(key))
+                {
+                    int value = (int)Convert.ChangeType(StringMap[key].Value, typeof(int));
+                    mask     |= value;
+                }
+            }
+            return mask;
+        }
+
+        public string MaskToStr(int m)
+        {
+            string s = "";
+
+            Dictionary<string, EnumClass>.KeyCollection keys = StringMap.Keys;
+
+            foreach (string key in keys)
+            {
+                int value = (int)Convert.ChangeType(StringMap[key].Value, typeof(int));
+
+                if ((m & value) == value)
+                    s += s == "" ? key : " | " + key;
+            }
+            return s;
+        }
     }
 
     #endregion // Enums

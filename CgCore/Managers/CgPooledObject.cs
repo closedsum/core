@@ -25,7 +25,6 @@
         #endregion // Data Members
 
         void Reset();
-        void OnCreatePool();
         void DeAllocate();
     }
 
@@ -140,11 +139,12 @@
             PooledObject = o;
         }
 
-        public virtual void Init(int activeIndex, ICgPooledObjectPayload payload, float time, float realTime, ulong frame, object owner = null, object parent = null, OnDeAllocate.Event e = null)
+        public virtual void Init(int activeIndex, ICgPooledObjectPayload payload, float time, float realTime, ulong frame, OnDeAllocate.Event e = null)
         {
             ActiveIndex = activeIndex;
-            Owner = owner;
-            Parent = parent;
+            Instigator = payload.Instigator;
+            Owner = payload.Owner;
+            Parent = payload.Parent;
 
             Time = time;
             RealTime = realTime;
@@ -173,11 +173,6 @@
             ElapsedTime = 0.0f;
         }
 
-        public virtual void OnCreatePool()
-        {
-
-        }
-
         public virtual void DeAllocate()
         {
             Reset();
@@ -186,6 +181,8 @@
 
     public interface ICgPooledObject
     {
+        void OnCreatePool();
+        void Allocate(int activeIndex, ICgPooledObjectPayload payload);
         void DeAllocate();
     }
 
@@ -195,17 +192,33 @@
 
         public TCgPooledObject()
         {
+            // Create Cache in Child Class
             //Cache = new CgPooledObjectCache<EnumType, TCgPooledObject<EnumType>>();
+        }
+
+        #region "Interface"
+
+        public virtual void OnCreatePool()
+        {
+
+        }
+
+        public virtual void Allocate(int activeIndex, ICgPooledObjectPayload payload)
+        {
+            Cache.Init(activeIndex, payload, 0.0f, 0.0f, 0, null);
         }
 
         public virtual void DeAllocate()
         {
-
+            Cache.Reset();
         }
+
+        #endregion // Interface
 
         public virtual void Init(int index, EnumType e)
         {
-
+            Cache.Set(index, this);
+            Cache.Type = e;
         }
     }
 }

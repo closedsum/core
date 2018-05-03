@@ -21,14 +21,17 @@ namespace CgCore
 
     public static class ECgEthereumCommand
     {
-        public static readonly ECgBlockchainCommand InitBlockchain = new ECgBlockchainCommand(0, "InitBlockchain");
-        public static readonly ECgBlockchainCommand SetDataDirectory = new ECgBlockchainCommand(1, "SetDataDirectory");
-        public static readonly ECgBlockchainCommand AttachToConsole = new ECgBlockchainCommand(2, "AttachToConsole");
-        public static readonly ECgBlockchainCommand ExitConsole = new ECgBlockchainCommand(3, "ExitConsole");
-        public static readonly ECgBlockchainCommand NewAccount = new ECgBlockchainCommand(4, "NewAccount");
-        public static readonly ECgBlockchainCommand UnlockAccount = new ECgBlockchainCommand(5, "UnlockAccount");
-        public static readonly ECgBlockchainCommand StartMiner = new ECgBlockchainCommand(6, "StartMiner");
-        public static readonly ECgBlockchainCommand StopMiner = new ECgBlockchainCommand(7, "StopMiner");
+        public static readonly ECgBlockchainCommand InitBlockchain = EMCgBlockchainCommand.Get().Create("InitBlockchain");
+        public static readonly ECgBlockchainCommand SetDataDirectory = EMCgBlockchainCommand.Get().Create("SetDataDirectory");
+        public static readonly ECgBlockchainCommand AttachToConsole = EMCgBlockchainCommand.Get().Create("AttachToConsole");
+        public static readonly ECgBlockchainCommand ExitConsole = EMCgBlockchainCommand.Get().Create("ExitConsole");
+        public static readonly ECgBlockchainCommand NewAccount = EMCgBlockchainCommand.Get().Create("NewAccount");
+        public static readonly ECgBlockchainCommand UnlockAccount = EMCgBlockchainCommand.Get().Create("UnlockAccount");
+        public static readonly ECgBlockchainCommand ListAccounts = EMCgBlockchainCommand.Get().Create("ListAccounts");
+        public static readonly ECgBlockchainCommand StartMiner = EMCgBlockchainCommand.Get().Create("StartMiner");
+        public static readonly ECgBlockchainCommand StopMiner = EMCgBlockchainCommand.Get().Create("StopMiner");
+
+        public static readonly ECgBlockchainCommand MAX = EMCgBlockchainCommand.Get().Create("MAX");
     }
 
     public class CgEthereum : CgBlockchain
@@ -43,7 +46,7 @@ namespace CgCore
         ECgEthereumOnBoardState OnBoardState;
         TCgFlagType<ECgEthereumOnBoardState> OnBoardStateFlag;
 
-        public SgGameInstance gi;
+        Dictionary<ECgBlockchainCommand, CgProcessMonitorOutputEvent> MonitorOutputEvents;
 
         #endregion // Data Members
 
@@ -105,6 +108,8 @@ namespace CgCore
 
             Accounts = new Dictionary<string, ICgBlockchainAccount>();
 
+            MonitorOutputEvents = new Dictionary<ECgBlockchainCommand, CgProcessMonitorOutputEvent>(new ECgBlockchainCommandEqualityComparer());
+
             // Commands
 
             //SetCommand(ECgEthereumCommand.InitBlockchain, "\"" + ConsoleFullPath + "\" --datadir=\"" + ChainDirectory + "\" init \"" + RootDirectory + "\\genesis.json\"");
@@ -112,8 +117,19 @@ namespace CgCore
             SetCommand(ECgEthereumCommand.InitBlockchain, "--datadir=\"" + ChainDirectory + "\" init \"" + RootDirectory + "\\genesis.json\"");
             SetCommand(ECgEthereumCommand.SetDataDirectory, "--datadir=\"" + ChainDirectory + "\" --networkid 15");
             {
+                CgStringSentence sentence = new CgStringSentence();
+                    CgStringPhrase phrase = new CgStringPhrase();
+                    phrase.AddAndToWord(0, "IPC endpoint opened", ECgStringWordRule.None);
+                    sentence.AddPhrase(phrase);
+
+                CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.SetDataDirectory, sentence, ECgProcessMonitorOutputEventPurpose.FireOnce);
+                e.AddEvent(OnCommandCompleted);
+
+                MonitorOutputEvents.Add(ECgEthereumCommand.SetDataDirectory, e);
+
                 CgBlockchainCommandRequest request = new CgBlockchainCommandRequest(ECgEthereumCommand.SetDataDirectory, null);
-                    request.AddFullfillment(ECgBlockchainCommandFullfillmentRule.Contain, "IPC endpoint opened "); // TODO: also include "url=\\\\.\\pipe\\geth.ipc"?
+                    request.AddFulfillment(ECgBlockchainCommandFulfillmentRule.Contain, "IPC endpoint opened"); // TODO: also include "url=\\\\.\\pipe\\geth.ipc"?
+                    request.RunWhenRelevant = false;
                     request.Completed_Event.Add(OnCommandCompleted);
                 CommandRequests[ECgBlockchainProcessType.RunningInstance].Add(ECgEthereumCommand.SetDataDirectory, request);
             }
@@ -122,20 +138,34 @@ namespace CgCore
             SetCommand(ECgEthereumCommand.AttachToConsole, "attach ipc:\\\\.\\pipe\\geth.ipc");
             {
                 CgBlockchainCommandRequest request = new CgBlockchainCommandRequest(ECgEthereumCommand.AttachToConsole, null);
-                    request.AddFullfillment(ECgBlockchainCommandFullfillmentRule.Contain, "welcome");
-                    request.AddFullfillment(ECgBlockchainCommandFullfillmentRule.Contain, "instance:");
-                    request.AddFullfillment(ECgBlockchainCommandFullfillmentRule.None, "");
-                    request.AddFullfillment(ECgBlockchainCommandFullfillmentRule.Contain, "modules:");
-                    request.AddFullfillment(ECgBlockchainCommandFullfillmentRule.None, "");
+                    request.AddFulfillment(ECgBlockchainCommandFulfillmentRule.Contain, "welcome");
+                    request.AddFulfillment(ECgBlockchainCommandFulfillmentRule.None, "");
+                    request.AddFulfillment(ECgBlockchainCommandFulfillmentRule.Contain, "instance:");
+                    request.AddFulfillment(ECgBlockchainCommandFulfillmentRule.Contain, "modules:");
+                    request.AddFulfillment(ECgBlockchainCommandFulfillmentRule.None, "");
+                    request.RunWhenRelevant = false;
                     request.Completed_Event.Add(OnCommandCompleted);
-                CommandRequests[ECgBlockchainProcessType.RunningInstance].Add(ECgEthereumCommand.AttachToConsole, request);
-                
+                CommandRequests[ECgBlockchainProcessType.Console].Add(ECgEthereumCommand.AttachToConsole, request);
+
             }
             SetCommand(ECgEthereumCommand.ExitConsole, "exit");
             SetCommand(ECgEthereumCommand.NewAccount, "personal.newAccount(%s)");
             SetCommand(ECgEthereumCommand.UnlockAccount, "personal.unlockAccount(%s,%s,%s)");
+            SetCommand(ECgEthereumCommand.ListAccounts, "personal.listAccounts");
             SetCommand(ECgEthereumCommand.StartMiner, "miner.start();");
+            {
+                CgBlockchainCommandRequest request = new CgBlockchainCommandRequest(ECgEthereumCommand.StartMiner, null);
+                request.AddFulfillment(ECgBlockchainCommandFulfillmentRule.None, "");
+                request.Completed_Event.Add(OnCommandCompleted);
+                CommandRequests[ECgBlockchainProcessType.Console].Add(ECgEthereumCommand.StartMiner, request);
+            }
             SetCommand(ECgEthereumCommand.StopMiner, "miner.stop();");
+            {
+                CgBlockchainCommandRequest request = new CgBlockchainCommandRequest(ECgEthereumCommand.StopMiner, null);
+                request.AddFulfillment(ECgBlockchainCommandFulfillmentRule.None, "");
+                request.Completed_Event.Add(OnCommandCompleted);
+                CommandRequests[ECgBlockchainProcessType.Console].Add(ECgEthereumCommand.StopMiner, request);
+            }
 
             OnBoardState = ECgEthereumOnBoardState.Init;
             OnBoardStateFlag = new TCgFlagType<ECgEthereumOnBoardState>(ECgEthereumOnBoardState.Init, ECgEthereumOnBoardState.MAX);
@@ -249,6 +279,7 @@ namespace CgCore
                             {
                                 parts.Add("");
                                 ++index;
+                                ++i;
                             }
                         }
                         else
@@ -263,7 +294,7 @@ namespace CgCore
                 }
 
                 // Add in arguments
-                if (parts.Count == args.Length)
+                if ((parts.Count - 1) == args.Length)
                 {
                     value = "";
 
@@ -273,16 +304,17 @@ namespace CgCore
                     {
                         value += parts[i] + args[i].ToStr();
                     }
+                    value += parts[argumentLength];
                 }
                 else
                 {
-                    UnityEngine.Debug.Log("CgEthereum.RunCommand: Failed to run command: " + command.Name + ". Wildcard count != Argument count (" + parts.Count + "," + args.Length + ")");
+                    UnityEngine.Debug.Log("CgEthereum.RunCommand: Failed to run command: " + command.Name + ". Wildcard count != Argument count (" + (parts.Count-1) + "," + args.Length + ")");
                 }
             }
             RunCommand(processType, value);
         }
 
-        public override void AddCommandRequest(ECgBlockchainProcessType processType, CgBlockchainCommandRequest request)
+        public override void EnqueueCommand(ECgBlockchainProcessType processType, CgBlockchainCommandRequest request)
         {
             CommandRequestQueue[processType].Enqueue(request);
 
@@ -290,18 +322,46 @@ namespace CgCore
             {
                 CurrentCommandRequests[processType] = CommandRequestQueue[processType].Peek();
 
-                RunCommand(processType, request.Command, request.Arguments);
+                if (request.RunWhenRelevant)
+                    RunCommand(processType, request.Command, request.Arguments);
             }
+        }
+
+        public override void EnqueueCommand(ECgBlockchainProcessType processType, ECgBlockchainCommand command)
+        {
+            EnqueueCommand(processType, CommandRequests[processType][command]);
         }
 
         public void OnCommandCompleted(CgBlockchainCommandRequest request)
         {
             if (LogCommandCompleted.Log())
             {
+                CgDebug.Log("CgEthereum.OnCommandCompleted: Completed command: " + request.Command);
             }
 
             // SetDataDirectory
             if (request.Command == ECgEthereumCommand.SetDataDirectory)
+            {
+                OnBoardState = ECgEthereumOnBoardState.Start;
+                OnBoardStateFlag.SetEnd(ECgEthereumOnBoardState.Start);
+            }
+            // AttachToConsole
+            if (request.Command == ECgEthereumCommand.AttachToConsole)
+            {
+                OnBoardState = ECgEthereumOnBoardState.Attach;
+                OnBoardStateFlag.SetEnd(ECgEthereumOnBoardState.Attach);
+            }
+        }
+
+        public void OnCommandCompleted(string name)
+        {
+            if (LogCommandCompleted.Log())
+            {
+                CgDebug.Log("CgEthereum.OnCommandCompleted: Completed command: " + name);
+            }
+
+            // SetDataDirectory
+            if (name == ECgEthereumCommand.SetDataDirectory)
             {
                 OnBoardState = ECgEthereumOnBoardState.Start;
                 OnBoardStateFlag.SetEnd(ECgEthereumOnBoardState.Start);
@@ -339,7 +399,8 @@ namespace CgCore
                 {
                     CgBlockchainCommandRequest request = CommandRequestQueue[processType].Peek();
 
-                    RunCommand(processType, request.Command, request.Arguments);
+                    if (request.RunWhenRelevant)
+                        RunCommand(processType, request.Command, request.Arguments);
                 }
                 else
                 {
@@ -499,9 +560,9 @@ namespace CgCore
 
             ECgBlockchainProcessType processType = ECgBlockchainProcessType.RunningInstance;
 
-            CgBlockchainCommandRequest request  = CommandRequests[processType][command];
-            CurrentCommandRequests[processType] = request;
-            CommandRequestQueue[processType].Enqueue(request);
+            //EnqueueCommand(processType, command);
+
+            Processes[processType].AddMonitorOuputEvent(MonitorOutputEvents[command]);
 
             StartProcess(processType, startInfo);
             
@@ -595,7 +656,17 @@ namespace CgCore
                 CgDebug.Log("CgEthereum.CreatePrivateChain: State Change: ECgEthereumOnBoardState.Start -> ECgEthereumOnBoardState.Attach.");
             }
 
+            eth.OnBoardStateFlag.SetEnd(ECgEthereumOnBoardState.MAX);
+            eth.OnBoardStateFlag.SetStart(ECgEthereumOnBoardState.Attach);
+
             eth.OpenConsole();
+
+            yield return eth.OnBoardStateFlag;
+
+            CgDebug.Log("here");
+            eth.ListAccounts();
+            //eth.NewAccount("world");
+            //eth.StartMiner();
 
             //yield return 10.0f;
 
@@ -614,44 +685,18 @@ namespace CgCore
             if (IsConsoleOpen)
                 return;
 
-            /*
-            string path = Application.dataPath;
-            path = path.Substring(0, path.Length - 6);
+            ECgBlockchainCommand command = ECgEthereumCommand.AttachToConsole;
 
-            Process p = new Process();
-            p.StartInfo.CreateNoWindow = false;
-            p.StartInfo.UseShellExecute = false;
-            p.StartInfo.FileName = path + "Blockchain\\Ethereum\\Geth\\geth.exe";
-
-            p.StartInfo.Arguments = "attach ipc:\\\\.\\pipe\\geth.ipc";
-            UnityEngine.Debug.Log(p.StartInfo.FileName + " " + p.StartInfo.Arguments);
-            p.StartInfo.ErrorDialog = false;
-            p.StartInfo.RedirectStandardInput = true;
-            p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.RedirectStandardError = true;
-            p.ErrorDataReceived += ConsoleErrorRecieved;
-            p.OutputDataReceived += ConsoleOutputRecieved;
-            p.Start();
-            p.BeginErrorReadLine();
-            p.BeginOutputReadLine();
-            return;
-            */
             CgBlockchainProcessStartInfo startInfo = new CgBlockchainProcessStartInfo();
-            /*
-            startInfo.FileName = "cmd.exe";
-            startInfo.Arguments = "";// "/K";
-            startInfo.RedirectStandardInput = false;
-            */
-            
             startInfo.FileName              = ConsoleFullPath;
-            startInfo.Arguments             = Commands[ECgEthereumCommand.AttachToConsole];
+            startInfo.Arguments             = Commands[command];
             startInfo.RedirectStandardInput = true;
 
-            //CgBlockchainCommandRequest request = new CgBlockchainCommandRequest()
+            ECgBlockchainProcessType processType = ECgBlockchainProcessType.Console;
 
-            StartProcess(ECgBlockchainProcessType.Console, startInfo);
+            EnqueueCommand(processType, command);
+            StartProcess(processType, startInfo);
 
-            //RunCommand(ECgBlockchainProcessType.Console, ECgEthereumCommand.AttachToConsole);
             IsConsoleOpen = true;
         }
 
@@ -709,14 +754,19 @@ namespace CgCore
             RunCommand(ECgBlockchainProcessType.Console, ECgEthereumCommand.UnlockAccount, args);
         }
 
+        public override void ListAccounts()
+        {
+            RunCommand(ECgBlockchainProcessType.Console, ECgEthereumCommand.ListAccounts, null);
+        }
+
         public override void StartMiner()
         {
             if (IsMining)
                 return;
             //if (!IsConsoleOpen)
             //   OpenConsole();
-            RunCommand(ECgBlockchainProcessType.Console,"personal.listAccounts");
-            //RunCommand(ECgBlockchainProcessType.Console, ECgEthereumCommand.StartMiner, null);
+            //RunCommand(ECgBlockchainProcessType.Console,"personal.listAccounts");
+            RunCommand(ECgBlockchainProcessType.Console, ECgEthereumCommand.StartMiner, null);
             IsMining = true;
         }
 

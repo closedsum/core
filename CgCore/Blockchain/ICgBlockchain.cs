@@ -65,6 +65,27 @@
         }
     }
 
+    public class EMCgBlockchainCommand : ECgEnumMap<ECgBlockchainCommand, byte>
+    {
+        private static EMCgBlockchainCommand _Instance;
+        public static EMCgBlockchainCommand Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = new EMCgBlockchainCommand();
+                }
+                return _Instance;
+            }
+        }
+
+        public static EMCgBlockchainCommand Get()
+        {
+            return Instance;
+        }
+    }
+
     public enum ECgBlockchainCommandArgumentType : byte
     {
         Number,
@@ -99,7 +120,7 @@
         }
     }
 
-    public enum ECgBlockchainCommandFullfillmentRule : byte
+    public enum ECgBlockchainCommandFulfillmentRule : byte
     {
         None,
         Contain,
@@ -107,13 +128,13 @@
         MAX
     }
 
-    public class CgBlockchainCommandFullfillment
+    public class CgBlockchainCommandFulfillment
     {
         private bool Completed;
-        public ECgBlockchainCommandFullfillmentRule Rule;
+        public ECgBlockchainCommandFulfillmentRule Rule;
         public string Response;
 
-        public CgBlockchainCommandFullfillment(ECgBlockchainCommandFullfillmentRule rule, string response)
+        public CgBlockchainCommandFulfillment(ECgBlockchainCommandFulfillmentRule rule, string response)
         {
             Completed = false;
             Rule = rule;
@@ -125,13 +146,13 @@
             if (Completed)
                 return Completed;
 
-            if (Rule == ECgBlockchainCommandFullfillmentRule.None)
+            if (Rule == ECgBlockchainCommandFulfillmentRule.None)
                 Completed = true;
             else
-            if (Rule == ECgBlockchainCommandFullfillmentRule.Contain)
+            if (Rule == ECgBlockchainCommandFulfillmentRule.Contain)
                 Completed = input.ToLower().Contains(Response);
             else
-            if (Rule == ECgBlockchainCommandFullfillmentRule.Match)
+            if (Rule == ECgBlockchainCommandFulfillmentRule.Match)
                 Completed = Response == input.ToLower();
             return Completed;
         }
@@ -154,10 +175,12 @@
 
         #region "Data Members
 
+        public bool RunWhenRelevant;
+
         public float StartTime;
         public ECgBlockchainCommand Command;
         public CgBlockchainCommandArgument[] Arguments;
-        public List<List<CgBlockchainCommandFullfillment>> FullfillmentList;
+        public List<List<CgBlockchainCommandFulfillment>> FulfillmentList;
         private int Index;
 
         public Completed Completed_Event;
@@ -166,6 +189,7 @@
 
         public CgBlockchainCommandRequest(ECgBlockchainCommand command, CgBlockchainCommandArgument[] arguments = null)
         {
+            RunWhenRelevant = true;
             StartTime = 0.0f;
             Command   = command;
 
@@ -184,29 +208,35 @@
                 }
             }
 
-            FullfillmentList = new List<List<CgBlockchainCommandFullfillment>>();
+            FulfillmentList = new List<List<CgBlockchainCommandFulfillment>>();
             Index = 0;
             Completed_Event = new Completed();
         }
 
-        public void AddFullfillment(ECgBlockchainCommandFullfillmentRule rule, string response)
+        public void AddFulfillment(ECgBlockchainCommandFulfillmentRule rule, string response)
         {
-            List<CgBlockchainCommandFullfillment> fullfillments = new List<CgBlockchainCommandFullfillment>();
-            fullfillments.Add(new CgBlockchainCommandFullfillment(rule, response));
-            FullfillmentList.Add(fullfillments);
+            List<CgBlockchainCommandFulfillment> Fulfillments = new List<CgBlockchainCommandFulfillment>();
+            Fulfillments.Add(new CgBlockchainCommandFulfillment(rule, response));
+            FulfillmentList.Add(Fulfillments);
         }
 
-        public void AddFullfillments(List<CgBlockchainCommandFullfillment> fullfillments)
+        public void AddFulfillments(List<CgBlockchainCommandFulfillment> Fulfillments)
         {
-            FullfillmentList.Add(fullfillments);
+            FulfillmentList.Add(Fulfillments);
         }
 
         public bool HasCompleted(string input)
         {
-            if (FullfillmentList.Count == EMPTY)
+            if (FulfillmentList.Count == EMPTY)
                 return true;
 
-            List<CgBlockchainCommandFullfillment> current = FullfillmentList[Index];
+            List<CgBlockchainCommandFulfillment> current = FulfillmentList[Index];
+
+            if (CgProcess.LogCommandRequest.Log())
+            {
+                CgDebug.Log("CgBlockchainCommandRequest.HasCompleted: Start checking input: \"" + input + "\"");
+                CgDebug.Log("CgBlockchainCommandRequest.HasCompleted: -- Checking Fulfillment[" + Index + "] of " + FulfillmentList.Count);
+            }
 
             bool completed = true;
 
@@ -214,28 +244,38 @@
 
             for (int i = 0; i < count; ++i)
             {
-                completed &= current[i].HasCompleted(input);
+                bool hasCompleted = current[i].HasCompleted(input);
+                completed        &= hasCompleted;
+
+                if (CgProcess.LogCommandRequest.Log())
+                {
+                    string rule     = current[i].Rule.ToString();
+                    string response = current[i].Response;
+                    string completion = hasCompleted ? "" : "NOT";
+
+                    CgDebug.Log("CgBlockchainCommandRequest.HasCompleted: -- Checking Fulfillment[" + Index + "][" + i + "] with Rule: " + rule + " and Response: \"" + response + "\" has " + completion + " completed");
+                }
             }
 
             if (completed)
                 ++Index;
 
-            if (Index >= FullfillmentList.Count)
+            if (Index >= FulfillmentList.Count)
                 Completed_Event.Broadcast(this);
-            return completed;
+            return completed && Index >= FulfillmentList.Count;
         }
 
         public void Clear()
         {
-            int iMax = FullfillmentList.Count;
+            int iMax = FulfillmentList.Count;
 
             for (int i = 0; i < iMax; ++i)
             {
-                int jMax = FullfillmentList[i].Count;
+                int jMax = FulfillmentList[i].Count;
 
                 for (int j = 0; j < jMax; ++j)
                 {
-                    FullfillmentList[i][j].Clear();
+                    FulfillmentList[i][j].Clear();
                 }
             }
             Index = 0;
@@ -508,7 +548,8 @@
         public abstract void SetCommand(ECgBlockchainCommand command, string str);
         public abstract void RunCommand(ECgBlockchainProcessType processType, string command);
         public abstract void RunCommand(ECgBlockchainProcessType processType, ECgBlockchainCommand command, CgBlockchainCommandArgument[] args = null);
-        public abstract void AddCommandRequest(ECgBlockchainProcessType processType, CgBlockchainCommandRequest request);
+        public abstract void EnqueueCommand(ECgBlockchainProcessType processType, CgBlockchainCommandRequest request);
+        public abstract void EnqueueCommand(ECgBlockchainProcessType processType, ECgBlockchainCommand command);
 
         public abstract void SetProcess(ECgBlockchainProcessType processType, CgProcess p);
         public abstract CgProcess GetProcess(ECgBlockchainProcessType processType);
@@ -524,6 +565,7 @@
 
         public abstract void NewAccount(object payload);
         public abstract void UnlockAccount(object payload);
+        public abstract void ListAccounts();
 
         public abstract void StartMiner();
         public abstract void StopMiner();

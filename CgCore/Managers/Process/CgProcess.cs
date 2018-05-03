@@ -2,6 +2,7 @@
 {
     using System;
     using System.Diagnostics;
+    using System.Collections.Generic;
 
     public sealed class ECgProcess : ECgEnum_byte
     {
@@ -33,8 +34,71 @@
     {
     }
 
+    public enum ECgProcessMonitorOutputEventPurpose : byte
+    {
+        FireOnce,
+        Loop,
+        MAX
+    }
+
+    public sealed class CgProcessMonitorOutputEvent
+    {
+        public sealed class CompletedEvent : TCgMulticastDelegate_OneParam<string> { }
+
+        private string Name;
+        public ECgProcessMonitorOutputEventPurpose Purpose;
+        private CgStringSentence Sentence;
+        private bool Completed;
+        private CompletedEvent Event;
+
+        public CgProcessMonitorOutputEvent(string name, CgStringSentence sentence, ECgProcessMonitorOutputEventPurpose purpose = ECgProcessMonitorOutputEventPurpose.FireOnce)
+        {
+            Name = name;
+            Sentence = sentence;
+            Event = new CompletedEvent();
+        }
+
+        public void AddEvent(CompletedEvent.Event e)
+        {
+            Event.Add(e);
+        }
+
+        public void ProcessOutput(string output)
+        {
+            Sentence.ProcessInput(output);
+
+            Completed = Sentence.HasCompleted();
+
+            if (Completed)
+            {
+                Clear();
+                Event.Broadcast(Name);
+            }
+        }
+
+        public void Clear()
+        {
+            Completed = false;
+            Sentence.Clear();
+        }
+
+        public void Reset()
+        {
+            Clear();
+            Event.Clear();
+        }
+
+        public bool HasCompleted()
+        {
+            return Completed;
+        }
+    }
+
+
     public class CgProcess : TCgPooledObject<ECgProcess>
     {
+        public static CgConsoleVariableLog LogCommandRequest = new CgConsoleVariableLog("log.process.command.request", false, "Log Process Command Request", (int)ECgConsoleVariableFlag.Console);
+
         public sealed class OutputDataRecieved : TCgMulticastDelegate_TwoParams<object, DataReceivedEventArgs> { }
         public sealed class ErrorDataRecieved : TCgMulticastDelegate_TwoParams<object, DataReceivedEventArgs> { }
         public sealed class Exited : TCgMulticastDelegate_TwoParams<object, EventArgs> { }
@@ -48,6 +112,8 @@
         public ErrorDataRecieved ErrorDataRecieved_Event;
         public Exited Exited_Event;
 
+        private List<CgProcessMonitorOutputEvent> MonitorOuputEvents;
+
         #endregion // Data Members
 
         public CgProcess() : base()
@@ -57,6 +123,8 @@
             OutputDataRecieved_Event = new OutputDataRecieved();
             ErrorDataRecieved_Event = new ErrorDataRecieved();
             Exited_Event = new Exited();
+
+            MonitorOuputEvents = new List<CgProcessMonitorOutputEvent>();
         }
 
         #region "Interface"
@@ -99,6 +167,8 @@
             ErrorDataRecieved_Event.Clear();
             Exited_Event.Clear();
 
+            MonitorOuputEvents.Clear();
+
             if (IsRunning)
                 P.Kill();
 
@@ -119,13 +189,41 @@
             P.StandardInput.BaseStream.Flush();
         }
 
+        public void AddMonitorOuputEvent(CgProcessMonitorOutputEvent e)
+        {
+            MonitorOuputEvents.Add(e);
+        }
+
+        public void ProcessMonitorOutputEvents(string ouput)
+        {
+            int count = MonitorOuputEvents.Count;
+
+            for (int i = count - 1; i >= 0; --i)
+            {
+                CgProcessMonitorOutputEvent o = MonitorOuputEvents[i];
+
+                o.ProcessOutput(ouput);
+
+                if (o.HasCompleted())
+                {
+                    o.Clear();
+
+                    // FireOnce
+                    if (o.Purpose == ECgProcessMonitorOutputEventPurpose.FireOnce)
+                        MonitorOuputEvents.RemoveAt(i);
+                }
+            }
+        }
+
         public void OnOutputDataRecieved(object sender, DataReceivedEventArgs e)
         {
+            ProcessMonitorOutputEvents(e.Data);
             OutputDataRecieved_Event.Broadcast(sender, e);
         }
 
         public void OnErrorDataRecieved(object sender, DataReceivedEventArgs e)
         {
+            ProcessMonitorOutputEvents(e.Data);
             ErrorDataRecieved_Event.Broadcast(sender, e);
         }
 

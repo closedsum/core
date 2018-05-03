@@ -56,6 +56,11 @@ namespace CgCore
             return e.Value;
         }
 
+        public static implicit operator string(TCgEnum<T> e)
+        {
+            return e.Name;
+        }
+
         public static bool operator ==(TCgEnum<T> lhs, TCgEnum<T> rhs)
         {
             if (object.ReferenceEquals(lhs, null))
@@ -86,6 +91,26 @@ namespace CgCore
         }
 
         public static bool operator !=(T lhs, TCgEnum<T> rhs)
+        {
+            return !(lhs == rhs);
+        }
+
+        public static bool operator ==(TCgEnum<T> lhs, string rhs)
+        {
+            return lhs.Name ==rhs;
+        }
+
+        public static bool operator !=(TCgEnum<T> lhs, string rhs)
+        {
+            return !(lhs == rhs);
+        }
+
+        public static bool operator ==(string lhs, TCgEnum<T> rhs)
+        {
+            return lhs == rhs.Name;
+        }
+
+        public static bool operator !=(string lhs, TCgEnum<T> rhs)
         {
             return !(lhs == rhs);
         }

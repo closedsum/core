@@ -23,6 +23,8 @@
         public CgProcess.ErrorDataRecieved ErrorDataRecieved_Event;
         public CgProcess.Exited Exited_Event;
 
+        public List<CgProcessMonitorOutputEvent> MonitorOuputEvents;
+
         #endregion // Data Members
 
         public CgProcessPayload() : base()
@@ -30,6 +32,8 @@
             OutputDataRecieved_Event = new CgProcess.OutputDataRecieved();
             ErrorDataRecieved_Event = new CgProcess.ErrorDataRecieved();
             Exited_Event = new CgProcess.Exited();
+
+            MonitorOuputEvents = new List<CgProcessMonitorOutputEvent>();
 
             Reset();
         }
@@ -51,6 +55,7 @@
             OutputDataRecieved_Event.Clear();
             ErrorDataRecieved_Event.Clear();
             Exited_Event.Clear();
+            MonitorOuputEvents.Clear();
         }
     }
 

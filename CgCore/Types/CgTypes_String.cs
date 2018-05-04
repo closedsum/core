@@ -4,8 +4,8 @@
 
     public enum ECgStringWordRule : byte
     {
-        None,
         MatchCase,
+        Lower,
         MAX
     }
 
@@ -19,7 +19,7 @@
         {
             Value = val;
             Rule = rule;
-            Altered = Rule == ECgStringWordRule.None ? Value.ToLower() : Value;
+            Altered = Rule == ECgStringWordRule.Lower ? Value.ToLower() : Value;
         }
 
         public static implicit operator string(CgStringWordInfo w)
@@ -74,6 +74,15 @@
         {
             return Value.GetHashCode() ^ Rule.GetHashCode() ^ Altered.GetHashCode();
         }
+
+        public bool IsContainedBy(string s)
+        {
+            if (Rule == ECgStringWordRule.MatchCase)
+                return s.Contains(Value);
+            if (Rule == ECgStringWordRule.Lower)
+                return s.ToLower().Contains(Value);
+            return s.Contains(Value);
+        }
     }
 
     public sealed class CgStringWord
@@ -91,12 +100,12 @@
             Ors = new List<CgStringWordInfo>();
         }
 
-        public void AddAnd(string s, ECgStringWordRule rule = ECgStringWordRule.None)
+        public void AddAnd(string s, ECgStringWordRule rule = ECgStringWordRule.MatchCase)
         {
             Ands.Add(new CgStringWordInfo(s, rule));
         }
 
-        public void AddOr(string s, ECgStringWordRule rule = ECgStringWordRule.None)
+        public void AddOr(string s, ECgStringWordRule rule = ECgStringWordRule.MatchCase)
         {
             Ors.Add(new CgStringWordInfo(s, rule));
         }
@@ -116,7 +125,7 @@
 
             for (int i = and; i < andCount; ++i)
             {
-                if (Ands[i] == "" || input.Contains(Ands[i]))
+                if (Ands[i] == "" || Ands[i].IsContainedBy(input))
                 {
                     ++and;
                 }
@@ -126,7 +135,7 @@
 
             for (int i = 0; i < orCount; ++i)
             {
-                or |= (Ands[i] == "" || input.Contains(Ands[i]));
+                or |= (Ors[i] == "" || Ors[i].IsContainedBy(input));
 
                 if (or)
                     break;
@@ -153,7 +162,7 @@
             Words = new List<CgStringWord>();
         }
 
-        public void AddAndToWord(int index, string s, ECgStringWordRule rule = ECgStringWordRule.None)
+        public void AddAndToWord(int index, string word, ECgStringWordRule rule = ECgStringWordRule.MatchCase)
         {
             int count = Words.Count;
 
@@ -164,10 +173,10 @@
                     Words.Add(new CgStringWord());
                 }
             }
-            Words[index].AddAnd(s, rule);
+            Words[index].AddAnd(word, rule);
         }
 
-        public void AddOrToWord(int index, string s, ECgStringWordRule rule = ECgStringWordRule.None)
+        public void AddOrToWord(int index, string word, ECgStringWordRule rule = ECgStringWordRule.MatchCase)
         {
             int count = Words.Count;
 
@@ -178,7 +187,7 @@
                     Words.Add(new CgStringWord());
                 }
             }
-            Words[index].AddOr(s, rule);
+            Words[index].AddOr(word, rule);
         }
 
         public void Clear()
@@ -227,31 +236,20 @@
 
     public sealed class CgStringSentence
     {
-        public sealed class CompletedEvent : CgMulticastDelegate { }
-
         private bool Completed;
 
         private List<CgStringPhrase> Phrases;
-
-        private CompletedEvent Event;
 
         public CgStringSentence()
         {
             Completed = false;
 
             Phrases = new List<CgStringPhrase>();
-
-            Event = new CompletedEvent();
         }
 
         public void AddPhrase(CgStringPhrase phrase)
         {
             Phrases.Add(phrase);
-        }
-
-        public void AddEvent(CompletedEvent.Event e)
-        {
-            Event.Add(e);
         }
 
         public void Clear()
@@ -267,6 +265,9 @@
 
         public void ProcessInput(string input)
         {
+            if (Completed)
+                return;
+
             // Check if ALL Phrases are Completed
             int count = Phrases.Count;
             int index = 0;
@@ -287,6 +288,77 @@
 
             // Check if Completed
             if (index == count)
+                Completed = true;
+        }
+
+        public bool HasCompleted()
+        {
+            return Completed;
+        }
+    }
+
+    public sealed class CgStringParagraph
+    {
+        public sealed class CompletedEvent : CgMulticastDelegate { }
+
+        private bool Completed;
+
+        private List<CgStringSentence> Sentences;
+
+        private CompletedEvent Event;
+
+        public CgStringParagraph()
+        {
+            Completed = false;
+
+            Sentences = new List<CgStringSentence>();
+
+            Event = new CompletedEvent();
+        }
+
+        public void AddSentence(CgStringSentence sentence)
+        {
+            Sentences.Add(sentence);
+        }
+
+        public void AddEvent(CompletedEvent.Event e)
+        {
+            Event.Add(e);
+        }
+
+        public void Clear()
+        {
+            int count = Sentences.Count;
+
+            for (int i = 0; i < count; ++i)
+            {
+                Sentences[i].Clear();
+            }
+            Completed = false;
+        }
+
+        public void ProcessInput(string input)
+        {
+            if (Completed)
+                return;
+
+            // Check if ALL Setences are Completed
+            int count = Sentences.Count;
+            int index = 0;
+
+            for (index = 0; index < count; ++index)
+            {
+                if (Sentences[index].HasCompleted())
+                    continue;
+
+                Sentences[index].ProcessInput(input);
+
+                if (index < count - 1 || !Sentences[index].HasCompleted())
+                    break;
+            }
+
+            // Check if Completed
+            if (index == count)
             {
                 Completed = true;
 
@@ -297,6 +369,31 @@
         public bool HasCompleted()
         {
             return Completed;
+        }
+    }
+
+    public static class CgStringParagraphHelper
+    {
+        public static CgStringSentence CreateOneWordSentence(string word, ECgStringWordRule rule = ECgStringWordRule.MatchCase)
+        {
+            CgStringSentence sentence = new CgStringSentence();
+                CgStringPhrase phrase = new CgStringPhrase();
+                phrase.AddAndToWord(0, word, rule);
+            sentence.AddPhrase(phrase);
+
+            return sentence;
+        }
+
+        public static CgStringParagraph CreateOneWordParagraph(string word, ECgStringWordRule rule = ECgStringWordRule.MatchCase)
+        {
+            CgStringParagraph paragraph = new CgStringParagraph();
+                CgStringSentence sentence = new CgStringSentence();
+                    CgStringPhrase phrase = new CgStringPhrase();
+                    phrase.AddAndToWord(0, word, rule);
+                sentence.AddPhrase(phrase);
+            paragraph.AddSentence(sentence);
+
+            return paragraph;
         }
     }
 }

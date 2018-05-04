@@ -313,6 +313,10 @@ namespace CgCore
             {
                 move = (WaitForBoolType != null && WaitForBoolType.Get()) || (WaitForFlagType != null && WaitForFlagType.IsEqual());
 
+                if (WaitForBoolType != null)
+                {
+                }
+
                 if (move)
                 {
                     WaitForBoolType = null;

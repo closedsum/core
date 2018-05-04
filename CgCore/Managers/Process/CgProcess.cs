@@ -47,14 +47,14 @@
 
         private string Name;
         public ECgProcessMonitorOutputEventPurpose Purpose;
-        private CgStringSentence Sentence;
+        private CgStringParagraph Paragraph;
         private bool Completed;
         private CompletedEvent Event;
 
-        public CgProcessMonitorOutputEvent(string name, CgStringSentence sentence, ECgProcessMonitorOutputEventPurpose purpose = ECgProcessMonitorOutputEventPurpose.FireOnce)
+        public CgProcessMonitorOutputEvent(string name, CgStringParagraph paragraph, ECgProcessMonitorOutputEventPurpose purpose = ECgProcessMonitorOutputEventPurpose.FireOnce)
         {
             Name = name;
-            Sentence = sentence;
+            Paragraph = paragraph;
             Event = new CompletedEvent();
         }
 
@@ -65,13 +65,15 @@
 
         public void ProcessOutput(string output)
         {
-            Sentence.ProcessInput(output);
+            if (Completed)
+                return;
 
-            Completed = Sentence.HasCompleted();
+            Paragraph.ProcessInput(output);
+
+            Completed = Paragraph.HasCompleted();
 
             if (Completed)
             {
-                Clear();
                 Event.Broadcast(Name);
             }
         }
@@ -79,7 +81,7 @@
         public void Clear()
         {
             Completed = false;
-            Sentence.Clear();
+            Paragraph.Clear();
         }
 
         public void Reset()
@@ -149,6 +151,11 @@
             pay.ErrorDataRecieved_Event.CopyTo(ErrorDataRecieved_Event);
             pay.Exited_Event.CopyTo(Exited_Event);
 
+            foreach (CgProcessMonitorOutputEvent e in pay.MonitorOuputEvents)
+            {
+                MonitorOuputEvents.Add(e);
+            }
+
             IsRunning = true;
 
             P.Start();
@@ -217,14 +224,14 @@
 
         public void OnOutputDataRecieved(object sender, DataReceivedEventArgs e)
         {
-            ProcessMonitorOutputEvents(e.Data);
             OutputDataRecieved_Event.Broadcast(sender, e);
+            ProcessMonitorOutputEvents(e.Data);
         }
 
         public void OnErrorDataRecieved(object sender, DataReceivedEventArgs e)
         {
-            ProcessMonitorOutputEvents(e.Data);
             ErrorDataRecieved_Event.Broadcast(sender, e);
+            ProcessMonitorOutputEvents(e.Data);
         }
 
         public void OnExited(object sender, EventArgs e)

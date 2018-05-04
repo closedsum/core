@@ -1,5 +1,7 @@
 ﻿namespace CgCore
 {
+    using System;
+
     public interface ICgBlockchainAccount
     {
         #region "Data Members"
@@ -7,8 +9,13 @@
         string Nickname { get; set; }
 
         #endregion // Data Members
+
+        string ToStr();
+        void Parse(string str);
+        void ParseFromFilePath(string path);
     }
 
+    [Serializable]
     public abstract class CgBlockchainAccount : ICgBlockchainAccount
     {
         #region "Data Members"
@@ -26,9 +33,12 @@
 
         #endregion // Data Members
 
-        public CgBlockchainAccount(string nickname)
+        public CgBlockchainAccount()
         {
-            Nickname = nickname;
         }
+
+        public abstract string ToStr();
+        public abstract void Parse(string str);
+        public abstract void ParseFromFilePath(string path);
     }
 }

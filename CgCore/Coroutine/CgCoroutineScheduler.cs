@@ -319,7 +319,11 @@ namespace CgCore
                 else
                 if (r.State == ECgRoutineState.End)
                 {
-                    Debug.LogError("CgCoroutineSchedule.Update: Dangling Routine. Check iteration through List or if Routine was tampered with.");
+                    if (r.EndReason == ECgCoroutineEndReason.EndOfExecution ||
+                        r.EndReason == ECgCoroutineEndReason.Parent)
+                    {
+                        Debug.LogError("CgCoroutineSchedule.Update: Dangling Routine. Check iteration through List or if Routine was tampered with.");
+                    }
                     r.Reset();
                     RoutinesRunning[schedule].RemoveAt(i);
                 }

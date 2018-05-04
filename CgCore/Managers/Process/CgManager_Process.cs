@@ -38,6 +38,11 @@
             Reset();
         }
 
+        public void AddMonitorOutputEvent(CgProcessMonitorOutputEvent e)
+        {
+            MonitorOuputEvents.Add(e);
+        }
+
         public override void Reset()
         {
             base.Reset();

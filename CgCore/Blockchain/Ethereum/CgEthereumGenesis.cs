@@ -3,9 +3,7 @@ namespace CgCore
 {
     using System;
     using System.IO;
-    using System.Collections;
     using System.Collections.Generic;
-    using UnityEngine;
 
     using Newtonsoft.Json;
 
@@ -61,10 +59,10 @@ namespace CgCore
             JsonConvert.PopulateObject(str, (object)this);
         }
 
-        public override void ParseFromFile(string filename)
+        public override void ParseFromFilePath(string path)
         {
-            if (File.Exists(filename))
-                Parse(File.ReadAllText(filename));
+            if (File.Exists(path))
+                Parse(File.ReadAllText(path));
         }
     }
 }

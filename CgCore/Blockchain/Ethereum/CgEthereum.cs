@@ -8,13 +8,30 @@ namespace CgCore
     using System.IO;
     using UnityEngine;
 
-    using Sg;
+    public struct CgEthereumNewAccountInfo
+    {
+        public string Nickname;
+        public string Passphrase;
 
+        public CgEthereumNewAccountInfo(string nickname, string passphrase)
+        {
+            Nickname = nickname;
+            Passphrase = passphrase;
+        }
+    }
+
+    // TODO: Move to SgEthereum
     public enum ECgEthereumOnBoardState : byte
     {
+        // RunningInstance
         Init,
         Start,
+        // Console
         Attach,
+            // Accounts
+        AccountCreatedWorld,
+        AccountCreatedGame,
+        AccountCreatedPlayer,
         Complete,
         MAX
     }
@@ -36,32 +53,36 @@ namespace CgCore
 
     public class CgEthereum : CgBlockchain
     {
+        // Account
+        public static CgConsoleVariableLog LogAccountLoad = new CgConsoleVariableLog("log.blockchain.account.load", false, "Log Blockchain (Ethereum) when Accounts get loaded", (int)ECgConsoleVariableFlag.Console);
+
         #region "Data Members"
 
         public string ConsoleFullPath;
-        public string GenesisFullPath;
+        public string GenesisFilePath;
+        public string KeystoreDirectory;
+
+        Dictionary<string, CgEthereumKeystore> Keystores;
 
         public CgRoutine.BoolType IsRunningInstanceCloseFlag;
+
+        Dictionary<ECgBlockchainCommand, CgProcessMonitorOutputEvent> MonitorOutputEvents;
+
+        CgBlockchainCommandInfo CurrentCommandInfo;
+
+        // TODO: Move into SgEthereum
 
         ECgEthereumOnBoardState OnBoardState;
         TCgFlagType<ECgEthereumOnBoardState> OnBoardStateFlag;
 
-        Dictionary<ECgBlockchainCommand, CgProcessMonitorOutputEvent> MonitorOutputEvents;
 
         #endregion // Data Members
 
-        public CgEthereum()
+        public CgEthereum() : base()
         {
             Genesis = new CgEthereumGenesis();
 
             StorageType = ECgBlockchainStorageType.Private;
-
-            Processes = new Dictionary<ECgBlockchainProcessType, CgProcess>(new ECgBlockchainProcessTypeEqualityComparer());
-
-            for (byte i = 0; i < (byte)ECgBlockchainProcessType.MAX; ++i)
-            {
-                Processes.Add((ECgBlockchainProcessType)i, null);
-            }
 
             ConsoleFilename = "geth.exe";
             string path = Application.dataPath;
@@ -70,105 +91,80 @@ namespace CgCore
             ConsoleDirectory = path + "Blockchain\\Ethereum\\Geth";
             ConsoleFullPath = ConsoleDirectory + "\\" + ConsoleFilename;
             RootDirectory = path + "Blockchain\\Ethereum";
-            GenesisFullPath = RootDirectory + "/genesis.json"; ;
+            GenesisFilePath = RootDirectory + "/genesis.json"; ;
 
             IsRunningInstanceCloseFlag = new CgRoutine.BoolType();
             IsRunningInstanceCloseFlag.Set(true);
 
             ChainDirectory = path + "Blockchain\\Ethereum\\chaindata";
+            AccountsDirectory = RootDirectory + "\\Accounts";
+            KeystoreDirectory = ChainDirectory + "\\keystore";
 
-            Commands = new Dictionary<ECgBlockchainCommand, string>(new ECgBlockchainCommandEqualityComparer());
-
-            CommandRequests = new Dictionary<ECgBlockchainProcessType, Dictionary<ECgBlockchainCommand, CgBlockchainCommandRequest>>(new ECgBlockchainProcessTypeEqualityComparer());
-
-            for (byte i = 0; i < (byte)ECgBlockchainProcessType.MAX; ++i)
-            {
-                ECgBlockchainProcessType processType = (ECgBlockchainProcessType)i;
-
-                CommandRequests.Add(processType, new Dictionary<ECgBlockchainCommand, CgBlockchainCommandRequest>(new ECgBlockchainCommandEqualityComparer()));
-            }
-
-            CurrentCommandRequests = new Dictionary<ECgBlockchainProcessType, CgBlockchainCommandRequest>(new ECgBlockchainProcessTypeEqualityComparer());
-
-            for (byte i = 0; i < (byte)ECgBlockchainProcessType.MAX; ++i)
-            {
-                ECgBlockchainProcessType processType = (ECgBlockchainProcessType)i;
-
-                CurrentCommandRequests.Add(processType, null);
-            }
-
-            CommandRequestQueue = new Dictionary<ECgBlockchainProcessType, Queue<CgBlockchainCommandRequest>>(new ECgBlockchainProcessTypeEqualityComparer());
-
-            for (byte i = 0; i < (byte)ECgBlockchainProcessType.MAX; ++i)
-            {
-                ECgBlockchainProcessType processType = (ECgBlockchainProcessType)i;
-
-                CommandRequestQueue.Add(processType, new Queue<CgBlockchainCommandRequest>());
-            }
-
-            Accounts = new Dictionary<string, ICgBlockchainAccount>();
+            Keystores = new Dictionary<string, CgEthereumKeystore>();
 
             MonitorOutputEvents = new Dictionary<ECgBlockchainCommand, CgProcessMonitorOutputEvent>(new ECgBlockchainCommandEqualityComparer());
 
             // Commands
 
-            //SetCommand(ECgEthereumCommand.InitBlockchain, "\"" + ConsoleFullPath + "\" --datadir=\"" + ChainDirectory + "\" init \"" + RootDirectory + "\\genesis.json\"");
-            //SetCommand(ECgEthereumCommand.SetDataDirectory, "\"" + ConsoleFullPath + "\" --datadir=\"" + ChainDirectory + "\" --networkid 15");
+                // InitBlockchain
             SetCommand(ECgEthereumCommand.InitBlockchain, "--datadir=\"" + ChainDirectory + "\" init \"" + RootDirectory + "\\genesis.json\"");
+                // SetDataDirectory
             SetCommand(ECgEthereumCommand.SetDataDirectory, "--datadir=\"" + ChainDirectory + "\" --networkid 15");
             {
-                CgStringSentence sentence = new CgStringSentence();
-                    CgStringPhrase phrase = new CgStringPhrase();
-                    phrase.AddAndToWord(0, "IPC endpoint opened", ECgStringWordRule.None);
-                    sentence.AddPhrase(phrase);
+                CgStringParagraph p = CgStringParagraphHelper.CreateOneWordParagraph("IPC endpoint opened", ECgStringWordRule.MatchCase);// TODO: also include "url=\\\\.\\pipe\\geth.ipc"?
 
-                CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.SetDataDirectory, sentence, ECgProcessMonitorOutputEventPurpose.FireOnce);
+                CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.SetDataDirectory, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
                 e.AddEvent(OnCommandCompleted);
 
                 MonitorOutputEvents.Add(ECgEthereumCommand.SetDataDirectory, e);
-
-                CgBlockchainCommandRequest request = new CgBlockchainCommandRequest(ECgEthereumCommand.SetDataDirectory, null);
-                    request.AddFulfillment(ECgBlockchainCommandFulfillmentRule.Contain, "IPC endpoint opened"); // TODO: also include "url=\\\\.\\pipe\\geth.ipc"?
-                    request.RunWhenRelevant = false;
-                    request.Completed_Event.Add(OnCommandCompleted);
-                CommandRequests[ECgBlockchainProcessType.RunningInstance].Add(ECgEthereumCommand.SetDataDirectory, request);
             }
-            //SetCommand(ECgEthereumCommand.ChangeToRootDirectory, "cd /d \"" + RootDirectory + "\"");
-            //SetCommand(ECgEthereumCommand.AttachToConsole, "\"" + ConsoleFullPath + "\" attach ipc:\\\\.\\pipe\\geth.ipc");
+                // AttachToConsole
             SetCommand(ECgEthereumCommand.AttachToConsole, "attach ipc:\\\\.\\pipe\\geth.ipc");
             {
-                CgBlockchainCommandRequest request = new CgBlockchainCommandRequest(ECgEthereumCommand.AttachToConsole, null);
-                    request.AddFulfillment(ECgBlockchainCommandFulfillmentRule.Contain, "welcome");
-                    request.AddFulfillment(ECgBlockchainCommandFulfillmentRule.None, "");
-                    request.AddFulfillment(ECgBlockchainCommandFulfillmentRule.Contain, "instance:");
-                    request.AddFulfillment(ECgBlockchainCommandFulfillmentRule.Contain, "modules:");
-                    request.AddFulfillment(ECgBlockchainCommandFulfillmentRule.None, "");
-                    request.RunWhenRelevant = false;
-                    request.Completed_Event.Add(OnCommandCompleted);
-                CommandRequests[ECgBlockchainProcessType.Console].Add(ECgEthereumCommand.AttachToConsole, request);
+                CgStringParagraph p = new CgStringParagraph();
+                    p.AddSentence(CgStringParagraphHelper.CreateOneWordSentence("welcome", ECgStringWordRule.Lower));
+                    p.AddSentence(CgStringParagraphHelper.CreateOneWordSentence("instance:", ECgStringWordRule.Lower));
+                    p.AddSentence(CgStringParagraphHelper.CreateOneWordSentence("modules:", ECgStringWordRule.Lower));
 
+                CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.AttachToConsole, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
+                e.AddEvent(OnCommandCompleted);
+
+                MonitorOutputEvents.Add(ECgEthereumCommand.AttachToConsole, e);
             }
+                // ExitConsole
             SetCommand(ECgEthereumCommand.ExitConsole, "exit");
+                // NewAccount
             SetCommand(ECgEthereumCommand.NewAccount, "personal.newAccount(%s)");
+                // UnlockAccount
             SetCommand(ECgEthereumCommand.UnlockAccount, "personal.unlockAccount(%s,%s,%s)");
+                // ListAccounts
             SetCommand(ECgEthereumCommand.ListAccounts, "personal.listAccounts");
+                // StartMiner
             SetCommand(ECgEthereumCommand.StartMiner, "miner.start();");
             {
+                /*
                 CgBlockchainCommandRequest request = new CgBlockchainCommandRequest(ECgEthereumCommand.StartMiner, null);
                 request.AddFulfillment(ECgBlockchainCommandFulfillmentRule.None, "");
                 request.Completed_Event.Add(OnCommandCompleted);
                 CommandRequests[ECgBlockchainProcessType.Console].Add(ECgEthereumCommand.StartMiner, request);
+                */
             }
+                // StopMiner
             SetCommand(ECgEthereumCommand.StopMiner, "miner.stop();");
             {
+                /*
                 CgBlockchainCommandRequest request = new CgBlockchainCommandRequest(ECgEthereumCommand.StopMiner, null);
                 request.AddFulfillment(ECgBlockchainCommandFulfillmentRule.None, "");
                 request.Completed_Event.Add(OnCommandCompleted);
                 CommandRequests[ECgBlockchainProcessType.Console].Add(ECgEthereumCommand.StopMiner, request);
+                */
             }
 
             OnBoardState = ECgEthereumOnBoardState.Init;
             OnBoardStateFlag = new TCgFlagType<ECgEthereumOnBoardState>(ECgEthereumOnBoardState.Init, ECgEthereumOnBoardState.MAX);
+
+            CommandCompleted_Event.Add(OnCommandCompleted);
+            AccountCreated_Event.Add(OnAccountCreated);
 
             // Enums
 
@@ -191,6 +187,37 @@ namespace CgCore
                 if (p != null)
                     p.DeAllocate();
             }
+        }
+
+        public override void Rebuild()
+        {
+            // Delete files in existing directories
+
+            // Accounts
+            if (Directory.Exists(AccountsDirectory))
+            {
+                string[] paths = Directory.GetFiles(AccountsDirectory);
+
+                foreach (string path in paths)
+                {
+                    File.Delete(path);
+                }
+                Directory.Delete(AccountsDirectory, true);
+            }
+            // chaindata
+            if (Directory.Exists(ChainDirectory))
+            {
+                string[] paths = Directory.GetFiles(ChainDirectory);
+
+                foreach (string path in paths)
+                {
+                    File.Delete(path);
+                }
+                Directory.Delete(ChainDirectory, true);
+            }
+            // genesis.json
+            if (File.Exists(GenesisFilePath))
+                File.Delete(GenesisFilePath);
         }
 
         public override void SetCommand(ECgBlockchainCommand command, string str)
@@ -314,39 +341,31 @@ namespace CgCore
             RunCommand(processType, value);
         }
 
-        public override void EnqueueCommand(ECgBlockchainProcessType processType, CgBlockchainCommandRequest request)
+        public void AddMonitorOutputEvenToProcess(ECgBlockchainProcessType processType, CgProcessMonitorOutputEvent e)
         {
-            CommandRequestQueue[processType].Enqueue(request);
-
-            if (CurrentCommandRequests[processType] == null)
-            {
-                CurrentCommandRequests[processType] = CommandRequestQueue[processType].Peek();
-
-                if (request.RunWhenRelevant)
-                    RunCommand(processType, request.Command, request.Arguments);
-            }
+            Processes[processType].AddMonitorOuputEvent(e);
         }
 
-        public override void EnqueueCommand(ECgBlockchainProcessType processType, ECgBlockchainCommand command)
+        public void AddMonitorOutputEvenToProcess(ECgBlockchainProcessType processType, ECgBlockchainCommand command)
         {
-            EnqueueCommand(processType, CommandRequests[processType][command]);
+            AddMonitorOutputEvenToProcess(processType, MonitorOutputEvents[command]);
         }
 
-        public void OnCommandCompleted(CgBlockchainCommandRequest request)
+        public void OnCommandCompleted(ECgBlockchainCommand command)
         {
             if (LogCommandCompleted.Log())
             {
-                CgDebug.Log("CgEthereum.OnCommandCompleted: Completed command: " + request.Command);
+                CgDebug.Log("CgEthereum.OnCommandCompleted: Completed command: " + command);
             }
 
             // SetDataDirectory
-            if (request.Command == ECgEthereumCommand.SetDataDirectory)
+            if (command == ECgEthereumCommand.SetDataDirectory)
             {
                 OnBoardState = ECgEthereumOnBoardState.Start;
                 OnBoardStateFlag.SetEnd(ECgEthereumOnBoardState.Start);
             }
             // AttachToConsole
-            if (request.Command == ECgEthereumCommand.AttachToConsole)
+            if (command == ECgEthereumCommand.AttachToConsole)
             {
                 OnBoardState = ECgEthereumOnBoardState.Attach;
                 OnBoardStateFlag.SetEnd(ECgEthereumOnBoardState.Attach);
@@ -355,17 +374,13 @@ namespace CgCore
 
         public void OnCommandCompleted(string name)
         {
-            if (LogCommandCompleted.Log())
-            {
-                CgDebug.Log("CgEthereum.OnCommandCompleted: Completed command: " + name);
-            }
-
             // SetDataDirectory
             if (name == ECgEthereumCommand.SetDataDirectory)
-            {
-                OnBoardState = ECgEthereumOnBoardState.Start;
-                OnBoardStateFlag.SetEnd(ECgEthereumOnBoardState.Start);
-            }
+                CommandCompleted_Event.Broadcast(ECgEthereumCommand.SetDataDirectory);
+            // AttachToConsole
+            else
+            if (name == ECgEthereumCommand.AttachToConsole)
+                CommandCompleted_Event.Broadcast(ECgEthereumCommand.AttachToConsole);
         }
 
         public void OnProcessOutputRecieved(object sender, DataReceivedEventArgs e)
@@ -374,7 +389,6 @@ namespace CgCore
             {
                 CgDebug.Log("Process (Output): " + e.Data);
             }
-            CheckCommandRequestQueue(ECgBlockchainProcessType.RunningInstance, e.Data);
         }
 
         public void OnProcessErrorRecieved(object sender, DataReceivedEventArgs e)
@@ -383,39 +397,70 @@ namespace CgCore
             {
                 CgDebug.Log("Process (Error): " + e.Data);
             }
-            CheckCommandRequestQueue(ECgBlockchainProcessType.RunningInstance, e.Data);
         }
 
-        public void CheckCommandRequestQueue(ECgBlockchainProcessType processType, string output)
+        public void OnProcessExited(object sender, EventArgs e)
         {
-            if (CurrentCommandRequests[processType] == null)
-                return;
-
-            if (CurrentCommandRequests[processType].HasCompleted(output))
+            if (LogIO.Log())
             {
-                CommandRequestQueue[processType].Dequeue();
-
-                if (CommandRequestQueue[processType].Count > EMPTY)
-                {
-                    CgBlockchainCommandRequest request = CommandRequestQueue[processType].Peek();
-
-                    if (request.RunWhenRelevant)
-                        RunCommand(processType, request.Command, request.Arguments);
-                }
-                else
-                {
-                    CurrentCommandRequests[processType] = null;
-                }
+                CgDebug.Log("Blockchain (Process): Exited");
             }
+
+            CgProcess p = Processes[ECgBlockchainProcessType.RunningInstance];
+
+            Processes[ECgBlockchainProcessType.RunningInstance] = null;
+            IsRunningInstanceOpen = false;
+            IsRunningInstanceCloseFlag.Set(true);
+            p.DeAllocate();
         }
 
         public void OnConsoleOutputRecieved(object sender, DataReceivedEventArgs e)
         {
+            string output = e.Data;
+
             if (LogIO.Log())
             {
-                UnityEngine.Debug.Log("Console (Output): " + e.Data);
+                CgDebug.Log("Console (Output): " + output);
             }
-            CheckCommandRequestQueue(ECgBlockchainProcessType.Console, e.Data);
+
+            ECgBlockchainCommand command = CurrentCommandInfo.Command;
+
+            // NewAccount
+            if (command == ECgEthereumCommand.NewAccount)
+            {
+                // Check for account address
+                if (output.StartsWith("\"0x"))
+                {
+                    CgEthereumNewAccountInfo info = (CgEthereumNewAccountInfo)CurrentCommandInfo.Payload;
+
+                    string nickname   = info.Nickname;
+                    string address    = output.Replace("\"", "");
+                    address           = address.Replace("0x", "");
+                    string passphrase = info.Passphrase;
+
+                    CgEthereumAccount a = new CgEthereumAccount(nickname, address, passphrase);
+
+                    string json            = a.ToStr();
+                    string accountFilePath = AccountsDirectory + "\\" + nickname + "-" + address;
+
+                    File.WriteAllText(accountFilePath, json, System.Text.Encoding.ASCII);
+
+                    if (LogAccountCreated.Log())
+                    {
+                        CgDebug.Log("Creating Account: " + nickname);
+                        CgDebug.Log("-- Address: " + address);
+                        CgDebug.Log("-- PassPhrase: " + passphrase);
+                        CgDebug.Log("-- writing to: " + accountFilePath);
+                    }
+
+                    Accounts.Add(nickname, a);
+
+                    CreateKeystore(a);
+
+                    AccountCreated_Event.Broadcast(a);
+                    CommandCompleted_Event.Broadcast(command);
+                }
+            }
         }
 
         public void OnConsoleErrorRecieved(object sender, DataReceivedEventArgs e)
@@ -424,20 +469,6 @@ namespace CgCore
             {
                 UnityEngine.Debug.Log("Console (Error): " + e.Data);
             }
-            CheckCommandRequestQueue(ECgBlockchainProcessType.Console, e.Data);
-        }
-
-        public void OnProcessExited(object sender, EventArgs e)
-        {
-            if(LogIO.Log())
-            {
-                UnityEngine.Debug.Log("Blockchain (Process): Exited");
-            }
-
-            Processes[ECgBlockchainProcessType.RunningInstance].DeAllocate();
-            Processes[ECgBlockchainProcessType.RunningInstance] = null;
-            IsRunningInstanceOpen = false;
-            IsRunningInstanceCloseFlag.Set(true);
         }
 
         public void OnConsoleExited(object sender, EventArgs e)
@@ -479,6 +510,7 @@ namespace CgCore
                 payload.RedirectStandardInput = startInfo.RedirectStandardInput;
                 payload.RedirectStandardOutput = true;
                 payload.RedirectStandardError = true;
+                payload.EnableRaisingEvents = true;
 
                 if (processType == ECgBlockchainProcessType.RunningInstance)
                 {
@@ -494,6 +526,11 @@ namespace CgCore
                     payload.Exited_Event.Add(OnConsoleExited);
                 }
 
+                foreach (CgProcessMonitorOutputEvent e in startInfo.MonitorOutputEvents)
+                {
+                    payload.AddMonitorOutputEvent(e);
+                }
+
                 p = ICgManager_Process.Get().Spawn(EMCgProcess.Get()["Blockchain"], payload);
 
                 SetProcess(processType, p);
@@ -502,40 +539,6 @@ namespace CgCore
             {
                 CgDebug.Log("CgEthereum.StartProcess: StartProcess called for running Process: " + processType.ToString() + " before the process exited.");
             }
-            /*
-            p = new Process();
-
-            
-
-            // ProcessStartInfo
-            ProcessStartInfo psi    = p.StartInfo;
-            psi.CreateNoWindow      = !ShowProcessWindow.Get();
-            psi.UseShellExecute     = false;
-            psi.FileName            = startInfo.FileName;
-            psi.Arguments           = startInfo.Arguments;
-            psi.ErrorDialog         = false;
-            psi.RedirectStandardInput = startInfo.RedirectStandardInput;
-            psi.RedirectStandardOutput = true;
-            psi.RedirectStandardError = true;
-            p.EnableRaisingEvents = true;
-
-            if (processType == ECgBlockchainProcessType.Console)
-            {
-                p.OutputDataReceived += ConsoleOutputRecieved;
-                p.ErrorDataReceived += ConsoleErrorRecieved;
-                p.Exited += OnConsoleExited;
-            }
-            else
-            {
-                p.OutputDataReceived += ProcessOutputRecieved;
-                p.ErrorDataReceived += ProcessErrorRecieved;
-                p.Exited += OnProcessExited;
-            }
-
-            p.Start();
-            p.BeginErrorReadLine();
-            p.BeginOutputReadLine();
-            */
         }
 
         public override void StopProcess(ECgBlockchainProcessType processType)
@@ -557,13 +560,11 @@ namespace CgCore
             startInfo.FileName              = ConsoleFullPath;
             startInfo.Arguments             = Commands[command];
             startInfo.RedirectStandardInput = false;
+            startInfo.AddMonitorOutputEvent(MonitorOutputEvents[command]);
 
             ECgBlockchainProcessType processType = ECgBlockchainProcessType.RunningInstance;
 
             //EnqueueCommand(processType, command);
-
-            Processes[processType].AddMonitorOuputEvent(MonitorOutputEvents[command]);
-
             StartProcess(processType, startInfo);
             
             IsRunningInstanceOpen = true;
@@ -574,14 +575,16 @@ namespace CgCore
         {
             // Create chaindata Directory
             if (!Directory.Exists(ChainDirectory))
-            {
                 Directory.CreateDirectory(ChainDirectory);
-            }
 
             // Create genesis.json
             string json = Genesis.ToStr();
 
-            File.WriteAllText(GenesisFullPath, json, System.Text.Encoding.ASCII);
+            File.WriteAllText(GenesisFilePath, json, System.Text.Encoding.ASCII);
+
+            // Create Accounts Directory
+            if (!Directory.Exists(AccountsDirectory))
+                Directory.CreateDirectory(AccountsDirectory);
 
             // Init
             IsRunningInstanceOpen = true;
@@ -610,7 +613,7 @@ namespace CgCore
         public static IEnumerator StartPrivateChain_Internal(CgEthereum eth)
         {
             // Start if the Blockchain has already been initialized
-            bool genesisExists = File.Exists(eth.GenesisFullPath);
+            bool genesisExists = File.Exists(eth.GenesisFilePath);
 
             if (genesisExists)
             {
@@ -644,7 +647,7 @@ namespace CgCore
                 eth.OpenRunningInstance();
             }
             // Parse the Genesis file
-            eth.Genesis.ParseFromFile(eth.GenesisFullPath);
+            eth.Genesis.ParseFromFilePath(eth.GenesisFilePath);
 
             // Waittill OnBoardState == ECgEthereumOnBoardState.Start
             yield return eth.OnBoardStateFlag;
@@ -661,10 +664,118 @@ namespace CgCore
 
             eth.OpenConsole();
 
+            // Waittill OnBoardState == ECgEthereumOnBoardState.Attach
             yield return eth.OnBoardStateFlag;
 
-            CgDebug.Log("here");
-            eth.ListAccounts();
+            // Load Accounts
+
+            eth.LoadAccounts();
+
+            // Check World Account exists
+
+            ICgBlockchainAccount iaccount = null;
+
+            eth.Accounts.TryGetValue("World", out iaccount);
+
+            if (iaccount == null)
+            {
+                eth.OnBoardStateFlag.SetEnd(ECgEthereumOnBoardState.MAX);
+                eth.OnBoardStateFlag.SetStart(ECgEthereumOnBoardState.AccountCreatedWorld);
+
+                CgEthereumNewAccountInfo info = new CgEthereumNewAccountInfo("World", "World");
+
+                eth.NewAccount(info);
+
+                // Waittill OnBoardState == ECgEthereumOnBoardState.AccountCreatedWorld
+                yield return eth.OnBoardStateFlag;
+            }
+            else
+            {
+                eth.OnBoardState = ECgEthereumOnBoardState.AccountCreatedWorld;
+            }
+
+            if (LogOnBoard.Log())
+            {
+                CgDebug.Log("CgEthereum.CreatePrivateChain: State Change: ECgEthereumOnBoardState.Attach -> ECgEthereumOnBoardState.AccountCreatedWorld.");
+            }
+
+            // Check Game Account exists
+
+            iaccount = null;
+
+            eth.Accounts.TryGetValue("Game", out iaccount);
+
+            if (iaccount == null)
+            {
+                eth.OnBoardStateFlag.SetEnd(ECgEthereumOnBoardState.MAX);
+                eth.OnBoardStateFlag.SetStart(ECgEthereumOnBoardState.AccountCreatedGame);
+
+                CgEthereumNewAccountInfo info = new CgEthereumNewAccountInfo("Game", "Game");
+
+                eth.NewAccount(info);
+
+                // Waittill OnBoardState == ECgEthereumOnBoardState.AccountCreatedGame
+                yield return eth.OnBoardStateFlag;
+            }
+            else
+            {
+                eth.OnBoardState = ECgEthereumOnBoardState.AccountCreatedGame;
+            }
+
+            if (LogOnBoard.Log())
+            {
+                CgDebug.Log("CgEthereum.CreatePrivateChain: State Change: ECgEthereumOnBoardState.AccountCreatedWorld -> ECgEthereumOnBoardState.AccountCreatedGame.");
+            }
+
+            // Check Player Account exists
+
+            iaccount = null;
+
+            eth.Accounts.TryGetValue("Player", out iaccount);
+
+            if (iaccount == null)
+            {
+                eth.OnBoardStateFlag.SetEnd(ECgEthereumOnBoardState.MAX);
+                eth.OnBoardStateFlag.SetStart(ECgEthereumOnBoardState.AccountCreatedPlayer);
+
+                CgEthereumNewAccountInfo info = new CgEthereumNewAccountInfo("Player", "Player");
+
+                eth.NewAccount(info);
+
+                // Waittill OnBoardState == ECgEthereumOnBoardState.AccountCreatedPlayer
+                yield return eth.OnBoardStateFlag;
+            }
+            else
+            {
+                eth.OnBoardState = ECgEthereumOnBoardState.AccountCreatedPlayer;
+            }
+
+            if (LogOnBoard.Log())
+            {
+                CgDebug.Log("CgEthereum.CreatePrivateChain: State Change: ECgEthereumOnBoardState.AccountCreatedGame -> ECgEthereumOnBoardState.AccountCreatedPlayer.");
+            }
+
+            /*
+            // Load Accounts, if any
+            eth.LoadAccounts();
+
+            // If NO Accounts, delete any old Keystores
+            if (eth.Accounts.Count == EMPTY)
+            {
+                string[] fileNames = Directory.GetFiles(eth.KeystoreDirectory);
+
+                foreach (string name in fileNames)
+                {
+                    File.Delete(eth.KeystoreDirectory + "\\" + name);
+                }
+            }
+
+            // Create Accounts for Game, World, and Player
+            */
+
+            //eth.ListAccounts();
+
+
             //eth.NewAccount("world");
             //eth.StartMiner();
 
@@ -691,10 +802,11 @@ namespace CgCore
             startInfo.FileName              = ConsoleFullPath;
             startInfo.Arguments             = Commands[command];
             startInfo.RedirectStandardInput = true;
+            startInfo.AddMonitorOutputEvent(MonitorOutputEvents[command]);
 
             ECgBlockchainProcessType processType = ECgBlockchainProcessType.Console;
 
-            EnqueueCommand(processType, command);
+            //EnqueueCommand(processType, command);
             StartProcess(processType, startInfo);
 
             IsConsoleOpen = true;
@@ -712,25 +824,206 @@ namespace CgCore
             IsConsoleOpen = false;
         }
 
+        #region "Account"
+
+        public override void LoadAccounts()
+        {
+            string[] paths = Directory.GetFiles(AccountsDirectory);
+
+            foreach (string path in paths)
+            {
+                CgEthereumAccount a = new CgEthereumAccount();
+                a.ParseFromFilePath(path);
+                Accounts.Add(a.Nickname, a);
+            }
+
+            // Check there is a matching Keystore for each Account
+
+            paths = Directory.GetFiles(KeystoreDirectory);
+            Dictionary<string, ICgBlockchainAccount>.KeyCollection names = Accounts.Keys;
+            List<string> invalidAccounts = new List<string>();
+
+            foreach (string path in paths)
+            {
+                CgEthereumAccount linkedAcccount = null;
+
+                foreach (string name in names)
+                {
+                    CgEthereumAccount a = (CgEthereumAccount)Accounts[name];
+
+                    if (path.Contains(a.Address))
+                    {
+                        linkedAcccount = a;
+                        break;
+                    }
+                }
+
+                // Delete the Keystore if it is not linked to an account
+                if (linkedAcccount == null)
+                {
+                    File.Delete(path);
+
+                    if (LogAccountLoad.Get())
+                    {
+                        string[] parts = path.Split(new string[] {"--"}, StringSplitOptions.None);
+                        string address = parts[2];
+
+                        CgDebug.Log("CgEthereum.LoadAccounts: Failed to link Keystore with address: " + address + " to an Account.");
+                        CgDebug.Log("-- deleting: " + path);
+                    }
+                    invalidAccounts.Add(linkedAcccount.Nickname);
+                }
+                else
+                {
+                    CreateKeystore(linkedAcccount);
+                }
+            }
+            // Check remaining Accounts that did NOT get matched with a keystore
+
+            foreach (string name in invalidAccounts)
+            {
+                CgEthereumAccount account = (CgEthereumAccount)Accounts[name];
+
+                // Delete the Account file
+                string path = AccountsDirectory + "\\" + name + "--" + account.Address + ".json";
+
+                if (File.Exists(path))
+                    File.Delete(path);
+
+                // Remove the Account
+                Accounts.Remove(name);
+
+                if (LogAccountLoad.Get())
+                {
+                    CgDebug.Log("CgEthereum.LoadAccounts: Failed to link Account with Nickname: " + name + " and address: " + account.Address + " to any Keystore.");
+                    CgDebug.Log("-- deleting: " + path);
+                }
+            }
+        }
+
         public override void NewAccount(object payload)
         {
-            string nickname = (string)payload;
+            CgEthereumNewAccountInfo info = (CgEthereumNewAccountInfo)payload;
             
             ICgBlockchainAccount iaccount;
-            Accounts.TryGetValue(nickname, out iaccount);
+            Accounts.TryGetValue(info.Nickname, out iaccount);
 
             if (iaccount != null)
             {
-                UnityEngine.Debug.LogWarning("CgEthereum.NewAccount: Account with Nickname: " + nickname + " already exists.");
+                UnityEngine.Debug.LogWarning("CgEthereum.NewAccount: Account with Nickname: " + info.Nickname + " already exists.");
                 return;
             }
 
             CgBlockchainCommandArgument[] args = new CgBlockchainCommandArgument[1];
-            args[0]                            = new CgBlockchainCommandArgument(ECgBlockchainCommandArgumentType.StringString, nickname);
+            args[0]                            = new CgBlockchainCommandArgument(ECgBlockchainCommandArgumentType.StringString, info.Passphrase);
+
+            CurrentCommandInfo = new CgBlockchainCommandInfo(ECgEthereumCommand.NewAccount, args, payload);
 
             RunCommand(ECgBlockchainProcessType.Console, ECgEthereumCommand.NewAccount, args);
-            // TODO: Need to fill in account details in ProcessOutputRecieved
-            Accounts.Add(nickname, new CgEthereumAccount(nickname));
+        }
+
+        public void OnAccountCreated(ICgBlockchainAccount account)
+        {
+            if (LogAccountCreated.Log())
+            {
+
+            }
+
+            // TODO: Put in SgEthereum
+
+            // World
+            if (account.Nickname == "World")
+            {
+                OnBoardState = ECgEthereumOnBoardState.AccountCreatedWorld;
+                OnBoardStateFlag.SetEnd(OnBoardState);
+            }
+            // Game
+            else
+            if (account.Nickname == "Game")
+            {
+                OnBoardState = ECgEthereumOnBoardState.AccountCreatedGame;
+                OnBoardStateFlag.SetEnd(OnBoardState);
+            }
+            // Player
+            else
+            if (account.Nickname == "Player")
+            {
+                OnBoardState = ECgEthereumOnBoardState.AccountCreatedPlayer;
+                OnBoardStateFlag.SetEnd(OnBoardState);
+            }
+        }
+
+        public string GetKeystoreFilePath(string address)
+        {
+            string[] paths = Directory.GetFiles(KeystoreDirectory);
+
+            foreach (string path in paths)
+            {
+                if (path.Contains(address))
+                {
+                    return path;
+                }
+            }
+            return "";
+        }
+
+        public void CreateKeystore(CgEthereumAccount account)
+        {
+            string path = GetKeystoreFilePath(account.Address);
+            
+            if (path == "")
+            {
+                CgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, CreateKeystore_Internal(this, account));
+            }
+            else
+            {
+                CgEthereumKeystore keystore = new CgEthereumKeystore();
+                keystore.ParseFromFilePath(path);
+                
+                Keystores.Add(account.Nickname, keystore);
+
+                if (LogAccountCreated.Log() || LogAccountLoad.Get())
+                {
+                    CgDebug.Log("CgEthereum.CreateKeystore: Keystore linked to Account with Nickname: " + account.Nickname);
+                    CgDebug.Log("-- saved to: " + path);
+                }
+            }
+        }
+
+        public static IEnumerator CreateKeystore_Internal(CgEthereum eth, CgEthereumAccount account)
+        {
+            string keystoreFilePath = "";
+
+            while (keystoreFilePath == "")
+            {
+                string[] paths = Directory.GetFiles(eth.KeystoreDirectory);
+
+                foreach (string path in paths)
+                {
+                    if (path.Contains(account.Address))
+                    {
+                        keystoreFilePath = path;
+                        break;
+                    }
+
+                    if (keystoreFilePath != "")
+                        break;
+                }
+
+                if (keystoreFilePath == "")
+                    yield return null;
+            }
+
+            CgEthereumKeystore keystore = new CgEthereumKeystore();
+            keystore.ParseFromFilePath(keystoreFilePath);
+
+            eth.Keystores.Add(account.Nickname, keystore);
+
+            if (LogAccountCreated.Log())
+            {
+                CgDebug.Log("CgEthereum.CreateKeystore: Keystore created for Account with Nickname: " + account.Nickname);
+                CgDebug.Log("-- saved to: " + keystoreFilePath);
+            }
         }
 
         public override void UnlockAccount(object payload)
@@ -758,6 +1051,8 @@ namespace CgCore
         {
             RunCommand(ECgBlockchainProcessType.Console, ECgEthereumCommand.ListAccounts, null);
         }
+
+        #endregion // Account
 
         public override void StartMiner()
         {

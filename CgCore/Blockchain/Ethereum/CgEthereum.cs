@@ -30,8 +30,11 @@ namespace CgCore
         Attach,
             // Accounts
         AccountCreatedWorld,
+        UnlockAccountWorld,
         AccountCreatedGame,
+        UnlockAccountGame,
         AccountCreatedPlayer,
+        UnlockAccountPlayer,
         Complete,
         MAX
     }
@@ -104,6 +107,8 @@ namespace CgCore
 
             MonitorOutputEvents = new Dictionary<ECgBlockchainCommand, CgProcessMonitorOutputEvent>(new ECgBlockchainCommandEqualityComparer());
 
+            CurrentCommandInfo = new CgBlockchainCommandInfo(ECgEthereumCommand.MAX, null, null);
+
             // Commands
 
                 // InitBlockchain
@@ -137,6 +142,14 @@ namespace CgCore
             SetCommand(ECgEthereumCommand.NewAccount, "personal.newAccount(%s)");
                 // UnlockAccount
             SetCommand(ECgEthereumCommand.UnlockAccount, "personal.unlockAccount(%s,%s,%s)");
+            {
+                CgStringParagraph p = CgStringParagraphHelper.CreateOneWordParagraph("true", ECgStringWordRule.MatchCase);
+
+                CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.UnlockAccount, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
+                e.AddEvent(OnCommandCompleted);
+
+                MonitorOutputEvents.Add(ECgEthereumCommand.UnlockAccount, e);
+            }
                 // ListAccounts
             SetCommand(ECgEthereumCommand.ListAccounts, "personal.listAccounts");
                 // StartMiner
@@ -284,44 +297,10 @@ namespace CgCore
             if (args != null && args.Length > EMPTY)
             {
                 // Create list of all string parts
-                List<string> parts = new List<string>();
-                parts.Add("");
-                int index = 0;
-
-                int commandLength = value.Length;
-
-                for (int i = 0; i < commandLength; ++i)
-                {
-                    char c = value[i];
-
-                    // Check for Wildcards
-                    if (c == '%')
-                    {
-                        // Check for type
-                        if (i < commandLength - 1)
-                        {
-                            char w = value[i + 1];
-
-                            if (w == 's')
-                            {
-                                parts.Add("");
-                                ++index;
-                                ++i;
-                            }
-                        }
-                        else
-                        {
-                            parts[index] += c;
-                        }
-                    }
-                    else
-                    {
-                        parts[index] += c;
-                    }
-                }
-
+                string[] parts = value.Split(new string[] { "%s" }, StringSplitOptions.None);
+                
                 // Add in arguments
-                if ((parts.Count - 1) == args.Length)
+                if ((parts.Length - 1) == args.Length)
                 {
                     value = "";
 
@@ -335,7 +314,7 @@ namespace CgCore
                 }
                 else
                 {
-                    UnityEngine.Debug.Log("CgEthereum.RunCommand: Failed to run command: " + command.Name + ". Wildcard count != Argument count (" + (parts.Count-1) + "," + args.Length + ")");
+                    UnityEngine.Debug.Log("CgEthereum.RunCommand: Failed to run command: " + command.Name + ". Wildcard count != Argument count (" + (parts.Length-1) + "," + args.Length + ")");
                 }
             }
             RunCommand(processType, value);
@@ -370,6 +349,11 @@ namespace CgCore
                 OnBoardState = ECgEthereumOnBoardState.Attach;
                 OnBoardStateFlag.SetEnd(ECgEthereumOnBoardState.Attach);
             }
+            // UnlockAccount
+            if (command == ECgEthereumCommand.UnlockAccount)
+            {
+
+            }
         }
 
         public void OnCommandCompleted(string name)
@@ -381,6 +365,10 @@ namespace CgCore
             else
             if (name == ECgEthereumCommand.AttachToConsole)
                 CommandCompleted_Event.Broadcast(ECgEthereumCommand.AttachToConsole);
+            // UnlockAccount
+            else
+            if (name == ECgEthereumCommand.UnlockAccount)
+                CommandCompleted_Event.Broadcast(ECgEthereumCommand.UnlockAccount);
         }
 
         public void OnProcessOutputRecieved(object sender, DataReceivedEventArgs e)
@@ -699,6 +687,8 @@ namespace CgCore
                 CgDebug.Log("CgEthereum.CreatePrivateChain: State Change: ECgEthereumOnBoardState.Attach -> ECgEthereumOnBoardState.AccountCreatedWorld.");
             }
 
+            // Unlock World Account
+
             // Check Game Account exists
 
             iaccount = null;
@@ -917,7 +907,7 @@ namespace CgCore
             CgBlockchainCommandArgument[] args = new CgBlockchainCommandArgument[1];
             args[0]                            = new CgBlockchainCommandArgument(ECgBlockchainCommandArgumentType.StringString, info.Passphrase);
 
-            CurrentCommandInfo = new CgBlockchainCommandInfo(ECgEthereumCommand.NewAccount, args, payload);
+            CurrentCommandInfo.Set(ECgEthereumCommand.NewAccount, args, payload);
 
             RunCommand(ECgBlockchainProcessType.Console, ECgEthereumCommand.NewAccount, args);
         }
@@ -1044,6 +1034,9 @@ namespace CgCore
             CgBlockchainCommandArgument[] args;
             account.CreateUnlockArguments(out args);
 
+            CurrentCommandInfo.Set(ECgEthereumCommand.NewAccount, args, payload);
+
+            AddMonitorOutputEvenToProcess(ECgBlockchainProcessType.Console, ECgEthereumCommand.UnlockAccount);
             RunCommand(ECgBlockchainProcessType.Console, ECgEthereumCommand.UnlockAccount, args);
         }
 

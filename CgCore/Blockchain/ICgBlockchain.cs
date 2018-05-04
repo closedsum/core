@@ -139,6 +139,13 @@
             Arguments = args;
             Payload = payload;
         }
+
+        public void Set(ECgBlockchainCommand command, CgBlockchainCommandArgument[] args = null, object payload = null)
+        {
+            Command = command;
+            Arguments = args;
+            Payload = payload;
+        }
     }
 
     public static class ICgBlockchainInterface

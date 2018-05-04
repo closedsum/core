@@ -262,6 +262,7 @@
 
         public class CommandCompleted : TCgMulticastDelegate_OneParam<ECgBlockchainCommand> { }
         public class AccountCreated : TCgMulticastDelegate_OneParam<ICgBlockchainAccount>{ }
+        public class CoinbaseSet : TCgDelegate_OneParam<ICgBlockchainAccount> { }
 
         #endregion // CVars
 
@@ -388,6 +389,7 @@
 
         public CommandCompleted CommandCompleted_Event;
         public AccountCreated AccountCreated_Event;
+        public CoinbaseSet CoinbaseSet_Event;
 
         #endregion // Data Members
 
@@ -406,6 +408,7 @@
 
             CommandCompleted_Event = new CommandCompleted();
             AccountCreated_Event = new AccountCreated();
+            CoinbaseSet_Event = new CoinbaseSet();
         }
 
         public static ICgBlockchain Get()

@@ -159,7 +159,7 @@ namespace CgCore
         public ECgEnum_uint(uint value, string name) : base(value, name) { }
     }
 
-    public class ECgEnumMap<EnumClass, EnumType> 
+    public class ECgEnumMap<EnumClass, EnumType>
         where EnumClass : TCgEnum<EnumType>
         where EnumType : struct, IConvertible
     {

@@ -48,6 +48,9 @@ namespace CgCore
         public static readonly ECgBlockchainCommand NewAccount = EMCgBlockchainCommand.Get().Create("NewAccount");
         public static readonly ECgBlockchainCommand UnlockAccount = EMCgBlockchainCommand.Get().Create("UnlockAccount");
         public static readonly ECgBlockchainCommand ListAccounts = EMCgBlockchainCommand.Get().Create("ListAccounts");
+        public static readonly ECgBlockchainCommand SetEtherbase = EMCgBlockchainCommand.Get().Create("SetEtherbase");
+        public static readonly ECgBlockchainCommand GetBalanceEther = EMCgBlockchainCommand.Get().Create("GetBalanceEther");
+        public static readonly ECgBlockchainCommand GetBalanceWei = EMCgBlockchainCommand.Get().Create("GetBalanceWei");
         public static readonly ECgBlockchainCommand StartMiner = EMCgBlockchainCommand.Get().Create("StartMiner");
         public static readonly ECgBlockchainCommand StopMiner = EMCgBlockchainCommand.Get().Create("StopMiner");
 
@@ -152,6 +155,16 @@ namespace CgCore
             }
                 // ListAccounts
             SetCommand(ECgEthereumCommand.ListAccounts, "personal.listAccounts");
+                // SetEtherbase
+            SetCommand(ECgEthereumCommand.SetEtherbase, "miner.setEtherbase(%s);");
+            {
+                CgStringParagraph p = CgStringParagraphHelper.CreateOneWordParagraph("true", ECgStringWordRule.MatchCase);
+
+                CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.SetEtherbase, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
+                e.AddEvent(OnCommandCompleted);
+
+                MonitorOutputEvents.Add(ECgEthereumCommand.SetEtherbase, e);
+            }
                 // StartMiner
             SetCommand(ECgEthereumCommand.StartMiner, "miner.start();");
             {
@@ -317,6 +330,11 @@ namespace CgCore
                     UnityEngine.Debug.Log("CgEthereum.RunCommand: Failed to run command: " + command.Name + ". Wildcard count != Argument count (" + (parts.Length-1) + "," + args.Length + ")");
                 }
             }
+
+            if (LogIO.Log())
+            {
+                CgDebug.Log("CgEthereum.RunCommand: Running command: " + command);
+            }
             RunCommand(processType, value);
         }
 
@@ -341,34 +359,45 @@ namespace CgCore
             if (command == ECgEthereumCommand.SetDataDirectory)
             {
                 OnBoardState = ECgEthereumOnBoardState.Start;
-                OnBoardStateFlag.SetEnd(ECgEthereumOnBoardState.Start);
+                OnBoardStateFlag.SetEnd(OnBoardState);
             }
             // AttachToConsole
             if (command == ECgEthereumCommand.AttachToConsole)
             {
                 OnBoardState = ECgEthereumOnBoardState.Attach;
-                OnBoardStateFlag.SetEnd(ECgEthereumOnBoardState.Attach);
+                OnBoardStateFlag.SetEnd(OnBoardState);
             }
             // UnlockAccount
             if (command == ECgEthereumCommand.UnlockAccount)
             {
+                // Get Nickname
+                string nickname = (string)CurrentCommandInfo.Payload;
 
+                // World
+                if (nickname == "World")
+                    OnBoardState = ECgEthereumOnBoardState.UnlockAccountWorld;
+                // Game
+                else
+                if (nickname == "Game")
+                    OnBoardState = ECgEthereumOnBoardState.UnlockAccountGame;
+                // Player
+                else
+                if (nickname == "Player")
+                    OnBoardState = ECgEthereumOnBoardState.UnlockAccountPlayer;
+
+                OnBoardStateFlag.SetEnd(OnBoardState);
+            }
+            // SetEtherbase
+            if (command == ECgEthereumCommand.SetEtherbase)
+            {
+                // Get Nickname
+                string nickname = (string)CurrentCommandInfo.Payload;
             }
         }
 
         public void OnCommandCompleted(string name)
         {
-            // SetDataDirectory
-            if (name == ECgEthereumCommand.SetDataDirectory)
-                CommandCompleted_Event.Broadcast(ECgEthereumCommand.SetDataDirectory);
-            // AttachToConsole
-            else
-            if (name == ECgEthereumCommand.AttachToConsole)
-                CommandCompleted_Event.Broadcast(ECgEthereumCommand.AttachToConsole);
-            // UnlockAccount
-            else
-            if (name == ECgEthereumCommand.UnlockAccount)
-                CommandCompleted_Event.Broadcast(ECgEthereumCommand.UnlockAccount);
+            CommandCompleted_Event.Broadcast(EMCgBlockchainCommand.Get()[name]);
         }
 
         public void OnProcessOutputRecieved(object sender, DataReceivedEventArgs e)
@@ -641,109 +670,159 @@ namespace CgCore
             yield return eth.OnBoardStateFlag;
 
             // Attach / Open Console
-
-            if (LogOnBoard.Log())
             {
-                CgDebug.Log("CgEthereum.CreatePrivateChain: State Change: ECgEthereumOnBoardState.Start -> ECgEthereumOnBoardState.Attach.");
+                if (LogOnBoard.Log())
+                {
+                    CgDebug.Log("CgEthereum.CreatePrivateChain: State Change: ECgEthereumOnBoardState.Start -> ECgEthereumOnBoardState.Attach.");
+                }
+
+                eth.OnBoardStateFlag.SetEnd(ECgEthereumOnBoardState.MAX);
+                eth.OnBoardStateFlag.SetStart(ECgEthereumOnBoardState.Attach);
+
+                eth.OpenConsole();
+
+                // Waittill OnBoardState == ECgEthereumOnBoardState.Attach
+                yield return eth.OnBoardStateFlag;
             }
-
-            eth.OnBoardStateFlag.SetEnd(ECgEthereumOnBoardState.MAX);
-            eth.OnBoardStateFlag.SetStart(ECgEthereumOnBoardState.Attach);
-
-            eth.OpenConsole();
-
-            // Waittill OnBoardState == ECgEthereumOnBoardState.Attach
-            yield return eth.OnBoardStateFlag;
-
             // Load Accounts
-
-            eth.LoadAccounts();
-
-            // Check World Account exists
-
-            ICgBlockchainAccount iaccount = null;
-
-            eth.Accounts.TryGetValue("World", out iaccount);
-
-            if (iaccount == null)
             {
-                eth.OnBoardStateFlag.SetEnd(ECgEthereumOnBoardState.MAX);
-                eth.OnBoardStateFlag.SetStart(ECgEthereumOnBoardState.AccountCreatedWorld);
+                eth.LoadAccounts();
 
-                CgEthereumNewAccountInfo info = new CgEthereumNewAccountInfo("World", "World");
+                // Check World Account exists
+                {
+                    ICgBlockchainAccount iaccount = null;
 
-                eth.NewAccount(info);
+                    eth.Accounts.TryGetValue("World", out iaccount);
 
-                // Waittill OnBoardState == ECgEthereumOnBoardState.AccountCreatedWorld
-                yield return eth.OnBoardStateFlag;
+                    if (iaccount == null)
+                    {
+                        eth.OnBoardStateFlag.SetEnd(ECgEthereumOnBoardState.MAX);
+                        eth.OnBoardStateFlag.SetStart(ECgEthereumOnBoardState.AccountCreatedWorld);
+
+                        CgEthereumNewAccountInfo info = new CgEthereumNewAccountInfo("World", "World");
+
+                        eth.NewAccount(info);
+
+                        // Waittill OnBoardState == ECgEthereumOnBoardState.AccountCreatedWorld
+                        yield return eth.OnBoardStateFlag;
+                    }
+                    else
+                    {
+                        eth.OnBoardState = ECgEthereumOnBoardState.AccountCreatedWorld;
+                    }
+
+                    if (LogOnBoard.Log())
+                    {
+                        CgDebug.Log("CgEthereum.CreatePrivateChain: State Change: ECgEthereumOnBoardState.Attach -> ECgEthereumOnBoardState.AccountCreatedWorld.");
+                    }
+                }
+                // Unlock World Account
+                {
+                    eth.OnBoardStateFlag.SetEnd(ECgEthereumOnBoardState.MAX);
+                    eth.OnBoardStateFlag.SetStart(ECgEthereumOnBoardState.UnlockAccountWorld);
+
+                    eth.UnlockAccount("World");
+
+                    // Waittill OnBoardState == ECgEthereumOnBoardState.UnlockAccountWorld
+                    yield return eth.OnBoardStateFlag;
+
+                    if (LogOnBoard.Log())
+                    {
+                        CgDebug.Log("CgEthereum.CreatePrivateChain: State Change: ECgEthereumOnBoardState.AccountCreatedWorld -> ECgEthereumOnBoardState.UnlockAccountWorld.");
+                    }
+                }
+                // Check Game Account exists
+                {
+                    ICgBlockchainAccount iaccount = null;
+
+                    eth.Accounts.TryGetValue("Game", out iaccount);
+
+                    if (iaccount == null)
+                    {
+                        eth.OnBoardStateFlag.SetEnd(ECgEthereumOnBoardState.MAX);
+                        eth.OnBoardStateFlag.SetStart(ECgEthereumOnBoardState.AccountCreatedGame);
+
+                        CgEthereumNewAccountInfo info = new CgEthereumNewAccountInfo("Game", "Game");
+
+                        eth.NewAccount(info);
+
+                        // Waittill OnBoardState == ECgEthereumOnBoardState.AccountCreatedGame
+                        yield return eth.OnBoardStateFlag;
+                    }
+                    else
+                    {
+                        eth.OnBoardState = ECgEthereumOnBoardState.AccountCreatedGame;
+                    }
+
+                    if (LogOnBoard.Log())
+                    {
+                        CgDebug.Log("CgEthereum.CreatePrivateChain: State Change: ECgEthereumOnBoardState.AccountCreatedWorld -> ECgEthereumOnBoardState.AccountCreatedGame.");
+                    }
+                }
+                // Unlock Game Account
+                {
+                    eth.OnBoardStateFlag.SetEnd(ECgEthereumOnBoardState.MAX);
+                    eth.OnBoardStateFlag.SetStart(ECgEthereumOnBoardState.UnlockAccountGame);
+
+                    eth.UnlockAccount("Game");
+
+                    // Waittill OnBoardState == ECgEthereumOnBoardState.UnlockAccountGame
+                    yield return eth.OnBoardStateFlag;
+
+                    if (LogOnBoard.Log())
+                    {
+                        CgDebug.Log("CgEthereum.CreatePrivateChain: State Change: ECgEthereumOnBoardState.AccountCreatedGame -> ECgEthereumOnBoardState.UnlockAccountGame.");
+                    }
+                }
+                // Check Player Account exists
+                {
+                    ICgBlockchainAccount iaccount = null;
+
+                    eth.Accounts.TryGetValue("Player", out iaccount);
+
+                    if (iaccount == null)
+                    {
+                        eth.OnBoardStateFlag.SetEnd(ECgEthereumOnBoardState.MAX);
+                        eth.OnBoardStateFlag.SetStart(ECgEthereumOnBoardState.AccountCreatedPlayer);
+
+                        CgEthereumNewAccountInfo info = new CgEthereumNewAccountInfo("Player", "Player");
+
+                        eth.NewAccount(info);
+
+                        // Waittill OnBoardState == ECgEthereumOnBoardState.AccountCreatedPlayer
+                        yield return eth.OnBoardStateFlag;
+                    }
+                    else
+                    {
+                        eth.OnBoardState = ECgEthereumOnBoardState.AccountCreatedPlayer;
+                    }
+
+                    if (LogOnBoard.Log())
+                    {
+                        CgDebug.Log("CgEthereum.CreatePrivateChain: State Change: ECgEthereumOnBoardState.AccountCreatedGame -> ECgEthereumOnBoardState.AccountCreatedPlayer.");
+                    }
+                }
+                // Unlock Player Account
+                {
+                    eth.OnBoardStateFlag.SetEnd(ECgEthereumOnBoardState.MAX);
+                    eth.OnBoardStateFlag.SetStart(ECgEthereumOnBoardState.UnlockAccountPlayer);
+
+                    eth.UnlockAccount("Player");
+
+                    // Waittill OnBoardState == ECgEthereumOnBoardState.UnlockAccountPlayer
+                    yield return eth.OnBoardStateFlag;
+
+                    if (LogOnBoard.Log())
+                    {
+                        CgDebug.Log("CgEthereum.CreatePrivateChain: State Change: ECgEthereumOnBoardState.AccountCreatedPlayer -> ECgEthereumOnBoardState.UnlockAccountPlayer.");
+                    }
+                }
+
+                {
+                    eth.SetCoinbase("World");
+                }
             }
-            else
-            {
-                eth.OnBoardState = ECgEthereumOnBoardState.AccountCreatedWorld;
-            }
-
-            if (LogOnBoard.Log())
-            {
-                CgDebug.Log("CgEthereum.CreatePrivateChain: State Change: ECgEthereumOnBoardState.Attach -> ECgEthereumOnBoardState.AccountCreatedWorld.");
-            }
-
-            // Unlock World Account
-
-            // Check Game Account exists
-
-            iaccount = null;
-
-            eth.Accounts.TryGetValue("Game", out iaccount);
-
-            if (iaccount == null)
-            {
-                eth.OnBoardStateFlag.SetEnd(ECgEthereumOnBoardState.MAX);
-                eth.OnBoardStateFlag.SetStart(ECgEthereumOnBoardState.AccountCreatedGame);
-
-                CgEthereumNewAccountInfo info = new CgEthereumNewAccountInfo("Game", "Game");
-
-                eth.NewAccount(info);
-
-                // Waittill OnBoardState == ECgEthereumOnBoardState.AccountCreatedGame
-                yield return eth.OnBoardStateFlag;
-            }
-            else
-            {
-                eth.OnBoardState = ECgEthereumOnBoardState.AccountCreatedGame;
-            }
-
-            if (LogOnBoard.Log())
-            {
-                CgDebug.Log("CgEthereum.CreatePrivateChain: State Change: ECgEthereumOnBoardState.AccountCreatedWorld -> ECgEthereumOnBoardState.AccountCreatedGame.");
-            }
-
-            // Check Player Account exists
-
-            iaccount = null;
-
-            eth.Accounts.TryGetValue("Player", out iaccount);
-
-            if (iaccount == null)
-            {
-                eth.OnBoardStateFlag.SetEnd(ECgEthereumOnBoardState.MAX);
-                eth.OnBoardStateFlag.SetStart(ECgEthereumOnBoardState.AccountCreatedPlayer);
-
-                CgEthereumNewAccountInfo info = new CgEthereumNewAccountInfo("Player", "Player");
-
-                eth.NewAccount(info);
-
-                // Waittill OnBoardState == ECgEthereumOnBoardState.AccountCreatedPlayer
-                yield return eth.OnBoardStateFlag;
-            }
-            else
-            {
-                eth.OnBoardState = ECgEthereumOnBoardState.AccountCreatedPlayer;
-            }
-
-            if (LogOnBoard.Log())
-            {
-                CgDebug.Log("CgEthereum.CreatePrivateChain: State Change: ECgEthereumOnBoardState.AccountCreatedGame -> ECgEthereumOnBoardState.AccountCreatedPlayer.");
-            }
+            // Check World Balance
 
             /*
             // Load Accounts, if any
@@ -1023,7 +1102,7 @@ namespace CgCore
             ICgBlockchainAccount iaccount;
             Accounts.TryGetValue(nickname, out iaccount);
 
-            if (iaccount != null)
+            if (iaccount == null)
             {
                 UnityEngine.Debug.LogWarning("CgEthereum.UnlockAccount: Account with Nickname: " + nickname + " does NOT exist.");
                 return;
@@ -1043,6 +1122,22 @@ namespace CgCore
         public override void ListAccounts()
         {
             RunCommand(ECgBlockchainProcessType.Console, ECgEthereumCommand.ListAccounts, null);
+        }
+
+        public void SetCoinbase(object payload)
+        {
+            // payload = nickname
+            string nickname           = (string)payload;
+            CgEthereumAccount account = (CgEthereumAccount)Accounts[nickname];
+
+            CgBlockchainCommandArgument[] args = new CgBlockchainCommandArgument[1];
+            args[0].Value                      = account.Address;
+            args[0].ValueType                  = ECgBlockchainCommandArgumentType.StringString;
+
+            CurrentCommandInfo.Set(ECgEthereumCommand.SetEtherbase, args, payload);
+
+            AddMonitorOutputEvenToProcess(ECgBlockchainProcessType.Console, ECgEthereumCommand.SetEtherbase);
+            RunCommand(ECgBlockchainProcessType.Console, ECgEthereumCommand.SetEtherbase, args);
         }
 
         #endregion // Account

@@ -338,7 +338,6 @@ namespace CgCore
             // AttachToConsole
             if (command == ECgEthereumCommand.AttachToConsole)
             {
-                ConsoleOpened_Event.Broadcast(SINGLE_NODE_INDEX);
             }
             // UnlockAccount
             if (command == ECgEthereumCommand.UnlockAccount)
@@ -556,6 +555,8 @@ namespace CgCore
             if (IsRunningInstanceOpen)
                 return;
 
+            CommandFlag.Set(false);
+
             ECgBlockchainCommand command = ECgEthereumCommand.SetDataDirectory;
 
             CgBlockchainProcessStartInfo startInfo = new CgBlockchainProcessStartInfo();
@@ -587,6 +588,8 @@ namespace CgCore
             // Create Accounts Directory
             if (!Directory.Exists(AccountsDirectory))
                 Directory.CreateDirectory(AccountsDirectory);
+
+            CommandFlag.Set(false);
 
             // Init
             IsRunningInstanceOpen = true;
@@ -639,19 +642,31 @@ namespace CgCore
             if (IsConsoleOpen)
                 return;
 
+            IsConsoleOpen = true;
+
+            CommandFlag.Set(false);
+
+            CgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, OpenConsole_Internal(this));
+        }
+
+        public static IEnumerator OpenConsole_Internal(CgEthereum eth)
+        {
             ECgBlockchainCommand command = ECgEthereumCommand.AttachToConsole;
 
             CgBlockchainProcessStartInfo startInfo = new CgBlockchainProcessStartInfo();
-            startInfo.FileName              = ConsoleFullPath;
-            startInfo.Arguments             = Commands[command];
+            startInfo.FileName              = eth.ConsoleFullPath;
+            startInfo.Arguments             = eth.Commands[command];
             startInfo.RedirectStandardInput = true;
-            startInfo.AddMonitorOutputEvent(MonitorOutputEvents[command]);
+            startInfo.AddMonitorOutputEvent(eth.MonitorOutputEvents[command]);
 
             ECgBlockchainProcessType processType = ECgBlockchainProcessType.Console;
 
-            StartProcess(processType, SINGLE_NODE_INDEX, startInfo);
+            eth.StartProcess(processType, SINGLE_NODE_INDEX, startInfo);
 
-            IsConsoleOpen = true;
+            // Waittill Console has opened
+            yield return eth.CommandFlag;
+
+            eth.ConsoleOpened_Event.Broadcast(SINGLE_NODE_INDEX);
         }
 
         public override void CloseConsole()

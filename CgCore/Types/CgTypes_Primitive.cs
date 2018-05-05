@@ -252,6 +252,11 @@ namespace CgCore
                 return e;
             }
         }
+
+        public bool IsValidEnum(EnumClass e)
+        {
+            return Enums.Find(em => em == e) != null;
+        }
     }
 
     public class ECgEnumMaskMap<EnumClass, EnumType>

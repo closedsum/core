@@ -62,25 +62,30 @@ namespace CgCore
         // Account
         public static CgConsoleVariableLog LogAccountLoad = new CgConsoleVariableLog("log.blockchain.account.load", false, "Log Blockchain (Ethereum) when Accounts get loaded", (int)ECgConsoleVariableFlag.Console);
 
+        public static CgConsoleVariableLog LogAccountSetup = new CgConsoleVariableLog("log.blockchain.account.setup", false, "Log Blockchain (Ethereum) Account Setup", (int)ECgConsoleVariableFlag.Console);
+
         #region "Data Members"
 
         public string ConsoleFullPath;
         public string GenesisFilePath;
         public string KeystoreDirectory;
 
-        Dictionary<string, CgEthereumKeystore> Keystores;
+        protected Dictionary<string, CgEthereumKeystore> Keystores;
 
         public CgRoutine.BoolType IsRunningInstanceCloseFlag;
 
-        Dictionary<ECgBlockchainCommand, CgProcessMonitorOutputEvent> MonitorOutputEvents;
+        protected Dictionary<ECgBlockchainCommand, CgProcessMonitorOutputEvent> MonitorOutputEvents;
 
-        CgBlockchainCommandInfo CurrentCommandInfo;
+        protected CgBlockchainCommandInfo CurrentCommandInfo;
+        protected object CurrentCommandOuput;
 
         // TODO: Move into SgEthereum
 
         ECgEthereumOnBoardState OnBoardState;
         TCgFlagType<ECgEthereumOnBoardState> OnBoardStateFlag;
 
+        private CgRoutine.BoolType CommandFlag;
+        private CgRoutine.BoolType SetupAccountFlag;
 
         #endregion // Data Members
 
@@ -165,29 +170,36 @@ namespace CgCore
 
                 MonitorOutputEvents.Add(ECgEthereumCommand.SetEtherbase, e);
             }
+                // GetBalanceEther
+            SetCommand(ECgEthereumCommand.GetBalanceEther, "web3.fromWei(eth.getBalance(%s))");
                 // StartMiner
             SetCommand(ECgEthereumCommand.StartMiner, "miner.start();");
             {
-                /*
-                CgBlockchainCommandRequest request = new CgBlockchainCommandRequest(ECgEthereumCommand.StartMiner, null);
-                request.AddFulfillment(ECgBlockchainCommandFulfillmentRule.None, "");
-                request.Completed_Event.Add(OnCommandCompleted);
-                CommandRequests[ECgBlockchainProcessType.Console].Add(ECgEthereumCommand.StartMiner, request);
-                */
+                CgStringParagraph p = CgStringParagraphHelper.CreateOneWordParagraph("null", ECgStringWordRule.MatchCase);
+
+                CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.StartMiner, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
+                e.AddEvent(OnCommandCompleted);
+
+                MonitorOutputEvents.Add(ECgEthereumCommand.StartMiner, e);
             }
                 // StopMiner
             SetCommand(ECgEthereumCommand.StopMiner, "miner.stop();");
             {
-                /*
-                CgBlockchainCommandRequest request = new CgBlockchainCommandRequest(ECgEthereumCommand.StopMiner, null);
-                request.AddFulfillment(ECgBlockchainCommandFulfillmentRule.None, "");
-                request.Completed_Event.Add(OnCommandCompleted);
-                CommandRequests[ECgBlockchainProcessType.Console].Add(ECgEthereumCommand.StopMiner, request);
-                */
+                CgStringParagraph p = CgStringParagraphHelper.CreateOneWordParagraph("true", ECgStringWordRule.MatchCase);
+
+                CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.StopMiner, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
+                e.AddEvent(OnCommandCompleted);
+
+                MonitorOutputEvents.Add(ECgEthereumCommand.StopMiner, e);
             }
 
             OnBoardState = ECgEthereumOnBoardState.Init;
             OnBoardStateFlag = new TCgFlagType<ECgEthereumOnBoardState>(ECgEthereumOnBoardState.Init, ECgEthereumOnBoardState.MAX);
+
+            CommandFlag = new CgRoutine.BoolType();
+            CommandFlag.Set(false);
+            SetupAccountFlag = new CgRoutine.BoolType();
+            SetupAccountFlag.Set(false);
 
             CommandCompleted_Event.Add(OnCommandCompleted);
             AccountCreated_Event.Add(OnAccountCreated);
@@ -393,6 +405,11 @@ namespace CgCore
                 // Get Nickname
                 string nickname = (string)CurrentCommandInfo.Payload;
             }
+            // GetBalanceEther
+            if (command == ECgEthereumCommand.GetBalanceEther)
+            {
+            }
+            CommandFlag.Set(true);
         }
 
         public void OnCommandCompleted(string name)
@@ -475,6 +492,18 @@ namespace CgCore
                     CreateKeystore(a);
 
                     AccountCreated_Event.Broadcast(a);
+                    CommandCompleted_Event.Broadcast(command);
+                }
+            }
+            // GetBalanceEther
+            if (command == ECgEthereumCommand.GetBalanceEther)
+            {
+                int balance;
+
+                if (Int32.TryParse(output, out balance))
+                {
+                    CurrentCommandOuput = balance;
+
                     CommandCompleted_Event.Broadcast(command);
                 }
             }
@@ -684,7 +713,12 @@ namespace CgCore
                 // Waittill OnBoardState == ECgEthereumOnBoardState.Attach
                 yield return eth.OnBoardStateFlag;
             }
+
+            eth.LoadAccounts();
+
+            eth.SetupAccount("World");
             // Load Accounts
+            /*
             {
                 eth.LoadAccounts();
 
@@ -819,9 +853,22 @@ namespace CgCore
                 }
 
                 {
+                    //eth.SetCoinbase("World");
+                    eth.GetBalanceEther("World");
+                    yield return 2.0f;
                     eth.SetCoinbase("World");
+                    yield return 2.0f;
+                    eth.StartMiner();
+
+                    yield return 4.0f;
+
+                    eth.StopMiner();
+
+                    yield return 2.0f;
+                    eth.GetBalanceEther("World");
                 }
             }
+            */
             // Check World Balance
 
             /*
@@ -983,6 +1030,8 @@ namespace CgCore
                 return;
             }
 
+            CommandFlag.Set(false);
+
             CgBlockchainCommandArgument[] args = new CgBlockchainCommandArgument[1];
             args[0]                            = new CgBlockchainCommandArgument(ECgBlockchainCommandArgumentType.StringString, info.Passphrase);
 
@@ -1108,6 +1157,8 @@ namespace CgCore
                 return;
             }
 
+            CommandFlag.Set(false);
+
             CgEthereumAccount account = (CgEthereumAccount)iaccount;
 
             CgBlockchainCommandArgument[] args;
@@ -1126,6 +1177,8 @@ namespace CgCore
 
         public void SetCoinbase(object payload)
         {
+            CommandFlag.Set(false);
+
             // payload = nickname
             string nickname           = (string)payload;
             CgEthereumAccount account = (CgEthereumAccount)Accounts[nickname];
@@ -1140,15 +1193,168 @@ namespace CgCore
             RunCommand(ECgBlockchainProcessType.Console, ECgEthereumCommand.SetEtherbase, args);
         }
 
+        // public void GetBalance(object payload)
+
+        public void GetBalanceEther(string nickname)
+        {
+            CommandFlag.Set(false);
+
+            CgEthereumAccount account = (CgEthereumAccount)Accounts[nickname];
+
+            CgBlockchainCommandArgument[] args = new CgBlockchainCommandArgument[1];
+            args[0].Value                      = account.Address;
+            args[0].ValueType                  = ECgBlockchainCommandArgumentType.StringString;
+            
+            CurrentCommandInfo.Set(ECgEthereumCommand.GetBalanceEther, args, nickname);
+            CurrentCommandOuput = null;
+
+            //AddMonitorOutputEvenToProcess(ECgBlockchainProcessType.Console, ECgEthereumCommand.GetBalanceEther);
+            RunCommand(ECgBlockchainProcessType.Console, ECgEthereumCommand.GetBalanceEther, args);
+        }
+
+        public void SetupAccount(string nickname)
+        {
+            SetupAccountFlag.Set(false);
+            CgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, SetupAccount_Internal(this, nickname));
+        }
+
+        public static IEnumerator SetupAccount_Internal(CgEthereum eth, string nickname)
+        {
+            // Check Account exists
+            {
+                ICgBlockchainAccount iaccount;
+
+                if (!eth.Accounts.TryGetValue(nickname, out iaccount))
+                {
+                    CgEthereumNewAccountInfo info = new CgEthereumNewAccountInfo(nickname, nickname);
+
+                    eth.NewAccount(info);
+
+                    // Waittill NewAccount command has completed
+                    yield return eth.CommandFlag;
+
+                    if (LogAccountSetup.Log())
+                    {
+                        CgDebug.Log("CgEthereum.SetupAccount: Created Account for: " + nickname);
+                    }
+                }
+            }
+            // Unlock Account
+            {
+                eth.UnlockAccount(nickname);
+
+                // Waittill UnlockAccount command has completed
+                yield return eth.CommandFlag;
+
+                if (LogAccountSetup.Log())
+                {
+                    CgEthereumAccount account = (CgEthereumAccount)eth.Accounts[nickname];
+
+                    CgDebug.Log("CgEthereum.SetupAccount: Unlocked Account (" + nickname + "): " + account.Address);
+                }
+            }
+            // Check Balance is above Threshold
+            {
+                eth.GetBalanceEther(nickname);
+
+                // Waittill GetBalanceEther command has completed
+                yield return eth.CommandFlag;
+
+                // If the balance is below the threshold, Start Mining
+                int balance = (int)eth.CurrentCommandOuput;
+                int threshold = 20;
+                
+                if (balance < threshold)
+                {
+                    // Set Coinbase
+                    eth.SetCoinbase(nickname);
+
+                    // Waittill SetEtherbase command has completed
+                    yield return eth.CommandFlag;
+
+                    if (LogAccountSetup.Log())
+                    {
+                        CgEthereumAccount account = (CgEthereumAccount)eth.Accounts[nickname];
+
+                        CgDebug.Log("CgEthereum.SetupAccount: Setting Account (" + nickname + "): " + account.Address + " as coinbase.");
+                    }
+
+                    // Start Mining
+                    eth.StartMiner();
+
+                    // Waittill StartMiner command has completed
+                    yield return eth.CommandFlag;
+
+                    if (LogAccountSetup.Log())
+                    {
+                        CgEthereumAccount account = (CgEthereumAccount)eth.Accounts[nickname];
+
+                        CgDebug.Log("CgEthereum.SetupAccount: Account (" + nickname + "): " + account.Address + " balance is: " + balance + " < " + threshold + ". Start mining.");
+                    }
+
+                    float interval = 0.5f;
+
+                    while (balance < threshold)
+                    {
+                        yield return interval;
+
+                        // Check Balance
+                        eth.GetBalanceEther(nickname);
+
+                        // Waittill GetBalanceEther command has completed
+                        yield return eth.CommandFlag;
+
+                        // If the balance is below the threshold, Start Mining
+                        balance = (int)eth.CurrentCommandOuput;
+
+                        if (LogAccountSetup.Log())
+                        {
+                            CgEthereumAccount account = (CgEthereumAccount)eth.Accounts[nickname];
+
+                            CgDebug.Log("CgEthereum.SetupAccount: Account (" + nickname + "): " + account.Address + " balance is: " + balance);
+                        }
+                    }
+
+                    // Stop Mining
+                    eth.StopMiner();
+
+                    // Waittill StopMiner command has completed
+                    yield return eth.CommandFlag;
+
+                    if (LogAccountSetup.Log())
+                    {
+                        CgEthereumAccount account = (CgEthereumAccount)eth.Accounts[nickname];
+
+                        CgDebug.Log("CgEthereum.SetupAccount: Finished mining.");
+                    }
+                }
+                // Finish
+                else
+                {
+                    if (LogAccountSetup.Log())
+                    {
+                        CgEthereumAccount account = (CgEthereumAccount)eth.Accounts[nickname];
+
+                        CgDebug.Log("CgEthereum.SetupAccount: Finished setup for Account (" + nickname + "): " + account.Address);
+                    }
+                }
+            }
+            eth.SetupAccountFlag.Set(true);
+        }
+
         #endregion // Account
 
         public override void StartMiner()
         {
             if (IsMining)
                 return;
-            //if (!IsConsoleOpen)
-            //   OpenConsole();
-            //RunCommand(ECgBlockchainProcessType.Console,"personal.listAccounts");
+
+            CommandFlag.Set(false);
+
+            CurrentCommandInfo.Set(ECgEthereumCommand.StartMiner, null, null);
+            CurrentCommandOuput = null;
+
+            AddMonitorOutputEvenToProcess(ECgBlockchainProcessType.Console, ECgEthereumCommand.StartMiner);
             RunCommand(ECgBlockchainProcessType.Console, ECgEthereumCommand.StartMiner, null);
             IsMining = true;
         }
@@ -1158,6 +1364,12 @@ namespace CgCore
             if (!IsMining)
                 return;
 
+            CommandFlag.Set(false);
+
+            CurrentCommandInfo.Set(ECgEthereumCommand.StopMiner, null, null);
+            CurrentCommandOuput = null;
+
+            AddMonitorOutputEvenToProcess(ECgBlockchainProcessType.Console, ECgEthereumCommand.StopMiner);
             RunCommand(ECgBlockchainProcessType.Console, ECgEthereumCommand.StopMiner, null);
 
             IsMining = false;

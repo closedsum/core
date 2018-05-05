@@ -1,6 +1,15 @@
 ﻿namespace CgCore
 {
+    using System;
     using System.Collections.Generic;
+
+    public enum ECgStringEscapeType : byte
+    {
+        Int,
+        Float,
+        String,
+        MAX
+    }
 
     public enum ECgStringWordRule : byte
     {
@@ -11,15 +20,26 @@
 
     public struct CgStringWordInfo
     {
+        private static readonly string ESCAPE_INT = "%d";
+        private static readonly string ESCAPE_FLOAT = "%f";
+
         private string Value;
         private ECgStringWordRule Rule;
         private string Altered;
+        private ECgStringEscapeType EscapeType;
 
         public CgStringWordInfo(string val, ECgStringWordRule rule)
         {
             Value = val;
             Rule = rule;
             Altered = Rule == ECgStringWordRule.Lower ? Value.ToLower() : Value;
+            EscapeType = ECgStringEscapeType.MAX;
+
+            if (Value == ESCAPE_INT)
+                EscapeType = ECgStringEscapeType.Int;
+            else
+            if (Value == ESCAPE_FLOAT)
+                EscapeType = ECgStringEscapeType.Float;
         }
 
         public static implicit operator string(CgStringWordInfo w)
@@ -77,6 +97,16 @@
 
         public bool IsContainedBy(string s)
         {
+            if (EscapeType == ECgStringEscapeType.Int)
+            {
+                int result;
+                return Int32.TryParse(s, out result);
+            }
+            if (EscapeType == ECgStringEscapeType.Float)
+            {
+                decimal result;
+                return Decimal.TryParse(s, out result);
+            }
             if (Rule == ECgStringWordRule.MatchCase)
                 return s.Contains(Value);
             if (Rule == ECgStringWordRule.Lower)

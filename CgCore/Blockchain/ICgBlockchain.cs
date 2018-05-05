@@ -214,13 +214,13 @@
         void Shutdown();
 
         void SetCommand(ECgBlockchainCommand command, string str);
-        void RunCommand(ECgBlockchainProcessType processType, string command);
-        void RunCommand(ECgBlockchainProcessType processType, ECgBlockchainCommand command, CgBlockchainCommandArgument[] args = null);
+        void RunCommand(int consoleIndex, string command);
+        void RunCommand(int consoleIndex, ECgBlockchainCommand command, CgBlockchainCommandArgument[] args = null);
 
-        void SetProcess(ECgBlockchainProcessType processType, CgProcess p);
-        CgProcess GetProcess(ECgBlockchainProcessType processType);
-        void StartProcess(ECgBlockchainProcessType processType, CgBlockchainProcessStartInfo startInfo);
-        void StopProcess(ECgBlockchainProcessType processType);
+        void SetProcess(ECgBlockchainProcessType processType, int index, CgProcess p);
+        CgProcess GetProcess(ECgBlockchainProcessType processType, int index);
+        void StartProcess(ECgBlockchainProcessType processType, int index, CgBlockchainProcessStartInfo startInfo);
+        void StopProcess(ECgBlockchainProcessType processType, int index);
 
         void OpenRunningInstance();
         /* Setup chaindata and genesis.json for private chain */
@@ -270,6 +270,8 @@
 
         protected static readonly int EMPTY = 0;
         protected static readonly string INVALID_COMMAND = "";
+        protected static readonly int SINGLE_NODE_CONSOLE_INDEX = 0;
+        protected static readonly string EMPTY_PATH = "";
 
         #endregion // Constants
 
@@ -440,13 +442,13 @@
         public abstract void Rebuild();
 
         public abstract void SetCommand(ECgBlockchainCommand command, string str);
-        public abstract void RunCommand(ECgBlockchainProcessType processType, string command);
-        public abstract void RunCommand(ECgBlockchainProcessType processType, ECgBlockchainCommand command, CgBlockchainCommandArgument[] args = null);
+        public abstract void RunCommand(int consoleIndex, string command);
+        public abstract void RunCommand(int consoleIndex, ECgBlockchainCommand command, CgBlockchainCommandArgument[] args = null);
 
-        public abstract void SetProcess(ECgBlockchainProcessType processType, CgProcess p);
-        public abstract CgProcess GetProcess(ECgBlockchainProcessType processType);
-        public abstract void StartProcess(ECgBlockchainProcessType processType, CgBlockchainProcessStartInfo startInfo);
-        public abstract void StopProcess(ECgBlockchainProcessType processType);
+        public abstract void SetProcess(ECgBlockchainProcessType processType, int index, CgProcess p);
+        public abstract CgProcess GetProcess(ECgBlockchainProcessType processType, int index);
+        public abstract void StartProcess(ECgBlockchainProcessType processType, int index, CgBlockchainProcessStartInfo startInfo);
+        public abstract void StopProcess(ECgBlockchainProcessType processType, int index);
 
         public abstract void OpenRunningInstance();
         public abstract void CreatePrivateChain();

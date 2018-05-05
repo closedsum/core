@@ -93,7 +93,7 @@ namespace CgCore
         {
             Genesis = new CgEthereumGenesis();
 
-            StorageType = ECgBlockchainStorageType.Private;
+            StorageType = ECgBlockchainType.PrivateSingleNode;
 
             ConsoleFilename = "geth.exe";
             string path = Application.dataPath;

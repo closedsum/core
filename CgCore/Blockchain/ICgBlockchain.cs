@@ -5,9 +5,9 @@
     using System.Diagnostics;
     using System.Reflection;
 
-    public enum ECgBlockchainStorageType : byte
+    public enum ECgBlockchainType : byte
     {
-        Private,
+        PrivateSingleNode,
         Local,
         Server,
         MAX
@@ -175,7 +175,7 @@
     {
         #region "Data Members"
 
-        ECgBlockchainStorageType StorageType { get; set; }
+        ECgBlockchainType StorageType { get; set; }
 
             #region "Private / Local Storage"
 
@@ -277,8 +277,8 @@
 
             #region "Interface"
 
-        private ECgBlockchainStorageType _StorageType;
-        public ECgBlockchainStorageType StorageType
+        private ECgBlockchainType _StorageType;
+        public ECgBlockchainType StorageType
         {
             get { return _StorageType; }
             set { _StorageType = value; }

@@ -213,6 +213,8 @@
 
         void Shutdown();
 
+        void Start();
+
         void SetCommand(ECgBlockchainCommand command, string str);
         void RunCommand(int consoleIndex, string command);
         void RunCommand(int consoleIndex, ECgBlockchainCommand command, CgBlockchainCommandArgument[] args = null);
@@ -254,23 +256,25 @@
 
         public static CgConsoleVariableLog LogIO = new CgConsoleVariableLog("log.blockchain.io", false, "Log Blockchain Input / Output Messages", (int)ECgConsoleVariableFlag.Console);
         public static TCgConsoleVariable<bool> ShowProcessWindow = new TCgConsoleVariable<bool>("show.blockchain.processwindow", false, "Show Blockchain Process Window", (int)ECgConsoleVariableFlag.Console);
-        public static CgConsoleVariableLog LogOnBoard = new CgConsoleVariableLog("log.blockchain.onboard", false, "Log Blockchain OnBoard Process", (int)ECgConsoleVariableFlag.Console);
         // Command
         public static CgConsoleVariableLog LogCommandCompleted = new CgConsoleVariableLog("log.blockchain.command.completed", false, "Log Blockchain Command Completed", (int)ECgConsoleVariableFlag.Console);
         // Account
         public static CgConsoleVariableLog LogAccountCreated = new CgConsoleVariableLog("log.blockchain.account.created", false, "Log Blockchain Account Created", (int)ECgConsoleVariableFlag.Console);
+        
+        #endregion // CVars
 
+        public class PrivateChainCreated : TCgMulticastDelegate_OneParam<int> { }
+        public class PrivateChainStarted : TCgMulticastDelegate_OneParam<int> { }
+        public class ConsoleOpened : TCgMulticastDelegate_OneParam<int> { }
         public class CommandCompleted : TCgMulticastDelegate_OneParam<ECgBlockchainCommand> { }
         public class AccountCreated : TCgMulticastDelegate_OneParam<ICgBlockchainAccount>{ }
         public class CoinbaseSet : TCgDelegate_OneParam<ICgBlockchainAccount> { }
-
-        #endregion // CVars
 
         #region "Constants"
 
         protected static readonly int EMPTY = 0;
         protected static readonly string INVALID_COMMAND = "";
-        protected static readonly int SINGLE_NODE_CONSOLE_INDEX = 0;
+        protected static readonly int SINGLE_NODE_INDEX = 0;
         protected static readonly string EMPTY_PATH = "";
 
         #endregion // Constants
@@ -389,6 +393,9 @@
 
         private static ICgBlockchain _Instance;
 
+        public PrivateChainCreated PrivateChainCreated_Event;
+        public PrivateChainStarted PrivateChainStarted_Event;
+        public ConsoleOpened ConsoleOpened_Event;
         public CommandCompleted CommandCompleted_Event;
         public AccountCreated AccountCreated_Event;
         public CoinbaseSet CoinbaseSet_Event;
@@ -408,6 +415,9 @@
             
             Accounts = new Dictionary<string, ICgBlockchainAccount>();
 
+            PrivateChainCreated_Event = new PrivateChainCreated();
+            PrivateChainStarted_Event = new PrivateChainStarted();
+            ConsoleOpened_Event = new ConsoleOpened();
             CommandCompleted_Event = new CommandCompleted();
             AccountCreated_Event = new AccountCreated();
             CoinbaseSet_Event = new CoinbaseSet();
@@ -439,6 +449,8 @@
 
         public abstract void Shutdown();
 
+        public abstract void Start();
+
         public abstract void Rebuild();
 
         public abstract void SetCommand(ECgBlockchainCommand command, string str);
@@ -469,5 +481,4 @@
         public abstract void StartMiner();
         public abstract void StopMiner();
     }
-
 }

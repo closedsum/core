@@ -7,7 +7,9 @@
 
     using System.Collections.Generic;
 
-    public sealed class CgEthereumABIData
+    // TODO: Need a custom read/write to json
+    [Serializable]
+    public sealed class CgEthereumABI
     {
         public bool constant;
         public List<string> inputs;
@@ -16,17 +18,25 @@
         public bool payable;
         public string stateMutability;
         public string type;
+
+        public CgEthereumABI()
+        {
+            inputs = new List<string>();
+            outputs = new List<string>();
+        }
     }
 
     [Serializable]
     public sealed class CgEthereumContract : CgBlockchainContract
     {
+        public List<CgEthereumABI> ABI;
         public string Address;
         public string ContractVariableName;
         public string InstanceVariableName;
 
         public CgEthereumContract(string name) : base(name)
         {
+            ABI = new List<CgEthereumABI>();
             Address = "";
             ContractVariableName = name.ToLower() + "Contract";
             InstanceVariableName = name.ToLower() + "Instance";
@@ -56,13 +66,13 @@
 
     public struct CgEthereumWeb3DeployLink
     {
-        public string ContractName;
-        public string LinkName;
+        public readonly ECgBlockchainContract Contract;
+        public readonly string Link;
 
-        public CgEthereumWeb3DeployLink(string contract, string link)
+        public CgEthereumWeb3DeployLink(ECgBlockchainContract contract, string link)
         {
-            ContractName = contract;
-            LinkName = link;
+            Contract = contract;
+            Link = link;
         }
     }
 }

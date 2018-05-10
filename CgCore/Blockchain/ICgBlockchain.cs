@@ -148,6 +148,45 @@
         }
     }
 
+    public sealed class ECgBlockchainContract : ECgEnum_byte
+    {
+        public ECgBlockchainContract(byte value, string name) : base(value, name) { }
+    }
+
+    public sealed class ECgBlockchainContractEqualityComparer : IEqualityComparer<ECgBlockchainContract>
+    {
+        public bool Equals(ECgBlockchainContract lhs, ECgBlockchainContract rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(ECgBlockchainContract x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
+    public class EMCgBlockchainContract : ECgEnumMap<ECgBlockchainContract, byte>
+    {
+        private static EMCgBlockchainContract _Instance;
+        public static EMCgBlockchainContract Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = new EMCgBlockchainContract();
+                }
+                return _Instance;
+            }
+        }
+
+        public static EMCgBlockchainContract Get()
+        {
+            return Instance;
+        }
+    }
+
     public static class ICgBlockchainInterface
     {
         public static void Init(Type type)
@@ -205,7 +244,7 @@
             #endregion // Private / Local Storage
 
         ICgBlockchainGenesis Genesis { get; set; }
-        Dictionary<string, ICgBlockchainContract> Contracts { get; set; }
+        Dictionary<ECgBlockchainContract, ICgBlockchainContract> Contracts { get; set; }
         Dictionary<ECgBlockchainCommand, string> Commands { get; set; }
 
         Dictionary<string, ICgBlockchainAccount> Accounts { get; set; }
@@ -378,8 +417,8 @@
             set { _Genesis = value; }
         }
 
-        private Dictionary<string, ICgBlockchainContract> _Contracts;
-        public Dictionary<string, ICgBlockchainContract> Contracts
+        private Dictionary<ECgBlockchainContract, ICgBlockchainContract> _Contracts;
+        public Dictionary<ECgBlockchainContract, ICgBlockchainContract> Contracts
         {
             get { return _Contracts; }
             set { _Contracts = value; }
@@ -421,7 +460,7 @@
                 Processes.Add((ECgBlockchainProcessType)i, null);
             }
 
-            Contracts = new Dictionary<string, ICgBlockchainContract>();
+            Contracts = new Dictionary<ECgBlockchainContract, ICgBlockchainContract>();
             Commands = new Dictionary<ECgBlockchainCommand, string>(new ECgBlockchainCommandEqualityComparer());
             
             Accounts = new Dictionary<string, ICgBlockchainAccount>();

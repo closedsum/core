@@ -21,6 +21,7 @@
         }
     }
 
+
     public interface ICgBlockchainContract
     {
         string Name { get; set; }

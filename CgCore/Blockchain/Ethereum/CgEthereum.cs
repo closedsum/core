@@ -59,13 +59,15 @@ namespace CgCore
         protected Dictionary<string, CgEthereumKeystore> Keystores;
 
         public string ABIDirectory;
-        protected Dictionary<string, string> ABISnippets;
+        protected Dictionary<ECgBlockchainContract, string> ABISnippets;
 
         public string Web3DeployDirectory;
-        protected Dictionary<string, string> Web3DeploySnippets;
+        protected Dictionary<ECgBlockchainContract, string> Web3DeploySnippets;
 
         public string Web3DeployLinkedDirectory;
-        protected Dictionary<string, string> Web3DeployLinkedSnippets;
+        protected Dictionary<ECgBlockchainContract, string> Web3DeployLinkedSnippets;
+
+        protected Dictionary<ECgBlockchainContract, List<CgEthereumWeb3DeployLink>> Web3DeployLinks;
 
         public CgRoutine.BoolType IsRunningInstanceCloseFlag;
 
@@ -76,6 +78,8 @@ namespace CgCore
 
         protected CgRoutine.BoolType CommandFlag;
         protected CgRoutine.BoolType SetupAccountFlag;
+        protected CgRoutine.BoolType LoadContractFlag;
+        protected CgRoutine.BoolType LoadContractsFlag;
 
         #endregion // Data Members
 
@@ -106,13 +110,15 @@ namespace CgCore
             ContractsDirectory = RootDirectory + "\\Contracts";
 
             ABIDirectory = ContractsDirectory + "\\ABI";
-            ABISnippets = new Dictionary<string, string>();
+            ABISnippets = new Dictionary<ECgBlockchainContract, string>(new ECgBlockchainContractEqualityComparer());
 
             Web3DeployDirectory = ContractsDirectory + "\\Web3Deploy";
-            Web3DeploySnippets = new Dictionary<string, string>();
+            Web3DeploySnippets = new Dictionary<ECgBlockchainContract, string>(new ECgBlockchainContractEqualityComparer());
 
             Web3DeployLinkedDirectory = Web3DeployDirectory + "\\Linked";
-            Web3DeployLinkedSnippets = new Dictionary<string, string>();
+            Web3DeployLinkedSnippets = new Dictionary<ECgBlockchainContract, string>(new ECgBlockchainContractEqualityComparer());
+
+            Web3DeployLinks = new Dictionary<ECgBlockchainContract, List<CgEthereumWeb3DeployLink>>(new ECgBlockchainContractEqualityComparer());
 
             MonitorOutputEvents = new Dictionary<ECgBlockchainCommand, CgProcessMonitorOutputEvent>(new ECgBlockchainCommandEqualityComparer());
 
@@ -198,6 +204,10 @@ namespace CgCore
             CommandFlag.Set(false);
             SetupAccountFlag = new CgRoutine.BoolType();
             SetupAccountFlag.Set(false);
+            LoadContractFlag = new CgRoutine.BoolType();
+            LoadContractFlag.Set(false);
+            LoadContractsFlag = new CgRoutine.BoolType();
+            LoadContractsFlag.Set(false);
 
             CommandCompleted_Event.Add(OnCommandCompleted);
             AccountCreated_Event.Add(OnAccountCreated);
@@ -487,9 +497,9 @@ namespace CgCore
                     string address = right.Substring(0, 40);
 
                     // Update Contract with the address
-                    string name = (string)CurrentCommandInfo.Payload;
+                    ECgBlockchainContract econtract = (ECgBlockchainContract)CurrentCommandInfo.Payload;
 
-                    CgEthereumContract contract = (CgEthereumContract)Contracts[name];
+                    CgEthereumContract contract = (CgEthereumContract)Contracts[econtract];
                     contract.Address            = address;
 
                     CurrentCommandOuput = address;
@@ -1145,14 +1155,14 @@ namespace CgCore
 
         #region Contract
 
-        public void DeployContract(string name)
+        public void DeployContract(ECgBlockchainContract econtract)
         {
             CommandFlag.Set(false);
 
-            CurrentCommandInfo.Set(ECgEthereumCommand.DeployContract, null, name);
+            CurrentCommandInfo.Set(ECgEthereumCommand.DeployContract, null, econtract);
             CurrentCommandOuput = null;
 
-            RunCommand(SINGLE_NODE_INDEX, Web3DeployLinkedSnippets[name]);
+            RunCommand(SINGLE_NODE_INDEX, Web3DeployLinkedSnippets[econtract]);
         }
 
         #endregion // Contract

@@ -34,6 +34,7 @@ namespace CgCore
         public static readonly ECgBlockchainCommand GetBalanceWei = EMCgBlockchainCommand.Get().Create("GetBalanceWei");
         public static readonly ECgBlockchainCommand StartMiner = EMCgBlockchainCommand.Get().Create("StartMiner");
         public static readonly ECgBlockchainCommand StopMiner = EMCgBlockchainCommand.Get().Create("StopMiner");
+        public static readonly ECgBlockchainCommand DeployContract = EMCgBlockchainCommand.Get().Create("DeployContract");
 
         public static readonly ECgBlockchainCommand MAX = EMCgBlockchainCommand.Get().Create("MAX");
     }
@@ -57,14 +58,21 @@ namespace CgCore
 
         protected Dictionary<string, CgEthereumKeystore> Keystores;
 
+        public string ABIDirectory;
+        protected Dictionary<string, string> ABISnippets;
+
+        public string Web3DeployDirectory;
+        protected Dictionary<string, string> Web3DeploySnippets;
+
+        public string Web3DeployLinkedDirectory;
+        protected Dictionary<string, string> Web3DeployLinkedSnippets;
+
         public CgRoutine.BoolType IsRunningInstanceCloseFlag;
 
         protected Dictionary<ECgBlockchainCommand, CgProcessMonitorOutputEvent> MonitorOutputEvents;
 
         protected CgBlockchainCommandInfo CurrentCommandInfo;
         protected object CurrentCommandOuput;
-
-        // TODO: Move into SgEthereu
 
         protected CgRoutine.BoolType CommandFlag;
         protected CgRoutine.BoolType SetupAccountFlag;
@@ -91,9 +99,20 @@ namespace CgCore
 
             ChainDirectory = path + "Blockchain\\Ethereum\\chaindata";
             AccountsDirectory = RootDirectory + "\\Accounts";
-            KeystoreDirectory = ChainDirectory + "\\keystore";
 
+            KeystoreDirectory = ChainDirectory + "\\keystore";
             Keystores = new Dictionary<string, CgEthereumKeystore>();
+
+            ContractsDirectory = RootDirectory + "\\Contracts";
+
+            ABIDirectory = ContractsDirectory + "\\ABI";
+            ABISnippets = new Dictionary<string, string>();
+
+            Web3DeployDirectory = ContractsDirectory + "\\Web3Deploy";
+            Web3DeploySnippets = new Dictionary<string, string>();
+
+            Web3DeployLinkedDirectory = Web3DeployDirectory + "\\Linked";
+            Web3DeployLinkedSnippets = new Dictionary<string, string>();
 
             MonitorOutputEvents = new Dictionary<ECgBlockchainCommand, CgProcessMonitorOutputEvent>(new ECgBlockchainCommandEqualityComparer());
 
@@ -104,7 +123,7 @@ namespace CgCore
                 // InitBlockchain
             SetCommand(ECgEthereumCommand.InitBlockchain, "--datadir=\"" + ChainDirectory + "\" init \"" + RootDirectory + "\\genesis.json\"");
                 // SetDataDirectory
-            SetCommand(ECgEthereumCommand.SetDataDirectory, "--datadir=\"" + ChainDirectory + "\" --networkid 15");
+            SetCommand(ECgEthereumCommand.SetDataDirectory, "--datadir=\"" + ChainDirectory + "\" --networkid 15 --gcmode archive");
             {
                 CgStringParagraph p = CgStringParagraphHelper.CreateOneWordParagraph("IPC endpoint opened", ECgStringWordRule.MatchCase);// TODO: also include "url=\\\\.\\pipe\\geth.ipc"?
 
@@ -455,6 +474,29 @@ namespace CgCore
                     CommandCompleted_Event.Broadcast(command);
                 }
             }
+            // DeployContract
+            if (command == ECgEthereumCommand.DeployContract)
+            {
+                string mined = "Contract mined! address: ";
+
+                if (output.StartsWith(mined))
+                {
+                    // Remove "Contract minded! address: 0x"
+                    string right = output.Remove(0, mined.Length + 2);
+                    // Get the first 40 characters for the address
+                    string address = right.Substring(0, 40);
+
+                    // Update Contract with the address
+                    string name = (string)CurrentCommandInfo.Payload;
+
+                    CgEthereumContract contract = (CgEthereumContract)Contracts[name];
+                    contract.Address            = address;
+
+                    CurrentCommandOuput = address;
+
+                    CommandCompleted_Event.Broadcast(command);
+                }
+            }
         }
 
         public virtual void OnConsoleErrorRecieved(object sender, DataReceivedEventArgs e)
@@ -527,6 +569,11 @@ namespace CgCore
                 foreach (CgProcessMonitorOutputEvent e in startInfo.MonitorOutputEvents)
                 {
                     payload.AddMonitorOutputEvent(e);
+                }
+
+                if (LogProcessStart.Log())
+                {
+                    CgDebug.Log("CgEthereum.StartProcess: Starting Process (" + processType.ToString() + "): " + startInfo.FileName + " " + startInfo.Arguments);
                 }
 
                 p = ICgManager_Process.Get().Spawn(EMCgProcess.Get()["Blockchain"], payload);
@@ -1061,6 +1108,8 @@ namespace CgCore
 
         #endregion // Account
 
+        #region Miner
+
         public override void StartMiner()
         {
             if (IsMining)
@@ -1091,5 +1140,21 @@ namespace CgCore
 
             IsMining = false;
         }
+
+        #endregion // Miner
+
+        #region Contract
+
+        public void DeployContract(string name)
+        {
+            CommandFlag.Set(false);
+
+            CurrentCommandInfo.Set(ECgEthereumCommand.DeployContract, null, name);
+            CurrentCommandOuput = null;
+
+            RunCommand(SINGLE_NODE_INDEX, Web3DeployLinkedSnippets[name]);
+        }
+
+        #endregion // Contract
     }
 }

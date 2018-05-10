@@ -39,8 +39,8 @@ namespace CgCore
     public class CgEthereumGenesis : CgBlockchainGenesis
     {
         public CgEthereumGenesisConfig config;
-        public string difficulty = "20";
-        public string gasLimit = "2100000";
+        public string difficulty = "0x20";
+        public string gasLimit = "0x200B20";
         public Dictionary<string, CgEthereumGenesisAddressBalance> alloc;
 
         public CgEthereumGenesis()

@@ -1,6 +1,6 @@
 ﻿namespace CgCore
 {
-    using System.Collections;
+    using System;
     using System.Collections.Generic;
 
     public class CgBlockchainContractKey
@@ -24,9 +24,15 @@
     public interface ICgBlockchainContract
     {
         string Name { get; set; }
+
+        bool IsValid();
+        string ToStr();
+        void Parse(string str);
+        void ParseFromFilePath(string path);
     }
 
-    public class CgBlockchainContract : ICgBlockchainContract
+    [Serializable]
+    public abstract class CgBlockchainContract : ICgBlockchainContract
     {
         private string _Name;
         public string Name
@@ -34,5 +40,16 @@
             get { return _Name; }
             set { _Name = value; }
         }
+
+        public CgBlockchainContract(){}
+        public CgBlockchainContract(string name)
+        {
+            Name = name;
+        }
+
+        public abstract bool IsValid();
+        public abstract string ToStr();
+        public abstract void Parse(string str);
+        public abstract void ParseFromFilePath(string path);
     }
 }

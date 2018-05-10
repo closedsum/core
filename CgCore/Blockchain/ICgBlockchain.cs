@@ -182,6 +182,7 @@
         string RootDirectory { get; set; }
         string ChainDirectory { get; set; }
         string AccountsDirectory { get; set; }
+        string ContractsDirectory { get; set; }
 
         Dictionary<ECgBlockchainProcessType, CgProcess> Processes { get; set; }
 
@@ -204,7 +205,7 @@
             #endregion // Private / Local Storage
 
         ICgBlockchainGenesis Genesis { get; set; }
-        Dictionary<CgBlockchainContractKey, ICgBlockchainContract> Contracts { get; set; }
+        Dictionary<string, ICgBlockchainContract> Contracts { get; set; }
         Dictionary<ECgBlockchainCommand, string> Commands { get; set; }
 
         Dictionary<string, ICgBlockchainAccount> Accounts { get; set; }
@@ -255,7 +256,9 @@
         #region "CVars"
 
         public static CgConsoleVariableLog LogIO = new CgConsoleVariableLog("log.blockchain.io", false, "Log Blockchain Input / Output Messages", (int)ECgConsoleVariableFlag.Console);
+        // Process
         public static TCgConsoleVariable<bool> ShowProcessWindow = new TCgConsoleVariable<bool>("show.blockchain.processwindow", false, "Show Blockchain Process Window", (int)ECgConsoleVariableFlag.Console);
+        public static CgConsoleVariableLog LogProcessStart = new CgConsoleVariableLog("log.blockchain.process.start", false, "Log Blockchain Process Starting", (int)ECgConsoleVariableFlag.Console);
         // Command
         public static CgConsoleVariableLog LogCommandCompleted = new CgConsoleVariableLog("log.blockchain.command.completed", false, "Log Blockchain Command Completed", (int)ECgConsoleVariableFlag.Console);
         // Account
@@ -309,6 +312,13 @@
         {
             get { return _AccountsDirectory; }
             set { _AccountsDirectory = value; }
+        }
+
+        private string _ContractsDirectory;
+        public string ContractsDirectory
+        {
+            get { return _ContractsDirectory; }
+            set { _ContractsDirectory = value; }
         }
 
         private Dictionary<ECgBlockchainProcessType, CgProcess> _Processes;
@@ -368,8 +378,8 @@
             set { _Genesis = value; }
         }
 
-        private Dictionary<CgBlockchainContractKey, ICgBlockchainContract> _Contracts;
-        public Dictionary<CgBlockchainContractKey, ICgBlockchainContract> Contracts
+        private Dictionary<string, ICgBlockchainContract> _Contracts;
+        public Dictionary<string, ICgBlockchainContract> Contracts
         {
             get { return _Contracts; }
             set { _Contracts = value; }
@@ -411,6 +421,7 @@
                 Processes.Add((ECgBlockchainProcessType)i, null);
             }
 
+            Contracts = new Dictionary<string, ICgBlockchainContract>();
             Commands = new Dictionary<ECgBlockchainCommand, string>(new ECgBlockchainCommandEqualityComparer());
             
             Accounts = new Dictionary<string, ICgBlockchainAccount>();

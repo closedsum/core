@@ -135,7 +135,7 @@ namespace CgCore
 
             Payloads = new List<CgCoroutinePayload>();
 
-            for (byte i = 0; i < (byte)ECgCoroutineSchedule.MAX; ++i)
+            for (ushort i = 0; i < POOL_SIZE; ++i)
             {
                 Payloads.Add(new CgCoroutinePayload());
             }
@@ -205,7 +205,10 @@ namespace CgCore
             CgRoutine r = Allocate(schedule);
 
             if (r == null)
+            {
+                payload.Reset();
                 return null;
+            }
 
             // If NO Head, Make r the Head
             if (Heads[schedule] == null)

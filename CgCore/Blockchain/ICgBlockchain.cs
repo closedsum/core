@@ -54,139 +54,6 @@
         }
     }
 
-    public sealed class ECgBlockchainCommand : ECgEnum_byte
-    {
-        public ECgBlockchainCommand(byte value, string name) : base(value, name) { }
-    }
-
-    public sealed class ECgBlockchainCommandEqualityComparer : IEqualityComparer<ECgBlockchainCommand>
-    {
-        public bool Equals(ECgBlockchainCommand lhs, ECgBlockchainCommand rhs)
-        {
-            return lhs == rhs;
-        }
-
-        public int GetHashCode(ECgBlockchainCommand x)
-        {
-            return x.GetHashCode();
-        }
-    }
-
-    public class EMCgBlockchainCommand : ECgEnumMap<ECgBlockchainCommand, byte>
-    {
-        private static EMCgBlockchainCommand _Instance;
-        public static EMCgBlockchainCommand Instance
-        {
-            get
-            {
-                if (_Instance == null)
-                {
-                    _Instance = new EMCgBlockchainCommand();
-                }
-                return _Instance;
-            }
-        }
-
-        public static EMCgBlockchainCommand Get()
-        {
-            return Instance;
-        }
-    }
-
-    public enum ECgBlockchainCommandArgumentType : byte
-    {
-        Number,
-        String,
-        StringString,
-        MAX
-    }
-
-    public struct CgBlockchainCommandArgument
-    {
-        public ECgBlockchainCommandArgumentType ValueType;
-        public object Value;
-
-        public CgBlockchainCommandArgument(ECgBlockchainCommandArgumentType valueType, object value)
-        {
-            ValueType = valueType;
-            Value     = value;
-        }
-
-        public string ToStr()
-        {
-            // Number
-            if (ValueType == ECgBlockchainCommandArgumentType.Number)
-                return CgCommon.NumericTypeToString(Value);
-            // String
-            if (ValueType == ECgBlockchainCommandArgumentType.String)
-                return (string)Value;
-            // StringString
-            if (ValueType == ECgBlockchainCommandArgumentType.StringString)
-                return "\"" + (string)Value + "\"";
-            return "";
-        }
-    }
-
-    public struct CgBlockchainCommandInfo
-    {
-        public ECgBlockchainCommand Command;
-        public CgBlockchainCommandArgument[] Arguments;
-        public object Payload;
-
-        public CgBlockchainCommandInfo(ECgBlockchainCommand command, CgBlockchainCommandArgument[] args = null, object payload = null)
-        {
-            Command   = command;
-            Arguments = args;
-            Payload = payload;
-        }
-
-        public void Set(ECgBlockchainCommand command, CgBlockchainCommandArgument[] args = null, object payload = null)
-        {
-            Command = command;
-            Arguments = args;
-            Payload = payload;
-        }
-    }
-
-    public sealed class ECgBlockchainContract : ECgEnum_byte
-    {
-        public ECgBlockchainContract(byte value, string name) : base(value, name) { }
-    }
-
-    public sealed class ECgBlockchainContractEqualityComparer : IEqualityComparer<ECgBlockchainContract>
-    {
-        public bool Equals(ECgBlockchainContract lhs, ECgBlockchainContract rhs)
-        {
-            return lhs == rhs;
-        }
-
-        public int GetHashCode(ECgBlockchainContract x)
-        {
-            return x.GetHashCode();
-        }
-    }
-
-    public class EMCgBlockchainContract : ECgEnumMap<ECgBlockchainContract, byte>
-    {
-        private static EMCgBlockchainContract _Instance;
-        public static EMCgBlockchainContract Instance
-        {
-            get
-            {
-                if (_Instance == null)
-                {
-                    _Instance = new EMCgBlockchainContract();
-                }
-                return _Instance;
-            }
-        }
-
-        public static EMCgBlockchainContract Get()
-        {
-            return Instance;
-        }
-    }
-
     public static class ICgBlockchainInterface
     {
         public static void Init(Type type)
@@ -222,6 +89,7 @@
         string ChainDirectory { get; set; }
         string AccountsDirectory { get; set; }
         string ContractsDirectory { get; set; }
+        string ContractsDeployedDirectory { get; set; }
 
         Dictionary<ECgBlockchainProcessType, CgProcess> Processes { get; set; }
 
@@ -294,7 +162,9 @@
     {
         #region "CVars"
 
-        public static CgConsoleVariableLog LogIO = new CgConsoleVariableLog("log.blockchain.io", false, "Log Blockchain Input / Output Messages", (int)ECgConsoleVariableFlag.Console);
+        public static CgConsoleVariableLog LogIO = new CgConsoleVariableLog("log.blockchain.io", false, "Log All Blockchain Input / Output Messages", (int)ECgConsoleVariableFlag.Console);
+        public static CgConsoleVariableLog LogIOProcess = new CgConsoleVariableLog("log.blockchain.io.process", false, "Log Process Blockchain Input / Output Messages", (int)ECgConsoleVariableFlag.Console);
+        public static CgConsoleVariableLog LogIOConsole = new CgConsoleVariableLog("log.blockchain.io.console", false, "Log Console Blockchain Input / Output Messages", (int)ECgConsoleVariableFlag.Console);
         // Process
         public static TCgConsoleVariable<bool> ShowProcessWindow = new TCgConsoleVariable<bool>("show.blockchain.processwindow", false, "Show Blockchain Process Window", (int)ECgConsoleVariableFlag.Console);
         public static CgConsoleVariableLog LogProcessStart = new CgConsoleVariableLog("log.blockchain.process.start", false, "Log Blockchain Process Starting", (int)ECgConsoleVariableFlag.Console);
@@ -358,6 +228,13 @@
         {
             get { return _ContractsDirectory; }
             set { _ContractsDirectory = value; }
+        }
+
+        private string _ContractsDeployedDirectory;
+        public string ContractsDeployedDirectory
+        {
+            get { return _ContractsDeployedDirectory; }
+            set { _ContractsDeployedDirectory = value; }
         }
 
         private Dictionary<ECgBlockchainProcessType, CgProcess> _Processes;

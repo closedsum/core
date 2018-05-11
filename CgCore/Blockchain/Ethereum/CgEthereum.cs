@@ -35,8 +35,48 @@ namespace CgCore
         public static readonly ECgBlockchainCommand StartMiner = EMCgBlockchainCommand.Get().Create("StartMiner");
         public static readonly ECgBlockchainCommand StopMiner = EMCgBlockchainCommand.Get().Create("StopMiner");
         public static readonly ECgBlockchainCommand DeployContract = EMCgBlockchainCommand.Get().Create("DeployContract");
+        public static readonly ECgBlockchainCommand LoadScript = EMCgBlockchainCommand.Get().Create("LoadScript");
 
         public static readonly ECgBlockchainCommand MAX = EMCgBlockchainCommand.Get().Create("MAX");
+    }
+
+    public sealed class ECgEthereumJavascript : ECgEnum_byte
+    {
+        public ECgEthereumJavascript(byte value, string name) : base(value, name) { }
+    }
+
+    public sealed class ECgEthereumJavascriptEqualityComparer : IEqualityComparer<ECgEthereumJavascript>
+    {
+        public bool Equals(ECgEthereumJavascript lhs, ECgEthereumJavascript rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(ECgEthereumJavascript x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
+    public class EMCgEthereumJavascript : ECgEnumMap<ECgEthereumJavascript, byte>
+    {
+        private static EMCgEthereumJavascript _Instance;
+        public static EMCgEthereumJavascript Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = new EMCgEthereumJavascript();
+                }
+                return _Instance;
+            }
+        }
+
+        public static EMCgEthereumJavascript Get()
+        {
+            return Instance;
+        }
     }
 
     public class CgEthereum : CgBlockchain
@@ -69,6 +109,10 @@ namespace CgCore
 
         protected Dictionary<ECgBlockchainContract, List<CgEthereumWeb3DeployLink>> Web3DeployLinks;
 
+        public string JavascriptDirectory;
+        protected Dictionary<ECgEthereumJavascript, string> ScriptPaths;
+        protected Dictionary<ECgEthereumJavascript, string> ScriptLinkedPaths;
+
         public CgRoutine.BoolType IsRunningInstanceCloseFlag;
 
         protected Dictionary<ECgBlockchainCommand, CgProcessMonitorOutputEvent> MonitorOutputEvents;
@@ -78,7 +122,7 @@ namespace CgCore
 
         protected CgRoutine.BoolType CommandFlag;
         protected CgRoutine.BoolType SetupAccountFlag;
-        protected CgRoutine.BoolType LoadContractFlag;
+        protected CgRoutine.BoolType DeployContractFlag;
         protected CgRoutine.BoolType LoadContractsFlag;
 
         #endregion // Data Members
@@ -108,6 +152,7 @@ namespace CgCore
             Keystores = new Dictionary<string, CgEthereumKeystore>();
 
             ContractsDirectory = RootDirectory + "\\Contracts";
+            ContractsDeployedDirectory = ContractsDirectory + "\\Deployed";
 
             ABIDirectory = ContractsDirectory + "\\ABI";
             ABISnippets = new Dictionary<ECgBlockchainContract, string>(new ECgBlockchainContractEqualityComparer());
@@ -119,6 +164,10 @@ namespace CgCore
             Web3DeployLinkedSnippets = new Dictionary<ECgBlockchainContract, string>(new ECgBlockchainContractEqualityComparer());
 
             Web3DeployLinks = new Dictionary<ECgBlockchainContract, List<CgEthereumWeb3DeployLink>>(new ECgBlockchainContractEqualityComparer());
+
+            JavascriptDirectory = RootDirectory + "\\Javascript";
+            ScriptPaths = new Dictionary<ECgEthereumJavascript, string>(new ECgEthereumJavascriptEqualityComparer());
+            ScriptLinkedPaths = new Dictionary<ECgEthereumJavascript, string>(new ECgEthereumJavascriptEqualityComparer());
 
             MonitorOutputEvents = new Dictionary<ECgBlockchainCommand, CgProcessMonitorOutputEvent>(new ECgBlockchainCommandEqualityComparer());
 
@@ -199,13 +248,15 @@ namespace CgCore
 
                 MonitorOutputEvents.Add(ECgEthereumCommand.StopMiner, e);
             }
+                // LoadScript
+            SetCommand(ECgEthereumCommand.LoadScript, "loadscript(%s);");
 
             CommandFlag = new CgRoutine.BoolType();
             CommandFlag.Set(false);
             SetupAccountFlag = new CgRoutine.BoolType();
             SetupAccountFlag.Set(false);
-            LoadContractFlag = new CgRoutine.BoolType();
-            LoadContractFlag.Set(false);
+            DeployContractFlag = new CgRoutine.BoolType();
+            DeployContractFlag.Set(false);
             LoadContractsFlag = new CgRoutine.BoolType();
             LoadContractsFlag.Set(false);
 
@@ -233,7 +284,7 @@ namespace CgCore
         public override void Start()
         {
         }
-    
+
         public override void Rebuild()
         {
             // Delete files in existing directories
@@ -263,6 +314,26 @@ namespace CgCore
             // genesis.json
             if (File.Exists(GenesisFilePath))
                 File.Delete(GenesisFilePath);
+            // Contracts Deployed
+            if (Directory.Exists(ContractsDeployedDirectory))
+            {
+                string[] paths = Directory.GetFiles(ContractsDeployedDirectory);
+
+                foreach (string path in paths)
+                {
+                    File.Delete(path);
+                }
+            }
+            // Web3Deploy Linked
+            if (Directory.Exists(Web3DeployLinkedDirectory))
+            {
+                string[] paths = Directory.GetFiles(Web3DeployLinkedDirectory);
+
+                foreach (string path in paths)
+                {
+                    File.Delete(path);
+                }
+            }
         }
 
         public override void SetCommand(ECgBlockchainCommand command, string str)
@@ -290,7 +361,7 @@ namespace CgCore
                 return;
             }
 
-            if (LogIO.Log())
+            if (LogIO.Log() || LogIOConsole.Log())
             {
                 CgDebug.Log("Console (Input): " + command);
             }
@@ -334,7 +405,7 @@ namespace CgCore
                 }
             }
 
-            if (LogIO.Log())
+            if (LogIO.Log() || LogIOConsole.Log())
             {
                 CgDebug.Log("CgEthereum.RunCommand: Running command: " + command);
             }
@@ -396,7 +467,7 @@ namespace CgCore
 
         public virtual void OnProcessOutputRecieved(object sender, DataReceivedEventArgs e)
         {
-            if (LogIO.Log())
+            if (LogIO.Log() || LogIOProcess.Log())
             {
                 CgDebug.Log("Process (Output): " + e.Data);
             }
@@ -404,7 +475,7 @@ namespace CgCore
 
         public virtual void OnProcessErrorRecieved(object sender, DataReceivedEventArgs e)
         {
-            if (LogIO.Log())
+            if (LogIO.Log() || LogIOProcess.Log())
             {
                 CgDebug.Log("Process (Error): " + e.Data);
             }
@@ -412,7 +483,7 @@ namespace CgCore
 
         public virtual void OnProcessExited(object sender, EventArgs e)
         {
-            if (LogIO.Log())
+            if (LogIO.Log() || LogIOProcess.Log())
             {
                 CgDebug.Log("Blockchain (Process): Exited");
             }
@@ -429,7 +500,7 @@ namespace CgCore
         {
             string output = e.Data;
 
-            if (LogIO.Log())
+            if (LogIO.Log() || LogIOConsole.Log())
             {
                 CgDebug.Log("Console (Output): " + output);
             }
@@ -511,7 +582,7 @@ namespace CgCore
 
         public virtual void OnConsoleErrorRecieved(object sender, DataReceivedEventArgs e)
         {
-            if (LogIO.Log())
+            if (LogIO.Log() || LogIOConsole.Log())
             {
                 UnityEngine.Debug.Log("Console (Error): " + e.Data);
             }
@@ -519,7 +590,7 @@ namespace CgCore
 
         public virtual void OnConsoleExited(object sender, EventArgs e)
         {
-            if (LogIO.Log())
+            if (LogIO.Log() || LogIOConsole.Log())
             {
                 UnityEngine.Debug.Log("Blockchain (Console): Exited");
             }
@@ -1155,16 +1226,55 @@ namespace CgCore
 
         #region Contract
 
-        public void DeployContract(ECgBlockchainContract econtract)
+        public void DeployContract(ECgBlockchainContract econtract, CgBlockchainContractArgument[] args = null)
         {
-            CommandFlag.Set(false);
+            DeployContractFlag.Set(false);
+            CgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, DeployContract_Internal(this, econtract, args));
+        }
 
-            CurrentCommandInfo.Set(ECgEthereumCommand.DeployContract, null, econtract);
-            CurrentCommandOuput = null;
+        public static IEnumerator DeployContract_Internal(CgEthereum eth, ECgBlockchainContract econtract, CgBlockchainContractArgument[] args = null)
+        {
+            // Start Miner
+            eth.StartMiner();
+            yield return eth.CommandFlag;
 
-            RunCommand(SINGLE_NODE_INDEX, Web3DeployLinkedSnippets[econtract]);
+            // Setup Contract with the correct arguments
+            string snippet = eth.Web3DeployLinkedSnippets[econtract];
+
+            if (args != null)
+            {
+                foreach (CgBlockchainContractArgument a in args)
+                {
+                    snippet = snippet.Replace(a.Name, a.ToStr());
+                }
+            }
+
+            // Deploy Contract
+            eth.CommandFlag.Set(false);
+            eth.CurrentCommandInfo.Set(ECgEthereumCommand.DeployContract, null, econtract);
+            eth.CurrentCommandOuput = null;
+            eth.RunCommand(SINGLE_NODE_INDEX, snippet);
+
+            // Waittill Contract has been mined
+            yield return eth.CommandFlag;
+
+            // Write out pertinent detail of Contract
+            CgEthereumContract contract = (CgEthereumContract)eth.Contracts[econtract];
+
+            File.WriteAllText(eth.ContractsDeployedDirectory + "\\" + contract.Address + "-" + econtract + ".txt", contract.ToStr(), System.Text.Encoding.ASCII);
+
+            // Stop Miner
+            eth.StopMiner();
+            yield return eth.CommandFlag;
+
+            eth.DeployContractFlag.Set(true);
         }
 
         #endregion // Contract
+
+        public virtual void LoadScript(string path)
+        {
+
+        }
     }
 }

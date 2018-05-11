@@ -21,6 +21,80 @@
         }
     }
 
+    public sealed class ECgBlockchainContract : ECgEnum_byte
+    {
+        public ECgBlockchainContract(byte value, string name) : base(value, name) { }
+    }
+
+    public sealed class ECgBlockchainContractEqualityComparer : IEqualityComparer<ECgBlockchainContract>
+    {
+        public bool Equals(ECgBlockchainContract lhs, ECgBlockchainContract rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(ECgBlockchainContract x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
+    public class EMCgBlockchainContract : ECgEnumMap<ECgBlockchainContract, byte>
+    {
+        private static EMCgBlockchainContract _Instance;
+        public static EMCgBlockchainContract Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = new EMCgBlockchainContract();
+                }
+                return _Instance;
+            }
+        }
+
+        public static EMCgBlockchainContract Get()
+        {
+            return Instance;
+        }
+    }
+
+    public enum ECgBlockchainContractArgumentType : byte
+    {
+        Number,
+        String,
+        StringString,
+        MAX
+    }
+
+    public struct CgBlockchainContractArgument
+    {
+        public string Name;
+        public ECgBlockchainContractArgumentType ValueType;
+        public object Value;
+
+        public CgBlockchainContractArgument(string name, ECgBlockchainContractArgumentType valueType, object value)
+        {
+            Name = name;
+            ValueType = valueType;
+            Value = value;
+        }
+
+        public string ToStr()
+        {
+            // Number
+            if (ValueType == ECgBlockchainContractArgumentType.Number)
+                return CgCommon.NumericTypeToString(Value);
+            // String
+            if (ValueType == ECgBlockchainContractArgumentType.String)
+                return (string)Value;
+            // StringString
+            if (ValueType == ECgBlockchainContractArgumentType.StringString)
+                return "\"" + (string)Value + "\"";
+            return "";
+        }
+    }
 
     public interface ICgBlockchainContract
     {

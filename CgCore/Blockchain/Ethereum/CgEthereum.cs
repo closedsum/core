@@ -79,6 +79,18 @@ namespace CgCore
         }
     }
 
+    public struct CgEthereumJavascriptContractLink
+    {
+        public readonly ECgBlockchainContract Contract;
+        public readonly string Link;
+
+        public CgEthereumJavascriptContractLink(ECgBlockchainContract contract, string link)
+        {
+            Contract = contract;
+            Link = link;
+        }
+    }
+
     public class CgEthereum : CgBlockchain
     {
         #region "CVars"
@@ -110,8 +122,10 @@ namespace CgCore
         protected Dictionary<ECgBlockchainContract, List<CgEthereumWeb3DeployLink>> Web3DeployLinks;
 
         public string JavascriptDirectory;
+        public string JavascriptLinkedDirectory;
         protected Dictionary<ECgEthereumJavascript, string> ScriptPaths;
-        protected Dictionary<ECgEthereumJavascript, string> ScriptLinkedPaths;
+        protected Dictionary<ECgBlockchainContract, string> ScriptLinkedPaths;
+        protected Dictionary<ECgBlockchainContract, List<CgEthereumJavascriptContractLink>> ScriptContractLinks;
 
         public CgRoutine.BoolType IsRunningInstanceCloseFlag;
 
@@ -166,8 +180,10 @@ namespace CgCore
             Web3DeployLinks = new Dictionary<ECgBlockchainContract, List<CgEthereumWeb3DeployLink>>(new ECgBlockchainContractEqualityComparer());
 
             JavascriptDirectory = RootDirectory + "\\Javascript";
+            JavascriptLinkedDirectory = JavascriptDirectory + "\\Linked";
             ScriptPaths = new Dictionary<ECgEthereumJavascript, string>(new ECgEthereumJavascriptEqualityComparer());
-            ScriptLinkedPaths = new Dictionary<ECgEthereumJavascript, string>(new ECgEthereumJavascriptEqualityComparer());
+            ScriptLinkedPaths = new Dictionary<ECgBlockchainContract, string>(new ECgBlockchainContractEqualityComparer());
+            ScriptContractLinks = new Dictionary<ECgBlockchainContract, List<CgEthereumJavascriptContractLink>>(new ECgBlockchainContractEqualityComparer());
 
             MonitorOutputEvents = new Dictionary<ECgBlockchainCommand, CgProcessMonitorOutputEvent>(new ECgBlockchainCommandEqualityComparer());
 
@@ -249,7 +265,15 @@ namespace CgCore
                 MonitorOutputEvents.Add(ECgEthereumCommand.StopMiner, e);
             }
                 // LoadScript
-            SetCommand(ECgEthereumCommand.LoadScript, "loadscript(%s);");
+            SetCommand(ECgEthereumCommand.LoadScript, "loadScript(%s)");
+            {
+                CgStringParagraph p = CgStringParagraphHelper.CreateOneWordParagraph("true", ECgStringWordRule.MatchCase);
+
+                CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.LoadScript, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
+                e.AddEvent(OnCommandCompleted);
+
+                MonitorOutputEvents.Add(ECgEthereumCommand.LoadScript, e);
+            }
 
             CommandFlag = new CgRoutine.BoolType();
             CommandFlag.Set(false);
@@ -328,6 +352,16 @@ namespace CgCore
             if (Directory.Exists(Web3DeployLinkedDirectory))
             {
                 string[] paths = Directory.GetFiles(Web3DeployLinkedDirectory);
+
+                foreach (string path in paths)
+                {
+                    File.Delete(path);
+                }
+            }
+            // Javascript Contract Linked
+            if (Directory.Exists(JavascriptLinkedDirectory))
+            {
+                string[] paths = Directory.GetFiles(JavascriptLinkedDirectory);
 
                 foreach (string path in paths)
                 {
@@ -1239,7 +1273,7 @@ namespace CgCore
             yield return eth.CommandFlag;
 
             // Setup Contract with the correct arguments
-            string snippet = eth.Web3DeployLinkedSnippets[econtract];
+            string snippet = eth.Web3DeploySnippets[econtract]; ;// eth.Web3DeployLinkedSnippets[econtract];
 
             if (args != null)
             {
@@ -1272,9 +1306,18 @@ namespace CgCore
 
         #endregion // Contract
 
-        public virtual void LoadScript(string path)
+        public virtual void LoadScript(ECgEthereumJavascript escript, string path)
         {
+            CommandFlag.Set(false);
 
+            CgBlockchainCommandArgument[] args  = new CgBlockchainCommandArgument[1];
+            args[0].Value                       = "'" + path + "'";
+            args[0].ValueType                   = ECgBlockchainCommandArgumentType.String;
+
+            CurrentCommandInfo.Set(ECgEthereumCommand.SetEtherbase, args, escript);
+
+            AddMonitorOutputEvenToProcess(ECgBlockchainProcessType.Console, SINGLE_NODE_INDEX, ECgEthereumCommand.LoadScript);
+            RunCommand(SINGLE_NODE_INDEX, ECgEthereumCommand.LoadScript, args);
         }
     }
 }

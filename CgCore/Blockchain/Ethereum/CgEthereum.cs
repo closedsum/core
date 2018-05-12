@@ -6,6 +6,7 @@ namespace CgCore
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
+    using System.Linq;
     using UnityEngine;
 
     public struct CgEthereumAccountInfo
@@ -580,9 +581,9 @@ namespace CgCore
             // GetBalanceEther
             if (command == ECgEthereumCommand.GetBalanceEther)
             {
-                int balance;
+                float balance;
 
-                if (Int32.TryParse(output, out balance))
+                if (float.TryParse(output, out balance))
                 {
                     CurrentCommandOuput = balance;
 
@@ -618,7 +619,7 @@ namespace CgCore
         {
             if (LogIO.Log() || LogIOConsole.Log())
             {
-                UnityEngine.Debug.Log("Console (Error): " + e.Data);
+                CgDebug.Log("Console (Error): " + e.Data);
             }
         }
 
@@ -626,7 +627,7 @@ namespace CgCore
         {
             if (LogIO.Log() || LogIOConsole.Log())
             {
-                UnityEngine.Debug.Log("Blockchain (Console): Exited");
+                CgDebug.Log("Blockchain (Console): Exited");
             }
 
             Processes[ECgBlockchainProcessType.Console].DeAllocate();
@@ -1032,7 +1033,7 @@ namespace CgCore
 
             if (iaccount == null)
             {
-                UnityEngine.Debug.LogWarning("CgEthereum.UnlockAccount: Account with Nickname: " + nickname + " does NOT exist.");
+                CgDebug.LogWarning("CgEthereum.UnlockAccount: Account with Nickname: " + nickname + " does NOT exist.");
                 return;
             }
 
@@ -1140,8 +1141,8 @@ namespace CgCore
                 yield return eth.CommandFlag;
 
                 // If the balance is below the threshold, Start Mining
-                int balance = (int)eth.CurrentCommandOuput;
-                int threshold = 20;
+                float balance = (float)eth.CurrentCommandOuput;
+                float threshold = 20.0f;
                 
                 if (balance < threshold)
                 {
@@ -1184,7 +1185,7 @@ namespace CgCore
                         yield return eth.CommandFlag;
 
                         // If the balance is below the threshold, Start Mining
-                        balance = (int)eth.CurrentCommandOuput;
+                        balance = (float)eth.CurrentCommandOuput;
 
                         if (LogAccountSetup.Log())
                         {
@@ -1273,7 +1274,7 @@ namespace CgCore
             yield return eth.CommandFlag;
 
             // Setup Contract with the correct arguments
-            string snippet = eth.Web3DeploySnippets[econtract]; ;// eth.Web3DeployLinkedSnippets[econtract];
+            string snippet = eth.Web3DeployLinkedSnippets[econtract];
 
             if (args != null)
             {
@@ -1302,6 +1303,145 @@ namespace CgCore
             yield return eth.CommandFlag;
 
             eth.DeployContractFlag.Set(true);
+        }
+
+        public void LoadContract(ECgBlockchainContract econtract, ECgEthereumJavascript escript)
+        {
+            ICgBlockchainContract c = null;
+            Contracts.TryGetValue(econtract, out c);
+
+            if (c == null)
+            {
+                CgDebug.LogWarning("CgEthereum.LoadContract: Contract with name: " + econtract + " does NOT exist. Make sure a Contract was initialized with name: " + econtract + " in the constructor.");
+                return;
+            }
+
+            CgEthereumContract contract = (CgEthereumContract)c;
+
+            // Check if Contract file exists
+            var filePaths = Directory.GetFiles(ContractsDeployedDirectory, "*.*", SearchOption.TopDirectoryOnly).Where(s => s.Contains(econtract + ".txt"));
+
+            foreach (var path in filePaths)
+            {
+                contract.ParseFromFilePath(path);
+                break;
+            }
+
+            // Check if Contract ABI file exists
+            string abiPath = ABIDirectory + "\\" + econtract + ".txt";
+
+            if (File.Exists(abiPath))
+            {
+                ABISnippets.Add(econtract, File.ReadAllText(abiPath));
+            }
+            else
+            {
+                CgDebug.LogWarning("CgEthereum.LoadContract: Failed to find ABI for Contract: " + econtract + " at: " + abiPath);
+            }
+
+            // If Contract is "new", setup Web3Deploy and Javascript file
+            if (!contract.IsValid())
+            {
+                // Check if Contract Web3Deploy file exists
+                string web3DeployPath = Web3DeployDirectory + "\\" + econtract + ".txt";
+
+                if (File.Exists(web3DeployPath))
+                {
+                    Web3DeploySnippets.Add(econtract, File.ReadAllText(web3DeployPath));
+                }
+                else
+                {
+                    CgDebug.LogWarning("CgEthereum.LoadContract: Failed to find Web3Deploy for Contract: " + econtract + " at: " + web3DeployPath);
+                }
+
+                // Check if Contract Web3Deploy Linked (Libraries linked) file exists
+
+                string web3DeployLinkedPath = Web3DeployLinkedDirectory + "\\" + econtract + ".txt";
+
+                if (File.Exists(web3DeployLinkedPath))
+                    Web3DeployLinkedSnippets.Add(econtract, File.ReadAllText(web3DeployLinkedPath));
+
+                CreatedWeb3DeployLinked(econtract);
+                CreatedJavascriptContractLinked(econtract, escript);
+            }
+            else
+            {
+                string web3DeployLinkedPath = Web3DeployLinkedDirectory + "\\" + econtract + ".txt";
+
+                if (!File.Exists(web3DeployLinkedPath))
+                {
+                    CgDebug.LogWarning("CgEthereum.LoadContract: Failed to find Web3DeployLinkedPath for Contract: " + econtract + " at: " + web3DeployLinkedPath);
+                }
+                Web3DeployLinkedSnippets.Add(econtract, File.ReadAllText(web3DeployLinkedPath));
+            }
+        }
+
+        public void CreatedWeb3DeployLinked(ECgBlockchainContract econtract)
+        {
+            string snippet = Web3DeploySnippets[econtract];
+
+            // Update all Links with the appropriate addresses
+            /*
+            List<CgEthereumWeb3DeployLink> links = Web3DeployLinks[econtract];
+
+            if (links != null)
+            {
+                foreach (CgEthereumWeb3DeployLink l in links)
+                {
+                    CgEthereumContract contract = (CgEthereumContract)Contracts[l.Contract];
+
+                    snippet = snippet.Replace(l.Link, contract.Address);
+                }
+            }
+            */
+            // Change eth.accounts[0] to eth.coinbase
+            snippet = snippet.Replace("eth.accounts[0]", "eth.coinbase");
+
+            string path = Web3DeployLinkedDirectory + "\\" + econtract + ".txt";
+
+            //snippet = snippet.Replace("\r", "");
+            //snippet = snippet.Replace("\n", "");
+
+            File.WriteAllText(path, snippet, System.Text.Encoding.ASCII);
+
+            string str;
+
+            if (!Web3DeployLinkedSnippets.TryGetValue(econtract, out str))
+            {
+                Web3DeployLinkedSnippets.Add(econtract, snippet);
+            }
+            else
+            {
+                Web3DeployLinkedSnippets[econtract] = snippet;
+            }
+        }
+
+        public void CreatedJavascriptContractLinked(ECgBlockchainContract econtract, ECgEthereumJavascript escript)
+        {
+            string path = "";
+
+            if (!ScriptPaths.TryGetValue(escript, out path))
+            {
+                CgDebug.LogWarning("CgEthereum.CreatedJavascriptContractLinked: No script path set for script: " + escript + ". Make sure a ScriptPath is set for: " + escript + " in the constructor.");
+                return;
+            }
+
+            string script = File.ReadAllText(path);
+
+            // Update all Links with the appropriate addresses
+            List<CgEthereumJavascriptContractLink> links = ScriptContractLinks[econtract];
+
+            if (links != null)
+            {
+                foreach (CgEthereumJavascriptContractLink l in links)
+                {
+                    CgEthereumContract contract = (CgEthereumContract)Contracts[l.Contract];
+
+                    script = script.Replace(l.Link, contract.Address);
+                }
+            }
+
+            File.WriteAllText(ScriptLinkedPaths[econtract], script, System.Text.Encoding.ASCII);
         }
 
         #endregion // Contract

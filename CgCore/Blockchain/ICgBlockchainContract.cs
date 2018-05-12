@@ -76,22 +76,25 @@
 
         public CgBlockchainContractArgument(string name, ECgBlockchainContractArgumentType valueType, object value)
         {
-            Name = name;
+            // HACKY: For now add ',' to distinguish between the same input arguments in the ABI
+            Name = name + ",";
             ValueType = valueType;
             Value = value;
         }
 
         public string ToStr()
         {
+            // HACKY: For now add ',' to distinguish between the same input arguments in the ABI
+
             // Number
             if (ValueType == ECgBlockchainContractArgumentType.Number)
-                return CgCommon.NumericTypeToString(Value);
+                return CgCommon.NumericTypeToString(Value) + ",";
             // String
             if (ValueType == ECgBlockchainContractArgumentType.String)
-                return (string)Value;
+                return (string)Value + ",";
             // StringString
             if (ValueType == ECgBlockchainContractArgumentType.StringString)
-                return "\"" + (string)Value + "\"";
+                return "'" + (string)Value + "'" + ",";
             return "";
         }
     }

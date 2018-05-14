@@ -37,6 +37,9 @@ namespace CgCore
         public static readonly ECgBlockchainCommand StopMiner = EMCgBlockchainCommand.Get().Create("StopMiner");
         public static readonly ECgBlockchainCommand DeployContract = EMCgBlockchainCommand.Get().Create("DeployContract");
         public static readonly ECgBlockchainCommand LoadScript = EMCgBlockchainCommand.Get().Create("LoadScript");
+        public static readonly ECgBlockchainCommand CreateContractABI = EMCgBlockchainCommand.Get().Create("CreateContractABI");
+        public static readonly ECgBlockchainCommand CreateContractInstance = EMCgBlockchainCommand.Get().Create("CreateContractInstance");
+        public static readonly ECgBlockchainCommand RunContractFunction = EMCgBlockchainCommand.Get().Create("RunContractFunction");
 
         public static readonly ECgBlockchainCommand MAX = EMCgBlockchainCommand.Get().Create("MAX");
     }
@@ -128,6 +131,8 @@ namespace CgCore
         protected Dictionary<ECgBlockchainContract, string> ScriptLinkedPaths;
         protected Dictionary<ECgBlockchainContract, List<CgEthereumJavascriptContractLink>> ScriptContractLinks;
 
+        protected Dictionary<ECgBlockchainContract, Dictionary<ECgBlockchainContractFunction, CgBlockchainContractFunction>> ContractFunctions;
+
         public CgRoutine.BoolType IsRunningInstanceCloseFlag;
 
         protected Dictionary<ECgBlockchainCommand, CgProcessMonitorOutputEvent> MonitorOutputEvents;
@@ -185,6 +190,8 @@ namespace CgCore
             ScriptPaths = new Dictionary<ECgEthereumJavascript, string>(new ECgEthereumJavascriptEqualityComparer());
             ScriptLinkedPaths = new Dictionary<ECgBlockchainContract, string>(new ECgBlockchainContractEqualityComparer());
             ScriptContractLinks = new Dictionary<ECgBlockchainContract, List<CgEthereumJavascriptContractLink>>(new ECgBlockchainContractEqualityComparer());
+
+            ContractFunctions = new Dictionary<ECgBlockchainContract, Dictionary<ECgBlockchainContractFunction, CgBlockchainContractFunction>>(new ECgBlockchainContractEqualityComparer());
 
             MonitorOutputEvents = new Dictionary<ECgBlockchainCommand, CgProcessMonitorOutputEvent>(new ECgBlockchainCommandEqualityComparer());
 
@@ -274,6 +281,26 @@ namespace CgCore
                 e.AddEvent(OnCommandCompleted);
 
                 MonitorOutputEvents.Add(ECgEthereumCommand.LoadScript, e);
+            }
+                // CreateContractABI
+            SetCommand(ECgEthereumCommand.CreateContractABI, "%s");
+            {
+                CgStringParagraph p = CgStringParagraphHelper.CreateOneWordParagraph("", ECgStringWordRule.MatchCase);
+
+                CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.CreateContractABI, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
+                e.AddEvent(OnCommandCompleted);
+
+                MonitorOutputEvents.Add(ECgEthereumCommand.CreateContractABI, e);
+            }
+                // CreateContractInstance
+            SetCommand(ECgEthereumCommand.CreateContractInstance, "var %s = %s.at(%s)");
+            {
+                CgStringParagraph p = CgStringParagraphHelper.CreateOneWordParagraph("", ECgStringWordRule.MatchCase);
+
+                CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.CreateContractInstance, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
+                e.AddEvent(OnCommandCompleted);
+
+                MonitorOutputEvents.Add(ECgEthereumCommand.CreateContractInstance, e);
             }
 
             CommandFlag = new CgRoutine.BoolType();
@@ -1444,17 +1471,79 @@ namespace CgCore
             File.WriteAllText(ScriptLinkedPaths[econtract], script, System.Text.Encoding.ASCII);
         }
 
+        public void CreateContractABI(ECgBlockchainContract econtract)
+        {
+            CommandFlag.Set(false);
+
+            // %s
+            byte ARGUMENTS = 1;
+            byte ABI = 0;
+
+            CgBlockchainCommandArgument[] args  = new CgBlockchainCommandArgument[ARGUMENTS];
+            args[ABI].Value                     = ABISnippets[econtract];
+            args[ABI].ValueType                 = ECgBlockchainCommandArgumentType.String;
+
+            CurrentCommandInfo.Set(ECgEthereumCommand.CreateContractABI, args, econtract);
+            CurrentCommandOuput = null;
+
+            AddMonitorOutputEvenToProcess(ECgBlockchainProcessType.Console, SINGLE_NODE_INDEX, ECgEthereumCommand.CreateContractABI);
+            RunCommand(SINGLE_NODE_INDEX, ECgEthereumCommand.CreateContractABI, args);
+        }
+
+        public void CreateContractInstance(ECgBlockchainContract econtract)
+        {
+            CommandFlag.Set(false);
+
+            // var %s = %s.at(%s)
+            byte ARGUMENTS = 3;
+            byte INSTANCE = 0;
+            byte ABI = 1;
+            byte ADDRESS = 2;
+
+            CgEthereumContract contract = (CgEthereumContract)Contracts[econtract];
+
+            CgBlockchainCommandArgument[] args  = new CgBlockchainCommandArgument[ARGUMENTS];
+            args[INSTANCE].Value                = contract.InstanceVariableName;
+            args[INSTANCE].ValueType            = ECgBlockchainCommandArgumentType.String;
+            args[ABI].Value                     = contract.ContractVariableName;
+            args[ABI].ValueType                 = ECgBlockchainCommandArgumentType.String;
+            args[ADDRESS].Value                 = contract.AddressAsArg();
+            args[ADDRESS].ValueType             = ECgBlockchainCommandArgumentType.String;
+
+            CurrentCommandInfo.Set(ECgEthereumCommand.CreateContractInstance, args, econtract);
+            CurrentCommandOuput = null;
+
+            AddMonitorOutputEvenToProcess(ECgBlockchainProcessType.Console, SINGLE_NODE_INDEX, ECgEthereumCommand.CreateContractInstance);
+            RunCommand(SINGLE_NODE_INDEX, ECgEthereumCommand.CreateContractInstance, args);
+        }
+
+        public void CreateContractInstance(ECgBlockchainContract econtract, string command)
+        {
+            CommandFlag.Set(false);
+
+            CurrentCommandInfo.Set(ECgEthereumCommand.CreateContractInstance, null, econtract);
+            CurrentCommandOuput = null;
+
+            AddMonitorOutputEvenToProcess(ECgBlockchainProcessType.Console, SINGLE_NODE_INDEX, ECgEthereumCommand.CreateContractInstance);
+            RunCommand(SINGLE_NODE_INDEX, command);
+        }
+
         #endregion // Contract
 
         public virtual void LoadScript(ECgEthereumJavascript escript, string path)
         {
             CommandFlag.Set(false);
 
-            CgBlockchainCommandArgument[] args  = new CgBlockchainCommandArgument[1];
-            args[0].Value                       = "'" + path + "'";
-            args[0].ValueType                   = ECgBlockchainCommandArgumentType.String;
+            // loadScript(% s)
+            byte ARGUMENTS = 1;
+            byte PATH = 0;
 
-            CurrentCommandInfo.Set(ECgEthereumCommand.SetEtherbase, args, escript);
+            CgBlockchainCommandArgument[] args  = new CgBlockchainCommandArgument[ARGUMENTS];
+            args[PATH].Value                    = "'" + path + "'";
+            args[PATH].ValueType                = ECgBlockchainCommandArgumentType.String;
+
+            CurrentCommandInfo.Set(ECgEthereumCommand.LoadScript, args, escript);
+            CurrentCommandOuput = null;
 
             AddMonitorOutputEvenToProcess(ECgBlockchainProcessType.Console, SINGLE_NODE_INDEX, ECgEthereumCommand.LoadScript);
             RunCommand(SINGLE_NODE_INDEX, ECgEthereumCommand.LoadScript, args);

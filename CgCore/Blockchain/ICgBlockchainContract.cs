@@ -99,6 +99,160 @@
         }
     }
 
+    #region "Function"
+
+    public sealed class ECgBlockchainContractFunction : ECgEnum_byte
+    {
+        public ECgBlockchainContractFunction(byte value, string name) : base(value, name) { }
+    }
+
+    public sealed class ECgBlockchainContractFunctionEqualityComparer : IEqualityComparer<ECgBlockchainContractFunction>
+    {
+        public bool Equals(ECgBlockchainContractFunction lhs, ECgBlockchainContractFunction rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(ECgBlockchainContractFunction x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
+    public class EMCgBlockchainContractFunction : ECgEnumMap<ECgBlockchainContractFunction, byte>
+    {
+        private static EMCgBlockchainContractFunction _Instance;
+        public static EMCgBlockchainContractFunction Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = new EMCgBlockchainContractFunction();
+                }
+                return _Instance;
+            }
+        }
+
+        public static EMCgBlockchainContractFunction Get()
+        {
+            return Instance;
+        }
+    }
+
+    public enum ECgBlockchainContractFunctionArgumentType : byte
+    {
+        Number,
+        String,
+        MAX
+    }
+
+    public struct CgBlockchainContractFunctionArgument
+    {
+        public ECgBlockchainContractFunctionArgumentType ValueType;
+        public object Value;
+
+        public CgBlockchainContractFunctionArgument(ECgBlockchainContractFunctionArgumentType valueType, object value)
+        {
+            ValueType = valueType;
+            Value = value;
+        }
+
+        public string ToStr()
+        {
+            // Number
+            if (ValueType == ECgBlockchainContractFunctionArgumentType.Number)
+                return CgCommon.NumericTypeToString(Value);
+            // String
+            if (ValueType == ECgBlockchainContractFunctionArgumentType.String)
+                return "'" + (string)Value + "'";
+            return "";
+        }
+
+        public void Clear()
+        {
+            Value = null;
+        }
+    }
+
+    public enum ECgBlockchainContractFunctionReturnType : byte
+    {
+        Number,
+        String,
+        MAX
+    }
+
+    public struct CgBlockchainContractFunctionReturn
+    {
+        public static readonly CgBlockchainContractFunctionReturn Void = new CgBlockchainContractFunctionReturn(ECgBlockchainContractFunctionReturnType.MAX, null);
+        public static readonly CgBlockchainContractFunctionReturn Number = new CgBlockchainContractFunctionReturn(ECgBlockchainContractFunctionReturnType.Number, 0);
+        public static readonly CgBlockchainContractFunctionReturn String = new CgBlockchainContractFunctionReturn(ECgBlockchainContractFunctionReturnType.String, "");
+
+        public ECgBlockchainContractFunctionReturnType ValueType;
+        public object Value;
+
+        public CgBlockchainContractFunctionReturn(ECgBlockchainContractFunctionReturnType valueType, object value)
+        {
+            ValueType = valueType;
+            Value = value;
+        }
+
+        public string ToStr()
+        {
+            // Number
+            if (ValueType == ECgBlockchainContractFunctionReturnType.Number)
+                return CgCommon.NumericTypeToString(Value);
+            // String
+            if (ValueType == ECgBlockchainContractFunctionReturnType.String)
+                return (string)Value;
+            return "";
+        }
+
+        public void Clear()
+        {
+            Value = null;
+        }
+    }
+
+    public sealed class CgBlockchainContractFunction
+    {
+        public string Signature;
+        public CgBlockchainContractFunctionArgument[] Arguments;
+        public CgBlockchainContractFunctionReturn Return;
+
+        public CgBlockchainContractFunction(string signature, CgBlockchainContractFunctionArgument[] args, CgBlockchainContractFunctionReturn ret)
+        {
+            Signature = signature;
+            Arguments = args;
+            Return = ret;
+        }
+
+        public void SetArgument(int index, object value)
+        {
+            Arguments[index].Value = value;
+        }
+
+        public string ToStr()
+        {
+            return Signature;
+        }
+
+        public void Clear()
+        {
+            if (Arguments != null)
+            {
+                for (int i = 0; i < Arguments.Length; ++i)
+                {
+                    Arguments[i].Clear();
+                }
+            }
+
+            Return.Clear();
+        }
+    }
+
+    #endregion // Function
+
     public interface ICgBlockchainContract
     {
         string Name { get; set; }

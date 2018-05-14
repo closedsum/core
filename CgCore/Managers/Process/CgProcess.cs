@@ -186,30 +186,6 @@
 
         public void RunCommand(string command)
         {
-            /*
-            int chunkSize = 1024;
-            int len       = command.Length;
-            
-            if (len > chunkSize)
-            {
-                int count = (int)Math.Floor((decimal)len / (decimal)chunkSize);
-
-                for (int i = 0; i < count + 1; ++i)
-                {
-                    if (i < count)
-                        len = len - chunkSize;
-
-                    string part = command.Substring(i * chunkSize, i < count ? chunkSize : len);
-
-                    P.StandardInput.Write(part);
-                    P.StandardInput.Flush();
-                }
-            }
-            else
-            {
-                P.StandardInput.Write(command);
-            }
-            */
             P.StandardInput.Write(command);
             P.StandardInput.Write("\n");
             P.StandardInput.Flush();

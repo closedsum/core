@@ -146,6 +146,7 @@ namespace CgCore
         protected CgRoutine.BoolType SetupAccountFlag;
         protected CgRoutine.BoolType DeployContractFlag;
         protected CgRoutine.BoolType LoadContractsFlag;
+        protected CgRoutine.BoolType SetupContractFlag;
         protected CgRoutine.BoolType RunContractStageChangeFunctionFlag;
 
         #endregion // Data Members
@@ -314,6 +315,8 @@ namespace CgCore
             DeployContractFlag.Set(false);
             LoadContractsFlag = new CgRoutine.BoolType();
             LoadContractsFlag.Set(false);
+            SetupContractFlag = new CgRoutine.BoolType();
+            SetupContractFlag.Set(false);
             RunContractStageChangeFunctionFlag = new CgRoutine.BoolType();
             RunContractStageChangeFunctionFlag.Set(false);
 
@@ -1552,6 +1555,33 @@ namespace CgCore
 
             AddMonitorOutputEvenToProcess(ECgBlockchainProcessType.Console, SINGLE_NODE_INDEX, ECgEthereumCommand.CreateContractInstance);
             RunCommand(SINGLE_NODE_INDEX, ECgEthereumCommand.CreateContractInstance, args);
+        }
+
+        public void SetupContract(ECgBlockchainContract econtract, ECgEthereumJavascript escript)
+        {
+            SetupContractFlag.Set(false);
+            CgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, SetupContract_Internal(this, econtract, escript));
+        }
+
+        public static IEnumerator SetupContract_Internal(CgEthereum eth, ECgBlockchainContract econtract, ECgEthereumJavascript escript)
+        {
+            eth.LoadContract(econtract, escript);
+            eth.LoadScript(escript, eth.ScriptLinkedPaths[econtract]);
+            yield return eth.CommandFlag;
+
+            if (!eth.Contracts[econtract].IsValid())
+            {
+                eth.DeployContract(econtract);
+                yield return eth.DeployContractFlag;
+            }
+            else
+            {
+                eth.CreateContractABI(econtract);
+                yield return eth.CommandFlag;
+                eth.CreateContractInstance(econtract);
+                yield return eth.CommandFlag;
+            }
+            eth.SetupContractFlag.Set(true);
         }
 
         public void RunContractConstantFunction(ECgBlockchainContract econtract, ECgBlockchainContractFunction efn, CgBlockchainContractFunctionArgument[] args = null)

@@ -85,6 +85,7 @@
         public ECgItemType Type;
 
         public Guid Id;
+        public string Address;
         public string ShortCode;
         public DateTime Created;
         public TimeSpan LifeTime;

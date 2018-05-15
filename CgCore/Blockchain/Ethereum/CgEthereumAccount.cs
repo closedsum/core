@@ -53,5 +53,10 @@
             if (File.Exists(path))
                 Parse(File.ReadAllText(path));
         }
+
+        public string AddressAsArg()
+        {
+            return "'0x" + Address + "'";
+        }
     }
 }

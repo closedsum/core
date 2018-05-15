@@ -216,6 +216,8 @@
 
     public sealed class CgBlockchainContractFunction
     {
+        private static readonly int EMPTY = 0;
+
         public string Signature;
         public CgBlockchainContractFunctionArgument[] Arguments;
         public CgBlockchainContractFunctionReturn Return;
@@ -232,9 +234,70 @@
             Arguments[index].Value = value;
         }
 
-        public string ToStr()
+        public string BuildConstantFunction()
         {
-            return Signature;
+            string output = Signature + "(";
+
+            if (Arguments != null && Arguments.Length > EMPTY)
+            {
+                int argumentLength = Arguments.Length;
+
+                for (int i = 0; i < argumentLength; ++i)
+                {
+                    output += Arguments[i].ToStr();
+
+                    if (i < argumentLength - 1)
+                        output += ",";
+                }
+            }
+
+            output += ");";
+
+            return output;
+        }
+
+        public string BuildEstimateFunction(string address)
+        {
+            string output = Signature;
+
+            output += ".estimateGas(";
+
+            if (Arguments != null && Arguments.Length > EMPTY)
+            {
+                int argumentLength = Arguments.Length;
+
+                for (int i = 0; i < argumentLength; ++i)
+                {
+                    output += Arguments[i].ToStr();
+                    output += ",";
+                }
+            }
+
+            output += " { from: " + address + " });";
+
+            return output;
+        }
+
+        public string BuildStateChangeFunction(string address, int gas)
+        {
+            string output = Signature;
+
+            output += "(";
+
+            if (Arguments != null && Arguments.Length > EMPTY)
+            {
+                int argumentLength = Arguments.Length;
+
+                for (int i = 0; i < argumentLength; ++i)
+                {
+                    output += Arguments[i].ToStr();
+                    output += ",";
+                }
+            }
+
+            output += " { from: " + address + ", gas: " + gas + " });";
+
+            return output;
         }
 
         public void Clear()

@@ -39,7 +39,9 @@ namespace CgCore
         public static readonly ECgBlockchainCommand LoadScript = EMCgBlockchainCommand.Get().Create("LoadScript");
         public static readonly ECgBlockchainCommand CreateContractABI = EMCgBlockchainCommand.Get().Create("CreateContractABI");
         public static readonly ECgBlockchainCommand CreateContractInstance = EMCgBlockchainCommand.Get().Create("CreateContractInstance");
-        public static readonly ECgBlockchainCommand RunContractFunction = EMCgBlockchainCommand.Get().Create("RunContractFunction");
+        public static readonly ECgBlockchainCommand RunContractConstantFunction = EMCgBlockchainCommand.Get().Create("RunContractConstantFunction");
+        public static readonly ECgBlockchainCommand RunContractStateChangeFunction = EMCgBlockchainCommand.Get().Create("RunContractStateChangeFunction");
+        public static readonly ECgBlockchainCommand GetGasEstimate = EMCgBlockchainCommand.Get().Create("GetGasEstimate");
 
         public static readonly ECgBlockchainCommand MAX = EMCgBlockchainCommand.Get().Create("MAX");
     }
@@ -144,6 +146,7 @@ namespace CgCore
         protected CgRoutine.BoolType SetupAccountFlag;
         protected CgRoutine.BoolType DeployContractFlag;
         protected CgRoutine.BoolType LoadContractsFlag;
+        protected CgRoutine.BoolType RunContractStageChangeFunctionFlag;
 
         #endregion // Data Members
 
@@ -295,7 +298,7 @@ namespace CgCore
                 // CreateContractInstance
             SetCommand(ECgEthereumCommand.CreateContractInstance, "var %s = %s.at(%s)");
             {
-                CgStringParagraph p = CgStringParagraphHelper.CreateOneWordParagraph("", ECgStringWordRule.MatchCase);
+                CgStringParagraph p = CgStringParagraphHelper.CreateOneWordParagraph("undefined", ECgStringWordRule.MatchCase);
 
                 CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.CreateContractInstance, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
                 e.AddEvent(OnCommandCompleted);
@@ -311,6 +314,8 @@ namespace CgCore
             DeployContractFlag.Set(false);
             LoadContractsFlag = new CgRoutine.BoolType();
             LoadContractsFlag.Set(false);
+            RunContractStageChangeFunctionFlag = new CgRoutine.BoolType();
+            RunContractStageChangeFunctionFlag.Set(false);
 
             CommandCompleted_Event.Add(OnCommandCompleted);
             AccountCreated_Event.Add(OnAccountCreated);
@@ -636,6 +641,38 @@ namespace CgCore
                     contract.Address            = address;
 
                     CurrentCommandOuput = address;
+
+                    CommandCompleted_Event.Broadcast(command);
+                }
+            }
+            // RunContractConstantFunction
+            if (command == ECgEthereumCommand.RunContractConstantFunction)
+            {
+                if (!output.StartsWith(">"))
+                {
+                    CurrentCommandOuput = output;
+
+                    CommandCompleted_Event.Broadcast(command);
+                }
+            }
+            // RunContractStateChangeFunction
+            if (command == ECgEthereumCommand.RunContractStateChangeFunction)
+            {
+                if (!output.StartsWith(">"))
+                {
+                    CurrentCommandOuput = output;
+
+                    CommandCompleted_Event.Broadcast(command);
+                }
+            }
+            // GetGasEstimate
+            if (command == ECgEthereumCommand.GetGasEstimate)
+            {
+                int estimate;
+
+                if (int.TryParse(output, out estimate))
+                {
+                    CurrentCommandOuput = estimate;
 
                     CommandCompleted_Event.Broadcast(command);
                 }
@@ -1490,7 +1527,7 @@ namespace CgCore
             RunCommand(SINGLE_NODE_INDEX, ECgEthereumCommand.CreateContractABI, args);
         }
 
-        public void CreateContractInstance(ECgBlockchainContract econtract)
+        public void CreateContractInstance(ECgBlockchainContract econtract, string address = "")
         {
             CommandFlag.Set(false);
 
@@ -1507,7 +1544,7 @@ namespace CgCore
             args[INSTANCE].ValueType            = ECgBlockchainCommandArgumentType.String;
             args[ABI].Value                     = contract.ContractVariableName;
             args[ABI].ValueType                 = ECgBlockchainCommandArgumentType.String;
-            args[ADDRESS].Value                 = contract.AddressAsArg();
+            args[ADDRESS].Value                 = address == "" ? contract.AddressAsArg() : address;
             args[ADDRESS].ValueType             = ECgBlockchainCommandArgumentType.String;
 
             CurrentCommandInfo.Set(ECgEthereumCommand.CreateContractInstance, args, econtract);
@@ -1517,14 +1554,82 @@ namespace CgCore
             RunCommand(SINGLE_NODE_INDEX, ECgEthereumCommand.CreateContractInstance, args);
         }
 
-        public void CreateContractInstance(ECgBlockchainContract econtract, string command)
+        public void RunContractConstantFunction(ECgBlockchainContract econtract, ECgBlockchainContractFunction efn, CgBlockchainContractFunctionArgument[] args = null)
         {
             CommandFlag.Set(false);
 
-            CurrentCommandInfo.Set(ECgEthereumCommand.CreateContractInstance, null, econtract);
+            CgBlockchainContractFunction fn = ContractFunctions[econtract][efn];
+            fn.Arguments = args;
+            string command = fn.BuildConstantFunction();
+
+            CurrentCommandInfo.Set(ECgEthereumCommand.RunContractConstantFunction, null, null);
             CurrentCommandOuput = null;
 
-            AddMonitorOutputEvenToProcess(ECgBlockchainProcessType.Console, SINGLE_NODE_INDEX, ECgEthereumCommand.CreateContractInstance);
+            if (LogIO.Log() || LogIOConsole.Log())
+            {
+                CgDebug.Log("CgEthereum.RunContractConstantFunction: Running command: " + ECgEthereumCommand.RunContractConstantFunction);
+            }
+            RunCommand(SINGLE_NODE_INDEX, command);
+        }
+
+        public void RunContractStateChangeFunction(ECgBlockchainContract econtract, string address, ECgBlockchainContractFunction efn, CgBlockchainContractFunctionArgument[] args = null)
+        {
+            RunContractStageChangeFunctionFlag.Set(false);
+            CgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, RunContractStateChangeFunction_Internal(this, econtract, address, efn, args));
+        }
+
+        public static IEnumerator RunContractStateChangeFunction_Internal(CgEthereum eth, ECgBlockchainContract econtract, string address, ECgBlockchainContractFunction efn, CgBlockchainContractFunctionArgument[] args = null)
+        {
+            // GetGasEstimage
+            eth.GetGasEstimate(econtract, address, efn, args);
+            yield return eth.CommandFlag;
+
+            int gas = (int)eth.CurrentCommandOuput;
+
+            // Start Miner
+            eth.StartMiner();
+            yield return eth.CommandFlag;
+
+            // Run State Change Function
+            eth.CommandFlag.Set(false);
+
+            CgBlockchainContractFunction fn = eth.ContractFunctions[econtract][efn];
+            fn.Arguments                    = args;
+            string command                  = fn.BuildStateChangeFunction(address, gas);
+
+            eth.CurrentCommandInfo.Set(ECgEthereumCommand.RunContractStateChangeFunction, null, null);
+            eth.CurrentCommandOuput = null;
+
+            if (LogIO.Log() || LogIOConsole.Log())
+            {
+                CgDebug.Log("CgEthereum.RunContractStateChangeFunction_Internal: Running command: " + ECgEthereumCommand.RunContractStateChangeFunction);
+            }
+            eth.RunCommand(SINGLE_NODE_INDEX, command);
+
+            yield return eth.CommandFlag;
+
+            // Stop Miner
+            eth.StopMiner();
+            yield return eth.CommandFlag;
+
+            eth.RunContractStageChangeFunctionFlag.Set(true);
+        }
+
+        public void GetGasEstimate(ECgBlockchainContract econtract, string address, ECgBlockchainContractFunction efn, CgBlockchainContractFunctionArgument[] args = null)
+        {
+            CommandFlag.Set(false);
+
+            CgBlockchainContractFunction fn = ContractFunctions[econtract][efn];
+            fn.Arguments                    = args;
+            string command                  = fn.BuildEstimateFunction(address);
+
+            CurrentCommandInfo.Set(ECgEthereumCommand.GetGasEstimate, null, null);
+            CurrentCommandOuput = null;
+
+            if (LogIO.Log() || LogIOConsole.Log())
+            {
+                CgDebug.Log("CgEthereum.GetGasEstimate: Running command: " + ECgEthereumCommand.GetGasEstimate);
+            }
             RunCommand(SINGLE_NODE_INDEX, command);
         }
 

@@ -40,7 +40,7 @@ namespace CgCore
     {
         public CgEthereumGenesisConfig config;
         public string difficulty = "0x20";
-        public string gasLimit = "0x3B9ACA00";
+        public string gasLimit = "0x2540BE400";
         public Dictionary<string, CgEthereumGenesisAddressBalance> alloc;
 
         public CgEthereumGenesis()

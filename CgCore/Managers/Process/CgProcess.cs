@@ -189,7 +189,7 @@
             P.StandardInput.Write(command);
             P.StandardInput.Write("\n");
             P.StandardInput.Flush();
-            
+
             // TODO: Have an option to choose encoding
             /*
             // Convert string command to bytes

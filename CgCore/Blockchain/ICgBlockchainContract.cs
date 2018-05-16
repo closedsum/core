@@ -314,6 +314,20 @@
         }
     }
 
+    public struct CgBlockchainContractFunctionPayload
+    {
+        public ECgBlockchainContract Contract;
+        public ECgBlockchainContractFunction Function;
+        //object Payload;
+
+        public CgBlockchainContractFunctionPayload(ECgBlockchainContract econtract, ECgBlockchainContractFunction efn)
+        {
+            Contract = econtract;
+            Function = efn;
+            //Payload = payload;
+        }
+    }
+
     #endregion // Function
 
     public interface ICgBlockchainContract

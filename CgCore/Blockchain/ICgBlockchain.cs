@@ -148,7 +148,7 @@
 
         void LoadAccounts();
         void NewAccount(object payload);
-        void UnlockAccount(object payload);
+        void UnlockAccount(ICgBlockchainAccount iaccount);
 
         #endregion // Account
 
@@ -181,6 +181,7 @@
         public class CommandCompleted : TCgMulticastDelegate_OneParam<ECgBlockchainCommand> { }
         public class AccountCreated : TCgMulticastDelegate_OneParam<ICgBlockchainAccount>{ }
         public class CoinbaseSet : TCgDelegate_OneParam<ICgBlockchainAccount> { }
+        public class ContractFunctionCompleted : TCgMulticastDelegate_TwoParams<ECgBlockchainContract, ECgBlockchainContractFunction> { }
 
         #region "Constants"
 
@@ -325,6 +326,7 @@
         public CommandCompleted CommandCompleted_Event;
         public AccountCreated AccountCreated_Event;
         public CoinbaseSet CoinbaseSet_Event;
+        public ContractFunctionCompleted ContractFunctionCompleted_Event;
 
         #endregion // Data Members
 
@@ -348,6 +350,7 @@
             CommandCompleted_Event = new CommandCompleted();
             AccountCreated_Event = new AccountCreated();
             CoinbaseSet_Event = new CoinbaseSet();
+            ContractFunctionCompleted_Event = new ContractFunctionCompleted();
         }
 
         public static ICgBlockchain Get()
@@ -400,7 +403,7 @@
 
         public abstract void LoadAccounts();
         public abstract void NewAccount(object payload);
-        public abstract void UnlockAccount(object payload);
+        public abstract void UnlockAccount(ICgBlockchainAccount iaccount);
         public abstract void ListAccounts();
 
         #endregion // Account

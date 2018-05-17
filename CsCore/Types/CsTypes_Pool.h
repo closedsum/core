@@ -308,4 +308,47 @@ public:
 	}
 };
 
+USTRUCT(BlueprintType)
+struct FCgPooledObjectPayload
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	bool IsAllocated;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	TWeakObjectPtr<UObject> Instigator;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	TWeakObjectPtr<UObject> Owner;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	TWeakObjectPtr<UObject> Parent;
+
+	FCgPooledObjectPayload(){}
+	virtual ~FCgPooledObjectPayload(){}
+
+	virtual void Reset()
+	{
+		IsAllocated = false;
+
+		Instigator.Reset();
+		Instigator = nullptr;
+		Owner.Reset();
+		Owner = nullptr;
+		Parent.Reset();
+		Parent = nullptr;
+	}
+
+	UObject* GetInstigator() { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
+	template<typename T>
+	T* GetInstigator() { return Cast<T>(GetInstigator()); }
+
+	UObject* GetOwner() { return Owner.IsValid() ? Owner.Get() : nullptr; }
+	template<typename T>
+	T* GetOwner() { return Cast<T>(GetOwner()); }
+
+	UObject* GetParent() { return Parent.IsValid() ? Parent.Get() : nullptr; }
+	template<typename T>
+	T* GetParent() { return Cast<T>(GetParent()); }
+};
+
 #pragma endregion Pooled Objects

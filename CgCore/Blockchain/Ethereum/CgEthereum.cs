@@ -1763,7 +1763,7 @@ namespace CgCore
         {
             CommandFlag.Set(false);
 
-            // loadScript(% s)
+            // loadScript(%s)
             byte ARGUMENTS = 1;
             byte PATH = 0;
 

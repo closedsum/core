@@ -4,7 +4,7 @@
 
 UCsPooledObject::UCsPooledObject(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	PoolIndex  = INDEX_NONE;
 }
 
+void UCsPooledObject::OnCreatePool(){}
 void UCsPooledObject::DeAllocate(){}

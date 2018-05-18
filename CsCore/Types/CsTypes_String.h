@@ -17,7 +17,7 @@ namespace ECsStringEscapeType
 	};
 }
 
-#define ECS_STRING_ESCAPE_TYPE (uint8)ECsStringEscapeType::ECsStringEscapeType_MAX
+#define ECS_STRING_ESCAPE_TYPE_MAX (uint8)ECsStringEscapeType::ECsStringEscapeType_MAX
 typedef ECsStringEscapeType::Type TCsStringEscapeType;
 
 namespace ECsStringEscapeType
@@ -74,7 +74,7 @@ namespace ECsStringWordRule
 	};
 }
 
-#define ECS_STRING_WORD_RULE (uint8)ECsStringWordRule::ECsStringWordRule_MAX
+#define ECS_STRING_WORD_RULE_MAX (uint8)ECsStringWordRule::ECsStringWordRule_MAX
 typedef ECsStringWordRule::Type TCsStringWordRule;
 
 namespace ECsStringWordRule
@@ -115,13 +115,13 @@ struct FCsStringWordInfo
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "String")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
 	FString Value;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "String")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
 	TEnumAsByte<ECsStringWordRule::Type> Rule;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "String")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
 	FString Altered;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "String")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
 	TEnumAsByte<ECsStringEscapeType::Type> EscapeType;
 
 	FCsStringWordInfo(){}
@@ -212,11 +212,11 @@ struct FCsStringWord
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "String")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
 	bool Completed;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "String")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
 	TArray<FCsStringWordInfo> Ands;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "String")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
 	TArray<FCsStringWordInfo> Ors;
 
 	FCsStringWord(){}
@@ -334,9 +334,9 @@ struct FCsStringPhrase
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "String")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
 	bool Completed;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "String")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
 	TArray<FCsStringWord> Words;
 
 	FCsStringPhrase(){}
@@ -457,9 +457,9 @@ struct FCsStringSentence
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "String")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
 	bool Completed;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "String")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
 	TArray<FCsStringPhrase> Phrases;
 
 	FCsStringSentence(){}
@@ -562,9 +562,9 @@ struct FCsStringParagraph
 
 	DECLARE_MULTICAST_DELEGATE(FCompletedEvent);
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "String")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
 	bool Completed;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "String")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
 	TArray<FCsStringSentence> Sentences;
 
 	FCompletedEvent Event;
@@ -665,6 +665,7 @@ struct FCsStringParagraph
 
 namespace CgStringParagraphHelper
 {
+	/*
 	FCsStringSentence CreateOneWordSentence(const FString &Word, const TCsStringWordRule &Rule = ECsStringWordRule::MatchCase)
 	{
 		FCsStringSentence Sentence;
@@ -686,4 +687,5 @@ namespace CgStringParagraphHelper
 
 		return Paragraph;
 	}
+	*/
 }

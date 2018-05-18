@@ -3,6 +3,7 @@
 
 #include "Managers/CsPooledObject.h"
 #include "Types/CsTypes_Pool.h"
+#include "Types/CsTypes_String.h"
 #include "CsProcess.generated.h"
 
 USTRUCT(BlueprintType)
@@ -99,6 +100,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
 	TEnumAsByte<ECsProcessMonitorOutputEventPurpose::Type> Purpose;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
+	FCsStringParagraph Paragraph;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
 	bool Completed;
 
 	FCompletedEvent Event;
@@ -108,6 +111,65 @@ public:
 public:
 	FCsProcessMonitorOutputEvent() {}
 	~FCsProcessMonitorOutputEvent() {}
+
+	FCsProcessMonitorOutputEvent& operator=(const FCsProcessMonitorOutputEvent& B)
+	{
+		Name = B.Name;
+		Purpose = B.Purpose;
+		Paragraph = B.Paragraph;
+		Completed = B.Completed;
+		return *this;
+	}
+
+	bool operator==(const FCsProcessMonitorOutputEvent& B) const
+	{
+		if (Name != B.Name)
+			return false;
+		if (Purpose != B.Purpose)
+			return false;
+		if (Paragraph != B.Paragraph)
+			return false;
+		if (Completed != B.Completed)
+			return false;
+		return true;
+	}
+
+	bool operator!=(const FCsProcessMonitorOutputEvent& B) const
+	{
+		return !(*this == B);
+	}
+
+	void ProcessOutput(const FString &Output)
+	{
+		if (Completed)
+			return;
+
+		Paragraph.ProcessInput(Output);
+
+		Completed = Paragraph.HasCompleted();
+
+		if (Completed)
+		{
+			Event.Broadcast(Name);
+		}
+	}
+
+	void Clear()
+	{
+		Completed = false;
+		Paragraph.Clear();
+	}
+
+	void Reset()
+	{
+		Clear();
+		Event.Clear();
+	}
+
+	bool HasCompleted()
+	{
+		return Completed;
+	}
 };
 
 USTRUCT(BlueprintType)

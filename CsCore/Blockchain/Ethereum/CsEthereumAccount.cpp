@@ -1,13 +1,49 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
-#pragma once
+#include "Blockchain/Ethereum/CsEthereumAccount.h"
 
-class ICsBlockchainAccount
+CsEthereumAccount::CsEthereumAccount() : ICsBlockchainAccount()
 {
-public:
+}
 
-	virtual const FString& GetNamename() = 0;
+CsEthereumAccount::CsEthereumAccount(const FString &nickname, const FString &address, const FString &passphrase)
+{
+	Nickname = nickname;
+	Address = address;
+	PassPhrase = passphrase;
+}
 
-	virtual FString ToString() = 0;
-	virtual void Parse(const FString &Str) = 0;
-	virtual void ParseFromFilePath(const FString &Path) = 0;
-};
+CsEthereumAccount::~CsEthereumAccount(){}
+
+// Interface
+#pragma region
+
+const FString& CsEthereumAccount::GetNamename() { return Nickname; }
+
+FString CsEthereumAccount::ToString()
+{
+	return ECsCachedString::Str::Empty;
+}
+
+void CsEthereumAccount::Parse(const FString &Str)
+{
+
+}
+
+void CsEthereumAccount::ParseFromFilePath(const FString &Path)
+{
+
+}
+
+#pragma endregion Interface
+
+void CsEthereumAccount::CreateUnlockArguments(TArray<FCsBlockchainCommandArgument> &OutArgs)
+{
+	OutArgs.Add(FCsBlockchainCommandArgument(ECsBlockchainCommandArgumentType::StringString, Address));
+	OutArgs.Add(FCsBlockchainCommandArgument(ECsBlockchainCommandArgumentType::StringString, PassPhrase));
+	OutArgs.Add(FCsBlockchainCommandArgument(ECsBlockchainCommandArgumentType::Int32, 0));
+}
+
+FString CsEthereumAccount::AddressAsArg()
+{
+	return TEXT("'0x") + Address + TEXT("'");
+}

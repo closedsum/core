@@ -39,6 +39,9 @@ class ICsBlockchainContract
 {
 public:
 
+	ICsBlockchainContract();
+	virtual ~ICsBlockchainContract();
+
 	virtual const FString& GetName() = 0;
 
 	virtual bool IsValid() = 0;

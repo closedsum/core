@@ -27,9 +27,8 @@ UCsBlockchain::UCsBlockchain(const FObjectInitializer& ObjectInitializer) : Supe
 
 	if (!s_blockchainSingleton)
 	{
-		SpawnClass = InSpawnClass;
-
-		s_blockchainSingleton = NewObject<UCsBlockchain>(GetTransientPackage(), SpawnClass, TEXT("Blockchain_Singleton"), RF_Transient | RF_Public);
+		s_blockchainSingleton = NewObject<UCsBlockchain>(GetTransientPackage(), InSpawnClass, TEXT("Blockchain_Singleton"), RF_Transient | RF_Public);
+		s_blockchainSingleton->SpawnClass = InSpawnClass;
 		s_blockchainSingleton->AddToRoot();
 		s_blockchainSingleton->Initialize();
 	}
@@ -37,7 +36,7 @@ UCsBlockchain::UCsBlockchain(const FObjectInitializer& ObjectInitializer) : Supe
 
 /*static*/ void UCsBlockchain::Shutdown()
 {
-	if (!s_coroutineSchedulerSingleton)
+	if (!s_blockchainSingleton)
 		return;
 
 	s_blockchainSingleton->CleanUp();
@@ -73,3 +72,39 @@ void UCsBlockchain::SetConsoleFilename(const FString &Filename){}
 void UCsBlockchain::SetConsoleDirectory(const FString &Path){}
 
 #pragma endregion Process
+
+void UCsBlockchain::Start() {}
+
+void UCsBlockchain::SetCommand(const FECsBlockchainCommand &Command, const FString &Str){}
+void UCsBlockchain::RunCommand(const int32 &ConsoleIndex, const FECsBlockchainCommand &Command, TArray<FCsBlockchainCommandArgument> &Arguments){}
+void UCsBlockchain::RunCommand(const int32 &ConsoleIndex, const FString &Command){}
+void UCsBlockchain::RunCommandEX(const int32 &ConsoleIndex, const FString &Command) { RunCommand(ConsoleIndex, Command); }
+
+void UCsBlockchain::SetProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, class UCsProcess* Process){}
+UCsProcess* UCsBlockchain::GetProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index) { return nullptr; }
+void UCsBlockchain::StartProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, const FCsBlockchainProcessStartInfo &StartInfo){}
+void UCsBlockchain::StopProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index){}
+
+void UCsBlockchain::OpenRunningInstance(){}
+void UCsBlockchain::CreatePrivateChain(){}
+void UCsBlockchain::StartPrivateChain(){}
+
+void UCsBlockchain::OpenConsole(){}
+void UCsBlockchain::CloseConsole(){}
+
+// Account
+#pragma region
+
+void UCsBlockchain::LoadAccounts(){}
+void UCsBlockchain::NewAccount(void* Payload){}
+void UCsBlockchain::UnlockAccount(class ICsBlockchainAccount* IAccount){}
+
+#pragma endregion Account
+
+// Miner
+#pragma region
+
+void UCsBlockchain::StartMiner(){}
+void UCsBlockchain::StopMiner(){}
+
+#pragma endregion Miner

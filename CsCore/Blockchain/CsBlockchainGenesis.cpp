@@ -6,7 +6,10 @@ UCsBlockchainGenesis::UCsBlockchainGenesis(const FObjectInitializer& ObjectIniti
 {
 }
 
-FString UCsBlockchainGenesis::ToString(){}
+FString UCsBlockchainGenesis::ToString()
+{
+	return ECsCachedString::Str::Empty;
+}
 
 void UCsBlockchainGenesis::Parse(const FString &Str){}
 

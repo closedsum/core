@@ -17,9 +17,9 @@ public:
 
 	FCsEthereumABI(){}
 	~FCsEthereumABI(){}
-}
-
-public struct CgEthereumWeb3DeployLink
+};
+/*
+struct CgEthereumWeb3DeployLink
 {
 	public readonly ECgBlockchainContract Contract;
 	public readonly string Link;
@@ -30,6 +30,7 @@ public struct CgEthereumWeb3DeployLink
 		Link = link;
 	}
 }
+*/
 
 class CsEthereumContract : ICsBlockchainContract
 {
@@ -37,6 +38,9 @@ class CsEthereumContract : ICsBlockchainContract
 #pragma region
 
 public:
+
+	CsEthereumContract();
+	~CsEthereumContract();
 
 	FString Name;
 

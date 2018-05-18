@@ -1,6 +1,10 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "Blockchain/Ethereum/CsEthereumContract.h"
 
+CsEthereumContract::CsEthereumContract() : ICsBlockchainContract()
+{
+}
+
 CsEthereumContract::CsEthereumContract(const FString &name)
 {
 	Address = TEXT("");
@@ -8,11 +12,13 @@ CsEthereumContract::CsEthereumContract(const FString &name)
 	InstanceVariableName = name.ToLower() + TEXT("Instance");
 }
 
+CsEthereumContract::~CsEthereumContract(){}
+
 const FString& CsEthereumContract::GetName() { return Name; }
 
 bool CsEthereumContract::IsValid()
 {
-
+	return false;
 }
 
 FString CsEthereumContract::ToString()

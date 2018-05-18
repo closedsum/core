@@ -29,11 +29,40 @@ struct FCsEthereumGenesisConfig
 		eip158Block = 0;
 	}
 	~FCsEthereumGenesisConfig(){}
+
+	FCsEthereumGenesisConfig& operator=(const FCsEthereumGenesisConfig& B)
+	{
+		chainId = B.chainId;
+		homesteadBlock = B.homesteadBlock;
+		eip155Block = B.eip155Block;
+		eip158Block = B.eip158Block;
+		return *this;
+	}
+
+	bool operator==(const FCsEthereumGenesisConfig& B) const
+	{
+		if (chainId != B.chainId)
+			return false;
+		if (homesteadBlock != B.homesteadBlock)
+			return false;
+		if (eip155Block != B.eip155Block)
+			return false;
+		if (eip158Block != B.eip158Block)
+			return false;
+		return true;
+	}
+
+	bool operator!=(const FCsEthereumGenesisConfig& B) const
+	{
+		return !(*this == B);
+	}
 };
 
 USTRUCT(BlueprintType)
 struct FCsEthereumGenesisAddressBalance
 {
+	GENERATED_USTRUCT_BODY()
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain Genesis")
 	FString balance;
 
@@ -43,7 +72,23 @@ struct FCsEthereumGenesisAddressBalance
 		balance = _balance;
 	}
 	~FCsEthereumGenesisAddressBalance(){}
-}
+
+	FCsEthereumGenesisAddressBalance& operator=(const FCsEthereumGenesisAddressBalance& B)
+	{
+		balance = B.balance;
+		return *this;
+	}
+
+	bool operator==(const FCsEthereumGenesisAddressBalance& B) const
+	{
+		return balance != B.balance;
+	}
+
+	bool operator!=(const FCsEthereumGenesisAddressBalance& B) const
+	{
+		return !(*this == B);
+	}
+};
 
 UCLASS(transient)
 class CSCORE_API UCsEthereumGenesis : public UCsBlockchainGenesis

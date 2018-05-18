@@ -5,6 +5,9 @@ class ICsBlockchainAccount
 {
 public:
 
+	ICsBlockchainAccount();
+	virtual ~ICsBlockchainAccount();
+
 	virtual const FString& GetNamename() = 0;
 
 	virtual FString ToString() = 0;

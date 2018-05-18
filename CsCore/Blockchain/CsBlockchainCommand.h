@@ -2,7 +2,7 @@
 #pragma once
 
 #include "Types/CsTypes_Primitive.h"
-#include "CsBlockchainContract.generated.h"
+#include "CsBlockchainCommand.generated.h"
 
 USTRUCT(BlueprintType)
 struct FECsBlockchainCommand : public FECsEnum_uint8
@@ -29,7 +29,7 @@ protected:
 public:
 	~EMCsBlockchainCommand() {}
 
-	static EMCsBlockchainContract& Get()
+	static EMCsBlockchainCommand& Get()
 	{
 		static EMCsBlockchainCommand Instance;
 		return Instance;
@@ -37,7 +37,7 @@ public:
 };
 
 UENUM(BlueprintType)
-namespace ECgBlockchainCommandArgumentType
+namespace ECsBlockchainCommandArgumentType
 {
 	enum Type
 	{
@@ -45,14 +45,14 @@ namespace ECgBlockchainCommandArgumentType
 		Float									UMETA(DisplayName = "Float"),
 		String									UMETA(DisplayName = "Local"),
 		StringString							UMETA(DisplayName = "Server"),
-		ECgBlockchainCommandArgumentType_MAX	UMETA(Hidden),
+		ECsBlockchainCommandArgumentType_MAX	UMETA(Hidden),
 	};
 }
 
-#define ECS_BLOCKCHAIN_COMMAND_ARGUMENT_TYPE_MAX (uint8)ECgBlockchainCommandArgumentType::ECgBlockchainCommandArgumentType_MAX
-typedef ECgBlockchainCommandArgumentType::Type TCgBlockchainCommandArgumentType;
+#define ECS_BLOCKCHAIN_COMMAND_ARGUMENT_TYPE_MAX (uint8)ECsBlockchainCommandArgumentType::ECsBlockchainCommandArgumentType_MAX
+typedef ECsBlockchainCommandArgumentType::Type TCsBlockchainCommandArgumentType;
 
-namespace ECgBlockchainCommandArgumentType
+namespace ECsBlockchainCommandArgumentType
 {
 	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
 
@@ -70,7 +70,7 @@ namespace ECgBlockchainCommandArgumentType
 		const Type Float = Type::Float;
 		const Type String = Type::String;
 		const Type StringString = Type::StringString;
-		const Type ECgBlockchainCommandArgumentType_MAX = Type::ECgBlockchainCommandArgumentType_MAX;
+		const Type ECsBlockchainCommandArgumentType_MAX = Type::ECsBlockchainCommandArgumentType_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -88,17 +88,17 @@ namespace ECgBlockchainCommandArgumentType
 		if (String == Str::Float) { return Ref::Float; }
 		if (String == Str::String) { return Ref::String; }
 		if (String == Str::StringString) { return Ref::StringString; }
-		return Ref::ECgBlockchainCommandArgumentType_MAX;
+		return Ref::ECsBlockchainCommandArgumentType_MAX;
 	}
 }
 
 USTRUCT(BlueprintType)
-struct FCgBlockchainCommandArgument
+struct FCsBlockchainCommandArgument
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
-	TEnumAsByte<ECgBlockchainCommandArgumentType::Type> ValueType;
+	TEnumAsByte<ECsBlockchainCommandArgumentType::Type> ValueType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
 	int32 Value_int32;
@@ -109,53 +109,164 @@ struct FCgBlockchainCommandArgument
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
 	FString Value_FString;
 
-	FCgBlockchainCommandArgument(){}
-	FCgBlockchainCommandArgument(const TCgBlockchainCommandArgumentType &valueType, const int32& value)
+	FCsBlockchainCommandArgument(){}
+	FCsBlockchainCommandArgument(const TCsBlockchainCommandArgumentType &valueType, const int32& value)
 	{
 		ValueType = valueType;
 		Value_int32 = value;
 	}
 
-	~FCgBlockchainCommandArgument(){}
+	FCsBlockchainCommandArgument(const TCsBlockchainCommandArgumentType &valueType, const float& value)
+	{
+		ValueType = valueType;
+		Value_float = value;
+	}
+
+	FCsBlockchainCommandArgument(const TCsBlockchainCommandArgumentType &valueType, const FString& value)
+	{
+		ValueType = valueType;
+		Value_FString = value;
+	}
+
+	~FCsBlockchainCommandArgument(){}
+
+	FCsBlockchainCommandArgument& operator=(const FCsBlockchainCommandArgument& B)
+	{
+		ValueType = B.ValueType;
+		Value_int32 = B.Value_int32;
+		Value_float = B.Value_float;
+		Value_FString = B.Value_FString;
+		return *this;
+	}
+
+	bool operator==(const FCsBlockchainCommandArgument& B) const
+	{
+		if (ValueType != B.ValueType)
+			return false;
+		if (Value_int32 != B.Value_int32)
+			return false;
+		if (Value_float != B.Value_float)
+			return false;
+		if (Value_FString != B.Value_FString)
+			return false;
+		return true;
+	}
+
+	bool operator!=(const FCsBlockchainCommandArgument& B) const
+	{
+		return !(*this == B);
+	}
 
 	FString ToString()
 	{
 		// Int32
-		if (ValueType == ECgBlockchainCommandArgumentType::Int32)
+		if (ValueType == ECsBlockchainCommandArgumentType::Int32)
 			return FString::FromInt(Value_int32);
 		// Float
-		if (ValueType == ECgBlockchainCommandArgumentType::Float)
+		if (ValueType == ECsBlockchainCommandArgumentType::Float)
 			return FString::SanitizeFloat(Value_float);
 		// String
-		if (ValueType == ECgBlockchainCommandArgumentType::String)
+		if (ValueType == ECsBlockchainCommandArgumentType::String)
 			return Value_FString;
 		// StringString
-		if (ValueType == ECgBlockchainCommandArgumentType::StringString)
+		if (ValueType == ECsBlockchainCommandArgumentType::StringString)
 			return TEXT("\"") + Value_FString + TEXT("\"");
 		return ECsCachedString::Str::Empty;
 	}
-}
+};
 
 USTRUCT(BlueprintType)
-struct CgBlockchainCommandInfo
+struct FCsBlockchainCommandInfo
 {
 	GENERATED_USTRUCT_BODY()
 
-	public ECgBlockchainCommand Command;
-	public CgBlockchainCommandArgument[] Arguments;
-	public object Payload;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
+	FECsBlockchainCommand Command;
 
-	public CgBlockchainCommandInfo(ECgBlockchainCommand command, CgBlockchainCommandArgument[] args = null, object payload = null)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
+	TArray<FCsBlockchainCommandArgument> Arguments;
+
+	void* Payload;
+
+	FCsBlockchainCommandInfo(){}
+	FCsBlockchainCommandInfo(const FECsBlockchainCommand &InCommand, TArray<FCsBlockchainCommandArgument>* Args = nullptr, void* InPayload = nullptr)
 	{
-		Command = command;
-		Arguments = args;
-		Payload = payload;
+		Command = InCommand;
+		
+		if (Args)
+		{
+			Arguments.Reset();
+
+			const int32 Count = Args->Num();
+
+			for (int32 I = 0; I < Count; ++I)
+			{
+				Arguments.Add((*Args)[I]);
+			}
+		}
+		Payload = InPayload;
 	}
 
-	public void Set(ECgBlockchainCommand command, CgBlockchainCommandArgument[] args = null, object payload = null)
+	~FCsBlockchainCommandInfo(){}
+
+	FCsBlockchainCommandInfo& operator=(const FCsBlockchainCommandInfo& B)
 	{
-		Command = command;
-		Arguments = args;
-		Payload = payload;
+		Command = B.Command;
+
+		Arguments.Reset();
+
+		const int32 Count = B.Arguments.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			Arguments.Add(B.Arguments[I]);
+		}
+
+		Payload = B.Payload;
+		return *this;
 	}
-}
+
+	bool operator==(const FCsBlockchainCommandInfo& B) const
+	{
+		if (Command != B.Command)
+			return false;
+
+		if (Arguments.Num() != B.Arguments.Num())
+			return false;
+
+		const int32 Count = Arguments.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			if (Arguments[I] != B.Arguments[I])
+				return false;
+		}
+
+		if (Payload != B.Payload)
+			return false;
+		return true;
+	}
+
+	bool operator!=(const FCsBlockchainCommandInfo& B) const
+	{
+		return !(*this == B);
+	}
+
+	void Set(const FECsBlockchainCommand& InCommand, TArray<FCsBlockchainCommandArgument>* Args = nullptr, void* InPayload = nullptr)
+	{
+		Command = InCommand;
+
+		if (Args)
+		{
+			Arguments.Reset();
+
+			const int32 Count = Args->Num();
+
+			for (int32 I = 0; I < Count; ++I)
+			{
+				Arguments.Add((*Args)[I]);
+			}
+		}
+		Payload = InPayload;
+	}
+};

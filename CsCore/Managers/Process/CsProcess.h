@@ -37,6 +37,79 @@ public:
 	}
 };
 
+UENUM(BlueprintType)
+namespace ECsProcessMonitorOutputEventPurpose
+{
+	enum Type
+	{
+		FireOnce								UMETA(DisplayName = "FireOnce"),
+		Loop									UMETA(DisplayName = "Loop"),
+		ECsProcessMonitorOutputEventPurpose_MAX	UMETA(Hidden),
+	};
+}
+
+#define ECS_PROCESS_MONITOR_OUTPUT_EVENT_PURPOSE (uint8)ECsProcessMonitorOutputEventPurpose::ECsProcessMonitorOutputEventPurpose_MAX
+typedef ECsProcessMonitorOutputEventPurpose::Type TCsProcessMonitorOutputEventPurpose;
+
+namespace ECsProcessMonitorOutputEventPurpose
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+
+	namespace Str
+	{
+		const TCsString FireOnce = TCsString(TEXT("FireOnce"), TEXT("fireonce"));
+		const TCsString Loop = TCsString(TEXT("Loop"), TEXT("Loop"));
+	}
+
+	namespace Ref
+	{
+		const Type FireOnce = Type::FireOnce;
+		const Type Loop = Type::Loop;
+		const Type ECsProcessMonitorOutputEventPurpose_MAX = Type::ECsProcessMonitorOutputEventPurpose_MAX;
+	}
+
+	FORCEINLINE const FString& ToString(const Type &EType)
+	{
+		if (EType == Type::FireOnce) { return Str::FireOnce.Value; }
+		if (EType == Type::Loop) { return Str::Loop.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE const Type& ToType(const FString &String)
+	{
+		if (String == Str::FireOnce) { return Ref::FireOnce; }
+		if (String == Str::Loop) { return Ref::Loop; }
+		return Ref::ECsProcessMonitorOutputEventPurpose_MAX;
+	}
+}
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsProcessMonitorOutputEvent_CompletedEvent, const FString&, Name);
+
+USTRUCT(BlueprintType)
+struct FCsProcessMonitorOutputEvent
+{
+	GENERATED_USTRUCT_BODY()
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FCompletedEvent, const FString&);
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
+	FString Name;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
+	TEnumAsByte<ECsProcessMonitorOutputEventPurpose::Type> Purpose;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
+	bool Completed;
+
+	FCompletedEvent Event;
+	UPROPERTY(BlueprintAssignable, Category = "Process")
+	FBindableDynEvent_CsProcessMonitorOutputEvent_CompletedEvent ScriptEvent;
+
+public:
+	FCsProcessMonitorOutputEvent() {}
+	~FCsProcessMonitorOutputEvent() {}
+};
+
 USTRUCT(BlueprintType)
 struct FCsProcessPayload : public FCgPooledObjectPayload
 {
@@ -46,14 +119,6 @@ public:
 	FCsProcessPayload() {}
 	~FCsProcessPayload() {}
 };
-
-/*
-namespace ECsProcessTest
-{
-	extern const FCsProcess Default;
-	extern const FCsProcess MAX;
-}
-*/
 
 USTRUCT(BlueprintType)
 struct FCsProcessCache : public FCsPooledObjectCache

@@ -139,6 +139,11 @@ struct FECsEnum_uint8 : public FECsEnum
 
 	virtual ~FECsEnum_uint8(){}
 
+	operator uint8() const
+	{
+		return Value;
+	}
+
 	bool operator==(const FECsEnum_uint8& B) const
 	{
 		return Value == B.Value && Name == B.Name;

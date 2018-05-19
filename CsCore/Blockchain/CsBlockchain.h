@@ -282,11 +282,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Blockchain")
 	virtual void SetCommand(const FECsBlockchainCommand &Command, const FString &Str);
 
-	UFUNCTION(BlueprintCallable, Category = "Blockchain")
-	virtual void RunCommand(const int32 &ConsoleIndex, const FECsBlockchainCommand &Command, TArray<FCsBlockchainCommandArgument> &Arguments);
 	virtual void RunCommand(const int32 &ConsoleIndex, const FString &Command);
 	UFUNCTION(BlueprintCallable, Category = "Blockchain")
 	void RunCommandEX(const int32 &ConsoleIndex, const FString &Command);
+	UFUNCTION(BlueprintCallable, Category = "Blockchain")
+	virtual void RunCommand(const int32 &ConsoleIndex, const FECsBlockchainCommand &Command, TArray<FCsBlockchainCommandArgument> &Arguments);
 
 	UFUNCTION(BlueprintCallable, Category = "Blockchain")
 	virtual void SetProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, class UCsProcess* Process);

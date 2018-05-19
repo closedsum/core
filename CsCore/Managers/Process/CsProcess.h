@@ -214,8 +214,18 @@ public:
 
 	FCsProcessCache Cache;
 
+// Interface
+#pragma region
+public:
+
 	void Init(const int32 &Index, const FECsProcess &Type);
 	void OnCreatePool();
 	void Allocate(const int32 &Index, FCsProcessPayload* Payload);
 	void DeAllocate();
+
+#pragma endregion Interface
+
+public:
+
+	void RunCommand(const FString &Command);
 };

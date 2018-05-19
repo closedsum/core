@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Blockchain/CsBlockchainContract.h"
+#include "CsEthereumContract.generated.h"
 
 struct FCsEthereumABI
 {
@@ -18,19 +19,43 @@ public:
 	FCsEthereumABI(){}
 	~FCsEthereumABI(){}
 };
-/*
-struct CgEthereumWeb3DeployLink
-{
-	public readonly ECgBlockchainContract Contract;
-	public readonly string Link;
 
-	public CgEthereumWeb3DeployLink(ECgBlockchainContract contract, string link)
+USTRUCT(BlueprintType)
+struct FCsEthereumWeb3DeployLink
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ethereum")
+	FECsBlockchainContract Contract;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ethereum")
+	FString Link;
+
+	FCsEthereumWeb3DeployLink(){}
+	FCsEthereumWeb3DeployLink(const FECsBlockchainContract &InContract, const FString &InLink)
 	{
-		Contract = contract;
-		Link = link;
+		Contract = InContract;
+		Link = InLink;
 	}
-}
-*/
+
+	~FCsEthereumWeb3DeployLink(){}
+
+	FCsEthereumWeb3DeployLink& operator=(const FCsEthereumWeb3DeployLink& B)
+	{
+		Contract = B.Contract;
+		Link = B.Link;
+		return *this;
+	}
+
+	bool operator==(const FCsEthereumWeb3DeployLink& B) const
+	{
+		return Contract == B.Contract && Link == B.Link;
+	}
+
+	bool operator!=(const FCsEthereumWeb3DeployLink& B) const
+	{
+		return !(*this == B);
+	}
+};
 
 class CsEthereumContract : ICsBlockchainContract
 {

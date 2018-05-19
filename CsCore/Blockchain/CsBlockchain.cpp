@@ -76,9 +76,9 @@ void UCsBlockchain::SetConsoleDirectory(const FString &Path){}
 void UCsBlockchain::Start() {}
 
 void UCsBlockchain::SetCommand(const FECsBlockchainCommand &Command, const FString &Str){}
-void UCsBlockchain::RunCommand(const int32 &ConsoleIndex, const FECsBlockchainCommand &Command, TArray<FCsBlockchainCommandArgument> &Arguments){}
-void UCsBlockchain::RunCommand(const int32 &ConsoleIndex, const FString &Command){}
+void UCsBlockchain::RunCommand(const int32 &ConsoleIndex, const FString &Command) {}
 void UCsBlockchain::RunCommandEX(const int32 &ConsoleIndex, const FString &Command) { RunCommand(ConsoleIndex, Command); }
+void UCsBlockchain::RunCommand(const int32 &ConsoleIndex, const FECsBlockchainCommand &Command, TArray<FCsBlockchainCommandArgument> &Arguments){}
 
 void UCsBlockchain::SetProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, class UCsProcess* Process){}
 UCsProcess* UCsBlockchain::GetProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index) { return nullptr; }

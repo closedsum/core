@@ -14,6 +14,9 @@ UCsProcess::UCsProcess(const FObjectInitializer& ObjectInitializer) : Super(Obje
 {
 }
 
+// Interface
+#pragma region
+
 void UCsProcess::Init(const int32 &Index, const FECsProcess &Type)
 {
 }
@@ -30,3 +33,7 @@ void UCsProcess::Allocate(const int32 &Index, FCsProcessPayload* Payload)
 void UCsProcess::DeAllocate()
 {
 }
+
+#pragma endregion Interface
+
+void UCsProcess::RunCommand(const FString &Command){}

@@ -211,7 +211,7 @@ void UCsEthereum::UnlockAccount(class ICsBlockchainAccount* IAccount)
 	TArray<FCsBlockchainCommandArgument> Args;
 	Account->CreateUnlockArguments(Args);
 
-	CurrentCommandInfo.Set(ECsEthereumCommand::NewAccount, &Args, IAccount);
+	CurrentCommandInfo.Set(ECsEthereumCommand::NewAccount, Args, IAccount);
 
 	AddMonitorOutputEvenToProcess(ECsBlockchainProcessType::Console, CS_BLOCKCHAIN_SINGLE_NODE_INDEX, ECsEthereumCommand::UnlockAccount);
 	RunCommand(CS_BLOCKCHAIN_SINGLE_NODE_INDEX, ECsEthereumCommand::UnlockAccount, Args);
@@ -484,7 +484,7 @@ void UCsEthereum::OnConsoleOutputRecieved(const FString &Output)
 		// Check for account address
 		if (Output.StartsWith("\"0x"))
 		{
-			FCsEthereumAccountInfo* Info = (FCsEthereumAccountInfo*)CurrentCommandInfo.Payload;
+			FCsEthereumAccountInfo* Info = (FCsEthereumAccountInfo*)CurrentCommandInfo.Payload_ptr;
 
 			const FString& Nickname   = Info->Nickname;
 			FString Address			  = Output.Replace(TEXT("\""), TEXT(""));
@@ -540,7 +540,7 @@ void UCsEthereum::OnConsoleOutputRecieved(const FString &Output)
 			const FString Address = Right.Left(40);
 
 			// Update Contract with the address
-			FECsBlockchainContract* EContract = (FECsBlockchainContract*)CurrentCommandInfo.Payload;
+			FECsBlockchainContract* EContract = (FECsBlockchainContract*)CurrentCommandInfo.Payload_ptr;
 
 			CsEthereumContract* Contract = (CsEthereumContract*)Contracts[*EContract];
 			Contract->Address			 = Address;
@@ -559,7 +559,7 @@ void UCsEthereum::OnConsoleOutputRecieved(const FString &Output)
 
 			CommandCompleted_Event.Broadcast(Command);
 
-			FCsBlockchainContractFunctionPayload* Payload = (FCsBlockchainContractFunctionPayload*)CurrentCommandInfo.Payload;
+			FCsBlockchainContractFunctionPayload* Payload = (FCsBlockchainContractFunctionPayload*)CurrentCommandInfo.Payload_ptr;
 
 			ContractFunctionCompleted_Event.Broadcast(Payload->Contract, Payload->Function);
 		}
@@ -770,7 +770,7 @@ void UCsEthereum::SetCoinbase(ICsBlockchainAccount* IAccount)
 	Args[ADDRESS].Value_FString	= Account->Address;
 	Args[ADDRESS].ValueType		= ECsBlockchainCommandArgumentType::StringString;
 
-	CurrentCommandInfo.Set(ECsEthereumCommand::SetEtherbase, &Args, IAccount);
+	CurrentCommandInfo.Set(ECsEthereumCommand::SetEtherbase, Args, IAccount);
 
 	AddMonitorOutputEvenToProcess(ECsBlockchainProcessType::Console, CS_BLOCKCHAIN_SINGLE_NODE_INDEX, ECsEthereumCommand::SetEtherbase);
 	RunCommand(CS_BLOCKCHAIN_SINGLE_NODE_INDEX, ECsEthereumCommand::SetEtherbase, Args);
@@ -789,9 +789,9 @@ void UCsEthereum::GetBalanceEther(ICsBlockchainAccount* IAccount)
 	Args[ADDRESS].Value_FString	= Account->Address;
 	Args[ADDRESS].ValueType		= ECsBlockchainCommandArgumentType::StringString;
 
-	FString& Nickname = Account->Nickname;
+	const FString& Nickname = Account->Nickname;
 
-	CurrentCommandInfo.Set(ECsEthereumCommand::GetBalanceEther, &Args, &Nickname);
+	CurrentCommandInfo.Set(ECsEthereumCommand::GetBalanceEther, Args, Nickname);
 	CurrentCommandOuput.Reset();
 
 	RunCommand(CS_BLOCKCHAIN_SINGLE_NODE_INDEX, ECsEthereumCommand::GetBalanceEther, Args);

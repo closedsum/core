@@ -322,9 +322,12 @@ public:
 	FCsBlockchainCommandInfo CurrentCommandInfo;
 	FCsBlockchainCommandOutput CurrentCommandOuput;
 
+protected:
 	FECsBlockchainContract ECurrentContract;
 	FCsBlockchainContractFunctionPayload CurrentContractFunctionPayload;
 	FCsEthereumAccountInfo CurrentAccountInfo;
+
+public:
 
 	bool CommandFlag;
 	bool SetupAccountFlag;

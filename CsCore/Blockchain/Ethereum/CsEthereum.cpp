@@ -307,7 +307,198 @@ void UCsEthereum::OnCommandCompleted(const FECsBlockchainCommand &Command)
 
 void UCsEthereum::OnCommandCompleted(const FString &Name)
 {
-	//CommandCompleted_Event
+	CommandCompleted_Event.Broadcast(EMCsBlockchainCommand::Get().GetEnum(Name));
 }
+
+	// I/O
+#pragma region
+
+void UCsEthereum::OnProcessOutputRecieved(const FString &Output)
+{
+	if (CsCVarLogBlockchainIO->GetInt() == CS_CVAR_SHOW_LOG || CsCVarLogBlockchainIORunning->GetInt() == CS_CVAR_SHOW_LOG)
+	{
+		UE_LOG(LogCs, Log, TEXT("Process (Output): %s"), *Output);
+	}
+}
+
+void UCsEthereum::OnProcessErrorRecieved(const FString &Output)
+{
+	if (CsCVarLogBlockchainIO->GetInt() == CS_CVAR_SHOW_LOG || CsCVarLogBlockchainIORunning->GetInt() == CS_CVAR_SHOW_LOG)
+	{
+		UE_LOG(LogCs, Log, TEXT("Process (Error): %s"), *Output);
+	}
+}
+
+void UCsEthereum::OnProcessExited(const FString &Output)
+{
+	if (CsCVarLogBlockchainIO->GetInt() == CS_CVAR_SHOW_LOG || CsCVarLogBlockchainIORunning->GetInt() == CS_CVAR_SHOW_LOG)
+	{
+		UE_LOG(LogCs, Log, TEXT("Blockchain (Process) Exited"));
+	}
+
+	UCsProcess* P = Processes[ECsBlockchainProcessType::RunningInstance];
+
+	Processes[ECsBlockchainProcessType::RunningInstance] = nullptr;
+	//IsRunningInstanceOpen = false;
+	//IsRunningInstanceCloseFlag.Set(true);
+	P->DeAllocate();
+}
+
+void UCsEthereum::OnConsoleOutputRecieved(const FString &Output)
+{
+	if (CsCVarLogBlockchainIO->GetInt() == CS_CVAR_SHOW_LOG || CsCVarLogBlockchainIOConsole->GetInt() == CS_CVAR_SHOW_LOG)
+	{
+		UE_LOG(LogCs, Log, TEXT("Console (Output): %s"), *Output);
+	}
+
+	const FECsBlockchainCommand& Command = CurrentCommandInfo.Command;
+
+	// NewAccount
+	if (Command == ECsEthereumCommand::NewAccount)
+	{
+		// Check for account address
+		if (Output.StartsWith("\"0x"))
+		{
+			FCsEthereumAccountInfo* Info = (FCsEthereumAccountInfo*)CurrentCommandInfo.Payload;
+
+			const FString& Nickname   = Info->Nickname;
+			FString Address			  = Output.Replace(TEXT("\""), TEXT(""));
+			Address					  = Address.Replace(TEXT("0x"), TEXT(""));
+			const FString& Passphrase = Info->Passphrase;
+
+			CsEthereumAccount Account = CsEthereumAccount(Nickname, Address, Passphrase);
+
+			string json = a.ToStr();
+			string accountFilePath = AccountsDirectory + "\\" + nickname + "-" + address;
+
+			File.WriteAllText(accountFilePath, json, System.Text.Encoding.ASCII);
+
+			if (LogAccountCreated.Log())
+			{
+				CgDebug.Log("Creating Account: " + nickname);
+				CgDebug.Log("-- Address: " + address);
+				CgDebug.Log("-- PassPhrase: " + passphrase);
+				CgDebug.Log("-- writing to: " + accountFilePath);
+			}
+
+			Accounts.Add(nickname, a);
+
+			CreateKeystore(a);
+
+			AccountCreated_Event.Broadcast(a);
+			CommandCompleted_Event.Broadcast(command);
+		}
+	}
+	// GetBalanceEther
+	if (command == ECgEthereumCommand.GetBalanceEther)
+	{
+		float balance;
+
+		if (float.TryParse(output, out balance))
+		{
+			CurrentCommandOuput = balance;
+
+			CommandCompleted_Event.Broadcast(command);
+		}
+	}
+	// DeployContract
+	if (command == ECgEthereumCommand.DeployContract)
+	{
+		string mined = "Contract mined! address: ";
+
+		if (output.StartsWith(mined))
+		{
+			// Remove "Contract minded! address: 0x"
+			string right = output.Remove(0, mined.Length + 2);
+			// Get the first 40 characters for the address
+			string address = right.Substring(0, 40);
+
+			// Update Contract with the address
+			ECgBlockchainContract econtract = (ECgBlockchainContract)CurrentCommandInfo.Payload;
+
+			CgEthereumContract contract = (CgEthereumContract)Contracts[econtract];
+			contract.Address = address;
+
+			CurrentCommandOuput = address;
+
+			CommandCompleted_Event.Broadcast(command);
+		}
+	}
+	// RunContractConstantFunction
+	if (command == ECgEthereumCommand.RunContractConstantFunction)
+	{
+		if (!output.StartsWith(">"))
+		{
+			CurrentCommandOuput = output;
+
+			CommandCompleted_Event.Broadcast(command);
+
+			CgBlockchainContractFunctionPayload payload = (CgBlockchainContractFunctionPayload)CurrentCommandInfo.Payload;
+
+			ContractFunctionCompleted_Event.Broadcast(payload.Contract, payload.Function);
+		}
+	}
+	// RunContractStateChangeFunction
+	if (command == ECgEthereumCommand.RunContractStateChangeFunction)
+	{
+		if (!output.StartsWith(">"))
+		{
+			CurrentCommandOuput = output;
+
+			CommandCompleted_Event.Broadcast(command);
+		}
+	}
+	// GetGasEstimate
+	if (command == ECgEthereumCommand.GetGasEstimate)
+	{
+		int estimate;
+
+		if (int.TryParse(output, out estimate))
+		{
+			CurrentCommandOuput = estimate;
+
+			CommandCompleted_Event.Broadcast(command);
+		}
+	}
+	// GetTransactionReceipt
+	if (command == ECgEthereumCommand.GetTransactionReceipt)
+	{
+		if (output == "null")
+		{
+			CurrentCommandOuput = false;
+
+			CommandCompleted_Event.Broadcast(command);
+		}
+
+		if (output.Contains("transactionIndex:"))
+		{
+			CurrentCommandOuput = true;
+
+			CommandCompleted_Event.Broadcast(command);
+		}
+	}
+}
+
+void UCsEthereum::OnConsoleErrorRecieved(object sender, DataReceivedEventArgs e)
+{
+	if (LogIO.Log() || LogIOConsole.Log())
+	{
+		CgDebug.Log("Console (Error): " + e.Data);
+	}
+}
+
+void UCsEthereum::OnConsoleExited(object sender, EventArgs e)
+{
+	if (LogIO.Log() || LogIOConsole.Log())
+	{
+		CgDebug.Log("Blockchain (Console): Exited");
+	}
+
+	Processes[ECgBlockchainProcessType.Console].DeAllocate();
+	Processes[ECgBlockchainProcessType.Console] = null;
+	IsConsoleOpen = false;
+}
+
+#pragma endregion I/O
 
 #pragma endregion Process

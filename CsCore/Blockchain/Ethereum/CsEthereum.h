@@ -265,6 +265,7 @@ public:
 
 // Process
 #pragma region
+public:
 
 	void AddMonitorOutputEvenToProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, const FCsProcessMonitorOutputEvent &E);
 	UFUNCTION(BlueprintCallable, Category = "Ethereum")
@@ -272,6 +273,19 @@ public:
 
 	virtual void OnCommandCompleted(const FECsBlockchainCommand &Command);
 	virtual void OnCommandCompleted(const FString &Name);
+
+	// I/O
+#pragma region
+public:
+
+	virtual void OnProcessOutputRecieved(const FString &Ouput);
+	virtual void OnProcessErrorRecieved(const FString &Output);
+	virtual void OnProcessExited(const FString &Output);
+	virtual void OnConsoleOutputRecieved(const FString &Output);
+	virtual void OnConsoleErrorRecieved(const FString &Output);
+	virtual void OnConsoleExited(const FString &Output);
+
+#pragma endregion I/O
 
 #pragma endregion Process
 };

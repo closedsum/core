@@ -185,6 +185,7 @@ namespace CgCore
         public void Start(IEnumerator fiber, CoroutineStopCondition stopCondition, object owner, string ownerName, float startTime, AddRoutine.Event add, RemoveRoutine.Event remove, byte routineType)
         {
             Fiber = fiber;
+            stopCondition.CopyTo(stopCondition);
             Owner.Set(owner);
             OwnerName = ownerName;
 
@@ -312,6 +313,10 @@ namespace CgCore
             if (bWaitForFlag)
             {
                 move = (WaitForBoolType != null && WaitForBoolType.Get()) || (WaitForFlagType != null && WaitForFlagType.IsEqual());
+
+                if (WaitForBoolType != null)
+                {
+                }
 
                 if (move)
                 {
@@ -533,7 +538,7 @@ namespace CgCore
             Children.Clear();
             Owner.UnSet();
             OwnerName = "";
-            StopCondition = null;
+            StopCondition.Clear();
             StopMessages.Clear();
 
             for (byte i = 0; i < (byte)ECgCoroutineMessage.MAX; ++i)

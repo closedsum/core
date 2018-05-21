@@ -9,10 +9,6 @@ class CSCORE_API UCsPooledObject : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
-	UPROPERTY(BlueprintReadWrite, Category = "Pool")
-	int32 PoolIndex;
-
+	virtual void OnCreatePool();
 	virtual void DeAllocate();
-
-	bool IsAllocated;
 };

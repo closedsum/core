@@ -86,6 +86,141 @@ namespace ECsCachedReferences
 
 #pragma endregion Enum Union
 
+// Enums
+#pragma region
+
+USTRUCT(BlueprintType)
+struct FECsEnum
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enum")
+	FString Name;
+
+	FECsEnum(){}
+	virtual ~FECsEnum(){}
+
+	FORCEINLINE friend bool operator==(const FString &Lhs, const FECsEnum &Rhs)
+	{
+		return Lhs == Rhs.Name;
+	}
+
+	FORCEINLINE friend bool operator==(const FECsEnum &Lhs, const FString &Rhs)
+	{
+		return Lhs.Name == Rhs;
+	}
+
+	FORCEINLINE friend bool operator!=(const FString &Lhs, const FECsEnum &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE friend bool operator!=(const FECsEnum &Lhs, const FString &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FECsEnum_uint8 : public FECsEnum
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enum_uint8")
+	uint8 Value;
+
+	FECsEnum_uint8(){}
+
+	FECsEnum_uint8(const uint8 &InValue, const FString &InName)
+	{
+		Value = InValue;
+		Name = InName;
+	}
+
+	virtual ~FECsEnum_uint8(){}
+
+	operator uint8() const
+	{
+		return Value;
+	}
+
+	bool operator==(const FECsEnum_uint8& B) const
+	{
+		return Value == B.Value && Name == B.Name;
+	}
+
+	bool operator!=(const FECsEnum_uint8& B) const
+	{
+		return !(*this == B);
+	}
+
+	FORCEINLINE friend bool operator==(const uint8 &Lhs, const FECsEnum_uint8 &Rhs)
+	{
+		return Lhs == Rhs.Value;
+	}
+
+	FORCEINLINE friend bool operator==(const FECsEnum_uint8 &Lhs, const uint8 &Rhs)
+	{
+		return Lhs.Value == Rhs;
+	}
+
+	FORCEINLINE friend bool operator!=(const uint8 &Lhs, const FECsEnum_uint8 &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE friend bool operator!=(const FECsEnum_uint8 &Lhs, const uint8 &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+};
+
+template<typename EnumStruct, typename EnumType>
+struct TCsEnumMap
+{
+private:
+	TArray<EnumStruct> Enums;
+	TMap<FString, EnumStruct> StringMap;
+	TMap<EnumType, EnumStruct> TypeMap;
+protected:
+	TCsEnumMap() {}
+public:
+	virtual ~TCsEnumMap() {}
+
+	EnumStruct Create(const FString &Name)
+	{
+		EnumType Index = (EnumType)Enums.Num();
+		EnumStruct E(Index, Name);
+
+		Enums.Add(E);
+		StringMap.Add(Name, E);
+		TypeMap.Add(Index, E);
+		return E;
+	}
+	
+	bool IsValidEnum(EnumStruct E)
+	{
+		return Enums.Find(E) > INDEX_NONE;
+	}
+
+	const EnumStruct& GetEnum(const int32 &Index)
+	{
+		return Enums[Index];
+	}
+
+	const EnumStruct& GetEnum(const FString &Name)
+	{
+		return StringMap[Name];
+	}
+
+	const EnumStruct& GetEnum(const EnumType &Type)
+	{
+		return TypeMap[Type];
+	}
+};
+
+#pragma endregion Enums
+
 // Primitive Types
 #pragma region
 

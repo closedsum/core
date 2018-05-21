@@ -1,5 +1,11 @@
 ﻿namespace CgCore
 {
+    using System;
+    using System.IO;
+
+    using Newtonsoft.Json;
+
+    [Serializable]
     public class CgEthereumAccount : CgBlockchainAccount
     {
         public static readonly int ADDRESS = 0;
@@ -9,19 +15,16 @@
 
         #region "Data Members"
 
-            #region "Interface"
-
         public string Address;
         public string PassPhrase;
 
-            #endregion // Interface
-
         #endregion // Data Members
 
-        public CgEthereumAccount(string nickname) : base(nickname){}
+        public CgEthereumAccount() : base(){}
 
-        public CgEthereumAccount(string nickname, string address, string passphrase) : base(nickname)
+        public CgEthereumAccount(string nickname, string address, string passphrase) : base()
         {
+            Nickname   = nickname;
             Address    = address;
             PassPhrase = passphrase;
         }
@@ -33,6 +36,27 @@
             args[ADDRESS]    = new CgBlockchainCommandArgument(ECgBlockchainCommandArgumentType.StringString, Address);
             args[PASSPHRASE] = new CgBlockchainCommandArgument(ECgBlockchainCommandArgumentType.StringString, PassPhrase);
             args[DURATION]   = new CgBlockchainCommandArgument(ECgBlockchainCommandArgumentType.Number, 0);
+        }
+
+        public override string ToStr()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
+
+        public override void Parse(string str)
+        {
+            JsonConvert.PopulateObject(str, (object)this);
+        }
+
+        public override void ParseFromFilePath(string path)
+        {
+            if (File.Exists(path))
+                Parse(File.ReadAllText(path));
+        }
+
+        public string AddressAsArg()
+        {
+            return "'0x" + Address + "'";
         }
     }
 }

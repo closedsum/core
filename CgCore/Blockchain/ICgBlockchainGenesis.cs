@@ -7,7 +7,7 @@ namespace CgCore
     {
         string ToStr();
         void Parse(string str);
-        void ParseFromFile(string filename);
+        void ParseFromFilePath(string path);
     }
 
     [Serializable]
@@ -15,6 +15,6 @@ namespace CgCore
     {
         public abstract string ToStr();
         public abstract void Parse(string str);
-        public abstract void ParseFromFile(string filename);
+        public abstract void ParseFromFilePath(string path);
     }
 }

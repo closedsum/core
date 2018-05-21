@@ -56,6 +56,11 @@ namespace CgCore
             return e.Value;
         }
 
+        public static implicit operator string(TCgEnum<T> e)
+        {
+            return e.Name;
+        }
+
         public static bool operator ==(TCgEnum<T> lhs, TCgEnum<T> rhs)
         {
             if (object.ReferenceEquals(lhs, null))
@@ -86,6 +91,26 @@ namespace CgCore
         }
 
         public static bool operator !=(T lhs, TCgEnum<T> rhs)
+        {
+            return !(lhs == rhs);
+        }
+
+        public static bool operator ==(TCgEnum<T> lhs, string rhs)
+        {
+            return lhs.Name ==rhs;
+        }
+
+        public static bool operator !=(TCgEnum<T> lhs, string rhs)
+        {
+            return !(lhs == rhs);
+        }
+
+        public static bool operator ==(string lhs, TCgEnum<T> rhs)
+        {
+            return lhs == rhs.Name;
+        }
+
+        public static bool operator !=(string lhs, TCgEnum<T> rhs)
         {
             return !(lhs == rhs);
         }
@@ -134,7 +159,7 @@ namespace CgCore
         public ECgEnum_uint(uint value, string name) : base(value, name) { }
     }
 
-    public class ECgEnumMap<EnumClass, EnumType> 
+    public class ECgEnumMap<EnumClass, EnumType>
         where EnumClass : TCgEnum<EnumType>
         where EnumType : struct, IConvertible
     {
@@ -226,6 +251,11 @@ namespace CgCore
                     CgDebug.LogError(this.GetType().Name + ".Get: No enum created of type: " + typeof(EnumClass).Name + " and name: " + key);
                 return e;
             }
+        }
+
+        public bool IsValidEnum(EnumClass e)
+        {
+            return Enums.Find(em => em == e) != null;
         }
     }
 

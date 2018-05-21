@@ -282,3 +282,28 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawManagerTraceResponses;
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerRunnableTransactions;
 
 #pragma endregion Runnable
+
+// Blockchain
+#pragma region
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainIO;
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainIORunning;
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainIOConsole;
+//Process
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarShowBlockchainProcessWindow;
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainProcessStart;
+// Command
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainCommandCompleted;
+// Account
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainAccountCreated;
+
+	// Ethereum
+#pragma region
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainAccountLoad;
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainAccountSetup;
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainBalance;
+
+#pragma endregion Ethereum
+
+#pragma endregion Blockchain

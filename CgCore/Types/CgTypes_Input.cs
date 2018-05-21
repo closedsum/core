@@ -767,7 +767,7 @@ namespace CgCore
         }
     }
 
-    public class CgInputWord
+    public sealed class CgInputWord
     {
         public bool Completed;
         public float CompletedTime;
@@ -897,7 +897,7 @@ namespace CgCore
         }
     }
 
-    public class CgInputPhrase
+    public sealed class CgInputPhrase
     {
         public bool Completed;
         public float CompletedTime;
@@ -1018,7 +1018,7 @@ namespace CgCore
         }
     }
 
-    public class CgInputSentence
+    public sealed class CgInputSentence
     {
         public bool Active;
         public bool Completed;

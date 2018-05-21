@@ -2,6 +2,7 @@
 {
     using System;
     using System.Diagnostics;
+    using System.Collections.Generic;
 
     public sealed class ECgProcess : ECgEnum_byte
     {
@@ -33,8 +34,73 @@
     {
     }
 
+    public enum ECgProcessMonitorOutputEventPurpose : byte
+    {
+        FireOnce,
+        Loop,
+        MAX
+    }
+
+    public sealed class CgProcessMonitorOutputEvent
+    {
+        public sealed class CompletedEvent : TCgMulticastDelegate_OneParam<string> { }
+
+        private string Name;
+        public ECgProcessMonitorOutputEventPurpose Purpose;
+        private CgStringParagraph Paragraph;
+        private bool Completed;
+        private CompletedEvent Event;
+
+        public CgProcessMonitorOutputEvent(string name, CgStringParagraph paragraph, ECgProcessMonitorOutputEventPurpose purpose = ECgProcessMonitorOutputEventPurpose.FireOnce)
+        {
+            Name = name;
+            Paragraph = paragraph;
+            Event = new CompletedEvent();
+        }
+
+        public void AddEvent(CompletedEvent.Event e)
+        {
+            Event.Add(e);
+        }
+
+        public void ProcessOutput(string output)
+        {
+            if (Completed)
+                return;
+
+            Paragraph.ProcessInput(output);
+
+            Completed = Paragraph.HasCompleted();
+
+            if (Completed)
+            {
+                Event.Broadcast(Name);
+            }
+        }
+
+        public void Clear()
+        {
+            Completed = false;
+            Paragraph.Clear();
+        }
+
+        public void Reset()
+        {
+            Clear();
+            Event.Clear();
+        }
+
+        public bool HasCompleted()
+        {
+            return Completed;
+        }
+    }
+
+
     public class CgProcess : TCgPooledObject<ECgProcess>
     {
+        public static CgConsoleVariableLog LogCommandRequest = new CgConsoleVariableLog("log.process.command.request", false, "Log Process Command Request", (int)ECgConsoleVariableFlag.Console);
+
         public sealed class OutputDataRecieved : TCgMulticastDelegate_TwoParams<object, DataReceivedEventArgs> { }
         public sealed class ErrorDataRecieved : TCgMulticastDelegate_TwoParams<object, DataReceivedEventArgs> { }
         public sealed class Exited : TCgMulticastDelegate_TwoParams<object, EventArgs> { }
@@ -48,6 +114,8 @@
         public ErrorDataRecieved ErrorDataRecieved_Event;
         public Exited Exited_Event;
 
+        private List<CgProcessMonitorOutputEvent> MonitorOuputEvents;
+
         #endregion // Data Members
 
         public CgProcess() : base()
@@ -57,6 +125,8 @@
             OutputDataRecieved_Event = new OutputDataRecieved();
             ErrorDataRecieved_Event = new ErrorDataRecieved();
             Exited_Event = new Exited();
+
+            MonitorOuputEvents = new List<CgProcessMonitorOutputEvent>();
         }
 
         #region "Interface"
@@ -81,6 +151,11 @@
             pay.ErrorDataRecieved_Event.CopyTo(ErrorDataRecieved_Event);
             pay.Exited_Event.CopyTo(Exited_Event);
 
+            foreach (CgProcessMonitorOutputEvent e in pay.MonitorOuputEvents)
+            {
+                MonitorOuputEvents.Add(e);
+            }
+
             IsRunning = true;
 
             P.Start();
@@ -99,6 +174,8 @@
             ErrorDataRecieved_Event.Clear();
             Exited_Event.Clear();
 
+            MonitorOuputEvents.Clear();
+
             if (IsRunning)
                 P.Kill();
 
@@ -109,6 +186,12 @@
 
         public void RunCommand(string command)
         {
+            P.StandardInput.Write(command);
+            P.StandardInput.Write("\n");
+            P.StandardInput.Flush();
+
+            // TODO: Have an option to choose encoding
+            /*
             // Convert string command to bytes
             byte[] buffer = System.Text.Encoding.ASCII.GetBytes(command);
             P.StandardInput.BaseStream.Write(buffer, 0, buffer.Length);
@@ -117,16 +200,45 @@
             P.StandardInput.BaseStream.Write(buffer, 0, buffer.Length);
             // Flush command to be processed
             P.StandardInput.BaseStream.Flush();
+            */
+        }
+
+        public void AddMonitorOuputEvent(CgProcessMonitorOutputEvent e)
+        {
+            MonitorOuputEvents.Add(e);
+        }
+
+        public void ProcessMonitorOutputEvents(string ouput)
+        {
+            int count = MonitorOuputEvents.Count;
+
+            for (int i = count - 1; i >= 0; --i)
+            {
+                CgProcessMonitorOutputEvent o = MonitorOuputEvents[i];
+
+                o.ProcessOutput(ouput);
+
+                if (o.HasCompleted())
+                {
+                    o.Clear();
+
+                    // FireOnce
+                    if (o.Purpose == ECgProcessMonitorOutputEventPurpose.FireOnce)
+                        MonitorOuputEvents.RemoveAt(i);
+                }
+            }
         }
 
         public void OnOutputDataRecieved(object sender, DataReceivedEventArgs e)
         {
             OutputDataRecieved_Event.Broadcast(sender, e);
+            ProcessMonitorOutputEvents(e.Data);
         }
 
         public void OnErrorDataRecieved(object sender, DataReceivedEventArgs e)
         {
             ErrorDataRecieved_Event.Broadcast(sender, e);
+            ProcessMonitorOutputEvents(e.Data);
         }
 
         public void OnExited(object sender, EventArgs e)

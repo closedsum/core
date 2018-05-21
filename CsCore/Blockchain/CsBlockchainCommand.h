@@ -270,3 +270,35 @@ struct FCsBlockchainCommandInfo
 		Payload = InPayload;
 	}
 };
+
+USTRUCT(BlueprintType)
+struct FCsBlockchainCommandOutput
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
+	bool Value_bool;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
+	int32 Value_int32;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
+	float Value_float;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
+	FString Value_FString;
+
+	void* Value_ptr;
+
+	FCsBlockchainCommandOutput(){}
+	~FCsBlockchainCommandOutput(){}
+
+	void Reset()
+	{
+		Value_bool = false;
+		Value_int32 = 0;
+		Value_float = 0.0f;
+		Value_FString = ECsCachedString::Str::Empty;
+		Value_ptr = nullptr;
+	}
+};

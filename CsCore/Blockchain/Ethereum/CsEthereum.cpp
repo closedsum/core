@@ -3,7 +3,14 @@
 #include "CsCore.h"
 #include "CsCVars.h"
 
+#include "Coroutine/CsCoroutineScheduler.h"
+
+#include "Blockchain/Ethereum/CsEthereumAccount.h"
+
 #include "Runtime/Core/Public/HAL/FileManagerGeneric.h"
+
+// Enums
+#pragma region
 
 namespace ECsEthereumCommand
 {
@@ -30,6 +37,35 @@ namespace ECsEthereumCommand
 
 	const FECsBlockchainCommand MAX = EMCsBlockchainCommand::Get().Create(TEXT("MAX"));
 }
+
+#pragma endregion Enums
+
+// Cache
+#pragma region
+
+namespace ECsEthereumCachedName
+{
+	namespace Name
+	{
+		// Functions
+		const FName CreateKeystore_Internal = FName("UCsEthereum::CreateKeystore_Internal");
+		const FName SetupAccount_Internal = FName("UCsEthereum::SetupAccount_Internal");
+		const FName BringBalanceToThreshold_Internal = FName("UCsEthereum::BringBalanceToThreshold_Internal");
+	};
+}
+
+namespace ECsEthereumCachedString
+{
+	namespace Str
+	{
+		// Functions
+		const FString CreateKeystore_Internal = TEXT("UCsEthereum::CreateKeystore_Internal");
+		const FString SetupAccount_Internal = TEXT("UCsEthereum::SetupAccount_Internal");
+		const FString BringBalanceToThreshold_Internal = TEXT("UCsEthereum::BringBalanceToThreshold_Internal");
+	};
+}
+
+#pragma endregion Cache
 
 UCsEthereum::UCsEthereum(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -163,8 +199,29 @@ void UCsEthereum::CloseConsole(){}
 #pragma region
 
 void UCsEthereum::LoadAccounts(){}
+
 void UCsEthereum::NewAccount(void* Payload){}
-void UCsEthereum::UnlockAccount(class ICsBlockchainAccount* IAccount){}
+
+void UCsEthereum::UnlockAccount(class ICsBlockchainAccount* IAccount)
+{
+	CommandFlag = false;
+
+	CsEthereumAccount* Account = (CsEthereumAccount*)IAccount;
+
+	TArray<FCsBlockchainCommandArgument> Args;
+	Account->CreateUnlockArguments(Args);
+
+	CurrentCommandInfo.Set(ECsEthereumCommand::NewAccount, &Args, IAccount);
+
+	AddMonitorOutputEvenToProcess(ECsBlockchainProcessType::Console, CS_BLOCKCHAIN_SINGLE_NODE_INDEX, ECsEthereumCommand::UnlockAccount);
+	RunCommand(CS_BLOCKCHAIN_SINGLE_NODE_INDEX, ECsEthereumCommand::UnlockAccount, Args);
+}
+
+void UCsEthereum::ListAccounts()
+{
+	TArray<FCsBlockchainCommandArgument> Arguments;
+	RunCommand(CS_BLOCKCHAIN_SINGLE_NODE_INDEX, ECsEthereumCommand::ListAccounts, Arguments);
+}
 
 #pragma endregion Account
 
@@ -177,6 +234,74 @@ void UCsEthereum::StopMiner(){}
 #pragma endregion Miner
 
 #pragma endregion // Interface
+
+// Routines
+#pragma region
+
+/*static*/ void UCsEthereum::AddRoutine(UObject* InBlockchain, struct FCsRoutine* Routine, const uint8 &Type)
+{
+	Cast<UCsEthereum>(InBlockchain)->AddRoutine_Internal(Routine, Type);
+}
+
+bool UCsEthereum::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
+{
+	const TCsEthereumRoutine RoutineType = (TCsEthereumRoutine)Type;
+
+	// CreateKeystore_Internal
+	if (RoutineType == ECsEthereumRoutine::CreateKeystore_Internal)
+	{
+		CreateKeystore_Internal_Routine = Routine;
+		return true;
+	}
+	// SetupAccount_Internal
+	if (RoutineType == ECsEthereumRoutine::SetupAccount_Internal)
+	{
+		SetupAccount_Internal_Routine = Routine;
+		return true;
+	}
+	// BringBalanceToThreshold_Internal
+	if (RoutineType == ECsEthereumRoutine::BringBalanceToThreshold_Internal)
+	{
+		BringBalanceToThreshold_Internal_Routine = Routine;
+		return true;
+	}
+	return false;
+}
+
+/*static*/ void UCsEthereum::RemoveRoutine(UObject* InBlockchain, struct FCsRoutine* Routine, const uint8 &Type)
+{
+	Cast<UCsEthereum>(InBlockchain)->RemoveRoutine_Internal(Routine, Type);
+}
+
+bool UCsEthereum::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
+{
+	const TCsEthereumRoutine RoutineType = (TCsEthereumRoutine)Type;
+
+	// CreateKeystore_Internal
+	if (RoutineType == ECsEthereumRoutine::CreateKeystore_Internal)
+	{
+		check(CreateKeystore_Internal_Routine == Routine);
+		CreateKeystore_Internal_Routine = nullptr;
+		return true;
+	}
+	// SetupAccount_Internal
+	if (RoutineType == ECsEthereumRoutine::SetupAccount_Internal)
+	{
+		check(SetupAccount_Internal_Routine == Routine);
+		SetupAccount_Internal_Routine = nullptr;
+		return true;
+	}
+	// BringBalanceToThreshold_Internal
+	if (RoutineType == ECsEthereumRoutine::BringBalanceToThreshold_Internal)
+	{
+		check(BringBalanceToThreshold_Internal_Routine == Routine);
+		BringBalanceToThreshold_Internal_Routine = nullptr;
+		return true;
+	}
+	return false;
+}
+
+#pragma endregion Routines
 
 void UCsEthereum::Rebuild()
 {
@@ -366,139 +491,513 @@ void UCsEthereum::OnConsoleOutputRecieved(const FString &Output)
 			Address					  = Address.Replace(TEXT("0x"), TEXT(""));
 			const FString& Passphrase = Info->Passphrase;
 
-			CsEthereumAccount Account = CsEthereumAccount(Nickname, Address, Passphrase);
+			CsEthereumAccount* Account =  new CsEthereumAccount(Nickname, Address, Passphrase);
 
-			string json = a.ToStr();
-			string accountFilePath = AccountsDirectory + "\\" + nickname + "-" + address;
+			const FString Json = Account->ToString();
+			const FString AccountFilePath = AccountsDirectory + TEXT("\\") + Nickname + TEXT("-") + Address;
 
-			File.WriteAllText(accountFilePath, json, System.Text.Encoding.ASCII);
+			FFileHelper::SaveStringToFile(Json, *AccountFilePath);
 
-			if (LogAccountCreated.Log())
+			if (CsCVarLogBlockchainAccountCreated->GetInt() == CS_CVAR_SHOW_LOG)
 			{
-				CgDebug.Log("Creating Account: " + nickname);
-				CgDebug.Log("-- Address: " + address);
-				CgDebug.Log("-- PassPhrase: " + passphrase);
-				CgDebug.Log("-- writing to: " + accountFilePath);
+				UE_LOG(LogCs, Log, TEXT("Creating Account: %s"), *Nickname);
+				UE_LOG(LogCs, Log, TEXT("-- Address: %s"), *Address);
+				UE_LOG(LogCs, Log, TEXT("-- PassPhrase: %s"), *Passphrase);
+				UE_LOG(LogCs, Log, TEXT("-- writing to: %s"), *AccountFilePath);
 			}
 
-			Accounts.Add(nickname, a);
+			Accounts.Add(Nickname, Account);
 
-			CreateKeystore(a);
+			CreateKeystore(Account);
 
-			AccountCreated_Event.Broadcast(a);
-			CommandCompleted_Event.Broadcast(command);
+			AccountCreated_Event.Broadcast(Account);
+			CommandCompleted_Event.Broadcast(Command);
 		}
 	}
 	// GetBalanceEther
-	if (command == ECgEthereumCommand.GetBalanceEther)
+	if (Command == ECsEthereumCommand::GetBalanceEther)
 	{
-		float balance;
+		const float Balance			  = FCString::Atof(*Output);
+		const FString BalanceAsString = FString::SanitizeFloat(Balance);
 
-		if (float.TryParse(output, out balance))
+		if (Output == BalanceAsString)
 		{
-			CurrentCommandOuput = balance;
+			CurrentCommandOuput.Value_int32 = Balance;
 
-			CommandCompleted_Event.Broadcast(command);
+			CommandCompleted_Event.Broadcast(Command);
 		}
 	}
 	// DeployContract
-	if (command == ECgEthereumCommand.DeployContract)
+	if (Command == ECsEthereumCommand::DeployContract)
 	{
-		string mined = "Contract mined! address: ";
+		const FString Mined = TEXT("Contract mined! address: ");
 
-		if (output.StartsWith(mined))
+		if (Output.StartsWith(Mined))
 		{
 			// Remove "Contract minded! address: 0x"
-			string right = output.Remove(0, mined.Length + 2);
+			const FString Right = Output.RightChop(Mined.Len() + 2);
 			// Get the first 40 characters for the address
-			string address = right.Substring(0, 40);
+			const FString Address = Right.Left(40);
 
 			// Update Contract with the address
-			ECgBlockchainContract econtract = (ECgBlockchainContract)CurrentCommandInfo.Payload;
+			FECsBlockchainContract* EContract = (FECsBlockchainContract*)CurrentCommandInfo.Payload;
 
-			CgEthereumContract contract = (CgEthereumContract)Contracts[econtract];
-			contract.Address = address;
+			CsEthereumContract* Contract = (CsEthereumContract*)Contracts[*EContract];
+			Contract->Address			 = Address;
 
-			CurrentCommandOuput = address;
+			CurrentCommandOuput.Value_FString = Address;
 
-			CommandCompleted_Event.Broadcast(command);
+			CommandCompleted_Event.Broadcast(Command);
 		}
 	}
 	// RunContractConstantFunction
-	if (command == ECgEthereumCommand.RunContractConstantFunction)
+	if (Command == ECsEthereumCommand::RunContractConstantFunction)
 	{
-		if (!output.StartsWith(">"))
+		if (!Output.StartsWith(TEXT(">")))
 		{
-			CurrentCommandOuput = output;
+			CurrentCommandOuput.Value_FString = Output;
 
-			CommandCompleted_Event.Broadcast(command);
+			CommandCompleted_Event.Broadcast(Command);
 
-			CgBlockchainContractFunctionPayload payload = (CgBlockchainContractFunctionPayload)CurrentCommandInfo.Payload;
+			FCsBlockchainContractFunctionPayload* Payload = (FCsBlockchainContractFunctionPayload*)CurrentCommandInfo.Payload;
 
-			ContractFunctionCompleted_Event.Broadcast(payload.Contract, payload.Function);
+			ContractFunctionCompleted_Event.Broadcast(Payload->Contract, Payload->Function);
 		}
 	}
 	// RunContractStateChangeFunction
-	if (command == ECgEthereumCommand.RunContractStateChangeFunction)
+	if (Command == ECsEthereumCommand::RunContractStateChangeFunction)
 	{
-		if (!output.StartsWith(">"))
+		if (!Output.StartsWith(TEXT(">")))
 		{
-			CurrentCommandOuput = output;
+			CurrentCommandOuput.Value_FString = Output;
 
-			CommandCompleted_Event.Broadcast(command);
+			CommandCompleted_Event.Broadcast(Command);
 		}
 	}
 	// GetGasEstimate
-	if (command == ECgEthereumCommand.GetGasEstimate)
+	if (Command == ECsEthereumCommand::GetGasEstimate)
 	{
-		int estimate;
+		const int32 Estimate		   = FCString::Atoi(*Output);
+		const FString EstimateAsString = FString::FromInt(Estimate);
 
-		if (int.TryParse(output, out estimate))
+		if (Output == EstimateAsString)
 		{
-			CurrentCommandOuput = estimate;
+			CurrentCommandOuput.Value_int32 = Estimate;
 
-			CommandCompleted_Event.Broadcast(command);
+			CommandCompleted_Event.Broadcast(Command);
 		}
 	}
 	// GetTransactionReceipt
-	if (command == ECgEthereumCommand.GetTransactionReceipt)
+	if (Command == ECsEthereumCommand::GetTransactionReceipt)
 	{
-		if (output == "null")
+		if (Output == TEXT("null"))
 		{
-			CurrentCommandOuput = false;
+			CurrentCommandOuput.Value_bool = false;
 
-			CommandCompleted_Event.Broadcast(command);
+			CommandCompleted_Event.Broadcast(Command);
 		}
 
-		if (output.Contains("transactionIndex:"))
+		if (Output.Contains(TEXT("transactionIndex:")))
 		{
-			CurrentCommandOuput = true;
+			CurrentCommandOuput.Value_bool = true;
 
-			CommandCompleted_Event.Broadcast(command);
+			CommandCompleted_Event.Broadcast(Command);
 		}
 	}
 }
 
-void UCsEthereum::OnConsoleErrorRecieved(object sender, DataReceivedEventArgs e)
+void UCsEthereum::OnConsoleErrorRecieved(const FString &Output)
 {
-	if (LogIO.Log() || LogIOConsole.Log())
+	if (CsCVarLogBlockchainIO->GetInt() == CS_CVAR_SHOW_LOG || CsCVarLogBlockchainIOConsole->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		CgDebug.Log("Console (Error): " + e.Data);
+		UE_LOG(LogCs, Log, TEXT("Console (Error): %s"), *Output);
 	}
 }
 
-void UCsEthereum::OnConsoleExited(object sender, EventArgs e)
+void UCsEthereum::OnConsoleExited(const FString &Output)
 {
-	if (LogIO.Log() || LogIOConsole.Log())
+	if (CsCVarLogBlockchainIO->GetInt() == CS_CVAR_SHOW_LOG || CsCVarLogBlockchainIOConsole->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		CgDebug.Log("Blockchain (Console): Exited");
+		UE_LOG(LogCs, Log, TEXT("Blockchain (Console): Exited"));
 	}
 
-	Processes[ECgBlockchainProcessType.Console].DeAllocate();
-	Processes[ECgBlockchainProcessType.Console] = null;
-	IsConsoleOpen = false;
+	Processes[ECsBlockchainProcessType::Console]->DeAllocate();
+	Processes[ECsBlockchainProcessType::Console] = nullptr;
+	//IsConsoleOpen = false;
 }
 
 #pragma endregion I/O
 
-#pragma endregion Process
+#pragma endregion Processc
+
+// Accounts
+#pragma region
+
+FString UCsEthereum::GetKeystoreFilePath(const FString &Address)
+{
+	IFileManager& FileManager = FFileManagerGeneric::Get();
+
+	TArray<FString> Paths;
+	FileManager.FindFiles(Paths, *KeystoreDirectory, nullptr);
+
+	const int32 Count = Paths.Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		const FString& Path = Paths[I];
+
+		if (Path.Contains(Address))
+		{
+			return Path;
+		}
+	}
+	return ECsCachedString::Str::Empty;
+}
+
+void UCsEthereum::CreateKeystore(CsEthereumAccount* Account)
+{
+	const FString Path = GetKeystoreFilePath(Account->Address);
+
+	if (Path == ECsCachedString::Str::Empty)
+	{
+		UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+		FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+
+		const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+
+		Payload->Schedule		= Schedule;
+		Payload->Function		= &UCsEthereum::CreateKeystore_Internal;
+		Payload->Object			= this;
+		Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
+		Payload->Add			= &UCsEthereum::AddRoutine;
+		Payload->Remove			= &UCsEthereum::RemoveRoutine;
+		Payload->Type			= (uint8)ECsEthereumRoutine::CreateKeystore_Internal;
+		Payload->DoInit			= true;
+		Payload->PerformFirstRun = false;
+		Payload->Name			= ECsEthereumCachedName::Name::CreateKeystore_Internal;
+		Payload->NameAsString	= ECsEthereumCachedString::Str::CreateKeystore_Internal;
+
+		FCsRoutine* R = Scheduler->Allocate(Payload);
+
+		R->strings[CS_FIRST]	  = ECsCachedString::Str::Empty;
+		R->voidPointers[CS_FIRST] = Account;
+
+		Scheduler->StartRoutine(Schedule, R);
+	}
+	else
+	{
+		FCsEthereumKeystore Keystore;
+		Keystore.ParseFromFilePath(Path);
+
+		Keystores.Add(Account->Nickname, Keystore);
+
+		if (CsCVarLogBlockchainAccountCreated->GetInt() == CS_CVAR_SHOW_LOG || CsCVarLogBlockchainAccountLoad->GetInt() == CS_CVAR_SHOW_LOG)
+		{
+			UE_LOG(LogCs, Log, TEXT("CgEthereum::CreateKeystore: Keystore linked to Account with Nickname: %s"), *(Account->Nickname));
+			UE_LOG(LogCs, Log, TEXT("-- saved to: %s"), *Path);
+		}
+	}
+}
+
+CS_COROUTINE(UCsEthereum, CreateKeystore_Internal)
+{
+	UCsEthereum* eth		 = r->GetRObject<UCsEthereum>();
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
+
+	FString& KeystoreFilePath  = r->strings[CS_FIRST];
+	CsEthereumAccount* Account = (CsEthereumAccount*)r->voidPointers[CS_FIRST];
+
+	IFileManager& FileManager = FFileManagerGeneric::Get();
+
+	CS_COROUTINE_BEGIN(r);
+
+	do
+	{
+		{
+			TArray<FString> Paths;
+			FileManager.FindFiles(Paths, *(eth->KeystoreDirectory));
+
+			const int32 Count = Paths.Num();
+
+			for (int32 I = 0; I < Count; ++I)
+			{
+				const FString& Path = Paths[I];
+
+				if (Path.Contains(*(Account->Address)))
+				{
+					KeystoreFilePath = Path;
+					break;
+				}
+
+				if (KeystoreFilePath != ECsCachedString::Str::Empty)
+					break;
+			}
+		}
+
+		if (KeystoreFilePath == ECsCachedString::Str::Empty)
+		{
+			CS_COROUTINE_YIELD(r);
+		}
+	} while (KeystoreFilePath == ECsCachedString::Str::Empty);
+
+	{
+		FCsEthereumKeystore Keystore;
+		Keystore.ParseFromFilePath(KeystoreFilePath);
+
+		eth->Keystores.Add(Account->Nickname, Keystore);
+
+		if (CsCVarLogBlockchainAccountCreated->GetInt() == CS_CVAR_SHOW_LOG)
+		{
+			UE_LOG(LogCs, Log, TEXT("CgEthereum::CreateKeystore: Keystore created for Account with Nickname: %s"), *(Account->Nickname));
+			UE_LOG(LogCs, Log, TEXT("-- saved to: %s"), *KeystoreFilePath);
+		}
+	}
+
+	CS_COROUTINE_END(r);
+}
+
+void UCsEthereum::SetCoinbase(ICsBlockchainAccount* IAccount)
+{
+	CommandFlag = false;
+
+	// payload = nickname
+	CsEthereumAccount* Account = (CsEthereumAccount*)IAccount;
+
+	const uint8 ADDRESS = 0;
+
+	TArray<FCsBlockchainCommandArgument> Args;
+	Args.AddDefaulted();
+	Args[ADDRESS].Value_FString	= Account->Address;
+	Args[ADDRESS].ValueType		= ECsBlockchainCommandArgumentType::StringString;
+
+	CurrentCommandInfo.Set(ECsEthereumCommand::SetEtherbase, &Args, IAccount);
+
+	AddMonitorOutputEvenToProcess(ECsBlockchainProcessType::Console, CS_BLOCKCHAIN_SINGLE_NODE_INDEX, ECsEthereumCommand::SetEtherbase);
+	RunCommand(CS_BLOCKCHAIN_SINGLE_NODE_INDEX, ECsEthereumCommand::SetEtherbase, Args);
+}
+
+void UCsEthereum::GetBalanceEther(ICsBlockchainAccount* IAccount)
+{
+	CommandFlag = false;
+
+	CsEthereumAccount* Account = (CsEthereumAccount*)IAccount;
+
+	const uint8 ADDRESS = 0;
+
+	TArray<FCsBlockchainCommandArgument> Args;
+	Args.AddDefaulted();
+	Args[ADDRESS].Value_FString	= Account->Address;
+	Args[ADDRESS].ValueType		= ECsBlockchainCommandArgumentType::StringString;
+
+	FString& Nickname = Account->Nickname;
+
+	CurrentCommandInfo.Set(ECsEthereumCommand::GetBalanceEther, &Args, &Nickname);
+	CurrentCommandOuput.Reset();
+
+	RunCommand(CS_BLOCKCHAIN_SINGLE_NODE_INDEX, ECsEthereumCommand::GetBalanceEther, Args);
+}
+
+void UCsEthereum::SetupAccount(void* Payload)
+{
+	SetupAccountFlag = false;
+
+	UCsCoroutineScheduler* Scheduler		= UCsCoroutineScheduler::Get();
+	FCsCoroutinePayload* CoroutinePayload	= Scheduler->AllocatePayload();
+
+	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+
+	CoroutinePayload->Schedule		= Schedule;
+	CoroutinePayload->Function		= &UCsEthereum::SetupAccount_Internal;
+	CoroutinePayload->Object		= this;
+	CoroutinePayload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
+	CoroutinePayload->Add			= &UCsEthereum::AddRoutine;
+	CoroutinePayload->Remove		= &UCsEthereum::RemoveRoutine;
+	CoroutinePayload->Type			= (uint8)ECsEthereumRoutine::SetupAccount_Internal;
+	CoroutinePayload->DoInit		= true;
+	CoroutinePayload->PerformFirstRun = false;
+	CoroutinePayload->Name			= ECsEthereumCachedName::Name::SetupAccount_Internal;
+	CoroutinePayload->NameAsString	= ECsEthereumCachedString::Str::SetupAccount_Internal;
+
+	FCsRoutine* R = Scheduler->Allocate(CoroutinePayload);
+
+	R->voidPointers[CS_FIRST] = Payload;
+
+	Scheduler->StartRoutine(Schedule, R);
+}
+
+CS_COROUTINE(UCsEthereum, SetupAccount_Internal)
+{
+	UCsEthereum* eth		 = r->GetRObject<UCsEthereum>();
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
+
+	FCsEthereumAccountInfo* Info = (FCsEthereumAccountInfo*)r->voidPointers[CS_FIRST];
+	const FString& Nickname		 = Info->Nickname;
+
+	ICsBlockchainAccount** IAccount = eth->Accounts.Find(Nickname);
+	CsEthereumAccount* Account		= IAccount ? (CsEthereumAccount*)(*IAccount) : nullptr;
+
+	CS_COROUTINE_BEGIN(r);
+
+	{
+		// Check Account exists
+		{
+			if (!eth->Accounts.Find(Nickname))
+			{
+				eth->NewAccount(Info);
+				// Waittill NewAccount command has completed
+				CS_COROUTINE_WAIT_UNTIL(r, eth->CommandFlag);
+
+				if (CsCVarLogBlockchainAccountSetup->GetInt() == CS_CVAR_SHOW_LOG)
+				{
+					UE_LOG(LogCs, Log, TEXT("CgEthereum::SetupAccount: Created Account for: %s"), *Nickname);
+				}
+			}
+		}
+		// Unlock Account
+		eth->UnlockAccount(Account);
+		// Waittill UnlockAccount command has completed
+		CS_COROUTINE_WAIT_UNTIL(r, eth->CommandFlag);
+
+		if (CsCVarLogBlockchainAccountSetup->GetInt() == CS_CVAR_SHOW_LOG)
+		{
+			UE_LOG(LogCs, Log, TEXT("CgEthereum::SetupAccount: Unlocked Account (%s): %s"), *Nickname, *(Account->Address));
+		}
+
+		// Check Balance is above Threshold
+		{
+			const int32 THRESHOLD = 20;
+
+			eth->BringBalanceToThreshold(Account, THRESHOLD);
+		}
+		CS_COROUTINE_WAIT_UNTIL(r, eth->BringBalanceToThresholdFlag);
+
+		eth->SetupAccountFlag = true;
+	}
+
+	CS_COROUTINE_END(r);
+}
+
+void UCsEthereum::BringBalanceToThreshold(ICsBlockchainAccount* IAccount, const int32 &Threshold)
+{
+	BringBalanceToThresholdFlag = false;
+
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	FCsCoroutinePayload* Payload = Scheduler->AllocatePayload();
+
+	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+
+	Payload->Schedule		= Schedule;
+	Payload->Function		= &UCsEthereum::BringBalanceToThreshold_Internal;
+	Payload->Object			= this;
+	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
+	Payload->Add			= &UCsEthereum::AddRoutine;
+	Payload->Remove			= &UCsEthereum::RemoveRoutine;
+	Payload->Type			= (uint8)ECsEthereumRoutine::BringBalanceToThreshold_Internal;
+	Payload->DoInit			= true;
+	Payload->PerformFirstRun = false;
+	Payload->Name			= ECsEthereumCachedName::Name::BringBalanceToThreshold_Internal;
+	Payload->NameAsString	= ECsEthereumCachedString::Str::BringBalanceToThreshold_Internal;
+
+	FCsRoutine* R = Scheduler->Allocate(Payload);
+
+	R->voidPointers[CS_FIRST] = IAccount;
+	R->ints[CS_FIRST]		  = Threshold;
+
+	Scheduler->StartRoutine(Schedule, R);
+}
+
+CS_COROUTINE(UCsEthereum, BringBalanceToThreshold_Internal)
+{
+	UCsEthereum* eth		 = r->GetRObject<UCsEthereum>();
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
+
+	CsEthereumAccount* Account = (CsEthereumAccount*)r->voidPointers[CS_FIRST];
+	const FString& Nickname	   = Account->Nickname;
+
+	const float& Threshold = r->ints[CS_FIRST];
+
+	float& Balance = r->floats[CS_FIRST];
+
+	float& Timer = r->timers[CS_FIRST];
+	Timer		+= r->deltaSeconds;
+
+	const float INTERVAL = 0.5f;
+
+	CS_COROUTINE_BEGIN(r);
+
+	{
+		eth->GetBalanceEther(Account);
+		// Waittill GetBalanceEther command has completed
+		CS_COROUTINE_WAIT_UNTIL(r, eth->CommandFlag);
+
+		// If the balance is below the threshold, Start Mining
+		Balance = eth->CurrentCommandOuput.Value_float;
+
+		if (Balance < Threshold)
+		{
+			// Set Coinbase
+			eth->SetCoinbase(Account);
+			// Waittill SetEtherbase command has completed
+			CS_COROUTINE_WAIT_UNTIL(r, eth->CommandFlag);
+
+			if (CsCVarLogBlockchainBalance->GetInt() == CS_CVAR_SHOW_LOG)
+			{
+				UE_LOG(LogCs, Log, TEXT("CgEthereum::BringBalanceToThreshold_Internal: Setting Account (%s): %s as coinbase."), *Nickname, *(Account->Address));
+			}
+
+			// Start Mining
+			eth->StartMiner();
+			// Waittill StartMiner command has completed
+			CS_COROUTINE_WAIT_UNTIL(r, eth->CommandFlag);
+
+			if (CsCVarLogBlockchainBalance->GetInt() == CS_CVAR_SHOW_LOG)
+			{
+				UE_LOG(LogCs, Log, TEXT("CgEthereum::BringBalanceToThreshold_Internal: Account (%s): %s balance is: %d < %d. Start mining."), *Nickname, *(Account->Address), Balance, Threshold);
+			}
+
+			Timer = 0.0f;
+
+			do
+			{
+				{
+					CS_COROUTINE_WAIT_UNTIL(r, Timer >= INTERVAL);
+
+					// Check Balance
+					eth->GetBalanceEther(Account);
+					// Waittill GetBalanceEther command has completed
+					CS_COROUTINE_WAIT_UNTIL(r, eth->CommandFlag);
+
+					// If the balance is below the threshold, Start Mining
+					Balance = eth->CurrentCommandOuput.Value_float;
+
+					if (CsCVarLogBlockchainBalance->GetInt() == CS_CVAR_SHOW_LOG)
+					{
+						UE_LOG(LogCs, Log, TEXT("CgEthereum::BringBalanceToThreshold_Internal: Account (%s): %s balance is: %d"), *Nickname, *(Account->Address), Balance);
+					}
+				}
+			} while (Balance < Threshold);
+
+			// Stop Mining
+			eth->StopMiner();
+			// Waittill StopMiner command has completed
+			CS_COROUTINE_WAIT_UNTIL(r, eth->CommandFlag);
+
+			if (CsCVarLogBlockchainBalance->GetInt() == CS_CVAR_SHOW_LOG)
+			{
+				UE_LOG(LogCs, Log, TEXT("CgEthereum::BringBalanceToThreshold_Internal: Finished mining."));
+			}
+		}
+		// Finish
+		else
+		{
+			if (CsCVarLogBlockchainBalance->GetInt() == CS_CVAR_SHOW_LOG)
+			{
+				UE_LOG(LogCs, Log, TEXT("CgEthereum::BringBalanceToThreshold_Internal: Finished setup for Account (%s): %d"), *Nickname, *(Account->Address));
+			}
+		}
+		eth->BringBalanceToThresholdFlag = true;
+	}
+	CS_COROUTINE_END(r);
+}
+
+#pragma endregion Accounts

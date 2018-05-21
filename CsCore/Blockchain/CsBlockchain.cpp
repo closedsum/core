@@ -98,6 +98,7 @@ void UCsBlockchain::CloseConsole(){}
 void UCsBlockchain::LoadAccounts(){}
 void UCsBlockchain::NewAccount(void* Payload){}
 void UCsBlockchain::UnlockAccount(class ICsBlockchainAccount* IAccount){}
+void UCsBlockchain::ListAccounts(){}
 
 #pragma endregion Account
 

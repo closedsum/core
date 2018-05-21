@@ -4,6 +4,7 @@
 #include "Blockchain/CsBlockchain.h"
 #include "Blockchain/Ethereum/CsEthereumContract.h"
 #include "Blockchain/Ethereum/CsEthereumKeystore.h"
+#include "Types/CsTypes_Coroutine.h"
 #include "CsEthereum.generated.h"
 
 USTRUCT(BlueprintType)
@@ -43,6 +44,9 @@ struct FCsEthereumAccountInfo
 	}
 };
 
+// Enums
+#pragma region
+
 namespace ECsEthereumCommand
 {
 	extern const FECsBlockchainCommand InitBlockchain;
@@ -68,6 +72,58 @@ namespace ECsEthereumCommand
 
 	extern const FECsBlockchainCommand MAX;
 }
+
+namespace ECsEthereumRoutine
+{
+	enum Type
+	{
+		CreateKeystore_Internal,
+		SetupAccount_Internal,
+		BringBalanceToThreshold_Internal,
+		ECsEthereumRoutine_MAX,
+	};
+}
+
+namespace ECsEthereumRoutine
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+
+	namespace Str
+	{
+		const TCsString CreateKeystore_Internal = TCsString(TEXT("CreateKeystore_Internal"), TEXT("createkeystore_internal"));
+		const TCsString SetupAccount_Internal = TCsString(TEXT("SetupAccount_Internal"), TEXT("setupaccount_internal"));
+		const TCsString BringBalanceToThreshold_Internal = TCsString(TEXT("BringBalanceToThreshold_Internal"), TEXT("bringbalancetothreshold_internal"));
+	}
+
+	namespace Ref
+	{
+		const Type CreateKeystore_Internal = Type::CreateKeystore_Internal;
+		const Type SetupAccount_Internal = Type::SetupAccount_Internal;
+		const Type BringBalanceToThreshold_Internal = Type::BringBalanceToThreshold_Internal;
+		const Type ECsEthereumRoutine_MAX = Type::ECsEthereumRoutine_MAX;
+	}
+
+	FORCEINLINE const FString& ToString(const Type &EType)
+	{
+		if (EType == Type::CreateKeystore_Internal) { return Str::CreateKeystore_Internal.Value; }
+		if (EType == Type::SetupAccount_Internal) { return Str::SetupAccount_Internal.Value; }
+		if (EType == Type::BringBalanceToThreshold_Internal) { return Str::BringBalanceToThreshold_Internal.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE const Type& ToType(const FString &String)
+	{
+		if (String == Str::CreateKeystore_Internal) { return Ref::CreateKeystore_Internal; }
+		if (String == Str::SetupAccount_Internal) { return Type::SetupAccount_Internal; }
+		if (String == Str::BringBalanceToThreshold_Internal) { return Type::BringBalanceToThreshold_Internal; }
+		return Ref::ECsEthereumRoutine_MAX;
+	}
+}
+
+#define ECS_ETHEREUM_ROUTINE_MAX (uint8)ECsEthereumRoutine::ECsEthereumRoutine_MAX
+typedef ECsEthereumRoutine::Type TCsEthereumRoutine;
+
+#pragma endregion Enums
 
 USTRUCT(BlueprintType)
 struct FECsEthereumJavascript : public FECsEnum_uint8
@@ -143,6 +199,7 @@ class CSCORE_API UCsEthereum : public UCsBlockchain
 {
 	GENERATED_UCLASS_BODY()
 
+
 // Interface
 #pragma region
 
@@ -195,6 +252,7 @@ public:
 	virtual void LoadAccounts() override;
 	virtual void NewAccount(void* Payload) override;
 	virtual void UnlockAccount(class ICsBlockchainAccount* IAccount) override;
+	virtual void ListAccounts() override;
 
 #pragma endregion Account
 
@@ -208,6 +266,18 @@ public:
 #pragma endregion Miner
 
 #pragma endregion Interface
+
+// Routines
+#pragma region
+public:
+
+	static void AddRoutine(UObject* InBlockchain, struct FCsRoutine* Routine, const uint8 &Type);
+	virtual bool AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type);
+
+	static void RemoveRoutine(UObject* InBlockchain, struct FCsRoutine* Routine, const uint8 &Type);
+	virtual bool RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type);
+
+#pragma endregion Routines
 
 public:
 
@@ -247,8 +317,14 @@ protected:
 
 	TMap<FECsBlockchainCommand, FCsProcessMonitorOutputEvent> MonitorOutputEvents;
 
+public:
+
 	FCsBlockchainCommandInfo CurrentCommandInfo;
-	void* CurrentCommandOuput;
+	FCsBlockchainCommandOutput CurrentCommandOuput;
+
+	FECsBlockchainContract ECurrentContract;
+	FCsBlockchainContractFunctionPayload CurrentContractFunctionPayload;
+	FCsEthereumAccountInfo CurrentAccountInfo;
 
 	bool CommandFlag;
 	bool SetupAccountFlag;
@@ -288,4 +364,27 @@ public:
 #pragma endregion I/O
 
 #pragma endregion Process
+
+// Accounts
+#pragma region
+public:
+
+	FString GetKeystoreFilePath(const FString &Address);
+
+	void CreateKeystore(class CsEthereumAccount* Account);
+	static char CreateKeystore_Internal(FCsRoutine* r);
+	FCsRoutine* CreateKeystore_Internal_Routine;
+
+	void SetCoinbase(class ICsBlockchainAccount* IAccount);
+	void GetBalanceEther(class ICsBlockchainAccount* IAccount);
+
+	void SetupAccount(void* Payload);
+	static char SetupAccount_Internal(FCsRoutine* r);
+	FCsRoutine* SetupAccount_Internal_Routine;
+
+	void BringBalanceToThreshold(class ICsBlockchainAccount* IAccount, const int32 &Threshold);
+	static char BringBalanceToThreshold_Internal(FCsRoutine* r);
+	FCsRoutine* BringBalanceToThreshold_Internal_Routine;
+
+#pragma endregion Accounts
 };

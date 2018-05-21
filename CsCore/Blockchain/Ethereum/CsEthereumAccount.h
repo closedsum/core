@@ -4,7 +4,7 @@
 #include "Blockchain/CsBlockchainAccount.h"
 #include "Blockchain/CsBlockchainCommand.h"
 
-class CsEthereumAccount : ICsBlockchainAccount
+class CsEthereumAccount : public ICsBlockchainAccount
 {
 // Interface
 #pragma region
@@ -15,11 +15,11 @@ public:
 
 	FString Nickname;
 
-	virtual const FString& GetNickname() = 0;
+	virtual const FString& GetNickname();
 
-	virtual FString ToString() = 0;
-	virtual void Parse(const FString &Str) = 0;
-	virtual void ParseFromFilePath(const FString &Path) = 0;
+	virtual FString ToString();
+	virtual void Parse(const FString &Str);
+	virtual void ParseFromFilePath(const FString &Path);
 
 #pragma endregion Interface
 

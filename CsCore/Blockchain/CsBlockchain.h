@@ -178,6 +178,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsBlockchain_Accou
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsBlockchain_CoinbaseSet, const FString&, Nickname);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsBlockchain_ContractFunctionCompleted, const FECsBlockchainCommand&, Command, const FECsBlockchainContractFunction&, Function);
 
+#define CS_BLOCKCHAIN_SINGLE_NODE_INDEX 0
+
 UCLASS(transient)
 class CSCORE_API UCsBlockchain: public UObject
 {
@@ -219,7 +221,7 @@ public:
 	DECLARE_MULTICAST_DELEGATE_OneParam(FCommandCompleted, const FECsBlockchainCommand&);
 	DECLARE_MULTICAST_DELEGATE_OneParam(FAccountCreated, class ICsBlockchainAccount*);
 	DECLARE_MULTICAST_DELEGATE_OneParam(FCoinbaseSet, class ICsBlockchainAccount*);
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FContractFunctionCompleted, const FECsBlockchainCommand&, const FECsBlockchainContractFunction&);
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FContractFunctionCompleted, const FECsBlockchainContract&, const FECsBlockchainContractFunction&);
 
 	FPrivateChainCreated PrivateChainCreated_Event;
 	UPROPERTY(BlueprintAssignable, Category = "Blockchain")
@@ -370,6 +372,9 @@ public:
 
 	virtual void NewAccount(void* Payload);
 	virtual void UnlockAccount(class ICsBlockchainAccount* IAccount);
+
+	UFUNCTION(BlueprintCallable, Category = "Blockchain")
+	virtual void ListAccounts();
 
 #pragma endregion Account
 

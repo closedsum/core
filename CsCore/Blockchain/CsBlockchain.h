@@ -170,6 +170,14 @@ struct FCsBlockchainProcessStartInfo
 	}
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsBlockchain_PrivateChainCreated, const int32&, Index);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsBlockchain_PrivateChainStarted, const int32&, Index);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsBlockchain_ConsoleOpened, const int32&, Index);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsBlockchain_CommandCompleted, const FECsBlockchainCommand&, Command);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsBlockchain_AccountCreated, const FString&, Nickname);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsBlockchain_CoinbaseSet, const FString&, Nickname);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsBlockchain_ContractFunctionCompleted, const FECsBlockchainCommand&, Command, const FECsBlockchainContractFunction&, Function);
+
 UCLASS(transient)
 class CSCORE_API UCsBlockchain: public UObject
 {
@@ -204,6 +212,42 @@ private:
 #pragma endregion Singleton
 
 public:
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FPrivateChainCreated, const int32&);
+	DECLARE_MULTICAST_DELEGATE_OneParam(FPrivateChainStarted, const int32&);
+	DECLARE_MULTICAST_DELEGATE_OneParam(FConsoleOpened, const int32&);
+	DECLARE_MULTICAST_DELEGATE_OneParam(FCommandCompleted, const FECsBlockchainCommand&);
+	DECLARE_MULTICAST_DELEGATE_OneParam(FAccountCreated, class ICsBlockchainAccount*);
+	DECLARE_MULTICAST_DELEGATE_OneParam(FCoinbaseSet, class ICsBlockchainAccount*);
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FContractFunctionCompleted, const FECsBlockchainCommand&, const FECsBlockchainContractFunction&);
+
+	FPrivateChainCreated PrivateChainCreated_Event;
+	UPROPERTY(BlueprintAssignable, Category = "Blockchain")
+	FBindableDynEvent_CsBlockchain_PrivateChainCreated PrivateChainCreated_ScriptEvent;
+
+	FPrivateChainStarted PrivateChainStarted_Event;
+	UPROPERTY(BlueprintAssignable, Category = "Blockchain")
+	FBindableDynEvent_CsBlockchain_PrivateChainStarted PrivateChainStarted_ScriptEvent;
+
+	FConsoleOpened ConsoleOpened_Event;
+	UPROPERTY(BlueprintAssignable, Category = "Blockchain")
+	FBindableDynEvent_CsBlockchain_ConsoleOpened ConsoleOpened_ScriptEvent;
+
+	FCommandCompleted CommandCompleted_Event;
+	UPROPERTY(BlueprintAssignable, Category = "Blockchain")
+	FBindableDynEvent_CsBlockchain_CommandCompleted CommandCompleted_ScriptEvent;
+
+	FAccountCreated AccountCreated_Event;
+	UPROPERTY(BlueprintAssignable, Category = "Blockchain")
+	FBindableDynEvent_CsBlockchain_AccountCreated AccountCreated_ScriptEvent;
+
+	FCoinbaseSet CoinbaseSet_Event;
+	UPROPERTY(BlueprintAssignable, Category = "Blockchain")
+	FBindableDynEvent_CsBlockchain_CoinbaseSet CoinbaseSet_ScriptEvent;
+
+	FContractFunctionCompleted ContractFunctionCompleted_Event;
+	UPROPERTY(BlueprintAssignable, Category = "Blockchain")
+	FBindableDynEvent_CsBlockchain_ContractFunctionCompleted ContractFunctionCompleted_ScriptEvent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Blockchain")
 	TEnumAsByte<ECsBlockchainType::Type> StorageType;

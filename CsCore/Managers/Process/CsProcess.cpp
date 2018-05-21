@@ -37,3 +37,8 @@ void UCsProcess::DeAllocate()
 #pragma endregion Interface
 
 void UCsProcess::RunCommand(const FString &Command){}
+
+void UCsProcess::AddMonitorOutputEvent(const FCsProcessMonitorOutputEvent &E)
+{
+	MonitorOutputEvents.Add(E);
+}

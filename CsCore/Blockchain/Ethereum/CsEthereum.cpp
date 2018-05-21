@@ -5,6 +5,32 @@
 
 #include "Runtime/Core/Public/HAL/FileManagerGeneric.h"
 
+namespace ECsEthereumCommand
+{
+	const FECsBlockchainCommand InitBlockchain = EMCsBlockchainCommand::Get().Create(TEXT("InitBlockchain"));
+	const FECsBlockchainCommand SetDataDirectory = EMCsBlockchainCommand::Get().Create(TEXT("SetDataDirectory"));
+	const FECsBlockchainCommand AttachToConsole = EMCsBlockchainCommand::Get().Create(TEXT("AttachToConsole"));
+	const FECsBlockchainCommand ExitConsole = EMCsBlockchainCommand::Get().Create(TEXT("ExitConsole"));
+	const FECsBlockchainCommand NewAccount = EMCsBlockchainCommand::Get().Create(TEXT("NewAccount"));
+	const FECsBlockchainCommand UnlockAccount = EMCsBlockchainCommand::Get().Create(TEXT("UnlockAccount"));
+	const FECsBlockchainCommand ListAccounts = EMCsBlockchainCommand::Get().Create(TEXT("ListAccounts"));
+	const FECsBlockchainCommand SetEtherbase = EMCsBlockchainCommand::Get().Create(TEXT("SetEtherbase"));
+	const FECsBlockchainCommand GetBalanceEther = EMCsBlockchainCommand::Get().Create(TEXT("GetBalanceEther"));
+	const FECsBlockchainCommand GetBalanceWei = EMCsBlockchainCommand::Get().Create(TEXT("GetBalanceWei"));
+	const FECsBlockchainCommand StartMiner = EMCsBlockchainCommand::Get().Create(TEXT("StartMiner"));
+	const FECsBlockchainCommand StopMiner = EMCsBlockchainCommand::Get().Create(TEXT("StopMiner"));
+	const FECsBlockchainCommand DeployContract = EMCsBlockchainCommand::Get().Create(TEXT("DeployContract"));
+	const FECsBlockchainCommand LoadScript = EMCsBlockchainCommand::Get().Create(TEXT("LoadScript"));
+	const FECsBlockchainCommand CreateContractABI = EMCsBlockchainCommand::Get().Create(TEXT("CreateContractABI"));
+	const FECsBlockchainCommand CreateContractInstance = EMCsBlockchainCommand::Get().Create(TEXT("CreateContractInstance"));
+	const FECsBlockchainCommand RunContractConstantFunction = EMCsBlockchainCommand::Get().Create(TEXT("RunContractConstantFunction"));
+	const FECsBlockchainCommand RunContractStateChangeFunction = EMCsBlockchainCommand::Get().Create(TEXT("RunContractStateChangeFunction"));
+	const FECsBlockchainCommand GetGasEstimate = EMCsBlockchainCommand::Get().Create(TEXT("GetGasEstimate"));
+	const FECsBlockchainCommand GetTransactionReceipt = EMCsBlockchainCommand::Get().Create(TEXT("GetTransactionReceipt"));
+
+	const FECsBlockchainCommand MAX = EMCsBlockchainCommand::Get().Create(TEXT("MAX"));
+}
+
 UCsEthereum::UCsEthereum(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }
@@ -64,7 +90,62 @@ void UCsEthereum::RunCommand(const int32 &ConsoleIndex, const FString &Command)
 	P->RunCommand(Command);
 }
 
-void UCsEthereum::RunCommand(const int32 &ConsoleIndex, const FECsBlockchainCommand &Command, TArray<FCsBlockchainCommandArgument> &Arguments){}
+void UCsEthereum::RunCommand(const int32 &ConsoleIndex, const FECsBlockchainCommand &Command, TArray<FCsBlockchainCommandArgument> &Arguments)
+{
+	FString* Value = Commands.Find(Command);
+
+	if (!Value)
+	{
+		UE_LOG(LogCs, Warning, TEXT("CgEthereum::RunCommand: No command set for %s"), *(Command.Name));
+		return;
+	}
+
+	FString Composite = *Value;
+
+	// Rebuild command if arguments where passed in
+	if (Arguments.Num() > CS_EMPTY)
+	{
+		int32 Index = Value->Find(TEXT("%s"));
+		int32 Start = 0;
+		
+		// Create list of all string parts
+		TArray<FString> Parts;
+
+		while (Index != INDEX_NONE)
+		{
+			Parts.Add(Value->Mid(Start, Index));
+
+			const int32 ESCAPE_LEN  = 2;
+			Start					= Index + ESCAPE_LEN;
+			FString Remaining	    = Value->Mid(Start);
+			Index					= Remaining.Find(TEXT("%s"));
+		}
+
+		// Add in arguments
+		if ((Parts.Num() - 1) == Arguments.Num())
+		{
+			Composite = ECsCachedString::Str::Empty;
+
+			int32 Count = Arguments.Num();
+
+			for (int32 I = 0; I < Count; ++I)
+			{
+				Composite += Parts[I] + Arguments[I].ToString();
+			}
+			Composite += Parts[Count];
+		}
+		else
+		{
+			UE_LOG(LogCs, Warning, TEXT("CgEthereum.RunCommand: Failed to run command: %s. Wildcard count (%d) != Argument count (%d)"), *(Command.Name), Parts.Num(), Arguments.Num());
+		}
+	}
+
+	if (CsCVarLogBlockchainIO->GetInt() == CS_CVAR_SHOW_LOG || CsCVarLogBlockchainIOConsole->GetInt() == CS_CVAR_SHOW_LOG)
+	{
+		UE_LOG(LogCs, Log, TEXT("CgEthereum.RunCommand: Running command: %s"), *(Command.Name));
+	}
+	RunCommand(ConsoleIndex, Composite);
+}
 
 void UCsEthereum::SetProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, class UCsProcess* Process){}
 UCsProcess* UCsEthereum::GetProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index) { return nullptr; }
@@ -176,3 +257,57 @@ void UCsEthereum::Rebuild()
 		}
 	}
 }
+
+// Process
+#pragma region
+
+void UCsEthereum::AddMonitorOutputEvenToProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, const FCsProcessMonitorOutputEvent &E)
+{
+	// TODO: Later handle PrivateMultiNode
+	Processes[ProcessType]->AddMonitorOutputEvent(E);
+}
+
+void UCsEthereum::AddMonitorOutputEvenToProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, const FECsBlockchainCommand& Command)
+{
+	// TODO: Later handle PrivateMultiNode
+	AddMonitorOutputEvenToProcess(ProcessType, Index, MonitorOutputEvents[Command]);
+}
+
+void UCsEthereum::OnCommandCompleted(const FECsBlockchainCommand &Command)
+{
+	if (CsCVarLogBlockchainCommandCompleted->GetInt() == CS_CVAR_SHOW_LOG)
+	{
+		UE_LOG(LogCs, Log, TEXT("CgEthereum.OnCommandCompleted: Completed command: %s"), *(Command.Name));
+	}
+
+	// SetDataDirectory
+	if (Command == ECsEthereumCommand::SetDataDirectory)
+	{
+	}
+	// AttachToConsole
+	if (Command == ECsEthereumCommand::AttachToConsole)
+	{
+	}
+	// UnlockAccount
+	if (Command == ECsEthereumCommand::UnlockAccount)
+	{
+	}
+	// SetEtherbase
+	if (Command == ECsEthereumCommand::SetEtherbase)
+	{
+		// Get Nickname
+		//CgEthereumAccount account = (CgEthereumAccount)CurrentCommandInfo.Payload;
+	}
+	// GetBalanceEther
+	if (Command == ECsEthereumCommand::GetBalanceEther)
+	{
+	}
+	CommandFlag = true;
+}
+
+void UCsEthereum::OnCommandCompleted(const FString &Name)
+{
+	//CommandCompleted_Event
+}
+
+#pragma endregion Process

@@ -45,28 +45,28 @@ struct FCsEthereumAccountInfo
 
 namespace ECsEthereumCommand
 {
-	const FECsBlockchainCommand InitBlockchain = EMCsBlockchainCommand::Get().Create(TEXT("InitBlockchain"));
-	const FECsBlockchainCommand SetDataDirectory = EMCsBlockchainCommand::Get().Create(TEXT("SetDataDirectory"));
-	const FECsBlockchainCommand AttachToConsole = EMCsBlockchainCommand::Get().Create(TEXT("AttachToConsole"));
-	const FECsBlockchainCommand ExitConsole = EMCsBlockchainCommand::Get().Create(TEXT("ExitConsole"));
-	const FECsBlockchainCommand NewAccount = EMCsBlockchainCommand::Get().Create(TEXT("NewAccount"));
-	const FECsBlockchainCommand UnlockAccount = EMCsBlockchainCommand::Get().Create(TEXT("UnlockAccount"));
-	const FECsBlockchainCommand ListAccounts = EMCsBlockchainCommand::Get().Create(TEXT("ListAccounts"));
-	const FECsBlockchainCommand SetEtherbase = EMCsBlockchainCommand::Get().Create(TEXT("SetEtherbase"));
-	const FECsBlockchainCommand GetBalanceEther = EMCsBlockchainCommand::Get().Create(TEXT("GetBalanceEther"));
-	const FECsBlockchainCommand GetBalanceWei = EMCsBlockchainCommand::Get().Create(TEXT("GetBalanceWei"));
-	const FECsBlockchainCommand StartMiner = EMCsBlockchainCommand::Get().Create(TEXT("StartMiner"));
-	const FECsBlockchainCommand StopMiner = EMCsBlockchainCommand::Get().Create(TEXT("StopMiner"));
-	const FECsBlockchainCommand DeployContract = EMCsBlockchainCommand::Get().Create(TEXT("DeployContract"));
-	const FECsBlockchainCommand LoadScript = EMCsBlockchainCommand::Get().Create(TEXT("LoadScript"));
-	const FECsBlockchainCommand CreateContractABI = EMCsBlockchainCommand::Get().Create(TEXT("CreateContractABI"));
-	const FECsBlockchainCommand CreateContractInstance = EMCsBlockchainCommand::Get().Create(TEXT("CreateContractInstance"));
-	const FECsBlockchainCommand RunContractConstantFunction = EMCsBlockchainCommand::Get().Create(TEXT("RunContractConstantFunction"));
-	const FECsBlockchainCommand RunContractStateChangeFunction = EMCsBlockchainCommand::Get().Create(TEXT("RunContractStateChangeFunction"));
-	const FECsBlockchainCommand GetGasEstimate = EMCsBlockchainCommand::Get().Create(TEXT("GetGasEstimate"));
-	const FECsBlockchainCommand GetTransactionReceipt = EMCsBlockchainCommand::Get().Create(TEXT("GetTransactionReceipt"));
+	extern const FECsBlockchainCommand InitBlockchain;
+	extern const FECsBlockchainCommand SetDataDirectory;
+	extern const FECsBlockchainCommand AttachToConsole;
+	extern const FECsBlockchainCommand ExitConsole;
+	extern const FECsBlockchainCommand NewAccount;
+	extern const FECsBlockchainCommand UnlockAccount;
+	extern const FECsBlockchainCommand ListAccounts;
+	extern const FECsBlockchainCommand SetEtherbase;
+	extern const FECsBlockchainCommand GetBalanceEther;
+	extern const FECsBlockchainCommand GetBalanceWei;
+	extern const FECsBlockchainCommand StartMiner;
+	extern const FECsBlockchainCommand StopMiner;
+	extern const FECsBlockchainCommand DeployContract;
+	extern const FECsBlockchainCommand LoadScript;
+	extern const FECsBlockchainCommand CreateContractABI;
+	extern const FECsBlockchainCommand CreateContractInstance;
+	extern const FECsBlockchainCommand RunContractConstantFunction;
+	extern const FECsBlockchainCommand RunContractStateChangeFunction;
+	extern const FECsBlockchainCommand GetGasEstimate;
+	extern const FECsBlockchainCommand GetTransactionReceipt;
 
-	const FECsBlockchainCommand MAX = EMCsBlockchainCommand::Get().Create(TEXT("MAX"));
+	extern const FECsBlockchainCommand MAX;
 }
 
 USTRUCT(BlueprintType)
@@ -250,5 +250,28 @@ protected:
 	FCsBlockchainCommandInfo CurrentCommandInfo;
 	void* CurrentCommandOuput;
 
+	bool CommandFlag;
+	bool SetupAccountFlag;
+	bool BringBalanceToThresholdFlag;
+	bool DeployContractFlag;
+	bool SetupContractFlag;
+	bool RunContractStateChangeFunctionFlag;
+	bool TransactionMinedFlag;
+
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "Ethereum")
 	virtual void Rebuild();
+
+// Process
+#pragma region
+
+	void AddMonitorOutputEvenToProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, const FCsProcessMonitorOutputEvent &E);
+	UFUNCTION(BlueprintCallable, Category = "Ethereum")
+	void AddMonitorOutputEvenToProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, const FECsBlockchainCommand& Command);
+
+	virtual void OnCommandCompleted(const FECsBlockchainCommand &Command);
+	virtual void OnCommandCompleted(const FString &Name);
+
+#pragma endregion Process
 };

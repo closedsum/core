@@ -228,4 +228,9 @@ public:
 public:
 
 	void RunCommand(const FString &Command);
+
+private:
+	TArray<FCsProcessMonitorOutputEvent> MonitorOutputEvents;
+public:
+	void AddMonitorOutputEvent(const FCsProcessMonitorOutputEvent &E);
 };

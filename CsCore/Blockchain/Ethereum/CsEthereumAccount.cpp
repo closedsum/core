@@ -17,7 +17,7 @@ CsEthereumAccount::~CsEthereumAccount(){}
 // Interface
 #pragma region
 
-const FString& CsEthereumAccount::GetNamename() { return Nickname; }
+const FString& CsEthereumAccount::GetNickname() { return Nickname; }
 
 FString CsEthereumAccount::ToString()
 {

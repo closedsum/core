@@ -187,7 +187,7 @@ protected:
 public:
 	virtual ~TCsEnumMap() {}
 
-	EnumStruct Create(FString Name)
+	EnumStruct Create(const FString &Name)
 	{
 		EnumType Index = (EnumType)Enums.Num();
 		EnumStruct E(Index, Name);
@@ -201,6 +201,21 @@ public:
 	bool IsValidEnum(EnumStruct E)
 	{
 		return Enums.Find(E) > INDEX_NONE;
+	}
+
+	const EnumStruct& GetEnum(const int32 &Index)
+	{
+		return Enums[Index];
+	}
+
+	const EnumStruct& GetEnum(const FString &Name)
+	{
+		return StringMap[Name];
+	}
+
+	const EnumStruct& GetEnum(const EnumType &Type)
+	{
+		return TypeMap[Type];
 	}
 };
 

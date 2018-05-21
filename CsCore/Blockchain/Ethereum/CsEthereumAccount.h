@@ -15,7 +15,7 @@ public:
 
 	FString Nickname;
 
-	virtual const FString& GetNamename() = 0;
+	virtual const FString& GetNickname() = 0;
 
 	virtual FString ToString() = 0;
 	virtual void Parse(const FString &Str) = 0;

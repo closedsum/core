@@ -130,12 +130,12 @@ namespace ECsEthereumRoutine
 	FORCEINLINE const Type& ToType(const FString &String)
 	{
 		if (String == Str::CreateKeystore_Internal) { return Ref::CreateKeystore_Internal; }
-		if (String == Str::SetupAccount_Internal) { return Type::SetupAccount_Internal; }
-		if (String == Str::BringBalanceToThreshold_Internal) { return Type::BringBalanceToThreshold_Internal; }
+		if (String == Str::SetupAccount_Internal) { return Ref::SetupAccount_Internal; }
+		if (String == Str::BringBalanceToThreshold_Internal) { return Ref::BringBalanceToThreshold_Internal; }
 		if (String == Str::DeployContract_Internal) { return Ref::DeployContract_Internal; }
-		if (String == Str::SetupContract_Internal) { return Type::SetupContract_Internal; }
-		if (String == Str::RunContractStateChangeFunction_Internal) { return Type::RunContractStateChangeFunction_Internal; }
-		if (String == Str::CheckTransactionHasBeenMined_Internal) { return Type::CheckTransactionHasBeenMined_Internal; }
+		if (String == Str::SetupContract_Internal) { return Ref::SetupContract_Internal; }
+		if (String == Str::RunContractStateChangeFunction_Internal) { return Ref::RunContractStateChangeFunction_Internal; }
+		if (String == Str::CheckTransactionHasBeenMined_Internal) { return Ref::CheckTransactionHasBeenMined_Internal; }
 		return Ref::ECsEthereumRoutine_MAX;
 	}
 }

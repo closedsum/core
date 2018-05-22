@@ -1577,12 +1577,23 @@ namespace ECsHMDDeviceType
 
 	namespace Str
 	{
-		const TCsString DT_OculusRift = TCsString(TEXT("DT_OculusRift"), TEXT("dt_oculusrift"), TEXT("oculus rift"));
-		const TCsString DT_Morpheus = TCsString(TEXT("DT_Morpheus"), TEXT("dt_morpheus"), TEXT("psvr"));
-		const TCsString DT_ES2GenericStereoMesh = TCsString(TEXT("DT_ES2GenericStereoMesh"), TEXT("dt_es2genericstereomesh"), TEXT("es2 generic"));
-		const TCsString DT_SteamVR = TCsString(TEXT("DT_SteamVR"), TEXT("dt_steamvr"), TEXT("vive"));
-		const TCsString DT_GearVR = TCsString(TEXT("DT_GearVR"), TEXT("dt_gearvr"), TEXT("gearvr"));
-		const TCsString DT_GoogleVR = TCsString(TEXT("DT_GoogleVR"), TEXT("dt_googlevr"), TEXT("goolgevr"));
+		extern const TCsString DT_OculusRift;
+		extern const TCsString DT_Morpheus;
+		extern const TCsString DT_ES2GenericStereoMesh;
+		extern const TCsString DT_SteamVR;
+		extern const TCsString DT_GearVR;
+		extern const TCsString DT_GoogleVR;
+	}
+
+	namespace Ref
+	{
+		extern const Type DT_OculusRift;
+		extern const Type DT_Morpheus;
+		extern const Type DT_ES2GenericStereoMesh;
+		extern const Type DT_SteamVR;
+		extern const Type DT_GearVR;
+		extern const Type DT_GoogleVR;
+		extern const Type ECsHMDDeviceType_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -1596,15 +1607,15 @@ namespace ECsHMDDeviceType
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE Type ToType(const FString &String)
+	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::DT_OculusRift) { return Type::DT_OculusRift; }
-		if (String == Str::DT_Morpheus) { return Type::DT_Morpheus; }
-		if (String == Str::DT_ES2GenericStereoMesh) { return Type::DT_ES2GenericStereoMesh; }
-		if (String == Str::DT_SteamVR) { return Type::DT_SteamVR; }
-		if (String == Str::DT_GearVR) { return Type::DT_GearVR; }
-		if (String == Str::DT_GoogleVR) { return Type::DT_GoogleVR; }
-		return Type::ECsHMDDeviceType_MAX;
+		if (String == Str::DT_OculusRift) { return Ref::DT_OculusRift; }
+		if (String == Str::DT_Morpheus) { return Ref::DT_Morpheus; }
+		if (String == Str::DT_ES2GenericStereoMesh) { return Ref::DT_ES2GenericStereoMesh; }
+		if (String == Str::DT_SteamVR) { return Ref::DT_SteamVR; }
+		if (String == Str::DT_GearVR) { return Ref::DT_GearVR; }
+		if (String == Str::DT_GoogleVR) { return Ref::DT_GoogleVR; }
+		return Ref::ECsHMDDeviceType_MAX;
 	}
 
 	FORCEINLINE EHMDDeviceType::Type ToBaseType(const Type &EType)
@@ -1638,7 +1649,7 @@ typedef ECsHMDDeviceType::Type TCsHMDDeviceType;
 // Gestures
 #pragma region
 
-UENUM()
+UENUM(BlueprintType)
 namespace ECsGestureDevice
 {
 	enum Type
@@ -1655,8 +1666,15 @@ namespace ECsGestureDevice
 
 	namespace Str
 	{
-		const TCsString Mouse = TCsString(TEXT("Mouse"), TEXT("mouse"), TEXT("mouse"));
-		const TCsString MotionController = TCsString(TEXT("MotionController"), TEXT("motioncontroller"), TEXT("motion controller"));
+		extern const TCsString Mouse;
+		extern const TCsString MotionController;
+	}
+
+	namespace Ref
+	{
+		extern const Type Mouse;
+		extern const Type MotionController;
+		extern const Type ECsGestureDevice_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -1666,11 +1684,11 @@ namespace ECsGestureDevice
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE Type ToType(const FString &String)
+	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::Mouse) { return Type::Mouse; }
-		if (String == Str::MotionController) { return Type::MotionController; }
-		return Type::ECsGestureDevice_MAX;
+		if (String == Str::Mouse) { return Ref::Mouse; }
+		if (String == Str::MotionController) { return Ref::MotionController; }
+		return Ref::ECsGestureDevice_MAX;
 	}
 }
 
@@ -1713,8 +1731,15 @@ namespace ECsControllerHand
 
 	namespace Str
 	{
-		const TCsString Left = TCsString(TEXT("Left"), TEXT("left"));
-		const TCsString Right = TCsString(TEXT("Right"), TEXT("right"));
+		extern const TCsString Left;
+		extern const TCsString Right;
+	}
+
+	namespace Ref
+	{
+		extern const Type Left;
+		extern const Type Right;
+		extern const Type ECsControllerHand_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -1724,11 +1749,11 @@ namespace ECsControllerHand
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE Type ToType(const FString &String)
+	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::Left) { return Type::Left; }
-		if (String == Str::Right) { return Type::Right; }
-		return Type::ECsControllerHand_MAX;
+		if (String == Str::Left) { return Ref::Left; }
+		if (String == Str::Right) { return Ref::Right; }
+		return Ref::ECsControllerHand_MAX;
 	}
 }
 

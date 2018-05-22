@@ -99,3 +99,77 @@ namespace ECsPhysicsImpulseType
 }
 
 #pragma endregion Physics
+
+// VR
+#pragma region
+
+namespace ECsHMDDeviceType
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString DT_OculusRift = TCsString(TEXT("DT_OculusRift"), TEXT("dt_oculusrift"), TEXT("oculus rift"));
+		const TCsString DT_Morpheus = TCsString(TEXT("DT_Morpheus"), TEXT("dt_morpheus"), TEXT("psvr"));
+		const TCsString DT_ES2GenericStereoMesh = TCsString(TEXT("DT_ES2GenericStereoMesh"), TEXT("dt_es2genericstereomesh"), TEXT("es2 generic"));
+		const TCsString DT_SteamVR = TCsString(TEXT("DT_SteamVR"), TEXT("dt_steamvr"), TEXT("vive"));
+		const TCsString DT_GearVR = TCsString(TEXT("DT_GearVR"), TEXT("dt_gearvr"), TEXT("gearvr"));
+		const TCsString DT_GoogleVR = TCsString(TEXT("DT_GoogleVR"), TEXT("dt_googlevr"), TEXT("goolgevr"));
+	}
+
+	namespace Ref
+	{
+		const Type DT_OculusRift = Type::DT_OculusRift;
+		const Type DT_Morpheus = Type::DT_Morpheus;
+		const Type DT_ES2GenericStereoMesh = Type::DT_ES2GenericStereoMesh;
+		const Type DT_SteamVR = Type::DT_SteamVR;
+		const Type DT_GearVR = Type::DT_GearVR;
+		const Type DT_GoogleVR = Type::DT_GoogleVR;
+		const Type ECsHMDDeviceType_MAX = Type::ECsHMDDeviceType_MAX;
+	}
+}
+
+#pragma endregion VR
+
+// Gestures
+#pragma region
+
+namespace ECsGestureDevice
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString Mouse = TCsString(TEXT("Mouse"), TEXT("mouse"), TEXT("mouse"));
+		const TCsString MotionController = TCsString(TEXT("MotionController"), TEXT("motioncontroller"), TEXT("motion controller"));
+	}
+
+	namespace Ref
+	{
+		const Type Mouse = Type::Mouse;
+		const Type MotionController = Type::MotionController;
+		const Type ECsGestureDevice_MAX = Type::ECsGestureDevice_MAX;
+	}
+}
+
+#pragma endregion Gestures
+
+// Motion Controller
+#pragma region
+
+namespace ECsControllerHand
+{
+	namespace Str
+	{
+		const TCsString Left = TCsString(TEXT("Left"), TEXT("left"));
+		const TCsString Right = TCsString(TEXT("Right"), TEXT("right"));
+	}
+
+	namespace Ref
+	{
+		const Type Left = Type::Left;
+		const Type Right = Type::Right;
+	}
+}
+
+#pragma endregion Motion Controller

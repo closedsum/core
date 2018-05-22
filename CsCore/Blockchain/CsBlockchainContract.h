@@ -36,6 +36,156 @@ public:
 	}
 };
 
+// Argument
+#pragma region
+
+UENUM(BlueprintType)
+namespace ECsBlockchainContractArgumentType
+{
+	enum Type
+	{
+		Bool									UMETA(DisplayName = "Bool"),
+		Int32									UMETA(DisplayName = "Int32"),
+		Float									UMETA(DisplayName = "Float"),
+		String									UMETA(DisplayName = "String"),
+		StringString							UMETA(DisplayName = "StringString"),
+		ECsBlockchainContractArgumentType_MAX	UMETA(Hidden),
+	};
+}
+
+#define ECS_BLOCKCHAIN_CONTRACT_ARGUMENT_TYPE_MAX (uint8)ECsBlockchainContractArgumentType::ECsBlockchainContractArgumentType_MAX
+typedef ECsBlockchainContractArgumentType::Type TCsBlockchainContractArgumentType;
+
+namespace ECsBlockchainContractArgumentType
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+
+	namespace Str
+	{
+		const TCsString Bool = TCsString(TEXT("Bool"), TEXT("bool"));
+		const TCsString Int32 = TCsString(TEXT("Int32"), TEXT("int32"));
+		const TCsString Float = TCsString(TEXT("Float"), TEXT("float"));
+		const TCsString String = TCsString(TEXT("String"), TEXT("string"));
+	}
+
+	namespace Ref
+	{
+		const Type Bool = Type::Bool;
+		const Type Int32 = Type::Int32;
+		const Type Float = Type::Float;
+		const Type String = Type::String;
+		const Type ECsBlockchainContractArgumentType_MAX = Type::ECsBlockchainContractArgumentType_MAX;
+	}
+
+	FORCEINLINE const FString& ToString(const Type &EType)
+	{
+		if (EType == Type::Bool) { return Str::Bool.Value; }
+		if (EType == Type::Int32) { return Str::Int32.Value; }
+		if (EType == Type::Float) { return Str::Float.Value; }
+		if (EType == Type::String) { return Str::String.Value; }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE const Type& ToType(const FString &InString)
+	{
+		if (InString == Str::Bool) { return Ref::Bool; }
+		if (InString == Str::Int32) { return Ref::Int32; }
+		if (InString == Str::Float) { return Ref::Float; }
+		if (InString == Str::String) { return Ref::String; }
+		return Ref::ECsBlockchainContractArgumentType_MAX;
+	}
+}
+
+USTRUCT(BlueprintType)
+struct FCsBlockchainContractArgument
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
+	FString Name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
+	TEnumAsByte<ECsBlockchainContractArgumentType::Type> ValueType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
+	bool Value_bool;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
+	int32 Value_int32;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
+	float Value_float;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
+	FString Value_FString;
+
+	FCsBlockchainContractArgument(){}
+	FCsBlockchainContractArgument(const FString &InName, const TCsBlockchainContractArgumentType &InValueType)
+	{
+		// HACKY: For now add ',' to distinguish between the same input arguments in the ABI
+		Name	  = InName + TEXT(",");
+		ValueType = InValueType;
+	}
+
+	FCsBlockchainContractArgument(const FString &InName, const TCsBlockchainContractArgumentType &InValueType, const bool &Value)
+	{
+		FCsBlockchainContractArgument(InName, InValueType);
+		Value_bool = Value;
+	}
+
+	FCsBlockchainContractArgument(const FString &InName, const TCsBlockchainContractArgumentType &InValueType, const int32 &Value)
+	{
+		FCsBlockchainContractArgument(InName, InValueType);
+		Value_int32 = Value;
+	}
+
+	FCsBlockchainContractArgument(const FString &InName, const TCsBlockchainContractArgumentType &InValueType, const float &Value)
+	{
+		FCsBlockchainContractArgument(InName, InValueType);
+		Value_float = Value;
+	}
+
+	FCsBlockchainContractArgument(const FString &InName, const TCsBlockchainContractArgumentType &InValueType, const FString &Value)
+	{
+		FCsBlockchainContractArgument(InName, InValueType);
+		Value_FString = Value;
+	}
+
+	FString ToString() const
+	{
+		// HACKY: For now add ',' to distinguish between the same input arguments in the ABI
+
+		// Bool
+		if (ValueType == ECsBlockchainContractArgumentType::Bool)
+			return Value_bool ? TEXT("true,") : TEXT("false,");
+		// Int32
+		if (ValueType == ECsBlockchainContractArgumentType::Int32)
+			return FString::FromInt(Value_int32) + (",");
+		// Float
+		if (ValueType == ECsBlockchainContractArgumentType::Float)
+			return FString::SanitizeFloat(Value_float) + (",");
+		// String
+		if (ValueType == ECsBlockchainContractArgumentType::String)
+			return Value_FString + TEXT(",");
+		// StringString
+		if (ValueType == ECsBlockchainContractArgumentType::StringString)
+			return TEXT("'") + Value_FString + TEXT("',");
+		return ECsCachedString::Str::Empty;
+	}
+
+	void Reset()
+	{
+		Name = ECsCachedString::Str::Empty;
+		ValueType = ECsBlockchainContractArgumentType::ECsBlockchainContractArgumentType_MAX;
+		Value_bool = false;
+		Value_int32 = 0;
+		Value_float  = 0.0f;
+		Value_FString = ECsCachedString::Str::Empty;
+	}
+};
+
+#pragma endregion Argument
+
 // Function
 #pragma region
 
@@ -427,6 +577,18 @@ struct FCsBlockchainContractFunction
 	void SetArgument(const int32 &Index, const int32 &Value)
 	{
 		Arguments[Index].Value_int32 = Value;
+	}
+
+	void SetArguments(const TArray<FCsBlockchainContractFunctionArgument> &Args)
+	{
+		Arguments.Reset();
+
+		const int32 Count = Args.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			Arguments.Add(Args[I]);
+		}
 	}
 
 	FString BuildConstantFunction()

@@ -80,6 +80,10 @@ namespace ECsEthereumRoutine
 		CreateKeystore_Internal,
 		SetupAccount_Internal,
 		BringBalanceToThreshold_Internal,
+		DeployContract_Internal,
+		SetupContract_Internal,
+		RunContractStateChangeFunction_Internal,
+		CheckTransactionHasBeenMined_Internal,
 		ECsEthereumRoutine_MAX,
 	};
 }
@@ -93,6 +97,10 @@ namespace ECsEthereumRoutine
 		const TCsString CreateKeystore_Internal = TCsString(TEXT("CreateKeystore_Internal"), TEXT("createkeystore_internal"));
 		const TCsString SetupAccount_Internal = TCsString(TEXT("SetupAccount_Internal"), TEXT("setupaccount_internal"));
 		const TCsString BringBalanceToThreshold_Internal = TCsString(TEXT("BringBalanceToThreshold_Internal"), TEXT("bringbalancetothreshold_internal"));
+		const TCsString DeployContract_Internal = TCsString(TEXT("DeployContract_Internal"), TEXT("deploycontract_internal"));
+		const TCsString SetupContract_Internal = TCsString(TEXT("SetupContract_Internal"), TEXT("setupcontract_internal"));
+		const TCsString RunContractStateChangeFunction_Internal = TCsString(TEXT("RunContractStateChangeFunction_Internal"), TEXT("runcontractstatechangefunction_internal"));
+		const TCsString CheckTransactionHasBeenMined_Internal = TCsString(TEXT("CheckTransactionHasBeenMined_Internal"), TEXT("checktransactionhasbeenmined_internal"));
 	}
 
 	namespace Ref
@@ -100,6 +108,10 @@ namespace ECsEthereumRoutine
 		const Type CreateKeystore_Internal = Type::CreateKeystore_Internal;
 		const Type SetupAccount_Internal = Type::SetupAccount_Internal;
 		const Type BringBalanceToThreshold_Internal = Type::BringBalanceToThreshold_Internal;
+		const Type DeployContract_Internal = Type::DeployContract_Internal;
+		const Type SetupContract_Internal = Type::SetupContract_Internal;
+		const Type RunContractStateChangeFunction_Internal = Type::RunContractStateChangeFunction_Internal;
+		const Type CheckTransactionHasBeenMined_Internal = Type::CheckTransactionHasBeenMined_Internal;
 		const Type ECsEthereumRoutine_MAX = Type::ECsEthereumRoutine_MAX;
 	}
 
@@ -108,6 +120,10 @@ namespace ECsEthereumRoutine
 		if (EType == Type::CreateKeystore_Internal) { return Str::CreateKeystore_Internal.Value; }
 		if (EType == Type::SetupAccount_Internal) { return Str::SetupAccount_Internal.Value; }
 		if (EType == Type::BringBalanceToThreshold_Internal) { return Str::BringBalanceToThreshold_Internal.Value; }
+		if (EType == Type::DeployContract_Internal) { return Str::DeployContract_Internal.Value; }
+		if (EType == Type::SetupContract_Internal) { return Str::SetupContract_Internal.Value; }
+		if (EType == Type::RunContractStateChangeFunction_Internal) { return Str::RunContractStateChangeFunction_Internal.Value; }
+		if (EType == Type::CheckTransactionHasBeenMined_Internal) { return Str::CheckTransactionHasBeenMined_Internal.Value; }
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
@@ -116,6 +132,10 @@ namespace ECsEthereumRoutine
 		if (String == Str::CreateKeystore_Internal) { return Ref::CreateKeystore_Internal; }
 		if (String == Str::SetupAccount_Internal) { return Type::SetupAccount_Internal; }
 		if (String == Str::BringBalanceToThreshold_Internal) { return Type::BringBalanceToThreshold_Internal; }
+		if (String == Str::DeployContract_Internal) { return Ref::DeployContract_Internal; }
+		if (String == Str::SetupContract_Internal) { return Type::SetupContract_Internal; }
+		if (String == Str::RunContractStateChangeFunction_Internal) { return Type::RunContractStateChangeFunction_Internal; }
+		if (String == Str::CheckTransactionHasBeenMined_Internal) { return Type::CheckTransactionHasBeenMined_Internal; }
 		return Ref::ECsEthereumRoutine_MAX;
 	}
 }
@@ -281,31 +301,38 @@ public:
 
 public:
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ethereum")
 	FString ConsoleFullPath;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ethereum")
 	FString GenesisFilePath;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ethereum")
 	FString KeystoreDirectory;
 
 	TMap<FString, FCsEthereumKeystore> Keystores;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ethereum")
 	FString ABIDirectory;
 protected:
 	TMap<FECsBlockchainContract, FString> ABISnippets;
 
 public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ethereum")
 	FString Web3DeployDirectory;
 protected:
 	TMap<FECsBlockchainContract, FString> Web3DeploySnippets;
 public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ethereum")
 	FString Web3DeployLinkedDirectory;
-protected:
-	TMap<FECsBlockchainContract, FString> Web3DepolyLinkedSnippets;
+
+	TMap<FECsBlockchainContract, FString> Web3DeployLinkedSnippets;
 	TMap<FECsBlockchainContract, TArray<FCsEthereumWeb3DeployLink>> Web3DeployLinks;
 
 public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ethereum")
 	FString JavascriptDirectory;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ethereum")
 	FString JavascriptLinkedDirectory;
 
-protected:
 	/* Path for any Javascript */
 	TMap<FECsEthereumJavascript, FString> ScriptPaths;
 	/* Path for any Contract Javascript functions that need to get procedural updated */
@@ -319,22 +346,29 @@ protected:
 
 public:
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ethereum")
 	FCsBlockchainCommandInfo CurrentCommandInfo;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ethereum")
 	FCsBlockchainCommandOutput CurrentCommandOuput;
 
 protected:
-	FECsBlockchainContract ECurrentContract;
-	FCsBlockchainContractFunctionPayload CurrentContractFunctionPayload;
 	FCsEthereumAccountInfo CurrentAccountInfo;
 
 public:
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ethereum")
 	bool CommandFlag;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ethereum")
 	bool SetupAccountFlag;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ethereum")
 	bool BringBalanceToThresholdFlag;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ethereum")
 	bool DeployContractFlag;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ethereum")
 	bool SetupContractFlag;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ethereum")
 	bool RunContractStateChangeFunctionFlag;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ethereum")
 	bool TransactionMinedFlag;
 
 public:
@@ -390,4 +424,42 @@ public:
 	FCsRoutine* BringBalanceToThreshold_Internal_Routine;
 
 #pragma endregion Accounts
+
+// Contracct
+#pragma region
+public:
+
+	void DeployContract(FECsBlockchainContract &EContract, TArray<FCsBlockchainContractArgument> &Args);
+	static char DeployContract_Internal(FCsRoutine* r);
+	FCsRoutine* DeployContract_Internal_Routine;
+
+	void LoadContract(const FECsBlockchainContract &EContract, const FECsEthereumJavascript &EScript);
+	void CreatedWeb3DeployLinked(const FECsBlockchainContract &EContract);
+	void CreatedJavascriptContractLinked(const FECsBlockchainContract &EContract, const FECsEthereumJavascript &EScript);
+	void CreateContractABI(const FECsBlockchainContract &EContract);
+	void CreateContractInstance(class ICsBlockchainContract* IContract);
+
+	void SetupContract(FECsBlockchainContract &EContract, FECsEthereumJavascript &EScript);
+	static char SetupContract_Internal(FCsRoutine* r);
+	FCsRoutine* SetupContract_Internal_Routine;
+
+	void RunContractConstantFunction(const FECsBlockchainContract &EContract, const FECsBlockchainContractFunction &EFn, const TArray<FCsBlockchainContractFunctionArgument> &Args);
+
+	void RunContractStateChangeFunction(FECsBlockchainContract &EContract, class ICsBlockchainAccount* IAccount, FECsBlockchainContractFunction &EFn, TArray<FCsBlockchainContractFunctionArgument> &Args);
+	static char RunContractStateChangeFunction_Internal(FCsRoutine* r);
+	FCsRoutine* RunContractStateChangeFunction_Internal_Routine;
+
+	void GetGasEstimate(const FECsBlockchainContract &EContract, class ICsBlockchainAccount* IAccount, const FECsBlockchainContractFunction &EFn, const TArray<FCsBlockchainContractFunctionArgument> &Args);
+
+	void GetTransactionReceipt(const FString &TransactionHash);
+
+	void CheckTransactionHasBeenMined(const FString &TransactionHash);
+	static char CheckTransactionHasBeenMined_Internal(FCsRoutine* r);
+	FCsRoutine* CheckTransactionHasBeenMined_Internal_Routine;
+
+#pragma endregion Contract
+
+public:
+
+	virtual void LoadScript(FECsEthereumJavascript &EScript, const FString &Path);
 };

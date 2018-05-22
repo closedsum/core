@@ -198,6 +198,12 @@ struct FCsBlockchainCommandInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
 	FString Payload_FString;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
+	FECsBlockchainContract Payload_Contract;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
+	FCsBlockchainContractFunctionPayload Payload_ContractFunction;
+
 	void* Payload_ptr;
 
 	FCsBlockchainCommandInfo(){}
@@ -317,6 +323,17 @@ struct FCsBlockchainCommandInfo
 		return !(*this == B);
 	}
 
+	void Set(const FECsBlockchainCommand& InCommand)
+	{
+		Command = InCommand;
+	}
+
+	void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+	}
+
 	void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const bool &Payload)
 	{
 		Command = InCommand;
@@ -343,6 +360,20 @@ struct FCsBlockchainCommandInfo
 		Command = InCommand;
 		SetArguments(Args);
 		Payload_FString = Payload;
+	}
+
+	void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const FECsBlockchainContract &Payload)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+		Payload_Contract = Payload;
+	}
+
+	void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const FCsBlockchainContractFunctionPayload &Payload)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+		Payload_ContractFunction = Payload;
 	}
 
 	void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, void* Payload)

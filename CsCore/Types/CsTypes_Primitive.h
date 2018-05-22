@@ -198,12 +198,22 @@ public:
 		return E;
 	}
 	
+	FORCEINLINE const EnumStruct& operator[](const EnumType &Type)
+	{
+		return TypeMap[Type];
+	}
+
+	FORCEINLINE const EnumStruct& operator[](const FString &Name)
+	{
+		return StringMap[Name];
+	}
+
 	bool IsValidEnum(EnumStruct E)
 	{
 		return Enums.Find(E) > INDEX_NONE;
 	}
 
-	const EnumStruct& GetEnum(const int32 &Index)
+	const EnumStruct& GetEnumAt(const int32 &Index)
 	{
 		return Enums[Index];
 	}

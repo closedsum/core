@@ -391,32 +391,6 @@ public:
 };
 
 /*
-
-#region "CVars"
-
-public static CgConsoleVariableLog LogIO = new CgConsoleVariableLog("log.blockchain.io", false, "Log All Blockchain Input / Output Messages", (int)ECgConsoleVariableFlag.Console);
-public static CgConsoleVariableLog LogIOProcess = new CgConsoleVariableLog("log.blockchain.io.process", false, "Log Process Blockchain Input / Output Messages", (int)ECgConsoleVariableFlag.Console);
-public static CgConsoleVariableLog LogIOConsole = new CgConsoleVariableLog("log.blockchain.io.console", false, "Log Console Blockchain Input / Output Messages", (int)ECgConsoleVariableFlag.Console);
-// Process
-public static TCgConsoleVariable<bool> ShowProcessWindow = new TCgConsoleVariable<bool>("show.blockchain.processwindow", false, "Show Blockchain Process Window", (int)ECgConsoleVariableFlag.Console);
-public static CgConsoleVariableLog LogProcessStart = new CgConsoleVariableLog("log.blockchain.process.start", false, "Log Blockchain Process Starting", (int)ECgConsoleVariableFlag.Console);
-// Command
-public static CgConsoleVariableLog LogCommandCompleted = new CgConsoleVariableLog("log.blockchain.command.completed", false, "Log Blockchain Command Completed", (int)ECgConsoleVariableFlag.Console);
-// Account
-public static CgConsoleVariableLog LogAccountCreated = new CgConsoleVariableLog("log.blockchain.account.created", false, "Log Blockchain Account Created", (int)ECgConsoleVariableFlag.Console);
-
-#endregion // CVars
-
-public class PrivateChainCreated : TCgMulticastDelegate_OneParam<int> { }
-public class PrivateChainStarted : TCgMulticastDelegate_OneParam<int> { }
-public class ConsoleOpened : TCgMulticastDelegate_OneParam<int> { }
-public class CommandCompleted : TCgMulticastDelegate_OneParam<ECgBlockchainCommand> { }
-public class AccountCreated : TCgMulticastDelegate_OneParam<ICgBlockchainAccount> { }
-public class CoinbaseSet : TCgDelegate_OneParam<ICgBlockchainAccount> { }
-public class ContractFunctionCompleted : TCgMulticastDelegate_TwoParams<ECgBlockchainContract, ECgBlockchainContractFunction> { }
-
-*/
-/*
 public interface ICgBlockchain
 {
 

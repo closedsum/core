@@ -153,7 +153,7 @@ namespace CgCore
         protected CgRoutine.BoolType DeployContractFlag;
         protected CgRoutine.BoolType LoadContractsFlag;
         protected CgRoutine.BoolType SetupContractFlag;
-        protected CgRoutine.BoolType RunContractStageChangeFunctionFlag;
+        protected CgRoutine.BoolType RunContractStateChangeFunctionFlag;
         protected CgRoutine.BoolType TransactionMinedFlag;
 
         protected CgEthereumContract CurrentContract;
@@ -330,8 +330,8 @@ namespace CgCore
             LoadContractsFlag.Set(false);
             SetupContractFlag = new CgRoutine.BoolType();
             SetupContractFlag.Set(false);
-            RunContractStageChangeFunctionFlag = new CgRoutine.BoolType();
-            RunContractStageChangeFunctionFlag.Set(false);
+            RunContractStateChangeFunctionFlag = new CgRoutine.BoolType();
+            RunContractStateChangeFunctionFlag.Set(false);
             TransactionMinedFlag = new CgRoutine.BoolType();
             TransactionMinedFlag.Set(false);
 
@@ -1636,7 +1636,7 @@ namespace CgCore
 
         public void RunContractStateChangeFunction(ECgBlockchainContract econtract, ICgBlockchainAccount iaccount, ECgBlockchainContractFunction efn, CgBlockchainContractFunctionArgument[] args = null)
         {
-            RunContractStageChangeFunctionFlag.Set(false);
+            RunContractStateChangeFunctionFlag.Set(false);
             CgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, RunContractStateChangeFunction_Internal(this, econtract, iaccount, efn, args));
         }
 
@@ -1691,7 +1691,7 @@ namespace CgCore
             eth.StopMiner();
             yield return eth.CommandFlag;
 
-            eth.RunContractStageChangeFunctionFlag.Set(true);
+            eth.RunContractStateChangeFunctionFlag.Set(true);
             eth.ContractFunctionCompleted_Event.Broadcast(econtract, efn);
         }
 

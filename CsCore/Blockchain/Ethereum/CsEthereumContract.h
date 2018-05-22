@@ -57,7 +57,7 @@ struct FCsEthereumWeb3DeployLink
 	}
 };
 
-class CsEthereumContract : ICsBlockchainContract
+class CsEthereumContract : public ICsBlockchainContract
 {
 // Interface
 #pragma region

@@ -1771,10 +1771,18 @@ namespace ECollisionEnabled
 
 	namespace Str
 	{
-		const TCsString NoCollision = TCsString(TEXT("NoCollision"), TEXT("nocollision"), TEXT("no collision"));
-		const TCsString QueryOnly = TCsString(TEXT("QueryOnly"), TEXT("queryonly"), TEXT("query only"));
-		const TCsString PhysicsOnly = TCsString(TEXT("PhysicsOnly"), TEXT("physicsonly"), TEXT("physics only"));
-		const TCsString QueryAndPhysics = TCsString(TEXT("QueryAndPhysics"), TEXT("queryandphysics"), TEXT("query and physics"));
+		extern const TCsString NoCollision;
+		extern const TCsString QueryOnly;
+		extern const TCsString PhysicsOnly;
+		extern const TCsString QueryAndPhysics;
+	}
+
+	namespace Ref
+	{
+		extern const Type NoCollision;
+		extern const Type QueryOnly;
+		extern const Type PhysicsOnly;
+		extern const Type QueryAndPhysics;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -1786,13 +1794,13 @@ namespace ECollisionEnabled
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE Type ToType(const FString &String)
+	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::NoCollision) { return Type::NoCollision; }
-		if (String == Str::QueryOnly) { return Type::QueryOnly; }
-		if (String == Str::PhysicsOnly) { return Type::PhysicsOnly; }
-		if (String == Str::QueryAndPhysics) { return Type::QueryAndPhysics; }
-		return Type::NoCollision;
+		if (String == Str::NoCollision) { return Ref::NoCollision; }
+		if (String == Str::QueryOnly) { return Ref::QueryOnly; }
+		if (String == Str::PhysicsOnly) { return Ref::PhysicsOnly; }
+		if (String == Str::QueryAndPhysics) { return Ref::QueryAndPhysics; }
+		return Ref::NoCollision;
 	}
 }
 

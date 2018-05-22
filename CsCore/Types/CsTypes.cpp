@@ -173,3 +173,27 @@ namespace ECsControllerHand
 }
 
 #pragma endregion Motion Controller
+
+// Collision
+#pragma region
+
+namespace ECollisionEnabled
+{
+	namespace Str
+	{
+		const TCsString NoCollision = TCsString(TEXT("NoCollision"), TEXT("nocollision"), TEXT("no collision"));
+		const TCsString QueryOnly = TCsString(TEXT("QueryOnly"), TEXT("queryonly"), TEXT("query only"));
+		const TCsString PhysicsOnly = TCsString(TEXT("PhysicsOnly"), TEXT("physicsonly"), TEXT("physics only"));
+		const TCsString QueryAndPhysics = TCsString(TEXT("QueryAndPhysics"), TEXT("queryandphysics"), TEXT("query and physics"));
+	}
+
+	namespace Ref
+	{
+		const Type NoCollision = Type::NoCollision;
+		const Type QueryOnly = Type::QueryOnly;
+		const Type PhysicsOnly = Type::PhysicsOnly;
+		const Type QueryAndPhysics = Type::QueryAndPhysics;
+	}
+}
+
+#pragma endregion Collision

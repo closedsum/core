@@ -38,6 +38,32 @@ namespace ECsEthereumCommand
 	const FECsBlockchainCommand MAX = EMCsBlockchainCommand::Get().Create(TEXT("MAX"));
 }
 
+namespace ECsEthereumRoutine
+{
+	namespace Str
+	{
+		const TCsString CreateKeystore_Internal = TCsString(TEXT("CreateKeystore_Internal"), TEXT("createkeystore_internal"));
+		const TCsString SetupAccount_Internal = TCsString(TEXT("SetupAccount_Internal"), TEXT("setupaccount_internal"));
+		const TCsString BringBalanceToThreshold_Internal = TCsString(TEXT("BringBalanceToThreshold_Internal"), TEXT("bringbalancetothreshold_internal"));
+		const TCsString DeployContract_Internal = TCsString(TEXT("DeployContract_Internal"), TEXT("deploycontract_internal"));
+		const TCsString SetupContract_Internal = TCsString(TEXT("SetupContract_Internal"), TEXT("setupcontract_internal"));
+		const TCsString RunContractStateChangeFunction_Internal = TCsString(TEXT("RunContractStateChangeFunction_Internal"), TEXT("runcontractstatechangefunction_internal"));
+		const TCsString CheckTransactionHasBeenMined_Internal = TCsString(TEXT("CheckTransactionHasBeenMined_Internal"), TEXT("checktransactionhasbeenmined_internal"));
+	}
+
+	namespace Ref
+	{
+		const Type CreateKeystore_Internal = Type::CreateKeystore_Internal;
+		const Type SetupAccount_Internal = Type::SetupAccount_Internal;
+		const Type BringBalanceToThreshold_Internal = Type::BringBalanceToThreshold_Internal;
+		const Type DeployContract_Internal = Type::DeployContract_Internal;
+		const Type SetupContract_Internal = Type::SetupContract_Internal;
+		const Type RunContractStateChangeFunction_Internal = Type::RunContractStateChangeFunction_Internal;
+		const Type CheckTransactionHasBeenMined_Internal = Type::CheckTransactionHasBeenMined_Internal;
+		const Type ECsEthereumRoutine_MAX = Type::ECsEthereumRoutine_MAX;
+	}
+}
+
 #pragma endregion Enums
 
 // Cache

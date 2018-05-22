@@ -46,14 +46,23 @@ namespace ECsLevelState
 
 namespace ECsLevelState
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
-		const TCsString None = TCsString(TEXT("None"), TEXT("none"), TEXT("none"));
-		const TCsString Loaded = TCsString(TEXT("Loaded"), TEXT("loaded"), TEXT("loaded"));
-		const TCsString BeginTransition = TCsString(TEXT("BeginTransition"), TEXT("begintransition"), TEXT("begin transition"));
-		const TCsString InTransition = TCsString(TEXT("InTransition"), TEXT("intransition"), TEXT("in transition"));
+		extern const TCsString None;
+		extern const TCsString Loaded;
+		extern const TCsString BeginTransition;
+		extern const TCsString InTransition;
+	}
+
+	namespace Ref
+	{
+		extern const Type None;
+		extern const Type Loaded;
+		extern const Type BeginTransition;
+		extern const Type InTransition;
+		extern const Type ECsLevelState_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -65,13 +74,13 @@ namespace ECsLevelState
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE Type ToType(const FString &String)
+	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::None) { return Type::None; }
-		if (String == Str::Loaded) { return Type::Loaded; }
-		if (String == Str::BeginTransition) { return Type::BeginTransition; }
-		if (String == Str::InTransition) { return Type::InTransition; }
-		return Type::ECsLevelState_MAX;
+		if (String == Str::None) { return Ref::None; }
+		if (String == Str::Loaded) { return Ref::Loaded; }
+		if (String == Str::BeginTransition) { return Ref::BeginTransition; }
+		if (String == Str::InTransition) { return Ref::InTransition; }
+		return Ref::ECsLevelState_MAX;
 	}
 }
 

@@ -49,4 +49,53 @@ namespace ECsAxes_Editor
 	}
 }
 
+namespace ECsTransformMember
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+
+	namespace Str
+	{
+		const TCsString Location = TCsString(TEXT("Location"), TEXT("location"));
+		const TCsString Rotation = TCsString(TEXT("Rotation"), TEXT("rotation"));
+		const TCsString Scale = TCsString(TEXT("Scale"), TEXT("scale"));
+	}
+
+	namespace Ref
+	{
+		const Type Location = Type::Location;
+		const Type Rotation = Type::Rotation;
+		const Type Scale = Type::Scale;
+		const Type ECsTransformMember_MAX = Type::ECsTransformMember_MAX;
+	}
+}
+
 #pragma endregion Transform
+
+// Physics
+#pragma region
+
+namespace ECsPhysicsImpulseType
+{
+	namespace Str
+	{
+		const TCsString AddForce = TCsString(TEXT("AddForce"), TEXT("addforce"));
+		const TCsString AddForceAtPosition = TCsString(TEXT("AddForceAtPosition"), TEXT("addforceatposition"));
+		const TCsString AddTorque = TCsString(TEXT("AddTorque"), TEXT("addtorque"));
+		const TCsString AddAngularImpulse = TCsString(TEXT("AddAngularImpulse"), TEXT("addangularimpulse"));
+		const TCsString AddImpulse = TCsString(TEXT("AddImpulse"), TEXT("addimpulse"));
+		const TCsString AddImpulseAtPosition = TCsString(TEXT("AddImpulseAtPosition"), TEXT("addimpulseatposition"));
+	}
+
+	namespace Ref
+	{
+		const Type AddForce = Type::AddForce;
+		const Type AddForceAtPosition = Type::AddForceAtPosition;
+		const Type AddTorque = Type::AddTorque;
+		const Type AddAngularImpulse = Type::AddAngularImpulse;
+		const Type AddImpulse = Type::AddImpulse;
+		const Type AddImpulseAtPosition = Type::AddImpulseAtPosition;
+		const Type ECsPhysicsImpulseType_MAX = Type::ECsPhysicsImpulseType_MAX;
+	}
+}
+
+#pragma endregion Physics

@@ -190,9 +190,17 @@ namespace ECsTransformMember
 
 	namespace Str
 	{
-		const TCsString Location = TCsString(TEXT("Location"), TEXT("location"));
-		const TCsString Rotation = TCsString(TEXT("Rotation"), TEXT("rotation"));
-		const TCsString Scale = TCsString(TEXT("Scale"), TEXT("scale"));
+		extern const TCsString Location;
+		extern const TCsString Rotation;
+		extern const TCsString Scale;
+	}
+
+	namespace Ref
+	{
+		extern const Type Location;
+		extern const Type Rotation;
+		extern const Type Scale;
+		extern const Type ECsTransformMember_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -203,12 +211,12 @@ namespace ECsTransformMember
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE Type ToType(const FString &String)
+	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::Location) { return Type::Location; }
-		if (String == Str::Rotation) { return Type::Rotation; }
-		if (String == Str::Scale) { return Type::Scale; }
-		return Type::ECsTransformMember_MAX;
+		if (String == Str::Location) { return Ref::Location; }
+		if (String == Str::Rotation) { return Ref::Rotation; }
+		if (String == Str::Scale) { return Ref::Scale; }
+		return Ref::ECsTransformMember_MAX;
 	}
 }
 
@@ -1282,16 +1290,27 @@ namespace ECsPhysicsImpulseType
 
 namespace ECsPhysicsImpulseType
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
-		const TCsString AddForce = TCsString(TEXT("AddForce"), TEXT("addforce"), TEXT("add force"));
-		const TCsString AddForceAtPosition = TCsString(TEXT("AddForceAtPosition"), TEXT("addforceatposition"), TEXT("add force at position"));
-		const TCsString AddTorque = TCsString(TEXT("AddTorque"), TEXT("addtorque"), TEXT("add torque"));
-		const TCsString AddAngularImpulse = TCsString(TEXT("AddAngularImpulse"), TEXT("addangularimpulse"), TEXT("add angular impulse"));
-		const TCsString AddImpulse = TCsString(TEXT("AddImpulse"), TEXT("addimpulse"), TEXT("add impulse"));
-		const TCsString AddImpulseAtPosition = TCsString(TEXT("AddImpulseAtPosition"), TEXT("addimpulseatposition"), TEXT("add impulse at position"));
+		extern const TCsString AddForce;
+		extern const TCsString AddForceAtPosition;
+		extern const TCsString AddTorque;
+		extern const TCsString AddAngularImpulse;
+		extern const TCsString AddImpulse;
+		extern const TCsString AddImpulseAtPosition;
+	}
+
+	namespace Ref
+	{
+		extern const Type AddForce;
+		extern const Type AddForceAtPosition;
+		extern const Type AddTorque;
+		extern const Type AddAngularImpulse;
+		extern const Type AddImpulse;
+		extern const Type AddImpulseAtPosition;
+		extern const Type ECsPhysicsImpulseType_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -1305,17 +1324,16 @@ namespace ECsPhysicsImpulseType
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE Type ToType(const FString &String)
+	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::AddForce) { return Type::AddForce; }
-		if (String == Str::AddForceAtPosition) { return Type::AddForceAtPosition; }
-		if (String == Str::AddTorque) { return Type::AddTorque; }
-		if (String == Str::AddAngularImpulse) { return Type::AddAngularImpulse; }
-		if (String == Str::AddImpulse) { return Type::AddImpulse; }
-		if (String == Str::AddImpulseAtPosition) { return Type::AddImpulseAtPosition; }
-		return Type::ECsPhysicsImpulseType_MAX;
+		if (String == Str::AddForce) { return Ref::AddForce; }
+		if (String == Str::AddForceAtPosition) { return Ref::AddForceAtPosition; }
+		if (String == Str::AddTorque) { return Ref::AddTorque; }
+		if (String == Str::AddAngularImpulse) { return Ref::AddAngularImpulse; }
+		if (String == Str::AddImpulse) { return Ref::AddImpulse; }
+		if (String == Str::AddImpulseAtPosition) { return Ref::AddImpulseAtPosition; }
+		return Ref::ECsPhysicsImpulseType_MAX;
 	}
-
 }
 
 #define ECS_PHYSICS_IMPULSE_TYPE_MAX (uint8)ECsPhysicsImpulseType::ECsPhysicsImpulseType_MAX

@@ -92,7 +92,6 @@ typedef ECsLevelState::Type TCsLevelState;
 // Transform
 #pragma region
 
-
 UENUM(BlueprintType, meta = (Bitflags))
 enum class ECsAxes : uint8
 {
@@ -124,9 +123,17 @@ namespace ECsAxes_Editor
 
 	namespace Str
 	{
-		const TCsString X = TCsString(TEXT("X"), TEXT("x"), TEXT("roll"));
-		const TCsString Y = TCsString(TEXT("Y"), TEXT("y"), TEXT("pitch"));
-		const TCsString Z = TCsString(TEXT("Z"), TEXT("z"), TEXT("yaw"));
+		extern const TCsString X;
+		extern const TCsString Y;
+		extern const TCsString Z;
+	}
+
+	namespace Ref
+	{
+		extern const Type X;
+		extern const Type Y;
+		extern const Type Z;
+		extern const Type ECsAxes_Editor_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -137,12 +144,12 @@ namespace ECsAxes_Editor
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE Type ToType(const FString &String)
+	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::X) { return Type::X; }
-		if (String == Str::Y) { return Type::Y; }
-		if (String == Str::Z) { return Type::Z; }
-		return Type::ECsAxes_Editor_MAX;
+		if (String == Str::X) { return Ref::X; }
+		if (String == Str::Y) { return Ref::Y; }
+		if (String == Str::Z) { return Ref::Z; }
+		return Ref::ECsAxes_Editor_MAX;
 	}
 
 	FORCEINLINE ECsAxes ToBaseType(const Type &EType)

@@ -25,3 +25,28 @@ namespace ECsLevelState
 }
 
 #pragma endregion Level
+
+// Transform
+#pragma region
+
+namespace ECsAxes_Editor
+{
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+
+	namespace Str
+	{
+		const TCsString X = TCsString(TEXT("X"), TEXT("x"), TEXT("roll"));
+		const TCsString Y = TCsString(TEXT("Y"), TEXT("y"), TEXT("pitch"));
+		const TCsString Z = TCsString(TEXT("Z"), TEXT("z"), TEXT("yaw"));
+	}
+
+	namespace Ref
+	{
+		const Type X = Type::X;
+		const Type Y = Type::Y;
+		const Type Z = Type::Z;
+		const Type ECsAxes_Editor_MAX = Type::ECsAxes_Editor_MAX;
+	}
+}
+
+#pragma endregion Transform

@@ -57,7 +57,7 @@ struct FCsEthereumWeb3DeployLink
 	}
 };
 
-class CsEthereumContract : public ICsBlockchainContract
+class CSCORE_API CsEthereumContract : public ICsBlockchainContract
 {
 // Interface
 #pragma region
@@ -65,6 +65,7 @@ class CsEthereumContract : public ICsBlockchainContract
 public:
 
 	CsEthereumContract();
+	CsEthereumContract(const FString &InName);
 	~CsEthereumContract();
 
 	FString Name;
@@ -79,8 +80,6 @@ public:
 #pragma endregion Interface
 
 public:
-
-	CsEthereumContract(const FString &name);
 
 	TArray<FCsEthereumABI> ABI;
 	FString Address;

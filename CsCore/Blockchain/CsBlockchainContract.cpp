@@ -2,4 +2,5 @@
 #include "Blockchain/CsBlockchainContract.h"
 
 ICsBlockchainContract::ICsBlockchainContract(){}
+ICsBlockchainContract::ICsBlockchainContract(const FString &InName){}
 ICsBlockchainContract::~ICsBlockchainContract(){}

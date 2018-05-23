@@ -151,6 +151,39 @@ struct FCsBlockchainContractArgument
 		Value_FString = Value;
 	}
 
+	~FCsBlockchainContractArgument(){}
+
+	void Set(const FString &InName, const TCsBlockchainContractArgumentType &InValueType)
+	{
+		// HACKY: For now add ',' to distinguish between the same input arguments in the ABI
+		Name = InName + TEXT(",");
+		ValueType = InValueType;
+	}
+
+	void Set(const FString &InName, const TCsBlockchainContractArgumentType &InValueType, const bool &Value)
+	{
+		Set(InName, InValueType);
+		Value_bool = Value;
+	}
+
+	void Set(const FString &InName, const TCsBlockchainContractArgumentType &InValueType, const int32 &Value)
+	{
+		Set(InName, InValueType);
+		Value_int32 = Value;
+	}
+
+	void Set(const FString &InName, const TCsBlockchainContractArgumentType &InValueType, const float &Value)
+	{
+		Set(InName, InValueType);
+		Value_float = Value;
+	}
+
+	void Set(const FString &InName, const TCsBlockchainContractArgumentType &InValueType, const FString &Value)
+	{
+		Set(InName, InValueType);
+		Value_FString = Value;
+	}
+
 	FString ToString() const
 	{
 		// HACKY: For now add ',' to distinguish between the same input arguments in the ABI
@@ -222,21 +255,21 @@ public:
 };
 
 UENUM(BlueprintType)
-namespace ECgBlockchainContractFunctionArgumentType
+namespace ECsBlockchainContractFunctionArgumentType
 {
 	enum Type
 	{
 		Int32											UMETA(DisplayName = "Int32"),
 		Float											UMETA(DisplayName = "Float"),
 		String											UMETA(DisplayName = "String"),
-		ECgBlockchainContractFunctionArgumentType_MAX	UMETA(Hidden),
+		ECsBlockchainContractFunctionArgumentType_MAX	UMETA(Hidden),
 	};
 }
 
-#define ECS_BLOCKCHAIN_CONTRACT_FUNCTION_ARGUMENT_TYPE_MAX (uint8)ECgBlockchainContractFunctionArgumentType::ECgBlockchainContractFunctionArgumentType_MAX
-typedef ECgBlockchainContractFunctionArgumentType::Type TCgBlockchainContractFunctionArgumentType;
+#define ECS_BLOCKCHAIN_CONTRACT_FUNCTION_ARGUMENT_TYPE_MAX (uint8)ECsBlockchainContractFunctionArgumentType::ECsBlockchainContractFunctionArgumentType_MAX
+typedef ECsBlockchainContractFunctionArgumentType::Type TCsBlockchainContractFunctionArgumentType;
 
-namespace ECgBlockchainContractFunctionArgumentType
+namespace ECsBlockchainContractFunctionArgumentType
 {
 	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
 
@@ -252,7 +285,7 @@ namespace ECgBlockchainContractFunctionArgumentType
 		const Type Int32 = Type::Int32;
 		const Type Float = Type::Float;
 		const Type String = Type::String;
-		const Type ECgBlockchainContractFunctionArgumentType_MAX = Type::ECgBlockchainContractFunctionArgumentType_MAX;
+		const Type ECsBlockchainContractFunctionArgumentType_MAX = Type::ECsBlockchainContractFunctionArgumentType_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -268,7 +301,7 @@ namespace ECgBlockchainContractFunctionArgumentType
 		if (InString == Str::Int32) { return Ref::Int32; }
 		if (InString == Str::Float) { return Ref::Float; }
 		if (InString == Str::String) { return Ref::String; }
-		return Ref::ECgBlockchainContractFunctionArgumentType_MAX;
+		return Ref::ECsBlockchainContractFunctionArgumentType_MAX;
 	}
 }
 
@@ -278,7 +311,7 @@ struct FCsBlockchainContractFunctionArgument
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
-	TEnumAsByte<ECgBlockchainContractFunctionArgumentType::Type> ValueType;
+	TEnumAsByte<ECsBlockchainContractFunctionArgumentType::Type> ValueType;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
 	int32 Value_int32;
@@ -290,19 +323,19 @@ struct FCsBlockchainContractFunctionArgument
 	FString Value_FString;
 
 	FCsBlockchainContractFunctionArgument() {}
-	FCsBlockchainContractFunctionArgument(const TCgBlockchainContractFunctionArgumentType &InValueType, const int32 &Value)
+	FCsBlockchainContractFunctionArgument(const TCsBlockchainContractFunctionArgumentType &InValueType, const int32 &Value)
 	{
 		ValueType = InValueType;
 		Value_int32 = Value;
 	}
 
-	FCsBlockchainContractFunctionArgument(const TCgBlockchainContractFunctionArgumentType &InValueType, const float &Value)
+	FCsBlockchainContractFunctionArgument(const TCsBlockchainContractFunctionArgumentType &InValueType, const float &Value)
 	{
 		ValueType = InValueType;
 		Value_float = Value;
 	}
 
-	FCsBlockchainContractFunctionArgument(const TCgBlockchainContractFunctionArgumentType &InValueType, const FString &Value)
+	FCsBlockchainContractFunctionArgument(const TCsBlockchainContractFunctionArgumentType &InValueType, const FString &Value)
 	{
 		ValueType = InValueType;
 		Value_FString = Value;
@@ -339,13 +372,13 @@ struct FCsBlockchainContractFunctionArgument
 	FString ToString()
 	{
 		// Int32
-		if (ValueType == ECgBlockchainContractFunctionArgumentType::Int32)
+		if (ValueType == ECsBlockchainContractFunctionArgumentType::Int32)
 			return FString::FromInt(Value_int32);
 		// Float
-		if (ValueType == ECgBlockchainContractFunctionArgumentType::Float)
+		if (ValueType == ECsBlockchainContractFunctionArgumentType::Float)
 			return FString::SanitizeFloat(Value_float);
 		// String
-		if (ValueType == ECgBlockchainContractFunctionArgumentType::String)
+		if (ValueType == ECsBlockchainContractFunctionArgumentType::String)
 			return TEXT("'") + Value_FString + TEXT("'");
 		return ECsCachedString::Str::Empty;
 	}
@@ -712,11 +745,12 @@ struct FCsBlockchainContractFunctionPayload
 
 #pragma endregion Function
 
-class ICsBlockchainContract
+class CSCORE_API ICsBlockchainContract
 {
 public:
 
 	ICsBlockchainContract();
+	ICsBlockchainContract(const FString &InName);
 	virtual ~ICsBlockchainContract();
 
 	virtual const FString& GetName() = 0;

@@ -43,7 +43,12 @@ void CsEthereumAccount::CreateUnlockArguments(TArray<FCsBlockchainCommandArgumen
 	OutArgs.Add(FCsBlockchainCommandArgument(ECsBlockchainCommandArgumentType::Int32, 0));
 }
 
+FString CsEthereumAccount::AddressAsHex()
+{
+	return TEXT("0x") + Address;
+}
+
 FString CsEthereumAccount::AddressAsArg()
 {
-	return TEXT("'0x") + Address + TEXT("'");
+	return TEXT("'") + AddressAsHex() + TEXT("'");
 }

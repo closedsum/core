@@ -170,6 +170,19 @@ struct FCsBlockchainProcessStartInfo
 	}
 };
 
+// Cache
+#pragma region
+
+namespace ECsBlockchainCached
+{
+	namespace Var
+	{
+		const TArray<FCsBlockchainContractFunctionArgument> ContractFunctionEmptyArgs;
+	};
+}
+
+#pragma endregion Cache
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsBlockchain_PrivateChainCreated, const int32&, Index);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsBlockchain_PrivateChainStarted, const int32&, Index);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsBlockchain_ConsoleOpened, const int32&, Index);

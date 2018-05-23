@@ -54,9 +54,14 @@
                 Parse(File.ReadAllText(path));
         }
 
+        public string AddressAsHex()
+        {
+            return "0x" + Address;
+        }
+
         public string AddressAsArg()
         {
-            return "'0x" + Address + "'";
+            return "'" + AddressAsHex() + "'";
         }
     }
 }

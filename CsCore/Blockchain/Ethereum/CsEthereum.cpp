@@ -1121,7 +1121,7 @@ CS_COROUTINE(UCsEthereum, BringBalanceToThreshold_Internal)
 // Contract
 #pragma region
 
-void UCsEthereum::DeployContract(FECsBlockchainContract &EContract, TArray<FCsBlockchainContractArgument> &Args)
+void UCsEthereum::DeployContract(const FECsBlockchainContract &EContract, TArray<FCsBlockchainContractArgument> &Args)
 {
 	DeployContractFlag = false;
 
@@ -1144,8 +1144,8 @@ void UCsEthereum::DeployContract(FECsBlockchainContract &EContract, TArray<FCsBl
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
-	R->voidPointers[0] = &EContract;
-	R->voidPointers[1] = &Args;
+	R->strings[0]	   = EContract.Name;
+	R->voidPointers[0] = &Args;
 
 	Scheduler->StartRoutine(Schedule, R);
 }
@@ -1155,8 +1155,9 @@ CS_COROUTINE(UCsEthereum, DeployContract_Internal)
 	UCsEthereum* eth		 = r->GetRObject<UCsEthereum>();
 	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 
-	const FECsBlockchainContract EContract	  = *((FECsBlockchainContract*)r->voidPointers[0]);
-	TArray<FCsBlockchainContractArgument> Args = *((TArray<FCsBlockchainContractArgument>*)r->voidPointers[1]);
+	const FString& SContract				   = r->strings[0];
+	const FECsBlockchainContract& EContract	   = EMCsBlockchainContract::Get()[SContract];
+	TArray<FCsBlockchainContractArgument> Args = *((TArray<FCsBlockchainContractArgument>*)r->voidPointers[0]);
 
 	CS_COROUTINE_BEGIN(r);
 
@@ -1413,7 +1414,7 @@ void UCsEthereum::CreateContractInstance(ICsBlockchainContract* IContract)
 	RunCommand(CS_BLOCKCHAIN_SINGLE_NODE_INDEX, ECsEthereumCommand::CreateContractInstance, Args);
 }
 
-void UCsEthereum::SetupContract(FECsBlockchainContract &EContract, FECsEthereumJavascript &EScript)
+void UCsEthereum::SetupContract(const FECsBlockchainContract &EContract, const FECsEthereumJavascript &EScript)
 {
 	SetupContractFlag = false;
 
@@ -1436,8 +1437,8 @@ void UCsEthereum::SetupContract(FECsBlockchainContract &EContract, FECsEthereumJ
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
-	R->voidPointers[0] = &EContract;
-	R->voidPointers[1] = &EScript;
+	R->strings[0] = EContract.Name;
+	R->strings[1] = EScript.Name;
 
 	Scheduler->StartRoutine(Schedule, R);
 }
@@ -1447,8 +1448,10 @@ CS_COROUTINE(UCsEthereum, SetupContract_Internal)
 	UCsEthereum* eth		 = r->GetRObject<UCsEthereum>();
 	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 
-	FECsBlockchainContract& EContract = *((FECsBlockchainContract*)r->voidPointers[0]);
-	FECsEthereumJavascript& EScript	  = *((FECsEthereumJavascript*)r->voidPointers[1]);
+	const FString& SContract				= r->strings[0];
+	const FECsBlockchainContract& EContract = EMCsBlockchainContract::Get()[SContract];
+	const FString& SScript					= r->strings[1];
+	const FECsEthereumJavascript& EScript	= EMCsEthereumJavascript::Get()[SScript];
 
 	ICsBlockchainContract** IContract = eth->Contracts.Find(EContract);
 	CsEthereumContract* Contract	  = IContract ? (CsEthereumContract*)(*IContract) : nullptr;
@@ -1501,7 +1504,7 @@ void UCsEthereum::RunContractConstantFunction(const FECsBlockchainContract &ECon
 	RunCommand(CS_BLOCKCHAIN_SINGLE_NODE_INDEX, Command);
 }
 
-void UCsEthereum::RunContractStateChangeFunction(FECsBlockchainContract &EContract, ICsBlockchainAccount* IAccount, FECsBlockchainContractFunction &EFn, TArray<FCsBlockchainContractFunctionArgument> &Args)
+void UCsEthereum::RunContractStateChangeFunction(const FECsBlockchainContract &EContract, ICsBlockchainAccount* IAccount, const FECsBlockchainContractFunction &EFn, TArray<FCsBlockchainContractFunctionArgument> &Args)
 {
 	RunContractStateChangeFunctionFlag = false;
 
@@ -1524,10 +1527,10 @@ void UCsEthereum::RunContractStateChangeFunction(FECsBlockchainContract &EContra
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
-	R->voidPointers[0] = &EContract;
-	R->voidPointers[1] = IAccount;
-	R->voidPointers[2] = &EFn;
-	R->voidPointers[3] = &Args;
+	R->strings[0]		= EContract.Name;
+	R->voidPointers[0]	= IAccount;
+	R->strings[1]		= EFn.Name;
+	R->voidPointers[1]	= &Args;
 
 	Scheduler->StartRoutine(Schedule, R);
 }
@@ -1537,11 +1540,13 @@ CS_COROUTINE(UCsEthereum, RunContractStateChangeFunction_Internal)
 	UCsEthereum* eth		 = r->GetRObject<UCsEthereum>();
 	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 
-	const FECsBlockchainContract EContract	= *((FECsBlockchainContract*)r->voidPointers[0]);
-	ICsBlockchainAccount* IAccount			= (ICsBlockchainAccount*)r->voidPointers[1];
+	const FString& SContract = r->strings[0];
+	const FECsBlockchainContract& EContract	= EMCsBlockchainContract::Get()[SContract];
+	ICsBlockchainAccount* IAccount			= (ICsBlockchainAccount*)r->voidPointers[0];
 	CsEthereumAccount* Account				= (CsEthereumAccount*)IAccount;
-	const FECsBlockchainContractFunction EFn = *((FECsBlockchainContractFunction*)r->voidPointers[2]);
-	const TArray<FCsBlockchainContractFunctionArgument> Args = *((TArray<FCsBlockchainContractFunctionArgument>*)r->voidPointers[3]);
+	const FString& SFn						= r->strings[1];
+	const FECsBlockchainContractFunction EFn = EMCsBlockchainContractFunction::Get()[SFn];
+	const TArray<FCsBlockchainContractFunctionArgument> Args = *((TArray<FCsBlockchainContractFunctionArgument>*)r->voidPointers[1]);
 
 	const int32 THRESHOLD = 10;
 
@@ -1703,7 +1708,7 @@ CS_COROUTINE(UCsEthereum, CheckTransactionHasBeenMined_Internal)
 
 #pragma endregion Contract
 
-void UCsEthereum::LoadScript(FECsEthereumJavascript &EScript, const FString &Path)
+void UCsEthereum::LoadScript(const FECsEthereumJavascript &EScript, const FString &Path)
 {
 	CommandFlag = false;
 
@@ -1715,7 +1720,7 @@ void UCsEthereum::LoadScript(FECsEthereumJavascript &EScript, const FString &Pat
 	Args[PATH].Value_FString = TEXT("'") + Path + TEXT("'");
 	Args[PATH].ValueType	 = ECsBlockchainCommandArgumentType::String;
 
-	CurrentCommandInfo.Set(ECsEthereumCommand::LoadScript, Args, &EScript);
+	CurrentCommandInfo.Set(ECsEthereumCommand::LoadScript, Args, EScript.Name);
 	CurrentCommandOuput.Reset();
 
 	AddMonitorOutputEvenToProcess(ECsBlockchainProcessType::Console, CS_BLOCKCHAIN_SINGLE_NODE_INDEX, ECsEthereumCommand::LoadScript);

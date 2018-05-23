@@ -4,7 +4,7 @@
 #include "Blockchain/CsBlockchainAccount.h"
 #include "Blockchain/CsBlockchainCommand.h"
 
-class CsEthereumAccount : public ICsBlockchainAccount
+class CSCORE_API CsEthereumAccount : public ICsBlockchainAccount
 {
 // Interface
 #pragma region
@@ -32,5 +32,6 @@ public:
 
 	void CreateUnlockArguments(TArray<FCsBlockchainCommandArgument> &OutArgs);
 
+	FString AddressAsHex();
 	FString AddressAsArg();
 };

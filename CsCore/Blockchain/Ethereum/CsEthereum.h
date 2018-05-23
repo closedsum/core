@@ -42,6 +42,12 @@ struct FCsEthereumAccountInfo
 	{
 		return !(*this == B);
 	}
+
+	void Set(const FString &InNickname, const FString &InPassphrase)
+	{
+		Nickname = InNickname;
+		Passphrase = InPassphrase;
+	}
 };
 
 // Enums
@@ -351,7 +357,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ethereum")
 	FCsBlockchainCommandOutput CurrentCommandOuput;
 
-protected:
 	FCsEthereumAccountInfo CurrentAccountInfo;
 
 public:
@@ -364,6 +369,8 @@ public:
 	bool BringBalanceToThresholdFlag;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ethereum")
 	bool DeployContractFlag;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ethereum")
+	bool LoadContractsFlag;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ethereum")
 	bool SetupContractFlag;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ethereum")
@@ -391,7 +398,7 @@ public:
 #pragma region
 public:
 
-	virtual void OnProcessOutputRecieved(const FString &Ouput);
+	virtual void OnProcessOutputRecieved(const FString &Output);
 	virtual void OnProcessErrorRecieved(const FString &Output);
 	virtual void OnProcessExited(const FString &Output);
 	virtual void OnConsoleOutputRecieved(const FString &Output);
@@ -429,7 +436,7 @@ public:
 #pragma region
 public:
 
-	void DeployContract(FECsBlockchainContract &EContract, TArray<FCsBlockchainContractArgument> &Args);
+	void DeployContract(const FECsBlockchainContract &EContract, TArray<FCsBlockchainContractArgument> &Args);
 	static char DeployContract_Internal(FCsRoutine* r);
 	FCsRoutine* DeployContract_Internal_Routine;
 
@@ -439,13 +446,13 @@ public:
 	void CreateContractABI(const FECsBlockchainContract &EContract);
 	void CreateContractInstance(class ICsBlockchainContract* IContract);
 
-	void SetupContract(FECsBlockchainContract &EContract, FECsEthereumJavascript &EScript);
+	void SetupContract(const FECsBlockchainContract &EContract, const FECsEthereumJavascript &EScript);
 	static char SetupContract_Internal(FCsRoutine* r);
 	FCsRoutine* SetupContract_Internal_Routine;
 
 	void RunContractConstantFunction(const FECsBlockchainContract &EContract, const FECsBlockchainContractFunction &EFn, const TArray<FCsBlockchainContractFunctionArgument> &Args);
 
-	void RunContractStateChangeFunction(FECsBlockchainContract &EContract, class ICsBlockchainAccount* IAccount, FECsBlockchainContractFunction &EFn, TArray<FCsBlockchainContractFunctionArgument> &Args);
+	void RunContractStateChangeFunction(const FECsBlockchainContract &EContract, class ICsBlockchainAccount* IAccount, const FECsBlockchainContractFunction &EFn, TArray<FCsBlockchainContractFunctionArgument> &Args);
 	static char RunContractStateChangeFunction_Internal(FCsRoutine* r);
 	FCsRoutine* RunContractStateChangeFunction_Internal_Routine;
 
@@ -461,5 +468,5 @@ public:
 
 public:
 
-	virtual void LoadScript(FECsEthereumJavascript &EScript, const FString &Path);
+	virtual void LoadScript(const FECsEthereumJavascript &EScript, const FString &Path);
 };

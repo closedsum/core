@@ -26,17 +26,17 @@ namespace ECsStringEscapeType
 
 	namespace Str
 	{
-		const TCsString Int = TCsString(TEXT("Int"), TEXT("int"));
-		const TCsString Float = TCsString(TEXT("Float"), TEXT("float"));
-		const TCsString String = TCsString(TEXT("String"), TEXT("string"));
+		extern const TCsString Int;
+		extern const TCsString Float;
+		extern const TCsString String;
 	}
 
 	namespace Ref
 	{
-		const Type Int = Type::Int;
-		const Type Float = Type::Float;
-		const Type String = Type::String;
-		const Type ECsStringEscapeType_MAX = Type::ECsStringEscapeType_MAX;
+		extern const Type Int;
+		extern const Type Float;
+		extern const Type String;
+		extern const Type ECsStringEscapeType_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)

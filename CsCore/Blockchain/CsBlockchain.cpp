@@ -2,6 +2,9 @@
 #include "Blockchain/CsBlockchain.h"
 #include "CsCore.h"
 
+#include "Blockchain/CsBlockchainAccount.h"
+#include "Blockchain/CsBlockchainContract.h"
+
 // static initializations
 UCsBlockchain* UCsBlockchain::s_blockchainSingleton;
 bool UCsBlockchain::s_bBlockchainHasShutdown = false;
@@ -50,6 +53,32 @@ void UCsBlockchain::Initialize()
 
 void UCsBlockchain::CleanUp()
 {
+	// Accounts
+	{
+		TArray<FString> Keys;
+		Accounts.GetKeys(Keys);
+
+		const int32 Count = Keys.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			delete Accounts[Keys[I]];
+		}
+		Accounts.Reset();
+	}
+	// Contracts
+	{
+		TArray<FECsBlockchainContract> Keys;
+		Contracts.GetKeys(Keys);
+
+		const int32 Count = Keys.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			delete Contracts[Keys[I]];
+		}
+		Contracts.Reset();
+	}
 }
 
 #pragma endregion Singleton

@@ -252,6 +252,10 @@ public:
 
 #pragma endregion Mouse Cursor
 
+	DECLARE_MULTICAST_DELEGATE(OnBoardCompleted);
+
+	OnBoardCompleted OnBoardCompleted_Event;
+
 #pragma endregion OnBoard
 
 	bool IsVR;

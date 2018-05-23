@@ -35,25 +35,25 @@ typedef ECsGameInstanceRoutine::Type TCsGameInstanceRoutine;
 
 namespace ECsGameInstanceRoutine
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
-		const TCsString OnBoard_Internal = TCsString(TEXT("OnBoard_Internal"), TEXT("onboard_internal"), TEXT("onboard internal"));
-		const TCsString LoadDataMapping_Internal = TCsString(TEXT("LoadDataMapping_Internal"), TEXT("loaddatamapping_internal"), TEXT("load data mapping internal"));
-		const TCsString PerformLevelTransition_Internal = TCsString(TEXT("PerformLevelTransition_Internal"), TEXT("performleveltransition_internal"), TEXT("perform level transition internal"));
-		const TCsString CreateFullscreenWidget_Internal = TCsString(TEXT("CreateFullscreenWidget_Internal"), TEXT("createfullscreenwidget_internal"), TEXT("create fullscreen widget internal"));
-		const TCsString HideMouseCursor_Internal = TCsString(TEXT("HideMouseCursor_Internal"), TEXT("hidemousecursor_internal"), TEXT("hide mouse cursor internal"));
+		extern const TCsString OnBoard_Internal;
+		extern const TCsString LoadDataMapping_Internal;
+		extern const TCsString PerformLevelTransition_Internal;
+		extern const TCsString CreateFullscreenWidget_Internal;
+		extern const TCsString HideMouseCursor_Internal;
 	}
 
 	namespace Ref
 	{
-		const TCsGameInstanceRoutine OnBoard_Internal = Type::OnBoard_Internal;
-		const TCsGameInstanceRoutine LoadDataMapping_Internal = Type::LoadDataMapping_Internal;
-		const TCsGameInstanceRoutine PerformLevelTransition_Internal = Type::PerformLevelTransition_Internal;
-		const TCsGameInstanceRoutine CreateFullscreenWidget_Internal = Type::CreateFullscreenWidget_Internal;
-		const TCsGameInstanceRoutine HideMouseCursor_Internal = Type::HideMouseCursor_Internal;
-		const TCsGameInstanceRoutine ECsGameInstanceRoutine_MAX = Type::ECsGameInstanceRoutine_MAX;
+		extern const TCsGameInstanceRoutine OnBoard_Internal;
+		extern const TCsGameInstanceRoutine LoadDataMapping_Internal;
+		extern const TCsGameInstanceRoutine PerformLevelTransition_Internal;
+		extern const TCsGameInstanceRoutine CreateFullscreenWidget_Internal;
+		extern const TCsGameInstanceRoutine HideMouseCursor_Internal;
+		extern const TCsGameInstanceRoutine ECsGameInstanceRoutine_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -93,32 +93,49 @@ namespace ECsGameInstanceOnBoardState
 
 namespace ECsGameInstanceOnBoardState
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
-		const TCsString LoadDataMapping = TCsString(TEXT("LoadDataMapping"), TEXT("loaddatamapping"), TEXT("load data mapping"));
-		const TCsString LoadStartUpData = TCsString(TEXT("LoadStartUpData"), TEXT("loadstartupdata"), TEXT("load start up data"));
-		const TCsString LoadScreen = TCsString(TEXT("LoadScreen"), TEXT("loadscreen"), TEXT("load screen"));
-		const TCsString Completed = TCsString(TEXT("Completed"), TEXT("completed"), TEXT("completed"));
+		extern const TCsString LoadDataMapping;
+		extern const TCsString FinishedLoadingDataAssets;
+		extern const TCsString FinishedPopulatingAssetReferences;
+		extern const TCsString LoadStartUpData;
+		extern const TCsString LoadScreen;
+		extern const TCsString Completed;
+	}
+
+	namespace Ref
+	{
+		extern const Type LoadDataMapping;
+		extern const Type FinishedLoadingDataAssets;
+		extern const Type FinishedPopulatingAssetReferences;
+		extern const Type LoadStartUpData;
+		extern const Type LoadScreen;
+		extern const Type Completed;
+		extern const Type ECsGameInstanceOnBoardState_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::LoadDataMapping) { return Str::LoadDataMapping.Value; }
+		if (EType == Type::FinishedLoadingDataAssets) { return Str::FinishedLoadingDataAssets.Value; }
+		if (EType == Type::FinishedPopulatingAssetReferences) { return Str::FinishedPopulatingAssetReferences.Value; }
 		if (EType == Type::LoadStartUpData) { return Str::LoadStartUpData.Value; }
 		if (EType == Type::LoadScreen) { return Str::LoadScreen.Value; }
 		if (EType == Type::Completed) { return Str::Completed.Value; }
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE Type ToType(const FString &String)
+	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::LoadDataMapping) { return Type::LoadDataMapping; }
-		if (String == Str::LoadStartUpData) { return Type::LoadStartUpData; }
-		if (String == Str::LoadScreen) { return Type::LoadScreen; }
-		if (String == Str::Completed) { return Type::Completed; }
-		return Type::ECsGameInstanceOnBoardState_MAX;
+		if (String == Str::LoadDataMapping) { return Ref::LoadDataMapping; }
+		if (String == Str::FinishedLoadingDataAssets) { return Ref::FinishedLoadingDataAssets; }
+		if (String == Str::FinishedPopulatingAssetReferences) { return Ref::FinishedPopulatingAssetReferences; }
+		if (String == Str::LoadStartUpData) { return Ref::LoadStartUpData; }
+		if (String == Str::LoadScreen) { return Ref::LoadScreen; }
+		if (String == Str::Completed) { return Ref::Completed; }
+		return Ref::ECsGameInstanceOnBoardState_MAX;
 	}
 }
 

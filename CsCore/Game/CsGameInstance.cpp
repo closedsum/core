@@ -20,10 +20,61 @@
 
 #include "Async/AsyncWork.h"
 
+// Enums
+#pragma region
+
+namespace ECsGameInstanceRoutine
+{
+	namespace Str
+	{
+		const TCsString OnBoard_Internal = TCsString(TEXT("OnBoard_Internal"), TEXT("onboard_internal"));
+		const TCsString LoadDataMapping_Internal = TCsString(TEXT("LoadDataMapping_Internal"), TEXT("loaddatamapping_internal"));
+		const TCsString PerformLevelTransition_Internal = TCsString(TEXT("PerformLevelTransition_Internal"), TEXT("performleveltransition_internal"));
+		const TCsString CreateFullscreenWidget_Internal = TCsString(TEXT("CreateFullscreenWidget_Internal"), TEXT("createfullscreenwidget_internal"));
+		const TCsString HideMouseCursor_Internal = TCsString(TEXT("HideMouseCursor_Internal"), TEXT("hidemousecursor_internal"));
+	}
+
+	namespace Ref
+	{
+		const TCsGameInstanceRoutine OnBoard_Internal = Type::OnBoard_Internal;
+		const TCsGameInstanceRoutine LoadDataMapping_Internal = Type::LoadDataMapping_Internal;
+		const TCsGameInstanceRoutine PerformLevelTransition_Internal = Type::PerformLevelTransition_Internal;
+		const TCsGameInstanceRoutine CreateFullscreenWidget_Internal = Type::CreateFullscreenWidget_Internal;
+		const TCsGameInstanceRoutine HideMouseCursor_Internal = Type::HideMouseCursor_Internal;
+		const TCsGameInstanceRoutine ECsGameInstanceRoutine_MAX = Type::ECsGameInstanceRoutine_MAX;
+	}
+}
+
+namespace ECsGameInstanceOnBoardState
+{
+	namespace Str
+	{
+		const TCsString LoadDataMapping = TCsString(TEXT("LoadDataMapping"), TEXT("loaddatamapping"));
+		const TCsString FinishedLoadingDataAssets = TCsString(TEXT("FinishedLoadingDataAssets"), TEXT("finishedloadingdataassets"));
+		const TCsString FinishedPopulatingAssetReferences = TCsString(TEXT("FinishedPopulatingAssetReferences"), TEXT("finishedpopulatingassetreferences"));
+		const TCsString LoadStartUpData = TCsString(TEXT("LoadStartUpData"), TEXT("loadstartupdata"));
+		const TCsString LoadScreen = TCsString(TEXT("LoadScreen"), TEXT("loadscreen"));
+		const TCsString Completed = TCsString(TEXT("Completed"), TEXT("completed"));
+	}
+
+	namespace Ref
+	{
+		const Type LoadDataMapping = Type::LoadDataMapping;
+		const Type FinishedLoadingDataAssets = Type::FinishedLoadingDataAssets;
+		const Type FinishedPopulatingAssetReferences = Type::FinishedPopulatingAssetReferences;
+		const Type LoadStartUpData = Type::LoadStartUpData;
+		const Type LoadScreen = Type::LoadScreen;
+		const Type Completed = Type::Completed;
+		const Type ECsGameInstanceOnBoardState_MAX = Type::ECsGameInstanceOnBoardState_MAX;
+	}
+}
+
+#pragma endregion
+
 // Cache
 #pragma region
 
-namespace ECsGameInstanceCachedName
+namespace ECsGameInstanceCached
 {
 	namespace Name
 	{
@@ -34,10 +85,7 @@ namespace ECsGameInstanceCachedName
 		const FName CreateFullscreenWidget_Internal = FName("UCsGameInstance::CreateFullscreenWidget_Internal");
 		const FName HideMouseCursor_Internal = FName("UCsGameInstance::HideMouseCursor_Internal");
 	};
-}
 
-namespace ECsGameInstanceCachedString
-{
 	namespace Str
 	{
 		// Functions
@@ -460,8 +508,8 @@ void UCsGameInstance::CreateFullscreenWidget()
 	Payload->Type			= (uint8)ECsGameInstanceRoutine::CreateFullscreenWidget_Internal;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsGameInstanceCachedName::Name::CreateFullscreenWidget_Internal;
-	Payload->NameAsString	= ECsGameInstanceCachedString::Str::CreateFullscreenWidget_Internal;
+	Payload->Name			= ECsGameInstanceCached::Name::CreateFullscreenWidget_Internal;
+	Payload->NameAsString	= ECsGameInstanceCached::Str::CreateFullscreenWidget_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
@@ -534,8 +582,8 @@ void UCsGameInstance::HideMouseCursor()
 	Payload->Type			= (uint8)ECsGameInstanceRoutine::HideMouseCursor_Internal;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsGameInstanceCachedName::Name::HideMouseCursor_Internal;
-	Payload->NameAsString	= ECsGameInstanceCachedString::Str::HideMouseCursor_Internal;
+	Payload->Name			= ECsGameInstanceCached::Name::HideMouseCursor_Internal;
+	Payload->NameAsString	= ECsGameInstanceCached::Str::HideMouseCursor_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 

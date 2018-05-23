@@ -216,8 +216,8 @@ public:
 
 protected:
 
-	void Initialize();
-	void CleanUp();
+	virtual void Initialize();
+	virtual void CleanUp();
 
 private:
 	// Singleton data

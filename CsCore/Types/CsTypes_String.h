@@ -5,6 +5,9 @@
 #include "CsTypes_String.generated.h"
 #pragma once
 
+// Escape
+#pragma region
+
 UENUM(BlueprintType)
 namespace ECsStringEscapeType
 {
@@ -13,6 +16,9 @@ namespace ECsStringEscapeType
 		Int						UMETA(DisplayName = "Int"),
 		Float					UMETA(DisplayName = "Float"),
 		String					UMETA(DisplayName = "String"),
+		CR						UMETA(DisplayName = "Carriage Return"),
+		LF						UMETA(DisplayName = "Line Feed"),
+		EOL						UMETA(DisplayName = "End of Line"),
 		ECsStringEscapeType_MAX	UMETA(Hidden),
 	};
 }
@@ -29,6 +35,9 @@ namespace ECsStringEscapeType
 		extern const TCsString Int;
 		extern const TCsString Float;
 		extern const TCsString String;
+		extern const TCsString CR;
+		extern const TCsString LF;
+		extern const TCsString EOL;
 	}
 
 	namespace Ref
@@ -36,6 +45,9 @@ namespace ECsStringEscapeType
 		extern const Type Int;
 		extern const Type Float;
 		extern const Type String;
+		extern const Type CR;
+		extern const Type LF;
+		extern const Type EOL;
 		extern const Type ECsStringEscapeType_MAX;
 	}
 
@@ -44,6 +56,9 @@ namespace ECsStringEscapeType
 		if (EType == Type::Int) { return Str::Int.Value; }
 		if (EType == Type::Float) { return Str::Float.Value; }
 		if (EType == Type::String) { return Str::String.Value; }
+		if (EType == Type::CR) { return Str::CR.Value; }
+		if (EType == Type::LF) { return Str::LF.Value; }
+		if (EType == Type::EOL) { return Str::EOL.Value; }
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
@@ -52,6 +67,9 @@ namespace ECsStringEscapeType
 		if (InString == Str::Int) { return Ref::Int; }
 		if (InString == Str::Float) { return Ref::Float; }
 		if (InString == Str::String) { return Ref::String; }
+		if (InString == Str::CR) { return Ref::CR; }
+		if (InString == Str::LF) { return Ref::LF; }
+		if (InString == Str::EOL) { return Ref::EOL; }
 		return Ref::ECsStringEscapeType_MAX;
 	}
 }
@@ -65,6 +83,11 @@ namespace ECsStringEscapeCharacter
 	extern const FString LF;
 	extern const FString EOL;
 }
+
+#pragma endregion Escape
+
+// World / Phrase / Sentence / Paragraph
+#pragma region
 
 UENUM(BlueprintType)
 namespace ECsStringWordRule
@@ -692,3 +715,12 @@ namespace CgStringParagraphHelper
 	}
 	*/
 }
+
+#pragma endregion Word / Phrase / Sentence / Paragraph
+
+struct CSCORE_API FCsStringHelper
+{
+public:
+	static void GetLines(const FString& Input, TArray<FString> &OutLines);
+	static void GetLineTerminatingIndexAndCharacter(const FString &Input, int32 &OutIndex, FString &OutEscapeChar);
+};

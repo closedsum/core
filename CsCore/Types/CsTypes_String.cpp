@@ -18,3 +18,29 @@ namespace ECsStringEscapeType
 		const Type ECsStringEscapeType_MAX = Type::ECsStringEscapeType_MAX;
 	}
 }
+
+namespace ECsStringEscapeCharacter
+{
+	const FString Int = TEXT("%d");
+	const FString Float = TEXT("%f");
+	const FString String = TEXT("%s");
+	const FString CR = TEXT("\r");
+	const FString LF = TEXT("\n");
+	const FString EOL = TEXT("\r\n");
+}
+
+namespace ECsStringWordRule
+{
+	namespace Str
+	{
+		const TCsString MatchCase = TCsString(TEXT("MatchCase"), TEXT("matchcase"));
+		const TCsString Lower = TCsString(TEXT("Lower"), TEXT("lower"));
+	}
+
+	namespace Ref
+	{
+		const Type MatchCase = Type::MatchCase;
+		const Type Lower = Type::Lower;
+		const Type ECsStringWordRule_MAX = Type::ECsStringWordRule_MAX;
+	}
+}

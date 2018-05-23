@@ -58,9 +58,12 @@ namespace ECsStringEscapeType
 
 namespace ECsStringEscapeCharacter
 {
-	const FString Int = TEXT("%d");
-	const FString Float = TEXT("%f");
-	const FString String = TEXT("%s");
+	extern const FString Int;
+	extern const FString Float;
+	extern const FString String;
+	extern const FString CR;
+	extern const FString LF;
+	extern const FString EOL;
 }
 
 UENUM(BlueprintType)
@@ -83,15 +86,15 @@ namespace ECsStringWordRule
 
 	namespace Str
 	{
-		const TCsString MatchCase = TCsString(TEXT("MatchCase"), TEXT("matchcase"));
-		const TCsString Lower = TCsString(TEXT("Lower"), TEXT("lower"));
+		extern const TCsString MatchCase;
+		extern const TCsString Lower;
 	}
 
 	namespace Ref
 	{
-		const Type MatchCase = Type::MatchCase;
-		const Type Lower = Type::Lower;
-		const Type ECsStringWordRule_MAX = Type::ECsStringWordRule_MAX;
+		extern const Type MatchCase;
+		extern const Type Lower;
+		extern const Type ECsStringWordRule_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)

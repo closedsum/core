@@ -310,6 +310,8 @@ CS_COROUTINE(UCsGameInstance, OnBoard_Internal)
 
 	CS_COROUTINE_WAIT_UNTIL(r, gi->OnBoardState == ECsGameInstanceOnBoardState::Completed);
 
+	gi->OnBoardCompleted_Event.Broadcast();
+
 	CS_COROUTINE_END(r);
 }
 

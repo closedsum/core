@@ -502,10 +502,10 @@ void UCsEthereum::Rebuild()
 // Process
 #pragma region
 
-void UCsEthereum::AddMonitorOutputEvenToProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, const FCsProcessMonitorOutputEvent &E)
+void UCsEthereum::AddMonitorOutputEvenToProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, FCsProcessMonitorOutputEvent &Event)
 {
 	// TODO: Later handle PrivateMultiNode
-	Processes[ProcessType]->AddMonitorOutputEvent(E);
+	Processes[ProcessType]->AddMonitorOutputEvent(Event);
 }
 
 void UCsEthereum::AddMonitorOutputEvenToProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, const FECsBlockchainCommand& Command)

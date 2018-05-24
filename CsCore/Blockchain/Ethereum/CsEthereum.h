@@ -387,7 +387,7 @@ public:
 #pragma region
 public:
 
-	void AddMonitorOutputEvenToProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, const FCsProcessMonitorOutputEvent &E);
+	void AddMonitorOutputEvenToProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, FCsProcessMonitorOutputEvent &Event);
 	UFUNCTION(BlueprintCallable, Category = "Ethereum")
 	void AddMonitorOutputEvenToProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, const FECsBlockchainCommand& Command);
 

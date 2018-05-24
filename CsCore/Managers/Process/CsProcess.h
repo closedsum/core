@@ -199,6 +199,9 @@ public:
 		if (Completed)
 		{
 			Event.Broadcast(Name);
+#if WITH_EDITOR
+			ScriptEvent.Broadcast(Name);
+#endif // #if WITH_EDITOR
 		}
 	}
 
@@ -212,6 +215,7 @@ public:
 	{
 		Clear();
 		Event.Clear();
+		ScriptEvent.Clear();
 	}
 
 	bool HasCompleted()
@@ -470,12 +474,12 @@ public:
 
 private:
 
-	TArray<FCsProcessMonitorOutputEvent> MonitorOutputEvents;
+	TArray<FCsProcessMonitorOutputEvent*> MonitorOutputEvents;
 
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Process")
-	void AddMonitorOutputEvent(const FCsProcessMonitorOutputEvent &Event);
+	void AddMonitorOutputEvent(FCsProcessMonitorOutputEvent &Event);
 	void ProcessMonitorOuputEvents(const FString &Output);
 	void OnOutputRecieved(const FString &Output);
 

@@ -49,10 +49,18 @@ UCsBlockchain::UCsBlockchain(const FObjectInitializer& ObjectInitializer) : Supe
 
 void UCsBlockchain::Initialize()
 {
+	for (int32 I = 0; I < ECS_BLOCKCHAIN_PROCESS_TYPE_MAX; ++I)
+	{
+		Processes.Add((TCsBlockchainProcessType)I, nullptr);
+	}
 }
 
 void UCsBlockchain::CleanUp()
 {
+	// Processes
+	{
+		Processes.Reset();
+	}
 	// Accounts
 	{
 		TArray<FString> Keys;

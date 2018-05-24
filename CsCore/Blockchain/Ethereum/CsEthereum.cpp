@@ -5,6 +5,10 @@
 
 #include "Coroutine/CsCoroutineScheduler.h"
 
+// Managers
+#include "Managers/Process/CsManager_Process.h"
+
+#include "Blockchain/Ethereum/CsEthereumGenesis.h"
 #include "Blockchain/Ethereum/CsEthereumAccount.h"
 
 #include "Runtime/Core/Public/HAL/FileManagerGeneric.h"
@@ -104,6 +108,140 @@ namespace ECsEthereumCachedString
 UCsEthereum::UCsEthereum(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }
+
+// Singleton
+#pragma region
+
+void UCsEthereum::Initialize()
+{
+	Super::Initialize();
+
+	Genesis = NewObject<UCsEthereumGenesis>(GetTransientPackage(), UCsEthereumGenesis::StaticClass(), TEXT("Ethereum_Genesis"), RF_Transient);
+	Genesis->AddToRoot();
+
+	// Commands
+	{
+		// InitBlockchain
+		SetCommand(ECsEthereumCommand::InitBlockchain, TEXT("--datadir=\"") + ChainDirectory + TEXT("\" init \"") + RootDirectory + TEXT("\\genesis.json\""));
+		// SetDataDirectory
+		SetCommand(ECsEthereumCommand::SetDataDirectory, TEXT("--datadir=\"") + ChainDirectory + TEXT("\" --networkid 15 --gcmode archive"));
+		{
+			// TODO: also include "url=\\\\.\\pipe\\geth.ipc"?
+			FCsStringParagraph P = CsStringParagraphHelper::CreateOneWordParagraph(TEXT("IPC endpoint opened"), ECsStringWordRule::MatchCase);
+
+			FCsProcessMonitorOutputEvent E(ECsEthereumCommand::SetDataDirectory, P, ECsProcessMonitorOutputEventPurpose::FireOnce);
+			E.Event.AddUObject(this, &UCsEthereum::OnCommandCompleted);
+
+			MonitorOutputEvents.Add(ECsEthereumCommand::SetDataDirectory, E);
+		}
+		// AttachToConsole
+		SetCommand(ECsEthereumCommand::AttachToConsole, TEXT("attach ipc:\\\\.\\pipe\\geth.ipc"));
+		{
+			FCsStringParagraph P;
+			P.AddSentence(CsStringParagraphHelper::CreateOneWordSentence(TEXT("welcome"), ECsStringWordRule::Lower));
+			P.AddSentence(CsStringParagraphHelper::CreateOneWordSentence(TEXT("instance:"), ECsStringWordRule::Lower));
+			P.AddSentence(CsStringParagraphHelper::CreateOneWordSentence(TEXT("modules:"), ECsStringWordRule::Lower));
+
+			FCsProcessMonitorOutputEvent E(ECsEthereumCommand::AttachToConsole, P, ECsProcessMonitorOutputEventPurpose::FireOnce);
+			E.Event.AddUObject(this, &UCsEthereum::OnCommandCompleted);
+
+			MonitorOutputEvents.Add(ECsEthereumCommand::AttachToConsole, E);
+		}
+		// ExitConsole
+		SetCommand(ECsEthereumCommand::ExitConsole, TEXT("exit"));
+		// NewAccount
+		SetCommand(ECsEthereumCommand::NewAccount, TEXT("personal.newAccount(%s)"));
+		// UnlockAccount
+		SetCommand(ECsEthereumCommand::UnlockAccount, TEXT("personal.unlockAccount(%s,%s,%s)"));
+		{
+			FCsStringParagraph P = CsStringParagraphHelper::CreateOneWordParagraph(TEXT("true"), ECsStringWordRule::MatchCase);
+
+			FCsProcessMonitorOutputEvent E(ECsEthereumCommand::UnlockAccount, P, ECsProcessMonitorOutputEventPurpose::FireOnce);
+			E.Event.AddUObject(this, &UCsEthereum::OnCommandCompleted);
+
+			MonitorOutputEvents.Add(ECsEthereumCommand::UnlockAccount, E);
+		}
+		// ListAccounts
+		SetCommand(ECsEthereumCommand::ListAccounts, TEXT("personal.listAccounts"));
+		// SetEtherbase
+		SetCommand(ECsEthereumCommand::SetEtherbase, TEXT("miner.setEtherbase(%s);"));
+		{
+			FCsStringParagraph P = CsStringParagraphHelper::CreateOneWordParagraph(TEXT("true"), ECsStringWordRule::MatchCase);
+
+			FCsProcessMonitorOutputEvent E(ECsEthereumCommand::SetEtherbase, P, ECsProcessMonitorOutputEventPurpose::FireOnce);
+			E.Event.AddUObject(this, &UCsEthereum::OnCommandCompleted);
+
+			MonitorOutputEvents.Add(ECsEthereumCommand::SetEtherbase, E);
+		}
+		// GetBalanceEther
+		SetCommand(ECsEthereumCommand::GetBalanceEther, TEXT("web3.fromWei(eth.getBalance(%s))"));
+		// StartMiner
+		SetCommand(ECsEthereumCommand::StartMiner, TEXT("miner.start();"));
+		{
+			FCsStringParagraph P = CsStringParagraphHelper::CreateOneWordParagraph(TEXT("null"), ECsStringWordRule::MatchCase);
+
+			FCsProcessMonitorOutputEvent E(ECsEthereumCommand::StartMiner, P, ECsProcessMonitorOutputEventPurpose::FireOnce);
+			E.Event.AddUObject(this, &UCsEthereum::OnCommandCompleted);
+
+			MonitorOutputEvents.Add(ECsEthereumCommand::StartMiner, E);
+		}
+		// StopMiner
+		SetCommand(ECsEthereumCommand::StopMiner, TEXT("miner.stop();"));
+		{
+			FCsStringParagraph P = CsStringParagraphHelper::CreateOneWordParagraph(TEXT("true"), ECsStringWordRule::MatchCase);
+
+			FCsProcessMonitorOutputEvent E(ECsEthereumCommand::StopMiner, P, ECsProcessMonitorOutputEventPurpose::FireOnce);
+			E.Event.AddUObject(this, &UCsEthereum::OnCommandCompleted);
+
+			MonitorOutputEvents.Add(ECsEthereumCommand::StopMiner, E);
+		}
+		// LoadScript
+		SetCommand(ECsEthereumCommand::LoadScript, TEXT("loadScript(%s)"));
+		{
+			FCsStringParagraph P = CsStringParagraphHelper::CreateOneWordParagraph(TEXT("true"), ECsStringWordRule::MatchCase);
+
+			FCsProcessMonitorOutputEvent E(ECsEthereumCommand::LoadScript, P, ECsProcessMonitorOutputEventPurpose::FireOnce);
+			E.Event.AddUObject(this, &UCsEthereum::OnCommandCompleted);
+
+			MonitorOutputEvents.Add(ECsEthereumCommand::LoadScript, E);
+		}
+		// CreateContractABI
+		SetCommand(ECsEthereumCommand::CreateContractABI, TEXT("%s"));
+		{
+			FCsStringParagraph P = CsStringParagraphHelper::CreateOneWordParagraph(TEXT(""), ECsStringWordRule::MatchCase);
+
+			FCsProcessMonitorOutputEvent E(ECsEthereumCommand::CreateContractABI, P, ECsProcessMonitorOutputEventPurpose::FireOnce);
+			E.Event.AddUObject(this, &UCsEthereum::OnCommandCompleted);
+
+			MonitorOutputEvents.Add(ECsEthereumCommand::CreateContractABI, E);
+		}
+		// CreateContractInstance
+		SetCommand(ECsEthereumCommand::CreateContractInstance, TEXT("var %s = %s.at(%s)"));
+		{
+			FCsStringParagraph P = CsStringParagraphHelper::CreateOneWordParagraph(TEXT("undefined"), ECsStringWordRule::MatchCase);
+
+			FCsProcessMonitorOutputEvent E(ECsEthereumCommand::CreateContractInstance, P, ECsProcessMonitorOutputEventPurpose::FireOnce);
+			E.Event.AddUObject(this, &UCsEthereum::OnCommandCompleted);
+
+			MonitorOutputEvents.Add(ECsEthereumCommand::CreateContractInstance, E);
+		}
+		// GetTransactionReceipt
+		SetCommand(ECsEthereumCommand::GetTransactionReceipt, TEXT("eth.getTransactionReceipt(%s)"));
+	}
+}
+
+void UCsEthereum::CleanUp()
+{
+	Super::CleanUp();
+
+	if (Genesis && !Genesis->IsPendingKill())
+	{
+		Genesis->RemoveFromRoot();
+		Genesis->ConditionalBeginDestroy();
+	}
+}
+
+#pragma endregion Singleton
 
 // Interface
 #pragma region
@@ -217,12 +355,115 @@ void UCsEthereum::RunCommand(const int32 &ConsoleIndex, const FECsBlockchainComm
 	RunCommand(ConsoleIndex, Composite);
 }
 
-void UCsEthereum::SetProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, class UCsProcess* Process){}
-UCsProcess* UCsEthereum::GetProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index) { return nullptr; }
-void UCsEthereum::StartProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, const FCsBlockchainProcessStartInfo &StartInfo){}
-void UCsEthereum::StopProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index){}
+void UCsEthereum::SetProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, UCsProcess* Process)
+{
+	// TODO: Later handle PrivateMultiNode
+	Processes[ProcessType] = Process;
+}
 
-void UCsEthereum::OpenRunningInstance(){}
+UCsProcess* UCsEthereum::GetProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index) 
+{ 
+	return Processes[ProcessType]; 
+}
+
+void UCsEthereum::StartProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, const FCsBlockchainProcessStartInfo &StartInfo)
+{
+	UCsProcess* Process = GetProcess(ProcessType, Index);
+
+	if (!Process)
+	{
+		FCsProcessPayload* Payload = UICsManager_Process::Get()->AllocatePayload();
+
+		Payload->URL				 = StartInfo.FileName;
+		Payload->Params				 = StartInfo.Arguments;
+		Payload->bLaunchDetached	 = CsCVarShowBlockchainProcessWindow->GetInt() == CS_CVAR_SHOW;
+		Payload->bLaunchHidden		 = CsCVarShowBlockchainProcessWindow->GetInt() == CS_CVAR_HIDE;
+		Payload->bLaunchReallyHidden = CsCVarShowBlockchainProcessWindow->GetInt() == CS_CVAR_HIDE;
+
+
+		if (CsCVarLogBlockchainProcessStart->GetInt() == CS_CVAR_SHOW_LOG)
+		{
+			const FString& ProcessTypeAsString = ECsBlockchainProcessType::ToString(ProcessType);
+
+			UE_LOG(LogCs, Log, TEXT("CgEthereum::StartProcess: Starting Process (%s): %s %s"), *ProcessTypeAsString, *(StartInfo.FileName), *(StartInfo.Arguments));
+		}
+
+		Process = UICsManager_Process::Get()->Spawn(EMCsProcess::Get()["Geth"], Payload);
+
+		if (ProcessType == ECsBlockchainProcessType::RunningInstance)
+		{
+			Process->OnOutputRecieved_Event.AddUObject(this, &UCsEthereum::OnProcessOutputRecieved);
+			Process->DeAllocate_Event.AddUObject(this, &UCsEthereum::OnProcessExited);
+		}
+		else
+		if (ProcessType == ECsBlockchainProcessType::Console)
+		{
+			Process->OnOutputRecieved_Event.AddUObject(this, &UCsEthereum::OnConsoleOutputRecieved);
+			Process->DeAllocate_Event.AddUObject(this, &UCsEthereum::OnConsoleExited);
+		}
+
+		const int32 Count = StartInfo.MonitorOutputEvents.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const FCsProcessMonitorOutputEvent& Event = StartInfo.MonitorOutputEvents[I];
+
+			Process->AddMonitorOutputEvent(Event);
+		}
+
+		SetProcess(ProcessType, Index, Process);
+	}
+	else
+	{
+		const FString& ProcessTypeAsString = ECsBlockchainProcessType::ToString(ProcessType);
+
+		UE_LOG(LogCs, Log, TEXT("CgEthereum::StartProcess: StartProcess called for running Process: %s BUT the process is already RUNNING."));
+	}
+}
+
+void UCsEthereum::StopProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index)
+{
+	if (Processes[ProcessType] == nullptr)
+		return;
+	Processes[ProcessType]->DeAllocate();
+	Processes[ProcessType] = nullptr;
+}
+
+void UCsEthereum::OpenRunningInstance()
+{
+	/*
+	if (IsRunningInstanceOpen)
+		return;
+	*/
+	IFileManager& FileManager = FFileManagerGeneric::Get();
+
+	// Create chaindata Directory
+	if (!FileManager.DirectoryExists(*ChainDirectory))
+		FileManager.MakeDirectory(*ChainDirectory);
+
+	// Create genesis.json
+	FString Json = Genesis->ToString();
+
+	FFileHelper::SaveStringToFile(Json, *GenesisFilePath);
+
+	// Create Accounts Directory
+	if (!FileManager.DirectoryExists(*AccountsDirectory))
+		FileManager.MakeDirectory(*AccountsDirectory);
+
+	CommandFlag = false;
+
+	// Init
+	//IsRunningInstanceOpen = true;
+	IsRunningInstanceCloseFlag = false;
+
+	FCsBlockchainProcessStartInfo StartInfo;
+	StartInfo.FileName				= ConsoleFullPath;
+	StartInfo.Arguments				= Commands[ECsEthereumCommand::InitBlockchain];
+	StartInfo.RedirectStandardInput = false;
+
+	StartProcess(ECsBlockchainProcessType::RunningInstance, 0, StartInfo);
+}
+
 void UCsEthereum::CreatePrivateChain(){}
 void UCsEthereum::StartPrivateChain(){}
 
@@ -502,7 +743,7 @@ void UCsEthereum::Rebuild()
 // Process
 #pragma region
 
-void UCsEthereum::AddMonitorOutputEvenToProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, FCsProcessMonitorOutputEvent &Event)
+void UCsEthereum::AddMonitorOutputEvenToProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, const FCsProcessMonitorOutputEvent &Event)
 {
 	// TODO: Later handle PrivateMultiNode
 	Processes[ProcessType]->AddMonitorOutputEvent(Event);
@@ -548,7 +789,7 @@ void UCsEthereum::OnCommandCompleted(const FECsBlockchainCommand &Command)
 
 void UCsEthereum::OnCommandCompleted(const FString &Name)
 {
-	CommandCompleted_Event.Broadcast(EMCsBlockchainCommand::Get().GetEnum(Name));
+	CommandCompleted_Event.Broadcast(EMCsBlockchainCommand::Get()[Name]);
 }
 
 	// I/O
@@ -562,27 +803,16 @@ void UCsEthereum::OnProcessOutputRecieved(const FString &Output)
 	}
 }
 
-void UCsEthereum::OnProcessErrorRecieved(const FString &Output)
-{
-	if (CsCVarLogBlockchainIO->GetInt() == CS_CVAR_SHOW_LOG || CsCVarLogBlockchainIORunning->GetInt() == CS_CVAR_SHOW_LOG)
-	{
-		UE_LOG(LogCs, Log, TEXT("Process (Error): %s"), *Output);
-	}
-}
-
-void UCsEthereum::OnProcessExited(const FString &Output)
+void UCsEthereum::OnProcessExited()
 {
 	if (CsCVarLogBlockchainIO->GetInt() == CS_CVAR_SHOW_LOG || CsCVarLogBlockchainIORunning->GetInt() == CS_CVAR_SHOW_LOG)
 	{
 		UE_LOG(LogCs, Log, TEXT("Blockchain (Process) Exited"));
 	}
 
-	UCsProcess* P = Processes[ECsBlockchainProcessType::RunningInstance];
-
 	Processes[ECsBlockchainProcessType::RunningInstance] = nullptr;
 	//IsRunningInstanceOpen = false;
 	//IsRunningInstanceCloseFlag.Set(true);
-	P->DeAllocate();
 }
 
 void UCsEthereum::OnConsoleOutputRecieved(const FString &Output)
@@ -722,22 +952,13 @@ void UCsEthereum::OnConsoleOutputRecieved(const FString &Output)
 	}
 }
 
-void UCsEthereum::OnConsoleErrorRecieved(const FString &Output)
-{
-	if (CsCVarLogBlockchainIO->GetInt() == CS_CVAR_SHOW_LOG || CsCVarLogBlockchainIOConsole->GetInt() == CS_CVAR_SHOW_LOG)
-	{
-		UE_LOG(LogCs, Log, TEXT("Console (Error): %s"), *Output);
-	}
-}
-
-void UCsEthereum::OnConsoleExited(const FString &Output)
+void UCsEthereum::OnConsoleExited()
 {
 	if (CsCVarLogBlockchainIO->GetInt() == CS_CVAR_SHOW_LOG || CsCVarLogBlockchainIOConsole->GetInt() == CS_CVAR_SHOW_LOG)
 	{
 		UE_LOG(LogCs, Log, TEXT("Blockchain (Console): Exited"));
 	}
 
-	Processes[ECsBlockchainProcessType::Console]->DeAllocate();
 	Processes[ECsBlockchainProcessType::Console] = nullptr;
 	//IsConsoleOpen = false;
 }

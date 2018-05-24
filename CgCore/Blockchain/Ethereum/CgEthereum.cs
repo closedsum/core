@@ -800,7 +800,7 @@ namespace CgCore
             }
             else
             {
-                CgDebug.Log("CgEthereum.StartProcess: StartProcess called for running Process: " + processType.ToString() + " before the process exited.");
+                CgDebug.Log("CgEthereum.StartProcess: StartProcess called for running Process: " + processType.ToString() + " BUT the process is already RUNNING.");
             }
         }
 

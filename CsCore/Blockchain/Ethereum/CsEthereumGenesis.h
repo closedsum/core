@@ -95,6 +95,20 @@ class CSCORE_API UCsEthereumGenesis : public UCsBlockchainGenesis
 {
 	GENERATED_UCLASS_BODY()
 
+// Interface
+#pragma region
+public:
+
+	virtual FString ToString() override;
+
+	virtual void Parse(const FString &Str) override;
+
+	virtual void ParseFromFilePath(const FString &Path) override;
+
+#pragma endregion Interface
+
+public:
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain Genesis")
 	FCsEthereumGenesisConfig config;
 

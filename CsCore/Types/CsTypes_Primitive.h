@@ -100,6 +100,11 @@ struct FECsEnum
 	FECsEnum(){}
 	virtual ~FECsEnum(){}
 
+	operator FString() const 
+	{
+		return Name;
+	}
+
 	FORCEINLINE friend bool operator==(const FString &Lhs, const FECsEnum &Rhs)
 	{
 		return Lhs == Rhs.Name;

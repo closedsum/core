@@ -225,6 +225,14 @@ class CSCORE_API UCsEthereum : public UCsBlockchain
 {
 	GENERATED_UCLASS_BODY()
 
+// Singleton
+#pragma region
+protected:
+
+	virtual void Initialize() override;
+	virtual void CleanUp() override;
+
+#pragma endregion Singleton
 
 // Interface
 #pragma region
@@ -348,6 +356,8 @@ public:
 
 	TMap<FECsBlockchainContract, TMap<FECsBlockchainContractFunction, FCsBlockchainContractFunction>> ContractFunctions;
 
+	bool IsRunningInstanceCloseFlag;
+
 	TMap<FECsBlockchainCommand, FCsProcessMonitorOutputEvent> MonitorOutputEvents;
 
 public:
@@ -387,7 +397,7 @@ public:
 #pragma region
 public:
 
-	void AddMonitorOutputEvenToProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, FCsProcessMonitorOutputEvent &Event);
+	void AddMonitorOutputEvenToProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, const FCsProcessMonitorOutputEvent &Event);
 	UFUNCTION(BlueprintCallable, Category = "Ethereum")
 	void AddMonitorOutputEvenToProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, const FECsBlockchainCommand& Command);
 
@@ -399,11 +409,9 @@ public:
 public:
 
 	virtual void OnProcessOutputRecieved(const FString &Output);
-	virtual void OnProcessErrorRecieved(const FString &Output);
-	virtual void OnProcessExited(const FString &Output);
+	virtual void OnProcessExited();
 	virtual void OnConsoleOutputRecieved(const FString &Output);
-	virtual void OnConsoleErrorRecieved(const FString &Output);
-	virtual void OnConsoleExited(const FString &Output);
+	virtual void OnConsoleExited();
 
 #pragma endregion I/O
 

@@ -45,6 +45,33 @@ namespace ECsStringEscapeCharacter
 	const FString EOL = TEXT("\r\n");
 }
 
+// Word / Phrase / Sentence / Paragraph
+#pragma region
+
+FCsStringSentence CsStringParagraphHelper::CreateOneWordSentence(const FString &Word, const TCsStringWordRule &Rule)
+{
+	FCsStringSentence Sentence;
+	FCsStringPhrase Phrase;
+	Phrase.AddAndToWord(0, Word, Rule);
+	Sentence.AddPhrase(Phrase);
+
+	return Sentence;
+}
+
+FCsStringParagraph CsStringParagraphHelper::CreateOneWordParagraph(const FString &Word, const TCsStringWordRule &Rule)
+{
+	FCsStringParagraph Paragraph;
+	FCsStringSentence Sentence;
+	FCsStringPhrase Phrase;
+	Phrase.AddAndToWord(0, Word, Rule);
+	Sentence.AddPhrase(Phrase);
+	Paragraph.AddSentence(Sentence);
+
+	return Paragraph;
+}
+
+#pragma endregion Word / Phrase / Sentence / Paragraph
+
 // FCsStringHelper
 #pragma region
 

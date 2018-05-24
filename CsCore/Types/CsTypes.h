@@ -21,6 +21,8 @@
 #define CS_CVAR_HIDE_LOG 0
 #define CS_CVAR_DRAW 1
 #define CS_CVAR_DISPLAY 1
+#define CS_CVAR_SHOW 1
+#define CS_CVAR_HIDE 0
 
 #define CS_ACTOR_SMALLEST_SCALE 0.001f
 #define CS_VECTOR_ONE FVector(1.0f)

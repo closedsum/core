@@ -689,31 +689,10 @@ struct FCsStringParagraph
 	}
 };
 
-namespace CgStringParagraphHelper
+namespace CsStringParagraphHelper
 {
-	/*
-	FCsStringSentence CreateOneWordSentence(const FString &Word, const TCsStringWordRule &Rule = ECsStringWordRule::MatchCase)
-	{
-		FCsStringSentence Sentence;
-		FCsStringPhrase Phrase;
-		Phrase.AddAndToWord(0, Word, Rule);
-		Sentence.AddPhrase(Phrase);
-
-		return Sentence;
-	}
-
-	FCsStringParagraph CreateOneWordParagraph(const FString &Word, const TCsStringWordRule &Rule = ECsStringWordRule::MatchCase)
-	{
-		FCsStringParagraph Paragraph;
-		FCsStringSentence Sentence;
-		FCsStringPhrase Phrase;
-		Phrase.AddAndToWord(0, Word, Rule);
-		Sentence.AddPhrase(Phrase);
-		Paragraph.AddSentence(Sentence);
-
-		return Paragraph;
-	}
-	*/
+	FCsStringSentence CreateOneWordSentence(const FString &Word, const TCsStringWordRule &Rule = ECsStringWordRule::MatchCase);
+	FCsStringParagraph CreateOneWordParagraph(const FString &Word, const TCsStringWordRule &Rule = ECsStringWordRule::MatchCase);
 }
 
 #pragma endregion Word / Phrase / Sentence / Paragraph

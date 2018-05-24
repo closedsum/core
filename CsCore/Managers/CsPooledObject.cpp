@@ -6,5 +6,18 @@ UCsPooledObject::UCsPooledObject(const FObjectInitializer& ObjectInitializer) : 
 {
 }
 
-void UCsPooledObject::OnCreatePool(){}
-void UCsPooledObject::DeAllocate(){}
+void UCsPooledObject::OnCreatePool()
+{
+	OnCreatePool_Event.Broadcast();
+#if WITH_EDITOR
+	OnCreatePool_ScriptEvent.Broadcast();
+#endif // #if WITH_EDITOR
+}
+
+void UCsPooledObject::DeAllocate()
+{
+	DeAllocate_Event.Broadcast();
+#if WITH_EDITOR
+	DeAllocate_ScriptEvent.Broadcast();
+#endif // #if WITH_EDITOR
+}

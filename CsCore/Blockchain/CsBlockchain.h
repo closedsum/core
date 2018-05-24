@@ -108,10 +108,13 @@ struct FCsBlockchainProcessStartInfo
 {
 	GENERATED_USTRUCT_BODY()
 
+	/** URL - executable name */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
 	FString FileName;
+	/** Params - command line arguments */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
 	FString Arguments;
+	/** WritePipe - whether to use WritePipe */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
 	bool RedirectStandardInput;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")

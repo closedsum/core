@@ -158,6 +158,14 @@ public:
 
 public:
 	FCsProcessMonitorOutputEvent() {}
+
+	FCsProcessMonitorOutputEvent(const FString &InName, const FCsStringParagraph &InParagraph, const TCsProcessMonitorOutputEventPurpose &InPurpse) 
+	{
+		Name = InName;
+		Paragraph = InParagraph;
+		Purpose = InPurpse;
+	}
+
 	~FCsProcessMonitorOutputEvent() {}
 
 	FCsProcessMonitorOutputEvent& operator=(const FCsProcessMonitorOutputEvent& B)
@@ -166,6 +174,8 @@ public:
 		Purpose = B.Purpose;
 		Paragraph = B.Paragraph;
 		Completed = B.Completed;
+		Event = B.Event;
+		ScriptEvent = B.ScriptEvent;
 		return *this;
 	}
 
@@ -474,12 +484,12 @@ public:
 
 private:
 
-	TArray<FCsProcessMonitorOutputEvent*> MonitorOutputEvents;
+	TArray<FCsProcessMonitorOutputEvent> MonitorOutputEvents;
 
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Process")
-	void AddMonitorOutputEvent(FCsProcessMonitorOutputEvent &Event);
+	void AddMonitorOutputEvent(const FCsProcessMonitorOutputEvent &Event);
 	void ProcessMonitorOuputEvents(const FString &Output);
 	void OnOutputRecieved(const FString &Output);
 

@@ -99,14 +99,11 @@ void UCsProcess::Allocate(const int32 &Index, FCsProcessPayload* Payload)
 
 void UCsProcess::OnCreatePool()
 {
+	Super::OnCreatePool();
 }
-
-
 
 void UCsProcess::DeAllocate()
 {
-	Super::DeAllocate();
-
 	if (ProcessHandle.IsValid())
 	{
 		FPlatformProcess::TerminateProc(ProcessHandle, true);
@@ -118,6 +115,8 @@ void UCsProcess::DeAllocate()
 		}
 	}
 	Cache.Reset();
+
+	Super::DeAllocate();
 }
 
 #pragma endregion Interface
@@ -208,7 +207,7 @@ CS_COROUTINE(UCsProcess, StartRead_Internal)
 
 			for (int32 I = 0; I < Count; ++I)
 			{
-				UE_LOG(LogCs, Log, TEXT("Process::StartRead: ReadPipe: Output: %s"), *(Lines[I]));
+				p->OnOutputRecieved(Lines[I]);
 			}
 		}
 
@@ -231,9 +230,9 @@ void UCsProcess::StopRead()
 		StartRead_Internal_Routine->End(ECsCoroutineEndReason::Manual);
 }
 
-void UCsProcess::AddMonitorOutputEvent(FCsProcessMonitorOutputEvent &Event)
+void UCsProcess::AddMonitorOutputEvent(const FCsProcessMonitorOutputEvent &Event)
 {
-	MonitorOutputEvents.Add(&Event);
+	MonitorOutputEvents.Add(Event);
 }
 
 void UCsProcess::ProcessMonitorOuputEvents(const FString &Output)
@@ -242,16 +241,16 @@ void UCsProcess::ProcessMonitorOuputEvents(const FString &Output)
 
 	for (int32 I = Count - 1; I >= 0; --I)
 	{
-		FCsProcessMonitorOutputEvent* Event = MonitorOutputEvents[I];
+		FCsProcessMonitorOutputEvent& Event = MonitorOutputEvents[I];
 
-		Event->ProcessOutput(Output);
+		Event.ProcessOutput(Output);
 
-		if (Event->HasCompleted())
+		if (Event.HasCompleted())
 		{
-			Event->Clear();
+			Event.Clear();
 
 			// FireOnce
-			if (Event->Purpose == ECsProcessMonitorOutputEventPurpose::FireOnce)
+			if (Event.Purpose == ECsProcessMonitorOutputEventPurpose::FireOnce)
 				MonitorOutputEvents.RemoveAt(I);
 		}
 	}
@@ -259,6 +258,8 @@ void UCsProcess::ProcessMonitorOuputEvents(const FString &Output)
 
 void UCsProcess::OnOutputRecieved(const FString &Output)
 {
+	UE_LOG(LogCs, Log, TEXT("Process::OnOutputRecieved: ReadPipe: Output: %s"), *Output);
+
 	OnOutputRecieved_Event.Broadcast(Output);
 #if WITH_EDITOR
 	OnOutputRecieved_ScriptEvent.Broadcast(Output);

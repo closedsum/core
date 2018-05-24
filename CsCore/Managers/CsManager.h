@@ -112,7 +112,11 @@ template<typename EnumType, typename ObjectType, typename PayloadType, int32 PAY
 class TCsManagerPooledObjects
 {
 public:
-	TCsManagerPooledObjects(){}
+	TCsManagerPooledObjects()
+	{
+		CsConstructObject.BindRaw(this, &TCsManagerPooledObjects::ConstructObject);
+	}
+
 	virtual ~TCsManagerPooledObjects()
 	{
 		Shutdown();
@@ -123,6 +127,8 @@ public:
 	FString ObjectClassName;
 
 	TWeakObjectPtr<class UWorld> CurrentWorld;
+
+	TBaseDelegate<ObjectType*, const EnumType&> CsConstructObject;
 
 	TMulticastDelegate<void, const EnumType&, ObjectType*> OnAddToPool_Event;
 
@@ -155,6 +161,11 @@ public:
 		FunctionNames[ECsManagerPooledObjectsFunctionNames::Spawn] = Name + TEXT("::Spawn");
 	}
 
+	virtual void DeconstructObject(ObjectType* o)
+	{
+		delete o;
+	}
+
 	virtual void Clear()
 	{
 		PoolSizes.Reset();
@@ -164,6 +175,7 @@ public:
 		for (int32 i = 0; i < count; ++i)
 		{
 			Pool[i]->DeAllocate();
+			DeconstructObject(Pool[i]);
 		}
 
 		Pool.Reset();
@@ -180,6 +192,8 @@ public:
 	virtual void Shutdown()
 	{
 		Clear();
+
+		CsConstructObject.Unbind();
 	}
 
 	virtual ObjectType* ConstructObject(const EnumType& e)
@@ -196,7 +210,7 @@ public:
 
 		for (int32 i = 0; i < size; ++i)
 		{
-			ObjectType* o = ConstructObject(e);
+			ObjectType* o = CsConstructObject.Execute(e);
 			o->Init(i, e);
 			o->OnCreatePool();
 			o->DeAllocate();
@@ -308,6 +322,11 @@ public:
 		*/
 	}
 
+	virtual float GetCurrentTimeSeconds()
+	{
+		return GetCurrentWorld() ? GetCurrentWorld()->GetTimeSeconds() : 0.0f;
+	}
+
 	void OnTick(const float &deltaTime)
 	{
 		TArray<EnumType> Keys;
@@ -346,7 +365,7 @@ public:
 				if (!o->Cache.bLifeTime)
 					continue;
 
-				if (GetCurrentWorld()->GetTimeSeconds() - o->Cache.Time > o->Cache.LifeTime)
+				if (GetCurrentTimeSeconds() - o->Cache.Time > o->Cache.LifeTime)
 				{
 					LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
 

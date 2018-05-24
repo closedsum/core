@@ -309,7 +309,7 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct FCgPooledObjectPayload
+struct FCsPooledObjectPayload
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -323,8 +323,8 @@ struct FCgPooledObjectPayload
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<UObject> Parent;
 
-	FCgPooledObjectPayload(){}
-	virtual ~FCgPooledObjectPayload(){}
+	FCsPooledObjectPayload(){}
+	virtual ~FCsPooledObjectPayload(){}
 
 	virtual void Reset()
 	{

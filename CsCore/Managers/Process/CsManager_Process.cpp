@@ -1,15 +1,27 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Process/CsManager_Process.h"
 #include "CsCore.h"
+#include "CsCVars.h"
 
 // Internal
 #pragma region
 
 CsManager_Process::~CsManager_Process(){}
 
+void CsManager_Process::DeconstructObject(UCsProcess* o)
+{
+	if (o && !o->IsPendingKill())
+	{
+		o->RemoveFromRoot();
+		o->ConditionalBeginDestroy();
+	}
+}
+
 UCsProcess* CsManager_Process::ConstructObject(const FECsProcess& e)
 {
-	return NewObject<UCsProcess>(GetCurrentWorld(), UCsProcess::StaticClass());
+	UCsProcess* process = NewObject<UCsProcess>(GetTransientPackage(), UCsProcess::StaticClass());
+	process->AddToRoot();
+	return process;
 }
 
 const FString& CsManager_Process::EnumTypeToString(const FECsProcess &e)
@@ -62,16 +74,27 @@ UICsManager_Process::UICsManager_Process(const FObjectInitializer& ObjectInitial
 void UICsManager_Process::Initialize()
 {
 	Internal = new CsManager_Process();
+	Internal->Init(TEXT("CsManager_Process"), TEXT("UCsProcess"), nullptr, &CsCVarLogManagerProcessTransactions);
+	Internal->CsConstructObject.Unbind();
+	Internal->CsConstructObject.BindUObject(this, &UICsManager_Process::ConstructObject);
 }
 
 void UICsManager_Process::CleanUp()
 {
+	Internal->Shutdown();
 	delete Internal;
 }
 
 void UICsManager_Process::Clear()
 {
 	Internal->Clear();
+}
+
+UCsProcess* UICsManager_Process::ConstructObject(const FECsProcess &Type)
+{
+	UCsProcess* Process = NewObject<UCsProcess>(GetTransientPackage(), UCsProcess::StaticClass());
+	Process->AddToRoot();
+	return Process;
 }
 
 void UICsManager_Process::CreatePool(const FECsProcess &Type, const int32 &Size)

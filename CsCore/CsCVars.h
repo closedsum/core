@@ -283,6 +283,13 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerRunnableTransactio
 
 #pragma endregion Runnable
 
+// Process
+#pragma region
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerProcessTransactions;
+
+#pragma endregion Process
+
 // Blockchain
 #pragma region
 

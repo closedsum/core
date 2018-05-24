@@ -625,6 +625,18 @@ TAutoConsoleVariable<int32> CsCVarLogManagerRunnableTransactions(
 
 #pragma endregion Runnable
 
+// Process
+#pragma region
+
+TAutoConsoleVariable<int32> CsCVarLogManagerProcessTransactions(
+	TEXT("log.manager.process.transactions"),
+	0,
+	TEXT("Log Manager Process Allocate and DeAllocate."),
+	ECVF_SetByConsole
+);
+
+#pragma endregion Process
+
 // Ethereum
 #pragma region
 

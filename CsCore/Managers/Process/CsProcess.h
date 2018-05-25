@@ -16,6 +16,7 @@ struct FECsProcess : public FECsEnum_uint8
 
 public:
 	FECsProcess(){}
+	FECsProcess(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
 	FECsProcess(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
 	~FECsProcess() {}
 };

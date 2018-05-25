@@ -11,6 +11,7 @@ struct FECsBlockchainContract : public FECsEnum_uint8
 
 public:
 	FECsBlockchainContract() {}
+	FECsBlockchainContract(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
 	FECsBlockchainContract(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
 	~FECsBlockchainContract() {}
 };
@@ -228,6 +229,7 @@ struct FECsBlockchainContractFunction : public FECsEnum_uint8
 
 public:
 	FECsBlockchainContractFunction() {}
+	FECsBlockchainContractFunction(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
 	FECsBlockchainContractFunction(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
 	~FECsBlockchainContractFunction() {}
 };

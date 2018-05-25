@@ -97,6 +97,9 @@ struct FECsEnum
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enum")
 	FString Name;
 
+	UPROPERTY()
+	FString DisplayName;
+
 	FECsEnum(){}
 	virtual ~FECsEnum(){}
 
@@ -140,6 +143,14 @@ struct FECsEnum_uint8 : public FECsEnum
 	{
 		Value = InValue;
 		Name = InName;
+		DisplayName = Name;
+	}
+
+	FECsEnum_uint8(const uint8 &InValue, const FString &InName, const FString &InDisplayName)
+	{
+		Value = InValue;
+		Name = InName;
+		DisplayName = InDisplayName;
 	}
 
 	virtual ~FECsEnum_uint8(){}
@@ -189,20 +200,28 @@ private:
 	TMap<FString, EnumStruct> StringMap;
 	TMap<EnumType, EnumStruct> TypeMap;
 protected:
-	TCsEnumMap() {}
+	TCsEnumMap() 
+	{
+		Count = 0;
+	}
 public:
 	virtual ~TCsEnumMap() {}
 
-	FORCEINLINE EnumStruct Create(const FString &Name)
+	FORCEINLINE EnumStruct Create(const FString &Name, const FString &DisplayName)
 	{
 		EnumType Index = (EnumType)Enums.Num();
-		EnumStruct E(Index, Name);
+		EnumStruct E(Index, Name, DisplayName);
 
 		Enums.Add(E);
 		++Count;
 		StringMap.Add(Name, E);
 		TypeMap.Add(Index, E);
 		return E;
+	}
+
+	FORCEINLINE EnumStruct Create(const FString &Name)
+	{
+		return Create(Name, Name);
 	}
 	
 	FORCEINLINE const EnumStruct& operator[](const EnumType &Type)

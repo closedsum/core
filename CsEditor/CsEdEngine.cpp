@@ -14,11 +14,21 @@
 // Data
 #include "Data/CsData.h"
 
+#include "Editor/PropertyEditor/Public/PropertyEditorModule.h"
+
+// DetailCustomizations
+#include "DetailCustomizations/EnumStruct/ECsBlockchainCommandCustomization.h"
+
 DECLARE_LOG_CATEGORY_CLASS(LogCsEditor, Log, All);
 
 void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 {
 	Super::Init(InEngineLoop);
+
+	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
+
+	//Custom properties
+	PropertyModule.RegisterCustomPropertyTypeLayout("ECsBlockchainCommand", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsBlockchainCommandCustomization::MakeInstance));
 }
 
 bool UCsEdEngine::Exec(UWorld* InWorld, const TCHAR* Stream, FOutputDevice& Ar)

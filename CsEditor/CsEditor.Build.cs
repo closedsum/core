@@ -27,6 +27,8 @@ public class CsEditor : ModuleRules
                     "AssetTools",
                     "ContentBrowser",
                     "Slate",
+                    "PropertyEditor",
+                    "EditorStyle",
                     "V8",
                     "CsCore",
                 }

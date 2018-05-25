@@ -163,6 +163,7 @@ struct FECsEthereumJavascript : public FECsEnum_uint8
 
 public:
 	FECsEthereumJavascript() {}
+	FECsEthereumJavascript(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
 	FECsEthereumJavascript(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
 	~FECsEthereumJavascript() {}
 };

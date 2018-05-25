@@ -173,6 +173,226 @@ struct FCsBlockchainProcessStartInfo
 	}
 };
 
+USTRUCT(BlueprintType)
+struct FCsBlockchainCommandInfo
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
+	FECsBlockchainCommand Command;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
+	TArray<FCsBlockchainCommandArgument> Arguments;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
+	bool Payload_bool;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
+	int32 Payload_int32;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
+	float Payload_float;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
+	FString Payload_FString;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
+	FECsBlockchainContract Payload_Contract;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
+	FCsBlockchainContractFunctionPayload Payload_ContractFunction;
+
+	void* Payload_ptr;
+
+	FCsBlockchainCommandInfo() {}
+
+	FCsBlockchainCommandInfo(const FECsBlockchainCommand &InCommand)
+	{
+		Command = InCommand;
+	}
+
+	FCsBlockchainCommandInfo(const FECsBlockchainCommand &InCommand, const TArray<FCsBlockchainCommandArgument> &Args)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+	}
+
+	FCsBlockchainCommandInfo(const FECsBlockchainCommand &InCommand, const TArray<FCsBlockchainCommandArgument> &Args, void* Payload)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+		Payload_ptr = Payload;
+	}
+
+	FCsBlockchainCommandInfo(const FECsBlockchainCommand &InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const bool &Payload)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+		Payload_bool = Payload;
+	}
+
+	FCsBlockchainCommandInfo(const FECsBlockchainCommand &InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const int32 &Payload)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+		Payload_int32 = Payload;
+	}
+
+	FCsBlockchainCommandInfo(const FECsBlockchainCommand &InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const float &Payload)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+		Payload_float = Payload;
+	}
+
+	FCsBlockchainCommandInfo(const FECsBlockchainCommand &InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const FString &Payload)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+		Payload_FString = Payload;
+	}
+
+	~FCsBlockchainCommandInfo() {}
+
+	void SetArguments(const TArray<FCsBlockchainCommandArgument> &Args)
+	{
+		Arguments.Reset();
+
+		const int32 Count = Args.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			Arguments.Add(Args[I]);
+		}
+	}
+
+	FCsBlockchainCommandInfo& operator=(const FCsBlockchainCommandInfo& B)
+	{
+		Command = B.Command;
+
+		Arguments.Reset();
+
+		const int32 Count = B.Arguments.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			Arguments.Add(B.Arguments[I]);
+		}
+
+		Payload_bool = B.Payload_bool;
+		Payload_int32 = B.Payload_int32;
+		Payload_float = B.Payload_float;
+		Payload_FString = B.Payload_FString;
+		Payload_ptr = B.Payload_ptr;
+		return *this;
+	}
+
+	bool operator==(const FCsBlockchainCommandInfo& B) const
+	{
+		if (Command != B.Command)
+			return false;
+
+		if (Arguments.Num() != B.Arguments.Num())
+			return false;
+
+		const int32 Count = Arguments.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			if (Arguments[I] != B.Arguments[I])
+				return false;
+		}
+
+		if (Payload_bool != B.Payload_bool)
+			return false;
+		if (Payload_int32 != B.Payload_int32)
+			return false;
+		if (Payload_float != B.Payload_float)
+			return false;
+		if (Payload_FString != B.Payload_FString)
+			return false;
+		if (Payload_ptr != B.Payload_ptr)
+			return false;
+		return true;
+	}
+
+	bool operator!=(const FCsBlockchainCommandInfo& B) const
+	{
+		return !(*this == B);
+	}
+
+	void Set(const FECsBlockchainCommand& InCommand)
+	{
+		Command = InCommand;
+	}
+
+	void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+	}
+
+	void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const bool &Payload)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+		Payload_bool = Payload;
+	}
+
+	void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const int32 &Payload)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+		Payload_int32 = Payload;
+	}
+
+	void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const float &Payload)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+		Payload_float = Payload;
+	}
+
+	void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const FString &Payload)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+		Payload_FString = Payload;
+	}
+
+	void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const FECsBlockchainContract &Payload)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+		Payload_Contract = Payload;
+	}
+
+	void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const FCsBlockchainContractFunctionPayload &Payload)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+		Payload_ContractFunction = Payload;
+	}
+
+	void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, void* Payload)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+		Payload_ptr = Payload;
+	}
+
+	void Reset()
+	{
+		Arguments.Reset();
+
+		Payload_bool = false;
+		Payload_int32 = 0;
+		Payload_float = 0.0f;
+		Payload_FString = ECsCachedString::Str::Empty;
+		Payload_ptr = nullptr;
+	}
+};
+
 // Cache
 #pragma region
 

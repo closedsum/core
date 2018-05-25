@@ -761,7 +761,7 @@ namespace CgCore
 
                 payload.CreateNoWindow = !ShowProcessWindow.Get();
                 payload.UseShellExecute = false;
-                payload.FileName = startInfo.FileName;
+                payload.Filename = startInfo.Filename;
                 payload.Arguments = startInfo.Arguments;
 
                 payload.ErrorDialog = false;
@@ -791,7 +791,7 @@ namespace CgCore
 
                 if (LogProcessStart.Log())
                 {
-                    CgDebug.Log("CgEthereum.StartProcess: Starting Process (" + processType.ToString() + "): " + startInfo.FileName + " " + startInfo.Arguments);
+                    CgDebug.Log("CgEthereum.StartProcess: Starting Process (" + processType.ToString() + "): " + startInfo.Filename + " " + startInfo.Arguments);
                 }
 
                 p = ICgManager_Process.Get().Spawn(EMCgProcess.Get()["Blockchain"], payload);
@@ -825,14 +825,13 @@ namespace CgCore
             ECgBlockchainCommand command = ECgEthereumCommand.SetDataDirectory;
 
             CgBlockchainProcessStartInfo startInfo = new CgBlockchainProcessStartInfo();
-            startInfo.FileName              = ConsoleFullPath;
+            startInfo.Filename              = ConsoleFullPath;
             startInfo.Arguments             = Commands[command];
             startInfo.RedirectStandardInput = false;
             startInfo.AddMonitorOutputEvent(MonitorOutputEvents[command]);
 
             ECgBlockchainProcessType processType = ECgBlockchainProcessType.RunningInstance;
 
-            //EnqueueCommand(processType, command);
             StartProcess(processType, 0, startInfo);
             
             IsRunningInstanceOpen = true;
@@ -861,7 +860,7 @@ namespace CgCore
             IsRunningInstanceCloseFlag.Set(false);
 
             CgBlockchainProcessStartInfo startInfo = new CgBlockchainProcessStartInfo();
-            startInfo.FileName              = ConsoleFullPath;
+            startInfo.Filename              = ConsoleFullPath;
             startInfo.Arguments             = Commands[ECgEthereumCommand.InitBlockchain];
             startInfo.RedirectStandardInput = false;
 
@@ -919,7 +918,7 @@ namespace CgCore
             ECgBlockchainCommand command = ECgEthereumCommand.AttachToConsole;
 
             CgBlockchainProcessStartInfo startInfo = new CgBlockchainProcessStartInfo();
-            startInfo.FileName              = eth.ConsoleFullPath;
+            startInfo.Filename              = eth.ConsoleFullPath;
             startInfo.Arguments             = eth.Commands[command];
             startInfo.RedirectStandardInput = true;
             startInfo.AddMonitorOutputEvent(eth.MonitorOutputEvents[command]);

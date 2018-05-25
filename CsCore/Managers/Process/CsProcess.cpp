@@ -8,6 +8,15 @@
 // Enums
 #pragma region
 
+EMCsProcess* EMCsProcess::Instance;
+
+EMCsProcess& EMCsProcess::Get()
+{
+	if (!Instance)
+		Instance = new EMCsProcess();
+	return *Instance;
+}
+
 namespace ECsProcessRoutine
 {
 	namespace Str
@@ -70,6 +79,26 @@ namespace ECsProcessPriorityModifier
 }
 
 #pragma endregion Enums
+
+// Cache
+#pragma region
+
+namespace ECsProcessCached
+{
+	namespace Name
+	{
+		// Functions
+		const FName StartRead_Internal = FName("UCsProcess::StartRead_Internal");
+	};
+
+	namespace Str
+	{
+		// Functions
+		const FString StartRead_Internal = TEXT("UCsProcess::StartRead_Internal");
+	};
+}
+
+#pragma endregion Cache
 
 UCsProcess::UCsProcess(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -180,6 +209,27 @@ void UCsProcess::StartRead()
 		StartRead_Internal_Routine->End(ECsCoroutineEndReason::UniqueInstance);
 
 	ReadFlag = true;
+
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	FCsCoroutinePayload* Payload = Scheduler->AllocatePayload();
+
+	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+
+	Payload->Schedule		= Schedule;
+	Payload->Function		= &UCsProcess::StartRead_Internal;
+	Payload->Object			= this;
+	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckObject;
+	Payload->Add			= &UCsProcess::AddRoutine;
+	Payload->Remove			= &UCsProcess::RemoveRoutine;
+	Payload->Type			= (uint8)ECsProcessRoutine::StartRead_Internal;
+	Payload->DoInit			= true;
+	Payload->PerformFirstRun = false;
+	Payload->Name			= ECsProcessCached::Name::StartRead_Internal;
+	Payload->NameAsString	= ECsProcessCached::Str::StartRead_Internal;
+
+	FCsRoutine* R = Scheduler->Allocate(Payload);
+
+	Scheduler->StartRoutine(Schedule, R);
 }
 
 CS_COROUTINE(UCsProcess, StartRead_Internal)
@@ -188,9 +238,9 @@ CS_COROUTINE(UCsProcess, StartRead_Internal)
 	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
 
 	const float INTERVAL = 0.1f;
-	float& Elapsed		 = r->timers[0];
+	float& Elapsed		 = r->timers[CS_FIRST];
 	Elapsed				+= r->deltaSeconds;
-	FString& LastRead	 = r->strings[0];
+	FString& LastRead	 = r->strings[CS_FIRST];
 
 	CS_COROUTINE_BEGIN(r);
 
@@ -251,7 +301,10 @@ void UCsProcess::ProcessMonitorOuputEvents(const FString &Output)
 
 			// FireOnce
 			if (Event.Purpose == ECsProcessMonitorOutputEventPurpose::FireOnce)
+			{
 				MonitorOutputEvents.RemoveAt(I);
+				StopRead();
+			}
 		}
 	}
 }

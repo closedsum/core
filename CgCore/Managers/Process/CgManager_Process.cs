@@ -11,7 +11,7 @@
 
         public bool CreateNoWindow;
         public bool UseShellExecute;
-        public string FileName;
+        public string Filename;
         public string Arguments;
         public bool ErrorDialog;
         public bool RedirectStandardInput;
@@ -49,7 +49,7 @@
 
             CreateNoWindow = true;
             UseShellExecute = false;
-            FileName = "";
+            Filename = "";
             Arguments = "";
             ErrorDialog = false;
             RedirectStandardInput = false;

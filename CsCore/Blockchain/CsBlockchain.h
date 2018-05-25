@@ -110,7 +110,7 @@ struct FCsBlockchainProcessStartInfo
 
 	/** URL - executable name */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
-	FString FileName;
+	FString Filename;
 	/** Params - command line arguments */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
 	FString Arguments;
@@ -125,7 +125,7 @@ struct FCsBlockchainProcessStartInfo
 
 	FCsBlockchainProcessStartInfo& operator=(const FCsBlockchainProcessStartInfo& B)
 	{
-		FileName = B.FileName;
+		Filename = B.Filename;
 		Arguments = B.Arguments;
 		RedirectStandardInput = B.RedirectStandardInput;
 
@@ -142,7 +142,7 @@ struct FCsBlockchainProcessStartInfo
 
 	bool operator==(const FCsBlockchainProcessStartInfo& B) const
 	{
-		if (FileName != B.FileName)
+		if (Filename != B.Filename)
 			return false;
 		if (Arguments != B.Arguments)
 			return false;

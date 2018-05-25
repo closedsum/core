@@ -46,6 +46,7 @@ namespace ECsEthereumRoutine
 {
 	namespace Str
 	{
+		const TCsString StartPrivateChain_Internal = TCsString(TEXT("StartPrivateChain_Internal"), TEXT("StartPrivateChain_Internal"));
 		const TCsString CreateKeystore_Internal = TCsString(TEXT("CreateKeystore_Internal"), TEXT("createkeystore_internal"));
 		const TCsString SetupAccount_Internal = TCsString(TEXT("SetupAccount_Internal"), TEXT("setupaccount_internal"));
 		const TCsString BringBalanceToThreshold_Internal = TCsString(TEXT("BringBalanceToThreshold_Internal"), TEXT("bringbalancetothreshold_internal"));
@@ -57,6 +58,7 @@ namespace ECsEthereumRoutine
 
 	namespace Ref
 	{
+		const Type StartPrivateChain_Internal = Type::StartPrivateChain_Internal;
 		const Type CreateKeystore_Internal = Type::CreateKeystore_Internal;
 		const Type SetupAccount_Internal = Type::SetupAccount_Internal;
 		const Type BringBalanceToThreshold_Internal = Type::BringBalanceToThreshold_Internal;
@@ -66,6 +68,15 @@ namespace ECsEthereumRoutine
 		const Type CheckTransactionHasBeenMined_Internal = Type::CheckTransactionHasBeenMined_Internal;
 		const Type ECsEthereumRoutine_MAX = Type::ECsEthereumRoutine_MAX;
 	}
+}
+
+EMCsEthereumJavascript* EMCsEthereumJavascript::Instance;
+
+EMCsEthereumJavascript& EMCsEthereumJavascript::Get()
+{
+	if (!Instance)
+		Instance = new EMCsEthereumJavascript();
+	return *Instance;
 }
 
 #pragma endregion Enums
@@ -78,6 +89,7 @@ namespace ECsEthereumCachedName
 	namespace Name
 	{
 		// Functions
+		const FName StartPrivateChain_Internal = FName("UCsEthereum::StartPrivateChain_Internal");
 		const FName CreateKeystore_Internal = FName("UCsEthereum::CreateKeystore_Internal");
 		const FName SetupAccount_Internal = FName("UCsEthereum::SetupAccount_Internal");
 		const FName BringBalanceToThreshold_Internal = FName("UCsEthereum::BringBalanceToThreshold_Internal");
@@ -93,6 +105,7 @@ namespace ECsEthereumCachedString
 	namespace Str
 	{
 		// Functions
+		const FString StartPrivateChain_Internal = TEXT("UCsEthereum::StartPrivateChain_Internal");
 		const FString CreateKeystore_Internal = TEXT("UCsEthereum::CreateKeystore_Internal");
 		const FString SetupAccount_Internal = TEXT("UCsEthereum::SetupAccount_Internal");
 		const FString BringBalanceToThreshold_Internal = TEXT("UCsEthereum::BringBalanceToThreshold_Internal");
@@ -118,6 +131,33 @@ void UCsEthereum::Initialize()
 
 	Genesis = NewObject<UCsEthereumGenesis>(GetTransientPackage(), UCsEthereumGenesis::StaticClass(), TEXT("Ethereum_Genesis"), RF_Transient);
 	Genesis->AddToRoot();
+
+	ConsoleFilename = TEXT("geth.exe");
+	const FString Path = FPaths::ConvertRelativePathToFull(FPaths::GameDir());
+
+	ConsoleDirectory = Path + TEXT("Blockchain/Ethereum/Geth");
+	ConsoleFullPath = ConsoleDirectory + "/" + ConsoleFilename;
+	RootDirectory = Path + TEXT("Blockchain/Ethereum");
+	GenesisFilePath = RootDirectory + TEXT("/genesis.json");
+
+	ChainDirectory = Path + TEXT("Blockchain/Ethereum/chaindata");
+	AccountsDirectory = RootDirectory + "/Accounts";
+
+	KeystoreDirectory = ChainDirectory + TEXT("/keystore");
+
+	ContractsDirectory = RootDirectory + TEXT("/Contracts");
+	ContractsDeployedDirectory = ContractsDirectory + TEXT("/Deployed");
+
+	ABIDirectory = ContractsDirectory + TEXT("/ABI");
+	
+	Web3DeployDirectory = ContractsDirectory + TEXT("/Web3Deploy");
+
+	Web3DeployLinkedDirectory = Web3DeployDirectory + TEXT("/Linked");
+
+	JavascriptDirectory = RootDirectory + TEXT("/Javascript");
+	JavascriptLinkedDirectory = JavascriptDirectory + TEXT("/Linked");
+
+	CurrentCommandInfo.Reset();
 
 	// Commands
 	{
@@ -227,6 +267,9 @@ void UCsEthereum::Initialize()
 		}
 		// GetTransactionReceipt
 		SetCommand(ECsEthereumCommand::GetTransactionReceipt, TEXT("eth.getTransactionReceipt(%s)"));
+
+		CommandCompleted_Event.AddUObject(this, &UCsEthereum::OnCommandCompleted);
+		//AccountCreated_Event.AddUObject(this, &UCsEthereum::OnAccountCreated);
 	}
 }
 
@@ -374,7 +417,7 @@ void UCsEthereum::StartProcess(const TEnumAsByte<ECsBlockchainProcessType::Type>
 	{
 		FCsProcessPayload* Payload = UICsManager_Process::Get()->AllocatePayload();
 
-		Payload->URL				 = StartInfo.FileName;
+		Payload->URL				 = StartInfo.Filename;
 		Payload->Params				 = StartInfo.Arguments;
 		Payload->bLaunchDetached	 = CsCVarShowBlockchainProcessWindow->GetInt() == CS_CVAR_SHOW;
 		Payload->bLaunchHidden		 = CsCVarShowBlockchainProcessWindow->GetInt() == CS_CVAR_HIDE;
@@ -385,10 +428,10 @@ void UCsEthereum::StartProcess(const TEnumAsByte<ECsBlockchainProcessType::Type>
 		{
 			const FString& ProcessTypeAsString = ECsBlockchainProcessType::ToString(ProcessType);
 
-			UE_LOG(LogCs, Log, TEXT("CgEthereum::StartProcess: Starting Process (%s): %s %s"), *ProcessTypeAsString, *(StartInfo.FileName), *(StartInfo.Arguments));
+			UE_LOG(LogCs, Log, TEXT("CgEthereum::StartProcess: Starting Process (%s): %s %s"), *ProcessTypeAsString, *(StartInfo.Filename), *(StartInfo.Arguments));
 		}
 
-		Process = UICsManager_Process::Get()->Spawn(EMCsProcess::Get()["Geth"], Payload);
+		Process = UICsManager_Process::Get()->Spawn(EMCsProcess::Get()[TEXT("Geth")], Payload);
 
 		if (ProcessType == ECsBlockchainProcessType::RunningInstance)
 		{
@@ -433,8 +476,29 @@ void UCsEthereum::OpenRunningInstance()
 {
 	/*
 	if (IsRunningInstanceOpen)
-		return;
+	return;
 	*/
+
+	CommandFlag = false;
+
+	const FECsBlockchainCommand& Command = ECsEthereumCommand::SetDataDirectory;
+
+	FCsBlockchainProcessStartInfo StartInfo;
+	StartInfo.Filename				= ConsoleFullPath;
+	StartInfo.Arguments				= Commands[Command];
+	StartInfo.RedirectStandardInput = false;
+	StartInfo.AddMonitorOutputEvent(MonitorOutputEvents[Command]);
+
+	const TCsBlockchainProcessType& ProcessType = ECsBlockchainProcessType::Ref::RunningInstance;
+
+	StartProcess(ProcessType, 0, StartInfo);
+
+	//IsRunningInstanceOpen = true;
+	IsRunningInstanceCloseFlag = false;
+}
+
+void UCsEthereum::CreatePrivateChain()
+{
 	IFileManager& FileManager = FFileManagerGeneric::Get();
 
 	// Create chaindata Directory
@@ -457,15 +521,70 @@ void UCsEthereum::OpenRunningInstance()
 	IsRunningInstanceCloseFlag = false;
 
 	FCsBlockchainProcessStartInfo StartInfo;
-	StartInfo.FileName				= ConsoleFullPath;
+	StartInfo.Filename				= ConsoleFullPath;
 	StartInfo.Arguments				= Commands[ECsEthereumCommand::InitBlockchain];
 	StartInfo.RedirectStandardInput = false;
 
 	StartProcess(ECsBlockchainProcessType::RunningInstance, 0, StartInfo);
 }
 
-void UCsEthereum::CreatePrivateChain(){}
-void UCsEthereum::StartPrivateChain(){}
+void UCsEthereum::StartPrivateChain()
+{
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+
+	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+
+	Payload->Schedule		= Schedule;
+	Payload->Function		= &UCsEthereum::StartPrivateChain_Internal;
+	Payload->Object			= this;
+	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckObject;
+	Payload->Add			= &UCsEthereum::AddRoutine;
+	Payload->Remove			= &UCsEthereum::RemoveRoutine;
+	Payload->Type			= (uint8)ECsEthereumRoutine::StartPrivateChain_Internal;
+	Payload->DoInit			= true;
+	Payload->PerformFirstRun = false;
+	Payload->Name			= ECsEthereumCachedName::Name::StartPrivateChain_Internal;
+	Payload->NameAsString	= ECsEthereumCachedString::Str::StartPrivateChain_Internal;
+
+	FCsRoutine* R = Scheduler->Allocate(Payload);
+
+	Scheduler->StartRoutine(Schedule, R);
+}
+
+CS_COROUTINE(UCsEthereum, StartPrivateChain_Internal)
+{
+	UCsEthereum* eth		 = r->GetRObject<UCsEthereum>();
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
+
+	CS_COROUTINE_BEGIN(r);
+
+	// Start if the Blockchain has already been initialized
+	if (FFileManagerGeneric::Get().FileExists(*(eth->GenesisFilePath)))
+	{
+		eth->OpenRunningInstance();
+	}
+	// Initialize then Start
+	else
+	{
+		eth->CreatePrivateChain();
+
+		CS_COROUTINE_WAIT_UNTIL(r, eth->IsRunningInstanceCloseFlag);
+
+		eth->PrivateChainCreated_Event.Broadcast(CS_BLOCKCHAIN_SINGLE_NODE_INDEX);
+
+		eth->OpenRunningInstance();
+	}
+	// Parse the Genesis file
+	eth->Genesis->ParseFromFilePath(eth->GenesisFilePath);
+
+	// Waittill DataDirectory has been set
+	CS_COROUTINE_WAIT_UNTIL(r, eth->CommandFlag);
+
+	eth->PrivateChainStarted_Event.Broadcast(CS_BLOCKCHAIN_SINGLE_NODE_INDEX);
+
+	CS_COROUTINE_END(r);
+}
 
 void UCsEthereum::OpenConsole(){}
 void UCsEthereum::CloseConsole(){}
@@ -552,6 +671,12 @@ bool UCsEthereum::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &T
 {
 	const TCsEthereumRoutine RoutineType = (TCsEthereumRoutine)Type;
 
+	// StartPrivateChain_Internal
+	if (RoutineType == ECsEthereumRoutine::StartPrivateChain_Internal)
+	{
+		StartPrivateChain_Internal_Routine = Routine;
+		return true;
+	}
 	// CreateKeystore_Internal
 	if (RoutineType == ECsEthereumRoutine::CreateKeystore_Internal)
 	{
@@ -606,6 +731,13 @@ bool UCsEthereum::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8
 {
 	const TCsEthereumRoutine RoutineType = (TCsEthereumRoutine)Type;
 
+	// StartPrivateChain_Internal
+	if (RoutineType == ECsEthereumRoutine::StartPrivateChain_Internal)
+	{
+		check(StartPrivateChain_Internal_Routine == Routine);
+		StartPrivateChain_Internal_Routine = nullptr;
+		return true;
+	}
 	// CreateKeystore_Internal
 	if (RoutineType == ECsEthereumRoutine::CreateKeystore_Internal)
 	{

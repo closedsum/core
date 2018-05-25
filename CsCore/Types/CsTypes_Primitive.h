@@ -185,6 +185,7 @@ struct TCsEnumMap
 {
 private:
 	TArray<EnumStruct> Enums;
+	int32 Count;
 	TMap<FString, EnumStruct> StringMap;
 	TMap<EnumType, EnumStruct> TypeMap;
 protected:
@@ -192,12 +193,13 @@ protected:
 public:
 	virtual ~TCsEnumMap() {}
 
-	EnumStruct Create(const FString &Name)
+	FORCEINLINE EnumStruct Create(const FString &Name)
 	{
 		EnumType Index = (EnumType)Enums.Num();
 		EnumStruct E(Index, Name);
 
 		Enums.Add(E);
+		++Count;
 		StringMap.Add(Name, E);
 		TypeMap.Add(Index, E);
 		return E;
@@ -213,24 +215,29 @@ public:
 		return StringMap[Name];
 	}
 
-	bool IsValidEnum(EnumStruct E)
+	FORCEINLINE bool IsValidEnum(EnumStruct E)
 	{
 		return Enums.Find(E) > INDEX_NONE;
 	}
 
-	const EnumStruct& GetEnumAt(const int32 &Index)
+	FORCEINLINE const EnumStruct& GetEnumAt(const int32 &Index)
 	{
 		return Enums[Index];
 	}
 
-	const EnumStruct& GetEnum(const FString &Name)
+	FORCEINLINE const EnumStruct& GetEnum(const FString &Name)
 	{
 		return StringMap[Name];
 	}
 
-	const EnumStruct& GetEnum(const EnumType &Type)
+	FORCEINLINE const EnumStruct& GetEnum(const EnumType &Type)
 	{
 		return TypeMap[Type];
+	}
+
+	FORCEINLINE const int32& Num()
+	{
+		return Count;
 	}
 };
 

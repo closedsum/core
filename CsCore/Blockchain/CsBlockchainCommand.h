@@ -17,10 +17,10 @@ public:
 
 FORCEINLINE uint32 GetTypeHash(const FECsBlockchainCommand& b)
 {
-	return FCrc::MemCrc_DEPRECATED(&b, sizeof(FECsBlockchainCommand));
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-struct EMCsBlockchainCommand : public TCsEnumMap<FECsBlockchainCommand, uint8>
+struct CSCORE_API EMCsBlockchainCommand : public TCsEnumMap<FECsBlockchainCommand, uint8>
 {
 protected:
 	EMCsBlockchainCommand() {}
@@ -28,12 +28,11 @@ protected:
 	EMCsBlockchainCommand(EMCsBlockchainCommand &&) = delete;
 public:
 	~EMCsBlockchainCommand() {}
+private:
+	static EMCsBlockchainCommand* Instance;
 
-	static EMCsBlockchainCommand& Get()
-	{
-		static EMCsBlockchainCommand Instance;
-		return Instance;
-	}
+public:
+	static EMCsBlockchainCommand& Get();
 };
 
 UENUM(BlueprintType)

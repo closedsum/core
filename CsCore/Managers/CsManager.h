@@ -338,14 +338,14 @@ public:
 		{
 			const EnumType& key = Keys[i];
 
-			TArray<ObjectType*>* objectsPtr = ActiveObjects.Find(key);
+			TArray<ObjectType*>& objects = ActiveObjects[key];
 
-			const int32 objectCount = objectsPtr->Num();
+			const int32 objectCount = objects.Num();
 			int32 earliestIndex		= objectCount;
 
 			for (int32 j = objectCount - 1; j >= 0; --j)
 			{
-				ObjectType* o = (*objectsPtr)[j];
+				ObjectType* o = objects[j];
 
 				// Check if ObjectType was DeAllocated NOT in a normal way (i.e. Out of Bounds)
 
@@ -355,7 +355,7 @@ public:
 
 					LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
 
-					objectsPtr->RemoveAt(j);
+					objects.RemoveAt(j);
 
 					if (j < earliestIndex)
 						earliestIndex = j;
@@ -370,7 +370,7 @@ public:
 					LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
 
 					o->DeAllocate();
-					objectsPtr->RemoveAt(j);
+					objects.RemoveAt(j);
 
 					if (j < earliestIndex)
 						earliestIndex = j;
@@ -380,11 +380,11 @@ public:
 			// Update ActiveIndex
 			if (earliestIndex != objectCount)
 			{
-				const int32 max = objectsPtr->Num();
+				const int32 max = objects.Num();
 				
 				for (int32 j = earliestIndex; j < max; ++j)
 				{
-					ObjectType* o = (*objectsPtr)[j];
+					ObjectType* o = objects[j];
 					o->Cache.SetActiveIndex(j);
 				}
 			}
@@ -492,21 +492,18 @@ public:
 
 		for (int32 i = 0; i < keyCount; ++i)
 		{
-			const EnumType& e = keys[i];
+			const EnumType& key = keys[i];
 
-			TArray<ObjectType*>* objectsPtr = ActiveObjects.Find(e);
+			TArray<ObjectType*>& objects = ActiveObjects[key];
 
-			if (!objectsPtr)
-				continue;
-
-			const int32 objectCount = objectsPtr->Num();
+			const int32 objectCount = objects.Num();
 
 			for (int32 j = objectCount - 1; j >= 0; --j)
 			{
-				LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::DeAllocateAll], ECsPoolTransaction::Deallocate, (*objectsPtr)[j]);
+				LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::DeAllocateAll], ECsPoolTransaction::Deallocate, objects[j]);
 
-				(*objectsPtr)[j]->DeAllocate();
-				objectsPtr->RemoveAt(j);
+				objects[j]->DeAllocate();
+				objects.RemoveAt(j);
 			}
 		}
 	}

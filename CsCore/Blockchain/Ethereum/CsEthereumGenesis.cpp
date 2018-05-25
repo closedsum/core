@@ -95,7 +95,7 @@ void UCsEthereumGenesis::Parse(const FString &Str)
 			config.eip158Block = JsonObject->GetIntegerField(TEXT("eip158Block"));
 		}
 		// difficulty
-		difficulty = JsonParsed->GetStringField(TEXT("difficult"));
+		difficulty = JsonParsed->GetStringField(TEXT("difficulty"));
 		// gasLimit
 		difficulty = JsonParsed->GetStringField(TEXT("gasLimit"));
 		// alloc

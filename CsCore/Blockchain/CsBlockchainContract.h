@@ -17,10 +17,10 @@ public:
 
 FORCEINLINE uint32 GetTypeHash(const FECsBlockchainContract& b)
 {
-	return FCrc::MemCrc_DEPRECATED(&b, sizeof(FECsBlockchainContract));
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-struct EMCsBlockchainContract : public TCsEnumMap<FECsBlockchainContract, uint8>
+struct CSCORE_API EMCsBlockchainContract : public TCsEnumMap<FECsBlockchainContract, uint8>
 {
 protected:
 	EMCsBlockchainContract() {}
@@ -28,12 +28,11 @@ protected:
 	EMCsBlockchainContract(EMCsBlockchainContract &&) = delete;
 public:
 	~EMCsBlockchainContract() {}
+private:
+	static EMCsBlockchainContract* Instance;
 
-	static EMCsBlockchainContract& Get()
-	{
-		static EMCsBlockchainContract Instance;
-		return Instance;
-	}
+public:
+	static EMCsBlockchainContract& Get();
 };
 
 // Argument
@@ -235,10 +234,10 @@ public:
 
 FORCEINLINE uint32 GetTypeHash(const FECsBlockchainContractFunction& b)
 {
-	return FCrc::MemCrc_DEPRECATED(&b, sizeof(FECsBlockchainContractFunction));
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-struct EMCsBlockchainContractFunction : public TCsEnumMap<FECsBlockchainContractFunction, uint8>
+struct  CSCORE_API EMCsBlockchainContractFunction : public TCsEnumMap<FECsBlockchainContractFunction, uint8>
 {
 protected:
 	EMCsBlockchainContractFunction() {}
@@ -246,12 +245,11 @@ protected:
 	EMCsBlockchainContractFunction(EMCsBlockchainContractFunction &&) = delete;
 public:
 	~EMCsBlockchainContractFunction() {}
+private:
+	static EMCsBlockchainContractFunction* Instance;
 
-	static EMCsBlockchainContractFunction& Get()
-	{
-		static EMCsBlockchainContractFunction Instance;
-		return Instance;
-	}
+public:
+	static EMCsBlockchainContractFunction& Get();
 };
 
 UENUM(BlueprintType)

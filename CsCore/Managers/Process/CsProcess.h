@@ -22,10 +22,10 @@ public:
 
 FORCEINLINE uint32 GetTypeHash(const FECsProcess& b)
 {
-	return FCrc::MemCrc_DEPRECATED(&b, sizeof(FECsProcess));
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-struct EMCsProcess : public TCsEnumMap<FECsProcess, uint8>
+struct CSCORE_API EMCsProcess : public TCsEnumMap<FECsProcess, uint8>
 {
 protected:
 	EMCsProcess(){}
@@ -33,12 +33,11 @@ protected:
 	EMCsProcess(EMCsProcess &&) = delete;
 public:
 	~EMCsProcess(){}
+private:
+	static EMCsProcess* Instance;
 
-	static EMCsProcess& Get()
-	{
-		static EMCsProcess Instance;
-		return Instance;
-	}
+public:
+	static EMCsProcess& Get();
 };
 
 namespace ECsProcessRoutine

@@ -328,8 +328,8 @@ public:
 		if (ownerMemberRoutine)
 			*ownerMemberRoutine = nullptr;
 		else
-			if (GetOwner() && removeRoutine)
-				(*removeRoutine)(GetOwner(), self, type);
+		if (GetOwner() && removeRoutine)
+			(*removeRoutine)(GetOwner(), self, type);
 		EndChildren();
 		index = CS_ROUTINE_END;
 		endReason = inEndReason;

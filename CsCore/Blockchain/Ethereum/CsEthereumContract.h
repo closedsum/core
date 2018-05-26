@@ -55,6 +55,12 @@ struct FCsEthereumWeb3DeployLink
 	{
 		return !(*this == B);
 	}
+
+	void Set(const FECsBlockchainContract &InContract, const FString &InLink)
+	{
+		Contract = InContract;
+		Link = InLink;
+	}
 };
 
 class CSCORE_API CsEthereumContract : public ICsBlockchainContract

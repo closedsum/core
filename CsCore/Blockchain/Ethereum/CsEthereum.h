@@ -84,6 +84,7 @@ namespace ECsEthereumRoutine
 	enum Type
 	{
 		StartPrivateChain_Internal,
+		OpenConsole_Internal,
 		CreateKeystore_Internal,
 		SetupAccount_Internal,
 		BringBalanceToThreshold_Internal,
@@ -102,6 +103,7 @@ namespace ECsEthereumRoutine
 	namespace Str
 	{
 		extern const TCsString StartPrivateChain_Internal;
+		extern const TCsString OpenConsole_Internal;
 		extern const TCsString CreateKeystore_Internal;
 		extern const TCsString SetupAccount_Internal;
 		extern const TCsString BringBalanceToThreshold_Internal;
@@ -114,6 +116,7 @@ namespace ECsEthereumRoutine
 	namespace Ref
 	{
 		extern const Type StartPrivateChain_Internal;
+		extern const Type OpenConsole_Internal;
 		extern const Type CreateKeystore_Internal;
 		extern const Type SetupAccount_Internal;
 		extern const Type BringBalanceToThreshold_Internal;
@@ -127,6 +130,7 @@ namespace ECsEthereumRoutine
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		if (EType == Type::StartPrivateChain_Internal) { return Str::StartPrivateChain_Internal.Value; }
+		if (EType == Type::OpenConsole_Internal) { return Str::OpenConsole_Internal.Value; }
 		if (EType == Type::CreateKeystore_Internal) { return Str::CreateKeystore_Internal.Value; }
 		if (EType == Type::SetupAccount_Internal) { return Str::SetupAccount_Internal.Value; }
 		if (EType == Type::BringBalanceToThreshold_Internal) { return Str::BringBalanceToThreshold_Internal.Value; }
@@ -140,6 +144,7 @@ namespace ECsEthereumRoutine
 	FORCEINLINE const Type& ToType(const FString &String)
 	{
 		if (String == Str::StartPrivateChain_Internal) { return Ref::StartPrivateChain_Internal; }
+		if (String == Str::OpenConsole_Internal) { return Ref::OpenConsole_Internal; }
 		if (String == Str::CreateKeystore_Internal) { return Ref::CreateKeystore_Internal; }
 		if (String == Str::SetupAccount_Internal) { return Ref::SetupAccount_Internal; }
 		if (String == Str::BringBalanceToThreshold_Internal) { return Ref::BringBalanceToThreshold_Internal; }
@@ -223,6 +228,12 @@ struct FCsEthereumJavascriptContractLink
 	{
 		return !(*this == B);
 	}
+
+	void Set(const FECsBlockchainContract &InContract, const FString &InLink)
+	{
+		Contract = InContract;
+		Link = InLink;
+	}
 };
 
 UCLASS(transient)
@@ -285,6 +296,9 @@ public:
 	FCsRoutine* StartPrivateChain_Internal_Routine;
 
 	virtual void OpenConsole() override;
+	static char OpenConsole_Internal(FCsRoutine* r);
+	FCsRoutine* OpenConsole_Internal_Routine;
+
 	virtual void CloseConsole() override;
 
 // Account
@@ -349,7 +363,6 @@ public:
 	TMap<FECsBlockchainContract, FString> Web3DeployLinkedSnippets;
 	TMap<FECsBlockchainContract, TArray<FCsEthereumWeb3DeployLink>> Web3DeployLinks;
 
-public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ethereum")
 	FString JavascriptDirectory;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ethereum")

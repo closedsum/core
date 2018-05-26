@@ -245,7 +245,10 @@ struct FCsStringWord
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
 	TArray<FCsStringWordInfo> Ors;
 
-	FCsStringWord(){}
+	FCsStringWord()
+	{
+		Completed = false;
+	}
 	~FCsStringWord(){}
 
 	FCsStringWord& operator=(const FCsStringWord& B)
@@ -365,7 +368,10 @@ struct FCsStringPhrase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
 	TArray<FCsStringWord> Words;
 
-	FCsStringPhrase(){}
+	FCsStringPhrase()
+	{
+		Completed = false;
+	}
 	~FCsStringPhrase(){}
 
 	FCsStringPhrase& operator=(const FCsStringPhrase& B)
@@ -488,7 +494,10 @@ struct FCsStringSentence
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
 	TArray<FCsStringPhrase> Phrases;
 
-	FCsStringSentence(){}
+	FCsStringSentence()
+	{
+		Completed = false;
+	}
 	~FCsStringSentence(){}
 
 	FCsStringSentence& operator=(const FCsStringSentence& B)
@@ -597,7 +606,10 @@ struct FCsStringParagraph
 	UPROPERTY(BlueprintAssignable, Category = "String")
 	FBindableDynEvent_CgStringParagraph_CompletedEvent ScriptEvent;
 
-	FCsStringParagraph(){}
+	FCsStringParagraph()
+	{
+		Completed = false;
+	}
 	~FCsStringParagraph(){}
 
 	FCsStringParagraph& operator=(const FCsStringParagraph& B)

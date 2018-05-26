@@ -47,6 +47,7 @@ namespace ECsEthereumRoutine
 	namespace Str
 	{
 		const TCsString StartPrivateChain_Internal = TCsString(TEXT("StartPrivateChain_Internal"), TEXT("startprivatechain_internal"));
+		const TCsString OpenConsole_Internal = TCsString(TEXT("OpenConsole_Internal"), TEXT("openconsole_internal"));
 		const TCsString CreateKeystore_Internal = TCsString(TEXT("CreateKeystore_Internal"), TEXT("createkeystore_internal"));
 		const TCsString SetupAccount_Internal = TCsString(TEXT("SetupAccount_Internal"), TEXT("setupaccount_internal"));
 		const TCsString BringBalanceToThreshold_Internal = TCsString(TEXT("BringBalanceToThreshold_Internal"), TEXT("bringbalancetothreshold_internal"));
@@ -59,6 +60,7 @@ namespace ECsEthereumRoutine
 	namespace Ref
 	{
 		const Type StartPrivateChain_Internal = Type::StartPrivateChain_Internal;
+		const Type OpenConsole_Internal = Type::OpenConsole_Internal;
 		const Type CreateKeystore_Internal = Type::CreateKeystore_Internal;
 		const Type SetupAccount_Internal = Type::SetupAccount_Internal;
 		const Type BringBalanceToThreshold_Internal = Type::BringBalanceToThreshold_Internal;
@@ -569,6 +571,7 @@ CS_COROUTINE(UCsEthereum, StartPrivateChain_Internal)
 	{
 		eth->CreatePrivateChain();
 
+		// TODO: Running Instance might NOT get closed
 		CS_COROUTINE_WAIT_UNTIL(r, eth->IsRunningInstanceCloseFlag);
 
 		eth->PrivateChainCreated_Event.Broadcast(CS_BLOCKCHAIN_SINGLE_NODE_INDEX);
@@ -586,8 +589,74 @@ CS_COROUTINE(UCsEthereum, StartPrivateChain_Internal)
 	CS_COROUTINE_END(r);
 }
 
-void UCsEthereum::OpenConsole(){}
-void UCsEthereum::CloseConsole(){}
+void UCsEthereum::OpenConsole()
+{
+	//if (IsConsoleOpen)
+	//	return;
+
+	CommandFlag = false;
+
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	FCsCoroutinePayload* Payload = Scheduler->AllocatePayload();
+
+	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+
+	Payload->Schedule = Schedule;
+	Payload->Function = &UCsEthereum::OpenConsole_Internal;
+	Payload->Object = this;
+	Payload->Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
+	Payload->Add = &UCsEthereum::AddRoutine;
+	Payload->Remove = &UCsEthereum::RemoveRoutine;
+	Payload->Type = (uint8)ECsEthereumRoutine::OpenConsole_Internal;
+	Payload->DoInit = true;
+	Payload->PerformFirstRun = false;
+	Payload->Name = ECsEthereumCachedName::Name::OpenConsole_Internal;
+	Payload->NameAsString = ECsEthereumCachedString::Str::OpenConsole_Internal;
+
+	FCsRoutine* R = Scheduler->Allocate(Payload);
+
+	Scheduler->StartRoutine(Schedule, R);
+}
+
+CS_COROUTINE(UCsEthereum, OpenConsole_Internal)
+{
+	UCsEthereum* eth		 = r->GetRObject<UCsEthereum>();
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
+
+
+	CS_COROUTINE_BEGIN(r);
+
+	{
+		const FECsBlockchainCommand& Command ECsEthereumCommand::AttachToConsole;
+
+		FCsBlockchainProcessStartInfo StartInfo;
+		StartInfo.Filename				= eth->ConsoleFullPath;
+		StartInfo.Arguments				= eth->Commands[Command];
+		StartInfo.RedirectStandardInput = true;
+		StartInfo.AddMonitorOutputEvent(eth->MonitorOutputEvents[Command]);
+
+		const ECsBlockchainProcessType& ProcessType = ECsBlockchainProcessType::Ref::Console;
+
+		eth->StartProcess(ProcessType, CS_BLOCKCHAIN_SINGLE_NODE_INDEX, StartInfo);
+	}
+	// Waittill Console has opened
+	CS_COROUTINE_WAIT_UNTIL(r, eth->CommandFlag);
+
+	eth->ConsoleOpened_Event.Broadcast(CS_BLOCKCHAIN_SINGLE_NODE_INDEX);
+
+	CS_COROUTINE_END(r);
+}
+
+void UCsEthereum::CloseConsole()
+{
+	// TODO: Later handle PrivateMultiNode
+	//if (!IsConsoleOpen)
+	//	return;
+
+	RunCommand(CS_BLOCKCHAIN_SINGLE_NODE_INDEX, ECsEthereumCommand::ExitConsole);
+
+	//IsConsoleOpen = false;
+}
 
 	// Account
 #pragma region
@@ -677,6 +746,12 @@ bool UCsEthereum::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &T
 		StartPrivateChain_Internal_Routine = Routine;
 		return true;
 	}
+	// OpenConsole_Internal
+	if (RoutineType == ECsEthereumRoutine::OpenConsole_Internal)
+	{
+		OpenConsole_Internal_Routine = Routine;
+		return true;
+	}
 	// CreateKeystore_Internal
 	if (RoutineType == ECsEthereumRoutine::CreateKeystore_Internal)
 	{
@@ -736,6 +811,13 @@ bool UCsEthereum::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8
 	{
 		check(StartPrivateChain_Internal_Routine == Routine);
 		StartPrivateChain_Internal_Routine = nullptr;
+		return true;
+	}
+	// OpenConsole_Internal
+	if (RoutineType == ECsEthereumRoutine::OpenConsole_Internal)
+	{
+		check(OpenConsole_Internal_Routine == Routine);
+		OpenConsole_Internal_Routine = nullptr;
 		return true;
 	}
 	// CreateKeystore_Internal
@@ -1097,7 +1179,7 @@ void UCsEthereum::OnConsoleExited()
 
 #pragma endregion I/O
 
-#pragma endregion Processc
+#pragma endregion Process
 
 // Accounts
 #pragma region

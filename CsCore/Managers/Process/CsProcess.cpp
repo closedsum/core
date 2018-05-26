@@ -121,6 +121,8 @@ void UCsProcess::Allocate(const int32 &Index, FCsProcessPayload* Payload)
 	FPlatformProcess::CreatePipe(ReadPipe, WritePipe);
 
 	ProcessHandle = FPlatformProcess::CreateProc(*URL, *Params, bLaunchDetached, bLaucnhHidden, bLaunchReallyHidden, &ProcessID, PriorityModifier, OptionalWorkingDirectory, WritePipe, ReadPipe);
+
+	StartRead();
 }
 
 // Interface
@@ -276,8 +278,8 @@ void UCsProcess::StopRead()
 {
 	ReadFlag = false;
 
-	if (StartRead_Internal_Routine && StartRead_Internal_Routine->IsValid())
-		StartRead_Internal_Routine->End(ECsCoroutineEndReason::Manual);
+	//if (StartRead_Internal_Routine && StartRead_Internal_Routine->IsValid())
+	//	StartRead_Internal_Routine->End(ECsCoroutineEndReason::Manual);
 }
 
 void UCsProcess::AddMonitorOutputEvent(const FCsProcessMonitorOutputEvent &Event)

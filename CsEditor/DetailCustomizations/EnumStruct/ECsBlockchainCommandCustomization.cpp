@@ -1,10 +1,5 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
-
 #include "ECsBlockchainCommandCustomization.h"
-#include "IDetailChildrenBuilder.h"
-#include "DetailWidgetRow.h"
-#include "IDetailGroup.h"
-#include "DetailLayoutBuilder.h"
 
 #include "Blockchain/CsBlockchainCommand.h"
 

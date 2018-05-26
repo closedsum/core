@@ -19,6 +19,9 @@
 // DetailCustomizations
 #include "DetailCustomizations/EnumStruct/ECsProcessCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsBlockchainCommandCustomization.h"
+#include "DetailCustomizations/EnumStruct/ECsBlockchainContractCustomization.h"
+#include "DetailCustomizations/EnumStruct/ECsBlockchainContractFunctionCustomization.h"
+#include "DetailCustomizations/EnumStruct/ECsEthereumJavascriptCustomization.h"
 
 DECLARE_LOG_CATEGORY_CLASS(LogCsEditor, Log, All);
 
@@ -32,6 +35,9 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsProcess", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsProcessCustomization::MakeInstance));
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsBlockchainCommand", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsBlockchainCommandCustomization::MakeInstance));
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsBlockchainContract", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsBlockchainContractCustomization::MakeInstance));
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsBlockchainContractFunction", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsBlockchainContractFunctionCustomization::MakeInstance));
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsEthereumJavascript", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsEthereumJavascriptCustomization::MakeInstance));
 	}
 }
 

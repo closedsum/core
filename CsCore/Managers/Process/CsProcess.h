@@ -164,6 +164,7 @@ public:
 		Name = InName;
 		Paragraph = InParagraph;
 		Purpose = InPurpse;
+		Completed = false;
 	}
 
 	~FCsProcessMonitorOutputEvent() {}

@@ -1,13 +1,9 @@
-#include "IPropertyTypeCustomization.h"
-#include "PropertyHandle.h"
-#include "Widgets/Input/SComboBox.h"
-
-class IDetailGroup;
+#include "DetailCustomizations/EnumStruct/ECsEnumCustomization.h"
 
 /**
 * Customizes a CollisionProfileName property to use a dropdown
 */
-class FECsBlockchainCommandCustomization : public IPropertyTypeCustomization
+class FECsBlockchainCommandCustomization : public FECsEnumCustomization
 {
 public:
 
@@ -21,21 +17,6 @@ public:
 
 protected:
 
-	TSharedRef<SWidget> OnGenerateWidget(TSharedPtr<FString> InItem);
-
-	void OnSelectionChanged(TSharedPtr<FString> NameItem, ESelectInfo::Type SelectInfo);
-	void OnComboBoxOpening();
-
-	TSharedPtr<FString> GetSelectedName() const;
-
-	void SetPropertyWithName(const FString& Name);
-	void GetPropertyAsName(FString& OutName) const;
-
-	FText GetProfileComboBoxContent() const;
-
-protected:
-
-	TSharedPtr<IPropertyHandle> NameHandle;
-	TArray<TSharedPtr<FString>> NameList;
-	TSharedPtr<SComboBox<TSharedPtr<FString>>> NameComboBox;
+	virtual void SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle) override;
+	virtual void SetEnumWithDisplayName(const FString& DisplayName) override;
 };

@@ -97,7 +97,7 @@ struct FECsEnum
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enum")
 	FString Name;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enum")
 	FString DisplayName;
 
 	FECsEnum(){}
@@ -160,6 +160,14 @@ struct FECsEnum_uint8 : public FECsEnum
 		return Value;
 	}
 
+	FECsEnum_uint8& operator=(const FECsEnum_uint8& B)
+	{
+		Value = B.Value;
+		Name = B.Name;
+		DisplayName = B.DisplayName;
+		return *this;
+	}
+
 	bool operator==(const FECsEnum_uint8& B) const
 	{
 		return Value == B.Value && Name == B.Name;
@@ -197,7 +205,8 @@ struct TCsEnumMap
 private:
 	TArray<EnumStruct> Enums;
 	int32 Count;
-	TMap<FString, EnumStruct> StringMap;
+	TMap<FString, EnumStruct> NameMap;
+	TMap<FString, EnumStruct> DisplayNameMap;
 	TMap<EnumType, EnumStruct> TypeMap;
 protected:
 	TCsEnumMap() 
@@ -214,7 +223,8 @@ public:
 
 		Enums.Add(E);
 		++Count;
-		StringMap.Add(Name, E);
+		NameMap.Add(Name, E);
+		DisplayNameMap.Add(DisplayName, E);
 		TypeMap.Add(Index, E);
 		return E;
 	}
@@ -231,12 +241,19 @@ public:
 
 	FORCEINLINE const EnumStruct& operator[](const FString &Name)
 	{
-		return StringMap[Name];
+		return NameMap[Name];
 	}
 
 	FORCEINLINE bool IsValidEnum(EnumStruct E)
 	{
 		return Enums.Find(E) > INDEX_NONE;
+	}
+
+	FORCEINLINE bool IsValidEnum(const FString &Name)
+	{
+		if (NameMap.Find(Name))
+			return true;
+		return false;
 	}
 
 	FORCEINLINE const EnumStruct& GetEnumAt(const int32 &Index)
@@ -246,12 +263,17 @@ public:
 
 	FORCEINLINE const EnumStruct& GetEnum(const FString &Name)
 	{
-		return StringMap[Name];
+		return NameMap[Name];
 	}
 
 	FORCEINLINE const EnumStruct& GetEnum(const EnumType &Type)
 	{
 		return TypeMap[Type];
+	}
+
+	FORCEINLINE const EnumStruct& GetEnumByDisplayName(const FString &DisplayName)
+	{
+		return DisplayNameMap[DisplayName];
 	}
 
 	FORCEINLINE const int32& Num()

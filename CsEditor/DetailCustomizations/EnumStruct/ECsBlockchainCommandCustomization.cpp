@@ -1,4 +1,4 @@
-// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
+// Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 
 #include "ECsBlockchainCommandCustomization.h"
 #include "IDetailChildrenBuilder.h"
@@ -13,14 +13,7 @@
 
 FECsBlockchainCommandCustomization::FECsBlockchainCommandCustomization()
 {
-	const int32 Count = EMCsBlockchainCommand::Get().Num();
-
-	for (int32 I = 0; I < Count - 1; ++I)
-	{
-		const FECsBlockchainCommand& Command = EMCsBlockchainCommand::Get().GetEnumAt(I);
-
-		DisplayNameList.Add(MakeShareable(new FString(Command.DisplayName)));
-	}
+	Init<FECsBlockchainCommand, EMCsBlockchainCommand>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsBlockchainCommandCustomization::MakeInstance()
@@ -28,43 +21,14 @@ TSharedRef<IPropertyTypeCustomization> FECsBlockchainCommandCustomization::MakeI
 	return MakeShareable(new FECsBlockchainCommandCustomization);
 }
 
-void FECsBlockchainCommandCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> StructPropertyHandle, class FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
-{
-	FECsEnumCustomization::CustomizeHeader(StructPropertyHandle, HeaderRow, StructCustomizationUtils);
-}
-
 void FECsBlockchainCommandCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
-	ValueHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FECsBlockchainCommand, Value));
-	check(ValueHandle.IsValid());
-	NameHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FECsBlockchainCommand, Name));
-	check(NameHandle.IsValid());
-	DisplayNameHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FECsBlockchainCommand, DisplayName));
-	check(DisplayNameHandle.IsValid());
-}
-
-void FECsBlockchainCommandCustomization::CustomizeChildren(TSharedRef<class IPropertyHandle> StructPropertyHandle, class IDetailChildrenBuilder& StructBuilder, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
-{
+	SetPropertyHandles_Internal<FECsBlockchainCommand>(StructPropertyHandle);
 }
 
 void FECsBlockchainCommandCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	check(DisplayNameHandle.IsValid());
-
-	FString OldDisplayName;
-	DisplayNameHandle->GetValue(OldDisplayName);
-
-	if (OldDisplayName != DisplayName)
-	{
-		DisplayNameHandle->SetValue(DisplayName);
-
-		const FECsBlockchainCommand& Command = EMCsBlockchainCommand::Get().GetEnumByDisplayName(DisplayName);
-
-		check(ValueHandle.IsValid());
-		ValueHandle->SetValue(Command.Value);
-		check(NameHandle.IsValid());
-		NameHandle->SetValue(Command.Name);
-	}
+	SetEnumWithDisplayName_Internal<FECsBlockchainCommand, EMCsBlockchainCommand>(DisplayName);
 }
 
 #undef LOCTEXT_NAMESPACE

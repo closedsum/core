@@ -17,6 +17,7 @@
 #include "Editor/PropertyEditor/Public/PropertyEditorModule.h"
 
 // DetailCustomizations
+#include "DetailCustomizations/EnumStruct/ECsProcessCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsBlockchainCommandCustomization.h"
 
 DECLARE_LOG_CATEGORY_CLASS(LogCsEditor, Log, All);
@@ -25,10 +26,13 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 {
 	Super::Init(InEngineLoop);
 
-	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
+	// Custom properties
+	{
+		FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
 
-	//Custom properties
-	PropertyModule.RegisterCustomPropertyTypeLayout("ECsBlockchainCommand", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsBlockchainCommandCustomization::MakeInstance));
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsProcess", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsProcessCustomization::MakeInstance));
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsBlockchainCommand", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsBlockchainCommandCustomization::MakeInstance));
+	}
 }
 
 bool UCsEdEngine::Exec(UWorld* InWorld, const TCHAR* Stream, FOutputDevice& Ar)

@@ -3,13 +3,13 @@
 #include "DetailCustomizations/EnumStruct/ECsEnumCustomization.h"
 
 /**
-* Customizes a FECsBlockchainCommand property to use a dropdown
+* Customizes a FECsProcess property to use a dropdown
 */
-class FECsBlockchainCommandCustomization : public FECsEnumCustomization
+class FECsProcessCustomization : public FECsEnumCustomization
 {
 public:
 
-	FECsBlockchainCommandCustomization();
+	FECsProcessCustomization();
 
 	static TSharedRef<IPropertyTypeCustomization> MakeInstance();
 

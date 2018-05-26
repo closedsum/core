@@ -1,0 +1,34 @@
+// Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
+
+#include "ECsProcessCustomization.h"
+#include "IDetailChildrenBuilder.h"
+#include "DetailWidgetRow.h"
+#include "IDetailGroup.h"
+#include "DetailLayoutBuilder.h"
+
+#include "Managers/Process/CsProcess.h"
+
+#define LOCTEXT_NAMESPACE "ECsProcessCustomization"
+
+
+FECsProcessCustomization::FECsProcessCustomization()
+{
+	Init<FECsProcess, EMCsProcess>();
+}
+
+TSharedRef<IPropertyTypeCustomization> FECsProcessCustomization::MakeInstance()
+{
+	return MakeShareable(new FECsProcessCustomization);
+}
+
+void FECsProcessCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
+{
+	SetPropertyHandles_Internal<FECsProcess>(StructPropertyHandle);
+}
+
+void FECsProcessCustomization::SetEnumWithDisplayName(const FString& DisplayName)
+{
+	SetEnumWithDisplayName_Internal<FECsProcess, EMCsProcess>(DisplayName);
+}
+
+#undef LOCTEXT_NAMESPACE

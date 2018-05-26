@@ -139,18 +139,16 @@ struct FECsEnum_uint8 : public FECsEnum
 
 	FECsEnum_uint8(){}
 
-	FECsEnum_uint8(const uint8 &InValue, const FString &InName)
-	{
-		Value = InValue;
-		Name = InName;
-		DisplayName = Name;
-	}
-
 	FECsEnum_uint8(const uint8 &InValue, const FString &InName, const FString &InDisplayName)
 	{
 		Value = InValue;
 		Name = InName;
 		DisplayName = InDisplayName;
+	}
+
+	FECsEnum_uint8(const uint8 &InValue, const FString &InName)
+	{
+		FECsEnum_uint8(InValue, InName, InName);
 	}
 
 	virtual ~FECsEnum_uint8(){}
@@ -234,6 +232,255 @@ public:
 		return Create(Name, Name);
 	}
 	
+	FORCEINLINE const EnumStruct& operator[](const EnumType &Type)
+	{
+		return TypeMap[Type];
+	}
+
+	FORCEINLINE const EnumStruct& operator[](const FString &Name)
+	{
+		return NameMap[Name];
+	}
+
+	FORCEINLINE bool IsValidEnum(EnumStruct E)
+	{
+		return Enums.Find(E) > INDEX_NONE;
+	}
+
+	FORCEINLINE bool IsValidEnum(const FString &Name)
+	{
+		if (NameMap.Find(Name))
+			return true;
+		return false;
+	}
+
+	FORCEINLINE const EnumStruct& GetEnumAt(const int32 &Index)
+	{
+		return Enums[Index];
+	}
+
+	FORCEINLINE const EnumStruct& GetEnum(const FString &Name)
+	{
+		return NameMap[Name];
+	}
+
+	FORCEINLINE const EnumStruct& GetEnum(const EnumType &Type)
+	{
+		return TypeMap[Type];
+	}
+
+	FORCEINLINE const EnumStruct& GetEnumByDisplayName(const FString &DisplayName)
+	{
+		return DisplayNameMap[DisplayName];
+	}
+
+	FORCEINLINE const int32& Num()
+	{
+		return Count;
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FECsEnumMask_int32 : public FECsEnum
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "EnumMask_uint32")
+	uint8 Value;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "EnumMask_uint32")
+	int32 Mask;
+
+	FECsEnumMask_int32() {}
+
+	FECsEnumMask_int32(const uint8 &InValue, const FString &InName, const FString &InDisplayName)
+	{
+		Value = InValue > CS_INT32_BIT_MAX ? CS_INT32_BIT_MAX : InValue;
+		Mask = 1 << Value;
+		Name = InName;
+		DisplayName = InDisplayName;
+	}
+
+	FECsEnumMask_int32(const uint8 &InValue, const FString &InName)
+	{
+		FECsEnumMask_int32(InValue, InName, InName);
+	}
+
+	virtual ~FECsEnumMask_int32() {}
+
+	operator int32() const
+	{
+		return Mask;
+	}
+
+	FECsEnumMask_int32& operator=(const FECsEnumMask_int32& B)
+	{
+		Value = B.Value;
+		Mask = B.Mask;
+		Name = B.Name;
+		DisplayName = B.DisplayName;
+		return *this;
+	}
+
+	bool operator==(const FECsEnumMask_int32& B) const
+	{
+		return Value == B.Value && Mask == B.Mask && Name == B.Name;
+	}
+
+	bool operator!=(const FECsEnumMask_int32& B) const
+	{
+		return !(*this == B);
+	}
+
+	FORCEINLINE friend bool operator==(const int32 &Lhs, const FECsEnumMask_int32 &Rhs)
+	{
+		return Lhs == Rhs.Mask;
+	}
+
+	FORCEINLINE friend bool operator==(const FECsEnumMask_int32 &Lhs, const int32 &Rhs)
+	{
+		return Lhs.Mask == Rhs;
+	}
+
+	FORCEINLINE friend bool operator!=(const int32 &Lhs, const FECsEnumMask_int32 &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE friend bool operator!=(const FECsEnumMask_int32 &Lhs, const int32 &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FECsEnumMask_uint32 : public FECsEnum
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "EnumMask_uint32")
+	uint8 Value;
+	
+	UPROPERTY()
+	uint32 Mask;
+
+	FECsEnumMask_uint32() {}
+
+	FECsEnumMask_uint32(const uint8 &InValue, const FString &InName, const FString &InDisplayName)
+	{
+		Value = InValue > CS_UINT32_BIT_MAX ? CS_UINT32_BIT_MAX : InValue;
+		Mask = 1 << Value;
+		Name = InName;
+		DisplayName = InDisplayName;
+	}
+
+	FECsEnumMask_uint32(const uint8 &InValue, const FString &InName)
+	{
+		FECsEnumMask_uint32(InValue, InName, InName);
+	}
+
+	virtual ~FECsEnumMask_uint32() {}
+
+	operator uint32() const
+	{
+		return Mask;
+	}
+
+	FECsEnumMask_uint32& operator=(const FECsEnumMask_uint32& B)
+	{
+		Value = B.Value;
+		Mask = B.Mask;
+		Name = B.Name;
+		DisplayName = B.DisplayName;
+		return *this;
+	}
+
+	bool operator==(const FECsEnumMask_uint32& B) const
+	{
+		return Value == B.Value && Mask == B.Mask && Name == B.Name;
+	}
+
+	bool operator!=(const FECsEnumMask_uint32& B) const
+	{
+		return !(*this == B);
+	}
+
+	FORCEINLINE friend bool operator==(const uint32 &Lhs, const FECsEnumMask_uint32 &Rhs)
+	{
+		return Lhs == Rhs.Mask;
+	}
+
+	FORCEINLINE friend bool operator==(const FECsEnumMask_uint32 &Lhs, const uint32 &Rhs)
+	{
+		return Lhs.Mask == Rhs;
+	}
+
+	FORCEINLINE friend bool operator!=(const uint32 &Lhs, const FECsEnumMask_uint32 &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE friend bool operator!=(const FECsEnumMask_uint32 &Lhs, const uint32 &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+};
+
+template<typename EnumStruct, typename EnumType>
+struct TCsEnumMaskMap
+{
+private:
+	TArray<EnumStruct> Enums;
+	int32 Count;
+	TMap<FString, EnumStruct> NameMap;
+	TMap<FString, EnumStruct> DisplayNameMap;
+	TMap<EnumType, EnumStruct> TypeMap;
+protected:
+	TCsEnumMaskMap()
+	{
+		Count = 0;
+	}
+public:
+	virtual ~TCsEnumMaskMap() {}
+
+	FORCEINLINE EnumStruct Create(const FString &Name, const FString &DisplayName)
+	{
+		EnumType Index = (EnumType)Enums.Num();
+
+		// int32
+		if (std::is_same<EnumType, int32>::value)
+		{
+			if (Index > CS_INT32_BIT_MAX)
+			{
+				UE_LOG(LogCs, Log, TEXT("TCsEnumMaskMap::Create: Reached limit of %d for EnumStruct of type FECsEnumMask_int32. Remaining Enums will be the same as 1<<%d."), Index, CS_INT32_BIT_MAX);
+				return Enums[Index - 1];
+			}
+		}
+		// unt32
+		if (std::is_same<EnumType, uint32>::value)
+		{
+			if (Index > CS_INT32_BIT_MAX)
+			{
+				UE_LOG(LogCs, Log, TEXT("TCsEnumMaskMap::Create: Reached limit of %d for EnumStruct of type FECsEnumMask_uint32. Remaining Enums will be the same as 1<<%d."), Index, CS_INT32_BIT_MAX);
+				return Enums[Index - 1];
+			}
+		}
+
+		EnumStruct E(Index, Name, DisplayName);
+
+		Enums.Add(E);
+		++Count;
+		NameMap.Add(Name, E);
+		DisplayNameMap.Add(DisplayName, E);
+		TypeMap.Add(Index, E);
+		return E;
+	}
+
+	FORCEINLINE EnumStruct Create(const FString &Name)
+	{
+		return Create(Name, Name);
+	}
+
 	FORCEINLINE const EnumStruct& operator[](const EnumType &Type)
 	{
 		return TypeMap[Type];

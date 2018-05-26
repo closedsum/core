@@ -1,4 +1,4 @@
-// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
+// Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 
 #include "ECsEnumCustomization.h"
 #include "IDetailChildrenBuilder.h"

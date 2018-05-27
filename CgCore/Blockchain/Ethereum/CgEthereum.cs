@@ -607,7 +607,7 @@ namespace CgCore
                     CgEthereumAccount a = new CgEthereumAccount(nickname, address, passphrase);
 
                     string json            = a.ToStr();
-                    string accountFilePath = AccountsDirectory + "\\" + nickname + "-" + address;
+                    string accountFilePath = AccountsDirectory + "\\" + nickname + "-" + address + ".json";
 
                     File.WriteAllText(accountFilePath, json, System.Text.Encoding.ASCII);
 
@@ -1390,7 +1390,7 @@ namespace CgCore
             // Write out pertinent detail of Contract
             CgEthereumContract contract = (CgEthereumContract)eth.Contracts[econtract];
 
-            File.WriteAllText(eth.ContractsDeployedDirectory + "\\" + contract.Address + "-" + econtract + ".txt", contract.ToStr(), System.Text.Encoding.ASCII);
+            File.WriteAllText(eth.ContractsDeployedDirectory + "\\" + contract.Address + "-" + econtract + ".json", contract.ToStr(), System.Text.Encoding.ASCII);
 
             // Stop Miner
             eth.StopMiner();
@@ -1413,7 +1413,7 @@ namespace CgCore
             CgEthereumContract contract = (CgEthereumContract)c;
 
             // Check if Contract file exists
-            var filePaths = Directory.GetFiles(ContractsDeployedDirectory, "*.*", SearchOption.TopDirectoryOnly).Where(s => s.Contains(econtract + ".txt"));
+            var filePaths = Directory.GetFiles(ContractsDeployedDirectory, "*.*", SearchOption.TopDirectoryOnly).Where(s => s.Contains(econtract + ".json"));
 
             foreach (var path in filePaths)
             {
@@ -1422,7 +1422,7 @@ namespace CgCore
             }
 
             // Check if Contract ABI file exists
-            string abiPath = ABIDirectory + "\\" + econtract + ".txt";
+            string abiPath = ABIDirectory + "\\" + econtract + ".json";
 
             if (File.Exists(abiPath))
             {

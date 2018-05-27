@@ -26,7 +26,7 @@ public:
 public:
 
 	FString Address;
-	FString PassPhrase;
+	FString Passphrase;
 
 	CsEthereumAccount(const FString& nickname, const FString &address, const FString &passphrase);
 

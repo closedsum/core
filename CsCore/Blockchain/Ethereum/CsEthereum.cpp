@@ -92,6 +92,7 @@ namespace ECsEthereumCachedName
 	{
 		// Functions
 		const FName StartPrivateChain_Internal = FName("UCsEthereum::StartPrivateChain_Internal");
+		const FName OpenConsole_Internal = FName("UCsEthereum::OpenConsole_Internal");
 		const FName CreateKeystore_Internal = FName("UCsEthereum::CreateKeystore_Internal");
 		const FName SetupAccount_Internal = FName("UCsEthereum::SetupAccount_Internal");
 		const FName BringBalanceToThreshold_Internal = FName("UCsEthereum::BringBalanceToThreshold_Internal");
@@ -108,6 +109,7 @@ namespace ECsEthereumCachedString
 	{
 		// Functions
 		const FString StartPrivateChain_Internal = TEXT("UCsEthereum::StartPrivateChain_Internal");
+		const FString OpenConsole_Internal = TEXT("UCsEthereum::OpenConsole_Internal");
 		const FString CreateKeystore_Internal = TEXT("UCsEthereum::CreateKeystore_Internal");
 		const FString SetupAccount_Internal = TEXT("UCsEthereum::SetupAccount_Internal");
 		const FString BringBalanceToThreshold_Internal = TEXT("UCsEthereum::BringBalanceToThreshold_Internal");
@@ -447,12 +449,8 @@ void UCsEthereum::StartProcess(const TEnumAsByte<ECsBlockchainProcessType::Type>
 			Process->DeAllocate_Event.AddUObject(this, &UCsEthereum::OnConsoleExited);
 		}
 
-		const int32 Count = StartInfo.MonitorOutputEvents.Num();
-
-		for (int32 I = 0; I < Count; ++I)
+		for (const FCsProcessMonitorOutputEvent& Event : StartInfo.MonitorOutputEvents)
 		{
-			const FCsProcessMonitorOutputEvent& Event = StartInfo.MonitorOutputEvents[I];
-
 			Process->AddMonitorOutputEvent(Event);
 		}
 
@@ -627,7 +625,7 @@ CS_COROUTINE(UCsEthereum, OpenConsole_Internal)
 	CS_COROUTINE_BEGIN(r);
 
 	{
-		const FECsBlockchainCommand& Command ECsEthereumCommand::AttachToConsole;
+		const FECsBlockchainCommand& Command = ECsEthereumCommand::AttachToConsole;
 
 		FCsBlockchainProcessStartInfo StartInfo;
 		StartInfo.Filename				= eth->ConsoleFullPath;
@@ -635,7 +633,7 @@ CS_COROUTINE(UCsEthereum, OpenConsole_Internal)
 		StartInfo.RedirectStandardInput = true;
 		StartInfo.AddMonitorOutputEvent(eth->MonitorOutputEvents[Command]);
 
-		const ECsBlockchainProcessType& ProcessType = ECsBlockchainProcessType::Ref::Console;
+		const TCsBlockchainProcessType& ProcessType = ECsBlockchainProcessType::Ref::Console;
 
 		eth->StartProcess(ProcessType, CS_BLOCKCHAIN_SINGLE_NODE_INDEX, StartInfo);
 	}
@@ -661,9 +659,115 @@ void UCsEthereum::CloseConsole()
 	// Account
 #pragma region
 
-void UCsEthereum::LoadAccounts(){}
+void UCsEthereum::LoadAccounts()
+{
+	IFileManager& FileManager = FFileManagerGeneric::Get();
 
-void UCsEthereum::NewAccount(void* Payload){}
+	TArray<FString> FoundFiles;
+	FileManager.FindFiles(FoundFiles, *AccountsDirectory);
+
+	for (const FString& File : FoundFiles)
+	{
+		CsEthereumAccount* Account = new CsEthereumAccount();
+		const FString Path = AccountsDirectory + TEXT("/") + File + ECsCachedString::Str::Json;
+		Account->ParseFromFilePath(File);
+		Accounts.Add(Account->Nickname, Account);
+	}
+	
+	// Check there is a matching Keystore for each Account
+
+	FoundFiles.Reset();
+	FileManager.FindFiles(FoundFiles, *KeystoreDirectory);
+
+	TArray<FString> Keys;
+	Accounts.GetKeys(Keys);
+
+	TArray<FString> InvalidAccounts;
+
+	for (const FString& File : FoundFiles)
+	{
+		CsEthereumAccount* LinkedAcccount = nullptr;
+
+		for (const FString& Key : Keys)
+		{
+			CsEthereumAccount* Account = (CsEthereumAccount*)Accounts[Key];
+
+			if (File.Contains(Account->Address))
+			{
+				LinkedAcccount = Account;
+				break;
+			}
+		}
+
+		// Delete the Keystore if it is not linked to an account
+		if (LinkedAcccount == nullptr)
+		{
+			const FString Path = KeystoreDirectory + TEXT("/") + File;
+
+			FileManager.Delete(*Path, false, true, true);
+
+			if (CsCVarLogBlockchainAccountLoad->GetInt() == CS_CVAR_SHOW_LOG)
+			{
+				TArray<FString> Parts;
+				File.ParseIntoArray(Parts, TEXT("--"), true);
+				const FString& Address = Parts[2];
+
+				UE_LOG(LogCs, Log, TEXT("CsEthereum::LoadAccounts: Failed to link Keystore with address: %s to an Account."), *Address);
+				UE_LOG(LogCs, Log, TEXT("-- deleting: %s"), *Path);
+			}
+			//InvalidAccounts.Add(LinkedAcccount->Nickname);
+		}
+		else
+		{
+			CreateKeystore(LinkedAcccount);
+		}
+	}
+	// Check remaining Accounts that did NOT get matched with a keystore
+
+	for (const FString& Key : Keys)
+	{
+		CsEthereumAccount* Account = (CsEthereumAccount*)Accounts[Key];
+
+		// Delete the Account file
+		const FString Path = AccountsDirectory + TEXT("/") + Key + TEXT("--") + Account->Address + TEXT(".json");
+
+		if (FileManager.FileExists(*Path))
+			FileManager.Delete(*Path);
+
+		// Remove the Account
+		Accounts.Remove(Key);
+
+		if (CsCVarLogBlockchainAccountLoad->GetInt() == CS_CVAR_SHOW_LOG)
+		{
+			UE_LOG(LogCs, Log, TEXT("CsEthereum::LoadAccounts: Failed to link Account with Nickname: %s and address: %s to any Keystore."), *Key, *(Account->Address));
+			UE_LOG(LogCs, Log, TEXT("-- deleting: %s"), *Path);
+		}
+	}
+}
+
+void UCsEthereum::NewAccount(void* Payload)
+{
+	FCsEthereumAccountInfo* Info = (FCsEthereumAccountInfo*)Payload;
+
+	if (!Accounts.Find(Info->Nickname))
+	{
+		UE_LOG(LogCs, Warning, TEXT("CgEthereum::NewAccount: Account with Nickname: %s already exists."), *(Info->Nickname));
+		return;
+	}
+
+	CommandFlag = false;
+
+	const uint8 ARGUMENTS = 1;
+	const uint8 PASSPHRASE = 0;
+
+	TArray<FCsBlockchainCommandArgument> Args;
+	Args.SetNum(ARGUMENTS);
+	Args[PASSPHRASE].Set(ECsBlockchainCommandArgumentType::StringString, Info->Passphrase);
+
+	CurrentCommandInfo.Set(ECsEthereumCommand::NewAccount, Args, Payload);
+
+	RunCommand(CS_BLOCKCHAIN_SINGLE_NODE_INDEX, ECsEthereumCommand::NewAccount, Args);
+}
 
 void UCsEthereum::UnlockAccount(class ICsBlockchainAccount* IAccount)
 {
@@ -883,28 +987,26 @@ void UCsEthereum::Rebuild()
 	if (FileManager.DirectoryExists(*AccountsDirectory))
 	{
 		TArray<FString> FoundFiles;
-
 		FileManager.FindFiles(FoundFiles, *AccountsDirectory, nullptr);
 
-		const int32 Count = FoundFiles.Num();
-
-		for (int32 I = 0; I < Count; ++I)
+		for (const FString& File : FoundFiles)
 		{
-			FileManager.Delete(*(FoundFiles[I]), false, true, true);
+			const FString Path = AccountsDirectory + TEXT("/") + File + ECsCachedString::Str::Json;
+
+			FileManager.Delete(*Path, false, true, true);
 		}
 	}
 	// chaindata
 	if (FileManager.DirectoryExists(*ChainDirectory))
 	{
 		TArray<FString> FoundFiles;
-
 		FileManager.FindFiles(FoundFiles, *ChainDirectory, nullptr);
 
-		const int32 Count = FoundFiles.Num();
-
-		for (int32 I = 0; I < Count; ++I)
+		for (const FString& File : FoundFiles)
 		{
-			FileManager.Delete(*(FoundFiles[I]), false, true, true);
+			const FString Path = ChainDirectory + TEXT("/") + File;
+
+			FileManager.Delete(*Path, false, true, true);
 		}
 	}
 	// genesis.json
@@ -914,42 +1016,39 @@ void UCsEthereum::Rebuild()
 	if (FileManager.DirectoryExists(*ContractsDeployedDirectory))
 	{
 		TArray<FString> FoundFiles;
-
 		FileManager.FindFiles(FoundFiles, *ContractsDeployedDirectory, nullptr);
 
-		const int32 Count = FoundFiles.Num();
-
-		for (int32 I = 0; I < Count; ++I)
+		for (const FString& File : FoundFiles)
 		{
-			FileManager.Delete(*(FoundFiles[I]), false, true, true);
+			const FString Path = ContractsDeployedDirectory + TEXT("/") + File + ECsCachedString::Str::Json;
+
+			FileManager.Delete(*Path, false, true, true);
 		}
 	}
 	// Web3Deploy Linked
 	if (FileManager.DirectoryExists(*Web3DeployLinkedDirectory))
 	{
 		TArray<FString> FoundFiles;
-
 		FileManager.FindFiles(FoundFiles, *Web3DeployLinkedDirectory, nullptr);
 
-		const int32 Count = FoundFiles.Num();
-
-		for (int32 I = 0; I < Count; ++I)
+		for (const FString& File : FoundFiles)
 		{
-			FileManager.Delete(*(FoundFiles[I]), false, true, true);
+			const FString Path = Web3DeployLinkedDirectory + TEXT("/") + File + ECsCachedString::Str::txt;
+
+			FileManager.Delete(*Path, false, true, true);
 		}
 	}
 	// Javascript Contract Linked
 	if (FileManager.DirectoryExists(*JavascriptLinkedDirectory))
 	{
 		TArray<FString> FoundFiles;
-
 		FileManager.FindFiles(FoundFiles, *JavascriptLinkedDirectory, nullptr);
 
-		const int32 Count = FoundFiles.Num();
-
-		for (int32 I = 0; I < Count; ++I)
+		for (const FString& File : FoundFiles)
 		{
-			FileManager.Delete(*(FoundFiles[I]), false, true, true);
+			const FString Path = JavascriptLinkedDirectory + TEXT("/") + File + TEXT(".js");
+
+			FileManager.Delete(*Path, false, true, true);
 		}
 	}
 }
@@ -1062,7 +1161,7 @@ void UCsEthereum::OnConsoleOutputRecieved(const FString &Output)
 			{
 				UE_LOG(LogCs, Log, TEXT("Creating Account: %s"), *Nickname);
 				UE_LOG(LogCs, Log, TEXT("-- Address: %s"), *Address);
-				UE_LOG(LogCs, Log, TEXT("-- PassPhrase: %s"), *Passphrase);
+				UE_LOG(LogCs, Log, TEXT("-- Passphrase: %s"), *Passphrase);
 				UE_LOG(LogCs, Log, TEXT("-- writing to: %s"), *AccountFilePath);
 			}
 
@@ -1191,12 +1290,8 @@ FString UCsEthereum::GetKeystoreFilePath(const FString &Address)
 	TArray<FString> Paths;
 	FileManager.FindFiles(Paths, *KeystoreDirectory, nullptr);
 
-	const int32 Count = Paths.Num();
-
-	for (int32 I = 0; I < Count; ++I)
+	for (const FString& Path : Paths)
 	{
-		const FString& Path = Paths[I];
-
 		if (Path.Contains(Address))
 		{
 			return Path;
@@ -1265,18 +1360,14 @@ CS_COROUTINE(UCsEthereum, CreateKeystore_Internal)
 	do
 	{
 		{
-			TArray<FString> Paths;
-			FileManager.FindFiles(Paths, *(eth->KeystoreDirectory));
+			TArray<FString> FoundFiles;
+			FileManager.FindFiles(FoundFiles, *(eth->KeystoreDirectory));
 
-			const int32 Count = Paths.Num();
-
-			for (int32 I = 0; I < Count; ++I)
+			for (const FString& File : FoundFiles)
 			{
-				const FString& Path = Paths[I];
-
-				if (Path.Contains(*(Account->Address)))
+				if (File.Contains(*(Account->Address)))
 				{
-					KeystoreFilePath = Path;
+					KeystoreFilePath = eth->KeystoreDirectory + TEXT("/") + File;
 					break;
 				}
 
@@ -1606,12 +1697,8 @@ CS_COROUTINE(UCsEthereum, DeployContract_Internal)
 
 		if (Args.Num() > CS_EMPTY)
 		{
-			const int32 Count = Args.Num();
-
-			for (int32 I = 0; I < Count; ++I)
+			for (const FCsBlockchainContractArgument& Arg : Args)
 			{
-				const FCsBlockchainContractArgument& Arg = Args[I];
-
 				Snippet = Snippet.Replace(*(Arg.Name), *(Arg.ToString()));
 			}
 		}
@@ -1661,13 +1748,10 @@ void UCsEthereum::LoadContract(const FECsBlockchainContract &EContract, const FE
 	FileManager.FindFiles(FilePaths, *ContractsDeployedDirectory);
 
 		// Only keep Files ending with EContract.Name + TEXT(".txt")
-	int32 Count			 = FilePaths.Num();
 	const FString Suffix = EContract.Name + TEXT(".txt");
 
-	for (int32 I = 0; I < Count; ++I)
+	for (const FString& Path : FilePaths)
 	{
-		const FString& Path = FilePaths[I];
-
 		if (Path.EndsWith(Suffix))
 		{
 			Contract->ParseFromFilePath(Path);

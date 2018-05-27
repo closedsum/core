@@ -531,6 +531,12 @@ struct FCsBlockchainContractFunctionReturn
 		Value_float = 0.0f;
 		Value_FString = ECsCachedString::Str::Empty;
 	}
+	
+	void Reset()
+	{
+		ValueType = ECsBlockchainContractFunctionReturnType::ECsBlockchainContractFunctionReturnType_MAX;
+		Clear();
+	}
 };
 
 USTRUCT(BlueprintType)
@@ -558,7 +564,6 @@ struct FCsBlockchainContractFunction
 		{
 			Arguments.Add(Args[I]);
 		}
-
 		Return = Ret;
 	}
 
@@ -605,6 +610,21 @@ struct FCsBlockchainContractFunction
 	bool operator!=(const FCsBlockchainContractFunction& B) const
 	{
 		return !(*this == B);
+	}
+
+	void Set(const FString &InSignature, const TArray<FCsBlockchainContractFunctionArgument> &Args, const FCsBlockchainContractFunctionReturn &Ret)
+	{
+		Signature = InSignature;
+
+		Arguments.Reset();
+
+		const int32 Count = Args.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			Arguments.Add(Args[I]);
+		}
+		Return = Ret;
 	}
 
 	void SetArgument(const int32 &Index, const int32 &Value)
@@ -699,6 +719,13 @@ struct FCsBlockchainContractFunction
 			Arguments[I].Clear();
 		}
 		Return.Clear();
+	}
+
+	void Reset()
+	{
+		Signature = ECsCachedString::Str::Empty;
+		Arguments.Reset();
+		Return.Reset();
 	}
 };
 

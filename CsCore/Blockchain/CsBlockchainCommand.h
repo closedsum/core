@@ -157,6 +157,24 @@ struct FCsBlockchainCommandArgument
 		return !(*this == B);
 	}
 
+	void Set(const TCsBlockchainCommandArgumentType &valueType, const int32& value)
+	{
+		ValueType = valueType;
+		Value_int32 = value;
+	}
+
+	void Set(const TCsBlockchainCommandArgumentType &valueType, const float& value)
+	{
+		ValueType = valueType;
+		Value_float = value;
+	}
+
+	void Set(const TCsBlockchainCommandArgumentType &valueType, const FString& value)
+	{
+		ValueType = valueType;
+		Value_FString = value;
+	}
+
 	FString ToString()
 	{
 		// Int32

@@ -92,5 +92,5 @@ public:
 	FString ContractVariableName;
 	FString InstanceVariableName;
 
-	FString AddressAsArg();
+	FString GetAddressAsArg();
 };

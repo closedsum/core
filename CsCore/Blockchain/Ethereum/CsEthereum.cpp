@@ -360,21 +360,8 @@ void UCsEthereum::RunCommand(const int32 &ConsoleIndex, const FECsBlockchainComm
 	// Rebuild command if arguments where passed in
 	if (Arguments.Num() > CS_EMPTY)
 	{
-		int32 Index = Value->Find(TEXT("%s"));
-		int32 Start = 0;
-		
-		// Create list of all string parts
 		TArray<FString> Parts;
-
-		while (Index != INDEX_NONE)
-		{
-			Parts.Add(Value->Mid(Start, Index));
-
-			const int32 ESCAPE_LEN  = 2;
-			Start					= Index + ESCAPE_LEN;
-			FString Remaining	    = Value->Mid(Start);
-			Index					= Remaining.Find(TEXT("%s"));
-		}
+		Value->ParseIntoArray(Parts, TEXT("%s"), true);
 
 		// Add in arguments
 		if ((Parts.Num() - 1) == Arguments.Num())
@@ -669,8 +656,8 @@ void UCsEthereum::LoadAccounts()
 	for (const FString& File : FoundFiles)
 	{
 		CsEthereumAccount* Account = new CsEthereumAccount();
-		const FString Path = AccountsDirectory + TEXT("/") + File + ECsCached::Ext::json;
-		Account->ParseFromFilePath(File);
+		const FString Path = AccountsDirectory + TEXT("/") + File;
+		Account->ParseFromFilePath(Path);
 		Accounts.Add(Account->Nickname, Account);
 	}
 	
@@ -682,7 +669,7 @@ void UCsEthereum::LoadAccounts()
 	TArray<FString> Keys;
 	Accounts.GetKeys(Keys);
 
-	TArray<FString> InvalidAccounts;
+	TMap<FString, bool> ValidAccounts;
 
 	for (const FString& File : FoundFiles)
 	{
@@ -695,6 +682,7 @@ void UCsEthereum::LoadAccounts()
 			if (File.Contains(Account->Address))
 			{
 				LinkedAcccount = Account;
+				ValidAccounts.Add(Key, true);
 				break;
 			}
 		}
@@ -715,7 +703,6 @@ void UCsEthereum::LoadAccounts()
 				UE_LOG(LogCs, Log, TEXT("CsEthereum::LoadAccounts: Failed to link Keystore with address: %s to an Account."), *Address);
 				UE_LOG(LogCs, Log, TEXT("-- deleting: %s"), *Path);
 			}
-			//InvalidAccounts.Add(LinkedAcccount->Nickname);
 		}
 		else
 		{
@@ -726,6 +713,9 @@ void UCsEthereum::LoadAccounts()
 
 	for (const FString& Key : Keys)
 	{
+		if (ValidAccounts.Find(Key))
+			continue;
+
 		CsEthereumAccount* Account = (CsEthereumAccount*)Accounts[Key];
 
 		// Delete the Account file
@@ -1483,7 +1473,7 @@ CS_COROUTINE(UCsEthereum, SetupAccount_Internal)
 	{
 		// Check Account exists
 		{
-			if (!eth->Accounts.Find(Nickname))
+			if (!Account)
 			{
 				eth->NewAccount(Info);
 				// Waittill NewAccount command has completed
@@ -1923,7 +1913,7 @@ void UCsEthereum::CreateContractInstance(ICsBlockchainContract* IContract)
 	Args[ABI].Value_FString = Contract->ContractVariableName;
 	Args[ABI].ValueType		= ECsBlockchainCommandArgumentType::String;
 	Args.AddDefaulted();
-	Args[ADDRESS].Value_FString = Contract->AddressAsArg();
+	Args[ADDRESS].Value_FString = Contract->GetAddressAsArg();
 	Args[ADDRESS].ValueType		= ECsBlockchainCommandArgumentType::String;
 
 	CurrentCommandInfo.Set(ECsEthereumCommand::CreateContractInstance, Args);
@@ -2087,7 +2077,7 @@ CS_COROUTINE(UCsEthereum, RunContractStateChangeFunction_Internal)
 	eth->CommandFlag = false;
 
 	{
-		const FString Address = Account->AddressAsArg();
+		const FString& Address = Account->GetAddressAsArg();
 
 		FCsBlockchainContractFunction Fn = eth->ContractFunctions[EContract][EFn];
 		Fn.SetArguments(Args);
@@ -2130,7 +2120,7 @@ void UCsEthereum::GetGasEstimate(const FECsBlockchainContract &EContract, ICsBlo
 	CommandFlag = false;
 
 	CsEthereumAccount* Account	= (CsEthereumAccount*)IAccount;
-	const FString Address		= Account->AddressAsArg();
+	const FString& Address		= Account->GetAddressAsArg();
 
 	FCsBlockchainContractFunction Fn = ContractFunctions[EContract][EFn];
 	Fn.SetArguments(Args);

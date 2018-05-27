@@ -34,7 +34,7 @@ void CsEthereumContract::ParseFromFilePath(const FString &Path)
 {
 }
 
-FString CsEthereumContract::AddressAsArg()
+FString CsEthereumContract::GetAddressAsArg()
 {
 	return TEXT("'0x") + Address + TEXT("'");
 }

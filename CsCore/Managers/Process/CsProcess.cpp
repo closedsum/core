@@ -196,10 +196,10 @@ bool UCsProcess::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 
 
 void UCsProcess::RunCommand(const FString &Command)
 {
+	StartRead();
+
 	FPlatformProcess::WritePipe(WritePipe, Command);
 	FPlatformProcess::WritePipe(WritePipe, ECsStringEscapeCharacter::LF);
-
-	StartRead();
 }
 
 // Read / Output

@@ -16,6 +16,9 @@ CsEthereumAccount::CsEthereumAccount(const FString &nickname, const FString &add
 	Nickname = nickname;
 	Address = address;
 	Passphrase = passphrase;
+
+	AddressAsHex = TEXT("0x") + Address;
+	AddressAsArg = TEXT("'") + AddressAsHex + TEXT("'");
 }
 
 CsEthereumAccount::~CsEthereumAccount(){}
@@ -54,8 +57,8 @@ void CsEthereumAccount::Parse(const FString &Str)
 
 	if (FJsonSerializer::Deserialize(JsonReader, JsonParsed) && JsonParsed.IsValid())
 	{
-		// chainId
-		Nickname = JsonParsed->GetStringField(TEXT("chainId"));
+		// Nickname
+		Nickname = JsonParsed->GetStringField(TEXT("Nickname"));
 		// Address
 		Address = JsonParsed->GetStringField(TEXT("Address"));
 		// Passphrase
@@ -88,17 +91,23 @@ void CsEthereumAccount::ParseFromFilePath(const FString &Path)
 
 void CsEthereumAccount::CreateUnlockArguments(TArray<FCsBlockchainCommandArgument> &OutArgs)
 {
-	OutArgs.Add(FCsBlockchainCommandArgument(ECsBlockchainCommandArgumentType::StringString, Address));
-	OutArgs.Add(FCsBlockchainCommandArgument(ECsBlockchainCommandArgumentType::StringString, Passphrase));
-	OutArgs.Add(FCsBlockchainCommandArgument(ECsBlockchainCommandArgumentType::Int32, 0));
+	const uint8 ARGUMENTS = 3;
+	const uint8 ADDRESS = 0;
+	const uint8 PASSPHRASE = 1;
+	const uint8 TIME = 2;
+
+	OutArgs.SetNum(ARGUMENTS);
+	OutArgs[ADDRESS].Set(ECsBlockchainCommandArgumentType::StringString, Address);
+	OutArgs[PASSPHRASE].Set(ECsBlockchainCommandArgumentType::StringString, Passphrase);
+	OutArgs[TIME].Set(ECsBlockchainCommandArgumentType::Int32, 0);
 }
 
-FString CsEthereumAccount::AddressAsHex()
+const FString& CsEthereumAccount::GetAddressAsHex()
 {
-	return TEXT("0x") + Address;
+	return AddressAsHex;
 }
 
-FString CsEthereumAccount::AddressAsArg()
+const FString& CsEthereumAccount::GetAddressAsArg()
 {
-	return TEXT("'") + AddressAsHex() + TEXT("'");
+	return AddressAsArg;
 }

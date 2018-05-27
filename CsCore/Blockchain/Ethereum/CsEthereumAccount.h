@@ -25,13 +25,19 @@ public:
 
 public:
 
+	CsEthereumAccount(const FString& nickname, const FString &address, const FString &passphrase);
+
 	FString Address;
 	FString Passphrase;
 
-	CsEthereumAccount(const FString& nickname, const FString &address, const FString &passphrase);
+private:
+	FString AddressAsHex;
+public:
+	const FString& GetAddressAsHex();
+private:
+	FString AddressAsArg;
+public:
+	const FString& GetAddressAsArg();
 
 	void CreateUnlockArguments(TArray<FCsBlockchainCommandArgument> &OutArgs);
-
-	FString AddressAsHex();
-	FString AddressAsArg();
 };

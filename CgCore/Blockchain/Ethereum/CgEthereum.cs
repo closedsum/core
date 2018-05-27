@@ -961,7 +961,7 @@ namespace CgCore
 
             paths = Directory.GetFiles(KeystoreDirectory);
             Dictionary<string, ICgBlockchainAccount>.KeyCollection names = Accounts.Keys;
-            List<string> invalidAccounts = new List<string>();
+            Dictionary<string, bool> validAccounts = new Dictionary<string, bool>();
 
             foreach (string path in paths)
             {
@@ -974,6 +974,7 @@ namespace CgCore
                     if (path.Contains(a.Address))
                     {
                         linkedAcccount = a;
+                        validAccounts.Add(name, true);
                         break;
                     }
                 }
@@ -991,7 +992,6 @@ namespace CgCore
                         CgDebug.Log("CgEthereum.LoadAccounts: Failed to link Keystore with address: " + address + " to an Account.");
                         CgDebug.Log("-- deleting: " + path);
                     }
-                    invalidAccounts.Add(linkedAcccount.Nickname);
                 }
                 else
                 {
@@ -1000,8 +1000,13 @@ namespace CgCore
             }
             // Check remaining Accounts that did NOT get matched with a keystore
 
-            foreach (string name in invalidAccounts)
+            foreach (string name in names)
             {
+                bool isValid;
+
+                if (validAccounts.TryGetValue(name, out isValid))
+                    continue;
+
                 CgEthereumAccount account = (CgEthereumAccount)Accounts[name];
 
                 // Delete the Account file
@@ -1574,7 +1579,7 @@ namespace CgCore
             args[INSTANCE].ValueType            = ECgBlockchainCommandArgumentType.String;
             args[ABI].Value                     = contract.ContractVariableName;
             args[ABI].ValueType                 = ECgBlockchainCommandArgumentType.String;
-            args[ADDRESS].Value                 = contract.AddressAsArg();
+            args[ADDRESS].Value                 = contract.GetAddressAsArg();
             args[ADDRESS].ValueType             = ECgBlockchainCommandArgumentType.String;
 
             CurrentCommandInfo.Set(ECgEthereumCommand.CreateContractInstance, args, null);
@@ -1661,7 +1666,7 @@ namespace CgCore
             eth.CommandFlag.Set(false);
 
             CgEthereumAccount account = (CgEthereumAccount)iaccount;
-            string address            = account.AddressAsArg();
+            string address            = account.GetAddressAsArg();
 
             CgBlockchainContractFunction fn = eth.ContractFunctions[econtract][efn];
             fn.Arguments                    = args;
@@ -1699,7 +1704,7 @@ namespace CgCore
             CommandFlag.Set(false);
 
             CgEthereumAccount account = (CgEthereumAccount)iaccount;
-            string address            = account.AddressAsArg();
+            string address            = account.GetAddressAsArg();
 
             CgBlockchainContractFunction fn = ContractFunctions[econtract][efn];
             fn.Arguments                    = args;

@@ -635,6 +635,13 @@ TAutoConsoleVariable<int32> CsCVarLogManagerProcessTransactions(
 	ECVF_SetByConsole
 );
 
+TAutoConsoleVariable<int32> CsCVarLogProcessIO(
+	TEXT("log.process.io"),
+	0,
+	TEXT("Log Process Input / Ouput from Write / Read Pipes."),
+	ECVF_SetByConsole
+);
+
 #pragma endregion Process
 
 // Blockchain

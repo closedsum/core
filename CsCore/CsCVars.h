@@ -287,6 +287,7 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerRunnableTransactio
 #pragma region
 
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerProcessTransactions;
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogProcessIO;
 
 #pragma endregion Process
 

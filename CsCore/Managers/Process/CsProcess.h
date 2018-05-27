@@ -325,6 +325,8 @@ struct FCsProcessPayload : public FCsPooledObjectPayload
 {
 	GENERATED_USTRUCT_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
+	FString Name;
 	/** executable name */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
 	FString URL;
@@ -357,6 +359,7 @@ public:
 	{
 		FCsPooledObjectPayload::Reset();
 
+		Name = ECsCached::Str::Empty;
 		URL = ECsCached::Str::Empty;
 		Params = ECsCached::Str::Empty;
 		bLaunchDetached = false;
@@ -377,6 +380,8 @@ struct FCsProcessCache : public FCsPooledObjectCache
 {
 	GENERATED_USTRUCT_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
+	FString Name;
 	/** executable name */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
 	FString URL;
@@ -417,6 +422,7 @@ struct FCsProcessCache : public FCsPooledObjectCache
 	{
 		FCsPooledObjectCache::Reset();
 
+		Name = ECsCached::Str::Empty;
 		URL = ECsCached::Str::Empty;
 		Params = ECsCached::Str::Empty;
 		bLaunchDetached = false;
@@ -465,8 +471,10 @@ public:
 
 	FProcHandle ProcessHandle;
 	uint32 ProcessID;
-	void* ReadPipe;
-	void* WritePipe;
+	void* ReadPipeChild;
+	void* WritePipeChild;
+	void* ReadPipeParent;
+	void* WritePipeParent;
 
 	bool ReadFlag;
 

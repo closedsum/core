@@ -1,9 +1,14 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Process/CsProcess.h"
 #include "CsCore.h"
+#include "CsCVars.h"
 #include "Types/CsTypes_String.h"
 
 #include "Coroutine/CsCoroutineScheduler.h"
+
+#if PLATFORM_WINDOWS
+#include "Windows/WindowsHWrapper.h"
+#endif // #if PLATFORM_WINDOWS
 
 // Enums
 #pragma region
@@ -100,6 +105,29 @@ namespace ECsProcessCached
 
 #pragma endregion Cache
 
+// Copied from: Engine\Source\Runtime\Core\Private\Misc\InteractiveProcess.cpp
+
+static FORCEINLINE bool CreatePipeWrite(void*& ReadPipe, void*& WritePipe)
+{
+#if PLATFORM_WINDOWS
+	SECURITY_ATTRIBUTES Attr = { sizeof(SECURITY_ATTRIBUTES), NULL, true };
+
+	if (!::CreatePipe(&ReadPipe, &WritePipe, &Attr, 0))
+	{
+		return false;
+	}
+
+	if (!::SetHandleInformation(WritePipe, HANDLE_FLAG_INHERIT, 0))
+	{
+		return false;
+	}
+
+	return true;
+#else
+	return FPlatformProcess::CreatePipe(ReadPipe, WritePipe);
+#endif // PLATFORM_WINDOWS
+}
+
 UCsProcess::UCsProcess(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }
@@ -110,6 +138,11 @@ void UCsProcess::Init(const int32 &Index, const FECsProcess &Type)
 
 void UCsProcess::Allocate(const int32 &Index, FCsProcessPayload* Payload)
 {
+	// For reading from child process
+	FPlatformProcess::CreatePipe(ReadPipeParent, WritePipeChild);
+	// For writing to child process
+	CreatePipeWrite(ReadPipeChild, WritePipeParent);
+
 	const FString& URL						= Payload->URL;
 	const FString& Params					= Payload->Params;
 	const bool& bLaunchDetached				= Payload->bLaunchDetached;
@@ -118,9 +151,7 @@ void UCsProcess::Allocate(const int32 &Index, FCsProcessPayload* Payload)
 	const int32& PriorityModifier			= ECsProcessPriorityModifier::ToInt32(Payload->PriorityModifier);
 	const TCHAR* OptionalWorkingDirectory	= Payload->bOptionalWorkingDirectory ? *(Payload->OptionalWorkingDirectory) : nullptr;
 
-	FPlatformProcess::CreatePipe(ReadPipe, WritePipe);
-
-	ProcessHandle = FPlatformProcess::CreateProc(*URL, *Params, bLaunchDetached, bLaucnhHidden, bLaunchReallyHidden, &ProcessID, PriorityModifier, OptionalWorkingDirectory, WritePipe, ReadPipe);
+	ProcessHandle = FPlatformProcess::CreateProc(*URL, *Params, bLaunchDetached, bLaucnhHidden, bLaunchReallyHidden, &ProcessID, PriorityModifier, OptionalWorkingDirectory, WritePipeChild, ReadPipeChild);
 
 	StartRead();
 }
@@ -139,10 +170,16 @@ void UCsProcess::DeAllocate()
 	{
 		FPlatformProcess::TerminateProc(ProcessHandle, true);
 
-		if (ReadPipe || WritePipe)
+		if (ReadPipeParent || WritePipeChild)
 		{
-			FPlatformProcess::ClosePipe(ReadPipe, WritePipe);
-			ReadPipe = WritePipe = nullptr;
+			FPlatformProcess::ClosePipe(ReadPipeParent, WritePipeChild);
+			ReadPipeParent = WritePipeChild = nullptr;
+		}
+
+		if (ReadPipeChild || WritePipeParent)
+		{
+			FPlatformProcess::ClosePipe(ReadPipeChild, WritePipeParent);
+			ReadPipeChild = WritePipeParent = nullptr;
 		}
 	}
 	Cache.Reset();
@@ -196,10 +233,14 @@ bool UCsProcess::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 
 
 void UCsProcess::RunCommand(const FString &Command)
 {
-	StartRead();
+	if (CsCVarLogProcessIO->GetInt() == CS_CVAR_SHOW_LOG)
+	{
+		UE_LOG(LogCs, Log, TEXT("Process::RunCommand (%s-WritePipe): %s"), *(Cache.Name), *Command);
+	}
 
-	FPlatformProcess::WritePipe(WritePipe, Command);
-	FPlatformProcess::WritePipe(WritePipe, ECsStringEscapeCharacter::LF);
+	FPlatformProcess::WritePipe(WritePipeParent, Command);
+
+	//StartRead();
 }
 
 // Read / Output
@@ -246,10 +287,12 @@ CS_COROUTINE(UCsProcess, StartRead_Internal)
 
 	CS_COROUTINE_BEGIN(r);
 
+	CS_COROUTINE_WAIT_UNTIL(r, Elapsed >= 0.5f);
+
 	do
 	{
 		{
-			const FString Output = FPlatformProcess::ReadPipe(p->ReadPipe);
+			const FString Output = FPlatformProcess::ReadPipe(p->ReadPipeParent);
 
 			TArray<FString> Lines;
 
@@ -276,7 +319,7 @@ CS_COROUTINE(UCsProcess, StartRead_Internal)
 
 void UCsProcess::StopRead()
 {
-	ReadFlag = false;
+	//ReadFlag = false;
 
 	//if (StartRead_Internal_Routine && StartRead_Internal_Routine->IsValid())
 	//	StartRead_Internal_Routine->End(ECsCoroutineEndReason::Manual);
@@ -313,7 +356,10 @@ void UCsProcess::ProcessMonitorOuputEvents(const FString &Output)
 
 void UCsProcess::OnOutputRecieved(const FString &Output)
 {
-	UE_LOG(LogCs, Log, TEXT("Process::OnOutputRecieved: ReadPipe: Output: %s"), *Output);
+	if (CsCVarLogProcessIO->GetInt() == CS_CVAR_SHOW_LOG)
+	{
+		UE_LOG(LogCs, Log, TEXT("Process::OnOutputRecieved (%s-ReadPipe): %s"), **(Cache.Name), *Output);
+	}
 
 	OnOutputRecieved_Event.Broadcast(Output);
 #if WITH_EDITOR

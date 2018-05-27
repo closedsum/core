@@ -37,7 +37,7 @@ void UCsWidget_ButtonAndText::OnNativeConstruct()
 	const FString& MemberName   = ECsWidgetButtonAndTextCachedString::Str::ButtonAndText;
 	const FString& MyButtonName = ECsWidgetButtonAndTextCachedString::Str::MyButton;
 	const FString& ButtonName   = ECsWidgetButtonAndTextCachedString::Str::Button;
-	ButtonAndText.Button.Init(ButtonName, MyButtonName, GetName() + ECsCachedString::Str::Dot + MemberName);
+	ButtonAndText.Button.Init(ButtonName, MyButtonName, GetName() + ECsCached::Str::Dot + MemberName);
 
 	MyButton->OnPressed.AddDynamic(this, &UCsWidget_ButtonAndText::MyButton_OnPressed);
 
@@ -45,7 +45,7 @@ void UCsWidget_ButtonAndText::OnNativeConstruct()
 	ButtonAndText.Text.Set(MyText);
 	const FString& MyTextName = ECsWidgetButtonAndTextCachedString::Str::MyText;
 	const FString& TextName   = ECsWidgetButtonAndTextCachedString::Str::Text;
-	ButtonAndText.Text.Init(TextName, MyTextName, GetName() + ECsCachedString::Str::Dot + MemberName);
+	ButtonAndText.Text.Init(TextName, MyTextName, GetName() + ECsCached::Str::Dot + MemberName);
 }
 
 void UCsWidget_ButtonAndText::OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime)

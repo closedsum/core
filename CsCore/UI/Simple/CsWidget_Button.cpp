@@ -24,7 +24,7 @@ void UCsWidget_Button::OnNativeConstruct()
 	Button.Set(MyButton);
 	const FString& ButtonName   = ECsWidgetButtonCachedString::Str::Button;
 	const FString& MyButtonName = ECsWidgetButtonCachedString::Str::MyButton;
-	Button.Init(ButtonName, MyButtonName, GetName() + ECsCachedString::Str::Dot + ButtonName);
+	Button.Init(ButtonName, MyButtonName, GetName() + ECsCached::Str::Dot + ButtonName);
 }
 
 void UCsWidget_Button::OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime)

@@ -20,7 +20,7 @@ UScriptStruct* ACsData_ProjectileWeapon::GetFireModeScriptStruct() { return null
 
 float ACsData_ProjectileWeapon::GetLocationDamageModifier(const TCsWeaponFireMode &FireMode, const FName &Bone) { return 1.0f; }
 
-const bool& ACsData_ProjectileWeapon::UseFakeProjectile(const TCsWeaponFireMode &FireMode) { return ECsCachedReferences::Ref::False; }
+const bool& ACsData_ProjectileWeapon::UseFakeProjectile(const TCsWeaponFireMode &FireMode) { return ECsCached::Ref::False; }
 ACsData_Projectile* ACsData_ProjectileWeapon::GetData_Projectile(const TCsWeaponFireMode &FireMode, const bool &IsCharged) { return nullptr; }
 
 FVector ACsData_ProjectileWeapon::GetMuzzleLocation(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode, const uint8 &Index /*=0*/){ return FVector::ZeroVector; }
@@ -28,13 +28,13 @@ FVector ACsData_ProjectileWeapon::GetMuzzleLocation(USkeletalMeshComponent* InMe
 
 TCsWeaponGrip ACsData_ProjectileWeapon::GetGripType() { return TCsWeaponGrip(0); }
 
-const int32& ACsData_ProjectileWeapon::GetMaxAmmo() { return ECsCachedReferences::Ref::SInt; }
+const int32& ACsData_ProjectileWeapon::GetMaxAmmo() { return ECsCached::Ref::SInt; }
 int32* ACsData_ProjectileWeapon::GetMaxAmmoAddr() { return nullptr; }
-const float& ACsData_ProjectileWeapon::GetRechargeStartupDelay() { return ECsCachedReferences::Ref::Float; }
+const float& ACsData_ProjectileWeapon::GetRechargeStartupDelay() { return ECsCached::Ref::Float; }
 float* ACsData_ProjectileWeapon::GetRechargeStartupDelayAddr() { return nullptr; }
-const float& ACsData_ProjectileWeapon::GetRechargeSecondsPerAmmo() { return ECsCachedReferences::Ref::Float; }
+const float& ACsData_ProjectileWeapon::GetRechargeSecondsPerAmmo() { return ECsCached::Ref::Float; }
 float* ACsData_ProjectileWeapon::GetRechargeSecondsPerAmmoAddr() { return nullptr; }
-const float& ACsData_ProjectileWeapon::GetReloadTime() { return ECsCachedReferences::Ref::Float; }
+const float& ACsData_ProjectileWeapon::GetReloadTime() { return ECsCached::Ref::Float; }
 float* ACsData_ProjectileWeapon::GetReloadTimeAddr() { return nullptr; }
 
 #pragma endregion Stats

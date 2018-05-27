@@ -266,7 +266,7 @@ void ACsManager_Inventory::LogTransaction(const FString &FunctionName, const TEn
 		const FString ItemName				  = Item->ShortCode.ToString();
 		const FString DataName				  = Item->GetData()->ShortCode.ToString();
 		const ACsData_Interactive* Data_Actor = Item->GetData_Actor();
-		const FString DataActorName			  = Data_Actor ? Data_Actor->ShortCode.ToString() : ECsCachedString::Str::Empty;
+		const FString DataActorName			  = Data_Actor ? Data_Actor->ShortCode.ToString() : ECsCached::Str::Empty;
 		const float CurrentTime				  = GetWorld()->GetTimeSeconds();
 
 		if (Data_Actor)

@@ -90,7 +90,7 @@ void ACsManager_Item::LogTransaction(const FString &FunctionName, const TEnumAsB
 		const FString Id					  = Item->Id.ToString();
 		const FString DataName				  = Item->GetData()->ShortCode.ToString();
 		const ACsData_Interactive* Data_Actor = Item->GetData_Actor();
-		const FString DataActorName			  = Data_Actor ? Data_Actor->ShortCode.ToString() : ECsCachedString::Str::Empty;
+		const FString DataActorName			  = Data_Actor ? Data_Actor->ShortCode.ToString() : ECsCached::Str::Empty;
 		const float CurrentTime				  = GetWorld()->GetTimeSeconds();
 
 		if (Data_Actor)
@@ -346,7 +346,7 @@ void ACsManager_Item::DeAllocate(const FGuid &Id)
 	if (Item->IsSaved)
 	{
 		const FString Path = GetSavePath();
-		const FString Filename = Path + Item->FileName + ECsCachedString::Str::Json;
+		const FString Filename = Path + Item->FileName + ECsCached::Ext::json;
 
 		if (IFileManager::Get().FileExists(*Filename))
 		{
@@ -384,7 +384,7 @@ void ACsManager_Item::OnTick_Handle_DeAllocateQueue()
 		if (Item->IsSaved)
 		{
 			const FString Path = GetSavePath();
-			const FString Filename = Path + Item->FileName + ECsCachedString::Str::Json;
+			const FString Filename = Path + Item->FileName + ECsCached::Ext::json;
 
 			if (IFileManager::Get().FileExists(*Filename))
 			{
@@ -635,7 +635,7 @@ void ACsManager_Item::Save(FCsItem* Item)
 	JsonWriter->Close();
 
 	const FString Path		= GetSavePath();
-	const FString Filename  = Path + Item->FileName + ECsCachedString::Str::Json;
+	const FString Filename  = Path + Item->FileName + ECsCached::Ext::json;
 
 	FFileHelper::SaveStringToFile(OutputString, *Filename);
 
@@ -839,7 +839,7 @@ void ACsManager_Item::PopulateExistingItems()
 
 	const FString Path = GetSavePath();
 	// Get all .json files under Path
-	IFileManager::Get().FindFiles(FoundFiles, *Path, *ECsCachedString::Str::Json);
+	IFileManager::Get().FindFiles(FoundFiles, *Path, *ECsCached::Ext::json);
 
 	const int32 FileCount = FoundFiles.Num();
 

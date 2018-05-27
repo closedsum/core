@@ -12,8 +12,8 @@ ACsData_Character::ACsData_Character(const FObjectInitializer& ObjectInitializer
 // Stats
 #pragma region
 
-const int32& ACsData_Character::GetHealth() { return ECsCachedReferences::Ref::SInt; }
-const float& ACsData_Character::GetRespawnTime() { return ECsCachedReferences::Ref::Float; }
+const int32& ACsData_Character::GetHealth() { return ECsCached::Ref::SInt; }
+const float& ACsData_Character::GetRespawnTime() { return ECsCached::Ref::Float; }
 
 #pragma endregion Stats
 
@@ -27,8 +27,8 @@ FCsInventoryLoadout* ACsData_Character::GetLoadout() { return nullptr; }
 // Collision
 #pragma region
 
-const float& ACsData_Character::GetCapsuleRadius() { return ECsCachedReferences::Ref::Float; }
-const float& ACsData_Character::GetCapsuleHalfHeight() { return ECsCachedReferences::Ref::Float; }
+const float& ACsData_Character::GetCapsuleRadius() { return ECsCached::Ref::Float; }
+const float& ACsData_Character::GetCapsuleHalfHeight() { return ECsCached::Ref::Float; }
 FCollisionResponseContainer& ACsData_Character::GetCollisionResponseContainer() { return DefaultCollisionResponseContainer; }
 
 FCsHeadCollision* ACsData_Character::GetHeadCollision() { return nullptr; }
@@ -38,18 +38,18 @@ FCsHeadCollision* ACsData_Character::GetHeadCollision() { return nullptr; }
 // Movement
 #pragma region
 
-const float& ACsData_Character::GetMaxWalkSpeed() { return ECsCachedReferences::Ref::Float; }
-const float& ACsData_Character::GetMaxAcceleration() { return ECsCachedReferences::Ref::Float; }
-const float& ACsData_Character::GetJumpZVelocity() { return ECsCachedReferences::Ref::Float; }
-const float& ACsData_Character::GetGravityScale() { return ECsCachedReferences::Ref::Float; }
-const float& ACsData_Character::GetAirControl() { return ECsCachedReferences::Ref::Float; }
+const float& ACsData_Character::GetMaxWalkSpeed() { return ECsCached::Ref::Float; }
+const float& ACsData_Character::GetMaxAcceleration() { return ECsCached::Ref::Float; }
+const float& ACsData_Character::GetJumpZVelocity() { return ECsCached::Ref::Float; }
+const float& ACsData_Character::GetGravityScale() { return ECsCached::Ref::Float; }
+const float& ACsData_Character::GetAirControl() { return ECsCached::Ref::Float; }
 
 #pragma endregion Movement
 
 // Weapon
 #pragma region
 
-const FName& ACsData_Character::GetBoneToAttachWeaponTo() { return ECsCachedName::Name::None; }
+const FName& ACsData_Character::GetBoneToAttachWeaponTo() { return ECsCached::Name::None; }
 
 #pragma endregion Weapon
 

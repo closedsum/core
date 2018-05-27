@@ -282,7 +282,7 @@ public:
 
 	virtual const FString& EnumTypeToString(const EnumType &e)
 	{
-		return ECsCachedString::Str::Empty;
+		return ECsCached::Str::Empty;
 	}
 
 	void LogTransaction(const FString &functionName, const TEnumAsByte<ECsPoolTransaction::Type> &transaction, ObjectType* o)
@@ -296,9 +296,9 @@ public:
 		const FString TypeAsString = (*InteractiveTypeToString)((TCsInteractiveType)Actor->Cache.Type);
 		const float CurrentTime	   = GetWorld()->GetTimeSeconds();
 		const UObject* ActorOwner  = Actor->Cache.GetOwner();
-		const FString OwnerName	   = ActorOwner ? ActorOwner->GetName() : ECsCachedString::Str::None;
+		const FString OwnerName	   = ActorOwner ? ActorOwner->GetName() : ECsCached::Str::None;
 		const UObject* Parent	   = Actor->Cache.GetParent();
-		const FString ParentName   = Parent ? Parent->GetName() : ECsCachedString::Str::None;
+		const FString ParentName   = Parent ? Parent->GetName() : ECsCached::Str::None;
 
 		if (ActorOwner && Parent)
 		{

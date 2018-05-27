@@ -299,9 +299,9 @@ void ACsManager_InteractiveActor::LogTransaction(const FString &FunctionName, co
 		const FString TypeAsString = (*InteractiveTypeToString)((TCsInteractiveType)Actor->Cache.Type);
 		const float CurrentTime	   = GetWorld()->GetTimeSeconds();
 		const UObject* ActorOwner  = Actor->Cache.GetOwner();
-		const FString OwnerName	   = ActorOwner ? ActorOwner->GetName() : ECsCachedString::Str::None;
+		const FString OwnerName	   = ActorOwner ? ActorOwner->GetName() : ECsCached::Str::None;
 		const UObject* Parent	   = Actor->Cache.GetParent();
-		const FString ParentName   = Parent ? Parent->GetName() : ECsCachedString::Str::None;
+		const FString ParentName   = Parent ? Parent->GetName() : ECsCached::Str::None;
 
 		if (ActorOwner && Parent)
 		{

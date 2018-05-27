@@ -189,9 +189,9 @@ void UCsManager_Widget::LogTransaction(const FString &FunctionName, const TEnumA
 		const FString WidgetName	   = Widget->GetName();
 		const float CurrentTime		   = Widget->GetWorld()->GetTimeSeconds();
 		const UObject* WidgetOwner	   = Widget->Cache.GetOwner();
-		const FString OwnerName		   = WidgetOwner ? WidgetOwner->GetName() : ECsCachedString::Str::None;
+		const FString OwnerName		   = WidgetOwner ? WidgetOwner->GetName() : ECsCached::Str::None;
 		const UObject* Parent		   = Widget->Cache.GetParent();
-		const FString ParentName	   = Parent ? Parent->GetName() : ECsCachedString::Str::None;
+		const FString ParentName	   = Parent ? Parent->GetName() : ECsCached::Str::None;
 
 		if (WidgetOwner && Parent)
 		{

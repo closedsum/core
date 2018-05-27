@@ -29,7 +29,7 @@ void UCsPooledWidget_ProgressBar::NativeConstruct()
 
 	Bar.Set(MyBar);
 	const FString& MemberName = ECsPooledWidgetProgressBarCachedString::Str::Bar;
-	Bar.Init(MemberName, MemberName, GetName() + ECsCachedString::Str::Dot + MemberName);
+	Bar.Init(MemberName, MemberName, GetName() + ECsCached::Str::Dot + MemberName);
 
 	HasNativeContructed = true;
 }

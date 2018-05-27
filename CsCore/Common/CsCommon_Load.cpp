@@ -101,7 +101,7 @@ UCsCommon_Load::UCsCommon_Load(const FObjectInitializer& ObjectInitializer)
 
 FString UCsCommon_Load::LoadFlagsToString(const int32 &LoadFlags)
 {
-	FString String = ECsCachedString::Str::Empty;
+	FString String = ECsCached::Str::Empty;
 	bool IsFirst = true;
 
 	for (int32 I = 0; I < ECS_LOAD_FLAGS_EDITOR_MAX; ++I)
@@ -224,20 +224,20 @@ void UCsCommon_Load::WriteTAssetPtrToJson_AnimBlueprint(TSharedRef<TJsonWriter<T
 		FString AssetName = Member.ToString();
 
 		// (AssetName != TEXT(""))
-		if (AssetName != ECsCachedString::Str::Empty)
+		if (AssetName != ECsCached::Str::Empty)
 		{
 			InJsonWriter->WriteValue(MemberName, AssetName);
 		}
 		else
 		{
 											//   TEXT("")
-			InJsonWriter->WriteValue(MemberName, ECsCachedString::Str::Empty);
+			InJsonWriter->WriteValue(MemberName, ECsCached::Str::Empty);
 		}
 	}
 	else
 	{
 										//   TEXT("")
-		InJsonWriter->WriteValue(MemberName, ECsCachedString::Str::Empty);
+		InJsonWriter->WriteValue(MemberName, ECsCached::Str::Empty);
 	}
 }
 
@@ -254,20 +254,20 @@ void UCsCommon_Load::WriteTAssetPtrToJson_Blueprint(TSharedRef<TJsonWriter<TCHAR
 		const FString AssetName = Member.ToString();
 
 		// (AssetName != TEXT("")
-		if (AssetName != ECsCachedString::Str::Empty)
+		if (AssetName != ECsCached::Str::Empty)
 		{
 			InJsonWriter->WriteValue(MemberName, AssetName);
 		}
 		else
 		{
 											//   TEXT("")
-			InJsonWriter->WriteValue(MemberName, ECsCachedString::Str::Empty);
+			InJsonWriter->WriteValue(MemberName, ECsCached::Str::Empty);
 		}
 	}
 	else
 	{
 										//   TEXT("")
-		InJsonWriter->WriteValue(MemberName, ECsCachedString::Str::Empty);
+		InJsonWriter->WriteValue(MemberName, ECsCached::Str::Empty);
 	}
 }
 
@@ -1012,7 +1012,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 
 void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, void* InStruct, UScriptStruct* const &InScriptStruct, const TArray<FCsCategoryMemberAssociation> &CategoryMemberAssociations, TCsWriteStructToJson_Internal Internal /*=nullptr*/)
 {
-	const FString NoCategory = ECsCachedString::Str::Empty;
+	const FString NoCategory = ECsCached::Str::Empty;
 	FString Category		 = NoCategory;
 	FString LastCategory	 = NoCategory;
 	int32 CategoryIndex		 = 0;
@@ -1041,7 +1041,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 		if (Category != LastCategory)
 		{
 			// (LastCategory != TEXT(""))
-			if (LastCategory != ECsCachedString::Str::Empty)
+			if (LastCategory != ECsCached::Str::Empty)
 				InJsonWriter->WriteObjectEnd();
 			InJsonWriter->WriteObjectStart(Category);
 
@@ -1709,7 +1709,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 
 void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, void* InObject, UClass* const &InClass, const TArray<FCsCategoryMemberAssociation> &CategoryMemberAssociations, TCsWriteObjectToJson_Internal Internal)
 {
-	const FString NoCategory = ECsCachedString::Str::Empty;
+	const FString NoCategory = ECsCached::Str::Empty;
 	FString Category		 = NoCategory;
 	FString LastCategory	 = NoCategory;
 	int32 CategoryIndex		 = 0;
@@ -1738,7 +1738,7 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 		if (Category != LastCategory)
 		{
 			// (LastCategory != TEXT(""))
-			if (LastCategory != ECsCachedString::Str::Empty)
+			if (LastCategory != ECsCached::Str::Empty)
 				InJsonWriter->WriteObjectEnd();
 			InJsonWriter->WriteObjectStart(Category);
 
@@ -3201,7 +3201,7 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 
 void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, void* InStruct, UScriptStruct* const &InScriptStruct, const TArray<FCsCategoryMemberAssociation> &CategoryMemberAssociations, TCsReadStructFromJson_Internal Internal /*=nullptr*/)
 {
-	const FString NoCategory = ECsCachedString::Str::Empty;
+	const FString NoCategory = ECsCached::Str::Empty;
 	FString Category		 = NoCategory;
 	int32 CategoryIndex		 = 0;
 
@@ -3939,7 +3939,7 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 
 void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, void* InObject, UClass* const &InClass, const TArray<FCsCategoryMemberAssociation> &CategoryMemberAssociations, TCsReadObjectFromJson_Internal Internal /*=nullptr*/)
 {
-	const FString NoCategory = ECsCachedString::Str::Empty;
+	const FString NoCategory = ECsCached::Str::Empty;
 	FString Category		 = NoCategory;
 	int32 CategoryIndex		 = 0;
 
@@ -4587,7 +4587,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_AnimMontage(UAsset
 		const FString AssetName				 = AssetRef.ToString();
 
 		// (AssetName == TEXT(""))
-		if (AssetName == ECsCachedString::Str::Empty)
+		if (AssetName == ECsCached::Str::Empty)
 			return;
 
 		OutAssetReferences.AddDefaulted();
@@ -4636,7 +4636,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_AnimMontage(UAsset
 		const FString AssetName				 = AssetRef.ToString();
 
 		// (AssetName == TEXT(""))
-		if (AssetName == ECsCachedString::Str::Empty)
+		if (AssetName == ECsCached::Str::Empty)
 			return;
 
 		OutAssetReferences.AddDefaulted();
@@ -4685,7 +4685,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_AnimSequence(UAsse
 		const FString AssetName				 = AssetRef.ToString();
 
 		// (AssetName == TEXT(""))
-		if (AssetName == ECsCachedString::Str::Empty)
+		if (AssetName == ECsCached::Str::Empty)
 			return;
 
 		OutAssetReferences.AddDefaulted();
@@ -4721,7 +4721,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_AnimSequence(UAsse
 		const FString AssetName				 = AssetRef.ToString();
 
 		// (AssetName == TEXT(""))
-		if (AssetName == ECsCachedString::Str::Empty)
+		if (AssetName == ECsCached::Str::Empty)
 			return;
 
 		OutAssetReferences.AddDefaulted();
@@ -4757,7 +4757,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_MaterialInstanceCo
 		const FString AssetName				 = AssetRef.ToString();
 
 		// (AssetName == TEXT(""))
-		if (AssetName == ECsCachedString::Str::Empty)
+		if (AssetName == ECsCached::Str::Empty)
 			return;
 
 		OutAssetReferences.AddDefaulted();
@@ -4804,7 +4804,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_MaterialInstanceCo
 		const FString AssetName				 = AssetRef.ToString();
 
 		// (AssetName == TEXT(""))
-		if (AssetName == ECsCachedString::Str::Empty)
+		if (AssetName == ECsCached::Str::Empty)
 			return;
 
 		OutAssetReferences.AddDefaulted();
@@ -4851,7 +4851,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_Blueprint(UAssetOb
 		const FString AssetName				 = AssetRef.ToString();
 
 		// (AssetName == TEXT(""))
-		if (AssetName == ECsCachedString::Str::Empty)
+		if (AssetName == ECsCached::Str::Empty)
 			return;
 
 		OutAssetReferences.AddDefaulted();
@@ -4889,7 +4889,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_Blueprint(UAssetOb
 		const FString AssetName				 = AssetRef.ToString();
 
 		// (AssetName == TEXT(""))
-		if (AssetName == ECsCachedString::Str::Empty)
+		if (AssetName == ECsCached::Str::Empty)
 			return;
 
 		OutAssetReferences.AddDefaulted();
@@ -4931,7 +4931,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_AnimMontage(U
 			const FString AssetName				 = AssetRef.ToString();
 
 			// (AssetName == TEXT(""))
-			if (AssetName == ECsCachedString::Str::Empty)
+			if (AssetName == ECsCached::Str::Empty)
 				continue;
 
 			OutAssetReferences.AddDefaulted();
@@ -4985,7 +4985,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_AnimMontage(U
 			const FString AssetName				 = AssetRef.ToString();
 
 			// (AssetName == TEXT(""))
-			if (AssetName == ECsCachedString::Str::Empty)
+			if (AssetName == ECsCached::Str::Empty)
 				continue;
 
 			OutAssetReferences.AddDefaulted();
@@ -5039,7 +5039,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_AnimSequence(
 			const FString AssetName				 = AssetRef.ToString();
 
 			// (AssetName == TEXT(""))
-			if (AssetName == ECsCachedString::Str::Empty)
+			if (AssetName == ECsCached::Str::Empty)
 				continue;
 
 			OutAssetReferences.AddDefaulted();
@@ -5080,7 +5080,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_AnimSequence(
 			const FString AssetName				 = AssetRef.ToString();
 
 			// (AssetName == TEXT(""))
-			if (AssetName == ECsCachedString::Str::Empty)
+			if (AssetName == ECsCached::Str::Empty)
 				continue;
 
 			OutAssetReferences.AddDefaulted();
@@ -5121,7 +5121,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_MaterialInsta
 			const FString AssetName				 = AssetRef.ToString();
 
 			// (AssetName == TEXT(""))
-			if (AssetName == ECsCachedString::Str::Empty)
+			if (AssetName == ECsCached::Str::Empty)
 				continue;
 
 			OutAssetReferences.AddDefaulted();
@@ -5179,7 +5179,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_MaterialInsta
 			const FString AssetName				 = AssetRef.ToString();
 
 			// (AssetName == TEXT(""))
-			if (AssetName == ECsCachedString::Str::Empty)
+			if (AssetName == ECsCached::Str::Empty)
 				continue;
 
 			OutAssetReferences.AddDefaulted();
@@ -5231,7 +5231,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_Blueprint(UAr
 			const FString AssetName				 = AssetRef.ToString();
 
 			// (AssetName == TEXT(""))
-			if (AssetName == ECsCachedString::Str::Empty)
+			if (AssetName == ECsCached::Str::Empty)
 				continue;
 
 			OutAssetReferences.AddDefaulted();
@@ -5273,7 +5273,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_Blueprint(UAr
 			const FString AssetName				 = AssetRef.ToString();
 
 			// (AssetName == TEXT(""))
-			if (AssetName == ECsCachedString::Str::Empty)
+			if (AssetName == ECsCached::Str::Empty)
 				continue;
 
 			OutAssetReferences.AddDefaulted();
@@ -5885,7 +5885,7 @@ void UCsCommon_Load::LoadTAssetPtr_AnimBlueprint(const FString &MemberName, TAss
 	const FString& AssetName = AssetPtr.ToString();
 
 	// (AssetName == TEXT(""))
-	if (AssetName == ECsCachedString::Str::Empty)
+	if (AssetName == ECsCached::Str::Empty)
 	{
 		Internal = nullptr;
 		return;
@@ -5921,7 +5921,7 @@ void UCsCommon_Load::LoadTAssetPtr_AnimBlueprint(const FString &MemberName, TAss
 	const FString& AssetName = AssetPtr->ToString();
 
 	// (AssetName == TEXT("")
-	if (AssetName == ECsCachedString::Str::Empty)
+	if (AssetName == ECsCached::Str::Empty)
 	{
 		Internal = nullptr;
 		return;
@@ -5965,7 +5965,7 @@ void UCsCommon_Load::LoadAssetObjectProperty_AnimBlueprint(UAssetObjectProperty*
 		if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 		{
 			if (UAnimBlueprintGeneratedClass** Internal = InternalProperty->ContainerPtrToValuePtr<UAnimBlueprintGeneratedClass*>(InObject))
-				LoadTAssetPtr_AnimBlueprint(ObjectName + ECsCachedString::Str::Dot + MemberName, Member, *Internal);
+				LoadTAssetPtr_AnimBlueprint(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal);
 										//  ObjectName = TEXT(".") + MemberName
 		}
 	}
@@ -5984,7 +5984,7 @@ void UCsCommon_Load::LoadAssetObjectProperty_AnimBlueprint(UAssetObjectProperty*
 		if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 		{
 			if (UAnimBlueprintGeneratedClass** Internal = InternalProperty->ContainerPtrToValuePtr<UAnimBlueprintGeneratedClass*>(InObject))
-				LoadTAssetPtr_AnimBlueprint(ObjectName + ECsCachedString::Str::Dot + MemberName, Member, *Internal);
+				LoadTAssetPtr_AnimBlueprint(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal);
 										//  ObjectName + TEXT(".") + MemberName
 		}
 	}
@@ -5995,7 +5995,7 @@ void UCsCommon_Load::LoadTAssetPtr_Blueprint(const FString &MemberName, TAssetPt
 	const FString& AssetName = AssetPtr.ToString();
 
 	// (AssetName == TEXT(""))
-	if (AssetName == ECsCachedString::Str::Empty)
+	if (AssetName == ECsCached::Str::Empty)
 	{
 		Internal = nullptr;
 		return;
@@ -6031,7 +6031,7 @@ void UCsCommon_Load::LoadTAssetPtr_Blueprint(const FString &MemberName, TAssetPt
 	const FString& AssetName = AssetPtr->ToString();
 
 	// (AssetName == TEXT(""))
-	if (AssetName == ECsCachedString::Str::Empty)
+	if (AssetName == ECsCached::Str::Empty)
 	{
 		Internal = nullptr;
 		return;
@@ -6090,7 +6090,7 @@ void UCsCommon_Load::LoadTArrayTAssetPtr_Blueprint(const FString &MemberName, TA
 		const FString& AssetName = AssetPtr.ToString();
 
 		// (AssetName != TEXT(""))
-		if (AssetName != ECsCachedString::Str::Empty)
+		if (AssetName != ECsCached::Str::Empty)
 		{
 																			//TEXT("_C")
 			const FString AssetDescription = TEXT("Blueprint'") + AssetName + ECsLoadCachedString::Str::_C + TEXT("'");
@@ -6137,7 +6137,7 @@ void UCsCommon_Load::LoadTArrayTAssetPtr_Blueprint(const FString &MemberName, TA
 		const FString& AssetName = AssetPtr.ToString();
 
 		// (AssetName != TEXT(""))
-		if (AssetName != ECsCachedString::Str::Empty)
+		if (AssetName != ECsCached::Str::Empty)
 		{
 																			//TEXT("_C")
 			const FString AssetDescription = TEXT("Blueprint'") + AssetName + ECsLoadCachedString::Str::_C + TEXT("'");
@@ -6346,7 +6346,7 @@ void UCsCommon_Load::LoadAssetObjectProperty_Blueprint(UAssetObjectProperty* &As
 		if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 		{
 			if (UBlueprintGeneratedClass** Internal = InternalProperty->ContainerPtrToValuePtr<UBlueprintGeneratedClass*>(InObject))
-				LoadTAssetPtr_Blueprint(ObjectName + ECsCachedString::Str::Dot + MemberName, Member, *Internal);
+				LoadTAssetPtr_Blueprint(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal);
 									//  ObjectName + TEXT(".") + MemberName
 		}
 	}
@@ -6365,7 +6365,7 @@ void UCsCommon_Load::LoadAssetObjectProperty_Blueprint(UAssetObjectProperty* &As
 		if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 		{
 			if (UBlueprintGeneratedClass** Internal = InternalProperty->ContainerPtrToValuePtr<UBlueprintGeneratedClass*>(InObject))
-				LoadTAssetPtr_Blueprint(ObjectName + ECsCachedString::Str::Dot + MemberName, Member, *Internal);
+				LoadTAssetPtr_Blueprint(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal);
 									//  ObjectName + TEXT(".") + MemberName
 		}
 	}
@@ -6384,7 +6384,7 @@ void UCsCommon_Load::LoadArrayAssetObjectProperty_Blueprint(UArrayProperty* &Arr
 		if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 		{
 			if (TArray<UBlueprintGeneratedClass*>* Internal = InternalProperty->ContainerPtrToValuePtr<TArray<UBlueprintGeneratedClass*>>(InObject))
-				LoadTArrayTAssetPtr_Blueprint(ObjectName + ECsCachedString::Str::Dot + MemberName, Member, *Internal);
+				LoadTArrayTAssetPtr_Blueprint(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal);
 											//ObjectName + TEXT(".") + MemberName
 		}
 	}
@@ -6403,7 +6403,7 @@ void UCsCommon_Load::LoadArrayAssetObjectProperty_Blueprint(UArrayProperty* &Arr
 		if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 		{
 			if (TArray<UBlueprintGeneratedClass*>* Internal = InternalProperty->ContainerPtrToValuePtr<TArray<UBlueprintGeneratedClass*>>(InObject))
-				LoadTArrayTAssetPtr_Blueprint(ObjectName + ECsCachedString::Str::Dot + MemberName, Member, *Internal);
+				LoadTArrayTAssetPtr_Blueprint(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal);
 											//ObjectName + TEXT(".") + MemberName
 		}
 	}

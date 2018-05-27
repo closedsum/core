@@ -189,7 +189,7 @@ struct FCsBlockchainCommandArgument
 		// StringString
 		if (ValueType == ECsBlockchainCommandArgumentType::StringString)
 			return TEXT("\"") + Value_FString + TEXT("\"");
-		return ECsCachedString::Str::Empty;
+		return ECsCached::Str::Empty;
 	}
 };
 
@@ -250,7 +250,7 @@ struct FCsBlockchainCommandOutput
 		Value_bool = false;
 		Value_int32 = 0;
 		Value_float = 0.0f;
-		Value_FString = ECsCachedString::Str::Empty;
+		Value_FString = ECsCached::Str::Empty;
 		Value_ptr = nullptr;
 	}
 };

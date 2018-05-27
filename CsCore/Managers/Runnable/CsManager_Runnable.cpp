@@ -168,7 +168,7 @@ void UCsManager_Runnable::LogTransaction(const FString &FunctionName, const TEnu
 		const FString& RunnableName  = Runnable->Cache.Name;
 		const float CurrentTime		 = GetCurrentWorld() ? GetCurrentWorld()->GetTimeSeconds() : UCsCommon::GetCurrentDateTimeSeconds();
 		const UObject* RunnableOwner = Runnable->Cache.GetOwner();
-		const FString OwnerName		 = RunnableOwner ? RunnableOwner->GetName() : ECsCachedString::Str::None;
+		const FString OwnerName		 = RunnableOwner ? RunnableOwner->GetName() : ECsCached::Str::None;
 
 		if (RunnableOwner)
 		{

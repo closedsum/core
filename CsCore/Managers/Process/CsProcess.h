@@ -357,14 +357,14 @@ public:
 	{
 		FCsPooledObjectPayload::Reset();
 
-		URL = ECsCachedString::Str::Empty;
-		Params = ECsCachedString::Str::Empty;
+		URL = ECsCached::Str::Empty;
+		Params = ECsCached::Str::Empty;
 		bLaunchDetached = false;
 		bLaunchHidden = false;
 		bLaunchReallyHidden = false;
 		PriorityModifier = ECsProcessPriorityModifier::Normal;
 		bOptionalWorkingDirectory = false;
-		OptionalWorkingDirectory = ECsCachedString::Str::Empty;
+		OptionalWorkingDirectory = ECsCached::Str::Empty;
 	}
 };
 
@@ -417,14 +417,14 @@ struct FCsProcessCache : public FCsPooledObjectCache
 	{
 		FCsPooledObjectCache::Reset();
 
-		URL = ECsCachedString::Str::Empty;
-		Params = ECsCachedString::Str::Empty;
+		URL = ECsCached::Str::Empty;
+		Params = ECsCached::Str::Empty;
 		bLaunchDetached = false;
 		bLaunchHidden = false;
 		bLaunchReallyHidden = false;
 		PriorityModifier = ECsProcessPriorityModifier::Normal;
 		bOptionalWorkingDirectory = false;
-		OptionalWorkingDirectory = ECsCachedString::Str::Empty;
+		OptionalWorkingDirectory = ECsCached::Str::Empty;
 	}
 };
 

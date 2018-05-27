@@ -134,7 +134,7 @@ struct FCsCoroutinePayload
 		DoInit = true;
 		PerformFirstRun = false;
 		Name = NAME_None;
-		NameAsString = ECsCachedString::Str::Empty;
+		NameAsString = ECsCached::Str::Empty;
 	}
 };
 

@@ -258,9 +258,9 @@ void ACsManager_WidgetActor::LogTransaction(const FString &FunctionName, const T
 		const FString TypeAsString	= (*WidgetActorTypeToString)((TCsWidgetActorType)Actor->Cache.Type);
 		const float CurrentTime		= GetWorld()->GetTimeSeconds();
 		const UObject* ActorOwner	= Actor->Cache.GetOwner();
-		const FString OwnerName		= ActorOwner ? ActorOwner->GetName() : ECsCachedString::Str::None;
+		const FString OwnerName		= ActorOwner ? ActorOwner->GetName() : ECsCached::Str::None;
 		const UObject* Parent		= Actor->Cache.GetParent();
-		const FString ParentName	= Parent ? Parent->GetName() : ECsCachedString::Str::None;
+		const FString ParentName	= Parent ? Parent->GetName() : ECsCached::Str::None;
 
 		if (ActorOwner && Parent)
 		{

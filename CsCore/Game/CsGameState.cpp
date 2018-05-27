@@ -780,9 +780,9 @@ void ACsGameState::SetPlayerStateMappingRelationshipFlag(const uint8 &ClientMapp
 				ACsPlayerState* ClientPlayerState = GetPlayerState(ClientMappingId);
 				ACsPlayerState* PlayerState		  = GetPlayerState(MappingId);
 
-				const FString ClientName = ClientPlayerState ? ClientPlayerState->PlayerName : ECsCachedString::Str::INVALID;
-				const FString OtherName  = PlayerState ? PlayerState->PlayerName : ECsCachedString::Str::INVALID;
-				const FString Value		 = Relationship.HasBCompletedInitialReplicationAndLoadingForA ? ECsCachedString::Str::True : ECsCachedString::Str::False;
+				const FString ClientName = ClientPlayerState ? ClientPlayerState->PlayerName : ECsCached::Str::INVALID;
+				const FString OtherName  = PlayerState ? PlayerState->PlayerName : ECsCached::Str::INVALID;
+				const FString Value		 = Relationship.HasBCompletedInitialReplicationAndLoadingForA ? ECsCached::Str::True : ECsCached::Str::False;
 
 				UE_LOG(LogCs, Log, TEXT("ACsGameState::SetPlayerStateMappingRelationshipFlag: Relationship: %s(%d) <-> %s(%d) from %s to True."), *OtherName, MappingId, *ClientName, ClientMappingId, *Value);
 			}
@@ -913,9 +913,9 @@ void ACsGameState::SetAIPlayerStateMappingRelationshipFlag(const uint8 &ClientMa
 				ACsPlayerState* ClientPlayerState = GetPlayerState(ClientMappingId);
 				ACsAIPlayerState* PlayerState	  = GetAIPlayerState(MappingId);
 
-				const FString ClientName = ClientPlayerState ? ClientPlayerState->PlayerName : ECsCachedString::Str::INVALID;
-				const FString OtherName  = PlayerState ? PlayerState->PlayerName : ECsCachedString::Str::INVALID;
-				const FString Value		 = Relationship.HasBCompletedInitialReplicationAndLoadingForA ? ECsCachedString::Str::True : ECsCachedString::Str::False;
+				const FString ClientName = ClientPlayerState ? ClientPlayerState->PlayerName : ECsCached::Str::INVALID;
+				const FString OtherName  = PlayerState ? PlayerState->PlayerName : ECsCached::Str::INVALID;
+				const FString Value		 = Relationship.HasBCompletedInitialReplicationAndLoadingForA ? ECsCached::Str::True : ECsCached::Str::False;
 
 				UE_LOG(LogCs, Log, TEXT("ACsGameState::SetAIPlayerStateMappingRelationshipFlag: Relationship: %s(%d) <-> %s(%d) from %s to True."), *OtherName, MappingId, *ClientName, ClientMappingId, *Value);
 			}

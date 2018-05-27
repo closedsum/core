@@ -2219,7 +2219,7 @@ struct FCsPooledWidgetPayload
 	void Reset()
 	{
 		IsAllocated = false;
-		DisplayName = ECsCachedString::Str::Empty;
+		DisplayName = ECsCached::Str::Empty;
 		Size = FVector2D::ZeroVector;
 		Offset = FIntPoint::ZeroValue;
 		LifeTime = 0.0f;
@@ -2272,7 +2272,7 @@ struct FCsWidgetActorPayload
 
 		Int32 = 0;
 		Float = 0.0f;
-		String = ECsCachedString::Str::Empty;
+		String = ECsCached::Str::Empty;
 	}
 
 	class UUserWidget* GetWidget() { return Widget.IsValid() ? Widget.Get() : nullptr; }

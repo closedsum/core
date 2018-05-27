@@ -355,7 +355,7 @@ public:
 		stopCondition = nullptr;
 		index = CS_ROUTINE_FREE;
 		name = NAME_None;
-		nameAsString = ECsCachedString::Str::Empty;
+		nameAsString = ECsCached::Str::Empty;
 		type = CS_ROUTINE_MAX_TYPE;
 		a.Reset();
 		a = nullptr;

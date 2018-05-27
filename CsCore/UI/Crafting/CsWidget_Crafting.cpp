@@ -13,6 +13,7 @@
 // Managers
 #include "Managers/Input/CsManager_Input.h"
 #include "Managers/Crafting/CsManager_Crafting.h"
+#include "Managers/Inventory/CsManager_Inventory.h"
 // Data
 #include "Data/CsDataMapping.h"
 #include "Data/CsData_Recipe.h"

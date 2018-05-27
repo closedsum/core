@@ -334,7 +334,7 @@ struct FCsStringWord
 
 		for (int32 I = And; I < AndCount; ++I)
 		{
-			if (Ands[I] == ECsCachedString::Str::Empty || Ands[I].IsContainedBy(Input))
+			if (Ands[I] == ECsCached::Str::Empty || Ands[I].IsContainedBy(Input))
 			{
 				++And;
 			}
@@ -344,7 +344,7 @@ struct FCsStringWord
 
 		for (int32 I = 0; I < OrCount; ++I)
 		{
-			Or |= (Ors[I] == ECsCachedString::Str::Empty || Ors[I].IsContainedBy(Input));
+			Or |= (Ors[I] == ECsCached::Str::Empty || Ors[I].IsContainedBy(Input));
 
 			if (Or )
 				break;

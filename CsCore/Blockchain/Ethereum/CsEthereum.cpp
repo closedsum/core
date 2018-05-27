@@ -379,7 +379,7 @@ void UCsEthereum::RunCommand(const int32 &ConsoleIndex, const FECsBlockchainComm
 		// Add in arguments
 		if ((Parts.Num() - 1) == Arguments.Num())
 		{
-			Composite = ECsCachedString::Str::Empty;
+			Composite = ECsCached::Str::Empty;
 
 			int32 Count = Arguments.Num();
 
@@ -669,7 +669,7 @@ void UCsEthereum::LoadAccounts()
 	for (const FString& File : FoundFiles)
 	{
 		CsEthereumAccount* Account = new CsEthereumAccount();
-		const FString Path = AccountsDirectory + TEXT("/") + File + ECsCachedString::Str::Json;
+		const FString Path = AccountsDirectory + TEXT("/") + File + ECsCached::Ext::json;
 		Account->ParseFromFilePath(File);
 		Accounts.Add(Account->Nickname, Account);
 	}
@@ -991,7 +991,7 @@ void UCsEthereum::Rebuild()
 
 		for (const FString& File : FoundFiles)
 		{
-			const FString Path = AccountsDirectory + TEXT("/") + File + ECsCachedString::Str::Json;
+			const FString Path = AccountsDirectory + TEXT("/") + File + ECsCached::Ext::json;
 
 			FileManager.Delete(*Path, false, true, true);
 		}
@@ -1020,7 +1020,7 @@ void UCsEthereum::Rebuild()
 
 		for (const FString& File : FoundFiles)
 		{
-			const FString Path = ContractsDeployedDirectory + TEXT("/") + File + ECsCachedString::Str::Json;
+			const FString Path = ContractsDeployedDirectory + TEXT("/") + File + ECsCached::Ext::json;
 
 			FileManager.Delete(*Path, false, true, true);
 		}
@@ -1033,7 +1033,7 @@ void UCsEthereum::Rebuild()
 
 		for (const FString& File : FoundFiles)
 		{
-			const FString Path = Web3DeployLinkedDirectory + TEXT("/") + File + ECsCachedString::Str::txt;
+			const FString Path = Web3DeployLinkedDirectory + TEXT("/") + File + ECsCached::Ext::txt;
 
 			FileManager.Delete(*Path, false, true, true);
 		}
@@ -1297,14 +1297,14 @@ FString UCsEthereum::GetKeystoreFilePath(const FString &Address)
 			return Path;
 		}
 	}
-	return ECsCachedString::Str::Empty;
+	return ECsCached::Str::Empty;
 }
 
 void UCsEthereum::CreateKeystore(CsEthereumAccount* Account)
 {
 	const FString Path = GetKeystoreFilePath(Account->Address);
 
-	if (Path == ECsCachedString::Str::Empty)
+	if (Path == ECsCached::Str::Empty)
 	{
 		UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 		FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
@@ -1325,7 +1325,7 @@ void UCsEthereum::CreateKeystore(CsEthereumAccount* Account)
 
 		FCsRoutine* R = Scheduler->Allocate(Payload);
 
-		R->strings[CS_FIRST]	  = ECsCachedString::Str::Empty;
+		R->strings[CS_FIRST]	  = ECsCached::Str::Empty;
 		R->voidPointers[CS_FIRST] = Account;
 
 		Scheduler->StartRoutine(Schedule, R);
@@ -1371,16 +1371,16 @@ CS_COROUTINE(UCsEthereum, CreateKeystore_Internal)
 					break;
 				}
 
-				if (KeystoreFilePath != ECsCachedString::Str::Empty)
+				if (KeystoreFilePath != ECsCached::Str::Empty)
 					break;
 			}
 		}
 
-		if (KeystoreFilePath == ECsCachedString::Str::Empty)
+		if (KeystoreFilePath == ECsCached::Str::Empty)
 		{
 			CS_COROUTINE_YIELD(r);
 		}
-	} while (KeystoreFilePath == ECsCachedString::Str::Empty);
+	} while (KeystoreFilePath == ECsCached::Str::Empty);
 
 	{
 		FCsEthereumKeystore Keystore;

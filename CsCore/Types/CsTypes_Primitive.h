@@ -4,83 +4,76 @@
 #include "CsTypes_Primitive.generated.h"
 #pragma once
 
-// String
+// Cached
 #pragma region
 
-namespace ECsCachedString
+namespace ECsCached
 {
 	namespace Str
 	{
-		const FString Empty = TEXT("");
-		const FString None = TEXT("None");
-		const FString Json = TEXT(".json");
-		const FString txt = TEXT(".txt");
-		const FString INVALID = TEXT("INVALID");
-		const FString Dot = TEXT(".");
-		const FString True = TEXT("True");
-		const FString _true = TEXT("true");
-		const FString False = TEXT("False");
-		const FString _false = TEXT("false");
-		const FString Index = TEXT("Index");
-		const FString PREVIEW = TEXT("PREVIEW");
-		const FString Zero = TEXT("0");
-		const FString One = TEXT("1");
+		extern CSCORE_API const FString Empty;// = TEXT("");
+		extern CSCORE_API const FString None;// = TEXT("None");
+		extern CSCORE_API const FString INVALID;// = TEXT("INVALID");
+		extern CSCORE_API const FString Dot;// = TEXT(".");
+		extern CSCORE_API const FString True;// = TEXT("True");
+		extern CSCORE_API const FString _true;// = TEXT("true");
+		extern CSCORE_API const FString False;// = TEXT("False");
+		extern CSCORE_API const FString _false;// = TEXT("false");
+		extern CSCORE_API const FString Index;// = TEXT("Index");
+		extern CSCORE_API const FString PREVIEW;// = TEXT("PREVIEW");
+		extern CSCORE_API const FString Zero;// = TEXT("0");
+		extern CSCORE_API const FString One;// = TEXT("1");
 
-		const FString Text = TEXT("Text");
-		const FString Button = TEXT("Button");
-		const FString Image = TEXT("Image");
+		extern CSCORE_API const FString Text;// = TEXT("Text");
+		extern CSCORE_API const FString Button;// = TEXT("Button");
+		extern CSCORE_API const FString Image;// = TEXT("Image");
 
 		// Vector to String
-		const FString XEquals = TEXT("X=");
-		const FString YEquals = TEXT("Y=");
-		const FString ZEquals = TEXT("Z=");
+		extern CSCORE_API const FString XEquals;// = TEXT("X=");
+		extern CSCORE_API const FString YEquals;// = TEXT("Y=");
+		extern CSCORE_API const FString ZEquals;// = TEXT("Z=");
 		// Rotator to String
-		const FString RollEquals = TEXT("R=");
-		const FString PitchEquals = TEXT("P=");
-		const FString YawEquals = TEXT("Y=");
+		extern CSCORE_API const FString RollEquals;// = TEXT("R=");
+		extern CSCORE_API const FString PitchEquals;// = TEXT("P=");
+		extern CSCORE_API const FString YawEquals;// = TEXT("Y=");
 	}
-}
 
-#define CS_INVALID_ENUM_TO_STRING ECsCachedString::Str::INVALID
-
-#pragma endregion String
-
-// FName
-#pragma region
-
-namespace ECsCachedName
-{
-	namespace Name
-	{
-		const FName None = NAME_None;
-		const FName Null = FName("NULL");
-	}
-}
-
-#define CS_INVALID_SHORT_CODE ECsCachedName::Name::Null
-
-#pragma endregion FName
-
-// Primitive References
-namespace ECsCachedReferences
-{
 	namespace Ref
 	{
-		const bool True = true;
-		const bool False = false;
-		const uint8 Byte = 0;
-		const int8 SByte = 0;
-		const uint16 Short = 0;
-		const int16 SShort = 0;
-		const uint32 Int = 0;
-		const int32 SInt = 0;
-		const uint64 Long = 0;
-		const int32 SLong = 0;
-		const float Float = 0.0f;
-		const FString String = TEXT("");
-		const FName Name = NAME_None;
+		extern CSCORE_API const bool True;// = true;
+		extern CSCORE_API const bool False;// = false;
+		extern CSCORE_API const uint8 Byte;// = 0;
+		extern CSCORE_API const int8 SByte;// = 0;
+		extern CSCORE_API const uint16 Short;// = 0;
+		extern CSCORE_API const int16 SShort;// = 0;
+		extern CSCORE_API const uint32 Int;// = 0;
+		extern CSCORE_API const int32 SInt;// = 0;
+		extern CSCORE_API const uint64 Long;// = 0;
+		extern CSCORE_API const int32 SLong;// = 0;
+		extern CSCORE_API const float Float;// = 0.0f;
+		extern CSCORE_API const FString String;// = TEXT("");
+		extern CSCORE_API const FName Name;// = NAME_None;
+	}
+
+	namespace Name
+	{
+		extern CSCORE_API const FName None;// = NAME_None;
+		extern CSCORE_API const FName Null;// = FName("NULL");
+	}
+
+	namespace Ext
+	{
+		extern CSCORE_API const FString json;// = TEXT(".json");
+		extern CSCORE_API const FString txt;// = TEXT(".txt");
+		extern CSCORE_API const FString js;// = TEXT(".js");
 	}
 }
+
+#define CS_INVALID_ENUM_TO_STRING ECsCached::Str::INVALID
+#define CS_INVALID_SHORT_CODE ECsCached::Name::Null
+
+#pragma endregion Cached
+
 
 // Enum Union
 #pragma region
@@ -1489,7 +1482,7 @@ public:
 
 	FCsPrimitiveType_FString()
 	{
-		DefaultValue = ECsCachedString::Str::Empty;
+		DefaultValue = ECsCached::Str::Empty;
 	}
 	~FCsPrimitiveType_FString() {}
 
@@ -2049,7 +2042,7 @@ struct TCsPrimitiveType_MultiValue_FString : public TCsPrimitiveType_MultiValue<
 {
 	TCsPrimitiveType_MultiValue_FString()
 	{
-		DefaultValue = ECsCachedString::Str::Empty;
+		DefaultValue = ECsCached::Str::Empty;
 	}
 	~TCsPrimitiveType_MultiValue_FString(){}
 };
@@ -2064,7 +2057,7 @@ struct TCsPrimitiveType_MultiValue_FString_Enum_TwoParams : public TCsPrimitiveT
 {
 	TCsPrimitiveType_MultiValue_FString_Enum_TwoParams()
 	{
-		DefaultValue = ECsCachedString::Str::Empty;
+		DefaultValue = ECsCached::Str::Empty;
 	}
 	~TCsPrimitiveType_MultiValue_FString_Enum_TwoParams(){}
 
@@ -2115,7 +2108,7 @@ struct TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams : public TCsPrimitiv
 {
 	TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams()
 	{
-		DefaultValue = ECsCachedString::Str::Empty;
+		DefaultValue = ECsCached::Str::Empty;
 	}
 	~TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams(){}
 
@@ -3310,7 +3303,7 @@ private:
 
 	const FString& ToString_Internal(const bool &Value) const 
 	{
-		return Value ? ECsCachedString::Str::True : ECsCachedString::Str::False;
+		return Value ? ECsCached::Str::True : ECsCached::Str::False;
 	}
 
 public:
@@ -3320,9 +3313,9 @@ public:
 		X = Y = Z = false;
 
 		// The initialization is only successful if the X, Y and Z values can all be parsed from the string
-		const bool bSuccessful = InitFromString_Internal(InSourceString, ECsCachedString::Str::XEquals, X) && 
-								 InitFromString_Internal(InSourceString, ECsCachedString::Str::YEquals, Y) &&
-								 InitFromString_Internal(InSourceString, ECsCachedString::Str::ZEquals, Z);
+		const bool bSuccessful = InitFromString_Internal(InSourceString, ECsCached::Str::XEquals, X) && 
+								 InitFromString_Internal(InSourceString, ECsCached::Str::YEquals, Y) &&
+								 InitFromString_Internal(InSourceString, ECsCached::Str::ZEquals, Z);
 
 		return bSuccessful;
 	}
@@ -3336,12 +3329,12 @@ private:
 
 		Bool = Bool.ToLower();
 
-		if (Bool == ECsCachedString::Str::_true || Bool == ECsCachedString::Str::One)
+		if (Bool == ECsCached::Str::_true || Bool == ECsCached::Str::One)
 		{
 			Value = true;
 			return true;
 		}
-		if (Bool == ECsCachedString::Str::_false || Bool == ECsCachedString::Str::Zero)
+		if (Bool == ECsCached::Str::_false || Bool == ECsCached::Str::Zero)
 		{
 			Value = false;
 			return true;
@@ -3430,7 +3423,7 @@ private:
 
 	const FString& ToString_Internal(const bool &Value) const
 	{
-		return Value ? ECsCachedString::Str::True : ECsCachedString::Str::False;
+		return Value ? ECsCached::Str::True : ECsCached::Str::False;
 	}
 
 public:
@@ -3440,9 +3433,9 @@ public:
 		Roll = Pitch = Yaw = false;
 
 		// The initialization is only successful if the Roll, Pitch and Yaw values can all be parsed from the string
-		const bool bSuccessful = InitFromString_Internal(InSourceString, ECsCachedString::Str::RollEquals, Roll) &&
-								 InitFromString_Internal(InSourceString, ECsCachedString::Str::PitchEquals, Pitch) &&
-								 InitFromString_Internal(InSourceString, ECsCachedString::Str::YawEquals, Yaw);
+		const bool bSuccessful = InitFromString_Internal(InSourceString, ECsCached::Str::RollEquals, Roll) &&
+								 InitFromString_Internal(InSourceString, ECsCached::Str::PitchEquals, Pitch) &&
+								 InitFromString_Internal(InSourceString, ECsCached::Str::YawEquals, Yaw);
 
 		return bSuccessful;
 	}
@@ -3456,12 +3449,12 @@ private:
 
 		Bool = Bool.ToLower();
 
-		if (Bool == ECsCachedString::Str::_true || Bool == ECsCachedString::Str::One)
+		if (Bool == ECsCached::Str::_true || Bool == ECsCached::Str::One)
 		{
 			Value = true;
 			return true;
 		}
-		if (Bool == ECsCachedString::Str::_false || Bool == ECsCachedString::Str::Zero)
+		if (Bool == ECsCached::Str::_false || Bool == ECsCached::Str::Zero)
 		{
 			Value = false;
 			return true;

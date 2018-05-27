@@ -192,9 +192,9 @@ void ACsManager_Projectile::LogTransaction(const FString &FunctionName, const TE
 		const FString DataName		   = Projectile->Cache.GetData()->ShortCode.ToString();
 		const float CurrentTime		   = GetWorld()->GetTimeSeconds();
 		const UObject* ProjectileOwner = Projectile->Cache.GetOwner();
-		const FString OwnerName		   = ProjectileOwner ? ProjectileOwner->GetName() : ECsCachedString::Str::None;
+		const FString OwnerName		   = ProjectileOwner ? ProjectileOwner->GetName() : ECsCached::Str::None;
 		const UObject* Parent		   = Projectile->Cache.GetParent();
-		const FString ParentName	   = Parent ? Parent->GetName() : ECsCachedString::Str::None;
+		const FString ParentName	   = Parent ? Parent->GetName() : ECsCached::Str::None;
 		const FString LocationAsString = Projectile->GetActorLocation().ToString();
 		const FString DirectionAsString = Projectile->GetActorRotation().Vector().GetSafeNormal().ToString();
 

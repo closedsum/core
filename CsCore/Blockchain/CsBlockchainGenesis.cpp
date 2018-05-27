@@ -8,7 +8,7 @@ UCsBlockchainGenesis::UCsBlockchainGenesis(const FObjectInitializer& ObjectIniti
 
 FString UCsBlockchainGenesis::ToString()
 {
-	return ECsCachedString::Str::Empty;
+	return ECsCached::Str::Empty;
 }
 
 void UCsBlockchainGenesis::Parse(const FString &Str){}

@@ -16,17 +16,14 @@
 // Cache
 #pragma region
 
-namespace ECsManagerCraftingCachedName
+namespace ECsManagerCraftingCached
 {
 	namespace Name
 	{
 		// Functions
 		const FName CraftItems_Internal = FName("ACsManager_Crafting::CraftItems_Internal");
 	};
-}
 
-namespace ECsManagerCraftingCachedString
-{
 	namespace Str
 	{
 		// Functions
@@ -129,8 +126,8 @@ void ACsManager_Crafting::CraftItems(FCsCraftingPayload* Payload)
 	CoroutinePayload->Stop			  = &UCsCommon::CoroutineStopCondition_CheckActor;
 	CoroutinePayload->DoInit		  = true;
 	CoroutinePayload->PerformFirstRun = false;
-	CoroutinePayload->Name			  = ECsManagerCraftingCachedName::Name::CraftItems_Internal;
-	CoroutinePayload->NameAsString	  = ECsManagerCraftingCachedString::Str::CraftItems_Internal;
+	CoroutinePayload->Name			  = ECsManagerCraftingCached::Name::CraftItems_Internal;
+	CoroutinePayload->NameAsString	  = ECsManagerCraftingCached::Str::CraftItems_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(CoroutinePayload);
 

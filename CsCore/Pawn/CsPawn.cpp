@@ -22,17 +22,14 @@
 // Cache
 #pragma region
 
-namespace ECsPawnCachedName
+namespace ECsPawnCached
 {
 	namespace Name
 	{
 		// Functions
 		const FName HandleRespawnTimer_Internal = FName("ACsPawn::HandleRespawnTimer_Internal");
 	};
-}
 
-namespace ECsPawnCachedString
-{
 	namespace Str
 	{
 		// Functions
@@ -206,8 +203,8 @@ void ACsPawn::HandleRespawnTimer()
 	Payload->Type			= (uint8)ECsPawnRoutine::HandleRespawnTimer_Internal;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsPawnCachedName::Name::HandleRespawnTimer_Internal;
-	Payload->NameAsString	= ECsPawnCachedString::Str::HandleRespawnTimer_Internal;
+	Payload->Name			= ECsPawnCached::Name::HandleRespawnTimer_Internal;
+	Payload->NameAsString	= ECsPawnCached::Str::HandleRespawnTimer_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 

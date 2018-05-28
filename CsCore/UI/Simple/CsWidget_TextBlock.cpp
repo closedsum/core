@@ -2,7 +2,7 @@
 #include "UI/Simple/CsWidget_TextBlock.h"
 #include "CsCore.h"
 
-namespace ECsWidgetTextBlockCachedString
+namespace ECsWidgetTextBlockCached
 {
 	namespace Str
 	{
@@ -21,7 +21,7 @@ void UCsWidget_TextBlock::OnNativeConstruct()
 
 	Text.Set(MyText);
 	const FString& TextName   = ECsCached::Str::Text;
-	const FString& MyTextName = ECsWidgetTextBlockCachedString::Str::MyText;
+	const FString& MyTextName = ECsWidgetTextBlockCached::Str::MyText;
 	Text.Init(TextName, MyTextName, GetName() + ECsCached::Str::Dot + TextName);
 }
 

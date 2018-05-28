@@ -15,7 +15,7 @@ TWeakObjectPtr<UObject> ACsManager_Projectile::MyOwner;
 // Cache
 #pragma region
 
-namespace ECsManagerProjectileCachedString
+namespace ECsManagerProjectileCached
 {
 	namespace Str
 	{
@@ -137,7 +137,7 @@ void ACsManager_Projectile::OnTick(const float &DeltaSeconds)
 				UE_LOG(LogCs, Warning, TEXT("ACsManager_Projectile::OnTick: Projectile: %s at PoolIndex: %s was prematurely deallocted NOT in a normal way."), *(Projectile->GetName()), Projectile->Cache.Index);
 			}
 
-			LogTransaction(ECsManagerProjectileCachedString::Str::OnTick, ECsPoolTransaction::Deallocate, Projectile);
+			LogTransaction(ECsManagerProjectileCached::Str::OnTick, ECsPoolTransaction::Deallocate, Projectile);
 
 			ActiveProjectiles.RemoveAt(I);
 
@@ -148,7 +148,7 @@ void ACsManager_Projectile::OnTick(const float &DeltaSeconds)
 
 		if (GetWorld()->GetTimeSeconds() - Projectile->Cache.Time > Projectile->Cache.LifeTime)
 		{
-			LogTransaction(ECsManagerProjectileCachedString::Str::OnTick, ECsPoolTransaction::Deallocate, Projectile);
+			LogTransaction(ECsManagerProjectileCached::Str::OnTick, ECsPoolTransaction::Deallocate, Projectile);
 
 			Projectile->DeAllocate();
 			ActiveProjectiles.RemoveAt(I);
@@ -255,7 +255,7 @@ void ACsManager_Projectile::DeAllocate(const int32 &Index)
 
 		if (Projectile->Cache.Index == Index)
 		{
-			LogTransaction(ECsManagerProjectileCachedString::Str::DeAllocate, ECsPoolTransaction::Deallocate, Projectile);
+			LogTransaction(ECsManagerProjectileCached::Str::DeAllocate, ECsPoolTransaction::Deallocate, Projectile);
 
 			Projectile->DeAllocate();
 			ActiveProjectiles.RemoveAt(I);
@@ -305,7 +305,7 @@ ACsProjectile* ACsManager_Projectile::Fire(FCsProjectilePayload* Payload, UObjec
 
 	Projectile->Allocate((uint16)Count, Payload, InInstigator, InOwner, InParent);
 
-	LogTransaction(ECsManagerProjectileCachedString::Str::Fire, ECsPoolTransaction::Allocate, Projectile);
+	LogTransaction(ECsManagerProjectileCached::Str::Fire, ECsPoolTransaction::Allocate, Projectile);
 
 	ActiveProjectiles.Add(Projectile);
 	Payload->Reset();
@@ -330,7 +330,7 @@ void ACsManager_Projectile::Fire(ACsProjectile* OutProjectile, FCsProjectilePayl
 
 	OutProjectile->Allocate((uint16)Count, Payload, InInstigator, InOwner, InParent);
 
-	LogTransaction(ECsManagerProjectileCachedString::Str::Fire, ECsPoolTransaction::Allocate, OutProjectile);
+	LogTransaction(ECsManagerProjectileCached::Str::Fire, ECsPoolTransaction::Allocate, OutProjectile);
 
 	ActiveProjectiles.Add(OutProjectile);
 	Payload->Reset();

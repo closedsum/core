@@ -5,7 +5,7 @@
 #include "Common/CsCommon.h"
 #include "Managers/Widget/CsPooledWidget.h"
 
-namespace ECsManagerWidgetCachedString
+namespace ECsManagerWidgetCached
 {
 	namespace Str
 	{
@@ -114,7 +114,7 @@ void UCsManager_Widget::OnNativeTick(const FGeometry& MyGeometry, const float &D
 			{
 				UE_LOG(LogCs, Warning, TEXT("UCsManager_Widget::OnTick: PooledWidget: %s at PoolIndex: %s was prematurely deallocted NOT in a normal way."), *(Widget->GetName()), Widget->Cache.Index);
 
-				LogTransaction(ECsManagerWidgetCachedString::Str::OnTick, ECsPoolTransaction::Deallocate, Widget);
+				LogTransaction(ECsManagerWidgetCached::Str::OnTick, ECsPoolTransaction::Deallocate, Widget);
 
 				WidgetsPtr->RemoveAt(J);
 
@@ -131,7 +131,7 @@ void UCsManager_Widget::OnNativeTick(const FGeometry& MyGeometry, const float &D
 
 			if (CurrentWorld->GetTimeSeconds() - Widget->Cache.Time > Widget->Cache.LifeTime)
 			{
-				LogTransaction(ECsManagerWidgetCachedString::Str::OnTick, ECsPoolTransaction::Deallocate, Widget);
+				LogTransaction(ECsManagerWidgetCached::Str::OnTick, ECsPoolTransaction::Deallocate, Widget);
 
 				Widget->DeAllocate();
 				WidgetsPtr->RemoveAt(J);
@@ -265,7 +265,7 @@ void UCsManager_Widget::DeAllocate(const TCsSimpleWidgetType &Type, const int32 
 
 		if (Widget->Cache.Index == Index)
 		{
-			LogTransaction(ECsManagerWidgetCachedString::Str::DeAllocate, ECsPoolTransaction::Deallocate, Widget);
+			LogTransaction(ECsManagerWidgetCached::Str::DeAllocate, ECsPoolTransaction::Deallocate, Widget);
 
 			Widget->DeAllocate();
 			Widgets->RemoveAt(I);
@@ -305,7 +305,7 @@ void UCsManager_Widget::DeAllocateAll()
 
 		for (int32 J = WidgetCount - 1; J >= 0; --J)
 		{
-			LogTransaction(ECsManagerWidgetCachedString::Str::DeAllocateAll, ECsPoolTransaction::Deallocate, (*Widgets)[J]);
+			LogTransaction(ECsManagerWidgetCached::Str::DeAllocateAll, ECsPoolTransaction::Deallocate, (*Widgets)[J]);
 
 			(*Widgets)[J]->DeAllocate();
 			Widgets->RemoveAt(J);
@@ -360,7 +360,7 @@ UCsPooledWidget* UCsManager_Widget::Show(const TCsSimpleWidgetType &Type, FCsPoo
 
 	Widget->Allocate(GetActivePoolSize(Type), Payload, InOwner, InParent);
 
-	LogTransaction(ECsManagerWidgetCachedString::Str::Show, ECsPoolTransaction::Allocate, Widget);
+	LogTransaction(ECsManagerWidgetCached::Str::Show, ECsPoolTransaction::Allocate, Widget);
 
 	AddToActivePool(Widget, Type);
 	Payload->Reset();

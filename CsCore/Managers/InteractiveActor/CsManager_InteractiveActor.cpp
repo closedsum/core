@@ -13,7 +13,7 @@
 // Cache
 #pragma region
 
-namespace ECsManagerInteractiveActorCachedString
+namespace ECsManagerInteractiveActorCached
 {
 	namespace Str
 	{
@@ -205,7 +205,7 @@ void ACsManager_InteractiveActor::OnTick(const float &DeltaSeconds)
 			{
 				UE_LOG(LogCs, Warning, TEXT("ACsManager_InteractiveActor::OnTick: InteractiveActor: %s at PoolIndex: %s was prematurely deallocted NOT in a normal way."), *(Actor->GetName()), Actor->Cache.Index);
 
-				LogTransaction(ECsManagerInteractiveActorCachedString::Str::OnTick, ECsPoolTransaction::Deallocate, Actor);
+				LogTransaction(ECsManagerInteractiveActorCached::Str::OnTick, ECsPoolTransaction::Deallocate, Actor);
 
 				ActorsPtr->RemoveAt(J);
 
@@ -219,7 +219,7 @@ void ACsManager_InteractiveActor::OnTick(const float &DeltaSeconds)
 
 			if (GetWorld()->GetTimeSeconds() - Actor->Cache.Time > Actor->Cache.LifeTime)
 			{
-				LogTransaction(ECsManagerInteractiveActorCachedString::Str::OnTick, ECsPoolTransaction::Deallocate, Actor);
+				LogTransaction(ECsManagerInteractiveActorCached::Str::OnTick, ECsPoolTransaction::Deallocate, Actor);
 
 				Actor->DeAllocate();
 				ActorsPtr->RemoveAt(J);
@@ -380,7 +380,7 @@ void ACsManager_InteractiveActor::DeAllocate(const uint8 &Type, const int32 &Ind
 
 		if (Actor->Cache.Index == Index)
 		{
-			LogTransaction(ECsManagerInteractiveActorCachedString::Str::DeAllocate, ECsPoolTransaction::Deallocate, Actor);
+			LogTransaction(ECsManagerInteractiveActorCached::Str::DeAllocate, ECsPoolTransaction::Deallocate, Actor);
 
 			Actor->DeAllocate();
 			Actors->RemoveAt(I);
@@ -418,7 +418,7 @@ void ACsManager_InteractiveActor::DeAllocateAll()
 
 		for (int32 J = ActorCount - 1; J >= 0; --J)
 		{
-			LogTransaction(ECsManagerInteractiveActorCachedString::Str::DeAllocateAll, ECsPoolTransaction::Deallocate, (*Actors)[J]);
+			LogTransaction(ECsManagerInteractiveActorCached::Str::DeAllocateAll, ECsPoolTransaction::Deallocate, (*Actors)[J]);
 
 			(*Actors)[J]->DeAllocate();
 			Actors->RemoveAt(J);
@@ -467,7 +467,7 @@ ACsInteractiveActor* ACsManager_InteractiveActor::WakeUp(const TCsInteractiveTyp
 
 	Actor->Allocate(GetActivePoolSize((uint8)Type), Payload, InOwner, Parent);
 
-	LogTransaction(ECsManagerInteractiveActorCachedString::Str::WakeUp, ECsPoolTransaction::Allocate, Actor);
+	LogTransaction(ECsManagerInteractiveActorCached::Str::WakeUp, ECsPoolTransaction::Allocate, Actor);
 	Payload->Reset();
 	AddToActivePool(Actor, (uint8)Type);
 	return Actor;
@@ -490,7 +490,7 @@ void ACsManager_InteractiveActor::WakeUp(const TCsInteractiveType &Type, ACsInte
 
 	OutActor->Allocate<T>(GetActivePoolSize((uint8)Type), Payload, InOwner, Parent, InObject, OnDeAllocate);
 
-	LogTransaction(ECsManagerInteractiveActorCachedString::Str::WakeUp, ECsPoolTransaction::Allocate, Actor);
+	LogTransaction(ECsManagerInteractiveActorCached::Str::WakeUp, ECsPoolTransaction::Allocate, Actor);
 	Payload->Reset();
 	AddToActivePool(Actor, (uint8)Type);
 }

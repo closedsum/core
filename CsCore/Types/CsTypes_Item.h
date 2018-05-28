@@ -81,7 +81,7 @@ namespace ECsItemCollection
 	}
 }
 
-namespace ECsItemCollectionCachedString
+namespace ECsItemCollectionCached
 {
 	namespace Str
 	{
@@ -1151,43 +1151,43 @@ typedef const TCsItemInteraction&(*TCsStringToItemInteraction)(const FString&);
 									ItemInteractionToString = &ECsItemInteraction::ToString; \
 									StringToItemInteraction = &ECsItemInteraction::ToType;
 
-namespace ECsFileItemProductHeaderCachedString
+namespace ECsFileItemProductHeaderCached
 {
 	namespace Str
 	{
-		const FString Products = TEXT("Products");
-		const FString Name = TEXT("Name");
-		const FString Id = TEXT("Id");
+		extern CSCORE_API const FString Products;// = TEXT("Products");
+		extern CSCORE_API const FString Name;// = TEXT("Name");
+		extern CSCORE_API const FString Id;// = TEXT("Id");
 	}
 }
 
-namespace ECsFileItemHeaderCachedString
+namespace ECsFileItemHeaderCached
 {
 	namespace Str
 	{
-		const FString Header = TEXT("Header");
-		const FString Id = TEXT("Id");
-		const FString ShortCode = TEXT("ShortCode");
-		const FString DisplayName = TEXT("DisplayName");
-		const FString Type = TEXT("Type");
-		const FString Created = TEXT("Created");
-		const FString LifeTime = TEXT("LifeTime");
-		const FString Timespan = TEXT("Timespan");
-		const FString Contents = TEXT("Contents");
+		extern CSCORE_API const FString Header;// = TEXT("Header");
+		extern CSCORE_API const FString Id;// = TEXT("Id");
+		extern CSCORE_API const FString ShortCode;// = TEXT("ShortCode");
+		extern CSCORE_API const FString DisplayName;// = TEXT("DisplayName");
+		extern CSCORE_API const FString Type;// = TEXT("Type");
+		extern CSCORE_API const FString Created;// = TEXT("Created");
+		extern CSCORE_API const FString LifeTime;// = TEXT("LifeTime");
+		extern CSCORE_API const FString Timespan;// = TEXT("Timespan");
+		extern CSCORE_API const FString Contents;// = TEXT("Contents");
 	}
 }
 
-namespace ECsFileItemHistoryHeaderCachedString
+namespace ECsFileItemHistoryHeaderCached
 {
 	namespace Str
 	{
-		const FString CurrentHistory = TEXT("CurrentHistory");
-		const FString PreviousHistories = TEXT("PreviousHistories");
-		const FString OwnerId = TEXT("OwnerId");
-		const FString OwnerName = TEXT("OwnerName");
-		const FString OwnerType = TEXT("OwnerType");
-		const FString Members = TEXT("Members");
-		const FString Value = TEXT("Value");
+		extern CSCORE_API const FString CurrentHistory;// = TEXT("CurrentHistory");
+		extern CSCORE_API const FString PreviousHistories;// = TEXT("PreviousHistories");
+		extern CSCORE_API const FString OwnerId;// = TEXT("OwnerId");
+		extern CSCORE_API const FString OwnerName;// = TEXT("OwnerName");
+		extern CSCORE_API const FString OwnerType;// = TEXT("OwnerType");
+		extern CSCORE_API const FString Members;// = TEXT("Members");
+		extern CSCORE_API const FString Value;// = TEXT("Value");
 	}
 }
 

@@ -26,7 +26,7 @@
 // Cache
 #pragma region
 
-namespace ECsPlayerStateBaseCachedName
+namespace ECsPlayerStateBaseCached
 {
 	namespace Name
 	{
@@ -34,10 +34,7 @@ namespace ECsPlayerStateBaseCachedName
 		const FName OnBoard_Internal = FName("ACsPlayerStateBase::OnBoard_Internal");
 		const FName RequestUniqueMappingId_AI_Internal = FName("ACsPlayerStateBase::RequestUniqueMappingId_AI_Internal");
 	};
-}
 
-namespace ECsPlayerStateBaseCachedString
-{
 	namespace Str
 	{
 		// Functions
@@ -172,8 +169,8 @@ void ACsPlayerStateBase::OnBoard()
 	Payload->Type			= (uint8)ECsPlayerStateBaseRoutine::OnBoard_Internal;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsPlayerStateBaseCachedName::Name::OnBoard_Internal;
-	Payload->NameAsString	= ECsPlayerStateBaseCachedString::Str::OnBoard_Internal;
+	Payload->Name			= ECsPlayerStateBaseCached::Name::OnBoard_Internal;
+	Payload->NameAsString	= ECsPlayerStateBaseCached::Str::OnBoard_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
@@ -595,8 +592,8 @@ void ACsPlayerStateBase::RequestUniqueMappingId_AI(ACsPlayerStateBase* Requestin
 	Payload->Type			 = (uint8)ECsPlayerStateBaseRoutine::RequestUniqueMappingId_AI_Internal;
 	Payload->DoInit			 = true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			 = ECsPlayerStateBaseCachedName::Name::RequestUniqueMappingId_AI_Internal;
-	Payload->NameAsString	 = ECsPlayerStateBaseCachedString::Str::RequestUniqueMappingId_AI_Internal;
+	Payload->Name			 = ECsPlayerStateBaseCached::Name::RequestUniqueMappingId_AI_Internal;
+	Payload->NameAsString	 = ECsPlayerStateBaseCached::Str::RequestUniqueMappingId_AI_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 

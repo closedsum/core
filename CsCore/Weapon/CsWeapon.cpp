@@ -29,7 +29,7 @@
 // Cache
 #pragma region
 
-namespace ECsWeaponCachedName
+namespace ECsWeaponCached
 {
 	namespace Name
 	{
@@ -44,10 +44,7 @@ namespace ECsWeaponCachedName
 		const FName Stop_FireWeapon_Internal = FName("Stop FireWeapon_Internal");
 		const FName Stop_DrawFireProjectile_Internal = FName("Stop DrawFireProjectile_Internal");
 	}
-}
 
-namespace ECsWeaponCachedString
-{
 	namespace Str
 	{
 		// Functions
@@ -684,10 +681,10 @@ void ACsWeapon::ClearRoutines()
 {
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 
-	Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, ECsWeaponCachedName::Name::Stop_PlayAnimation_Reload_Internal, this);
-	Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, ECsWeaponCachedName::Name::Stop_StartChargeFire_Internal, this);
-	Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, ECsWeaponCachedName::Name::Stop_FireWeapon_Internal, this);
-	Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, ECsWeaponCachedName::Name::Stop_DrawFireProjectile_Internal, this);
+	Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, ECsWeaponCached::Name::Stop_PlayAnimation_Reload_Internal, this);
+	Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, ECsWeaponCached::Name::Stop_StartChargeFire_Internal, this);
+	Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, ECsWeaponCached::Name::Stop_FireWeapon_Internal, this);
+	Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, ECsWeaponCached::Name::Stop_DrawFireProjectile_Internal, this);
 }
 
 #pragma endregion Routines
@@ -1133,8 +1130,8 @@ void ACsWeapon::PlayAnimation_Reload()
 	Payload->Type			= (uint8)ECsWeaponRoutine::PlayAnimation_Reload_Internal;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsWeaponCachedName::Name::PlayAnimation_Reload_Internal;
-	Payload->NameAsString	= ECsWeaponCachedString::Str::PlayAnimation_Reload_Internal;
+	Payload->Name			= ECsWeaponCached::Name::PlayAnimation_Reload_Internal;
+	Payload->NameAsString	= ECsWeaponCached::Str::PlayAnimation_Reload_Internal;
 	
 
 	FCsRoutine* R		 = Scheduler->Allocate(Payload);
@@ -1159,7 +1156,7 @@ CS_COROUTINE(ACsWeapon, PlayAnimation_Reload_Internal)
 
 	CS_COROUTINE_BEGIN(r);
 
-	r->AddMessage(ECsCoroutineMessage::Stop, ECsWeaponCachedName::Name::Stop_PlayAnimation_Reload_Internal);
+	r->AddMessage(ECsCoroutineMessage::Stop, ECsWeaponCached::Name::Stop_PlayAnimation_Reload_Internal);
 
 	mw->PlayAnimation(mw->WeaponFireMode_MAX, ReloadAnim, 0);
 
@@ -1492,8 +1489,8 @@ void ACsWeapon::StartChargeFire(const TCsWeaponFireMode &FireMode)
 	Payload->Type			= (uint8)ECsWeaponRoutine::StartChargeFire_Internal;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsWeaponCachedName::Name::StartChargeFire_Internal;
-	Payload->NameAsString	= ECsWeaponCachedString::Str::StartChargeFire_Internal;
+	Payload->Name			= ECsWeaponCached::Name::StartChargeFire_Internal;
+	Payload->NameAsString	= ECsWeaponCached::Str::StartChargeFire_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 	R->timers[0]  = GetWorld()->GetTimeSeconds();
@@ -1519,7 +1516,7 @@ CS_COROUTINE(ACsWeapon, StartChargeFire_Internal)
 
 	CS_COROUTINE_BEGIN(r);
 
-	r->AddMessage(ECsCoroutineMessage::Stop, ECsWeaponCachedName::Name::Stop_StartChargeFire_Internal);
+	r->AddMessage(ECsCoroutineMessage::Stop, ECsWeaponCached::Name::Stop_StartChargeFire_Internal);
 
 	// ChargeFireStart
 	mw->PlayAnimation(FireMode, mw->ChargeFireStartAnim);
@@ -1598,7 +1595,7 @@ void ACsWeapon::StopChargeFire(const TCsWeaponFireMode &FireMode)
 
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 
-	Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, ECsWeaponCachedName::Name::Stop_StartChargeFire_Internal, this);
+	Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, ECsWeaponCached::Name::Stop_StartChargeFire_Internal, this);
 
 	if (StartChargeFire_Internal_Routine && StartChargeFire_Internal_Routine->IsValid())
 		StartChargeFire_Internal_Routine->End(ECsCoroutineEndReason::UniqueInstance);
@@ -1706,8 +1703,8 @@ void ACsWeapon::FireWeapon(const TCsWeaponFireMode &FireMode)
 	Payload->Type			= (uint8)ECsWeaponRoutine::FireWeapon_Internal;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsWeaponCachedName::Name::FireWeapon_Internal;
-	Payload->NameAsString	= ECsWeaponCachedString::Str::FireWeapon_Internal;
+	Payload->Name			= ECsWeaponCached::Name::FireWeapon_Internal;
+	Payload->NameAsString	= ECsWeaponCached::Str::FireWeapon_Internal;
 
 	FCsRoutine* R		= Scheduler->Allocate(Payload);
 	R->timers[CS_FIRST] = 0;
@@ -1740,7 +1737,7 @@ CS_COROUTINE(ACsWeapon, FireWeapon_Internal)
 
 	CS_COROUTINE_BEGIN(r);
 
-	r->AddMessage(ECsCoroutineMessage::Stop, ECsWeaponCachedName::Name::Stop_FireWeapon_Internal);
+	r->AddMessage(ECsCoroutineMessage::Stop, ECsWeaponCached::Name::Stop_FireWeapon_Internal);
 
 	mw->StopChargeFire(FireMode);
 
@@ -1967,8 +1964,8 @@ void ACsWeapon::DrawFireProjectile(class ACsProjectile* Projectile, const FVecto
 	Payload->Stop				= &ACsWeapon::FireWeapon_StopCondition;
 	Payload->DoInit				= true;
 	Payload->PerformFirstRun	= false;
-	Payload->Name				= ECsWeaponCachedName::Name::DrawFireProjectile_Internal;
-	Payload->NameAsString		= ECsWeaponCachedString::Str::DrawFireProjectile_Internal;
+	Payload->Name				= ECsWeaponCached::Name::DrawFireProjectile_Internal;
+	Payload->NameAsString		= ECsWeaponCached::Str::DrawFireProjectile_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 	R->vectors[0] = Start;
@@ -1989,7 +1986,7 @@ CS_COROUTINE(ACsWeapon, DrawFireProjectile_Internal)
 
 	CS_COROUTINE_BEGIN(r);
 
-	r->AddMessage(ECsCoroutineMessage::Stop, ECsWeaponCachedName::Name::Stop_DrawFireProjectile_Internal);
+	r->AddMessage(ECsCoroutineMessage::Stop, ECsWeaponCached::Name::Stop_DrawFireProjectile_Internal);
 
 	do
 	{
@@ -2416,7 +2413,7 @@ void ACsWeapon::Reload()
 			StopChargeFire((TCsWeaponFireMode)I);
 		}
 
-		Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, ECsWeaponCachedName::Name::Stop_FireWeapon_Internal, this);
+		Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, ECsWeaponCached::Name::Stop_FireWeapon_Internal, this);
 
 		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; ++I)
 		{

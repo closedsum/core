@@ -8,7 +8,7 @@
 // Cache
 #pragma region
 
-namespace ECsWidgetInventorySlotCachedString
+namespace ECsWidgetInventorySlotCached
 {
 	namespace Str
 	{

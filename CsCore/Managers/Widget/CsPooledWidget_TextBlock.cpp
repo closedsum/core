@@ -2,7 +2,7 @@
 #include "Managers/Widget/CsPooledWidget_TextBlock.h"
 #include "CsCore.h"
 
-namespace ECsPooledWidgetTextBlockCachedString
+namespace ECsPooledWidgetTextBlockCached
 {
 	namespace Str
 	{
@@ -23,7 +23,7 @@ void UCsPooledWidget_TextBlock::NativeConstruct()
 		return;
 
 	Text.Set(MyText);
-	const FString& MemberName = ECsPooledWidgetTextBlockCachedString::Str::Text;
+	const FString& MemberName = ECsPooledWidgetTextBlockCached::Str::Text;
 	Text.Init(MemberName, MemberName, GetName() + ECsCached::Str::Dot + MemberName);
 
 	HasNativeContructed = true;

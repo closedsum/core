@@ -2,7 +2,7 @@
 #include "UI/Simple/CsWidget_ProgressBar.h"
 #include "CsCore.h"
 
-namespace ECsWidgetProgressBarCachedString
+namespace ECsWidgetProgressBarCached
 {
 	namespace Str
 	{
@@ -21,8 +21,8 @@ void UCsWidget_ProgressBar::OnNativeConstruct()
 	Super::OnNativeConstruct();
 
 	Bar.Set(MyBar);
-	const FString& BarName   = ECsWidgetProgressBarCachedString::Str::Bar;
-	const FString& MyBarName = ECsWidgetProgressBarCachedString::Str::MyBar;
+	const FString& BarName   = ECsWidgetProgressBarCached::Str::Bar;
+	const FString& MyBarName = ECsWidgetProgressBarCached::Str::MyBar;
 	Bar.Init(BarName, MyBarName, GetName() + ECsCached::Str::Dot + BarName);
 }
 

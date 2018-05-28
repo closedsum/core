@@ -18,7 +18,7 @@ TWeakObjectPtr<UObject> ACsManager_WidgetActor::MyOwner;
 // Cache
 #pragma region
 
-namespace ECsManagerWidgetActorCachedString
+namespace ECsManagerWidgetActorCached
 {
 	namespace Str
 	{
@@ -182,7 +182,7 @@ void ACsManager_WidgetActor::OnTick(const float &DeltaSeconds)
 			{
 				UE_LOG(LogCs, Warning, TEXT("ACsManager_WidgetActor::OnTick: WidgetActor: %s at PoolIndex: %s was prematurely deallocted NOT in a normal way."), *(Actor->GetName()), Actor->Cache.Index);
 
-				LogTransaction(ECsManagerWidgetActorCachedString::Str::OnTick, ECsPoolTransaction::Deallocate, Actor);
+				LogTransaction(ECsManagerWidgetActorCached::Str::OnTick, ECsPoolTransaction::Deallocate, Actor);
 
 				ActorsPtr->RemoveAt(J);
 
@@ -196,7 +196,7 @@ void ACsManager_WidgetActor::OnTick(const float &DeltaSeconds)
 
 			if (GetWorld()->GetTimeSeconds() - Actor->Cache.Time > Actor->Cache.LifeTime)
 			{
-				LogTransaction(ECsManagerWidgetActorCachedString::Str::OnTick, ECsPoolTransaction::Deallocate, Actor);
+				LogTransaction(ECsManagerWidgetActorCached::Str::OnTick, ECsPoolTransaction::Deallocate, Actor);
 
 				Actor->DeAllocate();
 				ActorsPtr->RemoveAt(J);
@@ -333,7 +333,7 @@ void ACsManager_WidgetActor::DeAllocate(const uint8 &Type, const int32 &Index)
 
 		if (Actor->Cache.Index == Index)
 		{
-			LogTransaction(ECsManagerWidgetActorCachedString::Str::DeAllocate, ECsPoolTransaction::Deallocate, Actor);
+			LogTransaction(ECsManagerWidgetActorCached::Str::DeAllocate, ECsPoolTransaction::Deallocate, Actor);
 
 			Actor->DeAllocate();
 			Actors->RemoveAt(I);
@@ -373,7 +373,7 @@ void ACsManager_WidgetActor::DeAllocateAll()
 
 		for (int32 J = ActorCount - 1; J >= 0; --J)
 		{
-			LogTransaction(ECsManagerWidgetActorCachedString::Str::DeAllocateAll, ECsPoolTransaction::Deallocate, (*Actors)[J]);
+			LogTransaction(ECsManagerWidgetActorCached::Str::DeAllocateAll, ECsPoolTransaction::Deallocate, (*Actors)[J]);
 
 			(*Actors)[J]->DeAllocate();
 			Actors->RemoveAt(J);
@@ -414,7 +414,7 @@ ACsWidgetActor* ACsManager_WidgetActor::Display(const TCsWidgetActorType &Type, 
 
 	Widget->Allocate(GetActivePoolSize((uint8)Type), Payload, InOwner, Parent);
 	
-	LogTransaction(ECsManagerWidgetActorCachedString::Str::Display, ECsPoolTransaction::Allocate, Widget);
+	LogTransaction(ECsManagerWidgetActorCached::Str::Display, ECsPoolTransaction::Allocate, Widget);
 
 	AddToActivePool(Widget, (uint8)Type);
 	Payload->Reset();
@@ -438,7 +438,7 @@ void ACsManager_WidgetActor::Display(const TCsWidgetActorType &Type, ACsWidgetAc
 
 	OutWidgetActor->Allocate<T>(GetActivePoolSize((uint8)Type), Payload, InOwner, Parent, InObject, OnDeAllocate);
 
-	LogTransaction(ECsManagerWidgetActorCachedString::Str::Display, ECsPoolTransaction::Allocate, OutWidgetActor);
+	LogTransaction(ECsManagerWidgetActorCached::Str::Display, ECsPoolTransaction::Allocate, OutWidgetActor);
 
 	AddToActivePool(Widget, (uint8)Type);
 	Payload->Reset();

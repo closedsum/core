@@ -26,7 +26,7 @@
 // Cache
 #pragma region
 
-namespace ECsManagerItemCachedString
+namespace ECsManagerItemCached
 {
 	namespace Str
 	{
@@ -579,23 +579,23 @@ void ACsManager_Item::Save(FCsItem* Item)
 
 	// Header
 	{
-		JsonWriter->WriteObjectStart(ECsFileItemHeaderCachedString::Str::Header);
+		JsonWriter->WriteObjectStart(ECsFileItemHeaderCached::Str::Header);
 
 			// Id
-			JsonWriter->WriteValue(ECsFileItemHeaderCachedString::Str::Id, Item->Id.ToString());
+			JsonWriter->WriteValue(ECsFileItemHeaderCached::Str::Id, Item->Id.ToString());
 			// ShortCode
-			JsonWriter->WriteValue(ECsFileItemHeaderCachedString::Str::ShortCode, Item->ShortCode.ToString());
+			JsonWriter->WriteValue(ECsFileItemHeaderCached::Str::ShortCode, Item->ShortCode.ToString());
 			// DisplayName
-			JsonWriter->WriteValue(ECsFileItemHeaderCachedString::Str::DisplayName, Item->DisplayName);
+			JsonWriter->WriteValue(ECsFileItemHeaderCached::Str::DisplayName, Item->DisplayName);
 			// Type
-			JsonWriter->WriteValue(ECsFileItemHeaderCachedString::Str::Type, (*ItemTypeToString)(Item->Type));
+			JsonWriter->WriteValue(ECsFileItemHeaderCached::Str::Type, (*ItemTypeToString)(Item->Type));
 			// Created
-			JsonWriter->WriteValue(ECsFileItemHeaderCachedString::Str::Created, Item->Created.ToString());
+			JsonWriter->WriteValue(ECsFileItemHeaderCached::Str::Created, Item->Created.ToString());
 			// Timespan
-			JsonWriter->WriteValue(ECsFileItemHeaderCachedString::Str::Timespan, Item->LifeTime.ToString());
+			JsonWriter->WriteValue(ECsFileItemHeaderCached::Str::Timespan, Item->LifeTime.ToString());
 
 			// Contents
-			JsonWriter->WriteObjectStart(ECsFileItemHeaderCachedString::Str::Contents);
+			JsonWriter->WriteObjectStart(ECsFileItemHeaderCached::Str::Contents);
 
 				const int32 Count = Item->Contents.Num();
 
@@ -609,7 +609,7 @@ void ACsManager_Item::Save(FCsItem* Item)
 	}
 	// Products
 	{
-		JsonWriter->WriteArrayStart(ECsFileItemProductHeaderCachedString::Str::Products);
+		JsonWriter->WriteArrayStart(ECsFileItemProductHeaderCached::Str::Products);
 
 		TArray<TCsItemProductId> Keys;
 		Item->Products.GetKeys(Keys);
@@ -645,13 +645,13 @@ void ACsManager_Item::Save(FCsItem* Item)
 void ACsManager_Item::SaveProduct(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FCsItemProduct* Product)
 {
 	// Name
-	JsonWriter->WriteValue(ECsFileItemProductHeaderCachedString::Str::Name, Product->Name);
+	JsonWriter->WriteValue(ECsFileItemProductHeaderCached::Str::Name, Product->Name);
 	// Id
-	JsonWriter->WriteValue(ECsFileItemProductHeaderCachedString::Str::Id, Product->Id.ToString());
+	JsonWriter->WriteValue(ECsFileItemProductHeaderCached::Str::Id, Product->Id.ToString());
 
 	// Current History
 	{
-		JsonWriter->WriteObjectStart(ECsFileItemHistoryHeaderCachedString::Str::CurrentHistory);
+		JsonWriter->WriteObjectStart(ECsFileItemHistoryHeaderCached::Str::CurrentHistory);
 
 		SaveHistory(JsonWriter, &(Product->CurrentHistory));
 
@@ -659,7 +659,7 @@ void ACsManager_Item::SaveProduct(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FC
 	}
 	// Previous Histories
 	{
-		JsonWriter->WriteArrayStart(ECsFileItemHistoryHeaderCachedString::Str::PreviousHistories);
+		JsonWriter->WriteArrayStart(ECsFileItemHistoryHeaderCached::Str::PreviousHistories);
 
 		const int32 Count = Product->PreviousHistories.Num();
 
@@ -679,14 +679,14 @@ void ACsManager_Item::SaveProduct(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FC
 void ACsManager_Item::SaveHistory(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FCsItemHistory* ItemHistory)
 {
 	// OwnerId
-	JsonWriter->WriteValue(ECsFileItemHistoryHeaderCachedString::Str::OwnerId, ItemHistory->OwnerId.ToString());
+	JsonWriter->WriteValue(ECsFileItemHistoryHeaderCached::Str::OwnerId, ItemHistory->OwnerId.ToString());
 	// OwnerType
-	JsonWriter->WriteValue(ECsFileItemHistoryHeaderCachedString::Str::OwnerType, (*ItemOwnerToString)(ItemHistory->OwnerType));
+	JsonWriter->WriteValue(ECsFileItemHistoryHeaderCached::Str::OwnerType, (*ItemOwnerToString)(ItemHistory->OwnerType));
 	// OwnerName
-	JsonWriter->WriteValue(ECsFileItemHistoryHeaderCachedString::Str::OwnerName, ItemHistory->OwnerName);
+	JsonWriter->WriteValue(ECsFileItemHistoryHeaderCached::Str::OwnerName, ItemHistory->OwnerName);
 
 	// Members
-	JsonWriter->WriteObjectStart(ECsFileItemHistoryHeaderCachedString::Str::Members);
+	JsonWriter->WriteObjectStart(ECsFileItemHistoryHeaderCached::Str::Members);
 
 		TArray<FName> OutKeys;
 		ItemHistory->Members.GetKeys(OutKeys);
@@ -877,24 +877,24 @@ void ACsManager_Item::PopulateExistingItems()
 
 				// Header
 				{
-					TSharedPtr<FJsonObject> JsonObject = JsonParsed->Values.Find(ECsFileItemHeaderCachedString::Str::Header)->Get()->AsObject();
+					TSharedPtr<FJsonObject> JsonObject = JsonParsed->Values.Find(ECsFileItemHeaderCached::Str::Header)->Get()->AsObject();
 
 					// Id
-					FGuid::Parse(JsonObject->GetStringField(ECsFileItemHeaderCachedString::Str::Id), Item->Id);
+					FGuid::Parse(JsonObject->GetStringField(ECsFileItemHeaderCached::Str::Id), Item->Id);
 					// ShortCode
-					Item->ShortCode = FName(*JsonObject->GetStringField(ECsFileItemHeaderCachedString::Str::ShortCode));
+					Item->ShortCode = FName(*JsonObject->GetStringField(ECsFileItemHeaderCached::Str::ShortCode));
 					// DisplayName
-					Item->DisplayName = JsonObject->GetStringField(ECsFileItemHeaderCachedString::Str::DisplayName);
+					Item->DisplayName = JsonObject->GetStringField(ECsFileItemHeaderCached::Str::DisplayName);
 					// Type
-					Item->TypeAsString = JsonObject->GetStringField(ECsFileItemHeaderCachedString::Str::Type);
+					Item->TypeAsString = JsonObject->GetStringField(ECsFileItemHeaderCached::Str::Type);
 					Item->SetType((*StringToItemType)(Item->TypeAsString));
 					// Created
-					FDateTime::Parse(JsonObject->GetStringField(ECsFileItemHeaderCachedString::Str::Created), Item->Created);
+					FDateTime::Parse(JsonObject->GetStringField(ECsFileItemHeaderCached::Str::Created), Item->Created);
 					// Timespan
-					FTimespan::Parse(JsonObject->GetStringField(ECsFileItemHeaderCachedString::Str::Timespan), Item->LifeTime);
+					FTimespan::Parse(JsonObject->GetStringField(ECsFileItemHeaderCached::Str::Timespan), Item->LifeTime);
 
 					// Contents
-					const TSharedPtr<FJsonObject>& Object = JsonObject->GetObjectField(ECsFileItemHeaderCachedString::Str::Contents);
+					const TSharedPtr<FJsonObject>& Object = JsonObject->GetObjectField(ECsFileItemHeaderCached::Str::Contents);
 
 					TArray<FString> Keys;
 
@@ -919,7 +919,7 @@ void ACsManager_Item::PopulateExistingItems()
 
 				// Products
 				{
-					const TArray<TSharedPtr<FJsonValue>> JsonArray = JsonParsed->Values.Find(ECsFileItemProductHeaderCachedString::Str::Products)->Get()->AsArray();
+					const TArray<TSharedPtr<FJsonValue>> JsonArray = JsonParsed->Values.Find(ECsFileItemProductHeaderCached::Str::Products)->Get()->AsArray();
 
 					TArray<TCsItemProductId> Keys;
 					Item->Products.GetKeys(Keys);
@@ -1043,19 +1043,19 @@ void ACsManager_Item::AsyncPopulateExistingItems()
 void ACsManager_Item::LoadProduct(TSharedPtr<class FJsonObject> &JsonObject, FCsItem* Item, FCsItemProduct* Product)
 {
 	// Name
-	Product->Name = JsonObject->GetStringField(ECsFileItemProductHeaderCachedString::Str::Name);
+	Product->Name = JsonObject->GetStringField(ECsFileItemProductHeaderCached::Str::Name);
 	// Id
-	FGuid::Parse(JsonObject->GetStringField(ECsFileItemProductHeaderCachedString::Str::Id), Product->Id);
+	FGuid::Parse(JsonObject->GetStringField(ECsFileItemProductHeaderCached::Str::Id), Product->Id);
 
 	// Current History
 	{
-		TSharedPtr<FJsonObject> Object = JsonObject->Values.Find(ECsFileItemHistoryHeaderCachedString::Str::CurrentHistory)->Get()->AsObject();
+		TSharedPtr<FJsonObject> Object = JsonObject->Values.Find(ECsFileItemHistoryHeaderCached::Str::CurrentHistory)->Get()->AsObject();
 
 		LoadHistory(Object, Item, &(Product->CurrentHistory));
 	}
 	// Previous Histories
 	{
-		const TArray<TSharedPtr<FJsonValue>> JsonArray = JsonObject->Values.Find(ECsFileItemHistoryHeaderCachedString::Str::PreviousHistories)->Get()->AsArray();
+		const TArray<TSharedPtr<FJsonValue>> JsonArray = JsonObject->Values.Find(ECsFileItemHistoryHeaderCached::Str::PreviousHistories)->Get()->AsArray();
 
 		const int32 Count = JsonArray.Num();
 
@@ -1071,15 +1071,15 @@ void ACsManager_Item::LoadProduct(TSharedPtr<class FJsonObject> &JsonObject, FCs
 void ACsManager_Item::LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCsItem* Item, FCsItemHistory* ItemHistory)
 {
 	// OwnerId
-	FGuid::Parse(JsonObject->GetStringField(ECsFileItemHistoryHeaderCachedString::Str::OwnerId), ItemHistory->OwnerId);
+	FGuid::Parse(JsonObject->GetStringField(ECsFileItemHistoryHeaderCached::Str::OwnerId), ItemHistory->OwnerId);
 	// OwnerType
-	ItemHistory->SetOwnerType((*StringToItemOwner)(JsonObject->GetStringField(ECsFileItemHistoryHeaderCachedString::Str::OwnerType)));
+	ItemHistory->SetOwnerType((*StringToItemOwner)(JsonObject->GetStringField(ECsFileItemHistoryHeaderCached::Str::OwnerType)));
 	// OwnerName
-	ItemHistory->OwnerName = JsonObject->GetStringField(ECsFileItemHistoryHeaderCachedString::Str::OwnerName);
+	ItemHistory->OwnerName = JsonObject->GetStringField(ECsFileItemHistoryHeaderCached::Str::OwnerName);
 
 	// Members
 	{
-		const TSharedPtr<FJsonObject>& Object = JsonObject->Values.Find(ECsFileItemHistoryHeaderCachedString::Str::Members)->Get()->AsObject();
+		const TSharedPtr<FJsonObject>& Object = JsonObject->Values.Find(ECsFileItemHistoryHeaderCached::Str::Members)->Get()->AsObject();
 
 		TArray<FCsItemMemberDescription>* Members = Item->GetData()->GetMembers();
 

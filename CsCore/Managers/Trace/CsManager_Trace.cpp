@@ -8,7 +8,7 @@
 // Cache
 #pragma region
 
-namespace ECsManagerTraceCachedString
+namespace ECsManagerTraceCached
 {
 	namespace Str
 	{
@@ -418,7 +418,7 @@ void ACsManager_Trace::OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& 
 		}
 	}
 
-	LogTransaction(ECsManagerTraceCachedString::Str::OnTraceResponse, ECsTraceTransaction::Complete, Request, Response);
+	LogTransaction(ECsManagerTraceCached::Str::OnTraceResponse, ECsTraceTransaction::Complete, Request, Response);
 
 	// Broadcast Response
 	Request->OnResponse_Event.Broadcast(Response);

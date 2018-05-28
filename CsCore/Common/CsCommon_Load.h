@@ -954,7 +954,7 @@ template<typename T>
 		{
 			const FString MemberName	 = ArrayAssetObjectProperty->GetName();
 										// MemberName + TEXT("_LaodFlags")
-			const FString FlagMemberName = MemberName + ECsLoadCachedString::Str::_LoadFlags;
+			const FString FlagMemberName = MemberName + ECsLoadCached::Str::_LoadFlags;
 
 			// Array
 			if (UArrayProperty* ArrayProperty = FindField<UArrayProperty>(InClass, *FlagMemberName))
@@ -1043,7 +1043,7 @@ template<typename T>
 		{
 			const FString MemberName	 = ArrayAssetObjectProperty->GetName();
 										// MemberName + TEXT("_LoadFlags")
-			const FString FlagMemberName = MemberName + ECsLoadCachedString::Str::_LoadFlags;
+			const FString FlagMemberName = MemberName + ECsLoadCached::Str::_LoadFlags;
 
 			// Array
 			if (UArrayProperty* ArrayProperty = FindField<UArrayProperty>(InClass, *FlagMemberName))
@@ -1254,7 +1254,7 @@ template<typename T>
 				const int32 Size = OutAssetReferences.Num();
 				// TODO: Fix / Investigate. 4.16.1. Built Game (Okay in Editor). TAssetPtr for UAnimBlueprint / UWidgetBlueprint does NOT have _C
 				FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
-				Reference.Reference				   = AssetName.EndsWith(ECsLoadCachedString::Str::_C) ? AssetName : AssetName + ECsLoadCachedString::Str::_C;
+				Reference.Reference				   = AssetName.EndsWith(ECsLoadCached::Str::_C) ? AssetName : AssetName + ECsLoadCached::Str::_C;
 				Reference.Reference_Internal	   = FStringAssetReference(Reference.Reference);
 #if WITH_EDITOR
 				if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::CalculateResourceSizes))
@@ -1294,7 +1294,7 @@ template<typename T>
 				const int32 Size = OutAssetReferences.Num();
 				// TODO: Fix / Investigate. 4.16.1. Built Game (Okay in Editor). TAssetPtr for UWidgetBlueprint does NOT have _C
 				FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
-				Reference.Reference				   = AssetName.EndsWith(ECsLoadCachedString::Str::_C) ? AssetName : AssetName + ECsLoadCachedString::Str::_C;
+				Reference.Reference				   = AssetName.EndsWith(ECsLoadCached::Str::_C) ? AssetName : AssetName + ECsLoadCached::Str::_C;
 				Reference.Reference_Internal	   = FStringAssetReference(Reference.Reference);
 #if WITH_EDITOR
 				if (CalculateResourceSizes)
@@ -2109,7 +2109,7 @@ template<typename T>
 				return;
 
 											// MemberName + TEXT("_Internal")
-			const FString InternalMemberName = MemberName + ECsLoadCachedString::Str::_Internal;
+			const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
 
 			if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 			{
@@ -2129,7 +2129,7 @@ template<typename T>
 				return;
 
 											// MemberName + TEXT("_Internal")
-			const FString InternalMemberName = MemberName + ECsLoadCachedString::Str::_Internal;
+			const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
 
 			if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 			{
@@ -2149,7 +2149,7 @@ template<typename T>
 				return;
 
 											// MemberName + TEXT("_Internal")
-			const FString InternalMemberName = MemberName + ECsLoadCachedString::Str::_Internal;
+			const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
 
 			if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 			{
@@ -2169,7 +2169,7 @@ template<typename T>
 				return;
 
 											// MemberName + TEXT("_Internal")
-			const FString InternalMemberName = MemberName + ECsLoadCachedString::Str::_Internal;
+			const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
 
 			if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 			{
@@ -2189,7 +2189,7 @@ template<typename T>
 				return;
 
 											// MemberName + TEXT("_Internal")
-			const FString InternalMemberName = MemberName + ECsLoadCachedString::Str::_Internal;
+			const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
 
 			if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 			{
@@ -2209,7 +2209,7 @@ template<typename T>
 				return;
 
 											// MemberName + TEXT("_Internal")
-			const FString InternalMemberName = MemberName + ECsLoadCachedString::Str::_Internal;
+			const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
 
 			if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 			{
@@ -2235,7 +2235,7 @@ template<typename T>
 				return;
 
 											// MemberName + TEXT("_Internal")
-			const FString InternalMemberName = MemberName + ECsLoadCachedString::Str::_Internal;
+			const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
 
 			if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 			{
@@ -2255,7 +2255,7 @@ template<typename T>
 				return;
 
 											// MemberName + TEXT("_Internal")
-			const FString InternalMemberName = MemberName + ECsLoadCachedString::Str::_Internal;
+			const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
 
 			if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 			{
@@ -2275,7 +2275,7 @@ template<typename T>
 				return;
 
 											// MemberName + TEXT("_Internal")
-			const FString InternalMemberName = MemberName + ECsLoadCachedString::Str::_Internal;
+			const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
 
 			if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 			{
@@ -2305,7 +2305,7 @@ template<typename T>
 				return;
 
 											// MemberName + TEXT("_Internal")
-			const FString InternalMemberName = MemberName + ECsLoadCachedString::Str::_Internal;
+			const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
 
 			if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 			{
@@ -2331,7 +2331,7 @@ template<typename T>
 				return;
 
 											// MemberName + TEXT("_Internal")
-			const FString InternalMemberName = MemberName + ECsLoadCachedString::Str::_Internal;
+			const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
 
 			if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 			{
@@ -2398,7 +2398,7 @@ template<typename T>
 			if (T* Struct = StructProperty->ContainerPtrToValuePtr<T>(InObject))
 			{
 										//   MemberName = TEXT("_Internal")
-				const FString InternalName = MemberName + ECsLoadCachedString::Str::_Internal;
+				const FString InternalName = MemberName + ECsLoadCached::Str::_Internal;
 
 				TArray<TAssetPtr<U>>* AssetPtrs = nullptr;
 				TArray<S*>* Internals			= nullptr;
@@ -2692,13 +2692,13 @@ template<typename T>
 		if (TAssetPtr<T>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<T>>(InObject))
 		{
 			// MemberName + TEXT("_LoadFlags")
-			const FString LoadFlagsMemberName = MemberName + ECsLoadCachedString::Str::_LoadFlags;
+			const FString LoadFlagsMemberName = MemberName + ECsLoadCached::Str::_LoadFlags;
 
 			if (UProperty* LoadFlagsProperty = FindField<UProperty>(InClass, *LoadFlagsMemberName))
 			{
 				if (int32* LoadFlags = LoadFlagsProperty->ContainerPtrToValuePtr<int32>(InObject))
 				{
-					const FString FullLoadFlagsMemberName = ObjectName + ECsLoadCachedString::Str::_LoadFlags;
+					const FString FullLoadFlagsMemberName = ObjectName + ECsLoadCached::Str::_LoadFlags;
 
 					CheckEnumLoadFlags(LoadFlags, FullLoadFlagsMemberName, LoadFlagsMemberName);
 				}
@@ -2712,13 +2712,13 @@ template<typename T>
 		if (TAssetPtr<T>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<T>>(InObject))
 		{
 			// MemberName + TEXT("_LoadFlags")
-			const FString LoadFlagsMemberName = MemberName + ECsLoadCachedString::Str::_LoadFlags;
+			const FString LoadFlagsMemberName = MemberName + ECsLoadCached::Str::_LoadFlags;
 
 			if (UProperty* LoadFlagsProperty = FindField<UProperty>(InClass, *LoadFlagsMemberName))
 			{
 				if (int32* LoadFlags = InternalProperty->ContainerPtrToValuePtr<int32>(InObject))
 				{
-					const FString FullLoadFlagsMemberName = ObjectName + ECsLoadCachedString::Str::_LoadFlags;
+					const FString FullLoadFlagsMemberName = ObjectName + ECsLoadCached::Str::_LoadFlags;
 
 					CheckEnumLoadFlags(LoadFlags, FullLoadFlagsMemberName, LoadFlagsMemberName);
 				}
@@ -2732,13 +2732,13 @@ template<typename T>
 		if (TArray<TAssetPtr<T>>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<TAssetPtr<T>>>(InObject))
 		{
 			// MemberName + TEXT("_LoadFlags")
-			const FString LoadFlagsMemberName = MemberName + ECsLoadCachedString::Str::_LoadFlags;
+			const FString LoadFlagsMemberName = MemberName + ECsLoadCached::Str::_LoadFlags;
 
 			if (UProperty* LoadFlagsProperty = FindField<UProperty>(InClass, *LoadFlagsMemberName))
 			{
 				if (int32* LoadFlags = LoadFlagsProperty->ContainerPtrToValuePtr<int32>(InObject))
 				{
-					const FString FullLoadFlagsMemberName = ObjectName + ECsLoadCachedString::Str::_LoadFlags;
+					const FString FullLoadFlagsMemberName = ObjectName + ECsLoadCached::Str::_LoadFlags;
 
 					CheckEnumLoadFlags(LoadFlags, FullLoadFlagsMemberName, LoadFlagsMemberName);
 				}

@@ -11,7 +11,7 @@
 // Cache
 #pragma region
 
-namespace ECsManagerAICachedString
+namespace ECsManagerAICached
 {
 	namespace Str
 	{
@@ -287,7 +287,7 @@ void ACsManager_AI::DeAllocate(const uint8 &Type, const int32 &Index)
 
 		if (Actor->PoolIndex == Index)
 		{
-			LogTransaction(ECsManagerAICachedString::Str::DeAllocate, ECsPoolTransaction::Deallocate, Actor);
+			LogTransaction(ECsManagerAICached::Str::DeAllocate, ECsPoolTransaction::Deallocate, Actor);
 
 			Actor->DeAllocate();
 			Actors->RemoveAt(I);
@@ -314,7 +314,7 @@ void ACsManager_AI::DeAllocateAll()
 
 		for (int32 J = ActorCount - 1; J >= 0; --J)
 		{
-			LogTransaction(ECsManagerAICachedString::Str::DeAllocateAll, ECsPoolTransaction::Deallocate, (*Actors)[J]);
+			LogTransaction(ECsManagerAICached::Str::DeAllocateAll, ECsPoolTransaction::Deallocate, (*Actors)[J]);
 
 			(*Actors)[J]->DeAllocate();
 			Actors->RemoveAt(J);
@@ -353,7 +353,7 @@ ACsAIPawn* ACsManager_AI::WakeUp(const TCsAIType &Type, FCsAIPawnPayload* Payloa
 
 	Actor->Allocate(GetActivePoolSize((uint8)Type), Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InOwner, Parent);
 
-	LogTransaction(ECsManagerAICachedString::Str::WakeUp, ECsPoolTransaction::Allocate, Actor);
+	LogTransaction(ECsManagerAICached::Str::WakeUp, ECsPoolTransaction::Allocate, Actor);
 
 	AddToActivePool(Actor, (uint8)Type);
 	Payload->Reset();
@@ -377,7 +377,7 @@ void ACsManager_AI::WakeUp(const TCsAIType &Type, ACsAIPawn* &OutPawn, FCsAIPawn
 
 	OutPawn->Allocate<T>(GetActivePoolSize((uint8)Type), Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InOwner, Parent, InObject, OnDeAllocate);
 
-	LogTransaction(ECsManagerAICachedString::Str::WakeUp, ECsPoolTransaction::Allocate, OutPawn);
+	LogTransaction(ECsManagerAICached::Str::WakeUp, ECsPoolTransaction::Allocate, OutPawn);
 
 	AddToActivePool(Actor, (uint8)Type);
 	Payload->Reset();

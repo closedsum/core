@@ -8,6 +8,24 @@
 UCsCoroutineScheduler* UCsCoroutineScheduler::s_coroutineSchedulerSingleton;
 bool UCsCoroutineScheduler::s_bCoroutineSchedulerHasShutdown = false;
 
+// Cache
+#pragma region
+
+namespace ECsCoroutineCached
+{
+	namespace Str
+	{
+		const FString Allocate = TEXT("UCsCoroutineScheduler::Allocate");
+		const FString Start = TEXT("UCsCoroutineScheduler::Start");
+		const FString Update = TEXT("UCsCoroutineScheduler::Update");
+		const FString OnTick_Update = TEXT("UCsCoroutineScheduler::OnTick_Update");
+		const FString OnCacCamera_Update = TEXT("UCsCoroutineScheduler::OnCacCamera_Update");
+		const FString OnLastTick_Update = TEXT("UCsCoroutineScheduler::OnLastTick_Update");
+	}
+}
+
+#pragma endregion Cache
+
 UCsCoroutineScheduler::UCsCoroutineScheduler(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	for (int32 I = 0; I < ECS_COROUTINE_SCHEDULE_MAX; ++I)
@@ -209,7 +227,7 @@ struct FCsRoutine* UCsCoroutineScheduler::Allocate(FCsCoroutinePayload* Payload)
 			{
 				RoutinesToInit[Schedule].Add(R);
 			}
-			LogTransaction(ECsCoroutineCachedString::Str::Allocate, (Payload->DoInit && Payload->PerformFirstRun) ? ECsCoroutineTransaction::Start : ECsCoroutineTransaction::Allocate, R);
+			LogTransaction(ECsCoroutineCached::Str::Allocate, (Payload->DoInit && Payload->PerformFirstRun) ? ECsCoroutineTransaction::Start : ECsCoroutineTransaction::Allocate, R);
 			Payload->Reset();
 			return R;
 		}
@@ -548,7 +566,7 @@ void UCsCoroutineScheduler::Update(const TCsCoroutineSchedule &ScheduleType, con
 
 		if (R->index == CS_ROUTINE_END)
 		{
-			LogTransaction(ECsCoroutineCachedString::ToUpdate(ScheduleType), ECsCoroutineTransaction::End, R);
+			LogTransaction(ECsCoroutineCached::ToUpdate(ScheduleType), ECsCoroutineTransaction::End, R);
 
 			R->Reset();
 			RoutinesToRun[Schedule].RemoveAt(Index);
@@ -570,7 +588,7 @@ void UCsCoroutineScheduler::Update(const TCsCoroutineSchedule &ScheduleType, con
 
 		if (R->index == CS_ROUTINE_END)
 		{
-			LogTransaction(ECsCoroutineCachedString::ToUpdate(ScheduleType), ECsCoroutineTransaction::End, R);
+			LogTransaction(ECsCoroutineCached::ToUpdate(ScheduleType), ECsCoroutineTransaction::End, R);
 
 			R->Reset();
 			RoutinesToRun[Schedule].RemoveAt(Index);
@@ -685,7 +703,7 @@ void UCsCoroutineScheduler::LogRunning(const TCsCoroutineSchedule &ScheduleType)
 
 	float CurrentTime = World ? World->GetTimeSeconds() : UCsCommon::GetCurrentDateTimeSeconds();
 
-	const FString& FunctionName		    = ECsCoroutineCachedString::Str::Update;
+	const FString& FunctionName		    = ECsCoroutineCached::Str::Update;
 	const FString& ScheduleTypeAsString = ECsCoroutineSchedule::ToString(ScheduleType);
 
 	UE_LOG(LogCs, Warning, TEXT("%s: On%s. Running %d Coroutines at %f."), *FunctionName, *ScheduleTypeAsString, Count, CurrentTime);

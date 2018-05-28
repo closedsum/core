@@ -15,17 +15,17 @@
 // Load
 #pragma region
 
-namespace ECsLoadCachedString
+namespace ECsLoadCached
 {
 	namespace Str
 	{
-		const FString _Internal = TEXT("_Internal");
-		const FString _LoadFlags = TEXT("_LoadFlags");
-		const FString _1P_LoadFlags = TEXT("1P_LoadFlags");
-		const FString _3P_LoadFlags = TEXT("3P_LoadFlags");
-		const FString _3P_Low_LoadFlags = TEXT("3P_Low_LoadFlags");
-		const FString VR_LoadFlags = TEXT("VR_LoadFlags");
-		const FString _C = TEXT("_C");
+		extern CSCORE_API const FString _Internal;// = TEXT("_Internal");
+		extern CSCORE_API const FString _LoadFlags;//= TEXT("_LoadFlags");
+		extern CSCORE_API const FString _1P_LoadFlags;// = TEXT("1P_LoadFlags");
+		extern CSCORE_API const FString _3P_LoadFlags;// = TEXT("3P_LoadFlags");
+		extern CSCORE_API const FString _3P_Low_LoadFlags;// = TEXT("3P_Low_LoadFlags");
+		extern CSCORE_API const FString VR_LoadFlags;// = TEXT("VR_LoadFlags");
+		extern CSCORE_API const FString _C;// = TEXT("_C");
 	}
 }
 

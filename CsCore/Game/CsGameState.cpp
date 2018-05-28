@@ -45,16 +45,13 @@
 // Cache
 #pragma region
 
-namespace ECsGameStateCachedName
+namespace ECsGameStateCached
 {
 	namespace Name
 	{
 		const FName OnBoard_Internal = FName("OnBoard_Internal");
 	};
-}
 
-namespace ECsGameStateCachedString
-{
 	namespace Str
 	{
 		const FString OnBoard_Internal = TEXT("OnBoard_Internal");
@@ -293,8 +290,8 @@ void ACsGameState::OnBoard()
 	Payload->Type			= (uint8)ECsGameStateRoutine::OnBoard_Internal;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsGameStateCachedName::Name::OnBoard_Internal;
-	Payload->NameAsString	= ECsGameStateCachedString::Str::OnBoard_Internal;
+	Payload->Name			= ECsGameStateCached::Name::OnBoard_Internal;
+	Payload->NameAsString	= ECsGameStateCached::Str::OnBoard_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
@@ -794,7 +791,7 @@ void ACsGameState::SetPlayerStateMappingRelationshipFlag(const uint8 &ClientMapp
 
 FString ACsGameState::GetLocalPlayerProfileName()
 {
-	return ECsGameStateCachedString::Str::DefaultPlayerProfileName;
+	return ECsGameStateCached::Str::DefaultPlayerProfileName;
 }
 
 #pragma endregion Player State

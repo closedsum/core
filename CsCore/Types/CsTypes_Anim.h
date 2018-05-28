@@ -269,7 +269,6 @@ struct FCsAnimMontage
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
 	TAssetPtr<UAnimMontage> Anim;
 
-
 	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Anim_LoadFlags;
 

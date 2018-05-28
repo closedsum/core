@@ -20,7 +20,7 @@
 // Cache
 #pragma region
 
-namespace ECsAnimInstanceCharacterCachedString
+namespace ECsAnimInstanceCharacterCached
 {
 	namespace Str
 	{
@@ -179,8 +179,8 @@ ACsData_Character* UCsAnimInstance_Character::GetData()
 
 void UCsAnimInstance_Character::LoadData_Character()
 {
-	const FString& DataString   = ECsAnimInstanceCharacterCachedString::Str::Data_Character;
-	const FString& CsDataString = ECsAnimInstanceCharacterCachedString::Str::CsData_Character;
+	const FString& DataString   = ECsAnimInstanceCharacterCached::Str::Data_Character;
+	const FString& CsDataString = ECsAnimInstanceCharacterCached::Str::CsData_Character;
 
 	UCsCommon_Load::LoadTAssetSubclassOf(DataString, Data_Character.Data, Data_Character.Data_Internal, CsDataString);
 
@@ -213,8 +213,8 @@ ACsData_CharacterMeshSkin* UCsAnimInstance_Character::GetData_CharacterMeshSkin(
 
 void UCsAnimInstance_Character::LoadData_CharacterMeshSkin()
 {
-	const FString& DataString   = ECsAnimInstanceCharacterCachedString::Str::Data_CharacterMeshSkin;
-	const FString& CsDataString = ECsAnimInstanceCharacterCachedString::Str::CsData_CharacterMeshSkin;
+	const FString& DataString   = ECsAnimInstanceCharacterCached::Str::Data_CharacterMeshSkin;
+	const FString& CsDataString = ECsAnimInstanceCharacterCached::Str::CsData_CharacterMeshSkin;
 
 	UCsCommon_Load::LoadTAssetSubclassOf(DataString, Data_CharacterMeshSkin.Data, Data_CharacterMeshSkin.Data_Internal, CsDataString);
 
@@ -247,8 +247,8 @@ ACsData_CharacterMaterialSkin* UCsAnimInstance_Character::GetData_CharacterMater
 
 void UCsAnimInstance_Character::LoadData_CharacterMaterialSkin()
 {
-	const FString& DataString   = ECsAnimInstanceCharacterCachedString::Str::Data_CharacterMaterialSkin;
-	const FString& CsDataString = ECsAnimInstanceCharacterCachedString::Str::CsData_CharacterMaterialSkin;
+	const FString& DataString   = ECsAnimInstanceCharacterCached::Str::Data_CharacterMaterialSkin;
+	const FString& CsDataString = ECsAnimInstanceCharacterCached::Str::CsData_CharacterMaterialSkin;
 
 	UCsCommon_Load::LoadTAssetSubclassOf(DataString, Data_CharacterMaterialSkin.Data, Data_CharacterMaterialSkin.Data_Internal, CsDataString);
 
@@ -281,8 +281,8 @@ ACsData_Weapon* UCsAnimInstance_Character::GetData_Weapon()
 
 void UCsAnimInstance_Character::LoadData_Weapon()
 {
-	const FString& DataString   = ECsAnimInstanceCharacterCachedString::Str::Data_Weapon;
-	const FString& CsDataString = ECsAnimInstanceCharacterCachedString::Str::CsData_Weapon;
+	const FString& DataString   = ECsAnimInstanceCharacterCached::Str::Data_Weapon;
+	const FString& CsDataString = ECsAnimInstanceCharacterCached::Str::CsData_Weapon;
 
 	UCsCommon_Load::LoadTAssetSubclassOf(DataString, Data_Weapon.Data, Data_Weapon.Data_Internal, CsDataString);
 
@@ -315,8 +315,8 @@ ACsData_WeaponMaterialSkin* UCsAnimInstance_Character::GetData_WeaponMaterialSki
 
 void UCsAnimInstance_Character::LoadData_WeaponMaterialSkin()
 {
-	const FString& DataString   = ECsAnimInstanceCharacterCachedString::Str::Data_WeaponMaterialSkin;
-	const FString& CsDataString = ECsAnimInstanceCharacterCachedString::Str::CsData_WeaponMaterialSkin;
+	const FString& DataString   = ECsAnimInstanceCharacterCached::Str::Data_WeaponMaterialSkin;
+	const FString& CsDataString = ECsAnimInstanceCharacterCached::Str::CsData_WeaponMaterialSkin;
 
 	UCsCommon_Load::LoadTAssetSubclassOf(DataString, Data_WeaponMaterialSkin.Data, Data_WeaponMaterialSkin.Data_Internal, CsDataString);
 

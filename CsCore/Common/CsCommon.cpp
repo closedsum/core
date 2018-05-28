@@ -53,7 +53,7 @@
 // Cache
 #pragma region
 
-namespace ECsCommonCachedName
+namespace ECsCommonCached
 {
 	namespace Name
 	{
@@ -64,10 +64,7 @@ namespace ECsCommonCachedName
 		const FName DestroyMaterialInstanceDynamic_Internal = FName("UCsCommon::DestroyMaterialInstanceDynamic_Internal");
 		const FName FadeCameraOverTime_Internal = FName("UCsCommon::FadeCameraOverTime_Internal");
 	}
-}
 
-namespace ECsCommonCachedString
-{
 	namespace Str
 	{
 		// Functions
@@ -1834,8 +1831,8 @@ FCsRoutine* UCsCommon::ScaleActorOverTime(const TCsCoroutineSchedule &ScheduleTy
 	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsCommonCachedName::Name::ScaleActorOverTime_Internal;
-	Payload->NameAsString	= ECsCommonCachedString::Str::ScaleActorOverTime_Internal;
+	Payload->Name			= ECsCommonCached::Name::ScaleActorOverTime_Internal;
+	Payload->NameAsString	= ECsCommonCached::Str::ScaleActorOverTime_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
@@ -1878,8 +1875,8 @@ FCsRoutine* UCsCommon::ScaleActorOverTime(const TCsCoroutineSchedule &ScheduleTy
 	UWorld* World			= InActor ? InActor->GetWorld() : nullptr;
 	const float CurrentTime = World ? World->GetTimeSeconds() : GetCurrentDateTimeSeconds();
 
-	R->name = ECsCommonCachedName::Name::ScaleActorOverTime_Internal;
-	R->nameAsString = ECsCommonCachedString::Str::ScaleActorOverTime_Internal;
+	R->name = ECsCommonCached::Name::ScaleActorOverTime_Internal;
+	R->nameAsString = ECsCommonCached::Str::ScaleActorOverTime_Internal;
 
 	R->timers[0] = CurrentTime;
 	R->vectors[0] = StartScale;
@@ -1974,8 +1971,8 @@ FCsRoutine* UCsCommon::ScaleActorOverTime_AsCurve(const TCsCoroutineSchedule &Sc
 	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsCommonCachedName::Name::ScaleActorOverTime_AsCurve_Internal;
-	Payload->NameAsString	= ECsCommonCachedString::Str::ScaleActorOverTime_AsCurve_Internal;
+	Payload->Name			= ECsCommonCached::Name::ScaleActorOverTime_AsCurve_Internal;
+	Payload->NameAsString	= ECsCommonCached::Str::ScaleActorOverTime_AsCurve_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
@@ -2082,8 +2079,8 @@ FCsRoutine* UCsCommon::MoveActorOverTime(const TCsCoroutineSchedule &ScheduleTyp
 	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsCommonCachedName::Name::MoveActorOverTime_Internal;
-	Payload->NameAsString	= ECsCommonCachedString::Str::MoveActorOverTime_Internal;
+	Payload->Name			= ECsCommonCached::Name::MoveActorOverTime_Internal;
+	Payload->NameAsString	= ECsCommonCached::Str::MoveActorOverTime_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
@@ -2156,8 +2153,8 @@ FCsRoutine* UCsCommon::DestroyMaterialInstanceDynamic(const TCsCoroutineSchedule
 	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckObject;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsCommonCachedName::Name::DestroyMaterialInstanceDynamic_Internal;
-	Payload->NameAsString	= ECsCommonCachedString::Str::DestroyMaterialInstanceDynamic_Internal;
+	Payload->Name			= ECsCommonCached::Name::DestroyMaterialInstanceDynamic_Internal;
+	Payload->NameAsString	= ECsCommonCached::Str::DestroyMaterialInstanceDynamic_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
@@ -2211,8 +2208,8 @@ FCsRoutine* UCsCommon::DestroyMaterialInstanceDynamics(const TCsCoroutineSchedul
 	{
 		R = Scheduler->Allocate(ScheduleType, Function, Stop, InMIDs[I], true, false);
 
-		R->name			= ECsCommonCachedName::Name::DestroyMaterialInstanceDynamic_Internal;
-		R->nameAsString = ECsCommonCachedString::Str::DestroyMaterialInstanceDynamic_Internal;
+		R->name			= ECsCommonCached::Name::DestroyMaterialInstanceDynamic_Internal;
+		R->nameAsString = ECsCommonCached::Str::DestroyMaterialInstanceDynamic_Internal;
 
 		UWorld* World			= InMIDs[I] ? InMIDs[I]->GetWorld() : nullptr;
 		const float CurrentTime = World ? World->GetTimeSeconds() : GetCurrentDateTimeSeconds();
@@ -2239,8 +2236,8 @@ FCsRoutine* UCsCommon::FadeCameraOverTime(const TCsCoroutineSchedule &ScheduleTy
 	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckObject;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsCommonCachedName::Name::FadeCameraOverTime_Internal;
-	Payload->NameAsString	= ECsCommonCachedString::Str::FadeCameraOverTime_Internal;
+	Payload->Name			= ECsCommonCached::Name::FadeCameraOverTime_Internal;
+	Payload->NameAsString	= ECsCommonCached::Str::FadeCameraOverTime_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
@@ -2420,14 +2417,14 @@ bool UCsCommon::IsDedicatedServer(AActor* InActor)
 FString UCsCommon::GetProxyAsString(AActor* InActor)
 {
 	if (InActor->Role < ROLE_Authority)
-		return ECsCommonCachedString::Str::Client;
+		return ECsCommonCached::Str::Client;
 	if (InActor->Role == ROLE_Authority)
 	{
 		if (IsDedicatedServer(InActor))
-			return ECsCommonCachedString::Str::Server_Dedicated;
-		return ECsCommonCachedString::Str::Server;
+			return ECsCommonCached::Str::Server_Dedicated;
+		return ECsCommonCached::Str::Server;
 	}
-	return ECsCommonCachedString::Str::Unknown;
+	return ECsCommonCached::Str::Unknown;
 }
 
 bool UCsCommon::IsPlayInGame(UWorld* InWorld)

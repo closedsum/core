@@ -1,5 +1,4 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
-#include "Types/CsTypes_Macro.h"
 #include "Types/CsTypes_Primitive.h"
 #include "Types/CsTypes_View.h"
 #include "Types/CsTypes_Load.h"
@@ -18,20 +17,20 @@
 // Anim
 #pragma region
 
-namespace ECsAnimCachedString
+namespace ECsAnimCached
 {
 	namespace Str
 	{
-		const FString Empty = TEXT("");
+		extern CSCORE_API const FString Empty;// = TEXT("");
 
-		const FString AnimSequence = TEXT("AnimSequence");
-		const FString Anim_Sequence = TEXT("Anim Sequence");
-		const FString AnimMontage = TEXT("AnimMontage");
-		const FString Anim_Montage = TEXT("Anim Montage");
-		const FString BlendSpace1D = TEXT("BlendSpace1D");
-		const FString Blend_Space_1D = TEXT("Blend Space 1D");
-		const FString BlendSpace = TEXT("BlendSpace");
-		const FString Blend_Space = TEXT("Blend Space");
+		extern CSCORE_API const FString AnimSequence;// = TEXT("AnimSequence");
+		extern CSCORE_API const FString Anim_Sequence;// = TEXT("Anim Sequence");
+		extern CSCORE_API const FString AnimMontage;// = TEXT("AnimMontage");
+		extern CSCORE_API const FString Anim_Montage;// = TEXT("Anim Montage");
+		extern CSCORE_API const FString BlendSpace1D;// = TEXT("BlendSpace1D");
+		extern CSCORE_API const FString Blend_Space_1D;// = TEXT("Blend Space 1D");
+		extern CSCORE_API const FString BlendSpace;// = TEXT("BlendSpace");
+		extern CSCORE_API const FString Blend_Space;// = TEXT("Blend Space");
 	}
 }
 
@@ -50,14 +49,23 @@ namespace ECsFpsAnimMember
 
 namespace ECsFpsAnimMember
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
-		const TCsString Anim1P = TCsString(TEXT("Anim1P"), TEXT("anim1p"), TEXT("anim 1p"));
-		const TCsString Anim3P = TCsString(TEXT("Anim3P"), TEXT("anim3p"), TEXT("anim 3p"));
-		const TCsString Anim3P_Low = TCsString(TEXT("Anim3P_Low"), TEXT("anim3p_low"), TEXT("anim 3p low"));
-		const TCsString AnimVR = TCsString(TEXT("AnimVR"), TEXT("animvr"), TEXT("anim vr"));
+		extern CSCORE_API const TCsString Anim1P;
+		extern CSCORE_API const TCsString Anim3P;
+		extern CSCORE_API const TCsString Anim3P_Low;
+		extern CSCORE_API const TCsString AnimVR;
+	}
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type Anim1P;
+		extern CSCORE_API const Type Anim3P;
+		extern CSCORE_API const Type Anim3P_Low;
+		extern CSCORE_API const Type AnimVR;
+		extern CSCORE_API const Type ECsFpsAnimMember_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -78,13 +86,13 @@ namespace ECsFpsAnimMember
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE Type ToType(const FString &String)
+	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::Anim1P) { return Type::Anim1P; }
-		if (String == Str::Anim3P) { return Type::Anim3P; }
-		if (String == Str::Anim3P_Low) { return Type::Anim3P_Low; }
-		if (String == Str::AnimVR) { return Type::AnimVR; }
-		return Type::ECsFpsAnimMember_MAX;
+		if (String == Str::Anim1P) { return Ref::Anim1P; }
+		if (String == Str::Anim3P) { return Ref::Anim3P; }
+		if (String == Str::Anim3P_Low) { return Ref::Anim3P_Low; }
+		if (String == Str::AnimVR) { return Ref::AnimVR; }
+		return Ref::ECsFpsAnimMember_MAX;
 	}
 }
 

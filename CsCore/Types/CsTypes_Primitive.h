@@ -612,7 +612,7 @@ public:
 	}
 };
 
-struct FCsPrimitiveType_int32 : public TCsPrimitiveType<int32>
+struct CSCORE_API FCsPrimitiveType_int32 : public TCsPrimitiveType<int32>
 {
 	FCsPrimitiveType_int32()
 	{
@@ -781,7 +781,7 @@ struct FCsPrimitiveType_int32 : public TCsPrimitiveType<int32>
 
 typedef FCsPrimitiveType_int32 TCsInt32;
 
-struct FCsPrimitiveType_uint32 : public TCsPrimitiveType<uint32>
+struct CSCORE_API FCsPrimitiveType_uint32 : public TCsPrimitiveType<uint32>
 {
 	FCsPrimitiveType_uint32()
 	{
@@ -950,7 +950,7 @@ struct FCsPrimitiveType_uint32 : public TCsPrimitiveType<uint32>
 
 typedef FCsPrimitiveType_uint32 TCsUint32;
 
-struct FCsPrimitiveType_float : public TCsPrimitiveType<float>
+struct CSCORE_API FCsPrimitiveType_float : public TCsPrimitiveType<float>
 {
 	FCsPrimitiveType_float()
 	{
@@ -1096,7 +1096,7 @@ typedef FCsPrimitiveType_float TCsFloat;
 #define CS_AXIS_Z 2
 #define CS_AXES_3D_ALL 3
 
-struct FCsPrimitiveType_FVector2D : public TCsPrimitiveType<FVector2D>
+struct CSCORE_API FCsPrimitiveType_FVector2D : public TCsPrimitiveType<FVector2D>
 {
 
 protected:
@@ -1226,7 +1226,7 @@ public:
 
 typedef FCsPrimitiveType_FVector2D TCsFVector2D;
 
-struct FCsPrimitiveType_FVector : public TCsPrimitiveType<FVector>
+struct CSCORE_API FCsPrimitiveType_FVector : public TCsPrimitiveType<FVector>
 {
 
 protected:
@@ -1357,7 +1357,7 @@ typedef FCsPrimitiveType_FVector TCsFVector;
 #define CS_AXIS_YAW 2
 
 
-struct FCsPrimitiveType_FRotator : public TCsPrimitiveType<FRotator>
+struct CSCORE_API FCsPrimitiveType_FRotator : public TCsPrimitiveType<FRotator>
 {
 
 protected:
@@ -1476,7 +1476,7 @@ public:
 
 typedef FCsPrimitiveType_FRotator TCsFRotator;
 
-struct FCsPrimitiveType_FString : public TCsPrimitiveType<FString>
+struct CSCORE_API FCsPrimitiveType_FString : public TCsPrimitiveType<FString>
 {
 public:
 
@@ -1516,7 +1516,7 @@ public:
 
 typedef FCsPrimitiveType_FString TCsFString;
 
-struct FCsPrimitiveType_FLinearColor : public TCsPrimitiveType<FLinearColor>
+struct CSCORE_API FCsPrimitiveType_FLinearColor : public TCsPrimitiveType<FLinearColor>
 {
 public:
 
@@ -1592,7 +1592,7 @@ public:
 
 	bool operator==(const T& B) const
 	{
-		return Value == B;
+		return *Value == B;
 	}
 
 	bool operator!=(const T& B) const
@@ -1643,7 +1643,7 @@ public:
 	}
 };
 
-struct FCsPrimitiveType_Ref_bool : public TCsPrimitiveType_Ref<bool>
+struct CSCORE_API FCsPrimitiveType_Ref_bool : public TCsPrimitiveType_Ref<bool>
 {
 	FCsPrimitiveType_Ref_bool()
 	{
@@ -1674,7 +1674,7 @@ struct FCsPrimitiveType_Ref_bool : public TCsPrimitiveType_Ref<bool>
 
 typedef FCsPrimitiveType_Ref_bool TCsBool_Ref;
 
-struct FCsPrimitiveType_Ref_int32 : public TCsPrimitiveType_Ref<int32>
+struct CSCORE_API FCsPrimitiveType_Ref_int32 : public TCsPrimitiveType_Ref<int32>
 {
 	FCsPrimitiveType_Ref_int32()
 	{
@@ -1725,7 +1725,7 @@ struct FCsPrimitiveType_Ref_int32 : public TCsPrimitiveType_Ref<int32>
 
 typedef FCsPrimitiveType_Ref_int32 TCsInt32_Ref;
 
-struct FCsPrimitiveType_Ref_float : public TCsPrimitiveType_Ref<float>
+struct CSCORE_API FCsPrimitiveType_Ref_float : public TCsPrimitiveType_Ref<float>
 {
 	FCsPrimitiveType_Ref_float()
 	{
@@ -1824,9 +1824,9 @@ public:
 			OnChangeEX_Event.Broadcast((U)(int32)Index, Values[Index]);
 	}
 
-	TCsPrimitiveType_MultiValue& operator=(const T& B)
+	TCsPrimitiveType_MultiValue& operator=(const TCsPrimitiveType_MultiValue& B)
 	{
-		Value = B;
+		Value = B.Value;
 		UpdateIsDirty();
 
 		for (uint8 I = 0; I < SIZE; ++I)
@@ -1844,7 +1844,7 @@ public:
 			if (Values[I] != B.Values[I])
 				return false;
 		}
-		return Value == B;
+		return Value == B.Value;
 	}
 
 	bool operator!=(const TCsPrimitiveType_MultiValue& B) const
@@ -2053,7 +2053,7 @@ struct TCsPrimitiveType_MultiValue_FString : public TCsPrimitiveType_MultiValue<
 #define CS_FSTRING_ENUM_LOWER_VALUE 1
 #define CS_FSTRING_ENUM_ALT_1_VALUE 2
 
-struct TCsPrimitiveType_MultiValue_FString_Enum_TwoParams : public TCsPrimitiveType_MultiValue_FString<int32, CS_FSTRING_ENUM_TWO_PARAMS>
+struct CSCORE_API TCsPrimitiveType_MultiValue_FString_Enum_TwoParams : public TCsPrimitiveType_MultiValue_FString<int32, CS_FSTRING_ENUM_TWO_PARAMS>
 {
 	TCsPrimitiveType_MultiValue_FString_Enum_TwoParams()
 	{
@@ -2104,7 +2104,7 @@ struct TCsPrimitiveType_MultiValue_FString_Enum_TwoParams : public TCsPrimitiveT
 	}
 };
 
-struct TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams : public TCsPrimitiveType_MultiValue_FString<int32, CS_FSTRING_ENUM_THREE_PARAMS>
+struct CSCORE_API TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams : public TCsPrimitiveType_MultiValue_FString<int32, CS_FSTRING_ENUM_THREE_PARAMS>
 {
 	TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams()
 	{

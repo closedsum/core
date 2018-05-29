@@ -18,28 +18,28 @@
 
 namespace ECsEthereumCommand
 {
-	const FECsBlockchainCommand InitBlockchain = EMCsBlockchainCommand::Get().Create(TEXT("InitBlockchain"), TEXT("Init Blockchain"));
-	const FECsBlockchainCommand SetDataDirectory = EMCsBlockchainCommand::Get().Create(TEXT("SetDataDirectory"), TEXT("Set Data Directory"));
-	const FECsBlockchainCommand AttachToConsole = EMCsBlockchainCommand::Get().Create(TEXT("AttachToConsole"), TEXT("Attach to Console"));
-	const FECsBlockchainCommand ExitConsole = EMCsBlockchainCommand::Get().Create(TEXT("ExitConsole"), TEXT("Exit Console"));
-	const FECsBlockchainCommand NewAccount = EMCsBlockchainCommand::Get().Create(TEXT("NewAccount"), TEXT("New Account"));
-	const FECsBlockchainCommand UnlockAccount = EMCsBlockchainCommand::Get().Create(TEXT("UnlockAccount"), TEXT("Unlock Account"));
-	const FECsBlockchainCommand ListAccounts = EMCsBlockchainCommand::Get().Create(TEXT("ListAccounts"), TEXT("List Accounts"));
-	const FECsBlockchainCommand SetEtherbase = EMCsBlockchainCommand::Get().Create(TEXT("SetEtherbase"), TEXT("Set Etherbase"));
-	const FECsBlockchainCommand GetBalanceEther = EMCsBlockchainCommand::Get().Create(TEXT("GetBalanceEther"), TEXT("Get Balance Ether"));
-	const FECsBlockchainCommand GetBalanceWei = EMCsBlockchainCommand::Get().Create(TEXT("GetBalanceWei"), TEXT("Get Balance Wei"));
-	const FECsBlockchainCommand StartMiner = EMCsBlockchainCommand::Get().Create(TEXT("StartMiner"), TEXT("Start Miner"));
-	const FECsBlockchainCommand StopMiner = EMCsBlockchainCommand::Get().Create(TEXT("StopMiner"), TEXT("Stop Miner"));
-	const FECsBlockchainCommand DeployContract = EMCsBlockchainCommand::Get().Create(TEXT("DeployContract"), TEXT("Deploy Contract"));
-	const FECsBlockchainCommand LoadScript = EMCsBlockchainCommand::Get().Create(TEXT("LoadScript"), TEXT("Load Script"));
-	const FECsBlockchainCommand CreateContractABI = EMCsBlockchainCommand::Get().Create(TEXT("CreateContractABI"), TEXT("Create Contract ABI"));
-	const FECsBlockchainCommand CreateContractInstance = EMCsBlockchainCommand::Get().Create(TEXT("CreateContractInstance"), TEXT("Create Contract Instance"));
-	const FECsBlockchainCommand RunContractConstantFunction = EMCsBlockchainCommand::Get().Create(TEXT("RunContractConstantFunction"), TEXT("Run Contract Constant Function"));
-	const FECsBlockchainCommand RunContractStateChangeFunction = EMCsBlockchainCommand::Get().Create(TEXT("RunContractStateChangeFunction"), TEXT("Run Contract State Change Function"));
-	const FECsBlockchainCommand GetGasEstimate = EMCsBlockchainCommand::Get().Create(TEXT("GetGasEstimate"), TEXT("Get Gas Estimate"));
-	const FECsBlockchainCommand GetTransactionReceipt = EMCsBlockchainCommand::Get().Create(TEXT("GetTransactionReceipt"), TEXT("Get Transaction Receipt"));
+	CSCORE_API const FECsBlockchainCommand InitBlockchain = EMCsBlockchainCommand::Get().Create(TEXT("InitBlockchain"), TEXT("Init Blockchain"));
+	CSCORE_API const FECsBlockchainCommand SetDataDirectory = EMCsBlockchainCommand::Get().Create(TEXT("SetDataDirectory"), TEXT("Set Data Directory"));
+	CSCORE_API const FECsBlockchainCommand AttachToConsole = EMCsBlockchainCommand::Get().Create(TEXT("AttachToConsole"), TEXT("Attach to Console"));
+	CSCORE_API const FECsBlockchainCommand ExitConsole = EMCsBlockchainCommand::Get().Create(TEXT("ExitConsole"), TEXT("Exit Console"));
+	CSCORE_API const FECsBlockchainCommand NewAccount = EMCsBlockchainCommand::Get().Create(TEXT("NewAccount"), TEXT("New Account"));
+	CSCORE_API const FECsBlockchainCommand UnlockAccount = EMCsBlockchainCommand::Get().Create(TEXT("UnlockAccount"), TEXT("Unlock Account"));
+	CSCORE_API const FECsBlockchainCommand ListAccounts = EMCsBlockchainCommand::Get().Create(TEXT("ListAccounts"), TEXT("List Accounts"));
+	CSCORE_API const FECsBlockchainCommand SetEtherbase = EMCsBlockchainCommand::Get().Create(TEXT("SetEtherbase"), TEXT("Set Etherbase"));
+	CSCORE_API const FECsBlockchainCommand GetBalanceEther = EMCsBlockchainCommand::Get().Create(TEXT("GetBalanceEther"), TEXT("Get Balance Ether"));
+	CSCORE_API const FECsBlockchainCommand GetBalanceWei = EMCsBlockchainCommand::Get().Create(TEXT("GetBalanceWei"), TEXT("Get Balance Wei"));
+	CSCORE_API const FECsBlockchainCommand StartMiner = EMCsBlockchainCommand::Get().Create(TEXT("StartMiner"), TEXT("Start Miner"));
+	CSCORE_API const FECsBlockchainCommand StopMiner = EMCsBlockchainCommand::Get().Create(TEXT("StopMiner"), TEXT("Stop Miner"));
+	CSCORE_API const FECsBlockchainCommand DeployContract = EMCsBlockchainCommand::Get().Create(TEXT("DeployContract"), TEXT("Deploy Contract"));
+	CSCORE_API const FECsBlockchainCommand LoadScript = EMCsBlockchainCommand::Get().Create(TEXT("LoadScript"), TEXT("Load Script"));
+	CSCORE_API const FECsBlockchainCommand CreateContractABI = EMCsBlockchainCommand::Get().Create(TEXT("CreateContractABI"), TEXT("Create Contract ABI"));
+	CSCORE_API const FECsBlockchainCommand CreateContractInstance = EMCsBlockchainCommand::Get().Create(TEXT("CreateContractInstance"), TEXT("Create Contract Instance"));
+	CSCORE_API const FECsBlockchainCommand RunContractConstantFunction = EMCsBlockchainCommand::Get().Create(TEXT("RunContractConstantFunction"), TEXT("Run Contract Constant Function"));
+	CSCORE_API const FECsBlockchainCommand RunContractStateChangeFunction = EMCsBlockchainCommand::Get().Create(TEXT("RunContractStateChangeFunction"), TEXT("Run Contract State Change Function"));
+	CSCORE_API const FECsBlockchainCommand GetGasEstimate = EMCsBlockchainCommand::Get().Create(TEXT("GetGasEstimate"), TEXT("Get Gas Estimate"));
+	CSCORE_API const FECsBlockchainCommand GetTransactionReceipt = EMCsBlockchainCommand::Get().Create(TEXT("GetTransactionReceipt"), TEXT("Get Transaction Receipt"));
 
-	const FECsBlockchainCommand MAX = EMCsBlockchainCommand::Get().Create(TEXT("MAX"));
+	CSCORE_API const FECsBlockchainCommand MAX = EMCsBlockchainCommand::Get().Create(TEXT("MAX"));
 }
 
 namespace ECsEthereumRoutine
@@ -82,6 +82,43 @@ EMCsEthereumJavascript& EMCsEthereumJavascript::Get()
 }
 
 #pragma endregion Enums
+
+// JavascriptContractLink
+#pragma region
+
+FCsEthereumJavascriptContractLink::FCsEthereumJavascriptContractLink() {}
+FCsEthereumJavascriptContractLink::FCsEthereumJavascriptContractLink(const FECsBlockchainContract &InContract, const FString &InLink)
+{
+	Contract = InContract;
+	Link = InLink;
+}
+
+FCsEthereumJavascriptContractLink::~FCsEthereumJavascriptContractLink() {}
+
+FCsEthereumJavascriptContractLink& FCsEthereumJavascriptContractLink::operator=(const FCsEthereumJavascriptContractLink& B)
+{
+	Contract = B.Contract;
+	Link = B.Link;
+	return *this;
+}
+
+bool FCsEthereumJavascriptContractLink::operator==(const FCsEthereumJavascriptContractLink& B) const
+{
+	return Contract == B.Contract && Link == B.Link;
+}
+
+bool FCsEthereumJavascriptContractLink::operator!=(const FCsEthereumJavascriptContractLink& B) const
+{
+	return !(*this == B);
+}
+
+void FCsEthereumJavascriptContractLink::Set(const FECsBlockchainContract &InContract, const FString &InLink)
+{
+	Contract = InContract;
+	Link = InLink;
+}
+
+#pragma endregion JavascriptContractLink
 
 // Cache
 #pragma region
@@ -361,7 +398,8 @@ void UCsEthereum::RunCommand(const int32 &ConsoleIndex, const FECsBlockchainComm
 		Value->ParseIntoArray(Parts, TEXT("%s"), true);
 
 		// Add in arguments
-		if ((Parts.Num() - 1) == Arguments.Num())
+		if ((Parts.Num() == 1 && Composite == Parts[CS_FIRST]) ||
+			(Parts.Num() - 1) == Arguments.Num())
 		{
 			Composite = ECsCached::Str::Empty;
 
@@ -581,21 +619,21 @@ void UCsEthereum::OpenConsole()
 	CommandFlag = false;
 
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-	FCsCoroutinePayload* Payload = Scheduler->AllocatePayload();
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
 	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
-	Payload->Schedule = Schedule;
-	Payload->Function = &UCsEthereum::OpenConsole_Internal;
-	Payload->Object = this;
-	Payload->Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
-	Payload->Add = &UCsEthereum::AddRoutine;
-	Payload->Remove = &UCsEthereum::RemoveRoutine;
-	Payload->Type = (uint8)ECsEthereumRoutine::OpenConsole_Internal;
-	Payload->DoInit = true;
+	Payload->Schedule		= Schedule;
+	Payload->Function		= &UCsEthereum::OpenConsole_Internal;
+	Payload->Object			= this;
+	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckObject;
+	Payload->Add			= &UCsEthereum::AddRoutine;
+	Payload->Remove			= &UCsEthereum::RemoveRoutine;
+	Payload->Type			= (uint8)ECsEthereumRoutine::OpenConsole_Internal;
+	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name = ECsEthereumCached::Name::OpenConsole_Internal;
-	Payload->NameAsString = ECsEthereumCached::Str::OpenConsole_Internal;
+	Payload->Name			= ECsEthereumCached::Name::OpenConsole_Internal;
+	Payload->NameAsString	= ECsEthereumCached::Str::OpenConsole_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
@@ -606,7 +644,6 @@ CS_COROUTINE(UCsEthereum, OpenConsole_Internal)
 {
 	UCsEthereum* eth		 = r->GetRObject<UCsEthereum>();
 	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
-
 
 	CS_COROUTINE_BEGIN(r);
 
@@ -1186,9 +1223,11 @@ void UCsEthereum::OnConsoleOutputRecieved(const FString &Output)
 			const FString Address = Right.Left(40);
 
 			// Update Contract with the address
-			FECsBlockchainContract* EContract = (FECsBlockchainContract*)CurrentCommandInfo.Payload_ptr;
+			const FString& SContract				= CurrentCommandInfo.Payload_FString;
+			const FECsBlockchainContract& EContract = EMCsBlockchainContract::Get()[SContract];
 
-			CsEthereumContract* Contract = (CsEthereumContract*)Contracts[*EContract];
+			CsEthereumContract* Contract = (CsEthereumContract*)Contracts[EContract];
+			Contract->Name				  = CurrentCommandInfo.Value_FString;
 			Contract->Address			 = Address;
 
 			CurrentCommandOuput.Value_FString = Address;
@@ -1206,9 +1245,9 @@ void UCsEthereum::OnConsoleOutputRecieved(const FString &Output)
 
 			CommandCompleted_Event.Broadcast(Command);
 
-			FCsBlockchainContractFunctionPayload* Payload = (FCsBlockchainContractFunctionPayload*)CurrentCommandInfo.Payload_ptr;
+			const FCsBlockchainContractFunctionPayload& Payload = CurrentContractFunctionPayload;
 
-			ContractFunctionCompleted_Event.Broadcast(Payload->Contract, Payload->Function);
+			ContractFunctionCompleted_Event.Broadcast(Payload.Contract, Payload.Function);
 		}
 	}
 	// RunContractStateChangeFunction
@@ -1394,10 +1433,11 @@ void UCsEthereum::SetCoinbase(ICsBlockchainAccount* IAccount)
 	// payload = nickname
 	CsEthereumAccount* Account = (CsEthereumAccount*)IAccount;
 
-	const uint8 ADDRESS = 0;
+	static const uint8 ARGUMENTS = 1;
+	static const uint8 ADDRESS = 0;
 
 	TArray<FCsBlockchainCommandArgument> Args;
-	Args.AddDefaulted();
+	Args.SetNum(ARGUMENTS);
 	Args[ADDRESS].Value_FString	= Account->Address;
 	Args[ADDRESS].ValueType		= ECsBlockchainCommandArgumentType::StringString;
 
@@ -1413,10 +1453,11 @@ void UCsEthereum::GetBalanceEther(ICsBlockchainAccount* IAccount)
 
 	CsEthereumAccount* Account = (CsEthereumAccount*)IAccount;
 
-	const uint8 ADDRESS = 0;
+	static const uint8 ARGUMENTS = 1;
+	static const uint8 ADDRESS = 0;
 
 	TArray<FCsBlockchainCommandArgument> Args;
-	Args.AddDefaulted();
+	Args.SetNum(ARGUMENTS);
 	Args[ADDRESS].Value_FString	= Account->Address;
 	Args[ADDRESS].ValueType		= ECsBlockchainCommandArgumentType::StringString;
 
@@ -1496,7 +1537,7 @@ CS_COROUTINE(UCsEthereum, SetupAccount_Internal)
 
 		// Check Balance is above Threshold
 		{
-			const int32 THRESHOLD = 20;
+			static const int32 THRESHOLD = 20;
 
 			eth->BringBalanceToThreshold(Account, THRESHOLD);
 		}
@@ -1552,7 +1593,7 @@ CS_COROUTINE(UCsEthereum, BringBalanceToThreshold_Internal)
 	float& Timer = r->timers[CS_FIRST];
 	Timer		+= r->deltaSeconds;
 
-	const float INTERVAL = 0.5f;
+	static const float INTERVAL = 0.5f;
 
 	CS_COROUTINE_BEGIN(r);
 
@@ -1684,18 +1725,15 @@ CS_COROUTINE(UCsEthereum, DeployContract_Internal)
 	{
 		FString Snippet = eth->Web3DeployLinkedSnippets[EContract];
 
-		if (Args.Num() > CS_EMPTY)
+		for (const FCsBlockchainContractArgument& Arg : Args)
 		{
-			for (const FCsBlockchainContractArgument& Arg : Args)
-			{
-				Snippet = Snippet.Replace(*(Arg.Name), *(Arg.ToString()));
-			}
+			Snippet = Snippet.Replace(*(Arg.Name), *(Arg.ToString()));
 		}
 
 		// Deploy Contract
 		eth->CommandFlag = false;
 		TArray<FCsBlockchainCommandArgument> CommandArgs;
-		eth->CurrentCommandInfo.Set(ECsEthereumCommand::DeployContract, CommandArgs, r->voidPointers[0]);
+		eth->CurrentCommandInfo.Set(ECsEthereumCommand::DeployContract, CommandArgs, SContract);
 		eth->CurrentCommandOuput.Reset();
 		eth->RunCommand(CS_BLOCKCHAIN_SINGLE_NODE_INDEX, Snippet);
 	}
@@ -1879,10 +1917,11 @@ void UCsEthereum::CreateContractABI(const FECsBlockchainContract &EContract)
 	CommandFlag = false;
 
 	// %s
+	const uint8 ARGUMENTS = 1;
 	const uint8 ABI = 0;
 
 	TArray<FCsBlockchainCommandArgument> Args;
-	Args.AddDefaulted();
+	Args.SetNum(ARGUMENTS);
 	Args[ABI].Value_FString = ABISnippets[EContract];
 	Args[ABI].ValueType		= ECsBlockchainCommandArgumentType::String;
 
@@ -1898,6 +1937,7 @@ void UCsEthereum::CreateContractInstance(ICsBlockchainContract* IContract)
 	CommandFlag = false;
 
 	// var %s = %s.at(%s)
+	const uint8 ARGUMENTS = 3;
 	const uint8 INSTANCE = 0;
 	const uint8 ABI = 1;
 	const uint8 ADDRESS = 2;
@@ -1905,7 +1945,7 @@ void UCsEthereum::CreateContractInstance(ICsBlockchainContract* IContract)
 	CsEthereumContract* Contract = (CsEthereumContract*)IContract;
 
 	TArray<FCsBlockchainCommandArgument> Args;
-	Args.AddDefaulted();
+	Args.SetNum(ARGUMENTS);
 	Args[INSTANCE].Value_FString = Contract->InstanceVariableName;
 	Args[INSTANCE].ValueType	 = ECsBlockchainCommandArgumentType::String;
 	Args.AddDefaulted();
@@ -1973,8 +2013,8 @@ CS_COROUTINE(UCsEthereum, SetupContract_Internal)
 	if (!Contract->IsValid())
 	{
 		{
-			TArray<FCsBlockchainContractArgument> Args;
-			eth->DeployContract(EContract, Args);
+			eth->CurrentContractArguments.Reset();
+			eth->DeployContract(EContract, eth->CurrentContractArguments);
 		}
 		CS_COROUTINE_WAIT_UNTIL(r, eth->DeployContractFlag);
 	}
@@ -2000,9 +2040,9 @@ void UCsEthereum::RunContractConstantFunction(const FECsBlockchainContract &ECon
 	Fn.SetArguments(Args);
 	const FString Command = Fn.BuildConstantFunction();
 
-	FCsBlockchainContractFunctionPayload Payload = FCsBlockchainContractFunctionPayload(EContract, EFn);
+	CurrentContractFunctionPayload.Set(EContract, EFn);
 
-	CurrentCommandInfo.Set(ECsEthereumCommand::RunContractConstantFunction, CommandArgs, Payload);
+	CurrentCommandInfo.Set(ECsEthereumCommand::RunContractConstantFunction, CommandArgs);
 	CurrentCommandOuput.Reset();
 
 	if (CsCVarLogBlockchainIO->GetInt() == CS_CVAR_SHOW_LOG || CsCVarLogBlockchainIOConsole->GetInt() == CS_CVAR_SHOW_LOG)
@@ -2080,7 +2120,7 @@ CS_COROUTINE(UCsEthereum, RunContractStateChangeFunction_Internal)
 
 		FCsBlockchainContractFunction Fn = eth->ContractFunctions[EContract][EFn];
 		Fn.SetArguments(Args);
-		const int32 GAS_PADDING = 10000;
+		static const int32 GAS_PADDING = 10000;
 		int32 Gas				= eth->CurrentCommandOuput.Value_int32;
 		Gas						+= GAS_PADDING;
 		const FString Command	= Fn.BuildStateChangeFunction(Address, Gas);
@@ -2139,10 +2179,11 @@ void UCsEthereum::GetTransactionReceipt(const FString& TransactionHash)
 {
 	CommandFlag = false;
 
-	const uint8 TRANSACTION = 0;
+	static const uint8 ARGUMENTS = 1;
+	static const uint8 TRANSACTION = 0;
 
 	TArray<FCsBlockchainCommandArgument> Args;
-	Args.AddDefaulted();
+	Args.SetNum(ARGUMENTS);
 	Args[TRANSACTION].Value_FString = TransactionHash;
 	Args[TRANSACTION].ValueType		= ECsBlockchainCommandArgumentType::String;
 
@@ -2187,10 +2228,10 @@ CS_COROUTINE(UCsEthereum, CheckTransactionHasBeenMined_Internal)
 
 	const FString& TransactionHash = r->strings[CS_FIRST];
 
-	bool& Success		 = r->flags[CS_FIRST];
-	const float INTERVAL = 0.1f;
-	float& Elapsed		 = r->timers[CS_FIRST];
-	Elapsed				+= r->deltaSeconds;
+	bool& Success				= r->flags[CS_FIRST];
+	static const float INTERVAL = 0.1f;
+	float& Elapsed				= r->timers[CS_FIRST];
+	Elapsed					   += r->deltaSeconds;
 
 	CS_COROUTINE_BEGIN(r);
 
@@ -2221,10 +2262,11 @@ void UCsEthereum::LoadScript(const FECsEthereumJavascript &EScript, const FStrin
 	CommandFlag = false;
 
 	// loadScript(%s)
+	const uint8 ARGUMENTS = 1;
 	const uint8 PATH = 0;
 
 	TArray<FCsBlockchainCommandArgument> Args;
-	Args.AddDefaulted();
+	Args.SetNum(ARGUMENTS);
 	Args[PATH].Value_FString = TEXT("'") + Path + TEXT("'");
 	Args[PATH].ValueType	 = ECsBlockchainCommandArgumentType::String;
 

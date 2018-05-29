@@ -21,41 +21,12 @@ struct FCsEthereumGenesisConfig
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain Genesis")
 	int32 eip158Block;
 
-	FCsEthereumGenesisConfig()
-	{
-		chainId = 15;
-		homesteadBlock = 0;
-		eip155Block = 0;
-		eip158Block = 0;
-	}
-	~FCsEthereumGenesisConfig(){}
+	FCsEthereumGenesisConfig();
+	~FCsEthereumGenesisConfig();
 
-	FCsEthereumGenesisConfig& operator=(const FCsEthereumGenesisConfig& B)
-	{
-		chainId = B.chainId;
-		homesteadBlock = B.homesteadBlock;
-		eip155Block = B.eip155Block;
-		eip158Block = B.eip158Block;
-		return *this;
-	}
-
-	bool operator==(const FCsEthereumGenesisConfig& B) const
-	{
-		if (chainId != B.chainId)
-			return false;
-		if (homesteadBlock != B.homesteadBlock)
-			return false;
-		if (eip155Block != B.eip155Block)
-			return false;
-		if (eip158Block != B.eip158Block)
-			return false;
-		return true;
-	}
-
-	bool operator!=(const FCsEthereumGenesisConfig& B) const
-	{
-		return !(*this == B);
-	}
+	FCsEthereumGenesisConfig& operator=(const FCsEthereumGenesisConfig& B);
+	bool operator==(const FCsEthereumGenesisConfig& B) const;
+	bool operator!=(const FCsEthereumGenesisConfig& B) const;
 };
 
 USTRUCT(BlueprintType)
@@ -66,28 +37,13 @@ struct FCsEthereumGenesisAddressBalance
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain Genesis")
 	FString balance;
 
-	FCsEthereumGenesisAddressBalance(){}
-	FCsEthereumGenesisAddressBalance(const FString &_balance)
-	{
-		balance = _balance;
-	}
-	~FCsEthereumGenesisAddressBalance(){}
+	FCsEthereumGenesisAddressBalance();
+	FCsEthereumGenesisAddressBalance(const FString &_balance);
+	~FCsEthereumGenesisAddressBalance();
 
-	FCsEthereumGenesisAddressBalance& operator=(const FCsEthereumGenesisAddressBalance& B)
-	{
-		balance = B.balance;
-		return *this;
-	}
-
-	bool operator==(const FCsEthereumGenesisAddressBalance& B) const
-	{
-		return balance != B.balance;
-	}
-
-	bool operator!=(const FCsEthereumGenesisAddressBalance& B) const
-	{
-		return !(*this == B);
-	}
+	FCsEthereumGenesisAddressBalance& operator=(const FCsEthereumGenesisAddressBalance& B);
+	bool operator==(const FCsEthereumGenesisAddressBalance& B) const;
+	bool operator!=(const FCsEthereumGenesisAddressBalance& B) const;
 };
 
 UCLASS(transient)

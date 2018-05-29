@@ -768,6 +768,12 @@ struct FCsBlockchainContractFunctionPayload
 	{
 		return !(*this == B);
 	}
+
+	FORCEINLINE void Set(const FECsBlockchainContract &EContract, const FECsBlockchainContractFunction &EFn)
+	{
+		Contract = EContract;
+		Function = EFn;
+	}
 };
 
 #pragma endregion Function

@@ -58,19 +58,19 @@ namespace ECsBlockchainCommandArgumentType
 
 	namespace Str
 	{
-		const TCsString Int32 = TCsString(TEXT("Int32"), TEXT("int32"));
-		const TCsString Float = TCsString(TEXT("Float"), TEXT("float"));
-		const TCsString String = TCsString(TEXT("String"), TEXT("string"));
-		const TCsString StringString = TCsString(TEXT("StringString"), TEXT("stringstring"));
+		extern CSCORE_API const TCsString Int32;
+		extern CSCORE_API const TCsString Float;
+		extern CSCORE_API const TCsString String;
+		extern CSCORE_API const TCsString StringString;
 	}
 
 	namespace Ref
 	{
-		const Type Int32 = Type::Int32;
-		const Type Float = Type::Float;
-		const Type String = Type::String;
-		const Type StringString = Type::StringString;
-		const Type ECsBlockchainCommandArgumentType_MAX = Type::ECsBlockchainCommandArgumentType_MAX;
+		extern CSCORE_API const Type Int32;
+		extern CSCORE_API const Type Float;
+		extern CSCORE_API const Type String;
+		extern CSCORE_API const Type StringString;
+		extern CSCORE_API const Type ECsBlockchainCommandArgumentType_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -139,7 +139,7 @@ struct FCsBlockchainCommandArgument
 		return *this;
 	}
 
-	bool operator==(const FCsBlockchainCommandArgument& B) const
+	FORCEINLINE bool operator==(const FCsBlockchainCommandArgument& B) const
 	{
 		if (ValueType != B.ValueType)
 			return false;
@@ -152,30 +152,30 @@ struct FCsBlockchainCommandArgument
 		return true;
 	}
 
-	bool operator!=(const FCsBlockchainCommandArgument& B) const
+	FORCEINLINE bool operator!=(const FCsBlockchainCommandArgument& B) const
 	{
 		return !(*this == B);
 	}
 
-	void Set(const TCsBlockchainCommandArgumentType &valueType, const int32& value)
+	FORCEINLINE void Set(const TCsBlockchainCommandArgumentType &valueType, const int32& value)
 	{
 		ValueType = valueType;
 		Value_int32 = value;
 	}
 
-	void Set(const TCsBlockchainCommandArgumentType &valueType, const float& value)
+	FORCEINLINE void Set(const TCsBlockchainCommandArgumentType &valueType, const float& value)
 	{
 		ValueType = valueType;
 		Value_float = value;
 	}
 
-	void Set(const TCsBlockchainCommandArgumentType &valueType, const FString& value)
+	FORCEINLINE void Set(const TCsBlockchainCommandArgumentType &valueType, const FString& value)
 	{
 		ValueType = valueType;
 		Value_FString = value;
 	}
 
-	FString ToString()
+	FORCEINLINE FString ToString()
 	{
 		// Int32
 		if (ValueType == ECsBlockchainCommandArgumentType::Int32)
@@ -215,7 +215,7 @@ struct FCsBlockchainCommandOutput
 	FCsBlockchainCommandOutput(){}
 	~FCsBlockchainCommandOutput(){}
 
-	FCsBlockchainCommandOutput& operator=(const FCsBlockchainCommandOutput& B)
+	FORCEINLINE FCsBlockchainCommandOutput& operator=(const FCsBlockchainCommandOutput& B)
 	{
 		Value_bool = B.Value_bool;
 		Value_int32 = B.Value_int32;
@@ -225,7 +225,7 @@ struct FCsBlockchainCommandOutput
 		return *this;
 	}
 
-	bool operator==(const FCsBlockchainCommandOutput& B) const
+	FORCEINLINE bool operator==(const FCsBlockchainCommandOutput& B) const
 	{
 		if (Value_bool != B.Value_bool)
 			return false;
@@ -240,12 +240,12 @@ struct FCsBlockchainCommandOutput
 		return true;
 	}
 
-	bool operator!=(const FCsBlockchainCommandOutput& B) const
+	FORCEINLINE bool operator!=(const FCsBlockchainCommandOutput& B) const
 	{
 		return !(*this == B);
 	}
 
-	void Reset()
+	FORCEINLINE void Reset()
 	{
 		Value_bool = false;
 		Value_int32 = 0;

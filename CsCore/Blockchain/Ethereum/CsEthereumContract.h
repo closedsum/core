@@ -21,7 +21,7 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct FCsEthereumWeb3DeployLink
+struct CSCORE_API FCsEthereumWeb3DeployLink
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -30,37 +30,15 @@ struct FCsEthereumWeb3DeployLink
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ethereum")
 	FString Link;
 
-	FCsEthereumWeb3DeployLink(){}
-	FCsEthereumWeb3DeployLink(const FECsBlockchainContract &InContract, const FString &InLink)
-	{
-		Contract = InContract;
-		Link = InLink;
-	}
+	FCsEthereumWeb3DeployLink();
+	FCsEthereumWeb3DeployLink(const FECsBlockchainContract &InContract, const FString &InLink);
+	~FCsEthereumWeb3DeployLink();
 
-	~FCsEthereumWeb3DeployLink(){}
+	FCsEthereumWeb3DeployLink& operator=(const FCsEthereumWeb3DeployLink& B);
+	bool operator==(const FCsEthereumWeb3DeployLink& B) const;
+	bool operator!=(const FCsEthereumWeb3DeployLink& B) const;
 
-	FCsEthereumWeb3DeployLink& operator=(const FCsEthereumWeb3DeployLink& B)
-	{
-		Contract = B.Contract;
-		Link = B.Link;
-		return *this;
-	}
-
-	bool operator==(const FCsEthereumWeb3DeployLink& B) const
-	{
-		return Contract == B.Contract && Link == B.Link;
-	}
-
-	bool operator!=(const FCsEthereumWeb3DeployLink& B) const
-	{
-		return !(*this == B);
-	}
-
-	void Set(const FECsBlockchainContract &InContract, const FString &InLink)
-	{
-		Contract = InContract;
-		Link = InLink;
-	}
+	void Set(const FECsBlockchainContract &InContract, const FString &InLink);
 };
 
 class CSCORE_API CsEthereumContract : public ICsBlockchainContract

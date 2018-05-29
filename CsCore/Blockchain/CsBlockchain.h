@@ -27,17 +27,17 @@ namespace ECsBlockchainType
 
 	namespace Str
 	{
-		const TCsString PrivateSingleNode = TCsString(TEXT("PrivateSingleNode"), TEXT("privatesinglenode"));
-		const TCsString Local = TCsString(TEXT("Local"), TEXT("local"));
-		const TCsString Server = TCsString(TEXT("Server"), TEXT("server"));
+		extern CSCORE_API const TCsString PrivateSingleNode;
+		extern CSCORE_API const TCsString Local;
+		extern CSCORE_API const TCsString Server;
 	}
 
 	namespace Ref
 	{
-		const Type PrivateSingleNode = Type::PrivateSingleNode;
-		const Type Local = Type::Local;
-		const Type Server = Type::Server;
-		const Type ECsBlockchainType_MAX = Type::ECsBlockchainType_MAX;
+		extern CSCORE_API const Type PrivateSingleNode;
+		extern CSCORE_API const Type Local;
+		extern CSCORE_API const Type Server;
+		extern CSCORE_API const Type ECsBlockchainType_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -77,15 +77,15 @@ namespace ECsBlockchainProcessType
 
 	namespace Str
 	{
-		const TCsString RunningInstance = TCsString(TEXT("RunningInstance"), TEXT("runninginstance"));
-		const TCsString Console = TCsString(TEXT("Console"), TEXT("console"));
+		extern CSCORE_API const TCsString RunningInstance;
+		extern CSCORE_API const TCsString Console;
 	}
 
 	namespace Ref
 	{
-		const Type RunningInstance = Type::RunningInstance;
-		const Type Console = Type::Console;
-		const Type ECsBlockchainProcessType_MAX = Type::ECsBlockchainProcessType_MAX;
+		extern CSCORE_API const Type RunningInstance;
+		extern CSCORE_API const Type Console;
+		extern CSCORE_API const Type ECsBlockchainProcessType_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -123,7 +123,7 @@ struct FCsBlockchainProcessStartInfo
 	FCsBlockchainProcessStartInfo(){}
 	~FCsBlockchainProcessStartInfo(){}
 
-	FCsBlockchainProcessStartInfo& operator=(const FCsBlockchainProcessStartInfo& B)
+	FORCEINLINE FCsBlockchainProcessStartInfo& operator=(const FCsBlockchainProcessStartInfo& B)
 	{
 		Filename = B.Filename;
 		Arguments = B.Arguments;
@@ -140,7 +140,7 @@ struct FCsBlockchainProcessStartInfo
 		return *this;
 	}
 
-	bool operator==(const FCsBlockchainProcessStartInfo& B) const
+	FORCEINLINE bool operator==(const FCsBlockchainProcessStartInfo& B) const
 	{
 		if (Filename != B.Filename)
 			return false;
@@ -162,12 +162,12 @@ struct FCsBlockchainProcessStartInfo
 		return true;
 	}
 
-	bool operator!=(const FCsBlockchainProcessStartInfo& B) const
+	FORCEINLINE bool operator!=(const FCsBlockchainProcessStartInfo& B) const
 	{
 		return !(*this == B);
 	}
 
-	void AddMonitorOutputEvent(const FCsProcessMonitorOutputEvent &e)
+	FORCEINLINE void AddMonitorOutputEvent(const FCsProcessMonitorOutputEvent &e)
 	{
 		MonitorOutputEvents.Add(e);
 	}
@@ -254,29 +254,27 @@ struct FCsBlockchainCommandInfo
 
 	~FCsBlockchainCommandInfo() {}
 
-	void SetArguments(const TArray<FCsBlockchainCommandArgument> &Args)
+	FORCEINLINE void SetArguments(const TArray<FCsBlockchainCommandArgument> &Args)
 	{
 		Arguments.Reset();
 
 		const int32 Count = Args.Num();
 
-		for (int32 I = 0; I < Count; ++I)
+		for (const FCsBlockchainCommandArgument& Arg : Args)
 		{
-			Arguments.Add(Args[I]);
+			Arguments.Add(Arg);
 		}
 	}
 
-	FCsBlockchainCommandInfo& operator=(const FCsBlockchainCommandInfo& B)
+	FORCEINLINE FCsBlockchainCommandInfo& operator=(const FCsBlockchainCommandInfo& B)
 	{
 		Command = B.Command;
 
 		Arguments.Reset();
 
-		const int32 Count = B.Arguments.Num();
-
-		for (int32 I = 0; I < Count; ++I)
+		for (const FCsBlockchainCommandArgument& Arg : B.Arguments)
 		{
-			Arguments.Add(B.Arguments[I]);
+			Arguments.Add(Arg);
 		}
 
 		Payload_bool = B.Payload_bool;
@@ -287,7 +285,7 @@ struct FCsBlockchainCommandInfo
 		return *this;
 	}
 
-	bool operator==(const FCsBlockchainCommandInfo& B) const
+	FORCEINLINE bool operator==(const FCsBlockchainCommandInfo& B) const
 	{
 		if (Command != B.Command)
 			return false;
@@ -316,72 +314,72 @@ struct FCsBlockchainCommandInfo
 		return true;
 	}
 
-	bool operator!=(const FCsBlockchainCommandInfo& B) const
+	FORCEINLINE bool operator!=(const FCsBlockchainCommandInfo& B) const
 	{
 		return !(*this == B);
 	}
 
-	void Set(const FECsBlockchainCommand& InCommand)
+	FORCEINLINE void Set(const FECsBlockchainCommand& InCommand)
 	{
 		Command = InCommand;
 	}
 
-	void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args)
+	FORCEINLINE void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args)
 	{
 		Command = InCommand;
 		SetArguments(Args);
 	}
 
-	void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const bool &Payload)
+	FORCEINLINE void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const bool &Payload)
 	{
 		Command = InCommand;
 		SetArguments(Args);
 		Payload_bool = Payload;
 	}
 
-	void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const int32 &Payload)
+	FORCEINLINE void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const int32 &Payload)
 	{
 		Command = InCommand;
 		SetArguments(Args);
 		Payload_int32 = Payload;
 	}
 
-	void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const float &Payload)
+	FORCEINLINE void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const float &Payload)
 	{
 		Command = InCommand;
 		SetArguments(Args);
 		Payload_float = Payload;
 	}
 
-	void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const FString &Payload)
+	FORCEINLINE void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const FString &Payload)
 	{
 		Command = InCommand;
 		SetArguments(Args);
 		Payload_FString = Payload;
 	}
 
-	void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const FECsBlockchainContract &Payload)
+	FORCEINLINE void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const FECsBlockchainContract &Payload)
 	{
 		Command = InCommand;
 		SetArguments(Args);
 		Payload_Contract = Payload;
 	}
 
-	void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const FCsBlockchainContractFunctionPayload &Payload)
+	FORCEINLINE void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const FCsBlockchainContractFunctionPayload &Payload)
 	{
 		Command = InCommand;
 		SetArguments(Args);
 		Payload_ContractFunction = Payload;
 	}
 
-	void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, void* Payload)
+	FORCEINLINE void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, void* Payload)
 	{
 		Command = InCommand;
 		SetArguments(Args);
 		Payload_ptr = Payload;
 	}
 
-	void Reset()
+	FORCEINLINE void Reset()
 	{
 		Arguments.Reset();
 

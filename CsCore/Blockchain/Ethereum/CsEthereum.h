@@ -26,24 +26,24 @@ struct FCsEthereumAccountInfo
 
 	~FCsEthereumAccountInfo(){}
 
-	FCsEthereumAccountInfo& operator=(const FCsEthereumAccountInfo& B)
+	FORCEINLINE FCsEthereumAccountInfo& operator=(const FCsEthereumAccountInfo& B)
 	{
 		Nickname = B.Nickname;
 		Passphrase = B.Passphrase;
 		return *this;
 	}
 
-	bool operator==(const FCsEthereumAccountInfo& B) const
+	FORCEINLINE bool operator==(const FCsEthereumAccountInfo& B) const
 	{
 		return Nickname == B.Nickname && Passphrase == B.Passphrase;
 	}
 
-	bool operator!=(const FCsEthereumAccountInfo& B) const
+	FORCEINLINE bool operator!=(const FCsEthereumAccountInfo& B) const
 	{
 		return !(*this == B);
 	}
 
-	void Set(const FString &InNickname, const FString &InPassphrase)
+	FORCEINLINE void Set(const FString &InNickname, const FString &InPassphrase)
 	{
 		Nickname = InNickname;
 		Passphrase = InPassphrase;
@@ -55,28 +55,28 @@ struct FCsEthereumAccountInfo
 
 namespace ECsEthereumCommand
 {
-	extern const FECsBlockchainCommand InitBlockchain;
-	extern const FECsBlockchainCommand SetDataDirectory;
-	extern const FECsBlockchainCommand AttachToConsole;
-	extern const FECsBlockchainCommand ExitConsole;
-	extern const FECsBlockchainCommand NewAccount;
-	extern const FECsBlockchainCommand UnlockAccount;
-	extern const FECsBlockchainCommand ListAccounts;
-	extern const FECsBlockchainCommand SetEtherbase;
-	extern const FECsBlockchainCommand GetBalanceEther;
-	extern const FECsBlockchainCommand GetBalanceWei;
-	extern const FECsBlockchainCommand StartMiner;
-	extern const FECsBlockchainCommand StopMiner;
-	extern const FECsBlockchainCommand DeployContract;
-	extern const FECsBlockchainCommand LoadScript;
-	extern const FECsBlockchainCommand CreateContractABI;
-	extern const FECsBlockchainCommand CreateContractInstance;
-	extern const FECsBlockchainCommand RunContractConstantFunction;
-	extern const FECsBlockchainCommand RunContractStateChangeFunction;
-	extern const FECsBlockchainCommand GetGasEstimate;
-	extern const FECsBlockchainCommand GetTransactionReceipt;
+	extern CSCORE_API const FECsBlockchainCommand InitBlockchain;
+	extern CSCORE_API const FECsBlockchainCommand SetDataDirectory;
+	extern CSCORE_API const FECsBlockchainCommand AttachToConsole;
+	extern CSCORE_API const FECsBlockchainCommand ExitConsole;
+	extern CSCORE_API const FECsBlockchainCommand NewAccount;
+	extern CSCORE_API const FECsBlockchainCommand UnlockAccount;
+	extern CSCORE_API const FECsBlockchainCommand ListAccounts;
+	extern CSCORE_API const FECsBlockchainCommand SetEtherbase;
+	extern CSCORE_API const FECsBlockchainCommand GetBalanceEther;
+	extern CSCORE_API const FECsBlockchainCommand GetBalanceWei;
+	extern CSCORE_API const FECsBlockchainCommand StartMiner;
+	extern CSCORE_API const FECsBlockchainCommand StopMiner;
+	extern CSCORE_API const FECsBlockchainCommand DeployContract;
+	extern CSCORE_API const FECsBlockchainCommand LoadScript;
+	extern CSCORE_API const FECsBlockchainCommand CreateContractABI;
+	extern CSCORE_API const FECsBlockchainCommand CreateContractInstance;
+	extern CSCORE_API const FECsBlockchainCommand RunContractConstantFunction;
+	extern CSCORE_API const FECsBlockchainCommand RunContractStateChangeFunction;
+	extern CSCORE_API const FECsBlockchainCommand GetGasEstimate;
+	extern CSCORE_API const FECsBlockchainCommand GetTransactionReceipt;
 
-	extern const FECsBlockchainCommand MAX;
+	extern CSCORE_API const FECsBlockchainCommand MAX;
 }
 
 namespace ECsEthereumRoutine
@@ -194,7 +194,7 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct FCsEthereumJavascriptContractLink
+struct CSCORE_API FCsEthereumJavascriptContractLink
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -203,37 +203,15 @@ struct FCsEthereumJavascriptContractLink
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ethereum")
 	FString Link;
 
-	FCsEthereumJavascriptContractLink(){}
-	FCsEthereumJavascriptContractLink(const FECsBlockchainContract &InContract, const FString &InLink)
-	{
-		Contract = InContract;
-		Link = InLink;
-	}
+	FCsEthereumJavascriptContractLink();
+	FCsEthereumJavascriptContractLink(const FECsBlockchainContract &InContract, const FString &InLink);
+	~FCsEthereumJavascriptContractLink();
 
-	~FCsEthereumJavascriptContractLink(){}
+	FCsEthereumJavascriptContractLink& operator=(const FCsEthereumJavascriptContractLink& B);
+	bool operator==(const FCsEthereumJavascriptContractLink& B) const;
+	bool operator!=(const FCsEthereumJavascriptContractLink& B) const;
 
-	FCsEthereumJavascriptContractLink& operator=(const FCsEthereumJavascriptContractLink& B)
-	{
-		Contract = B.Contract;
-		Link = B.Link;
-		return *this;
-	}
-
-	bool operator==(const FCsEthereumJavascriptContractLink& B) const
-	{
-		return Contract == B.Contract && Link == B.Link;
-	}
-
-	bool operator!=(const FCsEthereumJavascriptContractLink& B) const
-	{
-		return !(*this == B);
-	}
-
-	void Set(const FECsBlockchainContract &InContract, const FString &InLink)
-	{
-		Contract = InContract;
-		Link = InLink;
-	}
+	void Set(const FECsBlockchainContract &InContract, const FString &InLink);
 };
 
 UCLASS(transient)
@@ -389,6 +367,9 @@ public:
 	FCsBlockchainCommandOutput CurrentCommandOuput;
 
 	FCsEthereumAccountInfo CurrentAccountInfo;
+
+	TArray<FCsBlockchainContractArgument> CurrentContractArguments;
+	FCsBlockchainContractFunctionPayload CurrentContractFunctionPayload;
 
 public:
 

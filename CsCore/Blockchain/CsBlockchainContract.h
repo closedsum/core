@@ -125,6 +125,9 @@ struct FCsBlockchainContractArgument
 		// HACKY: For now add ',' to distinguish between the same input arguments in the ABI
 		Name	  = InName + TEXT(",");
 		ValueType = InValueType;
+		Value_bool = false;
+		Value_int32 = 0;
+		Value_float = 0.0f;
 	}
 
 	FCsBlockchainContractArgument(const FString &InName, const TCsBlockchainContractArgumentType &InValueType, const bool &Value)

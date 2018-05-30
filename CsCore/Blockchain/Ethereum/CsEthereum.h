@@ -369,6 +369,7 @@ public:
 	FCsEthereumAccountInfo CurrentAccountInfo;
 
 	TArray<FCsBlockchainContractArgument> CurrentContractArguments;
+	TArray<FCsBlockchainContractFunctionArgument> CurrentContractFunctionArguments;
 	FCsBlockchainContractFunctionPayload CurrentContractFunctionPayload;
 
 public:

@@ -467,25 +467,33 @@ namespace CgCore
             // Rebuild command if arguments where passed in
             if (args != null && args.Length > EMPTY)
             {
-                // Create list of all string parts
-                string[] parts = value.Split(new string[] { "%s" }, StringSplitOptions.None);
-                
-                // Add in arguments
-                if ((parts.Length - 1) == args.Length)
+                if (value == "%s" && args.Length == 1)
                 {
-                    value = "";
-
-                    int argumentLength = args.Length;
-
-                    for (int i = 0; i < argumentLength; ++i)
-                    {
-                        value += parts[i] + args[i].ToStr();
-                    }
-                    value += parts[argumentLength];
+                    value = args[0].ToStr();
                 }
                 else
                 {
-                    CgDebug.Log("CgEthereum.RunCommand: Failed to run command: " + command.Name + ". Wildcard count != Argument count (" + (parts.Length-1) + "," + args.Length + ")");
+                    // Create list of all string parts
+                    string[] parts = value.Split(new string[] { "%s" }, StringSplitOptions.None);
+
+                    // Add in arguments
+                    if ((parts.Length == 1 && value == parts[0]) ||
+                        (parts.Length - 1) == args.Length)
+                    {
+                        value = "";
+
+                        int argumentLength = args.Length;
+
+                        for (int i = 0; i < argumentLength; ++i)
+                        {
+                            value += parts[i] + args[i].ToStr();
+                        }
+                        value += parts[argumentLength];
+                    }
+                    else
+                    {
+                        CgDebug.Log("CgEthereum.RunCommand: Failed to run command: " + command.Name + ". Wildcard count != Argument count (" + (parts.Length - 1) + "," + args.Length + ")");
+                    }
                 }
             }
 
@@ -1427,7 +1435,7 @@ namespace CgCore
             }
 
             // Check if Contract ABI file exists
-            string abiPath = ABIDirectory + "\\" + econtract + ".json";
+            string abiPath = ABIDirectory + "\\" + econtract + ".txt";
 
             if (File.Exists(abiPath))
             {

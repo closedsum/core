@@ -394,26 +394,33 @@ void UCsEthereum::RunCommand(const int32 &ConsoleIndex, const FECsBlockchainComm
 	// Rebuild command if arguments where passed in
 	if (Arguments.Num() > CS_EMPTY)
 	{
-		TArray<FString> Parts;
-		Value->ParseIntoArray(Parts, TEXT("%s"), true);
-
-		// Add in arguments
-		if ((Parts.Num() == 1 && Composite == Parts[CS_FIRST]) ||
-			(Parts.Num() - 1) == Arguments.Num())
+		if (Composite == TEXT("%s") &&
+			Arguments.Num() == 1)
 		{
-			Composite = ECsCached::Str::Empty;
-
-			int32 Count = Arguments.Num();
-
-			for (int32 I = 0; I < Count; ++I)
-			{
-				Composite += Parts[I] + Arguments[I].ToString();
-			}
-			Composite += Parts[Count];
+			Composite = Arguments[CS_FIRST].ToString();
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("CgEthereum.RunCommand: Failed to run command: %s. Wildcard count (%d) != Argument count (%d)"), *(Command.Name), Parts.Num(), Arguments.Num());
+			TArray<FString> Parts;
+			Value->ParseIntoArray(Parts, TEXT("%s"), true);
+
+			// Add in arguments
+			if ((Parts.Num() - 1) == Arguments.Num())
+			{
+				Composite = ECsCached::Str::Empty;
+
+				int32 Count = Arguments.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					Composite += Parts[I] + Arguments[I].ToString();
+				}
+				Composite += Parts[Count];
+			}
+			else
+			{
+				UE_LOG(LogCs, Warning, TEXT("CgEthereum.RunCommand: Failed to run command: %s. Wildcard count (%d) != Argument count (%d)"), *(Command.Name), Parts.Num(), Arguments.Num());
+			}
 		}
 	}
 
@@ -1227,7 +1234,7 @@ void UCsEthereum::OnConsoleOutputRecieved(const FString &Output)
 			const FECsBlockchainContract& EContract = EMCsBlockchainContract::Get()[SContract];
 
 			CsEthereumContract* Contract = (CsEthereumContract*)Contracts[EContract];
-			Contract->Name				  = CurrentCommandInfo.Value_FString;
+			Contract->Name				 = CurrentCommandInfo.Payload_FString;
 			Contract->Address			 = Address;
 
 			CurrentCommandOuput.Value_FString = Address;
@@ -1315,14 +1322,14 @@ FString UCsEthereum::GetKeystoreFilePath(const FString &Address)
 {
 	IFileManager& FileManager = FFileManagerGeneric::Get();
 
-	TArray<FString> Paths;
-	FileManager.FindFiles(Paths, *KeystoreDirectory, nullptr);
+	TArray<FString> FoundFiles;
+	FileManager.FindFiles(FoundFiles, *KeystoreDirectory, nullptr);
 
-	for (const FString& Path : Paths)
+	for (const FString& File : FoundFiles)
 	{
-		if (Path.Contains(Address))
+		if (File.Contains(Address))
 		{
-			return Path;
+			return KeystoreDirectory + TEXT("/") + File;
 		}
 	}
 	return ECsCached::Str::Empty;
@@ -1727,7 +1734,7 @@ CS_COROUTINE(UCsEthereum, DeployContract_Internal)
 
 		for (const FCsBlockchainContractArgument& Arg : Args)
 		{
-			Snippet = Snippet.Replace(*(Arg.Name), *(Arg.ToString()));
+			Snippet = Snippet.Replace(*(Arg.Name), *(Arg.ToString()), ESearchCase::CaseSensitive);
 		}
 
 		// Deploy Contract
@@ -1743,7 +1750,7 @@ CS_COROUTINE(UCsEthereum, DeployContract_Internal)
 	// Write out pertinent detail of Contract
 	{
 		CsEthereumContract* Contract = (CsEthereumContract*)eth->Contracts[EContract];
-		const FString Path			 = eth->ContractsDeployedDirectory + TEXT("\\") + Contract->Address + TEXT("-") + EContract.Name + TEXT(".txt");
+		const FString Path			 = eth->ContractsDeployedDirectory + TEXT("\\") + Contract->Address + TEXT("-") + EContract.Name + TEXT(".json");
 
 		FFileHelper::SaveStringToFile(Contract->ToString(), *Path);
 	}
@@ -1774,19 +1781,22 @@ void UCsEthereum::LoadContract(const FECsBlockchainContract &EContract, const FE
 	TArray<FString> FilePaths;
 	FileManager.FindFiles(FilePaths, *ContractsDeployedDirectory);
 
-		// Only keep Files ending with EContract.Name + TEXT(".txt")
-	const FString Suffix = EContract.Name + TEXT(".txt");
+	// Only keep Files ending with EContract.Name + TEXT(".json")
+	const FString JsonSuffix = EContract.Name + ECsCached::Ext::json;
 
-	for (const FString& Path : FilePaths)
+	for (const FString& File : FilePaths)
 	{
-		if (Path.EndsWith(Suffix))
+		if (File.EndsWith(JsonSuffix))
 		{
+			const FString Path = ContractsDeployedDirectory + TEXT("/") + File;
+
 			Contract->ParseFromFilePath(Path);
 		}
 	}
 
 	// Check if Contract ABI file exists
-	const FString ABIPath = ABIDirectory + TEXT("\\") + Suffix;
+	const FString TxtSuffix = EContract.Name + ECsCached::Ext::txt;
+	const FString ABIPath   = ABIDirectory + TEXT("\\") + TxtSuffix;
 
 	if (FileManager.FileExists(*ABIPath))
 	{
@@ -1803,7 +1813,7 @@ void UCsEthereum::LoadContract(const FECsBlockchainContract &EContract, const FE
 	if (!Contract->IsValid())
 	{
 		// Check if Contract Web3Deploy file exists
-		const FString Web3DeployPath = Web3DeployDirectory + TEXT("\\") + Suffix;
+		const FString Web3DeployPath = Web3DeployDirectory + TEXT("\\") + TxtSuffix;
 
 		if (FileManager.FileExists(*Web3DeployPath))
 		{
@@ -1818,7 +1828,7 @@ void UCsEthereum::LoadContract(const FECsBlockchainContract &EContract, const FE
 
 		// Check if Contract Web3Deploy Linked (Libraries linked) file exists
 
-		const FString Web3DeployLinkedPath = Web3DeployLinkedDirectory + TEXT("\\") + Suffix;
+		const FString Web3DeployLinkedPath = Web3DeployLinkedDirectory + TEXT("\\") + TxtSuffix;
 
 		if (FileManager.FileExists(*Web3DeployLinkedPath))
 		{
@@ -1832,7 +1842,7 @@ void UCsEthereum::LoadContract(const FECsBlockchainContract &EContract, const FE
 	}
 	else
 	{
-		const FString Web3DeployLinkedPath = Web3DeployLinkedDirectory + TEXT("\\") + Suffix;
+		const FString Web3DeployLinkedPath = Web3DeployLinkedDirectory + TEXT("\\") + TxtSuffix;
 
 		if (!FileManager.FileExists(*Web3DeployLinkedPath))
 		{
@@ -1948,10 +1958,8 @@ void UCsEthereum::CreateContractInstance(ICsBlockchainContract* IContract)
 	Args.SetNum(ARGUMENTS);
 	Args[INSTANCE].Value_FString = Contract->InstanceVariableName;
 	Args[INSTANCE].ValueType	 = ECsBlockchainCommandArgumentType::String;
-	Args.AddDefaulted();
 	Args[ABI].Value_FString = Contract->ContractVariableName;
 	Args[ABI].ValueType		= ECsBlockchainCommandArgumentType::String;
-	Args.AddDefaulted();
 	Args[ADDRESS].Value_FString = Contract->GetAddressAsArg();
 	Args[ADDRESS].ValueType		= ECsBlockchainCommandArgumentType::String;
 
@@ -2096,6 +2104,8 @@ CS_COROUTINE(UCsEthereum, RunContractStateChangeFunction_Internal)
 	const FECsBlockchainContractFunction EFn = EMCsBlockchainContractFunction::Get()[SFn];
 	const TArray<FCsBlockchainContractFunctionArgument> Args = *((TArray<FCsBlockchainContractFunctionArgument>*)r->voidPointers[1]);
 
+	int32& Gas = r->indexers[0];
+
 	const int32 THRESHOLD = 10;
 
 	CS_COROUTINE_BEGIN(r);
@@ -2107,6 +2117,8 @@ CS_COROUTINE(UCsEthereum, RunContractStateChangeFunction_Internal)
 	// GetGasEstimage
 	eth->GetGasEstimate(EContract, IAccount, EFn, Args);
 	CS_COROUTINE_WAIT_UNTIL(r, eth->CommandFlag);
+
+	Gas = eth->CurrentCommandOuput.Value_int32;
 
 	// Start Miner
 	eth->StartMiner();
@@ -2121,7 +2133,6 @@ CS_COROUTINE(UCsEthereum, RunContractStateChangeFunction_Internal)
 		FCsBlockchainContractFunction Fn = eth->ContractFunctions[EContract][EFn];
 		Fn.SetArguments(Args);
 		static const int32 GAS_PADDING = 10000;
-		int32 Gas				= eth->CurrentCommandOuput.Value_int32;
 		Gas						+= GAS_PADDING;
 		const FString Command	= Fn.BuildStateChangeFunction(Address, Gas);
 

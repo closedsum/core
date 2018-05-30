@@ -33,7 +33,7 @@ void FCsEthereumKeystore::Parse(const FString &Str)
 				TSharedPtr<FJsonObject> Object = JsonObject->GetObjectField(TEXT("cipherparams"));
 
 				// iv
-				crypto.cipherparams.iv = JsonObject->GetStringField(TEXT("iv"));
+				crypto.cipherparams.iv = Object->GetStringField(TEXT("iv"));
 			}
 			// kdf
 			crypto.kdf = JsonObject->GetStringField(TEXT("kdf"));
@@ -42,15 +42,15 @@ void FCsEthereumKeystore::Parse(const FString &Str)
 				TSharedPtr<FJsonObject> Object = JsonObject->GetObjectField(TEXT("kdfparams"));
 
 				// dklen
-				crypto.kdfparams.dklen = JsonObject->GetIntegerField(TEXT("dklen"));
+				crypto.kdfparams.dklen = Object->GetIntegerField(TEXT("dklen"));
 				// n
-				crypto.kdfparams.n = JsonObject->GetIntegerField(TEXT("n"));
+				crypto.kdfparams.n = Object->GetIntegerField(TEXT("n"));
 				// p
-				crypto.kdfparams.p = JsonObject->GetIntegerField(TEXT("p"));
+				crypto.kdfparams.p = Object->GetIntegerField(TEXT("p"));
 				// r
-				crypto.kdfparams.r = JsonObject->GetIntegerField(TEXT("r"));
+				crypto.kdfparams.r = Object->GetIntegerField(TEXT("r"));
 				// salt
-				crypto.kdfparams.salt = JsonObject->GetStringField(TEXT("salt"));
+				crypto.kdfparams.salt = Object->GetStringField(TEXT("salt"));
 			}
 			// mac
 			crypto.mac = JsonObject->GetStringField(TEXT("mac"));

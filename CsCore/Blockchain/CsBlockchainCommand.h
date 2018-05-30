@@ -114,17 +114,21 @@ struct FCsBlockchainCommandArgument
 	{
 		ValueType = valueType;
 		Value_int32 = value;
+		Value_float = 0.0f;
 	}
 
 	FCsBlockchainCommandArgument(const TCsBlockchainCommandArgumentType &valueType, const float& value)
 	{
 		ValueType = valueType;
+		Value_int32 = 0;
 		Value_float = value;
 	}
 
 	FCsBlockchainCommandArgument(const TCsBlockchainCommandArgumentType &valueType, const FString& value)
 	{
 		ValueType = valueType;
+		Value_int32 = 0;
+		Value_float = 0.0f;
 		Value_FString = value;
 	}
 

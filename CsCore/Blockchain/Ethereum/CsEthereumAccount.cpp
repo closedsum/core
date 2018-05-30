@@ -61,6 +61,8 @@ void CsEthereumAccount::Parse(const FString &Str)
 		Nickname = JsonParsed->GetStringField(TEXT("Nickname"));
 		// Address
 		Address = JsonParsed->GetStringField(TEXT("Address"));
+		AddressAsHex = TEXT("0x") + Address;
+		AddressAsArg = TEXT("'") + AddressAsHex + TEXT("'");
 		// Passphrase
 		Passphrase = JsonParsed->GetStringField(TEXT("Passphrase"));
 	}

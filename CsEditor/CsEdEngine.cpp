@@ -17,6 +17,8 @@
 #include "Editor/PropertyEditor/Public/PropertyEditorModule.h"
 
 // DetailCustomizations
+#include "DetailCustomizations/EnumStruct/ECsInputActionCustomization.h"
+#include "DetailCustomizations/EnumStruct/ECsGameEventCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsProcessCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsBlockchainCommandCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsBlockchainContractCustomization.h"
@@ -33,7 +35,12 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 	{
 		FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
 
+		// Input
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsInputAction", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsInputActionCustomization::MakeInstance));
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsGameEvent", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsGameEventCustomization::MakeInstance));
+		// Process
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsProcess", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsProcessCustomization::MakeInstance));
+		// Blockchain
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsBlockchainCommand", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsBlockchainCommandCustomization::MakeInstance));
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsBlockchainContract", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsBlockchainContractCustomization::MakeInstance));
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsBlockchainContractFunction", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsBlockchainContractFunctionCustomization::MakeInstance));

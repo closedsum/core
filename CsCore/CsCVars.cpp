@@ -647,18 +647,12 @@ TAutoConsoleVariable<int32> CsCVarLogProcessIO(
 // Blockchain
 #pragma region
 
-/*
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainIO;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainIOProcess;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainIOConsole;
-//Process
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarShowBlockchainProcessWindow;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainProcessStart;
-// Command
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainCommandCompleted;
-// Account
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainAccountCreated;
-*/
+TAutoConsoleVariable<int32> CsCVarBlockchainRebuild(
+	TEXT("blockchain.rebuild"),
+	0,
+	TEXT("Rebuild Blockchain."),
+	ECVF_SetByConsole | ECVF_SetByCode
+);
 
 TAutoConsoleVariable<int32> CsCVarLogBlockchainIO(
 	TEXT("log.blockchain.io"),

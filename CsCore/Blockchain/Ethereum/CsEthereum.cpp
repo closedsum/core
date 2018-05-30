@@ -201,6 +201,14 @@ void UCsEthereum::Initialize()
 	{
 		// InitBlockchain
 		SetCommand(ECsEthereumCommand::InitBlockchain, TEXT("--datadir=\"") + ChainDirectory + TEXT("\" init \"") + RootDirectory + TEXT("\\genesis.json\""));
+		{
+			FCsStringParagraph P = CsStringParagraphHelper::CreateOneWordParagraph(TEXT("database=lightchaindata"), ECsStringWordRule::MatchCase);
+
+			FCsProcessMonitorOutputEvent E(ECsEthereumCommand::InitBlockchain, P, ECsProcessMonitorOutputEventPurpose::FireOnce);
+			E.Event.AddUObject(this, &UCsEthereum::OnCommandCompleted);
+
+			MonitorOutputEvents.Add(ECsEthereumCommand::InitBlockchain, E);
+		}
 		// SetDataDirectory
 		SetCommand(ECsEthereumCommand::SetDataDirectory, TEXT("--datadir=\"") + ChainDirectory + TEXT("\" --networkid 15 --gcmode archive"));
 		{
@@ -308,6 +316,11 @@ void UCsEthereum::Initialize()
 
 		CommandCompleted_Event.AddUObject(this, &UCsEthereum::OnCommandCompleted);
 		//AccountCreated_Event.AddUObject(this, &UCsEthereum::OnAccountCreated);
+	}
+
+	if (CsCVarBlockchainRebuild->GetInt() == CS_CVAR_VALID)
+	{
+		Rebuild();
 	}
 }
 
@@ -547,14 +560,17 @@ void UCsEthereum::CreatePrivateChain()
 
 	CommandFlag = false;
 
+	const FECsBlockchainCommand& Command = ECsEthereumCommand::InitBlockchain;
+
 	// Init
 	//IsRunningInstanceOpen = true;
 	IsRunningInstanceCloseFlag = false;
 
 	FCsBlockchainProcessStartInfo StartInfo;
 	StartInfo.Filename				= ConsoleFullPath;
-	StartInfo.Arguments				= Commands[ECsEthereumCommand::InitBlockchain];
+	StartInfo.Arguments				= Commands[Command];
 	StartInfo.RedirectStandardInput = false;
+	StartInfo.AddMonitorOutputEvent(MonitorOutputEvents[Command]);
 
 	StartProcess(ECsBlockchainProcessType::RunningInstance, 0, StartInfo);
 }
@@ -601,9 +617,12 @@ CS_COROUTINE(UCsEthereum, StartPrivateChain_Internal)
 		eth->CreatePrivateChain();
 
 		// TODO: Running Instance might NOT get closed
-		CS_COROUTINE_WAIT_UNTIL(r, eth->IsRunningInstanceCloseFlag);
+		//CS_COROUTINE_WAIT_UNTIL(r, eth->IsRunningInstanceCloseFlag);
+		CS_COROUTINE_WAIT_UNTIL(r, eth->CommandFlag);
 
 		eth->PrivateChainCreated_Event.Broadcast(CS_BLOCKCHAIN_SINGLE_NODE_INDEX);
+
+		eth->StopProcess(ECsBlockchainProcessType::RunningInstance, CS_BLOCKCHAIN_SINGLE_NODE_INDEX);
 
 		eth->OpenRunningInstance();
 	}
@@ -782,7 +801,7 @@ void UCsEthereum::NewAccount(void* Payload)
 {
 	FCsEthereumAccountInfo* Info = (FCsEthereumAccountInfo*)Payload;
 
-	if (!Accounts.Find(Info->Nickname))
+	if (Accounts.Find(Info->Nickname))
 	{
 		UE_LOG(LogCs, Warning, TEXT("CgEthereum::NewAccount: Account with Nickname: %s already exists."), *(Info->Nickname));
 		return;
@@ -1024,24 +1043,14 @@ void UCsEthereum::Rebuild()
 
 		for (const FString& File : FoundFiles)
 		{
-			const FString Path = AccountsDirectory + TEXT("/") + File + ECsCached::Ext::json;
+			const FString Path = AccountsDirectory + TEXT("/") + File;
 
 			FileManager.Delete(*Path, false, true, true);
 		}
 	}
 	// chaindata
 	if (FileManager.DirectoryExists(*ChainDirectory))
-	{
-		TArray<FString> FoundFiles;
-		FileManager.FindFiles(FoundFiles, *ChainDirectory, nullptr);
-
-		for (const FString& File : FoundFiles)
-		{
-			const FString Path = ChainDirectory + TEXT("/") + File;
-
-			FileManager.Delete(*Path, false, true, true);
-		}
-	}
+		FileManager.DeleteDirectory(*ChainDirectory, false, true);
 	// genesis.json
 	if (FileManager.FileExists(*GenesisFilePath))
 		FileManager.Delete(*GenesisFilePath, false, true, true);
@@ -1053,7 +1062,7 @@ void UCsEthereum::Rebuild()
 
 		for (const FString& File : FoundFiles)
 		{
-			const FString Path = ContractsDeployedDirectory + TEXT("/") + File + ECsCached::Ext::json;
+			const FString Path = ContractsDeployedDirectory + TEXT("/") + File;
 
 			FileManager.Delete(*Path, false, true, true);
 		}
@@ -1066,7 +1075,7 @@ void UCsEthereum::Rebuild()
 
 		for (const FString& File : FoundFiles)
 		{
-			const FString Path = Web3DeployLinkedDirectory + TEXT("/") + File + ECsCached::Ext::txt;
+			const FString Path = Web3DeployLinkedDirectory + TEXT("/") + File;
 
 			FileManager.Delete(*Path, false, true, true);
 		}
@@ -1079,7 +1088,7 @@ void UCsEthereum::Rebuild()
 
 		for (const FString& File : FoundFiles)
 		{
-			const FString Path = JavascriptLinkedDirectory + TEXT("/") + File + TEXT(".js");
+			const FString Path = JavascriptLinkedDirectory + TEXT("/") + File;
 
 			FileManager.Delete(*Path, false, true, true);
 		}
@@ -1186,7 +1195,7 @@ void UCsEthereum::OnConsoleOutputRecieved(const FString &Output)
 			CsEthereumAccount* Account =  new CsEthereumAccount(Nickname, Address, Passphrase);
 
 			const FString Json = Account->ToString();
-			const FString AccountFilePath = AccountsDirectory + TEXT("\\") + Nickname + TEXT("-") + Address;
+			const FString AccountFilePath = AccountsDirectory + TEXT("\\") + Nickname + TEXT("-") + Address + ECsCached::Ext::json;
 
 			FFileHelper::SaveStringToFile(Json, *AccountFilePath);
 

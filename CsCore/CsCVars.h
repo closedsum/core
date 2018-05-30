@@ -2,6 +2,14 @@
 #pragma once
 #include "Engine.h"
 
+#define CS_CVAR_SHOW_LOG 1
+#define CS_CVAR_HIDE_LOG 0
+#define CS_CVAR_DRAW 1
+#define CS_CVAR_DISPLAY 1
+#define CS_CVAR_SHOW 1
+#define CS_CVAR_HIDE 0
+#define CS_CVAR_VALID 1
+
 // Loading
 #pragma region
 
@@ -294,6 +302,7 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogProcessIO;
 // Blockchain
 #pragma region
 
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarBlockchainRebuild;
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainIO;
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainIORunning;
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainIOConsole;

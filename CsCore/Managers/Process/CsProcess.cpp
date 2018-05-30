@@ -166,6 +166,8 @@ void UCsProcess::OnCreatePool()
 
 void UCsProcess::DeAllocate()
 {
+	StopRead();
+
 	if (ProcessHandle.IsValid())
 	{
 		FPlatformProcess::TerminateProc(ProcessHandle, true);
@@ -182,6 +184,9 @@ void UCsProcess::DeAllocate()
 			ReadPipeChild = WritePipeParent = nullptr;
 		}
 	}
+	ProcessID = 0;
+	ProcessHandle.Reset();
+
 	Cache.Reset();
 
 	Super::DeAllocate();

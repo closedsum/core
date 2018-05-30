@@ -1,5 +1,5 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
-#include "ECsProcessCustomization.h"
+#include "DetailCustomizations/EnumStruct/ECsProcessCustomization.h"
 
 #include "Managers/Process/CsProcess.h"
 

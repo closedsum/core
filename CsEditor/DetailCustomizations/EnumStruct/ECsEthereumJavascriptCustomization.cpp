@@ -1,6 +1,5 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
-
-#include "ECsEthereumJavascriptCustomization.h"
+#include "DetailCustomizations/EnumStruct/ECsEthereumJavascriptCustomization.h"
 
 #include "Blockchain/Ethereum/CsEthereum.h"
 

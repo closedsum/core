@@ -466,7 +466,6 @@ public:
 		{
 			if (Index > CS_INT32_BIT_MAX)
 			{
-				UE_LOG(LogCs, Log, TEXT("TCsEnumMaskMap::Create: Reached limit of %d for EnumStruct of type FECsEnumMask_int32. Remaining Enums will be the same as 1<<%d."), Index, CS_INT32_BIT_MAX);
 				return Enums[Index - 1];
 			}
 		}
@@ -475,7 +474,6 @@ public:
 		{
 			if (Index > CS_INT32_BIT_MAX)
 			{
-				UE_LOG(LogCs, Log, TEXT("TCsEnumMaskMap::Create: Reached limit of %d for EnumStruct of type FECsEnumMask_uint32. Remaining Enums will be the same as 1<<%d."), Index, CS_INT32_BIT_MAX);
 				return Enums[Index - 1];
 			}
 		}

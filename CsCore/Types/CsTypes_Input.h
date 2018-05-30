@@ -25,9 +25,17 @@ namespace ECsInputDevice
 
 	namespace Str
 	{
-		const TCsString MouseAndKeyboard = TCsString(TEXT("MouseAndKeyboard"), TEXT("mouseandkeyboard"));
-		const TCsString Gamepad = TCsString(TEXT("Gamepad"), TEXT("gamepad"));
-		const TCsString MotionController = TCsString(TEXT("MotionController"), TEXT("motioncontroller"));
+		extern CSCORE_API const TCsString MouseAndKeyboard;
+		extern CSCORE_API const TCsString Gamepad;
+		extern CSCORE_API const TCsString MotionController;
+	}
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type MouseAndKeyboard;
+		extern CSCORE_API const Type Gamepad;
+		extern CSCORE_API const Type MotionController;
+		extern CSCORE_API const Type ECsInputDevice_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -38,12 +46,12 @@ namespace ECsInputDevice
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE Type ToType(const FString &String)
+	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::MouseAndKeyboard) { return Type::MouseAndKeyboard; }
-		if (String == Str::Gamepad) { return Type::Gamepad; }
-		if (String == Str::MotionController) { return Type::MotionController; }
-		return Type::ECsInputDevice_MAX;
+		if (String == Str::MouseAndKeyboard) { return Ref::MouseAndKeyboard; }
+		if (String == Str::Gamepad) { return Ref::Gamepad; }
+		if (String == Str::MotionController) { return Ref::MotionController; }
+		return Ref::ECsInputDevice_MAX;
 	}
 }
 
@@ -70,11 +78,21 @@ namespace ECsInputType
 
 	namespace Str
 	{
-		const TCsString Action = TCsString(TEXT("Action"), TEXT("action"));
-		const TCsString Axis = TCsString(TEXT("Axis"), TEXT("axis"));
-		const TCsString Trigger = TCsString(TEXT("Trigger"), TEXT("trigger"));
-		const TCsString Location = TCsString(TEXT("Location"), TEXT("location"));
-		const TCsString Rotation = TCsString(TEXT("Rotation"), TEXT("rotation"));
+		extern CSCORE_API const TCsString Action;
+		extern CSCORE_API const TCsString Axis;
+		extern CSCORE_API const TCsString Trigger;
+		extern CSCORE_API const TCsString Location;
+		extern CSCORE_API const TCsString Rotation;
+	}
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type Action;
+		extern CSCORE_API const Type Axis;
+		extern CSCORE_API const Type Trigger;
+		extern CSCORE_API const Type Location;
+		extern CSCORE_API const Type Rotation;
+		extern CSCORE_API const Type ECsInputType_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -87,14 +105,14 @@ namespace ECsInputType
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE Type ToType(const FString &String)
+	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::Action) { return Type::Action; }
-		if (String == Str::Axis) { return Type::Axis; }
-		if (String == Str::Trigger) { return Type::Trigger; }
-		if (String == Str::Location) { return Type::Location; }
-		if (String == Str::Rotation) { return Type::Rotation; }
-		return Type::ECsInputType_MAX;
+		if (String == Str::Action) { return Ref::Action; }
+		if (String == Str::Axis) { return Ref::Axis; }
+		if (String == Str::Trigger) { return Ref::Trigger; }
+		if (String == Str::Location) { return Ref::Location; }
+		if (String == Str::Rotation) { return Ref::Rotation; }
+		return Ref::ECsInputType_MAX;
 	}
 }
 
@@ -124,14 +142,27 @@ namespace ECsInputEvent
 
 	namespace Str
 	{
-		const TCsString FirstPressed = TCsString(TEXT("FirstPressed"), TEXT("firstpressed"), TEXT("first pressed"));
-		const TCsString Pressed = TCsString(TEXT("Pressed"), TEXT("pressed"), TEXT("pressed"));
-		const TCsString FirstReleased = TCsString(TEXT("FirstReleased"), TEXT("firstreleased"), TEXT("first released"));
-		const TCsString Released = TCsString(TEXT("Released"), TEXT("released"), TEXT("released"));
-		const TCsString FirstMoved = TCsString(TEXT("FirstMoved"), TEXT("firstmoved"), TEXT("first moved"));
-		const TCsString Moved = TCsString(TEXT("Moved"), TEXT("moved"), TEXT("moved"));
-		const TCsString FirstStationary = TCsString(TEXT("FirstStationary"), TEXT("firststationary"), TEXT("first stationary"));
-		const TCsString Stationary = TCsString(TEXT("Stationary"), TEXT("stationary"), TEXT("stationary"));
+		extern CSCORE_API const TCsString FirstPressed;
+		extern CSCORE_API const TCsString Pressed;
+		extern CSCORE_API const TCsString FirstReleased;
+		extern CSCORE_API const TCsString Released;
+		extern CSCORE_API const TCsString FirstMoved;
+		extern CSCORE_API const TCsString Moved;
+		extern CSCORE_API const TCsString FirstStationary;
+		extern CSCORE_API const TCsString Stationary;
+	}
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type FirstPressed;
+		extern CSCORE_API const Type Pressed;
+		extern CSCORE_API const Type FirstReleased;
+		extern CSCORE_API const Type Released;
+		extern CSCORE_API const Type FirstMoved;
+		extern CSCORE_API const Type Moved;
+		extern CSCORE_API const Type FirstStationary;
+		extern CSCORE_API const Type Stationary;
+		extern CSCORE_API const Type ECsInputEvent_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -147,17 +178,17 @@ namespace ECsInputEvent
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE Type ToType(const FString &String)
+	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::FirstPressed) { return Type::FirstPressed; }
-		if (String == Str::Pressed) { return Type::Pressed; }
-		if (String == Str::FirstReleased) { return Type::FirstReleased; }
-		if (String == Str::Released) { return Type::Released; }
-		if (String == Str::FirstMoved) { return Type::FirstMoved; }
-		if (String == Str::Moved) { return Type::Moved; }
-		if (String == Str::FirstStationary) { return Type::FirstStationary; }
-		if (String == Str::Stationary) { return Type::Stationary; }
-		return Type::ECsInputEvent_MAX;
+		if (String == Str::FirstPressed) { return Ref::FirstPressed; }
+		if (String == Str::Pressed) { return Ref::Pressed; }
+		if (String == Str::FirstReleased) { return Ref::FirstReleased; }
+		if (String == Str::Released) { return Ref::Released; }
+		if (String == Str::FirstMoved) { return Ref::FirstMoved; }
+		if (String == Str::Moved) { return Ref::Moved; }
+		if (String == Str::FirstStationary) { return Ref::FirstStationary; }
+		if (String == Str::Stationary) { return Ref::Stationary; }
+		return Ref::ECsInputEvent_MAX;
 	}
 }
 
@@ -183,10 +214,19 @@ namespace ECsInputValue
 
 	namespace Str
 	{
-		const TCsString Void = TCsString(TEXT("Void"), TEXT("void"));
-		const TCsString Float = TCsString(TEXT("Float"), TEXT("float"));
-		const TCsString Vector = TCsString(TEXT("Vector"), TEXT("vector"));
-		const TCsString Rotator = TCsString(TEXT("Rotator"), TEXT("rotator"));
+		extern CSCORE_API const TCsString Void;
+		extern CSCORE_API const TCsString Float;
+		extern CSCORE_API const TCsString Vector;
+		extern CSCORE_API const TCsString Rotator;
+	}
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type Void;
+		extern CSCORE_API const Type Float;
+		extern CSCORE_API const Type Vector;
+		extern CSCORE_API const Type Rotator;
+		extern CSCORE_API const Type ECsInputValue_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -198,13 +238,13 @@ namespace ECsInputValue
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE Type ToType(const FString &String)
+	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::Void) { return Type::Void; }
-		if (String == Str::Float) { return Type::Float; }
-		if (String == Str::Vector) { return Type::Vector; }
-		if (String == Str::Rotator) { return Type::Rotator; }
-		return Type::ECsInputValue_MAX;
+		if (String == Str::Void) { return Ref::Void; }
+		if (String == Str::Float) { return Ref::Float; }
+		if (String == Str::Vector) { return Ref::Vector; }
+		if (String == Str::Rotator) { return Ref::Rotator; }
+		return Ref::ECsInputValue_MAX;
 	}
 }
 
@@ -229,7 +269,42 @@ typedef TCsInputActionMap(*TCsStringToInputActionMap)(const FString&);
 #define CS_DEFINE_INPUT_ACTION_MAP	InputActionMapMaskToString = &ECsInputActionMap::MaskToString; \
 									StringToInputActionMap = &ECsInputActionMap::ToBitMask; \
 
-struct FCsInputActionMapRule
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsInputActionMap : public FECsEnumMask_int32
+{
+	//GENERATED_USTRUCT_BODY()
+
+public:
+
+	FECsInputActionMap() {}
+	FECsInputActionMap(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnumMask_int32(InValue, InName, InDisplayName) {}
+	FECsInputActionMap(const uint8 &InValue, const FString &InName) : FECsEnumMask_int32(InValue, InName) {}
+	~FECsInputActionMap() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnumMask_int32::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsInputActionMap& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
+}
+
+struct CSCORE_API EMCsInputActionMap : public TCsEnumMaskMap<FECsInputActionMap, int32>
+{
+protected:
+	EMCsInputActionMap() {}
+	EMCsInputActionMap(const EMCsInputActionMap &) = delete;
+	EMCsInputActionMap(EMCsInputActionMap &&) = delete;
+public:
+	~EMCsInputActionMap() {}
+private:
+	static EMCsInputActionMap* Instance;
+
+public:
+	static EMCsInputActionMap& Get();
+};
+
+struct CSCORE_API FCsInputActionMapRule
 {
 	int32 Clear;
 	int32 Set;
@@ -254,8 +329,6 @@ struct FCsInputActionMapRule
 	~FCsInputActionMapRule(){}
 };
 
-
-
 namespace ECsInputAction
 {
 	enum Type : uint8;
@@ -278,10 +351,44 @@ typedef TCsInputAction(*TCsStringToInputAction)(const FString&);
 								InputActionToString = &ECsInputAction::ToString; \
 								StringToInputAction = &ECsInputAction::ToType;
 
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsInputAction : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsInputAction() {}
+	FECsInputAction(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsInputAction(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsInputAction() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsInputAction& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
+}
+
+struct CSCORE_API EMCsInputAction : public TCsEnumMap<FECsInputAction, uint8>
+{
+protected:
+	EMCsInputAction() {}
+	EMCsInputAction(const EMCsInputAction &) = delete;
+	EMCsInputAction(EMCsInputAction &&) = delete;
+public:
+	~EMCsInputAction() {}
+private:
+	static EMCsInputAction* Instance;
+
+public:
+	static EMCsInputAction& Get();
+};
+
 #define CS_INVALID_INPUT_POOL_INDEX 65535
 
 USTRUCT(BlueprintType)
-struct FCsInputInfo
+struct CSCORE_API FCsInputInfo
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -302,7 +409,10 @@ struct FCsInputInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	float Duration;
 
-	FCsInputInfo& operator=(const FCsInputInfo& B)
+	FCsInputInfo() {}
+	~FCsInputInfo(){}
+
+	FORCEINLINE FCsInputInfo& operator=(const FCsInputInfo& B)
 	{
 		Type = B.Type;
 		ValueType = B.ValueType;
@@ -315,7 +425,7 @@ struct FCsInputInfo
 		return *this;
 	}
 
-	bool operator==(const FCsInputInfo& B) const
+	FORCEINLINE bool operator==(const FCsInputInfo& B) const
 	{
 		return Type == B.Type && ValueType == B.ValueType && 
 			   Event == B.Event && Last_Event == B.Last_Event &&
@@ -323,24 +433,24 @@ struct FCsInputInfo
 			   Duration == B.Duration;
 	}
 
-	bool operator!=(const FCsInputInfo& B) const
+	FORCEINLINE bool operator!=(const FCsInputInfo& B) const
 	{
 		return !(*this == B);
 	}
 
-	void Set(const TCsInputEvent &inEvent, const float &inValue)
+	FORCEINLINE void Set(const TCsInputEvent &inEvent, const float &inValue)
 	{
 		Event = inEvent;
 		Value = inValue;
 	}
 
-	void Set(const TCsInputEvent &inEvent, const FVector &inLocation)
+	FORCEINLINE void Set(const TCsInputEvent &inEvent, const FVector &inLocation)
 	{
 		Event = inEvent;
 		Location = inLocation;
 	}
 
-	void Set(const TCsInputEvent &inEvent, const FRotator &inRotation)
+	FORCEINLINE void Set(const TCsInputEvent &inEvent, const FRotator &inRotation)
 	{
 		Event = inEvent;
 		Rotation = inRotation;
@@ -388,7 +498,7 @@ struct FRep_CsInput
 };
 
 USTRUCT(BlueprintType)
-struct FCsInput
+struct CSCORE_API FCsInput
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -426,19 +536,19 @@ struct FCsInput
 		Rotation  = FRotator::ZeroRotator;
 	}
 
-	FCsInput& operator=(const FRep_CsInput& B)
+	FORCEINLINE FCsInput& operator=(const FRep_CsInput& B)
 	{
 		Action = B.Action;
 		Event  = B.Event;
 		return *this;
 	}
 
-	void Init(const uint16 &inPoolIndex)
+	FORCEINLINE void Init(const uint16 &inPoolIndex)
 	{
 		PoolIndex = inPoolIndex;
 	}
 
-	void Set(const TCsInputAction &inAction, const TCsInputEvent &inEvent, const float &inValue, const FVector &inLocation, const FRotator &inRotation)
+	FORCEINLINE void Set(const TCsInputAction &inAction, const TCsInputEvent &inEvent, const float &inValue, const FVector &inLocation, const FRotator &inRotation)
 	{
 		Action		  = inAction;
 		Action_Script = (uint8)Action;
@@ -448,53 +558,53 @@ struct FCsInput
 		Rotation	  = inRotation;
 	}
 
-	void Set(const TCsInputAction &inAction, const TCsInputEvent &inEvent, const FVector &inLocation)
+	FORCEINLINE void Set(const TCsInputAction &inAction, const TCsInputEvent &inEvent, const FVector &inLocation)
 	{
 		Set(inAction, inEvent, 0.0f, inLocation, FRotator::ZeroRotator);
 	}
 
-	void Set(const TCsInputAction &inAction, const TCsInputEvent &inEvent, const FRotator &inRotation)
+	FORCEINLINE void Set(const TCsInputAction &inAction, const TCsInputEvent &inEvent, const FRotator &inRotation)
 	{
 		Set(inAction, inEvent, 0.0f, FVector::ZeroVector, inRotation);
 	}
 
-	void Set(const TCsInputAction &inAction, const TCsInputEvent &inEvent, const float &inValue)
+	FORCEINLINE void Set(const TCsInputAction &inAction, const TCsInputEvent &inEvent, const float &inValue)
 	{
 		Set(inAction, inEvent, inValue, FVector::ZeroVector, FRotator::ZeroRotator);
 	}
 
-	void Set(const TCsInputAction &inAction, const TCsInputEvent &inEvent)
+	FORCEINLINE void Set(const TCsInputAction &inAction, const TCsInputEvent &inEvent)
 	{
 		Set(inAction, inEvent, 0.0f, FVector::ZeroVector, FRotator::ZeroRotator);
 	}
 
-	void Allocate(const TCsInputAction &inAction, const TCsInputEvent &inEvent, const float &inValue, const FVector &inLocation, const FRotator &inRotation)
+	FORCEINLINE void Allocate(const TCsInputAction &inAction, const TCsInputEvent &inEvent, const float &inValue, const FVector &inLocation, const FRotator &inRotation)
 	{
 		IsAllocated = true;
 		Set(inAction, inEvent, inValue, inLocation, inRotation);
 	}
 
-	void Allocate(const TCsInputAction &inAction, const TCsInputEvent &inEvent, const FVector &inLocation)
+	FORCEINLINE void Allocate(const TCsInputAction &inAction, const TCsInputEvent &inEvent, const FVector &inLocation)
 	{
 		Allocate(inAction, inEvent, 0.0f, inLocation, FRotator::ZeroRotator);
 	}
 
-	void Allocate(const TCsInputAction &inAction, const TCsInputEvent &inEvent, const FRotator &inRotation)
+	FORCEINLINE void Allocate(const TCsInputAction &inAction, const TCsInputEvent &inEvent, const FRotator &inRotation)
 	{
 		Allocate(inAction, inEvent, 0.0f, FVector::ZeroVector, inRotation);
 	}
 
-	void Allocate(const TCsInputAction &inAction, const TCsInputEvent &inEvent, const float &inValue)
+	FORCEINLINE void Allocate(const TCsInputAction &inAction, const TCsInputEvent &inEvent, const float &inValue)
 	{
 		Allocate(inAction, inEvent, inValue, FVector::ZeroVector, FRotator::ZeroRotator);
 	}
 
-	void Allocate(const TCsInputAction &inAction, const TCsInputEvent &inEvent)
+	FORCEINLINE void Allocate(const TCsInputAction &inAction, const TCsInputEvent &inEvent)
 	{
 		Allocate(inAction, inEvent, 0.0f, FVector::ZeroVector, FRotator::ZeroRotator);
 	}
 
-	void Reset()
+	FORCEINLINE void Reset()
 	{
 		IsAllocated   = false;
 		IsConsumed	  = false;
@@ -509,7 +619,7 @@ struct FCsInput
 };
 
 USTRUCT(BlueprintType)
-struct FCsInputFrame
+struct CSCORE_API FCsInputFrame
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -525,25 +635,23 @@ struct FCsInputFrame
 
 	TArray<struct FCsInput*> Inputs;
 
-	FCsInputFrame& operator=(const FCsInputFrame& B)
+	FORCEINLINE FCsInputFrame& operator=(const FCsInputFrame& B)
 	{
 		Time = B.Time;
 		RealTime = B.RealTime;
 		DeltaTime = B.DeltaTime;
 		Frame = B.Frame;
 
-
 		Inputs.Reset();
-		const uint16 Count = B.Inputs.Num();
 
-		for (uint16 I = 0; I < Count; ++I)
+		for (FCsInput* Input : B.Inputs)
 		{
-			Inputs.Add(B.Inputs[I]);
+			Inputs.Add(Input);
 		}
 		return *this;
 	}
 
-	void Init(const float &inTime, const float &inRealTime, const float &inDeltaTime, const uint64 &inFrame)
+	FORCEINLINE void Init(const float &inTime, const float &inRealTime, const float &inDeltaTime, const uint64 &inFrame)
 	{
 		Time	  = inTime;
 		RealTime  = inRealTime;
@@ -559,26 +667,24 @@ struct FCsInputFrame
 		Inputs.Reset();
 	}
 
-	FCsInput* GetInput(const TCsInputAction &Action)
+	FORCEINLINE FCsInput* GetInput(const TCsInputAction &Action)
 	{
-		const uint16 Count = Inputs.Num();
-
-		for (uint16 I = 0; I < Count; ++I)
+		for (FCsInput* Input : Inputs)
 		{
-			if ((*(Inputs[I])).Action == Action)
-				return Inputs[I];
+			if (Input->Action == Action)
+				return Input;
 		}
 		return nullptr;
 	}
 
-	FCsInput* GetInput(const TCsInputAction &Action, const TCsInputEvent &Event)
+	FORCEINLINE FCsInput* GetInput(const TCsInputAction &Action, const TCsInputEvent &Event)
 	{
 		if (FCsInput* Input = GetInput(Action))
 			return Input->Event == Event ? Input : nullptr;
 		return nullptr;
 	}
 
-	FCsInput* GetInput(const TCsInputAction &Action, const TArray<TCsInputEvent> &Events)
+	FORCEINLINE FCsInput* GetInput(const TCsInputAction &Action, const TArray<TCsInputEvent> &Events)
 	{
 		if (FCsInput* Input = GetInput(Action))
 			return Events.Find(Input->Event) != INDEX_NONE ? Input : nullptr;
@@ -587,7 +693,7 @@ struct FCsInputFrame
 };
 
 USTRUCT(BlueprintType)
-struct FCsInputWord
+struct CSCORE_API FCsInputWord
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -675,12 +781,12 @@ struct FCsInputWord
 		AddOrInput(Action, Event, 0.0f, FVector::ZeroVector, Rotation);
 	}
 
-	void Reset()
+	FORCEINLINE void Reset()
 	{
 		Completed = false;
 	}
 
-	void ProcessInput(FCsInputFrame &InputFrame)
+	FORCEINLINE void ProcessInput(FCsInputFrame &InputFrame)
 	{
 		int32 And = 0;
 		bool Or   = false;
@@ -705,14 +811,14 @@ struct FCsInputWord
 			// Check Or
 			const int32 OrCount = OrInputs.Num();
 
-			for (int32 J = 0; J < OrCount; ++J)
+			for (const FCsInput& OrInput : OrInputs)
 			{
-				Or |= Input->Action == OrInputs[J].Action && Input->Event == OrInputs[J].Event;
+				Or |= Input->Action == OrInput.Action && Input->Event == OrInput.Event;
 
 				if (Or)
 					break;
 			}
-
+			
 			Completed = (And > 0 && And == AndCount) || Or;
 
 			if (Completed)
@@ -727,7 +833,7 @@ struct FCsInputWord
 };
 
 USTRUCT(BlueprintType)
-struct FCsInputPhrase
+struct CSCORE_API FCsInputPhrase
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -790,19 +896,17 @@ struct FCsInputPhrase
 		Words[Index].AddOrInput(Action, Event, Value, Location, Rotation);
 	}
 
-	void Reset()
+	FORCEINLINE void Reset()
 	{
-		const int32 Count = Words.Num();
-
-		for (int32 I = 0; I < Count; ++I)
+		for (FCsInputWord& Word : Words)
 		{
-			Words[I].Reset();
+			Word.Reset();
 		}
 		Completed = false;
 		CompletedTime = 0.0f;
 	}
 
-	void ProcessInput(FCsInputFrame &InputFrame)
+	FORCEINLINE void ProcessInput(FCsInputFrame &InputFrame)
 	{
 		const float& CurrentTime = InputFrame.Time;
 
@@ -863,7 +967,7 @@ struct FCsInputPhrase
 };
 
 USTRUCT(BlueprintType)
-struct FCsInputSentence
+struct CSCORE_API FCsInputSentence
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -906,20 +1010,18 @@ struct FCsInputSentence
 		Frames = 0;
 	}
 
-	void Reset()
+	FORCEINLINE void Reset()
 	{
 		Active = true;
 
-		const int32 Count = Phrases.Num();
-
-		for (int32 I = 0; I < Count; ++I)
+		for (FCsInputPhrase& Phrase : Phrases)
 		{
-			Phrases[I].Reset();
+			Phrase.Reset();
 		}
 		Completed = false;
 	}
 
-	void ProcessInput(FCsInputFrame &InputFrame)
+	FORCEINLINE void ProcessInput(FCsInputFrame &InputFrame)
 	{
 		const float& CurrentTime = InputFrame.Time;
 
@@ -989,7 +1091,7 @@ struct FCsInputSentence
 };
 
 USTRUCT(BlueprintType)
-struct FCsInputActionMapping
+struct CSCORE_API FCsInputActionMapping
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -1013,7 +1115,7 @@ struct FCsInputActionMapping
 		Scale = 1.0f;
 	}
 
-	FCsInputActionMapping& operator=(const FCsInputActionMapping& B)
+	FORCEINLINE FCsInputActionMapping& operator=(const FCsInputActionMapping& B)
 	{
 		ActionName = B.ActionName;
 		Action = B.Action;
@@ -1023,7 +1125,7 @@ struct FCsInputActionMapping
 		return *this;
 	}
 
-	bool operator==(const FCsInputActionMapping& B) const
+	FORCEINLINE bool operator==(const FCsInputActionMapping& B) const
 	{
 		return ActionName == B.ActionName &&
 			   Action == B.Action &&
@@ -1032,21 +1134,21 @@ struct FCsInputActionMapping
 			   Scale == B.Scale;
 	}
 
-	bool operator!=(const FCsInputActionMapping& B) const
+	FORCEINLINE bool operator!=(const FCsInputActionMapping& B) const
 	{
 		return !(*this == B);
 	}
 };
 
 USTRUCT(BlueprintType)
-struct FCsInputActionMappings
+struct CSCORE_API FCsInputActionMappings
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	TArray<FCsInputActionMapping> Mappings;
 
-	FCsInputActionMappings& operator=(const FCsInputActionMappings& B)
+	FORCEINLINE FCsInputActionMappings& operator=(const FCsInputActionMappings& B)
 	{
 		Mappings.Reset();
 
@@ -1060,7 +1162,7 @@ struct FCsInputActionMappings
 		return *this;
 	}
 
-	bool operator==(const FCsInputActionMappings& B) const
+	FORCEINLINE bool operator==(const FCsInputActionMappings& B) const
 	{
 		if (Mappings.Num() != B.Mappings.Num())
 			return false;
@@ -1074,14 +1176,14 @@ struct FCsInputActionMappings
 		return true;
 	}
 
-	bool operator!=(const FCsInputActionMappings& B) const
+	FORCEINLINE bool operator!=(const FCsInputActionMappings& B) const
 	{
 		return !(*this == B);
 	}
 };
 
 USTRUCT(BlueprintType)
-struct FCsInputProfile
+struct CSCORE_API FCsInputProfile
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -1096,7 +1198,7 @@ struct FCsInputProfile
 		Player = 0;
 	}
 
-	FCsInputActionMapping& GetMapping(const TCsInputDevice &Device, const TCsInputAction &Action)
+	FORCEINLINE FCsInputActionMapping& GetMapping(const TCsInputDevice &Device, const TCsInputAction &Action)
 	{
 		FCsInputActionMappings& DeviceMapping   = DeviceMappings[(uint8)Device];
 		TArray<FCsInputActionMapping>& Mappings = DeviceMapping.Mappings;
@@ -1113,44 +1215,36 @@ struct FCsInputProfile
 		return Mappings[CS_FIRST];
 	}
 
-	FKey GetKey(const TCsInputDevice &Device, const TCsInputAction &Action)
+	FORCEINLINE FKey GetKey(const TCsInputDevice &Device, const TCsInputAction &Action)
 	{
 		FCsInputActionMappings& DeviceMapping   = DeviceMappings[(uint8)Device];
 		TArray<FCsInputActionMapping>& Mappings = DeviceMapping.Mappings;
 
-		const int32 Count = Mappings.Num();
-
-		for (int32 I = 0; I < Count; ++I)
+		for (FCsInputActionMapping& Mapping : Mappings)
 		{
-			const FCsInputActionMapping& Mapping = Mappings[I];
-
 			if (Action == Mapping.Action)
 				return Mapping.Key;
 		}
 		return EKeys::Invalid;
 	}
 
-	void SetKey(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key)
+	FORCEINLINE void SetKey(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key)
 	{
 		FCsInputActionMappings& DeviceMapping   = DeviceMappings[(uint8)Device];
 		TArray<FCsInputActionMapping>& Mappings = DeviceMapping.Mappings;
 
-		const int32 Count = Mappings.Num();
-
-		for (int32 I = 0; I < Count; ++I)
+		for (FCsInputActionMapping& Mapping : Mappings)
 		{
-			FCsInputActionMapping& Mapping = Mappings[I];
-
 			if (Action == Mapping.Action)
 			{
-				Mapping.KeyName = Key == EKeys::Invalid ? TEXT("") : Key.GetDisplayName().ToString();;
+				Mapping.KeyName = Key == EKeys::Invalid ? ECsCached::Str::Empty : Key.GetDisplayName().ToString();;
 				Mapping.Key		= Key;
 				break;
 			}
 		}
 	}
 
-	void AddMapping(const TCsInputDevice &Device, const FString &ActionName, const TCsInputAction &Action, const FString &KeyName, const FKey &Key)
+	FORCEINLINE void AddMapping(const TCsInputDevice &Device, const FString &ActionName, const TCsInputAction &Action, const FString &KeyName, const FKey &Key)
 	{
 		FCsInputActionMappings& DeviceMapping   = DeviceMappings[(uint8)Device];
 		TArray<FCsInputActionMapping>& Mappings = DeviceMapping.Mappings;
@@ -1164,7 +1258,7 @@ struct FCsInputProfile
 		Mapping.Key		   = Key;
 	}
 
-	void Reset()
+	FORCEINLINE void Reset()
 	{
 		for (int32 I = 0; I < ECS_INPUT_DEVICE_MAX; ++I)
 		{
@@ -1184,6 +1278,40 @@ namespace ECsGameEvent
 }
 
 typedef ECsGameEvent::Type TCsGameEvent;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsGameEvent : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsGameEvent() {}
+	FECsGameEvent(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsGameEvent(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsGameEvent() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsGameEvent& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
+}
+
+struct CSCORE_API EMCsGameEvent : public TCsEnumMap<FECsGameEvent, uint8>
+{
+protected:
+	EMCsGameEvent() {}
+	EMCsGameEvent(const EMCsGameEvent &) = delete;
+	EMCsGameEvent(EMCsGameEvent &&) = delete;
+public:
+	~EMCsGameEvent() {}
+private:
+	static EMCsGameEvent* Instance;
+
+public:
+	static EMCsGameEvent& Get();
+};
 
 namespace ECsRep_GameEvent
 {

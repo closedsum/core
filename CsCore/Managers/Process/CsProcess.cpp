@@ -287,8 +287,6 @@ CS_COROUTINE(UCsProcess, StartRead_Internal)
 
 	CS_COROUTINE_BEGIN(r);
 
-	CS_COROUTINE_WAIT_UNTIL(r, Elapsed >= 0.5f);
-
 	do
 	{
 		{
@@ -319,10 +317,10 @@ CS_COROUTINE(UCsProcess, StartRead_Internal)
 
 void UCsProcess::StopRead()
 {
-	//ReadFlag = false;
+	ReadFlag = false;
 
-	//if (StartRead_Internal_Routine && StartRead_Internal_Routine->IsValid())
-	//	StartRead_Internal_Routine->End(ECsCoroutineEndReason::Manual);
+	if (StartRead_Internal_Routine && StartRead_Internal_Routine->IsValid())
+		StartRead_Internal_Routine->End(ECsCoroutineEndReason::Manual);
 }
 
 void UCsProcess::AddMonitorOutputEvent(const FCsProcessMonitorOutputEvent &Event)
@@ -348,7 +346,7 @@ void UCsProcess::ProcessMonitorOuputEvents(const FString &Output)
 			if (Event.Purpose == ECsProcessMonitorOutputEventPurpose::FireOnce)
 			{
 				MonitorOutputEvents.RemoveAt(I);
-				StopRead();
+				//StopRead();
 			}
 		}
 	}

@@ -66,6 +66,7 @@ namespace ECsBlockchainContractArgumentType
 		extern CSCORE_API const TCsString Int32;
 		extern CSCORE_API const TCsString Float;
 		extern CSCORE_API const TCsString String;
+		extern CSCORE_API const TCsString StringString;
 	}
 
 	namespace Ref
@@ -74,6 +75,7 @@ namespace ECsBlockchainContractArgumentType
 		extern CSCORE_API const Type Int32;
 		extern CSCORE_API const Type Float;
 		extern CSCORE_API const Type String;
+		extern CSCORE_API const Type StringString;
 		extern CSCORE_API const Type ECsBlockchainContractArgumentType_MAX;
 	}
 
@@ -83,6 +85,7 @@ namespace ECsBlockchainContractArgumentType
 		if (EType == Type::Int32) { return Str::Int32.Value; }
 		if (EType == Type::Float) { return Str::Float.Value; }
 		if (EType == Type::String) { return Str::String.Value; }
+		if (EType == Type::StringString) { return Str::StringString.Value; }
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
@@ -92,6 +95,7 @@ namespace ECsBlockchainContractArgumentType
 		if (InString == Str::Int32) { return Ref::Int32; }
 		if (InString == Str::Float) { return Ref::Float; }
 		if (InString == Str::String) { return Ref::String; }
+		if (InString == Str::StringString) { return Ref::StringString; }
 		return Ref::ECsBlockchainContractArgumentType_MAX;
 	}
 }

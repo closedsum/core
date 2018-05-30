@@ -84,7 +84,7 @@ namespace ECsCached
 #pragma region
 
 USTRUCT(BlueprintType)
-struct FECsEnum
+struct CSCORE_API FECsEnum
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -124,7 +124,7 @@ struct FECsEnum
 };
 
 USTRUCT(BlueprintType)
-struct FECsEnum_uint8 : public FECsEnum
+struct CSCORE_API FECsEnum_uint8 : public FECsEnum
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -275,7 +275,7 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct FECsEnumMask_int32 : public FECsEnum
+struct CSCORE_API FECsEnumMask_int32 : public FECsEnum
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -348,7 +348,7 @@ struct FECsEnumMask_int32 : public FECsEnum
 };
 
 USTRUCT(BlueprintType)
-struct FECsEnumMask_uint32 : public FECsEnum
+struct CSCORE_API FECsEnumMask_uint32 : public FECsEnum
 {
 	GENERATED_USTRUCT_BODY()
 

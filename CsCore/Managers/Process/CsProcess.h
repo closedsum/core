@@ -10,7 +10,7 @@
 #pragma region
 
 USTRUCT(BlueprintType)
-struct FECsProcess : public FECsEnum_uint8
+struct CSCORE_API FECsProcess : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -19,6 +19,8 @@ public:
 	FECsProcess(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
 	FECsProcess(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
 	~FECsProcess() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
 };
 
 FORCEINLINE uint32 GetTypeHash(const FECsProcess& b)

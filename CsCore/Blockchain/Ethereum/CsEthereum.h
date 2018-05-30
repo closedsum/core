@@ -162,7 +162,7 @@ typedef ECsEthereumRoutine::Type TCsEthereumRoutine;
 #pragma endregion Enums
 
 USTRUCT(BlueprintType)
-struct FECsEthereumJavascript : public FECsEnum_uint8
+struct CSCORE_API FECsEthereumJavascript : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -171,6 +171,8 @@ public:
 	FECsEthereumJavascript(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
 	FECsEthereumJavascript(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
 	~FECsEthereumJavascript() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
 };
 
 FORCEINLINE uint32 GetTypeHash(const FECsEthereumJavascript& b)

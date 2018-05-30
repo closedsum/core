@@ -5,7 +5,7 @@
 #include "CsBlockchainCommand.generated.h"
 
 USTRUCT(BlueprintType)
-struct FECsBlockchainCommand : public FECsEnum_uint8
+struct CSCORE_API FECsBlockchainCommand : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -14,6 +14,8 @@ public:
 	FECsBlockchainCommand(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
 	FECsBlockchainCommand(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
 	~FECsBlockchainCommand() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
 };
 
 FORCEINLINE uint32 GetTypeHash(const FECsBlockchainCommand& b)

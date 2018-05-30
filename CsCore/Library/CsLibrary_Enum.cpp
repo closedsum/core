@@ -27,6 +27,11 @@ FECsProcess UCsLibrary_Enum::GetECsProcessByIndex(const int32& Index)
 	return FECsProcess(0, ECsCached::Str::INVALID);
 }
 
+FString UCsLibrary_Enum::ECsProcessToString(const FECsProcess& Enum)
+{
+	return Enum.ToString();
+}
+
 // Blockchain
 #pragma region
 
@@ -50,6 +55,11 @@ FECsBlockchainCommand UCsLibrary_Enum::GetECsBlockchainCommandByIndex(const int3
 	return FECsBlockchainCommand(0, ECsCached::Str::INVALID);
 }
 
+FString UCsLibrary_Enum::ECsBlockchainCommandToString(const FECsBlockchainCommand& Enum)
+{
+	return Enum.ToString();
+}
+
 FECsBlockchainContract UCsLibrary_Enum::GetECsBlockchainContract(const FString& Name)
 {
 	if (EMCsBlockchainContract::Get().IsValidEnum(Name))
@@ -68,6 +78,11 @@ FECsBlockchainContract UCsLibrary_Enum::GetECsBlockchainContractByIndex(const in
 
 	UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Enum::GetECsBlockchainContractByIndex: Enum of type FECsBlockchainContract and Index: %d (%d >= %d) does NOT exist."), Index, Index, Count);
 	return FECsBlockchainContract(0, ECsCached::Str::INVALID);
+}
+
+FString UCsLibrary_Enum::ECsBlockchainContractToString(const FECsBlockchainContract& Enum)
+{
+	return Enum.ToString();
 }
 
 FECsBlockchainContractFunction UCsLibrary_Enum::GetECsBlockchainContractFunction(const FString& Name)
@@ -90,6 +105,11 @@ FECsBlockchainContractFunction UCsLibrary_Enum::GetECsBlockchainContractFunction
 	return FECsBlockchainContractFunction(0, ECsCached::Str::INVALID);
 }
 
+FString UCsLibrary_Enum::ECsBlockchainContractFunctionToString(const FECsBlockchainContractFunction& Enum)
+{
+	return Enum.ToString();
+}
+
 FECsEthereumJavascript UCsLibrary_Enum::GetECsEthereumJavascript(const FString& Name)
 {
 	if (EMCsEthereumJavascript::Get().IsValidEnum(Name))
@@ -108,6 +128,11 @@ FECsEthereumJavascript UCsLibrary_Enum::GetECsEthereumJavascriptByIndex(const in
 
 	UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Enum::GetECsEthereumJavascriptByIndex: Enum of type FECsEthereumJavascript and Index: %d (%d >= %d) does NOT exist."), Index, Index, Count);
 	return FECsEthereumJavascript(0, ECsCached::Str::INVALID);
+}
+
+FString UCsLibrary_Enum::ECsEthereumJavascriptToString(const FECsEthereumJavascript& Enum)
+{
+	return Enum.ToString();
 }
 
 #pragma endregion Blockchain

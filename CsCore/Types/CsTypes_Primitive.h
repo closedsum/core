@@ -97,7 +97,7 @@ struct CSCORE_API FECsEnum
 	FECsEnum(){}
 	virtual ~FECsEnum(){}
 
-	operator FString() const 
+	FORCEINLINE operator FString() const
 	{
 		return Name;
 	}
@@ -120,6 +120,11 @@ struct CSCORE_API FECsEnum
 	FORCEINLINE friend bool operator!=(const FECsEnum &Lhs, const FString &Rhs)
 	{
 		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE virtual FString ToString() const
+	{
+		return TEXT("Name: ") + Name;
 	}
 };
 
@@ -147,12 +152,12 @@ struct CSCORE_API FECsEnum_uint8 : public FECsEnum
 
 	virtual ~FECsEnum_uint8(){}
 
-	operator uint8() const
+	FORCEINLINE operator uint8() const
 	{
 		return Value;
 	}
 
-	FECsEnum_uint8& operator=(const FECsEnum_uint8& B)
+	FORCEINLINE FECsEnum_uint8& operator=(const FECsEnum_uint8& B)
 	{
 		Value = B.Value;
 		Name = B.Name;
@@ -160,12 +165,12 @@ struct CSCORE_API FECsEnum_uint8 : public FECsEnum
 		return *this;
 	}
 
-	bool operator==(const FECsEnum_uint8& B) const
+	FORCEINLINE bool operator==(const FECsEnum_uint8& B) const
 	{
 		return Value == B.Value && Name == B.Name;
 	}
 
-	bool operator!=(const FECsEnum_uint8& B) const
+	FORCEINLINE bool operator!=(const FECsEnum_uint8& B) const
 	{
 		return !(*this == B);
 	}
@@ -188,6 +193,11 @@ struct CSCORE_API FECsEnum_uint8 : public FECsEnum
 	FORCEINLINE friend bool operator!=(const FECsEnum_uint8 &Lhs, const uint8 &Rhs)
 	{
 		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE virtual FString ToString() const override
+	{
+		return TEXT("Name: ") + Name + TEXT(" Value: ") + FString::FromInt(Value);
 	}
 };
 
@@ -302,12 +312,12 @@ struct CSCORE_API FECsEnumMask_int32 : public FECsEnum
 
 	virtual ~FECsEnumMask_int32() {}
 
-	operator int32() const
+	FORCEINLINE operator int32() const
 	{
 		return Mask;
 	}
 
-	FECsEnumMask_int32& operator=(const FECsEnumMask_int32& B)
+	FORCEINLINE FECsEnumMask_int32& operator=(const FECsEnumMask_int32& B)
 	{
 		Value = B.Value;
 		Mask = B.Mask;
@@ -316,12 +326,12 @@ struct CSCORE_API FECsEnumMask_int32 : public FECsEnum
 		return *this;
 	}
 
-	bool operator==(const FECsEnumMask_int32& B) const
+	FORCEINLINE bool operator==(const FECsEnumMask_int32& B) const
 	{
 		return Value == B.Value && Mask == B.Mask && Name == B.Name;
 	}
 
-	bool operator!=(const FECsEnumMask_int32& B) const
+	FORCEINLINE bool operator!=(const FECsEnumMask_int32& B) const
 	{
 		return !(*this == B);
 	}
@@ -344,6 +354,11 @@ struct CSCORE_API FECsEnumMask_int32 : public FECsEnum
 	FORCEINLINE friend bool operator!=(const FECsEnumMask_int32 &Lhs, const int32 &Rhs)
 	{
 		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE virtual FString ToString() const override
+	{
+		return TEXT("Name: ") + Name + TEXT(" Value: ") + FString::FromInt(Value) + TEXT(" Mask: ") + FString::FromInt(Mask);
 	}
 };
 
@@ -375,12 +390,12 @@ struct CSCORE_API FECsEnumMask_uint32 : public FECsEnum
 
 	virtual ~FECsEnumMask_uint32() {}
 
-	operator uint32() const
+	FORCEINLINE operator uint32() const
 	{
 		return Mask;
 	}
 
-	FECsEnumMask_uint32& operator=(const FECsEnumMask_uint32& B)
+	FORCEINLINE FECsEnumMask_uint32& operator=(const FECsEnumMask_uint32& B)
 	{
 		Value = B.Value;
 		Mask = B.Mask;
@@ -389,12 +404,12 @@ struct CSCORE_API FECsEnumMask_uint32 : public FECsEnum
 		return *this;
 	}
 
-	bool operator==(const FECsEnumMask_uint32& B) const
+	FORCEINLINE bool operator==(const FECsEnumMask_uint32& B) const
 	{
 		return Value == B.Value && Mask == B.Mask && Name == B.Name;
 	}
 
-	bool operator!=(const FECsEnumMask_uint32& B) const
+	FORCEINLINE bool operator!=(const FECsEnumMask_uint32& B) const
 	{
 		return !(*this == B);
 	}
@@ -417,6 +432,11 @@ struct CSCORE_API FECsEnumMask_uint32 : public FECsEnum
 	FORCEINLINE friend bool operator!=(const FECsEnumMask_uint32 &Lhs, const uint32 &Rhs)
 	{
 		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE virtual FString ToString() const override
+	{
+		return TEXT("Name: ") + Name + TEXT(" Value: ") + FString::FromInt(Value) + TEXT(" Mask: ") + FString::FromInt(Mask);
 	}
 };
 

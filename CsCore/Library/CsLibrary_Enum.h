@@ -22,6 +22,9 @@ class CSCORE_API UCsLibrary_Enum : public UBlueprintFunctionLibrary
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
 	FECsProcess GetECsProcessByIndex(const int32& Index);
 
+	UFUNCTION(BlueprintCallable, Category = "Library Enum")
+	FString ECsProcessToString(const FECsProcess& Enum);
+
 // Blockchain
 #pragma region
 
@@ -32,10 +35,16 @@ class CSCORE_API UCsLibrary_Enum : public UBlueprintFunctionLibrary
 	FECsBlockchainCommand GetECsBlockchainCommandByIndex(const int32& Index);
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
+	FString ECsBlockchainCommandToString(const FECsBlockchainCommand& Enum);
+
+	UFUNCTION(BlueprintCallable, Category = "Library Enum")
 	FECsBlockchainContract GetECsBlockchainContract(const FString& Name);
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
 	FECsBlockchainContract GetECsBlockchainContractByIndex(const int32& Index);
+
+	UFUNCTION(BlueprintCallable, Category = "Library Enum")
+	FString ECsBlockchainContractToString(const FECsBlockchainContract& Enum);
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
 	FECsBlockchainContractFunction GetECsBlockchainContractFunction(const FString& Name);
@@ -44,10 +53,16 @@ class CSCORE_API UCsLibrary_Enum : public UBlueprintFunctionLibrary
 	FECsBlockchainContractFunction GetECsBlockchainContractFunctionByIndex(const int32& Index);
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
+	FString ECsBlockchainContractFunctionToString(const FECsBlockchainContractFunction& Enum);
+
+	UFUNCTION(BlueprintCallable, Category = "Library Enum")
 	FECsEthereumJavascript GetECsEthereumJavascript(const FString& Name);
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
 	FECsEthereumJavascript GetECsEthereumJavascriptByIndex(const int32& Index);
+
+	UFUNCTION(BlueprintCallable, Category = "Library Enum")
+	FString ECsEthereumJavascriptToString(const FECsEthereumJavascript& Enum);
 
 #pragma endregion Blockchain
 };

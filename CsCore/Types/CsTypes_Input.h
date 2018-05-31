@@ -264,18 +264,18 @@ typedef FString(*TCsInputActionMapMaskToString)(const int32&);
 typedef TCsInputActionMap(*TCsStringToInputActionMap)(const FString&);
 
 #define CS_DECLARE_INPUT_ACTION_MAP	TCsInputActionMapMaskToString InputActionMapMaskToString; \
-									TCsStringToInputActionMap StringToInputActionMap; \
+									TCsStringToInputActionMap StringToInputActionMap;
 
 #define CS_DEFINE_INPUT_ACTION_MAP	InputActionMapMaskToString = &ECsInputActionMap::MaskToString; \
-									StringToInputActionMap = &ECsInputActionMap::ToBitMask; \
+									StringToInputActionMap = &ECsInputActionMap::ToBitMask;
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsInputActionMap : public FECsEnumMask_int32
 {
-	//GENERATED_USTRUCT_BODY()
+	GENERATED_USTRUCT_BODY()
 
 public:
-	
+
 	FECsInputActionMap() {}
 	FECsInputActionMap(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnumMask_int32(InValue, InName, InDisplayName) {}
 	FECsInputActionMap(const uint8 &InValue, const FString &InName) : FECsEnumMask_int32(InValue, InName) {}
@@ -658,11 +658,9 @@ struct CSCORE_API FCsInputFrame
 		DeltaTime = inDeltaTime;
 		Frame	  = inFrame;
 
-		const uint16 Count = Inputs.Num();
-
-		for (uint16 I = 0; I < Count; ++I)
+		for (FCsInput* Input : Inputs)
 		{
-			Inputs[I]->Reset();
+			Input->Reset();
 		}
 		Inputs.Reset();
 	}

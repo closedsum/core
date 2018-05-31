@@ -67,3 +67,53 @@ namespace ECsCached
 }
 
 #pragma endregion Cached
+
+namespace ECsMemberType
+{
+	namespace Str
+	{
+		CSCORE_API const TCsString Bool = TCsString(TEXT("Bool"), TEXT("bool"));
+		CSCORE_API const TCsString Uint8 = TCsString(TEXT("Uint8"), TEXT("uint8"));
+		CSCORE_API const TCsString Int32 = TCsString(TEXT("Int32"), TEXT("int32"));
+		CSCORE_API const TCsString Float = TCsString(TEXT("Float"), TEXT("float"));
+		CSCORE_API const TCsString _FString = TCsString(TEXT("FString"), TEXT("fstring"));
+		CSCORE_API const TCsString FName = TCsString(TEXT("FName"), TEXT("fname"));
+		CSCORE_API const TCsString FVector = TCsString(TEXT("FVector"), TEXT("fvector"));
+		CSCORE_API const TCsString FRotator = TCsString(TEXT("FRotator"), TEXT("frotator"));
+		CSCORE_API const TCsString FColor = TCsString(TEXT("FColor"), TEXT("fcolor"));
+	}
+
+	namespace Ref
+	{
+		CSCORE_API const Type Bool = Type::Bool;
+		CSCORE_API const Type Uint8 = Type::Uint8;
+		CSCORE_API const Type Int32 = Type::Int32;
+		CSCORE_API const Type Float = Type::Float;
+		CSCORE_API const Type _FString = Type::_FString;
+		CSCORE_API const Type FName = Type::FName;
+		CSCORE_API const Type FVector = Type::FVector;
+		CSCORE_API const Type FRotator = Type::FRotator;
+		CSCORE_API const Type FColor = Type::FColor;
+		CSCORE_API const Type ECsMemberType_MAX = Type::ECsMemberType_MAX;
+	}
+}
+
+namespace ECsStringCompare
+{
+	namespace Str
+	{
+		CSCORE_API const TCsString Equals = TCsString(TEXT("Equals"), TEXT("equals"), TEXT("equals"));
+		CSCORE_API const TCsString StartsWith = TCsString(TEXT("StartsWith"), TEXT("startswith"), TEXT("starts with"));
+		CSCORE_API const TCsString EndsWith = TCsString(TEXT("EndsWith"), TEXT("endswith"), TEXT("ends with"));
+		CSCORE_API const TCsString Contains = TCsString(TEXT("Contains"), TEXT("contains"), TEXT("contains"));
+	}
+
+	namespace Ref
+	{
+		CSCORE_API const Type Equals = Type::Equals;
+		CSCORE_API const Type StartsWith = Type::StartsWith;
+		CSCORE_API const Type EndsWith = Type::EndsWith;
+		CSCORE_API const Type Contains = Type::Contains;
+		CSCORE_API const Type ECsStringCompare_MAX = Type::ECsStringCompare_MAX;
+	}
+}

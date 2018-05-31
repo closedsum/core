@@ -261,11 +261,9 @@ void ACsManager_Item::GetItemsByOwnerType(const TCsItemOwner &OwnerType, TArray<
 	TArray<TCsItemId> OutKeys;
 	ActiveItems.GetKeys(OutKeys);
 
-	const int32 Count = OutKeys.Num();
-
-	for (int32 I = 0; I < Count; ++I)
+	for (const TCsItemId& Key : OutKeys)
 	{
-		FCsItem* Item = *(ActiveItems.Find(OutKeys[I]));
+		FCsItem* Item = ActiveItems[Key];
 
 		const FCsItemHistory& CurrentHistory = Item->GetCurrentHistory(ProductId);
 
@@ -278,9 +276,9 @@ void ACsManager_Item::GetItemsByOwnerType(const TCsItemOwner &OwnerType, TArray<
 
 void ACsManager_Item::GetItemsByOwnerId(const TCsItemOwnerId &OwnerId, TArray<FCsItem*> &OutItems)
 {
-	TArray<FCsItem*>* Items = ActiveItemsByOwnerId.Find(OwnerId);
+	TArray<FCsItem*>* ItemsPtr = ActiveItemsByOwnerId.Find(OwnerId);
 
-	if (!Items)
+	if (!ItemsPtr)
 	{
 		if (CsCVarLogManagerItemActionGetFail->GetInt() == CS_CVAR_SHOW_LOG)
 		{
@@ -290,21 +288,19 @@ void ACsManager_Item::GetItemsByOwnerId(const TCsItemOwnerId &OwnerId, TArray<FC
 		return;
 	}
 
-	const int32 Count = Items->Num();
+	TArray<FCsItem*>& Items = *ItemsPtr;
 
-	for (int32 I = 0; I < Count; ++I)
+	for (FCsItem* Item : Items)
 	{
-		OutItems.Add((*Items)[I]);
+		OutItems.Add(Item);
 	}
 }
 
 void ACsManager_Item::GetItems(const TArray<TCsItemId> &Ids, TArray<FCsItem*> &OutItems)
 {
-	const int32 Count = Ids.Num();
-
-	for (int32 I = 0; I < Count; ++I)
+	for (const TCsItemId& Id : Ids)
 	{
-		if (FCsItem** ItemPtr = (ActiveItems.Find(Ids[I])))
+		if (FCsItem** ItemPtr = (ActiveItems.Find(Id)))
 		{
 			OutItems.Add(*ItemPtr);
 		}
@@ -312,7 +308,7 @@ void ACsManager_Item::GetItems(const TArray<TCsItemId> &Ids, TArray<FCsItem*> &O
 		{
 			if (CsCVarLogManagerItemActionGetFail->GetInt() == CS_CVAR_SHOW_LOG)
 			{
-				UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::GetItems: Failed to find an Item with Id: %d"), *(Ids[I].ToString()));
+				UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::GetItems: Failed to find an Item with Id: %d"), *(Id.ToString()));
 			}
 		}
 	}
@@ -501,17 +497,13 @@ bool ACsManager_Item::Transfer(TArray<FCsItem*> &Items, UObject* Instigator, con
 
 	if (Manager_Inventory)
 	{
-		const int32 Count = Items.Num();
-
 		// Fill Any
 		if (Order == ECsPoolTransactionOrder::FillAny)
 		{
 			bool Success = false;
 
-			for (int32 I = 0; I < Count; ++I)
+			for (FCsItem* Item : Items)
 			{
-				FCsItem* Item = Items[I];
-
 				Success |= Transfer_Internal(Item, Instigator, Manager_Inventory);
 			}
 			return Success;
@@ -521,20 +513,16 @@ bool ACsManager_Item::Transfer(TArray<FCsItem*> &Items, UObject* Instigator, con
 		{
 			bool Success = true;
 
-			for (int32 I = 0; I < Count; ++I)
+			for (FCsItem* Item : Items)
 			{
-				FCsItem* Item = Items[I];
-
 				if (Manager_Inventory->IsFull(0, Item->ShortCode))
 					Success &= false;
 			}
 
 			if (Success)
 			{
-				for (int32 I = 0; I < Count; ++I)
+				for (FCsItem* Item : Items)
 				{
-					FCsItem* Item = Items[I];
-
 					Transfer_Internal(Item, Instigator, Manager_Inventory);
 				}
 			}
@@ -614,16 +602,13 @@ void ACsManager_Item::Save(FCsItem* Item)
 		TArray<TCsItemProductId> Keys;
 		Item->Products.GetKeys(Keys);
 
-		const int32 Count = Keys.Num();
-
-		for (int32 I = 0; I < Count; ++I)
+		for (const TCsItemProductId& Key : Keys)
 		{
 			JsonWriter->WriteObjectStart();
 
-			const TCsItemProductId& Key = Keys[I];
-			FCsItemProduct* Product		= Item->Products.Find(Key);
+			FCsItemProduct& Product	= Item->Products[Key];
 
-			SaveProduct(JsonWriter, Product);
+			SaveProduct(JsonWriter, &Product);
 
 			JsonWriter->WriteObjectEnd();
 		}
@@ -661,13 +646,11 @@ void ACsManager_Item::SaveProduct(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FC
 	{
 		JsonWriter->WriteArrayStart(ECsFileItemHistoryHeaderCached::Str::PreviousHistories);
 
-		const int32 Count = Product->PreviousHistories.Num();
-
-		for (int32 I = 0; I < Count; ++I)
+		for (FCsItemHistory& History : Product->PreviousHistories)
 		{
 			JsonWriter->WriteObjectStart();
 
-			SaveHistory(JsonWriter, &(Product->PreviousHistories[I]));
+			SaveHistory(JsonWriter, &History);
 
 			JsonWriter->WriteObjectEnd();
 		}
@@ -691,29 +674,27 @@ void ACsManager_Item::SaveHistory(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FC
 		TArray<FName> OutKeys;
 		ItemHistory->Members.GetKeys(OutKeys);
 
-		const int32 Count = OutKeys.Num();
-
-		for (int32 I = 0; I < Count; ++I)
+		for (const FName& Key : OutKeys)
 		{
-			FCsItemMemberValue* Value = ItemHistory->Members.Find(OutKeys[I]);
+			FCsItemMemberValue& Value = ItemHistory->Members[Key];
 
-			const TCsItemMemberValueType ValueType = Value->Type;
-			const FString KeyName				   = OutKeys[I].ToString();
+			const TCsItemMemberValueType& ValueType = Value.Type;
+			const FString KeyName				    = Key.ToString();
 			// bool
-			if (Value->Type == ECsItemMemberValueType::Bool)
-				JsonWriter->WriteValue(KeyName, Value->GetBool());
+			if (Value.Type == ECsItemMemberValueType::Bool)
+				JsonWriter->WriteValue(KeyName, Value.GetBool());
 			// uint8
 			else
-			if (Value->Type == ECsItemMemberValueType::Uint8)
-				JsonWriter->WriteValue(KeyName, Value->GetUint8());
+			if (Value.Type == ECsItemMemberValueType::Uint8)
+				JsonWriter->WriteValue(KeyName, Value.GetUint8());
 			// int32
 			else
-			if (Value->Type == ECsItemMemberValueType::Int32)
-				JsonWriter->WriteValue(KeyName, Value->GetInt32());
+			if (Value.Type == ECsItemMemberValueType::Int32)
+				JsonWriter->WriteValue(KeyName, Value.GetInt32());
 			// floats
 			else
-			if (Value->Type == ECsItemMemberValueType::Float)
-				JsonWriter->WriteValue(KeyName, Value->GetFloat());
+			if (Value.Type == ECsItemMemberValueType::Float)
+				JsonWriter->WriteValue(KeyName, Value.GetFloat());
 		}
 	JsonWriter->WriteObjectEnd();
 }
@@ -723,14 +704,11 @@ void ACsManager_Item::SaveActiveItems()
 	TArray<TCsItemId> Keys;
 	ActiveItems.GetKeys(Keys);
 
-	const int32 Count = Keys.Num();
-
-	for (int32 I = 0; I < Count; ++I)
+	for (const TCsItemId& Key : Keys)
 	{
-		const TCsItemId& Key = Keys[I];
-		FCsItem** ItemPtr	 = ActiveItems.Find(Key);
+		FCsItem* Item = ActiveItems[Key];
 
-		Save(*ItemPtr);
+		Save(Item);
 	}
 }
 
@@ -742,7 +720,7 @@ FCsItem* ACsManager_Item::AllocateAsyncSave()
 	for (uint8 I = 0; I < CS_ITEM_ASYNC_SAVE_POOL_SIZE; ++I)
 	{
 		const uint8 Index = (AsyncSavePoolIndex + I) % CS_ITEM_ASYNC_SAVE_POOL_SIZE;
-		FCsItem* Item = &(AsyncSavePool[Index]);
+		FCsItem* Item	  = &(AsyncSavePool[Index]);
 
 		if (!Item->IsAllocated)
 		{
@@ -761,12 +739,8 @@ void ACsManager_Item::AddAsyncSave(FCsItem* Item)
 
 void ACsManager_Item::AsyncSave()
 {
-	const int32 Count = CopiedAsyncSaveItems.Num();
-
-	for (int32 I = 0; I < Count; ++I)
+	for (FCsItem* Item : CopiedAsyncSaveItems)
 	{
-		FCsItem* Item = CopiedAsyncSaveItems[I];
-
 		Save(Item);
 		Item->Reset();
 	}
@@ -785,11 +759,8 @@ void ACsManager_Item::OnTick_Handle_AsyncSave()
 	// If an Async Save just completed, Clear Mutex
 	if (PerformingAsyncSaveHandle.HasChanged())
 	{
-		const int32 Count = ActiveAsyncSaveItems.Num();
-
-		for (int32 I = 0; I < Count; ++I)
+		for (FCsItem* Item : ActiveAsyncSaveItems)
 		{
-			FCsItem* Item = ActiveAsyncSaveItems[I];
 			Item->AsycTaskMutex.Unlock();
 		}
 		ActiveAsyncSaveItems.Reset();
@@ -799,11 +770,8 @@ void ACsManager_Item::OnTick_Handle_AsyncSave()
 	if (AsyncSaveItems.Num() == CS_EMPTY)
 		return;
 
-	const int32 Count = AsyncSaveItems.Num();
-
-	for (int32 I = 0; I < Count; ++I)
+	for (FCsItem* Item : AsyncSaveItems)
 	{
-		FCsItem* Item = AsyncSaveItems[I];
 		// Lock for Async Save
 		Item->AsycTaskMutex.Lock();
 		// Add to Active List
@@ -841,9 +809,7 @@ void ACsManager_Item::PopulateExistingItems()
 	// Get all .json files under Path
 	IFileManager::Get().FindFiles(FoundFiles, *Path, *ECsCached::Ext::json);
 
-	const int32 FileCount = FoundFiles.Num();
-
-	if (FileCount == CS_EMPTY)
+	if (FoundFiles.Num() == CS_EMPTY)
 	{
 #if WITH_EDITOR
 		OnPopulateExistingItems_ScriptEvent.Broadcast();
@@ -854,10 +820,10 @@ void ACsManager_Item::PopulateExistingItems()
 
 	TArray<FCsItem*> Items;
 
-	for (int32 I = 0; I < FileCount; ++I)
+	for (const FString& File : FoundFiles)
 	{
 		FString ItemJson;
-		const FString Filename = Path + FoundFiles[I];
+		const FString Filename = Path + File;
 
 		if (FFileHelper::LoadFileToString(ItemJson, *Filename))
 		{
@@ -897,16 +863,12 @@ void ACsManager_Item::PopulateExistingItems()
 					const TSharedPtr<FJsonObject>& Object = JsonObject->GetObjectField(ECsFileItemHeaderCached::Str::Contents);
 
 					TArray<FString> Keys;
-
 					Object->Values.GetKeys(Keys);
 
-					const int32 Count = Keys.Num();
-
-					for (int32 I = 0; I < Count; ++I)
+					for (const FString& Key : Keys)
 					{
-						const FString& Key				 = Keys[I];
-						TSharedPtr<FJsonValue> JsonValue = *(Object->Values.Find(Key));
-						FString Value					 = JsonValue->AsString();
+						TSharedPtr<FJsonValue>& JsonValue = Object->Values[Key];
+						FString Value					  = JsonValue->AsString();
 
 						TCsItemId Id;
 						FGuid::Parse(Value, Id);
@@ -931,9 +893,9 @@ void ACsManager_Item::PopulateExistingItems()
 						TSharedPtr<FJsonObject> Object = JsonArray[I]->AsObject();
 
 						const TCsItemProductId& Key = Keys[I];
-						FCsItemProduct* Product		= Item->Products.Find(Key);
+						FCsItemProduct& Product		= Item->Products[Key];
 
-						LoadProduct(Object, Item, Product);
+						LoadProduct(Object, Item, &Product);
 					}
 				}
 
@@ -1185,11 +1147,9 @@ void ACsManager_Item::AsyncInitInventory(ACsManager_Inventory* Manager_Inventory
 
 void ACsManager_Item::RecordItemsInteraction(const TArray<FCsItem*> &Items, const TCsItemInteraction &Interaction)
 {
-	const int32 Count = Items.Num();
-
-	for (int32 I = 0; I < Count; ++I)
+	for (FCsItem* Item : Items)
 	{
-		RecordItemInteraction(Items[I], Interaction);
+		RecordItemInteraction(Item, Interaction);
 	}
 }
 

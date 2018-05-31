@@ -19,6 +19,7 @@
 // DetailCustomizations
 #include "DetailCustomizations/EnumStruct/ECsInputActionCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsGameEventCustomization.h"
+#include "DetailCustomizations/EnumStruct/ECsSurfaceTypeCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsProcessCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsBlockchainCommandCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsBlockchainContractCustomization.h"
@@ -38,6 +39,8 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 		// Input
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsInputAction", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsInputActionCustomization::MakeInstance));
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsGameEvent", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsGameEventCustomization::MakeInstance));
+		// SurfaceType
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsSurfaceType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsSurfaceTypeCustomization::MakeInstance));
 		// Process
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsProcess", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsProcessCustomization::MakeInstance));
 		// Blockchain

@@ -45,19 +45,19 @@ namespace ECsLevelState
 
 	namespace Str
 	{
-		extern const TCsString None;
-		extern const TCsString Loaded;
-		extern const TCsString BeginTransition;
-		extern const TCsString InTransition;
+		extern CSCORE_API const TCsString None;
+		extern CSCORE_API const TCsString Loaded;
+		extern CSCORE_API const TCsString BeginTransition;
+		extern CSCORE_API const TCsString InTransition;
 	}
 
 	namespace Ref
 	{
-		extern const Type None;
-		extern const Type Loaded;
-		extern const Type BeginTransition;
-		extern const Type InTransition;
-		extern const Type ECsLevelState_MAX;
+		extern CSCORE_API const Type None;
+		extern CSCORE_API const Type Loaded;
+		extern CSCORE_API const Type BeginTransition;
+		extern CSCORE_API const Type InTransition;
+		extern CSCORE_API const Type ECsLevelState_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -118,17 +118,17 @@ namespace ECsAxes_Editor
 
 	namespace Str
 	{
-		extern const TCsString X;
-		extern const TCsString Y;
-		extern const TCsString Z;
+		extern CSCORE_API const TCsString X;
+		extern CSCORE_API const TCsString Y;
+		extern CSCORE_API const TCsString Z;
 	}
 
 	namespace Ref
 	{
-		extern const Type X;
-		extern const Type Y;
-		extern const Type Z;
-		extern const Type ECsAxes_Editor_MAX;
+		extern CSCORE_API const Type X;
+		extern CSCORE_API const Type Y;
+		extern CSCORE_API const Type Z;
+		extern CSCORE_API const Type ECsAxes_Editor_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -185,17 +185,17 @@ namespace ECsTransformMember
 
 	namespace Str
 	{
-		extern const TCsString Location;
-		extern const TCsString Rotation;
-		extern const TCsString Scale;
+		extern CSCORE_API const TCsString Location;
+		extern CSCORE_API const TCsString Rotation;
+		extern CSCORE_API const TCsString Scale;
 	}
 
 	namespace Ref
 	{
-		extern const Type Location;
-		extern const Type Rotation;
-		extern const Type Scale;
-		extern const Type ECsTransformMember_MAX;
+		extern CSCORE_API const Type Location;
+		extern CSCORE_API const Type Rotation;
+		extern CSCORE_API const Type Scale;
+		extern CSCORE_API const Type ECsTransformMember_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -224,7 +224,7 @@ typedef ECsTransformMember::Type TCsTransformMember;
 #pragma region
 
 USTRUCT(BlueprintType)
-struct FCsStaticMesh
+struct CSCORE_API FCsStaticMesh
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -244,12 +244,12 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(Mesh_LoadFlags, ECsLoadFlags::Game);
 	}
 
-	UStaticMesh* Get() const
+	FORCEINLINE UStaticMesh* Get() const
 	{
 		return Mesh_Internal;
 	}
 
-	FCsStaticMesh& operator=(const FCsStaticMesh& B)
+	FORCEINLINE FCsStaticMesh& operator=(const FCsStaticMesh& B)
 	{
 		Mesh = B.Mesh;
 		Mesh_LoadFlags = B.Mesh_LoadFlags;
@@ -257,19 +257,19 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsStaticMesh& B) const
+	FORCEINLINE bool operator==(const FCsStaticMesh& B) const
 	{
 		return Mesh == B.Mesh && Mesh_LoadFlags == B.Mesh_LoadFlags && Mesh_Internal == B.Mesh_Internal;
 	}
 
-	bool operator!=(const FCsStaticMesh& B) const
+	FORCEINLINE bool operator!=(const FCsStaticMesh& B) const
 	{
 		return !(*this == B);
 	}
 };
 
 USTRUCT(BlueprintType)
-struct FCsFpsStaticMesh
+struct CSCORE_API FCsFpsStaticMesh
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -325,7 +325,7 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(MeshVR_LoadFlags, ECsLoadFlags::GameVR);
 	}
 
-	FCsFpsStaticMesh& operator=(const FCsFpsStaticMesh& B)
+	FORCEINLINE FCsFpsStaticMesh& operator=(const FCsFpsStaticMesh& B)
 	{
 		Mesh1P			 = B.Mesh1P;
 		Mesh1P_LoadFlags = B.Mesh1P_LoadFlags;
@@ -345,7 +345,7 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsFpsStaticMesh& B) const
+	FORCEINLINE bool operator==(const FCsFpsStaticMesh& B) const
 	{
 		return Mesh1P == B.Mesh1P && Mesh1P_LoadFlags == B.Mesh1P_LoadFlags && Mesh1P_Internal == B.Mesh1P_Internal &&
 			   Mesh3P == B.Mesh3P && Mesh3P_LoadFlags == B.Mesh3P_LoadFlags && Mesh3P_Internal == B.Mesh3P_Internal &&
@@ -353,12 +353,12 @@ public:
 			   MeshVR == B.MeshVR && MeshVR_LoadFlags == B.MeshVR_LoadFlags && MeshVR_Internal == B.MeshVR_Internal;
 	}
 
-	bool operator!=(const FCsFpsStaticMesh& B) const
+	FORCEINLINE bool operator!=(const FCsFpsStaticMesh& B) const
 	{
 		return !(*this == B);
 	}
 
-	UStaticMesh* Get(const TCsViewType &ViewType, const bool &IsLow = false) const
+	FORCEINLINE UStaticMesh* Get(const TCsViewType &ViewType, const bool &IsLow = false) const
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Mesh1P_Internal;
@@ -371,7 +371,7 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct FCsTArrayStaticMesh
+struct CSCORE_API FCsTArrayStaticMesh
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -391,7 +391,7 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(Meshes_LoadFlags, ECsLoadFlags::Game);
 	}
 
-	FCsTArrayStaticMesh& operator=(const FCsTArrayStaticMesh& B)
+	FORCEINLINE FCsTArrayStaticMesh& operator=(const FCsTArrayStaticMesh& B)
 	{
 		Meshes.Reset();
 
@@ -405,7 +405,7 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsTArrayStaticMesh& B) const
+	FORCEINLINE bool operator==(const FCsTArrayStaticMesh& B) const
 	{
 		int32 Count  = Meshes.Num();
 		int32 CountB = B.Meshes.Num();
@@ -433,19 +433,19 @@ public:
 		return Meshes_LoadFlags == B.Meshes_LoadFlags;
 	}
 
-	bool operator!=(const FCsTArrayStaticMesh& B) const
+	FORCEINLINE bool operator!=(const FCsTArrayStaticMesh& B) const
 	{
 		return !(*this == B);
 	}
 
-	TArray<class UStaticMesh*>* Get()
+	FORCEINLINE TArray<class UStaticMesh*>* Get()
 	{
 		return &Meshes_Internal;
 	}
 
-	class UStaticMesh* Get(const int32 Index)
+	FORCEINLINE class UStaticMesh* Get(const int32 Index)
 	{
-		return Index < Meshes_Internal.Num() ? Meshes_Internal[Index] : NULL;
+		return Index < Meshes_Internal.Num() ? Meshes_Internal[Index] : nullptr;
 	}
 };
 
@@ -455,7 +455,7 @@ public:
 #pragma region
 
 USTRUCT(BlueprintType)
-struct FCsSkeletalMesh
+struct CSCORE_API FCsSkeletalMesh
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -475,7 +475,7 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(Mesh_LoadFlags, ECsLoadFlags::Game);
 	}
 
-	FCsSkeletalMesh& operator=(const FCsSkeletalMesh& B)
+	FORCEINLINE FCsSkeletalMesh& operator=(const FCsSkeletalMesh& B)
 	{
 		Mesh = B.Mesh;
 		Mesh_LoadFlags = B.Mesh_LoadFlags;
@@ -483,24 +483,24 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsSkeletalMesh& B) const
+	FORCEINLINE bool operator==(const FCsSkeletalMesh& B) const
 	{
 		return Mesh == B.Mesh && Mesh_LoadFlags == B.Mesh_LoadFlags && Mesh_Internal == B.Mesh_Internal;
 	}
 
-	bool operator!=(const FCsSkeletalMesh& B) const
+	FORCEINLINE bool operator!=(const FCsSkeletalMesh& B) const
 	{
 		return !(*this == B);
 	}
 
-	USkeletalMesh* Get() const
+	FORCEINLINE USkeletalMesh* Get() const
 	{
 		return Mesh_Internal;
 	}
 };
 
 USTRUCT(BlueprintType)
-struct FCsFpsSkeletalMesh
+struct CSCORE_API FCsFpsSkeletalMesh
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -556,7 +556,7 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(MeshVR_LoadFlags, ECsLoadFlags::GameVR);
 	}
 
-	FCsFpsSkeletalMesh& operator=(const FCsFpsSkeletalMesh& B)
+	FORCEINLINE FCsFpsSkeletalMesh& operator=(const FCsFpsSkeletalMesh& B)
 	{
 		Mesh1P			 = B.Mesh1P;
 		Mesh1P_LoadFlags = B.Mesh1P_LoadFlags;
@@ -576,7 +576,7 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsFpsSkeletalMesh& B) const
+	FORCEINLINE bool operator==(const FCsFpsSkeletalMesh& B) const
 	{
 		return Mesh1P == B.Mesh1P && Mesh1P_LoadFlags == B.Mesh1P_LoadFlags && Mesh1P_Internal == B.Mesh1P_Internal &&
 			   Mesh3P == B.Mesh3P && Mesh3P_LoadFlags == B.Mesh3P_LoadFlags && Mesh3P_Internal == B.Mesh3P_Internal &&
@@ -584,12 +584,12 @@ public:
 			   MeshVR == B.MeshVR && MeshVR_LoadFlags == B.MeshVR_LoadFlags && MeshVR_Internal == B.MeshVR_Internal;
 	}
 
-	bool operator!=(const FCsFpsSkeletalMesh& B) const
+	FORCEINLINE bool operator!=(const FCsFpsSkeletalMesh& B) const
 	{
 		return !(*this == B);
 	}
 
-	USkeletalMesh* Get(const TCsViewType &ViewType, const bool &IsLow = false) const
+	FORCEINLINE USkeletalMesh* Get(const TCsViewType &ViewType, const bool &IsLow = false) const
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Mesh1P_Internal;
@@ -602,7 +602,7 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct FCsTArraySkeletalMesh
+struct CSCORE_API FCsTArraySkeletalMesh
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -622,7 +622,7 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(Meshes_LoadFlags, ECsLoadFlags::Game);
 	}
 
-	FCsTArraySkeletalMesh& operator=(const FCsTArraySkeletalMesh& B)
+	FORCEINLINE FCsTArraySkeletalMesh& operator=(const FCsTArraySkeletalMesh& B)
 	{
 		Meshes.Reset();
 
@@ -636,7 +636,7 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsTArraySkeletalMesh& B) const
+	FORCEINLINE bool operator==(const FCsTArraySkeletalMesh& B) const
 	{
 		int32 Count = Meshes.Num();
 		int32 CountB = B.Meshes.Num();
@@ -664,17 +664,17 @@ public:
 		return Meshes_LoadFlags == B.Meshes_LoadFlags;
 	}
 
-	bool operator!=(const FCsTArraySkeletalMesh& B) const
+	FORCEINLINE bool operator!=(const FCsTArraySkeletalMesh& B) const
 	{
 		return !(*this == B);
 	}
 
-	TArray<class USkeletalMesh*>* Get()
+	FORCEINLINE TArray<class USkeletalMesh*>* Get()
 	{
 		return &Meshes_Internal;
 	}
 
-	class USkeletalMesh* Get(const int32 Index)
+	FORCEINLINE class USkeletalMesh* Get(const int32 Index)
 	{
 		return Index < Meshes_Internal.Num() ? Meshes_Internal[Index] : NULL;
 	}
@@ -721,13 +721,47 @@ typedef TCsSurfaceType(*TCsPhysicalSurfaceToSurfaceType)(const TEnumAsByte<EPhys
 										 StringToSurfaceType = (TCsSurfaceType (*)(const FString&))(&ECsSurfaceType::ToType); \
 										 PhysicalSurfaceToSurfaceType = (TCsSurfaceType (*)(const TEnumAsByte<EPhysicalSurface>&))(&ECsSurfaceType::ToType);
 
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsSurfaceType : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsSurfaceType() {}
+	FECsSurfaceType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsSurfaceType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsSurfaceType() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsSurfaceType& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
+}
+
+struct CSCORE_API EMCsSurfaceType : public TCsEnumMap<FECsSurfaceType, uint8>
+{
+protected:
+	EMCsSurfaceType() {}
+	EMCsSurfaceType(const EMCsSurfaceType &) = delete;
+	EMCsSurfaceType(EMCsSurfaceType &&) = delete;
+public:
+	~EMCsSurfaceType() {}
+private:
+	static EMCsSurfaceType* Instance;
+
+public:
+	static EMCsSurfaceType& Get();
+};
+
 #pragma endregion Surface
 
 // Materials
 #pragma region
 
 USTRUCT(BlueprintType)
-struct FCsMaterialInstance
+struct CSCORE_API FCsMaterialInstance
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -747,14 +781,14 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(Material_LoadFlags, ECsLoadFlags::Game);
 	}
 
-	UMaterialInstance* Get() const
+	FORCEINLINE UMaterialInstance* Get() const
 	{
 		return Material_Internal;
 	}
 };
 
 USTRUCT(BlueprintType)
-struct FCsMaterialInstanceConstant
+struct CSCORE_API FCsMaterialInstanceConstant
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -774,14 +808,14 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(Material_LoadFlags, ECsLoadFlags::Game);
 	}
 
-	UMaterialInstanceConstant* Get() const
+	FORCEINLINE UMaterialInstanceConstant* Get() const
 	{
 		return Material_Internal;
 	}
 };
 
 USTRUCT(BlueprintType)
-struct FCsTArrayMaterialInstanceConstant
+struct CSCORE_API FCsTArrayMaterialInstanceConstant
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -801,7 +835,7 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(Materials_LoadFlags, ECsLoadFlags::Game);
 	}
 
-	FCsTArrayMaterialInstanceConstant& operator=(const FCsTArrayMaterialInstanceConstant& B)
+	FORCEINLINE FCsTArrayMaterialInstanceConstant& operator=(const FCsTArrayMaterialInstanceConstant& B)
 	{
 		Materials.Reset();
 
@@ -815,7 +849,7 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsTArrayMaterialInstanceConstant& B) const
+	FORCEINLINE bool operator==(const FCsTArrayMaterialInstanceConstant& B) const
 	{
 		int32 Count  = Materials.Num();
 		int32 CountB = B.Materials.Num();
@@ -843,24 +877,24 @@ public:
 		return Materials_LoadFlags == B.Materials_LoadFlags;
 	}
 
-	bool operator!=(const FCsTArrayMaterialInstanceConstant& B) const
+	FORCEINLINE bool operator!=(const FCsTArrayMaterialInstanceConstant& B) const
 	{
 		return !(*this == B);
 	}
 
-	TArray<UMaterialInstanceConstant*>* Get()
+	FORCEINLINE TArray<UMaterialInstanceConstant*>* Get()
 	{
 		return &Materials_Internal;
 	}
 
-	class UMaterialInstanceConstant* Get(const int32 Index)
+	FORCEINLINE class UMaterialInstanceConstant* Get(const int32 Index)
 	{
 		return Index < Materials_Internal.Num() ? Materials_Internal[Index] : NULL;
 	}
 };
 
 USTRUCT(BlueprintType)
-struct FCsFpsTArrayMaterialInstanceConstant
+struct CSCORE_API FCsFpsTArrayMaterialInstanceConstant
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -917,7 +951,7 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(MaterialsVR_LoadFlags, ECsLoadFlags::GameVR);
 	}
 
-	FCsFpsTArrayMaterialInstanceConstant& operator=(const FCsFpsTArrayMaterialInstanceConstant& B)
+	FORCEINLINE FCsFpsTArrayMaterialInstanceConstant& operator=(const FCsFpsTArrayMaterialInstanceConstant& B)
 	{
 		// 1P
 		Materials1P.Reset();
@@ -962,7 +996,7 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsFpsTArrayMaterialInstanceConstant& B) const
+	FORCEINLINE bool operator==(const FCsFpsTArrayMaterialInstanceConstant& B) const
 	{
 		// 1P
 		int32 Count  = Materials1P.Num();
@@ -1075,12 +1109,12 @@ public:
 		return true;
 	}
 
-	bool operator!=(const FCsFpsTArrayMaterialInstanceConstant& B) const
+	FORCEINLINE bool operator!=(const FCsFpsTArrayMaterialInstanceConstant& B) const
 	{
 		return !(*this == B);
 	}
 
-	TArray<UMaterialInstanceConstant*>* Get(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE TArray<UMaterialInstanceConstant*>* Get(const TCsViewType &ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return &Materials1P_Internal;
@@ -1091,7 +1125,7 @@ public:
 		return &Materials3P_Internal;
 	}
 
-	class UMaterialInstanceConstant* Get(const TCsViewType &ViewType, const int32 &Index, const bool &IsLow = false)
+	FORCEINLINE class UMaterialInstanceConstant* Get(const TCsViewType &ViewType, const int32 &Index, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Index < Materials1P_Internal.Num() ? Materials1P_Internal[Index] : NULL;
@@ -1109,7 +1143,7 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct FCsPhysicalMaterial
+struct CSCORE_API FCsPhysicalMaterial
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -1129,17 +1163,17 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(Material_LoadFlags, ECsLoadFlags::Game);
 	}
 
-	bool operator==(const FCsPhysicalMaterial& B) const
+	FORCEINLINE bool operator==(const FCsPhysicalMaterial& B) const
 	{
 		return Material == B.Material && B.Material_LoadFlags == B.Material_LoadFlags && Material_Internal == B.Material_Internal;
 	}
 
-	bool operator!=(const FCsPhysicalMaterial& B) const
+	FORCEINLINE bool operator!=(const FCsPhysicalMaterial& B) const
 	{
 		return !(*this == B);
 	}
 
-	UPhysicalMaterial* Get() const
+	FORCEINLINE UPhysicalMaterial* Get() const
 	{
 		return Material_Internal;
 	}
@@ -1151,7 +1185,7 @@ public:
 #pragma region
 
 USTRUCT()
-struct FCsPhysicsAsset
+struct CSCORE_API FCsPhysicsAsset
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -1171,7 +1205,7 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(Physics_LoadFlags, ECsLoadFlags::Game);
 	}
 
-	FCsPhysicsAsset& operator=(const FCsPhysicsAsset& B)
+	FORCEINLINE FCsPhysicsAsset& operator=(const FCsPhysicsAsset& B)
 	{
 		Physics = B.Physics;
 		Physics_LoadFlags = B.Physics_LoadFlags;
@@ -1179,17 +1213,17 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsPhysicsAsset& B) const
+	FORCEINLINE bool operator==(const FCsPhysicsAsset& B) const
 	{
 		return Physics == B.Physics && Physics_LoadFlags == B.Physics_LoadFlags && Physics_Internal == B.Physics_Internal;
 	}
 
-	bool operator!=(const FCsPhysicsAsset& B) const
+	FORCEINLINE bool operator!=(const FCsPhysicsAsset& B) const
 	{
 		return !(*this == B);
 	}
 
-	UPhysicsAsset* Get() const
+	FORCEINLINE UPhysicsAsset* Get() const
 	{
 		return Physics_Internal;
 	}
@@ -1209,7 +1243,7 @@ namespace NCsAttachmentTransformRules
 }
 
 USTRUCT(BlueprintType)
-struct FCsPhysicsPreset
+struct CSCORE_API FCsPhysicsPreset
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -1241,7 +1275,7 @@ struct FCsPhysicsPreset
 		bEnableGravity = true;
 	}
 
-	FCsPhysicsPreset& operator=(const FCsPhysicsPreset& B)
+	FORCEINLINE FCsPhysicsPreset& operator=(const FCsPhysicsPreset& B)
 	{
 		bSimulatePhysics = B.bSimulatePhysics;
 		OverrideMassInKg = B.OverrideMassInKg;
@@ -1252,7 +1286,7 @@ struct FCsPhysicsPreset
 		return *this;
 	}
 
-	bool operator==(const FCsPhysicsPreset& B) const
+	FORCEINLINE bool operator==(const FCsPhysicsPreset& B) const
 	{
 		return bSimulatePhysics == B.bSimulatePhysics &&
 			   OverrideMassInKg == B.OverrideMassInKg &&
@@ -1262,7 +1296,7 @@ struct FCsPhysicsPreset
 			   bEnableGravity == B.bEnableGravity;
 	}
 
-	bool operator!=(const FCsPhysicsPreset& B) const
+	FORCEINLINE bool operator!=(const FCsPhysicsPreset& B) const
 	{
 		return !(*this == B);
 	}
@@ -1289,23 +1323,23 @@ namespace ECsPhysicsImpulseType
 
 	namespace Str
 	{
-		extern const TCsString AddForce;
-		extern const TCsString AddForceAtPosition;
-		extern const TCsString AddTorque;
-		extern const TCsString AddAngularImpulse;
-		extern const TCsString AddImpulse;
-		extern const TCsString AddImpulseAtPosition;
+		extern CSCORE_API const TCsString AddForce;
+		extern CSCORE_API const TCsString AddForceAtPosition;
+		extern CSCORE_API const TCsString AddTorque;
+		extern CSCORE_API const TCsString AddAngularImpulse;
+		extern CSCORE_API const TCsString AddImpulse;
+		extern CSCORE_API const TCsString AddImpulseAtPosition;
 	}
 
 	namespace Ref
 	{
-		extern const Type AddForce;
-		extern const Type AddForceAtPosition;
-		extern const Type AddTorque;
-		extern const Type AddAngularImpulse;
-		extern const Type AddImpulse;
-		extern const Type AddImpulseAtPosition;
-		extern const Type ECsPhysicsImpulseType_MAX;
+		extern CSCORE_API const Type AddForce;
+		extern CSCORE_API const Type AddForceAtPosition;
+		extern CSCORE_API const Type AddTorque;
+		extern CSCORE_API const Type AddAngularImpulse;
+		extern CSCORE_API const Type AddImpulse;
+		extern CSCORE_API const Type AddImpulseAtPosition;
+		extern CSCORE_API const Type ECsPhysicsImpulseType_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -1335,7 +1369,7 @@ namespace ECsPhysicsImpulseType
 typedef ECsPhysicsImpulseType::Type TCsPhysicsImpulseType;
 
 USTRUCT(BlueprintType)
-struct FCsPhysicsImpulse
+struct CSCORE_API FCsPhysicsImpulse
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -1377,7 +1411,7 @@ struct FCsPhysicsImpulse
 	}
 	~FCsPhysicsImpulse(){}
 
-	FCsPhysicsImpulse& operator=(const FCsPhysicsImpulse& B)
+	FORCEINLINE FCsPhysicsImpulse& operator=(const FCsPhysicsImpulse& B)
 	{
 		Type = B.Type;
 		ImpulseRotation = B.ImpulseRotation;
@@ -1391,7 +1425,7 @@ struct FCsPhysicsImpulse
 		return *this;
 	}
 
-	bool operator==(const FCsPhysicsImpulse& B) const
+	FORCEINLINE bool operator==(const FCsPhysicsImpulse& B) const
 	{
 		return	Type == B.Type &&
 				ImpulseRotation == B.ImpulseRotation &&
@@ -1404,12 +1438,12 @@ struct FCsPhysicsImpulse
 				bIsLocalForce == B.bIsLocalForce;
 	}
 
-	bool operator!=(const FCsPhysicsImpulse& B) const
+	FORCEINLINE bool operator!=(const FCsPhysicsImpulse& B) const
 	{
 		return !(*this == B);
 	}
 
-	void Seed()
+	FORCEINLINE void Seed()
 	{
 		ImpulseRotation.Seed();
 		Impulse = ImpulseMagnitude * ImpulseRotation.Get().Vector();
@@ -1441,7 +1475,7 @@ struct FCsPhysicsImpulse
 #pragma region
 
 USTRUCT(BlueprintType)
-struct FCsBlueprint
+struct CSCORE_API FCsBlueprint
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -1461,14 +1495,14 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(Blueprint_LoadFlags, ECsLoadFlags::Game);
 	}
 
-	UBlueprintGeneratedClass* Get() const
+	FORCEINLINE UBlueprintGeneratedClass* Get() const
 	{
 		return Blueprint_Internal;
 	}
 };
 
 USTRUCT(BlueprintType)
-struct FCsTArrayBlueprint
+struct CSCORE_API FCsTArrayBlueprint
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -1488,7 +1522,7 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(Blueprints_LoadFlags, ECsLoadFlags::Game);
 	}
 
-	FCsTArrayBlueprint& operator=(const FCsTArrayBlueprint& B)
+	FORCEINLINE FCsTArrayBlueprint& operator=(const FCsTArrayBlueprint& B)
 	{
 		Blueprints.Reset();
 
@@ -1502,7 +1536,7 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsTArrayBlueprint& B) const
+	FORCEINLINE bool operator==(const FCsTArrayBlueprint& B) const
 	{
 		int32 Count  = Blueprints.Num();
 		int32 CountB = B.Blueprints.Num();
@@ -1530,17 +1564,17 @@ public:
 		return Blueprints_LoadFlags == B.Blueprints_LoadFlags;
 	}
 
-	bool operator!=(const FCsTArrayBlueprint& B) const
+	FORCEINLINE bool operator!=(const FCsTArrayBlueprint& B) const
 	{
 		return !(*this == B);
 	}
 
-	TArray<UBlueprintGeneratedClass*>* Get()
+	FORCEINLINE TArray<UBlueprintGeneratedClass*>* Get()
 	{
 		return &Blueprints_Internal;
 	}
 
-	class UBlueprintGeneratedClass* Get(const int32 Index)
+	FORCEINLINE class UBlueprintGeneratedClass* Get(const int32 Index)
 	{
 		return Index < Blueprints_Internal.Num() ? Blueprints_Internal[Index] : NULL;
 	}
@@ -1572,23 +1606,23 @@ namespace ECsHMDDeviceType
 
 	namespace Str
 	{
-		extern const TCsString DT_OculusRift;
-		extern const TCsString DT_Morpheus;
-		extern const TCsString DT_ES2GenericStereoMesh;
-		extern const TCsString DT_SteamVR;
-		extern const TCsString DT_GearVR;
-		extern const TCsString DT_GoogleVR;
+		extern CSCORE_API const TCsString DT_OculusRift;
+		extern CSCORE_API const TCsString DT_Morpheus;
+		extern CSCORE_API const TCsString DT_ES2GenericStereoMesh;
+		extern CSCORE_API const TCsString DT_SteamVR;
+		extern CSCORE_API const TCsString DT_GearVR;
+		extern CSCORE_API const TCsString DT_GoogleVR;
 	}
 
 	namespace Ref
 	{
-		extern const Type DT_OculusRift;
-		extern const Type DT_Morpheus;
-		extern const Type DT_ES2GenericStereoMesh;
-		extern const Type DT_SteamVR;
-		extern const Type DT_GearVR;
-		extern const Type DT_GoogleVR;
-		extern const Type ECsHMDDeviceType_MAX;
+		extern CSCORE_API const Type DT_OculusRift;
+		extern CSCORE_API const Type DT_Morpheus;
+		extern CSCORE_API const Type DT_ES2GenericStereoMesh;
+		extern CSCORE_API const Type DT_SteamVR;
+		extern CSCORE_API const Type DT_GearVR;
+		extern CSCORE_API const Type DT_GoogleVR;
+		extern CSCORE_API const Type ECsHMDDeviceType_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -1661,15 +1695,15 @@ namespace ECsGestureDevice
 
 	namespace Str
 	{
-		extern const TCsString Mouse;
-		extern const TCsString MotionController;
+		extern CSCORE_API const TCsString Mouse;
+		extern CSCORE_API const TCsString MotionController;
 	}
 
 	namespace Ref
 	{
-		extern const Type Mouse;
-		extern const Type MotionController;
-		extern const Type ECsGestureDevice_MAX;
+		extern CSCORE_API const Type Mouse;
+		extern CSCORE_API const Type MotionController;
+		extern CSCORE_API const Type ECsGestureDevice_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -1696,6 +1730,40 @@ namespace ECsGestureType
 }
 
 typedef ECsGestureType::Type TCsGestureType;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsGestureType : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsGestureType() {}
+	FECsGestureType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsGestureType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsGestureType() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsGestureType& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
+}
+
+struct CSCORE_API EMCsGestureType : public TCsEnumMap<FECsGestureType, uint8>
+{
+protected:
+	EMCsGestureType() {}
+	EMCsGestureType(const EMCsGestureType &) = delete;
+	EMCsGestureType(EMCsGestureType &&) = delete;
+public:
+	~EMCsGestureType() {}
+private:
+	static EMCsGestureType* Instance;
+
+public:
+	static EMCsGestureType& Get();
+};
 
 #pragma endregion Gestures
 
@@ -2306,7 +2374,7 @@ typedef ECsDetachmentTransformRules::Type TCsDetachmentTransformRules;
 #pragma region
 
 USTRUCT(BlueprintType)
-struct FCsPlayerData_Inventory_Slot
+struct CSCORE_API FCsPlayerData_Inventory_Slot
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -2319,28 +2387,25 @@ struct FCsPlayerData_Inventory_Slot
 	FCsPlayerData_Inventory_Slot() {}
 	~FCsPlayerData_Inventory_Slot() {}
 
-	FCsPlayerData_Inventory_Slot& operator=(const FCsPlayerData_Inventory_Slot& B)
+	FORCEINLINE FCsPlayerData_Inventory_Slot& operator=(const FCsPlayerData_Inventory_Slot& B)
 	{
 		Position = B.Position;
 
 		Contents.Reset();
 
-		const int32 Count = B.Contents.Num();
-
-		for (int32 I = 0; I < Count; ++I)
+		for (const FGuid& Guid : B.Contents)
 		{
-			Contents.Add(B.Contents[I]);
+			Contents.Add(Guid);
 		}
 		return *this;
 	}
 
-	bool operator==(const FCsPlayerData_Inventory_Slot& B) const
+	FORCEINLINE bool operator==(const FCsPlayerData_Inventory_Slot& B) const
 	{
 		if (Position != B.Position) { return false; }
 
 		if (Contents.Num() != B.Contents.Num())
 			return false;
-
 
 		const int32 Count = Contents.Num();
 
@@ -2352,40 +2417,38 @@ struct FCsPlayerData_Inventory_Slot
 		return true;
 	}
 
-	bool operator!=(const FCsPlayerData_Inventory_Slot& B) const
+	FORCEINLINE bool operator!=(const FCsPlayerData_Inventory_Slot& B) const
 	{
 		return !(*this == B);
 	}
 
-	uint32 GetBits() const
+	FORCEINLINE uint32 GetBits() const
 	{
 		return 16					// Position
 			+ Contents.Num() * 8;	// Contents
 	}
 
-	float GetBytes() const
+	FORCEINLINE float GetBytes() const
 	{
 		return (float)GetBits() / 8.0f;
 	}
 
-	bool Contains(const FGuid &Id)
+	FORCEINLINE bool Contains(const FGuid &Id)
 	{
-		const int32 Count = Contents.Num();
-
-		for (int32 I = 0; I < Count; ++I)
+		for (FGuid& Guid : Contents)
 		{
-			if (Contents[I] == Id)
+			if (Guid == Id)
 				return true;
 		}
 		return false;
 	}
 
-	void Add(const FGuid &Id)
+	FORCEINLINE void Add(const FGuid &Id)
 	{
 		Contents.Add(Id);
 	}
 
-	void Remove(const FGuid &Id)
+	FORCEINLINE void Remove(const FGuid &Id)
 	{
 		const int32 Count = Contents.Num();
 
@@ -2401,7 +2464,7 @@ struct FCsPlayerData_Inventory_Slot
 };
 
 USTRUCT(BlueprintType)
-struct FCsPlayerData_Inventory_Bag
+struct CSCORE_API FCsPlayerData_Inventory_Bag
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -2414,7 +2477,7 @@ struct FCsPlayerData_Inventory_Bag
 	FCsPlayerData_Inventory_Bag() {}
 	~FCsPlayerData_Inventory_Bag() {}
 
-	FCsPlayerData_Inventory_Bag& operator=(const FCsPlayerData_Inventory_Bag& B)
+	FORCEINLINE FCsPlayerData_Inventory_Bag& operator=(const FCsPlayerData_Inventory_Bag& B)
 	{
 		Dimension = B.Dimension;
 
@@ -2430,7 +2493,7 @@ struct FCsPlayerData_Inventory_Bag
 		return *this;
 	}
 
-	bool operator==(const FCsPlayerData_Inventory_Bag& B) const
+	FORCEINLINE bool operator==(const FCsPlayerData_Inventory_Bag& B) const
 	{
 		if (Dimension != B.Dimension)
 			return false;
@@ -2447,12 +2510,12 @@ struct FCsPlayerData_Inventory_Bag
 		return true;
 	}
 
-	bool operator!=(const FCsPlayerData_Inventory_Bag& B) const
+	FORCEINLINE bool operator!=(const FCsPlayerData_Inventory_Bag& B) const
 	{
 		return !(*this == B);
 	}
 
-	uint32 GetBits() const
+	FORCEINLINE uint32 GetBits() const
 	{
 		uint32 Bits = Dimension.GetBits(); // Dimension
 
@@ -2465,12 +2528,12 @@ struct FCsPlayerData_Inventory_Bag
 		return Bits;
 	}
 
-	float GetBytes() const
+	FORCEINLINE float GetBytes() const
 	{
 		return (float)GetBits() / 8.0f;
 	}
 
-	int32 GetSlotIndexForItem(const FGuid &Id)
+	FORCEINLINE int32 GetSlotIndexForItem(const FGuid &Id)
 	{
 		const int32 Count = Slots.Num();
 
@@ -2482,7 +2545,7 @@ struct FCsPlayerData_Inventory_Bag
 		return INDEX_NONE;
 	}
 
-	int32 GetFirstOpenSlotIndex()
+	FORCEINLINE int32 GetFirstOpenSlotIndex()
 	{
 		const int32 Count = Slots.Num();
 

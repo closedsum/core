@@ -275,7 +275,7 @@ struct CSCORE_API FECsInputActionMap : public FECsEnumMask_int32
 	//GENERATED_USTRUCT_BODY()
 
 public:
-
+	
 	FECsInputActionMap() {}
 	FECsInputActionMap(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnumMask_int32(InValue, InName, InDisplayName) {}
 	FECsInputActionMap(const uint8 &InValue, const FString &InName) : FECsEnumMask_int32(InValue, InName) {}

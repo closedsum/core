@@ -8,10 +8,8 @@
 
 // PopulateExistingItems
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBindableDynEvent_CsManagerItem_OnPopulateExistingItems);
-DECLARE_MULTICAST_DELEGATE(FBindableEvent_CsManagerItem_OnPopulateExistingItems);
 // InitInventory
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBindableDynEvent_CsManagerItem_OnInitInventory);
-DECLARE_MULTICAST_DELEGATE(FBindableEvent_CsManagerItem_OnInitInventory);
 
 #define CS_ITEM_POOL_SIZE 65535
 #define CS_ITEM_UNIQUE_ID_START_INDEX 65535
@@ -174,7 +172,9 @@ public:
 	virtual void PopulateExistingItems();
 	virtual void AsyncPopulateExistingItems();
 
-	FBindableEvent_CsManagerItem_OnPopulateExistingItems OnPopulateExistingItems_Event;
+	DECLARE_MULTICAST_DELEGATE(OnPopulateExistingItems);
+
+	OnPopulateExistingItems OnPopulateExistingItems_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "Load")
 	FBindableDynEvent_CsManagerItem_OnPopulateExistingItems OnPopulateExistingItems_ScriptEvent;
@@ -185,7 +185,9 @@ public:
 	virtual void InitInventory(class ACsManager_Inventory* Manager_Inventory);
 	virtual void AsyncInitInventory(class ACsManager_Inventory* Manager_Inventory);
 
-	FBindableEvent_CsManagerItem_OnInitInventory OnInitInventory_Event;
+	DECLARE_MULTICAST_DELEGATE(OnInitInventory);
+
+	OnInitInventory OnInitInventory_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "Load")
 	FBindableDynEvent_CsManagerItem_OnInitInventory OnInitInventory_ScriptEvent;

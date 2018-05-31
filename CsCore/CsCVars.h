@@ -200,6 +200,13 @@ extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawPlayerPawnRightThickness
 
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawPlayerCalcCameraTraceHitLocation;
 
+	// Save
+#pragma region
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarPlayerSaveRebuild;
+
+#pragma endregion Save
+
 #pragma endregion Player
 
 // Local Player
@@ -251,6 +258,7 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerWidgetTransactions
 // Item
 #pragma region
 
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarManagerItemRebuild;
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerItemTransactions;
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerItemActionGetFail;
 

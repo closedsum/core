@@ -450,6 +450,13 @@ TAutoConsoleVariable<int32> CsCVarDrawPlayerCalcCameraTraceHitLocation(
 	ECVF_SetByConsole
 );
 
+TAutoConsoleVariable<int32> CsCVarPlayerSaveRebuild(
+	TEXT("player.save.rebuild"),
+	0,
+	TEXT("Player Save Rebuild."),
+	ECVF_SetByConsole
+);
+
 #pragma endregion Player
 
 // Local Player
@@ -540,6 +547,13 @@ TAutoConsoleVariable<int32> CsCVarLogManagerWidgetTransactions(
 
 // Item
 #pragma region
+
+TAutoConsoleVariable<int32> CsCVarManagerItemRebuild(
+	TEXT("manager.item.rebuild"),
+	0,
+	TEXT("Manager Item Rebuild."),
+	ECVF_SetByConsole
+);
 
 TAutoConsoleVariable<int32> CsCVarLogManagerItemTransactions(
 	TEXT("log.manager.item.transactions"),

@@ -151,6 +151,11 @@ namespace ECsEthereumCached
 		const FString SetupContract_Internal = TEXT("UCsEthereum::SetupContract_Internal");
 		const FString RunContractStateChangeFunction_Internal = TEXT("UCsEthereum::RunContractStateChangeFunction_Internal");
 		const FString CheckTransactionHasBeenMined_Internal = TEXT("UCsEthereum::CheckTransactionHasBeenMined_Internal");
+
+		const FString ConsolePrompt = TEXT(">");
+		const FString ContractMined = TEXT("Contract mined! address: ");
+		const FString null = TEXT("null");
+		const FString transactionIndex = TEXT("transactionIndex:");
 	};
 }
 
@@ -1218,8 +1223,9 @@ void UCsEthereum::OnConsoleOutputRecieved(const FString &Output)
 	// GetBalanceEther
 	if (Command == ECsEthereumCommand::GetBalanceEther)
 	{
+		// Output != TEXT("") && !Output.StartsWith(TEXT(">"))
 		if (Output != ECsCached::Str::Empty &&
-			!Output.StartsWith(TEXT(">")))
+			!Output.StartsWith(ECsEthereumCached::Str::ConsolePrompt))
 		{
 			CurrentCommandOuput.Value_float = FCString::Atof(*Output);
 
@@ -1229,8 +1235,9 @@ void UCsEthereum::OnConsoleOutputRecieved(const FString &Output)
 	// DeployContract
 	if (Command == ECsEthereumCommand::DeployContract)
 	{
-		const FString Mined = TEXT("Contract mined! address: ");
+		const FString& Mined = ECsEthereumCached::Str::ContractMined;
 
+		// Output.StartsWith(TEXT("Contract mined! address: "))
 		if (Output.StartsWith(Mined))
 		{
 			// Remove "Contract minded! address: 0x"
@@ -1254,8 +1261,9 @@ void UCsEthereum::OnConsoleOutputRecieved(const FString &Output)
 	// RunContractConstantFunction
 	if (Command == ECsEthereumCommand::RunContractConstantFunction)
 	{
+		// Output != TEXT("") && !Output.StartsWith(TEXT(">"))
 		if (Output != ECsCached::Str::Empty &&
-			!Output.StartsWith(TEXT(">")))
+			!Output.StartsWith(ECsEthereumCached::Str::ConsolePrompt))
 		{
 			CurrentCommandOuput.Value_FString = Output;
 
@@ -1269,8 +1277,9 @@ void UCsEthereum::OnConsoleOutputRecieved(const FString &Output)
 	// RunContractStateChangeFunction
 	if (Command == ECsEthereumCommand::RunContractStateChangeFunction)
 	{
+		// Output != TEXT("") && !Output.StartsWith(TEXT(">"))
 		if (Output != ECsCached::Str::Empty &&
-			!Output.StartsWith(TEXT(">")))
+			!Output.StartsWith(ECsEthereumCached::Str::ConsolePrompt))
 		{
 			CurrentCommandOuput.Value_FString = Output;
 
@@ -1293,14 +1302,15 @@ void UCsEthereum::OnConsoleOutputRecieved(const FString &Output)
 	// GetTransactionReceipt
 	if (Command == ECsEthereumCommand::GetTransactionReceipt)
 	{
-		if (Output == TEXT("null"))
+		// Output == TEXT("null")
+		if (Output == ECsEthereumCached::Str::null)
 		{
 			CurrentCommandOuput.Value_bool = false;
 
 			CommandCompleted_Event.Broadcast(Command);
 		}
-
-		if (Output.Contains(TEXT("transactionIndex:")))
+		// Output.Contains(ECsEthereumCached::Str::transactionIndex)
+		if (Output.Contains(ECsEthereumCached::Str::transactionIndex))
 		{
 			CurrentCommandOuput.Value_bool = true;
 

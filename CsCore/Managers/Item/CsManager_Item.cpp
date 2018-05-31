@@ -23,6 +23,8 @@
 
 #include "Async/AsyncWork.h"
 
+#include "Runtime/Core/Public/HAL/FileManagerGeneric.h"
+
 // Cache
 #pragma region
 
@@ -55,6 +57,28 @@ ACsManager_Item::ACsManager_Item(const FObjectInitializer& ObjectInitializer) : 
 /*static*/ ACsManager_Item* ACsManager_Item::Get(UWorld* InWorld)
 {
 	return InWorld->GetGameState<ACsGameState>()->Manager_Item;
+}
+
+void ACsManager_Item::Rebuild()
+{
+	const FString Directory = GetSavePath();
+
+	// Delete files in existing directories
+	IFileManager& FileManager = FFileManagerGeneric::Get();
+
+	// Accounts
+	if (FileManager.DirectoryExists(*Directory))
+	{
+		TArray<FString> FoundFiles;
+		FileManager.FindFiles(FoundFiles, *Directory, nullptr);
+
+		for (const FString& File : FoundFiles)
+		{
+			const FString Path = Directory + File;
+
+			FileManager.Delete(*Path, false, true, true);
+		}
+	}
 }
 
 void ACsManager_Item::OnTick(const float &DeltaSeconds)

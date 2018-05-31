@@ -24,6 +24,8 @@ public:
 
 	static ACsManager_Item* Get(UWorld* InWorld);
 
+	virtual void Rebuild();
+
 	virtual void OnTick(const float &DeltaSeconds);
 
 	CS_DECLARE_ITEM_TYPE

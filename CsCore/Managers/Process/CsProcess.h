@@ -28,7 +28,7 @@ FORCEINLINE uint32 GetTypeHash(const FECsProcess& b)
 	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-struct CSCORE_API EMCsProcess : public TCsEnumMap<FECsProcess, uint8>
+struct CSCORE_API EMCsProcess : public TCsEnumStructMap<FECsProcess, uint8>
 {
 protected:
 	EMCsProcess(){}

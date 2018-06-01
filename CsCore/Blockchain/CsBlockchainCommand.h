@@ -23,7 +23,7 @@ FORCEINLINE uint32 GetTypeHash(const FECsBlockchainCommand& b)
 	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-struct CSCORE_API EMCsBlockchainCommand : public TCsEnumMap<FECsBlockchainCommand, uint8>
+struct CSCORE_API EMCsBlockchainCommand : public TCsEnumStructMap<FECsBlockchainCommand, uint8>
 {
 protected:
 	EMCsBlockchainCommand() {}

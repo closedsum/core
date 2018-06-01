@@ -418,6 +418,13 @@ template<typename T>
 	}
 
 	template<typename T>
+	static void WriteMemberEnumStructPropertyToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UStructProperty* &StructProperty, void* InObject, const FString &MemberName)
+	{
+		T* Member = StructProperty->ContainerPtrToValuePtr<T>(InObject);
+		InJsonWriter->WriteValue(MemberName, Member->Name);
+	}
+
+	template<typename T>
 	static void WriteMemberArrayStructPropertyToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UArrayProperty* &ArrayProperty, void* InObject, const FString &MemberName, TCsWriteStructToJson_Internal Internal = nullptr)
 	{
 		TArray<T>* Member					 = ArrayProperty->ContainerPtrToValuePtr<TArray<T>>(InObject);
@@ -725,6 +732,14 @@ template<typename T>
 		TSharedPtr<FJsonObject> Object = JsonObject->GetObjectField(MemberName);
 
 		ReadStructFromJson(Object, (void*)Member, StructProperty->Struct, Internal);
+	}
+
+	template<typename EnumStruct, typename EnumMap>
+	static void WriteToMemberEnumStructPropertyFromJson(TSharedPtr<class FJsonObject> &JsonObject, UStructProperty* &StructProperty, void* InObject, const FString &MemberName, EnumMap &Map)
+	{
+		EnumStruct* Member  = StructProperty->ContainerPtrToValuePtr<EnumStruct>(InObject);
+		const FString Value = JsonObject->GetStringField(MemberName);
+		*Member				= Map[Value];
 	}
 
 	template<typename T>

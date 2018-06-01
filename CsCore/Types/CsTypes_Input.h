@@ -7,7 +7,7 @@
 // Input
 #pragma region
 
-UENUM()
+UENUM(BlueprintType)
 namespace ECsInputDevice
 {
 	enum Type
@@ -18,6 +18,21 @@ namespace ECsInputDevice
 		ECsInputDevice_MAX	UMETA(Hidden),
 	};
 }
+
+struct CSCORE_API EMCsInputDevice : public TCsEnumMap<ECsInputDevice::Type>
+{
+protected:
+	EMCsInputDevice() {}
+	EMCsInputDevice(const EMCsInputDevice &) = delete;
+	EMCsInputDevice(EMCsInputDevice &&) = delete;
+public:
+	~EMCsInputDevice() {}
+private:
+	static EMCsInputDevice* Instance;
+
+public:
+	static EMCsInputDevice& Get();
+};
 
 namespace ECsInputDevice
 {
@@ -58,7 +73,7 @@ namespace ECsInputDevice
 #define ECS_INPUT_DEVICE_MAX (uint8)ECsInputDevice::ECsInputDevice_MAX
 typedef ECsInputDevice::Type TCsInputDevice;
 
-UENUM()
+UENUM(BlueprintType)
 namespace ECsInputType
 {
 	enum Type
@@ -71,6 +86,21 @@ namespace ECsInputType
 		ECsInputType_MAX	UMETA(Hidden),
 	};
 }
+
+struct CSCORE_API EMCsInputType : public TCsEnumMap<ECsInputType::Type>
+{
+protected:
+	EMCsInputType() {}
+	EMCsInputType(const EMCsInputType &) = delete;
+	EMCsInputType(EMCsInputType &&) = delete;
+public:
+	~EMCsInputType() {}
+private:
+	static EMCsInputType* Instance;
+
+public:
+	static EMCsInputType& Get();
+};
 
 namespace ECsInputType
 {
@@ -135,6 +165,21 @@ namespace ECsInputEvent
 		ECsInputEvent_MAX	UMETA(Hidden),
 	};
 }
+
+struct CSCORE_API EMCsInputEvent : public TCsEnumMap<ECsInputEvent::Type>
+{
+protected:
+	EMCsInputEvent() {}
+	EMCsInputEvent(const EMCsInputEvent &) = delete;
+	EMCsInputEvent(EMCsInputEvent &&) = delete;
+public:
+	~EMCsInputEvent() {}
+private:
+	static EMCsInputEvent* Instance;
+
+public:
+	static EMCsInputEvent& Get();
+};
 
 namespace ECsInputEvent
 {
@@ -289,7 +334,7 @@ FORCEINLINE uint32 GetTypeHash(const FECsInputActionMap& b)
 	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-struct CSCORE_API EMCsInputActionMap : public TCsEnumMaskMap<FECsInputActionMap, int32>
+struct CSCORE_API EMCsInputActionMap : public TCsEnumStructMaskMap<FECsInputActionMap, int32>
 {
 protected:
 	EMCsInputActionMap() {}
@@ -372,7 +417,7 @@ FORCEINLINE uint32 GetTypeHash(const FECsInputAction& b)
 	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-struct CSCORE_API EMCsInputAction : public TCsEnumMap<FECsInputAction, uint8>
+struct CSCORE_API EMCsInputAction : public TCsEnumStructMap<FECsInputAction, uint8>
 {
 protected:
 	EMCsInputAction() {}
@@ -1284,7 +1329,7 @@ FORCEINLINE uint32 GetTypeHash(const FECsGameEvent& b)
 	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-struct CSCORE_API EMCsGameEvent : public TCsEnumMap<FECsGameEvent, uint8>
+struct CSCORE_API EMCsGameEvent : public TCsEnumStructMap<FECsGameEvent, uint8>
 {
 protected:
 	EMCsGameEvent() {}

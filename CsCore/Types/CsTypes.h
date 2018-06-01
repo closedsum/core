@@ -740,7 +740,7 @@ FORCEINLINE uint32 GetTypeHash(const FECsSurfaceType& b)
 	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-struct CSCORE_API EMCsSurfaceType : public TCsEnumMap<FECsSurfaceType, uint8>
+struct CSCORE_API EMCsSurfaceType : public TCsEnumStructMap<FECsSurfaceType, uint8>
 {
 protected:
 	EMCsSurfaceType() {}
@@ -1750,7 +1750,7 @@ FORCEINLINE uint32 GetTypeHash(const FECsGestureType& b)
 	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-struct CSCORE_API EMCsGestureType : public TCsEnumMap<FECsGestureType, uint8>
+struct CSCORE_API EMCsGestureType : public TCsEnumStructMap<FECsGestureType, uint8>
 {
 protected:
 	EMCsGestureType() {}

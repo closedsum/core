@@ -180,7 +180,7 @@ FORCEINLINE uint32 GetTypeHash(const FECsEthereumJavascript& b)
 	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-struct CSCORE_API EMCsEthereumJavascript : public TCsEnumMap<FECsEthereumJavascript, uint8>
+struct CSCORE_API EMCsEthereumJavascript : public TCsEnumStructMap<FECsEthereumJavascript, uint8>
 {
 protected:
 	EMCsEthereumJavascript() {}

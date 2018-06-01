@@ -742,6 +742,13 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			if (StructProperty->Struct == FCsPayload::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsPayload>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 
+			// EnumStruct
+			{
+				// FECsInputAction
+				if (StructProperty->Struct == FECsInputAction::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsInputAction>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+			}
+
 			if (Internal)
 			{
 				if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
@@ -1436,6 +1443,13 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			if (StructProperty->Struct == FCsPayload::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsPayload>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 
+			// EnumStruct
+			{
+				// FECsInputAction
+				if (StructProperty->Struct == FECsInputAction::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsInputAction>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+			}
+
 			if (Internal)
 			{
 				if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
@@ -2072,7 +2086,9 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 
 			// EnumStruct
 			{
-
+				// FECsInputAction
+				if (StructProperty->Struct == FECsInputAction::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsInputAction>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
 			}
 
 			if (Internal)
@@ -2885,6 +2901,13 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			if (StructProperty->Struct == FCsPayload::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsPayload>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 
+			// EnumStruct
+			{
+				// FECsInputAction
+				if (StructProperty->Struct == FECsInputAction::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsInputAction, EMCsInputAction>(JsonObject, StructProperty, InStruct, MemberName, EMCsInputAction::Get()); continue; }
+			}
+
 			if (Internal)
 			{
 				if ((*Internal)(Property, JsonObject, InStruct, InScriptStruct))
@@ -3618,6 +3641,13 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsPayload
 			if (StructProperty->Struct == FCsPayload::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsPayload>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			
+			// EnumStruct
+			{
+				// FECsInputAction
+				if (StructProperty->Struct == FECsInputAction::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsInputAction, EMCsInputAction>(JsonObject, StructProperty, InStruct, MemberName, EMCsInputAction::Get()); continue; }
+			}
 
 			if (Internal)
 			{
@@ -4295,9 +4325,16 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			{ WriteToMemberStructPropertyFromJson<FCsInventoryLoadout>(JsonObject, StructProperty, InObject, MemberName); continue; }
 			// FCsTArrayPayload
 			if (StructProperty->Struct == FCsTArrayPayload::StaticStruct())
-			{
+			{ 
 				if (ReadObjectFromJson_Internal_Helper(Internal, Property, JsonObject, InObject, InClass)) { continue; }
 				continue;
+			}
+
+			// EnumStruct
+			{
+				// FECsInputAction
+				if (StructProperty->Struct == FECsInputAction::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsInputAction, EMCsInputAction>(JsonObject, StructProperty, InObject, MemberName, EMCsInputAction::Get()); continue; }
 			}
 
 			if (Internal)

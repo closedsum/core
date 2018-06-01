@@ -1,6 +1,15 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_Input.h"
 
+EMCsInputDevice* EMCsInputDevice::Instance;
+
+EMCsInputDevice& EMCsInputDevice::Get()
+{
+	if (!Instance)
+		Instance = new EMCsInputDevice();
+	return *Instance;
+}
+
 namespace ECsInputDevice
 {
 	namespace Str
@@ -12,11 +21,20 @@ namespace ECsInputDevice
 
 	namespace Ref
 	{
-		CSCORE_API const Type MouseAndKeyboard = Type::MouseAndKeyboard;
-		CSCORE_API const Type Gamepad= Type::Gamepad;
-		CSCORE_API const Type MotionController = Type::MotionController;
-		CSCORE_API const Type ECsInputDevice_MAX = Type::ECsInputDevice_MAX;
+		CSCORE_API const Type MouseAndKeyboard = EMCsInputDevice::Get().Add(Type::MouseAndKeyboard, TEXT("MouseAndKeyboard"), TEXT("Mouse and Keyboard"));
+		CSCORE_API const Type Gamepad = EMCsInputDevice::Get().Add(Type::Gamepad, TEXT("Gamepad"), TEXT("Gamepad"));
+		CSCORE_API const Type MotionController = EMCsInputDevice::Get().Add(Type::MotionController, TEXT("MotionController"), TEXT("Motion Controller"));
+		CSCORE_API const Type ECsInputDevice_MAX = EMCsInputDevice::Get().Add(Type::ECsInputDevice_MAX, TEXT("ECsInputDevice_MAX"), TEXT("MAX"));
 	}
+}
+
+EMCsInputType* EMCsInputType::Instance;
+
+EMCsInputType& EMCsInputType::Get()
+{
+	if (!Instance)
+		Instance = new EMCsInputType();
+	return *Instance;
 }
 
 namespace ECsInputType
@@ -32,13 +50,22 @@ namespace ECsInputType
 
 	namespace Ref
 	{
-		CSCORE_API const Type Action = Type::Action;
-		CSCORE_API const Type Axis = Type::Axis;
-		CSCORE_API const Type Trigger = Type::Trigger;
-		CSCORE_API const Type Location = Type::Location;
-		CSCORE_API const Type Rotation = Type::Rotation;
-		CSCORE_API const Type ECsInputType_MAX = Type::ECsInputType_MAX;
+		CSCORE_API const Type Action = EMCsInputType::Get().Add(Type::Action, TEXT("Action"));
+		CSCORE_API const Type Axis = EMCsInputType::Get().Add(Type::Axis, TEXT("Axis"));
+		CSCORE_API const Type Trigger = EMCsInputType::Get().Add(Type::Trigger, TEXT("Trigger"));
+		CSCORE_API const Type Location = EMCsInputType::Get().Add(Type::Location, TEXT("Location"));
+		CSCORE_API const Type Rotation = EMCsInputType::Get().Add(Type::Rotation, TEXT("Rotation"));
+		CSCORE_API const Type ECsInputType_MAX = EMCsInputType::Get().Add(Type::ECsInputType_MAX, TEXT("ECsInputType_MAX"));
 	}
+}
+
+EMCsInputEvent* EMCsInputEvent::Instance;
+
+EMCsInputEvent& EMCsInputEvent::Get()
+{
+	if (!Instance)
+		Instance = new EMCsInputEvent();
+	return *Instance;
 }
 
 namespace ECsInputEvent

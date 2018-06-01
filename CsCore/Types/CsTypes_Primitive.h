@@ -70,10 +70,10 @@ namespace ECsCached
 }
 
 #define CS_INVALID_ENUM_TO_STRING ECsCached::Str::INVALID
+#define CS_INVALID_ENUM_TO_NAME ECsCached::Name::None
 #define CS_INVALID_SHORT_CODE ECsCached::Name::Null
 
 #pragma endregion Cached
-
 
 // Enum Union
 #pragma region
@@ -82,6 +82,137 @@ namespace ECsCached
 
 // Enums
 #pragma region
+
+template<typename EnumType>
+struct TCsEnumMap
+{
+private:
+	TArray<EnumType> Enums;
+	int32 Count;
+	TMap<FString, EnumType> FromNameMap;
+	TMap<EnumType, FString> ToNameMap;
+	TMap<FString, EnumType> FromDisplayNameMap;
+	TMap<EnumType, FString> ToDisplayNameMap;
+	TMap<FName, EnumType> FromNameInternalMap;
+	TMap<EnumType, FName> ToNameInternalMap;
+	EnumType MAX;
+protected:
+	TCsEnumMap()
+	{
+		Count = 0;
+	}
+public:
+	virtual ~TCsEnumMap() {}
+
+	FORCEINLINE EnumType Add(const EnumType& Enum, const FString &Name, const FString &DisplayName)
+	{
+		Enums.Add(Enum);
+		MAX = Enum;
+		++Count;
+		FromNameMap.Add(Name, Enum);
+		ToNameMap.Add(Enum, Name);
+		FromDisplayNameMap.Add(DisplayName, Enum);
+		ToDisplayNameMap.Add(Enum, DisplayName);
+		FromNameInternalMap.Add(FName(*Name), Enum);
+		ToNameInternalMap.Add(Enum, FName(*Name));
+		return Enum;
+	}
+
+	FORCEINLINE EnumType Add(const EnumType& Enum, const FString &Name)
+	{
+		return Add(Enum, Name, Name);
+	}
+
+	FORCEINLINE const EnumType& operator[](const FString &Name)
+	{
+		return FromNameMap[Name];
+	}
+
+	FORCEINLINE const EnumType& operator[](const FName &Name)
+	{
+		return FromNameInternalMap[Name];
+	}
+
+	FORCEINLINE bool IsValidEnum(EnumType E)
+	{
+		return Enums.Find(E) > INDEX_NONE;
+	}
+
+	FORCEINLINE bool IsValidEnum(const FString &Name)
+	{
+		return FromNameMap.Find(Name) != nullptr;
+	}
+
+	FORCEINLINE bool IsValidEnum(const FName &Name)
+	{
+		return FromNameInternalMap.Find(Name) != nullptr;
+	}
+
+	FORCEINLINE const EnumType& GetEnumAt(const int32 &Index)
+	{
+		return Enums[Index];
+	}
+
+	FORCEINLINE const EnumType& GetEnum(const FString &Name)
+	{
+		return FromNameMap[Name];
+	}
+
+	FORCEINLINE const EnumType& GetEnum(const FName &Name)
+	{
+		return FromNameInternalMap[Name];
+	}
+
+	FORCEINLINE const EnumType& GetEnumByDisplayName(const FString &DisplayName)
+	{
+		return FromDisplayNameMap[DisplayName];
+	}
+
+	FORCEINLINE const int32& Num()
+	{
+		return Count;
+	}
+
+	FORCEINLINE const EnumType& GetMAX()
+	{
+		return MAX;
+	}
+
+	FORCEINLINE const FString& ToString(const EnumType& Enum)
+	{
+		if (FString* Name = ToNameMap.Find(Enum))
+			return *Name;
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE const FName& ToName(const EnumType& Enum)
+	{
+		if (FName* Name = ToNameInternalMap.Find(Enum))
+			return *Name;
+		return CS_INVALID_ENUM_TO_NAME;
+	}
+
+	FORCEINLINE const FString& ToDisplayName(const EnumType& Enum)
+	{
+		if (FString* Name = ToDisplayNameMap.Find(Enum))
+			return *Name;
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE const EnumType& ToType(const FString &Name)
+	{
+		if (EnumType* Enum = FromNameMap.Find(Name))
+			return *Enum;
+		return MAX;
+	}
+
+	FORCEINLINE const EnumType& ToType(const FName &Name)
+	{
+		if (EnumType* Enum = FromNameInternalMap.Find(Name))
+			return *Enum;
+		return MAX;
+	}
+};
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsEnum
@@ -207,7 +338,7 @@ struct CSCORE_API FECsEnum_uint8 : public FECsEnum
 };
 
 template<typename EnumStruct, typename EnumType>
-struct TCsEnumMap
+struct TCsEnumStructMap
 {
 private:
 	TArray<EnumStruct> Enums;
@@ -218,7 +349,7 @@ private:
 	TMap<EnumType, EnumStruct> TypeMap;
 	EnumStruct MAX;
 protected:
-	TCsEnumMap() 
+	TCsEnumStructMap()
 	{
 		Count = 0;
 		MAX.Value = (EnumType)0;
@@ -226,7 +357,7 @@ protected:
 		MAX.DisplayName = TEXT("MAX");
 	}
 public:
-	virtual ~TCsEnumMap() {}
+	virtual ~TCsEnumStructMap() {}
 
 	FORCEINLINE EnumStruct Create(const FString &Name, const FString &DisplayName)
 	{
@@ -471,7 +602,7 @@ struct CSCORE_API FECsEnumMask_uint32 : public FECsEnum
 };
 
 template<typename EnumStruct, typename EnumType>
-struct TCsEnumMaskMap
+struct TCsEnumStructMaskMap
 {
 private:
 	TArray<EnumStruct> Enums;
@@ -480,12 +611,12 @@ private:
 	TMap<FString, EnumStruct> DisplayNameMap;
 	TMap<EnumType, EnumStruct> TypeMap;
 protected:
-	TCsEnumMaskMap()
+	TCsEnumStructMaskMap()
 	{
 		Count = 0;
 	}
 public:
-	virtual ~TCsEnumMaskMap() {}
+	virtual ~TCsEnumStructMaskMap() {}
 
 	FORCEINLINE EnumStruct Create(const FString &Name, const FString &DisplayName)
 	{

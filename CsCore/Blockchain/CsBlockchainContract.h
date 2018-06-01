@@ -23,7 +23,7 @@ FORCEINLINE uint32 GetTypeHash(const FECsBlockchainContract& b)
 	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-struct CSCORE_API EMCsBlockchainContract : public TCsEnumMap<FECsBlockchainContract, uint8>
+struct CSCORE_API EMCsBlockchainContract : public TCsEnumStructMap<FECsBlockchainContract, uint8>
 {
 protected:
 	EMCsBlockchainContract() {}
@@ -277,7 +277,7 @@ FORCEINLINE uint32 GetTypeHash(const FECsBlockchainContractFunction& b)
 	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-struct  CSCORE_API EMCsBlockchainContractFunction : public TCsEnumMap<FECsBlockchainContractFunction, uint8>
+struct  CSCORE_API EMCsBlockchainContractFunction : public TCsEnumStructMap<FECsBlockchainContractFunction, uint8>
 {
 protected:
 	EMCsBlockchainContractFunction() {}

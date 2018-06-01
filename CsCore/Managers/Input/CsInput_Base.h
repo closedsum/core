@@ -10,9 +10,8 @@ class CSCORE_API UCsInput_Base : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
-	TCsInputAction Action;
-
-	CS_DECLARE_INPUT_ACTION
+	UPROPERTY(BlueprintReadWrite, Category = "Input")
+	FECsInputAction Action;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Input")
 	FCsInputInfo Info;

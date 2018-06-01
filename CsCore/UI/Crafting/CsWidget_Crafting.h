@@ -182,7 +182,7 @@ public:
 
 	CS_COROUTINE_DECLARE(IncrementCount)
 
-	TCsInputAction IncrementInputAction;
+	FECsInputAction IncrementInputAction;
 
 	void PerformIncrementCount();
 	void StopIncrementCount();
@@ -233,7 +233,7 @@ public:
 
 	CS_COROUTINE_DECLARE(DecrementCount)
 
-	TCsInputAction DecrementInputAction;
+	FECsInputAction DecrementInputAction;
 
 	void PerformDecrementCount();
 	void StopDecrementCount();
@@ -253,7 +253,7 @@ public:
 
 	TCsGameEvent StartGameEvent;
 
-	TCsInputAction StartInputAction;
+	FECsInputAction StartInputAction;
 
 	UFUNCTION()
 	void OnStartButtonPressed();

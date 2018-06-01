@@ -38,8 +38,6 @@ namespace ECsEthereumCommand
 	CSCORE_API const FECsBlockchainCommand RunContractStateChangeFunction = EMCsBlockchainCommand::Get().Create(TEXT("RunContractStateChangeFunction"), TEXT("Run Contract State Change Function"));
 	CSCORE_API const FECsBlockchainCommand GetGasEstimate = EMCsBlockchainCommand::Get().Create(TEXT("GetGasEstimate"), TEXT("Get Gas Estimate"));
 	CSCORE_API const FECsBlockchainCommand GetTransactionReceipt = EMCsBlockchainCommand::Get().Create(TEXT("GetTransactionReceipt"), TEXT("Get Transaction Receipt"));
-
-	CSCORE_API const FECsBlockchainCommand MAX = EMCsBlockchainCommand::Get().Create(TEXT("MAX"));
 }
 
 namespace ECsEthereumRoutine
@@ -151,6 +149,8 @@ namespace ECsEthereumCached
 		const FString SetupContract_Internal = TEXT("UCsEthereum::SetupContract_Internal");
 		const FString RunContractStateChangeFunction_Internal = TEXT("UCsEthereum::RunContractStateChangeFunction_Internal");
 		const FString CheckTransactionHasBeenMined_Internal = TEXT("UCsEthereum::CheckTransactionHasBeenMined_Internal");
+
+		const FString Geth = TEXT("Geth");
 
 		const FString ConsolePrompt = TEXT(">");
 		const FString ContractMined = TEXT("Contract mined! address: ");
@@ -482,7 +482,7 @@ void UCsEthereum::StartProcess(const TEnumAsByte<ECsBlockchainProcessType::Type>
 			UE_LOG(LogCs, Log, TEXT("CgEthereum::StartProcess: Starting Process (%s): %s %s"), *ProcessTypeAsString, *(StartInfo.Filename), *(StartInfo.Arguments));
 		}
 
-		Process = UICsManager_Process::Get()->Spawn(EMCsProcess::Get()[TEXT("Geth")], Payload);
+		Process = UICsManager_Process::Get()->Spawn(EMCsProcess::Get()[ECsEthereumCached::Str::Geth], Payload);
 
 		if (ProcessType == ECsBlockchainProcessType::RunningInstance)
 		{

@@ -34,9 +34,6 @@ ACsManager_Input::ACsManager_Input(const FObjectInitializer& ObjectInitializer) 
 
 	InputActionMapMaskToString = nullptr;
 	StringToInputActionMap = nullptr;
-
-	InputActionToString = nullptr;
-	StringToInputAction = nullptr;
 }
 
 void ACsManager_Input::Init() {}
@@ -228,7 +225,7 @@ void ACsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 	// Set FirstReleased Events to Released after 1 Frame
 
 	// TODO: Potentially Optimize to O(n) versus O(n^2)
-	const uint8 ActionCount = (uint8)InputAction_MAX;
+	const int32& ActionCount = EMCsInputAction::Get().Num();
 
 	for (uint8 I = 0; I < ActionCount; ++I)
 	{
@@ -236,8 +233,8 @@ void ACsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 		if (*(Actions[I]) == ECsInputEvent::FirstPressed && 
 			*(Last_Actions[I]) == ECsInputEvent::FirstPressed)
 		{
-			const TCsInputAction Action = (TCsInputAction)I;
-			const uint8 InputCount		= InputFrame.Inputs.Num();
+			const FECsInputAction& Action = EMCsInputAction::Get().GetEnumAt(I);
+			const uint8 InputCount		  = InputFrame.Inputs.Num();
 
 			bool Found = false;
 
@@ -257,8 +254,8 @@ void ACsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 		if (*(Actions[I]) == ECsInputEvent::FirstReleased &&
 			*(Last_Actions[I]) == ECsInputEvent::FirstReleased)
 		{
-			const TCsInputAction Action = (TCsInputAction)I;
-			const uint8 InputCount	    = InputFrame.Inputs.Num();
+			const FECsInputAction& Action = EMCsInputAction::Get().GetEnumAt(I);
+			const uint8 InputCount		  = InputFrame.Inputs.Num();
 
 			bool Found = false;
 
@@ -278,8 +275,8 @@ void ACsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 		if (*(Actions[I]) == ECsInputEvent::FirstMoved && 
 			*(Last_Actions[I]) == ECsInputEvent::FirstMoved)
 		{
-			const TCsInputAction Action = (TCsInputAction)I;
-			const uint8 InputCount		= InputFrame.Inputs.Num();
+			const FECsInputAction& Action = EMCsInputAction::Get().GetEnumAt(I);
+			const uint8 InputCount		  = InputFrame.Inputs.Num();
 
 			bool Found = false;
 
@@ -299,8 +296,8 @@ void ACsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 		if (*(Actions[I]) == ECsInputEvent::FirstStationary && 
 			*(Last_Actions[I]) == ECsInputEvent::FirstStationary) 
 		{
-			const TCsInputAction Action = (TCsInputAction)I;
-			const uint8 InputCount		= InputFrame.Inputs.Num();
+			const FECsInputAction& Action = EMCsInputAction::Get().GetEnumAt(I);
+			const uint8 InputCount		  = InputFrame.Inputs.Num();
 
 			bool Found = false;
 
@@ -321,7 +318,7 @@ void ACsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 
 		// Currently NO Bindings for PRESSED Inputs, so manually add them
 		if (*(Actions[I]) == ECsInputEvent::Pressed)
-			AddInput((TCsInputAction)I, ECsInputEvent::Pressed);
+			AddInput(EMCsInputAction::Get().GetEnumAt(I), ECsInputEvent::Pressed);
 	}
 	// Process Inputs
 	AActor* ActionOwner    = GetInputOwner();
@@ -343,7 +340,7 @@ void ACsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 		{
 			const FCsInput* Input = InputFrame.Inputs[I];
 
-			const FString& Action = (*InputActionToString)(Input->Action);
+			const FString& Action = Input->Action.Name;
 			const FString& Event  = ECsInputEvent::ToString(Input->Event);
 
 			// Void - No Value
@@ -384,14 +381,14 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 	if (!CurrentInput)
 		return;
 
-	const TCsInputAction& Action	= CurrentInput->Action;
+	const FECsInputAction& Action	= CurrentInput->Action;
 	const TCsInputEvent& Event	    = CurrentInput->Event;
-	const TCsInputEvent& Last_Event = Infos[(uint8)Action]->Last_Event;
+	const TCsInputEvent& Last_Event = Infos[Action.Value]->Last_Event;
 	const float& Value			    = CurrentInput->Value;
 	const FVector& Location		    = CurrentInput->Location;
 	const FRotator& Rotation		= CurrentInput->Rotation;
 
-	FCsInputInfo* Info = Infos[(uint8)Action];
+	FCsInputInfo* Info = Infos[Action.Value];
 
 	// Action
 	if (Info->Type == ECsInputType::Action)
@@ -408,7 +405,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 
 		Action_Event.Broadcast(ActionOwner, Action, Event);
 #if WITH_EDITOR
-		Action_ScriptEvent.Broadcast((uint8)Action, Event);
+		Action_ScriptEvent.Broadcast(Action, Event);
 #endif // #if WITH_EDITOR
 
 		// FirstPressed
@@ -416,7 +413,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		{
 			FirstPressed_Event.Broadcast(ActionOwner, Action);
 #if WITH_EDITOR
-			FirstPressed_ScriptEvent.Broadcast((uint8)Action);
+			FirstPressed_ScriptEvent.Broadcast(Action);
 #endif // #if WITH_EDITOR
 			return;
 		}
@@ -425,7 +422,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		{
 			Pressed_Event.Broadcast(ActionOwner, Action);
 #if WITH_EDITOR
-			Pressed_ScriptEvent.Broadcast((uint8)Action);
+			Pressed_ScriptEvent.Broadcast(Action);
 #endif // #if WITH_EDITOR
 			return;
 		}
@@ -434,7 +431,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		{
 			FirstReleased_Event.Broadcast(ActionOwner, Action);
 #if WITH_EDITOR
-			FirstReleased_ScriptEvent.Broadcast((uint8)Action);
+			FirstReleased_ScriptEvent.Broadcast(Action);
 #endif // #if WITH_EDITOR
 			return;
 		}
@@ -455,7 +452,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 
 		Axis_Event.Broadcast(ActionOwner, Action, Event, Value);
 #if WITH_EDITOR
-		Axis_ScriptEvent.Broadcast((uint8)Action, Event, Value);
+		Axis_ScriptEvent.Broadcast(Action, Event, Value);
 #endif // #if WITH_EDITOR
 
 		// FirstMoved
@@ -463,7 +460,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		{
 			Axis_FirstMoved_Event.Broadcast(ActionOwner, Action, Value);
 #if WITH_EDITOR
-			Axis_FirstMoved_ScriptEvent.Broadcast((uint8)Action, Value);
+			Axis_FirstMoved_ScriptEvent.Broadcast(Action, Value);
 #endif // #if WITH_EDITOR
 			return;
 		}
@@ -472,7 +469,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		{
 			Axis_Moved_Event.Broadcast(ActionOwner, Action, Value);
 #if WITH_EDITOR
-			Axis_Moved_ScriptEvent.Broadcast((uint8)Action, Value);
+			Axis_Moved_ScriptEvent.Broadcast(Action, Value);
 #endif // #if WITH_EDITOR
 			return;
 		}
@@ -481,7 +478,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		{
 			Axis_FirstStationary_Event.Broadcast(ActionOwner, Action, Value);
 #if WITH_EDITOR
-			Axis_FirstStationary_ScriptEvent.Broadcast((uint8)Action, Value);
+			Axis_FirstStationary_ScriptEvent.Broadcast(Action, Value);
 #endif // #if WITH_EDITOR
 			return;
 		}
@@ -490,7 +487,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		{
 			Axis_Stationary_Event.Broadcast(ActionOwner, Action, Value);
 #if WITH_EDITOR
-			Axis_Stationary_ScriptEvent.Broadcast((uint8)Action, Value);
+			Axis_Stationary_ScriptEvent.Broadcast(Action, Value);
 #endif // #if WITH_EDITOR
 			return;
 		}
@@ -501,7 +498,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 	{
 		Location_Event.Broadcast(ActionOwner, Action, Event, Location);
 #if WITH_EDITOR
-		Location_ScriptEvent.Broadcast((uint8)Action, Event, Location);
+		Location_ScriptEvent.Broadcast(Action, Event, Location);
 #endif // #if WITH_EDITOR
 
 		// FirstMoved
@@ -509,7 +506,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		{
 			Location_FirstMoved_Event.Broadcast(ActionOwner, Action, Location);
 #if WITH_EDITOR
-			Location_FirstMoved_ScriptEvent.Broadcast((uint8)Action, Location);
+			Location_FirstMoved_ScriptEvent.Broadcast(Action, Location);
 #endif // #if WITH_EDITOR
 			return;
 		}
@@ -518,7 +515,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		{
 			Location_Moved_Event.Broadcast(ActionOwner, Action, Location);
 #if WITH_EDITOR
-			Location_Moved_ScriptEvent.Broadcast((uint8)Action, Location);
+			Location_Moved_ScriptEvent.Broadcast(Action, Location);
 #endif // #if WITH_EDITOR
 			return;
 		}
@@ -527,7 +524,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		{
 			Location_FirstStationary_Event.Broadcast(ActionOwner, Action, Location);
 #if WITH_EDITOR
-			Location_FirstStationary_ScriptEvent.Broadcast((uint8)Action, Location);
+			Location_FirstStationary_ScriptEvent.Broadcast(Action, Location);
 #endif // #if WITH_EDITOR
 			return;
 		}
@@ -536,7 +533,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		{
 			Location_Stationary_Event.Broadcast(ActionOwner, Action, Location);
 #if WITH_EDITOR
-			Location_Stationary_ScriptEvent.Broadcast((uint8)Action, Location);
+			Location_Stationary_ScriptEvent.Broadcast(Action, Location);
 #endif // #if WITH_EDITOR
 			return;
 		}
@@ -547,7 +544,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 	{
 		Rotation_Event.Broadcast(ActionOwner, Action, Event, Rotation);
 #if WITH_EDITOR
-		Rotation_ScriptEvent.Broadcast((uint8)Action, Event, Rotation);
+		Rotation_ScriptEvent.Broadcast(Action, Event, Rotation);
 #endif // #if WITH_EDITOR
 
 		// FirstMoved
@@ -555,7 +552,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		{
 			Rotation_FirstMoved_Event.Broadcast(ActionOwner, Action, Rotation);
 #if WITH_EDITOR
-			Rotation_FirstMoved_ScriptEvent.Broadcast((uint8)Action, Rotation);
+			Rotation_FirstMoved_ScriptEvent.Broadcast(Action, Rotation);
 #endif // #if WITH_EDITOR
 			return;
 		}
@@ -564,7 +561,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		{
 			Rotation_Moved_Event.Broadcast(ActionOwner, Action, Rotation);
 #if WITH_EDITOR
-			Rotation_Moved_ScriptEvent.Broadcast((uint8)Action, Rotation);
+			Rotation_Moved_ScriptEvent.Broadcast(Action, Rotation);
 #endif // #if WITH_EDITOR
 			return;
 		}
@@ -573,7 +570,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		{
 			Rotation_FirstStationary_Event.Broadcast(ActionOwner, Action, Rotation);
 #if WITH_EDITOR
-			Rotation_FirstStationary_ScriptEvent.Broadcast((uint8)Action, Rotation);
+			Rotation_FirstStationary_ScriptEvent.Broadcast(Action, Rotation);
 #endif // #if WITH_EDITOR
 			return;
 		}
@@ -582,7 +579,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 		{
 			Rotation_Stationary_Event.Broadcast(ActionOwner, Action, Rotation);
 #if WITH_EDITOR
-			Rotation_Stationary_ScriptEvent.Broadcast((uint8)Action, Rotation);
+			Rotation_Stationary_ScriptEvent.Broadcast(Action, Rotation);
 #endif // #if WITH_EDITOR
 			return;
 		}
@@ -590,7 +587,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 	}
 }
 
-FCsInput* ACsManager_Input::AllocateInput(const TCsInputAction &Action, const TCsInputEvent &Event, const float &Value /*=0.0f*/, const FVector &Location /*=FVector::ZeroVector*/, const FRotator &Rotation /*=FRotator::ZeroRotator*/)
+FCsInput* ACsManager_Input::AllocateInput(const FECsInputAction &Action, const TCsInputEvent &Event, const float &Value /*=0.0f*/, const FVector &Location /*=FVector::ZeroVector*/, const FRotator &Rotation /*=FRotator::ZeroRotator*/)
 {
 	for (int32 I = 0; I < CS_INPUT_POOL_SIZE; ++I)
 	{
@@ -608,29 +605,25 @@ FCsInput* ACsManager_Input::AllocateInput(const TCsInputAction &Action, const TC
 	return nullptr;
 }
 
-void ACsManager_Input::AddInput(const TCsInputAction &Action, const TCsInputEvent &Event, const float &Value /*=0.0f*/, const FVector &Location /*=FVector::ZeroVector*/, const FRotator &Rotation /*=FRotator::ZeroRotator*/)
+void ACsManager_Input::AddInput(const FECsInputAction &Action, const TCsInputEvent &Event, const float &Value /*=0.0f*/, const FVector &Location /*=FVector::ZeroVector*/, const FRotator &Rotation /*=FRotator::ZeroRotator*/)
 {
 	FCsInput* Input = AllocateInput(Action, Event, Value, Location, Rotation);
 	InputFrames[CurrentInputFrameIndex].Inputs.Add(Input);
 }
 
-void ACsManager_Input::QueueInput(const TCsInputAction &Action, const TCsInputEvent &Event, const float &Value /*=0.0f*/, const FVector &Location /*=FVector::ZeroVector*/, const FRotator &Rotation /*=FRotator::ZeroRotator*/)
+void ACsManager_Input::QueueInput(const FECsInputAction &Action, const TCsInputEvent &Event, const float &Value /*=0.0f*/, const FVector &Location /*=FVector::ZeroVector*/, const FRotator &Rotation /*=FRotator::ZeroRotator*/)
 {
 	FCsInput* Input = AllocateInput(Action, Event, Value, Location, Rotation);
 
 	QueuedInputsForNextFrame.Add(Input);
 }
 
-void ACsManager_Input::ConsumeInput(const TCsInputAction &Action)
+void ACsManager_Input::ConsumeInput(const FECsInputAction &Action)
 {
 	FCsInputFrame& InputFrame = InputFrames[CurrentInputFrameIndex];
 
-	int32 Count = InputFrame.Inputs.Num();
-
-	for (int32 I = 0; I < Count; ++I)
+	for (FCsInput* Input : InputFrame.Inputs)
 	{
-		FCsInput* Input = InputFrame.Inputs[I];
-
 		if (Input->Action == Action)
 		{
 			Input->IsConsumed = true;
@@ -638,7 +631,7 @@ void ACsManager_Input::ConsumeInput(const TCsInputAction &Action)
 		}
 	}
 
-	Count = CurrentInputFrame.Inputs.Num();
+	const int32 Count = CurrentInputFrame.Inputs.Num();
 
 	for (int32 I = Count - 1; I >= 0; --I)
 	{
@@ -672,7 +665,7 @@ void ACsManager_Input::ClearCurrentInputActionMap(const int32 &ActionMap)
 	CS_CLEAR_BITFLAG(CurrentInputActionMap, ActionMap);
 }
 
-FCsInput* ACsManager_Input::GetPreviousInputAction(const TCsInputAction &Action)
+FCsInput* ACsManager_Input::GetPreviousInputAction(const FECsInputAction &Action)
 {
 	const int32 LastInputFrame = UCsCommon::Mod(CurrentInputFrameIndex - 1, CS_MAX_INPUT_FRAMES);
 	FCsInput* Input			   = InputFrames[LastInputFrame].GetInput(Action);
@@ -680,7 +673,7 @@ FCsInput* ACsManager_Input::GetPreviousInputAction(const TCsInputAction &Action)
 	return Input;
 }
 
-FCsInput* ACsManager_Input::GetPreviousInputAction(const TCsInputAction &Action, const TCsInputEvent &Event)
+FCsInput* ACsManager_Input::GetPreviousInputAction(const FECsInputAction &Action, const TCsInputEvent &Event)
 {
 	const int32 LastInputFrame = UCsCommon::Mod(CurrentInputFrameIndex - 1, CS_MAX_INPUT_FRAMES);
 	FCsInput* Input			   = InputFrames[LastInputFrame].GetInput(Action, Event);
@@ -688,7 +681,7 @@ FCsInput* ACsManager_Input::GetPreviousInputAction(const TCsInputAction &Action,
 	return Input;
 }
 
-FCsInput* ACsManager_Input::GetPreviousInputAction(const TCsInputAction &Action, const TArray<TCsInputEvent> &Events)
+FCsInput* ACsManager_Input::GetPreviousInputAction(const FECsInputAction &Action, const TArray<TCsInputEvent> &Events)
 {
 	const int32 LastInputFrame = UCsCommon::Mod(CurrentInputFrameIndex - 1, CS_MAX_INPUT_FRAMES);
 	FCsInput* Input			   = InputFrames[LastInputFrame].GetInput(Action, Events);
@@ -696,10 +689,10 @@ FCsInput* ACsManager_Input::GetPreviousInputAction(const TCsInputAction &Action,
 	return Input;
 }
 
-FCsInput* ACsManager_Input::GetPreviousPreviousInputAction(const TCsInputAction &Action)
+FCsInput* ACsManager_Input::GetPreviousPreviousInputAction(const FECsInputAction &Action)
 {
 	const int32 LastInputFrame = UCsCommon::Mod(CurrentInputFrameIndex - 2, CS_MAX_INPUT_FRAMES);
-	FCsInput* Input = InputFrames[LastInputFrame].GetInput(Action);
+	FCsInput* Input			   = InputFrames[LastInputFrame].GetInput(Action);
 
 	return Input;
 }
@@ -718,84 +711,68 @@ void ACsManager_Input::DetermineGameEvents(const TArray<FCsInput*> &Inputs)
 {
 }
 
-bool ACsManager_Input::HasActionEventOccured(const TCsInputAction &Action, const TCsInputEvent &Event)
+bool ACsManager_Input::HasActionEventOccured(const FECsInputAction &Action, const TCsInputEvent &Event)
 {
 	FCsInputFrame& InputFrame = InputFrames[CurrentInputFrameIndex];
 
-	const int32 Count = InputFrame.Inputs.Num();
-
-	for (int32 I = 0; I < Count; ++I)
+	for (FCsInput* Input : InputFrame.Inputs)
 	{
-		FCsInput* Input = InputFrame.Inputs[I];
-
 		if (Input->Action == Action && Input->Event == Event)
 			return true;
 	}
 	return false;
 }
 
-float ACsManager_Input::GetInputValue(const TCsInputAction &Action)
+float ACsManager_Input::GetInputValue(const FECsInputAction &Action)
 {
 	FCsInputFrame& InputFrame = InputFrames[CurrentInputFrameIndex];
 
-	const int32 Count = InputFrame.Inputs.Num();
-
-	for (int32 I = 0; I < Count; ++I)
+	for (FCsInput* Input : InputFrame.Inputs)
 	{
-		FCsInput* Input = InputFrame.Inputs[I];
-
 		if (Input->Action == Action)
 			return Input->Value;
 	}
 	return 0.0f;
 }
 
-FVector ACsManager_Input::GetInputLocation(const TCsInputAction &Action)
+FVector ACsManager_Input::GetInputLocation(const FECsInputAction &Action)
 {
 	FCsInputFrame& InputFrame = InputFrames[CurrentInputFrameIndex];
 
-	const int32 Count = InputFrame.Inputs.Num();
-
-	for (int32 I = 0; I < Count; ++I)
+	for (FCsInput* Input : InputFrame.Inputs)
 	{
-		FCsInput* Input = InputFrame.Inputs[I];
-
 		if (Input->Action == Action)
 			return Input->Location;
 	}
 	return FVector::ZeroVector;
 }
 
-TCsInputEvent ACsManager_Input::GetInputEvent(const TCsInputAction& Action)
+TCsInputEvent ACsManager_Input::GetInputEvent(const FECsInputAction& Action)
 {
 	FCsInputFrame& InputFrame = InputFrames[CurrentInputFrameIndex];
 
-	const int32 Count = InputFrame.Inputs.Num();
-
-	for (int32 I = 0; I < Count; ++I)
+	for (FCsInput* Input : InputFrame.Inputs)
 	{
-		FCsInput* Input = InputFrame.Inputs[I];
-
 		if (Input->Action == Action)
 			return Input->Event;
 	}
 	return ECsInputEvent::ECsInputEvent_MAX;
 }
 
-TEnumAsByte<ECsInputEvent::Type> ACsManager_Input::GetInputEvent_Script(const uint8& Action)
+TEnumAsByte<ECsInputEvent::Type> ACsManager_Input::GetInputEvent_Script(const FECsInputAction& Action)
 {
-	return GetInputEvent((TCsInputAction)Action);
+	return (TEnumAsByte<ECsInputEvent::Type>)GetInputEvent(Action);
 }
 
-float ACsManager_Input::GetInputDuration(const TCsInputAction &Action)
+float ACsManager_Input::GetInputDuration(const FECsInputAction &Action)
 {
-	return Infos[(uint8)Action]->Duration;
+	return Infos[Action.Value]->Duration;
 }
 
 // Profile
 #pragma region
 
-bool ACsManager_Input::CanSaveInputActionMapping(const TCsInputDevice &Device, const TCsInputAction &Action)
+bool ACsManager_Input::CanSaveInputActionMapping(const TCsInputDevice &Device, const FECsInputAction &Action)
 {
 	return true;
 }
@@ -842,26 +819,24 @@ void ACsManager_Input::LoadDefaultInputProfile()
 	{
 		FInputActionKeyMapping& Mapping = PlayerInput->ActionMappings[I];
 
-		const TCsInputAction Action = (*StringToInputAction)(Mapping.ActionName.ToString());
-
-		if (Action == InputAction_MAX)
+		if (!EMCsInputAction::Get().IsValidEnum(Mapping.ActionName))
 			continue;
 
-		const FString ActionName = (*InputActionToString)(Action);
-		const FKey& Key			 = Mapping.Key;
-		const FString KeyName	 = Key.GetDisplayName().ToString();
+		const FECsInputAction& Action = EMCsInputAction::Get()[Mapping.ActionName];
+		const FKey& Key				  = Mapping.Key;
+		const FString KeyName		  = Key.GetDisplayName().ToString();
 
 		// MouseAndKeyboard
 		if (CanSaveInputActionMapping(ECsInputDevice::MouseAndKeyboard, Action) &&
 			IsValidKey(ECsInputDevice::MouseAndKeyboard, Key))
 		{
-			InputProfile.AddMapping(ECsInputDevice::MouseAndKeyboard, ActionName, Action, KeyName, Key);
+			InputProfile.AddMapping(ECsInputDevice::MouseAndKeyboard, Action, KeyName, Key);
 		}
 		// Gamepad
 		if (CanSaveInputActionMapping(ECsInputDevice::Gamepad, Action) &&
 			IsValidKey(ECsInputDevice::Gamepad, Key))
 		{
-			InputProfile.AddMapping(ECsInputDevice::Gamepad, ActionName, Action, KeyName, Key);
+			InputProfile.AddMapping(ECsInputDevice::Gamepad, Action, KeyName, Key);
 		}
 	}
 	// AxisMappings
@@ -871,26 +846,24 @@ void ACsManager_Input::LoadDefaultInputProfile()
 	{
 		FInputAxisKeyMapping& Mapping = PlayerInput->AxisMappings[I];
 
-		const TCsInputAction Action = (*StringToInputAction)(Mapping.AxisName.ToString());
-
-		if (Action == InputAction_MAX)
+		if (!EMCsInputAction::Get().IsValidEnum(Mapping.AxisName))
 			continue;
 
-		const FString ActionName = (*InputActionToString)(Action);
-		const FKey& Key			 = Mapping.Key;
-		const FString KeyName	 = Key.GetDisplayName().ToString();
+		const FECsInputAction& Action = EMCsInputAction::Get()[Mapping.AxisName];
+		const FKey& Key				  = Mapping.Key;
+		const FString KeyName		  = Key.GetDisplayName().ToString();
 
 		// MouseAndKeyboard
 		if (CanSaveInputActionMapping(ECsInputDevice::MouseAndKeyboard, Action) &&
 			IsValidKey(ECsInputDevice::MouseAndKeyboard, Key))
 		{
-			InputProfile.AddMapping(ECsInputDevice::MouseAndKeyboard, ActionName, Action, KeyName, Key);
+			InputProfile.AddMapping(ECsInputDevice::MouseAndKeyboard, Action, KeyName, Key);
 		}
 		// Gamepad
 		if (CanSaveInputActionMapping(ECsInputDevice::Gamepad, Action) &&
 			IsValidKey(ECsInputDevice::Gamepad, Key))
 		{
-			InputProfile.AddMapping(ECsInputDevice::Gamepad, ActionName, Action, KeyName, Key);
+			InputProfile.AddMapping(ECsInputDevice::Gamepad, Action, KeyName, Key);
 		}
 	}
 }
@@ -923,8 +896,7 @@ void ACsManager_Input::LoadInputProfile()
 				{
 					FCsInputActionMapping& Mapping = Mappings[J];
 
-					Mapping.Action = (*StringToInputAction)(Mapping.ActionName);
-					Mapping.Key	   = GetKey(Mapping.KeyName);
+					Mapping.Key	= GetKey(Mapping.KeyName);
 				}
 			}
 		}
@@ -983,75 +955,59 @@ FKey ACsManager_Input::GetKey(const FString &KeyName)
 	return EKeys::Invalid;
 }
 
-TCsInputAction ACsManager_Input::GetActionFromKey(const TCsInputDevice &Device, const FKey &Key)
+const FECsInputAction& ACsManager_Input::GetActionFromKey(const TCsInputDevice &Device, const FKey &Key)
 {
 	FCsInputActionMappings& DeviceMapping   = InputProfile.DeviceMappings[(uint8)Device];
 	TArray<FCsInputActionMapping>& Mappings = DeviceMapping.Mappings;
 
-	const int32 Count = Mappings.Num();
-
-	for (int32 I = 0; I < Count; ++I)
+	for (FCsInputActionMapping& Mapping : Mappings)
 	{
-		FCsInputActionMapping& Mapping = Mappings[I];
-
 		if (Mapping.Key == Key)
 			return Mapping.Action;
 	}
-	return InputAction_MAX;
+	return EMCsInputAction::Get().GetMAX();
 }
 
-FKey ACsManager_Input::GetKeyFromAction(const TCsInputDevice &Device, const TCsInputAction &Action)
+FKey ACsManager_Input::GetKeyFromAction(const TCsInputDevice &Device, const FECsInputAction &Action)
 {
 	FCsInputActionMappings& DeviceMapping   = InputProfile.DeviceMappings[(uint8)Device];
 	TArray<FCsInputActionMapping>& Mappings = DeviceMapping.Mappings;
 
-	const int32 Count = Mappings.Num();
-
-	for (int32 I = 0; I < Count; ++I)
+	for (FCsInputActionMapping& Mapping : Mappings)
 	{
-		FCsInputActionMapping& Mapping = Mappings[I];
-
 		if (Mapping.Action == Action)
 			return Mapping.Key;
 	}
 	return EKeys::Invalid;
 }
 
-FKey ACsManager_Input::GetKeyFromAction(const TCsInputAction& Action)
+FKey ACsManager_Input::GetKeyFromAction(const FECsInputAction& Action)
 {
 	UPlayerInput* PlayerInput = UCsCommon::GetLocalPlayerInput(GetWorld());
 
-	const FString ActionAsString = (*InputActionToString)(Action);
-	const FName ActionName		 = FName(*ActionAsString);
+	const FString& ActionAsString = Action.Name;
+	const FName& ActionName		  = Action.Name_Internal;
 
-	const int32 ActionCount	= PlayerInput->ActionMappings.Num();
-
-	for (int32 I = 0; I < ActionCount; ++I)
+	for (FInputActionKeyMapping& Mapping : PlayerInput->ActionMappings)
 	{
-		FInputActionKeyMapping& Mapping = PlayerInput->ActionMappings[I];
-
 		if (ActionName == Mapping.ActionName)
 			return Mapping.Key;
 	}
 
-	const int32 AxisCount = PlayerInput->AxisMappings.Num();
-
-	for (int32 I = 0; I < AxisCount; ++I)
+	for (FInputAxisKeyMapping& Mapping : PlayerInput->AxisMappings)
 	{
-		FInputAxisKeyMapping& Mapping = PlayerInput->AxisMappings[I];
-
 		if (ActionName == Mapping.AxisName)
 			return Mapping.Key;
 	}
 	return EKeys::Invalid;
 }
 
-void ACsManager_Input::UnbindActionMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key)
+void ACsManager_Input::UnbindActionMapping(const TCsInputDevice &Device, const FECsInputAction &Action, const FKey &Key)
 {
 	ACsPlayerController* Controller = Cast<ACsPlayerController>(GetInputOwner());
 	UPlayerInput* PlayerInput		= Controller->PlayerInput;
 
-	const FName ActionName = FName(*((*InputActionToString)(Action)));
+	const FName& ActionName = Action.Name_Internal;
 	// Remove binding from PlayerInput ActionMapping
 	const int32 MappingCount = PlayerInput->ActionMappings.Num();
 
@@ -1070,17 +1026,16 @@ void ACsManager_Input::UnbindActionMapping(const TCsInputDevice &Device, const T
 	FCsInputActionMappings& DeviceMapping  = InputProfile.DeviceMappings[(uint8)Device];
 	TArray<FCsInputActionMapping>& Mappings = DeviceMapping.Mappings;
 
-	const FString ActionNameAsString = ActionName.ToString();
-	const int32 Count			     = Mappings.Num();
+	const int32 Count = Mappings.Num();
 
 	for (int32 I = Count - 1; I >= 0; --I)
 	{
 		FCsInputActionMapping& Mapping = Mappings[I];
 
-		if (ActionNameAsString == Mapping.ActionName &&
+		if (Action == Mapping.Action &&
 			Key == Mapping.Key)
 		{
-			Mapping.KeyName = TEXT("");
+			Mapping.KeyName = ECsCached::Str::Empty;
 			Mapping.Key		= EKeys::Invalid;
 			break;
 		}
@@ -1088,12 +1043,12 @@ void ACsManager_Input::UnbindActionMapping(const TCsInputDevice &Device, const T
 	PlayerInput->ForceRebuildingKeyMaps(false);
 }
 
-void ACsManager_Input::UnbindAxisMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key)
+void ACsManager_Input::UnbindAxisMapping(const TCsInputDevice &Device, const FECsInputAction &Action, const FKey &Key)
 {
 	ACsPlayerController* Controller = Cast<ACsPlayerController>(GetInputOwner());
 	UPlayerInput* PlayerInput		= Controller->PlayerInput;
 
-	const FName ActionName = FName(*((*InputActionToString)(Action)));
+	const FName& ActionName = Action.Name_Internal;
 	// Remove binding from PlayerInput ActionMapping
 	const int32 MappingCount = PlayerInput->AxisMappings.Num();
 
@@ -1112,17 +1067,16 @@ void ACsManager_Input::UnbindAxisMapping(const TCsInputDevice &Device, const TCs
 	FCsInputActionMappings& DeviceMapping   = InputProfile.DeviceMappings[(uint8)Device];
 	TArray<FCsInputActionMapping>& Mappings = DeviceMapping.Mappings;
 
-	const FString ActionNameAsString = ActionName.ToString();
-	const int32 Count				 = Mappings.Num();
+	const int32 Count = Mappings.Num();
 
 	for (int32 I = Count - 1; I >= 0; --I)
 	{
 		FCsInputActionMapping& Mapping = Mappings[I];
 
-		if (ActionNameAsString == Mapping.ActionName &&
+		if (Action == Mapping.Action &&
 			Key == Mapping.Key)
 		{
-			Mapping.KeyName = TEXT("");
+			Mapping.KeyName = ECsCached::Str::Empty;
 			Mapping.Key = EKeys::Invalid;
 			break;
 		}
@@ -1130,17 +1084,17 @@ void ACsManager_Input::UnbindAxisMapping(const TCsInputDevice &Device, const TCs
 	PlayerInput->ForceRebuildingKeyMaps(false);
 }
 
-void ACsManager_Input::UnbindMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key)
+void ACsManager_Input::UnbindMapping(const TCsInputDevice &Device, const FECsInputAction &Action, const FKey &Key)
 {
-	if (Infos[(uint8)Action]->Type == ECsInputType::Action)
+	if (Infos[Action.Value]->Type == ECsInputType::Action)
 		UnbindActionMapping(Device, Action, Key);
-	if (Infos[(uint8)Action]->Type == ECsInputType::Axis)
+	if (Infos[Action.Value]->Type == ECsInputType::Axis)
 		UnbindAxisMapping(Device, Action, Key);
 }
 
 // TODO: Need to store the original Key "Keyboard" mappings for Input. Do similar for control setup
 
-void ACsManager_Input::RebindActionMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key)
+void ACsManager_Input::RebindActionMapping(const TCsInputDevice &Device, const FECsInputAction &Action, const FKey &Key)
 {
 	if (!IsValidKey(Device, Key))
 		return;
@@ -1156,23 +1110,20 @@ void ACsManager_Input::RebindActionMapping(const TCsInputDevice &Device, const T
 		return;
 	
 	// Check if another Action is already mapped to the Key
-	const TCsInputAction OtherAction = GetActionFromKey(Device, Key);
+	const FECsInputAction OtherAction = GetActionFromKey(Device, Key);
 
 	// Unbind ActionMapping for OtherAction bound to Key
-	if (OtherAction != InputAction_MAX)
+	if (OtherAction != EMCsInputAction::Get().GetMAX())
 	{
 		UnbindMapping(Device, OtherAction, Key);
 	}
 
-	const FName ActionName = FName(*((*InputActionToString)(Action)));
-	const int32 Count	   = PlayerInput->ActionMappings.Num();
+	const FName& ActionName = Action.Name_Internal;
 
 	bool Found = false;
 
-	for (int32 I = 0; I < Count; ++I)
+	for (FInputActionKeyMapping& ActionMapping : PlayerInput->ActionMappings)
 	{
-		FInputActionKeyMapping& ActionMapping = PlayerInput->ActionMappings[I];
-
 		if (ActionName == ActionMapping.ActionName &&
 			PreviousKey == ActionMapping.Key)
 		{
@@ -1186,8 +1137,10 @@ void ACsManager_Input::RebindActionMapping(const TCsInputDevice &Device, const T
 	{
 		PlayerInput->ActionMappings.AddDefaulted();
 
+		const int32 Count = PlayerInput->ActionMappings.Num();
+
 		FInputActionKeyMapping& ActionMapping = PlayerInput->ActionMappings[Count];
-		ActionMapping.ActionName			  = FName(*Mapping.ActionName);
+		ActionMapping.ActionName			  = Action.Name_Internal;
 		ActionMapping.Key					  = Mapping.Key;
 	}
 
@@ -1196,7 +1149,7 @@ void ACsManager_Input::RebindActionMapping(const TCsInputDevice &Device, const T
 	PlayerInput->ForceRebuildingKeyMaps(false);
 }
 
-void ACsManager_Input::RebindAxisMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key)
+void ACsManager_Input::RebindAxisMapping(const TCsInputDevice &Device, const FECsInputAction &Action, const FKey &Key)
 {
 	if (!IsValidKey(Device, Key))
 		return;
@@ -1212,23 +1165,20 @@ void ACsManager_Input::RebindAxisMapping(const TCsInputDevice &Device, const TCs
 		return;
 
 	// Check if another Action is already mapped to the Key
-	const TCsInputAction OtherAction = GetActionFromKey(Device, Key);
+	const FECsInputAction& OtherAction = GetActionFromKey(Device, Key);
 
 	// Unbind ActionMapping for OtherAction bound to Key
-	if (OtherAction != InputAction_MAX)
+	if (OtherAction != EMCsInputAction::Get().GetMAX())
 	{
 		UnbindMapping(Device, OtherAction, Key);
 	}
 
-	const FName ActionName = FName(*((*InputActionToString)(Action)));
-	const int32 Count	   = PlayerInput->AxisMappings.Num();
-
+	const FName& ActionName = Action.Name_Internal;
+	
 	bool Found = false;
 
-	for (int32 I = 0; I < Count; ++I)
+	for (FInputAxisKeyMapping& AxisMapping : PlayerInput->AxisMappings)
 	{
-		FInputAxisKeyMapping& AxisMapping = PlayerInput->AxisMappings[I];
-
 		if (ActionName == AxisMapping.AxisName &&
 			PreviousKey == AxisMapping.Key)
 		{
@@ -1242,8 +1192,10 @@ void ACsManager_Input::RebindAxisMapping(const TCsInputDevice &Device, const TCs
 	{
 		PlayerInput->AxisMappings.AddDefaulted();
 
+		const int32 Count = PlayerInput->AxisMappings.Num();
+
 		FInputAxisKeyMapping& AxisMapping = PlayerInput->AxisMappings[Count];
-		AxisMapping.AxisName			  = FName(*Mapping.ActionName);
+		AxisMapping.AxisName			  = Action.Name_Internal;
 		AxisMapping.Key					  = Mapping.Key;
 		AxisMapping.Scale				  = Mapping.Scale;
 	}
@@ -1252,11 +1204,11 @@ void ACsManager_Input::RebindAxisMapping(const TCsInputDevice &Device, const TCs
 	PlayerInput->ForceRebuildingKeyMaps(false);
 }
 
-void ACsManager_Input::RebindMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key)
+void ACsManager_Input::RebindMapping(const TCsInputDevice &Device, const FECsInputAction &Action, const FKey &Key)
 {
-	if (Infos[(uint8)Action]->Type == ECsInputType::Action)
+	if (Infos[Action.Value]->Type == ECsInputType::Action)
 		RebindActionMapping(Device, Action, Key);
-	if (Infos[(uint8)Action]->Type == ECsInputType::Axis)
+	if (Infos[Action.Value]->Type == ECsInputType::Axis)
 		RebindAxisMapping(Device, Action, Key);
 }
 
@@ -1289,7 +1241,7 @@ void ACsManager_Input::RunEditorGameJavascriptFile_FirstPressed()
 // Game Events
 #pragma region
 
-void ACsManager_Input::CreateGameEventDefinitionSimple(TArray<FCsGameEventDefinition> &Definitions, const TCsGameEvent &GameEvent, const TCsInputAction &Action, const TCsInputEvent &Event)
+void ACsManager_Input::CreateGameEventDefinitionSimple(TArray<FCsGameEventDefinition> &Definitions, const TCsGameEvent &GameEvent, const FECsInputAction &Action, const TCsInputEvent &Event)
 {
 	Definitions.AddDefaulted();
 	FCsGameEventDefinition& Def = Definitions[Definitions.Num() - 1];

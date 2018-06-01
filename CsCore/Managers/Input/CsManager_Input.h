@@ -14,150 +14,69 @@
 #pragma region
 
 	// Pressed
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput, const uint8&, Action, const TEnumAsByte<ECsInputEvent::Type>&, Event);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput, AActor*, const TCsInputAction&, const TEnumAsByte<ECsInputEvent::Type>&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput, const FECsInputAction&, Action, const TEnumAsByte<ECsInputEvent::Type>&, Event);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput, AActor*, const FECsInputAction&, const TEnumAsByte<ECsInputEvent::Type>&);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsManagerInput_FirstPressed, const uint8&, Action);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsManagerInput_Pressed, const uint8&, Action);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsManagerInput_FirstReleased, const uint8&, Action);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsManagerInput_FirstPressed, AActor*, const TCsInputAction&);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsManagerInput_Pressed, AActor*, const TCsInputAction&);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsManagerInput_FirstReleased, AActor*, const TCsInputAction&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsManagerInput_FirstPressed, const FECsInputAction&, Action);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsManagerInput_Pressed, const FECsInputAction&, Action);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsManagerInput_FirstReleased, const FECsInputAction&, Action);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsManagerInput_FirstPressed, AActor*, const FECsInputAction&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsManagerInput_Pressed, AActor*, const FECsInputAction&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsManagerInput_FirstReleased, AActor*, const FECsInputAction&);
 
 	// Axis
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsManagerInput_Axis, const uint8&, Action, const TEnumAsByte<ECsInputEvent::Type>&, Event, const float&, Val);
-DECLARE_MULTICAST_DELEGATE_FourParams(FBindableEvent_CsManagerInput_Axis, AActor*, const TCsInputAction&, const TEnumAsByte<ECsInputEvent::Type>&, const float&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsManagerInput_Axis, const FECsInputAction&, Action, const TEnumAsByte<ECsInputEvent::Type>&, Event, const float&, Val);
+DECLARE_MULTICAST_DELEGATE_FourParams(FBindableEvent_CsManagerInput_Axis, AActor*, const FECsInputAction&, const TEnumAsByte<ECsInputEvent::Type>&, const float&);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Axis_FirstMoved, const uint8&, Action, const float&, Val);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Axis_Moved, const uint8&, Action, const float&, Val);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Axis_FirstStationary, const uint8&, Action, const float&, Val);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Axis_Stationary, const uint8&, Action, const float&, Val);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Axis_FirstMoved, AActor*, const TCsInputAction&, const float&);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Axis_Moved, AActor*, const TCsInputAction&, const float&);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Axis_FirstStationary, AActor*, const TCsInputAction&, const float&);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Axis_Stationary, AActor*, const TCsInputAction&, const float&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Axis_FirstMoved, const FECsInputAction&, Action, const float&, Val);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Axis_Moved, const FECsInputAction&, Action, const float&, Val);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Axis_FirstStationary, const FECsInputAction&, Action, const float&, Val);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Axis_Stationary, const FECsInputAction&, Action, const float&, Val);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Axis_FirstMoved, AActor*, const FECsInputAction&, const float&);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Axis_Moved, AActor*, const FECsInputAction&, const float&);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Axis_FirstStationary, AActor*, const FECsInputAction&, const float&);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Axis_Stationary, AActor*, const FECsInputAction&, const float&);
 
 	// Location
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsManagerInput_Location, const uint8&, Action, const TEnumAsByte<ECsInputEvent::Type>&, Event, const FVector&, Location);
-DECLARE_MULTICAST_DELEGATE_FourParams(FBindableEvent_CsManagerInput_Location, AActor*, const TCsInputAction&, const TEnumAsByte<ECsInputEvent::Type>&, const FVector&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsManagerInput_Location, const FECsInputAction&, Action, const TEnumAsByte<ECsInputEvent::Type>&, Event, const FVector&, Location);
+DECLARE_MULTICAST_DELEGATE_FourParams(FBindableEvent_CsManagerInput_Location, AActor*, const FECsInputAction&, const TEnumAsByte<ECsInputEvent::Type>&, const FVector&);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Location_FirstMoved, const uint8&, Action, const FVector&, Location);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Location_Moved, const uint8&, Action, const FVector&, Location);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Location_FirstStationary, const uint8&, Action, const FVector&, Location);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Location_Stationary, const uint8&, Action, const FVector&, Location);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Location_FirstMoved, AActor*, const TCsInputAction&, const FVector&);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Location_Moved, AActor*, const TCsInputAction&, const FVector&);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Location_FirstStationary, AActor*, const TCsInputAction&, const FVector&);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Location_Stationary, AActor*, const TCsInputAction&, const FVector&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Location_FirstMoved, const FECsInputAction&, Action, const FVector&, Location);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Location_Moved, const FECsInputAction&, Action, const FVector&, Location);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Location_FirstStationary, const FECsInputAction&, Action, const FVector&, Location);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Location_Stationary, const FECsInputAction&, Action, const FVector&, Location);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Location_FirstMoved, AActor*, const FECsInputAction&, const FVector&);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Location_Moved, AActor*, const FECsInputAction&, const FVector&);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Location_FirstStationary, AActor*, const FECsInputAction&, const FVector&);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Location_Stationary, AActor*, const FECsInputAction&, const FVector&);
 
 DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Location_Raw, const FVector&);
 
 	// Rotation
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsManagerInput_Rotation, const uint8&, Action, const TEnumAsByte<ECsInputEvent::Type>&, Event, const FRotator&, Rotation);
-DECLARE_MULTICAST_DELEGATE_FourParams(FBindableEvent_CsManagerInput_Rotation, AActor*, const TCsInputAction&, const TEnumAsByte<ECsInputEvent::Type>&, const FRotator&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsManagerInput_Rotation, const FECsInputAction&, Action, const TEnumAsByte<ECsInputEvent::Type>&, Event, const FRotator&, Rotation);
+DECLARE_MULTICAST_DELEGATE_FourParams(FBindableEvent_CsManagerInput_Rotation, AActor*, const FECsInputAction&, const TEnumAsByte<ECsInputEvent::Type>&, const FRotator&);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Rotation_FirstMoved, const uint8&, Action, const FRotator&, Rotation);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Rotation_Moved, const uint8&, Action, const FRotator&, Rotation);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Rotation_FirstStationary, const uint8&, Action, const FRotator&, Rotation);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Rotation_Stationary, const uint8&, Action, const FRotator&, Rotation);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Rotation_FirstMoved, AActor*, const TCsInputAction&, const FRotator&);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Rotation_Moved, AActor*, const TCsInputAction&, const FRotator&);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Rotation_FirstStationary, AActor*, const TCsInputAction&, const FRotator&);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Rotation_Stationary, AActor*, const TCsInputAction&, const FRotator&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Rotation_FirstMoved, const FECsInputAction&, Action, const FRotator&, Rotation);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Rotation_Moved, const FECsInputAction&, Action, const FRotator&, Rotation);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Rotation_FirstStationary, const FECsInputAction&, Action, const FRotator&, Rotation);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput_Rotation_Stationary, const FECsInputAction&, Action, const FRotator&, Rotation);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Rotation_FirstMoved, AActor*, const FECsInputAction&, const FRotator&);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Rotation_Moved, AActor*, const FECsInputAction&, const FRotator&);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Rotation_FirstStationary, AActor*, const FECsInputAction&, const FRotator&);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput_Rotation_Stationary, AActor*, const FECsInputAction&, const FRotator&);
 
 DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRotator&);
 
 // Macros - Should ONLY be used for testing
 #pragma region
 
-/*
-#define CS_DECLARE_INPUT_AXIS_DELEGATES(INPUT)	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsManagerInput_On##INPUT##_FirstMoved, const float&, Val) \
-												DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsManagerInput_On##INPUT##_Moved, const float&, Val); \
-												DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsManagerInput_On##INPUT##_FirstStationary, const float&, Val); \
-												DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsManagerInput_On##INPUT##_Stationary, const float&, Val); \
-												DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsManagerInput_On##INPUT##_FirstMoved, AActor*, const float&); \
-												DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsManagerInput_On##INPUT##_Moved, AActor*, const float&); \
-												DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsManagerInput_On##INPUT##_FirstStationary, AActor*, const float&); \
-												DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsManagerInput_On##INPUT##_Stationary, AActor*, const float&);
-*/
-
-/*
-// Example: CLASS = CsManagerInput (if class is ACsManager_Input), INPUT = TurnAtRate
-#define CS_DECLARE_INPUT_AXIS_MEMBERS(CLASS, INPUT)	FCsInput Input_Last_##INPUT; \
-													void INPUT##_Raw(float Val); \
-													void INPUT##_FirstMoved(const float &Val); \
-													UPROPERTY(BlueprintAssignable, Category = "Input") \
-													FBindableDynEvent_##CLASS##_On##INPUT##_FirstMoved On##INPUT##_FirstMoved_ScriptEvent; \
-													FBindableEvent_##CLASS##_On##INPUT##_FirstMoved On##INPUT##_FirstMoved_Event; \
-													void INPUT##_Moved(const float &Val); \
-													UPROPERTY(BlueprintAssignable, Category = "Input") \
-													FBindableDynEvent_##CLASS##_On##INPUT##_Moved On##INPUT##_Moved_ScriptEvent; \
-													FBindableEvent_##CLASS##_On##INPUT##_Moved On##INPUT##_Moved_Event; \
-													void INPUT##_FirstStationary(const float &Val); \
-													UPROPERTY(BlueprintAssignable, Category = "Input") \
-													FBindableDynEvent_##CLASS##_On##INPUT##_FirstStationary On##INPUT##_FirstStationary_ScriptEvent; \
-													FBindableEvent_##CLASS##_On##INPUT##_FirstStationary On##INPUT##_FirstStationary_Event; \
-													void INPUT##_Stationary(const float &Val); \
-													UPROPERTY(BlueprintAssignable, Category = "Input") \
-													FBindableDynEvent_##CLASS##_On##INPUT##_Stationary On##INPUT##_Stationary_ScriptEvent; \
-													FBindableEvent_##CLASS##_On##INPUT##_Stationary On##INPUT##_Stationary_Event; \
-*/
-
-// Example: INPUT = TurnAtRate
-#define CS_DECLARE_INPUT_ACTION_MEMBERS_OLD(INPUT)	FCsInputInfo INPUT; \
-												void INPUT##_FirstPressed(); \
-												void INPUT##_Pressed(); \
-												void INPUT##_FirstReleased();
-
-#define CS_DEFINE_INPUT_ACTION_VALUES_OLD(INPUT) Infos[ECsInputAction::INPUT] = &INPUT; \
-												 INPUT.Type = ECsInputType::Action; \
-												 INPUT.ValueType = ECsInputValue::Void; \
-												 Actions[ECsInputAction::INPUT] = &INPUT.Event; \
-												 INPUT.Event = ECsInputEvent::Released; \
-												 Last_Actions[ECsInputAction::INPUT] = &INPUT.Last_Event; \
-												 INPUT.Last_Event = ECsInputEvent::Released; \
-
-#define CS_DEFINE_INPUT_ACTION_VALUES(INPUT, MAP)	DefineInputValues<UCsInput_Action>(INPUT, ECsInputAction::INPUT, MAP)
-
-// Example: CLASS = ACsManager_Input (if class is ACsManager_Input), INPUT = TurnAtRate
-#define CS_DEFINE_INPUT_ACTION_MEMBERS_OLD(CLASS, INPUT, MAP)	void CLASS::INPUT##_FirstPressed() \
-																{ \
-																	if ((CurrentInputActionMap & (MAP)) == 0) \
-																		return; \
-																	INPUT.Event = ECsInputEvent::FirstPressed; \
-																	AddInput(ECsInputAction::INPUT, ECsInputEvent::FirstPressed); \
-																} \
-																void CLASS::INPUT##_Pressed() \
-																{ \
-																	if (INPUT.Last_Event == ECsInputEvent::FirstPressed) \
-																		INPUT.Event = ECsInputEvent::Pressed; \
-																	AddInput(ECsInputAction::INPUT, ECsInputEvent::Pressed); \
-																} \
-																void CLASS::INPUT##_FirstReleased() \
-																{ \
-																	if ((CurrentInputActionMap & (MAP)) == 0) \
-																		return; \
-																	INPUT.Event = ECsInputEvent::FirstReleased; \
-																	AddInput(ECsInputAction::INPUT, ECsInputEvent::FirstReleased); \
-																}
-
-// Example: THIS = this, CLASS = ACsManager_Input (if class is ACsManager_Input), INPUT = Fire
-#define CS_BIND_ACTION_INPUT_OLD(THIS, CLASS, INPUT) 	InputComponent->BindAction(#INPUT, IE_Pressed, this, &CLASS::INPUT##_FirstPressed).bConsumeInput = false; \
-														InputComponent->BindAction(#INPUT, IE_Released, this, &CLASS::INPUT##_FirstReleased).bConsumeInput = false;
+#define CS_DEFINE_INPUT_ACTION_VALUES(INPUT, MAP)	DefineInputValues<UCsInput_Action>(INPUT, EMCsInputAction::Get().GetEnum(FString(#INPUT)), MAP)
 
 #define CS_BIND_ACTION_INPUT(INPUT) InputComponent->BindAction(#INPUT, IE_Pressed, INPUT, &UCsInput_Action::FirstPressed).bConsumeInput = false; \
 									InputComponent->BindAction(#INPUT, IE_Released, INPUT, &UCsInput_Action::FirstReleased).bConsumeInput = false;
 
 #define CS_IS_INPUT_ACTION_FIRST_PRESSED(Input, ACTION) Input->Action == ECsInputAction::ACTION && Input->Event == ECsInputEvent::FirstPressed
 
-// Example: INPUT = TurnAtRate
-#define CS_DECLARE_INPUT_AXIS_MEMBERS_OLD(INPUT)	FCsInputInfo INPUT; \
-													FCsInput Input_Last_##INPUT; \
-													void INPUT##_Raw(float Val); \
-													void INPUT##_FirstMoved(const float &Val); \
-													void INPUT##_Moved(const float &Val); \
-													void INPUT##_FirstStationary(const float &Val); \
-													void INPUT##_Stationary(const float &Val);
 
 #define CS_DEFINE_INPUT_AXIS_VALUES_OLD(INPUT)	Infos[ECsInputAction::INPUT] = &INPUT; \
 												INPUT.Type = ECsInputType::Axis; \
@@ -167,231 +86,17 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 												Last_Actions[ECsInputAction::INPUT] = &INPUT.Last_Event; \
 												INPUT.Last_Event = ECsInputEvent::Stationary; \
 
-#define CS_DEFINE_INPUT_AXIS_VALUES(INPUT, MAP)	DefineInputValues<UCsInput_Axis>(INPUT, ECsInputAction::INPUT, MAP)
-
-// Example: CLASS = ACsManager_Input (if class is ACsManager_Input), INPUT = TurnAtRate
-#define CS_DEFINE_INPUT_AXIS_MEMBERS_OLD(CLASS, INPUT, MAP)	void CLASS::INPUT##_Raw(float Val) \
-															{ \
-																if ((CurrentInputActionMap & (MAP)) == 0) \
-																	return; \
-																if (Val != 0.0f && INPUT.Value == 0.0f) \
-																	INPUT##_FirstMoved(Val); \
-																else \
-																if (Val != 0.0f && INPUT.Value != 0.0f) \
-																	INPUT##_Moved(Val); \
-																else \
-																if (Val == 0.0f && INPUT.Value != 0.0f) \
-																	INPUT##_FirstStationary(Val); \
-																else \
-																if (Val == 0.0f && INPUT.Value == 0.0f) \
-																	INPUT##_Stationary(Val); \
-															} \
-															void CLASS::INPUT##_FirstMoved(const float &Val) \
-															{ \
-																INPUT.Set(ECsInputEvent::FirstMoved, Val); \
-																AddInput(ECsInputAction::INPUT, INPUT.Event, Val); \
-															} \
-															void CLASS::INPUT##_Moved(const float &Val) \
-															{ \
-																INPUT.Set(ECsInputEvent::Moved, Val); \
-																AddInput(ECsInputAction::INPUT, INPUT.Event, Val); \
-															} \
-															void CLASS::INPUT##_FirstStationary(const float &Val) \
-															{ \
-																INPUT.Set(ECsInputEvent::FirstStationary, Val); \
-																AddInput(ECsInputAction::INPUT, INPUT.Event, Val); \
-															} \
-															void CLASS::INPUT##_Stationary(const float &Val) \
-															{ \
-																INPUT.Set(ECsInputEvent::Stationary, Val); \
-																AddInput(ECsInputAction::INPUT, INPUT.Event, Val); \
-															}
-
-// Example: THIS = this, CLASS = ACsManager_Input (if class is ACsManager_Input), INPUT = TurnAtRate
-#define CS_BIND_AXIS_INPUT_OlD(THIS, CLASS, INPUT) InputComponent->BindAxis(#INPUT, THIS, &CLASS::INPUT##_Raw).bConsumeInput = false;
+#define CS_DEFINE_INPUT_AXIS_VALUES(INPUT, MAP)	DefineInputValues<UCsInput_Axis>(INPUT, EMCsInputAction::Get().GetEnum(FString(#INPUT)), MAP)
 
 #define CS_BIND_AXIS_INPUT(INPUT) InputComponent->BindAxis(#INPUT, INPUT, &UCsInput_Axis::Raw).bConsumeInput = false
 
-// Example: CLASS = ACsManager_Input (if class is ACsManager_Input), INPUT = LeftTrigger
-#define CS_DECLARE_INPUT_TRIGGER_MEMBERS_OLD(INPUT)	FCsInputInfo INPUT; \
-												void INPUT##_Raw(float Val); \
-												void INPUT##_FirstMoved(const float &Val); \
-												void INPUT##_Moved(const float &Val); \
-												void INPUT##_FirstStationary(const float &Val); \
-												void INPUT##_Stationary(const float &Val);
-
-#define CS_DEFINE_INPUT_TRIGGER_VALUES_OLD(INPUT)	Infos[ECsInputAction::INPUT] = &INPUT; \
-													INPUT.Type = ECsInputType::Trigger; \
-													INPUT.ValueType = ECsInputValue::Float; \
-													Actions[ECsInputAction::INPUT] = &INPUT.Event; \
-													INPUT.Event = ECsInputEvent::Stationary; \
-													Last_Actions[ECsInputAction::INPUT] = &INPUT.Last_Event; \
-													INPUT.Last_Event = ECsInputEvent::Stationary; \
-
-#define CS_DEFINE_INPUT_TRIGGER_VALUES(INPUT, MAP)	DefineInputValues<UCsInput_Trigger>(INPUT, ECsInputAction::INPUT, MAP)
-
-// Example: CLASS = ACsManager_Input (if class is ACsManager_Input), INPUT = LeftTrigger
-#define CS_DEFINE_INPUT_TRIGGER_MEMBERS_OLD(CLASS, INPUT, MAP)	void CLASS::INPUT##_Raw(float Val) \
-																{ \
-																	if ((CurrentInputActionMap & (MAP)) == 0) \
-																		return; \
-																	FCsInput* Input	= GetPreviousPreviousInputAction(ECsInputAction::INPUT); \
-																	\
-																	if (!Input && INPUT.Value != Val) \
-																		INPUT##_FirstMoved(Val); \
-																	else \
-																	if (INPUT.Value != Val) \
-																		INPUT##_Moved(Val); \
-																	else \
-																	if ((!Input && INPUT.Value == Val) || (Input && Input->Value != INPUT.Value && INPUT.Value == Val)) \
-																		INPUT##_FirstStationary(Val); \
-																	else \
-																	if (INPUT.Value == Val) \
-																		INPUT##_Stationary(Val); \
-																} \
-																void CLASS::INPUT##_FirstMoved(const float &Val) \
-																{ \
-																	INPUT.Set(ECsInputEvent::FirstMoved, Val); \
-																	AddInput(ECsInputAction::INPUT, INPUT.Event, Val); \
-																} \
-																void CLASS::INPUT##_Moved(const float &Val) \
-																{ \
-																	INPUT.Set(ECsInputEvent::Moved, Val); \
-																	AddInput(ECsInputAction::INPUT, INPUT.Event, Val); \
-																} \
-																void CLASS::INPUT##_FirstStationary(const float &Val) \
-																{ \
-																	INPUT.Set(ECsInputEvent::FirstStationary, Val); \
-																	AddInput(ECsInputAction::INPUT, INPUT.Event, Val); \
-																} \
-																void CLASS::INPUT##_Stationary(const float &Val) \
-																{ \
-																	INPUT.Set(ECsInputEvent::Stationary, Val); \
-																	AddInput(ECsInputAction::INPUT, INPUT.Event, Val); \
-																}
-
-// Example: THIS = this, CLASS = ACsManager_Input (if class is ACsManager_Input), INPUT = LeftTrigger
-#define CS_BIND_TRIGGER_INPUT_OLD(THIS, CLASS, INPUT) InputComponent->BindAxis(#INPUT, THIS, &CLASS::INPUT##_Raw).bConsumeInput = false;
+#define CS_DEFINE_INPUT_TRIGGER_VALUES(INPUT, MAP)	DefineInputValues<UCsInput_Trigger>(INPUT, EMCsInputAction::Get().GetEnum(FString(#INPUT)), MAP)
 
 #define CS_BIND_TRIGGER_INPUT(INPUT) InputComponent->BindAxis(#INPUT, INPUT, &UCsInput_Trigger::Raw).bConsumeInput = false;
 
-// Example: INPUT = RightHandMove
-#define CS_DECLARE_INPUT_LOCATION_MEMBERS_OLD(INPUT)	FCsInputInfo INPUT; \
-														void INPUT##_Raw(const FVector &Location); \
-														void INPUT##_FirstMoved(const FVector &Location); \
-														void INPUT##_Moved(const FVector &Location); \
-														void INPUT##_FirstStationary(const FVector &Location); \
-														void INPUT##_Stationary(const FVector &Location);
+#define CS_DEFINE_INPUT_LOCATION_VALUES(INPUT, MAP)	DefineInputValues<UCsInput_Location>(INPUT, EMCsInputAction::Get().GetEnum(FString(#INPUT)), MAP)
 
-#define CS_DEFINE_INPUT_LOCATION_VALUES_OLD(INPUT)	Infos[ECsInputAction::INPUT] = &INPUT; \
-													INPUT.Type = ECsInputType::Location; \
-													INPUT.ValueType = ECsInputValue::Vector; \
-													Actions[ECsInputAction::INPUT] = &INPUT.Event; \
-													INPUT.Event = ECsInputEvent::Stationary; \
-													Last_Actions[ECsInputAction::INPUT] = &INPUT.Last_Event; \
-													INPUT.Last_Event = ECsInputEvent::Stationary; \
-
-#define CS_DEFINE_INPUT_LOCATION_VALUES(INPUT, MAP)	DefineInputValues<UCsInput_Location>(INPUT, ECsInputAction::INPUT, MAP)
-
-// Example: CLASS = ACsManager_Input (if class is ACsManager_Input), INPUT = RightHandMove
-#define CS_DEFINE_INPUT_LOCATION_MEMBERS_OLD(CLASS, INPUT, MAP)	void CLASS::INPUT##_Raw(const FVector &Location) \
-																{ \
-																	if ((CurrentInputActionMap & (MAP)) == 0) \
-																		return; \
-																	\
-																	FCsInput* Input	= GetPreviousPreviousInputAction(ECsInputAction::INPUT); \
-																	\
-																	if (!Input && INPUT.Location != Location) \
-																		INPUT##_FirstMoved(Location); \
-																	else \
-																	if (INPUT.Location != Location) \
-																		INPUT##_Moved(Location); \
-																	else \
-																	if ((!Input && INPUT.Location == Location) || (Input && Input->Location != INPUT.Location && INPUT.Location == Location)) \
-																		INPUT##_FirstStationary(Location); \
-																	else \
-																	if (INPUT.Location == Location) \
-																		INPUT##_Stationary(Location); \
-																} \
-																void CLASS::INPUT##_FirstMoved(const FVector &Location) \
-																{ \
-																	INPUT.Set(ECsInputEvent::FirstMoved, Location); \
-																	AddInput(ECsInputAction::INPUT, INPUT.Event, 0.0f, Location); \
-																} \
-																void CLASS::INPUT##_Moved(const FVector &Location) \
-																{ \
-																	INPUT.Set(ECsInputEvent::Moved, Location); \
-																	AddInput(ECsInputAction::INPUT, INPUT.Event, 0.0f, Location); \
-																} \
-																void CLASS::INPUT##_FirstStationary(const FVector &Location) \
-																{ \
-																	INPUT.Set(ECsInputEvent::FirstStationary, Location); \
-																	AddInput(ECsInputAction::INPUT, INPUT.Event, 0.0f, Location); \
-																} \
-																void CLASS::INPUT##_Stationary(const FVector &Location) \
-																{ \
-																	INPUT.Set(ECsInputEvent::Stationary, Location); \
-																	AddInput(ECsInputAction::INPUT, INPUT.Event, 0.0f, Location); \
-																}
-
-// Example: INPUT = RightHandRotate
-#define CS_DECLARE_INPUT_ROTATION_MEMBERS_OLD(INPUT)	FCsInputInfo INPUT; \
-														void INPUT##_Raw(const FRotator &Rotation); \
-														void INPUT##_FirstMoved(const FRotator &Rotation); \
-														void INPUT##_Moved(const FRotator &Rotation); \
-														void INPUT##_FirstStationary(const FRotator &Rotation); \
-														void INPUT##_Stationary(const FRotator &Rotation);
-
-#define CS_DEFINE_INPUT_ROTATION_VALUES_OLD(INPUT)	Infos[ECsInputAction::INPUT] = &INPUT; \
-													INPUT.Type = ECsInputType::Rotation; \
-													INPUT.ValueType = ECsInputValue::Rotator; \
-													Actions[ECsInputAction::INPUT] = &INPUT.Event; \
-													INPUT.Event = ECsInputEvent::Stationary; \
-													Last_Actions[ECsInputAction::INPUT] = &INPUT.Last_Event; \
-													INPUT.Last_Event = ECsInputEvent::Stationary; \
-
-#define CS_DEFINE_INPUT_ROTATION_VALUES(INPUT, MAP)	DefineInputValues<UCsInput_Rotation>(INPUT, ECsInputAction::INPUT, MAP)
-
-// Example: CLASS = ACsManager_Input (if class is ACsManager_Input), INPUT = RightHandRotate
-#define CS_DEFINE_INPUT_ROTATION_MEMBERS_OLD(CLASS, INPUT, MAP)	void CLASS::INPUT##_Raw(const FRotator &Rotation) \
-																{ \
-																	if ((CurrentInputActionMap & (MAP)) == 0) \
-																		return; \
-																	\
-																	FCsInput* Input	= GetPreviousPreviousInputAction(ECsInputAction::INPUT); \
-																	\
-																	if (!Input && INPUT.Rotation != Rotation) \
-																		INPUT##_FirstMoved(Rotation); \
-																	else \
-																	if (INPUT.Rotation != Rotation) \
-																		INPUT##_Moved(Rotation); \
-																	else \
-																	if ((!Input && INPUT.Rotation == Rotation) || (Input && Input->Rotation != INPUT.Rotation && INPUT.Rotation == Rotation)) \
-																		INPUT##_FirstStationary(Rotation); \
-																	else \
-																	if (INPUT.Rotation == Rotation) \
-																		INPUT##_Stationary(Rotation); \
-																} \
-																void CLASS::INPUT##_FirstMoved(const FRotator &Rotation) \
-																{ \
-																	INPUT.Set(ECsInputEvent::FirstMoved, Rotation); \
-																	AddInput(ECsInputAction::INPUT, INPUT.Event, 0.0f, FVector::ZeroVector, Rotation); \
-																} \
-																void CLASS::INPUT##_Moved(const FRotator &Rotation) \
-																{ \
-																	INPUT.Set(ECsInputEvent::Moved, Rotation); \
-																	AddInput(ECsInputAction::INPUT, INPUT.Event, 0.0f, FVector::ZeroVector, Rotation); \
-																} \
-																void CLASS::INPUT##_FirstStationary(const FRotator &Rotation) \
-																{ \
-																	INPUT.Set(ECsInputEvent::FirstStationary, Rotation); \
-																	AddInput(ECsInputAction::INPUT, INPUT.Event, 0.0f, FVector::ZeroVector, Rotation); \
-																} \
-																void CLASS::INPUT##_Stationary(const FRotator &Rotation) \
-																{ \
-																	INPUT.Set(ECsInputEvent::Stationary, Rotation); \
-																	AddInput(ECsInputAction::INPUT, INPUT.Event, 0.0f, FVector::ZeroVector, Rotation); \
-																}
+#define CS_DEFINE_INPUT_ROTATION_VALUES(INPUT, MAP)	DefineInputValues<UCsInput_Rotation>(INPUT, EMCsInputAction::Get().GetEnum(FString(#INPUT)), MAP)
 
 #pragma endregion Macros
 
@@ -435,15 +140,15 @@ class CSCORE_API ACsManager_Input : public AActor
 
 	FCsInput InputPool[CS_INPUT_POOL_SIZE];
 
-	FCsInput* AllocateInput(const TCsInputAction &Action, const TCsInputEvent &Event, const float &Value = 0.0f, const FVector &Location = FVector::ZeroVector, const FRotator &Rotation = FRotator::ZeroRotator);
+	FCsInput* AllocateInput(const FECsInputAction &Action, const TCsInputEvent &Event, const float &Value = 0.0f, const FVector &Location = FVector::ZeroVector, const FRotator &Rotation = FRotator::ZeroRotator);
 
-	virtual void AddInput(const TCsInputAction &Action, const TCsInputEvent &Event, const float &Value=0.0f, const FVector &Location=FVector::ZeroVector, const FRotator &Rotation=FRotator::ZeroRotator);
+	virtual void AddInput(const FECsInputAction &Action, const TCsInputEvent &Event, const float &Value=0.0f, const FVector &Location=FVector::ZeroVector, const FRotator &Rotation=FRotator::ZeroRotator);
 
 	TArray<FCsInput*> QueuedInputsForNextFrame;
 
-	virtual void QueueInput(const TCsInputAction &Action, const TCsInputEvent &Event, const float &Value = 0.0f, const FVector &Location = FVector::ZeroVector, const FRotator &Rotation = FRotator::ZeroRotator);
+	virtual void QueueInput(const FECsInputAction &Action, const TCsInputEvent &Event, const float &Value = 0.0f, const FVector &Location = FVector::ZeroVector, const FRotator &Rotation = FRotator::ZeroRotator);
 
-	void ConsumeInput(const TCsInputAction &Action);
+	void ConsumeInput(const FECsInputAction &Action);
 
 	uint16 CurrentInputPoolIndex;
 
@@ -465,10 +170,10 @@ class CSCORE_API ACsManager_Input : public AActor
 
 	TArray<FKey> PressedKeys;
 
-	FCsInput* GetPreviousInputAction(const TCsInputAction &Action);
-	FCsInput* GetPreviousInputAction(const TCsInputAction &Action, const TCsInputEvent &Event);
-	FCsInput* GetPreviousInputAction(const TCsInputAction &Action, const TArray<TCsInputEvent> &Events);
-	FCsInput* GetPreviousPreviousInputAction(const TCsInputAction &Action);
+	FCsInput* GetPreviousInputAction(const FECsInputAction &Action);
+	FCsInput* GetPreviousInputAction(const FECsInputAction &Action, const TCsInputEvent &Event);
+	FCsInput* GetPreviousInputAction(const FECsInputAction &Action, const TArray<TCsInputEvent> &Events);
+	FCsInput* GetPreviousPreviousInputAction(const FECsInputAction &Action);
 
 	TArray<TCsGameEvent> QueuedGameEventsForNextFrame;
 
@@ -478,22 +183,28 @@ class CSCORE_API ACsManager_Input : public AActor
 
 	virtual void DetermineGameEvents(const TArray<FCsInput*> &Inputs);
 
-	bool HasActionEventOccured(const TCsInputAction &Action, const TCsInputEvent &Event);
-
-	float GetInputValue(const TCsInputAction &Action);
-	FVector GetInputLocation(const TCsInputAction &Action);
-	TCsInputEvent GetInputEvent(const TCsInputAction& Action);
+	//UFUNCTION(BlueprintCallable, Category = "Input")
+	//bool HasActionEventOccured(const FECsInputAction &Action, const TEnumAsByte<ECsInputEvent::Type> &Event);
+	bool HasActionEventOccured(const FECsInputAction &Action, const TCsInputEvent &Event);
 
 	UFUNCTION(BlueprintCallable, Category = "Input")
-	TEnumAsByte<ECsInputEvent::Type> GetInputEvent_Script(const uint8& Action);
+	float GetInputValue(const FECsInputAction &Action);
+	UFUNCTION(BlueprintCallable, Category = "Input")
+	FVector GetInputLocation(const FECsInputAction &Action);
 
-	float GetInputDuration(const TCsInputAction &Action);
+	TCsInputEvent GetInputEvent(const FECsInputAction& Action);
+
+	UFUNCTION(BlueprintCallable, Category = "Input")
+	TEnumAsByte<ECsInputEvent::Type> GetInputEvent_Script(const FECsInputAction& Action);
+
+	UFUNCTION(BlueprintCallable, Category = "Input")
+	float GetInputDuration(const FECsInputAction &Action);
 
 // Profile
 #pragma region
 public:
 
-	virtual bool CanSaveInputActionMapping(const TCsInputDevice &Device, const TCsInputAction &Action);
+	virtual bool CanSaveInputActionMapping(const TCsInputDevice &Device, const FECsInputAction &Action);
 
 	FCsInputProfile InputProfile;
 
@@ -508,17 +219,17 @@ public:
 
 	struct FKey GetKey(const FString &KeyName);
 	
-	TCsInputAction GetActionFromKey(const TCsInputDevice &Device, const FKey &Key);
-	FKey GetKeyFromAction(const TCsInputDevice &Device, const TCsInputAction &Action);
-	FKey GetKeyFromAction(const TCsInputAction& Action);
+	const FECsInputAction& GetActionFromKey(const TCsInputDevice &Device, const FKey &Key);
+	FKey GetKeyFromAction(const TCsInputDevice &Device, const FECsInputAction &Action);
+	FKey GetKeyFromAction(const FECsInputAction& Action);
 
-	void UnbindActionMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key);
-	void UnbindAxisMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key);
-	void UnbindMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key);
+	void UnbindActionMapping(const TCsInputDevice &Device, const FECsInputAction &Action, const FKey &Key);
+	void UnbindAxisMapping(const TCsInputDevice &Device, const FECsInputAction &Action, const FKey &Key);
+	void UnbindMapping(const TCsInputDevice &Device, const FECsInputAction &Action, const FKey &Key);
 
-	void RebindActionMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key);
-	void RebindAxisMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key);
-	void RebindMapping(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key);
+	void RebindActionMapping(const TCsInputDevice &Device, const FECsInputAction &Action, const FKey &Key);
+	void RebindAxisMapping(const TCsInputDevice &Device, const FECsInputAction &Action, const FKey &Key);
+	void RebindMapping(const TCsInputDevice &Device, const FECsInputAction &Action, const FKey &Key);
 
 #pragma endregion Profile
 
@@ -544,7 +255,7 @@ public:
 #pragma region
 protected:
 
-	CS_DECLARE_INPUT_ACTION
+	//CS_DECLARE_INPUT_ACTION
 
 	TArray<class UCsInput_Base*> Inputs;
 
@@ -554,17 +265,17 @@ protected:
 	TArray<TEnumAsByte<ECsInputEvent::Type>*> Last_Actions;
 
 	template<typename T>
-	void DefineInputValues(T* &Input, const TCsInputAction &Action, const int32 &ActionMap)
+	void DefineInputValues(T* &Input, const FECsInputAction &Action, const int32 &ActionMap)
 	{
-		Input = NewObject<T>(GetWorld(), T::StaticClass(), *((*InputActionToString)(Action)), RF_Transient);
+		Input = NewObject<T>(GetWorld(), T::StaticClass(), *(Action.Name), RF_Transient);
 		Input->AddToRoot();
 		Input->Manager_Input = this;
 		Input->ActionMap = ActionMap;
 		Input->Action = Action;
-		Inputs[(uint8)Action] = Input;
-		Infos[(uint8)Action] = &(Input->Info);
-		Actions[(uint8)Action] = &(Input->Info.Event);
-		Last_Actions[(uint8)Action] = &(Input->Info.Last_Event);
+		Inputs[Action.Value] = Input;
+		Infos[Action.Value] = &(Input->Info);
+		Actions[Action.Value] = &(Input->Info.Event);
+		Last_Actions[Action.Value] = &(Input->Info.Last_Event);
 	}
 
 	// Pressed Events
@@ -710,7 +421,7 @@ public:
 // Game Events
 #pragma region
 
-	void CreateGameEventDefinitionSimple(TArray<FCsGameEventDefinition> &Definitions, const TCsGameEvent &GameEvent, const TCsInputAction &Action, const TCsInputEvent &Event);
+	void CreateGameEventDefinitionSimple(TArray<FCsGameEventDefinition> &Definitions, const TCsGameEvent &GameEvent, const FECsInputAction &Action, const TCsInputEvent &Event);
 
 #pragma endregion Game Events
 };

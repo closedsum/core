@@ -2070,6 +2070,11 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				continue;
 			}
 
+			// EnumStruct
+			{
+
+			}
+
 			if (Internal)
 			{
 				if ((*Internal)(Property, InJsonWriter, InObject, InClass))

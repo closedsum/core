@@ -22,7 +22,7 @@ protected:
 	{
 		const int32 Count = EnumMap::Get().Num();
 
-		for (int32 I = 0; I < Count - 1; ++I)
+		for (int32 I = 0; I < Count; ++I)
 		{
 			const EnumStruct& Enum = EnumMap::Get().GetEnumAt(I);
 

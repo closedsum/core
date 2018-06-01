@@ -329,6 +329,7 @@ struct CSCORE_API FCsInputActionMapRule
 	~FCsInputActionMapRule(){}
 };
 
+/*
 namespace ECsInputAction
 {
 	enum Type : uint8;
@@ -350,6 +351,7 @@ typedef TCsInputAction(*TCsStringToInputAction)(const FString&);
 								INPUT_ACTION_MAX = (uint8)InputAction_MAX; \
 								InputActionToString = &ECsInputAction::ToString; \
 								StringToInputAction = &ECsInputAction::ToType;
+*/
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsInputAction : public FECsEnum_uint8
@@ -462,29 +464,30 @@ struct FRep_CsInput
 {
 	GENERATED_USTRUCT_BODY()
 
-	ECsInputAction::Type Action;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	FECsInputAction Action;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	TEnumAsByte<ECsInputEvent::Type> Event;
 
-	FRep_CsInput& operator=(const FRep_CsInput& B)
+	FORCEINLINE FRep_CsInput& operator=(const FRep_CsInput& B)
 	{
 		Action = B.Action;
 		Event  = B.Event;
 		return *this;
 	}
 
-	bool operator==(const FRep_CsInput& B) const
+	FORCEINLINE bool operator==(const FRep_CsInput& B) const
 	{
 		return Action == B.Action && Event == B.Event;
 	}
 
-	bool operator!=(const FRep_CsInput& B) const
+	FORCEINLINE bool operator!=(const FRep_CsInput& B) const
 	{
 		return !(*this == B);
 	}
 
-	void Init(const TCsInputAction &inAction, const TCsInputEvent &inEvent)
+	void Init(const FECsInputAction &inAction, const TCsInputEvent &inEvent)
 	{
 		Action = inAction;
 		Event = inEvent;
@@ -492,7 +495,7 @@ struct FRep_CsInput
 
 	void Reset()
 	{
-		//Action = ECsInputAction::ECsInputAction_MAX;
+		Action = EMCsInputAction::Get().GetMAX();
 		Event  = ECsInputEvent::ECsInputEvent_MAX;
 	}
 };
@@ -509,11 +512,8 @@ struct CSCORE_API FCsInput
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	bool IsConsumed;
 
-	ECsInputAction::Type Action;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Input")
-	uint8 Action_Script;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	FString ActionAsString;
+	FECsInputAction Action;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	TEnumAsByte<ECsInputEvent::Type> Event;
@@ -529,7 +529,7 @@ struct CSCORE_API FCsInput
 	FCsInput()
 	{
 		PoolIndex = CS_INVALID_INPUT_POOL_INDEX;
-		//Action	  = ECsInputAction::ECsInputAction_MAX;
+		Action	  = EMCsInputAction::Get().GetMAX();
 		Event	  = ECsInputEvent::ECsInputEvent_MAX;
 		Value	  = INFINITY;
 		Location  = FVector::ZeroVector;
@@ -548,58 +548,57 @@ struct CSCORE_API FCsInput
 		PoolIndex = inPoolIndex;
 	}
 
-	FORCEINLINE void Set(const TCsInputAction &inAction, const TCsInputEvent &inEvent, const float &inValue, const FVector &inLocation, const FRotator &inRotation)
+	FORCEINLINE void Set(const FECsInputAction &inAction, const TCsInputEvent &inEvent, const float &inValue, const FVector &inLocation, const FRotator &inRotation)
 	{
 		Action		  = inAction;
-		Action_Script = (uint8)Action;
 		Event		  = inEvent;
 		Value		  = inValue;
 		Location	  = inLocation;
 		Rotation	  = inRotation;
 	}
 
-	FORCEINLINE void Set(const TCsInputAction &inAction, const TCsInputEvent &inEvent, const FVector &inLocation)
+	FORCEINLINE void Set(const FECsInputAction &inAction, const TCsInputEvent &inEvent, const FVector &inLocation)
 	{
 		Set(inAction, inEvent, 0.0f, inLocation, FRotator::ZeroRotator);
 	}
 
-	FORCEINLINE void Set(const TCsInputAction &inAction, const TCsInputEvent &inEvent, const FRotator &inRotation)
+	FORCEINLINE void Set(const FECsInputAction &inAction, const TCsInputEvent &inEvent, const FRotator &inRotation)
 	{
 		Set(inAction, inEvent, 0.0f, FVector::ZeroVector, inRotation);
 	}
 
-	FORCEINLINE void Set(const TCsInputAction &inAction, const TCsInputEvent &inEvent, const float &inValue)
+	FORCEINLINE void Set(const FECsInputAction &inAction, const TCsInputEvent &inEvent, const float &inValue)
 	{
 		Set(inAction, inEvent, inValue, FVector::ZeroVector, FRotator::ZeroRotator);
 	}
 
-	FORCEINLINE void Set(const TCsInputAction &inAction, const TCsInputEvent &inEvent)
+	FORCEINLINE void Set(const FECsInputAction &inAction, const TCsInputEvent &inEvent)
 	{
 		Set(inAction, inEvent, 0.0f, FVector::ZeroVector, FRotator::ZeroRotator);
 	}
 
-	FORCEINLINE void Allocate(const TCsInputAction &inAction, const TCsInputEvent &inEvent, const float &inValue, const FVector &inLocation, const FRotator &inRotation)
+	FORCEINLINE void Allocate(const FECsInputAction &inAction, const TCsInputEvent &inEvent, const float &inValue, const FVector &inLocation, const FRotator &inRotation)
 	{
 		IsAllocated = true;
 		Set(inAction, inEvent, inValue, inLocation, inRotation);
 	}
 
-	FORCEINLINE void Allocate(const TCsInputAction &inAction, const TCsInputEvent &inEvent, const FVector &inLocation)
+	FORCEINLINE void Allocate(const FECsInputAction &inAction, const TCsInputEvent &inEvent, const FVector &inLocation)
 	{
 		Allocate(inAction, inEvent, 0.0f, inLocation, FRotator::ZeroRotator);
 	}
 
-	FORCEINLINE void Allocate(const TCsInputAction &inAction, const TCsInputEvent &inEvent, const FRotator &inRotation)
+	FORCEINLINE void Allocate(const FECsInputAction &inAction, const TCsInputEvent &inEvent, const FRotator &inRotation)
 	{
 		Allocate(inAction, inEvent, 0.0f, FVector::ZeroVector, inRotation);
 	}
 
-	FORCEINLINE void Allocate(const TCsInputAction &inAction, const TCsInputEvent &inEvent, const float &inValue)
+	FORCEINLINE void Allocate(const FECsInputAction &inAction, const TCsInputEvent &inEvent, const float &inValue)
 	{
 		Allocate(inAction, inEvent, inValue, FVector::ZeroVector, FRotator::ZeroRotator);
 	}
 
-	FORCEINLINE void Allocate(const TCsInputAction &inAction, const TCsInputEvent &inEvent)
+	FORCEINLINE void Allocate(const FECsInputAction &inAction, const TCsInputEvent &inEvent)
 	{
 		Allocate(inAction, inEvent, 0.0f, FVector::ZeroVector, FRotator::ZeroRotator);
 	}
@@ -608,8 +607,7 @@ struct CSCORE_API FCsInput
 	{
 		IsAllocated   = false;
 		IsConsumed	  = false;
-		//Action	  = ECsInputAction::ECsInputAction_MAX;
-		Action_Script = 255;
+		Action		  = EMCsInputAction::Get().GetMAX();
 		Event		  = ECsInputEvent::ECsInputEvent_MAX;
 		Value		  = INFINITY;
 		Location	  = FVector::ZeroVector;
@@ -665,7 +663,7 @@ struct CSCORE_API FCsInputFrame
 		Inputs.Reset();
 	}
 
-	FORCEINLINE FCsInput* GetInput(const TCsInputAction &Action)
+	FORCEINLINE FCsInput* GetInput(const FECsInputAction &Action)
 	{
 		for (FCsInput* Input : Inputs)
 		{
@@ -675,14 +673,14 @@ struct CSCORE_API FCsInputFrame
 		return nullptr;
 	}
 
-	FORCEINLINE FCsInput* GetInput(const TCsInputAction &Action, const TCsInputEvent &Event)
+	FORCEINLINE FCsInput* GetInput(const FECsInputAction &Action, const TCsInputEvent &Event)
 	{
 		if (FCsInput* Input = GetInput(Action))
 			return Input->Event == Event ? Input : nullptr;
 		return nullptr;
 	}
 
-	FORCEINLINE FCsInput* GetInput(const TCsInputAction &Action, const TArray<TCsInputEvent> &Events)
+	FORCEINLINE FCsInput* GetInput(const FECsInputAction &Action, const TArray<TCsInputEvent> &Events)
 	{
 		if (FCsInput* Input = GetInput(Action))
 			return Events.Find(Input->Event) != INDEX_NONE ? Input : nullptr;
@@ -717,7 +715,7 @@ struct CSCORE_API FCsInputWord
 		Consume = false;
 	}
 
-	void AddAndInput(const TCsInputAction &Action, const TCsInputEvent &Event, const float &Value, const FVector &Location, const FRotator &Rotation)
+	void AddAndInput(const FECsInputAction &Action, const TCsInputEvent &Event, const float &Value, const FVector &Location, const FRotator &Rotation)
 	{
 		AndInputs.AddDefaulted();
 		const int32 Index = AndInputs.Num() - 1;
@@ -728,27 +726,27 @@ struct CSCORE_API FCsInputWord
 		AndInputs[Index].Rotation = Rotation;
 	}
 
-	void AddAndInput(const TCsInputAction &Action, const TCsInputEvent &Event)
+	void AddAndInput(const FECsInputAction &Action, const TCsInputEvent &Event)
 	{
 		AddAndInput(Action, Event, 0.0f, FVector::ZeroVector, FRotator::ZeroRotator);
 	}
 
-	void AddAndInput(const TCsInputAction &Action, const TCsInputEvent &Event, const float &Value)
+	void AddAndInput(const FECsInputAction &Action, const TCsInputEvent &Event, const float &Value)
 	{
 		AddAndInput(Action, Event, Value, FVector::ZeroVector, FRotator::ZeroRotator);
 	}
 
-	void AddAndInput(const TCsInputAction &Action, const TCsInputEvent &Event, const FVector &Location)
+	void AddAndInput(const FECsInputAction &Action, const TCsInputEvent &Event, const FVector &Location)
 	{
 		AddAndInput(Action, Event, 0.0f, Location, FRotator::ZeroRotator);
 	}
 
-	void AddAndInput(const TCsInputAction &Action, const TCsInputEvent &Event, const FRotator &Rotation)
+	void AddAndInput(const FECsInputAction &Action, const TCsInputEvent &Event, const FRotator &Rotation)
 	{
 		AddAndInput(Action, Event, 0.0f, FVector::ZeroVector, Rotation);
 	}
 
-	void AddOrInput(const TCsInputAction &Action, const TCsInputEvent &Event, const float &Value, const FVector &Location, const FRotator &Rotation)
+	void AddOrInput(const FECsInputAction &Action, const TCsInputEvent &Event, const float &Value, const FVector &Location, const FRotator &Rotation)
 	{
 		OrInputs.AddDefaulted();
 		const int32 Index = OrInputs.Num() - 1;
@@ -759,22 +757,22 @@ struct CSCORE_API FCsInputWord
 		OrInputs[Index].Rotation = Rotation;
 	}
 
-	void AddOrInput(const TCsInputAction &Action, const TCsInputEvent &Event)
+	void AddOrInput(const FECsInputAction &Action, const TCsInputEvent &Event)
 	{
 		AddOrInput(Action, Event, 0.0f, FVector::ZeroVector, FRotator::ZeroRotator);
 	}
 
-	void AddOrInput(const TCsInputAction &Action, const TCsInputEvent &Event, const float &Value)
+	void AddOrInput(const FECsInputAction &Action, const TCsInputEvent &Event, const float &Value)
 	{
 		AddOrInput(Action, Event, Value, FVector::ZeroVector, FRotator::ZeroRotator);
 	}
 
-	void AddOrInput(const TCsInputAction &Action, const TCsInputEvent &Event, const FVector &Location)
+	void AddOrInput(const FECsInputAction &Action, const TCsInputEvent &Event, const FVector &Location)
 	{
 		AddOrInput(Action, Event, 0.0f, Location, FRotator::ZeroRotator);
 	}
 
-	void AddOrInput(const TCsInputAction &Action, const TCsInputEvent &Event, const FRotator &Rotation)
+	void AddOrInput(const FECsInputAction &Action, const TCsInputEvent &Event, const FRotator &Rotation)
 	{
 		AddOrInput(Action, Event, 0.0f, FVector::ZeroVector, Rotation);
 	}
@@ -866,7 +864,7 @@ struct CSCORE_API FCsInputPhrase
 		Frames = 0;
 	}
 
-	void AddAndInputToWord(const int32 &Index, const TCsInputAction &Action, const TCsInputEvent &Event, const float &Value = 0.0f, const FVector &Location = FVector::ZeroVector, const FRotator &Rotation = FRotator::ZeroRotator)
+	void AddAndInputToWord(const int32 &Index, const FECsInputAction &Action, const TCsInputEvent &Event, const float &Value = 0.0f, const FVector &Location = FVector::ZeroVector, const FRotator &Rotation = FRotator::ZeroRotator)
 	{
 		const int32 Count = Words.Num();
 
@@ -880,7 +878,7 @@ struct CSCORE_API FCsInputPhrase
 		Words[Index].AddAndInput(Action, Event, Value, Location, Rotation);
 	}
 
-	void AddOrInputToWord(const int32 &Index, const TCsInputAction &Action, const TCsInputEvent &Event, const float &Value = 0.0f, const FVector &Location = FVector::ZeroVector, const FRotator &Rotation = FRotator::ZeroRotator)
+	void AddOrInputToWord(const int32 &Index, const FECsInputAction &Action, const TCsInputEvent &Event, const float &Value = 0.0f, const FVector &Location = FVector::ZeroVector, const FRotator &Rotation = FRotator::ZeroRotator)
 	{
 		const int32 Count = Words.Num();
 
@@ -1094,9 +1092,7 @@ struct CSCORE_API FCsInputActionMapping
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	FString ActionName;
-
-	TCsInputAction Action;
+	FECsInputAction Action;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	FString KeyName;
@@ -1108,14 +1104,12 @@ struct CSCORE_API FCsInputActionMapping
 
 	FCsInputActionMapping()
 	{
-		ActionName = TEXT("");
-		KeyName = TEXT("");
+		KeyName = ECsCached::Str::Empty;
 		Scale = 1.0f;
 	}
 
 	FORCEINLINE FCsInputActionMapping& operator=(const FCsInputActionMapping& B)
 	{
-		ActionName = B.ActionName;
 		Action = B.Action;
 		KeyName = B.KeyName;
 		Key = B.Key;
@@ -1125,8 +1119,7 @@ struct CSCORE_API FCsInputActionMapping
 
 	FORCEINLINE bool operator==(const FCsInputActionMapping& B) const
 	{
-		return ActionName == B.ActionName &&
-			   Action == B.Action &&
+		return Action == B.Action &&
 			   KeyName == B.KeyName &&
 			   Key == B.Key &&
 			   Scale == B.Scale;
@@ -1196,24 +1189,20 @@ struct CSCORE_API FCsInputProfile
 		Player = 0;
 	}
 
-	FORCEINLINE FCsInputActionMapping& GetMapping(const TCsInputDevice &Device, const TCsInputAction &Action)
+	FORCEINLINE FCsInputActionMapping& GetMapping(const TCsInputDevice &Device, const FECsInputAction &Action)
 	{
 		FCsInputActionMappings& DeviceMapping   = DeviceMappings[(uint8)Device];
 		TArray<FCsInputActionMapping>& Mappings = DeviceMapping.Mappings;
 
-		const int32 Count = Mappings.Num();
-
-		for (int32 I = 0; I < Count; ++I)
+		for (FCsInputActionMapping& Mapping : Mappings)
 		{
-			const FCsInputActionMapping& Mapping = Mappings[I];
-
 			if (Action == Mapping.Action)
-				return DeviceMapping.Mappings[I];
+				return Mapping;
 		}
 		return Mappings[CS_FIRST];
 	}
 
-	FORCEINLINE FKey GetKey(const TCsInputDevice &Device, const TCsInputAction &Action)
+	FORCEINLINE FKey GetKey(const TCsInputDevice &Device, const FECsInputAction &Action)
 	{
 		FCsInputActionMappings& DeviceMapping   = DeviceMappings[(uint8)Device];
 		TArray<FCsInputActionMapping>& Mappings = DeviceMapping.Mappings;
@@ -1226,7 +1215,7 @@ struct CSCORE_API FCsInputProfile
 		return EKeys::Invalid;
 	}
 
-	FORCEINLINE void SetKey(const TCsInputDevice &Device, const TCsInputAction &Action, const FKey &Key)
+	FORCEINLINE void SetKey(const TCsInputDevice &Device, const FECsInputAction &Action, const FKey &Key)
 	{
 		FCsInputActionMappings& DeviceMapping   = DeviceMappings[(uint8)Device];
 		TArray<FCsInputActionMapping>& Mappings = DeviceMapping.Mappings;
@@ -1242,7 +1231,7 @@ struct CSCORE_API FCsInputProfile
 		}
 	}
 
-	FORCEINLINE void AddMapping(const TCsInputDevice &Device, const FString &ActionName, const TCsInputAction &Action, const FString &KeyName, const FKey &Key)
+	FORCEINLINE void AddMapping(const TCsInputDevice &Device, const FECsInputAction &Action, const FString &KeyName, const FKey &Key)
 	{
 		FCsInputActionMappings& DeviceMapping   = DeviceMappings[(uint8)Device];
 		TArray<FCsInputActionMapping>& Mappings = DeviceMapping.Mappings;
@@ -1250,7 +1239,6 @@ struct CSCORE_API FCsInputProfile
 		const int32 Count = Mappings.Num();
 		Mappings.AddDefaulted();
 		FCsInputActionMapping& Mapping = Mappings[Count];
-		Mapping.ActionName = ActionName;
 		Mapping.Action	   = Action;
 		Mapping.KeyName	   = KeyName;
 		Mapping.Key		   = Key;
@@ -1361,6 +1349,6 @@ struct FCsGameEventDefinition
 
 #define CS_GAME_EVENT_DEFINITION_END() }
 
-#define CS_GAME_EVENT_DEFINITION_SIMPLE(Definitions, GAMEEVENT, ACTION, EVENT)	CreateGameEventDefinitionSimple(Definitions, ECsGameEvent::GAMEEVENT, ECsInputAction::ACTION, ECsInputEvent::EVENT);
+#define CS_GAME_EVENT_DEFINITION_SIMPLE(Definitions, GAMEEVENT, ACTION, EVENT)	CreateGameEventDefinitionSimple(Definitions, ECsGameEvent::GAMEEVENT, EMCsInputAction::Get().GetEnum(FString(#ACTION)), ECsInputEvent::EVENT);
 
 #pragma endregion

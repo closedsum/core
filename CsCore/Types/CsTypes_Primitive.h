@@ -94,6 +94,9 @@ struct CSCORE_API FECsEnum
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enum")
 	FString DisplayName;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enum")
+	FName Name_Internal;
+
 	FECsEnum(){}
 	virtual ~FECsEnum(){}
 
@@ -143,6 +146,7 @@ struct CSCORE_API FECsEnum_uint8 : public FECsEnum
 		Value = InValue;
 		Name = InName;
 		DisplayName = InDisplayName;
+		Name_Internal = FName(*Name);
 	}
 
 	FECsEnum_uint8(const uint8 &InValue, const FString &InName)
@@ -162,6 +166,7 @@ struct CSCORE_API FECsEnum_uint8 : public FECsEnum
 		Value = B.Value;
 		Name = B.Name;
 		DisplayName = B.DisplayName;
+		Name_Internal = B.Name_Internal;
 		return *this;
 	}
 
@@ -209,11 +214,16 @@ private:
 	int32 Count;
 	TMap<FString, EnumStruct> NameMap;
 	TMap<FString, EnumStruct> DisplayNameMap;
+	TMap<FName, EnumStruct> NameInternalMap;
 	TMap<EnumType, EnumStruct> TypeMap;
+	EnumStruct MAX;
 protected:
 	TCsEnumMap() 
 	{
 		Count = 0;
+		MAX.Value = (EnumType)0;
+		MAX.Name = TEXT("MAX");
+		MAX.DisplayName = TEXT("MAX");
 	}
 public:
 	virtual ~TCsEnumMap() {}
@@ -227,7 +237,9 @@ public:
 		++Count;
 		NameMap.Add(Name, E);
 		DisplayNameMap.Add(DisplayName, E);
+		NameInternalMap.Add(E.Name_Internal, E);
 		TypeMap.Add(Index, E);
+		MAX.Value = (EnumType)Count;
 		return E;
 	}
 
@@ -246,6 +258,11 @@ public:
 		return NameMap[Name];
 	}
 
+	FORCEINLINE const EnumStruct& operator[](const FName &Name)
+	{
+		return NameInternalMap[Name];
+	}
+
 	FORCEINLINE bool IsValidEnum(EnumStruct E)
 	{
 		return Enums.Find(E) > INDEX_NONE;
@@ -253,9 +270,12 @@ public:
 
 	FORCEINLINE bool IsValidEnum(const FString &Name)
 	{
-		if (NameMap.Find(Name))
-			return true;
-		return false;
+		return NameMap.Find(Name) != nullptr;
+	}
+
+	FORCEINLINE bool IsValidEnum(const FName &Name)
+	{
+		return NameInternalMap.Find(Name) != nullptr;
 	}
 
 	FORCEINLINE const EnumStruct& GetEnumAt(const int32 &Index)
@@ -266,6 +286,11 @@ public:
 	FORCEINLINE const EnumStruct& GetEnum(const FString &Name)
 	{
 		return NameMap[Name];
+	}
+
+	FORCEINLINE const EnumStruct& GetEnum(const FName &Name)
+	{
+		return NameInternalMap[Name];
 	}
 
 	FORCEINLINE const EnumStruct& GetEnum(const EnumType &Type)
@@ -281,6 +306,11 @@ public:
 	FORCEINLINE const int32& Num()
 	{
 		return Count;
+	}
+
+	FORCEINLINE const EnumStruct& GetMAX()
+	{
+		return MAX;
 	}
 };
 

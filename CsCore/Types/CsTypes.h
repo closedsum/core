@@ -39,18 +39,23 @@ namespace ECsLevelState
 	};
 }
 
+struct CSCORE_API EMCsLevelState : public TCsEnumMap<ECsLevelState::Type>
+{
+protected:
+	EMCsLevelState() {}
+	EMCsLevelState(const EMCsLevelState &) = delete;
+	EMCsLevelState(EMCsLevelState &&) = delete;
+public:
+	~EMCsLevelState() {}
+private:
+	static EMCsLevelState* Instance;
+
+public:
+	static EMCsLevelState& Get();
+};
+
 namespace ECsLevelState
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
-
-	namespace Str
-	{
-		extern CSCORE_API const TCsString None;
-		extern CSCORE_API const TCsString Loaded;
-		extern CSCORE_API const TCsString BeginTransition;
-		extern CSCORE_API const TCsString InTransition;
-	}
-
 	namespace Ref
 	{
 		extern CSCORE_API const Type None;
@@ -58,24 +63,6 @@ namespace ECsLevelState
 		extern CSCORE_API const Type BeginTransition;
 		extern CSCORE_API const Type InTransition;
 		extern CSCORE_API const Type ECsLevelState_MAX;
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::None) { return Str::None.Value; }
-		if (EType == Type::Loaded) { return Str::Loaded.Value; }
-		if (EType == Type::BeginTransition) { return Str::BeginTransition.Value; }
-		if (EType == Type::InTransition) { return Str::InTransition.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE const Type& ToType(const FString &String)
-	{
-		if (String == Str::None) { return Ref::None; }
-		if (String == Str::Loaded) { return Ref::Loaded; }
-		if (String == Str::BeginTransition) { return Ref::BeginTransition; }
-		if (String == Str::InTransition) { return Ref::InTransition; }
-		return Ref::ECsLevelState_MAX;
 	}
 }
 
@@ -111,6 +98,21 @@ namespace ECsAxes_Editor
 		ECsAxes_Editor_MAX	UMETA(Hidden),
 	};
 }
+
+struct CSCORE_API EMCsAxes_Editor : public TCsEnumMap<ECsAxes_Editor::Type>
+{
+protected:
+	EMCsAxes_Editor() {}
+	EMCsAxes_Editor(const EMCsAxes_Editor &) = delete;
+	EMCsAxes_Editor(EMCsAxes_Editor &&) = delete;
+public:
+	~EMCsAxes_Editor() {}
+private:
+	static EMCsAxes_Editor* Instance;
+
+public:
+	static EMCsAxes_Editor& Get();
+};
 
 namespace ECsAxes_Editor
 {
@@ -179,17 +181,23 @@ namespace ECsTransformMember
 	};
 }
 
+struct CSCORE_API EMCsTransformMember : public TCsEnumMap<ECsTransformMember::Type>
+{
+protected:
+	EMCsTransformMember() {}
+	EMCsTransformMember(const EMCsTransformMember &) = delete;
+	EMCsTransformMember(EMCsTransformMember &&) = delete;
+public:
+	~EMCsTransformMember() {}
+private:
+	static EMCsTransformMember* Instance;
+
+public:
+	static EMCsTransformMember& Get();
+};
+
 namespace ECsTransformMember
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
-
-	namespace Str
-	{
-		extern CSCORE_API const TCsString Location;
-		extern CSCORE_API const TCsString Rotation;
-		extern CSCORE_API const TCsString Scale;
-	}
-
 	namespace Ref
 	{
 		extern CSCORE_API const Type Location;
@@ -197,25 +205,8 @@ namespace ECsTransformMember
 		extern CSCORE_API const Type Scale;
 		extern CSCORE_API const Type ECsTransformMember_MAX;
 	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::Location) { return Str::Location.Value; }
-		if (EType == Type::Rotation) { return Str::Rotation.Value; }
-		if (EType == Type::Scale) { return Str::Scale.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE const Type& ToType(const FString &String)
-	{
-		if (String == Str::Location) { return Ref::Location; }
-		if (String == Str::Rotation) { return Ref::Rotation; }
-		if (String == Str::Scale) { return Ref::Scale; }
-		return Ref::ECsTransformMember_MAX;
-	}
 }
 
-#define ECS_TRANSFORM_MEMBER_MAX (uint8)ECsTransformMember::ECsTransformMember_MAX
 typedef ECsTransformMember::Type TCsTransformMember;
 
 #pragma endregion Transform

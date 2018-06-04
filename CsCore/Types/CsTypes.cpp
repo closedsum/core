@@ -4,23 +4,24 @@
 // Level
 #pragma region
 
+EMCsLevelState* EMCsLevelState::Instance;
+
+EMCsLevelState& EMCsLevelState::Get()
+{
+	if (!Instance)
+		Instance = new EMCsLevelState();
+	return *Instance;
+}
+
 namespace ECsLevelState
 {
-	namespace Str
-	{
-		CSCORE_API const TCsString None = TCsString(TEXT("None"), TEXT("none"));
-		CSCORE_API const TCsString Loaded = TCsString(TEXT("Loaded"), TEXT("loaded"));
-		CSCORE_API const TCsString BeginTransition = TCsString(TEXT("BeginTransition"), TEXT("begintransition"));
-		CSCORE_API const TCsString InTransition = TCsString(TEXT("InTransition"), TEXT("intransition"));
-	}
-
 	namespace Ref
 	{
-		CSCORE_API const Type None = Type::None;
-		CSCORE_API const Type Loaded = Type::Loaded;
-		CSCORE_API const Type BeginTransition = Type::BeginTransition;
-		CSCORE_API const Type InTransition = Type::InTransition;
-		CSCORE_API const Type ECsLevelState_MAX = Type::ECsLevelState_MAX;
+		CSCORE_API const Type None = EMCsLevelState::Get().Add(Type::None, TEXT("None"));
+		CSCORE_API const Type Loaded = EMCsLevelState::Get().Add(Type::Loaded, TEXT("Loaded"));
+		CSCORE_API const Type BeginTransition = EMCsLevelState::Get().Add(Type::BeginTransition, TEXT("BeginTransition"), TEXT("Begin Transition"));
+		CSCORE_API const Type InTransition = EMCsLevelState::Get().Add(Type::InTransition, TEXT("InTransition"), TEXT("In Transition"));
+		CSCORE_API const Type ECsLevelState_MAX = EMCsLevelState::Get().Add(Type::ECsLevelState_MAX, TEXT("ECsLevelState_MAX"), TEXT("MAX"));
 	}
 }
 
@@ -29,10 +30,17 @@ namespace ECsLevelState
 // Transform
 #pragma region
 
+EMCsAxes_Editor* EMCsAxes_Editor::Instance;
+
+EMCsAxes_Editor& EMCsAxes_Editor::Get()
+{
+	if (!Instance)
+		Instance = new EMCsAxes_Editor();
+	return *Instance;
+}
+
 namespace ECsAxes_Editor
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
-
 	namespace Str
 	{
 		CSCORE_API const TCsString X = TCsString(TEXT("X"), TEXT("x"), TEXT("roll"));
@@ -42,30 +50,30 @@ namespace ECsAxes_Editor
 
 	namespace Ref
 	{
-		CSCORE_API const Type X = Type::X;
-		CSCORE_API const Type Y = Type::Y;
-		CSCORE_API const Type Z = Type::Z;
-		CSCORE_API const Type ECsAxes_Editor_MAX = Type::ECsAxes_Editor_MAX;
+		CSCORE_API const Type X = EMCsAxes_Editor::Get().Add(Type::X, TEXT("X"));
+		CSCORE_API const Type Y = EMCsAxes_Editor::Get().Add(Type::Y, TEXT("Y"));
+		CSCORE_API const Type Z = EMCsAxes_Editor::Get().Add(Type::Z, TEXT("Z"));
+		CSCORE_API const Type ECsAxes_Editor_MAX = EMCsAxes_Editor::Get().Add(Type::ECsAxes_Editor_MAX, TEXT("ECsAxes_Editor_MAX"), TEXT("MAX"));
 	}
+}
+
+EMCsTransformMember* EMCsTransformMember::Instance;
+
+EMCsTransformMember& EMCsTransformMember::Get()
+{
+	if (!Instance)
+		Instance = new EMCsTransformMember();
+	return *Instance;
 }
 
 namespace ECsTransformMember
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
-
-	namespace Str
-	{
-		CSCORE_API const TCsString Location = TCsString(TEXT("Location"), TEXT("location"));
-		CSCORE_API const TCsString Rotation = TCsString(TEXT("Rotation"), TEXT("rotation"));
-		CSCORE_API const TCsString Scale = TCsString(TEXT("Scale"), TEXT("scale"));
-	}
-
 	namespace Ref
 	{
-		CSCORE_API const Type Location = Type::Location;
-		CSCORE_API const Type Rotation = Type::Rotation;
-		CSCORE_API const Type Scale = Type::Scale;
-		CSCORE_API const Type ECsTransformMember_MAX = Type::ECsTransformMember_MAX;
+		CSCORE_API const Type Location = EMCsTransformMember::Get().Add(Type::Location, TEXT("Location"));
+		CSCORE_API const Type Rotation = EMCsTransformMember::Get().Add(Type::Rotation, TEXT("Rotation"));
+		CSCORE_API const Type Scale = EMCsTransformMember::Get().Add(Type::Scale, TEXT("Scale"));
+		CSCORE_API const Type ECsTransformMember_MAX = EMCsTransformMember::Get().Add(Type::ECsTransformMember_MAX, TEXT("ECsTransformMember_MAX"), TEXT("MAX"));
 	}
 }
 

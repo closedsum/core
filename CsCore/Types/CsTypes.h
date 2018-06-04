@@ -135,18 +135,12 @@ namespace ECsAxes_Editor
 
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
-		if (EType == Type::X) { return Str::X.Value; }
-		if (EType == Type::Y) { return Str::Y.Value; }
-		if (EType == Type::Z) { return Str::Z.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
+		return EMCsAxes_Editor::Get().ToString(EType);
 	}
 
 	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::X) { return Ref::X; }
-		if (String == Str::Y) { return Ref::Y; }
-		if (String == Str::Z) { return Ref::Z; }
-		return Ref::ECsAxes_Editor_MAX;
+		return EMCsAxes_Editor::Get().ToType(String);
 	}
 
 	FORCEINLINE ECsAxes ToBaseType(const Type &EType)
@@ -1308,6 +1302,21 @@ namespace ECsPhysicsImpulseType
 	};
 }
 
+struct CSCORE_API EMCsPhysicsImpulseType : public TCsEnumMap<ECsPhysicsImpulseType::Type>
+{
+protected:
+	EMCsPhysicsImpulseType() {}
+	EMCsPhysicsImpulseType(const EMCsPhysicsImpulseType &) = delete;
+	EMCsPhysicsImpulseType(EMCsPhysicsImpulseType &&) = delete;
+public:
+	~EMCsPhysicsImpulseType() {}
+private:
+	static EMCsPhysicsImpulseType* Instance;
+
+public:
+	static EMCsPhysicsImpulseType& Get();
+};
+
 namespace ECsPhysicsImpulseType
 {
 	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
@@ -1591,20 +1600,23 @@ namespace ECsHMDDeviceType
 	};
 }
 
+struct CSCORE_API EMCsHMDDeviceType : public TCsEnumMap<ECsHMDDeviceType::Type>
+{
+protected:
+	EMCsHMDDeviceType() {}
+	EMCsHMDDeviceType(const EMCsHMDDeviceType &) = delete;
+	EMCsHMDDeviceType(EMCsHMDDeviceType &&) = delete;
+public:
+	~EMCsHMDDeviceType() {}
+private:
+	static EMCsHMDDeviceType* Instance;
+
+public:
+	static EMCsHMDDeviceType& Get();
+};
+
 namespace ECsHMDDeviceType
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-		extern CSCORE_API const TCsString DT_OculusRift;
-		extern CSCORE_API const TCsString DT_Morpheus;
-		extern CSCORE_API const TCsString DT_ES2GenericStereoMesh;
-		extern CSCORE_API const TCsString DT_SteamVR;
-		extern CSCORE_API const TCsString DT_GearVR;
-		extern CSCORE_API const TCsString DT_GoogleVR;
-	}
-
 	namespace Ref
 	{
 		extern CSCORE_API const Type DT_OculusRift;
@@ -1614,28 +1626,6 @@ namespace ECsHMDDeviceType
 		extern CSCORE_API const Type DT_GearVR;
 		extern CSCORE_API const Type DT_GoogleVR;
 		extern CSCORE_API const Type ECsHMDDeviceType_MAX;
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::DT_OculusRift) { return Str::DT_OculusRift.Value; }
-		if (EType == Type::DT_Morpheus) { return Str::DT_Morpheus.Value; }
-		if (EType == Type::DT_ES2GenericStereoMesh) { return Str::DT_ES2GenericStereoMesh.Value; }
-		if (EType == Type::DT_SteamVR) { return Str::DT_SteamVR.Value; }
-		if (EType == Type::DT_GearVR) { return Str::DT_GearVR.Value; }
-		if (EType == Type::DT_GoogleVR) { return Str::DT_GoogleVR.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE const Type& ToType(const FString &String)
-	{
-		if (String == Str::DT_OculusRift) { return Ref::DT_OculusRift; }
-		if (String == Str::DT_Morpheus) { return Ref::DT_Morpheus; }
-		if (String == Str::DT_ES2GenericStereoMesh) { return Ref::DT_ES2GenericStereoMesh; }
-		if (String == Str::DT_SteamVR) { return Ref::DT_SteamVR; }
-		if (String == Str::DT_GearVR) { return Ref::DT_GearVR; }
-		if (String == Str::DT_GoogleVR) { return Ref::DT_GoogleVR; }
-		return Ref::ECsHMDDeviceType_MAX;
 	}
 
 	FORCEINLINE EHMDDeviceType::Type ToBaseType(const Type &EType)
@@ -1661,7 +1651,6 @@ namespace ECsHMDDeviceType
 	}
 }
 
-#define ECS_HMD_DEVICE_TYPE_MAX (uint8)ECsHMDDeviceType::ECsHMDDeviceType_MAX
 typedef ECsHMDDeviceType::Type TCsHMDDeviceType;
 
 #pragma  endregion VR
@@ -1680,39 +1669,31 @@ namespace ECsGestureDevice
 	};
 }
 
+struct CSCORE_API EMCsGestureDevice : public TCsEnumMap<ECsGestureDevice::Type>
+{
+protected:
+	EMCsGestureDevice() {}
+	EMCsGestureDevice(const EMCsGestureDevice &) = delete;
+	EMCsGestureDevice(EMCsGestureDevice &&) = delete;
+public:
+	~EMCsGestureDevice() {}
+private:
+	static EMCsGestureDevice* Instance;
+
+public:
+	static EMCsGestureDevice& Get();
+};
+
 namespace ECsGestureDevice
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-		extern CSCORE_API const TCsString Mouse;
-		extern CSCORE_API const TCsString MotionController;
-	}
-
 	namespace Ref
 	{
 		extern CSCORE_API const Type Mouse;
 		extern CSCORE_API const Type MotionController;
 		extern CSCORE_API const Type ECsGestureDevice_MAX;
 	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::Mouse) { return Str::Mouse.Value; }
-		if (EType == Type::MotionController) { return Str::MotionController.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE const Type& ToType(const FString &String)
-	{
-		if (String == Str::Mouse) { return Ref::Mouse; }
-		if (String == Str::MotionController) { return Ref::MotionController; }
-		return Ref::ECsGestureDevice_MAX;
-	}
 }
 
-#define ECS_GESTURE_DEVICE_MAX (uint8)ECsGestureDevice::ECsGestureDevice_MAX
 typedef ECsGestureDevice::Type TCsGestureDevice;
 
 namespace ECsGestureType
@@ -1779,39 +1760,31 @@ namespace ECsControllerHand
 	};
 }
 
+struct CSCORE_API EMCsControllerHand : public TCsEnumMap<ECsControllerHand::Type>
+{
+protected:
+	EMCsControllerHand() {}
+	EMCsControllerHand(const EMCsControllerHand &) = delete;
+	EMCsControllerHand(EMCsControllerHand &&) = delete;
+public:
+	~EMCsControllerHand() {}
+private:
+	static EMCsControllerHand* Instance;
+
+public:
+	static EMCsControllerHand& Get();
+};
+
 namespace ECsControllerHand
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
-
-	namespace Str
-	{
-		extern const TCsString Left;
-		extern const TCsString Right;
-	}
-
 	namespace Ref
 	{
-		extern const Type Left;
-		extern const Type Right;
-		extern const Type ECsControllerHand_MAX;
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::Left) { return Str::Left.Value; }
-		if (EType == Type::Right) { return Str::Right.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE const Type& ToType(const FString &String)
-	{
-		if (String == Str::Left) { return Ref::Left; }
-		if (String == Str::Right) { return Ref::Right; }
-		return Ref::ECsControllerHand_MAX;
+		extern CSCORE_API const Type Left;
+		extern CSCORE_API const Type Right;
+		extern CSCORE_API const Type ECsControllerHand_MAX;
 	}
 }
 
-#define ECS_CONTROLLER_HAND_MAX (uint8)ECsControllerHand::ECsControllerHand_MAX
 typedef ECsControllerHand::Type TCsControllerHand;
 
 #pragma endregion Motion Controller
@@ -1819,196 +1792,148 @@ typedef ECsControllerHand::Type TCsControllerHand;
 // Collision
 #pragma region
 
+struct CSCORE_API EMCollisionEnabled : public TCsEnumMap<ECollisionEnabled::Type>
+{
+protected:
+	EMCollisionEnabled() {}
+	EMCollisionEnabled(const EMCollisionEnabled &) = delete;
+	EMCollisionEnabled(EMCollisionEnabled &&) = delete;
+public:
+	~EMCollisionEnabled() {}
+private:
+	static EMCollisionEnabled* Instance;
+
+public:
+	static EMCollisionEnabled& Get();
+};
+
 namespace ECollisionEnabled
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-		extern const TCsString NoCollision;
-		extern const TCsString QueryOnly;
-		extern const TCsString PhysicsOnly;
-		extern const TCsString QueryAndPhysics;
-	}
-
 	namespace Ref
 	{
-		extern const Type NoCollision;
-		extern const Type QueryOnly;
-		extern const Type PhysicsOnly;
-		extern const Type QueryAndPhysics;
+		extern CSCORE_API const Type NoCollision;
+		extern CSCORE_API const Type QueryOnly;
+		extern CSCORE_API const Type PhysicsOnly;
+		extern CSCORE_API const Type QueryAndPhysics;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
-		if (EType == Type::NoCollision) { return Str::NoCollision.Value; }
-		if (EType == Type::QueryOnly) { return Str::QueryOnly.Value; }
-		if (EType == Type::PhysicsOnly) { return Str::PhysicsOnly.Value; }
-		if (EType == Type::QueryAndPhysics) { return Str::QueryAndPhysics.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
+		return EMCollisionEnabled::Get().ToString(EType);
 	}
 
 	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::NoCollision) { return Ref::NoCollision; }
-		if (String == Str::QueryOnly) { return Ref::QueryOnly; }
-		if (String == Str::PhysicsOnly) { return Ref::PhysicsOnly; }
-		if (String == Str::QueryAndPhysics) { return Ref::QueryAndPhysics; }
-		return Ref::NoCollision;
+		return EMCollisionEnabled::Get().ToType(String);
 	}
 }
 
+struct CSCORE_API EMCsCollisionChannel : public TCsEnumMap<ECollisionChannel>
+{
+protected:
+	EMCsCollisionChannel() {}
+	EMCsCollisionChannel(const EMCsCollisionChannel &) = delete;
+	EMCsCollisionChannel(EMCsCollisionChannel &&) = delete;
+public:
+	~EMCsCollisionChannel() {}
+private:
+	static EMCsCollisionChannel* Instance;
+
+public:
+	static EMCsCollisionChannel& Get();
+};
+
 namespace ECsCollisionChannel
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
+	namespace Ref
 	{
-		const TCsString ECC_WorldStatic = TCsString(TEXT("ECC_WorldStatic"), TEXT("ecc_worldstatic"), TEXT("worldstatic"));
-		const TCsString ECC_WorldDynamic = TCsString(TEXT("ECC_WorldDynamic"), TEXT("ecc_worlddynamic"), TEXT("worlddynamic"));
-		const TCsString ECC_Pawn = TCsString(TEXT("ECC_Pawn"), TEXT("ecc_pawn"), TEXT("pawn"));
-		const TCsString ECC_Visibility = TCsString(TEXT("ECC_Visibility"), TEXT("ecc_visibility"), TEXT("visibility"));
-		const TCsString ECC_Camera = TCsString(TEXT("ECC_Camera"), TEXT("ecc_camera"), TEXT("camera"));
-		const TCsString ECC_PhysicsBody = TCsString(TEXT("ECC_PhysicsBody"), TEXT("ecc_physicsbody"), TEXT("physicsbody"));
-		const TCsString ECC_Vehicle = TCsString(TEXT("ECC_Vehicle"), TEXT("ecc_vehicle"), TEXT("vehicle"));
-		const TCsString ECC_Destructible = TCsString(TEXT("ECC_Destructible"), TEXT("ecc_destructible"), TEXT("destructible"));
+		extern CSCORE_API const ECollisionChannel ECC_WorldStatic;
+		extern CSCORE_API const ECollisionChannel ECC_WorldDynamic;
+		extern CSCORE_API const ECollisionChannel ECC_Pawn;
+		extern CSCORE_API const ECollisionChannel ECC_Visibility;
+		extern CSCORE_API const ECollisionChannel ECC_Camera;
+		extern CSCORE_API const ECollisionChannel ECC_PhysicsBody;
+		extern CSCORE_API const ECollisionChannel ECC_Vehicle;
+		extern CSCORE_API const ECollisionChannel ECC_Destructible;
 
-		const TCsString ECC_EngineTraceChannel1 = TCsString(TEXT("ECC_EngineTraceChannel1"), TEXT("ecc_enginetracechannel1"), TEXT("enginetracechannel 1"));
-		const TCsString ECC_EngineTraceChannel2 = TCsString(TEXT("ECC_EngineTraceChannel2"), TEXT("ecc_enginetracechannel2"), TEXT("enginetracechannel 2"));
-		const TCsString ECC_EngineTraceChannel3 = TCsString(TEXT("ECC_EngineTraceChannel3"), TEXT("ecc_enginetracechannel3"), TEXT("enginetracechannel 3"));
-		const TCsString ECC_EngineTraceChannel4 = TCsString(TEXT("ECC_EngineTraceChannel4"), TEXT("ecc_enginetracechannel4"), TEXT("enginetracechannel 4"));
-		const TCsString ECC_EngineTraceChannel5 = TCsString(TEXT("ECC_EngineTraceChannel5"), TEXT("ecc_enginetracechannel5"), TEXT("enginetracechannel 5"));
-		const TCsString ECC_EngineTraceChannel6 = TCsString(TEXT("ECC_EngineTraceChannel6"), TEXT("ecc_enginetracechannel6"), TEXT("enginetracechannel 6"));
+		extern CSCORE_API const ECollisionChannel ECC_EngineTraceChannel1;
+		extern CSCORE_API const ECollisionChannel ECC_EngineTraceChannel2;
+		extern CSCORE_API const ECollisionChannel ECC_EngineTraceChannel3;
+		extern CSCORE_API const ECollisionChannel ECC_EngineTraceChannel4;
+		extern CSCORE_API const ECollisionChannel ECC_EngineTraceChannel5;
+		extern CSCORE_API const ECollisionChannel ECC_EngineTraceChannel6;
 
-		const TCsString ECC_GameTraceChannel1 = TCsString(TEXT("ECC_GameTraceChannel1"), TEXT("ecc_gametracechannel1"), TEXT("gametracechannel 1"));
-		const TCsString ECC_GameTraceChannel2 = TCsString(TEXT("ECC_GameTraceChannel2"), TEXT("ecc_gametracechannel2"), TEXT("gametracechannel 2"));
-		const TCsString ECC_GameTraceChannel3 = TCsString(TEXT("ECC_GameTraceChannel3"), TEXT("ecc_gametracechannel3"), TEXT("gametracechannel 3"));
-		const TCsString ECC_GameTraceChannel4 = TCsString(TEXT("ECC_GameTraceChannel4"), TEXT("ecc_gametracechannel4"), TEXT("gametracechannel 4"));
-		const TCsString ECC_GameTraceChannel5 = TCsString(TEXT("ECC_GameTraceChannel5"), TEXT("ecc_gametracechannel5"), TEXT("gametracechannel 5"));
-		const TCsString ECC_GameTraceChannel6 = TCsString(TEXT("ECC_GameTraceChannel6"), TEXT("ecc_gametracechannel6"), TEXT("gametracechannel 6"));
-		const TCsString ECC_GameTraceChannel7 = TCsString(TEXT("ECC_GameTraceChannel7"), TEXT("ecc_gametracechannel7"), TEXT("gametracechannel 7"));
-		const TCsString ECC_GameTraceChannel8 = TCsString(TEXT("ECC_GameTraceChannel8"), TEXT("ecc_gametracechannel8"), TEXT("gametracechannel 8"));
-		const TCsString ECC_GameTraceChannel9 = TCsString(TEXT("ECC_GameTraceChannel9"), TEXT("ecc_gametracechannel9"), TEXT("gametracechannel 9"));
-		const TCsString ECC_GameTraceChannel10 = TCsString(TEXT("ECC_GameTraceChannel10"), TEXT("ecc_gametracechannel10"), TEXT("gametracechannel 10"));
-		const TCsString ECC_GameTraceChannel11 = TCsString(TEXT("ECC_GameTraceChannel11"), TEXT("ecc_gametracechannel11"), TEXT("gametracechannel 11"));
-		const TCsString ECC_GameTraceChannel12 = TCsString(TEXT("ECC_GameTraceChannel12"), TEXT("ecc_gametracechannel12"), TEXT("gametracechannel 12"));
-		const TCsString ECC_GameTraceChannel13 = TCsString(TEXT("ECC_GameTraceChannel13"), TEXT("ecc_gametracechannel13"), TEXT("gametracechannel 13"));
-		const TCsString ECC_GameTraceChannel14 = TCsString(TEXT("ECC_GameTraceChannel14"), TEXT("ecc_gametracechannel14"), TEXT("gametracechannel 14"));
-		const TCsString ECC_GameTraceChannel15 = TCsString(TEXT("ECC_GameTraceChannel15"), TEXT("ecc_gametracechannel15"), TEXT("gametracechannel 15"));
-		const TCsString ECC_GameTraceChannel16 = TCsString(TEXT("ECC_GameTraceChannel16"), TEXT("ecc_gametracechannel16"), TEXT("gametracechannel 16"));
-		const TCsString ECC_GameTraceChannel17 = TCsString(TEXT("ECC_GameTraceChannel17"), TEXT("ecc_gametracechannel17"), TEXT("gametracechannel 17"));
-		const TCsString ECC_GameTraceChannel18 = TCsString(TEXT("ECC_GameTraceChannel18"), TEXT("ecc_gametracechannel18"), TEXT("gametracechannel 18"));
+		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel1;
+		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel2;
+		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel3;
+		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel4;
+		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel5;
+		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel6;
+		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel7;
+		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel8;
+		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel9;
+		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel10;
+		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel11;
+		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel12;
+		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel13;
+		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel14;
+		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel15;
+		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel16;
+		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel17;
+		extern CSCORE_API const ECollisionChannel ECC_GameTraceChannel18;
+
+		extern CSCORE_API const ECollisionChannel ECC_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const ECollisionChannel &EType)
 	{
-		if (EType == ECollisionChannel::ECC_WorldStatic) { return Str::ECC_WorldStatic.Value; }
-		if (EType == ECollisionChannel::ECC_WorldDynamic) { return Str::ECC_WorldDynamic.Value; }
-		if (EType == ECollisionChannel::ECC_Pawn) { return Str::ECC_Pawn.Value; }
-		if (EType == ECollisionChannel::ECC_Visibility) { return Str::ECC_Visibility.Value; }
-		if (EType == ECollisionChannel::ECC_Camera) { return Str::ECC_Camera.Value; }
-		if (EType == ECollisionChannel::ECC_PhysicsBody) { return Str::ECC_PhysicsBody.Value; }
-		if (EType == ECollisionChannel::ECC_Vehicle) { return Str::ECC_Vehicle.Value; }
-		if (EType == ECollisionChannel::ECC_Destructible) { return Str::ECC_Destructible.Value; }
-
-		if (EType == ECollisionChannel::ECC_EngineTraceChannel1) { return Str::ECC_EngineTraceChannel1.Value; }
-		if (EType == ECollisionChannel::ECC_EngineTraceChannel2) { return Str::ECC_EngineTraceChannel2.Value; }
-		if (EType == ECollisionChannel::ECC_EngineTraceChannel3) { return Str::ECC_EngineTraceChannel3.Value; }
-		if (EType == ECollisionChannel::ECC_EngineTraceChannel4) { return Str::ECC_EngineTraceChannel4.Value; }
-		if (EType == ECollisionChannel::ECC_EngineTraceChannel5) { return Str::ECC_EngineTraceChannel5.Value; }
-		if (EType == ECollisionChannel::ECC_EngineTraceChannel6) { return Str::ECC_EngineTraceChannel6.Value; }
-
-		if (EType == ECollisionChannel::ECC_GameTraceChannel1) { return Str::ECC_GameTraceChannel1.Value; }
-		if (EType == ECollisionChannel::ECC_GameTraceChannel2) { return Str::ECC_GameTraceChannel2.Value; }
-		if (EType == ECollisionChannel::ECC_GameTraceChannel3) { return Str::ECC_GameTraceChannel3.Value; }
-		if (EType == ECollisionChannel::ECC_GameTraceChannel4) { return Str::ECC_GameTraceChannel4.Value; }
-		if (EType == ECollisionChannel::ECC_GameTraceChannel5) { return Str::ECC_GameTraceChannel5.Value; }
-		if (EType == ECollisionChannel::ECC_GameTraceChannel6) { return Str::ECC_GameTraceChannel6.Value; }
-		if (EType == ECollisionChannel::ECC_GameTraceChannel7) { return Str::ECC_GameTraceChannel7.Value; }
-		if (EType == ECollisionChannel::ECC_GameTraceChannel8) { return Str::ECC_GameTraceChannel8.Value; }
-		if (EType == ECollisionChannel::ECC_GameTraceChannel9) { return Str::ECC_GameTraceChannel9.Value; }
-		if (EType == ECollisionChannel::ECC_GameTraceChannel10) { return Str::ECC_GameTraceChannel10.Value; }
-		if (EType == ECollisionChannel::ECC_GameTraceChannel11) { return Str::ECC_GameTraceChannel11.Value; }
-		if (EType == ECollisionChannel::ECC_GameTraceChannel12) { return Str::ECC_GameTraceChannel12.Value; }
-		if (EType == ECollisionChannel::ECC_GameTraceChannel13) { return Str::ECC_GameTraceChannel13.Value; }
-		if (EType == ECollisionChannel::ECC_GameTraceChannel14) { return Str::ECC_GameTraceChannel14.Value; }
-		if (EType == ECollisionChannel::ECC_GameTraceChannel15) { return Str::ECC_GameTraceChannel15.Value; }
-		if (EType == ECollisionChannel::ECC_GameTraceChannel16) { return Str::ECC_GameTraceChannel16.Value; }
-		if (EType == ECollisionChannel::ECC_GameTraceChannel17) { return Str::ECC_GameTraceChannel17.Value; }
-		if (EType == ECollisionChannel::ECC_GameTraceChannel18) { return Str::ECC_GameTraceChannel18.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
+		return EMCsCollisionChannel::Get().ToString(EType);
 	}
 
 	FORCEINLINE ECollisionChannel ToType(const FString &String)
 	{
-		if (String == Str::ECC_WorldStatic) { return ECollisionChannel::ECC_WorldStatic; }
-		if (String == Str::ECC_WorldDynamic) { return ECollisionChannel::ECC_WorldDynamic; }
-		if (String == Str::ECC_Pawn) { return ECollisionChannel::ECC_Pawn; }
-		if (String == Str::ECC_Visibility) { return ECollisionChannel::ECC_Visibility; }
-		if (String == Str::ECC_Camera) { return ECollisionChannel::ECC_Camera; }
-		if (String == Str::ECC_PhysicsBody) { return ECollisionChannel::ECC_PhysicsBody; }
-		if (String == Str::ECC_Vehicle) { return ECollisionChannel::ECC_Vehicle; }
-		if (String == Str::ECC_Destructible) { return ECollisionChannel::ECC_Destructible; }
-
-		if (String == Str::ECC_EngineTraceChannel1) { return ECollisionChannel::ECC_EngineTraceChannel1; }
-		if (String == Str::ECC_EngineTraceChannel2) { return ECollisionChannel::ECC_EngineTraceChannel2; }
-		if (String == Str::ECC_EngineTraceChannel3) { return ECollisionChannel::ECC_EngineTraceChannel3; }
-		if (String == Str::ECC_EngineTraceChannel4) { return ECollisionChannel::ECC_EngineTraceChannel4; }
-		if (String == Str::ECC_EngineTraceChannel5) { return ECollisionChannel::ECC_EngineTraceChannel5; }
-		if (String == Str::ECC_EngineTraceChannel6) { return ECollisionChannel::ECC_EngineTraceChannel6; }
-
-		if (String == Str::ECC_GameTraceChannel1) { return ECollisionChannel::ECC_GameTraceChannel1; }
-		if (String == Str::ECC_GameTraceChannel2) { return ECollisionChannel::ECC_GameTraceChannel2; }
-		if (String == Str::ECC_GameTraceChannel3) { return ECollisionChannel::ECC_GameTraceChannel3; }
-		if (String == Str::ECC_GameTraceChannel4) { return ECollisionChannel::ECC_GameTraceChannel4; }
-		if (String == Str::ECC_GameTraceChannel5) { return ECollisionChannel::ECC_GameTraceChannel5; }
-		if (String == Str::ECC_GameTraceChannel6) { return ECollisionChannel::ECC_GameTraceChannel6; }
-		if (String == Str::ECC_GameTraceChannel7) { return ECollisionChannel::ECC_GameTraceChannel7; }
-		if (String == Str::ECC_GameTraceChannel8) { return ECollisionChannel::ECC_GameTraceChannel8; }
-		if (String == Str::ECC_GameTraceChannel9) { return ECollisionChannel::ECC_GameTraceChannel9; }
-		if (String == Str::ECC_GameTraceChannel10) { return ECollisionChannel::ECC_GameTraceChannel10; }
-		if (String == Str::ECC_GameTraceChannel11) { return ECollisionChannel::ECC_GameTraceChannel11; }
-		if (String == Str::ECC_GameTraceChannel12) { return ECollisionChannel::ECC_GameTraceChannel12; }
-		if (String == Str::ECC_GameTraceChannel13) { return ECollisionChannel::ECC_GameTraceChannel13; }
-		if (String == Str::ECC_GameTraceChannel14) { return ECollisionChannel::ECC_GameTraceChannel14; }
-		if (String == Str::ECC_GameTraceChannel15) { return ECollisionChannel::ECC_GameTraceChannel15; }
-		if (String == Str::ECC_GameTraceChannel16) { return ECollisionChannel::ECC_GameTraceChannel16; }
-		if (String == Str::ECC_GameTraceChannel17) { return ECollisionChannel::ECC_GameTraceChannel17; }
-		if (String == Str::ECC_GameTraceChannel18) { return ECollisionChannel::ECC_GameTraceChannel18; }
-		return ECollisionChannel::ECC_MAX;
+		return EMCsCollisionChannel::Get().ToType(String);
 	}
 }
 
+struct CSCORE_API EMCollisionResponse : public TCsEnumMap<ECollisionResponse>
+{
+protected:
+	EMCollisionResponse() {}
+	EMCollisionResponse(const EMCollisionResponse &) = delete;
+	EMCollisionResponse(EMCollisionResponse &&) = delete;
+public:
+	~EMCollisionResponse() {}
+private:
+	static EMCollisionResponse* Instance;
+
+public:
+	static EMCollisionResponse& Get();
+};
+
 namespace ECsCollisionResponse
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
+	namespace Ref
 	{
-		const TCsString ECR_Ignore = TCsString(TEXT("ECR_Ignore"), TEXT("ecr_ignore"), TEXT("ignore"));
-		const TCsString ECR_Overlap = TCsString(TEXT("ECR_Overlap"), TEXT("ecr_overlap"), TEXT("overlap"));
-		const TCsString ECR_Block = TCsString(TEXT("ECR_Block"), TEXT("ecr_block"), TEXT("block"));
+		extern CSCORE_API const ECollisionResponse ECR_Ignore;
+		extern CSCORE_API const ECollisionResponse ECR_Overlap;
+		extern CSCORE_API const ECollisionResponse ECR_Block;
+		extern CSCORE_API const ECollisionResponse ECR_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const ECollisionResponse &EType)
 	{
-		if (EType == ECollisionResponse::ECR_Ignore) { return Str::ECR_Ignore.Value; }
-		if (EType == ECollisionResponse::ECR_Overlap) { return Str::ECR_Overlap.Value; }
-		if (EType == ECollisionResponse::ECR_Block) { return Str::ECR_Block.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
+		return EMCollisionResponse::Get().ToString(EType);
 	}
 
 	FORCEINLINE ECollisionResponse ToType(const FString &String)
 	{
-		if (String == Str::ECR_Ignore) { return ECollisionResponse::ECR_Ignore; }
-		if (String == Str::ECR_Overlap) { return ECollisionResponse::ECR_Overlap; }
-		if (String == Str::ECR_Block) { return ECollisionResponse::ECR_Block; }
-		return ECollisionResponse::ECR_MAX;
+		return EMCollisionResponse::Get().ToType(String);
 	}
 };
 
 USTRUCT(BlueprintType)
-struct FCsCollisionPreset
+struct CSCORE_API FCsCollisionPreset
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -2039,7 +1964,7 @@ struct FCsCollisionPreset
 		CollisionResponses.SetAllChannels(ECR_Ignore);
 	}
 
-	FCsCollisionPreset& operator=(const FCsCollisionPreset& B)
+	FORCEINLINE FCsCollisionPreset& operator=(const FCsCollisionPreset& B)
 	{
 		bSimulationGeneratesHitEvents = B.bSimulationGeneratesHitEvents;
 		bGenerateOverlapEvents = B.bGenerateOverlapEvents;
@@ -2050,7 +1975,7 @@ struct FCsCollisionPreset
 		return *this;
 	}
 
-	bool operator==(const FCsCollisionPreset& B) const
+	FORCEINLINE bool operator==(const FCsCollisionPreset& B) const
 	{
 		return bSimulationGeneratesHitEvents == B.bSimulationGeneratesHitEvents && 
 			   bGenerateOverlapEvents == B.bGenerateOverlapEvents && 
@@ -2059,7 +1984,7 @@ struct FCsCollisionPreset
 			   ObjectType == B.ObjectType;
 	}
 
-	bool operator!=(const FCsCollisionPreset& B) const
+	FORCEINLINE bool operator!=(const FCsCollisionPreset& B) const
 	{
 		return !(*this == B);
 	}

@@ -96,6 +96,15 @@ EMCsSurfaceType& EMCsSurfaceType::Get()
 // Physics
 #pragma region
 
+EMCsPhysicsImpulseType* EMCsPhysicsImpulseType::Instance;
+
+EMCsPhysicsImpulseType& EMCsPhysicsImpulseType::Get()
+{
+	if (!Instance)
+		Instance = new EMCsPhysicsImpulseType();
+	return *Instance;
+}
+
 namespace ECsPhysicsImpulseType
 {
 	namespace Str
@@ -110,13 +119,13 @@ namespace ECsPhysicsImpulseType
 
 	namespace Ref
 	{
-		CSCORE_API const Type AddForce = Type::AddForce;
-		CSCORE_API const Type AddForceAtPosition = Type::AddForceAtPosition;
-		CSCORE_API const Type AddTorque = Type::AddTorque;
-		CSCORE_API const Type AddAngularImpulse = Type::AddAngularImpulse;
-		CSCORE_API const Type AddImpulse = Type::AddImpulse;
-		CSCORE_API const Type AddImpulseAtPosition = Type::AddImpulseAtPosition;
-		CSCORE_API const Type ECsPhysicsImpulseType_MAX = Type::ECsPhysicsImpulseType_MAX;
+		CSCORE_API const Type AddForce = EMCsPhysicsImpulseType::Get().Add(Type::AddForce, TEXT("AddForce"), TEXT("Add Force"));
+		CSCORE_API const Type AddForceAtPosition = EMCsPhysicsImpulseType::Get().Add(Type::AddForceAtPosition, TEXT("AddForceAtPosition"), TEXT("Add Force at Position"));
+		CSCORE_API const Type AddTorque = EMCsPhysicsImpulseType::Get().Add(Type::AddTorque, TEXT("AddTorque"), TEXT("Add Torque"));
+		CSCORE_API const Type AddAngularImpulse = EMCsPhysicsImpulseType::Get().Add(Type::AddAngularImpulse, TEXT("AddAngularImpulse"), TEXT("Add Angular Impulse"));
+		CSCORE_API const Type AddImpulse = EMCsPhysicsImpulseType::Get().Add(Type::AddImpulse, TEXT("AddImpulse"), TEXT("Add Impulse"));
+		CSCORE_API const Type AddImpulseAtPosition = EMCsPhysicsImpulseType::Get().Add(Type::AddImpulseAtPosition, TEXT("AddImpulseAtPosition"), TEXT("Add Impulse at Position"));
+		CSCORE_API const Type ECsPhysicsImpulseType_MAX = EMCsPhysicsImpulseType::Get().Add(Type::ECsPhysicsImpulseType_MAX, TEXT("ECsPhysicsImpulseType_MAX"), TEXT("MAX"));
 	}
 }
 
@@ -125,29 +134,26 @@ namespace ECsPhysicsImpulseType
 // VR
 #pragma region
 
+EMCsHMDDeviceType* EMCsHMDDeviceType::Instance;
+
+EMCsHMDDeviceType& EMCsHMDDeviceType::Get()
+{
+	if (!Instance)
+		Instance = new EMCsHMDDeviceType();
+	return *Instance;
+}
+
 namespace ECsHMDDeviceType
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-		CSCORE_API const TCsString DT_OculusRift = TCsString(TEXT("DT_OculusRift"), TEXT("dt_oculusrift"), TEXT("oculus rift"));
-		CSCORE_API const TCsString DT_Morpheus = TCsString(TEXT("DT_Morpheus"), TEXT("dt_morpheus"), TEXT("psvr"));
-		CSCORE_API const TCsString DT_ES2GenericStereoMesh = TCsString(TEXT("DT_ES2GenericStereoMesh"), TEXT("dt_es2genericstereomesh"), TEXT("es2 generic"));
-		CSCORE_API const TCsString DT_SteamVR = TCsString(TEXT("DT_SteamVR"), TEXT("dt_steamvr"), TEXT("vive"));
-		CSCORE_API const TCsString DT_GearVR = TCsString(TEXT("DT_GearVR"), TEXT("dt_gearvr"), TEXT("gearvr"));
-		CSCORE_API const TCsString DT_GoogleVR = TCsString(TEXT("DT_GoogleVR"), TEXT("dt_googlevr"), TEXT("goolgevr"));
-	}
-
 	namespace Ref
 	{
-		CSCORE_API const Type DT_OculusRift = Type::DT_OculusRift;
-		CSCORE_API const Type DT_Morpheus = Type::DT_Morpheus;
-		CSCORE_API const Type DT_ES2GenericStereoMesh = Type::DT_ES2GenericStereoMesh;
-		CSCORE_API const Type DT_SteamVR = Type::DT_SteamVR;
-		CSCORE_API const Type DT_GearVR = Type::DT_GearVR;
-		CSCORE_API const Type DT_GoogleVR = Type::DT_GoogleVR;
-		CSCORE_API const Type ECsHMDDeviceType_MAX = Type::ECsHMDDeviceType_MAX;
+		CSCORE_API const Type DT_OculusRift = EMCsHMDDeviceType::Get().Add(Type::DT_OculusRift, TEXT("DT_OculusRift"), TEXT("Oculus Rift"));
+		CSCORE_API const Type DT_Morpheus = EMCsHMDDeviceType::Get().Add(Type::DT_Morpheus, TEXT("DT_Morpheus"), TEXT("PS VR"));
+		CSCORE_API const Type DT_ES2GenericStereoMesh = EMCsHMDDeviceType::Get().Add(Type::DT_ES2GenericStereoMesh, TEXT("DT_ES2GenericStereoMesh"), TEXT("ES2 Generic"));
+		CSCORE_API const Type DT_SteamVR = EMCsHMDDeviceType::Get().Add(Type::DT_SteamVR, TEXT("DT_SteamVR"), TEXT("Vive"));
+		CSCORE_API const Type DT_GearVR = EMCsHMDDeviceType::Get().Add(Type::DT_GearVR, TEXT("DT_GearVR"), TEXT("Gear VR"));
+		CSCORE_API const Type DT_GoogleVR = EMCsHMDDeviceType::Get().Add(Type::DT_GoogleVR, TEXT("DT_GoogleVR"), TEXT("Google VR"));
+		CSCORE_API const Type ECsHMDDeviceType_MAX = EMCsHMDDeviceType::Get().Add(Type::ECsHMDDeviceType_MAX, TEXT("ECsHMDDeviceType_MAX"), TEXT("MAX"));
 	}
 }
 
@@ -156,21 +162,22 @@ namespace ECsHMDDeviceType
 // Gestures
 #pragma region
 
+EMCsGestureDevice* EMCsGestureDevice::Instance;
+
+EMCsGestureDevice& EMCsGestureDevice::Get()
+{
+	if (!Instance)
+		Instance = new EMCsGestureDevice();
+	return *Instance;
+}
+
 namespace ECsGestureDevice
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-		CSCORE_API const TCsString Mouse = TCsString(TEXT("Mouse"), TEXT("mouse"), TEXT("mouse"));
-		CSCORE_API const TCsString MotionController = TCsString(TEXT("MotionController"), TEXT("motioncontroller"), TEXT("motion controller"));
-	}
-
 	namespace Ref
 	{
-		CSCORE_API const Type Mouse = Type::Mouse;
-		CSCORE_API const Type MotionController = Type::MotionController;
-		CSCORE_API const Type ECsGestureDevice_MAX = Type::ECsGestureDevice_MAX;
+		CSCORE_API const Type Mouse = EMCsGestureDevice::Get().Add(Type::Mouse, TEXT("Mouse"));
+		CSCORE_API const Type MotionController = EMCsGestureDevice::Get().Add(Type::MotionController, TEXT("Motion Controller"));
+		CSCORE_API const Type ECsGestureDevice_MAX = EMCsGestureDevice::Get().Add(Type::ECsGestureDevice_MAX, TEXT("ECsGestureDevice_MAX"), TEXT("MAX"));
 	}
 }
 
@@ -188,18 +195,21 @@ EMCsGestureType& EMCsGestureType::Get()
 // Motion Controller
 #pragma region
 
+EMCsControllerHand* EMCsControllerHand::Instance;
+
+EMCsControllerHand& EMCsControllerHand::Get()
+{
+	if (!Instance)
+		Instance = new EMCsControllerHand();
+	return *Instance;
+}
+
 namespace ECsControllerHand
 {
-	namespace Str
-	{
-		const TCsString Left = TCsString(TEXT("Left"), TEXT("left"));
-		const TCsString Right = TCsString(TEXT("Right"), TEXT("right"));
-	}
-
 	namespace Ref
 	{
-		const Type Left = Type::Left;
-		const Type Right = Type::Right;
+		CSCORE_API const Type Left = EMCsControllerHand::Get().Add(Type::Left, TEXT("Left"));
+		CSCORE_API const Type Right = EMCsControllerHand::Get().Add(Type::Right, TEXT("Right"));
 	}
 }
 
@@ -208,22 +218,95 @@ namespace ECsControllerHand
 // Collision
 #pragma region
 
+EMCollisionEnabled* EMCollisionEnabled::Instance;
+
+EMCollisionEnabled& EMCollisionEnabled::Get()
+{
+	if (!Instance)
+		Instance = new EMCollisionEnabled();
+	return *Instance;
+}
+
 namespace ECollisionEnabled
 {
-	namespace Str
-	{
-		const TCsString NoCollision = TCsString(TEXT("NoCollision"), TEXT("nocollision"), TEXT("no collision"));
-		const TCsString QueryOnly = TCsString(TEXT("QueryOnly"), TEXT("queryonly"), TEXT("query only"));
-		const TCsString PhysicsOnly = TCsString(TEXT("PhysicsOnly"), TEXT("physicsonly"), TEXT("physics only"));
-		const TCsString QueryAndPhysics = TCsString(TEXT("QueryAndPhysics"), TEXT("queryandphysics"), TEXT("query and physics"));
-	}
-
 	namespace Ref
 	{
-		const Type NoCollision = Type::NoCollision;
-		const Type QueryOnly = Type::QueryOnly;
-		const Type PhysicsOnly = Type::PhysicsOnly;
-		const Type QueryAndPhysics = Type::QueryAndPhysics;
+		CSCORE_API const Type NoCollision = EMCollisionEnabled::Get().Add(Type::NoCollision, TEXT("NoCollision"));
+		CSCORE_API const Type QueryOnly = EMCollisionEnabled::Get().Add(Type::QueryOnly, TEXT("QueryOnly"));
+		CSCORE_API const Type PhysicsOnly = EMCollisionEnabled::Get().Add(Type::PhysicsOnly, TEXT("PhysicsOnly"));
+		CSCORE_API const Type QueryAndPhysics = EMCollisionEnabled::Get().Add(Type::QueryAndPhysics, TEXT("QueryAndPhysics"));
+	}
+}
+
+EMCsCollisionChannel* EMCsCollisionChannel::Instance;
+
+EMCsCollisionChannel& EMCsCollisionChannel::Get()
+{
+	if (!Instance)
+		Instance = new EMCsCollisionChannel();
+	return *Instance;
+}
+
+namespace ECsCollisionChannel
+{
+	namespace Ref
+	{
+		CSCORE_API const ECollisionChannel ECC_WorldStatic = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_WorldStatic, TEXT("ECC_WorldStatic"), TEXT("World Static"));
+		CSCORE_API const ECollisionChannel ECC_WorldDynamic = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_WorldDynamic, TEXT("ECC_WorldDynamic"), TEXT("World Dynamic"));
+		CSCORE_API const ECollisionChannel ECC_Pawn = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_Pawn, TEXT("ECC_Pawn"), TEXT("Pawn"));
+		CSCORE_API const ECollisionChannel ECC_Visibility = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_Visibility, TEXT("ECC_Visibility"), TEXT("Visibility"));
+		CSCORE_API const ECollisionChannel ECC_Camera = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_Camera, TEXT("ECC_Camera"), TEXT("Camera"));
+		CSCORE_API const ECollisionChannel ECC_PhysicsBody = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_PhysicsBody, TEXT("ECC_PhysicsBody"), TEXT("Physics Body"));
+		CSCORE_API const ECollisionChannel ECC_Vehicle = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_Vehicle, TEXT("ECC_Vehicle"), TEXT("Vehicle"));
+		CSCORE_API const ECollisionChannel ECC_Destructible = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_Destructible, TEXT("ECC_Destructible"), TEXT("Destructible"));
+
+		CSCORE_API const ECollisionChannel ECC_EngineTraceChannel1 = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_EngineTraceChannel1, TEXT("ECC_EngineTraceChannel1"), TEXT("EngineTraceChannel 1"));
+		CSCORE_API const ECollisionChannel ECC_EngineTraceChannel2 = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_EngineTraceChannel2, TEXT("ECC_EngineTraceChannel2"), TEXT("EngineTraceChannel 2"));
+		CSCORE_API const ECollisionChannel ECC_EngineTraceChannel3 = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_EngineTraceChannel3, TEXT("ECC_EngineTraceChannel3"), TEXT("EngineTraceChannel 3"));
+		CSCORE_API const ECollisionChannel ECC_EngineTraceChannel4 = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_EngineTraceChannel4, TEXT("ECC_EngineTraceChannel4"), TEXT("EngineTraceChannel 4"));
+		CSCORE_API const ECollisionChannel ECC_EngineTraceChannel5 = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_EngineTraceChannel5, TEXT("ECC_EngineTraceChannel5"), TEXT("EngineTraceChannel 5"));
+		CSCORE_API const ECollisionChannel ECC_EngineTraceChannel6 = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_EngineTraceChannel6, TEXT("ECC_EngineTraceChannel6"), TEXT("EngineTraceChannel 6"));
+
+		CSCORE_API const ECollisionChannel ECC_GameTraceChannel1 = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_GameTraceChannel1, TEXT("ECC_GameTraceChannel1"), TEXT("GameTraceChannel 1"));
+		CSCORE_API const ECollisionChannel ECC_GameTraceChannel2 = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_GameTraceChannel2, TEXT("ECC_GameTraceChannel2"), TEXT("GameTraceChannel 2"));
+		CSCORE_API const ECollisionChannel ECC_GameTraceChannel3 = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_GameTraceChannel3, TEXT("ECC_GameTraceChannel3"), TEXT("GameTraceChannel 3"));
+		CSCORE_API const ECollisionChannel ECC_GameTraceChannel4 = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_GameTraceChannel4, TEXT("ECC_GameTraceChannel4"), TEXT("GameTraceChannel 4"));
+		CSCORE_API const ECollisionChannel ECC_GameTraceChannel5 = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_GameTraceChannel5, TEXT("ECC_GameTraceChannel5"), TEXT("GameTraceChannel 5"));
+		CSCORE_API const ECollisionChannel ECC_GameTraceChannel6 = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_GameTraceChannel6, TEXT("ECC_GameTraceChannel6"), TEXT("GameTraceChannel 6"));
+		CSCORE_API const ECollisionChannel ECC_GameTraceChannel7 = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_GameTraceChannel7, TEXT("ECC_GameTraceChannel7"), TEXT("GameTraceChannel 7"));
+		CSCORE_API const ECollisionChannel ECC_GameTraceChannel8 = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_GameTraceChannel8, TEXT("ECC_GameTraceChannel8"), TEXT("GameTraceChannel 8"));
+		CSCORE_API const ECollisionChannel ECC_GameTraceChannel9 = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_GameTraceChannel9, TEXT("ECC_GameTraceChannel9"), TEXT("GameTraceChannel 9"));
+		CSCORE_API const ECollisionChannel ECC_GameTraceChannel10 = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_GameTraceChannel10, TEXT("ECC_GameTraceChannel10"), TEXT("GameTraceChannel 10"));
+		CSCORE_API const ECollisionChannel ECC_GameTraceChannel11 = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_GameTraceChannel11, TEXT("ECC_GameTraceChannel11"), TEXT("GameTraceChannel 11"));
+		CSCORE_API const ECollisionChannel ECC_GameTraceChannel12 = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_GameTraceChannel12, TEXT("ECC_GameTraceChannel12"), TEXT("GameTraceChannel 12"));
+		CSCORE_API const ECollisionChannel ECC_GameTraceChannel13 = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_GameTraceChannel13, TEXT("ECC_GameTraceChannel13"), TEXT("GameTraceChannel 13"));
+		CSCORE_API const ECollisionChannel ECC_GameTraceChannel14 = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_GameTraceChannel14, TEXT("ECC_GameTraceChannel14"), TEXT("GameTraceChannel 14"));
+		CSCORE_API const ECollisionChannel ECC_GameTraceChannel15 = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_GameTraceChannel15, TEXT("ECC_GameTraceChannel15"), TEXT("GameTraceChannel 15"));
+		CSCORE_API const ECollisionChannel ECC_GameTraceChannel16 = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_GameTraceChannel16, TEXT("ECC_GameTraceChannel16"), TEXT("GameTraceChannel 16"));
+		CSCORE_API const ECollisionChannel ECC_GameTraceChannel17 = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_GameTraceChannel17, TEXT("ECC_GameTraceChannel17"), TEXT("GameTraceChannel 17"));
+		CSCORE_API const ECollisionChannel ECC_GameTraceChannel18 = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_GameTraceChannel18, TEXT("ECC_GameTraceChannel18"), TEXT("GameTraceChannel 18"));
+
+		CSCORE_API const ECollisionChannel ECC_MAX = EMCsCollisionChannel::Get().Add(ECollisionChannel::ECC_MAX, TEXT("ECC_MAX"), TEXT("MAX"));
+	}
+}
+
+EMCollisionResponse* EMCollisionResponse::Instance;
+
+EMCollisionResponse& EMCollisionResponse::Get()
+{
+	if (!Instance)
+		Instance = new EMCollisionResponse();
+	return *Instance;
+}
+
+namespace ECsCollisionResponse
+{
+	namespace Ref
+	{
+		extern CSCORE_API const ECollisionResponse ECR_Ignore = EMCollisionResponse::Get().Add(ECollisionResponse::ECR_Ignore, TEXT("ECR_Ignore"), TEXT("Ignore"));
+		extern CSCORE_API const ECollisionResponse ECR_Overlap = EMCollisionResponse::Get().Add(ECollisionResponse::ECR_Overlap, TEXT("ECR_Overlap"), TEXT("Overlap"));
+		extern CSCORE_API const ECollisionResponse ECR_Block = EMCollisionResponse::Get().Add(ECollisionResponse::ECR_Block, TEXT("ECR_Block"), TEXT("Block"));
+		extern CSCORE_API const ECollisionResponse ECR_MAX = EMCollisionResponse::Get().Add(ECollisionResponse::ECR_MAX, TEXT("ECR_MAX"), TEXT("MAX"));
 	}
 }
 

@@ -253,6 +253,21 @@ namespace ECsInputValue
 	};
 }
 
+struct CSCORE_API EMCsInputValue : public TCsEnumMap<ECsInputValue::Type>
+{
+protected:
+	EMCsInputValue() {}
+	EMCsInputValue(const EMCsInputValue &) = delete;
+	EMCsInputValue(EMCsInputValue &&) = delete;
+public:
+	~EMCsInputValue() {}
+private:
+	static EMCsInputValue* Instance;
+
+public:
+	static EMCsInputValue& Get();
+};
+
 namespace ECsInputValue
 {
 	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
@@ -505,7 +520,7 @@ struct CSCORE_API FCsInputInfo
 };
 
 USTRUCT(BlueprintType)
-struct FRep_CsInput
+struct CSCORE_API FRep_CsInput
 {
 	GENERATED_USTRUCT_BODY()
 

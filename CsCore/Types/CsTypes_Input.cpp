@@ -55,7 +55,7 @@ namespace ECsInputType
 		CSCORE_API const Type Trigger = EMCsInputType::Get().Add(Type::Trigger, TEXT("Trigger"));
 		CSCORE_API const Type Location = EMCsInputType::Get().Add(Type::Location, TEXT("Location"));
 		CSCORE_API const Type Rotation = EMCsInputType::Get().Add(Type::Rotation, TEXT("Rotation"));
-		CSCORE_API const Type ECsInputType_MAX = EMCsInputType::Get().Add(Type::ECsInputType_MAX, TEXT("ECsInputType_MAX"));
+		CSCORE_API const Type ECsInputType_MAX = EMCsInputType::Get().Add(Type::ECsInputType_MAX, TEXT("ECsInputType_MAX"), TEXT("MAX"));
 	}
 }
 
@@ -86,16 +86,25 @@ namespace ECsInputEvent
 
 	namespace Ref
 	{
-		CSCORE_API const Type FirstPressed = Type::FirstPressed;
-		CSCORE_API const Type Pressed = Type::Pressed;
-		CSCORE_API const Type FirstReleased = Type::FirstReleased;
-		CSCORE_API const Type Released = Type::Released;
-		CSCORE_API const Type FirstMoved = Type::FirstMoved;
-		CSCORE_API const Type Moved = Type::Moved;
-		CSCORE_API const Type FirstStationary = Type::FirstStationary;
-		CSCORE_API const Type Stationary = Type::Stationary;
-		CSCORE_API const Type ECsInputEvent_MAX = Type::ECsInputEvent_MAX;
+		CSCORE_API const Type FirstPressed = EMCsInputEvent::Get().Add(Type::FirstPressed, TEXT("FirstPressed"), TEXT("First Pressed"));
+		CSCORE_API const Type Pressed = EMCsInputEvent::Get().Add(Type::Pressed, TEXT("Pressed"), TEXT("Pressed"));
+		CSCORE_API const Type FirstReleased = EMCsInputEvent::Get().Add(Type::FirstReleased, TEXT("FirstReleased"), TEXT("First Released"));
+		CSCORE_API const Type Released = EMCsInputEvent::Get().Add(Type::Released, TEXT("Released"), TEXT("Released"));
+		CSCORE_API const Type FirstMoved = EMCsInputEvent::Get().Add(Type::FirstMoved, TEXT("FirstMoved"), TEXT("First Moved"));
+		CSCORE_API const Type Moved = EMCsInputEvent::Get().Add(Type::Moved, TEXT("Moved"), TEXT("Moved"));
+		CSCORE_API const Type FirstStationary = EMCsInputEvent::Get().Add(Type::FirstStationary, TEXT("FirstStationary"), TEXT("First Stationary"));
+		CSCORE_API const Type Stationary = EMCsInputEvent::Get().Add(Type::Stationary, TEXT("Stationary"), TEXT("Stationary"));
+		CSCORE_API const Type ECsInputEvent_MAX = EMCsInputEvent::Get().Add(Type::ECsInputEvent_MAX, TEXT("ECsInputEvent_MAX"), TEXT("MAX"));
 	}
+}
+
+EMCsInputValue* EMCsInputValue::Instance;
+
+EMCsInputValue& EMCsInputValue::Get()
+{
+	if (!Instance)
+		Instance = new EMCsInputValue();
+	return *Instance;
 }
 
 namespace ECsInputValue
@@ -110,11 +119,11 @@ namespace ECsInputValue
 
 	namespace Ref
 	{
-		CSCORE_API const Type Void = Type::Void;
-		CSCORE_API const Type Float = Type::Float;
-		CSCORE_API const Type Vector = Type::Vector;
-		CSCORE_API const Type Rotator = Type::Rotator;
-		CSCORE_API const Type ECsInputValue_MAX = Type::ECsInputValue_MAX;
+		CSCORE_API const Type Void = EMCsInputValue::Get().Add(Type::Void, TEXT("Void"));
+		CSCORE_API const Type Float = EMCsInputValue::Get().Add(Type::Float, TEXT("Float"));
+		CSCORE_API const Type Vector = EMCsInputValue::Get().Add(Type::Vector, TEXT("Vector"));
+		CSCORE_API const Type Rotator = EMCsInputValue::Get().Add(Type::Rotator, TEXT("Rotator"));
+		CSCORE_API const Type ECsInputValue_MAX = EMCsInputValue::Get().Add(Type::ECsInputValue_MAX, TEXT("ECsInputValue_MAX"), TEXT("MAX"));
 	}
 }
 

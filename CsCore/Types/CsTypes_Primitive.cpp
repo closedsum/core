@@ -98,6 +98,15 @@ namespace ECsMemberType
 	}
 }
 
+EMCsStringCompare* EMCsStringCompare::Instance;
+
+EMCsStringCompare& EMCsStringCompare::Get()
+{
+	if (!Instance)
+		Instance = new EMCsStringCompare();
+	return *Instance;
+}
+
 namespace ECsStringCompare
 {
 	namespace Str
@@ -110,10 +119,10 @@ namespace ECsStringCompare
 
 	namespace Ref
 	{
-		CSCORE_API const Type Equals = Type::Equals;
-		CSCORE_API const Type StartsWith = Type::StartsWith;
-		CSCORE_API const Type EndsWith = Type::EndsWith;
-		CSCORE_API const Type Contains = Type::Contains;
-		CSCORE_API const Type ECsStringCompare_MAX = Type::ECsStringCompare_MAX;
+		CSCORE_API const Type Equals = EMCsStringCompare::Get().Add(Type::Equals, TEXT("Equals"));
+		CSCORE_API const Type StartsWith = EMCsStringCompare::Get().Add(Type::StartsWith, TEXT("Starts With"));
+		CSCORE_API const Type EndsWith = EMCsStringCompare::Get().Add(Type::EndsWith, TEXT("Ends With"));
+		CSCORE_API const Type Contains = EMCsStringCompare::Get().Add(Type::Contains, TEXT("Contains"));
+		CSCORE_API const Type ECsStringCompare_MAX = EMCsStringCompare::Get().Add(Type::ECsStringCompare_MAX, TEXT("ECsStringCompare_MAX"), TEXT("MAX"));
 	}
 }

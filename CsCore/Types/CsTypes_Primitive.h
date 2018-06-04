@@ -3130,7 +3130,7 @@ struct TCsPrimitiveType_TArrayRefValue_bool : public TCsPrimitiveType_TArrayRefV
 #pragma region
 
 template<typename KeyType, typename ValueType>
-struct TCsPrimitiveType_TMap
+struct TCsProperty_TMap
 {
 public:
 	ValueType DefaultValue;
@@ -3151,8 +3151,8 @@ public:
 
 public:
 
-	TCsPrimitiveType_TMap() {}
-	virtual ~TCsPrimitiveType_TMap() {}
+	TCsProperty_TMap() {}
+	virtual ~TCsProperty_TMap() {}
 
 	void SetDefaultValue(const ValueType& InDefaultValue)
 	{
@@ -3182,7 +3182,7 @@ public:
 			OnChangeMap_Event.Broadcast(Key, Values[Key]);
 	}
 
-	FORCEINLINE TCsPrimitiveType_TMap& operator=(const TCsPrimitiveType_TMap& B)
+	FORCEINLINE TCsProperty_TMap& operator=(const TCsProperty_TMap& B)
 	{
 		Value = B;
 		UpdateIsDirty();
@@ -3198,7 +3198,7 @@ public:
 		return *this;
 	}
 
-	FORCEINLINE bool operator==(const TCsPrimitiveType_TArrayValue& B) const
+	FORCEINLINE bool operator==(const TCsProperty_TMap& B) const
 	{
 		TArray<KeyType> Keys;
 		Values.GetKeys(Keys);
@@ -3211,7 +3211,7 @@ public:
 		return Value == B;
 	}
 
-	FORCEINLINE bool operator!=(const TCsPrimitiveType_TArrayValue& B) const
+	FORCEINLINE bool operator!=(const TCsProperty_TMap& B) const
 	{
 		return !(*this == B);
 	}
@@ -3298,7 +3298,7 @@ public:
 };
 
 template<typename KeyType, typename ValueType>
-struct TCsIntegralType_TMap : public TCsPrimitiveType_TMap<KeyType, ValueType>
+struct TCsIntegralType_TMap : public TCsProperty_TMap<KeyType, ValueType>
 {
 	TCsIntegralType_TMap() {}
 	~TCsIntegralType_TMap() {}
@@ -3381,13 +3381,13 @@ struct TCsIntegralType_TMap_float : public TCsIntegralType_TMap<KeyType, float>
 };
 
 template<typename KeyType>
-struct TCsPrimitiveType_TMap_bool : public TCsPrimitiveType_TMap<KeyType, bool>
+struct TCsProperty_TMap_bool : public TCsProperty_TMap<KeyType, bool>
 {
-	TCsPrimitiveType_TMap_bool()
+	TCsProperty_TMap_bool()
 	{
 		DefaultValue = false;
 	}
-	~TCsPrimitiveType_TMap_bool() {}
+	~TCsProperty_TMap_bool() {}
 
 	FORCEINLINE bool Or()
 	{
@@ -3422,7 +3422,7 @@ struct TCsPrimitiveType_TMap_bool : public TCsPrimitiveType_TMap<KeyType, bool>
 	}
 };
 
-#pragma endregion TArrayValue
+#pragma endregion TMap
 
 UENUM(BlueprintType)
 namespace ECsMemberType
@@ -4224,6 +4224,21 @@ namespace ECsStringCompare
 		ECsStringCompare_MAX,
 	};
 }
+
+struct CSCORE_API EMCsStringCompare : public TCsEnumMap<ECsStringCompare::Type>
+{
+protected:
+	EMCsStringCompare() {}
+	EMCsStringCompare(const EMCsStringCompare &) = delete;
+	EMCsStringCompare(EMCsStringCompare &&) = delete;
+public:
+	~EMCsStringCompare() {}
+private:
+	static EMCsStringCompare* Instance;
+
+public:
+	static EMCsStringCompare& Get();
+};
 
 namespace ECsStringCompare
 {

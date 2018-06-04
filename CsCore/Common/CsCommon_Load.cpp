@@ -747,6 +747,12 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FECsInputAction
 				if (StructProperty->Struct == FECsInputAction::StaticStruct())
 				{ WriteMemberEnumStructPropertyToJson<FECsInputAction>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsGameEvent
+				if (StructProperty->Struct == FECsGameEvent::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsGameEvent>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsSurfaceType
+				if (StructProperty->Struct == FECsSurfaceType::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsSurfaceType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
 			}
 
 			if (Internal)
@@ -1448,6 +1454,12 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FECsInputAction
 				if (StructProperty->Struct == FECsInputAction::StaticStruct())
 				{ WriteMemberEnumStructPropertyToJson<FECsInputAction>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsGameEvent
+				if (StructProperty->Struct == FECsGameEvent::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsGameEvent>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsSurfaceType
+				if (StructProperty->Struct == FECsSurfaceType::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsSurfaceType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
 			}
 
 			if (Internal)
@@ -2089,6 +2101,12 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FECsInputAction
 				if (StructProperty->Struct == FECsInputAction::StaticStruct())
 				{ WriteMemberEnumStructPropertyToJson<FECsInputAction>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+				// FECsGameEvent
+				if (StructProperty->Struct == FECsGameEvent::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsGameEvent>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+				// FECsSurfaceType
+				if (StructProperty->Struct == FECsSurfaceType::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsSurfaceType>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
 			}
 
 			if (Internal)
@@ -2906,6 +2924,12 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 				// FECsInputAction
 				if (StructProperty->Struct == FECsInputAction::StaticStruct())
 				{ WriteToMemberEnumStructPropertyFromJson<FECsInputAction, EMCsInputAction>(JsonObject, StructProperty, InStruct, MemberName, EMCsInputAction::Get()); continue; }
+				// FECsGameEvent
+				if (StructProperty->Struct == FECsGameEvent::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsGameEvent, EMCsGameEvent>(JsonObject, StructProperty, InStruct, MemberName, EMCsGameEvent::Get()); continue; }
+				// FECsSurfaceType
+				if (StructProperty->Struct == FECsSurfaceType::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsSurfaceType, EMCsSurfaceType>(JsonObject, StructProperty, InStruct, MemberName, EMCsSurfaceType::Get()); continue; }
 			}
 
 			if (Internal)
@@ -3647,6 +3671,12 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				// FECsInputAction
 				if (StructProperty->Struct == FECsInputAction::StaticStruct())
 				{ WriteToMemberEnumStructPropertyFromJson<FECsInputAction, EMCsInputAction>(JsonObject, StructProperty, InStruct, MemberName, EMCsInputAction::Get()); continue; }
+				// FECsGameEvent
+				if (StructProperty->Struct == FECsGameEvent::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsGameEvent, EMCsGameEvent>(JsonObject, StructProperty, InStruct, MemberName, EMCsGameEvent::Get()); continue; }
+				// FECsSurfaceType
+				if (StructProperty->Struct == FECsSurfaceType::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsSurfaceType, EMCsSurfaceType>(JsonObject, StructProperty, InStruct, MemberName, EMCsSurfaceType::Get()); continue; }
 			}
 
 			if (Internal)
@@ -4335,6 +4365,12 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				// FECsInputAction
 				if (StructProperty->Struct == FECsInputAction::StaticStruct())
 				{ WriteToMemberEnumStructPropertyFromJson<FECsInputAction, EMCsInputAction>(JsonObject, StructProperty, InObject, MemberName, EMCsInputAction::Get()); continue; }
+				// FECsGameEvent
+				if (StructProperty->Struct == FECsGameEvent::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsGameEvent, EMCsGameEvent>(JsonObject, StructProperty, InObject, MemberName, EMCsGameEvent::Get()); continue; }
+				// FECsSurfaceType
+				if (StructProperty->Struct == FECsSurfaceType::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsSurfaceType, EMCsSurfaceType>(JsonObject, StructProperty, InObject, MemberName, EMCsSurfaceType::Get()); continue; }
 			}
 
 			if (Internal)

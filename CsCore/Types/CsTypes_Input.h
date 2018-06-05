@@ -389,30 +389,6 @@ struct CSCORE_API FCsInputActionMapRule
 	~FCsInputActionMapRule(){}
 };
 
-/*
-namespace ECsInputAction
-{
-	enum Type : uint8;
-}
-
-typedef ECsInputAction::Type TCsInputAction;
-
-// InputActionToString
-typedef const FString&(*TCsInputActionToString)(const TCsInputAction&);
-// StringToInputAction
-typedef TCsInputAction(*TCsStringToInputAction)(const FString&);
-
-#define CS_DECLARE_INPUT_ACTION	TCsInputAction InputAction_MAX; \
-								uint8 INPUT_ACTION_MAX; \
-								TCsInputActionToString InputActionToString; \
-								TCsStringToInputAction StringToInputAction;
-
-#define CS_DEFINE_INPUT_ACTION	InputAction_MAX = ECsInputAction::ECsInputAction_MAX;\
-								INPUT_ACTION_MAX = (uint8)InputAction_MAX; \
-								InputActionToString = &ECsInputAction::ToString; \
-								StringToInputAction = &ECsInputAction::ToType;
-*/
-
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsInputAction : public FECsEnum_uint8
 {

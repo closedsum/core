@@ -76,6 +76,40 @@ typedef TCsWeaponState(*TCsStringToWeaponState)(const FString&);
 								WeaponStateToString = &ECsWeaponState::ToString; \
 								StringToWeaponState = &ECsWeaponState::ToType;
 
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsWeaponState : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsWeaponState() {}
+	FECsWeaponState(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsWeaponState(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsWeaponState() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsWeaponState& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
+}
+
+struct CSCORE_API EMCsWeaponState : public TCsEnumStructMap<FECsWeaponState, uint8>
+{
+protected:
+	EMCsWeaponState() {}
+	EMCsWeaponState(const EMCsWeaponState &) = delete;
+	EMCsWeaponState(EMCsWeaponState &&) = delete;
+public:
+	~EMCsWeaponState() {}
+private:
+	static EMCsWeaponState* Instance;
+
+public:
+	static EMCsWeaponState& Get();
+};
+
 namespace ECsWeaponSlot
 {
 	enum Type : uint8;
@@ -97,6 +131,40 @@ typedef TCsWeaponSlot(*TCsStringToWeaponSlot)(const FString&);
 								WEAPON_SLOT_MAX = (uint8)WeaponSlot_MAX \
 								WeaponSlotToString = &ECsWeaponSlot::ToString; \
 								StringToWeaponSlot = &ECsWeaponSlot::ToType;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsWeaponSlot : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsWeaponSlot() {}
+	FECsWeaponSlot(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsWeaponSlot(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsWeaponSlot() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsWeaponSlot& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
+}
+
+struct CSCORE_API EMCsWeaponSlot : public TCsEnumStructMap<FECsWeaponSlot, uint8>
+{
+protected:
+	EMCsWeaponSlot() {}
+	EMCsWeaponSlot(const EMCsWeaponSlot &) = delete;
+	EMCsWeaponSlot(EMCsWeaponSlot &&) = delete;
+public:
+	~EMCsWeaponSlot() {}
+private:
+	static EMCsWeaponSlot* Instance;
+
+public:
+	static EMCsWeaponSlot& Get();
+};
 
 namespace ECsWeaponFireMode
 {
@@ -120,6 +188,40 @@ typedef TCsWeaponFireMode(*TCsStringToWeaponFireMode)(const FString&);
 									WeaponFireModeToString = &ECsWeaponFireMode::ToString; \
 									StringToWeaponFireMode = &ECsWeaponFireMode::ToType;
 
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsWeaponFireMode : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsWeaponFireMode() {}
+	FECsWeaponFireMode(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsWeaponFireMode(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsWeaponFireMode() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsWeaponFireMode& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
+}
+
+struct CSCORE_API EMCsWeaponFireMode : public TCsEnumStructMap<FECsWeaponFireMode, uint8>
+{
+protected:
+	EMCsWeaponFireMode() {}
+	EMCsWeaponFireMode(const EMCsWeaponFireMode &) = delete;
+	EMCsWeaponFireMode(EMCsWeaponFireMode &&) = delete;
+public:
+	~EMCsWeaponFireMode() {}
+private:
+	static EMCsWeaponFireMode* Instance;
+
+public:
+	static EMCsWeaponFireMode& Get();
+};
+
 namespace ECsWeaponGrip
 {
 	enum Type : uint8;
@@ -141,6 +243,40 @@ typedef TCsWeaponGrip(*TCsStringToWeaponGrip)(const FString&);
 								WEAPON_GRIP_MAX = (uint8)WeaponGrip_MAX \
 								WeaponGripToString = &ECsWeaponGrip::ToString; \
 								StringToWeaponGrip = &ECsWeaponGrip::ToType;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsWeaponGrip : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsWeaponGrip() {}
+	FECsWeaponGrip(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsWeaponGrip(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsWeaponGrip() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsWeaponGrip& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
+}
+
+struct CSCORE_API EMCsWeaponGrip : public TCsEnumStructMap<FECsWeaponGrip, uint8>
+{
+protected:
+	EMCsWeaponGrip() {}
+	EMCsWeaponGrip(const EMCsWeaponGrip &) = delete;
+	EMCsWeaponGrip(EMCsWeaponGrip &&) = delete;
+public:
+	~EMCsWeaponGrip() {}
+private:
+	static EMCsWeaponGrip* Instance;
+
+public:
+	static EMCsWeaponGrip& Get();
+};
 
 namespace ECsWeaponAnim
 {
@@ -164,12 +300,80 @@ typedef TCsWeaponAnim(*TCsStringToWeaponAnim)(const FString&);
 								WeaponAnimToString = &ECsWeaponAnim::ToString; \
 								StringToWeaponAnim = &ECsWeaponAnim::ToType;
 
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsWeaponAnim : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsWeaponAnim() {}
+	FECsWeaponAnim(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsWeaponAnim(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsWeaponAnim() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsWeaponAnim& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
+}
+
+struct CSCORE_API EMCsWeaponAnim : public TCsEnumStructMap<FECsWeaponAnim, uint8>
+{
+protected:
+	EMCsWeaponAnim() {}
+	EMCsWeaponAnim(const EMCsWeaponAnim &) = delete;
+	EMCsWeaponAnim(EMCsWeaponAnim &&) = delete;
+public:
+	~EMCsWeaponAnim() {}
+private:
+	static EMCsWeaponAnim* Instance;
+
+public:
+	static EMCsWeaponAnim& Get();
+};
+
 namespace ECsWeaponBlendSpace
 {
 	enum Type : uint8;
 }
 
 typedef ECsWeaponBlendSpace::Type TCsWeaponBlendSpace;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsWeaponBlendSpace : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsWeaponBlendSpace() {}
+	FECsWeaponBlendSpace(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsWeaponBlendSpace(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsWeaponBlendSpace() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsWeaponBlendSpace& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
+}
+
+struct CSCORE_API EMCsWeaponBlendSpace : public TCsEnumStructMap<FECsWeaponBlendSpace, uint8>
+{
+protected:
+	EMCsWeaponBlendSpace() {}
+	EMCsWeaponBlendSpace(const EMCsWeaponBlendSpace &) = delete;
+	EMCsWeaponBlendSpace(EMCsWeaponBlendSpace &&) = delete;
+public:
+	~EMCsWeaponBlendSpace() {}
+private:
+	static EMCsWeaponBlendSpace* Instance;
+
+public:
+	static EMCsWeaponBlendSpace& Get();
+};
 
 namespace ECsWeaponAnimBlueprint
 {
@@ -178,12 +382,80 @@ namespace ECsWeaponAnimBlueprint
 
 typedef ECsWeaponAnimBlueprint::Type TCsWeaponAnimBlueprint;
 
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsWeaponAnimBlueprint : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsWeaponAnimBlueprint() {}
+	FECsWeaponAnimBlueprint(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsWeaponAnimBlueprint(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsWeaponAnimBlueprint() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsWeaponAnimBlueprint& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
+}
+
+struct CSCORE_API EMCsWeaponAnimBlueprint : public TCsEnumStructMap<FECsWeaponAnimBlueprint, uint8>
+{
+protected:
+	EMCsWeaponAnimBlueprint() {}
+	EMCsWeaponAnimBlueprint(const EMCsWeaponAnimBlueprint &) = delete;
+	EMCsWeaponAnimBlueprint(EMCsWeaponAnimBlueprint &&) = delete;
+public:
+	~EMCsWeaponAnimBlueprint() {}
+private:
+	static EMCsWeaponAnimBlueprint* Instance;
+
+public:
+	static EMCsWeaponAnimBlueprint& Get();
+};
+
 namespace ECsWeaponSound
 {
 	enum Type : uint8;
 }
 
 typedef ECsWeaponSound::Type TCsWeaponSound;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsWeaponSound : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsWeaponSound() {}
+	FECsWeaponSound(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsWeaponSound(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsWeaponSound() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsWeaponSound& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
+}
+
+struct CSCORE_API EMCsWeaponSound : public TCsEnumStructMap<FECsWeaponSound, uint8>
+{
+protected:
+	EMCsWeaponSound() {}
+	EMCsWeaponSound(const EMCsWeaponSound &) = delete;
+	EMCsWeaponSound(EMCsWeaponSound &&) = delete;
+public:
+	~EMCsWeaponSound() {}
+private:
+	static EMCsWeaponSound* Instance;
+
+public:
+	static EMCsWeaponSound& Get();
+};
 
 namespace ECsWeaponOwner
 {
@@ -206,6 +478,40 @@ typedef TCsWeaponOwner(*TCsStringToWeaponOwner)(const FString&);
 								WEAPON_OWNER_MAX = (uint8)WeaponOwner_MAX \
 								WeaponOwnerToString = &ECsWeaponOwner::ToString; \
 								StringToWeaponOwner = &ECsWeaponOwner::ToType;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsWeaponOwner : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsWeaponOwner() {}
+	FECsWeaponOwner(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsWeaponOwner(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsWeaponOwner() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsWeaponOwner& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
+}
+
+struct CSCORE_API EMCsWeaponOwner : public TCsEnumStructMap<FECsWeaponOwner, uint8>
+{
+protected:
+	EMCsWeaponOwner() {}
+	EMCsWeaponOwner(const EMCsWeaponOwner &) = delete;
+	EMCsWeaponOwner(EMCsWeaponOwner &&) = delete;
+public:
+	~EMCsWeaponOwner() {}
+private:
+	static EMCsWeaponOwner* Instance;
+
+public:
+	static EMCsWeaponOwner& Get();
+};
 
 USTRUCT(BlueprintType)
 struct FCsData_Weapon_FireMode_Firing

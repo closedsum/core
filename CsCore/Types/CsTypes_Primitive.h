@@ -3424,6 +3424,289 @@ struct TCsProperty_TMap_bool : public TCsProperty_TMap<KeyType, bool>
 
 #pragma endregion TMap
 
+// TMapRef
+#pragma region
+
+template<typename KeyType, typename ValueType>
+struct TCsProperty_TMapRef
+{
+public:
+	ValueType DefaultValue;
+	ValueType Value;
+	ValueType Last_Value;
+
+	TMap<KeyType, ValueType*> Values;
+	TMap<KeyType, ValueType> Last_Values;
+
+protected:
+	bool IsDirty;
+
+	TMap<KeyType, bool> IsDirtys;
+public:
+	TBaseDelegate<const ValueType&, const KeyType&> GetDelegate;
+	TMulticastDelegate<void, const ValueType&> OnChange_Event;
+	TMulticastDelegate<void, const KeyType&, const ValueType&> OnChangeMap_Event;
+public:
+
+	TCsProperty_TMapRef() {}
+	virtual ~TCsProperty_TMapRef() {}
+
+	void SetDefaultValue(const ValueType& InDefaultValue)
+	{
+		DefaultValue = InDefaultValue;
+	}
+
+	void Init(const KeyType &Key, ValueType* InValue)
+	{
+		Values.Add(Key, InValue);
+		Last_Values.Add(Key, *InValue);
+		IsDirtys.Add(Key, false);
+	}
+
+	FORCEINLINE virtual void UpdateIsDirty()
+	{
+		IsDirty = Value != Last_Value;
+
+		if (IsDirty)
+			OnChange_Event.Broadcast(Value);
+	}
+
+	FORCEINLINE virtual void UpdateIsDirtys(const KeyType &Key)
+	{
+		IsDirtys[Key] = *(Values[Key]) != Last_Values[Key];
+
+		if (IsDirtys[Key])
+			OnChangeMap_Event.Broadcast(Key, *(Values[Key]));
+	}
+
+	FORCEINLINE TCsProperty_TMapRef& operator=(const TCsProperty_TMapRef& B)
+	{
+		Value = B.Value;
+		UpdateIsDirty();
+
+		TArray<KeyType> Keys;
+		Values.GetKeys(Keys);
+
+		for (const KeyType& Key : Keys)
+		{
+			*(Values[Key]) = *(B.Values[Key]);
+			UpdateIsDirtys(I);
+		}
+		return *this;
+	}
+
+	FORCEINLINE bool operator==(const TCsProperty_TMapRef& B) const
+	{
+		TArray<KeyType> Keys;
+		Values.GetKeys(Keys);
+
+		for (const KeyType& Key : Keys)
+		{
+			if (*(Values[Key]) != *(B.Values[Key]))
+				return false;
+		}
+		return Value == B;
+	}
+
+	FORCEINLINE bool operator!=(const TCsProperty_TMapRef& B) const
+	{
+		return !(*this == B);
+	}
+
+	FORCEINLINE void Set(const ValueType &InValue)
+	{
+		Value = InValue;
+		UpdateIsDirty();
+	}
+
+	FORCEINLINE void Set(const KeyType& Key, ValueType* InValue)
+	{
+		Values[Key] = InValue;
+		UpdateIsDirtys(Key);
+	}
+
+	FORCEINLINE const ValueType& operator[](const KeyType &Key)
+	{
+		return *(Values[Key]);
+	}
+
+	FORCEINLINE const ValueType& Get() { return Value; }
+	FORCEINLINE const ValueType& Get(const KeyType& Key) { return *(Values[Key]); }
+
+	FORCEINLINE const ValueType& GetEX(const KeyType &Key) { return GetDelegate.Execute(Key); }
+
+	void Clear()
+	{
+		Last_Value = Value;
+		IsDirty = false;
+
+		TArray<KeyType> Keys;
+		Values.GetKeys(Keys);
+
+		for (const KeyType& Key : Keys)
+		{
+			Last_Values[Key] = *(Values[Key]);
+			IsDirtys[Key] = false;
+		}
+	}
+
+	void ResetValues()
+	{
+		Value = DefaultValue;
+		Last_Value = Value;
+		IsDirty = false;
+
+		TArray<KeyType> Keys;
+		Values.GetKeys(Keys);
+
+		for (const KeyType& Key : Keys)
+		{
+			Values[Key] = nullptr;
+			Last_Values[Key] = Value;
+			IsDirtys[Key] = false;
+		}
+	}
+
+	void Reset()
+	{
+		ResetValues();
+
+		GetDelegate.Unbind();
+		OnChange_Event.Clear();
+		OnChangeMap_Event.Clear();
+	}
+
+	FORCEINLINE bool HasChanged() { return IsDirty; }
+	FORCEINLINE bool HasChanged(const KeyType &Key) { return IsDirtys[Key]; }
+
+	FORCEINLINE void Resolve()
+	{
+		UpdateIsDirty();
+
+		TArray<KeyType> Keys;
+		Values.GetKeys(Keys);
+
+		for (const KeyType& Key : Keys)
+		{
+			UpdateIsDirtys(Key);
+		}
+		Clear();
+	}
+};
+
+template<typename KeyType, typename ValueType>
+struct TCsIntegralType_TMapRef : public TCsProperty_TMapRef<KeyType, ValueType>
+{
+	TCsIntegralType_TMapRef() {}
+	~TCsIntegralType_TMapRef() {}
+
+	FORCEINLINE ValueType Max()
+	{
+		TArray<KeyType> Keys;
+		Values.GetKeys(Keys);
+
+		ValueType max = *(Values[Keys[0]]);
+
+		const uint8 Count = Keys.Num();
+
+		for (uint8 I = 1; I < Count; ++I)
+		{
+			max = (KeyType)FMath::Max(max, *(Values[Keys[I]]));
+		}
+		return max;
+	}
+
+	FORCEINLINE ValueType Min()
+	{
+		TArray<KeyType> Keys;
+		Values.GetKeys(Keys);
+
+		ValueType min = *(Values[Keys[0]]);
+
+		const uint8 Count = Keys.Num();
+
+		for (uint8 I = 1; I < Count; ++I)
+		{
+			min = (ValueType)FMath::Min(min, *(Values[Keys[I]]));
+		}
+		return min;
+	}
+};
+
+template<typename KeyType>
+struct TCsIntegralType_TMapRef_uint8 : public TCsIntegralType_TMapRef<KeyType, uint8>
+{
+	TCsIntegralType_TMapRef_uint8()
+	{
+		DefaultValue = 0;
+	}
+	~TCsIntegralType_TMapRef_uint8() {}
+};
+
+template<typename KeyType>
+struct TCsIntegralType_TMapRef_int32 : public TCsIntegralType_TMapRef<KeyType, int32>
+{
+	TCsIntegralType_TMapRef_int32()
+	{
+		DefaultValue = 0;
+	}
+	~TCsIntegralType_TMapRef_int32() {}
+};
+
+template<typename KeyType>
+struct TCsIntegralType_TMapRef_float : public TCsIntegralType_TMapRef<KeyType, float>
+{
+	TCsIntegralType_TMapRef_float()
+	{
+		DefaultValue = 0.0f;
+	}
+	~TCsIntegralType_TMapRef_float() {}
+};
+
+template<typename KeyType>
+struct TCsIntegralType_TMapRef_bool : public TCsIntegralType_TMapRef<KeyType, bool>
+{
+	TCsIntegralType_TMapRef_bool()
+	{
+		DefaultValue = false;
+	}
+	~TCsIntegralType_TMapRef_bool() {}
+
+	FORCEINLINE bool Or()
+	{
+		TArray<KeyType> Keys;
+		Values.GetKeys(Keys);
+
+		bool or = *(Values[Keys[0]]);
+
+		const uint8 Count = Keys.Num();
+
+		for (uint8 I = 1; I < Count; ++I)
+		{
+			or |= *(Values[Keys[I]]);
+		}
+		return or ;
+	}
+
+	FORCEINLINE bool And()
+	{
+		TArray<KeyType> Keys;
+		Values.GetKeys(Keys);
+
+		bool and = *(Values[Keys[0]]);
+
+		const uint8 Count = Keys.Num();
+
+		for (uint8 I = 1; I < Count; ++I)
+		{
+			and &= *(Values[Keys[I]]);
+		}
+		return and;
+	}
+};
+
+#pragma endregion TMapRef
+
 UENUM(BlueprintType)
 namespace ECsMemberType
 {

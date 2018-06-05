@@ -176,7 +176,7 @@ void UCsEthereum::Initialize()
 	Genesis->AddToRoot();
 
 	ConsoleFilename = TEXT("geth.exe");
-	const FString Path = FPaths::ConvertRelativePathToFull(FPaths::GameDir());
+	const FString Path = FPaths::ConvertRelativePathToFull(FPaths::GameContentDir());
 
 	ConsoleDirectory = Path + TEXT("Blockchain/Ethereum/Geth");
 	ConsoleFullPath = ConsoleDirectory + "/" + ConsoleFilename;

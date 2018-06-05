@@ -22,6 +22,14 @@
 #include "DetailCustomizations/EnumStruct/ECsSurfaceTypeCustomization.h"
 	// Weapon
 #include "DetailCustomizations/EnumStruct/ECsWeaponStateCustomization.h"
+#include "DetailCustomizations/EnumStruct/ECsWeaponSlotCustomization.h"
+#include "DetailCustomizations/EnumStruct/ECsWeaponFireModeCustomization.h"
+#include "DetailCustomizations/EnumStruct/ECsWeaponGripCustomization.h"
+#include "DetailCustomizations/EnumStruct/ECsWeaponAnimCustomization.h"
+#include "DetailCustomizations/EnumStruct/ECsWeaponBlendSpaceCustomization.h"
+#include "DetailCustomizations/EnumStruct/ECsWeaponAnimBlueprintCustomization.h"
+#include "DetailCustomizations/EnumStruct/ECsWeaponSoundCustomization.h"
+#include "DetailCustomizations/EnumStruct/ECsWeaponOwnerCustomization.h"
 	// Process
 #include "DetailCustomizations/EnumStruct/ECsProcessCustomization.h"
 	// Blockchain
@@ -47,6 +55,14 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsSurfaceType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsSurfaceTypeCustomization::MakeInstance));
 		// Weapon
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponState", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponStateCustomization::MakeInstance));
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponSlot", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponSlotCustomization::MakeInstance));
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponFireMode", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponFireModeCustomization::MakeInstance));
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponGrip", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponGripCustomization::MakeInstance));
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponAnim", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponAnimCustomization::MakeInstance));
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponBlendSpace", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponBlendSpaceCustomization::MakeInstance));
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponAnimBlueprint", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponAnimBlueprintCustomization::MakeInstance));
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponSound", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponSoundCustomization::MakeInstance));
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponOwner", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponOwnerCustomization::MakeInstance));
 		// Process
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsProcess", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsProcessCustomization::MakeInstance));
 		// Blockchain

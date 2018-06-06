@@ -681,6 +681,9 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 
 	static FString GetProxyAsString(AActor* InActor);
 
+// World
+#pragma region
+
 	UFUNCTION(BlueprintCallable, Category = "Common")
 	static bool IsPlayInGame(UWorld* InWorld);
 	UFUNCTION(BlueprintCallable, Category = "Common")
@@ -689,6 +692,10 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	static bool IsPlayInPIE(UWorld* InWorld);
 	UFUNCTION(BlueprintCallable, Category = "Common")
 	static bool IsPlayInEditorPreview(UWorld* World);
+	UFUNCTION(BlueprintCallable, Category = "Common")
+	static bool IsAnyWorldContextEditorOrEditorPreview();
+
+#pragma endregion World
 
 	template<typename T>
 	static T* GetUObject(UWorld* InWorld)

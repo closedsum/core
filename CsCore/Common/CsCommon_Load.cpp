@@ -884,6 +884,16 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			}
 			continue;
 		}
+		// Map
+		if (UMapProperty* MapProperty = Cast<UMapProperty>(*It))
+		{
+			if (Internal)
+			{
+				if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
+					continue;
+			}
+			continue;
+		}
 		// bool
 		if (UBoolProperty* BoolProperty = Cast<UBoolProperty>(*It))
 		{
@@ -1591,6 +1601,16 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			}
 			continue;
 		}
+		// Map
+		if (UMapProperty* MapProperty = Cast<UMapProperty>(*It))
+		{
+			if (Internal)
+			{
+				if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
+					continue;
+			}
+			continue;
+		}
 		// bool
 		if (UBoolProperty* BoolProperty = Cast<UBoolProperty>(*It))
 		{
@@ -2217,6 +2237,16 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			if (UUInt64Property* IntProperty = Cast<UUInt64Property>(ArrayProperty->Inner))
 			{ WriteMemberIntegralArrayPropertyToJson_uint64(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
 
+			if (Internal)
+			{
+				if ((*Internal)(Property, InJsonWriter, InObject, InClass))
+					continue;
+			}
+			continue;
+		}
+		// Map
+		if (UMapProperty* MapProperty = Cast<UMapProperty>(*It))
+		{
 			if (Internal)
 			{
 				if ((*Internal)(Property, InJsonWriter, InObject, InClass))
@@ -3059,6 +3089,16 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			}
 			continue;
 		}
+		// Map
+		if (UMapProperty* MapProperty = Cast<UMapProperty>(*It))
+		{
+			if (Internal)
+			{
+				if ((*Internal)(Property, JsonObject, InStruct, InScriptStruct))
+					continue;
+			}
+			continue;
+		}
 		// bool
 		if (UBoolProperty* BoolProperty = Cast<UBoolProperty>(*It))
 		{
@@ -3809,6 +3849,16 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			}
 			continue;
 		}
+		// Map
+		if (UMapProperty* MapProperty = Cast<UMapProperty>(*It))
+		{
+			if (Internal)
+			{
+				if ((*Internal)(Property, JsonObject, InStruct, InScriptStruct))
+					continue;
+			}
+			continue;
+		}
 		// bool
 		if (UBoolProperty* BoolProperty = Cast<UBoolProperty>(*It))
 		{
@@ -4481,6 +4531,16 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			if (UUInt64Property* IntProperty = Cast<UUInt64Property>(ArrayProperty->Inner))
 			{ WriteToMemberArrayStructPropertyFromJson_uint64(JsonObject, ArrayProperty, InObject, MemberName); continue; }
 
+			if (Internal)
+			{
+				if ((*Internal)(Property, JsonObject, InObject, InClass))
+					continue;
+			}
+			continue;
+		}
+		// Map
+		if (UMapProperty* MapProperty = Cast<UMapProperty>(*It))
+		{
 			if (Internal)
 			{
 				if ((*Internal)(Property, JsonObject, InObject, InClass))
@@ -5706,6 +5766,16 @@ void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct*
 			}
 			continue;
 		}
+		// Map
+		if (UMapProperty* MapProperty = Cast<UMapProperty>(*It))
+		{
+			if (Internal)
+			{
+				if ((*Internal)(Property, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes))
+					continue;
+			}
+			continue;
+		}
 	}
 }
 
@@ -5947,6 +6017,16 @@ void UCsCommon_Load::GetAssetReferencesFromObject(void* InObject, UClass* const 
 						continue;
 				}
 				continue;
+			}
+			continue;
+		}
+		// Map
+		if (UMapProperty* MapProperty = Cast<UMapProperty>(*It))
+		{
+			if (Internal)
+			{
+				if ((*Internal)(Property, InObject, InClass, LoadFlags, OutAssetReferences, LoadCodes))
+					continue;
 			}
 			continue;
 		}
@@ -6888,6 +6968,16 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 			}
 			continue;
 		}
+		// Map
+		if (UMapProperty* MapProperty = Cast<UMapProperty>(*It))
+		{
+			if (Internal)
+			{
+				if ((*Internal)(Property, ObjectName, InStruct, InScriptStruct, LoadFlags))
+					continue;
+			}
+			continue;
+		}
 	}
 }
 
@@ -7244,6 +7334,16 @@ void UCsCommon_Load::LoadObjectWithTAssetPtrs(const FString &ObjectName, void* I
 				}
 				continue;
 			}
+		}
+		// Map
+		if (UMapProperty* MapProperty = Cast<UMapProperty>(*It))
+		{
+			if (Internal)
+			{
+				if ((*Internal)(Property, ObjectName, InObject, InClass, LoadFlags))
+					continue;
+			}
+			continue;
 		}
 	}
 }

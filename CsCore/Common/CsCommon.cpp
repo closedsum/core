@@ -2427,6 +2427,9 @@ FString UCsCommon::GetProxyAsString(AActor* InActor)
 	return ECsCommonCached::Str::Unknown;
 }
 
+// World
+#pragma region
+
 bool UCsCommon::IsPlayInGame(UWorld* InWorld)
 {
 	return InWorld && InWorld->WorldType == EWorldType::Game;
@@ -2446,6 +2449,23 @@ bool UCsCommon::IsPlayInEditorPreview(UWorld* InWorld)
 {
 	return InWorld && InWorld->WorldType == EWorldType::EditorPreview;
 }
+
+bool UCsCommon::IsAnyWorldContextEditorOrEditorPreview()
+{
+	const TIndirectArray<FWorldContext>& WorldContexts = GEngine->GetWorldContexts();
+
+	for (const FWorldContext& Context : WorldContexts)
+	{
+		if (Context.WorldType == EWorldType::Editor ||
+			Context.WorldType == EWorldType::EditorPreview)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+#pragma endregion World
 
 bool UCsCommon::IsDefaultObject(UObject* InObject)
 {

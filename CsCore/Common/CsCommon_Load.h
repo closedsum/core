@@ -455,7 +455,7 @@ template<typename T>
 		for (int32 I = 0; I < SIZE; ++I)
 		{
 			InJsonWriter->WriteObjectStart((*ToString)((E)I));
-			WriteStructToJson(InJsonWriter, (void*)&((*Member)[I]), StructProperty->Struct, Internal);
+				WriteStructToJson(InJsonWriter, (void*)&((*Member)[I]), StructProperty->Struct, Internal);
 			InJsonWriter->WriteObjectEnd();
 		}
 		InJsonWriter->WriteObjectEnd();
@@ -548,6 +548,27 @@ template<typename T>
 			}
 			InJsonWriter->WriteObjectEnd();
 		}
+	}
+
+	template<typename KeyType, typename ValueType>
+	static void WriteMemberMapStructPropertyToJson_EnumStructKey(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UMapProperty* &MapProperty, void* InObject, const FString &MemberName, TCsWriteStructToJson_Internal Internal = nullptr)
+	{
+		TMap<KeyType, ValueType>* Member = MapProperty->ContainerPtrToValuePtr<TMap<KeyType, ValueType>>(InObject);
+
+		UStructProperty* StructProperty = Cast<UStructProperty>(MapProperty->ValueProp);
+
+		InJsonWriter->WriteObjectStart(MemberName);
+
+		TArray<KeyType> Keys;
+		Member->GetKeys(Keys);
+
+		for (const KeyType& Key : Keys)
+		{
+			InJsonWriter->WriteObjectStart(Key.Name);
+				WriteStructToJson(InJsonWriter, (void*)&((*Member)[Key]), StructProperty->Struct, Internal);
+			InJsonWriter->WriteObjectEnd();
+		}
+		InJsonWriter->WriteObjectEnd();
 	}
 
 	static bool WriteStructToJson_Internal_Helper(TCsWriteStructToJson_Internal Internal, UProperty* Property, TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, void* InStruct, UScriptStruct* const &InScriptStruct);
@@ -835,6 +856,26 @@ template<typename T>
 				const FString Value = JObject->GetStringField((*ToString)((E)I));
 				(*Member)[I]		= FName(*Value);
 			}
+		}
+	}
+
+	template<typename KeyType, typename ValueType>
+	static void WriteToMemberMapStructPropertyFromJson_EnumStructKey(TSharedPtr<class FJsonObject> &JsonObject, UMapProperty* &MapProperty, void* InObject, const FString &MemberName, TCsReadStructFromJson_Internal Internal = nullptr)
+	{
+		TMap<KeyType, ValueType>* Member = MapProperty->ContainerPtrToValuePtr<TMap<KeyType, ValueType>>(InObject);
+
+		UStructProperty* StructProperty = Cast<UStructProperty>(MapProperty->ValueProp);
+
+		const TSharedPtr<FJsonObject> JsonObjects = JsonObject->GetObjectField(MemberName);
+
+		TArray<KeyType> Keys;
+		Member->GetKeys(Keys);
+
+		for (const KeyType& Key : Keys)
+		{
+			TSharedPtr<FJsonObject> Object = JsonObjects->GetObjectField(Key.Name);
+
+			ReadStructFromJson(Object, (void*)&((*Member)[Key]), StructProperty->Struct, Internal);
 		}
 	}
 
@@ -1514,6 +1555,23 @@ template<typename T>
 			for (int32 I = 0; I < Count; ++I)
 			{
 				GetAssetReferencesFromStruct((void*)&((*Member)[I]), StructProperty->Struct, LoadFlags, OutAssetReferences, Internal, LoadCodes);
+			}
+		}
+	}
+
+	template<typename KeyType, typename ValueType>
+	static void GetAssetReferencesFromMapStructProperty(UMapProperty* MapProperty, void* InObject, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, TCsGetAssetReferencesFromStruct_Internal Internal = nullptr, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
+	{
+		if (TMap<KeyType, ValueType>* Member = MapProperty->ContainerPtrToValuePtr<TMap<KeyType, ValueType>>(InObject))
+		{
+			UStructProperty* StructProperty = Cast<UStructProperty>(MapProperty->ValueProp);
+
+			TArray<KeyType> Keys;
+			Member->GetKeys(Keys);
+
+			for (const KeyType& Key : Keys)
+			{
+				GetAssetReferencesFromStruct((void*)&((*Member)[Key]), StructProperty->Struct, LoadFlags, OutAssetReferences, Internal, LoadCodes);
 			}
 		}
 	}
@@ -2397,6 +2455,24 @@ template<typename T>
 				const FString Index		  = (*ToString)((E)I);
 				const FString ElementName = MemberName + TEXT("[") + Index + TEXT("]");
 				LoadStructWithTAssetPtrs(ElementName, (void*)&((*Member)[I]), StructProperty->Struct, LoadFlags, Internal);
+			}
+		}
+	}
+
+	template<typename KeyType, typename ValueType>
+	static void LoadMemberMapStructProperty_EnumStructKey(UMapProperty* &MapProperty, void* InObject, const FString &MemberName, const ECsLoadFlags &LoadFlags, TCsLoadStructWithTAssetPtrs_Internal Internal = nullptr)
+	{
+		if (TMap<KeyType, ValueType>* Member = MapProperty->ContainerPtrToValuePtr<TMap<KeyType, ValueType>>(InObject))
+		{
+			UStructProperty* StructProperty = Cast<UStructProperty>(MapProperty->ValueProp);
+
+			TArray<KeyType> Keys;
+			Member->GetKeys(Keys);
+
+			for (const KeyType& Key : Keys)
+			{
+				const FString ElementName = MemberName + TEXT("[") + Key.Name + TEXT("]");
+				LoadStructWithTAssetPtrs(ElementName, (void*)&((*Member)[Key]), StructProperty->Struct, LoadFlags, Internal);
 			}
 		}
 	}

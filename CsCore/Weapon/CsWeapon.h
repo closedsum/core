@@ -9,240 +9,150 @@
 #include "CsWeapon.generated.h"
 
 // Data
-DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsWeapon_OnApplyDataWeapon, const uint8&);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsWeapon_OnApplyDataWeapon, const uint8&, WeaponIndex);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsWeapon_OnApplyDataWeapon, const FECsWeaponSlot&, WeaponSlot);
 // State
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsWeapon_OnTick, const uint8&, WeaponIndex, const float&, DeltaSeconds);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsWeapon_Override_CheckStateIdle, const uint8&, WeaponIndex);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsWeapon_OnTick, const FECsWeaponSlot&, WeaponSlot, const float&, DeltaSeconds);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsWeapon_Override_CheckStateIdle, const FECsWeaponSlot&, WeaponSlot);
 // Ammo
 
 	// OnChangeCurrentAmmo
-DECLARE_MULTICAST_DELEGATE_FourParams(FBindableEvent_CsWeapon_OnChangeCurrentAmmo, const TCsWeaponSlot&, const int32&, const int32&, const int32&);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FBindableDynEvent_CsWeapon_OnChangeCurrentAmmo, const uint8&, WeaponIndex, const int32&, Ammo, const int32&, MaxAmmo, const int32&, AmmoReserve);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FBindableDynEvent_CsWeapon_OnChangeCurrentAmmo, const FECsWeaponSlot&, WeaponSlot, const int32&, Ammo, const int32&, MaxAmmo, const int32&, AmmoReserve);
 	// OnConsumeAmmo
-DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsWeapon_OnConsumeAmmo, const FName&);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsWeapon_OnConsumeAmmo, const FName&, ShortCode);
 	// OnConsumeAmmoItem
 DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsWeapon_OnConsumeAmmoItem, const FName&, const TArray<FCsItem*>&);
 // Firing
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsWeapon_Override_FireWeapon, const uint8&, WeaponIndex, const uint8&, FireMode);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsWeapon_Override_FireWeapon, const FECsWeaponSlot&, WeaponSlot, const FECsWeaponFireMode&, FireMode);
 // Equip
-DECLARE_MULTICAST_DELEGATE_FourParams(FBindableEvent_CsWeapon_OnEquip, const TCsWeaponSlot&, const int32&, const int32&, const int32&);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FBindableDynEvent_CsWeapon_OnEquip, const uint8&, WeaponIndex, const int32&, Ammo, const int32&, MaxAmmo, const int32&, AmmoReserve);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FBindableDynEvent_CsWeapon_OnEquip, const FECsWeaponSlot&, WeaponSlot, const int32&, Ammo, const int32&, MaxAmmo, const int32&, AmmoReserve);
 // UnEquip
-DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsWeapon_OnUnEquip, const TCsWeaponSlot&);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsWeapon_OnUnEquip, const uint8&, WeaponIndex);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsWeapon_OnUnEquip, const FECsWeaponSlot&, WeaponSlot);
 
 // Enums
 #pragma region
 
-UENUM(BlueprintType)
-namespace ECsWeaponCacheMultiValueMember
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsWeaponMultiValueMember : public FECsEnum_uint8
 {
-	enum Type
-	{
-		// Scope
-		MaxAmmo									UMETA(DisplayName = "MaxAmmo"),
-		ProjectilesPerShot						UMETA(DisplayName = "ProjectilesPerShot"),
-		CurrentProjectilePerShotIndex			UMETA(DisplayName = "CurrentProjectilePerShotIndex"),
-		DoFireOnRelease							UMETA(DisplayName = "DoFireOnRelease"),
-		IsFullAuto								UMETA(DisplayName = "IsFullAuto"),
-		TimeBetweenProjectilesPerShot			UMETA(DisplayName = "TimeBetweenProjectilesPerShot"),
-		TimeBetweenShots						UMETA(DisplayName = "TimeBetweenShots"),
-		TimeBetweenAutoShots					UMETA(DisplayName = "TimeBetweenAutoShots"),
-		IsFirePressed							UMETA(DisplayName = "IsFirePressed"),
-		Last_IsFirePressed						UMETA(DisplayName = "Last_IsFirePressed"),
-		IsFirePressed_StartTime					UMETA(DisplayName = "IsFirePressed_StartTime"),
-		IsFireReleased_StartTime				UMETA(DisplayName = "IsFireReleased_StartTime"),
-		Fire_StartTime							UMETA(DisplayName = "Fire_StartTime"),
-		// Charge
-		AllowChargeFire							UMETA(DisplayName = "AllowChargeFire"),
-		MaxChargeFireTime						UMETA(DisplayName = "MaxChargeFireTime"),
-		// Spread
-		DoSpread								UMETA(DisplayName = "DoSpread"),
-		MinSpread								UMETA(DisplayName = "MinSpread"),
-		MaxSpread								UMETA(DisplayName = "MaxSpread"),
-		SpreadAddedPerShot						UMETA(DisplayName = "SpreadAddedPerShot"),
-		SpreadRecoveryRate						UMETA(DisplayName = "SpreadRecoveryRate"),
-		FiringSpreadRecoveryDelay				UMETA(DisplayName = "FiringSpreadRecoveryDelay"),
-		CurrentBaseSpread						UMETA(DisplayName = "CurrentBaseSpread"),
-		CurrentSpread							UMETA(DisplayName = "CurrentSpread"),
-		LastSpreadFireTime						UMETA(DisplayName = "LastSpreadFireTime"),
-		// Anim
-		LoopFireAnim							UMETA(DisplayName = "LoopFireAnim"),
-		DoScaleFireAnim							UMETA(DisplayName = "DoScaleFireAnim"),
-		// Sound
-		LoopFireSound							UMETA(DisplayName = "LoopFireSound"),
-		// Hitscan
-		IsHitscan								UMETA(DisplayName = "IsHitscan"),
-		DoesHitscanUseRadius					UMETA(DisplayName = "DoesHitscanUseRadius"),
-		DoesHitscanSimulateProjectileDuration	UMETA(DisplayName = "DoesHitscanSimulateProjectileDuration"),
-		ObstaclePenetrations					UMETA(DisplayName = "ObstaclePenetrations"),
-		PawnPenetrations						UMETA(DisplayName = "PawnPenetrations"),
-		// Reload
-		ReloadTime								UMETA(DisplayName = "ReloadTime"),
-		AllowRechargeAmmo						UMETA(DisplayName = "AllowRechargeAmmo"),
-		AllowRechargeAmmoDuringFire				UMETA(DisplayName = "AllowRechargeAmmoDuringFire"),
-		RechargeSecondsPerAmmo					UMETA(DisplayName = "RechargeSecondsPerAmmo"),
-		RechargeStartupDelay					UMETA(DisplayName = "RechargeStartupDelay"),
+	GENERATED_USTRUCT_BODY()
 
-		ECsWeaponCacheMultiValueMember_MAX		UMETA(Hidden),
-	};
+public:
+	FECsWeaponMultiValueMember() {}
+	FECsWeaponMultiValueMember(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsWeaponMultiValueMember(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsWeaponMultiValueMember() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsWeaponMultiValueMember& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-namespace ECsWeaponCacheMultiValueMember
+struct CSCORE_API EMCsWeaponMultiValueMember : public TCsEnumStructMap<FECsWeaponMultiValueMember, uint8>
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+protected:
+	EMCsWeaponMultiValueMember() {}
+	EMCsWeaponMultiValueMember(const EMCsWeaponMultiValueMember &) = delete;
+	EMCsWeaponMultiValueMember(EMCsWeaponMultiValueMember &&) = delete;
+public:
+	~EMCsWeaponMultiValueMember() {}
+private:
+	static EMCsWeaponMultiValueMember* Instance;
 
-	namespace Str
-	{
-		// Firing
-		const TCsString MaxAmmo = TCsString(TEXT("MaxAmmo"), TEXT("maxammo"), TEXT("maxammo"));
-		const TCsString ProjectilesPerShot = TCsString(TEXT("ProjectilesPerShot"), TEXT("projectilespershot"), TEXT("projectiles per shot"));
-		const TCsString CurrentProjectilePerShotIndex = TCsString(TEXT("CurrentProjectilePerShotIndex"), TEXT("currentprojectilepershotindex"), TEXT("current projectile per shot index"));
-		const TCsString DoFireOnRelease = TCsString(TEXT("DoFireOnRelease"), TEXT("dofireonrelease"), TEXT("do fire on release"));
-		const TCsString IsFullAuto = TCsString(TEXT("IsFullAuto"), TEXT("isfullauto"), TEXT("is full auto"));
-		const TCsString TimeBetweenProjectilesPerShot = TCsString(TEXT("TimeBetweenProjectilesPerShot"), TEXT("timebetweenprojectilespershot"), TEXT("time between projectiles per shot"));
-		const TCsString TimeBetweenShots = TCsString(TEXT("TimeBetweenShots"), TEXT("timebetweenshots"), TEXT("time between shots"));
-		const TCsString TimeBetweenAutoShots = TCsString(TEXT("TimeBetweenAutoShots"), TEXT("timebetweenautoshots"), TEXT("time between auto shots"));
-		const TCsString IsFirePressed = TCsString(TEXT("IsFirePressed"), TEXT("isfirepressed"), TEXT("is fire pressed"));
-		const TCsString Last_IsFirePressed = TCsString(TEXT("Last_IsFirePressed"), TEXT("last_isfirepressed"), TEXT("last is fire pressed"));
-		const TCsString IsFirePressed_StartTime = TCsString(TEXT("IsFirePressed_StartTime"), TEXT("isfirepressed_starttime"), TEXT("is fire pressed start time"));
-		const TCsString IsFireReleased_StartTime = TCsString(TEXT("IsFireReleased_StartTime"), TEXT("isfirereleased_starttime"), TEXT("is fire released start time"));
-		const TCsString Fire_StartTime = TCsString(TEXT("Fire_StartTime"), TEXT("fire_starttime"), TEXT("fire start time"));
-		// Charge
-		const TCsString AllowChargeFire = TCsString(TEXT("AllowChargeFire"), TEXT("allowchargefire"), TEXT("allow charge fire"));
-		const TCsString MaxChargeFireTime = TCsString(TEXT("MaxChargeFireTime"), TEXT("maxchargefiretime"), TEXT("max charge fire time"));
-		// Spread
-		const TCsString DoSpread = TCsString(TEXT("DoSpread"), TEXT("dospread"), TEXT("do spread"));
-		const TCsString MinSpread = TCsString(TEXT("MinSpread"), TEXT("minspread"), TEXT("min spread"));
-		const TCsString MaxSpread = TCsString(TEXT("MaxSpread"), TEXT("maxspread"), TEXT("max spread"));
-		const TCsString SpreadAddedPerShot = TCsString(TEXT("SpreadAddedPerShot"), TEXT("spreadaddedpershot"), TEXT("spread added per shot"));
-		const TCsString SpreadRecoveryRate = TCsString(TEXT("SpreadRecoveryRate"), TEXT("spreadrecoveryrate"), TEXT("spread recovery rate"));
-		const TCsString FiringSpreadRecoveryDelay = TCsString(TEXT("FiringSpreadRecoveryDelay"), TEXT("firingspreadrecoverydelay"), TEXT("firing spread recovery delay"));
-		const TCsString CurrentBaseSpread = TCsString(TEXT("CurrentBaseSpread"), TEXT("currentbasespread"), TEXT("current bases pread"));
-		const TCsString CurrentSpread = TCsString(TEXT("CurrentSpread"), TEXT("currentspread"), TEXT("current spread"));
-		const TCsString LastSpreadFireTime = TCsString(TEXT("LastSpreadFireTime"), TEXT("lastspreadfiretime"), TEXT("last spread fire time"));
-		// Anim
-		const TCsString LoopFireAnim = TCsString(TEXT("LoopFireAnim"), TEXT("loopfireanim"), TEXT("loop fire anim"));
-		const TCsString DoScaleFireAnim = TCsString(TEXT("DoScaleFireAnim"), TEXT("doscalefireanim"), TEXT("do scale fire anim"));
-		// Sound
-		const TCsString LoopFireSound = TCsString(TEXT("LoopFireSound"), TEXT("loopfiresound"), TEXT("loop fire sound"));
-		// Hitscan
-		const TCsString IsHitscan = TCsString(TEXT("IsHitscan"), TEXT("ishitscan"), TEXT("ishitscan"));
-		const TCsString DoesHitscanUseRadius = TCsString(TEXT("DoesHitscanUseRadius"), TEXT("doeshitscanuseradius"), TEXT("doeshitscanuseradius"));
-		const TCsString DoesHitscanSimulateProjectileDuration = TCsString(TEXT("DoesHitscanSimulateProjectileDuration"), TEXT("doeshitscansimulateprojectileduration"), TEXT("doeshitscansimulateprojectileduration"));
-		const TCsString ObstaclePenetrations = TCsString(TEXT("ObstaclePenetrations"), TEXT("obstaclepenetrations"), TEXT("obstaclepenetrations"));
-		const TCsString PawnPenetrations = TCsString(TEXT("PawnPenetrations"), TEXT("pawnpenetrations"), TEXT("pawnpenetrations"));
-		// Reload
-		const TCsString ReloadTime = TCsString(TEXT("ReloadTime"), TEXT("reloadtime"), TEXT("reload time"));
-		const TCsString AllowRechargeAmmo = TCsString(TEXT("AllowRechargeAmmo"), TEXT("allowrechargeammo"), TEXT("allow recharg eammo"));
-		const TCsString AllowRechargeAmmoDuringFire = TCsString(TEXT("AllowRechargeAmmoDuringFire"), TEXT("allowrechargeammoduringfire"), TEXT("allow recharge ammo during fire"));
-		const TCsString RechargeSecondsPerAmmo = TCsString(TEXT("RechargeSecondsPerAmmo"), TEXT("rechargesecondsperammo"), TEXT("recharge seconds per ammo"));
-		const TCsString RechargeStartupDelay = TCsString(TEXT("RechargeStartupDelay"), TEXT("rechargestartupdelay"), TEXT("recharge start up delay"));
-	}
+public:
+	static EMCsWeaponMultiValueMember& Get();
+};
 
-	inline FString ToString(const Type &EType)
-	{
-		// Firing
-		if (EType == Type::MaxAmmo) { return Str::MaxAmmo.Value; }
-		if (EType == Type::ProjectilesPerShot) { return Str::ProjectilesPerShot.Value; }
-		if (EType == Type::CurrentProjectilePerShotIndex) { return Str::CurrentProjectilePerShotIndex.Value; }
-		if (EType == Type::DoFireOnRelease) { return Str::DoFireOnRelease.Value; }
-		if (EType == Type::IsFullAuto) { return Str::IsFullAuto.Value; }
-		if (EType == Type::TimeBetweenProjectilesPerShot) { return Str::TimeBetweenProjectilesPerShot.Value; }
-		if (EType == Type::TimeBetweenShots) { return Str::TimeBetweenShots.Value; }
-		if (EType == Type::TimeBetweenAutoShots) { return Str::TimeBetweenAutoShots.Value; }
-		if (EType == Type::IsFirePressed) { return Str::IsFirePressed.Value; }
-		if (EType == Type::Last_IsFirePressed) { return Str::Last_IsFirePressed.Value; }
-		if (EType == Type::IsFirePressed_StartTime) { return Str::IsFirePressed_StartTime.Value; }
-		if (EType == Type::IsFireReleased_StartTime) { return Str::IsFireReleased_StartTime.Value; }
-		if (EType == Type::Fire_StartTime) { return Str::Fire_StartTime.Value; }
-		// Charge
-		if (EType == Type::AllowChargeFire) { return Str::AllowChargeFire.Value; }
-		if (EType == Type::MaxChargeFireTime) { return Str::MaxChargeFireTime.Value; }
-		// Spread
-		if (EType == Type::DoSpread) { return Str::DoSpread.Value; }
-		if (EType == Type::MinSpread) { return Str::MinSpread.Value; }
-		if (EType == Type::MaxSpread) { return Str::MaxSpread.Value; }
-		if (EType == Type::SpreadAddedPerShot) { return Str::SpreadAddedPerShot.Value; }
-		if (EType == Type::SpreadRecoveryRate) { return Str::SpreadRecoveryRate.Value; }
-		if (EType == Type::FiringSpreadRecoveryDelay) { return Str::FiringSpreadRecoveryDelay.Value; }
-		if (EType == Type::CurrentBaseSpread) { return Str::CurrentBaseSpread.Value; }
-		if (EType == Type::CurrentSpread) { return Str::CurrentSpread.Value; }
-		if (EType == Type::LastSpreadFireTime) { return Str::LastSpreadFireTime.Value; }
-		// Anim
-		if (EType == Type::LoopFireAnim) { return Str::LoopFireAnim.Value; }
-		if (EType == Type::DoScaleFireAnim) { return Str::DoScaleFireAnim.Value; }
-		// Sound
-		if (EType == Type::LoopFireSound) { return Str::LoopFireSound.Value; }
-		// Hitscan
-		if (EType == Type::IsHitscan) { return Str::IsHitscan.Value; }
-		if (EType == Type::DoesHitscanUseRadius) { return Str::DoesHitscanUseRadius.Value; }
-		if (EType == Type::DoesHitscanSimulateProjectileDuration) { return Str::DoesHitscanSimulateProjectileDuration.Value; }
-		if (EType == Type::ObstaclePenetrations) { return Str::ObstaclePenetrations.Value; }
-		if (EType == Type::PawnPenetrations) { return Str::PawnPenetrations.Value; }
-		// Reload
-		if (EType == Type::ReloadTime) { return Str::ReloadTime.Value; }
-		if (EType == Type::AllowRechargeAmmo) { return Str::AllowRechargeAmmo.Value; }
-		if (EType == Type::AllowRechargeAmmoDuringFire) { return Str::AllowRechargeAmmoDuringFire.Value; }
-		if (EType == Type::RechargeSecondsPerAmmo) { return Str::RechargeSecondsPerAmmo.Value; }
-		if (EType == Type::RechargeStartupDelay) { return Str::RechargeStartupDelay.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	inline Type ToType(const FString &String)
-	{
-		// Firing
-		if (String == Str::MaxAmmo) { return Type::MaxAmmo; }
-		if (String == Str::ProjectilesPerShot) { return Type::ProjectilesPerShot; }
-		if (String == Str::CurrentProjectilePerShotIndex) { return Type::CurrentProjectilePerShotIndex; }
-		if (String == Str::DoFireOnRelease) { return Type::DoFireOnRelease; }
-		if (String == Str::IsFullAuto) { return Type::IsFullAuto; }
-		if (String == Str::TimeBetweenProjectilesPerShot) { return Type::TimeBetweenProjectilesPerShot; }
-		if (String == Str::TimeBetweenShots) { return Type::TimeBetweenShots; }
-		if (String == Str::TimeBetweenAutoShots) { return Type::TimeBetweenAutoShots; }
-		if (String == Str::IsFirePressed) { return Type::IsFirePressed; }
-		if (String == Str::Last_IsFirePressed) { return Type::Last_IsFirePressed; }
-		if (String == Str::IsFirePressed_StartTime) { return Type::IsFirePressed_StartTime; }
-		if (String == Str::IsFireReleased_StartTime) { return Type::IsFireReleased_StartTime; }
-		if (String == Str::Fire_StartTime) { return Type::Fire_StartTime; }
-		// Charge
-		if (String == Str::AllowChargeFire) { return Type::AllowChargeFire; }
-		if (String == Str::MaxChargeFireTime) { return Type::MaxChargeFireTime; }
-		// Spread
-		if (String == Str::DoSpread) { return Type::DoSpread; }
-		if (String == Str::MinSpread) { return Type::MinSpread; }
-		if (String == Str::MaxSpread) { return Type::MaxSpread; }
-		if (String == Str::SpreadAddedPerShot) { return Type::SpreadAddedPerShot; }
-		if (String == Str::SpreadRecoveryRate) { return Type::SpreadRecoveryRate; }
-		if (String == Str::FiringSpreadRecoveryDelay) { return Type::FiringSpreadRecoveryDelay; }
-		if (String == Str::CurrentBaseSpread) { return Type::CurrentBaseSpread; }
-		if (String == Str::CurrentSpread) { return Type::CurrentSpread; }
-		if (String == Str::LastSpreadFireTime) { return Type::LastSpreadFireTime; }
-		// Anim
-		if (String == Str::LoopFireAnim) { return Type::LoopFireAnim; }
-		if (String == Str::DoScaleFireAnim) { return Type::DoScaleFireAnim; }
-		// Sound
-		if (String == Str::LoopFireSound) { return Type::LoopFireSound; }
-		// Hitscan
-		if (String == Str::IsHitscan) { return Type::IsHitscan; }
-		if (String == Str::DoesHitscanUseRadius) { return Type::DoesHitscanUseRadius; }
-		if (String == Str::DoesHitscanSimulateProjectileDuration) { return Type::DoesHitscanSimulateProjectileDuration; }
-		if (String == Str::ObstaclePenetrations) { return Type::ObstaclePenetrations; }
-		if (String == Str::PawnPenetrations) { return Type::PawnPenetrations; }
-		// Reload
-		if (String == Str::ReloadTime) { return Type::ReloadTime; }
-		if (String == Str::AllowRechargeAmmo) { return Type::AllowRechargeAmmo; }
-		if (String == Str::AllowRechargeAmmoDuringFire) { return Type::AllowRechargeAmmoDuringFire; }
-		if (String == Str::RechargeSecondsPerAmmo) { return Type::RechargeSecondsPerAmmo; }
-		if (String == Str::RechargeStartupDelay) { return Type::RechargeStartupDelay; }
-		return Type::ECsWeaponCacheMultiValueMember_MAX;
-	}
+namespace ECsWeaponMultiValueMember
+{
+	// Scope
+	extern CSCORE_API const FECsWeaponMultiValueMember MaxAmmo;
+	extern CSCORE_API const FECsWeaponMultiValueMember ProjectilesPerShot;
+	extern CSCORE_API const FECsWeaponMultiValueMember CurrentProjectilePerShotIndex;
+	extern CSCORE_API const FECsWeaponMultiValueMember DoFireOnRelease;
+	extern CSCORE_API const FECsWeaponMultiValueMember IsFullAuto;
+	extern CSCORE_API const FECsWeaponMultiValueMember TimeBetweenProjectilesPerShot;
+	extern CSCORE_API const FECsWeaponMultiValueMember TimeBetweenShots;
+	extern CSCORE_API const FECsWeaponMultiValueMember TimeBetweenAutoShots;
+	extern CSCORE_API const FECsWeaponMultiValueMember IsFirePressed;
+	extern CSCORE_API const FECsWeaponMultiValueMember Last_IsFirePressed;
+	extern CSCORE_API const FECsWeaponMultiValueMember IsFirePressed_StartTime;
+	extern CSCORE_API const FECsWeaponMultiValueMember IsFireReleased_StartTime;
+	extern CSCORE_API const FECsWeaponMultiValueMember Fire_StartTime;
+	// Charge
+	extern CSCORE_API const FECsWeaponMultiValueMember AllowChargeFire;
+	extern CSCORE_API const FECsWeaponMultiValueMember MaxChargeFireTime;
+	// Spread
+	extern CSCORE_API const FECsWeaponMultiValueMember DoSpread;
+	extern CSCORE_API const FECsWeaponMultiValueMember MinSpread;
+	extern CSCORE_API const FECsWeaponMultiValueMember MaxSpread;
+	extern CSCORE_API const FECsWeaponMultiValueMember SpreadAddedPerShot;
+	extern CSCORE_API const FECsWeaponMultiValueMember SpreadRecoveryRate;
+	extern CSCORE_API const FECsWeaponMultiValueMember FiringSpreadRecoveryDelay;
+	extern CSCORE_API const FECsWeaponMultiValueMember CurrentBaseSpread;
+	extern CSCORE_API const FECsWeaponMultiValueMember CurrentSpread;
+	extern CSCORE_API const FECsWeaponMultiValueMember LastSpreadFireTime;
+	// Anim
+	extern CSCORE_API const FECsWeaponMultiValueMember LoopFireAnim;
+	extern CSCORE_API const FECsWeaponMultiValueMember DoScaleFireAnim;
+	// Sound
+	extern CSCORE_API const FECsWeaponMultiValueMember LoopFireSound;
+	// Hitscan
+	extern CSCORE_API const FECsWeaponMultiValueMember IsHitscan;
+	extern CSCORE_API const FECsWeaponMultiValueMember DoesHitscanUseRadius;
+	extern CSCORE_API const FECsWeaponMultiValueMember DoesHitscanSimulateProjectileDuration;
+	extern CSCORE_API const FECsWeaponMultiValueMember ObstaclePenetrations;
+	extern CSCORE_API const FECsWeaponMultiValueMember PawnPenetrations;
+	// Reload
+	extern CSCORE_API const FECsWeaponMultiValueMember ReloadTime;
+	extern CSCORE_API const FECsWeaponMultiValueMember AllowRechargeAmmo;
+	extern CSCORE_API const FECsWeaponMultiValueMember AllowRechargeAmmoDuringFire;
+	extern CSCORE_API const FECsWeaponMultiValueMember RechargeSecondsPerAmmo;
+	extern CSCORE_API const FECsWeaponMultiValueMember RechargeStartupDelay;
 }
 
-#define ECS_WEAPON_CACHE_MULTI_VALUE_MEMBER_MAX (uint8)ECsWeaponCacheMultiValueMember::ECsWeaponCacheMultiValueMember_MAX
-typedef ECsWeaponCacheMultiValueMember::Type TCsWeaponCacheMultiValueMember;
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsWeaponRoutine : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsWeaponRoutine() {}
+	FECsWeaponRoutine(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsWeaponRoutine(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsWeaponRoutine() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsWeaponRoutine& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
+}
+
+struct CSCORE_API EMCsWeaponRoutine : public TCsEnumStructMap<FECsWeaponRoutine, uint8>
+{
+protected:
+	EMCsWeaponRoutine() {}
+	EMCsWeaponRoutine(const EMCsWeaponRoutine &) = delete;
+	EMCsWeaponRoutine(EMCsWeaponRoutine &&) = delete;
+public:
+	~EMCsWeaponRoutine() {}
+private:
+	static EMCsWeaponRoutine* Instance;
+
+public:
+	static EMCsWeaponRoutine& Get();
+};
+
+namespace ECsWeaponRoutine
+{
+	extern CSCORE_API const FECsWeaponRoutine PlayAnimation_Reload_Internal;
+	extern CSCORE_API const FECsWeaponRoutine StartChargeFire_Internal;
+	extern CSCORE_API const FECsWeaponRoutine FireWeapon_Internal;
+}
 
 #pragma endregion Enums
 
@@ -250,67 +160,67 @@ typedef ECsWeaponCacheMultiValueMember::Type TCsWeaponCacheMultiValueMember;
 #pragma region
 
 // bool
-struct FCsWeapon_Ref_bool : public TCsPrimitiveType_TArrayRefValue_bool<int32>
+struct FCsWeapon_Ref_bool : public TCsProperty_TArrayRef_bool
 {
-	FCsWeapon_Ref_bool() : TCsPrimitiveType_TArrayRefValue_bool<int32>(){}
+	FCsWeapon_Ref_bool() : TCsProperty_TArrayRef_bool(){}
 	~FCsWeapon_Ref_bool() {}
 };
 
-struct FCsWeapon_TArray_bool : public TCsPrimitiveType_TArrayValue_bool<TCsWeaponFireMode>
+struct FCsWeapon_TMap_bool : public TCsProperty_TMap_bool<FECsWeaponFireMode>
 {
-	FCsWeapon_TArray_bool() : TCsPrimitiveType_TArrayValue_bool<TCsWeaponFireMode>(){}
-	~FCsWeapon_TArray_bool() {}
+	FCsWeapon_TMap_bool() : TCsProperty_TMap_bool<FECsWeaponFireMode>(){}
+	~FCsWeapon_TMap_bool() {}
 };
 
-struct FCsWeapon_TArrayRef_bool : public TCsPrimitiveType_TArrayRefValue_bool<TCsWeaponFireMode>
+struct FCsWeapon_TMapRef_bool : public TCsProperty_TMapRef_bool<FECsWeaponFireMode>
 {
-	FCsWeapon_TArrayRef_bool() : TCsPrimitiveType_TArrayRefValue_bool<TCsWeaponFireMode>(){}
-	~FCsWeapon_TArrayRef_bool() {}
+	FCsWeapon_TMapRef_bool() : TCsProperty_TMapRef_bool<FECsWeaponFireMode>(){}
+	~FCsWeapon_TMapRef_bool() {}
 };
 
 // uint8
-struct FCsWeapon_TArray_uint8 : public TCsIntegralType_TArrayValue_uint8<TCsWeaponFireMode>
+struct FCsWeapon_TMap_uint8 : public TCsIntegralType_TMap_uint8<FECsWeaponFireMode>
 {
-	FCsWeapon_TArray_uint8() : TCsIntegralType_TArrayValue_uint8<TCsWeaponFireMode>(){}
-	~FCsWeapon_TArray_uint8() {}
+	FCsWeapon_TMap_uint8() : TCsIntegralType_TMap_uint8<FECsWeaponFireMode>(){}
+	~FCsWeapon_TMap_uint8() {}
 };
 
-struct FCsWeapon_TArrayRef_uint8 : public TCsIntegralType_TArrayRefValue_uint8<TCsWeaponFireMode>
+struct FCsWeapon_TMapRef_uint8 : public TCsIntegralType_TMapRef_uint8<FECsWeaponFireMode>
 {
-	FCsWeapon_TArrayRef_uint8() : TCsIntegralType_TArrayRefValue_uint8<TCsWeaponFireMode>(){}
-	~FCsWeapon_TArrayRef_uint8() {}
+	FCsWeapon_TMapRef_uint8() : TCsIntegralType_TMapRef_uint8<FECsWeaponFireMode>(){}
+	~FCsWeapon_TMapRef_uint8() {}
 };
 
 // int32
-struct FCsWeapon_Ref_int32 : public TCsIntegralType_TArrayRefValue_int32<int32>
+struct FCsWeapon_Ref_int32 : public TCsIntegralType_TArrayRef_int32
 {
-	FCsWeapon_Ref_int32() : TCsIntegralType_TArrayRefValue_int32<int32>(){}
+	FCsWeapon_Ref_int32() : TCsIntegralType_TArrayRef_int32(){}
 	~FCsWeapon_Ref_int32() {}
 };
 
-struct FCsWeapon_TArrayRef_int32 : public TCsIntegralType_TArrayRefValue_int32<TCsWeaponFireMode>
+struct FCsWeapon_TMapRef_int32 : public TCsIntegralType_TMapRef_int32<FECsWeaponFireMode>
 {
-	FCsWeapon_TArrayRef_int32() : TCsIntegralType_TArrayRefValue_int32<TCsWeaponFireMode>(){}
-	~FCsWeapon_TArrayRef_int32() {}
+	FCsWeapon_TMapRef_int32() : TCsIntegralType_TMapRef_int32<FECsWeaponFireMode>(){}
+	~FCsWeapon_TMapRef_int32() {}
 };
 
 // float
-struct FCsWeapon_Ref_float : public TCsIntegralType_TArrayRefValue_float<int32>
+struct FCsWeapon_Ref_float : public TCsIntegralType_TArrayRef_float
 {
-	FCsWeapon_Ref_float() : TCsIntegralType_TArrayRefValue_float<int32>(){}
+	FCsWeapon_Ref_float() : TCsIntegralType_TArrayRef_float(){}
 	~FCsWeapon_Ref_float() {}
 };
 
-struct FCsWeapon_TArray_float : public TCsIntegralType_TArrayValue_float<TCsWeaponFireMode>
+struct FCsWeapon_TMap_float : public TCsIntegralType_TMap_float<FECsWeaponFireMode>
 {
-	FCsWeapon_TArray_float() : TCsIntegralType_TArrayValue_float<TCsWeaponFireMode>(){}
-	~FCsWeapon_TArray_float() {}
+	FCsWeapon_TMap_float() : TCsIntegralType_TMap_float<FECsWeaponFireMode>(){}
+	~FCsWeapon_TMap_float() {}
 };
 
-struct FCsWeapon_TArrayRef_float : public TCsIntegralType_TArrayRefValue_float<TCsWeaponFireMode>
+struct FCsWeapon_TMapRef_float : public TCsIntegralType_TMapRef_float<FECsWeaponFireMode>
 {
-	FCsWeapon_TArrayRef_float() : TCsIntegralType_TArrayRefValue_float<TCsWeaponFireMode>(){}
-	~FCsWeapon_TArrayRef_float() {}
+	FCsWeapon_TMapRef_float() : TCsIntegralType_TMapRef_float<FECsWeaponFireMode>(){}
+	~FCsWeapon_TMapRef_float() {}
 };
 
 #pragma endregion Structs
@@ -335,12 +245,35 @@ class CSCORE_API ACsWeapon : public AActor
 #pragma region
 public:
 
-	CS_DECLARE_WEAPON_FIRE_MODE
-	CS_DECLARE_DATA_WEAPON_FIRE_MODE
-
 	TCsGetObjectMember_Internal GetObjectMember_Internal;
 	TCsGetStructMember_Internal GetStructMember_Internal;
 	TCsGetScriptStructMember_Internal GetScriptStructMember_Internal;
+
+	template<typename ValueType>
+	void InitMultiValueMember(struct TCsProperty_TMap<FECsWeaponFireMode, ValueType> &Member, const ValueType &DefaultValue)
+	{
+		Member.SetDefaultValue(DefaultValue);
+
+		const int32& Count = EMCsWeaponFireMode::Get().Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			Member.Init(EMCsWeaponFireMode::Get().GetEnumAt(I));
+		}
+	}
+
+	template<typename ValueType>
+	void InitMultiRefValueMember(struct TCsProperty_TMapRef<FECsWeaponFireMode, ValueType> &Member, const ValueType &DefaultValue)
+	{
+		Member.SetDefaultValue(DefaultValue);
+
+		const int32& Count = EMCsWeaponFireMode::Get().Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			Member.Init(EMCsWeaponFireMode::Get().GetEnumAt(I));
+		}
+	}
 
 	virtual void InitMultiValueMembers();
 
@@ -349,13 +282,13 @@ public:
 public:
 
 	template<typename T>
-	void SetMemberRefValue(struct TCsPrimitiveType_TArrayRefValue<T, int32> &Member, const FString &MemberName)
+	void SetMemberRefValue(struct TCsProperty_TArrayRef<T> &Member, const FString &MemberName)
 	{
 		ACsData_Weapon* Data_Weapon = GetMyData_Weapon();
 
 		Member.ResetValues();
 
-		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; ++I)
+		for (uint8 I = 0; I < Member.Num(); ++I)
 		{
 			T* DataMember = UCsCommon_Load::GetObjectMember<T>(Data_Weapon, Data_Weapon->GetClass(), MemberName, GetObjectMember_Internal);
 
@@ -365,59 +298,54 @@ public:
 		}
 	}
 
-	template<typename T>
-	void SetMemberMultiValue(struct TCsPrimitiveType_TArrayValue<T, TCsWeaponFireMode> &Member, const T &Value)
+	template<typename ValueType>
+	void SetMemberMultiValue(struct TCsProperty_TMap<FECsWeaponFireMode, ValueType> &Member, const ValueType &Value)
 	{
 		Member.ResetValues();
 
-		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; ++I)
+		const int32& Count = EMCsWeaponFireMode::Get().Num();
+
+		for (int32 I = 0; I < Count; ++I)
 		{
 			if (I == 0)
 				Member.Set(Value);
-			Member.Set(I, Value);
+			Member.Set(EMCsWeaponFireMode::Get().GetEnumAt(I), Value);
 		}
 	}
 
-	template<typename T>
-	void SetMemberMultiRefValue(struct TCsPrimitiveType_TArrayRefValue<T, TCsWeaponFireMode> &Member, const TCsData_Weapon_FireMode &FireModeMember, const FString &MemberName)
+	template<typename ValueType>
+	void SetMemberMultiRefValue(struct TCsProperty_TMapRef<FECsWeaponFireMode, ValueType> &Member, const FECsData_Weapon_FireMode &FireModeMember, const FString &MemberName)
 	{
 		ACsData_ProjectileWeapon* Data_Weapon = GetMyData_Weapon<ACsData_ProjectileWeapon>();
 
 		Member.ResetValues();
 
-		const FString StructName = (*DataWeaponFireModeToString)(FireModeMember);
+		const FString& StructName = FireModeMember.Name;
 
-		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; ++I)
+		const int32& Count = EMCsWeaponFireMode::Get().Num();
+
+		for (int32 I = 0; I < Count; ++I)
 		{
-			void* Struct				= UCsCommon_Load::GetStructMember<void>(Data_Weapon->GetFireModeStruct(I), Data_Weapon->GetFireModeScriptStruct(), StructName, GetStructMember_Internal);
-			UScriptStruct* ScriptStruct = UCsCommon_Load::GetScriptStructMember(Data_Weapon->GetFireModeStruct(I), Data_Weapon->GetFireModeScriptStruct(), StructName, GetScriptStructMember_Internal);
-			T* StructMember				= UCsCommon_Load::GetStructMember<T>(Struct, ScriptStruct, MemberName, GetStructMember_Internal);
+			const FECsWeaponFireMode& FireMode = EMCsWeaponFireMode::Get().GetEnumAt(I);
+
+			void* Struct				= UCsCommon_Load::GetStructMember<void>(Data_Weapon->GetFireModeStruct(FireMode), Data_Weapon->GetFireModeScriptStruct(), StructName, GetStructMember_Internal);
+			UScriptStruct* ScriptStruct = UCsCommon_Load::GetScriptStructMember(Data_Weapon->GetFireModeStruct(FireMode), Data_Weapon->GetFireModeScriptStruct(), StructName, GetScriptStructMember_Internal);
+			ValueType* StructMember		= UCsCommon_Load::GetStructMember<ValueType>(Struct, ScriptStruct, MemberName, GetStructMember_Internal);
 
 			if (I == 0)
 				Member.Set(*StructMember);
-			Member.Set(I, StructMember);
+			Member.Set(FireMode, StructMember);
 		}
 	}
 
-	virtual void SetMemberValue_bool(const TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> &Member, const int32 &Index, const bool &Value);
-	virtual void SetMemberValue_bool(const uint8 &Member, const int32 &Index, const bool &Value);
 	UFUNCTION(BlueprintCallable, Category = "Member")
-	virtual void SetMemberValue_Script_bool(const FString &MemberName, const int32 &Index, const bool &Value);
-
-	virtual void SetMemberValue_uint8(const TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> &Member, const int32 &Index, const uint8 &Value);
-	virtual void SetMemberValue_uint8(const uint8 &Member, const int32 &Index, const uint8 &Value);
+	virtual void SetMemberValue_bool(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode, const bool &Value);
 	UFUNCTION(BlueprintCallable, Category = "Member")
-	virtual void SetMemberValue_Script_uint8(const FString &MemberName, const int32 &Index, const uint8 &Value);
-
-	virtual void SetMemberValue_int32(const TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> &Member, const int32 &Index, const int32 &Value);
-	virtual void SetMemberValue_int32(const uint8 &Member, const int32 &Index, const int32 &Value);
+	virtual void SetMemberValue_uint8(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode, const uint8 &Value);
 	UFUNCTION(BlueprintCallable, Category = "Member")
-	virtual void SetMemberValue_Script_int32(const FString &MemberName, const int32 &Index, const int32 &Value);
-
-	virtual void SetMemberValue_float(const TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> &Member, const int32 &Index, const float &Value);
-	virtual void SetMemberValue_float(const uint8 &Member, const int32 &Index, const float &Value);
+	virtual void SetMemberValue_int32(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode, const int32 &Value);
 	UFUNCTION(BlueprintCallable, Category = "Member")
-	virtual void SetMemberValue_Script_float(const FString &MemberName, const int32 &Index, const float &Value);
+	virtual void SetMemberValue_float(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode, const float &Value);
 
 	virtual void SetMultiValueMembers();
 
@@ -427,25 +355,14 @@ public:
 #pragma region
 public:
 
-	virtual bool GetMemberValue_bool(const TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> &Member, const int32 &Index);
-	virtual bool GetMemberValue_bool(const uint8 &Member, const int32 &Index);
 	UFUNCTION(BlueprintCallable, Category = "Member")
-	virtual bool GetMemberValue_Script_bool(const FString &MemberName, const int32 &Index);
-
-	virtual uint8 GetMemberValue_uint8(const TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> &Member, const int32 &Index);
-	virtual uint8 GetMemberValue_uint8(const uint8 &Member, const int32 &Index);
+	virtual bool GetMemberValue_bool(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode);
 	UFUNCTION(BlueprintCallable, Category = "Member")
-	virtual uint8 GetMemberValue_Script_uint8(const FString &MemberName, const int32 &Index);
-
-	virtual int32 GetMemberValue_int32(const TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> &Member, const int32 &Index);
-	virtual int32 GetMemberValue_int32(const uint8 &Member, const int32 &Index);
+	virtual uint8 GetMemberValue_uint8(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode);
 	UFUNCTION(BlueprintCallable, Category = "Member")
-	virtual int32 GetMemberValue_Script_int32(const FString &MemberName, const int32 &Index);
-
-	virtual float GetMemberValue_float(const TEnumAsByte<ECsWeaponCacheMultiValueMember::Type> &Member, const int32 &Index);
-	virtual float GetMemberValue_float(const uint8 &Member, const int32 &Index);
+	virtual int32 GetMemberValue_int32(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode);
 	UFUNCTION(BlueprintCallable, Category = "Member")
-	virtual float GetMemberValue_Script_float(const FString &MemberName, const int32 &Index);
+	virtual float GetMemberValue_float(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode);
 
 #pragma endregion Get
 
@@ -454,7 +371,7 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Member")
-	void AddMemberValue_uint8(const int32 &Index, const FString &MemberName, const uint8 &Value);
+	void AddMemberValue_uint8(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode, const uint8 &Value);
 
 #pragma endregion Add
 
@@ -478,15 +395,18 @@ public:
 	/* Declare / Implement in Child class */
 	// ApplyData_Weapon
 
-	FBindableEvent_CsWeapon_OnApplyDataWeapon OnApplyData_Weapon_Event;
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnApplyDataWeapon, const uint8&);
+
+	FOnApplyDataWeapon OnApplyData_Weapon_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "Data")
 	FBindableDynEvent_CsWeapon_OnApplyDataWeapon OnApplyData_Weapon_ScriptEvent;
 
-	class ACsData_Projectile* GetMyData_Projectile(const TCsWeaponFireMode &FireMode, const bool &IsCharged);
+	UFUNCTION(BlueprintCallable, Category = "Data")
+	class ACsData_Projectile* GetMyData_Projectile(const FECsWeaponFireMode &FireMode, const bool &IsCharged);
 
 	template<typename T>
-	T* GetMyData_Projectile(const TCsWeaponFireMode &FireMode, const bool &IsCharged)
+	T* GetMyData_Projectile(const FECsWeaponFireMode &FireMode, const bool &IsCharged)
 	{
 		return Cast<T>(GetMyData_Projectile(FireMode, IsCharged));
 	}
@@ -497,6 +417,7 @@ public:
 #pragma region
 public:
 
+	UFUNCTION(BlueprintCallable, Category = "Manager")
 	class ACsManager_Inventory* GetMyManager_Inventory();
 
 	template<typename T>
@@ -543,7 +464,8 @@ public:
 		return Cast<T>(GetMyOwner());
 	}
 
-	TCsWeaponOwner MyOwnerType;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Owner")
+	FECsWeaponOwner MyOwnerType;
 
 	UFUNCTION(BlueprintCallable, Category = "Owner")
 	virtual bool IsValidOwnerTypeInGame();
@@ -559,7 +481,8 @@ public:
 		return Cast<T>(GetMyPawn());
 	}
 
-	TCsWeaponOwner PawnWeaponOwner;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Owner")
+	FECsWeaponOwner PawnWeaponOwner;
 
 	UFUNCTION(BlueprintCallable, Category = "Owner")
 	virtual TEnumAsByte<ECsViewType::Type> GetCurrentViewType();
@@ -570,17 +493,22 @@ public:
 #pragma region
 public:
 
-	UPROPERTY(BlueprintReadOnly, Category = "State")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State")
 	uint8 WeaponIndex;
 
-	TCsWeaponSlot WeaponSlot;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State")
+	FECsWeaponSlot WeaponSlot;
 
-	TCsWeaponState CurrentState;
-	TCsWeaponState LastState;
+	UPROPERTY(BlueprintReadOnly, Category = "State")
+	FECsWeaponState CurrentState;
+	UPROPERTY(BlueprintReadOnly, Category = "State")
+	FECsWeaponState LastState;
 
-	TCsWeaponState IdleState;
+	UPROPERTY(BlueprintReadOnly, Category = "State")
+	FECsWeaponState IdleState;
 
-	TCsWeaponFireMode PrimaryFireMode;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
+	FECsWeaponFireMode PrimaryFireMode;
 
 	virtual void OnTick(const float &DeltaSeconds);
 
@@ -593,15 +521,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "State")
 	void OnTick_HandleStates();
 
-	bool CanFire(const TCsWeaponFireMode &FireMode);
-	bool CanFire_Auto(const TCsWeaponFireMode &FireMode);
+	UFUNCTION(BlueprintCallable, Category = "State")
+	bool CanFire(const FECsWeaponFireMode &FireMode);
+	UFUNCTION(BlueprintCallable, Category = "State")
+	bool CanFire_Auto(const FECsWeaponFireMode &FireMode);
 
 	void CheckState_Idle();
 
 	UPROPERTY(BlueprintAssignable, Category = "Tick")
 	FBindableDynEvent_CsWeapon_Override_CheckStateIdle Override_CheckState_Idle_ScriptEvent;
 
-	void HandleState_Firing(const TCsWeaponFireMode &FireMode);
+	void HandleState_Firing(const FECsWeaponFireMode &FireMode);
 
 	void Enable();
 	virtual void Disable();
@@ -617,9 +547,11 @@ public:
 #pragma region
 public:
 
-	virtual void PlayAnimation(const TCsWeaponFireMode &FireMode, const TCsWeaponAnim &AnimType, const int32 &Index = 0);
+	UFUNCTION(BlueprintCallable, Category = "Animation")
+	virtual void PlayAnimation(const FECsWeaponFireMode &FireMode, const FECsWeaponAnim &AnimType, const int32 &Index = 0);
 
-	TCsWeaponAnim ReloadAnim;
+	UPROPERTY(BlueprintReadOnly, Category = "State")
+	FECsWeaponAnim ReloadAnim;
 
 	UFUNCTION(BlueprintCallable, Category = "Animation")
 	virtual void PlayAnimation_Reload();
@@ -627,8 +559,10 @@ public:
 	struct FCsRoutine* PlayAnimation_Reload_Internal_Routine;
 	static void PlayAnimation_Reload_StopCondition(struct FCsRoutine* r);
 
-	virtual float GetAnimationLength(const TCsWeaponFireMode &FireMode, const TCsWeaponAnim &AnimType, const int32 &Index = 0);
-	virtual void StopAnimation(const TCsWeaponFireMode &FireMode, const TCsWeaponAnim &AnimType, const int32 &Index = 0);
+	UFUNCTION(BlueprintCallable, Category = "Animation")
+	virtual float GetAnimationLength(const FECsWeaponFireMode &FireMode, const FECsWeaponAnim &AnimType, const int32 &Index = 0);
+	UFUNCTION(BlueprintCallable, Category = "Animation")
+	virtual void StopAnimation(const FECsWeaponFireMode &FireMode, const FECsWeaponAnim &AnimType, const int32 &Index = 0);
 
 #pragma endregion Animation
 
@@ -636,13 +570,17 @@ public:
 #pragma region
 public:
 
-	TCsWeaponSound FireSound;
+	UPROPERTY(BlueprintReadOnly, Category = "Sound")
+	FECsWeaponSound FireSound;
 
+	UFUNCTION(BlueprintCallable, Category = "Sound")
 	virtual UObject* GetSoundParent();
-	virtual class ACsSound* GetSound(const TCsWeaponSound &SoundType);
 
-	virtual void PlaySound(const TCsWeaponFireMode &FireMode, const TCsWeaponSound &SoundType);
-	virtual void StopSound(const TCsWeaponFireMode &FireMode, const TCsWeaponSound &SoundType);
+	UFUNCTION(BlueprintCallable, Category = "Sound")
+	virtual class ACsSound* GetSound(const FECsWeaponSound &SoundType);
+
+	virtual void PlaySound(const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType);
+	virtual void StopSound(const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType);
 
 #pragma endregion Sound
 
@@ -650,22 +588,28 @@ public:
 #pragma region
 public:
 
+	UPROPERTY(BlueprintReadOnly, Category = "Equip / UnEquip")
 	bool IsEquipped;
 
 	virtual void Equip();
 
-	FBindableEvent_CsWeapon_OnEquip OnEquip_Event;
+	DECLARE_MULTICAST_DELEGATE_FourParams(FOnEquip, const FECsWeaponSlot&, const int32&, const int32&, const int32&);
 
-	UPROPERTY(BlueprintAssignable, Category = "Eqiup")
+	FOnEquip OnEquip_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Equip / UnEquip")
 	FBindableDynEvent_CsWeapon_OnEquip OnEquip_ScriptEvent;
 
 	virtual void UnEquip();
 
-	FBindableEvent_CsWeapon_OnUnEquip OnUnEquip_Event;
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnUnEquip, const FECsWeaponSlot&);
 
-	UPROPERTY(BlueprintAssignable, Category = "Eqiup")
+	FOnUnEquip OnUnEquip_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Equip / UnEquip")
 	FBindableDynEvent_CsWeapon_OnUnEquip OnUnEquip_ScriptEvent;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Equip / UnEquip")
 	bool DoingEquipTransition;
 
 	virtual bool CanUnEquip();
@@ -676,15 +620,19 @@ public:
 #pragma region
 public:
 
-	TCsData_Weapon_FireMode FiringDataFireMode;
+	UPROPERTY(BlueprintReadOnly, Category = "Firing")
+	FECsData_Weapon_FireMode FiringDataFireMode;
 
-	TCsWeaponState FiringState;
+	UPROPERTY(BlueprintReadOnly, Category = "Firing")
+	FECsWeaponState FiringState;
 
 	// Ammo
 #pragma region
 public:
 
 	FCsWeapon_Ref_int32 MaxAmmo;
+
+	UFUNCTION(BlueprintCallable, Category = "Firing")
 	virtual int32 GetMaxAmmo(const int32 &Index);
 
 	UPROPERTY(BlueprintReadWrite, Category = "Firing")
@@ -693,8 +641,10 @@ public:
 	TCsInt32_Ref CurrentAmmoHandle;
 
 	virtual void OnChange_CurrentAmmo(const int32 &Value);
+															 // WeaponSlot, CurrentAmmo, MaxAmmo, AmmoReserve
+	DECLARE_MULTICAST_DELEGATE_FourParams(FOnChangeCurrentAmmo, const FECsWeaponSlot&, const int32&, const int32&, const int32&);
 
-	FBindableEvent_CsWeapon_OnChangeCurrentAmmo OnChange_CurrentAmmo_Event;
+	FOnChangeCurrentAmmo OnChange_CurrentAmmo_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "Firing")
 	FBindableDynEvent_CsWeapon_OnChangeCurrentAmmo OnChange_CurrentAmmo_ScriptEvent;
@@ -704,36 +654,42 @@ public:
 
 	bool HasUnlimitedAmmo;
 
-	virtual const FName& GetAmmoShortCode(const TCsWeaponFireMode &FireMode, const bool &IsCharged);
-	virtual int32 GetAmmoReserve(const int32 &Index, const TCsWeaponFireMode &FireMode, const bool &IsCharged);
+	virtual const FName& GetAmmoShortCode(const FECsWeaponFireMode &FireMode, const bool &IsCharged);
+	virtual int32 GetAmmoReserve(const int32 &Index, const FECsWeaponFireMode &FireMode, const bool &IsCharged);
 
-	virtual void ConsumeAmmo(const TCsWeaponFireMode &FireMode, const bool &IsCharged);
+	virtual void ConsumeAmmo(const FECsWeaponFireMode &FireMode, const bool &IsCharged);
 
-	FBindableEvent_CsWeapon_OnConsumeAmmo OnConsumeAmmo_Event;
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnConsumeAmmo, const FName&);
+
+	FOnConsumeAmmo OnConsumeAmmo_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "Firing")
 	FBindableDynEvent_CsWeapon_OnConsumeAmmo OnConsumeAmmo_ScriptEvent;
 
-	void ConsumeAmmoItem(const TCsWeaponFireMode &FireMode, const bool &IsCharged, TArray<FCsItem*> &OutItems);
+	void ConsumeAmmoItem(const FECsWeaponFireMode &FireMode, const bool &IsCharged, TArray<FCsItem*> &OutItems);
 
 	FBindableEvent_CsWeapon_OnConsumeAmmoItem OnConsumeAmmoItem_Event;
 
 #pragma endregion Ammo
 
-	FCsWeapon_TArrayRef_uint8 ProjectilesPerShot;
-	virtual uint8 GetProjectilesPerShot(const TCsWeaponFireMode &FireMode);
+	FCsWeapon_TMapRef_uint8 ProjectilesPerShot;
+	UFUNCTION(BlueprintCallable, Category = "Firing")
+	virtual uint8 GetProjectilesPerShot(const FECsWeaponFireMode &FireMode);
 
-	FCsWeapon_TArray_uint8 CurrentProjectilePerShotIndex;
+	FCsWeapon_TMap_uint8 CurrentProjectilePerShotIndex;
 
-	FCsWeapon_TArrayRef_bool DoFireOnRelease;
-	FCsWeapon_TArrayRef_bool IsFullAuto;
+	FCsWeapon_TMapRef_bool DoFireOnRelease;
+	FCsWeapon_TMapRef_bool IsFullAuto;
 
-	FCsWeapon_TArrayRef_float TimeBetweenProjectilesPerShot;
-	virtual float GetTimeBetweenProjectilesPerShot(const TCsWeaponFireMode &FireMode);
-	FCsWeapon_TArrayRef_float TimeBetweenShots;
-	virtual float GetTimeBetweenShots(const TCsWeaponFireMode &FireMode);
-	FCsWeapon_TArrayRef_float TimeBetweenAutoShots;
-	virtual float GetTimeBetweenAutoShots(const TCsWeaponFireMode &FireMode);
+	FCsWeapon_TMapRef_float TimeBetweenProjectilesPerShot;
+	UFUNCTION(BlueprintCallable, Category = "Firing")
+	virtual float GetTimeBetweenProjectilesPerShot(const FECsWeaponFireMode &FireMode);
+	FCsWeapon_TMapRef_float TimeBetweenShots;
+	UFUNCTION(BlueprintCallable, Category = "Firing")
+	virtual float GetTimeBetweenShots(const FECsWeaponFireMode &FireMode);
+	FCsWeapon_TMapRef_float TimeBetweenAutoShots;
+	UFUNCTION(BlueprintCallable, Category = "Firing")
+	virtual float GetTimeBetweenAutoShots(const FECsWeaponFireMode &FireMode);
 
 	int32 Seed;
 
@@ -742,33 +698,37 @@ public:
 	UPROPERTY()
 	struct FRandomStream RandStream;
 
-	FCsWeapon_TArray_bool IsFirePressed;
-	FCsWeapon_TArray_bool Last_IsFirePressed;
+	FCsWeapon_TMap_bool IsFirePressed;
+	FCsWeapon_TMap_bool Last_IsFirePressed;
 
-	void SetIsFirePressed(const TCsWeaponFireMode &FireMode, const bool &Value, const bool &DoOnTick = true);
+	void SetIsFirePressed(const FECsWeaponFireMode &FireMode, const bool &Value, const bool &DoOnTick = true);
 
-	FCsWeapon_TArray_float IsFirePressed_StartTime;
-	FCsWeapon_TArray_float IsFireReleased_StartTime;
-	FCsWeapon_TArray_float Fire_StartTime;
+	FCsWeapon_TMap_float IsFirePressed_StartTime;
+	FCsWeapon_TMap_float IsFireReleased_StartTime;
+	FCsWeapon_TMap_float Fire_StartTime;
 
 	// Charge
 #pragma region
 public:
 
-	TCsWeaponAnim ChargeFireStartAnim;
-	TCsWeaponAnim ChargeFireLoopAnim;
+	UPROPERTY(BlueprintReadOnly, Category = "Firing")
+	FECsWeaponAnim ChargeFireStartAnim;
+	UPROPERTY(BlueprintReadOnly, Category = "Firing")
+	FECsWeaponAnim ChargeFireLoopAnim;
 
-	FCsWeapon_TArrayRef_bool AllowChargeFire;
+	FCsWeapon_TMapRef_bool AllowChargeFire;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Firing")
 	bool PerformingChargeFire;
 
-	FCsWeapon_TArrayRef_float MaxChargeFireTime;
-	virtual float GetMaxChargeFireTime(const TCsWeaponFireMode &FireMode);
+	FCsWeapon_TMapRef_float MaxChargeFireTime;
+	UFUNCTION(BlueprintCallable, Category = "Firing")
+	virtual float GetMaxChargeFireTime(const FECsWeaponFireMode &FireMode);
 
 	UFUNCTION(BlueprintCallable, Category = "Firing")
 	void HandleChargeFire();
 
-	void StartChargeFire(const TCsWeaponFireMode &FireMode);
+	void StartChargeFire(const FECsWeaponFireMode &FireMode);
 	static char StartChargeFire_Internal(struct FCsRoutine* r);
 	struct FCsRoutine* StartChargeFire_Internal_Routine;
 
@@ -776,12 +736,16 @@ public:
 
 	float ChargeFire_StartTime;
 
+	UFUNCTION(BlueprintCallable, Category = "Firing")
 	float GetChargeFireHeldTime();
-	float GetChargeFireHeldPercent(const TCsWeaponFireMode &FireMoe);
+	UFUNCTION(BlueprintCallable, Category = "Firing")
+	float GetChargeFireHeldPercent(const FECsWeaponFireMode &FireMoe);
+	UFUNCTION(BlueprintCallable, Category = "Firing")
 	float GetCurrentChargeFireHeldTime();
-	float GetCurrentChargeFireHeldPercent(const TCsWeaponFireMode &FireMode);
+	UFUNCTION(BlueprintCallable, Category = "Firing")
+	float GetCurrentChargeFireHeldPercent(const FECsWeaponFireMode &FireMode);
 
-	void StopChargeFire(const TCsWeaponFireMode &FireMode);
+	void StopChargeFire(const FECsWeaponFireMode &FireMode);
 
 #pragma endregion Charge
 
@@ -789,51 +753,65 @@ public:
 #pragma region
 public:
 
-	TCsData_Weapon_FireMode AimingDataFireMode;
+	UPROPERTY(BlueprintReadOnly, Category = "Firing")
+	FECsData_Weapon_FireMode AimingDataFireMode;
 
-	FCsWeapon_TArrayRef_bool DoSpread;
-	FCsWeapon_TArrayRef_float MinSpread;
-	virtual float GetMinSpread(const TCsWeaponFireMode &FireMode);
-	FCsWeapon_TArrayRef_float MaxSpread;
-	virtual float GetMaxSpread(const TCsWeaponFireMode &FireMode);
-	FCsWeapon_TArrayRef_float SpreadAddedPerShot;
-	virtual float GetSpreadAddedPerShot(const TCsWeaponFireMode &FireMode);
-	FCsWeapon_TArrayRef_float SpreadRecoveryRate;
-	virtual float GetSpreadRecoveryRate(const TCsWeaponFireMode &FireMode);
-	FCsWeapon_TArrayRef_float FiringSpreadRecoveryDelay;
-	virtual float GetFiringSpreadRecoveryDelay(const TCsWeaponFireMode &FireMode);
-	FCsWeapon_TArrayRef_float MovingSpreadBonus;
-	virtual float GetMovingSpreadBonus(const TCsWeaponFireMode &FireMode);
+	FCsWeapon_TMapRef_bool DoSpread;
+	FCsWeapon_TMapRef_float MinSpread;
+	UFUNCTION(BlueprintCallable, Category = "Firing")
+	virtual float GetMinSpread(const FECsWeaponFireMode &FireMode);
+	FCsWeapon_TMapRef_float MaxSpread;
+	UFUNCTION(BlueprintCallable, Category = "Firing")
+	virtual float GetMaxSpread(const FECsWeaponFireMode &FireMode);
+	FCsWeapon_TMapRef_float SpreadAddedPerShot;
+	UFUNCTION(BlueprintCallable, Category = "Firing")
+	virtual float GetSpreadAddedPerShot(const FECsWeaponFireMode &FireMode);
+	FCsWeapon_TMapRef_float SpreadRecoveryRate;
+	UFUNCTION(BlueprintCallable, Category = "Firing")
+	virtual float GetSpreadRecoveryRate(const FECsWeaponFireMode &FireMode);
+	FCsWeapon_TMapRef_float FiringSpreadRecoveryDelay;
+	UFUNCTION(BlueprintCallable, Category = "Firing")
+	virtual float GetFiringSpreadRecoveryDelay(const FECsWeaponFireMode &FireMode);
+	FCsWeapon_TMapRef_float MovingSpreadBonus;
+	UFUNCTION(BlueprintCallable, Category = "Firing")
+	virtual float GetMovingSpreadBonus(const FECsWeaponFireMode &FireMode);
 
-	FCsWeapon_TArray_float CurrentBaseSpread;
-	FCsWeapon_TArray_float CurrentSpread;
-	FCsWeapon_TArray_float LastSpreadFireTime;
+	FCsWeapon_TMap_float CurrentBaseSpread;
+	FCsWeapon_TMap_float CurrentSpread;
+	FCsWeapon_TMap_float LastSpreadFireTime;
 
 #pragma endregion Spread
 
+public:
+
 	// Anim
-	TCsData_Weapon_FireMode AnimationDataFireMode;
+	UPROPERTY(BlueprintReadOnly, Category = "Firing")
+	FECsData_Weapon_FireMode AnimationDataFireMode;
 
-	TCsWeaponAnim FireAnim;
+	UPROPERTY(BlueprintReadOnly, Category = "Firing")
+	FECsWeaponAnim FireAnim;
 
-	FCsWeapon_TArrayRef_bool LoopFireAnim;
-	FCsWeapon_TArrayRef_bool DoScaleFireAnim;
+	FCsWeapon_TMapRef_bool LoopFireAnim;
+	FCsWeapon_TMapRef_bool DoScaleFireAnim;
 
 	// Sound
-	TCsData_Weapon_FireMode SoundsDataFireMode;
+	UPROPERTY(BlueprintReadOnly, Category = "Firing")
+	FECsData_Weapon_FireMode SoundsDataFireMode;
 
-	FCsWeapon_TArrayRef_bool LoopFireSound;
+	FCsWeapon_TMapRef_bool LoopFireSound;
 
-	virtual FVector GetFireWeaponStartLocation(const TCsWeaponFireMode &FireMode);
-	virtual FVector GetFireWeaponStartDirection(const TCsWeaponFireMode &FireMode);
+	UFUNCTION(BlueprintCallable, Category = "Firing")
+	virtual FVector GetFireWeaponStartLocation(const FECsWeaponFireMode &FireMode);
+	UFUNCTION(BlueprintCallable, Category = "Firing")
+	virtual FVector GetFireWeaponStartDirection(const FECsWeaponFireMode &FireMode);
 
 	struct FCsProjectileFirePayload ProjectileFirePayloads[CS_PROJECTILE_FIRE_PAYLOAD_POOL_SIZE];
 
 	uint8 ProjectileFirePayloadPoolIndex;
 
-	struct FCsProjectileFirePayload* AllocateProjectileFirePayload(const TCsWeaponFireMode &FireMode);
+	struct FCsProjectileFirePayload* AllocateProjectileFirePayload(const FECsWeaponFireMode &FireMode);
 
-	void FireWeapon(const TCsWeaponFireMode &FireMode);
+	void FireWeapon(const FECsWeaponFireMode &FireMode);
 	static char FireWeapon_Internal(struct FCsRoutine* r);
 	struct FCsRoutine* FireWeapon_Internal_Routine;
 
@@ -842,15 +820,14 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Firing")
 	FBindableDynEvent_CsWeapon_Override_FireWeapon Override_FireWeapon_ScriptEvent;
 
+	UFUNCTION(BlueprintCallable, Category = "Firing")
 	virtual FVector GetOwnerRightVector();
 
+	UFUNCTION(BlueprintCallable, Category = "Firing")
 	virtual FVector GetFireProjectileDestination();
 
-	virtual void FireProjectile(const TCsWeaponFireMode &FireMode, FCsProjectileFirePayload* FirePayload);
-	virtual void FireProjectile_Internal(const TCsWeaponFireMode &FireMode, FCsProjectileFirePayload* Payload);
-
-	UFUNCTION(BlueprintCallable, Category = "Firing")
-	void FireProjectile_Script(const uint8 &FireMode, FCsProjectileFirePayload &Payload);
+	virtual void FireProjectile(const FECsWeaponFireMode &FireMode, FCsProjectileFirePayload* FirePayload);
+	virtual void FireProjectile_Internal(const FECsWeaponFireMode &FireMode, FCsProjectileFirePayload* Payload);
 
 	void DrawFireProjectile(class ACsProjectile* Projectile, const FVector &Start, const FVector &End);
 	static char DrawFireProjectile_Internal(struct FCsRoutine* r);
@@ -859,27 +836,30 @@ public:
 #pragma region
 public:
 
-	FCsWeapon_TArrayRef_bool IsHitscan;
-	FCsWeapon_TArrayRef_bool DoesHitscanUseRadius;
-	FCsWeapon_TArrayRef_bool DoesHitscanSimulateProjectileDuration;
+	FCsWeapon_TMapRef_bool IsHitscan;
+	FCsWeapon_TMapRef_bool DoesHitscanUseRadius;
+	FCsWeapon_TMapRef_bool DoesHitscanSimulateProjectileDuration;
 
-	FCsWeapon_TArrayRef_int32 ObstaclePenetrations;
-	virtual int32 GetObstaclePenetractions(const TCsWeaponFireMode &FireMode);
-	FCsWeapon_TArrayRef_int32 PawnPenetrations;
-	virtual int32 GetPawnPenetrations(const TCsWeaponFireMode &FireMode);
+	FCsWeapon_TMapRef_int32 ObstaclePenetrations;
+	UFUNCTION(BlueprintCallable, Category = "Firing")
+	virtual int32 GetObstaclePenetractions(const FECsWeaponFireMode &FireMode);
+	FCsWeapon_TMapRef_int32 PawnPenetrations;
+	UFUNCTION(BlueprintCallable, Category = "Firing")
+	virtual int32 GetPawnPenetrations(const FECsWeaponFireMode &FireMode);
 
 	virtual void GetFireHitscanIgnoreActors(TArray<AActor*> &OutActors);
 	virtual void GetFireHitscanIgnoreComponents(TArray<UPrimitiveComponent*> &OutComponents);
 
-	void FireHitscan(const TCsWeaponFireMode &FireMode, const FCsProjectileFirePayload* Payload);
+	void FireHitscan(const FECsWeaponFireMode &FireMode, const FCsProjectileFirePayload* Payload);
 
 #pragma endregion Hitscan
 
 	virtual UObject* GetMuzzleFlashParent(const TCsViewType &ViewType);
 
-	virtual FVector GetMuzzleLocation(const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode);
+	virtual FVector GetMuzzleLocation(const TCsViewType &ViewType, const FECsWeaponFireMode &FireMode);
 
-	virtual void PlayMuzzleFlash(const TCsWeaponFireMode &FireMode);
+	UFUNCTION(BlueprintCallable, Category = "Firing")
+	virtual void PlayMuzzleFlash(const FECsWeaponFireMode &FireMode);
 
 #pragma endregion Firing
 
@@ -887,7 +867,8 @@ public:
 #pragma region
 public:
 
-	TCsWeaponState ReloadingState;
+	UPROPERTY(BlueprintReadOnly, Category = "Reload")
+	FECsWeaponState ReloadingState;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Reload")
 	bool IsReloading;
@@ -902,8 +883,10 @@ public:
 	FCsWeapon_Ref_bool AllowRechargeAmmoDuringFire;
 
 	FCsWeapon_Ref_float RechargeSecondsPerAmmo;
+	UFUNCTION(BlueprintCallable, Category = "Reload")
 	virtual float GetRechargeSecondsPerAmmo(const int32 &Index);
 	FCsWeapon_Ref_float RechargeStartupDelay;
+	UFUNCTION(BlueprintCallable, Category = "Reload")
 	virtual float GetRechargeStartupDelay(const int32 &Index);
 
 	float RechargeAmmo_StartTime;
@@ -912,9 +895,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Reload")
 	bool IsRechargingAmmo;
 
+	UFUNCTION(BlueprintCallable, Category = "Reload")
 	bool CanReload();
-	bool CanAutoReload(const TCsWeaponFireMode &FireMode);
-	bool ShouldAutoReload(const TCsWeaponFireMode &FireMode);
+	UFUNCTION(BlueprintCallable, Category = "Reload")
+	bool CanAutoReload(const FECsWeaponFireMode &FireMode);
+	UFUNCTION(BlueprintCallable, Category = "Reload")
+	bool ShouldAutoReload(const FECsWeaponFireMode &FireMode);
 
 	void Reload();
 

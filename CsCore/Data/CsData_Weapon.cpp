@@ -21,6 +21,7 @@ const bool& ACsData_Weapon::UseInventory() { return ECsCached::Ref::False; }
 #pragma region
 
 USkeletalMesh* ACsData_Weapon::GetMesh(const TCsViewType &ViewType, const bool &IsLow /*=false*/){ return nullptr; }
+USkeletalMesh* ACsData_Weapon::GetMesh(const TEnumAsByte<ECsViewType::Type> &ViewType, const bool &IsLow /*=false*/) { return GetMesh((TCsViewType)ViewType, IsLow); }
 USkeletalMesh* ACsData_Weapon::GetMesh() { return nullptr; }
 
 void ACsData_Weapon::SetMesh(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const bool &IsLow /*=false*/)

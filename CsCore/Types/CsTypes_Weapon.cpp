@@ -90,3 +90,12 @@ EMCsWeaponOwner& EMCsWeaponOwner::Get()
 		Instance = new EMCsWeaponOwner();
 	return *Instance;
 }
+
+EMCsData_Weapon_FireMode* EMCsData_Weapon_FireMode::Instance;
+
+EMCsData_Weapon_FireMode& EMCsData_Weapon_FireMode::Get()
+{
+	if (!Instance)
+		Instance = new EMCsData_Weapon_FireMode();
+	return *Instance;
+}

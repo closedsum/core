@@ -753,6 +753,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FECsSurfaceType
 				if (StructProperty->Struct == FECsSurfaceType::StaticStruct())
 				{ WriteMemberEnumStructPropertyToJson<FECsSurfaceType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsWeaponGrip
+				if (StructProperty->Struct == FECsWeaponGrip::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsWeaponGrip>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
 			}
 
 			if (Internal)
@@ -1470,6 +1473,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FECsSurfaceType
 				if (StructProperty->Struct == FECsSurfaceType::StaticStruct())
 				{ WriteMemberEnumStructPropertyToJson<FECsSurfaceType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsWeaponGrip
+				if (StructProperty->Struct == FECsWeaponGrip::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsWeaponGrip>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
 			}
 
 			if (Internal)
@@ -2127,6 +2133,9 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FECsSurfaceType
 				if (StructProperty->Struct == FECsSurfaceType::StaticStruct())
 				{ WriteMemberEnumStructPropertyToJson<FECsSurfaceType>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+				// FECsWeaponGrip
+				if (StructProperty->Struct == FECsWeaponGrip::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsWeaponGrip>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
 			}
 
 			if (Internal)
@@ -2960,6 +2969,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 				// FECsSurfaceType
 				if (StructProperty->Struct == FECsSurfaceType::StaticStruct())
 				{ WriteToMemberEnumStructPropertyFromJson<FECsSurfaceType, EMCsSurfaceType>(JsonObject, StructProperty, InStruct, MemberName, EMCsSurfaceType::Get()); continue; }
+				// FECsWeaponGrip
+				if (StructProperty->Struct == FECsWeaponGrip::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsWeaponGrip, EMCsWeaponGrip>(JsonObject, StructProperty, InStruct, MemberName, EMCsWeaponGrip::Get()); continue; }
 			}
 
 			if (Internal)
@@ -3717,6 +3729,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				// FECsSurfaceType
 				if (StructProperty->Struct == FECsSurfaceType::StaticStruct())
 				{ WriteToMemberEnumStructPropertyFromJson<FECsSurfaceType, EMCsSurfaceType>(JsonObject, StructProperty, InStruct, MemberName, EMCsSurfaceType::Get()); continue; }
+				// FECsWeaponGrip
+				if (StructProperty->Struct == FECsWeaponGrip::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsWeaponGrip, EMCsWeaponGrip>(JsonObject, StructProperty, InStruct, MemberName, EMCsWeaponGrip::Get()); continue; }
 			}
 
 			if (Internal)
@@ -4421,6 +4436,9 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				// FECsSurfaceType
 				if (StructProperty->Struct == FECsSurfaceType::StaticStruct())
 				{ WriteToMemberEnumStructPropertyFromJson<FECsSurfaceType, EMCsSurfaceType>(JsonObject, StructProperty, InObject, MemberName, EMCsSurfaceType::Get()); continue; }
+				// FECsWeaponGrip
+				if (StructProperty->Struct == FECsWeaponGrip::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsWeaponGrip, EMCsWeaponGrip>(JsonObject, StructProperty, InObject, MemberName, EMCsWeaponGrip::Get()); continue; }
 			}
 
 			if (Internal)

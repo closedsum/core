@@ -23,8 +23,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsPawn_OnSetupFini
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsPawn_OnChangeHealth, const uint8&, const float&, const float&);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsPawn_OnChangeHealth, const uint8&, MappingId, const float&, CurrentHealth, const float&, CurrentMaxHealth);
 // Weapon
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsPawn_OnChangeCurrentWeaponSlot, const uint8&, const TCsWeaponSlot&, const TCsWeaponSlot&);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsPawn_OnChangeCurrentWeaponSlot, const uint8&, MappingId, const uint8&, LastWeaponSlot, const uint8&, CurrentWeaponSlot);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsPawn_OnChangeCurrentWeaponSlot, const uint8&, const FECsWeaponSlot&, const FECsWeaponSlot&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsPawn_OnChangeCurrentWeaponSlot, const uint8&, MappingId, const FECsWeaponSlot&, LastWeaponSlot, const FECsWeaponSlot&, CurrentWeaponSlot);
 // Damage
 DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsPawn_OnApplyDamage_Result, const uint8&, FCsDamageResult*);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnApplyDamage_Result, const uint8&, MappingId, const FCsDamageResult&, Result);
@@ -381,11 +381,11 @@ public:
 #pragma region
 public:
 
-	TCsWeaponSlot CurrentWeaponSlot;
+	FECsWeaponSlot CurrentWeaponSlot;
 
-	TCsPrimitiveType_Ref<TCsWeaponSlot> CurrentWeaponSlotHandle;
+	TCsProperty_Ref<FECsWeaponSlot> CurrentWeaponSlotHandle;
 
-	virtual void OnChange_CurrentWeaponSlot(const TCsWeaponSlot &Slot);
+	virtual void OnChange_CurrentWeaponSlot(const FECsWeaponSlot &Slot);
 
 	UPROPERTY(BlueprintAssignable, Category = "Tick")
 	FBindableDynEvent_CsPawn_OnChangeCurrentWeaponSlot OnChange_CurrentWeaponSlot_ScriptEvent;
@@ -393,7 +393,7 @@ public:
 	FBindableEvent_CsPawn_OnChangeCurrentWeaponSlot OnChange_CurrentWeaponSlot_Event;
 
 	uint8 CurrentWeaponIndex;
-	TCsWeaponSlot LastWeaponSlot;
+	FECsWeaponSlot LastWeaponSlot;
 	uint8 LastWeaponIndex;
 	uint8 CurrentWeaponCount;
 	uint8 MaxWeaponCount;
@@ -403,10 +403,10 @@ public:
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Weapons")
 	TArray<class ACsWeapon*> Weapons;
 
-	class ACsWeapon* GetWeapon(const TCsWeaponSlot &Slot);
+	class ACsWeapon* GetWeapon(const FECsWeaponSlot &Slot);
 
 	template<typename T>
-	T* GetWeapon(const TCsWeaponSlot &Slot)
+	T* GetWeapon(const FECsWeaponSlot &Slot)
 	{
 		return Cast<T>(GetWeapon(Slot));
 	}
@@ -423,10 +423,10 @@ public:
 	UPROPERTY(Transient)
 	TArray<TWeakObjectPtr<class ACsData_Weapon>> Data_Weapons;
 
-	class ACsData_Weapon* GetData_Weapon(const TCsWeaponSlot &Slot);
+	class ACsData_Weapon* GetData_Weapon(const FECsWeaponSlot &Slot);
 	
 	template<typename T>
-	T* GetData_Weapon(const TCsWeaponSlot &Slot)
+	T* GetData_Weapon(const FECsWeaponSlot &Slot)
 	{
 		return Cast<T>(GetData_Weapon(Slot));
 	}
@@ -443,10 +443,10 @@ public:
 	UPROPERTY(Transient)
 	TArray<TWeakObjectPtr<class ACsData_WeaponMaterialSkin>> Data_WeaponMaterialSkins;
 
-	class ACsData_WeaponMaterialSkin* GetData_WeaponMaterialSkin(const TCsWeaponSlot &Slot);
+	class ACsData_WeaponMaterialSkin* GetData_WeaponMaterialSkin(const FECsWeaponSlot &Slot);
 
 	template<typename T>
-	T* GetData_WeaponMaterialSkin(const TCsWeaponSlot &Slot)
+	T* GetData_WeaponMaterialSkin(const FECsWeaponSlot &Slot)
 	{
 		return Cast<T>(GetData_WeaponMaterialSkin(Slot));
 	}

@@ -414,14 +414,29 @@ public:
 		return Enums[Index];
 	}
 
+	FORCEINLINE const EnumStruct& GetSafeEnumAt(const int32 &Index)
+	{
+		return Index < Count ? Enums[Index] : MAX;
+	}
+
 	FORCEINLINE const EnumStruct& GetEnum(const FString &Name)
 	{
 		return NameMap[Name];
 	}
 
+	FORCEINLINE const EnumStruct& GetSafeEnum(const FString &Name)
+	{
+		return IsValidEnum(Name) ? NameMap[Name] : MAX;
+	}
+
 	FORCEINLINE const EnumStruct& GetEnum(const FName &Name)
 	{
 		return NameInternalMap[Name];
+	}
+
+	FORCEINLINE const EnumStruct& GetSafeEnum(const FName &Name)
+	{
+		return IsValidEnum(Name) ? NameInternalMap[Name] : MAX;
 	}
 
 	FORCEINLINE const EnumStruct& GetEnum(const EnumType &Type)
@@ -1740,26 +1755,26 @@ typedef FCsPrimitiveType_FLinearColor TCsFLinearColor;
 
 #pragma endregion Value
 
-// Ref
+	// Ref
 #pragma region
 
-template<typename T>
-struct TCsPrimitiveType_Ref
+template<typename ValueType>
+struct TCsProperty_Ref
 {
 public:
-	T DefaultValue;
-	T* Value;
-	T Last_Value;
+	ValueType DefaultValue;
+	ValueType* Value;
+	ValueType Last_Value;
 protected:
 	bool IsDirty;
 public:
-	TMulticastDelegate<void, const T&> OnChange_Event;
+	TMulticastDelegate<void, const ValueType&> OnChange_Event;
 
 public:
-	TCsPrimitiveType_Ref(){}
-	virtual ~TCsPrimitiveType_Ref(){}
+	TCsProperty_Ref(){}
+	virtual ~TCsProperty_Ref(){}
 
-	virtual void UpdateIsDirty()
+	FORCEINLINE virtual void UpdateIsDirty()
 	{
 		IsDirty = *Value != Last_Value;
 
@@ -1767,36 +1782,36 @@ public:
 			OnChange_Event.Broadcast(*Value);
 	}
 
-	TCsPrimitiveType_Ref& operator=(const T& B)
+	FORCEINLINE TCsProperty_Ref& operator=(const ValueType& B)
 	{
 		*Value = B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	bool operator==(const T& B) const
+	FORCEINLINE bool operator==(const ValueType& B) const
 	{
 		return *Value == B;
 	}
 
-	bool operator!=(const T& B) const
+	FORCEINLINE bool operator!=(const ValueType& B) const
 	{
 		return !(*this == B);
 	}
 
-	void Set(T* inValue)
+	FORCEINLINE void Set(ValueType* inValue)
 	{
 		Value   = inValue;
 		UpdateIsDirty();
 	}
 
-	void Set(const T &inValue)
+	FORCEINLINE void Set(const ValueType &inValue)
 	{
 		*Value  = inValue;
 		UpdateIsDirty();
 	}
 
-	const T& Get() { return *Value; }
+	FORCEINLINE const ValueType& Get() { return *Value; }
 
 	void Clear()
 	{
@@ -1818,7 +1833,7 @@ public:
 		OnChange_Event.Clear();
 	}
 
-	bool HasChanged() { return IsDirty; }
+	FORCEINLINE bool HasChanged() { return IsDirty; }
 
 	void Resolve()
 	{
@@ -1827,138 +1842,138 @@ public:
 	}
 };
 
-struct CSCORE_API FCsPrimitiveType_Ref_bool : public TCsPrimitiveType_Ref<bool>
+struct CSCORE_API FCsProperty_Ref_bool : public TCsProperty_Ref<bool>
 {
-	FCsPrimitiveType_Ref_bool()
+	FCsProperty_Ref_bool()
 	{
 		DefaultValue = false;
 	}
-	~FCsPrimitiveType_Ref_bool() {}
+	~FCsProperty_Ref_bool() {}
 
-	FORCEINLINE friend bool operator==(const bool &Lhs, const FCsPrimitiveType_Ref_bool &Rhs)
+	FORCEINLINE friend bool operator==(const bool &Lhs, const FCsProperty_Ref_bool &Rhs)
 	{
 		return Lhs == *(Rhs.Value);
 	}
 
-	FORCEINLINE friend bool operator==(const FCsPrimitiveType_Ref_bool &Lhs, const bool &Rhs)
+	FORCEINLINE friend bool operator==(const FCsProperty_Ref_bool &Lhs, const bool &Rhs)
 	{
 		return *(Lhs.Value) == Rhs;
 	}
 
-	FORCEINLINE friend bool operator!=(const bool &Lhs, const FCsPrimitiveType_Ref_bool &Rhs)
+	FORCEINLINE friend bool operator!=(const bool &Lhs, const FCsProperty_Ref_bool &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_Ref_bool &Lhs, const bool &Rhs)
+	FORCEINLINE friend bool operator!=(const FCsProperty_Ref_bool &Lhs, const bool &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 };
 
-typedef FCsPrimitiveType_Ref_bool TCsBool_Ref;
+typedef FCsProperty_Ref_bool TCsBool_Ref;
 
-struct CSCORE_API FCsPrimitiveType_Ref_int32 : public TCsPrimitiveType_Ref<int32>
+struct CSCORE_API FCsProperty_Ref_int32 : public TCsProperty_Ref<int32>
 {
-	FCsPrimitiveType_Ref_int32()
+	FCsProperty_Ref_int32()
 	{
 		DefaultValue = 0;
 	}
-	~FCsPrimitiveType_Ref_int32() {}
+	~FCsProperty_Ref_int32() {}
 
-	FORCEINLINE friend bool operator==(const int32 &Lhs, const FCsPrimitiveType_Ref_int32 &Rhs)
+	FORCEINLINE friend bool operator==(const int32 &Lhs, const FCsProperty_Ref_int32 &Rhs)
 	{
 		return Lhs == *(Rhs.Value);
 	}
 
-	FORCEINLINE friend bool operator==(const FCsPrimitiveType_Ref_int32 &Lhs, const int32 &Rhs)
+	FORCEINLINE friend bool operator==(const FCsProperty_Ref_int32 &Lhs, const int32 &Rhs)
 	{
 		return *(Lhs.Value) == Rhs;
 	}
 
-	FORCEINLINE friend bool operator!=(const int32 &Lhs, const FCsPrimitiveType_Ref_int32 &Rhs)
+	FORCEINLINE friend bool operator!=(const int32 &Lhs, const FCsProperty_Ref_int32 &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_Ref_int32 &Lhs, const int32 &Rhs)
+	FORCEINLINE friend bool operator!=(const FCsProperty_Ref_int32 &Lhs, const int32 &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator<(const FCsPrimitiveType_Ref_int32 &Lhs, const int32 &Rhs)
+	FORCEINLINE friend bool operator<(const FCsProperty_Ref_int32 &Lhs, const int32 &Rhs)
 	{
 		return (*Lhs.Value) < Rhs;
 	}
 
-	FORCEINLINE friend bool operator<(const int32 &Lhs, const FCsPrimitiveType_Ref_int32 &Rhs)
+	FORCEINLINE friend bool operator<(const int32 &Lhs, const FCsProperty_Ref_int32 &Rhs)
 	{
 		return Lhs < (*Rhs.Value);
 	}
 
-	FORCEINLINE friend bool operator>(const FCsPrimitiveType_Ref_int32 &Lhs, const int32 &Rhs)
+	FORCEINLINE friend bool operator>(const FCsProperty_Ref_int32 &Lhs, const int32 &Rhs)
 	{
 		return (*Lhs.Value) > Rhs;
 	}
 
-	FORCEINLINE friend bool operator>(const int32 &Lhs, const FCsPrimitiveType_Ref_int32 &Rhs)
+	FORCEINLINE friend bool operator>(const int32 &Lhs, const FCsProperty_Ref_int32 &Rhs)
 	{
 		return Lhs > (*Rhs.Value);
 	}
 };
 
-typedef FCsPrimitiveType_Ref_int32 TCsInt32_Ref;
+typedef FCsProperty_Ref_int32 TCsInt32_Ref;
 
-struct CSCORE_API FCsPrimitiveType_Ref_float : public TCsPrimitiveType_Ref<float>
+struct CSCORE_API FCsProperty_Ref_float : public TCsProperty_Ref<float>
 {
-	FCsPrimitiveType_Ref_float()
+	FCsProperty_Ref_float()
 	{
 		DefaultValue = 0.0f;
 	}
-	~FCsPrimitiveType_Ref_float(){}
+	~FCsProperty_Ref_float(){}
 
-	FORCEINLINE friend bool operator==(const float &Lhs, const FCsPrimitiveType_Ref_float &Rhs)
+	FORCEINLINE friend bool operator==(const float &Lhs, const FCsProperty_Ref_float &Rhs)
 	{
 		return Lhs == *(Rhs.Value);
 	}
 
-	FORCEINLINE friend bool operator==(const FCsPrimitiveType_Ref_float &Lhs, const float &Rhs)
+	FORCEINLINE friend bool operator==(const FCsProperty_Ref_float &Lhs, const float &Rhs)
 	{
 		return *(Lhs.Value) == Rhs;
 	}
 
-	FORCEINLINE friend bool operator!=(const float &Lhs, const FCsPrimitiveType_Ref_float &Rhs)
+	FORCEINLINE friend bool operator!=(const float &Lhs, const FCsProperty_Ref_float &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_Ref_float &Lhs, const float &Rhs)
+	FORCEINLINE friend bool operator!=(const FCsProperty_Ref_float &Lhs, const float &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator<(const FCsPrimitiveType_Ref_float &Lhs, const float &Rhs)
+	FORCEINLINE friend bool operator<(const FCsProperty_Ref_float &Lhs, const float &Rhs)
 	{
 		return (*Lhs.Value) < Rhs;
 	}
 
-	FORCEINLINE friend bool operator<(const float &Lhs, const FCsPrimitiveType_Ref_float &Rhs)
+	FORCEINLINE friend bool operator<(const float &Lhs, const FCsProperty_Ref_float &Rhs)
 	{
 		return Lhs < (*Rhs.Value);
 	}
 
-	FORCEINLINE friend bool operator>(const FCsPrimitiveType_Ref_float &Lhs, const float &Rhs)
+	FORCEINLINE friend bool operator>(const FCsProperty_Ref_float &Lhs, const float &Rhs)
 	{
 		return (*Lhs.Value) > Rhs;
 	}
 
-	FORCEINLINE friend bool operator>(const float &Lhs, const FCsPrimitiveType_Ref_float &Rhs)
+	FORCEINLINE friend bool operator>(const float &Lhs, const FCsProperty_Ref_float &Rhs)
 	{
 		return Lhs > (*Rhs.Value);
 	}
 };
 
-typedef FCsPrimitiveType_Ref_float TCsFloat_Ref;
+typedef FCsProperty_Ref_float TCsFloat_Ref;
 
 #pragma endregion Ref
 
@@ -2565,17 +2580,16 @@ struct TCsPrimitiveType_MultiRefValue_bool : public TCsPrimitiveType_MultiRefVal
 // TArrayValue
 #pragma region
 
-// DON'T USE int64 for U
-template<typename T, typename U = int32>
-struct TCsPrimitiveType_TArrayValue
+template<typename ValueType>
+struct TCsProperty_TArray
 {
 public:
-	T DefaultValue;
-	T Value;
-	T Last_Value;
+	ValueType DefaultValue;
+	ValueType Value;
+	ValueType Last_Value;
 
-	TArray<T> Values;
-	TArray<T> Last_Values;
+	TArray<ValueType> Values;
+	TArray<ValueType> Last_Values;
 
 protected:
 	uint8 SIZE;
@@ -2583,21 +2597,23 @@ protected:
 
 	TArray<bool> IsDirtys;
 public:
-	TBaseDelegate<T, const U&> GetDelegate;
-	TMulticastDelegate<void, const T&> OnChange_Event;
-	TMulticastDelegate<void, const U&, const T&> OnChangeEX_Event;
+	TBaseDelegate<ValueType, const int32&> GetDelegate;
+	TBaseDelegate<const ValueType&, const int32&> Override_Get;
+	TBaseDelegate<const ValueType&, const int32&> Override_Subscript;
+	TMulticastDelegate<void, const ValueType&> OnChange_Event;
+	TMulticastDelegate<void, const int32&, const ValueType&> OnChangeArray_Event;
 
 public:
 
-	TCsPrimitiveType_TArrayValue() {}
-	virtual ~TCsPrimitiveType_TArrayValue() {}
+	TCsProperty_TArray() {}
+	virtual ~TCsProperty_TArray() {}
 
-	void SetDefaultValue(const T& inDefaultValue)
+	void SetDefaultValue(const ValueType& inDefaultValue)
 	{
 		DefaultValue = inDefaultValue;
 	}
 
-	virtual void UpdateIsDirty()
+	FORCEINLINE virtual void UpdateIsDirty()
 	{
 		IsDirty = Value != Last_Value;
 
@@ -2605,17 +2621,17 @@ public:
 			OnChange_Event.Broadcast(Value);
 	}
 
-	virtual void UpdateIsDirtys(const int64 &Index)
+	FORCEINLINE virtual void UpdateIsDirtys(const int32 &Index)
 	{
 		IsDirtys[Index] = Values[Index] != Last_Values[Index];
 
 		if (IsDirtys[Index])
-			OnChangeEX_Event.Broadcast((U)Index, Values[Index]);
+			OnChangeArray_Event.Broadcast(Index, Values[Index]);
 	}
 
-	TCsPrimitiveType_TArrayValue& operator=(const T& B)
+	FORCEINLINE TCsProperty_TArray& operator=(const TCsProperty_TArray& B)
 	{
-		Value = B;
+		Value = B.Value;
 		UpdateIsDirty();
 
 		for (uint8 I = 0; I < SIZE; ++I)
@@ -2626,7 +2642,7 @@ public:
 		return *this;
 	}
 
-	bool operator==(const TCsPrimitiveType_TArrayValue& B) const
+	FORCEINLINE bool operator==(const TCsProperty_TArray& B) const
 	{
 		for (uint8 I = 0; I < SIZE; ++I)
 		{
@@ -2636,7 +2652,7 @@ public:
 		return Value == B;
 	}
 
-	bool operator!=(const TCsPrimitiveType_TArrayValue& B) const
+	FORCEINLINE bool operator!=(const TCsProperty_TArray& B) const
 	{
 		return !(*this == B);
 	}
@@ -2649,21 +2665,14 @@ public:
 		IsDirtys.SetNumZeroed(SIZE, true);
 	}
 
-	void Set(const T &inValue)
+	FORCEINLINE void Set(const ValueType &inValue)
 	{
 		Value = inValue;
 		UpdateIsDirty();
 	}
 
-	void Set(const U &Index, const T &inValue)
+	FORCEINLINE void Set(const int32 &Index, const ValueType &inValue)
 	{
-		Set((int64)Index, inValue);
-	}
-
-	void Set(const int64 &Index, const T &inValue)
-	{
-		const int64 I = (int64)Index;
-
 		if (Index > CS_PRIMITIVE_TYPE_DEFAULT && Index < SIZE)
 		{
 			Values[Index] = inValue;
@@ -2675,11 +2684,22 @@ public:
 		}
 	}
 
-	const T& Get() { return Value; }
-	const T& Get(const U &Index) { return Get((int64)Index); }
-	const T& Get(const int64 &Index){ return Index <= CS_PRIMITIVE_TYPE_DEFAULT ? Value : Values[Index]; }
+	FORCEINLINE const ValueType& operator[](const int32 &Index)
+	{
+		if (Override_Subscript.IsBound())
+			return Override_Subscript.Execute(Index);
+		return Values[Index];
+	}
 
-	T GetEX(const U &Index) { return GetDelegate.Execute(Index); }
+	FORCEINLINE const ValueType& Get() { return Value; }
+	FORCEINLINE const ValueType& Get(const int32 &Index)
+	{
+		if (Override_Get.IsBound())
+			return Override_Get.Execute(Index);
+		return Index <= CS_PRIMITIVE_TYPE_DEFAULT ? Value : Values[Index]; 
+	}
+
+	FORCEINLINE ValueType GetEX(const int32 &Index) { return GetDelegate.Execute(Index); }
 
 	void Clear()
 	{
@@ -2712,15 +2732,16 @@ public:
 		ResetValues();
 
 		GetDelegate.Unbind();
+		Override_Get.Unbind();
+		Override_Subscript.Unbind();
 		OnChange_Event.Clear();
 		OnChangeEX_Event.Clear();
 	}
 
-	bool HasChanged() { return IsDirty; }
-	bool HasChanged(const U &Index) { return HasChanged((int64)Index); }
-	bool HasChanged(const int64 &Index) { return Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE ? IsDirty : IsDirtys[Index]; }
+	FORCEINLINE const bool& HasChanged() { return IsDirty; }
+	FORCEINLINE const bool& HasChanged(const int32 &Index) { return Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE ? IsDirty : IsDirtys[Index]; }
 
-	void Resolve()
+	FORCEINLINE void Resolve()
 	{
 		UpdateIsDirty();
 
@@ -2732,21 +2753,19 @@ public:
 	}
 };
 
-template<typename T, typename U>
-struct TCsIntegralType_TArrayValue : public TCsPrimitiveType_TArrayValue<T, U>
+template<typename ValueType>
+struct TCsIntegralType_TArray : public TCsProperty_TArray<ValueType>
 {
-	TCsIntegralType_TArrayValue() {}
-	~TCsIntegralType_TArrayValue() {}
+	TCsIntegralType_TArray() {}
+	~TCsIntegralType_TArray() {}
 
-	void Add(const T &inValue)
+	void Add(const ValueType &inValue)
 	{
 		Value += inValue;
 		UpdateIsDirty();
 	}
 
-	void Add(const U &Index, const T &inValue) { Add((int64)Index, inValue); }
-
-	void Add(const int64 &Index, const T &inValue)
+	void Add(const int32 &Index, const ValueType &inValue)
 	{
 		if (Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE)
 		{
@@ -2759,15 +2778,13 @@ struct TCsIntegralType_TArrayValue : public TCsPrimitiveType_TArrayValue<T, U>
 		}
 	}
 
-	void Subtract(const T &inValue)
+	void Subtract(const ValueType &inValue)
 	{
 		Value -= inValue;
 		UpdateIsDirty();
 	}
 
-	void Subtract(const U &Index, const T &inValue) { Subtract((int64)Index, inValue); }
-
-	void Subtract(const int64 &Index, const T &inValue)
+	void Subtract(const int32 &Index, const ValueType &inValue)
 	{
 		if (Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE)
 		{
@@ -2780,57 +2797,54 @@ struct TCsIntegralType_TArrayValue : public TCsPrimitiveType_TArrayValue<T, U>
 		}
 	}
 
-	T Max()
+	ValueType Max()
 	{
-		T max = Values[0];
+		ValueType max = Values[0];
 
 		for (uint8 I = 1; I < SIZE; ++I)
 		{
-			max = (T)FMath::Max(max, Values[I]);
+			max = (ValueType)FMath::Max(max, Values[I]);
 		}
 		return max;
 	}
 
-	T Min()
+	ValueType Min()
 	{
-		T min = Values[0];
+		ValueType min = Values[0];
 
 		for (uint8 I = 1; I < SIZE; ++I)
 		{
-			min = (T)FMath::Min(min, Values[I]);
+			min = (ValueType)FMath::Min(min, Values[I]);
 		}
 		return min;
 	}
 };
 
-template<typename U>
-struct TCsIntegralType_TArrayValue_uint8 : public TCsIntegralType_TArrayValue<uint8, U>
+struct TCsIntegralType_TArray_uint8 : public TCsIntegralType_TArray<uint8>
 {
-	TCsIntegralType_TArrayValue_uint8()
+	TCsIntegralType_TArray_uint8()
 	{
 		DefaultValue = 0;
 	}
-	~TCsIntegralType_TArrayValue_uint8(){}
+	~TCsIntegralType_TArray_uint8(){}
 };
 
-template<typename U>
-struct TCsIntegralType_TArrayValue_float : public TCsIntegralType_TArrayValue<float, U>
+struct TCsIntegralType_TArray_float : public TCsIntegralType_TArray<float>
 {
-	TCsIntegralType_TArrayValue_float()
+	TCsIntegralType_TArray_float()
 	{
 		DefaultValue = 0.0f;
 	}
-	~TCsIntegralType_TArrayValue_float() {}
+	~TCsIntegralType_TArray_float() {}
 };
 
-template<typename U>
-struct TCsPrimitiveType_TArrayValue_bool : public TCsPrimitiveType_TArrayValue<bool, U>
+struct TCsProperty_TArray_bool : public TCsProperty_TArray<bool>
 {
-	TCsPrimitiveType_TArrayValue_bool() 
+	TCsProperty_TArray_bool() 
 	{
 		DefaultValue = false;
 	}
-	~TCsPrimitiveType_TArrayValue_bool() {}
+	~TCsProperty_TArray_bool() {}
 
 	bool Or()
 	{
@@ -2860,17 +2874,16 @@ struct TCsPrimitiveType_TArrayValue_bool : public TCsPrimitiveType_TArrayValue<b
 // TArrayRefValue
 #pragma region
 
-// DON'T USE int64 for U
-template<typename T, typename U = int32>
-struct TCsPrimitiveType_TArrayRefValue
+template<typename ValueType>
+struct TCsProperty_TArrayRef
 {
 public:
-	T DefaultValue;
-	T Value;
-	T Last_Value;
+	ValueType DefaultValue;
+	ValueType Value;
+	ValueType Last_Value;
 
-	TArray<T*> Values;
-	TArray<T> Last_Values;
+	TArray<ValueType*> Values;
+	TArray<ValueType> Last_Values;
 
 protected:
 	uint8 SIZE;
@@ -2878,20 +2891,22 @@ protected:
 
 	TArray<bool> IsDirtys;
 public:
-	TBaseDelegate<T, const U&> GetDelegate;
-	TMulticastDelegate<void, const T&> OnChange_Event;
-	TMulticastDelegate<void, const U&, const T&> OnChangeEX_Event;
+	TBaseDelegate<ValueType, const int32&> GetDelegate;
+	TBaseDelegate<const ValueType&, const int32&> Override_Get;
+	TBaseDelegate<const ValueType&, const int32&> Override_Subscript;
+	TMulticastDelegate<void, const ValueType&> OnChange_Event;
+	TMulticastDelegate<void, const int32&, const ValueType&> OnChangeArray_Event;
 public:
 
-	TCsPrimitiveType_TArrayRefValue() {}
-	virtual ~TCsPrimitiveType_TArrayRefValue() {}
+	TCsProperty_TArrayRef() {}
+	virtual ~TCsProperty_TArrayRef() {}
 
-	void SetDefaultValue(const T& inDefaultValue)
+	void SetDefaultValue(const ValueType& inDefaultValue)
 	{
 		DefaultValue = inDefaultValue;
 	}
 
-	virtual void UpdateIsDirty()
+	FORCEINLINE virtual void UpdateIsDirty()
 	{
 		IsDirty = Value != Last_Value;
 
@@ -2899,17 +2914,17 @@ public:
 			OnChange_Event.Broadcast(Value);
 	}
 
-	virtual void UpdateIsDirtys(const int64 &Index)
+	FORCEINLINE virtual void UpdateIsDirtys(const int32 &Index)
 	{
 		IsDirtys[Index] = *(Values[Index]) != Last_Values[Index];
 
 		if (IsDirtys[Index])
-			OnChangeEX_Event.Broadcast((U)Index, *(Values[Index]));
+			OnChangeArray_Event.Broadcast(Index, *(Values[Index]));
 	}
 
-	TCsPrimitiveType_TArrayRefValue& operator=(const T& B)
+	FORCEINLINE TCsProperty_TArrayRef& operator=(const TCsProperty_TArrayRef& B)
 	{
-		Value = B;
+		Value = B.Value;
 		UpdateIsDirty();
 
 		for (uint8 I = 0; I < SIZE; ++I)
@@ -2920,7 +2935,7 @@ public:
 		return *this;
 	}
 
-	bool operator==(const TCsPrimitiveType_TArrayRefValue& B) const
+	FORCEINLINE bool operator==(const TCsProperty_TArrayRef& B) const
 	{
 		for (uint8 I = 0; I < SIZE; ++I)
 		{
@@ -2930,7 +2945,7 @@ public:
 		return Value == B;
 	}
 
-	bool operator!=(const TCsPrimitiveType_TArrayRefValue& B) const
+	FORCEINLINE bool operator!=(const TCsProperty_TArrayRef& B) const
 	{
 		return !(*this == B);
 	}
@@ -2948,18 +2963,15 @@ public:
 		IsDirtys.SetNumZeroed(SIZE, true);
 	}
 
-	void Set(T &inValue)
+	FORCEINLINE const uint8& Num() { return SIZE; }
+
+	FORCEINLINE void Set(ValueType &inValue)
 	{
 		Value = inValue;
 		UpdateIsDirty();
 	}
 
-	void Set(const U &Index, T* inValue)
-	{
-		Set((int64)Index, inValue);
-	}
-
-	void Set(const int64 &Index, T* inValue)
+	FORCEINLINE void Set(const int32 &Index, ValueType* inValue)
 	{
 		if (Index > CS_PRIMITIVE_TYPE_DEFAULT && Index < SIZE)
 		{
@@ -2972,11 +2984,22 @@ public:
 		}
 	}
 
-	const T& Get() { return Value; }
-	const T& Get(const U &Index) { return Get((int64)Index); }
-	const T& Get(const int64 &Index){ return Index <= CS_PRIMITIVE_TYPE_DEFAULT ? Value : *(Values[Index]); }
+	FORCEINLINE const ValueType& operator[](const int32 &Index)
+	{
+		if (Override_Subscript.IsBound())
+			return Override_Subscript.Execute(Index);
+		return *(Values[Index]);
+	}
 
-	T GetEX(const U &Index) { return GetDelegate.Execute(Index); }
+	FORCEINLINE const ValueType& Get() { return Value; }
+	FORCEINLINE const ValueType& Get(const int32 &Index)
+	{
+		if (Override_Get.IsBound())
+			return Override_Get.Execute(Index);
+		return Index <= CS_PRIMITIVE_TYPE_DEFAULT ? Value : *(Values[Index]); 
+	}
+
+	FORCEINLINE ValueType GetEX(const int32 &Index) { return GetDelegate.Execute(Index); }
 
 	void Clear()
 	{
@@ -3010,18 +3033,17 @@ public:
 
 		GetDelegate.Unbind();
 		OnChange_Event.Clear();
-		OnChangeEX_Event.Clear();
+		OnChangeArray_Event.Clear();
 	}
 
-	bool HasChanged() { return IsDirty; }
+	FORCEINLINE const bool& HasChanged() { return IsDirty; }
 
-	bool HasChanged(const U &Index)
+	FORCEINLINE const bool& HasChanged(const int32 &Index)
 	{
-		const int32 I = (int32)Index;
-		return I <= CS_PRIMITIVE_TYPE_DEFAULT || I >= SIZE ? IsDirty : IsDirtys[I];
+		return Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE ? IsDirty : IsDirtys[Index];
 	}
 
-	void Resolve()
+	FORCEINLINE void Resolve()
 	{
 		UpdateIsDirty();
 
@@ -3033,98 +3055,94 @@ public:
 	}
 };
 
-template<typename T, typename U>
-struct TCsIntegralType_TArrayRefValue : public TCsPrimitiveType_TArrayRefValue<T, U>
+template<typename ValueType>
+struct TCsIntegralType_TArrayRef : public TCsProperty_TArrayRef<ValueType>
 {
-	TCsIntegralType_TArrayRefValue() {}
-	~TCsIntegralType_TArrayRefValue() {}
+	TCsIntegralType_TArrayRef() {}
+	~TCsIntegralType_TArrayRef() {}
 
-	T Max()
+	ValueType Max()
 	{
-		T max = *(Values[0]);
+		ValueType max = *(Values[0]);
 
 		for (uint8 I = 1; I < SIZE; ++I)
 		{
-			max = (T)FMath::Max(max, *(Values[I]));
+			max = (ValueType)FMath::Max(max, *(Values[I]));
 		}
 		return max;
 	}
 
-	T Min()
+	ValueType Min()
 	{
-		T min = *(Values[0]);
+		ValueType min = *(Values[0]);
 
 		for (uint8 I = 1; I < SIZE; ++I)
 		{
-			min = (T)FMath::Min(min, *(Values[I]));
+			min = (ValueType)FMath::Min(min, *(Values[I]));
 		}
 		return min;
 	}
 };
 
-template<typename U>
-struct TCsIntegralType_TArrayRefValue_uint8 : public TCsIntegralType_TArrayRefValue<uint8, U>
+struct TCsIntegralType_TArrayRef_uint8 : public TCsIntegralType_TArrayRef<uint8>
 {
-	TCsIntegralType_TArrayRefValue_uint8() 
+	TCsIntegralType_TArrayRef_uint8() 
 	{
 		DefaultValue = 0;
 	}
-	~TCsIntegralType_TArrayRefValue_uint8() {}
+	~TCsIntegralType_TArrayRef_uint8() {}
 };
 
-template<typename U>
-struct TCsIntegralType_TArrayRefValue_int32 : public TCsIntegralType_TArrayRefValue<int32, U>
+struct TCsIntegralType_TArrayRef_int32 : public TCsIntegralType_TArrayRef<int32>
 {
-	TCsIntegralType_TArrayRefValue_int32()
+	TCsIntegralType_TArrayRef_int32()
 	{
 		DefaultValue = 0;
 	}
-	~TCsIntegralType_TArrayRefValue_int32() {}
+	~TCsIntegralType_TArrayRef_int32() {}
 };
 
-template<typename U>
-struct TCsIntegralType_TArrayRefValue_float : public TCsIntegralType_TArrayRefValue<float, U>
+struct TCsIntegralType_TArrayRef_float : public TCsIntegralType_TArrayRef<float>
 {
-	TCsIntegralType_TArrayRefValue_float()
+	TCsIntegralType_TArrayRef_float()
 	{
 		DefaultValue = 0.0f;
 	}
-	~TCsIntegralType_TArrayRefValue_float() {}
+	~TCsIntegralType_TArrayRef_float() {}
 };
 
-template<typename U>
-struct TCsPrimitiveType_TArrayRefValue_bool : public TCsPrimitiveType_TArrayRefValue<bool, U>
+struct TCsProperty_TArrayRef_bool : public TCsProperty_TArrayRef<bool>
 {
-	TCsPrimitiveType_TArrayRefValue_bool() 
+	TCsProperty_TArrayRef_bool() 
 	{
 		DefaultValue = false;
 	}
-	~TCsPrimitiveType_TArrayRefValue_bool() {}
+	~TCsProperty_TArrayRef_bool() {}
 
 	bool Or()
 	{
-		bool or = Values[0];
+		bool or = *(Values[0]);
 
 		for (uint8 I = 1; I < SIZE; ++I)
 		{
-			or |= Values[I];
+			or |= *(Values[I]);
 		}
 		return or ;
 	}
 
 	bool And()
 	{
-		bool and = Values[0];
+		bool and = *(Values[0]);
 
 		for (uint8 I = 1; I < SIZE; ++I)
 		{
-			and &= Values[I];
+			and &= *(Values[I]);
 		}
 		return and;
 	}
 };
 
-#pragma endregion TArrayRefValue
+#pragma endregion TArrayRef
 
 // TMap
 #pragma region
@@ -3145,7 +3163,7 @@ protected:
 
 	TMap<KeyType, bool> IsDirtys;
 public:
-	TBaseDelegate<const ValueType&, const KeyType&> GetDelegate;
+	TBaseDelegate<ValueType, const KeyType&> GetDelegate;
 	TMulticastDelegate<void, const ValueType&> OnChange_Event;
 	TMulticastDelegate<void, const KeyType&, const ValueType&> OnChangeMap_Event;
 
@@ -3159,10 +3177,10 @@ public:
 		DefaultValue = InDefaultValue;
 	}
 
-	void Init(const KeyType &Key, const ValueType &InValue)
+	void Init(const KeyType &Key)
 	{
-		Values.Add(Key, InValue);
-		Last_Values.Add(Key, InValue);
+		Values.Add(Key, DefaultValue);
+		Last_Values.Add(Key, DefaultValue);
 		IsDirtys.Add(Key, false);
 	}
 
@@ -3184,7 +3202,7 @@ public:
 
 	FORCEINLINE TCsProperty_TMap& operator=(const TCsProperty_TMap& B)
 	{
-		Value = B;
+		Value = B.Value;
 		UpdateIsDirty();
 
 		TArray<KeyType> Keys;
@@ -3236,7 +3254,7 @@ public:
 	FORCEINLINE const ValueType& Get() { return Value; }
 	FORCEINLINE const ValueType& Get(const KeyType& Key) { return Values[Key]; }
 
-	FORCEINLINE const ValueType& GetEX(const KeyType &Key) { return GetDelegate.Execute(Key); }
+	FORCEINLINE ValueType GetEX(const KeyType &Key) { return GetDelegate.Execute(Key); }
 
 	void Clear()
 	{
@@ -3443,7 +3461,9 @@ protected:
 
 	TMap<KeyType, bool> IsDirtys;
 public:
-	TBaseDelegate<const ValueType&, const KeyType&> GetDelegate;
+	TBaseDelegate<ValueType, const KeyType&> GetDelegate;
+	TBaseDelegate<const ValueType&, const KeyType&> Override_Get;
+	TBaseDelegate<const ValueType&, const KeyType&> Override_Subscript;
 	TMulticastDelegate<void, const ValueType&> OnChange_Event;
 	TMulticastDelegate<void, const KeyType&, const ValueType&> OnChangeMap_Event;
 public:
@@ -3456,10 +3476,10 @@ public:
 		DefaultValue = InDefaultValue;
 	}
 
-	void Init(const KeyType &Key, ValueType* InValue)
+	void Init(const KeyType &Key)
 	{
-		Values.Add(Key, InValue);
-		Last_Values.Add(Key, *InValue);
+		Values.Add(Key, nullptr);
+		Last_Values.Add(Key, DefaultValue);
 		IsDirtys.Add(Key, false);
 	}
 
@@ -3533,7 +3553,7 @@ public:
 	FORCEINLINE const ValueType& Get() { return Value; }
 	FORCEINLINE const ValueType& Get(const KeyType& Key) { return *(Values[Key]); }
 
-	FORCEINLINE const ValueType& GetEX(const KeyType &Key) { return GetDelegate.Execute(Key); }
+	FORCEINLINE ValueType GetEX(const KeyType &Key) { return GetDelegate.Execute(Key); }
 
 	void Clear()
 	{
@@ -3611,7 +3631,7 @@ struct TCsIntegralType_TMapRef : public TCsProperty_TMapRef<KeyType, ValueType>
 
 		for (uint8 I = 1; I < Count; ++I)
 		{
-			max = (KeyType)FMath::Max(max, *(Values[Keys[I]]));
+			max = (ValueType)FMath::Max(max, *(Values[Keys[I]]));
 		}
 		return max;
 	}
@@ -3664,13 +3684,13 @@ struct TCsIntegralType_TMapRef_float : public TCsIntegralType_TMapRef<KeyType, f
 };
 
 template<typename KeyType>
-struct TCsIntegralType_TMapRef_bool : public TCsIntegralType_TMapRef<KeyType, bool>
+struct TCsProperty_TMapRef_bool : public TCsProperty_TMapRef<KeyType, bool>
 {
-	TCsIntegralType_TMapRef_bool()
+	TCsProperty_TMapRef_bool()
 	{
 		DefaultValue = false;
 	}
-	~TCsIntegralType_TMapRef_bool() {}
+	~TCsProperty_TMapRef_bool() {}
 
 	FORCEINLINE bool Or()
 	{

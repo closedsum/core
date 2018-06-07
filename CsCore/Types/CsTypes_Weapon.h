@@ -54,27 +54,7 @@ struct FCsLocationDamageModifier
 // Weapon
 #pragma region
 
-namespace ECsWeaponState
-{
-	enum Type : uint8;
-}
-
-typedef ECsWeaponState::Type TCsWeaponState;
-
-// WeaponStateToString
-typedef const FString&(*TCsWeaponStateToString)(const TCsWeaponState&);
-// StringToWeaponState
-typedef TCsWeaponState(*TCsStringToWeaponState)(const FString&);
-
-#define CS_DECLARE_WEAPON_STATE	TCsWeaponState WeaponState_MAX; \
-								uint8 WEAPON_STATE_MAX; \
-								TCsWeaponStateToString WeaponStateToString; \
-								TCsStringToWeaponState StringToWeaponState;
-
-#define CS_DEFINE_WEAPON_STATE	WeaponState_MAX = ECsWeaponState::ECsWeaponState_MAX;\
-								WEAPON_STATE_MAX = (uint8)WeaponState_MAX \
-								WeaponStateToString = &ECsWeaponState::ToString; \
-								StringToWeaponState = &ECsWeaponState::ToType;
+	// WeaponState
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsWeaponState : public FECsEnum_uint8
@@ -110,27 +90,7 @@ public:
 	static EMCsWeaponState& Get();
 };
 
-namespace ECsWeaponSlot
-{
-	enum Type : uint8;
-}
-
-typedef ECsWeaponSlot::Type TCsWeaponSlot;
-
-// WeaponSlotToString
-typedef const FString&(*TCsWeaponSlotToString)(const TCsWeaponSlot&);
-// StringToWeaponSlot
-typedef TCsWeaponSlot(*TCsStringToWeaponSlot)(const FString&);
-
-#define CS_DECLARE_WEAPON_SLOT	TCsWeaponSlot WeaponSlot_MAX; \
-								uint8 WEAPON_SLOT_MAX; \
-								TCsWeaponSlotToString WeaponSlotToString; \
-								TCsStringToWeaponSlot StringToWeaponSlot;
-
-#define CS_DEFINE_WEAPON_SLOT	WeaponSlot_MAX = ECsWeaponSlot::ECsWeaponSlot_MAX;\
-								WEAPON_SLOT_MAX = (uint8)WeaponSlot_MAX \
-								WeaponSlotToString = &ECsWeaponSlot::ToString; \
-								StringToWeaponSlot = &ECsWeaponSlot::ToType;
+	// WeaponSlot
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsWeaponSlot : public FECsEnum_uint8
@@ -166,27 +126,7 @@ public:
 	static EMCsWeaponSlot& Get();
 };
 
-namespace ECsWeaponFireMode
-{
-	enum Type : uint8;
-}
-
-typedef ECsWeaponFireMode::Type TCsWeaponFireMode;
-
-// WeaponFireModeToString
-typedef const FString&(*TCsWeaponFireModeToString)(const TCsWeaponFireMode&);
-// StringToWeaponFireMode
-typedef TCsWeaponFireMode(*TCsStringToWeaponFireMode)(const FString&);
-
-#define CS_DECLARE_WEAPON_FIRE_MODE	TCsWeaponFireMode WeaponFireMode_MAX; \
-									uint8 WEAPON_FIRE_MODE_MAX; \
-									TCsWeaponFireModeToString WeaponFireModeToString; \
-									TCsStringToWeaponFireMode StringToWeaponFireMode;
-
-#define CS_DEFINE_WEAPON_FIRE_MODE	WeaponFireMode_MAX = ECsWeaponFireMode::ECsWeaponFireMode_MAX;\
-									WEAPON_FIRE_MODE_MAX = (uint8)WeaponFireMode_MAX; \
-									WeaponFireModeToString = &ECsWeaponFireMode::ToString; \
-									StringToWeaponFireMode = &ECsWeaponFireMode::ToType;
+	// WeaponFireMode
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsWeaponFireMode : public FECsEnum_uint8
@@ -222,27 +162,7 @@ public:
 	static EMCsWeaponFireMode& Get();
 };
 
-namespace ECsWeaponGrip
-{
-	enum Type : uint8;
-}
-
-typedef ECsWeaponGrip::Type TCsWeaponGrip;
-
-// WeaponGripToString
-typedef const FString&(*TCsWeaponGripToString)(const TCsWeaponGrip&);
-// StringToWeaponGrip
-typedef TCsWeaponGrip(*TCsStringToWeaponGrip)(const FString&);
-
-#define CS_DECLARE_WEAPON_GRIP	TCsWeaponGrip WeaponGrip_MAX; \
-								uint8 WEAPON_GRIP_MAX; \
-								TCsWeaponGripToString WeaponGripToString; \
-								TCsStringToWeaponGrip StringToWeaponGrip;
-
-#define CS_DEFINE_WEAPON_GRIP	WeaponGrip_MAX = ECsWeaponGrip::ECsWeaponGrip_MAX;\
-								WEAPON_GRIP_MAX = (uint8)WeaponGrip_MAX \
-								WeaponGripToString = &ECsWeaponGrip::ToString; \
-								StringToWeaponGrip = &ECsWeaponGrip::ToType;
+	// WeaponGrip
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsWeaponGrip : public FECsEnum_uint8
@@ -278,27 +198,7 @@ public:
 	static EMCsWeaponGrip& Get();
 };
 
-namespace ECsWeaponAnim
-{
-	enum Type : uint8;
-}
-
-typedef ECsWeaponAnim::Type TCsWeaponAnim;
-
-// WeaponAnimToString
-typedef const FString&(*TCsWeaponAnimToString)(const TCsWeaponAnim&);
-// StringToWeaponAnim
-typedef TCsWeaponAnim(*TCsStringToWeaponAnim)(const FString&);
-
-#define CS_DECLARE_WEAPON_ANIM	TCsWeaponAnim WeaponAnim_MAX; \
-								uint8 WEAPON_ANIM_MAX; \
-								TCsWeaponAnimToString WeaponAnimToString; \
-								TCsStringToWeaponAnim StringToWeaponAnim;
-
-#define CS_DEFINE_WEAPON_ANIM	WeaponAnim_MAX = ECsWeaponAnim::ECsWeaponAnim_MAX;\
-								WEAPON_ANIM_MAX = (uint8)WeaponAnim_MAX; \
-								WeaponAnimToString = &ECsWeaponAnim::ToString; \
-								StringToWeaponAnim = &ECsWeaponAnim::ToType;
+	// WeaponAnim
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsWeaponAnim : public FECsEnum_uint8
@@ -339,6 +239,8 @@ namespace ECsWeaponBlendSpace
 	enum Type : uint8;
 }
 
+	// WeaponBlendSpace
+
 typedef ECsWeaponBlendSpace::Type TCsWeaponBlendSpace;
 
 USTRUCT(BlueprintType)
@@ -375,12 +277,7 @@ public:
 	static EMCsWeaponBlendSpace& Get();
 };
 
-namespace ECsWeaponAnimBlueprint
-{
-	enum Type : uint8;
-}
-
-typedef ECsWeaponAnimBlueprint::Type TCsWeaponAnimBlueprint;
+	// WeaponAnimBlueprint
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsWeaponAnimBlueprint : public FECsEnum_uint8
@@ -416,12 +313,7 @@ public:
 	static EMCsWeaponAnimBlueprint& Get();
 };
 
-namespace ECsWeaponSound
-{
-	enum Type : uint8;
-}
-
-typedef ECsWeaponSound::Type TCsWeaponSound;
+	// WeaponSound
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsWeaponSound : public FECsEnum_uint8
@@ -457,27 +349,7 @@ public:
 	static EMCsWeaponSound& Get();
 };
 
-namespace ECsWeaponOwner
-{
-	enum Type : uint8;
-}
-
-typedef ECsWeaponOwner::Type TCsWeaponOwner;
-
-// WeaponOwnerToString
-typedef const FString&(*TCsWeaponOwnerToString)(const TCsWeaponOwner&);
-// StringToWeaponOwner
-typedef TCsWeaponOwner(*TCsStringToWeaponOwner)(const FString&);
-
-#define CS_DECLARE_WEAPON_OWNER	TCsWeaponOwner WeaponOwner_MAX; \
-								uint8 WEAPON_OWNER_MAX; \
-								TCsWeaponOwnerToString WeaponOwnerToString; \
-								TCsStringToWeaponOwner StringToWeaponOwner;
-
-#define CS_DEFINE_WEAPON_OWNER	WeaponOwner_MAX = ECsWeaponOwner::ECsWeaponOwner_MAX;\
-								WEAPON_OWNER_MAX = (uint8)WeaponOwner_MAX \
-								WeaponOwnerToString = &ECsWeaponOwner::ToString; \
-								StringToWeaponOwner = &ECsWeaponOwner::ToType;
+	// WeaponOwner
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsWeaponOwner : public FECsEnum_uint8
@@ -849,27 +721,39 @@ struct FCsData_FpsWeapon_FireMode_Sounds
 	virtual ~FCsData_FpsWeapon_FireMode_Sounds() {}
 };
 
-namespace ECsData_Weapon_FireMode
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsData_Weapon_FireMode : public FECsEnum_uint8
 {
-	enum Type : uint8;
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsData_Weapon_FireMode() {}
+	FECsData_Weapon_FireMode(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsData_Weapon_FireMode(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsData_Weapon_FireMode() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsData_Weapon_FireMode& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-typedef ECsData_Weapon_FireMode::Type TCsData_Weapon_FireMode;
+struct CSCORE_API EMCsData_Weapon_FireMode : public TCsEnumStructMap<FECsData_Weapon_FireMode, uint8>
+{
+protected:
+	EMCsData_Weapon_FireMode() {}
+	EMCsData_Weapon_FireMode(const EMCsData_Weapon_FireMode &) = delete;
+	EMCsData_Weapon_FireMode(EMCsData_Weapon_FireMode &&) = delete;
+public:
+	~EMCsData_Weapon_FireMode() {}
+private:
+	static EMCsData_Weapon_FireMode* Instance;
 
-// DataWeaponFireModeToString
-typedef const FString&(*TCsDataWeaponFireModeToString)(const TCsData_Weapon_FireMode&);
-// StringToDataWeaponFireMode
-typedef TCsData_Weapon_FireMode(*TCsStringToDataWeaponFireMode)(const FString&);
-
-#define CS_DECLARE_DATA_WEAPON_FIRE_MODE	TCsData_Weapon_FireMode Data_Weapon_FireMode_MAX; \
-											uint8 DATA_WEAPON_FIRE_MODE_MAX; \
-											TCsDataWeaponFireModeToString DataWeaponFireModeToString; \
-											TCsStringToDataWeaponFireMode StringToDataWeaponFireMode;
-
-#define CS_DEFINE_DATA_WEAPON_FIRE_MODE		Data_Weapon_FireMode_MAX = ECsData_Weapon_FireMode::ECsData_Weapon_FireMode_MAX;\
-											DATA_WEAPON_FIRE_MODE_MAX = (uint8)Data_Weapon_FireMode_MAX; \
-											DataWeaponFireModeToString = &ECsData_Weapon_FireMode::ToString; \
-											StringToDataWeaponFireMode = &ECsData_Weapon_FireMode::ToType;
+public:
+	static EMCsData_Weapon_FireMode& Get();
+};
 
 #pragma endregion Weapon
 

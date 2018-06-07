@@ -19,7 +19,7 @@ class CSCORE_API ACsGunWeapon : public ACsWeapon
 #pragma region
 public:
 
-	virtual void ApplyData_Weapon(const TCsWeaponSlot &Slot, class ACsData_Weapon* InData, class ACsData_WeaponMaterialSkin* InSkin, const bool &Equipped = true);
+	virtual void ApplyData_Weapon(const FECsWeaponSlot &Slot, class ACsData_Weapon* InData, class ACsData_WeaponMaterialSkin* InSkin, const bool &Equipped = true);
 
 	TWeakObjectPtr<class ACsData_WeaponMaterialSkin> MyData_WeaponMaterialSkin;
 
@@ -54,7 +54,8 @@ public:
 // State
 #pragma region
 
-	TCsWeaponGrip GripType;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State")
+	FECsWeaponGrip GripType;
 
 	virtual void OnPawnDeActivate();
 
@@ -70,7 +71,7 @@ public:
 // Animation
 #pragma region
 
-	virtual TCsCharacterAnim GetCharacterAnimType(const TCsWeaponAnim &AnimType);
+	virtual TCsCharacterAnim GetCharacterAnimType(const FECsWeaponAnim &AnimType);
 
 #pragma endregion Animation
 };

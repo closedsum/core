@@ -162,21 +162,21 @@ void UCsAnimInstance_Weapon::OnTick_Handle_Data_WeaponMaterialSkin()
 
 void UCsAnimInstance_Weapon::LoadAnims(){}
 
-UAnimMontage* UCsAnimInstance_Weapon::GetAnimMontage(const TCsWeaponAnim &AnimType, const int32 &Index /*=0*/) const
+UAnimMontage* UCsAnimInstance_Weapon::GetAnimMontage(const FECsWeaponAnim &AnimType, const int32 &Index /*=0*/) const
 {
 	return nullptr;
 }
 
-UAnimSequence* UCsAnimInstance_Weapon::GetAnimSequence(const TCsWeaponAnim &AnimType) const
+UAnimSequence* UCsAnimInstance_Weapon::GetAnimSequence(const FECsWeaponAnim &AnimType) const
 {
 	return nullptr;
 }
 
-UBlendSpace* UCsAnimInstance_Weapon::GetBlendSpace(const TCsWeaponBlendSpace &BlendType) const
+UBlendSpace* UCsAnimInstance_Weapon::GetBlendSpace(const FECsWeaponBlendSpace &BlendType) const
 {
 	return nullptr;
 }
 
-void UCsAnimInstance_Weapon::StopAnimation(const TCsWeaponAnim &AnimType, const int32 &Index /*0*/, const float BlendOutTime /*=0.0f*/){}
+void UCsAnimInstance_Weapon::StopAnimation(const FECsWeaponAnim &AnimType, const int32 &Index /*0*/, const float BlendOutTime /*=0.0f*/){}
 
 #pragma endregion Anims

@@ -70,7 +70,7 @@ namespace ECsLoadFlags_Editor
 
 namespace ECsLoadFlags_Editor
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -453,7 +453,7 @@ namespace ECsLoadAsyncOrder
 
 namespace ECsLoadAsyncOrder
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{

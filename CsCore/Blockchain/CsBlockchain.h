@@ -23,7 +23,7 @@ typedef ECsBlockchainType::Type TCsBlockchainType;
 
 namespace ECsBlockchainType
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
@@ -73,7 +73,7 @@ typedef ECsBlockchainProcessType::Type TCsBlockchainProcessType;
 
 namespace ECsBlockchainProcessType
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{

@@ -28,7 +28,7 @@ typedef ECsStringEscapeType::Type TCsStringEscapeType;
 
 namespace ECsStringEscapeType
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
@@ -105,7 +105,7 @@ typedef ECsStringWordRule::Type TCsStringWordRule;
 
 namespace ECsStringWordRule
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{

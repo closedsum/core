@@ -117,6 +117,6 @@ void ACsGunWeapon::SetMesh() {}
 // Animation
 #pragma region
 
-TCsCharacterAnim ACsGunWeapon::GetCharacterAnimType(const FECsWeaponAnim &AnimType) { return TCsCharacterAnim(0); }
+const FECsCharacterAnim& ACsGunWeapon::GetCharacterAnimType(const FECsWeaponAnim &AnimType) { return EMCsCharacterAnim::Get().GetMAX(); }
 
 #pragma endregion Animation

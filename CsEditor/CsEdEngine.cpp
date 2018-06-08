@@ -20,25 +20,28 @@
 #include "DetailCustomizations/EnumStruct/ECsInputActionCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsGameEventCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsSurfaceTypeCustomization.h"
+#include "DetailCustomizations/EnumStruct/ECsGestureTypeCustomization.h"
+	// Character
+#include "DetailCustomizations/EnumStruct/Character/ECsCharacterAnimCustomization.h"
+#include "DetailCustomizations/EnumStruct/Character/ECsCharacterAnimBlueprintCustomization.h"
+#include "DetailCustomizations/EnumStruct/Character/ECsCharacterBlendSpaceCustomization.h"
 	// Weapon
-#include "DetailCustomizations/EnumStruct/ECsWeaponStateCustomization.h"
-#include "DetailCustomizations/EnumStruct/ECsWeaponSlotCustomization.h"
-#include "DetailCustomizations/EnumStruct/ECsWeaponFireModeCustomization.h"
-#include "DetailCustomizations/EnumStruct/ECsWeaponGripCustomization.h"
-#include "DetailCustomizations/EnumStruct/ECsWeaponAnimCustomization.h"
-#include "DetailCustomizations/EnumStruct/ECsWeaponBlendSpaceCustomization.h"
-#include "DetailCustomizations/EnumStruct/ECsWeaponAnimBlueprintCustomization.h"
-#include "DetailCustomizations/EnumStruct/ECsWeaponSoundCustomization.h"
-#include "DetailCustomizations/EnumStruct/ECsWeaponOwnerCustomization.h"
+#include "DetailCustomizations/EnumStruct/Weapon/ECsWeaponStateCustomization.h"
+#include "DetailCustomizations/EnumStruct/Weapon/ECsWeaponSlotCustomization.h"
+#include "DetailCustomizations/EnumStruct/Weapon/ECsWeaponFireModeCustomization.h"
+#include "DetailCustomizations/EnumStruct/Weapon/ECsWeaponGripCustomization.h"
+#include "DetailCustomizations/EnumStruct/Weapon/ECsWeaponAnimCustomization.h"
+#include "DetailCustomizations/EnumStruct/Weapon/ECsWeaponBlendSpaceCustomization.h"
+#include "DetailCustomizations/EnumStruct/Weapon/ECsWeaponAnimBlueprintCustomization.h"
+#include "DetailCustomizations/EnumStruct/Weapon/ECsWeaponSoundCustomization.h"
+#include "DetailCustomizations/EnumStruct/Weapon/ECsWeaponOwnerCustomization.h"
 	// Process
 #include "DetailCustomizations/EnumStruct/ECsProcessCustomization.h"
 	// Blockchain
-#include "DetailCustomizations/EnumStruct/ECsBlockchainCommandCustomization.h"
-#include "DetailCustomizations/EnumStruct/ECsBlockchainContractCustomization.h"
-#include "DetailCustomizations/EnumStruct/ECsBlockchainContractFunctionCustomization.h"
-#include "DetailCustomizations/EnumStruct/ECsEthereumJavascriptCustomization.h"
-
-DECLARE_LOG_CATEGORY_CLASS(LogCsEditor, Log, All);
+#include "DetailCustomizations/EnumStruct/Blockchain/ECsBlockchainCommandCustomization.h"
+#include "DetailCustomizations/EnumStruct/Blockchain/ECsBlockchainContractCustomization.h"
+#include "DetailCustomizations/EnumStruct/Blockchain/ECsBlockchainContractFunctionCustomization.h"
+#include "DetailCustomizations/EnumStruct/Blockchain/ECsEthereumJavascriptCustomization.h"
 
 void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 {
@@ -53,6 +56,12 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsGameEvent", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsGameEventCustomization::MakeInstance));
 		// SurfaceType
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsSurfaceType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsSurfaceTypeCustomization::MakeInstance));
+		// GestureType
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsGestureType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsGestureTypeCustomization::MakeInstance));
+		// Character
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsCharacterAnim", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsCharacterAnimCustomization::MakeInstance));
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsCharacterAnimBlueprint", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsCharacterAnimBlueprintCustomization::MakeInstance));
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsCharacterBlendSpace", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsCharacterBlendSpaceCustomization::MakeInstance));
 		// Weapon
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponState", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponStateCustomization::MakeInstance));
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponSlot", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponSlotCustomization::MakeInstance));

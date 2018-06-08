@@ -117,7 +117,7 @@ namespace ECsRichCurveInterpMode
 
 namespace ECsRichCurveInterpMode
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -182,7 +182,7 @@ namespace ECsRichCurveTangentMode
 
 namespace ECsRichCurveTangentMode
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{

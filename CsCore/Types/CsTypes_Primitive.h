@@ -153,14 +153,29 @@ public:
 		return Enums[Index];
 	}
 
+	FORCEINLINE const EnumType& GetSafeEnumAt(const int32 &Index)
+	{
+		return Index < Count ? Enums[Index] : MAX;
+	}
+
 	FORCEINLINE const EnumType& GetEnum(const FString &Name)
 	{
 		return FromNameMap[Name];
 	}
 
+	FORCEINLINE const EnumType& GetSafeEnum(const FString &Name)
+	{
+		return IsValidEnum(Name) ? FromNameMap[Name] : MAX;
+	}
+
 	FORCEINLINE const EnumType& GetEnum(const FName &Name)
 	{
 		return FromNameInternalMap[Name];
+	}
+
+	FORCEINLINE const EnumType& GetSafeEnum(const FName &Name)
+	{
+		return IsValidEnum(Name) ? FromNameInternalMap[Name] : MAX;
 	}
 
 	FORCEINLINE const EnumType& GetEnumByDisplayName(const FString &DisplayName)
@@ -334,6 +349,11 @@ struct CSCORE_API FECsEnum_uint8 : public FECsEnum
 	FORCEINLINE virtual FString ToString() const override
 	{
 		return TEXT("Name: ") + Name + TEXT(" Value: ") + FString::FromInt(Value);
+	}
+
+	FORCEINLINE FString ToGraphPinString() const
+	{
+		return TEXT("(Name=\"") + Name + TEXT("\",DisplayName=\"") + DisplayName + TEXT("\",Name_Internal=\"") + Name_Internal.ToString() + TEXT("\",Value=") + FString::FromInt(Value) + TEXT(")");
 	}
 };
 
@@ -1980,34 +2000,33 @@ typedef FCsProperty_Ref_float TCsFloat_Ref;
 #define CS_PRIMITIVE_TYPE_DEFAULT -1
 #define CS_PRIMITIVE_TYPE_GET_DELEGATE -2
 
-// MultiValue
+// Multi
 #pragma region
 
-// DON'T USE int64 for U
-template<typename T, typename U = int32, uint8 SIZE = 1>
-struct TCsPrimitiveType_MultiValue
+template<typename ValueType, uint8 SIZE = 1>
+struct TCsProperty_Multi
 {
 public:
-	T DefaultValue;
-	T Value;
-	T Last_Value;
+	ValueType DefaultValue;
+	ValueType Value;
+	ValueType Last_Value;
 
-	T Values[SIZE];
-	T Last_Values[SIZE];
+	ValueType Values[SIZE];
+	ValueType Last_Values[SIZE];
 protected:
 	bool IsDirty;
 
 	bool IsDirtys[SIZE];
 public:
-	TMulticastDelegate<void, const T&> OnChange_Event;
-	TMulticastDelegate<void, const U&, const T&> OnChangeEX_Event;
+	TMulticastDelegate<void, const ValueType&> OnChange_Event;
+	TMulticastDelegate<void, const int32&, const ValueType&> OnChangeEX_Event;
 
 public:
 
-	TCsPrimitiveType_MultiValue(){}
-	virtual ~TCsPrimitiveType_MultiValue(){}
+	TCsProperty_Multi(){}
+	virtual ~TCsProperty_Multi(){}
 
-	virtual void UpdateIsDirty()
+	FORCEINLINE virtual void UpdateIsDirty()
 	{
 		IsDirty = Value != Last_Value;
 
@@ -2015,15 +2034,15 @@ public:
 			OnChange_Event.Broadcast(Value);
 	}
 
-	virtual void UpdateIsDirtys(const int64 &Index)
+	FORCEINLINE virtual void UpdateIsDirtys(const int32 &Index)
 	{
 		IsDirtys[Index] = Values[Index] != Last_Values[Index];
 
 		if (IsDirtys[Index])
-			OnChangeEX_Event.Broadcast((U)(int32)Index, Values[Index]);
+			OnChangeEX_Event.Broadcast(Index, Values[Index]);
 	}
 
-	TCsPrimitiveType_MultiValue& operator=(const TCsPrimitiveType_MultiValue& B)
+	FORCEINLINE TCsProperty_Multi& operator=(const TCsProperty_Multi& B)
 	{
 		Value = B.Value;
 		UpdateIsDirty();
@@ -2036,7 +2055,7 @@ public:
 		return *this;
 	}
 
-	bool operator==(const TCsPrimitiveType_MultiValue& B) const
+	FORCEINLINE bool operator==(const TCsProperty_Multi& B) const
 	{
 		for (uint8 I = 0; I < SIZE; ++I)
 		{
@@ -2046,23 +2065,18 @@ public:
 		return Value == B.Value;
 	}
 
-	bool operator!=(const TCsPrimitiveType_MultiValue& B) const
+	FORCEINLINE bool operator!=(const TCsProperty_Multi& B) const
 	{
 		return !(*this == B);
 	}
 
-	void Set(const T &inValue)
+	void Set(const ValueType &inValue)
 	{
 		Value = inValue;
 		UpdateIsDirty();
 	}
 
-	void Set(const U &Index, const T &inValue)
-	{
-		Set((int64)Index, inValue);
-	}
-
-	void Set(const int64 &Index, const T &inValue)
+	void Set(const int32 &Index, const ValueType &inValue)
 	{
 		if (Index > CS_PRIMITIVE_TYPE_DEFAULT && Index < SIZE)
 		{
@@ -2075,10 +2089,9 @@ public:
 		}
 	}
 
-	const T& Get() { return Value; }
-	const T& Get(const U &Index) { return Get((int64)Index); }
+	FORCEINLINE const ValueType& Get() { return Value; }
 
-	const T& Get(const int64 &Index)
+	FORCEINLINE const ValueType& Get(const int32 &Index)
 	{
 		return Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE ? Value : Values[Index];
 	}
@@ -2117,9 +2130,8 @@ public:
 		OnChangeEX_Event.Clear();
 	}
 
-	bool HasChanged() { return IsDirty; }
-	bool HasChanged(const U &Index) { return HasChanged((int64)Index); }
-	bool HasChanged(const int64 &Index) { return Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE ? IsDirty : IsDirtys[Index]; }
+	FORCEINLINE bool HasChanged() { return IsDirty; }
+	FORCEINLINE bool HasChanged(const int32 &Index) { return Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE ? IsDirty : IsDirtys[Index]; }
 
 	void Resolve()
 	{
@@ -2133,21 +2145,19 @@ public:
 	}
 };
 
-template<typename T, typename U, uint8 SIZE>
-struct TCsIntegralType_MultiValue : public TCsPrimitiveType_MultiValue<T, U, SIZE>
+template<typename ValueType, uint8 SIZE>
+struct TCsIntegralType_MultiValue : public TCsProperty_Multi<ValueType, SIZE>
 {
 	TCsIntegralType_MultiValue(){}
 	~TCsIntegralType_MultiValue(){}
 
-	void Add(const T &inValue) 
+	void Add(const ValueType &inValue)
 	{ 
 		Value += inValue;
 		UpdateIsDirty();
 	}
 
-	void Add(const U &Index, const T &inValue) { Add((int64)Index, inValue); }
-
-	void Add(const int64 &Index, const T &inValue)
+	void Add(const int32 &Index, const ValueType &inValue)
 	{
 		if (Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE)
 		{
@@ -2160,15 +2170,13 @@ struct TCsIntegralType_MultiValue : public TCsPrimitiveType_MultiValue<T, U, SIZ
 		}
 	}
 
-	void Subtract(const T &inValue) 
+	void Subtract(const ValueType &inValue)
 	{ 
 		Value -= inValue;
 		UpdateIsDirty();
 	}
 
-	void Subtract(const U &Index, const T &inValue) { Subtract((int64)Index, inValue); }
-
-	void Subtract(const int64 &Index, const T &inValue)
+	void Subtract(const int32 &Index, const ValueType &inValue)
 	{
 		if (Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE)
 		{
@@ -2181,37 +2189,37 @@ struct TCsIntegralType_MultiValue : public TCsPrimitiveType_MultiValue<T, U, SIZ
 		}
 	}
 
-	T Max()
+	ValueType Max()
 	{
-		T max = Values[0];
+		ValueType max = Values[0];
 
 		for (uint8 I = 1; I < SIZE; ++I)
 		{
-			max = (T)FMath::Max(max, Values[I]);
+			max = (ValueType)FMath::Max(max, Values[I]);
 		}
 		return max;
 	}
 
-	T Min()
+	ValueType Min()
 	{
-		T min = Values[0];
+		ValueType min = Values[0];
 
 		for (uint8 I = 1; I < SIZE; ++I)
 		{
-			min = (T)FMath::Min(min, Values[I]);
+			min = (ValueType)FMath::Min(min, Values[I]);
 		}
 		return min;
 	}
 };
 
-template<typename U, uint8 SIZE>
-struct TCsPrimitiveType_MultiValue_bool : public TCsPrimitiveType_MultiValue<bool, U, SIZE>
+template<uint8 SIZE>
+struct TCsProperty_Multi_bool : public TCsProperty_Multi<bool, SIZE>
 {
-	TCsPrimitiveType_MultiValue_bool()
+	TCsProperty_Multi_bool()
 	{
 		DefaultValue = false;
 	}
-	~TCsPrimitiveType_MultiValue_bool(){}
+	~TCsProperty_Multi_bool(){}
 
 	bool Or()
 	{
@@ -2236,14 +2244,14 @@ struct TCsPrimitiveType_MultiValue_bool : public TCsPrimitiveType_MultiValue<boo
 	}
 };
 
-template<typename U, uint8 SIZE>
-struct TCsPrimitiveType_MultiValue_FString : public TCsPrimitiveType_MultiValue<FString, U, SIZE>
+template<uint8 SIZE>
+struct TCsProperty_Multi_FString : public TCsProperty_Multi<FString, SIZE>
 {
-	TCsPrimitiveType_MultiValue_FString()
+	TCsProperty_Multi_FString()
 	{
 		DefaultValue = ECsCached::Str::Empty;
 	}
-	~TCsPrimitiveType_MultiValue_FString(){}
+	~TCsProperty_Multi_FString(){}
 };
 
 #define CS_FSTRING_ENUM_TWO_PARAMS 2
@@ -2252,15 +2260,15 @@ struct TCsPrimitiveType_MultiValue_FString : public TCsPrimitiveType_MultiValue<
 #define CS_FSTRING_ENUM_LOWER_VALUE 1
 #define CS_FSTRING_ENUM_ALT_1_VALUE 2
 
-struct CSCORE_API TCsPrimitiveType_MultiValue_FString_Enum_TwoParams : public TCsPrimitiveType_MultiValue_FString<int32, CS_FSTRING_ENUM_TWO_PARAMS>
+struct CSCORE_API TCsProperty_Multi_FString_Enum_TwoParams : public TCsProperty_Multi_FString<CS_FSTRING_ENUM_TWO_PARAMS>
 {
-	TCsPrimitiveType_MultiValue_FString_Enum_TwoParams()
+	TCsProperty_Multi_FString_Enum_TwoParams()
 	{
 		DefaultValue = ECsCached::Str::Empty;
 	}
-	~TCsPrimitiveType_MultiValue_FString_Enum_TwoParams(){}
+	~TCsProperty_Multi_FString_Enum_TwoParams(){}
 
-	TCsPrimitiveType_MultiValue_FString_Enum_TwoParams(const FString &inValue1, const FString &inValue2)
+	TCsProperty_Multi_FString_Enum_TwoParams(const FString &inValue1, const FString &inValue2)
 	{
 		Value = inValue1;
 
@@ -2268,7 +2276,7 @@ struct CSCORE_API TCsPrimitiveType_MultiValue_FString_Enum_TwoParams : public TC
 		Values[CS_FSTRING_ENUM_LOWER_VALUE] = inValue2;
 	}
 
-	FORCEINLINE friend bool operator==(const FString &Lhs, const TCsPrimitiveType_MultiValue_FString_Enum_TwoParams &Rhs)
+	FORCEINLINE friend bool operator==(const FString &Lhs, const TCsProperty_Multi_FString_Enum_TwoParams &Rhs)
 	{
 		const FString Lower = Lhs.ToLower();
 
@@ -2280,7 +2288,7 @@ struct CSCORE_API TCsPrimitiveType_MultiValue_FString_Enum_TwoParams : public TC
 		return Rhs.Value == Lhs || Rhs.Value == Lower;
 	}
 
-	FORCEINLINE friend bool operator==(const TCsPrimitiveType_MultiValue_FString_Enum_TwoParams &Lhs, const FString &Rhs)
+	FORCEINLINE friend bool operator==(const TCsProperty_Multi_FString_Enum_TwoParams &Lhs, const FString &Rhs)
 	{
 		const FString Lower = Rhs.ToLower();
 
@@ -2292,26 +2300,26 @@ struct CSCORE_API TCsPrimitiveType_MultiValue_FString_Enum_TwoParams : public TC
 		return Lhs.Value == Rhs || Lhs.Value == Lower;
 	}
 
-	FORCEINLINE friend bool operator!=(const FString &Lhs, const TCsPrimitiveType_MultiValue_FString_Enum_TwoParams &Rhs)
+	FORCEINLINE friend bool operator!=(const FString &Lhs, const TCsProperty_Multi_FString_Enum_TwoParams &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const TCsPrimitiveType_MultiValue_FString_Enum_TwoParams &Lhs, const FString &Rhs)
+	FORCEINLINE friend bool operator!=(const TCsProperty_Multi_FString_Enum_TwoParams &Lhs, const FString &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 };
 
-struct CSCORE_API TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams : public TCsPrimitiveType_MultiValue_FString<int32, CS_FSTRING_ENUM_THREE_PARAMS>
+struct CSCORE_API TCsProperty_Multi_FString_Enum_ThreeParams : public TCsProperty_Multi_FString<CS_FSTRING_ENUM_THREE_PARAMS>
 {
-	TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams()
+	TCsProperty_Multi_FString_Enum_ThreeParams()
 	{
 		DefaultValue = ECsCached::Str::Empty;
 	}
-	~TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams(){}
+	~TCsProperty_Multi_FString_Enum_ThreeParams(){}
 
-	TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams(const FString &inValue1, const FString &inValue2, const FString &inValue3)
+	TCsProperty_Multi_FString_Enum_ThreeParams(const FString &inValue1, const FString &inValue2, const FString &inValue3)
 	{
 		Value = inValue1;
 
@@ -2320,7 +2328,7 @@ struct CSCORE_API TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams : public 
 		Values[CS_FSTRING_ENUM_ALT_1_VALUE]   = inValue3;
 	}
 	
-	FORCEINLINE friend bool operator==(const FString &Lhs, const TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams &Rhs)
+	FORCEINLINE friend bool operator==(const FString &Lhs, const TCsProperty_Multi_FString_Enum_ThreeParams &Rhs)
 	{
 		const FString Lower = Lhs.ToLower();
 
@@ -2332,7 +2340,7 @@ struct CSCORE_API TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams : public 
 		return Rhs.Value == Lhs || Rhs.Value == Lower;
 	}
 
-	FORCEINLINE friend bool operator==(const TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams &Lhs, const FString &Rhs)
+	FORCEINLINE friend bool operator==(const TCsProperty_Multi_FString_Enum_ThreeParams &Lhs, const FString &Rhs)
 	{
 		const FString Lower = Rhs.ToLower();
 
@@ -2344,12 +2352,12 @@ struct CSCORE_API TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams : public 
 		return Lhs.Value == Rhs || Lhs.Value == Lower;
 	}
 
-	FORCEINLINE friend bool operator!=(const FString &Lhs, const TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams &Rhs)
+	FORCEINLINE friend bool operator!=(const FString &Lhs, const TCsProperty_Multi_FString_Enum_ThreeParams &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams &Lhs, const FString &Rhs)
+	FORCEINLINE friend bool operator!=(const TCsProperty_Multi_FString_Enum_ThreeParams &Lhs, const FString &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
@@ -2357,34 +2365,33 @@ struct CSCORE_API TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams : public 
 
 #pragma endregion MultiValue
 
-// MultiRefValue
+// MultiRef
 #pragma region
 
-// DON'T USE int64 for U
-template<typename T, typename U = int32, uint8 SIZE = 1>
-struct TCsPrimitiveType_MultiRefValue
+template<typename ValueType, uint8 SIZE = 1>
+struct TCsProperty_MultiRef
 {
 public:
-	T DefaultValue;
-	T Value;
-	T Last_Value;
+	ValueType DefaultValue;
+	ValueType Value;
+	ValueType Last_Value;
 
-	T* Values[SIZE];
-	T Last_Values[SIZE];
+	ValueType* Values[SIZE];
+	ValueType Last_Values[SIZE];
 protected:
 	bool IsDirty;
 
 	bool IsDirtys[SIZE];
 public:
-	TMulticastDelegate<void, const T&> OnChange_Event;
-	TMulticastDelegate<void, const U&, const T&> OnChangeEX_Event;
+	TMulticastDelegate<void, const ValueType&> OnChange_Event;
+	TMulticastDelegate<void, const int32&, const ValueType&> OnChangeEX_Event;
 
 public:
 
-	TCsPrimitiveType_MultiRefValue(){}
-	virtual ~TCsPrimitiveType_MultiRefValue(){}
+	TCsProperty_MultiRef(){}
+	virtual ~TCsProperty_MultiRef(){}
 
-	virtual void UpdateIsDirty()
+	FORCEINLINE virtual void UpdateIsDirty()
 	{
 		IsDirty = Value != Last_Value;
 
@@ -2392,7 +2399,7 @@ public:
 			OnChange_Event.Broadcast(Value);
 	}
 
-	virtual void UpdateIsDirtys(const int64 &Index)
+	FORCEINLINE virtual void UpdateIsDirtys(const int32 &Index)
 	{
 		IsDirtys[Index] = *(Values[Index]) != Last_Values[Index];
 
@@ -2400,7 +2407,7 @@ public:
 			OnChangeEX_Event.Broadcast((U)(int32)Index, *(Values[Index]));
 	}
 
-	TCsPrimitiveType_MultiRefValue& operator=(const T& B)
+	FORCEINLINE TCsProperty_MultiRef& operator=(const ValueType& B)
 	{
 		Value = B;
 		UpdateIsDirty();
@@ -2413,7 +2420,7 @@ public:
 		return *this;
 	}
 
-	bool operator==(const TCsPrimitiveType_MultiRefValue& B) const
+	FORCEINLINE bool operator==(const TCsProperty_MultiRef& B) const
 	{
 		for (uint8 I = 0; I < SIZE; ++I)
 		{
@@ -2423,23 +2430,18 @@ public:
 		return Value == B;
 	}
 
-	bool operator!=(const TCsPrimitiveType_MultiRefValue& B) const
+	FORCEINLINE bool operator!=(const TCsProperty_MultiRef& B) const
 	{
 		return !(*this == B);
 	}
 
-	void Set(const T &inValue)
+	void Set(const ValueType &inValue)
 	{
 		Value = inValue;
 		UpdateIsDirty();
 	}
 
-	void Set(const U &Index, T* inValue)
-	{
-		Set((int64)Index, inValue);
-	}
-
-	void Set(const int64 &Index, T* inValue)
+	void Set(const int32 &Index, ValueType* inValue)
 	{
 		if (Index > CS_PRIMITIVE_TYPE_DEFAULT && Index < SIZE)
 		{
@@ -2452,10 +2454,9 @@ public:
 		}
 	}
 
-	const T& Get() { return Value; }
-	const T& Get(const U &Index) { return Get((int64)Index); }
+	FORCEINLINE const ValueType& Get() { return Value; }
 
-	const T& Get(const int64 &Index)
+	FORCEINLINE const ValueType& Get(const int32 &Index)
 	{
 		return Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE ? Value : *(Values[Index]);
 	}
@@ -2494,9 +2495,9 @@ public:
 		OnChangeEX_Event.Clear();
 	}
 
-	bool HasChanged() { return IsDirty; }
+	FORCEINLINE bool HasChanged() { return IsDirty; }
 
-	bool HasChanged(const U &Index) 
+	FORCEINLINE bool HasChanged(const int32 &Index)
 	{ 
 		const int32 I = (int32)Index;
 		return I <= CS_PRIMITIVE_TYPE_DEFAULT || I >= SIZE ? IsDirty : IsDirtys[I];
@@ -2514,43 +2515,43 @@ public:
 	}
 };
 
-template<typename T, typename U, uint8 SIZE>
-struct TCsIntegralType_MultiRefValue : public TCsPrimitiveType_MultiRefValue<T, U, SIZE>
+template<typename ValueType, uint8 SIZE>
+struct TCsIntegralType_MultiRef : public TCsProperty_MultiRef<ValueType, SIZE>
 {
-	TCsIntegralType_MultiRefValue(){}
-	~TCsIntegralType_MultiRefValue(){}
+	TCsIntegralType_MultiRef(){}
+	~TCsIntegralType_MultiRef(){}
 
-	T Max()
+	ValueType Max()
 	{
-		T max = *(Values[0]);
+		ValueType max = *(Values[0]);
 
 		for (uint8 I = 1; I < SIZE; ++I)
 		{
-			max = (T)FMath::Max(max, *(Values[I]));
+			max = (ValueType)FMath::Max(max, *(Values[I]));
 		}
 		return max;
 	}
 
-	T Min()
+	ValueType Min()
 	{
-		T min = *(Values[0]);
+		ValueType min = *(Values[0]);
 
 		for (uint8 I = 1; I < SIZE; ++I)
 		{
-			min = (T)FMath::Min(min, *(Values[I]));
+			min = (ValueType)FMath::Min(min, *(Values[I]));
 		}
 		return min;
 	}
 };
 
-template<typename U, uint8 SIZE>
-struct TCsPrimitiveType_MultiRefValue_bool : public TCsPrimitiveType_MultiRefValue<bool, U, SIZE>
+template<uint8 SIZE>
+struct TCsProperty_MultiRef_bool : public TCsProperty_MultiRef<bool, SIZE>
 {
-	TCsPrimitiveType_MultiRefValue_bool()
+	TCsProperty_MultiRef_bool()
 	{
 		DefaultValue = bool;
 	}
-	~TCsPrimitiveType_MultiRefValue_bool(){}
+	~TCsProperty_MultiRef_bool(){}
 
 	bool Or()
 	{
@@ -2575,9 +2576,9 @@ struct TCsPrimitiveType_MultiRefValue_bool : public TCsPrimitiveType_MultiRefVal
 	}
 };
 
-#pragma endregion MultiRefValue
+#pragma endregion MultiRef
 
-// TArrayValue
+// TArray
 #pragma region
 
 template<typename ValueType>
@@ -2869,9 +2870,9 @@ struct TCsProperty_TArray_bool : public TCsProperty_TArray<bool>
 	}
 };
 
-#pragma endregion TArrayValue
+#pragma endregion TArray
 
-// TArrayRefValue
+// TArrayRef
 #pragma region
 
 template<typename ValueType>
@@ -3747,7 +3748,7 @@ namespace ECsMemberType
 
 namespace ECsMemberType
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
@@ -4545,7 +4546,7 @@ public:
 
 namespace ECsStringCompare
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{

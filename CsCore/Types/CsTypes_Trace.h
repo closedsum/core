@@ -23,7 +23,7 @@ namespace ECsTraceType
 
 namespace ECsTraceType
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
@@ -66,7 +66,7 @@ namespace ECsTraceMethod
 
 namespace ECsTraceMethod
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
@@ -109,7 +109,7 @@ namespace ECsTraceQuery
 
 namespace ECsTraceQuery
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{

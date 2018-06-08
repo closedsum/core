@@ -60,7 +60,7 @@ typedef ECsBlockchainContractArgumentType::Type TCsBlockchainContractArgumentTyp
 
 namespace ECsBlockchainContractArgumentType
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
@@ -309,7 +309,7 @@ typedef ECsBlockchainContractFunctionArgumentType::Type TCsBlockchainContractFun
 
 namespace ECsBlockchainContractFunctionArgumentType
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
@@ -446,7 +446,7 @@ typedef ECsBlockchainContractFunctionReturnType::Type TCsBlockchainContractFunct
 
 namespace ECsBlockchainContractFunctionReturnType
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{

@@ -22,7 +22,7 @@ namespace ECsViewType
 
 namespace ECsViewType
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -113,7 +113,7 @@ namespace ECsVisibility
 
 namespace ECsVisibility
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{

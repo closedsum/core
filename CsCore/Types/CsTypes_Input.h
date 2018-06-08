@@ -36,7 +36,7 @@ public:
 
 namespace ECsInputDevice
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
@@ -104,7 +104,7 @@ public:
 
 namespace ECsInputType
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
@@ -183,7 +183,7 @@ public:
 
 namespace ECsInputEvent
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -270,7 +270,7 @@ public:
 
 namespace ECsInputValue
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{

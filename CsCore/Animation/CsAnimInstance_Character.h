@@ -16,7 +16,7 @@ namespace ECsAnimInstanceCharacterRoutine
 
 namespace ECsAnimInstanceCharacterRoutine
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -221,12 +221,16 @@ public:
 
 	virtual void LoadAnims();
 
-	virtual class UAnimMontage* GetAnimMontage(const TCsCharacterAnim &AnimType, const int32 &Index = 0) const;
-	virtual class UAnimSequence* GetAnimSequence(const TCsCharacterAnim &AnimType) const;
-	virtual class UBlendSpace1D* GetBlendSpace1D(const TCsCharacterBlendSpace &BlendType) const;
-	virtual class UBlendSpace* GetBlendSpace(const TCsCharacterBlendSpace &BlendType) const;
+	UFUNCTION(BlueprintCallable, Category = "AnimInstance", meta = (BlueprintThreadSafe))
+	virtual class UAnimMontage* GetAnimMontage(const FECsCharacterAnim &AnimType, const int32 &Index = 0) const;
+	UFUNCTION(BlueprintCallable, Category = "AnimInstance", meta = (BlueprintThreadSafe))
+	virtual class UAnimSequence* GetAnimSequence(const FECsCharacterAnim &AnimType) const;
+	UFUNCTION(BlueprintCallable, Category = "AnimInstance", meta = (BlueprintThreadSafe))
+	virtual class UBlendSpace1D* GetBlendSpace1D(const FECsCharacterBlendSpace &BlendType) const;
+	UFUNCTION(BlueprintCallable, Category = "AnimInstance", meta = (BlueprintThreadSafe))
+	virtual class UBlendSpace* GetBlendSpace(const FECsCharacterBlendSpace &BlendType) const;
 
-	virtual void StopAnimation(const TCsCharacterAnim &AnimType, const int32 &Index = 0, const float BlendOutTime = 0.0f);
+	virtual void StopAnimation(const FECsCharacterAnim &AnimType, const int32 &Index = 0, const float BlendOutTime = 0.0f);
 
 #pragma endregion Anims
 

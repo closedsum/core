@@ -54,7 +54,7 @@ namespace ECsProcessRoutine
 
 namespace ECsProcessRoutine
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
@@ -104,7 +104,7 @@ typedef ECsProcessMonitorOutputEventPurpose::Type TCsProcessMonitorOutputEventPu
 
 namespace ECsProcessMonitorOutputEventPurpose
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
@@ -261,7 +261,7 @@ typedef ECsProcessPriorityModifier::Type TCsProcessPriorityModifier;
 
 namespace ECsProcessPriorityModifier
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{

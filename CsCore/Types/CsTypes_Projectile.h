@@ -118,7 +118,7 @@ typedef ECsProjectileRelevance::Type TCsProjectileRelevance;
 
 namespace ECsProjectileRelevance
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
@@ -176,7 +176,7 @@ typedef ECsProjectileState::Type TCsProjectileState;
 
 namespace ECsProjectileState
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
@@ -227,7 +227,7 @@ typedef ECsProjectileDeActivate::Type TCsProjectileDeActivate;
 
 namespace ECsProjectileDeActivate
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
@@ -277,7 +277,7 @@ typedef ECsProjectileMovement::Type TCsProjectileMovement;
 
 namespace ECsProjectileMovement
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
@@ -320,7 +320,7 @@ namespace ECsProjectileMovementFunctionType
 
 namespace ECsProjectileMovementFunctionType
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{

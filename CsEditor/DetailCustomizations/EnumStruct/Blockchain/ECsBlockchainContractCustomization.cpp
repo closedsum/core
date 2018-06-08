@@ -1,5 +1,5 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
-#include "DetailCustomizations/EnumStruct/ECsBlockchainContractCustomization.h"
+#include "DetailCustomizations/EnumStruct/Blockchain/ECsBlockchainContractCustomization.h"
 
 #include "Blockchain/CsBlockchainContract.h"
 

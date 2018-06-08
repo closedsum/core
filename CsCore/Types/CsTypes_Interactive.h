@@ -57,7 +57,7 @@ namespace ECsInteractiveState
 
 namespace ECsInteractiveState
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -140,7 +140,7 @@ namespace ECsInteractiveInstigator
 
 namespace ECsInteractiveInstigator
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -188,7 +188,7 @@ namespace ECsInteractiveCollision
 
 namespace ECsInteractiveCollision
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -313,7 +313,7 @@ namespace ECsInteractivePhysicsState_Editor
 
 namespace ECsInteractivePhysicsState_Editor
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{

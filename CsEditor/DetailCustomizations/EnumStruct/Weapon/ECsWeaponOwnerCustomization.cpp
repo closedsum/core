@@ -1,5 +1,5 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
-#include "DetailCustomizations/EnumStruct/ECsWeaponOwnerCustomization.h"
+#include "DetailCustomizations/EnumStruct/Weapon/ECsWeaponOwnerCustomization.h"
 
 #include "Types/CsTypes_Weapon.h"
 

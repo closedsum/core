@@ -49,7 +49,7 @@ namespace ECsFpsAnimMember
 
 namespace ECsFpsAnimMember
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
@@ -526,7 +526,7 @@ namespace ECsFpsAnimBlueprintMember
 
 namespace ECsFpsAnimBlueprintMember
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -733,7 +733,7 @@ namespace ECsFpsAnimBlendSpaceMember
 
 namespace ECsFpsAnimBlendSpaceMember
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -1115,7 +1115,7 @@ namespace ECsAdditiveBasePoseType
 
 namespace ECsAdditiveBasePoseType
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -1182,7 +1182,7 @@ namespace ECsAdditiveAnimationType
 
 namespace ECsAdditiveAnimationType
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{

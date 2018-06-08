@@ -47,7 +47,7 @@ typedef ECsItemCollection::Type TCsItemCollection;
 
 namespace ECsItemCollection
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -150,7 +150,7 @@ typedef ECsInventoryItemState_Editor::Type TCsInventoryItemState_Editor;
 
 namespace ECsInventoryItemState_Editor
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
@@ -329,7 +329,7 @@ typedef ECsItemMemberValueType::Type TCsItemMemberValueType;
 
 namespace ECsItemMemberValueType
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
@@ -1060,7 +1060,7 @@ typedef ECsItemOnConsumeContentAction::Type TCsItemOnConsumeContentAction;
 
 namespace ECsItemOnConsumeContentAction
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{

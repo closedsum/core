@@ -23,7 +23,7 @@ namespace ECsPoolTransaction
 
 namespace ECsPoolTransaction
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -73,7 +73,7 @@ namespace ECsPoolTransactionOrder
 
 namespace ECsPoolTransactionOrder
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -113,7 +113,7 @@ namespace ECsPooledObjectState
 
 namespace ECsPooledObjectState
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{

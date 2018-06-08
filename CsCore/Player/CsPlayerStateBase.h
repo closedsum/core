@@ -56,7 +56,7 @@ namespace ECsPlayerStateBaseOnBoardState
 
 namespace ECsPlayerStateBaseOnBoardState
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -190,7 +190,7 @@ namespace ECsPlayerStateBaseRoutine
 
 namespace ECsPlayerStateBaseRoutine
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{

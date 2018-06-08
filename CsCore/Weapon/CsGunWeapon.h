@@ -71,7 +71,7 @@ public:
 // Animation
 #pragma region
 
-	virtual TCsCharacterAnim GetCharacterAnimType(const FECsWeaponAnim &AnimType);
+	virtual const FECsCharacterAnim& GetCharacterAnimType(const FECsWeaponAnim &AnimType);
 
 #pragma endregion Animation
 };

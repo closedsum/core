@@ -346,26 +346,26 @@ void UCsAnimInstance_Character::OnTick_Handle_Data_WeaponMaterialSkin()
 
 void UCsAnimInstance_Character::LoadAnims(){}
 
-UAnimMontage* UCsAnimInstance_Character::GetAnimMontage(const TCsCharacterAnim &AnimType, const int32 &Index /*=0*/) const
+UAnimMontage* UCsAnimInstance_Character::GetAnimMontage(const FECsCharacterAnim &AnimType, const int32 &Index /*=0*/) const
 {
 	return nullptr;
 }
 
-UAnimSequence* UCsAnimInstance_Character::GetAnimSequence(const TCsCharacterAnim &AnimType) const
+UAnimSequence* UCsAnimInstance_Character::GetAnimSequence(const FECsCharacterAnim &AnimType) const
 {
 	return nullptr;
 }
 
-UBlendSpace1D* UCsAnimInstance_Character::GetBlendSpace1D(const TCsCharacterBlendSpace &BlendType) const
+UBlendSpace1D* UCsAnimInstance_Character::GetBlendSpace1D(const FECsCharacterBlendSpace &BlendType) const
 {
 	return nullptr;
 }
 
-UBlendSpace* UCsAnimInstance_Character::GetBlendSpace(const TCsCharacterBlendSpace &BlendType) const
+UBlendSpace* UCsAnimInstance_Character::GetBlendSpace(const FECsCharacterBlendSpace &BlendType) const
 {
 	return nullptr;
 }
 
-void UCsAnimInstance_Character::StopAnimation(const TCsCharacterAnim &AnimType, const int32 &Index /*0*/, const float BlendOutTime /*=0.0f*/){}
+void UCsAnimInstance_Character::StopAnimation(const FECsCharacterAnim &AnimType, const int32 &Index /*0*/, const float BlendOutTime /*=0.0f*/){}
 
 #pragma endregion Anims

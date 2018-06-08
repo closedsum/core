@@ -136,7 +136,7 @@ namespace ECsLoadFlags_Editor
 typedef ECsLoadFlags_Editor::Type TCsLoadFlags_Editor;
 
 USTRUCT()
-struct FCsResourceSize
+struct CSCORE_API FCsResourceSize
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -156,7 +156,7 @@ struct FCsResourceSize
 		Megabytes = 0.0f;
 	}
 
-	FCsResourceSize& operator=(const FCsResourceSize& B)
+	FORCEINLINE FCsResourceSize& operator=(const FCsResourceSize& B)
 	{
 		Bytes = B.Bytes;
 		Kilobytes = B.Kilobytes;
@@ -164,7 +164,7 @@ struct FCsResourceSize
 		return *this;
 	}
 
-	FCsResourceSize& operator+=(const FCsResourceSize& B)
+	FORCEINLINE FCsResourceSize& operator+=(const FCsResourceSize& B)
 	{
 		Bytes += B.Bytes;
 		Kilobytes += B.Kilobytes;
@@ -172,7 +172,7 @@ struct FCsResourceSize
 		return *this;
 	}
 
-	void Reset()
+	FORCEINLINE void Reset()
 	{
 		Bytes = 0;
 		Kilobytes = 0.0f;

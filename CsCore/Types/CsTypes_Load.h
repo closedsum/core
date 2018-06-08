@@ -181,7 +181,7 @@ struct CSCORE_API FCsResourceSize
 };
 
 USTRUCT()
-struct FCsStringAssetReference
+struct CSCORE_API FCsStringAssetReference
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -194,14 +194,14 @@ struct FCsStringAssetReference
 	UPROPERTY(VisibleDefaultsOnly, Category = "Reference")
 	FCsResourceSize Size;
 
-	FStringAssetReference* Get()
+	FORCEINLINE FStringAssetReference* Get()
 	{
 		&Reference_Internal;
 	}
 };
 
 USTRUCT()
-struct FCsTArrayStringAssetReference
+struct CSCORE_API FCsTArrayStringAssetReference
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -217,25 +217,21 @@ struct FCsTArrayStringAssetReference
 		Size.Reset();
 	}
 
-	void Get(TArray<FStringAssetReference>& OutReferences)
+	FORCEINLINE void Get(TArray<FStringAssetReference>& OutReferences)
 	{
-		const int32 Count = References.Num();
-
-		for (int32 I = 0; I < Count; ++I)
+		for (const FCsStringAssetReference& Reference : References)
 		{
-			OutReferences.Add(References[I].Reference_Internal);
+			OutReferences.Add(Reference.Reference_Internal);
 		}
 	}
 
-	void CalculateSize()
+	FORCEINLINE void CalculateSize()
 	{
 		Size.Reset();
 
-		const int32 Count = References.Num();
-
-		for (int32 I = 0; I < Count; ++I)
+		for (const FCsStringAssetReference& Reference : References)
 		{
-			Size += References[I].Size;
+			Size += Reference.Size;
 		}
 	}
 };

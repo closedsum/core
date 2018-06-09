@@ -145,7 +145,7 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const TCsLoadAss
 	ACsDataMapping* DataMapping = GetDataMapping();
 
 	TArray<FCsDataMappingEntry*> OutEntries;
-	TArray<TCsAssetType> OutAssetTypes;
+	TArray<FECsAssetType> OutAssetTypes;
 	OutIndices.Reset();
 
 	DataMapping->PerformFindEntry(InShortCode, OutEntries, OutAssetTypes, OutIndices);
@@ -166,7 +166,7 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const TCsLoadAss
 				CS_SET_BLUEPRINT_BITFLAG(OutEntries[CS_FIRST]->Data_LoadFlags, Flags);
 
 				const FString& LoadFlagsAsString = ECsLoadFlags_Editor::ToString(LoadFlags);
-				const FString& AssetTypeAsString = (*AssetTypeToString)(OutAssetTypes[CS_FIRST]);
+				const FString& AssetTypeAsString = OutAssetTypes[CS_FIRST].Name;
 
 				const FString Output = TEXT("ACsData_Payload::PostEditChangeProperty: Missing LoadFlags: ") + LoadFlagsAsString + TEXT(" in DataMapping: [") + AssetTypeAsString + TEXT(",") + InShortCode.ToString() + TEXT(",") + FString::FromInt(OutIndices[CS_FIRST]) + TEXT("]. Manually adding LoadFlag: ") + LoadFlagsAsString + TEXT(".");
 					
@@ -200,13 +200,12 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const TCsLoadAss
 
 								const int32 ArraySize = Array.Num();
 
-								const FString AssetTypeAsString = (*AssetTypeToString)(OutAssetTypes[CS_FIRST]);
+								const FString& AssetTypeAsString = OutAssetTypes[CS_FIRST].Name;
 
 								Array.AddDefaulted();
-								Array[ArraySize].AssetType		  = AssetTypeAsString;
-								Array[ArraySize].AssetType_Script = (uint8)OutAssetTypes[CS_FIRST];
-								Array[ArraySize].ShortCode		  = InShortCode;
-								Array[ArraySize].LoadFlags		  = LoadFlags;
+								Array[ArraySize].AssetType  = OutAssetTypes[CS_FIRST];
+								Array[ArraySize].ShortCode	= InShortCode;
+								Array[ArraySize].LoadFlags	= LoadFlags;
 
 								const FString& LoadAssetsTypeAsString = (*LoadAssetsTypeToString)(LoadAssetsType);
 								const FString& LoadFlagsAsString		 = ECsLoadFlags_Editor::ToString(LoadFlags);
@@ -230,11 +229,11 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const TCsLoadAss
 		else
 		{
 			bool IsAssetTypeMismatch   = false;
-			TCsAssetType LastAssetType = OutAssetTypes[CS_FIRST];
+			FECsAssetType LastAssetType = OutAssetTypes[CS_FIRST];
 
 			for (int32 I = 0; I < EntryCount; ++I)
 			{
-				const FString AssetTypeAsString = (*AssetTypeToString)(OutAssetTypes[I]);
+				const FString& AssetTypeAsString = OutAssetTypes[I].Name;
 
 				OutOutput += TEXT("[") + AssetTypeAsString + TEXT(", ") + FString::FromInt(OutIndices[I]) + TEXT("]");
 
@@ -296,13 +295,12 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const TCsLoadAss
 
 								const int32 ArraySize = Array.Num();
 
-								const FString AssetTypeAsString = (*AssetTypeToString)(OutAssetTypes[CS_FIRST]);
+								const FString& AssetTypeAsString = OutAssetTypes[CS_FIRST].Name;
 
 								Array.AddDefaulted();
-								Array[ArraySize].AssetType		  = AssetTypeAsString;
-								Array[ArraySize].AssetType_Script = (uint8)OutAssetTypes[CS_FIRST];
-								Array[ArraySize].ShortCode		  = InShortCode;
-								Array[ArraySize].LoadFlags		  = LoadFlags;
+								Array[ArraySize].AssetType	= OutAssetTypes[CS_FIRST];
+								Array[ArraySize].ShortCode	= InShortCode;
+								Array[ArraySize].LoadFlags	= LoadFlags;
 
 								const FString& LoadAssetsTypeAsString = (*LoadAssetsTypeToString)(LoadAssetsType);
 								const FString& LoadFlagsAsString	  = ECsLoadFlags_Editor::ToString(LoadFlags);
@@ -360,7 +358,7 @@ bool ACsData_Payload::Editor_IsValid(ACsDataMapping* DataMapping)
 								const FString _ShortCodeAsString = Array[J].ShortCode.ToString();
 
 								TArray<FCsDataMappingEntry*> OutEntries;
-								TArray<TCsAssetType> OutAssetTypes;
+								TArray<FECsAssetType> OutAssetTypes;
 								TArray<int32> OutIndices;
 
 								// Search in DataMapping
@@ -375,7 +373,7 @@ bool ACsData_Payload::Editor_IsValid(ACsDataMapping* DataMapping)
 
 										for (int32 K = 0; K < EntryCount; K++)
 										{
-											const FString OutAssetTypeAsString = (*AssetTypeToString)(OutAssetTypes[K]);
+											const FString& OutAssetTypeAsString = OutAssetTypes[K].Name;
 
 											UE_LOG(LogCs, Warning, TEXT("ACsData_Payload::Editor_IsValid: In DataMapping, ShortCode: %s at [%s, %d]."), *_ShortCodeAsString, *OutAssetTypeAsString, K);
 										}
@@ -383,7 +381,7 @@ bool ACsData_Payload::Editor_IsValid(ACsDataMapping* DataMapping)
 									else
 									{
 										// Check AssetType Mismatch
-										const FString OutAssetTypeAsString = (*AssetTypeToString)(OutAssetTypes[CS_FIRST]);
+										const FString& OutAssetTypeAsString = OutAssetTypes[CS_FIRST].Name;
 
 										if (AssetTypeAsString != OutAssetTypeAsString)
 										{

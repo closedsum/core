@@ -19,8 +19,6 @@ public:
 // Types
 #pragma region
 
-	CS_DECLARE_ASSET_TYPE
-
 	TCsGetAssetTypeStaticClass GetAssetTypeStaticClass;
 
 #pragma endregion Types
@@ -38,7 +36,7 @@ public:
 public:
 
 	bool Check_MarkDatasDirty(const TCHAR* Stream);
-	void MarkDatasDirty(const TCsAssetType &AssetType);
+	void MarkDatasDirty(const FECsAssetType &AssetType);
 
 #pragma endregion Data
 };

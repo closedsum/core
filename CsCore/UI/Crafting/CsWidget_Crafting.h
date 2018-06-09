@@ -142,8 +142,8 @@ public:
 
 	TArray<FName> SelectedOptionShortCodes;
 
-	TCsAssetType RecipeAssetType;
-	TCsAssetType ItemAssetType;
+	FECsAssetType RecipeAssetType;
+	FECsAssetType ItemAssetType;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
 	uint8 Bag;

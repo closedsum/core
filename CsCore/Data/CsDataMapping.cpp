@@ -12,34 +12,45 @@
 #include "Developer/SourceControl/Public/SourceControlHelpers.h"
 #endif WITH_EDITOR
 
+// Cache
+#pragma region
+
+namespace ECsDataMappingCache
+{
+	namespace Str
+	{
+		CSCORE_API const FString LoadData = TEXT("ACsDataMapping::LoadData");
+	}
+}
+
+#pragma endregion Cache
+
 ACsDataMapping::ACsDataMapping(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	AssetTypeToString = nullptr;
-	StringToAssetType = nullptr;
 }
 
 void ACsDataMapping::ClearLoaded()
 {
 }
 
-TArray<FCsDataMappingEntry>* ACsDataMapping::GetDataMappings(const TCsAssetType &AssetType)
+TArray<FCsDataMappingEntry>* ACsDataMapping::GetDataMappings(const FECsAssetType &AssetType)
 {
 	return nullptr;
 }
 
-TMap<FName, FCsDataMappingEntry>* ACsDataMapping::GetDataMappings_Map(const TCsAssetType &AssetType)
+TMap<FName, FCsDataMappingEntry>* ACsDataMapping::GetDataMappings_Map(const FECsAssetType &AssetType)
 {
 	return nullptr;
 }
 
-void ACsDataMapping::GenerateMaps(const TCsAssetType &AssetType)
+void ACsDataMapping::GenerateMaps(const FECsAssetType &AssetType)
 {
 	TArray<FCsDataMappingEntry>* Mapping = GetDataMappings(AssetType);
 
 	if (!Mapping)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::GenerateMaps: Warning. No DataMapping found for AssetType: %s"), *((*AssetTypeToString)(AssetType)));
+		UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::GenerateMaps: Warning. No DataMapping found for AssetType: %s"), *(AssetType.Name));
 		return;
 	}
 
@@ -47,7 +58,7 @@ void ACsDataMapping::GenerateMaps(const TCsAssetType &AssetType)
 
 	if (!Map)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::GenerateMaps: Warning. No DataMapping_Map found for AssetType: %s"), *((*AssetTypeToString)(AssetType)));
+		UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::GenerateMaps: Warning. No DataMapping_Map found for AssetType: %s"), *(AssetType.Name));
 		return;
 	}
 
@@ -64,22 +75,23 @@ void ACsDataMapping::GenerateMaps(const TCsAssetType &AssetType)
 
 void ACsDataMapping::GenerateMaps()
 {
-	const uint8 AssetCount = AssetType_MAX;
+	const int32& Count = EMCsAssetType::Get().Num();
 
-	for (uint8 I = 0; I < AssetCount; ++I)
+	for (int32 I = 0; I < Count; ++I)
 	{
-		GenerateMaps((TCsAssetType)I);
+		GenerateMaps(EMCsAssetType::Get().GetEnumAt(I));
 	}
 }
 
-TCsAssetType ACsDataMapping::GetDataAssetType(const FName &ShortCode)
+const FECsAssetType& ACsDataMapping::GetDataAssetType(const FName &ShortCode)
 {
 	// Search TMaps - Populated if GenerateMaps was called
-	const uint8 AssetCount = (uint8)AssetType_MAX;
+	EMCsAssetType& EnumMap  = EMCsAssetType::Get();
+	const int32& AssetCount = EnumMap.Num();
 
-	for (uint8 I = 0; I < AssetCount; ++I)
+	for (int32 I = 0; I < AssetCount; ++I)
 	{
-		const TCsAssetType AssetType		  = (TCsAssetType)I;
+		const FECsAssetType& AssetType		  = EnumMap.GetEnumAt(I);
 		TMap<FName, FCsDataMappingEntry>* Map = GetDataMappings_Map(AssetType);
 
 		if (!Map)
@@ -93,14 +105,14 @@ TCsAssetType ACsDataMapping::GetDataAssetType(const FName &ShortCode)
 			}
 			else
 			{
-				UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::GetDataAssetType: No Data set for AssetType: %s with ShortCode: %s"), *((*AssetTypeToString)(AssetType)), *ShortCode.ToString());
+				UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::GetDataAssetType: No Data set for AssetType: %s with ShortCode: %s"), *(AssetType.Name), *ShortCode.ToString());
 			}
 		}
 	}
 	// Search TArrays
-	for (uint8 I = 0; I < AssetCount; ++I)
+	for (int32 I = 0; I < AssetCount; ++I)
 	{
-		const TCsAssetType AssetType		 = (TCsAssetType)I;
+		const FECsAssetType& AssetType = EnumMap.GetEnumAt(I);
 		TArray<FCsDataMappingEntry>* Mapping = GetDataMappings(AssetType);
 
 		if (!Mapping)
@@ -114,7 +126,7 @@ TCsAssetType ACsDataMapping::GetDataAssetType(const FName &ShortCode)
 				return AssetType;
 		}
 	}
-	return AssetType_MAX;
+	return EnumMap.GetMAX();
 }
 
 ACsData_Payload* ACsDataMapping::GetPayload()
@@ -129,11 +141,11 @@ void ACsDataMapping::PreSave(const class ITargetPlatform* TargetPlatform)
 {
 #if WITH_EDITOR
 	// Set LookUpCodes
-	const uint8 AssetCount = (uint8)AssetType_MAX;
+	const int32& AssetCount = EMCsAssetType::Get().Num();
 
-	for (uint8 I = 0; I < AssetCount; ++I)
+	for (int32 I = 0; I < AssetCount; ++I)
 	{
-		const TCsAssetType AssetType		 = (TCsAssetType)I;
+		const FECsAssetType& AssetType		 = EMCsAssetType::Get().GetEnum(I);
 		TArray<FCsDataMappingEntry>* Mapping = GetDataMappings(AssetType);
 
 		const uint16 Count = Mapping->Num();
@@ -152,7 +164,7 @@ void ACsDataMapping::PreSave(const class ITargetPlatform* TargetPlatform)
 #endif // #if WITH_EDITOR
 }
 
-bool ACsDataMapping::DoesDataAssetReferenceExist(const TCsAssetType &AssetType, const FName &ShortCode)
+bool ACsDataMapping::DoesDataAssetReferenceExist(const FECsAssetType &AssetType, const FName &ShortCode)
 {
 	// Search TMaps - Populated if GenerateMaps was called
 	if (TMap<FName, FCsDataMappingEntry>* Map = GetDataMappings_Map(AssetType))
@@ -165,7 +177,7 @@ bool ACsDataMapping::DoesDataAssetReferenceExist(const TCsAssetType &AssetType, 
 			}
 			else
 			{
-				UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::DoesDataAssetReferenceExist: No Data set for AssetType: %s with ShortCode: %s"), *((*AssetTypeToString)(AssetType)), *ShortCode.ToString());
+				UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::DoesDataAssetReferenceExist: No Data set for AssetType: %s with ShortCode: %s"), *(AssetType.Name), *ShortCode.ToString());
 			}
 		}
 	}
@@ -184,7 +196,7 @@ bool ACsDataMapping::DoesDataAssetReferenceExist(const TCsAssetType &AssetType, 
 				}
 				else
 				{
-					UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::DoesDataAssetReferenceExist: No Data set for AssetType: %s with ShortCode: %s"), *((*AssetTypeToString)(AssetType)), *ShortCode.ToString());
+					UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::DoesDataAssetReferenceExist: No Data set for AssetType: %s with ShortCode: %s"), *(AssetType.Name), *ShortCode.ToString());
 				}
 			}
 		}
@@ -194,19 +206,19 @@ bool ACsDataMapping::DoesDataAssetReferenceExist(const TCsAssetType &AssetType, 
 
 bool ACsDataMapping::DoesDataAssetReferenceExist(const FName &ShortCode)
 {
-	bool Exist			   = false;
-	const uint8 AssetCount = (uint8)AssetType_MAX;
+	bool Exist			    = false;
+	const int32& AssetCount = EMCsAssetType::Get().Num();
 
-	for (uint8 I = 0; I < AssetCount; ++I)
+	for (int32 I = 0; I < AssetCount; ++I)
 	{
-		Exist |= DoesDataAssetReferenceExist((TCsAssetType)I, ShortCode);
+		Exist |= DoesDataAssetReferenceExist(EMCsAssetType::Get().GetEnumAt(I), ShortCode);
 	}
 	return Exist;
 }
 
-bool ACsDataMapping::AddDataAssetReference(const TCsAssetType &AssetType, const FName &ShortCode, AActor* InData)
+bool ACsDataMapping::AddDataAssetReference(const FECsAssetType &AssetType, const FName &ShortCode, AActor* InData)
 {
-	if (AssetType == AssetType_MAX)
+	if (!EMCsAssetType::Get().IsValidEnum(AssetType))
 	{
 		UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::AddDataAssetReference: Warning. Using INVALID AssetType: ECsAssetType_MAX when adding ShortCode: %s"), *ShortCode.ToString());
 		return false;
@@ -226,7 +238,7 @@ bool ACsDataMapping::AddDataAssetReference(const TCsAssetType &AssetType, const 
 
 			if (!Map)
 			{
-				UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::AddDataAssetReference: Warning. No DataMapping_Map found for AssetType: %s"), *((*AssetTypeToString)(AssetType)));
+				UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::AddDataAssetReference: Warning. No DataMapping_Map found for AssetType: %s"), *(AssetType.Name));
 				return true;
 			}
 			Map->Add(ShortCode, Mapping);
@@ -235,22 +247,22 @@ bool ACsDataMapping::AddDataAssetReference(const TCsAssetType &AssetType, const 
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::AddDataAssetReference: Warning. Mapping AssetType: %s and ShortCode: %s have ALREADY been ADDED."), *((*AssetTypeToString)(AssetType)), *ShortCode.ToString());
+			UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::AddDataAssetReference: Warning. Mapping AssetType: %s and ShortCode: %s have ALREADY been ADDED."), *(AssetType.Name), *ShortCode.ToString());
 			return false;
 		}
 	}
-	UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::AddDataAssetReference: Warning. Using AssetType: %s does NOT exist."), *((*AssetTypeToString)(AssetType)));
+	UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::AddDataAssetReference: Warning. Using AssetType: %s does NOT exist."), *(AssetType.Name));
 	return false;
 }
 
-FStringAssetReference ACsDataMapping::GetStringAssetReference(const TCsAssetType &AssetType, const FName &ShortCode)
+FStringAssetReference ACsDataMapping::GetStringAssetReference(const FECsAssetType &AssetType, const FName &ShortCode)
 {
 	TMap<FName, FCsDataMappingEntry>* Mapping = GetDataMappings_Map(AssetType);
 	FCsDataMappingEntry* Entry				  = Mapping->Find(ShortCode);
 	return Entry ? Entry->Data.ToStringReference() : FStringAssetReference();
 }
 
-FStringAssetReference ACsDataMapping::GetStringAssetReference(const TCsAssetType &AssetType, const uint16 &LookUpCode)
+FStringAssetReference ACsDataMapping::GetStringAssetReference(const FECsAssetType &AssetType, const uint16 &LookUpCode)
 {
 	TArray<FCsDataMappingEntry>* Mapping = GetDataMappings(AssetType);
 
@@ -259,7 +271,7 @@ FStringAssetReference ACsDataMapping::GetStringAssetReference(const TCsAssetType
 	return (*Mapping)[LookUpCode].Data.ToStringReference();
 }
 
-void ACsDataMapping::GetStringAssetReferences(const TCsAssetType &AssetType, const FName &ShortCode, const ECsLoadFlags &LoadFlags, TArray<FStringAssetReference> &OutReferences)
+void ACsDataMapping::GetStringAssetReferences(const FECsAssetType &AssetType, const FName &ShortCode, const ECsLoadFlags &LoadFlags, TArray<FStringAssetReference> &OutReferences)
 {
 	TMap<FName, FCsDataMappingEntry>* Mapping = GetDataMappings_Map(AssetType);
 	FCsDataMappingEntry* Entry				  = Mapping->Find(ShortCode);
@@ -269,7 +281,7 @@ void ACsDataMapping::GetStringAssetReferences(const TCsAssetType &AssetType, con
 	Entry->AssetReferences[(int32)LoadFlags].Get(OutReferences);
 }
 
-void ACsDataMapping::GetStringAssetReferences(const TCsAssetType &AssetType, const uint16 &LookUpCode, const ECsLoadFlags &LoadFlags, TArray<FStringAssetReference> &OutReferences)
+void ACsDataMapping::GetStringAssetReferences(const FECsAssetType &AssetType, const uint16 &LookUpCode, const ECsLoadFlags &LoadFlags, TArray<FStringAssetReference> &OutReferences)
 {
 	TArray<FCsDataMappingEntry>* Mapping = GetDataMappings(AssetType);
 
@@ -301,7 +313,7 @@ void ACsDataMapping::PopulateDataAssetReferences()
 				{
 					AssetTypeIndex++;
 
-					const TCsAssetType AssetType = (TCsAssetType)AssetTypeIndex;
+					const FECsAssetType& AssetType = EMCsAssetType::Get().GetEnumAt(AssetTypeIndex);
 
 					if (TArray<FCsDataMappingEntry>* Member = Property->ContainerPtrToValuePtr<TArray<FCsDataMappingEntry>>(this))
 					{
@@ -314,7 +326,7 @@ void ACsDataMapping::PopulateDataAssetReferences()
 
 							if (Asset == TEXT(""))
 							{
-								UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::PopulateAssetReferences: No data set for AssetType: %s using Short Code: %s"), *((*AssetTypeToString)(AssetType)), *((*Member)[I].ShortCode.ToString()));
+								UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::PopulateAssetReferences: No data set for AssetType: %s using Short Code: %s"), *(AssetType.Name), *((*Member)[I].ShortCode.ToString()));
 								continue;
 							}
 							DataAssetReferences.Add(AssetRef);
@@ -359,7 +371,7 @@ void ACsDataMapping::PopulateAssetReferences()
 				{
 					AssetTypeIndex++;
 
-					const TCsAssetType AssetType = (TCsAssetType)AssetTypeIndex;
+					const FECsAssetType& AssetType = EMCsAssetType::Get().GetEnumAt(AssetTypeIndex);
 
 					if (TArray<FCsDataMappingEntry>* Member = Property->ContainerPtrToValuePtr<TArray<FCsDataMappingEntry>>(this))
 					{
@@ -373,7 +385,7 @@ void ACsDataMapping::PopulateAssetReferences()
 
 							if (!OutAsset)
 							{
-								UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::PopulateAssetReferences: No data set for AssetType: %s using Short Code: %s"), *((*AssetTypeToString)(AssetType)), *((*Member)[I].ShortCode.ToString()));
+								UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::PopulateAssetReferences: No data set for AssetType: %s using Short Code: %s"), *(AssetType.Name), *((*Member)[I].ShortCode.ToString()));
 								continue;
 							}
 
@@ -447,7 +459,7 @@ void ACsDataMapping::GetLoadAssetsShortCodes(const TCsLoadAssetsType &AssetsType
 {
 }
 
-TCsAssetType ACsDataMapping::GetAssetTypeFromShortCode(const FName &ShortCode) { return AssetType_MAX; }
+const FECsAssetType& ACsDataMapping::GetAssetTypeFromShortCode(const FName &ShortCode) { return EMCsAssetType::Get().GetMAX(); }
 
 void ACsDataMapping::GetLoadStringAssetReferences(const TCsLoadAssetsType &AssetsType, TArray<FStringAssetReference> &OutAssetReferences)
 {
@@ -459,18 +471,18 @@ void ACsDataMapping::OnFinishedAsyncLoadingAssetsSetReferences(const TCsLoadAsse
 
 ACsData* ACsDataMapping::LoadData(const FName &ShortCode, const ECsLoadFlags &LoadFlags /*=ECsLoadFlags::Game*/)
 {
-	TCsAssetType AssetType = AssetType_MAX;
+	FECsAssetType AssetType = EMCsAssetType::Get().GetMAX();
 
 	// Search Loaded Data TMaps / TArray
 	if (ACsData* Data = GetLoadedData(ShortCode, AssetType))
 		return Data;
 
 	// Search TMaps - Populated if GenerateMaps was called
-	const uint8 AssetCount = (uint8)AssetType_MAX;
+	const int32& AssetCount = EMCsAssetType::Get().Num();
 
-	for (uint8 I = 0; I < AssetCount; ++I)
+	for (int32 I = 0; I < AssetCount; ++I)
 	{
-		TMap<FName, FCsDataMappingEntry>* Map = GetDataMappings_Map((TCsAssetType)I);
+		TMap<FName, FCsDataMappingEntry>* Map = GetDataMappings_Map(EMCsAssetType::Get().GetEnumAt(I));
 
 		if (!Map)
 			continue;
@@ -484,9 +496,9 @@ ACsData* ACsDataMapping::LoadData(const FName &ShortCode, const ECsLoadFlags &Lo
 			return Data;
 	}
 	// Search TArrays
-	for (uint8 I = 0; I < AssetCount; ++I)
+	for (int32 I = 0; I < AssetCount; ++I)
 	{
-		TArray<FCsDataMappingEntry>* Mapping = GetDataMappings((TCsAssetType)I);
+		TArray<FCsDataMappingEntry>* Mapping = GetDataMappings(EMCsAssetType::Get().GetEnumAt(I));
 
 		if (!Mapping)
 			continue;
@@ -509,11 +521,11 @@ ACsData* ACsDataMapping::LoadData(const FName &ShortCode, const ECsLoadFlags &Lo
 // Add
 #pragma region
 
-void ACsDataMapping::AddLoadedData(const TCsAssetType &AssetType, const FName &ShortCode, ACsData* InData)
+void ACsDataMapping::AddLoadedData(const FECsAssetType &AssetType, const FName &ShortCode, ACsData* InData)
 {
 }
 
-void ACsDataMapping::AddLoadedData(const TCsAssetType &AssetType, const uint16 &LookUpCode, ACsData* InData)
+void ACsDataMapping::AddLoadedData(const FECsAssetType &AssetType, const uint16 &LookUpCode, ACsData* InData)
 {
 }
 
@@ -522,30 +534,30 @@ void ACsDataMapping::AddLoadedData(const TCsAssetType &AssetType, const uint16 &
 // Get
 #pragma region
 
-ACsData* ACsDataMapping::GetLoadedData(const TCsAssetType &AssetType, const FName &ShortCode)
+ACsData* ACsDataMapping::GetLoadedData(const FECsAssetType &AssetType, const FName &ShortCode)
 {
 	return nullptr;
 }
 
-ACsData* ACsDataMapping::GetLoadedData(const FName &ShortCode, TCsAssetType &OutAssetType)
+ACsData* ACsDataMapping::GetLoadedData(const FName &ShortCode, FECsAssetType &OutAssetType)
 {
-	OutAssetType = AssetType_MAX;
+	OutAssetType = EMCsAssetType::Get().GetMAX();
 	return nullptr;
 }
 
 ACsData* ACsDataMapping::GetLoadedData(const FName &ShortCode)
 {
-	TCsAssetType OutAssetType;
+	FECsAssetType OutAssetType;
 	return GetLoadedData(ShortCode, OutAssetType);
 }
 
-ACsData* ACsDataMapping::GetLoadedData(const TCsAssetType &AssetType, const uint16 &LookUpCode)
+ACsData* ACsDataMapping::GetLoadedData(const FECsAssetType &AssetType, const uint16 &LookUpCode)
 {
 	return nullptr;
 }
 
-void ACsDataMapping::GetLoadedDatas(const TCsAssetType &AssetType, TArray<ACsData*> &OutDatas){}
-void ACsDataMapping::GetLoadedDataShortCodes(const TCsAssetType &AssetType, TArray<FName> &OutShortCodes){}
+void ACsDataMapping::GetLoadedDatas(const FECsAssetType &AssetType, TArray<ACsData*> &OutDatas){}
+void ACsDataMapping::GetLoadedDataShortCodes(const FECsAssetType &AssetType, TArray<FName> &OutShortCodes){}
 
 #pragma endregion Get
 
@@ -555,7 +567,7 @@ void ACsDataMapping::GetLoadedDataShortCodes(const TCsAssetType &AssetType, TArr
 #pragma region
 
 template<typename T>
-bool ACsDataMapping::CheckDataIsValid(const FString &FunctionName, const TCsAssetType &AssetType, const FName &ShortCode, const ECsLoadFlags &LoadFlags /*=ECsLoadFlags::Game*/)
+bool ACsDataMapping::CheckDataIsValid(const FString &FunctionName, const FECsAssetType &AssetType, const FName &ShortCode, const ECsLoadFlags &LoadFlags /*=ECsLoadFlags::Game*/)
 {
 	if (ShortCode == NAME_None)
 		return true;
@@ -584,7 +596,7 @@ bool ACsDataMapping::CheckDataIsValid(const FString &FunctionName, const TCsAsse
 }
 
 template<typename T>
-bool ACsDataMapping::CheckDataIsValid(const FString &FunctionName, const TCsAssetType &AssetType, FCsDataMappingEntry& Mapping, const ECsLoadFlags &LoadFlags /*=ECsLoadFlags::Game*/)
+bool ACsDataMapping::CheckDataIsValid(const FString &FunctionName, const FECsAssetType &AssetType, FCsDataMappingEntry& Mapping, const ECsLoadFlags &LoadFlags /*=ECsLoadFlags::Game*/)
 {
 	// Load the Data
 	AActor* OutAsset;
@@ -609,7 +621,7 @@ bool ACsDataMapping::CheckDataIsValid(const FString &FunctionName, const TCsAsse
 }
 
 template<typename T>
-bool ACsDataMapping::CheckAllDataIsValid(const FString &FunctionName, const TCsAssetType &AssetType, const ECsLoadFlags &LoadFlags /*=ECsLoadFlags::Game*/)
+bool ACsDataMapping::CheckAllDataIsValid(const FString &FunctionName, const FECsAssetType &AssetType, const ECsLoadFlags &LoadFlags /*=ECsLoadFlags::Game*/)
 {
 	TArray<FCsDataMappingEntry>& Mapping = *GetDataMappings(AssetType);
 	const int32 Count					 = Mapping.Num();
@@ -628,7 +640,7 @@ bool ACsDataMapping::CheckAllDataIsValid(const FString &FunctionName, const TCsA
 // Get
 #pragma region
 
-FName ACsDataMapping::GetShortCode(const TCsAssetType &AssetType, const uint16 &LookUpCode)
+FName ACsDataMapping::GetShortCode(const FECsAssetType &AssetType, const uint16 &LookUpCode)
 {
 	if (LookUpCode == CS_INVALID_LOOK_UP_CODE_MAX)
 	{
@@ -648,7 +660,7 @@ FName ACsDataMapping::GetShortCode(const TCsAssetType &AssetType, const uint16 &
 	return (*Mapping)[LookUpCode].ShortCode;
 }
 
-uint16 ACsDataMapping::GetLookUpCode(const TCsAssetType &AssetType, const FName &ShortCode)
+uint16 ACsDataMapping::GetLookUpCode(const FECsAssetType &AssetType, const FName &ShortCode)
 {
 	if (ShortCode == CS_INVALID_SHORT_CODE)
 	{
@@ -766,7 +778,7 @@ void ACsDataMapping::LoadFromJson()
 
 #if WITH_EDITOR
 
-bool ACsDataMapping::PerformFindEntry(const FName &ShortCode, TArray<FCsDataMappingEntry*> &OutEntries, TArray<TCsAssetType> &OutAssetTypes, TArray<int32> &OutIndices)
+bool ACsDataMapping::PerformFindEntry(const FName &ShortCode, TArray<FCsDataMappingEntry*> &OutEntries, TArray<FECsAssetType> &OutAssetTypes, TArray<int32> &OutIndices)
 {
 	int32 AssetTypeIndex = INDEX_NONE;
 
@@ -789,8 +801,8 @@ bool ACsDataMapping::PerformFindEntry(const FName &ShortCode, TArray<FCsDataMapp
 				{
 					AssetTypeIndex++;
 
-					const TCsAssetType AssetType    = (TCsAssetType)AssetTypeIndex;
-					const FString AssetTypeAsString = (*AssetTypeToString)(AssetType);
+					const FECsAssetType& AssetType   = EMCsAssetType::Get().GetEnumAt(AssetTypeIndex);
+					const FString& AssetTypeAsString = AssetType.Name;
 
 					if (TArray<FCsDataMappingEntry>* Member = Property->ContainerPtrToValuePtr<TArray<FCsDataMappingEntry>>(this))
 					{
@@ -815,7 +827,7 @@ bool ACsDataMapping::PerformFindEntry(const FName &ShortCode, TArray<FCsDataMapp
 	return OutEntries.Num() > CS_EMPTY;
 }
 
-bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const TCsAssetType &AssetType, const int32 &LoadFlags, FString &OutMessage, FString &OutOutput)
+bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const FECsAssetType &AssetType, const int32 &LoadFlags, FString &OutMessage, FString &OutOutput)
 {
 	// Check for valid ShortCode
 	if (ShortCode == NAME_None ||
@@ -833,7 +845,7 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const TCsAssetType 
 	}
 
 	// Check if AssetType Exists
-	if (AssetType == AssetType_MAX)
+	if (!EMCsAssetType::Get().IsValidEnum(AssetType))
 	{
 		OutMessage = TEXT("INVALID AssetType.");
 		OutOutput = TEXT("ERROR");
@@ -869,10 +881,10 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const TCsAssetType 
 				{
 					AssetTypeIndex++;
 
-					if ((TCsAssetType)AssetTypeIndex != AssetType)
+					if (EMCsAssetType::Get().GetEnumAt(AssetTypeIndex) != AssetType)
 						continue;
 
-					const FString AssetTypeAsString = (*AssetTypeToString)(AssetType);
+					const FString& AssetTypeAsString = AssetType.Name;
 
 					bool Found = false;
 					int32 FoundCount = 0;
@@ -1012,7 +1024,7 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const TCsAssetType 
 										if (ShortCode != DOb->ShortCode)
 											OutOutput = TEXT("ShortCode mismatch. ") + DOb->ShortCode.ToString() + TEXT(" != ") + ShortCode.ToString();
 										else
-											OutOutput = TEXT("AssetType mismatch. ") + (*AssetTypeToString)(DOb->Type) + TEXT(" != ") + AssetTypeAsString;
+											OutOutput = TEXT("AssetType mismatch. ") + DOb->Type.Name + TEXT(" != ") + AssetTypeAsString;
 										OutMessage = TEXT("FAILED.");
 
 										if (UCsCommon::IsDefaultObject(this))
@@ -1129,7 +1141,7 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const int32 &LoadFl
 		{
 			// ADD
 			if (ShortCode == DataDOb->ShortCode &&
-				DataDOb->Type != AssetType_MAX)
+				EMCsAssetType::Get().IsValidEnum(DataDOb->Type))
 			{
 				Data = Cast<UBlueprintCore>(Bps[0])->GeneratedClass;
 			}
@@ -1180,7 +1192,7 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const int32 &LoadFl
 		return false;
 	}
 
-	const TCsAssetType AssetType = DataDOb->Type;
+	const FECsAssetType& AssetType = DataDOb->Type;
 
 	// Search Entries
 	int32 AssetTypeIndex = INDEX_NONE;
@@ -1204,10 +1216,10 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const int32 &LoadFl
 				{
 					AssetTypeIndex++;
 
-					if ((TCsAssetType)AssetTypeIndex != AssetType)
+					if (EMCsAssetType::Get().GetEnumAt(AssetTypeIndex) != AssetType)
 						continue;
 
-					const FString AssetTypeAsString = (*AssetTypeToString)(AssetType);
+					const FString& AssetTypeAsString = AssetType.Name;
 
 					bool Found = false;
 					int32 FoundCount = 0;
@@ -1387,10 +1399,10 @@ bool ACsDataMapping::PerformValidate(FString &OutMessage, FString &OutOutput)
 				// FCsDataMappingEntry
 				if (InnerStructProperty->Struct == FCsDataMappingEntry::StaticStruct())
 				{
-					AssetTypeIndex++;
+					++AssetTypeIndex;
 
-					const TCsAssetType AssetType    = (TCsAssetType)AssetTypeIndex;
-					const FString AssetTypeAsString = (*AssetTypeToString)(AssetType);
+					const FECsAssetType& AssetType   = EMCsAssetType::Get().GetEnumAt(AssetTypeIndex);
+					const FString& AssetTypeAsString = AssetType.Name;
 
 					if (TArray<FCsDataMappingEntry>* Member = Property->ContainerPtrToValuePtr<TArray<FCsDataMappingEntry>>(this))
 					{
@@ -1509,7 +1521,7 @@ void ACsDataMapping::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 
 		// Search Entries
 		TArray<FCsDataMappingEntry*> OutEntries; 
-		TArray<TCsAssetType> OutAssetTypes;
+		TArray<FECsAssetType> OutAssetTypes;
 		TArray<int32> OutIndices;
 
 		PerformFindEntry(FindEntry.ShortCode, OutEntries, OutAssetTypes, OutIndices);
@@ -1521,8 +1533,8 @@ void ACsDataMapping::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 			if (I > 0)
 				FindEntry.Output += TEXT(", ");
 
-			const FString AssetTypeAsString = (*AssetTypeToString)(OutAssetTypes[I]);
-			FindEntry.Output			   += TEXT("[") + AssetTypeAsString + TEXT(", ") + FString::FromInt(OutIndices[I]) + TEXT("]");
+			const FString& AssetTypeAsString = OutAssetTypes[I].Name;
+			FindEntry.Output			    += TEXT("[") + AssetTypeAsString + TEXT(", ") + FString::FromInt(OutIndices[I]) + TEXT("]");
 		}
 
 		if (EntryCount == CS_EMPTY)
@@ -1548,7 +1560,7 @@ void ACsDataMapping::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 		AddEntry.Message = TEXT("");
 		AddEntry.Output  = TEXT("");
 
-		PerformAddEntry(AddEntry.ShortCode, (*StringToAssetType)(AddEntry.AssetType), AddEntry.LoadFlags, AddEntry.Message, AddEntry.Output);
+		PerformAddEntry(AddEntry.ShortCode, AddEntry.AssetType, AddEntry.LoadFlags, AddEntry.Message, AddEntry.Output);
 		AddEntry.Add = false;
 	}
 	// Remove Entry
@@ -1602,10 +1614,10 @@ void ACsDataMapping::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 					// FCsDataMappingEntry
 					if (InnerStructProperty->Struct == FCsDataMappingEntry::StaticStruct())
 					{
-						AssetTypeIndex++;
+						++AssetTypeIndex;
 
-						const TCsAssetType AssetType    = (TCsAssetType)AssetTypeIndex;
-						const FString AssetTypeAsString = (*AssetTypeToString)(AssetType);
+						const FECsAssetType& AssetType   = EMCsAssetType::Get().GetEnumAt(AssetTypeIndex);
+						const FString& AssetTypeAsString = AssetType.Name;
 
 						if (TArray<FCsDataMappingEntry>* Member = Property->ContainerPtrToValuePtr<TArray<FCsDataMappingEntry>>(this))
 						{
@@ -1667,7 +1679,7 @@ void ACsDataMapping::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 	Super::PostEditChangeProperty(e);
 }
 
-bool ACsDataMapping::CheckEntryExists(const FName &ShortCode, const TCsAssetType &AssetType, const TCsLoadFlags_Editor &LoadFlags, FString &OutMessage)
+bool ACsDataMapping::CheckEntryExists(const FName &ShortCode, const FECsAssetType &AssetType, const TCsLoadFlags_Editor &LoadFlags, FString &OutMessage)
 {
 	UClass* Class = GetClass();
 
@@ -1698,9 +1710,9 @@ bool ACsDataMapping::CheckEntryExists(const FName &ShortCode, const TCsAssetType
 							{
 								bool Found = true;
 								// Check AssetType
-								if (AssetType != (*StringToAssetType)(MemberName))
+								if (AssetType != EMCsAssetType::Get().GetSafeEnum(MemberName))
 								{
-									OutMessage += TEXT("AssetType mismatch: ") + (*AssetTypeToString)(AssetType) + TEXT(" != ") + MemberName + TEXT(".");
+									OutMessage += TEXT("AssetType mismatch: ") + AssetType.Name + TEXT(" != ") + MemberName + TEXT(".");
 									Found = false;
 								}
 								// Check LoadFlags

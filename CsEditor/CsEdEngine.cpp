@@ -17,6 +17,9 @@
 #include "Editor/PropertyEditor/Public/PropertyEditorModule.h"
 
 // DetailCustomizations
+	// Asset
+#include "DetailCustomizations/EnumStruct/ECsAssetTypeCustomization.h"
+	// Input
 #include "DetailCustomizations/EnumStruct/ECsInputActionCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsGameEventCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsSurfaceTypeCustomization.h"
@@ -51,6 +54,8 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 	{
 		FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
 
+		// Asset
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsAssetType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsAssetTypeCustomization::MakeInstance));
 		// Input
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsInputAction", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsInputActionCustomization::MakeInstance));
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsGameEvent", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsGameEventCustomization::MakeInstance));
@@ -126,7 +131,7 @@ bool UCsEdEngine::Check_MarkDatasDirty(const TCHAR* Stream)
 	{
 		// AssetType
 		const FString AssetTypeAsString = UCsCommon::Stream_GetString(Stream, false);
-		const TCsAssetType AssetType    = (*StringToAssetType)(AssetTypeAsString);
+		const FECsAssetType AssetType    = EMCsAssetType::Get().GetSafeEnum(AssetTypeAsString);
 
 		MarkDatasDirty(AssetType);
 		return true;
@@ -134,7 +139,7 @@ bool UCsEdEngine::Check_MarkDatasDirty(const TCHAR* Stream)
 	return false;
 }
 
-void UCsEdEngine::MarkDatasDirty(const TCsAssetType &AssetType)
+void UCsEdEngine::MarkDatasDirty(const FECsAssetType &AssetType)
 {
 	TArray<ACsData*> Datas;
 

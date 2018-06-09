@@ -196,7 +196,7 @@ struct CSCORE_API FCsStringAssetReference
 
 	FORCEINLINE FStringAssetReference* Get()
 	{
-		&Reference_Internal;
+		return &Reference_Internal;
 	}
 };
 
@@ -237,7 +237,7 @@ struct CSCORE_API FCsTArrayStringAssetReference
 };
 
 USTRUCT(BlueprintType)
-struct FCsDataMappingEntry
+struct CSCORE_API FCsDataMappingEntry
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -264,7 +264,7 @@ struct FCsDataMappingEntry
 		CS_SET_BLUEPRINT_BITFLAG(Data_LoadFlags, ECsLoadFlags::Game);
 	}
 
-	void Set(const FName &InShortCode, UObject* InData)
+	FORCEINLINE void Set(const FName &InShortCode, UObject* InData)
 	{
 		ShortCode = InShortCode;
 		Data = InData;
@@ -272,7 +272,7 @@ struct FCsDataMappingEntry
 };
 
 USTRUCT()
-struct FCsAssetReferenceLoadedCache
+struct CSCORE_API FCsAssetReferenceLoadedCache
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -290,7 +290,7 @@ struct FCsAssetReferenceLoadedCache
 };
 
 USTRUCT()
-struct FCsCategoryMemberAssociation
+struct CSCORE_API FCsCategoryMemberAssociation
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -301,30 +301,46 @@ struct FCsCategoryMemberAssociation
 	TArray<FString> Members;
 };
 
-namespace ECsAssetType
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsAssetType : public FECsEnum_uint8
 {
-	enum Type : uint8;
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsAssetType() {}
+	FECsAssetType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsAssetType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsAssetType() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsAssetType& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-typedef ECsAssetType::Type TCsAssetType;
+struct CSCORE_API EMCsAssetType : public TCsEnumStructMap<FECsAssetType, uint8>
+{
+protected:
+	EMCsAssetType() {}
+	EMCsAssetType(const EMCsAssetType &) = delete;
+	EMCsAssetType(EMCsAssetType &&) = delete;
+public:
+	~EMCsAssetType() {}
+private:
+	static EMCsAssetType* Instance;
 
-// AssetTypeToString
-typedef const FString&(*TCsAssetTypeToString)(const TCsAssetType&);
-// StringToAssetType
-typedef const TCsAssetType&(*TCsStringToAssetType)(const FString&);
+public:
+	static EMCsAssetType& Get();
+};
 
-#define CS_DECLARE_ASSET_TYPE	TCsAssetType AssetType_MAX; \
-								uint8 ASSET_TYPE_MAX; \
-								TCsAssetTypeToString AssetTypeToString; \
-								TCsStringToAssetType StringToAssetType;
-
-#define CS_DEFINE_ASSET_TYPE	AssetType_MAX = ECsAssetType::ECsAssetType_MAX;\
-								ASSET_TYPE_MAX = (uint8)AssetType_MAX; \
-								AssetTypeToString = &ECsAssetType::ToString; \
-								StringToAssetType = &ECsAssetType::ToType;
+namespace ECsAssetType
+{
+}
 
 // GetAssetTypeStaticClass
-typedef UClass*(*TCsGetAssetTypeStaticClass)(const TCsAssetType&);
+typedef UClass*(*TCsGetAssetTypeStaticClass)(const FECsAssetType&);
 
 namespace ECsLoadAssetsType
 {
@@ -357,10 +373,7 @@ struct FCsPayload
 	FName ShortCode;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
-	FString AssetType;
-
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Payload")
-	uint8 AssetType_Script;
+	FECsAssetType AssetType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	TEnumAsByte<ECsLoadFlags_Editor::Type> LoadFlags;
@@ -369,7 +382,6 @@ struct FCsPayload
 	{
 		ShortCode = B.ShortCode;
 		AssetType = B.AssetType;
-		AssetType_Script = B.AssetType_Script;
 		LoadFlags = B.LoadFlags;
 		return *this;
 	}
@@ -378,7 +390,6 @@ struct FCsPayload
 	{
 		if (ShortCode != B.ShortCode) { return false; }
 		if (AssetType != B.AssetType) { return false; }
-		if (AssetType_Script != B.AssetType_Script) { return false; }
 		if (LoadFlags != B.LoadFlags) { return false; }
 		return true;
 	}

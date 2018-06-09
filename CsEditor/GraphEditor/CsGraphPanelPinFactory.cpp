@@ -10,6 +10,9 @@
 #include "SlateBasics.h"
 
 // EnumStructs
+	// Asset
+#include "GraphEditor/EnumStruct/SCsGraphPin_ECsAssetType.h"
+	// Input
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsInputAction.h"
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsGameEvent.h"
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsSurfaceType.h"
@@ -50,6 +53,11 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 	Check if pin is struct, and then check if that pin is of struct type we want customize
 	*/
 
+	// Asset
+	{
+		// FECsAssetType
+		if (DoesPinUseScriptStruct<FECsAssetType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsAssetType, InPin); }
+	}
 	// Input
 	{
 		// FECsInputAction

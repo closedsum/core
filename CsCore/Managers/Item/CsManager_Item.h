@@ -53,8 +53,8 @@ public:
 
 	void LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, const FCsItem* const Item);
 
-	TCsAssetType ItemAssetType;
-	TCsAssetType InteractiveAssetType;
+	FECsAssetType ItemAssetType;
+	FECsAssetType InteractiveAssetType;
 
 // Allocate
 #pragma region

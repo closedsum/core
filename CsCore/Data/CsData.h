@@ -7,10 +7,6 @@
 // Macros
 #pragma region
 
-#define CS_DATA_DEFINE_TYPE(TYPE)	Type = ECsAssetType::TYPE; \
-									Type_Script = (uint8)Type; \
-									TypeAsString = (*AssetTypeToString)(Type);
-
 #define CS_DATA_DEFINE_LOAD_INTERNAL_FUNCTION_POINTERS(CLASS)	GetAssetReferencesFromObject_Internal = &CLASS::GetAssetReferencesFromObject_Internal; \
 																LoadObjectWithTAssetPtrs_Internal = &CLASS::LoadObjectWithTAssetPtrs_Internal; \
 																WriteObjectToJson_Internal = &CLASS::WriteObjectToJson_Internal; \
@@ -83,16 +79,10 @@ class CSCORE_API ACsData : public AActor
 
 	// Default
 
-	TCsAssetType Type;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "00 Default")
+	FECsAssetType Type;
 
-	CS_DECLARE_ASSET_TYPE
 	CS_DECLARE_LOAD_ASSETS_TYPE
-
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "00 Default")
-	uint8 Type_Script;
-
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "00 Default")
-	FString TypeAsString;
 
 	/** Short Code - linked with Backend */
 	UPROPERTY(EditDefaultsOnly, Category = "00 Default")

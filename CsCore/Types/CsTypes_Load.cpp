@@ -14,3 +14,13 @@ namespace ECsLoadCached
 		CSCORE_API const FString _C = TEXT("_C");
 	}
 }
+
+// AssetType
+EMCsAssetType* EMCsAssetType::Instance;
+
+EMCsAssetType& EMCsAssetType::Get()
+{
+	if (!Instance)
+		Instance = new EMCsAssetType();
+	return *Instance;
+}

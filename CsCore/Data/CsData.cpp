@@ -422,7 +422,7 @@ void ACsData::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 		AddToDataMapping.Message = TEXT("");
 		AddToDataMapping.Output  = TEXT("");
 
-		if (Type == AssetType_MAX)
+		if (!EMCsAssetType::Get().IsValidEnum(Type))
 		{
 			AddToDataMapping.Message = TEXT("INVALID Type.");
 			AddToDataMapping.Output  = TEXT("ERROR");
@@ -461,7 +461,7 @@ void ACsData::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 		AddToPayload.Message = TEXT("");
 		AddToPayload.Output  = TEXT("");
 
-		if (Type == AssetType_MAX)
+		if (!EMCsAssetType::Get().IsValidEnum(Type))
 		{
 			AddToPayload.Message = TEXT("INVALID Type.");
 			AddToPayload.Output = TEXT("ERROR");

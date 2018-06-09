@@ -756,11 +756,11 @@ template<typename T>
 	}
 
 	template<typename EnumStruct, typename EnumMap>
-	static void WriteToMemberEnumStructPropertyFromJson(TSharedPtr<class FJsonObject> &JsonObject, UStructProperty* &StructProperty, void* InObject, const FString &MemberName, EnumMap &Map)
+	static void WriteToMemberEnumStructPropertyFromJson(TSharedPtr<class FJsonObject> &JsonObject, UStructProperty* &StructProperty, void* InObject, const FString &MemberName)
 	{
 		EnumStruct* Member  = StructProperty->ContainerPtrToValuePtr<EnumStruct>(InObject);
 		const FString Value = JsonObject->GetStringField(MemberName);
-		*Member				= Map[Value];
+		*Member				= EnumMap::Get()[Value];
 	}
 
 	template<typename T>

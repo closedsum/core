@@ -8,27 +8,39 @@
 // Items
 #pragma region
 
-namespace ECsItemType
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsItemType : public FECsEnum_uint8
 {
-	enum Type : uint8;
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsItemType() {}
+	FECsItemType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsItemType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsItemType() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsItemType& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-typedef ECsItemType::Type TCsItemType;
+struct CSCORE_API EMCsItemType : public TCsEnumStructMap<FECsItemType, uint8>
+{
+protected:
+	EMCsItemType() {}
+	EMCsItemType(const EMCsItemType &) = delete;
+	EMCsItemType(EMCsItemType &&) = delete;
+public:
+	~EMCsItemType() {}
+private:
+	static EMCsItemType* Instance;
 
-// ItemTypeToString
-typedef const FString&(*TCsItemTypeToString)(const TCsItemType&);
-// StringToItemType
-typedef const TCsItemType&(*TCsStringToItemType)(const FString&);
-
-#define CS_DECLARE_ITEM_TYPE	TCsItemType ItemType_MAX;\
-								uint8 ITEM_TYPE_MAX; \
-								TCsItemTypeToString ItemTypeToString; \
-								TCsStringToItemType StringToItemType;
-
-#define CS_DEFINE_ITEM_TYPE	ItemType_MAX = ECsItemType::ECsItemType_MAX; \
-							ITEM_TYPE_MAX = (uint8)ItemType_MAX; \
-							ItemTypeToString = &ECsItemType::ToString; \
-							StringToItemType = &ECsItemType::ToType;
+public:
+	static EMCsItemType& Get();
+};
 
 UENUM(BlueprintType)
 namespace ECsItemCollection
@@ -42,44 +54,22 @@ namespace ECsItemCollection
 	};
 }
 
-#define ECS_ITEM_COLLECTION_MAX (uint8)ECsItemCollection::ECsItemCollection_MAX
 typedef ECsItemCollection::Type TCsItemCollection;
 
-namespace ECsItemCollection
+struct CSCORE_API EMCsItemCollectionType : public TCsEnumMap<ECsItemCollection::Type>
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
+protected:
+	EMCsItemCollectionType() {}
+	EMCsItemCollectionType(const EMCsItemCollectionType &) = delete;
+	EMCsItemCollectionType(EMCsItemCollectionType &&) = delete;
+public:
+	~EMCsItemCollectionType() {}
+private:
+	static EMCsItemCollectionType* Instance;
 
-	namespace Str
-	{
-		const TCsString Single = TCsString(TEXT("Single"), TEXT("single"), TEXT("single"));
-		const TCsString GroupHomogeneous = TCsString(TEXT("GroupHomogeneous"), TEXT("grouphomogeneous"), TEXT("group homogeneous"));
-		const TCsString GroupMixed = TCsString(TEXT("GroupMixed"), TEXT("groupmixed"), TEXT("group mixed"));
-	}
-
-	namespace Ref
-	{
-		const TCsItemCollection Single = Type::Single;
-		const TCsItemCollection GroupHomogeneous = Type::GroupHomogeneous;
-		const TCsItemCollection GroupMixed = Type::GroupMixed;
-		const TCsItemCollection ECsItemCollection_MAX = Type::ECsItemCollection_MAX;
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::Single) { return Str::Single.Value; }
-		if (EType == Type::GroupHomogeneous) { return Str::GroupHomogeneous.Value; }
-		if (EType == Type::GroupMixed) { return Str::GroupMixed.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE const Type& ToType(const FString &String)
-	{
-		if (String == Str::Single) { return Ref::Single; }
-		if (String == Str::GroupHomogeneous) { return Ref::GroupHomogeneous; }
-		if (String == Str::GroupMixed) { return Ref::GroupMixed; }
-		return Ref::ECsItemCollection_MAX;
-	}
-}
+public:
+	static EMCsItemCollectionType& Get();
+};
 
 namespace ECsItemCollectionCached
 {
@@ -89,27 +79,39 @@ namespace ECsItemCollectionCached
 	}
 }
 
-namespace ECsItemOwner
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsItemOwner : public FECsEnum_uint8
 {
-	enum Type : uint8;
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsItemOwner() {}
+	FECsItemOwner(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsItemOwner(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsItemOwner() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsItemOwner& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-typedef ECsItemOwner::Type TCsItemOwner;
+struct CSCORE_API EMCsItemOwner : public TCsEnumStructMap<FECsItemOwner, uint8>
+{
+protected:
+	EMCsItemOwner() {}
+	EMCsItemOwner(const EMCsItemOwner &) = delete;
+	EMCsItemOwner(EMCsItemOwner &&) = delete;
+public:
+	~EMCsItemOwner() {}
+private:
+	static EMCsItemOwner* Instance;
 
-// ItemOwnerToString
-typedef const FString&(*TCsItemOwnerToString)(const TCsItemOwner&);
-// StringToItemOwner
-typedef const TCsItemOwner&(*TCsStringToItemOwner)(const FString&);
-
-#define CS_DECLARE_ITEM_OWNER	TCsItemOwner ItemOwner_MAX;\
-								uint8 ITEM_OWNER_MAX; \
-								TCsItemOwnerToString ItemOwnerToString; \
-								TCsStringToItemOwner StringToItemOwner;
-
-#define CS_DEFINE_ITEM_OWNER	ItemOwner_MAX = ECsItemOwner::ECsItemOwner_MAX; \
-								ITEM_OWNER_MAX = (uint8)ItemOwner_MAX; \
-								ItemOwnerToString = &ECsItemOwner::ToString; \
-								StringToItemOwner = &ECsItemOwner::ToType;
+public:
+	static EMCsItemOwner& Get();
+};
 
 namespace ECsItemOwnerId
 {
@@ -208,7 +210,7 @@ namespace ECsInventoryItemState_Editor
 }
 
 USTRUCT(BlueprintType)
-struct FCsInventoryItemProperties
+struct CSCORE_API FCsInventoryItemProperties
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -232,7 +234,7 @@ struct FCsInventoryItemProperties
 	FCsInventoryItemProperties() {}
 	~FCsInventoryItemProperties() {}
 
-	FCsInventoryItemProperties& operator=(const FCsInventoryItemProperties& B)
+	FORCEINLINE FCsInventoryItemProperties& operator=(const FCsInventoryItemProperties& B)
 	{
 		State = B.State;
 		Bag = B.Bag;
@@ -242,7 +244,7 @@ struct FCsInventoryItemProperties
 		return *this;
 	}
 
-	bool operator==(const FCsInventoryItemProperties& B) const
+	FORCEINLINE bool operator==(const FCsInventoryItemProperties& B) const
 	{
 		if (State != B.State) { return false; }
 		if (Bag != B.Bag) { return false; }
@@ -252,7 +254,7 @@ struct FCsInventoryItemProperties
 		return true;
 	}
 
-	bool operator!=(const FCsInventoryItemProperties& B) const
+	FORCEINLINE bool operator!=(const FCsInventoryItemProperties& B) const
 	{
 		return !(*this == B);
 	}
@@ -324,51 +326,39 @@ namespace ECsItemMemberValueType
 	};
 }
 
-#define ECS_ITEM_MEMBER_VALUE_TYPE_MAX (uint8)ECsItemMemberValueType::ECsItemMemberValueType_MAX
 typedef ECsItemMemberValueType::Type TCsItemMemberValueType;
+
+struct CSCORE_API EMCsItemMemberValueType : public TCsEnumMap<ECsItemMemberValueType::Type>
+{
+protected:
+	EMCsItemMemberValueType() {}
+	EMCsItemMemberValueType(const EMCsItemMemberValueType &) = delete;
+	EMCsItemMemberValueType(EMCsItemMemberValueType &&) = delete;
+public:
+	~EMCsItemMemberValueType() {}
+private:
+	static EMCsItemMemberValueType* Instance;
+
+public:
+	static EMCsItemMemberValueType& Get();
+};
 
 namespace ECsItemMemberValueType
 {
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
-
-	namespace Str
-	{
-		const TCsString Bool = TCsString(TEXT("Bool"), TEXT("bool"));
-		const TCsString Uint8 = TCsString(TEXT("Uint8"), TEXT("uint8"));
-		const TCsString Int32 = TCsString(TEXT("Int32"), TEXT("int32"));
-		const TCsString Float = TCsString(TEXT("Float"), TEXT("float"));
-	}
-
-	namespace Ref
-	{
-		const TCsItemMemberValueType Bool = Type::Bool;
-		const TCsItemMemberValueType Uint8 = Type::Uint8;
-		const TCsItemMemberValueType Int32 = Type::Int32;
-		const TCsItemMemberValueType Float = Type::Float;
-		const TCsItemMemberValueType ECsItemMemberValueType_MAX = Type::ECsItemMemberValueType_MAX;
-	}
-
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
-		if (EType == Type::Bool) { return Str::Bool.Value; }
-		if (EType == Type::Uint8) { return Str::Uint8.Value; }
-		if (EType == Type::Int32) { return Str::Int32.Value; }
-		if (EType == Type::Float) { return Str::Float.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
+		return EMCsItemMemberValueType::Get().ToString(EType);
 	}
 
 	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::Bool) { return Ref::Bool; }
-		if (String == Str::Uint8) { return Ref::Uint8; }
-		if (String == Str::Int32) { return Ref::Int32; }
-		if (String == Str::Float) { return Ref::Float; }
-		return Ref::ECsItemMemberValueType_MAX;
+		return EMCsItemMemberValueType::Get().ToType(String);
 	}
+
 }
 
 USTRUCT(BlueprintType)
-struct FCsItemMemberValue
+struct CSCORE_API FCsItemMemberValue
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -391,7 +381,7 @@ struct FCsItemMemberValue
 	}
 	~FCsItemMemberValue() {}
 
-	FCsItemMemberValue& operator=(const FCsItemMemberValue& B)
+	FORCEINLINE FCsItemMemberValue& operator=(const FCsItemMemberValue& B)
 	{
 		Type = B.Type;
 		Value_bool = B.Value_bool;
@@ -401,7 +391,7 @@ struct FCsItemMemberValue
 		return *this;
 	}
 
-	bool operator==(const FCsItemMemberValue& B) const
+	FORCEINLINE bool operator==(const FCsItemMemberValue& B) const
 	{
 		if (Type != B.Type) { return false; }
 		if (Value_bool != B.Value_bool) { return false; }
@@ -411,17 +401,17 @@ struct FCsItemMemberValue
 		return true;
 	}
 
-	bool operator!=(const FCsItemMemberValue& B) const
+	FORCEINLINE bool operator!=(const FCsItemMemberValue& B) const
 	{
 		return !(*this == B);
 	}
 
-	bool GetBool() { return Value_bool; }
-	uint8 GetUint8() { return Value_uint8; }
-	int32 GetInt32() { return Value_int32; }
-	float GetFloat() { return Value_float; }
+	FORCEINLINE bool GetBool() { return Value_bool; }
+	FORCEINLINE uint8 GetUint8() { return Value_uint8; }
+	FORCEINLINE int32 GetInt32() { return Value_int32; }
+	FORCEINLINE float GetFloat() { return Value_float; }
 
-	void Increment()
+	FORCEINLINE void Increment()
 	{
 		if (Type == ECsItemMemberValueType::Uint8)
 			++Value_uint8;
@@ -439,7 +429,7 @@ struct FCsItemMemberValue
 };
 
 USTRUCT(BlueprintType)
-struct FCsItemMemberDescription
+struct CSCORE_API FCsItemMemberDescription
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -453,21 +443,21 @@ struct FCsItemMemberDescription
 	FCsItemMemberDescription() {}
 	~FCsItemMemberDescription() {}
 
-	FCsItemMemberDescription& operator=(const FCsItemMemberDescription& B)
+	FORCEINLINE FCsItemMemberDescription& operator=(const FCsItemMemberDescription& B)
 	{
 		Name = B.Name;
 		Type = B.Type;
 		return *this;
 	}
 
-	bool operator==(const FCsItemMemberDescription& B) const
+	FORCEINLINE bool operator==(const FCsItemMemberDescription& B) const
 	{
 		if (Name != B.Name) { return false; }
 		if (Type != B.Type) { return false; }
 		return true;
 	}
 
-	bool operator!=(const FCsItemMemberDescription& B) const
+	FORCEINLINE bool operator!=(const FCsItemMemberDescription& B) const
 	{
 		return !(*this == B);
 	}
@@ -478,7 +468,7 @@ typedef FGuid TCsItemOwnerId;
 #define CS_INVALID_ITEM_OWNER 255
 
 USTRUCT(BlueprintType)
-struct FCsItemHistory
+struct CSCORE_API FCsItemHistory
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -486,7 +476,8 @@ struct FCsItemHistory
 	UPROPERTY()
 	FGuid OwnerId;
 
-	TCsItemOwner OwnerType;
+	UPROPERTY()
+	FECsItemOwner OwnerType;
 
 	UPROPERTY()
 	uint8 OwnerType_Script;
@@ -500,11 +491,10 @@ struct FCsItemHistory
 	FCsItemHistory(){}
 	~FCsItemHistory(){}
 
-	FCsItemHistory& operator=(const FCsItemHistory& B)
+	FORCEINLINE FCsItemHistory& operator=(const FCsItemHistory& B)
 	{
 		OwnerId = B.OwnerId;
 		OwnerType = B.OwnerType;
-		OwnerType_Script = B.OwnerType_Script;
 		OwnerName = B.OwnerName;
 
 		Members.Empty();
@@ -512,25 +502,17 @@ struct FCsItemHistory
 		TArray<FName> Keys;
 		B.Members.GetKeys(Keys);
 
-		const int32 KeyCount = Keys.Num();
-
-		for (int32 I = 0; I < KeyCount; ++I)
+		for (const FName& Key : Keys)
 		{
-			const FName& Key					= Keys[I];
-			const FCsItemMemberValue* MemberPtr = B.Members.Find(Key);
-
-			FCsItemMemberValue Member;
-			Member = *MemberPtr;
-			Members.Add(Key, Member);
+			Members.Add(Key, B.Members[Key]);
 		}
 		return *this;
 	}
 
-	bool operator==(const FCsItemHistory& B) const
+	FORCEINLINE bool operator==(const FCsItemHistory& B) const
 	{
 		if (OwnerId != B.OwnerId) { return false; }
 		if (OwnerType != B.OwnerType) { return false; }
-		if (OwnerType_Script != B.OwnerType_Script) { return false; }
 		if (OwnerName != B.OwnerName) { return false; }
 		
 		TArray<FName> OutKeysA;
@@ -558,7 +540,7 @@ struct FCsItemHistory
 		return true;
 	}
 
-	bool operator!=(const FCsItemHistory& B) const
+	FORCEINLINE bool operator!=(const FCsItemHistory& B) const
 	{
 		return !(*this == B);
 	}
@@ -566,17 +548,10 @@ struct FCsItemHistory
 	void Reset()
 	{
 		OwnerId = ECsItemOwnerId::None;
-		OwnerType = (TCsItemOwner)0;
-		OwnerType_Script = CS_INVALID_ITEM_OWNER;
+		OwnerType = EMCsItemOwner::Get().GetMAX();
 		OwnerName = ECsCached::Str::Empty;
 
 		Members.Reset();
-	}
-
-	void SetOwnerType(const TCsItemOwner &InOwnerType)
-	{
-		OwnerType		 = InOwnerType;
-		OwnerType_Script = (uint8)OwnerType;
 	}
 };
 
@@ -610,7 +585,7 @@ struct FCsItemProduct
 
 	~FCsItemProduct() {}
 
-	FCsItemProduct& operator=(const FCsItemProduct& B)
+	FORCEINLINE FCsItemProduct& operator=(const FCsItemProduct& B)
 	{
 		Name = B.Name;
 		Id = B.Id;
@@ -629,7 +604,7 @@ struct FCsItemProduct
 		return *this;
 	}
 
-	bool operator==(const FCsItemProduct& B) const
+	FORCEINLINE bool operator==(const FCsItemProduct& B) const
 	{
 		if (Name != B.Name) { return false; }
 		if (Id != B.Id) { return false; }
@@ -647,12 +622,12 @@ struct FCsItemProduct
 		return true;
 	}
 
-	bool operator!=(const FCsItemProduct& B) const
+	FORCEINLINE bool operator!=(const FCsItemProduct& B) const
 	{
 		return !(*this == B);
 	}
 
-	FCsItemMemberValue* GetMemberValue(const int32 &HistoryIndex, const FName& Name)
+	FORCEINLINE FCsItemMemberValue* GetMemberValue(const int32 &HistoryIndex, const FName& Name)
 	{
 		if (HistoryIndex == CS_CURRENT_HISTORY)
 			return CurrentHistory.Members.Find(Name);
@@ -661,7 +636,7 @@ struct FCsItemProduct
 		return nullptr;
 	}
 
-	void IncrementMemberValue(const int32 &HistoryIndex, const FName& Name)
+	FORCEINLINE void IncrementMemberValue(const int32 &HistoryIndex, const FName& Name)
 	{
 		FCsItemMemberValue* Value = GetMemberValue(HistoryIndex, Name);
 		Value->Increment();
@@ -679,7 +654,7 @@ struct FCsItemProduct
 typedef FGuid TCsItemId;
 
 USTRUCT(BlueprintType)
-struct FCsItem
+struct CSCORE_API FCsItem
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -692,12 +667,8 @@ struct FCsItem
 	UPROPERTY()
 	bool IsSaved;
 
-	TCsItemType Type;
-
 	UPROPERTY()
-	uint8 Type_Script;
-	UPROPERTY()
-	FString TypeAsString;
+	FECsItemType Type;
 
 	UPROPERTY()
 	FGuid Id;
@@ -737,8 +708,6 @@ struct FCsItem
 	FCsItem& operator=(const FCsItem& B)
 	{
 		Type = B.Type;
-		Type_Script = B.Type_Script;
-		TypeAsString = B.TypeAsString;
 		Id = B.Id;
 		ShortCode = B.ShortCode;
 		DisplayName = B.DisplayName;
@@ -748,11 +717,9 @@ struct FCsItem
 
 		Contents.Reset();
 
-		const int32 ContentCount = B.Contents.Num();
-
-		for (int32 I = 0; I < ContentCount; ++I)
+		for (const FGuid& Content : B.Contents)
 		{
-			Contents.Add(B.Contents[I]);
+			Contents.Add(Content);
 		}
 		Data = B.Data;
 		Data_Actor = B.Data_Actor;
@@ -763,16 +730,9 @@ struct FCsItem
 		TArray<FGuid> Keys;
 		B.Products.GetKeys(Keys);
 
-		const int32 ProductCount = Keys.Num();
-
-		for (int32 I = 0; I < ProductCount; ++I)
+		for (const FGuid& Key : Keys)
 		{
-			const FGuid& Key = Keys[I];
-			
-			const FCsItemProduct* ProductPtr = B.Products.Find(Key);
-			FCsItemProduct Product			 = *ProductPtr;
-
-			Products.Add(Key, Product);
+			Products.Add(Key, B.Products[Key]);
 		}
 		return *this;
 	}
@@ -780,8 +740,6 @@ struct FCsItem
 	bool operator==(const FCsItem& B) const
 	{
 		if (Type != B.Type) { return false; }
-		if (Type_Script != B.Type_Script) { return false; }
-		if (TypeAsString != B.TypeAsString) { return false; }
 		if (Id != B.Id) { return false; }
 		if (ShortCode != B.ShortCode) { return false; }
 		if (DisplayName != B.DisplayName) { return false; }
@@ -807,12 +765,8 @@ struct FCsItem
 		TArray<TCsItemProductId> Keys;
 		B.Products.GetKeys(Keys);
 
-		const int32 ProductCount = Keys.Num();
-
-		for (int32 I = 0; I < ProductCount; ++I)
+		for (const TCsItemProductId& Key : Keys)
 		{
-			const TCsItemProductId& Key = Keys[I];
-
 			const FCsItemProduct* P1 = Products.Find(Key);
 			const FCsItemProduct* P2 = B.Products.Find(Key);
 
@@ -834,32 +788,25 @@ struct FCsItem
 		Index = InIndex;
 	}
 
-	void SetType(const TCsItemType &InType)
-	{
-		Type = InType;
-		Type_Script = (uint8)Type;
-	}
-
-
-	FCsItemProduct* GetProduct(const TCsItemProductId &ProductId)
+	FORCEINLINE FCsItemProduct* GetProduct(const TCsItemProductId &ProductId)
 	{
 		return Products.Find(ProductId);
 	}
 
-	FCsItemHistory& GetCurrentHistory(const TCsItemProductId &ProductId)
+	FORCEINLINE FCsItemHistory& GetCurrentHistory(const TCsItemProductId &ProductId)
 	{
 		FCsItemProduct* Product = Products.Find(ProductId);
 		return Product->CurrentHistory;
 	}
 
-	FCsItemMemberValue* GetMemberValue(const TCsItemProductId &ProductId, const int32 &HistoryIndex, const FName& Name)
+	FORCEINLINE FCsItemMemberValue* GetMemberValue(const TCsItemProductId &ProductId, const int32 &HistoryIndex, const FName& Name)
 	{
 		if (FCsItemProduct* Product = Products.Find(ProductId))
 			return Product->GetMemberValue(HistoryIndex, Name);
 		return nullptr;
 	}
 
-	void IncrementMemberValue(const TCsItemProductId &ProductId, const int32 &HistoryIndex, const FName& Name)
+	FORCEINLINE void IncrementMemberValue(const TCsItemProductId &ProductId, const int32 &HistoryIndex, const FName& Name)
 	{
 		if (FCsItemProduct* Product = Products.Find(ProductId))
 			Product->IncrementMemberValue(HistoryIndex, Name);
@@ -869,9 +816,7 @@ struct FCsItem
 	{
 		IsAllocated = false;
 		IsSaved = false;
-		Type = (TCsItemType)0;
-		Type_Script  = CS_INVALID_ITEM_TYPE;
-		TypeAsString = ECsCached::Str::Empty;
+		Type = EMCsItemType::Get().GetMAX();
 		Id = ECsItemOwnerId::None;
 		ShortCode = CS_INVALID_SHORT_CODE;
 		DisplayName = ECsCached::Str::Empty;
@@ -887,17 +832,17 @@ struct FCsItem
 		AsycTaskMutex.Reset();
 	}
 
-	class ACsData_Item* GetData() const { return Data.IsValid() ? Data.Get() : nullptr; }
+	FORCEINLINE class ACsData_Item* GetData() const { return Data.IsValid() ? Data.Get() : nullptr; }
 	template<typename T>
-	T* GetData() { return Cast<T>(GetData()); }
+	FORCEINLINE T* GetData() { return Cast<T>(GetData()); }
 
-	class ACsData_Interactive* GetData_Actor() const { return Data_Actor.IsValid() ? Data_Actor.Get() : nullptr; }
+	FORCEINLINE class ACsData_Interactive* GetData_Actor() const { return Data_Actor.IsValid() ? Data_Actor.Get() : nullptr; }
 	template<typename T>
-	T* GetData_Actor() const { return Cast<T>(GetData_Actor()); }
+	FORCEINLINE T* GetData_Actor() const { return Cast<T>(GetData_Actor()); }
 };
 
 USTRUCT(BlueprintType)
-struct FCsInventoryLoadoutRecipe
+struct CSCORE_API FCsInventoryLoadoutRecipe
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -914,28 +859,28 @@ struct FCsInventoryLoadoutRecipe
 	}
 	~FCsInventoryLoadoutRecipe() {}
 
-	FCsInventoryLoadoutRecipe& operator=(const FCsInventoryLoadoutRecipe& B)
+	FORCEINLINE FCsInventoryLoadoutRecipe& operator=(const FCsInventoryLoadoutRecipe& B)
 	{
 		ShortCode = B.ShortCode;
 		Count = B.Count;
 		return *this;
 	}
 
-	bool operator==(const FCsInventoryLoadoutRecipe& B) const
+	FORCEINLINE bool operator==(const FCsInventoryLoadoutRecipe& B) const
 	{
 		if (ShortCode != B.ShortCode) { return false; }
 		if (Count != B.Count) { return false; }
 		return true;
 	}
 
-	bool operator!=(const FCsInventoryLoadoutRecipe& B) const
+	FORCEINLINE bool operator!=(const FCsInventoryLoadoutRecipe& B) const
 	{
 		return !(*this == B);
 	}
 };
 
 USTRUCT(BlueprintType)
-struct FCsInventoryLoadoutItem
+struct CSCORE_API FCsInventoryLoadoutItem
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -952,28 +897,28 @@ struct FCsInventoryLoadoutItem
 	}
 	~FCsInventoryLoadoutItem() {}
 
-	FCsInventoryLoadoutItem& operator=(const FCsInventoryLoadoutItem& B)
+	FORCEINLINE FCsInventoryLoadoutItem& operator=(const FCsInventoryLoadoutItem& B)
 	{
 		ShortCode = B.ShortCode;
 		Count = B.Count;
 		return *this;
 	}
 
-	bool operator==(const FCsInventoryLoadoutItem& B) const
+	FORCEINLINE bool operator==(const FCsInventoryLoadoutItem& B) const
 	{
 		if (ShortCode != B.ShortCode) { return false; }
 		if (Count != B.Count) { return false; }
 		return true;
 	}
 
-	bool operator!=(const FCsInventoryLoadoutItem& B) const
+	FORCEINLINE bool operator!=(const FCsInventoryLoadoutItem& B) const
 	{
 		return !(*this == B);
 	}
 };
 
 USTRUCT(BlueprintType)
-struct FCsInventoryLoadout
+struct CSCORE_API FCsInventoryLoadout
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -987,7 +932,7 @@ struct FCsInventoryLoadout
 	FCsInventoryLoadout() {}
 	~FCsInventoryLoadout() {}
 
-	FCsInventoryLoadout& operator=(const FCsInventoryLoadout& B)
+	FORCEINLINE FCsInventoryLoadout& operator=(const FCsInventoryLoadout& B)
 	{
 		Items.Reset();
 
@@ -1011,7 +956,7 @@ struct FCsInventoryLoadout
 		return *this;
 	}
 
-	bool operator==(const FCsInventoryLoadout& B) const
+	FORCEINLINE bool operator==(const FCsInventoryLoadout& B) const
 	{
 		if (Items.Num() != B.Items.Num())
 			return false;
@@ -1037,7 +982,7 @@ struct FCsInventoryLoadout
 		return true;
 	}
 
-	bool operator!=(const FCsInventoryLoadout& B) const
+	FORCEINLINE bool operator!=(const FCsInventoryLoadout& B) const
 	{
 		return !(*this == B);
 	}
@@ -1055,47 +1000,39 @@ namespace ECsItemOnConsumeContentAction
 	};
 }
 
-#define ECS_ITEM_ON_CONSUME_CONTENT_ACTION_MAX (uint8)ECsItemOnConsumeContentAction::ECsItemOnConsumeContentAction_MAX
 typedef ECsItemOnConsumeContentAction::Type TCsItemOnConsumeContentAction;
+
+struct CSCORE_API EMCsItemOnConsumeContentAction : public TCsEnumMap<ECsItemOnConsumeContentAction::Type>
+{
+protected:
+	EMCsItemOnConsumeContentAction() {}
+	EMCsItemOnConsumeContentAction(const EMCsItemOnConsumeContentAction &) = delete;
+	EMCsItemOnConsumeContentAction(EMCsItemOnConsumeContentAction &&) = delete;
+public:
+	~EMCsItemOnConsumeContentAction() {}
+private:
+	static EMCsItemOnConsumeContentAction* Instance;
+
+public:
+	static EMCsItemOnConsumeContentAction& Get();
+};
 
 namespace ECsItemOnConsumeContentAction
 {
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
-
-	namespace Str
-	{
-		const TCsString Consume = TCsString(TEXT("Consume"), TEXT("consume"));
-		const TCsString Drop = TCsString(TEXT("Drop"), TEXT("drop"));
-		const TCsString Retain = TCsString(TEXT("Retain"), TEXT("retain"));
-	}
-
-	namespace Ref
-	{
-		const TCsItemOnConsumeContentAction Consume = Type::Consume;
-		const TCsItemOnConsumeContentAction Drop = Type::Drop;
-		const TCsItemOnConsumeContentAction Retain = Type::Retain;
-		const TCsItemOnConsumeContentAction ECsItemOnConsumeContentAction_MAX = Type::ECsItemOnConsumeContentAction_MAX;
-	}
-
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
-		if (EType == Type::Consume) { return Str::Consume.Value; }
-		if (EType == Type::Drop) { return Str::Drop.Value; }
-		if (EType == Type::Retain) { return Str::Retain.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
+		return EMCsItemOnConsumeContentAction::Get().ToString(EType);
 	}
 
-	FORCEINLINE const Type& ToType(const FString &String)
+	FORCEINLINE Type ToType(const FString &String)
 	{
-		if (String == Str::Consume) { return Ref::Consume; }
-		if (String == Str::Drop) { return Ref::Drop; }
-		if (String == Str::Retain) { return Ref::Retain; }
-		return Ref::ECsItemOnConsumeContentAction_MAX;
+		return EMCsItemOnConsumeContentAction::Get().ToType(String);
 	}
+
 }
 
 USTRUCT(BlueprintType)
-struct FCsItemOnConsumeContentRule
+struct CSCORE_API FCsItemOnConsumeContentRule
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -1109,47 +1046,59 @@ struct FCsItemOnConsumeContentRule
 	FCsItemOnConsumeContentRule(){}
 	~FCsItemOnConsumeContentRule() {}
 
-	FCsItemOnConsumeContentRule& operator=(const FCsItemOnConsumeContentRule& B)
+	FORCEINLINE FCsItemOnConsumeContentRule& operator=(const FCsItemOnConsumeContentRule& B)
 	{
 		ShortCode = B.ShortCode;
 		Action = B.Action;
 		return *this;
 	}
 
-	bool operator==(const FCsItemOnConsumeContentRule& B) const
+	FORCEINLINE bool operator==(const FCsItemOnConsumeContentRule& B) const
 	{
 		if (ShortCode != B.ShortCode) { return false; }
 		if (Action != B.Action) { return false; }
 		return true;
 	}
 
-	bool operator!=(const FCsItemOnConsumeContentRule& B) const
+	FORCEINLINE bool operator!=(const FCsItemOnConsumeContentRule& B) const
 	{
 		return !(*this == B);
 	}
 };
 
-namespace ECsItemInteraction
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsItemInteraction : public FECsEnum_uint8
 {
-	enum Type : uint8;
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsItemInteraction() {}
+	FECsItemInteraction(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsItemInteraction(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsItemInteraction() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsItemInteraction& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-typedef ECsItemInteraction::Type TCsItemInteraction;
+struct CSCORE_API EMCsItemInteraction : public TCsEnumStructMap<FECsItemInteraction, uint8>
+{
+protected:
+	EMCsItemInteraction() {}
+	EMCsItemInteraction(const EMCsItemInteraction &) = delete;
+	EMCsItemInteraction(EMCsItemInteraction &&) = delete;
+public:
+	~EMCsItemInteraction() {}
+private:
+	static EMCsItemInteraction* Instance;
 
-// ItemInteractionToString
-typedef const FString&(*TCsItemInteractionToString)(const TCsItemInteraction&);
-// StringToItemInteraction
-typedef const TCsItemInteraction&(*TCsStringToItemInteraction)(const FString&);
-
-#define CS_DECLARE_ITEM_INTERACTION	TCsItemInteraction ItemInteraction_MAX;\
-									uint8 ITEM_INTERACTION_MAX; \
-									TCsItemInteractionToString ItemInteractionToString; \
-									TCsStringToItemInteraction StringToItemInteraction;
-
-#define CS_DEFINE_ITEM_INTERACTION	ItemInteraction_MAX = ECsItemInteraction::ECsItemInteraction_MAX; \
-									ITEM_INTERACTION_MAX = (uint8)ItemInteraction_MAX; \
-									ItemInteractionToString = &ECsItemInteraction::ToString; \
-									StringToItemInteraction = &ECsItemInteraction::ToType;
+public:
+	static EMCsItemInteraction& Get();
+};
 
 namespace ECsFileItemProductHeaderCached
 {

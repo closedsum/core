@@ -28,9 +28,6 @@ public:
 
 	virtual void OnTick(const float &DeltaSeconds);
 
-	CS_DECLARE_ITEM_TYPE
-	CS_DECLARE_ITEM_OWNER
-
 // Product
 #pragma region
 public:
@@ -89,7 +86,7 @@ public:
 
 	virtual FCsItem* GetItem(const TCsItemId &Id);
 
-	void GetItemsByOwnerType(const TCsItemOwner &OwnerTyper, TArray<FCsItem*> &OutItems);
+	void GetItemsByOwnerType(const FECsItemOwner &OwnerTyper, TArray<FCsItem*> &OutItems);
 	void GetItemsByOwnerId(const TCsItemOwnerId &OwnerId, TArray<FCsItem*> &OutItems);
 
 	void GetItems(const TArray<TCsItemId> &Ids, TArray<FCsItem*> &OutItems);
@@ -200,8 +197,8 @@ public:
 #pragma region
 public:
 
-	void RecordItemsInteraction(const TArray<FCsItem*> &Items, const TCsItemInteraction &Interaction);
-	virtual void RecordItemInteraction(FCsItem* Item, const TCsItemInteraction& Interaction);
+	void RecordItemsInteraction(const TArray<FCsItem*> &Items, const FECsItemInteraction &Interaction);
+	virtual void RecordItemInteraction(FCsItem* Item, const FECsItemInteraction& Interaction);
 
 #pragma endregion Action
 };

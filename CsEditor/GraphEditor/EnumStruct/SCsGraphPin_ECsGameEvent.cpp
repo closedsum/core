@@ -14,7 +14,7 @@ void SCsGraphPin_ECsGameEvent::Construct(const FArguments& InArgs, UEdGraphPin* 
 
 void SCsGraphPin_ECsGameEvent::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)
 {
-	GenenerateComboBoxIndexes_Internal<EMCsCharacterAnim>(OutComboBoxIndexes);
+	GenenerateComboBoxIndexes_Internal<EMCsGameEvent>(OutComboBoxIndexes);
 }
 
 FString SCsGraphPin_ECsGameEvent::OnGetText() const

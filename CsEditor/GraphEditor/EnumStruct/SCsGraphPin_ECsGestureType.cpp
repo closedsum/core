@@ -14,7 +14,7 @@ void SCsGraphPin_ECsGestureType::Construct(const FArguments& InArgs, UEdGraphPin
 
 void SCsGraphPin_ECsGestureType::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)
 {
-	GenenerateComboBoxIndexes_Internal<EMCsCharacterAnim>(OutComboBoxIndexes);
+	GenenerateComboBoxIndexes_Internal<EMCsGestureType>(OutComboBoxIndexes);
 }
 
 FString SCsGraphPin_ECsGestureType::OnGetText() const

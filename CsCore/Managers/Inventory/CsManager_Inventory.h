@@ -276,8 +276,6 @@ class CSCORE_API ACsManager_Inventory : public AActor
 
 	AActor* GetMyOwner();
 
-	CS_DECLARE_ITEM_TYPE
-
 	TMap<TCsItemId, FCsItem*> Items;
 	TMap<FName, TArray<FCsItem*>> ItemMap;
 
@@ -307,7 +305,7 @@ class CSCORE_API ACsManager_Inventory : public AActor
 
 	void LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsInventoryTransaction::Type> &Transaction, const FCsItem* const Item);
 
-	virtual uint8 GetFirstAvailableBagIndex(const TCsItemType &ItemType);
+	virtual uint8 GetFirstAvailableBagIndex(const FECsItemType &ItemType);
 
 // Add
 #pragma region

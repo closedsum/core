@@ -7,7 +7,7 @@ ACsData_Item::ACsData_Item(const FObjectInitializer& ObjectInitializer)
 {
 }
 
-TCsItemType ACsData_Item::GetBaseItemType() { return BaseItemType; }
+const FECsItemType& ACsData_Item::GetItemType() { return EMCsItemType::Get().GetMAX(); }
 
 // Stats
 #pragma region

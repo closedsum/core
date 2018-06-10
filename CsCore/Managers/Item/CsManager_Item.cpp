@@ -168,11 +168,9 @@ FCsItem* ACsManager_Item::Allocate(const FName &ShortCode)
 
 	ACsDataMapping* DataMapping = UCsCommon::GetDataMapping(GetWorld());
 	ACsData_Item* Data			= Cast<ACsData_Item>(DataMapping->GetLoadedData(ItemAssetType, ShortCode));
-	const TCsItemType& ItemType = Data->BaseItemType;
+	const FECsItemType& ItemType = Data->GetItemType();
 
 	Item->Type			= ItemType;
-	Item->Type_Script	= (uint8)Item->Type;
-	Item->TypeAsString	= (*ItemTypeToString)(Item->Type);
 	Item->ShortCode		= Data->ShortCode;
 	Item->DisplayName	= Data->GetDisplayName();
 
@@ -280,7 +278,7 @@ FCsItem* ACsManager_Item::GetItem(const TCsItemId &Id)
 	return nullptr;
 }
 
-void ACsManager_Item::GetItemsByOwnerType(const TCsItemOwner &OwnerType, TArray<FCsItem*> &OutItems)
+void ACsManager_Item::GetItemsByOwnerType(const FECsItemOwner &OwnerType, TArray<FCsItem*> &OutItems)
 {
 	TArray<TCsItemId> OutKeys;
 	ActiveItems.GetKeys(OutKeys);
@@ -436,7 +434,7 @@ bool ACsManager_Item::Transfer_Internal(FCsItem* Item, UObject* Instigator, ACsM
 		if (Manager_Inventory->IsFull(BAG, Item->ShortCode))
 		{
 			const FString OwnerName = Instigator->GetName();
-			const FString& Type = Item->TypeAsString;
+			const FString& Type		= Item->Type.Name;
 
 			UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::Transfer_Internal: %s's Inventory is FULL. DeAllocating %s with Id: %s"), *OwnerName, *Type, *(Item->Id.ToString()));
 			DeAllocate(Item);
@@ -495,7 +493,7 @@ bool ACsManager_Item::Transfer(FCsItem* Item, UObject* Instigator)
 	if (Transfer_Internal(Item, Instigator, Manager_Inventory))
 		return true;
 
-	UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::Transfer: Failed to Trasfer Item: %s with Id: %d"), *(Item->TypeAsString), *(Item->Id.ToString()));
+	UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::Transfer: Failed to Trasfer Item: %s with Id: %d"), *(Item->Type.Name), *(Item->Id.ToString()));
 	return false;
 }
 
@@ -565,7 +563,7 @@ bool ACsManager_Item::Transfer(TArray<FCsItem*> &Items, UObject* Instigator, con
 void ACsManager_Item::SetItemFileName(FCsItem* Item)
 {
 	const FString Id = Item->Id.ToString();
-	Item->FileName   = Id + TEXT("_") + (*ItemTypeToString)(Item->Type);
+	Item->FileName   = Id + TEXT("_") + Item->Type.Name;
 }
 
 void ACsManager_Item::SetRootSaveDirectory(const FString &Directory)
@@ -600,7 +598,7 @@ void ACsManager_Item::Save(FCsItem* Item)
 			// DisplayName
 			JsonWriter->WriteValue(ECsFileItemHeaderCached::Str::DisplayName, Item->DisplayName);
 			// Type
-			JsonWriter->WriteValue(ECsFileItemHeaderCached::Str::Type, (*ItemTypeToString)(Item->Type));
+			JsonWriter->WriteValue(ECsFileItemHeaderCached::Str::Type, Item->Type.Name);
 			// Created
 			JsonWriter->WriteValue(ECsFileItemHeaderCached::Str::Created, Item->Created.ToString());
 			// Timespan
@@ -688,7 +686,7 @@ void ACsManager_Item::SaveHistory(TSharedRef<TJsonWriter<TCHAR>> &JsonWriter, FC
 	// OwnerId
 	JsonWriter->WriteValue(ECsFileItemHistoryHeaderCached::Str::OwnerId, ItemHistory->OwnerId.ToString());
 	// OwnerType
-	JsonWriter->WriteValue(ECsFileItemHistoryHeaderCached::Str::OwnerType, (*ItemOwnerToString)(ItemHistory->OwnerType));
+	JsonWriter->WriteValue(ECsFileItemHistoryHeaderCached::Str::OwnerType, ItemHistory->OwnerType.Name);
 	// OwnerName
 	JsonWriter->WriteValue(ECsFileItemHistoryHeaderCached::Str::OwnerName, ItemHistory->OwnerName);
 
@@ -876,8 +874,7 @@ void ACsManager_Item::PopulateExistingItems()
 					// DisplayName
 					Item->DisplayName = JsonObject->GetStringField(ECsFileItemHeaderCached::Str::DisplayName);
 					// Type
-					Item->TypeAsString = JsonObject->GetStringField(ECsFileItemHeaderCached::Str::Type);
-					Item->SetType((*StringToItemType)(Item->TypeAsString));
+					Item->Type = EMCsItemType::Get().GetEnum(JsonObject->GetStringField(ECsFileItemHeaderCached::Str::Type));
 					// Created
 					FDateTime::Parse(JsonObject->GetStringField(ECsFileItemHeaderCached::Str::Created), Item->Created);
 					// Timespan
@@ -1059,7 +1056,7 @@ void ACsManager_Item::LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCs
 	// OwnerId
 	FGuid::Parse(JsonObject->GetStringField(ECsFileItemHistoryHeaderCached::Str::OwnerId), ItemHistory->OwnerId);
 	// OwnerType
-	ItemHistory->SetOwnerType((*StringToItemOwner)(JsonObject->GetStringField(ECsFileItemHistoryHeaderCached::Str::OwnerType)));
+	ItemHistory->OwnerType = EMCsItemOwner::Get().GetEnum(JsonObject->GetStringField(ECsFileItemHistoryHeaderCached::Str::OwnerType));
 	// OwnerName
 	ItemHistory->OwnerName = JsonObject->GetStringField(ECsFileItemHistoryHeaderCached::Str::OwnerName);
 
@@ -1120,7 +1117,7 @@ void ACsManager_Item::LoadHistory(TSharedPtr<class FJsonObject> &JsonObject, FCs
 				}
 				else
 				{
-					UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::LoadHistory: INVALID ItemMemberValue Type: %s."), *(ECsItemMemberValueType::ToString(Type)));
+					UE_LOG(LogCs, Warning, TEXT("ACsManager_Item::LoadHistory: INVALID ItemMemberValue Type: %s."), *(EMCsItemMemberValueType::Get().ToString(Type)));
 				}
 			}
 			else
@@ -1169,7 +1166,7 @@ void ACsManager_Item::AsyncInitInventory(ACsManager_Inventory* Manager_Inventory
 // Action
 #pragma region
 
-void ACsManager_Item::RecordItemsInteraction(const TArray<FCsItem*> &Items, const TCsItemInteraction &Interaction)
+void ACsManager_Item::RecordItemsInteraction(const TArray<FCsItem*> &Items, const FECsItemInteraction &Interaction)
 {
 	for (FCsItem* Item : Items)
 	{
@@ -1177,6 +1174,6 @@ void ACsManager_Item::RecordItemsInteraction(const TArray<FCsItem*> &Items, cons
 	}
 }
 
-void ACsManager_Item::RecordItemInteraction(FCsItem* Item, const TCsItemInteraction& Interaction){}
+void ACsManager_Item::RecordItemInteraction(FCsItem* Item, const FECsItemInteraction& Interaction){}
 
 #pragma endregion Action

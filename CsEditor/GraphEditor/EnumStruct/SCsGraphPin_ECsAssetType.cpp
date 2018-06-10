@@ -14,7 +14,7 @@ void SCsGraphPin_ECsAssetType::Construct(const FArguments& InArgs, UEdGraphPin* 
 
 void SCsGraphPin_ECsAssetType::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)
 {
-	GenenerateComboBoxIndexes_Internal<EMCsSurfaceType>(OutComboBoxIndexes);
+	GenenerateComboBoxIndexes_Internal<EMCsAssetType>(OutComboBoxIndexes);
 }
 
 FString SCsGraphPin_ECsAssetType::OnGetText() const

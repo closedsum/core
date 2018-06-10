@@ -280,7 +280,7 @@ void ACsManager_Inventory::LogTransaction(const FString &FunctionName, const TEn
 	}
 }
 
-uint8 ACsManager_Inventory::GetFirstAvailableBagIndex(const TCsItemType &ItemType)
+uint8 ACsManager_Inventory::GetFirstAvailableBagIndex(const FECsItemType &ItemType)
 {
 	return 0;
 }

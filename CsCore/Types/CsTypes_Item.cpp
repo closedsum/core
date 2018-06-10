@@ -1,6 +1,46 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_Item.h"
 
+// ItemType
+EMCsItemType* EMCsItemType::Instance;
+
+EMCsItemType& EMCsItemType::Get()
+{
+	if (!Instance)
+		Instance = new EMCsItemType();
+	return *Instance;
+}
+
+// ItemCollectionType
+EMCsItemCollectionType* EMCsItemCollectionType::Instance;
+
+EMCsItemCollectionType& EMCsItemCollectionType::Get()
+{
+	if (!Instance)
+		Instance = new EMCsItemCollectionType();
+	return *Instance;
+}
+
+// ItemOwner
+EMCsItemOwner* EMCsItemOwner::Instance;
+
+EMCsItemOwner& EMCsItemOwner::Get()
+{
+	if (!Instance)
+		Instance = new EMCsItemOwner();
+	return *Instance;
+}
+
+// ItemMemberValueType
+EMCsItemMemberValueType* EMCsItemMemberValueType::Instance;
+
+EMCsItemMemberValueType& EMCsItemMemberValueType::Get()
+{
+	if (!Instance)
+		Instance = new EMCsItemMemberValueType();
+	return *Instance;
+}
+
 namespace ECsFileItemProductHeaderCached
 {
 	namespace Str
@@ -39,4 +79,24 @@ namespace ECsFileItemHistoryHeaderCached
 		CSCORE_API const FString Members = TEXT("Members");
 		CSCORE_API const FString Value = TEXT("Value");
 	}
+}
+
+// ItemOnConsumeContentAction
+EMCsItemOnConsumeContentAction* EMCsItemOnConsumeContentAction::Instance;
+
+EMCsItemOnConsumeContentAction& EMCsItemOnConsumeContentAction::Get()
+{
+	if (!Instance)
+		Instance = new EMCsItemOnConsumeContentAction();
+	return *Instance;
+}
+
+// ItemInteraction
+EMCsItemInteraction* EMCsItemInteraction::Instance;
+
+EMCsItemInteraction& EMCsItemInteraction::Get()
+{
+	if (!Instance)
+		Instance = new EMCsItemInteraction();
+	return *Instance;
 }

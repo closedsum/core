@@ -6,12 +6,14 @@
 #include "Types/CsTypes_Input.h"
 #include "Types/CsTypes_Character.h"
 #include "Types/CsTypes_Weapon.h"
+#include "Types/CsTypes_Item.h"
 
 #include "SlateBasics.h"
 
 // EnumStructs
 	// Asset
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsAssetType.h"
+#include "GraphEditor/EnumStruct/SCsGraphPin_ECsLoadAssetsType.h"
 	// Input
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsInputAction.h"
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsGameEvent.h"
@@ -38,6 +40,10 @@
 #include "GraphEditor/EnumStruct/Blockchain/SCsGraphPin_ECsBlockchainContract.h"
 #include "GraphEditor/EnumStruct/Blockchain/SCsGraphPin_ECsBlockchainContractFunction.h"
 #include "GraphEditor/EnumStruct/Blockchain/SCsGraphPin_ECsEthereumJavascript.h"
+	// Item
+#include "GraphEditor/EnumStruct/Item/SCsGraphPin_ECsItemType.h"
+#include "GraphEditor/EnumStruct/Item/SCsGraphPin_ECsItemOwner.h"
+#include "GraphEditor/EnumStruct/Item/SCsGraphPin_ECsItemInteraction.h"
 
 // Managers
 #include "Managers/Process/CsProcess.h"
@@ -57,6 +63,8 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 	{
 		// FECsAssetType
 		if (DoesPinUseScriptStruct<FECsAssetType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsAssetType, InPin); }
+		// FECsLoadAssetsType
+		if (DoesPinUseScriptStruct<FECsLoadAssetsType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsLoadAssetsType, InPin); }
 	}
 	// Input
 	{
@@ -111,6 +119,15 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 		if (DoesPinUseScriptStruct<FECsBlockchainContractFunction>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsBlockchainContractFunction, InPin); }
 		// FECsEthereumJavascript
 		if (DoesPinUseScriptStruct<FECsEthereumJavascript>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsEthereumJavascript, InPin); }
+	}
+	// Item
+	{
+		// FECsItemType
+		if (DoesPinUseScriptStruct<FECsItemType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsItemType, InPin); }
+		// FECsItemOwner
+		if (DoesPinUseScriptStruct<FECsItemOwner>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsItemOwner, InPin); }
+		// FECsItemInteraction
+		if (DoesPinUseScriptStruct<FECsItemInteraction>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsItemInteraction, InPin); }
 	}
 	return nullptr;
 }

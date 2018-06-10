@@ -49,7 +49,7 @@ struct FCsDataAddToPayload
 	bool AddToPayload;
 
 	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
-	FString LoadAssetsType;
+	FECsLoadAssetsType LoadAssetsType;
 
 	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	TEnumAsByte<ECsLoadFlags_Editor::Type> LoadFlags;
@@ -81,8 +81,6 @@ class CSCORE_API ACsData : public AActor
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "00 Default")
 	FECsAssetType Type;
-
-	CS_DECLARE_LOAD_ASSETS_TYPE
 
 	/** Short Code - linked with Backend */
 	UPROPERTY(EditDefaultsOnly, Category = "00 Default")

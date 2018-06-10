@@ -301,6 +301,8 @@ struct CSCORE_API FCsCategoryMemberAssociation
 	TArray<FString> Members;
 };
 
+// AssetType
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsAssetType : public FECsEnum_uint8
 {
@@ -342,30 +344,44 @@ namespace ECsAssetType
 // GetAssetTypeStaticClass
 typedef UClass*(*TCsGetAssetTypeStaticClass)(const FECsAssetType&);
 
-namespace ECsLoadAssetsType
-{
-	enum Type : uint8;
-}
-
-typedef ECsLoadAssetsType::Type TCsLoadAssetsType;
-
-// LoadAssetsTypeToString
-typedef const FString&(*TCsLoadAssetsTypeToString)(const TCsLoadAssetsType&);
-// StringToLoadAssetsType
-typedef const TCsLoadAssetsType&(*TCsStringToLoadAssetsType)(const FString&);
-
-#define CS_DECLARE_LOAD_ASSETS_TYPE	TCsLoadAssetsType LoadAssetsType_MAX; \
-									uint8 LOAD_ASSETS_TYPE_MAX; \
-									TCsLoadAssetsTypeToString LoadAssetsTypeToString; \
-									TCsStringToLoadAssetsType StringToLoadAssetsType;
-
-#define CS_DEFINE_LOAD_ASSETS_TYPE	LoadAssetsType_MAX = ECsLoadAssetsType::ECsLoadAssetsType_MAX;\
-									LOAD_ASSETS_TYPE_MAX = (uint8)LoadAssetsType_MAX; \
-									LoadAssetsTypeToString = &ECsLoadAssetsType::ToString; \
-									StringToLoadAssetsType = &ECsLoadAssetsType::ToType;
+// LoadAssetsType
 
 USTRUCT(BlueprintType)
-struct FCsPayload
+struct CSCORE_API FECsLoadAssetsType : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsLoadAssetsType() {}
+	FECsLoadAssetsType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsLoadAssetsType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsLoadAssetsType() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsLoadAssetsType& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
+}
+
+struct CSCORE_API EMCsLoadAssetsType : public TCsEnumStructMap<FECsLoadAssetsType, uint8>
+{
+protected:
+	EMCsLoadAssetsType() {}
+	EMCsLoadAssetsType(const EMCsLoadAssetsType &) = delete;
+	EMCsLoadAssetsType(EMCsLoadAssetsType &&) = delete;
+public:
+	~EMCsLoadAssetsType() {}
+private:
+	static EMCsLoadAssetsType* Instance;
+
+public:
+	static EMCsLoadAssetsType& Get();
+};
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsPayload
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -378,7 +394,7 @@ struct FCsPayload
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	TEnumAsByte<ECsLoadFlags_Editor::Type> LoadFlags;
 
-	FCsPayload& operator=(const FCsPayload& B)
+	FORCEINLINE FCsPayload& operator=(const FCsPayload& B)
 	{
 		ShortCode = B.ShortCode;
 		AssetType = B.AssetType;
@@ -386,7 +402,7 @@ struct FCsPayload
 		return *this;
 	}
 
-	bool operator==(const FCsPayload& B) const
+	FORCEINLINE bool operator==(const FCsPayload& B) const
 	{
 		if (ShortCode != B.ShortCode) { return false; }
 		if (AssetType != B.AssetType) { return false; }
@@ -394,34 +410,32 @@ struct FCsPayload
 		return true;
 	}
 
-	bool operator!=(const FCsPayload& B) const
+	FORCEINLINE bool operator!=(const FCsPayload& B) const
 	{
 		return !(*this == B);
 	}
 };
 
 USTRUCT(BlueprintType)
-struct FCsTArrayPayload
+struct CSCORE_API FCsTArrayPayload
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	TArray<FCsPayload> Payloads;
 
-	FCsTArrayPayload& operator=(const FCsTArrayPayload& B)
+	FORCEINLINE FCsTArrayPayload& operator=(const FCsTArrayPayload& B)
 	{
 		Payloads.Reset();
 
-		const int32 Count = B.Payloads.Num();
-
-		for (int32 I = 0; I < Count; ++I)
+		for (const FCsPayload& Payload : B.Payloads)
 		{
-			Payloads.Add(B.Payloads[I]);
+			Payloads.Add(Payload);
 		}
 		return *this;
 	}
 
-	bool operator==(const FCsTArrayPayload& B) const
+	FORCEINLINE bool operator==(const FCsTArrayPayload& B) const
 	{
 		const int32 CountA = Payloads.Num();
 		const int32 CountB = B.Payloads.Num();
@@ -437,7 +451,7 @@ struct FCsTArrayPayload
 		return true;
 	}
 
-	bool operator!=(const FCsTArrayPayload& B) const
+	FORCEINLINE bool operator!=(const FCsTArrayPayload& B) const
 	{
 		return !(*this == B);
 	}

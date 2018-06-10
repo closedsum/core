@@ -644,7 +644,7 @@ void ACsPlayerStateBase::ServerRequestAIData_Internal(const uint8 &ClientMapping
 
 #pragma endregion Requesting Player State on Client
 
-void ACsPlayerStateBase::GetLoadAssetsShortCodes(const TCsLoadAssetsType &AssetsType, TArray<FName> &OutShortCodes){}
+void ACsPlayerStateBase::GetLoadAssetsShortCodes(const FECsLoadAssetsType &AssetsType, TArray<FName> &OutShortCodes){}
 void ACsPlayerStateBase::LoadPlayerData(){}
 
 void ACsPlayerStateBase::StartSetAssetReferencesPlayerData() 

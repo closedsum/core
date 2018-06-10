@@ -388,7 +388,7 @@ CS_COROUTINE(ACsGameState, OnBoard_Internal)
 	CS_COROUTINE_END(r);
 }
 
-void ACsGameState::GetLoadAssetsShortCodes(const TCsLoadAssetsType &AssetsType, TArray<FName> &OutShortCodes){}
+void ACsGameState::GetLoadAssetsShortCodes(const FECsLoadAssetsType &AssetsType, TArray<FName> &OutShortCodes){}
 
 void ACsGameState::LoadCommonData(){}
 void ACsGameState::OnFinishedLoadCommonData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime){}

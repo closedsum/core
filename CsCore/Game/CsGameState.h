@@ -211,7 +211,7 @@ public:
 
 	CS_COROUTINE_DECLARE(OnBoard)
 
-	virtual void GetLoadAssetsShortCodes(const TCsLoadAssetsType &AssetsType, TArray<FName> &OutShortCodes);
+	virtual void GetLoadAssetsShortCodes(const FECsLoadAssetsType &AssetsType, TArray<FName> &OutShortCodes);
 
 	virtual void LoadCommonData();
 	virtual void OnFinishedLoadCommonData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime);

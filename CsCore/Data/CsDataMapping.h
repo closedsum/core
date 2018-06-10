@@ -72,7 +72,7 @@
 
 #pragma endregion Macros
 
-DECLARE_DELEGATE_TwoParams(FBindableDynEvent_CsDataMapping_OnGetLoadAssetsShortCodes, const TCsLoadAssetsType&, TArray<FName>&);
+DECLARE_DELEGATE_TwoParams(FBindableDynEvent_CsDataMapping_OnGetLoadAssetsShortCodes, const FECsLoadAssetsType&, TArray<FName>&);
 
 // Structs
 #pragma region
@@ -233,17 +233,17 @@ public:
 #pragma region
 public:
 
-	virtual ECsLoadFlags GetLoadAssetsFlags(const TCsLoadAssetsType &AssetsType);
-	virtual void GetLoadAssetsShortCodes(const TCsLoadAssetsType &AssetsType, TArray<FName> &OutShortCodes);
+	virtual ECsLoadFlags GetLoadAssetsFlags(const FECsLoadAssetsType &AssetsType);
+	virtual void GetLoadAssetsShortCodes(const FECsLoadAssetsType &AssetsType, TArray<FName> &OutShortCodes);
 
 	FBindableDynEvent_CsDataMapping_OnGetLoadAssetsShortCodes OnGetLoadAssetsShortCodes_Event;
 
 	virtual const FECsAssetType& GetAssetTypeFromShortCode(const FName &ShortCode);
 
-	virtual void GetLoadStringAssetReferences(const TCsLoadAssetsType &AssetsType, TArray<FStringAssetReference> &OutAssetReferences);
+	virtual void GetLoadStringAssetReferences(const FECsLoadAssetsType &AssetsType, TArray<FStringAssetReference> &OutAssetReferences);
 
 	template<typename T>
-	void AsyncLoadAssets(const TCsLoadAssetsType &AssetsType, const TCsLoadAsyncOrder &AsyncOrder, T* CallbackCaller,  void (T::*Callback)(const TArray<UObject*>&, const float&))
+	void AsyncLoadAssets(const FECsLoadAssetsType &AssetsType, const TCsLoadAsyncOrder &AsyncOrder, T* CallbackCaller,  void (T::*Callback)(const TArray<UObject*>&, const float&))
 	{
 		TArray<FStringAssetReference> References;
 
@@ -260,7 +260,7 @@ public:
 		UCsManager_Loading::Get()->LoadAssetReferences<T>(Cast<UObject>(CallbackCaller)->GetWorld(), References, AsyncOrder, CallbackCaller, Callback);
 	}
 
-	virtual void OnFinishedAsyncLoadingAssetsSetReferences(const TCsLoadAssetsType &AssetsType, const TArray<UObject*> &LoadedAssets);
+	virtual void OnFinishedAsyncLoadingAssetsSetReferences(const FECsLoadAssetsType &AssetsType, const TArray<UObject*> &LoadedAssets);
 
 	ACsData* LoadData(const FName &ShortCode, const ECsLoadFlags &LoadFlags = ECsLoadFlags::Game);
 

@@ -24,3 +24,13 @@ EMCsAssetType& EMCsAssetType::Get()
 		Instance = new EMCsAssetType();
 	return *Instance;
 }
+
+// LoadAssetsType
+EMCsLoadAssetsType* EMCsLoadAssetsType::Instance;
+
+EMCsLoadAssetsType& EMCsLoadAssetsType::Get()
+{
+	if (!Instance)
+		Instance = new EMCsLoadAssetsType();
+	return *Instance;
+}

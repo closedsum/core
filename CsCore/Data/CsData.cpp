@@ -479,7 +479,7 @@ void ACsData::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 
 		ACsData_Payload* Payload = GetPayload();
 
-		Payload->PerformAddEntry(ShortCode, (*StringToLoadAssetsType)(AddToPayload.LoadAssetsType), AddToPayload.LoadFlags, AddToPayload.Message, AddToPayload.Output);
+		Payload->PerformAddEntry(ShortCode, AddToPayload.LoadAssetsType, AddToPayload.LoadFlags, AddToPayload.Message, AddToPayload.Output);
 
 		if (UCsCommon::IsDefaultObject(this))
 		{

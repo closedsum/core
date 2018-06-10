@@ -218,7 +218,7 @@ bool ACsDataMapping::DoesDataAssetReferenceExist(const FName &ShortCode)
 
 bool ACsDataMapping::AddDataAssetReference(const FECsAssetType &AssetType, const FName &ShortCode, AActor* InData)
 {
-	if (!EMCsAssetType::Get().IsValidEnum(AssetType))
+	if (AssetType == EMCsAssetType::Get().GetMAX())
 	{
 		UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::AddDataAssetReference: Warning. Using INVALID AssetType: ECsAssetType_MAX when adding ShortCode: %s"), *ShortCode.ToString());
 		return false;
@@ -450,22 +450,22 @@ void ACsDataMapping::PopulateAssetReferences()
 // Load
 #pragma region
 
-ECsLoadFlags ACsDataMapping::GetLoadAssetsFlags(const TCsLoadAssetsType &AssetsType)
+ECsLoadFlags ACsDataMapping::GetLoadAssetsFlags(const FECsLoadAssetsType &AssetsType)
 {
 	return ECsLoadFlags::All;
 }
 
-void ACsDataMapping::GetLoadAssetsShortCodes(const TCsLoadAssetsType &AssetsType, TArray<FName> &OutShortCodes)
+void ACsDataMapping::GetLoadAssetsShortCodes(const FECsLoadAssetsType &AssetsType, TArray<FName> &OutShortCodes)
 {
 }
 
 const FECsAssetType& ACsDataMapping::GetAssetTypeFromShortCode(const FName &ShortCode) { return EMCsAssetType::Get().GetMAX(); }
 
-void ACsDataMapping::GetLoadStringAssetReferences(const TCsLoadAssetsType &AssetsType, TArray<FStringAssetReference> &OutAssetReferences)
+void ACsDataMapping::GetLoadStringAssetReferences(const FECsLoadAssetsType &AssetsType, TArray<FStringAssetReference> &OutAssetReferences)
 {
 }
 
-void ACsDataMapping::OnFinishedAsyncLoadingAssetsSetReferences(const TCsLoadAssetsType &AssetsType, const TArray<UObject*> &LoadedAssets)
+void ACsDataMapping::OnFinishedAsyncLoadingAssetsSetReferences(const FECsLoadAssetsType &AssetsType, const TArray<UObject*> &LoadedAssets)
 {
 }
 

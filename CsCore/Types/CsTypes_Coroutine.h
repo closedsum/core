@@ -21,36 +21,35 @@ namespace ECsCoroutineSchedule
 	};
 }
 
+typedef ECsCoroutineSchedule::Type TCsCoroutineSchedule;
+
+struct CSCORE_API EMCsCoroutineSchedule : public TCsEnumMap<ECsCoroutineSchedule::Type>
+{
+protected:
+	EMCsCoroutineSchedule() {}
+	EMCsCoroutineSchedule(const EMCsCoroutineSchedule &) = delete;
+	EMCsCoroutineSchedule(EMCsCoroutineSchedule &&) = delete;
+public:
+	~EMCsCoroutineSchedule() {}
+private:
+	static EMCsCoroutineSchedule* Instance;
+
+public:
+	static EMCsCoroutineSchedule& Get();
+};
+
 namespace ECsCoroutineSchedule
 {
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
-
-	namespace Str
+	namespace Ref
 	{
-		const TCsString Tick = TCsString(TEXT("Tick"), TEXT("tick"));
-		const TCsString CalcCamera = TCsString(TEXT("CalcCamera"), TEXT("calccamera"));
-		const TCsString LastTick = TCsString(TEXT("LastTick"), TEXT("lasttick"));
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::Tick) { return Str::Tick.Value; }
-		if (EType == Type::CalcCamera) { return Str::CalcCamera.Value; }
-		if (EType == Type::LastTick) { return Str::LastTick.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::Tick) { return Type::Tick; }
-		if (String == Str::CalcCamera) { return Type::CalcCamera; }
-		if (String == Str::LastTick) { return Type::LastTick; }
-		return Type::ECsCoroutineSchedule_MAX;
+		extern CSCORE_API const Type Tick;
+		extern CSCORE_API const Type CalcCamera;
+		extern CSCORE_API const Type LastTick;
+		extern CSCORE_API const Type ECsCoroutineSchedule_MAX;
 	}
 }
 
 #define ECS_COROUTINE_SCHEDULE_MAX (uint8)ECsCoroutineSchedule::ECsCoroutineSchedule_MAX
-typedef ECsCoroutineSchedule::Type TCsCoroutineSchedule;
 
 UENUM(BlueprintType)
 namespace ECsCoroutineMessage
@@ -63,37 +62,33 @@ namespace ECsCoroutineMessage
 		ECsCoroutineMessage_MAX	UMETA(Hidden),
 	};
 }
+typedef ECsCoroutineMessage::Type TCsCoroutineMessage;
+
+struct CSCORE_API EMCsCoroutineMessage : public TCsEnumMap<ECsCoroutineMessage::Type>
+{
+protected:
+	EMCsCoroutineMessage() {}
+	EMCsCoroutineMessage(const EMCsCoroutineMessage &) = delete;
+	EMCsCoroutineMessage(EMCsCoroutineMessage &&) = delete;
+public:
+	~EMCsCoroutineMessage() {}
+private:
+	static EMCsCoroutineMessage* Instance;
+
+public:
+	static EMCsCoroutineMessage& Get();
+};
 
 namespace ECsCoroutineMessage
 {
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
-
-	namespace Str
+	namespace Ref
 	{
-		const TCsString Notify = TCsString(TEXT("Notify"), TEXT("notify"));
-		const TCsString Listen = TCsString(TEXT("Listen"), TEXT("listen"));
-		const TCsString Stop = TCsString(TEXT("Stop"), TEXT("stop"));
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::Notify) { return Str::Notify.Value; }
-		if (EType == Type::Listen) { return Str::Listen.Value; }
-		if (EType == Type::Stop) { return Str::Stop.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::Notify) { return Type::Notify; }
-		if (String == Str::Listen) { return Type::Listen; }
-		if (String == Str::Stop) { return Type::Stop; }
-		return Type::ECsCoroutineMessage_MAX;
+		extern CSCORE_API const Type Notify;
+		extern CSCORE_API const Type Listen;
+		extern CSCORE_API const Type Stop;
+		extern CSCORE_API const Type ECsCoroutineMessage_MAX;
 	}
 }
-
-#define ECS_COROUTINE_MESSAGE_MAX (uint8)ECsCoroutineMessage::ECsCoroutineMessage_MAX
-typedef ECsCoroutineMessage::Type TCsCoroutineMessage;
 
 UENUM(BlueprintType)
 namespace ECsCoroutineEndReason
@@ -111,48 +106,37 @@ namespace ECsCoroutineEndReason
 	};
 }
 
+typedef ECsCoroutineEndReason::Type TCsCoroutineEndReason;
+
+struct CSCORE_API EMCsCoroutineEndReason : public TCsEnumMap<ECsCoroutineEndReason::Type>
+{
+protected:
+	EMCsCoroutineEndReason() {}
+	EMCsCoroutineEndReason(const EMCsCoroutineEndReason &) = delete;
+	EMCsCoroutineEndReason(EMCsCoroutineEndReason &&) = delete;
+public:
+	~EMCsCoroutineEndReason() {}
+private:
+	static EMCsCoroutineEndReason* Instance;
+
+public:
+	static EMCsCoroutineEndReason& Get();
+};
+
 namespace ECsCoroutineEndReason
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
+	namespace Ref
 	{
-		const TCsString EndOfExecution = TCsString(TEXT("EndOfExecution"), TEXT("endofexecution"), TEXT("end of execution"));
-		const TCsString StopMessage = TCsString(TEXT("StopMessage"), TEXT("stopmessage"), TEXT("stop message"));
-		const TCsString StopCondition = TCsString(TEXT("StopCondition"), TEXT("stopcondition"), TEXT("stop condition"));
-		const TCsString Parent = TCsString(TEXT("Parent"), TEXT("parent"), TEXT("parent"));
-		const TCsString UniqueInstance = TCsString(TEXT("UniqueInstance"), TEXT("uniqueinstance"), TEXT("unique instance"));
-		const TCsString Shutdown = TCsString(TEXT("Shutdown"), TEXT("shutdown"), TEXT("shutdown"));
-		const TCsString Manual = TCsString(TEXT("Manual"), TEXT("manual"), TEXT("manual"));
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::EndOfExecution) { return Str::EndOfExecution.Value; }
-		if (EType == Type::StopMessage) { return Str::StopMessage.Value; }
-		if (EType == Type::StopCondition) { return Str::StopCondition.Value; }
-		if (EType == Type::Parent) { return Str::Parent.Value; }
-		if (EType == Type::UniqueInstance) { return Str::UniqueInstance.Value; }
-		if (EType == Type::Shutdown) { return Str::Shutdown.Value; }
-		if (EType == Type::Manual) { return Str::Manual.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::EndOfExecution) { return Type::EndOfExecution; }
-		if (String == Str::StopMessage) { return Type::StopMessage; }
-		if (String == Str::StopCondition) { return Type::StopCondition; }
-		if (String == Str::Parent) { return Type::Parent; }
-		if (String == Str::UniqueInstance) { return Type::UniqueInstance; }
-		if (String == Str::Shutdown) { return Type::Shutdown; }
-		if (String == Str::Manual) { return Type::Manual; }
-		return Type::ECsCoroutineEndReason_MAX;
+		extern CSCORE_API const Type EndOfExecution;
+		extern CSCORE_API const Type StopMessage;
+		extern CSCORE_API const Type StopCondition;
+		extern CSCORE_API const Type Parent;
+		extern CSCORE_API const Type UniqueInstance;
+		extern CSCORE_API const Type Shutdown;
+		extern CSCORE_API const Type Manual;
+		extern CSCORE_API const Type ECsCoroutineEndReason_MAX;
 	}
 }
-
-#define ECS_COROUTINE_END_REASON_MAX (uint8)ECsCoroutineEndReason::ECsCoroutineEndReason_MAX
-typedef ECsCoroutineEndReason::Type TCsCoroutineEndReason;
 
 #define CS_ROUTINE_POOL_SIZE 2048
 #define CS_ROUTINE_INDEXER_SIZE 4

@@ -74,8 +74,8 @@ class CSCORE_API ACsData_ProjectileWeapon : public ACsData_Weapon
 
 	virtual FCsAnimSequence* GetFCsAnimSequence(const FECsWeaponFireMode &FireMode, const FECsWeaponAnim &AnimType);
 	virtual FCsAnimMontage* GetFCsAnimMontage(const FECsWeaponFireMode &FireMode, const FECsWeaponAnim &AnimType);
-	virtual FCsFpsAnimSequence* GetFCsFpsAnimSequence(const FECsWeaponFireMode &FireMode, const FECsWeaponAnim &AnimType);
-	virtual FCsFpsAnimMontage* GetFCsFpsAnimMontage(const FECsWeaponFireMode &FireMode, const FECsWeaponAnim &AnimType);
+	virtual FCsFpvAnimSequence* GetFCsFpvAnimSequence(const FECsWeaponFireMode &FireMode, const FECsWeaponAnim &AnimType);
+	virtual FCsFpvAnimMontage* GetFCsFpvAnimMontage(const FECsWeaponFireMode &FireMode, const FECsWeaponAnim &AnimType);
 
 #pragma endregion Anims
 

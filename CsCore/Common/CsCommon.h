@@ -343,7 +343,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	static void ShuffleTArray_FName(TArray<FName>& InArray);
 	static void ShuffleTArray_int32(TArray<int32>& InArray);
 
-	static bool IsValidFpsAnimMontageArray(TArray<FCsFpsAnimMontage> & InArray, const TCsViewType &ViewType, const bool &IsLow=false);
+	static bool IsValidFpsAnimMontageArray(TArray<FCsFpvAnimMontage> & InArray, const TCsViewType &ViewType, const bool &IsLow=false);
 
 // Component
 #pragma region

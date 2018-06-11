@@ -35,7 +35,7 @@ namespace ECsAnimCached
 }
 
 UENUM(BlueprintType)
-namespace ECsFpsAnimMember
+namespace ECsFpvAnimMember
 {
 	enum Type
 	{
@@ -43,64 +43,50 @@ namespace ECsFpsAnimMember
 		Anim3P					UMETA(DisplayName = "Anim3P"),
 		Anim3P_Low				UMETA(DisplayName = "Anim3P_Low"),
 		AnimVR					UMETA(DisplayName = "AnimVR"),
-		ECsFpsAnimMember_MAX	UMETA(Hidden),
+		ECsFpvAnimMember_MAX	UMETA(Hidden),
 	};
 }
 
-namespace ECsFpsAnimMember
+typedef ECsFpvAnimMember::Type TCsFpvAnimMember;
+
+struct CSCORE_API EMCsFpvAnimMember: public TCsEnumMap<ECsFpvAnimMember::Type>
 {
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
+protected:
+	EMCsFpvAnimMember() {}
+	EMCsFpvAnimMember(const EMCsFpvAnimMember &) = delete;
+	EMCsFpvAnimMember(EMCsFpvAnimMember &&) = delete;
+public:
+	~EMCsFpvAnimMember() {}
+private:
+	static EMCsFpvAnimMember* Instance;
 
-	namespace Str
-	{
-		extern CSCORE_API const TCsString Anim1P;
-		extern CSCORE_API const TCsString Anim3P;
-		extern CSCORE_API const TCsString Anim3P_Low;
-		extern CSCORE_API const TCsString AnimVR;
-	}
+public:
+	static EMCsFpvAnimMember& Get();
+};
 
+namespace ECsFpvAnimMember
+{
 	namespace Ref
 	{
 		extern CSCORE_API const Type Anim1P;
 		extern CSCORE_API const Type Anim3P;
 		extern CSCORE_API const Type Anim3P_Low;
 		extern CSCORE_API const Type AnimVR;
-		extern CSCORE_API const Type ECsFpsAnimMember_MAX;
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::Anim1P) { return Str::Anim1P.Value; }
-		if (EType == Type::Anim3P) { return Str::Anim3P.Value; }
-		if (EType == Type::Anim3P_Low) { return Str::Anim3P_Low.Value; }
-		if (EType == Type::AnimVR) { return Str::AnimVR.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
+		extern CSCORE_API const Type ECsFpvAnimMember_MAX;
 	}
 
 	FORCEINLINE const FString& ToStringFromViewType(const TCsViewType &ViewType, const bool &IsLow = false)
 	{
-		if (ViewType == ECsViewType::FirstPerson) { return Str::Anim1P.Value; }
-		if (ViewType == ECsViewType::ThirdPerson && !IsLow) { return Str::Anim3P.Value; }
-		if (ViewType == ECsViewType::ThirdPerson && IsLow) { return Str::Anim3P_Low.Value; }
-		if (ViewType == ECsViewType::VR) { return Str::AnimVR.Value; }
+		if (ViewType == ECsViewType::FirstPerson) { return EMCsFpvAnimMember::Get().ToString(Ref::Anim1P); }
+		if (ViewType == ECsViewType::ThirdPerson && !IsLow) { return EMCsFpvAnimMember::Get().ToString(Ref::Anim3P); }
+		if (ViewType == ECsViewType::ThirdPerson && IsLow) { return EMCsFpvAnimMember::Get().ToString(Ref::Anim3P_Low); }
+		if (ViewType == ECsViewType::VR) { return EMCsFpvAnimMember::Get().ToString(Ref::AnimVR); }
 		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE const Type& ToType(const FString &String)
-	{
-		if (String == Str::Anim1P) { return Ref::Anim1P; }
-		if (String == Str::Anim3P) { return Ref::Anim3P; }
-		if (String == Str::Anim3P_Low) { return Ref::Anim3P_Low; }
-		if (String == Str::AnimVR) { return Ref::AnimVR; }
-		return Ref::ECsFpsAnimMember_MAX;
 	}
 }
 
-#define ECS_FPS_ANIM_MEMBER_MAX (uint8)ECsFpsAnimMember::ECsFpsAnimMember_MAX
-typedef ECsFpsAnimMember::Type TCsFpsAnimMember;
-
 USTRUCT(BlueprintType)
-struct FCsAnimSequence
+struct CSCORE_API FCsAnimSequence
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -123,12 +109,12 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(Anim_LoadFlags, ECsLoadFlags::Game);
 	}
 
-	UAnimSequence* Get()
+	FORCEINLINE UAnimSequence* Get()
 	{
 		return Anim_Internal;
 	}
 
-	FCsAnimSequence& operator=(const FCsAnimSequence& B)
+	FORCEINLINE FCsAnimSequence& operator=(const FCsAnimSequence& B)
 	{
 		Anim = B.Anim;
 		Anim_LoadFlags = B.Anim_LoadFlags;
@@ -136,19 +122,19 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsAnimSequence& B) const
+	FORCEINLINE bool operator==(const FCsAnimSequence& B) const
 	{
 		return Anim == B.Anim && Anim_LoadFlags == B.Anim_LoadFlags && Anim_Internal == B.Anim_Internal;
 	}
 
-	bool operator!=(const FCsAnimSequence& B) const
+	FORCEINLINE bool operator!=(const FCsAnimSequence& B) const
 	{
 		return !(*this == B);
 	}
 };
 
 USTRUCT(BlueprintType)
-struct FCsFpsAnimSequence
+struct CSCORE_API FCsFpvAnimSequence
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -192,7 +178,7 @@ private:
 
 public:
 
-	FCsFpsAnimSequence()
+	FCsFpvAnimSequence()
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Anim1P_LoadFlags, ECsLoadFlags::Game);
 		CS_SET_BLUEPRINT_BITFLAG(Anim1P_LoadFlags, ECsLoadFlags::Game1P);
@@ -207,7 +193,7 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(AnimVR_LoadFlags, ECsLoadFlags::GameVR);
 	}
 
-	TAssetPtr<UAnimSequence> GetAssetPtr(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE TAssetPtr<UAnimSequence> GetAssetPtr(const TCsViewType &ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Anim1P;
@@ -218,7 +204,7 @@ public:
 		return Anim3P;
 	}
 
-	UAnimSequence* Get(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE UAnimSequence* Get(const TCsViewType &ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Anim1P_Internal;
@@ -229,7 +215,7 @@ public:
 		return Anim3P_Internal;
 	}
 
-	FCsFpsAnimSequence& operator=(const FCsFpsAnimSequence& B)
+	FORCEINLINE FCsFpvAnimSequence& operator=(const FCsFpvAnimSequence& B)
 	{
 		Anim1P = B.Anim1P;
 		Anim3P = B.Anim3P;
@@ -248,21 +234,21 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsFpsAnimSequence& B) const
+	FORCEINLINE bool operator==(const FCsFpvAnimSequence& B) const
 	{
 		return Anim1P == B.Anim1P && Anim3P == B.Anim3P && Anim3P_Low == B.Anim3P_Low && AnimVR == B.AnimVR &&
 			Anim1P_LoadFlags == B.Anim1P_LoadFlags && Anim3P_LoadFlags == B.Anim3P_LoadFlags && Anim3P_Low_LoadFlags == B.Anim3P_Low_LoadFlags && AnimVR_LoadFlags == B.AnimVR_LoadFlags &&
 			Anim1P_Internal == B.Anim1P_Internal && Anim3P_Internal == B.Anim3P_Internal && Anim3P_Low_Internal == B.Anim3P_Low_Internal && AnimVR_Internal == B.AnimVR_Internal;
 	}
 
-	bool operator!=(const FCsFpsAnimSequence& B) const
+	FORCEINLINE bool operator!=(const FCsFpvAnimSequence& B) const
 	{
 		return !(*this == B);
 	}
 };
 
 USTRUCT(BlueprintType)
-struct FCsAnimMontage
+struct CSCORE_API FCsAnimMontage
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -284,12 +270,12 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(Anim_LoadFlags, ECsLoadFlags::Game);
 	}
 
-	UAnimMontage* Get()
+	FORCEINLINE UAnimMontage* Get()
 	{
 		return Anim_Internal;
 	}
 
-	FCsAnimMontage& operator=(const FCsAnimMontage& B)
+	FORCEINLINE FCsAnimMontage& operator=(const FCsAnimMontage& B)
 	{
 		Anim = B.Anim;
 		Anim_LoadFlags = B.Anim_LoadFlags;
@@ -297,19 +283,19 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsAnimMontage& B) const
+	FORCEINLINE bool operator==(const FCsAnimMontage& B) const
 	{
 		return Anim == B.Anim && Anim_LoadFlags == B.Anim_LoadFlags && Anim_Internal == B.Anim_Internal;
 	}
 
-	bool operator!=(const FCsAnimMontage& B) const
+	FORCEINLINE bool operator!=(const FCsAnimMontage& B) const
 	{
 		return !(*this == B);
 	}
 };
 
 USTRUCT(BlueprintType)
-struct FCsFpsAnimMontage
+struct CSCORE_API FCsFpvAnimMontage
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -353,7 +339,7 @@ private:
 
 public:
 
-	FCsFpsAnimMontage()
+	FCsFpvAnimMontage()
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Anim1P_LoadFlags, ECsLoadFlags::Game);
 		CS_SET_BLUEPRINT_BITFLAG(Anim1P_LoadFlags, ECsLoadFlags::Game1P);
@@ -369,7 +355,7 @@ public:
 	}
 
 
-	TAssetPtr<UAnimMontage> GetAssetPtr(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE TAssetPtr<UAnimMontage> GetAssetPtr(const TCsViewType &ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Anim1P;
@@ -380,7 +366,7 @@ public:
 		return Anim3P;
 	}
 
-	UAnimMontage* Get(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE UAnimMontage* Get(const TCsViewType &ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Anim1P_Internal;
@@ -391,7 +377,7 @@ public:
 		return Anim3P_Internal;
 	}
 
-	FCsFpsAnimMontage& operator=(const FCsFpsAnimMontage& B)
+	FORCEINLINE FCsFpvAnimMontage& operator=(const FCsFpvAnimMontage& B)
 	{
 		Anim1P = B.Anim1P;
 		Anim3P = B.Anim3P;
@@ -410,21 +396,21 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsFpsAnimMontage& B) const
+	FORCEINLINE bool operator==(const FCsFpvAnimMontage& B) const
 	{
 		return Anim1P == B.Anim1P && Anim3P == B.Anim3P && Anim3P_Low == B.Anim3P_Low && AnimVR == B.AnimVR &&
 			Anim1P_LoadFlags == B.Anim1P_LoadFlags && Anim3P_LoadFlags == B.Anim3P_LoadFlags && Anim3P_Low_LoadFlags == B.Anim3P_Low_LoadFlags && AnimVR_LoadFlags == B.AnimVR_LoadFlags &&
 			Anim1P_Internal == B.Anim1P_Internal && Anim3P_Internal == B.Anim3P_Internal && Anim3P_Low_Internal == B.Anim3P_Low_Internal && AnimVR_Internal == B.AnimVR_Internal;
 	}
 
-	bool operator!=(const FCsFpsAnimMontage& B) const
+	FORCEINLINE bool operator!=(const FCsFpvAnimMontage& B) const
 	{
 		return !(*this == B);
 	}
 };
 
 USTRUCT()
-struct FCsTArrayAnimMontage
+struct CSCORE_API FCsTArrayAnimMontage
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -444,21 +430,19 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(Anims_LoadFlags, ECsLoadFlags::Game);
 	}
 
-	FCsTArrayAnimMontage& operator=(const FCsTArrayAnimMontage& B)
+	FORCEINLINE FCsTArrayAnimMontage& operator=(const FCsTArrayAnimMontage& B)
 	{
 		Anims.Reset();
 
-		const int32 Count = B.Anims.Num();
-
-		for (int32 I = 0; I < Count; ++I)
+		for (const TAssetPtr<class UAnimMontage>& Anim : B.Anims)
 		{
-			Anims.Add(B.Anims[I]);
+			Anims.Add(Anim);
 		}
 		Anims_LoadFlags = B.Anims_LoadFlags;
 		return *this;
 	}
 
-	bool operator==(const FCsTArrayAnimMontage& B) const
+	FORCEINLINE bool operator==(const FCsTArrayAnimMontage& B) const
 	{
 		int32 Count = Anims.Num();
 		int32 CountB = B.Anims.Num();
@@ -486,22 +470,22 @@ public:
 		return Anims_LoadFlags == B.Anims_LoadFlags;
 	}
 
-	bool operator!=(const FCsTArrayAnimMontage& B) const
+	FORCEINLINE bool operator!=(const FCsTArrayAnimMontage& B) const
 	{
 		return !(*this == B);
 	}
 
-	TArray<class UAnimMontage*>* Get()
+	FORCEINLINE TArray<class UAnimMontage*>* Get()
 	{
 		return &Anims_Internal;
 	}
 
-	class UAnimMontage* Get(const int32 Index)
+	FORCEINLINE class UAnimMontage* Get(const int32 Index)
 	{
 		return Index < Anims_Internal.Num() ? Anims_Internal[Index] : NULL;
 	}
 
-	uint8 Find(UAnimMontage* Anim)
+	FORCEINLINE uint8 Find(UAnimMontage* Anim)
 	{
 		int index;
 		if (Anims_Internal.Find(Anim, index))
@@ -512,7 +496,7 @@ public:
 };
 
 UENUM(BlueprintType)
-namespace ECsFpsAnimBlueprintMember
+namespace ECsFpvAnimBlueprintMember
 {
 	enum Type
 	{
@@ -520,55 +504,50 @@ namespace ECsFpsAnimBlueprintMember
 		Blueprint3P						UMETA(DisplayName = "Blueprint3P"),
 		Blueprint3P_Low					UMETA(DisplayName = "Blueprint3P_Low"),
 		BlueprintVR						UMETA(DisplayName = "BlueprintVR"),
-		ECsFpsAnimBlueprintMember_MAX	UMETA(Hidden),
+		ECsFpvAnimBlueprintMember_MAX	UMETA(Hidden),
 	};
 }
 
-namespace ECsFpsAnimBlueprintMember
+typedef ECsFpvAnimBlueprintMember::Type TCsFpvAnimBlueprintMember;
+
+struct CSCORE_API EMCsFpvAnimBlueprintMember : public TCsEnumMap<ECsFpvAnimBlueprintMember::Type>
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
+protected:
+	EMCsFpvAnimBlueprintMember() {}
+	EMCsFpvAnimBlueprintMember(const EMCsFpvAnimBlueprintMember &) = delete;
+	EMCsFpvAnimBlueprintMember(EMCsFpvAnimBlueprintMember &&) = delete;
+public:
+	~EMCsFpvAnimBlueprintMember() {}
+private:
+	static EMCsFpvAnimBlueprintMember* Instance;
 
-	namespace Str
-	{
-		const TCsString Blueprint1P = TCsString(TEXT("Blueprint1P"), TEXT("blueprint1p"), TEXT("blueprint 1p"));
-		const TCsString Blueprint3P = TCsString(TEXT("Blueprint3P"), TEXT("blueprint3p"), TEXT("blueprint 3p"));
-		const TCsString Blueprint3P_Low = TCsString(TEXT("Blueprint3P_Low"), TEXT("blueprint3p_low"), TEXT("blueprint 3p low"));
-		const TCsString BlueprintVR = TCsString(TEXT("BlueprintVR"), TEXT("blueprintvr"), TEXT("blueprint vr"));
-	}
+public:
+	static EMCsFpvAnimBlueprintMember& Get();
+};
 
-	FORCEINLINE const FString& ToString(const Type &EType)
+namespace ECsFpvAnimBlueprintMember
+{
+	namespace Ref
 	{
-		if (EType == Type::Blueprint1P) { return Str::Blueprint1P.Value; }
-		if (EType == Type::Blueprint3P) { return Str::Blueprint3P.Value; }
-		if (EType == Type::Blueprint3P_Low) { return Str::Blueprint3P_Low.Value; }
-		if (EType == Type::BlueprintVR) { return Str::BlueprintVR.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
+		extern CSCORE_API const Type Blueprint1P;
+		extern CSCORE_API const Type Blueprint3P;
+		extern CSCORE_API const Type Blueprint3P_Low;
+		extern CSCORE_API const Type BlueprintVR;
+		extern CSCORE_API const Type ECsFpvAnimBlueprintMember_MAX;
 	}
 
 	FORCEINLINE const FString& ToStringFromViewType(const TCsViewType &ViewType, const bool &IsLow = false)
 	{
-		if (ViewType == ECsViewType::FirstPerson) { return Str::Blueprint1P.Value; }
-		if (ViewType == ECsViewType::ThirdPerson && !IsLow) { return Str::Blueprint3P.Value; }
-		if (ViewType == ECsViewType::ThirdPerson && IsLow) { return Str::Blueprint3P_Low.Value; }
-		if (ViewType == ECsViewType::VR) { return Str::BlueprintVR.Value; }
+		if (ViewType == ECsViewType::FirstPerson) { return EMCsFpvAnimBlueprintMember::Get().ToString(Ref::Blueprint1P); }
+		if (ViewType == ECsViewType::ThirdPerson && !IsLow) { return EMCsFpvAnimBlueprintMember::Get().ToString(Ref::Blueprint3P); }
+		if (ViewType == ECsViewType::ThirdPerson && IsLow) { return EMCsFpvAnimBlueprintMember::Get().ToString(Ref::Blueprint3P_Low); }
+		if (ViewType == ECsViewType::VR) { return EMCsFpvAnimBlueprintMember::Get().ToString(Ref::BlueprintVR); }
 		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::Blueprint1P) { return Type::Blueprint1P; }
-		if (String == Str::Blueprint3P) { return Type::Blueprint3P; }
-		if (String == Str::Blueprint3P_Low) { return Type::Blueprint3P_Low; }
-		if (String == Str::BlueprintVR) { return Type::BlueprintVR; }
-		return Type::ECsFpsAnimBlueprintMember_MAX;
 	}
 }
 
-#define ECS_FPS_ANIM_BLUEPRINT_MEMBER_MAX (uint8)ECsFpsAnimBlueprintMember::ECsFpsAnimBlueprintMember_MAX
-typedef ECsFpsAnimBlueprintMember::Type TCsFpsAnimBlueprintMember;
-
 USTRUCT(BlueprintType)
-struct FCsAnimBlueprint
+struct CSCORE_API FCsAnimBlueprint
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -591,12 +570,12 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(Blueprint_LoadFlags, ECsLoadFlags::Game);
 	}
 
-	UAnimBlueprintGeneratedClass* Get()
+	FORCEINLINE UAnimBlueprintGeneratedClass* Get()
 	{
 		return Blueprint_Internal;
 	}
 
-	FCsAnimBlueprint& operator=(const FCsAnimBlueprint& B)
+	FORCEINLINE FCsAnimBlueprint& operator=(const FCsAnimBlueprint& B)
 	{
 		Blueprint = B.Blueprint;
 		Blueprint_LoadFlags = B.Blueprint_LoadFlags;
@@ -604,19 +583,19 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsAnimBlueprint& B) const
+	FORCEINLINE bool operator==(const FCsAnimBlueprint& B) const
 	{
 		return Blueprint == B.Blueprint && Blueprint_LoadFlags == B.Blueprint_LoadFlags && Blueprint_Internal == B.Blueprint_Internal;
 	}
 
-	bool operator!=(const FCsAnimBlueprint& B) const
+	FORCEINLINE bool operator!=(const FCsAnimBlueprint& B) const
 	{
 		return !(*this == B);
 	}
 };
 
 USTRUCT(BlueprintType)
-struct FCsFpsAnimBlueprint
+struct CSCORE_API FCsFpvAnimBlueprint
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -660,7 +639,7 @@ public:
 
 public:
 
-	FCsFpsAnimBlueprint()
+	FCsFpvAnimBlueprint()
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Blueprint1P_LoadFlags, ECsLoadFlags::Game);
 		CS_SET_BLUEPRINT_BITFLAG(Blueprint1P_LoadFlags, ECsLoadFlags::Game1P);
@@ -675,7 +654,7 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(BlueprintVR_LoadFlags, ECsLoadFlags::GameVR);
 	}
 
-	UAnimBlueprintGeneratedClass* Get(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE UAnimBlueprintGeneratedClass* Get(const TCsViewType &ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Blueprint1P_Internal;
@@ -686,7 +665,7 @@ public:
 		return Blueprint3P_Internal;
 	}
 
-	FCsFpsAnimBlueprint& operator=(const FCsFpsAnimBlueprint& B)
+	FORCEINLINE FCsFpvAnimBlueprint& operator=(const FCsFpvAnimBlueprint& B)
 	{
 		Blueprint1P = B.Blueprint1P;
 		Blueprint3P = B.Blueprint3P;
@@ -705,21 +684,21 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsFpsAnimBlueprint& B) const
+	FORCEINLINE bool operator==(const FCsFpvAnimBlueprint& B) const
 	{
 		return Blueprint1P == B.Blueprint1P && Blueprint3P == B.Blueprint3P && Blueprint3P_Low == B.Blueprint3P_Low && BlueprintVR == B.BlueprintVR &&
 			Blueprint1P_LoadFlags == B.Blueprint1P_LoadFlags && Blueprint3P_LoadFlags == B.Blueprint3P_LoadFlags && Blueprint3P_Low_LoadFlags == B.Blueprint3P_Low_LoadFlags && BlueprintVR_LoadFlags == B.BlueprintVR_LoadFlags &&
 			Blueprint1P_Internal == B.Blueprint1P_Internal && Blueprint3P_Internal == B.Blueprint3P_Internal && Blueprint3P_Low_Internal == B.Blueprint3P_Low_Internal && BlueprintVR_Internal == B.BlueprintVR_Internal;
 	}
 
-	bool operator!=(const FCsFpsAnimBlueprint& B) const
+	FORCEINLINE bool operator!=(const FCsFpvAnimBlueprint& B) const
 	{
 		return !(*this == B);
 	}
 };
 
 UENUM(BlueprintType)
-namespace ECsFpsAnimBlendSpaceMember
+namespace ECsFpvAnimBlendSpaceMember
 {
 	enum Type
 	{
@@ -727,55 +706,50 @@ namespace ECsFpsAnimBlendSpaceMember
 		Blend3P							UMETA(DisplayName = "Blend3P"),
 		Blend3P_Low						UMETA(DisplayName = "Blend3P_Low"),
 		BlendVR							UMETA(DisplayName = "BlendVR"),
-		ECsFpsAnimBlendSpaceMember_MAX	UMETA(Hidden),
+		ECsFpvAnimBlendSpaceMember_MAX	UMETA(Hidden),
 	};
 }
 
-namespace ECsFpsAnimBlendSpaceMember
+typedef ECsFpvAnimBlendSpaceMember::Type TCsFpsAnimBlendSpaceMember;
+
+struct CSCORE_API EMCsFpvAnimBlendSpaceMember : public TCsEnumMap<ECsFpvAnimBlendSpaceMember::Type>
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
+protected:
+	EMCsFpvAnimBlendSpaceMember() {}
+	EMCsFpvAnimBlendSpaceMember(const EMCsFpvAnimBlendSpaceMember &) = delete;
+	EMCsFpvAnimBlendSpaceMember(EMCsFpvAnimBlendSpaceMember &&) = delete;
+public:
+	~EMCsFpvAnimBlendSpaceMember() {}
+private:
+	static EMCsFpvAnimBlendSpaceMember* Instance;
 
-	namespace Str
-	{
-		const TCsString Blend1P = TCsString(TEXT("Blend1P"), TEXT("blend1p"), TEXT("blend 1p"));
-		const TCsString Blend3P = TCsString(TEXT("Blend3P"), TEXT("blend3p"), TEXT("blend 3p"));
-		const TCsString Blend3P_Low = TCsString(TEXT("Blend3P_Low"), TEXT("blend3p_low"), TEXT("blend 3p low"));
-		const TCsString BlendVR = TCsString(TEXT("BlendVR"), TEXT("blendvr"), TEXT("blend vr"));
-	}
+public:
+	static EMCsFpvAnimBlendSpaceMember& Get();
+};
 
-	FORCEINLINE const FString& ToString(const Type &EType)
+namespace ECsFpvAnimBlendSpaceMember
+{
+	namespace Ref
 	{
-		if (EType == Type::Blend1P) { return Str::Blend1P.Value; }
-		if (EType == Type::Blend3P) { return Str::Blend3P.Value; }
-		if (EType == Type::Blend3P_Low) { return Str::Blend3P_Low.Value; }
-		if (EType == Type::BlendVR) { return Str::BlendVR.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
+		extern CSCORE_API const Type Blend1P;
+		extern CSCORE_API const Type Blend3P;
+		extern CSCORE_API const Type Blend3P_Low;
+		extern CSCORE_API const Type BlendVR;
+		extern CSCORE_API const Type ECsFpvAnimBlendSpaceMember_MAX;
 	}
 
 	FORCEINLINE const FString& ToStringFromViewType(const TCsViewType &ViewType, const bool &IsLow = false)
 	{
-		if (ViewType == ECsViewType::FirstPerson) { return Str::Blend1P.Value; }
-		if (ViewType == ECsViewType::ThirdPerson && !IsLow) { return Str::Blend3P.Value; }
-		if (ViewType == ECsViewType::ThirdPerson && IsLow) { return Str::Blend3P_Low.Value; }
-		if (ViewType == ECsViewType::VR) { return Str::BlendVR.Value; }
+		if (ViewType == ECsViewType::FirstPerson) { return EMCsFpvAnimBlendSpaceMember::Get().ToString(Type::Blend1P); }
+		if (ViewType == ECsViewType::ThirdPerson && !IsLow) { return EMCsFpvAnimBlendSpaceMember::Get().ToString(Type::Blend3P); }
+		if (ViewType == ECsViewType::ThirdPerson && IsLow) { return EMCsFpvAnimBlendSpaceMember::Get().ToString(Type::Blend3P_Low); }
+		if (ViewType == ECsViewType::VR) { return EMCsFpvAnimBlendSpaceMember::Get().ToString(Type::BlendVR); }
 		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::Blend1P) { return Type::Blend1P; }
-		if (String == Str::Blend3P) { return Type::Blend3P; }
-		if (String == Str::Blend3P_Low) { return Type::Blend3P_Low; }
-		if (String == Str::BlendVR) { return Type::BlendVR; }
-		return Type::ECsFpsAnimBlendSpaceMember_MAX;
 	}
 }
 
-#define ECS_FPS_ANIM_BLEND_SPACE_MEMBER_MAX (uint8)ECsFpsAnimBlendSpaceMember::ECsFpsAnimBlendSpaceMember_MAX
-typedef ECsFpsAnimBlendSpaceMember::Type TCsFpsAnimBlendSpaceMember;
-
 USTRUCT(BlueprintType)
-struct FCsBlendSpace1D
+struct CSCORE_API FCsBlendSpace1D
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -797,12 +771,12 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(Blend_LoadFlags, ECsLoadFlags::Game);
 	}
 
-	UBlendSpace1D* Get()
+	FORCEINLINE UBlendSpace1D* Get()
 	{
 		return Blend_Internal;
 	}
 
-	FCsBlendSpace1D& operator=(const FCsBlendSpace1D& B)
+	FORCEINLINE FCsBlendSpace1D& operator=(const FCsBlendSpace1D& B)
 	{
 		Blend = B.Blend;
 		Blend_LoadFlags = B.Blend_LoadFlags;
@@ -810,19 +784,19 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsBlendSpace1D& B) const
+	FORCEINLINE bool operator==(const FCsBlendSpace1D& B) const
 	{
 		return Blend == B.Blend && Blend_LoadFlags == B.Blend_LoadFlags && Blend_Internal == B.Blend_Internal;
 	}
 
-	bool operator!=(const FCsBlendSpace1D& B) const
+	FORCEINLINE bool operator!=(const FCsBlendSpace1D& B) const
 	{
 		return !(*this == B);
 	}
 };
 
 USTRUCT(BlueprintType)
-struct FCsFpsBlendSpace1D
+struct CSCORE_API FCsFpvBlendSpace1D
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -866,7 +840,7 @@ public:
 
 public:
 
-	FCsFpsBlendSpace1D()
+	FCsFpvBlendSpace1D()
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Blend1P_LoadFlags, ECsLoadFlags::Game);
 		CS_SET_BLUEPRINT_BITFLAG(Blend1P_LoadFlags, ECsLoadFlags::Game1P);
@@ -881,7 +855,7 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(BlendVR_LoadFlags, ECsLoadFlags::GameVR);
 	}
 
-	UBlendSpace1D* Get(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE UBlendSpace1D* Get(const TCsViewType &ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Blend1P_Internal;
@@ -892,7 +866,7 @@ public:
 		return Blend3P_Internal;
 	}
 
-	TAssetPtr<UBlendSpace1D> GetAssetPtr(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE TAssetPtr<UBlendSpace1D> GetAssetPtr(const TCsViewType &ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Blend1P;
@@ -903,7 +877,7 @@ public:
 		return Blend3P;
 	}
 
-	FCsFpsBlendSpace1D& operator=(const FCsFpsBlendSpace1D& B)
+	FORCEINLINE FCsFpvBlendSpace1D& operator=(const FCsFpvBlendSpace1D& B)
 	{
 		Blend1P = B.Blend1P;
 		Blend3P = B.Blend3P;
@@ -922,21 +896,21 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsFpsBlendSpace1D& B) const
+	FORCEINLINE bool operator==(const FCsFpvBlendSpace1D& B) const
 	{
 		return Blend1P == B.Blend1P && Blend3P == B.Blend3P && Blend3P_Low == B.Blend3P_Low && BlendVR == B.BlendVR &&
 			   Blend1P_LoadFlags == B.Blend1P_LoadFlags && Blend3P_LoadFlags == B.Blend3P_LoadFlags && Blend3P_Low_LoadFlags == B.Blend3P_Low_LoadFlags && BlendVR_LoadFlags == B.BlendVR_LoadFlags &&
 			   Blend1P_Internal == B.Blend1P_Internal && Blend3P_Internal == B.Blend3P_Internal && Blend3P_Low_Internal == B.Blend3P_Low_Internal && BlendVR_Internal == B.BlendVR_Internal;
 	}
 
-	bool operator!=(const FCsFpsBlendSpace1D& B) const
+	FORCEINLINE bool operator!=(const FCsFpvBlendSpace1D& B) const
 	{
 		return !(*this == B);
 	}
 };
 
 USTRUCT(BlueprintType)
-struct FCsBlendSpace
+struct CSCORE_API FCsBlendSpace
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -958,12 +932,12 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(Blend_LoadFlags, ECsLoadFlags::Game);
 	}
 
-	UBlendSpace* Get()
+	FORCEINLINE UBlendSpace* Get()
 	{
 		return Blend_Internal;
 	}
 
-	FCsBlendSpace& operator=(const FCsBlendSpace& B)
+	FORCEINLINE FCsBlendSpace& operator=(const FCsBlendSpace& B)
 	{
 		Blend = B.Blend;
 		Blend_LoadFlags = B.Blend_LoadFlags;
@@ -971,19 +945,19 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsBlendSpace& B) const
+	FORCEINLINE bool operator==(const FCsBlendSpace& B) const
 	{
 		return Blend == B.Blend && Blend_LoadFlags == B.Blend_LoadFlags && Blend_Internal == B.Blend_Internal;
 	}
 
-	bool operator!=(const FCsBlendSpace& B) const
+	FORCEINLINE bool operator!=(const FCsBlendSpace& B) const
 	{
 		return !(*this == B);
 	}
 };
 
 USTRUCT(BlueprintType)
-struct FCsFpsBlendSpace
+struct CSCORE_API FCsFpvBlendSpace
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -1027,7 +1001,7 @@ public:
 
 public:
 
-	FCsFpsBlendSpace()
+	FCsFpvBlendSpace()
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Blend1P_LoadFlags, ECsLoadFlags::Game);
 		CS_SET_BLUEPRINT_BITFLAG(Blend1P_LoadFlags, ECsLoadFlags::Game1P);
@@ -1042,7 +1016,7 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(BlendVR_LoadFlags, ECsLoadFlags::GameVR);
 	}
 
-	UBlendSpace* Get(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE UBlendSpace* Get(const TCsViewType &ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Blend1P_Internal;
@@ -1053,7 +1027,7 @@ public:
 		return Blend3P_Internal;
 	}
 
-	TAssetPtr<UBlendSpace> GetAssetPtr(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE TAssetPtr<UBlendSpace> GetAssetPtr(const TCsViewType &ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Blend1P;
@@ -1064,7 +1038,7 @@ public:
 		return Blend3P;
 	}
 
-	FCsFpsBlendSpace& operator=(const FCsFpsBlendSpace& B)
+	FORCEINLINE FCsFpvBlendSpace& operator=(const FCsFpvBlendSpace& B)
 	{
 		Blend1P = B.Blend1P;
 		Blend3P = B.Blend3P;
@@ -1083,14 +1057,14 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsFpsBlendSpace& B) const
+	FORCEINLINE bool operator==(const FCsFpvBlendSpace& B) const
 	{
 		return Blend1P == B.Blend1P && Blend3P == B.Blend3P && Blend3P_Low == B.Blend3P_Low && BlendVR == B.BlendVR &&
 			Blend1P_LoadFlags == B.Blend1P_LoadFlags && Blend3P_LoadFlags == B.Blend3P_LoadFlags && Blend3P_Low_LoadFlags == B.Blend3P_Low_LoadFlags && BlendVR_LoadFlags == B.BlendVR_LoadFlags &&
 			Blend1P_Internal == B.Blend1P_Internal && Blend3P_Internal == B.Blend3P_Internal && Blend3P_Low_Internal == B.Blend3P_Low_Internal && BlendVR_Internal == B.BlendVR_Internal;
 	}
 
-	bool operator!=(const FCsFpsBlendSpace& B) const
+	FORCEINLINE bool operator!=(const FCsFpvBlendSpace& B) const
 	{
 		return !(*this == B);
 	}
@@ -1113,57 +1087,54 @@ namespace ECsAdditiveBasePoseType
 	};
 }
 
+typedef ECsAdditiveBasePoseType::Type TCsAdditiveBasePoseType;
+
+struct CSCORE_API EMCsAdditiveBasePoseType : public TCsEnumMap<ECsAdditiveBasePoseType::Type>
+{
+protected:
+	EMCsAdditiveBasePoseType() {}
+	EMCsAdditiveBasePoseType(const EMCsAdditiveBasePoseType &) = delete;
+	EMCsAdditiveBasePoseType(EMCsAdditiveBasePoseType &&) = delete;
+public:
+	~EMCsAdditiveBasePoseType() {}
+private:
+	static EMCsAdditiveBasePoseType* Instance;
+
+public:
+	static EMCsAdditiveBasePoseType& Get();
+};
+
 namespace ECsAdditiveBasePoseType
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
+	namespace Ref
 	{
-		const TCsString ABPT_None = TCsString(TEXT("ABPT_None"), TEXT("abpt_none"), TEXT("none"));
-		const TCsString ABPT_RefPose = TCsString(TEXT("ABPT_RefPose"), TEXT("abpt_refpose"), TEXT("ref pose"));
-		const TCsString ABPT_AnimScaled = TCsString(TEXT("ABPT_AnimScaled"), TEXT("abpt_animscaled"), TEXT("anim scaled"));
-		const TCsString ABPT_AnimFrame = TCsString(TEXT("ABPT_AnimFrame"), TEXT("abpt_animframe"), TEXT("anim frame"));
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::ABPT_None) { return Str::ABPT_None.Value; }
-		if (EType == Type::ABPT_RefPose) { return Str::ABPT_RefPose.Value; }
-		if (EType == Type::ABPT_AnimScaled) { return Str::ABPT_AnimScaled.Value; }
-		if (EType == Type::ABPT_AnimFrame) { return Str::ABPT_AnimFrame.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
+		extern CSCORE_API const Type ABPT_None;
+		extern CSCORE_API const Type ABPT_RefPose;
+		extern CSCORE_API const Type ABPT_AnimScaled;
+		extern CSCORE_API const Type ABPT_AnimFrame;
+		extern CSCORE_API const Type ABPT_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const EAdditiveBasePoseType &EType)
 	{
-		if (EType == EAdditiveBasePoseType::ABPT_None) { return Str::ABPT_None.Value; }
-		if (EType == EAdditiveBasePoseType::ABPT_RefPose) { return Str::ABPT_RefPose.Value; }
-		if (EType == EAdditiveBasePoseType::ABPT_AnimScaled) { return Str::ABPT_AnimScaled.Value; }
-		if (EType == EAdditiveBasePoseType::ABPT_AnimFrame) { return Str::ABPT_AnimFrame.Value; }
+		if (EType == EAdditiveBasePoseType::ABPT_None) { return EMCsAdditiveBasePoseType::Get().ToString(Ref::ABPT_None); }
+		if (EType == EAdditiveBasePoseType::ABPT_RefPose) { return EMCsAdditiveBasePoseType::Get().ToString(Ref::ABPT_RefPose); }
+		if (EType == EAdditiveBasePoseType::ABPT_AnimScaled) { return EMCsAdditiveBasePoseType::Get().ToString(Ref::ABPT_AnimScaled); }
+		if (EType == EAdditiveBasePoseType::ABPT_AnimFrame) { return EMCsAdditiveBasePoseType::Get().ToString(Ref::ABPT_AnimFrame); }
 		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::ABPT_None) { return Type::ABPT_None; }
-		if (String == Str::ABPT_RefPose) { return Type::ABPT_RefPose; }
-		if (String == Str::ABPT_AnimScaled) { return Type::ABPT_AnimScaled; }
-		if (String == Str::ABPT_AnimFrame) { return Type::ABPT_AnimFrame; }
-		return Type::ABPT_MAX;
 	}
 
 	FORCEINLINE EAdditiveBasePoseType ToBaseType(const FString &String)
 	{
-		if (String == Str::ABPT_None) { return EAdditiveBasePoseType::ABPT_None; }
-		if (String == Str::ABPT_RefPose) { return EAdditiveBasePoseType::ABPT_RefPose; }
-		if (String == Str::ABPT_AnimScaled) { return EAdditiveBasePoseType::ABPT_AnimScaled; }
-		if (String == Str::ABPT_AnimFrame) { return EAdditiveBasePoseType::ABPT_AnimFrame; }
+		const Type& Enum = EMCsAdditiveBasePoseType::Get().ToType(String);
+
+		if (Enum == Ref::ABPT_None) { return EAdditiveBasePoseType::ABPT_None; }
+		if (Enum == Ref::ABPT_RefPose) { return EAdditiveBasePoseType::ABPT_RefPose; }
+		if (Enum == Ref::ABPT_AnimScaled) { return EAdditiveBasePoseType::ABPT_AnimScaled; }
+		if (Enum == Ref::ABPT_AnimFrame) { return EAdditiveBasePoseType::ABPT_AnimFrame; }
 		return EAdditiveBasePoseType::ABPT_MAX;
 	}
 }
-
-#define ECS_ADDITIVE_BASE_POSE_TYPE_MAX (uint8)ECsAdditiveBasePoseType::ABPT_MAX
-typedef ECsAdditiveBasePoseType::Type TCsAdditiveBasePoseType;
 
 UENUM(BlueprintType)
 namespace ECsAdditiveAnimationType
@@ -1180,51 +1151,50 @@ namespace ECsAdditiveAnimationType
 	};
 }
 
+typedef ECsAdditiveAnimationType::Type TCsAdditiveAnimationType;
+
+struct CSCORE_API EMCsAdditiveAnimationType : public TCsEnumMap<ECsAdditiveAnimationType::Type>
+{
+protected:
+	EMCsAdditiveAnimationType() {}
+	EMCsAdditiveAnimationType(const EMCsAdditiveAnimationType &) = delete;
+	EMCsAdditiveAnimationType(EMCsAdditiveAnimationType &&) = delete;
+public:
+	~EMCsAdditiveAnimationType() {}
+private:
+	static EMCsAdditiveAnimationType* Instance;
+
+public:
+	static EMCsAdditiveAnimationType& Get();
+};
+
 namespace ECsAdditiveAnimationType
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
+	namespace Ref
 	{
-		const TCsString AAT_None = TCsString(TEXT("AAT_None"), TEXT("aat_none"), TEXT("none"));
-		const TCsString AAT_LocalSpaceBase = TCsString(TEXT("AAT_LocalSpaceBase"), TEXT("aat_localspacebase"), TEXT("local space base"));
-		const TCsString AAT_RotationOffsetMeshSpace = TCsString(TEXT("AAT_RotationOffsetMeshSpace"), TEXT("aat_rotationoffsetmeshspace"), TEXT("rotation offset mesh space"));
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::AAT_None) { return Str::AAT_None.Value; }
-		if (EType == Type::AAT_LocalSpaceBase) { return Str::AAT_LocalSpaceBase.Value; }
-		if (EType == Type::AAT_RotationOffsetMeshSpace) { return Str::AAT_RotationOffsetMeshSpace.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
+		extern CSCORE_API const Type AAT_None;
+		extern CSCORE_API const Type AAT_LocalSpaceBase;
+		extern CSCORE_API const Type AAT_RotationOffsetMeshSpace;
+		extern CSCORE_API const Type AAT_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const EAdditiveAnimationType &EType)
 	{
-		if (EType == EAdditiveAnimationType::AAT_None) { return Str::AAT_None.Value; }
-		if (EType == EAdditiveAnimationType::AAT_LocalSpaceBase) { return Str::AAT_LocalSpaceBase.Value; }
-		if (EType == EAdditiveAnimationType::AAT_RotationOffsetMeshSpace) { return Str::AAT_RotationOffsetMeshSpace.Value; }
+		if (EType == EAdditiveAnimationType::AAT_None) { return EMCsAdditiveAnimationType::Get().ToString(Ref::AAT_None); }
+		if (EType == EAdditiveAnimationType::AAT_LocalSpaceBase) { return EMCsAdditiveAnimationType::Get().ToString(Ref::AAT_LocalSpaceBase); }
+		if (EType == EAdditiveAnimationType::AAT_RotationOffsetMeshSpace) { return EMCsAdditiveAnimationType::Get().ToString(Ref::AAT_RotationOffsetMeshSpace); }
 		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::AAT_None) { return Type::AAT_None; }
-		if (String == Str::AAT_LocalSpaceBase) { return Type::AAT_LocalSpaceBase; }
-		if (String == Str::AAT_RotationOffsetMeshSpace) { return Type::AAT_RotationOffsetMeshSpace; }
-		return Type::AAT_MAX;
 	}
 
 	FORCEINLINE EAdditiveAnimationType ToBaseType(const FString &String)
 	{
-		if (String == Str::AAT_None) { return EAdditiveAnimationType::AAT_None; }
-		if (String == Str::AAT_LocalSpaceBase) { return EAdditiveAnimationType::AAT_LocalSpaceBase; }
-		if (String == Str::AAT_RotationOffsetMeshSpace) { return EAdditiveAnimationType::AAT_RotationOffsetMeshSpace; }
+		const Type& Enum = EMCsAdditiveAnimationType::Get().ToType(String);
+
+		if (Enum == Ref::AAT_None) { return EAdditiveAnimationType::AAT_None; }
+		if (Enum == Ref::AAT_LocalSpaceBase) { return EAdditiveAnimationType::AAT_LocalSpaceBase; }
+		if (Enum == Ref::AAT_RotationOffsetMeshSpace) { return EAdditiveAnimationType::AAT_RotationOffsetMeshSpace; }
 		return EAdditiveAnimationType::AAT_MAX;
 	}
 }
-
-#define ECS_ADDITIVE_ANIMATION_TYPE_MAX (uint8)ECsAdditiveAnimationType::AAT_MAX
-typedef ECsAdditiveAnimationType::Type TCsAdditiveAnimationType;
 
 #pragma endregion Anim

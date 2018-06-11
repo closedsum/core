@@ -499,7 +499,7 @@ struct FCsData_FpsWeapon_FireMode_Animation
 	bool LoopFireAnim;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
-	FCsFpsAnimMontage FireAnims;
+	FCsFpvAnimMontage FireAnims;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 	bool DoScaleFireAnim;
@@ -508,7 +508,7 @@ struct FCsData_FpsWeapon_FireMode_Animation
 	bool LoopAdsFireAnim;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
-	FCsFpsAnimMontage AdsFireAnims;
+	FCsFpvAnimMontage AdsFireAnims;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 	bool DoScaleAdsFireAnim;

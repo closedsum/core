@@ -1290,7 +1290,7 @@ void UCsCommon::ShuffleTArray_int32(TArray<int32>& InArray)
 	}
 }
 
-bool UCsCommon::IsValidFpsAnimMontageArray(TArray<FCsFpsAnimMontage> & InArray, const TCsViewType &ViewType, const bool &IsLow)
+bool UCsCommon::IsValidFpsAnimMontageArray(TArray<FCsFpvAnimMontage> & InArray, const TCsViewType &ViewType, const bool &IsLow)
 {
 	const int32 Count = InArray.Num();
 

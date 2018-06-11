@@ -183,8 +183,8 @@ void ACsData_ProjectileWeapon::StopAnimation(ASkeletalMeshActor* InActor, const 
 
 FCsAnimSequence* ACsData_ProjectileWeapon::GetFCsAnimSequence(const FECsWeaponFireMode &FireMode, const FECsWeaponAnim &AnimType) { return nullptr; }
 FCsAnimMontage* ACsData_ProjectileWeapon::GetFCsAnimMontage(const FECsWeaponFireMode &FireMode, const FECsWeaponAnim &AnimType) { return nullptr; }
-FCsFpsAnimSequence* ACsData_ProjectileWeapon::GetFCsFpsAnimSequence(const FECsWeaponFireMode &FireMode, const FECsWeaponAnim &AnimType) { return nullptr; }
-FCsFpsAnimMontage* ACsData_ProjectileWeapon::GetFCsFpsAnimMontage(const FECsWeaponFireMode &FireMode, const FECsWeaponAnim &AnimType) { return nullptr; }
+FCsFpvAnimSequence* ACsData_ProjectileWeapon::GetFCsFpvAnimSequence(const FECsWeaponFireMode &FireMode, const FECsWeaponAnim &AnimType) { return nullptr; }
+FCsFpvAnimMontage* ACsData_ProjectileWeapon::GetFCsFpvAnimMontage(const FECsWeaponFireMode &FireMode, const FECsWeaponAnim &AnimType) { return nullptr; }
 
 #pragma endregion Anims
 

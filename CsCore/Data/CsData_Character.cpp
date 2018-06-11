@@ -87,7 +87,7 @@ void ACsData_Character::GetAnim(UAnimSequence* &OutAnimSequence, UAnimMontage* &
 
 UAnimSequence* ACsData_Character::GetAnimSequence(const TCsViewType &ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index /*=0*/, const bool &IsLow /*=false*/) 
 { 
-	if (FCsFpsAnimSequence* Anim = GetFCsFpsAnimSequence(GripType, AnimType, Index))
+	if (FCsFpvAnimSequence* Anim = GetFCsFpvAnimSequence(GripType, AnimType, Index))
 		return Anim->Get(ViewType, IsLow);
 	return nullptr; 
 }
@@ -101,7 +101,7 @@ UAnimSequence* ACsData_Character::GetAnimSequence(const FECsWeaponGrip &GripType
 
 UAnimSequence* ACsData_Character::GetAnimSequence(const TCsViewType &ViewType, const FECsCharacterAnim &AnimType, const int32 &Index /*=0*/, const bool &IsLow /*=false*/)
 {
-	if (FCsFpsAnimSequence* Anim = GetFCsFpsAnimSequence(AnimType, Index))
+	if (FCsFpvAnimSequence* Anim = GetFCsFpvAnimSequence(AnimType, Index))
 		return Anim->Get(ViewType, IsLow);
 	return nullptr;
 }
@@ -115,8 +115,8 @@ UAnimSequence* ACsData_Character::GetAnimSequence(const FECsCharacterAnim &AnimT
 
 FCsAnimSequence* ACsData_Character::GetFCsAnimSequence(const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index /*=0*/) { return nullptr; }
 FCsAnimSequence* ACsData_Character::GetFCsAnimSequence(const FECsCharacterAnim &AnimType, const int32 &Index /*=0*/) { return nullptr; }
-FCsFpsAnimSequence* ACsData_Character::GetFCsFpsAnimSequence(const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index /*=0*/) { return nullptr; }
-FCsFpsAnimSequence* ACsData_Character::GetFCsFpsAnimSequence(const FECsCharacterAnim &AnimType, const int32 &Index /*=0*/) { return nullptr; }
+FCsFpvAnimSequence* ACsData_Character::GetFCsFpvAnimSequence(const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index /*=0*/) { return nullptr; }
+FCsFpvAnimSequence* ACsData_Character::GetFCsFpvAnimSequence(const FECsCharacterAnim &AnimType, const int32 &Index /*=0*/) { return nullptr; }
 
 #pragma endregion Sequence
 
@@ -125,7 +125,7 @@ FCsFpsAnimSequence* ACsData_Character::GetFCsFpsAnimSequence(const FECsCharacter
 
 UAnimMontage* ACsData_Character::GetAnimMontage(const TCsViewType &ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index /*=0*/, const bool &IsLow /*=false*/)
 {
-	if (FCsFpsAnimMontage* Anim = GetFCsFpsAnimMontage(GripType, AnimType, Index))
+	if (FCsFpvAnimMontage* Anim = GetFCsFpvAnimMontage(GripType, AnimType, Index))
 		return Anim->Get(ViewType, IsLow);
 	return nullptr;
 }
@@ -144,7 +144,7 @@ UAnimMontage* ACsData_Character::GetAnimMontage(const TCsViewType &ViewType, con
 
 UAnimMontage* ACsData_Character::GetAnimMontage(const TCsViewType &ViewType, const FECsCharacterAnim &AnimType, const int32 &Index /*=0*/, const bool &IsLow /*=false*/) 
 { 
-	if (FCsFpsAnimMontage* Anim = GetFCsFpsAnimMontage(AnimType, Index))
+	if (FCsFpvAnimMontage* Anim = GetFCsFpvAnimMontage(AnimType, Index))
 		return Anim->Get(ViewType, IsLow);
 	return nullptr;
 }
@@ -158,8 +158,8 @@ UAnimMontage* ACsData_Character::GetAnimMontage(const FECsCharacterAnim &AnimTyp
 
 FCsAnimMontage* ACsData_Character::GetFCsAnimMontage(const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index /*=0*/) { return nullptr; }
 FCsAnimMontage* ACsData_Character::GetFCsAnimMontage(const FECsCharacterAnim &AnimType, const int32 &Index /*=0*/) { return nullptr; }
-FCsFpsAnimMontage* ACsData_Character::GetFCsFpsAnimMontage(const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index /*=0*/) { return nullptr; }
-FCsFpsAnimMontage* ACsData_Character::GetFCsFpsAnimMontage(const FECsCharacterAnim &AnimType, const int32 &Index /*=0*/) { return nullptr; }
+FCsFpvAnimMontage* ACsData_Character::GetFCsFpvAnimMontage(const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index /*=0*/) { return nullptr; }
+FCsFpvAnimMontage* ACsData_Character::GetFCsFpvAnimMontage(const FECsCharacterAnim &AnimType, const int32 &Index /*=0*/) { return nullptr; }
 
 #pragma endregion Montage
 
@@ -168,7 +168,7 @@ FCsFpsAnimMontage* ACsData_Character::GetFCsFpsAnimMontage(const FECsCharacterAn
 
 UBlendSpace1D* ACsData_Character::GetBlendSpace1D(const TCsViewType &ViewType, const FECsWeaponGrip &GripType, const FECsCharacterBlendSpace &BlendType, const bool &IsLow /*=false*/) 
 {
-	if (FCsFpsBlendSpace1D* Blend = GetFCsFpsBlendSpace1D(GripType, BlendType))
+	if (FCsFpvBlendSpace1D* Blend = GetFCsFpvBlendSpace1D(GripType, BlendType))
 		return Blend->Get(ViewType, false);
 	return nullptr;
 }
@@ -189,8 +189,8 @@ UBlendSpace1D* ACsData_Character::GetBlendSpace1D(const FECsCharacterBlendSpace 
 
 FCsBlendSpace1D* ACsData_Character::GetFCsBlendSpace1D(const FECsWeaponGrip &GripType, const FECsCharacterBlendSpace &BlendType, const int32 &Index /*=0*/) { return nullptr; }
 FCsBlendSpace1D* ACsData_Character::GetFCsBlendSpace1D(const FECsCharacterBlendSpace &BlendType, const int32 &Index /*=0*/) { return nullptr; }
-FCsFpsBlendSpace1D* ACsData_Character::GetFCsFpsBlendSpace1D(const FECsWeaponGrip &GripType, const FECsCharacterBlendSpace &BlendType, const int32 &Index /*=0*/) { return nullptr; }
-FCsFpsBlendSpace1D* ACsData_Character::GetFCsFpsBlendSpace1D(const FECsCharacterBlendSpace &BlendType, const int32 &Index /*=0*/) { return nullptr; }
+FCsFpvBlendSpace1D* ACsData_Character::GetFCsFpvBlendSpace1D(const FECsWeaponGrip &GripType, const FECsCharacterBlendSpace &BlendType, const int32 &Index /*=0*/) { return nullptr; }
+FCsFpvBlendSpace1D* ACsData_Character::GetFCsFpvBlendSpace1D(const FECsCharacterBlendSpace &BlendType, const int32 &Index /*=0*/) { return nullptr; }
 
 #pragma endregion BlendSpace1D
 
@@ -204,8 +204,8 @@ UBlendSpace* ACsData_Character::GetBlendSpace(const FECsCharacterBlendSpace &Ble
 
 FCsBlendSpace* ACsData_Character::GetFCsBlendSpace(const FECsWeaponGrip &GripType, const FECsCharacterBlendSpace &BlendType, const int32 &Index /*=0*/) { return nullptr; }
 FCsBlendSpace* ACsData_Character::GetFCsBlendSpace(const FECsCharacterBlendSpace &BlendType, const int32 &Index /*=0*/) { return nullptr; }
-FCsFpsBlendSpace* ACsData_Character::GetFCsFpsBlendSpace(const FECsWeaponGrip &GripType, const FECsCharacterBlendSpace &BlendType, const int32 &Index /*=0*/) { return nullptr; }
-FCsFpsBlendSpace* ACsData_Character::GetFCsFpsBlendSpace(const FECsCharacterBlendSpace &BlendType, const int32 &Index /*=0*/) { return nullptr; }
+FCsFpvBlendSpace* ACsData_Character::GetFCsFpvBlendSpace(const FECsWeaponGrip &GripType, const FECsCharacterBlendSpace &BlendType, const int32 &Index /*=0*/) { return nullptr; }
+FCsFpvBlendSpace* ACsData_Character::GetFCsFpvBlendSpace(const FECsCharacterBlendSpace &BlendType, const int32 &Index /*=0*/) { return nullptr; }
 
 #pragma endregion BlendSpace
 

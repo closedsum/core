@@ -106,8 +106,8 @@ public:
 
 	virtual FCsAnimSequence* GetFCsAnimSequence(const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index = 0);
 	virtual FCsAnimSequence* GetFCsAnimSequence(const FECsCharacterAnim &AnimType, const int32 &Index = 0);
-	virtual FCsFpsAnimSequence* GetFCsFpsAnimSequence(const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index = 0);
-	virtual FCsFpsAnimSequence* GetFCsFpsAnimSequence(const FECsCharacterAnim &AnimType, const int32 &Index = 0);
+	virtual FCsFpvAnimSequence* GetFCsFpvAnimSequence(const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index = 0);
+	virtual FCsFpvAnimSequence* GetFCsFpvAnimSequence(const FECsCharacterAnim &AnimType, const int32 &Index = 0);
 
 #pragma endregion Sequence
 
@@ -122,8 +122,8 @@ public:
 	
 	virtual FCsAnimMontage* GetFCsAnimMontage(const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index = 0);
 	virtual FCsAnimMontage* GetFCsAnimMontage(const FECsCharacterAnim &AnimType, const int32 &Index = 0);
-	virtual FCsFpsAnimMontage* GetFCsFpsAnimMontage(const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index = 0);
-	virtual FCsFpsAnimMontage* GetFCsFpsAnimMontage(const FECsCharacterAnim &AnimType, const int32 &Index = 0);
+	virtual FCsFpvAnimMontage* GetFCsFpvAnimMontage(const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index = 0);
+	virtual FCsFpvAnimMontage* GetFCsFpvAnimMontage(const FECsCharacterAnim &AnimType, const int32 &Index = 0);
 
 #pragma endregion Montage
 
@@ -136,8 +136,8 @@ public:
 
 	virtual FCsBlendSpace1D* GetFCsBlendSpace1D(const FECsWeaponGrip &GripType, const FECsCharacterBlendSpace &BlendType, const int32 &Index = 0);
 	virtual FCsBlendSpace1D* GetFCsBlendSpace1D(const FECsCharacterBlendSpace &BlendType, const int32 &Index = 0);
-	virtual FCsFpsBlendSpace1D* GetFCsFpsBlendSpace1D(const FECsWeaponGrip &GripType, const FECsCharacterBlendSpace &BlendType, const int32 &Index = 0);
-	virtual FCsFpsBlendSpace1D* GetFCsFpsBlendSpace1D(const FECsCharacterBlendSpace &BlendType, const int32 &Index = 0);
+	virtual FCsFpvBlendSpace1D* GetFCsFpvBlendSpace1D(const FECsWeaponGrip &GripType, const FECsCharacterBlendSpace &BlendType, const int32 &Index = 0);
+	virtual FCsFpvBlendSpace1D* GetFCsFpvBlendSpace1D(const FECsCharacterBlendSpace &BlendType, const int32 &Index = 0);
 
 #pragma endregion BlendSpace1D
 
@@ -151,8 +151,8 @@ public:
 
 	virtual FCsBlendSpace* GetFCsBlendSpace(const FECsWeaponGrip &GripType, const FECsCharacterBlendSpace &BlendType, const int32 &Index = 0);
 	virtual FCsBlendSpace* GetFCsBlendSpace(const FECsCharacterBlendSpace &BlendType, const int32 &Index = 0);
-	virtual FCsFpsBlendSpace* GetFCsFpsBlendSpace(const FECsWeaponGrip &GripType, const FECsCharacterBlendSpace &BlendType, const int32 &Index = 0);
-	virtual FCsFpsBlendSpace* GetFCsFpsBlendSpace(const FECsCharacterBlendSpace &BlendType, const int32 &Index = 0);
+	virtual FCsFpvBlendSpace* GetFCsFpvBlendSpace(const FECsWeaponGrip &GripType, const FECsCharacterBlendSpace &BlendType, const int32 &Index = 0);
+	virtual FCsFpvBlendSpace* GetFCsFpvBlendSpace(const FECsCharacterBlendSpace &BlendType, const int32 &Index = 0);
 
 #pragma endregion BlendSpace
 

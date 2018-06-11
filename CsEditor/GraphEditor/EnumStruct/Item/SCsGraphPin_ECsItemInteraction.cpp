@@ -36,6 +36,3 @@ FText SCsGraphPin_ECsItemInteraction::OnGetTooltip(int32 EnumIndex)
 {
 	return OnGetTooltip_Internal<EMCsItemInteraction>(EnumIndex);
 }
-
-
-

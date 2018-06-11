@@ -298,12 +298,12 @@ void UCsAnimInstance::LoadAnim(const FString& MemberName, FCsAnimInstance_AnimMo
 	}
 }
 
-void UCsAnimInstance::LoadAnim(const FString& MemberName, const TCsViewType &ViewType, FCsAnimInstance_AnimSequence &Anim, FCsFpsAnimSequence* DataAnim)
+void UCsAnimInstance::LoadAnim(const FString& MemberName, const TCsViewType &ViewType, FCsAnimInstance_AnimSequence &Anim, FCsFpvAnimSequence* DataAnim)
 {
 	if (DataAnim &&
 		Anim.UseDataValueAsDefault)
 	{
-		UCsCommon_Load::LoadFCsFpsAnimSequence(MemberName, DataAnim, ViewType);
+		UCsCommon_Load::LoadFCsFpvAnimSequence(MemberName, DataAnim, ViewType);
 
 		if (UAnimSequence* Seq = DataAnim->Get(ViewType))
 		{
@@ -327,12 +327,12 @@ void UCsAnimInstance::LoadAnim(const FString& MemberName, const TCsViewType &Vie
 	}
 }
 
-void UCsAnimInstance::LoadAnim(const FString& MemberName, const TCsViewType &ViewType, FCsAnimInstance_AnimMontage &Anim, FCsFpsAnimMontage* DataAnim)
+void UCsAnimInstance::LoadAnim(const FString& MemberName, const TCsViewType &ViewType, FCsAnimInstance_AnimMontage &Anim, FCsFpvAnimMontage* DataAnim)
 {
 	if (DataAnim &&
 		Anim.UseDataValueAsDefault)
 	{
-		UCsCommon_Load::LoadFCsFpsAnimMontage(MemberName, DataAnim, ViewType);
+		UCsCommon_Load::LoadFCsFpvAnimMontage(MemberName, DataAnim, ViewType);
 
 		if (UAnimMontage* Seq = DataAnim->Get(ViewType))
 		{
@@ -415,12 +415,12 @@ void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, FCsAnimInstance_
 	}
 }
 
-void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, const TCsViewType &ViewType, FCsAnimInstance_BlendSpace1D &Blend, FCsFpsBlendSpace1D* DataBlend)
+void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, const TCsViewType &ViewType, FCsAnimInstance_BlendSpace1D &Blend, FCsFpvBlendSpace1D* DataBlend)
 {
 	if (DataBlend &&
 		Blend.UseDataValueAsDefault)
 	{
-		UCsCommon_Load::LoadFCsFpsBlendSpace1D(MemberName, DataBlend, ViewType);
+		UCsCommon_Load::LoadFCsFpvBlendSpace1D(MemberName, DataBlend, ViewType);
 
 		if (UBlendSpace1D* Space = DataBlend->Get(ViewType))
 		{
@@ -444,12 +444,12 @@ void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, const TCsViewTyp
 	}
 }
 
-void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, const TCsViewType &ViewType, FCsAnimInstance_BlendSpace &Blend, FCsFpsBlendSpace* DataBlend)
+void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, const TCsViewType &ViewType, FCsAnimInstance_BlendSpace &Blend, FCsFpvBlendSpace* DataBlend)
 {
 	if (DataBlend &&
 		Blend.UseDataValueAsDefault)
 	{
-		UCsCommon_Load::LoadFCsFpsBlendSpace(MemberName, DataBlend, ViewType);
+		UCsCommon_Load::LoadFCsFpvBlendSpace(MemberName, DataBlend, ViewType);
 
 		if (UBlendSpace* Space = DataBlend->Get(ViewType))
 		{

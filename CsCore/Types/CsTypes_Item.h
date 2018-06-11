@@ -56,19 +56,19 @@ namespace ECsItemCollection
 
 typedef ECsItemCollection::Type TCsItemCollection;
 
-struct CSCORE_API EMCsItemCollectionType : public TCsEnumMap<ECsItemCollection::Type>
+struct CSCORE_API EMCsItemCollection : public TCsEnumMap<ECsItemCollection::Type>
 {
 protected:
-	EMCsItemCollectionType() {}
-	EMCsItemCollectionType(const EMCsItemCollectionType &) = delete;
-	EMCsItemCollectionType(EMCsItemCollectionType &&) = delete;
+	EMCsItemCollection() {}
+	EMCsItemCollection(const EMCsItemCollection &) = delete;
+	EMCsItemCollection(EMCsItemCollection &&) = delete;
 public:
-	~EMCsItemCollectionType() {}
+	~EMCsItemCollection() {}
 private:
-	static EMCsItemCollectionType* Instance;
+	static EMCsItemCollection* Instance;
 
 public:
-	static EMCsItemCollectionType& Get();
+	static EMCsItemCollection& Get();
 };
 
 namespace ECsItemCollectionCached

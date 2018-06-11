@@ -11,13 +11,13 @@ EMCsItemType& EMCsItemType::Get()
 	return *Instance;
 }
 
-// ItemCollectionType
-EMCsItemCollectionType* EMCsItemCollectionType::Instance;
+// ItemCollection
+EMCsItemCollection* EMCsItemCollection::Instance;
 
-EMCsItemCollectionType& EMCsItemCollectionType::Get()
+EMCsItemCollection& EMCsItemCollection::Get()
 {
 	if (!Instance)
-		Instance = new EMCsItemCollectionType();
+		Instance = new EMCsItemCollection();
 	return *Instance;
 }
 

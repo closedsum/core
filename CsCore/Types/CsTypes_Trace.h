@@ -21,36 +21,34 @@ namespace ECsTraceType
 	};
 }
 
+typedef ECsTraceType::Type TCsTraceType;
+#define ECS_TRACE_TYPE_MAX (uint8)ECsTraceType::ECsTraceType_MAX
+
+struct CSCORE_API EMCsTraceType : public TCsEnumMap<ECsTraceType::Type>
+{
+protected:
+	EMCsTraceType() {}
+	EMCsTraceType(const EMCsTraceType &) = delete;
+	EMCsTraceType(EMCsTraceType &&) = delete;
+public:
+	~EMCsTraceType() {}
+private:
+	static EMCsTraceType* Instance;
+
+public:
+	static EMCsTraceType& Get();
+};
+
 namespace ECsTraceType
 {
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
-
-	namespace Str
+	namespace Ref
 	{
-		const TCsString Line = TCsString(TEXT("Line"), TEXT("line"));
-		const TCsString Sweep = TCsString(TEXT("Sweep"), TEXT("sweep"));
-		const TCsString Overlap = TCsString(TEXT("Overlap"), TEXT("overlap"));
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::Line) { return Str::Line.Value; }
-		if (EType == Type::Sweep) { return Str::Sweep.Value; }
-		if (EType == Type::Overlap) { return Str::Overlap.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::Line) { return Type::Line; }
-		if (String == Str::Sweep) { return Type::Sweep; }
-		if (String == Str::Overlap) { return Type::Overlap; }
-		return Type::ECsTraceType_MAX;
+		extern CSCORE_API const Type Line;
+		extern CSCORE_API const Type Sweep;
+		extern CSCORE_API const Type Overlap;
+		extern CSCORE_API const Type ECsTraceType_MAX;
 	}
 }
-
-#define ECS_TRACE_TYPE_MAX (uint8)ECsTraceType::ECsTraceType_MAX
-typedef ECsTraceType::Type TCsTraceType;
 
 UENUM(BlueprintType)
 namespace ECsTraceMethod
@@ -64,36 +62,34 @@ namespace ECsTraceMethod
 	};
 }
 
+typedef ECsTraceMethod::Type TCsTraceMethod;
+#define ECS_TRACE_METHOD_MAX (uint8)ECsTraceMethod::ECsTraceMethod_MAX
+
+struct CSCORE_API EMCsTraceMethod : public TCsEnumMap<ECsTraceMethod::Type>
+{
+protected:
+	EMCsTraceMethod() {}
+	EMCsTraceMethod(const EMCsTraceMethod &) = delete;
+	EMCsTraceMethod(EMCsTraceMethod &&) = delete;
+public:
+	~EMCsTraceMethod() {}
+private:
+	static EMCsTraceMethod* Instance;
+
+public:
+	static EMCsTraceMethod& Get();
+};
+
 namespace ECsTraceMethod
 {
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
-
 	namespace Str
 	{
-		const TCsString Test = TCsString(TEXT("Test"), TEXT("test"));
-		const TCsString Single = TCsString(TEXT("Single"), TEXT("single"));
-		const TCsString Multi = TCsString(TEXT("Multi"), TEXT("multi"));
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::Test) { return Str::Test.Value; }
-		if (EType == Type::Single) { return Str::Single.Value; }
-		if (EType == Type::Multi) { return Str::Multi.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::Test) { return Type::Test; }
-		if (String == Str::Single) { return Type::Single; }
-		if (String == Str::Multi) { return Type::Multi; }
-		return Type::ECsTraceMethod_MAX;
+		extern CSCORE_API const Type Test;
+		extern CSCORE_API const Type Single;
+		extern CSCORE_API const Type Multi;
+		extern CSCORE_API const Type ECsTraceMethod_MAX;
 	}
 }
-
-#define ECS_TRACE_METHOD_MAX (uint8)ECsTraceMethod::ECsTraceMethod_MAX
-typedef ECsTraceMethod::Type TCsTraceMethod;
 
 UENUM(BlueprintType)
 namespace ECsTraceQuery
@@ -107,39 +103,37 @@ namespace ECsTraceQuery
 	};
 }
 
+typedef ECsTraceQuery::Type TCsTraceQuery;
+#define ECS_TRACE_QUERY_MAX (uint8)ECsTraceQuery::ECsTraceQuery_MAX
+
+struct CSCORE_API EMCsTraceQuery : public TCsEnumMap<ECsTraceQuery::Type>
+{
+protected:
+	EMCsTraceQuery() {}
+	EMCsTraceQuery(const EMCsTraceQuery &) = delete;
+	EMCsTraceQuery(EMCsTraceQuery &&) = delete;
+public:
+	~EMCsTraceQuery() {}
+private:
+	static EMCsTraceQuery* Instance;
+
+public:
+	static EMCsTraceQuery& Get();
+};
+
 namespace ECsTraceQuery
 {
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
-
-	namespace Str
+	namespace Ref
 	{
-		const TCsString Channel = TCsString(TEXT("Channel"), TEXT("channel"));
-		const TCsString ObjectType = TCsString(TEXT("ObjectType"), TEXT("objecttype"));
-		const TCsString Profile = TCsString(TEXT("Profile"), TEXT("profile"));
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::Channel) { return Str::Channel.Value; }
-		if (EType == Type::ObjectType) { return Str::ObjectType.Value; }
-		if (EType == Type::Profile) { return Str::Profile.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::Channel) { return Type::Channel; }
-		if (String == Str::ObjectType) { return Type::ObjectType; }
-		if (String == Str::Profile) { return Type::Profile; }
-		return Type::ECsTraceQuery_MAX;
+		extern CSCORE_API const Type Channel;
+		extern CSCORE_API const Type ObjectType;
+		extern CSCORE_API const Type Profile;
+		extern CSCORE_API const Type ECsTraceQuery_MAX;
 	}
 }
 
-#define ECS_TRACE_QUERY_MAX (uint8)ECsTraceQuery::ECsTraceQuery_MAX
-typedef ECsTraceQuery::Type TCsTraceQuery;
-
 USTRUCT(BlueprintType)
-struct FCsTraceResponse
+struct CSCORE_API FCsTraceResponse
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -160,33 +154,28 @@ struct FCsTraceResponse
 	~FCsTraceResponse() {}
 
 	FCsTraceResponse() {}
-	FCsTraceResponse& operator=(const FCsTraceResponse& B)
+	
+	FORCEINLINE FCsTraceResponse& operator=(const FCsTraceResponse& B)
 	{
 		IsAllocated = B.IsAllocated;
 		bResult = B.bResult;
 
 		OutHits.Reset();
 
-		const int32 HitCount = B.OutHits.Num();
-
-		for (int32 I = 0; I < HitCount; ++I)
+		for (const FHitResult& Hit : B.OutHits)
 		{
-			OutHits.Add(B.OutHits[I]);
+			OutHits.Add(Hit);
 		}
 
-		OutOverlaps.Reset();
-
-		const int32 OverlapCount = B.OutOverlaps.Num();
-
-		for (int32 I = 0; I < OverlapCount; ++I)
+		for (const FOverlapResult& Overlap : B.OutOverlaps)
 		{
-			OutOverlaps.Add(B.OutOverlaps[I]);
+			OutOverlaps.Add(Overlap);
 		}
 		ElapsedTime = B.ElapsedTime;
 		return *this;
 	}
 
-	bool operator==(const FCsTraceResponse& B) const
+	FORCEINLINE bool operator==(const FCsTraceResponse& B) const
 	{
 		if (IsAllocated != B.IsAllocated)
 			return false;
@@ -201,12 +190,12 @@ struct FCsTraceResponse
 		return true;
 	}
 
-	bool operator!=(const FCsTraceResponse& B) const
+	FORCEINLINE bool operator!=(const FCsTraceResponse& B) const
 	{
 		return !(*this == B);
 	}
 
-	void Reset()
+	FORCEINLINE void Reset()
 	{
 		IsAllocated = false;
 		bResult = false;
@@ -221,7 +210,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsManagerTrace_OnR
 DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsManagerTrace_OnResponse, FCsTraceResponse*);
 
 USTRUCT(BlueprintType)
-struct FCsTraceRequest
+struct CSCORE_API FCsTraceRequest
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -290,7 +279,7 @@ struct FCsTraceRequest
 	}
 	~FCsTraceRequest() {}
 
-	FCsTraceRequest& operator=(const FCsTraceRequest& B)
+	FORCEINLINE FCsTraceRequest& operator=(const FCsTraceRequest& B)
 	{
 		IsAllocated = B.IsAllocated;
 		StaleTime = B.StaleTime;
@@ -310,7 +299,7 @@ struct FCsTraceRequest
 		return *this;
 	}
 
-	bool operator==(const FCsTraceRequest& B) const
+	FORCEINLINE bool operator==(const FCsTraceRequest& B) const
 	{
 		return	IsAllocated == B.IsAllocated &&
 			StaleTime == B.StaleTime &&
@@ -325,12 +314,12 @@ struct FCsTraceRequest
 			ProfileName == B.ProfileName;
 	}
 
-	bool operator!=(const FCsTraceRequest& B) const
+	FORCEINLINE bool operator!=(const FCsTraceRequest& B) const
 	{
 		return !(*this == B);
 	}
 
-	void Reset()
+	FORCEINLINE void Reset()
 	{
 		bProcessing = false;
 		IsAllocated = false;
@@ -362,14 +351,14 @@ struct FCsTraceRequest
 		ResetHandle();
 	}
 
-	void CopyHandle(const FTraceHandle &InHandle)
+	FORCEINLINE void CopyHandle(const FTraceHandle &InHandle)
 	{
 		Handle._Handle			 = InHandle._Handle;
 		Handle._Data.FrameNumber = InHandle._Data.FrameNumber;
 		Handle._Data.Index		 = InHandle._Data.Index;
 	}
 
-	void ResetHandle()
+	FORCEINLINE void ResetHandle()
 	{
 		Handle._Handle			 = 0;
 		Handle._Data.FrameNumber = 0;

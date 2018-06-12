@@ -285,7 +285,7 @@ bool ACsManager_Trace::ProcessRequest(FCsTraceRequest* Request)
 	Request->bProcessing = true;
 
 	EAsyncTraceType AsyncTraceType	   = EAsyncTraceType::Single;
-	const FString& TraceMethodAsString = ECsTraceMethod::ToString(Request->Method);
+	const FString& TraceMethodAsString = EMCsTraceMethod::Get().ToString(Request->Method);
 
 	// Test
 	if (Request->Method == ECsTraceMethod::Test)

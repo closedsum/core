@@ -21,33 +21,32 @@ namespace ECsSoundType
 	};
 }
 
+typedef ECsSoundType::Type TCsSoundType;
+
+struct CSCORE_API EMCsSoundType : public TCsEnumMap<ECsSoundType::Type>
+{
+protected:
+	EMCsSoundType() {}
+	EMCsSoundType(const EMCsSoundType &) = delete;
+	EMCsSoundType(EMCsSoundType &&) = delete;
+public:
+	~EMCsSoundType() {}
+private:
+	static EMCsSoundType* Instance;
+
+public:
+	static EMCsSoundType& Get();
+};
+
 namespace ECsSoundType
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
+	namespace Ref
 	{
-		const TCsString s2D = TCsString(TEXT("s2D"), TEXT("s2d"), TEXT("2d"));
-		const TCsString s3D = TCsString(TEXT("s3D"), TEXT("s3d"), TEXT("3d"));
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::s2D) { return Str::s2D.Value; }
-		if (EType == Type::s3D) { return Str::s3D.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::s2D) { return Type::s2D; }
-		if (String == Str::s3D) { return Type::s3D; }
-		return Type::ECsSoundType_MAX;
+		extern CSCORE_API const Type s2D;
+		extern CSCORE_API const Type s3D;
+		extern CSCORE_API const Type ECsSoundType_MAX;
 	}
 }
-
-#define ECS_SOUND_TYPE_MAX (uint8)ECsSoundType::ECsSoundType_MAX
-typedef ECsSoundType::Type TCsSoundType;
 
 UENUM(BlueprintType)
 namespace ECsSoundPriority
@@ -62,6 +61,23 @@ namespace ECsSoundPriority
 		ECsSoundPriority_MAX UMETA(Hidden),
 	};
 }
+
+typedef ECsSoundPriority::Type TCsSoundPriority;
+
+struct CSCORE_API EMCsSoundPriority : public TCsEnumMap<ECsSoundPriority::Type>
+{
+protected:
+	EMCsSoundPriority() {}
+	EMCsSoundPriority(const EMCsSoundPriority &) = delete;
+	EMCsSoundPriority(EMCsSoundPriority &&) = delete;
+public:
+	~EMCsSoundPriority() {}
+private:
+	static EMCsSoundPriority* Instance;
+
+public:
+	static EMCsSoundPriority& Get();
+};
 
 namespace ECsSoundPriority
 {
@@ -98,7 +114,7 @@ namespace ECsSoundPriority
 }
 
 #define ECS_SOUND_PRIORITY_MAX (uint8)ECsSoundPriority::ECsSoundPriority_MAX
-typedef ECsSoundPriority::Type TCsSoundPriority;
+
 
 USTRUCT(BlueprintType)
 struct FCsSoundElement

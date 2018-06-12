@@ -41,49 +41,77 @@ enum class ECsWidgetFocus : uint8
 // 1 (2^0 Mouse) + 2 (2^1 Keyboard) + 4 (2^2 Controller)
 #define ECS_WIDGET_FOCUS_ALL 7
 
-namespace ECsWidgetActorType
+// WidgetActorType
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsWidgetActorType : public FECsEnum_uint8
 {
-	enum Type : uint8;
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsWidgetActorType() {}
+	FECsWidgetActorType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsWidgetActorType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsWidgetActorType() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsWidgetActorType& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-typedef ECsWidgetActorType::Type TCsWidgetActorType;
-
-// WidgetActorTypeToString
-typedef const FString&(*TCsWidgetActorTypeToString)(const TCsWidgetActorType&);
-// StringToWidgetActorType
-typedef TCsWidgetActorType(*TCsStringToWidgetActorType)(const FString&);
-
-#define CS_DECLARE_WIDGET_ACTOR_TYPE	TCsWidgetActorType WidgetActorType_MAX; \
-										uint8 WIDGET_ACTOR_TYPE_MAX; \
-										TCsWidgetActorTypeToString WidgetActorTypeToString; \
-										TCsStringToWidgetActorType StringToWidgetActorType;
-
-#define CS_DEFINE_WIDGET_ACTOR_TYPE	WidgetActorType_MAX = ECsWidgetActorType::ECsWidgetActorType_MAX;\
-									WIDGET_ACTOR_TYPE_MAX = (uint8)WidgetActorType_MAX \
-									WidgetActorTypeToString = &ECsWidgetActorType::ToString; \
-									StringToWidgetActorType = &ECsWidgetActorType::ToType;
-
-namespace ECsWidgetType
+struct CSCORE_API EMCsWidgetActorType : public TCsEnumStructMap<FECsWidgetActorType, uint8>
 {
-	enum Type : uint8;
+protected:
+	EMCsWidgetActorType() {}
+	EMCsWidgetActorType(const EMCsWidgetActorType &) = delete;
+	EMCsWidgetActorType(EMCsWidgetActorType &&) = delete;
+public:
+	~EMCsWidgetActorType() {}
+private:
+	static EMCsWidgetActorType* Instance;
+
+public:
+	static EMCsWidgetActorType& Get();
+};
+
+// WidgetType
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsWidgetType : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsWidgetType() {}
+	FECsWidgetType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsWidgetType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsWidgetType() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsWidgetType& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-typedef ECsWidgetType::Type TCsWidgetType;
+struct CSCORE_API EMCsWidgetType : public TCsEnumStructMap<FECsWidgetType, uint8>
+{
+protected:
+	EMCsWidgetType() {}
+	EMCsWidgetType(const EMCsWidgetType &) = delete;
+	EMCsWidgetType(EMCsWidgetType &&) = delete;
+public:
+	~EMCsWidgetType() {}
+private:
+	static EMCsWidgetType* Instance;
 
-// WidgetTypeToString
-typedef const FString&(*TCsWidgetTypeToString)(const TCsWidgetType&);
-// StringToWidgetType
-typedef const TCsWidgetType&(*TCsStringToWidgetType)(const FString&);
-
-#define CS_DECLARE_WIDGET_TYPE	TCsWidgetType WidgetType_MAX; \
-								uint8 WIDGET_TYPE_MAX; \
-								TCsWidgetTypeToString WidgetTypeToString; \
-								TCsStringToWidgetType StringToWidgetType;
-
-#define CS_DEFINE_WIDGET_TYPE	WidgetType_MAX = ECsWidgetType::ECsWidgetType_MAX;\
-								WIDGET_TYPE_MAX = (uint8)WidgetType_MAX; \
-								WidgetTypeToString = &ECsWidgetType::ToString; \
-								StringToWidgetType = &ECsWidgetType::ToType;
+public:
+	static EMCsWidgetType& Get();
+};
 
 UENUM(BlueprintType)
 namespace ECsSimpleWidgetType

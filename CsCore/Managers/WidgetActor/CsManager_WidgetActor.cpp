@@ -33,8 +33,6 @@ namespace ECsManagerWidgetActorCached
 
 ACsManager_WidgetActor::ACsManager_WidgetActor(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	WidgetActorTypeToString = nullptr;
-
 	PoolSize = 1;
 }
 
@@ -59,13 +57,6 @@ ACsManager_WidgetActor::ACsManager_WidgetActor(const FObjectInitializer& ObjectI
 		return Cast<ACsGameState>(GetMyOwner())->Manager_WidgetActor;
 	}
 	return nullptr;
-}
-
-void ACsManager_WidgetActor::SetWidgetActorType(const TCsWidgetActorType &InWidgetActorType_MAX, TCsWidgetActorTypeToString InWidgetActorTypeToString)
-{
-	WidgetActorType_MAX		= InWidgetActorType_MAX;
-	WIDGET_ACTOR_TYPE_MAX   = (uint8)InWidgetActorType_MAX;
-	WidgetActorTypeToString = InWidgetActorTypeToString;
 }
 
 void ACsManager_WidgetActor::Clear()
@@ -102,7 +93,7 @@ void ACsManager_WidgetActor::Destroyed()
 
 void ACsManager_WidgetActor::CreatePool(const TSubclassOf<class UObject> &ObjectClass, const uint8 &Type, const int32 &Size)
 {
-	const TCsWidgetActorType ClassType = (TCsWidgetActorType)Type;
+	const FECsWidgetActorType& ClassType = EMCsWidgetActorType::Get().GetEnumAt(Type);
 
 	PoolSizes.Add(ClassType, Size);
 
@@ -143,7 +134,7 @@ void ACsManager_WidgetActor::AddToActivePool(UObject* InObject, const uint8& Typ
 
 	checkf(Actor, TEXT("ACsManager_WidgetActor::AddToActivePool: InObject (%s) is NOT type ACsInteraciveActor."), *InObject->GetClass()->GetName());
 
-	const TCsWidgetActorType ClassType = (TCsWidgetActorType)Type;
+	const FECsWidgetActorType& ClassType = EMCsWidgetActorType::Get().GetEnumAt(Type);
 
 	Actor->Cache.IsAllocated = true;
 
@@ -166,7 +157,7 @@ void ACsManager_WidgetActor::OnTick(const float &DeltaSeconds)
 
 	for (int32 I = PoolCount - 1; I >= 0; --I)
 	{
-		const TCsWidgetActorType Type	   = (TCsWidgetActorType)I;
+		const FECsWidgetActorType& Type	   = EMCsWidgetActorType::Get().GetEnumAt(I);
 		TArray<ACsWidgetActor*>* ActorsPtr = ActiveActors.Find(Type);
 
 		const int32 ActorCount = ActorsPtr->Num();
@@ -222,21 +213,21 @@ void ACsManager_WidgetActor::OnTick(const float &DeltaSeconds)
 
 int32 ACsManager_WidgetActor::GetActivePoolSize(const uint8 &Type)
 {
-	TArray<ACsWidgetActor*>* ActorsPtr = ActiveActors.Find((TCsWidgetActorType)Type);
+	TArray<ACsWidgetActor*>* ActorsPtr = ActiveActors.Find(EMCsWidgetActorType::Get().GetEnumAt(Type));
 
 	if (!ActorsPtr)
 		return CS_EMPTY;
 	return ActorsPtr->Num();
 }
 
-const TArray<class ACsWidgetActor*>* ACsManager_WidgetActor::GetActors(const TCsWidgetActorType& Type)
+const TArray<class ACsWidgetActor*>* ACsManager_WidgetActor::GetActors(const FECsWidgetActorType& Type)
 {
 	return Pools.Find(Type);
 }
 
 bool ACsManager_WidgetActor::IsExhausted(const uint8 &Type)
 {
-	const TCsWidgetActorType ClassType = (TCsWidgetActorType)Type;
+	const FECsWidgetActorType& ClassType = EMCsWidgetActorType::Get().GetEnumAt(Type);
 
 	TArray<ACsWidgetActor*>* PoolPtr = Pools.Find(ClassType);
 
@@ -255,7 +246,7 @@ void ACsManager_WidgetActor::LogTransaction(const FString &FunctionName, const T
 		const FString& TransactionAsString = ECsPoolTransaction::ToActionString(Transaction);
 
 		const FString ActorName		= Actor->GetName();
-		const FString TypeAsString	= (*WidgetActorTypeToString)((TCsWidgetActorType)Actor->Cache.Type);
+		const FString& TypeAsString	= EMCsWidgetActorType::Get().GetEnumAt(Actor->Cache.Type).Name;
 		const float CurrentTime		= GetWorld()->GetTimeSeconds();
 		const UObject* ActorOwner	= Actor->Cache.GetOwner();
 		const FString OwnerName		= ActorOwner ? ActorOwner->GetName() : ECsCached::Str::None;
@@ -286,7 +277,7 @@ void ACsManager_WidgetActor::LogTransaction(const FString &FunctionName, const T
 // Allocate / DeAllocate
 #pragma region
 
-ACsWidgetActor* ACsManager_WidgetActor::Allocate(const TCsWidgetActorType &ClassType)
+ACsWidgetActor* ACsManager_WidgetActor::Allocate(const FECsWidgetActorType &ClassType)
 {
 	TArray<ACsWidgetActor*>* WidgetPool = Pools.Find(ClassType);
 	const uint8 Size					= *(PoolSizes.Find(ClassType));
@@ -303,19 +294,19 @@ ACsWidgetActor* ACsManager_WidgetActor::Allocate(const TCsWidgetActorType &Class
 			return Widget;
 		}
 	}
-	checkf(0, TEXT("ACsManager_WidgetActor::Allocate: Pool: %s is exhausted"), *(*WidgetActorTypeToString(ClassType)));
+	checkf(0, TEXT("ACsManager_WidgetActor::Allocate: Pool: %s is exhausted"), *(ClassType.Name));
 	return nullptr;
 }
 
 void ACsManager_WidgetActor::DeAllocate(const uint8 &Type, const int32 &Index)
 {
-	const TCsWidgetActorType ClassType = (TCsWidgetActorType)Type;
+	const FECsWidgetActorType& ClassType = EMCsWidgetActorType::Get().GetEnumAt(Type);
 
 	TArray<ACsWidgetActor*>* Actors = ActiveActors.Find(ClassType);
 
 	if (!Actors)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_WidgetActor::DeAllocate: WidgetActor of Type: %s at PoolIndex: %d is already deallocated."), *((*WidgetActorTypeToString)(ClassType)), Index);
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_WidgetActor::DeAllocate: WidgetActor of Type: %s at PoolIndex: %d is already deallocated."), *(ClassType.Name), Index);
 		return;
 	}
 
@@ -341,7 +332,7 @@ void ACsManager_WidgetActor::DeAllocate(const uint8 &Type, const int32 &Index)
 #if WITH_EDITOR
 			OnDeAllocateEX_ScriptEvent.Broadcast(Index, I, Actor->Cache.Type);
 #endif // #if WITH_EDITOR
-			OnDeAllocateEX_Event.Broadcast(Index, I, (TCsWidgetActorType)Actor->Cache.Type);
+			OnDeAllocateEX_Event.Broadcast(Index, I, EMCsWidgetActorType::Get().GetEnumAt(Actor->Cache.Type));
 			return;
 		}
 	}
@@ -353,16 +344,16 @@ void ACsManager_WidgetActor::DeAllocate(const uint8 &Type, const int32 &Index)
 		// Reset ActiveIndex
 		Actor->Cache.SetActiveIndex(I);
 	}
-	UE_LOG(LogCs, Warning, TEXT("ACsManager_WidgetActor::DeAllocate: WidgetActor of Type: %s at PoolIndex: %d is already deallocated."), *((*WidgetActorTypeToString)(ClassType)), Index);
+	UE_LOG(LogCs, Warning, TEXT("ACsManager_WidgetActor::DeAllocate: WidgetActor of Type: %s at PoolIndex: %d is already deallocated."), *(ClassType.Name), Index);
 }
 
 void ACsManager_WidgetActor::DeAllocateAll()
 {
-	const uint8 Count = (uint8)WidgetActorType_MAX;
+	const int32& Count = EMCsWidgetActorType::Get().Num();
 
-	for (uint8 I = 0; I < WIDGET_ACTOR_TYPE_MAX; ++I)
+	for (uint8 I = 0; I < Count; ++I)
 	{
-		const TCsWidgetActorType Type = (TCsWidgetActorType)I;
+		const FECsWidgetActorType& Type = EMCsWidgetActorType::Get().GetEnumAt(I);
 
 		TArray<ACsWidgetActor*>* Actors = ActiveActors.Find(Type);
 
@@ -408,50 +399,50 @@ FCsWidgetActorPayload* ACsManager_WidgetActor::AllocatePayload()
 // Display
 #pragma region
 
-ACsWidgetActor* ACsManager_WidgetActor::Display(const TCsWidgetActorType &Type, FCsWidgetActorPayload* Payload, UObject* InOwner, UObject* Parent)
+ACsWidgetActor* ACsManager_WidgetActor::Display(const FECsWidgetActorType &Type, FCsWidgetActorPayload* Payload, UObject* InOwner, UObject* Parent)
 {
 	ACsWidgetActor* Widget = Allocate(Type);
 
-	Widget->Allocate(GetActivePoolSize((uint8)Type), Payload, InOwner, Parent);
+	Widget->Allocate(GetActivePoolSize(Type.Value), Payload, InOwner, Parent);
 	
 	LogTransaction(ECsManagerWidgetActorCached::Str::Display, ECsPoolTransaction::Allocate, Widget);
 
-	AddToActivePool(Widget, (uint8)Type);
+	AddToActivePool(Widget, Type.Value);
 	Payload->Reset();
 	return Widget;
 }
 
-ACsWidgetActor* ACsManager_WidgetActor::Display(const TCsWidgetActorType &Type, FCsWidgetActorPayload* Payload, UObject* InOwner)
+ACsWidgetActor* ACsManager_WidgetActor::Display(const FECsWidgetActorType &Type, FCsWidgetActorPayload* Payload, UObject* InOwner)
 {
 	return Display(Type, Payload, InOwner, nullptr);
 }
 
-ACsWidgetActor* ACsManager_WidgetActor::Display(const TCsWidgetActorType &Type, FCsWidgetActorPayload* Payload)
+ACsWidgetActor* ACsManager_WidgetActor::Display(const FECsWidgetActorType &Type, FCsWidgetActorPayload* Payload)
 {
 	return Display(Type, Payload, nullptr, nullptr);
 }
 
 template<typename T>
-void ACsManager_WidgetActor::Display(const TCsWidgetActorType &Type, ACsWidgetActor* OutWidgetActor, FCsWidgetActorPayload* Payload, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsManager_WidgetActor::Display(const FECsWidgetActorType &Type, ACsWidgetActor* OutWidgetActor, FCsWidgetActorPayload* Payload, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
 	OutWidgetActor = Allocate(Type);
 
-	OutWidgetActor->Allocate<T>(GetActivePoolSize((uint8)Type), Payload, InOwner, Parent, InObject, OnDeAllocate);
+	OutWidgetActor->Allocate<T>(GetActivePoolSize(Type.Value), Payload, InOwner, Parent, InObject, OnDeAllocate);
 
 	LogTransaction(ECsManagerWidgetActorCached::Str::Display, ECsPoolTransaction::Allocate, OutWidgetActor);
 
-	AddToActivePool(Widget, (uint8)Type);
+	AddToActivePool(Widget, Type.Value);
 	Payload->Reset();
 }
 
 template<typename T>
-void ACsManager_WidgetActor::Display(const TCsWidgetActorType &Type, ACsWidgetActor* OutWidgetActor, FCsWidgetActorPayload* Payload, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsManager_WidgetActor::Display(const FECsWidgetActorType &Type, ACsWidgetActor* OutWidgetActor, FCsWidgetActorPayload* Payload, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
 	Display<T>(Type, OutWidgetActor, Payload, nullptr, InOwner, InObject, OnDeAllocate);
 }
 
 template<typename T>
-void ACsManager_WidgetActor::Display(const TCsWidgetActorType &Type, ACsWidgetActor* OutWidgetActor, FCsWidgetActorPayload* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsManager_WidgetActor::Display(const FECsWidgetActorType &Type, ACsWidgetActor* OutWidgetActor, FCsWidgetActorPayload* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
 	Display<T>(Type, OutWidgetActor, Payload, nullptr, nullptr, InObject, OnDeAllocate);
 }

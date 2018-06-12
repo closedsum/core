@@ -11,6 +11,6 @@ ACsData_UI::ACsData_UI(const FObjectInitializer& ObjectInitializer)
 // Widgets
 #pragma region
 
-class UBlueprintGeneratedClass* ACsData_UI::GetWidget(const TCsWidgetType& WidgetType) { return nullptr; }
+class UBlueprintGeneratedClass* ACsData_UI::GetWidget(const FECsWidgetType& WidgetType) { return nullptr; }
 
 #pragma endregion Widgets

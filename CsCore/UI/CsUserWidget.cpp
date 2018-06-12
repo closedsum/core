@@ -105,16 +105,16 @@ void UCsUserWidget::Hide()
 // Get
 #pragma region
 
-UCsUserWidget* UCsUserWidget::GetChildWidget(const TCsWidgetType &WidgetType)
+UCsUserWidget* UCsUserWidget::GetChildWidget(const FECsWidgetType &WidgetType)
 {
 	TArray<UCsUserWidget*>* Widgets = ChildWidgetsMap.Find(WidgetType);
 
 	return (*Widgets)[CS_FIRST];
 }
 
-UCsUserWidget* UCsUserWidget::GetChildWidget_Script(const uint8 &WidgetType){ return GetChildWidget((TCsWidgetType)WidgetType); }
+UCsUserWidget* UCsUserWidget::GetChildWidget_Script(const uint8 &WidgetType){ return GetChildWidget(EMCsWidgetType::Get().GetEnumAt(WidgetType)); }
 
-UCsUserWidget* UCsUserWidget::GetActiveChildWidget(const TCsWidgetType &WidgetType)
+UCsUserWidget* UCsUserWidget::GetActiveChildWidget(const FECsWidgetType &WidgetType)
 {
 	TArray<UCsUserWidget*>* Widgets = ActiveChildWidgetsMap.Find(WidgetType);
 
@@ -125,11 +125,11 @@ UCsUserWidget* UCsUserWidget::GetActiveChildWidget(const TCsWidgetType &WidgetTy
 	return (*Widgets)[CS_FIRST];
 }
 
-UCsUserWidget* UCsUserWidget::GetActiveChildWidget_Script(const uint8 &WidgetType) { return GetActiveChildWidget((TCsWidgetType)WidgetType); }
+UCsUserWidget* UCsUserWidget::GetActiveChildWidget_Script(const uint8 &WidgetType) { return GetActiveChildWidget(EMCsWidgetType::Get().GetEnumAt(WidgetType)); }
 
 #pragma endregion Get
 
-void UCsUserWidget::SetChildFocus(const TCsWidgetType &WidgetType, const int32 &InFocus)
+void UCsUserWidget::SetChildFocus(const FECsWidgetType &WidgetType, const int32 &InFocus)
 {
 	if (UCsUserWidget* Widget = GetActiveChildWidget(WidgetType))
 	{
@@ -137,7 +137,7 @@ void UCsUserWidget::SetChildFocus(const TCsWidgetType &WidgetType, const int32 &
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsUserWidget::SetChildFocus(%s): Widget: %s is NOT Active."), *GetName(), *((*WidgetTypeToString)(WidgetType)));
+		UE_LOG(LogCs, Warning, TEXT("UCsUserWidget::SetChildFocus(%s): Widget: %s is NOT Active."), *GetName(), *(WidgetType.Name));
 	}
 }
 
@@ -147,11 +147,11 @@ void UCsUserWidget::SetChildFocus(const TCsWidgetType &WidgetType, const int32 &
 	// Open
 #pragma region
 
-bool UCsUserWidget::OpenChild(const TCsWidgetType &WidgetType)
+bool UCsUserWidget::OpenChild(const FECsWidgetType &WidgetType)
 {
 	if (UCsUserWidget* Widget = GetActiveChildWidget(WidgetType))
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsUserWidget::OpenChild: Attempting to open widget: %s but it is already open."), *((*WidgetTypeToString)(WidgetType)));
+		UE_LOG(LogCs, Warning, TEXT("UCsUserWidget::OpenChild: Attempting to open widget: %s but it is already open."), *(WidgetType.Name));
 		return false;
 	}
 
@@ -198,23 +198,23 @@ bool UCsUserWidget::OpenChild(const TCsWidgetType &WidgetType)
 	return true;
 }
 
-bool UCsUserWidget::OpenChild_Script(const uint8 &WidgetType) { return OpenChild((TCsWidgetType)WidgetType); }
+bool UCsUserWidget::OpenChild_Script(const uint8 &WidgetType) { return OpenChild(EMCsWidgetType::Get().GetEnumAt(WidgetType)); }
 
 #pragma endregion Open
 
 	// Close
 #pragma region
 
-bool UCsUserWidget::IsChildOpened(const TCsWidgetType &WidgetType) { return GetActiveChildWidget(WidgetType) != nullptr; }
-bool UCsUserWidget::IsChildOpened_Script(const uint8 &WidgetType) { return IsChildOpened((TCsWidgetType)WidgetType); }
+bool UCsUserWidget::IsChildOpened(const FECsWidgetType &WidgetType) { return GetActiveChildWidget(WidgetType) != nullptr; }
+bool UCsUserWidget::IsChildOpened_Script(const uint8 &WidgetType) { return IsChildOpened(EMCsWidgetType::Get().GetEnumAt(WidgetType)); }
 
-bool UCsUserWidget::CloseChild(const TCsWidgetType &WidgetType)
+bool UCsUserWidget::CloseChild(const FECsWidgetType &WidgetType)
 {
 	UCsUserWidget* Widget = GetActiveChildWidget(WidgetType);
 
 	if (!Widget)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsUserWidget::CloseChild: Attempting to close menu: %s but it is NOT open."), *((*WidgetTypeToString)(WidgetType)));
+		UE_LOG(LogCs, Warning, TEXT("UCsUserWidget::CloseChild: Attempting to close menu: %s but it is NOT open."), *(WidgetType.Name));
 		return false;
 	}
 
@@ -261,15 +261,11 @@ bool UCsUserWidget::CloseChild(const TCsWidgetType &WidgetType)
 				Controller->SetCurrentInputActionMap(Rule->Set);
 			}
 			// ReApply Open for any Widgets that are still open
-			TArray<TCsWidgetType> Keys;
+			TArray<FECsWidgetType> Keys;
 			ActiveChildWidgetsMap.GetKeys(Keys);
 
-			const int32 KeyCount = Keys.Num();
-
-			for (int32 I = 0; I < KeyCount; ++I)
+			for (const FECsWidgetType& Key : Keys)
 			{
-				const TCsWidgetType& Key = Keys[I];
-
 				if (Key == WidgetType)
 					continue;
 
@@ -294,15 +290,11 @@ bool UCsUserWidget::CloseChild(const TCsWidgetType &WidgetType)
 				Controller->bShowMouseCursor = *Rule;
 			}
 			// ReApply Open for any Widgets that are still open
-			TArray<TCsWidgetType> Keys;
+			TArray<FECsWidgetType> Keys;
 			ActiveChildWidgetsMap.GetKeys(Keys);
 
-			const int32 KeyCount = Keys.Num();
-
-			for (int32 I = 0; I < KeyCount; ++I)
+			for (const FECsWidgetType& Key : Keys)
 			{
-				const TCsWidgetType& Key = Keys[I];
-
 				if (Key == WidgetType)
 					continue;
 
@@ -328,16 +320,16 @@ bool UCsUserWidget::CloseChild(const TCsWidgetType &WidgetType)
 	return true;
 }
 
-bool UCsUserWidget::CloseChild_Script(const uint8 &WidgetType) { return CloseChild((TCsWidgetType)WidgetType); }
+bool UCsUserWidget::CloseChild_Script(const uint8 &WidgetType) { return CloseChild(EMCsWidgetType::Get().GetEnumAt(WidgetType)); }
 
-void UCsUserWidget::CloseAllChildrenExcept(const TCsWidgetType &WidgetType)
+void UCsUserWidget::CloseAllChildrenExcept(const FECsWidgetType &WidgetType)
 {
 	const int32 Count = ActiveChildWidgets.Num();
 
 	for (int32 I = Count - 1; I >= 0; --I)
 	{
-		UCsUserWidget* Widget		    = ActiveChildWidgets[I];
-		const TCsWidgetType& ActiveType = Widget->Type;
+		UCsUserWidget* Widget		     = ActiveChildWidgets[I];
+		const FECsWidgetType& ActiveType = Widget->Type;
 
 		if (WidgetType == ActiveType)
 			continue;
@@ -356,7 +348,7 @@ void UCsUserWidget::CloseAllChildrenExcept(const TCsWidgetType &WidgetType)
 
 	for (int32 I = 0; I < TypeCount; ++I)
 	{
-		const TCsWidgetType& ActiveType = ChildWidgetTypes[I];
+		const FECsWidgetType& ActiveType = ChildWidgetTypes[I];
 
 		if (WidgetType == ActiveType)
 			continue;
@@ -366,10 +358,10 @@ void UCsUserWidget::CloseAllChildrenExcept(const TCsWidgetType &WidgetType)
 	}
 }
 
-void UCsUserWidget::CloseAllChildrenExcept_Script(const uint8 &WidgetType) { CloseAllChildrenExcept((TCsWidgetType)WidgetType); }
+void UCsUserWidget::CloseAllChildrenExcept_Script(const uint8 &WidgetType) { CloseAllChildrenExcept(EMCsWidgetType::Get().GetEnumAt(WidgetType)); }
 
-bool UCsUserWidget::IsChildClosed(const TCsWidgetType &WidgetType) { return GetActiveChildWidget(WidgetType) == nullptr; }
-bool UCsUserWidget::IsChildClosed_Script(const uint8 &WidgetType) { return IsChildClosed((TCsWidgetType)WidgetType); }
+bool UCsUserWidget::IsChildClosed(const FECsWidgetType &WidgetType) { return GetActiveChildWidget(WidgetType) == nullptr; }
+bool UCsUserWidget::IsChildClosed_Script(const uint8 &WidgetType) { return IsChildClosed(EMCsWidgetType::Get().GetEnumAt(WidgetType)); }
 
 #pragma endregion Close
 

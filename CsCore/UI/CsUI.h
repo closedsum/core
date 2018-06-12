@@ -17,16 +17,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUI_OnLastTick, c
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUI_OnAddWidget, class UCsUserWidget*, Widget);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUI_OnAddWidgetActor, class ACsWidgetActor*, WidgetActor);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUI_OnOpen, const uint8&, WidgetType);
-DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsUI_OnOpen, const TEnumAsByte<ECsWidgetType::Type>&);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUI_OnClose, const uint8&, WidgetType);
-DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsUI_OnClose, const TEnumAsByte<ECsWidgetType::Type>&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUI_OnOpen, const FECsWidgetType&, WidgetType);
+DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsUI_OnOpen, const FECsWidgetType&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUI_OnClose, const FECsWidgetType&, WidgetType);
+DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsUI_OnClose, const FECsWidgetType&);
 // ProcessGameEvent
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUI_Override_ProcessGameEvent, const uint8&, GameEvent);
-
-#define CS_UI_DEFINE_TYPE	WidgetType_MAX = ECsWidgetType::ECsWidgetType_MAX; \
-							WidgetTypeToString = &ECsWidgetType::ToString; \
-							StringToWidgetType = &ECsWidgetType::ToType;
 
 UCLASS()
 class CSCORE_API ACsUI : public AHUD
@@ -63,28 +59,23 @@ public:
 		return Cast<T>(GetMyOwner());
 	}
 
-	TArray<TCsWidgetType> WidgetTypes;
+	TArray<FECsWidgetType> WidgetTypes;
 
 	UPROPERTY(BlueprintReadWrite, Category = "UI")
 	TArray<class UCsUserWidget*> Widgets;
 
-	TMap<TCsWidgetType, TArray<class UCsUserWidget*>> WidgetsMap;
+	TMap<FECsWidgetType, TArray<class UCsUserWidget*>> WidgetsMap;
 
 	UPROPERTY(BlueprintReadWrite, Category = "UI")
 	TArray<class UCsUserWidget*> ActiveWidgets;
 
-	TMap<TCsWidgetType, TArray<class UCsUserWidget*>> ActiveWidgetsMap;
-
-	TCsWidgetType WidgetType_MAX;
-
-	TCsWidgetTypeToString WidgetTypeToString;
-	TCsStringToWidgetType StringToWidgetType;
+	TMap<FECsWidgetType, TArray<class UCsUserWidget*>> ActiveWidgetsMap;
 
 // Add
 #pragma region
 public:
 
-	virtual void AddWidget(const TCsWidgetType &WidgetType);
+	virtual void AddWidget(const FECsWidgetType &WidgetType);
 
 	UPROPERTY(BlueprintAssignable, Category = "UI")
 	FBindableDynEvent_CsUI_OnAddWidget OnAddWidget_ScriptEvent;
@@ -101,12 +92,12 @@ public:
 #pragma region
 public:
 
-	virtual class UCsUserWidget* GetWidget(const TCsWidgetType &WidgetType);
+	virtual class UCsUserWidget* GetWidget(const FECsWidgetType &WidgetType);
 	
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual class UCsUserWidget* GetWidget_Script(const uint8 &WidgetType);
 
-	virtual class UCsUserWidget* GetActiveWidget(const TCsWidgetType &WidgetType);
+	virtual class UCsUserWidget* GetActiveWidget(const FECsWidgetType &WidgetType);
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual class UCsUserWidget* GetActiveWidget_Script(const uint8 &WidgetType);
@@ -121,17 +112,14 @@ public:
 	TArray<TWeakObjectPtr<class ACsWidgetActor>> WidgetActors;
 	TArray<TWeakObjectPtr<class ACsWidgetActor>> ActiveWidgetActors;
 
-	TCsWidgetActorTypeToString WidgetActorTypeToString;
-	TCsStringToWidgetActorType StringToWidgetActorType;
-
 #pragma endregion WidgetActor
 
-	virtual bool HasWidgetInitialized(const TCsWidgetType &WidgetType);
+	virtual bool HasWidgetInitialized(const FECsWidgetType &WidgetType);
 
-	virtual void SetFocus(const TCsWidgetType &WidgetType, const int32 &Focus);
-	virtual void SetFocus(const TCsWidgetType &WidgetType, const ECsWidgetFocus &Focus);
+	virtual void SetFocus(const FECsWidgetType &WidgetType, const int32 &Focus);
+	virtual void SetFocus(const FECsWidgetType &WidgetType, const ECsWidgetFocus &Focus);
 
-	void SetFocusAll(const TCsWidgetType &WidgetType);
+	void SetFocusAll(const FECsWidgetType &WidgetType);
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void SetFocusAll_Script(const uint8 &WidgetType);
@@ -140,24 +128,24 @@ public:
 #pragma region
 public:
 
-	virtual void Open(const TCsWidgetType &WidgetType);
+	virtual void Open(const FECsWidgetType &WidgetType);
 
 	FBindableEvent_CsUI_OnOpen OnOpen_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "UI")
 	FBindableDynEvent_CsUI_OnOpen OnOpen_ScriptEvent;
 
-	virtual bool IsOpened(const TCsWidgetType &WidgetType);
+	virtual bool IsOpened(const FECsWidgetType &WidgetType);
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual bool IsOpened_Script(const uint8 &WidgetType);
 
-	virtual bool IsOpenedAndFocused(const TCsWidgetType &WidgetType);
+	virtual bool IsOpenedAndFocused(const FECsWidgetType &WidgetType);
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual bool IsOpenedAndFocused_Script(const uint8 &WidgetType);
 
-	virtual void Close(const TCsWidgetType &WidgetType);
+	virtual void Close(const FECsWidgetType &WidgetType);
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual void Close_Script(const uint8 &WidgetType);
@@ -170,7 +158,7 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "UI")
 	FBindableDynEvent_CsUI_OnClose OnClose_ScriptEvent;
 
-	virtual bool IsClosed(const TCsWidgetType &WidgetType);
+	virtual bool IsClosed(const FECsWidgetType &WidgetType);
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual bool IsClosed_Script(const uint8 &WidgetType);

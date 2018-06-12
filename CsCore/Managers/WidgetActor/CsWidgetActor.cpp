@@ -59,17 +59,10 @@ void ACsWidgetActor::Tick(float DeltaSeconds)
 		OnTick_HandleMovementFunction();
 }
 
-void ACsWidgetActor::SetType(const TCsWidgetActorType &InType)
-{
-	Type		= InType;
-	Type_Script = (uint8)Type;
-}
-
-void ACsWidgetActor::Init(const int32 &Index, const TCsWidgetActorType &InType)
+void ACsWidgetActor::Init(const int32 &Index, const FECsWidgetActorType &InType)
 {
 	PoolIndex	= Index;
 	Type		= InType;
-	Type_Script = (uint8)Type;
 
 	Cache.Set(Index, this);
 }

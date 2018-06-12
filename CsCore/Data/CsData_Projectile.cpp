@@ -19,7 +19,7 @@ void ACsData_Projectile::Load(const ECsLoadFlags &LoadFlags /*=ECsLoadFlags::All
 		Data->Load(LoadFlags);
 }
 
-TCsProjectileType ACsData_Projectile::GetBaseProjectileType() { return BaseProjectileType; }
+const FECsProjectileType& ACsData_Projectile::GetProjectileType() { return EMCsProjectileType::Get().GetMAX(); }
 
 // Stats
 #pragma region

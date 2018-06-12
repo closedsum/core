@@ -17,7 +17,8 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 	TWeakObjectPtr<class ACsProjectile> Projectile;
 	TWeakObjectPtr<class ACsData_Projectile> Data;
 
-	TCsProjectileType Type_Script;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	FECsProjectileType Type_Script;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TEnumAsByte<ECsProjectileRelevance::Type> Relevance;
@@ -118,7 +119,7 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 		Owner	   = InOwner;
 		Data	   = Payload->Data;
 
-		Type_Script = Data->GetBaseProjectileType();
+		Type_Script = Data->GetProjectileType();
 		Type		= (uint8)Type_Script;
 
 		Parent	   = InParent;

@@ -67,77 +67,59 @@ namespace ECsInteractiveState
 	};
 }
 
+struct CSCORE_API EMCsInteractiveState : public TCsEnumMap<ECsInteractiveState::Type>
+{
+protected:
+	EMCsInteractiveState() {}
+	EMCsInteractiveState(const EMCsInteractiveState &) = delete;
+	EMCsInteractiveState(EMCsInteractiveState &&) = delete;
+public:
+	~EMCsInteractiveState() {}
+private:
+	static EMCsInteractiveState* Instance;
+
+public:
+	static EMCsInteractiveState& Get();
+};
+
 namespace ECsInteractiveState
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
+	namespace Ref
 	{
-		const TCsString None = TCsString(TEXT("None"), TEXT("none"), TEXT("none"));
-		const TCsString FirstFreeze = TCsString(TEXT("FirstFreeze"), TEXT("firstfreeze"), TEXT("first freeze"));
-		const TCsString Freeze = TCsString(TEXT("Freeze"), TEXT("freeze"), TEXT("freeze"));
-		const TCsString FirstUnFreeze = TCsString(TEXT("FirstUnFreeze"), TEXT("firstunfreeze"), TEXT("first unfreeze"));
-		const TCsString FirstHold = TCsString(TEXT("FirstHold"), TEXT("firsthold"), TEXT("first hold"));
-		const TCsString Hold = TCsString(TEXT("Hold"), TEXT("hold"), TEXT("hold"));
-		const TCsString Release = TCsString(TEXT("Release"), TEXT("release"), TEXT("release"));
-		const TCsString FirstTouch = TCsString(TEXT("FirstTouch"), TEXT("firsttouch"), TEXT("first touch"));
-		const TCsString Touch = TCsString(TEXT("Touch"), TEXT("touch"), TEXT("touch"));
-		const TCsString FirstHover = TCsString(TEXT("FirstHover"), TEXT("firsthover"), TEXT("first hover"));
-		const TCsString Hover = TCsString(TEXT("Hover"), TEXT("hover"), TEXT("hover"));
-		const TCsString FirstUnHover = TCsString(TEXT("FirstUnHover"), TEXT("firstunhover"), TEXT("first unhover"));
-		const TCsString FirstCollide = TCsString(TEXT("FirstCollide"), TEXT("firstcollide"), TEXT("first collide"));
-		const TCsString Collide = TCsString(TEXT("Collide"), TEXT("collide"), TEXT("collide"));
-		const TCsString FirstUnCollide = TCsString(TEXT("FirstUnCollide"), TEXT("firstuncollide"), TEXT("first uncollide"));
-		const TCsString Remove = TCsString(TEXT("Remove"), TEXT("remove"), TEXT("remove"));
+		extern CSCORE_API const Type None;
+		extern CSCORE_API const Type FirstFreeze;
+		extern CSCORE_API const Type Freeze;
+		extern CSCORE_API const Type FirstUnFreeze;
+		extern CSCORE_API const Type FirstHold;
+		extern CSCORE_API const Type Hold;
+		extern CSCORE_API const Type Release;
+		extern CSCORE_API const Type FirstTouch;
+		extern CSCORE_API const Type Touch;
+		extern CSCORE_API const Type FirstHover;
+		extern CSCORE_API const Type Hover;
+		extern CSCORE_API const Type FirstUnHover;
+		extern CSCORE_API const Type FirstCollide;
+		extern CSCORE_API const Type Collide;
+		extern CSCORE_API const Type FirstUnCollide;
+		extern CSCORE_API const Type Remove;
+		extern CSCORE_API const Type ECsInteractiveState_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
-		if (EType == Type::None) { return Str::None.Value; }
-		if (EType == Type::FirstFreeze) { return Str::FirstFreeze.Value; }
-		if (EType == Type::Freeze) { return Str::Freeze.Value; }
-		if (EType == Type::FirstUnFreeze) { return Str::FirstUnFreeze.Value; }
-		if (EType == Type::FirstHold) { return Str::FirstHold.Value; }
-		if (EType == Type::Hold) { return Str::Hold.Value; }
-		if (EType == Type::Release) { return Str::Release.Value; }
-		if (EType == Type::FirstTouch) { return Str::FirstTouch.Value; }
-		if (EType == Type::Touch) { return Str::Touch.Value; }
-		if (EType == Type::FirstHover) { return Str::FirstHover.Value; }
-		if (EType == Type::Hover) { return Str::Hover.Value; }
-		if (EType == Type::FirstUnHover) { return Str::FirstUnHover.Value; }
-		if (EType == Type::FirstCollide) { return Str::FirstCollide.Value; }
-		if (EType == Type::Collide) { return Str::Collide.Value; }
-		if (EType == Type::FirstUnCollide) { return Str::FirstUnCollide.Value; }
-		if (EType == Type::Remove) { return Str::Remove.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
+		return EMCsInteractiveState::Get().ToString(EType);
 	}
 
 	FORCEINLINE Type ToType(const FString &String)
 	{
-		if (String == Str::None) { return Type::None; }
-		if (String == Str::FirstFreeze) { return Type::FirstFreeze; }
-		if (String == Str::Freeze) { return Type::Freeze; }
-		if (String == Str::FirstHold) { return Type::FirstHold; }
-		if (String == Str::FirstUnFreeze) { return Type::FirstUnFreeze; }
-		if (String == Str::Hold) { return Type::Hold; }
-		if (String == Str::Release) { return Type::Release; }
-		if (String == Str::FirstTouch) { return Type::FirstTouch; }
-		if (String == Str::Touch) { return Type::Touch; }
-		if (String == Str::FirstHover) { return Type::FirstHover; }
-		if (String == Str::Hover) { return Type::Hover; }
-		if (String == Str::FirstUnHover) { return Type::FirstUnHover; }
-		if (String == Str::FirstCollide) { return Type::FirstCollide; }
-		if (String == Str::Collide) { return Type::Collide; }
-		if (String == Str::FirstUnCollide) { return Type::FirstUnCollide; }
-		if (String == Str::Remove) { return Type::Remove; }
-		return Type::ECsInteractiveState_MAX;
+		return EMCsInteractiveState::Get().ToType(String);
 	}
 }
 
 #define ECS_INTERACTIVE_STATE_MAX (uint8)ECsInteractiveState::ECsInteractiveState_MAX
 typedef ECsInteractiveState::Type TCsInteractiveState;
 
-UENUM()
+UENUM(BlueprintType)
 namespace ECsInteractiveInstigator
 {
 	enum Type
@@ -150,41 +132,36 @@ namespace ECsInteractiveInstigator
 	};
 }
 
+typedef ECsInteractiveInstigator::Type TCsInteractiveInstigator;
+
+struct CSCORE_API EMCsInteractiveInstigator : public TCsEnumMap<ECsInteractiveInstigator::Type>
+{
+protected:
+	EMCsInteractiveInstigator() {}
+	EMCsInteractiveInstigator(const EMCsInteractiveInstigator &) = delete;
+	EMCsInteractiveInstigator(EMCsInteractiveInstigator &&) = delete;
+public:
+	~EMCsInteractiveInstigator() {}
+private:
+	static EMCsInteractiveInstigator* Instance;
+
+public:
+	static EMCsInteractiveInstigator& Get();
+};
+
 namespace ECsInteractiveInstigator
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
+	namespace Ref
 	{
-		const TCsString Look = TCsString(TEXT("Look"), TEXT("look"), TEXT("look"));
-		const TCsString LeftHand = TCsString(TEXT("LeftHand"), TEXT("lefthand"), TEXT("left hand"));
-		const TCsString RightHand = TCsString(TEXT("RightHand"), TEXT("righthand"), TEXT("right hand"));
-		const TCsString Actor = TCsString(TEXT("Actor"), TEXT("actor"), TEXT("actor"));
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::Look) { return Str::Look.Value; }
-		if (EType == Type::LeftHand) { return Str::LeftHand.Value; }
-		if (EType == Type::RightHand) { return Str::RightHand.Value; }
-		if (EType == Type::Actor) { return Str::Actor.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::Look) { return Type::Look; }
-		if (String == Str::LeftHand) { return Type::LeftHand; }
-		if (String == Str::RightHand) { return Type::RightHand; }
-		if (String == Str::Actor) { return Type::Actor; }
-		return Type::ECsInteractiveInstigator_MAX;
+		extern CSCORE_API const Type Look;
+		extern CSCORE_API const Type LeftHand;
+		extern CSCORE_API const Type RightHand;
+		extern CSCORE_API const Type Actor;
+		extern CSCORE_API const Type ECsInteractiveInstigator_MAX;
 	}
 }
 
-#define ECS_INTERACTIVE_INSTIGATOR_MAX (uint8)ECsInteractiveInstigator::ECsInteractiveInstigator_MAX
-typedef ECsInteractiveInstigator::Type TCsInteractiveInstigator;
-
-UENUM()
+UENUM(BlueprintType)
 namespace ECsInteractiveCollision
 {
 	enum Type
@@ -198,45 +175,48 @@ namespace ECsInteractiveCollision
 	};
 }
 
+typedef ECsInteractiveCollision::Type TCsInteractiveCollision;
+
+struct CSCORE_API EMCsInteractiveCollision : public TCsEnumMap<ECsInteractiveCollision::Type>
+{
+protected:
+	EMCsInteractiveCollision() {}
+	EMCsInteractiveCollision(const EMCsInteractiveCollision &) = delete;
+	EMCsInteractiveCollision(EMCsInteractiveCollision &&) = delete;
+public:
+	~EMCsInteractiveCollision() {}
+private:
+	static EMCsInteractiveCollision* Instance;
+
+public:
+	static EMCsInteractiveCollision& Get();
+};
+
 namespace ECsInteractiveCollision
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
+	namespace Ref
 	{
-		const TCsString Box = TCsString(TEXT("Box"), TEXT("box"), TEXT("box"));
-		const TCsString Sphere = TCsString(TEXT("Sphere"), TEXT("sphere"), TEXT("sphere"));
-		const TCsString DistanceSquared = TCsString(TEXT("DistanceSquared"), TEXT("distancesquared"), TEXT("distance squared"));
-		const TCsString Trace = TCsString(TEXT("Trace"), TEXT("trace"), TEXT("trace"));
-		const TCsString Mesh = TCsString(TEXT("Mesh"), TEXT("mesh"), TEXT("mesh"));
+		extern CSCORE_API const Type Box;
+		extern CSCORE_API const Type Sphere;
+		extern CSCORE_API const Type DistanceSquared;
+		extern CSCORE_API const Type Trace;
+		extern CSCORE_API const Type Mesh;
+		extern CSCORE_API const Type ECsInteractiveCollision_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
-		if (EType == Type::Box) { return Str::Box.Value; }
-		if (EType == Type::Sphere) { return Str::Sphere.Value; }
-		if (EType == Type::DistanceSquared) { return Str::DistanceSquared.Value; }
-		if (EType == Type::Trace) { return Str::Trace.Value; }
-		if (EType == Type::Mesh) { return Str::Mesh.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
+		return EMCsInteractiveCollision::Get().ToString(EType);
 	}
 
 	FORCEINLINE Type ToType(const FString &String)
 	{
-		if (String == Str::Box) { return Type::Box; }
-		if (String == Str::Sphere) { return Type::Sphere; }
-		if (String == Str::DistanceSquared) { return Type::DistanceSquared; }
-		if (String == Str::Trace) { return Type::Trace; }
-		if (String == Str::Mesh) { return Type::Mesh; }
-		return Type::ECsInteractiveCollision_MAX;
+		return EMCsInteractiveCollision::Get().ToType(String);
 	}
 }
 
-#define ECS_INTERACTIVE_COLLISION_MAX (uint8)ECsInteractiveCollision::ECsInteractiveCollision_MAX
-typedef ECsInteractiveCollision::Type TCsInteractiveCollision;
-
-USTRUCT()
-struct FCsInteractiveMaterials
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsInteractiveMaterials
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -257,7 +237,7 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(Materials_LoadFlags, ECsLoadFlags::UI);
 	}
 
-	FCsInteractiveMaterials& operator=(const FCsInteractiveMaterials& B)
+	FORCEINLINE FCsInteractiveMaterials& operator=(const FCsInteractiveMaterials& B)
 	{
 		for (int32 I = 0; I < ECS_INTERACTIVE_STATE_MAX; ++I)
 		{
@@ -267,7 +247,7 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsInteractiveMaterials& B) const
+	FORCEINLINE bool operator==(const FCsInteractiveMaterials& B) const
 	{
 		for (int32 I = 0; I < ECS_INTERACTIVE_STATE_MAX; ++I)
 		{
@@ -283,17 +263,17 @@ public:
 		return Materials_LoadFlags == B.Materials_LoadFlags;
 	}
 
-	bool operator!=(const FCsInteractiveMaterials& B) const
+	FORCEINLINE bool operator!=(const FCsInteractiveMaterials& B) const
 	{
 		return !(*this == B);
 	}
 
-	UMaterialInstanceConstant** Get()
+	FORCEINLINE UMaterialInstanceConstant** Get()
 	{
 		return Materials_Internal;
 	}
 
-	class UMaterialInstanceConstant* Get(const int32 Index)
+	FORCEINLINE class UMaterialInstanceConstant* Get(const int32 Index)
 	{
 		return Index < ECS_INTERACTIVE_STATE_MAX ? Materials_Internal[Index] : nullptr;
 	}
@@ -371,7 +351,7 @@ namespace ECsInteractivePhysicsState_Editor
 typedef ECsInteractivePhysicsState_Editor::Type TCsInteractivePhysicsState_Editor;
 
 USTRUCT(BlueprintType)
-struct FCsInteractedActorInfo
+struct CSCORE_API FCsInteractedActorInfo
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -389,7 +369,7 @@ struct FCsInteractedActorInfo
 
 public:
 
-	FCsInteractedActorInfo& operator=(const FCsInteractedActorInfo& B)
+	FORCEINLINE FCsInteractedActorInfo& operator=(const FCsInteractedActorInfo& B)
 	{
 		Instigator = B.Instigator;
 		Actor = B.Actor;
@@ -398,19 +378,19 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsInteractedActorInfo& B) const
+	FORCEINLINE bool operator==(const FCsInteractedActorInfo& B) const
 	{
 		return Instigator == B.Instigator && Actor == B.Actor && Component == B.Component && Location == B.Location;
 	}
 
-	bool operator!=(const FCsInteractedActorInfo& B) const
+	FORCEINLINE bool operator!=(const FCsInteractedActorInfo& B) const
 	{
 		return !(*this == B);
 	}
 
-	class AActor* GetActor() const { return Actor.IsValid() ? Actor.Get() : nullptr; }
-	class UObject* GetInstigator() const { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
-	class USceneComponent* GetComponent() const { return Component.IsValid() ? Component.Get() : nullptr; }
+	FORCEINLINE class AActor* GetActor() const { return Actor.IsValid() ? Actor.Get() : nullptr; }
+	FORCEINLINE class UObject* GetInstigator() const { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
+	FORCEINLINE class USceneComponent* GetComponent() const { return Component.IsValid() ? Component.Get() : nullptr; }
 };
 
 #pragma endregion Interactives
@@ -418,50 +398,73 @@ public:
 // Pickup
 #pragma region
 
-namespace ECsPickupFX
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsPickupFX : public FECsEnum_uint8
 {
-	enum Type : uint8;
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsPickupFX() {}
+	FECsPickupFX(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsPickupFX(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsPickupFX() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsPickupFX& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-typedef ECsPickupFX::Type TCsPickupFX;
-
-// PickupFXToString
-typedef const FString&(*TCsPickupFXToString)(const TCsPickupFX&);
-// StringToPickupFX
-typedef TCsPickupFX(*TCsStringToPickupFX)(const FString&);
-
-#define CS_DECLARE_PICKUP_FX	TCsPickupFX PickupFX_MAX; \
-								uint8 PICKUP_FX_MAX; \
-								TCsPickupFXToString PickupFXToString; \
-								TCsStringToPickupFX StringToPickupFX;
-
-#define CS_DEFINE_PICKUP_FX	PickupFX_MAX = ECsPickupFX::ECsPickupFX_MAX;\
-							PICKUP_FX_MAX = (uint8)PickupFX_MAX \
-							PickupFXToString = &ECsPickupFX::ToString; \
-							StringToPickupFX = &ECsPickupFX::ToType;
-
-namespace ECsPickupSound
+struct CSCORE_API EMCsPickupFX : public TCsEnumStructMap<FECsPickupFX, uint8>
 {
-	enum Type : uint8;
+protected:
+	EMCsPickupFX() {}
+	EMCsPickupFX(const EMCsPickupFX &) = delete;
+	EMCsPickupFX(EMCsPickupFX &&) = delete;
+public:
+	~EMCsPickupFX() {}
+private:
+	static EMCsPickupFX* Instance;
+
+public:
+	static EMCsPickupFX& Get();
+};
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsPickupSound : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsPickupSound() {}
+	FECsPickupSound(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsPickupSound(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsPickupSound() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsPickupSound& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-typedef ECsPickupSound::Type TCsPickupSound;
+struct CSCORE_API EMCsPickupSound : public TCsEnumStructMap<FECsPickupSound, uint8>
+{
+protected:
+	EMCsPickupSound() {}
+	EMCsPickupSound(const EMCsPickupSound &) = delete;
+	EMCsPickupSound(EMCsPickupSound &&) = delete;
+public:
+	~EMCsPickupSound() {}
+private:
+	static EMCsPickupSound* Instance;
 
-// PickupSoundToString
-typedef const FString&(*TCsPickupSoundToString)(const TCsPickupSound&);
-// StringToPickupSound
-typedef TCsPickupSound(*TCsStringToPickupSound)(const FString&);
-
-#define CS_DECLARE_PICKUP_SOUND	TCsPickupSound PickupSound_MAX; \
-								uint8 PICKUP_SOUND_MAX; \
-								TCsPickupSoundToString PickupSoundToString; \
-								TCsStringToPickupSound StringToPickupSound;
-
-#define CS_DEFINE_PICKUP_SOUND	PickupSound_MAX = ECsPickupSound::ECsPickupSound_MAX;\
-								PICKUP_SOUND_MAX = (uint8)PickupSound_MAX \
-								PickupSoundToString = &ECsPickupSound::ToString; \
-								StringToPickupSound = &ECsPickupSound::ToType;
-
+public:
+	static EMCsPickupSound& Get();
+};
 
 struct FCsInteractiveActorPayload
 {

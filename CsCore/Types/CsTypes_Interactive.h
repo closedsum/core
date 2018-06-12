@@ -8,27 +8,39 @@
 // Interactives
 #pragma region
 
-namespace ECsInteractiveType
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsInteractiveType : public FECsEnum_uint8
 {
-	enum Type : uint8;
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsInteractiveType() {}
+	FECsInteractiveType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsInteractiveType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsInteractiveType() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsInteractiveType& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-typedef ECsInteractiveType::Type TCsInteractiveType;
+struct CSCORE_API EMCsInteractiveType : public TCsEnumStructMap<FECsInteractiveType, uint8>
+{
+protected:
+	EMCsInteractiveType() {}
+	EMCsInteractiveType(const EMCsInteractiveType &) = delete;
+	EMCsInteractiveType(EMCsInteractiveType &&) = delete;
+public:
+	~EMCsInteractiveType() {}
+private:
+	static EMCsInteractiveType* Instance;
 
-// InteractiveTypeToString
-typedef const FString&(*TCsInteractiveTypeToString)(const TCsInteractiveType&);
-// StringToInteractiveType
-typedef const TCsInteractiveType&(*TCsStringToInteractiveType)(const FString&);
-
-#define CS_DECLARE_INTERACTIVE_TYPE	TCsInteractiveType InteractiveType_MAX; \
-									uint8 INTERACTIVE_TYPE_MAX; \
-									TCsInteractiveTypeToString InteractiveTypeToString; \
-									TCsStringToInteractiveType StringToInteractiveType;
-
-#define CS_DEFINE_INTERACTIVE_TYPE	InteractiveType_MAX = ECsInteractiveType::ECsInteractiveType_MAX;\
-									INTERACTIVE_TYPE_MAX = (uint8)InteractiveType_MAX; \
-									InteractiveTypeToString = &ECsInteractiveType::ToString; \
-									StringToInteractiveType = &ECsInteractiveType::ToType;
+public:
+	static EMCsInteractiveType& Get();
+};
 
 UENUM(BlueprintType)
 namespace ECsInteractiveState

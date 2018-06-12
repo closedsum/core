@@ -13,9 +13,7 @@ class CSCORE_API ACsData_Interactive : public ACsData
 #pragma region
 public:
 
-	CS_DECLARE_INTERACTIVE_TYPE
-
-	virtual const TCsInteractiveType& GetInteractiveType();
+	virtual const FECsInteractiveType& GetInteractiveType();
 
 	UFUNCTION(BlueprintCallable, Category = "Stats")
 	virtual const float& GetWarmUpTime();

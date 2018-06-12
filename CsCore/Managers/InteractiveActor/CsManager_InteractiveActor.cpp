@@ -28,8 +28,6 @@ namespace ECsManagerInteractiveActorCached
 
 ACsManager_InteractiveActor::ACsManager_InteractiveActor(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	InteractiveTypeToString = nullptr;
-
 	PoolSize = 1;
 }
 
@@ -77,16 +75,9 @@ void ACsManager_InteractiveActor::Destroyed()
 	Super::Destroyed();
 }
 
-void ACsManager_InteractiveActor::SetInteractiveActorType(const TCsInteractiveType &InInteractiveType_MAX, TCsInteractiveTypeToString InInteractiveTypeToString)
-{
-	InteractiveType_MAX     = InInteractiveType_MAX;
-	INTERACTIVE_TYPE_MAX	= (uint8)InInteractiveType_MAX;
-	InteractiveTypeToString = InInteractiveTypeToString;
-}
-
 void ACsManager_InteractiveActor::CreatePool(const TSubclassOf<class UObject> &ObjectClass, const uint8 &Type, const int32 &Size)
 {
-	const TCsInteractiveType ClassType = (TCsInteractiveType)Type;
+	const FECsInteractiveType& ClassType = EMCsInteractiveType::Get().GetEnumAt(Type);
 
 	PoolSizes.Add(ClassType, Size);
 
@@ -121,7 +112,7 @@ void ACsManager_InteractiveActor::AddToPool(UObject* InObject, const uint8& Type
 
 	checkf(Actor, TEXT("ACsManager_InteractiveActor::AddToPool: InObject (%s) is NOT type ACsInteraciveActor."), *InObject->GetClass()->GetName());
 
-	const TCsInteractiveType ClassType = (TCsInteractiveType)Type;
+	const FECsInteractiveType& ClassType = EMCsInteractiveType::Get().GetEnumAt(Type);
 
 	uint16* Size = PoolSizes.Find(ClassType);
 
@@ -165,7 +156,7 @@ void ACsManager_InteractiveActor::AddToActivePool(UObject* InObject, const uint8
 
 	checkf(Actor, TEXT("ACsManager_InteractiveActor::AddToActivePool: InObject (%s) is NOT type ACsInteraciveActor."), *InObject->GetClass()->GetName());
 
-	const TCsInteractiveType ClassType = (TCsInteractiveType)Type;
+	const FECsInteractiveType& ClassType = EMCsInteractiveType::Get().GetEnumAt(Type);
 
 	Actor->Cache.IsAllocated = true;
 
@@ -184,9 +175,11 @@ void ACsManager_InteractiveActor::AddToActivePool(UObject* InObject, const uint8
 
 void ACsManager_InteractiveActor::OnTick(const float &DeltaSeconds)
 {
-	for (int32 I = 0; I < INTERACTIVE_TYPE_MAX; ++I)
+	const int32& Count = EMCsInteractiveType::Get().Num();
+
+	for (int32 I = 0; I < Count; ++I)
 	{
-		const TCsInteractiveType Type			= (TCsInteractiveType)I;
+		const FECsInteractiveType& Type			= EMCsInteractiveType::Get().GetEnumAt(I);
 		TArray<ACsInteractiveActor*>* ActorsPtr = ActiveActors.Find(Type);
 
 		if (!ActorsPtr)
@@ -245,9 +238,12 @@ void ACsManager_InteractiveActor::OnTick(const float &DeltaSeconds)
 
 void ACsManager_InteractiveActor::GetAllActiveActors(TArray<class ACsInteractiveActor*> &OutActors)
 {
-	for (int32 I = 0; I < INTERACTIVE_TYPE_MAX; ++I)
+	const int32& Count = EMCsInteractiveType::Get().Num();
+
+	for (int32 I = 0; I < Count; ++I)
 	{
-		TArray<ACsInteractiveActor*>* Actors = ActiveActors.Find((TCsInteractiveType)I);
+		const FECsInteractiveType& Type		 = EMCsInteractiveType::Get().GetEnumAt(I);
+		TArray<ACsInteractiveActor*>* Actors = ActiveActors.Find(Type);
 
 		if (!Actors)
 			continue;
@@ -261,14 +257,14 @@ void ACsManager_InteractiveActor::GetAllActiveActors(TArray<class ACsInteractive
 	}
 }
 
-const TArray<class ACsInteractiveActor*>* ACsManager_InteractiveActor::GetActors(const TCsInteractiveType& Type)
+const TArray<class ACsInteractiveActor*>* ACsManager_InteractiveActor::GetActors(const FECsInteractiveType& Type)
 {
 	return Pools.Find(Type);
 }
 
 int32 ACsManager_InteractiveActor::GetActivePoolSize(const uint8& Type)
 {
-	TArray<ACsInteractiveActor*>* ActorsPtr = ActiveActors.Find((TCsInteractiveType)Type);
+	TArray<ACsInteractiveActor*>* ActorsPtr = ActiveActors.Find(EMCsInteractiveType::Get().GetEnumAt(Type));
 
 	if (!ActorsPtr)
 		return CS_EMPTY;
@@ -277,7 +273,7 @@ int32 ACsManager_InteractiveActor::GetActivePoolSize(const uint8& Type)
 
 bool ACsManager_InteractiveActor::IsExhausted(const uint8 &Type)
 {
-	const TCsInteractiveType ClassType = (TCsInteractiveType)Type;
+	const FECsInteractiveType& ClassType = EMCsInteractiveType::Get().GetEnumAt(Type);
 
 	TArray<ACsInteractiveActor*>* PoolPtr = Pools.Find(ClassType);
 
@@ -296,7 +292,7 @@ void ACsManager_InteractiveActor::LogTransaction(const FString &FunctionName, co
 		const FString& TransactionAsString = ECsPoolTransaction::ToActionString(Transaction);
 		
 		const FString ActorName	   = Actor->GetName();
-		const FString TypeAsString = (*InteractiveTypeToString)((TCsInteractiveType)Actor->Cache.Type);
+		const FString& TypeAsString = Actor->Cache.Type_Script.Name;
 		const float CurrentTime	   = GetWorld()->GetTimeSeconds();
 		const UObject* ActorOwner  = Actor->Cache.GetOwner();
 		const FString OwnerName	   = ActorOwner ? ActorOwner->GetName() : ECsCached::Str::None;
@@ -327,14 +323,14 @@ void ACsManager_InteractiveActor::LogTransaction(const FString &FunctionName, co
 // Allocate / DeAllocate
 #pragma region
 
-ACsInteractiveActor* ACsManager_InteractiveActor::Allocate(const TCsInteractiveType &Type)
+ACsInteractiveActor* ACsManager_InteractiveActor::Allocate(const FECsInteractiveType &Type)
 {
 	TArray<ACsInteractiveActor*>* ActorPool = Pools.Find(Type);
 	const uint16 Size						= *(PoolSizes.Find(Type));
 
 	if (Size == CS_EMPTY)
 	{
-		checkf(0, TEXT("ACsManager_InteractiveActor::Allocate: Pool: %s is exhausted"), *(*InteractiveTypeToString(Type)));
+		checkf(0, TEXT("ACsManager_InteractiveActor::Allocate: Pool: %s is exhausted"), *(Type.Name));
 		return nullptr;
 	}
 
@@ -350,19 +346,19 @@ ACsInteractiveActor* ACsManager_InteractiveActor::Allocate(const TCsInteractiveT
 			return Actor;
 		}
 	}
-	checkf(0, TEXT("ACsManager_InteractiveActor::Allocate: Pool: %s is exhausted"), *(*InteractiveTypeToString(Type)));
+	checkf(0, TEXT("ACsManager_InteractiveActor::Allocate: Pool: %s is exhausted"), *(Type.Name));
 	return nullptr;
 }
 
 void ACsManager_InteractiveActor::DeAllocate(const uint8 &Type, const int32 &Index)
 {
-	const TCsInteractiveType ClassType = (TCsInteractiveType)Type;
+	const FECsInteractiveType& ClassType = EMCsInteractiveType::Get().GetEnumAt(Type);
 
 	TArray<ACsInteractiveActor*>* Actors = ActiveActors.Find(ClassType);
 
 	if (!Actors)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_InteractiveActor::DeAllocate: InteractiveActor of Type: %s at PoolIndex: %d is already deallocated."), *((*InteractiveTypeToString)(ClassType)), Index);
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_InteractiveActor::DeAllocate: InteractiveActor of Type: %s at PoolIndex: %d is already deallocated."), *(ClassType.Name), Index);
 		return;
 	}
 
@@ -388,7 +384,7 @@ void ACsManager_InteractiveActor::DeAllocate(const uint8 &Type, const int32 &Ind
 #if WITH_EDITOR
 			OnDeAllocateEX_ScriptEvent.Broadcast(Index, I, Actor->Cache.Type);
 #endif // #if WITH_EDITOR
-			OnDeAllocateEX_Internal_Event.Broadcast(Index, I, (TCsInteractiveType)Actor->Cache.Type);
+			OnDeAllocateEX_Internal_Event.Broadcast(Index, I, Actor->Cache.Type_Script);
 			return;
 		}
 	}
@@ -400,14 +396,16 @@ void ACsManager_InteractiveActor::DeAllocate(const uint8 &Type, const int32 &Ind
 		// Reset ActiveIndex
 		Actor->Cache.SetActiveIndex(I);
 	}
-	UE_LOG(LogCs, Warning, TEXT("ACsManager_InteractiveActor::DeAllocate: InteractiveActor of Type: %s at PoolIndex: %d is already deallocated."), *((*InteractiveTypeToString)(ClassType)), Index);
+	UE_LOG(LogCs, Warning, TEXT("ACsManager_InteractiveActor::DeAllocate: InteractiveActor of Type: %s at PoolIndex: %d is already deallocated."), *(ClassType.Name), Index);
 }
 
 void ACsManager_InteractiveActor::DeAllocateAll()
 {
-	for (uint8 I = 0; I < INTERACTIVE_TYPE_MAX; ++I)
+	const int32& Count = EMCsInteractiveType::Get().Num();
+
+	for (uint8 I = 0; I < Count; ++I)
 	{
-		const TCsInteractiveType Type = (TCsInteractiveType)I;
+		const FECsInteractiveType& Type = EMCsInteractiveType::Get().GetEnumAt(I);
 
 		TArray<ACsInteractiveActor*>* Actors = ActiveActors.Find(Type);
 
@@ -431,7 +429,7 @@ void ACsManager_InteractiveActor::OnDeAllocate(const uint16& Index, const uint16
 #if WITH_EDITOR
 	OnDeAllocateEX_ScriptEvent.Broadcast((int32)Index, (int32)ActiveIndex, Type);
 #endif // #if WITH_EDITOR
-	OnDeAllocateEX_Internal_Event.Broadcast(Index, ActiveIndex, (TCsInteractiveType)Type);
+	OnDeAllocateEX_Internal_Event.Broadcast(Index, ActiveIndex, EMCsInteractiveType::Get().GetEnumAt(Type));
 }
 
 #pragma endregion Allocate / DeAllocate
@@ -461,48 +459,48 @@ FCsInteractiveActorPayload* ACsManager_InteractiveActor::AllocatePayload()
 // WakeUp
 #pragma region
 
-ACsInteractiveActor* ACsManager_InteractiveActor::WakeUp(const TCsInteractiveType &Type, FCsInteractiveActorPayload* Payload, UObject* InOwner, UObject* Parent)
+ACsInteractiveActor* ACsManager_InteractiveActor::WakeUp(const FECsInteractiveType &Type, FCsInteractiveActorPayload* Payload, UObject* InOwner, UObject* Parent)
 {
 	ACsInteractiveActor* Actor = Allocate(Type);
 
-	Actor->Allocate(GetActivePoolSize((uint8)Type), Payload, InOwner, Parent);
+	Actor->Allocate(GetActivePoolSize(Type.Value), Payload, InOwner, Parent);
 
 	LogTransaction(ECsManagerInteractiveActorCached::Str::WakeUp, ECsPoolTransaction::Allocate, Actor);
 	Payload->Reset();
-	AddToActivePool(Actor, (uint8)Type);
+	AddToActivePool(Actor, Type.Value);
 	return Actor;
 }
 
-ACsInteractiveActor* ACsManager_InteractiveActor::WakeUp(const TCsInteractiveType &Type, FCsInteractiveActorPayload* Payload, UObject* InOwner)
+ACsInteractiveActor* ACsManager_InteractiveActor::WakeUp(const FECsInteractiveType &Type, FCsInteractiveActorPayload* Payload, UObject* InOwner)
 {
 	return WakeUp(Type, Payload, InOwner, nullptr);
 }
 
-ACsInteractiveActor* ACsManager_InteractiveActor::WakeUp(const TCsInteractiveType &Type, FCsInteractiveActorPayload* Payload)
+ACsInteractiveActor* ACsManager_InteractiveActor::WakeUp(const FECsInteractiveType &Type, FCsInteractiveActorPayload* Payload)
 {
 	return WakeUp(Type, Payload, nullptr, nullptr);
 }
 
 template<typename T>
-void ACsManager_InteractiveActor::WakeUp(const TCsInteractiveType &Type, ACsInteractiveActor* &OutActor, FCsInteractiveActorPayload* Payload, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsManager_InteractiveActor::WakeUp(const FECsInteractiveType &Type, ACsInteractiveActor* &OutActor, FCsInteractiveActorPayload* Payload, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
 	OutActor = Allocate(Type);
 
-	OutActor->Allocate<T>(GetActivePoolSize((uint8)Type), Payload, InOwner, Parent, InObject, OnDeAllocate);
+	OutActor->Allocate<T>(GetActivePoolSize(Type.Value), Payload, InOwner, Parent, InObject, OnDeAllocate);
 
 	LogTransaction(ECsManagerInteractiveActorCached::Str::WakeUp, ECsPoolTransaction::Allocate, Actor);
 	Payload->Reset();
-	AddToActivePool(Actor, (uint8)Type);
+	AddToActivePool(Actor, Type.Value);
 }
 
 template<typename T>
-void ACsManager_InteractiveActor::WakeUp(const TCsInteractiveType &Type, ACsInteractiveActor* &OutActor, FCsInteractiveActorPayload* Payload, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsManager_InteractiveActor::WakeUp(const FECsInteractiveType &Type, ACsInteractiveActor* &OutActor, FCsInteractiveActorPayload* Payload, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
 	WakeUp<T>(Type, OutActor, Payload, nullptr, InOwner, InObject, OnDeAllocate);
 }
 
 template<typename T>
-void ACsManager_InteractiveActor::WakeUp(const TCsInteractiveType &ClassType, ACsInteractiveActor* &OutActor, FCsInteractiveActorPayload* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsManager_InteractiveActor::WakeUp(const FECsInteractiveType &ClassType, ACsInteractiveActor* &OutActor, FCsInteractiveActorPayload* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
 	WakeUp<T>(Type, OutActor, Payload, nullptr, nullptr, InObject, OnDeAllocate);
 }

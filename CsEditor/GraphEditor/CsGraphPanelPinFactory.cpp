@@ -48,6 +48,8 @@
 	// Damage
 #include "GraphEditor/EnumStruct/Damage/SCsGraphPin_ECsDamageType.h"
 #include "GraphEditor/EnumStruct/Damage/SCsGraphPin_ECsHitType.h"
+	// Interactive
+#include "GraphEditor/EnumStruct/Interactive/SCsGraphPin_ECsInteractiveType.h"
 
 // Managers
 #include "Managers/Process/CsProcess.h"
@@ -139,6 +141,11 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 		if (DoesPinUseScriptStruct<FECsDamageType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsDamageType, InPin); }
 		// FECsHitType
 		if (DoesPinUseScriptStruct<FECsHitType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsHitType, InPin); }
+	}
+	// Interactive
+	{
+		// FECsInteractiveType
+		if (DoesPinUseScriptStruct<FECsInteractiveType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsInteractiveType, InPin); }
 	}
 	return nullptr;
 }

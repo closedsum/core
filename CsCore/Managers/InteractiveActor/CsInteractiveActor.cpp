@@ -94,14 +94,13 @@ void ACsInteractiveActor::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 }
 
-void ACsInteractiveActor::Init(const int32 &Index, const TCsInteractiveType &InType)
+void ACsInteractiveActor::Init(const int32 &Index, const FECsInteractiveType &InType)
 {
 	PoolIndex   = Index;
 	Type		= InType;
-	Type_Script = (uint8)Type;
 
 	Cache.Set(Index, this);
-	Cache.Type		  = Type_Script;
+	Cache.Type		  = Type.Value;
 	Cache.Type_Script = Type;
 }
 

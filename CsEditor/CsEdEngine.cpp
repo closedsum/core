@@ -53,6 +53,8 @@
 	// Damage
 #include "DetailCustomizations/EnumStruct/Damage/ECsDamageTypeCustomization.h"
 #include "DetailCustomizations/EnumStruct/Damage/ECsHitTypeCustomization.h"
+	// Interactive
+#include "DetailCustomizations/EnumStruct/Interactive/ECsInteractiveTypeCustomization.h"
 
 void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 {
@@ -100,6 +102,8 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 		// Damage
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsDamageType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsDamageTypeCustomization::MakeInstance));
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsHitType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsHitTypeCustomization::MakeInstance));
+		// Interactive
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsInteractiveType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsInteractiveTypeCustomization::MakeInstance));
 	}
 }
 

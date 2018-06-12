@@ -11,7 +11,7 @@ ACsData_Interactive::ACsData_Interactive(const FObjectInitializer& ObjectInitial
 // Stats
 #pragma region
 
-const TCsInteractiveType& ACsData_Interactive::GetInteractiveType() { return InteractiveType_MAX; }
+const FECsInteractiveType& ACsData_Interactive::GetInteractiveType() { return EMCsInteractiveType::Get().GetMAX(); }
 
 const float& ACsData_Interactive::GetWarmUpTime() { return ECsCached::Ref::Float; }
 const float& ACsData_Interactive::GetLifeTime() { return ECsCached::Ref::Float; }

@@ -221,7 +221,7 @@ UCsPooledWidget* UCsManager_Widget::Allocate(const TCsSimpleWidgetType &Type)
 
 	if (Size == CS_EMPTY)
 	{
-		checkf(0, TEXT("UCsManager_Widget::Allocate: Pool: %s is exhausted"), *(ECsSimpleWidgetType::ToString(Type)));
+		checkf(0, TEXT("UCsManager_Widget::Allocate: Pool: %s is exhausted"), *(EMCsSimpleWidgetType::Get().ToString(Type)));
 		return nullptr;
 	}
 
@@ -237,7 +237,7 @@ UCsPooledWidget* UCsManager_Widget::Allocate(const TCsSimpleWidgetType &Type)
 			return Widget;
 		}
 	}
-	checkf(0, TEXT("UCsManager_Widget::Allocate: Pool: %s is exhausted"), *(ECsSimpleWidgetType::ToString(Type)));
+	checkf(0, TEXT("UCsManager_Widget::Allocate: Pool: %s is exhausted"), *(EMCsSimpleWidgetType::Get().ToString(Type)));
 	return nullptr;
 }
 
@@ -247,7 +247,7 @@ void UCsManager_Widget::DeAllocate(const TCsSimpleWidgetType &Type, const int32 
 
 	if (!Widgets)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Widget::DeAllocate: SimpleWidget of Type: %s at PoolIndex: %d is already deallocated."), *(ECsSimpleWidgetType::ToString(Type)), Index);
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_Widget::DeAllocate: SimpleWidget of Type: %s at PoolIndex: %d is already deallocated."), *(EMCsSimpleWidgetType::Get().ToString(Type)), Index);
 		return;
 	}
 
@@ -287,15 +287,16 @@ void UCsManager_Widget::DeAllocate(const TCsSimpleWidgetType &Type, const int32 
 		// Reset ActiveIndex
 		Widget->Cache.SetActiveIndex(I);
 	}
-	UE_LOG(LogCs, Warning, TEXT("UCsManager_Widget::DeAllocate: PooledWidget of Type: %s at PoolIndex: %d is already deallocated."), *(ECsSimpleWidgetType::ToString(Type)), Index);
+	UE_LOG(LogCs, Warning, TEXT("UCsManager_Widget::DeAllocate: PooledWidget of Type: %s at PoolIndex: %d is already deallocated."), *(EMCsSimpleWidgetType::Get().ToString(Type)), Index);
 }
 
 void UCsManager_Widget::DeAllocateAll()
 {
-	for (uint8 I = 0; I < ECS_SIMPLE_WIDGET_TYPE_MAX; ++I)
-	{
-		const TCsSimpleWidgetType Type = (TCsSimpleWidgetType)I;
+	const int32& Count = EMCsSimpleWidgetType::Get().Num();
 
+	for (uint8 I = 0; I < Count; ++I)
+	{
+		const TCsSimpleWidgetType& Type   = EMCsSimpleWidgetType::Get().GetEnumAt(I);
 		TArray<UCsPooledWidget*>* Widgets = ActiveWidgets.Find(Type);
 
 		if (!Widgets)

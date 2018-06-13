@@ -126,42 +126,37 @@ namespace ECsSimpleWidgetType
 	};
 }
 
+typedef ECsSimpleWidgetType::Type TCsSimpleWidgetType;
+
+struct CSCORE_API EMCsSimpleWidgetType : public TCsEnumMap<ECsSimpleWidgetType::Type>
+{
+protected:
+	EMCsSimpleWidgetType() {}
+	EMCsSimpleWidgetType(const EMCsSimpleWidgetType &) = delete;
+	EMCsSimpleWidgetType(EMCsSimpleWidgetType &&) = delete;
+public:
+	~EMCsSimpleWidgetType() {}
+private:
+	static EMCsSimpleWidgetType* Instance;
+
+public:
+	static EMCsSimpleWidgetType& Get();
+};
+
 namespace ECsSimpleWidgetType
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
+	namespace Ref
 	{
-		const TCsString Text = TCsString(TEXT("Text"), TEXT("text"), TEXT("text"));
-		const TCsString Float = TCsString(TEXT("Float"), TEXT("float"), TEXT("float"));
-		const TCsString Button = TCsString(TEXT("Button"), TEXT("button"), TEXT("button"));
-		const TCsString Bar = TCsString(TEXT("Bar"), TEXT("bar"), TEXT("bar"));
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::Text) { return Str::Text.Value; }
-		if (EType == Type::Float) { return Str::Float.Value; }
-		if (EType == Type::Button) { return Str::Button.Value; }
-		if (EType == Type::Bar) { return Str::Bar.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::Text) { return Type::Text; }
-		if (String == Str::Float) { return Type::Float; }
-		if (String == Str::Button) { return Type::Button; }
-		if (String == Str::Bar) { return Type::Bar; }
-		return Type::ECsSimpleWidgetType_MAX;
+		extern CSCORE_API const Type Text;
+		extern CSCORE_API const Type Float;
+		extern CSCORE_API const Type Button;
+		extern CSCORE_API const Type Bar;
+		extern CSCORE_API const Type ECsSimpleWidgetType_MAX;
 	}
 }
 
-#define ECS_SIMPLE_WIDGET_TYPE_MAX (uint8)ECsSimpleWidgetType::ECsSimpleWidgetType_MAX
-typedef ECsSimpleWidgetType::Type TCsSimpleWidgetType;
-
 USTRUCT(BlueprintType)
-struct FCsWidgetActorInfo
+struct CSCORE_API FCsWidgetActorInfo
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -222,7 +217,7 @@ public:
 	}
 	~FCsWidgetActorInfo(){}
 
-	FCsWidgetActorInfo& operator=(const FCsWidgetActorInfo& B)
+	FORCEINLINE FCsWidgetActorInfo& operator=(const FCsWidgetActorInfo& B)
 	{
 		Blueprint = B.Blueprint;
 		Blueprint_LoadFlags = B.Blueprint_LoadFlags;
@@ -242,7 +237,7 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsWidgetActorInfo& B) const
+	FORCEINLINE bool operator==(const FCsWidgetActorInfo& B) const
 	{
 		return	Blueprint == B.Blueprint &&
 				Blueprint_LoadFlags == B.Blueprint_LoadFlags &&
@@ -260,12 +255,12 @@ public:
 				MovementFunction == B.MovementFunction;
 	}
 
-	bool operator!=(const FCsWidgetActorInfo& B) const
+	FORCEINLINE bool operator!=(const FCsWidgetActorInfo& B) const
 	{
 		return !(*this == B);
 	}
 
-	UBlueprintGeneratedClass* Get() const
+	FORCEINLINE UBlueprintGeneratedClass* Get() const
 	{
 		return Blueprint_Internal;
 	}
@@ -284,7 +279,7 @@ public:
 																	}
 
 USTRUCT(BlueprintType)
-struct FCsWidgetComponentInfo
+struct CSCORE_API FCsWidgetComponentInfo
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -339,7 +334,7 @@ public:
 	}
 	~FCsWidgetComponentInfo(){}
 
-	FCsWidgetComponentInfo& operator=(const FCsWidgetComponentInfo& B)
+	FORCEINLINE FCsWidgetComponentInfo& operator=(const FCsWidgetComponentInfo& B)
 	{
 		Blueprint = B.Blueprint;
 		Blueprint_LoadFlags = B.Blueprint_LoadFlags;
@@ -357,7 +352,7 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsWidgetComponentInfo& B) const
+	FORCEINLINE bool operator==(const FCsWidgetComponentInfo& B) const
 	{
 		return	Blueprint == B.Blueprint &&
 				Blueprint_LoadFlags == B.Blueprint_LoadFlags &&
@@ -373,12 +368,12 @@ public:
 				LockAxes == B.LockAxes;
 	}
 
-	bool operator!=(const FCsWidgetComponentInfo& B) const
+	FORCEINLINE bool operator!=(const FCsWidgetComponentInfo& B) const
 	{
 		return !(*this == B);
 	}
 
-	UBlueprintGeneratedClass* Get() const
+	FORCEINLINE UBlueprintGeneratedClass* Get() const
 	{
 		return Blueprint_Internal;
 	}
@@ -471,55 +466,46 @@ namespace ECsButtonState
 	};
 }
 
+typedef ECsButtonState::Type TCsButtonState;
+
+struct CSCORE_API EMCsButtonState : public TCsEnumMap<ECsButtonState::Type>
+{
+protected:
+	EMCsButtonState() {}
+	EMCsButtonState(const EMCsButtonState &) = delete;
+	EMCsButtonState(EMCsButtonState &&) = delete;
+public:
+	~EMCsButtonState() {}
+private:
+	static EMCsButtonState* Instance;
+
+public:
+	static EMCsButtonState& Get();
+};
+
 namespace ECsButtonState
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
+	namespace Ref
 	{
-		const TCsString None = TCsString(TEXT("None"), TEXT("none"), TEXT("none"));
-		const TCsString FirstHover = TCsString(TEXT("FirstHover"), TEXT("firsthover"), TEXT("first hover"));
-		const TCsString Hover = TCsString(TEXT("Hover"), TEXT("hover"), TEXT("hover"));
-		const TCsString FirstUnHover = TCsString(TEXT("FirstUnHover"), TEXT("firstunhover"), TEXT("first unhover"));
-		const TCsString FirstPressed = TCsString(TEXT("FirstPressed"), TEXT("firstpressed"), TEXT("first pressed"));
-		const TCsString Pressed = TCsString(TEXT("Pressed"), TEXT("pressed"), TEXT("pressed"));
-		const TCsString FirstReleased = TCsString(TEXT("FirstReleased"), TEXT("firstreleased"), TEXT("first released"));
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::None) { return Str::None.Value; }
-		if (EType == Type::FirstHover) { return Str::FirstHover.Value; }
-		if (EType == Type::Hover) { return Str::Hover.Value; }
-		if (EType == Type::FirstUnHover) { return Str::FirstUnHover.Value; }
-		if (EType == Type::FirstPressed) { return Str::FirstPressed.Value; }
-		if (EType == Type::Pressed) { return Str::Pressed.Value; }
-		if (EType == Type::FirstReleased) { return Str::FirstReleased.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::None) { return Type::None; }
-		if (String == Str::FirstHover) { return Type::FirstHover; }
-		if (String == Str::Hover) { return Type::Hover; }
-		if (String == Str::FirstUnHover) { return Type::FirstUnHover; }
-		if (String == Str::FirstPressed) { return Type::FirstPressed; }
-		if (String == Str::Pressed) { return Type::Pressed; }
-		if (String == Str::FirstReleased) { return Type::FirstReleased; }
-		return Type::ECsButtonState_MAX;
+		extern CSCORE_API const Type None;
+		extern CSCORE_API const Type FirstHover;
+		extern CSCORE_API const Type Hover;
+		extern CSCORE_API const Type FirstUnHover;
+		extern CSCORE_API const Type FirstPressed;
+		extern CSCORE_API const Type Pressed;
+		extern CSCORE_API const Type FirstReleased;
+		extern CSCORE_API const Type ECsButtonState_MAX;
 	}
 }
 
 #define ECS_BUTTON_STATE_MAX (uint8)ECsButtonState::ECsButtonState_MAX
-typedef ECsButtonState::Type TCsButtonState;
 
 #pragma endregion UI
 
 // PrimitiveType
 #pragma region
 
-struct TCsPrimitiveType_ESlateVisibility : public TCsPrimitiveType<ESlateVisibility>
+struct CSCORE_API TCsPrimitiveType_ESlateVisibility : public TCsPrimitiveType<ESlateVisibility>
 {
 public:
 
@@ -559,7 +545,7 @@ public:
 
 typedef TCsPrimitiveType_ESlateVisibility TCsESlateVisibility;
 
-struct TCsPrimitiveType_FSlateColor : public TCsPrimitiveType<FSlateColor>
+struct CSCORE_API TCsPrimitiveType_FSlateColor : public TCsPrimitiveType<FSlateColor>
 {
 public:
 
@@ -599,7 +585,7 @@ public:
 
 typedef TCsPrimitiveType_FSlateColor TCsFSlateColor;
 
-struct TCsPrimitiveType_ECheckBoxState : public TCsPrimitiveType<ECheckBoxState>
+struct CSCORE_API TCsPrimitiveType_ECheckBoxState : public TCsPrimitiveType<ECheckBoxState>
 {
 public:
 
@@ -644,7 +630,7 @@ typedef TCsPrimitiveType_ECheckBoxState TCsECheckBoxState;
 // Structs
 #pragma region
 
-struct FCsWidget
+struct CSCORE_API FCsWidget
 {
 public:
 	FString Name;
@@ -669,13 +655,13 @@ public:
 	virtual void OnNativeTick(const float &InDeltaTime) {}
 	virtual void SetIsEnabled(const bool &InIsEnabled){}
 
-	virtual void SetVisibility(const ESlateVisibility &Visible)
+	FORCEINLINE virtual void SetVisibility(const ESlateVisibility &Visible)
 	{
 		Visibility = Visible;
 	}
 };
 
-struct FCsWidget_Bar : public FCsWidget
+struct CSCORE_API FCsWidget_Bar : public FCsWidget
 {
 public:
 	TWeakObjectPtr<class UProgressBar> Bar;
@@ -733,20 +719,20 @@ public:
 		Color.Clear();
 	}
 
-	void SetPercent(const float &inPercent)
+	FORCEINLINE void SetPercent(const float &inPercent)
 	{
 		Percent = inPercent;
 	}
 
-	void SetColor(const FLinearColor &inColor)
+	FORCEINLINE void SetColor(const FLinearColor &inColor)
 	{
 		Color = inColor;
 	}
 
-	UProgressBar* Get() { return Bar.IsValid() ? Bar.Get() : nullptr; }
+	FORCEINLINE UProgressBar* Get() { return Bar.IsValid() ? Bar.Get() : nullptr; }
 };
 
-struct FCsWidget_Text : public FCsWidget
+struct CSCORE_API FCsWidget_Text : public FCsWidget
 {
 public:
 	TWeakObjectPtr<class UTextBlock> Text;
@@ -801,26 +787,26 @@ public:
 		Color.Clear();
 	}
 
-	virtual void SetIsEnabled(const bool &InIsEnabled) override
+	FORCEINLINE virtual void SetIsEnabled(const bool &InIsEnabled) override
 	{
 		if (UTextBlock* T = Get())
 			T->SetIsEnabled(InIsEnabled);
 	}
 
-	virtual void SetString(const FString &inString)
+	FORCEINLINE virtual void SetString(const FString &inString)
 	{
 		String = inString;
 	}
 
-	void SetColorAndOpacity(const FLinearColor &inColor)
+	FORCEINLINE void SetColorAndOpacity(const FLinearColor &inColor)
 	{
 		Color = inColor;
 	}
 
-	UTextBlock* Get() { return Text.IsValid() ? Text.Get() : nullptr; }
+	FORCEINLINE UTextBlock* Get() { return Text.IsValid() ? Text.Get() : nullptr; }
 };
 
-struct FCsWidget_Float : public FCsWidget_Text
+struct CSCORE_API FCsWidget_Float : public FCsWidget_Text
 {
 	TCsFloat Value;
 
@@ -872,7 +858,7 @@ struct FCsWidget_Float : public FCsWidget_Text
 		Color.Clear();
 	}
 
-	virtual void SetString(const FString &inString) override
+	FORCEINLINE virtual void SetString(const FString &inString) override
 	{
 		String = inString;
 
@@ -880,7 +866,7 @@ struct FCsWidget_Float : public FCsWidget_Text
 			Value = FCString::Atof(*inString);
 	}
 
-	void SetValue(const float &inValue)
+	FORCEINLINE void SetValue(const float &inValue)
 	{
 		Value = inValue;
 		
@@ -889,7 +875,7 @@ struct FCsWidget_Float : public FCsWidget_Text
 	}
 };
 
-struct FCsWidget_Int32 : public FCsWidget_Text
+struct CSCORE_API FCsWidget_Int32 : public FCsWidget_Text
 {
 	TCsInt32 Value;
 
@@ -941,7 +927,7 @@ struct FCsWidget_Int32 : public FCsWidget_Text
 		Color.Clear();
 	}
 
-	virtual void SetString(const FString &inString) override
+	FORCEINLINE virtual void SetString(const FString &inString) override
 	{
 		String = inString;
 
@@ -949,7 +935,7 @@ struct FCsWidget_Int32 : public FCsWidget_Text
 			Value = FCString::Atoi(*inString);
 	}
 
-	void SetValue(const float &inValue)
+	FORCEINLINE void SetValue(const float &inValue)
 	{
 		Value = inValue;
 
@@ -958,7 +944,7 @@ struct FCsWidget_Int32 : public FCsWidget_Text
 	}
 };
 
-struct FCsWidget_Image : public FCsWidget
+struct CSCORE_API FCsWidget_Image : public FCsWidget
 {
 public:
 	TWeakObjectPtr<class UImage> Image;
@@ -1015,27 +1001,27 @@ public:
 		Color.Clear();
 	}
 
-	void SetTint(const FSlateColor &inTint)
+	FORCEINLINE void SetTint(const FSlateColor &inTint)
 	{
 		Tint = inTint;
 	}
 
-	void SetColorAndOpacity(const FLinearColor &inColor)
+	FORCEINLINE void SetColorAndOpacity(const FLinearColor &inColor)
 	{
 		Color = inColor;
 	}
 
-	void SetOpacity(const float &Alpha)
+	FORCEINLINE void SetOpacity(const float &Alpha)
 	{
 		FLinearColor C = Color.Get();
 		C.A = Alpha;
 		Color = C;
 	}
 
-	UImage* Get() { return Image.IsValid() ? Image.Get() : nullptr; }
+	FORCEINLINE UImage* Get() { return Image.IsValid() ? Image.Get() : nullptr; }
 };
 
-struct FCsWidget_Button : public FCsWidget
+struct CSCORE_API FCsWidget_Button : public FCsWidget
 {
 public:
 	TWeakObjectPtr<class UButton> Button;
@@ -1082,15 +1068,15 @@ public:
 		Color.Clear();
 	}
 
-	void SetBackgroundColor(const FLinearColor &inColor)
+	FORCEINLINE void SetBackgroundColor(const FLinearColor &inColor)
 	{
 		Color = inColor;
 	}
 
-	UButton* Get() { return Button.IsValid() ? Button.Get() : nullptr; }
+	FORCEINLINE UButton* Get() { return Button.IsValid() ? Button.Get() : nullptr; }
 };
 
-struct FCsWidget_CheckBox : public FCsWidget
+struct CSCORE_API FCsWidget_CheckBox : public FCsWidget
 {
 public:
 	TWeakObjectPtr<class UCheckBox> CheckBox;
@@ -1133,15 +1119,15 @@ public:
 		State.Clear();
 	}
 
-	void SetCheckState(const ECheckBoxState &inState)
+	FORCEINLINE void SetCheckState(const ECheckBoxState &inState)
 	{
 		State = inState;
 	}
 
-	UCheckBox* Get() { return CheckBox.IsValid() ? CheckBox.Get() : nullptr; }
+	FORCEINLINE UCheckBox* Get() { return CheckBox.IsValid() ? CheckBox.Get() : nullptr; }
 };
 
-struct FCsWidget_LabelAndCheckBox : public FCsWidget
+struct CSCORE_API FCsWidget_LabelAndCheckBox : public FCsWidget
 {
 	FCsWidget_Text Label;
 	FCsWidget_CheckBox CheckBox;
@@ -1169,13 +1155,13 @@ struct FCsWidget_LabelAndCheckBox : public FCsWidget
 		}
 	}
 
-	void SetCheckState(const bool &IsChecked)
+	FORCEINLINE void SetCheckState(const bool &IsChecked)
 	{
 		CheckBox.SetCheckState(IsChecked ? ECheckBoxState::Checked : ECheckBoxState::Unchecked);
 	}
 };
 
-struct FCsWidget_Slider : public FCsWidget
+struct CSCORE_API FCsWidget_Slider : public FCsWidget
 {
 public:
 	TWeakObjectPtr<class USlider> Slider;
@@ -1228,20 +1214,20 @@ public:
 		HandleColor.Clear();
 	}
 
-	void SetValue(const float &inValue)
+	FORCEINLINE void SetValue(const float &inValue)
 	{
 		Value = inValue;
 	}
 
-	void SetHandleColor(const FLinearColor &Color)
+	FORCEINLINE void SetHandleColor(const FLinearColor &Color)
 	{
 		HandleColor = Color;
 	}
 
-	USlider* Get() { return Slider.IsValid() ? Slider.Get() : nullptr; }
+	FORCEINLINE USlider* Get() { return Slider.IsValid() ? Slider.Get() : nullptr; }
 };
 
-struct FCsWidget_EditableTextBox : public FCsWidget
+struct CSCORE_API FCsWidget_EditableTextBox : public FCsWidget
 {
 public:
 	TWeakObjectPtr<class UEditableTextBox> TextBox;
@@ -1294,20 +1280,20 @@ public:
 		Color.Clear();
 	}
 
-	virtual void SetText(const FString &inText)
+	FORCEINLINE virtual void SetText(const FString &inText)
 	{
 		Text = inText;
 	}
 
-	void SetBackgroundColor(const FLinearColor &inColor)
+	FORCEINLINE void SetBackgroundColor(const FLinearColor &inColor)
 	{
 		Color = inColor;
 	}
 
-	UEditableTextBox* Get() { return TextBox.IsValid() ? TextBox.Get() : nullptr; }
+	FORCEINLINE UEditableTextBox* Get() { return TextBox.IsValid() ? TextBox.Get() : nullptr; }
 };
 
-struct FCsWidget_EditableFloatBox : public FCsWidget_EditableTextBox
+struct CSCORE_API FCsWidget_EditableFloatBox : public FCsWidget_EditableTextBox
 {
 public:
 	TCsFloat Value;
@@ -1496,7 +1482,7 @@ public:
 	}
 };
 
-struct FCsWidget_SliderAndEditableFloatBox : public FCsWidget
+struct CSCORE_API FCsWidget_SliderAndEditableFloatBox : public FCsWidget
 {
 	FCsWidget_Slider Slider;
 	FCsWidget_EditableFloatBox FloatBox;
@@ -1524,14 +1510,14 @@ struct FCsWidget_SliderAndEditableFloatBox : public FCsWidget
 		}
 	}
 
-	void SetValue(const float &inValue)
+	FORCEINLINE void SetValue(const float &inValue)
 	{
 		Slider.SetValue(inValue);
 		FloatBox.SetValue(inValue);
 	}
 };
 
-struct FCsWidget_LabelAndSliderAndEditableFloatBox : public FCsWidget
+struct CSCORE_API FCsWidget_LabelAndSliderAndEditableFloatBox : public FCsWidget
 {
 	FCsWidget_Text Label;
 	FCsWidget_Slider Slider;
@@ -1562,20 +1548,20 @@ struct FCsWidget_LabelAndSliderAndEditableFloatBox : public FCsWidget
 		}
 	}
 
-	void SetValue(const float &inValue)
+	FORCEINLINE void SetValue(const float &inValue)
 	{
 		Slider.SetValue(inValue);
 		FloatBox.SetValue(inValue);
 	}
 
-	void SetValue(const FText &Text)
+	FORCEINLINE void SetValue(const FText &Text)
 	{
 		FloatBox.SetText(Text.ToString());
 		Slider.SetValue(FloatBox.Value.Get());
 	}
 };
 
-struct FCsWidget_SpinBox : public FCsWidget 
+struct CSCORE_API FCsWidget_SpinBox : public FCsWidget
 {
 public:
 	TWeakObjectPtr<class USpinBox> SpinBox;
@@ -1644,25 +1630,25 @@ public:
 		MaxValue.Clear();
 	}
 
-	void SetValue(const float &inValue)
+	FORCEINLINE void SetValue(const float &inValue)
 	{
 		Value = inValue;
 	}
 
-	void SetMinValue(const float &inMinValue)
+	FORCEINLINE void SetMinValue(const float &inMinValue)
 	{
 		MinValue = inMinValue;
 	}
 
-	void SetMaxValue(const float &inMaxValue)
+	FORCEINLINE void SetMaxValue(const float &inMaxValue)
 	{
 		MaxValue = inMaxValue;
 	}
 
-	USpinBox* Get() { return SpinBox.IsValid() ? SpinBox.Get() : nullptr; }
+	FORCEINLINE USpinBox* Get() { return SpinBox.IsValid() ? SpinBox.Get() : nullptr; }
 };
 
-struct FCsWidget_SpinBox_int32 : public FCsWidget
+struct CSCORE_API FCsWidget_SpinBox_int32 : public FCsWidget
 {
 public:
 	TWeakObjectPtr<class UCsSpinBox_Int32> SpinBox;
@@ -1731,37 +1717,37 @@ public:
 		MaxValue.Clear();
 	}
 
-	void SetValue(const int32 &inValue)
+	FORCEINLINE void SetValue(const int32 &inValue)
 	{
 		Value = FMath::Clamp(inValue, MinValue.Get(), MaxValue.Get());
 	}
 
-	void IncrementValue()
+	FORCEINLINE void IncrementValue()
 	{
 		++Value;
 		Value = FMath::Clamp(Value.Get(), MinValue.Get(), MaxValue.Get());
 	}
 
-	void DecrementValue()
+	FORCEINLINE void DecrementValue()
 	{
 		--Value;
 		Value = FMath::Clamp(Value.Get(), MinValue.Get(), MaxValue.Get());
 	}
 
-	void SetMinValue(const int32 &inMinValue)
+	FORCEINLINE void SetMinValue(const int32 &inMinValue)
 	{
 		MinValue = inMinValue;
 	}
 
-	void SetMaxValue(const int32 &inMaxValue)
+	FORCEINLINE void SetMaxValue(const int32 &inMaxValue)
 	{
 		MaxValue = inMaxValue;
 	}
 
-	UCsSpinBox_Int32* Get() { return SpinBox.IsValid() ? SpinBox.Get() : nullptr; }
+	FORCEINLINE UCsSpinBox_Int32* Get() { return SpinBox.IsValid() ? SpinBox.Get() : nullptr; }
 };
 
-struct FCsWidget_SpinBox_uint32 : public FCsWidget
+struct CSCORE_API FCsWidget_SpinBox_uint32 : public FCsWidget
 {
 public:
 	TWeakObjectPtr<class UCsSpinBox_Int32> SpinBox;
@@ -1830,39 +1816,39 @@ public:
 		MaxValue.Clear();
 	}
 
-	void SetValue(const uint32 &inValue)
+	FORCEINLINE void SetValue(const uint32 &inValue)
 	{
 		Value = FMath::Clamp(inValue, MinValue.Get(), MaxValue.Get());
 	}
 
-	void IncrementValue()
+	FORCEINLINE void IncrementValue()
 	{
 		if (Value == UINT32_MAX || Value >= MaxValue)
 			return;
 		++Value;
 	}
 
-	void DecrementValue()
+	FORCEINLINE void DecrementValue()
 	{
 		if (Value == 0 || Value <= MinValue)
 			return;
 		--Value;
 	}
 
-	void SetMinValue(const uint32 &inMinValue)
+	FORCEINLINE void SetMinValue(const uint32 &inMinValue)
 	{
 		MinValue = inMinValue;
 	}
 
-	void SetMaxValue(const uint32 &inMaxValue)
+	FORCEINLINE void SetMaxValue(const uint32 &inMaxValue)
 	{
 		MaxValue = inMaxValue;
 	}
 
-	UCsSpinBox_Int32* Get() { return SpinBox.IsValid() ? SpinBox.Get() : nullptr; }
+	FORCEINLINE UCsSpinBox_Int32* Get() { return SpinBox.IsValid() ? SpinBox.Get() : nullptr; }
 };
 
-struct FCsWidget_ButtonAndText : public FCsWidget
+struct CSCORE_API FCsWidget_ButtonAndText : public FCsWidget
 {
 	FCsWidget_Button Button;
 	FCsWidget_Text Text;
@@ -1891,7 +1877,7 @@ struct FCsWidget_ButtonAndText : public FCsWidget
 	}
 };
 
-struct FCsWidget_LabelAndButtonAndText : public FCsWidget
+struct CSCORE_API FCsWidget_LabelAndButtonAndText : public FCsWidget
 {
 	FCsWidget_Text Label;
 	FCsWidget_Button Button;
@@ -1923,7 +1909,7 @@ struct FCsWidget_LabelAndButtonAndText : public FCsWidget
 	}
 };
 
-struct FCsWidget_Loading
+struct CSCORE_API FCsWidget_Loading
 {
 public:
 	FCsWidget_Text Loading;
@@ -2230,7 +2216,7 @@ public:
 
 #pragma endregion Structs
 
-struct FCsPooledWidgetPayload
+struct CSCORE_API FCsPooledWidgetPayload
 {
 	bool IsAllocated;
 	FString DisplayName;
@@ -2254,7 +2240,7 @@ struct FCsPooledWidgetPayload
 	}
 };
 
-struct FCsWidgetActorPayload
+struct CSCORE_API FCsWidgetActorPayload
 {
 	bool IsAllocated;
 	TWeakObjectPtr<class UUserWidget> Widget;
@@ -2303,7 +2289,7 @@ struct FCsWidgetActorPayload
 		String = ECsCached::Str::Empty;
 	}
 
-	class UUserWidget* GetWidget() { return Widget.IsValid() ? Widget.Get() : nullptr; }
+	FORCEINLINE class UUserWidget* GetWidget() { return Widget.IsValid() ? Widget.Get() : nullptr; }
 	template<typename T>
-	T* GetWidget() { return Cast<T>(GetWidget()); }
+	FORCEINLINE T* GetWidget() { return Cast<T>(GetWidget()); }
 };

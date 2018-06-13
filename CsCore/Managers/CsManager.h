@@ -3,6 +3,7 @@
 
 #include "GameFramework/Actor.h"
 #include "Types/CsTypes_Pool.h"
+#include "CsCVars.h"
 #include "CsManager.generated.h"
 
 // OnAllocate
@@ -201,6 +202,11 @@ public:
 		return nullptr;
 	}
 
+	virtual FString GetObjectName(ObjectType* o)
+	{
+		return ECsCached::Str::Empty;
+	}
+
 	virtual void CreatePool(const EnumType &e, const int32 &size)
 	{
 		PoolSizes.Add(e, size);
@@ -285,42 +291,50 @@ public:
 		return ECsCached::Str::Empty;
 	}
 
-	void LogTransaction(const FString &functionName, const TEnumAsByte<ECsPoolTransaction::Type> &transaction, ObjectType* o)
+	virtual const FString& EnumTypeToString(const int32& index)
 	{
-		/*
+		return ECsCached::Str::Empty;
+	}
+
+	virtual void LogTransaction(const FString &functionName, const TEnumAsByte<ECsPoolTransaction::Type> &transaction, ObjectType* o)
+	{
 		if ((*LogTransactions)->GetInt() == CS_CVAR_SHOW_LOG)
 		{
-		const FString& TransactionAsString = ECsPoolTransaction::ToActionString(transaction);
+			const FString& TransactionAsString = ECsPoolTransaction::ToActionString(transaction);
 
-		const FString ActorName	   = Actor->GetName();
-		const FString TypeAsString = (*InteractiveTypeToString)((TCsInteractiveType)Actor->Cache.Type);
-		const float CurrentTime	   = GetWorld()->GetTimeSeconds();
-		const UObject* ActorOwner  = Actor->Cache.GetOwner();
-		const FString OwnerName	   = ActorOwner ? ActorOwner->GetName() : ECsCached::Str::None;
-		const UObject* Parent	   = Actor->Cache.GetParent();
-		const FString ParentName   = Parent ? Parent->GetName() : ECsCached::Str::None;
+			const FString ObjectName	= GetObjectName(o);
+			const FString TypeAsString  = EnumTypeToString(o->Cache.Type);
+			const float CurrentTime	    = GetCurrentTimeSeconds();
+			const UObject* ObjectOwner  = o->Cache.GetOwner();
+			const FString OwnerName	    = ObjectOwner ? ObjectOwner->GetName() : ECsCached::Str::None;
+			const UObject* Parent	    = o->Cache.GetParent();
+			const FString ParentName    = Parent ? Parent->GetName() : ECsCached::Str::None;
 
-		if (ActorOwner && Parent)
-		{
-		UE_LOG(LogCs, Warning, TEXT("%s: %s InteractiveActor: %s of Type: %s at %f for %s attached to %s."), *FunctionName, *TransactionAsString, *ActorName, *TypeAsString, CurrentTime, *OwnerName, *ParentName);
+			FString OutLog = ECsCached::Str::Empty;
+
+			if (ObjectOwner && Parent)
+			{
+				OutLog = FString::Printf(TEXT("%s: %s %s: %s of Type: %s at %f for %s attached to %s."), *functionName, *TransactionAsString, *ObjectClassName, *ObjectName, *TypeAsString, CurrentTime, *OwnerName, *ParentName);
+			}
+			else
+			if (ObjectOwner)
+			{
+				OutLog = FString::Printf(TEXT("%s: %s %s: %s of Type: %s at %f for %s."), *functionName, *TransactionAsString, *ObjectClassName, *ObjectName, *TypeAsString, CurrentTime, *OwnerName);
+			}
+			else
+			if (Parent)
+			{
+				OutLog = FString::Printf(TEXT("%s: %s %s: %s of Type: %s at %f attached to %s."), *functionName, *TransactionAsString, *ObjectClassName, *ObjectName, *TypeAsString, CurrentTime, *ParentName);
+			}
+			else
+			{
+				OutLog = FString::Printf(TEXT("%s: %s %s: %s of Type: %s at %f."), *functionName, *TransactionAsString, *ObjectClassName, *ObjectName, *TypeAsString, CurrentTime);
+			}
+			LogTransaction_Internal(OutLog);
 		}
-		else
-		if (ActorOwner)
-		{
-		UE_LOG(LogCs, Warning, TEXT("%s: %s InteractiveActor: %s of Type: %s at %f for %s."), *FunctionName, *TransactionAsString, *ActorName, *TypeAsString, CurrentTime, *OwnerName);
-		}
-		else
-		if (Parent)
-		{
-		UE_LOG(LogCs, Warning, TEXT("%s: %s InteractiveActor: %s of Type: %s at %f attached to %s."), *TransactionAsString, *FunctionName, *ActorName, *TypeAsString, CurrentTime, *ParentName);
-		}
-		else
-		{
-		UE_LOG(LogCs, Warning, TEXT("%s: %s InteractiveActor: %s of Type: %s at %f."), *FunctionName, *TransactionAsString, *ActorName, *TypeAsString, CurrentTime);
-		}
-		}
-		*/
 	}
+
+	virtual void LogTransaction_Internal(const FString& OutLog){}
 
 	virtual float GetCurrentTimeSeconds()
 	{

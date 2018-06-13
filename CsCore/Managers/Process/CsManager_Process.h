@@ -12,7 +12,10 @@ public:
 
 	virtual void DeconstructObject(UCsProcess* p) override;
 	virtual UCsProcess* ConstructObject(const FECsProcess& e) override;
+	virtual FString GetObjectName(UCsProcess* p) override;
 	virtual const FString& EnumTypeToString(const FECsProcess &e) override;
+	virtual const FString& EnumTypeToString(const int32 &index) override;
+	virtual void LogTransaction_Internal(const FString& OutLog) override;
 };
 
 UCLASS(transient)

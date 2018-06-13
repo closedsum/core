@@ -24,9 +24,24 @@ UCsProcess* CsManager_Process::ConstructObject(const FECsProcess& e)
 	return process;
 }
 
+FString CsManager_Process::GetObjectName(UCsProcess* p)
+{
+	return p->GetName();
+}
+
 const FString& CsManager_Process::EnumTypeToString(const FECsProcess &e)
 {
 	return e.Name;
+}
+
+const FString& CsManager_Process::EnumTypeToString(const int32 &index)
+{
+	return EMCsProcess::Get().GetEnumAt(index).Name;
+}
+
+void CsManager_Process::LogTransaction_Internal(const FString& OutLog)
+{
+	UE_LOG(LogCs, Warning, TEXT("%s"), *OutLog);
 }
 
 #pragma endregion // Internal

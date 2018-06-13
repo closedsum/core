@@ -1838,20 +1838,22 @@ void ACsWeapon::FireProjectile(const FECsWeaponFireMode &FireMode, FCsProjectile
 
 	// Allocate Projectiles
 	ACsGameState* GameState					  = GetWorld()->GetGameState<ACsGameState>();
-	ACsManager_Projectile* Manager_Projectile = GameState->Manager_Projectile;
+	AICsManager_Projectile* Manager_Projectile = GameState->Manager_Projectile;
 	
 	// Real
 	FCsProjectilePayload* Payload = Manager_Projectile->AllocatePayload();
 
 	Payload->Relevance = UseFakeProjectile ? ECsProjectileRelevance::RealInvisible : ECsProjectileRelevance::RealVisible;
-	Payload->Data	   = Data_Projectile;
+	Payload->Instigator = GetMyOwner();
+	Payload->Owner		= this;
+	Payload->Data		= Data_Projectile;
 
 	FirePayload->Location  = RealStart;
 	FirePayload->Direction = RealDir;
 
 	Payload->Set(FirePayload);
 
-	ACsProjectile* RealProjectile = Manager_Projectile->Fire(Payload, GetMyOwner(), this);
+	ACsProjectile* RealProjectile = Manager_Projectile->Fire(Data_Projectile->GetProjectileType(), Payload);
 
 	const bool IsLocalPawn = UCsCommon::IsLocalPawn(GetWorld(), GetMyPawn());
 
@@ -1867,8 +1869,10 @@ void ACsWeapon::FireProjectile(const FECsWeaponFireMode &FireMode, FCsProjectile
 	{
 		FCsProjectilePayload* FakePayload = Manager_Projectile->AllocatePayload();
 
-		Payload->Relevance = ECsProjectileRelevance::Fake;
-		Payload->Data	   = Data_Projectile;
+		Payload->Relevance	= ECsProjectileRelevance::Fake;
+		Payload->Instigator = GetMyOwner();
+		Payload->Owner		= this;
+		Payload->Data		= Data_Projectile;
 
 		FCsProjectileFirePayload* FakeFirePayload = AllocateProjectileFirePayload(FireMode);
 		FakeFirePayload->Location				  = FakeStart;
@@ -1876,7 +1880,7 @@ void ACsWeapon::FireProjectile(const FECsWeaponFireMode &FireMode, FCsProjectile
 
 		Payload->Set(FakeFirePayload);
 
-		ACsProjectile* FakeProjectile = Manager_Projectile->Fire(Payload, GetMyOwner(), this);
+		ACsProjectile* FakeProjectile = Manager_Projectile->Fire(Data_Projectile->GetProjectileType(), Payload);
 
 		FakeFirePayload->Reset();
 

@@ -135,6 +135,8 @@ public:
 
 	TAutoConsoleVariable<int32>* LogTransactions;
 
+	TBaseDelegate<void, ObjectType*> OnTick_Handle_Object;
+
 protected:
 	FString FunctionNames[ECsManagerPooledObjectsFunctionNames::ECsManagerPooledObjectsFunctionNames_MAX];
 
@@ -377,7 +379,10 @@ public:
 				}
 
 				if (!o->Cache.bLifeTime)
+				{
+					OnTick_Handle_Object.ExecuteIfBound(o);
 					continue;
+				}
 
 				if (GetCurrentTimeSeconds() - o->Cache.Time > o->Cache.LifeTime)
 				{
@@ -388,7 +393,10 @@ public:
 
 					if (j < earliestIndex)
 						earliestIndex = j;
+					continue;
 				}
+
+				OnTick_Handle_Object.ExecuteIfBound(o);
 			}
 
 			// Update ActiveIndex

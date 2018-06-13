@@ -14,7 +14,9 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 {
 	GENERATED_USTRUCT_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<class ACsProjectile> Projectile;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<class ACsData_Projectile> Data;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
@@ -54,75 +56,21 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 		Projectile = InProjectile;
 	}
 
-	template<typename T>
-	void Init(const uint16& InActiveIndex, FCsProjectilePayload* Payload, float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InInstigator, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)())
+	void Init(const uint16& InActiveIndex, FCsProjectilePayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
 		SetActiveIndex(InActiveIndex);
 		Relevance = Payload->Relevance;
 
 		IsAllocated = true;
 
-		Instigator = InInstigator;
-		Owner	   = InOwner;
-		Data	   = Payload->Data;
-
-		Type_Script = Data->GetBaseProjectileType();
-		Type		= (uint8)Type_Script;
-
-		Parent	    = InParent;
-
-		SetLifeTime(Data->GetLifeTime());
-
-		Time	    = InTime;
-		RealTime    = InRealTime;
-		SetFrame(InFrame);
-
-		Location	  = Payload->Location;
-		Direction	  = Payload->Direction;
-		Rotation	  = Direction.Rotation();
-		Transform.SetLocation(Location);
-		Transform.SetRotation(Rotation.Quaternion());
-
-		ChargePercent = Payload->ChargePercent;
-		Speed		  = Data->GetInitialSpeed() + Payload->AdditionalSpeed;
-
-		if (InObject && OnDeAllocate)
-		{
-			DelegateInvoker = (UObject*)InObject;
-#if WITH_EDITOR
-			OnDeAllocate_ScriptEvent.AddUObject(InObject, OnDeAllocate);
-#endif // #if WITH_EDITOR
-			OnDeAllocate_Event.AddUObject(InObject, OnDeAllocate);
-		}
-	}
-
-	template<typename T>
-	void Init(const uint16& InActiveIndex, FCsProjectilePayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, T* InObject, void (T::*OnDeAllocate)())
-	{
-		Init(InActiveIndex, Payload, InTime, InRealTime, InFrame, nullptr, nullptr, nullptr, InObject, OnDeAllocate);
-	}
-
-	template<typename T>
-	void Init(const uint16& InActiveIndex, FCsProjectilePayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)())
-	{
-		Init(InActiveIndex, Payload, InTime, InRealTime, InFrame, Instigator, InOwner, nullptr, InObject, OnDeAllocate);
-	}
-
-	void Init(const uint16& InActiveIndex, FCsProjectilePayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InInstigator, UObject* InOwner, UObject* InParent)
-	{
-		SetActiveIndex(InActiveIndex);
-		Relevance = Payload->Relevance;
-
-		IsAllocated = true;
-
-		Instigator = InInstigator;
-		Owner	   = InOwner;
+		Instigator = Payload->Instigator;
+		Owner	   = Payload->Owner;
 		Data	   = Payload->Data;
 
 		Type_Script = Data->GetProjectileType();
 		Type		= (uint8)Type_Script;
 
-		Parent	   = InParent;
+		Parent	   = Payload->Parent;
 
 		SetLifeTime(Data->GetLifeTime());
 
@@ -138,16 +86,6 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 
 		ChargePercent = Payload->ChargePercent;
 		Speed		  = Data->GetInitialSpeed() + Payload->AdditionalSpeed;
-	}
-
-	void Init(const uint16& InActiveIndex, FCsProjectilePayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InInstigator, UObject* InOwner)
-	{
-		Init(InActiveIndex, Payload, InTime, InRealTime, InFrame, InInstigator, InOwner, nullptr);
-	}
-
-	void Init(const uint16& InActiveIndex, FCsProjectilePayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
-	{
-		Init(InActiveIndex, Payload, InTime, InRealTime, InFrame, nullptr, nullptr, nullptr);
 	}
 
 	void Reset()
@@ -168,13 +106,13 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 		DrawDistanceSq = 0.0f;
 	}
 
-	ACsProjectile* GetProjectile() { return Projectile.IsValid() ? Projectile.Get() : nullptr; }
+	FORCEINLINE ACsProjectile* GetProjectile() { return Projectile.IsValid() ? Projectile.Get() : nullptr; }
 	template<typename T>
-	T* GetProjectile() { return Cast<T>(GetProjectile()); }
+	FORCEINLINE T* GetProjectile() { return Cast<T>(GetProjectile()); }
 
-	ACsData_Projectile* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
+	FORCEINLINE ACsData_Projectile* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
 	template<typename T>
-	T* GetData() { return Cast<T>(GetData()); }
+	FORCEINLINE T* GetData() { return Cast<T>(GetData()); }
 };
 
 UCLASS()
@@ -206,18 +144,11 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Projectile")
 	FCsProjectileCache Cache;
 
-	void Init(const int32 &Index);
+	UPROPERTY(BlueprintReadOnly, Category = "Projectile")
+	FECsProjectileType Type;
 
-	template<typename T>
-	void Allocate(const uint16& ActiveIndex, FCsProjectilePayload* Payload, UObject* InInstigator, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)());
+	void Init(const int32 &Index, const FECsProjectileType& InType);
 
-	template<typename T>
-	void Allocate(const uint16& ActiveIndex, FCsProjectilePayload* Payload, T* InObject, void (T::*OnDeAllocate)());
-
-	template<typename T>
-	void Allocate(const uint16& ActiveIndex, FCsProjectilePayload* Payload, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)());
-
-	virtual void Allocate(const uint16& ActiveIndex, FCsProjectilePayload* Payload, UObject* InInstigator, UObject* InOwner, UObject* InParent = nullptr);
 	virtual void Allocate(const uint16& ActiveIndex, FCsProjectilePayload* Payload);
 
 	virtual void Allocate_Internal(FCsProjectilePayload* Payload);

@@ -43,11 +43,10 @@ void CsManager_InteractiveActor::LogTransaction_Internal(const FString& outLog)
 
 #pragma endregion // Internal
 
-
 AICsManager_InteractiveActor::AICsManager_InteractiveActor(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	Internal = new CsManager_InteractiveActor();
-	Internal->Init(TEXT("CsManager_InteractiveActor"), TEXT("UCsProcess"), nullptr, &CsCVarLogManagerProcessTransactions);
+	Internal->Init(TEXT("CsManager_InteractiveActor"), TEXT("UCsProcess"), nullptr, &CsCVarLogManagerInteractiveActorTransactions);
 	Internal->CsConstructObject.Unbind();
 	Internal->CsConstructObject.BindUObject(this, &AICsManager_InteractiveActor::ConstructObject);
 }

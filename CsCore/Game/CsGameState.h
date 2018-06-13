@@ -295,7 +295,7 @@ public:
 	class ACsManager_Sound* Manager_Sound;
 
 	UPROPERTY()
-	class ACsManager_Projectile* Manager_Projectile;
+	class AICsManager_Projectile* Manager_Projectile;
 
 	UPROPERTY()
 	class ACsManager_Damage* Manager_Damage;

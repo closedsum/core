@@ -1,79 +1,98 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Types/CsTypes.h"
-#include "Types/CsTypes_Projectile.h"
+#include "GameFramework/Actor.h"
 #include "Managers/CsManager.h"
+#include "Managers/Projectile/CsProjectile.h"
 #include "CsManager_Projectile.generated.h"
 
 #define CS_PROJECTILE_POOL_SIZE 400
 #define CS_PROJECTILE_PAYLOAD_SIZE 255
 
+class CsManager_Projectile : public TCsManagerPooledObjects<FECsProjectileType, ACsProjectile, FCsProjectilePayload, CS_PROJECTILE_PAYLOAD_SIZE>
+{
+public:
+	~CsManager_Projectile();
+
+	virtual void DeconstructObject(class ACsProjectile* a) override;
+	virtual FString GetObjectName(class ACsProjectile* a) override;
+	virtual const FString& EnumTypeToString(const FECsProjectileType &e) override;
+	virtual const FString& EnumTypeToString(const int32 &index) override;
+	virtual void LogTransaction_Internal(const FString& OutLog) override;
+};
+
 UCLASS()
-class CSCORE_API ACsManager_Projectile : public ACsManager
+class CSCORE_API AICsManager_Projectile : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
 private:
 
+	CsManager_Projectile * Internal;
+
 	static TWeakObjectPtr<UObject> MyOwner;
 
 	static UObject* GetMyOwner();
+	template<typename T>
+	static T* GetMyOwner()
+	{
+		Cast<T>(GetMyOwner());
+	}
 
 public:
 
 	static void Init(UObject* InOwner);
-	static ACsManager_Projectile* Get(UWorld* InWorld);
 
-	virtual void Clear() override;
-	virtual void Shutdown() override;
+	static AICsManager_Projectile* Get(UWorld* InWorld);
+	template<typename T>
+	static T* Get(UWorld* InWorld)
+	{
+		return Cast<T>(Get(InWorld));
+	}
+
 	virtual void Destroyed() override;
-	virtual void CreatePool(const TSubclassOf<class UObject> &ObjectClass, const int32 &Size) override;
-	virtual void CreatePool(const int32 &Size) override;
-	virtual void OnTick(const float &DeltaSeconds);
 
-	TSubclassOf<class ACsProjectile> ProjectileClass;
+	UFUNCTION(BlueprintCallable, Category = "Manager Projectile")
+	void Clear();
 
-	UPROPERTY()
-	TArray<class ACsProjectile*> Pool;
+	void Shutdown();
 
-	uint16 PoolIndex;
+	virtual ACsProjectile* ConstructObject(const FECsProjectileType &Type);
 
-	TArray<class ACsProjectile*> ActiveProjectiles;
+	UFUNCTION(BlueprintCallable, Category = "Manager Projectile")
+	void CreatePool(const FECsProjectileType &Type, const int32 &Size);
+	UFUNCTION(BlueprintCallable, Category = "Manager Projectile")
+	void AddToPool(const FECsProjectileType &Type, ACsProjectile* Process);
+	UFUNCTION(BlueprintCallable, Category = "Manager Projectile")
+	void AddToActivePool(const FECsProjectileType &Type, ACsProjectile* Process);
+	
+	UFUNCTION(BlueprintCallable, Category = "Manager Projectile")
+	void OnTick(const float &DeltaTime);
+	
+	virtual void OnTick_Handle_Projectile(ACsProjectile* Projectile);
 
-	virtual void LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, class UObject* InObject) override;
+	UFUNCTION(BlueprintCallable, Category = "Manager Projectile")
+	void GetAllActiveActors(TArray<ACsProjectile*> &OutActors);
 
-	class ACsProjectile* Allocate();
+	const TArray<ACsProjectile*>* GetActors(const FECsProjectileType& Type);
 
-	virtual void DeAllocate(const int32 &Index) override;
+	UFUNCTION(BlueprintCallable, Category = "Manager Projectile")
+	int32 GetActivePoolSize(const FECsProjectileType &Type);
+	UFUNCTION(BlueprintCallable, Category = "Manager Projectile")
+	bool IsExhausted(const FECsProjectileType &Type);
+	UFUNCTION(BlueprintCallable, Category = "Manager Projectile")
+	bool DeAllocate(const FECsProjectileType &Type, const int32 &Index);
+	UFUNCTION(BlueprintCallable, Category = "Manager Projectile")
+	void DeAllocateAll();
 
-// Payload
-#pragma region
-private:
+	FCsProjectilePayload* AllocatePayload();
 
-	FCsProjectilePayload Payloads[CS_PROJECTILE_PAYLOAD_SIZE];
-
-	uint8 PayloadIndex;
-
-public:
-
-	FCsProjectilePayload * AllocatePayload();
-
-#pragma endregion Payload
-
-// Fire
-#pragma region
-public: 
-
-	virtual class ACsProjectile* Fire(FCsProjectilePayload* Payload, UObject* InInstigator, UObject* InOwner, UObject* InParent);
-	virtual class ACsProjectile* Fire(FCsProjectilePayload* Payload, UObject* InInstigator, UObject* InOwner);
-	virtual class ACsProjectile* Fire(FCsProjectilePayload* Payload);
+	UFUNCTION(BlueprintCallable, Category = "Manager Projectile")
+	ACsProjectile* Fire(const FECsProjectileType &Type, FCsProjectilePayload &Payload);
+	ACsProjectile* Fire(const FECsProjectileType &Type, FCsProjectilePayload* Payload);
 
 	template<typename T>
-	void Fire(class ACsProjectile* OutProjectile, FCsProjectilePayload* Payload, UObject* InInstigator, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)());
-	template<typename T>
-	void Fire(class ACsProjectile* OutProjectile, FCsProjectilePayload* Payload, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)());
-	template<typename T>
-	void Fire(class ACsProjectile* OutProjectile, FCsProjectilePayload* Payload, UObject* InInstigator, T* InObject, void (T::*OnDeAllocate)());
-
-#pragma endregion Fire
+	T* Fire(const FECsProjectileType &Type, FCsProjectilePayload* Payload)
+	{
+		return Cast<T>(Spawn(Type, Payload));
+	}
 };

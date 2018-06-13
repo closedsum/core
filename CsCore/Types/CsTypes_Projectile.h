@@ -591,11 +591,20 @@ struct CSCORE_API FCsProjectilePayload
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Payload")
 	bool IsAllocated;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	TEnumAsByte<ECsProjectileRelevance::Type> Relevance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	TWeakObjectPtr<UObject> Instigator;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	TWeakObjectPtr<UObject> Owner;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	TWeakObjectPtr<UObject> Parent;
 
 	UPROPERTY()
 	TWeakObjectPtr<class ACsData_Projectile> Data;
@@ -628,6 +637,9 @@ struct CSCORE_API FCsProjectilePayload
 	{
 		IsAllocated = B.IsAllocated;
 		Relevance = B.Relevance;
+		Instigator = B.Instigator;
+		Owner = B.Owner;
+		Parent = B.Parent;
 		Data = B.Data;
 		ChargePercent = B.ChargePercent;
 		Location = B.Location;
@@ -643,6 +655,9 @@ struct CSCORE_API FCsProjectilePayload
 	{
 		return	IsAllocated == B.IsAllocated &&
 				Relevance == B.Relevance &&
+				Instigator == B.Instigator &&
+				Owner == B.Owner &&
+				Parent == B.Parent &&
 				Data == B.Data &&
 				ChargePercent == B.ChargePercent &&
 				Location == B.Location &&
@@ -672,6 +687,12 @@ struct CSCORE_API FCsProjectilePayload
 	FORCEINLINE void Reset()
 	{
 		Relevance = ECsProjectileRelevance::ECsProjectileRelevance_MAX;
+		Instigator.Reset();
+		Instigator = nullptr;
+		Owner.Reset();
+		Owner = nullptr;
+		Parent.Reset();
+		Parent = nullptr;
 		ChargePercent = 0.0f;
 		Location = FVector::ZeroVector;
 		Direction = FVector::ZeroVector;
@@ -681,6 +702,18 @@ struct CSCORE_API FCsProjectilePayload
 		HomingBone = NAME_None;
 		HomingAccelerationMagnitude = 0.0f;
 	}
+
+	FORCEINLINE UObject* GetInstigator() { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
+	template<typename T>
+	FORCEINLINE T* GetInstigator() { return Cast<T>(GetInstigator()); }
+
+	FORCEINLINE UObject* GetOwner() { return Owner.IsValid() ? Owner.Get() : nullptr; }
+	template<typename T>
+	FORCEINLINE T* GetOwner() { return Cast<T>(GetOwner()); }
+
+	FORCEINLINE UObject* GetParent() { return Parent.IsValid() ? Parent.Get() : nullptr; }
+	template<typename T>
+	FORCEINLINE T* GetParent() { return Cast<T>(GetParent()); }
 
 	FORCEINLINE ACsData_Projectile* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
 	template<typename T>

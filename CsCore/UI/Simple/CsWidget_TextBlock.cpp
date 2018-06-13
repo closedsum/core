@@ -2,7 +2,7 @@
 #include "UI/Simple/CsWidget_TextBlock.h"
 #include "CsCore.h"
 
-namespace ECsWidgetTextBlockCachedString
+namespace ECsWidgetTextBlockCached
 {
 	namespace Str
 	{
@@ -20,9 +20,9 @@ void UCsWidget_TextBlock::OnNativeConstruct()
 	Super::OnNativeConstruct();
 
 	Text.Set(MyText);
-	const FString& TextName   = ECsCachedString::Str::Text;
-	const FString& MyTextName = ECsWidgetTextBlockCachedString::Str::MyText;
-	Text.Init(TextName, MyTextName, GetName() + ECsCachedString::Str::Dot + TextName);
+	const FString& TextName   = ECsCached::Str::Text;
+	const FString& MyTextName = ECsWidgetTextBlockCached::Str::MyText;
+	Text.Init(TextName, MyTextName, GetName() + ECsCached::Str::Dot + TextName);
 }
 
 void UCsWidget_TextBlock::OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime)

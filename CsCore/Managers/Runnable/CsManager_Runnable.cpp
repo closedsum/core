@@ -11,7 +11,7 @@ bool UCsManager_Runnable::s_bManagerHasShutdown = false;
 // Cache
 #pragma region
 
-namespace ECsManagerRunnableCachedString
+namespace ECsManagerRunnableCached
 {
 	namespace Str
 	{
@@ -85,7 +85,7 @@ bool UCsManager_Runnable::Tick(float DeltaSeconds)
 		{
 			UE_LOG(LogCs, Warning, TEXT("UCsManager_Runnable::OnTick: Runnable: %s at PoolIndex: %s was prematurely deallocted NOT in a normal way."), *(Runnable->Cache.Name), Runnable->Cache.Index);
 
-			LogTransaction(ECsManagerRunnableCachedString::Str::OnTick, ECsPoolTransaction::Deallocate, Runnable);
+			LogTransaction(ECsManagerRunnableCached::Str::OnTick, ECsPoolTransaction::Deallocate, Runnable);
 
 			ActiveRunnables.RemoveAt(I);
 
@@ -96,7 +96,7 @@ bool UCsManager_Runnable::Tick(float DeltaSeconds)
 
 		if (Runnable->bExit)
 		{
-			LogTransaction(ECsManagerRunnableCachedString::Str::OnTick, ECsPoolTransaction::Deallocate, Runnable);
+			LogTransaction(ECsManagerRunnableCached::Str::OnTick, ECsPoolTransaction::Deallocate, Runnable);
 
 			Runnable->DeAllocate();
 			ActiveRunnables.RemoveAt(I);
@@ -168,7 +168,7 @@ void UCsManager_Runnable::LogTransaction(const FString &FunctionName, const TEnu
 		const FString& RunnableName  = Runnable->Cache.Name;
 		const float CurrentTime		 = GetCurrentWorld() ? GetCurrentWorld()->GetTimeSeconds() : UCsCommon::GetCurrentDateTimeSeconds();
 		const UObject* RunnableOwner = Runnable->Cache.GetOwner();
-		const FString OwnerName		 = RunnableOwner ? RunnableOwner->GetName() : ECsCachedString::Str::None;
+		const FString OwnerName		 = RunnableOwner ? RunnableOwner->GetName() : ECsCached::Str::None;
 
 		if (RunnableOwner)
 		{
@@ -209,7 +209,7 @@ FCsRunnable_Delegate * UCsManager_Runnable::Prep(FCsRunnablePayload* Payload)
 	else
 		Runnable->Allocate(ActiveIndex, Payload, UCsCommon::GetCurrentDateTimeSeconds(), UCsCommon::GetCurrentDateTimeSeconds(), 0);
 
-	LogTransaction(ECsManagerRunnableCachedString::Str::Prep, ECsPoolTransaction::Allocate, Runnable);
+	LogTransaction(ECsManagerRunnableCached::Str::Prep, ECsPoolTransaction::Allocate, Runnable);
 	Payload->Reset();
 	return Runnable;
 }

@@ -18,12 +18,12 @@ ACsGunWeapon::ACsGunWeapon(const FObjectInitializer& ObjectInitializer)
 // Data
 #pragma region
 
-void ACsGunWeapon::ApplyData_Weapon(const TCsWeaponSlot &Slot, ACsData_Weapon* InData, class ACsData_WeaponMaterialSkin* InSkin, const bool &Equipped)
+void ACsGunWeapon::ApplyData_Weapon(const FECsWeaponSlot &Slot, ACsData_Weapon* InData, class ACsData_WeaponMaterialSkin* InSkin, const bool &Equipped)
 {
 	Reset();
 
 	WeaponSlot = Slot;
-	WeaponIndex = (uint8)Slot;
+	WeaponIndex = Slot.Value;
 
 	MyData_Weapon = InData;
 
@@ -53,9 +53,9 @@ void ACsGunWeapon::ApplyData_Weapon(const TCsWeaponSlot &Slot, ACsData_Weapon* I
 	AttachMeshToPawn();
 	SetMultiValueMembers();
 
-	OnApplyData_Weapon_Event.Broadcast(WeaponIndex);
+	OnApplyData_Weapon_Event.Broadcast(WeaponSlot);
 #if WITH_EDITOR
-	OnApplyData_Weapon_ScriptEvent.Broadcast(WeaponIndex);
+	OnApplyData_Weapon_ScriptEvent.Broadcast(WeaponSlot);
 #endif // #if WITH_EDITOR
 }
 
@@ -117,6 +117,6 @@ void ACsGunWeapon::SetMesh() {}
 // Animation
 #pragma region
 
-TCsCharacterAnim ACsGunWeapon::GetCharacterAnimType(const TCsWeaponAnim &AnimType) { return TCsCharacterAnim(0); }
+const FECsCharacterAnim& ACsGunWeapon::GetCharacterAnimType(const FECsWeaponAnim &AnimType) { return EMCsCharacterAnim::Get().GetMAX(); }
 
 #pragma endregion Animation

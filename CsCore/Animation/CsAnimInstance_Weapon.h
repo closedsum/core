@@ -87,11 +87,15 @@ public:
 
 	virtual void LoadAnims();
 
-	virtual class UAnimMontage* GetAnimMontage(const TCsWeaponAnim &AnimType, const int32 &Index = 0) const;
-	virtual class UAnimSequence* GetAnimSequence(const TCsWeaponAnim &AnimType) const;
-	virtual class UBlendSpace* GetBlendSpace(const TCsWeaponBlendSpace &BlendType) const;
+	UFUNCTION(BlueprintCallable, Category = "AI Weapon AnimInstance", meta = (BlueprintThreadSafe))
+	virtual class UAnimMontage* GetAnimMontage(const FECsWeaponAnim &AnimType, const int32 &Index = 0) const;
+	UFUNCTION(BlueprintCallable, Category = "AI Weapon AnimInstance", meta = (BlueprintThreadSafe))
+	virtual class UAnimSequence* GetAnimSequence(const FECsWeaponAnim &AnimType) const;
+	UFUNCTION(BlueprintCallable, Category = "AI Weapon AnimInstance", meta = (BlueprintThreadSafe))
+	virtual class UBlendSpace* GetBlendSpace(const FECsWeaponBlendSpace &BlendType) const;
 
-	virtual void StopAnimation(const TCsWeaponAnim &AnimType, const int32 &Index = 0, const float BlendOutTime = 0.0f);
+	UFUNCTION(BlueprintCallable, Category = "AI Weapon AnimInstance")
+	virtual void StopAnimation(const FECsWeaponAnim &AnimType, const int32 &Index = 0, const float BlendOutTime = 0.0f);
 
 #pragma endregion Anims
 

@@ -26,6 +26,8 @@ public:
 public:
 
 	virtual USkeletalMesh* GetMesh(const TCsViewType &ViewType, const bool &IsLow = false);
+	UFUNCTION(BlueprintCallable, Category = "Mesh")
+	virtual USkeletalMesh* GetMesh(const TEnumAsByte<ECsViewType::Type> &ViewType, const bool &IsLow = false);
 	virtual USkeletalMesh* GetMesh();
 
 	virtual void SetMesh(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const bool &IsLow = false);
@@ -45,8 +47,6 @@ public:
 // Anims
 #pragma region
 public:
-
-	CS_DECLARE_WEAPON_ANIM
 
 	virtual void SetAnimBlueprint(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const bool &IsLow = false);
 	virtual void SetAnimBlueprint(class ASkeletalMeshActor* InActor, const TCsViewType &ViewType, const bool &IsLow = false);

@@ -17,7 +17,7 @@
 #pragma region
 
 USTRUCT(BlueprintType)
-struct FCsAnimInstance_AnimSequence
+struct CSCORE_API FCsAnimInstance_AnimSequence
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -39,12 +39,12 @@ public:
 		UseDataValueAsDefault = true;
 	}
 
-	UAnimSequence* Get() const
+	FORCEINLINE UAnimSequence* Get() const
 	{
 		return Anim_Internal.IsValid() ? Anim_Internal.Get() : nullptr;
 	}
 
-	FCsAnimInstance_AnimSequence& operator=(const FCsAnimInstance_AnimSequence& B)
+	FORCEINLINE FCsAnimInstance_AnimSequence& operator=(const FCsAnimInstance_AnimSequence& B)
 	{
 		Anim = B.Anim;
 		Anim_Internal = B.Anim_Internal;
@@ -52,22 +52,22 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsAnimInstance_AnimSequence& B) const
+	FORCEINLINE bool operator==(const FCsAnimInstance_AnimSequence& B) const
 	{
 		return Anim == B.Anim && Anim_Internal == B.Anim_Internal && UseDataValueAsDefault == B.UseDataValueAsDefault;
 	}
 
-	bool operator!=(const FCsAnimInstance_AnimSequence& B) const
+	FORCEINLINE bool operator!=(const FCsAnimInstance_AnimSequence& B) const
 	{
 		return !(*this == B);
 	}
 
-	bool HasChanged() { return Anim != Last_Anim; }
-	void Update() { Last_Anim = Anim; }
+	FORCEINLINE bool HasChanged() { return Anim != Last_Anim; }
+	FORCEINLINE void Update() { Last_Anim = Anim; }
 };
 
 USTRUCT(BlueprintType)
-struct FCsAnimInstance_AnimMontage
+struct CSCORE_API FCsAnimInstance_AnimMontage
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -89,12 +89,12 @@ public:
 		UseDataValueAsDefault = true;
 	}
 
-	UAnimMontage* Get() const
+	FORCEINLINE UAnimMontage* Get() const
 	{
 		return Anim_Internal.IsValid() ? Anim_Internal.Get() : nullptr;
 	}
 
-	FCsAnimInstance_AnimMontage& operator=(const FCsAnimInstance_AnimMontage& B)
+	FORCEINLINE FCsAnimInstance_AnimMontage& operator=(const FCsAnimInstance_AnimMontage& B)
 	{
 		Anim = B.Anim;
 		Anim_Internal = B.Anim_Internal;
@@ -102,22 +102,22 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsAnimInstance_AnimMontage& B) const
+	FORCEINLINE bool operator==(const FCsAnimInstance_AnimMontage& B) const
 	{
 		return Anim == B.Anim && Anim_Internal == B.Anim_Internal && UseDataValueAsDefault == B.UseDataValueAsDefault;
 	}
 
-	bool operator!=(const FCsAnimInstance_AnimMontage& B) const
+	FORCEINLINE bool operator!=(const FCsAnimInstance_AnimMontage& B) const
 	{
 		return !(*this == B);
 	}
 
-	bool HasChanged() { return Anim != Last_Anim; }
-	void Update() { Last_Anim = Anim; }
+	FORCEINLINE bool HasChanged() { return Anim != Last_Anim; }
+	FORCEINLINE void Update() { Last_Anim = Anim; }
 };
 
 USTRUCT(BlueprintType)
-struct FCsAnimInstance_BlendSpace1D
+struct CSCORE_API FCsAnimInstance_BlendSpace1D
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -139,12 +139,12 @@ public:
 		UseDataValueAsDefault = true;
 	}
 
-	UBlendSpace1D* Get() const
+	FORCEINLINE UBlendSpace1D* Get() const
 	{
 		return Blend_Internal.IsValid() ? Blend_Internal.Get() : nullptr;
 	}
 
-	FCsAnimInstance_BlendSpace1D& operator=(const FCsAnimInstance_BlendSpace1D& B)
+	FORCEINLINE FCsAnimInstance_BlendSpace1D& operator=(const FCsAnimInstance_BlendSpace1D& B)
 	{
 		Blend = B.Blend;
 		Last_Blend = B.Last_Blend;
@@ -153,22 +153,22 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsAnimInstance_BlendSpace1D& B) const
+	FORCEINLINE bool operator==(const FCsAnimInstance_BlendSpace1D& B) const
 	{
 		return Blend == B.Blend && Last_Blend == B.Last_Blend && Blend_Internal == B.Blend_Internal && UseDataValueAsDefault == B.UseDataValueAsDefault;
 	}
 
-	bool operator!=(const FCsAnimInstance_BlendSpace1D& B) const
+	FORCEINLINE bool operator!=(const FCsAnimInstance_BlendSpace1D& B) const
 	{
 		return !(*this == B);
 	}
 
-	bool HasChanged() { return Blend != Last_Blend; }
-	void Update() { Last_Blend = Blend; }
+	FORCEINLINE bool HasChanged() { return Blend != Last_Blend; }
+	FORCEINLINE void Update() { Last_Blend = Blend; }
 };
 
 USTRUCT(BlueprintType)
-struct FCsAnimInstance_BlendSpace
+struct CSCORE_API FCsAnimInstance_BlendSpace
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -190,12 +190,12 @@ public:
 		UseDataValueAsDefault = true;
 	}
 
-	UBlendSpace* Get() const
+	FORCEINLINE UBlendSpace* Get() const
 	{
 		return Blend_Internal.IsValid() ? Blend_Internal.Get() : nullptr;
 	}
 
-	FCsAnimInstance_BlendSpace& operator=(const FCsAnimInstance_BlendSpace& B)
+	FORCEINLINE FCsAnimInstance_BlendSpace& operator=(const FCsAnimInstance_BlendSpace& B)
 	{
 		Blend = B.Blend;
 		Last_Blend = B.Last_Blend;
@@ -204,22 +204,22 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsAnimInstance_BlendSpace& B) const
+	FORCEINLINE bool operator==(const FCsAnimInstance_BlendSpace& B) const
 	{
 		return Blend == B.Blend && Last_Blend == B.Last_Blend && Blend_Internal == B.Blend_Internal && UseDataValueAsDefault == B.UseDataValueAsDefault;
 	}
 
-	bool operator!=(const FCsAnimInstance_BlendSpace& B) const
+	FORCEINLINE bool operator!=(const FCsAnimInstance_BlendSpace& B) const
 	{
 		return !(*this == B);
 	}
 
-	bool HasChanged() { return Blend != Last_Blend; }
-	void Update() { Last_Blend = Blend; }
+	FORCEINLINE bool HasChanged() { return Blend != Last_Blend; }
+	FORCEINLINE void Update() { Last_Blend = Blend; }
 };
 
 USTRUCT(BlueprintType)
-struct FCsAnimInstance_Blueprint
+struct CSCORE_API FCsAnimInstance_Blueprint
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -255,7 +255,7 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct FCsDataAnimInstance_CharacterPtr
+struct CSCORE_API FCsDataAnimInstance_CharacterPtr
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -272,40 +272,40 @@ public:
 	{
 	}
 
-	FCsDataAnimInstance_CharacterPtr& operator=(const FCsDataAnimInstance_CharacterPtr& B)
+	FORCEINLINE FCsDataAnimInstance_CharacterPtr& operator=(const FCsDataAnimInstance_CharacterPtr& B)
 	{
 		Data = B.Data;
 		Data_Internal = B.Data_Internal;
 		return *this;
 	}
 
-	bool operator==(const FCsDataAnimInstance_CharacterPtr& B) const
+	FORCEINLINE bool operator==(const FCsDataAnimInstance_CharacterPtr& B) const
 	{
 		return Data == B.Data && Data_Internal == B.Data_Internal;
 	}
 
-	bool operator!=(const FCsDataAnimInstance_CharacterPtr& B) const
+	FORCEINLINE bool operator!=(const FCsDataAnimInstance_CharacterPtr& B) const
 	{
 		return !(*this == B);
 	}
 
-	class ACsData_Character* Get() const
+	FORCEINLINE class ACsData_Character* Get() const
 	{
 		return Data_Internal.IsValid() ? Data_Internal.Get() : nullptr;
 	}
 
 	template<typename T>
-	T* Get() const 
+	FORCEINLINE T* Get() const
 	{
 		return Cast<T>(Get());
 	}
 	
-	bool HasChanged() { return Data != Last_Data; }
-	void Update() { Last_Data = Data; }
+	FORCEINLINE bool HasChanged() { return Data != Last_Data; }
+	FORCEINLINE void Update() { Last_Data = Data; }
 };
 
 USTRUCT(BlueprintType)
-struct FCsDataAnimInstance_CharacterMeshSkinPtr
+struct CSCORE_API FCsDataAnimInstance_CharacterMeshSkinPtr
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -322,40 +322,40 @@ public:
 	{
 	}
 
-	FCsDataAnimInstance_CharacterMeshSkinPtr& operator=(const FCsDataAnimInstance_CharacterMeshSkinPtr& B)
+	FORCEINLINE FCsDataAnimInstance_CharacterMeshSkinPtr& operator=(const FCsDataAnimInstance_CharacterMeshSkinPtr& B)
 	{
 		Data = B.Data;
 		Data_Internal = B.Data_Internal;
 		return *this;
 	}
 
-	bool operator==(const FCsDataAnimInstance_CharacterMeshSkinPtr& B) const
+	FORCEINLINE bool operator==(const FCsDataAnimInstance_CharacterMeshSkinPtr& B) const
 	{
 		return Data == B.Data && Data_Internal == B.Data_Internal;
 	}
 
-	bool operator!=(const FCsDataAnimInstance_CharacterMeshSkinPtr& B) const
+	FORCEINLINE bool operator!=(const FCsDataAnimInstance_CharacterMeshSkinPtr& B) const
 	{
 		return !(*this == B);
 	}
 
-	class ACsData_CharacterMeshSkin* Get() const
+	FORCEINLINE class ACsData_CharacterMeshSkin* Get() const
 	{
 		return Data_Internal.IsValid() ? Data_Internal.Get() : nullptr;
 	}
 
 	template<typename T>
-	T* Get() const 
+	FORCEINLINE T* Get() const
 	{
 		return Cast<T>(Get());
 	}
 
-	bool HasChanged() { return Data != Last_Data; }
-	void Update() { Last_Data = Data; }
+	FORCEINLINE bool HasChanged() { return Data != Last_Data; }
+	FORCEINLINE void Update() { Last_Data = Data; }
 };
 
 USTRUCT(BlueprintType)
-struct FCsDataAnimInstance_CharacterMaterialSkinPtr
+struct CSCORE_API FCsDataAnimInstance_CharacterMaterialSkinPtr
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -372,40 +372,40 @@ public:
 	{
 	}
 
-	FCsDataAnimInstance_CharacterMaterialSkinPtr& operator=(const FCsDataAnimInstance_CharacterMaterialSkinPtr& B)
+	FORCEINLINE FCsDataAnimInstance_CharacterMaterialSkinPtr& operator=(const FCsDataAnimInstance_CharacterMaterialSkinPtr& B)
 	{
 		Data = B.Data;
 		Data_Internal = B.Data_Internal;
 		return *this;
 	}
 
-	bool operator==(const FCsDataAnimInstance_CharacterMaterialSkinPtr& B) const
+	FORCEINLINE bool operator==(const FCsDataAnimInstance_CharacterMaterialSkinPtr& B) const
 	{
 		return Data == B.Data && Data_Internal == B.Data_Internal;
 	}
 
-	bool operator!=(const FCsDataAnimInstance_CharacterMaterialSkinPtr& B) const
+	FORCEINLINE bool operator!=(const FCsDataAnimInstance_CharacterMaterialSkinPtr& B) const
 	{
 		return !(*this == B);
 	}
 
-	class ACsData_CharacterMaterialSkin* Get() const
+	FORCEINLINE class ACsData_CharacterMaterialSkin* Get() const
 	{
 		return Data_Internal.IsValid() ? Data_Internal.Get() : nullptr;
 	}
 
 	template<typename T>
-	T* Get() const
+	FORCEINLINE T* Get() const
 	{
 		return Cast<T>(Get());
 	}
 
-	bool HasChanged() { return Data != Last_Data; }
-	void Update() { Last_Data = Data; }
+	FORCEINLINE bool HasChanged() { return Data != Last_Data; }
+	FORCEINLINE void Update() { Last_Data = Data; }
 };
 
 USTRUCT(BlueprintType)
-struct FCsDataAnimInstance_WeaponPtr
+struct CSCORE_API FCsDataAnimInstance_WeaponPtr
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -422,40 +422,40 @@ public:
 	{
 	}
 
-	FCsDataAnimInstance_WeaponPtr& operator=(const FCsDataAnimInstance_WeaponPtr& B)
+	FORCEINLINE FCsDataAnimInstance_WeaponPtr& operator=(const FCsDataAnimInstance_WeaponPtr& B)
 	{
 		Data = B.Data;
 		Data_Internal = B.Data_Internal;
 		return *this;
 	}
 
-	bool operator==(const FCsDataAnimInstance_WeaponPtr& B) const
+	FORCEINLINE bool operator==(const FCsDataAnimInstance_WeaponPtr& B) const
 	{
 		return Data == B.Data && Data_Internal == B.Data_Internal;
 	}
 
-	bool operator!=(const FCsDataAnimInstance_WeaponPtr& B) const
+	FORCEINLINE bool operator!=(const FCsDataAnimInstance_WeaponPtr& B) const
 	{
 		return !(*this == B);
 	}
 
-	class ACsData_Weapon* Get() const
+	FORCEINLINE class ACsData_Weapon* Get() const
 	{
 		return Data_Internal.IsValid() ? Data_Internal.Get() : nullptr;
 	}
 
 	template<typename T>
-	T* Get() const 
+	FORCEINLINE T* Get() const
 	{
 		return Cast<T>(Get());
 	}
 
-	bool HasChanged() { return Data != Last_Data; }
-	void Update() { Last_Data = Data; }
+	FORCEINLINE bool HasChanged() { return Data != Last_Data; }
+	FORCEINLINE void Update() { Last_Data = Data; }
 };
 
 USTRUCT(BlueprintType)
-struct FCsDataAnimInstance_WeaponMaterialSkinPtr
+struct CSCORE_API FCsDataAnimInstance_WeaponMaterialSkinPtr
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -472,36 +472,36 @@ public:
 	{
 	}
 
-	FCsDataAnimInstance_WeaponMaterialSkinPtr& operator=(const FCsDataAnimInstance_WeaponMaterialSkinPtr& B)
+	FORCEINLINE FCsDataAnimInstance_WeaponMaterialSkinPtr& operator=(const FCsDataAnimInstance_WeaponMaterialSkinPtr& B)
 	{
 		Data = B.Data;
 		Data_Internal = B.Data_Internal;
 		return *this;
 	}
 
-	bool operator==(const FCsDataAnimInstance_WeaponMaterialSkinPtr& B) const
+	FORCEINLINE bool operator==(const FCsDataAnimInstance_WeaponMaterialSkinPtr& B) const
 	{
 		return Data == B.Data && Data_Internal == B.Data_Internal;
 	}
 
-	bool operator!=(const FCsDataAnimInstance_WeaponMaterialSkinPtr& B) const
+	FORCEINLINE bool operator!=(const FCsDataAnimInstance_WeaponMaterialSkinPtr& B) const
 	{
 		return !(*this == B);
 	}
 
-	class ACsData_WeaponMaterialSkin* Get() const
+	FORCEINLINE class ACsData_WeaponMaterialSkin* Get() const
 	{
 		return Data_Internal.IsValid() ? Data_Internal.Get() : nullptr;
 	}
 
 	template<typename T>
-	T* Get() const 
+	FORCEINLINE T* Get() const
 	{
 		return Cast<T>(Get());
 	}
 
-	bool HasChanged() { return Data != Last_Data; }
-	void Update() { Last_Data = Data; }
+	FORCEINLINE bool HasChanged() { return Data != Last_Data; }
+	FORCEINLINE void Update() { Last_Data = Data; }
 };
 
 #pragma endregion Anim Instance

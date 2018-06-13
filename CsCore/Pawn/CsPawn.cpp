@@ -22,17 +22,14 @@
 // Cache
 #pragma region
 
-namespace ECsPawnCachedName
+namespace ECsPawnCached
 {
 	namespace Name
 	{
 		// Functions
 		const FName HandleRespawnTimer_Internal = FName("ACsPawn::HandleRespawnTimer_Internal");
 	};
-}
 
-namespace ECsPawnCachedString
-{
 	namespace Str
 	{
 		// Functions
@@ -206,8 +203,8 @@ void ACsPawn::HandleRespawnTimer()
 	Payload->Type			= (uint8)ECsPawnRoutine::HandleRespawnTimer_Internal;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsPawnCachedName::Name::HandleRespawnTimer_Internal;
-	Payload->NameAsString	= ECsPawnCachedString::Str::HandleRespawnTimer_Internal;
+	Payload->Name			= ECsPawnCached::Name::HandleRespawnTimer_Internal;
+	Payload->NameAsString	= ECsPawnCached::Str::HandleRespawnTimer_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
@@ -403,19 +400,19 @@ void ACsPawn::OnRespawn_ApplyData_Character(){}
 // Weapons
 #pragma region
 
-void ACsPawn::OnChange_CurrentWeaponSlot(const TCsWeaponSlot &Slot)
+void ACsPawn::OnChange_CurrentWeaponSlot(const FECsWeaponSlot &Slot)
 {
 	ACsPlayerStateBase* MyPlayerState = Cast<ACsPlayerStateBase>(PlayerState);
 
 	OnChange_CurrentWeaponSlot_Event.Broadcast(MyPlayerState->UniqueMappingId, LastWeaponSlot, CurrentWeaponSlot);
 #if WITH_EDITOR
-	OnChange_CurrentWeaponSlot_ScriptEvent.Broadcast(MyPlayerState->UniqueMappingId, LastWeaponIndex, CurrentWeaponIndex);
+	OnChange_CurrentWeaponSlot_ScriptEvent.Broadcast(MyPlayerState->UniqueMappingId, LastWeaponSlot, CurrentWeaponSlot);
 #endif // #if WITH_EDITOR
 }
 
-ACsWeapon* ACsPawn::GetWeapon(const TCsWeaponSlot &Slot)
+ACsWeapon* ACsPawn::GetWeapon(const FECsWeaponSlot &Slot)
 {
-	return Weapons[(uint8)Slot];
+	return Weapons[Slot.Value];
 }
 
 ACsWeapon* ACsPawn::GetCurrentWeapon()
@@ -423,9 +420,9 @@ ACsWeapon* ACsPawn::GetCurrentWeapon()
 	return GetWeapon(CurrentWeaponSlot);
 }
 
-ACsData_Weapon* ACsPawn::GetData_Weapon(const TCsWeaponSlot &Slot)
+ACsData_Weapon* ACsPawn::GetData_Weapon(const FECsWeaponSlot &Slot)
 {
-	return Data_Weapons[(uint8)Slot].IsValid() ? Data_Weapons[(uint8)Slot].Get() : nullptr;
+	return Data_Weapons[Slot.Value].IsValid() ? Data_Weapons[Slot.Value].Get() : nullptr;
 }
 
 ACsData_Weapon* ACsPawn::GetCurrentData_Weapon()
@@ -433,9 +430,9 @@ ACsData_Weapon* ACsPawn::GetCurrentData_Weapon()
 	return GetData_Weapon(CurrentWeaponSlot);
 }
 
-ACsData_WeaponMaterialSkin* ACsPawn::GetData_WeaponMaterialSkin(const TCsWeaponSlot &Slot)
+ACsData_WeaponMaterialSkin* ACsPawn::GetData_WeaponMaterialSkin(const FECsWeaponSlot &Slot)
 {
-	return Data_WeaponMaterialSkins[(uint8)Slot].IsValid() ? Data_WeaponMaterialSkins[(uint8)Slot].Get() : nullptr;
+	return Data_WeaponMaterialSkins[Slot.Value].IsValid() ? Data_WeaponMaterialSkins[Slot.Value].Get() : nullptr;
 }
 
 ACsData_WeaponMaterialSkin* ACsPawn::GetCurrentData_WeaponMaterialSkin()

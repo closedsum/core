@@ -89,7 +89,7 @@ namespace ECsParametricFunctionType
 
 namespace ECsParametricFunctionType
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{

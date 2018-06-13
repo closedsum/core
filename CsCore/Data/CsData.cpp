@@ -42,24 +42,7 @@ void ACsData::PostLoad()
 	ShortCodeAsString = ShortCode.ToString();
 
 #if WITH_EDITOR
-	// Check to verify .json file when codes changes have been made to Data
-	const TIndirectArray<FWorldContext>& WorldContexts = GEngine->GetWorldContexts();
-	
-	const uint8 Count = WorldContexts.Num();
-
-	bool Verify = false;
-
-	for (uint8 I = 0; I < Count; ++I)
-	{
-		if (WorldContexts[I].WorldType == EWorldType::Editor ||
-			WorldContexts[I].WorldType == EWorldType::EditorPreview)
-		{
-			Verify = true;
-			break;
-		}
-	}
-
-	if (Verify)
+	if (UCsCommon::IsAnyWorldContextEditorOrEditorPreview())
 	{
 		VerifyJsonIntegrity();
 	}
@@ -439,7 +422,7 @@ void ACsData::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 		AddToDataMapping.Message = TEXT("");
 		AddToDataMapping.Output  = TEXT("");
 
-		if (Type == AssetType_MAX)
+		if (!EMCsAssetType::Get().IsValidEnum(Type))
 		{
 			AddToDataMapping.Message = TEXT("INVALID Type.");
 			AddToDataMapping.Output  = TEXT("ERROR");
@@ -478,7 +461,7 @@ void ACsData::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 		AddToPayload.Message = TEXT("");
 		AddToPayload.Output  = TEXT("");
 
-		if (Type == AssetType_MAX)
+		if (!EMCsAssetType::Get().IsValidEnum(Type))
 		{
 			AddToPayload.Message = TEXT("INVALID Type.");
 			AddToPayload.Output = TEXT("ERROR");
@@ -496,7 +479,7 @@ void ACsData::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 
 		ACsData_Payload* Payload = GetPayload();
 
-		Payload->PerformAddEntry(ShortCode, (*StringToLoadAssetsType)(AddToPayload.LoadAssetsType), AddToPayload.LoadFlags, AddToPayload.Message, AddToPayload.Output);
+		Payload->PerformAddEntry(ShortCode, AddToPayload.LoadAssetsType, AddToPayload.LoadFlags, AddToPayload.Message, AddToPayload.Output);
 
 		if (UCsCommon::IsDefaultObject(this))
 		{

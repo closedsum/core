@@ -187,43 +187,20 @@ FVector ACsProjectile::EvaluateMovementFunction(const float &Time)
 	return Cache.GetData()->EvaluateMovementFunction(Time, Cache.Location, Cache.Transform);
 }
 
-void ACsProjectile::Init(const int32 &Index)
+void ACsProjectile::Init(const int32 &Index, const FECsProjectileType& InType)
 {
 	PoolIndex = Index;
+	Type	  = InType;
 
 	Cache.Set(Index, this);
 }
 
-template<typename T>
-void ACsProjectile::Allocate(const uint16& ActiveIndex, FCsProjectilePayload* Payload, UObject* InInstigator, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)())
-{
-	Cache.Init<T>(ActiveIndex, Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InInstigator, InOwner, InParent, InObject, OnDeAllocate);
-
-	Allocate_Internal(Payload);
-}
-
-template<typename T>
-void ACsProjectile::Allocate(const uint16& ActiveIndex, FCsProjectilePayload* Payload, T* InObject, void (T::*OnDeAllocate)())
-{
-	Allocate<T>(ActiveIndex, Payload, nullptr, nullptr, InObject, OnDeAllocate);
-}
-
-template<typename T>
-void ACsProjectile::Allocate(const uint16& ActiveIndex, FCsProjectilePayload* Payload, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)())
-{
-	Allocate<T>(ActiveIndex, Payload, nullptr, InOwner, InObject, OnDeAllocate);
-}
-
-void ACsProjectile::Allocate(const uint16& ActiveIndex, FCsProjectilePayload* Payload, UObject* InInstigator, UObject* InOwner, UObject* InParent /*=nullptr*/)
-{
-	Cache.Init(ActiveIndex, Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InInstigator, InOwner, InParent);
-
-	Allocate_Internal(Payload);
-}
-
 void ACsProjectile::Allocate(const uint16& ActiveIndex, FCsProjectilePayload* Payload)
 {
-	Allocate(ActiveIndex, Payload, nullptr, nullptr, nullptr);
+	Cache.Init(ActiveIndex, Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
+
+	Allocate_Internal(Payload);
+
 }
 
 void ACsProjectile::Allocate_Internal(FCsProjectilePayload* Payload)

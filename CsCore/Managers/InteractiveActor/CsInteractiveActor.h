@@ -81,7 +81,7 @@ typedef ECsInteractiveActorRoutine::Type TCsInteractiveActorRoutine;
 
 namespace ECsInteractiveActorRoutine
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -113,7 +113,8 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 	TWeakObjectPtr<class ACsInteractiveActor> Actor;
 	TWeakObjectPtr<class ACsData_Interactive> Data;
 
-	TCsInteractiveType Type_Script;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	FECsInteractiveType Type_Script;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FTransform Transform;
@@ -269,12 +270,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Collision")
 	TEnumAsByte<ECollisionEnabled::Type> InteractiveCollisionEnabled;
 
-	TCsInteractiveType Type;
-
 	UPROPERTY(BlueprintReadWrite, Category = "Interactive")
-	uint8 Type_Script;
-
-	TCsInteractiveTypeToString InteractiveTypeToString;
+	FECsInteractiveType Type;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Interactive")
 	TEnumAsByte<ECsInteractiveCollision::Type> CollisionType;
@@ -285,7 +282,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Interactive")
 	FCsInteractiveActorCache Cache;
 
-	void Init(const int32 &Index, const TCsInteractiveType &InType);
+	void Init(const int32 &Index, const FECsInteractiveType &InType);
 
 // Allocate / DeAllocate
 #pragma region

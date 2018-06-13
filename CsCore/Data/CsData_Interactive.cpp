@@ -11,10 +11,10 @@ ACsData_Interactive::ACsData_Interactive(const FObjectInitializer& ObjectInitial
 // Stats
 #pragma region
 
-const TCsInteractiveType& ACsData_Interactive::GetInteractiveType() { return InteractiveType_MAX; }
+const FECsInteractiveType& ACsData_Interactive::GetInteractiveType() { return EMCsInteractiveType::Get().GetMAX(); }
 
-const float& ACsData_Interactive::GetWarmUpTime() { return ECsCachedReferences::Ref::Float; }
-const float& ACsData_Interactive::GetLifeTime() { return ECsCachedReferences::Ref::Float; }
+const float& ACsData_Interactive::GetWarmUpTime() { return ECsCached::Ref::Float; }
+const float& ACsData_Interactive::GetLifeTime() { return ECsCached::Ref::Float; }
 
 const FVector& ACsData_Interactive::GetScale() { return FVector::OneVector; }
 
@@ -45,21 +45,21 @@ TArray<UMaterialInstanceConstant*>* ACsData_Interactive::GetMaterials() { return
 // Collision
 #pragma region
 
-const bool& ACsData_Interactive::UseWorldCollisionPreset() { return ECsCachedReferences::Ref::False; }
+const bool& ACsData_Interactive::UseWorldCollisionPreset() { return ECsCached::Ref::False; }
 void ACsData_Interactive::SetWorldCollisionFromPreset(UPrimitiveComponent* InComponent) {}
-const float& ACsData_Interactive::GetInteractiveCollisionRadius() { return ECsCachedReferences::Ref::Float; }
-const float& ACsData_Interactive::GetInteractiveCollisionRadiusSq() { return ECsCachedReferences::Ref::Float; }
+const float& ACsData_Interactive::GetInteractiveCollisionRadius() { return ECsCached::Ref::Float; }
+const float& ACsData_Interactive::GetInteractiveCollisionRadiusSq() { return ECsCached::Ref::Float; }
 
 #pragma endregion Collision
 
 // Movement
 #pragma region
 
-const bool& ACsData_Interactive::UsePhysicsPreset(){ return ECsCachedReferences::Ref::False; }
+const bool& ACsData_Interactive::UsePhysicsPreset(){ return ECsCached::Ref::False; }
 void ACsData_Interactive::SetPhysicsFromPreset(UPrimitiveComponent* InComponent) {}
-const bool& ACsData_Interactive::SimulatePhysics() { return ECsCachedReferences::Ref::False; }
+const bool& ACsData_Interactive::SimulatePhysics() { return ECsCached::Ref::False; }
 void ACsData_Interactive::ToggleWorldCollisionAndPhysics(UPrimitiveComponent* InComponent, const bool& Toggle){}
-const bool& ACsData_Interactive::UseSpawnPhysicsImpulse() { return ECsCachedReferences::Ref::False; }
+const bool& ACsData_Interactive::UseSpawnPhysicsImpulse() { return ECsCached::Ref::False; }
 void ACsData_Interactive::ApplySpawnPhysicsImpulse(UPrimitiveComponent* InComponent, const bool& bSeed /*=true*/){}
 
 #pragma endregion Movement
@@ -67,8 +67,8 @@ void ACsData_Interactive::ApplySpawnPhysicsImpulse(UPrimitiveComponent* InCompon
 // UI
 #pragma region
 
-const bool& ACsData_Interactive::OnSpawnSpawnWidget() { return ECsCachedReferences::Ref::False; }
-const FString& ACsData_Interactive::GetDisplayName() { return ECsCachedString::Str::Empty; }
+const bool& ACsData_Interactive::OnSpawnSpawnWidget() { return ECsCached::Ref::False; }
+const FString& ACsData_Interactive::GetDisplayName() { return ECsCached::Str::Empty; }
 void ACsData_Interactive::GetScreenSpaceOffset(FIntPoint &OutPoint){ OutPoint = FIntPoint::ZeroValue; }
 
 #pragma endregion UI

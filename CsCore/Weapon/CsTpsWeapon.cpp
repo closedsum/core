@@ -127,7 +127,7 @@ void ACsTpsWeapon::OnTick(const float &DeltaSeconds)
 		{
 			UE_LOG(LogCs, Warning, TEXT("ACsTpsWeapon::OnTick (%s): Using Override Function."), *GetName());
 		}
-		Override_OnTick_ScriptEvent.Broadcast(WeaponIndex, DeltaSeconds);
+		Override_OnTick_ScriptEvent.Broadcast(WeaponSlot, DeltaSeconds);
 		return;
 	}
 #endif // #if WITH_EDITOR
@@ -144,7 +144,7 @@ void ACsTpsWeapon::OnTick(const float &DeltaSeconds)
 	}
 
 #if WITH_EDITOR 
-	OnTick_ScriptEvent.Broadcast(WeaponIndex, DeltaSeconds);
+	OnTick_ScriptEvent.Broadcast(WeaponSlot, DeltaSeconds);
 #endif // #if WITH_EDITOR
 
 	OnTick_HandleStates();
@@ -262,9 +262,9 @@ USkeletalMeshComponent* ACsTpsWeapon::GetMesh()
 // Firing
 #pragma region
 
-FVector ACsTpsWeapon::GetMuzzleLocation(const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode)
+FVector ACsTpsWeapon::GetMuzzleLocation(const TCsViewType &ViewType, const FECsWeaponFireMode &FireMode)
 {
-	return GetMyData_Weapon<ACsData_ProjectileWeapon>()->GetMuzzleLocation(GetMesh(), FireMode, CurrentProjectilePerShotIndex.Get(FireMode));
+	return GetMyData_Weapon<ACsData_ProjectileWeapon>()->GetMuzzleLocation(GetMesh(), FireMode, CurrentProjectilePerShotIndex[FireMode]);
 }
 
 #pragma endregion Firing

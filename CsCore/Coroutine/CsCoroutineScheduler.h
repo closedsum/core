@@ -28,7 +28,7 @@ namespace ECsCoroutineTransaction
 
 namespace ECsCoroutineTransaction
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -67,16 +67,16 @@ typedef ECsCoroutineTransaction::Type TCsCoroutineTransaction;
 
 #pragma endregion Enums
 
-namespace ECsCoroutineCachedString
+namespace ECsCoroutineCached
 {
 	namespace Str
 	{
-		const FString Allocate = TEXT("UCsCoroutineScheduler::Allocate");
-		const FString Start = TEXT("UCsCoroutineScheduler::Start");
-		const FString Update = TEXT("UCsCoroutineScheduler::Update");
-		const FString OnTick_Update = TEXT("UCsCoroutineScheduler::OnTick_Update");
-		const FString OnCacCamera_Update = TEXT("UCsCoroutineScheduler::OnCacCamera_Update");
-		const FString OnLastTick_Update = TEXT("UCsCoroutineScheduler::OnLastTick_Update");
+		extern const FString Allocate;// = TEXT("UCsCoroutineScheduler::Allocate");
+		extern const FString Start;// = TEXT("UCsCoroutineScheduler::Start");
+		extern const FString Update;// = TEXT("UCsCoroutineScheduler::Update");
+		extern const FString OnTick_Update;// = TEXT("UCsCoroutineScheduler::OnTick_Update");
+		extern const FString OnCacCamera_Update;//= TEXT("UCsCoroutineScheduler::OnCacCamera_Update");
+		extern const FString OnLastTick_Update;// = TEXT("UCsCoroutineScheduler::OnLastTick_Update");
 	}
 
 	FORCEINLINE FString ToUpdate(const TCsCoroutineSchedule &ScheduleType)
@@ -134,7 +134,7 @@ struct FCsCoroutinePayload
 		DoInit = true;
 		PerformFirstRun = false;
 		Name = NAME_None;
-		NameAsString = ECsCachedString::Str::Empty;
+		NameAsString = ECsCached::Str::Empty;
 	}
 };
 

@@ -10,6 +10,6 @@ ACsData_UI_Common::ACsData_UI_Common(const FObjectInitializer& ObjectInitializer
 // Widgets
 #pragma region
 
-UBlueprintGeneratedClass* ACsData_UI_Common::GetWidget(const TCsWidgetType& WidgetType) { return nullptr; }
+UBlueprintGeneratedClass* ACsData_UI_Common::GetWidget(const FECsWidgetType& WidgetType) { return nullptr; }
 
 #pragma endregion Widgets

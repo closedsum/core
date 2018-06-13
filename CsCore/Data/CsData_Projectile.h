@@ -13,9 +13,7 @@ class CSCORE_API ACsData_Projectile : public ACsData
 
 	virtual void Load(const ECsLoadFlags &LoadFlags = ECsLoadFlags::All) override;
 
-	TCsProjectileType BaseProjectileType;
-
-	TCsProjectileType GetBaseProjectileType();
+	virtual const FECsProjectileType& GetProjectileType();
 
 // Stats
 #pragma region

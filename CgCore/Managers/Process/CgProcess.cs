@@ -139,7 +139,7 @@
 
             P.StartInfo.CreateNoWindow = pay.CreateNoWindow;
             P.StartInfo.UseShellExecute = pay.UseShellExecute;
-            P.StartInfo.FileName = pay.FileName;
+            P.StartInfo.FileName = pay.Filename;
             P.StartInfo.Arguments = pay.Arguments;
             P.StartInfo.ErrorDialog = pay.ErrorDialog;
             P.StartInfo.RedirectStandardInput = pay.RedirectStandardInput;

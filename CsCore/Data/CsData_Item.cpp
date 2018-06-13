@@ -7,12 +7,12 @@ ACsData_Item::ACsData_Item(const FObjectInitializer& ObjectInitializer)
 {
 }
 
-TCsItemType ACsData_Item::GetBaseItemType() { return BaseItemType; }
+const FECsItemType& ACsData_Item::GetItemType() { return EMCsItemType::Get().GetMAX(); }
 
 // Stats
 #pragma region
 
-const bool& ACsData_Item::IsIngredient() { return ECsCachedReferences::Ref::False; }
+const bool& ACsData_Item::IsIngredient() { return ECsCached::Ref::False; }
 
 #pragma endregion Stats
 
@@ -46,18 +46,18 @@ void ACsData_Item::SetMembers(FCsItemHistory& History)
 // UI
 #pragma region
 
-const FString& ACsData_Item::GetDisplayName() { return ECsCachedString::Str::INVALID; }
+const FString& ACsData_Item::GetDisplayName() { return ECsCached::Str::INVALID; }
 UMaterialInstanceConstant* ACsData_Item::GetMaterial() { return nullptr; }
 FCsUint8MatrixDimension* ACsData_Item::GetDimension() { return nullptr; }
-const int32& ACsData_Item::GetCapacity() { return ECsCachedReferences::Ref::SInt; }
+const int32& ACsData_Item::GetCapacity() { return ECsCached::Ref::SInt; }
 
 #pragma endregion UI
 
 // Drop
 #pragma region
 
-const bool& ACsData_Item::OnDropSpawnActor() { return ECsCachedReferences::Ref::False; }
-const FName& ACsData_Item::GetSpawnedActorDataShortCode() { return ECsCachedName::Name::None; }
+const bool& ACsData_Item::OnDropSpawnActor() { return ECsCached::Ref::False; }
+const FName& ACsData_Item::GetSpawnedActorDataShortCode() { return ECsCached::Name::None; }
 
 #pragma endregion Drop
 
@@ -66,6 +66,6 @@ const FName& ACsData_Item::GetSpawnedActorDataShortCode() { return ECsCachedName
 
 const TArray<FCsItemOnConsumeContentRule>* ACsData_Item::GetOnConsumeContentRules() { return nullptr; }
 
-const bool& ACsData_Item::OnConsumeDropContents() { return ECsCachedReferences::Ref::False; }
+const bool& ACsData_Item::OnConsumeDropContents() { return ECsCached::Ref::False; }
 
 #pragma endregion Consume

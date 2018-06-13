@@ -2,7 +2,7 @@
 #include "UI/Simple/CsWidget_Button.h"
 #include "CsCore.h"
 
-namespace ECsWidgetButtonCachedString
+namespace ECsWidgetButtonCached
 {
 	namespace Str
 	{
@@ -22,9 +22,9 @@ void UCsWidget_Button::OnNativeConstruct()
 	Super::OnNativeConstruct();
 
 	Button.Set(MyButton);
-	const FString& ButtonName   = ECsWidgetButtonCachedString::Str::Button;
-	const FString& MyButtonName = ECsWidgetButtonCachedString::Str::MyButton;
-	Button.Init(ButtonName, MyButtonName, GetName() + ECsCachedString::Str::Dot + ButtonName);
+	const FString& ButtonName   = ECsWidgetButtonCached::Str::Button;
+	const FString& MyButtonName = ECsWidgetButtonCached::Str::MyButton;
+	Button.Init(ButtonName, MyButtonName, GetName() + ECsCached::Str::Dot + ButtonName);
 }
 
 void UCsWidget_Button::OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime)

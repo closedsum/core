@@ -6,10 +6,6 @@
 ACsUI::ACsUI(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	WidgetTypeToString = nullptr;
-	StringToWidgetType = nullptr;
-	WidgetActorTypeToString = nullptr;
-	StringToWidgetActorType = nullptr;
 }
 
 void ACsUI::Destroyed()
@@ -43,22 +39,22 @@ void ACsUI::OnLastTick(const float &DeltaSeconds){}
 
 AActor* ACsUI::GetMyOwner() { return MyOwner.IsValid() ? MyOwner.Get() : nullptr; }
 
-void ACsUI::AddWidget(const TCsWidgetType &WidgetType) {}
-void ACsUI::AddWidget_Script(const uint8 &WidgetType) { AddWidget((TCsWidgetType)WidgetType); }
+void ACsUI::AddWidget(const FECsWidgetType &WidgetType) {}
+void ACsUI::AddWidget_Script(const uint8 &WidgetType) { AddWidget(EMCsWidgetType::Get().GetEnumAt(WidgetType)); }
 
 // Get
 #pragma region
 
-UCsUserWidget* ACsUI::GetWidget(const TCsWidgetType &WidgetType)
+UCsUserWidget* ACsUI::GetWidget(const FECsWidgetType &WidgetType)
 { 
 	TArray<UCsUserWidget*>* Array = WidgetsMap.Find(WidgetType);
 
 	return (*Array)[CS_FIRST];
 }
 
-UCsUserWidget* ACsUI::GetWidget_Script(const uint8 &WidgetType) { return GetWidget((TCsWidgetType)WidgetType); }
+UCsUserWidget* ACsUI::GetWidget_Script(const uint8 &WidgetType) { return GetWidget(EMCsWidgetType::Get().GetEnumAt(WidgetType)); }
 
-UCsUserWidget* ACsUI::GetActiveWidget(const TCsWidgetType &WidgetType) 
+UCsUserWidget* ACsUI::GetActiveWidget(const FECsWidgetType &WidgetType) 
 { 
 	TArray<UCsUserWidget*>* Array = ActiveWidgetsMap.Find(WidgetType);
 
@@ -69,13 +65,13 @@ UCsUserWidget* ACsUI::GetActiveWidget(const TCsWidgetType &WidgetType)
 	return (*Array)[CS_FIRST];
 }
 
-UCsUserWidget* ACsUI::GetActiveWidget_Script(const uint8 &WidgetType) { return GetActiveWidget((TCsWidgetType)WidgetType); }
+UCsUserWidget* ACsUI::GetActiveWidget_Script(const uint8 &WidgetType) { return GetActiveWidget(EMCsWidgetType::Get().GetEnumAt(WidgetType)); }
 
 #pragma endregion Get
 
-bool ACsUI::HasWidgetInitialized(const TCsWidgetType &WidgetType) { return true; }
+bool ACsUI::HasWidgetInitialized(const FECsWidgetType &WidgetType) { return true; }
 
-void ACsUI::SetFocus(const TCsWidgetType &WidgetType, const int32& Focus)
+void ACsUI::SetFocus(const FECsWidgetType &WidgetType, const int32& Focus)
 {
 	if (UCsUserWidget* Widget = GetActiveWidget(WidgetType))
 	{
@@ -83,11 +79,11 @@ void ACsUI::SetFocus(const TCsWidgetType &WidgetType, const int32& Focus)
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsUI::SetFocus(%s): Widget: %s is NOT Active."), *GetName(), *((*WidgetTypeToString)(WidgetType)));
+		UE_LOG(LogCs, Warning, TEXT("ACsUI::SetFocus(%s): Widget: %s is NOT Active."), *GetName(), *(WidgetType.Name));
 	}
 }
 
-void ACsUI::SetFocus(const TCsWidgetType &WidgetType, const ECsWidgetFocus& Focus)
+void ACsUI::SetFocus(const FECsWidgetType &WidgetType, const ECsWidgetFocus& Focus)
 {
 	if (UCsUserWidget* Widget = GetActiveWidget(WidgetType))
 	{
@@ -95,21 +91,21 @@ void ACsUI::SetFocus(const TCsWidgetType &WidgetType, const ECsWidgetFocus& Focu
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsUI::SetFocus(%s): Widget: %s is NOT Active."), *GetName(), *((*WidgetTypeToString)(WidgetType)));
+		UE_LOG(LogCs, Warning, TEXT("ACsUI::SetFocus(%s): Widget: %s is NOT Active."), *GetName(), *(WidgetType.Name));
 	}
 }
 
-void ACsUI::SetFocusAll(const TCsWidgetType &WidgetType) { SetFocus(WidgetType, ECS_WIDGET_FOCUS_ALL); }
-void ACsUI::SetFocusAll_Script(const uint8 &WidgetType) { SetFocusAll((TCsWidgetType)WidgetType); }
+void ACsUI::SetFocusAll(const FECsWidgetType &WidgetType) { SetFocus(WidgetType, ECS_WIDGET_FOCUS_ALL); }
+void ACsUI::SetFocusAll_Script(const uint8 &WidgetType) { SetFocusAll(EMCsWidgetType::Get().GetEnumAt(WidgetType)); }
 
 // Open / Close
 #pragma region
 
-void ACsUI::Open(const TCsWidgetType &WidgetType)
+void ACsUI::Open(const FECsWidgetType &WidgetType)
 {
 	if (UCsUserWidget* Widget = GetActiveWidget(WidgetType))
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsUI::Open: Attempting to open menu: %s but it is already open."), *((*WidgetTypeToString)(WidgetType)));
+		UE_LOG(LogCs, Warning, TEXT("ACsUI::Open: Attempting to open menu: %s but it is already open."), *(WidgetType.Name));
 		return;
 	}
 
@@ -130,27 +126,27 @@ void ACsUI::Open(const TCsWidgetType &WidgetType)
 
 	Widget->Show();
 #if WITH_EDITOR
-	OnOpen_ScriptEvent.Broadcast((uint8)WidgetType);
+	OnOpen_ScriptEvent.Broadcast(WidgetType);
 #endif // #if WITH_EDITOR
 	OnOpen_Event.Broadcast(WidgetType);
 }
 
-bool ACsUI::IsOpened(const TCsWidgetType &WidgetType) { return GetActiveWidget(WidgetType) != nullptr; }
-bool ACsUI::IsOpened_Script(const uint8 &WidgetType) { return IsOpened((TCsWidgetType)WidgetType); }
+bool ACsUI::IsOpened(const FECsWidgetType &WidgetType) { return GetActiveWidget(WidgetType) != nullptr; }
+bool ACsUI::IsOpened_Script(const uint8 &WidgetType) { return IsOpened(EMCsWidgetType::Get().GetEnumAt(WidgetType)); }
 
-bool ACsUI::IsOpenedAndFocused(const TCsWidgetType &WidgetType)
+bool ACsUI::IsOpenedAndFocused(const FECsWidgetType &WidgetType)
 {
 	if (UCsUserWidget* Widget = GetActiveWidget(WidgetType))
 		return Widget->Focus > ECS_WIDGET_FOCUS_NONE;
 	return false;
 }
 
-bool ACsUI::IsOpenedAndFocused_Script(const uint8 &WidgetType) { return IsOpenedAndFocused((TCsWidgetType)WidgetType); }
+bool ACsUI::IsOpenedAndFocused_Script(const uint8 &WidgetType) { return IsOpenedAndFocused(EMCsWidgetType::Get().GetEnumAt(WidgetType)); }
 
-void ACsUI::Close(const TCsWidgetType &WidgetType)
+void ACsUI::Close(const FECsWidgetType &WidgetType)
 {
 	// Close All
-	if (WidgetType == WidgetType_MAX)
+	if (WidgetType == EMCsWidgetType::Get().GetMAX())
 	{
 		int32 Count = ActiveWidgets.Num();
 
@@ -160,7 +156,7 @@ void ACsUI::Close(const TCsWidgetType &WidgetType)
 
 			Widget->Hide();
 #if WITH_EDITOR
-			OnClose_ScriptEvent.Broadcast((uint8)Widget->Type);
+			OnClose_ScriptEvent.Broadcast(Widget->Type);
 #endif // #if WITH_EDITOR
 			OnClose_Event.Broadcast(Widget->Type);
 		}
@@ -182,7 +178,7 @@ void ACsUI::Close(const TCsWidgetType &WidgetType)
 
 	if (!Widget)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsUI::Close: Attempting to close menu: %s but it is NOT open."), *((*WidgetTypeToString)(WidgetType)));
+		UE_LOG(LogCs, Warning, TEXT("ACsUI::Close: Attempting to close menu: %s but it is NOT open."), *(WidgetType.Name));
 		return;
 	}
 
@@ -213,16 +209,16 @@ void ACsUI::Close(const TCsWidgetType &WidgetType)
 
 	Widget->Hide();
 #if WITH_EDITOR
-	OnClose_ScriptEvent.Broadcast((uint8)WidgetType);
+	OnClose_ScriptEvent.Broadcast(WidgetType);
 #endif // #if WITH_EDITOR
 	OnClose_Event.Broadcast(WidgetType);
 }
 
-void ACsUI::Close_Script(const uint8 &WidgetType) { Close((TCsWidgetType)WidgetType); }
-void ACsUI::CloseAll() { Close(WidgetType_MAX); }
+void ACsUI::Close_Script(const uint8 &WidgetType) { Close(EMCsWidgetType::Get().GetEnumAt(WidgetType)); }
+void ACsUI::CloseAll() { Close(EMCsWidgetType::Get().GetMAX()); }
 
-bool ACsUI::IsClosed(const TCsWidgetType &WidgetType) { return GetActiveWidget(WidgetType) == nullptr; }
-bool ACsUI::IsClosed_Script(const uint8 &WidgetType) { return IsClosed((TCsWidgetType)WidgetType); }
+bool ACsUI::IsClosed(const FECsWidgetType &WidgetType) { return GetActiveWidget(WidgetType) == nullptr; }
+bool ACsUI::IsClosed_Script(const uint8 &WidgetType) { return IsClosed(EMCsWidgetType::Get().GetEnumAt(WidgetType)); }
 
 #pragma endregion Open / Close
 

@@ -1,7 +1,7 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
-class ICsBlockchainAccount
+class CSCORE_API ICsBlockchainAccount
 {
 public:
 

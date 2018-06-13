@@ -8,7 +8,7 @@
 // Cache
 #pragma region
 
-namespace ECsManagerTraceCachedString
+namespace ECsManagerTraceCached
 {
 	namespace Str
 	{
@@ -285,7 +285,7 @@ bool ACsManager_Trace::ProcessRequest(FCsTraceRequest* Request)
 	Request->bProcessing = true;
 
 	EAsyncTraceType AsyncTraceType	   = EAsyncTraceType::Single;
-	const FString& TraceMethodAsString = ECsTraceMethod::ToString(Request->Method);
+	const FString& TraceMethodAsString = EMCsTraceMethod::Get().ToString(Request->Method);
 
 	// Test
 	if (Request->Method == ECsTraceMethod::Test)
@@ -418,7 +418,7 @@ void ACsManager_Trace::OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& 
 		}
 	}
 
-	LogTransaction(ECsManagerTraceCachedString::Str::OnTraceResponse, ECsTraceTransaction::Complete, Request, Response);
+	LogTransaction(ECsManagerTraceCached::Str::OnTraceResponse, ECsTraceTransaction::Complete, Request, Response);
 
 	// Broadcast Response
 	Request->OnResponse_Event.Broadcast(Response);
@@ -609,7 +609,7 @@ void ACsManager_Trace::LogTransaction(const FString &FunctionName, const TCsTrac
 		const FString Id					  = FString::Printf(TEXT("%llu"), Item->UniqueId);
 		const FString DataName				  = Item->GetData()->ShortCode.ToString();
 		const ACsData_Interactive* Data_Actor = Item->GetData_Actor();
-		const FString DataActorName			  = Data_Actor ? Data_Actor->ShortCode.ToString() : ECsCachedString::Str::Empty;
+		const FString DataActorName			  = Data_Actor ? Data_Actor->ShortCode.ToString() : ECsCached::Str::Empty;
 		const float CurrentTime				  = GetWorld()->GetTimeSeconds();
 
 		if (Data_Actor)

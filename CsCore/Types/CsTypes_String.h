@@ -5,6 +5,9 @@
 #include "CsTypes_String.generated.h"
 #pragma once
 
+// Escape
+#pragma region
+
 UENUM(BlueprintType)
 namespace ECsStringEscapeType
 {
@@ -13,6 +16,9 @@ namespace ECsStringEscapeType
 		Int						UMETA(DisplayName = "Int"),
 		Float					UMETA(DisplayName = "Float"),
 		String					UMETA(DisplayName = "String"),
+		CR						UMETA(DisplayName = "Carriage Return"),
+		LF						UMETA(DisplayName = "Line Feed"),
+		EOL						UMETA(DisplayName = "End of Line"),
 		ECsStringEscapeType_MAX	UMETA(Hidden),
 	};
 }
@@ -22,21 +28,27 @@ typedef ECsStringEscapeType::Type TCsStringEscapeType;
 
 namespace ECsStringEscapeType
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
-		const TCsString Int = TCsString(TEXT("Int"), TEXT("int"));
-		const TCsString Float = TCsString(TEXT("Float"), TEXT("float"));
-		const TCsString String = TCsString(TEXT("String"), TEXT("string"));
+		extern const TCsString Int;
+		extern const TCsString Float;
+		extern const TCsString String;
+		extern const TCsString CR;
+		extern const TCsString LF;
+		extern const TCsString EOL;
 	}
 
 	namespace Ref
 	{
-		const Type Int = Type::Int;
-		const Type Float = Type::Float;
-		const Type String = Type::String;
-		const Type ECsStringEscapeType_MAX = Type::ECsStringEscapeType_MAX;
+		extern const Type Int;
+		extern const Type Float;
+		extern const Type String;
+		extern const Type CR;
+		extern const Type LF;
+		extern const Type EOL;
+		extern const Type ECsStringEscapeType_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -44,6 +56,9 @@ namespace ECsStringEscapeType
 		if (EType == Type::Int) { return Str::Int.Value; }
 		if (EType == Type::Float) { return Str::Float.Value; }
 		if (EType == Type::String) { return Str::String.Value; }
+		if (EType == Type::CR) { return Str::CR.Value; }
+		if (EType == Type::LF) { return Str::LF.Value; }
+		if (EType == Type::EOL) { return Str::EOL.Value; }
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
@@ -52,16 +67,27 @@ namespace ECsStringEscapeType
 		if (InString == Str::Int) { return Ref::Int; }
 		if (InString == Str::Float) { return Ref::Float; }
 		if (InString == Str::String) { return Ref::String; }
+		if (InString == Str::CR) { return Ref::CR; }
+		if (InString == Str::LF) { return Ref::LF; }
+		if (InString == Str::EOL) { return Ref::EOL; }
 		return Ref::ECsStringEscapeType_MAX;
 	}
 }
 
 namespace ECsStringEscapeCharacter
 {
-	const FString Int = TEXT("%d");
-	const FString Float = TEXT("%f");
-	const FString String = TEXT("%s");
+	extern const FString Int;
+	extern const FString Float;
+	extern const FString String;
+	extern const FString CR;
+	extern const FString LF;
+	extern const FString EOL;
 }
+
+#pragma endregion Escape
+
+// World / Phrase / Sentence / Paragraph
+#pragma region
 
 UENUM(BlueprintType)
 namespace ECsStringWordRule
@@ -79,19 +105,19 @@ typedef ECsStringWordRule::Type TCsStringWordRule;
 
 namespace ECsStringWordRule
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
-		const TCsString MatchCase = TCsString(TEXT("MatchCase"), TEXT("matchcase"));
-		const TCsString Lower = TCsString(TEXT("Lower"), TEXT("lower"));
+		extern const TCsString MatchCase;
+		extern const TCsString Lower;
 	}
 
 	namespace Ref
 	{
-		const Type MatchCase = Type::MatchCase;
-		const Type Lower = Type::Lower;
-		const Type ECsStringWordRule_MAX = Type::ECsStringWordRule_MAX;
+		extern const Type MatchCase;
+		extern const Type Lower;
+		extern const Type ECsStringWordRule_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -219,7 +245,10 @@ struct FCsStringWord
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
 	TArray<FCsStringWordInfo> Ors;
 
-	FCsStringWord(){}
+	FCsStringWord()
+	{
+		Completed = false;
+	}
 	~FCsStringWord(){}
 
 	FCsStringWord& operator=(const FCsStringWord& B)
@@ -305,7 +334,7 @@ struct FCsStringWord
 
 		for (int32 I = And; I < AndCount; ++I)
 		{
-			if (Ands[I] == ECsCachedString::Str::Empty || Ands[I].IsContainedBy(Input))
+			if (Ands[I] == ECsCached::Str::Empty || Ands[I].IsContainedBy(Input))
 			{
 				++And;
 			}
@@ -315,7 +344,7 @@ struct FCsStringWord
 
 		for (int32 I = 0; I < OrCount; ++I)
 		{
-			Or |= (Ors[I] == ECsCachedString::Str::Empty || Ors[I].IsContainedBy(Input));
+			Or |= (Ors[I] == ECsCached::Str::Empty || Ors[I].IsContainedBy(Input));
 
 			if (Or )
 				break;
@@ -339,7 +368,10 @@ struct FCsStringPhrase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
 	TArray<FCsStringWord> Words;
 
-	FCsStringPhrase(){}
+	FCsStringPhrase()
+	{
+		Completed = false;
+	}
 	~FCsStringPhrase(){}
 
 	FCsStringPhrase& operator=(const FCsStringPhrase& B)
@@ -462,7 +494,10 @@ struct FCsStringSentence
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
 	TArray<FCsStringPhrase> Phrases;
 
-	FCsStringSentence(){}
+	FCsStringSentence()
+	{
+		Completed = false;
+	}
 	~FCsStringSentence(){}
 
 	FCsStringSentence& operator=(const FCsStringSentence& B)
@@ -571,7 +606,10 @@ struct FCsStringParagraph
 	UPROPERTY(BlueprintAssignable, Category = "String")
 	FBindableDynEvent_CgStringParagraph_CompletedEvent ScriptEvent;
 
-	FCsStringParagraph(){}
+	FCsStringParagraph()
+	{
+		Completed = false;
+	}
 	~FCsStringParagraph(){}
 
 	FCsStringParagraph& operator=(const FCsStringParagraph& B)
@@ -663,29 +701,17 @@ struct FCsStringParagraph
 	}
 };
 
-namespace CgStringParagraphHelper
+namespace CsStringParagraphHelper
 {
-	/*
-	FCsStringSentence CreateOneWordSentence(const FString &Word, const TCsStringWordRule &Rule = ECsStringWordRule::MatchCase)
-	{
-		FCsStringSentence Sentence;
-		FCsStringPhrase Phrase;
-		Phrase.AddAndToWord(0, Word, Rule);
-		Sentence.AddPhrase(Phrase);
-
-		return Sentence;
-	}
-
-	FCsStringParagraph CreateOneWordParagraph(const FString &Word, const TCsStringWordRule &Rule = ECsStringWordRule::MatchCase)
-	{
-		FCsStringParagraph Paragraph;
-		FCsStringSentence Sentence;
-		FCsStringPhrase Phrase;
-		Phrase.AddAndToWord(0, Word, Rule);
-		Sentence.AddPhrase(Phrase);
-		Paragraph.AddSentence(Sentence);
-
-		return Paragraph;
-	}
-	*/
+	FCsStringSentence CreateOneWordSentence(const FString &Word, const TCsStringWordRule &Rule = ECsStringWordRule::MatchCase);
+	FCsStringParagraph CreateOneWordParagraph(const FString &Word, const TCsStringWordRule &Rule = ECsStringWordRule::MatchCase);
 }
+
+#pragma endregion Word / Phrase / Sentence / Paragraph
+
+struct CSCORE_API FCsStringHelper
+{
+public:
+	static void GetLines(const FString& Input, TArray<FString> &OutLines);
+	static void GetLineTerminatingIndexAndCharacter(const FString &Input, int32 &OutIndex, FString &OutEscapeChar);
+};

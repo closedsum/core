@@ -3,6 +3,7 @@
 
 #include "GameFramework/Actor.h"
 #include "Types/CsTypes_Pool.h"
+#include "CsCVars.h"
 #include "CsManager.generated.h"
 
 // OnAllocate
@@ -112,7 +113,11 @@ template<typename EnumType, typename ObjectType, typename PayloadType, int32 PAY
 class TCsManagerPooledObjects
 {
 public:
-	TCsManagerPooledObjects(){}
+	TCsManagerPooledObjects()
+	{
+		CsConstructObject.BindRaw(this, &TCsManagerPooledObjects::ConstructObject);
+	}
+
 	virtual ~TCsManagerPooledObjects()
 	{
 		Shutdown();
@@ -124,9 +129,13 @@ public:
 
 	TWeakObjectPtr<class UWorld> CurrentWorld;
 
+	TBaseDelegate<ObjectType*, const EnumType&> CsConstructObject;
+
 	TMulticastDelegate<void, const EnumType&, ObjectType*> OnAddToPool_Event;
 
 	TAutoConsoleVariable<int32>* LogTransactions;
+
+	TBaseDelegate<void, ObjectType*> OnTick_Handle_Object;
 
 protected:
 	FString FunctionNames[ECsManagerPooledObjectsFunctionNames::ECsManagerPooledObjectsFunctionNames_MAX];
@@ -155,6 +164,11 @@ public:
 		FunctionNames[ECsManagerPooledObjectsFunctionNames::Spawn] = Name + TEXT("::Spawn");
 	}
 
+	virtual void DeconstructObject(ObjectType* o)
+	{
+		delete o;
+	}
+
 	virtual void Clear()
 	{
 		PoolSizes.Reset();
@@ -164,6 +178,7 @@ public:
 		for (int32 i = 0; i < count; ++i)
 		{
 			Pool[i]->DeAllocate();
+			DeconstructObject(Pool[i]);
 		}
 
 		Pool.Reset();
@@ -180,11 +195,18 @@ public:
 	virtual void Shutdown()
 	{
 		Clear();
+
+		CsConstructObject.Unbind();
 	}
 
 	virtual ObjectType* ConstructObject(const EnumType& e)
 	{
 		return nullptr;
+	}
+
+	virtual FString GetObjectName(ObjectType* o)
+	{
+		return ECsCached::Str::Empty;
 	}
 
 	virtual void CreatePool(const EnumType &e, const int32 &size)
@@ -196,7 +218,7 @@ public:
 
 		for (int32 i = 0; i < size; ++i)
 		{
-			ObjectType* o = ConstructObject(e);
+			ObjectType* o = CsConstructObject.Execute(e);
 			o->Init(i, e);
 			o->OnCreatePool();
 			o->DeAllocate();
@@ -268,44 +290,57 @@ public:
 
 	virtual const FString& EnumTypeToString(const EnumType &e)
 	{
-		return ECsCachedString::Str::Empty;
+		return ECsCached::Str::Empty;
 	}
 
-	void LogTransaction(const FString &functionName, const TEnumAsByte<ECsPoolTransaction::Type> &transaction, ObjectType* o)
+	virtual const FString& EnumTypeToString(const int32& index)
 	{
-		/*
+		return ECsCached::Str::Empty;
+	}
+
+	virtual void LogTransaction(const FString &functionName, const TEnumAsByte<ECsPoolTransaction::Type> &transaction, ObjectType* o)
+	{
 		if ((*LogTransactions)->GetInt() == CS_CVAR_SHOW_LOG)
 		{
-		const FString& TransactionAsString = ECsPoolTransaction::ToActionString(transaction);
+			const FString& TransactionAsString = ECsPoolTransaction::ToActionString(transaction);
 
-		const FString ActorName	   = Actor->GetName();
-		const FString TypeAsString = (*InteractiveTypeToString)((TCsInteractiveType)Actor->Cache.Type);
-		const float CurrentTime	   = GetWorld()->GetTimeSeconds();
-		const UObject* ActorOwner  = Actor->Cache.GetOwner();
-		const FString OwnerName	   = ActorOwner ? ActorOwner->GetName() : ECsCachedString::Str::None;
-		const UObject* Parent	   = Actor->Cache.GetParent();
-		const FString ParentName   = Parent ? Parent->GetName() : ECsCachedString::Str::None;
+			const FString ObjectName	= GetObjectName(o);
+			const FString TypeAsString  = EnumTypeToString(o->Cache.Type);
+			const float CurrentTime	    = GetCurrentTimeSeconds();
+			const UObject* ObjectOwner  = o->Cache.GetOwner();
+			const FString OwnerName	    = ObjectOwner ? ObjectOwner->GetName() : ECsCached::Str::None;
+			const UObject* Parent	    = o->Cache.GetParent();
+			const FString ParentName    = Parent ? Parent->GetName() : ECsCached::Str::None;
 
-		if (ActorOwner && Parent)
-		{
-		UE_LOG(LogCs, Warning, TEXT("%s: %s InteractiveActor: %s of Type: %s at %f for %s attached to %s."), *FunctionName, *TransactionAsString, *ActorName, *TypeAsString, CurrentTime, *OwnerName, *ParentName);
+			FString OutLog = ECsCached::Str::Empty;
+
+			if (ObjectOwner && Parent)
+			{
+				OutLog = FString::Printf(TEXT("%s: %s %s: %s of Type: %s at %f for %s attached to %s."), *functionName, *TransactionAsString, *ObjectClassName, *ObjectName, *TypeAsString, CurrentTime, *OwnerName, *ParentName);
+			}
+			else
+			if (ObjectOwner)
+			{
+				OutLog = FString::Printf(TEXT("%s: %s %s: %s of Type: %s at %f for %s."), *functionName, *TransactionAsString, *ObjectClassName, *ObjectName, *TypeAsString, CurrentTime, *OwnerName);
+			}
+			else
+			if (Parent)
+			{
+				OutLog = FString::Printf(TEXT("%s: %s %s: %s of Type: %s at %f attached to %s."), *functionName, *TransactionAsString, *ObjectClassName, *ObjectName, *TypeAsString, CurrentTime, *ParentName);
+			}
+			else
+			{
+				OutLog = FString::Printf(TEXT("%s: %s %s: %s of Type: %s at %f."), *functionName, *TransactionAsString, *ObjectClassName, *ObjectName, *TypeAsString, CurrentTime);
+			}
+			LogTransaction_Internal(OutLog);
 		}
-		else
-		if (ActorOwner)
-		{
-		UE_LOG(LogCs, Warning, TEXT("%s: %s InteractiveActor: %s of Type: %s at %f for %s."), *FunctionName, *TransactionAsString, *ActorName, *TypeAsString, CurrentTime, *OwnerName);
-		}
-		else
-		if (Parent)
-		{
-		UE_LOG(LogCs, Warning, TEXT("%s: %s InteractiveActor: %s of Type: %s at %f attached to %s."), *TransactionAsString, *FunctionName, *ActorName, *TypeAsString, CurrentTime, *ParentName);
-		}
-		else
-		{
-		UE_LOG(LogCs, Warning, TEXT("%s: %s InteractiveActor: %s of Type: %s at %f."), *FunctionName, *TransactionAsString, *ActorName, *TypeAsString, CurrentTime);
-		}
-		}
-		*/
+	}
+
+	virtual void LogTransaction_Internal(const FString& outLog){}
+
+	virtual float GetCurrentTimeSeconds()
+	{
+		return GetCurrentWorld() ? GetCurrentWorld()->GetTimeSeconds() : 0.0f;
 	}
 
 	void OnTick(const float &deltaTime)
@@ -319,14 +354,14 @@ public:
 		{
 			const EnumType& key = Keys[i];
 
-			TArray<ObjectType*>* objectsPtr = ActiveObjects.Find(key);
+			TArray<ObjectType*>& objects = ActiveObjects[key];
 
-			const int32 objectCount = objectsPtr->Num();
+			const int32 objectCount = objects.Num();
 			int32 earliestIndex		= objectCount;
 
 			for (int32 j = objectCount - 1; j >= 0; --j)
 			{
-				ObjectType* o = (*objectsPtr)[j];
+				ObjectType* o = objects[j];
 
 				// Check if ObjectType was DeAllocated NOT in a normal way (i.e. Out of Bounds)
 
@@ -336,7 +371,7 @@ public:
 
 					LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
 
-					objectsPtr->RemoveAt(j);
+					objects.RemoveAt(j);
 
 					if (j < earliestIndex)
 						earliestIndex = j;
@@ -344,32 +379,59 @@ public:
 				}
 
 				if (!o->Cache.bLifeTime)
+				{
+					OnTick_Handle_Object.ExecuteIfBound(o);
 					continue;
+				}
 
-				if (GetCurrentWorld()->GetTimeSeconds() - o->Cache.Time > o->Cache.LifeTime)
+				if (GetCurrentTimeSeconds() - o->Cache.Time > o->Cache.LifeTime)
 				{
 					LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
 
 					o->DeAllocate();
-					objectsPtr->RemoveAt(j);
+					objects.RemoveAt(j);
 
 					if (j < earliestIndex)
 						earliestIndex = j;
+					continue;
 				}
+
+				OnTick_Handle_Object.ExecuteIfBound(o);
 			}
 
 			// Update ActiveIndex
 			if (earliestIndex != objectCount)
 			{
-				const int32 max = objectsPtr->Num();
+				const int32 max = objects.Num();
 				
 				for (int32 j = earliestIndex; j < max; ++j)
 				{
-					ObjectType* o = (*objectsPtr)[j];
+					ObjectType* o = objects[j];
 					o->Cache.SetActiveIndex(j);
 				}
 			}
 		}
+	}
+
+	void GetAllActiveObjects(TArray<ObjectType*> &outObjects)
+	{
+		TArray<EnumType> keys;
+		ActiveObjects.GetKeys(keys);
+
+		for (const EnumType& key : keys)
+		{
+			TArray<ObjectType*>& objects = ActiveObjects[key];
+
+			for (ObjectType* o : objects)
+			{
+				outObjects.Add(o);
+			}
+		}
+	}
+
+	const TArray<ObjectType*>* GetObjects(const EnumType& type)
+	{
+		return Pools.Find(type);
 	}
 
 	int32 GetActivePoolSize(const EnumType &e)
@@ -473,21 +535,18 @@ public:
 
 		for (int32 i = 0; i < keyCount; ++i)
 		{
-			const EnumType& e = keys[i];
+			const EnumType& key = keys[i];
 
-			TArray<ObjectType*>* objectsPtr = ActiveObjects.Find(e);
+			TArray<ObjectType*>& objects = ActiveObjects[key];
 
-			if (!objectsPtr)
-				continue;
-
-			const int32 objectCount = objectsPtr->Num();
+			const int32 objectCount = objects.Num();
 
 			for (int32 j = objectCount - 1; j >= 0; --j)
 			{
-				LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::DeAllocateAll], ECsPoolTransaction::Deallocate, (*objectsPtr)[j]);
+				LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::DeAllocateAll], ECsPoolTransaction::Deallocate, objects[j]);
 
-				(*objectsPtr)[j]->DeAllocate();
-				objectsPtr->RemoveAt(j);
+				objects[j]->DeAllocate();
+				objects.RemoveAt(j);
 			}
 		}
 	}

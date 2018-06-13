@@ -26,7 +26,7 @@
 // Cache
 #pragma region
 
-namespace ECsCommonLoadCachedString
+namespace ECsCommonLoadCached
 {
 	namespace Str
 	{
@@ -101,7 +101,7 @@ UCsCommon_Load::UCsCommon_Load(const FObjectInitializer& ObjectInitializer)
 
 FString UCsCommon_Load::LoadFlagsToString(const int32 &LoadFlags)
 {
-	FString String = ECsCachedString::Str::Empty;
+	FString String = ECsCached::Str::Empty;
 	bool IsFirst = true;
 
 	for (int32 I = 0; I < ECS_LOAD_FLAGS_EDITOR_MAX; ++I)
@@ -224,20 +224,20 @@ void UCsCommon_Load::WriteTAssetPtrToJson_AnimBlueprint(TSharedRef<TJsonWriter<T
 		FString AssetName = Member.ToString();
 
 		// (AssetName != TEXT(""))
-		if (AssetName != ECsCachedString::Str::Empty)
+		if (AssetName != ECsCached::Str::Empty)
 		{
 			InJsonWriter->WriteValue(MemberName, AssetName);
 		}
 		else
 		{
 											//   TEXT("")
-			InJsonWriter->WriteValue(MemberName, ECsCachedString::Str::Empty);
+			InJsonWriter->WriteValue(MemberName, ECsCached::Str::Empty);
 		}
 	}
 	else
 	{
 										//   TEXT("")
-		InJsonWriter->WriteValue(MemberName, ECsCachedString::Str::Empty);
+		InJsonWriter->WriteValue(MemberName, ECsCached::Str::Empty);
 	}
 }
 
@@ -254,20 +254,20 @@ void UCsCommon_Load::WriteTAssetPtrToJson_Blueprint(TSharedRef<TJsonWriter<TCHAR
 		const FString AssetName = Member.ToString();
 
 		// (AssetName != TEXT("")
-		if (AssetName != ECsCachedString::Str::Empty)
+		if (AssetName != ECsCached::Str::Empty)
 		{
 			InJsonWriter->WriteValue(MemberName, AssetName);
 		}
 		else
 		{
 											//   TEXT("")
-			InJsonWriter->WriteValue(MemberName, ECsCachedString::Str::Empty);
+			InJsonWriter->WriteValue(MemberName, ECsCached::Str::Empty);
 		}
 	}
 	else
 	{
 										//   TEXT("")
-		InJsonWriter->WriteValue(MemberName, ECsCachedString::Str::Empty);
+		InJsonWriter->WriteValue(MemberName, ECsCached::Str::Empty);
 	}
 }
 
@@ -299,11 +299,11 @@ void UCsCommon_Load::WriteMemberStructPropertyToJson_Transform(TSharedRef<TJsonW
 		InJsonWriter->WriteObjectStart(MemberName);
 
 		// Rotation
-		InJsonWriter->WriteValue(ECsCommonLoadCachedString::Str::Rotation, *(Member->GetRotation().Rotator().ToString()));
+		InJsonWriter->WriteValue(ECsCommonLoadCached::Str::Rotation, *(Member->GetRotation().Rotator().ToString()));
 		// Translation
-		InJsonWriter->WriteValue(ECsCommonLoadCachedString::Str::Translation, *(Member->GetTranslation().ToString()));
+		InJsonWriter->WriteValue(ECsCommonLoadCached::Str::Translation, *(Member->GetTranslation().ToString()));
 		// Scale
-		InJsonWriter->WriteValue(ECsCommonLoadCachedString::Str::Scale, *(Member->GetScale3D().ToString()));
+		InJsonWriter->WriteValue(ECsCommonLoadCached::Str::Scale, *(Member->GetScale3D().ToString()));
 
 		InJsonWriter->WriteObjectEnd();
 	}
@@ -324,11 +324,11 @@ void UCsCommon_Load::WriteMemberArrayStructPropertyToJson_Transform(TSharedRef<T
 		InJsonWriter->WriteObjectStart();
 
 		// Rotation
-		InJsonWriter->WriteValue(ECsCommonLoadCachedString::Str::Rotation, *(Element.GetRotation().Rotator().ToString()));
+		InJsonWriter->WriteValue(ECsCommonLoadCached::Str::Rotation, *(Element.GetRotation().Rotator().ToString()));
 		// Translation
-		InJsonWriter->WriteValue(ECsCommonLoadCachedString::Str::Translation, *(Element.GetTranslation().ToString()));
+		InJsonWriter->WriteValue(ECsCommonLoadCached::Str::Translation, *(Element.GetTranslation().ToString()));
 		// Scale
-		InJsonWriter->WriteValue(ECsCommonLoadCachedString::Str::Scale, *(Element.GetScale3D().ToString()));
+		InJsonWriter->WriteValue(ECsCommonLoadCached::Str::Scale, *(Element.GetScale3D().ToString()));
 
 		InJsonWriter->WriteObjectEnd();
 	}
@@ -579,9 +579,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsAnimSequence
 			if (StructProperty->Struct == FCsAnimSequence::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsAnimSequence>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-			// FCsFpsAnimSequence
-			if (StructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsFpsAnimSequence>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsFpvAnimSequence
+			if (StructProperty->Struct == FCsFpvAnimSequence::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsFpvAnimSequence>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 			// FCsAnimMontage
 			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
 			{
@@ -591,11 +591,11 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				if (WriteStructToJson_Internal_Helper(Internal, Property, InJsonWriter, InStruct, InScriptStruct)) { continue; }
 				continue;
 			}
-			// FCsFpsAnimMontage
-			if (StructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
+			// FCsFpvAnimMontage
+			if (StructProperty->Struct == FCsFpvAnimMontage::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ WriteMemberStructPropertyToJson<FCsFpsAnimMontage>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+				{ WriteMemberStructPropertyToJson<FCsFpvAnimMontage>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 
 				if (WriteStructToJson_Internal_Helper(Internal, Property, InJsonWriter, InStruct, InScriptStruct)) { continue; }
 				continue;
@@ -612,21 +612,21 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsBlendSpace1D
 			if (StructProperty->Struct == FCsBlendSpace1D::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsBlendSpace1D>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-			// FCsFpsBlendSpace1D
-			if (StructProperty->Struct == FCsFpsBlendSpace1D::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsFpsBlendSpace1D>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsFpvBlendSpace1D
+			if (StructProperty->Struct == FCsFpvBlendSpace1D::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsFpvBlendSpace1D>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 			// FCsBlendSpace
 			if (StructProperty->Struct == FCsBlendSpace::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsBlendSpace>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-			// FCsFpsBlendSpace
-			if (StructProperty->Struct == FCsFpsBlendSpace::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsFpsBlendSpace>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsFpvBlendSpace
+			if (StructProperty->Struct == FCsFpvBlendSpace::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsFpvBlendSpace>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 			// FCsAnimBlueprint
 			if (StructProperty->Struct == FCsAnimBlueprint::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsAnimBlueprint>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-			// FCsFpsAnimBlueprint
-			if (StructProperty->Struct == FCsFpsAnimBlueprint::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsFpsAnimBlueprint>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsFpvAnimBlueprint
+			if (StructProperty->Struct == FCsFpvAnimBlueprint::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsFpvAnimBlueprint>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 			// FCsBlueprint
 			if (StructProperty->Struct == FCsBlueprint::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsBlueprint>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
@@ -742,6 +742,34 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			if (StructProperty->Struct == FCsPayload::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsPayload>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 
+			// EnumStruct
+			{
+				// FECsAssetType
+				if (StructProperty->Struct == FECsAssetType::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsAssetType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsInputAction
+				if (StructProperty->Struct == FECsInputAction::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsInputAction>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsGameEvent
+				if (StructProperty->Struct == FECsGameEvent::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsGameEvent>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsSurfaceType
+				if (StructProperty->Struct == FECsSurfaceType::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsSurfaceType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsWeaponGrip
+				if (StructProperty->Struct == FECsWeaponGrip::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsWeaponGrip>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsDamageType
+				if (StructProperty->Struct == FECsDamageType::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsDamageType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsInteractiveType
+				if (StructProperty->Struct == FECsInteractiveType::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsInteractiveType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsProjectileType
+				if (StructProperty->Struct == FECsProjectileType::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsProjectileType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+			}
+
 			if (Internal)
 			{
 				if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
@@ -819,15 +847,15 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FCsAnimSequence
 				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsAnimSequence>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
-				// FCsFpsAnimSequence
-				if (InnerStructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
-				{ WriteMemberArrayStructPropertyToJson<FCsFpsAnimSequence>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsFpvAnimSequence
+				if (InnerStructProperty->Struct == FCsFpvAnimSequence::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsFpvAnimSequence>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// FCsAnimMontage
 				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsAnimMontage>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
-				// FCsFpsAnimMontage
-				if (InnerStructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
-				{ WriteMemberArrayStructPropertyToJson<FCsFpsAnimMontage>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsFpvAnimMontage
+				if (InnerStructProperty->Struct == FCsFpvAnimMontage::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsFpvAnimMontage>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// FCsInputActionMapping
 				if (InnerStructProperty->Struct == FCsInputActionMapping::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsInputActionMapping>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
@@ -871,6 +899,16 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			}
 			continue;
 		}
+		// Map
+		if (UMapProperty* MapProperty = Cast<UMapProperty>(*It))
+		{
+			if (Internal)
+			{
+				if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
+					continue;
+			}
+			continue;
+		}
 		// bool
 		if (UBoolProperty* BoolProperty = Cast<UBoolProperty>(*It))
 		{
@@ -885,40 +923,40 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			if (ByteProperty->IsEnum())
 			{
 				// ECollisionEnabled
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CollisionEnabled))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CollisionEnabled))
 				{ WriteMemberBytePropertyToJson<ECollisionEnabled::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECollisionEnabled::ToString); continue; }
 				// ECollisionChannel
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CollisionChannel))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CollisionChannel))
 				{ WriteMemberBytePropertyToJson<ECollisionChannel>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsCollisionChannel::ToString); continue; }
 				// ECollisionResponse
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CollisionResponse))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CollisionResponse))
 				{ WriteMemberBytePropertyToJson<ECollisionResponse>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsCollisionResponse::ToString); continue; }
 				// EHorizTextAligment
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::HorizTextAligment))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::HorizTextAligment))
 				{ WriteMemberBytePropertyToJson<EHorizTextAligment>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsHorizTextAligment::ToString); continue; }
 				// EVerticalTextAligment
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::VerticalTextAligment))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::VerticalTextAligment))
 				{ WriteMemberBytePropertyToJson<EVerticalTextAligment>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsVerticalTextAligment::ToString); continue; }
 				// ECsLoadFlags_Editor
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsLoadFlags_Editor))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsLoadFlags_Editor))
 				{ WriteMemberBytePropertyToJson<ECsLoadFlags_Editor::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsLoadFlags_Editor::ToString); continue; }
 				// ECsFxPriority
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsFxPriority))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsFxPriority))
 				{ WriteMemberBytePropertyToJson<ECsFxPriority::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsFxPriority::ToString); continue; }
 				// ECsSoundPriority
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsSoundPriority))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsSoundPriority))
 				{ WriteMemberBytePropertyToJson<ECsSoundPriority::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsSoundPriority::ToString); continue; }
 				// ECsProjectileMovementFunctionType
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsProjectileMovementFunctionType))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsProjectileMovementFunctionType))
 				{ WriteMemberBytePropertyToJson<ECsProjectileMovementFunctionType::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsProjectileMovementFunctionType::ToString); continue; }
 				// ECsParametricFunctionType
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsParametricFunctionType))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsParametricFunctionType))
 				{ WriteMemberBytePropertyToJson<ECsParametricFunctionType::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsParametricFunctionType::ToString); continue; }
 				// ECsItemMemberValueType
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsItemMemberValueType))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsItemMemberValueType))
 				{ WriteMemberBytePropertyToJson<ECsItemMemberValueType::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsItemMemberValueType::ToString); continue; }
 				// ECsItemOnConsumeContentAction
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsItemOnConsumeContentAction))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsItemOnConsumeContentAction))
 				{ WriteMemberBytePropertyToJson<ECsItemOnConsumeContentAction::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsItemOnConsumeContentAction::ToString); continue; }
 
 				if (Internal)
@@ -951,13 +989,13 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			{
 #if WITH_EDITOR
 									//    TEXT("BitmaskEnum")
-				if (Property->HasMetaData(*(ECsCommonLoadCachedString::Str::BitmaskEnum)))
+				if (Property->HasMetaData(*(ECsCommonLoadCached::Str::BitmaskEnum)))
 				{
 																//    TEXT("BitmaskEnum")
-					const FString BitmaskEnum = Property->GetMetaData(*(ECsCommonLoadCachedString::Str::BitmaskEnum));
+					const FString BitmaskEnum = Property->GetMetaData(*(ECsCommonLoadCached::Str::BitmaskEnum));
 
 					// (BitmaskEnum == TEXT("ECsLoadFlags"))
-					if (BitmaskEnum == ECsCommonLoadCachedString::Str::CsLoadFlags)
+					if (BitmaskEnum == ECsCommonLoadCached::Str::CsLoadFlags)
 					{
 						InJsonWriter->WriteValue(MemberName, LoadFlagsToString(*Member));
 					}
@@ -1012,7 +1050,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 
 void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, void* InStruct, UScriptStruct* const &InScriptStruct, const TArray<FCsCategoryMemberAssociation> &CategoryMemberAssociations, TCsWriteStructToJson_Internal Internal /*=nullptr*/)
 {
-	const FString NoCategory = ECsCachedString::Str::Empty;
+	const FString NoCategory = ECsCached::Str::Empty;
 	FString Category		 = NoCategory;
 	FString LastCategory	 = NoCategory;
 	int32 CategoryIndex		 = 0;
@@ -1041,7 +1079,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 		if (Category != LastCategory)
 		{
 			// (LastCategory != TEXT(""))
-			if (LastCategory != ECsCachedString::Str::Empty)
+			if (LastCategory != ECsCached::Str::Empty)
 				InJsonWriter->WriteObjectEnd();
 			InJsonWriter->WriteObjectStart(Category);
 
@@ -1270,9 +1308,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsAnimSequence
 			if (StructProperty->Struct == FCsAnimSequence::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsAnimSequence>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-			// FCsFpsAnimSequence
-			if (StructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsFpsAnimSequence>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsFpvAnimSequence
+			if (StructProperty->Struct == FCsFpvAnimSequence::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsFpvAnimSequence>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 			// FCsAnimMontage
 			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
 			{
@@ -1282,11 +1320,11 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				if (WriteStructToJson_Internal_Helper(Internal, Property, InJsonWriter, InStruct, InScriptStruct)) { continue; }
 				continue;
 			}
-			// FCsFpsAnimMontage
-			if (StructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
+			// FCsFpvAnimMontage
+			if (StructProperty->Struct == FCsFpvAnimMontage::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ WriteMemberStructPropertyToJson<FCsFpsAnimMontage>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+				{ WriteMemberStructPropertyToJson<FCsFpvAnimMontage>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 
 				if (WriteStructToJson_Internal_Helper(Internal, Property, InJsonWriter, InStruct, InScriptStruct)) { continue; }
 				continue;
@@ -1303,21 +1341,21 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsBlendSpace1D
 			if (StructProperty->Struct == FCsBlendSpace1D::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsBlendSpace1D>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-			// FCsFpsBlendSpace1D
-			if (StructProperty->Struct == FCsFpsBlendSpace1D::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsFpsBlendSpace1D>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsFpvBlendSpace1D
+			if (StructProperty->Struct == FCsFpvBlendSpace1D::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsFpvBlendSpace1D>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 			// FCsBlendSpace
 			if (StructProperty->Struct == FCsBlendSpace::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsBlendSpace>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-			// FCsFpsBlendSpace
-			if (StructProperty->Struct == FCsFpsBlendSpace::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsFpsBlendSpace>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsFpvBlendSpace
+			if (StructProperty->Struct == FCsFpvBlendSpace::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsFpvBlendSpace>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 			// FCsAnimBlueprint
 			if (StructProperty->Struct == FCsAnimBlueprint::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsAnimBlueprint>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
-			// FCsFpsAnimBlueprint
-			if (StructProperty->Struct == FCsFpsAnimBlueprint::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsFpsAnimBlueprint>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsFpvAnimBlueprint
+			if (StructProperty->Struct == FCsFpvAnimBlueprint::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsFpvAnimBlueprint>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 			// FCsBlueprint
 			if (StructProperty->Struct == FCsBlueprint::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsBlueprint>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
@@ -1436,6 +1474,34 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			if (StructProperty->Struct == FCsPayload::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsPayload>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 
+			// EnumStruct
+			{
+				// FECsAssetType
+				if (StructProperty->Struct == FECsAssetType::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsAssetType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsInputAction
+				if (StructProperty->Struct == FECsInputAction::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsInputAction>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsGameEvent
+				if (StructProperty->Struct == FECsGameEvent::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsGameEvent>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsSurfaceType
+				if (StructProperty->Struct == FECsSurfaceType::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsSurfaceType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsWeaponGrip
+				if (StructProperty->Struct == FECsWeaponGrip::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsWeaponGrip>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsDamageType
+				if (StructProperty->Struct == FECsDamageType::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsDamageType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsInteractiveType
+				if (StructProperty->Struct == FECsInteractiveType::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsInteractiveType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsProjectileType
+				if (StructProperty->Struct == FECsProjectileType::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsProjectileType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+			}
+
 			if (Internal)
 			{
 				if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
@@ -1513,15 +1579,15 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FCsAnimSequence
 				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsAnimSequence>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
-				// FCsFpsAnimSequence
-				if (InnerStructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
-				{ WriteMemberArrayStructPropertyToJson<FCsFpsAnimSequence>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsFpvAnimSequence
+				if (InnerStructProperty->Struct == FCsFpvAnimSequence::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsFpvAnimSequence>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// FCsAnimMontage
 				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsAnimMontage>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
-				// FCsFpsAnimMontage
-				if (InnerStructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
-				{ WriteMemberArrayStructPropertyToJson<FCsFpsAnimMontage>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsFpvAnimMontage
+				if (InnerStructProperty->Struct == FCsFpvAnimMontage::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsFpvAnimMontage>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// FCsInputActionMapping
 				if (InnerStructProperty->Struct == FCsInputActionMapping::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsInputActionMapping>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
@@ -1565,6 +1631,16 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			}
 			continue;
 		}
+		// Map
+		if (UMapProperty* MapProperty = Cast<UMapProperty>(*It))
+		{
+			if (Internal)
+			{
+				if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
+					continue;
+			}
+			continue;
+		}
 		// bool
 		if (UBoolProperty* BoolProperty = Cast<UBoolProperty>(*It))
 		{
@@ -1579,40 +1655,40 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			if (ByteProperty->IsEnum())
 			{
 				// ECollisionEnabled
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CollisionEnabled))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CollisionEnabled))
 				{ WriteMemberBytePropertyToJson<ECollisionEnabled::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECollisionEnabled::ToString); continue; }
 				// ECollisionChannel
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CollisionChannel))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CollisionChannel))
 				{ WriteMemberBytePropertyToJson<ECollisionChannel>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsCollisionChannel::ToString); continue; }
 				// ECollisionResponse
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CollisionResponse))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CollisionResponse))
 				{ WriteMemberBytePropertyToJson<ECollisionResponse>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsCollisionResponse::ToString); continue; }
 				// EHorizTextAligment
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::HorizTextAligment))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::HorizTextAligment))
 				{ WriteMemberBytePropertyToJson<EHorizTextAligment>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsHorizTextAligment::ToString); continue; }
 				// EVerticalTextAligment
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::VerticalTextAligment))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::VerticalTextAligment))
 				{ WriteMemberBytePropertyToJson<EVerticalTextAligment>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsVerticalTextAligment::ToString); continue; }
 				// ECsLoadFlags_Editor
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsLoadFlags_Editor))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsLoadFlags_Editor))
 				{ WriteMemberBytePropertyToJson<ECsLoadFlags_Editor::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsLoadFlags_Editor::ToString); continue; }
 				// ECsFxPriority
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsFxPriority))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsFxPriority))
 				{ WriteMemberBytePropertyToJson<ECsFxPriority::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsFxPriority::ToString); continue; }
 				// ECsSoundPriority
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsSoundPriority))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsSoundPriority))
 				{ WriteMemberBytePropertyToJson<ECsSoundPriority::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsSoundPriority::ToString); continue; }
 				// ECsProjectileMovementFunctionType
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsProjectileMovementFunctionType))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsProjectileMovementFunctionType))
 				{ WriteMemberBytePropertyToJson<ECsProjectileMovementFunctionType::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsProjectileMovementFunctionType::ToString); continue; }
 				// ECsParametricFunctionType
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsParametricFunctionType))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsParametricFunctionType))
 				{ WriteMemberBytePropertyToJson<ECsParametricFunctionType::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsParametricFunctionType::ToString); continue; }
 				// ECsItemMemberValueType
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsItemMemberValueType))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsItemMemberValueType))
 				{ WriteMemberBytePropertyToJson<ECsItemMemberValueType::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsItemMemberValueType::ToString); continue; }
 				// ECsItemOnConsumeContentAction
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsItemOnConsumeContentAction))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsItemOnConsumeContentAction))
 				{ WriteMemberBytePropertyToJson<ECsItemOnConsumeContentAction::Type>(InJsonWriter, ByteProperty, InStruct, MemberName, &ECsItemOnConsumeContentAction::ToString); continue; }
 
 				if (Internal)
@@ -1645,13 +1721,13 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			{
 #if WITH_EDITOR
 									//    TEXT("BitmaskEnum")
-				if (Property->HasMetaData(*(ECsCommonLoadCachedString::Str::BitmaskEnum)))
+				if (Property->HasMetaData(*(ECsCommonLoadCached::Str::BitmaskEnum)))
 				{
 																//    TEXT("BitmaskEnum")
-					const FString BitmaskEnum = Property->GetMetaData(*(ECsCommonLoadCachedString::Str::BitmaskEnum));
+					const FString BitmaskEnum = Property->GetMetaData(*(ECsCommonLoadCached::Str::BitmaskEnum));
 
 					// (BitmaskEnum == TEXT("ECsLoadFlags"))
-					if (BitmaskEnum == ECsCommonLoadCachedString::Str::CsLoadFlags)
+					if (BitmaskEnum == ECsCommonLoadCached::Str::CsLoadFlags)
 					{
 						InJsonWriter->WriteValue(MemberName, LoadFlagsToString(*Member));
 					}
@@ -1709,7 +1785,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 
 void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, void* InObject, UClass* const &InClass, const TArray<FCsCategoryMemberAssociation> &CategoryMemberAssociations, TCsWriteObjectToJson_Internal Internal)
 {
-	const FString NoCategory = ECsCachedString::Str::Empty;
+	const FString NoCategory = ECsCached::Str::Empty;
 	FString Category		 = NoCategory;
 	FString LastCategory	 = NoCategory;
 	int32 CategoryIndex		 = 0;
@@ -1738,7 +1814,7 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 		if (Category != LastCategory)
 		{
 			// (LastCategory != TEXT(""))
-			if (LastCategory != ECsCachedString::Str::Empty)
+			if (LastCategory != ECsCached::Str::Empty)
 				InJsonWriter->WriteObjectEnd();
 			InJsonWriter->WriteObjectStart(Category);
 
@@ -1958,9 +2034,9 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsAnimSequence
 			if (StructProperty->Struct == FCsAnimSequence::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsAnimSequence>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
-			// FCsFpsAnimSequence
-			if (StructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsFpsAnimSequence>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+			// FCsFpvAnimSequence
+			if (StructProperty->Struct == FCsFpvAnimSequence::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsFpvAnimSequence>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
 			// FCsAnimMontage
 			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
 			{
@@ -1970,11 +2046,11 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				if (WriteObjectToJson_Internal_Helper(Internal, Property, InJsonWriter, InObject, InClass)) { continue; }
 				continue;
 			}
-			// FCsFpsAnimMontage
-			if (StructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
+			// FCsFpvAnimMontage
+			if (StructProperty->Struct == FCsFpvAnimMontage::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ WriteMemberStructPropertyToJson<FCsFpsAnimMontage>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+				{ WriteMemberStructPropertyToJson<FCsFpvAnimMontage>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
 
 				if (WriteObjectToJson_Internal_Helper(Internal, Property, InJsonWriter, InObject, InClass)) { continue; }
 				continue;
@@ -1991,21 +2067,21 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsBlendSpace1D
 			if (StructProperty->Struct == FCsBlendSpace1D::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsBlendSpace1D>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
-			// FCsFpsBlendSpace1D
-			if (StructProperty->Struct == FCsFpsBlendSpace1D::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsFpsBlendSpace1D>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+			// FCsFpvBlendSpace1D
+			if (StructProperty->Struct == FCsFpvBlendSpace1D::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsFpvBlendSpace1D>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
 			// FCsBlendSpace
 			if (StructProperty->Struct == FCsBlendSpace::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsBlendSpace>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
-			// FCsFpsBlendSpace
-			if (StructProperty->Struct == FCsFpsBlendSpace::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsFpsBlendSpace>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+			// FCsFpvBlendSpace
+			if (StructProperty->Struct == FCsFpvBlendSpace::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsFpvBlendSpace>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
 			// FCsAnimBlueprint
 			if (StructProperty->Struct == FCsAnimBlueprint::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsAnimBlueprint>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
-			// FCsFpsAnimBlueprint
-			if (StructProperty->Struct == FCsFpsAnimBlueprint::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsFpsAnimBlueprint>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+			// FCsFpvAnimBlueprint
+			if (StructProperty->Struct == FCsFpvAnimBlueprint::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsFpvAnimBlueprint>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
 			// FCsBlueprint
 			if (StructProperty->Struct == FCsBlueprint::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsBlueprint>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
@@ -2068,6 +2144,34 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			{
 				if (WriteObjectToJson_Internal_Helper(Internal, Property, InJsonWriter, InObject, InClass)) { continue; }
 				continue;
+			}
+
+			// EnumStruct
+			{
+				// FECsAssetType
+				if (StructProperty->Struct == FECsAssetType::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsAssetType>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+				// FECsInputAction
+				if (StructProperty->Struct == FECsInputAction::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsInputAction>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+				// FECsGameEvent
+				if (StructProperty->Struct == FECsGameEvent::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsGameEvent>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+				// FECsSurfaceType
+				if (StructProperty->Struct == FECsSurfaceType::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsSurfaceType>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+				// FECsWeaponGrip
+				if (StructProperty->Struct == FECsWeaponGrip::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsWeaponGrip>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+				// FECsDamageType
+				if (StructProperty->Struct == FECsDamageType::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsDamageType>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+				// FECsInteractiveType
+				if (StructProperty->Struct == FECsInteractiveType::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsInteractiveType>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+				// FECsProjectileType
+				if (StructProperty->Struct == FECsProjectileType::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsProjectileType>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
 			}
 
 			if (Internal)
@@ -2142,15 +2246,15 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FCsAnimSequence
 				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsAnimSequence>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
-				// FCsFpsAnimSequence
-				if (InnerStructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
-				{ WriteMemberArrayStructPropertyToJson<FCsFpsAnimSequence>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
+				// FCsFpvAnimSequence
+				if (InnerStructProperty->Struct == FCsFpvAnimSequence::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsFpvAnimSequence>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
 				// FCsAnimMontage
 				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsAnimMontage>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
-				// FCsFpsAnimMontage
-				if (InnerStructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
-				{ WriteMemberArrayStructPropertyToJson<FCsFpsAnimMontage>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
+				// FCsFpvAnimMontage
+				if (InnerStructProperty->Struct == FCsFpvAnimMontage::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsFpvAnimMontage>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
 				// FCsDataMappingEntry
 				if (InnerStructProperty->Struct == FCsDataMappingEntry::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsDataMappingEntry>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
@@ -2185,6 +2289,16 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			}
 			continue;
 		}
+		// Map
+		if (UMapProperty* MapProperty = Cast<UMapProperty>(*It))
+		{
+			if (Internal)
+			{
+				if ((*Internal)(Property, InJsonWriter, InObject, InClass))
+					continue;
+			}
+			continue;
+		}
 		// bool
 		if (UBoolProperty* BoolProperty = Cast<UBoolProperty>(*It))
 		{
@@ -2199,37 +2313,37 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			if (ByteProperty->IsEnum())
 			{
 				// ECollisionEnabled
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CollisionEnabled))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CollisionEnabled))
 				{ WriteMemberBytePropertyToJson<ECollisionEnabled::Type>(InJsonWriter, ByteProperty, InObject, MemberName, &ECollisionEnabled::ToString); continue; }
 				// ECollisionChannel
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CollisionChannel))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CollisionChannel))
 				{ WriteMemberBytePropertyToJson<ECollisionChannel>(InJsonWriter, ByteProperty, InObject, MemberName, &ECsCollisionChannel::ToString); continue; }
 				// ECollisionResponse
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CollisionResponse))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CollisionResponse))
 				{ WriteMemberBytePropertyToJson<ECollisionResponse>(InJsonWriter, ByteProperty, InObject, MemberName, &ECsCollisionResponse::ToString); continue; }
 				// EHorizTextAligment
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::HorizTextAligment))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::HorizTextAligment))
 				{ WriteMemberBytePropertyToJson<EHorizTextAligment>(InJsonWriter, ByteProperty, InObject, MemberName, &ECsHorizTextAligment::ToString); continue; }
 				// EVerticalTextAligment
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::VerticalTextAligment))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::VerticalTextAligment))
 				{ WriteMemberBytePropertyToJson<EVerticalTextAligment>(InJsonWriter, ByteProperty, InObject, MemberName, &ECsVerticalTextAligment::ToString); continue; }
 				// ECsLoadFlags_Editor
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsLoadFlags_Editor))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsLoadFlags_Editor))
 				{ WriteMemberBytePropertyToJson<ECsLoadFlags_Editor::Type>(InJsonWriter, ByteProperty, InObject, MemberName, &ECsLoadFlags_Editor::ToString); continue; }
 				// ECsFxPriority
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsFxPriority))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsFxPriority))
 				{ WriteMemberBytePropertyToJson<ECsFxPriority::Type>(InJsonWriter, ByteProperty, InObject, MemberName, &ECsFxPriority::ToString); continue; }
 				// ECsSoundPriority
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsSoundPriority))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsSoundPriority))
 				{ WriteMemberBytePropertyToJson<ECsSoundPriority::Type>(InJsonWriter, ByteProperty, InObject, MemberName, &ECsSoundPriority::ToString); continue; }
 				// ECsParametricFunctionType
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsParametricFunctionType))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsParametricFunctionType))
 				{ WriteMemberBytePropertyToJson<ECsParametricFunctionType::Type>(InJsonWriter, ByteProperty, InObject, MemberName, &ECsParametricFunctionType::ToString); continue; }
 				// ECsItemMemberValueType
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsItemMemberValueType))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsItemMemberValueType))
 				{ WriteMemberBytePropertyToJson<ECsItemMemberValueType::Type>(InJsonWriter, ByteProperty, InObject, MemberName, &ECsItemMemberValueType::ToString); continue; }
 				// ECsInteractiveCollision
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsInteractiveCollision))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsInteractiveCollision))
 				{
 					if (ByteProperty->ArrayDim == CS_SINGLETON)
 					{ WriteMemberBytePropertyToJson<ECsInteractiveCollision::Type>(InJsonWriter, ByteProperty, InObject, MemberName, &ECsInteractiveCollision::ToString); continue; }
@@ -2257,13 +2371,13 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			{
 #if WITH_EDITOR
 									//    TEXT("BitmaskEnum")
-				if (Property->HasMetaData(*(ECsCommonLoadCachedString::Str::BitmaskEnum)))
+				if (Property->HasMetaData(*(ECsCommonLoadCached::Str::BitmaskEnum)))
 				{
 																//    TEXT("BitmaskEnum")
-					const FString BitmaskEnum = Property->GetMetaData(*(ECsCommonLoadCachedString::Str::BitmaskEnum));
+					const FString BitmaskEnum = Property->GetMetaData(*(ECsCommonLoadCached::Str::BitmaskEnum));
 
 					// (BitmaskEnum == TEXT("ECsLoadFlags"))
-					if (BitmaskEnum == ECsCommonLoadCachedString::Str::CsLoadFlags)
+					if (BitmaskEnum == ECsCommonLoadCached::Str::CsLoadFlags)
 					{
 						InJsonWriter->WriteValue(MemberName, LoadFlagsToString(*Member));
 					}
@@ -2320,8 +2434,8 @@ void UCsCommon_Load::WriteToAssetObjectPropertyFromJson_AnimBlueprint(TSharedPtr
 		FString AssetName = JsonObject->GetStringField(MemberName);
 
 		// (AssetName.EndsWith(TEXT("_C")))
-		if (AssetName.EndsWith(ECsLoadCachedString::Str::_C))
-			AssetName.RemoveFromEnd(ECsLoadCachedString::Str::_C);
+		if (AssetName.EndsWith(ECsLoadCached::Str::_C))
+			AssetName.RemoveFromEnd(ECsLoadCached::Str::_C);
 
 		*Member = TAssetPtr<UAnimBlueprint>(AssetName);
 	}
@@ -2334,8 +2448,8 @@ void UCsCommon_Load::WriteToAssetObjectPropertyFromJson_Blueprint(TSharedPtr<FJs
 		FString AssetName = JsonObject->GetStringField(MemberName);
 
 		// (AssetName.EndsWith(TEXT("_C")))
-		if (AssetName.EndsWith(ECsLoadCachedString::Str::_C))
-			AssetName.RemoveFromEnd(ECsLoadCachedString::Str::_C);
+		if (AssetName.EndsWith(ECsLoadCached::Str::_C))
+			AssetName.RemoveFromEnd(ECsLoadCached::Str::_C);
 
 		*Member = TAssetPtr<UBlueprint>(AssetName);
 	}
@@ -2345,12 +2459,12 @@ void UCsCommon_Load::WriteToMemberStructPropertyFromJson_Transform(TSharedPtr<FJ
 {
 	if (FTransform* Member = StructProperty->ContainerPtrToValuePtr<FTransform>(InObject))
 	{
-		TSharedPtr<FJsonObject> Object = JsonObject->Values.Find(ECsCommonLoadCachedString::Str::Transform)->Get()->AsObject();
+		TSharedPtr<FJsonObject> Object = JsonObject->Values.Find(ECsCommonLoadCached::Str::Transform)->Get()->AsObject();
 
 		// Rotation
 		FRotator Rotation;
 														// TEXT("Rotation")
-		Rotation.InitFromString(Object->GetStringField(ECsCommonLoadCachedString::Str::Rotation));
+		Rotation.InitFromString(Object->GetStringField(ECsCommonLoadCached::Str::Rotation));
 		FVector RotationAsVector = FVector(Rotation.Pitch, Rotation.Yaw, Rotation.Roll);
 		FQuat Quat = FQuat::MakeFromEuler(RotationAsVector);
 
@@ -2358,13 +2472,13 @@ void UCsCommon_Load::WriteToMemberStructPropertyFromJson_Transform(TSharedPtr<FJ
 		// Translation
 		FVector Translation;
 															//TEXT("Translation")
-		Translation.InitFromString(Object->GetStringField(ECsCommonLoadCachedString::Str::Translation));
+		Translation.InitFromString(Object->GetStringField(ECsCommonLoadCached::Str::Translation));
 
 		Member->SetTranslation(Translation);
 		// Scale
 		FVector Scale;
 													//  TEXT("Scale")
-		Scale.InitFromString(Object->GetStringField(ECsCommonLoadCachedString::Str::Scale));
+		Scale.InitFromString(Object->GetStringField(ECsCommonLoadCached::Str::Scale));
 
 		Member->SetScale3D(Scale);
 	}
@@ -2389,14 +2503,14 @@ void UCsCommon_Load::WriteToMemberArrayStructPropertyFromJson_Transform(TSharedP
 			Member->AddDefaulted();
 
 		TSharedPtr<FJsonObject> ArrayObject = JsonArray[I]->AsObject();
-		TSharedPtr<FJsonObject> Object		= ArrayObject->Values.Find(ECsCommonLoadCachedString::Str::Transform)->Get()->AsObject();
+		TSharedPtr<FJsonObject> Object		= ArrayObject->Values.Find(ECsCommonLoadCached::Str::Transform)->Get()->AsObject();
 
 		FTransform& Element = (*Member)[I];
 
 		// Rotation
 		FRotator Rotation;
 													// TEXT("Rotation")
-		Rotation.InitFromString(Object->GetStringField(ECsCommonLoadCachedString::Str::Rotation));
+		Rotation.InitFromString(Object->GetStringField(ECsCommonLoadCached::Str::Rotation));
 		FVector RotationAsVector = FVector(Rotation.Pitch, Rotation.Yaw, Rotation.Roll);
 		FQuat Quat = FQuat::MakeFromEuler(RotationAsVector);
 
@@ -2404,13 +2518,13 @@ void UCsCommon_Load::WriteToMemberArrayStructPropertyFromJson_Transform(TSharedP
 		// Translation
 		FVector Translation;
 														//TEXT("Translation")
-		Translation.InitFromString(Object->GetStringField(ECsCommonLoadCachedString::Str::Translation));
+		Translation.InitFromString(Object->GetStringField(ECsCommonLoadCached::Str::Translation));
 
 		Element.SetTranslation(Translation);
 		// Scale
 		FVector Scale;
 												//  TEXT("Scale")
-		Scale.InitFromString(Object->GetStringField(ECsCommonLoadCachedString::Str::Scale));
+		Scale.InitFromString(Object->GetStringField(ECsCommonLoadCached::Str::Scale));
 
 		Element.SetScale3D(Scale);
 	}
@@ -2715,9 +2829,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FCsAnimSequence
 			if (StructProperty->Struct == FCsAnimSequence::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsAnimSequence>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
-			// FCsFpsAnimSequence
-			if (StructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
-			{ WriteToMemberStructPropertyFromJson<FCsFpsAnimSequence>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
+			// FCsFpvAnimSequence
+			if (StructProperty->Struct == FCsFpvAnimSequence::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsFpvAnimSequence>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 			// FCsAnimMontage
 			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
 			{
@@ -2727,11 +2841,11 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 				if (ReadStructFromJson_Internal_Helper(Internal, Property, JsonObject, InStruct, InScriptStruct)) { continue; }
 				continue;
 			}
-			// FCsFpsAnimMontage
-			if (StructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
+			// FCsFpvAnimMontage
+			if (StructProperty->Struct == FCsFpvAnimMontage::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ WriteToMemberStructPropertyFromJson<FCsFpsAnimMontage>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
+				{ WriteToMemberStructPropertyFromJson<FCsFpvAnimMontage>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 
 				if (ReadStructFromJson_Internal_Helper(Internal, Property, JsonObject, InStruct, InScriptStruct)) { continue; }
 				continue;
@@ -2748,21 +2862,21 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FCsBlendSpace1D
 			if (StructProperty->Struct == FCsBlendSpace1D::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsBlendSpace1D>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
-			// FCsFpsBlendSpace1D
-			if (StructProperty->Struct == FCsFpsBlendSpace1D::StaticStruct())
-			{ WriteToMemberStructPropertyFromJson<FCsFpsBlendSpace1D>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
+			// FCsFpvBlendSpace1D
+			if (StructProperty->Struct == FCsFpvBlendSpace1D::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsFpvBlendSpace1D>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 			// FCsBlendSpace
 			if (StructProperty->Struct == FCsBlendSpace::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsBlendSpace>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
-			// FCsFpsBlendSpace
-			if (StructProperty->Struct == FCsFpsBlendSpace::StaticStruct())
-			{ WriteToMemberStructPropertyFromJson<FCsFpsBlendSpace>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
+			// FCsFpvBlendSpace
+			if (StructProperty->Struct == FCsFpvBlendSpace::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsFpvBlendSpace>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 			// FCsAnimBlueprint
 			if (StructProperty->Struct == FCsAnimBlueprint::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsAnimBlueprint>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
-			// FCsFpsAnimBlueprint
-			if (StructProperty->Struct == FCsFpsAnimBlueprint::StaticStruct())
-			{ WriteToMemberStructPropertyFromJson<FCsFpsAnimBlueprint>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
+			// FCsFpvAnimBlueprint
+			if (StructProperty->Struct == FCsFpvAnimBlueprint::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsFpvAnimBlueprint>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 			// FCsBlueprint
 			if (StructProperty->Struct == FCsBlueprint::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsBlueprint>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
@@ -2880,6 +2994,34 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			if (StructProperty->Struct == FCsPayload::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsPayload>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 
+			// EnumStruct
+			{
+				// FECsAssetType
+				if (StructProperty->Struct == FECsAssetType::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsAssetType, EMCsAssetType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FECsInputAction
+				if (StructProperty->Struct == FECsInputAction::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsInputAction, EMCsInputAction>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FECsGameEvent
+				if (StructProperty->Struct == FECsGameEvent::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsGameEvent, EMCsGameEvent>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FECsSurfaceType
+				if (StructProperty->Struct == FECsSurfaceType::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsSurfaceType, EMCsSurfaceType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FECsWeaponGrip
+				if (StructProperty->Struct == FECsWeaponGrip::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsWeaponGrip, EMCsWeaponGrip>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FECsDamageType
+				if (StructProperty->Struct == FECsDamageType::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsDamageType, EMCsDamageType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FECsInteractiveType
+				if (StructProperty->Struct == FECsInteractiveType::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsInteractiveType, EMCsInteractiveType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FECsProjectileType
+				if (StructProperty->Struct == FECsProjectileType::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsProjectileType, EMCsProjectileType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			}
+
 			if (Internal)
 			{
 				if ((*Internal)(Property, JsonObject, InStruct, InScriptStruct))
@@ -2958,15 +3100,15 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 				// FCsAnimSequence
 				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsAnimSequence>(JsonObject, ArrayProperty, InStruct, MemberName, nullptr); continue; }
-				// FCsFpsAnimSequence
-				if (InnerStructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
-				{ WriteToMemberArrayStructPropertyFromJson<FCsFpsAnimSequence>(JsonObject, ArrayProperty, InStruct, MemberName, nullptr); continue; }
+				// FCsFpvAnimSequence
+				if (InnerStructProperty->Struct == FCsFpvAnimSequence::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsFpvAnimSequence>(JsonObject, ArrayProperty, InStruct, MemberName, nullptr); continue; }
 				// FCsAnimMontage
 				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsAnimMontage>(JsonObject, ArrayProperty, InStruct, MemberName, nullptr); continue; }
-				// FCsFpsAnimMontage
-				if (InnerStructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
-				{ WriteToMemberArrayStructPropertyFromJson<FCsFpsAnimMontage>(JsonObject, ArrayProperty, InStruct, MemberName, nullptr); continue; }
+				// FCsFpvAnimMontage
+				if (InnerStructProperty->Struct == FCsFpvAnimMontage::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsFpvAnimMontage>(JsonObject, ArrayProperty, InStruct, MemberName, nullptr); continue; }
 				// FCsInputActionMapping
 				if (InnerStructProperty->Struct == FCsInputActionMapping::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsInputActionMapping>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
@@ -3007,6 +3149,16 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			}
 			continue;
 		}
+		// Map
+		if (UMapProperty* MapProperty = Cast<UMapProperty>(*It))
+		{
+			if (Internal)
+			{
+				if ((*Internal)(Property, JsonObject, InStruct, InScriptStruct))
+					continue;
+			}
+			continue;
+		}
 		// bool
 		if (UBoolProperty* BoolProperty = Cast<UBoolProperty>(*It))
 		{
@@ -3021,76 +3173,76 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			if (ByteProperty->IsEnum())
 			{
 				// ECollisionEnabled
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CollisionEnabled))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CollisionEnabled))
 				{
 					if (ECollisionEnabled::Type* Member = ByteProperty->ContainerPtrToValuePtr<ECollisionEnabled::Type>(InStruct))
 					{ *Member = ECollisionEnabled::ToType(JsonObject->GetStringField(MemberName)); continue; }
 					continue;
 				}
 				// ECollisionChannel
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CollisionChannel))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CollisionChannel))
 				{
 					if (ECollisionChannel* Member = ByteProperty->ContainerPtrToValuePtr<ECollisionChannel>(InStruct))
 					{ *Member = ECsCollisionChannel::ToType(JsonObject->GetStringField(MemberName)); continue; }
 					continue;
 				}
 				// ECollisionResponse
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CollisionResponse))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CollisionResponse))
 				{
 					if (ECollisionResponse* Member = ByteProperty->ContainerPtrToValuePtr<ECollisionResponse>(InStruct))
 					{ *Member = ECsCollisionResponse::ToType(JsonObject->GetStringField(MemberName)); continue; }
 					continue;
 				}
 				// EHorizTextAligment
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::HorizTextAligment))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::HorizTextAligment))
 				{
 					if (EHorizTextAligment* Member = ByteProperty->ContainerPtrToValuePtr<EHorizTextAligment>(InStruct))
 					{ *Member = ECsHorizTextAligment::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
 				// EVerticalTextAligment
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::VerticalTextAligment))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::VerticalTextAligment))
 				{
 					if (EVerticalTextAligment* Member = ByteProperty->ContainerPtrToValuePtr<EVerticalTextAligment>(InStruct))
 					{ *Member = ECsVerticalTextAligment::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
 				// ECsLoadFlags_Editor
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsLoadFlags_Editor))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsLoadFlags_Editor))
 				{
 					if (TCsLoadFlags_Editor* Member = ByteProperty->ContainerPtrToValuePtr<TCsLoadFlags_Editor>(InStruct))
 					{ *Member = ECsLoadFlags_Editor::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
 				// ECsFxPriority
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsFxPriority))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsFxPriority))
 				{
 					if (TCsFxPriority* Member = ByteProperty->ContainerPtrToValuePtr<TCsFxPriority>(InStruct))
 					{ *Member = ECsFxPriority::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
 				// ECsSoundPriority
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsSoundPriority))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsSoundPriority))
 				{
 					if (TCsSoundPriority* Member = ByteProperty->ContainerPtrToValuePtr<TCsSoundPriority>(InStruct))
 					{ *Member = ECsSoundPriority::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
 				// ECsProjectileMovementFunctionType
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsProjectileMovementFunctionType))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsProjectileMovementFunctionType))
 				{
 					if (TCsProjectileMovementFunctionType* Member = ByteProperty->ContainerPtrToValuePtr<TCsProjectileMovementFunctionType>(InStruct))
 					{ *Member = ECsProjectileMovementFunctionType::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
 				// ECsParametricFunctionType
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsParametricFunctionType))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsParametricFunctionType))
 				{
 					if (TCsParametricFunctionType* Member = ByteProperty->ContainerPtrToValuePtr<TCsParametricFunctionType>(InStruct))
 					{ *Member = ECsParametricFunctionType::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
 				// ECsItemMemberValueType
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsProjectileMovementFunctionType))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsProjectileMovementFunctionType))
 				{
 					if (TCsItemMemberValueType* Member = ByteProperty->ContainerPtrToValuePtr<TCsItemMemberValueType>(InStruct))
 					{ *Member = ECsItemMemberValueType::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
 				// ECsItemOnConsumeContentAction
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsItemOnConsumeContentAction))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsItemOnConsumeContentAction))
 				{
 					if (TCsItemOnConsumeContentAction* Member = ByteProperty->ContainerPtrToValuePtr<TCsItemOnConsumeContentAction>(InStruct))
 					{ *Member = ECsItemOnConsumeContentAction::ToType(JsonObject->GetStringField(MemberName)); continue; }
@@ -3201,7 +3353,7 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 
 void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, void* InStruct, UScriptStruct* const &InScriptStruct, const TArray<FCsCategoryMemberAssociation> &CategoryMemberAssociations, TCsReadStructFromJson_Internal Internal /*=nullptr*/)
 {
-	const FString NoCategory = ECsCachedString::Str::Empty;
+	const FString NoCategory = ECsCached::Str::Empty;
 	FString Category		 = NoCategory;
 	int32 CategoryIndex		 = 0;
 
@@ -3446,9 +3598,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsAnimSequence
 			if (StructProperty->Struct == FCsAnimSequence::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsAnimSequence>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
-			// FCsFpsAnimSequence
-			if (StructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
-			{ WriteToMemberStructPropertyFromJson<FCsFpsAnimSequence>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
+			// FCsFpvAnimSequence
+			if (StructProperty->Struct == FCsFpvAnimSequence::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsFpvAnimSequence>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 			// FCsAnimMontage
 			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
 			{
@@ -3458,11 +3610,11 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				if (ReadStructFromJson_Internal_Helper(Internal, Property, JsonObject, InStruct, InScriptStruct)) { continue; }
 				continue;
 			}
-			// FCsFpsAnimMontage
-			if (StructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
+			// FCsFpvAnimMontage
+			if (StructProperty->Struct == FCsFpvAnimMontage::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ WriteToMemberStructPropertyFromJson<FCsFpsAnimMontage>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
+				{ WriteToMemberStructPropertyFromJson<FCsFpvAnimMontage>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 
 				if (ReadStructFromJson_Internal_Helper(Internal, Property, JsonObject, InStruct, InScriptStruct)) { continue; }
 				continue;
@@ -3479,21 +3631,21 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsBlendSpace1D
 			if (StructProperty->Struct == FCsBlendSpace1D::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsBlendSpace1D>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
-			// FCsFpsBlendSpace1D
-			if (StructProperty->Struct == FCsFpsBlendSpace1D::StaticStruct())
-			{ WriteToMemberStructPropertyFromJson<FCsFpsBlendSpace1D>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
+			// FCsFpvBlendSpace1D
+			if (StructProperty->Struct == FCsFpvBlendSpace1D::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsFpvBlendSpace1D>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 			// FCsBlendSpace
 			if (StructProperty->Struct == FCsBlendSpace::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsBlendSpace>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
-			// FCsFpsBlendSpace
-			if (StructProperty->Struct == FCsFpsBlendSpace::StaticStruct())
-			{ WriteToMemberStructPropertyFromJson<FCsFpsBlendSpace>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
+			// FCsFpvBlendSpace
+			if (StructProperty->Struct == FCsFpvBlendSpace::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsFpvBlendSpace>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 			// FCsAnimBlueprint
 			if (StructProperty->Struct == FCsAnimBlueprint::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsAnimBlueprint>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
-			// FCsFpsAnimBlueprint
-			if (StructProperty->Struct == FCsFpsAnimBlueprint::StaticStruct())
-			{ WriteToMemberStructPropertyFromJson<FCsFpsAnimBlueprint>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
+			// FCsFpvAnimBlueprint
+			if (StructProperty->Struct == FCsFpvAnimBlueprint::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsFpvAnimBlueprint>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 			// FCsBlueprint
 			if (StructProperty->Struct == FCsBlueprint::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsBlueprint>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
@@ -3613,6 +3765,34 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsPayload
 			if (StructProperty->Struct == FCsPayload::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsPayload>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			
+			// EnumStruct
+			{
+				// FECsAssetType
+				if (StructProperty->Struct == FECsAssetType::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsAssetType, EMCsAssetType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FECsInputAction
+				if (StructProperty->Struct == FECsInputAction::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsInputAction, EMCsInputAction>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FECsGameEvent
+				if (StructProperty->Struct == FECsGameEvent::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsGameEvent, EMCsGameEvent>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FECsSurfaceType
+				if (StructProperty->Struct == FECsSurfaceType::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsSurfaceType, EMCsSurfaceType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FECsWeaponGrip
+				if (StructProperty->Struct == FECsWeaponGrip::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsWeaponGrip, EMCsWeaponGrip>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FECsDamageType
+				if (StructProperty->Struct == FECsDamageType::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsDamageType, EMCsDamageType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FECsInteractiveType
+				if (StructProperty->Struct == FECsInteractiveType::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsInteractiveType, EMCsInteractiveType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FECsProjectileType
+				if (StructProperty->Struct == FECsProjectileType::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsProjectileType, EMCsProjectileType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+			}
 
 			if (Internal)
 			{
@@ -3692,15 +3872,15 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				// FCsAnimSequence
 				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsAnimSequence>(JsonObject, ArrayProperty, InStruct, MemberName, nullptr); continue; }
-				// FCsFpsAnimSequence
-				if (InnerStructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
-				{ WriteToMemberArrayStructPropertyFromJson<FCsFpsAnimSequence>(JsonObject, ArrayProperty, InStruct, MemberName, nullptr); continue; }
+				// FCsFpvAnimSequence
+				if (InnerStructProperty->Struct == FCsFpvAnimSequence::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsFpvAnimSequence>(JsonObject, ArrayProperty, InStruct, MemberName, nullptr); continue; }
 				// FCsAnimMontage
 				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsAnimMontage>(JsonObject, ArrayProperty, InStruct, MemberName, nullptr); continue; }
-				// FCsFpsAnimMontage
-				if (InnerStructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
-				{ WriteToMemberArrayStructPropertyFromJson<FCsFpsAnimMontage>(JsonObject, ArrayProperty, InStruct, MemberName, nullptr); continue; }
+				// FCsFpvAnimMontage
+				if (InnerStructProperty->Struct == FCsFpvAnimMontage::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsFpvAnimMontage>(JsonObject, ArrayProperty, InStruct, MemberName, nullptr); continue; }
 				// FCsInputActionMapping
 				if (InnerStructProperty->Struct == FCsInputActionMapping::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsInputActionMapping>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
@@ -3744,6 +3924,16 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			}
 			continue;
 		}
+		// Map
+		if (UMapProperty* MapProperty = Cast<UMapProperty>(*It))
+		{
+			if (Internal)
+			{
+				if ((*Internal)(Property, JsonObject, InStruct, InScriptStruct))
+					continue;
+			}
+			continue;
+		}
 		// bool
 		if (UBoolProperty* BoolProperty = Cast<UBoolProperty>(*It))
 		{
@@ -3758,76 +3948,76 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			if (ByteProperty->IsEnum())
 			{
 				// ECollisionEnabled
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CollisionEnabled))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CollisionEnabled))
 				{
 					if (ECollisionEnabled::Type* Member = ByteProperty->ContainerPtrToValuePtr<ECollisionEnabled::Type>(InStruct))
 					{ *Member = ECollisionEnabled::ToType(JsonObject->GetStringField(MemberName)); continue; }
 					continue;
 				}
 				// ECollisionChannel
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CollisionChannel))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CollisionChannel))
 				{
 					if (ECollisionChannel* Member = ByteProperty->ContainerPtrToValuePtr<ECollisionChannel>(InStruct))
 					{ *Member = ECsCollisionChannel::ToType(JsonObject->GetStringField(MemberName)); continue; }
 					continue;
 				}
 				// ECollisionResponse
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CollisionResponse))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CollisionResponse))
 				{
 					if (ECollisionResponse* Member = ByteProperty->ContainerPtrToValuePtr<ECollisionResponse>(InStruct))
 					{ *Member = ECsCollisionResponse::ToType(JsonObject->GetStringField(MemberName)); continue; }
 					continue;
 				}
 				// EHorizTextAligment
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::HorizTextAligment))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::HorizTextAligment))
 				{
 					if (EHorizTextAligment* Member = ByteProperty->ContainerPtrToValuePtr<EHorizTextAligment>(InStruct))
 					{ *Member = ECsHorizTextAligment::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
 				// EVerticalTextAligment
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::VerticalTextAligment))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::VerticalTextAligment))
 				{
 					if (EVerticalTextAligment* Member = ByteProperty->ContainerPtrToValuePtr<EVerticalTextAligment>(InStruct))
 					{ *Member = ECsVerticalTextAligment::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
 				// ECsLoadFlags_Editor
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsLoadFlags_Editor))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsLoadFlags_Editor))
 				{
 					if (TCsLoadFlags_Editor* Member = ByteProperty->ContainerPtrToValuePtr<TCsLoadFlags_Editor>(InStruct))
 					{ *Member = ECsLoadFlags_Editor::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
 				// ECsFxPriority
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsFxPriority))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsFxPriority))
 				{
 					if (TCsFxPriority* Member = ByteProperty->ContainerPtrToValuePtr<TCsFxPriority>(InStruct))
 					{ *Member = ECsFxPriority::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
 				// ECsSoundPriority
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsSoundPriority))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsSoundPriority))
 				{
 					if (TCsSoundPriority* Member = ByteProperty->ContainerPtrToValuePtr<TCsSoundPriority>(InStruct))
 					{ *Member = ECsSoundPriority::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
 				// ECsProjectileMovementFunctionType
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsProjectileMovementFunctionType))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsProjectileMovementFunctionType))
 				{
 					if (TCsProjectileMovementFunctionType* Member = ByteProperty->ContainerPtrToValuePtr<TCsProjectileMovementFunctionType>(InStruct))
 					{ *Member = ECsProjectileMovementFunctionType::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
 				// ECsParametricFunctionType
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsParametricFunctionType))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsParametricFunctionType))
 				{
 					if (TCsParametricFunctionType* Member = ByteProperty->ContainerPtrToValuePtr<TCsParametricFunctionType>(InStruct))
 					{ *Member = ECsParametricFunctionType::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
 				// ECsItemMemberValueType
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsProjectileMovementFunctionType))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsProjectileMovementFunctionType))
 				{
 					if (TCsItemMemberValueType* Member = ByteProperty->ContainerPtrToValuePtr<TCsItemMemberValueType>(InStruct))
 					{ *Member = ECsItemMemberValueType::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
 				// ECsItemOnConsumeContentAction
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsItemOnConsumeContentAction))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsItemOnConsumeContentAction))
 				{
 					if (TCsItemOnConsumeContentAction* Member = ByteProperty->ContainerPtrToValuePtr<TCsItemOnConsumeContentAction>(InStruct))
 					{ *Member = ECsItemOnConsumeContentAction::ToType(JsonObject->GetStringField(MemberName)); continue; }
@@ -3939,7 +4129,7 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 
 void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, void* InObject, UClass* const &InClass, const TArray<FCsCategoryMemberAssociation> &CategoryMemberAssociations, TCsReadObjectFromJson_Internal Internal /*=nullptr*/)
 {
-	const FString NoCategory = ECsCachedString::Str::Empty;
+	const FString NoCategory = ECsCached::Str::Empty;
 	FString Category		 = NoCategory;
 	int32 CategoryIndex		 = 0;
 
@@ -4189,9 +4379,9 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsAnimSequence
 			if (StructProperty->Struct == FCsAnimSequence::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsAnimSequence>(JsonObject, StructProperty, InObject, MemberName); continue; }
-			// FCsFpsAnimSequence
-			if (StructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
-			{ WriteToMemberStructPropertyFromJson<FCsFpsAnimSequence>(JsonObject, StructProperty, InObject, MemberName); continue; }
+			// FCsFpvAnimSequence
+			if (StructProperty->Struct == FCsFpvAnimSequence::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsFpvAnimSequence>(JsonObject, StructProperty, InObject, MemberName); continue; }
 			// FCsAnimMontage
 			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
 			{
@@ -4201,11 +4391,11 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				if (ReadObjectFromJson_Internal_Helper(Internal, Property, JsonObject, InObject, InClass)) { continue; }
 				continue;
 			}
-			// FCsFpsAnimMontage
-			if (StructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
+			// FCsFpvAnimMontage
+			if (StructProperty->Struct == FCsFpvAnimMontage::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ WriteToMemberStructPropertyFromJson<FCsFpsAnimMontage>(JsonObject, StructProperty, InObject, MemberName); continue; }
+				{ WriteToMemberStructPropertyFromJson<FCsFpvAnimMontage>(JsonObject, StructProperty, InObject, MemberName); continue; }
 
 				if (ReadObjectFromJson_Internal_Helper(Internal, Property, JsonObject, InObject, InClass)) { continue; }
 				continue;
@@ -4222,21 +4412,21 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsBlendSpace1D
 			if (StructProperty->Struct == FCsBlendSpace1D::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsBlendSpace1D>(JsonObject, StructProperty, InObject, MemberName); continue; }
-			// FCsFpsBlendSpace1D
-			if (StructProperty->Struct == FCsFpsBlendSpace1D::StaticStruct())
-			{ WriteToMemberStructPropertyFromJson<FCsFpsBlendSpace1D>(JsonObject, StructProperty, InObject, MemberName); continue; }
+			// FCsFpvBlendSpace1D
+			if (StructProperty->Struct == FCsFpvBlendSpace1D::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsFpvBlendSpace1D>(JsonObject, StructProperty, InObject, MemberName); continue; }
 			// FCsBlendSpace
 			if (StructProperty->Struct == FCsBlendSpace::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsBlendSpace>(JsonObject, StructProperty, InObject, MemberName); continue; }
-			// FCsFpsBlendSpace
-			if (StructProperty->Struct == FCsFpsBlendSpace::StaticStruct())
-			{ WriteToMemberStructPropertyFromJson<FCsFpsBlendSpace>(JsonObject, StructProperty, InObject, MemberName); continue; }
+			// FCsFpvBlendSpace
+			if (StructProperty->Struct == FCsFpvBlendSpace::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsFpvBlendSpace>(JsonObject, StructProperty, InObject, MemberName); continue; }
 			// FCsAnimBlueprint
 			if (StructProperty->Struct == FCsAnimBlueprint::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsAnimBlueprint>(JsonObject, StructProperty, InObject, MemberName); continue; }
-			// FCsFpsAnimBlueprint
-			if (StructProperty->Struct == FCsFpsAnimBlueprint::StaticStruct())
-			{ WriteToMemberStructPropertyFromJson<FCsFpsAnimBlueprint>(JsonObject, StructProperty, InObject, MemberName); continue; }
+			// FCsFpvAnimBlueprint
+			if (StructProperty->Struct == FCsFpvAnimBlueprint::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsFpvAnimBlueprint>(JsonObject, StructProperty, InObject, MemberName); continue; }
 			// FCollisionResponseContainer
 			if (StructProperty->Struct == FCollisionResponseContainer::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCollisionResponseContainer>(JsonObject, StructProperty, InObject, MemberName); continue; }
@@ -4290,9 +4480,37 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			{ WriteToMemberStructPropertyFromJson<FCsInventoryLoadout>(JsonObject, StructProperty, InObject, MemberName); continue; }
 			// FCsTArrayPayload
 			if (StructProperty->Struct == FCsTArrayPayload::StaticStruct())
-			{
+			{ 
 				if (ReadObjectFromJson_Internal_Helper(Internal, Property, JsonObject, InObject, InClass)) { continue; }
 				continue;
+			}
+
+			// EnumStruct
+			{
+				// FECsAssetType
+				if (StructProperty->Struct == FECsAssetType::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsAssetType, EMCsAssetType>(JsonObject, StructProperty, InObject, MemberName); continue; }
+				// FECsInputAction
+				if (StructProperty->Struct == FECsInputAction::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsInputAction, EMCsInputAction>(JsonObject, StructProperty, InObject, MemberName); continue; }
+				// FECsGameEvent
+				if (StructProperty->Struct == FECsGameEvent::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsGameEvent, EMCsGameEvent>(JsonObject, StructProperty, InObject, MemberName); continue; }
+				// FECsSurfaceType
+				if (StructProperty->Struct == FECsSurfaceType::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsSurfaceType, EMCsSurfaceType>(JsonObject, StructProperty, InObject, MemberName); continue; }
+				// FECsWeaponGrip
+				if (StructProperty->Struct == FECsWeaponGrip::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsWeaponGrip, EMCsWeaponGrip>(JsonObject, StructProperty, InObject, MemberName); continue; }
+				// FECsDamageType
+				if (StructProperty->Struct == FECsDamageType::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsDamageType, EMCsDamageType>(JsonObject, StructProperty, InObject, MemberName); continue; }
+				// FECsInteractiveType
+				if (StructProperty->Struct == FECsInteractiveType::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsInteractiveType, EMCsInteractiveType>(JsonObject, StructProperty, InObject, MemberName); continue; }
+				// FECsProjectileType
+				if (StructProperty->Struct == FECsProjectileType::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsProjectileType, EMCsProjectileType>(JsonObject, StructProperty, InObject, MemberName); continue; }
 			}
 
 			if (Internal)
@@ -4367,15 +4585,15 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				// FCsAnimSequence
 				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsAnimSequence>(JsonObject, ArrayProperty, InObject, MemberName, nullptr); continue; }
-				// FCsFpsAnimSequence
-				if (InnerStructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
-				{ WriteToMemberArrayStructPropertyFromJson<FCsFpsAnimSequence>(JsonObject, ArrayProperty, InObject, MemberName, nullptr); continue; }
+				// FCsFpvAnimSequence
+				if (InnerStructProperty->Struct == FCsFpvAnimSequence::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsFpvAnimSequence>(JsonObject, ArrayProperty, InObject, MemberName, nullptr); continue; }
 				// FCsAnimMontage
 				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsAnimMontage>(JsonObject, ArrayProperty, InObject, MemberName, nullptr); continue; }
-				// FCsFpsAnimMontage
-				if (InnerStructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
-				{ WriteToMemberArrayStructPropertyFromJson<FCsFpsAnimMontage>(JsonObject, ArrayProperty, InObject, MemberName, nullptr); continue; }
+				// FCsFpvAnimMontage
+				if (InnerStructProperty->Struct == FCsFpvAnimMontage::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsFpvAnimMontage>(JsonObject, ArrayProperty, InObject, MemberName, nullptr); continue; }
 				// FCsDataMappingEntry
 				if (InnerStructProperty->Struct == FCsDataMappingEntry::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsDataMappingEntry>(JsonObject, ArrayProperty, InObject, MemberName, nullptr); continue; }
@@ -4410,6 +4628,16 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			}
 			continue;
 		}
+		// Map
+		if (UMapProperty* MapProperty = Cast<UMapProperty>(*It))
+		{
+			if (Internal)
+			{
+				if ((*Internal)(Property, JsonObject, InObject, InClass))
+					continue;
+			}
+			continue;
+		}
 		// bool
 		if (UBoolProperty* BoolProperty = Cast<UBoolProperty>(*It))
 		{
@@ -4424,55 +4652,55 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			if (ByteProperty->IsEnum())
 			{
 				// ECollisionEnabled
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CollisionEnabled))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CollisionEnabled))
 				{
 					if (ECollisionEnabled::Type* Member = ByteProperty->ContainerPtrToValuePtr<ECollisionEnabled::Type>(InObject))
 					{ *Member = ECollisionEnabled::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
 				// ECollisionChannel
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CollisionChannel))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CollisionChannel))
 				{
 					if (ECollisionChannel* Member = ByteProperty->ContainerPtrToValuePtr<ECollisionChannel>(InObject))
 					{ *Member = ECsCollisionChannel::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
 				// ECollisionResponse
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CollisionResponse))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CollisionResponse))
 				{
 					if (ECollisionResponse* Member = ByteProperty->ContainerPtrToValuePtr<ECollisionResponse>(InObject))
 					{ *Member = ECsCollisionResponse::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
 				// EHorizTextAligment
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::HorizTextAligment))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::HorizTextAligment))
 				{
 					if (EHorizTextAligment* Member = ByteProperty->ContainerPtrToValuePtr<EHorizTextAligment>(InObject))
 					{ *Member = ECsHorizTextAligment::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
 				// EVerticalTextAligment
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::VerticalTextAligment))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::VerticalTextAligment))
 				{
 					if (EVerticalTextAligment* Member = ByteProperty->ContainerPtrToValuePtr<EVerticalTextAligment>(InObject))
 					{ *Member = ECsVerticalTextAligment::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
 				// ECsFxPriority
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsFxPriority))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsFxPriority))
 				{
 					if (TCsFxPriority* Member = ByteProperty->ContainerPtrToValuePtr<TCsFxPriority>(InObject))
 					{ *Member = ECsFxPriority::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
 				// ECsSoundPriority
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsSoundPriority))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsSoundPriority))
 				{
 					if (TCsSoundPriority* Member = ByteProperty->ContainerPtrToValuePtr<TCsSoundPriority>(InObject))
 					{ *Member = ECsSoundPriority::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
 				// ECsParametricFunctionType
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsParametricFunctionType))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsParametricFunctionType))
 				{
 					if (TCsParametricFunctionType* Member = ByteProperty->ContainerPtrToValuePtr<TCsParametricFunctionType>(InObject))
 					{ *Member = ECsParametricFunctionType::ToType(JsonObject->GetStringField(MemberName)); continue; }
 				}
 				// ECsItemMemberValueType
-				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsItemMemberValueType))
+				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsItemMemberValueType))
 				{
 					if (TCsItemMemberValueType* Member = ByteProperty->ContainerPtrToValuePtr<TCsItemMemberValueType>(InObject))
 					{ *Member = ECsItemMemberValueType::ToType(JsonObject->GetStringField(MemberName)); continue; }
@@ -4587,7 +4815,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_AnimMontage(UAsset
 		const FString AssetName				 = AssetRef.ToString();
 
 		// (AssetName == TEXT(""))
-		if (AssetName == ECsCachedString::Str::Empty)
+		if (AssetName == ECsCached::Str::Empty)
 			return;
 
 		OutAssetReferences.AddDefaulted();
@@ -4636,7 +4864,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_AnimMontage(UAsset
 		const FString AssetName				 = AssetRef.ToString();
 
 		// (AssetName == TEXT(""))
-		if (AssetName == ECsCachedString::Str::Empty)
+		if (AssetName == ECsCached::Str::Empty)
 			return;
 
 		OutAssetReferences.AddDefaulted();
@@ -4685,7 +4913,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_AnimSequence(UAsse
 		const FString AssetName				 = AssetRef.ToString();
 
 		// (AssetName == TEXT(""))
-		if (AssetName == ECsCachedString::Str::Empty)
+		if (AssetName == ECsCached::Str::Empty)
 			return;
 
 		OutAssetReferences.AddDefaulted();
@@ -4721,7 +4949,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_AnimSequence(UAsse
 		const FString AssetName				 = AssetRef.ToString();
 
 		// (AssetName == TEXT(""))
-		if (AssetName == ECsCachedString::Str::Empty)
+		if (AssetName == ECsCached::Str::Empty)
 			return;
 
 		OutAssetReferences.AddDefaulted();
@@ -4757,7 +4985,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_MaterialInstanceCo
 		const FString AssetName				 = AssetRef.ToString();
 
 		// (AssetName == TEXT(""))
-		if (AssetName == ECsCachedString::Str::Empty)
+		if (AssetName == ECsCached::Str::Empty)
 			return;
 
 		OutAssetReferences.AddDefaulted();
@@ -4804,7 +5032,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_MaterialInstanceCo
 		const FString AssetName				 = AssetRef.ToString();
 
 		// (AssetName == TEXT(""))
-		if (AssetName == ECsCachedString::Str::Empty)
+		if (AssetName == ECsCached::Str::Empty)
 			return;
 
 		OutAssetReferences.AddDefaulted();
@@ -4851,7 +5079,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_Blueprint(UAssetOb
 		const FString AssetName				 = AssetRef.ToString();
 
 		// (AssetName == TEXT(""))
-		if (AssetName == ECsCachedString::Str::Empty)
+		if (AssetName == ECsCached::Str::Empty)
 			return;
 
 		OutAssetReferences.AddDefaulted();
@@ -4861,7 +5089,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_Blueprint(UAssetOb
 		// TODO: Fix / Investigate. 4.16.1. Built Game (Okay in Editor). TAssetPtr for UAnimBlueprint / UWidgetBlueprint does NOT have _C
 		FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
 										  // AssetName.EndsWith(TEXT("_C")) ? AssetName : AssetName + TEXT("_C");
-		Reference.Reference				   = AssetName.EndsWith(ECsLoadCachedString::Str::_C) ? AssetName : AssetName + ECsLoadCachedString::Str::_C;
+		Reference.Reference				   = AssetName.EndsWith(ECsLoadCached::Str::_C) ? AssetName : AssetName + ECsLoadCached::Str::_C;
 		Reference.Reference_Internal	   = FStringAssetReference(Reference.Reference);
 #if WITH_EDITOR
 		if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::CalculateResourceSizes))
@@ -4889,7 +5117,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_Blueprint(UAssetOb
 		const FString AssetName				 = AssetRef.ToString();
 
 		// (AssetName == TEXT(""))
-		if (AssetName == ECsCachedString::Str::Empty)
+		if (AssetName == ECsCached::Str::Empty)
 			return;
 
 		OutAssetReferences.AddDefaulted();
@@ -4899,7 +5127,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_Blueprint(UAssetOb
 		// TODO: Fix / Investigate. 4.16.1. Built Game (Okay in Editor). TAssetPtr for UAnimBlueprint / UWidgetBlueprint does NOT have _C
 		FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
 										  // AssetName.EndsWith(TEXT("_C")) ? AssetName : AssetName + TEXT("_C");
-		Reference.Reference				   = AssetName.EndsWith(ECsLoadCachedString::Str::_C) ? AssetName : AssetName + ECsLoadCachedString::Str::_C;
+		Reference.Reference				   = AssetName.EndsWith(ECsLoadCached::Str::_C) ? AssetName : AssetName + ECsLoadCached::Str::_C;
 		Reference.Reference_Internal	   = FStringAssetReference(Reference.Reference);
 #if WITH_EDITOR
 		if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::CalculateResourceSizes))
@@ -4931,7 +5159,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_AnimMontage(U
 			const FString AssetName				 = AssetRef.ToString();
 
 			// (AssetName == TEXT(""))
-			if (AssetName == ECsCachedString::Str::Empty)
+			if (AssetName == ECsCached::Str::Empty)
 				continue;
 
 			OutAssetReferences.AddDefaulted();
@@ -4985,7 +5213,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_AnimMontage(U
 			const FString AssetName				 = AssetRef.ToString();
 
 			// (AssetName == TEXT(""))
-			if (AssetName == ECsCachedString::Str::Empty)
+			if (AssetName == ECsCached::Str::Empty)
 				continue;
 
 			OutAssetReferences.AddDefaulted();
@@ -5039,7 +5267,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_AnimSequence(
 			const FString AssetName				 = AssetRef.ToString();
 
 			// (AssetName == TEXT(""))
-			if (AssetName == ECsCachedString::Str::Empty)
+			if (AssetName == ECsCached::Str::Empty)
 				continue;
 
 			OutAssetReferences.AddDefaulted();
@@ -5080,7 +5308,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_AnimSequence(
 			const FString AssetName				 = AssetRef.ToString();
 
 			// (AssetName == TEXT(""))
-			if (AssetName == ECsCachedString::Str::Empty)
+			if (AssetName == ECsCached::Str::Empty)
 				continue;
 
 			OutAssetReferences.AddDefaulted();
@@ -5121,7 +5349,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_MaterialInsta
 			const FString AssetName				 = AssetRef.ToString();
 
 			// (AssetName == TEXT(""))
-			if (AssetName == ECsCachedString::Str::Empty)
+			if (AssetName == ECsCached::Str::Empty)
 				continue;
 
 			OutAssetReferences.AddDefaulted();
@@ -5179,7 +5407,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_MaterialInsta
 			const FString AssetName				 = AssetRef.ToString();
 
 			// (AssetName == TEXT(""))
-			if (AssetName == ECsCachedString::Str::Empty)
+			if (AssetName == ECsCached::Str::Empty)
 				continue;
 
 			OutAssetReferences.AddDefaulted();
@@ -5231,7 +5459,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_Blueprint(UAr
 			const FString AssetName				 = AssetRef.ToString();
 
 			// (AssetName == TEXT(""))
-			if (AssetName == ECsCachedString::Str::Empty)
+			if (AssetName == ECsCached::Str::Empty)
 				continue;
 
 			OutAssetReferences.AddDefaulted();
@@ -5240,7 +5468,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_Blueprint(UAr
 			// TODO: Fix / Investigate. 4.16.1. Built Game (Okay in Editor). TAssetPtr for UWidgetBlueprint does NOT have _C
 			FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
 											  // AssetName.EndsWith(TEXT("_C")) ? AssetName : AssetName + TEXT("_C");
-			Reference.Reference				   = AssetName.EndsWith(ECsLoadCachedString::Str::_C) ? AssetName : AssetName + ECsLoadCachedString::Str::_C;
+			Reference.Reference				   = AssetName.EndsWith(ECsLoadCached::Str::_C) ? AssetName : AssetName + ECsLoadCached::Str::_C;
 			Reference.Reference_Internal	   = FStringAssetReference(Reference.Reference);
 #if WITH_EDITOR
 			if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::CalculateResourceSizes))
@@ -5273,7 +5501,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_Blueprint(UAr
 			const FString AssetName				 = AssetRef.ToString();
 
 			// (AssetName == TEXT(""))
-			if (AssetName == ECsCachedString::Str::Empty)
+			if (AssetName == ECsCached::Str::Empty)
 				continue;
 
 			OutAssetReferences.AddDefaulted();
@@ -5282,7 +5510,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_Blueprint(UAr
 			// TODO: Fix / Investigate. 4.16.1. Built Game (Okay in Editor). TAssetPtr for UWidgetBlueprint does NOT have _C
 			FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
 											  // AssetName.EndsWith(TEXT("_C")) ? AssetName : AssetName + TEXT("_C");
-			Reference.Reference				   = AssetName.EndsWith(ECsLoadCachedString::Str::_C) ? AssetName : AssetName + ECsLoadCachedString::Str::_C;
+			Reference.Reference				   = AssetName.EndsWith(ECsLoadCached::Str::_C) ? AssetName : AssetName + ECsLoadCached::Str::_C;
 			Reference.Reference_Internal	   = FStringAssetReference(Reference.Reference);
 #if WITH_EDITOR
 			if (CS_TEST_BLUEPRINT_BITFLAG(LoadCodes, ECsLoadCode::CalculateResourceSizes))
@@ -5466,36 +5694,36 @@ void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct*
 			// FCsAnimSequence
 			if (StructProperty->Struct == FCsAnimSequence::StaticStruct())
 			{ GetAssetReferencesFromStructProperty<FCsAnimSequence>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
-			// FCsFpsAnimSequence
-			if (StructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
-			{ GetAssetReferencesFromStructProperty<FCsFpsAnimSequence>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
+			// FCsFpvAnimSequence
+			if (StructProperty->Struct == FCsFpvAnimSequence::StaticStruct())
+			{ GetAssetReferencesFromStructProperty<FCsFpvAnimSequence>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
 			// FCsAnimMontage
 			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
 			{ GetAssetReferencesFromStructProperty<FCsAnimMontage>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
-			// FCsFpsAnimMontage
-			if (StructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
-			{ GetAssetReferencesFromStructProperty<FCsFpsAnimMontage>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
+			// FCsFpvAnimMontage
+			if (StructProperty->Struct == FCsFpvAnimMontage::StaticStruct())
+			{ GetAssetReferencesFromStructProperty<FCsFpvAnimMontage>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
 			// FCsTArrayAnimMontage
 			if (StructProperty->Struct == FCsTArrayAnimMontage::StaticStruct())
 			{ GetAssetReferencesFromStructProperty<FCsTArrayAnimMontage>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
 			// FCsAnimBlueprint
 			if (StructProperty->Struct == FCsAnimBlueprint::StaticStruct())
 			{ GetAssetReferencesFromStructProperty<FCsAnimBlueprint>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
-			// FCsFpsAnimBlueprint
-			if (StructProperty->Struct == FCsFpsAnimBlueprint::StaticStruct())
-			{ GetAssetReferencesFromStructProperty<FCsFpsAnimBlueprint>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
+			// FCsFpvAnimBlueprint
+			if (StructProperty->Struct == FCsFpvAnimBlueprint::StaticStruct())
+			{ GetAssetReferencesFromStructProperty<FCsFpvAnimBlueprint>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
 			// FCsBlendSpace1D
 			if (StructProperty->Struct == FCsBlendSpace1D::StaticStruct())
 			{ GetAssetReferencesFromStructProperty<FCsBlendSpace1D>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
-			// FCsFpsBlendSpace1D
-			if (StructProperty->Struct == FCsFpsBlendSpace1D::StaticStruct())
-			{ GetAssetReferencesFromStructProperty<FCsFpsBlendSpace1D>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
+			// FCsFpvBlendSpace1D
+			if (StructProperty->Struct == FCsFpvBlendSpace1D::StaticStruct())
+			{ GetAssetReferencesFromStructProperty<FCsFpvBlendSpace1D>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
 			// FCsBlendSpace
 			if (StructProperty->Struct == FCsBlendSpace::StaticStruct())
 			{ GetAssetReferencesFromStructProperty<FCsBlendSpace>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
-			// FCsFpsBlendSpace
-			if (StructProperty->Struct == FCsFpsBlendSpace::StaticStruct())
-			{ GetAssetReferencesFromStructProperty<FCsFpsBlendSpace>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
+			// FCsFpvBlendSpace
+			if (StructProperty->Struct == FCsFpvBlendSpace::StaticStruct())
+			{ GetAssetReferencesFromStructProperty<FCsFpvBlendSpace>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
 			// FCsBlueprint
 			if (StructProperty->Struct == FCsBlueprint::StaticStruct())
 			{ GetAssetReferencesFromStructProperty<FCsBlueprint>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
@@ -5609,15 +5837,15 @@ void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct*
 				// FCsAnimSequence
 				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
 				{ GetAssetReferencesFromArrayStructProperty<FCsAnimSequence>(ArrayProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
-				// FCsFpsAnimSequence
-				if (InnerStructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
-				{ GetAssetReferencesFromArrayStructProperty<FCsFpsAnimSequence>(ArrayProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
+				// FCsFpvAnimSequence
+				if (InnerStructProperty->Struct == FCsFpvAnimSequence::StaticStruct())
+				{ GetAssetReferencesFromArrayStructProperty<FCsFpvAnimSequence>(ArrayProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
 				// FCsAnimMontage
 				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
 				{ GetAssetReferencesFromArrayStructProperty<FCsAnimMontage>(ArrayProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
-				// FCsFpsAnimMontage
-				if (InnerStructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
-				{ GetAssetReferencesFromArrayStructProperty<FCsFpsAnimMontage>(ArrayProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
+				// FCsFpvAnimMontage
+				if (InnerStructProperty->Struct == FCsFpvAnimMontage::StaticStruct())
+				{ GetAssetReferencesFromArrayStructProperty<FCsFpvAnimMontage>(ArrayProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
 
 				if (Internal)
 				{
@@ -5625,6 +5853,16 @@ void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct*
 						continue;
 				}
 				continue;
+			}
+			continue;
+		}
+		// Map
+		if (UMapProperty* MapProperty = Cast<UMapProperty>(*It))
+		{
+			if (Internal)
+			{
+				if ((*Internal)(Property, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes))
+					continue;
 			}
 			continue;
 		}
@@ -5770,36 +6008,36 @@ void UCsCommon_Load::GetAssetReferencesFromObject(void* InObject, UClass* const 
 			// FCsAnimSequence
 			if (StructProperty->Struct == FCsAnimSequence::StaticStruct())
 			{ GetAssetReferencesFromStructProperty<FCsAnimSequence>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
-			// FCsFpsAnimSequence
-			if (StructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
-			{ GetAssetReferencesFromStructProperty<FCsFpsAnimSequence>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
+			// FCsFpvAnimSequence
+			if (StructProperty->Struct == FCsFpvAnimSequence::StaticStruct())
+			{ GetAssetReferencesFromStructProperty<FCsFpvAnimSequence>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
 			// FCsAnimMontage
 			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
 			{ GetAssetReferencesFromStructProperty<FCsAnimMontage>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
-			// FCsFpsAnimMontage
-			if (StructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
-			{ GetAssetReferencesFromStructProperty<FCsFpsAnimMontage>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
+			// FCsFpvAnimMontage
+			if (StructProperty->Struct == FCsFpvAnimMontage::StaticStruct())
+			{ GetAssetReferencesFromStructProperty<FCsFpvAnimMontage>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
 			// FCsTArrayAnimMontage
 			if (StructProperty->Struct == FCsTArrayAnimMontage::StaticStruct())
 			{ GetAssetReferencesFromStructProperty<FCsTArrayAnimMontage>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
 			// FCsAnimBlueprint
 			if (StructProperty->Struct == FCsAnimBlueprint::StaticStruct())
 			{ GetAssetReferencesFromStructProperty<FCsAnimBlueprint>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
-			// FCsFpsAnimBlueprint
-			if (StructProperty->Struct == FCsFpsAnimBlueprint::StaticStruct())
-			{ GetAssetReferencesFromStructProperty<FCsFpsAnimBlueprint>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
+			// FCsFpvAnimBlueprint
+			if (StructProperty->Struct == FCsFpvAnimBlueprint::StaticStruct())
+			{ GetAssetReferencesFromStructProperty<FCsFpvAnimBlueprint>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
 			// FCsBlendSpace1D
 			if (StructProperty->Struct == FCsBlendSpace1D::StaticStruct())
 			{ GetAssetReferencesFromStructProperty<FCsBlendSpace1D>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
-			// FCsFpsBlendSpace1D
-			if (StructProperty->Struct == FCsFpsBlendSpace1D::StaticStruct())
-			{ GetAssetReferencesFromStructProperty<FCsFpsBlendSpace1D>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
+			// FCsFpvBlendSpace1D
+			if (StructProperty->Struct == FCsFpvBlendSpace1D::StaticStruct())
+			{ GetAssetReferencesFromStructProperty<FCsFpvBlendSpace1D>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
 			// FCsBlendSpace
 			if (StructProperty->Struct == FCsBlendSpace::StaticStruct())
 			{ GetAssetReferencesFromStructProperty<FCsBlendSpace>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
-			// FCsFpsBlendSpace
-			if (StructProperty->Struct == FCsFpsBlendSpace::StaticStruct())
-			{ GetAssetReferencesFromStructProperty<FCsFpsBlendSpace>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
+			// FCsFpvBlendSpace
+			if (StructProperty->Struct == FCsFpvBlendSpace::StaticStruct())
+			{ GetAssetReferencesFromStructProperty<FCsFpvBlendSpace>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
 			// FCsBlueprint
 			if (StructProperty->Struct == FCsBlueprint::StaticStruct())
 			{ GetAssetReferencesFromStructProperty<FCsBlueprint>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
@@ -5853,15 +6091,15 @@ void UCsCommon_Load::GetAssetReferencesFromObject(void* InObject, UClass* const 
 				// FCsAnimSequence
 				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
 				{ GetAssetReferencesFromArrayStructProperty<FCsAnimSequence>(ArrayProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
-				// FCsFpsAnimSequence
-				if (InnerStructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
-				{ GetAssetReferencesFromArrayStructProperty<FCsFpsAnimSequence>(ArrayProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
+				// FCsFpvAnimSequence
+				if (InnerStructProperty->Struct == FCsFpvAnimSequence::StaticStruct())
+				{ GetAssetReferencesFromArrayStructProperty<FCsFpvAnimSequence>(ArrayProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
 				// FCsAnimMontage
 				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
 				{ GetAssetReferencesFromArrayStructProperty<FCsAnimMontage>(ArrayProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
-				// FCsFpsAnimMontage
-				if (InnerStructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
-				{ GetAssetReferencesFromArrayStructProperty<FCsFpsAnimMontage>(ArrayProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
+				// FCsFpvAnimMontage
+				if (InnerStructProperty->Struct == FCsFpvAnimMontage::StaticStruct())
+				{ GetAssetReferencesFromArrayStructProperty<FCsFpvAnimMontage>(ArrayProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
 				
 				if (Internal)
 				{
@@ -5869,6 +6107,16 @@ void UCsCommon_Load::GetAssetReferencesFromObject(void* InObject, UClass* const 
 						continue;
 				}
 				continue;
+			}
+			continue;
+		}
+		// Map
+		if (UMapProperty* MapProperty = Cast<UMapProperty>(*It))
+		{
+			if (Internal)
+			{
+				if ((*Internal)(Property, InObject, InClass, LoadFlags, OutAssetReferences, LoadCodes))
+					continue;
 			}
 			continue;
 		}
@@ -5885,7 +6133,7 @@ void UCsCommon_Load::LoadTAssetPtr_AnimBlueprint(const FString &MemberName, TAss
 	const FString& AssetName = AssetPtr.ToString();
 
 	// (AssetName == TEXT(""))
-	if (AssetName == ECsCachedString::Str::Empty)
+	if (AssetName == ECsCached::Str::Empty)
 	{
 		Internal = nullptr;
 		return;
@@ -5906,7 +6154,7 @@ void UCsCommon_Load::LoadTAssetPtr_AnimBlueprint(const FString &MemberName, TAss
 	else
 	{
 																			//TEXT("_C")
-		const FString AssetDescription = TEXT("AnimBlueprint'") + AssetName + ECsLoadCachedString::Str::_C + TEXT("'");
+		const FString AssetDescription = TEXT("AnimBlueprint'") + AssetName + ECsLoadCached::Str::_C + TEXT("'");
 		Internal					    = (UAnimBlueprintGeneratedClass*)StaticLoadObject(UClass::StaticClass(), NULL, *AssetDescription, NULL, LOAD_None, NULL);
 
 		if (!Internal)
@@ -5921,7 +6169,7 @@ void UCsCommon_Load::LoadTAssetPtr_AnimBlueprint(const FString &MemberName, TAss
 	const FString& AssetName = AssetPtr->ToString();
 
 	// (AssetName == TEXT("")
-	if (AssetName == ECsCachedString::Str::Empty)
+	if (AssetName == ECsCached::Str::Empty)
 	{
 		Internal = nullptr;
 		return;
@@ -5942,7 +6190,7 @@ void UCsCommon_Load::LoadTAssetPtr_AnimBlueprint(const FString &MemberName, TAss
 	else
 	{
 																			//TEXT("_C")
-		const FString AssetDescription = TEXT("AnimBlueprint'") + AssetName + ECsLoadCachedString::Str::_C + TEXT("'");
+		const FString AssetDescription = TEXT("AnimBlueprint'") + AssetName + ECsLoadCached::Str::_C + TEXT("'");
 		Internal					   = (UAnimBlueprintGeneratedClass*)StaticLoadObject(UClass::StaticClass(), NULL, *AssetDescription, NULL, LOAD_None, NULL);
 
 		if (!Internal)
@@ -5960,12 +6208,12 @@ void UCsCommon_Load::LoadAssetObjectProperty_AnimBlueprint(UAssetObjectProperty*
 			return;
 
 										// MemberName = TEXT("_Internal")
-		const FString InternalMemberName = MemberName + ECsLoadCachedString::Str::_Internal;
+		const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
 
 		if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 		{
 			if (UAnimBlueprintGeneratedClass** Internal = InternalProperty->ContainerPtrToValuePtr<UAnimBlueprintGeneratedClass*>(InObject))
-				LoadTAssetPtr_AnimBlueprint(ObjectName + ECsCachedString::Str::Dot + MemberName, Member, *Internal);
+				LoadTAssetPtr_AnimBlueprint(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal);
 										//  ObjectName = TEXT(".") + MemberName
 		}
 	}
@@ -5979,12 +6227,12 @@ void UCsCommon_Load::LoadAssetObjectProperty_AnimBlueprint(UAssetObjectProperty*
 			return;
 
 										// MemberName = TEXT("_Internal")
-		const FString InternalMemberName = MemberName + ECsLoadCachedString::Str::_Internal;
+		const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
 
 		if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 		{
 			if (UAnimBlueprintGeneratedClass** Internal = InternalProperty->ContainerPtrToValuePtr<UAnimBlueprintGeneratedClass*>(InObject))
-				LoadTAssetPtr_AnimBlueprint(ObjectName + ECsCachedString::Str::Dot + MemberName, Member, *Internal);
+				LoadTAssetPtr_AnimBlueprint(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal);
 										//  ObjectName + TEXT(".") + MemberName
 		}
 	}
@@ -5995,7 +6243,7 @@ void UCsCommon_Load::LoadTAssetPtr_Blueprint(const FString &MemberName, TAssetPt
 	const FString& AssetName = AssetPtr.ToString();
 
 	// (AssetName == TEXT(""))
-	if (AssetName == ECsCachedString::Str::Empty)
+	if (AssetName == ECsCached::Str::Empty)
 	{
 		Internal = nullptr;
 		return;
@@ -6016,7 +6264,7 @@ void UCsCommon_Load::LoadTAssetPtr_Blueprint(const FString &MemberName, TAssetPt
 	else
 	{
 																		//TEXT("_C")
-		const FString AssetDescription = TEXT("Blueprint'") + AssetName + ECsLoadCachedString::Str::_C + TEXT("'");
+		const FString AssetDescription = TEXT("Blueprint'") + AssetName + ECsLoadCached::Str::_C + TEXT("'");
 		Internal					   = (UBlueprintGeneratedClass*)StaticLoadObject(UClass::StaticClass(), NULL, *AssetDescription, NULL, LOAD_None, NULL);
 
 		if (!Internal)
@@ -6031,7 +6279,7 @@ void UCsCommon_Load::LoadTAssetPtr_Blueprint(const FString &MemberName, TAssetPt
 	const FString& AssetName = AssetPtr->ToString();
 
 	// (AssetName == TEXT(""))
-	if (AssetName == ECsCachedString::Str::Empty)
+	if (AssetName == ECsCached::Str::Empty)
 	{
 		Internal = nullptr;
 		return;
@@ -6052,7 +6300,7 @@ void UCsCommon_Load::LoadTAssetPtr_Blueprint(const FString &MemberName, TAssetPt
 	else
 	{
 																		//TEXT("_C")
-		const FString AssetDescription = TEXT("Blueprint'") + AssetName + ECsLoadCachedString::Str::_C + TEXT("'");
+		const FString AssetDescription = TEXT("Blueprint'") + AssetName + ECsLoadCached::Str::_C + TEXT("'");
 		Internal					   = (UBlueprintGeneratedClass*)StaticLoadObject(UClass::StaticClass(), NULL, *AssetDescription, NULL, LOAD_None, NULL);
 
 		if (!Internal)
@@ -6090,10 +6338,10 @@ void UCsCommon_Load::LoadTArrayTAssetPtr_Blueprint(const FString &MemberName, TA
 		const FString& AssetName = AssetPtr.ToString();
 
 		// (AssetName != TEXT(""))
-		if (AssetName != ECsCachedString::Str::Empty)
+		if (AssetName != ECsCached::Str::Empty)
 		{
 																			//TEXT("_C")
-			const FString AssetDescription = TEXT("Blueprint'") + AssetName + ECsLoadCachedString::Str::_C + TEXT("'");
+			const FString AssetDescription = TEXT("Blueprint'") + AssetName + ECsLoadCached::Str::_C + TEXT("'");
 			UBlueprintGeneratedClass* Data = (UBlueprintGeneratedClass*)StaticLoadObject(UClass::StaticClass(), NULL, *AssetDescription, NULL, LOAD_None, NULL);
 
 			if (!Data)
@@ -6137,10 +6385,10 @@ void UCsCommon_Load::LoadTArrayTAssetPtr_Blueprint(const FString &MemberName, TA
 		const FString& AssetName = AssetPtr.ToString();
 
 		// (AssetName != TEXT(""))
-		if (AssetName != ECsCachedString::Str::Empty)
+		if (AssetName != ECsCached::Str::Empty)
 		{
 																			//TEXT("_C")
-			const FString AssetDescription = TEXT("Blueprint'") + AssetName + ECsLoadCachedString::Str::_C + TEXT("'");
+			const FString AssetDescription = TEXT("Blueprint'") + AssetName + ECsLoadCached::Str::_C + TEXT("'");
 			UBlueprintGeneratedClass* Data = (UBlueprintGeneratedClass*)StaticLoadObject(UClass::StaticClass(), NULL, *AssetDescription, NULL, LOAD_None, NULL);
 
 			if (!Data)
@@ -6166,12 +6414,12 @@ void UCsCommon_Load::LoadFCsAnimSequence(const FString &MemberName, FCsAnimSeque
 	LoadFCsAnimSequence(MemberName, Anim, ECsLoadFlags::All);
 }
 
-void UCsCommon_Load::LoadFCsFpsAnimSequence(const FString &MemberName, FCsFpsAnimSequence* Anim, const ECsLoadFlags &LoadFlags)
+void UCsCommon_Load::LoadFCsFpvAnimSequence(const FString &MemberName, FCsFpvAnimSequence* Anim, const ECsLoadFlags &LoadFlags)
 {
-	LoadFCsStruct<FCsFpsAnimSequence>(MemberName, Anim, LoadFlags);
+	LoadFCsStruct<FCsFpvAnimSequence>(MemberName, Anim, LoadFlags);
 }
 
-void UCsCommon_Load::LoadFCsFpsAnimSequence(const FString &MemberName, FCsFpsAnimSequence* Anim, const TCsViewType &ViewType)
+void UCsCommon_Load::LoadFCsFpvAnimSequence(const FString &MemberName, FCsFpvAnimSequence* Anim, const TCsViewType &ViewType)
 {
 	ECsLoadFlags LoadFlags = ECsLoadFlags::All;
 
@@ -6182,7 +6430,7 @@ void UCsCommon_Load::LoadFCsFpsAnimSequence(const FString &MemberName, FCsFpsAni
 	if (ViewType == ECsViewType::VR)
 		LoadFlags = ECsLoadFlags::GameVR;
 
-	LoadFCsFpsAnimSequence(MemberName, Anim, LoadFlags);
+	LoadFCsFpvAnimSequence(MemberName, Anim, LoadFlags);
 }
 
 void UCsCommon_Load::LoadFCsAnimMontage(const FString &MemberName, FCsAnimMontage* Anim, const ECsLoadFlags &LoadFlags)
@@ -6195,12 +6443,12 @@ void UCsCommon_Load::LoadFCsAnimMontage(const FString &MemberName, FCsAnimMontag
 	LoadFCsAnimMontage(MemberName, Anim, ECsLoadFlags::All);
 }
 
-void UCsCommon_Load::LoadFCsFpsAnimMontage(const FString &MemberName, FCsFpsAnimMontage* Anim, const ECsLoadFlags &LoadFlags)
+void UCsCommon_Load::LoadFCsFpvAnimMontage(const FString &MemberName, FCsFpvAnimMontage* Anim, const ECsLoadFlags &LoadFlags)
 {
-	LoadFCsStruct<FCsFpsAnimMontage>(MemberName, Anim, LoadFlags);
+	LoadFCsStruct<FCsFpvAnimMontage>(MemberName, Anim, LoadFlags);
 }
 
-void UCsCommon_Load::LoadFCsFpsAnimMontage(const FString &MemberName, FCsFpsAnimMontage* Anim, const TCsViewType &ViewType)
+void UCsCommon_Load::LoadFCsFpvAnimMontage(const FString &MemberName, FCsFpvAnimMontage* Anim, const TCsViewType &ViewType)
 {
 	ECsLoadFlags LoadFlags = ECsLoadFlags::All;
 
@@ -6211,7 +6459,7 @@ void UCsCommon_Load::LoadFCsFpsAnimMontage(const FString &MemberName, FCsFpsAnim
 	if (ViewType == ECsViewType::VR)
 		LoadFlags = ECsLoadFlags::GameVR;
 
-	LoadFCsFpsAnimMontage(MemberName, Anim, LoadFlags);
+	LoadFCsFpvAnimMontage(MemberName, Anim, LoadFlags);
 }
 
 void UCsCommon_Load::LoadFCsBlendSpace1D(const FString &MemberName, FCsBlendSpace1D* Blend, const ECsLoadFlags &LoadFlags)
@@ -6224,12 +6472,12 @@ void UCsCommon_Load::LoadFCsBlendSpace1D(const FString &MemberName, FCsBlendSpac
 	LoadFCsBlendSpace1D(MemberName, Blend, ECsLoadFlags::All);
 }
 
-void UCsCommon_Load::LoadFCsFpsBlendSpace1D(const FString &MemberName, FCsFpsBlendSpace1D* Blend , const ECsLoadFlags &LoadFlags)
+void UCsCommon_Load::LoadFCsFpvBlendSpace1D(const FString &MemberName, FCsFpvBlendSpace1D* Blend , const ECsLoadFlags &LoadFlags)
 {
-	LoadFCsStruct<FCsFpsBlendSpace1D>(MemberName, Blend, LoadFlags);
+	LoadFCsStruct<FCsFpvBlendSpace1D>(MemberName, Blend, LoadFlags);
 }
 
-void UCsCommon_Load::LoadFCsFpsBlendSpace1D(const FString &MemberName, FCsFpsBlendSpace1D* Blend, const TCsViewType &ViewType)
+void UCsCommon_Load::LoadFCsFpvBlendSpace1D(const FString &MemberName, FCsFpvBlendSpace1D* Blend, const TCsViewType &ViewType)
 {
 	ECsLoadFlags LoadFlags = ECsLoadFlags::All;
 
@@ -6240,7 +6488,7 @@ void UCsCommon_Load::LoadFCsFpsBlendSpace1D(const FString &MemberName, FCsFpsBle
 	if (ViewType == ECsViewType::VR)
 		LoadFlags = ECsLoadFlags::GameVR;
 
-	LoadFCsFpsBlendSpace1D(MemberName, Blend, LoadFlags);
+	LoadFCsFpvBlendSpace1D(MemberName, Blend, LoadFlags);
 }
 
 void UCsCommon_Load::LoadFCsBlendSpace(const FString &MemberName, FCsBlendSpace* Blend, const ECsLoadFlags &LoadFlags)
@@ -6253,12 +6501,12 @@ void UCsCommon_Load::LoadFCsBlendSpace(const FString &MemberName, FCsBlendSpace*
 	LoadFCsBlendSpace(MemberName, Blend, ECsLoadFlags::All);
 }
 
-void UCsCommon_Load::LoadFCsFpsBlendSpace(const FString &MemberName, FCsFpsBlendSpace* Blend, const ECsLoadFlags &LoadFlags)
+void UCsCommon_Load::LoadFCsFpvBlendSpace(const FString &MemberName, FCsFpvBlendSpace* Blend, const ECsLoadFlags &LoadFlags)
 {
-	LoadFCsStruct<FCsFpsBlendSpace>(MemberName, Blend, LoadFlags);
+	LoadFCsStruct<FCsFpvBlendSpace>(MemberName, Blend, LoadFlags);
 }
 
-void UCsCommon_Load::LoadFCsFpsBlendSpace(const FString &MemberName, FCsFpsBlendSpace* Blend, const TCsViewType &ViewType)
+void UCsCommon_Load::LoadFCsFpvBlendSpace(const FString &MemberName, FCsFpvBlendSpace* Blend, const TCsViewType &ViewType)
 {
 	ECsLoadFlags LoadFlags = ECsLoadFlags::All;
 
@@ -6269,13 +6517,13 @@ void UCsCommon_Load::LoadFCsFpsBlendSpace(const FString &MemberName, FCsFpsBlend
 	if (ViewType == ECsViewType::VR)
 		LoadFlags = ECsLoadFlags::GameVR;
 
-	LoadFCsFpsBlendSpace(MemberName, Blend, LoadFlags);
+	LoadFCsFpvBlendSpace(MemberName, Blend, LoadFlags);
 }
 
 bool UCsCommon_Load::CanLoad(void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags, const int32 &LoadCodes)
 {
 								// MemberName + TEXT("_LoadFlags")
-	const FString FlagMemberName = MemberName + ECsLoadCachedString::Str::_LoadFlags;
+	const FString FlagMemberName = MemberName + ECsLoadCached::Str::_LoadFlags;
 
 	if (UIntProperty* IntProperty = FindField<UIntProperty>(InClass, *FlagMemberName))
 	{
@@ -6307,7 +6555,7 @@ bool UCsCommon_Load::CanLoad(void* InObject, UScriptStruct* const &InClass, cons
 bool UCsCommon_Load::CanLoad(void* InObject, UClass* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags, const int32 &LoadCodes)
 {
 								// MemberName + TEXT("_LoadFlags")
-	const FString FlagMemberName = MemberName + ECsLoadCachedString::Str::_LoadFlags;
+	const FString FlagMemberName = MemberName + ECsLoadCached::Str::_LoadFlags;
 
 	if (UIntProperty* IntProperty = FindField<UIntProperty>(InClass, *FlagMemberName))
 	{
@@ -6341,12 +6589,12 @@ void UCsCommon_Load::LoadAssetObjectProperty_Blueprint(UAssetObjectProperty* &As
 	if (TAssetPtr<UBlueprint>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UBlueprint>>(InObject))
 	{
 										// MemberName = TEXT("_Internal")
-		const FString InternalMemberName = MemberName + ECsLoadCachedString::Str::_Internal;
+		const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
 
 		if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 		{
 			if (UBlueprintGeneratedClass** Internal = InternalProperty->ContainerPtrToValuePtr<UBlueprintGeneratedClass*>(InObject))
-				LoadTAssetPtr_Blueprint(ObjectName + ECsCachedString::Str::Dot + MemberName, Member, *Internal);
+				LoadTAssetPtr_Blueprint(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal);
 									//  ObjectName + TEXT(".") + MemberName
 		}
 	}
@@ -6360,12 +6608,12 @@ void UCsCommon_Load::LoadAssetObjectProperty_Blueprint(UAssetObjectProperty* &As
 			return;
 
 										// MemberName + TEXT("_Internal")
-		const FString InternalMemberName = MemberName + ECsLoadCachedString::Str::_Internal;
+		const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
 
 		if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 		{
 			if (UBlueprintGeneratedClass** Internal = InternalProperty->ContainerPtrToValuePtr<UBlueprintGeneratedClass*>(InObject))
-				LoadTAssetPtr_Blueprint(ObjectName + ECsCachedString::Str::Dot + MemberName, Member, *Internal);
+				LoadTAssetPtr_Blueprint(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal);
 									//  ObjectName + TEXT(".") + MemberName
 		}
 	}
@@ -6379,12 +6627,12 @@ void UCsCommon_Load::LoadArrayAssetObjectProperty_Blueprint(UArrayProperty* &Arr
 			return;
 
 										// MemberName + TEXT("_Internal")
-		const FString InternalMemberName = MemberName + ECsLoadCachedString::Str::_Internal;
+		const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
 
 		if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 		{
 			if (TArray<UBlueprintGeneratedClass*>* Internal = InternalProperty->ContainerPtrToValuePtr<TArray<UBlueprintGeneratedClass*>>(InObject))
-				LoadTArrayTAssetPtr_Blueprint(ObjectName + ECsCachedString::Str::Dot + MemberName, Member, *Internal);
+				LoadTArrayTAssetPtr_Blueprint(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal);
 											//ObjectName + TEXT(".") + MemberName
 		}
 	}
@@ -6398,12 +6646,12 @@ void UCsCommon_Load::LoadArrayAssetObjectProperty_Blueprint(UArrayProperty* &Arr
 			return;
 
 										// MemberName + TEXT("_Internal")
-		const FString InternalMemberName = MemberName + ECsLoadCachedString::Str::_Internal;
+		const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
 
 		if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 		{
 			if (TArray<UBlueprintGeneratedClass*>* Internal = InternalProperty->ContainerPtrToValuePtr<TArray<UBlueprintGeneratedClass*>>(InObject))
-				LoadTArrayTAssetPtr_Blueprint(ObjectName + ECsCachedString::Str::Dot + MemberName, Member, *Internal);
+				LoadTArrayTAssetPtr_Blueprint(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal);
 											//ObjectName + TEXT(".") + MemberName
 		}
 	}
@@ -6422,10 +6670,10 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 		{
 			// ACsData_Projectile
 			if (AssetClassProperty->MetaClass == ACsData_Projectile::StaticClass())
-			{ LoadAssetClassProperty<ACsData_Projectile>(AssetClassProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCachedString::Str::CsData_Projectile, LoadFlags); continue; }
+			{ LoadAssetClassProperty<ACsData_Projectile>(AssetClassProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::CsData_Projectile, LoadFlags); continue; }
 			// ACsData_ProjectileImpact
 			if (AssetClassProperty->MetaClass == ACsData_ProjectileImpact::StaticClass())
-			{ LoadAssetClassProperty<ACsData_ProjectileImpact>(AssetClassProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCachedString::Str::CsData_ProjectileImpact, LoadFlags); continue; }
+			{ LoadAssetClassProperty<ACsData_ProjectileImpact>(AssetClassProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::CsData_ProjectileImpact, LoadFlags); continue; }
 
 			if (Internal)
 			{
@@ -6439,20 +6687,20 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 		{
 			// UStaticMesh
 			if (AssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
-			{ LoadAssetObjectProperty<UStaticMesh>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCachedString::Str::StaticMesh, ECsCommonLoadCachedString::Str::Static_Mesh, LoadFlags); continue; }
+			{ LoadAssetObjectProperty<UStaticMesh>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::StaticMesh, ECsCommonLoadCached::Str::Static_Mesh, LoadFlags); continue; }
 			// USkeletalMesh
 			if (AssetObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
-			{ LoadAssetObjectProperty<USkeletalMesh>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCachedString::Str::SkeletalMesh, ECsCommonLoadCachedString::Str::Skeletal_Mesh, LoadFlags); continue; }
+			{ LoadAssetObjectProperty<USkeletalMesh>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::SkeletalMesh, ECsCommonLoadCached::Str::Skeletal_Mesh, LoadFlags); continue; }
 			// UMaterialInstance
 			if (AssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-			{ LoadAssetObjectProperty<UMaterialInstance>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCachedString::Str::MaterialInstance, ECsCommonLoadCachedString::Str::MaterialInstance, LoadFlags); continue; }
+			{ LoadAssetObjectProperty<UMaterialInstance>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::MaterialInstance, ECsCommonLoadCached::Str::MaterialInstance, LoadFlags); continue; }
 			// UMaterialInstanceConstant
 			if (AssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
 			{
 				if (AssetObjectProperty->ArrayDim == CS_SINGLETON)
-				{ LoadAssetObjectProperty<UMaterialInstanceConstant>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCachedString::Str::MaterialInstanceConstant, ECsCommonLoadCachedString::Str::MaterialInstanceConstant, LoadFlags); continue; }
+				{ LoadAssetObjectProperty<UMaterialInstanceConstant>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::MaterialInstanceConstant, ECsCommonLoadCached::Str::MaterialInstanceConstant, LoadFlags); continue; }
 				if (AssetObjectProperty->ArrayDim == ECS_INTERACTIVE_STATE_MAX)
-				{ LoadFixedArrayAssetObjectProperty_EnumSize<UMaterialInstanceConstant, ECsInteractiveState::Type, ECS_INTERACTIVE_STATE_MAX>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCachedString::Str::MaterialInstanceConstant, ECsCommonLoadCachedString::Str::MaterialInstanceConstant, LoadFlags, &ECsInteractiveState::ToString); continue; }
+				{ LoadFixedArrayAssetObjectProperty_EnumSize<UMaterialInstanceConstant, ECsInteractiveState::Type, ECS_INTERACTIVE_STATE_MAX>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::MaterialInstanceConstant, ECsCommonLoadCached::Str::MaterialInstanceConstant, LoadFlags, &ECsInteractiveState::ToString); continue; }
 
 				if (Internal)
 				{
@@ -6463,37 +6711,37 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 			}
 			// UPhysicalMaterial
 			if (AssetObjectProperty->PropertyClass == UPhysicalMaterial::StaticClass())
-			{ LoadAssetObjectProperty<UPhysicalMaterial>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCachedString::Str::PhysicalMaterial, ECsCommonLoadCachedString::Str::Physical_Material, LoadFlags); continue; }
+			{ LoadAssetObjectProperty<UPhysicalMaterial>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::PhysicalMaterial, ECsCommonLoadCached::Str::Physical_Material, LoadFlags); continue; }
 			// UPhysicsAsset
 			if (AssetObjectProperty->PropertyClass == UPhysicsAsset::StaticClass())
-			{ LoadAssetObjectProperty<UPhysicsAsset>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCachedString::Str::PhysicsAsset, ECsCommonLoadCachedString::Str::Physics_Asset, LoadFlags); continue; }
+			{ LoadAssetObjectProperty<UPhysicsAsset>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::PhysicsAsset, ECsCommonLoadCached::Str::Physics_Asset, LoadFlags); continue; }
 			// UAnimSequence
 			if (AssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-			{ LoadAssetObjectProperty<UAnimSequence>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCachedString::Str::AnimSequence, ECsCommonLoadCachedString::Str::Anim_Sequence, LoadFlags); continue; }
+			{ LoadAssetObjectProperty<UAnimSequence>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::AnimSequence, ECsCommonLoadCached::Str::Anim_Sequence, LoadFlags); continue; }
 			// UAnimMontage
 			if (AssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-			{ LoadAssetObjectProperty<UAnimMontage>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCachedString::Str::AnimMontage, ECsCommonLoadCachedString::Str::Anim_Montage, LoadFlags); continue; }
+			{ LoadAssetObjectProperty<UAnimMontage>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::AnimMontage, ECsCommonLoadCached::Str::Anim_Montage, LoadFlags); continue; }
 			// UBlendSpace1D
 			if (AssetObjectProperty->PropertyClass == UBlendSpace1D::StaticClass())
-			{ LoadAssetObjectProperty<UBlendSpace1D>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCachedString::Str::BlendSpace1D, ECsCommonLoadCachedString::Str::Blend_Space_1D, LoadFlags); continue; }
+			{ LoadAssetObjectProperty<UBlendSpace1D>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::BlendSpace1D, ECsCommonLoadCached::Str::Blend_Space_1D, LoadFlags); continue; }
 			// UBlendSpace
 			if (AssetObjectProperty->PropertyClass == UBlendSpace::StaticClass())
-			{ LoadAssetObjectProperty<UBlendSpace>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCachedString::Str::BlendSpace, ECsCommonLoadCachedString::Str::Blend_Space, LoadFlags); continue; }
+			{ LoadAssetObjectProperty<UBlendSpace>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::BlendSpace, ECsCommonLoadCached::Str::Blend_Space, LoadFlags); continue; }
 			// UAnimBlueprint
 			if (AssetObjectProperty->PropertyClass == UAnimBlueprint::StaticClass())
 			{ LoadAssetObjectProperty_AnimBlueprint(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, LoadFlags); continue; }
 			// USoundCue
 			if (AssetObjectProperty->PropertyClass == USoundCue::StaticClass())
-			{ LoadAssetObjectProperty<USoundCue>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCachedString::Str::SoundCue, ECsCommonLoadCachedString::Str::Sound_Cue, LoadFlags); continue; }
+			{ LoadAssetObjectProperty<USoundCue>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::SoundCue, ECsCommonLoadCached::Str::Sound_Cue, LoadFlags); continue; }
 			// UParticleSystem
 			if (AssetObjectProperty->PropertyClass == UParticleSystem::StaticClass())
-			{ LoadAssetObjectProperty<UParticleSystem>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCachedString::Str::ParticleSystem, ECsCommonLoadCachedString::Str::Particle_System, LoadFlags); continue; }
+			{ LoadAssetObjectProperty<UParticleSystem>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::ParticleSystem, ECsCommonLoadCached::Str::Particle_System, LoadFlags); continue; }
 			// UCurveFloat
 			if (AssetObjectProperty->PropertyClass == UCurveFloat::StaticClass())
-			{ LoadAssetObjectProperty<UCurveFloat>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCachedString::Str::CurveFloat, ECsCommonLoadCachedString::Str::Curve_Float, LoadFlags); continue; }
+			{ LoadAssetObjectProperty<UCurveFloat>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::CurveFloat, ECsCommonLoadCached::Str::Curve_Float, LoadFlags); continue; }
 			// UCurveVector
 			if (AssetObjectProperty->PropertyClass == UCurveVector::StaticClass())
-			{ LoadAssetObjectProperty<UCurveVector>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCachedString::Str::CurveVector, ECsCommonLoadCachedString::Str::Curve_Vector, LoadFlags); continue; }
+			{ LoadAssetObjectProperty<UCurveVector>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::CurveVector, ECsCommonLoadCached::Str::Curve_Vector, LoadFlags); continue; }
 			// UBlueprint
 			if (AssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
 			{ 
@@ -6568,9 +6816,9 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 			// FCsAnimSequence
 			if (StructProperty->Struct == FCsAnimSequence::StaticStruct())
 			{ LoadMemberStructProperty<FCsAnimSequence>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
-			// FCsFpsAnimSequence
-			if (StructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
-			{ LoadMemberStructProperty<FCsFpsAnimSequence>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
+			// FCsFpvAnimSequence
+			if (StructProperty->Struct == FCsFpvAnimSequence::StaticStruct())
+			{ LoadMemberStructProperty<FCsFpvAnimSequence>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
 			// FCsAnimMontage
 			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
 			{
@@ -6584,11 +6832,11 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 				}
 				continue;
 			}
-			// FCsFpsAnimMontage
-			if (StructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
+			// FCsFpvAnimMontage
+			if (StructProperty->Struct == FCsFpvAnimMontage::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ LoadMemberStructProperty<FCsFpsAnimMontage>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
+				{ LoadMemberStructProperty<FCsFpvAnimMontage>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
 				
 				if (Internal)
 				{
@@ -6603,21 +6851,21 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 			// FCsBlendSpace1D
 			if (StructProperty->Struct == FCsBlendSpace1D::StaticStruct())
 			{ LoadMemberStructProperty<FCsBlendSpace1D>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
-			// FCsFpsBlendSpace1D
-			if (StructProperty->Struct == FCsFpsBlendSpace1D::StaticStruct())
-			{ LoadMemberStructProperty<FCsFpsBlendSpace1D>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
+			// FCsFpvBlendSpace1D
+			if (StructProperty->Struct == FCsFpvBlendSpace1D::StaticStruct())
+			{ LoadMemberStructProperty<FCsFpvBlendSpace1D>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
 			// FCsBlendSpace
 			if (StructProperty->Struct == FCsBlendSpace::StaticStruct())
 			{ LoadMemberStructProperty<FCsBlendSpace>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
-			// FCsFpsBlendSpace
-			if (StructProperty->Struct == FCsFpsBlendSpace::StaticStruct())
-			{ LoadMemberStructProperty<FCsFpsBlendSpace>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
+			// FCsFpvBlendSpace
+			if (StructProperty->Struct == FCsFpvBlendSpace::StaticStruct())
+			{ LoadMemberStructProperty<FCsFpvBlendSpace>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
 			// FCsAnimBlueprint
 			if (StructProperty->Struct == FCsAnimBlueprint::StaticStruct())
 			{ LoadMemberStructProperty<FCsAnimBlueprint>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
-			// FCsFpsAnimBlueprint
-			if (StructProperty->Struct == FCsFpsAnimBlueprint::StaticStruct())
-			{ LoadMemberStructProperty<FCsFpsAnimBlueprint>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
+			// FCsFpvAnimBlueprint
+			if (StructProperty->Struct == FCsFpvAnimBlueprint::StaticStruct())
+			{ LoadMemberStructProperty<FCsFpvAnimBlueprint>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
 			// FCsPhysicalMaterial
 			if (StructProperty->Struct == FCsPhysicalMaterial::StaticStruct())
 			{ LoadMemberStructProperty<FCsPhysicalMaterial>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
@@ -6791,15 +7039,15 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 				// FCsAnimSequence
 				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
 				{ LoadMemberArrayStructProperty<FCsAnimSequence>(ArrayProperty, InStruct, StructName, LoadFlags); continue; }
-				// FCsFpsAnimSequence
-				if (InnerStructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
-				{ LoadMemberArrayStructProperty<FCsFpsAnimSequence>(ArrayProperty, InStruct, StructName, LoadFlags); continue; }
+				// FCsFpvAnimSequence
+				if (InnerStructProperty->Struct == FCsFpvAnimSequence::StaticStruct())
+				{ LoadMemberArrayStructProperty<FCsFpvAnimSequence>(ArrayProperty, InStruct, StructName, LoadFlags); continue; }
 				// FCsAnimMontage
 				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
 				{ LoadMemberArrayStructProperty<FCsAnimMontage>(ArrayProperty, InStruct, StructName, LoadFlags); continue; }
-				// FCsFpsAnimMontage
-				if (InnerStructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
-				{ LoadMemberArrayStructProperty<FCsFpsAnimMontage>(ArrayProperty, InStruct, StructName, LoadFlags); continue; }
+				// FCsFpvAnimMontage
+				if (InnerStructProperty->Struct == FCsFpvAnimMontage::StaticStruct())
+				{ LoadMemberArrayStructProperty<FCsFpvAnimMontage>(ArrayProperty, InStruct, StructName, LoadFlags); continue; }
 
 				if (Internal)
 				{
@@ -6807,6 +7055,16 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 						continue;
 				}
 				continue;
+			}
+			continue;
+		}
+		// Map
+		if (UMapProperty* MapProperty = Cast<UMapProperty>(*It))
+		{
+			if (Internal)
+			{
+				if ((*Internal)(Property, ObjectName, InStruct, InScriptStruct, LoadFlags))
+					continue;
 			}
 			continue;
 		}
@@ -7026,36 +7284,36 @@ void UCsCommon_Load::LoadObjectWithTAssetPtrs(const FString &ObjectName, void* I
 			// FCsAnimSequence
 			if (StructProperty->Struct == FCsAnimSequence::StaticStruct())
 			{ LoadMemberStructProperty<FCsAnimSequence>(StructProperty, InObject, StructName, LoadFlags); continue; }
-			// FCsFpsAnimSequence
-			if (StructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
-			{ LoadMemberStructProperty<FCsFpsAnimSequence>(StructProperty, InObject, StructName, LoadFlags); continue; }
+			// FCsFpvAnimSequence
+			if (StructProperty->Struct == FCsFpvAnimSequence::StaticStruct())
+			{ LoadMemberStructProperty<FCsFpvAnimSequence>(StructProperty, InObject, StructName, LoadFlags); continue; }
 			// FCsAnimMontage
 			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
 			{ LoadMemberStructProperty<FCsAnimMontage>(StructProperty, InObject, StructName, LoadFlags); continue; }
-			// FCsFpsAnimMontage
-			if (StructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
-			{ LoadMemberStructProperty<FCsFpsAnimMontage>(StructProperty, InObject, StructName, LoadFlags); continue; }
+			// FCsFpvAnimMontage
+			if (StructProperty->Struct == FCsFpvAnimMontage::StaticStruct())
+			{ LoadMemberStructProperty<FCsFpvAnimMontage>(StructProperty, InObject, StructName, LoadFlags); continue; }
 			// FCsTArrayAnimMontage
 			if (StructProperty->Struct == FCsTArrayAnimMontage::StaticStruct())
 			{ LoadMemberStructProperty<FCsTArrayAnimMontage>(StructProperty, InObject, StructName, LoadFlags); continue; }
 			// FCsAnimBlueprint
 			if (StructProperty->Struct == FCsAnimBlueprint::StaticStruct())
 			{ LoadMemberStructProperty<FCsAnimBlueprint>(StructProperty, InObject, StructName, LoadFlags); continue; }
-			// FCsFpsAnimBlueprint
-			if (StructProperty->Struct == FCsFpsAnimBlueprint::StaticStruct())
-			{ LoadMemberStructProperty<FCsFpsAnimBlueprint>(StructProperty, InObject, StructName, LoadFlags); continue; }
+			// FCsFpvAnimBlueprint
+			if (StructProperty->Struct == FCsFpvAnimBlueprint::StaticStruct())
+			{ LoadMemberStructProperty<FCsFpvAnimBlueprint>(StructProperty, InObject, StructName, LoadFlags); continue; }
 			// FCsBlendSpace1D
 			if (StructProperty->Struct == FCsBlendSpace1D::StaticStruct())
 			{ LoadMemberStructProperty<FCsBlendSpace1D>(StructProperty, InObject, StructName, LoadFlags); continue; }
-			// FCsFpsBlendSpace1D
-			if (StructProperty->Struct == FCsFpsBlendSpace1D::StaticStruct())
-			{ LoadMemberStructProperty<FCsFpsBlendSpace1D>(StructProperty, InObject, StructName, LoadFlags); continue; }
+			// FCsFpvBlendSpace1D
+			if (StructProperty->Struct == FCsFpvBlendSpace1D::StaticStruct())
+			{ LoadMemberStructProperty<FCsFpvBlendSpace1D>(StructProperty, InObject, StructName, LoadFlags); continue; }
 			// FCsBlendSpace
 			if (StructProperty->Struct == FCsBlendSpace::StaticStruct())
 			{ LoadMemberStructProperty<FCsBlendSpace>(StructProperty, InObject, StructName, LoadFlags); continue; }
-			// FCsFpsBlendSpace
-			if (StructProperty->Struct == FCsFpsBlendSpace::StaticStruct())
-			{ LoadMemberStructProperty<FCsFpsBlendSpace>(StructProperty, InObject, StructName, LoadFlags); continue; }
+			// FCsFpvBlendSpace
+			if (StructProperty->Struct == FCsFpvBlendSpace::StaticStruct())
+			{ LoadMemberStructProperty<FCsFpvBlendSpace>(StructProperty, InObject, StructName, LoadFlags); continue; }
 			// FCsBlueprint
 			if (StructProperty->Struct == FCsBlueprint::StaticStruct())
 			{ LoadMemberStructProperty<FCsBlueprint>(StructProperty, InObject, StructName, LoadFlags); continue; }
@@ -7149,15 +7407,15 @@ void UCsCommon_Load::LoadObjectWithTAssetPtrs(const FString &ObjectName, void* I
 				// FCsAnimSequence
 				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
 				{ LoadMemberArrayStructProperty<FCsAnimSequence>(ArrayProperty, InObject, StructName, LoadFlags); continue; }
-				// FCsFpsAnimSequence
-				if (InnerStructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
-				{ LoadMemberArrayStructProperty<FCsFpsAnimSequence>(ArrayProperty, InObject, StructName, LoadFlags); continue; }
+				// FCsFpvAnimSequence
+				if (InnerStructProperty->Struct == FCsFpvAnimSequence::StaticStruct())
+				{ LoadMemberArrayStructProperty<FCsFpvAnimSequence>(ArrayProperty, InObject, StructName, LoadFlags); continue; }
 				// FCsAnimMontage
 				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
 				{ LoadMemberArrayStructProperty<FCsAnimMontage>(ArrayProperty, InObject, StructName, LoadFlags); continue; }
-				// FCsFpsAnimMontage
-				if (InnerStructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
-				{ LoadMemberArrayStructProperty<FCsFpsAnimMontage>(ArrayProperty, InObject, StructName, LoadFlags); continue; }
+				// FCsFpvAnimMontage
+				if (InnerStructProperty->Struct == FCsFpvAnimMontage::StaticStruct())
+				{ LoadMemberArrayStructProperty<FCsFpvAnimMontage>(ArrayProperty, InObject, StructName, LoadFlags); continue; }
 
 				if (Internal)
 				{
@@ -7166,6 +7424,16 @@ void UCsCommon_Load::LoadObjectWithTAssetPtrs(const FString &ObjectName, void* I
 				}
 				continue;
 			}
+		}
+		// Map
+		if (UMapProperty* MapProperty = Cast<UMapProperty>(*It))
+		{
+			if (Internal)
+			{
+				if ((*Internal)(Property, ObjectName, InObject, InClass, LoadFlags))
+					continue;
+			}
+			continue;
 		}
 	}
 }
@@ -7287,27 +7555,27 @@ void UCsCommon_Load::UnLoadStructWithTAssetPtrs(void* InStruct, UScriptStruct* c
 			// FCsAnimSequence
 			if (StructProperty->Struct == FCsAnimSequence::StaticStruct())
 			{ UnLoadMemberStructProperty<FCsAnimSequence>(StructProperty, InStruct); continue; }
-			// FCsFpsAnimSequence
-			if (StructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
-			{ UnLoadMemberStructProperty<FCsFpsAnimSequence>(StructProperty, InStruct); continue; }
+			// FCsFpvAnimSequence
+			if (StructProperty->Struct == FCsFpvAnimSequence::StaticStruct())
+			{ UnLoadMemberStructProperty<FCsFpvAnimSequence>(StructProperty, InStruct); continue; }
 			// FCsAnimMontage
 			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
 			{ UnLoadMemberStructProperty<FCsAnimMontage>(StructProperty, InStruct); continue; }
-			// FCsFpsAnimMontage
-			if (StructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
-			{ UnLoadMemberStructProperty<FCsFpsAnimMontage>(StructProperty, InStruct); continue; }
+			// FCsFpvAnimMontage
+			if (StructProperty->Struct == FCsFpvAnimMontage::StaticStruct())
+			{ UnLoadMemberStructProperty<FCsFpvAnimMontage>(StructProperty, InStruct); continue; }
 			// FCsAnimBlueprint
 			if (StructProperty->Struct == FCsAnimBlueprint::StaticStruct())
 			{ UnLoadMemberStructProperty<FCsAnimBlueprint>(StructProperty, InStruct); continue; }
-			// FCsFpsAnimBlueprint
-			if (StructProperty->Struct == FCsFpsAnimBlueprint::StaticStruct())
-			{ UnLoadMemberStructProperty<FCsFpsAnimBlueprint>(StructProperty, InStruct); continue; }
+			// FCsFpvAnimBlueprint
+			if (StructProperty->Struct == FCsFpvAnimBlueprint::StaticStruct())
+			{ UnLoadMemberStructProperty<FCsFpvAnimBlueprint>(StructProperty, InStruct); continue; }
 			// FCsBlendSpace
 			if (StructProperty->Struct == FCsBlendSpace::StaticStruct())
 			{ UnLoadMemberStructProperty<FCsBlendSpace>(StructProperty, InStruct); continue; }
-			// FCsFpsBlendSpace
-			if (StructProperty->Struct == FCsFpsBlendSpace::StaticStruct())
-			{ UnLoadMemberStructProperty<FCsFpsBlendSpace>(StructProperty, InStruct); continue; }
+			// FCsFpvBlendSpace
+			if (StructProperty->Struct == FCsFpvBlendSpace::StaticStruct())
+			{ UnLoadMemberStructProperty<FCsFpvBlendSpace>(StructProperty, InStruct); continue; }
 			continue;
 		}
 		// Array
@@ -7356,9 +7624,9 @@ void UCsCommon_Load::UnLoadStructWithTAssetPtrs(void* InStruct, UScriptStruct* c
 				// FCsAnimMontage
 				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
 				{ UnLoadMemberArrayStructProperty<FCsAnimMontage>(ArrayProperty, InStruct); continue; }
-				// FCsFpsAnimMontage
-				if (InnerStructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
-				{ UnLoadMemberArrayStructProperty<FCsFpsAnimMontage>(ArrayProperty, InStruct); continue; }
+				// FCsFpvAnimMontage
+				if (InnerStructProperty->Struct == FCsFpvAnimMontage::StaticStruct())
+				{ UnLoadMemberArrayStructProperty<FCsFpvAnimMontage>(ArrayProperty, InStruct); continue; }
 				// FCsSoundElement
 				if (InnerStructProperty->Struct == FCsSoundElement::StaticStruct())
 				{ UnLoadMemberArrayStructProperty<FCsSoundElement>(ArrayProperty, InStruct); continue; }
@@ -7478,27 +7746,27 @@ void UCsCommon_Load::UnLoadObjectWithTAssetPtrs(void* InObject, UClass* const &I
 			// FCsAnimSequence
 			if (StructProperty->Struct == FCsAnimSequence::StaticStruct())
 			{ UnLoadMemberStructProperty<FCsAnimSequence>(StructProperty, InObject); continue; }
-			// FCsFpsAnimSequence
-			if (StructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
-			{ UnLoadMemberStructProperty<FCsFpsAnimSequence>(StructProperty, InObject); continue; }
+			// FCsFpvAnimSequence
+			if (StructProperty->Struct == FCsFpvAnimSequence::StaticStruct())
+			{ UnLoadMemberStructProperty<FCsFpvAnimSequence>(StructProperty, InObject); continue; }
 			// FCsAnimMontage
 			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
 			{ UnLoadMemberStructProperty<FCsAnimMontage>(StructProperty, InObject); continue; }
-			// FCsFpsAnimMontage
-			if (StructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
-			{ UnLoadMemberStructProperty<FCsFpsAnimMontage>(StructProperty, InObject); continue; }
+			// FCsFpvAnimMontage
+			if (StructProperty->Struct == FCsFpvAnimMontage::StaticStruct())
+			{ UnLoadMemberStructProperty<FCsFpvAnimMontage>(StructProperty, InObject); continue; }
 			// FCsAnimBlueprint
 			if (StructProperty->Struct == FCsAnimBlueprint::StaticStruct())
 			{ UnLoadMemberStructProperty<FCsAnimBlueprint>(StructProperty, InObject); continue; }
-			// FCsFpsAnimBlueprint
-			if (StructProperty->Struct == FCsFpsAnimBlueprint::StaticStruct())
-			{ UnLoadMemberStructProperty<FCsFpsAnimBlueprint>(StructProperty, InObject); continue; }
+			// FCsFpvAnimBlueprint
+			if (StructProperty->Struct == FCsFpvAnimBlueprint::StaticStruct())
+			{ UnLoadMemberStructProperty<FCsFpvAnimBlueprint>(StructProperty, InObject); continue; }
 			// FCsBlendSpace
 			if (StructProperty->Struct == FCsBlendSpace::StaticStruct())
 			{ UnLoadMemberStructProperty<FCsBlendSpace>(StructProperty, InObject); continue; }
-			// FCsFpsBlendSpace
-			if (StructProperty->Struct == FCsFpsBlendSpace::StaticStruct())
-			{ UnLoadMemberStructProperty<FCsFpsBlendSpace>(StructProperty, InObject); continue; }
+			// FCsFpvBlendSpace
+			if (StructProperty->Struct == FCsFpvBlendSpace::StaticStruct())
+			{ UnLoadMemberStructProperty<FCsFpvBlendSpace>(StructProperty, InObject); continue; }
 			continue;
 		}
 		// Array
@@ -7547,9 +7815,9 @@ void UCsCommon_Load::UnLoadObjectWithTAssetPtrs(void* InObject, UClass* const &I
 				// FCsAnimMontage
 				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
 				{ UnLoadMemberArrayStructProperty<FCsAnimMontage>(ArrayProperty, InObject); continue; }
-				// FCsFpsAnimMontage
-				if (InnerStructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
-				{ UnLoadMemberArrayStructProperty<FCsFpsAnimMontage>(ArrayProperty, InObject); continue; }
+				// FCsFpvAnimMontage
+				if (InnerStructProperty->Struct == FCsFpvAnimMontage::StaticStruct())
+				{ UnLoadMemberArrayStructProperty<FCsFpvAnimMontage>(ArrayProperty, InObject); continue; }
 				// FCsSoundElement
 				if (InnerStructProperty->Struct == FCsSoundElement::StaticStruct())
 				{ UnLoadMemberArrayStructProperty<FCsSoundElement>(ArrayProperty, InObject); continue; }
@@ -7642,10 +7910,10 @@ bool UCsCommon_Load::IsLoadedStructWithTAssetPtrs(const FString &ObjectName, voi
 			// FCsAnimSequence
 			if (StructProperty->Struct == FCsAnimSequence::StaticStruct())
 				Pass &= IsLoadedMemberStructProperty<FCsAnimSequence>(StructProperty, InStruct, StructName);
-			// FCsFpsAnimSequence
+			// FCsFpvAnimSequence
 			else
-			if (StructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
-				Pass &= IsLoadedMemberStructProperty<FCsFpsAnimSequence>(StructProperty, InStruct, StructName);
+			if (StructProperty->Struct == FCsFpvAnimSequence::StaticStruct())
+				Pass &= IsLoadedMemberStructProperty<FCsFpvAnimSequence>(StructProperty, InStruct, StructName);
 			// FCsAnimMontage
 			else
 			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
@@ -7653,26 +7921,26 @@ bool UCsCommon_Load::IsLoadedStructWithTAssetPtrs(const FString &ObjectName, voi
 				if (StructProperty->ArrayDim == CS_SINGLETON)
 					Pass &= IsLoadedMemberStructProperty<FCsAnimMontage>(StructProperty, InStruct, StructName);
 			}
-			// FCsFpsAnimMontage
+			// FCsFpvAnimMontage
 			else
-			if (StructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
-				Pass &= IsLoadedMemberStructProperty<FCsFpsAnimMontage>(StructProperty, InStruct, StructName);
+			if (StructProperty->Struct == FCsFpvAnimMontage::StaticStruct())
+				Pass &= IsLoadedMemberStructProperty<FCsFpvAnimMontage>(StructProperty, InStruct, StructName);
 			// FCsBlendSpace
 			else
 			if (StructProperty->Struct == FCsBlendSpace::StaticStruct())
 				Pass &= IsLoadedMemberStructProperty<FCsBlendSpace>(StructProperty, InStruct, StructName);
-			// FCsFpsBlendSpace
+			// FCsFpvBlendSpace
 			else
-			if (StructProperty->Struct == FCsFpsBlendSpace::StaticStruct())
-				Pass &= IsLoadedMemberStructProperty<FCsFpsBlendSpace>(StructProperty, InStruct, StructName);
+			if (StructProperty->Struct == FCsFpvBlendSpace::StaticStruct())
+				Pass &= IsLoadedMemberStructProperty<FCsFpvBlendSpace>(StructProperty, InStruct, StructName);
 			// FCsAnimBlueprint
 			else
 			if (StructProperty->Struct == FCsAnimBlueprint::StaticStruct())
 				Pass &= IsLoadedMemberStructProperty<FCsAnimBlueprint>(StructProperty, InStruct, StructName);
-			// FCsFpsAnimBlueprint
+			// FCsFpvAnimBlueprint
 			else
-			if (StructProperty->Struct == FCsFpsAnimBlueprint::StaticStruct())
-				Pass &= IsLoadedMemberStructProperty<FCsFpsAnimBlueprint>(StructProperty, InStruct, StructName);
+			if (StructProperty->Struct == FCsFpvAnimBlueprint::StaticStruct())
+				Pass &= IsLoadedMemberStructProperty<FCsFpvAnimBlueprint>(StructProperty, InStruct, StructName);
 			// FCsSoundElement
 			else
 			if (StructProperty->Struct == FCsSoundElement::StaticStruct())
@@ -7829,10 +8097,10 @@ bool UCsCommon_Load::IsLoadedObjectWithTAssetPtrs(const FString &ObjectName, voi
 			// FCsAnimSequence
 			if (StructProperty->Struct == FCsAnimSequence::StaticStruct())
 				Pass &= IsLoadedMemberStructProperty<FCsAnimSequence>(StructProperty, InObject, StructName);
-			// FCsFpsAnimSequence
+			// FCsFpvAnimSequence
 			else
-			if (StructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
-				Pass &= IsLoadedMemberStructProperty<FCsFpsAnimSequence>(StructProperty, InObject, StructName);
+			if (StructProperty->Struct == FCsFpvAnimSequence::StaticStruct())
+				Pass &= IsLoadedMemberStructProperty<FCsFpvAnimSequence>(StructProperty, InObject, StructName);
 			// FCsAnimMontage
 			else
 			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
@@ -7840,26 +8108,26 @@ bool UCsCommon_Load::IsLoadedObjectWithTAssetPtrs(const FString &ObjectName, voi
 				if (StructProperty->ArrayDim == CS_SINGLETON)
 					Pass &= IsLoadedMemberStructProperty<FCsAnimMontage>(StructProperty, InObject, StructName);
 			}
-			// FCsFpsAnimMontage
+			// FCsFpvAnimMontage
 			else
-			if (StructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
-				Pass &= IsLoadedMemberStructProperty<FCsFpsAnimMontage>(StructProperty, InObject, StructName);
+			if (StructProperty->Struct == FCsFpvAnimMontage::StaticStruct())
+				Pass &= IsLoadedMemberStructProperty<FCsFpvAnimMontage>(StructProperty, InObject, StructName);
 			// FCsBlendSpace
 			else
 			if (StructProperty->Struct == FCsBlendSpace::StaticStruct())
 				Pass &= IsLoadedMemberStructProperty<FCsBlendSpace>(StructProperty, InObject, StructName);
-			// FCsFpsBlendSpace
+			// FCsFpvBlendSpace
 			else
-			if (StructProperty->Struct == FCsFpsBlendSpace::StaticStruct())
-				Pass &= IsLoadedMemberStructProperty<FCsFpsBlendSpace>(StructProperty, InObject, StructName);
+			if (StructProperty->Struct == FCsFpvBlendSpace::StaticStruct())
+				Pass &= IsLoadedMemberStructProperty<FCsFpvBlendSpace>(StructProperty, InObject, StructName);
 			// FCsAnimBlueprint
 			else
 			if (StructProperty->Struct == FCsAnimBlueprint::StaticStruct())
 				Pass &= IsLoadedMemberStructProperty<FCsAnimBlueprint>(StructProperty, InObject, StructName);
-			// FCsFpsAnimBlueprint
+			// FCsFpvAnimBlueprint
 			else
-			if (StructProperty->Struct == FCsFpsAnimBlueprint::StaticStruct())
-				Pass &= IsLoadedMemberStructProperty<FCsFpsAnimBlueprint>(StructProperty, InObject, StructName);
+			if (StructProperty->Struct == FCsFpvAnimBlueprint::StaticStruct())
+				Pass &= IsLoadedMemberStructProperty<FCsFpvAnimBlueprint>(StructProperty, InObject, StructName);
 			// FCsSoundElement
 			else
 			if (StructProperty->Struct == FCsSoundElement::StaticStruct())
@@ -7971,28 +8239,28 @@ void UCsCommon_Load::CheckEnumLoadFlags(int32* LoadFlags, const FString &ObjectN
 	if (*LoadFlags == CS_LOAD_FLAGS_NONE)
 	{
 		// 1P_LoadFlags
-		if (MemberName.EndsWith(ECsLoadCachedString::Str::_1P_LoadFlags))
+		if (MemberName.EndsWith(ECsLoadCached::Str::_1P_LoadFlags))
 		{
 			CS_SET_BLUEPRINT_BITFLAG(*LoadFlags, ECsLoadFlags::Game);
 			CS_SET_BLUEPRINT_BITFLAG(*LoadFlags, ECsLoadFlags::Game1P);
 		}
 		// 3P_LoadFlags
 		else
-		if (MemberName.EndsWith(ECsLoadCachedString::Str::_3P_LoadFlags))
+		if (MemberName.EndsWith(ECsLoadCached::Str::_3P_LoadFlags))
 		{
 			CS_SET_BLUEPRINT_BITFLAG(*LoadFlags, ECsLoadFlags::Game);
 			CS_SET_BLUEPRINT_BITFLAG(*LoadFlags, ECsLoadFlags::Game3P);
 		}
 		// 3P_Low_LoadFlags
 		else
-		if (MemberName.EndsWith(ECsLoadCachedString::Str::_3P_Low_LoadFlags))
+		if (MemberName.EndsWith(ECsLoadCached::Str::_3P_Low_LoadFlags))
 		{
 			CS_SET_BLUEPRINT_BITFLAG(*LoadFlags, ECsLoadFlags::Game);
 			CS_SET_BLUEPRINT_BITFLAG(*LoadFlags, ECsLoadFlags::Game3PLow);
 		}
 		// VR_LoadFlags
 		else
-		if (MemberName.EndsWith(ECsLoadCachedString::Str::VR_LoadFlags))
+		if (MemberName.EndsWith(ECsLoadCached::Str::VR_LoadFlags))
 		{
 			CS_SET_BLUEPRINT_BITFLAG(*LoadFlags, ECsLoadFlags::Game);
 			CS_SET_BLUEPRINT_BITFLAG(*LoadFlags, ECsLoadFlags::GameVR);
@@ -8224,36 +8492,36 @@ void UCsCommon_Load::CheckObjectWithEnum(const FString &ObjectName, void* InObje
 			// FCsAnimSequence
 			if (StructProperty->Struct == FCsAnimSequence::StaticStruct())
 			{ CheckEnumStructProperty<FCsAnimSequence>(StructProperty, InObject, StructName, nullptr); continue; }
-			// FCsFpsAnimSequence
-			if (StructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
-			{ CheckEnumStructProperty<FCsFpsAnimSequence>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsFpvAnimSequence
+			if (StructProperty->Struct == FCsFpvAnimSequence::StaticStruct())
+			{ CheckEnumStructProperty<FCsFpvAnimSequence>(StructProperty, InObject, StructName, nullptr); continue; }
 			// FCsAnimMontage
 			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
 			{ CheckEnumStructProperty<FCsAnimMontage>(StructProperty, InObject, StructName, nullptr); continue; }
-			// FCsFpsAnimMontage
-			if (StructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
-			{ CheckEnumStructProperty<FCsFpsAnimMontage>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsFpvAnimMontage
+			if (StructProperty->Struct == FCsFpvAnimMontage::StaticStruct())
+			{ CheckEnumStructProperty<FCsFpvAnimMontage>(StructProperty, InObject, StructName, nullptr); continue; }
 			// FCsTArrayAnimMontage
 			if (StructProperty->Struct == FCsTArrayAnimMontage::StaticStruct())
 			{ CheckEnumStructProperty<FCsTArrayAnimMontage>(StructProperty, InObject, StructName, nullptr); continue; }
 			// FCsAnimBlueprint
 			if (StructProperty->Struct == FCsAnimBlueprint::StaticStruct())
 			{ CheckEnumStructProperty<FCsAnimBlueprint>(StructProperty, InObject, StructName, nullptr); continue; }
-			// FCsFpsAnimBlueprint
-			if (StructProperty->Struct == FCsFpsAnimBlueprint::StaticStruct())
-			{ CheckEnumStructProperty<FCsFpsAnimBlueprint>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsFpvAnimBlueprint
+			if (StructProperty->Struct == FCsFpvAnimBlueprint::StaticStruct())
+			{ CheckEnumStructProperty<FCsFpvAnimBlueprint>(StructProperty, InObject, StructName, nullptr); continue; }
 			// FCsBlendSpace1D
 			if (StructProperty->Struct == FCsBlendSpace1D::StaticStruct())
 			{ CheckEnumStructProperty<FCsBlendSpace1D>(StructProperty, InObject, StructName, nullptr); continue; }
-			// FCsFpsBlendSpace1D
-			if (StructProperty->Struct == FCsFpsBlendSpace1D::StaticStruct())
-			{ CheckEnumStructProperty<FCsFpsBlendSpace1D>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsFpvBlendSpace1D
+			if (StructProperty->Struct == FCsFpvBlendSpace1D::StaticStruct())
+			{ CheckEnumStructProperty<FCsFpvBlendSpace1D>(StructProperty, InObject, StructName, nullptr); continue; }
 			// FCsBlendSpace
 			if (StructProperty->Struct == FCsBlendSpace::StaticStruct())
 			{ CheckEnumStructProperty<FCsBlendSpace>(StructProperty, InObject, StructName, nullptr); continue; }
-			// FCsFpsBlendSpace
-			if (StructProperty->Struct == FCsFpsBlendSpace::StaticStruct())
-			{ CheckEnumStructProperty<FCsFpsBlendSpace>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsFpvBlendSpace
+			if (StructProperty->Struct == FCsFpvBlendSpace::StaticStruct())
+			{ CheckEnumStructProperty<FCsFpvBlendSpace>(StructProperty, InObject, StructName, nullptr); continue; }
 			// FCsBlueprint
 			if (StructProperty->Struct == FCsBlueprint::StaticStruct())
 			{ CheckEnumStructProperty<FCsBlueprint>(StructProperty, InObject, StructName, nullptr); continue; }
@@ -8347,15 +8615,15 @@ void UCsCommon_Load::CheckObjectWithEnum(const FString &ObjectName, void* InObje
 				// FCsAnimSequence
 				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
 				{ CheckEnumArrayStructProperty<FCsAnimSequence>(ArrayProperty, InObject, StructName); continue; }
-				// FCsFpsAnimSequence
-				if (InnerStructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
-				{ CheckEnumArrayStructProperty<FCsFpsAnimSequence>(ArrayProperty, InObject, StructName); continue; }
+				// FCsFpvAnimSequence
+				if (InnerStructProperty->Struct == FCsFpvAnimSequence::StaticStruct())
+				{ CheckEnumArrayStructProperty<FCsFpvAnimSequence>(ArrayProperty, InObject, StructName); continue; }
 				// FCsAnimMontage
 				if (InnerStructProperty->Struct == FCsAnimMontage::StaticStruct())
 				{ CheckEnumArrayStructProperty<FCsAnimMontage>(ArrayProperty, InObject, StructName); continue; }
-				// FCsFpsAnimMontage
-				if (InnerStructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
-				{ CheckEnumArrayStructProperty<FCsFpsAnimMontage>(ArrayProperty, InObject, StructName); continue; }
+				// FCsFpvAnimMontage
+				if (InnerStructProperty->Struct == FCsFpvAnimMontage::StaticStruct())
+				{ CheckEnumArrayStructProperty<FCsFpvAnimMontage>(ArrayProperty, InObject, StructName); continue; }
 
 				if (Internal)
 				{
@@ -8371,19 +8639,19 @@ void UCsCommon_Load::CheckObjectWithEnum(const FString &ObjectName, void* InObje
 				if (ByteProperty->IsEnum())
 				{
 					// ECollisionChannel
-					if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CollisionChannel))
+					if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CollisionChannel))
 					{ CheckEnumByteProperty<ECollisionChannel>(ByteProperty, InObject, MemberName, ECollisionChannel::ECC_MAX); continue; }
 					// ECsLoadFlags_Editor
-					if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsLoadFlags_Editor))
+					if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsLoadFlags_Editor))
 					{ CheckEnumByteProperty<ECsLoadFlags_Editor::Type>(ByteProperty, InObject, MemberName, ECsLoadFlags_Editor::ECsLoadFlags_Editor_MAX); continue; }
 					// ECsFxPriority
-					if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsFxPriority))
+					if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsFxPriority))
 					{ CheckEnumByteProperty<ECsFxPriority::Type>(ByteProperty, InObject, MemberName, ECsFxPriority::ECsFxPriority_MAX); continue; }
 					// ECsSoundPriority
-					if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsSoundPriority))
+					if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsSoundPriority))
 					{ CheckEnumByteProperty<ECsSoundPriority::Type>(ByteProperty, InObject, MemberName, ECsSoundPriority::ECsSoundPriority_MAX); continue; }
 					// ECsInteractiveCollision
-					if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCachedString::Str::CsInteractiveCollision))
+					if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CsInteractiveCollision))
 					{
 						if (ByteProperty->ArrayDim == CS_SINGLETON)
 						{ CheckEnumByteProperty<ECsInteractiveCollision::Type>(ByteProperty, InObject, MemberName, ECsInteractiveCollision::ECsInteractiveCollision_MAX); continue; }
@@ -8404,13 +8672,13 @@ void UCsCommon_Load::CheckObjectWithEnum(const FString &ObjectName, void* InObje
 				if (int32* Member = IntProperty->ContainerPtrToValuePtr<int32>(InObject))
 				{
 										//    TEXT("BitmaskEnum")
-					if (Property->HasMetaData(*(ECsCommonLoadCachedString::Str::BitmaskEnum)))
+					if (Property->HasMetaData(*(ECsCommonLoadCached::Str::BitmaskEnum)))
 					{
 																	//    TEXT("BitmaskEnum")
-						const FString BitmaskEnum = Property->GetMetaData(*(ECsCommonLoadCachedString::Str::BitmaskEnum));
+						const FString BitmaskEnum = Property->GetMetaData(*(ECsCommonLoadCached::Str::BitmaskEnum));
 
 						// (BitmaskEnum == TEXT("ECsLoadFlags"))
-						if (BitmaskEnum == ECsCommonLoadCachedString::Str::CsLoadFlags)
+						if (BitmaskEnum == ECsCommonLoadCached::Str::CsLoadFlags)
 						{
 							const FString FullLoadFlagsMemberName = FString::Printf(TEXT("%s.%s"), *ObjectName, *MemberName);
 
@@ -8882,10 +9150,10 @@ void UCsCommon_Load::SetObjectMembers(void* FromObject, void* ToObject, UClass* 
 			// FCsAnimSequence
 			if (StructProperty->Struct == FCsAnimSequence::StaticStruct())
 				SetMemberProperty<FCsAnimSequence>(ToObject, Property, MemberValues[Index]);
-			// FCsFpsAnimSequence
+			// FCsFpvAnimSequence
 			else
-			if (StructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
-				SetMemberProperty<FCsFpsAnimSequence>(ToObject, Property, MemberValues[Index]);
+			if (StructProperty->Struct == FCsFpvAnimSequence::StaticStruct())
+				SetMemberProperty<FCsFpvAnimSequence>(ToObject, Property, MemberValues[Index]);
 			// FCsAnimMontage
 			else
 			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
@@ -8893,26 +9161,26 @@ void UCsCommon_Load::SetObjectMembers(void* FromObject, void* ToObject, UClass* 
 				if (StructProperty->ArrayDim == CS_SINGLETON)
 					SetMemberProperty<FCsAnimMontage>(ToObject, Property, MemberValues[Index]);
 			}
-			// FCsFpsAnimMontage
+			// FCsFpvAnimMontage
 			else
-			if (StructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
-				SetMemberProperty<FCsFpsAnimMontage>(ToObject, Property, MemberValues[Index]);
+			if (StructProperty->Struct == FCsFpvAnimMontage::StaticStruct())
+				SetMemberProperty<FCsFpvAnimMontage>(ToObject, Property, MemberValues[Index]);
 			// FCsBlendSpace
 			else
 			if (StructProperty->Struct == FCsBlendSpace::StaticStruct())
 				SetMemberProperty<FCsBlendSpace>(ToObject, Property, MemberValues[Index]);
-			// FCsFpsBlendSpace
+			// FCsFpvBlendSpace
 			else
-			if (StructProperty->Struct == FCsFpsBlendSpace::StaticStruct())
-				SetMemberProperty<FCsFpsBlendSpace>(ToObject, Property, MemberValues[Index]);
+			if (StructProperty->Struct == FCsFpvBlendSpace::StaticStruct())
+				SetMemberProperty<FCsFpvBlendSpace>(ToObject, Property, MemberValues[Index]);
 			// FCsAnimBlueprint
 			else
 			if (StructProperty->Struct == FCsAnimBlueprint::StaticStruct())
 				SetMemberProperty<FCsAnimBlueprint>(ToObject, Property, MemberValues[Index]);
-			// FCsFpsAnimBlueprint
+			// FCsFpvAnimBlueprint
 			else
-			if (StructProperty->Struct == FCsFpsAnimBlueprint::StaticStruct())
-				SetMemberProperty<FCsFpsAnimBlueprint>(ToObject, Property, MemberValues[Index]);
+			if (StructProperty->Struct == FCsFpvAnimBlueprint::StaticStruct())
+				SetMemberProperty<FCsFpvAnimBlueprint>(ToObject, Property, MemberValues[Index]);
 			// FCsSoundElement
 			else
 			if (StructProperty->Struct == FCsSoundElement::StaticStruct())
@@ -9308,9 +9576,9 @@ void UCsCommon_Load::GetObjectMembers(void* InObject, UClass* const &InClass, co
 			// FCsAnimSequence
 			if (StructProperty->Struct == FCsAnimSequence::StaticStruct())
 				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<FCsAnimSequence>(InObject));
-			// FCsFpsAnimSequence
-			if (StructProperty->Struct == FCsFpsAnimSequence::StaticStruct())
-				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<FCsFpsAnimSequence>(InObject));
+			// FCsFpvAnimSequence
+			if (StructProperty->Struct == FCsFpvAnimSequence::StaticStruct())
+				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<FCsFpvAnimSequence>(InObject));
 			// FCsAnimMontage
 			else
 			if (StructProperty->Struct == FCsAnimMontage::StaticStruct())
@@ -9318,26 +9586,26 @@ void UCsCommon_Load::GetObjectMembers(void* InObject, UClass* const &InClass, co
 				if (StructProperty->ArrayDim == CS_SINGLETON)
 					OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<FCsAnimMontage>(InObject));
 			}
-			// FCsFpsAnimMontage
+			// FCsFpvAnimMontage
 			else
-			if (StructProperty->Struct == FCsFpsAnimMontage::StaticStruct())
-				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<FCsFpsAnimMontage>(InObject));
+			if (StructProperty->Struct == FCsFpvAnimMontage::StaticStruct())
+				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<FCsFpvAnimMontage>(InObject));
 			// FCsBlendSpace
 			else
 			if (StructProperty->Struct == FCsBlendSpace::StaticStruct())
 				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<FCsBlendSpace>(InObject));
-			// FCsFpsBlendSpace
+			// FCsFpvBlendSpace
 			else
-			if (StructProperty->Struct == FCsFpsBlendSpace::StaticStruct())
-				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<FCsFpsBlendSpace>(InObject));
+			if (StructProperty->Struct == FCsFpvBlendSpace::StaticStruct())
+				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<FCsFpvBlendSpace>(InObject));
 			// FCsAnimBlueprint
 			else
 			if (StructProperty->Struct == FCsAnimBlueprint::StaticStruct())
 				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<FCsAnimBlueprint>(InObject));
-			// FCsFpsAnimBlueprint
+			// FCsFpvAnimBlueprint
 			else
-			if (StructProperty->Struct == FCsFpsAnimBlueprint::StaticStruct())
-				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<FCsFpsAnimBlueprint>(InObject));
+			if (StructProperty->Struct == FCsFpvAnimBlueprint::StaticStruct())
+				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<FCsFpvAnimBlueprint>(InObject));
 			// FCsSoundElement
 			else
 			if (StructProperty->Struct == FCsSoundElement::StaticStruct())

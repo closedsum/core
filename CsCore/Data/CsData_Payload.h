@@ -33,7 +33,7 @@ struct FCsPayloadAddEntry
 	bool Add;
 
 	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
-	FString LoadAssetsType;
+	FECsLoadAssetsType LoadAssetsType;
 
 	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
 	FName ShortCode;
@@ -57,7 +57,7 @@ struct FCsPayloadRemoveEntry
 	bool Remove;
 
 	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
-	FString LoadAssetsType;
+	FECsLoadAssetsType LoadAssetsType;
 
 	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
 	FName ShortCode;
@@ -105,8 +105,8 @@ class CSCORE_API ACsData_Payload : public ACsData
 
 #if WITH_EDITOR
 
-	bool PerformFindEntry(const FName &InShortCode, TArray<FCsPayload*> &OutPayloads, TArray<TCsLoadAssetsType> &OutLoadAssetsTypes, TArray<int32> &OutIndices);
-	bool PerformAddEntry(const FName &InShortCode, const TCsLoadAssetsType &LoadAssetsType, const TEnumAsByte<ECsLoadFlags_Editor::Type> &LoadFlags, FString &OutMessage, FString &OutOutput);
+	bool PerformFindEntry(const FName &InShortCode, TArray<FCsPayload*> &OutPayloads, TArray<FECsLoadAssetsType> &OutLoadAssetsTypes, TArray<int32> &OutIndices);
+	bool PerformAddEntry(const FName &InShortCode, const FECsLoadAssetsType &LoadAssetsType, const TEnumAsByte<ECsLoadFlags_Editor::Type> &LoadFlags, FString &OutMessage, FString &OutOutput);
 
 	virtual bool Editor_IsValid(class ACsDataMapping* DataMapping);
 

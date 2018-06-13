@@ -15,6 +15,31 @@
 // Components
 #include "Components/CsSkeletalMeshComponent.h"
 
+// Enums
+#pragma region
+
+namespace ECsFpsWeaponMultiValueMember
+{
+	// Spread
+	CSCORE_API const FECsWeaponMultiValueMember MovingSpreadBonus = EMCsWeaponMultiValueMember::Get().Create(TEXT("MovingSpreadBonus"));
+	CSCORE_API const FECsWeaponMultiValueMember JumpSpreadImpulse = EMCsWeaponMultiValueMember::Get().Create(TEXT("JumpSpreadImpulse"));
+	CSCORE_API const FECsWeaponMultiValueMember ScopeAccuracyBonus = EMCsWeaponMultiValueMember::Get().Create(TEXT("ScopeAccuracyBonus"));
+	// Scope
+	CSCORE_API const FECsWeaponMultiValueMember DoScopePower = EMCsWeaponMultiValueMember::Get().Create(TEXT("DoScopePower"));
+	CSCORE_API const FECsWeaponMultiValueMember MaxScopePower = EMCsWeaponMultiValueMember::Get().Create(TEXT("MaxScopePower"));
+	CSCORE_API const FECsWeaponMultiValueMember ScopePowerGrowthRate = EMCsWeaponMultiValueMember::Get().Create(TEXT("ScopePowerGrowthRate"));
+	CSCORE_API const FECsWeaponMultiValueMember CurrentScopePower = EMCsWeaponMultiValueMember::Get().Create(TEXT("CurrentScopePower"));
+	CSCORE_API const FECsWeaponMultiValueMember LastScopePower = EMCsWeaponMultiValueMember::Get().Create(TEXT("LastScopePower"));
+	// Movement
+	CSCORE_API const FECsWeaponMultiValueMember DoSlowWhileFiring = EMCsWeaponMultiValueMember::Get().Create(TEXT("DoSlowWhileFiring"));
+	CSCORE_API const FECsWeaponMultiValueMember SlowWhileFiringRate = EMCsWeaponMultiValueMember::Get().Create(TEXT("SlowWhileFiringRate"));
+	CSCORE_API const FECsWeaponMultiValueMember DoKickback = EMCsWeaponMultiValueMember::Get().Create(TEXT("DoKickback"));
+	CSCORE_API const FECsWeaponMultiValueMember DoKickbackOnGround = EMCsWeaponMultiValueMember::Get().Create(TEXT("DoKickbackOnGround"));
+	CSCORE_API const FECsWeaponMultiValueMember KickbackStrength = EMCsWeaponMultiValueMember::Get().Create(TEXT("KickbackStrength"));
+}
+
+#pragma endregion Enums
+
 ACsFpsWeapon::ACsFpsWeapon(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -62,70 +87,53 @@ void ACsFpsWeapon::InitMultiValueMembers()
 {
 	Super::InitMultiValueMembers();
 
-	const uint8 SIZE = (uint8)WeaponFireMode_MAX;
-	
 	// Spread
 	{
-		MovingSpreadBonus.Init(SIZE);
+		InitMultiRefValueMember<float>(MovingSpreadBonus, 0.0f);
 		MovingSpreadBonus.GetDelegate.BindUObject(this, &ACsFpsWeapon::GetMovingSpreadBonus);
-		JumpSpreadImpulse.Init(SIZE);
+		InitMultiRefValueMember<float>(JumpSpreadImpulse, 0.0f);
 		JumpSpreadImpulse.GetDelegate.BindUObject(this, &ACsFpsWeapon::GetJumpSpreadImpulse);
-		ScopeAccuracyBonus.Init(SIZE);
+		InitMultiRefValueMember<float>(ScopeAccuracyBonus, 0.0f);
 		ScopeAccuracyBonus.GetDelegate.BindUObject(this, &ACsFpsWeapon::GetScopeAccuracyBonus);
 	}
 	// Scope
 	{
-		DoScopePower.Init(SIZE);
-		MaxScopePower.Init(SIZE);
+		InitMultiRefValueMember<bool>(DoScopePower, false);
+		InitMultiRefValueMember<float>(MaxScopePower, 0.0f);
 		MaxScopePower.GetDelegate.BindUObject(this, &ACsFpsWeapon::GetMaxScopePower);
-		ScopePowerGrowthRate.Init(SIZE);
+		InitMultiRefValueMember<float>(ScopePowerGrowthRate, 0.0f);
 		ScopePowerGrowthRate.GetDelegate.BindUObject(this, &ACsFpsWeapon::GetScopePowerGrowthRate);
-		CurrentScopePower.Init(SIZE);
-		LastScopePower.Init(SIZE);
+		InitMultiValueMember<float>(CurrentScopePower, 0.0f);
+		InitMultiValueMember<float>(LastScopePower, 0.0f);
 	}
 	// Movement
 	{
-		DoSlowWhileFiring.Init(SIZE);
-		SlowWhileFiringRate.Init(SIZE);
-		DoKickback.Init(SIZE);
-		DoKickbackOnGround.Init(SIZE);
-		KickbackStrength.Init(SIZE);
+		InitMultiRefValueMember<bool>(DoSlowWhileFiring, false);
+		InitMultiRefValueMember<float>(SlowWhileFiringRate, 0.0f);
+		InitMultiRefValueMember<bool>(DoKickback, false);
+		InitMultiRefValueMember<bool>(DoKickbackOnGround, false);
+		InitMultiRefValueMember<float>(KickbackStrength, 0.0f);
 	}
 }
 
 	// Set
 #pragma region
 
-void ACsFpsWeapon::SetMemberValue_float(const uint8 &Member, const int32 &Index, const float &Value)
+void ACsFpsWeapon::SetMemberValue_float(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode, const float &Value)
 {
-	if (Member < ECS_WEAPON_CACHE_MULTI_VALUE_MEMBER_MAX)
+	if (Member.Value < ECsFpsWeaponMultiValueMember::MovingSpreadBonus.Value)
 	{
-		SetMemberValue_float((TCsWeaponCacheMultiValueMember)Member, Index, Value);
+		Super::SetMemberValue_float(Member, FireMode, Value);
 	}
 	else
 	{
-		const TCsFpsWeaponCacheMultiValueMember MemberType = (TCsFpsWeaponCacheMultiValueMember)Member;
-
 		// Firing
 		{
 			// Scope
-			if (MemberType == ECsFpsWeaponCacheMultiValueMember::CurrentScopePower) { CurrentScopePower.Set(Index, Value); }
-			if (MemberType == ECsFpsWeaponCacheMultiValueMember::LastScopePower) { CurrentScopePower.Set(Index, Value); }
+			if (Member == ECsFpsWeaponMultiValueMember::CurrentScopePower) { CurrentScopePower.Set(FireMode, Value); }
+			if (Member == ECsFpsWeaponMultiValueMember::LastScopePower) { CurrentScopePower.Set(FireMode, Value); }
 		}
 	}
-}
-
-void ACsFpsWeapon::SetMemberValue_Script_float(const FString &MemberName, const int32 &Index, const float &Value)
-{
-#if WITH_EDITOR
-	uint8 Member = (uint8)ECsWeaponCacheMultiValueMember::ToType(MemberName);
-
-	if (Member == ECS_WEAPON_CACHE_MULTI_VALUE_MEMBER_MAX)
-	{
-		Member = ECsFpsWeaponCacheMultiValueMember::ToType(MemberName);
-	}
-	SetMemberValue_float(Member, Index, Value);
-#endif // #if WITH_EDITOR
 }
 
 void ACsFpsWeapon::SetMultiValueMembers()
@@ -172,87 +180,55 @@ void ACsFpsWeapon::SetMultiValueMembers()
 	// Get
 #pragma region
 
-bool ACsFpsWeapon::GetMemberValue_bool(const uint8 &Member, const int32 &Index)
+bool ACsFpsWeapon::GetMemberValue_bool(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode)
 {
-	if (Member < ECS_WEAPON_CACHE_MULTI_VALUE_MEMBER_MAX)
+	if (Member.Value < ECsFpsWeaponMultiValueMember::MovingSpreadBonus.Value)
 	{
-		return GetMemberValue_bool((TCsWeaponCacheMultiValueMember)Member, Index);
+		return GetMemberValue_bool(Member, FireMode);
 	}
 	else
 	{
-		const TCsFpsWeaponCacheMultiValueMember MemberType = (TCsFpsWeaponCacheMultiValueMember)Member;
-
 		// Firing
 		{
 			// Scope
-			if (MemberType == ECsFpsWeaponCacheMultiValueMember::DoScopePower) { return DoScopePower.Get(Index); }
+			if (Member == ECsFpsWeaponMultiValueMember::DoScopePower) { return DoScopePower[FireMode]; }
 		}
 		// Movement
 		{
-			if (MemberType == ECsFpsWeaponCacheMultiValueMember::DoSlowWhileFiring) { return DoSlowWhileFiring.Get(Index); }
-			if (MemberType == ECsFpsWeaponCacheMultiValueMember::DoKickback) { return DoKickback.Get(Index); }
-			if (MemberType == ECsFpsWeaponCacheMultiValueMember::DoKickbackOnGround) { return DoKickbackOnGround.Get(Index); }
+			if (Member == ECsFpsWeaponMultiValueMember::DoSlowWhileFiring) { return DoSlowWhileFiring[FireMode]; }
+			if (Member == ECsFpsWeaponMultiValueMember::DoKickback) { return DoKickback[FireMode]; }
+			if (Member == ECsFpsWeaponMultiValueMember::DoKickbackOnGround) { return DoKickbackOnGround[FireMode]; }
 		}
 	}
 	return false;
 }
 
-bool ACsFpsWeapon::GetMemberValue_Script_bool(const FString &MemberName, const int32 &Index)
+float ACsFpsWeapon::GetMemberValue_float(const FECsWeaponMultiValueMember &Member, const FECsWeaponFireMode &FireMode)
 {
-#if WITH_EDITOR
-	uint8 Member = (uint8)ECsWeaponCacheMultiValueMember::ToType(MemberName);
-
-	if (Member == ECS_WEAPON_CACHE_MULTI_VALUE_MEMBER_MAX)
+	if (Member.Value < ECsFpsWeaponMultiValueMember::MovingSpreadBonus.Value)
 	{
-		Member = ECsFpsWeaponCacheMultiValueMember::ToType(MemberName);
-	}
-	return GetMemberValue_bool(Member, Index);
-#endif // #if WITH_EDITOR
-	return false;
-}
-
-float ACsFpsWeapon::GetMemberValue_float(const uint8 &Member, const int32 &Index)
-{
-	if (Member < ECS_WEAPON_CACHE_MULTI_VALUE_MEMBER_MAX)
-	{
-		return GetMemberValue_float((TCsWeaponCacheMultiValueMember)Member, Index);
+		return GetMemberValue_float(Member, FireMode);
 	}
 	else
 	{
-		const TCsFpsWeaponCacheMultiValueMember MemberType = (TCsFpsWeaponCacheMultiValueMember)Member;
-
 		// Firing
 		{
 			// Spread
-			if (MemberType == ECsFpsWeaponCacheMultiValueMember::MovingSpreadBonus) { return MovingSpreadBonus.Get(Index); }
-			if (MemberType == ECsFpsWeaponCacheMultiValueMember::JumpSpreadImpulse) { return JumpSpreadImpulse.Get(Index); }
-			if (MemberType == ECsFpsWeaponCacheMultiValueMember::ScopeAccuracyBonus) { return ScopeAccuracyBonus.Get(Index); }
+			if (Member == ECsFpsWeaponMultiValueMember::MovingSpreadBonus) { return MovingSpreadBonus[FireMode]; }
+			if (Member == ECsFpsWeaponMultiValueMember::JumpSpreadImpulse) { return JumpSpreadImpulse[FireMode]; }
+			if (Member == ECsFpsWeaponMultiValueMember::ScopeAccuracyBonus) { return ScopeAccuracyBonus[FireMode]; }
 			// Scope
-			if (MemberType == ECsFpsWeaponCacheMultiValueMember::MaxScopePower) { return MaxScopePower.Get(Index); }
-			if (MemberType == ECsFpsWeaponCacheMultiValueMember::ScopePowerGrowthRate) { return ScopePowerGrowthRate.Get(Index); }
-			if (MemberType == ECsFpsWeaponCacheMultiValueMember::CurrentScopePower) { return CurrentScopePower.Get(Index); }
-			if (MemberType == ECsFpsWeaponCacheMultiValueMember::LastScopePower) { return LastScopePower.Get(Index); }
+			if (Member == ECsFpsWeaponMultiValueMember::MaxScopePower) { return MaxScopePower[FireMode]; }
+			if (Member == ECsFpsWeaponMultiValueMember::ScopePowerGrowthRate) { return ScopePowerGrowthRate[FireMode]; }
+			if (Member == ECsFpsWeaponMultiValueMember::CurrentScopePower) { return CurrentScopePower[FireMode]; }
+			if (Member == ECsFpsWeaponMultiValueMember::LastScopePower) { return LastScopePower[FireMode]; }
 		}
 		// Movement
 		{
-			if (MemberType == ECsFpsWeaponCacheMultiValueMember::SlowWhileFiringRate) { return SlowWhileFiringRate.Get(Index); }
-			if (MemberType == ECsFpsWeaponCacheMultiValueMember::KickbackStrength) { return KickbackStrength.Get(Index); }
+			if (Member == ECsFpsWeaponMultiValueMember::SlowWhileFiringRate) { return SlowWhileFiringRate[FireMode]; }
+			if (Member == ECsFpsWeaponMultiValueMember::KickbackStrength) { return KickbackStrength[FireMode]; }
 		}
 	}
-	return 0.0f;
-}
-
-float ACsFpsWeapon::GetMemberValue_Script_float(const FString &MemberName, const int32 &Index)
-{
-#if WITH_EDITOR
-	uint8 Member = (uint8)ECsWeaponCacheMultiValueMember::ToType(MemberName);
-
-	if (Member == ECS_WEAPON_CACHE_MULTI_VALUE_MEMBER_MAX)
-	{
-		Member = ECsFpsWeaponCacheMultiValueMember::ToType(MemberName);
-	}
-	return GetMemberValue_float(Member, Index);
-#endif // #if WITH_EDITOR
 	return 0.0f;
 }
 
@@ -392,7 +368,7 @@ void ACsFpsWeapon::OnTick(const float &DeltaSeconds)
 		{
 			UE_LOG(LogCs, Warning, TEXT("ACsFpsWeapon::OnTick (%s): Using Override Function."), *GetName());
 		}
-		Override_OnTick_ScriptEvent.Broadcast(WeaponIndex, DeltaSeconds);
+		Override_OnTick_ScriptEvent.Broadcast(WeaponSlot, DeltaSeconds);
 		return;
 	}
 #endif // #if WITH_EDITOR
@@ -411,35 +387,37 @@ void ACsFpsWeapon::OnTick(const float &DeltaSeconds)
 		ACsPawn* MyPawn = GetMyPawn();
 
 		// Spread
-		for (uint8 I = 0; I < WEAPON_FIRE_MODE_MAX; ++I)
-		{
-			const TCsWeaponFireMode FireMode = (TCsWeaponFireMode)I;
+		const int32& Count = EMCsWeaponFireMode::Get().Num();
 
-			if (DoSpread.Get(I))
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const FECsWeaponFireMode& FireMode = EMCsWeaponFireMode::Get().GetEnumAt(I);
+
+			if (DoSpread[FireMode])
 			{
 				// Jumping
 				if (!Last_OwnerIsFalling && MyPawn->GetCharacterMovement()->IsFalling())
 				{
-					CurrentBaseSpread.Add(CS_WEAPON_DATA_VALUE, JumpSpreadImpulse.Get(I));
+					CurrentBaseSpread.Add(FireMode, JumpSpreadImpulse[FireMode]);
 				}
 				Last_OwnerIsFalling = MyPawn->GetCharacterMovement()->IsFalling();
 				// Firing
-				if (TimeSeconds - LastSpreadFireTime.Get(I) > FiringSpreadRecoveryDelay.Get(I))
+				if (TimeSeconds - LastSpreadFireTime[FireMode] > FiringSpreadRecoveryDelay[FireMode])
 				{
-					CurrentBaseSpread.Set(CS_WEAPON_DATA_VALUE, FMath::Max(CurrentBaseSpread.Get(CS_WEAPON_DATA_VALUE) - (SpreadRecoveryRate.GetEX(FireMode) * DeltaSeconds), MinSpread.GetEX(FireMode)));
+					CurrentBaseSpread.Set(FireMode, FMath::Max(CurrentBaseSpread[FireMode] - (SpreadRecoveryRate.GetEX(FireMode) * DeltaSeconds), MinSpread.GetEX(FireMode)));
 				}
 				// Moving
 				const float MovingThreshold = 0.5f;
 				const bool IsMoving			= MyPawn->CurrentSpeed > MovingThreshold;
-				float Bonus					= IsMoving ? MovingSpreadBonus.Get(I) : 0.f;
-				Bonus					   -= IsScopeActive ? ScopeAccuracyBonus.Get(I) : 0.f;
-				CurrentSpread.Set(CS_WEAPON_DATA_VALUE, FMath::Clamp(CurrentBaseSpread.Get(CS_WEAPON_DATA_VALUE) + Bonus, 0.f, MaxSpread.Get(I)));
+				float Bonus					= IsMoving ? MovingSpreadBonus[FireMode]: 0.f;
+				Bonus					   -= IsScopeActive ? ScopeAccuracyBonus[FireMode]: 0.f;
+				CurrentSpread.Set(FireMode, FMath::Clamp(CurrentBaseSpread[FireMode] + Bonus, 0.f, MaxSpread[FireMode]));
 			}
 		}
 	}
 
 #if WITH_EDITOR 
-	OnTick_ScriptEvent.Broadcast(WeaponIndex, DeltaSeconds);
+	OnTick_ScriptEvent.Broadcast(WeaponSlot, DeltaSeconds);
 #endif // #if WITH_EDITOR
 
 	OnTick_HandleStates();
@@ -687,18 +665,18 @@ USkeletalMeshComponent* ACsFpsWeapon::GetCurrentMesh()
 // Firing
 #pragma region
 
-FVector ACsFpsWeapon::GetMuzzleLocation(const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode)
+FVector ACsFpsWeapon::GetMuzzleLocation(const TCsViewType &ViewType, const FECsWeaponFireMode &FireMode)
 {
 	return GetMyData_Weapon<ACsData_ProjectileWeapon>()->GetMuzzleLocation(GetMesh(ViewType), ViewType, FireMode, CurrentProjectilePerShotIndex.Get(FireMode));
 }
 
-float ACsFpsWeapon::GetMovingSpreadBonus(const TCsWeaponFireMode &FireMode) { return MovingSpreadBonus.Get(FireMode); }
-float ACsFpsWeapon::GetJumpSpreadImpulse(const TCsWeaponFireMode &FireMode) { return JumpSpreadImpulse.Get(FireMode); }
-float ACsFpsWeapon::GetScopeAccuracyBonus(const TCsWeaponFireMode &FireMode) { return ScopeAccuracyBonus.Get(FireMode); }
-float ACsFpsWeapon::GetMaxScopePower(const TCsWeaponFireMode &FireMode) { return MaxScopePower.Get(FireMode); }
-float ACsFpsWeapon::GetScopePowerGrowthRate(const TCsWeaponFireMode &FireMode) { return ScopePowerGrowthRate.Get(FireMode); }
+float ACsFpsWeapon::GetMovingSpreadBonus(const FECsWeaponFireMode &FireMode) { return MovingSpreadBonus.Get(FireMode); }
+float ACsFpsWeapon::GetJumpSpreadImpulse(const FECsWeaponFireMode &FireMode) { return JumpSpreadImpulse.Get(FireMode); }
+float ACsFpsWeapon::GetScopeAccuracyBonus(const FECsWeaponFireMode &FireMode) { return ScopeAccuracyBonus.Get(FireMode); }
+float ACsFpsWeapon::GetMaxScopePower(const FECsWeaponFireMode &FireMode) { return MaxScopePower.Get(FireMode); }
+float ACsFpsWeapon::GetScopePowerGrowthRate(const FECsWeaponFireMode &FireMode) { return ScopePowerGrowthRate.Get(FireMode); }
 
-void ACsFpsWeapon::FireProjectile_Internal(const TCsWeaponFireMode &FireMode, FCsProjectileFirePayload* Payload)
+void ACsFpsWeapon::FireProjectile_Internal(const FECsWeaponFireMode &FireMode, FCsProjectileFirePayload* Payload)
 {
 	ACsPawn* MyPawn = GetMyPawn();
 

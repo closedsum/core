@@ -16,7 +16,7 @@ class CSCORE_API ACsData_UI : public ACsData
 // Widgets
 #pragma region
 
-	virtual class UBlueprintGeneratedClass* GetWidget(const TCsWidgetType& WidgetType);
+	virtual class UBlueprintGeneratedClass* GetWidget(const FECsWidgetType& WidgetType);
 
 #pragma endregion Widgets
 };

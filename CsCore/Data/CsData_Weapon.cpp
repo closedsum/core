@@ -12,8 +12,8 @@ ACsData_Weapon::ACsData_Weapon(const FObjectInitializer& ObjectInitializer)
 // Stats
 #pragma region
 
-const FName& ACsData_Weapon::GetItemShortCode() { return ECsCachedReferences::Ref::Name; }
-const bool& ACsData_Weapon::UseInventory() { return ECsCachedReferences::Ref::False; }
+const FName& ACsData_Weapon::GetItemShortCode() { return ECsCached::Ref::Name; }
+const bool& ACsData_Weapon::UseInventory() { return ECsCached::Ref::False; }
 
 #pragma endregion Stats
 
@@ -21,6 +21,7 @@ const bool& ACsData_Weapon::UseInventory() { return ECsCachedReferences::Ref::Fa
 #pragma region
 
 USkeletalMesh* ACsData_Weapon::GetMesh(const TCsViewType &ViewType, const bool &IsLow /*=false*/){ return nullptr; }
+USkeletalMesh* ACsData_Weapon::GetMesh(const TEnumAsByte<ECsViewType::Type> &ViewType, const bool &IsLow /*=false*/) { return GetMesh((TCsViewType)ViewType, IsLow); }
 USkeletalMesh* ACsData_Weapon::GetMesh() { return nullptr; }
 
 void ACsData_Weapon::SetMesh(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const bool &IsLow /*=false*/)

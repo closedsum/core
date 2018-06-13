@@ -63,7 +63,7 @@
                 Parse(File.ReadAllText(path));
         }
 
-        public string AddressAsArg()
+        public string GetAddressAsArg()
         {
             return "'0x" + Address + "'";
         }

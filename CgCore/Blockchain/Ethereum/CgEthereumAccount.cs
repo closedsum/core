@@ -18,6 +18,9 @@
         public string Address;
         public string PassPhrase;
 
+        private string AddressAsHex;
+        private string AddressAsArg;
+
         #endregion // Data Members
 
         public CgEthereumAccount() : base(){}
@@ -27,6 +30,9 @@
             Nickname   = nickname;
             Address    = address;
             PassPhrase = passphrase;
+
+            AddressAsHex = "0x" + Address;
+            AddressAsArg = "'" + AddressAsHex + "'";
         }
 
         public void CreateUnlockArguments(out CgBlockchainCommandArgument[] args)
@@ -54,9 +60,14 @@
                 Parse(File.ReadAllText(path));
         }
 
-        public string AddressAsArg()
+        public string GetAddressAsHex()
         {
-            return "'0x" + Address + "'";
+            return AddressAsHex;
+        }
+
+        public string GetAddressAsArg()
+        {
+            return AddressAsArg;
         }
     }
 }

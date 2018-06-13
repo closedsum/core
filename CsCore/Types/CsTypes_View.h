@@ -22,7 +22,7 @@ namespace ECsViewType
 
 namespace ECsViewType
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -113,7 +113,7 @@ namespace ECsVisibility
 
 namespace ECsVisibility
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
@@ -254,7 +254,7 @@ struct FCsFpsDrawDistance
 			return Distance1P;
 		if (ViewType == ECsViewType::ThirdPerson)
 			return Distance3P;
-		return ECsCachedReferences::Ref::Float;
+		return ECsCached::Ref::Float;
 	}
 
 	const float& GetSquared(const TCsViewType &ViewType) const
@@ -263,7 +263,7 @@ struct FCsFpsDrawDistance
 			return Distance1PSq;
 		if (ViewType == ECsViewType::ThirdPerson)
 			return Distance3PSq;
-		return ECsCachedReferences::Ref::Float;
+		return ECsCached::Ref::Float;
 	}
 
 	FString ToString() const

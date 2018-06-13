@@ -233,17 +233,13 @@ class CSCORE_API ACsWidgetActor : public ACsPooledActor
 	virtual void PostInitializeComponents() override;
 	virtual void Tick(float DeltaSeconds) override;
 
-	TCsWidgetActorType Type;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widget")
-	uint8 Type_Script;
-
-	void SetType(const TCsWidgetActorType &InType);
+	FECsWidgetActorType Type;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widget")
 	FCsWidgetActorCache Cache;
 
-	void Init(const int32 &Index, const TCsWidgetActorType &InType);
+	void Init(const int32 &Index, const FECsWidgetActorType &InType);
 
 // Allocate / DeAllocate
 #pragma region

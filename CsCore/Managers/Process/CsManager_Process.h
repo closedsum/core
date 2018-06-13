@@ -10,8 +10,12 @@ class CsManager_Process : public TCsManagerPooledObjects<FECsProcess, UCsProcess
 public:
 	~CsManager_Process();
 
+	virtual void DeconstructObject(UCsProcess* p) override;
 	virtual UCsProcess* ConstructObject(const FECsProcess& e) override;
+	virtual FString GetObjectName(UCsProcess* p) override;
 	virtual const FString& EnumTypeToString(const FECsProcess &e) override;
+	virtual const FString& EnumTypeToString(const int32 &index) override;
+	virtual void LogTransaction_Internal(const FString& outLog) override;
 };
 
 UCLASS(transient)
@@ -37,13 +41,16 @@ public:
 
 protected:
 
-	void Initialize();
-	void CleanUp();
+	virtual void Initialize();
+	virtual void CleanUp();
 
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Manager Process")
 	void Clear();
+
+	virtual UCsProcess* ConstructObject(const FECsProcess &Type);
+
 	UFUNCTION(BlueprintCallable, Category = "Manager Process")
 	void CreatePool(const FECsProcess &Type, const int32 &Size);
 	UFUNCTION(BlueprintCallable, Category = "Manager Process")
@@ -64,8 +71,8 @@ public:
 	FCsProcessPayload* AllocatePayload();
 
 	UFUNCTION(BlueprintCallable, Category = "Manager Process")
-	UCsProcess* Spawn(const FECsProcess &Type, FCsProcessPayload &Payload);
-	UCsProcess* Spawn(const FECsProcess &Type, FCsProcessPayload* Payload);
+	virtual UCsProcess* Spawn(const FECsProcess &Type, FCsProcessPayload &Payload);
+	virtual UCsProcess* Spawn(const FECsProcess &Type, FCsProcessPayload* Payload);
 
 private:
 	// Singleton data

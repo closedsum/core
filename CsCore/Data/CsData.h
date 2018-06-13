@@ -7,10 +7,6 @@
 // Macros
 #pragma region
 
-#define CS_DATA_DEFINE_TYPE(TYPE)	Type = ECsAssetType::TYPE; \
-									Type_Script = (uint8)Type; \
-									TypeAsString = (*AssetTypeToString)(Type);
-
 #define CS_DATA_DEFINE_LOAD_INTERNAL_FUNCTION_POINTERS(CLASS)	GetAssetReferencesFromObject_Internal = &CLASS::GetAssetReferencesFromObject_Internal; \
 																LoadObjectWithTAssetPtrs_Internal = &CLASS::LoadObjectWithTAssetPtrs_Internal; \
 																WriteObjectToJson_Internal = &CLASS::WriteObjectToJson_Internal; \
@@ -53,7 +49,7 @@ struct FCsDataAddToPayload
 	bool AddToPayload;
 
 	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper")
-	FString LoadAssetsType;
+	FECsLoadAssetsType LoadAssetsType;
 
 	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Helper", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	TEnumAsByte<ECsLoadFlags_Editor::Type> LoadFlags;
@@ -83,16 +79,8 @@ class CSCORE_API ACsData : public AActor
 
 	// Default
 
-	TCsAssetType Type;
-
-	CS_DECLARE_ASSET_TYPE
-	CS_DECLARE_LOAD_ASSETS_TYPE
-
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "00 Default")
-	uint8 Type_Script;
-
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "00 Default")
-	FString TypeAsString;
+	FECsAssetType Type;
 
 	/** Short Code - linked with Backend */
 	UPROPERTY(EditDefaultsOnly, Category = "00 Default")

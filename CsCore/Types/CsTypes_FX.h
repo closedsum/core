@@ -10,7 +10,7 @@
 #define CS_MAX_EMITTER_COUNT 256
 
 USTRUCT()
-struct FCsParticleSystem
+struct CSCORE_API FCsParticleSystem
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -30,7 +30,7 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(Particle_LoadFlags, ECsLoadFlags::Game);
 	}
 
-	UParticleSystem* Get() const
+	FORCEINLINE UParticleSystem* Get() const
 	{
 		return Particle_Internal;
 	}
@@ -48,39 +48,46 @@ namespace ECsFxPriority
 	};
 }
 
+typedef ECsFxPriority::Type TCsFxPriority;
+
+struct CSCORE_API EMCsFxPriority : public TCsEnumMap<ECsFxPriority::Type>
+{
+protected:
+	EMCsFxPriority() {}
+	EMCsFxPriority(const EMCsFxPriority &) = delete;
+	EMCsFxPriority(EMCsFxPriority &&) = delete;
+public:
+	~EMCsFxPriority() {}
+private:
+	static EMCsFxPriority* Instance;
+
+public:
+	static EMCsFxPriority& Get();
+};
+
 namespace ECsFxPriority
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
-
-	namespace Str
+	namespace Ref
 	{
-		const TCsString Low = TCsString(TEXT("Low"), TEXT("low"));
-		const TCsString Medium = TCsString(TEXT("Medium"), TEXT("medium"));
-		const TCsString High = TCsString(TEXT("High"), TEXT("high"));
+		extern CSCORE_API const Type Low;
+		extern CSCORE_API const Type Medium;
+		extern CSCORE_API const Type High;
+		extern CSCORE_API const Type ECsFxPriority_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
-		if (EType == Type::Low) { return Str::Low.Value; }
-		if (EType == Type::Medium) { return Str::Medium.Value; }
-		if (EType == Type::High) { return Str::High.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
+		return EMCsFxPriority::Get().ToString(EType);
 	}
 
 	FORCEINLINE Type ToType(const FString &String)
 	{
-		if (String == Str::Low) { return Type::Low; }
-		if (String == Str::Medium) { return Type::Medium; }
-		if (String == Str::High) { return Type::High; }
-		return Type::ECsFxPriority_MAX;
+		return EMCsFxPriority::Get().ToType(String);
 	}
 }
 
-#define ECS_FX_PRIORITY_MAX (uint8)ECsFxPriority::ECsFxPriority_MAX
-typedef ECsFxPriority::Type TCsFxPriority;
-
 USTRUCT(BlueprintType)
-struct FCsFxElement
+struct CSCORE_API FCsFxElement
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -130,7 +137,7 @@ public:
 		Priority = ECsFxPriority::Medium;
 	}
 
-	FCsFxElement& operator=(const FCsFxElement& B)
+	FORCEINLINE FCsFxElement& operator=(const FCsFxElement& B)
 	{
 		Particle = B.Particle;
 		Particle_LoadFlags = B.Particle_LoadFlags;
@@ -146,7 +153,7 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsFxElement& B) const
+	FORCEINLINE bool operator==(const FCsFxElement& B) const
 	{
 		return (Particle == B.Particle &&
 				Particle_LoadFlags == B.Particle_LoadFlags &&
@@ -160,23 +167,23 @@ public:
 				Particle_Internal == B.Particle_Internal);
 	}
 
-	bool operator!=(const FCsFxElement& B) const
+	FORCEINLINE bool operator!=(const FCsFxElement& B) const
 	{
 		return !(*this == B);
 	}
 	
-	void Set(class UParticleSystem* InParticle)
+	FORCEINLINE void Set(class UParticleSystem* InParticle)
 	{
 		//Particle		  = TAssetPtr<UParticleSystem>(InParticle);
 		Particle_Internal = InParticle;
 	}
 	
-	UParticleSystem* Get() const
+	FORCEINLINE UParticleSystem* Get() const
 	{
 		return Particle_Internal;
 	}
 
-	void Reset()
+	FORCEINLINE void Reset()
 	{
 		//Particle = nullptr;
 		Particle_LoadFlags = 0;
@@ -197,7 +204,7 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct FCsFpsFxElement
+struct CSCORE_API FCsFpsFxElement
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -213,7 +220,7 @@ struct FCsFpsFxElement
 		CS_SET_BLUEPRINT_BITFLAG(Effect3P.Particle_LoadFlags, ECsLoadFlags::Game3P);
 	}
 
-	FCsFxElement* Get(const TCsViewType &ViewType)
+	FORCEINLINE FCsFxElement* Get(const TCsViewType &ViewType)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return &Effect1P;
@@ -224,24 +231,24 @@ struct FCsFpsFxElement
 		return &Effect3P;
 	}
 
-	FCsFpsFxElement& operator=(const FCsFpsFxElement& B)
+	FORCEINLINE FCsFpsFxElement& operator=(const FCsFpsFxElement& B)
 	{
 		Effect1P = B.Effect1P;
 		Effect3P = B.Effect3P;
 		return *this;
 	}
 
-	bool operator==(const FCsFpsFxElement& B) const
+	FORCEINLINE bool operator==(const FCsFpsFxElement& B) const
 	{
 		return Effect1P == B.Effect1P && Effect3P == B.Effect3P;
 	}
 
-	bool operator!=(const FCsFpsFxElement& B) const
+	FORCEINLINE bool operator!=(const FCsFpsFxElement& B) const
 	{
 		return !(*this == B);
 	}
 
-	FName GetBone(const TCsViewType &ViewType)
+	FORCEINLINE FName GetBone(const TCsViewType &ViewType)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Effect1P.Bone;

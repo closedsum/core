@@ -20,12 +20,8 @@ private:
 
 public:
 
-	CS_DECLARE_WIDGET_ACTOR_TYPE
-
 	static void Init(UObject* InOwner);
 	static ACsManager_WidgetActor* Get(UWorld* InWorld);
-
-	void SetWidgetActorType(const TCsWidgetActorType &InWidgetActorType_MAX, TCsWidgetActorTypeToString InWidgetActorTypeToString);
 
 	virtual void Clear() override;
 	virtual void Shutdown() override;
@@ -34,24 +30,24 @@ public:
 	virtual void AddToActivePool(UObject* InObject, const uint8& Type) override;
 	virtual void OnTick(const float &DeltaSeconds) override;
 
-	TMap<TCsWidgetActorType, TArray<class ACsWidgetActor*>> ActiveActors;
+	TMap<FECsWidgetActorType, TArray<class ACsWidgetActor*>> ActiveActors;
 
 	virtual int32 GetActivePoolSize(const uint8 &Type) override;
 
 protected:
 
-	TMap<TCsWidgetActorType, uint8> PoolSizes;
+	TMap<FECsWidgetActorType, uint8> PoolSizes;
 
 	UPROPERTY()
 	TArray<class ACsWidgetActor*> Pool;
 
-	TMap<TCsWidgetActorType, TArray<class ACsWidgetActor*>> Pools;
+	TMap<FECsWidgetActorType, TArray<class ACsWidgetActor*>> Pools;
 
-	TMap<TCsWidgetActorType, uint8> PoolIndices;
+	TMap<FECsWidgetActorType, uint8> PoolIndices;
 	
 public:
 
-	const TArray<class ACsWidgetActor*>* GetActors(const TCsWidgetActorType& Type);
+	const TArray<class ACsWidgetActor*>* GetActors(const FECsWidgetActorType& Type);
 
 	virtual bool IsExhausted(const uint8 &Type) override;
 
@@ -61,7 +57,7 @@ public:
 #pragma region
 protected:
 
-	class ACsWidgetActor* Allocate(const TCsWidgetActorType &ClassType);
+	class ACsWidgetActor* Allocate(const FECsWidgetActorType &ClassType);
 
 public:
 
@@ -88,16 +84,16 @@ public:
 #pragma region
 public:
 
-	class ACsWidgetActor* Display(const TCsWidgetActorType &Type, FCsWidgetActorPayload* Payload, UObject* InOwner, UObject* Parent);
-	class ACsWidgetActor* Display(const TCsWidgetActorType &Type, FCsWidgetActorPayload* Payload, UObject* InOwner);
-	class ACsWidgetActor* Display(const TCsWidgetActorType &Type, FCsWidgetActorPayload* Payload);
+	class ACsWidgetActor* Display(const FECsWidgetActorType &Type, FCsWidgetActorPayload* Payload, UObject* InOwner, UObject* Parent);
+	class ACsWidgetActor* Display(const FECsWidgetActorType &Type, FCsWidgetActorPayload* Payload, UObject* InOwner);
+	class ACsWidgetActor* Display(const FECsWidgetActorType &Type, FCsWidgetActorPayload* Payload);
 
 	template<typename T>
-	void Display(const TCsWidgetActorType &Type, class ACsWidgetActor* OutWidgetActor, FCsWidgetActorPayload* Payload, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	void Display(const FECsWidgetActorType &Type, class ACsWidgetActor* OutWidgetActor, FCsWidgetActorPayload* Payload, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 	template<typename T>
-	void Display(const TCsWidgetActorType &Type, class ACsWidgetActor* OutWidgetActor, FCsWidgetActorPayload* Payload, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	void Display(const FECsWidgetActorType &Type, class ACsWidgetActor* OutWidgetActor, FCsWidgetActorPayload* Payload, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 	template<typename T>
-	void Display(const TCsWidgetActorType &Type, class ACsWidgetActor* OutWidgetActor, FCsWidgetActorPayload* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	void Display(const FECsWidgetActorType &Type, class ACsWidgetActor* OutWidgetActor, FCsWidgetActorPayload* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 
 #pragma endregion Display
 };

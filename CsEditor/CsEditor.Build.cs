@@ -26,7 +26,13 @@ public class CsEditor : ModuleRules
                     "UnrealEd",
                     "AssetTools",
                     "ContentBrowser",
+                    "BlueprintGraph",
                     "Slate",
+                    "PropertyEditor",
+                    "GraphEditor",
+                    "EditorStyle",
+                    "Kismet",
+                    "KismetCompiler",
                     "V8",
                     "CsCore",
                 }

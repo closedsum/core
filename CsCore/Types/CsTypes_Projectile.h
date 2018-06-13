@@ -11,7 +11,7 @@
 
 // ACsData_Projectile
 USTRUCT(BlueprintType)
-struct FCsData_ProjectilePtr
+struct CSCORE_API FCsData_ProjectilePtr
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -31,7 +31,7 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(Data_LoadFlags, ECsLoadFlags::Game);
 	}
 
-	FCsData_ProjectilePtr& operator=(const FCsData_ProjectilePtr& B)
+	FORCEINLINE FCsData_ProjectilePtr& operator=(const FCsData_ProjectilePtr& B)
 	{
 		Data = B.Data;
 		Data_LoadFlags = B.Data_LoadFlags;
@@ -39,17 +39,17 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsData_ProjectilePtr& B) const
+	FORCEINLINE bool operator==(const FCsData_ProjectilePtr& B) const
 	{
 		return Data == B.Data && Data_LoadFlags == B.Data_LoadFlags && Data_Internal == B.Data_Internal;
 	}
 
-	bool operator!=(const FCsData_ProjectilePtr& B) const
+	FORCEINLINE bool operator!=(const FCsData_ProjectilePtr& B) const
 	{
 		return !(*this == B);
 	}
 
-	class ACsData_Projectile* Get() const
+	FORCEINLINE class ACsData_Projectile* Get() const
 	{
 		return Data_Internal;
 	}
@@ -57,7 +57,7 @@ public:
 
 // ACsData_ProjectileImpact
 USTRUCT(BlueprintType)
-struct FCsData_ProjectileImpactPtr
+struct CSCORE_API FCsData_ProjectileImpactPtr
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -77,7 +77,7 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(Data_LoadFlags, ECsLoadFlags::Game);
 	}
 
-	FCsData_ProjectileImpactPtr& operator=(const FCsData_ProjectileImpactPtr& B)
+	FORCEINLINE FCsData_ProjectileImpactPtr& operator=(const FCsData_ProjectileImpactPtr& B)
 	{
 		Data = B.Data;
 		Data_LoadFlags = B.Data_LoadFlags;
@@ -85,17 +85,17 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsData_ProjectileImpactPtr& B) const
+	FORCEINLINE bool operator==(const FCsData_ProjectileImpactPtr& B) const
 	{
 		return Data == B.Data && Data_LoadFlags == B.Data_LoadFlags && Data_Internal == B.Data_Internal;
 	}
 
-	bool operator!=(const FCsData_ProjectileImpactPtr& B) const
+	FORCEINLINE bool operator!=(const FCsData_ProjectileImpactPtr& B) const
 	{
 		return !(*this == B);
 	}
 
-	class ACsData_ProjectileImpact* Get() const
+	FORCEINLINE class ACsData_ProjectileImpact* Get() const
 	{
 		return Data_Internal;
 	}
@@ -113,51 +113,67 @@ namespace ECsProjectileRelevance
 	};
 }
 
-#define ECS_PROJECTILE_RELEVANCE_MAX (uint8)ECsProjectileRelevance::ECsProjectileRelevance_MAX
 typedef ECsProjectileRelevance::Type TCsProjectileRelevance;
+
+struct CSCORE_API EMCsProjectileRelevance : public TCsEnumMap<ECsProjectileRelevance::Type>
+{
+protected:
+	EMCsProjectileRelevance() {}
+	EMCsProjectileRelevance(const EMCsProjectileRelevance &) = delete;
+	EMCsProjectileRelevance(EMCsProjectileRelevance &&) = delete;
+public:
+	~EMCsProjectileRelevance() {}
+private:
+	static EMCsProjectileRelevance* Instance;
+
+public:
+	static EMCsProjectileRelevance& Get();
+};
 
 namespace ECsProjectileRelevance
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
-
-	namespace Str
-	{
-		const TCsString RealVisible = TCsString(TEXT("RealVisible"), TEXT("realvisible"));
-		const TCsString RealInvisible = TCsString(TEXT("RealInvisible"), TEXT("realinvisible"));
-		const TCsString Fake = TCsString(TEXT("Fake"), TEXT("fake"));
-	}
-
 	namespace Ref
 	{
-		const TCsProjectileRelevance RealVisible = Type::RealInvisible;
-		const TCsProjectileRelevance RealInvisible = Type::RealInvisible;
-		const TCsProjectileRelevance Fake = Type::Fake;
-		const TCsProjectileRelevance ECsProjectileRelevance_MAX = Type::ECsProjectileRelevance_MAX;
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::RealVisible) { return Str::RealVisible.Value; }
-		if (EType == Type::RealInvisible) { return Str::RealInvisible.Value; }
-		if (EType == Type::Fake) { return Str::Fake.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE const Type& ToType(const FString &String)
-	{
-		if (String == Str::RealVisible) { return Ref::RealVisible; }
-		if (String == Str::RealInvisible) { return Ref::RealInvisible; }
-		if (String == Str::Fake) { return Ref::Fake; }
-		return Ref::ECsProjectileRelevance_MAX;
+		extern CSCORE_API const Type RealVisible;
+		extern CSCORE_API const Type RealInvisible;
+		extern CSCORE_API const Type Fake;
+		extern CSCORE_API const Type ECsProjectileRelevance_MAX;
 	}
 }
 
-namespace ECsProjectileType
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsProjectileType : public FECsEnum_uint8
 {
-	enum Type : uint8;
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsProjectileType() {}
+	FECsProjectileType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsProjectileType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsProjectileType() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsProjectileType& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-typedef ECsProjectileType::Type TCsProjectileType;
+struct CSCORE_API EMCsProjectileType : public TCsEnumStructMap<FECsProjectileType, uint8>
+{
+protected:
+	EMCsProjectileType() {}
+	EMCsProjectileType(const EMCsProjectileType &) = delete;
+	EMCsProjectileType(EMCsProjectileType &&) = delete;
+public:
+	~EMCsProjectileType() {}
+private:
+	static EMCsProjectileType* Instance;
+
+public:
+	static EMCsProjectileType& Get();
+};
 
 UENUM(BlueprintType)
 namespace ECsProjectileState
@@ -171,42 +187,31 @@ namespace ECsProjectileState
 	};
 }
 
-#define ECS_PROJECTILE_STATE_MAX (uint8)ECsProjectileState::ECsProjectileState_MAX
 typedef ECsProjectileState::Type TCsProjectileState;
+
+struct CSCORE_API EMCsProjectileState : public TCsEnumMap<ECsProjectileState::Type>
+{
+protected:
+	EMCsProjectileState() {}
+	EMCsProjectileState(const EMCsProjectileState &) = delete;
+	EMCsProjectileState(EMCsProjectileState &&) = delete;
+public:
+	~EMCsProjectileState() {}
+private:
+	static EMCsProjectileState* Instance;
+
+public:
+	static EMCsProjectileState& Get();
+};
 
 namespace ECsProjectileState
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
-
-	namespace Str
-	{
-		const TCsString Active = TCsString(TEXT("Active"), TEXT("active"));
-		const TCsString DeActivating = TCsString(TEXT("DeActivating"), TEXT("deactivating"));
-		const TCsString InActive = TCsString(TEXT("InActive"), TEXT("inactive"));
-	}
-
 	namespace Ref
 	{
-		const TCsProjectileState Active = Type::Active;
-		const TCsProjectileState DeActivating = Type::DeActivating;
-		const TCsProjectileState InActive = Type::InActive;
-		const TCsProjectileState ECsProjectileState_MAX = Type::ECsProjectileState_MAX;
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::Active) { return Str::Active.Value; }
-		if (EType == Type::DeActivating) { return Str::DeActivating.Value; }
-		if (EType == Type::InActive) { return Str::InActive.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE const Type& ToType(const FString &String)
-	{
-		if (String == Str::Active) { return Ref::Active; }
-		if (String == Str::DeActivating) { return Ref::DeActivating; }
-		if (String == Str::InActive) { return Ref::InActive; }
-		return Ref::ECsProjectileState_MAX;
+		extern CSCORE_API const Type Active;
+		extern CSCORE_API const Type DeActivating;
+		extern CSCORE_API const Type InActive;
+		extern CSCORE_API const Type ECsProjectileState_MAX;
 	}
 }
 
@@ -222,42 +227,31 @@ namespace ECsProjectileDeActivate
 	};
 }
 
-#define ECS_PROJECTILE_DEACTIVATE_MAX (uint8)ECsProjectileDeActivate::ECsProjectileDeActivate_MAX
 typedef ECsProjectileDeActivate::Type TCsProjectileDeActivate;
+
+struct CSCORE_API EMCsProjectileDeActivate : public TCsEnumMap<ECsProjectileDeActivate::Type>
+{
+protected:
+	EMCsProjectileDeActivate() {}
+	EMCsProjectileDeActivate(const EMCsProjectileDeActivate &) = delete;
+	EMCsProjectileDeActivate(EMCsProjectileDeActivate &&) = delete;
+public:
+	~EMCsProjectileDeActivate() {}
+private:
+	static EMCsProjectileDeActivate* Instance;
+
+public:
+	static EMCsProjectileDeActivate& Get();
+};
 
 namespace ECsProjectileDeActivate
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
-
-	namespace Str
-	{
-		const TCsString Collision = TCsString(TEXT("Collision"), TEXT("collision"));
-		const TCsString Movement = TCsString(TEXT("Movement"), TEXT("movement"));
-		const TCsString Mesh = TCsString(TEXT("Mesh"), TEXT("mesh"));
-	}
-
 	namespace Ref
 	{
-		const TCsProjectileDeActivate Collision = Type::Collision;
-		const TCsProjectileDeActivate Movement = Type::Movement;
-		const TCsProjectileDeActivate Mesh = Type::Mesh;
-		const TCsProjectileDeActivate ECsProjectileDeActivate_MAX = Type::ECsProjectileDeActivate_MAX;
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::Collision) { return Str::Collision.Value; }
-		if (EType == Type::Movement) { return Str::Movement.Value; }
-		if (EType == Type::Mesh) { return Str::Mesh.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE const Type& ToType(const FString &String)
-	{
-		if (String == Str::Collision) { return Ref::Collision; }
-		if (String == Str::Movement) { return Ref::Movement; }
-		if (String == Str::Mesh) { return Ref::Mesh; }
-		return Ref::ECsProjectileDeActivate_MAX;
+		extern CSCORE_API const Type Collision;
+		extern CSCORE_API const Type Movement;
+		extern CSCORE_API const Type Mesh;
+		extern CSCORE_API const Type ECsProjectileDeActivate_MAX;
 	}
 }
 
@@ -272,38 +266,30 @@ namespace ECsProjectileMovement
 	};
 }
 
-#define ECS_PROJECTILE_MOVEMENT_MAX (uint8)ECsProjectileMovement::ECsProjectileMovement_MAX
 typedef ECsProjectileMovement::Type TCsProjectileMovement;
+
+struct CSCORE_API EMCsProjectileMovement : public TCsEnumMap<ECsProjectileMovement::Type>
+{
+protected:
+	EMCsProjectileMovement() {}
+	EMCsProjectileMovement(const EMCsProjectileMovement &) = delete;
+	EMCsProjectileMovement(EMCsProjectileMovement &&) = delete;
+public:
+	~EMCsProjectileMovement() {}
+private:
+	static EMCsProjectileMovement* Instance;
+
+public:
+	static EMCsProjectileMovement& Get();
+};
 
 namespace ECsProjectileMovement
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
-
-	namespace Str
-	{
-		const TCsString Simulated = TCsString(TEXT("Simulated"), TEXT("simulated"));
-		const TCsString Function = TCsString(TEXT("Function"), TEXT("function"));
-	}
-
 	namespace Ref
 	{
-		const TCsProjectileMovement Simulated = Type::Simulated;
-		const TCsProjectileMovement Function = Type::Function;
-		const TCsProjectileMovement ECsProjectileMovement_MAX = Type::ECsProjectileMovement_MAX;
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::Simulated) { return Str::Simulated.Value; }
-		if (EType == Type::Function) { return Str::Function.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE const Type& ToType(const FString &String)
-	{
-		if (String == Str::Simulated) { return Ref::Simulated; }
-		if (String == Str::Function) { return Ref::Function; }
-		return Ref::ECsProjectileMovement_MAX;
+		extern CSCORE_API const Type Simulated;
+		extern CSCORE_API const Type Function;
+		extern CSCORE_API const Type ECsProjectileMovement_MAX;
 	}
 }
 
@@ -318,36 +304,45 @@ namespace ECsProjectileMovementFunctionType
 	};
 }
 
+typedef ECsProjectileMovementFunctionType::Type TCsProjectileMovementFunctionType;
+
+struct CSCORE_API EMCsProjectileMovementFunctionType : public TCsEnumMap<ECsProjectileMovementFunctionType::Type>
+{
+protected:
+	EMCsProjectileMovementFunctionType() {}
+	EMCsProjectileMovementFunctionType(const EMCsProjectileMovementFunctionType &) = delete;
+	EMCsProjectileMovementFunctionType(EMCsProjectileMovementFunctionType &&) = delete;
+public:
+	~EMCsProjectileMovementFunctionType() {}
+private:
+	static EMCsProjectileMovementFunctionType* Instance;
+
+public:
+	static EMCsProjectileMovementFunctionType& Get();
+};
+
 namespace ECsProjectileMovementFunctionType
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
-
-	namespace Str
+	namespace Ref
 	{
-		const TCsString Linear = TCsString(TEXT("Linear"), TEXT("linear"));
-		const TCsString Sine = TCsString(TEXT("Sine"), TEXT("sine"));
+		extern CSCORE_API const Type Linear;
+		extern CSCORE_API const Type Sine;
+		extern CSCORE_API const Type ECsProjectileMovementFunctionType_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
-		if (EType == Type::Linear) { return Str::Linear.Value; }
-		if (EType == Type::Sine) { return Str::Sine.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
+		return EMCsProjectileMovementFunctionType::Get().ToString(EType);
 	}
 
 	FORCEINLINE Type ToType(const FString &String)
 	{
-		if (String == Str::Linear) { return Type::Linear; }
-		if (String == Str::Sine) { return Type::Sine; }
-		return Type::ECsProjectileMovementFunctionType_MAX;
+		return EMCsProjectileMovementFunctionType::Get().ToType(String);
 	}
 }
 
-#define ECS_PROJECTILE_MOVEMENT_FUNCTION_TYPE_MAX (uint8)ECsProjectileMovementFunctionType::ECsProjectileMovementFunctionType_MAX
-typedef ECsProjectileMovementFunctionType::Type TCsProjectileMovementFunctionType;
-
 USTRUCT(BlueprintType)
-struct FCsProjectileMovementFunctionAxis
+struct CSCORE_API FCsProjectileMovementFunctionAxis
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -382,7 +377,7 @@ struct FCsProjectileMovementFunctionAxis
 
 	~FCsProjectileMovementFunctionAxis(){}
 
-	FCsProjectileMovementFunctionAxis& operator=(const FCsProjectileMovementFunctionAxis& D)
+	FORCEINLINE FCsProjectileMovementFunctionAxis& operator=(const FCsProjectileMovementFunctionAxis& D)
 	{
 		IsActive = D.IsActive;
 		Function = D.Function;
@@ -393,7 +388,7 @@ struct FCsProjectileMovementFunctionAxis
 		return *this;
 	}
 
-	bool operator==(const FCsProjectileMovementFunctionAxis& D) const
+	FORCEINLINE bool operator==(const FCsProjectileMovementFunctionAxis& D) const
 	{
 		return	IsActive == D.IsActive &&
 				Function == D.Function &&
@@ -403,12 +398,12 @@ struct FCsProjectileMovementFunctionAxis
 				C == D.C;
 	}
 
-	bool operator!=(const FCsProjectileMovementFunctionAxis& D) const
+	FORCEINLINE bool operator!=(const FCsProjectileMovementFunctionAxis& D) const
 	{
 		return !(*this == D);
 	}
 
-	float Evaluate(const float &T)
+	FORCEINLINE float Evaluate(const float &T)
 	{
 		if (!IsActive)
 			return 0.0f;
@@ -423,7 +418,7 @@ struct FCsProjectileMovementFunctionAxis
 };
 
 USTRUCT(BlueprintType)
-struct FCsProjectileMovementFunction
+struct CSCORE_API FCsProjectileMovementFunction
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -440,7 +435,7 @@ struct FCsProjectileMovementFunction
 	FCsProjectileMovementFunction(){}
 	~FCsProjectileMovementFunction(){}
 
-	FCsProjectileMovementFunction& operator=(const FCsProjectileMovementFunction& B)
+	FORCEINLINE FCsProjectileMovementFunction& operator=(const FCsProjectileMovementFunction& B)
 	{
 		X = B.X;
 		Y = B.Y;
@@ -448,22 +443,22 @@ struct FCsProjectileMovementFunction
 		return *this;
 	}
 
-	bool operator==(const FCsProjectileMovementFunction& B) const
+	FORCEINLINE bool operator==(const FCsProjectileMovementFunction& B) const
 	{
 		return	X == B.X && Y == B.Y && Z == B.Z;
 	}
 
-	bool operator!=(const FCsProjectileMovementFunction& B) const
+	FORCEINLINE bool operator!=(const FCsProjectileMovementFunction& B) const
 	{
 		return !(*this == B);
 	}
 
-	FVector Evaluate(const float &T)
+	FORCEINLINE FVector Evaluate(const float &T)
 	{
 		return FVector(X.Evaluate(T), Y.Evaluate(T), Z.Evaluate(T));
 	}
 
-	FVector Evaluate(const float &Time, const FVector &Location, const FTransform &Transform)
+	FORCEINLINE FVector Evaluate(const float &Time, const FVector &Location, const FTransform &Transform)
 	{
 		FVector Point = Evaluate(Time);
 
@@ -484,7 +479,7 @@ struct FCsProjectileMovementFunction
 };
 
 USTRUCT(BlueprintType)
-struct FCsProjectileFirePayload
+struct CSCORE_API FCsProjectileFirePayload
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -526,7 +521,7 @@ struct FCsProjectileFirePayload
 		Reset();
 	}
 
-	FCsProjectileFirePayload& operator=(const FCsProjectileFirePayload& B)
+	FORCEINLINE FCsProjectileFirePayload& operator=(const FCsProjectileFirePayload& B)
 	{
 		IsAllocated = B.IsAllocated;
 		Time = B.Time;
@@ -542,7 +537,7 @@ struct FCsProjectileFirePayload
 		return *this;
 	}
 
-	bool operator==(const FCsProjectileFirePayload& B) const
+	FORCEINLINE bool operator==(const FCsProjectileFirePayload& B) const
 	{
 		return	IsAllocated == B.IsAllocated &&
 				Time == B.Time &&
@@ -557,12 +552,12 @@ struct FCsProjectileFirePayload
 				HomingAccelerationMagnitude == B.HomingAccelerationMagnitude;
 	}
 
-	bool operator!=(const FCsProjectileFirePayload& B) const
+	FORCEINLINE bool operator!=(const FCsProjectileFirePayload& B) const
 	{
 		return !(*this == B);
 	}
 
-	void Reset()
+	FORCEINLINE void Reset()
 	{
 		IsAllocated = false;
 		Time = 0.0f;
@@ -579,28 +574,37 @@ struct FCsProjectileFirePayload
 		Items.Reset();
 	}
 
-	AActor* GetHomingTarget() const
+	FORCEINLINE AActor* GetHomingTarget() const
 	{
 		return HomingTarget.IsValid() ? HomingTarget.Get() : NULL;
 	}
 
 	template<typename T>
-	T* GetHomingTarget() const 
+	FORCEINLINE T* GetHomingTarget() const
 	{
 		return Cast<T>(GetHomingTarget());
 	}
 };
 
 USTRUCT(BlueprintType)
-struct FCsProjectilePayload
+struct CSCORE_API FCsProjectilePayload
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Payload")
 	bool IsAllocated;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	TEnumAsByte<ECsProjectileRelevance::Type> Relevance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	TWeakObjectPtr<UObject> Instigator;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	TWeakObjectPtr<UObject> Owner;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	TWeakObjectPtr<UObject> Parent;
 
 	UPROPERTY()
 	TWeakObjectPtr<class ACsData_Projectile> Data;
@@ -629,10 +633,13 @@ struct FCsProjectilePayload
 	FCsProjectilePayload(){}
 	~FCsProjectilePayload(){}
 
-	FCsProjectilePayload& operator=(const FCsProjectilePayload& B)
+	FORCEINLINE FCsProjectilePayload& operator=(const FCsProjectilePayload& B)
 	{
 		IsAllocated = B.IsAllocated;
 		Relevance = B.Relevance;
+		Instigator = B.Instigator;
+		Owner = B.Owner;
+		Parent = B.Parent;
 		Data = B.Data;
 		ChargePercent = B.ChargePercent;
 		Location = B.Location;
@@ -644,10 +651,13 @@ struct FCsProjectilePayload
 		return *this;
 	}
 
-	bool operator==(const FCsProjectilePayload& B) const
+	FORCEINLINE bool operator==(const FCsProjectilePayload& B) const
 	{
 		return	IsAllocated == B.IsAllocated &&
 				Relevance == B.Relevance &&
+				Instigator == B.Instigator &&
+				Owner == B.Owner &&
+				Parent == B.Parent &&
 				Data == B.Data &&
 				ChargePercent == B.ChargePercent &&
 				Location == B.Location &&
@@ -658,12 +668,12 @@ struct FCsProjectilePayload
 				HomingAccelerationMagnitude == B.HomingAccelerationMagnitude;
 	}
 
-	bool operator!=(const FCsProjectilePayload& B) const
+	FORCEINLINE bool operator!=(const FCsProjectilePayload& B) const
 	{
 		return !(*this == B);
 	}
 
-	void Set(FCsProjectileFirePayload* Payload)
+	FORCEINLINE void Set(FCsProjectileFirePayload* Payload)
 	{
 		ChargePercent = Payload->ChargePercent;
 		Location = Payload->Location;
@@ -674,9 +684,15 @@ struct FCsProjectilePayload
 		HomingAccelerationMagnitude = Payload->HomingAccelerationMagnitude;
 	}
 
-	void Reset()
+	FORCEINLINE void Reset()
 	{
 		Relevance = ECsProjectileRelevance::ECsProjectileRelevance_MAX;
+		Instigator.Reset();
+		Instigator = nullptr;
+		Owner.Reset();
+		Owner = nullptr;
+		Parent.Reset();
+		Parent = nullptr;
 		ChargePercent = 0.0f;
 		Location = FVector::ZeroVector;
 		Direction = FVector::ZeroVector;
@@ -687,17 +703,29 @@ struct FCsProjectilePayload
 		HomingAccelerationMagnitude = 0.0f;
 	}
 
-	ACsData_Projectile* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
+	FORCEINLINE UObject* GetInstigator() { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
 	template<typename T>
-	T* GetData() { return Cast<T>(GetData()); }
+	FORCEINLINE T* GetInstigator() { return Cast<T>(GetInstigator()); }
 
-	AActor* GetHomingTarget() const
+	FORCEINLINE UObject* GetOwner() { return Owner.IsValid() ? Owner.Get() : nullptr; }
+	template<typename T>
+	FORCEINLINE T* GetOwner() { return Cast<T>(GetOwner()); }
+
+	FORCEINLINE UObject* GetParent() { return Parent.IsValid() ? Parent.Get() : nullptr; }
+	template<typename T>
+	FORCEINLINE T* GetParent() { return Cast<T>(GetParent()); }
+
+	FORCEINLINE ACsData_Projectile* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
+	template<typename T>
+	FORCEINLINE T* GetData() { return Cast<T>(GetData()); }
+
+	FORCEINLINE AActor* GetHomingTarget() const
 	{
 		return HomingTarget.IsValid() ? HomingTarget.Get() : nullptr;
 	}
 
 	template<typename T>
-	T* GetHomingTarget() const
+	FORCEINLINE T* GetHomingTarget() const
 	{
 		return Cast<T>(GetHomingTarget());
 	}

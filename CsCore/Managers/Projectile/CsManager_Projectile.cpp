@@ -10,38 +10,58 @@
 #include "Data/CsData_Projectile.h"
 
 // static initializations
-TWeakObjectPtr<UObject> ACsManager_Projectile::MyOwner;
+TWeakObjectPtr<UObject> AICsManager_Projectile::MyOwner;
 
-// Cache
+// Internal
 #pragma region
 
-namespace ECsManagerProjectileCachedString
+CsManager_Projectile::~CsManager_Projectile() {}
+
+void CsManager_Projectile::DeconstructObject(ACsProjectile* a)
 {
-	namespace Str
-	{
-		// Functions
-		const FString OnTick = TEXT("ACsManager_Projectile::OnTick");
-		const FString Fire = TEXT("ACsManager_Projectile::Fire");
-		const FString DeAllocate = TEXT("ACsManager_Projectile::DeAllocate");
-	};
+	if (a && !a->IsPendingKill())
+		a->Destroy(true);
 }
 
-#pragma endregion Cache
+FString CsManager_Projectile::GetObjectName(ACsProjectile* a)
+{
+	return a->GetName();
+}
 
-ACsManager_Projectile::ACsManager_Projectile(const FObjectInitializer& ObjectInitializer)
+const FString& CsManager_Projectile::EnumTypeToString(const FECsProjectileType &e)
+{
+	return e.Name;
+}
+
+const FString& CsManager_Projectile::EnumTypeToString(const int32 &index)
+{
+	return EMCsProjectileType::Get().GetEnumAt(index).Name;
+}
+
+void CsManager_Projectile::LogTransaction_Internal(const FString& outLog)
+{
+	UE_LOG(LogCs, Warning, TEXT("%s"), *outLog);
+}
+
+#pragma endregion // Internal
+
+AICsManager_Projectile::AICsManager_Projectile(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	ProjectileClass = ACsProjectile::StaticClass();
+	Internal = new CsManager_Projectile();
+	Internal->Init(TEXT("CsManager_Projectile"), TEXT("ACsProjectile"), nullptr, &CsCVarLogManagerProjectileTransactions);
+	Internal->OnTick_Handle_Object.Unbind();
+	Internal->OnTick_Handle_Object.BindUObject(this, &AICsManager_Projectile::OnTick_Handle_Projectile);
 }
 
-/*static*/ UObject* ACsManager_Projectile::GetMyOwner() { return MyOwner.IsValid() ? MyOwner.Get() : nullptr; }
+/*static*/ UObject* AICsManager_Projectile::GetMyOwner() { return MyOwner.IsValid() ? MyOwner.Get() : nullptr; }
 
-/*static*/ void ACsManager_Projectile::Init(UObject* InOwner)
+/*static*/ void AICsManager_Projectile::Init(UObject* InOwner)
 {
 	MyOwner = InOwner;
 }
 
-/*static*/ ACsManager_Projectile* ACsManager_Projectile::Get(UWorld* InWorld)
+/*static*/ AICsManager_Projectile* AICsManager_Projectile::Get(UWorld* InWorld)
 {
 #if WITH_EDITOR 
 	// In Editor Preview Window
@@ -57,295 +77,112 @@ ACsManager_Projectile::ACsManager_Projectile(const FObjectInitializer& ObjectIni
 	return nullptr;
 }
 
-void ACsManager_Projectile::Clear()
+void AICsManager_Projectile::Clear()
 {
-	Super::Clear();
-
-	Pool.Reset();
-	ActiveProjectiles.Reset();
+	Internal->Clear();
 }
 
-void ACsManager_Projectile::Shutdown()
+void AICsManager_Projectile::Shutdown()
 {
-	Super::Shutdown();
-
-	const int32 Count = Pool.Num();
-
-	for (int32 I = 0; I < Count; ++I)
-	{
-		if (Pool[I] && !Pool[I]->IsPendingKill())
-			Pool[I]->Destroy(true);
-	}
 	Clear();
+	Internal->Shutdown();
+	delete Internal;
 }
 
-void ACsManager_Projectile::Destroyed()
+void AICsManager_Projectile::Destroyed()
 {
-	const int32 Count = Pool.Num();
-
-	for (int32 I = 0; I < Count; ++I)
-	{
-		if (Pool[I] && !Pool[I]->IsPendingKill())
-			Pool[I]->Destroy(true);
-	}
-	Clear();
+	Shutdown();
 
 	Super::Destroyed();
 }
 
-void ACsManager_Projectile::CreatePool(const TSubclassOf<class UObject> &ObjectClass, const int32 &Size)
+ACsProjectile* AICsManager_Projectile::ConstructObject(const FECsProjectileType &Type)
 {
-	PoolSize = Size;
-
 	FActorSpawnParameters SpawnInfo;
 	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnInfo.ObjectFlags |= RF_Transient;
 
-	for (int32 I = 0; I < Size; ++I)
-	{
-		ACsProjectile* Projectile = GetWorld()->SpawnActor<ACsProjectile>(ObjectClass, SpawnInfo);
+	ACsProjectile* Actor = GetWorld()->SpawnActor<ACsProjectile>(ACsProjectile::StaticClass(), SpawnInfo);
+	Actor->SetReplicates(false);
+	Actor->Role = ROLE_None;
+	GetWorld()->RemoveNetworkActor(Actor);
+	return Actor;
+}
 
-		Projectile->SetReplicates(false);
-		Projectile->Role = ROLE_None;
-		GetWorld()->RemoveNetworkActor(Projectile);
-		Projectile->Init(I);
-		Projectile->DeAllocate();
-		Pool.Add(Projectile);
+void AICsManager_Projectile::CreatePool(const FECsProjectileType &Type, const int32 &Size)
+{
+	Internal->CreatePool(Type, Size);
+}
+
+void AICsManager_Projectile::AddToPool(const FECsProjectileType &Type, ACsProjectile* Actor)
+{
+	Internal->AddToPool(Type, Actor);
+}
+
+void AICsManager_Projectile::AddToActivePool(const FECsProjectileType &Type, ACsProjectile* Actor)
+{
+	Internal->AddToActivePool(Type, Actor);
+}
+
+void AICsManager_Projectile::OnTick(const float &DeltaTime)
+{
+	Internal->OnTick(DeltaTime);
+}
+
+void AICsManager_Projectile::OnTick_Handle_Projectile(ACsProjectile* Projectile)
+{
+	// Check DrawDistance
+	if (Projectile->Cache.DrawDistanceSq > 0.0f)
+	{
+		const float DistanceSq = UCsCommon::GetSquaredDistanceToLocalControllerEye(GetWorld(), Projectile->GetActorLocation());
+		const bool Hide		   = DistanceSq > Projectile->Cache.DrawDistanceSq;
+
+		if (Hide != Projectile->bHidden)
+			Projectile->SetActorHiddenInGame(Hide);
 	}
 }
 
-void ACsManager_Projectile::CreatePool(const int32 &Size)
+void AICsManager_Projectile::GetAllActiveActors(TArray<ACsProjectile*> &OutActors)
 {
-	CreatePool(ProjectileClass, Size);
+	Internal->GetAllActiveObjects(OutActors);
 }
 
-void ACsManager_Projectile::OnTick(const float &DeltaSeconds)
+const TArray<class ACsProjectile*>* AICsManager_Projectile::GetActors(const FECsProjectileType& Type)
 {
-	const int32 Count	 = ActiveProjectiles.Num();
-	uint16 EarliestIndex = Count;
-
-	for (int32 I = Count - 1; I >= 0; --I)
-	{
-		ACsProjectile* Projectile = ActiveProjectiles[I];
-
-		// Check if Projectile was DeAllocated NOT in a normal way (i.e. Out of Bounds)
-		if (!Projectile->Cache.IsAllocated)
-		{
-			if (Projectile->Cache.Relevance == ECsProjectileRelevance::RealVisible ||
-				Projectile->Cache.Relevance == ECsProjectileRelevance::RealInvisible)
-			{
-				UE_LOG(LogCs, Warning, TEXT("ACsManager_Projectile::OnTick: Projectile: %s at PoolIndex: %s was prematurely deallocted NOT in a normal way."), *(Projectile->GetName()), Projectile->Cache.Index);
-			}
-
-			LogTransaction(ECsManagerProjectileCachedString::Str::OnTick, ECsPoolTransaction::Deallocate, Projectile);
-
-			ActiveProjectiles.RemoveAt(I);
-
-			if (I < EarliestIndex)
-				EarliestIndex = I;
-			continue;
-		}
-
-		if (GetWorld()->GetTimeSeconds() - Projectile->Cache.Time > Projectile->Cache.LifeTime)
-		{
-			LogTransaction(ECsManagerProjectileCachedString::Str::OnTick, ECsPoolTransaction::Deallocate, Projectile);
-
-			Projectile->DeAllocate();
-			ActiveProjectiles.RemoveAt(I);
-
-			if (I < EarliestIndex)
-				EarliestIndex = I;
-			continue;
-		}
-		// Check DrawDistance
-		if (Projectile->Cache.DrawDistanceSq > 0.0f)
-		{
-			const float DistanceSq = UCsCommon::GetSquaredDistanceToLocalControllerEye(GetWorld(), Projectile->GetActorLocation());
-			const bool Hide		   = DistanceSq > Projectile->Cache.DrawDistanceSq;
-
-			if (Hide != Projectile->bHidden)
-				Projectile->SetActorHiddenInGame(Hide);
-		}
-	}
-	// Update ActiveIndex
-	if (EarliestIndex != Count)
-	{
-		const uint8 Max = ActiveProjectiles.Num();
-
-		for (uint8 I = EarliestIndex; I < Max; ++I)
-		{
-			ACsProjectile* Projectile = ActiveProjectiles[I];
-			Projectile->Cache.SetActiveIndex(I);
-		}
-	}
+	return Internal->GetObjects(Type);
 }
 
-void ACsManager_Projectile::LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, UObject* InObject)
+int32 AICsManager_Projectile::GetActivePoolSize(const FECsProjectileType &Type)
 {
-	if (CsCVarLogManagerProjectileTransactions->GetInt() == CS_CVAR_SHOW_LOG)
-	{
-		ACsProjectile* Projectile = Cast<ACsProjectile>(InObject);
-
-		const FString& TransactionAsString = ECsPoolTransaction::ToActionString(Transaction);
-
-		const FString ProjectileName   = Projectile->GetName();
-		const FString DataName		   = Projectile->Cache.GetData()->ShortCode.ToString();
-		const float CurrentTime		   = GetWorld()->GetTimeSeconds();
-		const UObject* ProjectileOwner = Projectile->Cache.GetOwner();
-		const FString OwnerName		   = ProjectileOwner ? ProjectileOwner->GetName() : ECsCachedString::Str::None;
-		const UObject* Parent		   = Projectile->Cache.GetParent();
-		const FString ParentName	   = Parent ? Parent->GetName() : ECsCachedString::Str::None;
-		const FString LocationAsString = Projectile->GetActorLocation().ToString();
-		const FString DirectionAsString = Projectile->GetActorRotation().Vector().GetSafeNormal().ToString();
-
-		if (ProjectileOwner && Parent)
-		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s Projectile: %s with Data: %s at %f for %s attached to %s at %s moving at %s."), *FunctionName, *TransactionAsString, *ProjectileName, *DataName, CurrentTime, *OwnerName, *ParentName, *LocationAsString, *DirectionAsString);
-		}
-		else
-		if (ProjectileOwner)
-		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s Projectile: %s with Data: %s at %f for %s at %s moving at %s."), *FunctionName, *TransactionAsString, *ProjectileName, *DataName, CurrentTime, *OwnerName, *LocationAsString, *DirectionAsString);
-		}
-		else
-		if (Parent)
-		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s Projectile: %s with Data: %s at %f attached to %s at %s moving at %s."), *TransactionAsString, *FunctionName, *ProjectileName, *DataName, CurrentTime, *ParentName, *LocationAsString, *DirectionAsString);
-		}
-		else
-		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s Projectile: %s with Data: %s at %f at %s moving at %s."), *FunctionName, *TransactionAsString, *ProjectileName, *DataName, CurrentTime, *LocationAsString, *DirectionAsString);
-		}
-	}
+	return Internal->GetActivePoolSize(Type);
 }
 
-ACsProjectile* ACsManager_Projectile::Allocate()
+bool AICsManager_Projectile::IsExhausted(const FECsProjectileType &Type)
 {
-	for (uint16 I = 0; I < PoolSize; ++I)
-	{
-		PoolIndex				  = (PoolIndex + I) % PoolSize;
-		ACsProjectile* Projectile = Pool[PoolIndex];
-
-		if (!Projectile->Cache.IsAllocated)
-		{
-			Projectile->Cache.IsAllocated = true;
-			return Projectile;
-		}
-	}
-	checkf(0, TEXT("ACsManager_Projectile::Allocate: Pool is exhausted"));
-	return nullptr;
+	return Internal->IsExhausted(Type);
 }
 
-void ACsManager_Projectile::DeAllocate(const int32 &Index)
+bool AICsManager_Projectile::DeAllocate(const FECsProjectileType &Type, const int32 &Index)
 {
-	const uint16 Count = ActiveProjectiles.Num();
-
-	if (Count == CS_EMPTY)
-		return;
-
-	for (int32 I = Count - 1; I >= 0; --I)
-	{
-		ACsProjectile* Projectile = ActiveProjectiles[I];
-
-		// Update ActiveIndex
-		if (I > CS_FIRST)
-		{
-			Projectile->Cache.DecrementActiveIndex();
-		}
-
-		if (Projectile->Cache.Index == Index)
-		{
-			LogTransaction(ECsManagerProjectileCachedString::Str::DeAllocate, ECsPoolTransaction::Deallocate, Projectile);
-
-			Projectile->DeAllocate();
-			ActiveProjectiles.RemoveAt(I);
-			return;
-		}
-	}
-
-	// Correct on Cache "Miss"
-	for (int32 I = 1; I < Count; ++I)
-	{
-		ACsProjectile* Projectile = ActiveProjectiles[I];
-		// Reset ActiveIndex
-		Projectile->Cache.SetActiveIndex(I);
-	}
-	UE_LOG(LogCs, Warning, TEXT("ACsManager_Projectile::DeAllocate: Projectile at PoolIndex: %d is already deallocated."), Index);
+	return Internal->DeAllocate(Type, Index);
 }
 
-// Payload
-#pragma region
-
-FCsProjectilePayload* ACsManager_Projectile::AllocatePayload()
+void AICsManager_Projectile::DeAllocateAll()
 {
-	for (uint8 I = 0; I < CS_PROJECTILE_PAYLOAD_SIZE; ++I)
-	{
-		const uint8 Index			  = (PayloadIndex + I) % CS_PROJECTILE_PAYLOAD_SIZE;
-		FCsProjectilePayload* Payload = &(Payloads[Index]);
-
-		if (!Payload->IsAllocated)
-		{
-			Payload->IsAllocated = true;
-			return Payload;
-		}
-	}
-	checkf(0, TEXT("ACsManager_Projectile::AllocatePayload: Pool is exhausted"));
-	return nullptr;
+	return Internal->DeAllocateAll();
 }
 
-#pragma endregion Payload
-
-// Fire
-#pragma region
-
-ACsProjectile* ACsManager_Projectile::Fire(FCsProjectilePayload* Payload, UObject* InInstigator, UObject* InOwner, UObject* InParent)
+FCsProjectilePayload* AICsManager_Projectile::AllocatePayload()
 {
-	ACsProjectile* Projectile = Allocate();
-	const int32 Count		  = ActiveProjectiles.Num();
-
-	Projectile->Allocate((uint16)Count, Payload, InInstigator, InOwner, InParent);
-
-	LogTransaction(ECsManagerProjectileCachedString::Str::Fire, ECsPoolTransaction::Allocate, Projectile);
-
-	ActiveProjectiles.Add(Projectile);
-	Payload->Reset();
-	return Projectile;
+	return Internal->AllocatePayload();
 }
 
-ACsProjectile* ACsManager_Projectile::Fire(FCsProjectilePayload* Payload, UObject* InInstigator, UObject* InOwner)
+ACsProjectile* AICsManager_Projectile::Fire(const FECsProjectileType &Type, FCsProjectilePayload &Payload)
 {
-	return Fire(Payload, InInstigator, InOwner, nullptr);
+	return Internal->Spawn(Type, &Payload);
 }
 
-ACsProjectile* ACsManager_Projectile::Fire(FCsProjectilePayload* Payload)
+ACsProjectile* AICsManager_Projectile::Fire(const FECsProjectileType &Type, FCsProjectilePayload *Payload)
 {
-	return Fire(Payload, nullptr, nullptr, nullptr);;
+	return Internal->Spawn(Type, Payload);
 }
-
-template<typename T>
-void ACsManager_Projectile::Fire(ACsProjectile* OutProjectile, FCsProjectilePayload* Payload, UObject* InInstigator, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)())
-{
-	OutProjectile	  = Allocate();
-	const int32 Count = ActiveProjectiles.Num();
-
-	OutProjectile->Allocate((uint16)Count, Payload, InInstigator, InOwner, InParent);
-
-	LogTransaction(ECsManagerProjectileCachedString::Str::Fire, ECsPoolTransaction::Allocate, OutProjectile);
-
-	ActiveProjectiles.Add(OutProjectile);
-	Payload->Reset();
-}
-
-template<typename T>
-void ACsManager_Projectile::Fire(ACsProjectile* OutProjectile, FCsProjectilePayload* Payload, UObject* InInstigator, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)())
-{
-	Fire<T>(OutProjectile, Payload, InInstigator, InOwner, nullptr, InObject, OnDeAllocate);
-}
-
-template<typename T>
-void ACsManager_Projectile::Fire(ACsProjectile* OutProjectile, FCsProjectilePayload* Payload, UObject* InInstigator, T* InObject, void (T::*OnDeAllocate)())
-{
-	Fire<T>(OutProjectile, Payload, InInstigator, nullptr, nullptr, InObject, OnDeAllocate);
-}
-
-#pragma endregion Fire

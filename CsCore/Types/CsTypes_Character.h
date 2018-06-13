@@ -7,71 +7,114 @@
 // Character
 #pragma region
 
-namespace ECsCharacterAnim
+	// CharacterAnim
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsCharacterAnim : public FECsEnum_uint8
 {
-	enum Type : uint8;
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsCharacterAnim() {}
+	FECsCharacterAnim(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsCharacterAnim(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsCharacterAnim() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsCharacterAnim& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-typedef ECsCharacterAnim::Type TCsCharacterAnim;
-
-// CharacterAnimToString
-typedef const FString&(*TCsCharacterAnimToString)(const TCsCharacterAnim&);
-// StringToCharacterAnim
-typedef TCsCharacterAnim(*TCsStringToCharacterAnim)(const FString&);
-
-#define CS_DECLARE_CHARACTER_ANIM	TCsCharacterAnim CharacterAnim_MAX; \
-									uint8 CHARACTER_ANIM_MAX; \
-									TCsCharacterAnimToString CharacterAnimToString; \
-									TCsStringToCharacterAnim StringToCharacterAnim;
-
-#define CS_DEFINE_CHARACTER_ANIM	CharacterAnim_MAX = ECsCharacterAnim::ECsCharacterAnim_MAX;\
-									CHARACTER_ANIM_MAX = (uint8)CharacterAnim_MAX \
-									CharacterAnimToString = &ECsCharacterAnim::ToString; \
-									StringToCharacterAnim = &ECsCharacterAnim::ToType;
-
-namespace ECsCharacterBlendSpace
+struct CSCORE_API EMCsCharacterAnim : public TCsEnumStructMap<FECsCharacterAnim, uint8>
 {
-	enum Type : uint8;
+protected:
+	EMCsCharacterAnim() {}
+	EMCsCharacterAnim(const EMCsCharacterAnim &) = delete;
+	EMCsCharacterAnim(EMCsCharacterAnim &&) = delete;
+public:
+	~EMCsCharacterAnim() {}
+private:
+	static EMCsCharacterAnim* Instance;
+
+public:
+	static EMCsCharacterAnim& Get();
+};
+
+	// CharacterBlendSpace
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsCharacterBlendSpace : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsCharacterBlendSpace() {}
+	FECsCharacterBlendSpace(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsCharacterBlendSpace(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsCharacterBlendSpace() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsCharacterBlendSpace& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-typedef ECsCharacterBlendSpace::Type TCsCharacterBlendSpace;
-
-// CharacterBlendSpaceToString
-typedef const FString&(*TCsCharacterBlendSpaceToString)(const TCsCharacterBlendSpace&);
-// StringToCharacterBlendSpace
-typedef TCsCharacterBlendSpace(*TCsStringToCharacterBlendSpace)(const FString&);
-
-#define CS_DECLARE_CHARACTER_BLEND_SPACE	TCsCharacterBlendSpace CharacterBlendSpace_MAX; \
-											uint8 CHARACTER_BLEND_SPACE_MAX; \
-											TCsCharacterBlendSpaceToString CharacterBlendSpaceToString; \
-											TCsStringToCharacterBlendSpace StringToCharacterBlendSpace;
-
-#define CS_DEFINE_CHARACTER_BLEND_SPACE		CharacterBlendSpace_MAX = ECsCharacterBlendSpace::ECsCharacterBlendSpace_MAX;\
-											CHARACTER_BLEND_SPACE_MAX = (uint8)CharacterBlendSpace_MAX \
-											CharacterBlendSpaceToString = &ECsCharacterBlendSpace::ToString; \
-											StringToCharacterBlendSpace = &ECsCharacterBlendSpace::ToType;
-
-namespace ECsCharacterAnimBlueprint
+struct CSCORE_API EMCsCharacterBlendSpace : public TCsEnumStructMap<FECsCharacterBlendSpace, uint8>
 {
-	enum Type : uint8;
+protected:
+	EMCsCharacterBlendSpace() {}
+	EMCsCharacterBlendSpace(const EMCsCharacterBlendSpace &) = delete;
+	EMCsCharacterBlendSpace(EMCsCharacterBlendSpace &&) = delete;
+public:
+	~EMCsCharacterBlendSpace() {}
+private:
+	static EMCsCharacterBlendSpace* Instance;
+
+public:
+	static EMCsCharacterBlendSpace& Get();
+};
+
+
+	// CharacterAnimBlueprint
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsCharacterAnimBlueprint : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsCharacterAnimBlueprint() {}
+	FECsCharacterAnimBlueprint(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsCharacterAnimBlueprint(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsCharacterAnimBlueprint() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsCharacterAnimBlueprint& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-typedef ECsCharacterAnimBlueprint::Type TCsCharacterAnimBlueprint;
+struct CSCORE_API EMCsCharacterAnimBlueprint : public TCsEnumStructMap<FECsCharacterAnimBlueprint, uint8>
+{
+protected:
+	EMCsCharacterAnimBlueprint() {}
+	EMCsCharacterAnimBlueprint(const EMCsCharacterAnimBlueprint &) = delete;
+	EMCsCharacterAnimBlueprint(EMCsCharacterAnimBlueprint &&) = delete;
+public:
+	~EMCsCharacterAnimBlueprint() {}
+private:
+	static EMCsCharacterAnimBlueprint* Instance;
 
-// CharacterAnimBlueprintToString
-typedef const FString&(*TCsCharacterAnimBlueprintToString)(const TCsCharacterAnimBlueprint&);
-// StringToCharacterAnimBlueprint
-typedef TCsCharacterAnimBlueprint(*TCsStringToCharacterAnimBlueprint)(const FString&);
-
-#define CS_DECLARE_CHARACTER_ANIM_BLUEPRINT	TCsCharacterAnimBlueprint CharacterAnimBlueprint_MAX; \
-											uint8 CHARACTER_ANIM_BLUEPRINT_MAX; \
-											TCsCharacterAnimBlueprintToString CharacterAnimBlueprintToString; \
-											TCsStringToCharacterAnimBlueprint StringToCharacterAnimBlueprint;
-
-#define CS_DEFINE_CHARACTER_ANIM_BLUEPRINT	CharacterAnimBlueprint_MAX = ECsCharacterAnimBlueprint::ECsCharacterAnimBlueprint_MAX;\
-											CHARACTER_ANIM_BLUEPRINT_MAX = (uint8)CharacterAnimBlueprint_MAX \
-											CharacterAnimBlueprintToString = &ECsCharacterAnimBlueprint::ToString; \
-											StringToCharacterAnimBlueprint = &ECsCharacterAnimBlueprint::ToType;
+public:
+	static EMCsCharacterAnimBlueprint& Get();
+};
 
 namespace ECsCharacterAnimVariation
 {
@@ -95,8 +138,44 @@ typedef TCsCharacterAnimVariation(*TCsStringToCharacterAnimVariation)(const FStr
 											CharacterAnimVariationToString = &ECsCharacterAnimVariation::ToString; \
 											StringToCharacterAnimVariation = &ECsCharacterAnimVariation::ToType;
 
+	// CharacterAnimVariation
+
 USTRUCT(BlueprintType)
-struct FCsHeadCollision
+struct CSCORE_API FECsCharacterAnimVariation : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsCharacterAnimVariation() {}
+	FECsCharacterAnimVariation(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsCharacterAnimVariation(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsCharacterAnimVariation() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsCharacterAnimVariation& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
+}
+
+struct CSCORE_API EMCsCharacterAnimVariation : public TCsEnumStructMap<FECsCharacterAnimVariation, uint8>
+{
+protected:
+	EMCsCharacterAnimVariation() {}
+	EMCsCharacterAnimVariation(const EMCsCharacterAnimVariation &) = delete;
+	EMCsCharacterAnimVariation(EMCsCharacterAnimVariation &&) = delete;
+public:
+	~EMCsCharacterAnimVariation() {}
+private:
+	static EMCsCharacterAnimVariation* Instance;
+
+public:
+	static EMCsCharacterAnimVariation& Get();
+};
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsHeadCollision
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -115,7 +194,7 @@ struct FCsHeadCollision
 	FCsHeadCollision() {}
 	~FCsHeadCollision() {}
 
-	FCsHeadCollision& operator=(const FCsHeadCollision& B)
+	FORCEINLINE FCsHeadCollision& operator=(const FCsHeadCollision& B)
 	{
 		Radius = B.Radius;
 		BoneName = B.BoneName;
@@ -123,12 +202,12 @@ struct FCsHeadCollision
 		return *this;
 	}
 
-	bool operator==(const FCsHeadCollision& B) const
+	FORCEINLINE bool operator==(const FCsHeadCollision& B) const
 	{
 		return Radius != B.Radius && BoneName != BoneName && Offset == B.Offset;
 	}
 
-	bool operator!=(const FCsHeadCollision& B) const
+	FORCEINLINE bool operator!=(const FCsHeadCollision& B) const
 	{
 		return !(*this == B);		
 	}

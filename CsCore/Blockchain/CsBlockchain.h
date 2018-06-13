@@ -23,21 +23,21 @@ typedef ECsBlockchainType::Type TCsBlockchainType;
 
 namespace ECsBlockchainType
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
-		const TCsString PrivateSingleNode = TCsString(TEXT("PrivateSingleNode"), TEXT("privatesinglenode"));
-		const TCsString Local = TCsString(TEXT("Local"), TEXT("local"));
-		const TCsString Server = TCsString(TEXT("Server"), TEXT("server"));
+		extern CSCORE_API const TCsString PrivateSingleNode;
+		extern CSCORE_API const TCsString Local;
+		extern CSCORE_API const TCsString Server;
 	}
 
 	namespace Ref
 	{
-		const Type PrivateSingleNode = Type::PrivateSingleNode;
-		const Type Local = Type::Local;
-		const Type Server = Type::Server;
-		const Type ECsBlockchainType_MAX = Type::ECsBlockchainType_MAX;
+		extern CSCORE_API const Type PrivateSingleNode;
+		extern CSCORE_API const Type Local;
+		extern CSCORE_API const Type Server;
+		extern CSCORE_API const Type ECsBlockchainType_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -73,19 +73,19 @@ typedef ECsBlockchainProcessType::Type TCsBlockchainProcessType;
 
 namespace ECsBlockchainProcessType
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
-		const TCsString RunningInstance = TCsString(TEXT("RunningInstance"), TEXT("runninginstance"));
-		const TCsString Console = TCsString(TEXT("Console"), TEXT("console"));
+		extern CSCORE_API const TCsString RunningInstance;
+		extern CSCORE_API const TCsString Console;
 	}
 
 	namespace Ref
 	{
-		const Type RunningInstance = Type::RunningInstance;
-		const Type Console = Type::Console;
-		const Type ECsBlockchainProcessType_MAX = Type::ECsBlockchainProcessType_MAX;
+		extern CSCORE_API const Type RunningInstance;
+		extern CSCORE_API const Type Console;
+		extern CSCORE_API const Type ECsBlockchainProcessType_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -108,10 +108,13 @@ struct FCsBlockchainProcessStartInfo
 {
 	GENERATED_USTRUCT_BODY()
 
+	/** URL - executable name */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
-	FString FileName;
+	FString Filename;
+	/** Params - command line arguments */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
 	FString Arguments;
+	/** WritePipe - whether to use WritePipe */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
 	bool RedirectStandardInput;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
@@ -120,9 +123,9 @@ struct FCsBlockchainProcessStartInfo
 	FCsBlockchainProcessStartInfo(){}
 	~FCsBlockchainProcessStartInfo(){}
 
-	FCsBlockchainProcessStartInfo& operator=(const FCsBlockchainProcessStartInfo& B)
+	FORCEINLINE FCsBlockchainProcessStartInfo& operator=(const FCsBlockchainProcessStartInfo& B)
 	{
-		FileName = B.FileName;
+		Filename = B.Filename;
 		Arguments = B.Arguments;
 		RedirectStandardInput = B.RedirectStandardInput;
 
@@ -137,9 +140,9 @@ struct FCsBlockchainProcessStartInfo
 		return *this;
 	}
 
-	bool operator==(const FCsBlockchainProcessStartInfo& B) const
+	FORCEINLINE bool operator==(const FCsBlockchainProcessStartInfo& B) const
 	{
-		if (FileName != B.FileName)
+		if (Filename != B.Filename)
 			return false;
 		if (Arguments != B.Arguments)
 			return false;
@@ -159,16 +162,247 @@ struct FCsBlockchainProcessStartInfo
 		return true;
 	}
 
-	bool operator!=(const FCsBlockchainProcessStartInfo& B) const
+	FORCEINLINE bool operator!=(const FCsBlockchainProcessStartInfo& B) const
 	{
 		return !(*this == B);
 	}
 
-	void AddMonitorOutputEvent(const FCsProcessMonitorOutputEvent &e)
+	FORCEINLINE void AddMonitorOutputEvent(const FCsProcessMonitorOutputEvent &e)
 	{
 		MonitorOutputEvents.Add(e);
 	}
 };
+
+USTRUCT(BlueprintType)
+struct FCsBlockchainCommandInfo
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
+	FECsBlockchainCommand Command;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
+	TArray<FCsBlockchainCommandArgument> Arguments;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
+	bool Payload_bool;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
+	int32 Payload_int32;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
+	float Payload_float;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
+	FString Payload_FString;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
+	FECsBlockchainContract Payload_Contract;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
+	FCsBlockchainContractFunctionPayload Payload_ContractFunction;
+
+	void* Payload_ptr;
+
+	FCsBlockchainCommandInfo() {}
+
+	FCsBlockchainCommandInfo(const FECsBlockchainCommand &InCommand)
+	{
+		Command = InCommand;
+	}
+
+	FCsBlockchainCommandInfo(const FECsBlockchainCommand &InCommand, const TArray<FCsBlockchainCommandArgument> &Args)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+	}
+
+	FCsBlockchainCommandInfo(const FECsBlockchainCommand &InCommand, const TArray<FCsBlockchainCommandArgument> &Args, void* Payload)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+		Payload_ptr = Payload;
+	}
+
+	FCsBlockchainCommandInfo(const FECsBlockchainCommand &InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const bool &Payload)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+		Payload_bool = Payload;
+	}
+
+	FCsBlockchainCommandInfo(const FECsBlockchainCommand &InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const int32 &Payload)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+		Payload_int32 = Payload;
+	}
+
+	FCsBlockchainCommandInfo(const FECsBlockchainCommand &InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const float &Payload)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+		Payload_float = Payload;
+	}
+
+	FCsBlockchainCommandInfo(const FECsBlockchainCommand &InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const FString &Payload)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+		Payload_FString = Payload;
+	}
+
+	~FCsBlockchainCommandInfo() {}
+
+	FORCEINLINE void SetArguments(const TArray<FCsBlockchainCommandArgument> &Args)
+	{
+		Arguments.Reset();
+
+		const int32 Count = Args.Num();
+
+		for (const FCsBlockchainCommandArgument& Arg : Args)
+		{
+			Arguments.Add(Arg);
+		}
+	}
+
+	FORCEINLINE FCsBlockchainCommandInfo& operator=(const FCsBlockchainCommandInfo& B)
+	{
+		Command = B.Command;
+
+		Arguments.Reset();
+
+		for (const FCsBlockchainCommandArgument& Arg : B.Arguments)
+		{
+			Arguments.Add(Arg);
+		}
+
+		Payload_bool = B.Payload_bool;
+		Payload_int32 = B.Payload_int32;
+		Payload_float = B.Payload_float;
+		Payload_FString = B.Payload_FString;
+		Payload_ptr = B.Payload_ptr;
+		return *this;
+	}
+
+	FORCEINLINE bool operator==(const FCsBlockchainCommandInfo& B) const
+	{
+		if (Command != B.Command)
+			return false;
+
+		if (Arguments.Num() != B.Arguments.Num())
+			return false;
+
+		const int32 Count = Arguments.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			if (Arguments[I] != B.Arguments[I])
+				return false;
+		}
+
+		if (Payload_bool != B.Payload_bool)
+			return false;
+		if (Payload_int32 != B.Payload_int32)
+			return false;
+		if (Payload_float != B.Payload_float)
+			return false;
+		if (Payload_FString != B.Payload_FString)
+			return false;
+		if (Payload_ptr != B.Payload_ptr)
+			return false;
+		return true;
+	}
+
+	FORCEINLINE bool operator!=(const FCsBlockchainCommandInfo& B) const
+	{
+		return !(*this == B);
+	}
+
+	FORCEINLINE void Set(const FECsBlockchainCommand& InCommand)
+	{
+		Command = InCommand;
+	}
+
+	FORCEINLINE void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+	}
+
+	FORCEINLINE void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const bool &Payload)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+		Payload_bool = Payload;
+	}
+
+	FORCEINLINE void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const int32 &Payload)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+		Payload_int32 = Payload;
+	}
+
+	FORCEINLINE void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const float &Payload)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+		Payload_float = Payload;
+	}
+
+	FORCEINLINE void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const FString &Payload)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+		Payload_FString = Payload;
+	}
+
+	FORCEINLINE void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const FECsBlockchainContract &Payload)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+		Payload_Contract = Payload;
+	}
+
+	FORCEINLINE void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, const FCsBlockchainContractFunctionPayload &Payload)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+		Payload_ContractFunction = Payload;
+	}
+
+	FORCEINLINE void Set(const FECsBlockchainCommand& InCommand, const TArray<FCsBlockchainCommandArgument> &Args, void* Payload)
+	{
+		Command = InCommand;
+		SetArguments(Args);
+		Payload_ptr = Payload;
+	}
+
+	FORCEINLINE void Reset()
+	{
+		Arguments.Reset();
+
+		Payload_bool = false;
+		Payload_int32 = 0;
+		Payload_float = 0.0f;
+		Payload_FString = ECsCached::Str::Empty;
+		Payload_ptr = nullptr;
+	}
+};
+
+// Cache
+#pragma region
+
+namespace ECsBlockchainCached
+{
+	namespace Var
+	{
+		const TArray<FCsBlockchainContractFunctionArgument> ContractFunctionEmptyArgs;
+	};
+}
+
+#pragma endregion Cache
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsBlockchain_PrivateChainCreated, const int32&, Index);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsBlockchain_PrivateChainStarted, const int32&, Index);
@@ -203,8 +437,8 @@ public:
 
 protected:
 
-	void Initialize();
-	void CleanUp();
+	virtual void Initialize();
+	virtual void CleanUp();
 
 private:
 	// Singleton data
@@ -390,32 +624,6 @@ public:
 #pragma endregion Miner
 };
 
-/*
-
-#region "CVars"
-
-public static CgConsoleVariableLog LogIO = new CgConsoleVariableLog("log.blockchain.io", false, "Log All Blockchain Input / Output Messages", (int)ECgConsoleVariableFlag.Console);
-public static CgConsoleVariableLog LogIOProcess = new CgConsoleVariableLog("log.blockchain.io.process", false, "Log Process Blockchain Input / Output Messages", (int)ECgConsoleVariableFlag.Console);
-public static CgConsoleVariableLog LogIOConsole = new CgConsoleVariableLog("log.blockchain.io.console", false, "Log Console Blockchain Input / Output Messages", (int)ECgConsoleVariableFlag.Console);
-// Process
-public static TCgConsoleVariable<bool> ShowProcessWindow = new TCgConsoleVariable<bool>("show.blockchain.processwindow", false, "Show Blockchain Process Window", (int)ECgConsoleVariableFlag.Console);
-public static CgConsoleVariableLog LogProcessStart = new CgConsoleVariableLog("log.blockchain.process.start", false, "Log Blockchain Process Starting", (int)ECgConsoleVariableFlag.Console);
-// Command
-public static CgConsoleVariableLog LogCommandCompleted = new CgConsoleVariableLog("log.blockchain.command.completed", false, "Log Blockchain Command Completed", (int)ECgConsoleVariableFlag.Console);
-// Account
-public static CgConsoleVariableLog LogAccountCreated = new CgConsoleVariableLog("log.blockchain.account.created", false, "Log Blockchain Account Created", (int)ECgConsoleVariableFlag.Console);
-
-#endregion // CVars
-
-public class PrivateChainCreated : TCgMulticastDelegate_OneParam<int> { }
-public class PrivateChainStarted : TCgMulticastDelegate_OneParam<int> { }
-public class ConsoleOpened : TCgMulticastDelegate_OneParam<int> { }
-public class CommandCompleted : TCgMulticastDelegate_OneParam<ECgBlockchainCommand> { }
-public class AccountCreated : TCgMulticastDelegate_OneParam<ICgBlockchainAccount> { }
-public class CoinbaseSet : TCgDelegate_OneParam<ICgBlockchainAccount> { }
-public class ContractFunctionCompleted : TCgMulticastDelegate_TwoParams<ECgBlockchainContract, ECgBlockchainContractFunction> { }
-
-*/
 /*
 public interface ICgBlockchain
 {

@@ -8,7 +8,7 @@
 // Cache
 #pragma region
 
-namespace ECsWidgetInventorySlotCachedString
+namespace ECsWidgetInventorySlotCached
 {
 	namespace Str
 	{
@@ -38,7 +38,7 @@ void UCsWidget_Inventory_Slot::UpdateCurrentCount()
 	else
 	{
 				//TEXT("")
-		SetString(ECsCachedString::Str::Empty);
+		SetString(ECsCached::Str::Empty);
 	}
 	
 }

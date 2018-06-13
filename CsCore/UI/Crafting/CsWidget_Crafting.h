@@ -21,7 +21,7 @@ namespace ECsWidgetCraftingRoutine
 
 namespace ECsWidgetCraftingRoutine
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -61,7 +61,7 @@ namespace ECsWidgetCraftingProcessState
 
 namespace ECsWidgetCraftingProcessState
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
@@ -142,8 +142,8 @@ public:
 
 	TArray<FName> SelectedOptionShortCodes;
 
-	TCsAssetType RecipeAssetType;
-	TCsAssetType ItemAssetType;
+	FECsAssetType RecipeAssetType;
+	FECsAssetType ItemAssetType;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Crafting")
 	uint8 Bag;
@@ -182,7 +182,7 @@ public:
 
 	CS_COROUTINE_DECLARE(IncrementCount)
 
-	TCsInputAction IncrementInputAction;
+	FECsInputAction IncrementInputAction;
 
 	void PerformIncrementCount();
 	void StopIncrementCount();
@@ -233,7 +233,7 @@ public:
 
 	CS_COROUTINE_DECLARE(DecrementCount)
 
-	TCsInputAction DecrementInputAction;
+	FECsInputAction DecrementInputAction;
 
 	void PerformDecrementCount();
 	void StopDecrementCount();
@@ -253,7 +253,7 @@ public:
 
 	TCsGameEvent StartGameEvent;
 
-	TCsInputAction StartInputAction;
+	FECsInputAction StartInputAction;
 
 	UFUNCTION()
 	void OnStartButtonPressed();

@@ -5,55 +5,83 @@
 #include "CsTypes_Damage.generated.h"
 #pragma once
 
-namespace ECsDamageType
+// DamageType
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsDamageType : public FECsEnum_uint8
 {
-	enum Type : uint8;
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsDamageType() {}
+	FECsDamageType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsDamageType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsDamageType() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsDamageType& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-typedef ECsDamageType::Type TCsDamageType;
-
-// DamageTypeToString
-typedef const FString&(*TCsDamageTypeToString)(const TCsDamageType&);
-// StringToDamageType
-typedef TCsDamageType(*TCsStringToDamageType)(const FString&);
-
-#define CS_DECLARE_DAMAGE_TYPE	TCsDamageType DamageType_MAX; \
-								uint8 DAMAGE_TYPE_MAX; \
-								TCsDamageTypeToString DamageTypeToString; \
-								TCsStringToDamageType StringToDamageType;
-
-#define CS_DEFINE_DAMAGE_TYPE	DamageType_MAX = ECsDamageType::ECsDamageType_MAX;\
-								DAMAGE_TYPE_MAX = (uint8)DamageType_MAX \
-								DamageTypeToString = &ECsDamageType::ToString; \
-								StringToDamageType = &ECsDamageType::ToType;
-
-namespace ECsHitType
+struct CSCORE_API EMCsDamageType : public TCsEnumStructMap<FECsDamageType, uint8>
 {
-	enum Type : uint8;
+protected:
+	EMCsDamageType() {}
+	EMCsDamageType(const EMCsDamageType &) = delete;
+	EMCsDamageType(EMCsDamageType &&) = delete;
+public:
+	~EMCsDamageType() {}
+private:
+	static EMCsDamageType* Instance;
+
+public:
+	static EMCsDamageType& Get();
+};
+
+// HitType
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsHitType : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsHitType() {}
+	FECsHitType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsHitType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsHitType() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsHitType& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-typedef ECsHitType::Type TCsHitType;
+struct CSCORE_API EMCsHitType : public TCsEnumStructMap<FECsHitType, uint8>
+{
+protected:
+	EMCsHitType() {}
+	EMCsHitType(const EMCsHitType &) = delete;
+	EMCsHitType(EMCsHitType &&) = delete;
+public:
+	~EMCsHitType() {}
+private:
+	static EMCsHitType* Instance;
 
-// HitTypeToString
-typedef const FString&(*TCsHitTypeToString)(const TCsHitType&);
-// StringToHitType
-typedef TCsHitType(*TCsStringToHitType)(const FString&);
-
-#define CS_DECLARE_HIT_TYPE	TCsHitType HitType_MAX; \
-							uint8 HIT_TYPE_MAX; \
-							TCsHitTypeToString HitTypeToString; \
-							TCsStringToHitType StringToHitType;
-
-#define CS_DEFINE_HIT_TYPE	HitType_MAX = ECsHitType::ECsHitType_MAX;\
-							HIT_TYPE_MAX = (uint8)HitType_MAX \
-							HitTypeToString = &ECsHitType::ToString; \
-							StringToHitType = &ECsHitType::ToType
+public:
+	static EMCsHitType& Get();
+};
 
 #define CS_INVALID_DAMAGE_TYPE 255
 #define CS_INVALID_HIT_TYPE 255
 
 USTRUCT(BlueprintType)
-struct FCsDamageFalloff
+struct CSCORE_API FCsDamageFalloff
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -125,7 +153,7 @@ struct FCsDamageFalloff
 };
 
 USTRUCT(BlueprintType)
-struct FCsDamageRadial
+struct CSCORE_API FCsDamageRadial
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -221,7 +249,7 @@ struct FCsDamageRadial
 };
 
 USTRUCT(BlueprintType)
-struct FCsDamageEvent
+struct CSCORE_API FCsDamageEvent
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -240,15 +268,11 @@ struct FCsDamageEvent
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
 	TWeakObjectPtr<UObject> Causer;
 
-	TCsDamageType DamageType;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	FECsDamageType DamageType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
-	uint8 DamageType_Script;
-
-	TCsHitType HitType;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
-	uint8 HitType_Script;
+	FECsHitType HitType;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
 	//TEnumAsByte<EProjectileType::Type> ProjectileType;
@@ -265,33 +289,29 @@ struct FCsDamageEvent
 	}
 	virtual ~FCsDamageEvent(){}
 
-	FCsDamageEvent& operator=(const FCsDamageEvent& B)
+	FORCEINLINE FCsDamageEvent& operator=(const FCsDamageEvent& B)
 	{
 		Damage = B.Damage;
 		Instigator = B.Instigator;
 		Causer = B.Causer;
 		DamageType = B.DamageType;
-		DamageType_Script = B.DamageType_Script;
 		HitType = B.HitType;
-		HitType_Script = B.HitType_Script;
 		HasImpulse = B.HasImpulse;
 		HitInfo = B.HitInfo;
 		return *this;
 	}
 
-	bool operator==(const FCsDamageEvent& B) const
+	FORCEINLINE bool operator==(const FCsDamageEvent& B) const
 	{
 		return Damage == B.Damage &&
 			   Instigator == B.Instigator &&
 			   Causer == B.Causer &&
 			   DamageType == B.DamageType &&
-			   DamageType_Script == B.DamageType_Script &&
 		 	   HitType == B.HitType &&
-			   HitType_Script == B.HitType_Script &&
 			   HasImpulse == B.HasImpulse;
 	}
 
-	bool operator!=(const FCsDamageEvent& B) const
+	FORCEINLINE bool operator!=(const FCsDamageEvent& B) const
 	{
 		return !(*this == B);
 	}
@@ -308,37 +328,23 @@ struct FCsDamageEvent
 		Instigator = nullptr;
 		Causer.Reset();
 		Causer = nullptr;
-		DamageType = (TCsDamageType)0;
-		DamageType_Script = CS_INVALID_DAMAGE_TYPE;
-		HitType = (TCsHitType)0;
-		HitType_Script = CS_INVALID_HIT_TYPE;
+		DamageType = EMCsDamageType::Get().GetMAX();
+		HitType = EMCsHitType::Get().GetMAX();
 		HasImpulse = false;
 		HitInfo.Reset(0.0f, false);
 	}
 
-	void SetDamageType(const TCsDamageType &InDamageType)
-	{
-		DamageType		  = InDamageType;
-		DamageType_Script = (uint8)DamageType;
-	}
-
-	void SetHitType(const TCsHitType &InHitType)
-	{
-		HitType		   = InHitType;
-		HitType_Script = (uint8)HitType;
-	}
-
-	UObject* GetInstigator() { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
+	FORCEINLINE UObject* GetInstigator() { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
 	template<typename T>
-	T* GetInstigator() { return Cast<T>(GetInstigator()); }
+	FORCEINLINE T* GetInstigator() { return Cast<T>(GetInstigator()); }
 
-	UObject* GetCauser() { return Causer.IsValid() ? Causer.Get() : nullptr; }
+	FORCEINLINE UObject* GetCauser() { return Causer.IsValid() ? Causer.Get() : nullptr; }
 	template<typename T>
-	T* GetCauser() { return Cast<T>(GetCauser()); }
+	FORCEINLINE T* GetCauser() { return Cast<T>(GetCauser()); }
 };
 
 USTRUCT(BlueprintType)
-struct FCsDamageResult
+struct CSCORE_API FCsDamageResult
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -354,15 +360,11 @@ struct FCsDamageResult
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
 	TWeakObjectPtr<UObject> Victim;
 
-	TCsDamageType DamageType;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	FECsDamageType DamageType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
-	uint8 DamageType_Script;
-
-	TCsHitType HitType;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
-	uint8 HitType_Script;
+	FECsHitType HitType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
 	FHitResult HitInfo;
@@ -373,30 +375,26 @@ struct FCsDamageResult
 	}
 	virtual ~FCsDamageResult() {}
 
-	FCsDamageResult& operator=(const FCsDamageResult& B)
+	FORCEINLINE FCsDamageResult& operator=(const FCsDamageResult& B)
 	{
 		Damage = B.Damage;
 		
 		Victim = B.Victim;
 		DamageType = B.DamageType;
-		DamageType_Script = B.DamageType_Script;
 		HitType = B.HitType;
-		HitType_Script = B.HitType_Script;
 		HitInfo = B.HitInfo;
 		return *this;
 	}
 
-	bool operator==(const FCsDamageResult& B) const
+	FORCEINLINE bool operator==(const FCsDamageResult& B) const
 	{
 		return	Damage == B.Damage &&
 				Victim == B.Victim &&
 				DamageType == B.DamageType &&
-				DamageType_Script == B.DamageType_Script &&
-				HitType == B.HitType &&
-				HitType_Script == B.HitType_Script;
+				HitType == B.HitType;
 	}
 
-	bool operator!=(const FCsDamageResult& B) const
+	FORCEINLINE bool operator!=(const FCsDamageResult& B) const
 	{
 		return !(*this == B);
 	}
@@ -411,26 +409,12 @@ struct FCsDamageResult
 		Damage = 0.0f;
 		Victim.Reset();
 		Victim = nullptr;
-		DamageType = (TCsDamageType)0;
-		DamageType_Script = CS_INVALID_DAMAGE_TYPE;
-		HitType = (TCsHitType)0;
-		HitType_Script = CS_INVALID_HIT_TYPE;
+		DamageType = EMCsDamageType::Get().GetMAX();
+		HitType = EMCsHitType::Get().GetMAX();
 		HitInfo.Reset(0.0f, false);
 	}
 
-	void SetDamageType(const TCsDamageType &InDamageType)
-	{
-		DamageType = InDamageType;
-		DamageType_Script = (uint8)DamageType;
-	}
-
-	void SetHitType(const TCsHitType &InHitType)
-	{
-		HitType = InHitType;
-		HitType_Script = (uint8)HitType;
-	}
-
-	UObject* GetVictim() { return Victim.IsValid() ? Victim.Get() : nullptr; }
+	FORCEINLINE UObject* GetVictim() { return Victim.IsValid() ? Victim.Get() : nullptr; }
 	template<typename T>
-	T* GetVictim() { return Cast<T>(GetVictim()); }
+	FORCEINLINE T* GetVictim() { return Cast<T>(GetVictim()); }
 };

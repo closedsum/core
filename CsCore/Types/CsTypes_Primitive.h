@@ -4,82 +4,76 @@
 #include "CsTypes_Primitive.generated.h"
 #pragma once
 
-// String
+// Cached
 #pragma region
 
-namespace ECsCachedString
+namespace ECsCached
 {
 	namespace Str
 	{
-		const FString Empty = TEXT("");
-		const FString None = TEXT("None");
-		const FString Json = TEXT(".json");
-		const FString INVALID = TEXT("INVALID");
-		const FString Dot = TEXT(".");
-		const FString True = TEXT("True");
-		const FString _true = TEXT("true");
-		const FString False = TEXT("False");
-		const FString _false = TEXT("false");
-		const FString Index = TEXT("Index");
-		const FString PREVIEW = TEXT("PREVIEW");
-		const FString Zero = TEXT("0");
-		const FString One = TEXT("1");
+		extern CSCORE_API const FString Empty;// = TEXT("");
+		extern CSCORE_API const FString None;// = TEXT("None");
+		extern CSCORE_API const FString INVALID;// = TEXT("INVALID");
+		extern CSCORE_API const FString Dot;// = TEXT(".");
+		extern CSCORE_API const FString True;// = TEXT("True");
+		extern CSCORE_API const FString _true;// = TEXT("true");
+		extern CSCORE_API const FString False;// = TEXT("False");
+		extern CSCORE_API const FString _false;// = TEXT("false");
+		extern CSCORE_API const FString Index;// = TEXT("Index");
+		extern CSCORE_API const FString PREVIEW;// = TEXT("PREVIEW");
+		extern CSCORE_API const FString Zero;// = TEXT("0");
+		extern CSCORE_API const FString One;// = TEXT("1");
 
-		const FString Text = TEXT("Text");
-		const FString Button = TEXT("Button");
-		const FString Image = TEXT("Image");
+		extern CSCORE_API const FString Text;// = TEXT("Text");
+		extern CSCORE_API const FString Button;// = TEXT("Button");
+		extern CSCORE_API const FString Image;// = TEXT("Image");
 
 		// Vector to String
-		const FString XEquals = TEXT("X=");
-		const FString YEquals = TEXT("Y=");
-		const FString ZEquals = TEXT("Z=");
+		extern CSCORE_API const FString XEquals;// = TEXT("X=");
+		extern CSCORE_API const FString YEquals;// = TEXT("Y=");
+		extern CSCORE_API const FString ZEquals;// = TEXT("Z=");
 		// Rotator to String
-		const FString RollEquals = TEXT("R=");
-		const FString PitchEquals = TEXT("P=");
-		const FString YawEquals = TEXT("Y=");
+		extern CSCORE_API const FString RollEquals;// = TEXT("R=");
+		extern CSCORE_API const FString PitchEquals;// = TEXT("P=");
+		extern CSCORE_API const FString YawEquals;// = TEXT("Y=");
 	}
-}
 
-#define CS_INVALID_ENUM_TO_STRING ECsCachedString::Str::INVALID
-
-#pragma endregion String
-
-// FName
-#pragma region
-
-namespace ECsCachedName
-{
-	namespace Name
-	{
-		const FName None = NAME_None;
-		const FName Null = FName("NULL");
-	}
-}
-
-#define CS_INVALID_SHORT_CODE ECsCachedName::Name::Null
-
-#pragma endregion FName
-
-// Primitive References
-namespace ECsCachedReferences
-{
 	namespace Ref
 	{
-		const bool True = true;
-		const bool False = false;
-		const uint8 Byte = 0;
-		const int8 SByte = 0;
-		const uint16 Short = 0;
-		const int16 SShort = 0;
-		const uint32 Int = 0;
-		const int32 SInt = 0;
-		const uint64 Long = 0;
-		const int32 SLong = 0;
-		const float Float = 0.0f;
-		const FString String = TEXT("");
-		const FName Name = NAME_None;
+		extern CSCORE_API const bool True;// = true;
+		extern CSCORE_API const bool False;// = false;
+		extern CSCORE_API const uint8 Byte;// = 0;
+		extern CSCORE_API const int8 SByte;// = 0;
+		extern CSCORE_API const uint16 Short;// = 0;
+		extern CSCORE_API const int16 SShort;// = 0;
+		extern CSCORE_API const uint32 Int;// = 0;
+		extern CSCORE_API const int32 SInt;// = 0;
+		extern CSCORE_API const uint64 Long;// = 0;
+		extern CSCORE_API const int32 SLong;// = 0;
+		extern CSCORE_API const float Float;// = 0.0f;
+		extern CSCORE_API const FString String;// = TEXT("");
+		extern CSCORE_API const FName Name;// = NAME_None;
+	}
+
+	namespace Name
+	{
+		extern CSCORE_API const FName None;// = NAME_None;
+		extern CSCORE_API const FName Null;// = FName("NULL");
+	}
+
+	namespace Ext
+	{
+		extern CSCORE_API const FString json;// = TEXT(".json");
+		extern CSCORE_API const FString txt;// = TEXT(".txt");
+		extern CSCORE_API const FString js;// = TEXT(".js");
 	}
 }
+
+#define CS_INVALID_ENUM_TO_STRING ECsCached::Str::INVALID
+#define CS_INVALID_ENUM_TO_NAME ECsCached::Name::None
+#define CS_INVALID_SHORT_CODE ECsCached::Name::Null
+
+#pragma endregion Cached
 
 // Enum Union
 #pragma region
@@ -89,16 +83,173 @@ namespace ECsCachedReferences
 // Enums
 #pragma region
 
+template<typename EnumType>
+struct TCsEnumMap
+{
+private:
+	TArray<EnumType> Enums;
+	int32 Count;
+	TMap<FString, EnumType> FromNameMap;
+	TMap<EnumType, FString> ToNameMap;
+	TMap<FString, EnumType> FromDisplayNameMap;
+	TMap<EnumType, FString> ToDisplayNameMap;
+	TMap<FName, EnumType> FromNameInternalMap;
+	TMap<EnumType, FName> ToNameInternalMap;
+	EnumType MAX;
+protected:
+	TCsEnumMap()
+	{
+		Count = 0;
+	}
+public:
+	virtual ~TCsEnumMap() {}
+
+	FORCEINLINE EnumType Add(const EnumType& Enum, const FString &Name, const FString &DisplayName)
+	{
+		Enums.Add(Enum);
+		MAX = Enum;
+		++Count;
+		FromNameMap.Add(Name, Enum);
+		ToNameMap.Add(Enum, Name);
+		FromDisplayNameMap.Add(DisplayName, Enum);
+		ToDisplayNameMap.Add(Enum, DisplayName);
+		FromNameInternalMap.Add(FName(*Name), Enum);
+		ToNameInternalMap.Add(Enum, FName(*Name));
+		return Enum;
+	}
+
+	FORCEINLINE EnumType Add(const EnumType& Enum, const FString &Name)
+	{
+		return Add(Enum, Name, Name);
+	}
+
+	FORCEINLINE const EnumType& operator[](const FString &Name)
+	{
+		return FromNameMap[Name];
+	}
+
+	FORCEINLINE const EnumType& operator[](const FName &Name)
+	{
+		return FromNameInternalMap[Name];
+	}
+
+	FORCEINLINE bool IsValidEnum(EnumType E)
+	{
+		return Enums.Find(E) > INDEX_NONE;
+	}
+
+	FORCEINLINE bool IsValidEnum(const FString &Name)
+	{
+		return FromNameMap.Find(Name) != nullptr;
+	}
+
+	FORCEINLINE bool IsValidEnum(const FName &Name)
+	{
+		return FromNameInternalMap.Find(Name) != nullptr;
+	}
+
+	FORCEINLINE const EnumType& GetEnumAt(const int32 &Index)
+	{
+		return Enums[Index];
+	}
+
+	FORCEINLINE const EnumType& GetSafeEnumAt(const int32 &Index)
+	{
+		return Index < Count ? Enums[Index] : MAX;
+	}
+
+	FORCEINLINE const EnumType& GetEnum(const FString &Name)
+	{
+		return FromNameMap[Name];
+	}
+
+	FORCEINLINE const EnumType& GetSafeEnum(const FString &Name)
+	{
+		return IsValidEnum(Name) ? FromNameMap[Name] : MAX;
+	}
+
+	FORCEINLINE const EnumType& GetEnum(const FName &Name)
+	{
+		return FromNameInternalMap[Name];
+	}
+
+	FORCEINLINE const EnumType& GetSafeEnum(const FName &Name)
+	{
+		return IsValidEnum(Name) ? FromNameInternalMap[Name] : MAX;
+	}
+
+	FORCEINLINE const EnumType& GetEnumByDisplayName(const FString &DisplayName)
+	{
+		return FromDisplayNameMap[DisplayName];
+	}
+
+	FORCEINLINE const int32& Num()
+	{
+		return Count;
+	}
+
+	FORCEINLINE const EnumType& GetMAX()
+	{
+		return MAX;
+	}
+
+	FORCEINLINE const FString& ToString(const EnumType& Enum)
+	{
+		if (FString* Name = ToNameMap.Find(Enum))
+			return *Name;
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE const FName& ToName(const EnumType& Enum)
+	{
+		if (FName* Name = ToNameInternalMap.Find(Enum))
+			return *Name;
+		return CS_INVALID_ENUM_TO_NAME;
+	}
+
+	FORCEINLINE const FString& ToDisplayName(const EnumType& Enum)
+	{
+		if (FString* Name = ToDisplayNameMap.Find(Enum))
+			return *Name;
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE const EnumType& ToType(const FString &Name)
+	{
+		if (EnumType* Enum = FromNameMap.Find(Name))
+			return *Enum;
+		return MAX;
+	}
+
+	FORCEINLINE const EnumType& ToType(const FName &Name)
+	{
+		if (EnumType* Enum = FromNameInternalMap.Find(Name))
+			return *Enum;
+		return MAX;
+	}
+};
+
 USTRUCT(BlueprintType)
-struct FECsEnum
+struct CSCORE_API FECsEnum
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enum")
 	FString Name;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enum")
+	FString DisplayName;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enum")
+	FName Name_Internal;
+
 	FECsEnum(){}
 	virtual ~FECsEnum(){}
+
+	FORCEINLINE operator FString() const
+	{
+		return Name;
+	}
 
 	FORCEINLINE friend bool operator==(const FString &Lhs, const FECsEnum &Rhs)
 	{
@@ -119,10 +270,15 @@ struct FECsEnum
 	{
 		return !(Lhs == Rhs);
 	}
+
+	FORCEINLINE virtual FString ToString() const
+	{
+		return TEXT("Name: ") + Name;
+	}
 };
 
 USTRUCT(BlueprintType)
-struct FECsEnum_uint8 : public FECsEnum
+struct CSCORE_API FECsEnum_uint8 : public FECsEnum
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -131,25 +287,41 @@ struct FECsEnum_uint8 : public FECsEnum
 
 	FECsEnum_uint8(){}
 
-	FECsEnum_uint8(const uint8 &InValue, const FString &InName)
+	FECsEnum_uint8(const uint8 &InValue, const FString &InName, const FString &InDisplayName)
 	{
 		Value = InValue;
 		Name = InName;
+		DisplayName = InDisplayName;
+		Name_Internal = FName(*Name);
+	}
+
+	FECsEnum_uint8(const uint8 &InValue, const FString &InName)
+	{
+		FECsEnum_uint8(InValue, InName, InName);
 	}
 
 	virtual ~FECsEnum_uint8(){}
 
-	operator uint8() const
+	FORCEINLINE operator uint8() const
 	{
 		return Value;
 	}
 
-	bool operator==(const FECsEnum_uint8& B) const
+	FORCEINLINE FECsEnum_uint8& operator=(const FECsEnum_uint8& B)
+	{
+		Value = B.Value;
+		Name = B.Name;
+		DisplayName = B.DisplayName;
+		Name_Internal = B.Name_Internal;
+		return *this;
+	}
+
+	FORCEINLINE bool operator==(const FECsEnum_uint8& B) const
 	{
 		return Value == B.Value && Name == B.Name;
 	}
 
-	bool operator!=(const FECsEnum_uint8& B) const
+	FORCEINLINE bool operator!=(const FECsEnum_uint8& B) const
 	{
 		return !(*this == B);
 	}
@@ -173,55 +345,404 @@ struct FECsEnum_uint8 : public FECsEnum
 	{
 		return !(Lhs == Rhs);
 	}
+
+	FORCEINLINE virtual FString ToString() const override
+	{
+		return TEXT("Name: ") + Name + TEXT(" Value: ") + FString::FromInt(Value);
+	}
+
+	FORCEINLINE FString ToGraphPinString() const
+	{
+		return TEXT("(Name=\"") + Name + TEXT("\",DisplayName=\"") + DisplayName + TEXT("\",Name_Internal=\"") + Name_Internal.ToString() + TEXT("\",Value=") + FString::FromInt(Value) + TEXT(")");
+	}
 };
 
 template<typename EnumStruct, typename EnumType>
-struct TCsEnumMap
+struct TCsEnumStructMap
 {
 private:
 	TArray<EnumStruct> Enums;
-	TMap<FString, EnumStruct> StringMap;
+	int32 Count;
+	TMap<FString, EnumStruct> NameMap;
+	TMap<FString, EnumStruct> DisplayNameMap;
+	TMap<FName, EnumStruct> NameInternalMap;
 	TMap<EnumType, EnumStruct> TypeMap;
+	EnumStruct MAX;
 protected:
-	TCsEnumMap() {}
+	TCsEnumStructMap()
+	{
+		Count = 0;
+		MAX.Value = (EnumType)0;
+		MAX.Name = TEXT("MAX");
+		MAX.DisplayName = TEXT("MAX");
+	}
 public:
-	virtual ~TCsEnumMap() {}
+	virtual ~TCsEnumStructMap() {}
 
-	EnumStruct Create(const FString &Name)
+	FORCEINLINE EnumStruct Create(const FString &Name, const FString &DisplayName)
 	{
 		EnumType Index = (EnumType)Enums.Num();
-		EnumStruct E(Index, Name);
+		EnumStruct E(Index, Name, DisplayName);
 
 		Enums.Add(E);
-		StringMap.Add(Name, E);
+		++Count;
+		NameMap.Add(Name, E);
+		DisplayNameMap.Add(DisplayName, E);
+		NameInternalMap.Add(E.Name_Internal, E);
 		TypeMap.Add(Index, E);
+		MAX.Value = (EnumType)Count;
 		return E;
 	}
+
+	FORCEINLINE EnumStruct Create(const FString &Name)
+	{
+		return Create(Name, Name);
+	}
 	
-	bool IsValidEnum(EnumStruct E)
+	FORCEINLINE const EnumStruct& operator[](const EnumType &Type)
+	{
+		return TypeMap[Type];
+	}
+
+	FORCEINLINE const EnumStruct& operator[](const FString &Name)
+	{
+		return NameMap[Name];
+	}
+
+	FORCEINLINE const EnumStruct& operator[](const FName &Name)
+	{
+		return NameInternalMap[Name];
+	}
+
+	FORCEINLINE bool IsValidEnum(EnumStruct E)
 	{
 		return Enums.Find(E) > INDEX_NONE;
 	}
 
-	const EnumStruct& GetEnum(const int32 &Index)
+	FORCEINLINE bool IsValidEnum(const FString &Name)
+	{
+		return NameMap.Find(Name) != nullptr;
+	}
+
+	FORCEINLINE bool IsValidEnum(const FName &Name)
+	{
+		return NameInternalMap.Find(Name) != nullptr;
+	}
+
+	FORCEINLINE const EnumStruct& GetEnumAt(const int32 &Index)
 	{
 		return Enums[Index];
 	}
 
-	const EnumStruct& GetEnum(const FString &Name)
+	FORCEINLINE const EnumStruct& GetSafeEnumAt(const int32 &Index)
 	{
-		return StringMap[Name];
+		return Index < Count ? Enums[Index] : MAX;
 	}
 
-	const EnumStruct& GetEnum(const EnumType &Type)
+	FORCEINLINE const EnumStruct& GetEnum(const FString &Name)
+	{
+		return NameMap[Name];
+	}
+
+	FORCEINLINE const EnumStruct& GetSafeEnum(const FString &Name)
+	{
+		return IsValidEnum(Name) ? NameMap[Name] : MAX;
+	}
+
+	FORCEINLINE const EnumStruct& GetEnum(const FName &Name)
+	{
+		return NameInternalMap[Name];
+	}
+
+	FORCEINLINE const EnumStruct& GetSafeEnum(const FName &Name)
+	{
+		return IsValidEnum(Name) ? NameInternalMap[Name] : MAX;
+	}
+
+	FORCEINLINE const EnumStruct& GetEnum(const EnumType &Type)
 	{
 		return TypeMap[Type];
+	}
+
+	FORCEINLINE const EnumStruct& GetEnumByDisplayName(const FString &DisplayName)
+	{
+		return DisplayNameMap[DisplayName];
+	}
+
+	FORCEINLINE const int32& Num()
+	{
+		return Count;
+	}
+
+	FORCEINLINE const EnumStruct& GetMAX()
+	{
+		return MAX;
+	}
+};
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsEnumMask_int32 : public FECsEnum
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "EnumMask_uint32")
+	uint8 Value;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "EnumMask_uint32")
+	int32 Mask;
+
+	FECsEnumMask_int32() {}
+
+	FECsEnumMask_int32(const uint8 &InValue, const FString &InName, const FString &InDisplayName)
+	{
+		Value = InValue > CS_INT32_BIT_MAX ? CS_INT32_BIT_MAX : InValue;
+		Mask = 1 << Value;
+		Name = InName;
+		DisplayName = InDisplayName;
+	}
+
+	FECsEnumMask_int32(const uint8 &InValue, const FString &InName)
+	{
+		FECsEnumMask_int32(InValue, InName, InName);
+	}
+
+	virtual ~FECsEnumMask_int32() {}
+
+	FORCEINLINE operator int32() const
+	{
+		return Mask;
+	}
+
+	FORCEINLINE FECsEnumMask_int32& operator=(const FECsEnumMask_int32& B)
+	{
+		Value = B.Value;
+		Mask = B.Mask;
+		Name = B.Name;
+		DisplayName = B.DisplayName;
+		return *this;
+	}
+
+	FORCEINLINE bool operator==(const FECsEnumMask_int32& B) const
+	{
+		return Value == B.Value && Mask == B.Mask && Name == B.Name;
+	}
+
+	FORCEINLINE bool operator!=(const FECsEnumMask_int32& B) const
+	{
+		return !(*this == B);
+	}
+
+	FORCEINLINE friend bool operator==(const int32 &Lhs, const FECsEnumMask_int32 &Rhs)
+	{
+		return Lhs == Rhs.Mask;
+	}
+
+	FORCEINLINE friend bool operator==(const FECsEnumMask_int32 &Lhs, const int32 &Rhs)
+	{
+		return Lhs.Mask == Rhs;
+	}
+
+	FORCEINLINE friend bool operator!=(const int32 &Lhs, const FECsEnumMask_int32 &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE friend bool operator!=(const FECsEnumMask_int32 &Lhs, const int32 &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE virtual FString ToString() const override
+	{
+		return TEXT("Name: ") + Name + TEXT(" Value: ") + FString::FromInt(Value) + TEXT(" Mask: ") + FString::FromInt(Mask);
+	}
+};
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsEnumMask_uint32 : public FECsEnum
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "EnumMask_uint32")
+	uint8 Value;
+	
+	UPROPERTY()
+	uint32 Mask;
+
+	FECsEnumMask_uint32() {}
+
+	FECsEnumMask_uint32(const uint8 &InValue, const FString &InName, const FString &InDisplayName)
+	{
+		Value = InValue > CS_UINT32_BIT_MAX ? CS_UINT32_BIT_MAX : InValue;
+		Mask = 1 << Value;
+		Name = InName;
+		DisplayName = InDisplayName;
+	}
+
+	FECsEnumMask_uint32(const uint8 &InValue, const FString &InName)
+	{
+		FECsEnumMask_uint32(InValue, InName, InName);
+	}
+
+	virtual ~FECsEnumMask_uint32() {}
+
+	FORCEINLINE operator uint32() const
+	{
+		return Mask;
+	}
+
+	FORCEINLINE FECsEnumMask_uint32& operator=(const FECsEnumMask_uint32& B)
+	{
+		Value = B.Value;
+		Mask = B.Mask;
+		Name = B.Name;
+		DisplayName = B.DisplayName;
+		return *this;
+	}
+
+	FORCEINLINE bool operator==(const FECsEnumMask_uint32& B) const
+	{
+		return Value == B.Value && Mask == B.Mask && Name == B.Name;
+	}
+
+	FORCEINLINE bool operator!=(const FECsEnumMask_uint32& B) const
+	{
+		return !(*this == B);
+	}
+
+	FORCEINLINE friend bool operator==(const uint32 &Lhs, const FECsEnumMask_uint32 &Rhs)
+	{
+		return Lhs == Rhs.Mask;
+	}
+
+	FORCEINLINE friend bool operator==(const FECsEnumMask_uint32 &Lhs, const uint32 &Rhs)
+	{
+		return Lhs.Mask == Rhs;
+	}
+
+	FORCEINLINE friend bool operator!=(const uint32 &Lhs, const FECsEnumMask_uint32 &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE friend bool operator!=(const FECsEnumMask_uint32 &Lhs, const uint32 &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE virtual FString ToString() const override
+	{
+		return TEXT("Name: ") + Name + TEXT(" Value: ") + FString::FromInt(Value) + TEXT(" Mask: ") + FString::FromInt(Mask);
+	}
+};
+
+template<typename EnumStruct, typename EnumType>
+struct TCsEnumStructMaskMap
+{
+private:
+	TArray<EnumStruct> Enums;
+	int32 Count;
+	TMap<FString, EnumStruct> NameMap;
+	TMap<FString, EnumStruct> DisplayNameMap;
+	TMap<EnumType, EnumStruct> TypeMap;
+protected:
+	TCsEnumStructMaskMap()
+	{
+		Count = 0;
+	}
+public:
+	virtual ~TCsEnumStructMaskMap() {}
+
+	FORCEINLINE EnumStruct Create(const FString &Name, const FString &DisplayName)
+	{
+		EnumType Index = (EnumType)Enums.Num();
+
+		// int32
+		if (std::is_same<EnumType, int32>::value)
+		{
+			if (Index > CS_INT32_BIT_MAX)
+			{
+				return Enums[Index - 1];
+			}
+		}
+		// unt32
+		if (std::is_same<EnumType, uint32>::value)
+		{
+			if (Index > CS_INT32_BIT_MAX)
+			{
+				return Enums[Index - 1];
+			}
+		}
+
+		EnumStruct E(Index, Name, DisplayName);
+
+		Enums.Add(E);
+		++Count;
+		NameMap.Add(Name, E);
+		DisplayNameMap.Add(DisplayName, E);
+		TypeMap.Add(Index, E);
+		return E;
+	}
+
+	FORCEINLINE EnumStruct Create(const FString &Name)
+	{
+		return Create(Name, Name);
+	}
+
+	FORCEINLINE const EnumStruct& operator[](const EnumType &Type)
+	{
+		return TypeMap[Type];
+	}
+
+	FORCEINLINE const EnumStruct& operator[](const FString &Name)
+	{
+		return NameMap[Name];
+	}
+
+	FORCEINLINE bool IsValidEnum(EnumStruct E)
+	{
+		return Enums.Find(E) > INDEX_NONE;
+	}
+
+	FORCEINLINE bool IsValidEnum(const FString &Name)
+	{
+		if (NameMap.Find(Name))
+			return true;
+		return false;
+	}
+
+	FORCEINLINE const EnumStruct& GetEnumAt(const int32 &Index)
+	{
+		return Enums[Index];
+	}
+
+	FORCEINLINE const EnumStruct& GetEnum(const FString &Name)
+	{
+		return NameMap[Name];
+	}
+
+	FORCEINLINE const EnumStruct& GetEnum(const EnumType &Type)
+	{
+		return TypeMap[Type];
+	}
+
+	FORCEINLINE const EnumStruct& GetEnumByDisplayName(const FString &DisplayName)
+	{
+		return DisplayNameMap[DisplayName];
+	}
+
+	FORCEINLINE const int32& Num()
+	{
+		return Count;
 	}
 };
 
 #pragma endregion Enums
 
 // Primitive Types
+#pragma region
+
+	// Value
 #pragma region
 
 template<typename T>
@@ -308,7 +829,7 @@ public:
 	}
 };
 
-struct FCsPrimitiveType_int32 : public TCsPrimitiveType<int32>
+struct CSCORE_API FCsPrimitiveType_int32 : public TCsPrimitiveType<int32>
 {
 	FCsPrimitiveType_int32()
 	{
@@ -477,7 +998,7 @@ struct FCsPrimitiveType_int32 : public TCsPrimitiveType<int32>
 
 typedef FCsPrimitiveType_int32 TCsInt32;
 
-struct FCsPrimitiveType_uint32 : public TCsPrimitiveType<uint32>
+struct CSCORE_API FCsPrimitiveType_uint32 : public TCsPrimitiveType<uint32>
 {
 	FCsPrimitiveType_uint32()
 	{
@@ -646,7 +1167,7 @@ struct FCsPrimitiveType_uint32 : public TCsPrimitiveType<uint32>
 
 typedef FCsPrimitiveType_uint32 TCsUint32;
 
-struct FCsPrimitiveType_float : public TCsPrimitiveType<float>
+struct CSCORE_API FCsPrimitiveType_float : public TCsPrimitiveType<float>
 {
 	FCsPrimitiveType_float()
 	{
@@ -792,7 +1313,7 @@ typedef FCsPrimitiveType_float TCsFloat;
 #define CS_AXIS_Z 2
 #define CS_AXES_3D_ALL 3
 
-struct FCsPrimitiveType_FVector2D : public TCsPrimitiveType<FVector2D>
+struct CSCORE_API FCsPrimitiveType_FVector2D : public TCsPrimitiveType<FVector2D>
 {
 
 protected:
@@ -922,7 +1443,7 @@ public:
 
 typedef FCsPrimitiveType_FVector2D TCsFVector2D;
 
-struct FCsPrimitiveType_FVector : public TCsPrimitiveType<FVector>
+struct CSCORE_API FCsPrimitiveType_FVector : public TCsPrimitiveType<FVector>
 {
 
 protected:
@@ -1053,7 +1574,7 @@ typedef FCsPrimitiveType_FVector TCsFVector;
 #define CS_AXIS_YAW 2
 
 
-struct FCsPrimitiveType_FRotator : public TCsPrimitiveType<FRotator>
+struct CSCORE_API FCsPrimitiveType_FRotator : public TCsPrimitiveType<FRotator>
 {
 
 protected:
@@ -1172,13 +1693,13 @@ public:
 
 typedef FCsPrimitiveType_FRotator TCsFRotator;
 
-struct FCsPrimitiveType_FString : public TCsPrimitiveType<FString>
+struct CSCORE_API FCsPrimitiveType_FString : public TCsPrimitiveType<FString>
 {
 public:
 
 	FCsPrimitiveType_FString()
 	{
-		DefaultValue = ECsCachedString::Str::Empty;
+		DefaultValue = ECsCached::Str::Empty;
 	}
 	~FCsPrimitiveType_FString() {}
 
@@ -1212,7 +1733,7 @@ public:
 
 typedef FCsPrimitiveType_FString TCsFString;
 
-struct FCsPrimitiveType_FLinearColor : public TCsPrimitiveType<FLinearColor>
+struct CSCORE_API FCsPrimitiveType_FLinearColor : public TCsPrimitiveType<FLinearColor>
 {
 public:
 
@@ -1252,26 +1773,28 @@ public:
 
 typedef FCsPrimitiveType_FLinearColor TCsFLinearColor;
 
-// Ref
+#pragma endregion Value
+
+	// Ref
 #pragma region
 
-template<typename T>
-struct TCsPrimitiveType_Ref
+template<typename ValueType>
+struct TCsProperty_Ref
 {
 public:
-	T DefaultValue;
-	T* Value;
-	T Last_Value;
+	ValueType DefaultValue;
+	ValueType* Value;
+	ValueType Last_Value;
 protected:
 	bool IsDirty;
 public:
-	TMulticastDelegate<void, const T&> OnChange_Event;
+	TMulticastDelegate<void, const ValueType&> OnChange_Event;
 
 public:
-	TCsPrimitiveType_Ref(){}
-	virtual ~TCsPrimitiveType_Ref(){}
+	TCsProperty_Ref(){}
+	virtual ~TCsProperty_Ref(){}
 
-	virtual void UpdateIsDirty()
+	FORCEINLINE virtual void UpdateIsDirty()
 	{
 		IsDirty = *Value != Last_Value;
 
@@ -1279,36 +1802,36 @@ public:
 			OnChange_Event.Broadcast(*Value);
 	}
 
-	TCsPrimitiveType_Ref& operator=(const T& B)
+	FORCEINLINE TCsProperty_Ref& operator=(const ValueType& B)
 	{
 		*Value = B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	bool operator==(const T& B) const
+	FORCEINLINE bool operator==(const ValueType& B) const
 	{
-		return Value == B;
+		return *Value == B;
 	}
 
-	bool operator!=(const T& B) const
+	FORCEINLINE bool operator!=(const ValueType& B) const
 	{
 		return !(*this == B);
 	}
 
-	void Set(T* inValue)
+	FORCEINLINE void Set(ValueType* inValue)
 	{
 		Value   = inValue;
 		UpdateIsDirty();
 	}
 
-	void Set(const T &inValue)
+	FORCEINLINE void Set(const ValueType &inValue)
 	{
 		*Value  = inValue;
 		UpdateIsDirty();
 	}
 
-	const T& Get() { return *Value; }
+	FORCEINLINE const ValueType& Get() { return *Value; }
 
 	void Clear()
 	{
@@ -1330,7 +1853,7 @@ public:
 		OnChange_Event.Clear();
 	}
 
-	bool HasChanged() { return IsDirty; }
+	FORCEINLINE bool HasChanged() { return IsDirty; }
 
 	void Resolve()
 	{
@@ -1339,172 +1862,171 @@ public:
 	}
 };
 
-struct FCsPrimitiveType_Ref_bool : public TCsPrimitiveType_Ref<bool>
+struct CSCORE_API FCsProperty_Ref_bool : public TCsProperty_Ref<bool>
 {
-	FCsPrimitiveType_Ref_bool()
+	FCsProperty_Ref_bool()
 	{
 		DefaultValue = false;
 	}
-	~FCsPrimitiveType_Ref_bool() {}
+	~FCsProperty_Ref_bool() {}
 
-	FORCEINLINE friend bool operator==(const bool &Lhs, const FCsPrimitiveType_Ref_bool &Rhs)
+	FORCEINLINE friend bool operator==(const bool &Lhs, const FCsProperty_Ref_bool &Rhs)
 	{
 		return Lhs == *(Rhs.Value);
 	}
 
-	FORCEINLINE friend bool operator==(const FCsPrimitiveType_Ref_bool &Lhs, const bool &Rhs)
+	FORCEINLINE friend bool operator==(const FCsProperty_Ref_bool &Lhs, const bool &Rhs)
 	{
 		return *(Lhs.Value) == Rhs;
 	}
 
-	FORCEINLINE friend bool operator!=(const bool &Lhs, const FCsPrimitiveType_Ref_bool &Rhs)
+	FORCEINLINE friend bool operator!=(const bool &Lhs, const FCsProperty_Ref_bool &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_Ref_bool &Lhs, const bool &Rhs)
+	FORCEINLINE friend bool operator!=(const FCsProperty_Ref_bool &Lhs, const bool &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 };
 
-typedef FCsPrimitiveType_Ref_bool TCsBool_Ref;
+typedef FCsProperty_Ref_bool TCsBool_Ref;
 
-struct FCsPrimitiveType_Ref_int32 : public TCsPrimitiveType_Ref<int32>
+struct CSCORE_API FCsProperty_Ref_int32 : public TCsProperty_Ref<int32>
 {
-	FCsPrimitiveType_Ref_int32()
+	FCsProperty_Ref_int32()
 	{
 		DefaultValue = 0;
 	}
-	~FCsPrimitiveType_Ref_int32() {}
+	~FCsProperty_Ref_int32() {}
 
-	FORCEINLINE friend bool operator==(const int32 &Lhs, const FCsPrimitiveType_Ref_int32 &Rhs)
+	FORCEINLINE friend bool operator==(const int32 &Lhs, const FCsProperty_Ref_int32 &Rhs)
 	{
 		return Lhs == *(Rhs.Value);
 	}
 
-	FORCEINLINE friend bool operator==(const FCsPrimitiveType_Ref_int32 &Lhs, const int32 &Rhs)
+	FORCEINLINE friend bool operator==(const FCsProperty_Ref_int32 &Lhs, const int32 &Rhs)
 	{
 		return *(Lhs.Value) == Rhs;
 	}
 
-	FORCEINLINE friend bool operator!=(const int32 &Lhs, const FCsPrimitiveType_Ref_int32 &Rhs)
+	FORCEINLINE friend bool operator!=(const int32 &Lhs, const FCsProperty_Ref_int32 &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_Ref_int32 &Lhs, const int32 &Rhs)
+	FORCEINLINE friend bool operator!=(const FCsProperty_Ref_int32 &Lhs, const int32 &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator<(const FCsPrimitiveType_Ref_int32 &Lhs, const int32 &Rhs)
+	FORCEINLINE friend bool operator<(const FCsProperty_Ref_int32 &Lhs, const int32 &Rhs)
 	{
 		return (*Lhs.Value) < Rhs;
 	}
 
-	FORCEINLINE friend bool operator<(const int32 &Lhs, const FCsPrimitiveType_Ref_int32 &Rhs)
+	FORCEINLINE friend bool operator<(const int32 &Lhs, const FCsProperty_Ref_int32 &Rhs)
 	{
 		return Lhs < (*Rhs.Value);
 	}
 
-	FORCEINLINE friend bool operator>(const FCsPrimitiveType_Ref_int32 &Lhs, const int32 &Rhs)
+	FORCEINLINE friend bool operator>(const FCsProperty_Ref_int32 &Lhs, const int32 &Rhs)
 	{
 		return (*Lhs.Value) > Rhs;
 	}
 
-	FORCEINLINE friend bool operator>(const int32 &Lhs, const FCsPrimitiveType_Ref_int32 &Rhs)
+	FORCEINLINE friend bool operator>(const int32 &Lhs, const FCsProperty_Ref_int32 &Rhs)
 	{
 		return Lhs > (*Rhs.Value);
 	}
 };
 
-typedef FCsPrimitiveType_Ref_int32 TCsInt32_Ref;
+typedef FCsProperty_Ref_int32 TCsInt32_Ref;
 
-struct FCsPrimitiveType_Ref_float : public TCsPrimitiveType_Ref<float>
+struct CSCORE_API FCsProperty_Ref_float : public TCsProperty_Ref<float>
 {
-	FCsPrimitiveType_Ref_float()
+	FCsProperty_Ref_float()
 	{
 		DefaultValue = 0.0f;
 	}
-	~FCsPrimitiveType_Ref_float(){}
+	~FCsProperty_Ref_float(){}
 
-	FORCEINLINE friend bool operator==(const float &Lhs, const FCsPrimitiveType_Ref_float &Rhs)
+	FORCEINLINE friend bool operator==(const float &Lhs, const FCsProperty_Ref_float &Rhs)
 	{
 		return Lhs == *(Rhs.Value);
 	}
 
-	FORCEINLINE friend bool operator==(const FCsPrimitiveType_Ref_float &Lhs, const float &Rhs)
+	FORCEINLINE friend bool operator==(const FCsProperty_Ref_float &Lhs, const float &Rhs)
 	{
 		return *(Lhs.Value) == Rhs;
 	}
 
-	FORCEINLINE friend bool operator!=(const float &Lhs, const FCsPrimitiveType_Ref_float &Rhs)
+	FORCEINLINE friend bool operator!=(const float &Lhs, const FCsProperty_Ref_float &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const FCsPrimitiveType_Ref_float &Lhs, const float &Rhs)
+	FORCEINLINE friend bool operator!=(const FCsProperty_Ref_float &Lhs, const float &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator<(const FCsPrimitiveType_Ref_float &Lhs, const float &Rhs)
+	FORCEINLINE friend bool operator<(const FCsProperty_Ref_float &Lhs, const float &Rhs)
 	{
 		return (*Lhs.Value) < Rhs;
 	}
 
-	FORCEINLINE friend bool operator<(const float &Lhs, const FCsPrimitiveType_Ref_float &Rhs)
+	FORCEINLINE friend bool operator<(const float &Lhs, const FCsProperty_Ref_float &Rhs)
 	{
 		return Lhs < (*Rhs.Value);
 	}
 
-	FORCEINLINE friend bool operator>(const FCsPrimitiveType_Ref_float &Lhs, const float &Rhs)
+	FORCEINLINE friend bool operator>(const FCsProperty_Ref_float &Lhs, const float &Rhs)
 	{
 		return (*Lhs.Value) > Rhs;
 	}
 
-	FORCEINLINE friend bool operator>(const float &Lhs, const FCsPrimitiveType_Ref_float &Rhs)
+	FORCEINLINE friend bool operator>(const float &Lhs, const FCsProperty_Ref_float &Rhs)
 	{
 		return Lhs > (*Rhs.Value);
 	}
 };
 
-typedef FCsPrimitiveType_Ref_float TCsFloat_Ref;
+typedef FCsProperty_Ref_float TCsFloat_Ref;
 
 #pragma endregion Ref
 
 #define CS_PRIMITIVE_TYPE_DEFAULT -1
 #define CS_PRIMITIVE_TYPE_GET_DELEGATE -2
 
-// MultiValue
+// Multi
 #pragma region
 
-// DON'T USE int64 for U
-template<typename T, typename U = int32, uint8 SIZE = 1>
-struct TCsPrimitiveType_MultiValue
+template<typename ValueType, uint8 SIZE = 1>
+struct TCsProperty_Multi
 {
 public:
-	T DefaultValue;
-	T Value;
-	T Last_Value;
+	ValueType DefaultValue;
+	ValueType Value;
+	ValueType Last_Value;
 
-	T Values[SIZE];
-	T Last_Values[SIZE];
+	ValueType Values[SIZE];
+	ValueType Last_Values[SIZE];
 protected:
 	bool IsDirty;
 
 	bool IsDirtys[SIZE];
 public:
-	TMulticastDelegate<void, const T&> OnChange_Event;
-	TMulticastDelegate<void, const U&, const T&> OnChangeEX_Event;
+	TMulticastDelegate<void, const ValueType&> OnChange_Event;
+	TMulticastDelegate<void, const int32&, const ValueType&> OnChangeEX_Event;
 
 public:
 
-	TCsPrimitiveType_MultiValue(){}
-	virtual ~TCsPrimitiveType_MultiValue(){}
+	TCsProperty_Multi(){}
+	virtual ~TCsProperty_Multi(){}
 
-	virtual void UpdateIsDirty()
+	FORCEINLINE virtual void UpdateIsDirty()
 	{
 		IsDirty = Value != Last_Value;
 
@@ -1512,17 +2034,17 @@ public:
 			OnChange_Event.Broadcast(Value);
 	}
 
-	virtual void UpdateIsDirtys(const int64 &Index)
+	FORCEINLINE virtual void UpdateIsDirtys(const int32 &Index)
 	{
 		IsDirtys[Index] = Values[Index] != Last_Values[Index];
 
 		if (IsDirtys[Index])
-			OnChangeEX_Event.Broadcast((U)(int32)Index, Values[Index]);
+			OnChangeEX_Event.Broadcast(Index, Values[Index]);
 	}
 
-	TCsPrimitiveType_MultiValue& operator=(const T& B)
+	FORCEINLINE TCsProperty_Multi& operator=(const TCsProperty_Multi& B)
 	{
-		Value = B;
+		Value = B.Value;
 		UpdateIsDirty();
 
 		for (uint8 I = 0; I < SIZE; ++I)
@@ -1533,33 +2055,28 @@ public:
 		return *this;
 	}
 
-	bool operator==(const TCsPrimitiveType_MultiValue& B) const
+	FORCEINLINE bool operator==(const TCsProperty_Multi& B) const
 	{
 		for (uint8 I = 0; I < SIZE; ++I)
 		{
 			if (Values[I] != B.Values[I])
 				return false;
 		}
-		return Value == B;
+		return Value == B.Value;
 	}
 
-	bool operator!=(const TCsPrimitiveType_MultiValue& B) const
+	FORCEINLINE bool operator!=(const TCsProperty_Multi& B) const
 	{
 		return !(*this == B);
 	}
 
-	void Set(const T &inValue)
+	void Set(const ValueType &inValue)
 	{
 		Value = inValue;
 		UpdateIsDirty();
 	}
 
-	void Set(const U &Index, const T &inValue)
-	{
-		Set((int64)Index, inValue);
-	}
-
-	void Set(const int64 &Index, const T &inValue)
+	void Set(const int32 &Index, const ValueType &inValue)
 	{
 		if (Index > CS_PRIMITIVE_TYPE_DEFAULT && Index < SIZE)
 		{
@@ -1572,10 +2089,9 @@ public:
 		}
 	}
 
-	const T& Get() { return Value; }
-	const T& Get(const U &Index) { return Get((int64)Index); }
+	FORCEINLINE const ValueType& Get() { return Value; }
 
-	const T& Get(const int64 &Index)
+	FORCEINLINE const ValueType& Get(const int32 &Index)
 	{
 		return Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE ? Value : Values[Index];
 	}
@@ -1614,9 +2130,8 @@ public:
 		OnChangeEX_Event.Clear();
 	}
 
-	bool HasChanged() { return IsDirty; }
-	bool HasChanged(const U &Index) { return HasChanged((int64)Index); }
-	bool HasChanged(const int64 &Index) { return Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE ? IsDirty : IsDirtys[Index]; }
+	FORCEINLINE bool HasChanged() { return IsDirty; }
+	FORCEINLINE bool HasChanged(const int32 &Index) { return Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE ? IsDirty : IsDirtys[Index]; }
 
 	void Resolve()
 	{
@@ -1630,21 +2145,19 @@ public:
 	}
 };
 
-template<typename T, typename U, uint8 SIZE>
-struct TCsIntegralType_MultiValue : public TCsPrimitiveType_MultiValue<T, U, SIZE>
+template<typename ValueType, uint8 SIZE>
+struct TCsIntegralType_MultiValue : public TCsProperty_Multi<ValueType, SIZE>
 {
 	TCsIntegralType_MultiValue(){}
 	~TCsIntegralType_MultiValue(){}
 
-	void Add(const T &inValue) 
+	void Add(const ValueType &inValue)
 	{ 
 		Value += inValue;
 		UpdateIsDirty();
 	}
 
-	void Add(const U &Index, const T &inValue) { Add((int64)Index, inValue); }
-
-	void Add(const int64 &Index, const T &inValue)
+	void Add(const int32 &Index, const ValueType &inValue)
 	{
 		if (Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE)
 		{
@@ -1657,15 +2170,13 @@ struct TCsIntegralType_MultiValue : public TCsPrimitiveType_MultiValue<T, U, SIZ
 		}
 	}
 
-	void Subtract(const T &inValue) 
+	void Subtract(const ValueType &inValue)
 	{ 
 		Value -= inValue;
 		UpdateIsDirty();
 	}
 
-	void Subtract(const U &Index, const T &inValue) { Subtract((int64)Index, inValue); }
-
-	void Subtract(const int64 &Index, const T &inValue)
+	void Subtract(const int32 &Index, const ValueType &inValue)
 	{
 		if (Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE)
 		{
@@ -1678,37 +2189,37 @@ struct TCsIntegralType_MultiValue : public TCsPrimitiveType_MultiValue<T, U, SIZ
 		}
 	}
 
-	T Max()
+	ValueType Max()
 	{
-		T max = Values[0];
+		ValueType max = Values[0];
 
 		for (uint8 I = 1; I < SIZE; ++I)
 		{
-			max = (T)FMath::Max(max, Values[I]);
+			max = (ValueType)FMath::Max(max, Values[I]);
 		}
 		return max;
 	}
 
-	T Min()
+	ValueType Min()
 	{
-		T min = Values[0];
+		ValueType min = Values[0];
 
 		for (uint8 I = 1; I < SIZE; ++I)
 		{
-			min = (T)FMath::Min(min, Values[I]);
+			min = (ValueType)FMath::Min(min, Values[I]);
 		}
 		return min;
 	}
 };
 
-template<typename U, uint8 SIZE>
-struct TCsPrimitiveType_MultiValue_bool : public TCsPrimitiveType_MultiValue<bool, U, SIZE>
+template<uint8 SIZE>
+struct TCsProperty_Multi_bool : public TCsProperty_Multi<bool, SIZE>
 {
-	TCsPrimitiveType_MultiValue_bool()
+	TCsProperty_Multi_bool()
 	{
 		DefaultValue = false;
 	}
-	~TCsPrimitiveType_MultiValue_bool(){}
+	~TCsProperty_Multi_bool(){}
 
 	bool Or()
 	{
@@ -1733,14 +2244,14 @@ struct TCsPrimitiveType_MultiValue_bool : public TCsPrimitiveType_MultiValue<boo
 	}
 };
 
-template<typename U, uint8 SIZE>
-struct TCsPrimitiveType_MultiValue_FString : public TCsPrimitiveType_MultiValue<FString, U, SIZE>
+template<uint8 SIZE>
+struct TCsProperty_Multi_FString : public TCsProperty_Multi<FString, SIZE>
 {
-	TCsPrimitiveType_MultiValue_FString()
+	TCsProperty_Multi_FString()
 	{
-		DefaultValue = ECsCachedString::Str::Empty;
+		DefaultValue = ECsCached::Str::Empty;
 	}
-	~TCsPrimitiveType_MultiValue_FString(){}
+	~TCsProperty_Multi_FString(){}
 };
 
 #define CS_FSTRING_ENUM_TWO_PARAMS 2
@@ -1749,15 +2260,15 @@ struct TCsPrimitiveType_MultiValue_FString : public TCsPrimitiveType_MultiValue<
 #define CS_FSTRING_ENUM_LOWER_VALUE 1
 #define CS_FSTRING_ENUM_ALT_1_VALUE 2
 
-struct TCsPrimitiveType_MultiValue_FString_Enum_TwoParams : public TCsPrimitiveType_MultiValue_FString<int32, CS_FSTRING_ENUM_TWO_PARAMS>
+struct CSCORE_API TCsProperty_Multi_FString_Enum_TwoParams : public TCsProperty_Multi_FString<CS_FSTRING_ENUM_TWO_PARAMS>
 {
-	TCsPrimitiveType_MultiValue_FString_Enum_TwoParams()
+	TCsProperty_Multi_FString_Enum_TwoParams()
 	{
-		DefaultValue = ECsCachedString::Str::Empty;
+		DefaultValue = ECsCached::Str::Empty;
 	}
-	~TCsPrimitiveType_MultiValue_FString_Enum_TwoParams(){}
+	~TCsProperty_Multi_FString_Enum_TwoParams(){}
 
-	TCsPrimitiveType_MultiValue_FString_Enum_TwoParams(const FString &inValue1, const FString &inValue2)
+	TCsProperty_Multi_FString_Enum_TwoParams(const FString &inValue1, const FString &inValue2)
 	{
 		Value = inValue1;
 
@@ -1765,7 +2276,7 @@ struct TCsPrimitiveType_MultiValue_FString_Enum_TwoParams : public TCsPrimitiveT
 		Values[CS_FSTRING_ENUM_LOWER_VALUE] = inValue2;
 	}
 
-	FORCEINLINE friend bool operator==(const FString &Lhs, const TCsPrimitiveType_MultiValue_FString_Enum_TwoParams &Rhs)
+	FORCEINLINE friend bool operator==(const FString &Lhs, const TCsProperty_Multi_FString_Enum_TwoParams &Rhs)
 	{
 		const FString Lower = Lhs.ToLower();
 
@@ -1777,7 +2288,7 @@ struct TCsPrimitiveType_MultiValue_FString_Enum_TwoParams : public TCsPrimitiveT
 		return Rhs.Value == Lhs || Rhs.Value == Lower;
 	}
 
-	FORCEINLINE friend bool operator==(const TCsPrimitiveType_MultiValue_FString_Enum_TwoParams &Lhs, const FString &Rhs)
+	FORCEINLINE friend bool operator==(const TCsProperty_Multi_FString_Enum_TwoParams &Lhs, const FString &Rhs)
 	{
 		const FString Lower = Rhs.ToLower();
 
@@ -1789,26 +2300,26 @@ struct TCsPrimitiveType_MultiValue_FString_Enum_TwoParams : public TCsPrimitiveT
 		return Lhs.Value == Rhs || Lhs.Value == Lower;
 	}
 
-	FORCEINLINE friend bool operator!=(const FString &Lhs, const TCsPrimitiveType_MultiValue_FString_Enum_TwoParams &Rhs)
+	FORCEINLINE friend bool operator!=(const FString &Lhs, const TCsProperty_Multi_FString_Enum_TwoParams &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const TCsPrimitiveType_MultiValue_FString_Enum_TwoParams &Lhs, const FString &Rhs)
+	FORCEINLINE friend bool operator!=(const TCsProperty_Multi_FString_Enum_TwoParams &Lhs, const FString &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 };
 
-struct TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams : public TCsPrimitiveType_MultiValue_FString<int32, CS_FSTRING_ENUM_THREE_PARAMS>
+struct CSCORE_API TCsProperty_Multi_FString_Enum_ThreeParams : public TCsProperty_Multi_FString<CS_FSTRING_ENUM_THREE_PARAMS>
 {
-	TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams()
+	TCsProperty_Multi_FString_Enum_ThreeParams()
 	{
-		DefaultValue = ECsCachedString::Str::Empty;
+		DefaultValue = ECsCached::Str::Empty;
 	}
-	~TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams(){}
+	~TCsProperty_Multi_FString_Enum_ThreeParams(){}
 
-	TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams(const FString &inValue1, const FString &inValue2, const FString &inValue3)
+	TCsProperty_Multi_FString_Enum_ThreeParams(const FString &inValue1, const FString &inValue2, const FString &inValue3)
 	{
 		Value = inValue1;
 
@@ -1817,7 +2328,7 @@ struct TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams : public TCsPrimitiv
 		Values[CS_FSTRING_ENUM_ALT_1_VALUE]   = inValue3;
 	}
 	
-	FORCEINLINE friend bool operator==(const FString &Lhs, const TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams &Rhs)
+	FORCEINLINE friend bool operator==(const FString &Lhs, const TCsProperty_Multi_FString_Enum_ThreeParams &Rhs)
 	{
 		const FString Lower = Lhs.ToLower();
 
@@ -1829,7 +2340,7 @@ struct TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams : public TCsPrimitiv
 		return Rhs.Value == Lhs || Rhs.Value == Lower;
 	}
 
-	FORCEINLINE friend bool operator==(const TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams &Lhs, const FString &Rhs)
+	FORCEINLINE friend bool operator==(const TCsProperty_Multi_FString_Enum_ThreeParams &Lhs, const FString &Rhs)
 	{
 		const FString Lower = Rhs.ToLower();
 
@@ -1841,12 +2352,12 @@ struct TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams : public TCsPrimitiv
 		return Lhs.Value == Rhs || Lhs.Value == Lower;
 	}
 
-	FORCEINLINE friend bool operator!=(const FString &Lhs, const TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams &Rhs)
+	FORCEINLINE friend bool operator!=(const FString &Lhs, const TCsProperty_Multi_FString_Enum_ThreeParams &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams &Lhs, const FString &Rhs)
+	FORCEINLINE friend bool operator!=(const TCsProperty_Multi_FString_Enum_ThreeParams &Lhs, const FString &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
@@ -1854,34 +2365,33 @@ struct TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams : public TCsPrimitiv
 
 #pragma endregion MultiValue
 
-// MultiRefValue
+// MultiRef
 #pragma region
 
-// DON'T USE int64 for U
-template<typename T, typename U = int32, uint8 SIZE = 1>
-struct TCsPrimitiveType_MultiRefValue
+template<typename ValueType, uint8 SIZE = 1>
+struct TCsProperty_MultiRef
 {
 public:
-	T DefaultValue;
-	T Value;
-	T Last_Value;
+	ValueType DefaultValue;
+	ValueType Value;
+	ValueType Last_Value;
 
-	T* Values[SIZE];
-	T Last_Values[SIZE];
+	ValueType* Values[SIZE];
+	ValueType Last_Values[SIZE];
 protected:
 	bool IsDirty;
 
 	bool IsDirtys[SIZE];
 public:
-	TMulticastDelegate<void, const T&> OnChange_Event;
-	TMulticastDelegate<void, const U&, const T&> OnChangeEX_Event;
+	TMulticastDelegate<void, const ValueType&> OnChange_Event;
+	TMulticastDelegate<void, const int32&, const ValueType&> OnChangeEX_Event;
 
 public:
 
-	TCsPrimitiveType_MultiRefValue(){}
-	virtual ~TCsPrimitiveType_MultiRefValue(){}
+	TCsProperty_MultiRef(){}
+	virtual ~TCsProperty_MultiRef(){}
 
-	virtual void UpdateIsDirty()
+	FORCEINLINE virtual void UpdateIsDirty()
 	{
 		IsDirty = Value != Last_Value;
 
@@ -1889,7 +2399,7 @@ public:
 			OnChange_Event.Broadcast(Value);
 	}
 
-	virtual void UpdateIsDirtys(const int64 &Index)
+	FORCEINLINE virtual void UpdateIsDirtys(const int32 &Index)
 	{
 		IsDirtys[Index] = *(Values[Index]) != Last_Values[Index];
 
@@ -1897,7 +2407,7 @@ public:
 			OnChangeEX_Event.Broadcast((U)(int32)Index, *(Values[Index]));
 	}
 
-	TCsPrimitiveType_MultiRefValue& operator=(const T& B)
+	FORCEINLINE TCsProperty_MultiRef& operator=(const ValueType& B)
 	{
 		Value = B;
 		UpdateIsDirty();
@@ -1910,7 +2420,7 @@ public:
 		return *this;
 	}
 
-	bool operator==(const TCsPrimitiveType_MultiRefValue& B) const
+	FORCEINLINE bool operator==(const TCsProperty_MultiRef& B) const
 	{
 		for (uint8 I = 0; I < SIZE; ++I)
 		{
@@ -1920,23 +2430,18 @@ public:
 		return Value == B;
 	}
 
-	bool operator!=(const TCsPrimitiveType_MultiRefValue& B) const
+	FORCEINLINE bool operator!=(const TCsProperty_MultiRef& B) const
 	{
 		return !(*this == B);
 	}
 
-	void Set(const T &inValue)
+	void Set(const ValueType &inValue)
 	{
 		Value = inValue;
 		UpdateIsDirty();
 	}
 
-	void Set(const U &Index, T* inValue)
-	{
-		Set((int64)Index, inValue);
-	}
-
-	void Set(const int64 &Index, T* inValue)
+	void Set(const int32 &Index, ValueType* inValue)
 	{
 		if (Index > CS_PRIMITIVE_TYPE_DEFAULT && Index < SIZE)
 		{
@@ -1949,10 +2454,9 @@ public:
 		}
 	}
 
-	const T& Get() { return Value; }
-	const T& Get(const U &Index) { return Get((int64)Index); }
+	FORCEINLINE const ValueType& Get() { return Value; }
 
-	const T& Get(const int64 &Index)
+	FORCEINLINE const ValueType& Get(const int32 &Index)
 	{
 		return Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE ? Value : *(Values[Index]);
 	}
@@ -1991,9 +2495,9 @@ public:
 		OnChangeEX_Event.Clear();
 	}
 
-	bool HasChanged() { return IsDirty; }
+	FORCEINLINE bool HasChanged() { return IsDirty; }
 
-	bool HasChanged(const U &Index) 
+	FORCEINLINE bool HasChanged(const int32 &Index)
 	{ 
 		const int32 I = (int32)Index;
 		return I <= CS_PRIMITIVE_TYPE_DEFAULT || I >= SIZE ? IsDirty : IsDirtys[I];
@@ -2011,43 +2515,43 @@ public:
 	}
 };
 
-template<typename T, typename U, uint8 SIZE>
-struct TCsIntegralType_MultiRefValue : public TCsPrimitiveType_MultiRefValue<T, U, SIZE>
+template<typename ValueType, uint8 SIZE>
+struct TCsIntegralType_MultiRef : public TCsProperty_MultiRef<ValueType, SIZE>
 {
-	TCsIntegralType_MultiRefValue(){}
-	~TCsIntegralType_MultiRefValue(){}
+	TCsIntegralType_MultiRef(){}
+	~TCsIntegralType_MultiRef(){}
 
-	T Max()
+	ValueType Max()
 	{
-		T max = *(Values[0]);
+		ValueType max = *(Values[0]);
 
 		for (uint8 I = 1; I < SIZE; ++I)
 		{
-			max = (T)FMath::Max(max, *(Values[I]));
+			max = (ValueType)FMath::Max(max, *(Values[I]));
 		}
 		return max;
 	}
 
-	T Min()
+	ValueType Min()
 	{
-		T min = *(Values[0]);
+		ValueType min = *(Values[0]);
 
 		for (uint8 I = 1; I < SIZE; ++I)
 		{
-			min = (T)FMath::Min(min, *(Values[I]));
+			min = (ValueType)FMath::Min(min, *(Values[I]));
 		}
 		return min;
 	}
 };
 
-template<typename U, uint8 SIZE>
-struct TCsPrimitiveType_MultiRefValue_bool : public TCsPrimitiveType_MultiRefValue<bool, U, SIZE>
+template<uint8 SIZE>
+struct TCsProperty_MultiRef_bool : public TCsProperty_MultiRef<bool, SIZE>
 {
-	TCsPrimitiveType_MultiRefValue_bool()
+	TCsProperty_MultiRef_bool()
 	{
 		DefaultValue = bool;
 	}
-	~TCsPrimitiveType_MultiRefValue_bool(){}
+	~TCsProperty_MultiRef_bool(){}
 
 	bool Or()
 	{
@@ -2072,22 +2576,21 @@ struct TCsPrimitiveType_MultiRefValue_bool : public TCsPrimitiveType_MultiRefVal
 	}
 };
 
-#pragma endregion MultiRefValue
+#pragma endregion MultiRef
 
-// TArrayValue
+// TArray
 #pragma region
 
-// DON'T USE int64 for U
-template<typename T, typename U = int32>
-struct TCsPrimitiveType_TArrayValue
+template<typename ValueType>
+struct TCsProperty_TArray
 {
 public:
-	T DefaultValue;
-	T Value;
-	T Last_Value;
+	ValueType DefaultValue;
+	ValueType Value;
+	ValueType Last_Value;
 
-	TArray<T> Values;
-	TArray<T> Last_Values;
+	TArray<ValueType> Values;
+	TArray<ValueType> Last_Values;
 
 protected:
 	uint8 SIZE;
@@ -2095,21 +2598,23 @@ protected:
 
 	TArray<bool> IsDirtys;
 public:
-	TBaseDelegate<T, const U&> GetDelegate;
-	TMulticastDelegate<void, const T&> OnChange_Event;
-	TMulticastDelegate<void, const U&, const T&> OnChangeEX_Event;
+	TBaseDelegate<ValueType, const int32&> GetDelegate;
+	TBaseDelegate<const ValueType&, const int32&> Override_Get;
+	TBaseDelegate<const ValueType&, const int32&> Override_Subscript;
+	TMulticastDelegate<void, const ValueType&> OnChange_Event;
+	TMulticastDelegate<void, const int32&, const ValueType&> OnChangeArray_Event;
 
 public:
 
-	TCsPrimitiveType_TArrayValue() {}
-	virtual ~TCsPrimitiveType_TArrayValue() {}
+	TCsProperty_TArray() {}
+	virtual ~TCsProperty_TArray() {}
 
-	void SetDefaultValue(const T& inDefaultValue)
+	void SetDefaultValue(const ValueType& inDefaultValue)
 	{
 		DefaultValue = inDefaultValue;
 	}
 
-	virtual void UpdateIsDirty()
+	FORCEINLINE virtual void UpdateIsDirty()
 	{
 		IsDirty = Value != Last_Value;
 
@@ -2117,17 +2622,17 @@ public:
 			OnChange_Event.Broadcast(Value);
 	}
 
-	virtual void UpdateIsDirtys(const int64 &Index)
+	FORCEINLINE virtual void UpdateIsDirtys(const int32 &Index)
 	{
 		IsDirtys[Index] = Values[Index] != Last_Values[Index];
 
 		if (IsDirtys[Index])
-			OnChangeEX_Event.Broadcast((U)Index, Values[Index]);
+			OnChangeArray_Event.Broadcast(Index, Values[Index]);
 	}
 
-	TCsPrimitiveType_TArrayValue& operator=(const T& B)
+	FORCEINLINE TCsProperty_TArray& operator=(const TCsProperty_TArray& B)
 	{
-		Value = B;
+		Value = B.Value;
 		UpdateIsDirty();
 
 		for (uint8 I = 0; I < SIZE; ++I)
@@ -2138,7 +2643,7 @@ public:
 		return *this;
 	}
 
-	bool operator==(const TCsPrimitiveType_TArrayValue& B) const
+	FORCEINLINE bool operator==(const TCsProperty_TArray& B) const
 	{
 		for (uint8 I = 0; I < SIZE; ++I)
 		{
@@ -2148,7 +2653,7 @@ public:
 		return Value == B;
 	}
 
-	bool operator!=(const TCsPrimitiveType_TArrayValue& B) const
+	FORCEINLINE bool operator!=(const TCsProperty_TArray& B) const
 	{
 		return !(*this == B);
 	}
@@ -2161,21 +2666,14 @@ public:
 		IsDirtys.SetNumZeroed(SIZE, true);
 	}
 
-	void Set(const T &inValue)
+	FORCEINLINE void Set(const ValueType &inValue)
 	{
 		Value = inValue;
 		UpdateIsDirty();
 	}
 
-	void Set(const U &Index, const T &inValue)
+	FORCEINLINE void Set(const int32 &Index, const ValueType &inValue)
 	{
-		Set((int64)Index, inValue);
-	}
-
-	void Set(const int64 &Index, const T &inValue)
-	{
-		const int64 I = (int64)Index;
-
 		if (Index > CS_PRIMITIVE_TYPE_DEFAULT && Index < SIZE)
 		{
 			Values[Index] = inValue;
@@ -2187,11 +2685,22 @@ public:
 		}
 	}
 
-	const T& Get() { return Value; }
-	const T& Get(const U &Index) { return Get((int64)Index); }
-	const T& Get(const int64 &Index){ return Index <= CS_PRIMITIVE_TYPE_DEFAULT ? Value : Values[Index]; }
+	FORCEINLINE const ValueType& operator[](const int32 &Index)
+	{
+		if (Override_Subscript.IsBound())
+			return Override_Subscript.Execute(Index);
+		return Values[Index];
+	}
 
-	T GetEX(const U &Index) { return GetDelegate.Execute(Index); }
+	FORCEINLINE const ValueType& Get() { return Value; }
+	FORCEINLINE const ValueType& Get(const int32 &Index)
+	{
+		if (Override_Get.IsBound())
+			return Override_Get.Execute(Index);
+		return Index <= CS_PRIMITIVE_TYPE_DEFAULT ? Value : Values[Index]; 
+	}
+
+	FORCEINLINE ValueType GetEX(const int32 &Index) { return GetDelegate.Execute(Index); }
 
 	void Clear()
 	{
@@ -2224,15 +2733,16 @@ public:
 		ResetValues();
 
 		GetDelegate.Unbind();
+		Override_Get.Unbind();
+		Override_Subscript.Unbind();
 		OnChange_Event.Clear();
 		OnChangeEX_Event.Clear();
 	}
 
-	bool HasChanged() { return IsDirty; }
-	bool HasChanged(const U &Index) { return HasChanged((int64)Index); }
-	bool HasChanged(const int64 &Index) { return Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE ? IsDirty : IsDirtys[Index]; }
+	FORCEINLINE const bool& HasChanged() { return IsDirty; }
+	FORCEINLINE const bool& HasChanged(const int32 &Index) { return Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE ? IsDirty : IsDirtys[Index]; }
 
-	void Resolve()
+	FORCEINLINE void Resolve()
 	{
 		UpdateIsDirty();
 
@@ -2244,21 +2754,19 @@ public:
 	}
 };
 
-template<typename T, typename U>
-struct TCsIntegralType_TArrayValue : public TCsPrimitiveType_TArrayValue<T, U>
+template<typename ValueType>
+struct TCsIntegralType_TArray : public TCsProperty_TArray<ValueType>
 {
-	TCsIntegralType_TArrayValue() {}
-	~TCsIntegralType_TArrayValue() {}
+	TCsIntegralType_TArray() {}
+	~TCsIntegralType_TArray() {}
 
-	void Add(const T &inValue)
+	void Add(const ValueType &inValue)
 	{
 		Value += inValue;
 		UpdateIsDirty();
 	}
 
-	void Add(const U &Index, const T &inValue) { Add((int64)Index, inValue); }
-
-	void Add(const int64 &Index, const T &inValue)
+	void Add(const int32 &Index, const ValueType &inValue)
 	{
 		if (Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE)
 		{
@@ -2271,15 +2779,13 @@ struct TCsIntegralType_TArrayValue : public TCsPrimitiveType_TArrayValue<T, U>
 		}
 	}
 
-	void Subtract(const T &inValue)
+	void Subtract(const ValueType &inValue)
 	{
 		Value -= inValue;
 		UpdateIsDirty();
 	}
 
-	void Subtract(const U &Index, const T &inValue) { Subtract((int64)Index, inValue); }
-
-	void Subtract(const int64 &Index, const T &inValue)
+	void Subtract(const int32 &Index, const ValueType &inValue)
 	{
 		if (Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE)
 		{
@@ -2292,57 +2798,54 @@ struct TCsIntegralType_TArrayValue : public TCsPrimitiveType_TArrayValue<T, U>
 		}
 	}
 
-	T Max()
+	ValueType Max()
 	{
-		T max = Values[0];
+		ValueType max = Values[0];
 
 		for (uint8 I = 1; I < SIZE; ++I)
 		{
-			max = (T)FMath::Max(max, Values[I]);
+			max = (ValueType)FMath::Max(max, Values[I]);
 		}
 		return max;
 	}
 
-	T Min()
+	ValueType Min()
 	{
-		T min = Values[0];
+		ValueType min = Values[0];
 
 		for (uint8 I = 1; I < SIZE; ++I)
 		{
-			min = (T)FMath::Min(min, Values[I]);
+			min = (ValueType)FMath::Min(min, Values[I]);
 		}
 		return min;
 	}
 };
 
-template<typename U>
-struct TCsIntegralType_TArrayValue_uint8 : public TCsIntegralType_TArrayValue<uint8, U>
+struct TCsIntegralType_TArray_uint8 : public TCsIntegralType_TArray<uint8>
 {
-	TCsIntegralType_TArrayValue_uint8()
+	TCsIntegralType_TArray_uint8()
 	{
 		DefaultValue = 0;
 	}
-	~TCsIntegralType_TArrayValue_uint8(){}
+	~TCsIntegralType_TArray_uint8(){}
 };
 
-template<typename U>
-struct TCsIntegralType_TArrayValue_float : public TCsIntegralType_TArrayValue<float, U>
+struct TCsIntegralType_TArray_float : public TCsIntegralType_TArray<float>
 {
-	TCsIntegralType_TArrayValue_float()
+	TCsIntegralType_TArray_float()
 	{
 		DefaultValue = 0.0f;
 	}
-	~TCsIntegralType_TArrayValue_float() {}
+	~TCsIntegralType_TArray_float() {}
 };
 
-template<typename U>
-struct TCsPrimitiveType_TArrayValue_bool : public TCsPrimitiveType_TArrayValue<bool, U>
+struct TCsProperty_TArray_bool : public TCsProperty_TArray<bool>
 {
-	TCsPrimitiveType_TArrayValue_bool() 
+	TCsProperty_TArray_bool() 
 	{
 		DefaultValue = false;
 	}
-	~TCsPrimitiveType_TArrayValue_bool() {}
+	~TCsProperty_TArray_bool() {}
 
 	bool Or()
 	{
@@ -2367,22 +2870,21 @@ struct TCsPrimitiveType_TArrayValue_bool : public TCsPrimitiveType_TArrayValue<b
 	}
 };
 
-#pragma endregion TArrayValue
+#pragma endregion TArray
 
-// TArrayRefValue
+// TArrayRef
 #pragma region
 
-// DON'T USE int64 for U
-template<typename T, typename U = int32>
-struct TCsPrimitiveType_TArrayRefValue
+template<typename ValueType>
+struct TCsProperty_TArrayRef
 {
 public:
-	T DefaultValue;
-	T Value;
-	T Last_Value;
+	ValueType DefaultValue;
+	ValueType Value;
+	ValueType Last_Value;
 
-	TArray<T*> Values;
-	TArray<T> Last_Values;
+	TArray<ValueType*> Values;
+	TArray<ValueType> Last_Values;
 
 protected:
 	uint8 SIZE;
@@ -2390,20 +2892,22 @@ protected:
 
 	TArray<bool> IsDirtys;
 public:
-	TBaseDelegate<T, const U&> GetDelegate;
-	TMulticastDelegate<void, const T&> OnChange_Event;
-	TMulticastDelegate<void, const U&, const T&> OnChangeEX_Event;
+	TBaseDelegate<ValueType, const int32&> GetDelegate;
+	TBaseDelegate<const ValueType&, const int32&> Override_Get;
+	TBaseDelegate<const ValueType&, const int32&> Override_Subscript;
+	TMulticastDelegate<void, const ValueType&> OnChange_Event;
+	TMulticastDelegate<void, const int32&, const ValueType&> OnChangeArray_Event;
 public:
 
-	TCsPrimitiveType_TArrayRefValue() {}
-	virtual ~TCsPrimitiveType_TArrayRefValue() {}
+	TCsProperty_TArrayRef() {}
+	virtual ~TCsProperty_TArrayRef() {}
 
-	void SetDefaultValue(const T& inDefaultValue)
+	void SetDefaultValue(const ValueType& inDefaultValue)
 	{
 		DefaultValue = inDefaultValue;
 	}
 
-	virtual void UpdateIsDirty()
+	FORCEINLINE virtual void UpdateIsDirty()
 	{
 		IsDirty = Value != Last_Value;
 
@@ -2411,17 +2915,17 @@ public:
 			OnChange_Event.Broadcast(Value);
 	}
 
-	virtual void UpdateIsDirtys(const int64 &Index)
+	FORCEINLINE virtual void UpdateIsDirtys(const int32 &Index)
 	{
 		IsDirtys[Index] = *(Values[Index]) != Last_Values[Index];
 
 		if (IsDirtys[Index])
-			OnChangeEX_Event.Broadcast((U)Index, *(Values[Index]));
+			OnChangeArray_Event.Broadcast(Index, *(Values[Index]));
 	}
 
-	TCsPrimitiveType_TArrayRefValue& operator=(const T& B)
+	FORCEINLINE TCsProperty_TArrayRef& operator=(const TCsProperty_TArrayRef& B)
 	{
-		Value = B;
+		Value = B.Value;
 		UpdateIsDirty();
 
 		for (uint8 I = 0; I < SIZE; ++I)
@@ -2432,7 +2936,7 @@ public:
 		return *this;
 	}
 
-	bool operator==(const TCsPrimitiveType_TArrayRefValue& B) const
+	FORCEINLINE bool operator==(const TCsProperty_TArrayRef& B) const
 	{
 		for (uint8 I = 0; I < SIZE; ++I)
 		{
@@ -2442,7 +2946,7 @@ public:
 		return Value == B;
 	}
 
-	bool operator!=(const TCsPrimitiveType_TArrayRefValue& B) const
+	FORCEINLINE bool operator!=(const TCsProperty_TArrayRef& B) const
 	{
 		return !(*this == B);
 	}
@@ -2460,18 +2964,15 @@ public:
 		IsDirtys.SetNumZeroed(SIZE, true);
 	}
 
-	void Set(T &inValue)
+	FORCEINLINE const uint8& Num() { return SIZE; }
+
+	FORCEINLINE void Set(ValueType &inValue)
 	{
 		Value = inValue;
 		UpdateIsDirty();
 	}
 
-	void Set(const U &Index, T* inValue)
-	{
-		Set((int64)Index, inValue);
-	}
-
-	void Set(const int64 &Index, T* inValue)
+	FORCEINLINE void Set(const int32 &Index, ValueType* inValue)
 	{
 		if (Index > CS_PRIMITIVE_TYPE_DEFAULT && Index < SIZE)
 		{
@@ -2484,11 +2985,22 @@ public:
 		}
 	}
 
-	const T& Get() { return Value; }
-	const T& Get(const U &Index) { return Get((int64)Index); }
-	const T& Get(const int64 &Index){ return Index <= CS_PRIMITIVE_TYPE_DEFAULT ? Value : *(Values[Index]); }
+	FORCEINLINE const ValueType& operator[](const int32 &Index)
+	{
+		if (Override_Subscript.IsBound())
+			return Override_Subscript.Execute(Index);
+		return *(Values[Index]);
+	}
 
-	T GetEX(const U &Index) { return GetDelegate.Execute(Index); }
+	FORCEINLINE const ValueType& Get() { return Value; }
+	FORCEINLINE const ValueType& Get(const int32 &Index)
+	{
+		if (Override_Get.IsBound())
+			return Override_Get.Execute(Index);
+		return Index <= CS_PRIMITIVE_TYPE_DEFAULT ? Value : *(Values[Index]); 
+	}
+
+	FORCEINLINE ValueType GetEX(const int32 &Index) { return GetDelegate.Execute(Index); }
 
 	void Clear()
 	{
@@ -2522,18 +3034,17 @@ public:
 
 		GetDelegate.Unbind();
 		OnChange_Event.Clear();
-		OnChangeEX_Event.Clear();
+		OnChangeArray_Event.Clear();
 	}
 
-	bool HasChanged() { return IsDirty; }
+	FORCEINLINE const bool& HasChanged() { return IsDirty; }
 
-	bool HasChanged(const U &Index)
+	FORCEINLINE const bool& HasChanged(const int32 &Index)
 	{
-		const int32 I = (int32)Index;
-		return I <= CS_PRIMITIVE_TYPE_DEFAULT || I >= SIZE ? IsDirty : IsDirtys[I];
+		return Index <= CS_PRIMITIVE_TYPE_DEFAULT || Index >= SIZE ? IsDirty : IsDirtys[Index];
 	}
 
-	void Resolve()
+	FORCEINLINE void Resolve()
 	{
 		UpdateIsDirty();
 
@@ -2545,98 +3056,677 @@ public:
 	}
 };
 
-template<typename T, typename U>
-struct TCsIntegralType_TArrayRefValue : public TCsPrimitiveType_TArrayRefValue<T, U>
+template<typename ValueType>
+struct TCsIntegralType_TArrayRef : public TCsProperty_TArrayRef<ValueType>
 {
-	TCsIntegralType_TArrayRefValue() {}
-	~TCsIntegralType_TArrayRefValue() {}
+	TCsIntegralType_TArrayRef() {}
+	~TCsIntegralType_TArrayRef() {}
 
-	T Max()
+	ValueType Max()
 	{
-		T max = *(Values[0]);
+		ValueType max = *(Values[0]);
 
 		for (uint8 I = 1; I < SIZE; ++I)
 		{
-			max = (T)FMath::Max(max, *(Values[I]));
+			max = (ValueType)FMath::Max(max, *(Values[I]));
 		}
 		return max;
 	}
 
-	T Min()
+	ValueType Min()
 	{
-		T min = *(Values[0]);
+		ValueType min = *(Values[0]);
 
 		for (uint8 I = 1; I < SIZE; ++I)
 		{
-			min = (T)FMath::Min(min, *(Values[I]));
+			min = (ValueType)FMath::Min(min, *(Values[I]));
 		}
 		return min;
 	}
 };
 
-template<typename U>
-struct TCsIntegralType_TArrayRefValue_uint8 : public TCsIntegralType_TArrayRefValue<uint8, U>
+struct TCsIntegralType_TArrayRef_uint8 : public TCsIntegralType_TArrayRef<uint8>
 {
-	TCsIntegralType_TArrayRefValue_uint8() 
+	TCsIntegralType_TArrayRef_uint8() 
 	{
 		DefaultValue = 0;
 	}
-	~TCsIntegralType_TArrayRefValue_uint8() {}
+	~TCsIntegralType_TArrayRef_uint8() {}
 };
 
-template<typename U>
-struct TCsIntegralType_TArrayRefValue_int32 : public TCsIntegralType_TArrayRefValue<int32, U>
+struct TCsIntegralType_TArrayRef_int32 : public TCsIntegralType_TArrayRef<int32>
 {
-	TCsIntegralType_TArrayRefValue_int32()
+	TCsIntegralType_TArrayRef_int32()
 	{
 		DefaultValue = 0;
 	}
-	~TCsIntegralType_TArrayRefValue_int32() {}
+	~TCsIntegralType_TArrayRef_int32() {}
 };
 
-template<typename U>
-struct TCsIntegralType_TArrayRefValue_float : public TCsIntegralType_TArrayRefValue<float, U>
+struct TCsIntegralType_TArrayRef_float : public TCsIntegralType_TArrayRef<float>
 {
-	TCsIntegralType_TArrayRefValue_float()
+	TCsIntegralType_TArrayRef_float()
 	{
 		DefaultValue = 0.0f;
 	}
-	~TCsIntegralType_TArrayRefValue_float() {}
+	~TCsIntegralType_TArrayRef_float() {}
 };
 
-template<typename U>
-struct TCsPrimitiveType_TArrayRefValue_bool : public TCsPrimitiveType_TArrayRefValue<bool, U>
+struct TCsProperty_TArrayRef_bool : public TCsProperty_TArrayRef<bool>
 {
-	TCsPrimitiveType_TArrayRefValue_bool() 
+	TCsProperty_TArrayRef_bool() 
 	{
 		DefaultValue = false;
 	}
-	~TCsPrimitiveType_TArrayRefValue_bool() {}
+	~TCsProperty_TArrayRef_bool() {}
 
 	bool Or()
 	{
-		bool or = Values[0];
+		bool or = *(Values[0]);
 
 		for (uint8 I = 1; I < SIZE; ++I)
 		{
-			or |= Values[I];
+			or |= *(Values[I]);
 		}
 		return or ;
 	}
 
 	bool And()
 	{
-		bool and = Values[0];
+		bool and = *(Values[0]);
 
 		for (uint8 I = 1; I < SIZE; ++I)
 		{
-			and &= Values[I];
+			and &= *(Values[I]);
 		}
 		return and;
 	}
 };
 
-#pragma endregion TArrayRefValue
+#pragma endregion TArrayRef
+
+// TMap
+#pragma region
+
+template<typename KeyType, typename ValueType>
+struct TCsProperty_TMap
+{
+public:
+	ValueType DefaultValue;
+	ValueType Value;
+	ValueType Last_Value;
+
+	TMap<KeyType, ValueType> Values;
+	TMap<KeyType, ValueType> Last_Values;
+
+protected:
+	bool IsDirty;
+
+	TMap<KeyType, bool> IsDirtys;
+public:
+	TBaseDelegate<ValueType, const KeyType&> GetDelegate;
+	TMulticastDelegate<void, const ValueType&> OnChange_Event;
+	TMulticastDelegate<void, const KeyType&, const ValueType&> OnChangeMap_Event;
+
+public:
+
+	TCsProperty_TMap() {}
+	virtual ~TCsProperty_TMap() {}
+
+	void SetDefaultValue(const ValueType& InDefaultValue)
+	{
+		DefaultValue = InDefaultValue;
+	}
+
+	void Init(const KeyType &Key)
+	{
+		Values.Add(Key, DefaultValue);
+		Last_Values.Add(Key, DefaultValue);
+		IsDirtys.Add(Key, false);
+	}
+
+	FORCEINLINE virtual void UpdateIsDirty()
+	{
+		IsDirty = Value != Last_Value;
+
+		if (IsDirty)
+			OnChange_Event.Broadcast(Value);
+	}
+
+	FORCEINLINE virtual void UpdateIsDirtys(const KeyType &Key)
+	{
+		IsDirtys[Key] = Values[Key] != Last_Values[Key];
+
+		if (IsDirtys[Key])
+			OnChangeMap_Event.Broadcast(Key, Values[Key]);
+	}
+
+	FORCEINLINE TCsProperty_TMap& operator=(const TCsProperty_TMap& B)
+	{
+		Value = B.Value;
+		UpdateIsDirty();
+
+		TArray<KeyType> Keys;
+		Values.GetKeys(Keys);
+
+		for (const KeyType& Key : Keys)
+		{
+			Values[Key] = B.Values[Key];
+			UpdateIsDirtys(Key);
+		}
+		return *this;
+	}
+
+	FORCEINLINE bool operator==(const TCsProperty_TMap& B) const
+	{
+		TArray<KeyType> Keys;
+		Values.GetKeys(Keys);
+
+		for (const KeyType& Key : Keys)
+		{
+			if (Values[Key] != B.Values[Key])
+				return false;
+		}
+		return Value == B;
+	}
+
+	FORCEINLINE bool operator!=(const TCsProperty_TMap& B) const
+	{
+		return !(*this == B);
+	}
+
+	FORCEINLINE void Set(const ValueType &InValue)
+	{
+		Value = InValue;
+		UpdateIsDirty();
+	}
+
+	FORCEINLINE void Set(const KeyType& Key, const ValueType &InValue)
+	{
+		Values[Key] = InValue;
+		UpdateIsDirtys(Key);
+	}
+
+	FORCEINLINE const ValueType& operator[](const KeyType &Key)
+	{
+		return Values[Key];
+	}
+
+	FORCEINLINE const ValueType& Get() { return Value; }
+	FORCEINLINE const ValueType& Get(const KeyType& Key) { return Values[Key]; }
+
+	FORCEINLINE ValueType GetEX(const KeyType &Key) { return GetDelegate.Execute(Key); }
+
+	void Clear()
+	{
+		Last_Value = Value;
+		IsDirty	   = false;
+
+		TArray<KeyType> Keys;
+		Values.GetKeys(Keys);
+
+		for (const KeyType& Key : Keys)
+		{
+			Last_Values[Key] = Values[Key];
+			IsDirtys[Key]	 = false;
+		}
+	}
+
+	void ResetValues()
+	{
+		Value	   = DefaultValue;
+		Last_Value = Value;
+		IsDirty	   = false;
+
+		TArray<KeyType> Keys;
+		Values.GetKeys(Keys);
+
+		for (const KeyType& Key : Keys)
+		{
+			Values[Key]	     = Value;
+			Last_Values[Key] = Value;
+			IsDirtys[Key]    = false;
+		}
+	}
+
+	void Reset()
+	{
+		ResetValues();
+
+		GetDelegate.Unbind();
+		OnChange_Event.Clear();
+		OnChangeMap_Event.Clear();
+	}
+
+	FORCEINLINE bool HasChanged() { return IsDirty; }
+	FORCEINLINE bool HasChanged(const KeyType &Key) { return IsDirtys[Key]; }
+
+	FORCEINLINE void Resolve()
+	{
+		UpdateIsDirty();
+
+		TArray<KeyType> Keys;
+		Values.GetKeys(Keys);
+
+		for (const KeyType& Key : Keys)
+		{
+			UpdateIsDirtys(Key);
+		}
+		Clear();
+	}
+};
+
+template<typename KeyType, typename ValueType>
+struct TCsIntegralType_TMap : public TCsProperty_TMap<KeyType, ValueType>
+{
+	TCsIntegralType_TMap() {}
+	~TCsIntegralType_TMap() {}
+
+	FORCEINLINE void Add(const ValueType& InValue)
+	{
+		Value += InValue;
+		UpdateIsDirty();
+	}
+
+	FORCEINLINE void Add(const KeyType &Key, const ValueType &InValue)
+	{
+		Values[Key] += InValue;
+		UpdateIsDirtys(Key);
+	}
+
+	FORCEINLINE void Subtract(const ValueType &InValue)
+	{
+		Value -= InValue;
+		UpdateIsDirty();
+	}
+
+	FORCEINLINE void Subtract(const KeyType &Key, const ValueType &InValue)
+	{
+		Values[Index] -= inValue;
+		UpdateIsDirtys(Index);
+	}
+
+	FORCEINLINE ValueType Max()
+	{
+		TArray<KeyType> Keys;
+		Values.GetKeys(Keys);
+
+		ValueType max = Values[Keys[0]];
+
+		const uint8 Count = Keys.Num();
+
+		for (uint8 I = 1; I < Count; ++I)
+		{
+			max = (KeyType)FMath::Max(max, Values[Keys[I]]);
+		}
+		return max;
+	}
+
+	FORCEINLINE ValueType Min()
+	{
+		TArray<KeyType> Keys;
+		Values.GetKeys(Keys);
+
+		ValueType min = Values[Keys[0]];
+
+		const uint8 Count = Keys.Num();
+
+		for (uint8 I = 1; I < Count; ++I)
+		{
+			min = (ValueType)FMath::Min(min, Values[Keys[I]]);
+		}
+		return min;
+	}
+};
+
+template<typename KeyType>
+struct TCsIntegralType_TMap_uint8 : public TCsIntegralType_TMap<KeyType, uint8>
+{
+	TCsIntegralType_TMap_uint8()
+	{
+		DefaultValue = 0;
+	}
+	~TCsIntegralType_TMap_uint8() {}
+};
+
+template<typename KeyType>
+struct TCsIntegralType_TMap_float : public TCsIntegralType_TMap<KeyType, float>
+{
+	TCsIntegralType_TMap_float()
+	{
+		DefaultValue = 0.0f;
+	}
+	~TCsIntegralType_TMap_float() {}
+};
+
+template<typename KeyType>
+struct TCsProperty_TMap_bool : public TCsProperty_TMap<KeyType, bool>
+{
+	TCsProperty_TMap_bool()
+	{
+		DefaultValue = false;
+	}
+	~TCsProperty_TMap_bool() {}
+
+	FORCEINLINE bool Or()
+	{
+		TArray<KeyType> Keys;
+		Values.GetKeys(Keys);
+
+		bool or = Values[Keys[0]];
+
+		const uint8 Count = Keys.Num();
+
+		for (uint8 I = 1; I < Count; ++I)
+		{
+			or |= Values[Keys[I]];
+		}
+		return or ;
+	}
+
+	FORCEINLINE bool And()
+	{
+		TArray<KeyType> Keys;
+		Values.GetKeys(Keys);
+
+		bool and = Values[Keys[0]];
+
+		const uint8 Count = Keys.Num();
+
+		for (uint8 I = 1; I < Count; ++I)
+		{
+			and &= Values[Keys[I]];
+		}
+		return and;
+	}
+};
+
+#pragma endregion TMap
+
+// TMapRef
+#pragma region
+
+template<typename KeyType, typename ValueType>
+struct TCsProperty_TMapRef
+{
+public:
+	ValueType DefaultValue;
+	ValueType Value;
+	ValueType Last_Value;
+
+	TMap<KeyType, ValueType*> Values;
+	TMap<KeyType, ValueType> Last_Values;
+
+protected:
+	bool IsDirty;
+
+	TMap<KeyType, bool> IsDirtys;
+public:
+	TBaseDelegate<ValueType, const KeyType&> GetDelegate;
+	TBaseDelegate<const ValueType&, const KeyType&> Override_Get;
+	TBaseDelegate<const ValueType&, const KeyType&> Override_Subscript;
+	TMulticastDelegate<void, const ValueType&> OnChange_Event;
+	TMulticastDelegate<void, const KeyType&, const ValueType&> OnChangeMap_Event;
+public:
+
+	TCsProperty_TMapRef() {}
+	virtual ~TCsProperty_TMapRef() {}
+
+	void SetDefaultValue(const ValueType& InDefaultValue)
+	{
+		DefaultValue = InDefaultValue;
+	}
+
+	void Init(const KeyType &Key)
+	{
+		Values.Add(Key, nullptr);
+		Last_Values.Add(Key, DefaultValue);
+		IsDirtys.Add(Key, false);
+	}
+
+	FORCEINLINE virtual void UpdateIsDirty()
+	{
+		IsDirty = Value != Last_Value;
+
+		if (IsDirty)
+			OnChange_Event.Broadcast(Value);
+	}
+
+	FORCEINLINE virtual void UpdateIsDirtys(const KeyType &Key)
+	{
+		IsDirtys[Key] = *(Values[Key]) != Last_Values[Key];
+
+		if (IsDirtys[Key])
+			OnChangeMap_Event.Broadcast(Key, *(Values[Key]));
+	}
+
+	FORCEINLINE TCsProperty_TMapRef& operator=(const TCsProperty_TMapRef& B)
+	{
+		Value = B.Value;
+		UpdateIsDirty();
+
+		TArray<KeyType> Keys;
+		Values.GetKeys(Keys);
+
+		for (const KeyType& Key : Keys)
+		{
+			*(Values[Key]) = *(B.Values[Key]);
+			UpdateIsDirtys(I);
+		}
+		return *this;
+	}
+
+	FORCEINLINE bool operator==(const TCsProperty_TMapRef& B) const
+	{
+		TArray<KeyType> Keys;
+		Values.GetKeys(Keys);
+
+		for (const KeyType& Key : Keys)
+		{
+			if (*(Values[Key]) != *(B.Values[Key]))
+				return false;
+		}
+		return Value == B;
+	}
+
+	FORCEINLINE bool operator!=(const TCsProperty_TMapRef& B) const
+	{
+		return !(*this == B);
+	}
+
+	FORCEINLINE void Set(const ValueType &InValue)
+	{
+		Value = InValue;
+		UpdateIsDirty();
+	}
+
+	FORCEINLINE void Set(const KeyType& Key, ValueType* InValue)
+	{
+		Values[Key] = InValue;
+		UpdateIsDirtys(Key);
+	}
+
+	FORCEINLINE const ValueType& operator[](const KeyType &Key)
+	{
+		return *(Values[Key]);
+	}
+
+	FORCEINLINE const ValueType& Get() { return Value; }
+	FORCEINLINE const ValueType& Get(const KeyType& Key) { return *(Values[Key]); }
+
+	FORCEINLINE ValueType GetEX(const KeyType &Key) { return GetDelegate.Execute(Key); }
+
+	void Clear()
+	{
+		Last_Value = Value;
+		IsDirty = false;
+
+		TArray<KeyType> Keys;
+		Values.GetKeys(Keys);
+
+		for (const KeyType& Key : Keys)
+		{
+			Last_Values[Key] = *(Values[Key]);
+			IsDirtys[Key] = false;
+		}
+	}
+
+	void ResetValues()
+	{
+		Value = DefaultValue;
+		Last_Value = Value;
+		IsDirty = false;
+
+		TArray<KeyType> Keys;
+		Values.GetKeys(Keys);
+
+		for (const KeyType& Key : Keys)
+		{
+			Values[Key] = nullptr;
+			Last_Values[Key] = Value;
+			IsDirtys[Key] = false;
+		}
+	}
+
+	void Reset()
+	{
+		ResetValues();
+
+		GetDelegate.Unbind();
+		OnChange_Event.Clear();
+		OnChangeMap_Event.Clear();
+	}
+
+	FORCEINLINE bool HasChanged() { return IsDirty; }
+	FORCEINLINE bool HasChanged(const KeyType &Key) { return IsDirtys[Key]; }
+
+	FORCEINLINE void Resolve()
+	{
+		UpdateIsDirty();
+
+		TArray<KeyType> Keys;
+		Values.GetKeys(Keys);
+
+		for (const KeyType& Key : Keys)
+		{
+			UpdateIsDirtys(Key);
+		}
+		Clear();
+	}
+};
+
+template<typename KeyType, typename ValueType>
+struct TCsIntegralType_TMapRef : public TCsProperty_TMapRef<KeyType, ValueType>
+{
+	TCsIntegralType_TMapRef() {}
+	~TCsIntegralType_TMapRef() {}
+
+	FORCEINLINE ValueType Max()
+	{
+		TArray<KeyType> Keys;
+		Values.GetKeys(Keys);
+
+		ValueType max = *(Values[Keys[0]]);
+
+		const uint8 Count = Keys.Num();
+
+		for (uint8 I = 1; I < Count; ++I)
+		{
+			max = (ValueType)FMath::Max(max, *(Values[Keys[I]]));
+		}
+		return max;
+	}
+
+	FORCEINLINE ValueType Min()
+	{
+		TArray<KeyType> Keys;
+		Values.GetKeys(Keys);
+
+		ValueType min = *(Values[Keys[0]]);
+
+		const uint8 Count = Keys.Num();
+
+		for (uint8 I = 1; I < Count; ++I)
+		{
+			min = (ValueType)FMath::Min(min, *(Values[Keys[I]]));
+		}
+		return min;
+	}
+};
+
+template<typename KeyType>
+struct TCsIntegralType_TMapRef_uint8 : public TCsIntegralType_TMapRef<KeyType, uint8>
+{
+	TCsIntegralType_TMapRef_uint8()
+	{
+		DefaultValue = 0;
+	}
+	~TCsIntegralType_TMapRef_uint8() {}
+};
+
+template<typename KeyType>
+struct TCsIntegralType_TMapRef_int32 : public TCsIntegralType_TMapRef<KeyType, int32>
+{
+	TCsIntegralType_TMapRef_int32()
+	{
+		DefaultValue = 0;
+	}
+	~TCsIntegralType_TMapRef_int32() {}
+};
+
+template<typename KeyType>
+struct TCsIntegralType_TMapRef_float : public TCsIntegralType_TMapRef<KeyType, float>
+{
+	TCsIntegralType_TMapRef_float()
+	{
+		DefaultValue = 0.0f;
+	}
+	~TCsIntegralType_TMapRef_float() {}
+};
+
+template<typename KeyType>
+struct TCsProperty_TMapRef_bool : public TCsProperty_TMapRef<KeyType, bool>
+{
+	TCsProperty_TMapRef_bool()
+	{
+		DefaultValue = false;
+	}
+	~TCsProperty_TMapRef_bool() {}
+
+	FORCEINLINE bool Or()
+	{
+		TArray<KeyType> Keys;
+		Values.GetKeys(Keys);
+
+		bool or = *(Values[Keys[0]]);
+
+		const uint8 Count = Keys.Num();
+
+		for (uint8 I = 1; I < Count; ++I)
+		{
+			or |= *(Values[Keys[I]]);
+		}
+		return or ;
+	}
+
+	FORCEINLINE bool And()
+	{
+		TArray<KeyType> Keys;
+		Values.GetKeys(Keys);
+
+		bool and = *(Values[Keys[0]]);
+
+		const uint8 Count = Keys.Num();
+
+		for (uint8 I = 1; I < Count; ++I)
+		{
+			and &= *(Values[Keys[I]]);
+		}
+		return and;
+	}
+};
+
+#pragma endregion TMapRef
 
 UENUM(BlueprintType)
 namespace ECsMemberType
@@ -2658,19 +3748,33 @@ namespace ECsMemberType
 
 namespace ECsMemberType
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_TwoParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
 
 	namespace Str
 	{
-		const TCsString Bool = TCsString(TEXT("Bool"), TEXT("bool"));
-		const TCsString Uint8 = TCsString(TEXT("Uint8"), TEXT("uint8"));
-		const TCsString Int32 = TCsString(TEXT("Int32"), TEXT("int32"));
-		const TCsString Float = TCsString(TEXT("Float"), TEXT("float"));
-		const TCsString _FString = TCsString(TEXT("FString"), TEXT("fstring"));
-		const TCsString FName = TCsString(TEXT("FName"), TEXT("fname"));
-		const TCsString FVector = TCsString(TEXT("FVector"), TEXT("fvector"));
-		const TCsString FRotator = TCsString(TEXT("FRotator"), TEXT("frotator"));
-		const TCsString FColor = TCsString(TEXT("FColor"), TEXT("fcolor"));
+		extern CSCORE_API const TCsString Bool;
+		extern CSCORE_API const TCsString Uint8;
+		extern CSCORE_API const TCsString Int32;
+		extern CSCORE_API const TCsString Float;
+		extern CSCORE_API const TCsString _FString;
+		extern CSCORE_API const TCsString FName;
+		extern CSCORE_API const TCsString FVector;
+		extern CSCORE_API const TCsString FRotator;
+		extern CSCORE_API const TCsString FColor;
+	}
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type Bool;
+		extern CSCORE_API const Type Uint8;
+		extern CSCORE_API const Type Int32;
+		extern CSCORE_API const Type Float;
+		extern CSCORE_API const Type _FString;
+		extern CSCORE_API const Type FName;
+		extern CSCORE_API const Type FVector;
+		extern CSCORE_API const Type FRotator;
+		extern CSCORE_API const Type FColor;
+		extern CSCORE_API const Type ECsMemberType_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -2717,7 +3821,7 @@ typedef ECsMemberType::Type TCsMemberType;
 // TODO: Look at FIntPoint, FVector ... etc for proper setup
 
 USTRUCT(BlueprintType)
-struct FCsUint8Point
+struct CSCORE_API FCsUint8Point
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -2732,24 +3836,24 @@ struct FCsUint8Point
 	}
 	~FCsUint8Point(){}
 
-	FCsUint8Point& operator=(const FCsUint8Point& B)
+	FORCEINLINE FCsUint8Point& operator=(const FCsUint8Point& B)
 	{
 		X = B.X;
 		Y = B.Y;
 		return *this;
 	}
 
-	bool operator==(const FCsUint8Point& B) const
+	FORCEINLINE bool operator==(const FCsUint8Point& B) const
 	{
 		return X == B.X && Y == B.Y;
 	}
 
-	bool operator!=(const FCsUint8Point& B) const
+	FORCEINLINE bool operator!=(const FCsUint8Point& B) const
 	{
 		return !(*this == B);
 	}
 
-	void Reset()
+	FORCEINLINE void Reset()
 	{
 		X = 0;
 		Y = 0;
@@ -2770,20 +3874,20 @@ struct FCsUint8Point
 		return bSuccessful;
 	}
 
-	uint32 GetBits() const
+	FORCEINLINE uint32 GetBits() const
 	{
 		return 8 // X
 			 + 8;// Y
 	}
 
-	float GetBytes() const
+	FORCEINLINE float GetBytes() const
 	{
 		return (float)GetBits() / 8.0f;
 	}
 };
 
 USTRUCT(BlueprintType)
-struct FCsUint8MatrixDimension
+struct CSCORE_API FCsUint8MatrixDimension
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -2804,24 +3908,24 @@ struct FCsUint8MatrixDimension
 	}
 	~FCsUint8MatrixDimension() {}
 
-	FCsUint8MatrixDimension& operator=(const FCsUint8MatrixDimension& B)
+	FORCEINLINE FCsUint8MatrixDimension& operator=(const FCsUint8MatrixDimension& B)
 	{
 		RowSpan	   = B.RowSpan;
 		ColumnSpan = B.ColumnSpan;
 		return *this;
 	}
 
-	bool operator==(const FCsUint8MatrixDimension& B) const
+	FORCEINLINE bool operator==(const FCsUint8MatrixDimension& B) const
 	{
 		return RowSpan == B.RowSpan && ColumnSpan == B.ColumnSpan;
 	}
 
-	bool operator!=(const FCsUint8MatrixDimension& B) const
+	FORCEINLINE bool operator!=(const FCsUint8MatrixDimension& B) const
 	{
 		return !(*this == B);
 	}
 
-	void Reset()
+	FORCEINLINE void Reset()
 	{
 		RowSpan	   = 0;
 		ColumnSpan = 0;
@@ -2842,41 +3946,41 @@ struct FCsUint8MatrixDimension
 		return bSuccessful;
 	}
 
-	void Set(const uint8 &InRowSpan, const uint8 &InColumnSpan)
+	FORCEINLINE void Set(const uint8 &InRowSpan, const uint8 &InColumnSpan)
 	{
 		RowSpan    = InRowSpan;
 		ColumnSpan = InColumnSpan;
 	}
 
-	uint8 GetRow(const int32 &Index)
+	FORCEINLINE uint8 GetRow(const int32 &Index)
 	{
 		return (Index / RowSpan) % RowSpan;
 	}
 
-	uint8 GetColumn(const int32 &Index)
+	FORCEINLINE uint8 GetColumn(const int32 &Index)
 	{
 		return Index % RowSpan;
 	}
 
-	uint16 GetSize()
+	FORCEINLINE uint16 GetSize()
 	{
 		return RowSpan * ColumnSpan;
 	}
 
-	uint32 GetBits() const
+	FORCEINLINE uint32 GetBits() const
 	{
 		return 8 // RowSpan
 			 + 8;// ColumnSpan
 	}
 
-	float GetBytes() const
+	FORCEINLINE float GetBytes() const
 	{
 		return (float)GetBits() / 8.0f;
 	}
 };
 
 USTRUCT(BlueprintType)
-struct FCsUint8MatrixCoordinate
+struct CSCORE_API FCsUint8MatrixCoordinate
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -2891,24 +3995,24 @@ struct FCsUint8MatrixCoordinate
 	}
 	~FCsUint8MatrixCoordinate() {}
 
-	FCsUint8MatrixCoordinate& operator=(const FCsUint8MatrixCoordinate& B)
+	FORCEINLINE FCsUint8MatrixCoordinate& operator=(const FCsUint8MatrixCoordinate& B)
 	{
 		Row    = B.Row;
 		Column = B.Column;
 		return *this;
 	}
 
-	bool operator==(const FCsUint8MatrixCoordinate& B) const
+	FORCEINLINE bool operator==(const FCsUint8MatrixCoordinate& B) const
 	{
 		return Row == B.Row && Column == B.Column;
 	}
 
-	bool operator!=(const FCsUint8MatrixCoordinate& B) const
+	FORCEINLINE bool operator!=(const FCsUint8MatrixCoordinate& B) const
 	{
 		return !(*this == B);
 	}
 
-	void Reset()
+	FORCEINLINE void Reset()
 	{
 		Row	   = 0;
 		Column = 0;
@@ -2929,26 +4033,26 @@ struct FCsUint8MatrixCoordinate
 		return bSuccessful;
 	}
 
-	void Set(const uint8 &InRow, const uint8 &InColumn)
+	FORCEINLINE void Set(const uint8 &InRow, const uint8 &InColumn)
 	{
 		Row    = InRow;
 		Column = InColumn;
 	}
 
-	uint32 GetBits() const
+	FORCEINLINE uint32 GetBits() const
 	{
 		return 8 // Row
 			 + 8;// Column
 	}
 
-	float GetBytes() const
+	FORCEINLINE float GetBytes() const
 	{
 		return (float)GetBits() / 8.0f;
 	}
 };
 
 USTRUCT(BlueprintType)
-struct FCsVectorFlag
+struct CSCORE_API FCsVectorFlag
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -2965,7 +4069,7 @@ struct FCsVectorFlag
 	}
 	~FCsVectorFlag() {}
 
-	FCsVectorFlag& operator=(const FCsVectorFlag& B)
+	FORCEINLINE FCsVectorFlag& operator=(const FCsVectorFlag& B)
 	{
 		X = B.X;
 		Y = B.Y;
@@ -2973,17 +4077,17 @@ struct FCsVectorFlag
 		return *this;
 	}
 
-	bool operator==(const FCsVectorFlag& B) const
+	FORCEINLINE bool operator==(const FCsVectorFlag& B) const
 	{
 		return X == B.X && Y == B.Y && Z == B.Z;
 	}
 
-	bool operator!=(const FCsVectorFlag& B) const
+	FORCEINLINE bool operator!=(const FCsVectorFlag& B) const
 	{
 		return !(*this == B);
 	}
 
-	void Reset()
+	FORCEINLINE void Reset()
 	{
 		X = false;
 		Y = false;
@@ -2999,7 +4103,7 @@ private:
 
 	const FString& ToString_Internal(const bool &Value) const 
 	{
-		return Value ? ECsCachedString::Str::True : ECsCachedString::Str::False;
+		return Value ? ECsCached::Str::True : ECsCached::Str::False;
 	}
 
 public:
@@ -3009,9 +4113,9 @@ public:
 		X = Y = Z = false;
 
 		// The initialization is only successful if the X, Y and Z values can all be parsed from the string
-		const bool bSuccessful = InitFromString_Internal(InSourceString, ECsCachedString::Str::XEquals, X) && 
-								 InitFromString_Internal(InSourceString, ECsCachedString::Str::YEquals, Y) &&
-								 InitFromString_Internal(InSourceString, ECsCachedString::Str::ZEquals, Z);
+		const bool bSuccessful = InitFromString_Internal(InSourceString, ECsCached::Str::XEquals, X) && 
+								 InitFromString_Internal(InSourceString, ECsCached::Str::YEquals, Y) &&
+								 InitFromString_Internal(InSourceString, ECsCached::Str::ZEquals, Z);
 
 		return bSuccessful;
 	}
@@ -3025,12 +4129,12 @@ private:
 
 		Bool = Bool.ToLower();
 
-		if (Bool == ECsCachedString::Str::_true || Bool == ECsCachedString::Str::One)
+		if (Bool == ECsCached::Str::_true || Bool == ECsCached::Str::One)
 		{
 			Value = true;
 			return true;
 		}
-		if (Bool == ECsCachedString::Str::_false || Bool == ECsCachedString::Str::Zero)
+		if (Bool == ECsCached::Str::_false || Bool == ECsCached::Str::Zero)
 		{
 			Value = false;
 			return true;
@@ -3040,35 +4144,35 @@ private:
 
 public:
 
-	void Set(const bool &InX, const bool &InY, const bool &InZ)
+	FORCEINLINE void Set(const bool &InX, const bool &InY, const bool &InZ)
 	{
 		X = InX;
 		Y = InY;
 		Z = InZ;
 	}
 
-	void ApplyLock(FVector &V)
+	FORCEINLINE void ApplyLock(FVector &V)
 	{
 		V.X = X ? 0.0f : V.X;
 		V.Y = Y ? 0.0f : V.Y;
 		V.Z = Z ? 0.0f : V.Z;
 	}
 
-	uint32 GetBits() const
+	FORCEINLINE uint32 GetBits() const
 	{
 		return 1 // X
 			 + 1 // Y
 			 + 1;// Z
 	}
 
-	float GetBytes() const
+	FORCEINLINE float GetBytes() const
 	{
 		return (float)GetBits() / 8.0f;
 	}
 };
 
 USTRUCT(BlueprintType)
-struct FCsRotatorFlag
+struct CSCORE_API FCsRotatorFlag
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -3093,17 +4197,17 @@ struct FCsRotatorFlag
 		return *this;
 	}
 
-	bool operator==(const FCsRotatorFlag& B) const
+	FORCEINLINE bool operator==(const FCsRotatorFlag& B) const
 	{
 		return Roll == B.Roll && Pitch == B.Pitch && Yaw == B.Yaw;
 	}
 
-	bool operator!=(const FCsRotatorFlag& B) const
+	FORCEINLINE bool operator!=(const FCsRotatorFlag& B) const
 	{
 		return !(*this == B);
 	}
 
-	void Reset()
+	FORCEINLINE void Reset()
 	{
 		Roll = false;
 		Pitch = false;
@@ -3119,7 +4223,7 @@ private:
 
 	const FString& ToString_Internal(const bool &Value) const
 	{
-		return Value ? ECsCachedString::Str::True : ECsCachedString::Str::False;
+		return Value ? ECsCached::Str::True : ECsCached::Str::False;
 	}
 
 public:
@@ -3129,9 +4233,9 @@ public:
 		Roll = Pitch = Yaw = false;
 
 		// The initialization is only successful if the Roll, Pitch and Yaw values can all be parsed from the string
-		const bool bSuccessful = InitFromString_Internal(InSourceString, ECsCachedString::Str::RollEquals, Roll) &&
-								 InitFromString_Internal(InSourceString, ECsCachedString::Str::PitchEquals, Pitch) &&
-								 InitFromString_Internal(InSourceString, ECsCachedString::Str::YawEquals, Yaw);
+		const bool bSuccessful = InitFromString_Internal(InSourceString, ECsCached::Str::RollEquals, Roll) &&
+								 InitFromString_Internal(InSourceString, ECsCached::Str::PitchEquals, Pitch) &&
+								 InitFromString_Internal(InSourceString, ECsCached::Str::YawEquals, Yaw);
 
 		return bSuccessful;
 	}
@@ -3145,12 +4249,12 @@ private:
 
 		Bool = Bool.ToLower();
 
-		if (Bool == ECsCachedString::Str::_true || Bool == ECsCachedString::Str::One)
+		if (Bool == ECsCached::Str::_true || Bool == ECsCached::Str::One)
 		{
 			Value = true;
 			return true;
 		}
-		if (Bool == ECsCachedString::Str::_false || Bool == ECsCachedString::Str::Zero)
+		if (Bool == ECsCached::Str::_false || Bool == ECsCached::Str::Zero)
 		{
 			Value = false;
 			return true;
@@ -3160,35 +4264,35 @@ private:
 
 public:
 
-	void Set(const bool &InRoll, const bool &InPitch, const bool &InYaw)
+	FORCEINLINE void Set(const bool &InRoll, const bool &InPitch, const bool &InYaw)
 	{
 		Roll = InRoll;
 		Pitch = InPitch;
 		Yaw = InYaw;
 	}
 
-	void ApplyLock(FRotator &R)
+	FORCEINLINE void ApplyLock(FRotator &R)
 	{
 		R.Roll = Roll ? 0.0f : R.Roll;
 		R.Pitch = Pitch ? 0.0f : R.Pitch;
 		R.Yaw = Yaw ? 0.0f : R.Yaw;
 	}
 
-	uint32 GetBits() const
+	FORCEINLINE uint32 GetBits() const
 	{
 		return 1 // Roll
 			 + 1 // Pitch
 			 + 1;// Yaw
 	}
 
-	float GetBytes() const
+	FORCEINLINE float GetBytes() const
 	{
 		return (float)GetBits() / 8.0f;
 	}
 };
 
 USTRUCT(BlueprintType)
-struct FCsOptionalVectorInterval
+struct CSCORE_API FCsOptionalVectorInterval
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -3216,7 +4320,7 @@ struct FCsOptionalVectorInterval
 	}
 	~FCsOptionalVectorInterval() {}
 
-	FCsOptionalVectorInterval& operator=(const FCsOptionalVectorInterval& B)
+	FORCEINLINE FCsOptionalVectorInterval& operator=(const FCsOptionalVectorInterval& B)
 	{
 		Vector = B.Vector;
 		// X
@@ -3234,7 +4338,7 @@ struct FCsOptionalVectorInterval
 		return *this;
 	}
 
-	bool operator==(const FCsOptionalVectorInterval& B) const
+	FORCEINLINE bool operator==(const FCsOptionalVectorInterval& B) const
 	{
 		return	Vector == B.Vector && 
 				bIntervalX == B.bIntervalX && 
@@ -3248,12 +4352,12 @@ struct FCsOptionalVectorInterval
 				IntervalZ.Max == B.IntervalZ.Max;
 	}
 
-	bool operator!=(const FCsOptionalVectorInterval& B) const
+	FORCEINLINE bool operator!=(const FCsOptionalVectorInterval& B) const
 	{
 		return !(*this == B);
 	}
 
-	void Reset()
+	FORCEINLINE void Reset()
 	{
 		Vector = FVector::ZeroVector;
 		// X
@@ -3270,7 +4374,7 @@ struct FCsOptionalVectorInterval
 		IntervalZ.Max = 0.0f;
 	}
 
-	uint32 GetBits() const
+	FORCEINLINE uint32 GetBits() const
 	{
 		return  (3 * 64) // Vector
 			   + 1 // bIntervalX
@@ -3281,7 +4385,7 @@ struct FCsOptionalVectorInterval
 			   + (2 * 64); // IntervalZ
 	}
 
-	float GetBytes() const
+	FORCEINLINE float GetBytes() const
 	{
 		return (float)GetBits() / 8.0f;
 	}
@@ -3293,14 +4397,14 @@ struct FCsOptionalVectorInterval
 		Vector.Z = bIntervalZ ? FMath::RandRange(IntervalZ.Min, IntervalZ.Max) : Vector.Z;
 	}
 
-	const FVector& Get()
+	FORCEINLINE const FVector& Get()
 	{
 		return Vector;
 	}
 };
 
 USTRUCT(BlueprintType)
-struct FCsOptionalRotatorInterval
+struct CSCORE_API FCsOptionalRotatorInterval
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -3328,7 +4432,7 @@ struct FCsOptionalRotatorInterval
 	}
 	~FCsOptionalRotatorInterval() {}
 
-	FCsOptionalRotatorInterval& operator=(const FCsOptionalRotatorInterval& B)
+	FORCEINLINE FCsOptionalRotatorInterval& operator=(const FCsOptionalRotatorInterval& B)
 	{
 		Rotator = B.Rotator;
 		// Roll
@@ -3346,7 +4450,7 @@ struct FCsOptionalRotatorInterval
 		return *this;
 	}
 
-	bool operator==(const FCsOptionalRotatorInterval& B) const
+	FORCEINLINE bool operator==(const FCsOptionalRotatorInterval& B) const
 	{
 		return	Rotator == B.Rotator &&
 				bIntervalRoll == B.bIntervalRoll &&
@@ -3360,12 +4464,12 @@ struct FCsOptionalRotatorInterval
 				IntervalYaw.Max == B.IntervalYaw.Max;
 	}
 
-	bool operator!=(const FCsOptionalRotatorInterval& B) const
+	FORCEINLINE bool operator!=(const FCsOptionalRotatorInterval& B) const
 	{
 		return !(*this == B);
 	}
 
-	void Reset()
+	FORCEINLINE void Reset()
 	{
 		Rotator = FRotator::ZeroRotator;
 		// Roll
@@ -3382,7 +4486,7 @@ struct FCsOptionalRotatorInterval
 		IntervalYaw.Max = 0.0f;
 	}
 
-	uint32 GetBits() const
+	FORCEINLINE uint32 GetBits() const
 	{
 		return  (3 * 64) // Rotator
 				+ 1 // bIntervalRoll
@@ -3393,7 +4497,7 @@ struct FCsOptionalRotatorInterval
 				+ (2 * 64); // IntervalYaw
 	}
 
-	float GetBytes() const
+	FORCEINLINE float GetBytes() const
 	{
 		return (float)GetBits() / 8.0f;
 	}
@@ -3405,7 +4509,7 @@ struct FCsOptionalRotatorInterval
 		Rotator.Yaw = bIntervalYaw ? FMath::RandRange(IntervalYaw.Min, IntervalYaw.Max) : Rotator.Yaw;
 	}
 
-	const FRotator& Get()
+	FORCEINLINE const FRotator& Get()
 	{
 		return Rotator;
 	}
@@ -3425,25 +4529,40 @@ namespace ECsStringCompare
 	};
 }
 
+struct CSCORE_API EMCsStringCompare : public TCsEnumMap<ECsStringCompare::Type>
+{
+protected:
+	EMCsStringCompare() {}
+	EMCsStringCompare(const EMCsStringCompare &) = delete;
+	EMCsStringCompare(EMCsStringCompare &&) = delete;
+public:
+	~EMCsStringCompare() {}
+private:
+	static EMCsStringCompare* Instance;
+
+public:
+	static EMCsStringCompare& Get();
+};
+
 namespace ECsStringCompare
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
-		const TCsString Equals = TCsString(TEXT("Equals"), TEXT("equals"), TEXT("equals"));
-		const TCsString StartsWith = TCsString(TEXT("StartsWith"), TEXT("startswith"), TEXT("starts with"));
-		const TCsString EndsWith = TCsString(TEXT("EndsWith"), TEXT("endswith"), TEXT("ends with"));
-		const TCsString Contains = TCsString(TEXT("Contains"), TEXT("contains"), TEXT("contains"));
+		extern CSCORE_API const TCsString Equals;
+		extern CSCORE_API const TCsString StartsWith;
+		extern CSCORE_API const TCsString EndsWith;
+		extern CSCORE_API const TCsString Contains;
 	}
 
 	namespace Ref
 	{
-		const ECsStringCompare::Type Equals = Type::Equals;
-		const ECsStringCompare::Type StartsWith = Type::StartsWith;
-		const ECsStringCompare::Type EndsWith = Type::EndsWith;
-		const ECsStringCompare::Type Contains = Type::Contains;
-		const ECsStringCompare::Type ECsStringCompare_MAX = Type::ECsStringCompare_MAX;
+		extern CSCORE_API const Type Equals;
+		extern CSCORE_API const Type StartsWith;
+		extern CSCORE_API const Type EndsWith;
+		extern CSCORE_API const Type Contains;
+		extern CSCORE_API const Type ECsStringCompare_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)

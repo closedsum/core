@@ -8,5 +8,5 @@ ACsData_Level::ACsData_Level(const FObjectInitializer& ObjectInitializer)
 {
 }
 
-FString ACsData_Level::GetMapName() { return ECsCachedString::Str::Empty; }
+FString ACsData_Level::GetMapName() { return ECsCached::Str::Empty; }
 TArray<FName>* ACsData_Level::GetShortCodes() { return nullptr; }

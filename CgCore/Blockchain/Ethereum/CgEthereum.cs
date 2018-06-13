@@ -153,7 +153,7 @@ namespace CgCore
         protected CgRoutine.BoolType DeployContractFlag;
         protected CgRoutine.BoolType LoadContractsFlag;
         protected CgRoutine.BoolType SetupContractFlag;
-        protected CgRoutine.BoolType RunContractStageChangeFunctionFlag;
+        protected CgRoutine.BoolType RunContractStateChangeFunctionFlag;
         protected CgRoutine.BoolType TransactionMinedFlag;
 
         protected CgEthereumContract CurrentContract;
@@ -330,8 +330,8 @@ namespace CgCore
             LoadContractsFlag.Set(false);
             SetupContractFlag = new CgRoutine.BoolType();
             SetupContractFlag.Set(false);
-            RunContractStageChangeFunctionFlag = new CgRoutine.BoolType();
-            RunContractStageChangeFunctionFlag.Set(false);
+            RunContractStateChangeFunctionFlag = new CgRoutine.BoolType();
+            RunContractStateChangeFunctionFlag.Set(false);
             TransactionMinedFlag = new CgRoutine.BoolType();
             TransactionMinedFlag.Set(false);
 
@@ -467,25 +467,33 @@ namespace CgCore
             // Rebuild command if arguments where passed in
             if (args != null && args.Length > EMPTY)
             {
-                // Create list of all string parts
-                string[] parts = value.Split(new string[] { "%s" }, StringSplitOptions.None);
-                
-                // Add in arguments
-                if ((parts.Length - 1) == args.Length)
+                if (value == "%s" && args.Length == 1)
                 {
-                    value = "";
-
-                    int argumentLength = args.Length;
-
-                    for (int i = 0; i < argumentLength; ++i)
-                    {
-                        value += parts[i] + args[i].ToStr();
-                    }
-                    value += parts[argumentLength];
+                    value = args[0].ToStr();
                 }
                 else
                 {
-                    CgDebug.Log("CgEthereum.RunCommand: Failed to run command: " + command.Name + ". Wildcard count != Argument count (" + (parts.Length-1) + "," + args.Length + ")");
+                    // Create list of all string parts
+                    string[] parts = value.Split(new string[] { "%s" }, StringSplitOptions.None);
+
+                    // Add in arguments
+                    if ((parts.Length == 1 && value == parts[0]) ||
+                        (parts.Length - 1) == args.Length)
+                    {
+                        value = "";
+
+                        int argumentLength = args.Length;
+
+                        for (int i = 0; i < argumentLength; ++i)
+                        {
+                            value += parts[i] + args[i].ToStr();
+                        }
+                        value += parts[argumentLength];
+                    }
+                    else
+                    {
+                        CgDebug.Log("CgEthereum.RunCommand: Failed to run command: " + command.Name + ". Wildcard count != Argument count (" + (parts.Length - 1) + "," + args.Length + ")");
+                    }
                 }
             }
 
@@ -607,7 +615,7 @@ namespace CgCore
                     CgEthereumAccount a = new CgEthereumAccount(nickname, address, passphrase);
 
                     string json            = a.ToStr();
-                    string accountFilePath = AccountsDirectory + "\\" + nickname + "-" + address;
+                    string accountFilePath = AccountsDirectory + "\\" + nickname + "-" + address + ".json";
 
                     File.WriteAllText(accountFilePath, json, System.Text.Encoding.ASCII);
 
@@ -761,7 +769,7 @@ namespace CgCore
 
                 payload.CreateNoWindow = !ShowProcessWindow.Get();
                 payload.UseShellExecute = false;
-                payload.FileName = startInfo.FileName;
+                payload.Filename = startInfo.Filename;
                 payload.Arguments = startInfo.Arguments;
 
                 payload.ErrorDialog = false;
@@ -791,7 +799,7 @@ namespace CgCore
 
                 if (LogProcessStart.Log())
                 {
-                    CgDebug.Log("CgEthereum.StartProcess: Starting Process (" + processType.ToString() + "): " + startInfo.FileName + " " + startInfo.Arguments);
+                    CgDebug.Log("CgEthereum.StartProcess: Starting Process (" + processType.ToString() + "): " + startInfo.Filename + " " + startInfo.Arguments);
                 }
 
                 p = ICgManager_Process.Get().Spawn(EMCgProcess.Get()["Blockchain"], payload);
@@ -800,7 +808,7 @@ namespace CgCore
             }
             else
             {
-                CgDebug.Log("CgEthereum.StartProcess: StartProcess called for running Process: " + processType.ToString() + " before the process exited.");
+                CgDebug.Log("CgEthereum.StartProcess: StartProcess called for running Process: " + processType.ToString() + " BUT the process is already RUNNING.");
             }
         }
 
@@ -825,14 +833,13 @@ namespace CgCore
             ECgBlockchainCommand command = ECgEthereumCommand.SetDataDirectory;
 
             CgBlockchainProcessStartInfo startInfo = new CgBlockchainProcessStartInfo();
-            startInfo.FileName              = ConsoleFullPath;
+            startInfo.Filename              = ConsoleFullPath;
             startInfo.Arguments             = Commands[command];
             startInfo.RedirectStandardInput = false;
             startInfo.AddMonitorOutputEvent(MonitorOutputEvents[command]);
 
             ECgBlockchainProcessType processType = ECgBlockchainProcessType.RunningInstance;
 
-            //EnqueueCommand(processType, command);
             StartProcess(processType, 0, startInfo);
             
             IsRunningInstanceOpen = true;
@@ -861,7 +868,7 @@ namespace CgCore
             IsRunningInstanceCloseFlag.Set(false);
 
             CgBlockchainProcessStartInfo startInfo = new CgBlockchainProcessStartInfo();
-            startInfo.FileName              = ConsoleFullPath;
+            startInfo.Filename              = ConsoleFullPath;
             startInfo.Arguments             = Commands[ECgEthereumCommand.InitBlockchain];
             startInfo.RedirectStandardInput = false;
 
@@ -919,7 +926,7 @@ namespace CgCore
             ECgBlockchainCommand command = ECgEthereumCommand.AttachToConsole;
 
             CgBlockchainProcessStartInfo startInfo = new CgBlockchainProcessStartInfo();
-            startInfo.FileName              = eth.ConsoleFullPath;
+            startInfo.Filename              = eth.ConsoleFullPath;
             startInfo.Arguments             = eth.Commands[command];
             startInfo.RedirectStandardInput = true;
             startInfo.AddMonitorOutputEvent(eth.MonitorOutputEvents[command]);
@@ -962,7 +969,7 @@ namespace CgCore
 
             paths = Directory.GetFiles(KeystoreDirectory);
             Dictionary<string, ICgBlockchainAccount>.KeyCollection names = Accounts.Keys;
-            List<string> invalidAccounts = new List<string>();
+            Dictionary<string, bool> validAccounts = new Dictionary<string, bool>();
 
             foreach (string path in paths)
             {
@@ -975,6 +982,7 @@ namespace CgCore
                     if (path.Contains(a.Address))
                     {
                         linkedAcccount = a;
+                        validAccounts.Add(name, true);
                         break;
                     }
                 }
@@ -992,7 +1000,6 @@ namespace CgCore
                         CgDebug.Log("CgEthereum.LoadAccounts: Failed to link Keystore with address: " + address + " to an Account.");
                         CgDebug.Log("-- deleting: " + path);
                     }
-                    invalidAccounts.Add(linkedAcccount.Nickname);
                 }
                 else
                 {
@@ -1001,8 +1008,13 @@ namespace CgCore
             }
             // Check remaining Accounts that did NOT get matched with a keystore
 
-            foreach (string name in invalidAccounts)
+            foreach (string name in names)
             {
+                bool isValid;
+
+                if (validAccounts.TryGetValue(name, out isValid))
+                    continue;
+
                 CgEthereumAccount account = (CgEthereumAccount)Accounts[name];
 
                 // Delete the Account file
@@ -1391,7 +1403,7 @@ namespace CgCore
             // Write out pertinent detail of Contract
             CgEthereumContract contract = (CgEthereumContract)eth.Contracts[econtract];
 
-            File.WriteAllText(eth.ContractsDeployedDirectory + "\\" + contract.Address + "-" + econtract + ".txt", contract.ToStr(), System.Text.Encoding.ASCII);
+            File.WriteAllText(eth.ContractsDeployedDirectory + "\\" + contract.Address + "-" + econtract + ".json", contract.ToStr(), System.Text.Encoding.ASCII);
 
             // Stop Miner
             eth.StopMiner();
@@ -1414,7 +1426,7 @@ namespace CgCore
             CgEthereumContract contract = (CgEthereumContract)c;
 
             // Check if Contract file exists
-            var filePaths = Directory.GetFiles(ContractsDeployedDirectory, "*.*", SearchOption.TopDirectoryOnly).Where(s => s.Contains(econtract + ".txt"));
+            var filePaths = Directory.GetFiles(ContractsDeployedDirectory, "*.*", SearchOption.TopDirectoryOnly).Where(s => s.Contains(econtract + ".json"));
 
             foreach (var path in filePaths)
             {
@@ -1575,7 +1587,7 @@ namespace CgCore
             args[INSTANCE].ValueType            = ECgBlockchainCommandArgumentType.String;
             args[ABI].Value                     = contract.ContractVariableName;
             args[ABI].ValueType                 = ECgBlockchainCommandArgumentType.String;
-            args[ADDRESS].Value                 = contract.AddressAsArg();
+            args[ADDRESS].Value                 = contract.GetAddressAsArg();
             args[ADDRESS].ValueType             = ECgBlockchainCommandArgumentType.String;
 
             CurrentCommandInfo.Set(ECgEthereumCommand.CreateContractInstance, args, null);
@@ -1636,7 +1648,7 @@ namespace CgCore
 
         public void RunContractStateChangeFunction(ECgBlockchainContract econtract, ICgBlockchainAccount iaccount, ECgBlockchainContractFunction efn, CgBlockchainContractFunctionArgument[] args = null)
         {
-            RunContractStageChangeFunctionFlag.Set(false);
+            RunContractStateChangeFunctionFlag.Set(false);
             CgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, RunContractStateChangeFunction_Internal(this, econtract, iaccount, efn, args));
         }
 
@@ -1662,7 +1674,7 @@ namespace CgCore
             eth.CommandFlag.Set(false);
 
             CgEthereumAccount account = (CgEthereumAccount)iaccount;
-            string address            = account.AddressAsArg();
+            string address            = account.GetAddressAsArg();
 
             CgBlockchainContractFunction fn = eth.ContractFunctions[econtract][efn];
             fn.Arguments                    = args;
@@ -1691,7 +1703,7 @@ namespace CgCore
             eth.StopMiner();
             yield return eth.CommandFlag;
 
-            eth.RunContractStageChangeFunctionFlag.Set(true);
+            eth.RunContractStateChangeFunctionFlag.Set(true);
             eth.ContractFunctionCompleted_Event.Broadcast(econtract, efn);
         }
 
@@ -1700,7 +1712,7 @@ namespace CgCore
             CommandFlag.Set(false);
 
             CgEthereumAccount account = (CgEthereumAccount)iaccount;
-            string address            = account.AddressAsArg();
+            string address            = account.GetAddressAsArg();
 
             CgBlockchainContractFunction fn = ContractFunctions[econtract][efn];
             fn.Arguments                    = args;

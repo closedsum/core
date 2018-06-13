@@ -5,7 +5,7 @@
 // Cache
 #pragma region
 
-namespace ECsWidgeCraftingSlotCachedString
+namespace ECsWidgeCraftingSlotCached
 {
 	namespace Str
 	{
@@ -29,14 +29,14 @@ void UCsWidget_Crafting_Slot::UpdateDisplayNameWithCurrentCount()
 	if (Count > CS_EMPTY)
 	{ 
 										//   FString::FromInt(Count) + TEXT("x ") + DisplayName
-		const FString DisplayNameWithCount = FString::FromInt(Count) + ECsWidgeCraftingSlotCachedString::Str::x + DisplayName;
+		const FString DisplayNameWithCount = FString::FromInt(Count) + ECsWidgeCraftingSlotCached::Str::x + DisplayName;
 
 		SetString(DisplayNameWithCount);
 	}
 	else
 	{
 				//TEXT("")
-		SetString(ECsCachedString::Str::Empty);
+		SetString(ECsCached::Str::Empty);
 	}
 }
 

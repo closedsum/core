@@ -51,7 +51,7 @@ protected:
 // Firing
 #pragma region
 
-	virtual FVector GetMuzzleLocation(const TCsViewType &ViewType, const TCsWeaponFireMode &FireMode) override;
+	virtual FVector GetMuzzleLocation(const TCsViewType &ViewType, const FECsWeaponFireMode &FireMode) override;
 
 #pragma endregion Firing
 };

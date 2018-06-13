@@ -5,8 +5,7 @@
 UCsUiWidget_Loading::UCsUiWidget_Loading(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	Type_Script = 1;
-	Type = (TCsWidgetType)Type_Script;
+	//Type = EMCsWidgetType::Get().GetSafeEnum(TEXT("Loading"));
 }
 
 void UCsUiWidget_Loading::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)

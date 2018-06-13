@@ -35,14 +35,14 @@
 
     public class CgBlockchainProcessStartInfo
     {
-        public string FileName;
+        public string Filename;
         public string Arguments;
         public bool RedirectStandardInput;
         public List<CgProcessMonitorOutputEvent> MonitorOutputEvents;
 
         public CgBlockchainProcessStartInfo()
         {
-            FileName = "";
+            Filename = "";
             Arguments = "";
             RedirectStandardInput = false;
             MonitorOutputEvents = new List<CgProcessMonitorOutputEvent>();

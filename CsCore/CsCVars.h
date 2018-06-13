@@ -2,6 +2,14 @@
 #pragma once
 #include "Engine.h"
 
+#define CS_CVAR_SHOW_LOG 1
+#define CS_CVAR_HIDE_LOG 0
+#define CS_CVAR_DRAW 1
+#define CS_CVAR_DISPLAY 1
+#define CS_CVAR_SHOW 1
+#define CS_CVAR_HIDE 0
+#define CS_CVAR_VALID 1
+
 // Loading
 #pragma region
 
@@ -192,6 +200,13 @@ extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawPlayerPawnRightThickness
 
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawPlayerCalcCameraTraceHitLocation;
 
+	// Save
+#pragma region
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarPlayerSaveRebuild;
+
+#pragma endregion Save
+
 #pragma endregion Player
 
 // Local Player
@@ -243,6 +258,7 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerWidgetTransactions
 // Item
 #pragma region
 
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarManagerItemRebuild;
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerItemTransactions;
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerItemActionGetFail;
 
@@ -283,9 +299,18 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerRunnableTransactio
 
 #pragma endregion Runnable
 
+// Process
+#pragma region
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerProcessTransactions;
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogProcessIO;
+
+#pragma endregion Process
+
 // Blockchain
 #pragma region
 
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarBlockchainRebuild;
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainIO;
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainIORunning;
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainIOConsole;

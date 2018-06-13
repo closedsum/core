@@ -45,16 +45,13 @@
 // Cache
 #pragma region
 
-namespace ECsGameStateCachedName
+namespace ECsGameStateCached
 {
 	namespace Name
 	{
 		const FName OnBoard_Internal = FName("OnBoard_Internal");
 	};
-}
 
-namespace ECsGameStateCachedString
-{
 	namespace Str
 	{
 		const FString OnBoard_Internal = TEXT("OnBoard_Internal");
@@ -293,8 +290,8 @@ void ACsGameState::OnBoard()
 	Payload->Type			= (uint8)ECsGameStateRoutine::OnBoard_Internal;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsGameStateCachedName::Name::OnBoard_Internal;
-	Payload->NameAsString	= ECsGameStateCachedString::Str::OnBoard_Internal;
+	Payload->Name			= ECsGameStateCached::Name::OnBoard_Internal;
+	Payload->NameAsString	= ECsGameStateCached::Str::OnBoard_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
@@ -391,7 +388,7 @@ CS_COROUTINE(ACsGameState, OnBoard_Internal)
 	CS_COROUTINE_END(r);
 }
 
-void ACsGameState::GetLoadAssetsShortCodes(const TCsLoadAssetsType &AssetsType, TArray<FName> &OutShortCodes){}
+void ACsGameState::GetLoadAssetsShortCodes(const FECsLoadAssetsType &AssetsType, TArray<FName> &OutShortCodes){}
 
 void ACsGameState::LoadCommonData(){}
 void ACsGameState::OnFinishedLoadCommonData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime){}
@@ -780,9 +777,9 @@ void ACsGameState::SetPlayerStateMappingRelationshipFlag(const uint8 &ClientMapp
 				ACsPlayerState* ClientPlayerState = GetPlayerState(ClientMappingId);
 				ACsPlayerState* PlayerState		  = GetPlayerState(MappingId);
 
-				const FString ClientName = ClientPlayerState ? ClientPlayerState->PlayerName : ECsCachedString::Str::INVALID;
-				const FString OtherName  = PlayerState ? PlayerState->PlayerName : ECsCachedString::Str::INVALID;
-				const FString Value		 = Relationship.HasBCompletedInitialReplicationAndLoadingForA ? ECsCachedString::Str::True : ECsCachedString::Str::False;
+				const FString ClientName = ClientPlayerState ? ClientPlayerState->PlayerName : ECsCached::Str::INVALID;
+				const FString OtherName  = PlayerState ? PlayerState->PlayerName : ECsCached::Str::INVALID;
+				const FString Value		 = Relationship.HasBCompletedInitialReplicationAndLoadingForA ? ECsCached::Str::True : ECsCached::Str::False;
 
 				UE_LOG(LogCs, Log, TEXT("ACsGameState::SetPlayerStateMappingRelationshipFlag: Relationship: %s(%d) <-> %s(%d) from %s to True."), *OtherName, MappingId, *ClientName, ClientMappingId, *Value);
 			}
@@ -794,7 +791,7 @@ void ACsGameState::SetPlayerStateMappingRelationshipFlag(const uint8 &ClientMapp
 
 FString ACsGameState::GetLocalPlayerProfileName()
 {
-	return ECsGameStateCachedString::Str::DefaultPlayerProfileName;
+	return ECsGameStateCached::Str::DefaultPlayerProfileName;
 }
 
 #pragma endregion Player State
@@ -913,9 +910,9 @@ void ACsGameState::SetAIPlayerStateMappingRelationshipFlag(const uint8 &ClientMa
 				ACsPlayerState* ClientPlayerState = GetPlayerState(ClientMappingId);
 				ACsAIPlayerState* PlayerState	  = GetAIPlayerState(MappingId);
 
-				const FString ClientName = ClientPlayerState ? ClientPlayerState->PlayerName : ECsCachedString::Str::INVALID;
-				const FString OtherName  = PlayerState ? PlayerState->PlayerName : ECsCachedString::Str::INVALID;
-				const FString Value		 = Relationship.HasBCompletedInitialReplicationAndLoadingForA ? ECsCachedString::Str::True : ECsCachedString::Str::False;
+				const FString ClientName = ClientPlayerState ? ClientPlayerState->PlayerName : ECsCached::Str::INVALID;
+				const FString OtherName  = PlayerState ? PlayerState->PlayerName : ECsCached::Str::INVALID;
+				const FString Value		 = Relationship.HasBCompletedInitialReplicationAndLoadingForA ? ECsCached::Str::True : ECsCached::Str::False;
 
 				UE_LOG(LogCs, Log, TEXT("ACsGameState::SetAIPlayerStateMappingRelationshipFlag: Relationship: %s(%d) <-> %s(%d) from %s to True."), *OtherName, MappingId, *ClientName, ClientMappingId, *Value);
 			}

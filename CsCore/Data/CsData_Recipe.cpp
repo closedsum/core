@@ -12,7 +12,7 @@ TCsRecipeType ACsData_Recipe::GetBaseRecipeType() { return BaseRecipeType; }
 // Stats
 #pragma region
 
-const FName& ACsData_Recipe::GetCreatedItem() { return ECsCachedName::Name::None; }
+const FName& ACsData_Recipe::GetCreatedItem() { return ECsCached::Name::None; }
 
 #pragma endregion Stats
 
@@ -20,15 +20,15 @@ const FName& ACsData_Recipe::GetCreatedItem() { return ECsCachedName::Name::None
 #pragma region
 
 TArray<FCsRecipeIngredient>* ACsData_Recipe::GetIngredients() { return nullptr; }
-const float& ACsData_Recipe::GetTime() { return ECsCachedReferences::Ref::Float; }
-const bool& ACsData_Recipe::GetUseBulkTime() { return ECsCachedReferences::Ref::False; }
-const float& ACsData_Recipe::GetBulkTime() { return ECsCachedReferences::Ref::Float; }
+const float& ACsData_Recipe::GetTime() { return ECsCached::Ref::Float; }
+const bool& ACsData_Recipe::GetUseBulkTime() { return ECsCached::Ref::False; }
+const float& ACsData_Recipe::GetBulkTime() { return ECsCached::Ref::Float; }
 
 #pragma endregion Ingredients
 
 // UI
 #pragma region
 
-const FString& ACsData_Recipe::GetDisplayName() { return ECsCachedString::Str::INVALID; }
+const FString& ACsData_Recipe::GetDisplayName() { return ECsCached::Str::INVALID; }
 
 #pragma endregion UI

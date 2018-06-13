@@ -9,15 +9,11 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsUserWidget_OnNativeTick, const FGeometry&, MyGeometry, const float&, InDeltaTime);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUserWidget_OnOpenChild, const uint8&, WidgetType);
-DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsUserWidget_OnOpenChild, const TEnumAsByte<ECsWidgetType::Type>&);
+DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsUserWidget_OnOpenChild, const FECsWidgetType&);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUserWidget_OnCloseChild, const uint8&, WidgetType);
-DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsUserWidget_OnCloseChild, const TEnumAsByte<ECsWidgetType::Type>&);
+DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsUserWidget_OnCloseChild, const FECsWidgetType&);
 // ProcessGameEvent
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUserWidget_Override_ProcessGameEvent, const uint8&, GameEvent);
-
-#define CS_WIDGET_DEFINE_TYPE(TYPE)	Type = ECsWidgetType::TYPE; \
-									Type_Script = (uint8)Type; \
-									CS_DEFINE_WIDGET_TYPE
 
 // Enums
 #pragma region
@@ -32,7 +28,7 @@ namespace ECsUserWidgetRoutine
 
 namespace ECsUserWidgetRoutine
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -84,10 +80,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OO Default")
 	FName ShortCode;
 
-	TCsWidgetType Type;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "OO Default")
-	uint8 Type_Script;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OO Default")
+	FECsWidgetType Type;
 
 protected:
 
@@ -132,19 +126,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual void Hide();
 
-	CS_DECLARE_WIDGET_TYPE
-
-	TArray<TCsWidgetType> ChildWidgetTypes;
+	TArray<FECsWidgetType> ChildWidgetTypes;
 
 	UPROPERTY(BlueprintReadWrite, Category = "UI")
 	TArray<UCsUserWidget*> ChildWidgets;
 
-	TMap<TCsWidgetType, TArray<UCsUserWidget*>> ChildWidgetsMap;
+	TMap<FECsWidgetType, TArray<UCsUserWidget*>> ChildWidgetsMap;
 
 	UPROPERTY(BlueprintReadWrite, Category = "UI")
 	TArray<UCsUserWidget*> ActiveChildWidgets;
 
-	TMap<TCsWidgetType, TArray<UCsUserWidget*>> ActiveChildWidgetsMap;
+	TMap<FECsWidgetType, TArray<UCsUserWidget*>> ActiveChildWidgetsMap;
 
 	UPROPERTY(meta = (BindWidget))
 	UCanvasPanel* Canvas;
@@ -153,19 +145,19 @@ public:
 #pragma region
 public:
 
-	virtual UCsUserWidget* GetChildWidget(const TCsWidgetType &WidgetType);
+	virtual UCsUserWidget* GetChildWidget(const FECsWidgetType &WidgetType);
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual UCsUserWidget* GetChildWidget_Script(const uint8 &WidgetType);
 
-	virtual UCsUserWidget* GetActiveChildWidget(const TCsWidgetType &WidgetType);
+	virtual UCsUserWidget* GetActiveChildWidget(const FECsWidgetType &WidgetType);
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual UCsUserWidget* GetActiveChildWidget_Script(const uint8 &WidgetType);
 
 #pragma endregion Get
 
-	virtual void SetChildFocus(const TCsWidgetType &WidgetType, const int32 &InFocus);
+	virtual void SetChildFocus(const FECsWidgetType &WidgetType, const int32 &InFocus);
 
 // Open / Close Child
 #pragma region
@@ -175,7 +167,7 @@ public:
 #pragma region
 public:
 
-	virtual bool OpenChild(const TCsWidgetType &WidgetType);
+	virtual bool OpenChild(const FECsWidgetType &WidgetType);
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual bool OpenChild_Script(const uint8 &WidgetType);
@@ -185,10 +177,10 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "UI")
 	FBindableDynEvent_CsUserWidget_OnOpenChild OnOpenChild_ScriptEvent;
 
-	TMap<TCsWidgetType, FCsInputActionMapRule> OpenChildActionMapRules;
-	TMap<TCsWidgetType, bool> OpenChildShowMouseCursorRules;
+	TMap<FECsWidgetType, FCsInputActionMapRule> OpenChildActionMapRules;
+	TMap<FECsWidgetType, bool> OpenChildShowMouseCursorRules;
 
-	virtual bool IsChildOpened(const TCsWidgetType &WidgetType);
+	virtual bool IsChildOpened(const FECsWidgetType &WidgetType);
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual bool IsChildOpened_Script(const uint8 &WidgetType);
@@ -198,7 +190,7 @@ public:
 	// Close
 #pragma region
 
-	virtual bool CloseChild(const TCsWidgetType &WidgetType);
+	virtual bool CloseChild(const FECsWidgetType &WidgetType);
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual bool CloseChild_Script(const uint8 &WidgetType);
@@ -208,15 +200,15 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "UI")
 	FBindableDynEvent_CsUserWidget_OnCloseChild OnCloseChild_ScriptEvent;
 
-	TMap<TCsWidgetType, FCsInputActionMapRule> CloseChildActionMapRules;
-	TMap<TCsWidgetType, bool> CloseChildShowMouseCursorRules;
+	TMap<FECsWidgetType, FCsInputActionMapRule> CloseChildActionMapRules;
+	TMap<FECsWidgetType, bool> CloseChildShowMouseCursorRules;
 
-	virtual void CloseAllChildrenExcept(const TCsWidgetType &WidgetType);
+	virtual void CloseAllChildrenExcept(const FECsWidgetType &WidgetType);
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual void CloseAllChildrenExcept_Script(const uint8 &WidgetType);
 
-	virtual bool IsChildClosed(const TCsWidgetType &WidgetType);
+	virtual bool IsChildClosed(const FECsWidgetType &WidgetType);
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual bool IsChildClosed_Script(const uint8 &WidgetType);

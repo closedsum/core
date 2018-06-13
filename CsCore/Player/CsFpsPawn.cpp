@@ -165,7 +165,7 @@ void ACsFpsPawn::ApplyData_Weapon()
 	{
 		ACsGunWeapon* Weapon = Cast<ACsGunWeapon>(Weapons[I]);
 
-		const TCsWeaponSlot Slot = (TCsWeaponSlot)I;
+		const FECsWeaponSlot& Slot = EMCsWeaponSlot::Get().GetEnumAt(I);
 
 		ACsData_Weapon* Data_Weapon							= GetData_Weapon(Slot);
 		ACsData_WeaponMaterialSkin* Data_WeaponMaterialSkin = GetData_WeaponMaterialSkin(Slot);

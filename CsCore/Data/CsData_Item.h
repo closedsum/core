@@ -9,9 +9,7 @@ class CSCORE_API ACsData_Item : public ACsData
 {
 	GENERATED_UCLASS_BODY()
 
-	TCsItemType BaseItemType;
-
-	TCsItemType GetBaseItemType();
+	const FECsItemType& GetItemType();
 
 // Stats
 #pragma region

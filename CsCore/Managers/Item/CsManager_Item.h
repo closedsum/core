@@ -8,10 +8,8 @@
 
 // PopulateExistingItems
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBindableDynEvent_CsManagerItem_OnPopulateExistingItems);
-DECLARE_MULTICAST_DELEGATE(FBindableEvent_CsManagerItem_OnPopulateExistingItems);
 // InitInventory
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBindableDynEvent_CsManagerItem_OnInitInventory);
-DECLARE_MULTICAST_DELEGATE(FBindableEvent_CsManagerItem_OnInitInventory);
 
 #define CS_ITEM_POOL_SIZE 65535
 #define CS_ITEM_UNIQUE_ID_START_INDEX 65535
@@ -26,10 +24,9 @@ public:
 
 	static ACsManager_Item* Get(UWorld* InWorld);
 
-	virtual void OnTick(const float &DeltaSeconds);
+	virtual void Rebuild();
 
-	CS_DECLARE_ITEM_TYPE
-	CS_DECLARE_ITEM_OWNER
+	virtual void OnTick(const float &DeltaSeconds);
 
 // Product
 #pragma region
@@ -53,8 +50,8 @@ public:
 
 	void LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, const FCsItem* const Item);
 
-	TCsAssetType ItemAssetType;
-	TCsAssetType InteractiveAssetType;
+	FECsAssetType ItemAssetType;
+	FECsAssetType InteractiveAssetType;
 
 // Allocate
 #pragma region
@@ -89,7 +86,7 @@ public:
 
 	virtual FCsItem* GetItem(const TCsItemId &Id);
 
-	void GetItemsByOwnerType(const TCsItemOwner &OwnerTyper, TArray<FCsItem*> &OutItems);
+	void GetItemsByOwnerType(const FECsItemOwner &OwnerTyper, TArray<FCsItem*> &OutItems);
 	void GetItemsByOwnerId(const TCsItemOwnerId &OwnerId, TArray<FCsItem*> &OutItems);
 
 	void GetItems(const TArray<TCsItemId> &Ids, TArray<FCsItem*> &OutItems);
@@ -174,7 +171,9 @@ public:
 	virtual void PopulateExistingItems();
 	virtual void AsyncPopulateExistingItems();
 
-	FBindableEvent_CsManagerItem_OnPopulateExistingItems OnPopulateExistingItems_Event;
+	DECLARE_MULTICAST_DELEGATE(OnPopulateExistingItems);
+
+	OnPopulateExistingItems OnPopulateExistingItems_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "Load")
 	FBindableDynEvent_CsManagerItem_OnPopulateExistingItems OnPopulateExistingItems_ScriptEvent;
@@ -185,7 +184,9 @@ public:
 	virtual void InitInventory(class ACsManager_Inventory* Manager_Inventory);
 	virtual void AsyncInitInventory(class ACsManager_Inventory* Manager_Inventory);
 
-	FBindableEvent_CsManagerItem_OnInitInventory OnInitInventory_Event;
+	DECLARE_MULTICAST_DELEGATE(OnInitInventory);
+
+	OnInitInventory OnInitInventory_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "Load")
 	FBindableDynEvent_CsManagerItem_OnInitInventory OnInitInventory_ScriptEvent;
@@ -196,8 +197,8 @@ public:
 #pragma region
 public:
 
-	void RecordItemsInteraction(const TArray<FCsItem*> &Items, const TCsItemInteraction &Interaction);
-	virtual void RecordItemInteraction(FCsItem* Item, const TCsItemInteraction& Interaction);
+	void RecordItemsInteraction(const TArray<FCsItem*> &Items, const FECsItemInteraction &Interaction);
+	virtual void RecordItemInteraction(FCsItem* Item, const FECsItemInteraction& Interaction);
 
 #pragma endregion Action
 };

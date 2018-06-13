@@ -2,9 +2,53 @@
 #include "Blockchain/CsBlockchain.h"
 #include "CsCore.h"
 
+#include "Blockchain/CsBlockchainAccount.h"
+#include "Blockchain/CsBlockchainContract.h"
+
 // static initializations
 UCsBlockchain* UCsBlockchain::s_blockchainSingleton;
 bool UCsBlockchain::s_bBlockchainHasShutdown = false;
+
+// Enums
+#pragma region
+
+namespace ECsBlockchainType
+{
+	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
+
+	namespace Str
+	{
+		CSCORE_API const TCsString PrivateSingleNode = TCsString(TEXT("PrivateSingleNode"), TEXT("privatesinglenode"));
+		CSCORE_API const TCsString Local = TCsString(TEXT("Local"), TEXT("local"));
+		CSCORE_API const TCsString Server = TCsString(TEXT("Server"), TEXT("server"));
+	}
+
+	namespace Ref
+	{
+		CSCORE_API const Type PrivateSingleNode = Type::PrivateSingleNode;
+		CSCORE_API const Type Local = Type::Local;
+		CSCORE_API const Type Server = Type::Server;
+		CSCORE_API const Type ECsBlockchainType_MAX = Type::ECsBlockchainType_MAX;
+	}
+}
+
+namespace ECsBlockchainProcessType
+{
+	namespace Str
+	{
+		CSCORE_API const TCsString RunningInstance = TCsString(TEXT("RunningInstance"), TEXT("runninginstance"));
+		CSCORE_API const TCsString Console = TCsString(TEXT("Console"), TEXT("console"));
+	}
+
+	namespace Ref
+	{
+		CSCORE_API const Type RunningInstance = Type::RunningInstance;
+		CSCORE_API const Type Console = Type::Console;
+		CSCORE_API const Type ECsBlockchainProcessType_MAX = Type::ECsBlockchainProcessType_MAX;
+	}
+}
+
+#pragma endregion Enums
 
 UCsBlockchain::UCsBlockchain(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -46,10 +90,44 @@ UCsBlockchain::UCsBlockchain(const FObjectInitializer& ObjectInitializer) : Supe
 
 void UCsBlockchain::Initialize()
 {
+	for (int32 I = 0; I < ECS_BLOCKCHAIN_PROCESS_TYPE_MAX; ++I)
+	{
+		Processes.Add((TCsBlockchainProcessType)I, nullptr);
+	}
 }
 
 void UCsBlockchain::CleanUp()
 {
+	// Processes
+	{
+		Processes.Reset();
+	}
+	// Accounts
+	{
+		TArray<FString> Keys;
+		Accounts.GetKeys(Keys);
+
+		const int32 Count = Keys.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			delete Accounts[Keys[I]];
+		}
+		Accounts.Reset();
+	}
+	// Contracts
+	{
+		TArray<FECsBlockchainContract> Keys;
+		Contracts.GetKeys(Keys);
+
+		const int32 Count = Keys.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			delete Contracts[Keys[I]];
+		}
+		Contracts.Reset();
+	}
 }
 
 #pragma endregion Singleton

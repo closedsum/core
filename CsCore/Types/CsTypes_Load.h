@@ -15,17 +15,17 @@
 // Load
 #pragma region
 
-namespace ECsLoadCachedString
+namespace ECsLoadCached
 {
 	namespace Str
 	{
-		const FString _Internal = TEXT("_Internal");
-		const FString _LoadFlags = TEXT("_LoadFlags");
-		const FString _1P_LoadFlags = TEXT("1P_LoadFlags");
-		const FString _3P_LoadFlags = TEXT("3P_LoadFlags");
-		const FString _3P_Low_LoadFlags = TEXT("3P_Low_LoadFlags");
-		const FString VR_LoadFlags = TEXT("VR_LoadFlags");
-		const FString _C = TEXT("_C");
+		extern CSCORE_API const FString _Internal;// = TEXT("_Internal");
+		extern CSCORE_API const FString _LoadFlags;//= TEXT("_LoadFlags");
+		extern CSCORE_API const FString _1P_LoadFlags;// = TEXT("1P_LoadFlags");
+		extern CSCORE_API const FString _3P_LoadFlags;// = TEXT("3P_LoadFlags");
+		extern CSCORE_API const FString _3P_Low_LoadFlags;// = TEXT("3P_Low_LoadFlags");
+		extern CSCORE_API const FString VR_LoadFlags;// = TEXT("VR_LoadFlags");
+		extern CSCORE_API const FString _C;// = TEXT("_C");
 	}
 }
 
@@ -70,7 +70,7 @@ namespace ECsLoadFlags_Editor
 
 namespace ECsLoadFlags_Editor
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -136,7 +136,7 @@ namespace ECsLoadFlags_Editor
 typedef ECsLoadFlags_Editor::Type TCsLoadFlags_Editor;
 
 USTRUCT()
-struct FCsResourceSize
+struct CSCORE_API FCsResourceSize
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -156,7 +156,7 @@ struct FCsResourceSize
 		Megabytes = 0.0f;
 	}
 
-	FCsResourceSize& operator=(const FCsResourceSize& B)
+	FORCEINLINE FCsResourceSize& operator=(const FCsResourceSize& B)
 	{
 		Bytes = B.Bytes;
 		Kilobytes = B.Kilobytes;
@@ -164,7 +164,7 @@ struct FCsResourceSize
 		return *this;
 	}
 
-	FCsResourceSize& operator+=(const FCsResourceSize& B)
+	FORCEINLINE FCsResourceSize& operator+=(const FCsResourceSize& B)
 	{
 		Bytes += B.Bytes;
 		Kilobytes += B.Kilobytes;
@@ -172,7 +172,7 @@ struct FCsResourceSize
 		return *this;
 	}
 
-	void Reset()
+	FORCEINLINE void Reset()
 	{
 		Bytes = 0;
 		Kilobytes = 0.0f;
@@ -181,7 +181,7 @@ struct FCsResourceSize
 };
 
 USTRUCT()
-struct FCsStringAssetReference
+struct CSCORE_API FCsStringAssetReference
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -194,14 +194,14 @@ struct FCsStringAssetReference
 	UPROPERTY(VisibleDefaultsOnly, Category = "Reference")
 	FCsResourceSize Size;
 
-	FStringAssetReference* Get()
+	FORCEINLINE FStringAssetReference* Get()
 	{
-		&Reference_Internal;
+		return &Reference_Internal;
 	}
 };
 
 USTRUCT()
-struct FCsTArrayStringAssetReference
+struct CSCORE_API FCsTArrayStringAssetReference
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -217,31 +217,27 @@ struct FCsTArrayStringAssetReference
 		Size.Reset();
 	}
 
-	void Get(TArray<FStringAssetReference>& OutReferences)
+	FORCEINLINE void Get(TArray<FStringAssetReference>& OutReferences)
 	{
-		const int32 Count = References.Num();
-
-		for (int32 I = 0; I < Count; ++I)
+		for (const FCsStringAssetReference& Reference : References)
 		{
-			OutReferences.Add(References[I].Reference_Internal);
+			OutReferences.Add(Reference.Reference_Internal);
 		}
 	}
 
-	void CalculateSize()
+	FORCEINLINE void CalculateSize()
 	{
 		Size.Reset();
 
-		const int32 Count = References.Num();
-
-		for (int32 I = 0; I < Count; ++I)
+		for (const FCsStringAssetReference& Reference : References)
 		{
-			Size += References[I].Size;
+			Size += Reference.Size;
 		}
 	}
 };
 
 USTRUCT(BlueprintType)
-struct FCsDataMappingEntry
+struct CSCORE_API FCsDataMappingEntry
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -268,7 +264,7 @@ struct FCsDataMappingEntry
 		CS_SET_BLUEPRINT_BITFLAG(Data_LoadFlags, ECsLoadFlags::Game);
 	}
 
-	void Set(const FName &InShortCode, UObject* InData)
+	FORCEINLINE void Set(const FName &InShortCode, UObject* InData)
 	{
 		ShortCode = InShortCode;
 		Data = InData;
@@ -276,7 +272,7 @@ struct FCsDataMappingEntry
 };
 
 USTRUCT()
-struct FCsAssetReferenceLoadedCache
+struct CSCORE_API FCsAssetReferenceLoadedCache
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -294,7 +290,7 @@ struct FCsAssetReferenceLoadedCache
 };
 
 USTRUCT()
-struct FCsCategoryMemberAssociation
+struct CSCORE_API FCsCategoryMemberAssociation
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -305,55 +301,87 @@ struct FCsCategoryMemberAssociation
 	TArray<FString> Members;
 };
 
-namespace ECsAssetType
-{
-	enum Type : uint8;
-}
-
-typedef ECsAssetType::Type TCsAssetType;
-
-// AssetTypeToString
-typedef const FString&(*TCsAssetTypeToString)(const TCsAssetType&);
-// StringToAssetType
-typedef const TCsAssetType&(*TCsStringToAssetType)(const FString&);
-
-#define CS_DECLARE_ASSET_TYPE	TCsAssetType AssetType_MAX; \
-								uint8 ASSET_TYPE_MAX; \
-								TCsAssetTypeToString AssetTypeToString; \
-								TCsStringToAssetType StringToAssetType;
-
-#define CS_DEFINE_ASSET_TYPE	AssetType_MAX = ECsAssetType::ECsAssetType_MAX;\
-								ASSET_TYPE_MAX = (uint8)AssetType_MAX; \
-								AssetTypeToString = &ECsAssetType::ToString; \
-								StringToAssetType = &ECsAssetType::ToType;
-
-// GetAssetTypeStaticClass
-typedef UClass*(*TCsGetAssetTypeStaticClass)(const TCsAssetType&);
-
-namespace ECsLoadAssetsType
-{
-	enum Type : uint8;
-}
-
-typedef ECsLoadAssetsType::Type TCsLoadAssetsType;
-
-// LoadAssetsTypeToString
-typedef const FString&(*TCsLoadAssetsTypeToString)(const TCsLoadAssetsType&);
-// StringToLoadAssetsType
-typedef const TCsLoadAssetsType&(*TCsStringToLoadAssetsType)(const FString&);
-
-#define CS_DECLARE_LOAD_ASSETS_TYPE	TCsLoadAssetsType LoadAssetsType_MAX; \
-									uint8 LOAD_ASSETS_TYPE_MAX; \
-									TCsLoadAssetsTypeToString LoadAssetsTypeToString; \
-									TCsStringToLoadAssetsType StringToLoadAssetsType;
-
-#define CS_DEFINE_LOAD_ASSETS_TYPE	LoadAssetsType_MAX = ECsLoadAssetsType::ECsLoadAssetsType_MAX;\
-									LOAD_ASSETS_TYPE_MAX = (uint8)LoadAssetsType_MAX; \
-									LoadAssetsTypeToString = &ECsLoadAssetsType::ToString; \
-									StringToLoadAssetsType = &ECsLoadAssetsType::ToType;
+// AssetType
 
 USTRUCT(BlueprintType)
-struct FCsPayload
+struct CSCORE_API FECsAssetType : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsAssetType() {}
+	FECsAssetType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsAssetType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsAssetType() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsAssetType& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
+}
+
+struct CSCORE_API EMCsAssetType : public TCsEnumStructMap<FECsAssetType, uint8>
+{
+protected:
+	EMCsAssetType() {}
+	EMCsAssetType(const EMCsAssetType &) = delete;
+	EMCsAssetType(EMCsAssetType &&) = delete;
+public:
+	~EMCsAssetType() {}
+private:
+	static EMCsAssetType* Instance;
+
+public:
+	static EMCsAssetType& Get();
+};
+
+namespace ECsAssetType
+{
+}
+
+// GetAssetTypeStaticClass
+typedef UClass*(*TCsGetAssetTypeStaticClass)(const FECsAssetType&);
+
+// LoadAssetsType
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsLoadAssetsType : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsLoadAssetsType() {}
+	FECsLoadAssetsType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsLoadAssetsType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsLoadAssetsType() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsLoadAssetsType& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
+}
+
+struct CSCORE_API EMCsLoadAssetsType : public TCsEnumStructMap<FECsLoadAssetsType, uint8>
+{
+protected:
+	EMCsLoadAssetsType() {}
+	EMCsLoadAssetsType(const EMCsLoadAssetsType &) = delete;
+	EMCsLoadAssetsType(EMCsLoadAssetsType &&) = delete;
+public:
+	~EMCsLoadAssetsType() {}
+private:
+	static EMCsLoadAssetsType* Instance;
+
+public:
+	static EMCsLoadAssetsType& Get();
+};
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsPayload
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -361,60 +389,53 @@ struct FCsPayload
 	FName ShortCode;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
-	FString AssetType;
-
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Payload")
-	uint8 AssetType_Script;
+	FECsAssetType AssetType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	TEnumAsByte<ECsLoadFlags_Editor::Type> LoadFlags;
 
-	FCsPayload& operator=(const FCsPayload& B)
+	FORCEINLINE FCsPayload& operator=(const FCsPayload& B)
 	{
 		ShortCode = B.ShortCode;
 		AssetType = B.AssetType;
-		AssetType_Script = B.AssetType_Script;
 		LoadFlags = B.LoadFlags;
 		return *this;
 	}
 
-	bool operator==(const FCsPayload& B) const
+	FORCEINLINE bool operator==(const FCsPayload& B) const
 	{
 		if (ShortCode != B.ShortCode) { return false; }
 		if (AssetType != B.AssetType) { return false; }
-		if (AssetType_Script != B.AssetType_Script) { return false; }
 		if (LoadFlags != B.LoadFlags) { return false; }
 		return true;
 	}
 
-	bool operator!=(const FCsPayload& B) const
+	FORCEINLINE bool operator!=(const FCsPayload& B) const
 	{
 		return !(*this == B);
 	}
 };
 
 USTRUCT(BlueprintType)
-struct FCsTArrayPayload
+struct CSCORE_API FCsTArrayPayload
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	TArray<FCsPayload> Payloads;
 
-	FCsTArrayPayload& operator=(const FCsTArrayPayload& B)
+	FORCEINLINE FCsTArrayPayload& operator=(const FCsTArrayPayload& B)
 	{
 		Payloads.Reset();
 
-		const int32 Count = B.Payloads.Num();
-
-		for (int32 I = 0; I < Count; ++I)
+		for (const FCsPayload& Payload : B.Payloads)
 		{
-			Payloads.Add(B.Payloads[I]);
+			Payloads.Add(Payload);
 		}
 		return *this;
 	}
 
-	bool operator==(const FCsTArrayPayload& B) const
+	FORCEINLINE bool operator==(const FCsTArrayPayload& B) const
 	{
 		const int32 CountA = Payloads.Num();
 		const int32 CountB = B.Payloads.Num();
@@ -430,7 +451,7 @@ struct FCsTArrayPayload
 		return true;
 	}
 
-	bool operator!=(const FCsTArrayPayload& B) const
+	FORCEINLINE bool operator!=(const FCsTArrayPayload& B) const
 	{
 		return !(*this == B);
 	}
@@ -453,7 +474,7 @@ namespace ECsLoadAsyncOrder
 
 namespace ECsLoadAsyncOrder
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{

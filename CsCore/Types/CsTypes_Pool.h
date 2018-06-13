@@ -23,7 +23,7 @@ namespace ECsPoolTransaction
 
 namespace ECsPoolTransaction
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -73,7 +73,7 @@ namespace ECsPoolTransactionOrder
 
 namespace ECsPoolTransactionOrder
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -113,7 +113,7 @@ namespace ECsPooledObjectState
 
 namespace ECsPooledObjectState
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -309,7 +309,7 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct FCgPooledObjectPayload
+struct FCsPooledObjectPayload
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -323,8 +323,8 @@ struct FCgPooledObjectPayload
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<UObject> Parent;
 
-	FCgPooledObjectPayload(){}
-	virtual ~FCgPooledObjectPayload(){}
+	FCsPooledObjectPayload(){}
+	virtual ~FCsPooledObjectPayload(){}
 
 	virtual void Reset()
 	{

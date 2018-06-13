@@ -71,14 +71,9 @@ struct FCsEthereumKeystore
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ethereum Keystore")
 	int32 version;
 
-	void Parse(const FString &Str)
-	{
-		//JsonConvert.PopulateObject(str, (object)this);
-	}
+	FCsEthereumKeystore();
+	~FCsEthereumKeystore();
 
-	void ParseFromFilePath(const FString &Path)
-	{
-		//if (File.Exists(path))
-		//	Parse(File.ReadAllText(path));
-	}
+	void Parse(const FString &Str);
+	void ParseFromFilePath(const FString &Path);
 };

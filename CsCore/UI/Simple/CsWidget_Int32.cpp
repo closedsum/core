@@ -5,7 +5,7 @@
 // Cache
 #pragma region
 
-namespace ECsWidgetInt32CachedString
+namespace ECsWidgetInt32Cached
 {
 	namespace Str
 	{
@@ -25,9 +25,9 @@ void UCsWidget_Int32::OnNativeConstruct()
 	Super::OnNativeConstruct();
 
 	Text.Set(MyText);
-	const FString& TextName   = ECsCachedString::Str::Text;
-	const FString& MyTextName = ECsWidgetInt32CachedString::Str::MyText;
-	Text.Init(TextName, MyTextName, GetName() + ECsCachedString::Str::Dot + TextName);
+	const FString& TextName   = ECsCached::Str::Text;
+	const FString& MyTextName = ECsWidgetInt32Cached::Str::MyText;
+	Text.Init(TextName, MyTextName, GetName() + ECsCached::Str::Dot + TextName);
 }
 
 void UCsWidget_Int32::OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime)

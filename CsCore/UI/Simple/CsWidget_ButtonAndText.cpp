@@ -8,7 +8,7 @@
 // Cache
 #pragma region
 
-namespace ECsWidgetButtonAndTextCachedString
+namespace ECsWidgetButtonAndTextCached
 {
 	namespace Str
 	{
@@ -34,18 +34,18 @@ void UCsWidget_ButtonAndText::OnNativeConstruct()
 
 	// Button
 	ButtonAndText.Button.Set(MyButton);
-	const FString& MemberName   = ECsWidgetButtonAndTextCachedString::Str::ButtonAndText;
-	const FString& MyButtonName = ECsWidgetButtonAndTextCachedString::Str::MyButton;
-	const FString& ButtonName   = ECsWidgetButtonAndTextCachedString::Str::Button;
-	ButtonAndText.Button.Init(ButtonName, MyButtonName, GetName() + ECsCachedString::Str::Dot + MemberName);
+	const FString& MemberName   = ECsWidgetButtonAndTextCached::Str::ButtonAndText;
+	const FString& MyButtonName = ECsWidgetButtonAndTextCached::Str::MyButton;
+	const FString& ButtonName   = ECsWidgetButtonAndTextCached::Str::Button;
+	ButtonAndText.Button.Init(ButtonName, MyButtonName, GetName() + ECsCached::Str::Dot + MemberName);
 
 	MyButton->OnPressed.AddDynamic(this, &UCsWidget_ButtonAndText::MyButton_OnPressed);
 
 	// Text
 	ButtonAndText.Text.Set(MyText);
-	const FString& MyTextName = ECsWidgetButtonAndTextCachedString::Str::MyText;
-	const FString& TextName   = ECsWidgetButtonAndTextCachedString::Str::Text;
-	ButtonAndText.Text.Init(TextName, MyTextName, GetName() + ECsCachedString::Str::Dot + MemberName);
+	const FString& MyTextName = ECsWidgetButtonAndTextCached::Str::MyText;
+	const FString& TextName   = ECsWidgetButtonAndTextCached::Str::Text;
+	ButtonAndText.Text.Init(TextName, MyTextName, GetName() + ECsCached::Str::Dot + MemberName);
 }
 
 void UCsWidget_ButtonAndText::OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime)

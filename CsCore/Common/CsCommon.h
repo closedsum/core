@@ -343,7 +343,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	static void ShuffleTArray_FName(TArray<FName>& InArray);
 	static void ShuffleTArray_int32(TArray<int32>& InArray);
 
-	static bool IsValidFpsAnimMontageArray(TArray<FCsFpsAnimMontage> & InArray, const TCsViewType &ViewType, const bool &IsLow=false);
+	static bool IsValidFpsAnimMontageArray(TArray<FCsFpvAnimMontage> & InArray, const TCsViewType &ViewType, const bool &IsLow=false);
 
 // Component
 #pragma region
@@ -681,6 +681,9 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 
 	static FString GetProxyAsString(AActor* InActor);
 
+// World
+#pragma region
+
 	UFUNCTION(BlueprintCallable, Category = "Common")
 	static bool IsPlayInGame(UWorld* InWorld);
 	UFUNCTION(BlueprintCallable, Category = "Common")
@@ -689,6 +692,10 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	static bool IsPlayInPIE(UWorld* InWorld);
 	UFUNCTION(BlueprintCallable, Category = "Common")
 	static bool IsPlayInEditorPreview(UWorld* World);
+	UFUNCTION(BlueprintCallable, Category = "Common")
+	static bool IsAnyWorldContextEditorOrEditorPreview();
+
+#pragma endregion World
 
 	template<typename T>
 	static T* GetUObject(UWorld* InWorld)

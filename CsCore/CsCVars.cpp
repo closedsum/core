@@ -450,6 +450,13 @@ TAutoConsoleVariable<int32> CsCVarDrawPlayerCalcCameraTraceHitLocation(
 	ECVF_SetByConsole
 );
 
+TAutoConsoleVariable<int32> CsCVarPlayerSaveRebuild(
+	TEXT("player.save.rebuild"),
+	0,
+	TEXT("Player Save Rebuild."),
+	ECVF_SetByConsole
+);
+
 #pragma endregion Player
 
 // Local Player
@@ -541,6 +548,13 @@ TAutoConsoleVariable<int32> CsCVarLogManagerWidgetTransactions(
 // Item
 #pragma region
 
+TAutoConsoleVariable<int32> CsCVarManagerItemRebuild(
+	TEXT("manager.item.rebuild"),
+	0,
+	TEXT("Manager Item Rebuild."),
+	ECVF_SetByConsole
+);
+
 TAutoConsoleVariable<int32> CsCVarLogManagerItemTransactions(
 	TEXT("log.manager.item.transactions"),
 	0,
@@ -625,69 +639,82 @@ TAutoConsoleVariable<int32> CsCVarLogManagerRunnableTransactions(
 
 #pragma endregion Runnable
 
-// Ethereum
+// Process
 #pragma region
 
-/*
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainIO;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainIOProcess;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainIOConsole;
-//Process
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarShowBlockchainProcessWindow;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainProcessStart;
-// Command
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainCommandCompleted;
-// Account
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainAccountCreated;
-*/
+TAutoConsoleVariable<int32> CsCVarLogManagerProcessTransactions(
+	TEXT("log.manager.process.transactions"),
+	0,
+	TEXT("Log Manager Process Allocate and DeAllocate."),
+	ECVF_SetByConsole
+);
+
+TAutoConsoleVariable<int32> CsCVarLogProcessIO(
+	TEXT("log.process.io"),
+	0,
+	TEXT("Log Process Input / Ouput from Write / Read Pipes."),
+	ECVF_SetByConsole
+);
+
+#pragma endregion Process
+
+// Blockchain
+#pragma region
+
+TAutoConsoleVariable<int32> CsCVarBlockchainRebuild(
+	TEXT("blockchain.rebuild"),
+	0,
+	TEXT("Rebuild Blockchain."),
+	ECVF_SetByConsole | ECVF_SetByCode
+);
 
 TAutoConsoleVariable<int32> CsCVarLogBlockchainIO(
 	TEXT("log.blockchain.io"),
 	0,
 	TEXT("Log All Blockchain Input / Output Messages."),
-	ECVF_SetByConsole
+	ECVF_SetByConsole | ECVF_SetByCode
 );
 
 TAutoConsoleVariable<int32> CsCVarLogBlockchainIORunning(
 	TEXT("log.blockchain.io.running"),
 	0,
 	TEXT("Log Running Blockchain Input / Output Messages."),
-	ECVF_SetByConsole
+	ECVF_SetByConsole | ECVF_SetByCode
 );
 
 TAutoConsoleVariable<int32> CsCVarLogBlockchainIOConsole(
 	TEXT("log.blockchain.io.console"),
 	0,
 	TEXT("Log Console Blockchain Input / Output Messages."),
-	ECVF_SetByConsole
+	ECVF_SetByConsole | ECVF_SetByCode
 );
 
 TAutoConsoleVariable<int32> CsCVarShowBlockchainProcessWindow(
 	TEXT("show.blockchain.processwindow"),
 	0,
 	TEXT("Show Blockchain Process Window."),
-	ECVF_SetByConsole
+	ECVF_SetByConsole | ECVF_SetByCode
 );
 
 TAutoConsoleVariable<int32> CsCVarLogBlockchainProcessStart(
 	TEXT("log.blockchain.process.start"),
 	0,
 	TEXT("Log Blockchain Process Starting."),
-	ECVF_SetByConsole
+	ECVF_SetByConsole | ECVF_SetByCode
 );
 
 TAutoConsoleVariable<int32> CsCVarLogBlockchainCommandCompleted(
 	TEXT("log.blockchain.command.completed"),
 	0,
 	TEXT("Log Blockchain Command Completed."),
-	ECVF_SetByConsole
+	ECVF_SetByConsole | ECVF_SetByCode
 );
 
 TAutoConsoleVariable<int32> CsCVarLogBlockchainAccountCreated(
 	TEXT("log.blockchain.account.created"),
 	0,
 	TEXT("Log Blockchain Account Created."),
-	ECVF_SetByConsole
+	ECVF_SetByConsole | ECVF_SetByCode
 );
 
 	// Ethereum
@@ -697,23 +724,23 @@ TAutoConsoleVariable<int32> CsCVarLogBlockchainAccountLoad(
 	TEXT("log.blockchain.account.load"),
 	0,
 	TEXT("Log Blockchain (Ethereum) when Accounts get loaded."),
-	ECVF_SetByConsole
+	ECVF_SetByConsole | ECVF_SetByCode
 );
 
 TAutoConsoleVariable<int32> CsCVarLogBlockchainAccountSetup(
 	TEXT("log.blockchain.account.setup"),
 	0,
 	TEXT("Log Blockchain (Ethereum) Account Setup."),
-	ECVF_SetByConsole
+	ECVF_SetByConsole | ECVF_SetByCode
 );
 
 TAutoConsoleVariable<int32> CsCVarLogBlockchainBalance(
 	TEXT("log.blockchain.balance"),
 	0,
 	TEXT("Log Blockchain (Ethereum) Balance."),
-	ECVF_SetByConsole
+	ECVF_SetByConsole | ECVF_SetByCode
 );
 
 #pragma endregion Ethereum
 
-#pragma endregion Ethereum
+#pragma endregion Blockchain

@@ -23,7 +23,7 @@ class CSCORE_API UCsWidget_ButtonAndText : public UCsSimpleWidget
 	UFUNCTION()
 	virtual void MyButton_OnPressed();
 
-	TCsInputAction InputAction_OnPressed;
+	FECsInputAction InputAction_OnPressed;
 
 	FVector MousePosition_OnPressed;
 

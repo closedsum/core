@@ -13,6 +13,7 @@
 // Managers
 #include "Managers/Input/CsManager_Input.h"
 #include "Managers/Crafting/CsManager_Crafting.h"
+#include "Managers/Inventory/CsManager_Inventory.h"
 // Data
 #include "Data/CsDataMapping.h"
 #include "Data/CsData_Recipe.h"
@@ -21,7 +22,7 @@
 // Cache
 #pragma region
 
-namespace ECsWidgetCraftingCachedName
+namespace ECsWidgetCraftingCached
 {
 	namespace Name
 	{
@@ -30,10 +31,7 @@ namespace ECsWidgetCraftingCachedName
 		const FName DecrementCount_Internal = FName("UCsWidget_Crafting::DecrementCount_Internal");
 		const FName UpdateProgress_Internal = FName("UCsWidget_Crafting::UpdateProgress_Internal");
 	};
-}
 
-namespace ECsWidgetCraftingCachedString
-{
 	namespace Str
 	{
 		// Functions
@@ -404,8 +402,8 @@ void UCsWidget_Crafting::IncrementCount()
 	Payload->Type			 = (uint8)ECsWidgetCraftingRoutine::IncrementCount_Internal;
 	Payload->DoInit			 = true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			 = ECsWidgetCraftingCachedName::Name::IncrementCount_Internal;
-	Payload->NameAsString	 = ECsWidgetCraftingCachedString::Str::IncrementCount_Internal;
+	Payload->Name			 = ECsWidgetCraftingCached::Name::IncrementCount_Internal;
+	Payload->NameAsString	 = ECsWidgetCraftingCached::Str::IncrementCount_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
@@ -536,8 +534,8 @@ void UCsWidget_Crafting::DecrementCount()
 	Payload->Type			 = (uint8)ECsWidgetCraftingRoutine::DecrementCount_Internal;
 	Payload->DoInit			 = true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			 = ECsWidgetCraftingCachedName::Name::DecrementCount_Internal;
-	Payload->NameAsString	 = ECsWidgetCraftingCachedString::Str::DecrementCount_Internal;
+	Payload->Name			 = ECsWidgetCraftingCached::Name::DecrementCount_Internal;
+	Payload->NameAsString	 = ECsWidgetCraftingCached::Str::DecrementCount_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
@@ -721,8 +719,8 @@ void UCsWidget_Crafting::UpdateProgress(const uint64 &PayloadId)
 	Payload->Type			 = (uint8)ECsWidgetCraftingRoutine::UpdateProgress_Internal;
 	Payload->DoInit			 = true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			 = ECsWidgetCraftingCachedName::Name::UpdateProgress_Internal;
-	Payload->NameAsString	 = ECsWidgetCraftingCachedString::Str::UpdateProgress_Internal;
+	Payload->Name			 = ECsWidgetCraftingCached::Name::UpdateProgress_Internal;
+	Payload->NameAsString	 = ECsWidgetCraftingCached::Str::UpdateProgress_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 

@@ -37,7 +37,7 @@ namespace ECsGameStateOnBoardState
 
 namespace ECsGameStateOnBoardState
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -107,7 +107,7 @@ typedef ECsGameStateRoutine::Type TCsGameStateRoutine;
 
 namespace ECsGameStateRoutine
 {
-	typedef TCsPrimitiveType_MultiValue_FString_Enum_ThreeParams TCsString;
+	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
 
 	namespace Str
 	{
@@ -211,7 +211,7 @@ public:
 
 	CS_COROUTINE_DECLARE(OnBoard)
 
-	virtual void GetLoadAssetsShortCodes(const TCsLoadAssetsType &AssetsType, TArray<FName> &OutShortCodes);
+	virtual void GetLoadAssetsShortCodes(const FECsLoadAssetsType &AssetsType, TArray<FName> &OutShortCodes);
 
 	virtual void LoadCommonData();
 	virtual void OnFinishedLoadCommonData(const TArray<UObject*> &LoadedAssets, const float& LoadingTime);
@@ -295,13 +295,13 @@ public:
 	class ACsManager_Sound* Manager_Sound;
 
 	UPROPERTY()
-	class ACsManager_Projectile* Manager_Projectile;
+	class AICsManager_Projectile* Manager_Projectile;
 
 	UPROPERTY()
 	class ACsManager_Damage* Manager_Damage;
 
 	UPROPERTY()
-	class ACsManager_InteractiveActor* Manager_InteractiveActor;
+	class AICsManager_InteractiveActor* Manager_InteractiveActor;
 
 	UPROPERTY()
 	class ACsManager_Item* Manager_Item;

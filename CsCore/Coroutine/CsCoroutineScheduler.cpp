@@ -8,6 +8,24 @@
 UCsCoroutineScheduler* UCsCoroutineScheduler::s_coroutineSchedulerSingleton;
 bool UCsCoroutineScheduler::s_bCoroutineSchedulerHasShutdown = false;
 
+// Cache
+#pragma region
+
+namespace ECsCoroutineCached
+{
+	namespace Str
+	{
+		const FString Allocate = TEXT("UCsCoroutineScheduler::Allocate");
+		const FString Start = TEXT("UCsCoroutineScheduler::Start");
+		const FString Update = TEXT("UCsCoroutineScheduler::Update");
+		const FString OnTick_Update = TEXT("UCsCoroutineScheduler::OnTick_Update");
+		const FString OnCacCamera_Update = TEXT("UCsCoroutineScheduler::OnCacCamera_Update");
+		const FString OnLastTick_Update = TEXT("UCsCoroutineScheduler::OnLastTick_Update");
+	}
+}
+
+#pragma endregion Cache
+
 UCsCoroutineScheduler::UCsCoroutineScheduler(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	for (int32 I = 0; I < ECS_COROUTINE_SCHEDULE_MAX; ++I)
@@ -209,7 +227,7 @@ struct FCsRoutine* UCsCoroutineScheduler::Allocate(FCsCoroutinePayload* Payload)
 			{
 				RoutinesToInit[Schedule].Add(R);
 			}
-			LogTransaction(ECsCoroutineCachedString::Str::Allocate, (Payload->DoInit && Payload->PerformFirstRun) ? ECsCoroutineTransaction::Start : ECsCoroutineTransaction::Allocate, R);
+			LogTransaction(ECsCoroutineCached::Str::Allocate, (Payload->DoInit && Payload->PerformFirstRun) ? ECsCoroutineTransaction::Start : ECsCoroutineTransaction::Allocate, R);
 			Payload->Reset();
 			return R;
 		}
@@ -548,7 +566,7 @@ void UCsCoroutineScheduler::Update(const TCsCoroutineSchedule &ScheduleType, con
 
 		if (R->index == CS_ROUTINE_END)
 		{
-			LogTransaction(ECsCoroutineCachedString::ToUpdate(ScheduleType), ECsCoroutineTransaction::End, R);
+			LogTransaction(ECsCoroutineCached::ToUpdate(ScheduleType), ECsCoroutineTransaction::End, R);
 
 			R->Reset();
 			RoutinesToRun[Schedule].RemoveAt(Index);
@@ -570,7 +588,7 @@ void UCsCoroutineScheduler::Update(const TCsCoroutineSchedule &ScheduleType, con
 
 		if (R->index == CS_ROUTINE_END)
 		{
-			LogTransaction(ECsCoroutineCachedString::ToUpdate(ScheduleType), ECsCoroutineTransaction::End, R);
+			LogTransaction(ECsCoroutineCached::ToUpdate(ScheduleType), ECsCoroutineTransaction::End, R);
 
 			R->Reset();
 			RoutinesToRun[Schedule].RemoveAt(Index);
@@ -616,16 +634,16 @@ void UCsCoroutineScheduler::LogTransaction(const FString &FunctionName, const TE
 		FString TransactionAsString = ECsCoroutineTransaction::ToActionString(Transaction);
 			
 		if (Transaction == ECsCoroutineTransaction::End)
-			TransactionAsString = ECsCoroutineTransaction::ToActionString(Transaction) + TEXT("(Reason=") + ECsCoroutineEndReason::ToString(R->endReason) + TEXT(")");
+			TransactionAsString = ECsCoroutineTransaction::ToActionString(Transaction) + TEXT("(Reason=") + EMCsCoroutineEndReason::Get().ToString(R->endReason) + TEXT(")");
 
-		const FString& ScheduleTypeAsString = ECsCoroutineSchedule::ToString(R->scheduleType);
+		const FString& ScheduleTypeAsString = EMCsCoroutineSchedule::Get().ToString(R->scheduleType);
 
 		AActor* Actor			= R->GetActor();
-		const FString ActorName = Actor ? Actor->GetName() : ECsCachedString::Str::Empty;
+		const FString ActorName = Actor ? Actor->GetName() : ECsCached::Str::Empty;
 		UObject* Object			= R->GetRObject();
-		const FString ObjectName = Object ? Object->GetName() : ECsCachedString::Str::Empty;
+		const FString ObjectName = Object ? Object->GetName() : ECsCached::Str::Empty;
 		UObject* Owner			= R->GetOwner();
-		const FString OwnerName	= Owner ? Owner->GetName() : ECsCachedString::Str::Empty;
+		const FString OwnerName	= Owner ? Owner->GetName() : ECsCached::Str::Empty;
 
 		UWorld* World = nullptr;
 
@@ -636,9 +654,9 @@ void UCsCoroutineScheduler::LogTransaction(const FString &FunctionName, const TE
 
 		const float CurrentTime = World ? World->GetTimeSeconds() : UCsCommon::GetCurrentDateTimeSeconds();
 
-		const FString CoroutineName = R->name == NAME_None ? ECsCachedString::Str::None : R->nameAsString;
+		const FString CoroutineName = R->name == NAME_None ? ECsCached::Str::None : R->nameAsString;
 
-		FString Elapsed = ECsCachedString::Str::None;
+		FString Elapsed = ECsCached::Str::None;
 
 		if (Transaction == ECsCoroutineTransaction::End)
 		{
@@ -685,8 +703,8 @@ void UCsCoroutineScheduler::LogRunning(const TCsCoroutineSchedule &ScheduleType)
 
 	float CurrentTime = World ? World->GetTimeSeconds() : UCsCommon::GetCurrentDateTimeSeconds();
 
-	const FString& FunctionName		    = ECsCoroutineCachedString::Str::Update;
-	const FString& ScheduleTypeAsString = ECsCoroutineSchedule::ToString(ScheduleType);
+	const FString& FunctionName		    = ECsCoroutineCached::Str::Update;
+	const FString& ScheduleTypeAsString = EMCsCoroutineSchedule::Get().ToString(ScheduleType);
 
 	UE_LOG(LogCs, Warning, TEXT("%s: On%s. Running %d Coroutines at %f."), *FunctionName, *ScheduleTypeAsString, Count, CurrentTime);
 
@@ -695,13 +713,13 @@ void UCsCoroutineScheduler::LogRunning(const TCsCoroutineSchedule &ScheduleType)
 		FCsRoutine* R = RoutinesToRun[Schedule][Index];
 
 		AActor* Actor			= R->GetActor();
-		const FString ActorName = Actor ? Actor->GetName() : ECsCachedString::Str::Empty;
+		const FString ActorName = Actor ? Actor->GetName() : ECsCached::Str::Empty;
 		UObject* Object			= R->GetRObject();
-		const FString ObjectName = Object ? Object->GetName() : ECsCachedString::Str::Empty;
+		const FString ObjectName = Object ? Object->GetName() : ECsCached::Str::Empty;
 		UObject* Owner			= R->GetOwner();
-		const FString OwnerName = Owner ? Owner->GetName() : ECsCachedString::Str::Empty;
+		const FString OwnerName = Owner ? Owner->GetName() : ECsCached::Str::Empty;
 
-		const FString CoroutineName = R->name == NAME_None ? ECsCachedString::Str::None : R->name.ToString();
+		const FString CoroutineName = R->name == NAME_None ? ECsCached::Str::None : R->name.ToString();
 
 		const float Duration = CurrentTime - R->startTime;
 

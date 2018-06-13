@@ -15,7 +15,7 @@ public:
 	virtual FString GetObjectName(UCsProcess* p) override;
 	virtual const FString& EnumTypeToString(const FECsProcess &e) override;
 	virtual const FString& EnumTypeToString(const int32 &index) override;
-	virtual void LogTransaction_Internal(const FString& OutLog) override;
+	virtual void LogTransaction_Internal(const FString& outLog) override;
 };
 
 UCLASS(transient)

@@ -466,14 +466,25 @@ public:
 	static EMCsPickupSound& Get();
 };
 
+USTRUCT(BlueprintType)
 struct FCsInteractiveActorPayload
 {
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interactive Actor")
 	bool IsAllocated;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactive Actor")
 	TWeakObjectPtr<class ACsData_Interactive> Data;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactive Actor")
 	float LifeTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactive Actor")
 	bool bLocation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactive Actor")
 	bool bRotation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactive Actor")
 	bool bScale;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactive Actor")
 	FTransform Transform;
 
 	void* Blob;
@@ -495,9 +506,9 @@ struct FCsInteractiveActorPayload
 		Blob = nullptr;
 	}
 
-	class ACsData_Interactive* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
+	FORCEINLINE class ACsData_Interactive* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
 	template<typename T>
-	T* GetData() { return Cast<T>(GetData()); }
+	FORCEINLINE T* GetData() { return Cast<T>(GetData()); }
 };
 
 #pragma endregion Pickup

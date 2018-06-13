@@ -334,7 +334,7 @@ public:
 		}
 	}
 
-	virtual void LogTransaction_Internal(const FString& OutLog){}
+	virtual void LogTransaction_Internal(const FString& outLog){}
 
 	virtual float GetCurrentTimeSeconds()
 	{
@@ -403,6 +403,27 @@ public:
 				}
 			}
 		}
+	}
+
+	void GetAllActiveObjects(TArray<ObjectType*> &outObjects)
+	{
+		TArray<EnumType> keys;
+		ActiveObjects.GetKeys(keys);
+
+		for (const EnumType& key : keys)
+		{
+			TArray<ObjectType*>& objects = ActiveObjects[key];
+
+			for (ObjectType* o : objects)
+			{
+				outObjects.Add(o);
+			}
+		}
+	}
+
+	const TArray<ObjectType*>* GetObjects(const EnumType& type)
+	{
+		return Pools.Find(type);
 	}
 
 	int32 GetActivePoolSize(const EnumType &e)

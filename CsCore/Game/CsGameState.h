@@ -301,7 +301,7 @@ public:
 	class ACsManager_Damage* Manager_Damage;
 
 	UPROPERTY()
-	class ACsManager_InteractiveActor* Manager_InteractiveActor;
+	class AICsManager_InteractiveActor* Manager_InteractiveActor;
 
 	UPROPERTY()
 	class ACsManager_Item* Manager_Item;

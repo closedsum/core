@@ -1,95 +1,84 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
+#include "GameFramework/Actor.h"
 #include "Managers/CsManager.h"
-#include "Types/CsTypes_Interactive.h"
+#include "Managers/InteractiveActor/CsInteractiveActor.h"
 #include "CsManager_InteractiveActor.generated.h"
-
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInteractiveActor_OnDeAllocateEX_Internal, const uint16&, const uint16&, const FECsInteractiveType&);
 
 #define CS_INTERACTIVE_ACTOR_PAYLOAD_SIZE 255
 
+class CsManager_InteractiveActor : public TCsManagerPooledObjects<FECsInteractiveType, ACsInteractiveActor, FCsInteractiveActorPayload, CS_INTERACTIVE_ACTOR_PAYLOAD_SIZE>
+{
+public:
+	~CsManager_InteractiveActor();
+
+	virtual void DeconstructObject(ACsInteractiveActor* a) override;
+	virtual FString GetObjectName(ACsInteractiveActor* a) override;
+	virtual const FString& EnumTypeToString(const FECsInteractiveType &e) override;
+	virtual const FString& EnumTypeToString(const int32 &index) override;
+	virtual void LogTransaction_Internal(const FString& OutLog) override;
+};
+
 UCLASS()
-class CSCORE_API ACsManager_InteractiveActor : public ACsManager
+class CSCORE_API AICsManager_InteractiveActor : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
-	static ACsManager_InteractiveActor* Get(UWorld* InWorld);
+private:
 
-	virtual void Clear() override;
-	virtual void Shutdown() override;
-
-	virtual void Destroyed() override;
-	virtual void CreatePool(const TSubclassOf<class UObject> &ObjectClass, const uint8 &Type, const int32 &Size) override;
-	virtual void AddToPool(UObject* InObject, const uint8& Type) override;
-	virtual void AddToActivePool(UObject* InObject, const uint8& Type) override;
-	virtual void OnTick(const float &DeltaSeconds) override;
-
-	TMap<FECsInteractiveType, uint16> PoolSizes;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Pool")
-	TArray<class ACsInteractiveActor*> Pool;
-
-	TMap<FECsInteractiveType, TArray<class ACsInteractiveActor*>> Pools;
-
-	TMap<FECsInteractiveType, uint16> PoolIndices;
-
-	TMap<FECsInteractiveType, TArray<class ACsInteractiveActor*>> ActiveActors;
+	CsManager_InteractiveActor* Internal;
 
 public:
 
-	UFUNCTION(BlueprintCallable, Category = "Pool")
-	void GetAllActiveActors(TArray<class ACsInteractiveActor*> &OutActors);
+	static AICsManager_InteractiveActor* Get(UWorld* InWorld);
+	template<typename T>
+	static T* Get(UWorld* InWorld)
+	{
+		return Cast<T>(Get(InWorld));
+	}
+
+	virtual void Destroyed() override;
+
+	UFUNCTION(BlueprintCallable, Category = "Manager InteractiveActor")
+	void Clear();
+
+	void Shutdown();
+
+	virtual ACsInteractiveActor* ConstructObject(const FECsInteractiveType &Type);
+
+	UFUNCTION(BlueprintCallable, Category = "Manager InteractiveActor")
+	void CreatePool(const FECsInteractiveType &Type, const int32 &Size);
+	UFUNCTION(BlueprintCallable, Category = "Manager InteractiveActor")
+	void AddToPool(const FECsInteractiveType &Type, ACsInteractiveActor* Process);
+	UFUNCTION(BlueprintCallable, Category = "Manager InteractiveActor")
+	void AddToActivePool(const FECsInteractiveType &Type, ACsInteractiveActor* Process);
+	UFUNCTION(BlueprintCallable, Category = "Manager InteractiveActor")
+	void OnTick(const float &DeltaTime);
+	UFUNCTION(BlueprintCallable, Category = "Manager InteractiveActor")
+	void GetAllActiveActors(TArray<ACsInteractiveActor*> &OutActors);
 
 	const TArray<class ACsInteractiveActor*>* GetActors(const FECsInteractiveType& Type);
 
-	virtual int32 GetActivePoolSize(const uint8& Type) override;
-
-	virtual bool IsExhausted(const uint8 &Type) override;
-
-	virtual void LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, class UObject* InObject) override;
-
-// Allocate / DeAllocate
-#pragma region
-public:
-
-	class ACsInteractiveActor* Allocate(const FECsInteractiveType &Type);
-
-	virtual void DeAllocate(const uint8 &Type, const int32 &Index) override;
-	virtual void DeAllocateAll() override;
-
-	virtual void OnDeAllocate(const uint16 &Index, const uint16 &ActiveIndex, const uint8 &Type);
-
-	FBindableEvent_CsManagerInteractiveActor_OnDeAllocateEX_Internal OnDeAllocateEX_Internal_Event;
-
-#pragma endregion Allocate / DeAllocate
-
-// Payload
-#pragma region
-private:
-
-	FCsInteractiveActorPayload Payloads[CS_INTERACTIVE_ACTOR_PAYLOAD_SIZE];
-
-	uint8 PayloadIndex;
-
-public:
+	UFUNCTION(BlueprintCallable, Category = "Manager InteractiveActor")
+	int32 GetActivePoolSize(const FECsInteractiveType &Type);
+	UFUNCTION(BlueprintCallable, Category = "Manager InteractiveActor")
+	bool IsExhausted(const FECsInteractiveType &Type);
+	UFUNCTION(BlueprintCallable, Category = "Manager InteractiveActor")
+	bool DeAllocate(const FECsInteractiveType &Type, const int32 &Index);
+	UFUNCTION(BlueprintCallable, Category = "Manager InteractiveActor")
+	void DeAllocateAll();
 
 	FCsInteractiveActorPayload* AllocatePayload();
 
-#pragma endregion Payload
-
-// WakeUp
-#pragma region
-
-	class ACsInteractiveActor* WakeUp(const FECsInteractiveType &Type, FCsInteractiveActorPayload* Payload, UObject* InOwner, UObject* Parent);
-	class ACsInteractiveActor* WakeUp(const FECsInteractiveType &Type, FCsInteractiveActorPayload* Payload, UObject* InOwner);
-	class ACsInteractiveActor* WakeUp(const FECsInteractiveType &Type, FCsInteractiveActorPayload* Payload);
+	UFUNCTION(BlueprintCallable, Category = "Manager InteractiveActor")
+	ACsInteractiveActor* Spawn(const FECsInteractiveType &Type, FCsInteractiveActorPayload &Payload);
+	ACsInteractiveActor* Spawn(const FECsInteractiveType &Type, FCsInteractiveActorPayload* Payload);
 
 	template<typename T>
-	void WakeUp(const FECsInteractiveType &Type, class ACsInteractiveActor* &OutActor, FCsInteractiveActorPayload* Payload, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
-	template<typename T>
-	void WakeUp(const FECsInteractiveType &Type, class ACsInteractiveActor* &OutActor, FCsInteractiveActorPayload* Payload, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
-	template<typename T>
-	void WakeUp(const FECsInteractiveType &Type, class ACsInteractiveActor* &OutActor, FCsInteractiveActorPayload* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	T* Spawn(const FECsInteractiveType &Type, FCsInteractiveActorPayload* Payload)
+	{
+		return Cast<T>(Spawn(Type, Payload));
+	}
 
 #pragma endregion WakeUp
 };

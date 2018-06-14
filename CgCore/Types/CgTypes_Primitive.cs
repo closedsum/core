@@ -179,6 +179,7 @@ namespace CgCore
         private List<EnumClass> Enums;
         private Dictionary<string, EnumClass> StringMap;
         private Dictionary<EnumType, EnumClass> TypeMap;
+        private EnumClass Max;
 
         public int Count
         {
@@ -216,6 +217,8 @@ namespace CgCore
             param[0]        = (EnumType)Convert.ChangeType(Enums.Count, typeof(EnumType));
             param[1]        = name;
             e               = (EnumClass)constructor.Invoke(param);
+
+            Max = (EnumClass)constructor.Invoke(param);
 
             // Add to List and Maps
             EnumType index = (EnumType)Convert.ChangeType(Enums.Count, typeof(EnumType));
@@ -256,6 +259,41 @@ namespace CgCore
         public bool IsValidEnum(EnumClass e)
         {
             return Enums.Find(em => em == e) != null;
+        }
+
+        public bool IsValidEnum(string name)
+        {
+            return StringMap.ContainsKey(name);
+        }
+
+        public EnumClass GetEnumAt(int index)
+        {
+            return Enums[index];
+        }
+
+        public EnumClass GetSafeEnumAt(int index)
+        {
+            return index < Count ? Enums[index] : Max;
+        }
+
+        public EnumClass GetEnum(string name)
+        {
+            return StringMap[name];
+        }
+
+        public EnumClass GetSafeEnum(string name)
+        {
+            return IsValidEnum(name) ? StringMap[name] : Max;
+        }
+
+        public EnumClass GetEnum(EnumType type)
+        {
+            return TypeMap[type];
+        }
+
+        public EnumClass GetMAX()
+        {
+            return Max;
         }
     }
 
@@ -391,7 +429,7 @@ namespace CgCore
 
     #region "Primitive Types"
 
-    public interface ICgPrimitive
+    public interface ICgProperty
     {
         void UpdateIsDirty();
         void Clear();
@@ -402,7 +440,7 @@ namespace CgCore
         void Resolve();
     }
 
-    public abstract class CgPrimitive : ICgPrimitive
+    public abstract class CgProperty : ICgProperty
     {
         public abstract void UpdateIsDirty();
         public abstract void Clear();
@@ -413,7 +451,8 @@ namespace CgCore
         public abstract void Resolve();
     }
 
-    public class TCgPrimitiveType<T> : CgPrimitive where T : struct
+    public class TCgPropertyType<T> : CgProperty 
+        where T : struct
     {
         public sealed class OnChange : TCgMulticastDelegate_OneParam<T> { }
 
@@ -428,14 +467,14 @@ namespace CgCore
 
         #endregion // Data Members
 
-        public TCgPrimitiveType()
+        public TCgPropertyType()
         {
             OnChange_Event = new OnChange();
         }
 
         #region "Operators"
 
-        public static bool operator ==(TCgPrimitiveType<T> lhs, TCgPrimitiveType<T> rhs)
+        public static bool operator ==(TCgPropertyType<T> lhs, TCgPropertyType<T> rhs)
         {
             if (object.ReferenceEquals(lhs, null))
                 return object.ReferenceEquals(rhs, null);
@@ -444,37 +483,37 @@ namespace CgCore
             return lhs.Value.Equals(rhs.Value);
         }
 
-        public static bool operator !=(TCgPrimitiveType<T> lhs, TCgPrimitiveType<T> rhs)
+        public static bool operator !=(TCgPropertyType<T> lhs, TCgPropertyType<T> rhs)
         {
             return !(lhs == rhs);
         }
 
-        public static bool operator ==(TCgPrimitiveType<T> lhs, T rhs)
+        public static bool operator ==(TCgPropertyType<T> lhs, T rhs)
         {
             return lhs.Value.Equals(rhs);
         }
 
-        public static bool operator !=(TCgPrimitiveType<T> lhs, T rhs)
+        public static bool operator !=(TCgPropertyType<T> lhs, T rhs)
         {
             return !(lhs == rhs);
         }
 
-        public static bool operator ==(T lhs, TCgPrimitiveType<T> rhs)
+        public static bool operator ==(T lhs, TCgPropertyType<T> rhs)
         {
             return lhs.Equals(rhs.Value);
         }
 
-        public static bool operator !=(T lhs, TCgPrimitiveType<T> rhs)
+        public static bool operator !=(T lhs, TCgPropertyType<T> rhs)
         {
             return !(lhs == rhs);
         }
 
         public override bool Equals(object obj)
         {
-            if (!(obj is TCgPrimitiveType<T>))
+            if (!(obj is TCgPropertyType<T>))
                 return false;
 
-            TCgPrimitiveType<T> rhs = (TCgPrimitiveType<T>)obj;
+            TCgPropertyType<T> rhs = (TCgPropertyType<T>)obj;
 
             if (!Value.Equals(rhs.Value)) return false;
             return true;
@@ -532,12 +571,308 @@ namespace CgCore
             Clear();
         }
     }
+    
+    #region "Map"
+
+    public class TCgProperty_TMap<KeyType, ValueType>
+        where T : struct
+    {
+	    public ValueType DefaultValue;
+        public ValueType Value;
+        public ValueType Last_Value;
+
+        public Dictionary<KeyType, ValueType> Values;
+        public Dictionary<KeyType, ValueType> Last_Values;
+
+        protected:
+	bool IsDirty;
+
+        TMap<KeyType, bool> IsDirtys;
+        public:
+	TBaseDelegate<ValueType, const KeyType&> GetDelegate;
+	TMulticastDelegate<void, const ValueType&> OnChange_Event;
+	TMulticastDelegate<void, const KeyType&, const ValueType&> OnChangeMap_Event;
+
+public:
+
+	TCsProperty_TMap() { }
+        virtual ~TCsProperty_TMap() { }
+
+        void SetDefaultValue(const ValueType& InDefaultValue)
+	{
+		DefaultValue = InDefaultValue;
+	}
+
+    void Init(const KeyType &Key)
+    {
+        Values.Add(Key, DefaultValue);
+        Last_Values.Add(Key, DefaultValue);
+        IsDirtys.Add(Key, false);
+    }
+
+    FORCEINLINE virtual void UpdateIsDirty()
+    {
+        IsDirty = Value != Last_Value;
+
+        if (IsDirty)
+            OnChange_Event.Broadcast(Value);
+    }
+
+    FORCEINLINE virtual void UpdateIsDirtys(const KeyType &Key)
+    {
+        IsDirtys[Key] = Values[Key] != Last_Values[Key];
+
+        if (IsDirtys[Key])
+            OnChangeMap_Event.Broadcast(Key, Values[Key]);
+    }
+
+    FORCEINLINE TCsProperty_TMap& operator=(const TCsProperty_TMap& B)
+    {
+        Value = B.Value;
+        UpdateIsDirty();
+
+        TArray<KeyType> Keys;
+        Values.GetKeys(Keys);
+
+        for (const KeyType&Key : Keys)
+		{
+            Values[Key] = B.Values[Key];
+            UpdateIsDirtys(Key);
+        }
+        return *this;
+    }
+
+    FORCEINLINE bool operator ==(const TCsProperty_TMap& B) const
+	{
+		TArray<KeyType> Keys;
+    Values.GetKeys(Keys);
+
+		for (const KeyType& Key : Keys)
+		{
+			if (Values[Key] != B.Values[Key])
+				return false;
+		}
+		return Value == B;
+	}
+
+	FORCEINLINE bool operator !=(const TCsProperty_TMap& B) const
+	{
+		return !(*this == B);
+}
+
+FORCEINLINE void Set(const ValueType &InValue)
+{
+    Value = InValue;
+    UpdateIsDirty();
+}
+
+FORCEINLINE void Set(const KeyType& Key, const ValueType &InValue)
+{
+    Values[Key] = InValue;
+    UpdateIsDirtys(Key);
+}
+
+FORCEINLINE const ValueType& operator[] (const KeyType &Key)
+{
+    return Values[Key];
+}
+
+FORCEINLINE const ValueType& Get() { return Value; }
+FORCEINLINE const ValueType& Get(const KeyType& Key) { return Values[Key]; }
+
+FORCEINLINE ValueType GetEX(const KeyType &Key) { return GetDelegate.Execute(Key); }
+
+void Clear()
+{
+    Last_Value = Value;
+    IsDirty = false;
+
+    TArray<KeyType> Keys;
+    Values.GetKeys(Keys);
+
+    for (const KeyType&Key : Keys)
+		{
+        Last_Values[Key] = Values[Key];
+        IsDirtys[Key] = false;
+    }
+}
+
+void ResetValues()
+{
+    Value = DefaultValue;
+    Last_Value = Value;
+    IsDirty = false;
+
+    TArray<KeyType> Keys;
+    Values.GetKeys(Keys);
+
+    for (const KeyType&Key : Keys)
+		{
+        Values[Key] = Value;
+        Last_Values[Key] = Value;
+        IsDirtys[Key] = false;
+    }
+}
+
+void Reset()
+{
+    ResetValues();
+
+    GetDelegate.Unbind();
+    OnChange_Event.Clear();
+    OnChangeMap_Event.Clear();
+}
+
+FORCEINLINE bool HasChanged() { return IsDirty; }
+FORCEINLINE bool HasChanged(const KeyType &Key) { return IsDirtys[Key]; }
+
+FORCEINLINE void Resolve()
+{
+    UpdateIsDirty();
+
+    TArray<KeyType> Keys;
+    Values.GetKeys(Keys);
+
+    for (const KeyType&Key : Keys)
+		{
+        UpdateIsDirtys(Key);
+    }
+    Clear();
+}
+};
+
+template<typename KeyType, typename ValueType>
+struct TCsIntegralType_TMap : public TCsProperty_TMap<KeyType, ValueType>
+{
+	TCsIntegralType_TMap() { }
+~TCsIntegralType_TMap() { }
+
+FORCEINLINE void Add(const ValueType& InValue)
+{
+    Value += InValue;
+    UpdateIsDirty();
+}
+
+FORCEINLINE void Add(const KeyType &Key, const ValueType &InValue)
+{
+    Values[Key] += InValue;
+    UpdateIsDirtys(Key);
+}
+
+FORCEINLINE void Subtract(const ValueType &InValue)
+{
+    Value -= InValue;
+    UpdateIsDirty();
+}
+
+FORCEINLINE void Subtract(const KeyType &Key, const ValueType &InValue)
+{
+    Values[Index] -= inValue;
+    UpdateIsDirtys(Index);
+}
+
+FORCEINLINE ValueType Max()
+{
+    TArray<KeyType> Keys;
+    Values.GetKeys(Keys);
+
+    ValueType max = Values[Keys[0]];
+
+    const uint8 Count = Keys.Num();
+
+    for (uint8 I = 1; I < Count; ++I)
+    {
+        max = (KeyType)FMath::Max(max, Values[Keys[I]]);
+    }
+    return max;
+}
+
+FORCEINLINE ValueType Min()
+{
+    TArray<KeyType> Keys;
+    Values.GetKeys(Keys);
+
+    ValueType min = Values[Keys[0]];
+
+    const uint8 Count = Keys.Num();
+
+    for (uint8 I = 1; I < Count; ++I)
+    {
+        min = (ValueType)FMath::Min(min, Values[Keys[I]]);
+    }
+    return min;
+}
+};
+
+template<typename KeyType>
+struct TCsIntegralType_TMap_uint8 : public TCsIntegralType_TMap<KeyType, uint8>
+{
+	TCsIntegralType_TMap_uint8()
+{
+    DefaultValue = 0;
+}
+~TCsIntegralType_TMap_uint8() { }
+};
+
+template<typename KeyType>
+struct TCsIntegralType_TMap_float : public TCsIntegralType_TMap<KeyType, float>
+{
+	TCsIntegralType_TMap_float()
+{
+    DefaultValue = 0.0f;
+}
+~TCsIntegralType_TMap_float() { }
+};
+
+template<typename KeyType>
+struct TCsProperty_TMap_bool : public TCsProperty_TMap<KeyType, bool>
+{
+	TCsProperty_TMap_bool()
+{
+    DefaultValue = false;
+}
+~TCsProperty_TMap_bool() { }
+
+FORCEINLINE bool Or()
+{
+    TArray<KeyType> Keys;
+    Values.GetKeys(Keys);
+
+    bool or = Values[Keys[0]];
+
+    const uint8 Count = Keys.Num();
+
+    for (uint8 I = 1; I < Count; ++I)
+    {
+        or |= Values[Keys[I]];
+    }
+    return or;
+}
+
+FORCEINLINE bool And()
+{
+    TArray<KeyType> Keys;
+    Values.GetKeys(Keys);
+
+    bool and = Values[Keys[0]];
+
+    const uint8 Count = Keys.Num();
+
+    for (uint8 I = 1; I < Count; ++I)
+    {
+        and &= Values[Keys[I]];
+    }
+    return and;
+}
+};
+
+        #endregion // Map
 
     #endregion // Primitive Types
 
     #region "Primitive Classes"
 
-    public class TCgPrimitiveClass<T> : CgPrimitive where T : class
+    public class TCgPropertyClass<T> : CgProperty where T : class
     {
         public sealed class OnChange : TCgMulticastDelegate_OneParam<T> { }
 
@@ -552,14 +887,14 @@ namespace CgCore
 
         #endregion // Data Members
 
-        public TCgPrimitiveClass()
+        public TCgPropertyClass()
         {
             OnChange_Event = new OnChange();
         }
 
         #region "Operators"
 
-        public static bool operator ==(TCgPrimitiveClass<T> lhs, TCgPrimitiveClass<T> rhs)
+        public static bool operator ==(TCgPropertyClass<T> lhs, TCgPropertyClass<T> rhs)
         {
             if (object.ReferenceEquals(lhs, null))
                 return object.ReferenceEquals(rhs, null);
@@ -568,37 +903,37 @@ namespace CgCore
             return lhs.Value.Equals(rhs.Value);
         }
 
-        public static bool operator !=(TCgPrimitiveClass<T> lhs, TCgPrimitiveClass<T> rhs)
+        public static bool operator !=(TCgPropertyClass<T> lhs, TCgPropertyClass<T> rhs)
         {
             return !(lhs == rhs);
         }
 
-        public static bool operator ==(TCgPrimitiveClass<T> lhs, T rhs)
+        public static bool operator ==(TCgPropertyClass<T> lhs, T rhs)
         {
             return lhs.Value.Equals(rhs);
         }
 
-        public static bool operator !=(TCgPrimitiveClass<T> lhs, T rhs)
+        public static bool operator !=(TCgPropertyClass<T> lhs, T rhs)
         {
             return !(lhs == rhs);
         }
 
-        public static bool operator ==(T lhs, TCgPrimitiveClass<T> rhs)
+        public static bool operator ==(T lhs, TCgPropertyClass<T> rhs)
         {
             return lhs.Equals(rhs.Value);
         }
 
-        public static bool operator !=(T lhs, TCgPrimitiveClass<T> rhs)
+        public static bool operator !=(T lhs, TCgPropertyClass<T> rhs)
         {
             return !(lhs == rhs);
         }
 
         public override bool Equals(object obj)
         {
-            if (!(obj is TCgPrimitiveClass<T>))
+            if (!(obj is TCgPropertyClass<T>))
                 return false;
 
-            TCgPrimitiveClass<T> rhs = (TCgPrimitiveClass<T>)obj;
+            TCgPropertyClass<T> rhs = (TCgPropertyClass<T>)obj;
 
             if (!Value.Equals(rhs.Value)) return false;
             return true;

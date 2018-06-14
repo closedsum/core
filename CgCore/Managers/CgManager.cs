@@ -59,8 +59,9 @@
 
     }
 
-    public class TCgManager<EnumType, ObjectType> : ICgManager 
+    public class TCgManager<EnumType, ObjectType, PayloadType> : ICgManager 
         where ObjectType : TCgPooledObject<EnumType>
+        where PayloadType : ICgPooledObjectPayload
     {
         protected sealed class EnumTypeEqualityComparer : IEqualityComparer<EnumType>
         {
@@ -75,19 +76,20 @@
             }
         }
 
+        public sealed class Execute_ConstructObject : TCgDelegate_Ret_OneParam<ObjectType, EnumType> { }
         public sealed class OnAddToPool : TCgMulticastDelegate_TwoParams<EnumType, ObjectType> { }
 
         protected static int EMPTY = 0;
         protected static int FIRST = 0;
 
-        private static TCgManager<EnumType, ObjectType> _Instance;
-        public static TCgManager<EnumType, ObjectType> Instance
+        private static TCgManager<EnumType, ObjectType, PayloadType> _Instance;
+        public static TCgManager<EnumType, ObjectType, PayloadType> Instance
         {
             get
             {
                 if (_Instance == null)
                 {
-                    _Instance = new TCgManager<EnumType, ObjectType>();
+                    _Instance = new TCgManager<EnumType, ObjectType, PayloadType>();
                 }
                 return _Instance;
             }
@@ -101,9 +103,10 @@
         protected Dictionary<EnumType, int> PoolIndices;
         protected Dictionary<EnumType, List<ObjectType>> ActiveObjects;
 
-        protected List<ICgPooledObjectPayload> Payloads;
+        protected List<PayloadType> Payloads;
         protected int PayloadIndex;
 
+        public Execute_ConstructObject ConstructObject;
         public OnAddToPool OnAddToPool_Event;
 
         #endregion // Data Members
@@ -116,7 +119,10 @@
             PoolIndices = new Dictionary<EnumType, int>(new EnumTypeEqualityComparer());
             ActiveObjects = new Dictionary<EnumType, List<ObjectType>>(new EnumTypeEqualityComparer());
 
-            Payloads = new List<ICgPooledObjectPayload>();
+            Payloads = new List<PayloadType>();
+
+            ConstructObject = new Execute_ConstructObject();
+            ConstructObject.Bind(ConstructObject_Internal);
 
             OnAddToPool_Event = new OnAddToPool();
         }
@@ -158,6 +164,23 @@
             Clear();
         }
 
+        public virtual ObjectType ConstructObject_Internal(EnumType e)
+        {
+            Type type                   = typeof(ObjectType);
+            bool IsUnityObject          = type.IsSubclassOf(typeof(MonoBehaviour));
+            ConstructorInfo constructor = type.GetConstructor(Type.EmptyTypes);
+
+            if (IsUnityObject)
+            {
+                GameObject go = new GameObject(type.ToString());
+                return (ObjectType)(object)go.AddComponent(type);
+            }
+            else
+            {
+                return (ObjectType)constructor.Invoke(Type.EmptyTypes);
+            }
+        }
+
         public virtual void CreatePool(EnumType e, int size)
         {
             PoolSizes.Add(e, size);
@@ -165,23 +188,9 @@
 
             List<ObjectType> pool = new List<ObjectType>();
 
-            Type type                   = typeof(ObjectType);
-            bool IsUnityObject          = type.IsSubclassOf(typeof(MonoBehaviour));
-            ConstructorInfo constructor = type.GetConstructor(Type.EmptyTypes);
-
             for (int i = 0; i < size; ++i)
             {
-                ObjectType o = null;
-
-                if (IsUnityObject)
-                {
-                    GameObject go = new GameObject(type.ToString());
-                    o             = (ObjectType)(object)go.AddComponent(type);
-                }
-                else
-                {
-                    o = (ObjectType)constructor.Invoke(Type.EmptyTypes);
-                }
+                ObjectType o = ConstructObject.Execute(e);
                 o.Init(i, e);
                 o.OnCreatePool();
                 o.DeAllocate();
@@ -430,14 +439,14 @@
 
         #region "Payload"
 
-        public ICgPooledObjectPayload AllocatePayload()
+        public PayloadType AllocatePayload()
         {
             int count = Payloads.Count;
 
             for (int i = 0; i < count; ++i)
             {
                 int index = (PayloadIndex + i) % count;
-                ICgPooledObjectPayload payload = Payloads[index];
+                PayloadType payload = Payloads[index];
 
                 if (!payload.IsAllocated)
                 {
@@ -446,12 +455,12 @@
                 }
             }
             CgDebug.LogError(this.GetType().Name + ".AllocatePayload: Pool is exhausted.");
-            return null;
+            return default(PayloadType);
         }
 
         #endregion // Payload
 
-        public ObjectType Spawn(EnumType e, ICgPooledObjectPayload payload)
+        public ObjectType Spawn(EnumType e, PayloadType payload)
         {
             ObjectType o = Allocate(e);
 

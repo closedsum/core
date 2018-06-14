@@ -77,7 +77,7 @@ namespace CgCore
             return e != null;
         }
 
-        public void Broacast()
+        public void Execute()
         {
             if (e != null)
                 e();
@@ -105,10 +105,39 @@ namespace CgCore
             return e != null;
         }
 
-        public void Broacast(T t)
+        public void Execute(T t)
         {
             if (e != null)
                 e(t);
+        }
+    }
+
+    public abstract class TCgDelegate_Ret_OneParam<Ret, T>
+    {
+        public delegate Ret Event(T t);
+
+        private Event e;
+
+        public void Bind(Event inEvent)
+        {
+            e = inEvent;
+        }
+
+        public void UnBind()
+        {
+            e = null;
+        }
+
+        public bool IsBound()
+        {
+            return e != null;
+        }
+
+        public Ret Execute(T t)
+        {
+            if (e != null)
+                return e(t);
+            return default(Ret);
         }
     }
 

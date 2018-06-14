@@ -59,14 +59,14 @@
             }
         }
 
-        public TCgPrimitiveType<T> Value;
+        public TCgPropertyType<T> Value;
 
         #endregion // Data Members
 
         public TCgConsoleVariable(string inName, T inValue, string inDescription, int inFlag)
         {
             Name = inName;
-            Value = new TCgPrimitiveType<T>();
+            Value = new TCgPropertyType<T>();
             Set(inValue);
             Description = inDescription;
             Flag = inFlag;

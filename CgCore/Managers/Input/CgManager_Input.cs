@@ -32,7 +32,6 @@ namespace CgCore
 
         #region "Data Members"
 
-        public ECgInputActionHelper InputActionHelper;
         public ECgInputActionMapHelper InputActionMapHelper;
 
         public MonoBehaviour InputOwner;
@@ -128,7 +127,6 @@ namespace CgCore
 
         public CgManager_Input()
         {
-            InputActionHelper = new ECgInputActionHelper();
             InputActionMapHelper = new ECgInputActionMapHelper();
 
             // InputPool
@@ -299,10 +297,10 @@ namespace CgCore
             // Set FirstReleased Events to Released after 1 Frame
 
             // TODO: Potentially Optimize to O(n) versus O(n^2)
-            for (byte i = 0; i < InputActionHelper.Max; ++i)
+            for (byte i = 0; i < EMCgInputAction.Get().Count; ++i)
             {
                 CgInputInfo info      = Infos[i];
-                ECgInputAction action = (ECgInputAction)InputActionHelper.Get(i);
+                ECgInputAction action = EMCgInputAction.Get().GetEnumAt(i);
                 int inputCount        = inputFrame.Inputs.Count;
 
                 // Transition From FirstPressed to Pressed
@@ -403,7 +401,7 @@ namespace CgCore
                 {
                     CgInput input = inputFrame.Inputs[i];
 
-                    string action = InputActionHelper.ToStr(input.Action);
+                    string action = input.Action.Name;
                     string e      = input.Event.ToString();
 
                     // Void - No Value

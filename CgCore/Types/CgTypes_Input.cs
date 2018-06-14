@@ -49,15 +49,25 @@ namespace CgCore
         public ECgInputAction(byte value, string name) : base(value, name) { }
     }
 
-    public sealed class ECgInputActionHelper
+    public class EMCgInputAction : ECgEnumMap<ECgInputAction, byte>
     {
-        public ECgInputAction.Get Get;
-        public ECgInputAction.GetMAX GetMAX;
-        public ECgInputAction.ToType ToType;
-        public ECgInputAction.ToStr ToStr;
+        private static EMCgInputAction _Instance;
+        public static EMCgInputAction Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = new EMCgInputAction();
+                }
+                return _Instance;
+            }
+        }
 
-        public ECgInputAction MAX;
-        public byte Max;
+        public static EMCgInputAction Get()
+        {
+            return Instance;
+        }
     }
 
     public sealed class ECgInputActionEqualityComparer : IEqualityComparer<ECgInputAction>

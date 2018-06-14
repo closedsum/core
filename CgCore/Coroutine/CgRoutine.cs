@@ -42,10 +42,10 @@ namespace CgCore
 
         public delegate void InsertRoutineAheadOf(ECgCoroutineSchedule schedule, CgRoutine pivot, CgRoutine insert);
 
-        public sealed class FrameType : TCgPrimitiveType<int> { }
-        public sealed class TimeType : TCgPrimitiveType<float> { }
-        public sealed class BoolType : TCgPrimitiveType<bool> { }
-        public sealed class ListenMessageType : TCgPrimitiveClass<string> { }
+        public sealed class FrameType : TCgPropertyType<int> { }
+        public sealed class TimeType : TCgPropertyType<float> { }
+        public sealed class BoolType : TCgPropertyType<bool> { }
+        public sealed class ListenMessageType : TCgPropertyClass<string> { }
 
         #region "Constants"
 
@@ -195,7 +195,7 @@ namespace CgCore
             Remove.Bind(remove);
 
             if (Owner.IsValid())
-                Add.Broacast(this);
+                Add.Execute(this);
         }
 
         public void Start(IEnumerator fiber, CoroutineStopCondition stopCondition, object owner, string ownerName, float startTime)
@@ -496,7 +496,7 @@ namespace CgCore
         public void End(ECgCoroutineEndReason endReason)
         {
             if (Owner.IsValid())
-                Remove.Broacast(this);
+                Remove.Execute(this);
             // EndChildren();
             EndReason = endReason;
             State = ECgRoutineState.End;

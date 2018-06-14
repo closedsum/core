@@ -1,12 +1,10 @@
 ﻿namespace CgCore
 {
+    using UnityEngine;
 
-    public interface ICgData
+    public abstract class CgData : MonoBehaviour
     {
-
-    }
-
-    public abstract class CgData : ICgData
-    {
+        public ECgAssetType AssetType;
+        public string ShortCode;
     }
 }

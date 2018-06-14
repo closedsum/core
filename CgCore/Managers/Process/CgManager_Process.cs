@@ -64,7 +64,7 @@
         }
     }
 
-    public class CgManager_Process : TCgManager<ECgProcess, CgProcess>
+    public class CgManager_Process : TCgManager<ECgProcess, CgProcess, CgProcessPayload>
     {
         private static readonly int PAYLOAD_COUNT = 8;
 
@@ -83,7 +83,7 @@
 
         #region "Data Members"
 
-        protected TCgManager<ECgProcess, CgProcess> Internal;
+        protected CgManager_Process Internal;
 
         protected List<Process> Processes = new List<Process>();
 
@@ -99,16 +99,17 @@
             if (_Instance != null)
                 return;
 
-            if (!type.IsSubclassOf(typeof(TCgManager<ECgProcess, CgProcess>)))
+
+            if (!type.IsSubclassOf(typeof(TCgManager<ECgProcess, CgProcess, CgProcessPayload>)))
             {
-                CgDebug.Log("ICgManager_Process.Init: Passed in Type of " + type.GetType().Name + " is NOT a SubclassOf TCgManager<ECgProcess, CgProcess>");
+                CgDebug.Log("ICgManager_Process.Init: Passed in Type of " + type.GetType().Name + " is NOT a SubclassOf TCgManager<ECgProcess, CgProcess, CgProcessPayload>");
                 return;
             }
 
             GameObject go = new GameObject("Manager_Process");
             _Instance     = go.AddComponent<ICgManager_Process>();
 
-            _Instance.Internal = (TCgManager<ECgProcess,CgProcess>)type.GetConstructor(Type.EmptyTypes).Invoke(Type.EmptyTypes);
+            _Instance.Internal = (CgManager_Process)type.GetConstructor(Type.EmptyTypes).Invoke(Type.EmptyTypes);
             _Instance.Internal.OnAddToPool_Event.Add(_Instance.OnAddToPool);
         }
 
@@ -169,7 +170,7 @@
 
             #endregion // Allocate / DeAllocate
 
-        public CgProcess Spawn(ECgProcess e, ICgPooledObjectPayload payload)
+        public CgProcess Spawn(ECgProcess e, CgProcessPayload payload)
         {
             return Internal.Spawn(e, payload);
         }

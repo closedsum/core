@@ -5,10 +5,10 @@
 #include "Managers/Process/CsProcess.h"
 #include "CsManager_Process.generated.h"
 
-class CsManager_Process : public TCsManagerPooledObjects<FECsProcess, UCsProcess, FCsProcessPayload, 16>
+class FCsManager_Process : public TCsManagerPooledObjects<FECsProcess, UCsProcess, FCsProcessPayload, 16>
 {
 public:
-	~CsManager_Process();
+	~FCsManager_Process();
 
 	virtual void DeconstructObject(UCsProcess* p) override;
 	virtual UCsProcess* ConstructObject(const FECsProcess& e) override;

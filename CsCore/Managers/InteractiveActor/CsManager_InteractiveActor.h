@@ -7,10 +7,10 @@
 
 #define CS_INTERACTIVE_ACTOR_PAYLOAD_SIZE 255
 
-class CsManager_InteractiveActor : public TCsManagerPooledObjects<FECsInteractiveType, ACsInteractiveActor, FCsInteractiveActorPayload, CS_INTERACTIVE_ACTOR_PAYLOAD_SIZE>
+class FCsManager_InteractiveActor : public TCsManagerPooledObjects<FECsInteractiveType, ACsInteractiveActor, FCsInteractiveActorPayload, CS_INTERACTIVE_ACTOR_PAYLOAD_SIZE>
 {
 public:
-	~CsManager_InteractiveActor();
+	~FCsManager_InteractiveActor();
 
 	virtual void DeconstructObject(ACsInteractiveActor* a) override;
 	virtual FString GetObjectName(ACsInteractiveActor* a) override;

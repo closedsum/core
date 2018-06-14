@@ -13,30 +13,30 @@
 // Internal
 #pragma region
 
-CsManager_InteractiveActor::~CsManager_InteractiveActor() {}
+FCsManager_InteractiveActor::~FCsManager_InteractiveActor() {}
 
-void CsManager_InteractiveActor::DeconstructObject(ACsInteractiveActor* a)
+void FCsManager_InteractiveActor::DeconstructObject(ACsInteractiveActor* a)
 {
 	if (a && !a->IsPendingKill())
 		a->Destroy(true);
 }
 
-FString CsManager_InteractiveActor::GetObjectName(ACsInteractiveActor* a)
+FString FCsManager_InteractiveActor::GetObjectName(ACsInteractiveActor* a)
 {
 	return a->GetName();
 }
 
-const FString& CsManager_InteractiveActor::EnumTypeToString(const FECsInteractiveType &e)
+const FString& FCsManager_InteractiveActor::EnumTypeToString(const FECsInteractiveType &e)
 {
 	return e.Name;
 }
 
-const FString& CsManager_InteractiveActor::EnumTypeToString(const int32 &index)
+const FString& FCsManager_InteractiveActor::EnumTypeToString(const int32 &index)
 {
 	return EMCsInteractiveType::Get().GetEnumAt(index).Name;
 }
 
-void CsManager_InteractiveActor::LogTransaction_Internal(const FString& outLog)
+void FCsManager_InteractiveActor::LogTransaction_Internal(const FString& outLog)
 {
 	UE_LOG(LogCs, Warning, TEXT("%s"), *outLog);
 }
@@ -45,7 +45,7 @@ void CsManager_InteractiveActor::LogTransaction_Internal(const FString& outLog)
 
 AICsManager_InteractiveActor::AICsManager_InteractiveActor(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	Internal = new CsManager_InteractiveActor();
+	Internal = new FCsManager_InteractiveActor();
 	Internal->Init(TEXT("CsManager_InteractiveActor"), TEXT("UCsProcess"), nullptr, &CsCVarLogManagerInteractiveActorTransactions);
 	Internal->CsConstructObject.Unbind();
 	Internal->CsConstructObject.BindUObject(this, &AICsManager_InteractiveActor::ConstructObject);

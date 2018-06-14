@@ -6,9 +6,9 @@
 // Internal
 #pragma region
 
-CsManager_Process::~CsManager_Process(){}
+FCsManager_Process::~FCsManager_Process(){}
 
-void CsManager_Process::DeconstructObject(UCsProcess* o)
+void FCsManager_Process::DeconstructObject(UCsProcess* o)
 {
 	if (o && !o->IsPendingKill())
 	{
@@ -17,29 +17,29 @@ void CsManager_Process::DeconstructObject(UCsProcess* o)
 	}
 }
 
-UCsProcess* CsManager_Process::ConstructObject(const FECsProcess& e)
+UCsProcess* FCsManager_Process::ConstructObject(const FECsProcess& e)
 {
 	UCsProcess* process = NewObject<UCsProcess>(GetTransientPackage(), UCsProcess::StaticClass());
 	process->AddToRoot();
 	return process;
 }
 
-FString CsManager_Process::GetObjectName(UCsProcess* p)
+FString FCsManager_Process::GetObjectName(UCsProcess* p)
 {
 	return p->GetName();
 }
 
-const FString& CsManager_Process::EnumTypeToString(const FECsProcess &e)
+const FString& FCsManager_Process::EnumTypeToString(const FECsProcess &e)
 {
 	return e.Name;
 }
 
-const FString& CsManager_Process::EnumTypeToString(const int32 &index)
+const FString& FCsManager_Process::EnumTypeToString(const int32 &index)
 {
 	return EMCsProcess::Get().GetEnumAt(index).Name;
 }
 
-void CsManager_Process::LogTransaction_Internal(const FString& outLog)
+void FCsManager_Process::LogTransaction_Internal(const FString& outLog)
 {
 	UE_LOG(LogCs, Warning, TEXT("%s"), *outLog);
 }
@@ -88,7 +88,7 @@ UICsManager_Process::UICsManager_Process(const FObjectInitializer& ObjectInitial
 
 void UICsManager_Process::Initialize()
 {
-	Internal = new CsManager_Process();
+	Internal = new FCsManager_Process();
 	Internal->Init(TEXT("CsManager_Process"), TEXT("UCsProcess"), nullptr, &CsCVarLogManagerProcessTransactions);
 	Internal->CsConstructObject.Unbind();
 	Internal->CsConstructObject.BindUObject(this, &UICsManager_Process::ConstructObject);

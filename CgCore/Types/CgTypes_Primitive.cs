@@ -575,296 +575,313 @@ namespace CgCore
     #region "Map"
 
     public class TCgProperty_TMap<KeyType, ValueType>
-        where T : struct
+        where KeyType : struct
+        where ValueType : struct, IConvertible
     {
-	    public ValueType DefaultValue;
+        public sealed class FGet : TCgDelegate_Ret_OneParam<ValueType, KeyType> { }
+        public sealed class FOnChange : TCgMulticastDelegate_OneParam<ValueType> { }
+        public sealed class FOnChangeMap : TCgMulticastDelegate_TwoParams<KeyType, ValueType> { }
+
+        public sealed class FKeyTypeEqualityComparer : IEqualityComparer<KeyType>
+        {
+            public bool Equals(KeyType lhs, KeyType rhs)
+            {
+                return lhs.Equals(rhs);
+            }
+
+            public int GetHashCode(KeyType x)
+            {
+                return x.GetHashCode();
+            }
+        }
+
+        public ValueType DefaultValue;
         public ValueType Value;
         public ValueType Last_Value;
 
         public Dictionary<KeyType, ValueType> Values;
         public Dictionary<KeyType, ValueType> Last_Values;
 
-        protected:
-	bool IsDirty;
+	    protected bool IsDirty;
 
-        TMap<KeyType, bool> IsDirtys;
-        public:
-	TBaseDelegate<ValueType, const KeyType&> GetDelegate;
-	TMulticastDelegate<void, const ValueType&> OnChange_Event;
-	TMulticastDelegate<void, const KeyType&, const ValueType&> OnChangeMap_Event;
+        protected Dictionary<KeyType, bool> IsDirtys;
 
-public:
+	    public FGet Get_Call;
+	    public FOnChange OnChange_Event;
+	    public FOnChangeMap OnChangeMap_Event;
 
-	TCsProperty_TMap() { }
-        virtual ~TCsProperty_TMap() { }
+	    public TCgProperty_TMap()
+        {
+            Values = new Dictionary<KeyType, ValueType>(new FKeyTypeEqualityComparer());
+            Last_Values = new Dictionary<KeyType, ValueType>(new FKeyTypeEqualityComparer());
 
-        void SetDefaultValue(const ValueType& InDefaultValue)
-	{
-		DefaultValue = InDefaultValue;
-	}
+            IsDirtys = new Dictionary<KeyType, bool>(new FKeyTypeEqualityComparer());
 
-    void Init(const KeyType &Key)
-    {
-        Values.Add(Key, DefaultValue);
-        Last_Values.Add(Key, DefaultValue);
-        IsDirtys.Add(Key, false);
-    }
-
-    FORCEINLINE virtual void UpdateIsDirty()
-    {
-        IsDirty = Value != Last_Value;
-
-        if (IsDirty)
-            OnChange_Event.Broadcast(Value);
-    }
-
-    FORCEINLINE virtual void UpdateIsDirtys(const KeyType &Key)
-    {
-        IsDirtys[Key] = Values[Key] != Last_Values[Key];
-
-        if (IsDirtys[Key])
-            OnChangeMap_Event.Broadcast(Key, Values[Key]);
-    }
-
-    FORCEINLINE TCsProperty_TMap& operator=(const TCsProperty_TMap& B)
-    {
-        Value = B.Value;
-        UpdateIsDirty();
-
-        TArray<KeyType> Keys;
-        Values.GetKeys(Keys);
-
-        for (const KeyType&Key : Keys)
-		{
-            Values[Key] = B.Values[Key];
-            UpdateIsDirtys(Key);
+            Get_Call = new FGet();
+            OnChange_Event = new FOnChange();
+            OnChangeMap_Event = new FOnChangeMap();
         }
-        return *this;
+
+        public void SetDefaultValue(ValueType defaultValue)
+        {
+            DefaultValue = defaultValue;
+        }
+
+        public void Init(KeyType key)
+        {
+            Values.Add(key, DefaultValue);
+            Last_Values.Add(key, DefaultValue);
+            IsDirtys.Add(key, false);
+        }
+
+        public virtual void UpdateIsDirty()
+        {
+            IsDirty = !Value.Equals(Last_Value);
+
+            if (IsDirty)
+                OnChange_Event.Broadcast(Value);
+        }
+
+        public virtual void UpdateIsDirtys(KeyType key)
+        {
+            IsDirtys[key] = !Values[key].Equals(Last_Values[key]);
+
+            if (IsDirtys[key])
+                OnChangeMap_Event.Broadcast(key, Values[key]);
+        }
+        /*
+        bool operator ==(const TCsProperty_TMap& B) const
+	    {
+		    TArray<KeyType> Keys;
+            Values.GetKeys(Keys);
+
+		    for (const KeyType& Key : Keys)
+		    {
+			    if (Values[Key] != B.Values[Key])
+				    return false;
+		    }
+		    return Value == B;
+	    }
+
+	     bool operator !=(const TCsProperty_TMap& B) const
+	    {
+		    return !(*this == B);
+        }
+        */
+
+        public void Set(ValueType value)
+        {
+            Value = value;
+            UpdateIsDirty();
+        }
+
+        public void Set(KeyType key, ValueType value)
+        {
+            Values[key] = value;
+            UpdateIsDirtys(key);
+        }
+        /*
+        ValueType operator[] (KeyType key)
+        {
+            return Values[key];
+        }
+        */
+
+        public ValueType Get() { return Value; }
+        public ValueType Get(KeyType key) { return Values[key]; }
+
+        public ValueType GetEX(KeyType key) { return Get_Call.Execute(key); }
+
+        public void Clear()
+        {
+            Last_Value = Value;
+            IsDirty = false;
+
+            Dictionary<KeyType, ValueType>.KeyCollection keys = Values.Keys;
+
+            foreach (KeyType key in keys)
+		    {
+                Last_Values[key] = Values[key];
+                IsDirtys[key] = false;
+            }
+        }
+
+        public void ResetValues()
+        {
+            Value = DefaultValue;
+            Last_Value = Value;
+            IsDirty = false;
+
+            Dictionary<KeyType, ValueType>.KeyCollection keys = Values.Keys;
+
+            foreach (KeyType key in keys)
+            {
+                Values[key] = Value;
+                Last_Values[key] = Value;
+                IsDirtys[key] = false;
+            }
+        }
+
+        public void Reset()
+        {
+            ResetValues();
+
+            Get_Call.Unbind();
+            OnChange_Event.Clear();
+            OnChangeMap_Event.Clear();
+        }
+
+        public bool HasChanged() { return IsDirty; }
+        public bool HasChanged(KeyType key) { return IsDirtys[key]; }
+
+        public void Resolve()
+        {
+            UpdateIsDirty();
+
+            Dictionary<KeyType, ValueType>.KeyCollection keys = Values.Keys;
+
+            foreach (KeyType key in keys)
+            {
+                UpdateIsDirtys(key);
+            }
+            Clear();
+        }
     }
 
-    FORCEINLINE bool operator ==(const TCsProperty_TMap& B) const
-	{
-		TArray<KeyType> Keys;
-    Values.GetKeys(Keys);
-
-		for (const KeyType& Key : Keys)
-		{
-			if (Values[Key] != B.Values[Key])
-				return false;
-		}
-		return Value == B;
-	}
-
-	FORCEINLINE bool operator !=(const TCsProperty_TMap& B) const
-	{
-		return !(*this == B);
-}
-
-FORCEINLINE void Set(const ValueType &InValue)
-{
-    Value = InValue;
-    UpdateIsDirty();
-}
-
-FORCEINLINE void Set(const KeyType& Key, const ValueType &InValue)
-{
-    Values[Key] = InValue;
-    UpdateIsDirtys(Key);
-}
-
-FORCEINLINE const ValueType& operator[] (const KeyType &Key)
-{
-    return Values[Key];
-}
-
-FORCEINLINE const ValueType& Get() { return Value; }
-FORCEINLINE const ValueType& Get(const KeyType& Key) { return Values[Key]; }
-
-FORCEINLINE ValueType GetEX(const KeyType &Key) { return GetDelegate.Execute(Key); }
-
-void Clear()
-{
-    Last_Value = Value;
-    IsDirty = false;
-
-    TArray<KeyType> Keys;
-    Values.GetKeys(Keys);
-
-    for (const KeyType&Key : Keys)
-		{
-        Last_Values[Key] = Values[Key];
-        IsDirtys[Key] = false;
-    }
-}
-
-void ResetValues()
-{
-    Value = DefaultValue;
-    Last_Value = Value;
-    IsDirty = false;
-
-    TArray<KeyType> Keys;
-    Values.GetKeys(Keys);
-
-    for (const KeyType&Key : Keys)
-		{
-        Values[Key] = Value;
-        Last_Values[Key] = Value;
-        IsDirtys[Key] = false;
-    }
-}
-
-void Reset()
-{
-    ResetValues();
-
-    GetDelegate.Unbind();
-    OnChange_Event.Clear();
-    OnChangeMap_Event.Clear();
-}
-
-FORCEINLINE bool HasChanged() { return IsDirty; }
-FORCEINLINE bool HasChanged(const KeyType &Key) { return IsDirtys[Key]; }
-
-FORCEINLINE void Resolve()
-{
-    UpdateIsDirty();
-
-    TArray<KeyType> Keys;
-    Values.GetKeys(Keys);
-
-    for (const KeyType&Key : Keys)
-		{
-        UpdateIsDirtys(Key);
-    }
-    Clear();
-}
-};
-
-template<typename KeyType, typename ValueType>
-struct TCsIntegralType_TMap : public TCsProperty_TMap<KeyType, ValueType>
-{
-	TCsIntegralType_TMap() { }
-~TCsIntegralType_TMap() { }
-
-FORCEINLINE void Add(const ValueType& InValue)
-{
-    Value += InValue;
-    UpdateIsDirty();
-}
-
-FORCEINLINE void Add(const KeyType &Key, const ValueType &InValue)
-{
-    Values[Key] += InValue;
-    UpdateIsDirtys(Key);
-}
-
-FORCEINLINE void Subtract(const ValueType &InValue)
-{
-    Value -= InValue;
-    UpdateIsDirty();
-}
-
-FORCEINLINE void Subtract(const KeyType &Key, const ValueType &InValue)
-{
-    Values[Index] -= inValue;
-    UpdateIsDirtys(Index);
-}
-
-FORCEINLINE ValueType Max()
-{
-    TArray<KeyType> Keys;
-    Values.GetKeys(Keys);
-
-    ValueType max = Values[Keys[0]];
-
-    const uint8 Count = Keys.Num();
-
-    for (uint8 I = 1; I < Count; ++I)
+    public class TCgIntegralType_TMap<KeyType, ValueType> : TCgProperty_TMap<KeyType, ValueType>
+        where KeyType : struct
+        where ValueType : struct, IConvertible
     {
-        max = (KeyType)FMath::Max(max, Values[Keys[I]]);
+        public TCgIntegralType_TMap() { }
+        /*
+        public void Add(ValueType value)
+        {
+            Value += value;
+            UpdateIsDirty();
+        }
+
+        void Add(KeyType key, ValueType value)
+        {
+            Values[key] += value;
+            UpdateIsDirtys(key);
+        }
+
+        void Subtract(ValueType value)
+        {
+            Value -= value;
+            UpdateIsDirty();
+        }
+
+        void Subtract(KeyType key, ValueType value)
+        {
+            Values[key] -= value;
+            UpdateIsDirtys(key);
+        }
+
+        ValueType Max()
+        {
+            Dictionary<KeyType, ValueType>.KeyCollection keys = Values.Keys;
+
+            ValueType max = DefaultValue;
+
+            int i = 0;
+
+            foreach (KeyType key in keys)
+            {
+                if (i == 0)
+                    max = Values[key];
+                else
+                  max = (ValueType)Math.Max(max, Values[key]);
+                ++i;
+            }
+            return max;
+        }
+
+        ValueType Min()
+        {
+            Dictionary<KeyType, ValueType>.KeyCollection keys = Values.Keys;
+
+            ValueType min = DefaultValue;
+
+            int i = 0;
+
+            foreach (KeyType key in keys)
+            {
+                if (i == 0)
+                    min = Values[key];
+                else
+                    min = (ValueType)Math.Max(min, Values[key]);
+                ++i;
+            }
+            return min;
+        }
+        */
     }
-    return max;
-}
 
-FORCEINLINE ValueType Min()
-{
-    TArray<KeyType> Keys;
-    Values.GetKeys(Keys);
-
-    ValueType min = Values[Keys[0]];
-
-    const uint8 Count = Keys.Num();
-
-    for (uint8 I = 1; I < Count; ++I)
+    public class TCgIntegralType_TMap_byte<KeyType> : TCgIntegralType_TMap<KeyType, byte>
+        where KeyType : struct
     {
-        min = (ValueType)FMath::Min(min, Values[Keys[I]]);
+	    public TCgIntegralType_TMap_byte()
+        {
+            DefaultValue = 0;
+        }
     }
-    return min;
-}
-};
 
-template<typename KeyType>
-struct TCsIntegralType_TMap_uint8 : public TCsIntegralType_TMap<KeyType, uint8>
-{
-	TCsIntegralType_TMap_uint8()
-{
-    DefaultValue = 0;
-}
-~TCsIntegralType_TMap_uint8() { }
-};
-
-template<typename KeyType>
-struct TCsIntegralType_TMap_float : public TCsIntegralType_TMap<KeyType, float>
-{
-	TCsIntegralType_TMap_float()
-{
-    DefaultValue = 0.0f;
-}
-~TCsIntegralType_TMap_float() { }
-};
-
-template<typename KeyType>
-struct TCsProperty_TMap_bool : public TCsProperty_TMap<KeyType, bool>
-{
-	TCsProperty_TMap_bool()
-{
-    DefaultValue = false;
-}
-~TCsProperty_TMap_bool() { }
-
-FORCEINLINE bool Or()
-{
-    TArray<KeyType> Keys;
-    Values.GetKeys(Keys);
-
-    bool or = Values[Keys[0]];
-
-    const uint8 Count = Keys.Num();
-
-    for (uint8 I = 1; I < Count; ++I)
+    public class TCgIntegralType_TMap_float<KeyType> : TCgIntegralType_TMap<KeyType, float>
+        where KeyType : struct
     {
-        or |= Values[Keys[I]];
+	    public TCgIntegralType_TMap_float()
+        {
+            DefaultValue = 0.0f;
+        }
     }
-    return or;
-}
 
-FORCEINLINE bool And()
-{
-    TArray<KeyType> Keys;
-    Values.GetKeys(Keys);
-
-    bool and = Values[Keys[0]];
-
-    const uint8 Count = Keys.Num();
-
-    for (uint8 I = 1; I < Count; ++I)
+    public class TCgProperty_TMap_bool<KeyType> : TCgProperty_TMap<KeyType, bool>
+        where KeyType : struct
     {
-        and &= Values[Keys[I]];
+	    TCgProperty_TMap_bool()
+        {
+            DefaultValue = false;
+        }
+
+        bool Or()
+        {
+            Dictionary<KeyType, bool>.KeyCollection keys = Values.Keys;
+
+            bool or = false;
+
+            int i = 0;
+
+            foreach (KeyType key in keys)
+            {
+                if (i == 0)
+                    or = Values[key];
+                else
+                   or |= Values[key];
+                ++i;
+            }
+            return or;
+        }
+
+        bool And()
+        {
+            Dictionary<KeyType, bool>.KeyCollection keys = Values.Keys;
+
+            bool and = false;
+
+            int i = 0;
+
+            foreach (KeyType key in keys)
+            {
+                if (i == 0)
+                    and = Values[key];
+                else
+                    and &= Values[key];
+                ++i;
+            }
+            return and;
+        }
     }
-    return and;
-}
-};
 
         #endregion // Map
 

@@ -67,7 +67,7 @@ namespace CgCore
             e = inEvent;
         }
 
-        public void UnBind()
+        public void Unbind()
         {
             e = null;
         }
@@ -95,7 +95,7 @@ namespace CgCore
             e = inEvent;
         }
 
-        public void UnBind()
+        public void Unbind()
         {
             e = null;
         }
@@ -123,7 +123,7 @@ namespace CgCore
             e = inEvent;
         }
 
-        public void UnBind()
+        public void Unbind()
         {
             e = null;
         }

@@ -546,8 +546,8 @@ namespace CgCore
                 Messages_Recieved[(ECgCoroutineMessage)i].Clear();
             }
 
-            Add.UnBind();
-            Remove.UnBind();
+            Add.Unbind();
+            Remove.Unbind();
             StartTime = 0.0f;
             ElapsedTime = 0.0f;
             DeltaTime = 0.0f;

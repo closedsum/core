@@ -8,7 +8,7 @@ namespace CgCore
     using Newtonsoft.Json;
 
     [Serializable]
-    public struct CgEthereumGenesisConfig
+    public struct FCgEthereumGenesisConfig
     {
         public int chainId;
         public int homesteadBlock;
@@ -25,28 +25,28 @@ namespace CgCore
     }
 
     [Serializable]
-    public struct CgEthereumGenesisAddressBalance
+    public struct FCgEthereumGenesisAddressBalance
     {
         public string balance;
 
-        public CgEthereumGenesisAddressBalance(string _balance)
+        public FCgEthereumGenesisAddressBalance(string _balance)
         {
             balance = _balance;
         }
     }
 
     [Serializable]
-    public class CgEthereumGenesis : CgBlockchainGenesis
+    public class FCgEthereumGenesis : FCgBlockchainGenesis
     {
-        public CgEthereumGenesisConfig config;
+        public FCgEthereumGenesisConfig config;
         public string difficulty = "0x20";
         public string gasLimit = "0x2540BE400";
-        public Dictionary<string, CgEthereumGenesisAddressBalance> alloc;
+        public Dictionary<string, FCgEthereumGenesisAddressBalance> alloc;
 
-        public CgEthereumGenesis()
+        public FCgEthereumGenesis()
         {
             config.Init();
-            alloc = new Dictionary<string, CgEthereumGenesisAddressBalance>();
+            alloc = new Dictionary<string, FCgEthereumGenesisAddressBalance>();
         }
 
         public override string ToStr()

@@ -182,7 +182,7 @@ namespace CgCore
         }
     }
 
-    public static class CgKey
+    public static class FCgKey
     {
         public static bool IsJoystickKey(KeyCode key)
         {
@@ -198,7 +198,7 @@ namespace CgCore
         }
     }
 
-    public sealed class KeyCodeEqualityComparer : IEqualityComparer<KeyCode>
+    public sealed class FKeyCodeEqualityComparer : IEqualityComparer<KeyCode>
     {
         public bool Equals(KeyCode lhs, KeyCode rhs)
         {
@@ -211,7 +211,7 @@ namespace CgCore
         }
     }
 
-    public class CgKeyInputHandler
+    public class FCgKeyInputHandler
     {
         public class CgKeyInputHandler_Event : CgMulticastDelegate { }
 
@@ -223,35 +223,35 @@ namespace CgCore
 
         #endregion // Data Members
 
-        public CgKeyInputHandler()
+        public FCgKeyInputHandler()
         {
             Action = null;
         }
 
-        public CgKeyInputHandler(ECgInputAction action)
+        public FCgKeyInputHandler(ECgInputAction action)
         {
             Action = action;
             Event = new CgKeyInputHandler_Event();
         }
 
-        public static bool operator ==(CgKeyInputHandler lhs, CgKeyInputHandler rhs)
+        public static bool operator ==(FCgKeyInputHandler lhs, FCgKeyInputHandler rhs)
         {
             if (lhs.Action != rhs.Action) return false;
             if (lhs.Event != rhs.Event) return false;
             return true;
         }
 
-        public static bool operator !=(CgKeyInputHandler lhs, CgKeyInputHandler rhs)
+        public static bool operator !=(FCgKeyInputHandler lhs, FCgKeyInputHandler rhs)
         {
             return !(lhs == rhs);
         }
 
         public override bool Equals(object obj)
         {
-            if (!(obj is CgKeyInputHandler))
+            if (!(obj is FCgKeyInputHandler))
                 return false;
 
-            CgKeyInputHandler rhs = (CgKeyInputHandler)obj;
+            FCgKeyInputHandler rhs = (FCgKeyInputHandler)obj;
 
             if (Action != rhs.Action) return false;
             if (Event != rhs.Event) return false;
@@ -263,12 +263,12 @@ namespace CgCore
             return base.GetHashCode();
         }
 
-        public CgDelegateHandle Add(CgMulticastDelegate.Event e)
+        public FCgDelegateHandle Add(CgMulticastDelegate.Event e)
         {
             return Event.Add(e);
         }
 
-        public bool Remove(CgDelegateHandle handle)
+        public bool Remove(FCgDelegateHandle handle)
         {
             return Event.Remove(handle);
         }
@@ -279,7 +279,7 @@ namespace CgCore
         }
     }
 
-    public class CgKeyInput
+    public class FCgKeyInput
     {
         #region "Data Members"
 
@@ -290,11 +290,11 @@ namespace CgCore
         public float DeltaTime;
         public ulong Frame;
 
-        private Dictionary<ECgInputAction, CgKeyInputHandler>[] HandlerMap;
+        private Dictionary<ECgInputAction, FCgKeyInputHandler>[] HandlerMap;
 
         #endregion // Data Members
 
-        public CgKeyInput()
+        public FCgKeyInput()
         {
             Key = KeyCode.None;
             Event = ECgInputEvent.MAX;
@@ -303,17 +303,17 @@ namespace CgCore
             DeltaTime = 0f;
             Frame = 0;
 
-            HandlerMap = new Dictionary<ECgInputAction, CgKeyInputHandler>[(byte)ECgInputEvent.MAX];
+            HandlerMap = new Dictionary<ECgInputAction, FCgKeyInputHandler>[(byte)ECgInputEvent.MAX];
 
             int len = (int)ECgInputEvent.MAX;
 
             for (int i = 0; i < len; ++i)
             {
-                HandlerMap[i] = new Dictionary<ECgInputAction, CgKeyInputHandler>(new ECgInputActionEqualityComparer());
+                HandlerMap[i] = new Dictionary<ECgInputAction, FCgKeyInputHandler>(new ECgInputActionEqualityComparer());
             }
         }
 
-        public CgKeyInput(KeyCode key)
+        public FCgKeyInput(KeyCode key)
         {
             Key = key;
             Event = ECgInputEvent.MAX;
@@ -322,21 +322,21 @@ namespace CgCore
             DeltaTime = 0f;
             Frame = 0;
 
-            HandlerMap = new Dictionary<ECgInputAction, CgKeyInputHandler>[(byte)ECgInputEvent.MAX];
+            HandlerMap = new Dictionary<ECgInputAction, FCgKeyInputHandler>[(byte)ECgInputEvent.MAX];
 
             int len = (int)ECgInputEvent.MAX;
 
             for (int i = 0; i < len; ++i)
             {
-                HandlerMap[i] = new Dictionary<ECgInputAction, CgKeyInputHandler>(new ECgInputActionEqualityComparer());
+                HandlerMap[i] = new Dictionary<ECgInputAction, FCgKeyInputHandler>(new ECgInputActionEqualityComparer());
             }
         }
 
-        public CgDelegateHandle Bind(ECgInputAction action, ECgInputEvent e, CgMulticastDelegate.Event del)
+        public FCgDelegateHandle Bind(ECgInputAction action, ECgInputEvent e, CgMulticastDelegate.Event del)
         {
-            Dictionary<ECgInputAction, CgKeyInputHandler> map = HandlerMap[(byte)e];
+            Dictionary<ECgInputAction, FCgKeyInputHandler> map = HandlerMap[(byte)e];
 
-            CgKeyInputHandler handle = null;
+            FCgKeyInputHandler handle = null;
             bool found               = map.TryGetValue(action, out handle);
 
             if (found)
@@ -345,22 +345,22 @@ namespace CgCore
             }
             else
             {
-                handle = new CgKeyInputHandler(action);
+                handle = new FCgKeyInputHandler(action);
                 
                 map.Add(action, handle);
                 return handle.Add(del);
             }
         }
 
-        public bool UnBind(ECgInputEvent e, CgDelegateHandle handle)
+        public bool UnBind(ECgInputEvent e, FCgDelegateHandle handle)
         {
-            Dictionary<ECgInputAction, CgKeyInputHandler> map = HandlerMap[(byte)e];
+            Dictionary<ECgInputAction, FCgKeyInputHandler> map = HandlerMap[(byte)e];
 
-            Dictionary<ECgInputAction, CgKeyInputHandler>.ValueCollection handles = map.Values;
+            Dictionary<ECgInputAction, FCgKeyInputHandler>.ValueCollection handles = map.Values;
 
             bool success = false;
 
-            foreach (CgKeyInputHandler h in handles)
+            foreach (FCgKeyInputHandler h in handles)
             {
                 success |= h.Remove(handle);
             }
@@ -378,18 +378,18 @@ namespace CgCore
 
         public void Execute(ECgInputEvent e)
         {
-            Dictionary<ECgInputAction, CgKeyInputHandler> map = HandlerMap[(byte)e];
+            Dictionary<ECgInputAction, FCgKeyInputHandler> map = HandlerMap[(byte)e];
 
-            Dictionary<ECgInputAction, CgKeyInputHandler>.ValueCollection handles = map.Values;
+            Dictionary<ECgInputAction, FCgKeyInputHandler>.ValueCollection handles = map.Values;
 
-            foreach (CgKeyInputHandler h in handles)
+            foreach (FCgKeyInputHandler h in handles)
             { 
                 h.Broadcast();
             }
         }
     }
 
-    public class CgInput
+    public class FCgInput
     {
         #region "Data Members"
 
@@ -405,7 +405,7 @@ namespace CgCore
 
         #endregion // Data Members
 
-        public CgInput()
+        public FCgInput()
         {
             PoolIndex = CgTypes_Input.INVALID_INPUT_POOL_INDEX;
             IsAllocated = false;
@@ -418,7 +418,7 @@ namespace CgCore
             Duration = 0f;
         }
 
-        public CgInput(ushort poolIndex)
+        public FCgInput(ushort poolIndex)
         {
             PoolIndex = poolIndex;
             IsAllocated = false;
@@ -431,7 +431,7 @@ namespace CgCore
             Duration = 0f;
         }
 
-        public static bool operator ==(CgInput lhs, CgInput rhs)
+        public static bool operator ==(FCgInput lhs, FCgInput rhs)
         {
             if (object.ReferenceEquals(lhs, null))
                 return object.ReferenceEquals(rhs, null);
@@ -447,17 +447,17 @@ namespace CgCore
             return true;
         }
 
-        public static bool operator !=(CgInput lhs, CgInput rhs)
+        public static bool operator !=(FCgInput lhs, FCgInput rhs)
         {
             return !(lhs == rhs);
         }
 
         public override bool Equals(object obj)
         {
-            if (!(obj is CgInput))
+            if (!(obj is FCgInput))
                 return false;
 
-            CgInput input = (CgInput)obj;
+            FCgInput input = (FCgInput)obj;
 
             if (Action != input.Action) return false;
             if (Event != input.Event) return false;
@@ -545,7 +545,7 @@ namespace CgCore
         }
     }
 
-    public class CgInputFrame
+    public class FCgInputFrame
     {
         #region "Data Members"
 
@@ -553,20 +553,20 @@ namespace CgCore
         public float RealTime;
         public float DeltaTime;
         public ulong Frame;
-        public List<CgInput> Inputs;
+        public List<FCgInput> Inputs;
 
         #endregion // Data Members
 
-        public CgInputFrame()
+        public FCgInputFrame()
         {
             Time = 0f;
             RealTime = 0f;
             DeltaTime = 0f;
             Frame = 0;
-            Inputs = new List<CgInput>();
+            Inputs = new List<FCgInput>();
         }
 
-        public static bool operator ==(CgInputFrame lhs, CgInputFrame rhs)
+        public static bool operator ==(FCgInputFrame lhs, FCgInputFrame rhs)
         {
             if (lhs.Time != rhs.Time) return false;
             if (lhs.RealTime != rhs.RealTime) return false;
@@ -585,17 +585,17 @@ namespace CgCore
             return true;
         }
 
-        public static bool operator !=(CgInputFrame lhs, CgInputFrame rhs)
+        public static bool operator !=(FCgInputFrame lhs, FCgInputFrame rhs)
         {
             return !(lhs == rhs);
         }
 
         public override bool Equals(object obj)
         {
-            if (!(obj is CgInputFrame))
+            if (!(obj is FCgInputFrame))
                 return false;
 
-            CgInputFrame rhs = (CgInputFrame)obj;
+            FCgInputFrame rhs = (FCgInputFrame)obj;
 
             if (Time != rhs.Time) return false;
             if (RealTime != rhs.RealTime) return false;
@@ -619,7 +619,7 @@ namespace CgCore
             return Time.GetHashCode() ^ RealTime.GetHashCode() ^ DeltaTime.GetHashCode() ^ Frame.GetHashCode();
         }
 
-        public void Copy(CgInputFrame rhs)
+        public void Copy(FCgInputFrame rhs)
         {
             Time = rhs.Time;
             RealTime = rhs.RealTime;
@@ -652,7 +652,7 @@ namespace CgCore
             Inputs.Clear();
         }
 
-        public CgInput GetInput(ECgInputAction action)
+        public FCgInput GetInput(ECgInputAction action)
         {
             int count = Inputs.Count;
 
@@ -664,18 +664,18 @@ namespace CgCore
             return null;
         }
 
-        public CgInput GetInput(ECgInputAction action, ECgInputEvent e)
+        public FCgInput GetInput(ECgInputAction action, ECgInputEvent e)
         {
-            CgInput input = GetInput(action);
+            FCgInput input = GetInput(action);
 
             if (input != null)
                 return input.Event == e ? input : null;
             return null;
         }
 
-        public CgInput GetInput(ECgInputAction action, List<ECgInputEvent> events)
+        public FCgInput GetInput(ECgInputAction action, List<ECgInputEvent> events)
         {
-            CgInput input = GetInput(action);
+            FCgInput input = GetInput(action);
 
             if (input != null)
                 return events.IndexOf(input.Event) != CgTypes.INDEX_NONE ? input : null;
@@ -683,7 +683,7 @@ namespace CgCore
         }
     }
 
-    public class CgInputInfo
+    public class FCgInputInfo
     {
         #region "Data Members"
 
@@ -699,7 +699,7 @@ namespace CgCore
 
         #endregion // Data Members
 
-        public CgInputInfo(ECgInputType type, ECgInputValue valueType)
+        public FCgInputInfo(ECgInputType type, ECgInputValue valueType)
         {
             Type = type;
             ValueType = valueType;
@@ -712,7 +712,7 @@ namespace CgCore
             Duration = 0f;
         }
 
-        public static bool operator ==(CgInputInfo lhs, CgInputInfo rhs)
+        public static bool operator ==(FCgInputInfo lhs, FCgInputInfo rhs)
         {
             if (lhs.Type != rhs.Type) return false;
             if (lhs.ValueType != rhs.ValueType) return false;
@@ -726,17 +726,17 @@ namespace CgCore
             return true;
         }
 
-        public static bool operator !=(CgInputInfo lhs, CgInputInfo rhs)
+        public static bool operator !=(FCgInputInfo lhs, FCgInputInfo rhs)
         {
             return !(lhs == rhs);
         }
 
         public override bool Equals(object obj)
         {
-            if (!(obj is CgInputInfo))
+            if (!(obj is FCgInputInfo))
                 return false;
 
-            CgInputInfo rhs = (CgInputInfo)obj;
+            FCgInputInfo rhs = (FCgInputInfo)obj;
 
             if (Type != rhs.Type) return false;
             if (ValueType != rhs.ValueType) return false;
@@ -777,26 +777,26 @@ namespace CgCore
         }
     }
 
-    public sealed class CgInputWord
+    public sealed class FCgInputWord
     {
         public bool Completed;
         public float CompletedTime;
         public bool Consume;
-        public List<CgInput> AndInputs;
-        public List<CgInput> OrInputs;
+        public List<FCgInput> AndInputs;
+        public List<FCgInput> OrInputs;
 
-        public CgInputWord()
+        public FCgInputWord()
         {
             Completed = false;
             CompletedTime = 0.0f;
             Consume = false;
-            AndInputs = new List<CgInput>();
-            OrInputs = new List<CgInput>();
+            AndInputs = new List<FCgInput>();
+            OrInputs = new List<FCgInput>();
         }
 
         public void AddAndInput(ECgInputAction action, ECgInputEvent e, float value, Vector3 location, Vector3 rotation)
 	    {
-            AndInputs.Add(new CgInput());
+            AndInputs.Add(new FCgInput());
 		    int index = AndInputs.Count - 1;
             AndInputs[index].Action = action;
 		    AndInputs[index].Event = e;
@@ -827,7 +827,7 @@ namespace CgCore
 
         public void AddOrInput(ECgInputAction action, ECgInputEvent e, float value, Vector3 location, Vector3 rotation)
         {
-            OrInputs.Add(new CgInput());
+            OrInputs.Add(new FCgInput());
             int index = OrInputs.Count - 1;
             OrInputs[index].Action = action;
             OrInputs[index].Event = e;
@@ -861,7 +861,7 @@ namespace CgCore
             Completed = false;
         }
 
-        public void ProcessInput(CgInputFrame inputFrame)
+        public void ProcessInput(FCgInputFrame inputFrame)
         {
             int and = 0;
             bool or = false;
@@ -870,7 +870,7 @@ namespace CgCore
 
             for (int i = count - 1; i >= 0; --i)
             {
-                CgInput input = inputFrame.Inputs[i];
+                FCgInput input = inputFrame.Inputs[i];
                 
                 // Check And
                 int andCount = AndInputs.Count;
@@ -907,7 +907,7 @@ namespace CgCore
         }
     }
 
-    public sealed class CgInputPhrase
+    public sealed class FCgInputPhrase
     {
         public bool Completed;
         public float CompletedTime;
@@ -915,9 +915,9 @@ namespace CgCore
         public float Interval;
         public bool UseFrames;
         public int Frames;
-        public List<CgInputWord> Words;
+        public List<FCgInputWord> Words;
 
-        public CgInputPhrase()
+        public FCgInputPhrase()
         {
             Completed = false;
             CompletedTime = 0.0f;
@@ -925,7 +925,7 @@ namespace CgCore
             Interval = 0.0f;
             UseFrames = false;
             Frames = 0;
-            Words = new List<CgInputWord>();
+            Words = new List<FCgInputWord>();
         }
 
         public void AddAndInputToWord(int index, ECgInputAction action, ECgInputEvent e, float value = 0.0f, Vector3 location = new Vector3(), Vector3 rotation = new Vector3())
@@ -936,7 +936,7 @@ namespace CgCore
 		    {
 			    for (int i = 0; i < index - count + 1; ++i)
 			    {
-				    Words.Add(new CgInputWord());
+				    Words.Add(new FCgInputWord());
 			    }
 		    }
 		    Words[index].AddAndInput(action, e, value, location, rotation);
@@ -950,7 +950,7 @@ namespace CgCore
             {
                 for (int i = 0; i < index - count + 1; ++i)
                 {
-                    Words.Add(new CgInputWord());
+                    Words.Add(new FCgInputWord());
                 }
             }
             Words[index].AddOrInput(action, e, value, location, rotation);
@@ -968,7 +968,7 @@ namespace CgCore
             CompletedTime = 0.0f;
         }
 
-        public void ProcessInput(CgInputFrame inputFrame)
+        public void ProcessInput(FCgInputFrame inputFrame)
         {
             float currentTime = inputFrame.Time;
 
@@ -1028,7 +1028,7 @@ namespace CgCore
         }
     }
 
-    public sealed class CgInputSentence
+    public sealed class FCgInputSentence
     {
         public bool Active;
         public bool Completed;
@@ -1038,9 +1038,9 @@ namespace CgCore
         public float Interval;
         public bool UseFrames;
         public int Frames;
-        public List<CgInputPhrase> Phrases;
+        public List<FCgInputPhrase> Phrases;
 
-        public CgInputSentence()
+        public FCgInputSentence()
         {
             Active = true;
             Completed = false;
@@ -1050,7 +1050,7 @@ namespace CgCore
             Interval = 0.0f;
             UseFrames = false;
             Frames = 0;
-            Phrases = new List<CgInputPhrase>();
+            Phrases = new List<FCgInputPhrase>();
         }
 
         public void Reset()
@@ -1066,7 +1066,7 @@ namespace CgCore
             Completed = false;
         }
 
-        public void ProcessInput(CgInputFrame inputFrame)
+        public void ProcessInput(FCgInputFrame inputFrame)
         {
             float currentTime = inputFrame.Time;
 
@@ -1135,7 +1135,7 @@ namespace CgCore
         }
     }
 
-    public class CgInputActionMapping
+    public class FCgInputActionMapping
     {
         public string ActionName;
         public ECgInputAction Action;
@@ -1143,7 +1143,7 @@ namespace CgCore
         public KeyCode Key;
         public float Scale;
 
-        public CgInputActionMapping()
+        public FCgInputActionMapping()
         {
             ActionName = "";
             Action = null;
@@ -1152,7 +1152,7 @@ namespace CgCore
             Scale = 1.0f;
         }
 
-        public static bool operator ==(CgInputActionMapping lhs, CgInputActionMapping rhs)
+        public static bool operator ==(FCgInputActionMapping lhs, FCgInputActionMapping rhs)
         {
             if (lhs.ActionName != rhs.ActionName) return false;
             if (lhs.Action != rhs.Action) return false;
@@ -1162,17 +1162,17 @@ namespace CgCore
             return true;
         }
 
-        public static bool operator !=(CgInputActionMapping lhs, CgInputActionMapping rhs)
+        public static bool operator !=(FCgInputActionMapping lhs, FCgInputActionMapping rhs)
         {
             return !(lhs == rhs);
         }
 
         public override bool Equals(object obj)
         {
-            if (!(obj is CgInputActionMapping))
+            if (!(obj is FCgInputActionMapping))
                 return false;
 
-            CgInputActionMapping rhs = (CgInputActionMapping)obj;
+            FCgInputActionMapping rhs = (FCgInputActionMapping)obj;
 
             if (ActionName != rhs.ActionName) return false;
             if (Action != rhs.Action) return false;
@@ -1188,11 +1188,11 @@ namespace CgCore
         }
     }
 
-    public class CgInputActionMappings
+    public class FCgInputActionMappings
     {
-        public List<CgInputActionMapping> Mappings;
+        public List<FCgInputActionMapping> Mappings;
 
-        public static bool operator ==(CgInputActionMappings lhs, CgInputActionMappings rhs)
+        public static bool operator ==(FCgInputActionMappings lhs, FCgInputActionMappings rhs)
         {
             if (lhs.Mappings.Count != rhs.Mappings.Count) return false;
 
@@ -1206,17 +1206,17 @@ namespace CgCore
             return true;
         }
 
-        public static bool operator !=(CgInputActionMappings lhs, CgInputActionMappings rhs)
+        public static bool operator !=(FCgInputActionMappings lhs, FCgInputActionMappings rhs)
         {
             return !(lhs == rhs);
         }
 
         public override bool Equals(object obj)
         {
-            if (!(obj is CgInputActionMappings))
+            if (!(obj is FCgInputActionMappings))
                 return false;
 
-            CgInputActionMappings rhs = (CgInputActionMappings)obj;
+            FCgInputActionMappings rhs = (FCgInputActionMappings)obj;
 
             if (Mappings.Count != rhs.Mappings.Count) return false;
 
@@ -1243,27 +1243,27 @@ namespace CgCore
         }
     }
 
-    public class CgInputProfile
+    public class FCgInputProfile
     {
         public byte Player;
-        public CgInputActionMappings[] DeviceMappings;
+        public FCgInputActionMappings[] DeviceMappings;
 
-        CgInputProfile()
+        FCgInputProfile()
         {
             Player = 0;
-            DeviceMappings = new CgInputActionMappings[(byte)ECgInputDevice.MAX];
+            DeviceMappings = new FCgInputActionMappings[(byte)ECgInputDevice.MAX];
         }
 
-        public CgInputActionMapping GetMapping(ECgInputDevice device, ECgInputAction action)
+        public FCgInputActionMapping GetMapping(ECgInputDevice device, ECgInputAction action)
 	    {
-		    CgInputActionMappings deviceMapping = DeviceMappings[(byte)device];
-		    List<CgInputActionMapping> mappings = deviceMapping.Mappings;
+		    FCgInputActionMappings deviceMapping = DeviceMappings[(byte)device];
+		    List<FCgInputActionMapping> mappings = deviceMapping.Mappings;
 
 		    int count = mappings.Count;
 
 		    for (int i = 0; i < count; ++i)
 		    {
-			    CgInputActionMapping mapping = mappings[i];
+			    FCgInputActionMapping mapping = mappings[i];
 
 			    if (action == mapping.Action)
 				    return deviceMapping.Mappings[i];
@@ -1273,14 +1273,14 @@ namespace CgCore
 
 	    public KeyCode GetKey(ECgInputDevice device, ECgInputAction action)
         {
-            CgInputActionMappings deviceMapping = DeviceMappings[(byte)device];
-            List<CgInputActionMapping> mappings = deviceMapping.Mappings;
+            FCgInputActionMappings deviceMapping = DeviceMappings[(byte)device];
+            List<FCgInputActionMapping> mappings = deviceMapping.Mappings;
 
             int count = mappings.Count;
 
             for (int i = 0; i < count; ++i)
             {
-                CgInputActionMapping mapping = mappings[i];
+                FCgInputActionMapping mapping = mappings[i];
 
                 if (action == mapping.Action)
                     return mapping.Key;
@@ -1290,14 +1290,14 @@ namespace CgCore
 
         public void SetKey(ECgInputDevice device, ECgInputAction action, KeyCode key)
         {
-            CgInputActionMappings deviceMapping = DeviceMappings[(byte)device];
-            List<CgInputActionMapping> mappings = deviceMapping.Mappings;
+            FCgInputActionMappings deviceMapping = DeviceMappings[(byte)device];
+            List<FCgInputActionMapping> mappings = deviceMapping.Mappings;
 
             int count = mappings.Count;
 
             for (int i = 0; i < count; ++i)
             {
-                CgInputActionMapping mapping = mappings[i];
+                FCgInputActionMapping mapping = mappings[i];
 
                 if (action == mapping.Action)
                 {
@@ -1310,12 +1310,12 @@ namespace CgCore
 
         public void AddMapping(ECgInputDevice device, string actionName, ECgInputAction action, string keyName, KeyCode key)
         {
-            CgInputActionMappings deviceMapping = DeviceMappings[(byte)device];
-            List<CgInputActionMapping> mappings = deviceMapping.Mappings;
+            FCgInputActionMappings deviceMapping = DeviceMappings[(byte)device];
+            List<FCgInputActionMapping> mappings = deviceMapping.Mappings;
 
             int count = mappings.Count;
-            mappings.Add(new CgInputActionMapping());
-            CgInputActionMapping mapping = mappings[count];
+            mappings.Add(new FCgInputActionMapping());
+            FCgInputActionMapping mapping = mappings[count];
             mapping.ActionName          = actionName;
             mapping.Action              = action;
             mapping.KeyName             = keyName;
@@ -1359,14 +1359,14 @@ namespace CgCore
         public ECgGameEvent.ToStr ToStr;
     }
 
-    public class CgGameEventDefinition
+    public class FCgGameEventDefinition
     {
-        public CgInputSentence Sentence;
+        public FCgInputSentence Sentence;
         public ECgGameEvent Event;
 
-        public CgGameEventDefinition()
+        public FCgGameEventDefinition()
         {
-            Sentence = new CgInputSentence();
+            Sentence = new FCgInputSentence();
         }
     }
 }

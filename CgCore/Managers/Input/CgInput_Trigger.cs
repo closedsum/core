@@ -5,7 +5,7 @@ namespace CgCore
     using System.Collections.Generic;
     using UnityEngine;
 
-    public class CgInput_Trigger : CgInput_Base
+    public class FCgInput_Trigger : FCgInput_Base
     {
         public class CgInputTrigger_Event : TCgMulticastDelegate_TwoParams<MonoBehaviour, float> { }
 
@@ -15,9 +15,9 @@ namespace CgCore
 
         #endregion // Data Members
 
-        public CgInput_Trigger()
+        public FCgInput_Trigger()
         {
-            Info = new CgInputInfo(ECgInputType.Trigger, ECgInputValue.Float);
+            Info = new FCgInputInfo(ECgInputType.Trigger, ECgInputValue.Float);
             Info.Event = ECgInputEvent.Stationary;
             Info.Last_Event = Info.Event;
 
@@ -33,7 +33,7 @@ namespace CgCore
             if ((Manager_Input.CurrentInputActionMap & (ActionMap)) == ECgInputActionMap.NONE)
                 return;
 
-            CgInput input = Manager_Input.GetPreviousPreviousInputAction(Action);
+            FCgInput input = Manager_Input.GetPreviousPreviousInputAction(Action);
 
             if (input == null && Info.Value != val)
                 FirstMoved(val);

@@ -5,7 +5,7 @@ namespace CgCore
     using System.Collections.Generic;
     using UnityEngine;
 
-    public class CgInput_Rotation : CgInput_Base
+    public class FCgInput_Rotation : FCgInput_Base
     {
         public class CgInputRotation_Event : TCgMulticastDelegate_TwoParams<MonoBehaviour, Vector3> { }
 
@@ -15,9 +15,9 @@ namespace CgCore
 
         #endregion // Data Members
 
-        public CgInput_Rotation()
+        public FCgInput_Rotation()
         {
-            Info = new CgInputInfo(ECgInputType.Rotation, ECgInputValue.Rotator);
+            Info = new FCgInputInfo(ECgInputType.Rotation, ECgInputValue.Rotator);
             Info.Event = ECgInputEvent.Stationary;
             Info.Last_Event = Info.Event;
 
@@ -33,7 +33,7 @@ namespace CgCore
             if ((Manager_Input.CurrentInputActionMap & (ActionMap)) == ECgInputActionMap.NONE)
                 return;
 
-            CgInput input = Manager_Input.GetPreviousPreviousInputAction(Action);
+            FCgInput input = Manager_Input.GetPreviousPreviousInputAction(Action);
 
             if (input == null && Info.Euler != rotation)
                 FirstMoved(rotation);

@@ -1,14 +1,14 @@
 ﻿// Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 namespace CgCore
 {
-    public abstract class CgInput_Base
+    public abstract class FCgInput_Base
     {
         public ECgInputAction Action;
-        public CgInputInfo Info;
+        public FCgInputInfo Info;
         public int ActionMap;
-        public CgManager_Input Manager_Input;
+        public FCgManager_Input Manager_Input;
 
-        public CgInput_Base()
+        public FCgInput_Base()
         {
             Action = null;
             ActionMap = 0;

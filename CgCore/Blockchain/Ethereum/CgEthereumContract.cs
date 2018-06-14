@@ -9,7 +9,7 @@
 
     // TODO: Need a custom read/write to json
     [Serializable]
-    public sealed class CgEthereumABI
+    public sealed class FCgEthereumABI
     {
         public bool constant;
         public List<string> inputs;
@@ -19,7 +19,7 @@
         public string stateMutability;
         public string type;
 
-        public CgEthereumABI()
+        public FCgEthereumABI()
         {
             inputs = new List<string>();
             outputs = new List<string>();
@@ -27,16 +27,16 @@
     }
 
     [Serializable]
-    public sealed class CgEthereumContract : CgBlockchainContract
+    public sealed class FCgEthereumContract : FCgBlockchainContract
     {
-        public List<CgEthereumABI> ABI;
+        public List<FCgEthereumABI> ABI;
         public string Address;
         public string ContractVariableName;
         public string InstanceVariableName;
 
-        public CgEthereumContract(string name) : base(name)
+        public FCgEthereumContract(string name) : base(name)
         {
-            ABI = new List<CgEthereumABI>();
+            ABI = new List<FCgEthereumABI>();
             Address = "";
             ContractVariableName = name.ToLower() + "Contract";
             InstanceVariableName = name.ToLower() + "Instance";
@@ -69,12 +69,12 @@
         }
     }
 
-    public struct CgEthereumWeb3DeployLink
+    public struct FCgEthereumWeb3DeployLink
     {
         public readonly ECgBlockchainContract Contract;
         public readonly string Link;
 
-        public CgEthereumWeb3DeployLink(ECgBlockchainContract contract, string link)
+        public FCgEthereumWeb3DeployLink(ECgBlockchainContract contract, string link)
         {
             Contract = contract;
             Link = link;

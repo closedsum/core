@@ -47,11 +47,11 @@
 
         private string Name;
         public ECgProcessMonitorOutputEventPurpose Purpose;
-        private CgStringParagraph Paragraph;
+        private FCgStringParagraph Paragraph;
         private bool Completed;
         private CompletedEvent Event;
 
-        public CgProcessMonitorOutputEvent(string name, CgStringParagraph paragraph, ECgProcessMonitorOutputEventPurpose purpose = ECgProcessMonitorOutputEventPurpose.FireOnce)
+        public CgProcessMonitorOutputEvent(string name, FCgStringParagraph paragraph, ECgProcessMonitorOutputEventPurpose purpose = ECgProcessMonitorOutputEventPurpose.FireOnce)
         {
             Name = name;
             Paragraph = paragraph;
@@ -97,7 +97,7 @@
     }
 
 
-    public class CgProcess : TCgPooledObject<ECgProcess>
+    public class FCgProcess : TCgPooledObject<ECgProcess>
     {
         public static CgConsoleVariableLog LogCommandRequest = new CgConsoleVariableLog("log.process.command.request", false, "Log Process Command Request", (int)ECgConsoleVariableFlag.Console);
 
@@ -118,7 +118,7 @@
 
         #endregion // Data Members
 
-        public CgProcess() : base()
+        public FCgProcess() : base()
         {
             Cache = new CgProcessCache();
 
@@ -135,7 +135,7 @@
         {
             base.Allocate(activeIndex, payload);
 
-            CgProcessPayload pay = (CgProcessPayload)payload;
+            FCgProcessPayload pay = (FCgProcessPayload)payload;
 
             P.StartInfo.CreateNoWindow = pay.CreateNoWindow;
             P.StartInfo.UseShellExecute = pay.UseShellExecute;

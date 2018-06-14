@@ -5,7 +5,7 @@ namespace CgCore
     using System.Collections.Generic;
     using UnityEngine;
 
-    public class CgInput_Action : CgInput_Base
+    public class FCgInput_Action : FCgInput_Base
     {
         public class CgInputAction_Event : TCgMulticastDelegate_OneParam<MonoBehaviour> { }
 
@@ -15,9 +15,9 @@ namespace CgCore
 
         #endregion // Data Members
 
-        public CgInput_Action()
+        public FCgInput_Action()
         {
-            Info = new CgInputInfo(ECgInputType.Action, ECgInputValue.Void);
+            Info = new FCgInputInfo(ECgInputType.Action, ECgInputValue.Void);
             Info.Event = ECgInputEvent.Released;
             Info.Last_Event = Info.Event;
 

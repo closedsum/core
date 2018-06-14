@@ -6,7 +6,7 @@
     using Newtonsoft.Json;
 
     [Serializable]
-    public class CgEthereumAccount : CgBlockchainAccount
+    public class FCgEthereumAccount : FCgBlockchainAccount
     {
         public static readonly int ADDRESS = 0;
         public static readonly int PASSPHRASE = 1;
@@ -23,9 +23,9 @@
 
         #endregion // Data Members
 
-        public CgEthereumAccount() : base(){}
+        public FCgEthereumAccount() : base(){}
 
-        public CgEthereumAccount(string nickname, string address, string passphrase) : base()
+        public FCgEthereumAccount(string nickname, string address, string passphrase) : base()
         {
             Nickname   = nickname;
             Address    = address;
@@ -35,13 +35,13 @@
             AddressAsArg = "'" + AddressAsHex + "'";
         }
 
-        public void CreateUnlockArguments(out CgBlockchainCommandArgument[] args)
+        public void CreateUnlockArguments(out FCgBlockchainCommandArgument[] args)
         {
-            args = new CgBlockchainCommandArgument[ARGUMENT_COUNT];
+            args = new FCgBlockchainCommandArgument[ARGUMENT_COUNT];
 
-            args[ADDRESS]    = new CgBlockchainCommandArgument(ECgBlockchainCommandArgumentType.StringString, Address);
-            args[PASSPHRASE] = new CgBlockchainCommandArgument(ECgBlockchainCommandArgumentType.StringString, PassPhrase);
-            args[DURATION]   = new CgBlockchainCommandArgument(ECgBlockchainCommandArgumentType.Number, 0);
+            args[ADDRESS]    = new FCgBlockchainCommandArgument(ECgBlockchainCommandArgumentType.StringString, Address);
+            args[PASSPHRASE] = new FCgBlockchainCommandArgument(ECgBlockchainCommandArgumentType.StringString, PassPhrase);
+            args[DURATION]   = new FCgBlockchainCommandArgument(ECgBlockchainCommandArgumentType.Number, 0);
         }
 
         public override string ToStr()

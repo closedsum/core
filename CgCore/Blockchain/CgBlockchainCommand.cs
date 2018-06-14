@@ -49,12 +49,12 @@
         MAX
     }
 
-    public struct CgBlockchainCommandArgument
+    public struct FCgBlockchainCommandArgument
     {
         public ECgBlockchainCommandArgumentType ValueType;
         public object Value;
 
-        public CgBlockchainCommandArgument(ECgBlockchainCommandArgumentType valueType, object value)
+        public FCgBlockchainCommandArgument(ECgBlockchainCommandArgumentType valueType, object value)
         {
             ValueType = valueType;
             Value = value;
@@ -75,20 +75,20 @@
         }
     }
 
-    public struct CgBlockchainCommandInfo
+    public struct FCgBlockchainCommandInfo
     {
         public ECgBlockchainCommand Command;
-        public CgBlockchainCommandArgument[] Arguments;
+        public FCgBlockchainCommandArgument[] Arguments;
         public object Payload;
 
-        public CgBlockchainCommandInfo(ECgBlockchainCommand command, CgBlockchainCommandArgument[] args = null, object payload = null)
+        public FCgBlockchainCommandInfo(ECgBlockchainCommand command, FCgBlockchainCommandArgument[] args = null, object payload = null)
         {
             Command = command;
             Arguments = args;
             Payload = payload;
         }
 
-        public void Set(ECgBlockchainCommand command, CgBlockchainCommandArgument[] args = null, object payload = null)
+        public void Set(ECgBlockchainCommand command, FCgBlockchainCommandArgument[] args = null, object payload = null)
         {
             Command = command;
             Arguments = args;

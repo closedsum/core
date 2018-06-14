@@ -6,7 +6,7 @@
     using Newtonsoft.Json;
 
     [Serializable]
-    public struct CgEthereumKeystoreKdfParams
+    public struct FCgEthereumKeystoreKdfParams
     {
         public int dklen;
         public int n;
@@ -16,27 +16,27 @@
     }
 
     [Serializable]
-    public struct CgEthereumKeystoreCipherParams
+    public struct FCgEthereumKeystoreCipherParams
     {
         public string iv;
     }
 
     [Serializable]
-    public struct CgEthereumKeystoreCrypto
+    public struct FCgEthereumKeystoreCrypto
     {
         public string cipher;
         public string ciphertext;
-        public CgEthereumKeystoreCipherParams cipherparams;
+        public FCgEthereumKeystoreCipherParams cipherparams;
         public string kdf;
-        public CgEthereumKeystoreKdfParams kdfparams;
+        public FCgEthereumKeystoreKdfParams kdfparams;
         public string mac;
     }
 
     [Serializable]
-    public sealed class CgEthereumKeystore
+    public sealed class FCgEthereumKeystore
     {
         public string address;
-        public CgEthereumKeystoreCrypto crypto;
+        public FCgEthereumKeystoreCrypto crypto;
         public string id;
         public int version;
 

@@ -16,7 +16,7 @@
         void Reset();
     }
 
-    public abstract class CgPooledObjectPayload : ICgPooledObjectPayload
+    public abstract class FCgPooledObjectPayload : ICgPooledObjectPayload
     {
         private bool _IsAllocated;
         public bool IsAllocated

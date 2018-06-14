@@ -5,7 +5,7 @@ namespace CgCore
     using System.Collections.Generic;
     using UnityEngine;
 
-    public sealed class CgCoroutinePayload
+    public sealed class FCgCoroutinePayload
     {
         public bool IsAllocated;
 
@@ -20,7 +20,7 @@ namespace CgCore
         public FCgRoutine.FAddRoutine.Event Add;
         public FCgRoutine.FRemoveRoutine.Event Remove;
 
-        public CgCoroutinePayload()
+        public FCgCoroutinePayload()
         {
             StopCondition = new FCgRoutine.FCoroutineStopCondition();
         }
@@ -39,7 +39,7 @@ namespace CgCore
         }
     }
 
-    public class CgCoroutineScheduler
+    public class FCgCoroutineScheduler
     {
 
         public static CgConsoleVariableLog LogTransactions = new CgConsoleVariableLog("log.coroutine.transactions", false, "Log Coroutine Scheduler Allocation and DeAllocation.", (int)ECgConsoleVariableFlag.Console);
@@ -54,14 +54,14 @@ namespace CgCore
 
         #region "Data Members"
 
-        private static CgCoroutineScheduler instance;
-        public static CgCoroutineScheduler Instance
+        private static FCgCoroutineScheduler instance;
+        public static FCgCoroutineScheduler Instance
         {
             get
             {
                 if (instance == null)
                 {
-                    instance = new CgCoroutineScheduler();
+                    instance = new FCgCoroutineScheduler();
                 }
                 return instance;
             }
@@ -79,7 +79,7 @@ namespace CgCore
 
             #region "Payload"
 
-        private List<CgCoroutinePayload> Payloads;
+        private List<FCgCoroutinePayload> Payloads;
 
         private int PayloadIndex;
 
@@ -89,7 +89,7 @@ namespace CgCore
 
         // Constructor
 
-        public CgCoroutineScheduler()
+        public FCgCoroutineScheduler()
         {
             Pools = new Dictionary<ECgCoroutineSchedule, List<FCgRoutine>>(new ECgCoroutineScheduleEqualityComparer());
 
@@ -133,15 +133,15 @@ namespace CgCore
                 Tails[(ECgCoroutineSchedule)i] = null;
             }
 
-            Payloads = new List<CgCoroutinePayload>();
+            Payloads = new List<FCgCoroutinePayload>();
 
             for (ushort i = 0; i < POOL_SIZE; ++i)
             {
-                Payloads.Add(new CgCoroutinePayload());
+                Payloads.Add(new FCgCoroutinePayload());
             }
         }
 
-        public static CgCoroutineScheduler Get()
+        public static FCgCoroutineScheduler Get()
         {
             return Instance;
         }
@@ -198,7 +198,7 @@ namespace CgCore
             }
         }
 
-        public FCgRoutine Start(CgCoroutinePayload payload)
+        public FCgRoutine Start(FCgCoroutinePayload payload)
         {
             ECgCoroutineSchedule schedule = payload.Schedule;
 
@@ -239,7 +239,7 @@ namespace CgCore
 
         public FCgRoutine Start(ECgCoroutineSchedule schedule, IEnumerator fiber)
         {
-            CgCoroutinePayload payload = AllocatePayload();
+            FCgCoroutinePayload payload = AllocatePayload();
 
             payload.Schedule = schedule;
             payload.Fiber = fiber;
@@ -362,20 +362,20 @@ namespace CgCore
                 Debug.Log(functionName + ": On" + schedule + " " + transactionAsString + " Routine with Coroutine: " + r.Name + " at " + currentTime + ". " + elapsed);
         }
 
-        public CgCoroutinePayload AllocatePayload()
+        public FCgCoroutinePayload AllocatePayload()
         {
             for (int i = 0; i < POOL_SIZE; ++i)
             {
                 PayloadIndex = (PayloadIndex + 1) % POOL_SIZE;
 
-                CgCoroutinePayload p = Payloads[PayloadIndex];
+                FCgCoroutinePayload p = Payloads[PayloadIndex];
 
                 if (!p.IsAllocated)
                 {
                     return p;
                 }
             }
-            Debug.LogWarning("CgCoroutineScheduler.AllocatePayload: No free Payloads. Look for Runaway Coroutines or consider raising the pool size.");
+            Debug.LogWarning("FCgCoroutineScheduler.AllocatePayload: No free Payloads. Look for Runaway Coroutines or consider raising the pool size.");
             return null;
         }
     }

@@ -5,7 +5,7 @@ namespace CgCore
     using System.Collections.Generic;
     using UnityEngine;
 
-    public class CgInput_Location : CgInput_Base
+    public class CgInput_Location : FCgInput_Base
     {
         public class CgInputLocation_Event : TCgMulticastDelegate_TwoParams<MonoBehaviour, Vector3> { }
 
@@ -17,7 +17,7 @@ namespace CgCore
 
         public CgInput_Location()
         {
-            Info = new CgInputInfo(ECgInputType.Location, ECgInputValue.Vector);
+            Info = new FCgInputInfo(ECgInputType.Location, ECgInputValue.Vector);
             Info.Event = ECgInputEvent.Stationary;
             Info.Last_Event = Info.Event;
 
@@ -33,7 +33,7 @@ namespace CgCore
             if ((Manager_Input.CurrentInputActionMap & (ActionMap)) == ECgInputActionMap.NONE)
                 return;
 
-            CgInput input = Manager_Input.GetPreviousPreviousInputAction(Action);
+            FCgInput input = Manager_Input.GetPreviousPreviousInputAction(Action);
 
             if (input == null && Info.Location != location)
                 FirstMoved(location);

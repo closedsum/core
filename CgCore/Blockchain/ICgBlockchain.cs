@@ -61,13 +61,13 @@
             if (Get() != null)
                 return;
 
-            CgBlockchain.Init(type);
+            FCgBlockchain.Init(type);
         }
 
         public static ICgBlockchain Get()
         {
-            if (CgBlockchain.Get() != null)
-                return CgBlockchain.Get();
+            if (FCgBlockchain.Get() != null)
+                return FCgBlockchain.Get();
             return null;
         }
 
@@ -91,7 +91,7 @@
         string ContractsDirectory { get; set; }
         string ContractsDeployedDirectory { get; set; }
 
-        Dictionary<ECgBlockchainProcessType, CgProcess> Processes { get; set; }
+        Dictionary<ECgBlockchainProcessType, FCgProcess> Processes { get; set; }
 
                 #region "Running Instance"
 
@@ -111,7 +111,7 @@
 
             #endregion // Private / Local Storage
 
-        ICgBlockchainGenesis Genesis { get; set; }
+        IFCgBlockchainGenesis Genesis { get; set; }
         Dictionary<ECgBlockchainContract, ICgBlockchainContract> Contracts { get; set; }
         Dictionary<ECgBlockchainCommand, string> Commands { get; set; }
 
@@ -125,10 +125,10 @@
 
         void SetCommand(ECgBlockchainCommand command, string str);
         void RunCommand(int consoleIndex, string command);
-        void RunCommand(int consoleIndex, ECgBlockchainCommand command, CgBlockchainCommandArgument[] args = null);
+        void RunCommand(int consoleIndex, ECgBlockchainCommand command, FCgBlockchainCommandArgument[] args = null);
 
-        void SetProcess(ECgBlockchainProcessType processType, int index, CgProcess p);
-        CgProcess GetProcess(ECgBlockchainProcessType processType, int index);
+        void SetProcess(ECgBlockchainProcessType processType, int index, FCgProcess p);
+        FCgProcess GetProcess(ECgBlockchainProcessType processType, int index);
         void StartProcess(ECgBlockchainProcessType processType, int index, CgBlockchainProcessStartInfo startInfo);
         void StopProcess(ECgBlockchainProcessType processType, int index);
 
@@ -158,7 +158,7 @@
         void StopMiner();
     }
 
-    public abstract class CgBlockchain : ICgBlockchain
+    public abstract class FCgBlockchain : ICgBlockchain
     {
         #region "CVars"
 
@@ -175,13 +175,13 @@
         
         #endregion // CVars
 
-        public class PrivateChainCreated : TCgMulticastDelegate_OneParam<int> { }
-        public class PrivateChainStarted : TCgMulticastDelegate_OneParam<int> { }
-        public class ConsoleOpened : TCgMulticastDelegate_OneParam<int> { }
-        public class CommandCompleted : TCgMulticastDelegate_OneParam<ECgBlockchainCommand> { }
-        public class AccountCreated : TCgMulticastDelegate_OneParam<ICgBlockchainAccount>{ }
-        public class CoinbaseSet : TCgDelegate_OneParam<ICgBlockchainAccount> { }
-        public class ContractFunctionCompleted : TCgMulticastDelegate_TwoParams<ECgBlockchainContract, ECgBlockchainContractFunction> { }
+        public class FPrivateChainCreated : TCgMulticastDelegate_OneParam<int> { }
+        public class FPrivateChainStarted : TCgMulticastDelegate_OneParam<int> { }
+        public class FConsoleOpened : TCgMulticastDelegate_OneParam<int> { }
+        public class FCommandCompleted : TCgMulticastDelegate_OneParam<ECgBlockchainCommand> { }
+        public class FAccountCreated : TCgMulticastDelegate_OneParam<ICgBlockchainAccount>{ }
+        public class FCoinbaseSet : TCgDelegate_OneParam<ICgBlockchainAccount> { }
+        public class FContractFunctionCompleted : TCgMulticastDelegate_TwoParams<ECgBlockchainContract, ECgBlockchainContractFunction> { }
 
         #region "Constants"
 
@@ -238,8 +238,8 @@
             set { _ContractsDeployedDirectory = value; }
         }
 
-        private Dictionary<ECgBlockchainProcessType, CgProcess> _Processes;
-        public Dictionary<ECgBlockchainProcessType, CgProcess> Processes
+        private Dictionary<ECgBlockchainProcessType, FCgProcess> _Processes;
+        public Dictionary<ECgBlockchainProcessType, FCgProcess> Processes
         {
             get { return _Processes; }
             set { _Processes = value; }
@@ -288,8 +288,8 @@
 
                 #endregion // Console
 
-        private ICgBlockchainGenesis _Genesis;
-        public ICgBlockchainGenesis Genesis
+        private IFCgBlockchainGenesis _Genesis;
+        public IFCgBlockchainGenesis Genesis
         {
             get { return _Genesis; }
             set { _Genesis = value; }
@@ -320,19 +320,19 @@
 
         private static ICgBlockchain _Instance;
 
-        public PrivateChainCreated PrivateChainCreated_Event;
-        public PrivateChainStarted PrivateChainStarted_Event;
-        public ConsoleOpened ConsoleOpened_Event;
-        public CommandCompleted CommandCompleted_Event;
-        public AccountCreated AccountCreated_Event;
-        public CoinbaseSet CoinbaseSet_Event;
-        public ContractFunctionCompleted ContractFunctionCompleted_Event;
+        public FPrivateChainCreated PrivateChainCreated_Event;
+        public FPrivateChainStarted PrivateChainStarted_Event;
+        public FConsoleOpened ConsoleOpened_Event;
+        public FCommandCompleted CommandCompleted_Event;
+        public FAccountCreated AccountCreated_Event;
+        public FCoinbaseSet CoinbaseSet_Event;
+        public FContractFunctionCompleted ContractFunctionCompleted_Event;
 
         #endregion // Data Members
 
-        public CgBlockchain()
+        public FCgBlockchain()
         {
-            Processes = new Dictionary<ECgBlockchainProcessType, CgProcess>(new ECgBlockchainProcessTypeEqualityComparer());
+            Processes = new Dictionary<ECgBlockchainProcessType, FCgProcess>(new ECgBlockchainProcessTypeEqualityComparer());
 
             for (byte i = 0; i < (byte)ECgBlockchainProcessType.MAX; ++i)
             {
@@ -344,13 +344,13 @@
             
             Accounts = new Dictionary<string, ICgBlockchainAccount>();
 
-            PrivateChainCreated_Event = new PrivateChainCreated();
-            PrivateChainStarted_Event = new PrivateChainStarted();
-            ConsoleOpened_Event = new ConsoleOpened();
-            CommandCompleted_Event = new CommandCompleted();
-            AccountCreated_Event = new AccountCreated();
-            CoinbaseSet_Event = new CoinbaseSet();
-            ContractFunctionCompleted_Event = new ContractFunctionCompleted();
+            PrivateChainCreated_Event = new FPrivateChainCreated();
+            PrivateChainStarted_Event = new FPrivateChainStarted();
+            ConsoleOpened_Event = new FConsoleOpened();
+            CommandCompleted_Event = new FCommandCompleted();
+            AccountCreated_Event = new FAccountCreated();
+            CoinbaseSet_Event = new FCoinbaseSet();
+            ContractFunctionCompleted_Event = new FContractFunctionCompleted();
         }
 
         public static ICgBlockchain Get()
@@ -368,9 +368,9 @@
             if (_Instance != null)
                 return;
 
-            if (!type.IsSubclassOf(typeof(CgBlockchain)))
+            if (!type.IsSubclassOf(typeof(FCgBlockchain)))
             {
-                CgDebug.Log("CgBlockchain.Init: Passed in Type of " + type.GetType().Name + " is NOT a SubclassOf CgBlockchain");
+                CgDebug.Log("FCgBlockchain.Init: Passed in Type of " + type.GetType().Name + " is NOT a SubclassOf FCgBlockchain");
                 return;
             }
             ConstructorInfo constructor = type.GetConstructor(Type.EmptyTypes);
@@ -385,10 +385,10 @@
 
         public abstract void SetCommand(ECgBlockchainCommand command, string str);
         public abstract void RunCommand(int consoleIndex, string command);
-        public abstract void RunCommand(int consoleIndex, ECgBlockchainCommand command, CgBlockchainCommandArgument[] args = null);
+        public abstract void RunCommand(int consoleIndex, ECgBlockchainCommand command, FCgBlockchainCommandArgument[] args = null);
 
-        public abstract void SetProcess(ECgBlockchainProcessType processType, int index, CgProcess p);
-        public abstract CgProcess GetProcess(ECgBlockchainProcessType processType, int index);
+        public abstract void SetProcess(ECgBlockchainProcessType processType, int index, FCgProcess p);
+        public abstract FCgProcess GetProcess(ECgBlockchainProcessType processType, int index);
         public abstract void StartProcess(ECgBlockchainProcessType processType, int index, CgBlockchainProcessStartInfo startInfo);
         public abstract void StopProcess(ECgBlockchainProcessType processType, int index);
 

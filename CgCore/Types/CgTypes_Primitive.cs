@@ -1139,13 +1139,13 @@ namespace CgCore
 
     #region "Attribute"
 
-    public class TCgAttributeValue<T> where T : struct
+    public class TFCgAttributeValue<T> where T : struct
     {
         public T Value;
         public T UnSetValue;
         public bool IsSet;
 
-        public TCgAttributeValue(T value)
+        public TFCgAttributeValue(T value)
         {
             Value = value;
             UnSetValue = default(T);
@@ -1170,13 +1170,13 @@ namespace CgCore
         }
     }
 
-    public class TCgAttributeRef<T> where T : class
+    public class TFCgAttributeRef<T> where T : class
     {
         public T Ref;
         public T UnSetRef;
         public bool IsSet;
 
-        public TCgAttributeRef(T inRef)
+        public TFCgAttributeRef(T inRef)
         {
             Ref = inRef;
             UnSetRef = default(T);
@@ -1201,14 +1201,14 @@ namespace CgCore
         }
     }
     
-    public sealed class CgAttribute
+    public sealed class FCgAttribute
     {
         private Type ValueType;
         private object Value;
         private object UnSetValue;
         private bool IsSet;
 
-        public CgAttribute()
+        public FCgAttribute()
         {
             ValueType = null;
             Value = null;

@@ -15,14 +15,14 @@ namespace CgCore
         public object Owner;
         public string OwnerName;
         public byte RoutineType;
-        public CgRoutine.CoroutineStopCondition StopCondition;
+        public FCgRoutine.FCoroutineStopCondition StopCondition;
 
-        public CgRoutine.AddRoutine.Event Add;
-        public CgRoutine.RemoveRoutine.Event Remove;
+        public FCgRoutine.FAddRoutine.Event Add;
+        public FCgRoutine.FRemoveRoutine.Event Remove;
 
         public CgCoroutinePayload()
         {
-            StopCondition = new CgRoutine.CoroutineStopCondition();
+            StopCondition = new FCgRoutine.FCoroutineStopCondition();
         }
 
         public void Reset()
@@ -32,7 +32,7 @@ namespace CgCore
             Fiber = null;
             Owner = null;
             OwnerName = "";
-            RoutineType = CgRoutine.INVALID_TYPE;
+            RoutineType = FCgRoutine.INVALID_TYPE;
             StopCondition.Clear();
             Add = null;
             Remove = null;
@@ -70,12 +70,12 @@ namespace CgCore
         private int currentFrame;
         private float currentTime;
 
-        public Dictionary<ECgCoroutineSchedule, List<CgRoutine>> Pools;
+        public Dictionary<ECgCoroutineSchedule, List<FCgRoutine>> Pools;
         public Dictionary<ECgCoroutineSchedule, int> PoolIndicies;
-        public Dictionary<ECgCoroutineSchedule, List<CgRoutine>> RoutinesRunning;
+        public Dictionary<ECgCoroutineSchedule, List<FCgRoutine>> RoutinesRunning;
 
-        public Dictionary<ECgCoroutineSchedule, CgRoutine> Heads;
-        public Dictionary<ECgCoroutineSchedule, CgRoutine> Tails;
+        public Dictionary<ECgCoroutineSchedule, FCgRoutine> Heads;
+        public Dictionary<ECgCoroutineSchedule, FCgRoutine> Tails;
 
             #region "Payload"
 
@@ -91,16 +91,16 @@ namespace CgCore
 
         public CgCoroutineScheduler()
         {
-            Pools = new Dictionary<ECgCoroutineSchedule, List<CgRoutine>>(new ECgCoroutineScheduleEqualityComparer());
+            Pools = new Dictionary<ECgCoroutineSchedule, List<FCgRoutine>>(new ECgCoroutineScheduleEqualityComparer());
 
             for (byte i = 0; i < (byte)ECgCoroutineSchedule.MAX; ++i)
             {
-                List<CgRoutine> routines = new List<CgRoutine>();
+                List<FCgRoutine> routines = new List<FCgRoutine>();
                 ECgCoroutineSchedule schedule = (ECgCoroutineSchedule)i;
 
                 for (ushort j = 0; j < POOL_SIZE; ++j)
                 {
-                    routines.Add(new CgRoutine(j, schedule, InsertRoutine));
+                    routines.Add(new FCgRoutine(j, schedule, InsertRoutine));
                 }
                 Pools[(ECgCoroutineSchedule)i] = routines;
             }
@@ -112,21 +112,21 @@ namespace CgCore
                 PoolIndicies[(ECgCoroutineSchedule)i] = 0;
             }
 
-            RoutinesRunning = new Dictionary<ECgCoroutineSchedule, List<CgRoutine>>(new ECgCoroutineScheduleEqualityComparer());
+            RoutinesRunning = new Dictionary<ECgCoroutineSchedule, List<FCgRoutine>>(new ECgCoroutineScheduleEqualityComparer());
 
             for (byte i = 0; i < (byte)ECgCoroutineSchedule.MAX; ++i)
             {
-                RoutinesRunning[(ECgCoroutineSchedule)i] = new List<CgRoutine>();
+                RoutinesRunning[(ECgCoroutineSchedule)i] = new List<FCgRoutine>();
             }
 
-            Heads = new Dictionary<ECgCoroutineSchedule, CgRoutine>(new ECgCoroutineScheduleEqualityComparer());
+            Heads = new Dictionary<ECgCoroutineSchedule, FCgRoutine>(new ECgCoroutineScheduleEqualityComparer());
 
             for (byte i = 0; i < (byte)ECgCoroutineSchedule.MAX; ++i)
             {
                 Heads[(ECgCoroutineSchedule)i] = null;
             }
 
-            Tails = new Dictionary<ECgCoroutineSchedule, CgRoutine>(new ECgCoroutineScheduleEqualityComparer());
+            Tails = new Dictionary<ECgCoroutineSchedule, FCgRoutine>(new ECgCoroutineScheduleEqualityComparer());
 
             for (byte i = 0; i < (byte)ECgCoroutineSchedule.MAX; ++i)
             {
@@ -146,24 +146,24 @@ namespace CgCore
             return Instance;
         }
 
-        public CgRoutine Allocate(ECgCoroutineSchedule schedule)
+        public FCgRoutine Allocate(ECgCoroutineSchedule schedule)
         {
             for (ushort i = 0; i < POOL_SIZE; ++i)
             {
                 PoolIndicies[schedule] = (PoolIndicies[schedule] + i) % POOL_SIZE;
 
-                CgRoutine r = Pools[schedule][PoolIndicies[schedule]];
+                FCgRoutine r = Pools[schedule][PoolIndicies[schedule]];
 
                 if (r.State != ECgRoutineState.Free)
                     continue;
 
                 return r;
             }
-            Debug.LogError("CgRoutine.Allocate: No free Routines. Pools[" + schedule.ToString() + "] is exhausted. Look for runaway Coroutines or consider raising the pool size.");
+            Debug.LogError("FCgRoutine.Allocate: No free Routines. Pools[" + schedule.ToString() + "] is exhausted. Look for runaway Coroutines or consider raising the pool size.");
             return null;
         }
 
-        public void InsertRoutine(ECgCoroutineSchedule schedule, CgRoutine pivot, CgRoutine insert)
+        public void InsertRoutine(ECgCoroutineSchedule schedule, FCgRoutine pivot, FCgRoutine insert)
         {
             // Detach insert
 
@@ -198,11 +198,11 @@ namespace CgCore
             }
         }
 
-        public CgRoutine Start(CgCoroutinePayload payload)
+        public FCgRoutine Start(CgCoroutinePayload payload)
         {
             ECgCoroutineSchedule schedule = payload.Schedule;
 
-            CgRoutine r = Allocate(schedule);
+            FCgRoutine r = Allocate(schedule);
 
             if (r == null)
             {
@@ -219,7 +219,7 @@ namespace CgCore
             // Add r end of the list, Make r the Tail
             else
             {
-                CgRoutine tail = Tails[schedule];
+                FCgRoutine tail = Tails[schedule];
                 tail.Next = r;
                 r.Prev = tail;
                 Tails[schedule] = r;
@@ -227,7 +227,7 @@ namespace CgCore
 
             RoutinesRunning[schedule].Add(r);
 
-            LogTransaction("CgRoutine.Start", ECgCoroutineTransaction.Start, r);
+            LogTransaction("FCgRoutine.Start", ECgCoroutineTransaction.Start, r);
 
             // TODO: get Time from Manager_Time
             r.Start(payload.Fiber, payload.StopCondition, payload.Owner, payload.OwnerName, Time.timeSinceLevelLoad, payload.Add, payload.Remove, payload.RoutineType);
@@ -237,7 +237,7 @@ namespace CgCore
             return r;
         }
 
-        public CgRoutine Start(ECgCoroutineSchedule schedule, IEnumerator fiber)
+        public FCgRoutine Start(ECgCoroutineSchedule schedule, IEnumerator fiber)
         {
             CgCoroutinePayload payload = AllocatePayload();
 
@@ -259,7 +259,7 @@ namespace CgCore
         public void Update(ECgCoroutineSchedule schedule, float deltaTime)
         {
             // Iterate through List
-            CgRoutine current = Heads[schedule];
+            FCgRoutine current = Heads[schedule];
 
             while (current != null)
             {
@@ -296,9 +296,9 @@ namespace CgCore
                             Tails[schedule] = null;
                         }
                     }
-                    LogTransaction("CgRoutine.Update", ECgCoroutineTransaction.End, current);
+                    LogTransaction("FCgRoutine.Update", ECgCoroutineTransaction.End, current);
 
-                    CgRoutine r = current;
+                    FCgRoutine r = current;
                     current     = current.Next;
                     r.Reset();
                 }
@@ -313,7 +313,7 @@ namespace CgCore
 
             for (int i = count - 1; i >= 0; --i)
             {
-                CgRoutine r = RoutinesRunning[schedule][i];
+                FCgRoutine r = RoutinesRunning[schedule][i];
 
                 if (r.State == ECgRoutineState.Free)
                 {
@@ -338,7 +338,7 @@ namespace CgCore
             Update(ECgCoroutineSchedule.Update, deltaTime);
         }
 
-        public void LogTransaction(string functionName, ECgCoroutineTransaction transaction, CgRoutine r)
+        public void LogTransaction(string functionName, ECgCoroutineTransaction transaction, FCgRoutine r)
         {
             if (!LogTransactions.Log())
                 return;

@@ -34,18 +34,18 @@ namespace CgCore
         }
     }
 
-    public sealed class CgRoutine
+    public sealed class FCgRoutine
     {
-        public sealed class CoroutineStopCondition : TCgMulticastDelegate_RetOrBool_OneParam<CgRoutine> { }
-        public sealed class AddRoutine : TCgDelegate_OneParam<CgRoutine> { }
-        public sealed class RemoveRoutine : TCgDelegate_OneParam<CgRoutine> { }
+        public sealed class FCoroutineStopCondition : TCgMulticastDelegate_RetOrBool_OneParam<FCgRoutine> { }
+        public sealed class FAddRoutine : TCgDelegate_OneParam<FCgRoutine> { }
+        public sealed class FRemoveRoutine : TCgDelegate_OneParam<FCgRoutine> { }
 
-        public delegate void InsertRoutineAheadOf(ECgCoroutineSchedule schedule, CgRoutine pivot, CgRoutine insert);
+        public delegate void InsertRoutineAheadOf(ECgCoroutineSchedule schedule, FCgRoutine pivot, FCgRoutine insert);
 
-        public sealed class FrameType : TCgPropertyType<int> { }
-        public sealed class TimeType : TCgPropertyType<float> { }
-        public sealed class BoolType : TCgPropertyType<bool> { }
-        public sealed class ListenMessageType : TCgPropertyClass<string> { }
+        public sealed class FFrameType : TCgPropertyType<int> { }
+        public sealed class FTimeType : TCgPropertyType<float> { }
+        public sealed class FBoolType : TCgPropertyType<bool> { }
+        public sealed class FListenMessageType : TCgPropertyClass<string> { }
 
         #region "Constants"
 
@@ -59,8 +59,8 @@ namespace CgCore
         public readonly int Index;
         public readonly ECgCoroutineSchedule Schedule;
 
-        public CgRoutine Prev;
-        public CgRoutine Next;
+        public FCgRoutine Prev;
+        public FCgRoutine Next;
 
         public ECgRoutineState State;
 
@@ -69,23 +69,23 @@ namespace CgCore
         public byte RoutineType;
 
         public bool bWaitingFor;
-        public CgRoutine WaitingFor;
-        public CgRoutine Blocking;
+        public FCgRoutine WaitingFor;
+        public FCgRoutine Blocking;
 
         public readonly InsertRoutineAheadOf InsertRoutine;
 
-        public CgRoutine Parent;
-        public List<CgRoutine> Children;
+        public FCgRoutine Parent;
+        public List<FCgRoutine> Children;
 
-        public CgAttribute Owner;
+        public FCgAttribute Owner;
         public string OwnerName;
-        public CoroutineStopCondition StopCondition;
+        public FCoroutineStopCondition StopCondition;
 
         public List<string> StopMessages;
         public Dictionary<ECgCoroutineMessage, List<string>> Messages_Recieved;
 
-        public AddRoutine Add;
-        public RemoveRoutine Remove;
+        public FAddRoutine Add;
+        public FRemoveRoutine Remove;
 
         public float StartTime;
         public float ElapsedTime;
@@ -97,20 +97,20 @@ namespace CgCore
         public bool bWaitForFrame;
         public int WaitForFrameCounter;
         public int WaitForFrame;
-        public FrameType WaitForFrameType;
+        public FFrameType WaitForFrameType;
         // Time
         public bool bWaitForTime;
         public float WaitForTimeTimer;
         public float WaitForTime;
-        public TimeType WaitForTimeType;
+        public FTimeType WaitForTimeType;
         // Flag
         public bool bWaitForFlag;
-        public BoolType WaitForBoolType;
+        public FBoolType WaitForBoolType;
         public ICgFlag WaitForFlagType;
         // Message
         public bool bWaitForListenMessage;
         public string WaitForListenMessage;
-        public ListenMessageType WaitForListenMessageType;
+        public FListenMessageType WaitForListenMessageType;
 
         public ECgCoroutineEndReason EndReason;
 
@@ -118,7 +118,7 @@ namespace CgCore
 
         // Constructor
 
-        public CgRoutine(int index, ECgCoroutineSchedule schedule, InsertRoutineAheadOf insertRoutine)
+        public FCgRoutine(int index, ECgCoroutineSchedule schedule, InsertRoutineAheadOf insertRoutine)
         {
             Index = index;
             Schedule = schedule;
@@ -139,11 +139,11 @@ namespace CgCore
             InsertRoutine = insertRoutine;
 
             Parent = null;
-            Children = new List<CgRoutine>();
+            Children = new List<FCgRoutine>();
 
-            Owner = new CgAttribute();
+            Owner = new FCgAttribute();
             OwnerName = "";
-            StopCondition = new CoroutineStopCondition();
+            StopCondition = new FCoroutineStopCondition();
 
             StopMessages = new List<string>();
             Messages_Recieved = new Dictionary<ECgCoroutineMessage, List<string>>(new ECgCoroutineMessageEqualityComparer());
@@ -153,8 +153,8 @@ namespace CgCore
                 Messages_Recieved[(ECgCoroutineMessage)i] = new List<string>();
             }
 
-            Add = new AddRoutine();
-            Remove = new RemoveRoutine();
+            Add = new FAddRoutine();
+            Remove = new FRemoveRoutine();
 
             StartTime = 0.0f;
             ElapsedTime = 0.0f;
@@ -182,7 +182,7 @@ namespace CgCore
 
         // Functions
 
-        public void Start(IEnumerator fiber, CoroutineStopCondition stopCondition, object owner, string ownerName, float startTime, AddRoutine.Event add, RemoveRoutine.Event remove, byte routineType)
+        public void Start(IEnumerator fiber, FCoroutineStopCondition stopCondition, object owner, string ownerName, float startTime, FAddRoutine.Event add, FRemoveRoutine.Event remove, byte routineType)
         {
             Fiber = fiber;
             stopCondition.CopyTo(stopCondition);
@@ -198,7 +198,7 @@ namespace CgCore
                 Add.Execute(this);
         }
 
-        public void Start(IEnumerator fiber, CoroutineStopCondition stopCondition, object owner, string ownerName, float startTime)
+        public void Start(IEnumerator fiber, FCoroutineStopCondition stopCondition, object owner, string ownerName, float startTime)
         {
             Start(fiber, stopCondition, owner, ownerName, startTime, null, null, INVALID_TYPE);
         }
@@ -255,7 +255,7 @@ namespace CgCore
                         WaitForFrame  = 0;
                         WaitForFrameType = null;
 
-                        Debug.LogWarning("CgRoutine.Run: yield return value of type 'CgRoutine.FrameType' is used for WaitForFrame. yield return value must be >= 0.");
+                        Debug.LogWarning("FCgRoutine.Run: yield return value of type 'FCgRoutine.FFrameType' is used for WaitForFrame. yield return value must be >= 0.");
                     }
                 }
 
@@ -282,7 +282,7 @@ namespace CgCore
                         WaitForTime = 0.0f;
                         WaitForTimeType = null;
 
-                        Debug.LogWarning("CgRoutine.Run: yield return value of type 'CgRoutine.TimeType' is used for WaitForTime. yield return value must be >= 0.0f.");
+                        Debug.LogWarning("FCgRoutine.Run: yield return value of type 'FCgRoutine.FTimeType' is used for WaitForTime. yield return value must be >= 0.0f.");
                     }
                 }
 
@@ -334,7 +334,7 @@ namespace CgCore
 
                     if (WaitForListenMessage == INVALID_LISTEN_MESSAGE)
                     {
-                        Debug.LogWarning("CgRoutine.Run: yield return value of type 'CgRoutine.ListenMessageType' is used for WaitForListenMessage. yield return value must NOT be empty.");
+                        Debug.LogWarning("FCgRoutine.Run: yield return value of type 'FCgRoutine.FListenMessageType' is used for WaitForListenMessage. yield return value must NOT be empty.");
                     }
                 }
 
@@ -363,7 +363,7 @@ namespace CgCore
                     {
                         WaitForFrame = 0;
 
-                        Debug.LogWarning("CgRoutine.Run: yield return value of type 'int' is used for WaitForFrame. yield return value must be >= 0.");
+                        Debug.LogWarning("FCgRoutine.Run: yield return value of type 'int' is used for WaitForFrame. yield return value must be >= 0.");
                     }
                     else
                     {
@@ -372,15 +372,15 @@ namespace CgCore
                     }
                 }
                 else
-                if (type == typeof(FrameType))
+                if (type == typeof(FFrameType))
                 {
-                    WaitForFrameType = (FrameType)yieldCommand;
+                    WaitForFrameType = (FFrameType)yieldCommand;
 
                     if (WaitForFrameType.Get() < 0)
                     {
                         WaitForFrameType = null;
 
-                        Debug.LogWarning("CgRoutine.Run: yield return value of type 'CgRoutine.FrameType' is used for WaitForFrame. yield return value must be >= 0.");
+                        Debug.LogWarning("FCgRoutine.Run: yield return value of type 'FCgRoutine.FFrameType' is used for WaitForFrame. yield return value must be >= 0.");
                     }
                     else
                     {
@@ -398,7 +398,7 @@ namespace CgCore
                     {
                         WaitForTime = 0.0f;
 
-                        Debug.LogWarning("CgRoutine.Run: yield return value of type 'float' is used for WaitForTime. yield return value must be >= 0.0f.");
+                        Debug.LogWarning("FCgRoutine.Run: yield return value of type 'float' is used for WaitForTime. yield return value must be >= 0.0f.");
                     }
                     else
                     {
@@ -407,15 +407,15 @@ namespace CgCore
                     }
                 }
                 else
-                if (type == typeof(TimeType))
+                if (type == typeof(FTimeType))
                 {
-                    WaitForTimeType = (TimeType)yieldCommand;
+                    WaitForTimeType = (FTimeType)yieldCommand;
 
                     if (WaitForTimeType.Get() < 0.0f)
                     {
                         WaitForTimeType = null;
 
-                        Debug.LogWarning("CgRoutine.Run: yield return value of type 'CgRoutine.TimeType' is used for WaitForTime. yield return value must be >= 0.0f.");
+                        Debug.LogWarning("FCgRoutine.Run: yield return value of type 'FCgRoutine.FTimeType' is used for WaitForTime. yield return value must be >= 0.0f.");
                     }
                     else
                     {
@@ -425,9 +425,9 @@ namespace CgCore
                 }
                 // WaitingFor
                 else
-                if (type == typeof(CgRoutine))
+                if (type == typeof(FCgRoutine))
                 {
-                    WaitingFor = (CgRoutine)yieldCommand;
+                    WaitingFor = (FCgRoutine)yieldCommand;
                     WaitingFor.Blocking = this;
                     bWaitingFor = true;
 
@@ -436,9 +436,9 @@ namespace CgCore
                 }
                 // WaitForFlag
                 else
-                if (type == typeof(BoolType))
+                if (type == typeof(FBoolType))
                 {
-                    WaitForBoolType = (BoolType)yieldCommand;
+                    WaitForBoolType = (FBoolType)yieldCommand;
 
                     if (!WaitForBoolType.Get())
                         bWaitForFlag = true;
@@ -459,7 +459,7 @@ namespace CgCore
 
                     if (WaitForListenMessage == INVALID_LISTEN_MESSAGE)
                     {
-                        Debug.LogWarning("CgRoutine.Run: yield return value of type 'string' is used for WaitForListenMessage. yield return value must NOT be empty.");
+                        Debug.LogWarning("FCgRoutine.Run: yield return value of type 'string' is used for WaitForListenMessage. yield return value must NOT be empty.");
                     }
                     else
                     {
@@ -467,13 +467,13 @@ namespace CgCore
                     }
                 }
                 else
-                if (type == typeof(ListenMessageType))
+                if (type == typeof(FListenMessageType))
                 {
-                    WaitForListenMessageType = (ListenMessageType)yieldCommand;
+                    WaitForListenMessageType = (FListenMessageType)yieldCommand;
 
                     if (WaitForListenMessageType.Get() == INVALID_LISTEN_MESSAGE)
                     {
-                        Debug.LogWarning("CgRoutine.Run: yield return value of type 'string' is used for WaitForListenMessage. yield return value must NOT be empty.");
+                        Debug.LogWarning("FCgRoutine.Run: yield return value of type 'string' is used for WaitForListenMessage. yield return value must NOT be empty.");
                     }
                     else
                     {
@@ -483,7 +483,7 @@ namespace CgCore
                 // INVALID Type
                 else
                 {
-                    Debug.LogError("CgRoutine.Run: Invalid Type: " + type.GetType() + " for yield. yield return value must be of type: int, CgRoutine.FrameType, float, CgRoutine.TimeType, CgRoutine, CgRoutine.BoolType, ICgFlag, string, or CgRoutine.ListenMessageType.");
+                    Debug.LogError("FCgRoutine.Run: Invalid Type: " + type.GetType() + " for yield. yield return value must be of type: int, FCgRoutine.FFrameType, float, FCgRoutine.FTimeType, FCgRoutine, FCgRoutine.FBoolType, ICgFlag, string, or FCgRoutine.FListenMessageType.");
                 }
             }
             // Finished

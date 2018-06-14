@@ -140,21 +140,21 @@ namespace CgCore
 
         protected Dictionary<ECgBlockchainContract, Dictionary<ECgBlockchainContractFunction, CgBlockchainContractFunction>> ContractFunctions;
 
-        public CgRoutine.BoolType IsRunningInstanceCloseFlag;
+        public FCgRoutine.FBoolType IsRunningInstanceCloseFlag;
 
         protected Dictionary<ECgBlockchainCommand, CgProcessMonitorOutputEvent> MonitorOutputEvents;
 
         protected CgBlockchainCommandInfo CurrentCommandInfo;
         protected object CurrentCommandOuput;
 
-        protected CgRoutine.BoolType CommandFlag;
-        protected CgRoutine.BoolType SetupAccountFlag;
-        protected CgRoutine.BoolType BringBalanceToThresholdFlag;
-        protected CgRoutine.BoolType DeployContractFlag;
-        protected CgRoutine.BoolType LoadContractsFlag;
-        protected CgRoutine.BoolType SetupContractFlag;
-        protected CgRoutine.BoolType RunContractStateChangeFunctionFlag;
-        protected CgRoutine.BoolType TransactionMinedFlag;
+        protected FCgRoutine.FBoolType CommandFlag;
+        protected FCgRoutine.FBoolType SetupAccountFlag;
+        protected FCgRoutine.FBoolType BringBalanceToThresholdFlag;
+        protected FCgRoutine.FBoolType DeployContractFlag;
+        protected FCgRoutine.FBoolType LoadContractsFlag;
+        protected FCgRoutine.FBoolType SetupContractFlag;
+        protected FCgRoutine.FBoolType RunContractStateChangeFunctionFlag;
+        protected FCgRoutine.FBoolType TransactionMinedFlag;
 
         protected CgEthereumContract CurrentContract;
 
@@ -175,7 +175,7 @@ namespace CgCore
             RootDirectory = path + "Blockchain\\Ethereum";
             GenesisFilePath = RootDirectory + "/genesis.json"; ;
 
-            IsRunningInstanceCloseFlag = new CgRoutine.BoolType();
+            IsRunningInstanceCloseFlag = new FCgRoutine.FBoolType();
             IsRunningInstanceCloseFlag.Set(true);
 
             ChainDirectory = path + "Blockchain\\Ethereum\\chaindata";
@@ -318,21 +318,21 @@ namespace CgCore
                 // GetTransactionReceipt
             SetCommand(ECgEthereumCommand.GetTransactionReceipt, "eth.getTransactionReceipt(%s)");
 
-            CommandFlag = new CgRoutine.BoolType();
+            CommandFlag = new FCgRoutine.FBoolType();
             CommandFlag.Set(false);
-            SetupAccountFlag = new CgRoutine.BoolType();
+            SetupAccountFlag = new FCgRoutine.FBoolType();
             SetupAccountFlag.Set(false);
-            BringBalanceToThresholdFlag = new CgRoutine.BoolType();
+            BringBalanceToThresholdFlag = new FCgRoutine.FBoolType();
             BringBalanceToThresholdFlag.Set(false);
-            DeployContractFlag = new CgRoutine.BoolType();
+            DeployContractFlag = new FCgRoutine.FBoolType();
             DeployContractFlag.Set(false);
-            LoadContractsFlag = new CgRoutine.BoolType();
+            LoadContractsFlag = new FCgRoutine.FBoolType();
             LoadContractsFlag.Set(false);
-            SetupContractFlag = new CgRoutine.BoolType();
+            SetupContractFlag = new FCgRoutine.FBoolType();
             SetupContractFlag.Set(false);
-            RunContractStateChangeFunctionFlag = new CgRoutine.BoolType();
+            RunContractStateChangeFunctionFlag = new FCgRoutine.FBoolType();
             RunContractStateChangeFunctionFlag.Set(false);
-            TransactionMinedFlag = new CgRoutine.BoolType();
+            TransactionMinedFlag = new FCgRoutine.FBoolType();
             TransactionMinedFlag.Set(false);
 
             CommandCompleted_Event.Add(OnCommandCompleted);

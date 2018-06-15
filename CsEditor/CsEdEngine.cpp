@@ -50,6 +50,8 @@
 #include "DetailCustomizations/EnumStruct/Item/ECsItemTypeCustomization.h"
 #include "DetailCustomizations/EnumStruct/Item/ECsItemOwnerCustomization.h"
 #include "DetailCustomizations/EnumStruct/Item/ECsItemInteractionCustomization.h"
+	// Crafting
+#include "DetailCustomizations/EnumStruct/Crafting/ECsRecipeTypeCustomization.h"
 	// Damage
 #include "DetailCustomizations/EnumStruct/Damage/ECsDamageTypeCustomization.h"
 #include "DetailCustomizations/EnumStruct/Damage/ECsHitTypeCustomization.h"
@@ -101,6 +103,8 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsItemType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsItemTypeCustomization::MakeInstance));
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsItemOwner", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsItemOwnerCustomization::MakeInstance));
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsItemInteraction", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsItemInteractionCustomization::MakeInstance));
+		// Crafting
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsRecipeType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsRecipeTypeCustomization::MakeInstance));
 		// Damage
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsDamageType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsDamageTypeCustomization::MakeInstance));
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsHitType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsHitTypeCustomization::MakeInstance));

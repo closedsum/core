@@ -771,6 +771,12 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FECsSoundType
 				if (StructProperty->Struct == FECsSoundType::StaticStruct())
 				{ WriteMemberEnumStructPropertyToJson<FECsSoundType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsItemType
+				if (StructProperty->Struct == FECsItemType::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsItemType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsRecipeType
+				if (StructProperty->Struct == FECsRecipeType::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsRecipeType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
 			}
 
 			if (Internal)
@@ -1506,6 +1512,12 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FECsSoundType
 				if (StructProperty->Struct == FECsSoundType::StaticStruct())
 				{ WriteMemberEnumStructPropertyToJson<FECsSoundType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsItemType
+				if (StructProperty->Struct == FECsItemType::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsItemType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsRecipeType
+				if (StructProperty->Struct == FECsRecipeType::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsRecipeType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
 			}
 
 			if (Internal)
@@ -2181,6 +2193,12 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FECsSoundType
 				if (StructProperty->Struct == FECsSoundType::StaticStruct())
 				{ WriteMemberEnumStructPropertyToJson<FECsSoundType>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+				// FECsItemType
+				if (StructProperty->Struct == FECsItemType::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsItemType>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+				// FECsRecipeType
+				if (StructProperty->Struct == FECsRecipeType::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsRecipeType>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
 			}
 
 			if (Internal)
@@ -3032,6 +3050,12 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 				// FECsSoundType
 				if (StructProperty->Struct == FECsSoundType::StaticStruct())
 				{ WriteToMemberEnumStructPropertyFromJson<FECsSoundType, EMCsSoundType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FECsItemType
+				if (StructProperty->Struct == FECsItemType::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsItemType, EMCsItemType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FECsRecipeType
+				if (StructProperty->Struct == FECsRecipeType::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsRecipeType, EMCsRecipeType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 			}
 
 			if (Internal)
@@ -3807,6 +3831,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				// FECsSoundType
 				if (StructProperty->Struct == FECsSoundType::StaticStruct())
 				{ WriteToMemberEnumStructPropertyFromJson<FECsSoundType, EMCsSoundType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FECsItemType
+				if (StructProperty->Struct == FECsItemType::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsItemType, EMCsItemType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 			}
 
 			if (Internal)
@@ -4529,6 +4556,12 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				// FECsSoundType
 				if (StructProperty->Struct == FECsSoundType::StaticStruct())
 				{ WriteToMemberEnumStructPropertyFromJson<FECsSoundType, EMCsSoundType>(JsonObject, StructProperty, InObject, MemberName); continue; }
+				// FECsItemType
+				if (StructProperty->Struct == FECsItemType::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsItemType, EMCsItemType>(JsonObject, StructProperty, InObject, MemberName); continue; }
+				// FECsRecipeType
+				if (StructProperty->Struct == FECsRecipeType::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsRecipeType, EMCsRecipeType>(JsonObject, StructProperty, InObject, MemberName); continue; }
 			}
 
 			if (Internal)

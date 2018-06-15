@@ -16,6 +16,40 @@ class CSCORE_API UCsLibrary_Enum : public UBlueprintFunctionLibrary
 {
 	GENERATED_UCLASS_BODY()
 
+// Asset
+#pragma region
+
+#pragma endregion Asset
+
+// Input
+#pragma region
+
+#pragma endregion Input
+
+// SurfaceType
+#pragma region
+
+#pragma endregion SurfaceType
+
+// GestureType
+#pragma region
+
+#pragma endregion SurfaceType
+
+// Character
+#pragma region
+
+#pragma endregion Character
+
+// Weapon
+#pragma region
+
+#pragma endregion Weapon
+
+
+// Process
+#pragma region
+
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
 	FECsProcess GetECsProcess(const FString& Name);
 
@@ -24,6 +58,8 @@ class CSCORE_API UCsLibrary_Enum : public UBlueprintFunctionLibrary
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
 	FString ECsProcessToString(const FECsProcess& Enum);
+
+#pragma endregion Process
 
 // Blockchain
 #pragma region
@@ -65,4 +101,29 @@ class CSCORE_API UCsLibrary_Enum : public UBlueprintFunctionLibrary
 	FString ECsEthereumJavascriptToString(const FECsEthereumJavascript& Enum);
 
 #pragma endregion Blockchain
+
+// Item
+#pragma region
+
+#pragma endregion Item
+
+// Crafting
+#pragma region
+
+#pragma endregion Crafting
+
+// Damage
+#pragma region
+
+#pragma endregion Damage
+
+// Interactive
+#pragma region
+
+#pragma endregion Interactive
+
+// Sound
+#pragma region
+
+#pragma endregion Sound
 };

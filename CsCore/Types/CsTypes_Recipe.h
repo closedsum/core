@@ -7,27 +7,39 @@
 // Recipe
 #pragma region
 
-namespace ECsRecipeType
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsRecipeType : public FECsEnum_uint8
 {
-	enum Type : uint8;
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsRecipeType() {}
+	FECsRecipeType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsRecipeType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsRecipeType() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsRecipeType& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-typedef ECsRecipeType::Type TCsRecipeType;
+struct CSCORE_API EMCsRecipeType : public TCsEnumStructMap<FECsRecipeType, uint8>
+{
+protected:
+	EMCsRecipeType() {}
+	EMCsRecipeType(const EMCsRecipeType &) = delete;
+	EMCsRecipeType(EMCsRecipeType &&) = delete;
+public:
+	~EMCsRecipeType() {}
+private:
+	static EMCsRecipeType* Instance;
 
-// RecipeToString
-typedef const FString&(*TCsRecipeTypeToString)(const TCsRecipeType&);
-// StringToRecipe
-typedef TCsRecipeType(*TCsStringToRecipeType)(const FString&);
-
-#define CS_DECLARE_RECIPE_TYPE	TCsRecipeType RecipeType_MAX;\
-								uint8 RECIPE_TYPE_MAX; \
-								TCsRecipeTypeToString RecipeTypeToString; \
-								TCsStringToRecipeType StringToRecipeType;
-
-#define CS_DEFINE_RECIPE_TYPE	RecipeType_MAX = ECsRecipeType::ECsRecipeType_MAX; \
-								RECIPE_TYPE_MAX = (uint8)RecipeType_MAX; \
-								RecipeTypeToString = &ECsRecipeType::ToString; \
-								StringToRecipeType = &ECsRecipeType::ToType;
+public:
+	static EMCsRecipeType& Get();
+};
 
 USTRUCT(BlueprintType)
 struct FCsRecipeIngredient

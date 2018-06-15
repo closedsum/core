@@ -7,8 +7,10 @@
 #include "Types/CsTypes_Character.h"
 #include "Types/CsTypes_Weapon.h"
 #include "Types/CsTypes_Item.h"
+#include "Types/CsTypes_Recipe.h"
 #include "Types/CsTypes_Damage.h"
 #include "Types/CsTypes_Sound.h"
+#include "Types/CsTypes_Interactive.h"
 
 #include "SlateBasics.h"
 
@@ -46,6 +48,8 @@
 #include "GraphEditor/EnumStruct/Item/SCsGraphPin_ECsItemType.h"
 #include "GraphEditor/EnumStruct/Item/SCsGraphPin_ECsItemOwner.h"
 #include "GraphEditor/EnumStruct/Item/SCsGraphPin_ECsItemInteraction.h"
+	// Crafting
+#include "GraphEditor/EnumStruct/Crafting/SCsGraphPin_ECsRecipeType.h"
 	// Damage
 #include "GraphEditor/EnumStruct/Damage/SCsGraphPin_ECsDamageType.h"
 #include "GraphEditor/EnumStruct/Damage/SCsGraphPin_ECsHitType.h"
@@ -137,6 +141,11 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 		if (DoesPinUseScriptStruct<FECsItemOwner>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsItemOwner, InPin); }
 		// FECsItemInteraction
 		if (DoesPinUseScriptStruct<FECsItemInteraction>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsItemInteraction, InPin); }
+	}
+	// Crafting
+	{
+		// FECsRecipeType
+		if (DoesPinUseScriptStruct<FECsRecipeType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsRecipeType, InPin); }
 	}
 	// Damage
 	{

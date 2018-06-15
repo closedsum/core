@@ -704,18 +704,18 @@ struct FCsData_FpsWeapon_FireMode_Sounds
 
 	/** single fire sound (bLoopedFireSound not set) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds")
-	FCsFpsSoundElement FireSounds;
+	FCsFpvSoundElement FireSounds;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds")
 	bool LoopFireSound;
 
 	/** looped fire sound (bLoopedFireSound set) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds")
-	FCsFpsSoundElement FireLoopSounds;
+	FCsFpvSoundElement FireLoopSounds;
 
 	/** finished burst sound (bLoopedFireSound set) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds")
-	FCsFpsSoundElement FireFinishSounds;
+	FCsFpvSoundElement FireFinishSounds;
 
 	FCsData_FpsWeapon_FireMode_Sounds() {}
 	virtual ~FCsData_FpsWeapon_FireMode_Sounds() {}

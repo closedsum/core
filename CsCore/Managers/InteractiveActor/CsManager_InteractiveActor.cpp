@@ -46,7 +46,7 @@ void FCsManager_InteractiveActor::LogTransaction_Internal(const FString& outLog)
 AICsManager_InteractiveActor::AICsManager_InteractiveActor(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	Internal = new FCsManager_InteractiveActor();
-	Internal->Init(TEXT("CsManager_InteractiveActor"), TEXT("UCsProcess"), nullptr, &CsCVarLogManagerInteractiveActorTransactions);
+	Internal->Init(TEXT("CsManager_InteractiveActor"), TEXT("ACsInteractiveActor"), nullptr, &CsCVarLogManagerInteractiveActorTransactions);
 	Internal->CsConstructObject.Unbind();
 	Internal->CsConstructObject.BindUObject(this, &AICsManager_InteractiveActor::ConstructObject);
 }

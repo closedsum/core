@@ -348,12 +348,8 @@ public:
 		TArray<EnumType> Keys;
 		ActiveObjects.GetKeys(Keys);
 
-		const int32 keyCount = Keys.Num();
-
-		for (int32 i = 0; i < keyCount; ++i)
+		for (const EnumType& key : Keys)
 		{
-			const EnumType& key = Keys[i];
-
 			TArray<ObjectType*>& objects = ActiveObjects[key];
 
 			const int32 objectCount = objects.Num();

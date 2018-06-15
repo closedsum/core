@@ -1,6 +1,5 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "GameFramework/Actor.h"
 #include "Managers/CsManager.h"
 #include "Managers/InteractiveActor/CsInteractiveActor.h"
 #include "CsManager_InteractiveActor.generated.h"
@@ -26,7 +25,7 @@ class CSCORE_API AICsManager_InteractiveActor : public AActor
 
 private:
 
-	CsManager_InteractiveActor* Internal;
+	FCsManager_InteractiveActor* Internal;
 
 public:
 
@@ -79,6 +78,4 @@ public:
 	{
 		return Cast<T>(Spawn(Type, Payload));
 	}
-
-#pragma endregion WakeUp
 };

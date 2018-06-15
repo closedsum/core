@@ -205,49 +205,69 @@ FCsSoundElement* ACsData_ProjectileWeapon::GetSound(const FECsWeaponFireMode &Fi
 void ACsData_ProjectileWeapon::PlaySound(UWorld* InWorld, const TCsViewType &ViewType, const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType, UObject* InOwner, UObject* InParent)
 {
 	FCsSoundElement* SoundElement	= GetSound(ViewType, FireMode, SoundType);
-	ACsManager_Sound* Manager_Sound = ACsManager_Sound::Get(InWorld);
+	AICsManager_Sound* Manager_Sound = AICsManager_Sound::Get(InWorld);
+	
+	FCsSoundPayload* Payload = Manager_Sound->AllocatePayload();
+	Payload->Set(SoundElement);
+	Payload->Owner = InOwner;
+	Payload->Parent = InParent;
 
-	Manager_Sound->Play(SoundElement, InOwner, InParent);
+	Manager_Sound->Play(SoundElement->Type, Payload);
+}
+
+void ACsData_ProjectileWeapon::PlaySound(UWorld* InWorld, const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType, UObject* InOwner, UObject* InParent)
+{
+	FCsSoundElement* SoundElement = GetSound(FireMode, SoundType);
+	AICsManager_Sound* Manager_Sound = AICsManager_Sound::Get(InWorld);
+
+	FCsSoundPayload* Payload = Manager_Sound->AllocatePayload();
+	Payload->Set(SoundElement);
+	Payload->Owner = InOwner;
+	Payload->Parent = InParent;
+
+	Manager_Sound->Play(SoundElement->Type, Payload);
 }
 
 void ACsData_ProjectileWeapon::PlaySound(UWorld* InWorld, const TCsViewType &ViewType, const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType, UObject* InOwner, const FVector &Location)
 {
 	FCsSoundElement* SoundElement	= GetSound(ViewType, FireMode, SoundType);
-	ACsManager_Sound* Manager_Sound = ACsManager_Sound::Get(InWorld);
+	AICsManager_Sound* Manager_Sound = AICsManager_Sound::Get(InWorld);
 
-	Manager_Sound->Play(SoundElement, InOwner, Location);
+	FCsSoundPayload* Payload = Manager_Sound->AllocatePayload();
+	Payload->Set(SoundElement);
+	Payload->Owner = InOwner;
+	Payload->Location = Location;
+
+	Manager_Sound->Play(SoundElement->Type, Payload);
+}
+
+void ACsData_ProjectileWeapon::PlaySound(UWorld* InWorld, const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType, UObject* InOwner, const FVector &Location)
+{
+	FCsSoundElement* SoundElement = GetSound(FireMode, SoundType);
+	AICsManager_Sound* Manager_Sound = AICsManager_Sound::Get(InWorld);
+
+	FCsSoundPayload* Payload = Manager_Sound->AllocatePayload();
+	Payload->Set(SoundElement);
+	Payload->Owner = InOwner;
+	Payload->Location = Location;
+
+	Manager_Sound->Play(SoundElement->Type, Payload);
 }
 
 void ACsData_ProjectileWeapon::StopSound(UWorld* InWorld, const TCsViewType &ViewType, const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType, UObject* InOwner, UObject* InParent)
 {
 	FCsSoundElement* SoundElement	= GetSound(ViewType, FireMode, SoundType);
-	ACsManager_Sound* Manager_Sound = ACsManager_Sound::Get(InWorld);
+	AICsManager_Sound* Manager_Sound = AICsManager_Sound::Get(InWorld);
 
-	Manager_Sound->Stop(SoundElement, InOwner, InParent);
-}
-
-void ACsData_ProjectileWeapon::PlaySound(UWorld* InWorld, const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType, UObject* InOwner, UObject* InParent)
-{
-	FCsSoundElement* SoundElement	= GetSound(FireMode, SoundType);
-	ACsManager_Sound* Manager_Sound = ACsManager_Sound::Get(InWorld);
-
-	Manager_Sound->Play(SoundElement, InOwner, InParent);
-}
-
-void ACsData_ProjectileWeapon::PlaySound(UWorld* InWorld, const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType, UObject* InOwner, const FVector &Location)
-{
-	FCsSoundElement* SoundElement	= GetSound(FireMode, SoundType);
-	ACsManager_Sound* Manager_Sound = ACsManager_Sound::Get(InWorld);
-
-	Manager_Sound->Play(SoundElement, InOwner, Location);
+	//Manager_Sound->Stop(SoundElement, InOwner, InParent);
 }
 
 void ACsData_ProjectileWeapon::StopSound(UWorld* InWorld, const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType, UObject* InOwner, UObject* InParent)
 {
 	FCsSoundElement* SoundElement	= GetSound(FireMode, SoundType);
-	ACsManager_Sound* Manager_Sound = ACsManager_Sound::Get(InWorld);
+	AICsManager_Sound* Manager_Sound = AICsManager_Sound::Get(InWorld);
 
-	Manager_Sound->Stop(SoundElement, InOwner, InParent);
+	//Manager_Sound->Stop(SoundElement, InOwner, InParent);
 }
 
 #pragma endregion Sounds

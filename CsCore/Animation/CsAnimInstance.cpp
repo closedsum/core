@@ -183,7 +183,7 @@ void UCsAnimInstance::Spawn_Manager_FX()
 	}
 }
 
-ACsManager_Sound* UCsAnimInstance::GetManager_Sound()
+AICsManager_Sound* UCsAnimInstance::GetManager_Sound()
 {
 	return Manager_Sound.IsValid() ? Manager_Sound.Get() : nullptr;
 }
@@ -191,7 +191,7 @@ ACsManager_Sound* UCsAnimInstance::GetManager_Sound()
 void UCsAnimInstance::Spawn_Manager_Sound()
 {
 	// Check if Manager_Sound was already created. This may be the case when Refreshing Nodes for the AnimInstance
-	for (TActorIterator<ACsManager_Sound> Itr(GetWorld()); Itr; ++Itr)
+	for (TActorIterator<AICsManager_Sound> Itr(GetWorld()); Itr; ++Itr)
 	{
 		if (Itr)
 		{
@@ -206,9 +206,15 @@ void UCsAnimInstance::Spawn_Manager_Sound()
 		SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		SpawnInfo.ObjectFlags |= RF_Transient;
 
-		Manager_Sound = GetWorld()->SpawnActor<ACsManager_Sound>(SpawnInfo);
-		ACsManager_Sound::Init(this);
-		Manager_Sound->CreatePool(2);
+		Manager_Sound = GetWorld()->SpawnActor<AICsManager_Sound>(SpawnInfo);
+		AICsManager_Sound::Init(this);
+
+		const int32& Count = EMCsSoundType::Get().Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			Manager_Sound->CreatePool(EMCsSoundType::Get().GetEnumAt(I), 2);
+		}
 	}
 }
 

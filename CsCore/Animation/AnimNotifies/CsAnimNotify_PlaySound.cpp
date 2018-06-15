@@ -51,7 +51,7 @@ void UCsAnimNotify_PlaySound::Notify(class USkeletalMeshComponent* MeshComp, cla
 	// Use Sound Manager
 	if (InGame)
 	{
-		ACsManager_Sound* Manager_Sound = ACsManager_Sound::Get(CurrentWorld);
+		AICsManager_Sound* Manager_Sound = AICsManager_Sound::Get(CurrentWorld);
 
 		SoundElement.Set(Sound.Sound);
 		SoundElement.Type = Sound.Type;
@@ -62,7 +62,12 @@ void UCsAnimNotify_PlaySound::Notify(class USkeletalMeshComponent* MeshComp, cla
 		SoundElement.PitchMultiplier = Sound.PitchMultiplier;
 		SoundElement.Bone = Sound.Bone;
 
-		Manager_Sound->Play(&SoundElement, MeshComp->GetOwner() ? Cast<UObject>(MeshComp->GetOwner()) : Cast<UObject>(MeshComp->GetAttachParent()), MeshComp);
+		FCsSoundPayload* Payload = Manager_Sound->AllocatePayload();
+		Payload->Set(&SoundElement);
+		Payload->Owner = MeshComp->GetOwner() ? Cast<UObject>(MeshComp->GetOwner()) : Cast<UObject>(MeshComp->GetAttachParent());
+		Payload->Parent = MeshComp;
+
+		Manager_Sound->Play(SoundElement.Type, Payload);
 	}
 	// Editor
 	else

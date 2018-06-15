@@ -10,20 +10,26 @@
 // Sound
 #pragma region
 
-UENUM(BlueprintType)
-namespace ECsSoundType
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsSoundType : public FECsEnum_uint8
 {
-	enum Type
-	{
-		s2D				 UMETA(DisplayName = "2D"),
-		s3D				 UMETA(DisplayName = "3D"),
-		ECsSoundType_MAX UMETA(Hidden),
-	};
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsSoundType() {}
+	FECsSoundType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsSoundType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsSoundType() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsSoundType& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-typedef ECsSoundType::Type TCsSoundType;
-
-struct CSCORE_API EMCsSoundType : public TCsEnumMap<ECsSoundType::Type>
+struct CSCORE_API EMCsSoundType : public TCsEnumStructMap<FECsSoundType, uint8>
 {
 protected:
 	EMCsSoundType() {}
@@ -37,16 +43,6 @@ private:
 public:
 	static EMCsSoundType& Get();
 };
-
-namespace ECsSoundType
-{
-	namespace Ref
-	{
-		extern CSCORE_API const Type s2D;
-		extern CSCORE_API const Type s3D;
-		extern CSCORE_API const Type ECsSoundType_MAX;
-	}
-}
 
 UENUM(BlueprintType)
 namespace ECsSoundPriority
@@ -81,40 +77,26 @@ public:
 
 namespace ECsSoundPriority
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
+	namespace Ref
 	{
-		const TCsString VeryLow = TCsString(TEXT("VeryLow"), TEXT("verylow"), TEXT("very low"));
-		const TCsString Low = TCsString(TEXT("Low"), TEXT("low"), TEXT("low"));
-		const TCsString Medium = TCsString(TEXT("Medium"), TEXT("medium"), TEXT("medium"));
-		const TCsString High = TCsString(TEXT("High"), TEXT("high"), TEXT("high"));
-		const TCsString VeryHigh = TCsString(TEXT("VeryHigh"), TEXT("veryhigh"), TEXT("very high"));
+		extern CSCORE_API const Type VeryLow;
+		extern CSCORE_API const Type Low;
+		extern CSCORE_API const Type Medium;
+		extern CSCORE_API const Type High;
+		extern CSCORE_API const Type VeryHigh;
+		extern CSCORE_API const Type ECsSoundPriority_MAX;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
-		if (EType == Type::VeryLow) { return Str::VeryLow.Value; }
-		if (EType == Type::Low) { return Str::Low.Value; }
-		if (EType == Type::Medium) { return Str::Medium.Value; }
-		if (EType == Type::High) { return Str::High.Value; }
-		if (EType == Type::VeryHigh) { return Str::VeryHigh.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
+		return EMCsSoundPriority::Get().ToString(EType);
 	}
 
 	FORCEINLINE Type ToType(const FString &String)
 	{
-		if (String == Str::VeryLow) { return Type::VeryLow; }
-		if (String == Str::Low) { return Type::Low; }
-		if (String == Str::Medium) { return Type::Medium; }
-		if (String == Str::High) { return Type::High; }
-		if (String == Str::VeryHigh) { return Type::VeryHigh; }
-		return Type::ECsSoundPriority_MAX;
+		return EMCsSoundPriority::Get().ToType(String);
 	}
 }
-
-#define ECS_SOUND_PRIORITY_MAX (uint8)ECsSoundPriority::ECsSoundPriority_MAX
-
 
 USTRUCT(BlueprintType)
 struct FCsSoundElement
@@ -128,10 +110,13 @@ struct FCsSoundElement
 	int32 Sound_LoadFlags;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-	TEnumAsByte<ECsSoundType::Type> Type;
+	FECsSoundType Type;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 	TEnumAsByte<ECsSoundPriority::Type> Priority;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	bool bSpatialize;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound", meta = (ClampMin = "0.05", UIMin = "0.05"))
 	float Duration;
@@ -157,7 +142,7 @@ public:
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Sound_LoadFlags, ECsLoadFlags::Game);
 
-		Type = ECsSoundType::s3D;
+		Type = EMCsSoundType::Get().GetMAX();
 		Priority = ECsSoundPriority::Medium;
 		Duration = 0.05f;
 		VolumeMultiplier = 1.0f;
@@ -165,7 +150,7 @@ public:
 		Bone = NAME_None;
 	}
 
-	FCsSoundElement& operator=(const FCsSoundElement& B)
+	FORCEINLINE FCsSoundElement& operator=(const FCsSoundElement& B)
 	{
 		Sound = B.Sound;
 		Sound_LoadFlags = B.Sound_LoadFlags;
@@ -179,7 +164,7 @@ public:
 		return *this;
 	}
 
-	bool operator==(const FCsSoundElement& B) const
+	FORCEINLINE bool operator==(const FCsSoundElement& B) const
 	{
 		return Sound == B.Sound &&
 				Sound_LoadFlags == B.Sound_LoadFlags &&
@@ -192,25 +177,25 @@ public:
 				Bone == B.Bone;
 	}
 
-	bool operator!=(const FCsSoundElement& B) const
+	FORCEINLINE bool operator!=(const FCsSoundElement& B) const
 	{
 		return !(*this == B);
 	}
 
-	void Set(USoundCue* InSound)
+	FORCEINLINE void Set(USoundCue* InSound)
 	{
 		Sound = TAssetPtr<USoundCue>(InSound);
 		Sound_Internal = InSound;
 	}
 
-	USoundCue* Get() const
+	FORCEINLINE USoundCue* Get() const
 	{
 		return Sound_Internal;
 	}
 };
 
 USTRUCT(BlueprintType)
-struct FCsFpsSoundElement
+struct FCsFpvSoundElement
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -222,24 +207,24 @@ struct FCsFpsSoundElement
 
 public:
 
-	FCsFpsSoundElement& operator=(const FCsFpsSoundElement& B)
+	FORCEINLINE FCsFpvSoundElement& operator=(const FCsFpvSoundElement& B)
 	{
 		Sound1P = B.Sound1P;
 		Sound3P = B.Sound3P;
 		return *this;
 	}
 
-	bool operator==(const FCsFpsSoundElement& B) const
+	FORCEINLINE bool operator==(const FCsFpvSoundElement& B) const
 	{
 		return Sound1P == B.Sound1P && Sound3P == B.Sound3P;
 	}
 
-	bool operator!=(const FCsFpsSoundElement& B) const
+	FORCEINLINE bool operator!=(const FCsFpvSoundElement& B) const
 	{
 		return !(*this == B);
 	}
 
-	FCsSoundElement* Get(const TCsViewType &ViewType)
+	FORCEINLINE FCsSoundElement* Get(const TCsViewType &ViewType)
 	{
 		if (ViewType == ECsViewType::FirstPerson || ViewType == ECsViewType::VR)
 			return &Sound1P;
@@ -248,7 +233,7 @@ public:
 		return nullptr;
 	}
 
-	USoundCue* GetCue(const TCsViewType &ViewType)
+	FORCEINLINE USoundCue* GetCue(const TCsViewType &ViewType)
 	{
 		if (ViewType == ECsViewType::FirstPerson || ViewType == ECsViewType::VR)
 			return Sound1P.Get();
@@ -256,6 +241,101 @@ public:
 			return Sound3P.Get();
 		return nullptr;
 	}
+};
+
+USTRUCT(BlueprintType)
+struct FCsSoundPayload
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	bool IsAllocated;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	TWeakObjectPtr<UObject> Instigator;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	TWeakObjectPtr<UObject> Owner;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	TWeakObjectPtr<UObject> Parent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	TWeakObjectPtr<class USoundCue> Sound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	TEnumAsByte<ECsSoundPriority::Type> Priority;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	bool bSpatialize;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload", meta = (ClampMin = "0.05", UIMin = "0.05"))
+	float Duration;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	bool IsLooping;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	float VolumeMultiplier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	float PitchMultiplier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	FName Bone;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	FVector Location;
+
+	FCsSoundPayload(){}
+	~FCsSoundPayload(){}
+
+	FORCEINLINE void Set(FCsSoundElement* Element)
+	{
+		Sound = Element->Get();
+		Priority = Element->Priority;
+		bSpatialize = Element->bSpatialize;
+		Duration = Element->Duration;
+		IsLooping = Element->IsLooping;
+		VolumeMultiplier = Element->VolumeMultiplier;
+		PitchMultiplier = Element->PitchMultiplier;
+		Bone = Element->Bone;
+	}
+
+	FORCEINLINE void Reset()
+	{
+		Instigator.Reset();
+		Instigator = nullptr;
+		Owner.Reset();
+		Owner = nullptr;
+		Parent.Reset();
+		Parent = nullptr;
+		Sound = nullptr;
+		Priority = ECsSoundPriority::Medium;
+		bSpatialize = true;
+		Duration = 0.05f;
+		IsLooping = false;
+		VolumeMultiplier = 1.0f;
+		PitchMultiplier = 1.0f;
+		Bone = NAME_None;
+		Location = FVector::ZeroVector;
+	}
+
+	FORCEINLINE UObject* GetInstigator() { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
+	template<typename T>
+	FORCEINLINE T* GetInstigator() { return Cast<T>(GetInstigator()); }
+
+	FORCEINLINE UObject* GetOwner() { return Owner.IsValid() ? Owner.Get() : nullptr; }
+	template<typename T>
+	FORCEINLINE T* GetOwner() { return Cast<T>(GetOwner()); }
+
+	FORCEINLINE UObject* GetParent() { return Parent.IsValid() ? Parent.Get() : nullptr; }
+	template<typename T>
+	FORCEINLINE T* GetParent() { return Cast<T>(GetParent()); }
+
+	FORCEINLINE USoundCue* GetCue() { return Sound.IsValid() ? Sound.Get() : nullptr; }
+	template<typename T>
+	FORCEINLINE T* GetCue() { return Cast<T>(GetCue()); }
 };
 
 #pragma endregion Sound

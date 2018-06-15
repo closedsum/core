@@ -25,7 +25,7 @@ class CSCORE_API UICsManager_Process : public UObject
 
 private:
 
-	CsManager_Process* Internal;
+	FCsManager_Process* Internal;
 
 public:
 

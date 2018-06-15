@@ -55,6 +55,8 @@
 #include "DetailCustomizations/EnumStruct/Damage/ECsHitTypeCustomization.h"
 	// Interactive
 #include "DetailCustomizations/EnumStruct/Interactive/ECsInteractiveTypeCustomization.h"
+	// Sound
+#include "DetailCustomizations/EnumStruct/ECsSoundTypeCustomization.h"
 
 void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 {
@@ -104,6 +106,8 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsHitType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsHitTypeCustomization::MakeInstance));
 		// Interactive
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsInteractiveType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsInteractiveTypeCustomization::MakeInstance));
+		// Sound
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsSoundType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsSoundTypeCustomization::MakeInstance));
 	}
 }
 

@@ -35,9 +35,14 @@ FCsSoundElement* ACsData_Pickup::GetSound(const FECsPickupSound &SoundType) { re
 void ACsData_Pickup::PlaySound(UWorld* InWorld, const FECsPickupSound &SoundType, UObject* InOwner, UObject* InParent)
 {
 	FCsSoundElement* SoundElement   = GetSound(SoundType);
-	ACsManager_Sound* Manager_Sound = ACsManager_Sound::Get(InWorld);
+	AICsManager_Sound* Manager_Sound = AICsManager_Sound::Get(InWorld);
 
-	Manager_Sound->Play(SoundElement, InOwner, InParent);
+	FCsSoundPayload* Payload = Manager_Sound->AllocatePayload();
+	Payload->Set(SoundElement);
+	Payload->Owner = InOwner;
+	Payload->Parent = InParent;
+
+	Manager_Sound->Play(SoundElement->Type, Payload);
 }
 
 #pragma endregion Sound

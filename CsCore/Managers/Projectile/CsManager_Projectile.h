@@ -27,7 +27,7 @@ class CSCORE_API AICsManager_Projectile : public AActor
 
 private:
 
-	CsManager_Projectile * Internal;
+	FCsManager_Projectile* Internal;
 
 	static TWeakObjectPtr<UObject> MyOwner;
 

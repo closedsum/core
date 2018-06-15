@@ -165,9 +165,9 @@ public:
 
 	// Manager Sound
 
-	TWeakObjectPtr<class ACsManager_Sound> Manager_Sound;
+	TWeakObjectPtr<class AICsManager_Sound> Manager_Sound;
 
-	class ACsManager_Sound* GetManager_Sound();
+	class AICsManager_Sound* GetManager_Sound();
 
 	void Spawn_Manager_Sound();
 

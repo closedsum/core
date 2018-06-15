@@ -2,6 +2,7 @@
 #include "Types/CsTypes_Sound.h"
 #include "CsCore.h"
 
+// SoundType
 EMCsSoundType* EMCsSoundType::Instance;
 
 EMCsSoundType& EMCsSoundType::Get()
@@ -11,12 +12,25 @@ EMCsSoundType& EMCsSoundType::Get()
 	return *Instance;
 }
 
-namespace ECsSoundType
+// SoundPriority
+EMCsSoundPriority* EMCsSoundPriority::Instance;
+
+EMCsSoundPriority& EMCsSoundPriority::Get()
+{
+	if (!Instance)
+		Instance = new EMCsSoundPriority();
+	return *Instance;
+}
+
+namespace ECsSoundPriority
 {
 	namespace Ref
 	{
-		extern CSCORE_API const Type s2D = EMCsSoundType::Get().Add(Type::s2D, TEXT("s2D"), TEXT("2D"));
-		extern CSCORE_API const Type s3D = EMCsSoundType::Get().Add(Type::s3D, TEXT("s3D"), TEXT("3D"));
-		extern CSCORE_API const Type ECsSoundType_MAX = EMCsSoundType::Get().Add(Type::ECsSoundType_MAX, TEXT("ECsSoundType_MAX"), TEXT("MAX"));
+		CSCORE_API const Type VeryLow = EMCsSoundPriority::Get().Add(Type::VeryLow, TEXT("VeryLow"), TEXT("Very Low"));
+		CSCORE_API const Type Low = EMCsSoundPriority::Get().Add(Type::Low, TEXT("Low"));
+		CSCORE_API const Type Medium = EMCsSoundPriority::Get().Add(Type::Medium, TEXT("Medium"));
+		CSCORE_API const Type High = EMCsSoundPriority::Get().Add(Type::High, TEXT("High"));
+		CSCORE_API const Type VeryHigh = EMCsSoundPriority::Get().Add(Type::VeryHigh, TEXT("VeryHigh"), TEXT("Very High"));
+		CSCORE_API const Type ECsSoundPriority_MAX = EMCsSoundPriority::Get().Add(Type::ECsSoundPriority_MAX, TEXT("ECsSoundPriority_MAX"), TEXT("MAX"));
 	}
 }

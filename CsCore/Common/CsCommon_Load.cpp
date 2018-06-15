@@ -549,11 +549,11 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				if (WriteStructToJson_Internal_Helper(Internal, Property, InJsonWriter, InStruct, InScriptStruct)) { continue; }
 				continue;
 			}
-			// FCsFpsSoundElement
-			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
+			// FCsFpvSoundElement
+			if (StructProperty->Struct == FCsFpvSoundElement::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ WriteMemberStructPropertyToJson<FCsFpsSoundElement>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+				{ WriteMemberStructPropertyToJson<FCsFpvSoundElement>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 
 				if (WriteStructToJson_Internal_Helper(Internal, Property, InJsonWriter, InStruct, InScriptStruct)) { continue; }
 				continue;
@@ -768,6 +768,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FECsProjectileType
 				if (StructProperty->Struct == FECsProjectileType::StaticStruct())
 				{ WriteMemberEnumStructPropertyToJson<FECsProjectileType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsSoundType
+				if (StructProperty->Struct == FECsSoundType::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsSoundType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
 			}
 
 			if (Internal)
@@ -841,9 +844,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FCsSoundElement
 				if (InnerStructProperty->Struct == FCsSoundElement::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsSoundElement>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
-				// FCsFpsSoundElement
-				if (InnerStructProperty->Struct == FCsFpsSoundElement::StaticStruct())
-				{ WriteMemberArrayStructPropertyToJson<FCsFpsSoundElement>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsFpvSoundElement
+				if (InnerStructProperty->Struct == FCsFpvSoundElement::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsFpvSoundElement>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// FCsAnimSequence
 				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsAnimSequence>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
@@ -1278,11 +1281,11 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				if (WriteStructToJson_Internal_Helper(Internal, Property, InJsonWriter, InStruct, InScriptStruct)) { continue; }
 				continue;
 			}
-			// FCsFpsSoundElement
-			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
+			// FCsFpvSoundElement
+			if (StructProperty->Struct == FCsFpvSoundElement::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ WriteMemberStructPropertyToJson<FCsFpsSoundElement>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+				{ WriteMemberStructPropertyToJson<FCsFpvSoundElement>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 
 				if (WriteStructToJson_Internal_Helper(Internal, Property, InJsonWriter, InStruct, InScriptStruct)) { continue; }
 				continue;
@@ -1500,6 +1503,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FECsProjectileType
 				if (StructProperty->Struct == FECsProjectileType::StaticStruct())
 				{ WriteMemberEnumStructPropertyToJson<FECsProjectileType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
+				// FECsSoundType
+				if (StructProperty->Struct == FECsSoundType::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsSoundType>(InJsonWriter, StructProperty, InStruct, MemberName); continue; }
 			}
 
 			if (Internal)
@@ -1573,9 +1579,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FCsSoundElement
 				if (InnerStructProperty->Struct == FCsSoundElement::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsSoundElement>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
-				// FCsFpsSoundElement
-				if (InnerStructProperty->Struct == FCsFpsSoundElement::StaticStruct())
-				{ WriteMemberArrayStructPropertyToJson<FCsFpsSoundElement>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				// FCsFpvSoundElement
+				if (InnerStructProperty->Struct == FCsFpvSoundElement::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsFpvSoundElement>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// FCsAnimSequence
 				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsAnimSequence>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
@@ -2001,11 +2007,11 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				if (WriteObjectToJson_Internal_Helper(Internal, Property, InJsonWriter, InObject, InClass)) { continue; }
 				continue;
 			}
-			// FCsFpsSoundElement
-			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
+			// FCsFpvSoundElement
+			if (StructProperty->Struct == FCsFpvSoundElement::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ WriteMemberStructPropertyToJson<FCsFpsSoundElement>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+				{ WriteMemberStructPropertyToJson<FCsFpvSoundElement>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
 
 				if (WriteObjectToJson_Internal_Helper(Internal, Property, InJsonWriter, InObject, InClass)) { continue; }
 				continue;
@@ -2172,6 +2178,9 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FECsProjectileType
 				if (StructProperty->Struct == FECsProjectileType::StaticStruct())
 				{ WriteMemberEnumStructPropertyToJson<FECsProjectileType>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+				// FECsSoundType
+				if (StructProperty->Struct == FECsSoundType::StaticStruct())
+				{ WriteMemberEnumStructPropertyToJson<FECsSoundType>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
 			}
 
 			if (Internal)
@@ -2240,9 +2249,9 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				// FCsSoundElement
 				if (InnerStructProperty->Struct == FCsSoundElement::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsSoundElement>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
-				// FCsFpsSoundElement
-				if (InnerStructProperty->Struct == FCsFpsSoundElement::StaticStruct())
-				{ WriteMemberArrayStructPropertyToJson<FCsFpsSoundElement>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
+				// FCsFpvSoundElement
+				if (InnerStructProperty->Struct == FCsFpvSoundElement::StaticStruct())
+				{ WriteMemberArrayStructPropertyToJson<FCsFpvSoundElement>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
 				// FCsAnimSequence
 				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
 				{ WriteMemberArrayStructPropertyToJson<FCsAnimSequence>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
@@ -2799,11 +2808,11 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 				if (ReadStructFromJson_Internal_Helper(Internal, Property, JsonObject, InStruct, InScriptStruct)) { continue; }
 				continue;
 			}
-			// FCsFpsSoundElement
-			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
+			// FCsFpvSoundElement
+			if (StructProperty->Struct == FCsFpvSoundElement::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ WriteToMemberStructPropertyFromJson<FCsFpsSoundElement>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
+				{ WriteToMemberStructPropertyFromJson<FCsFpvSoundElement>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 
 				if (ReadStructFromJson_Internal_Helper(Internal, Property, JsonObject, InStruct, InScriptStruct)) { continue; }
 				continue;
@@ -3020,6 +3029,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 				// FECsProjectileType
 				if (StructProperty->Struct == FECsProjectileType::StaticStruct())
 				{ WriteToMemberEnumStructPropertyFromJson<FECsProjectileType, EMCsProjectileType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FECsSoundType
+				if (StructProperty->Struct == FECsSoundType::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsSoundType, EMCsSoundType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 			}
 
 			if (Internal)
@@ -3094,9 +3106,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 				// FCsSoundElement
 				if (InnerStructProperty->Struct == FCsSoundElement::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsSoundElement>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
-				// FCsFpsSoundElement
-				if (InnerStructProperty->Struct == FCsFpsSoundElement::StaticStruct())
-				{ WriteToMemberArrayStructPropertyFromJson<FCsFpsSoundElement>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
+				// FCsFpvSoundElement
+				if (InnerStructProperty->Struct == FCsFpvSoundElement::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsFpvSoundElement>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
 				// FCsAnimSequence
 				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsAnimSequence>(JsonObject, ArrayProperty, InStruct, MemberName, nullptr); continue; }
@@ -3568,11 +3580,11 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				if (ReadStructFromJson_Internal_Helper(Internal, Property, JsonObject, InStruct, InScriptStruct)) { continue; }
 				continue;
 			}
-			// FCsFpsSoundElement
-			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
+			// FCsFpvSoundElement
+			if (StructProperty->Struct == FCsFpvSoundElement::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ WriteToMemberStructPropertyFromJson<FCsFpsSoundElement>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
+				{ WriteToMemberStructPropertyFromJson<FCsFpvSoundElement>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 
 				if (ReadStructFromJson_Internal_Helper(Internal, Property, JsonObject, InStruct, InScriptStruct)) { continue; }
 				continue;
@@ -3792,6 +3804,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				// FECsProjectileType
 				if (StructProperty->Struct == FECsProjectileType::StaticStruct())
 				{ WriteToMemberEnumStructPropertyFromJson<FECsProjectileType, EMCsProjectileType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
+				// FECsSoundType
+				if (StructProperty->Struct == FECsSoundType::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsSoundType, EMCsSoundType>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 			}
 
 			if (Internal)
@@ -3866,9 +3881,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				// FCsSoundElement
 				if (InnerStructProperty->Struct == FCsSoundElement::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsSoundElement>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
-				// FCsFpsSoundElement
-				if (InnerStructProperty->Struct == FCsFpsSoundElement::StaticStruct())
-				{ WriteToMemberArrayStructPropertyFromJson<FCsFpsSoundElement>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
+				// FCsFpvSoundElement
+				if (InnerStructProperty->Struct == FCsFpvSoundElement::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsFpvSoundElement>(JsonObject, ArrayProperty, InStruct, MemberName, Internal); continue; }
 				// FCsAnimSequence
 				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsAnimSequence>(JsonObject, ArrayProperty, InStruct, MemberName, nullptr); continue; }
@@ -4346,11 +4361,11 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				if (ReadObjectFromJson_Internal_Helper(Internal, Property, JsonObject, InObject, InClass)) { continue; }
 				continue;
 			}
-			// FCsFpsSoundElement
-			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
+			// FCsFpvSoundElement
+			if (StructProperty->Struct == FCsFpvSoundElement::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ WriteToMemberStructPropertyFromJson<FCsFpsSoundElement>(JsonObject, StructProperty, InObject, MemberName); continue; }
+				{ WriteToMemberStructPropertyFromJson<FCsFpvSoundElement>(JsonObject, StructProperty, InObject, MemberName); continue; }
 
 				if (ReadObjectFromJson_Internal_Helper(Internal, Property, JsonObject, InObject, InClass)) { continue; }
 				continue;
@@ -4511,6 +4526,9 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				// FECsProjectileType
 				if (StructProperty->Struct == FECsProjectileType::StaticStruct())
 				{ WriteToMemberEnumStructPropertyFromJson<FECsProjectileType, EMCsProjectileType>(JsonObject, StructProperty, InObject, MemberName); continue; }
+				// FECsSoundType
+				if (StructProperty->Struct == FECsSoundType::StaticStruct())
+				{ WriteToMemberEnumStructPropertyFromJson<FECsSoundType, EMCsSoundType>(JsonObject, StructProperty, InObject, MemberName); continue; }
 			}
 
 			if (Internal)
@@ -4579,9 +4597,9 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				// FCsSoundElement
 				if (InnerStructProperty->Struct == FCsSoundElement::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsSoundElement>(JsonObject, ArrayProperty, InObject, MemberName, nullptr); continue; }
-				// FCsFpsSoundElement
-				if (InnerStructProperty->Struct == FCsFpsSoundElement::StaticStruct())
-				{ WriteToMemberArrayStructPropertyFromJson<FCsFpsSoundElement>(JsonObject, ArrayProperty, InObject, MemberName, nullptr); continue; }
+				// FCsFpvSoundElement
+				if (InnerStructProperty->Struct == FCsFpvSoundElement::StaticStruct())
+				{ WriteToMemberArrayStructPropertyFromJson<FCsFpvSoundElement>(JsonObject, ArrayProperty, InObject, MemberName, nullptr); continue; }
 				// FCsAnimSequence
 				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
 				{ WriteToMemberArrayStructPropertyFromJson<FCsAnimSequence>(JsonObject, ArrayProperty, InObject, MemberName, nullptr); continue; }
@@ -5673,11 +5691,11 @@ void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct*
 				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ GetAssetReferencesFromStructProperty<FCsSoundElement>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
 			}
-			// FCsFpsSoundElement
-			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
+			// FCsFpvSoundElement
+			if (StructProperty->Struct == FCsFpvSoundElement::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ GetAssetReferencesFromStructProperty<FCsFpsSoundElement>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
+				{ GetAssetReferencesFromStructProperty<FCsFpvSoundElement>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
 			}
 			// FCsFxElement
 			if (StructProperty->Struct == FCsFxElement::StaticStruct())
@@ -5831,9 +5849,9 @@ void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct*
 				// FCsSoundElement
 				if (InnerStructProperty->Struct == FCsSoundElement::StaticStruct())
 				{ GetAssetReferencesFromArrayStructProperty<FCsSoundElement>(ArrayProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
-				// FCsFpsSoundElement
-				if (InnerStructProperty->Struct == FCsFpsSoundElement::StaticStruct())
-				{ GetAssetReferencesFromArrayStructProperty<FCsFpsSoundElement>(ArrayProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
+				// FCsFpvSoundElement
+				if (InnerStructProperty->Struct == FCsFpvSoundElement::StaticStruct())
+				{ GetAssetReferencesFromArrayStructProperty<FCsFpvSoundElement>(ArrayProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
 				// FCsAnimSequence
 				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
 				{ GetAssetReferencesFromArrayStructProperty<FCsAnimSequence>(ArrayProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
@@ -5960,11 +5978,11 @@ void UCsCommon_Load::GetAssetReferencesFromObject(void* InObject, UClass* const 
 				}
 				continue;
 			}
-			// FCsFpsSoundElement
-			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
+			// FCsFpvSoundElement
+			if (StructProperty->Struct == FCsFpvSoundElement::StaticStruct())
 			{ 
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ GetAssetReferencesFromStructProperty<FCsFpsSoundElement>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
+				{ GetAssetReferencesFromStructProperty<FCsFpvSoundElement>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
 				
 				if (Internal)
 				{
@@ -6085,9 +6103,9 @@ void UCsCommon_Load::GetAssetReferencesFromObject(void* InObject, UClass* const 
 				// FCsFpsFxElement
 				if (InnerStructProperty->Struct == FCsFpsFxElement::StaticStruct())
 				{ GetAssetReferencesFromArrayStructProperty<FCsFpsFxElement>(ArrayProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
-				// FCsFpsSoundElement
-				if (InnerStructProperty->Struct == FCsFpsSoundElement::StaticStruct())
-				{ GetAssetReferencesFromArrayStructProperty<FCsFpsSoundElement>(ArrayProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
+				// FCsFpvSoundElement
+				if (InnerStructProperty->Struct == FCsFpvSoundElement::StaticStruct())
+				{ GetAssetReferencesFromArrayStructProperty<FCsFpvSoundElement>(ArrayProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
 				// FCsAnimSequence
 				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
 				{ GetAssetReferencesFromArrayStructProperty<FCsAnimSequence>(ArrayProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
@@ -6885,11 +6903,11 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 				}
 				continue;
 			}
-			// FCsFpsSoundElement
-			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
+			// FCsFpvSoundElement
+			if (StructProperty->Struct == FCsFpvSoundElement::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ LoadMemberStructProperty<FCsFpsSoundElement>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
+				{ LoadMemberStructProperty<FCsFpvSoundElement>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
 				
 				if (Internal)
 				{
@@ -7033,9 +7051,9 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 				// FCsSoundElement
 				if (InnerStructProperty->Struct == FCsSoundElement::StaticStruct())
 				{ LoadMemberArrayStructProperty<FCsSoundElement>(ArrayProperty, InStruct, StructName, LoadFlags); continue; }
-				// FCsFpsSoundElement
-				if (InnerStructProperty->Struct == FCsFpsSoundElement::StaticStruct())
-				{ LoadMemberArrayStructProperty<FCsFpsSoundElement>(ArrayProperty, InStruct, StructName, LoadFlags); continue; }
+				// FCsFpvSoundElement
+				if (InnerStructProperty->Struct == FCsFpvSoundElement::StaticStruct())
+				{ LoadMemberArrayStructProperty<FCsFpvSoundElement>(ArrayProperty, InStruct, StructName, LoadFlags); continue; }
 				// FCsAnimSequence
 				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
 				{ LoadMemberArrayStructProperty<FCsAnimSequence>(ArrayProperty, InStruct, StructName, LoadFlags); continue; }
@@ -7239,11 +7257,11 @@ void UCsCommon_Load::LoadObjectWithTAssetPtrs(const FString &ObjectName, void* I
 				}
 				continue;
 			}
-			// FCsFpsSoundElement
-			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
+			// FCsFpvSoundElement
+			if (StructProperty->Struct == FCsFpvSoundElement::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ LoadMemberStructProperty<FCsFpsSoundElement>(StructProperty, InObject, StructName, LoadFlags); continue; }
+				{ LoadMemberStructProperty<FCsFpvSoundElement>(StructProperty, InObject, StructName, LoadFlags); continue; }
 
 				if (Internal)
 				{
@@ -7401,9 +7419,9 @@ void UCsCommon_Load::LoadObjectWithTAssetPtrs(const FString &ObjectName, void* I
 				// FCsFpsFxElement
 				if (InnerStructProperty->Struct == FCsFpsFxElement::StaticStruct())
 				{ LoadMemberArrayStructProperty<FCsFpsFxElement>(ArrayProperty, InObject, StructName, LoadFlags); continue; }
-				// FCsFpsSoundElement
-				if (InnerStructProperty->Struct == FCsFpsSoundElement::StaticStruct())
-				{ LoadMemberArrayStructProperty<FCsFpsSoundElement>(ArrayProperty, InObject, StructName, LoadFlags); continue; }
+				// FCsFpvSoundElement
+				if (InnerStructProperty->Struct == FCsFpvSoundElement::StaticStruct())
+				{ LoadMemberArrayStructProperty<FCsFpvSoundElement>(ArrayProperty, InObject, StructName, LoadFlags); continue; }
 				// FCsAnimSequence
 				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
 				{ LoadMemberArrayStructProperty<FCsAnimSequence>(ArrayProperty, InObject, StructName, LoadFlags); continue; }
@@ -7531,11 +7549,11 @@ void UCsCommon_Load::UnLoadStructWithTAssetPtrs(void* InStruct, UScriptStruct* c
 				{ UnLoadMemberStructProperty<FCsSoundElement>(StructProperty, InStruct); continue; }
 				continue;
 			}
-			// FCsFpsSoundElement
-			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
+			// FCsFpvSoundElement
+			if (StructProperty->Struct == FCsFpvSoundElement::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ UnLoadMemberStructProperty<FCsFpsSoundElement>(StructProperty, InStruct); continue; }
+				{ UnLoadMemberStructProperty<FCsFpvSoundElement>(StructProperty, InStruct); continue; }
 				continue;
 			}
 			// FCsFxElement
@@ -7630,9 +7648,9 @@ void UCsCommon_Load::UnLoadStructWithTAssetPtrs(void* InStruct, UScriptStruct* c
 				// FCsSoundElement
 				if (InnerStructProperty->Struct == FCsSoundElement::StaticStruct())
 				{ UnLoadMemberArrayStructProperty<FCsSoundElement>(ArrayProperty, InStruct); continue; }
-				// FCsFpsSoundElement
-				if (InnerStructProperty->Struct == FCsFpsSoundElement::StaticStruct())
-				{ UnLoadMemberArrayStructProperty<FCsFpsSoundElement>(ArrayProperty, InStruct); continue; }
+				// FCsFpvSoundElement
+				if (InnerStructProperty->Struct == FCsFpvSoundElement::StaticStruct())
+				{ UnLoadMemberArrayStructProperty<FCsFpvSoundElement>(ArrayProperty, InStruct); continue; }
 				continue;
 			}
 			continue;
@@ -7722,11 +7740,11 @@ void UCsCommon_Load::UnLoadObjectWithTAssetPtrs(void* InObject, UClass* const &I
 				{ UnLoadMemberStructProperty<FCsSoundElement>(StructProperty, InObject); continue; }
 				continue;
 			}
-			// FCsFpsSoundElement
-			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
+			// FCsFpvSoundElement
+			if (StructProperty->Struct == FCsFpvSoundElement::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ UnLoadMemberStructProperty<FCsFpsSoundElement>(StructProperty, InObject); continue; }
+				{ UnLoadMemberStructProperty<FCsFpvSoundElement>(StructProperty, InObject); continue; }
 				continue;
 			}
 			// FCsFxElement
@@ -7821,9 +7839,9 @@ void UCsCommon_Load::UnLoadObjectWithTAssetPtrs(void* InObject, UClass* const &I
 				// FCsSoundElement
 				if (InnerStructProperty->Struct == FCsSoundElement::StaticStruct())
 				{ UnLoadMemberArrayStructProperty<FCsSoundElement>(ArrayProperty, InObject); continue; }
-				// FCsFpsSoundElement
-				if (InnerStructProperty->Struct == FCsFpsSoundElement::StaticStruct())
-				{ UnLoadMemberArrayStructProperty<FCsFpsSoundElement>(ArrayProperty, InObject); continue; }
+				// FCsFpvSoundElement
+				if (InnerStructProperty->Struct == FCsFpvSoundElement::StaticStruct())
+				{ UnLoadMemberArrayStructProperty<FCsFpvSoundElement>(ArrayProperty, InObject); continue; }
 				continue;
 			}
 		}
@@ -7948,12 +7966,12 @@ bool UCsCommon_Load::IsLoadedStructWithTAssetPtrs(const FString &ObjectName, voi
 				if (StructProperty->ArrayDim == CS_SINGLETON)
 					Pass &= IsLoadedMemberStructProperty<FCsSoundElement>(StructProperty, InStruct, StructName);
 			}
-			// FCsFpsSoundElement
+			// FCsFpvSoundElement
 			else
-			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
+			if (StructProperty->Struct == FCsFpvSoundElement::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-					Pass &= IsLoadedMemberStructProperty<FCsFpsSoundElement>(StructProperty, InStruct, StructName);
+					Pass &= IsLoadedMemberStructProperty<FCsFpvSoundElement>(StructProperty, InStruct, StructName);
 			}
 			// FCsFxElement
 			else
@@ -8012,10 +8030,10 @@ bool UCsCommon_Load::IsLoadedStructWithTAssetPtrs(const FString &ObjectName, voi
 				else
 				if (InnerStructProperty->Struct == FCsSoundElement::StaticStruct())
 					Pass &= IsLoadedMemberArrayStructProperty<FCsSoundElement>(ArrayProperty, InStruct, StructName);
-				// FCsFpsSoundElement
+				// FCsFpvSoundElement
 				else
-				if (InnerStructProperty->Struct == FCsFpsSoundElement::StaticStruct())
-					Pass &= IsLoadedMemberArrayStructProperty<FCsFpsSoundElement>(ArrayProperty, InStruct, StructName);
+				if (InnerStructProperty->Struct == FCsFpvSoundElement::StaticStruct())
+					Pass &= IsLoadedMemberArrayStructProperty<FCsFpvSoundElement>(ArrayProperty, InStruct, StructName);
 			}
 		}
 	}
@@ -8135,12 +8153,12 @@ bool UCsCommon_Load::IsLoadedObjectWithTAssetPtrs(const FString &ObjectName, voi
 				if (StructProperty->ArrayDim == CS_SINGLETON)
 					Pass &= IsLoadedMemberStructProperty<FCsSoundElement>(StructProperty, InObject, StructName);
 			}
-			// FCsFpsSoundElement
+			// FCsFpvSoundElement
 			else
-			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
+			if (StructProperty->Struct == FCsFpvSoundElement::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-					Pass &= IsLoadedMemberStructProperty<FCsFpsSoundElement>(StructProperty, InObject, StructName);
+					Pass &= IsLoadedMemberStructProperty<FCsFpvSoundElement>(StructProperty, InObject, StructName);
 			}
 			// FCsFxElement
 			else
@@ -8199,10 +8217,10 @@ bool UCsCommon_Load::IsLoadedObjectWithTAssetPtrs(const FString &ObjectName, voi
 				else
 				if (InnerStructProperty->Struct == FCsSoundElement::StaticStruct())
 					Pass &= IsLoadedMemberArrayStructProperty<FCsSoundElement>(ArrayProperty, InObject, StructName);
-				// FCsFpsSoundElement
+				// FCsFpvSoundElement
 				else
-				if (InnerStructProperty->Struct == FCsFpsSoundElement::StaticStruct())
-					Pass &= IsLoadedMemberArrayStructProperty<FCsFpsSoundElement>(ArrayProperty, InObject, StructName);
+				if (InnerStructProperty->Struct == FCsFpvSoundElement::StaticStruct())
+					Pass &= IsLoadedMemberArrayStructProperty<FCsFpvSoundElement>(ArrayProperty, InObject, StructName);
 			}
 		}
 	}
@@ -8447,11 +8465,11 @@ void UCsCommon_Load::CheckObjectWithEnum(const FString &ObjectName, void* InObje
 				}
 				continue;
 			}
-			// FCsFpsSoundElement
-			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
+			// FCsFpvSoundElement
+			if (StructProperty->Struct == FCsFpvSoundElement::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-				{ CheckEnumStructProperty<FCsFpsSoundElement>(StructProperty, InObject, StructName, nullptr); continue; }
+				{ CheckEnumStructProperty<FCsFpvSoundElement>(StructProperty, InObject, StructName, nullptr); continue; }
 
 				if (Internal)
 				{
@@ -8609,9 +8627,9 @@ void UCsCommon_Load::CheckObjectWithEnum(const FString &ObjectName, void* InObje
 				// FCsFpsFxElement
 				if (InnerStructProperty->Struct == FCsFpsFxElement::StaticStruct())
 				{ CheckEnumArrayStructProperty<FCsFpsFxElement>(ArrayProperty, InObject, StructName); continue; }
-				// FCsFpsSoundElement
-				if (InnerStructProperty->Struct == FCsFpsSoundElement::StaticStruct())
-				{ CheckEnumArrayStructProperty<FCsFpsSoundElement>(ArrayProperty, InObject, StructName); continue; }
+				// FCsFpvSoundElement
+				if (InnerStructProperty->Struct == FCsFpvSoundElement::StaticStruct())
+				{ CheckEnumArrayStructProperty<FCsFpvSoundElement>(ArrayProperty, InObject, StructName); continue; }
 				// FCsAnimSequence
 				if (InnerStructProperty->Struct == FCsAnimSequence::StaticStruct())
 				{ CheckEnumArrayStructProperty<FCsAnimSequence>(ArrayProperty, InObject, StructName); continue; }
@@ -9188,12 +9206,12 @@ void UCsCommon_Load::SetObjectMembers(void* FromObject, void* ToObject, UClass* 
 				if (StructProperty->ArrayDim == CS_SINGLETON)
 					SetMemberProperty<FCsSoundElement>(ToObject, Property, MemberValues[Index]);
 			}
-			// FCsFpsSoundElement
+			// FCsFpvSoundElement
 			else
-			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
+			if (StructProperty->Struct == FCsFpvSoundElement::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-					SetMemberProperty<FCsFpsSoundElement>(ToObject, Property, MemberValues[Index]);
+					SetMemberProperty<FCsFpvSoundElement>(ToObject, Property, MemberValues[Index]);
 			}
 			// FCsFxElement
 			else
@@ -9613,12 +9631,12 @@ void UCsCommon_Load::GetObjectMembers(void* InObject, UClass* const &InClass, co
 				if (StructProperty->ArrayDim == CS_SINGLETON)
 					OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<FCsSoundElement>(InObject));
 			}
-			// FCsFpsSoundElement
+			// FCsFpvSoundElement
 			else
-			if (StructProperty->Struct == FCsFpsSoundElement::StaticStruct())
+			if (StructProperty->Struct == FCsFpvSoundElement::StaticStruct())
 			{
 				if (StructProperty->ArrayDim == CS_SINGLETON)
-					OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<FCsFpsSoundElement>(InObject));
+					OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<FCsFpvSoundElement>(InObject));
 			}
 			// FCsFxElement
 			else

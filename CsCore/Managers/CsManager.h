@@ -115,7 +115,7 @@ class TCsManagerPooledObjects
 public:
 	TCsManagerPooledObjects()
 	{
-		CsConstructObject.BindRaw(this, &TCsManagerPooledObjects::ConstructObject);
+		ConstructObject_Call.BindRaw(this, &TCsManagerPooledObjects::ConstructObject);
 	}
 
 	virtual ~TCsManagerPooledObjects()
@@ -129,9 +129,10 @@ public:
 
 	TWeakObjectPtr<class UWorld> CurrentWorld;
 
-	TBaseDelegate<ObjectType*, const EnumType&> CsConstructObject;
+	TBaseDelegate<ObjectType*, const EnumType&> ConstructObject_Call;
 
 	TMulticastDelegate<void, const EnumType&, ObjectType*> OnAddToPool_Event;
+	TMulticastDelegate<void, const EnumType&, int32> OnDeAllocate_Event;
 
 	TAutoConsoleVariable<int32>* LogTransactions;
 
@@ -190,13 +191,16 @@ public:
 		{
 			Payloads[i].Reset();
 		}
+		OnAddToPool_Event.Clear();
+		OnDeAllocate_Event.Clear();
 	}
 
 	virtual void Shutdown()
 	{
 		Clear();
 
-		CsConstructObject.Unbind();
+		OnTick_Handle_Object.Unbind();
+		ConstructObject_Call.Unbind();
 	}
 
 	virtual ObjectType* ConstructObject(const EnumType& e)
@@ -218,7 +222,7 @@ public:
 
 		for (int32 i = 0; i < size; ++i)
 		{
-			ObjectType* o = CsConstructObject.Execute(e);
+			ObjectType* o = ConstructObject_Call.Execute(e);
 			o->Init(i, e);
 			o->OnCreatePool();
 			o->DeAllocate();
@@ -386,6 +390,8 @@ public:
 
 					o->DeAllocate();
 					objects.RemoveAt(j);
+
+					OnDeAllocate_Event.Broadcast(key, o->Cache.Index);
 
 					if (j < earliestIndex)
 						earliestIndex = j;

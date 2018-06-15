@@ -43,14 +43,82 @@ void FCsManager_Sound::LogTransaction_Internal(const FString& outLog)
 	UE_LOG(LogCs, Warning, TEXT("%s"), *outLog);
 }
 
+void FCsManager_Sound::Stop(FCsSoundElement* InSound, UObject* InOwner, UObject* InParent)
+{
+	if (!InSound->Get())
+	{
+		UE_LOG(LogCs, Warning, TEXT("CsManager_Sound::Stop: Attemping to Stop a NULL Sound."));
+		return;
+	}
+
+#if WITH_EDITOR
+	// For Play in Preview
+	if (InOwner)
+	{
+		if (UWorld* CurrentWorld = InOwner->GetWorld())
+		{
+			if (UCsCommon::IsPlayInEditorPreview(CurrentWorld) || UCsCommon::IsPlayInEditor(CurrentWorld))
+				return;
+		}
+	}
+#endif // #if WITH_EDITOR
+
+	const FECsSoundType& SoundType = InSound->Type;
+
+	if (!ActiveObjects.Find(SoundType))
+		return;
+
+	TArray<ACsSound*>& Sounds = ActiveObjects[SoundType];
+
+	const int32 Count   = Sounds.Num();
+	int32 EarliestIndex = Count;
+
+	for (int32 I = Count - 1; I >= 0; --I)
+	{
+		ACsSound* Sound = Sounds[I];
+
+		if (InSound->Get() != Sound->Cache.GetCue())
+			continue;
+		if (InOwner != Sound->Cache.GetOwner())
+			continue;
+		if (InParent != Sound->Cache.GetParent())
+			continue;
+
+		if (I < EarliestIndex)
+			EarliestIndex = I;
+
+		LogTransaction(TEXT("CsManager_Sound::Stop"), ECsPoolTransaction::Deallocate, Sound);
+
+		Sound->DeAllocate();
+		Sounds.RemoveAt(I);
+
+/*
+#if WITH_EDITOR
+		OnDeAllocate_ScriptEvent.Broadcast(I);
+#endif // #if WITH_EDITOR
+		OnDeAllocate_Event.Broadcast(I);
+		*/
+	}
+
+	if (EarliestIndex != Count)
+	{
+		for (int32 I = EarliestIndex; I < Count; ++I)
+		{
+			ACsSound* Sound = Sounds[I];
+			// Reset ActiveIndex
+			Sound->Cache.SetActiveIndex(I);
+		}
+	}
+}
+
 #pragma endregion // Internal
 
 AICsManager_Sound::AICsManager_Sound(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	Internal = new FCsManager_Sound();
 	Internal->Init(TEXT("CsManager_Sound"), TEXT("ACsSound"), nullptr, &CsCVarLogManagerSoundTransactions);
-	Internal->CsConstructObject.Unbind();
-	Internal->CsConstructObject.BindUObject(this, &AICsManager_Sound::ConstructObject);
+	Internal->ConstructObject_Call.Unbind();
+	Internal->ConstructObject_Call.BindUObject(this, &AICsManager_Sound::ConstructObject);
 }
 
 /*static*/ UObject* AICsManager_Sound::GetMyOwner() { return MyOwner.IsValid() ? MyOwner.Get() : nullptr; }
@@ -180,64 +248,7 @@ ACsSound* AICsManager_Sound::Play(const FECsSoundType &Type, FCsSoundPayload *Pa
 
 void AICsManager_Sound::Stop(FCsSoundElement* InSound, UObject* InOwner, UObject* InParent)
 {
-	/*
-	if (!InSound->Get())
-	{
-		UE_LOG(LogCs, Warning, TEXT("AICsManager_Sound::Stop: Attemping to Stop a NULL Sound."));
-		return;
-	}
-
-#if WITH_EDITOR
-	// For Play in Preview
-	if (InOwner)
-	{
-		if (UWorld* CurrentWorld = InOwner->GetWorld())
-		{
-			if (UCsCommon::IsPlayInEditorPreview(CurrentWorld) || UCsCommon::IsPlayInEditor(CurrentWorld))
-				return;
-		}
-	}
-#endif // #if WITH_EDITOR
-
-	const uint8 Count   = ActiveSounds.Num();
-	uint8 EarliestIndex = Count;
-
-	for (int32 I = Count - 1; I >= 0; --I)
-	{
-		ACsSound* Sound = ActiveSounds[I];
-
-		if (InSound->Get() != Sound->Cache.GetCue())
-			continue;
-		if (InOwner != Sound->Cache.GetOwner())
-			continue;
-		if (InParent != Sound->Cache.GetParent())
-			continue;
-
-		if (I < EarliestIndex)
-			EarliestIndex = I;
-
-		LogTransaction(TEXT("ACsManager_Sound::Stop"), ECsPoolTransaction::Deallocate, Sound);
-
-		Sound->DeAllocate();
-		ActiveSounds.RemoveAt(I);
-
-#if WITH_EDITOR
-		OnDeAllocate_ScriptEvent.Broadcast(I);
-#endif // #if WITH_EDITOR
-		OnDeAllocate_Event.Broadcast(I);
-	}
-
-	if (EarliestIndex != Count)
-	{
-		for (int32 I = EarliestIndex; I < Count; ++I)
-		{
-			ACsSound* Sound = ActiveSounds[I];
-			// Reset ActiveIndex
-			Sound->Cache.ActiveIndex		= I;
-			Sound->Cache.ActiveIndex_Script = I;
-		}
-	}
-	*/
+	Internal->Stop(InSound, InOwner, InParent);
 }
 
 #pragma endregion Stop

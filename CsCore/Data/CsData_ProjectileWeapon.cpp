@@ -259,7 +259,7 @@ void ACsData_ProjectileWeapon::StopSound(UWorld* InWorld, const TCsViewType &Vie
 	FCsSoundElement* SoundElement	= GetSound(ViewType, FireMode, SoundType);
 	AICsManager_Sound* Manager_Sound = AICsManager_Sound::Get(InWorld);
 
-	//Manager_Sound->Stop(SoundElement, InOwner, InParent);
+	Manager_Sound->Stop(SoundElement, InOwner, InParent);
 }
 
 void ACsData_ProjectileWeapon::StopSound(UWorld* InWorld, const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType, UObject* InOwner, UObject* InParent)
@@ -267,7 +267,7 @@ void ACsData_ProjectileWeapon::StopSound(UWorld* InWorld, const FECsWeaponFireMo
 	FCsSoundElement* SoundElement	= GetSound(FireMode, SoundType);
 	AICsManager_Sound* Manager_Sound = AICsManager_Sound::Get(InWorld);
 
-	//Manager_Sound->Stop(SoundElement, InOwner, InParent);
+	Manager_Sound->Stop(SoundElement, InOwner, InParent);
 }
 
 #pragma endregion Sounds

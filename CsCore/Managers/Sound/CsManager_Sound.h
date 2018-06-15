@@ -13,11 +13,18 @@ class FCsManager_Sound : public TCsManagerPooledObjects<FECsSoundType, ACsSound,
 public:
 	~FCsManager_Sound();
 
+// Interface
+#pragma region
+
 	virtual void DeconstructObject(ACsSound* a) override;
 	virtual FString GetObjectName(ACsSound* a) override;
 	virtual const FString& EnumTypeToString(const FECsSoundType &e) override;
 	virtual const FString& EnumTypeToString(const int32 &index) override;
 	virtual void LogTransaction_Internal(const FString& OutLog) override;
+
+#pragma endregion Interface
+
+	void Stop(FCsSoundElement* InSound, UObject* InOwner, UObject* InParent);
 };
 
 UCLASS()

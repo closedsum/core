@@ -47,8 +47,8 @@ AICsManager_InteractiveActor::AICsManager_InteractiveActor(const FObjectInitiali
 {
 	Internal = new FCsManager_InteractiveActor();
 	Internal->Init(TEXT("CsManager_InteractiveActor"), TEXT("ACsInteractiveActor"), nullptr, &CsCVarLogManagerInteractiveActorTransactions);
-	Internal->CsConstructObject.Unbind();
-	Internal->CsConstructObject.BindUObject(this, &AICsManager_InteractiveActor::ConstructObject);
+	Internal->ConstructObject_Call.Unbind();
+	Internal->ConstructObject_Call.BindUObject(this, &AICsManager_InteractiveActor::ConstructObject);
 }
 
 /*static*/ AICsManager_InteractiveActor* AICsManager_InteractiveActor::Get(UWorld* InWorld)

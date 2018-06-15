@@ -90,8 +90,8 @@ void UICsManager_Process::Initialize()
 {
 	Internal = new FCsManager_Process();
 	Internal->Init(TEXT("CsManager_Process"), TEXT("UCsProcess"), nullptr, &CsCVarLogManagerProcessTransactions);
-	Internal->CsConstructObject.Unbind();
-	Internal->CsConstructObject.BindUObject(this, &UICsManager_Process::ConstructObject);
+	Internal->ConstructObject_Call.Unbind();
+	Internal->ConstructObject_Call.BindUObject(this, &UICsManager_Process::ConstructObject);
 }
 
 void UICsManager_Process::CleanUp()

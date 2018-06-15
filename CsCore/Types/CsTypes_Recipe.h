@@ -86,17 +86,31 @@ struct FCsRecipeIngredient
 
 #define CS_INVALID_CRAFTING_PAYLOAD_BAG 255
 
+USTRUCT(BlueprintType)
 struct FCsCraftingPayload
 {
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY()
 	bool IsAllocated;
+	UPROPERTY()
 	uint64 Id;
+	UPROPERTY()
 	TWeakObjectPtr<UObject> Instigator;
+	UPROPERTY()
 	TWeakObjectPtr<class ACsManager_Inventory> Manager_Inventory;
+	UPROPERTY()
 	TWeakObjectPtr<class ACsData_Recipe> Recipe;
+	UPROPERTY()
 	uint8 Bag;
+	UPROPERTY()
 	uint16 Count;
+	
 	TMap<FName, TArray<struct FCsItem*>> ItemMap;
+	
+	UPROPERTY()
 	bool AddToInventory;
+
 	TArray<struct FCsItem*> OutItems;
 
 	FCsCraftingPayload()
@@ -105,7 +119,7 @@ struct FCsCraftingPayload
 	}
 	~FCsCraftingPayload() {}
 
-	void Reset()
+	FORCEINLINE void Reset()
 	{
 		IsAllocated = false;
 		Id = 0;
@@ -118,32 +132,38 @@ struct FCsCraftingPayload
 		OutItems.Reset();
 	}
 
-	class UObject* GetInstigator() { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
-	class ACsManager_Inventory* GetManager_Inventory() { return Manager_Inventory.IsValid() ? Manager_Inventory.Get() : nullptr; }
-	class ACsData_Recipe* GetRecipe() { return Recipe.IsValid() ? Recipe.Get() : nullptr; }
+	FORCEINLINE class UObject* GetInstigator() { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
+	template<typename T>
+	FORCEINLINE T* GetInstigator() { return Cast<T>(GetInstigator()); }
+	FORCEINLINE class ACsManager_Inventory* GetManager_Inventory() { return Manager_Inventory.IsValid() ? Manager_Inventory.Get() : nullptr; }
+	template<typename T>
+	FORCEINLINE T* GetManager_Inventory() { return Cast<T>(GetManager_Inventory()); }
+	FORCEINLINE class ACsData_Recipe* GetRecipe() { return Recipe.IsValid() ? Recipe.Get() : nullptr; }
+	template<typename T>
+	FORCEINLINE T* GetRecipe() { return Cast<T>(GetRecipe()); }
 
 	void ProcessItems(const FName &ShortCode, const int32 &ItemCount, TArray<struct FCsItem*> &OutProcessedItems)
 	{
-		TArray<struct FCsItem*>* ItemsPtr = ItemMap.Find(ShortCode);
+		TArray<struct FCsItem*>& Items = ItemMap[ShortCode];
 
-		for (int32 I = 0; I < ItemCount; ++I)
+		for (FCsItem* Item : Items)
 		{
-			OutProcessedItems.Add((*ItemsPtr)[I]);
+			OutProcessedItems.Add(Item);
 		}
 		
 		// Transpose the first ItemCount elements to the end of the array
-		const int32 ItemsPtrCount = ItemsPtr->Num();
+		const int32 Count = Items.Num();
 
-		for (int32 I = ItemCount; I < ItemsPtrCount; ++I)
+		for (int32 I = ItemCount; I < Count; ++I)
 		{
-			FCsItem* Temp			   = (*ItemsPtr)[I - ItemCount];
-			(*ItemsPtr)[I - ItemCount] = (*ItemsPtr)[I];
-			(*ItemsPtr)[I]			   = Temp;
+			FCsItem* Temp		 = Items[I - ItemCount];
+			Items[I - ItemCount] = Items[I];
+			Items[I]			 = Temp;
 		}
 		// Remove the last ItemCount elements of the array
-		for (int32 I = ItemsPtrCount - 1; I > ItemsPtrCount - 1 - ItemCount; --I)
+		for (int32 I = Count - 1; I > Count - 1 - ItemCount; --I)
 		{
-			ItemsPtr->RemoveAt(I);
+			Items.RemoveAt(I);
 		}
 	}
 };

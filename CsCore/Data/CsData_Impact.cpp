@@ -25,7 +25,12 @@ void ACsData_Impact::PlayImpactSound(UWorld* InWorld, const TEnumAsByte<EPhysica
 {
 	const TCsSurfaceType SurfaceType = (*PhysicalSurfaceToSurfaceType)(PhysicalSurface);
 	FCsSoundElement* SoundElement	 = GetImpactSound(SurfaceType);
-	ACsManager_Sound* Manager_Sound	 = ACsManager_Sound::Get(InWorld);
+	AICsManager_Sound* Manager_Sound = AICsManager_Sound::Get(InWorld);
 
-	Manager_Sound->Play(SoundElement, InOwner, Location);
+	FCsSoundPayload* Payload = Manager_Sound->AllocatePayload();
+	Payload->Set(SoundElement);
+	Payload->Owner = InOwner;
+	Payload->Location = Location;
+
+	Manager_Sound->Play(SoundElement->Type, Payload);
 }

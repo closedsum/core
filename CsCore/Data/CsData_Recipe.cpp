@@ -7,7 +7,7 @@ ACsData_Recipe::ACsData_Recipe(const FObjectInitializer& ObjectInitializer)
 {
 }
 
-TCsRecipeType ACsData_Recipe::GetBaseRecipeType() { return BaseRecipeType; }
+const FECsRecipeType& ACsData_Recipe::GetRecipeType() { return EMCsRecipeType::Get().GetMAX(); }
 
 // Stats
 #pragma region

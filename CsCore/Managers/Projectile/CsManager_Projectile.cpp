@@ -15,30 +15,30 @@ TWeakObjectPtr<UObject> AICsManager_Projectile::MyOwner;
 // Internal
 #pragma region
 
-CsManager_Projectile::~CsManager_Projectile() {}
+FCsManager_Projectile::~FCsManager_Projectile() {}
 
-void CsManager_Projectile::DeconstructObject(ACsProjectile* a)
+void FCsManager_Projectile::DeconstructObject(ACsProjectile* a)
 {
 	if (a && !a->IsPendingKill())
 		a->Destroy(true);
 }
 
-FString CsManager_Projectile::GetObjectName(ACsProjectile* a)
+FString FCsManager_Projectile::GetObjectName(ACsProjectile* a)
 {
 	return a->GetName();
 }
 
-const FString& CsManager_Projectile::EnumTypeToString(const FECsProjectileType &e)
+const FString& FCsManager_Projectile::EnumTypeToString(const FECsProjectileType &e)
 {
 	return e.Name;
 }
 
-const FString& CsManager_Projectile::EnumTypeToString(const int32 &index)
+const FString& FCsManager_Projectile::EnumTypeToString(const int32 &index)
 {
 	return EMCsProjectileType::Get().GetEnumAt(index).Name;
 }
 
-void CsManager_Projectile::LogTransaction_Internal(const FString& outLog)
+void FCsManager_Projectile::LogTransaction_Internal(const FString& outLog)
 {
 	UE_LOG(LogCs, Warning, TEXT("%s"), *outLog);
 }
@@ -48,7 +48,7 @@ void CsManager_Projectile::LogTransaction_Internal(const FString& outLog)
 AICsManager_Projectile::AICsManager_Projectile(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	Internal = new CsManager_Projectile();
+	Internal = new FCsManager_Projectile();
 	Internal->Init(TEXT("CsManager_Projectile"), TEXT("ACsProjectile"), nullptr, &CsCVarLogManagerProjectileTransactions);
 	Internal->OnTick_Handle_Object.Unbind();
 	Internal->OnTick_Handle_Object.BindUObject(this, &AICsManager_Projectile::OnTick_Handle_Projectile);

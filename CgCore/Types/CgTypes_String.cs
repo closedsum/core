@@ -18,7 +18,7 @@
         MAX
     }
 
-    public struct CgStringWordInfo
+    public struct FCgStringWordInfo
     {
         private static readonly string ESCAPE_INT = "%d";
         private static readonly string ESCAPE_FLOAT = "%f";
@@ -28,7 +28,7 @@
         private string Altered;
         private ECgStringEscapeType EscapeType;
 
-        public CgStringWordInfo(string val, ECgStringWordRule rule)
+        public FCgStringWordInfo(string val, ECgStringWordRule rule)
         {
             Value = val;
             Rule = rule;
@@ -42,47 +42,47 @@
                 EscapeType = ECgStringEscapeType.Float;
         }
 
-        public static implicit operator string(CgStringWordInfo w)
+        public static implicit operator string(FCgStringWordInfo w)
         {
             return w.Altered;
         }
 
-        public static bool operator ==(CgStringWordInfo lhs, CgStringWordInfo rhs)
+        public static bool operator ==(FCgStringWordInfo lhs, FCgStringWordInfo rhs)
         {
             return lhs.Value == rhs.Value && lhs.Rule == rhs.Rule && lhs.Altered == rhs.Altered;
         }
 
-        public static bool operator !=(CgStringWordInfo lhs, CgStringWordInfo rhs)
+        public static bool operator !=(FCgStringWordInfo lhs, FCgStringWordInfo rhs)
         {
             return !(lhs == rhs);
         }
 
-        public static bool operator ==(CgStringWordInfo lhs, string rhs)
+        public static bool operator ==(FCgStringWordInfo lhs, string rhs)
         {
             return lhs.Value == rhs;
         }
 
-        public static bool operator !=(CgStringWordInfo lhs, string rhs)
+        public static bool operator !=(FCgStringWordInfo lhs, string rhs)
         {
             return !(lhs == rhs);
         }
 
-        public static bool operator ==(string lhs, CgStringWordInfo rhs)
+        public static bool operator ==(string lhs, FCgStringWordInfo rhs)
         {
             return lhs == rhs.Value;
         }
 
-        public static bool operator !=(string lhs, CgStringWordInfo rhs)
+        public static bool operator !=(string lhs, FCgStringWordInfo rhs)
         {
             return !(lhs == rhs);
         }
 
         public override bool Equals(object obj)
         {
-            if (!(obj is CgStringWordInfo))
+            if (!(obj is FCgStringWordInfo))
                 return false;
 
-            CgStringWordInfo rhs = (CgStringWordInfo)obj;
+            FCgStringWordInfo rhs = (FCgStringWordInfo)obj;
 
             if (Value != rhs.Value) return false;
             if (Rule != rhs.Rule) return false;
@@ -115,29 +115,29 @@
         }
     }
 
-    public sealed class CgStringWord
+    public sealed class FCgStringWord
     {
         private bool Completed;
 
-        private List<CgStringWordInfo> Ands;
-        private List<CgStringWordInfo> Ors;
+        private List<FCgStringWordInfo> Ands;
+        private List<FCgStringWordInfo> Ors;
 
-        public CgStringWord()
+        public FCgStringWord()
         {
             Completed = false;
 
-            Ands = new List<CgStringWordInfo>();
-            Ors = new List<CgStringWordInfo>();
+            Ands = new List<FCgStringWordInfo>();
+            Ors = new List<FCgStringWordInfo>();
         }
 
         public void AddAnd(string s, ECgStringWordRule rule = ECgStringWordRule.MatchCase)
         {
-            Ands.Add(new CgStringWordInfo(s, rule));
+            Ands.Add(new FCgStringWordInfo(s, rule));
         }
 
         public void AddOr(string s, ECgStringWordRule rule = ECgStringWordRule.MatchCase)
         {
-            Ors.Add(new CgStringWordInfo(s, rule));
+            Ors.Add(new FCgStringWordInfo(s, rule));
         }
 
         public void Clear()
@@ -179,17 +179,17 @@
         }
     }
 
-    public sealed class CgStringPhrase
+    public sealed class FCgStringPhrase
     {
         private bool Completed;
 
-        private List<CgStringWord> Words;
+        private List<FCgStringWord> Words;
 
-        public CgStringPhrase()
+        public FCgStringPhrase()
         {
             Completed = false;
 
-            Words = new List<CgStringWord>();
+            Words = new List<FCgStringWord>();
         }
 
         public void AddAndToWord(int index, string word, ECgStringWordRule rule = ECgStringWordRule.MatchCase)
@@ -200,7 +200,7 @@
             {
                 for (int i = 0; i < index - count + 1; ++i)
                 {
-                    Words.Add(new CgStringWord());
+                    Words.Add(new FCgStringWord());
                 }
             }
             Words[index].AddAnd(word, rule);
@@ -214,7 +214,7 @@
             {
                 for (int i = 0; i < index - count + 1; ++i)
                 {
-                    Words.Add(new CgStringWord());
+                    Words.Add(new FCgStringWord());
                 }
             }
             Words[index].AddOr(word, rule);
@@ -264,20 +264,20 @@
         }
     }
 
-    public sealed class CgStringSentence
+    public sealed class FCgStringSentence
     {
         private bool Completed;
 
-        private List<CgStringPhrase> Phrases;
+        private List<FCgStringPhrase> Phrases;
 
-        public CgStringSentence()
+        public FCgStringSentence()
         {
             Completed = false;
 
-            Phrases = new List<CgStringPhrase>();
+            Phrases = new List<FCgStringPhrase>();
         }
 
-        public void AddPhrase(CgStringPhrase phrase)
+        public void AddPhrase(FCgStringPhrase phrase)
         {
             Phrases.Add(phrase);
         }
@@ -327,31 +327,31 @@
         }
     }
 
-    public sealed class CgStringParagraph
+    public sealed class FCgStringParagraph
     {
-        public sealed class CompletedEvent : CgMulticastDelegate { }
+        public sealed class FCompletedEvent : CgMulticastDelegate { }
 
         private bool Completed;
 
-        private List<CgStringSentence> Sentences;
+        private List<FCgStringSentence> Sentences;
 
-        private CompletedEvent Event;
+        private FCompletedEvent Event;
 
-        public CgStringParagraph()
+        public FCgStringParagraph()
         {
             Completed = false;
 
-            Sentences = new List<CgStringSentence>();
+            Sentences = new List<FCgStringSentence>();
 
-            Event = new CompletedEvent();
+            Event = new FCompletedEvent();
         }
 
-        public void AddSentence(CgStringSentence sentence)
+        public void AddSentence(FCgStringSentence sentence)
         {
             Sentences.Add(sentence);
         }
 
-        public void AddEvent(CompletedEvent.Event e)
+        public void AddEvent(FCompletedEvent.Event e)
         {
             Event.Add(e);
         }
@@ -402,23 +402,23 @@
         }
     }
 
-    public static class CgStringParagraphHelper
+    public static class FCgStringParagraphHelper
     {
-        public static CgStringSentence CreateOneWordSentence(string word, ECgStringWordRule rule = ECgStringWordRule.MatchCase)
+        public static FCgStringSentence CreateOneWordSentence(string word, ECgStringWordRule rule = ECgStringWordRule.MatchCase)
         {
-            CgStringSentence sentence = new CgStringSentence();
-                CgStringPhrase phrase = new CgStringPhrase();
+            FCgStringSentence sentence = new FCgStringSentence();
+                FCgStringPhrase phrase = new FCgStringPhrase();
                 phrase.AddAndToWord(0, word, rule);
             sentence.AddPhrase(phrase);
 
             return sentence;
         }
 
-        public static CgStringParagraph CreateOneWordParagraph(string word, ECgStringWordRule rule = ECgStringWordRule.MatchCase)
+        public static FCgStringParagraph CreateOneWordParagraph(string word, ECgStringWordRule rule = ECgStringWordRule.MatchCase)
         {
-            CgStringParagraph paragraph = new CgStringParagraph();
-                CgStringSentence sentence = new CgStringSentence();
-                    CgStringPhrase phrase = new CgStringPhrase();
+            FCgStringParagraph paragraph = new FCgStringParagraph();
+                FCgStringSentence sentence = new FCgStringSentence();
+                    FCgStringPhrase phrase = new FCgStringPhrase();
                     phrase.AddAndToWord(0, word, rule);
                 sentence.AddPhrase(phrase);
             paragraph.AddSentence(sentence);

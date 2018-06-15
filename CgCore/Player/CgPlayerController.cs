@@ -8,7 +8,7 @@
     {
         #region "Data Members"
 
-        public CgManager_Input Manager_Input;
+        public FCgManager_Input Manager_Input;
 
         public List<ECgGameEvent> GameEventPriorityList;
 

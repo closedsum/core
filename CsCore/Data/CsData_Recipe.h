@@ -9,9 +9,7 @@ class CSCORE_API ACsData_Recipe : public ACsData
 {
 	GENERATED_UCLASS_BODY()
 
-	TCsRecipeType BaseRecipeType;
-
-	TCsRecipeType GetBaseRecipeType();
+	virtual const FECsRecipeType& GetRecipeType();
 
 // Stats
 #pragma region

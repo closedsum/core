@@ -16,7 +16,7 @@
     }
 
     [Serializable]
-    public abstract class CgBlockchainAccount : ICgBlockchainAccount
+    public abstract class FCgBlockchainAccount : ICgBlockchainAccount
     {
         #region "Data Members"
 
@@ -33,7 +33,7 @@
 
         #endregion // Data Members
 
-        public CgBlockchainAccount()
+        public FCgBlockchainAccount()
         {
         }
 

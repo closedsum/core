@@ -9,12 +9,12 @@ namespace CgCore
     using System.Linq;
     using UnityEngine;
 
-    public struct CgEthereumAccountInfo
+    public struct FCgEthereumAccountInfo
     {
         public string Nickname;
         public string Passphrase;
 
-        public CgEthereumAccountInfo(string nickname, string passphrase)
+        public FCgEthereumAccountInfo(string nickname, string passphrase)
         {
             Nickname = nickname;
             Passphrase = passphrase;
@@ -86,19 +86,19 @@ namespace CgCore
         }
     }
 
-    public struct CgEthereumJavascriptContractLink
+    public struct FCgEthereumJavascriptContractLink
     {
         public readonly ECgBlockchainContract Contract;
         public readonly string Link;
 
-        public CgEthereumJavascriptContractLink(ECgBlockchainContract contract, string link)
+        public FCgEthereumJavascriptContractLink(ECgBlockchainContract contract, string link)
         {
             Contract = contract;
             Link = link;
         }
     }
 
-    public class CgEthereum : CgBlockchain
+    public class FCgEthereum : FCgBlockchain
     {
         #region "CVars"
 
@@ -115,7 +115,7 @@ namespace CgCore
         public string GenesisFilePath;
         public string KeystoreDirectory;
 
-        protected Dictionary<string, CgEthereumKeystore> Keystores;
+        protected Dictionary<string, FCgEthereumKeystore> Keystores;
 
         public string ABIDirectory;
         protected Dictionary<ECgBlockchainContract, string> ABISnippets;
@@ -126,7 +126,7 @@ namespace CgCore
         public string Web3DeployLinkedDirectory;
         protected Dictionary<ECgBlockchainContract, string> Web3DeployLinkedSnippets;
 
-        protected Dictionary<ECgBlockchainContract, List<CgEthereumWeb3DeployLink>> Web3DeployLinks;
+        protected Dictionary<ECgBlockchainContract, List<FCgEthereumWeb3DeployLink>> Web3DeployLinks;
 
         
         public string JavascriptDirectory;
@@ -136,33 +136,33 @@ namespace CgCore
         /* Path for any Contract Javascript functions that need to get procedural updated */
         protected Dictionary<ECgBlockchainContract, string> ScriptLinkedPaths;
         /* Any links, code, and/or information related to a Contract javascript function that needs to get procedurally updated */
-        protected Dictionary<ECgBlockchainContract, List<CgEthereumJavascriptContractLink>> ScriptContractLinks;
+        protected Dictionary<ECgBlockchainContract, List<FCgEthereumJavascriptContractLink>> ScriptContractLinks;
 
         protected Dictionary<ECgBlockchainContract, Dictionary<ECgBlockchainContractFunction, CgBlockchainContractFunction>> ContractFunctions;
 
-        public CgRoutine.BoolType IsRunningInstanceCloseFlag;
+        public FCgRoutine.FBoolType IsRunningInstanceCloseFlag;
 
         protected Dictionary<ECgBlockchainCommand, CgProcessMonitorOutputEvent> MonitorOutputEvents;
 
-        protected CgBlockchainCommandInfo CurrentCommandInfo;
+        protected FCgBlockchainCommandInfo CurrentCommandInfo;
         protected object CurrentCommandOuput;
 
-        protected CgRoutine.BoolType CommandFlag;
-        protected CgRoutine.BoolType SetupAccountFlag;
-        protected CgRoutine.BoolType BringBalanceToThresholdFlag;
-        protected CgRoutine.BoolType DeployContractFlag;
-        protected CgRoutine.BoolType LoadContractsFlag;
-        protected CgRoutine.BoolType SetupContractFlag;
-        protected CgRoutine.BoolType RunContractStateChangeFunctionFlag;
-        protected CgRoutine.BoolType TransactionMinedFlag;
+        protected FCgRoutine.FBoolType CommandFlag;
+        protected FCgRoutine.FBoolType SetupAccountFlag;
+        protected FCgRoutine.FBoolType BringBalanceToThresholdFlag;
+        protected FCgRoutine.FBoolType DeployContractFlag;
+        protected FCgRoutine.FBoolType LoadContractsFlag;
+        protected FCgRoutine.FBoolType SetupContractFlag;
+        protected FCgRoutine.FBoolType RunContractStateChangeFunctionFlag;
+        protected FCgRoutine.FBoolType TransactionMinedFlag;
 
-        protected CgEthereumContract CurrentContract;
+        protected FCgEthereumContract CurrentContract;
 
         #endregion // Data Members
 
-        public CgEthereum() : base()
+        public FCgEthereum() : base()
         {
-            Genesis = new CgEthereumGenesis();
+            Genesis = new FCgEthereumGenesis();
 
             StorageType = ECgBlockchainType.PrivateSingleNode;
 
@@ -175,14 +175,14 @@ namespace CgCore
             RootDirectory = path + "Blockchain\\Ethereum";
             GenesisFilePath = RootDirectory + "/genesis.json"; ;
 
-            IsRunningInstanceCloseFlag = new CgRoutine.BoolType();
+            IsRunningInstanceCloseFlag = new FCgRoutine.FBoolType();
             IsRunningInstanceCloseFlag.Set(true);
 
             ChainDirectory = path + "Blockchain\\Ethereum\\chaindata";
             AccountsDirectory = RootDirectory + "\\Accounts";
 
             KeystoreDirectory = ChainDirectory + "\\keystore";
-            Keystores = new Dictionary<string, CgEthereumKeystore>();
+            Keystores = new Dictionary<string, FCgEthereumKeystore>();
 
             ContractsDirectory = RootDirectory + "\\Contracts";
             ContractsDeployedDirectory = ContractsDirectory + "\\Deployed";
@@ -196,19 +196,19 @@ namespace CgCore
             Web3DeployLinkedDirectory = Web3DeployDirectory + "\\Linked";
             Web3DeployLinkedSnippets = new Dictionary<ECgBlockchainContract, string>(new ECgBlockchainContractEqualityComparer());
 
-            Web3DeployLinks = new Dictionary<ECgBlockchainContract, List<CgEthereumWeb3DeployLink>>(new ECgBlockchainContractEqualityComparer());
+            Web3DeployLinks = new Dictionary<ECgBlockchainContract, List<FCgEthereumWeb3DeployLink>>(new ECgBlockchainContractEqualityComparer());
 
             JavascriptDirectory = RootDirectory + "\\Javascript";
             JavascriptLinkedDirectory = JavascriptDirectory + "\\Linked";
             ScriptPaths = new Dictionary<ECgEthereumJavascript, string>(new ECgEthereumJavascriptEqualityComparer());
             ScriptLinkedPaths = new Dictionary<ECgBlockchainContract, string>(new ECgBlockchainContractEqualityComparer());
-            ScriptContractLinks = new Dictionary<ECgBlockchainContract, List<CgEthereumJavascriptContractLink>>(new ECgBlockchainContractEqualityComparer());
+            ScriptContractLinks = new Dictionary<ECgBlockchainContract, List<FCgEthereumJavascriptContractLink>>(new ECgBlockchainContractEqualityComparer());
 
             ContractFunctions = new Dictionary<ECgBlockchainContract, Dictionary<ECgBlockchainContractFunction, CgBlockchainContractFunction>>(new ECgBlockchainContractEqualityComparer());
 
             MonitorOutputEvents = new Dictionary<ECgBlockchainCommand, CgProcessMonitorOutputEvent>(new ECgBlockchainCommandEqualityComparer());
 
-            CurrentCommandInfo = new CgBlockchainCommandInfo(ECgEthereumCommand.MAX, null, null);
+            CurrentCommandInfo = new FCgBlockchainCommandInfo(ECgEthereumCommand.MAX, null, null);
 
             // Commands
 
@@ -217,7 +217,7 @@ namespace CgCore
                 // SetDataDirectory
             SetCommand(ECgEthereumCommand.SetDataDirectory, "--datadir=\"" + ChainDirectory + "\" --networkid 15 --gcmode archive");
             {
-                CgStringParagraph p = CgStringParagraphHelper.CreateOneWordParagraph("IPC endpoint opened", ECgStringWordRule.MatchCase);// TODO: also include "url=\\\\.\\pipe\\geth.ipc"?
+                FCgStringParagraph p = FCgStringParagraphHelper.CreateOneWordParagraph("IPC endpoint opened", ECgStringWordRule.MatchCase);// TODO: also include "url=\\\\.\\pipe\\geth.ipc"?
 
                 CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.SetDataDirectory, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
                 e.AddEvent(OnCommandCompleted);
@@ -227,10 +227,10 @@ namespace CgCore
                 // AttachToConsole
             SetCommand(ECgEthereumCommand.AttachToConsole, "attach ipc:\\\\.\\pipe\\geth.ipc");
             {
-                CgStringParagraph p = new CgStringParagraph();
-                    p.AddSentence(CgStringParagraphHelper.CreateOneWordSentence("welcome", ECgStringWordRule.Lower));
-                    p.AddSentence(CgStringParagraphHelper.CreateOneWordSentence("instance:", ECgStringWordRule.Lower));
-                    p.AddSentence(CgStringParagraphHelper.CreateOneWordSentence("modules:", ECgStringWordRule.Lower));
+                FCgStringParagraph p = new FCgStringParagraph();
+                    p.AddSentence(FCgStringParagraphHelper.CreateOneWordSentence("welcome", ECgStringWordRule.Lower));
+                    p.AddSentence(FCgStringParagraphHelper.CreateOneWordSentence("instance:", ECgStringWordRule.Lower));
+                    p.AddSentence(FCgStringParagraphHelper.CreateOneWordSentence("modules:", ECgStringWordRule.Lower));
 
                 CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.AttachToConsole, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
                 e.AddEvent(OnCommandCompleted);
@@ -244,7 +244,7 @@ namespace CgCore
                 // UnlockAccount
             SetCommand(ECgEthereumCommand.UnlockAccount, "personal.unlockAccount(%s,%s,%s)");
             {
-                CgStringParagraph p = CgStringParagraphHelper.CreateOneWordParagraph("true", ECgStringWordRule.MatchCase);
+                FCgStringParagraph p = FCgStringParagraphHelper.CreateOneWordParagraph("true", ECgStringWordRule.MatchCase);
 
                 CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.UnlockAccount, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
                 e.AddEvent(OnCommandCompleted);
@@ -256,7 +256,7 @@ namespace CgCore
                 // SetEtherbase
             SetCommand(ECgEthereumCommand.SetEtherbase, "miner.setEtherbase(%s);");
             {
-                CgStringParagraph p = CgStringParagraphHelper.CreateOneWordParagraph("true", ECgStringWordRule.MatchCase);
+                FCgStringParagraph p = FCgStringParagraphHelper.CreateOneWordParagraph("true", ECgStringWordRule.MatchCase);
 
                 CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.SetEtherbase, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
                 e.AddEvent(OnCommandCompleted);
@@ -268,7 +268,7 @@ namespace CgCore
                 // StartMiner
             SetCommand(ECgEthereumCommand.StartMiner, "miner.start();");
             {
-                CgStringParagraph p = CgStringParagraphHelper.CreateOneWordParagraph("null", ECgStringWordRule.MatchCase);
+                FCgStringParagraph p = FCgStringParagraphHelper.CreateOneWordParagraph("null", ECgStringWordRule.MatchCase);
 
                 CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.StartMiner, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
                 e.AddEvent(OnCommandCompleted);
@@ -278,7 +278,7 @@ namespace CgCore
                 // StopMiner
             SetCommand(ECgEthereumCommand.StopMiner, "miner.stop();");
             {
-                CgStringParagraph p = CgStringParagraphHelper.CreateOneWordParagraph("true", ECgStringWordRule.MatchCase);
+                FCgStringParagraph p = FCgStringParagraphHelper.CreateOneWordParagraph("true", ECgStringWordRule.MatchCase);
 
                 CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.StopMiner, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
                 e.AddEvent(OnCommandCompleted);
@@ -288,7 +288,7 @@ namespace CgCore
                 // LoadScript
             SetCommand(ECgEthereumCommand.LoadScript, "loadScript(%s)");
             {
-                CgStringParagraph p = CgStringParagraphHelper.CreateOneWordParagraph("true", ECgStringWordRule.MatchCase);
+                FCgStringParagraph p = FCgStringParagraphHelper.CreateOneWordParagraph("true", ECgStringWordRule.MatchCase);
 
                 CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.LoadScript, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
                 e.AddEvent(OnCommandCompleted);
@@ -298,7 +298,7 @@ namespace CgCore
                 // CreateContractABI
             SetCommand(ECgEthereumCommand.CreateContractABI, "%s");
             {
-                CgStringParagraph p = CgStringParagraphHelper.CreateOneWordParagraph("", ECgStringWordRule.MatchCase);
+                FCgStringParagraph p = FCgStringParagraphHelper.CreateOneWordParagraph("", ECgStringWordRule.MatchCase);
 
                 CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.CreateContractABI, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
                 e.AddEvent(OnCommandCompleted);
@@ -308,7 +308,7 @@ namespace CgCore
                 // CreateContractInstance
             SetCommand(ECgEthereumCommand.CreateContractInstance, "var %s = %s.at(%s)");
             {
-                CgStringParagraph p = CgStringParagraphHelper.CreateOneWordParagraph("undefined", ECgStringWordRule.MatchCase);
+                FCgStringParagraph p = FCgStringParagraphHelper.CreateOneWordParagraph("undefined", ECgStringWordRule.MatchCase);
 
                 CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.CreateContractInstance, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
                 e.AddEvent(OnCommandCompleted);
@@ -318,21 +318,21 @@ namespace CgCore
                 // GetTransactionReceipt
             SetCommand(ECgEthereumCommand.GetTransactionReceipt, "eth.getTransactionReceipt(%s)");
 
-            CommandFlag = new CgRoutine.BoolType();
+            CommandFlag = new FCgRoutine.FBoolType();
             CommandFlag.Set(false);
-            SetupAccountFlag = new CgRoutine.BoolType();
+            SetupAccountFlag = new FCgRoutine.FBoolType();
             SetupAccountFlag.Set(false);
-            BringBalanceToThresholdFlag = new CgRoutine.BoolType();
+            BringBalanceToThresholdFlag = new FCgRoutine.FBoolType();
             BringBalanceToThresholdFlag.Set(false);
-            DeployContractFlag = new CgRoutine.BoolType();
+            DeployContractFlag = new FCgRoutine.FBoolType();
             DeployContractFlag.Set(false);
-            LoadContractsFlag = new CgRoutine.BoolType();
+            LoadContractsFlag = new FCgRoutine.FBoolType();
             LoadContractsFlag.Set(false);
-            SetupContractFlag = new CgRoutine.BoolType();
+            SetupContractFlag = new FCgRoutine.FBoolType();
             SetupContractFlag.Set(false);
-            RunContractStateChangeFunctionFlag = new CgRoutine.BoolType();
+            RunContractStateChangeFunctionFlag = new FCgRoutine.FBoolType();
             RunContractStateChangeFunctionFlag.Set(false);
-            TransactionMinedFlag = new CgRoutine.BoolType();
+            TransactionMinedFlag = new FCgRoutine.FBoolType();
             TransactionMinedFlag.Set(false);
 
             CommandCompleted_Event.Add(OnCommandCompleted);
@@ -349,7 +349,7 @@ namespace CgCore
             for (byte i = 0; i < (byte)ECgBlockchainProcessType.MAX; ++i)
             {
                 ECgBlockchainProcessType processType = (ECgBlockchainProcessType)i;
-                CgProcess p                          = Processes[processType];
+                FCgProcess p                          = Processes[processType];
                 
                 if (p != null)
                     p.DeAllocate();
@@ -437,11 +437,11 @@ namespace CgCore
 
         public override void RunCommand(int consoleIndex, string command)
         {
-            CgProcess p = GetProcess(ECgBlockchainProcessType.Console, consoleIndex);
+            FCgProcess p = GetProcess(ECgBlockchainProcessType.Console, consoleIndex);
 
             if (p == null)
             {
-                CgDebug.Log("CgEthereum.RunCommand: Failed to run command: " + command + ". Process Console has NOT started. Call OpenShell().");
+                CgDebug.Log("FCgEthereum.RunCommand: Failed to run command: " + command + ". Process Console has NOT started. Call OpenShell().");
                 return;
             }
 
@@ -453,14 +453,14 @@ namespace CgCore
             p.RunCommand(command);
         }
 
-        public override void RunCommand(int consoleIndex, ECgBlockchainCommand command, CgBlockchainCommandArgument[] args = null)
+        public override void RunCommand(int consoleIndex, ECgBlockchainCommand command, FCgBlockchainCommandArgument[] args = null)
         {
             string value;
             Commands.TryGetValue(command, out value);
 
             if (value == INVALID_COMMAND)
             {
-                CgDebug.LogWarning("CgEthereum.RunCommand: No command set for " + command.Name);
+                CgDebug.LogWarning("FCgEthereum.RunCommand: No command set for " + command.Name);
                 return;
             }
 
@@ -492,14 +492,14 @@ namespace CgCore
                     }
                     else
                     {
-                        CgDebug.Log("CgEthereum.RunCommand: Failed to run command: " + command.Name + ". Wildcard count != Argument count (" + (parts.Length - 1) + "," + args.Length + ")");
+                        CgDebug.Log("FCgEthereum.RunCommand: Failed to run command: " + command.Name + ". Wildcard count != Argument count (" + (parts.Length - 1) + "," + args.Length + ")");
                     }
                 }
             }
 
             if (LogIO.Log() || LogIOConsole.Log())
             {
-                CgDebug.Log("CgEthereum.RunCommand: Running command: " + command);
+                CgDebug.Log("FCgEthereum.RunCommand: Running command: " + command);
             }
             RunCommand(consoleIndex, value);
         }
@@ -520,7 +520,7 @@ namespace CgCore
         {
             if (LogCommandCompleted.Log())
             {
-                CgDebug.Log("CgEthereum.OnCommandCompleted: Completed command: " + command);
+                CgDebug.Log("FCgEthereum.OnCommandCompleted: Completed command: " + command);
             }
 
             // SetDataDirectory
@@ -539,7 +539,7 @@ namespace CgCore
             if (command == ECgEthereumCommand.SetEtherbase)
             {
                 // Get Nickname
-                //CgEthereumAccount account = (CgEthereumAccount)CurrentCommandInfo.Payload;
+                //FCgEthereumAccount account = (FCgEthereumAccount)CurrentCommandInfo.Payload;
             }
             // GetBalanceEther
             if (command == ECgEthereumCommand.GetBalanceEther)
@@ -580,7 +580,7 @@ namespace CgCore
                 CgDebug.Log("Blockchain (Process): Exited");
             }
 
-            CgProcess p = Processes[ECgBlockchainProcessType.RunningInstance];
+            FCgProcess p = Processes[ECgBlockchainProcessType.RunningInstance];
 
             Processes[ECgBlockchainProcessType.RunningInstance] = null;
             IsRunningInstanceOpen = false;
@@ -605,14 +605,14 @@ namespace CgCore
                 // Check for account address
                 if (output.StartsWith("\"0x"))
                 {
-                    CgEthereumAccountInfo info = (CgEthereumAccountInfo)CurrentCommandInfo.Payload;
+                    FCgEthereumAccountInfo info = (FCgEthereumAccountInfo)CurrentCommandInfo.Payload;
 
                     string nickname   = info.Nickname;
                     string address    = output.Replace("\"", "");
                     address           = address.Replace("0x", "");
                     string passphrase = info.Passphrase;
 
-                    CgEthereumAccount a = new CgEthereumAccount(nickname, address, passphrase);
+                    FCgEthereumAccount a = new FCgEthereumAccount(nickname, address, passphrase);
 
                     string json            = a.ToStr();
                     string accountFilePath = AccountsDirectory + "\\" + nickname + "-" + address + ".json";
@@ -662,7 +662,7 @@ namespace CgCore
                     // Update Contract with the address
                     ECgBlockchainContract econtract = (ECgBlockchainContract)CurrentCommandInfo.Payload;
 
-                    CgEthereumContract contract = (CgEthereumContract)Contracts[econtract];
+                    FCgEthereumContract contract = (FCgEthereumContract)Contracts[econtract];
                     contract.Address            = address;
 
                     CurrentCommandOuput = address;
@@ -747,13 +747,13 @@ namespace CgCore
 
             #endregion // I/O
 
-        public override void SetProcess(ECgBlockchainProcessType processType, int index, CgProcess p)
+        public override void SetProcess(ECgBlockchainProcessType processType, int index, FCgProcess p)
         {
             // TODO: Later handle PrivateMultiNode
             Processes[processType] = p;
         }
 
-        public override CgProcess GetProcess(ECgBlockchainProcessType processType, int index)
+        public override FCgProcess GetProcess(ECgBlockchainProcessType processType, int index)
         {
             // TODO: Later handle PrivateMultiNode
             return Processes[processType];
@@ -761,11 +761,11 @@ namespace CgCore
 
         public override void StartProcess(ECgBlockchainProcessType processType, int index, CgBlockchainProcessStartInfo startInfo)
         {
-            CgProcess p = GetProcess(processType, index);
+            FCgProcess p = GetProcess(processType, index);
 
             if (p == null)
             {
-                CgProcessPayload payload = ICgManager_Process.Get().AllocatePayload();
+                FCgProcessPayload payload = ICgManager_Process.Get().AllocatePayload();
 
                 payload.CreateNoWindow = !ShowProcessWindow.Get();
                 payload.UseShellExecute = false;
@@ -799,7 +799,7 @@ namespace CgCore
 
                 if (LogProcessStart.Log())
                 {
-                    CgDebug.Log("CgEthereum.StartProcess: Starting Process (" + processType.ToString() + "): " + startInfo.Filename + " " + startInfo.Arguments);
+                    CgDebug.Log("FCgEthereum.StartProcess: Starting Process (" + processType.ToString() + "): " + startInfo.Filename + " " + startInfo.Arguments);
                 }
 
                 p = ICgManager_Process.Get().Spawn(EMCgProcess.Get()["Blockchain"], payload);
@@ -808,7 +808,7 @@ namespace CgCore
             }
             else
             {
-                CgDebug.Log("CgEthereum.StartProcess: StartProcess called for running Process: " + processType.ToString() + " BUT the process is already RUNNING.");
+                CgDebug.Log("FCgEthereum.StartProcess: StartProcess called for running Process: " + processType.ToString() + " BUT the process is already RUNNING.");
             }
         }
 
@@ -877,10 +877,10 @@ namespace CgCore
 
         public override void StartPrivateChain()
         {
-            CgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, StartPrivateChain_Internal(this));
+            FCgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, StartPrivateChain_Internal(this));
         }
 
-        public static IEnumerator StartPrivateChain_Internal(CgEthereum eth)
+        public static IEnumerator StartPrivateChain_Internal(FCgEthereum eth)
         {
             // Start if the Blockchain has already been initialized
             bool genesisExists = File.Exists(eth.GenesisFilePath);
@@ -918,10 +918,10 @@ namespace CgCore
 
             CommandFlag.Set(false);
 
-            CgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, OpenConsole_Internal(this));
+            FCgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, OpenConsole_Internal(this));
         }
 
-        public static IEnumerator OpenConsole_Internal(CgEthereum eth)
+        public static IEnumerator OpenConsole_Internal(FCgEthereum eth)
         {
             ECgBlockchainCommand command = ECgEthereumCommand.AttachToConsole;
 
@@ -960,7 +960,7 @@ namespace CgCore
 
             foreach (string path in paths)
             {
-                CgEthereumAccount a = new CgEthereumAccount();
+                FCgEthereumAccount a = new FCgEthereumAccount();
                 a.ParseFromFilePath(path);
                 Accounts.Add(a.Nickname, a);
             }
@@ -973,11 +973,11 @@ namespace CgCore
 
             foreach (string path in paths)
             {
-                CgEthereumAccount linkedAcccount = null;
+                FCgEthereumAccount linkedAcccount = null;
 
                 foreach (string name in names)
                 {
-                    CgEthereumAccount a = (CgEthereumAccount)Accounts[name];
+                    FCgEthereumAccount a = (FCgEthereumAccount)Accounts[name];
 
                     if (path.Contains(a.Address))
                     {
@@ -997,7 +997,7 @@ namespace CgCore
                         string[] parts = path.Split(new string[] {"--"}, StringSplitOptions.None);
                         string address = parts[2];
 
-                        CgDebug.Log("CgEthereum.LoadAccounts: Failed to link Keystore with address: " + address + " to an Account.");
+                        CgDebug.Log("FCgEthereum.LoadAccounts: Failed to link Keystore with address: " + address + " to an Account.");
                         CgDebug.Log("-- deleting: " + path);
                     }
                 }
@@ -1015,7 +1015,7 @@ namespace CgCore
                 if (validAccounts.TryGetValue(name, out isValid))
                     continue;
 
-                CgEthereumAccount account = (CgEthereumAccount)Accounts[name];
+                FCgEthereumAccount account = (FCgEthereumAccount)Accounts[name];
 
                 // Delete the Account file
                 string path = AccountsDirectory + "\\" + name + "--" + account.Address + ".json";
@@ -1028,7 +1028,7 @@ namespace CgCore
 
                 if (LogAccountLoad.Get())
                 {
-                    CgDebug.Log("CgEthereum.LoadAccounts: Failed to link Account with Nickname: " + name + " and address: " + account.Address + " to any Keystore.");
+                    CgDebug.Log("FCgEthereum.LoadAccounts: Failed to link Account with Nickname: " + name + " and address: " + account.Address + " to any Keystore.");
                     CgDebug.Log("-- deleting: " + path);
                 }
             }
@@ -1036,21 +1036,21 @@ namespace CgCore
 
         public override void NewAccount(object payload)
         {
-            CgEthereumAccountInfo info = (CgEthereumAccountInfo)payload;
+            FCgEthereumAccountInfo info = (FCgEthereumAccountInfo)payload;
             
             ICgBlockchainAccount iaccount;
             Accounts.TryGetValue(info.Nickname, out iaccount);
 
             if (iaccount != null)
             {
-                CgDebug.LogWarning("CgEthereum.NewAccount: Account with Nickname: " + info.Nickname + " already exists.");
+                CgDebug.LogWarning("FCgEthereum.NewAccount: Account with Nickname: " + info.Nickname + " already exists.");
                 return;
             }
 
             CommandFlag.Set(false);
 
-            CgBlockchainCommandArgument[] args = new CgBlockchainCommandArgument[1];
-            args[0]                            = new CgBlockchainCommandArgument(ECgBlockchainCommandArgumentType.StringString, info.Passphrase);
+            FCgBlockchainCommandArgument[] args = new FCgBlockchainCommandArgument[1];
+            args[0]                            = new FCgBlockchainCommandArgument(ECgBlockchainCommandArgumentType.StringString, info.Passphrase);
 
             CurrentCommandInfo.Set(ECgEthereumCommand.NewAccount, args, payload);
 
@@ -1079,30 +1079,30 @@ namespace CgCore
             return "";
         }
 
-        public void CreateKeystore(CgEthereumAccount account)
+        public void CreateKeystore(FCgEthereumAccount account)
         {
             string path = GetKeystoreFilePath(account.Address);
             
             if (path == EMPTY_PATH)
             {
-                CgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, CreateKeystore_Internal(this, account));
+                FCgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, CreateKeystore_Internal(this, account));
             }
             else
             {
-                CgEthereumKeystore keystore = new CgEthereumKeystore();
+                FCgEthereumKeystore keystore = new FCgEthereumKeystore();
                 keystore.ParseFromFilePath(path);
                 
                 Keystores.Add(account.Nickname, keystore);
 
                 if (LogAccountCreated.Log() || LogAccountLoad.Get())
                 {
-                    CgDebug.Log("CgEthereum.CreateKeystore: Keystore linked to Account with Nickname: " + account.Nickname);
+                    CgDebug.Log("FCgEthereum.CreateKeystore: Keystore linked to Account with Nickname: " + account.Nickname);
                     CgDebug.Log("-- saved to: " + path);
                 }
             }
         }
 
-        public static IEnumerator CreateKeystore_Internal(CgEthereum eth, CgEthereumAccount account)
+        public static IEnumerator CreateKeystore_Internal(FCgEthereum eth, FCgEthereumAccount account)
         {
             string keystoreFilePath = EMPTY_PATH;
 
@@ -1126,14 +1126,14 @@ namespace CgCore
                     yield return null;
             }
 
-            CgEthereumKeystore keystore = new CgEthereumKeystore();
+            FCgEthereumKeystore keystore = new FCgEthereumKeystore();
             keystore.ParseFromFilePath(keystoreFilePath);
 
             eth.Keystores.Add(account.Nickname, keystore);
 
             if (LogAccountCreated.Log())
             {
-                CgDebug.Log("CgEthereum.CreateKeystore: Keystore created for Account with Nickname: " + account.Nickname);
+                CgDebug.Log("FCgEthereum.CreateKeystore: Keystore created for Account with Nickname: " + account.Nickname);
                 CgDebug.Log("-- saved to: " + keystoreFilePath);
             }
         }
@@ -1142,9 +1142,9 @@ namespace CgCore
         {
             CommandFlag.Set(false);
 
-            CgEthereumAccount account = (CgEthereumAccount)iaccount;
+            FCgEthereumAccount account = (FCgEthereumAccount)iaccount;
 
-            CgBlockchainCommandArgument[] args;
+            FCgBlockchainCommandArgument[] args;
             account.CreateUnlockArguments(out args);
 
             CurrentCommandInfo.Set(ECgEthereumCommand.NewAccount, args, iaccount);
@@ -1163,12 +1163,12 @@ namespace CgCore
             CommandFlag.Set(false);
 
             // payload = nickname
-            CgEthereumAccount account = (CgEthereumAccount)iaccount;
+            FCgEthereumAccount account = (FCgEthereumAccount)iaccount;
 
             byte ARGUMENTS = 1;
             byte ADDRESS = 0;
 
-            CgBlockchainCommandArgument[] args = new CgBlockchainCommandArgument[ARGUMENTS];
+            FCgBlockchainCommandArgument[] args = new FCgBlockchainCommandArgument[ARGUMENTS];
             args[ADDRESS].Value                = account.Address;
             args[ADDRESS].ValueType            = ECgBlockchainCommandArgumentType.StringString;
 
@@ -1182,12 +1182,12 @@ namespace CgCore
         {
             CommandFlag.Set(false);
 
-            CgEthereumAccount account = (CgEthereumAccount)iaccount;
+            FCgEthereumAccount account = (FCgEthereumAccount)iaccount;
 
             byte ARGUMENTS = 1;
             byte ADDRESS = 0;
 
-            CgBlockchainCommandArgument[] args = new CgBlockchainCommandArgument[ARGUMENTS];
+            FCgBlockchainCommandArgument[] args = new FCgBlockchainCommandArgument[ARGUMENTS];
             args[ADDRESS].Value                = account.Address;
             args[ADDRESS].ValueType            = ECgBlockchainCommandArgumentType.StringString;
 
@@ -1202,12 +1202,12 @@ namespace CgCore
         public void SetupAccount(object payload)
         {
             SetupAccountFlag.Set(false);
-            CgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, SetupAccount_Internal(this, payload));
+            FCgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, SetupAccount_Internal(this, payload));
         }
 
-        public static IEnumerator SetupAccount_Internal(CgEthereum eth, object payload)
+        public static IEnumerator SetupAccount_Internal(FCgEthereum eth, object payload)
         {
-            CgEthereumAccountInfo info = (CgEthereumAccountInfo)payload;
+            FCgEthereumAccountInfo info = (FCgEthereumAccountInfo)payload;
             string nickname            = info.Nickname;
 
             // Check Account exists
@@ -1222,11 +1222,11 @@ namespace CgCore
 
                     if (LogAccountSetup.Log())
                     {
-                        CgDebug.Log("CgEthereum.SetupAccount: Created Account for: " + nickname);
+                        CgDebug.Log("FCgEthereum.SetupAccount: Created Account for: " + nickname);
                     }
                 }
             }
-            CgEthereumAccount account = (CgEthereumAccount)eth.Accounts[nickname];
+            FCgEthereumAccount account = (FCgEthereumAccount)eth.Accounts[nickname];
 
             // Unlock Account
             {
@@ -1236,7 +1236,7 @@ namespace CgCore
 
                 if (LogAccountSetup.Log())
                 {
-                    CgDebug.Log("CgEthereum.SetupAccount: Unlocked Account (" + nickname + "): " + account.Address);
+                    CgDebug.Log("FCgEthereum.SetupAccount: Unlocked Account (" + nickname + "): " + account.Address);
                 }
             }
             // Check Balance is above Threshold
@@ -1251,12 +1251,12 @@ namespace CgCore
         public void BringBalanceToThreshold(ICgBlockchainAccount iaccount, int threshold)
         {
             BringBalanceToThresholdFlag.Set(false);
-            CgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, BringBalanceToThreshold_Internal(this, iaccount, threshold));
+            FCgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, BringBalanceToThreshold_Internal(this, iaccount, threshold));
         }
         
-        public static IEnumerator BringBalanceToThreshold_Internal(CgEthereum eth, ICgBlockchainAccount iaccount, int threshold)
+        public static IEnumerator BringBalanceToThreshold_Internal(FCgEthereum eth, ICgBlockchainAccount iaccount, int threshold)
         {
-            CgEthereumAccount account = (CgEthereumAccount)iaccount;
+            FCgEthereumAccount account = (FCgEthereumAccount)iaccount;
             string nickname           = account.Nickname;
 
             eth.GetBalanceEther(account);
@@ -1275,7 +1275,7 @@ namespace CgCore
 
                 if (LogBalance.Log())
                 {
-                    CgDebug.Log("CgEthereum.BringBalanceToThreshold_Internal: Setting Account (" + nickname + "): " + account.Address + " as coinbase.");
+                    CgDebug.Log("FCgEthereum.BringBalanceToThreshold_Internal: Setting Account (" + nickname + "): " + account.Address + " as coinbase.");
                 }
 
                 // Start Mining
@@ -1285,7 +1285,7 @@ namespace CgCore
 
                 if (LogBalance.Log())
                 {
-                    CgDebug.Log("CgEthereum.BringBalanceToThreshold_Internal: Account (" + nickname + "): " + account.Address + " balance is: " + balance + " < " + threshold + ". Start mining.");
+                    CgDebug.Log("FCgEthereum.BringBalanceToThreshold_Internal: Account (" + nickname + "): " + account.Address + " balance is: " + balance + " < " + threshold + ". Start mining.");
                 }
 
                 float INTERVAL = 0.5f;
@@ -1304,7 +1304,7 @@ namespace CgCore
 
                     if (LogBalance.Log())
                     {
-                        CgDebug.Log("CgEthereum.BringBalanceToThreshold_Internal: Account (" + nickname + "): " + account.Address + " balance is: " + balance);
+                        CgDebug.Log("FCgEthereum.BringBalanceToThreshold_Internal: Account (" + nickname + "): " + account.Address + " balance is: " + balance);
                     }
                 }
 
@@ -1315,7 +1315,7 @@ namespace CgCore
 
                 if (LogBalance.Log())
                 {
-                    CgDebug.Log("CgEthereum.BringBalanceToThreshold_Internal: Finished mining.");
+                    CgDebug.Log("FCgEthereum.BringBalanceToThreshold_Internal: Finished mining.");
                 }
             }
             // Finish
@@ -1323,7 +1323,7 @@ namespace CgCore
             {
                 if (LogBalance.Log())
                 {
-                    CgDebug.Log("CgEthereum.BringBalanceToThreshold_Internal: Finished setup for Account (" + nickname + "): " + account.Address);
+                    CgDebug.Log("FCgEthereum.BringBalanceToThreshold_Internal: Finished setup for Account (" + nickname + "): " + account.Address);
                 }
             }
             eth.BringBalanceToThresholdFlag.Set(true);
@@ -1371,10 +1371,10 @@ namespace CgCore
         public void DeployContract(ECgBlockchainContract econtract, CgBlockchainContractArgument[] args = null)
         {
             DeployContractFlag.Set(false);
-            CgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, DeployContract_Internal(this, econtract, args));
+            FCgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, DeployContract_Internal(this, econtract, args));
         }
 
-        public static IEnumerator DeployContract_Internal(CgEthereum eth, ECgBlockchainContract econtract, CgBlockchainContractArgument[] args = null)
+        public static IEnumerator DeployContract_Internal(FCgEthereum eth, ECgBlockchainContract econtract, CgBlockchainContractArgument[] args = null)
         {
             // Start Miner
             eth.StartMiner();
@@ -1401,7 +1401,7 @@ namespace CgCore
             yield return eth.CommandFlag;
 
             // Write out pertinent detail of Contract
-            CgEthereumContract contract = (CgEthereumContract)eth.Contracts[econtract];
+            FCgEthereumContract contract = (FCgEthereumContract)eth.Contracts[econtract];
 
             File.WriteAllText(eth.ContractsDeployedDirectory + "\\" + contract.Address + "-" + econtract + ".json", contract.ToStr(), System.Text.Encoding.ASCII);
 
@@ -1419,11 +1419,11 @@ namespace CgCore
 
             if (c == null)
             {
-                CgDebug.LogWarning("CgEthereum.LoadContract: Contract with name: " + econtract + " does NOT exist. Make sure a Contract was initialized with name: " + econtract + " in the constructor.");
+                CgDebug.LogWarning("FCgEthereum.LoadContract: Contract with name: " + econtract + " does NOT exist. Make sure a Contract was initialized with name: " + econtract + " in the constructor.");
                 return;
             }
 
-            CgEthereumContract contract = (CgEthereumContract)c;
+            FCgEthereumContract contract = (FCgEthereumContract)c;
 
             // Check if Contract file exists
             var filePaths = Directory.GetFiles(ContractsDeployedDirectory, "*.*", SearchOption.TopDirectoryOnly).Where(s => s.Contains(econtract + ".json"));
@@ -1443,7 +1443,7 @@ namespace CgCore
             }
             else
             {
-                CgDebug.LogWarning("CgEthereum.LoadContract: Failed to find ABI for Contract: " + econtract + " at: " + abiPath);
+                CgDebug.LogWarning("FCgEthereum.LoadContract: Failed to find ABI for Contract: " + econtract + " at: " + abiPath);
             }
 
             // If Contract is "new", setup Web3Deploy and Javascript file
@@ -1458,7 +1458,7 @@ namespace CgCore
                 }
                 else
                 {
-                    CgDebug.LogWarning("CgEthereum.LoadContract: Failed to find Web3Deploy for Contract: " + econtract + " at: " + web3DeployPath);
+                    CgDebug.LogWarning("FCgEthereum.LoadContract: Failed to find Web3Deploy for Contract: " + econtract + " at: " + web3DeployPath);
                 }
 
                 // Check if Contract Web3Deploy Linked (Libraries linked) file exists
@@ -1477,7 +1477,7 @@ namespace CgCore
 
                 if (!File.Exists(web3DeployLinkedPath))
                 {
-                    CgDebug.LogWarning("CgEthereum.LoadContract: Failed to find Web3DeployLinkedPath for Contract: " + econtract + " at: " + web3DeployLinkedPath);
+                    CgDebug.LogWarning("FCgEthereum.LoadContract: Failed to find Web3DeployLinkedPath for Contract: " + econtract + " at: " + web3DeployLinkedPath);
                 }
                 Web3DeployLinkedSnippets.Add(econtract, File.ReadAllText(web3DeployLinkedPath));
             }
@@ -1489,13 +1489,13 @@ namespace CgCore
 
             // Update all Links with the appropriate addresses
             /*
-            List<CgEthereumWeb3DeployLink> links = Web3DeployLinks[econtract];
+            List<FCgEthereumWeb3DeployLink> links = Web3DeployLinks[econtract];
 
             if (links != null)
             {
-                foreach (CgEthereumWeb3DeployLink l in links)
+                foreach (FCgEthereumWeb3DeployLink l in links)
                 {
-                    CgEthereumContract contract = (CgEthereumContract)Contracts[l.Contract];
+                    FCgEthereumContract contract = (FCgEthereumContract)Contracts[l.Contract];
 
                     snippet = snippet.Replace(l.Link, contract.Address);
                 }
@@ -1529,20 +1529,20 @@ namespace CgCore
 
             if (!ScriptPaths.TryGetValue(escript, out path))
             {
-                CgDebug.LogWarning("CgEthereum.CreatedJavascriptContractLinked: No script path set for script: " + escript + ". Make sure a ScriptPath is set for: " + escript + " in the constructor.");
+                CgDebug.LogWarning("FCgEthereum.CreatedJavascriptContractLinked: No script path set for script: " + escript + ". Make sure a ScriptPath is set for: " + escript + " in the constructor.");
                 return;
             }
 
             string script = File.ReadAllText(path);
 
             // Update all Links with the appropriate addresses
-            List<CgEthereumJavascriptContractLink> links = ScriptContractLinks[econtract];
+            List<FCgEthereumJavascriptContractLink> links = ScriptContractLinks[econtract];
 
             if (links != null)
             {
-                foreach (CgEthereumJavascriptContractLink l in links)
+                foreach (FCgEthereumJavascriptContractLink l in links)
                 {
-                    CgEthereumContract contract = (CgEthereumContract)Contracts[l.Contract];
+                    FCgEthereumContract contract = (FCgEthereumContract)Contracts[l.Contract];
 
                     script = script.Replace(l.Link, contract.Address);
                 }
@@ -1559,7 +1559,7 @@ namespace CgCore
             byte ARGUMENTS = 1;
             byte ABI = 0;
 
-            CgBlockchainCommandArgument[] args  = new CgBlockchainCommandArgument[ARGUMENTS];
+            FCgBlockchainCommandArgument[] args  = new FCgBlockchainCommandArgument[ARGUMENTS];
             args[ABI].Value                     = ABISnippets[econtract];
             args[ABI].ValueType                 = ECgBlockchainCommandArgumentType.String;
 
@@ -1580,9 +1580,9 @@ namespace CgCore
             byte ABI = 1;
             byte ADDRESS = 2;
 
-            CgEthereumContract contract = (CgEthereumContract)icontract;
+            FCgEthereumContract contract = (FCgEthereumContract)icontract;
 
-            CgBlockchainCommandArgument[] args  = new CgBlockchainCommandArgument[ARGUMENTS];
+            FCgBlockchainCommandArgument[] args  = new FCgBlockchainCommandArgument[ARGUMENTS];
             args[INSTANCE].Value                = contract.InstanceVariableName;
             args[INSTANCE].ValueType            = ECgBlockchainCommandArgumentType.String;
             args[ABI].Value                     = contract.ContractVariableName;
@@ -1600,10 +1600,10 @@ namespace CgCore
         public void SetupContract(ECgBlockchainContract econtract, ECgEthereumJavascript escript)
         {
             SetupContractFlag.Set(false);
-            CgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, SetupContract_Internal(this, econtract, escript));
+            FCgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, SetupContract_Internal(this, econtract, escript));
         }
 
-        public static IEnumerator SetupContract_Internal(CgEthereum eth, ECgBlockchainContract econtract, ECgEthereumJavascript escript)
+        public static IEnumerator SetupContract_Internal(FCgEthereum eth, ECgBlockchainContract econtract, ECgEthereumJavascript escript)
         {
             eth.LoadContract(econtract, escript);
             eth.LoadScript(escript, eth.ScriptLinkedPaths[econtract]);
@@ -1641,7 +1641,7 @@ namespace CgCore
 
             if (LogIO.Log() || LogIOConsole.Log())
             {
-                CgDebug.Log("CgEthereum.RunContractConstantFunction: Running command: " + ECgEthereumCommand.RunContractConstantFunction);
+                CgDebug.Log("FCgEthereum.RunContractConstantFunction: Running command: " + ECgEthereumCommand.RunContractConstantFunction);
             }
             RunCommand(SINGLE_NODE_INDEX, command);
         }
@@ -1649,10 +1649,10 @@ namespace CgCore
         public void RunContractStateChangeFunction(ECgBlockchainContract econtract, ICgBlockchainAccount iaccount, ECgBlockchainContractFunction efn, CgBlockchainContractFunctionArgument[] args = null)
         {
             RunContractStateChangeFunctionFlag.Set(false);
-            CgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, RunContractStateChangeFunction_Internal(this, econtract, iaccount, efn, args));
+            FCgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, RunContractStateChangeFunction_Internal(this, econtract, iaccount, efn, args));
         }
 
-        public static IEnumerator RunContractStateChangeFunction_Internal(CgEthereum eth, ECgBlockchainContract econtract, ICgBlockchainAccount iaccount, ECgBlockchainContractFunction efn, CgBlockchainContractFunctionArgument[] args = null)
+        public static IEnumerator RunContractStateChangeFunction_Internal(FCgEthereum eth, ECgBlockchainContract econtract, ICgBlockchainAccount iaccount, ECgBlockchainContractFunction efn, CgBlockchainContractFunctionArgument[] args = null)
         {
             // Check Balance
             int THRESHOLD = 10;
@@ -1673,7 +1673,7 @@ namespace CgCore
             // Run State Change Function
             eth.CommandFlag.Set(false);
 
-            CgEthereumAccount account = (CgEthereumAccount)iaccount;
+            FCgEthereumAccount account = (FCgEthereumAccount)iaccount;
             string address            = account.GetAddressAsArg();
 
             CgBlockchainContractFunction fn = eth.ContractFunctions[econtract][efn];
@@ -1687,7 +1687,7 @@ namespace CgCore
 
             if (LogIO.Log() || LogIOConsole.Log())
             {
-                CgDebug.Log("CgEthereum.RunContractStateChangeFunction_Internal: Running command: " + ECgEthereumCommand.RunContractStateChangeFunction);
+                CgDebug.Log("FCgEthereum.RunContractStateChangeFunction_Internal: Running command: " + ECgEthereumCommand.RunContractStateChangeFunction);
             }
             eth.RunCommand(SINGLE_NODE_INDEX, command);
 
@@ -1711,7 +1711,7 @@ namespace CgCore
         {
             CommandFlag.Set(false);
 
-            CgEthereumAccount account = (CgEthereumAccount)iaccount;
+            FCgEthereumAccount account = (FCgEthereumAccount)iaccount;
             string address            = account.GetAddressAsArg();
 
             CgBlockchainContractFunction fn = ContractFunctions[econtract][efn];
@@ -1723,7 +1723,7 @@ namespace CgCore
 
             if (LogIO.Log() || LogIOConsole.Log())
             {
-                CgDebug.Log("CgEthereum.GetGasEstimate: Running command: " + ECgEthereumCommand.GetGasEstimate);
+                CgDebug.Log("FCgEthereum.GetGasEstimate: Running command: " + ECgEthereumCommand.GetGasEstimate);
             }
             RunCommand(SINGLE_NODE_INDEX, command);
         }
@@ -1735,7 +1735,7 @@ namespace CgCore
             byte ARGUMENTS = 1;
             byte TRANSACTION = 0;
 
-            CgBlockchainCommandArgument[] args  = new CgBlockchainCommandArgument[ARGUMENTS];
+            FCgBlockchainCommandArgument[] args  = new FCgBlockchainCommandArgument[ARGUMENTS];
             args[TRANSACTION].ValueType         = ECgBlockchainCommandArgumentType.String;
             args[TRANSACTION].Value             = transactionHash;
 
@@ -1748,10 +1748,10 @@ namespace CgCore
         public void CheckTransactionHasBeenMined(string transactionHash)
         {
             TransactionMinedFlag.Set(false);
-            CgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, CheckTransactionHasBeenMined_Internal(this, transactionHash));
+            FCgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, CheckTransactionHasBeenMined_Internal(this, transactionHash));
         }
 
-        public static IEnumerator CheckTransactionHasBeenMined_Internal(CgEthereum eth, string transactionHash)
+        public static IEnumerator CheckTransactionHasBeenMined_Internal(FCgEthereum eth, string transactionHash)
         {
             bool success = false;
             float INTERVAL = 0.1f;
@@ -1779,7 +1779,7 @@ namespace CgCore
             byte ARGUMENTS = 1;
             byte PATH = 0;
 
-            CgBlockchainCommandArgument[] args  = new CgBlockchainCommandArgument[ARGUMENTS];
+            FCgBlockchainCommandArgument[] args  = new FCgBlockchainCommandArgument[ARGUMENTS];
             args[PATH].Value                    = "'" + path + "'";
             args[PATH].ValueType                = ECgBlockchainCommandArgumentType.String;
 

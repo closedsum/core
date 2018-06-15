@@ -3,7 +3,7 @@ namespace CgCore
 {
     using System;
 
-    public interface ICgBlockchainGenesis
+    public interface IFCgBlockchainGenesis
     {
         string ToStr();
         void Parse(string str);
@@ -11,7 +11,7 @@ namespace CgCore
     }
 
     [Serializable]
-    public abstract class CgBlockchainGenesis : ICgBlockchainGenesis
+    public abstract class FCgBlockchainGenesis : IFCgBlockchainGenesis
     {
         public abstract string ToStr();
         public abstract void Parse(string str);

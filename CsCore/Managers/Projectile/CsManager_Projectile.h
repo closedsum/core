@@ -8,10 +8,10 @@
 #define CS_PROJECTILE_POOL_SIZE 400
 #define CS_PROJECTILE_PAYLOAD_SIZE 255
 
-class CsManager_Projectile : public TCsManagerPooledObjects<FECsProjectileType, ACsProjectile, FCsProjectilePayload, CS_PROJECTILE_PAYLOAD_SIZE>
+class FCsManager_Projectile : public TCsManagerPooledObjects<FECsProjectileType, ACsProjectile, FCsProjectilePayload, CS_PROJECTILE_PAYLOAD_SIZE>
 {
 public:
-	~CsManager_Projectile();
+	~FCsManager_Projectile();
 
 	virtual void DeconstructObject(class ACsProjectile* a) override;
 	virtual FString GetObjectName(class ACsProjectile* a) override;
@@ -27,7 +27,7 @@ class CSCORE_API AICsManager_Projectile : public AActor
 
 private:
 
-	CsManager_Projectile * Internal;
+	FCsManager_Projectile* Internal;
 
 	static TWeakObjectPtr<UObject> MyOwner;
 

@@ -4,30 +4,30 @@ namespace CgCore
     using System;
     using System.Collections.Generic;
 
-    public struct CgDelegateHandle : IEquatable<CgDelegateHandle>
+    public struct FCgDelegateHandle : IEquatable<FCgDelegateHandle>
     {
         public object Object;
         public string Name;
         public Guid Id;
 
-        public CgDelegateHandle(object o, string name, Guid id)
+        public FCgDelegateHandle(object o, string name, Guid id)
         {
             Object = o;
             Name = name;
             Id = id;
         }
                
-        public static bool operator ==(CgDelegateHandle lhs, CgDelegateHandle rhs)
+        public static bool operator ==(FCgDelegateHandle lhs, FCgDelegateHandle rhs)
         {
             return lhs.Object == rhs.Object && lhs.Name == rhs.Name && lhs.Id == rhs.Id;
         }
 
-        public static bool operator !=(CgDelegateHandle lhs, CgDelegateHandle rhs)
+        public static bool operator !=(FCgDelegateHandle lhs, FCgDelegateHandle rhs)
         {
             return !(lhs == rhs);
         }
 
-        public bool Equals(CgDelegateHandle rhs)
+        public bool Equals(FCgDelegateHandle rhs)
         {
             if (Object != rhs.Object) return false;
             if (Name != rhs.Name) return false;
@@ -37,10 +37,10 @@ namespace CgCore
 
         public override bool Equals(object obj)
         {
-            if (!(obj is CgDelegateHandle))
+            if (!(obj is FCgDelegateHandle))
                 return false;
 
-            CgDelegateHandle rhs = (CgDelegateHandle)obj;
+            FCgDelegateHandle rhs = (FCgDelegateHandle)obj;
 
             if (Object != rhs.Object) return false;
             if (Name != rhs.Name) return false;
@@ -67,7 +67,7 @@ namespace CgCore
             e = inEvent;
         }
 
-        public void UnBind()
+        public void Unbind()
         {
             e = null;
         }
@@ -95,7 +95,7 @@ namespace CgCore
             e = inEvent;
         }
 
-        public void UnBind()
+        public void Unbind()
         {
             e = null;
         }
@@ -123,7 +123,7 @@ namespace CgCore
             e = inEvent;
         }
 
-        public void UnBind()
+        public void Unbind()
         {
             e = null;
         }
@@ -153,27 +153,27 @@ namespace CgCore
     {
         public delegate void Event();
 
-        private Dictionary<CgDelegateHandle, Event> InvocationMap;
+        private Dictionary<FCgDelegateHandle, Event> InvocationMap;
 
         public CgMulticastDelegate()
         {
-            InvocationMap = new Dictionary<CgDelegateHandle, Event>();
+            InvocationMap = new Dictionary<FCgDelegateHandle, Event>();
         }
 
-        public CgDelegateHandle AddObject(object o, Event e)
+        public FCgDelegateHandle AddObject(object o, Event e)
         {
-            CgDelegateHandle handle = new CgDelegateHandle(o, "", Guid.NewGuid());
+            FCgDelegateHandle handle = new FCgDelegateHandle(o, "", Guid.NewGuid());
 
             InvocationMap.Add(handle, e);
             return handle;
         }
 
-        public CgDelegateHandle Add(Event e)
+        public FCgDelegateHandle Add(Event e)
         {
             return AddObject(null, e);
         }
 
-        public bool Remove(CgDelegateHandle handle)
+        public bool Remove(FCgDelegateHandle handle)
         {
             return InvocationMap.Remove(handle);
         }
@@ -190,7 +190,7 @@ namespace CgCore
 
         public void Broadcast()
         {
-            Dictionary<CgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
+            Dictionary<FCgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
 
             foreach (Event e in events)
             {
@@ -202,10 +202,10 @@ namespace CgCore
         {
             to.Clear();
 
-            Dictionary<CgDelegateHandle, Event>.KeyCollection keys     = InvocationMap.Keys;
-            Dictionary<CgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
+            Dictionary<FCgDelegateHandle, Event>.KeyCollection keys     = InvocationMap.Keys;
+            Dictionary<FCgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
 
-            foreach (CgDelegateHandle key in keys)
+            foreach (FCgDelegateHandle key in keys)
             {
                 to.AddObject(key.Object, InvocationMap[key]);
             }
@@ -216,27 +216,27 @@ namespace CgCore
     {
         public delegate void Event(T t);
 
-        private Dictionary<CgDelegateHandle, Event> InvocationMap;
+        private Dictionary<FCgDelegateHandle, Event> InvocationMap;
 
         public TCgMulticastDelegate_OneParam()
         {
-            InvocationMap = new Dictionary<CgDelegateHandle, Event>();
+            InvocationMap = new Dictionary<FCgDelegateHandle, Event>();
         }
 
-        public CgDelegateHandle AddObject(object o, Event e)
+        public FCgDelegateHandle AddObject(object o, Event e)
         {
-            CgDelegateHandle handle = new CgDelegateHandle(o, "", Guid.NewGuid());
+            FCgDelegateHandle handle = new FCgDelegateHandle(o, "", Guid.NewGuid());
 
             InvocationMap.Add(handle, e);
             return handle;
         }
 
-        public CgDelegateHandle Add(Event e)
+        public FCgDelegateHandle Add(Event e)
         {
             return AddObject(null, e);
         }
 
-        public bool Remove(CgDelegateHandle handle)
+        public bool Remove(FCgDelegateHandle handle)
         {
             return InvocationMap.Remove(handle);
         }
@@ -253,7 +253,7 @@ namespace CgCore
 
         public void Broadcast(T t)
         {
-            Dictionary<CgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
+            Dictionary<FCgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
 
             foreach (Event e in events)
             {
@@ -265,10 +265,10 @@ namespace CgCore
         {
             to.Clear();
 
-            Dictionary<CgDelegateHandle, Event>.KeyCollection keys = InvocationMap.Keys;
-            Dictionary<CgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
+            Dictionary<FCgDelegateHandle, Event>.KeyCollection keys = InvocationMap.Keys;
+            Dictionary<FCgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
 
-            foreach (CgDelegateHandle key in keys)
+            foreach (FCgDelegateHandle key in keys)
             {
                 to.AddObject(key.Object, InvocationMap[key]);
             }
@@ -279,27 +279,27 @@ namespace CgCore
     {
         public delegate void Event(T1 t1, T2 t2);
 
-        private Dictionary<CgDelegateHandle, Event> InvocationMap;
+        private Dictionary<FCgDelegateHandle, Event> InvocationMap;
 
         public TCgMulticastDelegate_TwoParams()
         {
-            InvocationMap = new Dictionary<CgDelegateHandle, Event>();
+            InvocationMap = new Dictionary<FCgDelegateHandle, Event>();
         }
 
-        public CgDelegateHandle AddObject(object o, Event e)
+        public FCgDelegateHandle AddObject(object o, Event e)
         {
-            CgDelegateHandle handle = new CgDelegateHandle(o, "", Guid.NewGuid());
+            FCgDelegateHandle handle = new FCgDelegateHandle(o, "", Guid.NewGuid());
 
             InvocationMap.Add(handle, e);
             return handle;
         }
 
-        public CgDelegateHandle Add(Event e)
+        public FCgDelegateHandle Add(Event e)
         {
             return AddObject(null, e);
         }
 
-        public bool Remove(CgDelegateHandle handle)
+        public bool Remove(FCgDelegateHandle handle)
         {
             return InvocationMap.Remove(handle);
         }
@@ -316,7 +316,7 @@ namespace CgCore
 
         public void Broadcast(T1 t1, T2 t2)
         {
-            Dictionary<CgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
+            Dictionary<FCgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
 
             foreach (Event e in events)
             {
@@ -328,10 +328,10 @@ namespace CgCore
         {
             to.Clear();
 
-            Dictionary<CgDelegateHandle, Event>.KeyCollection keys = InvocationMap.Keys;
-            Dictionary<CgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
+            Dictionary<FCgDelegateHandle, Event>.KeyCollection keys = InvocationMap.Keys;
+            Dictionary<FCgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
 
-            foreach (CgDelegateHandle key in keys)
+            foreach (FCgDelegateHandle key in keys)
             {
                 to.AddObject(key.Object, InvocationMap[key]);
             }
@@ -342,27 +342,27 @@ namespace CgCore
     {
         public delegate void Event(T1 t1, T2 t2, T3 t3);
 
-        private Dictionary<CgDelegateHandle, Event> InvocationMap;
+        private Dictionary<FCgDelegateHandle, Event> InvocationMap;
 
         public TCgMulticastDelegate_ThreeParams()
         {
-            InvocationMap = new Dictionary<CgDelegateHandle, Event>();
+            InvocationMap = new Dictionary<FCgDelegateHandle, Event>();
         }
 
-        public CgDelegateHandle AddObject(object o, Event e)
+        public FCgDelegateHandle AddObject(object o, Event e)
         {
-            CgDelegateHandle handle = new CgDelegateHandle(o, "", Guid.NewGuid());
+            FCgDelegateHandle handle = new FCgDelegateHandle(o, "", Guid.NewGuid());
 
             InvocationMap.Add(handle, e);
             return handle;
         }
 
-        public CgDelegateHandle Add(Event e)
+        public FCgDelegateHandle Add(Event e)
         {
             return AddObject(null, e);
         }
 
-        public bool Remove(CgDelegateHandle handle)
+        public bool Remove(FCgDelegateHandle handle)
         {
             return InvocationMap.Remove(handle);
         }
@@ -374,7 +374,7 @@ namespace CgCore
 
         public void Broadcast(T1 t1, T2 t2, T3 t3)
         {
-            Dictionary<CgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
+            Dictionary<FCgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
 
             foreach (Event e in events)
             {
@@ -386,10 +386,10 @@ namespace CgCore
         {
             to.Clear();
 
-            Dictionary<CgDelegateHandle, Event>.KeyCollection keys = InvocationMap.Keys;
-            Dictionary<CgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
+            Dictionary<FCgDelegateHandle, Event>.KeyCollection keys = InvocationMap.Keys;
+            Dictionary<FCgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
 
-            foreach (CgDelegateHandle key in keys)
+            foreach (FCgDelegateHandle key in keys)
             {
                 to.AddObject(key.Object, InvocationMap[key]);
             }
@@ -400,27 +400,27 @@ namespace CgCore
     {
         public delegate bool Event(T t);
 
-        private Dictionary<CgDelegateHandle, Event> InvocationMap;
+        private Dictionary<FCgDelegateHandle, Event> InvocationMap;
 
         public TCgMulticastDelegate_RetOrBool_OneParam()
         {
-            InvocationMap = new Dictionary<CgDelegateHandle, Event>();
+            InvocationMap = new Dictionary<FCgDelegateHandle, Event>();
         }
 
-        public CgDelegateHandle AddObject(object o, Event e)
+        public FCgDelegateHandle AddObject(object o, Event e)
         {
-            CgDelegateHandle handle = new CgDelegateHandle(o, "", Guid.NewGuid());
+            FCgDelegateHandle handle = new FCgDelegateHandle(o, "", Guid.NewGuid());
 
             InvocationMap.Add(handle, e);
             return handle;
         }
 
-        public CgDelegateHandle Add(Event e)
+        public FCgDelegateHandle Add(Event e)
         {
             return AddObject(null, e);
         }
 
-        public bool Remove(CgDelegateHandle handle)
+        public bool Remove(FCgDelegateHandle handle)
         {
             return InvocationMap.Remove(handle);
         }
@@ -437,7 +437,7 @@ namespace CgCore
 
         public bool Broadcast(T t)
         {
-            Dictionary<CgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
+            Dictionary<FCgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
 
             foreach (Event e in events)
             {
@@ -451,10 +451,10 @@ namespace CgCore
         {
             to.Clear();
 
-            Dictionary<CgDelegateHandle, Event>.KeyCollection keys = InvocationMap.Keys;
-            Dictionary<CgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
+            Dictionary<FCgDelegateHandle, Event>.KeyCollection keys = InvocationMap.Keys;
+            Dictionary<FCgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
 
-            foreach (CgDelegateHandle key in keys)
+            foreach (FCgDelegateHandle key in keys)
             {
                 to.AddObject(key.Object, InvocationMap[key]);
             }
@@ -465,27 +465,27 @@ namespace CgCore
     {
         public delegate bool Event(T t);
 
-        private Dictionary<CgDelegateHandle, Event> InvocationMap;
+        private Dictionary<FCgDelegateHandle, Event> InvocationMap;
 
         public TCgMulticastDelegate_RetAndBool_OneParam()
         {
-            InvocationMap = new Dictionary<CgDelegateHandle, Event>();
+            InvocationMap = new Dictionary<FCgDelegateHandle, Event>();
         }
 
-        public CgDelegateHandle AddObject(object o, Event e)
+        public FCgDelegateHandle AddObject(object o, Event e)
         {
-            CgDelegateHandle handle = new CgDelegateHandle(o, "", Guid.NewGuid());
+            FCgDelegateHandle handle = new FCgDelegateHandle(o, "", Guid.NewGuid());
 
             InvocationMap.Add(handle, e);
             return handle;
         }
 
-        public CgDelegateHandle Add(Event e)
+        public FCgDelegateHandle Add(Event e)
         {
             return AddObject(null, e);
         }
 
-        public bool Remove(CgDelegateHandle handle)
+        public bool Remove(FCgDelegateHandle handle)
         {
             return InvocationMap.Remove(handle);
         }
@@ -502,7 +502,7 @@ namespace CgCore
 
         public bool Broadcast(T t)
         {
-            Dictionary<CgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
+            Dictionary<FCgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
 
             bool ret = true;
 
@@ -517,10 +517,10 @@ namespace CgCore
         {
             to.Clear();
 
-            Dictionary<CgDelegateHandle, Event>.KeyCollection keys = InvocationMap.Keys;
-            Dictionary<CgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
+            Dictionary<FCgDelegateHandle, Event>.KeyCollection keys = InvocationMap.Keys;
+            Dictionary<FCgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
 
-            foreach (CgDelegateHandle key in keys)
+            foreach (FCgDelegateHandle key in keys)
             {
                 to.AddObject(key.Object, InvocationMap[key]);
             }

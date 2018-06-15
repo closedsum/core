@@ -486,32 +486,32 @@ struct CSCORE_API FCsProjectileFirePayload
 	UPROPERTY()
 	bool IsAllocated;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	float Time;
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	float RealTime;
 	UPROPERTY()
 	uint64 Frame;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	float ChargePercent;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FVector Direction;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FVector Location;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	float AdditionalSpeed;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	TWeakObjectPtr<AActor> HomingTarget;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FName HomingBoneName;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	float HomingAccelerationMagnitude;
 
 	TArray<struct FCsItem*> Items;
@@ -606,28 +606,28 @@ struct CSCORE_API FCsProjectilePayload
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	TWeakObjectPtr<UObject> Parent;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	TWeakObjectPtr<class ACsData_Projectile> Data;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	float ChargePercent;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FVector Direction;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FVector Location;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	float AdditionalSpeed;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	TWeakObjectPtr<AActor> HomingTarget;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FName HomingBone;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	float HomingAccelerationMagnitude;
 
 	FCsProjectilePayload(){}

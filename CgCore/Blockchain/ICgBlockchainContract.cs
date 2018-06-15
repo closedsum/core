@@ -341,7 +341,7 @@
     }
 
     [Serializable]
-    public abstract class CgBlockchainContract : ICgBlockchainContract
+    public abstract class FCgBlockchainContract : ICgBlockchainContract
     {
         private string _Name;
         public string Name
@@ -350,8 +350,8 @@
             set { _Name = value; }
         }
 
-        public CgBlockchainContract(){}
-        public CgBlockchainContract(string name)
+        public FCgBlockchainContract(){}
+        public FCgBlockchainContract(string name)
         {
             Name = name;
         }

@@ -1,6 +1,7 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Sound/CsSound.h"
 #include "CsCore.h"
+#include "Common/CsCommon.h"
 
 ACsSound::ACsSound(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -27,60 +28,21 @@ ACsSound::ACsSound(const FObjectInitializer& ObjectInitializer) : Super(ObjectIn
 	bCanBeDamaged	   = false;
 }
 
-void ACsSound::Init(const int32 &Index)
+void ACsSound::Init(const int32 &Index, const FECsSoundType &InType)
 {
 	PoolIndex = Index;
+	Type = InType;
 
 	Cache.Set(Index, this);
+	Cache.Type = Type.Value;
+	Cache.Type_Script = Type;
 }
 
-template<typename T>
-void ACsSound::Allocate(const uint16& ActiveIndex, FCsSoundElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsSound::Allocate(const uint16& ActiveIndex, FCsSoundPayload* Payload)
 {
-	Cache.Init<T>(ActiveIndex, InElement, Time, RealTime, Frame, InOwner, InParent, InObject, OnDeAllocate);
-}
+	Cache.Init(ActiveIndex, Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
 
-template<typename T>
-void ACsSound::Allocate(const uint16& ActiveIndex, FCsSoundElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
-{
-	Cache.Init<T>(ActiveIndex, InElement, Time, RealTime, Frame, InObject, OnDeAllocate);
-}
-
-template<typename T>
-void ACsSound::Allocate(const uint16& ActiveIndex, FCsSoundElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, const FVector &InLocation, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
-{
-	Cache.Init<T>(ActiveIndex, InElement, Time, RealTime, Frame, InOwner, InLocation, InObject, OnDeAllocate);
-}
-
-template<typename T>
-void ACsSound::Allocate(const uint16& ActiveIndex, FCsSoundElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, const FVector &InLocation, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
-{
-	Cache.Init<T>(ActiveIndex, InElement, Time, RealTime, Frame, nullptr, InLocation, InObject, OnDeAllocate);
-}
-
-void ACsSound::Allocate(const uint16& ActiveIndex, FCsSoundElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent, const FVector &InLocation)
-{
-	Cache.Init(ActiveIndex, InElement, Time, RealTime, Frame, InOwner, InParent, InLocation);
-}
-
-void ACsSound::Allocate(const uint16& ActiveIndex, FCsSoundElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent)
-{
-	Cache.Init(ActiveIndex, InElement, Time, RealTime, Frame, InOwner, InParent);
-}
-
-void ACsSound::Allocate(const uint16& ActiveIndex, FCsSoundElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, const FVector &InLocation)
-{
-	Cache.Init(ActiveIndex, InElement, Time, RealTime, Frame, InOwner, InLocation);
-}
-
-void ACsSound::Allocate(const uint16& ActiveIndex, FCsSoundElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, const FVector &InLocation)
-{
-	Cache.Init(ActiveIndex, InElement, Time, RealTime, Frame, InLocation);
-}
-
-void ACsSound::Allocate(const uint16& ActiveIndex, FCsSoundElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame)
-{
-	Cache.Init(ActiveIndex, InElement, Time, RealTime, Frame);
+	Play();
 }
 
 void ACsSound::DeAllocate()
@@ -104,7 +66,7 @@ bool ACsSound::Play()
 	if (const FSoundAttenuationSettings* Settings = Cue->GetAttenuationSettingsToApply())
 		AudioComponent->AttenuationSettings->Attenuation = *Settings;
 
-	AudioComponent->AttenuationSettings->Attenuation.bSpatialize = Cache.Type_Script == ECsSoundType::s3D;
+	AudioComponent->AttenuationSettings->Attenuation.bSpatialize = Cache.bSpatialize;
 
 	AudioComponent->SetVolumeMultiplier(Cache.VolumeMultiplier);
 	AudioComponent->SetPitchMultiplier(Cache.PitchMultiplier);

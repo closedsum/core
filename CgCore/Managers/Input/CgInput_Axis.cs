@@ -5,7 +5,7 @@ namespace CgCore
     using System.Collections.Generic;
     using UnityEngine;
 
-    public class CgInput_Axis : CgInput_Base
+    public class FCgInput_Axis : FCgInput_Base
     {
         public class CgInputAxis_Event : TCgMulticastDelegate_TwoParams<MonoBehaviour, float> { }
 
@@ -15,9 +15,9 @@ namespace CgCore
 
         #endregion // Data Members
 
-        public CgInput_Axis()
+        public FCgInput_Axis()
         {
-            Info = new CgInputInfo(ECgInputType.Axis, ECgInputValue.Float);
+            Info = new FCgInputInfo(ECgInputType.Axis, ECgInputValue.Float);
             Info.Event = ECgInputEvent.Stationary;
             Info.Last_Event = Info.Event;
 

@@ -16,10 +16,13 @@ struct FCsAnimNotifySound
 	class USoundCue* Sound;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-	TEnumAsByte<ECsSoundType::Type> Type;
+	FECsSoundType Type;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 	TEnumAsByte<ECsSoundPriority::Type> Priority;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	bool bSpatialize;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 	float VolumeMultiplier;
@@ -32,8 +35,8 @@ struct FCsAnimNotifySound
 
 	FCsAnimNotifySound()
 	{
-		Type = ECsSoundType::s3D;
 		Priority = ECsSoundPriority::Medium;
+		bSpatialize = true;
 		VolumeMultiplier = 1.0f;
 		PitchMultiplier = 1.0f;
 		Bone = NAME_None;
@@ -43,6 +46,7 @@ struct FCsAnimNotifySound
 	{
 		Sound = B.Sound;
 		Priority = B.Priority;
+		bSpatialize = B.bSpatialize;
 		VolumeMultiplier = B.VolumeMultiplier;
 		PitchMultiplier = B.PitchMultiplier;
 		Bone = B.Bone;
@@ -53,6 +57,7 @@ struct FCsAnimNotifySound
 	{
 		return Sound == B.Sound &&
 			   Priority == B.Priority &&
+			   bSpatialize == B.bSpatialize &&
 			   VolumeMultiplier == B.VolumeMultiplier &&
 			   PitchMultiplier == B.PitchMultiplier &&
 			   Bone == B.Bone;

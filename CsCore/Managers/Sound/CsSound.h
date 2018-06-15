@@ -14,13 +14,13 @@ struct FCsSoundCache : public FCsPooledObjectCache
 	TWeakObjectPtr<USoundCue> Cue;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
-	TEnumAsByte<ECsSoundType::Type> Type_Script;
+	FECsSoundType Type_Script;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TEnumAsByte<ECsSoundPriority::Type> Priority;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
-	float Duration;
+	bool bSpatialize;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	bool IsLooping;
@@ -50,99 +50,27 @@ struct FCsSoundCache : public FCsPooledObjectCache
 		Sound = InSound;
 	}
 
-	template<typename T>
-	void Init(const uint16& InActiveIndex, FCsSoundElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+	void Init(const uint16& InActiveIndex, FCsSoundPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
 		SetActiveIndex(InActiveIndex);
 
 		IsAllocated = true;
 
-		Owner			 = InOwner;
-		Cue				 = InElement->Get();
-		Parent			 = InParent;
-		Type_Script		 = InElement->Type;
-		Type			 = (uint8)Type_Script;
-		Priority		 = InElement->Priority;
-		Duration		 = InElement->Duration;
-		IsLooping		 = InElement->IsLooping;
-		VolumeMultiplier = InElement->VolumeMultiplier;
-		PitchMultiplier  = InElement->PitchMultiplier;
-		Bone			 = InElement->Bone;
+		Owner			 = Payload->GetOwner();
+		Cue				 = Payload->GetCue();
+		Parent			 = Payload->GetParent();
+		Priority		 = Payload->Priority;
+		IsLooping		 = Payload->IsLooping;
+
+		SetLifeTime(IsLooping ? 0.0f : Payload->Duration);
+
+		VolumeMultiplier = Payload->VolumeMultiplier;
+		PitchMultiplier	 = Payload->PitchMultiplier;
+		Bone			 = Payload->Bone;
 		Time			 = InTime;
 		RealTime		 = InRealTime;
 		SetFrame(InFrame);
-
-		if (InObject && OnDeAllocate)
-		{
-			DelegateInvoker = (UObject*)InObject;
-#if WITH_EDITOR
-			OnDeAllocate_ScriptEvent.AddUObject(InObject, OnDeAllocate);
-#endif // #if WITH_EDITOR
-			OnDeAllocate_Event.AddUObject(InObject, OnDeAllocate);
-		}
-	}
-
-	template<typename T>
-	void Init(const uint16& InActiveIndex, FCsSoundElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
-	{
-		Init(InActiveIndex, InElement, InTime, InRealTime, InFrame, nullptr, nullptr, InObject, OnDeAllocate);
-	}
-
-	template<typename T>
-	void Init(const uint16& InActiveIndex, FCsSoundElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, const FVector &InLocation, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
-	{
-		Init(InActiveIndex, InElement, InTime, InRealTime, InFrame, InOwner, nullptr, InObject, OnDeAllocate);
-
-		Location = InLocation;
-	}
-
-	template<typename T>
-	void Init(const uint16& InActiveIndex, FCsSoundElement* InElement, const float &InTime, const float &InRealTime, const uint64 &inFrame, const FVector &InLocation, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
-	{
-		Init(InActiveIndex, InElement, InTime, InRealTime, inFrame, nullptr, InLocation, InObject, OnDeAllocate);
-	}
-
-	void Init(const uint16& InActiveIndex, FCsSoundElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, const FVector &InLocation)
-	{
-		SetActiveIndex(InActiveIndex);
-
-		IsAllocated = true;
-
-		Owner			 = InOwner;
-		Cue				 = InElement->Get();
-		Parent			 = InParent;
-		Type_Script		 = InElement->Type;
-		Type			 = (uint8)Type_Script;
-		Priority		 = InElement->Priority;
-		Duration		 = InElement->Duration;
-		IsLooping		 = InElement->IsLooping;
-		VolumeMultiplier = InElement->VolumeMultiplier;
-		PitchMultiplier	 = InElement->PitchMultiplier;
-		Bone			 = InElement->Bone;
-		Time			 = InTime;
-		RealTime		 = InRealTime;
-		SetFrame(InFrame);
-		Location		 = InLocation;
-	}
-
-	void Init(const uint16& InActiveIndex, FCsSoundElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent)
-	{
-		Init(InActiveIndex, InElement, InTime, InRealTime, InFrame, InOwner, InParent, FVector::ZeroVector);
-	}
-
-	void Init(const uint16& InActiveIndex, FCsSoundElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, const FVector &InLocation)
-	{
-		Init(InActiveIndex, InElement, InTime, InRealTime, InFrame, nullptr, InOwner, InLocation);
-	}
-
-	void Init(const uint16& InActiveIndex, FCsSoundElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, const FVector &InLocation)
-	{
-		Init(InActiveIndex, InElement, InTime, InRealTime, InFrame, nullptr, nullptr, InLocation);
-	}
-
-	void Init(const uint16& InActiveIndex, FCsSoundElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame)
-	{
-		Init(InActiveIndex, InElement, InTime, InRealTime, InFrame, nullptr, nullptr, FVector::ZeroVector);
+		Location		 = Payload->Location;
 	}
 
 	virtual void Reset() override
@@ -151,18 +79,18 @@ struct FCsSoundCache : public FCsPooledObjectCache
 
 		Cue.Reset();
 		Cue   = nullptr;
-		Type_Script		 = ECsSoundType::s3D;
-		Type			 = (uint8)Type_Script;
 		Priority		 = ECsSoundPriority::VeryLow;
-		Duration		 = 0.0f;
+		bSpatialize		 = false;
 		IsLooping		 = false;
 		VolumeMultiplier = 1.0f;
 		PitchMultiplier  = 1.0f;
 		Bone			 = NAME_None;
 	}
 
-	ACsSound* GetSound() { return Sound.IsValid() ? Sound.Get() : nullptr; }
-	USoundCue* GetCue() { return Cue.IsValid() ? Cue.Get() : nullptr; }
+	FORCEINLINE ACsSound* GetSound() { return Sound.IsValid() ? Sound.Get() : nullptr; }
+	template<typename T>
+	T* GetSound() { return Cast<T>(GetSound()); }
+	FORCEINLINE USoundCue* GetCue() { return Cue.IsValid() ? Cue.Get() : nullptr; }
 };
 
 UCLASS()
@@ -178,31 +106,17 @@ private:
 public:
 
 	UPROPERTY(BlueprintReadWrite, Category = "Sound")
+	FECsSoundType Type;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Sound")
 	FCsSoundCache Cache;
 
-	void Init(const int32 &Index);
+	void Init(const int32 &Index, const FECsSoundType &InType);
 
-	template<typename T>
-	void Allocate(const uint16& ActiveIndex, FCsSoundElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
-
-	template<typename T>
-	void Allocate(const uint16& ActiveIndex, FCsSoundElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
-
-	template<typename T>
-	void Allocate(const uint16& ActiveIndex, FCsSoundElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, const FVector &InLocation, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
-
-	template<typename T>
-	void Allocate(const uint16& ActiveIndex, FCsSoundElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, const FVector &InLocation, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
-
-	void Allocate(const uint16& ActiveIndex, FCsSoundElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent, const FVector &InLocation);
-	void Allocate(const uint16& ActiveIndex, FCsSoundElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent);
-	void Allocate(const uint16& ActiveIndex, FCsSoundElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, const FVector &InLocation);
-	void Allocate(const uint16& ActiveIndex, FCsSoundElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, const FVector &InLocation);
-	void Allocate(const uint16& ActiveIndex, FCsSoundElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame);
+	void Allocate(const uint16& ActiveIndex, FCsSoundPayload* Payload);
 
 	virtual void DeAllocate() override;
 
-	//bool Play(USoundCue* Cue, UObject* Parent, const float &StartTime=0.0f, const FVector &Location = FVector::ZeroVector);
 	bool Play();
 	bool Stop();
 };

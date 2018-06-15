@@ -94,11 +94,11 @@ class CSCORE_API ACsData_ProjectileWeapon : public ACsData_Weapon
 	virtual FCsSoundElement* GetSound(const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType);
 
 	virtual void PlaySound(UWorld* InWorld, const TCsViewType &ViewType, const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType, UObject* InOwner, UObject* InParent);
-	virtual void PlaySound(UWorld* InWorld, const TCsViewType &ViewType, const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType, UObject* InOwner, const FVector &Location);
-	virtual void StopSound(UWorld* InWorld, const TCsViewType &ViewType, const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType, UObject* InOwner, UObject* InParent);
-
 	virtual void PlaySound(UWorld* InWorld, const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType, UObject* InOwner, UObject* InParent);
+	virtual void PlaySound(UWorld* InWorld, const TCsViewType &ViewType, const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType, UObject* InOwner, const FVector &Location);
 	virtual void PlaySound(UWorld* InWorld, const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType, UObject* InOwner, const FVector &Location);
+
+	virtual void StopSound(UWorld* InWorld, const TCsViewType &ViewType, const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType, UObject* InOwner, UObject* InParent);
 	virtual void StopSound(UWorld* InWorld, const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType, UObject* InOwner, UObject* InParent);
 
 #pragma endregion Sound

@@ -5,7 +5,7 @@
     using System.Collections.Generic;
     using UnityEngine;
 
-    public class CgProcessPayload : CgPooledObjectPayload
+    public class FCgProcessPayload : FCgPooledObjectPayload
     {
         #region "Data Members"
 
@@ -19,19 +19,19 @@
         public bool RedirectStandardError;
         public bool EnableRaisingEvents;
 
-        public CgProcess.OutputDataRecieved OutputDataRecieved_Event;
-        public CgProcess.ErrorDataRecieved ErrorDataRecieved_Event;
-        public CgProcess.Exited Exited_Event;
+        public FCgProcess.OutputDataRecieved OutputDataRecieved_Event;
+        public FCgProcess.ErrorDataRecieved ErrorDataRecieved_Event;
+        public FCgProcess.Exited Exited_Event;
 
         public List<CgProcessMonitorOutputEvent> MonitorOuputEvents;
 
         #endregion // Data Members
 
-        public CgProcessPayload() : base()
+        public FCgProcessPayload() : base()
         {
-            OutputDataRecieved_Event = new CgProcess.OutputDataRecieved();
-            ErrorDataRecieved_Event = new CgProcess.ErrorDataRecieved();
-            Exited_Event = new CgProcess.Exited();
+            OutputDataRecieved_Event = new FCgProcess.OutputDataRecieved();
+            ErrorDataRecieved_Event = new FCgProcess.ErrorDataRecieved();
+            Exited_Event = new FCgProcess.Exited();
 
             MonitorOuputEvents = new List<CgProcessMonitorOutputEvent>();
 
@@ -64,15 +64,15 @@
         }
     }
 
-    public class CgManager_Process : TCgManager<ECgProcess, CgProcess, CgProcessPayload>
+    public class FCgManager_Process : TCgManager<ECgProcess, FCgProcess, FCgProcessPayload>
     {
         private static readonly int PAYLOAD_COUNT = 8;
 
-        public CgManager_Process() : base()
+        public FCgManager_Process() : base()
         {
             for (int i = 0; i < PAYLOAD_COUNT; ++i)
             {
-                Payloads.Add(new CgProcessPayload());
+                Payloads.Add(new FCgProcessPayload());
             }
         }
     }
@@ -83,7 +83,7 @@
 
         #region "Data Members"
 
-        protected CgManager_Process Internal;
+        protected FCgManager_Process Internal;
 
         protected List<Process> Processes = new List<Process>();
 
@@ -100,16 +100,16 @@
                 return;
 
 
-            if (!type.IsSubclassOf(typeof(TCgManager<ECgProcess, CgProcess, CgProcessPayload>)))
+            if (!type.IsSubclassOf(typeof(TCgManager<ECgProcess, FCgProcess, FCgProcessPayload>)))
             {
-                CgDebug.Log("ICgManager_Process.Init: Passed in Type of " + type.GetType().Name + " is NOT a SubclassOf TCgManager<ECgProcess, CgProcess, CgProcessPayload>");
+                CgDebug.Log("ICgManager_Process.Init: Passed in Type of " + type.GetType().Name + " is NOT a SubclassOf TCgManager<ECgProcess, FCgProcess, FCgProcessPayload>");
                 return;
             }
 
             GameObject go = new GameObject("Manager_Process");
             _Instance     = go.AddComponent<ICgManager_Process>();
 
-            _Instance.Internal = (CgManager_Process)type.GetConstructor(Type.EmptyTypes).Invoke(Type.EmptyTypes);
+            _Instance.Internal = (FCgManager_Process)type.GetConstructor(Type.EmptyTypes).Invoke(Type.EmptyTypes);
             _Instance.Internal.OnAddToPool_Event.Add(_Instance.OnAddToPool);
         }
 
@@ -131,12 +131,12 @@
             Internal.CreatePool(e, size);
         }
 
-        public virtual void AddToPool(ECgProcess e, CgProcess o)
+        public virtual void AddToPool(ECgProcess e, FCgProcess o)
         {
             Internal.AddToPool(e, o);
         }
 
-        public virtual void AddToActivePool(ECgProcess e, CgProcess o)
+        public virtual void AddToActivePool(ECgProcess e, FCgProcess o)
         {
             Internal.AddToActivePool(e, o);
         }
@@ -170,19 +170,19 @@
 
             #endregion // Allocate / DeAllocate
 
-        public CgProcess Spawn(ECgProcess e, CgProcessPayload payload)
+        public FCgProcess Spawn(ECgProcess e, FCgProcessPayload payload)
         {
             return Internal.Spawn(e, payload);
         }
 
-        public CgProcessPayload AllocatePayload()
+        public FCgProcessPayload AllocatePayload()
         {
-            return (CgProcessPayload)Internal.AllocatePayload();
+            return (FCgProcessPayload)Internal.AllocatePayload();
         }
 
         #endregion "Internal"
 
-        public void OnAddToPool(ECgProcess e, CgProcess o)
+        public void OnAddToPool(ECgProcess e, FCgProcess o)
         {
             Process p = new Process();
             Processes.Add(p);

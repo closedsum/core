@@ -292,7 +292,7 @@ public:
 	class ACsManager_FX* Manager_FX;
 
 	UPROPERTY()
-	class ACsManager_Sound* Manager_Sound;
+	class AICsManager_Sound* Manager_Sound;
 
 	UPROPERTY()
 	class AICsManager_Projectile* Manager_Projectile;

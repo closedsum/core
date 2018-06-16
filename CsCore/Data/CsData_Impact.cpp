@@ -14,9 +14,21 @@ void ACsData_Impact::PlayImpactFX(UWorld* InWorld, const TEnumAsByte<EPhysicalSu
 {
 	const TCsSurfaceType SurfaceType = (*PhysicalSurfaceToSurfaceType)(PhysicalSurface);
 	FCsFxElement* FxElement			 = GetImpactFX(SurfaceType);
-	ACsManager_FX* Manager_FX		 = ACsManager_FX::Get(InWorld);
 
-	Manager_FX->Play(FxElement, InOwner, Location, Normal.Rotation());
+	if (!FxElement->Get())
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsData_Impact::PlayImpactFX: Attempting to Play a NULL ParticleSystem."));
+		return;
+	}
+
+	AICsManager_FX* Manager_FX = AICsManager_FX::Get(InWorld);
+
+	FCsFxPayload* Payload = Manager_FX->AllocatePayload();
+	Payload->Set(FxElement);
+	Payload->Owner = InOwner;
+	Payload->Rotation = Normal.Rotation();
+
+	Manager_FX->Play(Payload);
 }
 
 FCsSoundElement* ACsData_Impact::GetImpactSound(const TCsSurfaceType &SurfaceType) { return nullptr; }
@@ -25,6 +37,13 @@ void ACsData_Impact::PlayImpactSound(UWorld* InWorld, const TEnumAsByte<EPhysica
 {
 	const TCsSurfaceType SurfaceType = (*PhysicalSurfaceToSurfaceType)(PhysicalSurface);
 	FCsSoundElement* SoundElement	 = GetImpactSound(SurfaceType);
+
+	if (!SoundElement->Get())
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsData_Impact::PlayImpactSound: Attempting to Play a NULL Sound."));
+		return;
+	}
+
 	AICsManager_Sound* Manager_Sound = AICsManager_Sound::Get(InWorld);
 
 	FCsSoundPayload* Payload = Manager_Sound->AllocatePayload();

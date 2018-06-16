@@ -18,7 +18,8 @@ public:
 
 	virtual void DeconstructObject(ACsSound* a) override;
 	virtual FString GetObjectName(ACsSound* a) override;
-	virtual void Log_Internal(const FString& log) override;
+	virtual void LogTransaction(const FString &functionName, const TEnumAsByte<ECsPoolTransaction::Type> &transaction, ACsSound* o) override;
+	virtual void Log(const FString& log) override;
 	virtual ACsSound* Spawn(FCsSoundPayload* payload) override;
 
 #pragma endregion Interface

@@ -34,7 +34,14 @@ FCsSoundElement* ACsData_Pickup::GetSound(const FECsPickupSound &SoundType) { re
 
 void ACsData_Pickup::PlaySound(UWorld* InWorld, const FECsPickupSound &SoundType, UObject* InOwner, UObject* InParent)
 {
-	FCsSoundElement* SoundElement   = GetSound(SoundType);
+	FCsSoundElement* SoundElement = GetSound(SoundType);
+
+	if (!SoundElement->Get())
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsData_Pickup::PlaySound: Attempting to Play a NULL Sound."));
+		return;
+	}
+
 	AICsManager_Sound* Manager_Sound = AICsManager_Sound::Get(InWorld);
 
 	FCsSoundPayload* Payload = Manager_Sound->AllocatePayload();

@@ -115,6 +115,10 @@ class TCsManager_PooledObjects
 public:
 	TCsManager_PooledObjects()
 	{
+		PoolSize = 0;
+		PoolIndex = 0;
+		PayloadIndex = 0;
+
 		ConstructObject_Call.BindRaw(this, &TCsManager_PooledObjects::ConstructObject);
 	}
 
@@ -142,6 +146,7 @@ protected:
 	FString FunctionNames[ECsManagerPooledObjectsFunctionNames::ECsManagerPooledObjectsFunctionNames_MAX];
 
 	TArray<ObjectType*> Pool;
+	int32 PoolSize;
 	int32 PoolIndex;
 	TArray<ObjectType*> ActiveObjects;
 
@@ -177,6 +182,7 @@ public:
 		}
 
 		Pool.Reset();
+		PoolSize = 0;
 		ActiveObjects.Reset();
 
 		for (int32 i = 0; i < PAYLOAD_SIZE; ++i)
@@ -207,6 +213,8 @@ public:
 
 	virtual void CreatePool(const int32 &size)
 	{
+		PoolSize = size;
+
 		for (int32 i = 0; i < size; ++i)
 		{
 			ObjectType* o = ConstructObject_Call.Execute();
@@ -221,6 +229,7 @@ public:
 	virtual void AddToPool(ObjectType* o)
 	{
 		Pool.Add(o);
+		PoolSize = Pool.Num();
 		o->Init(Pool.Num() - 1);
 		// TODO: Data needs to be set somewhere
 		o->Cache.Init(0, nullptr, 0.0f, 0.0f, 0);
@@ -271,11 +280,11 @@ public:
 			{
 				log = FString::Printf(TEXT("%s: %s %s: %s of Type: %s at %f."), *functionName, *transactionAsString, *ObjectClassName, *objectName, currentTime);
 			}
-			Log_Internal(log);
+			Log(log);
 		}
 	}
 
-	virtual void Log_Internal(const FString& outLog) {}
+	virtual void Log(const FString& outLog) {}
 
 	virtual float GetCurrentTimeSeconds()
 	{
@@ -346,10 +355,8 @@ public:
 	{
 		const FString log = FString::Printf(TEXT("%s::OnTick: %s: %s at PoolIndex: %d was prematurely deallocted NOT in a normal way."), *Name, *ObjectClassName, *(GetObjectName(o)), o->Cache.Index);
 
-		OnTick_Log_PrematureDeAllocation_Internal(log);
+		Log(log);
 	}
-
-	virtual void OnTick_Log_PrematureDeAllocation_Internal(const FString &log){}
 
 	const TArray<ObjectType*>& GetAllActiveObjects()
 	{
@@ -374,7 +381,7 @@ public:
 	// Allocate / DeAllocate
 #pragma region
 
-	ObjectType* Allocate()
+	virtual ObjectType* Allocate()
 	{
 		if (IsExhausted())
 		{
@@ -382,8 +389,11 @@ public:
 			return nullptr;
 		}
 
-		for (ObjectType* o : Pool)
+		for (int32 i = 0; i < PoolSize; ++i)
 		{
+			PoolIndex	  = (PoolIndex + i) % PoolSize;
+			ObjectType* o = Pool[PoolIndex];
+
 			if (!o->Cache.IsAllocated)
 			{
 				o->Cache.IsAllocated = true;
@@ -495,6 +505,8 @@ class TCsManager_PooledObjects_TMap
 public:
 	TCsManager_PooledObjects_TMap()
 	{
+		PayloadIndex = 0;
+
 		ConstructObject_Call.BindRaw(this, &TCsManager_PooledObjects_TMap::ConstructObject);
 	}
 
@@ -689,9 +701,9 @@ public:
 		{
 			const FString& transactionAsString = ECsPoolTransaction::ToActionString(transaction);
 
-			const FString ObjectName	= GetObjectName(o);
+			const FString objectName	= GetObjectName(o);
 			const FString typeAsString  = EnumTypeToString(o->Cache.Type);
-			const float CurrentTime	    = GetCurrentTimeSeconds();
+			const float currentTime	    = GetCurrentTimeSeconds();
 			const UObject* objectOwner  = o->Cache.GetOwner();
 			const FString ownerName	    = objectOwner ? objectOwner->GetName() : ECsCached::Str::None;
 			const UObject* parent	    = o->Cache.GetParent();
@@ -701,23 +713,23 @@ public:
 
 			if (objectOwner && parent)
 			{
-				log = FString::Printf(TEXT("%s: %s %s: %s of Type: %s at %f for %s attached to %s."), *functionName, *transactionAsString, *ObjectClassName, *ObjectName, *typeAsString, CurrentTime, *ownerName, *parentName);
+				log = FString::Printf(TEXT("%s: %s %s: %s of Type: %s at %f for %s attached to %s."), *functionName, *transactionAsString, *ObjectClassName, *objectName, *typeAsString, currentTime, *ownerName, *parentName);
 			}
 			else
 			if (objectOwner)
 			{
-				log = FString::Printf(TEXT("%s: %s %s: %s of Type: %s at %f for %s."), *functionName, *transactionAsString, *ObjectClassName, *ObjectName, *typeAsString, CurrentTime, *ownerName);
+				log = FString::Printf(TEXT("%s: %s %s: %s of Type: %s at %f for %s."), *functionName, *transactionAsString, *ObjectClassName, *objectName, *typeAsString, currentTime, *ownerName);
 			}
 			else
 			if (parent)
 			{
-				log = FString::Printf(TEXT("%s: %s %s: %s of Type: %s at %f attached to %s."), *functionName, *transactionAsString, *ObjectClassName, *ObjectName, *typeAsString, CurrentTime, *parentName);
+				log = FString::Printf(TEXT("%s: %s %s: %s of Type: %s at %f attached to %s."), *functionName, *transactionAsString, *ObjectClassName, *objectName, *typeAsString, currentTime, *parentName);
 			}
 			else
 			{
-				log = FString::Printf(TEXT("%s: %s %s: %s of Type: %s at %f."), *functionName, *transactionAsString, *ObjectClassName, *ObjectName, *typeAsString, CurrentTime);
+				log = FString::Printf(TEXT("%s: %s %s: %s of Type: %s at %f."), *functionName, *transactionAsString, *ObjectClassName, *objectName, *typeAsString, currentTime);
 			}
-			Log_Internal(log);
+			Log(log);
 		}
 	}
 
@@ -798,10 +810,10 @@ public:
 	{
 		const FString log = FString::Printf(TEXT("%s::OnTick: %s: %s of type: %s at PoolIndex: %d was prematurely deallocted NOT in a normal way."), *Name, *ObjectClassName, *GetObjectName(o), *EnumTypeToString(e), o->Cache.Index);
 
-		Log_Internal(log);
+		Log(log);
 	}
 
-	virtual void Log_Internal(const FString &log) {}
+	virtual void Log(const FString &log) {}
 
 	void GetAllActiveObjects(TArray<ObjectType*> &outObjects)
 	{

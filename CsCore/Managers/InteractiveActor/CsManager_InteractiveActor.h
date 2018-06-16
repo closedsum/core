@@ -15,7 +15,7 @@ public:
 	virtual FString GetObjectName(ACsInteractiveActor* a) override;
 	virtual const FString& EnumTypeToString(const FECsInteractiveType &e) override;
 	virtual const FString& EnumTypeToString(const int32 &index) override;
-	virtual void Log_Internal(const FString& log) override;
+	virtual void Log(const FString& log) override;
 };
 
 UCLASS()

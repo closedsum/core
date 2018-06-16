@@ -121,7 +121,7 @@ void UCsAnimInstance::OnTick_Handle_ShowEditorIcons()
 
 	if (ShowEmitterEditorIconsHandle.HasChanged())
 	{
-		if (ACsManager_FX* MyManager_FX = GetManager_FX())
+		if (AICsManager_FX* MyManager_FX = GetManager_FX())
 			MyManager_FX->ToggleEmitterEditorIcons(ShowEmitterEditorIcons);
 		ShowEmitterEditorIconsHandle.Clear();
 	}
@@ -153,7 +153,7 @@ void UCsAnimInstance::Spawn_CoroutineScheduler()
 	Scheduler->MyOwner = this;
 }
 
-ACsManager_FX* UCsAnimInstance::GetManager_FX()
+AICsManager_FX* UCsAnimInstance::GetManager_FX()
 {
 	return Manager_FX.IsValid() ? Manager_FX.Get() : nullptr;
 }
@@ -161,7 +161,7 @@ ACsManager_FX* UCsAnimInstance::GetManager_FX()
 void UCsAnimInstance::Spawn_Manager_FX()
 {
 	// Check if Manager_FX was already created. This may be the case when Refreshing Nodes for the AnimInstance
-	for (TActorIterator<ACsManager_FX> Itr(GetWorld()); Itr; ++Itr)
+	for (TActorIterator<AICsManager_FX> Itr(GetWorld()); Itr; ++Itr)
 	{
 		if (Itr)
 		{
@@ -176,8 +176,8 @@ void UCsAnimInstance::Spawn_Manager_FX()
 		SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		SpawnInfo.ObjectFlags |= RF_Transient;
 
-		Manager_FX = GetWorld()->SpawnActor<ACsManager_FX>(SpawnInfo);
-		ACsManager_FX::Init(this);
+		Manager_FX = GetWorld()->SpawnActor<AICsManager_FX>(SpawnInfo);
+		AICsManager_FX::Init(this);
 		Manager_FX->CreatePool(4);
 		Manager_FX->ToggleEmitterEditorIcons(false);
 	}
@@ -232,7 +232,7 @@ void UCsAnimInstance::NativeUpdateAnimation(float DeltaTimeX)
 
 	if (UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get())
 		Scheduler->OnTick_Update(DeltaTimeX);
-	if (ACsManager_FX* MyManager_FX = GetManager_FX())
+	if (AICsManager_FX* MyManager_FX = GetManager_FX())
 		MyManager_FX->OnTick(DeltaTimeX);
 #endif // #if WITH_EDITOR
 }

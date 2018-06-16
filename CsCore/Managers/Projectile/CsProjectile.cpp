@@ -281,8 +281,16 @@ void ACsProjectile::Allocate_Internal(FCsProjectilePayload* Payload)
 		// Trail
 		if (Data_Projectile->GetUseTrailFX())
 		{
-			ACsManager_FX* Manager_FX = ACsManager_FX::Get(GetWorld());
-			ACsEmitter* TrailFX		  = Manager_FX->Play(Data_Projectile->GetTrailFX(ViewType), OwnerWeapon, MeshComponent, Cache.Rotation.GetInverse());
+			AICsManager_FX* Manager_FX = AICsManager_FX::Get(GetWorld());
+			FCsFxElement* FX		   = Data_Projectile->GetTrailFX(ViewType);
+
+			FCsFxPayload* FxPayload = Manager_FX->AllocatePayload();
+			FxPayload->Set(FX);
+			FxPayload->Owner = OwnerWeapon;
+			FxPayload->Parent = MeshComponent;
+			FxPayload->Rotation = Cache.Rotation.GetInverse();
+
+			ACsEmitter* TrailFX		  = Manager_FX->Play(FxPayload);
 			TrailFX->Cache.LifeTime   = Data_Projectile->GetLifeTime();
 		}
 	}

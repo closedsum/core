@@ -157,9 +157,9 @@ public:
 
 	// Manager FX
 
-	TWeakObjectPtr<class ACsManager_FX> Manager_FX;
+	TWeakObjectPtr<class AICsManager_FX> Manager_FX;
 
-	class ACsManager_FX* GetManager_FX();
+	class AICsManager_FX* GetManager_FX();
 
 	void Spawn_Manager_FX();
 

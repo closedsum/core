@@ -1,6 +1,7 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_View.h"
 #include "Types/CsTypes_Load.h"
+#include "Runtime/Engine/Classes/Particles/ParticleSystem.h"
 #include "CsTypes_FX.generated.h"
 #pragma once
 
@@ -204,7 +205,7 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsFpsFxElement
+struct CSCORE_API FCsFpvFxElement
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -214,7 +215,7 @@ struct CSCORE_API FCsFpsFxElement
 	UPROPERTY(EditAnywhere, Category = "FX")
 	FCsFxElement Effect3P;
 
-	FCsFpsFxElement()
+	FCsFpvFxElement()
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Effect1P.Particle_LoadFlags, ECsLoadFlags::Game1P);
 		CS_SET_BLUEPRINT_BITFLAG(Effect3P.Particle_LoadFlags, ECsLoadFlags::Game3P);
@@ -231,19 +232,19 @@ struct CSCORE_API FCsFpsFxElement
 		return &Effect3P;
 	}
 
-	FORCEINLINE FCsFpsFxElement& operator=(const FCsFpsFxElement& B)
+	FORCEINLINE FCsFpvFxElement& operator=(const FCsFpvFxElement& B)
 	{
 		Effect1P = B.Effect1P;
 		Effect3P = B.Effect3P;
 		return *this;
 	}
 
-	FORCEINLINE bool operator==(const FCsFpsFxElement& B) const
+	FORCEINLINE bool operator==(const FCsFpvFxElement& B) const
 	{
 		return Effect1P == B.Effect1P && Effect3P == B.Effect3P;
 	}
 
-	FORCEINLINE bool operator!=(const FCsFpsFxElement& B) const
+	FORCEINLINE bool operator!=(const FCsFpvFxElement& B) const
 	{
 		return !(*this == B);
 	}
@@ -256,6 +257,107 @@ struct CSCORE_API FCsFpsFxElement
 			return Effect3P.Bone;
 		return NAME_None;
 	}
+};
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsFxPayload
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	bool IsAllocated;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	TWeakObjectPtr<UObject> Instigator;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	TWeakObjectPtr<UObject> Owner;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	TWeakObjectPtr<UObject> Parent;
+
+	UPROPERTY(EditAnywhere, Category = "Payload")
+	TWeakObjectPtr<UParticleSystem> Particle;
+
+	UPROPERTY(EditAnywhere, Category = "Payload")
+	TEnumAsByte<ECsFxPriority::Type> Priority;
+
+	UPROPERTY(EditAnywhere, Category = "Payload", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float LifeTime;
+
+	UPROPERTY(EditAnywhere, Category = "Payload", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float DeathTime;
+
+	UPROPERTY(EditAnywhere, Category = "Payload", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float Scale;
+
+	UPROPERTY(EditAnywhere, Category = "FX")
+	FCsFpsDrawDistance DrawDistances;
+
+	UPROPERTY(EditAnywhere, Category = "FX")
+	FName Bone;
+
+	UPROPERTY(EditAnywhere, Category = "FX")
+	FVector Location;
+
+	UPROPERTY(EditAnywhere, Category = "FX")
+	FRotator Rotation;
+
+	FCsFxPayload() {}
+	~FCsFxPayload() {}
+
+	FORCEINLINE void Set(FCsFxElement* Element)
+	{
+		Particle = Element->Get();
+		Priority = Element->Priority;
+		LifeTime = Element->LifeTime;
+		DeathTime = Element->DeathTime;
+		Scale = Element->Scale;
+		DrawDistances = Element->DrawDistances;
+		Bone = Element->Bone;
+		Location = Element->Location;
+		Rotation = Element->Rotation;
+	}
+
+	FORCEINLINE void Set(FCsFxElement& Element)
+	{
+		Set(&Element);
+	}
+
+	FORCEINLINE void Reset()
+	{
+		Instigator.Reset();
+		Instigator = nullptr;
+		Owner.Reset();
+		Owner = nullptr;
+		Parent.Reset();
+		Parent = nullptr;
+		Particle = nullptr;
+		Priority = ECsFxPriority::Medium;
+		LifeTime = 0.0f;
+		DeathTime = 0.0f;
+		Scale = 1.0f;
+		DrawDistances.Reset();
+		Bone = NAME_None;
+		Location = FVector::ZeroVector;
+		Rotation = FRotator::ZeroRotator;
+	}
+
+	FORCEINLINE UObject* GetInstigator() { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
+	template<typename T>
+	FORCEINLINE T* GetInstigator() { return Cast<T>(GetInstigator()); }
+
+	FORCEINLINE UObject* GetOwner() { return Owner.IsValid() ? Owner.Get() : nullptr; }
+	template<typename T>
+	FORCEINLINE T* GetOwner() { return Cast<T>(GetOwner()); }
+
+	FORCEINLINE UObject* GetParent() { return Parent.IsValid() ? Parent.Get() : nullptr; }
+	template<typename T>
+	FORCEINLINE T* GetParent() { return Cast<T>(GetParent()); }
+
+	FORCEINLINE UParticleSystem* GetParticle() { return Particle.IsValid() ? Particle.Get() : nullptr; }
+	template<typename T>
+	FORCEINLINE T* GetParticle() { return Cast<T>(GetParticle()); }
 };
 
 #pragma endregion FX

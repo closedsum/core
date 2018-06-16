@@ -36,7 +36,7 @@ const FString& FCsManager_InteractiveActor::EnumTypeToString(const int32 &index)
 	return EMCsInteractiveType::Get().GetEnumAt(index).Name;
 }
 
-void FCsManager_InteractiveActor::Log_Internal(const FString& log)
+void FCsManager_InteractiveActor::Log(const FString& log)
 {
 	UE_LOG(LogCs, Warning, TEXT("%s"), *log);
 }

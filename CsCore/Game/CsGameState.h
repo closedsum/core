@@ -289,7 +289,7 @@ public:
 	class ACsManager_WidgetActor* Manager_WidgetActor;
 
 	UPROPERTY()
-	class ACsManager_FX* Manager_FX;
+	class AICsManager_FX* Manager_FX;
 
 	UPROPERTY()
 	class AICsManager_Sound* Manager_Sound;

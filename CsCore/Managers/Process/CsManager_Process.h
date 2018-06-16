@@ -10,12 +10,17 @@ class FCsManager_Process : public TCsManager_PooledObjects_TMap<FECsProcess, UCs
 public:
 	~FCsManager_Process();
 
+// Interface
+#pragma region
+
 	virtual void DeconstructObject(UCsProcess* p) override;
 	virtual UCsProcess* ConstructObject(const FECsProcess& e) override;
 	virtual FString GetObjectName(UCsProcess* p) override;
 	virtual const FString& EnumTypeToString(const FECsProcess &e) override;
 	virtual const FString& EnumTypeToString(const int32 &index) override;
-	virtual void Log_Internal(const FString& log) override;
+	virtual void Log(const FString& log) override;
+
+#pragma endregion Interface
 };
 
 UCLASS(transient)

@@ -8,6 +8,9 @@
 
 FCsManager_Process::~FCsManager_Process(){}
 
+	// Interface
+#pragma region
+
 void FCsManager_Process::DeconstructObject(UCsProcess* o)
 {
 	if (o && !o->IsPendingKill())
@@ -39,10 +42,12 @@ const FString& FCsManager_Process::EnumTypeToString(const int32 &index)
 	return EMCsProcess::Get().GetEnumAt(index).Name;
 }
 
-void FCsManager_Process::Log_Internal(const FString& log)
+void FCsManager_Process::Log(const FString& log)
 {
 	UE_LOG(LogCs, Warning, TEXT("%s"), *log);
 }
+
+#pragma endregion Interface
 
 #pragma endregion // Internal
 

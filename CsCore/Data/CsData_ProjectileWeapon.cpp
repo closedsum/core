@@ -205,6 +205,13 @@ FCsSoundElement* ACsData_ProjectileWeapon::GetSound(const FECsWeaponFireMode &Fi
 void ACsData_ProjectileWeapon::PlaySound(UWorld* InWorld, const TCsViewType &ViewType, const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType, UObject* InOwner, UObject* InParent)
 {
 	FCsSoundElement* SoundElement	= GetSound(ViewType, FireMode, SoundType);
+
+	if (!SoundElement->Get())
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsData_ProjectileWeapon::PlaySound: Attempting to Play a NULL Sound."));
+		return;
+	}
+
 	AICsManager_Sound* Manager_Sound = AICsManager_Sound::Get(InWorld);
 	
 	FCsSoundPayload* Payload = Manager_Sound->AllocatePayload();
@@ -218,6 +225,13 @@ void ACsData_ProjectileWeapon::PlaySound(UWorld* InWorld, const TCsViewType &Vie
 void ACsData_ProjectileWeapon::PlaySound(UWorld* InWorld, const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType, UObject* InOwner, UObject* InParent)
 {
 	FCsSoundElement* SoundElement = GetSound(FireMode, SoundType);
+
+	if (!SoundElement->Get())
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsData_ProjectileWeapon::PlaySound: Attempting to Play a NULL Sound."));
+		return;
+	}
+
 	AICsManager_Sound* Manager_Sound = AICsManager_Sound::Get(InWorld);
 
 	FCsSoundPayload* Payload = Manager_Sound->AllocatePayload();
@@ -230,7 +244,14 @@ void ACsData_ProjectileWeapon::PlaySound(UWorld* InWorld, const FECsWeaponFireMo
 
 void ACsData_ProjectileWeapon::PlaySound(UWorld* InWorld, const TCsViewType &ViewType, const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType, UObject* InOwner, const FVector &Location)
 {
-	FCsSoundElement* SoundElement	= GetSound(ViewType, FireMode, SoundType);
+	FCsSoundElement* SoundElement = GetSound(ViewType, FireMode, SoundType);
+
+	if (!SoundElement->Get())
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsData_ProjectileWeapon::PlaySound: Attempting to Play a NULL Sound."));
+		return;
+	}
+
 	AICsManager_Sound* Manager_Sound = AICsManager_Sound::Get(InWorld);
 
 	FCsSoundPayload* Payload = Manager_Sound->AllocatePayload();
@@ -244,6 +265,13 @@ void ACsData_ProjectileWeapon::PlaySound(UWorld* InWorld, const TCsViewType &Vie
 void ACsData_ProjectileWeapon::PlaySound(UWorld* InWorld, const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType, UObject* InOwner, const FVector &Location)
 {
 	FCsSoundElement* SoundElement = GetSound(FireMode, SoundType);
+	
+	if (!SoundElement->Get())
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsData_ProjectileWeapon::PlaySound: Attempting to Play a NULL Sound."));
+		return;
+	}
+
 	AICsManager_Sound* Manager_Sound = AICsManager_Sound::Get(InWorld);
 
 	FCsSoundPayload* Payload = Manager_Sound->AllocatePayload();

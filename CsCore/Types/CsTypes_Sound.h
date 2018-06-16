@@ -99,7 +99,7 @@ namespace ECsSoundPriority
 }
 
 USTRUCT(BlueprintType)
-struct FCsSoundElement
+struct CSCORE_API FCsSoundElement
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -195,7 +195,7 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct FCsFpvSoundElement
+struct CSCORE_API FCsFpvSoundElement
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -244,7 +244,7 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct FCsSoundPayload
+struct CSCORE_API FCsSoundPayload
 {
 	GENERATED_USTRUCT_BODY()
 

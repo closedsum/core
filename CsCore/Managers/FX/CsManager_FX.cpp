@@ -2,29 +2,248 @@
 #include "Managers/FX/CsManager_FX.h"
 #include "CsCore.h"
 #include "CsCVars.h"
-#include "Types/CsTypes.h"
 #include "Common/CsCommon.h"
-#include "Managers/FX/CsEmitter.h"
+
 #include "Game/CsGameState.h"
 
 #include "Animation/CsAnimInstance.h"
 
 // static initializations
-TWeakObjectPtr<UObject> ACsManager_FX::MyOwner;
+TWeakObjectPtr<UObject> AICsManager_FX::MyOwner;
 
-ACsManager_FX::ACsManager_FX(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+// Internal
+#pragma region
+
+FCsManager_FX::~FCsManager_FX() {}
+
+// Interface
+#pragma region
+
+void FCsManager_FX::DeconstructObject(ACsEmitter* a)
 {
-	EmitterClass = ACsEmitter::StaticClass();
+	if (a && !a->IsPendingKill())
+		a->Destroy(true);
 }
 
-/*static*/ UObject* ACsManager_FX::GetMyOwner() { return MyOwner.IsValid() ? MyOwner.Get() : nullptr; }
+FString FCsManager_FX::GetObjectName(ACsEmitter* a)
+{
+	return a->GetName();
+}
 
-/*static*/ void ACsManager_FX::Init(UObject* InOwner)
+void FCsManager_FX::LogTransaction(const FString &functionName, const TEnumAsByte<ECsPoolTransaction::Type> &transaction, ACsEmitter* o)
+{
+	if ((*LogTransactions)->GetInt() == CS_CVAR_SHOW_LOG)
+	{
+		const FString& transactionAsString = ECsPoolTransaction::ToActionString(transaction);
+
+		const FString objectName	= GetObjectName(o);
+		const FString particleName	= o->Cache.GetParticle()->GetName();
+		const float currentTime		= GetCurrentTimeSeconds();
+		const UObject* objectOwner	= o->Cache.GetOwner();
+		const FString ownerName		= objectOwner ? objectOwner->GetName() : ECsCached::Str::None;
+		const UObject* parent		= o->Cache.GetParent();
+		const FString parentName	= parent ? parent->GetName() : ECsCached::Str::None;
+
+		FString log = ECsCached::Str::Empty;
+
+		if (objectOwner && parent)
+		{
+			log = FString::Printf(TEXT("%s: %s %s: %s with Particle: %s at %f for %s attached to %s."), *functionName, *transactionAsString, *ObjectClassName, *objectName, currentTime, *ownerName, *parentName);
+		}
+		else
+		if (objectOwner)
+		{
+			log = FString::Printf(TEXT("%s: %s %s: %s with Particle: %s at %f for %s."), *functionName, *transactionAsString, *ObjectClassName, *objectName, currentTime, *ownerName);
+		}
+		else
+		if (parent)
+		{
+			log = FString::Printf(TEXT("%s: %s %s: %s with Particle: %s at %f attached to %s."), *functionName, *transactionAsString, *ObjectClassName, *objectName, currentTime, *parentName);
+		}
+		else
+		{
+			if (o->Cache.Location != FVector::ZeroVector)
+			{
+				const FString locationAsString = o->Cache.Location.ToString();
+
+				log = FString::Printf(TEXT("%s: %s %s: %s with Particle: %s at %f at %s."), *functionName, *transactionAsString, *ObjectClassName, *objectName, *particleName, currentTime, *locationAsString);
+			}
+			else
+			{
+				log = FString::Printf(TEXT("%s: %s %s: %s with Particle: %s at %f."), *functionName, *transactionAsString, *ObjectClassName, *objectName, *particleName, currentTime);
+			}
+		}
+		Log(log);
+	}
+}
+
+void FCsManager_FX::Log(const FString& log)
+{
+	UE_LOG(LogCs, Warning, TEXT("%s"), *log);
+}
+
+void FCsManager_FX::OnTick(const float &deltaTime)
+{
+	const int32 objectCount = ActiveObjects.Num();
+	int32 earliestIndex = objectCount;
+
+	for (int32 i = objectCount - 1; i >= 0; --i)
+	{
+		ACsEmitter* o = ActiveObjects[i];
+
+		// Check if ObjectType was DeAllocated NOT in a normal way (i.e. Out of Bounds)
+
+		if (!o->Cache.IsAllocated)
+		{
+			OnTick_Log_PrematureDeAllocation(o);
+
+			LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
+
+			ActiveObjects.RemoveAt(i);
+
+			if (i < earliestIndex)
+				earliestIndex = i;
+			continue;
+		}
+
+		if (!o->Cache.bLifeTime)
+		{
+			OnTick_Handle_Object.ExecuteIfBound(o);
+			continue;
+		}
+
+		// Check Dying
+		if (o->Cache.IsDying)
+		{
+			if (GetCurrentTimeSeconds() - o->Cache.DeathStartTime > o->Cache.DeathTime)
+			{
+				LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
+
+				o->DeAllocate();
+				ActiveObjects.RemoveAt(i);
+
+				OnDeAllocate_Event.Broadcast(o);
+
+				if (i < earliestIndex)
+					earliestIndex = i;
+			}
+		}
+		// Check Normal Lifetime
+		else
+		{
+			if (GetCurrentTimeSeconds() - o->Cache.Time > o->Cache.LifeTime)
+			{
+				if (o->Cache.DeathTime > 0.0f)
+				{
+					LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::PreDeallocate, o);
+
+					o->StartDeath();
+				}
+				else
+				{
+					LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
+
+					o->DeAllocate();
+					ActiveObjects.RemoveAt(i);
+
+					OnDeAllocate_Event.Broadcast(o);
+
+					if (i < earliestIndex)
+						earliestIndex = i;
+				}
+			}
+		}
+
+		OnTick_Handle_Object.ExecuteIfBound(o);
+	}
+
+	// Update ActiveIndex
+	if (earliestIndex != objectCount)
+	{
+		const int32 max = ActiveObjects.Num();
+
+		for (int32 i = earliestIndex; i < max; ++i)
+		{
+			ACsEmitter* o = ActiveObjects[i];
+			o->Cache.SetActiveIndex(i);
+		}
+	}
+}
+
+ACsEmitter* FCsManager_FX::Allocate()
+{
+	int32 oldestIndex = INDEX_NONE;
+	float oldestTime = GetCurrentTimeSeconds();
+
+	for (int32 i = 0; i < PoolSize; ++i)
+	{
+		PoolIndex	  = (PoolIndex + i) % PoolSize;
+		ACsEmitter* e = Pool[PoolIndex];
+
+		if (e->Cache.Time < oldestTime)
+		{
+			oldestIndex = PoolIndex;
+			oldestTime = e->Cache.Time;
+		}
+
+		if (!e->Cache.IsAllocated)
+		{
+			e->Cache.IsAllocated = true;
+			return e;
+		}
+	}
+#if WITH_EDITOR
+	if (UCsCommon::IsPlayInEditorPreview(GetCurrentWorld()))
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_FX::Allocate: Warning. Pool is exhausted. Using Oldest Active Emitter."));
+
+		const int32 index = ActiveObjects.Find(Pool[PoolIndex]);
+
+		if (index != INDEX_NONE)
+			ActiveObjects.RemoveAt(index);
+		return Pool[oldestIndex];
+	}
+#endif // #if WITH_EDITOR
+	checkf(0, TEXT("ACsManager_FX::Allocate: Pool is exhausted"));
+	return nullptr;
+}
+
+#pragma endregion Interface
+
+#if WITH_EDITOR
+void FCsManager_FX::ToggleEmitterEditorIcons(const bool &toggle)
+{
+	for (int32 i = 0; i < PoolSize; ++i)
+	{
+		ACsEmitter* e = Pool[i];
+
+		e->GetSpriteComponent()->SetVisibility(toggle);
+		e->GetSpriteComponent()->SetHiddenInGame(!toggle);
+		e->GetArrowComponent()->SetVisibility(toggle);
+		e->GetArrowComponent()->SetHiddenInGame(!toggle);
+	}
+}
+
+#endif // #if WITH_EDITOR
+
+#pragma endregion // Internal
+
+AICsManager_FX::AICsManager_FX(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+{
+	Internal = new FCsManager_FX();
+	Internal->Init(TEXT("AICsManager_FX"), TEXT("ACsEmitter"), nullptr, &CsCVarLogManagerFxTransactions);
+	Internal->ConstructObject_Call.Unbind();
+	Internal->ConstructObject_Call.BindUObject(this, &AICsManager_FX::ConstructObject);
+}
+
+/*static*/ UObject* AICsManager_FX::GetMyOwner() { return MyOwner.IsValid() ? MyOwner.Get() : nullptr; }
+
+/*static*/ void AICsManager_FX::Init(UObject* InOwner)
 {
 	MyOwner = InOwner;
 }
 
-/*static*/ ACsManager_FX* ACsManager_FX::Get(UWorld* InWorld)
+/*static*/ AICsManager_FX* AICsManager_FX::Get(UWorld* InWorld)
 {
 #if WITH_EDITOR 
 	// In Editor Preview Window
@@ -42,422 +261,108 @@ ACsManager_FX::ACsManager_FX(const FObjectInitializer& ObjectInitializer) : Supe
 	return nullptr;
 }
 
-void ACsManager_FX::Clear()
+void AICsManager_FX::Clear()
 {
-	Super::Clear();
-
-	Pool.Reset();
-	ActiveEmitters.Reset();
+	Internal->Clear();
 }
 
-void ACsManager_FX::Shutdown()
+void AICsManager_FX::Shutdown()
 {
-	Super::Shutdown();
-
-	const int32 Count = Pool.Num();
-
-	for (int32 I = 0; I < Count; ++I)
-	{
-		if (Pool[I] && !Pool[I]->IsPendingKill())
-			Pool[I]->Destroy(true);
-	}
 	Clear();
+	Internal->Shutdown();
+	delete Internal;
 }
 
-void ACsManager_FX::Destroyed()
+void AICsManager_FX::Destroyed()
 {
-	const int32 Count = Pool.Num();
-
-	for (int32 I = 0; I < Count; ++I)
-	{
-		if (Pool[I] && !Pool[I]->IsPendingKill())
-			Pool[I]->Destroy(true);
-	}
-	Clear();
+	Shutdown();
 
 	Super::Destroyed();
 }
 
-void ACsManager_FX::CreatePool(const int32 &Size)
+ACsEmitter* AICsManager_FX::ConstructObject()
 {
-	PoolSize = Size;
-
 	FActorSpawnParameters SpawnInfo;
 	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnInfo.ObjectFlags |= RF_Transient;
 
-	PoolIndex = 0;
-
-	for (int32 I = 0; I < PoolSize; ++I)
-	{
-		ACsEmitter* Emitter = GetWorld()->SpawnActor<ACsEmitter>(EmitterClass, SpawnInfo);
-		Emitter->SetReplicates(false);
-		Emitter->Role = ROLE_None;
-		GetWorld()->RemoveNetworkActor(Emitter);
-		Emitter->Init(I);
-		Emitter->DeAllocate();
-		Pool.Add(Emitter);
-	}
+	ACsEmitter* Actor = GetWorld()->SpawnActor<ACsEmitter>(ACsEmitter::StaticClass(), SpawnInfo);
+	Actor->SetReplicates(false);
+	Actor->Role = ROLE_None;
+	GetWorld()->RemoveNetworkActor(Actor);
+	return Actor;
 }
 
-void ACsManager_FX::OnTick(const float &DeltaSeconds)
+void AICsManager_FX::CreatePool(const int32 &Size)
 {
-	const uint16 Count = ActiveEmitters.Num();
-
-	if (Count == CS_EMPTY)
-		return;
-
-	uint16 EarliestIndex = Count;
-
-	for (int32 I = Count - 1; I >= 0; --I)
-	{
-		ACsEmitter* Emitter = ActiveEmitters[I];
-
-		// Check if Emitter was DeAllocated NOT in a normal way (i.e. Out of Bounds)
-		if (!Emitter->Cache.IsAllocated)
-		{
-			UE_LOG(LogCs, Warning, TEXT("ACsManager_FX::OnTick: Emitter: %s at PoolIndex: %s was prematurely deallocted NOT in a normal way."), *(Emitter->GetName()), Emitter->Cache.Index);
-
-			LogTransaction(TEXT("ACsManager_FX::OnTick"), ECsPoolTransaction::Deallocate, Emitter);
-
-			ActiveEmitters.RemoveAt(I);
-
-			if (I < EarliestIndex)
-				EarliestIndex = I;
-			continue;
-		}
-
-		if (!Emitter->Cache.bLifeTime)
-			continue;
-
-		// Check Dying
-		if (Emitter->Cache.IsDying)
-		{
-			if (GetWorld()->GetTimeSeconds() - Emitter->Cache.DeathStartTime > Emitter->Cache.DeathTime)
-			{
-				LogTransaction(TEXT("ACsManager_FX::OnTick"), ECsPoolTransaction::Deallocate, Emitter);
-
-				Emitter->DeAllocate();
-				ActiveEmitters.RemoveAt(I);
-
-				if (I < EarliestIndex)
-					EarliestIndex = I;
-			}
-		}
-		// Check Normal Lifetime
-		else
-		{
-			if (GetWorld()->GetTimeSeconds() - Emitter->Cache.Time > Emitter->Cache.LifeTime)
-			{
-				if (Emitter->Cache.DeathTime > 0.0f)
-				{
-					LogTransaction(TEXT("ACsManager_FX::OnTick"), ECsPoolTransaction::PreDeallocate, Emitter);
-
-					Emitter->StartDeath();
-				}
-				else
-				{
-					LogTransaction(TEXT("ACsManager_FX::OnTick"), ECsPoolTransaction::Deallocate, Emitter);
-
-					Emitter->DeAllocate();
-					ActiveEmitters.RemoveAt(I);
-
-					if (I < EarliestIndex)
-						EarliestIndex = I;
-				}
-			}
-		}
-	}
-	// Update ActiveIndex
-	if (EarliestIndex != Count)
-	{
-		const uint16 Max = ActiveEmitters.Num();
-
-		for (uint16 I = EarliestIndex; I < Max; ++I)
-		{
-			ACsEmitter* Emitter = ActiveEmitters[I];
-			Emitter->Cache.SetActiveIndex(I);
-		}
-	}
+	Internal->CreatePool(Size);
 }
 
-void ACsManager_FX::LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, UObject* InObject)
+void AICsManager_FX::AddToPool(ACsEmitter* Actor)
 {
-	if (CsCVarLogManagerFxTransactions->GetInt() == CS_CVAR_SHOW_LOG)
-	{
-		ACsEmitter* Emitter = Cast<ACsEmitter>(InObject);
-
-		FString TransactionAsString = TEXT("");
-		
-		if (Transaction == ECsPoolTransaction::Allocate)
-			TransactionAsString = TEXT("Allocating");
-		else
-		if (Transaction == ECsPoolTransaction::PreDeallocate)
-			TransactionAsString = TEXT("PreDeAllocating");
-		else
-		if (Transaction == ECsPoolTransaction::Deallocate)
-			TransactionAsString = TEXT("DeAllocating");
-
-		const FString EmitterName   = Emitter->GetName();
-		const FString ParticleName  = Emitter->Cache.GetParticle()->GetName();
-		const float CurrentTime		= GetWorld()->GetTimeSeconds();
-		const UObject* EmitterOwner = Emitter->Cache.GetOwner();
-		const FString OwnerName		= EmitterOwner ? EmitterOwner->GetName() : TEXT("");
-		const UObject* Parent		= Emitter->Cache.GetParent();
-		const FString ParentName	= Parent ? Parent->GetName() : TEXT("");
-
-		if (EmitterOwner && Parent)
-		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s Emitter: %s with Particle: %s at %f for %s attached to %s."), *FunctionName, *TransactionAsString, *EmitterName, *ParticleName, CurrentTime, *OwnerName, *ParentName);
-		}
-		else
-		if (EmitterOwner)
-		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s Emitter: %s with Particle: %s at %f for %s."), *FunctionName, *TransactionAsString, *EmitterName, *ParticleName, CurrentTime, *OwnerName);
-		}
-		else
-		if (Parent)
-		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s Emitter: %s with Particle: %s at %f attached to %s."), *TransactionAsString, *FunctionName, *EmitterName, *ParticleName, CurrentTime, *ParentName);
-		}
-		else
-		{
-			if (Emitter->Cache.Location != FVector::ZeroVector)
-			{
-				const FString LocationAsString = Emitter->Cache.Location.ToString();
-
-				UE_LOG(LogCs, Warning, TEXT("%s: %s Emitter: %s with Particle: %s at %f at %s."), *FunctionName, *TransactionAsString, *EmitterName, *ParticleName, CurrentTime, *LocationAsString);
-			}
-			else
-			{
-				UE_LOG(LogCs, Warning, TEXT("%s: %s Emitter: %s with Particle: %s at %f."), *FunctionName, *TransactionAsString, *EmitterName, *ParticleName, CurrentTime);
-			}
-		}
-	}
+	Internal->AddToPool(Actor);
 }
 
-ACsEmitter* ACsManager_FX::Allocate()
+void AICsManager_FX::AddToActivePool(ACsEmitter* Actor)
 {
-	int32 OldestIndex = INDEX_NONE;
-	float OldestTime  = GetWorld()->GetTimeSeconds();
-
-	for (uint8 I = 0; I < PoolSize; ++I)
-	{
-		PoolIndex			= (PoolIndex + I) % PoolSize;
-		ACsEmitter* Emitter = Pool[PoolIndex];
-
-		if (Emitter->Cache.Time < OldestTime)
-		{
-			OldestIndex = PoolIndex;
-			OldestTime  = Emitter->Cache.Time;
-		}
-
-		if (!Emitter->Cache.IsAllocated)
-		{
-			Emitter->Cache.IsAllocated = true;
-			return Emitter;
-		}
-	}
-#if WITH_EDITOR
-	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
-	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_FX::Allocate: Warning. Pool is exhausted. Using Oldest Active Emitter."));
-		
-		const int32 Index = ActiveEmitters.Find(Pool[PoolIndex]);
-
-		if (Index != INDEX_NONE)
-			ActiveEmitters.RemoveAt(Index);
-		return Pool[OldestIndex];
-	}
-#endif // #if WITH_EDITOR
-	checkf(0, TEXT("ACsManager_FX::Allocate: Pool is exhausted"));
-	return nullptr;
+	Internal->AddToActivePool(Actor);
 }
 
-void ACsManager_FX::DeAllocate(const int32 &Index)
+void AICsManager_FX::OnTick(const float &DeltaTime)
 {
-	const uint8 Count = ActiveEmitters.Num();
-
-	for (int32 I = Count - 1; I >= 0; --I)
-	{
-		ACsEmitter* Emitter = ActiveEmitters[I];
-
-		// Update ActiveIndex
-		if (I > CS_FIRST)
-		{
-			Emitter->Cache.DecrementActiveIndex();
-		}
-
-		if (Emitter->PoolIndex == Index)
-		{
-			LogTransaction(TEXT("ACsManager_FX::DeAllocate"), ECsPoolTransaction::Allocate, Emitter);
-
-			Emitter->DeAllocate();
-			ActiveEmitters.RemoveAt(I);
-
-#if WITH_EDITOR
-			OnDeAllocate_ScriptEvent.Broadcast(Index);
-#endif // #if WITH_EDITOR
-			OnDeAllocate_Event.Broadcast(Index);
-			return;
-		}
-	}
-
-	// Correct on Cache "Miss"
-	for (int32 I = 1; I < Count; ++I)
-	{
-		ACsEmitter* Emitter = ActiveEmitters[I];
-		// Reset ActiveIndex
-		Emitter->Cache.SetActiveIndex(I);
-	}
-	UE_LOG(LogCs, Warning, TEXT("ACsManager_FX::DeAllocate: Emitter with PoolIndex: %s is already deallocated."), Index);
+	Internal->OnTick(DeltaTime);
 }
 
-ACsEmitter* ACsManager_FX::Play(FCsFxElement* InFX, UObject* InOwner, UObject* InParent)
+const TArray<ACsEmitter*>& AICsManager_FX::GetAllActiveActors()
 {
-	if (!InFX->Get())
-	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_FX::Play: Attempting to Play a NULL ParticleSystem."));
-		return nullptr;
-	}
-
-	ACsEmitter* Emitter = Allocate();
-	const int32 Count   = ActiveEmitters.Num();
-	
-	Emitter->Allocate((uint16)Count, InFX, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), 0, InOwner, InParent);
-
-	LogTransaction(TEXT("ACsManager_FX::Play"), ECsPoolTransaction::Allocate, Emitter);
-
-	ActiveEmitters.Add(Emitter);
-	Emitter->Play();
-	return Emitter;
+	return Internal->GetAllActiveObjects();
 }
 
-ACsEmitter* ACsManager_FX::Play(FCsFxElement* InFX, UObject* InOwner)
+const TArray<ACsEmitter*>& AICsManager_FX::GetActors()
 {
-	return Play(InFX, InOwner, nullptr);
+	return Internal->GetObjects();
 }
 
-ACsEmitter* ACsManager_FX::Play(FCsFxElement* InFX)
+int32 AICsManager_FX::GetActivePoolSize()
 {
-	return Play(InFX, nullptr, nullptr);
+	return Internal->GetActivePoolSize();
 }
 
-ACsEmitter* ACsManager_FX::Play(FCsFxElement* InFX, UObject* InOwner, const FVector &Location, const FRotator &Rotation)
+bool AICsManager_FX::IsExhausted()
 {
-	if (!InFX->Get())
-	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_FX::Play: Attempting to Play a NULL ParticleSystem."));
-		return nullptr;
-	}
-
-	ACsEmitter* Emitter = Allocate();
-	const int32 Count   = ActiveEmitters.Num();
-
-	Emitter->Allocate((uint16)Count, InFX, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), 0, InOwner, nullptr, Location, Rotation);
-
-	LogTransaction(TEXT("ACsManager_FX::Play"), ECsPoolTransaction::Allocate, Emitter);
-
-	ActiveEmitters.Add(Emitter);
-	Emitter->Play();
-	return Emitter;
+	return Internal->IsExhausted();
 }
 
-ACsEmitter* ACsManager_FX::Play(FCsFxElement* InFX, UObject* InOwner, UObject* InParent, const FRotator &Rotation)
+bool AICsManager_FX::DeAllocate(const int32 &Index)
 {
-	if (!InFX->Get())
-	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_FX::Play: Attempting to Play a NULL ParticleSystem."));
-		return nullptr;
-	}
-
-	ACsEmitter* Emitter = Allocate();
-	const int32 Count = ActiveEmitters.Num();
-
-	Emitter->Allocate((uint16)Count, InFX, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), 0, InOwner, InParent, Rotation);
-
-	LogTransaction(TEXT("ACsManager_FX::Play"), ECsPoolTransaction::Allocate, Emitter);
-
-	ActiveEmitters.Add(Emitter);
-	Emitter->Play();
-	return Emitter;
+	return Internal->DeAllocate(Index);
 }
 
-template<typename T>
-void ACsManager_FX::Play(ACsEmitter* OutEmitter, FCsFxElement* InFX, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)())
+void AICsManager_FX::DeAllocateAll()
 {
-	if (!InFX->Get())
-	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_FX::Play: Attempting to Play a NULL ParticleSystem."));
-		return nullptr;
-	}
-
-	OutEmitter		  = Allocate();
-	const int32 Count = ActiveEmitters.Num();
-
-	OutEmitter->Allocate<T>((uint16)Count, InFX, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), 0, InOwner, InParent, InObject, OnDeAllocate);
-
-	LogTransaction(TEXT("ACsManager_FX::Play"), ECsPoolTransaction::Allocate, Emitter);
-
-	ActiveEmitters.Add(OutEmitter);
-	OutEmitter->Play();
+	return Internal->DeAllocateAll();
 }
 
-template<typename T>
-void ACsManager_FX::Play(ACsEmitter* OutEmitter, FCsFxElement* InFX, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)())
+FCsFxPayload* AICsManager_FX::AllocatePayload()
 {
-	Play(OutEmitter, InFX, nullptr, InOwner, InObject, OnDeAllocate);
+	return Internal->AllocatePayload();
 }
 
-template<typename T>
-void ACsManager_FX::Play(ACsEmitter* OutEmitter, FCsFxElement* InFX, T* InObject, void (T::*OnDeAllocate)())
+ACsEmitter* AICsManager_FX::Play(FCsFxPayload &Payload)
 {
-	Play(OutEmitter, InFX, nullptr, nullptr, InObject, OnDeAllocate);
+	return Internal->Spawn(&Payload);
 }
 
-template<typename T>
-void ACsManager_FX::Play(ACsEmitter* OutEmitter, FCsFxElement* InFX, UObject* InOwner, const FVector &Location, const FRotator &Rotation, T* InObject, void (T::*OnDeAllocate)())
+ACsEmitter* AICsManager_FX::Play(FCsFxPayload *Payload)
 {
-	if (!InFX->Get())
-	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_FX::Play: Attempting to Play a NULL ParticleSystem."));
-		return nullptr;
-	}
-
-	OutEmitter		  = Allocate();
-	const int32 Count = ActiveEmitters.Num();
-
-	OutEmitter->Allocate<T>((uint16)Count, InFX, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), 0, InOwner, Location, Rotation, InObject, OnDeAllocate);
-
-	LogTransaction(TEXT("ACsManager_FX::Play"), ECsPoolTransaction::Allocate, Emitter);
-
-	ActiveEmitters.Add(OutEmitter);
-	OutEmitter->Play();
-}
-
-ACsEmitter* ACsManager_FX::Play_Script(FCsFxElement& InFX, UObject* InOwner, UObject* InParent)
-{
-	return Play(&InFX, InOwner, InParent);
-}
-
-ACsEmitter* ACsManager_FX::Play_ScriptEX(FCsFxElement& InFX, UObject* InOwner, const FVector &Location, const FRotator &Rotation)
-{
-	return Play(&InFX, InOwner, Location, Rotation);
+	return Internal->Spawn(Payload);
 }
 
 #if WITH_EDITOR
 
-void ACsManager_FX::ToggleEmitterEditorIcons(const bool &Toggle)
+void AICsManager_FX::ToggleEmitterEditorIcons(const bool &Toggle)
 {
-	for (uint8 I = 0; I < PoolSize; ++I)
-	{
-		ACsEmitter* Emitter = Pool[I];
-
-		Emitter->GetSpriteComponent()->SetVisibility(Toggle);
-		Emitter->GetSpriteComponent()->SetHiddenInGame(!Toggle);
-		Emitter->GetArrowComponent()->SetVisibility(Toggle);
-		Emitter->GetArrowComponent()->SetHiddenInGame(!Toggle);
-	}
+	Internal->ToggleEmitterEditorIcons(Toggle);
 }
 
 #endif // #if WITH_EDITOR

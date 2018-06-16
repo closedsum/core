@@ -13,11 +13,16 @@ class FCsManager_Projectile : public TCsManager_PooledObjects_TMap<FECsProjectil
 public:
 	~FCsManager_Projectile();
 
+// Interface
+#pragma region
+
 	virtual void DeconstructObject(class ACsProjectile* a) override;
 	virtual FString GetObjectName(class ACsProjectile* a) override;
 	virtual const FString& EnumTypeToString(const FECsProjectileType &e) override;
 	virtual const FString& EnumTypeToString(const int32 &index) override;
-	virtual void Log_Internal(const FString& log) override;
+	virtual void Log(const FString& log) override;
+
+#pragma endregion Interface
 };
 
 UCLASS()

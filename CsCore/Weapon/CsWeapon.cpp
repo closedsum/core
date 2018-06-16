@@ -2262,7 +2262,7 @@ FVector ACsWeapon::GetMuzzleLocation(const TCsViewType &ViewType, const FECsWeap
 
 void ACsWeapon::PlayMuzzleFlash(const FECsWeaponFireMode &FireMode)
 {
-	ACsManager_FX* Manager_FX = nullptr;
+	AICsManager_FX* Manager_FX = nullptr;
 
 #if WITH_EDITOR 
 	// In Editor Preview Window
@@ -2283,7 +2283,16 @@ void ACsWeapon::PlayMuzzleFlash(const FECsWeaponFireMode &FireMode)
 	const TCsViewType ViewType			  = GetCurrentViewType();
 	FCsFxElement* FX					  = Data_Weapon->GetMuzzleFX(ViewType, FireMode, CurrentProjectilePerShotIndex.Get(FireMode));
 
-	Manager_FX->Play(FX, GetMyPawn(), GetMuzzleFlashParent(ViewType));
+	if (!FX->Get())
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsWeapon::PlayMuzzleFlash: Attempting to Play a NULL ParticleSystem."));
+		return;
+	}
+
+	FCsFxPayload* Payload = Manager_FX->AllocatePayload();
+	Payload->Set(FX);
+	Payload->Owner = GetMyPawn();
+	Payload->Parent = GetMuzzleFlashParent(ViewType);
 }
 
 #pragma endregion Firing

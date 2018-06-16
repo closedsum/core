@@ -39,9 +39,9 @@ const FString& FCsManager_Process::EnumTypeToString(const int32 &index)
 	return EMCsProcess::Get().GetEnumAt(index).Name;
 }
 
-void FCsManager_Process::LogTransaction_Internal(const FString& outLog)
+void FCsManager_Process::Log_Internal(const FString& log)
 {
-	UE_LOG(LogCs, Warning, TEXT("%s"), *outLog);
+	UE_LOG(LogCs, Warning, TEXT("%s"), *log);
 }
 
 #pragma endregion // Internal

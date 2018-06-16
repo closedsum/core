@@ -209,12 +209,7 @@ void UCsAnimInstance::Spawn_Manager_Sound()
 		Manager_Sound = GetWorld()->SpawnActor<AICsManager_Sound>(SpawnInfo);
 		AICsManager_Sound::Init(this);
 
-		const int32& Count = EMCsSoundType::Get().Num();
-
-		for (int32 I = 0; I < Count; ++I)
-		{
-			Manager_Sound->CreatePool(EMCsSoundType::Get().GetEnumAt(I), 2);
-		}
+		Manager_Sound->CreatePool(2);
 	}
 }
 

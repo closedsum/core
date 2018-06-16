@@ -42,7 +42,7 @@ void ACsData_Pickup::PlaySound(UWorld* InWorld, const FECsPickupSound &SoundType
 	Payload->Owner = InOwner;
 	Payload->Parent = InParent;
 
-	Manager_Sound->Play(SoundElement->Type, Payload);
+	Manager_Sound->Play(Payload);
 }
 
 #pragma endregion Sound

@@ -8,7 +8,7 @@
 #define CS_MAX_CONCURRENT_SOUNDS 16
 #define CS_SOUND_PAYLOAD_SIZE 16
 
-class FCsManager_Sound : public TCsManagerPooledObjects<FECsSoundType, ACsSound, FCsSoundPayload, CS_SOUND_PAYLOAD_SIZE>
+class FCsManager_Sound : public TCsManager_PooledObjects<ACsSound, FCsSoundPayload, CS_SOUND_PAYLOAD_SIZE>
 {
 public:
 	~FCsManager_Sound();
@@ -18,9 +18,8 @@ public:
 
 	virtual void DeconstructObject(ACsSound* a) override;
 	virtual FString GetObjectName(ACsSound* a) override;
-	virtual const FString& EnumTypeToString(const FECsSoundType &e) override;
-	virtual const FString& EnumTypeToString(const int32 &index) override;
-	virtual void LogTransaction_Internal(const FString& OutLog) override;
+	virtual void Log_Internal(const FString& log) override;
+	virtual ACsSound* Spawn(FCsSoundPayload* payload) override;
 
 #pragma endregion Interface
 
@@ -58,40 +57,40 @@ public:
 
 	void Shutdown();
 
-	virtual ACsSound* ConstructObject(const FECsSoundType &Type);
+	virtual ACsSound* ConstructObject();
 
 	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
-	void CreatePool(const FECsSoundType &Type, const int32 &Size);
+	void CreatePool(const int32 &Size);
 	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
-	void AddToPool(const FECsSoundType &Type, ACsSound* Sound);
+	void AddToPool(ACsSound* Sound);
 	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
-	void AddToActivePool(const FECsSoundType &Type, ACsSound* Sound);
+	void AddToActivePool(ACsSound* Sound);
 	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
 	void OnTick(const float &DeltaTime);
 	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
-	void GetAllActiveActors(TArray<ACsSound*> &OutActors);
+	const TArray<ACsSound*>& GetAllActiveActors();
 
-	const TArray<class ACsSound*>* GetActors(const FECsSoundType& Type);
+	const TArray<ACsSound*>& GetActors();
 
 	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
-	int32 GetActivePoolSize(const FECsSoundType &Type);
+	int32 GetActivePoolSize();
 	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
-	bool IsExhausted(const FECsSoundType &Type);
+	bool IsExhausted();
 	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
-	bool DeAllocate(const FECsSoundType &Type, const int32 &Index);
+	bool DeAllocate(const int32 &Index);
 	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
 	void DeAllocateAll();
 
 	FCsSoundPayload* AllocatePayload();
 
 	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
-	ACsSound* Play(const FECsSoundType &Type, FCsSoundPayload &Payload);
-	ACsSound* Play(const FECsSoundType &Type, FCsSoundPayload* Payload);
+	ACsSound* Play(FCsSoundPayload &Payload);
+	ACsSound* Play(FCsSoundPayload* Payload);
 
 	template<typename T>
-	T* Play(const FECsSoundType &Type, FCsSoundPayload* Payload)
+	T* Play(FCsSoundPayload* Payload)
 	{
-		return Cast<T>(Play(Type, Payload));
+		return Cast<T>(Play(Payload));
 	}
 
 // Stop

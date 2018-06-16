@@ -212,7 +212,7 @@ void ACsData_ProjectileWeapon::PlaySound(UWorld* InWorld, const TCsViewType &Vie
 	Payload->Owner = InOwner;
 	Payload->Parent = InParent;
 
-	Manager_Sound->Play(SoundElement->Type, Payload);
+	Manager_Sound->Play(Payload);
 }
 
 void ACsData_ProjectileWeapon::PlaySound(UWorld* InWorld, const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType, UObject* InOwner, UObject* InParent)
@@ -225,7 +225,7 @@ void ACsData_ProjectileWeapon::PlaySound(UWorld* InWorld, const FECsWeaponFireMo
 	Payload->Owner = InOwner;
 	Payload->Parent = InParent;
 
-	Manager_Sound->Play(SoundElement->Type, Payload);
+	Manager_Sound->Play(Payload);
 }
 
 void ACsData_ProjectileWeapon::PlaySound(UWorld* InWorld, const TCsViewType &ViewType, const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType, UObject* InOwner, const FVector &Location)
@@ -238,7 +238,7 @@ void ACsData_ProjectileWeapon::PlaySound(UWorld* InWorld, const TCsViewType &Vie
 	Payload->Owner = InOwner;
 	Payload->Location = Location;
 
-	Manager_Sound->Play(SoundElement->Type, Payload);
+	Manager_Sound->Play(Payload);
 }
 
 void ACsData_ProjectileWeapon::PlaySound(UWorld* InWorld, const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType, UObject* InOwner, const FVector &Location)
@@ -251,7 +251,7 @@ void ACsData_ProjectileWeapon::PlaySound(UWorld* InWorld, const FECsWeaponFireMo
 	Payload->Owner = InOwner;
 	Payload->Location = Location;
 
-	Manager_Sound->Play(SoundElement->Type, Payload);
+	Manager_Sound->Play(Payload);
 }
 
 void ACsData_ProjectileWeapon::StopSound(UWorld* InWorld, const TCsViewType &ViewType, const FECsWeaponFireMode &FireMode, const FECsWeaponSound &SoundType, UObject* InOwner, UObject* InParent)

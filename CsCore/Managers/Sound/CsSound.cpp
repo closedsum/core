@@ -38,6 +38,11 @@ void ACsSound::Init(const int32 &Index, const FECsSoundType &InType)
 	Cache.Type_Script = Type;
 }
 
+void ACsSound::Init(const int32 &Index)
+{
+	Init(Index, EMCsSoundType::Get().GetMAX());
+}
+
 void ACsSound::Allocate(const uint16& ActiveIndex, FCsSoundPayload* Payload)
 {
 	Cache.Init(ActiveIndex, Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));

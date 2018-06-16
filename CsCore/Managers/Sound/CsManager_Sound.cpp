@@ -17,6 +17,9 @@ TWeakObjectPtr<UObject> AICsManager_Sound::MyOwner;
 
 FCsManager_Sound::~FCsManager_Sound() {}
 
+	// Interface
+#pragma region
+
 void FCsManager_Sound::DeconstructObject(ACsSound* a)
 {
 	if (a && !a->IsPendingKill())
@@ -28,20 +31,36 @@ FString FCsManager_Sound::GetObjectName(ACsSound* a)
 	return a->GetName();
 }
 
-const FString& FCsManager_Sound::EnumTypeToString(const FECsSoundType &e)
+void FCsManager_Sound::Log_Internal(const FString& log)
 {
-	return e.Name;
+	UE_LOG(LogCs, Warning, TEXT("%s"), *log);
 }
 
-const FString& FCsManager_Sound::EnumTypeToString(const int32 &index)
+ACsSound* FCsManager_Sound::Spawn(FCsSoundPayload* payload)
 {
-	return EMCsSoundType::Get().GetEnumAt(index).Name;
+	ACsSound* o = Allocate();
+
+	o->Allocate(GetActivePoolSize(), payload);
+
+	LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::Spawn], ECsPoolTransaction::Allocate, o);
+	payload->Reset();
+
+	if (GetActivePoolSize() >= CS_MAX_CONCURRENT_SOUNDS)
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Sound::Play: Warning more than %d Sounds playing at once"), CS_MAX_CONCURRENT_SOUNDS);
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Sound::Play: Remove Sound"));
+
+		ActiveObjects.RemoveAt(0);
+	}
+	else
+	{
+		ActiveObjects.Add(o);
+	}
+	AddToActivePool(o);
+	return o;
 }
 
-void FCsManager_Sound::LogTransaction_Internal(const FString& outLog)
-{
-	UE_LOG(LogCs, Warning, TEXT("%s"), *outLog);
-}
+#pragma endregion Interface
 
 void FCsManager_Sound::Stop(FCsSoundElement* InSound, UObject* InOwner, UObject* InParent)
 {
@@ -63,19 +82,16 @@ void FCsManager_Sound::Stop(FCsSoundElement* InSound, UObject* InOwner, UObject*
 	}
 #endif // #if WITH_EDITOR
 
-	const FECsSoundType& SoundType = InSound->Type;
+	const int32 Count   = ActiveObjects.Num();
 
-	if (!ActiveObjects.Find(SoundType))
+	if (Count == CS_EMPTY)
 		return;
 
-	TArray<ACsSound*>& Sounds = ActiveObjects[SoundType];
-
-	const int32 Count   = Sounds.Num();
 	int32 EarliestIndex = Count;
 
 	for (int32 I = Count - 1; I >= 0; --I)
 	{
-		ACsSound* Sound = Sounds[I];
+		ACsSound* Sound = ActiveObjects[I];
 
 		if (InSound->Get() != Sound->Cache.GetCue())
 			continue;
@@ -90,7 +106,7 @@ void FCsManager_Sound::Stop(FCsSoundElement* InSound, UObject* InOwner, UObject*
 		LogTransaction(TEXT("CsManager_Sound::Stop"), ECsPoolTransaction::Deallocate, Sound);
 
 		Sound->DeAllocate();
-		Sounds.RemoveAt(I);
+		ActiveObjects.RemoveAt(I);
 
 /*
 #if WITH_EDITOR
@@ -104,7 +120,7 @@ void FCsManager_Sound::Stop(FCsSoundElement* InSound, UObject* InOwner, UObject*
 	{
 		for (int32 I = EarliestIndex; I < Count; ++I)
 		{
-			ACsSound* Sound = Sounds[I];
+			ACsSound* Sound = ActiveObjects[I];
 			// Reset ActiveIndex
 			Sound->Cache.SetActiveIndex(I);
 		}
@@ -165,7 +181,7 @@ void AICsManager_Sound::Destroyed()
 	Super::Destroyed();
 }
 
-ACsSound* AICsManager_Sound::ConstructObject(const FECsSoundType &Type)
+ACsSound* AICsManager_Sound::ConstructObject()
 {
 	FActorSpawnParameters SpawnInfo;
 	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
@@ -178,19 +194,19 @@ ACsSound* AICsManager_Sound::ConstructObject(const FECsSoundType &Type)
 	return Actor;
 }
 
-void AICsManager_Sound::CreatePool(const FECsSoundType &Type, const int32 &Size)
+void AICsManager_Sound::CreatePool(const int32 &Size)
 {
-	Internal->CreatePool(Type, Size);
+	Internal->CreatePool(Size);
 }
 
-void AICsManager_Sound::AddToPool(const FECsSoundType &Type, ACsSound* Actor)
+void AICsManager_Sound::AddToPool(ACsSound* Actor)
 {
-	Internal->AddToPool(Type, Actor);
+	Internal->AddToPool(Actor);
 }
 
-void AICsManager_Sound::AddToActivePool(const FECsSoundType &Type, ACsSound* Actor)
+void AICsManager_Sound::AddToActivePool(ACsSound* Actor)
 {
-	Internal->AddToActivePool(Type, Actor);
+	Internal->AddToActivePool(Actor);
 }
 
 void AICsManager_Sound::OnTick(const float &DeltaTime)
@@ -198,29 +214,29 @@ void AICsManager_Sound::OnTick(const float &DeltaTime)
 	Internal->OnTick(DeltaTime);
 }
 
-void AICsManager_Sound::GetAllActiveActors(TArray<ACsSound*> &OutActors)
+const TArray<ACsSound*>& AICsManager_Sound::GetAllActiveActors()
 {
-	Internal->GetAllActiveObjects(OutActors);
+	return Internal->GetAllActiveObjects();
 }
 
-const TArray<class ACsSound*>* AICsManager_Sound::GetActors(const FECsSoundType& Type)
+const TArray<ACsSound*>& AICsManager_Sound::GetActors()
 {
-	return Internal->GetObjects(Type);
+	return Internal->GetObjects();
 }
 
-int32 AICsManager_Sound::GetActivePoolSize(const FECsSoundType &Type)
+int32 AICsManager_Sound::GetActivePoolSize()
 {
-	return Internal->GetActivePoolSize(Type);
+	return Internal->GetActivePoolSize();
 }
 
-bool AICsManager_Sound::IsExhausted(const FECsSoundType &Type)
+bool AICsManager_Sound::IsExhausted()
 {
-	return Internal->IsExhausted(Type);
+	return Internal->IsExhausted();
 }
 
-bool AICsManager_Sound::DeAllocate(const FECsSoundType &Type, const int32 &Index)
+bool AICsManager_Sound::DeAllocate(const int32 &Index)
 {
-	return Internal->DeAllocate(Type, Index);
+	return Internal->DeAllocate(Index);
 }
 
 void AICsManager_Sound::DeAllocateAll()
@@ -233,14 +249,14 @@ FCsSoundPayload* AICsManager_Sound::AllocatePayload()
 	return Internal->AllocatePayload();
 }
 
-ACsSound* AICsManager_Sound::Play(const FECsSoundType &Type, FCsSoundPayload &Payload)
+ACsSound* AICsManager_Sound::Play(FCsSoundPayload &Payload)
 {
-	return Internal->Spawn(Type, &Payload);
+	return Internal->Spawn(&Payload);
 }
 
-ACsSound* AICsManager_Sound::Play(const FECsSoundType &Type, FCsSoundPayload *Payload)
+ACsSound* AICsManager_Sound::Play(FCsSoundPayload *Payload)
 {
-	return Internal->Spawn(Type, Payload);
+	return Internal->Spawn(Payload);
 }
 
 // Stop
@@ -252,20 +268,6 @@ void AICsManager_Sound::Stop(FCsSoundElement* InSound, UObject* InOwner, UObject
 }
 
 #pragma endregion Stop
-
-/*
-if (Count >= CS_MAX_CONCURRENT_SOUNDS)
-{
-UE_LOG(LogCs, Warning, TEXT("ACsManager_Sound::Play: Warning more than %d Sounds playing at once"), CS_MAX_CONCURRENT_SOUNDS);
-UE_LOG(LogCs, Warning, TEXT("ACsManager_Sound::Play: Remove Sound"));
-
-ActiveSounds.RemoveAt(0);
-}
-else
-{
-ActiveSounds.Add(OutSound);
-}
-*/
 
 /*
 void ACsManager_Sound::LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, UObject* InObject)

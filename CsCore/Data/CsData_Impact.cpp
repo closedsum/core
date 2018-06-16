@@ -32,5 +32,5 @@ void ACsData_Impact::PlayImpactSound(UWorld* InWorld, const TEnumAsByte<EPhysica
 	Payload->Owner = InOwner;
 	Payload->Location = Location;
 
-	Manager_Sound->Play(SoundElement->Type, Payload);
+	Manager_Sound->Play(Payload);
 }

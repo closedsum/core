@@ -6,7 +6,7 @@
 
 #define CS_INTERACTIVE_ACTOR_PAYLOAD_SIZE 255
 
-class FCsManager_InteractiveActor : public TCsManagerPooledObjects<FECsInteractiveType, ACsInteractiveActor, FCsInteractiveActorPayload, CS_INTERACTIVE_ACTOR_PAYLOAD_SIZE>
+class FCsManager_InteractiveActor : public TCsManager_PooledObjects_TMap<FECsInteractiveType, ACsInteractiveActor, FCsInteractiveActorPayload, CS_INTERACTIVE_ACTOR_PAYLOAD_SIZE>
 {
 public:
 	~FCsManager_InteractiveActor();
@@ -15,7 +15,7 @@ public:
 	virtual FString GetObjectName(ACsInteractiveActor* a) override;
 	virtual const FString& EnumTypeToString(const FECsInteractiveType &e) override;
 	virtual const FString& EnumTypeToString(const int32 &index) override;
-	virtual void LogTransaction_Internal(const FString& OutLog) override;
+	virtual void Log_Internal(const FString& log) override;
 };
 
 UCLASS()

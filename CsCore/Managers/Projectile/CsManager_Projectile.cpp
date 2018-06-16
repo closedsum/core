@@ -38,9 +38,9 @@ const FString& FCsManager_Projectile::EnumTypeToString(const int32 &index)
 	return EMCsProjectileType::Get().GetEnumAt(index).Name;
 }
 
-void FCsManager_Projectile::LogTransaction_Internal(const FString& outLog)
+void FCsManager_Projectile::Log_Internal(const FString& log)
 {
-	UE_LOG(LogCs, Warning, TEXT("%s"), *outLog);
+	UE_LOG(LogCs, Warning, TEXT("%s"), *log);
 }
 
 #pragma endregion // Internal

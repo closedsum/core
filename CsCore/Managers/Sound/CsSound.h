@@ -112,6 +112,7 @@ public:
 	FCsSoundCache Cache;
 
 	void Init(const int32 &Index, const FECsSoundType &InType);
+	void Init(const int32 &Index);
 
 	void Allocate(const uint16& ActiveIndex, FCsSoundPayload* Payload);
 

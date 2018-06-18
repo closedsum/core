@@ -710,7 +710,7 @@ namespace ECsFpvAnimBlendSpaceMember
 	};
 }
 
-typedef ECsFpvAnimBlendSpaceMember::Type TCsFpsAnimBlendSpaceMember;
+typedef ECsFpvAnimBlendSpaceMember::Type TCsFpvAnimBlendSpaceMember;
 
 struct CSCORE_API EMCsFpvAnimBlendSpaceMember : public TCsEnumMap<ECsFpvAnimBlendSpaceMember::Type>
 {

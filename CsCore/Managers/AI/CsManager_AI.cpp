@@ -8,6 +8,9 @@
 #include "AI/Pawn/CsAIPawn.h"
 #include "Game/CsGameState.h"
 
+// static initializations
+TWeakObjectPtr<UObject> ACsManager_AI::MyOwner;
+
 // Cache
 #pragma region
 
@@ -26,9 +29,14 @@ namespace ECsManagerAICached
 
 ACsManager_AI::ACsManager_AI(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	AITypeToString = nullptr;
-
 	PoolSize = 1;
+}
+
+/*static*/ UObject* ACsManager_AI::GetMyOwner() { return MyOwner.IsValid() ? MyOwner.Get() : nullptr; }
+
+/*static*/ void ACsManager_AI::Init(UObject* InOwner)
+{
+	MyOwner = InOwner;
 }
 
 void ACsManager_AI::Shutdown()
@@ -75,15 +83,9 @@ void ACsManager_AI::Destroyed()
 	return InWorld->GetGameState<ACsGameState>()->Manager_AI;
 }
 
-void ACsManager_AI::Init(const TCsAIType &InAIType_MAX, TCsAITypeToString InAITypeToString)
-{
-	AIType_MAX     = InAIType_MAX;
-	AITypeToString = InAITypeToString;
-}
-
 void ACsManager_AI::CreatePool(const TSubclassOf<class UObject> &ObjectClass, const uint8 &Type, const int32 &Size)
 {
-	const TCsAIType ClassType = (TCsAIType)Type;
+	const FECsAIType ClassType = EMCsAIType::Get().GetEnumAt(Type);
 
 	PoolSizes.Add(ClassType, Size);
 
@@ -121,7 +123,7 @@ void ACsManager_AI::AddToPool(UObject* InObject, const uint8& Type)
 
 	checkf(Actor, TEXT("ACsManager_AI::AddToPool: InObject (%s) is NOT type ACsAIPawn."), *InObject->GetClass()->GetName());
 
-	const TCsAIType ClassType = (TCsAIType)Type;
+	const FECsAIType ClassType = EMCsAIType::Get().GetEnumAt(Type);
 
 	uint8* Size = PoolSizes.Find(ClassType);
 
@@ -162,7 +164,7 @@ void ACsManager_AI::AddToActivePool(UObject* InObject, const uint8& Type)
 
 	checkf(Actor, TEXT("ACsManager_AI::AddToActivePool: InObject (%s) is NOT type ACsAIPawn."), *InObject->GetClass()->GetName());
 
-	const TCsAIType ClassType = (TCsAIType)Type;
+	const FECsAIType ClassType = EMCsAIType::Get().GetEnumAt(Type);
 
 	TArray<ACsAIPawn*>* ActorPoolPtr = ActivePawns.Find(ClassType);
 
@@ -200,7 +202,7 @@ void ACsManager_AI::OnTick(const float &DeltaSeconds)
 
 int32 ACsManager_AI::GetActivePoolSize(const uint8 &Type)
 {
-	TArray<ACsAIPawn*>* PawnsPtr = ActivePawns.Find((TCsAIType)Type);
+	TArray<ACsAIPawn*>* PawnsPtr = ActivePawns.Find(EMCsAIType::Get().GetEnumAt(Type));
 
 	if (!PawnsPtr)
 		return CS_EMPTY;
@@ -246,7 +248,7 @@ void ACsManager_AI::LogTransaction(const FString &FunctionName, const TEnumAsByt
 }
 }
 
-ACsAIPawn* ACsManager_AI::Allocate(const TCsAIType &Type)
+ACsAIPawn* ACsManager_AI::Allocate(const FECsAIType &Type)
 {
 	TArray<ACsAIPawn*>* ActorPool = Pools.Find(Type);
 	const uint8 Size			  = *(PoolSizes.Find(Type));
@@ -263,19 +265,19 @@ ACsAIPawn* ACsManager_AI::Allocate(const TCsAIType &Type)
 			return Actor;
 		}
 	}
-	checkf(0, TEXT("ACsManager_AI::Allocate: Pool: %s is exhausted"), *(*AITypeToString(Type)));
+	checkf(0, TEXT("ACsManager_AI::Allocate: Pool: %s is exhausted"), *(Type.Name));
 	return nullptr;
 }
 
 void ACsManager_AI::DeAllocate(const uint8 &Type, const int32 &Index)
 {
-	const TCsAIType ClassType = (TCsAIType)Type;
+	const FECsAIType ClassType = EMCsAIType::Get().GetEnumAt(Type);
 
 	TArray<ACsAIPawn*>* Actors = ActivePawns.Find(ClassType);
 
 	if (!Actors)
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_AI::DeAllocate: AI Pawn of Type: %s at Index: %d is already deallocated."), *((*AITypeToString)(ClassType)), Index);
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_AI::DeAllocate: AI Pawn of Type: %s at Index: %d is already deallocated."), *(ClassType.Name), Index);
 		return;
 	}
 
@@ -294,16 +296,16 @@ void ACsManager_AI::DeAllocate(const uint8 &Type, const int32 &Index)
 			return;
 		}
 	}
-	UE_LOG(LogCs, Warning, TEXT("ACsManager_AI::DeAllocate: AI Pawn of Type: %s at Index: %d is already deallocated."), *((*AITypeToString)(ClassType)), Index);
+	UE_LOG(LogCs, Warning, TEXT("ACsManager_AI::DeAllocate: AI Pawn of Type: %s at Index: %d is already deallocated."), *(ClassType.Name), Index);
 }
 
 void ACsManager_AI::DeAllocateAll()
 {
-	const uint8 Count = (uint8)AIType_MAX;
+	const int32& Count = EMCsAIType::Get().Num();
 
-	for (uint8 I = 0; I < Count; ++I)
+	for (int32 I = 0; I < Count; ++I)
 	{
-		const TCsAIType Type = (TCsAIType)I;
+		const FECsAIType& Type = EMCsAIType::Get().GetEnumAt(I);
 
 		TArray<ACsAIPawn*>* Actors = ActivePawns.Find(Type);
 
@@ -347,7 +349,7 @@ FCsAIPawnPayload* ACsManager_AI::AllocatePayload()
 // Wake Up
 #pragma region
 
-ACsAIPawn* ACsManager_AI::WakeUp(const TCsAIType &Type, FCsAIPawnPayload* Payload, UObject* InOwner, UObject* Parent)
+ACsAIPawn* ACsManager_AI::WakeUp(const FECsAIType &Type, FCsAIPawnPayload* Payload, UObject* InOwner, UObject* Parent)
 {
 	ACsAIPawn* Actor = Allocate(Type);
 
@@ -360,18 +362,18 @@ ACsAIPawn* ACsManager_AI::WakeUp(const TCsAIType &Type, FCsAIPawnPayload* Payloa
 	return Actor;
 }
 
-ACsAIPawn* ACsManager_AI::WakeUp(const TCsAIType &Type, FCsAIPawnPayload* Payload, UObject* InOwner)
+ACsAIPawn* ACsManager_AI::WakeUp(const FECsAIType &Type, FCsAIPawnPayload* Payload, UObject* InOwner)
 {
 	return WakeUp(Type, Payload, InOwner, nullptr);
 }
 
-ACsAIPawn* ACsManager_AI::WakeUp(const TCsAIType &Type, FCsAIPawnPayload* Payload)
+ACsAIPawn* ACsManager_AI::WakeUp(const FECsAIType &Type, FCsAIPawnPayload* Payload)
 {
 	return WakeUp(Type, Payload, nullptr, nullptr);
 }
 
 template<typename T>
-void ACsManager_AI::WakeUp(const TCsAIType &Type, ACsAIPawn* &OutPawn, FCsAIPawnPayload* Payload, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsManager_AI::WakeUp(const FECsAIType &Type, ACsAIPawn* &OutPawn, FCsAIPawnPayload* Payload, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
 	OutPawn = Allocate(Type);
 
@@ -384,13 +386,13 @@ void ACsManager_AI::WakeUp(const TCsAIType &Type, ACsAIPawn* &OutPawn, FCsAIPawn
 }
 
 template<typename T>
-void ACsManager_AI::WakeUp(const TCsAIType &Type, ACsAIPawn* &OutPawn, FCsAIPawnPayload* Payload, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsManager_AI::WakeUp(const FECsAIType &Type, ACsAIPawn* &OutPawn, FCsAIPawnPayload* Payload, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
 	WakeUp<T>(Type, OutPawn, Payload, nullptr, InOwner, InObject, OnDeAllocate);
 }
 
 template<typename T>
-void ACsManager_AI::WakeUp(const TCsAIType &ClassType, ACsAIPawn* &OutPawn, FCsAIPawnPayload* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsManager_AI::WakeUp(const FECsAIType &ClassType, ACsAIPawn* &OutPawn, FCsAIPawnPayload* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
 {
 	WakeUp<T>(Type, OutPawn, Payload, nullptr, nullptr, InObject, OnDeAllocate);
 }

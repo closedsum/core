@@ -12,11 +12,16 @@ class CSCORE_API ACsManager_Damage : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
-private:
+protected:
 
 	static TWeakObjectPtr<UObject> MyOwner;
 
 	static UObject* GetMyOwner();
+	template<typename T>
+	static T* GetMyOwner()
+	{
+		return Cast<T>(GetMyOwner());
+	}
 
 public:
 

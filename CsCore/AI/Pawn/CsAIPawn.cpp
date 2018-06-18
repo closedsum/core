@@ -32,11 +32,10 @@ ACsAIPawn::ACsAIPawn(const FObjectInitializer& ObjectInitializer)
 }
 
 
-void ACsAIPawn::Init(const int32 &Index, const TCsAIType &InType)
+void ACsAIPawn::Init(const int32 &Index, const FECsAIType &InType)
 {
 	PoolIndex	= Index;
 	Type		= InType;
-	Type_Script = (uint8)Type;
 
 	Cache.Set(Index, this);
 }

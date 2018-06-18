@@ -466,7 +466,7 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct FCsInteractiveActorPayload : public FCsPooledObjectPayload
+struct CSCORE_API FCsInteractiveActorPayload : public FCsPooledObjectPayload
 {
 	GENERATED_USTRUCT_BODY()
 

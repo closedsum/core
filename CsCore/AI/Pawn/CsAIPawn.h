@@ -138,15 +138,13 @@ class CSCORE_API ACsAIPawn : public ACsPawn
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Pool")
 	bool IsAllocated;
 
-	TCsAIType Type;
-
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "AI")
-	uint8 Type_Script;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
+	FECsAIType Type;
 
 	UPROPERTY(BlueprintReadWrite, Category = "AI")
 	struct FCsAIPawnCache Cache;
 
-	void Init(const int32 &Index, const TCsAIType &InType);
+	void Init(const int32 &Index, const FECsAIType &InType);
 
 	virtual void OnCreatePool();
 	virtual void OnPostCreatePool();
@@ -170,10 +168,10 @@ class CSCORE_API ACsAIPawn : public ACsPawn
 #pragma region
 public:
 
-	TCsAIState CurrentState;
-	TCsAIState SpawnedState;
+	FECsAIState CurrentState;
+	FECsAIState SpawnedState;
 
-	TCsAISetup CurrentSetup;
+	FECsAISetup CurrentSetup;
 
 #pragma endregion Setup
 

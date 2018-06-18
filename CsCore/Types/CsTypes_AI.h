@@ -1,83 +1,137 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
+#include "Types/CsTypes_Pool.h"
 
-//#include "CsTypes_AI.generated.h"
+#include "CsTypes_AI.generated.h"
 #pragma once
 
 // AI
 #pragma region
 
-namespace ECsAIType
+	// AIType
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsAIType : public FECsEnum_uint8
 {
-	enum Type : uint8;
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsAIType() {}
+	FECsAIType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsAIType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsAIType() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsAIType& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-typedef ECsAIType::Type TCsAIType;
-
-// AITypeToString
-typedef const FString&(*TCsAITypeToString)(const TCsAIType&);
-// StringToAIType
-typedef TCsAIType(*TCsStringToAIType)(const FString&);
-
-#define CS_DECLARE_AI_TYPE	TCsAIType AIType_MAX; \
-							uint8 AI_TYPE_MAX; \
-							TCsAITypeToString AITypeToString; \
-							TCsStringToAIType StringToAIType;
-
-#define CS_DEFINE_AI_TYPE	AIType_MAX = ECsAIType::ECsAIType_MAX;\
-							AI_TYPE_MAX = (uint8)AIType_MAX \
-							AITypeToString = &ECsAIType::ToString; \
-							StringToAIType = &ECsAIType::ToType;
-
-namespace ECsAIState
+struct CSCORE_API EMCsAIType : public TCsEnumStructMap<FECsAIType, uint8>
 {
-	enum Type : uint8;
+protected:
+	EMCsAIType() {}
+	EMCsAIType(const EMCsAIType &) = delete;
+	EMCsAIType(EMCsAIType &&) = delete;
+public:
+	~EMCsAIType() {}
+private:
+	static EMCsAIType* Instance;
+
+public:
+	static EMCsAIType& Get();
+};
+
+	// AIState
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsAIState : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsAIState() {}
+	FECsAIState(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsAIState(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsAIState() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsAIState& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-typedef ECsAIState::Type TCsAIState;
+struct CSCORE_API EMCsAIState : public TCsEnumStructMap<FECsAIState, uint8>
+{
+protected:
+	EMCsAIState() {}
+	EMCsAIState(const EMCsAIState &) = delete;
+	EMCsAIState(EMCsAIState &&) = delete;
+public:
+	~EMCsAIState() {}
+private:
+	static EMCsAIState* Instance;
 
-// AIStateToString
-typedef const FString&(*TCsAIStateToString)(const TCsAIState&);
-// StringToAIState
-typedef TCsAIState(*TCsStringToAIState)(const FString&);
-
-#define CS_DECLARE_AI_STATE	TCsAIState AIState_MAX; \
-							uint8 AI_STATE_MAX; \
-							TCsAIStateToString AIStateToString; \
-							TCsStringToAIState StringToAIState;
-
-#define CS_DEFINE_AI_STATE	AIState_MAX = ECsAIState::ECsAIState_MAX;\
-							AI_STATE_MAX = (uint8)AIState_MAX \
-							AIStateToString = &ECsAIState::ToString; \
-							StringToAIState = &ECsAIState::ToType;
+public:
+	static EMCsAIState& Get();
+};
 
 namespace ECsAISetup
 {
 	enum Type : uint8;
 }
 
-typedef ECsAISetup::Type TCsAISetup;
+	// AISetup
 
-// AISetupToString
-typedef const FString&(*TCsAISetupToString)(const TCsAISetup&);
-// StringToAISetup
-typedef TCsAISetup(*TCsStringToAISetup)(const FString&);
-
-#define CS_DECLARE_AI_SETUP	TCsAISetup AISetup_MAX; \
-							uint8 AI_SETUP_MAX; \
-							TCsAISetupToString AISetupToString; \
-							TCsStringToAISetup StringToAISetup;
-
-#define CS_DEFINE_AI_SETUP	AISetup_MAX = ECsAISetup::ECsAISetup_MAX;\
-							AI_SETUP_MAX = (uint8)AISetup_MAX \
-							AISetupToString = &ECsAISetup::ToString; \
-							StringToAISetup = &ECsAISetup::ToType;
-
-struct FCsAIPawnPayload
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsAISetup : public FECsEnum_uint8
 {
-	bool IsAllocated;
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsAISetup() {}
+	FECsAISetup(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsAISetup(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsAISetup() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsAISetup& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
+}
+
+struct CSCORE_API EMCsAISetup : public TCsEnumStructMap<FECsAISetup, uint8>
+{
+protected:
+	EMCsAISetup() {}
+	EMCsAISetup(const EMCsAISetup &) = delete;
+	EMCsAISetup(EMCsAISetup &&) = delete;
+public:
+	~EMCsAISetup() {}
+private:
+	static EMCsAISetup* Instance;
+
+public:
+	static EMCsAISetup& Get();
+};
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsAIPawnPayload : public FCsPooledObjectPayload
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	bool TeleportLocation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FVector Location;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	bool TeleportRotation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FRotator Rotation;
 
 	FCsAIPawnPayload()
@@ -86,9 +140,10 @@ struct FCsAIPawnPayload
 	}
 	~FCsAIPawnPayload() {}
 
-	void Reset()
+	FORCEINLINE virtual void Reset() override
 	{
-		IsAllocated = false;
+		FCsPooledObjectPayload::Reset();
+
 		TeleportLocation = false;
 		Location = FVector::ZeroVector;
 		TeleportRotation = false;

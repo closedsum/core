@@ -30,7 +30,7 @@ struct FCsAnimNotifyFX
 	float Scale;
 
 	UPROPERTY(EditAnywhere, Category = "FX")
-	FCsFpsDrawDistance DrawDistances;
+	FCsFpvDrawDistance DrawDistances;
 
 	UPROPERTY(EditAnywhere, Category = "FX")
 	FName Bone;

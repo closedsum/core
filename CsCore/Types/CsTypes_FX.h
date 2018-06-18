@@ -111,7 +111,7 @@ struct CSCORE_API FCsFxElement
 	float Scale;
 
 	UPROPERTY(EditAnywhere, Category = "FX")
-	FCsFpsDrawDistance DrawDistances;
+	FCsFpvDrawDistance DrawDistances;
 
 	UPROPERTY(EditAnywhere, Category = "FX")
 	FName Bone;
@@ -292,7 +292,7 @@ struct CSCORE_API FCsFxPayload
 	float Scale;
 
 	UPROPERTY(EditAnywhere, Category = "FX")
-	FCsFpsDrawDistance DrawDistances;
+	FCsFpvDrawDistance DrawDistances;
 
 	UPROPERTY(EditAnywhere, Category = "FX")
 	FName Bone;

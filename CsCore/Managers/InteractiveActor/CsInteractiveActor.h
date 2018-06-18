@@ -137,69 +137,26 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 		Actor = InActor;
 	}
 
-	template<typename T>
-	void Init(const uint16& InActiveIndex, FCsInteractiveActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint8&))
-	{
-		SetActiveIndex(InActiveIndex);
-		Data = Payload->GetData();
-		Owner = InOwner;
-		Parent = InParent;
-
-		WarmUpTime = Data->GetWarmUpTime();
-		State = WarmUpTime > 0.0f ? ECsPooledObjectState::WarmUp : ECsPooledObjectState::Active;
-
-		Transform = Payload->Transform;
-		Rotation = Transform.GetRotation().Rotator();
-		Location = Transform.GetTranslation();
-		Scale = Transform.GetScale3D();
-
-		SetLifeTime(Data->GetLifeTime());
-
-		Time = InTime;
-		RealTime = InRealTime;
-		SetFrame(InFrame);
-
-		if (InObject && OnDeAllocate)
-		{
-			DelegateInvoker = (UObject*)InObject;
-#if WITH_EDITOR
-			OnDeAllocate_ScriptEvent.AddUObject(InObject, OnDeAllocate);
-#endif // #if WITH_EDITOR
-			OnDeAllocate_Event.AddUObject(InObject, OnDeAllocate);
-		}
-	}
-
-	template<typename T>
-	void Init(const uint16& InActiveIndex, FCsInteractiveActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, T* InObject, void (T::*OnDeAllocate)(const uint8&))
-	{
-		Init(InActiveIndex, Payload, InTime, InRealTime, InFrame, nullptr, nullptr, InObject, OnDeAllocate);
-	}
-
-	void Init(const uint16& InActiveIndex, FCsInteractiveActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent)
-	{
-		SetActiveIndex(InActiveIndex);
-		Data = Payload->GetData();
-		Owner = InOwner;
-		Parent = InParent;
-
-		WarmUpTime = Data->GetWarmUpTime();
-		State = WarmUpTime > 0.0f ? ECsPooledObjectState::WarmUp : ECsPooledObjectState::Active;
-
-		Transform = Payload->Transform;
-		Rotation = Transform.GetRotation().Rotator();
-		Location = Transform.GetTranslation();
-		Scale = Transform.GetScale3D();
-
-		SetLifeTime(Data->GetLifeTime());
-
-		Time = InTime;
-		RealTime = InRealTime;
-		SetFrame(InFrame);
-	}
-
 	void Init(const uint16& InActiveIndex, FCsInteractiveActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
-		Init(InActiveIndex, Payload, InTime, InRealTime, InFrame, nullptr, nullptr);
+		SetActiveIndex(InActiveIndex);
+		Data = Payload->GetData();
+		Owner = Payload->Owner;
+		Parent = Payload->Parent;
+
+		WarmUpTime = Data->GetWarmUpTime();
+		State = WarmUpTime > 0.0f ? ECsPooledObjectState::WarmUp : ECsPooledObjectState::Active;
+
+		Transform = Payload->Transform;
+		Rotation = Transform.GetRotation().Rotator();
+		Location = Transform.GetTranslation();
+		Scale = Transform.GetScale3D();
+
+		SetLifeTime(Data->GetLifeTime());
+
+		Time = InTime;
+		RealTime = InRealTime;
+		SetFrame(InFrame);
 	}
 
 	virtual void Reset() override
@@ -217,13 +174,13 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 		Scale = FVector::OneVector;
 	}
 
-	class ACsInteractiveActor* GetActor() { return Actor.IsValid() ? Actor.Get() : nullptr; }
+	FORCEINLINE class ACsInteractiveActor* GetActor() { return Actor.IsValid() ? Actor.Get() : nullptr; }
 	template<typename T>
-	T* GetActor() { return Cast<T>(GetActor()); }
+	FORCEINLINE T* GetActor() { return Cast<T>(GetActor()); }
 
-	class ACsData_Interactive* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
+	FORCEINLINE class ACsData_Interactive* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
 	template<typename T>
-	T* GetData() { return Cast<T>(GetData()); }
+	FORCEINLINE T* GetData() { return Cast<T>(GetData()); }
 };
 
 UCLASS()

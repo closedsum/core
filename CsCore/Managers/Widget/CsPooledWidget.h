@@ -1,7 +1,6 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "UI/Simple/CsSimpleWidget.h"
-#include "Types/CsTypes_Pool.h"
 #include "Types/CsTypes_UI.h"
 #include "CsPooledWidget.generated.h"
 

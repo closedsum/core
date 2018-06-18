@@ -2,6 +2,7 @@
 #include "Types/CsTypes_View.h"
 #include "Types/CsTypes_Load.h"
 #include "Types/CsTypes_Math.h"
+#include "Types/CsTypes_Pool.h"
 
 
 #include "Runtime/UMG/Public/Components/SlateWrapperTypes.h"
@@ -2218,31 +2219,16 @@ public:
 #pragma endregion Structs
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsWidgetPayload
+struct CSCORE_API FCsWidgetPayload : public FCsPooledObjectPayload
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Payload")
-	bool IsAllocated;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
-	TWeakObjectPtr<UObject> Instigator;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
-	TWeakObjectPtr<UObject> Owner;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
-	TWeakObjectPtr<UObject> Parent;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FString DisplayName;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FVector2D Size;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FIntPoint Offset;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	float LifeTime;
 
@@ -2252,96 +2238,52 @@ struct CSCORE_API FCsWidgetPayload
 	}
 	~FCsWidgetPayload() {}
 
-	void Reset()
+	FORCEINLINE virtual void Reset() override
 	{
-		IsAllocated = false;
-		Instigator.Reset();
-		Instigator = nullptr;
-		Owner.Reset();
-		Owner = nullptr;
-		Parent.Reset();
-		Parent = nullptr;
+		FCsPooledObjectPayload::Reset();
+
 		DisplayName = ECsCached::Str::Empty;
 		Size = FVector2D::ZeroVector;
 		Offset = FIntPoint::ZeroValue;
 		LifeTime = 0.0f;
 	}
-
-	FORCEINLINE UObject* GetInstigator() { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
-	template<typename T>
-	FORCEINLINE T* GetInstigator() { return Cast<T>(GetInstigator()); }
-
-	FORCEINLINE UObject* GetOwner() { return Owner.IsValid() ? Owner.Get() : nullptr; }
-	template<typename T>
-	FORCEINLINE T* GetOwner() { return Cast<T>(GetOwner()); }
-
-	FORCEINLINE UObject* GetParent() { return Parent.IsValid() ? Parent.Get() : nullptr; }
-	template<typename T>
-	FORCEINLINE T* GetParent() { return Cast<T>(GetParent()); }
 };
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsWidgetActorPayload
+struct CSCORE_API FCsWidgetActorPayload : public FCsPooledObjectPayload
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Payload")
-	bool IsAllocated;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
-	TWeakObjectPtr<UObject> Instigator;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
-	TWeakObjectPtr<UObject> Owner;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
-	TWeakObjectPtr<UObject> Parent;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	TWeakObjectPtr<class UUserWidget> Widget;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FVector2D Size;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	float LifeTime;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	bool bMinDrawDistance;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FCsDrawDistance MinDrawDistance;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	bool ScaleByDistance;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FTransform Transform;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	bool FollowCamera;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	float DistanceProjectedOutFromCamera;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	bool LookAtCamera;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FCsRotatorFlag LockAxes;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	bool bMovementFunction;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FCsParametricFunction MovementFunction;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	int32 Int32;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	float Float;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FString String;
 
@@ -2351,15 +2293,10 @@ struct CSCORE_API FCsWidgetActorPayload
 	}
 	~FCsWidgetActorPayload() {}
 
-	void Reset()
+	FORCEINLINE virtual void Reset() override
 	{
-		IsAllocated = false;
-		Instigator.Reset();
-		Instigator = nullptr;
-		Owner.Reset();
-		Owner = nullptr;
-		Parent.Reset();
-		Parent = nullptr;
+		FCsPooledObjectPayload::Reset();
+
 		Widget.Reset();
 		Widget = nullptr;
 		Size = FVector2D::ZeroVector;
@@ -2378,18 +2315,6 @@ struct CSCORE_API FCsWidgetActorPayload
 		Float = 0.0f;
 		String = ECsCached::Str::Empty;
 	}
-
-	FORCEINLINE UObject* GetInstigator() { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
-	template<typename T>
-	FORCEINLINE T* GetInstigator() { return Cast<T>(GetInstigator()); }
-
-	FORCEINLINE UObject* GetOwner() { return Owner.IsValid() ? Owner.Get() : nullptr; }
-	template<typename T>
-	FORCEINLINE T* GetOwner() { return Cast<T>(GetOwner()); }
-
-	FORCEINLINE UObject* GetParent() { return Parent.IsValid() ? Parent.Get() : nullptr; }
-	template<typename T>
-	FORCEINLINE T* GetParent() { return Cast<T>(GetParent()); }
 
 	FORCEINLINE class UUserWidget* GetWidget() { return Widget.IsValid() ? Widget.Get() : nullptr; }
 	template<typename T>

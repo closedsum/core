@@ -491,7 +491,7 @@ struct FCsInteractiveActorPayload : public FCsPooledObjectPayload
 	}
 	~FCsInteractiveActorPayload() {}
 
-	virtual void Reset() override
+	FORCEINLINE virtual void Reset() override
 	{
 		FCsPooledObjectPayload::Reset();
 

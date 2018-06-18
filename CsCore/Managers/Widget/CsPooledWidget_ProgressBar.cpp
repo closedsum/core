@@ -41,7 +41,7 @@ void UCsPooledWidget_ProgressBar::OnNativeTick(const FGeometry& MyGeometry, cons
 	Bar.OnNativeTick(InDeltaTime);
 }
 
-void UCsPooledWidget_ProgressBar::Allocate(const uint16& ActiveIndex, FCsPooledWidgetPayload* Payload, UObject* InOwner, UObject* InParent)
+void UCsPooledWidget_ProgressBar::Allocate(const uint16& ActiveIndex, FCsWidgetPayload* Payload, UObject* InOwner, UObject* InParent)
 {
 	Super::Allocate(ActiveIndex, Payload, InOwner, InParent);
 

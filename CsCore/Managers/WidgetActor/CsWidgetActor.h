@@ -67,6 +67,9 @@ struct FCsWidgetActorCache : public FCsPooledObjectCache
 	TWeakObjectPtr<class UUserWidget> Widget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	FECsWidgetActorType Type_Script;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FVector2D DrawSize;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
@@ -110,8 +113,7 @@ struct FCsWidgetActorCache : public FCsPooledObjectCache
 		WidgetActor = InWidgetActor;
 	}
 
-	template<typename T>
-	void Init(const uint16& InActiveIndex, FCsWidgetActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+	void Init(const uint16& InActiveIndex, FCsWidgetActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
 		SetActiveIndex(InActiveIndex);
 
@@ -119,53 +121,7 @@ struct FCsWidgetActorCache : public FCsPooledObjectCache
 
 		SetLifeTime(Payload->LifeTime);
 
-		Owner	 = InOwner;
-		Widget   = Payload->GetWidget();
-		DrawSize = Payload->Size;
-		bMinDrawDistance = Payload->bMinDrawDistance;
-		MinDrawDistance = Payload->MinDrawDistance;
-		ScaleByDistance = Payload->ScaleByDistance;
-		Transform = Payload->Transform;
-		Rotation = Transform.GetRotation().Rotator();
-		Location = Transform.GetTranslation();
-		Scale = Transform.GetScale3D();
-		FollowCamera = Payload->FollowCamera;
-		DistanceProjectedOutFromCamera = Payload->DistanceProjectedOutFromCamera;
-		LookAtCamera = Payload->LookAtCamera;
-		CameraLockAxes = Payload->LockAxes;
-		bMovementFunction = Payload->bMovementFunction;
-		MovementFunction = Payload->MovementFunction;
-		MovementFunction.Seed();
-		Parent   = InParent;
-		Time	 = InTime;
-		RealTime = InRealTime;
-		SetFrame(InFrame);
-
-		if (InObject && OnDeAllocate)
-		{
-			DelegateInvoker = (UObject*)InObject;
-#if WITH_EDITOR
-			OnDeAllocate_ScriptEvent.AddUObject(InObject, OnDeAllocate);
-#endif // #if WITH_EDITOR
-			OnDeAllocate_Event.AddUObject(InObject, OnDeAllocate);
-		}
-	}
-
-	template<typename T>
-	void Init(const uint16& InActiveIndex, FCsWidgetActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
-	{
-		Init(InActiveIndex, Payload, InTime, InRealTime, InFrame, nullptr, nullptr, InObject, OnDeAllocate);
-	}
-
-	void Init(const uint16& InActiveIndex, FCsWidgetActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent)
-	{
-		SetActiveIndex(InActiveIndex);
-
-		IsAllocated = true;
-
-		SetLifeTime(Payload->LifeTime);
-
-		Owner	 = InOwner;
+		Owner	 = Payload->Owner;
 		Widget = Payload->GetWidget();
 		DrawSize = Payload->Size;
 		bMinDrawDistance = Payload->bMinDrawDistance;
@@ -182,15 +138,10 @@ struct FCsWidgetActorCache : public FCsPooledObjectCache
 		bMovementFunction = Payload->bMovementFunction;
 		MovementFunction = Payload->MovementFunction;
 		MovementFunction.Seed();
-		Parent	 = InParent;
+		Parent	 = Payload->Parent;
 		Time	 = InTime;
 		RealTime = InRealTime;
 		SetFrame(InFrame);
-	}
-
-	void Init(const uint16& InActiveIndex, FCsWidgetActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
-	{
-		Init(InActiveIndex, Payload, InTime, InRealTime, InFrame, nullptr, nullptr);
 	}
 
 	virtual void Reset() override
@@ -245,13 +196,6 @@ class CSCORE_API ACsWidgetActor : public ACsPooledActor
 #pragma region
 public:
 
-	template<typename T>
-	void Allocate(const uint16 &ActiveIndex, FCsWidgetActorPayload* Payload, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
-
-	template<typename T>
-	void Allocate(const uint16 &ActiveIndex, FCsWidgetActorPayload* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
-
-	void Allocate(const uint16 &ActiveIndex, FCsWidgetActorPayload* Payload, UObject* InOwner, UObject* InParent);
 	void Allocate(const uint16 &ActiveIndex, FCsWidgetActorPayload* Payload);
 
 	virtual void Allocate_Internal(FCsWidgetActorPayload* Payload);

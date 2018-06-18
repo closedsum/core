@@ -333,12 +333,12 @@ void UCsManager_Widget::AddPoolToCanvas(UCanvasPanel* InCanvas, const TCsSimpleW
 // Payload
 #pragma region
 
-FCsPooledWidgetPayload* UCsManager_Widget::AllocatePayload()
+FCsWidgetPayload* UCsManager_Widget::AllocatePayload()
 {
 	for (uint8 I = 0; I < CS_POOLED_WIDGET_PAYLOAD_SIZE; ++I)
 	{
 		const uint8 Index				= (PayloadIndex + I) % CS_POOLED_WIDGET_PAYLOAD_SIZE;
-		FCsPooledWidgetPayload* Payload = &(Payloads[Index]);
+		FCsWidgetPayload* Payload = &(Payloads[Index]);
 		
 		if (!Payload->IsAllocated)
 		{
@@ -355,7 +355,7 @@ FCsPooledWidgetPayload* UCsManager_Widget::AllocatePayload()
 // Show
 #pragma region
 
-UCsPooledWidget* UCsManager_Widget::Show(const TCsSimpleWidgetType &Type, FCsPooledWidgetPayload* Payload, UObject* InOwner, UObject* InParent)
+UCsPooledWidget* UCsManager_Widget::Show(const TCsSimpleWidgetType &Type, FCsWidgetPayload* Payload, UObject* InOwner, UObject* InParent)
 {
 	UCsPooledWidget* Widget = Allocate(Type);
 

@@ -23,7 +23,7 @@ class CSCORE_API AICsManager_InteractiveActor : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
-private:
+protected:
 
 	FCsManager_InteractiveActor* Internal;
 
@@ -48,9 +48,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Manager InteractiveActor")
 	void CreatePool(const FECsInteractiveType &Type, const int32 &Size);
 	UFUNCTION(BlueprintCallable, Category = "Manager InteractiveActor")
-	void AddToPool(const FECsInteractiveType &Type, ACsInteractiveActor* Process);
+	void AddToPool(const FECsInteractiveType &Type, ACsInteractiveActor* Actor);
 	UFUNCTION(BlueprintCallable, Category = "Manager InteractiveActor")
-	void AddToActivePool(const FECsInteractiveType &Type, ACsInteractiveActor* Process);
+	void AddToActivePool(const FECsInteractiveType &Type, ACsInteractiveActor* Actor);
 	UFUNCTION(BlueprintCallable, Category = "Manager InteractiveActor")
 	void OnTick(const float &DeltaTime);
 	UFUNCTION(BlueprintCallable, Category = "Manager InteractiveActor")

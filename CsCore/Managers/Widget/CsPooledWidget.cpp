@@ -20,7 +20,7 @@ void UCsPooledWidget::Init(const int32 &Index)
 	Cache.Set(Index, this);
 }
 
-void UCsPooledWidget::Allocate(const uint16& ActiveIndex, FCsPooledWidgetPayload* Payload, UObject* InOwner, UObject* InParent)
+void UCsPooledWidget::Allocate(const uint16& ActiveIndex, FCsWidgetPayload* Payload, UObject* InOwner, UObject* InParent)
 {
 	Cache.Init(ActiveIndex, Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InOwner, InParent);
 

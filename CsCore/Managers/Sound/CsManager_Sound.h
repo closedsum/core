@@ -32,7 +32,7 @@ class CSCORE_API AICsManager_Sound : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
-private:
+protected:
 
 	FCsManager_Sound * Internal;
 

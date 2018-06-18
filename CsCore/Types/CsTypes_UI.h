@@ -3,6 +3,7 @@
 #include "Types/CsTypes_Load.h"
 #include "Types/CsTypes_Math.h"
 
+
 #include "Runtime/UMG/Public/Components/SlateWrapperTypes.h"
 #include "Runtime/UMG/Public/Components/CanvasPanel.h"
 #include "Runtime/UMG/Public/Components/CanvasPanelSlot.h"
@@ -505,125 +506,125 @@ namespace ECsButtonState
 // PrimitiveType
 #pragma region
 
-struct CSCORE_API TCsPrimitiveType_ESlateVisibility : public TCsPrimitiveType<ESlateVisibility>
+struct CSCORE_API TCsProperty_ESlateVisibility : public TCsProperty<ESlateVisibility>
 {
 public:
 
-	TCsPrimitiveType_ESlateVisibility()
+	TCsProperty_ESlateVisibility()
 	{
 		DefaultValue = ESlateVisibility::Hidden;
 	}
-	~TCsPrimitiveType_ESlateVisibility() {}
+	~TCsProperty_ESlateVisibility() {}
 
-	TCsPrimitiveType_ESlateVisibility& operator=(const ESlateVisibility& B)
+	TCsProperty_ESlateVisibility& operator=(const ESlateVisibility& B)
 	{
 		Value = B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FORCEINLINE friend bool operator==(const ESlateVisibility &Lhs, const TCsPrimitiveType_ESlateVisibility &Rhs)
+	FORCEINLINE friend bool operator==(const ESlateVisibility &Lhs, const TCsProperty_ESlateVisibility &Rhs)
 	{
 		return Lhs == Rhs.Value;
 	}
 
-	FORCEINLINE friend bool operator==(const TCsPrimitiveType_ESlateVisibility &Lhs, const ESlateVisibility &Rhs)
+	FORCEINLINE friend bool operator==(const TCsProperty_ESlateVisibility &Lhs, const ESlateVisibility &Rhs)
 	{
 		return Lhs.Value == Rhs;
 	}
 
-	FORCEINLINE friend bool operator!=(const ESlateVisibility &Lhs, const TCsPrimitiveType_ESlateVisibility &Rhs)
+	FORCEINLINE friend bool operator!=(const ESlateVisibility &Lhs, const TCsProperty_ESlateVisibility &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const TCsPrimitiveType_ESlateVisibility &Lhs, const ESlateVisibility &Rhs)
+	FORCEINLINE friend bool operator!=(const TCsProperty_ESlateVisibility &Lhs, const ESlateVisibility &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 };
 
-typedef TCsPrimitiveType_ESlateVisibility TCsESlateVisibility;
+typedef TCsProperty_ESlateVisibility TCsESlateVisibility;
 
-struct CSCORE_API TCsPrimitiveType_FSlateColor : public TCsPrimitiveType<FSlateColor>
+struct CSCORE_API TCsProperty_FSlateColor : public TCsProperty<FSlateColor>
 {
 public:
 
-	TCsPrimitiveType_FSlateColor()
+	TCsProperty_FSlateColor()
 	{
 		DefaultValue = FSlateColor();
 	}
-	~TCsPrimitiveType_FSlateColor() {}
+	~TCsProperty_FSlateColor() {}
 
-	TCsPrimitiveType_FSlateColor& operator=(const FSlateColor& B)
+	TCsProperty_FSlateColor& operator=(const FSlateColor& B)
 	{
 		Value = B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FORCEINLINE friend bool operator==(const FSlateColor &Lhs, const TCsPrimitiveType_FSlateColor &Rhs)
+	FORCEINLINE friend bool operator==(const FSlateColor &Lhs, const TCsProperty_FSlateColor &Rhs)
 	{
 		return Lhs == Rhs.Value;
 	}
 
-	FORCEINLINE friend bool operator==(const TCsPrimitiveType_FSlateColor &Lhs, const FSlateColor &Rhs)
+	FORCEINLINE friend bool operator==(const TCsProperty_FSlateColor &Lhs, const FSlateColor &Rhs)
 	{
 		return Lhs.Value == Rhs;
 	}
 
-	FORCEINLINE friend bool operator!=(const FSlateColor &Lhs, const TCsPrimitiveType_FSlateColor &Rhs)
+	FORCEINLINE friend bool operator!=(const FSlateColor &Lhs, const TCsProperty_FSlateColor &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const TCsPrimitiveType_FSlateColor &Lhs, const FSlateColor &Rhs)
+	FORCEINLINE friend bool operator!=(const TCsProperty_FSlateColor &Lhs, const FSlateColor &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 };
 
-typedef TCsPrimitiveType_FSlateColor TCsFSlateColor;
+typedef TCsProperty_FSlateColor TCsFSlateColor;
 
-struct CSCORE_API TCsPrimitiveType_ECheckBoxState : public TCsPrimitiveType<ECheckBoxState>
+struct CSCORE_API TCsProperty_ECheckBoxState : public TCsProperty<ECheckBoxState>
 {
 public:
 
-	TCsPrimitiveType_ECheckBoxState()
+	TCsProperty_ECheckBoxState()
 	{
 		DefaultValue = ECheckBoxState::Unchecked;
 	}
-	~TCsPrimitiveType_ECheckBoxState() {}
+	~TCsProperty_ECheckBoxState() {}
 
-	TCsPrimitiveType_ECheckBoxState& operator=(const ECheckBoxState& B)
+	TCsProperty_ECheckBoxState& operator=(const ECheckBoxState& B)
 	{
 		Value = B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FORCEINLINE friend bool operator==(const ECheckBoxState &Lhs, const TCsPrimitiveType_ECheckBoxState &Rhs)
+	FORCEINLINE friend bool operator==(const ECheckBoxState &Lhs, const TCsProperty_ECheckBoxState &Rhs)
 	{
 		return Lhs == Rhs.Value;
 	}
 
-	FORCEINLINE friend bool operator==(const TCsPrimitiveType_ECheckBoxState &Lhs, const ECheckBoxState &Rhs)
+	FORCEINLINE friend bool operator==(const TCsProperty_ECheckBoxState &Lhs, const ECheckBoxState &Rhs)
 	{
 		return Lhs.Value == Rhs;
 	}
 
-	FORCEINLINE friend bool operator!=(const ECheckBoxState &Lhs, const TCsPrimitiveType_ECheckBoxState &Rhs)
+	FORCEINLINE friend bool operator!=(const ECheckBoxState &Lhs, const TCsProperty_ECheckBoxState &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const TCsPrimitiveType_ECheckBoxState &Lhs, const ECheckBoxState &Rhs)
+	FORCEINLINE friend bool operator!=(const TCsProperty_ECheckBoxState &Lhs, const ECheckBoxState &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 };
 
-typedef TCsPrimitiveType_ECheckBoxState TCsECheckBoxState;
+typedef TCsProperty_ECheckBoxState TCsECheckBoxState;
 
 #pragma endregion PrimitiveType
 
@@ -2216,7 +2217,7 @@ public:
 
 #pragma endregion Structs
 
-struct CSCORE_API FCsPooledWidgetPayload
+struct CSCORE_API FCsWidgetPayload
 {
 	bool IsAllocated;
 	FString DisplayName;
@@ -2224,11 +2225,11 @@ struct CSCORE_API FCsPooledWidgetPayload
 	FIntPoint Offset;
 	float LifeTime;
 
-	FCsPooledWidgetPayload() 
+	FCsWidgetPayload() 
 	{
 		Reset();
 	}
-	~FCsPooledWidgetPayload() {}
+	~FCsWidgetPayload() {}
 
 	void Reset()
 	{
@@ -2240,25 +2241,69 @@ struct CSCORE_API FCsPooledWidgetPayload
 	}
 };
 
+USTRUCT(BlueprintType)
 struct CSCORE_API FCsWidgetActorPayload
 {
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Payload")
 	bool IsAllocated;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	TWeakObjectPtr<UObject> Instigator;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	TWeakObjectPtr<UObject> Owner;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	TWeakObjectPtr<UObject> Parent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	TWeakObjectPtr<class UUserWidget> Widget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FVector2D Size;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	float LifeTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	bool bMinDrawDistance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FCsDrawDistance MinDrawDistance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	bool ScaleByDistance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FTransform Transform;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	bool FollowCamera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	float DistanceProjectedOutFromCamera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	bool LookAtCamera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FCsRotatorFlag LockAxes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	bool bMovementFunction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FCsParametricFunction MovementFunction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	int32 Int32;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	float Float;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FString String;
 
 	FCsWidgetActorPayload()
@@ -2288,6 +2333,18 @@ struct CSCORE_API FCsWidgetActorPayload
 		Float = 0.0f;
 		String = ECsCached::Str::Empty;
 	}
+
+	FORCEINLINE UObject* GetInstigator() { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
+	template<typename T>
+	FORCEINLINE T* GetInstigator() { return Cast<T>(GetInstigator()); }
+
+	FORCEINLINE UObject* GetOwner() { return Owner.IsValid() ? Owner.Get() : nullptr; }
+	template<typename T>
+	FORCEINLINE T* GetOwner() { return Cast<T>(GetOwner()); }
+
+	FORCEINLINE UObject* GetParent() { return Parent.IsValid() ? Parent.Get() : nullptr; }
+	template<typename T>
+	FORCEINLINE T* GetParent() { return Cast<T>(GetParent()); }
 
 	FORCEINLINE class UUserWidget* GetWidget() { return Widget.IsValid() ? Widget.Get() : nullptr; }
 	template<typename T>

@@ -11,7 +11,7 @@ class CSCORE_API UCsPooledWidget_TextBlock : public UCsPooledWidget
 	virtual void NativeConstruct() override;
 	virtual void OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime) override;
 
-	virtual void Allocate(const uint16& ActiveIndex, FCsPooledWidgetPayload* Payload, UObject* InOwner, UObject* InParent) override;
+	virtual void Allocate(const uint16& ActiveIndex, FCsWidgetPayload* Payload, UObject* InOwner, UObject* InParent) override;
 	virtual void DeAllocate() override;
 
 	virtual void Show() override;

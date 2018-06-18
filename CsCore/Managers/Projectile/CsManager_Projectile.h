@@ -30,7 +30,7 @@ class CSCORE_API AICsManager_Projectile : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
-private:
+protected:
 
 	FCsManager_Projectile* Internal;
 

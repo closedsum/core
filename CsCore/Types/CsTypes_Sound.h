@@ -248,7 +248,7 @@ struct CSCORE_API FCsSoundPayload
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Payload")
 	bool IsAllocated;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")

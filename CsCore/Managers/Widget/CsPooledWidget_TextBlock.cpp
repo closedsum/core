@@ -36,7 +36,7 @@ void UCsPooledWidget_TextBlock::OnNativeTick(const FGeometry& MyGeometry, const 
 	Text.OnNativeTick(InDeltaTime);
 }
 
-void UCsPooledWidget_TextBlock::Allocate(const uint16& ActiveIndex, FCsPooledWidgetPayload* Payload, UObject* InOwner, UObject* InParent)
+void UCsPooledWidget_TextBlock::Allocate(const uint16& ActiveIndex, FCsWidgetPayload* Payload, UObject* InOwner, UObject* InParent)
 {
 	Super::Allocate(ActiveIndex, Payload, InOwner, InParent);
 

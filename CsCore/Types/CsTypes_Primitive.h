@@ -746,7 +746,7 @@ public:
 #pragma region
 
 template<typename T>
-struct TCsPrimitiveType
+struct TCsProperty
 {
 public:
 	T DefaultValue;
@@ -758,8 +758,8 @@ public:
 	TMulticastDelegate<void, const T&> OnChange_Event;
 
 public:
-	TCsPrimitiveType(){}
-	virtual ~TCsPrimitiveType(){}
+	TCsProperty(){}
+	virtual ~TCsProperty(){}
 
 	void SetDefaultValue(const T &inDefaultValue)
 	{
@@ -774,7 +774,7 @@ public:
 			OnChange_Event.Broadcast(Value);
 	}
 
-	TCsPrimitiveType& operator=(const T& B)
+	TCsProperty& operator=(const T& B)
 	{
 		Value = B;
 		UpdateIsDirty();
@@ -829,7 +829,7 @@ public:
 	}
 };
 
-struct CSCORE_API FCsPrimitiveType_int32 : public TCsPrimitiveType<int32>
+struct CSCORE_API FCsPrimitiveType_int32 : public TCsProperty<int32>
 {
 	FCsPrimitiveType_int32()
 	{
@@ -998,7 +998,7 @@ struct CSCORE_API FCsPrimitiveType_int32 : public TCsPrimitiveType<int32>
 
 typedef FCsPrimitiveType_int32 TCsInt32;
 
-struct CSCORE_API FCsPrimitiveType_uint32 : public TCsPrimitiveType<uint32>
+struct CSCORE_API FCsPrimitiveType_uint32 : public TCsProperty<uint32>
 {
 	FCsPrimitiveType_uint32()
 	{
@@ -1167,7 +1167,7 @@ struct CSCORE_API FCsPrimitiveType_uint32 : public TCsPrimitiveType<uint32>
 
 typedef FCsPrimitiveType_uint32 TCsUint32;
 
-struct CSCORE_API FCsPrimitiveType_float : public TCsPrimitiveType<float>
+struct CSCORE_API FCsPrimitiveType_float : public TCsProperty<float>
 {
 	FCsPrimitiveType_float()
 	{
@@ -1313,7 +1313,7 @@ typedef FCsPrimitiveType_float TCsFloat;
 #define CS_AXIS_Z 2
 #define CS_AXES_3D_ALL 3
 
-struct CSCORE_API FCsPrimitiveType_FVector2D : public TCsPrimitiveType<FVector2D>
+struct CSCORE_API FCsPrimitiveType_FVector2D : public TCsProperty<FVector2D>
 {
 
 protected:
@@ -1443,7 +1443,7 @@ public:
 
 typedef FCsPrimitiveType_FVector2D TCsFVector2D;
 
-struct CSCORE_API FCsPrimitiveType_FVector : public TCsPrimitiveType<FVector>
+struct CSCORE_API FCsPrimitiveType_FVector : public TCsProperty<FVector>
 {
 
 protected:
@@ -1574,7 +1574,7 @@ typedef FCsPrimitiveType_FVector TCsFVector;
 #define CS_AXIS_YAW 2
 
 
-struct CSCORE_API FCsPrimitiveType_FRotator : public TCsPrimitiveType<FRotator>
+struct CSCORE_API FCsPrimitiveType_FRotator : public TCsProperty<FRotator>
 {
 
 protected:
@@ -1693,7 +1693,7 @@ public:
 
 typedef FCsPrimitiveType_FRotator TCsFRotator;
 
-struct CSCORE_API FCsPrimitiveType_FString : public TCsPrimitiveType<FString>
+struct CSCORE_API FCsPrimitiveType_FString : public TCsProperty<FString>
 {
 public:
 
@@ -1733,7 +1733,7 @@ public:
 
 typedef FCsPrimitiveType_FString TCsFString;
 
-struct CSCORE_API FCsPrimitiveType_FLinearColor : public TCsPrimitiveType<FLinearColor>
+struct CSCORE_API FCsPrimitiveType_FLinearColor : public TCsProperty<FLinearColor>
 {
 public:
 

@@ -286,7 +286,7 @@ public:
 public:
 
 	UPROPERTY()
-	class ACsManager_WidgetActor* Manager_WidgetActor;
+	class AICsManager_WidgetActor* Manager_WidgetActor;
 
 	UPROPERTY()
 	class AICsManager_FX* Manager_FX;

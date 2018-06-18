@@ -55,13 +55,13 @@ class CSCORE_API UCsManager_Widget : public UObject
 #pragma region
 private:
 
-	FCsPooledWidgetPayload Payloads[CS_POOLED_WIDGET_PAYLOAD_SIZE];
+	FCsWidgetPayload Payloads[CS_POOLED_WIDGET_PAYLOAD_SIZE];
 
 	uint8 PayloadIndex;
 
 public:
 
-	FCsPooledWidgetPayload* AllocatePayload();
+	FCsWidgetPayload* AllocatePayload();
 
 #pragma endregion Payload
 
@@ -69,7 +69,7 @@ public:
 #pragma region
 public:
 
-	virtual class UCsPooledWidget* Show(const TCsSimpleWidgetType &Type, FCsPooledWidgetPayload* Payload, UObject* InOwner, UObject* InParent);
+	virtual class UCsPooledWidget* Show(const TCsSimpleWidgetType &Type, FCsWidgetPayload* Payload, UObject* InOwner, UObject* InParent);
 
 #pragma endregion Show
 };

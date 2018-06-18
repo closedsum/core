@@ -28,7 +28,7 @@ class CSCORE_API UICsManager_Process : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
-private:
+protected:
 
 	FCsManager_Process* Internal;
 

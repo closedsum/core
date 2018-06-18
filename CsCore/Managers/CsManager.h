@@ -565,12 +565,10 @@ public:
 
 	virtual void Clear()
 	{
-		const int32 count = Pool.Num();
-
-		for (int32 i = 0; i < count; ++i)
+		for (ObjectType* o : Pool)
 		{
-			Pool[i]->DeAllocate();
-			DeconstructObject(Pool[i]);
+			o->DeAllocate();
+			DeconstructObject(o);
 		}
 
 		PoolSize = 0;

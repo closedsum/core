@@ -1,7 +1,9 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_View.h"
 #include "Types/CsTypes_Load.h"
+#include "Types/CsTypes_Pool.h"
 #include "Runtime/Engine/Classes/Particles/ParticleSystem.h"
+
 #include "CsTypes_FX.generated.h"
 #pragma once
 
@@ -260,21 +262,9 @@ struct CSCORE_API FCsFpvFxElement
 };
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsFxPayload
+struct CSCORE_API FCsFxPayload : public FCsPooledObjectPayload
 {
 	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
-	bool IsAllocated;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
-	TWeakObjectPtr<UObject> Instigator;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
-	TWeakObjectPtr<UObject> Owner;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
-	TWeakObjectPtr<UObject> Parent;
 
 	UPROPERTY(EditAnywhere, Category = "Payload")
 	TWeakObjectPtr<UParticleSystem> Particle;
@@ -324,14 +314,10 @@ struct CSCORE_API FCsFxPayload
 		Set(&Element);
 	}
 
-	FORCEINLINE void Reset()
+	FORCEINLINE virtual void Reset() override
 	{
-		Instigator.Reset();
-		Instigator = nullptr;
-		Owner.Reset();
-		Owner = nullptr;
-		Parent.Reset();
-		Parent = nullptr;
+		FCsPooledObjectPayload::Reset();
+
 		Particle = nullptr;
 		Priority = ECsFxPriority::Medium;
 		LifeTime = 0.0f;
@@ -342,18 +328,6 @@ struct CSCORE_API FCsFxPayload
 		Location = FVector::ZeroVector;
 		Rotation = FRotator::ZeroRotator;
 	}
-
-	FORCEINLINE UObject* GetInstigator() { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
-	template<typename T>
-	FORCEINLINE T* GetInstigator() { return Cast<T>(GetInstigator()); }
-
-	FORCEINLINE UObject* GetOwner() { return Owner.IsValid() ? Owner.Get() : nullptr; }
-	template<typename T>
-	FORCEINLINE T* GetOwner() { return Cast<T>(GetOwner()); }
-
-	FORCEINLINE UObject* GetParent() { return Parent.IsValid() ? Parent.Get() : nullptr; }
-	template<typename T>
-	FORCEINLINE T* GetParent() { return Cast<T>(GetParent()); }
 
 	FORCEINLINE UParticleSystem* GetParticle() { return Particle.IsValid() ? Particle.Get() : nullptr; }
 	template<typename T>

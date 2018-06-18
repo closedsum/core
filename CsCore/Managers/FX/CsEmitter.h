@@ -1,6 +1,5 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Types/CsTypes_Pool.h"
 #include "Types/CsTypes_FX.h"
 #include "Particles/Emitter.h"
 #include "CsEmitter.generated.h"

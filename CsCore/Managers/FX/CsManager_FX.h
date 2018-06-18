@@ -34,13 +34,18 @@ class CSCORE_API AICsManager_FX : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
-private:
+protected:
 
 	FCsManager_FX* Internal;
 
 	static TWeakObjectPtr<UObject> MyOwner;
 
 	static UObject* GetMyOwner();
+	template<typename T>
+	static T* GetMyOwner()
+	{
+		return Cast<T>(GetMyOwner());
+	}
 
 public:
 

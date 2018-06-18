@@ -313,7 +313,7 @@ public:
 	class ACsManager_Crafting* Manager_Crafting;
 
 	UPROPERTY()
-	class ACsManager_AI* Manager_AI;
+	class AICsManager_AI* Manager_AI;
 
 	UPROPERTY()
 	class ACsManager_Decal* Manager_Decal;

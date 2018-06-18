@@ -109,11 +109,13 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 {
 	GENERATED_USTRUCT_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<class ACsInteractiveActor> Actor;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<class ACsData_Interactive> Data;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
-	FECsInteractiveType Type_Script;
+	FECsInteractiveType Type;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FTransform Transform;
@@ -131,15 +133,15 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 
 	~FCsInteractiveActorCache(){}
 
-	void Set(const uint16 &InIndex, class ACsInteractiveActor* InActor)
+	void Set(const int32 &InIndex, class ACsInteractiveActor* InActor)
 	{
-		SetIndex(InIndex);
+		Index = InIndex;
 		Actor = InActor;
 	}
 
-	void Init(const uint16& InActiveIndex, FCsInteractiveActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
+	void Init(const int32& InActiveIndex, FCsInteractiveActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
-		SetActiveIndex(InActiveIndex);
+		ActiveIndex = InActiveIndex;
 		Data = Payload->GetData();
 		Owner = Payload->Owner;
 		Parent = Payload->Parent;
@@ -161,7 +163,7 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 
 	virtual void Reset() override
 	{
-		Reset_Internal();
+		FCsPooledObjectCache::Reset();
 
 		Actor.Reset();
 		Actor = nullptr;

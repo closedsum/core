@@ -383,6 +383,9 @@ struct FCsProcessCache : public FCsPooledObjectCache
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
+	FECsProcess Type;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
 	FString Name;
 	/** executable name */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")

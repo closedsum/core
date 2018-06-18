@@ -345,8 +345,8 @@ public:
 
 			for (int32 i = earliestIndex; i < max; ++i)
 			{
-				ObjectType* o = ActiveObjects[i];
-				o->Cache.SetActiveIndex(i);
+				ObjectType* o		 = ActiveObjects[i];
+				o->Cache.ActiveIndex = i;
 			}
 		}
 	}
@@ -441,7 +441,7 @@ public:
 		{
 			ObjectType* o = ActiveObjects[i];
 			// Reset ActiveIndex
-			o->Cache.SetActiveIndex(i);
+			o->Cache.ActiveIndex = i;
 		}
 		UE_LOG(LogCs, Warning, TEXT("%s::DeAllocate: %s at PoolIndex: %d is already deallocated."), *Name, *ObjectClassName, index);
 		return false;
@@ -801,8 +801,8 @@ public:
 				
 				for (int32 j = earliestIndex; j < max; ++j)
 				{
-					ObjectType* o = objects[j];
-					o->Cache.SetActiveIndex(j);
+					ObjectType* o		 = objects[j];
+					o->Cache.ActiveIndex = j;
 				}
 			}
 		}
@@ -926,7 +926,7 @@ public:
 		{
 			ObjectType* o = (*objectsPtr)[i];
 			// Reset ActiveIndex
-			o->Cache.SetActiveIndex(i);
+			o->Cache.ActiveIndex = i;
 		}
 		UE_LOG(LogCs, Warning, TEXT("%s::DeAllocate: %s of Type: %s at PoolIndex: %d is already deallocated."), *Name, *ObjectClassName, *EnumTypeToString(e), index);
 		return false;

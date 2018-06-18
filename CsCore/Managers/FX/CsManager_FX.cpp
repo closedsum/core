@@ -164,8 +164,8 @@ void FCsManager_FX::OnTick(const float &deltaTime)
 
 		for (int32 i = earliestIndex; i < max; ++i)
 		{
-			ACsEmitter* o = ActiveObjects[i];
-			o->Cache.SetActiveIndex(i);
+			ACsEmitter* o		 = ActiveObjects[i];
+			o->Cache.ActiveIndex = i;
 		}
 	}
 }

@@ -62,11 +62,13 @@ struct FCsWidgetActorCache : public FCsPooledObjectCache
 {
 	GENERATED_USTRUCT_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<class ACsWidgetActor> WidgetActor;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<class UUserWidget> Widget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
-	FECsWidgetActorType Type_Script;
+	FECsWidgetActorType Type;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FVector2D DrawSize;
@@ -106,15 +108,15 @@ struct FCsWidgetActorCache : public FCsPooledObjectCache
 		Reset();
 	}
 
-	void Set(const uint16 &InIndex, ACsWidgetActor* InWidgetActor)
+	void Set(const int32 &InIndex, ACsWidgetActor* InWidgetActor)
 	{
-		SetIndex(InIndex);
+		Index = InIndex;
 		WidgetActor = InWidgetActor;
 	}
 
-	void Init(const uint16& InActiveIndex, FCsWidgetActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
+	void Init(const int32& InActiveIndex, FCsWidgetActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
-		SetActiveIndex(InActiveIndex);
+		ActiveIndex = InActiveIndex;
 
 		IsAllocated = true;
 
@@ -145,7 +147,7 @@ struct FCsWidgetActorCache : public FCsPooledObjectCache
 
 	virtual void Reset() override
 	{
-		Reset_Internal();
+		FCsPooledObjectCache::Reset();
 
 		Widget.Reset();
 		Widget = nullptr;

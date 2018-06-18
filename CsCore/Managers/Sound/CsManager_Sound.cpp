@@ -169,7 +169,7 @@ void FCsManager_Sound::Stop(FCsSoundElement* InSound, UObject* InOwner, UObject*
 		{
 			ACsSound* Sound = ActiveObjects[I];
 			// Reset ActiveIndex
-			Sound->Cache.SetActiveIndex(I);
+			Sound->Cache.ActiveIndex = I;
 		}
 	}
 }

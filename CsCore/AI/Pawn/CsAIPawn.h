@@ -56,9 +56,11 @@ struct FCsAIPawnCache : public FCsPooledObjectCache
 {
 	GENERATED_USTRUCT_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<class ACsAIPawn> Pawn;
 
-	// TODO: LifeTime
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	FECsAIType Type;
 
 	FCsAIPawnCache()
 	{
@@ -73,10 +75,9 @@ struct FCsAIPawnCache : public FCsPooledObjectCache
 		Pawn  = InPawn;
 	}
 
-	void Init(const uint16& InActiveIndex, FCsAIPawnPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
+	void Init(const int32& InActiveIndex, FCsAIPawnPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
 		ActiveIndex = InActiveIndex;
-		ActiveIndex_Script = (int32)ActiveIndex;
 		Owner = Payload->Owner;
 		Parent = Payload->Parent;
 		Time = InTime;
@@ -86,7 +87,7 @@ struct FCsAIPawnCache : public FCsPooledObjectCache
 
 	virtual void Reset() override
 	{
-		Reset_Internal();
+		FCsPooledObjectCache::Reset();
 
 		Pawn.Reset();
 		Pawn = nullptr;

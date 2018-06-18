@@ -34,8 +34,7 @@ void ACsSound::Init(const int32 &Index, const FECsSoundType &InType)
 	Type = InType;
 
 	Cache.Set(Index, this);
-	Cache.Type = Type.Value;
-	Cache.Type_Script = Type;
+	Cache.Type = Type;
 }
 
 void ACsSound::Init(const int32 &Index)

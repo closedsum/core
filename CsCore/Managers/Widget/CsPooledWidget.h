@@ -9,7 +9,11 @@ struct FCsPooledWidgetCache : public FCsPooledObjectCache
 {
 	GENERATED_USTRUCT_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<class UCsPooledWidget> Widget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	TEnumAsByte<ECsSimpleWidgetType::Type> Type;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FString DisplayName;
@@ -23,15 +27,15 @@ struct FCsPooledWidgetCache : public FCsPooledObjectCache
 
 	~FCsPooledWidgetCache() {}
 
-	void Set(const uint16 &InIndex, class UCsPooledWidget* InWidget)
+	void Set(const int32 &InIndex, class UCsPooledWidget* InWidget)
 	{
-		SetIndex(InIndex);
+		Index = InIndex;
 		Widget = InWidget;
 	}
 
-	void Init(const uint16& InActiveIndex, FCsWidgetPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
+	void Init(const int32& InActiveIndex, FCsWidgetPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
-		SetActiveIndex(InActiveIndex);
+		ActiveIndex = InActiveIndex;
 
 		IsAllocated = true;
 
@@ -47,7 +51,7 @@ struct FCsPooledWidgetCache : public FCsPooledObjectCache
 
 	virtual void Reset() override
 	{
-		Reset_Internal();
+		FCsPooledObjectCache::Reset();
 
 		DisplayName = ECsCached::Str::Empty;
 		Offset = FIntPoint::ZeroValue;

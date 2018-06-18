@@ -71,33 +71,32 @@ namespace ECsPoolTransactionOrder
 	};
 }
 
+typedef ECsPoolTransactionOrder::Type TCsPoolTransactionOrder;
+
+struct CSCORE_API EMCsPoolTransactionOrder : public TCsEnumMap<ECsPoolTransactionOrder::Type>
+{
+protected:
+	EMCsPoolTransactionOrder() {}
+	EMCsPoolTransactionOrder(const EMCsPoolTransactionOrder &) = delete;
+	EMCsPoolTransactionOrder(EMCsPoolTransactionOrder &&) = delete;
+public:
+	~EMCsPoolTransactionOrder() {}
+private:
+	static EMCsPoolTransactionOrder* Instance;
+
+public:
+	static EMCsPoolTransactionOrder& Get();
+};
+
 namespace ECsPoolTransactionOrder
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
+	namespace Ref
 	{
-		const TCsString FillAny = TCsString(TEXT("FillAny"), TEXT("fillany"), TEXT("fill any"));
-		const TCsString FillOrKill = TCsString(TEXT("FillOrKill"), TEXT("fillorkill"), TEXT("fill or kill"));
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::FillAny) { return Str::FillAny.Value; }
-		if (EType == Type::FillOrKill) { return Str::FillOrKill.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::FillAny) { return Type::FillAny; }
-		if (String == Str::FillOrKill) { return Type::FillOrKill; }
-		return Type::ECsPoolTransactionOrder_MAX;
+		extern CSCORE_API const Type FillAny;
+		extern CSCORE_API const Type FillOrKill;
+		extern CSCORE_API const Type ECsPoolTransactionOrder_MAX;
 	}
 }
-
-#define ECS_POOL_TRANSACTION_ORDER_MAX (uint8)ECsPoolTransactionOrder::ECsPoolTransactionOrder_MAX
-typedef ECsPoolTransactionOrder::Type TCsPoolTransactionOrder;
 
 UENUM(BlueprintType)
 namespace ECsPooledObjectState
@@ -111,41 +110,33 @@ namespace ECsPooledObjectState
 	};
 }
 
-namespace ECsPooledObjectState
-{
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-		const TCsString WarmUp = TCsString(TEXT("WarmUp"), TEXT("warmup"), TEXT("warm up"));
-		const TCsString Active = TCsString(TEXT("Active"), TEXT("active"), TEXT("active"));
-		const TCsString Inactive = TCsString(TEXT("Inactive"), TEXT("inactive"), TEXT("inactive"));
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::WarmUp) { return Str::WarmUp.Value; }
-		if (EType == Type::Active) { return Str::Active.Value; }
-		if (EType == Type::Inactive) { return Str::Inactive.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::WarmUp) { return Type::WarmUp; }
-		if (String == Str::Active) { return Type::Active; }
-		if (String == Str::Inactive) { return Type::Inactive; }
-		return Type::ECsPooledObjectState_MAX;
-	}
-}
-
-#define ECS_POOLED_OBJECT_STATE_MAX (uint8)ECsPooledObjectState::ECsPooledObjectState_MAX
 typedef ECsPooledObjectState::Type TCsPooledObjectState;
 
-#define CS_POOLED_OBJECT_CACHE_INVALID_TYPE 255
+struct CSCORE_API EMCsPoolObjectState : public TCsEnumMap<ECsPooledObjectState::Type>
+{
+protected:
+	EMCsPoolObjectState() {}
+	EMCsPoolObjectState(const EMCsPoolObjectState &) = delete;
+	EMCsPoolObjectState(EMCsPoolObjectState &&) = delete;
+public:
+	~EMCsPoolObjectState() {}
+private:
+	static EMCsPoolObjectState* Instance;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsPooledObjectCache_OnDeAllocate, const int32&, PoolIndex, const int32&, ActiveIndex, const uint8&, Type);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsPooledObjectCache_OnDeAllocate, const uint16&, const uint16&, const uint8&);
+public:
+	static EMCsPoolObjectState& Get();
+};
+
+namespace ECsPooledObjectState
+{
+	namespace Ref
+	{
+		extern CSCORE_API const Type WarmUp;
+		extern CSCORE_API const Type Active;
+		extern CSCORE_API const Type Inactive;
+		extern CSCORE_API const Type ECsPooledObjectState_MAX;
+	}
+}
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsPooledObjectCache
@@ -154,15 +145,11 @@ struct CSCORE_API FCsPooledObjectCache
 
 public:
 
-	UPROPERTY()
-	uint16 Index;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
-	int32 Index_Script;
+	int32 Index;
 
-	UPROPERTY()
-	uint16 ActiveIndex;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
-	int32 ActiveIndex_Script;
+	int32 ActiveIndex;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	bool IsAllocated;
@@ -171,17 +158,11 @@ public:
 	TEnumAsByte<ECsPooledObjectState::Type> State;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
-	uint8 Type;
-
 	TWeakObjectPtr<UObject> Instigator;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<UObject> Owner;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<UObject> Parent;
-	TWeakObjectPtr<UObject> DelegateInvoker;
-
-	UPROPERTY(BlueprintAssignable, Category = "Cache")
-	FBindableDynEvent_CsPooledObjectCache_OnDeAllocate OnDeAllocate_ScriptEvent;
-
-	FBindableEvent_CsPooledObjectCache_OnDeAllocate OnDeAllocate_Event;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	float WarmUpTime;
@@ -214,27 +195,10 @@ public:
 
 	virtual void Reset()
 	{
-		Reset_Internal();
-	}
-
-protected:
-
-	void Reset_Internal()
-	{
-		SetActiveIndex(0);
+		ActiveIndex = 0;
 
 		IsAllocated = false;
 		State = ECsPooledObjectState::Inactive;
-
-		Type = CS_POOLED_OBJECT_CACHE_INVALID_TYPE;
-
-		if (UObject* Invoker = GetDelegateInvoker())
-		{
-#if WITH_EDITOR
-			OnDeAllocate_ScriptEvent.Clear();
-#endif // #if WITH_EDITOR
-			OnDeAllocate_Event.Clear();
-		}
 
 		Instigator.Reset();
 		Instigator = nullptr;
@@ -252,22 +216,9 @@ protected:
 
 public:
 
-	void SetIndex(const uint16 &InIndex)
-	{
-		Index = InIndex;
-		Index_Script = (int32)Index;
-	}
-
-	void SetActiveIndex(const uint16 &InActiveIndex)
-	{
-		ActiveIndex = InActiveIndex;
-		ActiveIndex_Script = (int32)ActiveIndex;
-	}
-
 	void DecrementActiveIndex()
 	{
-		ActiveIndex--;
-		ActiveIndex_Script--;
+		--ActiveIndex;
 	}
 	void SetFrame(const uint64 &InFrame)
 	{
@@ -293,17 +244,8 @@ public:
 	template<typename T>
 	FORCEINLINE T* GetParent() { return Cast<T>(GetParent()); }
 
-	UObject* GetDelegateInvoker() { return DelegateInvoker.IsValid() ? DelegateInvoker.Get() : nullptr; }
-	template<typename T>
-	T* GetDelegateInvoker() { return Cast<T>(GetDelegateInvoker()); }
-
 	void DeAllocate()
 	{
-#if WITH_EDITOR
-		OnDeAllocate_ScriptEvent.Broadcast(Index_Script, ActiveIndex_Script, Type);
-#endif // #if WITH_EDITOR
-		OnDeAllocate_Event.Broadcast(Index, ActiveIndex, Type);
-
 		Reset();
 	}
 };

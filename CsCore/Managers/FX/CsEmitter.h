@@ -9,7 +9,9 @@ struct FCsFxCache : public FCsPooledObjectCache
 {
 	GENERATED_USTRUCT_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<class ACsEmitter> Emitter;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<class UParticleSystem> Particle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
@@ -40,14 +42,14 @@ struct FCsFxCache : public FCsPooledObjectCache
 
 	~FCsFxCache(){}
 
-	void Set(const uint8 &InIndex, ACsEmitter* InEmitter)
+	void Set(const int32 &InIndex, ACsEmitter* InEmitter)
 	{
-		SetIndex(InIndex);
+		Index = InIndex;
 		Emitter = InEmitter;
 	}
-	void Init(const uint16& InActiveIndex, FCsFxPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
+	void Init(const int32& InActiveIndex, FCsFxPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
-		SetActiveIndex(InActiveIndex);
+		ActiveIndex = InActiveIndex;
 
 		IsAllocated = true;
 
@@ -72,9 +74,7 @@ struct FCsFxCache : public FCsPooledObjectCache
 
 	virtual void Reset() override
 	{
-		Reset_Internal();
-
-		IsAllocated = false;
+		FCsPooledObjectCache::Reset();
 
 		Particle.Reset();
 		Particle = nullptr;

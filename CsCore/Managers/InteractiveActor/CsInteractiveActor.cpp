@@ -100,8 +100,7 @@ void ACsInteractiveActor::Init(const int32 &Index, const FECsInteractiveType &In
 	Type		= InType;
 
 	Cache.Set(Index, this);
-	Cache.Type		  = Type.Value;
-	Cache.Type_Script = Type;
+	Cache.Type = Type;
 }
 
 // Allocate / DeAllocate

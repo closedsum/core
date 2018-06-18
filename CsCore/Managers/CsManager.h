@@ -533,9 +533,10 @@ public:
 protected:
 	FString FunctionNames[ECsManagerPooledObjectsFunctionNames::ECsManagerPooledObjectsFunctionNames_MAX];
 
-	TMap<EnumType, int32> PoolSizes;
 	TArray<ObjectType*> Pool;
+	int32 PoolSize;
 	TMap<EnumType, TArray<ObjectType*>> Pools;
+	TMap<EnumType, int32> PoolSizes;
 	TMap<EnumType, int32> PoolIndices;
 	TMap<EnumType, TArray<ObjectType*>> ActiveObjects;
 
@@ -564,8 +565,6 @@ public:
 
 	virtual void Clear()
 	{
-		PoolSizes.Reset();
-
 		const int32 count = Pool.Num();
 
 		for (int32 i = 0; i < count; ++i)
@@ -574,8 +573,11 @@ public:
 			DeconstructObject(Pool[i]);
 		}
 
+		PoolSize = 0;
+
 		Pool.Reset();
 		Pools.Reset();
+		PoolSizes.Reset();
 		PoolIndices.Reset();
 		ActiveObjects.Reset();
 
@@ -623,6 +625,7 @@ public:
 			OnAddToPool_Event.Broadcast(e, o);
 		}
 		Pools.Add(e, pool);
+		PoolSize = Pool.Num();
 	}
 
 	virtual void AddToPool(const EnumType &e, ObjectType* o)
@@ -640,6 +643,7 @@ public:
 			PoolIndices.Add(e, 0);
 
 		Pool.Add(o);
+		PoolSize = Pool.Num();
 
 		TArray<ObjectType*>* poolPtr = Pools.Find(e);
 

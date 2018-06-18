@@ -2217,12 +2217,33 @@ public:
 
 #pragma endregion Structs
 
+USTRUCT(BlueprintType)
 struct CSCORE_API FCsWidgetPayload
 {
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Payload")
 	bool IsAllocated;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	TWeakObjectPtr<UObject> Instigator;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	TWeakObjectPtr<UObject> Owner;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	TWeakObjectPtr<UObject> Parent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FString DisplayName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FVector2D Size;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FIntPoint Offset;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	float LifeTime;
 
 	FCsWidgetPayload() 
@@ -2234,11 +2255,29 @@ struct CSCORE_API FCsWidgetPayload
 	void Reset()
 	{
 		IsAllocated = false;
+		Instigator.Reset();
+		Instigator = nullptr;
+		Owner.Reset();
+		Owner = nullptr;
+		Parent.Reset();
+		Parent = nullptr;
 		DisplayName = ECsCached::Str::Empty;
 		Size = FVector2D::ZeroVector;
 		Offset = FIntPoint::ZeroValue;
 		LifeTime = 0.0f;
 	}
+
+	FORCEINLINE UObject* GetInstigator() { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
+	template<typename T>
+	FORCEINLINE T* GetInstigator() { return Cast<T>(GetInstigator()); }
+
+	FORCEINLINE UObject* GetOwner() { return Owner.IsValid() ? Owner.Get() : nullptr; }
+	template<typename T>
+	FORCEINLINE T* GetOwner() { return Cast<T>(GetOwner()); }
+
+	FORCEINLINE UObject* GetParent() { return Parent.IsValid() ? Parent.Get() : nullptr; }
+	template<typename T>
+	FORCEINLINE T* GetParent() { return Cast<T>(GetParent()); }
 };
 
 USTRUCT(BlueprintType)
@@ -2315,6 +2354,12 @@ struct CSCORE_API FCsWidgetActorPayload
 	void Reset()
 	{
 		IsAllocated = false;
+		Instigator.Reset();
+		Instigator = nullptr;
+		Owner.Reset();
+		Owner = nullptr;
+		Parent.Reset();
+		Parent = nullptr;
 		Widget.Reset();
 		Widget = nullptr;
 		Size = FVector2D::ZeroVector;

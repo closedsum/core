@@ -200,6 +200,13 @@ public:
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
+	FORCEINLINE const FString& ToString(const int32& Index)
+	{
+		if (Index >= Count)
+			return CS_INVALID_ENUM_TO_STRING;
+		return ToString(Enums[Index]);
+	}
+
 	FORCEINLINE const FName& ToName(const EnumType& Enum)
 	{
 		if (FName* Name = ToNameInternalMap.Find(Enum))

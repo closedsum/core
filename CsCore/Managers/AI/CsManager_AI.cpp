@@ -338,7 +338,7 @@ FCsAIPawnPayload* ACsManager_AI::AllocatePayload()
 			return Payload;
 		}
 	}
-	checkf(0, TEXT("UCsManager_Widget::AllocatePayload: Pool is exhausted"));
+	checkf(0, TEXT("UICsManager_Widget::AllocatePayload: Pool is exhausted"));
 	return nullptr;
 }
 

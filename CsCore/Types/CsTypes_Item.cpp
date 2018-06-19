@@ -21,6 +21,25 @@ EMCsItemCollection& EMCsItemCollection::Get()
 	return *Instance;
 }
 
+namespace ECsItemCollection
+{
+	namespace Ref
+	{
+		CSCORE_API const Type Single = EMCsItemCollection::Get().Add(Type::Single, TEXT("Single"));
+		CSCORE_API const Type GroupHomogeneous = EMCsItemCollection::Get().Add(Type::GroupHomogeneous, TEXT("GroupHomogeneous"), TEXT("Group Homogeneous"));
+		CSCORE_API const Type GroupMixed = EMCsItemCollection::Get().Add(Type::GroupMixed, TEXT("GroupMixed"), TEXT("Group Mixed"));
+		CSCORE_API const Type ECsItemCollection_MAX = EMCsItemCollection::Get().Add(Type::ECsItemCollection_MAX, TEXT("ECsItemCollection_MAX"), TEXT("MAX"));
+	};
+}
+
+namespace ECsItemCollectionCached
+{
+	namespace Str
+	{
+		CSCORE_API const FString Single = TEXT("1x");
+	}
+}
+
 // ItemOwner
 EMCsItemOwner* EMCsItemOwner::Instance;
 
@@ -39,6 +58,18 @@ EMCsItemMemberValueType& EMCsItemMemberValueType::Get()
 	if (!Instance)
 		Instance = new EMCsItemMemberValueType();
 	return *Instance;
+}
+
+namespace ECsItemMemberValueType
+{
+	namespace Ref
+	{
+		CSCORE_API const Type Bool = EMCsItemMemberValueType::Get().Add(Type::Bool, TEXT("Bool"));
+		CSCORE_API const Type Uint8 = EMCsItemMemberValueType::Get().Add(Type::Uint8, TEXT("Uint8"));
+		CSCORE_API const Type Int32 = EMCsItemMemberValueType::Get().Add(Type::Int32, TEXT("Int32"));
+		CSCORE_API const Type Float = EMCsItemMemberValueType::Get().Add(Type::Float, TEXT("Float"));
+		CSCORE_API const Type ECsItemMemberValueType_MAX = EMCsItemMemberValueType::Get().Add(Type::ECsItemMemberValueType_MAX, TEXT("ECsItemMemberValueType_MAX"), TEXT("MAX"));
+	};
 }
 
 namespace ECsFileItemProductHeaderCached
@@ -89,6 +120,17 @@ EMCsItemOnConsumeContentAction& EMCsItemOnConsumeContentAction::Get()
 	if (!Instance)
 		Instance = new EMCsItemOnConsumeContentAction();
 	return *Instance;
+}
+
+namespace ECsItemOnConsumeContentAction
+{
+	namespace Ref
+	{
+		CSCORE_API const Type Consume = EMCsItemOnConsumeContentAction::Get().Add(Type::Consume, TEXT("Consume"));
+		CSCORE_API const Type Drop = EMCsItemOnConsumeContentAction::Get().Add(Type::Drop, TEXT("Drop"));
+		CSCORE_API const Type Retain = EMCsItemOnConsumeContentAction::Get().Add(Type::Retain, TEXT("Retain"));
+		CSCORE_API const Type ECsItemOnConsumeContentAction_MAX = EMCsItemOnConsumeContentAction::Get().Add(Type::ECsItemOnConsumeContentAction_MAX, TEXT("ECsItemOnConsumeContentAction_MAX"), TEXT("MAX"));
+	};
 }
 
 // ItemInteraction

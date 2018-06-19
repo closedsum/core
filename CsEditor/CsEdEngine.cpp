@@ -59,6 +59,10 @@
 #include "DetailCustomizations/EnumStruct/Interactive/ECsInteractiveTypeCustomization.h"
 	// Sound
 #include "DetailCustomizations/EnumStruct/ECsSoundTypeCustomization.h"
+	// AI
+#include "DetailCustomizations/EnumStruct/AI/ECsAITypeCustomization.h"
+#include "DetailCustomizations/EnumStruct/AI/ECsAIStateCustomization.h"
+#include "DetailCustomizations/EnumStruct/AI/ECsAISetupCustomization.h"
 
 void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 {
@@ -112,6 +116,10 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsInteractiveType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsInteractiveTypeCustomization::MakeInstance));
 		// Sound
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsSoundType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsSoundTypeCustomization::MakeInstance));
+		// AI
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsAIType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsAITypeCustomization::MakeInstance));
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsAIState", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsAIStateCustomization::MakeInstance));
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsAISetup", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsAISetupCustomization::MakeInstance));
 	}
 }
 

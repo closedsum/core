@@ -4553,16 +4553,6 @@ public:
 
 namespace ECsStringCompare
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-		extern CSCORE_API const TCsString Equals;
-		extern CSCORE_API const TCsString StartsWith;
-		extern CSCORE_API const TCsString EndsWith;
-		extern CSCORE_API const TCsString Contains;
-	}
-
 	namespace Ref
 	{
 		extern CSCORE_API const Type Equals;
@@ -4574,20 +4564,12 @@ namespace ECsStringCompare
 
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
-		if (EType == Type::Equals) { return Str::Equals.Value; }
-		if (EType == Type::StartsWith) { return Str::StartsWith.Value; }
-		if (EType == Type::EndsWith) { return Str::EndsWith.Value; }
-		if (EType == Type::Contains) { return Str::Contains.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
+		return EMCsStringCompare::Get().ToString(EType);
 	}
 
 	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::Equals) { return Ref::Equals; }
-		if (String == Str::StartsWith) { return Ref::StartsWith; }
-		if (String == Str::EndsWith) { return Ref::EndsWith; }
-		if (String == Str::Contains) { return Ref::Contains; }
-		return Ref::ECsStringCompare_MAX;
+		return EMCsStringCompare::Get().ToType(String);
 	}
 
 	FORCEINLINE bool Compare(const FString &Source, const FString &String, const Type &EType)

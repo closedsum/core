@@ -71,11 +71,22 @@ public:
 	static EMCsItemCollection& Get();
 };
 
+namespace ECsItemCollection
+{
+	namespace Ref
+	{
+		extern CSCORE_API const Type Single;
+		extern CSCORE_API const Type GroupHomogeneous;
+		extern CSCORE_API const Type GroupMixed;
+		extern CSCORE_API const Type ECsItemCollection_MAX;
+	};
+}
+
 namespace ECsItemCollectionCached
 {
 	namespace Str
 	{
-		const FString Single = TEXT("1x");
+		extern CSCORE_API const FString Single;// = TEXT("1x");
 	}
 }
 
@@ -345,6 +356,15 @@ public:
 
 namespace ECsItemMemberValueType
 {
+	namespace Ref
+	{
+		extern CSCORE_API const Type Bool;
+		extern CSCORE_API const Type Uint8;
+		extern CSCORE_API const Type Int32;
+		extern CSCORE_API const Type Float;
+		extern CSCORE_API const Type ECsItemMemberValueType_MAX;
+	};
+
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		return EMCsItemMemberValueType::Get().ToString(EType);
@@ -1019,6 +1039,14 @@ public:
 
 namespace ECsItemOnConsumeContentAction
 {
+	namespace Ref
+	{
+		extern CSCORE_API const Type Consume;
+		extern CSCORE_API const Type Drop;
+		extern CSCORE_API const Type Retain;
+		extern CSCORE_API const Type ECsItemOnConsumeContentAction_MAX;
+	};
+
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
 		return EMCsItemOnConsumeContentAction::Get().ToString(EType);

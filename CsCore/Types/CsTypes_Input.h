@@ -36,15 +36,6 @@ public:
 
 namespace ECsInputDevice
 {
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
-
-	namespace Str
-	{
-		extern CSCORE_API const TCsString MouseAndKeyboard;
-		extern CSCORE_API const TCsString Gamepad;
-		extern CSCORE_API const TCsString MotionController;
-	}
-
 	namespace Ref
 	{
 		extern CSCORE_API const Type MouseAndKeyboard;
@@ -55,18 +46,12 @@ namespace ECsInputDevice
 
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
-		if (EType == Type::MouseAndKeyboard) { return Str::MouseAndKeyboard.Value; }
-		if (EType == Type::Gamepad) { return Str::Gamepad.Value; }
-		if (EType == Type::MotionController) { return Str::MotionController.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
+		return EMCsInputDevice::Get().ToString(EType);
 	}
 
 	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::MouseAndKeyboard) { return Ref::MouseAndKeyboard; }
-		if (String == Str::Gamepad) { return Ref::Gamepad; }
-		if (String == Str::MotionController) { return Ref::MotionController; }
-		return Ref::ECsInputDevice_MAX;
+		return EMCsInputDevice::Get().ToType(String);
 	}
 }
 
@@ -104,17 +89,6 @@ public:
 
 namespace ECsInputType
 {
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
-
-	namespace Str
-	{
-		extern CSCORE_API const TCsString Action;
-		extern CSCORE_API const TCsString Axis;
-		extern CSCORE_API const TCsString Trigger;
-		extern CSCORE_API const TCsString Location;
-		extern CSCORE_API const TCsString Rotation;
-	}
-
 	namespace Ref
 	{
 		extern CSCORE_API const Type Action;
@@ -127,22 +101,12 @@ namespace ECsInputType
 
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
-		if (EType == Type::Action) { return Str::Action.Value; }
-		if (EType == Type::Axis) { return Str::Axis.Value; }
-		if (EType == Type::Trigger) { return Str::Trigger.Value; }
-		if (EType == Type::Location) { return Str::Location.Value; }
-		if (EType == Type::Rotation) { return Str::Rotation.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
+		return EMCsInputType::Get().ToString(EType);
 	}
 
 	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::Action) { return Ref::Action; }
-		if (String == Str::Axis) { return Ref::Axis; }
-		if (String == Str::Trigger) { return Ref::Trigger; }
-		if (String == Str::Location) { return Ref::Location; }
-		if (String == Str::Rotation) { return Ref::Rotation; }
-		return Ref::ECsInputType_MAX;
+		return EMCsInputType::Get().ToType(String);
 	}
 }
 
@@ -183,20 +147,6 @@ public:
 
 namespace ECsInputEvent
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-		extern CSCORE_API const TCsString FirstPressed;
-		extern CSCORE_API const TCsString Pressed;
-		extern CSCORE_API const TCsString FirstReleased;
-		extern CSCORE_API const TCsString Released;
-		extern CSCORE_API const TCsString FirstMoved;
-		extern CSCORE_API const TCsString Moved;
-		extern CSCORE_API const TCsString FirstStationary;
-		extern CSCORE_API const TCsString Stationary;
-	}
-
 	namespace Ref
 	{
 		extern CSCORE_API const Type FirstPressed;
@@ -212,28 +162,12 @@ namespace ECsInputEvent
 
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
-		if (EType == Type::FirstPressed) { return Str::FirstPressed.Value; }
-		if (EType == Type::Pressed) { return Str::Pressed.Value; }
-		if (EType == Type::FirstReleased) { return Str::FirstReleased.Value; }
-		if (EType == Type::Released) { return Str::Released.Value; }
-		if (EType == Type::FirstMoved) { return Str::FirstMoved.Value; }
-		if (EType == Type::Moved) { return Str::Moved.Value; }
-		if (EType == Type::FirstStationary) { return Str::FirstStationary.Value; }
-		if (EType == Type::Stationary) { return Str::Stationary.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
+		return EMCsInputEvent::Get().ToString(EType);
 	}
 
 	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::FirstPressed) { return Ref::FirstPressed; }
-		if (String == Str::Pressed) { return Ref::Pressed; }
-		if (String == Str::FirstReleased) { return Ref::FirstReleased; }
-		if (String == Str::Released) { return Ref::Released; }
-		if (String == Str::FirstMoved) { return Ref::FirstMoved; }
-		if (String == Str::Moved) { return Ref::Moved; }
-		if (String == Str::FirstStationary) { return Ref::FirstStationary; }
-		if (String == Str::Stationary) { return Ref::Stationary; }
-		return Ref::ECsInputEvent_MAX;
+		return EMCsInputEvent::Get().ToType(String);
 	}
 }
 
@@ -270,16 +204,6 @@ public:
 
 namespace ECsInputValue
 {
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
-
-	namespace Str
-	{
-		extern CSCORE_API const TCsString Void;
-		extern CSCORE_API const TCsString Float;
-		extern CSCORE_API const TCsString Vector;
-		extern CSCORE_API const TCsString Rotator;
-	}
-
 	namespace Ref
 	{
 		extern CSCORE_API const Type Void;
@@ -291,20 +215,12 @@ namespace ECsInputValue
 
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
-		if (EType == Type::Void) { return Str::Void.Value; }
-		if (EType == Type::Float) { return Str::Float.Value; }
-		if (EType == Type::Vector) { return Str::Vector.Value; }
-		if (EType == Type::Rotator) { return Str::Rotator.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
+		return EMCsInputValue::Get().ToString(EType);
 	}
 
 	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::Void) { return Ref::Void; }
-		if (String == Str::Float) { return Ref::Float; }
-		if (String == Str::Vector) { return Ref::Vector; }
-		if (String == Str::Rotator) { return Ref::Rotator; }
-		return Ref::ECsInputValue_MAX;
+		return EMCsInputValue::Get().ToType(String);
 	}
 }
 

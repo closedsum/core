@@ -241,13 +241,13 @@ struct CSCORE_API FECsEnum
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enum")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enum")
 	FString Name;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enum")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enum")
 	FString DisplayName;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enum")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enum")
 	FName Name_Internal;
 
 	FECsEnum(){}
@@ -289,7 +289,7 @@ struct CSCORE_API FECsEnum_uint8 : public FECsEnum
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enum_uint8")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enum_uint8")
 	uint8 Value;
 
 	FECsEnum_uint8(){}

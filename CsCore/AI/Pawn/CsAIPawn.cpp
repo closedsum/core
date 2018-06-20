@@ -32,11 +32,10 @@ ACsAIPawn::ACsAIPawn(const FObjectInitializer& ObjectInitializer)
 }
 
 
-void ACsAIPawn::Init(const int32 &Index, const TCsAIType &InType)
+void ACsAIPawn::Init(const int32 &Index, const FECsAIType &InType)
 {
 	PoolIndex	= Index;
 	Type		= InType;
-	Type_Script = (uint8)Type;
 
 	Cache.Set(Index, this);
 }
@@ -48,30 +47,11 @@ void ACsAIPawn::OnCreatePool()
 
 void ACsAIPawn::OnPostCreatePool(){}
 
-template<typename T>
-void ACsAIPawn::Allocate(const uint16 &ActiveIndex, FCsAIPawnPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+void ACsAIPawn::Allocate(const uint16 &ActiveIndex, FCsAIPawnPayload* Payload)
 {
-	Cache.Init<T>(ActiveIndex, Time, RealTime, Frame, InOwner, InParent, InObject, OnDeAllocate);
+	Cache.Init(ActiveIndex, Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
 
 	Allocate_Internal(Payload);
-}
-
-template<typename T>
-void ACsAIPawn::Allocate(const uint16 &ActiveIndex, FCsAIPawnPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
-{
-	Allocate<T>(ActiveIndex, Payload, Time, RealTime, Frame, nullptr, nullptr, InObject, OnDeAllocate);
-}
-
-void ACsAIPawn::Allocate(const uint16 &ActiveIndex, FCsAIPawnPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent)
-{
-	Cache.Init(ActiveIndex, Time, RealTime, Frame, InOwner, InParent);
-
-	Allocate_Internal(Payload);
-}
-
-void ACsAIPawn::Allocate(const uint16 &ActiveIndex, FCsAIPawnPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame)
-{
-	Allocate(ActiveIndex, Payload, Time, RealTime, Frame, nullptr, nullptr);
 }
 
 void ACsAIPawn::Allocate_Internal(FCsAIPawnPayload* Payload)

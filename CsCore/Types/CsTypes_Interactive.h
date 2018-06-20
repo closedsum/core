@@ -1,6 +1,5 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
-#include "Types/CsTypes_Primitive.h"
-#include "Types/CsTypes_Load.h"
+#include "Types/CsTypes_Pool.h"
 
 #include "CsTypes_Interactive.generated.h"
 #pragma once
@@ -467,24 +466,21 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct FCsInteractiveActorPayload
+struct CSCORE_API FCsInteractiveActorPayload : public FCsPooledObjectPayload
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interactive Actor")
-	bool IsAllocated;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactive Actor")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	TWeakObjectPtr<class ACsData_Interactive> Data;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactive Actor")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	float LifeTime;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactive Actor")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	bool bLocation;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactive Actor")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	bool bRotation;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactive Actor")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	bool bScale;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactive Actor")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FTransform Transform;
 
 	void* Blob;
@@ -495,9 +491,10 @@ struct FCsInteractiveActorPayload
 	}
 	~FCsInteractiveActorPayload() {}
 
-	void Reset()
+	FORCEINLINE virtual void Reset() override
 	{
-		IsAllocated = false;
+		FCsPooledObjectPayload::Reset();
+
 		LifeTime = 0.0f;
 		bLocation = false;
 		bRotation = false;

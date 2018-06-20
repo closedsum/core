@@ -56,9 +56,11 @@ struct FCsAIPawnCache : public FCsPooledObjectCache
 {
 	GENERATED_USTRUCT_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<class ACsAIPawn> Pawn;
 
-	// TODO: LifeTime
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	FECsAIType Type;
 
 	FCsAIPawnCache()
 	{
@@ -73,58 +75,27 @@ struct FCsAIPawnCache : public FCsPooledObjectCache
 		Pawn  = InPawn;
 	}
 
-	template<typename T>
-	void Init(const uint16& InActiveIndex, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+	void Init(const int32& InActiveIndex, FCsAIPawnPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
 		ActiveIndex = InActiveIndex;
-		ActiveIndex_Script = (int32)ActiveIndex;
-		Owner = InOwner;
-		Parent = InParent;
+		Owner = Payload->Owner;
+		Parent = Payload->Parent;
 		Time = InTime;
 		RealTime = InRealTime;
 		Frame = InFrame;
-
-		if (InObject && OnDeAllocate)
-		{
-			DelegateInvoker = (UObject*)InObject;
-#if WITH_EDITOR
-			OnDeAllocate_ScriptEvent.AddUObject(InObject, OnDeAllocate);
-#endif // #if WITH_EDITOR
-			OnDeAllocate_Event.AddUObject(InObject, OnDeAllocate);
-		}
-	}
-
-	template<typename T>
-	void Init(const uint16& InActiveIndex, const float &InTime, const float &InRealTime, const uint64 &InFrame, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
-	{
-		Init(InActiveIndex, InTime, InRealTime, InFrame, nullptr, nullptr, InObject, OnDeAllocate);
-	}
-
-	void Init(const uint16& InActiveIndex, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent)
-	{
-		ActiveIndex = InActiveIndex;
-		ActiveIndex_Script = (int32)ActiveIndex;
-		Owner = InOwner;
-		Parent = InParent;
-		Time = InTime;
-		RealTime = InRealTime;
-		Frame = InFrame;
-	}
-
-	void Init(const uint16& InActiveIndex, const float &InTime, const float &InRealTime, const uint64 &InFrame)
-	{
-		Init(InActiveIndex, InTime, InRealTime, InFrame, nullptr, nullptr);
 	}
 
 	virtual void Reset() override
 	{
-		Reset_Internal();
+		FCsPooledObjectCache::Reset();
 
 		Pawn.Reset();
 		Pawn = nullptr;
 	}
 
-	ACsAIPawn* GetPawn() { return Pawn.IsValid() ? Pawn.Get() : nullptr; }
+	FORCEINLINE ACsAIPawn* GetPawn() { return Pawn.IsValid() ? Pawn.Get() : nullptr; }
+	template<typename T>
+	FORCEINLINE T* GetPawn() { return Cast<T>(GetPawn()); }
 };
 
 UCLASS()
@@ -138,27 +109,18 @@ class CSCORE_API ACsAIPawn : public ACsPawn
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Pool")
 	bool IsAllocated;
 
-	TCsAIType Type;
-
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "AI")
-	uint8 Type_Script;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
+	FECsAIType Type;
 
 	UPROPERTY(BlueprintReadWrite, Category = "AI")
 	struct FCsAIPawnCache Cache;
 
-	void Init(const int32 &Index, const TCsAIType &InType);
+	void Init(const int32 &Index, const FECsAIType &InType);
 
 	virtual void OnCreatePool();
 	virtual void OnPostCreatePool();
 
-	template<typename T>
-	void Allocate(const uint16 &ActiveIndex, FCsAIPawnPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
-
-	template<typename T>
-	void Allocate(const uint16 &ActiveIndex, FCsAIPawnPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
-
-	void Allocate(const uint16 &ActiveIndex, FCsAIPawnPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent);
-	void Allocate(const uint16 &ActiveIndex, FCsAIPawnPayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame);
+	void Allocate(const uint16 &ActiveIndex, FCsAIPawnPayload* Payload);
 
 	virtual void Allocate_Internal(FCsAIPawnPayload* Payload);
 
@@ -170,10 +132,10 @@ class CSCORE_API ACsAIPawn : public ACsPawn
 #pragma region
 public:
 
-	TCsAIState CurrentState;
-	TCsAIState SpawnedState;
+	FECsAIState CurrentState;
+	FECsAIState SpawnedState;
 
-	TCsAISetup CurrentSetup;
+	FECsAISetup CurrentSetup;
 
 #pragma endregion Setup
 

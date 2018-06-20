@@ -107,16 +107,6 @@ EMCsPhysicsImpulseType& EMCsPhysicsImpulseType::Get()
 
 namespace ECsPhysicsImpulseType
 {
-	namespace Str
-	{
-		CSCORE_API const TCsString AddForce = TCsString(TEXT("AddForce"), TEXT("addforce"));
-		CSCORE_API const TCsString AddForceAtPosition = TCsString(TEXT("AddForceAtPosition"), TEXT("addforceatposition"));
-		CSCORE_API const TCsString AddTorque = TCsString(TEXT("AddTorque"), TEXT("addtorque"));
-		CSCORE_API const TCsString AddAngularImpulse = TCsString(TEXT("AddAngularImpulse"), TEXT("addangularimpulse"));
-		CSCORE_API const TCsString AddImpulse = TCsString(TEXT("AddImpulse"), TEXT("addimpulse"));
-		CSCORE_API const TCsString AddImpulseAtPosition = TCsString(TEXT("AddImpulseAtPosition"), TEXT("addimpulseatposition"));
-	}
-
 	namespace Ref
 	{
 		CSCORE_API const Type AddForce = EMCsPhysicsImpulseType::Get().Add(Type::AddForce, TEXT("AddForce"), TEXT("Add Force"));

@@ -49,6 +49,8 @@ protected:
 		check(ValueHandle.IsValid());
 		NameHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(EnumStruct, Name));
 		check(NameHandle.IsValid());
+		NameInternalHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(EnumStruct, Name_Internal));
+		check(NameInternalHandle.IsValid());
 		DisplayNameHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(EnumStruct, DisplayName));
 		check(DisplayNameHandle.IsValid());
 	}
@@ -80,6 +82,8 @@ protected:
 			ValueHandle->SetValue(Enum.Value);
 			check(NameHandle.IsValid());
 			NameHandle->SetValue(Enum.Name);
+			check(NameInternalHandle.IsValid());
+			NameInternalHandle->SetValue(Enum.Name_Internal);
 		}
 	}
 
@@ -91,6 +95,7 @@ protected:
 
 	TSharedPtr<IPropertyHandle> ValueHandle;
 	TSharedPtr<IPropertyHandle> NameHandle;
+	TSharedPtr<IPropertyHandle> NameInternalHandle;
 	TSharedPtr<IPropertyHandle> DisplayNameHandle;
 	TArray<TSharedPtr<FString>> DisplayNameList;
 	TSharedPtr<SComboBox<TSharedPtr<FString>>> DisplayNameComboBox;

@@ -87,11 +87,11 @@ public:
 
 	virtual void LoadAnims();
 
-	UFUNCTION(BlueprintCallable, Category = "AI Weapon AnimInstance", meta = (BlueprintThreadSafe))
+	UFUNCTION(BlueprintCallable, Category = "Weapon AnimInstance", meta = (BlueprintThreadSafe, AutoCreateRefTerm = "AnimType"))
 	virtual class UAnimMontage* GetAnimMontage(const FECsWeaponAnim &AnimType, const int32 &Index = 0) const;
-	UFUNCTION(BlueprintCallable, Category = "AI Weapon AnimInstance", meta = (BlueprintThreadSafe))
+	UFUNCTION(BlueprintCallable, Category = "Weapon AnimInstance", meta = (BlueprintThreadSafe, AutoCreateRefTerm = "AnimType"))
 	virtual class UAnimSequence* GetAnimSequence(const FECsWeaponAnim &AnimType) const;
-	UFUNCTION(BlueprintCallable, Category = "AI Weapon AnimInstance", meta = (BlueprintThreadSafe))
+	UFUNCTION(BlueprintCallable, Category = "Weapon AnimInstance", meta = (BlueprintThreadSafe, AutoCreateRefTerm = "BlendType"))
 	virtual class UBlendSpace* GetBlendSpace(const FECsWeaponBlendSpace &BlendType) const;
 
 	UFUNCTION(BlueprintCallable, Category = "AI Weapon AnimInstance")

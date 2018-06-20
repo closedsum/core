@@ -200,6 +200,13 @@ public:
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
+	FORCEINLINE const FString& ToString(const int32& Index)
+	{
+		if (Index >= Count)
+			return CS_INVALID_ENUM_TO_STRING;
+		return ToString(Enums[Index]);
+	}
+
 	FORCEINLINE const FName& ToName(const EnumType& Enum)
 	{
 		if (FName* Name = ToNameInternalMap.Find(Enum))
@@ -234,13 +241,13 @@ struct CSCORE_API FECsEnum
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enum")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enum")
 	FString Name;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enum")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enum")
 	FString DisplayName;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enum")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enum")
 	FName Name_Internal;
 
 	FECsEnum(){}
@@ -282,7 +289,7 @@ struct CSCORE_API FECsEnum_uint8 : public FECsEnum
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enum_uint8")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enum_uint8")
 	uint8 Value;
 
 	FECsEnum_uint8(){}
@@ -746,7 +753,7 @@ public:
 #pragma region
 
 template<typename T>
-struct TCsPrimitiveType
+struct TCsProperty
 {
 public:
 	T DefaultValue;
@@ -758,8 +765,8 @@ public:
 	TMulticastDelegate<void, const T&> OnChange_Event;
 
 public:
-	TCsPrimitiveType(){}
-	virtual ~TCsPrimitiveType(){}
+	TCsProperty(){}
+	virtual ~TCsProperty(){}
 
 	void SetDefaultValue(const T &inDefaultValue)
 	{
@@ -774,7 +781,7 @@ public:
 			OnChange_Event.Broadcast(Value);
 	}
 
-	TCsPrimitiveType& operator=(const T& B)
+	TCsProperty& operator=(const T& B)
 	{
 		Value = B;
 		UpdateIsDirty();
@@ -829,7 +836,7 @@ public:
 	}
 };
 
-struct CSCORE_API FCsPrimitiveType_int32 : public TCsPrimitiveType<int32>
+struct CSCORE_API FCsPrimitiveType_int32 : public TCsProperty<int32>
 {
 	FCsPrimitiveType_int32()
 	{
@@ -998,7 +1005,7 @@ struct CSCORE_API FCsPrimitiveType_int32 : public TCsPrimitiveType<int32>
 
 typedef FCsPrimitiveType_int32 TCsInt32;
 
-struct CSCORE_API FCsPrimitiveType_uint32 : public TCsPrimitiveType<uint32>
+struct CSCORE_API FCsPrimitiveType_uint32 : public TCsProperty<uint32>
 {
 	FCsPrimitiveType_uint32()
 	{
@@ -1167,7 +1174,7 @@ struct CSCORE_API FCsPrimitiveType_uint32 : public TCsPrimitiveType<uint32>
 
 typedef FCsPrimitiveType_uint32 TCsUint32;
 
-struct CSCORE_API FCsPrimitiveType_float : public TCsPrimitiveType<float>
+struct CSCORE_API FCsPrimitiveType_float : public TCsProperty<float>
 {
 	FCsPrimitiveType_float()
 	{
@@ -1313,7 +1320,7 @@ typedef FCsPrimitiveType_float TCsFloat;
 #define CS_AXIS_Z 2
 #define CS_AXES_3D_ALL 3
 
-struct CSCORE_API FCsPrimitiveType_FVector2D : public TCsPrimitiveType<FVector2D>
+struct CSCORE_API FCsPrimitiveType_FVector2D : public TCsProperty<FVector2D>
 {
 
 protected:
@@ -1443,7 +1450,7 @@ public:
 
 typedef FCsPrimitiveType_FVector2D TCsFVector2D;
 
-struct CSCORE_API FCsPrimitiveType_FVector : public TCsPrimitiveType<FVector>
+struct CSCORE_API FCsPrimitiveType_FVector : public TCsProperty<FVector>
 {
 
 protected:
@@ -1574,7 +1581,7 @@ typedef FCsPrimitiveType_FVector TCsFVector;
 #define CS_AXIS_YAW 2
 
 
-struct CSCORE_API FCsPrimitiveType_FRotator : public TCsPrimitiveType<FRotator>
+struct CSCORE_API FCsPrimitiveType_FRotator : public TCsProperty<FRotator>
 {
 
 protected:
@@ -1693,7 +1700,7 @@ public:
 
 typedef FCsPrimitiveType_FRotator TCsFRotator;
 
-struct CSCORE_API FCsPrimitiveType_FString : public TCsPrimitiveType<FString>
+struct CSCORE_API FCsPrimitiveType_FString : public TCsProperty<FString>
 {
 public:
 
@@ -1733,7 +1740,7 @@ public:
 
 typedef FCsPrimitiveType_FString TCsFString;
 
-struct CSCORE_API FCsPrimitiveType_FLinearColor : public TCsPrimitiveType<FLinearColor>
+struct CSCORE_API FCsPrimitiveType_FLinearColor : public TCsProperty<FLinearColor>
 {
 public:
 
@@ -4546,16 +4553,6 @@ public:
 
 namespace ECsStringCompare
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-		extern CSCORE_API const TCsString Equals;
-		extern CSCORE_API const TCsString StartsWith;
-		extern CSCORE_API const TCsString EndsWith;
-		extern CSCORE_API const TCsString Contains;
-	}
-
 	namespace Ref
 	{
 		extern CSCORE_API const Type Equals;
@@ -4567,20 +4564,12 @@ namespace ECsStringCompare
 
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
-		if (EType == Type::Equals) { return Str::Equals.Value; }
-		if (EType == Type::StartsWith) { return Str::StartsWith.Value; }
-		if (EType == Type::EndsWith) { return Str::EndsWith.Value; }
-		if (EType == Type::Contains) { return Str::Contains.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
+		return EMCsStringCompare::Get().ToString(EType);
 	}
 
 	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::Equals) { return Ref::Equals; }
-		if (String == Str::StartsWith) { return Ref::StartsWith; }
-		if (String == Str::EndsWith) { return Ref::EndsWith; }
-		if (String == Str::Contains) { return Ref::Contains; }
-		return Ref::ECsStringCompare_MAX;
+		return EMCsStringCompare::Get().ToType(String);
 	}
 
 	FORCEINLINE bool Compare(const FString &Source, const FString &String, const Type &EType)

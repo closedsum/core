@@ -1,6 +1,6 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_View.h"
-#include "Types/CsTypes_Load.h"
+#include "Types/CsTypes_Pool.h"
 
 #include "Sound/SoundCue.h"
 
@@ -99,7 +99,7 @@ namespace ECsSoundPriority
 }
 
 USTRUCT(BlueprintType)
-struct FCsSoundElement
+struct CSCORE_API FCsSoundElement
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -195,7 +195,7 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct FCsFpvSoundElement
+struct CSCORE_API FCsFpvSoundElement
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -244,46 +244,26 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct FCsSoundPayload
+struct CSCORE_API FCsSoundPayload : public FCsPooledObjectPayload
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
-	bool IsAllocated;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
-	TWeakObjectPtr<UObject> Instigator;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
-	TWeakObjectPtr<UObject> Owner;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
-	TWeakObjectPtr<UObject> Parent;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	TWeakObjectPtr<class USoundCue> Sound;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	TEnumAsByte<ECsSoundPriority::Type> Priority;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	bool bSpatialize;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload", meta = (ClampMin = "0.05", UIMin = "0.05"))
 	float Duration;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	bool IsLooping;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	float VolumeMultiplier;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	float PitchMultiplier;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FName Bone;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FVector Location;
 
@@ -302,14 +282,10 @@ struct FCsSoundPayload
 		Bone = Element->Bone;
 	}
 
-	FORCEINLINE void Reset()
+	FORCEINLINE virtual void Reset() override
 	{
-		Instigator.Reset();
-		Instigator = nullptr;
-		Owner.Reset();
-		Owner = nullptr;
-		Parent.Reset();
-		Parent = nullptr;
+		FCsPooledObjectPayload::Reset();
+
 		Sound = nullptr;
 		Priority = ECsSoundPriority::Medium;
 		bSpatialize = true;
@@ -320,18 +296,6 @@ struct FCsSoundPayload
 		Bone = NAME_None;
 		Location = FVector::ZeroVector;
 	}
-
-	FORCEINLINE UObject* GetInstigator() { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
-	template<typename T>
-	FORCEINLINE T* GetInstigator() { return Cast<T>(GetInstigator()); }
-
-	FORCEINLINE UObject* GetOwner() { return Owner.IsValid() ? Owner.Get() : nullptr; }
-	template<typename T>
-	FORCEINLINE T* GetOwner() { return Cast<T>(GetOwner()); }
-
-	FORCEINLINE UObject* GetParent() { return Parent.IsValid() ? Parent.Get() : nullptr; }
-	template<typename T>
-	FORCEINLINE T* GetParent() { return Cast<T>(GetParent()); }
 
 	FORCEINLINE USoundCue* GetCue() { return Sound.IsValid() ? Sound.Get() : nullptr; }
 	template<typename T>

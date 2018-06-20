@@ -1,7 +1,6 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "UI/Simple/CsSimpleWidget.h"
-#include "Types/CsTypes_Pool.h"
 #include "Types/CsTypes_UI.h"
 #include "CsPooledWidget.generated.h"
 
@@ -10,7 +9,11 @@ struct FCsPooledWidgetCache : public FCsPooledObjectCache
 {
 	GENERATED_USTRUCT_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<class UCsPooledWidget> Widget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	TEnumAsByte<ECsSimpleWidgetType::Type> Type;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FString DisplayName;
@@ -24,88 +27,39 @@ struct FCsPooledWidgetCache : public FCsPooledObjectCache
 
 	~FCsPooledWidgetCache() {}
 
-	void Set(const uint16 &InIndex, class UCsPooledWidget* InWidget)
+	void Set(const int32 &InIndex, class UCsPooledWidget* InWidget)
 	{
-		SetIndex(InIndex);
+		Index = InIndex;
 		Widget = InWidget;
 	}
 
-	template<typename T>
-	void Init(const uint16& InActiveIndex, FCsPooledWidgetPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)())
+	void Init(const int32& InActiveIndex, FCsWidgetPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
-		SetActiveIndex(InActiveIndex);
+		ActiveIndex = InActiveIndex;
 
 		IsAllocated = true;
 
-		Owner = InOwner;
-		Parent = InParent;
+		Owner = Payload->Owner;
+		Parent = Payload->Parent;
 
 		SetLifeTime(Payload->LifeTime);
 
 		Time = InTime;
 		RealTime = InRealTime;
 		SetFrame(InFrame);
-
-		if (InObject && OnDeAllocate)
-		{
-			DelegateInvoker = (UObject*)InObject;
-#if WITH_EDITOR
-			OnDeAllocate_ScriptEvent.AddUObject(InObject, OnDeAllocate);
-#endif // #if WITH_EDITOR
-			OnDeAllocate_Event.AddUObject(InObject, OnDeAllocate);
-		}
-	}
-
-	template<typename T>
-	void Init(const uint16& InActiveIndex, FCsPooledWidgetPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, T* InObject, void (T::*OnDeAllocate)())
-	{
-		Init(InActiveIndex, Payload, InTime, InRealTime, InFrame, nullptr, nullptr, InObject, OnDeAllocate);
-	}
-
-	template<typename T>
-	void Init(const uint16& InActiveIndex, FCsPooledWidgetPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)())
-	{
-		Init(InActiveIndex, Payload, InTime, InRealTime, InFrame, InOwner, nullptr, InObject, OnDeAllocate);
-	}
-
-	void Init(const uint16& InActiveIndex, FCsPooledWidgetPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent)
-	{
-		SetActiveIndex(InActiveIndex);
-
-		IsAllocated = true;
-
-		Owner = InOwner;
-		Parent = InParent;
-
-		SetLifeTime(Payload->LifeTime);
-
-		Time = InTime;
-		RealTime = InRealTime;
-		SetFrame(InFrame);
-	}
-
-	void Init(const uint16& InActiveIndex, FCsPooledWidgetPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner)
-	{
-		Init(InActiveIndex, Payload, InTime, InRealTime, InFrame, InOwner, nullptr);
-	}
-
-	void Init(const uint16& InActiveIndex, FCsPooledWidgetPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
-	{
-		Init(InActiveIndex, Payload, InTime, InRealTime, InFrame, nullptr, nullptr);
 	}
 
 	virtual void Reset() override
 	{
-		Reset_Internal();
+		FCsPooledObjectCache::Reset();
 
 		DisplayName = ECsCached::Str::Empty;
 		Offset = FIntPoint::ZeroValue;
 	}
 
-	UCsPooledWidget* GetWidget() { return Widget.IsValid() ? Widget.Get() : nullptr; }
-	
+	FORCEINLINE UCsPooledWidget* GetWidget() { return Widget.IsValid() ? Widget.Get() : nullptr; }
 	template<typename T>
-	T* GetWidget() { return Cast<T>(GetWidget()); }
+	FORCEINLINE T* GetWidget() { return Cast<T>(GetWidget()); }
 };
 
 UCLASS()
@@ -114,9 +68,9 @@ class CSCORE_API UCsPooledWidget : public UCsSimpleWidget
 	GENERATED_UCLASS_BODY()
 
 	virtual void Init(const FGeometry& MyGeometry) override;
-	virtual void Init(const int32 &Index) override;
+	virtual void Init(const int32 &Index, const TCsSimpleWidgetType &InType) override;
  
-	virtual void Allocate(const uint16& ActiveIndex, FCsPooledWidgetPayload* Payload, UObject* InOwner, UObject* InParent);
+	virtual void Allocate(const uint16& ActiveIndex, FCsWidgetPayload* Payload);
 	virtual void DeAllocate();
 
 	UPROPERTY(BlueprintReadWrite, Category = "Widget")

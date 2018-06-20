@@ -1,6 +1,5 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Types/CsTypes_Pool.h"
 #include "Types/CsTypes_Interactive.h"
 #include "Managers/CsPooledActor.h"
 #include "UI/CsUserWidget.h"
@@ -63,8 +62,13 @@ struct FCsWidgetActorCache : public FCsPooledObjectCache
 {
 	GENERATED_USTRUCT_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<class ACsWidgetActor> WidgetActor;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<class UUserWidget> Widget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	FECsWidgetActorType Type;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FVector2D DrawSize;
@@ -104,68 +108,21 @@ struct FCsWidgetActorCache : public FCsPooledObjectCache
 		Reset();
 	}
 
-	void Set(const uint16 &InIndex, ACsWidgetActor* InWidgetActor)
+	void Set(const int32 &InIndex, ACsWidgetActor* InWidgetActor)
 	{
-		SetIndex(InIndex);
+		Index = InIndex;
 		WidgetActor = InWidgetActor;
 	}
 
-	template<typename T>
-	void Init(const uint16& InActiveIndex, FCsWidgetActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
+	void Init(const int32& InActiveIndex, FCsWidgetActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
-		SetActiveIndex(InActiveIndex);
+		ActiveIndex = InActiveIndex;
 
 		IsAllocated = true;
 
 		SetLifeTime(Payload->LifeTime);
 
-		Owner	 = InOwner;
-		Widget   = Payload->GetWidget();
-		DrawSize = Payload->Size;
-		bMinDrawDistance = Payload->bMinDrawDistance;
-		MinDrawDistance = Payload->MinDrawDistance;
-		ScaleByDistance = Payload->ScaleByDistance;
-		Transform = Payload->Transform;
-		Rotation = Transform.GetRotation().Rotator();
-		Location = Transform.GetTranslation();
-		Scale = Transform.GetScale3D();
-		FollowCamera = Payload->FollowCamera;
-		DistanceProjectedOutFromCamera = Payload->DistanceProjectedOutFromCamera;
-		LookAtCamera = Payload->LookAtCamera;
-		CameraLockAxes = Payload->LockAxes;
-		bMovementFunction = Payload->bMovementFunction;
-		MovementFunction = Payload->MovementFunction;
-		MovementFunction.Seed();
-		Parent   = InParent;
-		Time	 = InTime;
-		RealTime = InRealTime;
-		SetFrame(InFrame);
-
-		if (InObject && OnDeAllocate)
-		{
-			DelegateInvoker = (UObject*)InObject;
-#if WITH_EDITOR
-			OnDeAllocate_ScriptEvent.AddUObject(InObject, OnDeAllocate);
-#endif // #if WITH_EDITOR
-			OnDeAllocate_Event.AddUObject(InObject, OnDeAllocate);
-		}
-	}
-
-	template<typename T>
-	void Init(const uint16& InActiveIndex, FCsWidgetActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
-	{
-		Init(InActiveIndex, Payload, InTime, InRealTime, InFrame, nullptr, nullptr, InObject, OnDeAllocate);
-	}
-
-	void Init(const uint16& InActiveIndex, FCsWidgetActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent)
-	{
-		SetActiveIndex(InActiveIndex);
-
-		IsAllocated = true;
-
-		SetLifeTime(Payload->LifeTime);
-
-		Owner	 = InOwner;
+		Owner	 = Payload->Owner;
 		Widget = Payload->GetWidget();
 		DrawSize = Payload->Size;
 		bMinDrawDistance = Payload->bMinDrawDistance;
@@ -182,20 +139,15 @@ struct FCsWidgetActorCache : public FCsPooledObjectCache
 		bMovementFunction = Payload->bMovementFunction;
 		MovementFunction = Payload->MovementFunction;
 		MovementFunction.Seed();
-		Parent	 = InParent;
+		Parent	 = Payload->Parent;
 		Time	 = InTime;
 		RealTime = InRealTime;
 		SetFrame(InFrame);
 	}
 
-	void Init(const uint16& InActiveIndex, FCsWidgetActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
-	{
-		Init(InActiveIndex, Payload, InTime, InRealTime, InFrame, nullptr, nullptr);
-	}
-
 	virtual void Reset() override
 	{
-		Reset_Internal();
+		FCsPooledObjectCache::Reset();
 
 		Widget.Reset();
 		Widget = nullptr;
@@ -245,13 +197,6 @@ class CSCORE_API ACsWidgetActor : public ACsPooledActor
 #pragma region
 public:
 
-	template<typename T>
-	void Allocate(const uint16 &ActiveIndex, FCsWidgetActorPayload* Payload, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
-
-	template<typename T>
-	void Allocate(const uint16 &ActiveIndex, FCsWidgetActorPayload* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
-
-	void Allocate(const uint16 &ActiveIndex, FCsWidgetActorPayload* Payload, UObject* InOwner, UObject* InParent);
 	void Allocate(const uint16 &ActiveIndex, FCsWidgetActorPayload* Payload);
 
 	virtual void Allocate_Internal(FCsWidgetActorPayload* Payload);

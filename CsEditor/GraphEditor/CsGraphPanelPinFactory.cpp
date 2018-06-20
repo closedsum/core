@@ -11,6 +11,7 @@
 #include "Types/CsTypes_Damage.h"
 #include "Types/CsTypes_Sound.h"
 #include "Types/CsTypes_Interactive.h"
+#include "Types/CsTypes_AI.h"
 
 #include "SlateBasics.h"
 
@@ -57,6 +58,10 @@
 #include "GraphEditor/EnumStruct/Interactive/SCsGraphPin_ECsInteractiveType.h"
 	// Sound
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsSoundType.h"
+	// AI
+#include "GraphEditor/EnumStruct/AI/SCsGraphPin_ECsAIType.h"
+#include "GraphEditor/EnumStruct/AI/SCsGraphPin_ECsAIState.h"
+#include "GraphEditor/EnumStruct/AI/SCsGraphPin_ECsAISetup.h"
 
 // Managers
 #include "Managers/Process/CsProcess.h"
@@ -161,6 +166,15 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 	}
 	// FECsSoundType
 	if (DoesPinUseScriptStruct<FECsSoundType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsSoundType, InPin); }
+	// AI
+	{
+		// FECsAIType
+		if (DoesPinUseScriptStruct<FECsAIType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsAIType, InPin); }
+		// FECsAIState
+		if (DoesPinUseScriptStruct<FECsAIState>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsAIState, InPin); }
+		// FECsAISetup
+		if (DoesPinUseScriptStruct<FECsAISetup>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsAISetup, InPin); }
+	}
 	return nullptr;
 }
 

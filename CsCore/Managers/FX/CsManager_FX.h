@@ -2,70 +2,104 @@
 #pragma once
 
 #include "Managers/CsManager.h"
-#include "Types/CsTypes_FX.h"
+#include "Managers/FX/CsEmitter.h"
 #include "CsManager_FX.generated.h"
 
+#define CS_FX_PAYLOAD_SIZE 255
+
+class FCsManager_FX : public TCsManager_PooledObjects<ACsEmitter, FCsFxPayload, CS_FX_PAYLOAD_SIZE>
+{
+public:
+	~FCsManager_FX();
+
+	// Interface
+#pragma region
+
+	virtual void DeconstructObject(ACsEmitter* a) override;
+	virtual FString GetObjectName(ACsEmitter* a) override;
+	virtual void LogTransaction(const FString &functionName, const TEnumAsByte<ECsPoolTransaction::Type> &transaction, ACsEmitter* o) override;
+	virtual void Log(const FString& log) override;
+	virtual void OnTick(const float &deltaTime) override;
+	virtual ACsEmitter* Allocate() override;
+
+#pragma endregion Interface
+
+#if WITH_EDITOR
+	void ToggleEmitterEditorIcons(const bool &toggle);
+#endif // #if WITH_EDITOR
+};
+
 UCLASS()
-class CSCORE_API ACsManager_FX : public ACsManager
+class CSCORE_API AICsManager_FX : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
-private:
+protected:
+
+	FCsManager_FX* Internal;
 
 	static TWeakObjectPtr<UObject> MyOwner;
 
 	static UObject* GetMyOwner();
+	template<typename T>
+	static T* GetMyOwner()
+	{
+		return Cast<T>(GetMyOwner());
+	}
 
 public:
 
 	static void Init(UObject* InOwner);
-	static ACsManager_FX* Get(UWorld* InWorld);
 
-	virtual void Clear() override;
-	virtual void Shutdown() override;
+	static AICsManager_FX* Get(UWorld* InWorld);
+	template<typename T>
+	T* Get(UWorld* InWorld)
+	{
+		return Cast<T>(Get(InWorld));
+	}
+
 	virtual void Destroyed() override;
-	virtual void CreatePool(const int32 &Size) override;
-	virtual void OnTick(const float &DeltaSeconds) override;
 
-	TSubclassOf<class ACsEmitter> EmitterClass;
+	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
+	void Clear();
 
-	TArray<class ACsEmitter*> ActiveEmitters;
+	void Shutdown();
 
-	UPROPERTY()
-	TArray<class ACsEmitter*> Pool;
+	virtual ACsEmitter* ConstructObject();
 
-	uint8 PoolIndex;
+	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
+	void CreatePool(const int32 &Size);
+	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
+	void AddToPool(ACsEmitter* Sound);
+	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
+	void AddToActivePool(ACsEmitter* Sound);
+	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
+	void OnTick(const float &DeltaTime);
+	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
+	const TArray<ACsEmitter*>& GetAllActiveActors();
 
-	virtual void LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, class UObject* InObject) override;
+	const TArray<ACsEmitter*>& GetActors();
 
-	UFUNCTION(BlueprintCallable, Category = "Pool")
-	class ACsEmitter* Allocate();
+	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
+	int32 GetActivePoolSize();
+	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
+	bool IsExhausted();
+	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
+	bool DeAllocate(const int32 &Index);
+	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
+	void DeAllocateAll();
 
-	virtual void DeAllocate(const int32 &Index) override;
+	FCsFxPayload* AllocatePayload();
 
-	class ACsEmitter* Play(FCsFxElement* InFX, UObject* InOwner, UObject* InParent);
-	class ACsEmitter* Play(FCsFxElement* InFX, UObject* InOwner);
-	class ACsEmitter* Play(FCsFxElement* InFX);
-	class ACsEmitter* Play(FCsFxElement* InFX, UObject* InOwner, const FVector &Location, const FRotator &Rotation);
-
-	class ACsEmitter* Play(FCsFxElement* InFX, UObject* InOwner, UObject* InParent, const FRotator &Rotation);
+	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
+	ACsEmitter* Play(FCsFxPayload &Payload);
+	ACsEmitter* Play(FCsFxPayload* Payload);
 
 	template<typename T>
-	void Play(class ACsEmitter* OutEmitter, FCsFxElement* InFX, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)());
-
-	template<typename T>
-	void Play(class ACsEmitter* OutEmitter, FCsFxElement* InFX, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)());
-
-	template<typename T>
-	void Play(class ACsEmitter* OutEmitter, FCsFxElement* InFX, T* InObject, void (T::*OnDeAllocate)());
-
-	template<typename T>
-	void Play(class ACsEmitter* OutEmitter, FCsFxElement* InFX, UObject* InOwner, const FVector &Location, const FRotator &Rotation, T* InObject, void (T::*OnDeAllocate)());
-
-	UFUNCTION(BlueprintCallable, Category = "Pool")
-	class ACsEmitter* Play_Script(FCsFxElement& InFX, UObject* InOwner, UObject* InParent);
-	UFUNCTION(BlueprintCallable, Category = "Pool")
-	class ACsEmitter* Play_ScriptEX(FCsFxElement& InFX, UObject* InOwner, const FVector &Location, const FRotator &Rotation);
+	T* Play(FCsFxPayload* Payload)
+	{
+		return Cast<T>(Play(Payload));
+	}
 
 #if WITH_EDITOR
 	void ToggleEmitterEditorIcons(const bool &Toggle);

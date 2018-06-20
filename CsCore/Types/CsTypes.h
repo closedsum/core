@@ -1344,24 +1344,12 @@ namespace ECsPhysicsImpulseType
 
 	FORCEINLINE const FString& ToString(const Type &EType)
 	{
-		if (EType == Type::AddForce) { return Str::AddForce.Value; }
-		if (EType == Type::AddForceAtPosition) { return Str::AddForceAtPosition.Value; }
-		if (EType == Type::AddTorque) { return Str::AddTorque.Value; }
-		if (EType == Type::AddAngularImpulse) { return Str::AddAngularImpulse.Value; }
-		if (EType == Type::AddImpulse) { return Str::AddImpulse.Value; }
-		if (EType == Type::AddImpulseAtPosition) { return Str::AddImpulseAtPosition.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
+		return EMCsPhysicsImpulseType::Get().ToString(EType);
 	}
 
 	FORCEINLINE const Type& ToType(const FString &String)
 	{
-		if (String == Str::AddForce) { return Ref::AddForce; }
-		if (String == Str::AddForceAtPosition) { return Ref::AddForceAtPosition; }
-		if (String == Str::AddTorque) { return Ref::AddTorque; }
-		if (String == Str::AddAngularImpulse) { return Ref::AddAngularImpulse; }
-		if (String == Str::AddImpulse) { return Ref::AddImpulse; }
-		if (String == Str::AddImpulseAtPosition) { return Ref::AddImpulseAtPosition; }
-		return Ref::ECsPhysicsImpulseType_MAX;
+		return EMCsPhysicsImpulseType::Get().ToType(String);
 	}
 }
 

@@ -760,7 +760,7 @@ template<typename T>
 	{
 		EnumStruct* Member  = StructProperty->ContainerPtrToValuePtr<EnumStruct>(InObject);
 		const FString Value = JsonObject->GetStringField(MemberName);
-		*Member				= EnumMap::Get()[Value];
+		*Member				= EnumMap::Get().GetSafeEnum(Value);
 	}
 
 	template<typename T>

@@ -109,16 +109,408 @@ namespace ECsManagerPooledObjectsFunctionNames
 	};
 }
 
-template<typename EnumType, typename ObjectType, typename PayloadType, int32 PAYLOAD_SIZE = 1>
-class TCsManagerPooledObjects
+template<typename ObjectType, typename PayloadType, int32 PAYLOAD_SIZE = 1>
+class TCsManager_PooledObjects
 {
 public:
-	TCsManagerPooledObjects()
+	TCsManager_PooledObjects()
 	{
-		ConstructObject_Call.BindRaw(this, &TCsManagerPooledObjects::ConstructObject);
+		PoolSize = 0;
+		PoolIndex = 0;
+		PayloadIndex = 0;
+
+		ConstructObject_Call.BindRaw(this, &TCsManager_PooledObjects::ConstructObject);
 	}
 
-	virtual ~TCsManagerPooledObjects()
+	virtual ~TCsManager_PooledObjects()
+	{
+		Shutdown();
+	}
+
+public:
+	FString Name;
+	FString ObjectClassName;
+
+	TWeakObjectPtr<class UWorld> CurrentWorld;
+
+	TBaseDelegate<ObjectType*> ConstructObject_Call;
+
+	TMulticastDelegate<void, ObjectType*> OnAddToPool_Event;
+	TMulticastDelegate<void, ObjectType*> OnDeAllocate_Event;
+
+	TAutoConsoleVariable<int32>* LogTransactions;
+
+	TBaseDelegate<void, ObjectType*> OnTick_Handle_Object;
+
+protected:
+	FString FunctionNames[ECsManagerPooledObjectsFunctionNames::ECsManagerPooledObjectsFunctionNames_MAX];
+
+	TArray<ObjectType*> Pool;
+	int32 PoolSize;
+	int32 PoolIndex;
+	TArray<ObjectType*> ActiveObjects;
+
+	PayloadType Payloads[PAYLOAD_SIZE];
+	int32 PayloadIndex;
+
+public:
+
+	virtual void Init(const FString& name, const FString &objectClassName, UWorld* world, TAutoConsoleVariable<int32>* logTransactions)
+	{
+		Name = name;
+		ObjectClassName = objectClassName;
+		CurrentWorld = world;
+		LogTransactions = logTransactions;
+
+		FunctionNames[ECsManagerPooledObjectsFunctionNames::OnTick] = Name + TEXT("::OnTick");
+		FunctionNames[ECsManagerPooledObjectsFunctionNames::DeAllocate] = Name + TEXT("::DeAllocate");
+		FunctionNames[ECsManagerPooledObjectsFunctionNames::DeAllocateAll] = Name + TEXT("::DeAllocateAll");
+		FunctionNames[ECsManagerPooledObjectsFunctionNames::Spawn] = Name + TEXT("::Spawn");
+	}
+
+	virtual void DeconstructObject(ObjectType* o)
+	{
+		delete o;
+	}
+
+	virtual void Clear()
+	{
+		for (ObjectType* o : Pool)
+		{
+			o->DeAllocate();
+			DeconstructObject(o);
+		}
+
+		Pool.Reset();
+		PoolSize = 0;
+		ActiveObjects.Reset();
+
+		for (int32 i = 0; i < PAYLOAD_SIZE; ++i)
+		{
+			Payloads[i].Reset();
+		}
+		OnAddToPool_Event.Clear();
+		OnDeAllocate_Event.Clear();
+	}
+
+	virtual void Shutdown()
+	{
+		Clear();
+
+		OnTick_Handle_Object.Unbind();
+		ConstructObject_Call.Unbind();
+	}
+
+	virtual ObjectType* ConstructObject()
+	{
+		return nullptr;
+	}
+
+	virtual FString GetObjectName(ObjectType* o)
+	{
+		return ECsCached::Str::Empty;
+	}
+
+	virtual void CreatePool(const int32 &size)
+	{
+		PoolSize = size;
+
+		for (int32 i = 0; i < size; ++i)
+		{
+			ObjectType* o = ConstructObject_Call.Execute();
+			o->Init(i);
+			o->OnCreatePool();
+			o->DeAllocate();
+			Pool.Add(o);
+			OnAddToPool_Event.Broadcast(o);
+		}
+	}
+
+	virtual void AddToPool(ObjectType* o)
+	{
+		Pool.Add(o);
+		PoolSize = Pool.Num();
+		o->Init(Pool.Num() - 1);
+		// TODO: Data needs to be set somewhere
+		o->Cache.Init(0, nullptr, 0.0f, 0.0f, 0);
+	}
+
+	virtual void AddToActivePool(ObjectType* o)
+	{
+		o->Cache.IsAllocated = true;
+
+		ActiveObjects.Add(o);
+	}
+
+	class UWorld* GetCurrentWorld()
+	{
+		return CurrentWorld.IsValid() ? CurrentWorld.Get() : nullptr;
+	}
+
+	virtual void LogTransaction(const FString &functionName, const TEnumAsByte<ECsPoolTransaction::Type> &transaction, ObjectType* o)
+	{
+		if ((*LogTransactions)->GetInt() == CS_CVAR_SHOW_LOG)
+		{
+			const FString& transactionAsString = ECsPoolTransaction::ToActionString(transaction);
+
+			const FString objectName	= GetObjectName(o);
+			const float currentTime		= GetCurrentTimeSeconds();
+			const UObject* objectOwner	= o->Cache.GetOwner();
+			const FString ownerName		= objectOwner ? objectOwner->GetName() : ECsCached::Str::None;
+			const UObject* parent		= o->Cache.GetParent();
+			const FString parentName	= parent ? parent->GetName() : ECsCached::Str::None;
+
+			FString log = ECsCached::Str::Empty;
+
+			if (objectOwner && parent)
+			{
+				log = FString::Printf(TEXT("%s: %s %s: %s of Type: %s at %f for %s attached to %s."), *functionName, *transactionAsString, *ObjectClassName, *objectName, currentTime, *ownerName, *parentName);
+			}
+			else
+			if (objectOwner)
+			{
+				log = FString::Printf(TEXT("%s: %s %s: %s of Type: %s at %f for %s."), *functionName, *transactionAsString, *ObjectClassName, *objectName, currentTime, *ownerName);
+			}
+			else
+			if (parent)
+			{
+				log = FString::Printf(TEXT("%s: %s %s: %s of Type: %s at %f attached to %s."), *functionName, *transactionAsString, *ObjectClassName, *objectName, currentTime, *parentName);
+			}
+			else
+			{
+				log = FString::Printf(TEXT("%s: %s %s: %s of Type: %s at %f."), *functionName, *transactionAsString, *ObjectClassName, *objectName, currentTime);
+			}
+			Log(log);
+		}
+	}
+
+	virtual void Log(const FString& outLog) {}
+
+	virtual float GetCurrentTimeSeconds()
+	{
+		return GetCurrentWorld() ? GetCurrentWorld()->GetTimeSeconds() : 0.0f;
+	}
+
+	virtual void OnTick(const float &deltaTime)
+	{
+		const int32 objectCount = ActiveObjects.Num();
+		int32 earliestIndex		= objectCount;
+
+		for (int32 i = objectCount - 1; i >= 0; --i)
+		{
+			ObjectType* o = ActiveObjects[i];
+
+			// Check if ObjectType was DeAllocated NOT in a normal way (i.e. Out of Bounds)
+
+			if (!o->Cache.IsAllocated)
+			{
+				OnTick_Log_PrematureDeAllocation(o);
+
+				LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
+
+				ActiveObjects.RemoveAt(i);
+
+				if (i < earliestIndex)
+					earliestIndex = i;
+				continue;
+			}
+
+			if (!o->Cache.bLifeTime)
+			{
+				OnTick_Handle_Object.ExecuteIfBound(o);
+				continue;
+			}
+
+			if (GetCurrentTimeSeconds() - o->Cache.Time > o->Cache.LifeTime)
+			{
+				LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
+
+				o->DeAllocate();
+				ActiveObjects.RemoveAt(i);
+
+				OnDeAllocate_Event.Broadcast(o);
+
+				if (i < earliestIndex)
+					earliestIndex = i;
+				continue;
+			}
+
+			OnTick_Handle_Object.ExecuteIfBound(o);
+		}
+
+		// Update ActiveIndex
+		if (earliestIndex != objectCount)
+		{
+			const int32 max = ActiveObjects.Num();
+
+			for (int32 i = earliestIndex; i < max; ++i)
+			{
+				ObjectType* o		 = ActiveObjects[i];
+				o->Cache.ActiveIndex = i;
+			}
+		}
+	}
+
+	void OnTick_Log_PrematureDeAllocation(ObjectType* o)
+	{
+		const FString log = FString::Printf(TEXT("%s::OnTick: %s: %s at PoolIndex: %d was prematurely deallocted NOT in a normal way."), *Name, *ObjectClassName, *(GetObjectName(o)), o->Cache.Index);
+
+		Log(log);
+	}
+
+	const TArray<ObjectType*>& GetAllActiveObjects()
+	{
+		return ActiveObjects;
+	}
+
+	const TArray<ObjectType*>& GetObjects()
+	{
+		return Pool;
+	}
+
+	int32 GetActivePoolSize()
+	{
+		return ActiveObjects.Num();
+	}
+
+	bool IsExhausted()
+	{
+		return ActiveObjects.Num() == Pool.Num();
+	}
+
+	// Allocate / DeAllocate
+#pragma region
+
+	virtual ObjectType* Allocate()
+	{
+		if (IsExhausted())
+		{
+			checkf(0, TEXT("%s::Allocate: Pool: is exhausted"), *Name);
+			return nullptr;
+		}
+
+		for (int32 i = 0; i < PoolSize; ++i)
+		{
+			PoolIndex	  = (PoolIndex + i) % PoolSize;
+			ObjectType* o = Pool[PoolIndex];
+
+			if (!o->Cache.IsAllocated)
+			{
+				o->Cache.IsAllocated = true;
+				return o;
+			}
+		}
+		checkf(0, TEXT("%s::Allocate: Pool: %s is exhausted"), *Name);
+		return nullptr;
+	}
+
+	bool DeAllocate(const int32 &index)
+	{
+		if (ActiveObjects.Num() == CS_EMPTY)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s::DeAllocate: %s at PoolIndex: %d is already deallocated."), *Name, *ObjectClassName, index);
+			return false;
+		}
+
+		const int32 count = ActiveObjects.Num();
+
+		for (int32 i = count - 1; i >= 0; --i)
+		{
+			ObjectType* o = ActiveObjects[i];
+
+			// Update ActiveIndex
+			if (i > CS_FIRST)
+			{
+				o->Cache.DecrementActiveIndex();
+			}
+
+			if (o->Cache.Index == index)
+			{
+				LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::DeAllocate], ECsPoolTransaction::Deallocate, o);
+
+				o->DeAllocate();
+				ActiveObjects.RemoveAt(i);
+
+				OnDeAllocate_Event.Broadcast(o);
+				return true;
+			}
+		}
+
+		// Correct on Cache "Miss"
+		for (int32 i = 1; i < count; ++i)
+		{
+			ObjectType* o = ActiveObjects[i];
+			// Reset ActiveIndex
+			o->Cache.ActiveIndex = i;
+		}
+		UE_LOG(LogCs, Warning, TEXT("%s::DeAllocate: %s at PoolIndex: %d is already deallocated."), *Name, *ObjectClassName, index);
+		return false;
+	}
+
+	void DeAllocateAll()
+	{
+		const int32 count = ActiveObjects.Num();
+
+		for (int32 i = count - 1; i >= 0; --i)
+		{
+			ObjectType* o = ActiveObjects[i];
+
+			LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::DeAllocateAll], ECsPoolTransaction::Deallocate, o);
+
+			o->DeAllocate();
+			ActiveObjects.RemoveAt(i);
+		}
+	}
+
+#pragma endregion Allocate / DeAllocate
+
+	// Payload
+#pragma region
+
+	PayloadType* AllocatePayload()
+	{
+		for (int32 i = 0; i < PAYLOAD_SIZE; ++i)
+		{
+			const int32 index = (PayloadIndex + i) % PAYLOAD_SIZE;
+			PayloadType* Payload = &(Payloads[index]);
+
+			if (!Payload->IsAllocated)
+			{
+				Payload->IsAllocated = true;
+				return Payload;
+			}
+		}
+		checkf(0, TEXT("%s::AllocatePayload: Pool is exhausted"), *Name);
+		return nullptr;
+	}
+
+#pragma endregion Payload
+
+	virtual ObjectType* Spawn(PayloadType* payload)
+	{
+		ObjectType* o = Allocate();
+
+		o->Allocate(GetActivePoolSize(), payload);
+
+		LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::Spawn], ECsPoolTransaction::Allocate, o);
+		payload->Reset();
+		AddToActivePool(o);
+		return o;
+	}
+};
+
+template<typename EnumType, typename ObjectType, typename PayloadType, int32 PAYLOAD_SIZE = 1>
+class TCsManager_PooledObjects_TMap
+{
+public:
+	TCsManager_PooledObjects_TMap()
+	{
+		PayloadIndex = 0;
+
+		ConstructObject_Call.BindRaw(this, &TCsManager_PooledObjects_TMap::ConstructObject);
+	}
+
+	virtual ~TCsManager_PooledObjects_TMap()
 	{
 		Shutdown();
 	}
@@ -132,7 +524,7 @@ public:
 	TBaseDelegate<ObjectType*, const EnumType&> ConstructObject_Call;
 
 	TMulticastDelegate<void, const EnumType&, ObjectType*> OnAddToPool_Event;
-	TMulticastDelegate<void, const EnumType&, int32> OnDeAllocate_Event;
+	TMulticastDelegate<void, const EnumType&, ObjectType*> OnDeAllocate_Event;
 
 	TAutoConsoleVariable<int32>* LogTransactions;
 
@@ -141,9 +533,10 @@ public:
 protected:
 	FString FunctionNames[ECsManagerPooledObjectsFunctionNames::ECsManagerPooledObjectsFunctionNames_MAX];
 
-	TMap<EnumType, int32> PoolSizes;
 	TArray<ObjectType*> Pool;
+	int32 PoolSize;
 	TMap<EnumType, TArray<ObjectType*>> Pools;
+	TMap<EnumType, int32> PoolSizes;
 	TMap<EnumType, int32> PoolIndices;
 	TMap<EnumType, TArray<ObjectType*>> ActiveObjects;
 
@@ -172,18 +565,17 @@ public:
 
 	virtual void Clear()
 	{
-		PoolSizes.Reset();
-
-		const int32 count = Pool.Num();
-
-		for (int32 i = 0; i < count; ++i)
+		for (ObjectType* o : Pool)
 		{
-			Pool[i]->DeAllocate();
-			DeconstructObject(Pool[i]);
+			o->DeAllocate();
+			DeconstructObject(o);
 		}
+
+		PoolSize = 0;
 
 		Pool.Reset();
 		Pools.Reset();
+		PoolSizes.Reset();
 		PoolIndices.Reset();
 		ActiveObjects.Reset();
 
@@ -231,6 +623,7 @@ public:
 			OnAddToPool_Event.Broadcast(e, o);
 		}
 		Pools.Add(e, pool);
+		PoolSize = Pool.Num();
 	}
 
 	virtual void AddToPool(const EnumType &e, ObjectType* o)
@@ -248,6 +641,7 @@ public:
 			PoolIndices.Add(e, 0);
 
 		Pool.Add(o);
+		PoolSize = Pool.Num();
 
 		TArray<ObjectType*>* poolPtr = Pools.Find(e);
 
@@ -273,7 +667,8 @@ public:
 	{
 		o->Cache.IsAllocated = true;
 
-		TArray<ObjectType*>* poolPtr = Pools.Find(e);
+		// Add to ActiveObjects
+		TArray<ObjectType*>* poolPtr = ActiveObjects.Find(e);
 
 		if (poolPtr)
 		{
@@ -306,48 +701,46 @@ public:
 	{
 		if ((*LogTransactions)->GetInt() == CS_CVAR_SHOW_LOG)
 		{
-			const FString& TransactionAsString = ECsPoolTransaction::ToActionString(transaction);
+			const FString& transactionAsString = ECsPoolTransaction::ToActionString(transaction);
 
-			const FString ObjectName	= GetObjectName(o);
-			const FString TypeAsString  = EnumTypeToString(o->Cache.Type);
-			const float CurrentTime	    = GetCurrentTimeSeconds();
-			const UObject* ObjectOwner  = o->Cache.GetOwner();
-			const FString OwnerName	    = ObjectOwner ? ObjectOwner->GetName() : ECsCached::Str::None;
-			const UObject* Parent	    = o->Cache.GetParent();
-			const FString ParentName    = Parent ? Parent->GetName() : ECsCached::Str::None;
+			const FString objectName	= GetObjectName(o);
+			const FString typeAsString  = EnumTypeToString(o->Cache.Type);
+			const float currentTime	    = GetCurrentTimeSeconds();
+			const UObject* objectOwner  = o->Cache.GetOwner();
+			const FString ownerName	    = objectOwner ? objectOwner->GetName() : ECsCached::Str::None;
+			const UObject* parent	    = o->Cache.GetParent();
+			const FString parentName    = parent ? parent->GetName() : ECsCached::Str::None;
 
-			FString OutLog = ECsCached::Str::Empty;
+			FString log = ECsCached::Str::Empty;
 
-			if (ObjectOwner && Parent)
+			if (objectOwner && parent)
 			{
-				OutLog = FString::Printf(TEXT("%s: %s %s: %s of Type: %s at %f for %s attached to %s."), *functionName, *TransactionAsString, *ObjectClassName, *ObjectName, *TypeAsString, CurrentTime, *OwnerName, *ParentName);
+				log = FString::Printf(TEXT("%s: %s %s: %s of Type: %s at %f for %s attached to %s."), *functionName, *transactionAsString, *ObjectClassName, *objectName, *typeAsString, currentTime, *ownerName, *parentName);
 			}
 			else
-			if (ObjectOwner)
+			if (objectOwner)
 			{
-				OutLog = FString::Printf(TEXT("%s: %s %s: %s of Type: %s at %f for %s."), *functionName, *TransactionAsString, *ObjectClassName, *ObjectName, *TypeAsString, CurrentTime, *OwnerName);
+				log = FString::Printf(TEXT("%s: %s %s: %s of Type: %s at %f for %s."), *functionName, *transactionAsString, *ObjectClassName, *objectName, *typeAsString, currentTime, *ownerName);
 			}
 			else
-			if (Parent)
+			if (parent)
 			{
-				OutLog = FString::Printf(TEXT("%s: %s %s: %s of Type: %s at %f attached to %s."), *functionName, *TransactionAsString, *ObjectClassName, *ObjectName, *TypeAsString, CurrentTime, *ParentName);
+				log = FString::Printf(TEXT("%s: %s %s: %s of Type: %s at %f attached to %s."), *functionName, *transactionAsString, *ObjectClassName, *objectName, *typeAsString, currentTime, *parentName);
 			}
 			else
 			{
-				OutLog = FString::Printf(TEXT("%s: %s %s: %s of Type: %s at %f."), *functionName, *TransactionAsString, *ObjectClassName, *ObjectName, *TypeAsString, CurrentTime);
+				log = FString::Printf(TEXT("%s: %s %s: %s of Type: %s at %f."), *functionName, *transactionAsString, *ObjectClassName, *objectName, *typeAsString, currentTime);
 			}
-			LogTransaction_Internal(OutLog);
+			Log(log);
 		}
 	}
-
-	virtual void LogTransaction_Internal(const FString& outLog){}
 
 	virtual float GetCurrentTimeSeconds()
 	{
 		return GetCurrentWorld() ? GetCurrentWorld()->GetTimeSeconds() : 0.0f;
 	}
 
-	void OnTick(const float &deltaTime)
+	virtual void OnTick(const float &deltaTime)
 	{
 		TArray<EnumType> Keys;
 		ActiveObjects.GetKeys(Keys);
@@ -367,7 +760,7 @@ public:
 
 				if (!o->Cache.IsAllocated)
 				{
-					//UE_LOG(LogCs, Warning, TEXT("ACsManager_InteractiveActor::OnTick: InteractiveActor: %s at PoolIndex: %s was prematurely deallocted NOT in a normal way."), *(Actor->GetName()), Actor->Cache.Index);
+					OnTick_Log_PrematureDeAllocation(key, o);
 
 					LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
 
@@ -391,7 +784,7 @@ public:
 					o->DeAllocate();
 					objects.RemoveAt(j);
 
-					OnDeAllocate_Event.Broadcast(key, o->Cache.Index);
+					OnDeAllocate_Event.Broadcast(key, o);
 
 					if (j < earliestIndex)
 						earliestIndex = j;
@@ -408,12 +801,21 @@ public:
 				
 				for (int32 j = earliestIndex; j < max; ++j)
 				{
-					ObjectType* o = objects[j];
-					o->Cache.SetActiveIndex(j);
+					ObjectType* o		 = objects[j];
+					o->Cache.ActiveIndex = j;
 				}
 			}
 		}
 	}
+
+	void OnTick_Log_PrematureDeAllocation(const EnumType& e, ObjectType* o)
+	{
+		const FString log = FString::Printf(TEXT("%s::OnTick: %s: %s of type: %s at PoolIndex: %d was prematurely deallocted NOT in a normal way."), *Name, *ObjectClassName, *GetObjectName(o), *EnumTypeToString(e), o->Cache.Index);
+
+		Log(log);
+	}
+
+	virtual void Log(const FString &log) {}
 
 	void GetAllActiveObjects(TArray<ObjectType*> &outObjects)
 	{
@@ -458,7 +860,7 @@ public:
 	// Allocate / DeAllocate
 #pragma region
 
-	ObjectType* Allocate(const EnumType &e)
+	virtual ObjectType* Allocate(const EnumType &e)
 	{
 		TArray<ObjectType*>* pool = Pools.Find(e);
 		const int32 size		  = *(PoolSizes.Find(e));
@@ -513,6 +915,8 @@ public:
 
 				o->DeAllocate();
 				objectsPtr->RemoveAt(i);
+
+				OnDeAllocate_Event.Broadcast(e, o);
 				return true;
 			}
 		}
@@ -522,7 +926,7 @@ public:
 		{
 			ObjectType* o = (*objectsPtr)[i];
 			// Reset ActiveIndex
-			o->Cache.SetActiveIndex(i);
+			o->Cache.ActiveIndex = i;
 		}
 		UE_LOG(LogCs, Warning, TEXT("%s::DeAllocate: %s of Type: %s at PoolIndex: %d is already deallocated."), *Name, *ObjectClassName, *EnumTypeToString(e), index);
 		return false;
@@ -533,22 +937,20 @@ public:
 		TArray<EnumType> keys;
 		ActiveObjects.GetKeys(keys);
 
-		const int32 keyCount = keys.Num();
-
-		for (int32 i = 0; i < keyCount; ++i)
+		for (const EnumType& key : keys)
 		{
-			const EnumType& key = keys[i];
-
 			TArray<ObjectType*>& objects = ActiveObjects[key];
 
 			const int32 objectCount = objects.Num();
 
-			for (int32 j = objectCount - 1; j >= 0; --j)
+			for (int32 i = objectCount - 1; i >= 0; --i)
 			{
-				LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::DeAllocateAll], ECsPoolTransaction::Deallocate, objects[j]);
+				ObjectType* o = objects[i];
 
-				objects[j]->DeAllocate();
-				objects.RemoveAt(j);
+				LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::DeAllocateAll], ECsPoolTransaction::Deallocate, o);
+
+				o->DeAllocate();
+				objects.RemoveAt(i);
 			}
 		}
 	}

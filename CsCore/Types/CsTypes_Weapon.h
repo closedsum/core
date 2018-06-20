@@ -234,14 +234,7 @@ public:
 	static EMCsWeaponAnim& Get();
 };
 
-namespace ECsWeaponBlendSpace
-{
-	enum Type : uint8;
-}
-
 	// WeaponBlendSpace
-
-typedef ECsWeaponBlendSpace::Type TCsWeaponBlendSpace;
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsWeaponBlendSpace : public FECsEnum_uint8
@@ -653,7 +646,7 @@ struct FCsData_FpsWeapon_FireMode_FXs
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effects")
-	TArray<FCsFpsFxElement> MuzzleFXs;
+	TArray<FCsFpvFxElement> MuzzleFXs;
 
 	FCsData_FpsWeapon_FireMode_FXs() {}
 	virtual ~FCsData_FpsWeapon_FireMode_FXs() {}

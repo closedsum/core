@@ -6,7 +6,7 @@
 
 #define CS_INTERACTIVE_ACTOR_PAYLOAD_SIZE 255
 
-class FCsManager_InteractiveActor : public TCsManagerPooledObjects<FECsInteractiveType, ACsInteractiveActor, FCsInteractiveActorPayload, CS_INTERACTIVE_ACTOR_PAYLOAD_SIZE>
+class FCsManager_InteractiveActor : public TCsManager_PooledObjects_TMap<FECsInteractiveType, ACsInteractiveActor, FCsInteractiveActorPayload, CS_INTERACTIVE_ACTOR_PAYLOAD_SIZE>
 {
 public:
 	~FCsManager_InteractiveActor();
@@ -15,7 +15,7 @@ public:
 	virtual FString GetObjectName(ACsInteractiveActor* a) override;
 	virtual const FString& EnumTypeToString(const FECsInteractiveType &e) override;
 	virtual const FString& EnumTypeToString(const int32 &index) override;
-	virtual void LogTransaction_Internal(const FString& OutLog) override;
+	virtual void Log(const FString& log) override;
 };
 
 UCLASS()
@@ -23,7 +23,7 @@ class CSCORE_API AICsManager_InteractiveActor : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
-private:
+protected:
 
 	FCsManager_InteractiveActor* Internal;
 
@@ -48,9 +48,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Manager InteractiveActor")
 	void CreatePool(const FECsInteractiveType &Type, const int32 &Size);
 	UFUNCTION(BlueprintCallable, Category = "Manager InteractiveActor")
-	void AddToPool(const FECsInteractiveType &Type, ACsInteractiveActor* Process);
+	void AddToPool(const FECsInteractiveType &Type, ACsInteractiveActor* Actor);
 	UFUNCTION(BlueprintCallable, Category = "Manager InteractiveActor")
-	void AddToActivePool(const FECsInteractiveType &Type, ACsInteractiveActor* Process);
+	void AddToActivePool(const FECsInteractiveType &Type, ACsInteractiveActor* Actor);
 	UFUNCTION(BlueprintCallable, Category = "Manager InteractiveActor")
 	void OnTick(const float &DeltaTime);
 	UFUNCTION(BlueprintCallable, Category = "Manager InteractiveActor")

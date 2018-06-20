@@ -1,6 +1,5 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Types/CsTypes_Pool.h"
 #include "Types/CsTypes_FX.h"
 #include "Particles/Emitter.h"
 #include "CsEmitter.generated.h"
@@ -10,7 +9,9 @@ struct FCsFxCache : public FCsPooledObjectCache
 {
 	GENERATED_USTRUCT_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<class ACsEmitter> Emitter;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<class UParticleSystem> Particle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
@@ -41,121 +42,39 @@ struct FCsFxCache : public FCsPooledObjectCache
 
 	~FCsFxCache(){}
 
-	void Set(const uint8 &InIndex, ACsEmitter* InEmitter)
+	void Set(const int32 &InIndex, ACsEmitter* InEmitter)
 	{
-		SetIndex(InIndex);
+		Index = InIndex;
 		Emitter = InEmitter;
 	}
-
-	template<typename T>
-	void Init(const uint16& InActiveIndex, FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)())
+	void Init(const int32& InActiveIndex, FCsFxPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
-		SetActiveIndex(InActiveIndex);
+		ActiveIndex = InActiveIndex;
 
 		IsAllocated = true;
 
-		Owner = InOwner;
-		Cue = InElement->Get();
-		Parent = InParent;
-		Priority = InElement->Priority;
+		Owner = Payload->Owner;
+		Particle = Payload->Particle;
+		Parent = Payload->Parent;
+		Priority = Payload->Priority;
 
-		SetLifeTime(InElement->LifeTime);
+		SetLifeTime(Payload->LifeTime);
 
-		DeathTime = InElement->DeathTime;
+		DeathTime = Payload->DeathTime;
 		IsDying = false;
-		Bone = InElement->Bone;
-		Scale = InElement->Scale;
+		Bone = Payload->Bone;
+		Scale = Payload->Scale;
 		Scale3D = FVector(Scale);
-		Location = Bone != NAME_None ? InElement->Location : FVector::ZeroVector;
-		Rotation = Bone != NAME_None ? InElement->Rotation : FRotator::ZeroRotator;
+		Location = Bone != NAME_None ? Payload->Location : FVector::ZeroVector;
+		Rotation = Bone != NAME_None ? Payload->Rotation : FRotator::ZeroRotator;
 		Time = InTime;
 		RealTime = InRealTime;
 		SetFrame(InFrame);
-
-		if (InObject && OnDeAllocate)
-		{
-			DelegateInvoker = (UObject*)InObject;
-#if WITH_EDITOR
-			OnDeAllocate_ScriptEvent.AddUObject(InObject, OnDeAllocate);
-#endif // #if WITH_EDITOR
-			OnDeAllocate_Event.AddUObject(InObject, OnDeAllocate);
-		}
-	}
-
-	template<typename T>
-	void Init(const uint16& InActiveIndex, FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, T* InObject, void (T::*OnDeAllocate)())
-	{
-		Init(InActiveIndex, InElement, InTime, InRealTime, InFrame, nullptr, nullptr, InObject, OnDeAllocate);
-	}
-
-	template<typename T>
-	void Init(const uint16& InActiveIndex, FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, const FVector &InLocation, const FRotator &InRotation, T* InObject, void (T::*OnDeAllocate)())
-	{
-		Init(InActiveIndex, InElement, InTime, InRealTime, InFrame, InOwner, nullptr, InObject, OnDeAllocate);
-
-		if (Bone != NAME_None)
-		{
-			Location = InLocation;
-			Rotation = InRotation;
-		}
-	}
-
-	template<typename T>
-	void Init(const uint16& InActiveIndex, FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &inFrame, const FVector &InLocation, const FVector &InRotation, T* InObject, void (T::*OnDeAllocate)())
-	{
-		Init(InActiveIndex, InElement, InTime, InRealTime, inFrame, nullptr, InLocation, InRotation, InObject, OnDeAllocate);
-	}
-
-	void Init(const uint16& InActiveIndex, FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent, const FVector &InLocation, const FRotator &InRotation)
-	{
-		SetActiveIndex(InActiveIndex);
-
-		IsAllocated = true;
-
-		Owner = InOwner;
-		Particle = InElement->Get();
-		Parent = InParent;
-		Priority = InElement->Priority;
-
-		SetLifeTime(InElement->LifeTime);
-
-		DeathTime = InElement->DeathTime;
-		IsDying = false;
-		Bone = InElement->Bone;
-		Scale = InElement->Scale;
-		Scale3D = FVector(Scale);
-		Location = Bone != NAME_None ? InElement->Location : InLocation;
-		Rotation = Bone != NAME_None ? InElement->Rotation : InRotation;
-		Time = InTime;
-		RealTime = InRealTime;
-		SetFrame(InFrame);
-	}
-
-	void Init(const uint16& InActiveIndex, FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, UObject* InParent)
-	{
-		Init(InActiveIndex, InElement, InTime, InRealTime, InFrame, InOwner, InParent, FVector::ZeroVector, FRotator::ZeroRotator);
-	}
-
-	void Init(const uint16& InActiveIndex, FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, UObject* InOwner, const FVector &InLocation, const FRotator &InRotation)
-	{
-		Init(InActiveIndex, InElement, InTime, InRealTime, InFrame, nullptr, InOwner, InLocation, InRotation);
-	}
-
-	void Init(const uint16& InActiveIndex, FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame, const FVector &InLocation, const FRotator &InRotation)
-	{
-		Init(InActiveIndex, InElement, InTime, InRealTime, InFrame, nullptr, nullptr, InLocation, InRotation);
-	}
-
-	void Init(const uint16& InActiveIndex, FCsFxElement* InElement, const float &InTime, const float &InRealTime, const uint64 &InFrame)
-	{
-		Init(InActiveIndex, InElement, InTime, InRealTime, InFrame, nullptr, nullptr, FVector::ZeroVector, FRotator::ZeroRotator);
 	}
 
 	virtual void Reset() override
 	{
-		Reset_Internal();
-
-		IsAllocated = false;
+		FCsPooledObjectCache::Reset();
 
 		Particle.Reset();
 		Particle = nullptr;
@@ -170,8 +89,11 @@ struct FCsFxCache : public FCsPooledObjectCache
 		Rotation = FRotator::ZeroRotator;
 	}
 
-	ACsEmitter* GetEmitter() { return Emitter.IsValid() ? Emitter.Get() : nullptr; }
-	class UParticleSystem* GetParticle() { return Particle.IsValid() ? Particle.Get() : nullptr; }
+	FORCEINLINE ACsEmitter* GetEmitter() { return Emitter.IsValid() ? Emitter.Get() : nullptr; }
+	template<typename T>
+	FORCEINLINE T* GetEmitter() { return Cast<T>(GetEmitter()); }
+
+	FORCEINLINE class UParticleSystem* GetParticle() { return Particle.IsValid() ? Particle.Get() : nullptr; }
 };
 
 UCLASS()
@@ -193,26 +115,8 @@ public:
 	virtual void OutsideWorldBounds() override;
 
 	void Init(const int32 &Index);
-
-	template<typename T>
-	void Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)());
-
-	template<typename T>
-	void Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, T* InObject, void (T::*OnDeAllocate)());
-
-	template<typename T>
-	void Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, const FVector &Location, const FRotator &Rotation, T* InObject, void (T::*OnDeAllocate)());
-
-	template<typename T>
-	void Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, const FVector &Location, const FRotator &Rotation, T* InObject, void (T::*OnDeAllocate)());
-
-	void Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent, const FVector &Location, const FRotator &Rotation);
-	void Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent);
-	void Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, const FVector &Location, const FRotator &Rotation);
-	void Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, const FVector &Location, const FRotator &Rotation);
-	void Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame);
-
-	void Allocate(const uint16& ActiveIndex, FCsFxElement* InElement, const float &Time, const float &RealTime, const uint64 &Frame, UObject* InOwner, UObject* InParent, const FRotator &Rotation);
+	void OnCreatePool();
+	void Allocate(const uint16& ActiveIndex, FCsFxPayload* Payload);
 
 	void DeAllocate();
 	void StartDeath();

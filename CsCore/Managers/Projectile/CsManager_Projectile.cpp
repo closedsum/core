@@ -17,6 +17,9 @@ TWeakObjectPtr<UObject> AICsManager_Projectile::MyOwner;
 
 FCsManager_Projectile::~FCsManager_Projectile() {}
 
+	// Interface
+#pragma region
+
 void FCsManager_Projectile::DeconstructObject(ACsProjectile* a)
 {
 	if (a && !a->IsPendingKill())
@@ -38,10 +41,12 @@ const FString& FCsManager_Projectile::EnumTypeToString(const int32 &index)
 	return EMCsProjectileType::Get().GetEnumAt(index).Name;
 }
 
-void FCsManager_Projectile::LogTransaction_Internal(const FString& outLog)
+void FCsManager_Projectile::Log(const FString& log)
 {
-	UE_LOG(LogCs, Warning, TEXT("%s"), *outLog);
+	UE_LOG(LogCs, Warning, TEXT("%s"), *log);
 }
+
+#pragma endregion Interface
 
 #pragma endregion // Internal
 

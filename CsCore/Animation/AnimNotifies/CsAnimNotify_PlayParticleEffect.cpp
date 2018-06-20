@@ -74,7 +74,7 @@ void UCsAnimNotify_PlayParticleEffect::Notify(class USkeletalMeshComponent* Mesh
 	// Use FX Manager
 	if (InGame)
 	{
-		ACsManager_FX* Manager_FX = ACsManager_FX::Get(CurrentWorld);
+		AICsManager_FX* Manager_FX = AICsManager_FX::Get(CurrentWorld);
 
 		FxElement.Particle = TAssetPtr<UParticleSystem>(FX.Particle);
 		FxElement.Set(FX.Particle);
@@ -87,7 +87,12 @@ void UCsAnimNotify_PlayParticleEffect::Notify(class USkeletalMeshComponent* Mesh
 		FxElement.Location	= FX.Location;
 		FxElement.Rotation  = FX.Rotation;
 		
-		Manager_FX->Play(&FxElement, MeshComp->GetOwner() ? Cast<UObject>(MeshComp->GetOwner()) : Cast<UObject>(MeshComp->GetAttachParent()), MeshComp);
+		FCsFxPayload* Payload = Manager_FX->AllocatePayload();
+		Payload->Set(FxElement);
+		Payload->Owner = MeshComp->GetOwner() ? Cast<UObject>(MeshComp->GetOwner()) : Cast<UObject>(MeshComp->GetAttachParent());
+		Payload->Parent = MeshComp;
+
+		Manager_FX->Play(Payload);
 	}
 	else
 	{

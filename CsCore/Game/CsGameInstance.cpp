@@ -20,6 +20,10 @@
 
 #include "Async/AsyncWork.h"
 
+#if WITH_EDITOR
+#include "Editor.h"
+#endif // #if WITH_EDITOR
+
 // Enums
 #pragma region
 
@@ -139,7 +143,7 @@ void UCsGameInstance::Init()
 	HideMouseCursor();
 	OnBoard();
 
-	IsVR = GEngine->HMDDevice.IsValid() && GEngine->IsStereoscopic3D();
+	IsVR = GEngine->StereoRenderingDevice.IsValid() && GEngine->IsStereoscopic3D();
 }
 
 void UCsGameInstance::Shutdown()
@@ -321,7 +325,7 @@ CS_COROUTINE(UCsGameInstance, OnBoard_Internal)
 void UCsGameInstance::LoadDataMapping()
 {
 	const FStringAssetReference AssetRef			 = FStringAssetReference(DataMappingAssetPath);
-	TAssetSubclassOf<ACsDataMapping> AssetSubclassOf = TAssetSubclassOf<ACsDataMapping>(AssetRef);
+	TSoftClassPtr<ACsDataMapping> AssetSubclassOf = TSoftClassPtr<ACsDataMapping>(AssetRef);
 
 	if (UClass* DataClass = AssetSubclassOf.LoadSynchronous())
 	{

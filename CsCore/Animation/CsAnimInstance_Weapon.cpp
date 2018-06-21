@@ -29,13 +29,13 @@ void UCsAnimInstance_Weapon::NativeInitializeAnimation()
 		return;
 
 	// Data_Weapon
-	Data_Weapon.Data		  = TAssetSubclassOf<ACsData_Weapon>(MyWeapon->GetMyData_Weapon());
+	Data_Weapon.Data		  = TSoftClassPtr<ACsData_Weapon>(MyWeapon->GetMyData_Weapon());
 	Data_Weapon.Data_Internal = MyWeapon->GetMyData_Weapon();
 
 	if (ACsGunWeapon* MyGunWeapon = Cast<ACsGunWeapon>(MyWeapon))
 	{
 		// Data_WeaponMaterialSkin
-		Data_WeaponMaterialSkin.Data		  = TAssetSubclassOf<ACsData_WeaponMaterialSkin>(MyGunWeapon->GetMyData_WeaponMaterialSkin());
+		Data_WeaponMaterialSkin.Data		  = TSoftClassPtr<ACsData_WeaponMaterialSkin>(MyGunWeapon->GetMyData_WeaponMaterialSkin());
 		Data_WeaponMaterialSkin.Data_Internal = MyGunWeapon->GetMyData_WeaponMaterialSkin();
 	}
 	LoadAnims();
@@ -75,12 +75,12 @@ void UCsAnimInstance_Weapon::SetupInGameSimulation()
 		Weapon->SetMyOwner(this);
 	}
 
-	UCsCommon_Load::LoadTAssetSubclassOf(TEXT("Data_Weapon"), Data_Weapon.Data, Data_Weapon.Data_Internal, TEXT("MboData_Weapon"));
+	UCsCommon_Load::LoadTSoftClassPtr(TEXT("Data_Weapon"), Data_Weapon.Data, Data_Weapon.Data_Internal, TEXT("MboData_Weapon"));
 
 	if (ACsData_Weapon* MyData_Weapon = GetData_Weapon())
 		MyData_Weapon->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
 
-	UCsCommon_Load::LoadTAssetSubclassOf(TEXT("Data_WeaponMaterialSkin"), Data_WeaponMaterialSkin.Data, Data_WeaponMaterialSkin.Data_Internal, TEXT("CsData_WeaponMaterialSkin"));
+	UCsCommon_Load::LoadTSoftClassPtr(TEXT("Data_WeaponMaterialSkin"), Data_WeaponMaterialSkin.Data, Data_WeaponMaterialSkin.Data_Internal, TEXT("CsData_WeaponMaterialSkin"));
 
 	if (ACsData_WeaponMaterialSkin* MyData_WeaponMaterialSkin = GetData_WeaponMaterialSkin())
 		MyData_WeaponMaterialSkin->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));

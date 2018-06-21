@@ -76,7 +76,7 @@ void UCsAnimNotify_PlayParticleEffect::Notify(class USkeletalMeshComponent* Mesh
 	{
 		AICsManager_FX* Manager_FX = AICsManager_FX::Get(CurrentWorld);
 
-		FxElement.Particle = TAssetPtr<UParticleSystem>(FX.Particle);
+		FxElement.Particle = TSoftObjectPtr<UParticleSystem>(FX.Particle);
 		FxElement.Set(FX.Particle);
 		FxElement.Priority  = FX.Priority;
 		FxElement.LifeTime  = FX.LifeTime;

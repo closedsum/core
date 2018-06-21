@@ -383,7 +383,7 @@ public:
 		// Load the Data
 		ACsData* OutAsset;
 
-		UCsCommon_Load::LoadTAssetSubclassOf<ACsData>(Mapping.Data, OutAsset, TEXT("Actor"));
+		UCsCommon_Load::LoadTSoftClassPtr<ACsData>(Mapping.Data, OutAsset, TEXT("Actor"));
 
 		T* DataDOb = Cast<T>(OutAsset);
 

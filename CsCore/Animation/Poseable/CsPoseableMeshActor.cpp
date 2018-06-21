@@ -1,9 +1,10 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "Animation/Poseable/CsPoseableMeshActor.h"
-#include "Components/CsPoseableMeshComponent.h"
 #include "CsCore.h"
 #include "Common/CsCommon.h"
 #include "Common/CsCommon_Asset.h"
+
+#include "Components/CsPoseableMeshComponent.h"
 
 #if WITH_EDITOR
 #include "../AnimationCore/Public/TwoBoneIK.h"
@@ -18,23 +19,29 @@
 #include "Animation/Poseable/Controls/Helpers/CsAnim_ControlHelper_JointTarget.h"
 
 // Level Sequence
-#include "../LevelSequence/Public/LevelSequence.h"
+//#include "../LevelSequence/Public/LevelSequence.h"
+#include "../LevelSequence/Public/LevelSequenceActor.h"
 
 #if WITH_EDITOR
 
+#include "Editor/Sequencer/Public/ISequencer.h"
+/*
 #include "../MovieScene/Public/MovieScene.h"
-#include "../MovieScene/Public/MovieSceneSection.h"
-#include "../MovieScene/Public/MovieScenePossessable.h"
+*/
+
+//#include "../MovieScene/Public/MovieSceneSection.h"
+
+
+//#include "../MovieScene/Public/MovieScenePossessable.h"
 #include "../MovieScene/Public/MovieSceneFolder.h"
 #include "../MovieSceneTracks/Public/Tracks/MovieSceneCinematicShotTrack.h"
 #include "../MovieSceneTracks/Public/Tracks/MovieScene3DTransformTrack.h"
-#include "../MovieSceneTracks/Public/Sections/MovieScene3dTransformSection.h"
+//#include "../MovieSceneTracks/Public/Sections/MovieScene3dTransformSection.h"
 
-#include "Editor/Sequencer/Public/ISequencer.h"
+
 #include "../UnrealEd/Public/Toolkits/AssetEditorManager.h"
 #include "Private/LevelSequenceEditorToolkit.h"
-#include "../LevelSequence/Public/LevelSequenceActor.h"
-#include "../LevelSequence/Public/LevelSequencePlayer.h"
+//#include "../LevelSequence/Public/LevelSequencePlayer.h"
 
 #include "../Engine/Classes/Curves/KeyHandle.h"
 

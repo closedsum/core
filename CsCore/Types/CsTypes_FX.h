@@ -18,7 +18,7 @@ struct CSCORE_API FCsParticleSystem
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "FX")
-	TAssetPtr<class UParticleSystem> Particle;
+	TSoftObjectPtr<class UParticleSystem> Particle;
 
 	UPROPERTY(EditAnywhere, Category = "FX", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Particle_LoadFlags;
@@ -95,7 +95,7 @@ struct CSCORE_API FCsFxElement
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "FX")
-	TAssetPtr<UParticleSystem> Particle;
+	TSoftObjectPtr<UParticleSystem> Particle;
 
 	UPROPERTY(EditAnywhere, Category = "FX", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Particle_LoadFlags;
@@ -177,7 +177,7 @@ public:
 	
 	FORCEINLINE void Set(class UParticleSystem* InParticle)
 	{
-		//Particle		  = TAssetPtr<UParticleSystem>(InParticle);
+		//Particle		  = TSoftObjectPtr<UParticleSystem>(InParticle);
 		Particle_Internal = InParticle;
 	}
 	

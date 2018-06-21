@@ -257,7 +257,7 @@ void UCsAnimInstance::LoadAnim(const FString& MemberName, FCsAnimInstance_AnimSe
 		else
 		{
 			//																					    TEXT("AnimSequence"), TEXT("Anim Sequence")
-			UCsCommon_Load::LoadTAssetPtr<UAnimSequence>(MemberName, Anim.Anim, Anim.Anim_Internal, ECsAnimCached::Str::AnimSequence, ECsAnimCached::Str::Anim_Sequence);
+			UCsCommon_Load::LoadTSoftObjectPtr<UAnimSequence>(MemberName, Anim.Anim, Anim.Anim_Internal, ECsAnimCached::Str::AnimSequence, ECsAnimCached::Str::Anim_Sequence);
 		}
 	}
 	else
@@ -266,7 +266,7 @@ void UCsAnimInstance::LoadAnim(const FString& MemberName, FCsAnimInstance_AnimSe
 		if (Anim.Anim.ToString() != ECsAnimCached::Str::Empty)
 		{
 			//																						TEXT("AnimSequence"), TEXT("Anim Sequence")
-			UCsCommon_Load::LoadTAssetPtr<UAnimSequence>(MemberName, Anim.Anim, Anim.Anim_Internal, ECsAnimCached::Str::AnimSequence, ECsAnimCached::Str::Anim_Sequence);
+			UCsCommon_Load::LoadTSoftObjectPtr<UAnimSequence>(MemberName, Anim.Anim, Anim.Anim_Internal, ECsAnimCached::Str::AnimSequence, ECsAnimCached::Str::Anim_Sequence);
 		}
 	}
 	Anim.Update();
@@ -287,7 +287,7 @@ void UCsAnimInstance::LoadAnim(const FString& MemberName, FCsAnimInstance_AnimMo
 		else
 		{
 			//																					   TEXT("AnimMontage"), TEXT("Anim Montage")
-			UCsCommon_Load::LoadTAssetPtr<UAnimMontage>(MemberName, Anim.Anim, Anim.Anim_Internal, ECsAnimCached::Str::AnimMontage, ECsAnimCached::Str::Anim_Montage);
+			UCsCommon_Load::LoadTSoftObjectPtr<UAnimMontage>(MemberName, Anim.Anim, Anim.Anim_Internal, ECsAnimCached::Str::AnimMontage, ECsAnimCached::Str::Anim_Montage);
 		}
 	}
 	else
@@ -296,7 +296,7 @@ void UCsAnimInstance::LoadAnim(const FString& MemberName, FCsAnimInstance_AnimMo
 		if (Anim.Anim.ToString() != ECsAnimCached::Str::Empty)
 		{
 			//																					   TEXT("AnimMontage"), TEXT("Anim Montage")
-			UCsCommon_Load::LoadTAssetPtr<UAnimMontage>(MemberName, Anim.Anim, Anim.Anim_Internal, ECsAnimCached::Str::AnimMontage, ECsAnimCached::Str::Anim_Montage);
+			UCsCommon_Load::LoadTSoftObjectPtr<UAnimMontage>(MemberName, Anim.Anim, Anim.Anim_Internal, ECsAnimCached::Str::AnimMontage, ECsAnimCached::Str::Anim_Montage);
 		}
 	}
 }
@@ -310,13 +310,13 @@ void UCsAnimInstance::LoadAnim(const FString& MemberName, const TCsViewType &Vie
 
 		if (UAnimSequence* Seq = DataAnim->Get(ViewType))
 		{
-			Anim.Anim		   = DataAnim->GetAssetPtr(ViewType);
+			Anim.Anim		   = DataAnim->GeTSoftObjectPtr(ViewType);
 			Anim.Anim_Internal = Seq;
 		}
 		else
 		{
 			//																					    TEXT("AnimSequence"), TEXT("Anim Sequence")
-			UCsCommon_Load::LoadTAssetPtr<UAnimSequence>(MemberName, Anim.Anim, Anim.Anim_Internal, ECsAnimCached::Str::AnimSequence, ECsAnimCached::Str::Anim_Sequence);
+			UCsCommon_Load::LoadTSoftObjectPtr<UAnimSequence>(MemberName, Anim.Anim, Anim.Anim_Internal, ECsAnimCached::Str::AnimSequence, ECsAnimCached::Str::Anim_Sequence);
 		}
 	}
 	else
@@ -325,7 +325,7 @@ void UCsAnimInstance::LoadAnim(const FString& MemberName, const TCsViewType &Vie
 		if (Anim.Anim.ToString() != ECsAnimCached::Str::Empty)
 		{
 			//																					    TEXT("AnimSequence"), TEXT("Anim Sequence")
-			UCsCommon_Load::LoadTAssetPtr<UAnimSequence>(MemberName, Anim.Anim, Anim.Anim_Internal, ECsAnimCached::Str::AnimSequence, ECsAnimCached::Str::Anim_Sequence);
+			UCsCommon_Load::LoadTSoftObjectPtr<UAnimSequence>(MemberName, Anim.Anim, Anim.Anim_Internal, ECsAnimCached::Str::AnimSequence, ECsAnimCached::Str::Anim_Sequence);
 		}
 	}
 }
@@ -339,13 +339,13 @@ void UCsAnimInstance::LoadAnim(const FString& MemberName, const TCsViewType &Vie
 
 		if (UAnimMontage* Seq = DataAnim->Get(ViewType))
 		{
-			Anim.Anim		   = DataAnim->GetAssetPtr(ViewType);
+			Anim.Anim		   = DataAnim->GeTSoftObjectPtr(ViewType);
 			Anim.Anim_Internal = Seq;
 		}
 		else
 		{
 			//																					   TEXT("AnimMontage"), TEXT("Anim Montage")
-			UCsCommon_Load::LoadTAssetPtr<UAnimMontage>(MemberName, Anim.Anim, Anim.Anim_Internal, ECsAnimCached::Str::AnimMontage, ECsAnimCached::Str::Anim_Montage);
+			UCsCommon_Load::LoadTSoftObjectPtr<UAnimMontage>(MemberName, Anim.Anim, Anim.Anim_Internal, ECsAnimCached::Str::AnimMontage, ECsAnimCached::Str::Anim_Montage);
 		}
 	}
 	else
@@ -354,7 +354,7 @@ void UCsAnimInstance::LoadAnim(const FString& MemberName, const TCsViewType &Vie
 		if (Anim.Anim.ToString() != ECsAnimCached::Str::Empty)
 		{
 			//																					   TEXT("AnimMontage"), TEXT("Anim Montage")
-			UCsCommon_Load::LoadTAssetPtr<UAnimMontage>(MemberName, Anim.Anim, Anim.Anim_Internal, ECsAnimCached::Str::AnimMontage, ECsAnimCached::Str::Anim_Montage);
+			UCsCommon_Load::LoadTSoftObjectPtr<UAnimMontage>(MemberName, Anim.Anim, Anim.Anim_Internal, ECsAnimCached::Str::AnimMontage, ECsAnimCached::Str::Anim_Montage);
 		}
 	}
 }
@@ -374,7 +374,7 @@ void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, FCsAnimInstance_
 		else
 		{
 			//																							TEXT("BlendSpace1D"), TEXT("Blend Space 1D")
-			UCsCommon_Load::LoadTAssetPtr<UBlendSpace1D>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCached::Str::BlendSpace1D, ECsAnimCached::Str::Blend_Space_1D);
+			UCsCommon_Load::LoadTSoftObjectPtr<UBlendSpace1D>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCached::Str::BlendSpace1D, ECsAnimCached::Str::Blend_Space_1D);
 		}
 	}
 	else
@@ -383,7 +383,7 @@ void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, FCsAnimInstance_
 		if (Blend.Blend.ToString() != ECsAnimCached::Str::Empty)
 		{
 			//																							TEXT("BlendSpace1D"), TEXT("Blend Space 1D")
-			UCsCommon_Load::LoadTAssetPtr<UBlendSpace1D>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCached::Str::BlendSpace1D, ECsAnimCached::Str::Blend_Space_1D);
+			UCsCommon_Load::LoadTSoftObjectPtr<UBlendSpace1D>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCached::Str::BlendSpace1D, ECsAnimCached::Str::Blend_Space_1D);
 		}
 	}
 	Blend.Update();
@@ -404,7 +404,7 @@ void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, FCsAnimInstance_
 		else
 		{
 			//																						  TEXT("BlendSpace"), TEXT("Blend Space")
-			UCsCommon_Load::LoadTAssetPtr<UBlendSpace>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCached::Str::BlendSpace, ECsAnimCached::Str::Blend_Space);
+			UCsCommon_Load::LoadTSoftObjectPtr<UBlendSpace>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCached::Str::BlendSpace, ECsAnimCached::Str::Blend_Space);
 		}
 	}
 	else
@@ -413,7 +413,7 @@ void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, FCsAnimInstance_
 		if (Blend.Blend.ToString() != ECsAnimCached::Str::Empty)
 		{
 			//																						  TEXT("BlendSpace"), TEXT("Blend Space")
-			UCsCommon_Load::LoadTAssetPtr<UBlendSpace>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCached::Str::BlendSpace, ECsAnimCached::Str::Blend_Space);
+			UCsCommon_Load::LoadTSoftObjectPtr<UBlendSpace>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCached::Str::BlendSpace, ECsAnimCached::Str::Blend_Space);
 		}
 	}
 }
@@ -427,13 +427,13 @@ void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, const TCsViewTyp
 
 		if (UBlendSpace1D* Space = DataBlend->Get(ViewType))
 		{
-			Blend.Blend			 = DataBlend->GetAssetPtr(ViewType);
+			Blend.Blend			 = DataBlend->GeTSoftObjectPtr(ViewType);
 			Blend.Blend_Internal = Space;
 		}
 		else
 		{
 			//																							TEXT("BlendSpace1D"), TEXT("Blend Space 1D")
-			UCsCommon_Load::LoadTAssetPtr<UBlendSpace1D>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCached::Str::BlendSpace1D, ECsAnimCached::Str::Blend_Space_1D);
+			UCsCommon_Load::LoadTSoftObjectPtr<UBlendSpace1D>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCached::Str::BlendSpace1D, ECsAnimCached::Str::Blend_Space_1D);
 		}
 	}
 	else
@@ -442,7 +442,7 @@ void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, const TCsViewTyp
 		if (Blend.Blend.ToString() != ECsAnimCached::Str::Empty)
 		{
 			//																							TEXT("BlendSpace1D"), TEXT("Anim Sequence")
-			UCsCommon_Load::LoadTAssetPtr<UBlendSpace1D>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCached::Str::BlendSpace1D, ECsAnimCached::Str::Blend_Space_1D);
+			UCsCommon_Load::LoadTSoftObjectPtr<UBlendSpace1D>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCached::Str::BlendSpace1D, ECsAnimCached::Str::Blend_Space_1D);
 		}
 	}
 }
@@ -456,13 +456,13 @@ void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, const TCsViewTyp
 
 		if (UBlendSpace* Space = DataBlend->Get(ViewType))
 		{
-			Blend.Blend			 = DataBlend->GetAssetPtr(ViewType);
+			Blend.Blend			 = DataBlend->GeTSoftObjectPtr(ViewType);
 			Blend.Blend_Internal = Space;
 		}
 		else
 		{
 			//																						  TEXT("BlendSpace"), TEXT("Blend Space")
-			UCsCommon_Load::LoadTAssetPtr<UBlendSpace>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCached::Str::BlendSpace, ECsAnimCached::Str::Blend_Space);
+			UCsCommon_Load::LoadTSoftObjectPtr<UBlendSpace>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCached::Str::BlendSpace, ECsAnimCached::Str::Blend_Space);
 		}
 	}
 	else
@@ -471,7 +471,7 @@ void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, const TCsViewTyp
 		if (Blend.Blend.ToString() != ECsAnimCached::Str::Empty)
 		{
 			//																					      TEXT("BlendSpace"), TEXT("Blend Space")
-			UCsCommon_Load::LoadTAssetPtr<UBlendSpace>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCached::Str::BlendSpace, ECsAnimCached::Str::Blend_Space);
+			UCsCommon_Load::LoadTSoftObjectPtr<UBlendSpace>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCached::Str::BlendSpace, ECsAnimCached::Str::Blend_Space);
 		}
 	}
 }

@@ -26,62 +26,43 @@ namespace ECsStringEscapeType
 #define ECS_STRING_ESCAPE_TYPE_MAX (uint8)ECsStringEscapeType::ECsStringEscapeType_MAX
 typedef ECsStringEscapeType::Type TCsStringEscapeType;
 
+struct CSCORE_API EMCsStringEscapeType : public TCsEnumMap<ECsStringEscapeType::Type>
+{
+protected:
+	EMCsStringEscapeType() {}
+	EMCsStringEscapeType(const EMCsStringEscapeType &) = delete;
+	EMCsStringEscapeType(EMCsStringEscapeType &&) = delete;
+public:
+	~EMCsStringEscapeType() {}
+private:
+	static EMCsStringEscapeType* Instance;
+
+public:
+	static EMCsStringEscapeType& Get();
+};
+
 namespace ECsStringEscapeType
 {
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
-
-	namespace Str
-	{
-		extern const TCsString Int;
-		extern const TCsString Float;
-		extern const TCsString String;
-		extern const TCsString CR;
-		extern const TCsString LF;
-		extern const TCsString EOL;
-	}
-
 	namespace Ref
 	{
-		extern const Type Int;
-		extern const Type Float;
-		extern const Type String;
-		extern const Type CR;
-		extern const Type LF;
-		extern const Type EOL;
-		extern const Type ECsStringEscapeType_MAX;
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::Int) { return Str::Int.Value; }
-		if (EType == Type::Float) { return Str::Float.Value; }
-		if (EType == Type::String) { return Str::String.Value; }
-		if (EType == Type::CR) { return Str::CR.Value; }
-		if (EType == Type::LF) { return Str::LF.Value; }
-		if (EType == Type::EOL) { return Str::EOL.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE const Type& ToType(const FString &InString)
-	{
-		if (InString == Str::Int) { return Ref::Int; }
-		if (InString == Str::Float) { return Ref::Float; }
-		if (InString == Str::String) { return Ref::String; }
-		if (InString == Str::CR) { return Ref::CR; }
-		if (InString == Str::LF) { return Ref::LF; }
-		if (InString == Str::EOL) { return Ref::EOL; }
-		return Ref::ECsStringEscapeType_MAX;
+		extern CSCORE_API const Type Int;
+		extern CSCORE_API const Type Float;
+		extern CSCORE_API const Type String;
+		extern CSCORE_API const Type CR;
+		extern CSCORE_API const Type LF;
+		extern CSCORE_API const Type EOL;
+		extern CSCORE_API const Type ECsStringEscapeType_MAX;
 	}
 }
 
 namespace ECsStringEscapeCharacter
 {
-	extern const FString Int;
-	extern const FString Float;
-	extern const FString String;
-	extern const FString CR;
-	extern const FString LF;
-	extern const FString EOL;
+	extern CSCORE_API const FString Int;
+	extern CSCORE_API const FString Float;
+	extern CSCORE_API const FString String;
+	extern CSCORE_API const FString CR;
+	extern CSCORE_API const FString LF;
+	extern CSCORE_API const FString EOL;
 }
 
 #pragma endregion Escape
@@ -103,35 +84,28 @@ namespace ECsStringWordRule
 #define ECS_STRING_WORD_RULE_MAX (uint8)ECsStringWordRule::ECsStringWordRule_MAX
 typedef ECsStringWordRule::Type TCsStringWordRule;
 
+struct CSCORE_API EMCsStringWordRule : public TCsEnumMap<ECsStringWordRule::Type>
+{
+protected:
+	EMCsStringWordRule() {}
+	EMCsStringWordRule(const EMCsStringWordRule &) = delete;
+	EMCsStringWordRule(EMCsStringWordRule &&) = delete;
+public:
+	~EMCsStringWordRule() {}
+private:
+	static EMCsStringWordRule* Instance;
+
+public:
+	static EMCsStringWordRule& Get();
+};
+
 namespace ECsStringWordRule
 {
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
-
-	namespace Str
-	{
-		extern const TCsString MatchCase;
-		extern const TCsString Lower;
-	}
-
 	namespace Ref
 	{
-		extern const Type MatchCase;
-		extern const Type Lower;
-		extern const Type ECsStringWordRule_MAX;
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::MatchCase) { return Str::MatchCase.Value; }
-		if (EType == Type::Lower) { return Str::Lower.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE const Type& ToType(const FString &InString)
-	{
-		if (InString == Str::MatchCase) { return Ref::MatchCase; }
-		if (InString == Str::Lower) { return Ref::Lower; }
-		return Ref::ECsStringWordRule_MAX;
+		extern CSCORE_API const Type MatchCase;
+		extern CSCORE_API const Type Lower;
+		extern CSCORE_API const Type ECsStringWordRule_MAX;
 	}
 }
 
@@ -703,8 +677,8 @@ struct FCsStringParagraph
 
 namespace CsStringParagraphHelper
 {
-	FCsStringSentence CreateOneWordSentence(const FString &Word, const TCsStringWordRule &Rule = ECsStringWordRule::MatchCase);
-	FCsStringParagraph CreateOneWordParagraph(const FString &Word, const TCsStringWordRule &Rule = ECsStringWordRule::MatchCase);
+	FCsStringSentence CreateOneWordSentence(const FString &Word, const TCsStringWordRule &Rule);
+	FCsStringParagraph CreateOneWordParagraph(const FString &Word, const TCsStringWordRule &Rule);
 }
 
 #pragma endregion Word / Phrase / Sentence / Paragraph

@@ -85,7 +85,7 @@ void ACsPlayerState::ClientRecieveLocalUniqueMappingId_Internal(const uint8 &Cli
 
 	if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		UE_LOG(LogCs, Log, TEXT("ACsPlayerState::ClientRecieveLocalUniqueMappingId: %s recieved UniqueMappingId: %d"), *PlayerName, ClientMappingId);
+		UE_LOG(LogCs, Log, TEXT("ACsPlayerState::ClientRecieveLocalUniqueMappingId: %s recieved UniqueMappingId: %d"), *GetPlayerName(), ClientMappingId);
 		UE_LOG(LogCs, Log, TEXT("ACsPlayerState::ClientRecieveLocalUniqueMappingId: State Change: WaitingForLocalUniqueMappingId -> RecievedLocalUniqueMappingId"));
 	}
 	RequestingPlayerState->OnBoardState = ECsPlayerStateBaseOnBoardState::RecievedLocalUniqueMappingId;
@@ -126,7 +126,7 @@ void ACsPlayerState::ServerRequestUniqueMappingId_Internal(const uint8 &ClientMa
 	{
 		if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsPlayerState::ServerRequestUniqueMappingId: %s is requesting PlayerState that is nullptr."), *ClientPlayerState->PlayerName);
+			UE_LOG(LogCs, Warning, TEXT("ACsPlayerState::ServerRequestUniqueMappingId: %s is requesting PlayerState that is nullptr."), *ClientPlayerState->GetPlayerName());
 		}
 		return;
 	}
@@ -135,14 +135,14 @@ void ACsPlayerState::ServerRequestUniqueMappingId_Internal(const uint8 &ClientMa
 	{
 		if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsPlayerState::ServerRequestUniqueMappingId: %s is requesting %s's UniqueMappingId is INVALID."), *ClientPlayerState->PlayerName, *RequestingPlayerState->PlayerName);
+			UE_LOG(LogCs, Warning, TEXT("ACsPlayerState::ServerRequestUniqueMappingId: %s is requesting %s's UniqueMappingId is INVALID."), *ClientPlayerState->GetPlayerName(), *RequestingPlayerState->GetPlayerName());
 		}
 		return;
 	}
 
 	if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		UE_LOG(LogCs, Log, TEXT("ACsPlayerState::ServerRequestUniqueMappingId: %s is requesting %s's UniqueMappingId: %d"), *ClientPlayerState->PlayerName, *RequestingPlayerState->PlayerName, RequestingPlayerState->UniqueMappingId);
+		UE_LOG(LogCs, Log, TEXT("ACsPlayerState::ServerRequestUniqueMappingId: %s is requesting %s's UniqueMappingId: %d"), *ClientPlayerState->GetPlayerName(), *RequestingPlayerState->GetPlayerName(), RequestingPlayerState->UniqueMappingId);
 	}
 	ClientPlayerState->ClientRecieveUniqueMappingId(RequestingPlayerState, RequestingPlayerState->UniqueMappingId);
 }
@@ -157,7 +157,7 @@ void ACsPlayerState::ClientRecieveUniqueMappingId_Internal(const uint8 &MappingI
 
 	if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		UE_LOG(LogCs, Log, TEXT("ACsPlayerState::ClientRecieveUniqueMappingId: %s recieved UniqueMappingId: %d"), *PlayerName, MappingId);
+		UE_LOG(LogCs, Log, TEXT("ACsPlayerState::ClientRecieveUniqueMappingId: %s recieved UniqueMappingId: %d"), *GetPlayerName(), MappingId);
 		UE_LOG(LogCs, Log, TEXT("ACsPlayerState::ClientRecieveUniqueMappingId: State Change: WaitingForUniqueMappingId -> RecievedUniqueMappingId"));
 	}
 	OnBoardState = ECsPlayerStateBaseOnBoardState::RecievedUniqueMappingId;
@@ -197,7 +197,7 @@ void ACsPlayerState::ServerRequestUniqueMappingId_AI_Internal(const uint8 &Clien
 	{
 		if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsAIPlayerState::ServerRequestUniqueMappingId_AI: %s is requesting PlayerState that is nullptr."), *ClientPlayerState->PlayerName);
+			UE_LOG(LogCs, Warning, TEXT("ACsAIPlayerState::ServerRequestUniqueMappingId_AI: %s is requesting PlayerState that is nullptr."), *ClientPlayerState->GetPlayerName());
 		}
 		return;
 	}
@@ -206,7 +206,7 @@ void ACsPlayerState::ServerRequestUniqueMappingId_AI_Internal(const uint8 &Clien
 	{
 		if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsAIPlayerState::ServerRequestUniqueMappingId_AI: %s is requesting %s's UniqueMappingId is INVALID."), *ClientPlayerState->PlayerName, *RequestingPlayerState->PlayerName);
+			UE_LOG(LogCs, Warning, TEXT("ACsAIPlayerState::ServerRequestUniqueMappingId_AI: %s is requesting %s's UniqueMappingId is INVALID."), *ClientPlayerState->GetPlayerName(), *RequestingPlayerState->GetPlayerName());
 		}
 		ClientPlayerState->RequestUniqueMappingId_AI(RequestingPlayerState);
 		return;
@@ -214,7 +214,7 @@ void ACsPlayerState::ServerRequestUniqueMappingId_AI_Internal(const uint8 &Clien
 
 	if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		UE_LOG(LogCs, Log, TEXT("ACsAIPlayerState::ServerRequestUniqueMappingId_AI: %s is requesting %s's UniqueMappingId: %d"), *ClientPlayerState->PlayerName, *RequestingPlayerState->PlayerName, RequestingPlayerState->UniqueMappingId);
+		UE_LOG(LogCs, Log, TEXT("ACsAIPlayerState::ServerRequestUniqueMappingId_AI: %s is requesting %s's UniqueMappingId: %d"), *ClientPlayerState->GetPlayerName(), *RequestingPlayerState->GetPlayerName(), RequestingPlayerState->UniqueMappingId);
 	}
 	ClientPlayerState->ClientRecieveUniqueMappingId_AI(RequestingPlayerState, RequestingPlayerState->UniqueMappingId);
 }

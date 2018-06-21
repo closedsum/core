@@ -14,7 +14,7 @@ struct CSCORE_API FCsData_ProjectilePtr
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Data")
-	TAssetSubclassOf<class ACsData_Projectile> Data;
+	TSoftClassPtr<class ACsData_Projectile> Data;
 
 	UPROPERTY(EditAnywhere, Category = "Data", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Data_LoadFlags;
@@ -60,7 +60,7 @@ struct CSCORE_API FCsData_ProjectileImpactPtr
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Data")
-	TAssetSubclassOf<class ACsData_ProjectileImpact> Data;
+	TSoftClassPtr<class ACsData_ProjectileImpact> Data;
 
 	UPROPERTY(EditAnywhere, Category = "Data", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Data_LoadFlags;

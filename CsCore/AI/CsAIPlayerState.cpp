@@ -275,7 +275,7 @@ void ACsAIPlayerState::ClientRecieveUniqueMappingId_AI_Internal(const uint8 &Map
 
 	if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		UE_LOG(LogCs, Log, TEXT("ACsAIPlayerState::ClientRecieveUniqueMappingId_AI: %s recieved UniqueMappingId: %d"), *PlayerName, MappingId);
+		UE_LOG(LogCs, Log, TEXT("ACsAIPlayerState::ClientRecieveUniqueMappingId_AI: %s recieved UniqueMappingId: %d"), *GetPlayerName(), MappingId);
 		UE_LOG(LogCs, Log, TEXT("ACsAIPlayerState::ClientRecieveUniqueMappingId_AI: State Change: WaitingForUniqueMappingId -> RecievedUniqueMappingId"));
 	}
 	OnBoardState = ECsPlayerStateBaseOnBoardState::RecievedUniqueMappingId;

@@ -504,13 +504,13 @@ void ACsPlayerStateBase::ServerRequestLocalUniqueMappingId_Implementation(ACsPla
 	{
 		if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsPlayerStateBase::ServerRequestLocalUniqueMappingId: %s's UniqueMappingId is INVALID."), *ClientPlayerState->PlayerName);
+			UE_LOG(LogCs, Warning, TEXT("ACsPlayerStateBase::ServerRequestLocalUniqueMappingId: %s's UniqueMappingId is INVALID."), *ClientPlayerState->GetPlayerName());
 		}
 		return;
 	}
 	if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		UE_LOG(LogCs, Log, TEXT("ACsPlayerStateBase::ServerRequestLocalUniqueMappingId: %s is requesting UniqueMappingId: %d"), *ClientPlayerState->PlayerName, ClientPlayerState->UniqueMappingId);
+		UE_LOG(LogCs, Log, TEXT("ACsPlayerStateBase::ServerRequestLocalUniqueMappingId: %s is requesting UniqueMappingId: %d"), *ClientPlayerState->GetPlayerName(), ClientPlayerState->UniqueMappingId);
 	}
 	ClientPlayerState->ClientRecieveLocalUniqueMappingId(ClientPlayerState->UniqueMappingId, RequestingPlayerState);
 }

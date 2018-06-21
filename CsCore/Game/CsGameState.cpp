@@ -39,6 +39,7 @@
 #include "Javascript/CsJavascriptEntryPoint.h"
 
 #if WITH_EDITOR
+#include "Editor.h"
 #include "Settings/LevelEditorPlaySettings.h"
 #endif // #if WITH_EDITOR
 
@@ -777,8 +778,8 @@ void ACsGameState::SetPlayerStateMappingRelationshipFlag(const uint8 &ClientMapp
 				ACsPlayerState* ClientPlayerState = GetPlayerState(ClientMappingId);
 				ACsPlayerState* PlayerState		  = GetPlayerState(MappingId);
 
-				const FString ClientName = ClientPlayerState ? ClientPlayerState->PlayerName : ECsCached::Str::INVALID;
-				const FString OtherName  = PlayerState ? PlayerState->PlayerName : ECsCached::Str::INVALID;
+				const FString ClientName = ClientPlayerState ? ClientPlayerState->GetPlayerName() : ECsCached::Str::INVALID;
+				const FString OtherName  = PlayerState ? PlayerState->GetPlayerName() : ECsCached::Str::INVALID;
 				const FString Value		 = Relationship.HasBCompletedInitialReplicationAndLoadingForA ? ECsCached::Str::True : ECsCached::Str::False;
 
 				UE_LOG(LogCs, Log, TEXT("ACsGameState::SetPlayerStateMappingRelationshipFlag: Relationship: %s(%d) <-> %s(%d) from %s to True."), *OtherName, MappingId, *ClientName, ClientMappingId, *Value);
@@ -910,8 +911,8 @@ void ACsGameState::SetAIPlayerStateMappingRelationshipFlag(const uint8 &ClientMa
 				ACsPlayerState* ClientPlayerState = GetPlayerState(ClientMappingId);
 				ACsAIPlayerState* PlayerState	  = GetAIPlayerState(MappingId);
 
-				const FString ClientName = ClientPlayerState ? ClientPlayerState->PlayerName : ECsCached::Str::INVALID;
-				const FString OtherName  = PlayerState ? PlayerState->PlayerName : ECsCached::Str::INVALID;
+				const FString ClientName = ClientPlayerState ? ClientPlayerState->GetPlayerName() : ECsCached::Str::INVALID;
+				const FString OtherName  = PlayerState ? PlayerState->GetPlayerName() : ECsCached::Str::INVALID;
 				const FString Value		 = Relationship.HasBCompletedInitialReplicationAndLoadingForA ? ECsCached::Str::True : ECsCached::Str::False;
 
 				UE_LOG(LogCs, Log, TEXT("ACsGameState::SetAIPlayerStateMappingRelationshipFlag: Relationship: %s(%d) <-> %s(%d) from %s to True."), *OtherName, MappingId, *ClientName, ClientMappingId, *Value);

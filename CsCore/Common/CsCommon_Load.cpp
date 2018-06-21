@@ -17,8 +17,6 @@
 #include "Types/CsTypes_Math.h"
 #include "CsCVars.h"
 
-#include "Common/CsCommon.h"
-
 #include "Data/CsData.h"
 #include "Data/CsData_Projectile.h"
 #include "Data/CsData_ProjectileImpact.h"
@@ -217,7 +215,7 @@ void UCsCommon_Load::JsonWriter_ArrayElement(TSharedRef<TJsonWriter<TCHAR>> &InJ
 	InJsonWriter->WriteObjectEnd();
 }
 
-void UCsCommon_Load::WriteTAssetPtrToJson_AnimBlueprint(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, const FString &MemberName, TAssetPtr<UAnimBlueprint> &Member)
+void UCsCommon_Load::WriteTSoftObjectPtrToJson_AnimBlueprint(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, const FString &MemberName, TSoftObjectPtr<UAnimBlueprint> &Member)
 {
 	if (Member.IsValid() && Member.Get())
 	{
@@ -241,13 +239,13 @@ void UCsCommon_Load::WriteTAssetPtrToJson_AnimBlueprint(TSharedRef<TJsonWriter<T
 	}
 }
 
-void UCsCommon_Load::WriteAssetObjectPropertyToJson_AnimBlueprint(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, UAssetObjectProperty* &AssetObjectProperty, void* InObject, const FString &MemberName)
+void UCsCommon_Load::WriteSoftObjectPropertyToJson_AnimBlueprint(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, USoftObjectProperty* &SoftObjectProperty, void* InObject, const FString &MemberName)
 {
-	if (TAssetPtr<UAnimBlueprint>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UAnimBlueprint>>(InObject))
-		WriteTAssetPtrToJson_AnimBlueprint(InJsonWriter, MemberName, *Member);
+	if (TSoftObjectPtr<UAnimBlueprint>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UAnimBlueprint>>(InObject))
+		WriteTSoftObjectPtrToJson_AnimBlueprint(InJsonWriter, MemberName, *Member);
 }
 
-void UCsCommon_Load::WriteTAssetPtrToJson_Blueprint(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, const FString &MemberName, TAssetPtr<UBlueprint> &Member)
+void UCsCommon_Load::WriteTSoftObjectPtrToJson_Blueprint(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, const FString &MemberName, TSoftObjectPtr<UBlueprint> &Member)
 {
 	if (Member.IsValid() && Member.Get())
 	{
@@ -271,10 +269,10 @@ void UCsCommon_Load::WriteTAssetPtrToJson_Blueprint(TSharedRef<TJsonWriter<TCHAR
 	}
 }
 
-void UCsCommon_Load::WriteAssetObjectPropertyToJson_Blueprint(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, UAssetObjectProperty* &AssetObjectProperty, void* InObject, const FString &MemberName)
+void UCsCommon_Load::WriteSoftObjectPropertyToJson_Blueprint(TSharedRef<TJsonWriter<TCHAR>> &InJsonWriter, USoftObjectProperty* &SoftObjectProperty, void* InObject, const FString &MemberName)
 {
-	if (TAssetPtr<UBlueprint>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UBlueprint>>(InObject))
-		WriteTAssetPtrToJson_Blueprint(InJsonWriter, MemberName, *Member);
+	if (TSoftObjectPtr<UBlueprint>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UBlueprint>>(InObject))
+		WriteTSoftObjectPtrToJson_Blueprint(InJsonWriter, MemberName, *Member);
 }
 
 void UCsCommon_Load::WriteMemberIntegralArrayPropertyToJson_uint64(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UArrayProperty* &ArrayProperty, void* InObject, const FString &MemberName)
@@ -357,18 +355,18 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 		
 		const FString MemberName = Property->GetName();
 
-		// TAssetSubclassOf
-		if (UAssetClassProperty* AssetClassProperty = Cast<UAssetClassProperty>(*It))
+		// TSoftClassPtr
+		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(*It))
 		{
 			// ACsData_Projectile
-			if (AssetClassProperty->MetaClass == ACsData_Projectile::StaticClass())
-			{ WriteAssetClassPropertyToJson<ACsData_Projectile>(InJsonWriter, AssetClassProperty, InStruct, MemberName); continue; }
+			if (SoftClassProperty->MetaClass == ACsData_Projectile::StaticClass())
+			{ WriteSoftClassPropertyToJson<ACsData_Projectile>(InJsonWriter, SoftClassProperty, InStruct, MemberName); continue; }
 			// ACsData_ProjectileImpact
-			if (AssetClassProperty->MetaClass == ACsData_ProjectileImpact::StaticClass())
-			{ WriteAssetClassPropertyToJson<ACsData_ProjectileImpact>(InJsonWriter, AssetClassProperty, InStruct, MemberName); continue; }
+			if (SoftClassProperty->MetaClass == ACsData_ProjectileImpact::StaticClass())
+			{ WriteSoftClassPropertyToJson<ACsData_ProjectileImpact>(InJsonWriter, SoftClassProperty, InStruct, MemberName); continue; }
 			// ACsData
-			if (AssetClassProperty->MetaClass == ACsData::StaticClass())
-			{ WriteAssetClassPropertyToJson<ACsData>(InJsonWriter, AssetClassProperty, InStruct, MemberName); continue; }
+			if (SoftClassProperty->MetaClass == ACsData::StaticClass())
+			{ WriteSoftClassPropertyToJson<ACsData>(InJsonWriter, SoftClassProperty, InStruct, MemberName); continue; }
 
 			if (Internal)
 			{
@@ -377,67 +375,67 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			}
 			continue;
 		}
-		// TAssetPtr
-		if (UAssetObjectProperty* AssetObjectProperty = Cast<UAssetObjectProperty>(*It))
+		// TSoftObjectPtr
+		if (USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(*It))
 		{
 			// UStaticMesh
-			if (AssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UStaticMesh>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UStaticMesh::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UStaticMesh>(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
 			// USkeletalMesh
-			if (AssetObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
-			{ WriteAssetObjectPropertyToJson<USkeletalMesh>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
+			{ WriteSoftObjectPropertyToJson<USkeletalMesh>(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UMaterialInstance
-			if (AssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UMaterialInstance>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UMaterialInstance>(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UMaterialInstanceConstant
-			if (AssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
+			if (SoftObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
 			{
-				if (AssetObjectProperty->ArrayDim == CS_SINGLETON)
-				{ WriteAssetObjectPropertyToJson<UMaterialInstanceConstant>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
-				if (AssetObjectProperty->ArrayDim == ECS_INTERACTIVE_STATE_MAX)
-				{ WriteFixedArrayAssetObjectPropertyToJson_EnumSize<UMaterialInstanceConstant, ECsInteractiveState::Type, ECS_INTERACTIVE_STATE_MAX>(InJsonWriter, AssetObjectProperty, InStruct, MemberName, &ECsInteractiveState::ToString); continue; }
+				if (SoftObjectProperty->ArrayDim == CS_SINGLETON)
+				{ WriteSoftObjectPropertyToJson<UMaterialInstanceConstant>(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
+				if (SoftObjectProperty->ArrayDim == ECS_INTERACTIVE_STATE_MAX)
+				{ WriteFixedArraySoftObjectPropertyToJson_EnumSize<UMaterialInstanceConstant, ECsInteractiveState::Type, ECS_INTERACTIVE_STATE_MAX>(InJsonWriter, SoftObjectProperty, InStruct, MemberName, &ECsInteractiveState::ToString); continue; }
 
 				if (WriteStructToJson_Internal_Helper(Internal, Property, InJsonWriter, InStruct, InScriptStruct)) { continue; }
 				continue;
 			}
 			// UPhysicalMaterial
-			if (AssetObjectProperty->PropertyClass == UPhysicalMaterial::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UPhysicalMaterial>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UPhysicalMaterial::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UPhysicalMaterial>(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UPhysicsAsset
-			if (AssetObjectProperty->PropertyClass == UPhysicsAsset::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UPhysicsAsset>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UPhysicsAsset::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UPhysicsAsset>(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UCurveFloat
-			if (AssetObjectProperty->PropertyClass == UCurveFloat::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UCurveFloat>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UCurveFloat::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UCurveFloat>(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UCurveVector
-			if (AssetObjectProperty->PropertyClass == UCurveVector::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UCurveVector>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UCurveVector::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UCurveVector>(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
 			// USoundCue
-			if (AssetObjectProperty->PropertyClass == USoundCue::StaticClass())
-			{ WriteAssetObjectPropertyToJson<USoundCue>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == USoundCue::StaticClass())
+			{ WriteSoftObjectPropertyToJson<USoundCue>(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UParticleSystem
-			if (AssetObjectProperty->PropertyClass == UParticleSystem::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UParticleSystem>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UParticleSystem::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UParticleSystem>(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UAnimSequence
-			if (AssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UAnimSequence>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UAnimSequence::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UAnimSequence>(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UAnimMontage
-			if (AssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UAnimMontage>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UAnimMontage>(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UBlendSpace1D
-			if (AssetObjectProperty->PropertyClass == UBlendSpace1D::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UBlendSpace1D>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UBlendSpace1D::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UBlendSpace1D>(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UBlendSpace
-			if (AssetObjectProperty->PropertyClass == UBlendSpace::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UBlendSpace>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UBlendSpace::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UBlendSpace>(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UAnimBlueprint
-			if (AssetObjectProperty->PropertyClass == UAnimBlueprint::StaticClass())
-			{ WriteAssetObjectPropertyToJson_AnimBlueprint(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UAnimBlueprint::StaticClass())
+			{ WriteSoftObjectPropertyToJson_AnimBlueprint(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UBlueprint
-			if (AssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
+			if (SoftObjectProperty->PropertyClass == UBlueprint::StaticClass())
 			{
-				if (AssetObjectProperty->ArrayDim == CS_SINGLETON)
-				{ WriteAssetObjectPropertyToJson_Blueprint(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+				if (SoftObjectProperty->ArrayDim == CS_SINGLETON)
+				{ WriteSoftObjectPropertyToJson_Blueprint(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
 			}
 
 			if (Internal)
@@ -792,30 +790,30 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 		// Array
 		if (UArrayProperty* ArrayProperty = Cast<UArrayProperty>(*It))
 		{
-			// TAssetPtr
-			if (UAssetObjectProperty* InnerAssetObjectProperty = Cast<UAssetObjectProperty>(ArrayProperty->Inner))
+			// TSoftObjectPtr
+			if (USoftObjectProperty* InnerSoftObjectProperty = Cast<USoftObjectProperty>(ArrayProperty->Inner))
 			{
 				// UStaticMesh
-				if (InnerAssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UStaticMesh>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UStaticMesh::StaticClass())
+				{ WriteArraySoftObjectPropertyToJson<UStaticMesh>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// USkeletalMesh
-				if (InnerAssetObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<USkeletalMesh>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
+				{ WriteArraySoftObjectPropertyToJson<USkeletalMesh>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// UMaterialInstance
-				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UMaterialInstance>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
+				{ WriteArraySoftObjectPropertyToJson<UMaterialInstance>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// UMaterialInstanceConstant
-				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UMaterialInstanceConstant>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
+				{ WriteArraySoftObjectPropertyToJson<UMaterialInstanceConstant>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// UAnimSequence
-				if (InnerAssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UAnimSequence>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UAnimSequence::StaticClass())
+				{ WriteArraySoftObjectPropertyToJson<UAnimSequence>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// UAnimMontage
-				if (InnerAssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UAnimMontage>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+				{ WriteArraySoftObjectPropertyToJson<UAnimMontage>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// UBlueprint
-				if (InnerAssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UBlueprint>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UBlueprint::StaticClass())
+				{ WriteArraySoftObjectPropertyToJson<UBlueprint>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 
 				if (Internal)
 				{
@@ -1098,18 +1096,18 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			LastCategory = Category;
 		}
 
-		// TAssetSubclassOf
-		if (UAssetClassProperty* AssetClassProperty = Cast<UAssetClassProperty>(*It))
+		// TSoftClassPtr
+		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(*It))
 		{
 			// ACsData_Projectile
-			if (AssetClassProperty->MetaClass == ACsData_Projectile::StaticClass())
-			{ WriteAssetClassPropertyToJson<ACsData_Projectile>(InJsonWriter, AssetClassProperty, InStruct, MemberName); continue; }
+			if (SoftClassProperty->MetaClass == ACsData_Projectile::StaticClass())
+			{ WriteSoftClassPropertyToJson<ACsData_Projectile>(InJsonWriter, SoftClassProperty, InStruct, MemberName); continue; }
 			// ACsData_ProjectileImpact
-			if (AssetClassProperty->MetaClass == ACsData_ProjectileImpact::StaticClass())
-			{ WriteAssetClassPropertyToJson<ACsData_ProjectileImpact>(InJsonWriter, AssetClassProperty, InStruct, MemberName); continue; }
+			if (SoftClassProperty->MetaClass == ACsData_ProjectileImpact::StaticClass())
+			{ WriteSoftClassPropertyToJson<ACsData_ProjectileImpact>(InJsonWriter, SoftClassProperty, InStruct, MemberName); continue; }
 			// ACsData
-			if (AssetClassProperty->MetaClass == ACsData::StaticClass())
-			{ WriteAssetClassPropertyToJson<ACsData>(InJsonWriter, AssetClassProperty, InStruct, MemberName); continue; }
+			if (SoftClassProperty->MetaClass == ACsData::StaticClass())
+			{ WriteSoftClassPropertyToJson<ACsData>(InJsonWriter, SoftClassProperty, InStruct, MemberName); continue; }
 
 			if (Internal)
 			{
@@ -1118,67 +1116,67 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			}
 			continue;
 		}
-		// TAssetPtr
-		if (UAssetObjectProperty* AssetObjectProperty = Cast<UAssetObjectProperty>(*It))
+		// TSoftObjectPtr
+		if (USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(*It))
 		{
 			// UStaticMesh
-			if (AssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UStaticMesh>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UStaticMesh::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UStaticMesh>(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
 			// USkeletalMesh
-			if (AssetObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
-			{ WriteAssetObjectPropertyToJson<USkeletalMesh>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
+			{ WriteSoftObjectPropertyToJson<USkeletalMesh>(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UMaterialInstance
-			if (AssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UMaterialInstance>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UMaterialInstance>(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UMaterialInstanceConstant
-			if (AssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
+			if (SoftObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
 			{
-				if (AssetObjectProperty->ArrayDim == CS_SINGLETON)
-				{ WriteAssetObjectPropertyToJson<UMaterialInstanceConstant>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
-				if (AssetObjectProperty->ArrayDim == ECS_INTERACTIVE_STATE_MAX)
-				{ WriteFixedArrayAssetObjectPropertyToJson_EnumSize<UMaterialInstanceConstant, ECsInteractiveState::Type, ECS_INTERACTIVE_STATE_MAX>(InJsonWriter, AssetObjectProperty, InStruct, MemberName, &ECsInteractiveState::ToString); continue; }
+				if (SoftObjectProperty->ArrayDim == CS_SINGLETON)
+				{ WriteSoftObjectPropertyToJson<UMaterialInstanceConstant>(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
+				if (SoftObjectProperty->ArrayDim == ECS_INTERACTIVE_STATE_MAX)
+				{ WriteFixedArraySoftObjectPropertyToJson_EnumSize<UMaterialInstanceConstant, ECsInteractiveState::Type, ECS_INTERACTIVE_STATE_MAX>(InJsonWriter, SoftObjectProperty, InStruct, MemberName, &ECsInteractiveState::ToString); continue; }
 
 				if (WriteStructToJson_Internal_Helper(Internal, Property, InJsonWriter, InStruct, InScriptStruct)) { continue; }
 				continue;
 			}
 			// UPhysicalMaterial
-			if (AssetObjectProperty->PropertyClass == UPhysicalMaterial::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UPhysicalMaterial>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UPhysicalMaterial::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UPhysicalMaterial>(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UPhysicsAsset
-			if (AssetObjectProperty->PropertyClass == UPhysicsAsset::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UPhysicsAsset>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UPhysicsAsset::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UPhysicsAsset>(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UCurveFloat
-			if (AssetObjectProperty->PropertyClass == UCurveFloat::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UCurveFloat>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UCurveFloat::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UCurveFloat>(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UCurveVector
-			if (AssetObjectProperty->PropertyClass == UCurveVector::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UCurveVector>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UCurveVector::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UCurveVector>(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
 			// USoundCue
-			if (AssetObjectProperty->PropertyClass == USoundCue::StaticClass())
-			{ WriteAssetObjectPropertyToJson<USoundCue>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == USoundCue::StaticClass())
+			{ WriteSoftObjectPropertyToJson<USoundCue>(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UParticleSystem
-			if (AssetObjectProperty->PropertyClass == UParticleSystem::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UParticleSystem>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UParticleSystem::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UParticleSystem>(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UAnimSequence
-			if (AssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UAnimSequence>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UAnimSequence::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UAnimSequence>(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UAnimMontage
-			if (AssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UAnimMontage>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UAnimMontage>(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UBlendSpace1D
-			if (AssetObjectProperty->PropertyClass == UBlendSpace1D::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UBlendSpace1D>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UBlendSpace1D::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UBlendSpace1D>(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UBlendSpace
-			if (AssetObjectProperty->PropertyClass == UBlendSpace::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UBlendSpace>(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UBlendSpace::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UBlendSpace>(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UAnimBlueprint
-			if (AssetObjectProperty->PropertyClass == UAnimBlueprint::StaticClass())
-			{ WriteAssetObjectPropertyToJson_AnimBlueprint(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UAnimBlueprint::StaticClass())
+			{ WriteSoftObjectPropertyToJson_AnimBlueprint(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UBlueprint
-			if (AssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
+			if (SoftObjectProperty->PropertyClass == UBlueprint::StaticClass())
 			{
-				if (AssetObjectProperty->ArrayDim == CS_SINGLETON)
-				{ WriteAssetObjectPropertyToJson_Blueprint(InJsonWriter, AssetObjectProperty, InStruct, MemberName); continue; }
+				if (SoftObjectProperty->ArrayDim == CS_SINGLETON)
+				{ WriteSoftObjectPropertyToJson_Blueprint(InJsonWriter, SoftObjectProperty, InStruct, MemberName); continue; }
 			}
 
 			if (Internal)
@@ -1536,30 +1534,30 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 		// Array
 		if (UArrayProperty* ArrayProperty = Cast<UArrayProperty>(*It))
 		{
-			// TAssetPtr
-			if (UAssetObjectProperty* InnerAssetObjectProperty = Cast<UAssetObjectProperty>(ArrayProperty->Inner))
+			// TSoftObjectPtr
+			if (USoftObjectProperty* InnerSoftObjectProperty = Cast<USoftObjectProperty>(ArrayProperty->Inner))
 			{
 				// UStaticMesh
-				if (InnerAssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UStaticMesh>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UStaticMesh::StaticClass())
+				{ WriteArraySoftObjectPropertyToJson<UStaticMesh>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// USkeletalMesh
-				if (InnerAssetObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<USkeletalMesh>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
+				{ WriteArraySoftObjectPropertyToJson<USkeletalMesh>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// UMaterialInstance
-				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UMaterialInstance>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
+				{ WriteArraySoftObjectPropertyToJson<UMaterialInstance>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// UMaterialInstanceConstant
-				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UMaterialInstanceConstant>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
+				{ WriteArraySoftObjectPropertyToJson<UMaterialInstanceConstant>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// UAnimSequence
-				if (InnerAssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UAnimSequence>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UAnimSequence::StaticClass())
+				{ WriteArraySoftObjectPropertyToJson<UAnimSequence>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// UAnimMontage
-				if (InnerAssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UAnimMontage>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+				{ WriteArraySoftObjectPropertyToJson<UAnimMontage>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 				// UBlueprint
-				if (InnerAssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UBlueprint>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UBlueprint::StaticClass())
+				{ WriteArraySoftObjectPropertyToJson<UBlueprint>(InJsonWriter, ArrayProperty, InStruct, MemberName); continue; }
 
 				if (Internal)
 				{
@@ -1845,8 +1843,8 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			LastCategory = Category;
 		}
 
-		// TAssetSubclassOf
-		if (UAssetClassProperty* AssetClassProperty = Cast<UAssetClassProperty>(*It))
+		// TSoftClassPtr
+		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(*It))
 		{
 			if (Internal)
 			{
@@ -1855,48 +1853,48 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			}
 			continue;
 		}
-		// TAssetPtr
-		if (UAssetObjectProperty* AssetObjectProperty = Cast<UAssetObjectProperty>(*It))
+		// TSoftObjectPtr
+		if (USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(*It))
 		{
 			// UStaticMesh
-			if (AssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UStaticMesh>(InJsonWriter, AssetObjectProperty, InObject, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UStaticMesh::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UStaticMesh>(InJsonWriter, SoftObjectProperty, InObject, MemberName); continue; }
 			// USkeletalMesh
-			if (AssetObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
-			{ WriteAssetObjectPropertyToJson<USkeletalMesh>(InJsonWriter, AssetObjectProperty, InObject, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
+			{ WriteSoftObjectPropertyToJson<USkeletalMesh>(InJsonWriter, SoftObjectProperty, InObject, MemberName); continue; }
 			// UMaterialInstance
-			if (AssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UMaterialInstance>(InJsonWriter, AssetObjectProperty, InObject, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UMaterialInstance>(InJsonWriter, SoftObjectProperty, InObject, MemberName); continue; }
 			// UMaterialInstanceConstant
-			if (AssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UMaterialInstanceConstant>(InJsonWriter, AssetObjectProperty, InObject, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UMaterialInstanceConstant>(InJsonWriter, SoftObjectProperty, InObject, MemberName); continue; }
 			// UPhysicalMaterial
-			if (AssetObjectProperty->PropertyClass == UPhysicalMaterial::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UPhysicalMaterial>(InJsonWriter, AssetObjectProperty, InObject, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UPhysicalMaterial::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UPhysicalMaterial>(InJsonWriter, SoftObjectProperty, InObject, MemberName); continue; }
 			// UPhysicsAsset
-			if (AssetObjectProperty->PropertyClass == UPhysicsAsset::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UPhysicsAsset>(InJsonWriter, AssetObjectProperty, InObject, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UPhysicsAsset::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UPhysicsAsset>(InJsonWriter, SoftObjectProperty, InObject, MemberName); continue; }
 			// UAnimSequence
-			if (AssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UAnimSequence>(InJsonWriter, AssetObjectProperty, InObject, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UAnimSequence::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UAnimSequence>(InJsonWriter, SoftObjectProperty, InObject, MemberName); continue; }
 			// UAnimMontage
-			if (AssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UAnimMontage>(InJsonWriter, AssetObjectProperty, InObject, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UAnimMontage>(InJsonWriter, SoftObjectProperty, InObject, MemberName); continue; }
 			// UBlendSpace
-			if (AssetObjectProperty->PropertyClass == UBlendSpace::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UBlendSpace>(InJsonWriter, AssetObjectProperty, InObject, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UBlendSpace::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UBlendSpace>(InJsonWriter, SoftObjectProperty, InObject, MemberName); continue; }
 			// UAnimBlueprint
-			if (AssetObjectProperty->PropertyClass == UAnimBlueprint::StaticClass())
-			{ WriteAssetObjectPropertyToJson_AnimBlueprint(InJsonWriter, AssetObjectProperty, InObject, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UAnimBlueprint::StaticClass())
+			{ WriteSoftObjectPropertyToJson_AnimBlueprint(InJsonWriter, SoftObjectProperty, InObject, MemberName); continue; }
 			// USoundCue
-			if (AssetObjectProperty->PropertyClass == USoundCue::StaticClass())
-			{ WriteAssetObjectPropertyToJson<USoundCue>(InJsonWriter, AssetObjectProperty, InObject, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == USoundCue::StaticClass())
+			{ WriteSoftObjectPropertyToJson<USoundCue>(InJsonWriter, SoftObjectProperty, InObject, MemberName); continue; }
 			// UParticleSystem
-			if (AssetObjectProperty->PropertyClass == UParticleSystem::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UParticleSystem>(InJsonWriter, AssetObjectProperty, InObject, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UParticleSystem::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UParticleSystem>(InJsonWriter, SoftObjectProperty, InObject, MemberName); continue; }
 			// UCurveVector
-			if (AssetObjectProperty->PropertyClass == UCurveVector::StaticClass())
-			{ WriteAssetObjectPropertyToJson<UCurveVector>(InJsonWriter, AssetObjectProperty, InObject, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UCurveVector::StaticClass())
+			{ WriteSoftObjectPropertyToJson<UCurveVector>(InJsonWriter, SoftObjectProperty, InObject, MemberName); continue; }
 
 			if (Internal)
 			{
@@ -2220,24 +2218,24 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 		// Array
 		if (UArrayProperty* ArrayProperty = Cast<UArrayProperty>(*It))
 		{
-			// TAssetPtr
-			if (UAssetObjectProperty* InnerAssetObjectProperty = Cast<UAssetObjectProperty>(ArrayProperty->Inner))
+			// TSoftObjectPtr
+			if (USoftObjectProperty* InnerSoftObjectProperty = Cast<USoftObjectProperty>(ArrayProperty->Inner))
 			{
 				// UMaterialInstance
-				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UMaterialInstance>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
+				{ WriteArraySoftObjectPropertyToJson<UMaterialInstance>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
 				// UMaterialInstanceConstant
-				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UMaterialInstanceConstant>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
+				{ WriteArraySoftObjectPropertyToJson<UMaterialInstanceConstant>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
 				// UAnimSequence
-				if (InnerAssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UAnimSequence>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UAnimSequence::StaticClass())
+				{ WriteArraySoftObjectPropertyToJson<UAnimSequence>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
 				// UAnimMontage
-				if (InnerAssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UAnimMontage>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+				{ WriteArraySoftObjectPropertyToJson<UAnimMontage>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
 				// UBlueprint
-				if (InnerAssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
-				{ WriteArrayAssetObjectPropertyToJson<UBlueprint>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UBlueprint::StaticClass())
+				{ WriteArraySoftObjectPropertyToJson<UBlueprint>(InJsonWriter, ArrayProperty, InObject, MemberName); continue; }
 
 				if (Internal)
 				{
@@ -2463,9 +2461,9 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 	// Read
 #pragma region
 
-void UCsCommon_Load::WriteToAssetObjectPropertyFromJson_AnimBlueprint(TSharedPtr<FJsonObject> &JsonObject, UAssetObjectProperty* &AssetObjectProperty, void* InObject, const FString &MemberName)
+void UCsCommon_Load::WriteToSoftObjectPropertyFromJson_AnimBlueprint(TSharedPtr<FJsonObject> &JsonObject, USoftObjectProperty* &SoftObjectProperty, void* InObject, const FString &MemberName)
 {
-	if (TAssetPtr<UAnimBlueprint>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UAnimBlueprint>>(InObject))
+	if (TSoftObjectPtr<UAnimBlueprint>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UAnimBlueprint>>(InObject))
 	{
 		FString AssetName = JsonObject->GetStringField(MemberName);
 
@@ -2473,13 +2471,13 @@ void UCsCommon_Load::WriteToAssetObjectPropertyFromJson_AnimBlueprint(TSharedPtr
 		if (AssetName.EndsWith(ECsLoadCached::Str::_C))
 			AssetName.RemoveFromEnd(ECsLoadCached::Str::_C);
 
-		*Member = TAssetPtr<UAnimBlueprint>(AssetName);
+		*Member = TSoftObjectPtr<UAnimBlueprint>(AssetName);
 	}
 }
 
-void UCsCommon_Load::WriteToAssetObjectPropertyFromJson_Blueprint(TSharedPtr<FJsonObject> &JsonObject, UAssetObjectProperty* &AssetObjectProperty, void* InObject, const FString &MemberName)
+void UCsCommon_Load::WriteToSoftObjectPropertyFromJson_Blueprint(TSharedPtr<FJsonObject> &JsonObject, USoftObjectProperty* &SoftObjectProperty, void* InObject, const FString &MemberName)
 {
-	if (TAssetPtr<UBlueprint>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UBlueprint>>(InObject))
+	if (TSoftObjectPtr<UBlueprint>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UBlueprint>>(InObject))
 	{
 		FString AssetName = JsonObject->GetStringField(MemberName);
 
@@ -2487,7 +2485,7 @@ void UCsCommon_Load::WriteToAssetObjectPropertyFromJson_Blueprint(TSharedPtr<FJs
 		if (AssetName.EndsWith(ECsLoadCached::Str::_C))
 			AssetName.RemoveFromEnd(ECsLoadCached::Str::_C);
 
-		*Member = TAssetPtr<UBlueprint>(AssetName);
+		*Member = TSoftObjectPtr<UBlueprint>(AssetName);
 	}
 }
 
@@ -2648,18 +2646,18 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 
 		const FString MemberName = Property->GetName();
 
-		// TAssetSubclassOf
-		if (UAssetClassProperty* AssetClassProperty = Cast<UAssetClassProperty>(*It))
+		// TSoftClassPtr
+		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(*It))
 		{
 			// ACsData_Projectile
-			if (AssetClassProperty->MetaClass == ACsData_Projectile::StaticClass())
-			{ WriteToAssetClassPropertyFromJson<ACsData_Projectile>(JsonObject, AssetClassProperty, InStruct, MemberName); continue; }
+			if (SoftClassProperty->MetaClass == ACsData_Projectile::StaticClass())
+			{ WriteToSoftClassPropertyFromJson<ACsData_Projectile>(JsonObject, SoftClassProperty, InStruct, MemberName); continue; }
 			// ACsData_ProjectileImpact
-			if (AssetClassProperty->MetaClass == ACsData_ProjectileImpact::StaticClass())
-			{ WriteToAssetClassPropertyFromJson<ACsData_ProjectileImpact>(JsonObject, AssetClassProperty, InStruct, MemberName); continue; }
+			if (SoftClassProperty->MetaClass == ACsData_ProjectileImpact::StaticClass())
+			{ WriteToSoftClassPropertyFromJson<ACsData_ProjectileImpact>(JsonObject, SoftClassProperty, InStruct, MemberName); continue; }
 			// ACsData
-			if (AssetClassProperty->MetaClass == ACsData::StaticClass())
-			{ WriteToAssetClassPropertyFromJson<ACsData>(JsonObject, AssetClassProperty, InStruct, MemberName); continue; }
+			if (SoftClassProperty->MetaClass == ACsData::StaticClass())
+			{ WriteToSoftClassPropertyFromJson<ACsData>(JsonObject, SoftClassProperty, InStruct, MemberName); continue; }
 			
 			if (Internal)
 			{
@@ -2668,65 +2666,65 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			}
 			continue;
 		}
-		// TAssetPtr
-		if (UAssetObjectProperty* AssetObjectProperty = Cast<UAssetObjectProperty>(*It))
+		// TSoftObjectPtr
+		if (USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(*It))
 		{
 			// UStaticMesh
-			if (AssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UStaticMesh>(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UStaticMesh::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UStaticMesh>(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
 			// USkeletalMesh
-			if (AssetObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<USkeletalMesh>(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<USkeletalMesh>(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UMaterialInstance
-			if (AssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UMaterialInstance>(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UMaterialInstance>(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UMaterialInstanceConstant
-			if (AssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
+			if (SoftObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
 			{
-				if (AssetObjectProperty->ArrayDim == CS_SINGLETON)
-				{ WriteToAssetObjectPropertyFromJson<UMaterialInstanceConstant>(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
-				if (AssetObjectProperty->ArrayDim == ECS_INTERACTIVE_STATE_MAX)
-				{ WriteToFixedArrayAssetObjectPropertyFromJson_EnumSize<UMaterialInstanceConstant, ECsInteractiveState::Type, ECS_INTERACTIVE_STATE_MAX>(JsonObject, AssetObjectProperty, InStruct, MemberName, &ECsInteractiveState::ToString); continue; }
+				if (SoftObjectProperty->ArrayDim == CS_SINGLETON)
+				{ WriteToSoftObjectPropertyFromJson<UMaterialInstanceConstant>(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
+				if (SoftObjectProperty->ArrayDim == ECS_INTERACTIVE_STATE_MAX)
+				{ WriteToFixedArraySoftObjectPropertyFromJson_EnumSize<UMaterialInstanceConstant, ECsInteractiveState::Type, ECS_INTERACTIVE_STATE_MAX>(JsonObject, SoftObjectProperty, InStruct, MemberName, &ECsInteractiveState::ToString); continue; }
 
 				if (ReadStructFromJson_Internal_Helper(Internal, Property, JsonObject, InStruct, InScriptStruct)) { continue; }
 				continue;
 			}
 			// UPhysicalMaterial
-			if (AssetObjectProperty->PropertyClass == UPhysicalMaterial::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UPhysicalMaterial>(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UPhysicalMaterial::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UPhysicalMaterial>(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UPhysicsAsset
-			if (AssetObjectProperty->PropertyClass == UPhysicsAsset::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UPhysicsAsset>(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UPhysicsAsset::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UPhysicsAsset>(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UCurveFloat
-			if (AssetObjectProperty->PropertyClass == UCurveFloat::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UCurveFloat>(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UCurveFloat::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UCurveFloat>(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UCurveVector
-			if (AssetObjectProperty->PropertyClass == UCurveVector::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UCurveVector>(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UCurveVector::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UCurveVector>(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
 			// USoundCue
-			if (AssetObjectProperty->PropertyClass == USoundCue::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<USoundCue>(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == USoundCue::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<USoundCue>(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UParticleSystem
-			if (AssetObjectProperty->PropertyClass == UParticleSystem::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UParticleSystem>(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UParticleSystem::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UParticleSystem>(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UAnimSequence
-			if (AssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UAnimSequence>(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UAnimSequence::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UAnimSequence>(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UAnimMontage
-			if (AssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UAnimMontage>(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UAnimMontage>(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UBlendSpace1D
-			if (AssetObjectProperty->PropertyClass == UBlendSpace1D::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UBlendSpace1D>(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UBlendSpace1D::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UBlendSpace1D>(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UBlendSpace
-			if (AssetObjectProperty->PropertyClass == UBlendSpace::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UBlendSpace>(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UBlendSpace::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UBlendSpace>(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UAnimBlueprint
-			if (AssetObjectProperty->PropertyClass == UAnimBlueprint::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson_AnimBlueprint(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UAnimBlueprint::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson_AnimBlueprint(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UBlueprint
-			if (AssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson_Blueprint(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UBlueprint::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson_Blueprint(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
 
 			if (Internal)
 			{
@@ -3082,30 +3080,30 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 		// Array
 		if (UArrayProperty* ArrayProperty = Cast<UArrayProperty>(*It))
 		{
-			// TAssetPtr
-			if (UAssetObjectProperty* InnerAssetObjectProperty = Cast<UAssetObjectProperty>(ArrayProperty->Inner))
+			// TSoftObjectPtr
+			if (USoftObjectProperty* InnerSoftObjectProperty = Cast<USoftObjectProperty>(ArrayProperty->Inner))
 			{
 				// UStaticMesh
-				if (InnerAssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UStaticMesh>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UStaticMesh::StaticClass())
+				{ WriteToArraySoftObjectPropertyFromJson<UStaticMesh>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 				// USkeletalMesh
-				if (InnerAssetObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<USkeletalMesh>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
+				{ WriteToArraySoftObjectPropertyFromJson<USkeletalMesh>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 				// UMaterialInstance
-				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UMaterialInstance>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
+				{ WriteToArraySoftObjectPropertyFromJson<UMaterialInstance>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 				// UMaterialInstanceConstant
-				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UMaterialInstanceConstant>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
+				{ WriteToArraySoftObjectPropertyFromJson<UMaterialInstanceConstant>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 				// UAnimSequence
-				if (InnerAssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UAnimSequence>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UAnimSequence::StaticClass())
+				{ WriteToArraySoftObjectPropertyFromJson<UAnimSequence>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 				// UAnimMontage
-				if (InnerAssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UAnimMontage>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+				{ WriteToArraySoftObjectPropertyFromJson<UAnimMontage>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 				// UBlueprint
-				if (InnerAssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UBlueprint>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UBlueprint::StaticClass())
+				{ WriteToArraySoftObjectPropertyFromJson<UBlueprint>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 				
 				if (Internal)
 				{
@@ -3429,18 +3427,18 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 
 		TSharedPtr<FJsonObject> JsonObject = JsonParsed->Values.Find(Category)->Get()->AsObject();
 
-		// TAssetSubclassOf
-		if (UAssetClassProperty* AssetClassProperty = Cast<UAssetClassProperty>(*It))
+		// TSoftClassPtr
+		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(*It))
 		{
 			// ACsData_Projectile
-			if (AssetClassProperty->MetaClass == ACsData_Projectile::StaticClass())
-			{ WriteToAssetClassPropertyFromJson<ACsData_Projectile>(JsonObject, AssetClassProperty, InStruct, MemberName); continue; }
+			if (SoftClassProperty->MetaClass == ACsData_Projectile::StaticClass())
+			{ WriteToSoftClassPropertyFromJson<ACsData_Projectile>(JsonObject, SoftClassProperty, InStruct, MemberName); continue; }
 			// ACsData_ProjectileImpact
-			if (AssetClassProperty->MetaClass == ACsData_ProjectileImpact::StaticClass())
-			{ WriteToAssetClassPropertyFromJson<ACsData_ProjectileImpact>(JsonObject, AssetClassProperty, InStruct, MemberName); continue; }
+			if (SoftClassProperty->MetaClass == ACsData_ProjectileImpact::StaticClass())
+			{ WriteToSoftClassPropertyFromJson<ACsData_ProjectileImpact>(JsonObject, SoftClassProperty, InStruct, MemberName); continue; }
 			// ACsData
-			if (AssetClassProperty->MetaClass == ACsData::StaticClass())
-			{ WriteToAssetClassPropertyFromJson<ACsData>(JsonObject, AssetClassProperty, InStruct, MemberName); continue; }
+			if (SoftClassProperty->MetaClass == ACsData::StaticClass())
+			{ WriteToSoftClassPropertyFromJson<ACsData>(JsonObject, SoftClassProperty, InStruct, MemberName); continue; }
 
 			if (Internal)
 			{
@@ -3449,65 +3447,65 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			}
 			continue;
 		}
-		// TAssetPtr
-		if (UAssetObjectProperty* AssetObjectProperty = Cast<UAssetObjectProperty>(*It))
+		// TSoftObjectPtr
+		if (USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(*It))
 		{
 			// UStaticMesh
-			if (AssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UStaticMesh>(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UStaticMesh::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UStaticMesh>(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
 			// USkeletalMesh
-			if (AssetObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<USkeletalMesh>(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<USkeletalMesh>(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UMaterialInstance
-			if (AssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UMaterialInstance>(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UMaterialInstance>(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UMaterialInstanceConstant
-			if (AssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
+			if (SoftObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
 			{
-				if (AssetObjectProperty->ArrayDim == CS_SINGLETON)
-				{ WriteToAssetObjectPropertyFromJson<UMaterialInstanceConstant>(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
-				if (AssetObjectProperty->ArrayDim == ECS_INTERACTIVE_STATE_MAX)
-				{ WriteToFixedArrayAssetObjectPropertyFromJson_EnumSize<UMaterialInstanceConstant, ECsInteractiveState::Type, ECS_INTERACTIVE_STATE_MAX>(JsonObject, AssetObjectProperty, InStruct, MemberName, &ECsInteractiveState::ToString); continue; }
+				if (SoftObjectProperty->ArrayDim == CS_SINGLETON)
+				{ WriteToSoftObjectPropertyFromJson<UMaterialInstanceConstant>(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
+				if (SoftObjectProperty->ArrayDim == ECS_INTERACTIVE_STATE_MAX)
+				{ WriteToFixedArraySoftObjectPropertyFromJson_EnumSize<UMaterialInstanceConstant, ECsInteractiveState::Type, ECS_INTERACTIVE_STATE_MAX>(JsonObject, SoftObjectProperty, InStruct, MemberName, &ECsInteractiveState::ToString); continue; }
 
 				if (ReadStructFromJson_Internal_Helper(Internal, Property, JsonObject, InStruct, InScriptStruct)) { continue; }
 				continue;
 			}
 			// UPhysicalMaterial
-			if (AssetObjectProperty->PropertyClass == UPhysicalMaterial::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UPhysicalMaterial>(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UPhysicalMaterial::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UPhysicalMaterial>(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UPhysicsAsset
-			if (AssetObjectProperty->PropertyClass == UPhysicsAsset::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UPhysicsAsset>(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UPhysicsAsset::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UPhysicsAsset>(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UCurveFloat
-			if (AssetObjectProperty->PropertyClass == UCurveFloat::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UCurveFloat>(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UCurveFloat::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UCurveFloat>(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UCurveVector
-			if (AssetObjectProperty->PropertyClass == UCurveVector::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UCurveVector>(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UCurveVector::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UCurveVector>(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
 			// USoundCue
-			if (AssetObjectProperty->PropertyClass == USoundCue::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<USoundCue>(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == USoundCue::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<USoundCue>(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UParticleSystem
-			if (AssetObjectProperty->PropertyClass == UParticleSystem::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UParticleSystem>(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UParticleSystem::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UParticleSystem>(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UAnimSequence
-			if (AssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UAnimSequence>(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UAnimSequence::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UAnimSequence>(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UAnimMontage
-			if (AssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UAnimMontage>(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UAnimMontage>(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UBlendSpace1D
-			if (AssetObjectProperty->PropertyClass == UBlendSpace1D::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UBlendSpace1D>(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UBlendSpace1D::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UBlendSpace1D>(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UBlendSpace
-			if (AssetObjectProperty->PropertyClass == UBlendSpace::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UBlendSpace>(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UBlendSpace::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UBlendSpace>(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UAnimBlueprint
-			if (AssetObjectProperty->PropertyClass == UAnimBlueprint::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson_AnimBlueprint(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UAnimBlueprint::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson_AnimBlueprint(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
 			// UBlueprint
-			if (AssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson_Blueprint(JsonObject, AssetObjectProperty, InStruct, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UBlueprint::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson_Blueprint(JsonObject, SoftObjectProperty, InStruct, MemberName); continue; }
 
 			if (Internal)
 			{
@@ -3863,30 +3861,30 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 		// Array
 		if (UArrayProperty* ArrayProperty = Cast<UArrayProperty>(*It))
 		{
-			// TAssetPtr
-			if (UAssetObjectProperty* InnerAssetObjectProperty = Cast<UAssetObjectProperty>(ArrayProperty->Inner))
+			// TSoftObjectPtr
+			if (USoftObjectProperty* InnerSoftObjectProperty = Cast<USoftObjectProperty>(ArrayProperty->Inner))
 			{
 				// UStaticMesh
-				if (InnerAssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UStaticMesh>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UStaticMesh::StaticClass())
+				{ WriteToArraySoftObjectPropertyFromJson<UStaticMesh>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 				// USkeletalMesh
-				if (InnerAssetObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<USkeletalMesh>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
+				{ WriteToArraySoftObjectPropertyFromJson<USkeletalMesh>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 				// UMaterialInstance
-				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UMaterialInstance>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
+				{ WriteToArraySoftObjectPropertyFromJson<UMaterialInstance>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 				// UMaterialInstanceConstant
-				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UMaterialInstanceConstant>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
+				{ WriteToArraySoftObjectPropertyFromJson<UMaterialInstanceConstant>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 				// UAnimSequence
-				if (InnerAssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UAnimSequence>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UAnimSequence::StaticClass())
+				{ WriteToArraySoftObjectPropertyFromJson<UAnimSequence>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 				// UAnimMontage
-				if (InnerAssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UAnimMontage>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+				{ WriteToArraySoftObjectPropertyFromJson<UAnimMontage>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 				// UBlueprint
-				if (InnerAssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UBlueprint>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UBlueprint::StaticClass())
+				{ WriteToArraySoftObjectPropertyFromJson<UBlueprint>(JsonObject, ArrayProperty, InStruct, MemberName); continue; }
 
 				if (Internal)
 				{
@@ -4214,8 +4212,8 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 
 		TSharedPtr<FJsonObject> JsonObject = JsonParsed->Values.Find(Category)->Get()->AsObject();
 		
-		// TAssetSubclassOf
-		if (UAssetClassProperty* AssetClassProperty = Cast<UAssetClassProperty>(*It))
+		// TSoftClassPtr
+		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(*It))
 		{
 			if (Internal)
 			{
@@ -4224,60 +4222,60 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			}
 			continue;
 		}
-		// TAssetPtr
-		if (UAssetObjectProperty* AssetObjectProperty = Cast<UAssetObjectProperty>(*It))
+		// TSoftObjectPtr
+		if (USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(*It))
 		{
 			// UStaticMesh
-			if (AssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UStaticMesh>(JsonObject, AssetObjectProperty, InObject, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UStaticMesh::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UStaticMesh>(JsonObject, SoftObjectProperty, InObject, MemberName); continue; }
 			// USkeletalMesh
-			if (AssetObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<USkeletalMesh>(JsonObject, AssetObjectProperty, InObject, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<USkeletalMesh>(JsonObject, SoftObjectProperty, InObject, MemberName); continue; }
 			// UMaterialInstance
-			if (AssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UMaterialInstance>(JsonObject, AssetObjectProperty, InObject, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UMaterialInstance>(JsonObject, SoftObjectProperty, InObject, MemberName); continue; }
 			// UMaterialInstanceConstant
-			if (AssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UMaterialInstanceConstant>(JsonObject, AssetObjectProperty, InObject, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UMaterialInstanceConstant>(JsonObject, SoftObjectProperty, InObject, MemberName); continue; }
 			// UPhysicalMaterial
-			if (AssetObjectProperty->PropertyClass == UPhysicalMaterial::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UPhysicalMaterial>(JsonObject, AssetObjectProperty, InObject, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UPhysicalMaterial::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UPhysicalMaterial>(JsonObject, SoftObjectProperty, InObject, MemberName); continue; }
 			// UPhysicsAsset
-			if (AssetObjectProperty->PropertyClass == UPhysicsAsset::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UPhysicsAsset>(JsonObject, AssetObjectProperty, InObject, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UPhysicsAsset::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UPhysicsAsset>(JsonObject, SoftObjectProperty, InObject, MemberName); continue; }
 			// USoundCue
-			if (AssetObjectProperty->PropertyClass == USoundCue::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<USoundCue>(JsonObject, AssetObjectProperty, InObject, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == USoundCue::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<USoundCue>(JsonObject, SoftObjectProperty, InObject, MemberName); continue; }
 			// UParticleSystem
-			if (AssetObjectProperty->PropertyClass == UParticleSystem::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UParticleSystem>(JsonObject, AssetObjectProperty, InObject, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UParticleSystem::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UParticleSystem>(JsonObject, SoftObjectProperty, InObject, MemberName); continue; }
 			// UAnimSequence
-			if (AssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UAnimSequence>(JsonObject, AssetObjectProperty, InObject, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UAnimSequence::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UAnimSequence>(JsonObject, SoftObjectProperty, InObject, MemberName); continue; }
 			// UAnimMontage
-			if (AssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UAnimMontage>(JsonObject, AssetObjectProperty, InObject, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UAnimMontage>(JsonObject, SoftObjectProperty, InObject, MemberName); continue; }
 			// UBlendSpace
-			if (AssetObjectProperty->PropertyClass == UBlendSpace::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UBlendSpace>(JsonObject, AssetObjectProperty, InObject, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UBlendSpace::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UBlendSpace>(JsonObject, SoftObjectProperty, InObject, MemberName); continue; }
 			// UAnimBlueprint
-			if (AssetObjectProperty->PropertyClass == UAnimBlueprint::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson_AnimBlueprint(JsonObject, AssetObjectProperty, InObject, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UAnimBlueprint::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson_AnimBlueprint(JsonObject, SoftObjectProperty, InObject, MemberName); continue; }
 			// UBlueprint
-			if (AssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
+			if (SoftObjectProperty->PropertyClass == UBlueprint::StaticClass())
 			{
-				if (AssetObjectProperty->ArrayDim == CS_SINGLETON)
-				{ WriteToAssetObjectPropertyFromJson_Blueprint(JsonObject, AssetObjectProperty, InObject, MemberName); continue; }
+				if (SoftObjectProperty->ArrayDim == CS_SINGLETON)
+				{ WriteToSoftObjectPropertyFromJson_Blueprint(JsonObject, SoftObjectProperty, InObject, MemberName); continue; }
 
 				if (ReadObjectFromJson_Internal_Helper(Internal, Property, JsonObject, InObject, InClass)) { continue; }
 				continue;
 			}
 			// UCurveVector
-			if (AssetObjectProperty->PropertyClass == UCurveVector::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UCurveVector>(JsonObject, AssetObjectProperty, InObject, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UCurveVector::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UCurveVector>(JsonObject, SoftObjectProperty, InObject, MemberName); continue; }
 			// UCurveFloat
-			if (AssetObjectProperty->PropertyClass == UCurveFloat::StaticClass())
-			{ WriteToAssetObjectPropertyFromJson<UCurveFloat>(JsonObject, AssetObjectProperty, InObject, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UCurveFloat::StaticClass())
+			{ WriteToSoftObjectPropertyFromJson<UCurveFloat>(JsonObject, SoftObjectProperty, InObject, MemberName); continue; }
 
 			if (Internal)
 			{
@@ -4594,24 +4592,24 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 		// Array
 		if (UArrayProperty* ArrayProperty = Cast<UArrayProperty>(*It))
 		{
-			// TAssetPtr
-			if (UAssetObjectProperty* InnerAssetObjectProperty = Cast<UAssetObjectProperty>(ArrayProperty->Inner))
+			// TSoftObjectPtr
+			if (USoftObjectProperty* InnerSoftObjectProperty = Cast<USoftObjectProperty>(ArrayProperty->Inner))
 			{
 				// UMaterialInstance
-				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UMaterialInstance>(JsonObject, ArrayProperty, InObject, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
+				{ WriteToArraySoftObjectPropertyFromJson<UMaterialInstance>(JsonObject, ArrayProperty, InObject, MemberName); continue; }
 				// UMaterialInstanceConstant
-				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UMaterialInstanceConstant>(JsonObject, ArrayProperty, InObject, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
+				{ WriteToArraySoftObjectPropertyFromJson<UMaterialInstanceConstant>(JsonObject, ArrayProperty, InObject, MemberName); continue; }
 				// UAnimSequence
-				if (InnerAssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UAnimSequence>(JsonObject, ArrayProperty, InObject, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UAnimSequence::StaticClass())
+				{ WriteToArraySoftObjectPropertyFromJson<UAnimSequence>(JsonObject, ArrayProperty, InObject, MemberName); continue; }
 				// UAnimMontage
-				if (InnerAssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UAnimMontage>(JsonObject, ArrayProperty, InObject, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+				{ WriteToArraySoftObjectPropertyFromJson<UAnimMontage>(JsonObject, ArrayProperty, InObject, MemberName); continue; }
 				// UBlueprint
-				if (InnerAssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
-				{ WriteToArrayAssetObjectPropertyFromJson<UBlueprint>(JsonObject, ArrayProperty, InObject, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UBlueprint::StaticClass())
+				{ WriteToArraySoftObjectPropertyFromJson<UBlueprint>(JsonObject, ArrayProperty, InObject, MemberName); continue; }
 				
 				if (Internal)
 				{
@@ -4867,22 +4865,37 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 // Loading
 #pragma region
 
+float UCsCommon_Load::BytesToKilobytes(const int32 &Bytes)
+{
+	return Bytes * FMath::Pow(10, -3);
+}
+
+float UCsCommon_Load::BytesToMegabytes(const int32 &Bytes)
+{
+	return Bytes * FMath::Pow(10, -6);
+}
+
+int32 UCsCommon_Load::KilobytesToBytes(const float &Kilobytes)
+{
+	return Kilobytes * FMath::Pow(10, 3);
+}
+
 	// Asset References
 #pragma region
 
 		// FCsStringAssetReference
 #pragma region
 
-void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_AnimMontage(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_AnimMontage(USoftObjectProperty* &SoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
-	const FString MemberName = AssetObjectProperty->GetName();
+	const FString MemberName = SoftObjectProperty->GetName();
 
 	if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
 		return;
 
-	if (TAssetPtr<UAnimMontage>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UAnimMontage>>(InObject))
+	if (TSoftObjectPtr<UAnimMontage>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UAnimMontage>>(InObject))
 	{
-		const FStringAssetReference AssetRef = Member->ToStringReference();
+		const FStringAssetReference AssetRef = Member->ToSoftObjectPath();
 		const FString AssetName				 = AssetRef.ToString();
 
 		// (AssetName == TEXT(""))
@@ -4915,23 +4928,23 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_AnimMontage(UAsset
 				}
 			}
 
-			Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-			Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+			Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
+			Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
 		}
 #endif // #if WITH_EDITOR
 	}
 }
 
-void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_AnimMontage(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_AnimMontage(USoftObjectProperty* &SoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
-	const FString MemberName = AssetObjectProperty->GetName();
+	const FString MemberName = SoftObjectProperty->GetName();
 
 	if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
 		return;
 
-	if (TAssetPtr<UAnimMontage>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UAnimMontage>>(InObject))
+	if (TSoftObjectPtr<UAnimMontage>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UAnimMontage>>(InObject))
 	{
-		const FStringAssetReference AssetRef = Member->ToStringReference();
+		const FStringAssetReference AssetRef = Member->ToSoftObjectPath();
 		const FString AssetName				 = AssetRef.ToString();
 
 		// (AssetName == TEXT(""))
@@ -4964,23 +4977,23 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_AnimMontage(UAsset
 				}
 			}
 
-			Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Kilobytes);
-			Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+			Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Kilobytes);
+			Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
 		}
 #endif // #if WITH_EDITOR
 	}
 }
 
-void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_AnimSequence(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_AnimSequence(USoftObjectProperty* &SoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
-	const FString MemberName = AssetObjectProperty->GetName();
+	const FString MemberName = SoftObjectProperty->GetName();
 
 	if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
 		return;
 
-	if (TAssetPtr<UAnimSequence>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UAnimSequence>>(InObject))
+	if (TSoftObjectPtr<UAnimSequence>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UAnimSequence>>(InObject))
 	{
-		const FStringAssetReference AssetRef = Member->ToStringReference();
+		const FStringAssetReference AssetRef = Member->ToSoftObjectPath();
 		const FString AssetName				 = AssetRef.ToString();
 
 		// (AssetName == TEXT(""))
@@ -5000,23 +5013,23 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_AnimSequence(UAsse
 			UAnimSequence* Asset = Cast<UAnimSequence>(Member->LoadSynchronous());
 
 			Reference.Size.Bytes	 = Asset->GetApproxCompressedSize();
-			Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-			Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+			Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
+			Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
 		}
 #endif // #if WITH_EDITOR
 	}
 }
 
-void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_AnimSequence(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_AnimSequence(USoftObjectProperty* &SoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
-	const FString MemberName = AssetObjectProperty->GetName();
+	const FString MemberName = SoftObjectProperty->GetName();
 
 	if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
 		return;
 
-	if (TAssetPtr<UAnimSequence>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UAnimSequence>>(InObject))
+	if (TSoftObjectPtr<UAnimSequence>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UAnimSequence>>(InObject))
 	{
-		const FStringAssetReference AssetRef = Member->ToStringReference();
+		const FStringAssetReference AssetRef = Member->ToSoftObjectPath();
 		const FString AssetName				 = AssetRef.ToString();
 
 		// (AssetName == TEXT(""))
@@ -5036,23 +5049,23 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_AnimSequence(UAsse
 			UAnimSequence* Asset = Cast<UAnimSequence>(Member->LoadSynchronous());
 
 			Reference.Size.Bytes	 = Asset->GetApproxCompressedSize();
-			Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-			Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+			Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
+			Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
 		}
 #endif // #if WITH_EDITOR
 	}
 }
 
-void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_MaterialInstanceConstant(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_MaterialInstanceConstant(USoftObjectProperty* &SoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
-	const FString MemberName = AssetObjectProperty->GetName();
+	const FString MemberName = SoftObjectProperty->GetName();
 
 	if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
 		return;
 
-	if (TAssetPtr<UMaterialInstanceConstant>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UMaterialInstanceConstant>>(InObject))
+	if (TSoftObjectPtr<UMaterialInstanceConstant>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UMaterialInstanceConstant>>(InObject))
 	{
-		const FStringAssetReference AssetRef = Member->ToStringReference();
+		const FStringAssetReference AssetRef = Member->ToSoftObjectPath();
 		const FString AssetName				 = AssetRef.ToString();
 
 		// (AssetName == TEXT(""))
@@ -5080,26 +5093,26 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_MaterialInstanceCo
 				if (!Texture)
 					continue;
 
-				Reference.Size.Bytes += Texture->GetResourceSizeBytes(EResourceSizeMode::Inclusive);
+				Reference.Size.Bytes += Texture->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
 			}
 
-			Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-			Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+			Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
+			Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
 		}
 #endif // #if WITH_EDITOR
 	}
 }
 
-void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_MaterialInstanceConstant(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_MaterialInstanceConstant(USoftObjectProperty* &SoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
-	const FString MemberName = AssetObjectProperty->GetName();
+	const FString MemberName = SoftObjectProperty->GetName();
 
 	if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
 		return;
 
-	if (TAssetPtr<UMaterialInstanceConstant>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UMaterialInstanceConstant>>(InObject))
+	if (TSoftObjectPtr<UMaterialInstanceConstant>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UMaterialInstanceConstant>>(InObject))
 	{
-		const FStringAssetReference AssetRef = Member->ToStringReference();
+		const FStringAssetReference AssetRef = Member->ToSoftObjectPath();
 		const FString AssetName				 = AssetRef.ToString();
 
 		// (AssetName == TEXT(""))
@@ -5127,26 +5140,26 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_MaterialInstanceCo
 				if (!Texture)
 					continue;
 
-				Reference.Size.Bytes += Texture->GetResourceSizeBytes(EResourceSizeMode::Inclusive);
+				Reference.Size.Bytes += Texture->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
 			}
 
-			Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-			Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+			Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
+			Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
 		}
 #endif // #if WITH_EDITOR
 	}
 }
 
-void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_Blueprint(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_Blueprint(USoftObjectProperty* &SoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
-	const FString MemberName = AssetObjectProperty->GetName();
+	const FString MemberName = SoftObjectProperty->GetName();
 
 	if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
 		return;
 
-	if (TAssetPtr<UBlueprint>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UBlueprint>>(InObject))
+	if (TSoftObjectPtr<UBlueprint>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UBlueprint>>(InObject))
 	{
-		const FStringAssetReference AssetRef = Member->ToStringReference();
+		const FStringAssetReference AssetRef = Member->ToSoftObjectPath();
 		const FString AssetName				 = AssetRef.ToString();
 
 		// (AssetName == TEXT(""))
@@ -5157,7 +5170,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_Blueprint(UAssetOb
 
 		const int32 Size = OutAssetReferences.Num();
 
-		// TODO: Fix / Investigate. 4.16.1. Built Game (Okay in Editor). TAssetPtr for UAnimBlueprint / UWidgetBlueprint does NOT have _C
+		// TODO: Fix / Investigate. 4.16.1. Built Game (Okay in Editor). TSoftObjectPtr for UAnimBlueprint / UWidgetBlueprint does NOT have _C
 		FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
 										  // AssetName.EndsWith(TEXT("_C")) ? AssetName : AssetName + TEXT("_C");
 		Reference.Reference				   = AssetName.EndsWith(ECsLoadCached::Str::_C) ? AssetName : AssetName + ECsLoadCached::Str::_C;
@@ -5167,24 +5180,24 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_Blueprint(UAssetOb
 		{
 			UObject* Asset = Member->LoadSynchronous();
 
-			Reference.Size.Bytes = Asset->GetResourceSizeBytes(EResourceSizeMode::Inclusive);
-			Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-			Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+			Reference.Size.Bytes = Asset->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
+			Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
+			Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
 		}
 #endif // #if WITH_EDITOR
 	}
 }
 
-void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_Blueprint(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromSoftObjectProperty_Blueprint(USoftObjectProperty* &SoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
-	const FString MemberName = AssetObjectProperty->GetName();
+	const FString MemberName = SoftObjectProperty->GetName();
 
 	if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
 		return;
 
-	if (TAssetPtr<UBlueprint>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UBlueprint>>(InObject))
+	if (TSoftObjectPtr<UBlueprint>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UBlueprint>>(InObject))
 	{
-		const FStringAssetReference AssetRef = Member->ToStringReference();
+		const FStringAssetReference AssetRef = Member->ToSoftObjectPath();
 		const FString AssetName				 = AssetRef.ToString();
 
 		// (AssetName == TEXT(""))
@@ -5195,7 +5208,7 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_Blueprint(UAssetOb
 
 		const int32 Size = OutAssetReferences.Num();
 
-		// TODO: Fix / Investigate. 4.16.1. Built Game (Okay in Editor). TAssetPtr for UAnimBlueprint / UWidgetBlueprint does NOT have _C
+		// TODO: Fix / Investigate. 4.16.1. Built Game (Okay in Editor). TSoftObjectPtr for UAnimBlueprint / UWidgetBlueprint does NOT have _C
 		FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
 										  // AssetName.EndsWith(TEXT("_C")) ? AssetName : AssetName + TEXT("_C");
 		Reference.Reference				   = AssetName.EndsWith(ECsLoadCached::Str::_C) ? AssetName : AssetName + ECsLoadCached::Str::_C;
@@ -5205,28 +5218,28 @@ void UCsCommon_Load::GetAssetReferenceFromAssetObjectProperty_Blueprint(UAssetOb
 		{
 			UObject* Asset = Member->LoadSynchronous();
 
-			Reference.Size.Bytes = Asset->GetResourceSizeBytes(EResourceSizeMode::Inclusive);
-			Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-			Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+			Reference.Size.Bytes = Asset->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
+			Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
+			Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
 		}
 #endif // #if WITH_EDITOR
 	}
 }
 
-void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_AnimMontage(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_AnimMontage(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
-	const FString MemberName = ArrayAssetObjectProperty->GetName();
+	const FString MemberName = ArraySoftObjectProperty->GetName();
 
 	if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
 		return;
 
-	if (TArray<TAssetPtr<UAnimMontage>>* Member = ArrayAssetObjectProperty->ContainerPtrToValuePtr<TArray<TAssetPtr<UAnimMontage>>>(InObject))
+	if (TArray<TSoftObjectPtr<UAnimMontage>>* Member = ArraySoftObjectProperty->ContainerPtrToValuePtr<TArray<TSoftObjectPtr<UAnimMontage>>>(InObject))
 	{
 		const int32 Count = Member->Num();
 
 		for (int32 I = 0; I < Count; ++I)
 		{
-			const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
+			const FStringAssetReference AssetRef = (*Member)[I].ToSoftObjectPath();
 			const FString AssetName				 = AssetRef.ToString();
 
 			// (AssetName == TEXT(""))
@@ -5259,28 +5272,28 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_AnimMontage(U
 					}
 				}
 
-				Reference.Size.Kilobytes = UCsCommon::KilobytesToBytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = KilobytesToBytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = BytesToKilobytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
 	}
 }
 
-void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_AnimMontage(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_AnimMontage(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
-	const FString MemberName = ArrayAssetObjectProperty->GetName();
+	const FString MemberName = ArraySoftObjectProperty->GetName();
 
 	if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
 		return;
 
-	if (TArray<TAssetPtr<UAnimMontage>>* Member = ArrayAssetObjectProperty->ContainerPtrToValuePtr<TArray<TAssetPtr<UAnimMontage>>>(InObject))
+	if (TArray<TSoftObjectPtr<UAnimMontage>>* Member = ArraySoftObjectProperty->ContainerPtrToValuePtr<TArray<TSoftObjectPtr<UAnimMontage>>>(InObject))
 	{
 		const int32 Count = Member->Num();
 
 		for (int32 I = 0; I < Count; ++I)
 		{
-			const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
+			const FStringAssetReference AssetRef = (*Member)[I].ToSoftObjectPath();
 			const FString AssetName				 = AssetRef.ToString();
 
 			// (AssetName == TEXT(""))
@@ -5313,28 +5326,28 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_AnimMontage(U
 					}
 				}
 
-				Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
 	}
 }
 
-void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_AnimSequence(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_AnimSequence(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
-	const FString MemberName = ArrayAssetObjectProperty->GetName();
+	const FString MemberName = ArraySoftObjectProperty->GetName();
 
 	if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
 		return;
 
-	if (TArray<TAssetPtr<UAnimSequence>>* Member = ArrayAssetObjectProperty->ContainerPtrToValuePtr<TArray<TAssetPtr<UAnimSequence>>>(InObject))
+	if (TArray<TSoftObjectPtr<UAnimSequence>>* Member = ArraySoftObjectProperty->ContainerPtrToValuePtr<TArray<TSoftObjectPtr<UAnimSequence>>>(InObject))
 	{
 		const int32 Count = Member->Num();
 
 		for (int32 I = 0; I < Count; ++I)
 		{
-			const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
+			const FStringAssetReference AssetRef = (*Member)[I].ToSoftObjectPath();
 			const FString AssetName				 = AssetRef.ToString();
 
 			// (AssetName == TEXT(""))
@@ -5354,28 +5367,28 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_AnimSequence(
 				UAnimSequence* Asset = Cast<UAnimSequence>((*Member)[I].LoadSynchronous());
 
 				Reference.Size.Bytes = Asset->GetApproxCompressedSize();
-				Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
 	}
 }
 
-void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_AnimSequence(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_AnimSequence(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
-	const FString MemberName = ArrayAssetObjectProperty->GetName();
+	const FString MemberName = ArraySoftObjectProperty->GetName();
 
 	if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
 		return;
 
-	if (TArray<TAssetPtr<UAnimSequence>>* Member = ArrayAssetObjectProperty->ContainerPtrToValuePtr<TArray<TAssetPtr<UAnimSequence>>>(InObject))
+	if (TArray<TSoftObjectPtr<UAnimSequence>>* Member = ArraySoftObjectProperty->ContainerPtrToValuePtr<TArray<TSoftObjectPtr<UAnimSequence>>>(InObject))
 	{
 		const int32 Count = Member->Num();
 
 		for (int32 I = 0; I < Count; ++I)
 		{
-			const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
+			const FStringAssetReference AssetRef = (*Member)[I].ToSoftObjectPath();
 			const FString AssetName				 = AssetRef.ToString();
 
 			// (AssetName == TEXT(""))
@@ -5395,28 +5408,28 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_AnimSequence(
 				UAnimSequence* Asset = Cast<UAnimSequence>((*Member)[I].LoadSynchronous());
 
 				Reference.Size.Bytes = Asset->GetApproxCompressedSize();
-				Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
 	}
 }
 
-void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_MaterialInstanceConstant(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_MaterialInstanceConstant(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
-	const FString MemberName = ArrayAssetObjectProperty->GetName();
+	const FString MemberName = ArraySoftObjectProperty->GetName();
 
 	if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
 		return;
 
-	if (TArray<TAssetPtr<UMaterialInstanceConstant>>* Member = ArrayAssetObjectProperty->ContainerPtrToValuePtr<TArray<TAssetPtr<UMaterialInstanceConstant>>>(InObject))
+	if (TArray<TSoftObjectPtr<UMaterialInstanceConstant>>* Member = ArraySoftObjectProperty->ContainerPtrToValuePtr<TArray<TSoftObjectPtr<UMaterialInstanceConstant>>>(InObject))
 	{
 		const int32 Count = Member->Num();
 
 		for (int32 I = 0; I < Count; ++I)
 		{
-			const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
+			const FStringAssetReference AssetRef = (*Member)[I].ToSoftObjectPath();
 			const FString AssetName				 = AssetRef.ToString();
 
 			// (AssetName == TEXT(""))
@@ -5437,7 +5450,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_MaterialInsta
 
 				if (!Asset)
 				{
-					UE_LOG(LogCs, Warning, TEXT("UCsCommon::GetAssetReferenceFromArrayAssetObjectProperty_MaterialInstanceConstant: Failed to Load %s[%d]"), *MemberName, I);
+					UE_LOG(LogCs, Warning, TEXT("UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_MaterialInstanceConstant: Failed to Load %s[%d]"), *MemberName, I);
 					continue;
 				}
 
@@ -5450,31 +5463,31 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_MaterialInsta
 					if (!Texture)
 						continue;
 
-					Reference.Size.Bytes += Texture->GetResourceSizeBytes(EResourceSizeMode::Inclusive);
+					Reference.Size.Bytes += Texture->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
 				}
 
-				Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
 	}
 }
 
-void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_MaterialInstanceConstant(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_MaterialInstanceConstant(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
-	const FString MemberName = ArrayAssetObjectProperty->GetName();
+	const FString MemberName = ArraySoftObjectProperty->GetName();
 
 	if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
 		return;
 
-	if (TArray<TAssetPtr<UMaterialInstanceConstant>>* Member = ArrayAssetObjectProperty->ContainerPtrToValuePtr<TArray<TAssetPtr<UMaterialInstanceConstant>>>(InObject))
+	if (TArray<TSoftObjectPtr<UMaterialInstanceConstant>>* Member = ArraySoftObjectProperty->ContainerPtrToValuePtr<TArray<TSoftObjectPtr<UMaterialInstanceConstant>>>(InObject))
 	{
 		const int32 Count = Member->Num();
 
 		for (int32 I = 0; I < Count; ++I)
 		{
-			const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
+			const FStringAssetReference AssetRef = (*Member)[I].ToSoftObjectPath();
 			const FString AssetName				 = AssetRef.ToString();
 
 			// (AssetName == TEXT(""))
@@ -5502,31 +5515,31 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_MaterialInsta
 					if (!Texture)
 						continue;
 
-					Reference.Size.Bytes += Texture->GetResourceSizeBytes(EResourceSizeMode::Inclusive);
+					Reference.Size.Bytes += Texture->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
 				}
 
-				Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
 	}
 }
 
-void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_Blueprint(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_Blueprint(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
-	const FString MemberName = ArrayAssetObjectProperty->GetName();
+	const FString MemberName = ArraySoftObjectProperty->GetName();
 
 	if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
 		return;
 
-	if (TArray<TAssetPtr<UBlueprint>>* Member = ArrayAssetObjectProperty->ContainerPtrToValuePtr<TArray<TAssetPtr<UBlueprint>>>(InObject))
+	if (TArray<TSoftObjectPtr<UBlueprint>>* Member = ArraySoftObjectProperty->ContainerPtrToValuePtr<TArray<TSoftObjectPtr<UBlueprint>>>(InObject))
 	{
 		const int32 Count = Member->Num();
 
 		for (int32 I = 0; I < Count; ++I)
 		{
-			const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
+			const FStringAssetReference AssetRef = (*Member)[I].ToSoftObjectPath();
 			const FString AssetName				 = AssetRef.ToString();
 
 			// (AssetName == TEXT(""))
@@ -5536,7 +5549,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_Blueprint(UAr
 			OutAssetReferences.AddDefaulted();
 
 			const int32 Size = OutAssetReferences.Num();
-			// TODO: Fix / Investigate. 4.16.1. Built Game (Okay in Editor). TAssetPtr for UWidgetBlueprint does NOT have _C
+			// TODO: Fix / Investigate. 4.16.1. Built Game (Okay in Editor). TSoftObjectPtr for UWidgetBlueprint does NOT have _C
 			FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
 											  // AssetName.EndsWith(TEXT("_C")) ? AssetName : AssetName + TEXT("_C");
 			Reference.Reference				   = AssetName.EndsWith(ECsLoadCached::Str::_C) ? AssetName : AssetName + ECsLoadCached::Str::_C;
@@ -5546,29 +5559,29 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_Blueprint(UAr
 			{
 				UBlueprint* Asset = (*Member)[I].LoadSynchronous();
 
-				Reference.Size.Bytes = Asset->GetResourceSizeBytes(EResourceSizeMode::Inclusive);
-				Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Bytes = Asset->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
+				Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
 	}
 }
 
-void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_Blueprint(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
+void UCsCommon_Load::GetAssetReferenceFromArraySoftObjectProperty_Blueprint(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes /*=ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES*/)
 {
-	const FString MemberName = ArrayAssetObjectProperty->GetName();
+	const FString MemberName = ArraySoftObjectProperty->GetName();
 
 	if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
 		return;
 
-	if (TArray<TAssetPtr<UBlueprint>>* Member = ArrayAssetObjectProperty->ContainerPtrToValuePtr<TArray<TAssetPtr<UBlueprint>>>(InObject))
+	if (TArray<TSoftObjectPtr<UBlueprint>>* Member = ArraySoftObjectProperty->ContainerPtrToValuePtr<TArray<TSoftObjectPtr<UBlueprint>>>(InObject))
 	{
 		const int32 Count = Member->Num();
 
 		for (int32 I = 0; I < Count; ++I)
 		{
-			const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
+			const FStringAssetReference AssetRef = (*Member)[I].ToSoftObjectPath();
 			const FString AssetName				 = AssetRef.ToString();
 
 			// (AssetName == TEXT(""))
@@ -5578,7 +5591,7 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_Blueprint(UAr
 			OutAssetReferences.AddDefaulted();
 
 			const int32 Size = OutAssetReferences.Num();
-			// TODO: Fix / Investigate. 4.16.1. Built Game (Okay in Editor). TAssetPtr for UWidgetBlueprint does NOT have _C
+			// TODO: Fix / Investigate. 4.16.1. Built Game (Okay in Editor). TSoftObjectPtr for UWidgetBlueprint does NOT have _C
 			FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
 											  // AssetName.EndsWith(TEXT("_C")) ? AssetName : AssetName + TEXT("_C");
 			Reference.Reference				   = AssetName.EndsWith(ECsLoadCached::Str::_C) ? AssetName : AssetName + ECsLoadCached::Str::_C;
@@ -5588,9 +5601,9 @@ void UCsCommon_Load::GetAssetReferenceFromArrayAssetObjectProperty_Blueprint(UAr
 			{
 				UBlueprint* Asset = (*Member)[I].LoadSynchronous();
 
-				Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(EResourceSizeMode::Inclusive);
-				Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
+				Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
@@ -5607,15 +5620,15 @@ void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct*
 
 		const FString MemberName = Property->GetName();
 
-		// TAssetSubclassOf
-		if (UAssetClassProperty* AssetClassProperty = Cast<UAssetClassProperty>(*It))
+		// TSoftClassPtr
+		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(*It))
 		{
 			// ACsData_Projectile
-			if (AssetClassProperty->MetaClass == ACsData_Projectile::StaticClass())
-			{ GetAssetReferenceFromAssetClassProperty<ACsData_Projectile>(AssetClassProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Exclusive, OutAssetReferences, LoadCodes); continue; }
+			if (SoftClassProperty->MetaClass == ACsData_Projectile::StaticClass())
+			{ GetAssetReferenceFromSoftClassProperty<ACsData_Projectile>(SoftClassProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Exclusive, OutAssetReferences, LoadCodes); continue; }
 			// ACsData_ProjectileImpact
-			if (AssetClassProperty->MetaClass == ACsData_ProjectileImpact::StaticClass())
-			{ GetAssetReferenceFromAssetClassProperty<ACsData_ProjectileImpact>(AssetClassProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Exclusive, OutAssetReferences, LoadCodes); continue; }
+			if (SoftClassProperty->MetaClass == ACsData_ProjectileImpact::StaticClass())
+			{ GetAssetReferenceFromSoftClassProperty<ACsData_ProjectileImpact>(SoftClassProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Exclusive, OutAssetReferences, LoadCodes); continue; }
 
 			if (Internal)
 			{
@@ -5624,25 +5637,25 @@ void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct*
 			}
 			continue;
 		}
-		// TAssetPtr
-		if (UAssetObjectProperty* AssetObjectProperty = Cast<UAssetObjectProperty>(*It))
+		// TSoftObjectPtr
+		if (USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(*It))
 		{
 			// UStaticMesh
-			if (AssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
-			{ GetAssetReferenceFromAssetObjectProperty<UStaticMesh>(AssetObjectProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Exclusive, OutAssetReferences, LoadCodes); continue; }
+			if (SoftObjectProperty->PropertyClass == UStaticMesh::StaticClass())
+			{ GetAssetReferenceFromSoftObjectProperty<UStaticMesh>(SoftObjectProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Exclusive, OutAssetReferences, LoadCodes); continue; }
 			// USkeletalMesh
-			if (AssetObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
-			{ GetAssetReferenceFromAssetObjectProperty<USkeletalMesh>(AssetObjectProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Exclusive, OutAssetReferences, LoadCodes); continue; }
+			if (SoftObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
+			{ GetAssetReferenceFromSoftObjectProperty<USkeletalMesh>(SoftObjectProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Exclusive, OutAssetReferences, LoadCodes); continue; }
 			// UMaterialInstance
-			if (AssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-			{ GetAssetReferenceFromAssetObjectProperty<UMaterialInstance>(AssetObjectProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Inclusive, OutAssetReferences, LoadCodes); continue; }
+			if (SoftObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
+			{ GetAssetReferenceFromSoftObjectProperty<UMaterialInstance>(SoftObjectProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::EstimatedTotal, OutAssetReferences, LoadCodes); continue; }
 			// UMaterialInstanceConstant
-			if (AssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
+			if (SoftObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
 			{
-				if (AssetObjectProperty->ArrayDim == CS_SINGLETON)
-				{ GetAssetReferenceFromAssetObjectProperty_MaterialInstanceConstant(AssetObjectProperty, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes); continue; }
-				if (AssetObjectProperty->ArrayDim == ECS_INTERACTIVE_STATE_MAX)
-				{ GetAssetReferenceFromFixedArrayAssetObjectProperty_EnumSize_MaterialInstanceConstant<ECS_INTERACTIVE_STATE_MAX>(AssetObjectProperty, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes); continue; }
+				if (SoftObjectProperty->ArrayDim == CS_SINGLETON)
+				{ GetAssetReferenceFromSoftObjectProperty_MaterialInstanceConstant(SoftObjectProperty, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes); continue; }
+				if (SoftObjectProperty->ArrayDim == ECS_INTERACTIVE_STATE_MAX)
+				{ GetAssetReferenceFromFixedArraySoftObjectProperty_EnumSize_MaterialInstanceConstant<ECS_INTERACTIVE_STATE_MAX>(SoftObjectProperty, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes); continue; }
 
 				if (Internal)
 				{
@@ -5652,43 +5665,43 @@ void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct*
 				continue;
 			}
 			// UPhysicalMaterial
-			if (AssetObjectProperty->PropertyClass == UPhysicalMaterial::StaticClass())
-			{ GetAssetReferenceFromAssetObjectProperty<UPhysicalMaterial>(AssetObjectProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Inclusive, OutAssetReferences, LoadCodes); continue; }
+			if (SoftObjectProperty->PropertyClass == UPhysicalMaterial::StaticClass())
+			{ GetAssetReferenceFromSoftObjectProperty<UPhysicalMaterial>(SoftObjectProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::EstimatedTotal, OutAssetReferences, LoadCodes); continue; }
 			// UPhysicsAsset
-			if (AssetObjectProperty->PropertyClass == UPhysicsAsset::StaticClass())
-			{ GetAssetReferenceFromAssetObjectProperty<UPhysicsAsset>(AssetObjectProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Exclusive, OutAssetReferences, LoadCodes); continue; }
+			if (SoftObjectProperty->PropertyClass == UPhysicsAsset::StaticClass())
+			{ GetAssetReferenceFromSoftObjectProperty<UPhysicsAsset>(SoftObjectProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Exclusive, OutAssetReferences, LoadCodes); continue; }
 			// UAnimSequence
-			if (AssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-			{ GetAssetReferenceFromAssetObjectProperty_AnimSequence(AssetObjectProperty, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes); continue; }
+			if (SoftObjectProperty->PropertyClass == UAnimSequence::StaticClass())
+			{ GetAssetReferenceFromSoftObjectProperty_AnimSequence(SoftObjectProperty, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes); continue; }
 			// UAnimMontage
-			if (AssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-			{ GetAssetReferenceFromAssetObjectProperty_AnimMontage(AssetObjectProperty, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes); continue; }
+			if (SoftObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+			{ GetAssetReferenceFromSoftObjectProperty_AnimMontage(SoftObjectProperty, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes); continue; }
 			// UBlendSpace1D
-			if (AssetObjectProperty->PropertyClass == UBlendSpace1D::StaticClass())
-			{ GetAssetReferenceFromAssetObjectProperty<UBlendSpace1D>(AssetObjectProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Exclusive, OutAssetReferences, LoadCodes); continue; }
+			if (SoftObjectProperty->PropertyClass == UBlendSpace1D::StaticClass())
+			{ GetAssetReferenceFromSoftObjectProperty<UBlendSpace1D>(SoftObjectProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Exclusive, OutAssetReferences, LoadCodes); continue; }
 			// UBlendSpace
-			if (AssetObjectProperty->PropertyClass == UBlendSpace::StaticClass())
-			{ GetAssetReferenceFromAssetObjectProperty<UBlendSpace>(AssetObjectProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Exclusive, OutAssetReferences, LoadCodes); continue; }
+			if (SoftObjectProperty->PropertyClass == UBlendSpace::StaticClass())
+			{ GetAssetReferenceFromSoftObjectProperty<UBlendSpace>(SoftObjectProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Exclusive, OutAssetReferences, LoadCodes); continue; }
 			// UAnimBlueprint
-			if (AssetObjectProperty->PropertyClass == UAnimBlueprint::StaticClass())
-			{ GetAssetReferenceFromAssetObjectProperty_Blueprint(AssetObjectProperty, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes); continue; }
+			if (SoftObjectProperty->PropertyClass == UAnimBlueprint::StaticClass())
+			{ GetAssetReferenceFromSoftObjectProperty_Blueprint(SoftObjectProperty, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes); continue; }
 			// USoundCue
-			if (AssetObjectProperty->PropertyClass == USoundCue::StaticClass())
-			{ GetAssetReferenceFromAssetObjectProperty<USoundCue>(AssetObjectProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Inclusive, OutAssetReferences, LoadCodes); continue; }
+			if (SoftObjectProperty->PropertyClass == USoundCue::StaticClass())
+			{ GetAssetReferenceFromSoftObjectProperty<USoundCue>(SoftObjectProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::EstimatedTotal, OutAssetReferences, LoadCodes); continue; }
 			// UParticleSystem
-			if (AssetObjectProperty->PropertyClass == UParticleSystem::StaticClass())
-			{ GetAssetReferenceFromAssetObjectProperty<UParticleSystem>(AssetObjectProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Inclusive, OutAssetReferences, LoadCodes); continue; }
+			if (SoftObjectProperty->PropertyClass == UParticleSystem::StaticClass())
+			{ GetAssetReferenceFromSoftObjectProperty<UParticleSystem>(SoftObjectProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::EstimatedTotal, OutAssetReferences, LoadCodes); continue; }
 			// UCurveFloat
-			if (AssetObjectProperty->PropertyClass == UCurveFloat::StaticClass())
-			{ GetAssetReferenceFromAssetObjectProperty<UCurveFloat>(AssetObjectProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Inclusive, OutAssetReferences, LoadCodes); continue; }
+			if (SoftObjectProperty->PropertyClass == UCurveFloat::StaticClass())
+			{ GetAssetReferenceFromSoftObjectProperty<UCurveFloat>(SoftObjectProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::EstimatedTotal, OutAssetReferences, LoadCodes); continue; }
 			// UCurveVector
-			if (AssetObjectProperty->PropertyClass == UCurveVector::StaticClass())
-			{ GetAssetReferenceFromAssetObjectProperty<UCurveVector>(AssetObjectProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Inclusive, OutAssetReferences, LoadCodes); continue; }
+			if (SoftObjectProperty->PropertyClass == UCurveVector::StaticClass())
+			{ GetAssetReferenceFromSoftObjectProperty<UCurveVector>(SoftObjectProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::EstimatedTotal, OutAssetReferences, LoadCodes); continue; }
 			// UBlueprint
-			if (AssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
+			if (SoftObjectProperty->PropertyClass == UBlueprint::StaticClass())
 			{
-				if (AssetObjectProperty->ArrayDim == CS_SINGLETON)
-				{ GetAssetReferenceFromAssetObjectProperty_Blueprint(AssetObjectProperty, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes); continue; }
+				if (SoftObjectProperty->ArrayDim == CS_SINGLETON)
+				{ GetAssetReferenceFromSoftObjectProperty_Blueprint(SoftObjectProperty, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes); continue; }
 			}
 			
 			if (Internal)
@@ -5842,12 +5855,12 @@ void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct*
 		// Array
 		if (UArrayProperty* ArrayProperty = Cast<UArrayProperty>(*It))
 		{
-			// TAssetSubclassOf
-			if (UAssetClassProperty* InnerAssetClassProperty = Cast<UAssetClassProperty>(ArrayProperty->Inner))
+			// TSoftClassPtr
+			if (USoftClassProperty* InnerSoftClassProperty = Cast<USoftClassProperty>(ArrayProperty->Inner))
 			{
 				// AShooterWeaponData
-				//if (InnerAssetClassProperty->PropertyClass == AShooterWeaponData::StaticClass() || InnerAssetClassProperty->MetaClass == AShooterWeaponData::StaticClass())
-				//{ GetAssetReferenceFromArrayAssetObjectProperty<AShooterWeaponData>(ArrayProperty, InStruct, InScriptStruct, LoadFlags, OutAssetReferences); continue; }
+				//if (InnerSoftClassProperty->PropertyClass == AShooterWeaponData::StaticClass() || InnerSoftClassProperty->MetaClass == AShooterWeaponData::StaticClass())
+				//{ GetAssetReferenceFromArraySoftObjectProperty<AShooterWeaponData>(ArrayProperty, InStruct, InScriptStruct, LoadFlags, OutAssetReferences); continue; }
 				if (Internal)
 				{
 					if ((*Internal)(Property, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes))
@@ -5855,30 +5868,30 @@ void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct*
 				}
 				continue;
 			}
-			// TAssetPtr
-			if (UAssetObjectProperty* InnerAssetObjectProperty = Cast<UAssetObjectProperty>(ArrayProperty->Inner))
+			// TSoftObjectPtr
+			if (USoftObjectProperty* InnerSoftObjectProperty = Cast<USoftObjectProperty>(ArrayProperty->Inner))
 			{
 				// UStaticMesh
-				if (InnerAssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
-				{ GetAssetReferenceFromArrayAssetObjectProperty<UStaticMesh>(ArrayProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Exclusive, OutAssetReferences, LoadCodes); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UStaticMesh::StaticClass())
+				{ GetAssetReferenceFromArraySoftObjectProperty<UStaticMesh>(ArrayProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Exclusive, OutAssetReferences, LoadCodes); continue; }
 				// USkeletalMesh
-				if (InnerAssetObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
-				{ GetAssetReferenceFromArrayAssetObjectProperty<USkeletalMesh>(ArrayProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Exclusive, OutAssetReferences, LoadCodes); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
+				{ GetAssetReferenceFromArraySoftObjectProperty<USkeletalMesh>(ArrayProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Exclusive, OutAssetReferences, LoadCodes); continue; }
 				// UMaterialInstance
-				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-				{ GetAssetReferenceFromArrayAssetObjectProperty<UMaterialInstance>(ArrayProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Inclusive, OutAssetReferences, LoadCodes); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
+				{ GetAssetReferenceFromArraySoftObjectProperty<UMaterialInstance>(ArrayProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::EstimatedTotal, OutAssetReferences, LoadCodes); continue; }
 				// UMaterialInstanceConstant
-				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
-				{ GetAssetReferenceFromArrayAssetObjectProperty_MaterialInstanceConstant(ArrayProperty, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
+				{ GetAssetReferenceFromArraySoftObjectProperty_MaterialInstanceConstant(ArrayProperty, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes); continue; }
 				// UAnimSequence
-				if (InnerAssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-				{ GetAssetReferenceFromArrayAssetObjectProperty_AnimSequence(ArrayProperty, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UAnimSequence::StaticClass())
+				{ GetAssetReferenceFromArraySoftObjectProperty_AnimSequence(ArrayProperty, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes); continue; }
 				// UAnimMontage
-				if (InnerAssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-				{ GetAssetReferenceFromArrayAssetObjectProperty_AnimMontage(ArrayProperty, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+				{ GetAssetReferenceFromArraySoftObjectProperty_AnimMontage(ArrayProperty, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes); continue; }
 				// UBlueprint
-				if (InnerAssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
-				{ GetAssetReferenceFromArrayAssetObjectProperty_Blueprint(ArrayProperty, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UBlueprint::StaticClass())
+				{ GetAssetReferenceFromArraySoftObjectProperty_Blueprint(ArrayProperty, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes); continue; }
 				
 				if (Internal)
 				{
@@ -6199,7 +6212,7 @@ void UCsCommon_Load::GetAssetReferencesFromObject(void* InObject, UClass* const 
 	// Load
 #pragma region
 
-void UCsCommon_Load::LoadTAssetPtr_AnimBlueprint(const FString &MemberName, TAssetPtr<UAnimBlueprint> AssetPtr, UAnimBlueprintGeneratedClass* &Internal)
+void UCsCommon_Load::LoadTSoftObjectPtr_AnimBlueprint(const FString &MemberName, TSoftObjectPtr<UAnimBlueprint> AssetPtr, UAnimBlueprintGeneratedClass* &Internal)
 {
 	const FString& AssetName = AssetPtr.ToString();
 
@@ -6214,7 +6227,7 @@ void UCsCommon_Load::LoadTAssetPtr_AnimBlueprint(const FString &MemberName, TAss
 		AssetPtr.IsValid() && AssetPtr.Get() &&
 		Internal == Cast<UAnimBlueprintGeneratedClass>(Cast<UBlueprintCore>(AssetPtr.Get())->GeneratedClass))
 	{
-		UE_LOG(LogLoad, Warning, TEXT("UCsCommon::LoadTAssetPtr_AnimBlueprint (%s): Possibly trying to load Anim Blueprint and it is already loaded"), *MemberName);
+		UE_LOG(LogLoad, Warning, TEXT("UCsCUCsCommon_Loadommon::LoadTSoftObjectPtr_AnimBlueprint (%s): Possibly trying to load Anim Blueprint and it is already loaded"), *MemberName);
 		return;
 	}
 
@@ -6230,12 +6243,12 @@ void UCsCommon_Load::LoadTAssetPtr_AnimBlueprint(const FString &MemberName, TAss
 
 		if (!Internal)
 		{
-			UE_LOG(LogLoad, Warning, TEXT("UCsCommon::LoadTAssetPtr_AnimBlueprint (%s): Failed to load Anim Blueprint at %s"), *MemberName, *AssetDescription);
+			UE_LOG(LogLoad, Warning, TEXT("UCsCommon_Load::LoadTSoftObjectPtr_AnimBlueprint (%s): Failed to load Anim Blueprint at %s"), *MemberName, *AssetDescription);
 		}
 	}
 }
 
-void UCsCommon_Load::LoadTAssetPtr_AnimBlueprint(const FString &MemberName, TAssetPtr<UAnimBlueprint>* AssetPtr, UAnimBlueprintGeneratedClass* &Internal)
+void UCsCommon_Load::LoadTSoftObjectPtr_AnimBlueprint(const FString &MemberName, TSoftObjectPtr<UAnimBlueprint>* AssetPtr, UAnimBlueprintGeneratedClass* &Internal)
 {
 	const FString& AssetName = AssetPtr->ToString();
 
@@ -6250,7 +6263,7 @@ void UCsCommon_Load::LoadTAssetPtr_AnimBlueprint(const FString &MemberName, TAss
 		AssetPtr->IsValid() && AssetPtr->Get() &&
 		Internal == Cast<UAnimBlueprintGeneratedClass>(Cast<UBlueprintCore>(AssetPtr->Get())->GeneratedClass))
 	{
-		UE_LOG(LogLoad, Warning, TEXT("UCsCommon::LoadTAssetPtr_AnimBlueprint (%s): Possibly trying to load Anim Blueprint and it is already loaded"), *MemberName);
+		UE_LOG(LogLoad, Warning, TEXT("UCsCUCsCommon_Loadommon::LoadTSoftObjectPtr_AnimBlueprint (%s): Possibly trying to load Anim Blueprint and it is already loaded"), *MemberName);
 		return;
 	}
 
@@ -6266,14 +6279,14 @@ void UCsCommon_Load::LoadTAssetPtr_AnimBlueprint(const FString &MemberName, TAss
 
 		if (!Internal)
 		{
-			UE_LOG(LogLoad, Warning, TEXT("UCsCommon::LoadTAssetPtr_AnimBlueprint (%s): Failed to load Anim Blueprint at %s"), *MemberName, *AssetDescription);
+			UE_LOG(LogLoad, Warning, TEXT("UCsCommon_Load::LoadTSoftObjectPtr_AnimBlueprint (%s): Failed to load Anim Blueprint at %s"), *MemberName, *AssetDescription);
 		}
 	}
 }
 
-void UCsCommon_Load::LoadAssetObjectProperty_AnimBlueprint(UAssetObjectProperty* &AssetObjectProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags)
+void UCsCommon_Load::LoadSoftObjectProperty_AnimBlueprint(USoftObjectProperty* &SoftObjectProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags)
 {
-	if (TAssetPtr<UAnimBlueprint>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UAnimBlueprint>>(InObject))
+	if (TSoftObjectPtr<UAnimBlueprint>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UAnimBlueprint>>(InObject))
 	{
 		if (!CanLoad(InObject, InClass, MemberName, LoadFlags, 0))
 			return;
@@ -6284,15 +6297,15 @@ void UCsCommon_Load::LoadAssetObjectProperty_AnimBlueprint(UAssetObjectProperty*
 		if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 		{
 			if (UAnimBlueprintGeneratedClass** Internal = InternalProperty->ContainerPtrToValuePtr<UAnimBlueprintGeneratedClass*>(InObject))
-				LoadTAssetPtr_AnimBlueprint(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal);
+				LoadTSoftObjectPtr_AnimBlueprint(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal);
 										//  ObjectName = TEXT(".") + MemberName
 		}
 	}
 }
 
-void UCsCommon_Load::LoadAssetObjectProperty_AnimBlueprint(UAssetObjectProperty* &AssetObjectProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags)
+void UCsCommon_Load::LoadSoftObjectProperty_AnimBlueprint(USoftObjectProperty* &SoftObjectProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags)
 {
-	if (TAssetPtr<UAnimBlueprint>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UAnimBlueprint>>(InObject))
+	if (TSoftObjectPtr<UAnimBlueprint>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UAnimBlueprint>>(InObject))
 	{
 		if (!CanLoad(InObject, InClass, MemberName, LoadFlags, 0))
 			return;
@@ -6303,13 +6316,13 @@ void UCsCommon_Load::LoadAssetObjectProperty_AnimBlueprint(UAssetObjectProperty*
 		if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 		{
 			if (UAnimBlueprintGeneratedClass** Internal = InternalProperty->ContainerPtrToValuePtr<UAnimBlueprintGeneratedClass*>(InObject))
-				LoadTAssetPtr_AnimBlueprint(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal);
+				LoadTSoftObjectPtr_AnimBlueprint(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal);
 										//  ObjectName + TEXT(".") + MemberName
 		}
 	}
 }
 
-void UCsCommon_Load::LoadTAssetPtr_Blueprint(const FString &MemberName, TAssetPtr<UBlueprint> AssetPtr, UBlueprintGeneratedClass* &Internal)
+void UCsCommon_Load::LoadTSoftObjectPtr_Blueprint(const FString &MemberName, TSoftObjectPtr<UBlueprint> AssetPtr, UBlueprintGeneratedClass* &Internal)
 {
 	const FString& AssetName = AssetPtr.ToString();
 
@@ -6324,7 +6337,7 @@ void UCsCommon_Load::LoadTAssetPtr_Blueprint(const FString &MemberName, TAssetPt
 		AssetPtr.IsValid() && AssetPtr.Get() &&
 		Internal == Cast<UBlueprintGeneratedClass>(Cast<UBlueprintCore>(AssetPtr.Get())->GeneratedClass))
 	{
-		//UE_LOG(LogLoad, Warning, TEXT("UCsCommon::LoadTAssetPtr_Blueprint (%s): Possibly trying to load Blueprint and it is already loaded"), *MemberName);
+		//UE_LOG(LogLoad, Warning, TEXT("UCsCommon_Load::LoadTSoftObjectPtr_Blueprint (%s): Possibly trying to load Blueprint and it is already loaded"), *MemberName);
 		return;
 	}
 
@@ -6340,12 +6353,12 @@ void UCsCommon_Load::LoadTAssetPtr_Blueprint(const FString &MemberName, TAssetPt
 
 		if (!Internal)
 		{
-			UE_LOG(LogLoad, Warning, TEXT("UCsCommon::LoadTAssetPtr_Blueprint (%s): Failed to load Blueprint at %s"), *MemberName, *AssetDescription);
+			UE_LOG(LogLoad, Warning, TEXT("UCsCommon_Load::LoadTSoftObjectPtr_Blueprint (%s): Failed to load Blueprint at %s"), *MemberName, *AssetDescription);
 		}
 	}
 }
 
-void UCsCommon_Load::LoadTAssetPtr_Blueprint(const FString &MemberName, TAssetPtr<UBlueprint>* AssetPtr, UBlueprintGeneratedClass* &Internal)
+void UCsCommon_Load::LoadTSoftObjectPtr_Blueprint(const FString &MemberName, TSoftObjectPtr<UBlueprint>* AssetPtr, UBlueprintGeneratedClass* &Internal)
 {
 	const FString& AssetName = AssetPtr->ToString();
 
@@ -6360,7 +6373,7 @@ void UCsCommon_Load::LoadTAssetPtr_Blueprint(const FString &MemberName, TAssetPt
 		AssetPtr->IsValid() && AssetPtr->Get() &&
 		Internal == Cast<UBlueprintGeneratedClass>(Cast<UBlueprintCore>(AssetPtr->Get())->GeneratedClass))
 	{
-		//UE_LOG(LogLoad, Warning, TEXT("UCsCommon::LoadTAssetPtr_Blueprint (%s): Possibly trying to load Blueprint and it is already loaded"), *MemberName);
+		//UE_LOG(LogLoad, Warning, TEXT("UCsCommon_Load::LoadTSoftObjectPtr_Blueprint (%s): Possibly trying to load Blueprint and it is already loaded"), *MemberName);
 		return;
 	}
 
@@ -6376,17 +6389,17 @@ void UCsCommon_Load::LoadTAssetPtr_Blueprint(const FString &MemberName, TAssetPt
 
 		if (!Internal)
 		{
-			UE_LOG(LogLoad, Warning, TEXT("UCsCommon::LoadTAssetPtr_Blueprint (%s): Failed to load Blueprint at %s"), *MemberName, *AssetDescription);
+			UE_LOG(LogLoad, Warning, TEXT("UCsCommon_Load::LoadTSoftObjectPtr_Blueprint (%s): Failed to load Blueprint at %s"), *MemberName, *AssetDescription);
 		}
 	}
 }
 
-void UCsCommon_Load::LoadTArrayTAssetPtr_Blueprint(const FString &MemberName, TArray<TAssetPtr<UBlueprint>> &ArrayAssetPtr, TArray<UBlueprintGeneratedClass*> &ArrayInternal)
+void UCsCommon_Load::LoadTArrayTSoftObjectPtr_Blueprint(const FString &MemberName, TArray<TSoftObjectPtr<UBlueprint>> &ArrayAssetPtr, TArray<UBlueprintGeneratedClass*> &ArrayInternal)
 {
 	if (ArrayInternal.Num() > 0 &&
 		AreAllElementsInTArrayNotNull(ArrayInternal))
 	{
-		//UE_LOG(LogLoad, Warning, TEXT("UCsCommon::LoadTArrayTAssetPtr_Blueprint (%s): Possibly trying to load Blueprint and it is already loaded"), *MemberName);
+		//UE_LOG(LogLoad, Warning, TEXT("UCsCommon_Load::LoadTArrayTSoftObjectPtr_Blueprint (%s): Possibly trying to load Blueprint and it is already loaded"), *MemberName);
 	}
 
 	UCsCommon_Load::NullAndEmptyTArray<UBlueprintGeneratedClass>(ArrayInternal);
@@ -6395,7 +6408,7 @@ void UCsCommon_Load::LoadTArrayTAssetPtr_Blueprint(const FString &MemberName, TA
 
 	for (int32 I = 0; I < Count; ++I)
 	{
-		TAssetPtr<UBlueprint>& AssetPtr = ArrayAssetPtr[I];
+		TSoftObjectPtr<UBlueprint>& AssetPtr = ArrayAssetPtr[I];
 
 		if (AssetPtr.IsValid() && AssetPtr.Get())
 		{
@@ -6417,7 +6430,7 @@ void UCsCommon_Load::LoadTArrayTAssetPtr_Blueprint(const FString &MemberName, TA
 
 			if (!Data)
 			{
-				UE_LOG(LogLoad, Warning, TEXT("UCsCommon::LoadTArrayTAssetPtr_Blueprint (%s[%d]): Failed to load Blueprint at %s"), *MemberName, I, *AssetDescription);
+				UE_LOG(LogLoad, Warning, TEXT("UCsCommon_Load::LoadTArrayTSoftObjectPtr_Blueprint (%s[%d]): Failed to load Blueprint at %s"), *MemberName, I, *AssetDescription);
 			}
 			ArrayInternal.Add(Data);
 		}
@@ -6428,12 +6441,12 @@ void UCsCommon_Load::LoadTArrayTAssetPtr_Blueprint(const FString &MemberName, TA
 	}
 }
 
-void UCsCommon_Load::LoadTArrayTAssetPtr_Blueprint(const FString &MemberName, TArray<TAssetPtr<UBlueprint>>* &ArrayAssetPtr, TArray<UBlueprintGeneratedClass*> &ArrayInternal)
+void UCsCommon_Load::LoadTArrayTSoftObjectPtr_Blueprint(const FString &MemberName, TArray<TSoftObjectPtr<UBlueprint>>* &ArrayAssetPtr, TArray<UBlueprintGeneratedClass*> &ArrayInternal)
 {
 	if (ArrayInternal.Num() > 0 &&
 		AreAllElementsInTArrayNotNull(ArrayInternal))
 	{
-		//UE_LOG(LogLoad, Warning, TEXT("UCsCommon::LoadTArrayTAssetPtr_Blueprint (%s): Possibly trying to load Blueprint and it is already loaded"), *MemberName);
+		//UE_LOG(LogLoad, Warning, TEXT("UCsCommon_Load::LoadTArrayTSoftObjectPtr_Blueprint (%s): Possibly trying to load Blueprint and it is already loaded"), *MemberName);
 	}
 
 	UCsCommon_Load::NullAndEmptyTArray<UBlueprintGeneratedClass>(ArrayInternal);
@@ -6442,7 +6455,7 @@ void UCsCommon_Load::LoadTArrayTAssetPtr_Blueprint(const FString &MemberName, TA
 
 	for (int32 I = 0; I < Count; ++I)
 	{
-		TAssetPtr<UBlueprint>& AssetPtr	= (*ArrayAssetPtr)[I];
+		TSoftObjectPtr<UBlueprint>& AssetPtr	= (*ArrayAssetPtr)[I];
 
 		if (AssetPtr.IsValid() && AssetPtr.Get())
 		{
@@ -6464,7 +6477,7 @@ void UCsCommon_Load::LoadTArrayTAssetPtr_Blueprint(const FString &MemberName, TA
 
 			if (!Data)
 			{
-				UE_LOG(LogLoad, Warning, TEXT("UCsCommon::LoadTArrayTAssetPtr_Blueprint (%s[%d]): Failed to load Blueprint at %s"), *MemberName, I, *AssetDescription);
+				UE_LOG(LogLoad, Warning, TEXT("UCsCommon_Load::LoadTArrayTSoftObjectPtr_Blueprint (%s[%d]): Failed to load Blueprint at %s"), *MemberName, I, *AssetDescription);
 			}
 			ArrayInternal.Add(Data);
 		}
@@ -6655,9 +6668,9 @@ bool UCsCommon_Load::CanLoad(void* InObject, UClass* const &InClass, const FStri
 	return false;
 }
 
-void UCsCommon_Load::LoadAssetObjectProperty_Blueprint(UAssetObjectProperty* &AssetObjectProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags)
+void UCsCommon_Load::LoadSoftObjectProperty_Blueprint(USoftObjectProperty* &SoftObjectProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags)
 {
-	if (TAssetPtr<UBlueprint>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UBlueprint>>(InObject))
+	if (TSoftObjectPtr<UBlueprint>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UBlueprint>>(InObject))
 	{
 										// MemberName = TEXT("_Internal")
 		const FString InternalMemberName = MemberName + ECsLoadCached::Str::_Internal;
@@ -6665,15 +6678,15 @@ void UCsCommon_Load::LoadAssetObjectProperty_Blueprint(UAssetObjectProperty* &As
 		if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 		{
 			if (UBlueprintGeneratedClass** Internal = InternalProperty->ContainerPtrToValuePtr<UBlueprintGeneratedClass*>(InObject))
-				LoadTAssetPtr_Blueprint(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal);
+				LoadTSoftObjectPtr_Blueprint(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal);
 									//  ObjectName + TEXT(".") + MemberName
 		}
 	}
 }
 
-void UCsCommon_Load::LoadAssetObjectProperty_Blueprint(UAssetObjectProperty* &AssetObjectProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags)
+void UCsCommon_Load::LoadSoftObjectProperty_Blueprint(USoftObjectProperty* &SoftObjectProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags)
 {
-	if (TAssetPtr<UBlueprint>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UBlueprint>>(InObject))
+	if (TSoftObjectPtr<UBlueprint>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UBlueprint>>(InObject))
 	{
 		if (!CanLoad(InObject, InClass, MemberName, LoadFlags, 0))
 			return;
@@ -6684,15 +6697,15 @@ void UCsCommon_Load::LoadAssetObjectProperty_Blueprint(UAssetObjectProperty* &As
 		if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 		{
 			if (UBlueprintGeneratedClass** Internal = InternalProperty->ContainerPtrToValuePtr<UBlueprintGeneratedClass*>(InObject))
-				LoadTAssetPtr_Blueprint(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal);
+				LoadTSoftObjectPtr_Blueprint(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal);
 									//  ObjectName + TEXT(".") + MemberName
 		}
 	}
 }
 
-void UCsCommon_Load::LoadArrayAssetObjectProperty_Blueprint(UArrayProperty* &ArrayProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags)
+void UCsCommon_Load::LoadArraySoftObjectProperty_Blueprint(UArrayProperty* &ArrayProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags)
 {
-	if (TArray<TAssetPtr<UBlueprint>>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<TAssetPtr<UBlueprint>>>(InObject))
+	if (TArray<TSoftObjectPtr<UBlueprint>>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<TSoftObjectPtr<UBlueprint>>>(InObject))
 	{
 		if (!CanLoad(InObject, InClass, MemberName, LoadFlags, 0))
 			return;
@@ -6703,15 +6716,15 @@ void UCsCommon_Load::LoadArrayAssetObjectProperty_Blueprint(UArrayProperty* &Arr
 		if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 		{
 			if (TArray<UBlueprintGeneratedClass*>* Internal = InternalProperty->ContainerPtrToValuePtr<TArray<UBlueprintGeneratedClass*>>(InObject))
-				LoadTArrayTAssetPtr_Blueprint(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal);
+				LoadTArrayTSoftObjectPtr_Blueprint(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal);
 											//ObjectName + TEXT(".") + MemberName
 		}
 	}
 }
 
-void UCsCommon_Load::LoadArrayAssetObjectProperty_Blueprint(UArrayProperty* &ArrayProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags)
+void UCsCommon_Load::LoadArraySoftObjectProperty_Blueprint(UArrayProperty* &ArrayProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags)
 {
-	if (TArray<TAssetPtr<UBlueprint>>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<TAssetPtr<UBlueprint>>>(InObject))
+	if (TArray<TSoftObjectPtr<UBlueprint>>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<TSoftObjectPtr<UBlueprint>>>(InObject))
 	{
 		if (!CanLoad(InObject, InClass, MemberName, LoadFlags, 0))
 			return;
@@ -6722,13 +6735,13 @@ void UCsCommon_Load::LoadArrayAssetObjectProperty_Blueprint(UArrayProperty* &Arr
 		if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 		{
 			if (TArray<UBlueprintGeneratedClass*>* Internal = InternalProperty->ContainerPtrToValuePtr<TArray<UBlueprintGeneratedClass*>>(InObject))
-				LoadTArrayTAssetPtr_Blueprint(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal);
+				LoadTArrayTSoftObjectPtr_Blueprint(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal);
 											//ObjectName + TEXT(".") + MemberName
 		}
 	}
 }
 
-void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* InStruct, UScriptStruct* const &InScriptStruct, const ECsLoadFlags &LoadFlags, TCsLoadStructWithTAssetPtrs_Internal Internal /*=nullptr*/)
+void UCsCommon_Load::LoadStructWithTSoftObjectPtrs(const FString &ObjectName, void* InStruct, UScriptStruct* const &InScriptStruct, const ECsLoadFlags &LoadFlags, TCsLoadStructWithTSoftObjectPtrs_Internal Internal /*=nullptr*/)
 {
 	for (TFieldIterator<UProperty> It(InScriptStruct); It; ++It)
 	{
@@ -6736,15 +6749,15 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 
 		const FString MemberName = Property->GetName();
 
-		// TAssetSubclassOf
-		if (UAssetClassProperty* AssetClassProperty = Cast<UAssetClassProperty>(*It))
+		// TSoftClassPtr
+		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(*It))
 		{
 			// ACsData_Projectile
-			if (AssetClassProperty->MetaClass == ACsData_Projectile::StaticClass())
-			{ LoadAssetClassProperty<ACsData_Projectile>(AssetClassProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::CsData_Projectile, LoadFlags); continue; }
+			if (SoftClassProperty->MetaClass == ACsData_Projectile::StaticClass())
+			{ LoadSoftClassProperty<ACsData_Projectile>(SoftClassProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::CsData_Projectile, LoadFlags); continue; }
 			// ACsData_ProjectileImpact
-			if (AssetClassProperty->MetaClass == ACsData_ProjectileImpact::StaticClass())
-			{ LoadAssetClassProperty<ACsData_ProjectileImpact>(AssetClassProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::CsData_ProjectileImpact, LoadFlags); continue; }
+			if (SoftClassProperty->MetaClass == ACsData_ProjectileImpact::StaticClass())
+			{ LoadSoftClassProperty<ACsData_ProjectileImpact>(SoftClassProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::CsData_ProjectileImpact, LoadFlags); continue; }
 
 			if (Internal)
 			{
@@ -6753,25 +6766,25 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 			}
 			continue;
 		}
-		// TAssetPtr
-		if (UAssetObjectProperty* AssetObjectProperty = Cast<UAssetObjectProperty>(*It))
+		// TSoftObjectPtr
+		if (USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(*It))
 		{
 			// UStaticMesh
-			if (AssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
-			{ LoadAssetObjectProperty<UStaticMesh>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::StaticMesh, ECsCommonLoadCached::Str::Static_Mesh, LoadFlags); continue; }
+			if (SoftObjectProperty->PropertyClass == UStaticMesh::StaticClass())
+			{ LoadSoftObjectProperty<UStaticMesh>(SoftObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::StaticMesh, ECsCommonLoadCached::Str::Static_Mesh, LoadFlags); continue; }
 			// USkeletalMesh
-			if (AssetObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
-			{ LoadAssetObjectProperty<USkeletalMesh>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::SkeletalMesh, ECsCommonLoadCached::Str::Skeletal_Mesh, LoadFlags); continue; }
+			if (SoftObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
+			{ LoadSoftObjectProperty<USkeletalMesh>(SoftObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::SkeletalMesh, ECsCommonLoadCached::Str::Skeletal_Mesh, LoadFlags); continue; }
 			// UMaterialInstance
-			if (AssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-			{ LoadAssetObjectProperty<UMaterialInstance>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::MaterialInstance, ECsCommonLoadCached::Str::MaterialInstance, LoadFlags); continue; }
+			if (SoftObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
+			{ LoadSoftObjectProperty<UMaterialInstance>(SoftObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::MaterialInstance, ECsCommonLoadCached::Str::MaterialInstance, LoadFlags); continue; }
 			// UMaterialInstanceConstant
-			if (AssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
+			if (SoftObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
 			{
-				if (AssetObjectProperty->ArrayDim == CS_SINGLETON)
-				{ LoadAssetObjectProperty<UMaterialInstanceConstant>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::MaterialInstanceConstant, ECsCommonLoadCached::Str::MaterialInstanceConstant, LoadFlags); continue; }
-				if (AssetObjectProperty->ArrayDim == ECS_INTERACTIVE_STATE_MAX)
-				{ LoadFixedArrayAssetObjectProperty_EnumSize<UMaterialInstanceConstant, ECsInteractiveState::Type, ECS_INTERACTIVE_STATE_MAX>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::MaterialInstanceConstant, ECsCommonLoadCached::Str::MaterialInstanceConstant, LoadFlags, &ECsInteractiveState::ToString); continue; }
+				if (SoftObjectProperty->ArrayDim == CS_SINGLETON)
+				{ LoadSoftObjectProperty<UMaterialInstanceConstant>(SoftObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::MaterialInstanceConstant, ECsCommonLoadCached::Str::MaterialInstanceConstant, LoadFlags); continue; }
+				if (SoftObjectProperty->ArrayDim == ECS_INTERACTIVE_STATE_MAX)
+				{ LoadFixedArraySoftObjectProperty_EnumSize<UMaterialInstanceConstant, ECsInteractiveState::Type, ECS_INTERACTIVE_STATE_MAX>(SoftObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::MaterialInstanceConstant, ECsCommonLoadCached::Str::MaterialInstanceConstant, LoadFlags, &ECsInteractiveState::ToString); continue; }
 
 				if (Internal)
 				{
@@ -6781,43 +6794,43 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 				continue;
 			}
 			// UPhysicalMaterial
-			if (AssetObjectProperty->PropertyClass == UPhysicalMaterial::StaticClass())
-			{ LoadAssetObjectProperty<UPhysicalMaterial>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::PhysicalMaterial, ECsCommonLoadCached::Str::Physical_Material, LoadFlags); continue; }
+			if (SoftObjectProperty->PropertyClass == UPhysicalMaterial::StaticClass())
+			{ LoadSoftObjectProperty<UPhysicalMaterial>(SoftObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::PhysicalMaterial, ECsCommonLoadCached::Str::Physical_Material, LoadFlags); continue; }
 			// UPhysicsAsset
-			if (AssetObjectProperty->PropertyClass == UPhysicsAsset::StaticClass())
-			{ LoadAssetObjectProperty<UPhysicsAsset>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::PhysicsAsset, ECsCommonLoadCached::Str::Physics_Asset, LoadFlags); continue; }
+			if (SoftObjectProperty->PropertyClass == UPhysicsAsset::StaticClass())
+			{ LoadSoftObjectProperty<UPhysicsAsset>(SoftObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::PhysicsAsset, ECsCommonLoadCached::Str::Physics_Asset, LoadFlags); continue; }
 			// UAnimSequence
-			if (AssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-			{ LoadAssetObjectProperty<UAnimSequence>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::AnimSequence, ECsCommonLoadCached::Str::Anim_Sequence, LoadFlags); continue; }
+			if (SoftObjectProperty->PropertyClass == UAnimSequence::StaticClass())
+			{ LoadSoftObjectProperty<UAnimSequence>(SoftObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::AnimSequence, ECsCommonLoadCached::Str::Anim_Sequence, LoadFlags); continue; }
 			// UAnimMontage
-			if (AssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-			{ LoadAssetObjectProperty<UAnimMontage>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::AnimMontage, ECsCommonLoadCached::Str::Anim_Montage, LoadFlags); continue; }
+			if (SoftObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+			{ LoadSoftObjectProperty<UAnimMontage>(SoftObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::AnimMontage, ECsCommonLoadCached::Str::Anim_Montage, LoadFlags); continue; }
 			// UBlendSpace1D
-			if (AssetObjectProperty->PropertyClass == UBlendSpace1D::StaticClass())
-			{ LoadAssetObjectProperty<UBlendSpace1D>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::BlendSpace1D, ECsCommonLoadCached::Str::Blend_Space_1D, LoadFlags); continue; }
+			if (SoftObjectProperty->PropertyClass == UBlendSpace1D::StaticClass())
+			{ LoadSoftObjectProperty<UBlendSpace1D>(SoftObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::BlendSpace1D, ECsCommonLoadCached::Str::Blend_Space_1D, LoadFlags); continue; }
 			// UBlendSpace
-			if (AssetObjectProperty->PropertyClass == UBlendSpace::StaticClass())
-			{ LoadAssetObjectProperty<UBlendSpace>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::BlendSpace, ECsCommonLoadCached::Str::Blend_Space, LoadFlags); continue; }
+			if (SoftObjectProperty->PropertyClass == UBlendSpace::StaticClass())
+			{ LoadSoftObjectProperty<UBlendSpace>(SoftObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::BlendSpace, ECsCommonLoadCached::Str::Blend_Space, LoadFlags); continue; }
 			// UAnimBlueprint
-			if (AssetObjectProperty->PropertyClass == UAnimBlueprint::StaticClass())
-			{ LoadAssetObjectProperty_AnimBlueprint(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, LoadFlags); continue; }
+			if (SoftObjectProperty->PropertyClass == UAnimBlueprint::StaticClass())
+			{ LoadSoftObjectProperty_AnimBlueprint(SoftObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, LoadFlags); continue; }
 			// USoundCue
-			if (AssetObjectProperty->PropertyClass == USoundCue::StaticClass())
-			{ LoadAssetObjectProperty<USoundCue>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::SoundCue, ECsCommonLoadCached::Str::Sound_Cue, LoadFlags); continue; }
+			if (SoftObjectProperty->PropertyClass == USoundCue::StaticClass())
+			{ LoadSoftObjectProperty<USoundCue>(SoftObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::SoundCue, ECsCommonLoadCached::Str::Sound_Cue, LoadFlags); continue; }
 			// UParticleSystem
-			if (AssetObjectProperty->PropertyClass == UParticleSystem::StaticClass())
-			{ LoadAssetObjectProperty<UParticleSystem>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::ParticleSystem, ECsCommonLoadCached::Str::Particle_System, LoadFlags); continue; }
+			if (SoftObjectProperty->PropertyClass == UParticleSystem::StaticClass())
+			{ LoadSoftObjectProperty<UParticleSystem>(SoftObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::ParticleSystem, ECsCommonLoadCached::Str::Particle_System, LoadFlags); continue; }
 			// UCurveFloat
-			if (AssetObjectProperty->PropertyClass == UCurveFloat::StaticClass())
-			{ LoadAssetObjectProperty<UCurveFloat>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::CurveFloat, ECsCommonLoadCached::Str::Curve_Float, LoadFlags); continue; }
+			if (SoftObjectProperty->PropertyClass == UCurveFloat::StaticClass())
+			{ LoadSoftObjectProperty<UCurveFloat>(SoftObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::CurveFloat, ECsCommonLoadCached::Str::Curve_Float, LoadFlags); continue; }
 			// UCurveVector
-			if (AssetObjectProperty->PropertyClass == UCurveVector::StaticClass())
-			{ LoadAssetObjectProperty<UCurveVector>(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::CurveVector, ECsCommonLoadCached::Str::Curve_Vector, LoadFlags); continue; }
+			if (SoftObjectProperty->PropertyClass == UCurveVector::StaticClass())
+			{ LoadSoftObjectProperty<UCurveVector>(SoftObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::CurveVector, ECsCommonLoadCached::Str::Curve_Vector, LoadFlags); continue; }
 			// UBlueprint
-			if (AssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
+			if (SoftObjectProperty->PropertyClass == UBlueprint::StaticClass())
 			{ 
-				if (AssetObjectProperty->ArrayDim == CS_SINGLETON)
-				{ LoadAssetObjectProperty_Blueprint(AssetObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, LoadFlags); continue; }
+				if (SoftObjectProperty->ArrayDim == CS_SINGLETON)
+				{ LoadSoftObjectProperty_Blueprint(SoftObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, LoadFlags); continue; }
 			}
 
 			if (Internal)
@@ -7045,8 +7058,8 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 		// Array
 		if (UArrayProperty* ArrayProperty = Cast<UArrayProperty>(*It))
 		{
-			// TAssetSubclassOf
-			if (UAssetClassProperty* InnerAssetClassProperty = Cast<UAssetClassProperty>(ArrayProperty->Inner))
+			// TSoftClassPtr
+			if (USoftClassProperty* InnerSoftClassProperty = Cast<USoftClassProperty>(ArrayProperty->Inner))
 			{
 				if (Internal)
 				{
@@ -7055,30 +7068,30 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 				}
 				continue;
 			}
-			// TAssetPtr
-			if (UAssetObjectProperty* InnerAssetObjectProperty = Cast<UAssetObjectProperty>(ArrayProperty->Inner))
+			// TSoftObjectPtr
+			if (USoftObjectProperty* InnerSoftObjectProperty = Cast<USoftObjectProperty>(ArrayProperty->Inner))
 			{
 				// UStaticMesh
-				if (InnerAssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
-				{ LoadArrayAssetObjectProperty<UStaticMesh>(ArrayProperty, ObjectName, InStruct, InScriptStruct, MemberName, TEXT("StaticMesh"), TEXT("Static Mesh"), LoadFlags); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UStaticMesh::StaticClass())
+				{ LoadArraySoftObjectProperty<UStaticMesh>(ArrayProperty, ObjectName, InStruct, InScriptStruct, MemberName, TEXT("StaticMesh"), TEXT("Static Mesh"), LoadFlags); continue; }
 				// USkeletalMesh
-				if (InnerAssetObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
-				{ LoadArrayAssetObjectProperty<USkeletalMesh>(ArrayProperty, ObjectName, InStruct, InScriptStruct, MemberName, TEXT("SkeletalMesh"), TEXT("Skeletal Mesh"), LoadFlags); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
+				{ LoadArraySoftObjectProperty<USkeletalMesh>(ArrayProperty, ObjectName, InStruct, InScriptStruct, MemberName, TEXT("SkeletalMesh"), TEXT("Skeletal Mesh"), LoadFlags); continue; }
 				// UMaterialInstance
-				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-				{ LoadArrayAssetObjectProperty<UMaterialInstance>(ArrayProperty, ObjectName, InStruct, InScriptStruct, MemberName, TEXT("MaterialInstance"), TEXT("Material Instance"), LoadFlags); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
+				{ LoadArraySoftObjectProperty<UMaterialInstance>(ArrayProperty, ObjectName, InStruct, InScriptStruct, MemberName, TEXT("MaterialInstance"), TEXT("Material Instance"), LoadFlags); continue; }
 				// UMaterialInstanceConstant
-				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
-				{ LoadArrayAssetObjectProperty<UMaterialInstanceConstant>(ArrayProperty, ObjectName, InStruct, InScriptStruct, MemberName, TEXT("MaterialInstanceConstant"), TEXT("Material Instance Constant"), LoadFlags); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
+				{ LoadArraySoftObjectProperty<UMaterialInstanceConstant>(ArrayProperty, ObjectName, InStruct, InScriptStruct, MemberName, TEXT("MaterialInstanceConstant"), TEXT("Material Instance Constant"), LoadFlags); continue; }
 				// UAnimSequence
-				if (InnerAssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-				{ LoadArrayAssetObjectProperty<UAnimSequence>(ArrayProperty, ObjectName, InStruct, InScriptStruct, MemberName, TEXT("AnimSequence"), TEXT("Anim Sequence"), LoadFlags); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UAnimSequence::StaticClass())
+				{ LoadArraySoftObjectProperty<UAnimSequence>(ArrayProperty, ObjectName, InStruct, InScriptStruct, MemberName, TEXT("AnimSequence"), TEXT("Anim Sequence"), LoadFlags); continue; }
 				// UAnimMontage
-				if (InnerAssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-				{ LoadArrayAssetObjectProperty<UAnimMontage>(ArrayProperty, ObjectName, InStruct, InScriptStruct, MemberName, TEXT("AnimMontage"), TEXT("Anim Montage"), LoadFlags); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+				{ LoadArraySoftObjectProperty<UAnimMontage>(ArrayProperty, ObjectName, InStruct, InScriptStruct, MemberName, TEXT("AnimMontage"), TEXT("Anim Montage"), LoadFlags); continue; }
 				// UBlueprint
-				if (InnerAssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
-				{ LoadArrayAssetObjectProperty_Blueprint(ArrayProperty, ObjectName, InStruct, InScriptStruct, MemberName, LoadFlags); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UBlueprint::StaticClass())
+				{ LoadArraySoftObjectProperty_Blueprint(ArrayProperty, ObjectName, InStruct, InScriptStruct, MemberName, LoadFlags); continue; }
 
 				if (Internal)
 				{
@@ -7145,7 +7158,7 @@ void UCsCommon_Load::LoadStructWithTAssetPtrs(const FString &ObjectName, void* I
 //#if PLATFORM_WINDOWS
 //#pragma optimize("", off)
 //#endif // #if PLATFORM_WINDOWS
-void UCsCommon_Load::LoadObjectWithTAssetPtrs(const FString &ObjectName, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TCsLoadObjectWithTAssetPtrs_Internal Internal /*=nullptr*/)
+void UCsCommon_Load::LoadObjectWithTSoftObjectPtrs(const FString &ObjectName, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TCsLoadObjectWithTSoftObjectPtrs_Internal Internal /*=nullptr*/)
 {
 	for (TFieldIterator<UProperty> It(InClass); It; ++It)
 	{
@@ -7153,8 +7166,8 @@ void UCsCommon_Load::LoadObjectWithTAssetPtrs(const FString &ObjectName, void* I
 
 		const FString MemberName = Property->GetName();
 
-		// TAssetSubclassOf
-		if (UAssetClassProperty* AssetClassProperty = Cast<UAssetClassProperty>(*It))
+		// TSoftClassPtr
+		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(*It))
 		{
 			if (Internal)
 			{
@@ -7163,56 +7176,56 @@ void UCsCommon_Load::LoadObjectWithTAssetPtrs(const FString &ObjectName, void* I
 			}
 			continue;
 		}
-		// TAssetPtr
-		if (UAssetObjectProperty* AssetObjectProperty = Cast<UAssetObjectProperty>(*It))
+		// TSoftObjectPtr
+		if (USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(*It))
 		{
 			// UStaticMesh
-			if (AssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
-			{ LoadAssetObjectProperty<UStaticMesh>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName, TEXT("StaticMesh"), TEXT("Static Mesh"), LoadFlags); continue; }
+			if (SoftObjectProperty->PropertyClass == UStaticMesh::StaticClass())
+			{ LoadSoftObjectProperty<UStaticMesh>(SoftObjectProperty, ObjectName, InObject, InClass, MemberName, TEXT("StaticMesh"), TEXT("Static Mesh"), LoadFlags); continue; }
 			// USkeletalMesh
-			if (AssetObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
-			{ LoadAssetObjectProperty<USkeletalMesh>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName, TEXT("SkeletalMesh"), TEXT("Skeletal Mesh"), LoadFlags); continue; }
+			if (SoftObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
+			{ LoadSoftObjectProperty<USkeletalMesh>(SoftObjectProperty, ObjectName, InObject, InClass, MemberName, TEXT("SkeletalMesh"), TEXT("Skeletal Mesh"), LoadFlags); continue; }
 			// UMaterialInstance
-			if (AssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-			{ LoadAssetObjectProperty<UMaterialInstance>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName, TEXT("MaterialInstance"), TEXT("Material Instance"), LoadFlags); continue; }
+			if (SoftObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
+			{ LoadSoftObjectProperty<UMaterialInstance>(SoftObjectProperty, ObjectName, InObject, InClass, MemberName, TEXT("MaterialInstance"), TEXT("Material Instance"), LoadFlags); continue; }
 			// UMaterialInstanceConstant
-			if (AssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
-			{ LoadAssetObjectProperty<UMaterialInstanceConstant>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName, TEXT("MaterialInstanceConstant"), TEXT("Material Instance Constant"), LoadFlags); continue; }
+			if (SoftObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
+			{ LoadSoftObjectProperty<UMaterialInstanceConstant>(SoftObjectProperty, ObjectName, InObject, InClass, MemberName, TEXT("MaterialInstanceConstant"), TEXT("Material Instance Constant"), LoadFlags); continue; }
 			// UPhysicalMaterial
-			if (AssetObjectProperty->PropertyClass == UPhysicalMaterial::StaticClass())
-			{ LoadAssetObjectProperty<UPhysicalMaterial>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName, TEXT("PhysicalMaterial"), TEXT("Physical Material"), LoadFlags); continue; }
+			if (SoftObjectProperty->PropertyClass == UPhysicalMaterial::StaticClass())
+			{ LoadSoftObjectProperty<UPhysicalMaterial>(SoftObjectProperty, ObjectName, InObject, InClass, MemberName, TEXT("PhysicalMaterial"), TEXT("Physical Material"), LoadFlags); continue; }
 			// UPhysicsAsset
-			if (AssetObjectProperty->PropertyClass == UPhysicsAsset::StaticClass())
-			{ LoadAssetObjectProperty<UPhysicsAsset>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName, TEXT("PhysicsAsset"), TEXT("Physics Asset"), LoadFlags); continue; }
+			if (SoftObjectProperty->PropertyClass == UPhysicsAsset::StaticClass())
+			{ LoadSoftObjectProperty<UPhysicsAsset>(SoftObjectProperty, ObjectName, InObject, InClass, MemberName, TEXT("PhysicsAsset"), TEXT("Physics Asset"), LoadFlags); continue; }
 			// UAnimSequence
-			if (AssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-			{ LoadAssetObjectProperty<UAnimSequence>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName, TEXT("AnimSequence"), TEXT("Anim Sequence"), LoadFlags); continue; }
+			if (SoftObjectProperty->PropertyClass == UAnimSequence::StaticClass())
+			{ LoadSoftObjectProperty<UAnimSequence>(SoftObjectProperty, ObjectName, InObject, InClass, MemberName, TEXT("AnimSequence"), TEXT("Anim Sequence"), LoadFlags); continue; }
 			// UAnimMontage
-			if (AssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-			{ LoadAssetObjectProperty<UAnimMontage>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName, TEXT("AnimMontage"), TEXT("Anim Montage"), LoadFlags); continue; }
+			if (SoftObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+			{ LoadSoftObjectProperty<UAnimMontage>(SoftObjectProperty, ObjectName, InObject, InClass, MemberName, TEXT("AnimMontage"), TEXT("Anim Montage"), LoadFlags); continue; }
 			// UBlendSpace
-			if (AssetObjectProperty->PropertyClass == UBlendSpace::StaticClass())
-			{ LoadAssetObjectProperty<UBlendSpace>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName, TEXT("BlendSpace"), TEXT("Blend Space"), LoadFlags); continue; }
+			if (SoftObjectProperty->PropertyClass == UBlendSpace::StaticClass())
+			{ LoadSoftObjectProperty<UBlendSpace>(SoftObjectProperty, ObjectName, InObject, InClass, MemberName, TEXT("BlendSpace"), TEXT("Blend Space"), LoadFlags); continue; }
 			// UAnimBlueprint
-			if (AssetObjectProperty->PropertyClass == UAnimBlueprint::StaticClass())
-			{ LoadAssetObjectProperty_AnimBlueprint(AssetObjectProperty, ObjectName, InObject, InClass, MemberName, LoadFlags); continue; }
+			if (SoftObjectProperty->PropertyClass == UAnimBlueprint::StaticClass())
+			{ LoadSoftObjectProperty_AnimBlueprint(SoftObjectProperty, ObjectName, InObject, InClass, MemberName, LoadFlags); continue; }
 			// USoundCue
-			if (AssetObjectProperty->PropertyClass == USoundCue::StaticClass())
-			{ LoadAssetObjectProperty<USoundCue>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName, TEXT("SoundCue"), TEXT("Sound Cue"), LoadFlags); continue; }
+			if (SoftObjectProperty->PropertyClass == USoundCue::StaticClass())
+			{ LoadSoftObjectProperty<USoundCue>(SoftObjectProperty, ObjectName, InObject, InClass, MemberName, TEXT("SoundCue"), TEXT("Sound Cue"), LoadFlags); continue; }
 			// UParticleSystem
-			if (AssetObjectProperty->PropertyClass == UParticleSystem::StaticClass())
-			{ LoadAssetObjectProperty<UParticleSystem>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName, TEXT("ParticleSystem"), TEXT("Particle System"), LoadFlags); continue; }
+			if (SoftObjectProperty->PropertyClass == UParticleSystem::StaticClass())
+			{ LoadSoftObjectProperty<UParticleSystem>(SoftObjectProperty, ObjectName, InObject, InClass, MemberName, TEXT("ParticleSystem"), TEXT("Particle System"), LoadFlags); continue; }
 			// UCurveFloat
-			if (AssetObjectProperty->PropertyClass == UCurveFloat::StaticClass())
-			{ LoadAssetObjectProperty<UCurveFloat>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName, TEXT("CurveFloat"), TEXT("Curve Float"), LoadFlags); continue; }
+			if (SoftObjectProperty->PropertyClass == UCurveFloat::StaticClass())
+			{ LoadSoftObjectProperty<UCurveFloat>(SoftObjectProperty, ObjectName, InObject, InClass, MemberName, TEXT("CurveFloat"), TEXT("Curve Float"), LoadFlags); continue; }
 			// UCurveVector
-			if (AssetObjectProperty->PropertyClass == UCurveVector::StaticClass())
-			{ LoadAssetObjectProperty<UCurveVector>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName, TEXT("CurveVector"), TEXT("Curve Vector"), LoadFlags); continue; }
+			if (SoftObjectProperty->PropertyClass == UCurveVector::StaticClass())
+			{ LoadSoftObjectProperty<UCurveVector>(SoftObjectProperty, ObjectName, InObject, InClass, MemberName, TEXT("CurveVector"), TEXT("Curve Vector"), LoadFlags); continue; }
 			// UBlueprint
-			if (AssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
+			if (SoftObjectProperty->PropertyClass == UBlueprint::StaticClass())
 			{
-				if (AssetObjectProperty->ArrayDim == CS_SINGLETON)
-				{ LoadAssetObjectProperty_Blueprint(AssetObjectProperty, ObjectName, InObject, InClass, MemberName, LoadFlags); continue; }
+				if (SoftObjectProperty->ArrayDim == CS_SINGLETON)
+				{ LoadSoftObjectProperty_Blueprint(SoftObjectProperty, ObjectName, InObject, InClass, MemberName, LoadFlags); continue; }
 			}
 
 			if (Internal)
@@ -7416,8 +7429,8 @@ void UCsCommon_Load::LoadObjectWithTAssetPtrs(const FString &ObjectName, void* I
 		// Array
 		if (UArrayProperty* ArrayProperty = Cast<UArrayProperty>(*It))
 		{
-			// TAssetSubclassOf
-			if (UAssetClassProperty* InnerAssetClassProperty = Cast<UAssetClassProperty>(ArrayProperty->Inner))
+			// TSoftClassPtr
+			if (USoftClassProperty* InnerSoftClassProperty = Cast<USoftClassProperty>(ArrayProperty->Inner))
 			{
 				if (Internal)
 				{
@@ -7426,30 +7439,30 @@ void UCsCommon_Load::LoadObjectWithTAssetPtrs(const FString &ObjectName, void* I
 				}
 				continue;
 			}
-			// TAssetPtr
-			if (UAssetObjectProperty* InnerAssetObjectProperty = Cast<UAssetObjectProperty>(ArrayProperty->Inner))
+			// TSoftObjectPtr
+			if (USoftObjectProperty* InnerSoftObjectProperty = Cast<USoftObjectProperty>(ArrayProperty->Inner))
 			{
 				// UStaticMesh
-				if (InnerAssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
-				{ LoadArrayAssetObjectProperty<UStaticMesh>(ArrayProperty, ObjectName, InObject, InClass, MemberName, TEXT("StaticMesh"), TEXT("Static Mesh"), LoadFlags); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UStaticMesh::StaticClass())
+				{ LoadArraySoftObjectProperty<UStaticMesh>(ArrayProperty, ObjectName, InObject, InClass, MemberName, TEXT("StaticMesh"), TEXT("Static Mesh"), LoadFlags); continue; }
 				// USkeletalMesh
-				if (InnerAssetObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
-				{ LoadArrayAssetObjectProperty<USkeletalMesh>(ArrayProperty, ObjectName, InObject, InClass, MemberName, TEXT("SkeletalMesh"), TEXT("Skeletal Mesh"), LoadFlags); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
+				{ LoadArraySoftObjectProperty<USkeletalMesh>(ArrayProperty, ObjectName, InObject, InClass, MemberName, TEXT("SkeletalMesh"), TEXT("Skeletal Mesh"), LoadFlags); continue; }
 				// UMaterialInstance
-				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-				{ LoadArrayAssetObjectProperty<UMaterialInstance>(ArrayProperty, ObjectName, InObject, InClass, MemberName, TEXT("MaterialInstance"), TEXT("Material Instance"), LoadFlags); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
+				{ LoadArraySoftObjectProperty<UMaterialInstance>(ArrayProperty, ObjectName, InObject, InClass, MemberName, TEXT("MaterialInstance"), TEXT("Material Instance"), LoadFlags); continue; }
 				// UMaterialInstanceConstant
-				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
-				{ LoadArrayAssetObjectProperty<UMaterialInstanceConstant>(ArrayProperty, ObjectName, InObject, InClass, MemberName, TEXT("MaterialInstanceConstant"), TEXT("Material Instance Constant"), LoadFlags); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
+				{ LoadArraySoftObjectProperty<UMaterialInstanceConstant>(ArrayProperty, ObjectName, InObject, InClass, MemberName, TEXT("MaterialInstanceConstant"), TEXT("Material Instance Constant"), LoadFlags); continue; }
 				// UAnimSequence
-				if (InnerAssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-				{ LoadArrayAssetObjectProperty<UAnimSequence>(ArrayProperty, ObjectName, InObject, InClass, MemberName, TEXT("AnimSequence"), TEXT("Anim Sequence"), LoadFlags); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UAnimSequence::StaticClass())
+				{ LoadArraySoftObjectProperty<UAnimSequence>(ArrayProperty, ObjectName, InObject, InClass, MemberName, TEXT("AnimSequence"), TEXT("Anim Sequence"), LoadFlags); continue; }
 				// UAnimMontage
-				if (InnerAssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-				{ LoadArrayAssetObjectProperty<UAnimMontage>(ArrayProperty, ObjectName, InObject, InClass, MemberName, TEXT("AnimMontage"), TEXT("Anim Montage"), LoadFlags); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+				{ LoadArraySoftObjectProperty<UAnimMontage>(ArrayProperty, ObjectName, InObject, InClass, MemberName, TEXT("AnimMontage"), TEXT("Anim Montage"), LoadFlags); continue; }
 				// UBlueprint
-				if (InnerAssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-				{ LoadArrayAssetObjectProperty_Blueprint(ArrayProperty, ObjectName, InObject, InClass, MemberName, LoadFlags); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+				{ LoadArraySoftObjectProperty_Blueprint(ArrayProperty, ObjectName, InObject, InClass, MemberName, LoadFlags); continue; }
 
 				if (Internal)
 				{
@@ -7517,7 +7530,7 @@ void UCsCommon_Load::LoadObjectWithTAssetPtrs(const FString &ObjectName, void* I
 	// UnLoad
 #pragma region
 
-void UCsCommon_Load::UnLoadStructWithTAssetPtrs(void* InStruct, UScriptStruct* const &InScriptStruct)
+void UCsCommon_Load::UnLoadStructWithTSoftObjectPtrs(void* InStruct, UScriptStruct* const &InScriptStruct)
 {
 	for (TFieldIterator<UProperty> It(InScriptStruct); It; ++It)
 	{
@@ -7652,18 +7665,18 @@ void UCsCommon_Load::UnLoadStructWithTAssetPtrs(void* InStruct, UScriptStruct* c
 		// Array
 		if (UArrayProperty* ArrayProperty = Cast<UArrayProperty>(*It))
 		{
-			// TAssetSubclassOf
-			if (UAssetClassProperty* InnerAssetClassProperty = Cast<UAssetClassProperty>(ArrayProperty->Inner))
+			// TSoftClassPtr
+			if (USoftClassProperty* InnerSoftClassProperty = Cast<USoftClassProperty>(ArrayProperty->Inner))
 			{
 				if (!MemberName.Contains(TEXT("_Internal")))
 					continue;
 
 				// AShooterWeaponData
-				//if (InnerAssetClassProperty->PropertyClass == AShooterWeaponData::StaticClass() || InnerAssetClassProperty->MetaClass == AShooterWeaponData::StaticClass())
+				//if (InnerSoftClassProperty->PropertyClass == AShooterWeaponData::StaticClass() || InnerSoftClassProperty->MetaClass == AShooterWeaponData::StaticClass())
 				//{ UnLoadArrayObjectProperty<AShooterWeaponData>(ArrayProperty, InStruct); continue; }
 				continue;
 			}
-			// TAssetPtr
+			// TSoftObjectPtr
 			if (UObjectProperty* InnerObjectProperty = Cast<UObjectProperty>(ArrayProperty->Inner))
 			{
 				if (!MemberName.Contains(TEXT("_Internal")))
@@ -7711,7 +7724,7 @@ void UCsCommon_Load::UnLoadStructWithTAssetPtrs(void* InStruct, UScriptStruct* c
 	}
 }
 
-void UCsCommon_Load::UnLoadObjectWithTAssetPtrs(void* InObject, UClass* const &InClass)
+void UCsCommon_Load::UnLoadObjectWithTSoftObjectPtrs(void* InObject, UClass* const &InClass)
 {
 	for (TFieldIterator<UProperty> It(InClass); It; ++It)
 	{
@@ -7844,17 +7857,17 @@ void UCsCommon_Load::UnLoadObjectWithTAssetPtrs(void* InObject, UClass* const &I
 		else
 		if (UArrayProperty* ArrayProperty = Cast<UArrayProperty>(*It))
 		{
-			// TAssetSubclassOf
-			if (UAssetClassProperty* InnerAssetClassProperty = Cast<UAssetClassProperty>(ArrayProperty->Inner))
+			// TSoftClassPtr
+			if (USoftClassProperty* InnerSoftClassProperty = Cast<USoftClassProperty>(ArrayProperty->Inner))
 			{
 				if (!MemberName.Contains(TEXT("_Internal")))
 					continue;
 
 				// AShooterWeaponData
-				//if (InnerAssetClassProperty->PropertyClass == AShooterWeaponData::StaticClass() || InnerAssetClassProperty->MetaClass == AShooterWeaponData::StaticClass())
+				//if (InnerSoftClassProperty->PropertyClass == AShooterWeaponData::StaticClass() || InnerSoftClassProperty->MetaClass == AShooterWeaponData::StaticClass())
 				//{ UnLoadArrayObjectProperty<AShooterWeaponData>(ArrayProperty, InObject); continue; }
 			}
-			// TAssetPtr
+			// TSoftObjectPtr
 			if (UObjectProperty* InnerObjectProperty = Cast<UObjectProperty>(ArrayProperty->Inner))
 			{
 				if (!MemberName.Contains(TEXT("_Internal")))
@@ -7906,7 +7919,7 @@ void UCsCommon_Load::UnLoadObjectWithTAssetPtrs(void* InObject, UClass* const &I
 	// IsLoaded
 #pragma region
 
-bool UCsCommon_Load::IsLoadedStructWithTAssetPtrs(const FString &ObjectName, void* InStruct, UScriptStruct* const &InScriptStruct)
+bool UCsCommon_Load::IsLoadedStructWithTSoftObjectPtrs(const FString &ObjectName, void* InStruct, UScriptStruct* const &InScriptStruct)
 {
 	bool Pass = true;
 
@@ -8045,17 +8058,17 @@ bool UCsCommon_Load::IsLoadedStructWithTAssetPtrs(const FString &ObjectName, voi
 		else
 		if (UArrayProperty* ArrayProperty = Cast<UArrayProperty>(*It))
 		{
-			// TAssetSubclassOf
-			if (UAssetClassProperty* InnerAssetClassProperty = Cast<UAssetClassProperty>(ArrayProperty->Inner))
+			// TSoftClassPtr
+			if (USoftClassProperty* InnerSoftClassProperty = Cast<USoftClassProperty>(ArrayProperty->Inner))
 			{
 				if (!MemberName.Contains(TEXT("_Internal")))
 					continue;
 
 				// AShooterWeaponData
-				//if (InnerAssetClassProperty->PropertyClass == AShooterWeaponData::StaticClass() || InnerAssetClassProperty->MetaClass == AShooterWeaponData::StaticClass())
+				//if (InnerSoftClassProperty->PropertyClass == AShooterWeaponData::StaticClass() || InnerSoftClassProperty->MetaClass == AShooterWeaponData::StaticClass())
 				//	Pass &= IsLoadedArrayObjectProperty<AShooterWeaponData>(ArrayProperty, InStruct, MemberName);
 			}
-			// TAssetPtr
+			// TSoftObjectPtr
 			else
 			if (UObjectProperty* InnerObjectProperty = Cast<UObjectProperty>(ArrayProperty->Inner))
 			{
@@ -8093,7 +8106,7 @@ bool UCsCommon_Load::IsLoadedStructWithTAssetPtrs(const FString &ObjectName, voi
 	return Pass;
 }
 
-bool UCsCommon_Load::IsLoadedObjectWithTAssetPtrs(const FString &ObjectName, void* InObject, UClass* const &InClass)
+bool UCsCommon_Load::IsLoadedObjectWithTSoftObjectPtrs(const FString &ObjectName, void* InObject, UClass* const &InClass)
 {
 	bool Pass = true;
 
@@ -8232,17 +8245,17 @@ bool UCsCommon_Load::IsLoadedObjectWithTAssetPtrs(const FString &ObjectName, voi
 		else
 		if (UArrayProperty* ArrayProperty = Cast<UArrayProperty>(*It))
 		{
-			// TAssetSubclassOf
-			if (UAssetClassProperty* InnerAssetClassProperty = Cast<UAssetClassProperty>(ArrayProperty->Inner))
+			// TSoftClassPtr
+			if (USoftClassProperty* InnerSoftClassProperty = Cast<USoftClassProperty>(ArrayProperty->Inner))
 			{
 				if (!MemberName.Contains(TEXT("_Internal")))
 					continue;
 
 				// AShooterWeaponData
-				//if (InnerAssetClassProperty->PropertyClass == AShooterWeaponData::StaticClass() || InnerAssetClassProperty->MetaClass == AShooterWeaponData::StaticClass())
+				//if (InnerSoftClassProperty->PropertyClass == AShooterWeaponData::StaticClass() || InnerSoftClassProperty->MetaClass == AShooterWeaponData::StaticClass())
 				//	Pass &= IsLoadedArrayObjectProperty<AShooterWeaponData>(ArrayProperty, InObject, MemberName);
 			}
-			// TAssetPtr
+			// TSoftObjectPtr
 			else
 			if (UObjectProperty* InnerObjectProperty = Cast<UObjectProperty>(ArrayProperty->Inner))
 			{
@@ -8360,8 +8373,8 @@ void UCsCommon_Load::CheckObjectWithEnum(const FString &ObjectName, void* InObje
 
 		const FString MemberName = Property->GetName();
 
-		// TAssetSubclassOf
-		if (UAssetClassProperty* AssetClassProperty = Cast<UAssetClassProperty>(*It))
+		// TSoftClassPtr
+		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(*It))
 		{
 			if (Internal)
 			{
@@ -8370,57 +8383,57 @@ void UCsCommon_Load::CheckObjectWithEnum(const FString &ObjectName, void* InObje
 			}
 			continue;
 		}
-		// TAssetPtr
-		if (UAssetObjectProperty* AssetObjectProperty = Cast<UAssetObjectProperty>(*It))
+		// TSoftObjectPtr
+		if (USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(*It))
 		{
 			// UStaticMesh
-			if (AssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
-			{ CheckEnumAssetObjectProperty<UStaticMesh>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UStaticMesh::StaticClass())
+			{ CheckEnumSoftObjectProperty<UStaticMesh>(SoftObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
 			// USkeletalMesh
-			if (AssetObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
-			{ CheckEnumAssetObjectProperty<USkeletalMesh>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
+			{ CheckEnumSoftObjectProperty<USkeletalMesh>(SoftObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
 			// UMaterialInstance
-			if (AssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-			{ CheckEnumAssetObjectProperty<UMaterialInstance>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
+			{ CheckEnumSoftObjectProperty<UMaterialInstance>(SoftObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
 			// UMaterialInstanceConstant
-			if (AssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
-			{ CheckEnumAssetObjectProperty<UMaterialInstanceConstant>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
+			{ CheckEnumSoftObjectProperty<UMaterialInstanceConstant>(SoftObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
 			// UPhysicalMaterial
-			if (AssetObjectProperty->PropertyClass == UPhysicalMaterial::StaticClass())
-			{ CheckEnumAssetObjectProperty<UPhysicalMaterial>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UPhysicalMaterial::StaticClass())
+			{ CheckEnumSoftObjectProperty<UPhysicalMaterial>(SoftObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
 			// UPhysicsAsset
-			if (AssetObjectProperty->PropertyClass == UPhysicsAsset::StaticClass())
-			{ CheckEnumAssetObjectProperty<UPhysicsAsset>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UPhysicsAsset::StaticClass())
+			{ CheckEnumSoftObjectProperty<UPhysicsAsset>(SoftObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
 			// UAnimSequence
-			if (AssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-			{ CheckEnumAssetObjectProperty<UAnimSequence>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UAnimSequence::StaticClass())
+			{ CheckEnumSoftObjectProperty<UAnimSequence>(SoftObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
 			// UAnimMontage
-			if (AssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-			{ CheckEnumAssetObjectProperty<UAnimMontage>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+			{ CheckEnumSoftObjectProperty<UAnimMontage>(SoftObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
 			// UBlendSpace
-			if (AssetObjectProperty->PropertyClass == UBlendSpace::StaticClass())
-			{ CheckEnumAssetObjectProperty<UBlendSpace>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UBlendSpace::StaticClass())
+			{ CheckEnumSoftObjectProperty<UBlendSpace>(SoftObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
 			// UAnimBlueprint
-			//if (AssetObjectProperty->PropertyClass == UAnimBlueprint::StaticClass())
-			//{ CheckEnumAssetObjectProperty(AssetObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
+			//if (SoftObjectProperty->PropertyClass == UAnimBlueprint::StaticClass())
+			//{ CheckEnumSoftObjectProperty(SoftObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
 			// USoundCue
-			if (AssetObjectProperty->PropertyClass == USoundCue::StaticClass())
-			{ CheckEnumAssetObjectProperty<USoundCue>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == USoundCue::StaticClass())
+			{ CheckEnumSoftObjectProperty<USoundCue>(SoftObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
 			// UParticleSystem
-			if (AssetObjectProperty->PropertyClass == UParticleSystem::StaticClass())
-			{ CheckEnumAssetObjectProperty<UParticleSystem>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UParticleSystem::StaticClass())
+			{ CheckEnumSoftObjectProperty<UParticleSystem>(SoftObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
 			// UCurveFloat
-			if (AssetObjectProperty->PropertyClass == UCurveFloat::StaticClass())
-			{ CheckEnumAssetObjectProperty<UCurveFloat>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UCurveFloat::StaticClass())
+			{ CheckEnumSoftObjectProperty<UCurveFloat>(SoftObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
 			// UCurveVector
-			if (AssetObjectProperty->PropertyClass == UCurveVector::StaticClass())
-			{ CheckEnumAssetObjectProperty<UCurveVector>(AssetObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
+			if (SoftObjectProperty->PropertyClass == UCurveVector::StaticClass())
+			{ CheckEnumSoftObjectProperty<UCurveVector>(SoftObjectProperty, ObjectName, InObject, InClass, MemberName); continue; }
 			// UBlueprint
-			if (AssetObjectProperty->PropertyClass == UBlueprint::StaticClass())
+			if (SoftObjectProperty->PropertyClass == UBlueprint::StaticClass())
 			{
-				if (AssetObjectProperty->ArrayDim == CS_SINGLETON)
+				if (SoftObjectProperty->ArrayDim == CS_SINGLETON)
 				{
-					//LoadAssetObjectProperty_Blueprint(AssetObjectProperty, ObjectName, InObject, InClass, MemberName, LoadFlags); continue;
+					//LoadSoftObjectProperty_Blueprint(SoftObjectProperty, ObjectName, InObject, InClass, MemberName, LoadFlags); continue;
 				}
 			}
 
@@ -8624,8 +8637,8 @@ void UCsCommon_Load::CheckObjectWithEnum(const FString &ObjectName, void* InObje
 		// Array
 		if (UArrayProperty* ArrayProperty = Cast<UArrayProperty>(*It))
 		{
-			// TAssetSubclassOf
-			if (UAssetClassProperty* InnerAssetClassProperty = Cast<UAssetClassProperty>(ArrayProperty->Inner))
+			// TSoftClassPtr
+			if (USoftClassProperty* InnerSoftClassProperty = Cast<USoftClassProperty>(ArrayProperty->Inner))
 			{
 				if (Internal)
 				{
@@ -8634,30 +8647,30 @@ void UCsCommon_Load::CheckObjectWithEnum(const FString &ObjectName, void* InObje
 				}
 				continue;
 			}
-			// TAssetPtr
-			if (UAssetObjectProperty* InnerAssetObjectProperty = Cast<UAssetObjectProperty>(ArrayProperty->Inner))
+			// TSoftObjectPtr
+			if (USoftObjectProperty* InnerSoftObjectProperty = Cast<USoftObjectProperty>(ArrayProperty->Inner))
 			{
 				// UStaticMesh
-				if (InnerAssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
-				{ CheckEnumArrayAssetObjectProperty<UStaticMesh>(ArrayProperty, ObjectName, InObject, InClass, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UStaticMesh::StaticClass())
+				{ CheckEnumArraySoftObjectProperty<UStaticMesh>(ArrayProperty, ObjectName, InObject, InClass, MemberName); continue; }
 				// USkeletalMesh
-				if (InnerAssetObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
-				{ CheckEnumArrayAssetObjectProperty<USkeletalMesh>(ArrayProperty, ObjectName, InObject, InClass, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == USkeletalMesh::StaticClass())
+				{ CheckEnumArraySoftObjectProperty<USkeletalMesh>(ArrayProperty, ObjectName, InObject, InClass, MemberName); continue; }
 				// UMaterialInstance
-				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-				{ CheckEnumArrayAssetObjectProperty<UMaterialInstance>(ArrayProperty, ObjectName, InObject, InClass, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
+				{ CheckEnumArraySoftObjectProperty<UMaterialInstance>(ArrayProperty, ObjectName, InObject, InClass, MemberName); continue; }
 				// UMaterialInstanceConstant
-				if (InnerAssetObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
-				{ CheckEnumArrayAssetObjectProperty<UMaterialInstanceConstant>(ArrayProperty, ObjectName, InObject, InClass, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UMaterialInstanceConstant::StaticClass())
+				{ CheckEnumArraySoftObjectProperty<UMaterialInstanceConstant>(ArrayProperty, ObjectName, InObject, InClass, MemberName); continue; }
 				// UAnimSequence
-				if (InnerAssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-				{ CheckEnumArrayAssetObjectProperty<UAnimSequence>(ArrayProperty, ObjectName, InObject, InClass, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UAnimSequence::StaticClass())
+				{ CheckEnumArraySoftObjectProperty<UAnimSequence>(ArrayProperty, ObjectName, InObject, InClass, MemberName); continue; }
 				// UAnimMontage
-				if (InnerAssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-				{ CheckEnumArrayAssetObjectProperty<UAnimMontage>(ArrayProperty, ObjectName, InObject, InClass, MemberName); continue; }
+				if (InnerSoftObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+				{ CheckEnumArraySoftObjectProperty<UAnimMontage>(ArrayProperty, ObjectName, InObject, InClass, MemberName); continue; }
 				// UBlueprint
-				//if (InnerAssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-				//{ CheckEnumArrayAssetObjectProperty(ArrayProperty, ObjectName, InObject, InClass, MemberName); continue; }
+				//if (InnerSoftObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+				//{ CheckEnumArraySoftObjectProperty(ArrayProperty, ObjectName, InObject, InClass, MemberName); continue; }
 
 				if (Internal)
 				{
@@ -9163,56 +9176,56 @@ void UCsCommon_Load::SetObjectMembers(void* FromObject, void* ToObject, UClass* 
 			return;
 		}
 
-		// TAssetSubclassOf
-		if (UAssetClassProperty* AssetClassProperty = Cast<UAssetClassProperty>(*It))
+		// TSoftClassPtr
+		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(*It))
 		{
 			// AShooterWeaponData
-			//if (AssetClassProperty->PropertyClass == AShooterWeaponData::StaticClass() || AssetClassProperty->MetaClass == AShooterWeaponData::StaticClass())
-			//	SetMemberProperty<TAssetSubclassOf<AShooterWeaponData>>(ToObject, Property, MemberValues[Index]);
+			//if (SoftClassProperty->PropertyClass == AShooterWeaponData::StaticClass() || SoftClassProperty->MetaClass == AShooterWeaponData::StaticClass())
+			//	SetMemberProperty<TSoftClassPtr<AShooterWeaponData>>(ToObject, Property, MemberValues[Index]);
 		}
-		// TAssetPtr
+		// TSoftObjectPtr
 		else
-		if (UAssetObjectProperty* AssetObjectProperty = Cast<UAssetObjectProperty>(*It))
+		if (USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(*It))
 		{
 			// UStaticMesh
-			if (AssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
-				SetMemberProperty<TAssetPtr<UStaticMesh>>(ToObject, Property, MemberValues[Index]);
+			if (SoftObjectProperty->PropertyClass == UStaticMesh::StaticClass())
+				SetMemberProperty<TSoftObjectPtr<UStaticMesh>>(ToObject, Property, MemberValues[Index]);
 			// UMaterialInstance
 			else
-			if (AssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-				SetMemberProperty<TAssetPtr<UMaterialInstance>>(ToObject, Property, MemberValues[Index]);
+			if (SoftObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
+				SetMemberProperty<TSoftObjectPtr<UMaterialInstance>>(ToObject, Property, MemberValues[Index]);
 			// UPhysicsAsset
 			else
-			if (AssetObjectProperty->PropertyClass == UPhysicsAsset::StaticClass())
-				SetMemberProperty<TAssetPtr<UPhysicsAsset>>(ToObject, Property, MemberValues[Index]);
+			if (SoftObjectProperty->PropertyClass == UPhysicsAsset::StaticClass())
+				SetMemberProperty<TSoftObjectPtr<UPhysicsAsset>>(ToObject, Property, MemberValues[Index]);
 			// UAnimSequence
 			else
-			if (AssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-				SetMemberProperty<TAssetPtr<UAnimSequence>>(ToObject, Property, MemberValues[Index]);
+			if (SoftObjectProperty->PropertyClass == UAnimSequence::StaticClass())
+				SetMemberProperty<TSoftObjectPtr<UAnimSequence>>(ToObject, Property, MemberValues[Index]);
 			// UAnimMontage
 			else
-			if (AssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-				SetMemberProperty<TAssetPtr<UAnimMontage>>(ToObject, Property, MemberValues[Index]);
+			if (SoftObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+				SetMemberProperty<TSoftObjectPtr<UAnimMontage>>(ToObject, Property, MemberValues[Index]);
 			// UBlendSpace
 			else
-			if (AssetObjectProperty->PropertyClass == UBlendSpace::StaticClass())
-				SetMemberProperty<TAssetPtr<UBlendSpace>>(ToObject, Property, MemberValues[Index]);
+			if (SoftObjectProperty->PropertyClass == UBlendSpace::StaticClass())
+				SetMemberProperty<TSoftObjectPtr<UBlendSpace>>(ToObject, Property, MemberValues[Index]);
 			// UAnimBlueprint
 			else
-			if (AssetObjectProperty->PropertyClass == UAnimBlueprint::StaticClass())
-				SetMemberProperty<TAssetPtr<UAnimBlueprint>>(ToObject, Property, MemberValues[Index]);
+			if (SoftObjectProperty->PropertyClass == UAnimBlueprint::StaticClass())
+				SetMemberProperty<TSoftObjectPtr<UAnimBlueprint>>(ToObject, Property, MemberValues[Index]);
 			// USoundCue
 			else
-			if (AssetObjectProperty->PropertyClass == USoundCue::StaticClass())
-				SetMemberProperty<TAssetPtr<USoundCue>>(ToObject, Property, MemberValues[Index]);
+			if (SoftObjectProperty->PropertyClass == USoundCue::StaticClass())
+				SetMemberProperty<TSoftObjectPtr<USoundCue>>(ToObject, Property, MemberValues[Index]);
 			// UParticleSystem
 			else
-			if (AssetObjectProperty->PropertyClass == UParticleSystem::StaticClass())
-				SetMemberProperty<TAssetPtr<UParticleSystem>>(ToObject, Property, MemberValues[Index]);
+			if (SoftObjectProperty->PropertyClass == UParticleSystem::StaticClass())
+				SetMemberProperty<TSoftObjectPtr<UParticleSystem>>(ToObject, Property, MemberValues[Index]);
 			// UCurveVector
 			else
-			if (AssetObjectProperty->PropertyClass == UCurveVector::StaticClass())
-				SetMemberProperty<TAssetPtr<UCurveVector>>(ToObject, Property, MemberValues[Index]);
+			if (SoftObjectProperty->PropertyClass == UCurveVector::StaticClass())
+				SetMemberProperty<TSoftObjectPtr<UCurveVector>>(ToObject, Property, MemberValues[Index]);
 		}
 		// Structs
 		else
@@ -9285,20 +9298,20 @@ void UCsCommon_Load::SetObjectMembers(void* FromObject, void* ToObject, UClass* 
 		else
 		if (UArrayProperty* ArrayProperty = Cast<UArrayProperty>(*It))
 		{
-			// TAssetSubclassOf
-			if (UAssetClassProperty* InnerAssetClassProperty = Cast<UAssetClassProperty>(ArrayProperty->Inner))
+			// TSoftClassPtr
+			if (USoftClassProperty* InnerSoftClassProperty = Cast<USoftClassProperty>(ArrayProperty->Inner))
 			{
 				// AShooterWeaponData
-				//if (InnerAssetClassProperty->PropertyClass == AShooterWeaponData::StaticClass() || InnerAssetClassProperty->MetaClass == AShooterWeaponData::StaticClass())
-				//{ SetMemberProperty<TArray<TAssetSubclassOf<AShooterWeaponData>>>(ToObject, Property, MemberValues[Index]); }
+				//if (InnerSoftClassProperty->PropertyClass == AShooterWeaponData::StaticClass() || InnerSoftClassProperty->MetaClass == AShooterWeaponData::StaticClass())
+				//{ SetMemberProperty<TArray<TSoftClassPtr<AShooterWeaponData>>>(ToObject, Property, MemberValues[Index]); }
 			}
-			// TAssetPtr
+			// TSoftObjectPtr
 			else
-			if (UAssetObjectProperty* InnerAssetObjectProperty = Cast<UAssetObjectProperty>(ArrayProperty->Inner))
+			if (USoftObjectProperty* InnerSoftObjectProperty = Cast<USoftObjectProperty>(ArrayProperty->Inner))
 			{
 				// UAnimMontage
-				//if (InnerAssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-				//{ SetMemberProperty<TArray<TAssetPtr<UAnimMontage>>>(ToObject, Property, MemberValues[Index]); }
+				//if (InnerSoftObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+				//{ SetMemberProperty<TArray<TSoftObjectPtr<UAnimMontage>>>(ToObject, Property, MemberValues[Index]); }
 			}
 			// Struct
 			else
@@ -9434,7 +9447,7 @@ UScriptStruct* UCsCommon_Load::GetScriptStructMember(void* InStruct, UScriptStru
 }
 
 /*
-TEnumAsByte<EMemberType::Type> UCsCommon::GetObjectMemberType(UClass* const &InClass, const FString &MemberName)
+TEnumAsByte<EMemberType::Type> UCsCommon_Load::GetObjectMemberType(UClass* const &InClass, const FString &MemberName)
 {
 	for (TFieldIterator<UProperty> It(InClass); It; ++It)
 	{
@@ -9490,7 +9503,7 @@ TEnumAsByte<EMemberType::Type> UCsCommon::GetObjectMemberType(UClass* const &InC
 	return EMemberType::EMemberType_MAX;
 }
 
-TEnumAsByte<EMemberType::Type> UCsCommon::GetStructMemberType(UScriptStruct* const &InScriptStruct, const FString &MemberName)
+TEnumAsByte<EMemberType::Type> UCsCommon_Load::GetStructMemberType(UScriptStruct* const &InScriptStruct, const FString &MemberName)
 {
 	for (TFieldIterator<UProperty> It(InScriptStruct); It; ++It)
 	{
@@ -9589,56 +9602,56 @@ void UCsCommon_Load::GetObjectMembers(void* InObject, UClass* const &InClass, co
 			return;
 		}
 
-		// TAssetSubclassOf
-		if (UAssetClassProperty* AssetClassProperty = Cast<UAssetClassProperty>(*It))
+		// TSoftClassPtr
+		if (USoftClassProperty* SoftClassProperty = Cast<USoftClassProperty>(*It))
 		{
 			// AShooterWeaponData
-			//if (AssetClassProperty->PropertyClass == AShooterWeaponData::StaticClass() || AssetClassProperty->MetaClass == AShooterWeaponData::StaticClass())
-			//	OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<TAssetSubclassOf<AShooterWeaponData>>(InObject));
+			//if (SoftClassProperty->PropertyClass == AShooterWeaponData::StaticClass() || SoftClassProperty->MetaClass == AShooterWeaponData::StaticClass())
+			//	OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<TSoftClassPtr<AShooterWeaponData>>(InObject));
 		}
-		// TAssetPtr
+		// TSoftObjectPtr
 		else
-		if (UAssetObjectProperty* AssetObjectProperty = Cast<UAssetObjectProperty>(*It))
+		if (USoftObjectProperty* SoftObjectProperty = Cast<USoftObjectProperty>(*It))
 		{
 			// UStaticMesh
-			if (AssetObjectProperty->PropertyClass == UStaticMesh::StaticClass())
-				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<TAssetPtr<UStaticMesh>>(InObject));
+			if (SoftObjectProperty->PropertyClass == UStaticMesh::StaticClass())
+				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<TSoftObjectPtr<UStaticMesh>>(InObject));
 			// UMaterialInstance
 			else
-			if (AssetObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
-				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<TAssetPtr<UMaterialInstance>>(InObject));
+			if (SoftObjectProperty->PropertyClass == UMaterialInstance::StaticClass())
+				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<TSoftObjectPtr<UMaterialInstance>>(InObject));
 			// UPhysicsAsset
 			else
-			if (AssetObjectProperty->PropertyClass == UPhysicsAsset::StaticClass())
-				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<TAssetPtr<UPhysicsAsset>>(InObject));
+			if (SoftObjectProperty->PropertyClass == UPhysicsAsset::StaticClass())
+				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<TSoftObjectPtr<UPhysicsAsset>>(InObject));
 			// UAnimSequence
 			else
-			if (AssetObjectProperty->PropertyClass == UAnimSequence::StaticClass())
-				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<TAssetPtr<UAnimSequence>>(InObject));
+			if (SoftObjectProperty->PropertyClass == UAnimSequence::StaticClass())
+				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<TSoftObjectPtr<UAnimSequence>>(InObject));
 			// UAnimMontage
 			else
-			if (AssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<TAssetPtr<UAnimMontage>>(InObject));
+			if (SoftObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<TSoftObjectPtr<UAnimMontage>>(InObject));
 			// UBlendSpace
 			else
-			if (AssetObjectProperty->PropertyClass == UBlendSpace::StaticClass())
-				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<TAssetPtr<UBlendSpace>>(InObject));
+			if (SoftObjectProperty->PropertyClass == UBlendSpace::StaticClass())
+				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<TSoftObjectPtr<UBlendSpace>>(InObject));
 			// UAnimBlueprint
 			else
-			if (AssetObjectProperty->PropertyClass == UAnimBlueprint::StaticClass())
-				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<TAssetPtr<UAnimBlueprint>>(InObject));
+			if (SoftObjectProperty->PropertyClass == UAnimBlueprint::StaticClass())
+				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<TSoftObjectPtr<UAnimBlueprint>>(InObject));
 			// USoundCue
 			else
-			if (AssetObjectProperty->PropertyClass == USoundCue::StaticClass())
-				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<TAssetPtr<USoundCue>>(InObject));
+			if (SoftObjectProperty->PropertyClass == USoundCue::StaticClass())
+				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<TSoftObjectPtr<USoundCue>>(InObject));
 			// UParticleSystem
 			else
-			if (AssetObjectProperty->PropertyClass == UParticleSystem::StaticClass())
-				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<TAssetPtr<UParticleSystem>>(InObject));
+			if (SoftObjectProperty->PropertyClass == UParticleSystem::StaticClass())
+				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<TSoftObjectPtr<UParticleSystem>>(InObject));
 			// UCurveVector
 			else
-			if (AssetObjectProperty->PropertyClass == UCurveVector::StaticClass())
-				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<TAssetPtr<UCurveVector>>(InObject));
+			if (SoftObjectProperty->PropertyClass == UCurveVector::StaticClass())
+				OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<TSoftObjectPtr<UCurveVector>>(InObject));
 		}
 		// Structs
 		else
@@ -9710,20 +9723,20 @@ void UCsCommon_Load::GetObjectMembers(void* InObject, UClass* const &InClass, co
 		else
 		if (UArrayProperty* ArrayProperty = Cast<UArrayProperty>(*It))
 		{
-			// TAssetSubclassOf
-			if (UAssetClassProperty* InnerAssetClassProperty = Cast<UAssetClassProperty>(ArrayProperty->Inner))
+			// TSoftClassPtr
+			if (USoftClassProperty* InnerSoftClassProperty = Cast<USoftClassProperty>(ArrayProperty->Inner))
 			{
 				// AShooterWeaponData
-				//if (InnerAssetClassProperty->PropertyClass == AShooterWeaponData::StaticClass() || InnerAssetClassProperty->MetaClass == AShooterWeaponData::StaticClass())
-				//	OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<TArray<TAssetSubclassOf<AShooterWeaponData>>>(InObject));
+				//if (InnerSoftClassProperty->PropertyClass == AShooterWeaponData::StaticClass() || InnerSoftClassProperty->MetaClass == AShooterWeaponData::StaticClass())
+				//	OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<TArray<TSoftClassPtr<AShooterWeaponData>>>(InObject));
 			}
-			// TAssetPtr
+			// TSoftObjectPtr
 			else
-			if (UAssetObjectProperty* InnerAssetObjectProperty = Cast<UAssetObjectProperty>(ArrayProperty->Inner))
+			if (USoftObjectProperty* InnerSoftObjectProperty = Cast<USoftObjectProperty>(ArrayProperty->Inner))
 			{
 				// AnimMontage
-				if (InnerAssetObjectProperty->PropertyClass == UAnimMontage::StaticClass())
-					OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<TArray<TAssetPtr<UAnimMontage>>>(InObject));
+				if (InnerSoftObjectProperty->PropertyClass == UAnimMontage::StaticClass())
+					OutMemberValues.Add((void*)Property->ContainerPtrToValuePtr<TArray<TSoftObjectPtr<UAnimMontage>>>(InObject));
 			}
 			// Struct
 			else

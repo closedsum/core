@@ -22,33 +22,44 @@ EMCsProcess& EMCsProcess::Get()
 	return *Instance;
 }
 
+// ProcessRoutine
+
+EMCsProcessRoutine* EMCsProcessRoutine::Instance;
+
+EMCsProcessRoutine& EMCsProcessRoutine::Get()
+{
+	if (!Instance)
+		Instance = new EMCsProcessRoutine();
+	return *Instance;
+}
+
 namespace ECsProcessRoutine
 {
-	namespace Str
-	{
-		const TCsString StartRead_Internal = TCsString(TEXT("StartRead_Internal"), TEXT("startread_internal"));
-	}
-
 	namespace Ref
 	{
-		const Type StartRead_Internal = Type::StartRead_Internal;
-		const Type ECsProcessRoutine_MAX = Type::ECsProcessRoutine_MAX;
+		CSCORE_API const Type StartRead_Internal = EMCsProcessRoutine::Get().Add(Type::StartRead_Internal, TEXT("StartRead_Internal"));
+		CSCORE_API const Type ECsProcessRoutine_MAX = EMCsProcessRoutine::Get().Add(Type::ECsProcessRoutine_MAX, TEXT("ECsProcessRoutine_MAX"), TEXT("MAX"));
 	}
+}
+
+// ProcessMonitorOutputEventPurpose
+
+EMCsProcessMonitorOutputEventPurpose* EMCsProcessMonitorOutputEventPurpose::Instance;
+
+EMCsProcessMonitorOutputEventPurpose& EMCsProcessMonitorOutputEventPurpose::Get()
+{
+	if (!Instance)
+		Instance = new EMCsProcessMonitorOutputEventPurpose();
+	return *Instance;
 }
 
 namespace ECsProcessMonitorOutputEventPurpose
 {
-	namespace Str
-	{
-		const TCsString FireOnce = TCsString(TEXT("FireOnce"), TEXT("fireonce"));
-		const TCsString Loop = TCsString(TEXT("Loop"), TEXT("Loop"));
-	}
-
 	namespace Ref
 	{
-		const Type FireOnce = Type::FireOnce;
-		const Type Loop = Type::Loop;
-		const Type ECsProcessMonitorOutputEventPurpose_MAX = Type::ECsProcessMonitorOutputEventPurpose_MAX;
+		CSCORE_API const Type FireOnce = EMCsProcessMonitorOutputEventPurpose::Get().Add(Type::FireOnce, TEXT("FireOnce"), TEXT("Fire Once"));
+		CSCORE_API const Type Loop = EMCsProcessMonitorOutputEventPurpose::Get().Add(Type::Loop, TEXT("Loop"));
+		CSCORE_API const Type ECsProcessMonitorOutputEventPurpose_MAX = EMCsProcessMonitorOutputEventPurpose::Get().Add(Type::ECsProcessMonitorOutputEventPurpose_MAX, TEXT("ECsProcessMonitorOutputEventPurpose_MAX"), TEXT("MAX"));
 	}
 }
 
@@ -56,30 +67,30 @@ namespace ECsProcessPriorityModifier
 {
 	namespace Str
 	{
-		const TCsString Idle = TCsString(TEXT("Idle"), TEXT("idle"));
-		const TCsString Low = TCsString(TEXT("Low"), TEXT("low"));
-		const TCsString Normal = TCsString(TEXT("Normal"), TEXT("normal"));
-		const TCsString High = TCsString(TEXT("High"), TEXT("high"));
-		const TCsString Higher = TCsString(TEXT("Higher"), TEXT("higher"));
+		CSCORE_API const TCsString Idle = TCsString(TEXT("Idle"), TEXT("idle"));
+		CSCORE_API const TCsString Low = TCsString(TEXT("Low"), TEXT("low"));
+		CSCORE_API const TCsString Normal = TCsString(TEXT("Normal"), TEXT("normal"));
+		CSCORE_API const TCsString High = TCsString(TEXT("High"), TEXT("high"));
+		CSCORE_API const TCsString Higher = TCsString(TEXT("Higher"), TEXT("higher"));
 	}
 
 	namespace Ref
 	{
-		const Type Idle = Type::Idle;
-		const Type Low = Type::Low;
-		const Type Normal = Type::Normal;
-		const Type High = Type::High;
-		const Type Higher = Type::Higher;
-		const Type ECsProcessPriorityModifier_MAX = Type::ECsProcessPriorityModifier_MAX;
+		CSCORE_API const Type Idle = Type::Idle;
+		CSCORE_API const Type Low = Type::Low;
+		CSCORE_API const Type Normal = Type::Normal;
+		CSCORE_API const Type High = Type::High;
+		CSCORE_API const Type Higher = Type::Higher;
+		CSCORE_API const Type ECsProcessPriorityModifier_MAX = Type::ECsProcessPriorityModifier_MAX;
 	}
 
 	namespace Val
 	{
-		const int32 Idle = -2;
-		const int32 Low = -1;
-		const int32 Normal = 0;
-		const int32 High = 1;
-		const int32 Higher = 2;
+		CSCORE_API const int32 Idle = -2;
+		CSCORE_API const int32 Low = -1;
+		CSCORE_API const int32 Normal = 0;
+		CSCORE_API const int32 High = 1;
+		CSCORE_API const int32 Higher = 2;
 	}
 }
 

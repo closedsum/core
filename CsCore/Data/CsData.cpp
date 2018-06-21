@@ -23,7 +23,7 @@ ACsData::ACsData(const FObjectInitializer& ObjectInitializer)
 	PrimaryActorTick.bStartWithTickEnabled = false;
 
 	GetAssetReferencesFromObject_Internal = nullptr;
-	LoadObjectWithTAssetPtrs_Internal = nullptr;
+	LoadObjectWithTSoftObjectPtrs_Internal = nullptr;
 	WriteObjectToJson_Internal = nullptr;
 	ReadObjectFromJson_Internal = nullptr;
 
@@ -220,19 +220,19 @@ void ACsData::Load(const ECsLoadFlags &LoadFlags /*=ECsLoadFlags::All*/)
 	if (!HasLoadedFromJson)
 		LoadFromJson();
 
-	UCsCommon_Load::LoadObjectWithTAssetPtrs(ShortCodeAsString, (void*)this, GetClass(), LoadFlags, LoadObjectWithTAssetPtrs_Internal);
+	UCsCommon_Load::LoadObjectWithTSoftObjectPtrs(ShortCodeAsString, (void*)this, GetClass(), LoadFlags, LoadObjectWithTSoftObjectPtrs_Internal);
 }
 
 void ACsData::UnLoad()
 {
-	UCsCommon_Load::UnLoadObjectWithTAssetPtrs((void*)this, GetClass());
+	UCsCommon_Load::UnLoadObjectWithTSoftObjectPtrs((void*)this, GetClass());
 }
 
 bool ACsData::IsLoaded()
 {
 	const FString DataName = ShortCode.ToString();
 
-	return UCsCommon_Load::IsLoadedObjectWithTAssetPtrs(DataName, (void*)this, GetClass());
+	return UCsCommon_Load::IsLoadedObjectWithTSoftObjectPtrs(DataName, (void*)this, GetClass());
 }
 
 FString ACsData::GetAbsolutePath()
@@ -245,9 +245,9 @@ FString ACsData::GetAbsolutePath()
 	PathName = PathName.Replace(*AssetName, TEXT(""));
 	PathName = PathName.Replace(TEXT("/Game/"), TEXT(""));
 
-	const FString GameContentDir = FPaths::ConvertRelativePathToFull(FPaths::GameContentDir());
-	const FString JsonDir		 = TEXT("Json/");
-	return GameContentDir + JsonDir + PathName;
+	const FString ProjectContentDir = FPaths::ConvertRelativePathToFull(FPaths::ProjectContentDir());
+	const FString JsonDir		    = TEXT("Json/");
+	return ProjectContentDir + JsonDir + PathName;
 }
 
 void ACsData::SaveToJson()

@@ -218,27 +218,32 @@ ACsManager_Inventory* UCsCommon::GetLocalManager_Inventory(UWorld *InWorld)
 
 bool UCsCommon::IsVR()
 {
-	return GEngine->HMDDevice.IsValid() && GEngine->IsStereoscopic3D();
+	return GEngine->StereoRenderingDevice.IsValid() && GEngine->IsStereoscopic3D();
 }
 
 bool UCsCommon::IsVive()
 {
-	return GEngine->HMDDevice.IsValid() && GEngine->HMDDevice->IsHMDEnabled() && GEngine->HMDDevice->GetHMDDeviceType() == EHMDDeviceType::DT_SteamVR;
+	// TODO: FIX:
+	static const FName SteamVR(TEXT("SteamVR"));
+	return GEngine->StereoRenderingDevice.IsValid() && GEngine->StereoRenderingDevice->IsStereoEnabled();// && GEngine->StereoRenderingDevice->GetHMDDeviceType() == SteamVR;
 }
 
 bool UCsCommon::IsRift()
 {
-	return GEngine->HMDDevice.IsValid() && GEngine->HMDDevice->IsHMDEnabled() && GEngine->HMDDevice->GetHMDDeviceType() == EHMDDeviceType::DT_OculusRift;
+	// TODO: FIX:
+	static const FName OculusHMD(TEXT("OculusHMD"));
+	return GEngine->StereoRenderingDevice.IsValid() && GEngine->StereoRenderingDevice->IsStereoEnabled();// && GEngine->StereoRenderingDevice->GetHMDDeviceType() == OculusHMD;
 }
 
 void UCsCommon::GetHMDOrientationAndPosition(FRotator& DeviceRotation, FVector& DevicePosition)
 {
-	if (GEngine->HMDDevice.IsValid() && GEngine->HMDDevice->IsHeadTrackingAllowed())
+	// TODO: FIX:
+	if (GEngine->StereoRenderingDevice.IsValid())// && GEngine->HMDDevice->IsHeadTrackingAllowed())
 	{
 		FQuat OrientationAsQuat;
 		FVector Position(0.f);
 
-		GEngine->HMDDevice->GetCurrentOrientationAndPosition(OrientationAsQuat, Position);
+		//GEngine->HMDDevice->GetCurrentOrientationAndPosition(OrientationAsQuat, Position);
 
 		DeviceRotation = OrientationAsQuat.Rotator();
 		DevicePosition = Position;
@@ -255,13 +260,13 @@ void UCsCommon::GetHMDWorldViewPoint(UWorld* InWorld, FVector &OutLocation, FRot
 	APlayerController* PlayerController = GetLocalPlayerController<APlayerController>(InWorld);
 	
 	PlayerController->GetPlayerViewPoint(OutLocation, OutRotation);
-
-	if (GEngine->HMDDevice.IsValid() && GEngine->HMDDevice->IsHeadTrackingAllowed())
+	// TODO: FIX:
+	if (GEngine->StereoRenderingDevice.IsValid())// && GEngine->HMDDevice->IsHeadTrackingAllowed())
 	{
 		FQuat hmdOrientation;
 		FVector hmdPosition;
 
-		GEngine->HMDDevice->GetCurrentOrientationAndPosition(hmdOrientation, hmdPosition);
+		//GEngine->StereoRenderingDevice->GetCurrentOrientationAndPosition(hmdOrientation, hmdPosition);
 
 		//if (GEngine->HMDDevice->GetHMDDeviceType() == EHMDDeviceType::DT_Morpheus)
 		//	hmdPosition *= 100.0f;
@@ -2354,6 +2359,8 @@ void UCsCommon::CoroutineStopCondition_CheckCharacter(struct FRoutine* r)
 void UCsCommon::SetupJavascript(UObject* InOwner, UWorld* InWorld, UObject* &JavascriptIsolate, UObject* &JavascriptContext, const FString &EditorJavascriptFile)
 {
 	auto Isolate = NewObject<UJavascriptIsolate>();
+	// TODO: bIsEditor. Probably need to set to true if we want to interact with AnimInstance in Editor.
+	Isolate->Init(false);
 	auto Context = Isolate->CreateContext();
 
 	JavascriptIsolate = Isolate;

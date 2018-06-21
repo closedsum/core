@@ -163,7 +163,7 @@ struct CSCORE_API FCsWidgetActorInfo
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blueprint")
-	TAssetPtr<class UBlueprint> Blueprint;
+	TSoftObjectPtr<class UBlueprint> Blueprint;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blueprint", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Blueprint_LoadFlags;
@@ -286,7 +286,7 @@ struct CSCORE_API FCsWidgetComponentInfo
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blueprint")
-	TAssetPtr<class UBlueprint> Blueprint;
+	TSoftObjectPtr<class UBlueprint> Blueprint;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blueprint", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Blueprint_LoadFlags;

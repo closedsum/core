@@ -9,6 +9,19 @@
 #include "Managers/FX/CsManager_FX.h"
 #include "Managers/Sound/CsManager_Sound.h"
 
+// Enums
+#pragma region
+
+EMCsAnimInstanceRoutine* EMCsAnimInstanceRoutine::Instance;
+
+EMCsAnimInstanceRoutine& EMCsAnimInstanceRoutine::Get()
+{
+	if (!Instance)
+		Instance = new EMCsAnimInstanceRoutine();
+	return *Instance;
+}
+
+#pragma endregion Enums
 
 UCsAnimInstance::UCsAnimInstance(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

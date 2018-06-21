@@ -58,36 +58,6 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsInteractiveAIPawn_OnRemove
 // Enums
 #pragma region
 
-namespace ECsInteractiveAIPawnRoutine
-{
-	enum Type
-	{
-		ECsInteractiveAIPawnRoutine_MAX = ECsAIPawnRoutine::ECsAIPawnRoutine_MAX,
-	};
-}
-
-namespace ECsInteractiveAIPawnRoutine
-{
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		return Type::ECsInteractiveAIPawnRoutine_MAX;
-	}
-}
-
-#define ECS_INTERACTIVE_AI_PAWN_ROUTINE_MAX (uint8)ECsInteractiveAIPawnRoutine::ECsInteractiveAIPawnRoutine_MAX
-typedef ECsInteractiveAIPawnRoutine::Type TCsInteractiveAIPawnRoutine;
-
 #pragma endregion Enums
 
 UCLASS()

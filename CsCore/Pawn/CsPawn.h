@@ -32,39 +32,44 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnApplyDam
 // Enums
 #pragma region
 
-namespace ECsPawnRoutine
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsPawnRoutine : public FECsEnum_uint8
 {
-	enum Type
-	{
-		HandleRespawnTimer_Internal,
-		ECsPawnRoutine_MAX,
-	};
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsPawnRoutine() {}
+	FECsPawnRoutine(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsPawnRoutine(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsPawnRoutine() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsPawnRoutine& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
+struct CSCORE_API EMCsPawnRoutine : public TCsEnumStructMap<FECsPawnRoutine, uint8>
+{
+protected:
+	EMCsPawnRoutine() {}
+	EMCsPawnRoutine(const EMCsPawnRoutine &) = delete;
+	EMCsPawnRoutine(EMCsPawnRoutine &&) = delete;
+public:
+	~EMCsPawnRoutine() {}
+private:
+	static EMCsPawnRoutine* Instance;
+
+public:
+	static EMCsPawnRoutine& Get();
+};
+
 namespace ECsPawnRoutine
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-		const TCsString HandleRespawnTimer_Internal = TCsString(TEXT("HandleRespawnTimer_Internal"), TEXT("handlerespawntimer_internal"), TEXT("handle respawn timer internal"));
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::HandleRespawnTimer_Internal) { return Str::HandleRespawnTimer_Internal.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::HandleRespawnTimer_Internal) { return Type::HandleRespawnTimer_Internal; }
-		return Type::ECsPawnRoutine_MAX;
-	}
+	extern CSCORE_API const FECsPawnRoutine HandleRespawnTimer_Internal;
 }
-
-#define ECS_PAWN_ROUTINE_MAX (uint8)ECsPawnRoutine::ECsPawnRoutine_MAX
-typedef ECsPawnRoutine::Type TCsPawnRoutine;
 
 #pragma endregion Enums
 

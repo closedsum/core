@@ -19,6 +19,25 @@
 #include "Player/CsPlayerStateBase.h"
 #include "Weapon/CsWeapon.h"
 
+// Enums
+#pragma region
+
+EMCsPawnRoutine* EMCsPawnRoutine::Instance;
+
+EMCsPawnRoutine& EMCsPawnRoutine::Get()
+{
+	if (!Instance)
+		Instance = new EMCsPawnRoutine();
+	return *Instance;
+}
+
+namespace ECsPawnRoutine
+{
+	CSCORE_API const FECsPawnRoutine HandleRespawnTimer_Internal = EMCsPawnRoutine::Get().Create(TEXT("HandleRespawnTimer_Internal"));
+}
+
+#pragma endregion Enums
+
 // Cache
 #pragma region
 
@@ -200,7 +219,7 @@ void ACsPawn::HandleRespawnTimer()
 	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
 	Payload->Add			= &ACsPawn::AddRoutine;
 	Payload->Remove			= &ACsPawn::RemoveRoutine;
-	Payload->Type			= (uint8)ECsPawnRoutine::HandleRespawnTimer_Internal;
+	Payload->Type			= ECsPawnRoutine::HandleRespawnTimer_Internal.Value;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			= ECsPawnCached::Name::HandleRespawnTimer_Internal;
@@ -249,7 +268,7 @@ void ACsPawn::OnHandleRespawnTimerFinished(const uint8 &MappingId) {}
 
 bool ACsPawn::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
 {
-	const TCsPawnRoutine RoutineType = (TCsPawnRoutine)Type;
+	const FECsPawnRoutine& RoutineType = EMCsPawnRoutine::Get()[Type];
 
 	// HandleRespawnTimer_Internal
 	if (RoutineType == ECsPawnRoutine::HandleRespawnTimer_Internal)
@@ -267,7 +286,7 @@ bool ACsPawn::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
 
 bool ACsPawn::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
 {
-	const TCsPawnRoutine RoutineType = (TCsPawnRoutine)Type;
+	const FECsPawnRoutine& RoutineType = EMCsPawnRoutine::Get()[Type];
 
 	// HandleRespawnTimer_Internal
 	if (RoutineType == ECsPawnRoutine::HandleRespawnTimer_Internal)

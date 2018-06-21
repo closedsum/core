@@ -177,7 +177,7 @@ ACsAIPawn* AICsManager_AI::ConstructObject(const FECsAIType &Type)
 	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnInfo.ObjectFlags |= RF_Transient;
 
-	ACsAIPawn* Actor = GetWorld()->SpawnActor<ACsAIPawn>(ACsAIPawn::StaticClass(), SpawnInfo);
+	ACsAIPawn* Actor = GetWorld()->SpawnActor<ACsAIPawn>(ClassMap.Find(Type) ? ClassMap[Type] : ACsAIPawn::StaticClass(), SpawnInfo);
 	return Actor;
 }
 

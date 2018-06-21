@@ -209,7 +209,7 @@ void UCsAnimInstance::Spawn_Manager_Sound()
 		Manager_Sound = GetWorld()->SpawnActor<AICsManager_Sound>(SpawnInfo);
 		AICsManager_Sound::Init(this);
 
-		Manager_Sound->CreatePool(2);
+		Manager_Sound->CreatePool(8);
 	}
 }
 
@@ -234,6 +234,8 @@ void UCsAnimInstance::NativeUpdateAnimation(float DeltaTimeX)
 		Scheduler->OnTick_Update(DeltaTimeX);
 	if (AICsManager_FX* MyManager_FX = GetManager_FX())
 		MyManager_FX->OnTick(DeltaTimeX);
+	if (AICsManager_Sound* MyManager_Sound = GetManager_Sound())
+		MyManager_Sound->OnTick(DeltaTimeX);
 #endif // #if WITH_EDITOR
 }
 

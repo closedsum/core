@@ -236,6 +236,13 @@ AICsManager_FX::AICsManager_FX(const FObjectInitializer& ObjectInitializer) : Su
 	Internal->ConstructObject_Call.BindUObject(this, &AICsManager_FX::ConstructObject);
 }
 
+void AICsManager_FX::PostActorCreated()
+{
+	Super::PostActorCreated();
+
+	Internal->CurrentWorld = GetWorld();
+}
+
 /*static*/ UObject* AICsManager_FX::GetMyOwner() { return MyOwner.IsValid() ? MyOwner.Get() : nullptr; }
 
 /*static*/ void AICsManager_FX::Init(UObject* InOwner)

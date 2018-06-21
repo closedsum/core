@@ -34,6 +34,10 @@ class CSCORE_API AICsManager_FX : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
+public:
+
+	virtual void PostActorCreated() override;
+
 protected:
 
 	FCsManager_FX* Internal;

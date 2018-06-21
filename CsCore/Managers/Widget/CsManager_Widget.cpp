@@ -78,7 +78,7 @@ UWorld* UICsManager_Widget::GetCurrentWorld()
 
 UCsPooledWidget* UICsManager_Widget::ConstructObject(const TCsSimpleWidgetType &Type)
 {
-	return  CreateWidget<UCsPooledWidget>(GetCurrentWorld(), UCsPooledWidget::StaticClass());
+	return  CreateWidget<UCsPooledWidget>(GetCurrentWorld(), ClassMap.Find(Type) ? ClassMap[Type] : UCsPooledWidget::StaticClass());
 }
 
 void UICsManager_Widget::CreatePool(const TCsSimpleWidgetType &Type, const int32 &Size)

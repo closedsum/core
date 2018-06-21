@@ -2491,7 +2491,14 @@ float UCsCommon::GetCurrentDateTimeSeconds()
 	return Seconds;
 }
 
-uint64 UCsCommon::GetCurrentFrame(UWorld* InWorld) { return InWorld->GetGameInstance<UCsGameInstance>()->CurrentGameFrame; }
+uint64 UCsCommon::GetCurrentFrame(UWorld* InWorld) 
+{
+#if WITH_EDITOR
+	if (IsPlayInEditorPreview(InWorld))
+		return 0;
+#endif // #if WITH_EDITOR
+	return InWorld->GetGameInstance<UCsGameInstance>()->CurrentGameFrame; 
+}
 
 #pragma endregion Time
 

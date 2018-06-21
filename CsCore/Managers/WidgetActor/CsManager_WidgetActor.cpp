@@ -54,6 +54,13 @@ AICsManager_WidgetActor::AICsManager_WidgetActor(const FObjectInitializer& Objec
 	Internal->ConstructObject_Call.BindUObject(this, &AICsManager_WidgetActor::ConstructObject);
 }
 
+void AICsManager_WidgetActor::PostActorCreated()
+{
+	Super::PostActorCreated();
+
+	Internal->CurrentWorld = GetWorld();
+}
+
 /*static*/ UObject* AICsManager_WidgetActor::GetMyOwner() { return MyOwner.IsValid() ? MyOwner.Get() : nullptr; }
 
 /*static*/ void AICsManager_WidgetActor::Init(UObject* InOwner)
@@ -102,7 +109,7 @@ ACsWidgetActor* AICsManager_WidgetActor::ConstructObject(const FECsWidgetActorTy
 	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnInfo.ObjectFlags |= RF_Transient;
 
-	ACsWidgetActor* Actor = GetWorld()->SpawnActor<ACsWidgetActor>(ACsWidgetActor::StaticClass(), SpawnInfo);
+	ACsWidgetActor* Actor = GetWorld()->SpawnActor<ACsWidgetActor>(ClassMap.Find(Type) ? ClassMap[Type] : ACsWidgetActor::StaticClass(), SpawnInfo);
 	Actor->SetReplicates(false);
 	Actor->Role = ROLE_None;
 	GetWorld()->RemoveNetworkActor(Actor);

@@ -69,17 +69,30 @@ void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxPayload* Payload)
 
 	SetActorRelativeScale3D(Cache.Scale3D);
 
+	bool IsLocalAttachment = false;
+
 	// Owner
 	if (AActor* MyOwner = Cache.GetOwner<AActor>())
+	{
 		SetOwner(MyOwner);
+	}
 	// Parent
 	if (AActor* Actor = Cache.GetParent<AActor>())
+	{
+		IsLocalAttachment = true;
 		AttachToActor(Actor, FAttachmentTransformRules::KeepWorldTransform, Cache.Bone);
+	}
 	else
 	if (USceneComponent* Component = Cache.GetParent<USceneComponent>())
+	{
+		IsLocalAttachment = true;
 		AttachToComponent(Component, FAttachmentTransformRules::KeepWorldTransform, Cache.Bone);
+	}
 
-	SetActorLocationAndRotation(Cache.Location, Cache.Rotation);
+	if (IsLocalAttachment)
+		SetActorRelativeTransform(Cache.Transform);
+	else
+		SetActorLocationAndRotation(Cache.Location, Cache.Rotation);
 	Play();
 }
 

@@ -43,6 +43,8 @@ public:
 
 	void Shutdown();
 
+	TMap<TCsSimpleWidgetType, UClass*> ClassMap;
+
 	virtual UCsPooledWidget* ConstructObject(const TCsSimpleWidgetType &Type);
 
 	void CreatePool(const TCsSimpleWidgetType &Type, const int32 &Size);

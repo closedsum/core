@@ -70,6 +70,17 @@ bool ACsSound::Play()
 	if (const FSoundAttenuationSettings* Settings = Cue->GetAttenuationSettingsToApply())
 		AudioComponent->AttenuationSettings->Attenuation = *Settings;
 
+#if WITH_EDITOR
+	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	{
+		AudioComponent->bAllowSpatialization = false;
+		AudioComponent->bIsUISound = true;
+	}
+	else
+#endif // #if WITH_EDITOR
+	{
+		AudioComponent->bAllowSpatialization = Cache.bSpatialize;
+	}
 	AudioComponent->AttenuationSettings->Attenuation.bSpatialize = Cache.bSpatialize;
 
 	AudioComponent->SetVolumeMultiplier(Cache.VolumeMultiplier);

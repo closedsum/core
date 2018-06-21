@@ -68,6 +68,9 @@ public:
 
 	void Shutdown();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Manager AI")
+	TMap<FECsAIType, UClass*> ClassMap;
+
 	virtual ACsAIPawn* ConstructObject(const FECsAIType &Type);
 
 	UFUNCTION(BlueprintCallable, Category = "Manager AI")

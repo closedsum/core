@@ -51,6 +51,13 @@ AICsManager_InteractiveActor::AICsManager_InteractiveActor(const FObjectInitiali
 	Internal->ConstructObject_Call.BindUObject(this, &AICsManager_InteractiveActor::ConstructObject);
 }
 
+void AICsManager_InteractiveActor::PostActorCreated()
+{
+	Super::PostActorCreated();
+
+	Internal->CurrentWorld = GetWorld();
+}
+
 /*static*/ AICsManager_InteractiveActor* AICsManager_InteractiveActor::Get(UWorld* InWorld)
 {
 	return InWorld->GetGameState<ACsGameState>()->Manager_InteractiveActor;
@@ -81,7 +88,7 @@ ACsInteractiveActor* AICsManager_InteractiveActor::ConstructObject(const FECsInt
 	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnInfo.ObjectFlags |= RF_Transient;
 
-	ACsInteractiveActor* Actor = GetWorld()->SpawnActor<ACsInteractiveActor>(ACsInteractiveActor::StaticClass(), SpawnInfo);
+	ACsInteractiveActor* Actor = GetWorld()->SpawnActor<ACsInteractiveActor>(ClassMap.Find(Type) ? ClassMap[Type] : ACsInteractiveActor::StaticClass(), SpawnInfo);
 	Actor->SetReplicates(false);
 	Actor->Role = ROLE_None;
 	GetWorld()->RemoveNetworkActor(Actor);

@@ -32,6 +32,10 @@ class CSCORE_API AICsManager_Sound : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
+public:
+
+	virtual void PostActorCreated() override;
+
 protected:
 
 	FCsManager_Sound * Internal;

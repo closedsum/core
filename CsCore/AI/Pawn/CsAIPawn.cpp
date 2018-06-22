@@ -31,7 +31,6 @@ ACsAIPawn::ACsAIPawn(const FObjectInitializer& ObjectInitializer)
 	CheckPlayerSeesBodyInterval = 0.1f;
 }
 
-
 void ACsAIPawn::Init(const int32 &Index, const FECsAIType &InType)
 {
 	PoolIndex	= Index;

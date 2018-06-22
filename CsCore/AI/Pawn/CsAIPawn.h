@@ -21,6 +21,43 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsAIPawn_OnPlayerSeesBody, c
 
 #pragma endregion Enums
 
+// Structs
+#pragma region
+
+USTRUCT(BlueprintType)
+struct FCsAISenseInfo_Player
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	float PlayerToMeDot;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	bool bCanSeePlayer;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	bool bPlayerCanSeeMe;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	bool bPlayerSeesBody;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	float CheckPlayerSeesBodyStartTime;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	bool bPlayerSeesHead;
+
+	float Current_DistanceToPlayer;
+	FVector Current_PlayerLocation;
+	float LastKnown_DistanceToPlayer;
+	FVector LastKnown_PlayerLocation;
+
+	FCsAISenseInfo_Player(){}
+	~FCsAISenseInfo_Player(){}
+};
+
+#pragma endregion Structs
+
 USTRUCT(BlueprintType)
 struct FCsAIPawnCache : public FCsPooledObjectCache
 {
@@ -136,6 +173,9 @@ public:
 // Player
 #pragma region
 public:
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player")
+	TMap<uint8, FCsAISenseInfo_Player> PlayerSenseInfos;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Player")
 	float PlayerToMeDot;

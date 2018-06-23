@@ -30,16 +30,21 @@ struct FCsAISenseInfo_Player
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	uint8 PlayerMappingId;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
 	float PlayerToMeDot;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
-	bool bCanSeePlayer;
+	bool bSeesPlayer;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
-	bool bPlayerCanSeeMe;
+	bool bPlayerSeesMe;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
 	bool bPlayerSeesBody;
+
+	TCsBool_Ref bPlayerSeesBodyHandle;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
 	float CheckPlayerSeesBodyStartTime;
@@ -76,7 +81,7 @@ struct FCsAIPawnCache : public FCsPooledObjectCache
 
 	~FCsAIPawnCache(){}
 
-	void Set(const uint16 &InIndex, ACsAIPawn* InPawn)
+	void Set(const int32 &InIndex, ACsAIPawn* InPawn)
 	{
 		Index = InIndex;
 		Pawn  = InPawn;
@@ -169,6 +174,24 @@ public:
 	FBindableEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Finish OnBTTask_RotateToFaceBBEntry_Finish_Event;
 
 #pragma endregion Behavior Tree
+
+// Sense
+#pragma region
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
+	float ViewDot;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
+	float ViewAngle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float SenseRadius;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
+	float SenseRadiusSq;
+
+#pragma endregion Sense
 
 // Player
 #pragma region

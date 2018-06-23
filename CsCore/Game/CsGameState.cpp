@@ -616,7 +616,11 @@ void ACsGameState::AddPlayerState(class APlayerState* PlayerState)
 
 	// Player
 	if (ACsPlayerState* NewPlayerState = Cast<ACsPlayerState>(PlayerState))
+	{
 		AddPlayerStateMapping(NewPlayerState);
+
+		OnAddPlayerStateMapping_Event.Broadcast(NewPlayerState);
+	}
 	// AI
 	if (ACsAIPlayerState* NewPlayerState = Cast<ACsAIPlayerState>(PlayerState))
 		AddAIPlayerStateMapping(NewPlayerState);

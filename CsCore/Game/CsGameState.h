@@ -348,6 +348,10 @@ public:
 	virtual void AddPlayerState(class APlayerState* PlayerState) override;
 	void AddPlayerStateMapping(class ACsPlayerState* NewPlayerState);
 
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnAddPlayerStateMapping, class ACsPlayerState*);
+
+	FOnAddPlayerStateMapping OnAddPlayerStateMapping_Event;
+
 	virtual void RemovePlayerState(class APlayerState* PlayerState) override;
 
 	TMap<uint8, TWeakObjectPtr<class ACsPlayerState>> PlayerStateMappings;

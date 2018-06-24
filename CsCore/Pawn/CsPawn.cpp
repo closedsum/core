@@ -201,7 +201,10 @@ void ACsPawn::OnApplyDamage_Result(FCsDamageResult* Result)
 #endif // #if WITH_EDITOR
 }
 
-void ACsPawn::Die(){}
+void ACsPawn::Die()
+{
+	bSpawnedAndActive = false;
+}
 
 	// Spawn
 #pragma region

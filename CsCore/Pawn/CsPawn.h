@@ -201,6 +201,10 @@ public:
 
 	FBindableEvent_CsPawn_OnHandleRespawnTimerFinished OnHandleRespawnTimerFinished_Event;
 
+	/** Flag for whether pawn has been setup, active, and alive */
+	UPROPERTY(BlueprintReadOnly, Category = "State")
+	bool bSpawnedAndActive;
+
 #pragma endregion Spawn
 
 #pragma endregion State

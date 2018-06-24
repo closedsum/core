@@ -10,6 +10,11 @@
 #include "Data/CsData_Character.h"
 // Managers
 #include "Managers/Trace/CsManager_Trace.h"
+// Game
+#include "Game/CsGameState.h"
+// Player
+#include "Player/CsPlayerState.h"
+#include "Player/CsPlayerPawn.h"
 // UI
 //#include "Components/CsWidgetComponent.h"
 //#include "UI/Simple/CsWidget_ProgressBar.h"
@@ -42,11 +47,25 @@ void ACsAIPawn::Init(const int32 &Index, const FECsAIType &InType)
 void ACsAIPawn::OnCreatePool()
 {
 	SetActorHiddenInGame(true);
+
+	// Populate SenseInfos
+	ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
+
+	TArray<uint8> Keys;
+	GameState->PlayerStateMappings.GetKeys(Keys);
+
+	const uint8 Count = Keys.Num();
+
+	for (uint8 I = 0; I < Count; ++I)
+	{
+		PlayerSenseInfos.AddDefaulted();
+		PlayerSenseInfos[I].PlayerMappingId = Keys[I];
+	}
 }
 
 void ACsAIPawn::OnPostCreatePool(){}
 
-void ACsAIPawn::Allocate(const uint16 &ActiveIndex, FCsAIPawnPayload* Payload)
+void ACsAIPawn::Allocate(const int32 &ActiveIndex, FCsAIPawnPayload* Payload)
 {
 	Cache.Init(ActiveIndex, Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
 
@@ -91,6 +110,54 @@ void ACsAIPawn::OnChange_Health(const float &Value)
 
 // Player
 #pragma region
+
+void ACsAIPawn::OnTick_CheckSenses()
+{
+	ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
+
+	for (FCsAISenseInfo_Player& Info : PlayerSenseInfos)
+	{
+		ACsPlayerState* PlayerState = GameState->GetPlayerState(Info.PlayerMappingId);
+
+		if (!PlayerState->IsOnBoardCompleted_Game())
+			continue;
+
+		ACsPawn* Pawn = PlayerState->GetMyPawn();
+
+		// Check to start any Sensing
+		const float DistanceSq = (GetActorLocation() - Pawn->GetActorLocation()).SizeSquared2D();
+
+		if (DistanceSq > SenseRadiusSq)
+			continue;
+
+		OnTick_CalculateMeToPlayerDot(Info);
+	}
+}
+
+void ACsAIPawn::OnTick_CalculateMeToPlayerDot(FCsAISenseInfo_Player& Info)
+{
+	ACsGameState* GameState		= GetWorld()->GetGameState<ACsGameState>();
+	ACsPlayerState* PlayerState = GameState->GetPlayerState(Info.PlayerMappingId);
+	ACsPawn* Pawn				= PlayerState->GetMyPawn();
+
+	const FVector MeToPlayer = (Pawn->GetActorLocation() - GetActorLocation()).GetSafeNormal2D();
+	Info.MeToPlayerDot		 = FVector::DotProduct(CurrentRootDirXY, MeToPlayer);
+}
+
+void ACsAIPawn::OnTick_CheckSeesPlayer(FCsAISenseInfo_Player& Info)
+{
+
+}
+
+void ACsAIPawn::OnTick_CheckSeesPlayerBody(FCsAISenseInfo_Player& Info)
+{
+
+}
+
+void ACsAIPawn::OnTick_CheckSeesPlayerHead(FCsAISenseInfo_Player& Info)
+{
+
+}
 
 void ACsAIPawn::OnTick_CalculatePlayerToMeDot()
 {

@@ -25,19 +25,21 @@ struct FCsDecalCache : public FCsPooledObjectCache
 };
 
 UCLASS()
-class CSCORE_API ACsManager_Decal : public ACsManager
+class CSCORE_API ACsManager_Decal : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
+		/*
 	virtual void Shutdown() override;
 
 	void OnTick(const float &DeltaSeconds);
 
 	virtual void Destroyed() override;
 	virtual void CreatePool(const int32 &Size);
-
+	*/
 	static ACsManager_Decal* Get(UWorld* InWorld);
 
+	/*
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Pool")
 	TArray<FCsDecalCache> Pool;
 
@@ -47,4 +49,5 @@ class CSCORE_API ACsManager_Decal : public ACsManager
 
 	virtual void DeAllocate(const int32 &Index) override;
 	virtual void DeAllocateAll() override;
+	*/
 };

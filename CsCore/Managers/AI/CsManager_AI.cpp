@@ -5,6 +5,9 @@
 #include "Common/CsCommon.h"
 
 #include "AI/CsAIController.h"
+// Player
+#include "Player/CsPlayerState.h"
+// Game
 #include "Game/CsGameState.h"
 
 // static initializations
@@ -201,12 +204,17 @@ void AICsManager_AI::OnTick(const float &DeltaTime)
 	Internal->OnTick(DeltaTime);
 }
 
+const TArray<ACsAIPawn*>& AICsManager_AI::GetAllActors()
+{
+	return Internal->GetAllObjects();
+}
+
 void AICsManager_AI::GetAllActiveActors(TArray<ACsAIPawn*> &OutActors)
 {
 	Internal->GetAllActiveObjects(OutActors);
 }
 
-const TArray<class ACsAIPawn*>* AICsManager_AI::GetActors(const FECsAIType& Type)
+const TArray<ACsAIPawn*>* AICsManager_AI::GetActors(const FECsAIType& Type)
 {
 	return Internal->GetObjects(Type);
 }
@@ -245,3 +253,21 @@ ACsAIPawn* AICsManager_AI::Spawn(const FECsAIType &Type, FCsAIPawnPayload *Paylo
 {
 	return Internal->Spawn(Type, Payload);
 }
+
+// Sense
+#pragma region
+
+void AICsManager_AI::OnAddPlayerStateMapping(class ACsPlayerState* PlayerState)
+{
+	const TArray<ACsAIPawn*>& Pawns = GetAllActors();
+
+	for (ACsAIPawn* Pawn : Pawns)
+	{
+		const int32 Count = Pawn->PlayerSenseInfos.Num();
+
+		Pawn->PlayerSenseInfos.AddDefaulted();
+		Pawn->PlayerSenseInfos[Count].PlayerMappingId = PlayerState->UniqueMappingId;
+	}
+}
+
+#pragma endregion Sense

@@ -81,6 +81,9 @@ public:
 	void AddToActivePool(const FECsAIType &Type, ACsAIPawn* Actor);
 	UFUNCTION(BlueprintCallable, Category = "Manager AI")
 	void OnTick(const float &DeltaTime);
+
+	const TArray<class ACsAIPawn*>& GetAllActors();
+
 	UFUNCTION(BlueprintCallable, Category = "Manager AI")
 	void GetAllActiveActors(TArray<ACsAIPawn*> &OutActors);
 
@@ -106,4 +109,16 @@ public:
 	{
 		return Cast<T>(Spawn(Type, Payload));
 	}
+
+// Sense
+#pragma region
+public:
+
+	typedef uint8 TCsAIId;
+
+	TMap<TCsAIId, TArray<FCsAISenseInfo_Player>> SenseMap;
+
+	void OnAddPlayerStateMapping(class ACsPlayerState* PlayerState);
+
+#pragma endregion Sense
 };

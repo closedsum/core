@@ -40,63 +40,43 @@ namespace ECsGameStateOnBoardState
 	};
 }
 
-namespace ECsGameStateOnBoardState
-{
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-		const TCsString LoadCommonData = TCsString(TEXT("LoadCommonData"), TEXT("loadcommondata"), TEXT("load common data"));
-		const TCsString SetAssetReferencesCommonData = TCsString(TEXT("SetAssetReferencesCommonData"), TEXT("setassetreferencescommondata"), TEXT("set asset references common data"));
-		const TCsString SetupHUD = TCsString(TEXT("SetupHUD"), TEXT("setuphud"), TEXT("setup hud"));
-		const TCsString LoadGameData = TCsString(TEXT("LoadGameData"), TEXT("loadgamedata"), TEXT("load game data"));
-		const TCsString SetAssetReferencesGameData = TCsString(TEXT("SetAssetReferencesGameData"), TEXT("setassetreferencesgamedata"), TEXT("set asset references game data"));
-		const TCsString LoadItems = TCsString(TEXT("LoadItems"), TEXT("loaditems"), TEXT("load items"));
-		const TCsString LoadSceneData = TCsString(TEXT("LoadSceneData"), TEXT("loadscenedata"), TEXT("load scene data"));
-		const TCsString SetAssetReferencesSceneData = TCsString(TEXT("SetAssetReferencesSceneData"), TEXT("setassetreferencesscenedata"), TEXT("set asset references scene data"));
-		const TCsString SetupScene = TCsString(TEXT("SetupScene"), TEXT("setupscene"), TEXT("setup scene"));
-		const TCsString SetupLastTickActor = TCsString(TEXT("SetupLastTickActor"), TEXT("setuplasttickactor"), TEXT("setup last tick actor"));
-		const TCsString SetupJavascriptEntryPoint = TCsString(TEXT("SetupJavascriptEntryPoint"), TEXT("setupjavascriptentrypoint"), TEXT("setup javascript entry point"));
-		const TCsString Completed = TCsString(TEXT("Completed"), TEXT("completed"), TEXT("completed"));
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::LoadCommonData) { return Str::LoadCommonData.Value; }
-		if (EType == Type::SetAssetReferencesCommonData) { return Str::SetAssetReferencesCommonData.Value; }
-		if (EType == Type::SetupHUD) { return Str::SetupHUD.Value; }
-		if (EType == Type::LoadGameData) { return Str::LoadGameData.Value; }
-		if (EType == Type::SetAssetReferencesGameData) { return Str::SetAssetReferencesGameData.Value; }
-		if (EType == Type::LoadItems) { return Str::LoadItems.Value; }
-		if (EType == Type::LoadSceneData) { return Str::LoadSceneData.Value; }
-		if (EType == Type::SetAssetReferencesSceneData) { return Str::SetAssetReferencesSceneData.Value; }
-		if (EType == Type::SetupScene) { return Str::SetupScene.Value; }
-		if (EType == Type::SetupLastTickActor) { return Str::SetupLastTickActor.Value; }
-		if (EType == Type::SetupJavascriptEntryPoint) { return Str::SetupJavascriptEntryPoint.Value; }
-		if (EType == Type::Completed) { return Str::Completed.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::LoadCommonData) { return Type::LoadCommonData; }
-		if (String == Str::SetAssetReferencesCommonData) { return Type::SetAssetReferencesCommonData; }
-		if (String == Str::SetupHUD) { return Type::SetupHUD; }
-		if (String == Str::LoadGameData) { return Type::LoadGameData; }
-		if (String == Str::SetAssetReferencesGameData) { return Type::SetAssetReferencesGameData; }
-		if (String == Str::LoadItems) { return Type::LoadItems; }
-		if (String == Str::LoadSceneData) { return Type::LoadSceneData; }
-		if (String == Str::SetAssetReferencesSceneData) { return Type::SetAssetReferencesSceneData; }
-		if (String == Str::SetupScene) { return Type::SetupScene; }
-		if (String == Str::SetupLastTickActor) { return Type::SetupLastTickActor; }
-		if (String == Str::SetupJavascriptEntryPoint) { return Type::SetupJavascriptEntryPoint; }
-		if (String == Str::Completed) { return Type::Completed; }
-		return Type::ECsGameStateOnBoardState_MAX;
-	}
-}
-
 #define ECS_GAME_STATE_ONBOARD_STATE_MAX (uint8)ECsGameStateOnBoardState::ECsGameStateOnBoardState_MAX
 typedef ECsGameStateOnBoardState::Type TCsGameStateOnBoardState;
+
+struct CSCORE_API EMCsGameStateOnBoardState : public TCsEnumMap<ECsGameStateOnBoardState::Type>
+{
+protected:
+	EMCsGameStateOnBoardState() {}
+	EMCsGameStateOnBoardState(const EMCsGameStateOnBoardState &) = delete;
+	EMCsGameStateOnBoardState(EMCsGameStateOnBoardState &&) = delete;
+public:
+	~EMCsGameStateOnBoardState() {}
+private:
+	static EMCsGameStateOnBoardState* Instance;
+
+public:
+	static EMCsGameStateOnBoardState& Get();
+};
+
+namespace ECsGameStateOnBoardState
+{
+	namespace Ref
+	{
+		extern CSCORE_API const Type LoadCommonData;
+		extern CSCORE_API const Type SetAssetReferencesCommonData;
+		extern CSCORE_API const Type SetupHUD;
+		extern CSCORE_API const Type LoadGameData;
+		extern CSCORE_API const Type SetAssetReferencesGameData;
+		extern CSCORE_API const Type LoadItems;
+		extern CSCORE_API const Type LoadSceneData;
+		extern CSCORE_API const Type SetAssetReferencesSceneData;
+		extern CSCORE_API const Type SetupScene;
+		extern CSCORE_API const Type SetupLastTickActor;
+		extern CSCORE_API const Type SetupJavascriptEntryPoint;
+		extern CSCORE_API const Type Completed;
+		extern CSCORE_API const Type ECsGameStateOnBoardState_MAX;
+	}
+}
 
 namespace ECsGameStateRoutine
 {

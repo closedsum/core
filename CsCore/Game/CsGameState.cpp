@@ -65,6 +65,35 @@ namespace ECsGameStateCached
 // Enums
 #pragma region
 
+EMCsGameStateOnBoardState* EMCsGameStateOnBoardState::Instance;
+
+EMCsGameStateOnBoardState& EMCsGameStateOnBoardState::Get()
+{
+	if (!Instance)
+		Instance = new EMCsGameStateOnBoardState();
+	return *Instance;
+}
+
+namespace ECsGameStateOnBoardState
+{
+	namespace Ref
+	{
+		CSCORE_API const Type LoadCommonData = EMCsGameStateOnBoardState::Get().Add(Type::LoadCommonData, TEXT("LoadCommonData"), TEXT("Load Common Data"));
+		CSCORE_API const Type SetAssetReferencesCommonData = EMCsGameStateOnBoardState::Get().Add(Type::SetAssetReferencesCommonData, TEXT("SetAssetReferencesCommonData"), TEXT("Set Asset References Common Data"));
+		CSCORE_API const Type SetupHUD = EMCsGameStateOnBoardState::Get().Add(Type::SetupHUD, TEXT("SetupHUD"), TEXT("Setup HUD"));
+		CSCORE_API const Type LoadGameData = EMCsGameStateOnBoardState::Get().Add(Type::LoadGameData, TEXT("LoadGameData"), TEXT("Load Game Data"));
+		CSCORE_API const Type SetAssetReferencesGameData = EMCsGameStateOnBoardState::Get().Add(Type::SetAssetReferencesGameData, TEXT("SetAssetReferencesGameData"), TEXT("Set Asset References Game Data"));
+		CSCORE_API const Type LoadItems = EMCsGameStateOnBoardState::Get().Add(Type::LoadItems, TEXT("LoadItems"), TEXT("Load Items"));
+		CSCORE_API const Type LoadSceneData = EMCsGameStateOnBoardState::Get().Add(Type::LoadSceneData, TEXT("LoadSceneData"), TEXT("Load Scene Data"));
+		CSCORE_API const Type SetAssetReferencesSceneData = EMCsGameStateOnBoardState::Get().Add(Type::SetAssetReferencesSceneData, TEXT("SetAssetReferencesSceneData"), TEXT("Set Asset References Scene Data"));
+		CSCORE_API const Type SetupScene = EMCsGameStateOnBoardState::Get().Add(Type::SetupScene, TEXT("SetupScene"), TEXT("Setup Scene"));
+		CSCORE_API const Type SetupLastTickActor = EMCsGameStateOnBoardState::Get().Add(Type::SetupLastTickActor, TEXT("SetupLastTickActor"), TEXT("Setup Last Tick Actor"));
+		CSCORE_API const Type SetupJavascriptEntryPoint = EMCsGameStateOnBoardState::Get().Add(Type::SetupJavascriptEntryPoint, TEXT("SetupJavascriptEntryPoint"), TEXT("Setup Javascript Entry Point"));
+		CSCORE_API const Type Completed = EMCsGameStateOnBoardState::Get().Add(Type::Completed, TEXT("Completed"));
+		CSCORE_API const Type ECsGameStateOnBoardState_MAX = EMCsGameStateOnBoardState::Get().Add(Type::ECsGameStateOnBoardState_MAX, TEXT("ECsGameStateOnBoardState_MAX"), TEXT("MAX"));
+	}
+}
+
 #pragma endregion Enums
 
 ACsGameState::ACsGameState(const FObjectInitializer& ObjectInitializer)
@@ -562,7 +591,7 @@ void ACsGameState::SetupLastTickActor()
 
 	if (CsCVarLogGameStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		UE_LOG(LogCs, Log, TEXT("ACsGameState::SetupLastTickActor: State Change: SetupLastTickActor -> %s"), *(ECsGameStateOnBoardState::ToString(OnBoardState)));
+		UE_LOG(LogCs, Log, TEXT("ACsGameState::SetupLastTickActor: State Change: SetupLastTickActor -> %s"), *(EMCsGameStateOnBoardState::Get().ToString(OnBoardState)));
 	}
 }
 

@@ -84,9 +84,9 @@ ACsPawn* ACsPlayerStateBase::GetMyPawn()
 	{
 		APawn* Pawn = It->Get();
 
-		if (ACsPawn* P = Cast<ACsPawn>(Pawn))
+		if (Pawn->PlayerState == this)
 		{
-			LinkedPawn = P;
+			LinkedPawn = Cast<ACsPawn>(Pawn);
 			break;
 		}
 	}
@@ -200,6 +200,8 @@ void ACsPlayerStateBase::OnTick_OnBoard()
 	{
 		if (ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>())
 		{
+			OnLinkedPawnSet_Event.AddUObject(GameState, &ACsGameState::OnPlayerStateBaseLinkedToPawn);
+
 			OnBoardState = ECsPlayerStateBaseOnBoardState::WaitingForFinishLoadingCommonData;
 
 			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)

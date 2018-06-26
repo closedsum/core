@@ -241,7 +241,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player")
 	TArray<FCsAISenseInfo_Player> PlayerSenseInfos;
 
-	void OnTick_CheckSenses();
+	virtual void OnTick_CheckSenses(const float &DeltaSeconds) override;
 	void OnTick_CalculateMeToPlayerDot(FCsAISenseInfo_Player& Info);
 	void OnTick_CheckSeesPlayer(FCsAISenseInfo_Player& Info);
 	void OnTick_CheckSeesPlayerBody(FCsAISenseInfo_Player& Info);
@@ -279,7 +279,7 @@ public:
 	float CheckPlayerSeesBodyStartTime;
 
 	void OnTick_CheckPlayerSeesBody();
-	void CheckPlayerSeesBody_Response(FCsTraceResponse* Response);
+	void CheckPlayerSeesBody_Response(const uint8& RequestId, FCsTraceResponse* Response);
 
 #pragma endregion Player
 };

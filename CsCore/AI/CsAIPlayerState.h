@@ -12,8 +12,6 @@ class CSCORE_API ACsAIPlayerState : public ACsPlayerStateBase
 
 	virtual AController* GetMyController() override;
 
-	virtual ACsPawn* GetMyPawn() override;
-
 // OnBoard
 #pragma region
 public:

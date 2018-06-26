@@ -204,17 +204,17 @@ void AICsManager_AI::OnTick(const float &DeltaTime)
 	Internal->OnTick(DeltaTime);
 }
 
-const TArray<ACsAIPawn*>& AICsManager_AI::GetAllActors()
+const TArray<ACsAIPawn*>& AICsManager_AI::GetAllPawns()
 {
 	return Internal->GetAllObjects();
 }
 
-void AICsManager_AI::GetAllActiveActors(TArray<ACsAIPawn*> &OutActors)
+void AICsManager_AI::GetAllActivePawns(TArray<ACsAIPawn*> &OutActors)
 {
 	Internal->GetAllActiveObjects(OutActors);
 }
 
-const TArray<ACsAIPawn*>* AICsManager_AI::GetActors(const FECsAIType& Type)
+const TArray<ACsAIPawn*>* AICsManager_AI::GetPawns(const FECsAIType& Type)
 {
 	return Internal->GetObjects(Type);
 }
@@ -259,7 +259,7 @@ ACsAIPawn* AICsManager_AI::Spawn(const FECsAIType &Type, FCsAIPawnPayload *Paylo
 
 void AICsManager_AI::OnAddPlayerStateMapping(class ACsPlayerState* PlayerState)
 {
-	const TArray<ACsAIPawn*>& Pawns = GetAllActors();
+	const TArray<ACsAIPawn*>& Pawns = GetAllPawns();
 
 	for (ACsAIPawn* Pawn : Pawns)
 	{

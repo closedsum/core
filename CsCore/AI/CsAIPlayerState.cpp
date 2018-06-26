@@ -35,24 +35,6 @@ AController* ACsAIPlayerState::GetMyController()
 	return MyController.Get();
 }
 
-ACsPawn* ACsAIPlayerState::GetMyPawn()
-{
-	if (LinkedPawn.IsValid() && LinkedPawn.Get())
-		return LinkedPawn.Get();
-
-	for (FConstPawnIterator It = GetWorld()->GetPawnIterator(); It; ++It)
-	{
-		APawn* Pawn = It->Get();
-
-		if (ACsAIPawn* P = Cast<ACsAIPawn>(Pawn))
-		{
-			LinkedPawn = P;
-			break;
-		}
-	}
-	return LinkedPawn.Get();
-}
-
 // OnBoard
 #pragma region
 

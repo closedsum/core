@@ -34,24 +34,6 @@ AController* ACsPlayerState::GetMyController()
 	return MyController.Get();
 }
 
-ACsPawn* ACsPlayerState::GetMyPawn()
-{
-	if (LinkedPawn.IsValid() && LinkedPawn.Get())
-		return LinkedPawn.Get();
-
-	for (FConstPawnIterator It = GetWorld()->GetPawnIterator(); It; ++It)
-	{
-		APawn* Pawn = It->Get();
-
-		if (ACsPlayerPawn* P = Cast<ACsPlayerPawn>(Pawn))
-		{
-			LinkedPawn = P;
-			break;
-		}
-	}
-	return LinkedPawn.Get();
-}
-
 // Routines
 #pragma region
 

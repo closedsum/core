@@ -146,10 +146,15 @@ void ACsManager_Trace::OnTick(const float &DeltaSeconds)
 
 	int32 I = 0;
 
-	TLinkedList<FCsTraceRequest*>& PendingRequestQueue = *PendingRequestHead;
+	//TLinkedList<FCsTraceRequest*>& PendingRequestQueue = *PendingRequestHead;
 
-	for (FCsTraceRequest* Request : PendingRequestQueue)
+	TLinkedList<FCsTraceRequest*>* Current = PendingRequestHead;
+
+	while (Current)
 	{
+		FCsTraceRequest* Request = **Current;
+		Current					 = PendingRequestHead->GetNextLink();
+
 		// If Processing, SKIP
 		if (Request->bProcessing)
 			continue;
@@ -234,7 +239,8 @@ void ACsManager_Trace::AddPendingRequest(FCsTraceRequest* Request)
 {
 	if (PendingRequestTail)
 	{
-		PendingRequestTail->LinkAfter(&(Request->Link));
+		Request->Link.LinkAfter(PendingRequestTail);
+		PendingRequestTail = &(Request->Link);
 	}
 	else
 	{
@@ -525,7 +531,7 @@ void ACsManager_Trace::OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& 
 	LogTransaction(ECsManagerTraceCached::Str::OnTraceResponse, ECsTraceTransaction::Complete, Request, Response);
 
 	// Broadcast Response
-	Request->OnResponse_Event.Broadcast(Response);
+	Request->OnResponse_Event.Broadcast(Request->Id, Response);
 	Response->Reset();
 
 	Request->bProcessing = false;

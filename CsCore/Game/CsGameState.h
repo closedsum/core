@@ -5,8 +5,13 @@
 #include "Types/CsTypes_Coroutine.h"
 #include "CsGameState.generated.h"
 
+// Tick
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsGameState_OnTick, const float&, DeltaSeconds);
 DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsGameState_OnTick, const float&);
+// LinkedPawn
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsGameState_OnPlayerStateBaseLinkedToPawn, class ACsPlayerStateBase*, PlayerState);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsGameState_OnPlayerStateLinkedToPawn, class ACsPlayerState*, PlayerState);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsGameState_OnAIPlayerStateLinkedToPawn, class ACsAIPlayerState*, PlayerState);
 
 // Enums
 #pragma region
@@ -135,6 +140,9 @@ namespace ECsGameStateRoutine
 
 #pragma endregion Enums
 
+// Structs
+#pragma region
+
 struct FCsPlayerStateMappingRelationship
 {
 	uint8 A;
@@ -168,6 +176,8 @@ struct FCsAIPlayerStateMappingRelationship
 		HasBCompletedInitialReplicationAndLoadingForA = false;
 	}
 };
+
+#pragma endregion Structs
 
 UCLASS()
 class CSCORE_API ACsGameState : public AGameState
@@ -337,6 +347,15 @@ public:
 
 #pragma endregion Match State
 
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerStateBaseLinkedToPawn, class ACsPlayerStateBase*);
+
+	FOnPlayerStateBaseLinkedToPawn OnPlayerStateBaseLinkedToPawn_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Player State")
+	FBindableDynEvent_CsGameState_OnPlayerStateBaseLinkedToPawn OnPlayerStateBaseLinkedToPawn_ScriptEvent;
+
+	void OnPlayerStateBaseLinkedToPawn(class ACsPlayerStateBase* PlayerState);
+
 // Player State
 #pragma region
 private:
@@ -359,12 +378,27 @@ public:
 	TMap<uint8, bool> HasPlayerStateFullyReplicatedAndLoadedBroadcastFlags;
 
 	class ACsPlayerState* GetPlayerState(const uint8 &MappingId);
-
 	template<typename T>
 	T* GetPlayerState(const uint8 &MappingId)
 	{
 		return Cast<T>(GetPlayerState(MappingId));
 	}
+
+	class ACsPlayerPawn* GetPlayerPawn(const uint8 &MappingId);
+	template<typename T>
+	T* GetPlayerPawn(const uint8& MappingId)
+	{
+		return Cast<T>(GetPlayerPawn(MappingId));
+	}
+
+	void GetSpawnedAndActivePlayerPawns(TArray<class ACsPlayerPawn*>& OutPawns);
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerStateLinkedToPawn, class ACsPlayerState*);
+
+	FOnPlayerStateLinkedToPawn OnPlayerStateLinkedToPawn_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Player State")
+	FBindableDynEvent_CsGameState_OnPlayerStateLinkedToPawn OnPlayerStateLinkedToPawn_ScriptEvent;
 
 	void OnTick_HandleBroadcastingPlayerStateFullyReplicatedAndLoaded();
 
@@ -391,12 +425,41 @@ public:
 	TMap<uint8, bool> HasAIPlayerStateFullyReplicatedAndLoadedBroadcastFlags;
 
 	class ACsAIPlayerState* GetAIPlayerState(const uint8 &MappingId);
-
 	template<typename T>
 	T* GetAIPlayerState(const uint8 &MappingId)
 	{
 		return Cast<T>(GetAIPlayerState(MappingId));
 	}
+
+	class ACsAIPlayerState* GetSafeAIPlayerState(const uint8 &MappingId);
+	template<typename T>
+	T* GetSafeAIPlayerState(const uint8 &MappingId)
+	{
+		return Cast<T>(GetSafeAIPlayerState(MappingId));
+	}
+
+	class ACsAIPawn* GetAIPawn(const uint8 &MappingId);
+	template<typename T>
+	T* GetAIPawn(const uint8& MappingId)
+	{
+		return Cast<T>(GetAIPawn(MappingId));
+	}
+
+	class ACsAIPawn* GetSafeAIPawn(const uint8 &MappingId);
+	template<typename T>
+	T* GetSafeAIPawn(const uint8& MappingId)
+	{
+		return Cast<T>(GetSafeAIPawn(MappingId));
+	}
+
+	void GetAIPlayerStates(TArray<ACsAIPlayerState*>& OutPlayerStates);
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnAIPlayerStateLinkedToPawn, class ACsAIPlayerState*);
+
+	FOnAIPlayerStateLinkedToPawn OnAIPlayerStateLinkedToPawn_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Player State")
+	FBindableDynEvent_CsGameState_OnAIPlayerStateLinkedToPawn OnAIPlayerStateLinkedToPawn_ScriptEvent;
 
 	void OnTick_HandleBroadcastingAIPlayerStateFullyReplicatedAndLoaded();
 

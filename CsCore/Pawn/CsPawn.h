@@ -4,6 +4,7 @@
 #include "Types/CsTypes_Weapon.h"
 #include "Types/CsTypes_Coroutine.h"
 #include "Types/CsTypes_Damage.h"
+#include "Types/CsTypes_Sense.h"
 #include "CsPawn.generated.h"
 
 // Tick
@@ -14,7 +15,10 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsPawn_OnPreTick, const uint
 	// Post
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnPostTick, const uint8&, MappingId, const float&, DeltaSeconds);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsPawn_OnPostTick, const uint8&, const float&);
-// Respawn
+// Spawn
+	// FirstSpawn
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsPawn_OnFirstSpawn, const uint8&, MappingId);
+	// Respawn
 DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsPawn_OnHandleRespawnTimerFinished, const uint8&);
 // Setup
 DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsPawn_OnSetupFinished, const uint8&);
@@ -68,10 +72,16 @@ public:
 
 namespace ECsPawnRoutine
 {
+	extern CSCORE_API const FECsPawnRoutine CheckLinkedToPlayerState_Internal;
 	extern CSCORE_API const FECsPawnRoutine HandleRespawnTimer_Internal;
 }
 
 #pragma endregion Enums
+
+// Structs
+#pragma region
+
+#pragma endregion Structs
 
 UCLASS()
 class CSCORE_API ACsPawn : public ACharacter
@@ -113,10 +123,14 @@ class CSCORE_API ACsPawn : public ACharacter
 
 	virtual void OnTickActor_HandleCVars(const float &DeltaSeconds);
 
-	virtual bool IsOnBoardCompleted_Game();
+
 
 // Setup
 #pragma region
+
+	CS_COROUTINE_DECLARE(CheckLinkedToPlayerState)
+
+	virtual bool IsOnBoardCompleted_Game();
 
 	virtual void OnTick_HandleSetup();
 
@@ -182,6 +196,15 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, Category = "State")
 	bool bFirstSpawn;
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnFirstSpawn, ACsPawn*);
+
+	FOnFirstSpawn OnFirstSpawn_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "State")
+	FBindableDynEvent_CsPawn_OnFirstSpawn OnFirstSpawn_ScriptEvent;
+
+	virtual void OnFirstSpawn();
 
 	UPROPERTY(BlueprintReadWrite, Category = "State")
 	int32 SpawnCount;
@@ -473,6 +496,27 @@ public:
 	virtual void OnRespawn_Setup_Weapon();
 
 #pragma endregion Weapons
+
+// Sense
+#pragma region
+public:
+
+	TMap<FECsSenseActorType, TMap<uint8, FCsSenseInfo>> SenseMap;
+	TMap<uint8, FCsSenseInfo*> SenseTraceRequestMap;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
+	float SenseViewMinDot;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
+	float SenseViewMinAngle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float SenseTraceToAIInterval;
+
+	virtual void OnTick_CheckSenses(const float &DeltaSeconds);
+	virtual void Sense_CheckMeToActorDot(FCsSenseInfo& Info);
+
+#pragma endregion Sense
 
 // Managers
 #pragma region

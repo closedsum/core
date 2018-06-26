@@ -206,7 +206,7 @@ struct CSCORE_API FCsTraceResponse
 	}
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsManagerTrace_OnResponse, const FCsTraceResponse&, Response);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerTrace_OnResponse, const uint8&, RequestId, const FCsTraceResponse&, Response);
 
 #define CS_INVALID_TRACE_REQUEST_ID 255
 
@@ -238,7 +238,7 @@ struct CSCORE_API FCsTraceRequest
 
 	uint64 CallerId;
 
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnResponse, FCsTraceResponse*);
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnResponse, const uint8&, FCsTraceResponse*);
 
 	FOnResponse OnResponse_Event;
 

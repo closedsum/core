@@ -111,7 +111,7 @@ void ACsAIPawn::OnChange_Health(const float &Value)
 // Player
 #pragma region
 
-void ACsAIPawn::OnTick_CheckSenses()
+void ACsAIPawn::OnTick_CheckSenses(const float &DeltaSeconds)
 {
 	ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
 
@@ -171,7 +171,7 @@ void ACsAIPawn::SetPlayerSeesBody(const bool &Value)
 	bPlayerSeesBody = Value;
 
 	bPlayerSeesBodyHandle.UpdateIsDirty();
-
+	
 	if (bPlayerSeesBodyHandle.HasChanged())
 	{
 		bPlayerSeesBodyHandle.Clear();
@@ -181,7 +181,7 @@ void ACsAIPawn::SetPlayerSeesBody(const bool &Value)
 void ACsAIPawn::OnChange_bPlayerSeesBody(const bool &Value)
 {
 	ACsAIPlayerState* MyPlayerState = Cast<ACsAIPlayerState>(PlayerState);
-
+	
 	OnPlayerSeesBody_Event.Broadcast(MyPlayerState->UniqueMappingId, Value);
 #if WITH_EDITOR
 	OnPlayerSeesBody_ScriptEvent.Broadcast(MyPlayerState->UniqueMappingId, Value);
@@ -222,7 +222,7 @@ void ACsAIPawn::OnTick_CheckPlayerSeesBody()
 	Manager_Trace->Trace(Request);
 }
 
-void ACsAIPawn::CheckPlayerSeesBody_Response(FCsTraceResponse* Response)
+void ACsAIPawn::CheckPlayerSeesBody_Response(const uint8 &RequestId, FCsTraceResponse* Response)
 {
 	if (PlayerToMeDot < PlayerSeesBodyMinDot)
 	{

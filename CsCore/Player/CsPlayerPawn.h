@@ -1,7 +1,11 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Pawn/CsPawn.h"
+#include "Types/CsTypes_Trace.h"
 #include "CsPlayerPawn.generated.h"
+
+// Structs
+#pragma region
 
 USTRUCT(BlueprintType)
 struct FCsPlayerPawnCalcCameraTraceInfo
@@ -26,6 +30,8 @@ struct FCsPlayerPawnCalcCameraTraceInfo
 	UPROPERTY(BlueprintReadWrite, Category = "Trace")
 	TArray<FHitResult> OutHits;
 };
+
+#pragma endregion Structs
 
 // Enums
 #pragma region
@@ -65,6 +71,7 @@ public:
 
 // View
 #pragma region
+public:
 
 	virtual void RecordView() override;
 
@@ -72,8 +79,22 @@ public:
 
 // Managers
 #pragma region
+public:
 
 	virtual class ACsManager_Inventory* GetMyManager_Inventory() override;
 
 #pragma endregion Managers
+
+// Sense
+#pragma region
+public:
+
+	virtual void OnTick_CheckSenses(const float &DeltaSeconds) override;
+	virtual void Sense_CheckMeToActorDot(FCsSenseInfo& Info) override;
+	virtual void Sense_TraceViewToActorBody(FCsSenseInfo& Info);
+	virtual void Async_Sense_TraceViewToActorBody_Response(const uint8 &RequestId, FCsTraceResponse* Response);
+	virtual void Sense_TraceViewToActorHead(FCsSenseInfo& Info);
+	virtual void Async_Sense_TraceViewToActorHead_Response(const uint8 &RequestId, FCsTraceResponse* Response);
+
+#pragma endregion Sense
 };

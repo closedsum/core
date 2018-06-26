@@ -82,12 +82,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Manager AI")
 	void OnTick(const float &DeltaTime);
 
-	const TArray<class ACsAIPawn*>& GetAllActors();
+	const TArray<class ACsAIPawn*>& GetAllPawns();
 
 	UFUNCTION(BlueprintCallable, Category = "Manager AI")
-	void GetAllActiveActors(TArray<ACsAIPawn*> &OutActors);
+	void GetAllActivePawns(TArray<ACsAIPawn*> &OutActors);
 
-	const TArray<class ACsAIPawn*>* GetActors(const FECsAIType& Type);
+	const TArray<class ACsAIPawn*>* GetPawns(const FECsAIType& Type);
 
 	UFUNCTION(BlueprintCallable, Category = "Manager AI")
 	int32 GetActivePoolSize(const FECsAIType &Type);

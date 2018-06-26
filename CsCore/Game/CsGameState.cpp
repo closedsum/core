@@ -604,6 +604,30 @@ uint64 ACsGameState::GetElapsedGameTimeMilliseconds()
 
 #pragma endregion Match State
 
+void ACsGameState::OnPlayerStateBaseLinkedToPawn(class ACsPlayerStateBase* PlayerState)
+{
+	// Player
+	if (ACsPlayerState* PS = Cast<ACsPlayerState>(PlayerState))
+	{
+		OnPlayerStateLinkedToPawn_Event.Broadcast(PS);
+#if WITH_EDITOR
+		OnPlayerStateLinkedToPawn_ScriptEvent.Broadcast(PS);
+#endif // #if WITH_EDITOR
+	}
+	// AI
+	if (ACsAIPlayerState* PS = Cast<ACsAIPlayerState>(PlayerState))
+	{
+		OnAIPlayerStateLinkedToPawn_Event.Broadcast(PS);
+#if WITH_EDITOR
+		OnAIPlayerStateLinkedToPawn_ScriptEvent.Broadcast(PS);
+#endif // #if WITH_EDITOR
+	}
+	OnPlayerStateBaseLinkedToPawn_Event.Broadcast(PlayerState);
+#if WITH_EDITOR
+	OnPlayerStateBaseLinkedToPawn_ScriptEvent.Broadcast(PlayerState);
+#endif // #if WITH_EDITOR
+}
+
 // Player State
 #pragma region
 
@@ -702,13 +726,43 @@ void ACsGameState::RemovePlayerState(class APlayerState* PlayerState)
 	Super::RemovePlayerState(PlayerState);
 }
 
-class ACsPlayerState* ACsGameState::GetPlayerState(const uint8 &MappingId)
+ACsPlayerState* ACsGameState::GetPlayerState(const uint8 &MappingId)
 {
-	TWeakObjectPtr<ACsPlayerState>* PtrPlayerState = PlayerStateMappings.Find(MappingId);
+	TWeakObjectPtr<ACsPlayerState>* PlayerStatePtr = PlayerStateMappings.Find(MappingId);
 
-	if (!PtrPlayerState)
+	if (!PlayerStatePtr)
 		return nullptr;
-	return (*PtrPlayerState).IsValid() ? (*PtrPlayerState).Get() : nullptr;
+	return (*PlayerStatePtr).IsValid() ? (*PlayerStatePtr).Get() : nullptr;
+}
+
+ACsPlayerPawn* ACsGameState::GetPlayerPawn(const uint8 &MappingId)
+{
+	ACsPlayerState* PlayerState = GetPlayerState(MappingId);
+
+	if (!PlayerState)
+		return nullptr;
+	return PlayerState->GetMyPawn<ACsPlayerPawn>();
+}
+
+void ACsGameState::GetSpawnedAndActivePlayerPawns(TArray<class ACsPlayerPawn*>& OutPawns)
+{
+	TArray<uint8> Keys;
+	PlayerStateMappings.GetKeys(Keys);
+
+	for (const uint8& Key : Keys)
+	{
+		ACsPlayerState* PlayerState = PlayerStateMappings[Key].Get();
+
+		if (!PlayerState->IsOnBoardCompleted_Game())
+			continue;
+
+		ACsPlayerPawn* Pawn = Cast<ACsPlayerPawn>(PlayerState->GetMyPawn());
+
+		if (!Pawn->bSpawnedAndActive)
+			continue;
+
+		OutPawns.Add(Pawn);
+	}
 }
 
 void ACsGameState::OnTick_HandleBroadcastingPlayerStateFullyReplicatedAndLoaded()
@@ -837,11 +891,45 @@ void ACsGameState::AddAIPlayerStateMapping(ACsAIPlayerState* NewPlayerState)
 
 class ACsAIPlayerState* ACsGameState::GetAIPlayerState(const uint8 &MappingId)
 {
-	TWeakObjectPtr<ACsAIPlayerState>* PtrPlayerState = AIPlayerStateMappings.Find(MappingId);
+	return AIPlayerStateMappings[MappingId].IsValid() ? AIPlayerStateMappings[MappingId].Get() : nullptr;
+}
 
-	if (!PtrPlayerState)
+class ACsAIPlayerState* ACsGameState::GetSafeAIPlayerState(const uint8 &MappingId)
+{
+	TWeakObjectPtr<ACsAIPlayerState>* PlayerStatePtr = AIPlayerStateMappings.Find(MappingId);
+
+	if (!PlayerStatePtr)
 		return nullptr;
-	return (*PtrPlayerState).IsValid() ? (*PtrPlayerState).Get() : nullptr;
+	return (*PlayerStatePtr).IsValid() ? (*PlayerStatePtr).Get() : nullptr;
+}
+
+ACsAIPawn* ACsGameState::GetAIPawn(const uint8 &MappingId)
+{
+	ACsAIPlayerState* PlayerState = GetAIPlayerState(MappingId);
+
+	if (!PlayerState)
+		return nullptr;
+	return PlayerState->GetMyPawn<ACsAIPawn>();
+}
+
+ACsAIPawn* ACsGameState::GetSafeAIPawn(const uint8 &MappingId)
+{
+	ACsAIPlayerState* PlayerState = GetSafeAIPlayerState(MappingId);
+
+	if (!PlayerState)
+		return nullptr;
+	return PlayerState->GetMyPawn<ACsAIPawn>();
+}
+
+void ACsGameState::GetAIPlayerStates(TArray<ACsAIPlayerState*>& OutPlayerStates)
+{
+	TArray<uint8> Keys;
+	AIPlayerStateMappings.GetKeys(Keys);
+
+	for (const uint8& Key : Keys)
+	{
+		OutPlayerStates.Add(GetAIPlayerState(Key));
+	}
 }
 
 void ACsGameState::OnTick_HandleBroadcastingAIPlayerStateFullyReplicatedAndLoaded()
@@ -853,7 +941,7 @@ void ACsGameState::OnTick_HandleBroadcastingAIPlayerStateFullyReplicatedAndLoade
 	{
 		const uint8& Key = RelationshipKeys[I];
 
-		ACsAIPlayerState* PlayerState = GetAIPlayerState(Key);
+		ACsAIPlayerState* PlayerState = GetSafeAIPlayerState(Key);
 
 		// Check if PlayerState is still VALID (i.e. Player could have Disconnected)
 		if (!PlayerState)
@@ -913,7 +1001,7 @@ void ACsGameState::SetAIPlayerStateMappingRelationshipFlag(const uint8 &ClientMa
 			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 			{
 				ACsPlayerState* ClientPlayerState = GetPlayerState(ClientMappingId);
-				ACsAIPlayerState* PlayerState	  = GetAIPlayerState(MappingId);
+				ACsAIPlayerState* PlayerState	  = GetSafeAIPlayerState(MappingId);
 
 				const FString ClientName = ClientPlayerState ? ClientPlayerState->GetPlayerName() : ECsCached::Str::INVALID;
 				const FString OtherName  = PlayerState ? PlayerState->GetPlayerName() : ECsCached::Str::INVALID;

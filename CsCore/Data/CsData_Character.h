@@ -98,6 +98,7 @@ public:
 
 	// Sequence
 #pragma region
+public:
 
 	virtual UAnimSequence* GetAnimSequence(const TCsViewType &ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
 	virtual UAnimSequence* GetAnimSequence(const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
@@ -113,6 +114,7 @@ public:
 
 	// Montage
 #pragma region
+public:
 
 	virtual UAnimMontage* GetAnimMontage(const TCsViewType &ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
 	virtual UAnimMontage* GetAnimMontage(const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index = 0, const bool &IsLow = false);
@@ -129,6 +131,7 @@ public:
 
 	// BlendSpace1D
 #pragma region
+public:
 
 	virtual UBlendSpace1D* GetBlendSpace1D(const TCsViewType &ViewType, const FECsWeaponGrip &GripType, const FECsCharacterBlendSpace &BlendType, const bool &IsLow = false);
 	virtual UBlendSpace1D* GetBlendSpace1D(const FECsWeaponGrip &GripType, const FECsCharacterBlendSpace &BlendType, const bool &IsLow = false);
@@ -143,6 +146,7 @@ public:
 
 	// BlendSpace
 #pragma region
+public:
 
 	virtual bool IsBlendMemberStruct(const FECsCharacterBlendSpace &BlendType);
 	
@@ -163,6 +167,7 @@ public:
 
 	// AnimBlueprint
 #pragma region
+public:
 
 	virtual bool IsAnimBlueprintMemberStruct(const FECsCharacterAnimBlueprint &BlueprintType);
 
@@ -180,6 +185,7 @@ public:
 
 	// Play
 #pragma region
+public:
 
 	virtual void PlayAnimation(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &PlayRate = 1.0f, const bool &IsLooping = false, const bool &IsLow = false);
 	virtual void PlayAnimation(USkeletalMeshComponent* InMesh, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &PlayRate = 1.0f, const bool &IsLooping = false, const bool &IsLow = false);
@@ -198,6 +204,7 @@ public:
 
 	// JumpTo
 #pragma region
+public:
 
 	virtual void Montage_JumpToSection(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const FName &SectionName, const int32 &Index = 0, const bool &IsLow = false);
 	virtual void Montage_JumpToSection(USkeletalMeshComponent* InMesh, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const FName &SectionName, const int32 &Index = 0, const bool &IsLow = false);
@@ -216,6 +223,7 @@ public:
 
 	// Stop
 #pragma region
+public:
 
 	virtual void StopAnimation(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &BlendOutTime = 0.0f, const bool &IsLow = false);
 	virtual void StopAnimation(USkeletalMeshComponent* InMesh, const FECsWeaponGrip &GripType, const FECsCharacterAnim &AnimType, const int32 &Index, const float &BlendOutTime = 0.0f, const bool &IsLow = false);
@@ -233,4 +241,10 @@ public:
 #pragma endregion Stop
 
 #pragma endregion Animation
+
+// Sense
+#pragma region
+public:
+
+#pragma endregion Sense
 };

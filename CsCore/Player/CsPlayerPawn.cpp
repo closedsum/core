@@ -6,8 +6,14 @@
 
 // Managers
 #include "Managers/Inventory/CsManager_Inventory.h"
-
+#include "Managers/Trace/CsManager_Trace.h"
+// Game
+#include "Game/CsGameState.h"
+// Player
 #include "Player/CsPlayerState.h"
+// AI
+#include "AI/CsAIPlayerState.h"
+#include "AI/Pawn/CsAIPawn.h"
 
 ACsPlayerPawn::ACsPlayerPawn(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -37,7 +43,7 @@ ACsPlayerPawn::ACsPlayerPawn(const FObjectInitializer& ObjectInitializer)
 	GetCharacterMovement()->bAutoActivate = false;
 	*/
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
-
+	
 	/*
 	bAlwaysRelevant		   = true;
 	NetDormancy			   = ENetDormancy::DORM_Never;
@@ -236,6 +242,246 @@ void ACsPlayerPawn::RecordView()
 }
 
 #pragma endregion View
+
+#pragma region
+
+void ACsPlayerPawn::OnTick_CheckSenses(const float &DeltaSeconds)
+{
+	ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
+
+	const float CurrentTimeSeconds = GetWorld()->GetTimeSeconds();
+
+	TArray<FECsSenseActorType> TypeKeys;
+	SenseMap.GetKeys(TypeKeys);
+
+	for (const FECsSenseActorType& ActorType : TypeKeys)
+	{
+		TMap<uint8, FCsSenseInfo>& Map = SenseMap[ActorType];
+
+		TArray<uint8> IdKeys;
+		Map.GetKeys(IdKeys);
+
+		for (const uint8& Id : IdKeys)
+		{
+			FCsSenseInfo& Info = Map[Id];
+
+			ACsAIPawn* AIPawn = GameState->GetAIPawn(Info.Id);
+			// Check AI is Alive
+			if (!AIPawn->bSpawnedAndActive)
+				continue;
+			// Check Dot
+			Sense_CheckMeToActorDot(Info);
+
+			if (!Info.bSeesActorByDot)
+			{
+				Info.SetSeesActor(false);
+				Info.SetSeesActorBody(false);
+				Info.SetSeesActorHead(false);
+				continue;
+			}
+
+			Info.LastTime_SeesActorByDot = GetWorld()->GetTimeSeconds();
+
+			if (CurrentTimeSeconds - Info.StartTime_TraceMeToActorBody >= SenseTraceToAIInterval)
+			{
+				// Trace to Body
+				Sense_TraceViewToActorBody(Info);
+				// Trace to Head
+				//Sense_TraceViewToActorHead(Info);
+
+				Info.StartTime_TraceMeToActorBody = CurrentTimeSeconds;
+			}
+			Info.SetSeesActor(Info.bSeesActorBody || Info.bSeesActorHead);
+		}
+	}
+}
+
+void ACsPlayerPawn::Sense_CheckMeToActorDot(FCsSenseInfo& Info) 
+{
+	FVector Location = FVector::ZeroVector;
+
+	// Pawn
+	if (Info.ActorType == ECsSenseActorType::AI)
+	{
+		ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
+		ACsAIPawn* Pawn			= GameState->GetAIPawn(Info.Id);
+		Location				= Pawn->GetActorLocation();
+	}
+
+	// XYZ
+	const FVector MeToActor  = Location - GetActorLocation();
+	Info.MeToActorDistance	 = MeToActor.Size();
+	Info.MeToActorDistanceSq = Info.MeToActorDistance * Info.MeToActorDistance;
+	Info.MeToActorDir		 = MeToActor / Info.MeToActorDistance;
+	// XY
+	const FVector MeToActorXY	= FVector(MeToActor.X, MeToActor.Y, 0.0f);
+	Info.MeToActorDistanceXY	= MeToActorXY.Size();
+	Info.MeToActorDistanceXYSq	= Info.MeToActorDistanceXY * Info.MeToActorDistanceXY;
+	Info.MeToActorDirXY			= MeToActorXY / Info.MeToActorDistanceXY;
+
+	Info.MeToActorDot = FVector::DotProduct(CurrentRootDirXY, Info.MeToActorDirXY);
+
+	Info.SetSeesActorByDot(Info.MeToActorDot >= SenseViewMinDot);
+}
+
+void ACsPlayerPawn::Sense_TraceViewToActorBody(FCsSenseInfo& Info)
+{
+	ACsManager_Trace* Manager_Trace = ACsManager_Trace::Get(GetWorld());
+
+	FCsTraceRequest* Request = Manager_Trace->AllocateRequest();
+
+	SenseTraceRequestMap.Add(Request->Id, &Info);
+
+	Request->Caller = this;
+	Request->CallerId = UniqueObjectId;
+	Request->OnResponse_Event.AddUObject(this, &ACsPlayerPawn::Async_Sense_TraceViewToActorBody_Response);
+	Request->Start = GetPawnViewLocation();
+
+	FVector End = FVector::ZeroVector;
+
+	// AI
+	if (Info.ActorType == ECsSenseActorType::AI)
+	{
+		ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
+		ACsAIPawn* Pawn			= GameState->GetAIPawn(Info.Id);
+		End						= Pawn->GetActorLocation();
+	}
+
+	Request->End	= End;
+	Request->bAsync = true;
+	Request->Type	= ECsTraceType::Line;
+	Request->Method = ECsTraceMethod::Multi;
+	Request->Query	= ECsTraceQuery::ObjectType;
+
+	// AI
+	if (Info.ActorType == ECsSenseActorType::AI)
+		Request->ObjectParams.AddObjectTypesToQuery(ECC_Pawn);
+
+	Request->Params.AddIgnoredActor(this);
+
+	Request->ReplacePending = true;
+	Request->PendingId		= Info.TraceRequestId_MeToActorBody;
+
+	Manager_Trace->Trace(Request);
+}
+
+void ACsPlayerPawn::Async_Sense_TraceViewToActorBody_Response(const uint8 &RequestId, FCsTraceResponse* Response)
+{
+	FCsSenseInfo* InfoPtr = SenseTraceRequestMap[RequestId];
+	FCsSenseInfo& Info	  = *InfoPtr;
+
+	SenseTraceRequestMap.Remove(RequestId);
+
+	Info.TraceRequestId_MeToActorBody = CS_INVALID_TRACE_REQUEST_ID;
+
+	if (!Info.bSeesActorByDot)
+		return;
+	if (!Response->bResult)
+		return;
+
+	ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
+	ACsAIPawn* Pawn			= GameState->GetAIPawn(Info.Id);
+
+	for (FHitResult& Hit : Response->OutHits)
+	{
+		// AI
+		if (Info.ActorType == ECsSenseActorType::AI)
+		{
+			ACsAIPawn* P = Cast<ACsAIPawn>(Hit.GetActor());
+
+			if (Pawn == P)
+			{
+				Info.SetSeesActor(true);
+				Info.SetSeesActorBody(true);
+
+				Info.LastTime_SeesActor = GetWorld()->GetTimeSeconds();
+				Info.LastTime_SeesActorBody = GetWorld()->GetTimeSeconds();
+				return;
+			}
+		}
+	}
+}
+
+void ACsPlayerPawn::Sense_TraceViewToActorHead(FCsSenseInfo& Info)
+{
+	ACsManager_Trace* Manager_Trace = ACsManager_Trace::Get(GetWorld());
+
+	FCsTraceRequest* Request = Manager_Trace->AllocateRequest();
+
+	SenseTraceRequestMap.Add(Request->Id, &Info);
+
+	Request->Caller = this;
+	Request->CallerId = UniqueObjectId;
+	Request->OnResponse_Event.AddUObject(this, &ACsPlayerPawn::Async_Sense_TraceViewToActorHead_Response);
+	Request->Start = GetPawnViewLocation();
+
+	FVector End = FVector::ZeroVector;
+
+	// AI
+	if (Info.ActorType == ECsSenseActorType::AI)
+	{
+		ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
+		ACsAIPawn* Pawn			= GameState->GetAIPawn(Info.Id);
+		// TODO: Get Head Location
+		End						= Pawn->GetActorLocation();
+	}
+
+	Request->End	= End;
+	Request->bAsync = true;
+	Request->Type	= ECsTraceType::Line;
+	Request->Method = ECsTraceMethod::Multi;
+	Request->Query	= ECsTraceQuery::ObjectType;
+
+	// AI
+	if (Info.ActorType == ECsSenseActorType::AI)
+		Request->ObjectParams.AddObjectTypesToQuery(ECC_Pawn);
+
+	Request->Params.AddIgnoredActor(this);
+
+	Request->ReplacePending = true;
+	Request->PendingId		= Info.TraceRequestId_MeToActorHead;
+
+	Manager_Trace->Trace(Request);
+}
+
+void ACsPlayerPawn::Async_Sense_TraceViewToActorHead_Response(const uint8 &RequestId, FCsTraceResponse* Response)
+{
+	FCsSenseInfo* InfoPtr = SenseTraceRequestMap[RequestId];
+	FCsSenseInfo& Info    = *InfoPtr;
+
+	SenseTraceRequestMap.Remove(RequestId);
+
+	Info.TraceRequestId_MeToActorHead = CS_INVALID_TRACE_REQUEST_ID;
+
+	if (!Info.bSeesActorByDot)
+		return;
+	if (!Response->bResult)
+		return;
+
+	ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
+	ACsAIPawn* Pawn			= GameState->GetAIPawn(Info.Id);
+
+	for (FHitResult& Hit : Response->OutHits)
+	{
+		// AI
+		if (Info.ActorType == ECsSenseActorType::AI)
+		{
+			ACsAIPawn* P = Cast<ACsAIPawn>(Hit.GetActor());
+
+			if (Pawn == P)
+			{
+				Info.SetSeesActor(true);
+				Info.SetSeesActorHead(true);
+
+				Info.LastTime_SeesActor		= GetWorld()->GetTimeSeconds();
+				Info.LastTime_SeesActorHead = GetWorld()->GetTimeSeconds();
+				return;
+			}
+		}
+	}
+}
+
+#pragma endregion Sense
 
 // Managers
 #pragma region

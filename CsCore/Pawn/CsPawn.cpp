@@ -12,11 +12,13 @@
 #include "Data/CsData_CharacterMaterialSkin.h"
 // Managers
 #include "Managers/Inventory/CsManager_Inventory.h"
-
+// UI
 #include "UI/State/CsHealthBarComponent.h"
-
+// Game
 #include "Game/CsGameInstance.h"
+// Player
 #include "Player/CsPlayerStateBase.h"
+// Weapon
 #include "Weapon/CsWeapon.h"
 
 // Enums
@@ -33,6 +35,7 @@ EMCsPawnRoutine& EMCsPawnRoutine::Get()
 
 namespace ECsPawnRoutine
 {
+	CSCORE_API const FECsPawnRoutine CheckLinkedToPlayerState_Internal = EMCsPawnRoutine::Get().Create(TEXT("CheckLinkedToPlayerState_Internal"));
 	CSCORE_API const FECsPawnRoutine HandleRespawnTimer_Internal = EMCsPawnRoutine::Get().Create(TEXT("HandleRespawnTimer_Internal"));
 }
 
@@ -46,12 +49,14 @@ namespace ECsPawnCached
 	namespace Name
 	{
 		// Functions
+		const FName CheckLinkedToPlayerState_Internal = FName("ACsPawn::CheckLinkedToPlayerState_Internal");
 		const FName HandleRespawnTimer_Internal = FName("ACsPawn::HandleRespawnTimer_Internal");
 	};
 
 	namespace Str
 	{
 		// Functions
+		const FString CheckLinkedToPlayerState_Internal = TEXT("ACsPawn::CheckLinkedToPlayerState_Internal");
 		const FString HandleRespawnTimer_Internal = TEXT("ACsPawn::HandleRespawnTimer_Internal");
 	};
 }
@@ -77,6 +82,19 @@ ACsPawn::ACsPawn(const FObjectInitializer& ObjectInitializer)
 	// Weapon
 	CurrentWeaponSlotHandle.Set(&CurrentWeaponSlot);
 	CurrentWeaponSlotHandle.OnChange_Event.AddUObject(this, &ACsPawn::OnChange_CurrentWeaponSlot);
+	// Sense
+	{
+		const int32& Count = EMCsSenseActorType::Get().Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const FECsSenseActorType& Enum = EMCsSenseActorType::Get().GetEnumAt(I);
+
+			TMap<uint8, FCsSenseInfo> Map;
+			SenseMap.Add(Enum, Map);
+		}
+		SenseTraceToAIInterval = 0.1f;
+	}
 }
 
 void ACsPawn::OnConstructor(const FObjectInitializer& ObjectInitializer)
@@ -106,6 +124,7 @@ void ACsPawn::PostActorCreated()
 	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
 	UniqueObjectId				  = GameInstance->GetUniqueObjectId();
 
+	// Spawn Weapons
 	FActorSpawnParameters SpawnInfo;
 	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnInfo.ObjectFlags |= RF_Transient;
@@ -115,6 +134,8 @@ void ACsPawn::PostActorCreated()
 		Weapons[I] = GetWorld()->SpawnActor<ACsWeapon>(WeaponClass, SpawnInfo);
 		Weapons[I]->SetMyPawn(this);
 	}
+	// Check PlayerState
+	CheckLinkedToPlayerState();
 }
 
 void ACsPawn::Destroyed()
@@ -148,6 +169,48 @@ void ACsPawn::PostTick(const float &DeltaSeconds){}
 
 void ACsPawn::OnTickActor_HandleCVars(const float &DeltaSeconds) {};
 
+// Setup
+#pragma region
+
+void ACsPawn::CheckLinkedToPlayerState()
+{
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	FCsCoroutinePayload* Payload = Scheduler->AllocatePayload();
+
+	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+
+	Payload->Schedule		= Schedule;
+	Payload->Function		= &ACsPawn::CheckLinkedToPlayerState_Internal;
+	Payload->Actor			= this;
+	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
+	Payload->Add			= &ACsPawn::AddRoutine;
+	Payload->Remove			= &ACsPawn::RemoveRoutine;
+	Payload->Type			= ECsPawnRoutine::CheckLinkedToPlayerState_Internal.Value;
+	Payload->DoInit			= true;
+	Payload->PerformFirstRun = false;
+	Payload->Name			= ECsPawnCached::Name::CheckLinkedToPlayerState_Internal;
+	Payload->NameAsString	= ECsPawnCached::Str::CheckLinkedToPlayerState_Internal;
+
+	FCsRoutine* R = Scheduler->Allocate(Payload);
+
+	Scheduler->StartRoutine(Schedule, R);
+}
+
+CS_COROUTINE(ACsPawn, CheckLinkedToPlayerState_Internal)
+{
+	ACsPawn* p			   = r->GetActor<ACsPawn>();
+	ACsPlayerStateBase* ps = Cast<ACsPlayerStateBase>(p->PlayerState);
+
+	CS_COROUTINE_BEGIN(r);
+
+	CS_COROUTINE_WAIT_UNTIL(r, ps);
+
+	ps->LinkedPawn = p;
+	ps->OnLinkedPawnSet_Event.Broadcast(ps);
+
+	CS_COROUTINE_END(r);
+}
+
 bool ACsPawn::IsOnBoardCompleted_Game()
 {
 	ACsPlayerStateBase* MyPlayerState = Cast<ACsPlayerStateBase>(PlayerState);
@@ -158,6 +221,8 @@ bool ACsPawn::IsOnBoardCompleted_Game()
 }
 
 void ACsPawn::OnTick_HandleSetup() {}
+
+#pragma endregion Setup
 
 // State
 #pragma region
@@ -208,6 +273,8 @@ void ACsPawn::Die()
 
 	// Spawn
 #pragma region
+
+void ACsPawn::OnFirstSpawn(){}
 
 void ACsPawn::HandleRespawnTimer()
 {
@@ -273,6 +340,12 @@ bool ACsPawn::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
 {
 	const FECsPawnRoutine& RoutineType = EMCsPawnRoutine::Get()[Type];
 
+	// CheckLinkedToPlayerState_Internal
+	if (RoutineType == ECsPawnRoutine::CheckLinkedToPlayerState_Internal)
+	{
+		CheckLinkedToPlayerState_Internal_Routine = Routine;
+		return true;
+	}
 	// HandleRespawnTimer_Internal
 	if (RoutineType == ECsPawnRoutine::HandleRespawnTimer_Internal)
 	{
@@ -291,6 +364,13 @@ bool ACsPawn::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Ty
 {
 	const FECsPawnRoutine& RoutineType = EMCsPawnRoutine::Get()[Type];
 
+	// CheckLinkedToPlayerState_Internal
+	if (RoutineType == ECsPawnRoutine::CheckLinkedToPlayerState_Internal)
+	{
+		check(CheckLinkedToPlayerState_Internal_Routine == Routine);
+		CheckLinkedToPlayerState_Internal_Routine = nullptr;
+		return true;
+	}
 	// HandleRespawnTimer_Internal
 	if (RoutineType == ECsPawnRoutine::HandleRespawnTimer_Internal)
 	{
@@ -468,6 +548,14 @@ void ACsPawn::ApplyData_Weapon(){}
 void ACsPawn::OnRespawn_Setup_Weapon(){}
 
 #pragma endregion Weapons
+
+// Sense
+#pragma region
+
+void ACsPawn::OnTick_CheckSenses(const float &DeltaSeconds){}
+void ACsPawn::Sense_CheckMeToActorDot(FCsSenseInfo& Info){}
+
+#pragma endregion Sense
 
 // Managers
 #pragma region

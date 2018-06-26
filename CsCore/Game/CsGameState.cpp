@@ -94,6 +94,20 @@ namespace ECsGameStateOnBoardState
 	}
 }
 
+EMCsGameStateRoutine* EMCsGameStateRoutine::Instance;
+
+EMCsGameStateRoutine& EMCsGameStateRoutine::Get()
+{
+	if (!Instance)
+		Instance = new EMCsGameStateRoutine();
+	return *Instance;
+}
+
+namespace ECsGameStateRoutine
+{
+	CSCORE_API const FECsGameStateRoutine OnBoard_Internal = EMCsGameStateRoutine::Get().Create(TEXT("OnBoard_Internal"));
+}
+
 #pragma endregion Enums
 
 ACsGameState::ACsGameState(const FObjectInitializer& ObjectInitializer)
@@ -269,7 +283,7 @@ void ACsGameState::SeamlessTravelTransitionCheckpoint(bool bToTransitionMap)
 
 bool ACsGameState::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
 {
-	const TCsGameStateRoutine RoutineType = (TCsGameStateRoutine)Type;
+	const FECsGameStateRoutine& RoutineType = EMCsGameStateRoutine::Get().GetEnumAt(Type);
 
 	// OnBoard_Internal
 	if (RoutineType == ECsGameStateRoutine::OnBoard_Internal)
@@ -287,7 +301,7 @@ bool ACsGameState::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &
 
 bool ACsGameState::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
 {
-	const TCsGameStateRoutine RoutineType = (TCsGameStateRoutine)Type;
+	const FECsGameStateRoutine& RoutineType = EMCsGameStateRoutine::Get().GetEnumAt(Type);
 
 	// OnBoard_Internal
 	if (RoutineType == ECsGameStateRoutine::OnBoard_Internal)
@@ -317,7 +331,7 @@ void ACsGameState::OnBoard()
 	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
 	Payload->Add			= &ACsGameState::AddRoutine;
 	Payload->Remove			= &ACsGameState::RemoveRoutine;
-	Payload->Type			= (uint8)ECsGameStateRoutine::OnBoard_Internal;
+	Payload->Type			= ECsGameStateRoutine::OnBoard_Internal.Value;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			= ECsGameStateCached::Name::OnBoard_Internal;

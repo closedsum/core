@@ -78,44 +78,43 @@ namespace ECsGameStateOnBoardState
 	}
 }
 
-namespace ECsGameStateRoutine
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsGameStateRoutine : public FECsEnum_uint8
 {
-	enum Type
-	{
-		OnBoard_Internal,
-		ECsGameStateRoutine_MAX,
-	};
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsGameStateRoutine() {}
+	FECsGameStateRoutine(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsGameStateRoutine(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsGameStateRoutine() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsGameStateRoutine& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-#define ECS_ROUTINE_GAME_STATE_MAX (uint8)ECsGameStateRoutine::ECsGameStateRoutine_MAX
-typedef ECsGameStateRoutine::Type TCsGameStateRoutine;
+struct CSCORE_API EMCsGameStateRoutine : public TCsEnumStructMap<FECsGameStateRoutine, uint8>
+{
+protected:
+	EMCsGameStateRoutine() {}
+	EMCsGameStateRoutine(const EMCsGameStateRoutine &) = delete;
+	EMCsGameStateRoutine(EMCsGameStateRoutine &&) = delete;
+public:
+	~EMCsGameStateRoutine() {}
+private:
+	static EMCsGameStateRoutine* Instance;
+
+public:
+	static EMCsGameStateRoutine& Get();
+};
 
 namespace ECsGameStateRoutine
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-		const TCsString OnBoard_Internal = TCsString(TEXT("OnBoard_Internal"), TEXT("onboard_internal"), TEXT("onboard internal"));
-	}
-
-	namespace Ref
-	{
-		const TCsGameStateRoutine OnBoard_Internal = Type::OnBoard_Internal;
-		const TCsGameStateRoutine ECsGameStateRoutine_MAX = Type::ECsGameStateRoutine_MAX;
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::OnBoard_Internal) { return Str::OnBoard_Internal.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE const Type& ToType(const FString &String)
-	{
-		if (String == Str::OnBoard_Internal) { return Ref::OnBoard_Internal; }
-		return Ref::ECsGameStateRoutine_MAX;
-	}
+	extern CSCORE_API const FECsGameStateRoutine OnBoard_Internal;
 }
 
 #pragma endregion Enums

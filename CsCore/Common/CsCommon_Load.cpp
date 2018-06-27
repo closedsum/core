@@ -15,6 +15,7 @@
 #include "Types/CsTypes_Item.h"
 #include "Types/CsTypes_Recipe.h"
 #include "Types/CsTypes_Math.h"
+#include "Types/CsTypes_Sense.h"
 #include "CsCVars.h"
 
 #include "Data/CsData.h"
@@ -912,6 +913,16 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 		// Map
 		if (UMapProperty* MapProperty = Cast<UMapProperty>(*It))
 		{
+			UStructProperty* KeyStructProp = Cast<UStructProperty>(MapProperty->KeyProp);
+			UFloatProperty* ValueFloatProp = Cast<UFloatProperty>(MapProperty->ValueProp);
+
+			if (KeyStructProp && ValueFloatProp)
+			{
+				// FECsSenseActorType, float
+				if (KeyStructProp->Struct == FECsSenseActorType::StaticStruct())
+				{ WriteMemberMapStructPropertyToJson_EnumStructKey_NumericValue<FECsSenseActorType, float>(InJsonWriter, MapProperty, InStruct, MemberName, Internal); continue; }
+			}
+
 			if (Internal)
 			{
 				if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
@@ -1656,6 +1667,16 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 		// Map
 		if (UMapProperty* MapProperty = Cast<UMapProperty>(*It))
 		{
+			UStructProperty* KeyStructProp = Cast<UStructProperty>(MapProperty->KeyProp);
+			UFloatProperty* ValueFloatProp = Cast<UFloatProperty>(MapProperty->ValueProp);
+
+			if (KeyStructProp && ValueFloatProp)
+			{
+				// FECsSenseActorType, float
+				if (KeyStructProp->Struct == FECsSenseActorType::StaticStruct())
+				{ WriteMemberMapStructPropertyToJson_EnumStructKey_NumericValue<FECsSenseActorType, float>(InJsonWriter, MapProperty, InStruct, MemberName, Internal); continue; }
+			}
+
 			if (Internal)
 			{
 				if ((*Internal)(Property, InJsonWriter, InStruct, InScriptStruct))
@@ -2167,6 +2188,9 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				if (WriteObjectToJson_Internal_Helper(Internal, Property, InJsonWriter, InObject, InClass)) { continue; }
 				continue;
 			}
+			// FCsSenseData
+			if (StructProperty->Struct == FCsSenseData::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsSenseData>(InJsonWriter, StructProperty, InObject, MemberName, true, nullptr); continue; }
 
 			// EnumStruct
 			{
@@ -3200,6 +3224,16 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 		// Map
 		if (UMapProperty* MapProperty = Cast<UMapProperty>(*It))
 		{
+			UStructProperty* KeyStructProp = Cast<UStructProperty>(MapProperty->KeyProp);
+			UFloatProperty* ValueFloatProp = Cast<UFloatProperty>(MapProperty->ValueProp);
+
+			if (KeyStructProp && ValueFloatProp)
+			{
+				// FECsSenseActorType, float
+				if (KeyStructProp->Struct == FECsSenseActorType::StaticStruct())
+				{ WriteToMemberMapStructPropertyFromJson_EnumStructKey_NumericValue<FECsSenseActorType, float>(JsonObject, MapProperty, InStruct, MemberName, Internal); continue; }
+			}
+
 			if (Internal)
 			{
 				if ((*Internal)(Property, JsonObject, InStruct, InScriptStruct))
@@ -3813,7 +3847,7 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsPayload
 			if (StructProperty->Struct == FCsPayload::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsPayload>(JsonObject, StructProperty, InStruct, MemberName); continue; }
-			
+
 			// EnumStruct
 			{
 				// FECsAssetType
@@ -3984,6 +4018,16 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 		// Map
 		if (UMapProperty* MapProperty = Cast<UMapProperty>(*It))
 		{
+			UStructProperty* KeyStructProp = Cast<UStructProperty>(MapProperty->KeyProp);
+			UFloatProperty* ValueFloatProp = Cast<UFloatProperty>(MapProperty->ValueProp);
+
+			if (KeyStructProp && ValueFloatProp)
+			{
+				// FECsSenseActorType, float
+				if (KeyStructProp->Struct == FECsSenseActorType::StaticStruct())
+				{ WriteToMemberMapStructPropertyFromJson_EnumStructKey_NumericValue<FECsSenseActorType, float>(JsonObject, MapProperty, InStruct, MemberName, Internal); continue; }
+			}
+
 			if (Internal)
 			{
 				if ((*Internal)(Property, JsonObject, InStruct, InScriptStruct))
@@ -4541,6 +4585,9 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				if (ReadObjectFromJson_Internal_Helper(Internal, Property, JsonObject, InObject, InClass)) { continue; }
 				continue;
 			}
+			// FCsSenseData
+			if (StructProperty->Struct == FCsSenseData::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsSenseData>(JsonObject, StructProperty, InObject, MemberName); continue; }
 
 			// EnumStruct
 			{

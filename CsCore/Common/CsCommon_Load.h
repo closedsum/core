@@ -551,7 +551,7 @@ template<typename T>
 	}
 
 	template<typename KeyType, typename ValueType>
-	static void WriteMemberMapStructPropertyToJson_EnumStructKey(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UMapProperty* &MapProperty, void* InObject, const FString &MemberName, TCsWriteStructToJson_Internal Internal = nullptr)
+	static void WriteMemberMapStructPropertyToJson_EnumStructKey_StructValue(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UMapProperty* &MapProperty, void* InObject, const FString &MemberName, TCsWriteStructToJson_Internal Internal = nullptr)
 	{
 		TMap<KeyType, ValueType>* Member = MapProperty->ContainerPtrToValuePtr<TMap<KeyType, ValueType>>(InObject);
 
@@ -567,6 +567,23 @@ template<typename T>
 			InJsonWriter->WriteObjectStart(Key.Name);
 				WriteStructToJson(InJsonWriter, (void*)&((*Member)[Key]), StructProperty->Struct, Internal);
 			InJsonWriter->WriteObjectEnd();
+		}
+		InJsonWriter->WriteObjectEnd();
+	}
+
+	template<typename KeyType, typename ValueType>
+	static void WriteMemberMapStructPropertyToJson_EnumStructKey_NumericValue(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UMapProperty* &MapProperty, void* InObject, const FString &MemberName, TCsWriteStructToJson_Internal Internal = nullptr)
+	{
+		TMap<KeyType, ValueType>* Member = MapProperty->ContainerPtrToValuePtr<TMap<KeyType, ValueType>>(InObject);
+
+		InJsonWriter->WriteObjectStart(MemberName);
+
+		TArray<KeyType> Keys;
+		Member->GetKeys(Keys);
+
+		for (const KeyType& Key : Keys)
+		{
+			InJsonWriter->WriteValue(Key.Name, (*Member)[Key]);
 		}
 		InJsonWriter->WriteObjectEnd();
 	}
@@ -860,7 +877,7 @@ template<typename T>
 	}
 
 	template<typename KeyType, typename ValueType>
-	static void WriteToMemberMapStructPropertyFromJson_EnumStructKey(TSharedPtr<class FJsonObject> &JsonObject, UMapProperty* &MapProperty, void* InObject, const FString &MemberName, TCsReadStructFromJson_Internal Internal = nullptr)
+	static void WriteToMemberMapStructPropertyFromJson_EnumStructKey_StructValue(TSharedPtr<class FJsonObject> &JsonObject, UMapProperty* &MapProperty, void* InObject, const FString &MemberName, TCsReadStructFromJson_Internal Internal = nullptr)
 	{
 		TMap<KeyType, ValueType>* Member = MapProperty->ContainerPtrToValuePtr<TMap<KeyType, ValueType>>(InObject);
 
@@ -876,6 +893,22 @@ template<typename T>
 			TSharedPtr<FJsonObject> Object = JsonObjects->GetObjectField(Key.Name);
 
 			ReadStructFromJson(Object, (void*)&((*Member)[Key]), StructProperty->Struct, Internal);
+		}
+	}
+
+	template<typename KeyType, typename ValueType>
+	static void WriteToMemberMapStructPropertyFromJson_EnumStructKey_NumericValue(TSharedPtr<class FJsonObject> &JsonObject, UMapProperty* &MapProperty, void* InObject, const FString &MemberName, TCsReadStructFromJson_Internal Internal = nullptr)
+	{
+		TMap<KeyType, ValueType>* Member = MapProperty->ContainerPtrToValuePtr<TMap<KeyType, ValueType>>(InObject);
+
+		const TSharedPtr<FJsonObject> JsonObjects = JsonObject->GetObjectField(MemberName);
+
+		TArray<KeyType> Keys;
+		Member->GetKeys(Keys);
+
+		for (const KeyType& Key : Keys)
+		{
+			(*Member)[Key] = (ValueType)JsonObjects->GetNumberField(Key.Name);
 		}
 	}
 

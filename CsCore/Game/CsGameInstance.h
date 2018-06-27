@@ -252,6 +252,8 @@ public:
 
 #pragma endregion Mouse Cursor
 
+public:
+
 	DECLARE_MULTICAST_DELEGATE(OnBoardCompleted);
 
 	OnBoardCompleted OnBoardCompleted_Event;
@@ -299,6 +301,8 @@ public:
 
 #pragma endregion Level
 
+public:
+
 	virtual void ExitGame();
 
 // Object
@@ -309,6 +313,40 @@ public:
 	uint64 UniqueObjectIdIndex;
 
 	uint64 GetUniqueObjectId();
+
+	TMap<uint64, TWeakObjectPtr<UObject>> ObjectMap;
+	TMap<uint64, TWeakObjectPtr<AActor>> ActorMap;
+
+	uint64 RegisterUniqueObject(UObject* InObject);
+	void UnregisterUniqueObject(const uint64 &Id);
+
+	UObject* GetUniqueObjectById(const uint64 &Id);
+	template<typename T>
+	T* GetUniqueObjectById(const uint64 &Id)
+	{
+		return Cast<T>(GetUniqueObjectById(Id));
+	}
+
+	UObject* GetSafeUniqueObjectById(const uint64 &Id);
+	template<typename T>
+	T* GetSafeUniqueObjectById(const uint64 &Id)
+	{
+		return Cast<T>(GetSafeUniqueObjectById(Id));
+	}
+
+	AActor* GetUniqueActorById(const uint64 &Id);
+	template<typename T>
+	T* GetUniqueActorById(const uint64 &Id)
+	{
+		return Cast<T>(GetUniqueActorById(Id));
+	}
+
+	AActor* GetSafeUniqueActorById(const uint64 &Id);
+	template<typename T>
+	T* GetSafeUniqueActorById(const uint64 &Id)
+	{
+		return Cast<T>(GetSafeUniqueActorById(Id));
+	}
 
 #pragma endregion Object
 };

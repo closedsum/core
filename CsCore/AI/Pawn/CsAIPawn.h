@@ -241,7 +241,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player")
 	TArray<FCsAISenseInfo_Player> PlayerSenseInfos;
 
-	virtual void OnTick_CheckSenses(const float &DeltaSeconds) override;
+	void OnTick_CheckSenses(const float &DeltaSeconds);
 	void OnTick_CalculateMeToPlayerDot(FCsAISenseInfo_Player& Info);
 	void OnTick_CheckSeesPlayer(FCsAISenseInfo_Player& Info);
 	void OnTick_CheckSeesPlayerBody(FCsAISenseInfo_Player& Info);

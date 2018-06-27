@@ -269,7 +269,7 @@ public:
 };
 
 // PostEditChangeProperty FCsWidgetActorInfo
-#define CS_PECEP_FCS_WIDGET_ACTOR_INFO(e, PropertyName, MemberName)	if (UStructProperty* StructProperty = Cast<UStructProperty>(e.MemberProperty)) \
+#define CS_PECP_FCS_WIDGET_ACTOR_INFO(e, PropertyName, MemberName)	if (UStructProperty* StructProperty = Cast<UStructProperty>(e.MemberProperty)) \
 																	{ \
 																		if (StructProperty->Struct == FCsWidgetActorInfo::StaticStruct()) \
 																		{ \
@@ -382,7 +382,7 @@ public:
 };
 
 // PostEditChangeProperty FCsWidgetComponentInfo
-#define CS_PECEP_FCS_WIDGET_COMPONENT_INFO(e, PropertyName, MemberName)	if (UStructProperty* StructProperty = Cast<UStructProperty>(e.MemberProperty)) \
+#define CS_PECP_FCS_WIDGET_COMPONENT_INFO(e, PropertyName, MemberName)	if (UStructProperty* StructProperty = Cast<UStructProperty>(e.MemberProperty)) \
 																		{ \
 																			if (StructProperty->Struct == FCsWidgetComponentInfo::StaticStruct()) \
 																			{ \

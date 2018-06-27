@@ -501,9 +501,6 @@ public:
 #pragma region
 public:
 
-	TMap<FECsSenseActorType, TMap<uint8, FCsSenseInfo>> SenseMap;
-	TMap<uint8, FCsSenseInfo*> SenseTraceRequestMap;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
 	float SenseViewMinDot;
 
@@ -513,9 +510,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float SenseTraceToAIInterval;
 
-	virtual void OnTick_CheckSenses(const float &DeltaSeconds);
-	virtual void Sense_CheckMeToActorDot(FCsSenseInfo& Info);
-
 #pragma endregion Sense
 
 // Managers
@@ -523,6 +517,9 @@ public:
 public:
 
 	virtual class ACsManager_Inventory* GetMyManager_Inventory();
+
+	UPROPERTY()
+	class ACsManager_Sense* Manager_Sense;
 
 #pragma endregion Managers
 };

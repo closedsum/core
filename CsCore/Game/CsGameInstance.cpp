@@ -718,4 +718,45 @@ uint64 UCsGameInstance::GetUniqueObjectId()
 	return UniqueObjectIdIndex;
 }
 
+uint64 UCsGameInstance::RegisterUniqueObject(UObject* InObject)
+{
+	const uint64 Id = GetUniqueObjectId();
+
+	ObjectMap.Add(Id, InObject);
+
+	if (AActor* Actor = Cast<AActor>(InObject))
+		ActorMap.Add(Id, Actor);
+	return Id;
+}
+
+void UCsGameInstance::UnregisterUniqueObject(const uint64 &Id)
+{
+	ObjectMap.Remove(Id);
+	ActorMap.Remove(Id);
+}
+
+UObject* UCsGameInstance::GetUniqueObjectById(const uint64 &Id)
+{
+	return ObjectMap[Id].IsValid() ? ObjectMap[Id].Get() : nullptr;
+}
+
+UObject* UCsGameInstance::GetSafeUniqueObjectById(const uint64 &Id)
+{
+	if (!ObjectMap.Find(Id))
+		return nullptr;
+	return GetUniqueObjectById(Id);
+}
+
+AActor* UCsGameInstance::GetUniqueActorById(const uint64 &Id)
+{
+	return ActorMap[Id].IsValid() ? ActorMap[Id].Get() : nullptr;
+}
+
+AActor* UCsGameInstance::GetSafeUniqueActorById(const uint64 &Id)
+{
+	if (!ActorMap.Find(Id))
+		return nullptr;
+	return GetUniqueActorById(Id);
+}
+
 #pragma endregion Object

@@ -187,6 +187,17 @@ void ACsWeapon::PostActorCreated()
 	UniqueObjectId				  = GameInstance->GetUniqueObjectId();
 }
 
+void ACsWeapon::Destroyed()
+{
+	Super::Destroyed();
+
+	if (UCsCommon::IsPlayInEditor(GetWorld()) || UCsCommon::IsPlayInEditorPreview(GetWorld()))
+		return;
+
+	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+	GameInstance->UnregisterUniqueObject(UniqueObjectId);
+}
+
 // Members
 #pragma region
 

@@ -1440,7 +1440,7 @@ struct CSCORE_API FCsPhysicsImpulse
 };
 
 // PostEditChangeProperty FCsPhysicsImpulse
-#define CS_PECEP_FCS_PHYSICS_IMPULSE(e, PropertyName, MemberName)	if (UStructProperty* StructProperty = Cast<UStructProperty>(e.MemberProperty)) \
+#define CS_PECP_FCS_PHYSICS_IMPULSE(e, PropertyName, MemberName)	if (UStructProperty* StructProperty = Cast<UStructProperty>(e.MemberProperty)) \
 																	{ \
 																		if (StructProperty->Struct == FCsPhysicsImpulse::StaticStruct()) \
 																		{ \

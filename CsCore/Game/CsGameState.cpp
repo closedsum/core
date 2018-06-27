@@ -778,9 +778,27 @@ ACsPlayerState* ACsGameState::GetPlayerState(const uint8 &MappingId)
 	return (*PlayerStatePtr).IsValid() ? (*PlayerStatePtr).Get() : nullptr;
 }
 
+ACsPlayerState* ACsGameState::GetSafePlayerState(const uint8 &MappingId)
+{
+	TWeakObjectPtr<ACsPlayerState>* PlayerStatePtr = PlayerStateMappings.Find(MappingId);
+
+	if (!PlayerStatePtr)
+		return nullptr;
+	return (*PlayerStatePtr).IsValid() ? (*PlayerStatePtr).Get() : nullptr;
+}
+
 ACsPlayerPawn* ACsGameState::GetPlayerPawn(const uint8 &MappingId)
 {
 	ACsPlayerState* PlayerState = GetPlayerState(MappingId);
+
+	if (!PlayerState)
+		return nullptr;
+	return PlayerState->GetMyPawn<ACsPlayerPawn>();
+}
+
+ACsPlayerPawn* ACsGameState::GetSafePlayerPawn(const uint8 &MappingId)
+{
+	ACsPlayerState* PlayerState = GetSafePlayerState(MappingId);
 
 	if (!PlayerState)
 		return nullptr;
@@ -805,6 +823,31 @@ void ACsGameState::GetSpawnedAndActivePlayerPawns(TArray<class ACsPlayerPawn*>& 
 			continue;
 
 		OutPawns.Add(Pawn);
+	}
+}
+
+void ACsGameState::GetPlayerStates(TArray<ACsPlayerState*>& OutPlayerStates)
+{
+	TArray<uint8> Keys;
+	PlayerStateMappings.GetKeys(Keys);
+
+	for (const uint8& Key : Keys)
+	{
+		OutPlayerStates.Add(GetPlayerState(Key));
+	}
+}
+
+void ACsGameState::GetPlayerPawns(TArray<ACsPlayerPawn*>& OutPawns)
+{
+	TArray<uint8> Keys;
+	PlayerStateMappings.GetKeys(Keys);
+
+	for (const uint8& Key : Keys)
+	{
+		ACsPlayerState* PlayerState = GetPlayerState(Key);
+
+		if (ACsPlayerPawn* Pawn = PlayerState->GetMyPawn<ACsPlayerPawn>())
+			OutPawns.Add(Pawn);
 	}
 }
 
@@ -939,11 +982,9 @@ class ACsAIPlayerState* ACsGameState::GetAIPlayerState(const uint8 &MappingId)
 
 class ACsAIPlayerState* ACsGameState::GetSafeAIPlayerState(const uint8 &MappingId)
 {
-	TWeakObjectPtr<ACsAIPlayerState>* PlayerStatePtr = AIPlayerStateMappings.Find(MappingId);
-
-	if (!PlayerStatePtr)
+	if (!AIPlayerStateMappings.Find(MappingId))
 		return nullptr;
-	return (*PlayerStatePtr).IsValid() ? (*PlayerStatePtr).Get() : nullptr;
+	return GetAIPlayerState(MappingId);
 }
 
 ACsAIPawn* ACsGameState::GetAIPawn(const uint8 &MappingId)
@@ -972,6 +1013,20 @@ void ACsGameState::GetAIPlayerStates(TArray<ACsAIPlayerState*>& OutPlayerStates)
 	for (const uint8& Key : Keys)
 	{
 		OutPlayerStates.Add(GetAIPlayerState(Key));
+	}
+}
+
+void ACsGameState::GetAIPawns(TArray<ACsAIPawn*>& OutPawns)
+{
+	TArray<uint8> Keys;
+	AIPlayerStateMappings.GetKeys(Keys);
+
+	for (const uint8& Key : Keys)
+	{
+		ACsAIPlayerState* PlayerState = GetAIPlayerState(Key);
+
+		if (ACsAIPawn* Pawn = PlayerState->GetMyPawn<ACsAIPawn>())
+			OutPawns.Add(Pawn);
 	}
 }
 

@@ -12,6 +12,7 @@
 #include "Data/CsData_CharacterMaterialSkin.h"
 // Managers
 #include "Managers/Inventory/CsManager_Inventory.h"
+#include "Managers/Sense/CsManager_Sense.h"
 // UI
 #include "UI/State/CsHealthBarComponent.h"
 // Game
@@ -83,18 +84,7 @@ ACsPawn::ACsPawn(const FObjectInitializer& ObjectInitializer)
 	CurrentWeaponSlotHandle.Set(&CurrentWeaponSlot);
 	CurrentWeaponSlotHandle.OnChange_Event.AddUObject(this, &ACsPawn::OnChange_CurrentWeaponSlot);
 	// Sense
-	{
-		const int32& Count = EMCsSenseActorType::Get().Num();
-
-		for (int32 I = 0; I < Count; ++I)
-		{
-			const FECsSenseActorType& Enum = EMCsSenseActorType::Get().GetEnumAt(I);
-
-			TMap<uint8, FCsSenseInfo> Map;
-			SenseMap.Add(Enum, Map);
-		}
-		SenseTraceToAIInterval = 0.1f;
-	}
+	SenseTraceToAIInterval = 0.1f;
 }
 
 void ACsPawn::OnConstructor(const FObjectInitializer& ObjectInitializer)
@@ -122,7 +112,7 @@ void ACsPawn::PostActorCreated()
 		return;
 
 	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
-	UniqueObjectId				  = GameInstance->GetUniqueObjectId();
+	UniqueObjectId				  = GameInstance->RegisterUniqueObject(this);
 
 	// Spawn Weapons
 	FActorSpawnParameters SpawnInfo;
@@ -142,11 +132,17 @@ void ACsPawn::Destroyed()
 {
 	Super::Destroyed();
 
+	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+	GameInstance->UnregisterUniqueObject(UniqueObjectId);
+
 	for (int32 I = 0; I < MaxWeaponCount; I++)
 	{
 		if (!Weapons[I] && !Weapons[I]->IsPendingKill())
 			Weapons[I]->Destroy();
 	}
+
+	if (!Manager_Sense && !Manager_Sense->IsPendingKill())
+		Manager_Sense->Destroy();
 }
 
 void ACsPawn::PostInitializeComponents()
@@ -551,9 +547,6 @@ void ACsPawn::OnRespawn_Setup_Weapon(){}
 
 // Sense
 #pragma region
-
-void ACsPawn::OnTick_CheckSenses(const float &DeltaSeconds){}
-void ACsPawn::Sense_CheckMeToActorDot(FCsSenseInfo& Info){}
 
 #pragma endregion Sense
 

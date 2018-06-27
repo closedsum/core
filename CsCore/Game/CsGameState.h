@@ -356,6 +356,7 @@ public:
 	TMap<uint8, TArray<FCsPlayerStateMappingRelationship>> PlayerStateMappingRelationships;
 	TMap<uint8, bool> HasPlayerStateFullyReplicatedAndLoadedBroadcastFlags;
 
+	UFUNCTION(BlueprintCallable, Category = "Player State")
 	class ACsPlayerState* GetPlayerState(const uint8 &MappingId);
 	template<typename T>
 	T* GetPlayerState(const uint8 &MappingId)
@@ -363,6 +364,15 @@ public:
 		return Cast<T>(GetPlayerState(MappingId));
 	}
 
+	UFUNCTION(BlueprintCallable, Category = "Player State")
+	class ACsPlayerState* GetSafePlayerState(const uint8 &MappingId);
+	template<typename T>
+	T* GetSafePlayerState(const uint8 &MappingId)
+	{
+		return Cast<T>(GetSafePlayerState(MappingId));
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "Player State")
 	class ACsPlayerPawn* GetPlayerPawn(const uint8 &MappingId);
 	template<typename T>
 	T* GetPlayerPawn(const uint8& MappingId)
@@ -370,7 +380,20 @@ public:
 		return Cast<T>(GetPlayerPawn(MappingId));
 	}
 
+	UFUNCTION(BlueprintCallable, Category = "Player State")
+	class ACsPlayerPawn* GetSafePlayerPawn(const uint8 &MappingId);
+	template<typename T>
+	T* GetSafePlayerPawn(const uint8& MappingId)
+	{
+		return Cast<T>(GetSafePlayerPawn(MappingId));
+	}
+
 	void GetSpawnedAndActivePlayerPawns(TArray<class ACsPlayerPawn*>& OutPawns);
+
+	UFUNCTION(BlueprintCallable, Category = "Player State")
+	void GetPlayerStates(TArray<ACsPlayerState*>& OutPlayerStates);
+	UFUNCTION(BlueprintCallable, Category = "Player State")
+	void GetPlayerPawns(TArray<ACsPlayerPawn*>& OutPawns);
 
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerStateLinkedToPawn, class ACsPlayerState*);
 
@@ -403,6 +426,7 @@ public:
 	TMap<uint8, TArray<FCsAIPlayerStateMappingRelationship>> AIPlayerStateMappingRelationships;
 	TMap<uint8, bool> HasAIPlayerStateFullyReplicatedAndLoadedBroadcastFlags;
 
+	UFUNCTION(BlueprintCallable, Category = "Player State")
 	class ACsAIPlayerState* GetAIPlayerState(const uint8 &MappingId);
 	template<typename T>
 	T* GetAIPlayerState(const uint8 &MappingId)
@@ -410,6 +434,7 @@ public:
 		return Cast<T>(GetAIPlayerState(MappingId));
 	}
 
+	UFUNCTION(BlueprintCallable, Category = "Player State")
 	class ACsAIPlayerState* GetSafeAIPlayerState(const uint8 &MappingId);
 	template<typename T>
 	T* GetSafeAIPlayerState(const uint8 &MappingId)
@@ -417,6 +442,7 @@ public:
 		return Cast<T>(GetSafeAIPlayerState(MappingId));
 	}
 
+	UFUNCTION(BlueprintCallable, Category = "Player State")
 	class ACsAIPawn* GetAIPawn(const uint8 &MappingId);
 	template<typename T>
 	T* GetAIPawn(const uint8& MappingId)
@@ -424,6 +450,7 @@ public:
 		return Cast<T>(GetAIPawn(MappingId));
 	}
 
+	UFUNCTION(BlueprintCallable, Category = "Player State")
 	class ACsAIPawn* GetSafeAIPawn(const uint8 &MappingId);
 	template<typename T>
 	T* GetSafeAIPawn(const uint8& MappingId)
@@ -431,7 +458,10 @@ public:
 		return Cast<T>(GetSafeAIPawn(MappingId));
 	}
 
+	UFUNCTION(BlueprintCallable, Category = "Player State")
 	void GetAIPlayerStates(TArray<ACsAIPlayerState*>& OutPlayerStates);
+	UFUNCTION(BlueprintCallable, Category = "Player State")
+	void GetAIPawns(TArray<ACsAIPawn*>& OutPawns);
 
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnAIPlayerStateLinkedToPawn, class ACsAIPlayerState*);
 

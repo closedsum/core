@@ -100,10 +100,10 @@ struct FCsSenseInfo
 	TEnumAsByte<ECsSenseTeam::Type> Team;
 
 	/** TODO: Need to update UniqueObjectId to be FGuid in GameInstance */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
-	uint8 Id;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
-	uint8 ObserveeId;
+	UPROPERTY()
+	uint64 Id;
+	UPROPERTY()
+	uint64 ObserveeId;
 
 	// Me to Actor
 
@@ -133,31 +133,31 @@ struct FCsSenseInfo
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
 	bool bSeesActorByRadius;
 	TCsBool_Ref bSeesActorByRadiusHandle;
-	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnSeesActorByRadius, const uint8&, const uint8&, const bool&);
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnSeesActorByRadius, const uint64&, const uint64&, const bool&);
 	FOnSeesActorByRadius OnSeesActorByRadius_Event;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
 	bool bSeesActorByDot;
 	TCsBool_Ref bSeesActorByDotHandle;
-	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnSeesActorByDot, const uint8&, const uint8&, const bool&);
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnSeesActorByDot, const uint64&, const uint64&, const bool&);
 	FOnSeesActorByRadius OnSeesActorByDot_Event;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
 	bool bSeesActor;
 	TCsBool_Ref bSeesActorHandle;
-	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnSeesActor, const uint8&, const uint8&, const bool&);
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnSeesActor, const uint64&, const uint64&, const bool&);
 	FOnSeesActor OnSeesActor_Event;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
 	bool bSeesActorBody;
 	TCsBool_Ref bSeesActorBodyHandle;
-	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnSeesActorBody, const uint8&, const uint8&, const bool&);
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnSeesActorBody, const uint64&, const uint64&, const bool&);
 	FOnSeesActorBody OnSeesActorBody_Event;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
 	bool bSeesActorHead;
 	TCsBool_Ref bSeesActorHeadHandle;
-	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnSeesActorHead, const uint8&, const uint8&, const bool&);
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnSeesActorHead, const uint64&, const uint64&, const bool&);
 	FOnSeesActorHead OnSeesActorHead_Event;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
@@ -190,8 +190,8 @@ struct FCsSenseInfo
 	{
 		ActorType = EMCsSenseActorType::Get().GetMAX();
 		Team = ECsSenseTeam::Friendly;
-		Id = 255;
-		ObserveeId = 255;
+		Id = MAX_uint64;
+		ObserveeId = MAX_uint64;
 		MeToActorDir = FVector::ZeroVector;
 		MeToActorDistance = 0.0f;;
 		MeToActorDistanceSq = 0.0f;

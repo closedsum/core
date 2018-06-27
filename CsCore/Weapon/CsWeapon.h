@@ -237,6 +237,7 @@ class CSCORE_API ACsWeapon : public AActor
 	virtual void PostInitializeComponents() override;
 	virtual void OutsideWorldBounds() override;
 	virtual void PostActorCreated() override;
+	virtual void Destroyed() override;
 
 	UPROPERTY()
 	uint64 UniqueObjectId;

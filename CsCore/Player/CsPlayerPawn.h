@@ -84,17 +84,4 @@ public:
 	virtual class ACsManager_Inventory* GetMyManager_Inventory() override;
 
 #pragma endregion Managers
-
-// Sense
-#pragma region
-public:
-
-	virtual void OnTick_CheckSenses(const float &DeltaSeconds) override;
-	virtual void Sense_CheckMeToActorDot(FCsSenseInfo& Info) override;
-	virtual void Sense_TraceViewToActorBody(FCsSenseInfo& Info);
-	virtual void Async_Sense_TraceViewToActorBody_Response(const uint8 &RequestId, FCsTraceResponse* Response);
-	virtual void Sense_TraceViewToActorHead(FCsSenseInfo& Info);
-	virtual void Async_Sense_TraceViewToActorHead_Response(const uint8 &RequestId, FCsTraceResponse* Response);
-
-#pragma endregion Sense
 };

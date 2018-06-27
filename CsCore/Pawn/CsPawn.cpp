@@ -84,7 +84,12 @@ ACsPawn::ACsPawn(const FObjectInitializer& ObjectInitializer)
 	CurrentWeaponSlotHandle.Set(&CurrentWeaponSlot);
 	CurrentWeaponSlotHandle.OnChange_Event.AddUObject(this, &ACsPawn::OnChange_CurrentWeaponSlot);
 	// Sense
-	SenseTraceToAIInterval = 0.1f;
+	const int32& Count = EMCsSenseActorType::Get().Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		SenseTraceIntervals.Add(EMCsSenseActorType::Get().GetEnumAt(I), 0.1f);
+	}
 }
 
 void ACsPawn::OnConstructor(const FObjectInitializer& ObjectInitializer)

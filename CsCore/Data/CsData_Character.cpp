@@ -743,3 +743,14 @@ void ACsData_Character::StopAnimation(class UObject* InObject, const FECsCharact
 #pragma endregion Stop
 
 #pragma endregion Animation
+
+// Sense
+#pragma region
+
+const bool& ACsData_Character::GetUseSenseRadius() { return ECsCached::Ref::False; }
+const float& ACsData_Character::GetSenseRadius() { return ECsCached::Ref::Float; }
+const float& ACsData_Character::GetSenseRadiusSq() { return ECsCached::Ref::Float; }
+const float& ACsData_Character::GetSenseViewMinAngle() { return ECsCached::Ref::Float; }
+const float& ACsData_Character::GetSenseViewMinDot() { return ECsCached::Ref::Float; }
+
+#pragma endregion Sense

@@ -419,7 +419,7 @@ public:
 
 	virtual void OnChange_CurrentWeaponSlot(const FECsWeaponSlot &Slot);
 
-	UPROPERTY(BlueprintAssignable, Category = "Tick")
+	UPROPERTY(BlueprintAssignable, Category = "Weapons")
 	FBindableDynEvent_CsPawn_OnChangeCurrentWeaponSlot OnChange_CurrentWeaponSlot_ScriptEvent;
 
 	FBindableEvent_CsPawn_OnChangeCurrentWeaponSlot OnChange_CurrentWeaponSlot_Event;
@@ -435,6 +435,7 @@ public:
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Weapons")
 	TArray<class ACsWeapon*> Weapons;
 
+	UFUNCTION(BlueprintCallable, Category = "Weapons")
 	class ACsWeapon* GetWeapon(const FECsWeaponSlot &Slot);
 
 	template<typename T>
@@ -455,6 +456,7 @@ public:
 	UPROPERTY(Transient)
 	TArray<TWeakObjectPtr<class ACsData_Weapon>> Data_Weapons;
 
+	UFUNCTION(BlueprintCallable, Category = "Weapons")
 	class ACsData_Weapon* GetData_Weapon(const FECsWeaponSlot &Slot);
 	
 	template<typename T>
@@ -475,6 +477,7 @@ public:
 	UPROPERTY(Transient)
 	TArray<TWeakObjectPtr<class ACsData_WeaponMaterialSkin>> Data_WeaponMaterialSkins;
 
+	UFUNCTION(BlueprintCallable, Category = "Weapons")
 	class ACsData_WeaponMaterialSkin* GetData_WeaponMaterialSkin(const FECsWeaponSlot &Slot);
 
 	template<typename T>
@@ -501,7 +504,10 @@ public:
 #pragma region
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
+	UPROPERTY(EditAnywhere, Category = "Sense", meta = (InlineEditConditionToggle))
+	bool bSenseViewMinDot;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense", meta = (editcondition = "bSenseViewMinDot"))
 	float SenseViewMinDot;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")

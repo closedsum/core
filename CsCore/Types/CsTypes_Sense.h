@@ -303,3 +303,65 @@ public:
 		OnSeesActorHead_Event.Broadcast(Id, ObserveeId, Value);
 	}
 };
+
+USTRUCT(BlueprintType)
+struct FCsSenseData
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** Whether to Sense by Radius */
+	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "Sense", meta = (InlineEditConditionToggle))
+	bool bRadius;
+	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "Sense", meta = (editcondition = "bRadius", ClampMin = "0.0", UIMin = "0.0"))
+	float Radius;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
+	float RadiusSq;
+
+	/** Minimum View Angle for Sensing */
+	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "Sense", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float Angle;
+	/** Minimum Dot to Target Actor for Sensing */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
+	float Dot;
+
+	FCsSenseData()
+	{
+		bRadius = false;
+		Radius = 3000.0f;
+		RadiusSq = Radius * Radius;
+		Angle = 45.0f;
+		Dot = FMath::Cos(FMath::DegreesToRadians(Angle));
+	}
+	~FCsSenseData(){}
+
+	FORCEINLINE FCsSenseData& operator=(const FCsSenseData& B)
+	{
+		bRadius = B.bRadius;
+		Radius = B.Radius;
+		RadiusSq = B.RadiusSq;
+		Angle = B.Angle;
+		Dot = B.Dot;
+		return *this;
+	}
+
+	FORCEINLINE bool operator==(const FCsSenseData& B) const
+	{
+		return bRadius == B.bRadius && Radius == B.Radius && RadiusSq == B.RadiusSq && Angle == B.Angle && Dot == B.Dot;
+	}
+
+	FORCEINLINE bool operator!=(const FCsSenseData& B) const
+	{
+		return !(*this == B);
+	}
+};
+
+
+// PostEditChangeProperty FCsSenseData
+#define CS_PECP_FCS_SENSE_DATA(PropertyName, MemberName)	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsSenseData, Radius)) \
+															{ \
+																MemberName.RadiusSq = MemberName.Radius * MemberName.Radius; \
+															} \
+															if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsSenseData, Angle)) \
+															{ \
+																MemberName.Dot = FMath::Cos(FMath::DegreesToRadians(MemberName.Angle)); \
+															}

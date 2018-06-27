@@ -246,5 +246,16 @@ public:
 #pragma region
 public:
 
+	UFUNCTION(BlueprintCallable, Category = "Character Data")
+	virtual const bool& GetUseSenseRadius();
+	UFUNCTION(BlueprintCallable, Category = "Character Data")
+	virtual const float& GetSenseRadius();
+	UFUNCTION(BlueprintCallable, Category = "Character Data")
+	virtual const float& GetSenseRadiusSq();
+	UFUNCTION(BlueprintCallable, Category = "Character Data")
+	virtual const float& GetSenseViewMinAngle();
+	UFUNCTION(BlueprintCallable, Category = "Character Data")
+	virtual const float& GetSenseViewMinDot();
+
 #pragma endregion Sense
 };

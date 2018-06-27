@@ -109,16 +109,4 @@ public:
 	{
 		return Cast<T>(Spawn(Type, Payload));
 	}
-
-// Sense
-#pragma region
-public:
-
-	typedef uint8 TCsAIId;
-
-	TMap<TCsAIId, TArray<FCsAISenseInfo_Player>> SenseMap;
-
-	void OnAddPlayerStateMapping(class ACsPlayerState* PlayerState);
-
-#pragma endregion Sense
 };

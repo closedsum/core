@@ -747,6 +747,7 @@ void ACsData_Character::StopAnimation(class UObject* InObject, const FECsCharact
 // Sense
 #pragma region
 
+FCsSenseData* ACsData_Character::GetSenseData() { return nullptr; }
 const bool& ACsData_Character::GetUseSenseRadius() { return ECsCached::Ref::False; }
 const float& ACsData_Character::GetSenseRadius() { return ECsCached::Ref::Float; }
 const float& ACsData_Character::GetSenseRadiusSq() { return ECsCached::Ref::Float; }

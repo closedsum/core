@@ -6,6 +6,7 @@
 #include "Types/CsTypes_Weapon.h"
 #include "Types/CsTypes_Anim.h"
 #include "Types/CsTypes_Item.h"
+#include "Types/CsTypes_Sense.h"
 #include "CsData_Character.generated.h"
 
 UCLASS(Abstract, hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick"))
@@ -245,6 +246,8 @@ public:
 // Sense
 #pragma region
 public:
+
+	virtual FCsSenseData* GetSenseData();
 
 	UFUNCTION(BlueprintCallable, Category = "Character Data")
 	virtual const bool& GetUseSenseRadius();

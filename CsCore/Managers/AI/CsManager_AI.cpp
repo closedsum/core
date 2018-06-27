@@ -253,21 +253,3 @@ ACsAIPawn* AICsManager_AI::Spawn(const FECsAIType &Type, FCsAIPawnPayload *Paylo
 {
 	return Internal->Spawn(Type, Payload);
 }
-
-// Sense
-#pragma region
-
-void AICsManager_AI::OnAddPlayerStateMapping(class ACsPlayerState* PlayerState)
-{
-	const TArray<ACsAIPawn*>& Pawns = GetAllPawns();
-
-	for (ACsAIPawn* Pawn : Pawns)
-	{
-		const int32 Count = Pawn->PlayerSenseInfos.Num();
-
-		Pawn->PlayerSenseInfos.AddDefaulted();
-		Pawn->PlayerSenseInfos[Count].PlayerMappingId = PlayerState->UniqueMappingId;
-	}
-}
-
-#pragma endregion Sense

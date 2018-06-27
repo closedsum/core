@@ -83,13 +83,6 @@ ACsPawn::ACsPawn(const FObjectInitializer& ObjectInitializer)
 	// Weapon
 	CurrentWeaponSlotHandle.Set(&CurrentWeaponSlot);
 	CurrentWeaponSlotHandle.OnChange_Event.AddUObject(this, &ACsPawn::OnChange_CurrentWeaponSlot);
-	// Sense
-	const int32& Count = EMCsSenseActorType::Get().Num();
-
-	for (int32 I = 0; I < Count; ++I)
-	{
-		SenseTraceIntervals.Add(EMCsSenseActorType::Get().GetEnumAt(I), 0.1f);
-	}
 }
 
 void ACsPawn::OnConstructor(const FObjectInitializer& ObjectInitializer)
@@ -553,6 +546,51 @@ void ACsPawn::OnRespawn_Setup_Weapon(){}
 // Sense
 #pragma region
 
+void ACsPawn::ApplySenseData()
+{
+	ACsData_Character* Data_Character = GetMyData_Character();
+	FCsSenseData* OtherData			  = Data_Character->GetSenseData();
+
+	// Radius
+	if (!SenseData.bOverride_Radius)
+	{
+		SenseData.Radius = OtherData->Radius;
+		SenseData.RadiusSq = OtherData->RadiusSq;
+	}
+
+	Manager_Sense->bRadius  = SenseData.bOverride_Radius || OtherData->bRadius;
+	Manager_Sense->Radius   = SenseData.Radius;
+	Manager_Sense->RadiusSq = SenseData.RadiusSq;
+	// Angle / Dot
+	if (!SenseData.bOverride_Angle)
+	{
+		SenseData.Angle = OtherData->Angle;
+		SenseData.Dot = OtherData->Dot;
+	}
+
+	Manager_Sense->ViewMinAngle = SenseData.Angle;
+	Manager_Sense->ViewMinDot = SenseData.Dot;
+	// Trace Intervals
+	if (!SenseData.bOverride_TraceIntervals)
+	{
+		TArray<FECsSenseActorType> Keys;
+		SenseData.TraceIntervals.GetKeys(Keys);
+
+		for (const FECsSenseActorType& Key : Keys)
+		{
+			SenseData.TraceIntervals[Key] = OtherData->TraceIntervals[Key];
+		}
+	}
+
+	TArray<FECsSenseActorType> Keys;
+	SenseData.TraceIntervals.GetKeys(Keys);
+
+	for (const FECsSenseActorType& Key : Keys)
+	{
+		Manager_Sense->TraceToActorIntervals[Key] = SenseData.TraceIntervals[Key];
+	}
+}
+
 #pragma endregion Sense
 
 // Managers
@@ -561,3 +599,17 @@ void ACsPawn::OnRespawn_Setup_Weapon(){}
 ACsManager_Inventory* ACsPawn::GetMyManager_Inventory() { return nullptr; }
 
 #pragma endregion Managers
+
+#if WITH_EDITOR
+
+void ACsPawn::PostEditChangeProperty(struct FPropertyChangedEvent& e)
+{
+	FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
+
+	// SenseData.Radius, SenseData.Angle
+	CS_PECP_FCS_SENSE_DATA_OVERRIDE(PropertyName, SenseData)
+
+	Super::PostEditChangeProperty(e);
+}
+
+#endif // #if WITH_EDITOR

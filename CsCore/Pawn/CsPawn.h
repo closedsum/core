@@ -361,7 +361,7 @@ public:
 #pragma region
 public:
 
-	UPROPERTY(BlueprintReadWrite, Category = "Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	bool bCacheData;
 
 	class ACsDataMapping* GetDataMapping();
@@ -512,17 +512,10 @@ public:
 #pragma region
 public:
 
-	UPROPERTY(EditAnywhere, Category = "Sense", meta = (InlineEditConditionToggle))
-	bool bSenseViewMinDot;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense", meta = (editcondition = "bSenseViewMinDot"))
-	float SenseViewMinDot;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
-	float SenseViewMinAngle;
+	FCsSenseData_Override SenseData;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
-	TMap<FECsSenseActorType, float> SenseTraceIntervals;
+	virtual void ApplySenseData();
 
 #pragma endregion Sense
 
@@ -532,8 +525,14 @@ public:
 
 	virtual class ACsManager_Inventory* GetMyManager_Inventory();
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly, Category = "Managers")
 	class ACsManager_Sense* Manager_Sense;
 
 #pragma endregion Managers
+
+#if WITH_EDITOR
+
+	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& e) override;
+
+#endif // #if WITH_EDITOR
 };

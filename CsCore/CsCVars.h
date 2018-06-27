@@ -332,3 +332,10 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainBalance;
 #pragma endregion Ethereum
 
 #pragma endregion Blockchain
+
+// Sense
+#pragma region
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawManagerSenseRadius;
+
+#pragma endregion Sense

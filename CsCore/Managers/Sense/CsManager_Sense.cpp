@@ -1,6 +1,7 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Sense/CsManager_Sense.h"
 #include "CsCore.h"
+#include "CsCVars.h"
 
 // Managers
 #include "Managers/Trace/CsManager_Trace.h"
@@ -83,13 +84,29 @@ void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 		{
 			FCsSenseInfo& Info = Map[Id];
 
+			AActor* Me	  = GetMyOwner();
+			AActor* Actor = GameInstance->GetUniqueActorById(Info.ObserveeId);
+
 			// Player / AI
 			if (Info.ActorType == ECsSenseActorType::Player ||
 				Info.ActorType == ECsSenseActorType::AI)
 			{
-				ACsPawn* Pawn = GameInstance->GetUniqueObjectById<ACsPawn>(Info.ObserveeId);
+				ACsPawn* Pawn = Cast<ACsPawn>(Actor);
 				// Check Pawn is Alive
 				if (!Pawn->bSpawnedAndActive)
+					continue;
+			}
+			// Check Radius
+			if (bRadius)
+			{
+				const float DistanceSq = (Actor->GetActorLocation() - Me->GetActorLocation()).SizeSquared();
+
+				if (CsCVarDrawManagerSenseRadius->GetInt() == CS_CVAR_DRAW)
+				{
+					DrawDebugSphere(GetWorld(), Me->GetActorLocation(), Radius, 16.0f, FColor::Green, false, DeltaSeconds + 0.001f, 0, 5.0f);
+				}
+
+				if (DistanceSq > RadiusSq)
 					continue;
 			}
 			// Check Dot

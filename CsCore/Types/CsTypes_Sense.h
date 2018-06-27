@@ -365,7 +365,6 @@ struct FCsSenseData
 	}
 };
 
-
 // PostEditChangeProperty FCsSenseData
 #define CS_PECP_FCS_SENSE_DATA(PropertyName, MemberName)	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsSenseData, Radius)) \
 															{ \
@@ -375,3 +374,111 @@ struct FCsSenseData
 															{ \
 																MemberName.Dot = FMath::Cos(FMath::DegreesToRadians(MemberName.Angle)); \
 															}
+
+USTRUCT(BlueprintType)
+struct FCsSenseData_Override
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** Whether to Sense by Radius */
+	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "Sense", meta = (InlineEditConditionToggle))
+	bool bOverride_Radius;
+	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "Sense", meta = (editcondition = "bOverride_Radius", ClampMin = "0.0", UIMin = "0.0"))
+	float Radius;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
+	float RadiusSq;
+
+	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "Sense", meta = (InlineEditConditionToggle))
+	bool bOverride_Angle;
+	/** Minimum View Angle for Sensing */
+	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "Sense", meta = (editcondition = "bOverride_Angle", ClampMin = "0.0", UIMin = "0.0"))
+	float Angle;
+	/** Minimum Dot to Target Actor for Sensing */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
+	float Dot;
+
+	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "Sense", meta = (InlineEditConditionToggle))
+	bool bOverride_TraceIntervals;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense", meta = (editcondition = "bOverride_TraceIntervals"))
+	TMap<FECsSenseActorType, float> TraceIntervals;
+
+	FCsSenseData_Override()
+	{
+		bOverride_Radius = false;
+		Radius = 3000.0f;
+		RadiusSq = Radius * Radius;
+		bOverride_Angle = false;
+		Angle = 45.0f;
+		Dot = FMath::Cos(FMath::DegreesToRadians(Angle));
+
+		bOverride_TraceIntervals = false;
+
+		const int32& Count = EMCsSenseActorType::Get().Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			TraceIntervals.Add(EMCsSenseActorType::Get().GetEnumAt(I), 0.1f);
+		}
+	}
+	~FCsSenseData_Override() {}
+
+	FORCEINLINE FCsSenseData_Override& operator=(const FCsSenseData_Override& B)
+	{
+		bOverride_Radius = B.bOverride_Radius;
+		Radius = B.Radius;
+		RadiusSq = B.RadiusSq;
+		bOverride_Angle = B.bOverride_Angle;
+		Angle = B.Angle;
+		Dot = B.Dot;
+
+		TArray<FECsSenseActorType> Keys;
+		TraceIntervals.GetKeys(Keys);
+
+		for (const FECsSenseActorType& Key : Keys)
+		{
+			TraceIntervals[Key] = B.TraceIntervals[Key];
+		}
+		return *this;
+	}
+
+	FORCEINLINE bool operator==(const FCsSenseData_Override& B) const
+	{
+		if (bOverride_Radius != B.bOverride_Radius)
+			return false;
+		if (Radius != B.Radius)
+			return false;
+		if (RadiusSq != B.RadiusSq)
+			return false;
+		if (bOverride_Angle != B.bOverride_Angle)
+			return false;
+		if (Angle != B.Angle)
+			return false;
+		if (Dot != B.Dot)
+			return false;
+
+		TArray<FECsSenseActorType> Keys;
+		TraceIntervals.GetKeys(Keys);
+
+		for (const FECsSenseActorType& Key : Keys)
+		{
+			if (TraceIntervals[Key] != B.TraceIntervals[Key])
+				return false;
+		}
+		return true;
+	}
+
+	FORCEINLINE bool operator!=(const FCsSenseData_Override& B) const
+	{
+		return !(*this == B);
+	}
+};
+
+// PostEditChangeProperty FCsSenseData
+#define CS_PECP_FCS_SENSE_DATA_OVERRIDE(PropertyName, MemberName)	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsSenseData_Override, Radius)) \
+																	{ \
+																		MemberName.RadiusSq = MemberName.Radius * MemberName.Radius; \
+																	} \
+																	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsSenseData_Override, Angle)) \
+																	{ \
+																		MemberName.Dot = FMath::Cos(FMath::DegreesToRadians(MemberName.Angle)); \
+																	}

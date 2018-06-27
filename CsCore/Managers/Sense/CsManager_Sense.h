@@ -37,6 +37,15 @@ public:
 	TMap<uint8, FCsSenseInfo*> SenseTraceRequestMap;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
+	bool bRadius;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
+	float Radius;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
+	float RadiusSq;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
 	float ViewMinDot;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")

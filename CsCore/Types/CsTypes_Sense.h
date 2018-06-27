@@ -324,6 +324,9 @@ struct FCsSenseData
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
 	float Dot;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
+	TMap<FECsSenseActorType, float> TraceIntervals;
+
 	FCsSenseData()
 	{
 		bRadius = false;
@@ -331,6 +334,13 @@ struct FCsSenseData
 		RadiusSq = Radius * Radius;
 		Angle = 45.0f;
 		Dot = FMath::Cos(FMath::DegreesToRadians(Angle));
+
+		const int32& Count = EMCsSenseActorType::Get().Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			TraceIntervals.Add(EMCsSenseActorType::Get().GetEnumAt(I), 0.1f);
+		}
 	}
 	~FCsSenseData(){}
 

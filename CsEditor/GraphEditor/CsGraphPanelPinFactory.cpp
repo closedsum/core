@@ -12,6 +12,7 @@
 #include "Types/CsTypes_Sound.h"
 #include "Types/CsTypes_Interactive.h"
 #include "Types/CsTypes_AI.h"
+#include "Types/CsTypes_Sense.h"
 
 #include "SlateBasics.h"
 
@@ -62,6 +63,8 @@
 #include "GraphEditor/EnumStruct/AI/SCsGraphPin_ECsAIType.h"
 #include "GraphEditor/EnumStruct/AI/SCsGraphPin_ECsAIState.h"
 #include "GraphEditor/EnumStruct/AI/SCsGraphPin_ECsAISetup.h"
+	// Sense
+#include "GraphEditor/EnumStruct/Sense/SCsGraphPin_ECsSenseActorType.h"
 
 // Managers
 #include "Managers/Process/CsProcess.h"
@@ -174,6 +177,11 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 		if (DoesPinUseScriptStruct<FECsAIState>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsAIState, InPin); }
 		// FECsAISetup
 		if (DoesPinUseScriptStruct<FECsAISetup>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsAISetup, InPin); }
+	}
+	// Sense
+	{
+		// FECsSenseActorType
+		if (DoesPinUseScriptStruct<FECsSenseActorType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsSenseActorType, InPin); }
 	}
 	return nullptr;
 }

@@ -1,5 +1,304 @@
 ﻿namespace CgCore
 {
+    using System.Collections.Generic;
+
+    public class FCgLocationDamageModifier
+    {
+        public string Bone;
+        public float Multiplier;
+
+        public FCgLocationDamageModifier()
+        {
+            Bone = "";
+            Multiplier = 1.0f;
+        }
+
+        public static bool operator ==(FCgLocationDamageModifier lhs, FCgLocationDamageModifier rhs)
+        {
+            return lhs.Bone == rhs.Bone && lhs.Multiplier == rhs.Multiplier;
+        }
+
+        public static bool operator !=(FCgLocationDamageModifier lhs, FCgLocationDamageModifier rhs)
+        {
+            return !(lhs == rhs);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is FCgLocationDamageModifier))
+                return false;
+
+            FCgLocationDamageModifier rhs = (FCgLocationDamageModifier)obj;
+
+            if (Bone != rhs.Bone) return false;
+            if (Multiplier != rhs.Multiplier) return false;
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            return Bone.GetHashCode() ^ Multiplier.GetHashCode();
+        }
+    }
+
+    #region "WeaponState"
+
+    public sealed class ECgWeaponState : ECgEnum_byte
+    {
+        public ECgWeaponState(byte value, string name) : base(value, name) { }
+    }
+
+    public class EMCgWeaponState : ECgEnumMap<ECgWeaponState, byte>
+    {
+        private static EMCgWeaponState _Instance;
+        public static EMCgWeaponState Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = new EMCgWeaponState();
+                }
+                return _Instance;
+            }
+        }
+
+        public static EMCgWeaponState Get()
+        {
+            return Instance;
+        }
+    }
+
+    public sealed class ECgWeaponStateEqualityComparer : IEqualityComparer<ECgWeaponState>
+    {
+        public bool Equals(ECgWeaponState lhs, ECgWeaponState rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(ECgWeaponState x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
+    #endregion // WeaponState
+
+    #region "WeaponSlot"
+
+    public sealed class ECgWeaponSlot : ECgEnum_byte
+    {
+        public ECgWeaponSlot(byte value, string name) : base(value, name) { }
+    }
+
+    public class EMCgWeaponSlot : ECgEnumMap<ECgWeaponSlot, byte>
+    {
+        private static EMCgWeaponSlot _Instance;
+        public static EMCgWeaponSlot Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = new EMCgWeaponSlot();
+                }
+                return _Instance;
+            }
+        }
+
+        public static EMCgWeaponSlot Get()
+        {
+            return Instance;
+        }
+    }
+
+    public sealed class ECgWeaponSlotEqualityComparer : IEqualityComparer<ECgWeaponSlot>
+    {
+        public bool Equals(ECgWeaponSlot lhs, ECgWeaponSlot rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(ECgWeaponSlot x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
+    #endregion // WeaponSlot
+
+    #region "WeaponFireMode"
+
+    public sealed class ECgWeaponFireMode : ECgEnum_byte
+    {
+        public ECgWeaponFireMode(byte value, string name) : base(value, name) { }
+    }
+
+    public class EMCgWeaponFireMode : ECgEnumMap<ECgWeaponFireMode, byte>
+    {
+        private static EMCgWeaponFireMode _Instance;
+        public static EMCgWeaponFireMode Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = new EMCgWeaponFireMode();
+                }
+                return _Instance;
+            }
+        }
+
+        public static EMCgWeaponFireMode Get()
+        {
+            return Instance;
+        }
+    }
+
+    public sealed class ECgWeaponFireModeEqualityComparer : IEqualityComparer<ECgWeaponFireMode>
+    {
+        public bool Equals(ECgWeaponFireMode lhs, ECgWeaponFireMode rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(ECgWeaponFireMode x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
+    #endregion // WeaponFireMode
+
+    #region "WeaponGrip"
+
+    public sealed class ECgWeaponGrip : ECgEnum_byte
+    {
+        public ECgWeaponGrip(byte value, string name) : base(value, name) { }
+    }
+
+    public class EMCgWeaponGrip : ECgEnumMap<ECgWeaponGrip, byte>
+    {
+        private static EMCgWeaponGrip _Instance;
+        public static EMCgWeaponGrip Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = new EMCgWeaponGrip();
+                }
+                return _Instance;
+            }
+        }
+
+        public static EMCgWeaponGrip Get()
+        {
+            return Instance;
+        }
+    }
+
+    public sealed class ECgWeaponGripEqualityComparer : IEqualityComparer<ECgWeaponGrip>
+    {
+        public bool Equals(ECgWeaponGrip lhs, ECgWeaponGrip rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(ECgWeaponGrip x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
+    #endregion // WeaponGrip
+
+    #region "WeaponAnim"
+
+    public sealed class ECgWeaponAnim : ECgEnum_byte
+    {
+        public ECgWeaponAnim(byte value, string name) : base(value, name) { }
+    }
+
+    public class EMCgWeaponAnim : ECgEnumMap<ECgWeaponAnim, byte>
+    {
+        private static EMCgWeaponAnim _Instance;
+        public static EMCgWeaponAnim Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = new EMCgWeaponAnim();
+                }
+                return _Instance;
+            }
+        }
+
+        public static EMCgWeaponAnim Get()
+        {
+            return Instance;
+        }
+    }
+
+    public sealed class ECgWeaponAnimEqualityComparer : IEqualityComparer<ECgWeaponAnim>
+    {
+        public bool Equals(ECgWeaponAnim lhs, ECgWeaponAnim rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(ECgWeaponAnim x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
+    #endregion // WeaponAnim
+
+    #region "WeaponBlendSpace"
+
+    public sealed class ECgWeaponBlendSpace : ECgEnum_byte
+    {
+        public ECgWeaponAnim(byte value, string name) : base(value, name) { }
+    }
+
+    public class EMCgWeaponAnim : ECgEnumMap<ECgWeaponAnim, byte>
+    {
+        private static EMCgWeaponAnim _Instance;
+        public static EMCgWeaponAnim Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = new EMCgWeaponAnim();
+                }
+                return _Instance;
+            }
+        }
+
+        public static EMCgWeaponAnim Get()
+        {
+            return Instance;
+        }
+    }
+
+    public sealed class ECgWeaponAnimEqualityComparer : IEqualityComparer<ECgWeaponAnim>
+    {
+        public bool Equals(ECgWeaponAnim lhs, ECgWeaponAnim rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(ECgWeaponAnim x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
+    #endregion // WeaponAnim
+
     public class CgData_Weapon_FireMode_Firing
     {
         /** Whether to do weapon fire on release of input */

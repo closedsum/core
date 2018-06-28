@@ -13,6 +13,7 @@
 #include "Types/CsTypes_Interactive.h"
 #include "Types/CsTypes_AI.h"
 #include "Types/CsTypes_Sense.h"
+#include "Types/CsTypes_Projectile.h"
 
 #include "SlateBasics.h"
 
@@ -65,6 +66,8 @@
 #include "GraphEditor/EnumStruct/AI/SCsGraphPin_ECsAISetup.h"
 	// Sense
 #include "GraphEditor/EnumStruct/Sense/SCsGraphPin_ECsSenseActorType.h"
+	// Projectile
+#include "GraphEditor/EnumStruct/Projectile/SCsGraphPin_ECsProjectileType.h"
 
 // Managers
 #include "Managers/Process/CsProcess.h"
@@ -182,6 +185,11 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 	{
 		// FECsSenseActorType
 		if (DoesPinUseScriptStruct<FECsSenseActorType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsSenseActorType, InPin); }
+	}
+	// Projectile
+	{
+		// FECsProjectileType
+		if (DoesPinUseScriptStruct<FECsProjectileType>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsProjectileType, InPin); }
 	}
 	return nullptr;
 }

@@ -565,11 +565,13 @@ void ACsPawn::ApplySenseData()
 	if (!SenseData.bOverride_Angle)
 	{
 		SenseData.Angle = OtherData->Angle;
+		SenseData.Radians = OtherData->Radians;
 		SenseData.Dot = OtherData->Dot;
 	}
 
-	Manager_Sense->ViewMinAngle = SenseData.Angle;
-	Manager_Sense->ViewMinDot = SenseData.Dot;
+	Manager_Sense->ViewMinAngle	  = SenseData.Angle;
+	Manager_Sense->ViewMinRadians = SenseData.Radians;
+	Manager_Sense->ViewMinDot	  = SenseData.Dot;
 	// Trace Intervals
 	if (!SenseData.bOverride_TraceIntervals)
 	{

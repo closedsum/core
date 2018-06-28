@@ -755,4 +755,11 @@ TAutoConsoleVariable<int32> CsCVarDrawManagerSenseRadius(
 	ECVF_SetByConsole | ECVF_SetByCode
 );
 
+TAutoConsoleVariable<int32> CsCVarDrawManagerSenseAngle(
+	TEXT("draw.manager.sense.angle"),
+	0,
+	TEXT("Draw Manager Sense Angle."),
+	ECVF_SetByConsole | ECVF_SetByCode
+);
+
 #pragma endregion Sense

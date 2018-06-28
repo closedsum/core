@@ -51,8 +51,29 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
 	float ViewMinAngle;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
+	float ViewMinRadians;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
 	TMap<FECsSenseActorType, float> TraceToActorIntervals;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
+	bool bSeesAnyByRadius;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
+	bool bSeesAnyByDot;
+
+// Debug
+#pragma region
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
+	bool bDrawRadius;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
+	bool bDrawAngle;
+
+#pragma endregion Debug
 
 	virtual void OnTick(const float &DeltaSeconds);
 	virtual void Sense_CheckMeToActorDot(FCsSenseInfo& Info);

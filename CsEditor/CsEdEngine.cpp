@@ -65,6 +65,8 @@
 #include "DetailCustomizations/EnumStruct/AI/ECsAISetupCustomization.h"
 	// Sense
 #include "DetailCustomizations/EnumStruct/Sense/ECsSenseActorTypeCustomization.h"
+	// Projectile
+#include "DetailCustomizations/EnumStruct/Projectile/ECsProjectileTypeCustomization.h"
 
 void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 {
@@ -124,6 +126,8 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsAISetup", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsAISetupCustomization::MakeInstance));
 		// Sense
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsSenseActorType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsSenseActorTypeCustomization::MakeInstance));
+		// Projectile
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsProjectileType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsProjectileTypeCustomization::MakeInstance));
 	}
 }
 

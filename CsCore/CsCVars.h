@@ -337,5 +337,6 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogBlockchainBalance;
 #pragma region
 
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawManagerSenseRadius;
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawManagerSenseAngle;
 
 #pragma endregion Sense

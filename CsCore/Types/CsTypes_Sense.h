@@ -320,6 +320,8 @@ struct FCsSenseData
 	/** Minimum View Angle for Sensing */
 	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "Sense", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float Angle;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
+	float Radians;
 	/** Minimum Dot to Target Actor for Sensing */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
 	float Dot;
@@ -333,7 +335,8 @@ struct FCsSenseData
 		Radius = 3000.0f;
 		RadiusSq = Radius * Radius;
 		Angle = 45.0f;
-		Dot = FMath::Cos(FMath::DegreesToRadians(Angle));
+		Radians = FMath::DegreesToRadians(Angle);
+		Dot = FMath::Cos(Radians);
 
 		const int32& Count = EMCsSenseActorType::Get().Num();
 
@@ -350,13 +353,14 @@ struct FCsSenseData
 		Radius = B.Radius;
 		RadiusSq = B.RadiusSq;
 		Angle = B.Angle;
+		Radians = B.Radians;
 		Dot = B.Dot;
 		return *this;
 	}
 
 	FORCEINLINE bool operator==(const FCsSenseData& B) const
 	{
-		return bRadius == B.bRadius && Radius == B.Radius && RadiusSq == B.RadiusSq && Angle == B.Angle && Dot == B.Dot;
+		return bRadius == B.bRadius && Radius == B.Radius && RadiusSq == B.RadiusSq && Angle == B.Angle && Radians == B.Radians && Dot == B.Dot;
 	}
 
 	FORCEINLINE bool operator!=(const FCsSenseData& B) const
@@ -372,7 +376,8 @@ struct FCsSenseData
 															} \
 															if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsSenseData, Angle)) \
 															{ \
-																MemberName.Dot = FMath::Cos(FMath::DegreesToRadians(MemberName.Angle)); \
+																MemberName.Radians = FMath::DegreesToRadians(MemberName.Angle); \
+																MemberName.Dot = FMath::Cos(MemberName.Radians); \
 															}
 
 USTRUCT(BlueprintType)
@@ -393,6 +398,8 @@ struct FCsSenseData_Override
 	/** Minimum View Angle for Sensing */
 	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "Sense", meta = (editcondition = "bOverride_Angle", ClampMin = "0.0", UIMin = "0.0"))
 	float Angle;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
+	float Radians;
 	/** Minimum Dot to Target Actor for Sensing */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
 	float Dot;
@@ -409,7 +416,8 @@ struct FCsSenseData_Override
 		RadiusSq = Radius * Radius;
 		bOverride_Angle = false;
 		Angle = 45.0f;
-		Dot = FMath::Cos(FMath::DegreesToRadians(Angle));
+		Radians = FMath::DegreesToRadians(Angle);
+		Dot = FMath::Cos(Radians);
 
 		bOverride_TraceIntervals = false;
 
@@ -429,6 +437,7 @@ struct FCsSenseData_Override
 		RadiusSq = B.RadiusSq;
 		bOverride_Angle = B.bOverride_Angle;
 		Angle = B.Angle;
+		Radians = B.Radians;
 		Dot = B.Dot;
 
 		TArray<FECsSenseActorType> Keys;
@@ -452,6 +461,8 @@ struct FCsSenseData_Override
 		if (bOverride_Angle != B.bOverride_Angle)
 			return false;
 		if (Angle != B.Angle)
+			return false;
+		if (Radians != B.Radians)
 			return false;
 		if (Dot != B.Dot)
 			return false;
@@ -480,5 +491,6 @@ struct FCsSenseData_Override
 																	} \
 																	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsSenseData_Override, Angle)) \
 																	{ \
-																		MemberName.Dot = FMath::Cos(FMath::DegreesToRadians(MemberName.Angle)); \
+																		MemberName.Radians = FMath::DegreesToRadians(MemberName.Angle); \
+																		MemberName.Dot = FMath::Cos(MemberName.Radians); \
 																	}

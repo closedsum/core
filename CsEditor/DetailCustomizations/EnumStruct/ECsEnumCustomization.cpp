@@ -17,6 +17,25 @@ FECsEnumCustomization::FECsEnumCustomization()
 void FECsEnumCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> StructPropertyHandle, class FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
 	SetPropertyHandles(StructPropertyHandle);
+	
+	// Alter DisplayNameList for Properties that are visible and should NOT be edited
+	UProperty* Property				   = StructPropertyHandle->GetProperty();
+	const uint64 DisplayAsDropDownMask = (1 << UP::EditAnywhere);
+
+	if (!Property->HasAnyPropertyFlags(DisplayAsDropDownMask))
+	{
+		const int32 Count = DisplayNameList.Num();
+
+		FString DisplayName;
+		GetDisplayNamePropertyValue(DisplayName);
+
+		for (int32 I = Count - 1; I >= 0; --I)
+		{
+			if (DisplayName == *DisplayNameList[I].Get())
+				continue;
+			DisplayNameList.RemoveAt(I);
+		}
+	}
 
 	TSharedPtr<FString> InitialSelectedDisplayName = GetSelectedDisplayName();
 

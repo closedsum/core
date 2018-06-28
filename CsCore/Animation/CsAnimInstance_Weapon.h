@@ -87,7 +87,7 @@ public:
 
 	virtual void LoadAnims();
 
-	UFUNCTION(BlueprintCallable, Category = "Weapon AnimInstance", meta = (BlueprintThreadSafe, AutoCreateRefTerm = "AnimType"))
+	UFUNCTION(BlueprintCallable, Category = "Weapon AnimInstance", meta = (BlueprintThreadSafe, AutoCreateRefTerm = "AnimType,Index"))
 	virtual class UAnimMontage* GetAnimMontage(const FECsWeaponAnim &AnimType, const int32 &Index = 0) const;
 	UFUNCTION(BlueprintCallable, Category = "Weapon AnimInstance", meta = (BlueprintThreadSafe, AutoCreateRefTerm = "AnimType"))
 	virtual class UAnimSequence* GetAnimSequence(const FECsWeaponAnim &AnimType) const;

@@ -104,7 +104,7 @@ struct CSCORE_API FCsSoundElement
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-	TAssetPtr<class USoundCue> Sound;
+	TSoftObjectPtr<class USoundCue> Sound;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Sound_LoadFlags;
@@ -184,7 +184,7 @@ public:
 
 	FORCEINLINE void Set(USoundCue* InSound)
 	{
-		Sound = TAssetPtr<USoundCue>(InSound);
+		Sound = TSoftObjectPtr<USoundCue>(InSound);
 		Sound_Internal = InSound;
 	}
 

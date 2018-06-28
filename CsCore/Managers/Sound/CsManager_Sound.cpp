@@ -99,10 +99,6 @@ ACsSound* FCsManager_Sound::Spawn(FCsSoundPayload* payload)
 
 		ActiveObjects.RemoveAt(0);
 	}
-	else
-	{
-		ActiveObjects.Add(o);
-	}
 	AddToActivePool(o);
 	return o;
 }
@@ -182,6 +178,13 @@ AICsManager_Sound::AICsManager_Sound(const FObjectInitializer& ObjectInitializer
 	Internal->Init(TEXT("AICsManager_Sound"), TEXT("ACsSound"), nullptr, &CsCVarLogManagerSoundTransactions);
 	Internal->ConstructObject_Call.Unbind();
 	Internal->ConstructObject_Call.BindUObject(this, &AICsManager_Sound::ConstructObject);
+}
+
+void AICsManager_Sound::PostActorCreated()
+{
+	Super::PostActorCreated();
+
+	Internal->CurrentWorld = GetWorld();
 }
 
 /*static*/ UObject* AICsManager_Sound::GetMyOwner() { return MyOwner.IsValid() ? MyOwner.Get() : nullptr; }

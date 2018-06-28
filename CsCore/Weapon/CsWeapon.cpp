@@ -17,6 +17,7 @@
 #include "Managers/Damage/CsManager_Damage.h"
 #include "Managers/Trace/CsManager_Trace.h"
 #include "Managers/Inventory/CsManager_Inventory.h"
+#include "Managers/InteractiveActor/CsDamageableActor.h"
 // Game
 #include "Game/CsGameInstance.h"
 #include "Game/CsGameState.h"
@@ -24,7 +25,9 @@
 #include "Player/CsPlayerStateBase.h"
 #include "Pawn/CsPawn.h"
 
-#include "Managers/InteractiveActor/CsDamageableActor.h"
+#include "Animation/CsAnimInstance.h"
+
+
 
 // Cache
 #pragma region
@@ -182,6 +185,17 @@ void ACsWeapon::PostActorCreated()
 
 	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
 	UniqueObjectId				  = GameInstance->GetUniqueObjectId();
+}
+
+void ACsWeapon::Destroyed()
+{
+	Super::Destroyed();
+
+	if (UCsCommon::IsPlayInEditor(GetWorld()) || UCsCommon::IsPlayInEditorPreview(GetWorld()))
+		return;
+
+	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+	GameInstance->UnregisterUniqueObject(UniqueObjectId);
 }
 
 // Members
@@ -2324,6 +2338,8 @@ void ACsWeapon::PlayMuzzleFlash(const FECsWeaponFireMode &FireMode)
 	Payload->Set(FX);
 	Payload->Owner = GetMyPawn();
 	Payload->Parent = GetMuzzleFlashParent(ViewType);
+
+	Manager_FX->Play(Payload);
 }
 
 #pragma endregion Firing

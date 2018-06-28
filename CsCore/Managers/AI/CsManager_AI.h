@@ -68,6 +68,9 @@ public:
 
 	void Shutdown();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Manager AI")
+	TMap<FECsAIType, UClass*> ClassMap;
+
 	virtual ACsAIPawn* ConstructObject(const FECsAIType &Type);
 
 	UFUNCTION(BlueprintCallable, Category = "Manager AI")
@@ -78,10 +81,13 @@ public:
 	void AddToActivePool(const FECsAIType &Type, ACsAIPawn* Actor);
 	UFUNCTION(BlueprintCallable, Category = "Manager AI")
 	void OnTick(const float &DeltaTime);
-	UFUNCTION(BlueprintCallable, Category = "Manager AI")
-	void GetAllActiveActors(TArray<ACsAIPawn*> &OutActors);
 
-	const TArray<class ACsAIPawn*>* GetActors(const FECsAIType& Type);
+	const TArray<class ACsAIPawn*>& GetAllPawns();
+
+	UFUNCTION(BlueprintCallable, Category = "Manager AI")
+	void GetAllActivePawns(TArray<ACsAIPawn*> &OutActors);
+
+	const TArray<class ACsAIPawn*>* GetPawns(const FECsAIType& Type);
 
 	UFUNCTION(BlueprintCallable, Category = "Manager AI")
 	int32 GetActivePoolSize(const FECsAIType &Type);

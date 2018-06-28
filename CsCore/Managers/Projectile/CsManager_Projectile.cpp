@@ -56,7 +56,15 @@ AICsManager_Projectile::AICsManager_Projectile(const FObjectInitializer& ObjectI
 	Internal = new FCsManager_Projectile();
 	Internal->Init(TEXT("CsManager_Projectile"), TEXT("ACsProjectile"), nullptr, &CsCVarLogManagerProjectileTransactions);
 	Internal->OnTick_Handle_Object.Unbind();
+	Internal->ConstructObject_Call.BindUObject(this, &AICsManager_Projectile::ConstructObject);
 	Internal->OnTick_Handle_Object.BindUObject(this, &AICsManager_Projectile::OnTick_Handle_Projectile);
+}
+
+void AICsManager_Projectile::PostActorCreated()
+{
+	Super::PostActorCreated();
+
+	Internal->CurrentWorld = GetWorld();
 }
 
 /*static*/ UObject* AICsManager_Projectile::GetMyOwner() { return MyOwner.IsValid() ? MyOwner.Get() : nullptr; }
@@ -107,7 +115,7 @@ ACsProjectile* AICsManager_Projectile::ConstructObject(const FECsProjectileType 
 	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnInfo.ObjectFlags |= RF_Transient;
 
-	ACsProjectile* Actor = GetWorld()->SpawnActor<ACsProjectile>(ACsProjectile::StaticClass(), SpawnInfo);
+	ACsProjectile* Actor = GetWorld()->SpawnActor<ACsProjectile>(ClassMap.Find(Type) ? ClassMap[Type] : ACsProjectile::StaticClass(), SpawnInfo);
 	Actor->SetReplicates(false);
 	Actor->Role = ROLE_None;
 	GetWorld()->RemoveNetworkActor(Actor);

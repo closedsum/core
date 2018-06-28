@@ -23,6 +23,10 @@ class CSCORE_API  AICsManager_WidgetActor  : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
+public:
+
+	virtual void PostActorCreated() override;
+
 protected:
 
 	FCsManager_WidgetActor * Internal;
@@ -30,6 +34,11 @@ protected:
 	static TWeakObjectPtr<UObject> MyOwner;
 
 	static UObject* GetMyOwner();
+	template<typename T>
+	static T* GetMyOwner()
+	{
+		return Cast<T>(GetMyOwner());
+	}
 
 public:
 
@@ -48,6 +57,9 @@ public:
 	void Clear();
 
 	void Shutdown();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Manager WidgetActor")
+	TMap<FECsWidgetActorType, UClass*> ClassMap;
 
 	virtual ACsWidgetActor* ConstructObject(const FECsWidgetActorType &Type);
 

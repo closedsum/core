@@ -47,8 +47,6 @@ class CSCORE_API ACsPlayerState : public ACsPlayerStateBase
 
 	virtual AController* GetMyController() override;
 
-	virtual ACsPawn* GetMyPawn() override;
-
 // Routines
 #pragma region
 public:

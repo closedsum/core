@@ -6,36 +6,6 @@
 // Enums
 #pragma region
 
-namespace ECsAnimInstanceCharacterRoutine
-{
-	enum Type
-	{
-		ECsAnimInstanceCharacterRoutine_MAX = ECsAnimInstanceRoutine::ECsAnimInstanceRoutine_MAX,
-	};
-}
-
-namespace ECsAnimInstanceCharacterRoutine
-{
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		return Type::ECsAnimInstanceCharacterRoutine_MAX;
-	}
-}
-
-#define ECS_ANIM_INSTANCE_CHARACTER_ROUTINE_MAX (uint8)ECsAnimInstanceCharacterRoutine::ECsAnimInstanceCharacterRoutine_MAX
-typedef ECsAnimInstanceCharacterRoutine::Type TCsAnimInstanceCharacterRoutine;
-
 #pragma endregion Enums
 
 UCLASS()
@@ -221,13 +191,13 @@ public:
 
 	virtual void LoadAnims();
 
-	UFUNCTION(BlueprintCallable, Category = "AnimInstance", meta = (BlueprintThreadSafe, AutoCreateRefTerm = "AnimType"))
+	UFUNCTION(BlueprintCallable, Category = "AnimInstance", meta = (BlueprintThreadSafe, AutoCreateRefTerm = "AnimType,Index"))
 	virtual class UAnimMontage* GetAnimMontage(const FECsCharacterAnim &AnimType, const int32 &Index = 0) const;
 	UFUNCTION(BlueprintCallable, Category = "AnimInstance", meta = (BlueprintThreadSafe, AutoCreateRefTerm = "AnimType"))
 	virtual class UAnimSequence* GetAnimSequence(const FECsCharacterAnim &AnimType) const;
-	UFUNCTION(BlueprintCallable, Category = "AnimInstance", meta = (BlueprintThreadSafe, AutoCreateRefTerm = "AnimType"))
+	UFUNCTION(BlueprintCallable, Category = "AnimInstance", meta = (BlueprintThreadSafe, AutoCreateRefTerm = "BlendType"))
 	virtual class UBlendSpace1D* GetBlendSpace1D(const FECsCharacterBlendSpace &BlendType) const;
-	UFUNCTION(BlueprintCallable, Category = "AnimInstance", meta = (BlueprintThreadSafe, AutoCreateRefTerm = "AnimType"))
+	UFUNCTION(BlueprintCallable, Category = "AnimInstance", meta = (BlueprintThreadSafe, AutoCreateRefTerm = "BlendType"))
 	virtual class UBlendSpace* GetBlendSpace(const FECsCharacterBlendSpace &BlendType) const;
 
 	virtual void StopAnimation(const FECsCharacterAnim &AnimType, const int32 &Index = 0, const float BlendOutTime = 0.0f);

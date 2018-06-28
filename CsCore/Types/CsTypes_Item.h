@@ -647,18 +647,18 @@ struct FCsItemProduct
 		return !(*this == B);
 	}
 
-	FORCEINLINE FCsItemMemberValue* GetMemberValue(const int32 &HistoryIndex, const FName& Name)
+	FORCEINLINE FCsItemMemberValue* GetMemberValue(const int32 &HistoryIndex, const FName& InName)
 	{
 		if (HistoryIndex == CS_CURRENT_HISTORY)
-			return CurrentHistory.Members.Find(Name);
+			return CurrentHistory.Members.Find(InName);
 		if (HistoryIndex < PreviousHistories.Num())
-			return PreviousHistories[HistoryIndex].Members.Find(Name);
+			return PreviousHistories[HistoryIndex].Members.Find(InName);
 		return nullptr;
 	}
 
-	FORCEINLINE void IncrementMemberValue(const int32 &HistoryIndex, const FName& Name)
+	FORCEINLINE void IncrementMemberValue(const int32 &HistoryIndex, const FName& InName)
 	{
-		FCsItemMemberValue* Value = GetMemberValue(HistoryIndex, Name);
+		FCsItemMemberValue* Value = GetMemberValue(HistoryIndex, InName);
 		Value->Increment();
 	}
 

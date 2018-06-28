@@ -9,35 +9,43 @@
 // Enums
 #pragma region
 
-namespace ECsAnimInstanceRoutine
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsAnimInstanceRoutine : public FECsEnum_uint8
 {
-	enum Type
-	{
-		ECsAnimInstanceRoutine_MAX,
-	};
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsAnimInstanceRoutine() {}
+	FECsAnimInstanceRoutine(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsAnimInstanceRoutine(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsAnimInstanceRoutine() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsAnimInstanceRoutine& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
+struct CSCORE_API EMCsAnimInstanceRoutine : public TCsEnumStructMap<FECsAnimInstanceRoutine, uint8>
+{
+protected:
+	EMCsAnimInstanceRoutine() {}
+	EMCsAnimInstanceRoutine(const EMCsAnimInstanceRoutine &) = delete;
+	EMCsAnimInstanceRoutine(EMCsAnimInstanceRoutine &&) = delete;
+public:
+	~EMCsAnimInstanceRoutine() {}
+private:
+	static EMCsAnimInstanceRoutine* Instance;
+
+public:
+	static EMCsAnimInstanceRoutine& Get();
+};
+
 namespace ECsAnimInstanceRoutine
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		return Type::ECsAnimInstanceRoutine_MAX;
-	}
 }
-
-#define ECS_ANIM_INSTANCE_ROUTINE_MAX (uint8)ECsAnimInstanceRoutine::ECsAnimInstanceRoutine_MAX
-typedef ECsAnimInstanceRoutine::Type TCsAnimInstanceRoutine;
 
 #pragma endregion Enums
 

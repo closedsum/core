@@ -1,5 +1,6 @@
 #pragma once
 #include "Data/CsData.h"
+#include "Types/CsTypes_View.h"
 #include "CsData_CharacterMaterialSkin.generated.h"
 
 /* Current Order of Categories

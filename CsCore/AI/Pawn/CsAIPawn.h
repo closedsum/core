@@ -19,37 +19,87 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsAIPawn_OnPlayerSeesBody, c
 // Enums
 #pragma region
 
-namespace ECsAIPawnRoutine
-{
-	enum Type
-	{
-		ECsAIPawnRoutine_MAX = ECsPawnRoutine::ECsPawnRoutine_MAX,
-	};
-}
-
-namespace ECsAIPawnRoutine
-{
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		return Type::ECsAIPawnRoutine_MAX;
-	}
-}
-
-#define ECS_AI_PAWN_ROUTINE_MAX (uint8)ECsAIPawnRoutine::ECsAIPawnRoutine_MAX
-typedef ECsAIPawnRoutine::Type TCsAIPawnRoutine;
-
 #pragma endregion Enums
+
+// Structs
+#pragma region
+
+USTRUCT(BlueprintType)
+struct FCsAISenseInfo_Player
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	uint8 PlayerMappingId;
+
+// Me to Player
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	bool bSensePlayerBySight;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	FVector MeToPlayerDir;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	float MeToPlayerDistance;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	float MeToPlayerDistanceSq;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	FVector MeToPlayerDirXY;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	float MeToPlayerDot;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	bool bSeesPlayer;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	float TraceMeToPlayerBodyStartTime;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	uint8 TraceRequestId_MeToPlayerBody;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	float TraceMeToPlayerHeadStartTime;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	uint8 TraceRequestId_MeToPlayerHead;
+
+// Player to Me
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	float PlayerToMeDot;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	bool bPlayerSeesMe;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	bool bPlayerSeesBody;
+
+	TCsBool_Ref bPlayerSeesBodyHandle;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	float CheckPlayerSeesBodyStartTime;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	bool bPlayerSeesHead;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	float LastKnown_DistanceToPlayer;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	FVector LastKnown_PlayerLocation;
+
+	FCsAISenseInfo_Player()
+	{
+
+	}
+	~FCsAISenseInfo_Player(){}
+};
+
+#pragma endregion Structs
 
 USTRUCT(BlueprintType)
 struct FCsAIPawnCache : public FCsPooledObjectCache
@@ -69,7 +119,7 @@ struct FCsAIPawnCache : public FCsPooledObjectCache
 
 	~FCsAIPawnCache(){}
 
-	void Set(const uint16 &InIndex, ACsAIPawn* InPawn)
+	void Set(const int32 &InIndex, ACsAIPawn* InPawn)
 	{
 		Index = InIndex;
 		Pawn  = InPawn;
@@ -120,7 +170,7 @@ class CSCORE_API ACsAIPawn : public ACsPawn
 	virtual void OnCreatePool();
 	virtual void OnPostCreatePool();
 
-	void Allocate(const uint16 &ActiveIndex, FCsAIPawnPayload* Payload);
+	void Allocate(const int32 &ActiveIndex, FCsAIPawnPayload* Payload);
 
 	virtual void Allocate_Internal(FCsAIPawnPayload* Payload);
 
@@ -163,43 +213,24 @@ public:
 
 #pragma endregion Behavior Tree
 
-// Player
+// Sense
 #pragma region
 public:
 
-	UPROPERTY(BlueprintReadOnly, Category = "Player")
-	float PlayerToMeDot;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
+	float ViewDot;
 
-	void OnTick_CalculatePlayerToMeDot();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
+	float ViewAngle;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player", meta = (ClampMin = "0.0", UIMin = "0.0", ClampMax = "1.0", UIMax = "1.0"))
-	float PlayerSeesBodyMinDot;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float SenseRadius;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player", meta = (ClampMin = "0.0", UIMin = "0.0", ClampMax = "90.0", UIMax = "80.0"))
-	float PlayerSeesBodyAngle;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
+	float SenseRadiusSq;
+	/** Minimum Z distance below or above capsule to start checks */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float SenseHeight;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Player")
-	bool bPlayerSeesBody;
-
-	UFUNCTION(BlueprintCallable, Category = "Player")
-	virtual void SetPlayerSeesBody(const bool &Value);
-
-	TCsBool_Ref bPlayerSeesBodyHandle;
-	virtual void OnChange_bPlayerSeesBody(const bool &Value);
-
-	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
-	FBindableDynEvent_CsAIPawn_OnPlayerSeesBody OnPlayerSeesBody_ScriptEvent;
-
-	FBindableEvent_CsAIPawn_OnPlayerSeesBody OnPlayerSeesBody_Event;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player", meta = (ClampMin = "0.0", UIMin = "0.0"))
-	float CheckPlayerSeesBodyInterval;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Player")
-	float CheckPlayerSeesBodyStartTime;
-
-	void OnTick_CheckPlayerSeesBody();
-	void CheckPlayerSeesBody_Response(FCsTraceResponse* Response);
-
-#pragma endregion Player
+#pragma endregion Sense
 };

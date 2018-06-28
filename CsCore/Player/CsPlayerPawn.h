@@ -1,7 +1,11 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Pawn/CsPawn.h"
+#include "Types/CsTypes_Trace.h"
 #include "CsPlayerPawn.generated.h"
+
+// Structs
+#pragma region
 
 USTRUCT(BlueprintType)
 struct FCsPlayerPawnCalcCameraTraceInfo
@@ -27,38 +31,10 @@ struct FCsPlayerPawnCalcCameraTraceInfo
 	TArray<FHitResult> OutHits;
 };
 
+#pragma endregion Structs
+
 // Enums
 #pragma region
-
-namespace ECsPlayerPawnRoutine
-{
-	enum Type
-	{
-		ECsPlayerPawnRoutine_MAX = ECsPawnRoutine::ECsPawnRoutine_MAX,
-	};
-}
-
-namespace ECsPlayerPawnRoutine
-{
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		return Type::ECsPlayerPawnRoutine_MAX;
-	}
-}
-
-#define ECS_PLAYER_PAWN_ROUTINE_MAX (uint8)ECsPlayerPawnRoutine::ECsPlayerPawnRoutine_MAX
-typedef ECsPlayerPawnRoutine::Type TCsPlayerPawnRoutine;
 
 #pragma endregion Enums
 
@@ -95,6 +71,7 @@ public:
 
 // View
 #pragma region
+public:
 
 	virtual void RecordView() override;
 
@@ -102,6 +79,7 @@ public:
 
 // Managers
 #pragma region
+public:
 
 	virtual class ACsManager_Inventory* GetMyManager_Inventory() override;
 

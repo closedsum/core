@@ -163,7 +163,7 @@ struct CSCORE_API FCsWidgetActorInfo
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blueprint")
-	TAssetPtr<class UBlueprint> Blueprint;
+	TSoftObjectPtr<class UBlueprint> Blueprint;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blueprint", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Blueprint_LoadFlags;
@@ -269,7 +269,7 @@ public:
 };
 
 // PostEditChangeProperty FCsWidgetActorInfo
-#define CS_PECEP_FCS_WIDGET_ACTOR_INFO(e, PropertyName, MemberName)	if (UStructProperty* StructProperty = Cast<UStructProperty>(e.MemberProperty)) \
+#define CS_PECP_FCS_WIDGET_ACTOR_INFO(e, PropertyName, MemberName)	if (UStructProperty* StructProperty = Cast<UStructProperty>(e.MemberProperty)) \
 																	{ \
 																		if (StructProperty->Struct == FCsWidgetActorInfo::StaticStruct()) \
 																		{ \
@@ -286,7 +286,7 @@ struct CSCORE_API FCsWidgetComponentInfo
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blueprint")
-	TAssetPtr<class UBlueprint> Blueprint;
+	TSoftObjectPtr<class UBlueprint> Blueprint;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blueprint", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Blueprint_LoadFlags;
@@ -382,7 +382,7 @@ public:
 };
 
 // PostEditChangeProperty FCsWidgetComponentInfo
-#define CS_PECEP_FCS_WIDGET_COMPONENT_INFO(e, PropertyName, MemberName)	if (UStructProperty* StructProperty = Cast<UStructProperty>(e.MemberProperty)) \
+#define CS_PECP_FCS_WIDGET_COMPONENT_INFO(e, PropertyName, MemberName)	if (UStructProperty* StructProperty = Cast<UStructProperty>(e.MemberProperty)) \
 																		{ \
 																			if (StructProperty->Struct == FCsWidgetComponentInfo::StaticStruct()) \
 																			{ \

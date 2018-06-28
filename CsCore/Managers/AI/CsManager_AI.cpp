@@ -5,6 +5,9 @@
 #include "Common/CsCommon.h"
 
 #include "AI/CsAIController.h"
+// Player
+#include "Player/CsPlayerState.h"
+// Game
 #include "Game/CsGameState.h"
 
 // static initializations
@@ -177,7 +180,7 @@ ACsAIPawn* AICsManager_AI::ConstructObject(const FECsAIType &Type)
 	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnInfo.ObjectFlags |= RF_Transient;
 
-	ACsAIPawn* Actor = GetWorld()->SpawnActor<ACsAIPawn>(ACsAIPawn::StaticClass(), SpawnInfo);
+	ACsAIPawn* Actor = GetWorld()->SpawnActor<ACsAIPawn>(ClassMap.Find(Type) ? ClassMap[Type] : ACsAIPawn::StaticClass(), SpawnInfo);
 	return Actor;
 }
 
@@ -201,12 +204,17 @@ void AICsManager_AI::OnTick(const float &DeltaTime)
 	Internal->OnTick(DeltaTime);
 }
 
-void AICsManager_AI::GetAllActiveActors(TArray<ACsAIPawn*> &OutActors)
+const TArray<ACsAIPawn*>& AICsManager_AI::GetAllPawns()
+{
+	return Internal->GetAllObjects();
+}
+
+void AICsManager_AI::GetAllActivePawns(TArray<ACsAIPawn*> &OutActors)
 {
 	Internal->GetAllActiveObjects(OutActors);
 }
 
-const TArray<class ACsAIPawn*>* AICsManager_AI::GetActors(const FECsAIType& Type)
+const TArray<ACsAIPawn*>* AICsManager_AI::GetPawns(const FECsAIType& Type)
 {
 	return Internal->GetObjects(Type);
 }

@@ -34,6 +34,8 @@ struct FCsFxCache : public FCsPooledObjectCache
 	FVector Location;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FRotator Rotation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	FTransform Transform;
 
 	FCsFxCache()
 	{
@@ -67,6 +69,9 @@ struct FCsFxCache : public FCsPooledObjectCache
 		Scale3D = FVector(Scale);
 		Location = Bone != NAME_None ? Payload->Location : FVector::ZeroVector;
 		Rotation = Bone != NAME_None ? Payload->Rotation : FRotator::ZeroRotator;
+		Transform.SetScale3D(Scale3D);
+		Transform.SetLocation(Location);
+		Transform.SetRotation(Rotation.Quaternion());
 		Time = InTime;
 		RealTime = InRealTime;
 		SetFrame(InFrame);
@@ -87,6 +92,7 @@ struct FCsFxCache : public FCsPooledObjectCache
 		Scale3D = FVector::OneVector;
 		Location = FVector::ZeroVector;
 		Rotation = FRotator::ZeroRotator;
+		Transform = FTransform::Identity;
 	}
 
 	FORCEINLINE ACsEmitter* GetEmitter() { return Emitter.IsValid() ? Emitter.Get() : nullptr; }

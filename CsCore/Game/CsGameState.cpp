@@ -39,6 +39,7 @@
 #include "Javascript/CsJavascriptEntryPoint.h"
 
 #if WITH_EDITOR
+#include "Editor.h"
 #include "Settings/LevelEditorPlaySettings.h"
 #endif // #if WITH_EDITOR
 
@@ -63,6 +64,49 @@ namespace ECsGameStateCached
 
 // Enums
 #pragma region
+
+EMCsGameStateOnBoardState* EMCsGameStateOnBoardState::Instance;
+
+EMCsGameStateOnBoardState& EMCsGameStateOnBoardState::Get()
+{
+	if (!Instance)
+		Instance = new EMCsGameStateOnBoardState();
+	return *Instance;
+}
+
+namespace ECsGameStateOnBoardState
+{
+	namespace Ref
+	{
+		CSCORE_API const Type LoadCommonData = EMCsGameStateOnBoardState::Get().Add(Type::LoadCommonData, TEXT("LoadCommonData"), TEXT("Load Common Data"));
+		CSCORE_API const Type SetAssetReferencesCommonData = EMCsGameStateOnBoardState::Get().Add(Type::SetAssetReferencesCommonData, TEXT("SetAssetReferencesCommonData"), TEXT("Set Asset References Common Data"));
+		CSCORE_API const Type SetupHUD = EMCsGameStateOnBoardState::Get().Add(Type::SetupHUD, TEXT("SetupHUD"), TEXT("Setup HUD"));
+		CSCORE_API const Type LoadGameData = EMCsGameStateOnBoardState::Get().Add(Type::LoadGameData, TEXT("LoadGameData"), TEXT("Load Game Data"));
+		CSCORE_API const Type SetAssetReferencesGameData = EMCsGameStateOnBoardState::Get().Add(Type::SetAssetReferencesGameData, TEXT("SetAssetReferencesGameData"), TEXT("Set Asset References Game Data"));
+		CSCORE_API const Type LoadItems = EMCsGameStateOnBoardState::Get().Add(Type::LoadItems, TEXT("LoadItems"), TEXT("Load Items"));
+		CSCORE_API const Type LoadSceneData = EMCsGameStateOnBoardState::Get().Add(Type::LoadSceneData, TEXT("LoadSceneData"), TEXT("Load Scene Data"));
+		CSCORE_API const Type SetAssetReferencesSceneData = EMCsGameStateOnBoardState::Get().Add(Type::SetAssetReferencesSceneData, TEXT("SetAssetReferencesSceneData"), TEXT("Set Asset References Scene Data"));
+		CSCORE_API const Type SetupScene = EMCsGameStateOnBoardState::Get().Add(Type::SetupScene, TEXT("SetupScene"), TEXT("Setup Scene"));
+		CSCORE_API const Type SetupLastTickActor = EMCsGameStateOnBoardState::Get().Add(Type::SetupLastTickActor, TEXT("SetupLastTickActor"), TEXT("Setup Last Tick Actor"));
+		CSCORE_API const Type SetupJavascriptEntryPoint = EMCsGameStateOnBoardState::Get().Add(Type::SetupJavascriptEntryPoint, TEXT("SetupJavascriptEntryPoint"), TEXT("Setup Javascript Entry Point"));
+		CSCORE_API const Type Completed = EMCsGameStateOnBoardState::Get().Add(Type::Completed, TEXT("Completed"));
+		CSCORE_API const Type ECsGameStateOnBoardState_MAX = EMCsGameStateOnBoardState::Get().Add(Type::ECsGameStateOnBoardState_MAX, TEXT("ECsGameStateOnBoardState_MAX"), TEXT("MAX"));
+	}
+}
+
+EMCsGameStateRoutine* EMCsGameStateRoutine::Instance;
+
+EMCsGameStateRoutine& EMCsGameStateRoutine::Get()
+{
+	if (!Instance)
+		Instance = new EMCsGameStateRoutine();
+	return *Instance;
+}
+
+namespace ECsGameStateRoutine
+{
+	CSCORE_API const FECsGameStateRoutine OnBoard_Internal = EMCsGameStateRoutine::Get().Create(TEXT("OnBoard_Internal"));
+}
 
 #pragma endregion Enums
 
@@ -239,7 +283,7 @@ void ACsGameState::SeamlessTravelTransitionCheckpoint(bool bToTransitionMap)
 
 bool ACsGameState::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
 {
-	const TCsGameStateRoutine RoutineType = (TCsGameStateRoutine)Type;
+	const FECsGameStateRoutine& RoutineType = EMCsGameStateRoutine::Get().GetEnumAt(Type);
 
 	// OnBoard_Internal
 	if (RoutineType == ECsGameStateRoutine::OnBoard_Internal)
@@ -257,7 +301,7 @@ bool ACsGameState::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &
 
 bool ACsGameState::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
 {
-	const TCsGameStateRoutine RoutineType = (TCsGameStateRoutine)Type;
+	const FECsGameStateRoutine& RoutineType = EMCsGameStateRoutine::Get().GetEnumAt(Type);
 
 	// OnBoard_Internal
 	if (RoutineType == ECsGameStateRoutine::OnBoard_Internal)
@@ -287,7 +331,7 @@ void ACsGameState::OnBoard()
 	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
 	Payload->Add			= &ACsGameState::AddRoutine;
 	Payload->Remove			= &ACsGameState::RemoveRoutine;
-	Payload->Type			= (uint8)ECsGameStateRoutine::OnBoard_Internal;
+	Payload->Type			= ECsGameStateRoutine::OnBoard_Internal.Value;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			= ECsGameStateCached::Name::OnBoard_Internal;
@@ -561,7 +605,7 @@ void ACsGameState::SetupLastTickActor()
 
 	if (CsCVarLogGameStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		UE_LOG(LogCs, Log, TEXT("ACsGameState::SetupLastTickActor: State Change: SetupLastTickActor -> %s"), *(ECsGameStateOnBoardState::ToString(OnBoardState)));
+		UE_LOG(LogCs, Log, TEXT("ACsGameState::SetupLastTickActor: State Change: SetupLastTickActor -> %s"), *(EMCsGameStateOnBoardState::Get().ToString(OnBoardState)));
 	}
 }
 
@@ -603,6 +647,30 @@ uint64 ACsGameState::GetElapsedGameTimeMilliseconds()
 
 #pragma endregion Match State
 
+void ACsGameState::OnPlayerStateBaseLinkedToPawn(class ACsPlayerStateBase* PlayerState)
+{
+	// Player
+	if (ACsPlayerState* PS = Cast<ACsPlayerState>(PlayerState))
+	{
+		OnPlayerStateLinkedToPawn_Event.Broadcast(PS);
+#if WITH_EDITOR
+		OnPlayerStateLinkedToPawn_ScriptEvent.Broadcast(PS);
+#endif // #if WITH_EDITOR
+	}
+	// AI
+	if (ACsAIPlayerState* PS = Cast<ACsAIPlayerState>(PlayerState))
+	{
+		OnAIPlayerStateLinkedToPawn_Event.Broadcast(PS);
+#if WITH_EDITOR
+		OnAIPlayerStateLinkedToPawn_ScriptEvent.Broadcast(PS);
+#endif // #if WITH_EDITOR
+	}
+	OnPlayerStateBaseLinkedToPawn_Event.Broadcast(PlayerState);
+#if WITH_EDITOR
+	OnPlayerStateBaseLinkedToPawn_ScriptEvent.Broadcast(PlayerState);
+#endif // #if WITH_EDITOR
+}
+
 // Player State
 #pragma region
 
@@ -615,7 +683,11 @@ void ACsGameState::AddPlayerState(class APlayerState* PlayerState)
 
 	// Player
 	if (ACsPlayerState* NewPlayerState = Cast<ACsPlayerState>(PlayerState))
+	{
 		AddPlayerStateMapping(NewPlayerState);
+
+		OnAddPlayerStateMapping_Event.Broadcast(NewPlayerState);
+	}
 	// AI
 	if (ACsAIPlayerState* NewPlayerState = Cast<ACsAIPlayerState>(PlayerState))
 		AddAIPlayerStateMapping(NewPlayerState);
@@ -697,13 +769,86 @@ void ACsGameState::RemovePlayerState(class APlayerState* PlayerState)
 	Super::RemovePlayerState(PlayerState);
 }
 
-class ACsPlayerState* ACsGameState::GetPlayerState(const uint8 &MappingId)
+ACsPlayerState* ACsGameState::GetPlayerState(const uint8 &MappingId)
 {
-	TWeakObjectPtr<ACsPlayerState>* PtrPlayerState = PlayerStateMappings.Find(MappingId);
+	TWeakObjectPtr<ACsPlayerState>* PlayerStatePtr = PlayerStateMappings.Find(MappingId);
 
-	if (!PtrPlayerState)
+	if (!PlayerStatePtr)
 		return nullptr;
-	return (*PtrPlayerState).IsValid() ? (*PtrPlayerState).Get() : nullptr;
+	return (*PlayerStatePtr).IsValid() ? (*PlayerStatePtr).Get() : nullptr;
+}
+
+ACsPlayerState* ACsGameState::GetSafePlayerState(const uint8 &MappingId)
+{
+	TWeakObjectPtr<ACsPlayerState>* PlayerStatePtr = PlayerStateMappings.Find(MappingId);
+
+	if (!PlayerStatePtr)
+		return nullptr;
+	return (*PlayerStatePtr).IsValid() ? (*PlayerStatePtr).Get() : nullptr;
+}
+
+ACsPlayerPawn* ACsGameState::GetPlayerPawn(const uint8 &MappingId)
+{
+	ACsPlayerState* PlayerState = GetPlayerState(MappingId);
+
+	if (!PlayerState)
+		return nullptr;
+	return PlayerState->GetMyPawn<ACsPlayerPawn>();
+}
+
+ACsPlayerPawn* ACsGameState::GetSafePlayerPawn(const uint8 &MappingId)
+{
+	ACsPlayerState* PlayerState = GetSafePlayerState(MappingId);
+
+	if (!PlayerState)
+		return nullptr;
+	return PlayerState->GetMyPawn<ACsPlayerPawn>();
+}
+
+void ACsGameState::GetSpawnedAndActivePlayerPawns(TArray<class ACsPlayerPawn*>& OutPawns)
+{
+	TArray<uint8> Keys;
+	PlayerStateMappings.GetKeys(Keys);
+
+	for (const uint8& Key : Keys)
+	{
+		ACsPlayerState* PlayerState = PlayerStateMappings[Key].Get();
+
+		if (!PlayerState->IsOnBoardCompleted_Game())
+			continue;
+
+		ACsPlayerPawn* Pawn = Cast<ACsPlayerPawn>(PlayerState->GetMyPawn());
+
+		if (!Pawn->bSpawnedAndActive)
+			continue;
+
+		OutPawns.Add(Pawn);
+	}
+}
+
+void ACsGameState::GetPlayerStates(TArray<ACsPlayerState*>& OutPlayerStates)
+{
+	TArray<uint8> Keys;
+	PlayerStateMappings.GetKeys(Keys);
+
+	for (const uint8& Key : Keys)
+	{
+		OutPlayerStates.Add(GetPlayerState(Key));
+	}
+}
+
+void ACsGameState::GetPlayerPawns(TArray<ACsPlayerPawn*>& OutPawns)
+{
+	TArray<uint8> Keys;
+	PlayerStateMappings.GetKeys(Keys);
+
+	for (const uint8& Key : Keys)
+	{
+		ACsPlayerState* PlayerState = GetPlayerState(Key);
+
+		if (ACsPlayerPawn* Pawn = PlayerState->GetMyPawn<ACsPlayerPawn>())
+			OutPawns.Add(Pawn);
+	}
 }
 
 void ACsGameState::OnTick_HandleBroadcastingPlayerStateFullyReplicatedAndLoaded()
@@ -777,8 +922,8 @@ void ACsGameState::SetPlayerStateMappingRelationshipFlag(const uint8 &ClientMapp
 				ACsPlayerState* ClientPlayerState = GetPlayerState(ClientMappingId);
 				ACsPlayerState* PlayerState		  = GetPlayerState(MappingId);
 
-				const FString ClientName = ClientPlayerState ? ClientPlayerState->PlayerName : ECsCached::Str::INVALID;
-				const FString OtherName  = PlayerState ? PlayerState->PlayerName : ECsCached::Str::INVALID;
+				const FString ClientName = ClientPlayerState ? ClientPlayerState->GetPlayerName() : ECsCached::Str::INVALID;
+				const FString OtherName  = PlayerState ? PlayerState->GetPlayerName() : ECsCached::Str::INVALID;
 				const FString Value		 = Relationship.HasBCompletedInitialReplicationAndLoadingForA ? ECsCached::Str::True : ECsCached::Str::False;
 
 				UE_LOG(LogCs, Log, TEXT("ACsGameState::SetPlayerStateMappingRelationshipFlag: Relationship: %s(%d) <-> %s(%d) from %s to True."), *OtherName, MappingId, *ClientName, ClientMappingId, *Value);
@@ -832,11 +977,57 @@ void ACsGameState::AddAIPlayerStateMapping(ACsAIPlayerState* NewPlayerState)
 
 class ACsAIPlayerState* ACsGameState::GetAIPlayerState(const uint8 &MappingId)
 {
-	TWeakObjectPtr<ACsAIPlayerState>* PtrPlayerState = AIPlayerStateMappings.Find(MappingId);
+	return AIPlayerStateMappings[MappingId].IsValid() ? AIPlayerStateMappings[MappingId].Get() : nullptr;
+}
 
-	if (!PtrPlayerState)
+class ACsAIPlayerState* ACsGameState::GetSafeAIPlayerState(const uint8 &MappingId)
+{
+	if (!AIPlayerStateMappings.Find(MappingId))
 		return nullptr;
-	return (*PtrPlayerState).IsValid() ? (*PtrPlayerState).Get() : nullptr;
+	return GetAIPlayerState(MappingId);
+}
+
+ACsAIPawn* ACsGameState::GetAIPawn(const uint8 &MappingId)
+{
+	ACsAIPlayerState* PlayerState = GetAIPlayerState(MappingId);
+
+	if (!PlayerState)
+		return nullptr;
+	return PlayerState->GetMyPawn<ACsAIPawn>();
+}
+
+ACsAIPawn* ACsGameState::GetSafeAIPawn(const uint8 &MappingId)
+{
+	ACsAIPlayerState* PlayerState = GetSafeAIPlayerState(MappingId);
+
+	if (!PlayerState)
+		return nullptr;
+	return PlayerState->GetMyPawn<ACsAIPawn>();
+}
+
+void ACsGameState::GetAIPlayerStates(TArray<ACsAIPlayerState*>& OutPlayerStates)
+{
+	TArray<uint8> Keys;
+	AIPlayerStateMappings.GetKeys(Keys);
+
+	for (const uint8& Key : Keys)
+	{
+		OutPlayerStates.Add(GetAIPlayerState(Key));
+	}
+}
+
+void ACsGameState::GetAIPawns(TArray<ACsAIPawn*>& OutPawns)
+{
+	TArray<uint8> Keys;
+	AIPlayerStateMappings.GetKeys(Keys);
+
+	for (const uint8& Key : Keys)
+	{
+		ACsAIPlayerState* PlayerState = GetAIPlayerState(Key);
+
+		if (ACsAIPawn* Pawn = PlayerState->GetMyPawn<ACsAIPawn>())
+			OutPawns.Add(Pawn);
+	}
 }
 
 void ACsGameState::OnTick_HandleBroadcastingAIPlayerStateFullyReplicatedAndLoaded()
@@ -848,7 +1039,7 @@ void ACsGameState::OnTick_HandleBroadcastingAIPlayerStateFullyReplicatedAndLoade
 	{
 		const uint8& Key = RelationshipKeys[I];
 
-		ACsAIPlayerState* PlayerState = GetAIPlayerState(Key);
+		ACsAIPlayerState* PlayerState = GetSafeAIPlayerState(Key);
 
 		// Check if PlayerState is still VALID (i.e. Player could have Disconnected)
 		if (!PlayerState)
@@ -908,10 +1099,10 @@ void ACsGameState::SetAIPlayerStateMappingRelationshipFlag(const uint8 &ClientMa
 			if (CsCVarLogPlayerStateOnBoard->GetInt() == CS_CVAR_SHOW_LOG)
 			{
 				ACsPlayerState* ClientPlayerState = GetPlayerState(ClientMappingId);
-				ACsAIPlayerState* PlayerState	  = GetAIPlayerState(MappingId);
+				ACsAIPlayerState* PlayerState	  = GetSafeAIPlayerState(MappingId);
 
-				const FString ClientName = ClientPlayerState ? ClientPlayerState->PlayerName : ECsCached::Str::INVALID;
-				const FString OtherName  = PlayerState ? PlayerState->PlayerName : ECsCached::Str::INVALID;
+				const FString ClientName = ClientPlayerState ? ClientPlayerState->GetPlayerName() : ECsCached::Str::INVALID;
+				const FString OtherName  = PlayerState ? PlayerState->GetPlayerName() : ECsCached::Str::INVALID;
 				const FString Value		 = Relationship.HasBCompletedInitialReplicationAndLoadingForA ? ECsCached::Str::True : ECsCached::Str::False;
 
 				UE_LOG(LogCs, Log, TEXT("ACsGameState::SetAIPlayerStateMappingRelationshipFlag: Relationship: %s(%d) <-> %s(%d) from %s to True."), *OtherName, MappingId, *ClientName, ClientMappingId, *Value);

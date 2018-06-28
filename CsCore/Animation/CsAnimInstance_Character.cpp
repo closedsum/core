@@ -58,19 +58,19 @@ void UCsAnimInstance_Character::NativeInitializeAnimation()
 		return;
 	
 	// Data_Character
-	Data_Character.Data = TAssetSubclassOf<ACsData_Character>(MyPawn->GetMyData_Character());
+	Data_Character.Data = TSoftClassPtr<ACsData_Character>(MyPawn->GetMyData_Character());
 	Data_Character.Data_Internal = MyPawn->GetMyData_Character();
 	// Data_CharacterMeshSkin
-	Data_CharacterMeshSkin.Data = TAssetSubclassOf<ACsData_CharacterMeshSkin>(MyPawn->GetMyData_CharacterMeshSkin());
+	Data_CharacterMeshSkin.Data = TSoftClassPtr<ACsData_CharacterMeshSkin>(MyPawn->GetMyData_CharacterMeshSkin());
 	Data_CharacterMeshSkin.Data_Internal = MyPawn->GetMyData_CharacterMeshSkin();
 	// Data_CharacterMaterialSkin
-	Data_CharacterMaterialSkin.Data = TAssetSubclassOf<ACsData_CharacterMaterialSkin>(MyPawn->GetMyData_CharacterMaterialSkin());
+	Data_CharacterMaterialSkin.Data = TSoftClassPtr<ACsData_CharacterMaterialSkin>(MyPawn->GetMyData_CharacterMaterialSkin());
 	Data_CharacterMaterialSkin.Data_Internal = MyPawn->GetMyData_CharacterMaterialSkin();
 	// Data_Weapon
-	Data_Weapon.Data = TAssetSubclassOf<ACsData_Weapon>(MyPawn->GetCurrentData_Weapon());
+	Data_Weapon.Data = TSoftClassPtr<ACsData_Weapon>(MyPawn->GetCurrentData_Weapon());
 	Data_Weapon.Data_Internal = MyPawn->GetCurrentData_Weapon();
 	// Data_WeaponMaterialSkin
-	Data_WeaponMaterialSkin.Data = TAssetSubclassOf<ACsData_WeaponMaterialSkin>(MyPawn->GetCurrentData_WeaponMaterialSkin());
+	Data_WeaponMaterialSkin.Data = TSoftClassPtr<ACsData_WeaponMaterialSkin>(MyPawn->GetCurrentData_WeaponMaterialSkin());
 	Data_WeaponMaterialSkin.Data_Internal = MyPawn->GetCurrentData_WeaponMaterialSkin();
 	
 	LoadAnims();
@@ -182,7 +182,7 @@ void UCsAnimInstance_Character::LoadData_Character()
 	const FString& DataString   = ECsAnimInstanceCharacterCached::Str::Data_Character;
 	const FString& CsDataString = ECsAnimInstanceCharacterCached::Str::CsData_Character;
 
-	UCsCommon_Load::LoadTAssetSubclassOf(DataString, Data_Character.Data, Data_Character.Data_Internal, CsDataString);
+	UCsCommon_Load::LoadTSoftClassPtr(DataString, Data_Character.Data, Data_Character.Data_Internal, CsDataString);
 
 	if (ACsData_Character* MyData_Charater = GetData())
 		MyData_Charater->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
@@ -216,7 +216,7 @@ void UCsAnimInstance_Character::LoadData_CharacterMeshSkin()
 	const FString& DataString   = ECsAnimInstanceCharacterCached::Str::Data_CharacterMeshSkin;
 	const FString& CsDataString = ECsAnimInstanceCharacterCached::Str::CsData_CharacterMeshSkin;
 
-	UCsCommon_Load::LoadTAssetSubclassOf(DataString, Data_CharacterMeshSkin.Data, Data_CharacterMeshSkin.Data_Internal, CsDataString);
+	UCsCommon_Load::LoadTSoftClassPtr(DataString, Data_CharacterMeshSkin.Data, Data_CharacterMeshSkin.Data_Internal, CsDataString);
 
 	if (ACsData_CharacterMeshSkin* MyData_CharacterMeshSkin = GetData_CharacterMeshSkin())
 		MyData_CharacterMeshSkin->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
@@ -250,7 +250,7 @@ void UCsAnimInstance_Character::LoadData_CharacterMaterialSkin()
 	const FString& DataString   = ECsAnimInstanceCharacterCached::Str::Data_CharacterMaterialSkin;
 	const FString& CsDataString = ECsAnimInstanceCharacterCached::Str::CsData_CharacterMaterialSkin;
 
-	UCsCommon_Load::LoadTAssetSubclassOf(DataString, Data_CharacterMaterialSkin.Data, Data_CharacterMaterialSkin.Data_Internal, CsDataString);
+	UCsCommon_Load::LoadTSoftClassPtr(DataString, Data_CharacterMaterialSkin.Data, Data_CharacterMaterialSkin.Data_Internal, CsDataString);
 
 	if (ACsData_CharacterMaterialSkin* MyData_CharacterMaterialSkin = GetData_CharacterMaterialSkin())
 		MyData_CharacterMaterialSkin->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
@@ -284,7 +284,7 @@ void UCsAnimInstance_Character::LoadData_Weapon()
 	const FString& DataString   = ECsAnimInstanceCharacterCached::Str::Data_Weapon;
 	const FString& CsDataString = ECsAnimInstanceCharacterCached::Str::CsData_Weapon;
 
-	UCsCommon_Load::LoadTAssetSubclassOf(DataString, Data_Weapon.Data, Data_Weapon.Data_Internal, CsDataString);
+	UCsCommon_Load::LoadTSoftClassPtr(DataString, Data_Weapon.Data, Data_Weapon.Data_Internal, CsDataString);
 
 	if (ACsData_Weapon* MyData_Weapon = GetData_Weapon())
 		MyData_Weapon->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));
@@ -318,7 +318,7 @@ void UCsAnimInstance_Character::LoadData_WeaponMaterialSkin()
 	const FString& DataString   = ECsAnimInstanceCharacterCached::Str::Data_WeaponMaterialSkin;
 	const FString& CsDataString = ECsAnimInstanceCharacterCached::Str::CsData_WeaponMaterialSkin;
 
-	UCsCommon_Load::LoadTAssetSubclassOf(DataString, Data_WeaponMaterialSkin.Data, Data_WeaponMaterialSkin.Data_Internal, CsDataString);
+	UCsCommon_Load::LoadTSoftClassPtr(DataString, Data_WeaponMaterialSkin.Data, Data_WeaponMaterialSkin.Data_Internal, CsDataString);
 
 	if (ACsData_WeaponMaterialSkin* MyData_WeaponMaterialSkin = GetData_WeaponMaterialSkin())
 		MyData_WeaponMaterialSkin->Load(UCsCommon::ViewTypeToLoadFlags(CurrentViewType));

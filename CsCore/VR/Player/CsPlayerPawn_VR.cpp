@@ -11,9 +11,9 @@ ACsPlayerPawn_VR::ACsPlayerPawn_VR(const FObjectInitializer& ObjectInitializer)
 	MotionControllerClass = ACsMotionController::StaticClass();
 
 	MotionControllerComponent_LeftHand = ObjectInitializer.CreateDefaultSubobject<UMotionControllerComponent>(this, TEXT("MotionControllerComponent_LeftHand"));
-	MotionControllerComponent_LeftHand->Hand = EControllerHand::Left;
+	MotionControllerComponent_LeftHand->MotionSource = EMCsControllerHand::Get().ToName(ECsControllerHand::Left);
 	MotionControllerComponent_RightHand = ObjectInitializer.CreateDefaultSubobject<UMotionControllerComponent>(this, TEXT("MotionControllerComponent_RightHand"));
-	MotionControllerComponent_RightHand->Hand = EControllerHand::Right;
+	MotionControllerComponent_RightHand->MotionSource = EMCsControllerHand::Get().ToName(ECsControllerHand::Right);
 }
 
 void ACsPlayerPawn_VR::PostInitializeComponents()

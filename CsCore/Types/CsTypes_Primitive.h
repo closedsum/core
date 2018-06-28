@@ -773,7 +773,7 @@ public:
 		DefaultValue = inDefaultValue;
 	}
 
-	virtual void UpdateIsDirty()
+	FORCEINLINE virtual void UpdateIsDirty()
 	{
 		IsDirty = Value != Last_Value;
 
@@ -781,32 +781,32 @@ public:
 			OnChange_Event.Broadcast(Value);
 	}
 
-	TCsProperty& operator=(const T& B)
+	FORCEINLINE TCsProperty& operator=(const T& B)
 	{
 		Value = B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	bool operator==(const T& B) const
+	FORCEINLINE bool operator==(const T& B) const
 	{
 		return Value == B;
 	}
 
-	bool operator!=(const T& B) const
+	FORCEINLINE bool operator!=(const T& B) const
 	{
 		return !(*this == B);
 	}
 
-	virtual void Set(const T &inValue)
+	FORCEINLINE virtual void Set(const T &inValue)
 	{
 		Value = inValue;
 		UpdateIsDirty();
 	}
 
-	const T& Get() { return Value; }
+	FORCEINLINE const T& Get() { return Value; }
 
-	virtual void Clear()
+	FORCEINLINE virtual void Clear()
 	{
 		Last_Value = Value;
 		IsDirty	   = false;
@@ -826,10 +826,10 @@ public:
 		OnChange_Event.Clear();
 	}
 
-	bool HasChanged() { return IsDirty; }
-	void MarkDirty() { IsDirty = true; }
+	FORCEINLINE bool HasChanged() { return IsDirty; }
+	FORCEINLINE void MarkDirty() { IsDirty = true; }
 
-	void Resolve()
+	FORCEINLINE void Resolve()
 	{
 		UpdateIsDirty();
 		Clear();

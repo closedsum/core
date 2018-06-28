@@ -5,7 +5,10 @@
 #include "Types/CsTypes_Coroutine.h"
 #include "CsPlayerStateBase.generated.h"
 
+// Tick
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPlayerStateBase_OnTick, const uint8&, MappingId, const float&, DeltaSeconds);
+// LinkedPawn
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsPlayerStateBase_OnLinkedPawnSet, class ACsPlayerStateBase*, PlayerState);
 
 // Enums
 #pragma region
@@ -223,6 +226,8 @@ class CSCORE_API ACsPlayerStateBase : public APlayerState
 {
 	GENERATED_UCLASS_BODY()
 
+public:
+
 	virtual void PostActorCreated() override;
 
 	UPROPERTY(BlueprintAssignable, Category = "Tick")
@@ -230,13 +235,26 @@ class CSCORE_API ACsPlayerStateBase : public APlayerState
 
 	TWeakObjectPtr<AController> MyController;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, Category = "Controller")
 	virtual AController* GetMyController();
 
+	UPROPERTY(BlueprintReadOnly, Category = "Pawn")
 	TWeakObjectPtr<class ACsPawn> LinkedPawn;
 
-	UFUNCTION()
-	virtual class ACsPawn* GetMyPawn();
+	UFUNCTION(BlueprintCallable, Category = "Pawn")
+	class ACsPawn* GetMyPawn();
+	template<typename T>
+	T* GetMyPawn()
+	{
+		return Cast<T>(GetMyPawn());
+	}
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnLinkedPawnSet, class ACsPlayerStateBase*);
+
+	FOnLinkedPawnSet OnLinkedPawnSet_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Pawn")
+	FBindableDynEvent_CsPlayerStateBase_OnLinkedPawnSet OnLinkedPawnSet_ScriptEvent;
 
 // Routines
 #pragma region

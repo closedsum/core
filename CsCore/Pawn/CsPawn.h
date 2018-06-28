@@ -4,69 +4,76 @@
 #include "Types/CsTypes_Weapon.h"
 #include "Types/CsTypes_Coroutine.h"
 #include "Types/CsTypes_Damage.h"
+#include "Types/CsTypes_Sense.h"
 #include "CsPawn.generated.h"
 
 // Tick
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_Override_OnTick, const uint8&, MappingId, const float&, DeltaSeconds);
 	// Pre
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnPreTick, const uint8&, MappingId, const float&, DeltaSeconds);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsPawn_OnPreTick, const uint8&, const float&);
 	// Post
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnPostTick, const uint8&, MappingId, const float&, DeltaSeconds);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsPawn_OnPostTick, const uint8&, const float&);
-// Respawn
-DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsPawn_OnHandleRespawnTimerFinished, const uint8&);
+// Spawn
+	// FirstSpawn
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsPawn_OnFirstSpawn, const uint8&, MappingId);
 // Setup
-DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsPawn_OnSetupFinished, const uint8&);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsPawn_OnSetupFinished, const uint8&, MappingId);
 // Health
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsPawn_OnChangeHealth, const uint8&, const float&, const float&);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsPawn_OnChangeHealth, const uint8&, MappingId, const float&, CurrentHealth, const float&, CurrentMaxHealth);
 // Weapon
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsPawn_OnChangeCurrentWeaponSlot, const uint8&, const FECsWeaponSlot&, const FECsWeaponSlot&);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsPawn_OnChangeCurrentWeaponSlot, const uint8&, MappingId, const FECsWeaponSlot&, LastWeaponSlot, const FECsWeaponSlot&, CurrentWeaponSlot);
 // Damage
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsPawn_OnApplyDamage_Result, const uint8&, FCsDamageResult*);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnApplyDamage_Result, const uint8&, MappingId, const FCsDamageResult&, Result);
 
 // Enums
 #pragma region
 
-namespace ECsPawnRoutine
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsPawnRoutine : public FECsEnum_uint8
 {
-	enum Type
-	{
-		HandleRespawnTimer_Internal,
-		ECsPawnRoutine_MAX,
-	};
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsPawnRoutine() {}
+	FECsPawnRoutine(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsPawnRoutine(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsPawnRoutine() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsPawnRoutine& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
+struct CSCORE_API EMCsPawnRoutine : public TCsEnumStructMap<FECsPawnRoutine, uint8>
+{
+protected:
+	EMCsPawnRoutine() {}
+	EMCsPawnRoutine(const EMCsPawnRoutine &) = delete;
+	EMCsPawnRoutine(EMCsPawnRoutine &&) = delete;
+public:
+	~EMCsPawnRoutine() {}
+private:
+	static EMCsPawnRoutine* Instance;
+
+public:
+	static EMCsPawnRoutine& Get();
+};
+
 namespace ECsPawnRoutine
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-		const TCsString HandleRespawnTimer_Internal = TCsString(TEXT("HandleRespawnTimer_Internal"), TEXT("handlerespawntimer_internal"), TEXT("handle respawn timer internal"));
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::HandleRespawnTimer_Internal) { return Str::HandleRespawnTimer_Internal.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::HandleRespawnTimer_Internal) { return Type::HandleRespawnTimer_Internal; }
-		return Type::ECsPawnRoutine_MAX;
-	}
+	extern CSCORE_API const FECsPawnRoutine CheckLinkedToPlayerState_Internal;
+	extern CSCORE_API const FECsPawnRoutine HandleRespawnTimer_Internal;
 }
-
-#define ECS_PAWN_ROUTINE_MAX (uint8)ECsPawnRoutine::ECsPawnRoutine_MAX
-typedef ECsPawnRoutine::Type TCsPawnRoutine;
 
 #pragma endregion Enums
+
+// Structs
+#pragma region
+
+#pragma endregion Structs
 
 UCLASS()
 class CSCORE_API ACsPawn : public ACharacter
@@ -90,32 +97,40 @@ class CSCORE_API ACsPawn : public ACharacter
 	/** ONLY Call in the child class in which you want to implement this functionality */
 	virtual void PreTick(const float &DeltaSeconds);
 
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnPreTick, const uint8&, const float&);
+
+	FOnPreTick OnPreTick_Event;
+
 	UPROPERTY(BlueprintAssignable, Category = "Tick")
 	FBindableDynEvent_CsPawn_OnPreTick OnPreTick_ScriptEvent;
-
-	FBindableEvent_CsPawn_OnPreTick OnPreTick_Event;
 
 	/** ONLY Call in the child class in which you want to implement this functionality */
 	virtual void PostTick(const float &DeltaSeconds);
 
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnPostTick, const uint8&, const float&);
+
+	FOnPostTick OnPostTick_Event;
+
 	UPROPERTY(BlueprintAssignable, Category = "Tick")
 	FBindableDynEvent_CsPawn_OnPostTick OnPostTick_ScriptEvent;
-
-	FBindableEvent_CsPawn_OnPostTick OnPostTick_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "Tick")
 	FBindableDynEvent_CsPawn_Override_OnTick Override_OnTick_ScriptEvent;
 
 	virtual void OnTickActor_HandleCVars(const float &DeltaSeconds);
 
-	virtual bool IsOnBoardCompleted_Game();
-
 // Setup
 #pragma region
 
+	CS_COROUTINE_DECLARE(CheckLinkedToPlayerState)
+
+	virtual bool IsOnBoardCompleted_Game();
+
 	virtual void OnTick_HandleSetup();
 
-	FBindableEvent_CsPawn_OnSetupFinished OnSetup_Finished_Event;
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnSetupFinished, const uint8&);
+
+	FOnSetupFinished OnSetup_Finished_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "Setup")
 	FBindableDynEvent_CsPawn_OnSetupFinished OnSetup_Finished_ScriptEvent;
@@ -140,10 +155,12 @@ public:
 
 	virtual void OnChange_Health(const float &Value);
 
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnChangeHealth, const uint8&, const float&, const float&);
+
+	FOnChangeHealth OnChange_Health_Event;
+
 	UPROPERTY(BlueprintAssignable, Category = "State")
 	FBindableDynEvent_CsPawn_OnChangeHealth OnChange_Health_ScriptEvent;
-
-	FBindableEvent_CsPawn_OnChangeHealth OnChange_Health_Event;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
 	float MaxHealth;
@@ -164,10 +181,12 @@ public:
 	virtual void ApplyDamage(FCsDamageEvent* Event);
 	virtual void OnApplyDamage_Result(FCsDamageResult* Result);
 
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnApplyDamage_Result, const uint8&, FCsDamageResult*);
+
+	FOnApplyDamage_Result OnApplyDamage_Result_Event;
+
 	UPROPERTY(BlueprintAssignable, Category = "State")
 	FBindableDynEvent_CsPawn_OnApplyDamage_Result OnApplyDamage_Result_ScriptEvent;
-
-	FBindableEvent_CsPawn_OnApplyDamage_Result OnApplyDamage_Result_Event;
 
 	virtual void Die();
 
@@ -177,6 +196,15 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, Category = "State")
 	bool bFirstSpawn;
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnFirstSpawn, ACsPawn*);
+
+	FOnFirstSpawn OnFirstSpawn_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "State")
+	FBindableDynEvent_CsPawn_OnFirstSpawn OnFirstSpawn_ScriptEvent;
+
+	virtual void OnFirstSpawn();
 
 	UPROPERTY(BlueprintReadWrite, Category = "State")
 	int32 SpawnCount;
@@ -194,7 +222,13 @@ public:
 
 	virtual void OnHandleRespawnTimerFinished(const uint8 &MappingId);
 
-	FBindableEvent_CsPawn_OnHandleRespawnTimerFinished OnHandleRespawnTimerFinished_Event;
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnHandleRespawnTimerFinished, const uint8&);
+
+	FOnHandleRespawnTimerFinished OnHandleRespawnTimerFinished_Event;
+
+	/** Flag for whether pawn has been setup, active, and alive */
+	UPROPERTY(BlueprintReadOnly, Category = "State")
+	bool bSpawnedAndActive;
 
 #pragma endregion Spawn
 
@@ -327,7 +361,7 @@ public:
 #pragma region
 public:
 
-	UPROPERTY(BlueprintReadWrite, Category = "Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	bool bCacheData;
 
 	class ACsDataMapping* GetDataMapping();
@@ -381,21 +415,27 @@ public:
 #pragma region
 public:
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapons")
 	FECsWeaponSlot CurrentWeaponSlot;
-
 	TCsProperty_Ref<FECsWeaponSlot> CurrentWeaponSlotHandle;
-
 	virtual void OnChange_CurrentWeaponSlot(const FECsWeaponSlot &Slot);
 
-	UPROPERTY(BlueprintAssignable, Category = "Tick")
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnChangeCurrentWeaponSlot, const uint8&, const FECsWeaponSlot&, const FECsWeaponSlot&);
+
+	FOnChangeCurrentWeaponSlot OnChange_CurrentWeaponSlot_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Weapons")
 	FBindableDynEvent_CsPawn_OnChangeCurrentWeaponSlot OnChange_CurrentWeaponSlot_ScriptEvent;
 
-	FBindableEvent_CsPawn_OnChangeCurrentWeaponSlot OnChange_CurrentWeaponSlot_Event;
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapons")
 	uint8 CurrentWeaponIndex;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapons")
 	FECsWeaponSlot LastWeaponSlot;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapons")
 	uint8 LastWeaponIndex;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapons")
 	uint8 CurrentWeaponCount;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapons")
 	uint8 MaxWeaponCount;
 
 	TSubclassOf<class ACsWeapon> WeaponClass;
@@ -403,6 +443,7 @@ public:
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Weapons")
 	TArray<class ACsWeapon*> Weapons;
 
+	UFUNCTION(BlueprintCallable, Category = "Weapons")
 	class ACsWeapon* GetWeapon(const FECsWeaponSlot &Slot);
 
 	template<typename T>
@@ -423,6 +464,7 @@ public:
 	UPROPERTY(Transient)
 	TArray<TWeakObjectPtr<class ACsData_Weapon>> Data_Weapons;
 
+	UFUNCTION(BlueprintCallable, Category = "Weapons")
 	class ACsData_Weapon* GetData_Weapon(const FECsWeaponSlot &Slot);
 	
 	template<typename T>
@@ -443,6 +485,7 @@ public:
 	UPROPERTY(Transient)
 	TArray<TWeakObjectPtr<class ACsData_WeaponMaterialSkin>> Data_WeaponMaterialSkins;
 
+	UFUNCTION(BlueprintCallable, Category = "Weapons")
 	class ACsData_WeaponMaterialSkin* GetData_WeaponMaterialSkin(const FECsWeaponSlot &Slot);
 
 	template<typename T>
@@ -465,11 +508,31 @@ public:
 
 #pragma endregion Weapons
 
+// Sense
+#pragma region
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
+	FCsSenseData_Override SenseData;
+
+	virtual void ApplySenseData();
+
+#pragma endregion Sense
+
 // Managers
 #pragma region
 public:
 
 	virtual class ACsManager_Inventory* GetMyManager_Inventory();
 
+	UPROPERTY(BlueprintReadOnly, Category = "Managers")
+	class ACsManager_Sense* Manager_Sense;
+
 #pragma endregion Managers
+
+#if WITH_EDITOR
+
+	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& e) override;
+
+#endif // #if WITH_EDITOR
 };

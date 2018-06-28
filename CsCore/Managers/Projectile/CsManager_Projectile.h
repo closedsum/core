@@ -30,6 +30,10 @@ class CSCORE_API AICsManager_Projectile : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
+public:
+
+	virtual void PostActorCreated() override;
+
 protected:
 
 	FCsManager_Projectile* Internal;
@@ -60,6 +64,9 @@ public:
 	void Clear();
 
 	void Shutdown();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Manager Projectile")
+	TMap<FECsProjectileType, UClass*> ClassMap;
 
 	virtual ACsProjectile* ConstructObject(const FECsProjectileType &Type);
 

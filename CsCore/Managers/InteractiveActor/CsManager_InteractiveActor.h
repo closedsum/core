@@ -23,6 +23,10 @@ class CSCORE_API AICsManager_InteractiveActor : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
+public:
+
+	virtual void PostActorCreated() override;
+
 protected:
 
 	FCsManager_InteractiveActor* Internal;
@@ -42,6 +46,9 @@ public:
 	void Clear();
 
 	void Shutdown();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Manager InteractiveActor")
+	TMap<FECsInteractiveType, UClass*> ClassMap;
 
 	virtual ACsInteractiveActor* ConstructObject(const FECsInteractiveType &Type);
 

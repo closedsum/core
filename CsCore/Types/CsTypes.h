@@ -214,7 +214,7 @@ struct CSCORE_API FCsStaticMesh
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Mesh")
-	TAssetPtr<UStaticMesh> Mesh;
+	TSoftObjectPtr<UStaticMesh> Mesh;
 
 	UPROPERTY(EditAnywhere, Category = "Mesh", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Mesh_LoadFlags;
@@ -259,16 +259,16 @@ struct CSCORE_API FCsFpsStaticMesh
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Mesh")
-	TAssetPtr<UStaticMesh> Mesh1P;
+	TSoftObjectPtr<UStaticMesh> Mesh1P;
 
 	UPROPERTY(EditAnywhere, Category = "Mesh")
-	TAssetPtr<UStaticMesh> Mesh3P;
+	TSoftObjectPtr<UStaticMesh> Mesh3P;
 
 	UPROPERTY(EditAnywhere, Category = "Mesh")
-	TAssetPtr<UStaticMesh> Mesh3P_Low;
+	TSoftObjectPtr<UStaticMesh> Mesh3P_Low;
 
 	UPROPERTY(EditAnywhere, Category = "Mesh")
-	TAssetPtr<UStaticMesh> MeshVR;
+	TSoftObjectPtr<UStaticMesh> MeshVR;
 
 	UPROPERTY(EditAnywhere, Category = "Mesh", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Mesh1P_LoadFlags;
@@ -361,7 +361,7 @@ struct CSCORE_API FCsTArrayStaticMesh
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Material")
-	TArray<TAssetPtr<class UStaticMesh>> Meshes;
+	TArray<TSoftObjectPtr<class UStaticMesh>> Meshes;
 
 	UPROPERTY(EditAnywhere, Category = "Material", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Meshes_LoadFlags;
@@ -445,7 +445,7 @@ struct CSCORE_API FCsSkeletalMesh
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Mesh")
-	TAssetPtr<USkeletalMesh> Mesh;
+	TSoftObjectPtr<USkeletalMesh> Mesh;
 
 	UPROPERTY(EditAnywhere, Category = "Mesh", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Mesh_LoadFlags;
@@ -490,16 +490,16 @@ struct CSCORE_API FCsFpsSkeletalMesh
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Mesh")
-	TAssetPtr<USkeletalMesh> Mesh1P;
+	TSoftObjectPtr<USkeletalMesh> Mesh1P;
 
 	UPROPERTY(EditAnywhere, Category = "Mesh")
-	TAssetPtr<USkeletalMesh> Mesh3P;
+	TSoftObjectPtr<USkeletalMesh> Mesh3P;
 
 	UPROPERTY(EditAnywhere, Category = "Mesh")
-	TAssetPtr<USkeletalMesh> Mesh3P_Low;
+	TSoftObjectPtr<USkeletalMesh> Mesh3P_Low;
 
 	UPROPERTY(EditAnywhere, Category = "Mesh")
-	TAssetPtr<USkeletalMesh> MeshVR;
+	TSoftObjectPtr<USkeletalMesh> MeshVR;
 
 	UPROPERTY(EditAnywhere, Category = "Mesh", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Mesh1P_LoadFlags;
@@ -592,7 +592,7 @@ struct CSCORE_API FCsTArraySkeletalMesh
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Material")
-	TArray<TAssetPtr<class USkeletalMesh>> Meshes;
+	TArray<TSoftObjectPtr<class USkeletalMesh>> Meshes;
 
 	UPROPERTY(EditAnywhere, Category = "Material", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Meshes_LoadFlags;
@@ -751,7 +751,7 @@ struct CSCORE_API FCsMaterialInstance
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Material")
-	TAssetPtr<class UMaterialInstance> Material;
+	TSoftObjectPtr<class UMaterialInstance> Material;
 
 	UPROPERTY(EditAnywhere, Category = "Material", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Material_LoadFlags;
@@ -778,7 +778,7 @@ struct CSCORE_API FCsMaterialInstanceConstant
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Material")
-	TAssetPtr<class UMaterialInstanceConstant> Material;
+	TSoftObjectPtr<class UMaterialInstanceConstant> Material;
 
 	UPROPERTY(EditAnywhere, Category = "Material", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Material_LoadFlags;
@@ -805,7 +805,7 @@ struct CSCORE_API FCsTArrayMaterialInstanceConstant
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Material")
-	TArray<TAssetPtr<class UMaterialInstanceConstant>> Materials;
+	TArray<TSoftObjectPtr<class UMaterialInstanceConstant>> Materials;
 
 	UPROPERTY(EditAnywhere, Category = "Material", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Materials_LoadFlags;
@@ -884,16 +884,16 @@ struct CSCORE_API FCsFpsTArrayMaterialInstanceConstant
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Material")
-	TArray<TAssetPtr<class UMaterialInstanceConstant>> Materials1P;
+	TArray<TSoftObjectPtr<class UMaterialInstanceConstant>> Materials1P;
 
 	UPROPERTY(EditAnywhere, Category = "Material")
-	TArray<TAssetPtr<class UMaterialInstanceConstant>> Materials3P;
+	TArray<TSoftObjectPtr<class UMaterialInstanceConstant>> Materials3P;
 
 	UPROPERTY(EditAnywhere, Category = "Material")
-	TArray<TAssetPtr<class UMaterialInstanceConstant>> Materials3P_Low;
+	TArray<TSoftObjectPtr<class UMaterialInstanceConstant>> Materials3P_Low;
 
 	UPROPERTY(EditAnywhere, Category = "Material")
-	TArray<TAssetPtr<class UMaterialInstanceConstant>> MaterialsVR;
+	TArray<TSoftObjectPtr<class UMaterialInstanceConstant>> MaterialsVR;
 
 	UPROPERTY(EditAnywhere, Category = "Material", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Materials1P_LoadFlags;
@@ -1133,7 +1133,7 @@ struct CSCORE_API FCsPhysicalMaterial
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Material")
-	TAssetPtr<class UPhysicalMaterial> Material;
+	TSoftObjectPtr<class UPhysicalMaterial> Material;
 
 	UPROPERTY(EditAnywhere, Category = "Material", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Material_LoadFlags;
@@ -1175,7 +1175,7 @@ struct CSCORE_API FCsPhysicsAsset
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Physics")
-	TAssetPtr<UPhysicsAsset> Physics;
+	TSoftObjectPtr<UPhysicsAsset> Physics;
 
 	UPROPERTY(EditAnywhere, Category = "Physics", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Physics_LoadFlags;
@@ -1440,7 +1440,7 @@ struct CSCORE_API FCsPhysicsImpulse
 };
 
 // PostEditChangeProperty FCsPhysicsImpulse
-#define CS_PECEP_FCS_PHYSICS_IMPULSE(e, PropertyName, MemberName)	if (UStructProperty* StructProperty = Cast<UStructProperty>(e.MemberProperty)) \
+#define CS_PECP_FCS_PHYSICS_IMPULSE(e, PropertyName, MemberName)	if (UStructProperty* StructProperty = Cast<UStructProperty>(e.MemberProperty)) \
 																	{ \
 																		if (StructProperty->Struct == FCsPhysicsImpulse::StaticStruct()) \
 																		{ \
@@ -1468,7 +1468,7 @@ struct CSCORE_API FCsBlueprint
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Blueprint")
-	TAssetPtr<class UBlueprint> Blueprint;
+	TSoftObjectPtr<class UBlueprint> Blueprint;
 
 	UPROPERTY(EditAnywhere, Category = "Blueprint", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Blueprint_LoadFlags;
@@ -1495,7 +1495,7 @@ struct CSCORE_API FCsTArrayBlueprint
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Blueprint")
-	TArray<TAssetPtr<class UBlueprint>> Blueprints;
+	TArray<TSoftObjectPtr<class UBlueprint>> Blueprints;
 
 	UPROPERTY(EditAnywhere, Category = "Blueprint", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Blueprints_LoadFlags;
@@ -1615,7 +1615,7 @@ namespace ECsHMDDeviceType
 		extern CSCORE_API const Type DT_GoogleVR;
 		extern CSCORE_API const Type ECsHMDDeviceType_MAX;
 	}
-
+	/*
 	FORCEINLINE EHMDDeviceType::Type ToBaseType(const Type &EType)
 	{
 		if (EType == Type::DT_OculusRift) { return EHMDDeviceType::DT_OculusRift; }
@@ -1637,6 +1637,7 @@ namespace ECsHMDDeviceType
 		if (EType == EHMDDeviceType::DT_GoogleVR) { return Type::DT_GoogleVR; }
 		return Type::ECsHMDDeviceType_MAX;
 	}
+	*/
 }
 
 typedef ECsHMDDeviceType::Type TCsHMDDeviceType;

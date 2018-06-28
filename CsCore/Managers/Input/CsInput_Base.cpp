@@ -2,6 +2,10 @@
 #include "Managers/Input/CsInput_Base.h"
 #include "CsCore.h"
 
+#if WITH_EDITOR
+#include "Editor.h"
+#endif // #if WITH_EDITOR
+
 UCsInput_Base::UCsInput_Base(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 #if WITH_EDITOR

@@ -652,7 +652,7 @@ void ACsInteractiveActor::OnTick_Handle_PhysicsState()
 	}
 	// Check 'CurrentState' = Grounded
 	const float LinearSpeed = WorldCollisionComponent->GetPhysicsLinearVelocity().Size();
-	const float AngularSpeed = WorldCollisionComponent->GetPhysicsAngularVelocity().Size();
+	const float AngularSpeed = WorldCollisionComponent->GetPhysicsAngularVelocityInDegrees().Size();
 	
 	if (LinearSpeed <= MinPhysicsLinearVelocityForMovement &&
 		AngularSpeed <= MinPhysicsLinearVelocityForMovement)

@@ -495,7 +495,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	}
 
 	template<typename T>
-	static void CopyTArrays(TArray<TAssetPtr<T>>& To, TArray<TAssetPtr<T>>& From)
+	static void CopyTArrays(TArray<TSoftObjectPtr<T>>& To, TArray<TSoftObjectPtr<T>>& From)
 	{
 		To.Reset();
 
@@ -570,7 +570,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	}
 
 	template<typename T>
-	static bool IsAnyElementInTArrayTAssetPtrNull(TArray<TAssetPtr<T>>& A)
+	static bool IsAnyElementInTArrayTSoftObjectPtrNull(TArray<TSoftObjectPtr<T>>& A)
 	{
 		const int32 Count = A.Num();
 
@@ -583,7 +583,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	}
 
 	template<typename T>
-	static bool IsAnyElementInTArrayTAssetPtrNull(TArray<TAssetPtr<T>>* &A)
+	static bool IsAnyElementInTArrayTSoftObjectPtrNull(TArray<TSoftObjectPtr<T>>* &A)
 	{
 		const int32 Count = A->Num();
 
@@ -596,7 +596,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	}
 
 	template<typename T>
-	static bool IsAnyElementInTArrayTAssetSubclassOfNull(TArray<TAssetSubclassOf<T>>& A)
+	static bool IsAnyElementInTArrayTSoftClassPtrNull(TArray<TSoftClassPtr<T>>& A)
 	{
 		const int32 Count = A.Num();
 
@@ -609,7 +609,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	}
 
 	template<typename T>
-	static bool IsAnyElementInTArrayTAssetSubclassOfNull(TArray<TAssetSubclassOf<T>>* &A)
+	static bool IsAnyElementInTArrayTSoftClassPtrNull(TArray<TSoftClassPtr<T>>* &A)
 	{
 		const int32 Count = A->Num();
 
@@ -622,27 +622,27 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	}
 
 	template<typename T>
-	static bool AreAllElementsInTArrayAssetPtrNotNull(TArray<TAssetPtr<T>>& A)
+	static bool AreAllElementsInTArrayAssetPtrNotNull(TArray<TSoftObjectPtr<T>>& A)
 	{
-		return !IsAnyElementInTArrayTAssetPtrNull<T>(A);
+		return !IsAnyElementInTArrayTSoftObjectPtrNull<T>(A);
 	}
 
 	template<typename T>
-	static bool AreAllElementsInTArrayAssetPtrNotNull(TArray<TAssetPtr<T>>* &A)
+	static bool AreAllElementsInTArrayAssetPtrNotNull(TArray<TSoftObjectPtr<T>>* &A)
 	{
-		return !IsAnyElementInTArrayTAssetPtrNull<T>(A);
+		return !IsAnyElementInTArrayTSoftObjectPtrNull<T>(A);
 	}
 
 	template<typename T>
-	static bool AreAllElementsInTArrayAssetSubclassOfNotNull(TArray<TAssetSubclassOf<T>>& A)
+	static bool AreAllElementsInTArrayAssetSubclassOfNotNull(TArray<TSoftClassPtr<T>>& A)
 	{
-		return !IsAnyElementInTArrayTAssetSubclassOfNull<T>(A);
+		return !IsAnyElementInTArrayTSoftClassPtrNull<T>(A);
 	}
 
 	template<typename T>
-	static bool AreAllElementsInTArrayAssetSubclassOfNotNull(TArray<TAssetSubclassOf<T>>* &A)
+	static bool AreAllElementsInTArrayAssetSubclassOfNotNull(TArray<TSoftClassPtr<T>>* &A)
 	{
-		return !IsAnyElementInTArrayTAssetSubclassOfNull<T>(A);
+		return !IsAnyElementInTArrayTSoftClassPtrNull<T>(A);
 	}
 
 #pragma endregion TArray

@@ -59,14 +59,15 @@ typedef ECsTraceTransaction::Type TCsTraceTransaction;
 #define CS_POOLED_TRACE_REQUEST_SIZE 255
 #define CS_POOLED_TRACE_RESPONSE_SIZE 255
 
-// For Clarity
-typedef uint64 TCsTraceHandleId;
-typedef uint64 TCsObjectId;
-
 UCLASS()
 class CSCORE_API ACsManager_Trace : public AActor
 {
 	GENERATED_UCLASS_BODY()
+
+	// For Clarity
+typedef uint8 TCsTraceRequestId;
+typedef uint64 TCsTraceHandleId;
+typedef uint64 TCsObjectId;
 
 public:
 
@@ -83,14 +84,15 @@ public:
 
 	uint64 TraceCountLifetime;
 
-	TMap<uint64, uint64> TraceCountLifetimeById;
+	TMap<uint64, uint64> TraceCountLifetimeByObjectId;
 	uint64 TraceCountLifetimeByType[ECS_TRACE_TYPE_MAX];
 	uint64 TraceCountLifetimeByMethod[ECS_TRACE_METHOD_MAX];
 	uint64 TraceCountLifetimeByQuery[ECS_TRACE_QUERY_MAX];
 
-	uint16 TraceCountThisFrame;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Trace")
+	int32 TraceCountThisFrame;
 
-	TMap<uint64, uint16> TraceCountThisFrameById;
+	TMap<uint64, uint16> TraceCountThisFrameByObjectId;
 	uint16 TraceCountThisFrameByType[ECS_TRACE_TYPE_MAX];
 	uint16 TraceCountThisFrameByMethod[ECS_TRACE_METHOD_MAX];
 	uint16 TraceCountThisFrameByQuery[ECS_TRACE_QUERY_MAX];
@@ -108,18 +110,23 @@ private:
 	uint8 RequestIndex;
 
 public:
-
+	
 	FCsTraceRequest* AllocateRequest();
 
-	TMap<TCsTraceHandleId, FCsTraceRequest*> PendingRequests;
-	TMap<TCsObjectId, TMap<TCsTraceHandleId, FCsTraceRequest*>> PendingRequestsById;
-	TMap<TCsTraceType, TMap<TCsTraceHandleId, FCsTraceRequest*>> PendingRequestsByType;
-	TMap<TCsTraceMethod, TMap<TCsTraceHandleId, FCsTraceRequest*>> PendingRequestsByMethod;
-	TMap<TCsTraceQuery, TMap<TCsTraceHandleId, FCsTraceRequest*>> PendingRequestsByQuery;
+	TLinkedList<FCsTraceRequest*>* PendingRequestHead;
+	TLinkedList<FCsTraceRequest*>* PendingRequestTail;
+
+	TMap<TCsTraceRequestId, FCsTraceRequest*> PendingRequests;
+	TMap<TCsTraceHandleId, FCsTraceRequest*> PendingRequestsByTraceId;
+	TMap<TCsObjectId, TMap<TCsTraceRequestId, FCsTraceRequest*>> PendingRequestsByObjectId;
+	TMap<TCsTraceType, TMap<TCsTraceRequestId, FCsTraceRequest*>> PendingRequestsByType;
+	TMap<TCsTraceMethod, TMap<TCsTraceRequestId, FCsTraceRequest*>> PendingRequestsByMethod;
+	TMap<TCsTraceQuery, TMap<TCsTraceRequestId, FCsTraceRequest*>> PendingRequestsByQuery;
 
 private:
 
 	void AddPendingRequest(FCsTraceRequest* Request);
+	void ReplacePendingRequest(FCsTraceRequest* PendingRequest, FCsTraceRequest* Request);
 	void RemovePendingRequest(FCsTraceRequest* Request);
 	bool ProcessRequest(FCsTraceRequest* Request);
 

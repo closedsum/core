@@ -164,16 +164,16 @@ struct FCsCraftingPayload
 		}
 		
 		// Transpose the first ItemCount elements to the end of the array
-		const int32 Count = Items.Num();
+		const int32 CurrentCount = Items.Num();
 
-		for (int32 I = ItemCount; I < Count; ++I)
+		for (int32 I = ItemCount; I < CurrentCount; ++I)
 		{
 			FCsItem* Temp		 = Items[I - ItemCount];
 			Items[I - ItemCount] = Items[I];
 			Items[I]			 = Temp;
 		}
 		// Remove the last ItemCount elements of the array
-		for (int32 I = Count - 1; I > Count - 1 - ItemCount; --I)
+		for (int32 I = CurrentCount - 1; I > CurrentCount - 1 - ItemCount; --I)
 		{
 			Items.RemoveAt(I);
 		}

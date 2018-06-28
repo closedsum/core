@@ -2,6 +2,8 @@
 #include "Types/CsTypes_View.h"
 #include "Types/CsTypes_Load.h"
 #include "Types/CsTypes_Math.h"
+#include "Types/CsTypes_Pool.h"
+
 
 #include "Runtime/UMG/Public/Components/SlateWrapperTypes.h"
 #include "Runtime/UMG/Public/Components/CanvasPanel.h"
@@ -161,7 +163,7 @@ struct CSCORE_API FCsWidgetActorInfo
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blueprint")
-	TAssetPtr<class UBlueprint> Blueprint;
+	TSoftObjectPtr<class UBlueprint> Blueprint;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blueprint", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Blueprint_LoadFlags;
@@ -267,7 +269,7 @@ public:
 };
 
 // PostEditChangeProperty FCsWidgetActorInfo
-#define CS_PECEP_FCS_WIDGET_ACTOR_INFO(e, PropertyName, MemberName)	if (UStructProperty* StructProperty = Cast<UStructProperty>(e.MemberProperty)) \
+#define CS_PECP_FCS_WIDGET_ACTOR_INFO(e, PropertyName, MemberName)	if (UStructProperty* StructProperty = Cast<UStructProperty>(e.MemberProperty)) \
 																	{ \
 																		if (StructProperty->Struct == FCsWidgetActorInfo::StaticStruct()) \
 																		{ \
@@ -284,7 +286,7 @@ struct CSCORE_API FCsWidgetComponentInfo
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blueprint")
-	TAssetPtr<class UBlueprint> Blueprint;
+	TSoftObjectPtr<class UBlueprint> Blueprint;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blueprint", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Blueprint_LoadFlags;
@@ -380,7 +382,7 @@ public:
 };
 
 // PostEditChangeProperty FCsWidgetComponentInfo
-#define CS_PECEP_FCS_WIDGET_COMPONENT_INFO(e, PropertyName, MemberName)	if (UStructProperty* StructProperty = Cast<UStructProperty>(e.MemberProperty)) \
+#define CS_PECP_FCS_WIDGET_COMPONENT_INFO(e, PropertyName, MemberName)	if (UStructProperty* StructProperty = Cast<UStructProperty>(e.MemberProperty)) \
 																		{ \
 																			if (StructProperty->Struct == FCsWidgetComponentInfo::StaticStruct()) \
 																			{ \
@@ -505,125 +507,125 @@ namespace ECsButtonState
 // PrimitiveType
 #pragma region
 
-struct CSCORE_API TCsPrimitiveType_ESlateVisibility : public TCsPrimitiveType<ESlateVisibility>
+struct CSCORE_API TCsProperty_ESlateVisibility : public TCsProperty<ESlateVisibility>
 {
 public:
 
-	TCsPrimitiveType_ESlateVisibility()
+	TCsProperty_ESlateVisibility()
 	{
 		DefaultValue = ESlateVisibility::Hidden;
 	}
-	~TCsPrimitiveType_ESlateVisibility() {}
+	~TCsProperty_ESlateVisibility() {}
 
-	TCsPrimitiveType_ESlateVisibility& operator=(const ESlateVisibility& B)
+	TCsProperty_ESlateVisibility& operator=(const ESlateVisibility& B)
 	{
 		Value = B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FORCEINLINE friend bool operator==(const ESlateVisibility &Lhs, const TCsPrimitiveType_ESlateVisibility &Rhs)
+	FORCEINLINE friend bool operator==(const ESlateVisibility &Lhs, const TCsProperty_ESlateVisibility &Rhs)
 	{
 		return Lhs == Rhs.Value;
 	}
 
-	FORCEINLINE friend bool operator==(const TCsPrimitiveType_ESlateVisibility &Lhs, const ESlateVisibility &Rhs)
+	FORCEINLINE friend bool operator==(const TCsProperty_ESlateVisibility &Lhs, const ESlateVisibility &Rhs)
 	{
 		return Lhs.Value == Rhs;
 	}
 
-	FORCEINLINE friend bool operator!=(const ESlateVisibility &Lhs, const TCsPrimitiveType_ESlateVisibility &Rhs)
+	FORCEINLINE friend bool operator!=(const ESlateVisibility &Lhs, const TCsProperty_ESlateVisibility &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const TCsPrimitiveType_ESlateVisibility &Lhs, const ESlateVisibility &Rhs)
+	FORCEINLINE friend bool operator!=(const TCsProperty_ESlateVisibility &Lhs, const ESlateVisibility &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 };
 
-typedef TCsPrimitiveType_ESlateVisibility TCsESlateVisibility;
+typedef TCsProperty_ESlateVisibility TCsESlateVisibility;
 
-struct CSCORE_API TCsPrimitiveType_FSlateColor : public TCsPrimitiveType<FSlateColor>
+struct CSCORE_API TCsProperty_FSlateColor : public TCsProperty<FSlateColor>
 {
 public:
 
-	TCsPrimitiveType_FSlateColor()
+	TCsProperty_FSlateColor()
 	{
 		DefaultValue = FSlateColor();
 	}
-	~TCsPrimitiveType_FSlateColor() {}
+	~TCsProperty_FSlateColor() {}
 
-	TCsPrimitiveType_FSlateColor& operator=(const FSlateColor& B)
+	TCsProperty_FSlateColor& operator=(const FSlateColor& B)
 	{
 		Value = B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FORCEINLINE friend bool operator==(const FSlateColor &Lhs, const TCsPrimitiveType_FSlateColor &Rhs)
+	FORCEINLINE friend bool operator==(const FSlateColor &Lhs, const TCsProperty_FSlateColor &Rhs)
 	{
 		return Lhs == Rhs.Value;
 	}
 
-	FORCEINLINE friend bool operator==(const TCsPrimitiveType_FSlateColor &Lhs, const FSlateColor &Rhs)
+	FORCEINLINE friend bool operator==(const TCsProperty_FSlateColor &Lhs, const FSlateColor &Rhs)
 	{
 		return Lhs.Value == Rhs;
 	}
 
-	FORCEINLINE friend bool operator!=(const FSlateColor &Lhs, const TCsPrimitiveType_FSlateColor &Rhs)
+	FORCEINLINE friend bool operator!=(const FSlateColor &Lhs, const TCsProperty_FSlateColor &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const TCsPrimitiveType_FSlateColor &Lhs, const FSlateColor &Rhs)
+	FORCEINLINE friend bool operator!=(const TCsProperty_FSlateColor &Lhs, const FSlateColor &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 };
 
-typedef TCsPrimitiveType_FSlateColor TCsFSlateColor;
+typedef TCsProperty_FSlateColor TCsFSlateColor;
 
-struct CSCORE_API TCsPrimitiveType_ECheckBoxState : public TCsPrimitiveType<ECheckBoxState>
+struct CSCORE_API TCsProperty_ECheckBoxState : public TCsProperty<ECheckBoxState>
 {
 public:
 
-	TCsPrimitiveType_ECheckBoxState()
+	TCsProperty_ECheckBoxState()
 	{
 		DefaultValue = ECheckBoxState::Unchecked;
 	}
-	~TCsPrimitiveType_ECheckBoxState() {}
+	~TCsProperty_ECheckBoxState() {}
 
-	TCsPrimitiveType_ECheckBoxState& operator=(const ECheckBoxState& B)
+	TCsProperty_ECheckBoxState& operator=(const ECheckBoxState& B)
 	{
 		Value = B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FORCEINLINE friend bool operator==(const ECheckBoxState &Lhs, const TCsPrimitiveType_ECheckBoxState &Rhs)
+	FORCEINLINE friend bool operator==(const ECheckBoxState &Lhs, const TCsProperty_ECheckBoxState &Rhs)
 	{
 		return Lhs == Rhs.Value;
 	}
 
-	FORCEINLINE friend bool operator==(const TCsPrimitiveType_ECheckBoxState &Lhs, const ECheckBoxState &Rhs)
+	FORCEINLINE friend bool operator==(const TCsProperty_ECheckBoxState &Lhs, const ECheckBoxState &Rhs)
 	{
 		return Lhs.Value == Rhs;
 	}
 
-	FORCEINLINE friend bool operator!=(const ECheckBoxState &Lhs, const TCsPrimitiveType_ECheckBoxState &Rhs)
+	FORCEINLINE friend bool operator!=(const ECheckBoxState &Lhs, const TCsProperty_ECheckBoxState &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const TCsPrimitiveType_ECheckBoxState &Lhs, const ECheckBoxState &Rhs)
+	FORCEINLINE friend bool operator!=(const TCsProperty_ECheckBoxState &Lhs, const ECheckBoxState &Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 };
 
-typedef TCsPrimitiveType_ECheckBoxState TCsECheckBoxState;
+typedef TCsProperty_ECheckBoxState TCsECheckBoxState;
 
 #pragma endregion PrimitiveType
 
@@ -2216,23 +2218,30 @@ public:
 
 #pragma endregion Structs
 
-struct CSCORE_API FCsPooledWidgetPayload
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsWidgetPayload : public FCsPooledObjectPayload
 {
-	bool IsAllocated;
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FString DisplayName;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FVector2D Size;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FIntPoint Offset;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	float LifeTime;
 
-	FCsPooledWidgetPayload() 
+	FCsWidgetPayload() 
 	{
 		Reset();
 	}
-	~FCsPooledWidgetPayload() {}
+	~FCsWidgetPayload() {}
 
-	void Reset()
+	FORCEINLINE virtual void Reset() override
 	{
-		IsAllocated = false;
+		FCsPooledObjectPayload::Reset();
+
 		DisplayName = ECsCached::Str::Empty;
 		Size = FVector2D::ZeroVector;
 		Offset = FIntPoint::ZeroValue;
@@ -2240,25 +2249,42 @@ struct CSCORE_API FCsPooledWidgetPayload
 	}
 };
 
-struct CSCORE_API FCsWidgetActorPayload
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsWidgetActorPayload : public FCsPooledObjectPayload
 {
-	bool IsAllocated;
-	TWeakObjectPtr<class UUserWidget> Widget;
-	FVector2D Size;
-	float LifeTime;
-	bool bMinDrawDistance;
-	FCsDrawDistance MinDrawDistance;
-	bool ScaleByDistance;
-	FTransform Transform;
-	bool FollowCamera;
-	float DistanceProjectedOutFromCamera;
-	bool LookAtCamera;
-	FCsRotatorFlag LockAxes;
-	bool bMovementFunction;
-	FCsParametricFunction MovementFunction;
+	GENERATED_USTRUCT_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	TWeakObjectPtr<class UUserWidget> Widget;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	FVector2D Size;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	float LifeTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	bool bMinDrawDistance;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	FCsDrawDistance MinDrawDistance;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	bool ScaleByDistance;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	FTransform Transform;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	bool FollowCamera;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	float DistanceProjectedOutFromCamera;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	bool LookAtCamera;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	FCsRotatorFlag LockAxes;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	bool bMovementFunction;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	FCsParametricFunction MovementFunction;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	int32 Int32;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	float Float;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FString String;
 
 	FCsWidgetActorPayload()
@@ -2267,9 +2293,10 @@ struct CSCORE_API FCsWidgetActorPayload
 	}
 	~FCsWidgetActorPayload() {}
 
-	void Reset()
+	FORCEINLINE virtual void Reset() override
 	{
-		IsAllocated = false;
+		FCsPooledObjectPayload::Reset();
+
 		Widget.Reset();
 		Widget = nullptr;
 		Size = FVector2D::ZeroVector;

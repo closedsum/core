@@ -52,36 +52,32 @@ namespace ECsProcessRoutine
 	};
 }
 
-namespace ECsProcessRoutine
-{
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
-
-	namespace Str
-	{
-		extern const TCsString StartRead_Internal;
-	}
-
-	namespace Ref
-	{
-		extern const Type StartRead_Internal;
-		extern const Type ECsProcessRoutine_MAX;
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::StartRead_Internal) { return Str::StartRead_Internal.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE const Type& ToType(const FString &String)
-	{
-		if (String == Str::StartRead_Internal) { return Ref::StartRead_Internal; }
-		return Ref::ECsProcessRoutine_MAX;
-	}
-}
-
 #define ECS_PROCESS_ROUTINE_MAX (uint8)ECsProcessRoutine::ECsProcessRoutine_MAX
 typedef ECsProcessRoutine::Type TCsProcessRoutine;
+
+struct CSCORE_API EMCsProcessRoutine : public TCsEnumMap<ECsProcessRoutine::Type>
+{
+protected:
+	EMCsProcessRoutine() {}
+	EMCsProcessRoutine(const EMCsProcessRoutine &) = delete;
+	EMCsProcessRoutine(EMCsProcessRoutine &&) = delete;
+public:
+	~EMCsProcessRoutine() {}
+private:
+	static EMCsProcessRoutine* Instance;
+
+public:
+	static EMCsProcessRoutine& Get();
+};
+
+namespace ECsProcessRoutine
+{
+	namespace Ref
+	{
+		extern CSCORE_API const Type StartRead_Internal;
+		extern CSCORE_API const Type ECsProcessRoutine_MAX;
+	}
+}
 
 #pragma endregion Enums
 
@@ -102,42 +98,35 @@ namespace ECsProcessMonitorOutputEventPurpose
 #define ECS_PROCESS_MONITOR_OUTPUT_EVENT_PURPOSE (uint8)ECsProcessMonitorOutputEventPurpose::ECsProcessMonitorOutputEventPurpose_MAX
 typedef ECsProcessMonitorOutputEventPurpose::Type TCsProcessMonitorOutputEventPurpose;
 
+struct CSCORE_API EMCsProcessMonitorOutputEventPurpose : public TCsEnumMap<ECsProcessMonitorOutputEventPurpose::Type>
+{
+protected:
+	EMCsProcessMonitorOutputEventPurpose() {}
+	EMCsProcessMonitorOutputEventPurpose(const EMCsProcessMonitorOutputEventPurpose &) = delete;
+	EMCsProcessMonitorOutputEventPurpose(EMCsProcessMonitorOutputEventPurpose &&) = delete;
+public:
+	~EMCsProcessMonitorOutputEventPurpose() {}
+private:
+	static EMCsProcessMonitorOutputEventPurpose* Instance;
+
+public:
+	static EMCsProcessMonitorOutputEventPurpose& Get();
+};
+
 namespace ECsProcessMonitorOutputEventPurpose
 {
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
-
-	namespace Str
-	{
-		extern const TCsString FireOnce;
-		extern const TCsString Loop;
-	}
-
 	namespace Ref
 	{
-		extern const Type FireOnce;
-		extern const Type Loop;
-		extern const Type ECsProcessMonitorOutputEventPurpose_MAX;
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::FireOnce) { return Str::FireOnce.Value; }
-		if (EType == Type::Loop) { return Str::Loop.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE const Type& ToType(const FString &String)
-	{
-		if (String == Str::FireOnce) { return Ref::FireOnce; }
-		if (String == Str::Loop) { return Ref::Loop; }
-		return Ref::ECsProcessMonitorOutputEventPurpose_MAX;
+		extern CSCORE_API const Type FireOnce;
+		extern CSCORE_API const Type Loop;
+		extern CSCORE_API const Type ECsProcessMonitorOutputEventPurpose_MAX;
 	}
 }
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsProcessMonitorOutputEvent_Completed, const FString&, Name);
 
 USTRUCT(BlueprintType)
-struct FCsProcessMonitorOutputEvent
+struct CSCORE_API FCsProcessMonitorOutputEvent
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -265,30 +254,30 @@ namespace ECsProcessPriorityModifier
 
 	namespace Str
 	{
-		extern const TCsString Idle;
-		extern const TCsString Low;
-		extern const TCsString Normal;
-		extern const TCsString High;
-		extern const TCsString Higher;
+		extern CSCORE_API const TCsString Idle;
+		extern CSCORE_API const TCsString Low;
+		extern CSCORE_API const TCsString Normal;
+		extern CSCORE_API const TCsString High;
+		extern CSCORE_API const TCsString Higher;
 	}
 
 	namespace Ref
 	{
-		extern const Type Idle;
-		extern const Type Low;
-		extern const Type Normal;
-		extern const Type High;
-		extern const Type Higher;
-		extern const Type ECsProcessPriorityModifier_MAX;
+		extern CSCORE_API const Type Idle;
+		extern CSCORE_API const Type Low;
+		extern CSCORE_API const Type Normal;
+		extern CSCORE_API const Type High;
+		extern CSCORE_API const Type Higher;
+		extern CSCORE_API const Type ECsProcessPriorityModifier_MAX;
 	}
 
 	namespace Val
 	{
-		extern const int32 Idle;
-		extern const int32 Low;
-		extern const int32 Normal;
-		extern const int32 High;
-		extern const int32 Higher;
+		extern CSCORE_API const int32 Idle;
+		extern CSCORE_API const int32 Low;
+		extern CSCORE_API const int32 Normal;
+		extern CSCORE_API const int32 High;
+		extern CSCORE_API const int32 Higher;
 	}
 
 	FORCEINLINE const FString& ToString(const Type &EType)
@@ -381,6 +370,9 @@ USTRUCT(BlueprintType)
 struct FCsProcessCache : public FCsPooledObjectCache
 {
 	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
+	FECsProcess Type;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
 	FString Name;

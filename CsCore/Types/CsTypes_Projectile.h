@@ -1,7 +1,5 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
-#include "Types/CsTypes_Macro.h"
-#include "Types/CsTypes_Primitive.h"
-#include "Types/CsTypes_Load.h"
+#include "Types/CsTypes_Pool.h"
 
 #include "CsTypes_Projectile.generated.h"
 #pragma once
@@ -16,7 +14,7 @@ struct CSCORE_API FCsData_ProjectilePtr
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Data")
-	TAssetSubclassOf<class ACsData_Projectile> Data;
+	TSoftClassPtr<class ACsData_Projectile> Data;
 
 	UPROPERTY(EditAnywhere, Category = "Data", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Data_LoadFlags;
@@ -62,7 +60,7 @@ struct CSCORE_API FCsData_ProjectileImpactPtr
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Data")
-	TAssetSubclassOf<class ACsData_ProjectileImpact> Data;
+	TSoftClassPtr<class ACsData_ProjectileImpact> Data;
 
 	UPROPERTY(EditAnywhere, Category = "Data", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Data_LoadFlags;
@@ -587,46 +585,26 @@ struct CSCORE_API FCsProjectileFirePayload
 };
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsProjectilePayload
+struct CSCORE_API FCsProjectilePayload : public FCsPooledObjectPayload
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Payload")
-	bool IsAllocated;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	TEnumAsByte<ECsProjectileRelevance::Type> Relevance;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
-	TWeakObjectPtr<UObject> Instigator;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
-	TWeakObjectPtr<UObject> Owner;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
-	TWeakObjectPtr<UObject> Parent;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	TWeakObjectPtr<class ACsData_Projectile> Data;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	float ChargePercent;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FVector Direction;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FVector Location;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	float AdditionalSpeed;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	TWeakObjectPtr<AActor> HomingTarget;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FName HomingBone;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	float HomingAccelerationMagnitude;
 
@@ -635,11 +613,7 @@ struct CSCORE_API FCsProjectilePayload
 
 	FORCEINLINE FCsProjectilePayload& operator=(const FCsProjectilePayload& B)
 	{
-		IsAllocated = B.IsAllocated;
 		Relevance = B.Relevance;
-		Instigator = B.Instigator;
-		Owner = B.Owner;
-		Parent = B.Parent;
 		Data = B.Data;
 		ChargePercent = B.ChargePercent;
 		Location = B.Location;
@@ -653,11 +627,7 @@ struct CSCORE_API FCsProjectilePayload
 
 	FORCEINLINE bool operator==(const FCsProjectilePayload& B) const
 	{
-		return	IsAllocated == B.IsAllocated &&
-				Relevance == B.Relevance &&
-				Instigator == B.Instigator &&
-				Owner == B.Owner &&
-				Parent == B.Parent &&
+		return	Relevance == B.Relevance &&
 				Data == B.Data &&
 				ChargePercent == B.ChargePercent &&
 				Location == B.Location &&
@@ -684,15 +654,12 @@ struct CSCORE_API FCsProjectilePayload
 		HomingAccelerationMagnitude = Payload->HomingAccelerationMagnitude;
 	}
 
-	FORCEINLINE void Reset()
+	FORCEINLINE virtual void Reset() override
 	{
+		FCsPooledObjectPayload::Reset();
+
 		Relevance = ECsProjectileRelevance::ECsProjectileRelevance_MAX;
 		Instigator.Reset();
-		Instigator = nullptr;
-		Owner.Reset();
-		Owner = nullptr;
-		Parent.Reset();
-		Parent = nullptr;
 		ChargePercent = 0.0f;
 		Location = FVector::ZeroVector;
 		Direction = FVector::ZeroVector;
@@ -702,18 +669,6 @@ struct CSCORE_API FCsProjectilePayload
 		HomingBone = NAME_None;
 		HomingAccelerationMagnitude = 0.0f;
 	}
-
-	FORCEINLINE UObject* GetInstigator() { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
-	template<typename T>
-	FORCEINLINE T* GetInstigator() { return Cast<T>(GetInstigator()); }
-
-	FORCEINLINE UObject* GetOwner() { return Owner.IsValid() ? Owner.Get() : nullptr; }
-	template<typename T>
-	FORCEINLINE T* GetOwner() { return Cast<T>(GetOwner()); }
-
-	FORCEINLINE UObject* GetParent() { return Parent.IsValid() ? Parent.Get() : nullptr; }
-	template<typename T>
-	FORCEINLINE T* GetParent() { return Cast<T>(GetParent()); }
 
 	FORCEINLINE ACsData_Projectile* GetData() { return Data.IsValid() ? Data.Get() : nullptr; }
 	template<typename T>

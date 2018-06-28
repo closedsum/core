@@ -1,99 +1,99 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Managers/CsManager.h"
-#include "Types/CsTypes.h"
-#include "Types/CsTypes_UI.h"
+#include "Managers/WidgetActor/CsWidgetActor.h"
 #include "CsManager_WidgetActor.generated.h"
 
 #define CS_WIDGET_ACTOR_PAYLOAD_SIZE 255
 
+class FCsManager_WidgetActor : public TCsManager_PooledObjects_TMap<FECsWidgetActorType, ACsWidgetActor, FCsWidgetActorPayload, CS_WIDGET_ACTOR_PAYLOAD_SIZE>
+{
+public:
+	~FCsManager_WidgetActor();
+
+	virtual void DeconstructObject(ACsWidgetActor* a) override;
+	virtual FString GetObjectName(ACsWidgetActor* a) override;
+	virtual const FString& EnumTypeToString(const FECsWidgetActorType &e) override;
+	virtual const FString& EnumTypeToString(const int32 &index) override;
+	virtual void Log(const FString& log) override;
+};
+
 UCLASS()
-class CSCORE_API ACsManager_WidgetActor : public ACsManager
+class CSCORE_API  AICsManager_WidgetActor  : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
-private:
+public:
+
+	virtual void PostActorCreated() override;
+
+protected:
+
+	FCsManager_WidgetActor * Internal;
 
 	static TWeakObjectPtr<UObject> MyOwner;
 
 	static UObject* GetMyOwner();
+	template<typename T>
+	static T* GetMyOwner()
+	{
+		return Cast<T>(GetMyOwner());
+	}
 
 public:
 
 	static void Init(UObject* InOwner);
-	static ACsManager_WidgetActor* Get(UWorld* InWorld);
 
-	virtual void Clear() override;
-	virtual void Shutdown() override;
+	static AICsManager_WidgetActor* Get(UWorld* InWorld);
+	template<typename T>
+	static T* Get(UWorld* InWorld)
+	{
+		return Cast<T>(GetWorld(InWorld));
+	}
+
 	virtual void Destroyed() override;
-	virtual void CreatePool(const TSubclassOf<class UObject> &ObjectClass, const uint8 &Type, const int32 &Size) override;
-	virtual void AddToActivePool(UObject* InObject, const uint8& Type) override;
-	virtual void OnTick(const float &DeltaSeconds) override;
 
-	TMap<FECsWidgetActorType, TArray<class ACsWidgetActor*>> ActiveActors;
+	UFUNCTION(BlueprintCallable, Category = "Manager WidgetActor")
+	void Clear();
 
-	virtual int32 GetActivePoolSize(const uint8 &Type) override;
+	void Shutdown();
 
-protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Manager WidgetActor")
+	TMap<FECsWidgetActorType, UClass*> ClassMap;
 
-	TMap<FECsWidgetActorType, uint8> PoolSizes;
+	virtual ACsWidgetActor* ConstructObject(const FECsWidgetActorType &Type);
 
-	UPROPERTY()
-	TArray<class ACsWidgetActor*> Pool;
-
-	TMap<FECsWidgetActorType, TArray<class ACsWidgetActor*>> Pools;
-
-	TMap<FECsWidgetActorType, uint8> PoolIndices;
-	
-public:
+	UFUNCTION(BlueprintCallable, Category = "Manager WidgetActor")
+	void CreatePool(const FECsWidgetActorType &Type, const int32 &Size);
+	UFUNCTION(BlueprintCallable, Category = "Manager WidgetActor")
+	void AddToPool(const FECsWidgetActorType &Type, ACsWidgetActor* Actor);
+	UFUNCTION(BlueprintCallable, Category = "Manager WidgetActor")
+	void AddToActivePool(const FECsWidgetActorType &Type, ACsWidgetActor* Actor);
+	UFUNCTION(BlueprintCallable, Category = "Manager WidgetActor")
+	void OnTick(const float &DeltaTime);
+	UFUNCTION(BlueprintCallable, Category = "Manager WidgetActor")
+	void GetAllActiveActors(TArray<ACsWidgetActor*> &OutActors);
 
 	const TArray<class ACsWidgetActor*>* GetActors(const FECsWidgetActorType& Type);
 
-	virtual bool IsExhausted(const uint8 &Type) override;
+	UFUNCTION(BlueprintCallable, Category = "Manager WidgetActor")
+	int32 GetActivePoolSize(const FECsWidgetActorType &Type);
+	UFUNCTION(BlueprintCallable, Category = "Manager WidgetActor")
+	bool IsExhausted(const FECsWidgetActorType &Type);
+	UFUNCTION(BlueprintCallable, Category = "Manager WidgetActor")
+	bool DeAllocate(const FECsWidgetActorType &Type, const int32 &Index);
+	UFUNCTION(BlueprintCallable, Category = "Manager WidgetActor")
+	void DeAllocateAll();
 
-	virtual void LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, class UObject* InObject) override;
+	FCsWidgetActorPayload* AllocatePayload();
 
-// Allocate / DeAllocate
-#pragma region
-protected:
-
-	class ACsWidgetActor* Allocate(const FECsWidgetActorType &ClassType);
-
-public:
-
-	virtual void DeAllocate(const uint8 &Type, const int32 &Index) override;
-	virtual void DeAllocateAll() override;
-
-#pragma endregion Allocate / DeAllocate
-
-// Payload
-#pragma region
-private:
-
-	FCsWidgetActorPayload Payloads[CS_WIDGET_ACTOR_PAYLOAD_SIZE];
-
-	uint8 PayloadIndex;
-
-public:
-
-	FCsWidgetActorPayload * AllocatePayload();
-
-#pragma endregion Payload
-
-// Display
-#pragma region
-public:
-
-	class ACsWidgetActor* Display(const FECsWidgetActorType &Type, FCsWidgetActorPayload* Payload, UObject* InOwner, UObject* Parent);
-	class ACsWidgetActor* Display(const FECsWidgetActorType &Type, FCsWidgetActorPayload* Payload, UObject* InOwner);
-	class ACsWidgetActor* Display(const FECsWidgetActorType &Type, FCsWidgetActorPayload* Payload);
+	UFUNCTION(BlueprintCallable, Category = "Manager WidgetActor")
+	ACsWidgetActor* Display(const FECsWidgetActorType &Type, FCsWidgetActorPayload &Payload);
+	ACsWidgetActor* Display(const FECsWidgetActorType &Type, FCsWidgetActorPayload* Payload);
 
 	template<typename T>
-	void Display(const FECsWidgetActorType &Type, class ACsWidgetActor* OutWidgetActor, FCsWidgetActorPayload* Payload, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
-	template<typename T>
-	void Display(const FECsWidgetActorType &Type, class ACsWidgetActor* OutWidgetActor, FCsWidgetActorPayload* Payload, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
-	template<typename T>
-	void Display(const FECsWidgetActorType &Type, class ACsWidgetActor* OutWidgetActor, FCsWidgetActorPayload* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
-
-#pragma endregion Display
+	T* Display(const FECsWidgetActorType &Type, FCsWidgetActorPayload* Payload)
+	{
+		return Cast<T>(Display(Type, Payload));
+	}
 };

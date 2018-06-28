@@ -1,75 +1,90 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "../CoreUObject/Public/UObject/Object.h"
-#include "Types/CsTypes_UI.h"
-#include "Types/CsTypes_Pool.h"
+#include "Managers/CsManager.h"
+#include "Managers/Widget/CsPooledWidget.h"
 #include "CsManager_Widget.generated.h"
 
 #define CS_POOLED_WIDGET_PAYLOAD_SIZE 256
 
+class FCsManager_Widget : public TCsManager_PooledObjects_TMap<TCsSimpleWidgetType, UCsPooledWidget, FCsWidgetPayload, CS_POOLED_WIDGET_PAYLOAD_SIZE>
+{
+public:
+	~FCsManager_Widget();
+
+	virtual void DeconstructObject(UCsPooledWidget* o) override;
+	virtual FString GetObjectName(UCsPooledWidget* o) override;
+	virtual const FString& EnumTypeToString(const TCsSimpleWidgetType &e) override;
+	virtual const FString& EnumTypeToString(const int32 &index) override;
+	virtual void Log(const FString& log) override;
+};
+
 UCLASS()
-class CSCORE_API UCsManager_Widget : public UObject
+class CSCORE_API UICsManager_Widget : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
+protected:
+
+	FCsManager_Widget * Internal;
+
+public:
+
 	//static ACsManager_Projectile* Get(UWorld* InWorld);
 
-	virtual void Clear();
-	virtual void Shutdown();
+	TWeakObjectPtr<UWorld> CurrentWorld;
+
+	UWorld* GetCurrentWorld();
+
 	virtual void BeginDestroy() override;
-	virtual void CreatePool(UClass* InClass, const TCsSimpleWidgetType &Type, const int32 &Size);
-	virtual void AddToActivePool(UObject* InObject, const TCsSimpleWidgetType& Type);
-	virtual void OnNativeTick(const FGeometry& MyGeometry, const float &DeltaSeconds);
 
-	UWorld* CurrentWorld;
+	UFUNCTION(BlueprintCallable, Category = "Manager Widget")
+	void Clear();
 
-	int32 PoolSize;
+	void Shutdown();
 
-	TMap<TCsSimpleWidgetType, uint16> PoolSizes;
+	TMap<TCsSimpleWidgetType, UClass*> ClassMap;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Pool")
-	TArray<class UCsPooledWidget*> Pool;
+	virtual UCsPooledWidget* ConstructObject(const TCsSimpleWidgetType &Type);
 
-	TMap<TCsSimpleWidgetType, TArray<class UCsPooledWidget*>> Pools;
+	void CreatePool(const TCsSimpleWidgetType &Type, const int32 &Size);
+	UFUNCTION(BlueprintCallable, Category = "Manager Widget")
+	void CreatePool(const TEnumAsByte<ECsSimpleWidgetType::Type> &Type, const int32 &Size);
+	void AddToPool(const TCsSimpleWidgetType &Type, UCsPooledWidget* Object);
+	UFUNCTION(BlueprintCallable, Category = "Manager Widget")
+	void AddToPool(const TEnumAsByte<ECsSimpleWidgetType::Type> &Type, UCsPooledWidget* Object);
+	void AddToActivePool(const TCsSimpleWidgetType &Type, UCsPooledWidget* Object);
+	UFUNCTION(BlueprintCallable, Category = "Manager Widget")
+	void AddToActivePool(const TEnumAsByte<ECsSimpleWidgetType::Type> &Type, UCsPooledWidget* Object);
+	UFUNCTION(BlueprintCallable, Category = "Manager Widget")
+	void OnTick(const float &DeltaTime);
+	UFUNCTION(BlueprintCallable, Category = "Manager Widget")
+	void GetAllActiveObjects(TArray<UCsPooledWidget*> &OutObjects);
 
-	TMap<TCsSimpleWidgetType, uint16> PoolIndices;
+	const TArray<class UCsPooledWidget*>* GetObjects(const TCsSimpleWidgetType& Type);
 
-	uint16 PoolIndex;
+	int32 GetActivePoolSize(const TCsSimpleWidgetType &Type);
+	UFUNCTION(BlueprintCallable, Category = "Manager Widget")
+	int32 GetActivePoolSize(const TEnumAsByte<ECsSimpleWidgetType::Type> &Type);
+	bool IsExhausted(const TCsSimpleWidgetType &Type);
+	UFUNCTION(BlueprintCallable, Category = "Manager Widget")
+	bool IsExhausted(const TEnumAsByte<ECsSimpleWidgetType::Type> &Type);
+	bool DeAllocate(const TCsSimpleWidgetType &Type, const int32 &Index);
+	UFUNCTION(BlueprintCallable, Category = "Manager Widget")
+	bool DeAllocate(const TEnumAsByte<ECsSimpleWidgetType::Type> &Type, const int32 &Index);
+	UFUNCTION(BlueprintCallable, Category = "Manager Widget")
+	void DeAllocateAll();
 
-	TMap<TCsSimpleWidgetType, TArray<class UCsPooledWidget*>> ActiveWidgets;
+	FCsWidgetPayload* AllocatePayload();
 
-	virtual int32 GetActivePoolSize(const TCsSimpleWidgetType& Type);
+	UCsPooledWidget* Display(const TCsSimpleWidgetType &Type, FCsWidgetPayload &Payload);
+	UFUNCTION(BlueprintCallable, Category = "Manager Widget")
+	UCsPooledWidget* Display(const TEnumAsByte<ECsSimpleWidgetType::Type> &Type, FCsWidgetPayload &Payload);
+	UCsPooledWidget* Display(const TCsSimpleWidgetType &Type, FCsWidgetPayload* Payload);
 
-	virtual bool IsExhausted(const TCsSimpleWidgetType &Type);
-
-	virtual void LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, class UObject* InObject);
-
-	class UCsPooledWidget* Allocate(const TCsSimpleWidgetType &Type);
-
-	virtual void DeAllocate(const TCsSimpleWidgetType &Type, const int32 &Index);
-	virtual void DeAllocateAll();
-
-	virtual void AddPoolToCanvas(UCanvasPanel* InCanvas, const TCsSimpleWidgetType &Type);
-
-// Payload
-#pragma region
-private:
-
-	FCsPooledWidgetPayload Payloads[CS_POOLED_WIDGET_PAYLOAD_SIZE];
-
-	uint8 PayloadIndex;
-
-public:
-
-	FCsPooledWidgetPayload* AllocatePayload();
-
-#pragma endregion Payload
-
-// Show
-#pragma region
-public:
-
-	virtual class UCsPooledWidget* Show(const TCsSimpleWidgetType &Type, FCsPooledWidgetPayload* Payload, UObject* InOwner, UObject* InParent);
-
-#pragma endregion Show
+	template<typename T>
+	T* Display(const TCsSimpleWidgetType &Type, FCsWidgetPayload* Payload)
+	{
+		return Cast<T>(Display(Type, Payload));
+	}
 };

@@ -34,8 +34,12 @@ void ACsSound::Init(const int32 &Index, const FECsSoundType &InType)
 	Type = InType;
 
 	Cache.Set(Index, this);
-	Cache.Type = Type.Value;
-	Cache.Type_Script = Type;
+	Cache.Type = Type;
+}
+
+void ACsSound::Init(const int32 &Index)
+{
+	Init(Index, EMCsSoundType::Get().GetMAX());
 }
 
 void ACsSound::Allocate(const uint16& ActiveIndex, FCsSoundPayload* Payload)
@@ -66,6 +70,17 @@ bool ACsSound::Play()
 	if (const FSoundAttenuationSettings* Settings = Cue->GetAttenuationSettingsToApply())
 		AudioComponent->AttenuationSettings->Attenuation = *Settings;
 
+#if WITH_EDITOR
+	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	{
+		AudioComponent->bAllowSpatialization = false;
+		AudioComponent->bIsUISound = true;
+	}
+	else
+#endif // #if WITH_EDITOR
+	{
+		AudioComponent->bAllowSpatialization = Cache.bSpatialize;
+	}
 	AudioComponent->AttenuationSettings->Attenuation.bSpatialize = Cache.bSpatialize;
 
 	AudioComponent->SetVolumeMultiplier(Cache.VolumeMultiplier);

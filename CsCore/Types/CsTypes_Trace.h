@@ -206,24 +206,28 @@ struct CSCORE_API FCsTraceResponse
 	}
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsManagerTrace_OnResponse, const FCsTraceResponse&, Response);
-DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsManagerTrace_OnResponse, FCsTraceResponse*);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerTrace_OnResponse, const uint8&, RequestId, const FCsTraceResponse&, Response);
+
+#define CS_INVALID_TRACE_REQUEST_ID 255
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsTraceRequest
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(BlueprintReadOnly, Category = "Trace")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Trace")
 	uint8 Id;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Trace")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Trace")
 	bool IsAllocated;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Trace")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Trace")
 	bool bProcessing;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Trace")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Trace")
+	bool Completed;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Trace")
 	float StartTime;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
@@ -234,10 +238,12 @@ struct CSCORE_API FCsTraceRequest
 
 	uint64 CallerId;
 
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnResponse, const uint8&, FCsTraceResponse*);
+
+	FOnResponse OnResponse_Event;
+
 	UPROPERTY(BlueprintAssignable, Category = "Trace")
 	FBindableDynEvent_CsManagerTrace_OnResponse OnRespone_ScriptEvent;
-
-	FBindableEvent_CsManagerTrace_OnResponse OnResponse_Event;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
 	bool bAsync;
@@ -271,17 +277,23 @@ struct CSCORE_API FCsTraceRequest
 	FCollisionObjectQueryParams ObjectParams;
 	FCollisionResponseParams ResponseParam;
 
+	bool ReplacePending;
+	uint8 PendingId;
+
 	FTraceHandle Handle;
+
+	TLinkedList<FCsTraceRequest*> Link;
 
 	FCsTraceRequest()
 	{
+		Link = TLinkedList<FCsTraceRequest*>(this);
+
 		Reset();
 	}
 	~FCsTraceRequest() {}
 
 	FORCEINLINE FCsTraceRequest& operator=(const FCsTraceRequest& B)
 	{
-		IsAllocated = B.IsAllocated;
 		StaleTime = B.StaleTime;
 		bAsync = B.bAsync;
 		Type = B.Type;
@@ -296,6 +308,9 @@ struct CSCORE_API FCsTraceRequest
 		Params = B.Params;
 		ObjectParams = B.ObjectParams;
 		ResponseParam = B.ResponseParam;
+		ReplacePending = B.ReplacePending;
+		PendingId = B.PendingId;
+		CopyHandle_Internal(B.Handle, Handle);
 		return *this;
 	}
 
@@ -321,8 +336,9 @@ struct CSCORE_API FCsTraceRequest
 
 	FORCEINLINE void Reset()
 	{
-		bProcessing = false;
 		IsAllocated = false;
+		bProcessing = false;
+		Completed = false;
 		StartTime = 0.0f;
 		StaleTime = 1.0f;
 		Caller.Reset();
@@ -347,22 +363,31 @@ struct CSCORE_API FCsTraceRequest
 		Params = FCollisionQueryParams::DefaultQueryParam;
 		ObjectParams = FCollisionObjectQueryParams::DefaultObjectQueryParam;
 		ResponseParam = FCollisionResponseParams::DefaultResponseParam;
+		ReplacePending = false;
+		PendingId = CS_INVALID_TRACE_REQUEST_ID;
 
-		ResetHandle();
+		ResetHandle(Handle);
+
+		Link.Unlink();
+	}
+
+	FORCEINLINE void CopyHandle_Internal(const FTraceHandle &From, FTraceHandle &To)
+	{
+		To._Handle			 = From._Handle;
+		To._Data.FrameNumber = From._Data.FrameNumber;
+		To._Data.Index		 = From._Data.Index;
 	}
 
 	FORCEINLINE void CopyHandle(const FTraceHandle &InHandle)
 	{
-		Handle._Handle			 = InHandle._Handle;
-		Handle._Data.FrameNumber = InHandle._Data.FrameNumber;
-		Handle._Data.Index		 = InHandle._Data.Index;
+		CopyHandle_Internal(InHandle, Handle);
 	}
 
-	FORCEINLINE void ResetHandle()
+	FORCEINLINE void ResetHandle(FTraceHandle &InHandle)
 	{
-		Handle._Handle			 = 0;
-		Handle._Data.FrameNumber = 0;
-		Handle._Data.Index		 = 0;
+		InHandle._Handle		   = 0;
+		InHandle._Data.FrameNumber = 0;
+		InHandle._Data.Index	   = 0;
 	}
 };
 

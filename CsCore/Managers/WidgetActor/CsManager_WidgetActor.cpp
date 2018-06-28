@@ -4,8 +4,6 @@
 #include "CsCVars.h"
 #include "Common/CsCommon.h"
 
-#include "Managers/WidgetActor/CsWidgetActor.h"
-
 // UI
 #include "UI/CsUserWidget.h"
 #include "UI/Simple/CsSimpleWidget.h"
@@ -13,37 +11,64 @@
 #include "Game/CsGameState.h"
 
 // static initializations
-TWeakObjectPtr<UObject> ACsManager_WidgetActor::MyOwner;
+TWeakObjectPtr<UObject> AICsManager_WidgetActor::MyOwner;
 
-// Cache
+// Internal
 #pragma region
 
-namespace ECsManagerWidgetActorCached
+FCsManager_WidgetActor::~FCsManager_WidgetActor() {}
+
+void FCsManager_WidgetActor::DeconstructObject(ACsWidgetActor* a)
 {
-	namespace Str
-	{
-		const FString OnTick = TEXT("ACsManager_WidgetActor::OnTick");
-		const FString DeAllocate = TEXT("ACsManager_WidgetActor::DeAllocate");
-		const FString DeAllocateAll = TEXT("ACsManager_WidgetActor::DeAllocateAll");
-		const FString Display = TEXT("ACsManager_WidgetActor::Display");
-	}
+	if (a && !a->IsPendingKill())
+		a->Destroy(true);
 }
 
-#pragma endregion Cache
-
-ACsManager_WidgetActor::ACsManager_WidgetActor(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+FString FCsManager_WidgetActor::GetObjectName(ACsWidgetActor* a)
 {
-	PoolSize = 1;
+	return a->GetName();
 }
 
-/*static*/ UObject* ACsManager_WidgetActor::GetMyOwner() { return MyOwner.IsValid() ? MyOwner.Get() : nullptr; }
+const FString& FCsManager_WidgetActor::EnumTypeToString(const FECsWidgetActorType &e)
+{
+	return e.Name;
+}
 
-/*static*/ void ACsManager_WidgetActor::Init(UObject* InOwner)
+const FString& FCsManager_WidgetActor::EnumTypeToString(const int32 &index)
+{
+	return EMCsWidgetActorType::Get().GetEnumAt(index).Name;
+}
+
+void FCsManager_WidgetActor::Log(const FString& log)
+{
+	UE_LOG(LogCs, Warning, TEXT("%s"), *log);
+}
+
+#pragma endregion // Internal
+
+AICsManager_WidgetActor::AICsManager_WidgetActor(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+{
+	Internal = new FCsManager_WidgetActor();
+	Internal->Init(TEXT("AICsManager_WidgetActor"), TEXT("ACsWidgetActor"), nullptr, &CsCVarLogManagerWidgetActorTransactions);
+	Internal->ConstructObject_Call.Unbind();
+	Internal->ConstructObject_Call.BindUObject(this, &AICsManager_WidgetActor::ConstructObject);
+}
+
+void AICsManager_WidgetActor::PostActorCreated()
+{
+	Super::PostActorCreated();
+
+	Internal->CurrentWorld = GetWorld();
+}
+
+/*static*/ UObject* AICsManager_WidgetActor::GetMyOwner() { return MyOwner.IsValid() ? MyOwner.Get() : nullptr; }
+
+/*static*/ void AICsManager_WidgetActor::Init(UObject* InOwner)
 {
 	MyOwner = InOwner;
 }
 
-/*static*/ ACsManager_WidgetActor* ACsManager_WidgetActor::Get(UWorld* InWorld)
+/*static*/ AICsManager_WidgetActor* AICsManager_WidgetActor::Get(UWorld* InWorld)
 {
 #if WITH_EDITOR 
 	// In Editor Preview Window
@@ -59,392 +84,99 @@ ACsManager_WidgetActor::ACsManager_WidgetActor(const FObjectInitializer& ObjectI
 	return nullptr;
 }
 
-void ACsManager_WidgetActor::Clear()
+void AICsManager_WidgetActor::Clear()
 {
-	Super::Clear();
-
-	Pool.Reset();
-	Pools.Reset();
-	PoolSizes.Reset();
-	PoolIndices.Reset();
-	ActiveActors.Reset();
+	Internal->Clear();
 }
 
-void ACsManager_WidgetActor::Shutdown()
+void AICsManager_WidgetActor::Shutdown()
 {
-	Super::Shutdown();
-
-	const int32 Count = Pool.Num();
-
-	for (int32 I = 0; I < Count; ++I)
-	{
-		if (Pool[I] && !Pool[I]->IsPendingKill())
-			Pool[I]->Destroy(true);
-	}
 	Clear();
+	Internal->Shutdown();
+	delete Internal;
 }
 
-void ACsManager_WidgetActor::Destroyed()
+void AICsManager_WidgetActor::Destroyed()
 {
 	Shutdown();
 
 	Super::Destroyed();
 }
 
-void ACsManager_WidgetActor::CreatePool(const TSubclassOf<class UObject> &ObjectClass, const uint8 &Type, const int32 &Size)
+ACsWidgetActor* AICsManager_WidgetActor::ConstructObject(const FECsWidgetActorType &Type)
 {
-	const FECsWidgetActorType& ClassType = EMCsWidgetActorType::Get().GetEnumAt(Type);
-
-	PoolSizes.Add(ClassType, Size);
-
 	FActorSpawnParameters SpawnInfo;
 	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnInfo.ObjectFlags |= RF_Transient;
 
-	PoolIndices.Add(ClassType, 0);
-
-	TArray<ACsWidgetActor*> WidgetPool;
-
-	for (int32 I = 0; I < Size; ++I)
-	{
-		ACsWidgetActor* Widget = GetWorld()->SpawnActor<ACsWidgetActor>(ObjectClass, SpawnInfo);
-		Widget->SetReplicates(false);
-		Widget->Role = ROLE_None;
-		GetWorld()->RemoveNetworkActor(Widget);
-		Widget->Init(I, ClassType);
-		Widget->DeAllocate();
-		Widget->OnCreatePool();
-
-		OnCreatePool_Event.Broadcast(Widget, Type);
-#if WITH_EDITOR
-		OnCreatePool_ScriptEvent.Broadcast(Widget, Type);
-#endif // #if WITH_EDITOR
-
-		Pool.Add(Widget);
-		WidgetPool.Add(Widget);
-	}
-	Pools.Add(ClassType, WidgetPool);
+	ACsWidgetActor* Actor = GetWorld()->SpawnActor<ACsWidgetActor>(ClassMap.Find(Type) ? ClassMap[Type] : ACsWidgetActor::StaticClass(), SpawnInfo);
+	Actor->SetReplicates(false);
+	Actor->Role = ROLE_None;
+	GetWorld()->RemoveNetworkActor(Actor);
+	return Actor;
 }
 
-void ACsManager_WidgetActor::AddToActivePool(UObject* InObject, const uint8& Type)
+void AICsManager_WidgetActor::CreatePool(const FECsWidgetActorType &Type, const int32 &Size)
 {
-	checkf(InObject, TEXT("ACsManager_WidgetActor::AddToActivePool: InObject is NULL."));
-
-	ACsWidgetActor* Actor = Cast<ACsWidgetActor>(InObject);
-
-	checkf(Actor, TEXT("ACsManager_WidgetActor::AddToActivePool: InObject (%s) is NOT type ACsInteraciveActor."), *InObject->GetClass()->GetName());
-
-	const FECsWidgetActorType& ClassType = EMCsWidgetActorType::Get().GetEnumAt(Type);
-
-	Actor->Cache.IsAllocated = true;
-
-	if (TArray<ACsWidgetActor*>* ActorsPtr = ActiveActors.Find(ClassType))
-	{
-		ActorsPtr->Add(Actor);
-	}
-	else
-	{
-		TArray<ACsWidgetActor*> Actors;
-		Actors.Add(Actor);
-		ActiveActors.Add(ClassType, Actors);
-	}
-	//Actor->Cache.OnDeAllocate_Event.AddUObject(this, &ACsManager_WidgetActor::OnDeAllocate);
+	Internal->CreatePool(Type, Size);
 }
 
-void ACsManager_WidgetActor::OnTick(const float &DeltaSeconds)
+void AICsManager_WidgetActor::AddToPool(const FECsWidgetActorType &Type, ACsWidgetActor* Actor)
 {
-	const int32 PoolCount = ActiveActors.Num();
-
-	for (int32 I = PoolCount - 1; I >= 0; --I)
-	{
-		const FECsWidgetActorType& Type	   = EMCsWidgetActorType::Get().GetEnumAt(I);
-		TArray<ACsWidgetActor*>* ActorsPtr = ActiveActors.Find(Type);
-
-		const int32 ActorCount = ActorsPtr->Num();
-		int32 EarliestIndex    = ActorCount;
-
-		for (int32 J = ActorCount - 1; J >= 0; --J)
-		{
-			ACsWidgetActor* Actor = (*ActorsPtr)[J];
-
-			// Check if InteractiveActor was DeAllocated NOT in a normal way (i.e. Out of Bounds)
-
-			if (!Actor->Cache.IsAllocated)
-			{
-				UE_LOG(LogCs, Warning, TEXT("ACsManager_WidgetActor::OnTick: WidgetActor: %s at PoolIndex: %s was prematurely deallocted NOT in a normal way."), *(Actor->GetName()), Actor->Cache.Index);
-
-				LogTransaction(ECsManagerWidgetActorCached::Str::OnTick, ECsPoolTransaction::Deallocate, Actor);
-
-				ActorsPtr->RemoveAt(J);
-
-				if (J < EarliestIndex)
-					EarliestIndex = J;
-				continue;
-			}
-
-			if (!Actor->Cache.bLifeTime)
-				continue;
-
-			if (GetWorld()->GetTimeSeconds() - Actor->Cache.Time > Actor->Cache.LifeTime)
-			{
-				LogTransaction(ECsManagerWidgetActorCached::Str::OnTick, ECsPoolTransaction::Deallocate, Actor);
-
-				Actor->DeAllocate();
-				ActorsPtr->RemoveAt(J);
-
-				if (J < EarliestIndex)
-					EarliestIndex = J;
-			}
-		}
-
-		// Update ActiveIndex
-		if (EarliestIndex != ActorCount)
-		{
-			const uint16 Max = ActorsPtr->Num();
-
-			for (uint16 J = EarliestIndex; J < Max; J++)
-			{
-				ACsWidgetActor* Actor = (*ActorsPtr)[J];
-				Actor->Cache.SetActiveIndex(J);
-			}
-		}
-	}
+	Internal->AddToPool(Type, Actor);
 }
 
-int32 ACsManager_WidgetActor::GetActivePoolSize(const uint8 &Type)
+void AICsManager_WidgetActor::AddToActivePool(const FECsWidgetActorType &Type, ACsWidgetActor* Actor)
 {
-	TArray<ACsWidgetActor*>* ActorsPtr = ActiveActors.Find(EMCsWidgetActorType::Get().GetEnumAt(Type));
-
-	if (!ActorsPtr)
-		return CS_EMPTY;
-	return ActorsPtr->Num();
+	Internal->AddToActivePool(Type, Actor);
 }
 
-const TArray<class ACsWidgetActor*>* ACsManager_WidgetActor::GetActors(const FECsWidgetActorType& Type)
+void AICsManager_WidgetActor::OnTick(const float &DeltaTime)
 {
-	return Pools.Find(Type);
+	Internal->OnTick(DeltaTime);
 }
 
-bool ACsManager_WidgetActor::IsExhausted(const uint8 &Type)
+void AICsManager_WidgetActor::GetAllActiveActors(TArray<ACsWidgetActor*> &OutActors)
 {
-	const FECsWidgetActorType& ClassType = EMCsWidgetActorType::Get().GetEnumAt(Type);
-
-	TArray<ACsWidgetActor*>* PoolPtr = Pools.Find(ClassType);
-
-	if (!PoolPtr)
-		return true;
-
-	return GetActivePoolSize(Type) >= PoolPtr->Num();
+	Internal->GetAllActiveObjects(OutActors);
 }
 
-void ACsManager_WidgetActor::LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, UObject* InObject)
+const TArray<class ACsWidgetActor*>* AICsManager_WidgetActor::GetActors(const FECsWidgetActorType& Type)
 {
-	if (CsCVarLogManagerWidgetActorTransactions->GetInt() == CS_CVAR_SHOW_LOG)
-	{
-		ACsWidgetActor* Actor = Cast<ACsWidgetActor>(InObject);
-
-		const FString& TransactionAsString = ECsPoolTransaction::ToActionString(Transaction);
-
-		const FString ActorName		= Actor->GetName();
-		const FString& TypeAsString	= EMCsWidgetActorType::Get().GetEnumAt(Actor->Cache.Type).Name;
-		const float CurrentTime		= GetWorld()->GetTimeSeconds();
-		const UObject* ActorOwner	= Actor->Cache.GetOwner();
-		const FString OwnerName		= ActorOwner ? ActorOwner->GetName() : ECsCached::Str::None;
-		const UObject* Parent		= Actor->Cache.GetParent();
-		const FString ParentName	= Parent ? Parent->GetName() : ECsCached::Str::None;
-
-		if (ActorOwner && Parent)
-		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s InteractiveActor: %s of Type: %s at %f for %s attached to %s."), *FunctionName, *TransactionAsString, *ActorName, *TypeAsString, CurrentTime, *OwnerName, *ParentName);
-		}
-		else
-		if (ActorOwner)
-		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s WidgetActor: %s of Type: %s at %f for %s."), *FunctionName, *TransactionAsString, *ActorName, *TypeAsString, CurrentTime, *OwnerName);
-		}
-		else
-		if (Parent)
-		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s WidgetActor: %s of Type: %s at %f attached to %s."), *TransactionAsString, *FunctionName, *ActorName, *TypeAsString, CurrentTime, *ParentName);
-		}
-		else
-		{
-			UE_LOG(LogCs, Warning, TEXT("%s: %s WidgetActor: %s of Type: %s at %f."), *FunctionName, *TransactionAsString, *ActorName, *TypeAsString, CurrentTime);
-		}
-	}
+	return Internal->GetObjects(Type);
 }
 
-// Allocate / DeAllocate
-#pragma region
-
-ACsWidgetActor* ACsManager_WidgetActor::Allocate(const FECsWidgetActorType &ClassType)
+int32 AICsManager_WidgetActor::GetActivePoolSize(const FECsWidgetActorType &Type)
 {
-	TArray<ACsWidgetActor*>* WidgetPool = Pools.Find(ClassType);
-	const uint8 Size					= *(PoolSizes.Find(ClassType));
-
-	for (uint8 I = 0; I < Size; ++I)
-	{
-		uint8* PoolIndexPtr    = (PoolIndices.Find(ClassType));
-		*PoolIndexPtr	       = (*PoolIndexPtr + I) % Size;
-		ACsWidgetActor* Widget = (*WidgetPool)[*PoolIndexPtr];
-
-		if (!Widget->Cache.IsAllocated)
-		{
-			Widget->Cache.IsAllocated = true;
-			return Widget;
-		}
-	}
-	checkf(0, TEXT("ACsManager_WidgetActor::Allocate: Pool: %s is exhausted"), *(ClassType.Name));
-	return nullptr;
+	return Internal->GetActivePoolSize(Type);
 }
 
-void ACsManager_WidgetActor::DeAllocate(const uint8 &Type, const int32 &Index)
+bool AICsManager_WidgetActor::IsExhausted(const FECsWidgetActorType &Type)
 {
-	const FECsWidgetActorType& ClassType = EMCsWidgetActorType::Get().GetEnumAt(Type);
-
-	TArray<ACsWidgetActor*>* Actors = ActiveActors.Find(ClassType);
-
-	if (!Actors)
-	{
-		UE_LOG(LogCs, Warning, TEXT("ACsManager_WidgetActor::DeAllocate: WidgetActor of Type: %s at PoolIndex: %d is already deallocated."), *(ClassType.Name), Index);
-		return;
-	}
-
-	const uint8 Count = Actors->Num();
-
-	for (int32 I = Count - 1; I >= 0; --I)
-	{
-		ACsWidgetActor* Actor = (*Actors)[I];
-
-		// Update ActiveIndex
-		if (I > CS_FIRST)
-		{
-			Actor->Cache.DecrementActiveIndex();
-		}
-
-		if (Actor->Cache.Index == Index)
-		{
-			LogTransaction(ECsManagerWidgetActorCached::Str::DeAllocate, ECsPoolTransaction::Deallocate, Actor);
-
-			Actor->DeAllocate();
-			Actors->RemoveAt(I);
-
-#if WITH_EDITOR
-			OnDeAllocateEX_ScriptEvent.Broadcast(Index, I, Actor->Cache.Type);
-#endif // #if WITH_EDITOR
-			OnDeAllocateEX_Event.Broadcast(Index, I, EMCsWidgetActorType::Get().GetEnumAt(Actor->Cache.Type));
-			return;
-		}
-	}
-
-	// Correct on Cache "Miss"
-	for (int32 I = 1; I < Count; ++I)
-	{
-		ACsWidgetActor* Actor = (*Actors)[I];
-		// Reset ActiveIndex
-		Actor->Cache.SetActiveIndex(I);
-	}
-	UE_LOG(LogCs, Warning, TEXT("ACsManager_WidgetActor::DeAllocate: WidgetActor of Type: %s at PoolIndex: %d is already deallocated."), *(ClassType.Name), Index);
+	return Internal->IsExhausted(Type);
 }
 
-void ACsManager_WidgetActor::DeAllocateAll()
+bool AICsManager_WidgetActor::DeAllocate(const FECsWidgetActorType &Type, const int32 &Index)
 {
-	const int32& Count = EMCsWidgetActorType::Get().Num();
-
-	for (uint8 I = 0; I < Count; ++I)
-	{
-		const FECsWidgetActorType& Type = EMCsWidgetActorType::Get().GetEnumAt(I);
-
-		TArray<ACsWidgetActor*>* Actors = ActiveActors.Find(Type);
-
-		if (!Actors)
-			continue;
-
-		const int32 ActorCount = Actors->Num();
-
-		for (int32 J = ActorCount - 1; J >= 0; --J)
-		{
-			LogTransaction(ECsManagerWidgetActorCached::Str::DeAllocateAll, ECsPoolTransaction::Deallocate, (*Actors)[J]);
-
-			(*Actors)[J]->DeAllocate();
-			Actors->RemoveAt(J);
-		}
-	}
+	return Internal->DeAllocate(Type, Index);
 }
 
-#pragma endregion Allocate / DeAllocate
-
-// Payload
-#pragma region
-
-FCsWidgetActorPayload* ACsManager_WidgetActor::AllocatePayload()
+void AICsManager_WidgetActor::DeAllocateAll()
 {
-	for (uint8 I = 0; I < CS_WIDGET_ACTOR_PAYLOAD_SIZE; ++I)
-	{
-		const uint8 Index			   = (PayloadIndex + I) % CS_WIDGET_ACTOR_PAYLOAD_SIZE;
-		FCsWidgetActorPayload* Payload = &(Payloads[Index]);
-
-		if (!Payload->IsAllocated)
-		{
-			Payload->IsAllocated = true;
-			return Payload;
-		}
-	}
-	checkf(0, TEXT("ACsManager_WidgetActor::AllocatePayload: Pool is exhausted"));
-	return nullptr;
+	return Internal->DeAllocateAll();
 }
 
-#pragma endregion Payload
-
-// Display
-#pragma region
-
-ACsWidgetActor* ACsManager_WidgetActor::Display(const FECsWidgetActorType &Type, FCsWidgetActorPayload* Payload, UObject* InOwner, UObject* Parent)
+FCsWidgetActorPayload* AICsManager_WidgetActor::AllocatePayload()
 {
-	ACsWidgetActor* Widget = Allocate(Type);
-
-	Widget->Allocate(GetActivePoolSize(Type.Value), Payload, InOwner, Parent);
-	
-	LogTransaction(ECsManagerWidgetActorCached::Str::Display, ECsPoolTransaction::Allocate, Widget);
-
-	AddToActivePool(Widget, Type.Value);
-	Payload->Reset();
-	return Widget;
+	return Internal->AllocatePayload();
 }
 
-ACsWidgetActor* ACsManager_WidgetActor::Display(const FECsWidgetActorType &Type, FCsWidgetActorPayload* Payload, UObject* InOwner)
+ACsWidgetActor* AICsManager_WidgetActor::Display(const FECsWidgetActorType &Type, FCsWidgetActorPayload &Payload)
 {
-	return Display(Type, Payload, InOwner, nullptr);
+	return Internal->Spawn(Type, &Payload);
 }
 
-ACsWidgetActor* ACsManager_WidgetActor::Display(const FECsWidgetActorType &Type, FCsWidgetActorPayload* Payload)
+ACsWidgetActor* AICsManager_WidgetActor::Display(const FECsWidgetActorType &Type, FCsWidgetActorPayload *Payload)
 {
-	return Display(Type, Payload, nullptr, nullptr);
+	return Internal->Spawn(Type, Payload);
 }
-
-template<typename T>
-void ACsManager_WidgetActor::Display(const FECsWidgetActorType &Type, ACsWidgetActor* OutWidgetActor, FCsWidgetActorPayload* Payload, UObject* InOwner, UObject* Parent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
-{
-	OutWidgetActor = Allocate(Type);
-
-	OutWidgetActor->Allocate<T>(GetActivePoolSize(Type.Value), Payload, InOwner, Parent, InObject, OnDeAllocate);
-
-	LogTransaction(ECsManagerWidgetActorCached::Str::Display, ECsPoolTransaction::Allocate, OutWidgetActor);
-
-	AddToActivePool(Widget, Type.Value);
-	Payload->Reset();
-}
-
-template<typename T>
-void ACsManager_WidgetActor::Display(const FECsWidgetActorType &Type, ACsWidgetActor* OutWidgetActor, FCsWidgetActorPayload* Payload, UObject* InOwner, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
-{
-	Display<T>(Type, OutWidgetActor, Payload, nullptr, InOwner, InObject, OnDeAllocate);
-}
-
-template<typename T>
-void ACsManager_WidgetActor::Display(const FECsWidgetActorType &Type, ACsWidgetActor* OutWidgetActor, FCsWidgetActorPayload* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&))
-{
-	Display<T>(Type, OutWidgetActor, Payload, nullptr, nullptr, InObject, OnDeAllocate);
-}
-
-#pragma endregion Display

@@ -5,9 +5,15 @@
 
 ACsManager_Decal::ACsManager_Decal(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	PoolSize = 1;
+	//PoolSize = 1;
 }
 
+/*static*/ ACsManager_Decal* ACsManager_Decal::Get(UWorld* InWorld)
+{
+	return InWorld->GetGameState<ACsGameState>()->Manager_Decal;
+}
+
+/*
 void ACsManager_Decal::Shutdown()
 {
 	Super::Shutdown();
@@ -43,7 +49,6 @@ void ACsManager_Decal::CreatePool(const int32 &Size)
 
 void ACsManager_Decal::OnTick(const float &DeltaSeconds)
 {
-	/*
 	const uint8 Count = ActiveWidgetActors.Num();
 
 	for (int32 I = Count - 1; I >= 0; --I)
@@ -56,12 +61,6 @@ void ACsManager_Decal::OnTick(const float &DeltaSeconds)
 	ActiveWidgetActors.RemoveAt(I);
 	}
 	}
-	*/
-}
-
-/*static*/ ACsManager_Decal* ACsManager_Decal::Get(UWorld* InWorld)
-{
-	return InWorld->GetGameState<ACsGameState>()->Manager_Decal;
 }
 
 FCsDecalCache ACsManager_Decal::Allocate()
@@ -95,3 +94,4 @@ void ACsManager_Decal::DeAllocateAll()
 		DeAllocate(I);
 	}
 }
+*/

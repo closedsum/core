@@ -17,7 +17,7 @@ struct CSCORE_API FCsCurveFloat
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Curves")
-	TAssetPtr<UCurveFloat> Curve;
+	TSoftObjectPtr<UCurveFloat> Curve;
 
 	UPROPERTY(EditAnywhere, Category = "Curves", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Curve_LoadFlags;
@@ -63,7 +63,7 @@ struct CSCORE_API FCsCurveVector
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Curves")
-	TAssetPtr<UCurveVector> Curve;
+	TSoftObjectPtr<UCurveVector> Curve;
 
 	UPROPERTY(EditAnywhere, Category = "Curves", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Curve_LoadFlags;

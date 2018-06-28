@@ -5,8 +5,13 @@
 #include "Types/CsTypes_Coroutine.h"
 #include "CsGameState.generated.h"
 
+// Tick
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsGameState_OnTick, const float&, DeltaSeconds);
 DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsGameState_OnTick, const float&);
+// LinkedPawn
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsGameState_OnPlayerStateBaseLinkedToPawn, class ACsPlayerStateBase*, PlayerState);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsGameState_OnPlayerStateLinkedToPawn, class ACsPlayerState*, PlayerState);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsGameState_OnAIPlayerStateLinkedToPawn, class ACsAIPlayerState*, PlayerState);
 
 // Enums
 #pragma region
@@ -35,105 +40,87 @@ namespace ECsGameStateOnBoardState
 	};
 }
 
-namespace ECsGameStateOnBoardState
-{
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-		const TCsString LoadCommonData = TCsString(TEXT("LoadCommonData"), TEXT("loadcommondata"), TEXT("load common data"));
-		const TCsString SetAssetReferencesCommonData = TCsString(TEXT("SetAssetReferencesCommonData"), TEXT("setassetreferencescommondata"), TEXT("set asset references common data"));
-		const TCsString SetupHUD = TCsString(TEXT("SetupHUD"), TEXT("setuphud"), TEXT("setup hud"));
-		const TCsString LoadGameData = TCsString(TEXT("LoadGameData"), TEXT("loadgamedata"), TEXT("load game data"));
-		const TCsString SetAssetReferencesGameData = TCsString(TEXT("SetAssetReferencesGameData"), TEXT("setassetreferencesgamedata"), TEXT("set asset references game data"));
-		const TCsString LoadItems = TCsString(TEXT("LoadItems"), TEXT("loaditems"), TEXT("load items"));
-		const TCsString LoadSceneData = TCsString(TEXT("LoadSceneData"), TEXT("loadscenedata"), TEXT("load scene data"));
-		const TCsString SetAssetReferencesSceneData = TCsString(TEXT("SetAssetReferencesSceneData"), TEXT("setassetreferencesscenedata"), TEXT("set asset references scene data"));
-		const TCsString SetupScene = TCsString(TEXT("SetupScene"), TEXT("setupscene"), TEXT("setup scene"));
-		const TCsString SetupLastTickActor = TCsString(TEXT("SetupLastTickActor"), TEXT("setuplasttickactor"), TEXT("setup last tick actor"));
-		const TCsString SetupJavascriptEntryPoint = TCsString(TEXT("SetupJavascriptEntryPoint"), TEXT("setupjavascriptentrypoint"), TEXT("setup javascript entry point"));
-		const TCsString Completed = TCsString(TEXT("Completed"), TEXT("completed"), TEXT("completed"));
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::LoadCommonData) { return Str::LoadCommonData.Value; }
-		if (EType == Type::SetAssetReferencesCommonData) { return Str::SetAssetReferencesCommonData.Value; }
-		if (EType == Type::SetupHUD) { return Str::SetupHUD.Value; }
-		if (EType == Type::LoadGameData) { return Str::LoadGameData.Value; }
-		if (EType == Type::SetAssetReferencesGameData) { return Str::SetAssetReferencesGameData.Value; }
-		if (EType == Type::LoadItems) { return Str::LoadItems.Value; }
-		if (EType == Type::LoadSceneData) { return Str::LoadSceneData.Value; }
-		if (EType == Type::SetAssetReferencesSceneData) { return Str::SetAssetReferencesSceneData.Value; }
-		if (EType == Type::SetupScene) { return Str::SetupScene.Value; }
-		if (EType == Type::SetupLastTickActor) { return Str::SetupLastTickActor.Value; }
-		if (EType == Type::SetupJavascriptEntryPoint) { return Str::SetupJavascriptEntryPoint.Value; }
-		if (EType == Type::Completed) { return Str::Completed.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::LoadCommonData) { return Type::LoadCommonData; }
-		if (String == Str::SetAssetReferencesCommonData) { return Type::SetAssetReferencesCommonData; }
-		if (String == Str::SetupHUD) { return Type::SetupHUD; }
-		if (String == Str::LoadGameData) { return Type::LoadGameData; }
-		if (String == Str::SetAssetReferencesGameData) { return Type::SetAssetReferencesGameData; }
-		if (String == Str::LoadItems) { return Type::LoadItems; }
-		if (String == Str::LoadSceneData) { return Type::LoadSceneData; }
-		if (String == Str::SetAssetReferencesSceneData) { return Type::SetAssetReferencesSceneData; }
-		if (String == Str::SetupScene) { return Type::SetupScene; }
-		if (String == Str::SetupLastTickActor) { return Type::SetupLastTickActor; }
-		if (String == Str::SetupJavascriptEntryPoint) { return Type::SetupJavascriptEntryPoint; }
-		if (String == Str::Completed) { return Type::Completed; }
-		return Type::ECsGameStateOnBoardState_MAX;
-	}
-}
-
 #define ECS_GAME_STATE_ONBOARD_STATE_MAX (uint8)ECsGameStateOnBoardState::ECsGameStateOnBoardState_MAX
 typedef ECsGameStateOnBoardState::Type TCsGameStateOnBoardState;
 
-namespace ECsGameStateRoutine
+struct CSCORE_API EMCsGameStateOnBoardState : public TCsEnumMap<ECsGameStateOnBoardState::Type>
 {
-	enum Type
-	{
-		OnBoard_Internal,
-		ECsGameStateRoutine_MAX,
-	};
-}
+protected:
+	EMCsGameStateOnBoardState() {}
+	EMCsGameStateOnBoardState(const EMCsGameStateOnBoardState &) = delete;
+	EMCsGameStateOnBoardState(EMCsGameStateOnBoardState &&) = delete;
+public:
+	~EMCsGameStateOnBoardState() {}
+private:
+	static EMCsGameStateOnBoardState* Instance;
 
-#define ECS_ROUTINE_GAME_STATE_MAX (uint8)ECsGameStateRoutine::ECsGameStateRoutine_MAX
-typedef ECsGameStateRoutine::Type TCsGameStateRoutine;
+public:
+	static EMCsGameStateOnBoardState& Get();
+};
 
-namespace ECsGameStateRoutine
+namespace ECsGameStateOnBoardState
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-		const TCsString OnBoard_Internal = TCsString(TEXT("OnBoard_Internal"), TEXT("onboard_internal"), TEXT("onboard internal"));
-	}
-
 	namespace Ref
 	{
-		const TCsGameStateRoutine OnBoard_Internal = Type::OnBoard_Internal;
-		const TCsGameStateRoutine ECsGameStateRoutine_MAX = Type::ECsGameStateRoutine_MAX;
+		extern CSCORE_API const Type LoadCommonData;
+		extern CSCORE_API const Type SetAssetReferencesCommonData;
+		extern CSCORE_API const Type SetupHUD;
+		extern CSCORE_API const Type LoadGameData;
+		extern CSCORE_API const Type SetAssetReferencesGameData;
+		extern CSCORE_API const Type LoadItems;
+		extern CSCORE_API const Type LoadSceneData;
+		extern CSCORE_API const Type SetAssetReferencesSceneData;
+		extern CSCORE_API const Type SetupScene;
+		extern CSCORE_API const Type SetupLastTickActor;
+		extern CSCORE_API const Type SetupJavascriptEntryPoint;
+		extern CSCORE_API const Type Completed;
+		extern CSCORE_API const Type ECsGameStateOnBoardState_MAX;
 	}
+}
 
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::OnBoard_Internal) { return Str::OnBoard_Internal.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsGameStateRoutine : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
 
-	FORCEINLINE const Type& ToType(const FString &String)
-	{
-		if (String == Str::OnBoard_Internal) { return Ref::OnBoard_Internal; }
-		return Ref::ECsGameStateRoutine_MAX;
-	}
+public:
+	FECsGameStateRoutine() {}
+	FECsGameStateRoutine(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsGameStateRoutine(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsGameStateRoutine() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsGameStateRoutine& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
+}
+
+struct CSCORE_API EMCsGameStateRoutine : public TCsEnumStructMap<FECsGameStateRoutine, uint8>
+{
+protected:
+	EMCsGameStateRoutine() {}
+	EMCsGameStateRoutine(const EMCsGameStateRoutine &) = delete;
+	EMCsGameStateRoutine(EMCsGameStateRoutine &&) = delete;
+public:
+	~EMCsGameStateRoutine() {}
+private:
+	static EMCsGameStateRoutine* Instance;
+
+public:
+	static EMCsGameStateRoutine& Get();
+};
+
+namespace ECsGameStateRoutine
+{
+	extern CSCORE_API const FECsGameStateRoutine OnBoard_Internal;
 }
 
 #pragma endregion Enums
+
+// Structs
+#pragma region
 
 struct FCsPlayerStateMappingRelationship
 {
@@ -168,6 +155,8 @@ struct FCsAIPlayerStateMappingRelationship
 		HasBCompletedInitialReplicationAndLoadingForA = false;
 	}
 };
+
+#pragma endregion Structs
 
 UCLASS()
 class CSCORE_API ACsGameState : public AGameState
@@ -286,10 +275,10 @@ public:
 public:
 
 	UPROPERTY()
-	class ACsManager_WidgetActor* Manager_WidgetActor;
+	class AICsManager_WidgetActor* Manager_WidgetActor;
 
 	UPROPERTY()
-	class ACsManager_FX* Manager_FX;
+	class AICsManager_FX* Manager_FX;
 
 	UPROPERTY()
 	class AICsManager_Sound* Manager_Sound;
@@ -313,7 +302,7 @@ public:
 	class ACsManager_Crafting* Manager_Crafting;
 
 	UPROPERTY()
-	class ACsManager_AI* Manager_AI;
+	class AICsManager_AI* Manager_AI;
 
 	UPROPERTY()
 	class ACsManager_Decal* Manager_Decal;
@@ -337,6 +326,15 @@ public:
 
 #pragma endregion Match State
 
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerStateBaseLinkedToPawn, class ACsPlayerStateBase*);
+
+	FOnPlayerStateBaseLinkedToPawn OnPlayerStateBaseLinkedToPawn_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Player State")
+	FBindableDynEvent_CsGameState_OnPlayerStateBaseLinkedToPawn OnPlayerStateBaseLinkedToPawn_ScriptEvent;
+
+	void OnPlayerStateBaseLinkedToPawn(class ACsPlayerStateBase* PlayerState);
+
 // Player State
 #pragma region
 private:
@@ -348,19 +346,61 @@ public:
 	virtual void AddPlayerState(class APlayerState* PlayerState) override;
 	void AddPlayerStateMapping(class ACsPlayerState* NewPlayerState);
 
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnAddPlayerStateMapping, class ACsPlayerState*);
+
+	FOnAddPlayerStateMapping OnAddPlayerStateMapping_Event;
+
 	virtual void RemovePlayerState(class APlayerState* PlayerState) override;
 
 	TMap<uint8, TWeakObjectPtr<class ACsPlayerState>> PlayerStateMappings;
 	TMap<uint8, TArray<FCsPlayerStateMappingRelationship>> PlayerStateMappingRelationships;
 	TMap<uint8, bool> HasPlayerStateFullyReplicatedAndLoadedBroadcastFlags;
 
+	UFUNCTION(BlueprintCallable, Category = "Player State")
 	class ACsPlayerState* GetPlayerState(const uint8 &MappingId);
-
 	template<typename T>
 	T* GetPlayerState(const uint8 &MappingId)
 	{
 		return Cast<T>(GetPlayerState(MappingId));
 	}
+
+	UFUNCTION(BlueprintCallable, Category = "Player State")
+	class ACsPlayerState* GetSafePlayerState(const uint8 &MappingId);
+	template<typename T>
+	T* GetSafePlayerState(const uint8 &MappingId)
+	{
+		return Cast<T>(GetSafePlayerState(MappingId));
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "Player State")
+	class ACsPlayerPawn* GetPlayerPawn(const uint8 &MappingId);
+	template<typename T>
+	T* GetPlayerPawn(const uint8& MappingId)
+	{
+		return Cast<T>(GetPlayerPawn(MappingId));
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "Player State")
+	class ACsPlayerPawn* GetSafePlayerPawn(const uint8 &MappingId);
+	template<typename T>
+	T* GetSafePlayerPawn(const uint8& MappingId)
+	{
+		return Cast<T>(GetSafePlayerPawn(MappingId));
+	}
+
+	void GetSpawnedAndActivePlayerPawns(TArray<class ACsPlayerPawn*>& OutPawns);
+
+	UFUNCTION(BlueprintCallable, Category = "Player State")
+	void GetPlayerStates(TArray<ACsPlayerState*>& OutPlayerStates);
+	UFUNCTION(BlueprintCallable, Category = "Player State")
+	void GetPlayerPawns(TArray<ACsPlayerPawn*>& OutPawns);
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerStateLinkedToPawn, class ACsPlayerState*);
+
+	FOnPlayerStateLinkedToPawn OnPlayerStateLinkedToPawn_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Player State")
+	FBindableDynEvent_CsGameState_OnPlayerStateLinkedToPawn OnPlayerStateLinkedToPawn_ScriptEvent;
 
 	void OnTick_HandleBroadcastingPlayerStateFullyReplicatedAndLoaded();
 
@@ -386,13 +426,49 @@ public:
 	TMap<uint8, TArray<FCsAIPlayerStateMappingRelationship>> AIPlayerStateMappingRelationships;
 	TMap<uint8, bool> HasAIPlayerStateFullyReplicatedAndLoadedBroadcastFlags;
 
+	UFUNCTION(BlueprintCallable, Category = "Player State")
 	class ACsAIPlayerState* GetAIPlayerState(const uint8 &MappingId);
-
 	template<typename T>
 	T* GetAIPlayerState(const uint8 &MappingId)
 	{
 		return Cast<T>(GetAIPlayerState(MappingId));
 	}
+
+	UFUNCTION(BlueprintCallable, Category = "Player State")
+	class ACsAIPlayerState* GetSafeAIPlayerState(const uint8 &MappingId);
+	template<typename T>
+	T* GetSafeAIPlayerState(const uint8 &MappingId)
+	{
+		return Cast<T>(GetSafeAIPlayerState(MappingId));
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "Player State")
+	class ACsAIPawn* GetAIPawn(const uint8 &MappingId);
+	template<typename T>
+	T* GetAIPawn(const uint8& MappingId)
+	{
+		return Cast<T>(GetAIPawn(MappingId));
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "Player State")
+	class ACsAIPawn* GetSafeAIPawn(const uint8 &MappingId);
+	template<typename T>
+	T* GetSafeAIPawn(const uint8& MappingId)
+	{
+		return Cast<T>(GetSafeAIPawn(MappingId));
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "Player State")
+	void GetAIPlayerStates(TArray<ACsAIPlayerState*>& OutPlayerStates);
+	UFUNCTION(BlueprintCallable, Category = "Player State")
+	void GetAIPawns(TArray<ACsAIPawn*>& OutPawns);
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnAIPlayerStateLinkedToPawn, class ACsAIPlayerState*);
+
+	FOnAIPlayerStateLinkedToPawn OnAIPlayerStateLinkedToPawn_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Player State")
+	FBindableDynEvent_CsGameState_OnAIPlayerStateLinkedToPawn OnAIPlayerStateLinkedToPawn_ScriptEvent;
 
 	void OnTick_HandleBroadcastingAIPlayerStateFullyReplicatedAndLoaded();
 

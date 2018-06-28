@@ -6,8 +6,14 @@
 
 // Managers
 #include "Managers/Inventory/CsManager_Inventory.h"
-
+#include "Managers/Trace/CsManager_Trace.h"
+// Game
+#include "Game/CsGameState.h"
+// Player
 #include "Player/CsPlayerState.h"
+// AI
+#include "AI/CsAIPlayerState.h"
+#include "AI/Pawn/CsAIPawn.h"
 
 ACsPlayerPawn::ACsPlayerPawn(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -37,7 +43,7 @@ ACsPlayerPawn::ACsPlayerPawn(const FObjectInitializer& ObjectInitializer)
 	GetCharacterMovement()->bAutoActivate = false;
 	*/
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
-
+	
 	/*
 	bAlwaysRelevant		   = true;
 	NetDormancy			   = ENetDormancy::DORM_Never;

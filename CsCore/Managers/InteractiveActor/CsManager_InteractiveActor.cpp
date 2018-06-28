@@ -36,9 +36,9 @@ const FString& FCsManager_InteractiveActor::EnumTypeToString(const int32 &index)
 	return EMCsInteractiveType::Get().GetEnumAt(index).Name;
 }
 
-void FCsManager_InteractiveActor::LogTransaction_Internal(const FString& outLog)
+void FCsManager_InteractiveActor::Log(const FString& log)
 {
-	UE_LOG(LogCs, Warning, TEXT("%s"), *outLog);
+	UE_LOG(LogCs, Warning, TEXT("%s"), *log);
 }
 
 #pragma endregion // Internal
@@ -49,6 +49,13 @@ AICsManager_InteractiveActor::AICsManager_InteractiveActor(const FObjectInitiali
 	Internal->Init(TEXT("CsManager_InteractiveActor"), TEXT("ACsInteractiveActor"), nullptr, &CsCVarLogManagerInteractiveActorTransactions);
 	Internal->ConstructObject_Call.Unbind();
 	Internal->ConstructObject_Call.BindUObject(this, &AICsManager_InteractiveActor::ConstructObject);
+}
+
+void AICsManager_InteractiveActor::PostActorCreated()
+{
+	Super::PostActorCreated();
+
+	Internal->CurrentWorld = GetWorld();
 }
 
 /*static*/ AICsManager_InteractiveActor* AICsManager_InteractiveActor::Get(UWorld* InWorld)
@@ -81,7 +88,7 @@ ACsInteractiveActor* AICsManager_InteractiveActor::ConstructObject(const FECsInt
 	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnInfo.ObjectFlags |= RF_Transient;
 
-	ACsInteractiveActor* Actor = GetWorld()->SpawnActor<ACsInteractiveActor>(ACsInteractiveActor::StaticClass(), SpawnInfo);
+	ACsInteractiveActor* Actor = GetWorld()->SpawnActor<ACsInteractiveActor>(ClassMap.Find(Type) ? ClassMap[Type] : ACsInteractiveActor::StaticClass(), SpawnInfo);
 	Actor->SetReplicates(false);
 	Actor->Role = ROLE_None;
 	GetWorld()->RemoveNetworkActor(Actor);

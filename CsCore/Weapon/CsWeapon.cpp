@@ -17,6 +17,7 @@
 #include "Managers/Damage/CsManager_Damage.h"
 #include "Managers/Trace/CsManager_Trace.h"
 #include "Managers/Inventory/CsManager_Inventory.h"
+#include "Managers/InteractiveActor/CsDamageableActor.h"
 // Game
 #include "Game/CsGameInstance.h"
 #include "Game/CsGameState.h"
@@ -24,7 +25,9 @@
 #include "Player/CsPlayerStateBase.h"
 #include "Pawn/CsPawn.h"
 
-#include "Managers/InteractiveActor/CsDamageableActor.h"
+#include "Animation/CsAnimInstance.h"
+
+
 
 // Cache
 #pragma region
@@ -184,6 +187,17 @@ void ACsWeapon::PostActorCreated()
 	UniqueObjectId				  = GameInstance->GetUniqueObjectId();
 }
 
+void ACsWeapon::Destroyed()
+{
+	Super::Destroyed();
+
+	if (UCsCommon::IsPlayInEditor(GetWorld()) || UCsCommon::IsPlayInEditorPreview(GetWorld()))
+		return;
+
+	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+	GameInstance->UnregisterUniqueObject(UniqueObjectId);
+}
+
 // Members
 #pragma region
 
@@ -225,6 +239,8 @@ void ACsWeapon::InitMultiValueMembers()
 		SpreadRecoveryRate.GetDelegate.BindUObject(this, &ACsWeapon::GetSpreadRecoveryRate);
 		InitMultiRefValueMember<float>(FiringSpreadRecoveryDelay, 0.0f);
 		FiringSpreadRecoveryDelay.GetDelegate.BindUObject(this, &ACsWeapon::GetFiringSpreadRecoveryDelay);
+		InitMultiRefValueMember<float>(MovingSpreadBonus, 0.0f);
+		MovingSpreadBonus.GetDelegate.BindUObject(this, &ACsWeapon::GetMovingSpreadBonus);
 		InitMultiValueMember<float>(CurrentBaseSpread, 0.0f);
 		InitMultiValueMember<float>(CurrentSpread, 0.0f);
 		InitMultiValueMember<float>(LastSpreadFireTime, 0.0f);
@@ -1224,6 +1240,14 @@ void ACsWeapon::OnChange_CurrentAmmo(const int32 &Value)
 
 void ACsWeapon::IncrementCurrentAmmo(const int32 &Index)
 {
+#if WITH_EDITOR
+	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	{
+		if (CurrentAmmo < GetMaxAmmo(Index))
+			++CurrentAmmo;
+	}
+	else
+#endif // #if WITH_EDITOR
 	if (GetMyData_Weapon()->UseInventory())
 	{
 		// TODO: Later might need a way to store the LastFireMode used
@@ -1257,6 +1281,15 @@ void ACsWeapon::IncrementCurrentAmmo(const int32 &Index)
 
 void ACsWeapon::ResetCurrentAmmo(const int32 &Index) 
 { 
+#if WITH_EDITOR
+	// In Editor Preview Window
+	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	{
+		CurrentAmmo = GetMaxAmmo(Index);
+	}
+	// In Game
+	else
+#endif // #if WITH_EDITOR
 	if (GetMyData_Weapon()->UseInventory())
 	{
 		// TODO: Later might need a way to store the LastFireMode used
@@ -1291,6 +1324,13 @@ const FName& ACsWeapon::GetAmmoShortCode(const FECsWeaponFireMode &FireMode, con
 
 int32 ACsWeapon::GetAmmoReserve(const int32 &Index, const FECsWeaponFireMode &FireMode, const bool &IsCharged)
 {
+#if WITH_EDITOR
+	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	{
+		return GetMaxAmmo(Index);
+	}
+#endif // #if WITH_EDITOR
+
 	if (GetMyData_Weapon()->UseInventory())
 	{
 		ACsManager_Inventory* Manager_Inventory = GetMyManager_Inventory();
@@ -1325,6 +1365,11 @@ void ACsWeapon::ConsumeAmmo(const FECsWeaponFireMode& FireMode, const bool& IsCh
 
 void ACsWeapon::ConsumeAmmoItem(const FECsWeaponFireMode &FireMode, const bool &IsCharged, TArray<FCsItem*> &OutItems)
 {
+#if WITH_EDITOR
+	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+		return;
+#endif // #if WITH_EDITOR
+
 	if (GetMyData_Weapon()->UseInventory())
 	{
 		ACsManager_Inventory* Manager_Inventory = GetMyManager_Inventory();
@@ -2262,7 +2307,7 @@ FVector ACsWeapon::GetMuzzleLocation(const TCsViewType &ViewType, const FECsWeap
 
 void ACsWeapon::PlayMuzzleFlash(const FECsWeaponFireMode &FireMode)
 {
-	ACsManager_FX* Manager_FX = nullptr;
+	AICsManager_FX* Manager_FX = nullptr;
 
 #if WITH_EDITOR 
 	// In Editor Preview Window
@@ -2283,7 +2328,18 @@ void ACsWeapon::PlayMuzzleFlash(const FECsWeaponFireMode &FireMode)
 	const TCsViewType ViewType			  = GetCurrentViewType();
 	FCsFxElement* FX					  = Data_Weapon->GetMuzzleFX(ViewType, FireMode, CurrentProjectilePerShotIndex.Get(FireMode));
 
-	Manager_FX->Play(FX, GetMyPawn(), GetMuzzleFlashParent(ViewType));
+	if (!FX->Get())
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsWeapon::PlayMuzzleFlash: Attempting to Play a NULL ParticleSystem."));
+		return;
+	}
+
+	FCsFxPayload* Payload = Manager_FX->AllocatePayload();
+	Payload->Set(FX);
+	Payload->Owner = GetMyPawn();
+	Payload->Parent = GetMuzzleFlashParent(ViewType);
+
+	Manager_FX->Play(Payload);
 }
 
 #pragma endregion Firing

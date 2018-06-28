@@ -574,9 +574,9 @@ void ACsManager_Item::SetRootSaveDirectory(const FString &Directory)
 
 FString ACsManager_Item::GetSavePath()
 {
-	const FString GameSaveDir = FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir());
-	const FString ItemsDir	  = CombinedSaveDirectory;
-	const FString Directory   = GameSaveDir + ItemsDir;
+	const FString ProjectSaveDir = FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir());
+	const FString ItemsDir		 = CombinedSaveDirectory;
+	const FString Directory		= ProjectSaveDir + ItemsDir;
 	return Directory;
 }
 

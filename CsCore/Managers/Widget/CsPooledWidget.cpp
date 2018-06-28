@@ -15,14 +15,14 @@ void UCsPooledWidget::Init(const FGeometry& MyGeometry)
 	Super::Init(MyGeometry);
 }
 
-void UCsPooledWidget::Init(const int32 &Index)
+void UCsPooledWidget::Init(const int32 &Index, const TCsSimpleWidgetType &InType)
 {
 	Cache.Set(Index, this);
 }
 
-void UCsPooledWidget::Allocate(const uint16& ActiveIndex, FCsPooledWidgetPayload* Payload, UObject* InOwner, UObject* InParent)
+void UCsPooledWidget::Allocate(const uint16& ActiveIndex, FCsWidgetPayload* Payload)
 {
-	Cache.Init(ActiveIndex, Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()), InOwner, InParent);
+	Cache.Init(ActiveIndex, Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
 
 	SetSize(Payload->Size);
 	Show();

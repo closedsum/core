@@ -744,3 +744,22 @@ TAutoConsoleVariable<int32> CsCVarLogBlockchainBalance(
 #pragma endregion Ethereum
 
 #pragma endregion Blockchain
+
+// Sense
+#pragma region
+
+TAutoConsoleVariable<int32> CsCVarDrawManagerSenseRadius(
+	TEXT("draw.manager.sense.radius"),
+	0,
+	TEXT("Draw Manager Sense Radius."),
+	ECVF_SetByConsole | ECVF_SetByCode
+);
+
+TAutoConsoleVariable<int32> CsCVarDrawManagerSenseAngle(
+	TEXT("draw.manager.sense.angle"),
+	0,
+	TEXT("Draw Manager Sense Angle."),
+	ECVF_SetByConsole | ECVF_SetByCode
+);
+
+#pragma endregion Sense

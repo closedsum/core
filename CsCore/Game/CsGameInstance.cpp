@@ -20,6 +20,10 @@
 
 #include "Async/AsyncWork.h"
 
+#if WITH_EDITOR
+#include "Editor.h"
+#endif // #if WITH_EDITOR
+
 // Enums
 #pragma region
 
@@ -139,7 +143,7 @@ void UCsGameInstance::Init()
 	HideMouseCursor();
 	OnBoard();
 
-	IsVR = GEngine->HMDDevice.IsValid() && GEngine->IsStereoscopic3D();
+	IsVR = GEngine->StereoRenderingDevice.IsValid() && GEngine->IsStereoscopic3D();
 }
 
 void UCsGameInstance::Shutdown()
@@ -321,7 +325,7 @@ CS_COROUTINE(UCsGameInstance, OnBoard_Internal)
 void UCsGameInstance::LoadDataMapping()
 {
 	const FStringAssetReference AssetRef			 = FStringAssetReference(DataMappingAssetPath);
-	TAssetSubclassOf<ACsDataMapping> AssetSubclassOf = TAssetSubclassOf<ACsDataMapping>(AssetRef);
+	TSoftClassPtr<ACsDataMapping> AssetSubclassOf = TSoftClassPtr<ACsDataMapping>(AssetRef);
 
 	if (UClass* DataClass = AssetSubclassOf.LoadSynchronous())
 	{
@@ -712,6 +716,47 @@ uint64 UCsGameInstance::GetUniqueObjectId()
 {
 	++UniqueObjectIdIndex;
 	return UniqueObjectIdIndex;
+}
+
+uint64 UCsGameInstance::RegisterUniqueObject(UObject* InObject)
+{
+	const uint64 Id = GetUniqueObjectId();
+
+	ObjectMap.Add(Id, InObject);
+
+	if (AActor* Actor = Cast<AActor>(InObject))
+		ActorMap.Add(Id, Actor);
+	return Id;
+}
+
+void UCsGameInstance::UnregisterUniqueObject(const uint64 &Id)
+{
+	ObjectMap.Remove(Id);
+	ActorMap.Remove(Id);
+}
+
+UObject* UCsGameInstance::GetUniqueObjectById(const uint64 &Id)
+{
+	return ObjectMap[Id].IsValid() ? ObjectMap[Id].Get() : nullptr;
+}
+
+UObject* UCsGameInstance::GetSafeUniqueObjectById(const uint64 &Id)
+{
+	if (!ObjectMap.Find(Id))
+		return nullptr;
+	return GetUniqueObjectById(Id);
+}
+
+AActor* UCsGameInstance::GetUniqueActorById(const uint64 &Id)
+{
+	return ActorMap[Id].IsValid() ? ActorMap[Id].Get() : nullptr;
+}
+
+AActor* UCsGameInstance::GetSafeUniqueActorById(const uint64 &Id)
+{
+	if (!ActorMap.Find(Id))
+		return nullptr;
+	return GetUniqueActorById(Id);
 }
 
 #pragma endregion Object

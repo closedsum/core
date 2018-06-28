@@ -12,13 +12,6 @@ EMCsInputDevice& EMCsInputDevice::Get()
 
 namespace ECsInputDevice
 {
-	namespace Str
-	{
-		CSCORE_API const TCsString MouseAndKeyboard = TCsString(TEXT("MouseAndKeyboard"), TEXT("mouseandkeyboard"));
-		CSCORE_API const TCsString Gamepad = TCsString(TEXT("Gamepad"), TEXT("gamepad"));
-		CSCORE_API const TCsString MotionController = TCsString(TEXT("MotionController"), TEXT("motioncontroller"));
-	}
-
 	namespace Ref
 	{
 		CSCORE_API const Type MouseAndKeyboard = EMCsInputDevice::Get().Add(Type::MouseAndKeyboard, TEXT("MouseAndKeyboard"), TEXT("Mouse and Keyboard"));
@@ -39,15 +32,6 @@ EMCsInputType& EMCsInputType::Get()
 
 namespace ECsInputType
 {
-	namespace Str
-	{
-		CSCORE_API const TCsString Action = TCsString(TEXT("Action"), TEXT("action"));
-		CSCORE_API const TCsString Axis = TCsString(TEXT("Axis"), TEXT("axis"));
-		CSCORE_API const TCsString Trigger = TCsString(TEXT("Trigger"), TEXT("trigger"));
-		CSCORE_API const TCsString Location = TCsString(TEXT("Location"), TEXT("location"));
-		CSCORE_API const TCsString Rotation = TCsString(TEXT("Rotation"), TEXT("rotation"));
-	}
-
 	namespace Ref
 	{
 		CSCORE_API const Type Action = EMCsInputType::Get().Add(Type::Action, TEXT("Action"));
@@ -70,20 +54,6 @@ EMCsInputEvent& EMCsInputEvent::Get()
 
 namespace ECsInputEvent
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-		CSCORE_API const TCsString FirstPressed = TCsString(TEXT("FirstPressed"), TEXT("firstpressed"), TEXT("first pressed"));
-		CSCORE_API const TCsString Pressed = TCsString(TEXT("Pressed"), TEXT("pressed"), TEXT("pressed"));
-		CSCORE_API const TCsString FirstReleased = TCsString(TEXT("FirstReleased"), TEXT("firstreleased"), TEXT("first released"));
-		CSCORE_API const TCsString Released = TCsString(TEXT("Released"), TEXT("released"), TEXT("released"));
-		CSCORE_API const TCsString FirstMoved = TCsString(TEXT("FirstMoved"), TEXT("firstmoved"), TEXT("first moved"));
-		CSCORE_API const TCsString Moved = TCsString(TEXT("Moved"), TEXT("moved"), TEXT("moved"));
-		CSCORE_API const TCsString FirstStationary = TCsString(TEXT("FirstStationary"), TEXT("firststationary"), TEXT("first stationary"));
-		CSCORE_API const TCsString Stationary = TCsString(TEXT("Stationary"), TEXT("stationary"), TEXT("stationary"));
-	}
-
 	namespace Ref
 	{
 		CSCORE_API const Type FirstPressed = EMCsInputEvent::Get().Add(Type::FirstPressed, TEXT("FirstPressed"), TEXT("First Pressed"));
@@ -109,14 +79,6 @@ EMCsInputValue& EMCsInputValue::Get()
 
 namespace ECsInputValue
 {
-	namespace Str
-	{
-		CSCORE_API const TCsString Void = TCsString(TEXT("Void"), TEXT("void"));
-		CSCORE_API const TCsString Float = TCsString(TEXT("Float"), TEXT("float"));
-		CSCORE_API const TCsString Vector = TCsString(TEXT("Vector"), TEXT("vector"));
-		CSCORE_API const TCsString Rotator = TCsString(TEXT("Rotator"), TEXT("rotator"));
-	}
-
 	namespace Ref
 	{
 		CSCORE_API const Type Void = EMCsInputValue::Get().Add(Type::Void, TEXT("Void"));

@@ -191,13 +191,13 @@ void ACsManager_Input::PreProcessInput(const float DeltaTime, const bool bGamePa
 		FVector Location;
 
 		// Left
-		if (Controllers[I]->GetControllerOrientationAndPosition(LocalPlayerIndex, EControllerHand::Left, Rotation, Location, WorldToMetersScale))
+		if (Controllers[I]->GetControllerOrientationAndPosition(LocalPlayerIndex, EMCsControllerHand::Get().ToName(ECsControllerHand::Left), Rotation, Location, WorldToMetersScale))
 		{
 			LeftHand_Rotation_Raw.ExecuteIfBound(Rotation);
 			LeftHand_Location_Raw.ExecuteIfBound(Location);
 		}
 		// Right
-		if (Controllers[I]->GetControllerOrientationAndPosition(LocalPlayerIndex, EControllerHand::Right, Rotation, Location, WorldToMetersScale))
+		if (Controllers[I]->GetControllerOrientationAndPosition(LocalPlayerIndex, EMCsControllerHand::Get().ToName(ECsControllerHand::Right), Rotation, Location, WorldToMetersScale))
 		{
 			RightHand_Rotation_Raw.ExecuteIfBound(Rotation);
 			RightHand_Location_Raw.ExecuteIfBound(Location);
@@ -779,7 +779,7 @@ bool ACsManager_Input::CanSaveInputActionMapping(const TCsInputDevice &Device, c
 
 FString ACsManager_Input::GetSavePath()
 {
-	return FPaths::ConvertRelativePathToFull(FPaths::GameSavedDir()) + TEXT("/");
+	return FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir()) + TEXT("/");
 }
 
 FString ACsManager_Input::GetInputProfileFilenameAndPath()

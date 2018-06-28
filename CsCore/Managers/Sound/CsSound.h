@@ -1,6 +1,5 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Types/CsTypes_Pool.h"
 #include "Types/CsTypes_Sound.h"
 #include "Managers/CsPooledActor.h"
 #include "CsSound.generated.h"
@@ -10,11 +9,13 @@ struct FCsSoundCache : public FCsPooledObjectCache
 {
 	GENERATED_USTRUCT_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<class ACsSound> Sound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<USoundCue> Cue;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
-	FECsSoundType Type_Script;
+	FECsSoundType Type;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TEnumAsByte<ECsSoundPriority::Type> Priority;
@@ -44,15 +45,15 @@ struct FCsSoundCache : public FCsPooledObjectCache
 
 	~FCsSoundCache(){}
 
-	void Set(const uint16 &InIndex, ACsSound* InSound)
+	void Set(const int32 &InIndex, ACsSound* InSound)
 	{
-		SetIndex(Index);
+		Index = InIndex;
 		Sound = InSound;
 	}
 
-	void Init(const uint16& InActiveIndex, FCsSoundPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
+	void Init(const int32& InActiveIndex, FCsSoundPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
-		SetActiveIndex(InActiveIndex);
+		ActiveIndex = InActiveIndex;
 
 		IsAllocated = true;
 
@@ -75,7 +76,7 @@ struct FCsSoundCache : public FCsPooledObjectCache
 
 	virtual void Reset() override
 	{
-		Reset_Internal();
+		FCsPooledObjectCache::Reset();
 
 		Cue.Reset();
 		Cue   = nullptr;
@@ -112,6 +113,7 @@ public:
 	FCsSoundCache Cache;
 
 	void Init(const int32 &Index, const FECsSoundType &InType);
+	void Init(const int32 &Index);
 
 	void Allocate(const uint16& ActiveIndex, FCsSoundPayload* Payload);
 

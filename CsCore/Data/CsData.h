@@ -8,7 +8,7 @@
 #pragma region
 
 #define CS_DATA_DEFINE_LOAD_INTERNAL_FUNCTION_POINTERS(CLASS)	GetAssetReferencesFromObject_Internal = &CLASS::GetAssetReferencesFromObject_Internal; \
-																LoadObjectWithTAssetPtrs_Internal = &CLASS::LoadObjectWithTAssetPtrs_Internal; \
+																LoadObjectWithTSoftObjectPtrs_Internal = &CLASS::LoadObjectWithTSoftObjectPtrs_Internal; \
 																WriteObjectToJson_Internal = &CLASS::WriteObjectToJson_Internal; \
 																ReadObjectFromJson_Internal = &CLASS::ReadObjectFromJson_Internal;
 
@@ -123,7 +123,7 @@ class CSCORE_API ACsData : public AActor
 
 	virtual void Load(const ECsLoadFlags &LoadFlags = ECsLoadFlags::All);
 
-	TCsLoadObjectWithTAssetPtrs_Internal LoadObjectWithTAssetPtrs_Internal;
+	TCsLoadObjectWithTSoftObjectPtrs_Internal LoadObjectWithTSoftObjectPtrs_Internal;
 
 	virtual void UnLoad();
 	virtual bool IsLoaded();

@@ -259,7 +259,7 @@ FStringAssetReference ACsDataMapping::GetStringAssetReference(const FECsAssetTyp
 {
 	TMap<FName, FCsDataMappingEntry>* Mapping = GetDataMappings_Map(AssetType);
 	FCsDataMappingEntry* Entry				  = Mapping->Find(ShortCode);
-	return Entry ? Entry->Data.ToStringReference() : FStringAssetReference();
+	return Entry ? Entry->Data.ToSoftObjectPath() : FStringAssetReference();
 }
 
 FStringAssetReference ACsDataMapping::GetStringAssetReference(const FECsAssetType &AssetType, const uint16 &LookUpCode)
@@ -268,7 +268,7 @@ FStringAssetReference ACsDataMapping::GetStringAssetReference(const FECsAssetTyp
 
 	if (Mapping->Num() <= LookUpCode)
 		return FStringAssetReference();
-	return (*Mapping)[LookUpCode].Data.ToStringReference();
+	return (*Mapping)[LookUpCode].Data.ToSoftObjectPath();
 }
 
 void ACsDataMapping::GetStringAssetReferences(const FECsAssetType &AssetType, const FName &ShortCode, const ECsLoadFlags &LoadFlags, TArray<FStringAssetReference> &OutReferences)
@@ -321,7 +321,7 @@ void ACsDataMapping::PopulateDataAssetReferences()
 
 						for (int32 I = 0; I < EntryCount; ++I)
 						{
-							const FStringAssetReference AssetRef = (*Member)[I].Data.ToStringReference();
+							const FStringAssetReference AssetRef = (*Member)[I].Data.ToSoftObjectPath();
 							const FString Asset					 = AssetRef.ToString();
 
 							if (Asset == TEXT(""))
@@ -381,7 +381,7 @@ void ACsDataMapping::PopulateAssetReferences()
 						{
 							ACsData* OutAsset;
 
-							UCsCommon_Load::LoadTAssetSubclassOf<ACsData>((*Member)[I].Data, OutAsset, TEXT("Actor"));
+							UCsCommon_Load::LoadTSoftClassPtr<ACsData>((*Member)[I].Data, OutAsset, TEXT("Actor"));
 
 							if (!OutAsset)
 							{
@@ -389,7 +389,7 @@ void ACsDataMapping::PopulateAssetReferences()
 								continue;
 							}
 
-							const FStringAssetReference AssetRef = (*Member)[I].Data.ToStringReference();
+							const FStringAssetReference AssetRef = (*Member)[I].Data.ToSoftObjectPath();
 							const FString Asset					 = AssetRef.ToString();
 
 							const int32 LoadFlags = (*Member)[I].Data_LoadFlags;
@@ -601,7 +601,7 @@ bool ACsDataMapping::CheckDataIsValid(const FString &FunctionName, const FECsAss
 	// Load the Data
 	AActor* OutAsset;
 
-	UCsCommon_Load::LoadTAssetSubclassOf<AActor>(Mapping.Data, OutAsset, TEXT("Actor"));
+	UCsCommon_Load::LoadTSoftClassPtr<AActor>(Mapping.Data, OutAsset, TEXT("Actor"));
 
 	T* DataDOb = Cast<T>(OutAsset);
 
@@ -701,9 +701,9 @@ FString ACsDataMapping::GetAbsolutePath()
 	PathName = PathName.Replace(*AssetName, TEXT(""));
 	PathName = PathName.Replace(TEXT("/Game/"), TEXT(""));
 
-	const FString GameContentDir = FPaths::ConvertRelativePathToFull(FPaths::GameContentDir());
-	const FString JsonDir		 = TEXT("Json/");
-	return GameContentDir + JsonDir + PathName;
+	const FString ProjectContentDir = FPaths::ConvertRelativePathToFull(FPaths::ProjectContentDir());
+	const FString JsonDir		    = TEXT("Json/");
+	return ProjectContentDir + JsonDir + PathName;
 }
 
 void ACsDataMapping::SaveToJson()

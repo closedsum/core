@@ -43,7 +43,10 @@ void UCsSimpleWidget::Init(const FGeometry& MyGeometry)
 	Size = MyGeometry.GetAbsoluteSize(); 
 }
 
-void UCsSimpleWidget::Init(const int32 &Index){}
+void UCsSimpleWidget::Init(const int32 &Index, const TCsSimpleWidgetType &InType){}
+
+void UCsSimpleWidget::OnCreatePool(){}
+
 void UCsSimpleWidget::OnNativeTick(const FGeometry& MyGeometry, const float &InDeltaTime)
 {
 	// TODO: When the widget is part of a WidgetComponent, there is NO Slot

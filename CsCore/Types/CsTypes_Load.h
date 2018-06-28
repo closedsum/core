@@ -249,7 +249,7 @@ struct CSCORE_API FCsDataMappingEntry
 	uint16 LookUpCode;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
-	TAssetSubclassOf<class ACsData> Data;
+	TSoftClassPtr<class ACsData> Data;
 
 	UPROPERTY(EditAnywhere, Category = "Data", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Data_LoadFlags;
@@ -511,9 +511,9 @@ typedef bool(*TCsReadObjectFromJson_Internal)(UProperty*, TSharedPtr<class FJson
 // AssetReferences
 typedef bool(*TCsGetAssetReferencesFromStruct_Internal)(UProperty*, void*, UScriptStruct* const &, const ECsLoadFlags&, TArray<FCsStringAssetReference>&, const int32&);
 typedef bool(*TCsGetAssetReferencesFromObject_Internal)(UProperty*, void*, UClass* const &, const ECsLoadFlags&, TArray<FCsStringAssetReference>&, const int32&);
-// Load TAssetPtrs
-typedef bool(*TCsLoadStructWithTAssetPtrs_Internal)(UProperty*, const FString&, void*, UScriptStruct* const &, const ECsLoadFlags&);
-typedef bool(*TCsLoadObjectWithTAssetPtrs_Internal)(UProperty*, const FString&, void*, UClass* const &, const ECsLoadFlags&);
+// Load TSoftObjectPtrs
+typedef bool(*TCsLoadStructWithTSoftObjectPtrs_Internal)(UProperty*, const FString&, void*, UScriptStruct* const &, const ECsLoadFlags&);
+typedef bool(*TCsLoadObjectWithTSoftObjectPtrs_Internal)(UProperty*, const FString&, void*, UClass* const &, const ECsLoadFlags&);
 // Get Members
 typedef void*(*TCsGetStructMember_Internal)(UProperty*, void*, UScriptStruct* const &, const FString&);
 

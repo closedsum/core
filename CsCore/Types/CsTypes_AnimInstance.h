@@ -22,9 +22,9 @@ struct CSCORE_API FCsAnimInstance_AnimSequence
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	TAssetPtr<UAnimSequence> Anim;
+	TSoftObjectPtr<UAnimSequence> Anim;
 
-	TAssetPtr<UAnimSequence> Last_Anim;
+	TSoftObjectPtr<UAnimSequence> Last_Anim;
 
 	UPROPERTY(Transient, VisibleDefaultsOnly, Category = Animation)
 	TWeakObjectPtr<UAnimSequence> Anim_Internal;
@@ -72,9 +72,9 @@ struct CSCORE_API FCsAnimInstance_AnimMontage
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	TAssetPtr<UAnimMontage> Anim;
+	TSoftObjectPtr<UAnimMontage> Anim;
 
-	TAssetPtr<UAnimMontage> Last_Anim;
+	TSoftObjectPtr<UAnimMontage> Last_Anim;
 
 	UPROPERTY(Transient, VisibleDefaultsOnly, Category = Animation)
 	TWeakObjectPtr<UAnimMontage> Anim_Internal;
@@ -122,9 +122,9 @@ struct CSCORE_API FCsAnimInstance_BlendSpace1D
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	TAssetPtr<UBlendSpace1D> Blend;
+	TSoftObjectPtr<UBlendSpace1D> Blend;
 
-	TAssetPtr<UBlendSpace1D> Last_Blend;
+	TSoftObjectPtr<UBlendSpace1D> Last_Blend;
 
 	UPROPERTY(Transient, VisibleDefaultsOnly, Category = Animation)
 	TWeakObjectPtr<UBlendSpace1D> Blend_Internal;
@@ -173,9 +173,9 @@ struct CSCORE_API FCsAnimInstance_BlendSpace
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	TAssetPtr<UBlendSpace> Blend;
+	TSoftObjectPtr<UBlendSpace> Blend;
 
-	TAssetPtr<UBlendSpace> Last_Blend;
+	TSoftObjectPtr<UBlendSpace> Last_Blend;
 
 	UPROPERTY(Transient, VisibleDefaultsOnly, Category = Animation)
 	TWeakObjectPtr<UBlendSpace> Blend_Internal;
@@ -224,7 +224,7 @@ struct CSCORE_API FCsAnimInstance_Blueprint
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	TAssetPtr<class UBlueprint> Blueprint;
+	TSoftObjectPtr<class UBlueprint> Blueprint;
 
 	UPROPERTY(Transient, VisibleDefaultsOnly, Category = Animation)
 	class UBlueprintGeneratedClass* Blueprint_Internal;
@@ -260,9 +260,9 @@ struct CSCORE_API FCsDataAnimInstance_CharacterPtr
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Data")
-	TAssetSubclassOf<class ACsData_Character> Data;
+	TSoftClassPtr<class ACsData_Character> Data;
 
-	TAssetSubclassOf<class ACsData_Character> Last_Data;
+	TSoftClassPtr<class ACsData_Character> Last_Data;
 
 	UPROPERTY(Transient)
 	TWeakObjectPtr<class ACsData_Character> Data_Internal;
@@ -310,9 +310,9 @@ struct CSCORE_API FCsDataAnimInstance_CharacterMeshSkinPtr
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Data")
-	TAssetSubclassOf<class ACsData_CharacterMeshSkin> Data;
+	TSoftClassPtr<class ACsData_CharacterMeshSkin> Data;
 
-	TAssetSubclassOf<class ACsData_CharacterMeshSkin> Last_Data;
+	TSoftClassPtr<class ACsData_CharacterMeshSkin> Last_Data;
 
 	UPROPERTY(Transient)
 	TWeakObjectPtr<class ACsData_CharacterMeshSkin> Data_Internal;
@@ -360,9 +360,9 @@ struct CSCORE_API FCsDataAnimInstance_CharacterMaterialSkinPtr
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Data")
-	TAssetSubclassOf<class ACsData_CharacterMaterialSkin> Data;
+	TSoftClassPtr<class ACsData_CharacterMaterialSkin> Data;
 
-	TAssetSubclassOf<class ACsData_CharacterMaterialSkin> Last_Data;
+	TSoftClassPtr<class ACsData_CharacterMaterialSkin> Last_Data;
 
 	UPROPERTY(Transient)
 	TWeakObjectPtr<class ACsData_CharacterMaterialSkin> Data_Internal;
@@ -410,9 +410,9 @@ struct CSCORE_API FCsDataAnimInstance_WeaponPtr
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Data")
-	TAssetSubclassOf<class ACsData_Weapon> Data;
+	TSoftClassPtr<class ACsData_Weapon> Data;
 
-	TAssetSubclassOf<class ACsData_Weapon> Last_Data;
+	TSoftClassPtr<class ACsData_Weapon> Last_Data;
 
 	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Data")
 	TWeakObjectPtr<class ACsData_Weapon> Data_Internal;
@@ -460,9 +460,9 @@ struct CSCORE_API FCsDataAnimInstance_WeaponMaterialSkinPtr
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Data")
-	TAssetSubclassOf<class ACsData_WeaponMaterialSkin> Data;
+	TSoftClassPtr<class ACsData_WeaponMaterialSkin> Data;
 
-	TAssetSubclassOf<class ACsData_WeaponMaterialSkin> Last_Data;
+	TSoftClassPtr<class ACsData_WeaponMaterialSkin> Last_Data;
 
 	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Data")
 	TWeakObjectPtr<class ACsData_WeaponMaterialSkin> Data_Internal;

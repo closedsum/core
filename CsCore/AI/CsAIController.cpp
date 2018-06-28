@@ -47,11 +47,11 @@ void ACsAIController::InitPlayerState()
 			PlayerState = World->SpawnActor<APlayerState>(PlayerStateClass, SpawnInfo);
 
 			// force a default player name if necessary
-			if (PlayerState && PlayerState->PlayerName.IsEmpty())
+			if (PlayerState && PlayerState->GetPlayerName().IsEmpty())
 			{
 				// don't call SetPlayerName() as that will broadcast entry messages but the GameMode hasn't had a chance
 				// to potentially apply a player/bot name yet
-				PlayerState->PlayerName = GameMode->DefaultPlayerName.ToString();
+				PlayerState->SetPlayerName(GameMode->DefaultPlayerName.ToString());
 			}
 		}
 	}

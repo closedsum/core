@@ -119,7 +119,7 @@ template<typename T>
 	}
 
 	template<typename T>
-	static void CopyTArrays(TArray<TAssetPtr<T>>& To, TArray<TAssetPtr<T>>& From)
+	static void CopyTArrays(TArray<TSoftObjectPtr<T>>& To, TArray<TSoftObjectPtr<T>>& From)
 	{
 		To.Reset();
 
@@ -194,7 +194,7 @@ template<typename T>
 	}
 
 	template<typename T>
-	static bool IsAnyElementInTArrayTAssetPtrNull(TArray<TAssetPtr<T>>& A)
+	static bool IsAnyElementInTArrayTSoftObjectPtrNull(TArray<TSoftObjectPtr<T>>& A)
 	{
 		const int32 Count = A.Num();
 
@@ -207,7 +207,7 @@ template<typename T>
 	}
 
 	template<typename T>
-	static bool IsAnyElementInTArrayTAssetPtrNull(TArray<TAssetPtr<T>>* &A)
+	static bool IsAnyElementInTArrayTSoftObjectPtrNull(TArray<TSoftObjectPtr<T>>* &A)
 	{
 		const int32 Count = A->Num();
 
@@ -220,7 +220,7 @@ template<typename T>
 	}
 
 	template<typename T>
-	static bool IsAnyElementInTArrayTAssetSubclassOfNull(TArray<TAssetSubclassOf<T>>& A)
+	static bool IsAnyElementInTArrayTSoftClassPtrNull(TArray<TSoftClassPtr<T>>& A)
 	{
 		const int32 Count = A.Num();
 
@@ -233,7 +233,7 @@ template<typename T>
 	}
 
 	template<typename T>
-	static bool IsAnyElementInTArrayTAssetSubclassOfNull(TArray<TAssetSubclassOf<T>>* &A)
+	static bool IsAnyElementInTArrayTSoftClassPtrNull(TArray<TSoftClassPtr<T>>* &A)
 	{
 		const int32 Count = A->Num();
 
@@ -246,27 +246,27 @@ template<typename T>
 	}
 
 	template<typename T>
-	static bool AreAllElementsInTArrayAssetPtrNotNull(TArray<TAssetPtr<T>>& A)
+	static bool AreAllElementsInTArrayAssetPtrNotNull(TArray<TSoftObjectPtr<T>>& A)
 	{
-		return !IsAnyElementInTArrayTAssetPtrNull<T>(A);
+		return !IsAnyElementInTArrayTSoftObjectPtrNull<T>(A);
 	}
 
 	template<typename T>
-	static bool AreAllElementsInTArrayAssetPtrNotNull(TArray<TAssetPtr<T>>* &A)
+	static bool AreAllElementsInTArrayAssetPtrNotNull(TArray<TSoftObjectPtr<T>>* &A)
 	{
-		return !IsAnyElementInTArrayTAssetPtrNull<T>(A);
+		return !IsAnyElementInTArrayTSoftObjectPtrNull<T>(A);
 	}
 
 	template<typename T>
-	static bool AreAllElementsInTArrayAssetSubclassOfNotNull(TArray<TAssetSubclassOf<T>>& A)
+	static bool AreAllElementsInTArrayAssetSubclassOfNotNull(TArray<TSoftClassPtr<T>>& A)
 	{
-		return !IsAnyElementInTArrayTAssetSubclassOfNull<T>(A);
+		return !IsAnyElementInTArrayTSoftClassPtrNull<T>(A);
 	}
 
 	template<typename T>
-	static bool AreAllElementsInTArrayAssetSubclassOfNotNull(TArray<TAssetSubclassOf<T>>* &A)
+	static bool AreAllElementsInTArrayAssetSubclassOfNotNull(TArray<TSoftClassPtr<T>>* &A)
 	{
-		return !IsAnyElementInTArrayTAssetSubclassOfNull<T>(A);
+		return !IsAnyElementInTArrayTSoftClassPtrNull<T>(A);
 	}
 
 #pragma endregion TArray
@@ -292,7 +292,7 @@ template<typename T>
 	static void JsonWriter_ArrayElement(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, const FString &MemberName, const FName &Member);
 
 	template<typename T>
-	static void WriteTAssetPtrToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, const FString &MemberName, TAssetPtr<T> &Member)
+	static void WriteTSoftObjectPtrToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, const FString &MemberName, TSoftObjectPtr<T> &Member)
 	{
 		if (Member.IsValid() && Member.Get())
 		{
@@ -316,11 +316,11 @@ template<typename T>
 		}
 	}
 
-	static void WriteTAssetPtrToJson_AnimBlueprint(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, const FString &MemberName, TAssetPtr<class UAnimBlueprint> &Member);
-	static void WriteTAssetPtrToJson_Blueprint(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, const FString &MemberName, TAssetPtr<class UBlueprint> &Member);
+	static void WriteTSoftObjectPtrToJson_AnimBlueprint(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, const FString &MemberName, TSoftObjectPtr<class UAnimBlueprint> &Member);
+	static void WriteTSoftObjectPtrToJson_Blueprint(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, const FString &MemberName, TSoftObjectPtr<class UBlueprint> &Member);
 
 	template<typename T>
-	static void WriteTArrayTAssetPtrToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, const FString &MemberName, TArray<TAssetPtr<T>> &Member)
+	static void WriteTArrayTSoftObjectPtrToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, const FString &MemberName, TArray<TSoftObjectPtr<T>> &Member)
 	{
 		InJsonWriter->WriteObjectStart(MemberName);
 		
@@ -328,13 +328,13 @@ template<typename T>
 
 		for (int32 I = 0; I < Count; ++I)
 		{
-			WriteTAssetPtrToJson(InJsonWriter, FString::FromInt(I), Member[I]);
+			WriteTSoftObjectPtrToJson(InJsonWriter, FString::FromInt(I), Member[I]);
 		}
 		InJsonWriter->WriteObjectEnd();
 	}
 
 	template<typename T>
-	static void WriteTAssetSubclassOfToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, const FString &MemberName, TAssetSubclassOf<T> AssetSubclassOf)
+	static void WriteTSoftClassPtrToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, const FString &MemberName, TSoftClassPtr<T> AssetSubclassOf)
 	{
 		if (AssetSubclassOf.IsValid() && AssetSubclassOf.Get())
 		{
@@ -359,40 +359,40 @@ template<typename T>
 	}
 
 	template<typename T>
-	static void WriteAssetClassPropertyToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UAssetClassProperty* &AssetClassProperty, void* InObject, const FString &MemberName)
+	static void WriteSoftClassPropertyToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, USoftClassProperty* &SoftClassProperty, void* InObject, const FString &MemberName)
 	{
-		if (TAssetSubclassOf<T>* Member = AssetClassProperty->ContainerPtrToValuePtr<TAssetSubclassOf<T>>(InObject))
-			WriteTAssetSubclassOfToJson<T>(InJsonWriter, MemberName, *Member);
+		if (TSoftClassPtr<T>* Member = SoftClassProperty->ContainerPtrToValuePtr<TSoftClassPtr<T>>(InObject))
+			WriteTSoftClassPtrToJson<T>(InJsonWriter, MemberName, *Member);
 	}
 
 	template<typename T>
-	static void WriteAssetObjectPropertyToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UAssetObjectProperty* &AssetObjectProperty, void* InObject, const FString &MemberName)
+	static void WriteSoftObjectPropertyToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, USoftObjectProperty* &SoftObjectProperty, void* InObject, const FString &MemberName)
 	{
-		if (TAssetPtr<T>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<T>>(InObject))
-			WriteTAssetPtrToJson<T>(InJsonWriter, MemberName, *Member);
+		if (TSoftObjectPtr<T>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<T>>(InObject))
+			WriteTSoftObjectPtrToJson<T>(InJsonWriter, MemberName, *Member);
 	}
 
-	static void WriteAssetObjectPropertyToJson_AnimBlueprint(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UAssetObjectProperty* &AssetObjectProperty, void* InObject, const FString &MemberName);
-	static void WriteAssetObjectPropertyToJson_Blueprint(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UAssetObjectProperty* &AssetObjectProperty, void* InObject, const FString &MemberName);
+	static void WriteSoftObjectPropertyToJson_AnimBlueprint(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, USoftObjectProperty* &SoftObjectProperty, void* InObject, const FString &MemberName);
+	static void WriteSoftObjectPropertyToJson_Blueprint(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, USoftObjectProperty* &SoftObjectProperty, void* InObject, const FString &MemberName);
 
 	template<typename T>
-	static void WriteArrayAssetObjectPropertyToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UArrayProperty* &ArrayProperty, void* InObject, const FString &MemberName)
+	static void WriteArraySoftObjectPropertyToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UArrayProperty* &ArrayProperty, void* InObject, const FString &MemberName)
 	{
-		if (TArray<TAssetPtr<T>>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<TAssetPtr<T>>>(InObject))
-			WriteTArrayTAssetPtrToJson<T>(InJsonWriter, MemberName, *Member);
+		if (TArray<TSoftObjectPtr<T>>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<TSoftObjectPtr<T>>>(InObject))
+			WriteTArrayTSoftObjectPtrToJson<T>(InJsonWriter, MemberName, *Member);
 	}
 
 	template<typename T, typename E, int32 SIZE>
-	static void WriteFixedArrayAssetObjectPropertyToJson_EnumSize(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UAssetObjectProperty* &AssetObjectProperty, void* InObject, const FString &MemberName, const FString&(*ToString)(const E&))
+	static void WriteFixedArraySoftObjectPropertyToJson_EnumSize(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, USoftObjectProperty* &SoftObjectProperty, void* InObject, const FString &MemberName, const FString&(*ToString)(const E&))
 	{
-		if (TAssetPtr<T>(*Member)[SIZE] = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<T>[SIZE]>(InObject))
+		if (TSoftObjectPtr<T>(*Member)[SIZE] = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<T>[SIZE]>(InObject))
 		{
 			InJsonWriter->WriteObjectStart(MemberName);
 
 			for (int32 I = 0; I < SIZE; ++I)
 			{
 				const FString ElementName = (*ToString)((E)I);
-				WriteTAssetPtrToJson<T>(InJsonWriter, ElementName, (*Member)[I]);
+				WriteTSoftObjectPtrToJson<T>(InJsonWriter, ElementName, (*Member)[I]);
 			}
 			InJsonWriter->WriteObjectEnd();
 		}
@@ -551,7 +551,7 @@ template<typename T>
 	}
 
 	template<typename KeyType, typename ValueType>
-	static void WriteMemberMapStructPropertyToJson_EnumStructKey(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UMapProperty* &MapProperty, void* InObject, const FString &MemberName, TCsWriteStructToJson_Internal Internal = nullptr)
+	static void WriteMemberMapStructPropertyToJson_EnumStructKey_StructValue(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UMapProperty* &MapProperty, void* InObject, const FString &MemberName, TCsWriteStructToJson_Internal Internal = nullptr)
 	{
 		TMap<KeyType, ValueType>* Member = MapProperty->ContainerPtrToValuePtr<TMap<KeyType, ValueType>>(InObject);
 
@@ -571,6 +571,23 @@ template<typename T>
 		InJsonWriter->WriteObjectEnd();
 	}
 
+	template<typename KeyType, typename ValueType>
+	static void WriteMemberMapStructPropertyToJson_EnumStructKey_NumericValue(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UMapProperty* &MapProperty, void* InObject, const FString &MemberName, TCsWriteStructToJson_Internal Internal = nullptr)
+	{
+		TMap<KeyType, ValueType>* Member = MapProperty->ContainerPtrToValuePtr<TMap<KeyType, ValueType>>(InObject);
+
+		InJsonWriter->WriteObjectStart(MemberName);
+
+		TArray<KeyType> Keys;
+		Member->GetKeys(Keys);
+
+		for (const KeyType& Key : Keys)
+		{
+			InJsonWriter->WriteValue(Key.Name, (*Member)[Key]);
+		}
+		InJsonWriter->WriteObjectEnd();
+	}
+
 	static bool WriteStructToJson_Internal_Helper(TCsWriteStructToJson_Internal Internal, UProperty* Property, TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, void* InStruct, UScriptStruct* const &InScriptStruct);
 	static bool WriteObjectToJson_Internal_Helper(TCsWriteObjectToJson_Internal Internal, UProperty* Property, TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, void* InObject, UClass* const &InClass);
 
@@ -584,26 +601,26 @@ template<typename T>
 #pragma region
 
 	template<typename T>
-	static void WriteToAssetClassPropertyFromJson(TSharedPtr<class FJsonObject> &JsonObject, UAssetClassProperty* &AssetClassProperty, void* InObject, const FString &MemberName)
+	static void WriteToSoftClassPropertyFromJson(TSharedPtr<class FJsonObject> &JsonObject, USoftClassProperty* &SoftClassProperty, void* InObject, const FString &MemberName)
 	{
-		if (TAssetSubclassOf<T>* Member = AssetClassProperty->ContainerPtrToValuePtr<TAssetSubclassOf<T>>(InObject))
-			*Member = TAssetSubclassOf<T>(JsonObject->GetStringField(MemberName));
+		if (TSoftClassPtr<T>* Member = SoftClassProperty->ContainerPtrToValuePtr<TSoftClassPtr<T>>(InObject))
+			*Member = TSoftClassPtr<T>(JsonObject->GetStringField(MemberName));
 	}
 
 	template<typename T>
-	static void WriteToAssetObjectPropertyFromJson(TSharedPtr<class FJsonObject> &JsonObject, UAssetObjectProperty* &AssetObjectProperty, void* InObject, const FString &MemberName)
+	static void WriteToSoftObjectPropertyFromJson(TSharedPtr<class FJsonObject> &JsonObject, USoftObjectProperty* &SoftObjectProperty, void* InObject, const FString &MemberName)
 	{
-		if (TAssetPtr<T>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<T>>(InObject))
-			*Member = TAssetPtr<T>(JsonObject->GetStringField(MemberName));
+		if (TSoftObjectPtr<T>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<T>>(InObject))
+			*Member = TSoftObjectPtr<T>(JsonObject->GetStringField(MemberName));
 	}
 
-	static void WriteToAssetObjectPropertyFromJson_AnimBlueprint(TSharedPtr<class FJsonObject> &JsonObject, UAssetObjectProperty* &AssetObjectProperty, void* InObject, const FString &MemberName);
-	static void WriteToAssetObjectPropertyFromJson_Blueprint(TSharedPtr<class FJsonObject> &JsonObject, UAssetObjectProperty* &AssetObjectProperty, void* InObject, const FString &MemberName);
+	static void WriteToSoftObjectPropertyFromJson_AnimBlueprint(TSharedPtr<class FJsonObject> &JsonObject, USoftObjectProperty* &SoftObjectProperty, void* InObject, const FString &MemberName);
+	static void WriteToSoftObjectPropertyFromJson_Blueprint(TSharedPtr<class FJsonObject> &JsonObject, USoftObjectProperty* &SoftObjectProperty, void* InObject, const FString &MemberName);
 
 	template<typename T>
-	static void WriteToArrayAssetObjectPropertyFromJson(TSharedPtr<class FJsonObject> &JsonObject, UArrayProperty* &ArrayProperty, void* InObject, const FString &MemberName)
+	static void WriteToArraySoftObjectPropertyFromJson(TSharedPtr<class FJsonObject> &JsonObject, UArrayProperty* &ArrayProperty, void* InObject, const FString &MemberName)
 	{
-		if (TArray<TAssetPtr<T>>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<TAssetPtr<T>>>(InObject))
+		if (TArray<TSoftObjectPtr<T>>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<TSoftObjectPtr<T>>>(InObject))
 		{
 			const TSharedPtr<FJsonObject>& Object = JsonObject->GetObjectField(MemberName);
 
@@ -628,15 +645,15 @@ template<typename T>
 				TSharedPtr<FJsonValue> JsonValue = *(Object->Values.Find(Key));
 				FString Value					 = JsonValue->AsString();
 
-				(*Member)[I] = TAssetPtr<T>(Value);
+				(*Member)[I] = TSoftObjectPtr<T>(Value);
 			}
 		}
 	}
 
 	template<typename T, typename E, int32 SIZE>
-	static void WriteToFixedArrayAssetObjectPropertyFromJson_EnumSize(TSharedPtr<class FJsonObject> &JsonObject, UAssetObjectProperty* &AssetObjectProperty, void* InObject, const FString &MemberName, const FString&(*ToString)(const E&))
+	static void WriteToFixedArraySoftObjectPropertyFromJson_EnumSize(TSharedPtr<class FJsonObject> &JsonObject, USoftObjectProperty* &SoftObjectProperty, void* InObject, const FString &MemberName, const FString&(*ToString)(const E&))
 	{
-		if (TAssetPtr<T>(*Member)[SIZE] = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<T>[SIZE]>(InObject))
+		if (TSoftObjectPtr<T>(*Member)[SIZE] = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<T>[SIZE]>(InObject))
 		{
 			const TSharedPtr<FJsonObject>& Object = JsonObject->GetObjectField(MemberName);
 
@@ -657,7 +674,7 @@ template<typename T>
 				TSharedPtr<FJsonValue> JsonValue = *(Object->Values.Find(Key));
 				FString Value					 = JsonValue->AsString();
 				
-				(*Member)[I] = TAssetPtr<T>(Value);
+				(*Member)[I] = TSoftObjectPtr<T>(Value);
 			}
 		}
 	}
@@ -760,7 +777,7 @@ template<typename T>
 	{
 		EnumStruct* Member  = StructProperty->ContainerPtrToValuePtr<EnumStruct>(InObject);
 		const FString Value = JsonObject->GetStringField(MemberName);
-		*Member				= EnumMap::Get()[Value];
+		*Member				= EnumMap::Get().GetSafeEnum(Value);
 	}
 
 	template<typename T>
@@ -860,7 +877,7 @@ template<typename T>
 	}
 
 	template<typename KeyType, typename ValueType>
-	static void WriteToMemberMapStructPropertyFromJson_EnumStructKey(TSharedPtr<class FJsonObject> &JsonObject, UMapProperty* &MapProperty, void* InObject, const FString &MemberName, TCsReadStructFromJson_Internal Internal = nullptr)
+	static void WriteToMemberMapStructPropertyFromJson_EnumStructKey_StructValue(TSharedPtr<class FJsonObject> &JsonObject, UMapProperty* &MapProperty, void* InObject, const FString &MemberName, TCsReadStructFromJson_Internal Internal = nullptr)
 	{
 		TMap<KeyType, ValueType>* Member = MapProperty->ContainerPtrToValuePtr<TMap<KeyType, ValueType>>(InObject);
 
@@ -879,6 +896,22 @@ template<typename T>
 		}
 	}
 
+	template<typename KeyType, typename ValueType>
+	static void WriteToMemberMapStructPropertyFromJson_EnumStructKey_NumericValue(TSharedPtr<class FJsonObject> &JsonObject, UMapProperty* &MapProperty, void* InObject, const FString &MemberName, TCsReadStructFromJson_Internal Internal = nullptr)
+	{
+		TMap<KeyType, ValueType>* Member = MapProperty->ContainerPtrToValuePtr<TMap<KeyType, ValueType>>(InObject);
+
+		const TSharedPtr<FJsonObject> JsonObjects = JsonObject->GetObjectField(MemberName);
+
+		TArray<KeyType> Keys;
+		Member->GetKeys(Keys);
+
+		for (const KeyType& Key : Keys)
+		{
+			(*Member)[Key] = (ValueType)JsonObjects->GetNumberField(Key.Name);
+		}
+	}
+
 	static bool ReadStructFromJson_Internal_Helper(TCsReadStructFromJson_Internal Internal, UProperty* Property, TSharedPtr<class FJsonObject> &JsonObject, void* InStruct, UScriptStruct* const &InScriptStruct);
 	static bool ReadObjectFromJson_Internal_Helper(TCsReadObjectFromJson_Internal Internal, UProperty* Property, TSharedPtr<class FJsonObject> &JsonObject, void* InObject, UClass* const &InClass);
 
@@ -893,13 +926,17 @@ template<typename T>
 // Loading
 #pragma region
 
+	static float BytesToKilobytes(const int32 &Bytes);
+	static float BytesToMegabytes(const int32 &Bytes);
+	static int32 KilobytesToBytes(const float &Kilobytes);
+
 	// Asset References
 #pragma region
 
 	template<typename T>
-	static FString GetAssetDescription(TAssetSubclassOf<T> &AssetSubclassOf)
+	static FString GetAssetDescription(TSoftClassPtr<T> &AssetSubclassOf)
 	{
-		const FStringAssetReference& AssetRef = AssetSubclassOf.ToStringReference();
+		const FStringAssetReference& AssetRef = AssetSubclassOf.ToSoftObjectPath();
 		const FString AssetName				  = AssetRef.ToString();
 		FString AssetDescription			  = ECsCached::Str::Empty;
 
@@ -915,16 +952,16 @@ template<typename T>
 #pragma region
 
 	template<typename T>
-	static void GetAssetReferenceFromAssetObjectProperty(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
+	static void GetAssetReferenceFromSoftObjectProperty(USoftObjectProperty* &SoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
 	{
-		const FString MemberName = AssetObjectProperty->GetName();
+		const FString MemberName = SoftObjectProperty->GetName();
 
 		if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
 			return;
 
-		if (TAssetPtr<T>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<T>>(InObject))
+		if (TSoftObjectPtr<T>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<T>>(InObject))
 		{
-			const FStringAssetReference AssetRef = Member->ToStringReference();
+			const FStringAssetReference AssetRef = Member->ToSoftObjectPath();
 			const FString AssetName				 = AssetRef.ToString();
 			
 			// (AssetName == TEXT(""))
@@ -944,24 +981,24 @@ template<typename T>
 				UObject* Asset = Cast<UObject>(Member->LoadSynchronous());
 
 				Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-				Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
 	}
 
 	template<typename T>
-	static void GetAssetReferenceFromAssetObjectProperty(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
+	static void GetAssetReferenceFromSoftObjectProperty(USoftObjectProperty* &SoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
 	{
-		const FString MemberName = AssetObjectProperty->GetName();
+		const FString MemberName = SoftObjectProperty->GetName();
 
 		if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
 			return;
 
-		if (TAssetPtr<T>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<T>>(InObject))
+		if (TSoftObjectPtr<T>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<T>>(InObject))
 		{
-			const FStringAssetReference AssetRef = Member->ToStringReference();
+			const FStringAssetReference AssetRef = Member->ToSoftObjectPath();
 			const FString AssetName				 = AssetRef.ToString();
 
 			// (AssetName == TEXT(""))
@@ -981,34 +1018,34 @@ template<typename T>
 				UObject* Asset = Cast<UObject>(Member->LoadSynchronous());
 
 				Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-				Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
 	}
 
-	static void GetAssetReferenceFromAssetObjectProperty_AnimMontage(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
-	static void GetAssetReferenceFromAssetObjectProperty_AnimMontage(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+	static void GetAssetReferenceFromSoftObjectProperty_AnimMontage(USoftObjectProperty* &SoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+	static void GetAssetReferenceFromSoftObjectProperty_AnimMontage(USoftObjectProperty* &SoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
 
-	static void GetAssetReferenceFromAssetObjectProperty_AnimSequence(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
-	static void GetAssetReferenceFromAssetObjectProperty_AnimSequence(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+	static void GetAssetReferenceFromSoftObjectProperty_AnimSequence(USoftObjectProperty* &SoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+	static void GetAssetReferenceFromSoftObjectProperty_AnimSequence(USoftObjectProperty* &SoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
 
-	static void GetAssetReferenceFromAssetObjectProperty_AnimBlueprint(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
-	static void GetAssetReferenceFromAssetObjectProperty_AnimBlueprint(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+	static void GetAssetReferenceFromSoftObjectProperty_AnimBlueprint(USoftObjectProperty* &SoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+	static void GetAssetReferenceFromSoftObjectProperty_AnimBlueprint(USoftObjectProperty* &SoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
 
-	static void GetAssetReferenceFromAssetObjectProperty_MaterialInstanceConstant(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
-	static void GetAssetReferenceFromAssetObjectProperty_MaterialInstanceConstant(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+	static void GetAssetReferenceFromSoftObjectProperty_MaterialInstanceConstant(USoftObjectProperty* &SoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+	static void GetAssetReferenceFromSoftObjectProperty_MaterialInstanceConstant(USoftObjectProperty* &SoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
 
-	static void GetAssetReferenceFromAssetObjectProperty_Blueprint(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
-	static void GetAssetReferenceFromAssetObjectProperty_Blueprint(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+	static void GetAssetReferenceFromSoftObjectProperty_Blueprint(USoftObjectProperty* &SoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+	static void GetAssetReferenceFromSoftObjectProperty_Blueprint(USoftObjectProperty* &SoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
 
 	template<typename T>
-	static void GetAssetReferenceFromArrayAssetObjectProperty(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
+	static void GetAssetReferenceFromArraySoftObjectProperty(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
 	{
-		if (TArray<TAssetPtr<T>>* Member = ArrayAssetObjectProperty->ContainerPtrToValuePtr<TArray<TAssetPtr<T>>>(InObject))
+		if (TArray<TSoftObjectPtr<T>>* Member = ArraySoftObjectProperty->ContainerPtrToValuePtr<TArray<TSoftObjectPtr<T>>>(InObject))
 		{
-			const FString MemberName	 = ArrayAssetObjectProperty->GetName();
+			const FString MemberName	 = ArraySoftObjectProperty->GetName();
 										// MemberName + TEXT("_LaodFlags")
 			const FString FlagMemberName = MemberName + ECsLoadCached::Str::_LoadFlags;
 
@@ -1027,7 +1064,7 @@ template<typename T>
 
 						for (int32 I = 0; I < Count; ++I)
 						{
-							const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
+							const FStringAssetReference AssetRef = (*Member)[I].ToSoftObjectPath();
 							const FString AssetName				 = AssetRef.ToString();
 							
 							// (AssetName == TEXT(""))
@@ -1049,8 +1086,8 @@ template<typename T>
 									UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
 
 									Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-									Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-									Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+									Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
+									Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
 								}
 #endif // #if WITH_EDITOR
 							}
@@ -1067,7 +1104,7 @@ template<typename T>
 
 			for (int32 I = 0; I < Count; ++I)
 			{
-				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
+				const FStringAssetReference AssetRef = (*Member)[I].ToSoftObjectPath();
 				const FString AssetName				 = AssetRef.ToString();
 
 				// (AssetName == TEXT(""))
@@ -1085,19 +1122,19 @@ template<typename T>
 				UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
 
 				Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-				Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
 #endif // #if WITH_EDITOR
 			}
 		}
 	}
 
 	template<typename T>
-	static void GetAssetReferenceFromArrayAssetObjectProperty(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
+	static void GetAssetReferenceFromArraySoftObjectProperty(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
 	{
-		if (TArray<TAssetPtr<T>>* Member = ArrayAssetObjectProperty->ContainerPtrToValuePtr<TArray<TAssetPtr<T>>>(InObject))
+		if (TArray<TSoftObjectPtr<T>>* Member = ArraySoftObjectProperty->ContainerPtrToValuePtr<TArray<TSoftObjectPtr<T>>>(InObject))
 		{
-			const FString MemberName	 = ArrayAssetObjectProperty->GetName();
+			const FString MemberName	 = ArraySoftObjectProperty->GetName();
 										// MemberName + TEXT("_LoadFlags")
 			const FString FlagMemberName = MemberName + ECsLoadCached::Str::_LoadFlags;
 
@@ -1116,7 +1153,7 @@ template<typename T>
 
 						for (int32 I = 0; I < Count; ++I)
 						{
-							const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
+							const FStringAssetReference AssetRef = (*Member)[I].ToSoftObjectPath();
 							const FString AssetName				 = AssetRef.ToString();
 
 							// (AssetName == TEXT(""))
@@ -1138,8 +1175,8 @@ template<typename T>
 									UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
 
 									Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-									Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-									Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+									Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
+									Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
 								}
 #endif // #if WITH_EDITOR
 							}
@@ -1149,7 +1186,7 @@ template<typename T>
 				return;
 			}
 			// Singleton
-			const FString MemberName = AssetObjectProperty->GetName();
+			const FString MemberName = SoftObjectProperty->GetName();
 
 			if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
 				return;
@@ -1158,7 +1195,7 @@ template<typename T>
 
 			for (int32 I = 0; I < Count; ++I)
 			{
-				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
+				const FStringAssetReference AssetRef = (*Member)[I].ToSoftObjectPath();
 				const FString AssetName				 = AssetRef.ToString();
 
 				// (AssetName == TEXT(""))
@@ -1176,26 +1213,26 @@ template<typename T>
 				UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
 
 				Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-				Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
 #endif // #if WITH_EDITOR
 			}
 		}
 	}
 
 	template<typename T, int32 SIZE>
-	static void GetAssetReferenceFromFixedArrayAssetObjectProperty_EnumSize(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
+	static void GetAssetReferenceFromFixedArraySoftObjectProperty_EnumSize(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
 	{
-		const FString MemberName = AssetObjectProperty->GetName();
+		const FString MemberName = SoftObjectProperty->GetName();
 
 		if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
 			return;
 
-		if (TAssetPtr<T>(*Member)[SIZE] = ArrayAssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<T>[SIZE]>(InObject))
+		if (TSoftObjectPtr<T>(*Member)[SIZE] = ArraySoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<T>[SIZE]>(InObject))
 		{
 			for (int32 I = 0; I < SIZE; ++I)
 			{
-				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
+				const FStringAssetReference AssetRef = (*Member)[I].ToSoftObjectPath();
 				const FString AssetName				 = AssetRef.ToString();
 
 				// (AssetName == TEXT(""))
@@ -1215,36 +1252,36 @@ template<typename T>
 					UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
 
 					Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-					Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-					Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+					Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
+					Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
 				}
 #endif // #if WITH_EDITOR
 			}
 		}
 	}
 
-	static void GetAssetReferenceFromArrayAssetObjectProperty_AnimMontage(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
-	static void GetAssetReferenceFromArrayAssetObjectProperty_AnimMontage(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+	static void GetAssetReferenceFromArraySoftObjectProperty_AnimMontage(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+	static void GetAssetReferenceFromArraySoftObjectProperty_AnimMontage(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
 
-	static void GetAssetReferenceFromArrayAssetObjectProperty_AnimSequence(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
-	static void GetAssetReferenceFromArrayAssetObjectProperty_AnimSequence(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+	static void GetAssetReferenceFromArraySoftObjectProperty_AnimSequence(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+	static void GetAssetReferenceFromArraySoftObjectProperty_AnimSequence(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
 
-	static void GetAssetReferenceFromArrayAssetObjectProperty_MaterialInstanceConstant(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
-	static void GetAssetReferenceFromArrayAssetObjectProperty_MaterialInstanceConstant(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+	static void GetAssetReferenceFromArraySoftObjectProperty_MaterialInstanceConstant(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+	static void GetAssetReferenceFromArraySoftObjectProperty_MaterialInstanceConstant(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
 
 	template<int32 SIZE>
-	static void GetAssetReferenceFromFixedArrayAssetObjectProperty_EnumSize_MaterialInstanceConstant(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
+	static void GetAssetReferenceFromFixedArraySoftObjectProperty_EnumSize_MaterialInstanceConstant(USoftObjectProperty* &SoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
 	{
-		const FString MemberName = AssetObjectProperty->GetName();
+		const FString MemberName = SoftObjectProperty->GetName();
 
 		if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
 			return;
 
-		if (TAssetPtr<UMaterialInstanceConstant>(*Member)[SIZE] = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UMaterialInstanceConstant>[SIZE]>(InObject))
+		if (TSoftObjectPtr<UMaterialInstanceConstant>(*Member)[SIZE] = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UMaterialInstanceConstant>[SIZE]>(InObject))
 		{
 			for (int32 I = 0; I < SIZE; ++I)
 			{
-				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
+				const FStringAssetReference AssetRef = (*Member)[I].ToSoftObjectPath();
 				const FString AssetName				 = AssetRef.ToString();
 
 				// (AssetName == TEXT(""))
@@ -1272,33 +1309,33 @@ template<typename T>
 						if (!Texture)
 							continue;
 
-						Reference.Size.Bytes += Texture->GetResourceSizeBytes(EResourceSizeMode::Inclusive);
+						Reference.Size.Bytes += Texture->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
 					}
 
-					Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-					Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+					Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
+					Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
 				}
 #endif // #if WITH_EDITOR
 			}
 		}
 	}
 
-	static void GetAssetReferenceFromArrayAssetObjectProperty_Blueprint(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
-	static void GetAssetReferenceFromArrayAssetObjectProperty_Blueprint(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+	static void GetAssetReferenceFromArraySoftObjectProperty_Blueprint(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
+	static void GetAssetReferenceFromArraySoftObjectProperty_Blueprint(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES);
 
 	template<int32 SIZE>
-	static void GetAssetReferenceFromFixedArrayAssetObjectProperty_Blueprint_EnumSize(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
+	static void GetAssetReferenceFromFixedArraySoftObjectProperty_Blueprint_EnumSize(USoftObjectProperty* &SoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
 	{
-		const FString MemberName = AssetObjectProperty->GetName();
+		const FString MemberName = SoftObjectProperty->GetName();
 
 		if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
 			return;
 
-		if (TAssetPtr<UBlueprint>(*Member)[SIZE] = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UBlueprint>[SIZE]>(InObject))
+		if (TSoftObjectPtr<UBlueprint>(*Member)[SIZE] = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UBlueprint>[SIZE]>(InObject))
 		{
 			for (int32 I = 0; I < SIZE; ++I)
 			{
-				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
+				const FStringAssetReference AssetRef = (*Member)[I].ToSoftObjectPath();
 				const FString AssetName				 = AssetRef.ToString();
 
 				// (AssetName == TEXT(""))
@@ -1308,7 +1345,7 @@ template<typename T>
 				OutAssetReferences.AddDefaulted();
 
 				const int32 Size = OutAssetReferences.Num();
-				// TODO: Fix / Investigate. 4.16.1. Built Game (Okay in Editor). TAssetPtr for UAnimBlueprint / UWidgetBlueprint does NOT have _C
+				// TODO: Fix / Investigate. 4.16.1. Built Game (Okay in Editor). TSoftObjectPtr for UAnimBlueprint / UWidgetBlueprint does NOT have _C
 				FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
 				Reference.Reference				   = AssetName.EndsWith(ECsLoadCached::Str::_C) ? AssetName : AssetName + ECsLoadCached::Str::_C;
 				Reference.Reference_Internal	   = FStringAssetReference(Reference.Reference);
@@ -1318,8 +1355,8 @@ template<typename T>
 					UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
 
 					Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(EResourceSizeMode::Inclusive);
-					Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-					Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+					Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
+					Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
 				}
 #endif // #if WITH_EDITOR
 			}
@@ -1327,18 +1364,18 @@ template<typename T>
 	}
 
 	template<int32 SIZE>
-	static void GetAssetReferenceFromFixedArrayAssetObjectProperty_Blueprint_EnumSize(UAssetObjectProperty* &AssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
+	static void GetAssetReferenceFromFixedArraySoftObjectProperty_Blueprint_EnumSize(USoftObjectProperty* &SoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
 	{
-		const FString MemberName = AssetObjectProperty->GetName();
+		const FString MemberName = SoftObjectProperty->GetName();
 
 		if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
 			return;
 
-		if (TAssetPtr<UBlueprint>(*Member)[SIZE] = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UBlueprint>[SIZE]>(InObject))
+		if (TSoftObjectPtr<UBlueprint>(*Member)[SIZE] = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UBlueprint>[SIZE]>(InObject))
 		{
 			for (int32 I = 0; I < SIZE; ++I)
 			{
-				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
+				const FStringAssetReference AssetRef = (*Member)[I].ToSoftObjectPath();
 				const FString AssetName				 = AssetRef.ToString();
 
 				// (AssetName == TEXT(""))
@@ -1348,7 +1385,7 @@ template<typename T>
 				OutAssetReferences.AddDefaulted();
 
 				const int32 Size = OutAssetReferences.Num();
-				// TODO: Fix / Investigate. 4.16.1. Built Game (Okay in Editor). TAssetPtr for UWidgetBlueprint does NOT have _C
+				// TODO: Fix / Investigate. 4.16.1. Built Game (Okay in Editor). TSoftObjectPtr for UWidgetBlueprint does NOT have _C
 				FCsStringAssetReference& Reference = OutAssetReferences[Size - 1];
 				Reference.Reference				   = AssetName.EndsWith(ECsLoadCached::Str::_C) ? AssetName : AssetName + ECsLoadCached::Str::_C;
 				Reference.Reference_Internal	   = FStringAssetReference(Reference.Reference);
@@ -1358,8 +1395,8 @@ template<typename T>
 					UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
 
 					Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(EResourceSizeMode::Inclusive);
-					Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-					Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+					Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
+					Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
 				}
 #endif // #if WITH_EDITOR
 			}
@@ -1379,16 +1416,16 @@ template<typename T>
 	}
 
 	template<typename T>
-	static void GetAssetReferenceFromAssetClassProperty(UAssetClassProperty* &AssetClassProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
+	static void GetAssetReferenceFromSoftClassProperty(USoftClassProperty* &SoftClassProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
 	{
-		const FString MemberName = AssetClassProperty->GetName();
+		const FString MemberName = SoftClassProperty->GetName();
 
 		if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
 			return;
 
-		if (TAssetSubclassOf<T>* Member = AssetClassProperty->ContainerPtrToValuePtr<TAssetSubclassOf<T>>(InObject))
+		if (TSoftClassPtr<T>* Member = SoftClassProperty->ContainerPtrToValuePtr<TSoftClassPtr<T>>(InObject))
 		{
-			const FStringAssetReference AssetRef = Member->ToStringReference();
+			const FStringAssetReference AssetRef = Member->ToSoftObjectPath();
 			const FString AssetName				 = AssetRef.ToString();
 
 			// (AssetName == TEXT(""))
@@ -1408,24 +1445,24 @@ template<typename T>
 				UObject* Asset = Cast<UObject>(Member->LoadSynchronous());
 
 				Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-				Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
 	}
 
 	template<typename T>
-	static void GetAssetReferenceFromAssetClassProperty(UAssetClassProperty* &AssetClassProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
+	static void GetAssetReferenceFromSoftClassProperty(USoftClassProperty* &SoftClassProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
 	{
-		const FString MemberName = AssetClassProperty->GetName();
+		const FString MemberName = SoftClassProperty->GetName();
 
 		if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
 			return;
 
-		if (TAssetSubclassOf<T>* Member = AssetClassProperty->ContainerPtrToValuePtr<TAssetSubclassOf<T>>(InObject))
+		if (TSoftClassPtr<T>* Member = SoftClassProperty->ContainerPtrToValuePtr<TSoftClassPtr<T>>(InObject))
 		{
-			const FStringAssetReference AssetRef = Member->ToStringReference();
+			const FStringAssetReference AssetRef = Member->ToSoftObjectPath();
 			const FString AssetName				 = AssetRef.ToString();
 
 			// (AssetName == TEXT(""))
@@ -1445,28 +1482,28 @@ template<typename T>
 				UObject* Asset = Cast<UObject>(Member->LoadSynchronous());
 
 				Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-				Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-				Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+				Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
+				Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
 			}
 #endif // #if WITH_EDITOR
 		}
 	}
 
 	template<typename T>
-	static void GetAssetReferenceFromArrayAssetClassProperty(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
+	static void GetAssetReferenceFromArraySoftClassProperty(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UScriptStruct* const &InClass, const ECsLoadFlags &LoadFlags, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
 	{
-		const FString MemberName = ArrayAssetObjectProperty->GetName();
+		const FString MemberName = ArraySoftObjectProperty->GetName();
 
 		if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
 			return;
 
-		if (TArray<TAssetSubclassOf<T>>* Member = ArrayAssetObjectProperty->ContainerPtrToValuePtr<TArray<TAssetSubclassOf<T>>>(InObject))
+		if (TArray<TSoftClassPtr<T>>* Member = ArraySoftObjectProperty->ContainerPtrToValuePtr<TArray<TSoftClassPtr<T>>>(InObject))
 		{
 			const int32 Count = Member->Num();
 
 			for (int32 I = 0; I < Count; ++I)
 			{
-				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
+				const FStringAssetReference AssetRef = (*Member)[I].ToSoftObjectPath();
 				const FString AssetName				 = AssetRef.ToString();
 
 				// (AssetName == TEXT(""))
@@ -1486,8 +1523,8 @@ template<typename T>
 					UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
 
 					Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-					Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-					Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+					Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
+					Reference.Size.Megabytes = sBytesToMegabytes(Reference.Size.Bytes);
 				}
 #endif // #if WITH_EDITOR
 			}
@@ -1495,20 +1532,20 @@ template<typename T>
 	}
 
 	template<typename T>
-	static void GetAssetReferenceFromArrayAssetClassProperty(UArrayProperty* &ArrayAssetObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
+	static void GetAssetReferenceFromArraySoftClassProperty(UArrayProperty* &ArraySoftObjectProperty, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, const EResourceSizeMode::Type &ResourceSizeMode, TArray<FCsStringAssetReference> &OutAssetReferences, const int32 &LoadCodes = ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES)
 	{
-		const FString MemberName = ArrayAssetObjectProperty->GetName();
+		const FString MemberName = ArraySoftObjectProperty->GetName();
 
 		if (!CanLoad(InObject, InClass, MemberName, LoadFlags, LoadCodes))
 			return;
 
-		if (TArray<TAssetSubclassOf<T>>* Member = ArrayAssetObjectProperty->ContainerPtrToValuePtr<TArray<TAssetSubclassOf<T>>>(InObject))
+		if (TArray<TSoftClassPtr<T>>* Member = ArraySoftObjectProperty->ContainerPtrToValuePtr<TArray<TSoftClassPtr<T>>>(InObject))
 		{
 			const int32 Count = Member->Num();
 
 			for (int32 I = 0; I < Count; ++I)
 			{
-				const FStringAssetReference AssetRef = (*Member)[I].ToStringReference();
+				const FStringAssetReference AssetRef = (*Member)[I].ToSoftObjectPath();
 				const FString AssetName				 = AssetRef.ToString();
 
 				// (AssetName == TEXT(""))
@@ -1528,8 +1565,8 @@ template<typename T>
 					UObject* Asset = Cast<UObject>((*Member)[I].LoadSynchronous());
 
 					Reference.Size.Bytes	 = Asset->GetResourceSizeBytes(ResourceSizeMode);
-					Reference.Size.Kilobytes = UCsCommon::BytesToKilobytes(Reference.Size.Bytes);
-					Reference.Size.Megabytes = UCsCommon::BytesToMegabytes(Reference.Size.Bytes);
+					Reference.Size.Kilobytes = BytesToKilobytes(Reference.Size.Bytes);
+					Reference.Size.Megabytes = BytesToMegabytes(Reference.Size.Bytes);
 				}
 #endif // #if WITH_EDITOR
 			}
@@ -1587,7 +1624,7 @@ template<typename T>
 #pragma region
 
 	template<typename T>
-	static void LoadTAssetPtr(const FString &MemberName, TAssetPtr<T> AssetPtr, T* &Internal, const FString &AssetType, const FString &AssetErrorMessageType)
+	static void LoadTSoftObjectPtr(const FString &MemberName, TSoftObjectPtr<T> AssetPtr, T* &Internal, const FString &AssetType, const FString &AssetErrorMessageType)
 	{
 		const FString& AssetName = AssetPtr.ToString();
 
@@ -1620,7 +1657,7 @@ template<typename T>
 			{
 				const FString AssetDescription = AssetType + TEXT("'") + AssetName + TEXT("'");
 
-				UE_LOG(LogLoad, Warning, TEXT("UCsCommon::LoadTAssetPtr (%s): Failed to load %s at %s"), *MemberName, *AssetErrorMessageType, *AssetDescription);
+				UE_LOG(LogLoad, Warning, TEXT("UCsCommon_Load::LoadTSoftObjectPtr (%s): Failed to load %s at %s"), *MemberName, *AssetErrorMessageType, *AssetDescription);
 
 				Internal = nullptr;
 			}
@@ -1628,7 +1665,7 @@ template<typename T>
 	}
 
 	template<typename T>
-	static void LoadTAssetPtr(const FString &MemberName, TAssetPtr<T>* AssetPtr, T* &Internal, const FString &AssetType, const FString &AssetErrorMessageType)
+	static void LoadTSoftObjectPtr(const FString &MemberName, TSoftObjectPtr<T>* AssetPtr, T* &Internal, const FString &AssetType, const FString &AssetErrorMessageType)
 	{
 		const FString& AssetName = AssetPtr->ToString();
 
@@ -1661,7 +1698,7 @@ template<typename T>
 			{
 				const FString AssetDescription = AssetType + TEXT("'") + AssetName + TEXT("'");
 
-				UE_LOG(LogLoad, Warning, TEXT("UCsCommon::LoadTAssetPtr (%s): Failed to load %s at %s"), *MemberName, *AssetErrorMessageType, *AssetDescription);
+				UE_LOG(LogLoad, Warning, TEXT("UCsCommon_Load::LoadTSoftObjectPtr (%s): Failed to load %s at %s"), *MemberName, *AssetErrorMessageType, *AssetDescription);
 
 				Internal = nullptr;
 			}
@@ -1669,7 +1706,7 @@ template<typename T>
 	}
 
 	template<typename T>
-	static void LoadTAssetPtr(const FString &MemberName, TAssetPtr<T> AssetPtr, TWeakObjectPtr<T> &Internal, const FString &AssetType, const FString &AssetErrorMessageType)
+	static void LoadTSoftObjectPtr(const FString &MemberName, TSoftObjectPtr<T> AssetPtr, TWeakObjectPtr<T> &Internal, const FString &AssetType, const FString &AssetErrorMessageType)
 	{
 		const FString& AssetName = AssetPtr.ToString();
 
@@ -1702,21 +1739,21 @@ template<typename T>
 			{
 				const FString AssetDescription = AssetType + TEXT("'") + AssetName + TEXT("'");
 
-				UE_LOG(LogLoad, Warning, TEXT("UCsCommon::LoadTAssetPtr (%s): Failed to load %s at %s"), *MemberName, *AssetErrorMessageType, *AssetDescription);
+				UE_LOG(LogLoad, Warning, TEXT("UCsCommon_Load::LoadTSoftObjectPtr (%s): Failed to load %s at %s"), *MemberName, *AssetErrorMessageType, *AssetDescription);
 
 				Internal = nullptr;
 			}
 		}
 	}
 
-	static void LoadTAssetPtr_Blueprint(const FString &MemberName, TAssetPtr<class UBlueprint> AssetPtr, class UBlueprintGeneratedClass* &Internal);
-	static void LoadTAssetPtr_Blueprint(const FString &MemberName, TAssetPtr<class UBlueprint>* AssetPtr, class UBlueprintGeneratedClass* &Internal);
+	static void LoadTSoftObjectPtr_Blueprint(const FString &MemberName, TSoftObjectPtr<class UBlueprint> AssetPtr, class UBlueprintGeneratedClass* &Internal);
+	static void LoadTSoftObjectPtr_Blueprint(const FString &MemberName, TSoftObjectPtr<class UBlueprint>* AssetPtr, class UBlueprintGeneratedClass* &Internal);
 
-	static void LoadTAssetPtr_AnimBlueprint(const FString &MemberName, TAssetPtr<class UAnimBlueprint> AssetPtr, class UAnimBlueprintGeneratedClass* &Internal);
-	static void LoadTAssetPtr_AnimBlueprint(const FString &MemberName, TAssetPtr<class UAnimBlueprint>* AssetPtr, class UAnimBlueprintGeneratedClass* &Internal);
+	static void LoadTSoftObjectPtr_AnimBlueprint(const FString &MemberName, TSoftObjectPtr<class UAnimBlueprint> AssetPtr, class UAnimBlueprintGeneratedClass* &Internal);
+	static void LoadTSoftObjectPtr_AnimBlueprint(const FString &MemberName, TSoftObjectPtr<class UAnimBlueprint>* AssetPtr, class UAnimBlueprintGeneratedClass* &Internal);
 
 	template<typename T>
-	static void LoadTAssetSubclassOf(const FString &MemberName, TAssetSubclassOf<T> &AssetSubclassOf, T* &Internal, const FString &AssetErrorMessageType)
+	static void LoadTSoftClassPtr(const FString &MemberName, TSoftClassPtr<T> &AssetSubclassOf, T* &Internal, const FString &AssetErrorMessageType)
 	{
 		const FString& AssetName = AssetSubclassOf.ToString();
 
@@ -1731,7 +1768,7 @@ template<typename T>
 			AssetSubclassOf.IsValid() && AssetSubclassOf.Get() &&
 			Internal == AssetSubclassOf.Get()->template GetDefaultObject<T>())
 		{
-			UE_LOG(LogLoad, Warning, TEXT("UCsCommon::LoadTAssetSubclassOf (%s): Possibly trying to load %s and it is already loaded"), *MemberName, *AssetErrorMessageType);
+			UE_LOG(LogLoad, Warning, TEXT("UCsCommon_Load::LoadTSoftClassPtr (%s): Possibly trying to load %s and it is already loaded"), *MemberName, *AssetErrorMessageType);
 			return;
 		}
 
@@ -1749,7 +1786,7 @@ template<typename T>
 			{
 				const FString AssetDescription = TEXT("Blueprint'") + AssetName + TEXT("'");
 
-				UE_LOG(LogLoad, Warning, TEXT("UCsCommon::LoadTAssetSubclassOf (%s): Failed to load %s at %s"), *MemberName, *AssetErrorMessageType, *AssetDescription);
+				UE_LOG(LogLoad, Warning, TEXT("UCsCommon_Load::LoadTSoftClassPtr (%s): Failed to load %s at %s"), *MemberName, *AssetErrorMessageType, *AssetDescription);
 
 				Internal = nullptr;
 			}
@@ -1757,7 +1794,7 @@ template<typename T>
 	}
 
 	template<typename T>
-	static void LoadTAssetSubclassOf(const FString &MemberName, TAssetSubclassOf<T>* &AssetSubclassOf, T* &Internal, const FString &AssetErrorMessageType)
+	static void LoadTSoftClassPtr(const FString &MemberName, TSoftClassPtr<T>* &AssetSubclassOf, T* &Internal, const FString &AssetErrorMessageType)
 	{
 		const FString& AssetName = AssetSubclassOf->ToString();
 
@@ -1772,7 +1809,7 @@ template<typename T>
 			AssetSubclassOf->IsValid() && AssetSubclassOf->Get() &&
 			Internal == AssetSubclassOf->Get()->template GetDefaultObject<T>())
 		{
-			UE_LOG(LogLoad, Warning, TEXT("UCsCommon::LoadTAssetSubclassOf (%s): Possibly trying to load %s and it is already loaded"), *MemberName, *AssetErrorMessageType);
+			UE_LOG(LogLoad, Warning, TEXT("UCsCommon_Load::LoadTSoftClassPtr (%s): Possibly trying to load %s and it is already loaded"), *MemberName, *AssetErrorMessageType);
 			return;
 		}
 
@@ -1790,7 +1827,7 @@ template<typename T>
 			{
 				const FString AssetDescription = TEXT("Blueprint'") + AssetName + TEXT("'");
 
-				UE_LOG(LogLoad, Warning, TEXT("UCsCommon::LoadTAssetSubclassOf (%s): Failed to load %s at %s"), *MemberName, *AssetErrorMessageType, *AssetDescription);
+				UE_LOG(LogLoad, Warning, TEXT("UCsCommon_Load::LoadTSoftClassPtr (%s): Failed to load %s at %s"), *MemberName, *AssetErrorMessageType, *AssetDescription);
 
 				Internal = nullptr;
 			}
@@ -1798,7 +1835,7 @@ template<typename T>
 	}
 
 	template<typename T>
-	static void LoadTAssetSubclassOf(const FString &MemberName, TAssetSubclassOf<T> &AssetSubclassOf, TWeakObjectPtr<T> &Internal, const FString &AssetErrorMessageType)
+	static void LoadTSoftClassPtr(const FString &MemberName, TSoftClassPtr<T> &AssetSubclassOf, TWeakObjectPtr<T> &Internal, const FString &AssetErrorMessageType)
 	{
 		const FString& AssetName = AssetSubclassOf.ToString();
 
@@ -1813,7 +1850,7 @@ template<typename T>
 			AssetSubclassOf.IsValid() && AssetSubclassOf.Get() &&
 			Internal == AssetSubclassOf.Get()->template GetDefaultObject<T>())
 		{
-			UE_LOG(LogLoad, Warning, TEXT("UCsCommon::LoadTAssetSubclassOf (%s): Possibly trying to load %s and it is already loaded"), *MemberName, *AssetErrorMessageType);
+			UE_LOG(LogLoad, Warning, TEXT("UCsCommon_Load::LoadTSoftClassPtr (%s): Possibly trying to load %s and it is already loaded"), *MemberName, *AssetErrorMessageType);
 			return;
 		}
 
@@ -1831,7 +1868,7 @@ template<typename T>
 			{
 				const FString AssetDescription = TEXT("Blueprint'") + AssetName + TEXT("'");
 
-				UE_LOG(LogLoad, Warning, TEXT("UCsCommon::LoadTAssetSubclassOf (%s): Failed to load %s at %s"), *MemberName, *AssetErrorMessageType, *AssetDescription);
+				UE_LOG(LogLoad, Warning, TEXT("UCsCommon_Load::LoadTSoftClassPtr (%s): Failed to load %s at %s"), *MemberName, *AssetErrorMessageType, *AssetDescription);
 
 				Internal = nullptr;
 			}
@@ -1839,7 +1876,7 @@ template<typename T>
 	}
 
 	template<typename T>
-	static void LoadTAssetSubclassOf(TAssetSubclassOf<T> &AssetSubclassOf, T* &OutAsset, const FString &AssetErrorMessageType)
+	static void LoadTSoftClassPtr(TSoftClassPtr<T> &AssetSubclassOf, T* &OutAsset, const FString &AssetErrorMessageType)
 	{
 		OutAsset = nullptr;
 
@@ -1863,13 +1900,13 @@ template<typename T>
 			{
 				const FString AssetDescription = TEXT("Blueprint'") + AssetName + TEXT("'");
 
-				UE_LOG(LogLoad, Warning, TEXT("UCsCommon::LoadTAssetSubclassOf (%s): Failed to load %s at %s"), *AssetErrorMessageType, *AssetDescription);
+				UE_LOG(LogLoad, Warning, TEXT("UCsCommon_Load::LoadTSoftClassPtr (%s): Failed to load %s at %s"), *AssetErrorMessageType, *AssetDescription);
 			}
 		}
 	}
 
 	template<typename T>
-	static void SetTArrayFromTArrayTAssetPtr(TArray<T*> &Array, TArray<TAssetPtr<T>> &ArrayAssetPtr)
+	static void SetTArrayFromTArrayTSoftObjectPtr(TArray<T*> &Array, TArray<TSoftObjectPtr<T>> &ArrayAssetPtr)
 	{
 		Array.Reset();
 
@@ -1882,7 +1919,7 @@ template<typename T>
 	}
 
 	template<typename T>
-	static void SetTArrayFromTArrayTAssetPtr(TArray<T*> &Array, TArray<TAssetPtr<T>>* &ArrayAssetPtr)
+	static void SetTArrayFromTArrayTSoftObjectPtr(TArray<T*> &Array, TArray<TSoftObjectPtr<T>>* &ArrayAssetPtr)
 	{
 		Array.Reset();
 
@@ -1895,7 +1932,7 @@ template<typename T>
 	}
 
 	template<typename T>
-	static void SetTArrayFromTArrayTAssetPtr(TArray<TWeakObjectPtr<T>> &Array, TArray<TAssetPtr<T>> &ArrayAssetPtr)
+	static void SetTArrayFromTArrayTSoftObjectPtr(TArray<TWeakObjectPtr<T>> &Array, TArray<TSoftObjectPtr<T>> &ArrayAssetPtr)
 	{
 		Array.Reset();
 
@@ -1908,7 +1945,7 @@ template<typename T>
 	}
 
 	template<typename T>
-	static void SetTArrayFromTArrayTAssetPtr(TArray<TWeakObjectPtr<T>> &Array, TArray<TAssetPtr<T>>* &ArrayAssetPtr)
+	static void SetTArrayFromTArrayTSoftObjectPtr(TArray<TWeakObjectPtr<T>> &Array, TArray<TSoftObjectPtr<T>>* &ArrayAssetPtr)
 	{
 		Array.Reset();
 
@@ -1921,7 +1958,7 @@ template<typename T>
 	}
 
 	template<typename T>
-	static void LoadTArrayTAssetPtr(const FString &MemberName, TArray<TAssetPtr<T>> &ArrayAssetPtr, TArray<T*> &ArrayInternal, const FString &AssetType, const FString &AssetErrorMessageType)
+	static void LoadTArrayTSoftObjectPtr(const FString &MemberName, TArray<TSoftObjectPtr<T>> &ArrayAssetPtr, TArray<T*> &ArrayInternal, const FString &AssetType, const FString &AssetErrorMessageType)
 	{
 		if (ArrayInternal.Num() > 0 &&
 			AreAllElementsInTArrayNotNull(ArrayInternal))
@@ -1932,18 +1969,18 @@ template<typename T>
 		if (ArrayAssetPtr.Num() > 0 &&
 			AreAllElementsInTArrayAssetPtrNotNull(ArrayAssetPtr))
 		{
-			SetTArrayFromTArrayTAssetPtr<T>(ArrayInternal, ArrayAssetPtr);
+			SetTArrayFromTArrayTSoftObjectPtr<T>(ArrayInternal, ArrayAssetPtr);
 		}
 		else
 		{
-			UCsCommon::NullAndEmptyTArray<T>(ArrayInternal);
+			NullAndEmptyTArray<T>(ArrayInternal);
 
 			const int32 Count = ArrayAssetPtr.Num();
 
 			for (int32 I = 0; I < Count; ++I)
 			{
-				TAssetPtr<T>& AssetPtr				  = ArrayAssetPtr[I];
-				const FStringAssetReference& AssetRef = AssetPtr.ToStringReference();
+				TSoftObjectPtr<T>& AssetPtr				  = ArrayAssetPtr[I];
+				const FStringAssetReference& AssetRef = AssetPtr.ToSoftObjectPath();
 				const FString& AssetName			  = AssetRef.ToString();
 
 				// (AssetName != TEXT(""))
@@ -1967,7 +2004,7 @@ template<typename T>
 	}
 
 	template<typename T>
-	static void LoadTArrayTAssetPtr(const FString &MemberName, TArray<TAssetPtr<T>>* &ArrayAssetPtr, TArray<T*> &ArrayInternal, const FString &AssetType, const FString &AssetErrorMessageType)
+	static void LoadTArrayTSoftObjectPtr(const FString &MemberName, TArray<TSoftObjectPtr<T>>* &ArrayAssetPtr, TArray<T*> &ArrayInternal, const FString &AssetType, const FString &AssetErrorMessageType)
 	{
 		if (ArrayInternal.Num() > 0 &&
 			AreAllElementsInTArrayNotNull(ArrayInternal))
@@ -1978,7 +2015,7 @@ template<typename T>
 		if (ArrayAssetPtr->Num() > 0 &&
 			AreAllElementsInTArrayAssetPtrNotNull(ArrayAssetPtr))
 		{
-			SetTArrayFromTArrayTAssetPtr<T>(ArrayInternal, ArrayAssetPtr);
+			SetTArrayFromTArrayTSoftObjectPtr<T>(ArrayInternal, ArrayAssetPtr);
 		}
 		else
 		{
@@ -1988,8 +2025,8 @@ template<typename T>
 
 			for (int32 I = 0; I < Count; ++I)
 			{
-				TAssetPtr<T>& AssetPtr				  = (*ArrayAssetPtr)[I];
-				const FStringAssetReference& AssetRef = AssetPtr.ToStringReference();
+				TSoftObjectPtr<T>& AssetPtr				  = (*ArrayAssetPtr)[I];
+				const FStringAssetReference& AssetRef = AssetPtr.ToSoftObjectPath();
 				const FString& AssetName			  = AssetRef.ToString();
 
 				// (AssetName != TEXT(""))
@@ -2013,7 +2050,7 @@ template<typename T>
 	}
 
 	template<typename T>
-	static void LoadTArrayTAssetPtr(const FString &MemberName, TArray<TAssetPtr<T>> &ArrayAssetPtr, TArray<TWeakObjectPtr<T>> &ArrayInternal, const FString &AssetType, const FString &AssetErrorMessageType)
+	static void LoadTArrayTSoftObjectPtr(const FString &MemberName, TArray<TSoftObjectPtr<T>> &ArrayAssetPtr, TArray<TWeakObjectPtr<T>> &ArrayInternal, const FString &AssetType, const FString &AssetErrorMessageType)
 	{
 		if (ArrayInternal.Num() > 0 &&
 			AreAllElementsInTArrayNotNull(ArrayInternal))
@@ -2024,18 +2061,18 @@ template<typename T>
 		if (ArrayAssetPtr.Num() > 0 &&
 			AreAllElementsInTArrayAssetPtrNotNull(ArrayAssetPtr))
 		{
-			SetTArrayFromTArrayTAssetPtr<T>(ArrayInternal, ArrayAssetPtr);
+			SetTArrayFromTArrayTSoftObjectPtr<T>(ArrayInternal, ArrayAssetPtr);
 		}
 		else
 		{
-			UCsCommon::NullAndEmptyTArray<T>(ArrayInternal);
+			NullAndEmptyTArray<T>(ArrayInternal);
 
 			const int32 Count = ArrayAssetPtr.Num();
 
 			for (int32 I = 0; I < Count; ++I)
 			{
-				TAssetPtr<T>& AssetPtr				  = ArrayAssetPtr[I];
-				const FStringAssetReference& AssetRef = AssetPtr.ToStringReference();
+				TSoftObjectPtr<T>& AssetPtr				  = ArrayAssetPtr[I];
+				const FStringAssetReference& AssetRef = AssetPtr.ToSoftObjectPath();
 				const FString& AssetName			  = AssetRef.ToString();
 
 				// (AssetName != TEXT(""))
@@ -2058,11 +2095,11 @@ template<typename T>
 		}
 	}
 
-	static void LoadTArrayTAssetPtr_Blueprint(const FString &MemberName, TArray<TAssetPtr<class UBlueprint>> &ArrayAssetPtr, TArray<class UBlueprintGeneratedClass*> &ArrayInternal);
-	static void LoadTArrayTAssetPtr_Blueprint(const FString &MemberName, TArray<TAssetPtr<class UBlueprint>>* &ArrayAssetPtr, TArray<class UBlueprintGeneratedClass*> &ArrayInternal);
+	static void LoadTArrayTSoftObjectPtr_Blueprint(const FString &MemberName, TArray<TSoftObjectPtr<class UBlueprint>> &ArrayAssetPtr, TArray<class UBlueprintGeneratedClass*> &ArrayInternal);
+	static void LoadTArrayTSoftObjectPtr_Blueprint(const FString &MemberName, TArray<TSoftObjectPtr<class UBlueprint>>* &ArrayAssetPtr, TArray<class UBlueprintGeneratedClass*> &ArrayInternal);
 
 	template<typename T>
-	static void SetTArrayFromTArrayTAssetSubclassOf(TArray<T*> &Array, TArray<TAssetSubclassOf<T>> &ArrayAssetSubclassOf)
+	static void SetTArrayFromTArrayTSoftClassPtr(TArray<T*> &Array, TArray<TSoftClassPtr<T>> &ArrayAssetSubclassOf)
 	{
 		Array.Reset();
 
@@ -2075,7 +2112,7 @@ template<typename T>
 	}
 
 	template<typename T>
-	static void SetTArrayFromTArrayTAssetSubclassOf(TArray<T*> &Array, TArray<TAssetSubclassOf<T>>* &ArrayAssetSubclassOf)
+	static void SetTArrayFromTArrayTSoftClassPtr(TArray<T*> &Array, TArray<TSoftClassPtr<T>>* &ArrayAssetSubclassOf)
 	{
 		Array.Reset();
 
@@ -2088,7 +2125,7 @@ template<typename T>
 	}
 
 	template<typename T>
-	static void LoadTArrayTAssetSubclassOf(const FString &MemberName, TArray<TAssetSubclassOf<T>>* &ArrayAssetSubclassOf, TArray<T*> &ArrayInternal, const FString &AssetErrorMessageType)
+	static void LoadTArrayTSoftClassPtr(const FString &MemberName, TArray<TSoftClassPtr<T>>* &ArrayAssetSubclassOf, TArray<T*> &ArrayInternal, const FString &AssetErrorMessageType)
 	{
 		if (ArrayInternal.Num() > 0 &&
 			AreAllElementsInTArrayNotNull(ArrayInternal))
@@ -2099,18 +2136,18 @@ template<typename T>
 		if (ArrayAssetSubclassOf->Num() > 0 &&
 			AreAllElementsInTArrayAssetSubclassOfNotNull(ArrayAssetSubclassOf))
 		{
-			SetTArrayFromTArrayTAssetSubclassOf<T>(ArrayInternal, ArrayAssetSubclassOf);
+			SetTArrayFromTArrayTSoftClassPtr<T>(ArrayInternal, ArrayAssetSubclassOf);
 		}
 		else
 		{
-			UCsCommon::NullAndEmptyTArray<T>(ArrayInternal);
+			NullAndEmptyTArray<T>(ArrayInternal);
 
 			const int32 Count = ArrayAssetSubclassOf->Num();
 
 			for (int32 I = 0; I < Count; ++I)
 			{
-				TAssetSubclassOf<T>& AssetSubclassOf  = (*ArrayAssetSubclassOf)[I];
-				const FStringAssetReference& AssetRef = AssetSubclassOf.ToStringReference();
+				TSoftClassPtr<T>& AssetSubclassOf  = (*ArrayAssetSubclassOf)[I];
+				const FStringAssetReference& AssetRef = AssetSubclassOf.ToSoftObjectPath();
 				const FString& AssetName			  = AssetRef.ToString();
 
 				// (AssetName != TEXT(""))
@@ -2141,7 +2178,7 @@ template<typename T>
 	template<typename T>
 	static void LoadFCsStruct(const FString &MemberName, T* InStruct, const ECsLoadFlags &LoadFlags)
 	{
-		LoadStructWithTAssetPtrs(MemberName, InStruct, T::StaticStruct(), LoadFlags);
+		LoadStructWithTSoftObjectPtrs(MemberName, InStruct, T::StaticStruct(), LoadFlags);
 	}
 
 	template<typename T>
@@ -2174,9 +2211,9 @@ template<typename T>
 	static bool CanLoad(void* InObject, UClass* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags, const int32 &LoadCodes);
 
 	template<typename T>
-	static void LoadAssetClassProperty(UAssetClassProperty* &AssetClassProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName, const FString &AssetType, const ECsLoadFlags &LoadFlags)
+	static void LoadSoftClassProperty(USoftClassProperty* &SoftClassProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName, const FString &AssetType, const ECsLoadFlags &LoadFlags)
 	{
-		if (TAssetSubclassOf<T>* Member = AssetClassProperty->ContainerPtrToValuePtr<TAssetSubclassOf<T>>(InObject))
+		if (TSoftClassPtr<T>* Member = SoftClassProperty->ContainerPtrToValuePtr<TSoftClassPtr<T>>(InObject))
 		{
 			if (!CanLoad(InObject, InClass, MemberName, LoadFlags, 0))
 				return;
@@ -2187,16 +2224,16 @@ template<typename T>
 			if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 			{
 				if (T** Internal = InternalProperty->ContainerPtrToValuePtr<T*>(InObject))
-					LoadTAssetSubclassOf<T>(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal, AssetType);
+					LoadTSoftClassPtr<T>(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal, AssetType);
 										//  ObjectName + TEXT(".") + MemberName
 			}
 		}
 	}
 
 	template<typename T>
-	static void LoadAssetClassProperty(UAssetClassProperty* &AssetClassProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const FString &AssetType, const ECsLoadFlags &LoadFlags)
+	static void LoadSoftClassProperty(USoftClassProperty* &SoftClassProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const FString &AssetType, const ECsLoadFlags &LoadFlags)
 	{
-		if (TAssetSubclassOf<T>* Member = AssetClassProperty->ContainerPtrToValuePtr<TAssetSubclassOf<T>>(InObject))
+		if (TSoftClassPtr<T>* Member = SoftClassProperty->ContainerPtrToValuePtr<TSoftClassPtr<T>>(InObject))
 		{
 			if (!CanLoad(InObject, InClass, MemberName, LoadFlags, 0))
 				return;
@@ -2207,16 +2244,16 @@ template<typename T>
 			if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 			{
 				if (T** Internal = InternalProperty->ContainerPtrToValuePtr<T*>(InObject))
-					LoadTAssetSubclassOf<T>(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal, AssetType);
+					LoadTSoftClassPtr<T>(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal, AssetType);
 										//  ObjectName + TEXT(".") + MemberName
 			}
 		}
 	}
 
 	template<typename T>
-	static void LoadArrayAssetClassProperty(UArrayProperty* &ArrayProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName, const FString &AssetErrorMessageType, const ECsLoadFlags &LoadFlags)
+	static void LoadArraySoftClassProperty(UArrayProperty* &ArrayProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName, const FString &AssetErrorMessageType, const ECsLoadFlags &LoadFlags)
 	{
-		if (TArray<TAssetSubclassOf<T>>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<TAssetSubclassOf<T>>>(InObject))
+		if (TArray<TSoftClassPtr<T>>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<TSoftClassPtr<T>>>(InObject))
 		{
 			if (!CanLoad(InObject, InClass, MemberName, LoadFlags, 0))
 				return;
@@ -2227,16 +2264,16 @@ template<typename T>
 			if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 			{
 				if (TArray<T*>* Internal = InternalProperty->ContainerPtrToValuePtr<TArray<T*>>(InObject))
-					LoadTArrayTAssetSubclassOf<T>(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal, AssetErrorMessageType);
+					LoadTArrayTSoftClassPtr<T>(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal, AssetErrorMessageType);
 												//ObjectName + TEXT(".") + MemberName
 			}
 		}
 	}
 
 	template<typename T>
-	static void LoadArrayAssetClassProperty(UArrayProperty* &ArrayProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const FString &AssetErrorMessageType, const ECsLoadFlags &LoadFlags)
+	static void LoadArraySoftClassProperty(UArrayProperty* &ArrayProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const FString &AssetErrorMessageType, const ECsLoadFlags &LoadFlags)
 	{
-		if (TArray<TAssetSubclassOf<T>>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<TAssetSubclassOf<T>>>(InObject))
+		if (TArray<TSoftClassPtr<T>>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<TSoftClassPtr<T>>>(InObject))
 		{
 			if (!CanLoad(InObject, InClass, MemberName, LoadFlags, 0))
 				return;
@@ -2247,16 +2284,16 @@ template<typename T>
 			if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 			{
 				if (TArray<T*>* Internal = InternalProperty->ContainerPtrToValuePtr<TArray<T*>>(InObject))
-					LoadTArrayTAssetSubclassOf<T>(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal, AssetErrorMessageType);
+					LoadTArrayTSoftClassPtr<T>(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal, AssetErrorMessageType);
 												//ObjectName + TEXT(".") + MemberName
 			}
 		}
 	}
 
 	template<typename T>
-	static void LoadAssetObjectProperty(UAssetObjectProperty* &AssetObjectProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName, const FString &AssetType, const FString &AssetErrorMessageType, const ECsLoadFlags &LoadFlags)
+	static void LoadSoftObjectProperty(USoftObjectProperty* &SoftObjectProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName, const FString &AssetType, const FString &AssetErrorMessageType, const ECsLoadFlags &LoadFlags)
 	{
-		if (TAssetPtr<T>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<T>>(InObject))
+		if (TSoftObjectPtr<T>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<T>>(InObject))
 		{
 			if (!CanLoad(InObject, InClass, MemberName, LoadFlags, 0))
 				return;
@@ -2267,16 +2304,16 @@ template<typename T>
 			if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 			{
 				if (T** Internal = InternalProperty->ContainerPtrToValuePtr<T*>(InObject))
-					LoadTAssetPtr<T>(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal, AssetType, AssetErrorMessageType);
+					LoadTSoftObjectPtr<T>(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal, AssetType, AssetErrorMessageType);
 								//   ObjectName + TEXT(".") + MemberName
 			}
 		}
 	}
 
 	template<typename T>
-	static void LoadAssetObjectProperty(UAssetObjectProperty* &AssetObjectProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const FString &AssetType, const FString &AssetErrorMessageType, const ECsLoadFlags &LoadFlags)
+	static void LoadSoftObjectProperty(USoftObjectProperty* &SoftObjectProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const FString &AssetType, const FString &AssetErrorMessageType, const ECsLoadFlags &LoadFlags)
 	{
-		if (TAssetPtr<T>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<T>>(InObject))
+		if (TSoftObjectPtr<T>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<T>>(InObject))
 		{
 			if (!CanLoad(InObject, InClass, MemberName, LoadFlags, 0))
 				return;
@@ -2287,22 +2324,22 @@ template<typename T>
 			if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 			{
 				if (T** Internal = InternalProperty->ContainerPtrToValuePtr<T*>(InObject))
-					LoadTAssetPtr<T>(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal, AssetType, AssetErrorMessageType);
+					LoadTSoftObjectPtr<T>(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal, AssetType, AssetErrorMessageType);
 								//   ObjectName + TEXT(".") + MemberName
 			}
 		}
 	}
 
-	static void LoadAssetObjectProperty_AnimBlueprint(UAssetObjectProperty* &AssetObjectProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags);
-	static void LoadAssetObjectProperty_AnimBlueprint(UAssetObjectProperty* &AssetObjectProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags);
+	static void LoadSoftObjectProperty_AnimBlueprint(USoftObjectProperty* &SoftObjectProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags);
+	static void LoadSoftObjectProperty_AnimBlueprint(USoftObjectProperty* &SoftObjectProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags);
 
-	static void LoadAssetObjectProperty_Blueprint(UAssetObjectProperty* &AssetObjectProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags);
-	static void LoadAssetObjectProperty_Blueprint(UAssetObjectProperty* &AssetObjectProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags);
+	static void LoadSoftObjectProperty_Blueprint(USoftObjectProperty* &SoftObjectProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags);
+	static void LoadSoftObjectProperty_Blueprint(USoftObjectProperty* &SoftObjectProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags);
 
 	template<typename T>
-	static void LoadArrayAssetObjectProperty(UArrayProperty* &ArrayProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName, const FString &AssetType, const FString &AssetErrorMessageType, const ECsLoadFlags &LoadFlags)
+	static void LoadArraySoftObjectProperty(UArrayProperty* &ArrayProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName, const FString &AssetType, const FString &AssetErrorMessageType, const ECsLoadFlags &LoadFlags)
 	{
-		if (TArray<TAssetPtr<T>>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<TAssetPtr<T>>>(InObject))
+		if (TArray<TSoftObjectPtr<T>>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<TSoftObjectPtr<T>>>(InObject))
 		{
 			if (!CanLoad(InObject, InClass, MemberName, LoadFlags, 0))
 				return;
@@ -2313,16 +2350,16 @@ template<typename T>
 			if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 			{
 				if (TArray<T*>* Internal = InternalProperty->ContainerPtrToValuePtr<TArray<T*>>(InObject))
-					LoadTArrayTAssetPtr<T>(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal, AssetType, AssetErrorMessageType);
+					LoadTArrayTSoftObjectPtr<T>(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal, AssetType, AssetErrorMessageType);
 										// ObjectName + TEXT(".") + MemberName
 			}
 		}
 	}
 
 	template<typename T>
-	static void LoadArrayAssetObjectProperty(UArrayProperty* &ArrayProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const FString &AssetType, const FString &AssetErrorMessageType, const ECsLoadFlags &LoadFlags)
+	static void LoadArraySoftObjectProperty(UArrayProperty* &ArrayProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const FString &AssetType, const FString &AssetErrorMessageType, const ECsLoadFlags &LoadFlags)
 	{
-		if (TArray<TAssetPtr<T>>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<TAssetPtr<T>>>(InObject))
+		if (TArray<TSoftObjectPtr<T>>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<TSoftObjectPtr<T>>>(InObject))
 		{
 			if (!CanLoad(InObject, InClass, MemberName, LoadFlags, 0))
 				return;
@@ -2333,16 +2370,16 @@ template<typename T>
 			if (UProperty* InternalProperty = FindField<UProperty>(InClass, *InternalMemberName))
 			{
 				if (TArray<T*>* Internal = InternalProperty->ContainerPtrToValuePtr<TArray<T*>>(InObject))
-					LoadTArrayTAssetPtr<T>(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal, AssetType, AssetErrorMessageType);
+					LoadTArrayTSoftObjectPtr<T>(ObjectName + ECsCached::Str::Dot + MemberName, Member, *Internal, AssetType, AssetErrorMessageType);
 										// ObjectName + TEXT(".") + MemberName
 			}
 		}
 	}
 
 	template<typename T, typename E, int32 SIZE>
-	static void LoadFixedArrayAssetObjectProperty_EnumSize(UAssetObjectProperty* &AssetObjectProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const FString &AssetType, const FString &AssetErrorMessageType, const ECsLoadFlags &LoadFlags, const FString&(*ToString)(const E&))
+	static void LoadFixedArraySoftObjectProperty_EnumSize(USoftObjectProperty* &SoftObjectProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const FString &AssetType, const FString &AssetErrorMessageType, const ECsLoadFlags &LoadFlags, const FString&(*ToString)(const E&))
 	{
-		if (TAssetPtr<T>(*Member)[SIZE] = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<T>[SIZE]>(InObject))
+		if (TSoftObjectPtr<T>(*Member)[SIZE] = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<T>[SIZE]>(InObject))
 		{
 			if (!CanLoad(InObject, InClass, MemberName, LoadFlags, 0))
 				return;
@@ -2359,20 +2396,20 @@ template<typename T>
 						const FString Index		  = (*ToString)((E)I);
 						const FString ElementName = MemberName + TEXT("[") + Index + TEXT("]");
 
-						LoadTAssetPtr<T>(ElementName, (*Member)[I], (*Internal)[I], AssetType, AssetErrorMessageType);
+						LoadTSoftObjectPtr<T>(ElementName, (*Member)[I], (*Internal)[I], AssetType, AssetErrorMessageType);
 					}
 				}
 			}
 		}
 	}
 
-	static void LoadArrayAssetObjectProperty_Blueprint(UArrayProperty* &ArrayProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags);
-	static void LoadArrayAssetObjectProperty_Blueprint(UArrayProperty* &ArrayProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags);
+	static void LoadArraySoftObjectProperty_Blueprint(UArrayProperty* &ArrayProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags);
+	static void LoadArraySoftObjectProperty_Blueprint(UArrayProperty* &ArrayProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags);
 
 	template<typename E, int32 SIZE>
-	static void LoadFixedArrayAssetObjectProperty_Blueprint_EnumSize(UAssetObjectProperty* &AssetObjectProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags, FString(*ToString)(const E&))
+	static void LoadFixedArraySoftObjectProperty_Blueprint_EnumSize(USoftObjectProperty* &SoftObjectProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags, FString(*ToString)(const E&))
 	{
-		if (TAssetPtr<UBlueprint>(*Member)[SIZE] = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UBlueprint>[SIZE]>(InObject))
+		if (TSoftObjectPtr<UBlueprint>(*Member)[SIZE] = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UBlueprint>[SIZE]>(InObject))
 		{
 			if (!CanLoad(InObject, InClass, MemberName, LoadFlags, 0))
 				return;
@@ -2388,7 +2425,7 @@ template<typename T>
 					{
 						const FString Index		  = (*ToString)((E)I);
 						const FString ElementName = MemberName + TEXT("[") + Index + TEXT("]");
-						UCsCommon::LoadTAssetPtr_Blueprint(ElementName, (*Member)[I], (*Internal)[I]);
+						LoadTSoftObjectPtr_Blueprint(ElementName, (*Member)[I], (*Internal)[I]);
 					}
 				}
 			}
@@ -2396,9 +2433,9 @@ template<typename T>
 	}
 
 	template<typename E, int32 SIZE>
-	static void LoadFixedArrayAssetObjectProperty_Blueprint_EnumSize(UAssetObjectProperty* &AssetObjectProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags, FString(*ToString)(const E&))
+	static void LoadFixedArraySoftObjectProperty_Blueprint_EnumSize(USoftObjectProperty* &SoftObjectProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags, FString(*ToString)(const E&))
 	{
-		if (TAssetPtr<UBlueprint>(*Member)[SIZE] = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<UBlueprint>[SIZE]>(InObject))
+		if (TSoftObjectPtr<UBlueprint>(*Member)[SIZE] = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UBlueprint>[SIZE]>(InObject))
 		{
 			if (!CanLoad(InObject, InClass, MemberName, LoadFlags, 0))
 				return;
@@ -2414,7 +2451,7 @@ template<typename T>
 					{
 						const FString Index		  = (*ToString)((E)I);
 						const FString ElementName = MemberName + TEXT("[") + Index + TEXT("]");
-						UCsCommon::LoadTAssetPtr_Blueprint(ElementName, (*Member)[I], (*Internal)[I]);
+						LoadTSoftObjectPtr_Blueprint(ElementName, (*Member)[I], (*Internal)[I]);
 					}
 				}
 			}
@@ -2422,10 +2459,10 @@ template<typename T>
 	}
 
 	template<typename T>
-	static void LoadMemberStructProperty(UStructProperty* &StructProperty, void* InObject, const FString &MemberName, const ECsLoadFlags &LoadFlags, TCsLoadStructWithTAssetPtrs_Internal Internal = nullptr)
+	static void LoadMemberStructProperty(UStructProperty* &StructProperty, void* InObject, const FString &MemberName, const ECsLoadFlags &LoadFlags, TCsLoadStructWithTSoftObjectPtrs_Internal Internal = nullptr)
 	{
 		if (T* Member = StructProperty->ContainerPtrToValuePtr<T>(InObject))
-			LoadStructWithTAssetPtrs(MemberName, (void*)Member, StructProperty->Struct, LoadFlags, Internal);
+			LoadStructWithTSoftObjectPtrs(MemberName, (void*)Member, StructProperty->Struct, LoadFlags, Internal);
 	}
 
 	template<typename T>
@@ -2440,13 +2477,13 @@ template<typename T>
 			for (int32 I = 0; I < Count; ++I)
 			{
 				const FString ElementName = MemberName + TEXT("[") + FString::FromInt(I) + TEXT("]");
-				LoadStructWithTAssetPtrs(ElementName, (void*)&((*Member)[I]), StructProperty->Struct, LoadFlags);
+				LoadStructWithTSoftObjectPtrs(ElementName, (void*)&((*Member)[I]), StructProperty->Struct, LoadFlags);
 			}
 		}
 	}
 
 	template<typename T, typename E, int32 SIZE>
-	static void LoadMemberFixedArrayStructProperty_EnumSize(UStructProperty* &StructProperty, void* InObject, const FString &MemberName, const ECsLoadFlags &LoadFlags, const FString&(*ToString)(const E&), TCsLoadStructWithTAssetPtrs_Internal Internal = nullptr)
+	static void LoadMemberFixedArrayStructProperty_EnumSize(UStructProperty* &StructProperty, void* InObject, const FString &MemberName, const ECsLoadFlags &LoadFlags, const FString&(*ToString)(const E&), TCsLoadStructWithTSoftObjectPtrs_Internal Internal = nullptr)
 	{
 		if (T(*Member)[SIZE] = StructProperty->ContainerPtrToValuePtr<T[SIZE]>(InObject))
 		{
@@ -2454,13 +2491,13 @@ template<typename T>
 			{
 				const FString Index		  = (*ToString)((E)I);
 				const FString ElementName = MemberName + TEXT("[") + Index + TEXT("]");
-				LoadStructWithTAssetPtrs(ElementName, (void*)&((*Member)[I]), StructProperty->Struct, LoadFlags, Internal);
+				LoadStructWithTSoftObjectPtrs(ElementName, (void*)&((*Member)[I]), StructProperty->Struct, LoadFlags, Internal);
 			}
 		}
 	}
 
 	template<typename KeyType, typename ValueType>
-	static void LoadMemberMapStructProperty_EnumStructKey(UMapProperty* &MapProperty, void* InObject, const FString &MemberName, const ECsLoadFlags &LoadFlags, TCsLoadStructWithTAssetPtrs_Internal Internal = nullptr)
+	static void LoadMemberMapStructProperty_EnumStructKey(UMapProperty* &MapProperty, void* InObject, const FString &MemberName, const ECsLoadFlags &LoadFlags, TCsLoadStructWithTSoftObjectPtrs_Internal Internal = nullptr)
 	{
 		if (TMap<KeyType, ValueType>* Member = MapProperty->ContainerPtrToValuePtr<TMap<KeyType, ValueType>>(InObject))
 		{
@@ -2472,13 +2509,13 @@ template<typename T>
 			for (const KeyType& Key : Keys)
 			{
 				const FString ElementName = MemberName + TEXT("[") + Key.Name + TEXT("]");
-				LoadStructWithTAssetPtrs(ElementName, (void*)&((*Member)[Key]), StructProperty->Struct, LoadFlags, Internal);
+				LoadStructWithTSoftObjectPtrs(ElementName, (void*)&((*Member)[Key]), StructProperty->Struct, LoadFlags, Internal);
 			}
 		}
 	}
 
-	static void LoadStructWithTAssetPtrs(const FString &ObjectName, void* InStruct, UScriptStruct* const &InScriptStruct, const ECsLoadFlags &LoadFlags, TCsLoadStructWithTAssetPtrs_Internal Internal = nullptr);
-	static void LoadObjectWithTAssetPtrs(const FString &ObjectName, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TCsLoadObjectWithTAssetPtrs_Internal Internal = nullptr);
+	static void LoadStructWithTSoftObjectPtrs(const FString &ObjectName, void* InStruct, UScriptStruct* const &InScriptStruct, const ECsLoadFlags &LoadFlags, TCsLoadStructWithTSoftObjectPtrs_Internal Internal = nullptr);
+	static void LoadObjectWithTSoftObjectPtrs(const FString &ObjectName, void* InObject, UClass* const &InClass, const ECsLoadFlags &LoadFlags, TCsLoadObjectWithTSoftObjectPtrs_Internal Internal = nullptr);
 
 	template<typename T, typename U, typename S>
 	static void SetTArrayInternalMemberFromLoadedAssets(void* InObject, UClass* const &InClass, const FString &StructMemberName, UScriptStruct* const &InScriptStruct, const FString &MemberName, const TArray<UObject*> &LoadedAssets)
@@ -2491,11 +2528,11 @@ template<typename T>
 										//   MemberName = TEXT("_Internal")
 				const FString InternalName = MemberName + ECsLoadCached::Str::_Internal;
 
-				TArray<TAssetPtr<U>>* AssetPtrs = nullptr;
+				TArray<TSoftObjectPtr<U>>* AssetPtrs = nullptr;
 				TArray<S*>* Internals			= nullptr;
 				// Member
 				if (UArrayProperty* ArrayProperty = FindField<UArrayProperty>(InScriptStruct, *MemberName))
-					AssetPtrs = ArrayProperty->ContainerPtrToValuePtr<TArray<TAssetPtr<U>>>(Struct);
+					AssetPtrs = ArrayProperty->ContainerPtrToValuePtr<TArray<TSoftObjectPtr<U>>>(Struct);
 				// Internal
 				if (UArrayProperty* ArrayProperty = FindField<UArrayProperty>(InScriptStruct, *InternalName))
 					Internals = ArrayProperty->ContainerPtrToValuePtr<TArray<S*>>(Struct);
@@ -2549,7 +2586,7 @@ template<typename T>
 	static void UnLoadMemberStructProperty(UStructProperty* &StructProperty, void* InObject)
 	{
 		if (T* Member = StructProperty->ContainerPtrToValuePtr<T>(InObject))
-			UnLoadStructWithTAssetPtrs((void*)Member, StructProperty->Struct);
+			UnLoadStructWithTSoftObjectPtrs((void*)Member, StructProperty->Struct);
 	}
 	/*
 	template<typename T>
@@ -2561,7 +2598,7 @@ template<typename T>
 
 			for (int32 I = 0; I < Count; ++I)
 			{
-				UnLoadStructWithTAssetPtrs((void*)&((*Member)[I]), StructProperty->Struct);
+				UnLoadStructWithTSoftObjectPtrs((void*)&((*Member)[I]), StructProperty->Struct);
 			}
 		}
 	}
@@ -2576,7 +2613,7 @@ template<typename T>
 
 			for (int32 I = 0; I < Count; ++I)
 			{
-				UnLoadStructWithTAssetPtrs((void*)&((*Member)[I]), StructProperty->Struct);
+				UnLoadStructWithTSoftObjectPtrs((void*)&((*Member)[I]), StructProperty->Struct);
 			}
 		}
 	}
@@ -2591,7 +2628,7 @@ template<typename T>
 
 			for (int32 I = 0; I < Count; ++I)
 			{
-				UnLoadStructWithTAssetPtrs((void*)&((*Member)[I]), StructProperty->Struct);
+				UnLoadStructWithTSoftObjectPtrs((void*)&((*Member)[I]), StructProperty->Struct);
 			}
 		}
 	}
@@ -2607,7 +2644,7 @@ template<typename T>
 
 			for (int32 I = 0; I < Count; ++I)
 			{
-				UnLoadStructWithTAssetPtrs((void*)&((*Member)[I]), StructProperty->Struct);
+				UnLoadStructWithTSoftObjectPtrs((void*)&((*Member)[I]), StructProperty->Struct);
 			}
 		}
 	}
@@ -2619,8 +2656,8 @@ template<typename T>
 			Member->Reset();
 	}
 
-	static void UnLoadStructWithTAssetPtrs(void* InStruct, UScriptStruct* const &InScriptStruct);
-	static void UnLoadObjectWithTAssetPtrs(void* InObject, UClass* const &InClass);
+	static void UnLoadStructWithTSoftObjectPtrs(void* InStruct, UScriptStruct* const &InScriptStruct);
+	static void UnLoadObjectWithTSoftObjectPtrs(void* InObject, UClass* const &InClass);
 
 #pragma endregion UnLoad
 
@@ -2674,7 +2711,7 @@ template<typename T>
 	static bool IsLoadedMemberStructProperty(UStructProperty* &StructProperty, void* InObject, const FString &MemberName)
 	{
 		T* Member = StructProperty->ContainerPtrToValuePtr<T>(InObject);
-		return IsLoadedStructWithTAssetPtrs(MemberName, (void*)Member, StructProperty->Struct);
+		return IsLoadedStructWithTSoftObjectPtrs(MemberName, (void*)Member, StructProperty->Struct);
 	}
 	/*
 	template<typename T>
@@ -2689,7 +2726,7 @@ template<typename T>
 			{
 				const FString Index		  = MeleeTypeToString((TEnumAsByte<EMeleeType::Type>)I);
 				const FString ElementName = MemberName + TEXT("[") + Index + TEXT("].");
-				Pass &= IsLoadedStructWithTAssetPtrs(ElementName, (void*)&((*Member)[I]), StructProperty->Struct);
+				Pass &= IsLoadedStructWithTSoftObjectPtrs(ElementName, (void*)&((*Member)[I]), StructProperty->Struct);
 			}
 			return Pass;
 		}
@@ -2709,7 +2746,7 @@ template<typename T>
 			{
 				const FString Index		  = PickupItemToString((TEnumAsByte<EPickupItem::Type>)I);
 				const FString ElementName = MemberName + TEXT("[") + Index + TEXT("].");
-				Pass &= IsLoadedStructWithTAssetPtrs(ElementName, (void*)&((*Member)[I]), StructProperty->Struct);
+				Pass &= IsLoadedStructWithTSoftObjectPtrs(ElementName, (void*)&((*Member)[I]), StructProperty->Struct);
 			}
 			return Pass;
 		}
@@ -2729,7 +2766,7 @@ template<typename T>
 			{
 				const FString Index		  = SurfaceTypeToString((TEnumAsByte<ESurfaceType::Type>)I);
 				const FString ElementName = MemberName + TEXT("[") + Index + TEXT("].");
-				Pass &= IsLoadedStructWithTAssetPtrs(ElementName, (void*)&((*Member)[I]), StructProperty->Struct);
+				Pass &= IsLoadedStructWithTSoftObjectPtrs(ElementName, (void*)&((*Member)[I]), StructProperty->Struct);
 			}
 			return Pass;
 		}
@@ -2748,7 +2785,7 @@ template<typename T>
 			for (int32 I = 0; I < Count; ++I)
 			{
 				const FString ElementName = MemberName + TEXT("[") + FString::FromInt(I) + TEXT("].");
-				Pass &= IsLoadedStructWithTAssetPtrs(ElementName, (void*)&((*Member)[I]), StructProperty->Struct);
+				Pass &= IsLoadedStructWithTSoftObjectPtrs(ElementName, (void*)&((*Member)[I]), StructProperty->Struct);
 			}
 			return Pass;
 		}
@@ -2763,8 +2800,8 @@ template<typename T>
 		return true;
 	}
 
-	static bool IsLoadedStructWithTAssetPtrs(const FString &ObjectName, void* InStruct, UScriptStruct* const &InScriptStruct);
-	static bool IsLoadedObjectWithTAssetPtrs(const FString &ObjectName, void* InObject, UClass* const &InClass);
+	static bool IsLoadedStructWithTSoftObjectPtrs(const FString &ObjectName, void* InStruct, UScriptStruct* const &InScriptStruct);
+	static bool IsLoadedObjectWithTSoftObjectPtrs(const FString &ObjectName, void* InObject, UClass* const &InClass);
 
 #pragma endregion IsLoaded
 
@@ -2778,9 +2815,9 @@ template<typename T>
 	static void CheckEnumLoadFlags(int32* LoadFlags, const FString &ObjectName, const FString &MemberName);
 
 	template<typename T>
-	static void CheckEnumAssetObjectProperty(UAssetObjectProperty* &AssetObjectProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName)
+	static void CheckEnumSoftObjectProperty(USoftObjectProperty* &SoftObjectProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName)
 	{
-		if (TAssetPtr<T>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<T>>(InObject))
+		if (TSoftObjectPtr<T>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<T>>(InObject))
 		{
 			// MemberName + TEXT("_LoadFlags")
 			const FString LoadFlagsMemberName = MemberName + ECsLoadCached::Str::_LoadFlags;
@@ -2798,9 +2835,9 @@ template<typename T>
 	}
 
 	template<typename T>
-	static void CheckEnumAssetObjectProperty(UAssetObjectProperty* &AssetObjectProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName)
+	static void CheckEnumSoftObjectProperty(USoftObjectProperty* &SoftObjectProperty, const FString &ObjectName, void* InObject, UScriptStruct* const &InClass, const FString &MemberName)
 	{
-		if (TAssetPtr<T>* Member = AssetObjectProperty->ContainerPtrToValuePtr<TAssetPtr<T>>(InObject))
+		if (TSoftObjectPtr<T>* Member = SoftObjectProperty->ContainerPtrToValuePtr<TSoftObjectPtr<T>>(InObject))
 		{
 			// MemberName + TEXT("_LoadFlags")
 			const FString LoadFlagsMemberName = MemberName + ECsLoadCached::Str::_LoadFlags;
@@ -2818,9 +2855,9 @@ template<typename T>
 	}
 
 	template<typename T>
-	static void CheckEnumArrayAssetObjectProperty(UArrayProperty* &ArrayProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName)
+	static void CheckEnumArraySoftObjectProperty(UArrayProperty* &ArrayProperty, const FString &ObjectName, void* InObject, UClass* const &InClass, const FString &MemberName)
 	{
-		if (TArray<TAssetPtr<T>>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<TAssetPtr<T>>>(InObject))
+		if (TArray<TSoftObjectPtr<T>>* Member = ArrayProperty->ContainerPtrToValuePtr<TArray<TSoftObjectPtr<T>>>(InObject))
 		{
 			// MemberName + TEXT("_LoadFlags")
 			const FString LoadFlagsMemberName = MemberName + ECsLoadCached::Str::_LoadFlags;

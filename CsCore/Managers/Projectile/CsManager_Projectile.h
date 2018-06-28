@@ -8,16 +8,21 @@
 #define CS_PROJECTILE_POOL_SIZE 400
 #define CS_PROJECTILE_PAYLOAD_SIZE 255
 
-class FCsManager_Projectile : public TCsManagerPooledObjects<FECsProjectileType, ACsProjectile, FCsProjectilePayload, CS_PROJECTILE_PAYLOAD_SIZE>
+class FCsManager_Projectile : public TCsManager_PooledObjects_TMap<FECsProjectileType, ACsProjectile, FCsProjectilePayload, CS_PROJECTILE_PAYLOAD_SIZE>
 {
 public:
 	~FCsManager_Projectile();
+
+// Interface
+#pragma region
 
 	virtual void DeconstructObject(class ACsProjectile* a) override;
 	virtual FString GetObjectName(class ACsProjectile* a) override;
 	virtual const FString& EnumTypeToString(const FECsProjectileType &e) override;
 	virtual const FString& EnumTypeToString(const int32 &index) override;
-	virtual void LogTransaction_Internal(const FString& OutLog) override;
+	virtual void Log(const FString& log) override;
+
+#pragma endregion Interface
 };
 
 UCLASS()
@@ -25,7 +30,11 @@ class CSCORE_API AICsManager_Projectile : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
-private:
+public:
+
+	virtual void PostActorCreated() override;
+
+protected:
 
 	FCsManager_Projectile* Internal;
 
@@ -55,6 +64,9 @@ public:
 	void Clear();
 
 	void Shutdown();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Manager Projectile")
+	TMap<FECsProjectileType, UClass*> ClassMap;
 
 	virtual ACsProjectile* ConstructObject(const FECsProjectileType &Type);
 

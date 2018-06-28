@@ -17,6 +17,9 @@ TWeakObjectPtr<UObject> AICsManager_Sound::MyOwner;
 
 FCsManager_Sound::~FCsManager_Sound() {}
 
+	// Interface
+#pragma region
+
 void FCsManager_Sound::DeconstructObject(ACsSound* a)
 {
 	if (a && !a->IsPendingKill())
@@ -28,20 +31,79 @@ FString FCsManager_Sound::GetObjectName(ACsSound* a)
 	return a->GetName();
 }
 
-const FString& FCsManager_Sound::EnumTypeToString(const FECsSoundType &e)
+void FCsManager_Sound::LogTransaction(const FString &functionName, const TEnumAsByte<ECsPoolTransaction::Type> &transaction, ACsSound* o)
 {
-	return e.Name;
+	if ((*LogTransactions)->GetInt() == CS_CVAR_SHOW_LOG)
+	{
+		const FString& transactionAsString = ECsPoolTransaction::ToActionString(transaction);
+
+		const FString objectName	= GetObjectName(o);
+		const FString cueName		= o->Cache.GetCue()->GetName();
+		const float currentTime		= GetCurrentTimeSeconds();
+		const UObject* objectOwner	= o->Cache.GetOwner();
+		const FString ownerName		= objectOwner ? objectOwner->GetName() : ECsCached::Str::None;
+		const UObject* parent		= o->Cache.GetParent();
+		const FString parentName	= parent ? parent->GetName() : ECsCached::Str::None;
+
+		FString log = ECsCached::Str::Empty;
+		
+		if (objectOwner && parent)
+		{
+			log = FString::Printf(TEXT("%s: %s %s: %s with Cue: %s at %f for %s attached to %s."), *functionName, *transactionAsString, *ObjectClassName, *objectName, currentTime, *ownerName, *parentName);
+		}
+		else
+		if (objectOwner)
+		{
+			log = FString::Printf(TEXT("%s: %s %s: %s with Cue: %s at %f for %s."), *functionName, *transactionAsString, *ObjectClassName, *objectName, currentTime, *ownerName);
+		}
+		else
+		if (parent)
+		{
+			log = FString::Printf(TEXT("%s: %s %s: %s with Cue: %s at %f attached to %s."), *functionName, *transactionAsString, *ObjectClassName, *objectName, currentTime, *parentName);
+		}
+		else
+		{
+			if (o->Cache.Location != FVector::ZeroVector)
+			{
+				const FString locationAsString = o->Cache.Location.ToString();
+
+				log = FString::Printf(TEXT("%s: %s %s: %s with Cue: %s at %f at %s."), *functionName, *transactionAsString, *ObjectClassName, *objectName, *cueName, currentTime, *locationAsString);
+			}
+			else
+			{
+				log = FString::Printf(TEXT("%s: %s %s: %s with Cue: %s at %f."), *functionName, *transactionAsString, *ObjectClassName, *objectName, *cueName, currentTime);
+			}
+		}
+		Log(log);
+	}
 }
 
-const FString& FCsManager_Sound::EnumTypeToString(const int32 &index)
+void FCsManager_Sound::Log(const FString& log)
 {
-	return EMCsSoundType::Get().GetEnumAt(index).Name;
+	UE_LOG(LogCs, Warning, TEXT("%s"), *log);
 }
 
-void FCsManager_Sound::LogTransaction_Internal(const FString& outLog)
+ACsSound* FCsManager_Sound::Spawn(FCsSoundPayload* payload)
 {
-	UE_LOG(LogCs, Warning, TEXT("%s"), *outLog);
+	ACsSound* o = Allocate();
+
+	o->Allocate(GetActivePoolSize(), payload);
+
+	LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::Spawn], ECsPoolTransaction::Allocate, o);
+	payload->Reset();
+
+	if (GetActivePoolSize() >= CS_MAX_CONCURRENT_SOUNDS)
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Sound::Play: Warning more than %d Sounds playing at once"), CS_MAX_CONCURRENT_SOUNDS);
+		UE_LOG(LogCs, Warning, TEXT("ACsManager_Sound::Play: Remove Sound"));
+
+		ActiveObjects.RemoveAt(0);
+	}
+	AddToActivePool(o);
+	return o;
 }
+
+#pragma endregion Interface
 
 void FCsManager_Sound::Stop(FCsSoundElement* InSound, UObject* InOwner, UObject* InParent)
 {
@@ -63,19 +125,16 @@ void FCsManager_Sound::Stop(FCsSoundElement* InSound, UObject* InOwner, UObject*
 	}
 #endif // #if WITH_EDITOR
 
-	const FECsSoundType& SoundType = InSound->Type;
+	const int32 Count   = ActiveObjects.Num();
 
-	if (!ActiveObjects.Find(SoundType))
+	if (Count == CS_EMPTY)
 		return;
 
-	TArray<ACsSound*>& Sounds = ActiveObjects[SoundType];
-
-	const int32 Count   = Sounds.Num();
 	int32 EarliestIndex = Count;
 
 	for (int32 I = Count - 1; I >= 0; --I)
 	{
-		ACsSound* Sound = Sounds[I];
+		ACsSound* Sound = ActiveObjects[I];
 
 		if (InSound->Get() != Sound->Cache.GetCue())
 			continue;
@@ -90,23 +149,23 @@ void FCsManager_Sound::Stop(FCsSoundElement* InSound, UObject* InOwner, UObject*
 		LogTransaction(TEXT("CsManager_Sound::Stop"), ECsPoolTransaction::Deallocate, Sound);
 
 		Sound->DeAllocate();
-		Sounds.RemoveAt(I);
+		ActiveObjects.RemoveAt(I);
 
 /*
 #if WITH_EDITOR
 		OnDeAllocate_ScriptEvent.Broadcast(I);
 #endif // #if WITH_EDITOR
-		OnDeAllocate_Event.Broadcast(I);
-		*/
+*/
+		OnDeAllocate_Event.Broadcast(Sound);
 	}
 
 	if (EarliestIndex != Count)
 	{
 		for (int32 I = EarliestIndex; I < Count; ++I)
 		{
-			ACsSound* Sound = Sounds[I];
+			ACsSound* Sound = ActiveObjects[I];
 			// Reset ActiveIndex
-			Sound->Cache.SetActiveIndex(I);
+			Sound->Cache.ActiveIndex = I;
 		}
 	}
 }
@@ -116,9 +175,16 @@ void FCsManager_Sound::Stop(FCsSoundElement* InSound, UObject* InOwner, UObject*
 AICsManager_Sound::AICsManager_Sound(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	Internal = new FCsManager_Sound();
-	Internal->Init(TEXT("CsManager_Sound"), TEXT("ACsSound"), nullptr, &CsCVarLogManagerSoundTransactions);
+	Internal->Init(TEXT("AICsManager_Sound"), TEXT("ACsSound"), nullptr, &CsCVarLogManagerSoundTransactions);
 	Internal->ConstructObject_Call.Unbind();
 	Internal->ConstructObject_Call.BindUObject(this, &AICsManager_Sound::ConstructObject);
+}
+
+void AICsManager_Sound::PostActorCreated()
+{
+	Super::PostActorCreated();
+
+	Internal->CurrentWorld = GetWorld();
 }
 
 /*static*/ UObject* AICsManager_Sound::GetMyOwner() { return MyOwner.IsValid() ? MyOwner.Get() : nullptr; }
@@ -165,7 +231,7 @@ void AICsManager_Sound::Destroyed()
 	Super::Destroyed();
 }
 
-ACsSound* AICsManager_Sound::ConstructObject(const FECsSoundType &Type)
+ACsSound* AICsManager_Sound::ConstructObject()
 {
 	FActorSpawnParameters SpawnInfo;
 	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
@@ -178,19 +244,19 @@ ACsSound* AICsManager_Sound::ConstructObject(const FECsSoundType &Type)
 	return Actor;
 }
 
-void AICsManager_Sound::CreatePool(const FECsSoundType &Type, const int32 &Size)
+void AICsManager_Sound::CreatePool(const int32 &Size)
 {
-	Internal->CreatePool(Type, Size);
+	Internal->CreatePool(Size);
 }
 
-void AICsManager_Sound::AddToPool(const FECsSoundType &Type, ACsSound* Actor)
+void AICsManager_Sound::AddToPool(ACsSound* Actor)
 {
-	Internal->AddToPool(Type, Actor);
+	Internal->AddToPool(Actor);
 }
 
-void AICsManager_Sound::AddToActivePool(const FECsSoundType &Type, ACsSound* Actor)
+void AICsManager_Sound::AddToActivePool(ACsSound* Actor)
 {
-	Internal->AddToActivePool(Type, Actor);
+	Internal->AddToActivePool(Actor);
 }
 
 void AICsManager_Sound::OnTick(const float &DeltaTime)
@@ -198,29 +264,29 @@ void AICsManager_Sound::OnTick(const float &DeltaTime)
 	Internal->OnTick(DeltaTime);
 }
 
-void AICsManager_Sound::GetAllActiveActors(TArray<ACsSound*> &OutActors)
+const TArray<ACsSound*>& AICsManager_Sound::GetAllActiveActors()
 {
-	Internal->GetAllActiveObjects(OutActors);
+	return Internal->GetAllActiveObjects();
 }
 
-const TArray<class ACsSound*>* AICsManager_Sound::GetActors(const FECsSoundType& Type)
+const TArray<ACsSound*>& AICsManager_Sound::GetActors()
 {
-	return Internal->GetObjects(Type);
+	return Internal->GetObjects();
 }
 
-int32 AICsManager_Sound::GetActivePoolSize(const FECsSoundType &Type)
+int32 AICsManager_Sound::GetActivePoolSize()
 {
-	return Internal->GetActivePoolSize(Type);
+	return Internal->GetActivePoolSize();
 }
 
-bool AICsManager_Sound::IsExhausted(const FECsSoundType &Type)
+bool AICsManager_Sound::IsExhausted()
 {
-	return Internal->IsExhausted(Type);
+	return Internal->IsExhausted();
 }
 
-bool AICsManager_Sound::DeAllocate(const FECsSoundType &Type, const int32 &Index)
+bool AICsManager_Sound::DeAllocate(const int32 &Index)
 {
-	return Internal->DeAllocate(Type, Index);
+	return Internal->DeAllocate(Index);
 }
 
 void AICsManager_Sound::DeAllocateAll()
@@ -233,14 +299,14 @@ FCsSoundPayload* AICsManager_Sound::AllocatePayload()
 	return Internal->AllocatePayload();
 }
 
-ACsSound* AICsManager_Sound::Play(const FECsSoundType &Type, FCsSoundPayload &Payload)
+ACsSound* AICsManager_Sound::Play(FCsSoundPayload &Payload)
 {
-	return Internal->Spawn(Type, &Payload);
+	return Internal->Spawn(&Payload);
 }
 
-ACsSound* AICsManager_Sound::Play(const FECsSoundType &Type, FCsSoundPayload *Payload)
+ACsSound* AICsManager_Sound::Play(FCsSoundPayload *Payload)
 {
-	return Internal->Spawn(Type, Payload);
+	return Internal->Spawn(Payload);
 }
 
 // Stop
@@ -252,65 +318,3 @@ void AICsManager_Sound::Stop(FCsSoundElement* InSound, UObject* InOwner, UObject
 }
 
 #pragma endregion Stop
-
-/*
-if (Count >= CS_MAX_CONCURRENT_SOUNDS)
-{
-UE_LOG(LogCs, Warning, TEXT("ACsManager_Sound::Play: Warning more than %d Sounds playing at once"), CS_MAX_CONCURRENT_SOUNDS);
-UE_LOG(LogCs, Warning, TEXT("ACsManager_Sound::Play: Remove Sound"));
-
-ActiveSounds.RemoveAt(0);
-}
-else
-{
-ActiveSounds.Add(OutSound);
-}
-*/
-
-/*
-void ACsManager_Sound::LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsPoolTransaction::Type> &Transaction, UObject* InObject)
-{
-if (CsCVarLogManagerSoundTransactions->GetInt() == CS_CVAR_SHOW_LOG)
-{
-ACsSound* Sound = Cast<ACsSound>(InObject);
-
-const FString TransactionAsString = Transaction == ECsPoolTransaction::Allocate ? TEXT("Allocating") : TEXT("DeAllocating");
-
-const FString SoundName   = Sound->GetName();
-const FString CueName	  = Sound->Cache.GetCue()->GetName();
-const float CurrentTime   = GetWorld()->GetTimeSeconds();
-const UObject* SoundOwner = Sound->Cache.GetOwner();
-const FString OwnerName	  = SoundOwner ? SoundOwner->GetName() : TEXT("");
-const UObject* Parent	  = Sound->Cache.GetParent();
-const FString ParentName  = Parent ? Parent->GetName() : TEXT("");
-
-if (SoundOwner && Parent)
-{
-UE_LOG(LogCs, Warning, TEXT("%s: %s Sound: %s with Cue: %s at %f for %s attached to %s."), *FunctionName, *TransactionAsString, *SoundName, *CueName, CurrentTime, *OwnerName, *ParentName);
-}
-else
-if (SoundOwner)
-{
-UE_LOG(LogCs, Warning, TEXT("%s: %s Sound: %s with Cue: %s at %f for %s."), *FunctionName, *TransactionAsString, *SoundName, *CueName, CurrentTime, *OwnerName);
-}
-else
-if (Parent)
-{
-UE_LOG(LogCs, Warning, TEXT("%s: %s Sound: %s with Cue: %s at %f attached to %s."), *TransactionAsString, *FunctionName, *SoundName, *CueName, CurrentTime, *ParentName);
-}
-else
-{
-if (Sound->Cache.Location != FVector::ZeroVector)
-{
-const FString LocationAsString = Sound->Cache.Location.ToString();
-
-UE_LOG(LogCs, Warning, TEXT("%s: %s Sound: %s with Cue: %s at %f at %s."), *FunctionName, *TransactionAsString, *SoundName, *CueName, CurrentTime, *LocationAsString);
-}
-else
-{
-UE_LOG(LogCs, Warning, TEXT("%s: %s Sound: %s with Cue: %s at %f."), *FunctionName, *TransactionAsString, *SoundName, *CueName, CurrentTime);
-}
-}
-}
-}
-*/

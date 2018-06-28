@@ -91,7 +91,7 @@ struct CSCORE_API FCsAnimSequence
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
-	TAssetPtr<UAnimSequence> Anim;
+	TSoftObjectPtr<UAnimSequence> Anim;
 
 
 	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
@@ -139,16 +139,16 @@ struct CSCORE_API FCsFpvAnimSequence
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
-	TAssetPtr<UAnimSequence> Anim1P;
+	TSoftObjectPtr<UAnimSequence> Anim1P;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
-	TAssetPtr<UAnimSequence> Anim3P;
+	TSoftObjectPtr<UAnimSequence> Anim3P;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
-	TAssetPtr<UAnimSequence> Anim3P_Low;
+	TSoftObjectPtr<UAnimSequence> Anim3P_Low;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
-	TAssetPtr<UAnimSequence> AnimVR;
+	TSoftObjectPtr<UAnimSequence> AnimVR;
 
 	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Anim1P_LoadFlags;
@@ -193,7 +193,7 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(AnimVR_LoadFlags, ECsLoadFlags::GameVR);
 	}
 
-	FORCEINLINE TAssetPtr<UAnimSequence> GetAssetPtr(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE TSoftObjectPtr<UAnimSequence> GeTSoftObjectPtr(const TCsViewType &ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Anim1P;
@@ -253,7 +253,7 @@ struct CSCORE_API FCsAnimMontage
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
-	TAssetPtr<UAnimMontage> Anim;
+	TSoftObjectPtr<UAnimMontage> Anim;
 
 	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Anim_LoadFlags;
@@ -300,16 +300,16 @@ struct CSCORE_API FCsFpvAnimMontage
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
-	TAssetPtr<UAnimMontage> Anim1P;
+	TSoftObjectPtr<UAnimMontage> Anim1P;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
-	TAssetPtr<UAnimMontage> Anim3P;
+	TSoftObjectPtr<UAnimMontage> Anim3P;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
-	TAssetPtr<UAnimMontage> Anim3P_Low;
+	TSoftObjectPtr<UAnimMontage> Anim3P_Low;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
-	TAssetPtr<UAnimMontage> AnimVR;
+	TSoftObjectPtr<UAnimMontage> AnimVR;
 
 	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Anim1P_LoadFlags;
@@ -355,7 +355,7 @@ public:
 	}
 
 
-	FORCEINLINE TAssetPtr<UAnimMontage> GetAssetPtr(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE TSoftObjectPtr<UAnimMontage> GeTSoftObjectPtr(const TCsViewType &ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Anim1P;
@@ -415,7 +415,7 @@ struct CSCORE_API FCsTArrayAnimMontage
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Material")
-	TArray<TAssetPtr<class UAnimMontage>> Anims;
+	TArray<TSoftObjectPtr<class UAnimMontage>> Anims;
 
 	UPROPERTY(EditAnywhere, Category = "Material", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Anims_LoadFlags;
@@ -434,7 +434,7 @@ public:
 	{
 		Anims.Reset();
 
-		for (const TAssetPtr<class UAnimMontage>& Anim : B.Anims)
+		for (const TSoftObjectPtr<class UAnimMontage>& Anim : B.Anims)
 		{
 			Anims.Add(Anim);
 		}
@@ -552,7 +552,7 @@ struct CSCORE_API FCsAnimBlueprint
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
-	TAssetPtr<class UAnimBlueprint> Blueprint;
+	TSoftObjectPtr<class UAnimBlueprint> Blueprint;
 
 
 	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
@@ -600,16 +600,16 @@ struct CSCORE_API FCsFpvAnimBlueprint
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anims")
-	TAssetPtr<class UAnimBlueprint> Blueprint1P;
+	TSoftObjectPtr<class UAnimBlueprint> Blueprint1P;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anims")
-	TAssetPtr<class UAnimBlueprint> Blueprint3P;
+	TSoftObjectPtr<class UAnimBlueprint> Blueprint3P;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anims")
-	TAssetPtr<class UAnimBlueprint> Blueprint3P_Low;
+	TSoftObjectPtr<class UAnimBlueprint> Blueprint3P_Low;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anims")
-	TAssetPtr<class UAnimBlueprint> BlueprintVR;
+	TSoftObjectPtr<class UAnimBlueprint> BlueprintVR;
 
 	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Blueprint1P_LoadFlags;
@@ -710,7 +710,7 @@ namespace ECsFpvAnimBlendSpaceMember
 	};
 }
 
-typedef ECsFpvAnimBlendSpaceMember::Type TCsFpsAnimBlendSpaceMember;
+typedef ECsFpvAnimBlendSpaceMember::Type TCsFpvAnimBlendSpaceMember;
 
 struct CSCORE_API EMCsFpvAnimBlendSpaceMember : public TCsEnumMap<ECsFpvAnimBlendSpaceMember::Type>
 {
@@ -754,7 +754,7 @@ struct CSCORE_API FCsBlendSpace1D
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
-	TAssetPtr<UBlendSpace1D> Blend;
+	TSoftObjectPtr<UBlendSpace1D> Blend;
 
 	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Blend_LoadFlags;
@@ -801,16 +801,16 @@ struct CSCORE_API FCsFpvBlendSpace1D
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
-	TAssetPtr<UBlendSpace1D> Blend1P;
+	TSoftObjectPtr<UBlendSpace1D> Blend1P;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
-	TAssetPtr<UBlendSpace1D> Blend3P;
+	TSoftObjectPtr<UBlendSpace1D> Blend3P;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
-	TAssetPtr<UBlendSpace1D> Blend3P_Low;
+	TSoftObjectPtr<UBlendSpace1D> Blend3P_Low;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
-	TAssetPtr<UBlendSpace1D> BlendVR;
+	TSoftObjectPtr<UBlendSpace1D> BlendVR;
 
 	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Blend1P_LoadFlags;
@@ -866,7 +866,7 @@ public:
 		return Blend3P_Internal;
 	}
 
-	FORCEINLINE TAssetPtr<UBlendSpace1D> GetAssetPtr(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE TSoftObjectPtr<UBlendSpace1D> GeTSoftObjectPtr(const TCsViewType &ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Blend1P;
@@ -915,7 +915,7 @@ struct CSCORE_API FCsBlendSpace
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
-	TAssetPtr<UBlendSpace> Blend;
+	TSoftObjectPtr<UBlendSpace> Blend;
 
 	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Blend_LoadFlags;
@@ -962,16 +962,16 @@ struct CSCORE_API FCsFpvBlendSpace
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
-	TAssetPtr<UBlendSpace> Blend1P;
+	TSoftObjectPtr<UBlendSpace> Blend1P;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
-	TAssetPtr<UBlendSpace> Blend3P;
+	TSoftObjectPtr<UBlendSpace> Blend3P;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
-	TAssetPtr<UBlendSpace> Blend3P_Low;
+	TSoftObjectPtr<UBlendSpace> Blend3P_Low;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
-	TAssetPtr<UBlendSpace> BlendVR;
+	TSoftObjectPtr<UBlendSpace> BlendVR;
 
 	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Blend1P_LoadFlags;
@@ -1027,7 +1027,7 @@ public:
 		return Blend3P_Internal;
 	}
 
-	FORCEINLINE TAssetPtr<UBlendSpace> GetAssetPtr(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE TSoftObjectPtr<UBlendSpace> GeTSoftObjectPtr(const TCsViewType &ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Blend1P;

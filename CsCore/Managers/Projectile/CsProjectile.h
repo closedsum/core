@@ -1,7 +1,6 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Managers/CsPooledActor.h"
-#include "Types/CsTypes_Pool.h"
 #include "Types/CsTypes_Projectile.h"
 #include "Data/CsData_Projectile.h"
 #include "CsProjectile.generated.h"
@@ -20,7 +19,7 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 	TWeakObjectPtr<class ACsData_Projectile> Data;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
-	FECsProjectileType Type_Script;
+	FECsProjectileType Type;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TEnumAsByte<ECsProjectileRelevance::Type> Relevance;
@@ -50,15 +49,15 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 
 	~FCsProjectileCache(){}
 
-	void Set(const uint8 &InIndex, ACsProjectile* InProjectile)
+	void Set(const int32 &InIndex, ACsProjectile* InProjectile)
 	{
-		SetIndex(InIndex);
+		Index = InIndex;
 		Projectile = InProjectile;
 	}
 
-	void Init(const uint16& InActiveIndex, FCsProjectilePayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
+	void Init(const int32& InActiveIndex, FCsProjectilePayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
-		SetActiveIndex(InActiveIndex);
+		ActiveIndex = InActiveIndex;
 		Relevance = Payload->Relevance;
 
 		IsAllocated = true;
@@ -67,10 +66,9 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 		Owner	   = Payload->Owner;
 		Data	   = Payload->Data;
 
-		Type_Script = Data->GetProjectileType();
-		Type		= (uint8)Type_Script;
+		Type = Data->GetProjectileType();
 
-		Parent	   = Payload->Parent;
+		Parent = Payload->Parent;
 
 		SetLifeTime(Data->GetLifeTime());
 
@@ -90,7 +88,7 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 
 	void Reset()
 	{
-		Reset_Internal();
+		FCsPooledObjectCache::Reset();
 
 		Data.Reset();
 		Data  = nullptr;

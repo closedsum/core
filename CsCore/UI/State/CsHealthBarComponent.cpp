@@ -15,7 +15,7 @@ void UCsHealthBarComponent::OnChange_Health(const uint8 &MappingId, const float 
 	GetWidget<UCsWidget_HealthBar>()->SetPercent(Percent);
 }
 
-void UCsHealthBarComponent::OnLocalClientSeesMe(const uint8 &MappingId, const bool& Value)
+void UCsHealthBarComponent::OnLocalClientSeesMe(const uint64 &ObserverId, const uint64& ObserveeId, const bool& Value)
 {
 	if (Value)
 		Show();

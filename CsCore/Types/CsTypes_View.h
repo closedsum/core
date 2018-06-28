@@ -202,7 +202,7 @@ struct FCsDrawDistance
 };
 
 USTRUCT(BlueprintType)
-struct FCsFpsDrawDistance
+struct FCsFpvDrawDistance
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -218,12 +218,12 @@ struct FCsFpsDrawDistance
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Draw Distance")
 	float Distance3PSq;
 
-	FCsFpsDrawDistance()
+	FCsFpvDrawDistance()
 	{
 		Reset();
 	}
 
-	FCsFpsDrawDistance& operator=(const FCsFpsDrawDistance& B)
+	FCsFpvDrawDistance& operator=(const FCsFpvDrawDistance& B)
 	{
 		Distance1P   = B.Distance1P;
 		Distance1PSq = B.Distance1PSq;
@@ -232,12 +232,12 @@ struct FCsFpsDrawDistance
 		return *this;
 	}
 
-	bool operator==(const FCsFpsDrawDistance& B) const
+	bool operator==(const FCsFpvDrawDistance& B) const
 	{
 		return Distance1P == B.Distance1P && Distance1PSq == B.Distance1PSq && Distance3P == B.Distance3P && Distance3PSq == B.Distance3PSq;
 	}
 
-	bool operator!=(const FCsFpsDrawDistance& B) const
+	bool operator!=(const FCsFpvDrawDistance& B) const
 	{
 		return !(*this == B);
 	}

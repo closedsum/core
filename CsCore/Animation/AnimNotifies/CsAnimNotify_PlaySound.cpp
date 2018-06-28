@@ -67,7 +67,7 @@ void UCsAnimNotify_PlaySound::Notify(class USkeletalMeshComponent* MeshComp, cla
 		Payload->Owner = MeshComp->GetOwner() ? Cast<UObject>(MeshComp->GetOwner()) : Cast<UObject>(MeshComp->GetAttachParent());
 		Payload->Parent = MeshComp;
 
-		Manager_Sound->Play(SoundElement.Type, Payload);
+		Manager_Sound->Play(Payload);
 	}
 	// Editor
 	else

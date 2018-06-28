@@ -109,14 +109,6 @@ EMCsStringCompare& EMCsStringCompare::Get()
 
 namespace ECsStringCompare
 {
-	namespace Str
-	{
-		CSCORE_API const TCsString Equals = TCsString(TEXT("Equals"), TEXT("equals"), TEXT("equals"));
-		CSCORE_API const TCsString StartsWith = TCsString(TEXT("StartsWith"), TEXT("startswith"), TEXT("starts with"));
-		CSCORE_API const TCsString EndsWith = TCsString(TEXT("EndsWith"), TEXT("endswith"), TEXT("ends with"));
-		CSCORE_API const TCsString Contains = TCsString(TEXT("Contains"), TEXT("contains"), TEXT("contains"));
-	}
-
 	namespace Ref
 	{
 		CSCORE_API const Type Equals = EMCsStringCompare::Get().Add(Type::Equals, TEXT("Equals"));

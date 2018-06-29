@@ -202,6 +202,9 @@ public:
 	void LoadBlendSpace(const FString& MemberName, const TCsViewType &ViewType, FCsAnimInstance_BlendSpace1D &Blend, FCsFpvBlendSpace1D* DataBlend);
 	void LoadBlendSpace(const FString& MemberName, const TCsViewType &ViewType, FCsAnimInstance_BlendSpace &Blend, FCsFpvBlendSpace* DataBlend);
 
+	//void LoadAimOffset(const FString& MemberName, FCsAnimInstance_AimOffset &Blend, FCsAimOffset* DataBlend);
+	//void LoadAimOffset(const FString& MemberName, const TCsViewType &ViewType, FCsAnimInstance_AimOffset &Blend, FCsFpvAimOffset* DataBlend);
+
 #pragma endregion Anims
 
 #pragma endregion Event Graph

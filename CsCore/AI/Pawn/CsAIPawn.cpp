@@ -72,6 +72,23 @@ void ACsAIPawn::DeAllocate()
 
 void ACsAIPawn::OnTick_HandleCVars(const float &DeltaSeconds){}
 
+// Behavior Tree
+#pragma region
+
+void ACsAIPawn::AimAtLocation(const FVector &Target)
+{
+}
+
+void ACsAIPawn::AimAtActor(AActor* Target)
+{
+}
+
+void ACsAIPawn::StopAimAt()
+{
+}
+
+#pragma endregion Behavior Tree
+
 // State
 #pragma region
 

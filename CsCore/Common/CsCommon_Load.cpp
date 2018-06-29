@@ -620,6 +620,12 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsFpvBlendSpace
 			if (StructProperty->Struct == FCsFpvBlendSpace::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsFpvBlendSpace>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsAimOffset
+			if (StructProperty->Struct == FCsAimOffset::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsAimOffset>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsFpvAimOffset
+			if (StructProperty->Struct == FCsFpvAimOffset::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsFpvAimOffset>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 			// FCsAnimBlueprint
 			if (StructProperty->Struct == FCsAnimBlueprint::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsAnimBlueprint>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
@@ -1371,6 +1377,12 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsFpvBlendSpace
 			if (StructProperty->Struct == FCsFpvBlendSpace::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsFpvBlendSpace>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsAimOffset
+			if (StructProperty->Struct == FCsAimOffset::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsAimOffset>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsFpvAimOffset
+			if (StructProperty->Struct == FCsFpvAimOffset::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsFpvAimOffset>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 			// FCsAnimBlueprint
 			if (StructProperty->Struct == FCsAnimBlueprint::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsAnimBlueprint>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
@@ -2119,6 +2131,12 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			// FCsFpvBlendSpace
 			if (StructProperty->Struct == FCsFpvBlendSpace::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsFpvBlendSpace>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+			// FCsAimOffset
+			if (StructProperty->Struct == FCsAimOffset::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsAimOffset>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+			// FCsFpvAimOffset
+			if (StructProperty->Struct == FCsFpvAimOffset::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsFpvAimOffset>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
 			// FCsAnimBlueprint
 			if (StructProperty->Struct == FCsAnimBlueprint::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsAnimBlueprint>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
@@ -2931,6 +2949,12 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			// FCsFpvBlendSpace
 			if (StructProperty->Struct == FCsFpvBlendSpace::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsFpvBlendSpace>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
+			// FCsAimOffset
+			if (StructProperty->Struct == FCsAimOffset::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsAimOffset>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
+			// FCsFpvAimOffset
+			if (StructProperty->Struct == FCsFpvAimOffset::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsFpvAimOffset>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 			// FCsAnimBlueprint
 			if (StructProperty->Struct == FCsAnimBlueprint::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsAnimBlueprint>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
@@ -3722,6 +3746,12 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsFpvBlendSpace
 			if (StructProperty->Struct == FCsFpvBlendSpace::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsFpvBlendSpace>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
+			// FCsAimOffset
+			if (StructProperty->Struct == FCsAimOffset::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsAimOffset>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
+			// FCsFpvAimOffset
+			if (StructProperty->Struct == FCsFpvAimOffset::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsFpvAimOffset>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 			// FCsAnimBlueprint
 			if (StructProperty->Struct == FCsAnimBlueprint::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsAnimBlueprint>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
@@ -4522,6 +4552,12 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			// FCsFpvBlendSpace
 			if (StructProperty->Struct == FCsFpvBlendSpace::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsFpvBlendSpace>(JsonObject, StructProperty, InObject, MemberName); continue; }
+			// FCsAimOffset
+			if (StructProperty->Struct == FCsAimOffset::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsAimOffset>(JsonObject, StructProperty, InObject, MemberName); continue; }
+			// FCsFpvAimOffset
+			if (StructProperty->Struct == FCsFpvAimOffset::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsFpvAimOffset>(JsonObject, StructProperty, InObject, MemberName); continue; }
 			// FCsAnimBlueprint
 			if (StructProperty->Struct == FCsAnimBlueprint::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsAnimBlueprint>(JsonObject, StructProperty, InObject, MemberName); continue; }
@@ -5855,6 +5891,12 @@ void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct*
 			// FCsFpvBlendSpace
 			if (StructProperty->Struct == FCsFpvBlendSpace::StaticStruct())
 			{ GetAssetReferencesFromStructProperty<FCsFpvBlendSpace>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
+			// FCsAimOffset
+			if (StructProperty->Struct == FCsAimOffset::StaticStruct())
+			{ GetAssetReferencesFromStructProperty<FCsAimOffset>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
+			// FCsFpvAimOffset
+			if (StructProperty->Struct == FCsFpvAimOffset::StaticStruct())
+			{ GetAssetReferencesFromStructProperty<FCsFpvAimOffset>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
 			// FCsBlueprint
 			if (StructProperty->Struct == FCsBlueprint::StaticStruct())
 			{ GetAssetReferencesFromStructProperty<FCsBlueprint>(StructProperty, InStruct, LoadFlags, OutAssetReferences, Internal, LoadCodes); continue; }
@@ -6169,6 +6211,12 @@ void UCsCommon_Load::GetAssetReferencesFromObject(void* InObject, UClass* const 
 			// FCsFpvBlendSpace
 			if (StructProperty->Struct == FCsFpvBlendSpace::StaticStruct())
 			{ GetAssetReferencesFromStructProperty<FCsFpvBlendSpace>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
+			// FCsAimOffset
+			if (StructProperty->Struct == FCsAimOffset::StaticStruct())
+			{ GetAssetReferencesFromStructProperty<FCsAimOffset>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
+			// FCsFpvAimOffset
+			if (StructProperty->Struct == FCsFpvAimOffset::StaticStruct())
+			{ GetAssetReferencesFromStructProperty<FCsFpvAimOffset>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
 			// FCsBlueprint
 			if (StructProperty->Struct == FCsBlueprint::StaticStruct())
 			{ GetAssetReferencesFromStructProperty<FCsBlueprint>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
@@ -6651,6 +6699,35 @@ void UCsCommon_Load::LoadFCsFpvBlendSpace(const FString &MemberName, FCsFpvBlend
 	LoadFCsFpvBlendSpace(MemberName, Blend, LoadFlags);
 }
 
+void UCsCommon_Load::LoadFCsAimOffset(const FString &MemberName, FCsAimOffset* Blend, const ECsLoadFlags &LoadFlags)
+{
+	LoadFCsStruct<FCsAimOffset>(MemberName, Blend, LoadFlags);
+}
+
+void UCsCommon_Load::LoadFCsAimOffset(const FString &MemberName, FCsAimOffset* Blend)
+{
+	LoadFCsAimOffset(MemberName, Blend, ECsLoadFlags::All);
+}
+
+void UCsCommon_Load::LoadFCsFpvAimOffset(const FString &MemberName, FCsFpvAimOffset* Blend, const ECsLoadFlags &LoadFlags)
+{
+	LoadFCsStruct<FCsFpvAimOffset>(MemberName, Blend, LoadFlags);
+}
+
+void UCsCommon_Load::LoadFCsFpvAimOffset(const FString &MemberName, FCsFpvAimOffset* Blend, const TCsViewType &ViewType)
+{
+	ECsLoadFlags LoadFlags = ECsLoadFlags::All;
+
+	if (ViewType == ECsViewType::FirstPerson)
+		LoadFlags = ECsLoadFlags::Game1P;
+	if (ViewType == ECsViewType::ThirdPerson)
+		LoadFlags = ECsLoadFlags::Game3P;
+	if (ViewType == ECsViewType::VR)
+		LoadFlags = ECsLoadFlags::GameVR;
+
+	LoadFCsFpvAimOffset(MemberName, Blend, LoadFlags);
+}
+
 bool UCsCommon_Load::CanLoad(void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags, const int32 &LoadCodes)
 {
 								// MemberName + TEXT("_LoadFlags")
@@ -6991,6 +7068,12 @@ void UCsCommon_Load::LoadStructWithTSoftObjectPtrs(const FString &ObjectName, vo
 			// FCsFpvBlendSpace
 			if (StructProperty->Struct == FCsFpvBlendSpace::StaticStruct())
 			{ LoadMemberStructProperty<FCsFpvBlendSpace>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
+			// FCsAimOffset
+			if (StructProperty->Struct == FCsAimOffset::StaticStruct())
+			{ LoadMemberStructProperty<FCsAimOffset>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
+			// FCsFpvAimOffset
+			if (StructProperty->Struct == FCsFpvAimOffset::StaticStruct())
+			{ LoadMemberStructProperty<FCsFpvAimOffset>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
 			// FCsAnimBlueprint
 			if (StructProperty->Struct == FCsAnimBlueprint::StaticStruct())
 			{ LoadMemberStructProperty<FCsAnimBlueprint>(StructProperty, InStruct, StructName, LoadFlags, Internal); continue; }
@@ -7445,6 +7528,12 @@ void UCsCommon_Load::LoadObjectWithTSoftObjectPtrs(const FString &ObjectName, vo
 			// FCsFpvBlendSpace
 			if (StructProperty->Struct == FCsFpvBlendSpace::StaticStruct())
 			{ LoadMemberStructProperty<FCsFpvBlendSpace>(StructProperty, InObject, StructName, LoadFlags); continue; }
+			// FCsAimOffset
+			if (StructProperty->Struct == FCsAimOffset::StaticStruct())
+			{ LoadMemberStructProperty<FCsAimOffset>(StructProperty, InObject, StructName, LoadFlags); continue; }
+			// FCsFpvAimOffset
+			if (StructProperty->Struct == FCsFpvAimOffset::StaticStruct())
+			{ LoadMemberStructProperty<FCsFpvAimOffset>(StructProperty, InObject, StructName, LoadFlags); continue; }
 			// FCsBlueprint
 			if (StructProperty->Struct == FCsBlueprint::StaticStruct())
 			{ LoadMemberStructProperty<FCsBlueprint>(StructProperty, InObject, StructName, LoadFlags); continue; }

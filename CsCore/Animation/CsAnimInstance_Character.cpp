@@ -366,6 +366,11 @@ UBlendSpace* UCsAnimInstance_Character::GetBlendSpace(const FECsCharacterBlendSp
 	return nullptr;
 }
 
+UAimOffsetBlendSpace* UCsAnimInstance_Character::GetAimOffset(const FECsCharacterBlendSpace &BlendType) const
+{
+	return nullptr;
+}
+
 void UCsAnimInstance_Character::StopAnimation(const FECsCharacterAnim &AnimType, const int32 &Index /*0*/, const float BlendOutTime /*=0.0f*/){}
 
 #pragma endregion Anims

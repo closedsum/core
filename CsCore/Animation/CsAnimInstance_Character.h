@@ -199,6 +199,8 @@ public:
 	virtual class UBlendSpace1D* GetBlendSpace1D(const FECsCharacterBlendSpace &BlendType) const;
 	UFUNCTION(BlueprintCallable, Category = "AnimInstance", meta = (BlueprintThreadSafe, AutoCreateRefTerm = "BlendType"))
 	virtual class UBlendSpace* GetBlendSpace(const FECsCharacterBlendSpace &BlendType) const;
+	UFUNCTION(BlueprintCallable, Category = "AnimInstance", meta = (BlueprintThreadSafe, AutoCreateRefTerm = "BlendType"))
+	virtual class UAimOffsetBlendSpace* GetAimOffset(const FECsCharacterBlendSpace &BlendType) const;
 
 	virtual void StopAnimation(const FECsCharacterAnim &AnimType, const int32 &Index = 0, const float BlendOutTime = 0.0f);
 

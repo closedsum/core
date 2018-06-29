@@ -161,6 +161,20 @@ public:
 
 #pragma endregion BlendSpace
 
+	// AimOffset
+#pragma region
+public:
+
+	virtual UAimOffsetBlendSpace* GetAimOffset(const TCsViewType &ViewType, const FECsCharacterBlendSpace &BlendType, const bool &IsLow = false);
+	virtual UAimOffsetBlendSpace* GetAimOffset(const FECsCharacterBlendSpace &BlendType, const bool &IsLow = false);
+
+	virtual FCsAimOffset* GetFCsAimOffset(const FECsWeaponGrip &GripType, const FECsCharacterBlendSpace &BlendType, const int32 &Index = 0);
+	virtual FCsAimOffset* GetFCsAimOffset(const FECsCharacterBlendSpace &BlendType, const int32 &Index = 0);
+	virtual FCsFpvAimOffset* GetFCsFpvAimOffset(const FECsWeaponGrip &GripType, const FECsCharacterBlendSpace &BlendType, const int32 &Index = 0);
+	virtual FCsFpvAimOffset* GetFCsFpvAimOffset(const FECsCharacterBlendSpace &BlendType, const int32 &Index = 0);
+
+#pragma endregion AimOffset
+
 	virtual USkeleton* GetSkeleton(const TCsViewType &ViewType, const FECsCharacterBlendSpace &BlendType, const bool &IsLow = false);
 	virtual USkeleton* GetSkeleton(const FECsCharacterBlendSpace &BlendType, const bool &IsLow = false);
 	virtual USkeleton* GetSkeleton(const TCsViewType &ViewType, const FECsCharacterAnimBlueprint &BlueprintType, const bool &IsLow = false);
@@ -261,4 +275,13 @@ public:
 	virtual const float& GetSenseViewMinDot();
 
 #pragma endregion Sense
+
+// AI
+#pragma region
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "Character Data")
+	const float& GetAimTime();
+
+#pragma endregion AI
 };

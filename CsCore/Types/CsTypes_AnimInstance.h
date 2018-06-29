@@ -9,6 +9,7 @@
 #include "Animation/AnimBlueprint.h"
 #include "Animation/BlendSpace.h"
 #include "Animation/BlendSpace1D.h"
+#include "Animation/AimOffsetBlendSpace.h"
 
 #include "CsTypes_AnimInstance.generated.h"
 #pragma once
@@ -210,6 +211,57 @@ public:
 	}
 
 	FORCEINLINE bool operator!=(const FCsAnimInstance_BlendSpace& B) const
+	{
+		return !(*this == B);
+	}
+
+	FORCEINLINE bool HasChanged() { return Blend != Last_Blend; }
+	FORCEINLINE void Update() { Last_Blend = Blend; }
+};
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsAnimInstance_AimOffset
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	TSoftObjectPtr<UAimOffsetBlendSpace> Blend;
+
+	TSoftObjectPtr<UAimOffsetBlendSpace> Last_Blend;
+
+	UPROPERTY(Transient, VisibleDefaultsOnly, Category = Animation)
+	TWeakObjectPtr<UAimOffsetBlendSpace> Blend_Internal;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	bool UseDataValueAsDefault;
+
+public:
+
+	FCsAnimInstance_AimOffset()
+	{
+		UseDataValueAsDefault = true;
+	}
+
+	FORCEINLINE UAimOffsetBlendSpace* Get() const
+	{
+		return Blend_Internal.IsValid() ? Blend_Internal.Get() : nullptr;
+	}
+
+	FORCEINLINE FCsAnimInstance_AimOffset& operator=(const FCsAnimInstance_AimOffset& B)
+	{
+		Blend = B.Blend;
+		Last_Blend = B.Last_Blend;
+		Blend_Internal = B.Blend_Internal;
+		UseDataValueAsDefault = B.UseDataValueAsDefault;
+		return *this;
+	}
+
+	FORCEINLINE bool operator==(const FCsAnimInstance_AimOffset& B) const
+	{
+		return Blend == B.Blend && Last_Blend == B.Last_Blend && Blend_Internal == B.Blend_Internal && UseDataValueAsDefault == B.UseDataValueAsDefault;
+	}
+
+	FORCEINLINE bool operator!=(const FCsAnimInstance_AimOffset& B) const
 	{
 		return !(*this == B);
 	}

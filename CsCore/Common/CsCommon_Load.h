@@ -2207,6 +2207,11 @@ template<typename T>
 	static void LoadFCsFpvBlendSpace(const FString &MemberName, struct FCsFpvBlendSpace* Blend, const ECsLoadFlags &LoadFlags);
 	static void LoadFCsFpvBlendSpace(const FString &MemberName, struct FCsFpvBlendSpace* Blend, const TCsViewType &ViewType);
 
+	static void LoadFCsAimOffset(const FString &MemberName, struct FCsAimOffset* Blend, const ECsLoadFlags &LoadFlags);
+	static void LoadFCsAimOffset(const FString &MemberName, struct FCsAimOffset* Blend);
+	static void LoadFCsFpvAimOffset(const FString &MemberName, struct FCsFpvAimOffset* Blend, const ECsLoadFlags &LoadFlags);
+	static void LoadFCsFpvAimOffset(const FString &MemberName, struct FCsFpvAimOffset* Blend, const TCsViewType &ViewType);
+
 	static bool CanLoad(void* InObject, UScriptStruct* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags, const int32 &LoadCodes);
 	static bool CanLoad(void* InObject, UClass* const &InClass, const FString &MemberName, const ECsLoadFlags &LoadFlags, const int32 &LoadCodes);
 

@@ -9,12 +9,11 @@
 
 // RotateToFaceBBEntry
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Start, const uint8&, MappingId, const float&, AngleDelta, const float&, RotationRate);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Start, const uint8&, const float&, const float&);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Finish, const uint8&, MappingId);
-DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Finish, const uint8&);
-// PlayerSeesBody
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsAIPawn_OnPlayerSeesBody, const uint8&, MappingId, const bool, Value);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsAIPawn_OnPlayerSeesBody, const uint8&, const bool&);
+// AimAt
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsAIPawn_OnBTTask_AimAtLocation_Start, const uint8&, MappingId, const FVector&, Location);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsAIPawn_OnBTTask_AimAtActor_Start, const uint8&, MappingId, AActor*, Actor);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsAIPawn_OnBTTask_AimAt_Aborted, const uint8&, MappingId);
 
 // Enums
 #pragma region
@@ -182,9 +181,12 @@ class CSCORE_API ACsAIPawn : public ACsPawn
 #pragma region
 public:
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Setup")
 	FECsAIState CurrentState;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Setup")
 	FECsAIState SpawnedState;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Setup")
 	FECsAISetup CurrentSetup;
 
 #pragma endregion Setup
@@ -201,36 +203,61 @@ public:
 #pragma region
 public:
 
+	// RotateToFaceBBEntry
+
+		// Start
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnBTTask_RotateToFaceBBEntry_Start, const uint8&, const float&, const float&);
+
+	FOnBTTask_RotateToFaceBBEntry_Start OnBTTask_RotateToFaceBBEntry_Start_Event;
+
 	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
 	FBindableDynEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Start OnBTTask_RotateToFaceBBEntry_Start_ScriptEvent;
+		// Finish
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnBTTask_RotateToFaceBBEntry_Finish, const uint8&);
 
-	FBindableEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Start OnBTTask_RotateToFaceBBEntry_Start_Event;
+	FOnBTTask_RotateToFaceBBEntry_Finish OnBTTask_RotateToFaceBBEntry_Finish_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
 	FBindableDynEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Finish OnBTTask_RotateToFaceBBEntry_Finish_ScriptEvent;
 
-	FBindableEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Finish OnBTTask_RotateToFaceBBEntry_Finish_Event;
+	// AimAt
+
+		// Location Start
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnBTTask_AimAtLocation_Start, const uint8&, const FVector&);
+
+	FOnBTTask_AimAtLocation_Start OnBTTask_AimAtLocation_Start_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
+	FBindableDynEvent_CsAIPawn_OnBTTask_AimAtLocation_Start OnBTTask_AimAtLocation_Start_ScriptEvent;
+
+		// Actor Start
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnBTTask_AimAtActor_Start, const uint8&, AActor*);
+
+	FOnBTTask_AimAtActor_Start OnBTTask_AimAtActor_Start_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
+	FBindableDynEvent_CsAIPawn_OnBTTask_AimAtActor_Start OnBTTask_AimAtActor_Start_ScriptEvent;
+
+		// Abort
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnBTTask_AimAt_Aborted, const uint8&);
+
+	FOnBTTask_AimAt_Aborted OnBTTask_AimAt_Aborted_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
+	FBindableDynEvent_CsAIPawn_OnBTTask_AimAt_Aborted OnBTTask_AimAt_Aborted_ScriptEvent;
+
+	UFUNCTION(BlueprintCallable, Category = "Aiming")
+	virtual void AimAtLocation(const FVector &Target);
+	UFUNCTION(BlueprintCallable, Category = "Aiming")
+	virtual void AimAtActor(AActor* Target);
+	UFUNCTION(BlueprintCallable, Category = "Aiming")
+	virtual void StopAimAt();
 
 #pragma endregion Behavior Tree
 
 // Sense
 #pragma region
 public:
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
-	float ViewDot;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
-	float ViewAngle;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense", meta = (ClampMin = "0.0", UIMin = "0.0"))
-	float SenseRadius;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
-	float SenseRadiusSq;
-	/** Minimum Z distance below or above capsule to start checks */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense", meta = (ClampMin = "0.0", UIMin = "0.0"))
-	float SenseHeight;
 
 #pragma endregion Sense
 };

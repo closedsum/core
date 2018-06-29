@@ -1070,6 +1070,167 @@ public:
 	}
 };
 
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsAimOffset
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
+	TSoftObjectPtr<UAimOffsetBlendSpace> Blend;
+
+	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	int32 Blend_LoadFlags;
+
+public:
+
+	UPROPERTY(Transient)
+	class UAimOffsetBlendSpace* Blend_Internal;
+
+public:
+
+	FCsAimOffset()
+	{
+		CS_SET_BLUEPRINT_BITFLAG(Blend_LoadFlags, ECsLoadFlags::Game);
+	}
+
+	FORCEINLINE UAimOffsetBlendSpace* Get()
+	{
+		return Blend_Internal;
+	}
+
+	FORCEINLINE FCsAimOffset& operator=(const FCsAimOffset& B)
+	{
+		Blend = B.Blend;
+		Blend_LoadFlags = B.Blend_LoadFlags;
+		Blend_Internal = B.Blend_Internal;
+		return *this;
+	}
+
+	FORCEINLINE bool operator==(const FCsAimOffset& B) const
+	{
+		return Blend == B.Blend && Blend_LoadFlags == B.Blend_LoadFlags && Blend_Internal == B.Blend_Internal;
+	}
+
+	FORCEINLINE bool operator!=(const FCsAimOffset& B) const
+	{
+		return !(*this == B);
+	}
+};
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsFpvAimOffset
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
+	TSoftObjectPtr<UAimOffsetBlendSpace> Blend1P;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
+	TSoftObjectPtr<UAimOffsetBlendSpace> Blend3P;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
+	TSoftObjectPtr<UAimOffsetBlendSpace> Blend3P_Low;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
+	TSoftObjectPtr<UAimOffsetBlendSpace> BlendVR;
+
+	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	int32 Blend1P_LoadFlags;
+
+	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	int32 Blend3P_LoadFlags;
+
+	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	int32 Blend3P_Low_LoadFlags;
+
+	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	int32 BlendVR_LoadFlags;
+
+public:
+
+	UPROPERTY(Transient)
+	class UAimOffsetBlendSpace* Blend1P_Internal;
+
+	UPROPERTY(Transient)
+	class UAimOffsetBlendSpace* Blend3P_Internal;
+
+	UPROPERTY(Transient)
+	class UAimOffsetBlendSpace* Blend3P_Low_Internal;
+
+	UPROPERTY(Transient)
+	class UAimOffsetBlendSpace* BlendVR_Internal;
+
+public:
+
+	FCsFpvAimOffset()
+	{
+		CS_SET_BLUEPRINT_BITFLAG(Blend1P_LoadFlags, ECsLoadFlags::Game);
+		CS_SET_BLUEPRINT_BITFLAG(Blend1P_LoadFlags, ECsLoadFlags::Game1P);
+
+		CS_SET_BLUEPRINT_BITFLAG(Blend3P_LoadFlags, ECsLoadFlags::Game);
+		CS_SET_BLUEPRINT_BITFLAG(Blend3P_LoadFlags, ECsLoadFlags::Game3P);
+
+		CS_SET_BLUEPRINT_BITFLAG(Blend3P_Low_LoadFlags, ECsLoadFlags::Game);
+		CS_SET_BLUEPRINT_BITFLAG(Blend3P_Low_LoadFlags, ECsLoadFlags::Game3PLow);
+
+		CS_SET_BLUEPRINT_BITFLAG(BlendVR_LoadFlags, ECsLoadFlags::Game);
+		CS_SET_BLUEPRINT_BITFLAG(BlendVR_LoadFlags, ECsLoadFlags::GameVR);
+	}
+
+	FORCEINLINE UAimOffsetBlendSpace* Get(const TCsViewType &ViewType, const bool &IsLow = false)
+	{
+		if (ViewType == ECsViewType::FirstPerson)
+			return Blend1P_Internal;
+		if (ViewType == ECsViewType::ThirdPerson)
+			return IsLow ? Blend3P_Low_Internal : Blend3P_Internal;
+		if (ViewType == ECsViewType::VR)
+			return BlendVR_Internal;
+		return Blend3P_Internal;
+	}
+
+	FORCEINLINE TSoftObjectPtr<UBlendSpace> GeTSoftObjectPtr(const TCsViewType &ViewType, const bool &IsLow = false)
+	{
+		if (ViewType == ECsViewType::FirstPerson)
+			return Blend1P;
+		if (ViewType == ECsViewType::ThirdPerson)
+			return IsLow ? Blend3P_Low : Blend3P;
+		if (ViewType == ECsViewType::VR)
+			return BlendVR;
+		return Blend3P;
+	}
+
+	FORCEINLINE FCsFpvAimOffset& operator=(const FCsFpvAimOffset& B)
+	{
+		Blend1P = B.Blend1P;
+		Blend3P = B.Blend3P;
+		Blend3P_Low = B.Blend3P_Low;
+		BlendVR = B.BlendVR;
+
+		Blend1P_LoadFlags = B.Blend1P_LoadFlags;
+		Blend3P_LoadFlags = B.Blend3P_LoadFlags;
+		Blend3P_Low_LoadFlags = B.Blend3P_Low_LoadFlags;
+		BlendVR_LoadFlags = B.BlendVR_LoadFlags;
+
+		Blend1P_Internal = B.Blend1P_Internal;
+		Blend3P_Internal = B.Blend3P_Internal;
+		Blend3P_Low_Internal = B.Blend3P_Low_Internal;
+		BlendVR_Internal = B.BlendVR_Internal;
+		return *this;
+	}
+
+	FORCEINLINE bool operator==(const FCsFpvAimOffset& B) const
+	{
+		return Blend1P == B.Blend1P && Blend3P == B.Blend3P && Blend3P_Low == B.Blend3P_Low && BlendVR == B.BlendVR &&
+				Blend1P_LoadFlags == B.Blend1P_LoadFlags && Blend3P_LoadFlags == B.Blend3P_LoadFlags && Blend3P_Low_LoadFlags == B.Blend3P_Low_LoadFlags && BlendVR_LoadFlags == B.BlendVR_LoadFlags &&
+				Blend1P_Internal == B.Blend1P_Internal && Blend3P_Internal == B.Blend3P_Internal && Blend3P_Low_Internal == B.Blend3P_Low_Internal && BlendVR_Internal == B.BlendVR_Internal;
+	}
+
+	FORCEINLINE bool operator!=(const FCsFpvAimOffset& B) const
+	{
+		return !(*this == B);
+	}
+};
+
 UENUM(BlueprintType)
 namespace ECsAdditiveBasePoseType
 {

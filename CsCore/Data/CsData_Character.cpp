@@ -209,6 +209,19 @@ FCsFpvBlendSpace* ACsData_Character::GetFCsFpvBlendSpace(const FECsCharacterBlen
 
 #pragma endregion BlendSpace
 
+	// AimOffset
+#pragma region
+
+UAimOffsetBlendSpace* ACsData_Character::GetAimOffset(const TCsViewType &ViewType, const FECsCharacterBlendSpace &BlendType, const bool &IsLow /*=false*/) { return nullptr; }
+UAimOffsetBlendSpace* ACsData_Character::GetAimOffset(const FECsCharacterBlendSpace &BlendType, const bool &IsLow /*=false*/) { return nullptr; }
+
+FCsAimOffset* ACsData_Character::GetFCsAimOffset(const FECsWeaponGrip &GripType, const FECsCharacterBlendSpace &BlendType, const int32 &Index /*=0*/) { return nullptr; }
+FCsAimOffset* ACsData_Character::GetFCsAimOffset(const FECsCharacterBlendSpace &BlendType, const int32 &Index /*=0*/) { return nullptr; }
+FCsFpvAimOffset* ACsData_Character::GetFCsFpvAimOffset(const FECsWeaponGrip &GripType, const FECsCharacterBlendSpace &BlendType, const int32 &Index /*=0*/) { return nullptr; }
+FCsFpvAimOffset* ACsData_Character::GetFCsFpvAimOffset(const FECsCharacterBlendSpace &BlendType, const int32 &Index /*=0*/) { return nullptr; }
+
+#pragma endregion BlendSpace
+
 USkeleton* ACsData_Character::GetSkeleton(const TCsViewType &ViewType, const FECsCharacterBlendSpace &BlendType, const bool &IsLow /*=false*/) 
 {
 	if (UBlendSpace* Blend = GetBlendSpace(ViewType, BlendType, IsLow))
@@ -755,3 +768,10 @@ const float& ACsData_Character::GetSenseViewMinAngle() { return ECsCached::Ref::
 const float& ACsData_Character::GetSenseViewMinDot() { return ECsCached::Ref::Float; }
 
 #pragma endregion Sense
+
+// AI
+#pragma region
+
+const float& ACsData_Character::GetAimTime() { return ECsCached::Ref::Float; }
+
+#pragma endregion AI

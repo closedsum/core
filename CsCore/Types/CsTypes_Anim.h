@@ -31,6 +31,8 @@ namespace ECsAnimCached
 		extern CSCORE_API const FString Blend_Space_1D;// = TEXT("Blend Space 1D");
 		extern CSCORE_API const FString BlendSpace;// = TEXT("BlendSpace");
 		extern CSCORE_API const FString Blend_Space;// = TEXT("Blend Space");
+		extern CSCORE_API const FString AimOffsetBlendSpace;// = TEXT("AimOffsetBlendSpace");
+		extern CSCORE_API const FString Aim_Offset_Blend_Space;// = TEXT("Aim Offset Blend Space");
 	}
 }
 
@@ -1188,7 +1190,7 @@ public:
 		return Blend3P_Internal;
 	}
 
-	FORCEINLINE TSoftObjectPtr<UBlendSpace> GeTSoftObjectPtr(const TCsViewType &ViewType, const bool &IsLow = false)
+	FORCEINLINE TSoftObjectPtr<UAimOffsetBlendSpace> GeTSoftObjectPtr(const TCsViewType &ViewType, const bool &IsLow = false)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Blend1P;

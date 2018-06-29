@@ -15,6 +15,8 @@ namespace ECsAnimCached
 		CSCORE_API const FString Blend_Space_1D = TEXT("Blend Space 1D");
 		CSCORE_API const FString BlendSpace = TEXT("BlendSpace");
 		CSCORE_API const FString Blend_Space = TEXT("Blend Space");
+		CSCORE_API const FString AimOffsetBlendSpace = TEXT("AimOffsetBlendSpace");
+		CSCORE_API const FString Aim_Offset_Blend_Space = TEXT("Aim Offset Blend Space");
 	}
 }
 

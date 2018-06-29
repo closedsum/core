@@ -489,4 +489,62 @@ void UCsAnimInstance::LoadBlendSpace(const FString& MemberName, const TCsViewTyp
 	}
 }
 
+void UCsAnimInstance::LoadAimOffset(const FString& MemberName, FCsAnimInstance_AimOffset &Blend, FCsAimOffset* DataBlend)
+{
+	if (DataBlend &&
+		Blend.UseDataValueAsDefault)
+	{
+		UCsCommon_Load::LoadFCsAimOffset(MemberName, DataBlend, DefaultLoadFlags);
+
+		if (UAimOffsetBlendSpace* Space = DataBlend->Get())
+		{
+			Blend.Blend = DataBlend->Blend;
+			Blend.Blend_Internal = Space;
+		}
+		else
+		{
+			//																									    TEXT("AimOffsetBlendSpace"), TEXT("Aim Offset Blend Space")
+			UCsCommon_Load::LoadTSoftObjectPtr<UAimOffsetBlendSpace>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCached::Str::AimOffsetBlendSpace, ECsAnimCached::Str::Aim_Offset_Blend_Space);
+		}
+	}
+	else
+	{
+		//						 != TEXT("")
+		if (Blend.Blend.ToString() != ECsAnimCached::Str::Empty)
+		{
+			//																										TEXT("AimOffsetBlendSpace"), TEXT("Aim Offset Blend Space")
+			UCsCommon_Load::LoadTSoftObjectPtr<UAimOffsetBlendSpace>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCached::Str::AimOffsetBlendSpace, ECsAnimCached::Str::Aim_Offset_Blend_Space);
+		}
+	}
+}
+
+void UCsAnimInstance::LoadAimOffset(const FString& MemberName, const TCsViewType &ViewType, FCsAnimInstance_AimOffset &Blend, FCsFpvAimOffset* DataBlend)
+{
+	if (DataBlend &&
+		Blend.UseDataValueAsDefault)
+	{
+		UCsCommon_Load::LoadFCsFpvAimOffset(MemberName, DataBlend, ViewType);
+
+		if (UAimOffsetBlendSpace* Space = DataBlend->Get(ViewType))
+		{
+			Blend.Blend = DataBlend->GeTSoftObjectPtr(ViewType);
+			Blend.Blend_Internal = Space;
+		}
+		else
+		{
+			//																										TEXT("AimOffsetBlendSpace"), TEXT("Aim Offset Blend Space")
+			UCsCommon_Load::LoadTSoftObjectPtr<UAimOffsetBlendSpace>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCached::Str::AimOffsetBlendSpace, ECsAnimCached::Str::Aim_Offset_Blend_Space);
+		}
+	}
+	else
+	{
+		//						 != TEXT("")
+		if (Blend.Blend.ToString() != ECsAnimCached::Str::Empty)
+		{
+			//																									   TEXT("AimOffsetBlendSpace"), TEXT("Aim Offset Blend Space")
+			UCsCommon_Load::LoadTSoftObjectPtr<UAimOffsetBlendSpace>(MemberName, Blend.Blend, Blend.Blend_Internal, ECsAnimCached::Str::AimOffsetBlendSpace, ECsAnimCached::Str::Aim_Offset_Blend_Space);
+		}
+	}
+}
+
 #pragma endregion Anims

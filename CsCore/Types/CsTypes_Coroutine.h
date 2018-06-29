@@ -146,6 +146,7 @@ namespace ECsCoroutineEndReason
 #define CS_ROUTINE_INT_SIZE 4
 #define CS_ROUTINE_FLOAT_SIZE 4
 #define CS_ROUTINE_VECTOR_SIZE 4
+#define CS_ROUTINE_ROTATOR_SIZE 4
 #define CS_ROUTINE_COLOR_SIZE 4
 #define CS_ROUTINE_STRING_SIZE 4
 #define CS_ROUTINE_OBJECT_SIZE 4
@@ -200,6 +201,7 @@ public:
 	int32 ints[CS_ROUTINE_INT_SIZE];
 	float floats[CS_ROUTINE_FLOAT_SIZE];
 	FVector vectors[CS_ROUTINE_VECTOR_SIZE];
+	FRotator rotators[CS_ROUTINE_ROTATOR_SIZE];
 	FLinearColor colors[CS_ROUTINE_COLOR_SIZE];
 	FString strings[CS_ROUTINE_STRING_SIZE];
 	TWeakObjectPtr<UObject> objects[CS_ROUTINE_OBJECT_SIZE];
@@ -389,6 +391,11 @@ public:
 		for (int32 i = 0; i < CS_ROUTINE_VECTOR_SIZE; ++i)
 		{
 			vectors[i] = FVector::ZeroVector;
+		}
+
+		for (int32 i = 0; i < CS_ROUTINE_ROTATOR_SIZE; ++i)
+		{
+			rotators[i] = FRotator::ZeroRotator;
 		}
 
 		for (int32 i = 0; i < CS_ROUTINE_COLOR_SIZE; ++i)

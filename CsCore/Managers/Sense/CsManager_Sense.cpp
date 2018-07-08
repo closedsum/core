@@ -66,7 +66,12 @@ void ACsManager_Sense::Init(AActor* InOwner)
 
 void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 {
-	AActor* Me					  = GetMyOwner();
+	AActor* Me			  = GetMyOwner();
+	FVector OwnerLocation = FVector::ZeroVector;
+
+	if (ACsPawn* Pawn = Cast<ACsPawn>(Me))
+		OwnerLocation = Pawn->CurrentRootLocation;
+
 	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
 
 	bSeesAnyByDot = false;
@@ -87,21 +92,29 @@ void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 		{
 			FCsSenseInfo& Info = Map[Id];
 
-			AActor* Actor = GameInstance->GetUniqueActorById(Info.ObserveeId);
+			AActor* Actor		  = GameInstance->GetUniqueActorById(Info.ObserveeId);
+			FVector ActorLocation = FVector::ZeroVector;
 
 			// Player / AI
 			if (Info.ActorType == ECsSenseActorType::Player ||
 				Info.ActorType == ECsSenseActorType::AI)
 			{
 				ACsPawn* Pawn = Cast<ACsPawn>(Actor);
+				ActorLocation = Pawn->CurrentRootLocation;
+
 				// Check Pawn is Alive
 				if (!Pawn->bSpawnedAndActive)
 					continue;
 			}
+			else
+			{
+				Actor->GetActorLocation();
+			}
+
 			// Check Radius
 			if (bRadius)
 			{
-				const float DistanceSq = (Actor->GetActorLocation() - Me->GetActorLocation()).SizeSquared();
+				const float DistanceSq = (ActorLocation - OwnerLocation).SizeSquared();
 
 				if (DistanceSq > RadiusSq)
 					continue;
@@ -144,7 +157,7 @@ void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 	{
 		if (bDrawRadius || CsCVarDrawManagerSenseRadius->GetInt() == CS_CVAR_DRAW)
 		{
-			DrawDebugSphere(GetWorld(), Me->GetActorLocation(), Radius, 16.0f, FColor::Green, false, DeltaSeconds + 0.001f, 0, 5.0f);
+			DrawDebugSphere(GetWorld(), OwnerLocation, Radius, 16.0f, FColor::Green, false, DeltaSeconds + 0.001f, 0, 5.0f);
 		}
 	}
 	// Draw Angle
@@ -158,7 +171,7 @@ void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 
 		const float AngleHeight = 0.0174533f;// FMath::DegreesToRadians(1.0f);
 
-		DrawDebugCone(GetWorld(), Me->GetActorLocation(), Direction, Radius, ViewMinRadians, AngleHeight, 16, Color, false, DeltaSeconds + 0.001f, 0, 5.0f);
+		DrawDebugCone(GetWorld(), OwnerLocation, Direction, Radius, ViewMinRadians, AngleHeight, 16, Color, false, DeltaSeconds + 0.001f, 0, 5.0f);
 	}
 }
 

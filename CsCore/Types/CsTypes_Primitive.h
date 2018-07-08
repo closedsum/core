@@ -3822,6 +3822,106 @@ typedef ECsMemberType::Type TCsMemberType;
 
 #pragma endregion Primitive Types
 
+// Blueprint Property Types
+#pragma region
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_FCsProperty_bool_OnChange, bool, Value);
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsProperty_bool
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Property bool")
+	bool DefaultValue;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Property bool")
+	bool Value;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Property bool")
+	bool Last_Value;
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Property bool")
+	bool IsDirty;
+public:
+	TMulticastDelegate<void, const bool&> OnChange_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Property bool")
+	FBindableDynEvent_FCsProperty_bool_OnChange OnChange_ScriptEvent;
+
+public:
+	FCsProperty_bool() {}
+	~FCsProperty_bool() {}
+
+	void SetDefaultValue(const bool &inDefaultValue)
+	{
+		DefaultValue = inDefaultValue;
+	}
+
+	FORCEINLINE void UpdateIsDirty()
+	{
+		IsDirty = Value != Last_Value;
+
+		if (IsDirty)
+			OnChange_Event.Broadcast(Value);
+	}
+
+	FORCEINLINE FCsProperty_bool& operator=(const bool& B)
+	{
+		Value = B;
+		UpdateIsDirty();
+		return *this;
+	}
+
+	FORCEINLINE bool operator==(const bool& B) const
+	{
+		return Value == B;
+	}
+
+	FORCEINLINE bool operator!=(const bool& B) const
+	{
+		return !(*this == B);
+	}
+
+	FORCEINLINE void Set(const bool &inValue)
+	{
+		Value = inValue;
+		UpdateIsDirty();
+	}
+
+	FORCEINLINE const bool& Get() { return Value; }
+
+	FORCEINLINE void Clear()
+	{
+		Last_Value = Value;
+		IsDirty = false;
+	}
+
+	void ResetValue()
+	{
+		Value = DefaultValue;
+		Last_Value = Value;
+		IsDirty = false;
+	}
+
+	void Reset()
+	{
+		ResetValue();
+
+		OnChange_Event.Clear();
+	}
+
+	FORCEINLINE bool HasChanged() { return IsDirty; }
+	FORCEINLINE void MarkDirty() { IsDirty = true; }
+
+	FORCEINLINE void Resolve()
+	{
+		UpdateIsDirty();
+		Clear();
+	}
+};
+
+#pragma endregion Blueprint Property Types
+
 // Vector Types
 #pragma region
 

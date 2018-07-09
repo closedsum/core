@@ -179,15 +179,43 @@ void ACsManager_Sense::Sense_CheckMeToActorDot(FCsSenseInfo& Info)
 {
 	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
 	AActor* Actor				  = GameInstance->GetUniqueActorById(Info.ObserveeId);
-	const FVector Location		  = Actor->GetActorLocation();
+
+	FVector ActorLocation = FVector::ZeroVector;
+
+	// Player / AI
+	if (Info.ActorType == ECsSenseActorType::Player ||
+		Info.ActorType == ECsSenseActorType::AI)
+	{
+		ACsPawn* Pawn = Cast<ACsPawn>(Actor);
+		ActorLocation = Pawn->CurrentBodyLocation;
+	}
+	else
+	{
+		ActorLocation = Actor->GetActorLocation();
+	}
 
 	AActor* Me = GetMyOwner();
 
+	FVector OwnerLocation = FVector::ZeroVector;
+
+	// Player / AI
+	if (ACsPawn* Pawn = Cast<ACsPawn>(Me))
+	{
+		OwnerLocation = Pawn->CurrentBodyLocation;
+	}
+	else
+	{
+		OwnerLocation = Me->GetActorLocation();
+	}
+
 	// XYZ
-	const FVector MeToActor = Location - Me->GetActorLocation();
+	const FVector MeToActor = ActorLocation - OwnerLocation;
 	Info.MeToActorDistance	= MeToActor.Size();
 	Info.MeToActorDistanceSq = Info.MeToActorDistance * Info.MeToActorDistance;
 	Info.MeToActorDir		= MeToActor / Info.MeToActorDistance;
+	
+	Info.MeToActorBodyRotation	  = UCsCommon::AngleClamp360(Info.MeToActorDir.Rotation());
+	Info.MeToActorBodyRotation.Roll = 0.0f;
 	// XY
 	const FVector MeToActorXY	= FVector(MeToActor.X, MeToActor.Y, 0.0f);
 	Info.MeToActorDistanceXY	= MeToActorXY.Size();
@@ -242,7 +270,21 @@ void ACsManager_Sense::Sense_TraceViewToActorBody(FCsSenseInfo& Info)
 	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
 	AActor* Actor				  = GameInstance->GetUniqueActorById(Info.ObserveeId);
 
-	Request->End	= Actor->GetActorLocation();
+	FVector End = FVector::ZeroVector;
+
+	// Player / AI
+	if (Info.ActorType == ECsSenseActorType::Player ||
+		Info.ActorType == ECsSenseActorType::AI)
+	{
+		ACsPawn* Pawn = Cast<ACsPawn>(Actor);
+		End			  = Pawn->CurrentBodyLocation;
+	}
+	else
+	{
+		End = Actor->GetActorLocation();
+	}
+
+	Request->End	= End;
 	Request->bAsync = true;
 	Request->Type	= ECsTraceType::Line;
 	Request->Method = ECsTraceMethod::Multi;

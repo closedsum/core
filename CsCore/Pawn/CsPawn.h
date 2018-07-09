@@ -279,17 +279,21 @@ public:
 #pragma region
 public:
 
-	UPROPERTY(BlueprintReadOnly, Category = "View")
+	UPROPERTY(BlueprintReadOnly, Category = "Body")
 	FRotator CurrentRootRotation;
-	UPROPERTY(BlueprintReadOnly, Category = "View")
+	UPROPERTY(BlueprintReadOnly, Category = "Body")
 	FVector CurrentRootLocation;
-	UPROPERTY(BlueprintReadOnly, Category = "View")
+	UPROPERTY(BlueprintReadOnly, Category = "Body")
+	FVector CurrentBodyLocation;
+	UPROPERTY(BlueprintReadOnly, Category = "Body")
+	FVector CurrentFeetLocation;
+	UPROPERTY(BlueprintReadOnly, Category = "Body")
 	FVector CurrentRootDir;
-	UPROPERTY(BlueprintReadOnly, Category = "View")
+	UPROPERTY(BlueprintReadOnly, Category = "Body")
 	FVector CurrentRootDirXY;
-	UPROPERTY(BlueprintReadOnly, Category = "View")
+	UPROPERTY(BlueprintReadOnly, Category = "Body")
 	FVector CurrentRootRight;
-	UPROPERTY(BlueprintReadOnly, Category = "View")
+	UPROPERTY(BlueprintReadOnly, Category = "Body")
 	FVector CurrentRootRightXY;
 
 	virtual void RecordRoot();

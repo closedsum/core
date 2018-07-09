@@ -396,6 +396,8 @@ void ACsPawn::RecordRoot()
 {
 	CurrentRootRotation = GetActorRotation();
 	CurrentRootLocation = GetActorLocation();
+	CurrentBodyLocation = CurrentRootLocation;
+	CurrentFeetLocation = CurrentBodyLocation - FVector(0.0f, 0.0f, GetCapsuleComponent()->GetScaledCapsuleHalfHeight());
 	CurrentRootDir		= CurrentRootRotation.Vector();
 	CurrentRootDirXY	= FRotator(0.0f, CurrentRootRotation.Yaw, 0.0f).Vector();
 

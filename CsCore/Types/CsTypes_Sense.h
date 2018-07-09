@@ -128,6 +128,9 @@ struct FCsSenseInfo
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
 	float MeToActorDot;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	FRotator MeToActorBodyRotation;
+
 		// Sight
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
@@ -198,7 +201,8 @@ struct FCsSenseInfo
 		MeToActorDirXY = FVector::ZeroVector;
 		MeToActorDistanceXY = 0.0f;
 		MeToActorDistanceXYSq = 0.0f;
-		MeToActorDot = 0.0f;;
+		MeToActorDot = 0.0f;
+		MeToActorBodyRotation = FRotator::ZeroRotator;
 		// Sight
 		bSeesActorByRadius= false;
 		bSeesActorByDot= false;

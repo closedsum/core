@@ -54,7 +54,6 @@ EBTNodeResult::Type UCsBTTask_AimAt::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 
 		if (ActorValue)
 		{
-			AIController->SetFocalPoint(ActorValue->GetActorLocation(), EAIFocusPriority::Gameplay);
 			Pawn->AimAtActor(ActorValue);
 
 			Pawn->OnBTTask_AimAtActor_Start_Event.Broadcast(PlayerState->UniqueMappingId, ActorValue);
@@ -69,7 +68,6 @@ EBTNodeResult::Type UCsBTTask_AimAt::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 	{
 		const FVector KeyValue = MyBlackboard->GetValue<UBlackboardKeyType_Vector>(BlackboardKey.GetSelectedKeyID());
 		
-		AIController->SetFocalPoint(KeyValue, EAIFocusPriority::Gameplay);
 		Pawn->AimAtLocation(KeyValue);
 
 		Pawn->OnBTTask_AimAtLocation_Start_Event.Broadcast(PlayerState->UniqueMappingId, KeyValue);

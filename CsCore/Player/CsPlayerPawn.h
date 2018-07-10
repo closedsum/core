@@ -4,35 +4,6 @@
 #include "Types/CsTypes_Trace.h"
 #include "CsPlayerPawn.generated.h"
 
-// Structs
-#pragma region
-
-USTRUCT(BlueprintType)
-struct FCsPlayerPawnCalcCameraTraceInfo
-{
-	GENERATED_USTRUCT_BODY()
-
-	FCollisionQueryParams QueryParams;
-
-	TArray<TWeakObjectPtr<AActor>> IgnoreActors;
-
-	FCollisionObjectQueryParams ObjectParams;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Trace")
-	float Range;
-	UPROPERTY(BlueprintReadWrite, Category = "Trace")
-	float RangeSq;
-	UPROPERTY(BlueprintReadWrite, Category = "Trace")
-	FVector HitLocation;
-	UPROPERTY(BlueprintReadWrite, Category = "Trace")
-	FHitResult HitResult;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Trace")
-	TArray<FHitResult> OutHits;
-};
-
-#pragma endregion Structs
-
 // Enums
 #pragma region
 
@@ -60,7 +31,7 @@ public:
 	virtual void OnCalcCamera_Trace(const float &DeltaTime, const struct FMinimalViewInfo& ViewResult);
 
 	UPROPERTY(BlueprintReadWrite, Category = "Camera")
-	FCsPlayerPawnCalcCameraTraceInfo CalcCameraTraceInfo;
+	FCsPawnViewTraceInfo CalcCameraTraceInfo;
 
 	virtual FRotator GetViewRotation() const override;
 	virtual FVector GetPawnViewLocation() const override;

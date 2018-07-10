@@ -73,6 +73,33 @@ namespace ECsPawnRoutine
 // Structs
 #pragma region
 
+USTRUCT(BlueprintType)
+struct FCsPawnViewTraceInfo
+{
+	GENERATED_USTRUCT_BODY()
+
+	FCollisionQueryParams QueryParams;
+
+	TArray<TWeakObjectPtr<AActor>> IgnoreActors;
+
+	FCollisionObjectQueryParams ObjectParams;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Trace")
+	float Range;
+	UPROPERTY(BlueprintReadWrite, Category = "Trace")
+	float RangeSq;
+	UPROPERTY(BlueprintReadWrite, Category = "Trace")
+	FVector HitLocation;
+	UPROPERTY(BlueprintReadWrite, Category = "Trace")
+	FHitResult HitResult;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Trace")
+	TArray<FHitResult> OutHits;
+
+	FCsPawnViewTraceInfo(){}
+	~FCsPawnViewTraceInfo(){}
+};
+
 #pragma endregion Structs
 
 UCLASS()

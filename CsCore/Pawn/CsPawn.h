@@ -78,22 +78,28 @@ struct FCsPawnViewTraceInfo
 {
 	GENERATED_USTRUCT_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
+	bool bAsync;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
+	uint8 RequestId;
+
 	FCollisionQueryParams QueryParams;
 
 	TArray<TWeakObjectPtr<AActor>> IgnoreActors;
 
 	FCollisionObjectQueryParams ObjectParams;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Trace")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
 	float Range;
-	UPROPERTY(BlueprintReadWrite, Category = "Trace")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
 	float RangeSq;
-	UPROPERTY(BlueprintReadWrite, Category = "Trace")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
 	FVector HitLocation;
-	UPROPERTY(BlueprintReadWrite, Category = "Trace")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
 	FHitResult HitResult;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Trace")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
 	TArray<FHitResult> OutHits;
 
 	FCsPawnViewTraceInfo(){}

@@ -27,8 +27,6 @@
 
 #include "Animation/CsAnimInstance.h"
 
-
-
 // Cache
 #pragma region
 
@@ -1049,6 +1047,8 @@ void ACsWeapon::Disable()
 void ACsWeapon::Reset()
 {
 	Disable();
+
+	FireCount = 0;
 }
 
 void ACsWeapon::Show(){}
@@ -1766,6 +1766,7 @@ CS_COROUTINE(ACsWeapon, FireWeapon_Internal)
 					mw->FireHitscan(FireMode, Payload);
 				else
 					mw->FireProjectile(FireMode, Payload);
+				++(mw->FireCount);
 				Payload->Reset();
 			}
 			mw->PlayMuzzleFlash(FireMode);

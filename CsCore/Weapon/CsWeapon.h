@@ -801,6 +801,9 @@ public:
 
 	FCsWeapon_TMapRef_bool LoopFireSound;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Firing")
+	int32 FireCount;
+
 	UFUNCTION(BlueprintCallable, Category = "Firing")
 	virtual FVector GetFireWeaponStartLocation(const FECsWeaponFireMode &FireMode);
 	UFUNCTION(BlueprintCallable, Category = "Firing")

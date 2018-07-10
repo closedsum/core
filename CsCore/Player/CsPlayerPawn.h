@@ -1,7 +1,6 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Pawn/CsPawn.h"
-#include "Types/CsTypes_Trace.h"
 #include "CsPlayerPawn.generated.h"
 
 // Enums
@@ -38,6 +37,7 @@ public:
 #pragma region
 public:
 
+	virtual void PerformViewTrace_Response(const uint8 &RequestId, FCsTraceResponse* Response) override;
 	virtual void RecordView() override;
 
 #pragma endregion View

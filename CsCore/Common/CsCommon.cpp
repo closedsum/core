@@ -735,6 +735,12 @@ void UCsCommon::SetHitResult(FHitResult* InHitResult, FHitResult* OutHitResult)
 	OutHitResult->FaceIndex = InHitResult->FaceIndex;
 }
 
+void UCsCommon::CopyCollisionObjectQueryParams(const FCollisionObjectQueryParams& From, FCollisionObjectQueryParams& To)
+{
+	To.ObjectTypesToQuery = From.ObjectTypesToQuery;
+	To.IgnoreMask = From.IgnoreMask;
+}
+
 bool UCsCommon::IsMatchInProgress(UWorld *InWorld)
 {
 	AGameState* GameState = Cast<AGameState>(InWorld->GetGameState());

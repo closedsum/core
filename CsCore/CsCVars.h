@@ -89,6 +89,13 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerWidgetActorTransac
 
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerAITransactions;
 
+	// View
+#pragma region
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawAIViewTraceHitLocation;
+
+#pragma endregion View
+
 	// Interactive AI Pawn
 #pragma region
 
@@ -198,7 +205,7 @@ extern CSCORE_API TAutoConsoleVariable<float> CsCVarDrawPlayerPawnRightThickness
 
 #pragma endregion Pawn
 
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawPlayerCalcCameraTraceHitLocation;
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawPlayerViewTraceHitLocation;
 
 	// Save
 #pragma region

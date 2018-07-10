@@ -1,6 +1,7 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "AI/Pawn/CsAIPawn.h"
 #include "CsCore.h"
+#include "CsCVars.h"
 #include "Coroutine/CsCoroutineScheduler.h"
 
 #include "AI/CsAIController.h"
@@ -71,6 +72,21 @@ void ACsAIPawn::DeAllocate()
 }
 
 void ACsAIPawn::OnTick_HandleCVars(const float &DeltaSeconds){}
+
+// View
+#pragma region
+
+void ACsAIPawn::PerformViewTrace_Response(const uint8 &RequestId, FCsTraceResponse* Response)
+{
+	Super::PerformViewTrace_Response(RequestId, Response);
+	
+	if (CsCVarDrawAIViewTraceHitLocation->GetInt() == CS_CVAR_DRAW)
+	{
+		DrawDebugSphere(GetWorld(), ViewTraceInfo.HitLocation, 32.0f, 16, FColor::Green, false, GetWorld()->GetDeltaSeconds() + 0.0005f, 0, 1.0f);
+	}
+}
+
+#pragma endregion View
 
 // Behavior Tree
 #pragma region

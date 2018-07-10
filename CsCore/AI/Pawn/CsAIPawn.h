@@ -199,6 +199,14 @@ public:
 
 #pragma endregion State
 
+// View
+#pragma region
+public:
+
+	virtual void PerformViewTrace_Response(const uint8 &RequestId, FCsTraceResponse* Response) override;
+
+#pragma endregion View
+
 // Behavior Tree
 #pragma region
 public:

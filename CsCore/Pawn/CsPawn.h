@@ -5,6 +5,7 @@
 #include "Types/CsTypes_Coroutine.h"
 #include "Types/CsTypes_Damage.h"
 #include "Types/CsTypes_Sense.h"
+#include "Types/CsTypes_Trace.h"
 #include "CsPawn.generated.h"
 
 // Tick
@@ -80,13 +81,15 @@ struct FCsPawnViewTraceInfo
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
 	bool bAsync;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
+	bool bForce;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
 	uint8 RequestId;
 
 	FCollisionQueryParams QueryParams;
 
-	TArray<TWeakObjectPtr<AActor>> IgnoreActors;
+	TArray<TWeakObjectPtr<AActor>> IgnoredActors;
 
 	FCollisionObjectQueryParams ObjectParams;
 
@@ -102,7 +105,10 @@ struct FCsPawnViewTraceInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
 	TArray<FHitResult> OutHits;
 
-	FCsPawnViewTraceInfo(){}
+	FCsPawnViewTraceInfo()
+	{
+		RequestId = CS_INVALID_TRACE_REQUEST_ID;
+	}
 	~FCsPawnViewTraceInfo(){}
 };
 
@@ -310,6 +316,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "View")
 	FCsPawnViewTraceInfo ViewTraceInfo;
 
+	virtual void PerformViewTrace();
+	virtual void PerformViewTrace_Response(const uint8 &RequestId, FCsTraceResponse* Response);
 	virtual void RecordView();
 
 #pragma endregion View

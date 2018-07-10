@@ -13,6 +13,7 @@
 // Managers
 #include "Managers/Inventory/CsManager_Inventory.h"
 #include "Managers/Sense/CsManager_Sense.h"
+#include "Managers/Trace/CsManager_Trace.h"
 // UI
 #include "UI/State/CsHealthBarComponent.h"
 // Game
@@ -78,6 +79,19 @@ ACsPawn::ACsPawn(const FObjectInitializer& ObjectInitializer)
 	bFirstSpawn = true;
 
 	OnHandleRespawnTimerFinished_Event.AddUObject(this, &ACsPawn::OnHandleRespawnTimerFinished);
+	// View
+	bPerformViewTrace = false;
+
+	ViewTraceInfo.bAsync = true;
+	ViewTraceInfo.bForce = false;
+	ViewTraceInfo.QueryParams.TraceTag = FName("PerformViewTrace");
+	ViewTraceInfo.IgnoredActors.Add(this);
+	ViewTraceInfo.ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Pawn);
+	ViewTraceInfo.ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_PhysicsBody);
+	ViewTraceInfo.ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
+	ViewTraceInfo.ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
+	ViewTraceInfo.Range	  = 30000.0f;
+	ViewTraceInfo.RangeSq = ViewTraceInfo.Range * ViewTraceInfo.Range;
 	// Data
 	bCacheData = true;
 	// Weapon
@@ -383,6 +397,105 @@ bool ACsPawn::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Ty
 TEnumAsByte<ECsViewType::Type> ACsPawn::GetCurrentViewType()
 {
 	return CurrentViewType;
+}
+
+void ACsPawn::PerformViewTrace()
+{
+	TArray<FHitResult>& OutHits = ViewTraceInfo.OutHits;
+	OutHits.Reset();
+
+	const FVector Start = CurrentViewLocation;
+	const FVector Dir	= CurrentViewDir;
+	const FVector End	= Start + ViewTraceInfo.Range * Dir;
+
+	ViewTraceInfo.HitResult.Reset(0.0f, false);
+
+	ACsManager_Trace* Manager_Trace = ACsManager_Trace::Get(GetWorld());
+	FCsTraceRequest* Request		= Manager_Trace->AllocateRequest();
+
+	Request->bForce		= ViewTraceInfo.bForce;
+	Request->Caller		= this;
+	Request->CallerId	= UniqueObjectId;
+	Request->Start		= Start;
+	Request->End		= End;
+	Request->bAsync		= ViewTraceInfo.bAsync;
+	Request->Type		= ECsTraceType::Line;
+	Request->Method		= ECsTraceMethod::Multi;
+	Request->Query		= ECsTraceQuery::ObjectType;
+	UCsCommon::CopyCollisionObjectQueryParams(ViewTraceInfo.ObjectParams, Request->ObjectParams);
+	Request->Params.AddIgnoredActors(ViewTraceInfo.IgnoredActors);
+
+	Request->ReplacePending = !ViewTraceInfo.bForce;
+	Request->PendingId		= ViewTraceInfo.RequestId;
+
+	Request->OnResponse_Event.AddUObject(this, &ACsPawn::PerformViewTrace_Response);
+
+	ViewTraceInfo.RequestId = Request->PendingId;
+
+	FCsTraceResponse* Response = Manager_Trace->Trace(Request);
+
+	if (ViewTraceInfo.bAsync)
+		return;
+
+	PerformViewTrace_Response(ViewTraceInfo.RequestId, Response);
+}
+
+void ACsPawn::PerformViewTrace_Response(const uint8 &RequestId, FCsTraceResponse* Response)
+{
+	const bool HitFound = Response->bResult;
+
+	if (Response->OutHits.Num() > CS_EMPTY)
+		UCsCommon::CopyHitResult(Response->OutHits[CS_FIRST], ViewTraceInfo.HitResult);
+
+	Response->Reset();
+
+	if (HitFound)
+	{
+		float ClosestDistanceSq = ViewTraceInfo.RangeSq;
+		int32 ClosestIndex		= INDEX_NONE;
+		bool IgnoreActor		= false;
+
+		TArray<FHitResult>& OutHits = Response->OutHits;
+		const int32 HitCount		= OutHits.Num();
+
+		for (int32 Index = 0; Index < HitCount; ++Index)
+		{
+			IgnoreActor = false;
+
+			if (!IgnoreActor)
+			{
+				float DistanceSq = FVector::DistSquared(OutHits[Index].TraceStart, OutHits[Index].Location);
+
+				if (DistanceSq > 0.0f &&
+					DistanceSq < ClosestDistanceSq)
+				{
+					ClosestIndex = Index;
+					ClosestDistanceSq = DistanceSq;
+				}
+			}
+		}
+
+		if (ClosestIndex != INDEX_NONE)
+		{
+			ViewTraceInfo.HitLocation = OutHits[ClosestIndex].Location;
+
+			UCsCommon::CopyHitResult(OutHits[ClosestIndex], ViewTraceInfo.HitResult);
+		}
+		else
+		{
+			const FVector Start		  = CurrentViewLocation;
+			const FVector Dir		  = CurrentViewDir;
+			const FVector End		  = Start + ViewTraceInfo.Range * Dir;
+			ViewTraceInfo.HitLocation = End;
+		}
+	}
+	else
+	{
+		const FVector Start		 = CurrentViewLocation;
+		const FVector Dir		  = CurrentViewDir;
+		const FVector End		  = Start + ViewTraceInfo.Range * Dir;
+		ViewTraceInfo.HitLocation = End;
+	}
 }
 
 void ACsPawn::RecordView() {}

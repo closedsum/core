@@ -51,17 +51,6 @@ ACsPlayerPawn::ACsPlayerPawn(const FObjectInitializer& ObjectInitializer)
 	*/
 
 	EyeHeight = 192.0f;
-
-	bPerformViewTrace = false;
-
-	ViewTraceInfo.QueryParams.TraceTag = FName("PerformViewTrace");
-	ViewTraceInfo.IgnoreActors.Add(this);
-	ViewTraceInfo.ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Pawn);
-	ViewTraceInfo.ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_PhysicsBody);
-	ViewTraceInfo.ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
-	ViewTraceInfo.ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
-	ViewTraceInfo.Range = 30000.0f;
-	ViewTraceInfo.RangeSq = ViewTraceInfo.Range * ViewTraceInfo.Range;
 }
 
 void ACsPlayerPawn::OnTickActor_HandleCVars(const float &DeltaSeconds)
@@ -139,62 +128,7 @@ void ACsPlayerPawn::OnCalcCamera_Trace(const float &DeltaTime, const struct FMin
 	if (!bPerformViewTrace)
 		return;
 
-	TArray<FHitResult>& OutHits = ViewTraceInfo.OutHits;
-	OutHits.Reset();
-
-	const FVector Start = ViewResult.Location;
-	const FVector Dir	= ViewResult.Rotation.Vector();
-	const FVector End	= Start + ViewTraceInfo.Range * Dir;
-
-	ViewTraceInfo.HitResult.Reset(0.0f, false);
-
-	const bool HasHitSomething = GetWorld()->LineTraceMultiByObjectType(OutHits, Start, End, ViewTraceInfo.ObjectParams, ViewTraceInfo.QueryParams);
-
-	if (HasHitSomething)
-	{
-		float ClosestDistanceSq = ViewTraceInfo.RangeSq;
-		int32 ClosestIndex		= INDEX_NONE;
-		bool IgnoreActor		= false;
-
-		const int32 HitCount = OutHits.Num();
-
-		for (int32 Index = 0; Index < HitCount; ++Index)
-		{
-			IgnoreActor = false;
-
-			if (!IgnoreActor)
-			{
-				float DistanceSq = FVector::DistSquared(Start, OutHits[Index].Location);
-
-				if (DistanceSq > 0.0f && 
-					DistanceSq < ClosestDistanceSq)
-				{
-					ClosestIndex	  = Index;
-					ClosestDistanceSq = DistanceSq;
-				}
-			}
-		}
-
-		if (ClosestIndex != INDEX_NONE)
-		{
-			ViewTraceInfo.HitLocation = OutHits[ClosestIndex].Location;
-			
-			UCsCommon::CopyHitResult(OutHits[ClosestIndex], ViewTraceInfo.HitResult);
-		}
-		else
-		{
-			ViewTraceInfo.HitLocation = End;
-		}
-	}
-	else
-	{
-		ViewTraceInfo.HitLocation = End;
-	}
-
-	if (CsCVarDrawPlayerCalcCameraTraceHitLocation->GetInt() == CS_CVAR_DRAW)
-	{
-		DrawDebugSphere(GetWorld(), ViewTraceInfo.HitLocation, 32.0f, 16, FColor::Green, false, DeltaTime + 0.005f, 0, 1.0f);
-	}
+	PerformViewTrace();
 }
 
 FRotator ACsPlayerPawn::GetViewRotation() const
@@ -218,6 +152,16 @@ FVector ACsPlayerPawn::GetFeetLocation() const
 
 // View
 #pragma region
+
+void ACsPlayerPawn::PerformViewTrace_Response(const uint8 &RequestId, FCsTraceResponse* Response)
+{
+	Super::PerformViewTrace_Response(RequestId, Response);
+
+	if (CsCVarDrawPlayerViewTraceHitLocation->GetInt() == CS_CVAR_DRAW)
+	{
+		DrawDebugSphere(GetWorld(), ViewTraceInfo.HitLocation, 32.0f, 16, FColor::Green, false, GetWorld()->GetDeltaSeconds() + 0.0005f, 0, 1.0f);
+	}
+}
 
 void ACsPlayerPawn::RecordView()
 {

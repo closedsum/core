@@ -214,6 +214,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 
 	static void CopyHitResult(const FHitResult& From, FHitResult& To);
 	static void SetHitResult(FHitResult* InHitResult, FHitResult* OutHitResult);
+	static void CopyCollisionObjectQueryParams(const FCollisionObjectQueryParams& From, FCollisionObjectQueryParams& To);
 
 	static FORCEINLINE FString GetFloatAsStringWithPrecision(float TheFloat, const uint8 Precision)
 	{

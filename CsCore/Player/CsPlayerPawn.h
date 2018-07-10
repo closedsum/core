@@ -25,13 +25,7 @@ public:
 
 	virtual void CalcCamera(float DeltaTime, struct FMinimalViewInfo& OutResult) override;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Camera")
-	bool bOnCalcCamera_Trace;
-
 	virtual void OnCalcCamera_Trace(const float &DeltaTime, const struct FMinimalViewInfo& ViewResult);
-
-	UPROPERTY(BlueprintReadWrite, Category = "Camera")
-	FCsPawnViewTraceInfo CalcCameraTraceInfo;
 
 	virtual FRotator GetViewRotation() const override;
 	virtual FVector GetPawnViewLocation() const override;

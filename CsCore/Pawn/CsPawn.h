@@ -304,6 +304,12 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "View")
 	FVector CurrentViewRightXY;
 
+	UPROPERTY(BlueprintReadWrite, Category = "View")
+	bool bOnCalcCamera_Trace;
+
+	UPROPERTY(BlueprintReadWrite, Category = "View")
+	FCsPawnViewTraceInfo CalcCameraTraceInfo;
+
 	virtual void RecordView();
 
 #pragma endregion View

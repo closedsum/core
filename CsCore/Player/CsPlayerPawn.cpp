@@ -52,16 +52,16 @@ ACsPlayerPawn::ACsPlayerPawn(const FObjectInitializer& ObjectInitializer)
 
 	EyeHeight = 192.0f;
 
-	bOnCalcCamera_Trace = false;
+	bPerformViewTrace = false;
 
-	CalcCameraTraceInfo.QueryParams.TraceTag = FName("OnCalcCamera_Trace");
-	CalcCameraTraceInfo.IgnoreActors.Add(this);
-	CalcCameraTraceInfo.ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Pawn);
-	CalcCameraTraceInfo.ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_PhysicsBody);
-	CalcCameraTraceInfo.ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
-	CalcCameraTraceInfo.ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
-	CalcCameraTraceInfo.Range = 30000.0f;
-	CalcCameraTraceInfo.RangeSq = CalcCameraTraceInfo.Range * CalcCameraTraceInfo.Range;
+	ViewTraceInfo.QueryParams.TraceTag = FName("PerformViewTrace");
+	ViewTraceInfo.IgnoreActors.Add(this);
+	ViewTraceInfo.ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Pawn);
+	ViewTraceInfo.ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_PhysicsBody);
+	ViewTraceInfo.ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
+	ViewTraceInfo.ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
+	ViewTraceInfo.Range = 30000.0f;
+	ViewTraceInfo.RangeSq = ViewTraceInfo.Range * ViewTraceInfo.Range;
 }
 
 void ACsPlayerPawn::OnTickActor_HandleCVars(const float &DeltaSeconds)
@@ -130,29 +130,29 @@ void ACsPlayerPawn::CalcCamera(float DeltaTime, struct FMinimalViewInfo& OutResu
 	if (!ViewingController)
 		return;
 	ViewingController->CalcCamera(DeltaTime, OutResult);
-	OnCalcCamera_Trace(DeltaTime, OutResult);
 	RecordView();
+	OnCalcCamera_Trace(DeltaTime, OutResult);
 }
 
 void ACsPlayerPawn::OnCalcCamera_Trace(const float &DeltaTime, const struct FMinimalViewInfo& ViewResult)
 {
-	if (!bOnCalcCamera_Trace)
+	if (!bPerformViewTrace)
 		return;
 
-	TArray<FHitResult>& OutHits = CalcCameraTraceInfo.OutHits;
+	TArray<FHitResult>& OutHits = ViewTraceInfo.OutHits;
 	OutHits.Reset();
 
 	const FVector Start = ViewResult.Location;
 	const FVector Dir	= ViewResult.Rotation.Vector();
-	const FVector End	= Start + CalcCameraTraceInfo.Range * Dir;
+	const FVector End	= Start + ViewTraceInfo.Range * Dir;
 
-	CalcCameraTraceInfo.HitResult.Reset(0.0f, false);
+	ViewTraceInfo.HitResult.Reset(0.0f, false);
 
-	const bool HasHitSomething = GetWorld()->LineTraceMultiByObjectType(OutHits, Start, End, CalcCameraTraceInfo.ObjectParams, CalcCameraTraceInfo.QueryParams);
+	const bool HasHitSomething = GetWorld()->LineTraceMultiByObjectType(OutHits, Start, End, ViewTraceInfo.ObjectParams, ViewTraceInfo.QueryParams);
 
 	if (HasHitSomething)
 	{
-		float ClosestDistanceSq = CalcCameraTraceInfo.RangeSq;
+		float ClosestDistanceSq = ViewTraceInfo.RangeSq;
 		int32 ClosestIndex		= INDEX_NONE;
 		bool IgnoreActor		= false;
 
@@ -177,23 +177,23 @@ void ACsPlayerPawn::OnCalcCamera_Trace(const float &DeltaTime, const struct FMin
 
 		if (ClosestIndex != INDEX_NONE)
 		{
-			CalcCameraTraceInfo.HitLocation = OutHits[ClosestIndex].Location;
+			ViewTraceInfo.HitLocation = OutHits[ClosestIndex].Location;
 			
-			UCsCommon::CopyHitResult(OutHits[ClosestIndex], CalcCameraTraceInfo.HitResult);
+			UCsCommon::CopyHitResult(OutHits[ClosestIndex], ViewTraceInfo.HitResult);
 		}
 		else
 		{
-			CalcCameraTraceInfo.HitLocation = End;
+			ViewTraceInfo.HitLocation = End;
 		}
 	}
 	else
 	{
-		CalcCameraTraceInfo.HitLocation = End;
+		ViewTraceInfo.HitLocation = End;
 	}
 
 	if (CsCVarDrawPlayerCalcCameraTraceHitLocation->GetInt() == CS_CVAR_DRAW)
 	{
-		DrawDebugSphere(GetWorld(), CalcCameraTraceInfo.HitLocation, 32.0f, 16, FColor::Green, false, DeltaTime + 0.005f, 0, 1.0f);
+		DrawDebugSphere(GetWorld(), ViewTraceInfo.HitLocation, 32.0f, 16, FColor::Green, false, DeltaTime + 0.005f, 0, 1.0f);
 	}
 }
 

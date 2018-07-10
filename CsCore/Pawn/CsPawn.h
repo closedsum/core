@@ -305,10 +305,10 @@ public:
 	FVector CurrentViewRightXY;
 
 	UPROPERTY(BlueprintReadWrite, Category = "View")
-	bool bOnCalcCamera_Trace;
+	bool bPerformViewTrace;
 
 	UPROPERTY(BlueprintReadWrite, Category = "View")
-	FCsPawnViewTraceInfo CalcCameraTraceInfo;
+	FCsPawnViewTraceInfo ViewTraceInfo;
 
 	virtual void RecordView();
 

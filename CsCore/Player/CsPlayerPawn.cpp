@@ -178,6 +178,7 @@ void ACsPlayerPawn::RecordView()
 
 	FRotationMatrix Matrix = FRotationMatrix(Rotation);
 	CurrentViewRight	   = Matrix.GetScaledAxis(EAxis::Y);
+	CurrentViewUp		   = Matrix.GetScaledAxis(EAxis::Z);
 		
 	Rotation = FRotator(0.0f, CurrentViewRotation.Yaw, 0.0f);
 

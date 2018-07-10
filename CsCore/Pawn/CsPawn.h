@@ -309,6 +309,8 @@ public:
 	FVector CurrentViewRight;
 	UPROPERTY(BlueprintReadOnly, Category = "View")
 	FVector CurrentViewRightXY;
+	UPROPERTY(BlueprintReadOnly, Category = "View")
+	FVector CurrentViewUp;
 
 	UPROPERTY(BlueprintReadWrite, Category = "View")
 	bool bPerformViewTrace;

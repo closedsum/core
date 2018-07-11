@@ -13,7 +13,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsUserWidget_OnOpenChild, con
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUserWidget_OnCloseChild, const uint8&, WidgetType);
 DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsUserWidget_OnCloseChild, const FECsWidgetType&);
 // ProcessGameEvent
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUserWidget_Override_ProcessGameEvent, const uint8&, GameEvent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUserWidget_Override_ProcessGameEvent, const FECsGameEvent&, GameEvent);
 
 // Enums
 #pragma region
@@ -243,18 +243,14 @@ public:
 #pragma region
 public:
 
-	virtual bool ProcessGameEvent(const TCsGameEvent &GameEvent);
-
 	UFUNCTION(BlueprintCallable, Category = "UI")
-	virtual bool ProcessGameEvent_Script(const uint8 &GameEvent);
+	virtual bool ProcessGameEvent(const FECsGameEvent &GameEvent);
 
 	UPROPERTY(BlueprintAssignable, Category = "UI")
 	FBindableDynEvent_CsUserWidget_Override_ProcessGameEvent Override_ProcessGameEvent_ScriptEvent;
 
-	virtual bool ChildWidgets_ProcessGameEvent(const TCsGameEvent &GamEvent);
-
 	UFUNCTION(BlueprintCallable, Category = "UI")
-	virtual bool ChildWidgets_ProcessGameEvent_Script(const uint8 &GameEvent);
+	virtual bool ChildWidgets_ProcessGameEvent(const FECsGameEvent &GamEvent);
 
 #pragma endregion Game Event
 

@@ -369,9 +369,15 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float CurrentSpeed;
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	float CurrentSpeedSq;
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float CurrentSpeedXY;
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	float CurrentSpeedXYSq;
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float CurrentSpeedZ;
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	float CurrentSpeedZSq;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	FVector CurrentVelocityRight;
@@ -394,9 +400,15 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float CurrentCapsuleSpeed;
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	float CurrentCapsuleSpeedSq;
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float CurrentCapsuleSpeedXY;
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	float CurrentCapsuleSpeedXYSq;
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float CurrentCapsuleSpeedZ;
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	float CurrentCapsuleSpeedZSq;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	FVector CurrentCapsuleVelocityRight;

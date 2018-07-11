@@ -536,16 +536,19 @@ void ACsPawn::RecordVelocityAndSpeed()
 
 	// Velocity from CharacterMovement
 	CurrentVelocity			= GetVelocity();
-	CurrentVelocityDir		= CurrentVelocity.GetSafeNormal();
+	CurrentSpeed			= CurrentVelocity.Size();
+	CurrentSpeedSq			= CurrentSpeed * CurrentSpeed;
+	CurrentVelocityDir		= CurrentSpeed < SMALL_NUMBER ? FVector::ZeroVector : CurrentVelocity / CurrentSpeed;
 	CurrentVelocityXY.X		= CurrentVelocity.X;
 	CurrentVelocityXY.Y		= CurrentVelocity.Y;
-	CurrentVelocityDirXY	= CurrentVelocityXY.GetSafeNormal();
-	CurrentVelocityZ.Z		= CurrentVelocity.Z;
-	CurrentVelocityDirZ		= CurrentVelocityZ.GetSafeNormal();
-	CurrentSpeed			= CurrentVelocity.Size();
 	CurrentSpeedXY			= CurrentVelocityXY.Size();
+	CurrentSpeedXYSq		= CurrentSpeedXY * CurrentSpeedXY;
+	CurrentVelocityDirXY	= CurrentSpeedXY < SMALL_NUMBER ? FVector::ZeroVector : CurrentVelocityXY / CurrentSpeedXY;
+	CurrentVelocityZ.Z		= CurrentVelocity.Z;
 	CurrentSpeedZ			= CurrentVelocityZ.Size();
-
+	CurrentSpeedZSq			= CurrentSpeedZ * CurrentSpeedZ;
+	CurrentVelocityDirZ		= CurrentSpeedZ < SMALL_NUMBER ? FVector::ZeroVector : CurrentVelocityZ / CurrentSpeedZ;
+	
 	FRotator Rotation = CurrentVelocityDir.Rotation();
 
 	FRotationMatrix Matrix = FRotationMatrix(Rotation);
@@ -558,16 +561,19 @@ void ACsPawn::RecordVelocityAndSpeed()
 
 	// Velocity from Capsule
 	CurrentCapsuleVelocity		= GetCapsuleComponent()->GetComponentVelocity();
-	CurrentCapsuleVelocityDir	= CurrentCapsuleVelocity.GetSafeNormal();
+	CurrentCapsuleSpeed			= CurrentCapsuleVelocity.Size();
+	CurrentCapsuleSpeedSq		= CurrentCapsuleSpeed * CurrentCapsuleSpeed;
+	CurrentCapsuleVelocityDir	= CurrentCapsuleSpeed < SMALL_NUMBER ? FVector::ZeroVector : CurrentCapsuleVelocity / CurrentCapsuleSpeed;
 	CurrentCapsuleVelocityXY.X	= CurrentCapsuleVelocity.X;
 	CurrentCapsuleVelocityXY.Y	= CurrentCapsuleVelocity.Y;
-	CurrentCapsuleVelocityDirXY = CurrentCapsuleVelocityXY.GetSafeNormal();
-	CurrentCapsuleVelocityZ.Z	= CurrentCapsuleVelocity.Z;
-	CurrentCapsuleVelocityDirZ	= CurrentCapsuleVelocityZ.GetSafeNormal();
-	CurrentCapsuleSpeed			= CurrentCapsuleVelocity.Size();
 	CurrentCapsuleSpeedXY		= CurrentCapsuleVelocityXY.Size();
+	CurrentCapsuleSpeedXYSq		= CurrentCapsuleSpeedXY * CurrentCapsuleSpeedXY;
+	CurrentCapsuleVelocityDirXY = CurrentCapsuleSpeedXY < SMALL_NUMBER ? FVector::ZeroVector : CurrentCapsuleVelocityXY / CurrentCapsuleSpeedXY;
+	CurrentCapsuleVelocityZ.Z	= CurrentCapsuleVelocity.Z;
 	CurrentCapsuleSpeedZ		= CurrentCapsuleVelocityZ.Size();
-
+	CurrentCapsuleSpeedZSq		= CurrentCapsuleSpeedZ * CurrentCapsuleSpeedZ;
+	CurrentCapsuleVelocityDirZ	= CurrentCapsuleSpeedZ < SMALL_NUMBER ? FVector::ZeroVector : CurrentCapsuleVelocityZ / CurrentCapsuleVelocityZ;
+	
 	Rotation = CurrentCapsuleVelocityDir.Rotation();
 
 	Matrix = FRotationMatrix(Rotation);

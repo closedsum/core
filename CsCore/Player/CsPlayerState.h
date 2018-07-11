@@ -8,36 +8,6 @@
 // Enums
 #pragma region
 
-namespace ECsPlayerStateRoutine
-{
-	enum Type
-	{
-		ECsPlayerStateRoutine_MAX = ECsPlayerStateBaseRoutine::ECsPlayerStateBaseRoutine_MAX,
-	};
-}
-
-namespace ECsPlayerStateRoutine
-{
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		return Type::ECsPlayerStateRoutine_MAX;
-	}
-}
-
-#define ECS_PLAYER_STATE_ROUTINE_MAX (uint8)ECsPlayerStateRoutine::ECsPlayerStateRoutine_MAX
-typedef ECsPlayerStateRoutine::Type TCsPlayerStateRoutine;
-
 #pragma endregion Enums
 
 UCLASS()

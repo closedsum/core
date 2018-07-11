@@ -23,6 +23,77 @@
 #include "Editor/UnrealEd/Public/Editor.h"
 #endif // #if WITH_EDITOR
 
+// Enums
+#pragma region
+
+EMCsPlayerStateBaseRoutine* EMCsPlayerStateBaseRoutine::Instance;
+
+EMCsPlayerStateBaseRoutine& EMCsPlayerStateBaseRoutine::Get()
+{
+	if (!Instance)
+		Instance = new EMCsPlayerStateBaseRoutine();
+	return *Instance;
+}
+
+namespace ECsPlayerStateBaseRoutine
+{
+	CSCORE_API const FECsPlayerStateBaseRoutine OnBoard_Internal = EMCsPlayerStateBaseRoutine::Get().Create(TEXT("OnBoard_Internal"));
+	CSCORE_API const FECsPlayerStateBaseRoutine RequestUniqueMappingId_AI_Internal = EMCsPlayerStateBaseRoutine::Get().Create(TEXT("RequestUniqueMappingId_AI_Internal"));
+}
+
+EMCsPlayerStateBaseOnBoardState* EMCsPlayerStateBaseOnBoardState::Instance;
+
+EMCsPlayerStateBaseOnBoardState& EMCsPlayerStateBaseOnBoardState::Get()
+{
+	if (!Instance)
+		Instance = new EMCsPlayerStateBaseOnBoardState();
+	return *Instance;
+}
+
+namespace ECsPlayerStateBaseOnBoardState
+{
+	namespace Ref
+	{
+		CSCORE_API const Type WaitingForGameState = EMCsPlayerStateBaseOnBoardState::Get().Add(Type::WaitingForGameState, TEXT("WaitingForGameState"), TEXT("Waiting for GameState"));
+		CSCORE_API const Type WaitingForFinishLoadingCommonData = EMCsPlayerStateBaseOnBoardState::Get().Add(Type::WaitingForFinishLoadingCommonData, TEXT("WaitingForFinishLoadingCommonData"), TEXT("Waiting for Finish Loading Common Data"));
+		CSCORE_API const Type WaitingForLocalPlayerState = EMCsPlayerStateBaseOnBoardState::Get().Add(Type::WaitingForLocalPlayerState, TEXT("WaitingForLocalPlayerState"), TEXT("Waiting for Local PlayerState"));
+		// Client
+		CSCORE_API const Type RequestLocalUniqueMappingId = EMCsPlayerStateBaseOnBoardState::Get().Add(Type::RequestLocalUniqueMappingId, TEXT("RequestLocalUniqueMappingId"), TEXT("Request Local UniqueMappingId"));
+		CSCORE_API const Type WaitingForLocalUniqueMappingId = EMCsPlayerStateBaseOnBoardState::Get().Add(Type::WaitingForLocalUniqueMappingId, TEXT("WaitingForLocalUniqueMappingId"), TEXT("Waiting for Local UniqueMappingId"));
+		CSCORE_API const Type RecievedLocalUniqueMappingId = EMCsPlayerStateBaseOnBoardState::Get().Add(Type::RecievedLocalUniqueMappingId, TEXT("RecievedLocalUniqueMappingId"), TEXT("Recieved Local UniqueMappingId"));
+		// Requesting Player State on Client
+		CSCORE_API const Type RequestUniqueMappingId = EMCsPlayerStateBaseOnBoardState::Get().Add(Type::RequestUniqueMappingId, TEXT("RequestUniqueMappingId"), TEXT("Request UniqueMappingId"));
+		CSCORE_API const Type WaitingForUniqueMappingId = EMCsPlayerStateBaseOnBoardState::Get().Add(Type::WaitingForUniqueMappingId, TEXT("WaitingForUniqueMappingId"), TEXT("Waiting for UniqueMappingId"));
+		CSCORE_API const Type RecievedUniqueMappingId = EMCsPlayerStateBaseOnBoardState::Get().Add(Type::RecievedUniqueMappingId, TEXT("RecievedUniqueMappingId"), TEXT("Recieved UniqueMappingId"));
+		// Player
+		CSCORE_API const Type RequestPlayerData = EMCsPlayerStateBaseOnBoardState::Get().Add(Type::RequestPlayerData, TEXT("RequestPlayerData"), TEXT("Request Player Data"));
+		CSCORE_API const Type WaitingForPlayerData = EMCsPlayerStateBaseOnBoardState::Get().Add(Type::WaitingForPlayerData, TEXT("WaitingForPlayerData"), TEXT("Waiting for Player Data"));
+		CSCORE_API const Type ReceivedPlayerData = EMCsPlayerStateBaseOnBoardState::Get().Add(Type::ReceivedPlayerData, TEXT("ReceivedPlayerData"), TEXT("Received Player Data"));
+		// AI
+		CSCORE_API const Type RequestAIData = EMCsPlayerStateBaseOnBoardState::Get().Add(Type::RequestAIData, TEXT("RequestAIData"), TEXT("Request AI Data"));
+		CSCORE_API const Type WaitingForAIData = EMCsPlayerStateBaseOnBoardState::Get().Add(Type::WaitingForAIData, TEXT("WaitingForAIData"), TEXT("Waiting for AI Data"));
+		CSCORE_API const Type ReceivedAIData = EMCsPlayerStateBaseOnBoardState::Get().Add(Type::ReceivedAIData, TEXT("ReceivedAIData"), TEXT("Received AI Data"));
+		// Loading
+		CSCORE_API const Type BeginLoadingPlayerData = EMCsPlayerStateBaseOnBoardState::Get().Add(Type::BeginLoadingPlayerData, TEXT("BeginLoadingPlayerData"), TEXT("Begin Loading Player Data"));
+		CSCORE_API const Type WaitingForFinishLoadingPlayerData = EMCsPlayerStateBaseOnBoardState::Get().Add(Type::WaitingForFinishLoadingPlayerData, TEXT("WaitingForFinishLoadingPlayerData"), TEXT("Waiting for Finish Loading Player Data"));
+		CSCORE_API const Type FinishedLoadingPlayerData = EMCsPlayerStateBaseOnBoardState::Get().Add(Type::FinishedLoadingPlayerData, TEXT("FinishedLoadingPlayerData"), TEXT("Finished Loading Player Data"));
+		CSCORE_API const Type SetAssetReferencesPlayerData = EMCsPlayerStateBaseOnBoardState::Get().Add(Type::SetAssetReferencesPlayerData, TEXT("SetAssetReferencesPlayerData"), TEXT("Set Asset Referencess Player Data"));
+		CSCORE_API const Type WaitingForSetAssetReferencesPlayerData = EMCsPlayerStateBaseOnBoardState::Get().Add(Type::WaitingForSetAssetReferencesPlayerData, TEXT("WaitingForSetAssetReferencesPlayerData"), TEXT("Waiting for Set Asset Referencess Player Data"));
+		CSCORE_API const Type FinishedSetAssetReferencesPlayerData = EMCsPlayerStateBaseOnBoardState::Get().Add(Type::FinishedSetAssetReferencesPlayerData, TEXT("FinishedSetAssetReferencesPlayerData"), TEXT("Finished Set Asset Referencess Player Data"));
+		// Setup
+		CSCORE_API const Type BeginApplyingPlayerData = EMCsPlayerStateBaseOnBoardState::Get().Add(Type::BeginApplyingPlayerData, TEXT("BeginApplyingPlayerData"), TEXT("Begin Applying Player Data"));
+		CSCORE_API const Type WaitingForFinishApplyingPlayerData = EMCsPlayerStateBaseOnBoardState::Get().Add(Type::WaitingForFinishApplyingPlayerData, TEXT("WaitingForFinishApplyingPlayerData"), TEXT("Waiting for Finish Applying Player Data"));
+		CSCORE_API const Type FinishedApplyingPlayerData = EMCsPlayerStateBaseOnBoardState::Get().Add(Type::FinishedApplyingPlayerData, TEXT("FinishedApplyingPlayerData"), TEXT("Finished Applying Player Data"));
+		// Handshaking
+		CSCORE_API const Type SendOnBoardCompleted = EMCsPlayerStateBaseOnBoardState::Get().Add(Type::SendOnBoardCompleted, TEXT("SendOnBoardCompleted"), TEXT("Send OnBoard Completed"));
+		CSCORE_API const Type WaitingForOnBoardCompleted = EMCsPlayerStateBaseOnBoardState::Get().Add(Type::WaitingForOnBoardCompleted, TEXT("WaitingForOnBoardCompleted"), TEXT("Waiting for OnBoard Completed"));
+		CSCORE_API const Type Completed = EMCsPlayerStateBaseOnBoardState::Get().Add(Type::Completed, TEXT("Completed"));
+		CSCORE_API const Type ECsPlayerStateBaseOnBoardState_MAX = EMCsPlayerStateBaseOnBoardState::Get().Add(Type::ECsPlayerStateBaseOnBoardState_MAX, TEXT("ECsPlayerStateBaseOnBoardState_MAX"), TEXT("MAX"));
+	}
+}
+
+#pragma endregion Enums
+
 // Cache
 #pragma region
 
@@ -103,7 +174,7 @@ ACsPawn* ACsPlayerStateBase::GetMyPawn()
 
 bool ACsPlayerStateBase::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
 {
-	const TCsPlayerStateBaseRoutine RoutineType = (TCsPlayerStateBaseRoutine)Type;
+	const FECsPlayerStateBaseRoutine& RoutineType = EMCsPlayerStateBaseRoutine::Get()[Type];
 
 	// OnBoard_Internal
 	if (RoutineType == ECsPlayerStateBaseRoutine::OnBoard_Internal)
@@ -128,7 +199,7 @@ bool ACsPlayerStateBase::AddRoutine_Internal(struct FCsRoutine* Routine, const u
 
 bool ACsPlayerStateBase::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
 {
-	const TCsPlayerStateBaseRoutine RoutineType = (TCsPlayerStateBaseRoutine)Type;
+	const FECsPlayerStateBaseRoutine& RoutineType = EMCsPlayerStateBaseRoutine::Get()[Type];
 
 	// OnBoard_Internal
 	if (RoutineType == ECsPlayerStateBaseRoutine::OnBoard_Internal)
@@ -166,7 +237,7 @@ void ACsPlayerStateBase::OnBoard()
 	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
 	Payload->Add			= &ACsPlayerStateBase::AddRoutine;
 	Payload->Remove			= &ACsPlayerStateBase::RemoveRoutine;
-	Payload->Type			= (uint8)ECsPlayerStateBaseRoutine::OnBoard_Internal;
+	Payload->Type			= ECsPlayerStateBaseRoutine::OnBoard_Internal.Value;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			= ECsPlayerStateBaseCached::Name::OnBoard_Internal;
@@ -591,7 +662,7 @@ void ACsPlayerStateBase::RequestUniqueMappingId_AI(ACsPlayerStateBase* Requestin
 	Payload->Stop			 = &UCsCommon::CoroutineStopCondition_CheckActor;
 	Payload->Add			 = &ACsPlayerStateBase::AddRoutine;
 	Payload->Remove			 = &ACsPlayerStateBase::RemoveRoutine;
-	Payload->Type			 = (uint8)ECsPlayerStateBaseRoutine::RequestUniqueMappingId_AI_Internal;
+	Payload->Type			 = ECsPlayerStateBaseRoutine::RequestUniqueMappingId_AI_Internal.Value;
 	Payload->DoInit			 = true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			 = ECsPlayerStateBaseCached::Name::RequestUniqueMappingId_AI_Internal;

@@ -300,6 +300,10 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 
 	static FString UInt64ToString(const uint64 &Value);
 
+	static FVector ClampVectorComponents(FVector V, const float &Clamp);
+	static void ClampMinVectorComponents(FVector &V, const float &Min);
+	static void ClampMaxVectorComponents(FVector &V, const float &Max);
+
 #pragma endregion Math
 
 	/*
@@ -684,10 +688,6 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 #endif // #if WITH_EDITOR
 
 #pragma endregion Javascript
-
-	static FVector ClampVectorComponents(FVector V, float Clamp);
-	static void ClampMinVectorComponents(FVector &V, const float &Min);
-	static void ClampMaxVectorComponents(FVector &V, const float &Max);
 
 	UFUNCTION(BlueprintCallable, Category = "Common")
 	static bool IsDedicatedServer(AActor* InActor);

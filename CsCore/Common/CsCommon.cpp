@@ -884,6 +884,29 @@ FString UCsCommon::UInt64ToString(const uint64 &Value)
 	return Zeroes + FString::Printf(TEXT("%llu"), Value);
 }
 
+FVector UCsCommon::ClampVectorComponents(FVector V, const float &Clamp)
+{
+	V.X = FMath::Abs(V.X) < Clamp ? FMath::Sign(V.X) * Clamp : V.X;
+	V.Y = FMath::Abs(V.Y) < Clamp ? FMath::Sign(V.Y) * Clamp : V.Y;
+	V.Y = FMath::Abs(V.Z) < Clamp ? FMath::Sign(V.Z) * Clamp : V.Z;
+
+	return V;
+}
+
+void UCsCommon::ClampMinVectorComponents(FVector &V, const float &Min)
+{
+	V.X = FMath::Max(V.X, Min);
+	V.Y = FMath::Max(V.Y, Min);
+	V.Z = FMath::Max(V.Z, Min);
+}
+
+void UCsCommon::ClampMaxVectorComponents(FVector &V, const float &Max)
+{
+	V.X = FMath::Min(V.X, Max);
+	V.Y = FMath::Min(V.Y, Max);
+	V.Z = FMath::Min(V.Z, Max);
+}
+
 #pragma endregion Math
 
 /*
@@ -2368,29 +2391,6 @@ void UCsCommon::Javascript_RunFile(UObject* &JavascriptContext, const FString &E
 #endif // #if WITH_EDITOR
 
 #pragma endregion Javascript
-
-FVector UCsCommon::ClampVectorComponents(FVector V, float Clamp)
-{
-	V.X = FMath::Abs(V.X) < Clamp ? FMath::Sign(V.X) * Clamp : V.X;
-	V.Y = FMath::Abs(V.Y) < Clamp ? FMath::Sign(V.Y) * Clamp : V.Y;
-	V.Y = FMath::Abs(V.Z) < Clamp ? FMath::Sign(V.Z) * Clamp : V.Z;
-
-	return V;
-}
-
-void UCsCommon::ClampMinVectorComponents(FVector &V, const float &Min)
-{
-	V.X = FMath::Max(V.X, Min);
-	V.Y = FMath::Max(V.Y, Min);
-	V.Z = FMath::Max(V.Z, Min);
-}
-
-void UCsCommon::ClampMaxVectorComponents(FVector &V, const float &Max)
-{
-	V.X = FMath::Min(V.X, Max);
-	V.Y = FMath::Min(V.Y, Max);
-	V.Z = FMath::Min(V.Z, Max);
-}
 
 bool UCsCommon::IsDedicatedServer(AActor* InActor)
 {

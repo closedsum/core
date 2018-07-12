@@ -65,6 +65,15 @@ void ACsManager_Sense::Init(AActor* InOwner)
 	MyOwner = InOwner;
 }
 
+const FECsSenseActorType& ACsManager_Sense::GetActorType(AActor* Actor)
+{
+	if (Cast<ACsPlayerPawn>(Actor))
+		return ECsSenseActorType::Player;
+	if (Cast<ACsAIPawn>(Actor))
+		return ECsSenseActorType::AI;
+	return EMCsSenseActorType::Get().GetMAX();
+}
+
 void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 {
 	AActor* Me			  = GetMyOwner();

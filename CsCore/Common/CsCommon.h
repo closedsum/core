@@ -783,7 +783,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 
 	static bool IsDefaultObject(UObject* InObject);
 
-	static uint64 GetUniqueObjectId(AActor* Actor);
+	static const uint64& GetUniqueObjectId(AActor* Actor);
 
 #pragma endregion Object / Actor
 

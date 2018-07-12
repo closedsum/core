@@ -2470,7 +2470,7 @@ bool UCsCommon::IsDefaultObject(UObject* InObject)
 	return InObject->GetName().StartsWith(TEXT("Default__"));
 }
 
-uint64 UCsCommon::GetUniqueObjectId(AActor* Actor)
+const uint64& UCsCommon::GetUniqueObjectId(AActor* Actor)
 {
 	if (ACsPawn* Pawn = Cast<ACsPawn>(Actor))
 		return Pawn->UniqueObjectId;

@@ -49,7 +49,8 @@ namespace ECsCached
 		extern CSCORE_API const uint32 Int;// = 0;
 		extern CSCORE_API const int32 SInt;// = 0;
 		extern CSCORE_API const uint64 Long;// = 0;
-		extern CSCORE_API const int32 SLong;// = 0;
+		extern CSCORE_API const uint64 Long_MAX;// = UINT64_MAX;
+		extern CSCORE_API const int64 SLong;// = 0;
 		extern CSCORE_API const float Float;// = 0.0f;
 		extern CSCORE_API const FString String;// = TEXT("");
 		extern CSCORE_API const FName Name;// = NAME_None;

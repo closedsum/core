@@ -75,6 +75,8 @@ public:
 
 #pragma endregion Debug
 
+	const FECsSenseActorType& GetActorType(AActor* Actor);
+
 	virtual void OnTick(const float &DeltaSeconds);
 	virtual void Sense_CheckMeToActorDot(FCsSenseInfo& Info);
 	virtual void Sense_TraceViewToActorBody(FCsSenseInfo& Info);

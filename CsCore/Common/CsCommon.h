@@ -341,9 +341,6 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	static bool GrabOption(FString& Options, FString& Result);
 	static FString ParseOption(const FString& Options, const FString& InKey);
 
-	static void ShuffleTArray_FName(TArray<FName>& InArray);
-	static void ShuffleTArray_int32(TArray<int32>& InArray);
-
 	static bool IsValidFpsAnimMontageArray(TArray<FCsFpvAnimMontage> & InArray, const TCsViewType &ViewType, const bool &IsLow=false);
 
 // Component
@@ -644,6 +641,21 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	static bool AreAllElementsInTArrayAssetSubclassOfNotNull(TArray<TSoftClassPtr<T>>* &A)
 	{
 		return !IsAnyElementInTArrayTSoftClassPtrNull<T>(A);
+	}
+
+	template<typename T>
+	static void StuffleTArray(TArray<T>& InArray)
+	{
+		const int32 Len = InArray.Num();
+
+		for (int32 Index = Len; Index > 1; --Index)
+		{
+			int32 J = FMath::RandRange(0, Index - 1);
+
+			FName Temp = InArray[J];
+			InArray[J] = InArray[Index - 1];
+			InArray[Index - 1] = Temp;
+		}
 	}
 
 #pragma endregion TArray

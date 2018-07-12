@@ -532,8 +532,6 @@ void ACsPawn::RecordRoot()
 
 void ACsPawn::RecordVelocityAndSpeed()
 {
-	// TODO: Potentially optimize slightly by doing normal calculation manually
-
 	// Velocity from CharacterMovement
 	CurrentVelocity			= GetVelocity();
 	CurrentSpeed			= CurrentVelocity.Size();

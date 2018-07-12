@@ -3,33 +3,31 @@
 #include "CsCore.h"
 #include "CsCVars.h"
 #include "Types/CsTypes_Curve.h"
+#include "Coroutine/CsCoroutineScheduler.h"
+
+// Game
 #include "GameFramework/GameState.h"
 #include "GameFramework/GameMode.h"
 #include "Game/CsGameInstance.h"
-#include "Coroutine/CsCoroutineScheduler.h"
-
 // VR
 #include "IHeadMountedDisplay.h"
 #include "MotionControllerComponent.h"
 #include "MotionController/CsMotionController.h"
-
 // Components
 #include "Components/CsStaticMeshComponent.h"
 #include "Components/CsSkeletalMeshComponent.h"
 #include "Components/CsPoseableMeshComponent.h"
 #include "Components/CsBoxComponent.h"
 #include "Components/CsSphereComponent.h"
-
 // Player
 #include "Player/CsPlayerState.h"
 #include "Player/CsPlayerPawn.h"
 #include "VR/Player/CsPlayerPawn_VR.h"
 #include "../Engine/Classes/GameFramework/PlayerInput.h"
-
+// Physics
 #include "Engine/CollisionProfile.h"
-
+// Data
 #include "Data/CsData.h"
-
 // Managers
 #include "Managers/Inventory/CsManager_Inventory.h"
 
@@ -1271,34 +1269,6 @@ FString UCsCommon::ParseOption(const FString& Options, const FString& InKey)
 			return Value;
 	}
 	return TEXT("");
-}
-
-void UCsCommon::ShuffleTArray_FName(TArray<FName>& InArray)
-{
-	const int32 Len = InArray.Num();
-
-	for (int32 Index = Len; Index > 1; Index--)
-	{
-		int32 J = FMath::RandRange(0, Index - 1);
-
-		FName Temp		   = InArray[J];
-		InArray[J]		   = InArray[Index - 1];
-		InArray[Index - 1] = Temp;
-	}
-}
-
-void UCsCommon::ShuffleTArray_int32(TArray<int32>& InArray)
-{
-	const int32 Len = InArray.Num();
-
-	for (int32 Index = Len; Index > 1; Index--)
-	{
-		int32 J = FMath::RandRange(0, Index - 1);
-
-		int32 Temp		   = InArray[J];
-		InArray[J]		   = InArray[Index - 1];
-		InArray[Index - 1] = Temp;
-	}
 }
 
 bool UCsCommon::IsValidFpsAnimMontageArray(TArray<FCsFpvAnimMontage> & InArray, const TCsViewType &ViewType, const bool &IsLow)

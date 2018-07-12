@@ -6,7 +6,6 @@
 #include "Types/CsTypes_Anim.h"
 #include "Types/CsTypes_Coroutine.h"
 #include "Types/CsTypes_Interpolation.h"
-#include "Player/CsPlayerController.h"
 
 #include "CsCommon.generated.h"
 
@@ -15,27 +14,27 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 {
 	GENERATED_UCLASS_BODY()
 
-		/*
-		static bool IsControlledByClient(AShooterCharacter* InPawn);
+	/*
+	static bool IsControlledByClient(AShooterCharacter* InPawn);
 
-		UFUNCTION(BlueprintCallable, Category = "Pawn")
-		static AShooterPlayerController* GetClientController(AShooterCharacter* InPawn);
+	UFUNCTION(BlueprintCallable, Category = "Pawn")
+	static AShooterPlayerController* GetClientController(AShooterCharacter* InPawn);
 
-		UFUNCTION(BlueprintCallable, Category = "Pawn")
-		static AShooterPlayerController* GetMachineClientController(UWorld *InWorld);
+	UFUNCTION(BlueprintCallable, Category = "Pawn")
+	static AShooterPlayerController* GetMachineClientController(UWorld *InWorld);
 
-		UFUNCTION(BlueprintCallable, Category = "Pawn")
-		static bool IsLocallyControlled(AShooterCharacter* InPawn, UWorld *InWorld);
+	UFUNCTION(BlueprintCallable, Category = "Pawn")
+	static bool IsLocallyControlled(AShooterCharacter* InPawn, UWorld *InWorld);
 
-		static FORCEINLINE float GetAngleBetweenVectors(const FVector& v1, const FVector& v2)
-		{
-			float dotValue = FVector::DotProduct(v1, v2);
-			float radians = FMath::Acos(dotValue);
-			return FMath::RadiansToDegrees(radians);
-		}
+	static FORCEINLINE float GetAngleBetweenVectors(const FVector& v1, const FVector& v2)
+	{
+		float dotValue = FVector::DotProduct(v1, v2);
+		float radians = FMath::Acos(dotValue);
+		return FMath::RadiansToDegrees(radians);
+	}
 
-		static float GetSquaredDistanceToLocalControllerEye(UWorld *InWorld, const FVector& otherLocation);
-		*/
+	static float GetSquaredDistanceToLocalControllerEye(UWorld *InWorld, const FVector& otherLocation);
+	*/
 
 // Local Client
 #pragma region
@@ -120,26 +119,13 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	UFUNCTION(BlueprintCallable, Category = "Commmon")
 	static class ACsMotionController* GetMotionController(UWorld* InWorld, const TEnumAsByte<ECsControllerHand::Type> &Hand);
 
+	UFUNCTION(BlueprintCallable, Category = "Commmon")
+	static bool IsStereoscopic3D();
+
 #pragma endregion
 
 // Delegates
 #pragma region
-
-	template<typename T>
-	static void Bind_OnCalcCamera_Event(UWorld* InWorld, T* Caller, void (T::*Callback)(const uint8&, const float&, const struct FMinimalViewInfo&))
-	{
-		ACsPlayerController* Controller = GetLocalPlayerController<ACsPlayerController>(InWorld);
-
-		Controller->OnCalcCamera_Event.AddUObject(Caller, Callback);
-	}
-
-	template<typename T>
-	static void Bind_OnCalcCamera_ScriptEvent(UWorld* InWorld, T* Caller, void (T::*Callback)(const uint8&, const float&, const struct FMinimalViewInfo&))
-	{
-		ACsPlayerController* Controller = GetLocalPlayerController<ACsPlayerController>(InWorld);
-
-		Controller->OnCalcCamera_ScriptEvent.AddUObject(Caller, Callback);
-	}
 
 #pragma endregion Delegates
 
@@ -304,6 +290,13 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	static void ClampMinVectorComponents(FVector &V, const float &Min);
 	static void ClampMaxVectorComponents(FVector &V, const float &Max);
 
+	UFUNCTION(BlueprintCallable, Category = "Commmon")
+	static float BytesToKilobytes(const int32 &Bytes);
+	UFUNCTION(BlueprintCallable, Category = "Commmon")
+	static float BytesToMegabytes(const int32 &Bytes);
+	UFUNCTION(BlueprintCallable, Category = "Commmon")
+	static int32 KilobytesToBytes(const float &Kilobytes);
+
 #pragma endregion Math
 
 	/*
@@ -317,23 +310,31 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	// The HMD world position and PlayerCamera can be in different positions
 	//static void GetHMDWorldViewPoint(APlayerController* PlayerController, FVector& out_Location, FRotator& out_Rotation);
 
-	UFUNCTION(BlueprintCallable, Category = "VR")
-	static bool IsStereoscopic3D();
-
 // Easing
 #pragma region
 
+	UFUNCTION(BlueprintCallable, Category = "Commmon")
 	static float Ease(const TEnumAsByte<ECsEasingType::Type> &EasingType, const float &Time, const float &Start, const float &Final, const float &Duration);
 	
+	UFUNCTION(BlueprintCallable, Category = "Commmon")
 	static float Linear(const float &Time, const float &Start, const float &Final, const float &Duration);
+	UFUNCTION(BlueprintCallable, Category = "Commmon")
 	static float BounceEaseOut(const float &Time, const float &Start, const float &Final, const float &Duration);
+	UFUNCTION(BlueprintCallable, Category = "Commmon")
 	static float BounceEaseIn(const float &Time, const float &Start, const float &Final, const float &Duration);
+	UFUNCTION(BlueprintCallable, Category = "Commmon")
 	static float BounceEaseInOut(const float &Time, const float &Start, const float &Final, const float &Duration);
+	UFUNCTION(BlueprintCallable, Category = "Commmon")
 	static float CubicEaseIn(const float &Time, const float &Start, const float &Final, const float &Duration);
+	UFUNCTION(BlueprintCallable, Category = "Commmon")
 	static float CubicEaseOut(const float &Time, const float &Start, const float &Final, const float &Duration);
+	UFUNCTION(BlueprintCallable, Category = "Commmon")
 	static float CubicEaseInOut(const float &Time, const float &Start, const float &Final, const float &Duration);
+	UFUNCTION(BlueprintCallable, Category = "Commmon")
 	static float ExpoEaseIn(const float &Time, const float &Start, const float &Final, const float &Duration);
+	UFUNCTION(BlueprintCallable, Category = "Commmon")
 	static float ExpoEaseOut(const float &Time, const float &Start, const float &Final, const float &Duration);
+	UFUNCTION(BlueprintCallable, Category = "Commmon")
 	static float ExpoEaseInOut(const float &Time, const float &Start, const float &Final, const float &Duration);
 
 	static TCsEasingFunction GetEasingFunction(const TCsEasingType &EasingType);
@@ -710,6 +711,9 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 
 #pragma endregion World
 
+// Object / Actor
+#pragma region
+
 	template<typename T>
 	static T* GetUObject(UWorld* InWorld)
 	{
@@ -779,6 +783,10 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 
 	static bool IsDefaultObject(UObject* InObject);
 
+	static uint64 GetUniqueObjectId(AActor* Actor);
+
+#pragma endregion Object / Actor
+
 // Time
 #pragma region
 
@@ -789,10 +797,6 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	static uint64 GetCurrentFrame(UWorld* InWorld);
 
 #pragma endregion Time
-
-	static float BytesToKilobytes(const int32 &Bytes);
-	static float BytesToMegabytes(const int32 &Bytes);
-	static int32 KilobytesToBytes(const float &Kilobytes);
 
 	UFUNCTION(BlueprintCallable, Category = "Commmon")
 	static bool IsDeveloperBuild();

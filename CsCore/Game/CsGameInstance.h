@@ -144,6 +144,8 @@ typedef ECsGameInstanceOnBoardState::Type TCsGameInstanceOnBoardState;
 
 #pragma endregion Enums
 
+#define CS_INVALID_UNIQUE_OBJECT_ID UINT64_MAX
+
 UCLASS(config = Game)
 class CSCORE_API UCsGameInstance : public UGameInstance
 {

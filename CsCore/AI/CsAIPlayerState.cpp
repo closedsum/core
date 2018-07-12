@@ -25,8 +25,8 @@ AController* ACsAIPlayerState::GetMyController()
 	{
 		AController* Controller = It->Get();
 
-		if (Cast<ACsPlayerController>(Controller) &&
-			Cast<ACsPlayerController>(Controller)->PlayerState == this)
+		if (Cast<ACsAIController>(Controller) &&
+			Cast<ACsAIController>(Controller)->PlayerState == this)
 		{
 			MyController = Controller;
 			break;

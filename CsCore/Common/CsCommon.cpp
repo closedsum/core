@@ -299,6 +299,13 @@ ACsMotionController* UCsCommon::GetMotionController(UWorld* InWorld, const TEnum
 	return ECsControllerHand::Right ? Pawn->RightHand : Pawn->LeftHand;
 }
 
+// version of GEngine->IsStereoscopic3D() that is valid even during toggle frame. 
+bool UCsCommon::IsStereoscopic3D()
+{
+	return false;
+	//return GEngine && GEngine->StereoRenderingDevice.IsValid() && GEngine->StereoRenderingDevice->IsStereoEnabledOnNextFrame();
+}
+
 #pragma endregion
 
 // Enum to String Conversion
@@ -907,6 +914,21 @@ void UCsCommon::ClampMaxVectorComponents(FVector &V, const float &Max)
 	V.Z = FMath::Min(V.Z, Max);
 }
 
+float UCsCommon::BytesToKilobytes(const int32 &Bytes)
+{
+	return Bytes * FMath::Pow(10, -3);
+}
+
+float UCsCommon::BytesToMegabytes(const int32 &Bytes)
+{
+	return Bytes * FMath::Pow(10, -6);
+}
+
+int32 UCsCommon::KilobytesToBytes(const float &Kilobytes)
+{
+	return Kilobytes * FMath::Pow(10, 3);
+}
+
 #pragma endregion Math
 
 /*
@@ -1042,13 +1064,6 @@ void UCsCommon::GetHMDWorldViewPoint(APlayerController* PlayerController, FVecto
 	}
 }
 */
-
-// version of GEngine->IsStereoscopic3D() that is valid even during toggle frame. 
-bool UCsCommon::IsStereoscopic3D()
-{
-	return false;
-	//return GEngine && GEngine->StereoRenderingDevice.IsValid() && GEngine->StereoRenderingDevice->IsStereoEnabledOnNextFrame();
-}
 
 // Easing
 #pragma region
@@ -2455,6 +2470,13 @@ bool UCsCommon::IsDefaultObject(UObject* InObject)
 	return InObject->GetName().StartsWith(TEXT("Default__"));
 }
 
+uint64 UCsCommon::GetUniqueObjectId(AActor* Actor)
+{
+	if (ACsPawn* Pawn = Cast<ACsPawn>(Actor))
+		return Pawn->UniqueObjectId;
+	return CS_INVALID_UNIQUE_OBJECT_ID;
+}
+
 // Time
 #pragma region
 
@@ -2484,21 +2506,6 @@ uint64 UCsCommon::GetCurrentFrame(UWorld* InWorld)
 }
 
 #pragma endregion Time
-
-float UCsCommon::BytesToKilobytes(const int32 &Bytes)
-{
-	return Bytes * FMath::Pow(10, -3);
-}
-
-float UCsCommon::BytesToMegabytes(const int32 &Bytes)
-{
-	return Bytes * FMath::Pow(10, -6);
-}
-
-int32 UCsCommon::KilobytesToBytes(const float &Kilobytes)
-{
-	return Kilobytes * FMath::Pow(10, 3);
-}
 
 bool UCsCommon::IsDeveloperBuild()
 {

@@ -131,7 +131,18 @@ struct FCsSenseInfo
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
 	FRotator MeToActorBodyRotation;
 
-		// Sight
+	// View to Actor
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	FVector ViewToActorDir;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	FRotator ViewToActorBodyRotation;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	float ViewToActorDot;
+
+	// Sight
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
 	bool bSeesActorByRadius;

@@ -2,6 +2,7 @@
 #include "Managers/Sense/CsManager_Sense.h"
 #include "CsCore.h"
 #include "CsCVars.h"
+#include "Common/CsCommon.h"
 
 // Managers
 #include "Managers/Trace/CsManager_Trace.h"
@@ -208,7 +209,9 @@ void ACsManager_Sense::Sense_CheckMeToActorDot(FCsSenseInfo& Info)
 		OwnerLocation = Me->GetActorLocation();
 	}
 
-	// XYZ
+	// MeToActor
+
+		// XYZ
 	const FVector MeToActor = ActorLocation - OwnerLocation;
 	Info.MeToActorDistance	= MeToActor.Size();
 	Info.MeToActorDistanceSq = Info.MeToActorDistance * Info.MeToActorDistance;
@@ -216,15 +219,30 @@ void ACsManager_Sense::Sense_CheckMeToActorDot(FCsSenseInfo& Info)
 	
 	Info.MeToActorBodyRotation	  = UCsCommon::AngleClamp360(Info.MeToActorDir.Rotation());
 	Info.MeToActorBodyRotation.Roll = 0.0f;
-	// XY
+		// XY
 	const FVector MeToActorXY	= FVector(MeToActor.X, MeToActor.Y, 0.0f);
 	Info.MeToActorDistanceXY	= MeToActorXY.Size();
 	Info.MeToActorDistanceXYSq	= Info.MeToActorDistanceXY * Info.MeToActorDistanceXY;
 	Info.MeToActorDirXY			= MeToActorXY / Info.MeToActorDistanceXY;
 
+	// ViewToActor
+
+		// Player / AI
+	if (ACsPawn* Pawn = Cast<ACsPawn>(Me))
+	{
+		Info.ViewToActorDir			 = (ActorLocation - Pawn->CurrentViewLocation).GetSafeNormal();
+		Info.ViewToActorBodyRotation = Info.ViewToActorDir.Rotation();
+	}
+	else
+	{
+		Info.ViewToActorDir			 = Info.MeToActorDir;
+		Info.ViewToActorBodyRotation = Info.MeToActorBodyRotation;
+	}
+
+	// Dot
 	FVector CurrentFaceDirXY = FVector::ZeroVector;
 
-	// Player / AI
+		// Player / AI
 	if (ACsPawn* Pawn = Cast<ACsPawn>(Me))
 	{
 		CurrentFaceDirXY = Pawn->CurrentRootDirXY;
@@ -237,7 +255,17 @@ void ACsManager_Sense::Sense_CheckMeToActorDot(FCsSenseInfo& Info)
 	}
 	Info.MeToActorDot = FVector::DotProduct(CurrentFaceDirXY, Info.MeToActorDirXY);
 
-	Info.SetSeesActorByDot(Info.MeToActorDot >= ViewMinDot);
+		// Player / AI
+	if (ACsPawn* Pawn = Cast<ACsPawn>(Me))
+	{
+		Info.ViewToActorDot = FVector::DotProduct(Pawn->CurrentViewDirXY, Info.MeToActorDirXY);
+	}
+	else
+	{
+		Info.ViewToActorDot	= Info.MeToActorDot;
+	}
+
+	Info.SetSeesActorByDot(Info.ViewToActorDot >= ViewMinDot);
 }
 
 void ACsManager_Sense::Sense_TraceViewToActorBody(FCsSenseInfo& Info)

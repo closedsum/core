@@ -74,6 +74,24 @@ const FECsSenseActorType& ACsManager_Sense::GetActorType(AActor* Actor)
 	return EMCsSenseActorType::Get().GetMAX();
 }
 
+FCsSenseInfo* ACsManager_Sense::Add(AActor* Actor, const TCsSenseTeam& Team)
+{
+	if (ACsPawn* Pawn = Cast<ACsPawn>(Actor))
+	{
+		const FECsSenseActorType& ActorType = Cast<ACsPlayerPawn>(Pawn) ? ECsSenseActorType::Player : ECsSenseActorType::AI;
+
+		FCsSenseInfo& Info	= SenseMap[ActorType].Add(Pawn->UniqueObjectId);
+		Info.Id				= UniqueObjectId;
+		Info.ObserveeId		= Pawn->UniqueObjectId;
+		Info.ActorType		= ActorType;
+		Info.Team			= Team;
+		Info.Init();
+
+		return &Info;
+	}
+	return nullptr;
+}
+
 void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 {
 	AActor* Me			  = GetMyOwner();

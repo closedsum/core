@@ -77,6 +77,8 @@ public:
 
 	const FECsSenseActorType& GetActorType(AActor* Actor);
 
+	virtual FCsSenseInfo* Add(AActor* Actor, const TCsSenseTeam& Team);
+
 	virtual void OnTick(const float &DeltaSeconds);
 	virtual void Sense_CheckMeToActorDot(FCsSenseInfo& Info);
 	virtual void Sense_TraceViewToActorBody(FCsSenseInfo& Info);

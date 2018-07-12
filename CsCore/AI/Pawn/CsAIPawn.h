@@ -14,6 +14,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsAIPawn_OnBTTask_
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsAIPawn_OnBTTask_AimAtLocation_Start, const uint8&, MappingId, const FVector&, Location);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsAIPawn_OnBTTask_AimAtActor_Start, const uint8&, MappingId, AActor*, Actor);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsAIPawn_OnBTTask_AimAt_Aborted, const uint8&, MappingId);
+// Shoot
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsAIPawn_OnBTTask_Shoot_Start, const uint8&, MappingId);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsAIPawn_OnBTTask_Shoot_Stop, const uint8&, MappingId);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsAIPawn_OnBTTask_Shoot_Aborted, const uint8&, MappingId);
 
 // Enums
 #pragma region
@@ -207,11 +211,19 @@ public:
 
 #pragma endregion View
 
+// Game Events
+#pragma region
+public:
+
+#pragma endregion Game Events
+
 // Behavior Tree
 #pragma region
 public:
 
 	// RotateToFaceBBEntry
+#pragma region
+public:
 
 		// Start
 	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnBTTask_RotateToFaceBBEntry_Start, const uint8&, const float&, const float&);
@@ -228,7 +240,11 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
 	FBindableDynEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Finish OnBTTask_RotateToFaceBBEntry_Finish_ScriptEvent;
 
+#pragma endregion RotateToFaceBBEntry
+
 	// AimAt
+#pragma region
+public:
 
 		// Location Start
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnBTTask_AimAtLocation_Start, const uint8&, const FVector&);
@@ -254,12 +270,49 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
 	FBindableDynEvent_CsAIPawn_OnBTTask_AimAt_Aborted OnBTTask_AimAt_Aborted_ScriptEvent;
 
-	UFUNCTION(BlueprintCallable, Category = "Aiming")
+	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
 	virtual void AimAtLocation(const FVector &Target);
-	UFUNCTION(BlueprintCallable, Category = "Aiming")
+	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
 	virtual void AimAtActor(AActor* Target);
-	UFUNCTION(BlueprintCallable, Category = "Aiming")
+	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
 	virtual void StopAimAt();
+
+#pragma endregion AimtAt
+
+	// Shoot
+#pragma region
+public:
+
+		// Start
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnBTTask_Shoot_Start, const uint8&);
+
+	FOnBTTask_Shoot_Start OnBTTask_Shoot_Start_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
+	FBindableDynEvent_CsAIPawn_OnBTTask_Shoot_Start OnBTTask_Shoot_Start_ScriptEvent;
+
+		// Stop
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnBTTask_Shoot_Stop, const uint8&);
+
+	FOnBTTask_Shoot_Stop OnBTTask_Shoot_Stop_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
+	FBindableDynEvent_CsAIPawn_OnBTTask_Shoot_Stop OnBTTask_Shoot_Stop_ScriptEvent;
+
+		// Abort
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnBTTask_Shoot_Aborted, const uint8&);
+
+	FOnBTTask_Shoot_Aborted OnBTTask_Shoot_Aborted_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
+	FBindableDynEvent_CsAIPawn_OnBTTask_Shoot_Aborted OnBTTask_Shoot_Aborted_ScriptEvent;
+
+	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
+	virtual void StartShoot();
+	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
+	virtual void StopShoot();
+
+#pragma endregion Shoot
 
 #pragma endregion Behavior Tree
 

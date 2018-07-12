@@ -7,12 +7,10 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AIController.h"
 
-#include "Common/CsCommon.h"
+#include "CsCore.h"
 // AI
 #include "AI/Pawn/CsAIPawn.h"
 #include "AI/CsAIPlayerState.h"
-// Data
-#include "Data/CsData_Character.h"
 // Weapon
 #include "Weapon/CsWeapon.h"
 
@@ -21,10 +19,6 @@ UCsBTTask_Shoot::UCsBTTask_Shoot(const FObjectInitializer& ObjectInitializer)
 {
 	NodeName = TEXT("Shoot");
 	bNotifyTick = true;
-	
-	// accept only actors and vectors
-	BlackboardKey.AddObjectFilter(this, GET_MEMBER_NAME_CHECKED(UCsBTTask_Shoot, BlackboardKey), AActor::StaticClass());
-	BlackboardKey.AddVectorFilter(this, GET_MEMBER_NAME_CHECKED(UCsBTTask_Shoot, BlackboardKey));
 }
 
 EBTNodeResult::Type UCsBTTask_Shoot::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -42,46 +36,43 @@ EBTNodeResult::Type UCsBTTask_Shoot::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 	if (!Pawn)
 		return EBTNodeResult::Failed;
 
+	if (!bDuration && !bShots)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s): Either bDuration or bShot must be TRUE. Both can NOT be FALSE."), *(Pawn->GetName()));
+		return EBTNodeResult::Failed;
+	}
+
+	if (bDuration && Duration <= 0.0f)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s): if bDuration = TRUE, Duration must be > 0.0f."), *(Pawn->GetName()));
+		return EBTNodeResult::Failed;
+	}
+
+	if (bShots && Shots.Min <= 0)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s): if bShots = TRUE, Shots.Min must be > 0."), *(Pawn->GetName()));
+		return EBTNodeResult::Failed;
+	}
+
 	FCsBTTask_ShootMemory* MyMemory = (FCsBTTask_ShootMemory*)NodeMemory;
 	check(MyMemory);
 	MyMemory->Reset();
 
-	EBTNodeResult::Type Result = EBTNodeResult::Failed;
+	MyMemory->Shots = FMath::RandRange(Shots.Min, Shots.Max);
 
-	const UBlackboardComponent* MyBlackboard = OwnerComp.GetBlackboardComponent();
-	ACsAIPlayerState* PlayerState			 = Cast<ACsAIPlayerState>(Pawn->PlayerState);
+	ACsWeapon* Weapon = Pawn->GetCurrentWeapon();
 
-	// Object
-	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Object::StaticClass())
-	{
-		UObject* KeyValue  = MyBlackboard->GetValue<UBlackboardKeyType_Object>(BlackboardKey.GetSelectedKeyID());
-		AActor* ActorValue = Cast<AActor>(KeyValue);
+	MyMemory->StartCount = Weapon->FireCount;
 
-		if (ActorValue)
-		{
-			Pawn->AimAtActor(ActorValue);
+	Pawn->StartShoot();
 
-			Pawn->OnBTTask_AimAtActor_Start_Event.Broadcast(PlayerState->UniqueMappingId, ActorValue);
+	ACsAIPlayerState* PlayerState = Cast<ACsAIPlayerState>(Pawn->PlayerState);
+
+	Pawn->OnBTTask_Shoot_Start_Event.Broadcast(PlayerState->UniqueMappingId);
 #if WITH_EDITOR
-			Pawn->OnBTTask_AimAtActor_Start_ScriptEvent.Broadcast(PlayerState->UniqueMappingId, ActorValue);
+	Pawn->OnBTTask_Shoot_Start_ScriptEvent.Broadcast(PlayerState->UniqueMappingId);
 #endif // #if WITH_EDITOR
-			Result = EBTNodeResult::InProgress;
-		}
-	}
-	// Vector
-	else if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Vector::StaticClass())
-	{
-		const FVector KeyValue = MyBlackboard->GetValue<UBlackboardKeyType_Vector>(BlackboardKey.GetSelectedKeyID());
-		
-		Pawn->AimAtLocation(KeyValue);
-
-		Pawn->OnBTTask_AimAtLocation_Start_Event.Broadcast(PlayerState->UniqueMappingId, KeyValue);
-#if WITH_EDITOR
-		Pawn->OnBTTask_AimAtLocation_Start_ScriptEvent.Broadcast(PlayerState->UniqueMappingId, KeyValue);
-#endif // #if WITH_EDITOR
-		Result = EBTNodeResult::InProgress;
-	}
-	return Result;
+	return EBTNodeResult::InProgress;
 }
 
 void UCsBTTask_Shoot::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
@@ -102,8 +93,19 @@ void UCsBTTask_Shoot::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMem
 		ACsAIPawn* Pawn	  = Cast<ACsAIPawn>(AIController->GetPawn());
 		ACsWeapon* Weapon = Pawn->GetCurrentWeapon();
 
-		if (MyMemory->ElapsedTime >= Duration)
+		if ((bDuration && MyMemory->ElapsedTime >= Duration) ||
+			(bShots && (Weapon->FireCount - MyMemory->StartCount > MyMemory->Shots)))
+		{
+			Pawn->StopShoot();
+
+			ACsAIPlayerState* PlayerState = Cast<ACsAIPlayerState>(Pawn->PlayerState);
+
+			Pawn->OnBTTask_Shoot_Stop_Event.Broadcast(PlayerState->UniqueMappingId);
+#if WITH_EDITOR
+			Pawn->OnBTTask_Shoot_Stop_ScriptEvent.Broadcast(PlayerState->UniqueMappingId);
+#endif // #if WITH_EDITOR
 			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+		}
 	}
 }
 
@@ -113,16 +115,12 @@ EBTNodeResult::Type UCsBTTask_Shoot::AbortTask(UBehaviorTreeComponent& OwnerComp
 	{
 		if (ACsAIPawn* Pawn = Cast<ACsAIPawn>(AIController->GetPawn()))
 		{
-			/*
-			Pawn->StopAimAt();
-
 			ACsAIPlayerState* PlayerState = Cast<ACsAIPlayerState>(Pawn->PlayerState);
 
-			Pawn->OnBTTask_AimAt_Aborted_Event.Broadcast(PlayerState->UniqueMappingId);
+			Pawn->OnBTTask_Shoot_Aborted_Event.Broadcast(PlayerState->UniqueMappingId);
 #if WITH_EDITOR
-			Pawn->OnBTTask_AimAt_Aborted_ScriptEvent.Broadcast(PlayerState->UniqueMappingId);
+			Pawn->OnBTTask_Shoot_Aborted_ScriptEvent.Broadcast(PlayerState->UniqueMappingId);
 #endif // #if WITH_EDITOR
-*/
 		}
 	}
 	return EBTNodeResult::Aborted;
@@ -130,12 +128,7 @@ EBTNodeResult::Type UCsBTTask_Shoot::AbortTask(UBehaviorTreeComponent& OwnerComp
 
 void UCsBTTask_Shoot::DescribeRuntimeValues(const UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTDescriptionVerbosity::Type Verbosity, TArray<FString>& Values) const
 {
-	FString KeyDesc = BlackboardKey.SelectedKeyName.ToString();
-	Values.Add(FString::Printf(TEXT("%s: %s"), *Super::GetStaticDescription(), *KeyDesc));
-}
-
-FString UCsBTTask_Shoot::GetStaticDescription() const
-{
-	FString KeyDesc = BlackboardKey.SelectedKeyName.ToString();
-	return FString::Printf(TEXT("%s: %s"), *Super::GetStaticDescription(), *KeyDesc);
+	FCsBTTask_ShootMemory* MyMemory = (FCsBTTask_ShootMemory*)NodeMemory;
+	check(MyMemory);
+	Values.Add(FString::Printf(TEXT("%s: ElapsedTime: %f Count: %d"), *Super::GetStaticDescription(), MyMemory->ElapsedTime, MyMemory->StartCount));
 }

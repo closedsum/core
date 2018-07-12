@@ -430,7 +430,7 @@ void ACsPawn::PerformViewTrace()
 
 	Request->OnResponse_Event.AddUObject(this, &ACsPawn::PerformViewTrace_Response);
 
-	ViewTraceInfo.RequestId = Request->PendingId;
+	ViewTraceInfo.RequestId = Request->Id;
 
 	FCsTraceResponse* Response = Manager_Trace->Trace(Request);
 

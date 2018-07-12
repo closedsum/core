@@ -20,12 +20,15 @@ public:
 
 	// Requesting Player State on Client
 #pragma region
+public:
 
 	virtual void ClientRecieveUniqueMappingId_AI_Internal(const uint8 &MappingId) override;
 
 #pragma endregion Requesting Player State on Client
 
-// Handshaking
+public:
+
+	// Handshaking
 
 	virtual void ServerSendOnBoardCompleted_AI_Internal(const uint8 &ClientMappingId, const uint8 &MappingId) override;
 

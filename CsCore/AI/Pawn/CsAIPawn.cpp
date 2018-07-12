@@ -91,17 +91,22 @@ void ACsAIPawn::PerformViewTrace_Response(const uint8 &RequestId, FCsTraceRespon
 // Behavior Tree
 #pragma region
 
-void ACsAIPawn::AimAtLocation(const FVector &Target)
-{
-}
+	// AimAt
+#pragma region
 
-void ACsAIPawn::AimAtActor(AActor* Target)
-{
-}
+void ACsAIPawn::AimAtLocation(const FVector &Target){}
+void ACsAIPawn::AimAtActor(AActor* Target){}
+void ACsAIPawn::StopAimAt(){}
 
-void ACsAIPawn::StopAimAt()
-{
-}
+#pragma endregion AimAt
+
+	// Shoot
+#pragma region
+
+void ACsAIPawn::StartShoot(){}
+void ACsAIPawn::StopShoot(){}
+
+#pragma endregion Shoot
 
 #pragma endregion Behavior Tree
 

@@ -19,21 +19,24 @@ void FECsEnumCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> StructPr
 	SetPropertyHandles(StructPropertyHandle);
 	
 	// Alter DisplayNameList for Properties that are visible and should NOT be edited
-	UProperty* Property				   = StructPropertyHandle->GetProperty();
-	const uint64 DisplayAsDropDownMask = (1 << UP::EditAnywhere);
-
-	if (!Property->HasAnyPropertyFlags(DisplayAsDropDownMask))
+	if (PerformDropDownCheck)
 	{
-		const int32 Count = DisplayNameList.Num();
+		UProperty* Property = StructPropertyHandle->GetProperty();
+		const uint64 DisplayAsDropDownMask = (1 << UP::EditAnywhere);
 
-		FString DisplayName;
-		GetDisplayNamePropertyValue(DisplayName);
-
-		for (int32 I = Count - 1; I >= 0; --I)
+		if (!Property->HasAnyPropertyFlags(DisplayAsDropDownMask))
 		{
-			if (DisplayName == *DisplayNameList[I].Get())
-				continue;
-			DisplayNameList.RemoveAt(I);
+			const int32 Count = DisplayNameList.Num();
+
+			FString DisplayName;
+			GetDisplayNamePropertyValue(DisplayName);
+
+			for (int32 I = Count - 1; I >= 0; --I)
+			{
+				if (DisplayName == *DisplayNameList[I].Get())
+					continue;
+				DisplayNameList.RemoveAt(I);
+			}
 		}
 	}
 

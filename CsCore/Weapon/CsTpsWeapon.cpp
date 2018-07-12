@@ -22,8 +22,8 @@ ACsTpsWeapon::ACsTpsWeapon(const FObjectInitializer& ObjectInitializer)
 	Mesh->CastShadow = false;
 	Mesh->SetHiddenInGame(true);
 	Mesh->SetVisibility(false);
-	Mesh->SetOnlyOwnerSee(true);
-	Mesh->SetOwnerNoSee(false);
+	Mesh->SetOnlyOwnerSee(false);
+	Mesh->SetOwnerNoSee(true);
 	Mesh->SetCollisionObjectType(ECC_WorldDynamic);
 	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Mesh->SetCollisionResponseToAllChannels(ECR_Ignore);

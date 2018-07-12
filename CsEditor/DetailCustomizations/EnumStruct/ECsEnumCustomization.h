@@ -20,6 +20,8 @@ protected:
 	template<typename EnumStruct, typename EnumMap>
 	void Init()
 	{
+		PerformDropDownCheck = true;
+
 		const int32 Count = EnumMap::Get().Num();
 
 		for (int32 I = 0; I < Count; ++I)
@@ -33,6 +35,8 @@ protected:
 public:
 
 	static TSharedRef<IPropertyTypeCustomization> MakeInstance();
+
+	bool PerformDropDownCheck;
 
 	/** IPropertyTypeCustomization interface */
 	virtual void CustomizeHeader(TSharedRef<IPropertyHandle> StructPropertyHandle, class FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils) override;

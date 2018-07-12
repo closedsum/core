@@ -1354,13 +1354,16 @@ void ACsWeapon::ConsumeAmmo(const FECsWeaponFireMode& FireMode, const bool& IsCh
 	--CurrentAmmo;
 	CurrentAmmoHandle.Resolve();
 	
-	ACsData_Projectile* Data_Projectile = GetMyData_Projectile<ACsData_Projectile>(PrimaryFireMode, false);
-	const FName& ShortCode				= Data_Projectile->GetItemShortCode();
+	if (GetMyData_Weapon()->UseInventory())
+	{
+		ACsData_Projectile* Data_Projectile = GetMyData_Projectile<ACsData_Projectile>(PrimaryFireMode, false);
+		const FName& ShortCode = Data_Projectile->GetItemShortCode();
 
-	OnConsumeAmmo_Event.Broadcast(ShortCode);
+		OnConsumeAmmo_Event.Broadcast(ShortCode);
 #if WITH_EDITOR
-	OnConsumeAmmo_ScriptEvent.Broadcast(ShortCode);
+		OnConsumeAmmo_ScriptEvent.Broadcast(ShortCode);
 #endif // #if WITH_EDITOR
+	}
 }
 
 void ACsWeapon::ConsumeAmmoItem(const FECsWeaponFireMode &FireMode, const bool &IsCharged, TArray<FCsItem*> &OutItems)

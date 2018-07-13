@@ -3826,8 +3826,6 @@ typedef ECsMemberType::Type TCsMemberType;
 // Blueprint Property Types
 #pragma region
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_FCsProperty_bool_OnChange, bool, Value);
-
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsProperty_bool
 {
@@ -3845,9 +3843,6 @@ protected:
 	bool IsDirty;
 public:
 	TMulticastDelegate<void, const bool&> OnChange_Event;
-
-	UPROPERTY(BlueprintAssignable, Category = "Property bool")
-	FBindableDynEvent_FCsProperty_bool_OnChange OnChange_ScriptEvent;
 
 public:
 	FCsProperty_bool() {}

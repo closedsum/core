@@ -23,9 +23,6 @@ UCsBTTask_Shoot::UCsBTTask_Shoot(const FObjectInitializer& ObjectInitializer)
 
 EBTNodeResult::Type UCsBTTask_Shoot::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	if (!bDuration && !bShots)
-		return EBTNodeResult::Failed;
-
 	AAIController* AIController = OwnerComp.GetAIOwner();
 
 	if (!AIController)
@@ -38,19 +35,19 @@ EBTNodeResult::Type UCsBTTask_Shoot::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 
 	if (!bDuration && !bShots)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s): Either bDuration or bShot must be TRUE. Both can NOT be FALSE."), *(Pawn->GetName()));
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s): Either Duration or Shots must be SET. Both can NOT be NOT SET."), *(Pawn->GetName()));
 		return EBTNodeResult::Failed;
 	}
 
 	if (bDuration && Duration <= 0.0f)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s): if bDuration = TRUE, Duration must be > 0.0f."), *(Pawn->GetName()));
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s): if Duration is SET, Duration must be > 0.0f."), *(Pawn->GetName()));
 		return EBTNodeResult::Failed;
 	}
 
 	if (bShots && Shots.Min <= 0)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s): if bShots = TRUE, Shots.Min must be > 0."), *(Pawn->GetName()));
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s): if Shots is SET, Shots.Min must be > 0."), *(Pawn->GetName()));
 		return EBTNodeResult::Failed;
 	}
 

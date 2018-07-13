@@ -18,8 +18,6 @@ struct FCsBTTask_ShootMemory
 	}
 };
 
-class AAIController;
-
 UCLASS(config = Game)
 class CSCORE_API UCsBTTask_Shoot : public UBTTaskNode
 {

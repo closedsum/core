@@ -1,0 +1,235 @@
+// Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
+#include "Types/CsTypes_Primitive.h"
+#include "Runtime/AIModule/Classes/BehaviorTree/BehaviorTreeTypes.h"
+#include "Runtime/AIModule/Classes/BehaviorTree/Blackboard/BlackboardKeyType.h"
+
+#include "CsTypes_BehaviorTree.generated.h"
+#pragma once
+
+// BlackboardKeyType
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsBlackboardKeyType : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsBlackboardKeyType() {}
+	FECsBlackboardKeyType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsBlackboardKeyType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsBlackboardKeyType() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsBlackboardKeyType& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
+}
+
+struct CSCORE_API EMCsBlackboardKeyType : public TCsEnumStructMap<FECsBlackboardKeyType, uint8>
+{
+protected:
+	EMCsBlackboardKeyType() {}
+	EMCsBlackboardKeyType(const EMCsBlackboardKeyType &) = delete;
+	EMCsBlackboardKeyType(EMCsBlackboardKeyType &&) = delete;
+public:
+	~EMCsBlackboardKeyType() {}
+private:
+	static EMCsBlackboardKeyType* Instance;
+
+public:
+	static EMCsBlackboardKeyType& Get();
+};
+
+namespace ECsBlackboardKeyType
+{
+	extern CSCORE_API const FECsBlackboardKeyType Bool;
+	extern CSCORE_API const FECsBlackboardKeyType Enum;
+	extern CSCORE_API const FECsBlackboardKeyType Int;
+	extern CSCORE_API const FECsBlackboardKeyType Float;
+	extern CSCORE_API const FECsBlackboardKeyType Name;
+	extern CSCORE_API const FECsBlackboardKeyType String;
+	extern CSCORE_API const FECsBlackboardKeyType Vector;
+	extern CSCORE_API const FECsBlackboardKeyType Rotator;
+	extern CSCORE_API const FECsBlackboardKeyType Object;
+	extern CSCORE_API const FECsBlackboardKeyType Class;
+}
+
+struct CSCORE_API FCsBlackboardKeyTypeHelper
+{
+	static const FECsBlackboardKeyType& GetType(struct FBlackboardKeySelector &Key);
+};
+
+// BTTaskLogicalOperator
+
+UENUM()
+namespace ECsBTTask_LogicalOperator
+{
+	enum Type
+	{
+		And								UMETA(DisplayName = "And"),
+		Or								UMETA(DisplayName = "Or"),
+		ECsBTTask_LogicalOperator_MAX	UMETA(Hidden),
+	};
+}
+
+typedef ECsBTTask_LogicalOperator::Type TCsBTTaskLogicalOperator;
+
+struct CSCORE_API EMCsBTTask_LogicalOperator : public TCsEnumMap<ECsBTTask_LogicalOperator::Type>
+{
+protected:
+	EMCsBTTask_LogicalOperator() {}
+	EMCsBTTask_LogicalOperator(const EMCsBTTask_LogicalOperator &) = delete;
+	EMCsBTTask_LogicalOperator(EMCsBTTask_LogicalOperator &&) = delete;
+public:
+	~EMCsBTTask_LogicalOperator() {}
+private:
+	static EMCsBTTask_LogicalOperator* Instance;
+
+public:
+	static EMCsBTTask_LogicalOperator& Get();
+};
+
+namespace ECsBTTask_LogicalOperator
+{
+	namespace Ref
+	{
+		extern CSCORE_API const Type And;
+		extern CSCORE_API const Type Or;
+		extern CSCORE_API const Type ECsBTTask_LogicalOperator_MAX;
+	}
+
+	namespace Sym
+	{
+		extern CSCORE_API const FString And; // = TEXT("&");
+		extern CSCORE_API const FString Or; // = TEXT("|");
+	}
+
+	FORCEINLINE const FString& ToSymbol(const Type &EType)
+	{
+		if (EType == Type::And) { return Sym::And; }
+		if (EType == Type::Or) { return Sym::Or; }
+		return ECsCached::Str::Empty;
+	}
+}
+
+namespace EBasicKeyOperation
+{
+	namespace Sym
+	{
+		extern CSCORE_API const FString Set; //= TEXT("true");
+		extern CSCORE_API const FString NotSet; //= TEXT("false");
+	}
+
+	FORCEINLINE const FString& ToSymbol(const Type &EType)
+	{
+		if (EType == Type::Set) { return Sym::Set; }
+		if (EType == Type::NotSet) { return Sym::NotSet; }
+		return ECsCached::Str::Empty;
+	}
+}
+
+namespace EArithmeticKeyOperation
+{
+	namespace Sym
+	{
+		extern CSCORE_API const FString Equal; //= TEXT("=");
+		extern CSCORE_API const FString NotEqual; // = TEXT("!=");
+		extern CSCORE_API const FString Less; // =TEXT("<");
+		extern CSCORE_API const FString LessOrEqual; // = TEXT("<=");
+		extern CSCORE_API const FString Greater; // = TEXT(">");
+		extern CSCORE_API const FString GreaterOrEqual; // = TEXT(".=");
+	}
+
+	FORCEINLINE const FString& ToSymbol(const Type &EType)
+	{
+		if (EType == Type::Equal) { return Sym::Equal; }
+		if (EType == Type::NotEqual) { return Sym::NotEqual; }
+		if (EType == Type::Less) { return Sym::Less; }
+		if (EType == Type::LessOrEqual) { return Sym::LessOrEqual; }
+		if (EType == Type::Equal) { return Sym::Greater; }
+		if (EType == Type::Equal) { return Sym::GreaterOrEqual; }
+		return ECsCached::Str::Empty;
+	}
+}
+
+namespace ETextKeyOperation
+{
+	namespace Sym
+	{
+		extern CSCORE_API const FString Equal; // = TEXT("=");
+		extern CSCORE_API const FString NotEqual; // = TEXT("!=");
+		extern CSCORE_API const FString Contain; // = TEXT("contains");
+		extern CSCORE_API const FString NotContain; // = TEXT("not contains");
+	}
+
+	FORCEINLINE const FString& ToSymbol(const Type &EType)
+	{
+		if (EType == Type::Equal) { return Sym::Equal; }
+		if (EType == Type::NotEqual) { return Sym::NotEqual; }
+		if (EType == Type::Contain) { return Sym::Contain; }
+		if (EType == Type::NotContain) { return Sym::NotContain; }
+		return ECsCached::Str::Empty;
+	}
+}
+
+USTRUCT()
+struct CSCORE_API FCsBTTask_KeyValue
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, Category = Blackboard)
+	struct FBlackboardKeySelector Key;
+
+	UPROPERTY(EditAnywhere, Category = Blackboard)
+	TEnumAsByte<EBasicKeyOperation::Type> BasicOperation;
+
+	UPROPERTY(EditAnywhere, Category = Blackboard)
+	TEnumAsByte<EArithmeticKeyOperation::Type> ArithmeticOperation;
+
+	UPROPERTY(EditAnywhere, Category = Blackboard)
+	TEnumAsByte<ETextKeyOperation::Type> TextOperation;
+
+	UPROPERTY(EditAnywhere, Category = Blackboard)
+	TEnumAsByte<ESearchCase::Type> SearchCase;
+
+	FECsBlackboardKeyType Type;
+
+	UPROPERTY(EditAnywhere, Category = Blackboard)
+	int32 Value_Int;
+
+	UPROPERTY(EditAnywhere, Category = Blackboard)
+	float Value_Float;
+
+	UPROPERTY(EditAnywhere, Category = Blackboard)
+	FName Value_Name;
+
+	UPROPERTY(EditAnywhere, Category = Blackboard)
+	FString Value_String;
+
+	UPROPERTY(EditAnywhere, Category = Blackboard)
+	FVector Value_Vector;
+
+	UPROPERTY(EditAnywhere, Category = Blackboard)
+	FRotator Value_Rotator;
+
+	bool Last_Evaluation;
+
+	FCsBTTask_KeyValue()
+	{
+		SearchCase	= ESearchCase::IgnoreCase;
+		Type		= EMCsBlackboardKeyType::Get().GetMAX();
+		Last_Evaluation = false;
+	}
+	~FCsBTTask_KeyValue(){}
+
+public:
+	void Init(const FString& FunctionName);
+	bool IsValid();
+	bool Evaluate(const class UBlackboardComponent* Blackboard);
+protected:
+	bool Evaluate_Internal(const class UBlackboardComponent* Blackboard);
+public:
+	FString GetStaticDescription(const class UBlackboardComponent* Blackboard) const;
+};

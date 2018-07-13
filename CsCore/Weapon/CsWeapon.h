@@ -23,6 +23,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsWeapon_OnConsume
 DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsWeapon_OnConsumeAmmoItem, const FName&, const TArray<FCsItem*>&);
 // Firing
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsWeapon_Override_FireWeapon, const FECsWeaponSlot&, WeaponSlot, const FECsWeaponFireMode&, FireMode);
+// Reload
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsWeapon_OnbReloading, const FECsWeaponSlot&, WeaponSlot, bool, Value);
 // Equip
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FBindableDynEvent_CsWeapon_OnEquip, const FECsWeaponSlot&, WeaponSlot, const int32&, Ammo, const int32&, MaxAmmo, const int32&, AmmoReserve);
 // UnEquip
@@ -875,7 +877,15 @@ public:
 	FECsWeaponState ReloadingState;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Reload")
-	bool IsReloading;
+	bool bReloading;
+	TCsBool_Ref bReloadingHandle;
+private:
+	void OnChange_bReloading(const bool &Value);
+public:
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnbReloading, const FECsWeaponSlot&, const bool&);
+	FOnbReloading OnbReloading_Event;
+	UPROPERTY(BlueprintAssignable, Category = "Reload")
+	FBindableDynEvent_CsWeapon_OnbReloading OnbReloading_ScriptEvent;
 
 	FCsWeapon_Ref_float ReloadTime;
 	virtual float GetReloadTime(const int32 &Index);

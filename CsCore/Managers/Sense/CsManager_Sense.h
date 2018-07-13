@@ -79,6 +79,9 @@ public:
 
 	virtual FCsSenseInfo* Add(AActor* Actor, const TCsSenseTeam& Team);
 
+	virtual bool CanSense(AActor* Actor);
+	virtual bool IsSensing(AActor* Actor);
+
 	virtual void OnTick(const float &DeltaSeconds);
 	virtual void Sense_CheckMeToActorDot(FCsSenseInfo& Info);
 	virtual void Sense_TraceViewToActorBody(FCsSenseInfo& Info);

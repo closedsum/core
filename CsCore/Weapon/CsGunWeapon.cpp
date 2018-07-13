@@ -101,8 +101,8 @@ void ACsGunWeapon::OnPawnDeActivate()
 	Hide();
 	Disable();
 
-	IsReloading = false;
-	ReloadStartTime = GetWorld()->TimeSeconds + ReloadTime.Get(CS_WEAPON_DATA_VALUE) + 1.0f;
+	bReloading = false;
+	ReloadStartTime = GetWorld()->GetTimeSeconds() + ReloadTime.Get(CS_WEAPON_DATA_VALUE) + 1.0f;
 }
 
 #pragma endregion State

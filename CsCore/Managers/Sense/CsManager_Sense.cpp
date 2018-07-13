@@ -92,6 +92,33 @@ FCsSenseInfo* ACsManager_Sense::Add(AActor* Actor, const TCsSenseTeam& Team)
 	return nullptr;
 }
 
+bool ACsManager_Sense::CanSense(AActor* Actor)
+{
+	if (Cast<ACsPawn>(Actor))
+		return true;
+	return false;
+}
+
+bool ACsManager_Sense::IsSensing(AActor* Actor)
+{
+	if (!CanSense(Actor))
+		return false;
+
+	// Player
+	if (ACsPlayerPawn* Pawn = Cast<ACsPlayerPawn>(Actor))
+	{
+		if (SenseMap[ECsSenseActorType::Player].Find(Pawn->UniqueObjectId))
+			return true;
+	}
+	// AI
+	if (ACsAIPawn* Pawn = Cast<ACsAIPawn>(Actor))
+	{
+		if (SenseMap[ECsSenseActorType::AI].Find(Pawn->UniqueObjectId))
+			return true;
+	}
+	return false;
+}
+
 void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 {
 	AActor* Me			  = GetMyOwner();
@@ -195,7 +222,7 @@ void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 		FVector Direction  = FVector::ZeroVector;
 
 		if (ACsPawn* Pawn = Cast<ACsPawn>(Me))
-			Direction = Pawn->CurrentRootDirXY;
+			Direction = Pawn->CurrentViewDirXY;
 
 		const float AngleHeight = 0.0174533f;// FMath::DegreesToRadians(1.0f);
 

@@ -796,7 +796,7 @@ void ACsWeapon::OnTick_HandleStates()
 					StopSound(FireMode, FireSound);
 
 					ReloadStartTime = GetWorld()->TimeSeconds;
-					IsReloading		= true;
+					bReloading		= true;
 
 					PlayAnimation_Reload();
 
@@ -843,7 +843,7 @@ void ACsWeapon::OnTick_HandleStates()
 		{
 			ResetCurrentAmmo(CS_WEAPON_DATA_VALUE);
 
-			IsReloading  = false;
+			bReloading   = false;
 			LastState    = CurrentState;
 			CurrentState = IdleState;
 
@@ -888,17 +888,17 @@ void ACsWeapon::CheckState_Idle()
 	{
 		const float TimeSeconds = GetWorld()->GetTimeSeconds();
 
-		if (IsReloading &&
+		if (bReloading &&
 			TimeSeconds - ReloadStartTime > ReloadTime.GetEX(CS_WEAPON_DATA_VALUE))
 		{
 			ResetCurrentAmmo(CS_WEAPON_DATA_VALUE);
-			IsReloading = false;
+			bReloading = false;
 		}
 
 		if (ShouldAutoReload(EMCsWeaponFireMode::Get().GetMAX()))
 		{
 			ReloadStartTime = TimeSeconds;
-			IsReloading		= true;
+			bReloading		= true;
 
 			PlayAnimation_Reload();
 
@@ -975,7 +975,7 @@ bool ACsWeapon::CanFire(const FECsWeaponFireMode &FireMode)
 	const bool Pass_FireOnRelease = DoFireOnRelease[FireMode] && ((Last_IsFirePressed[FireMode] && !IsFirePressed[FireMode])) && AllowFire;
 	const bool Pass_Ammo		  = CurrentAmmo > 0 || HasUnlimitedAmmo;
 
-	return (Pass_IsFirePressed || Pass_FireOnRelease) && Pass_Ammo && !IsReloading;
+	return (Pass_IsFirePressed || Pass_FireOnRelease) && Pass_Ammo && !bReloading;
 }
 
 bool ACsWeapon::CanFire_Auto(const FECsWeaponFireMode &FireMode)
@@ -988,7 +988,7 @@ bool ACsWeapon::CanFire_Auto(const FECsWeaponFireMode &FireMode)
 	const bool Pass_FireOnRelease = DoFireOnRelease[FireMode] && ((Last_IsFirePressed[FireMode] && !IsFirePressed[FireMode])) && AllowFire;
 	const bool Pass_Ammo		  = CurrentAmmo > 0 || HasUnlimitedAmmo;
 
-	return (Pass_IsFirePressed || Pass_FireOnRelease) && Pass_Ammo && !IsReloading;
+	return (Pass_IsFirePressed || Pass_FireOnRelease) && Pass_Ammo && !bReloading;
 }
 
 void ACsWeapon::Enable()
@@ -2351,13 +2351,21 @@ void ACsWeapon::PlayMuzzleFlash(const FECsWeaponFireMode &FireMode)
 // Reload
 #pragma region
 
+void ACsWeapon::OnChange_bReloading(const bool &Value)
+{
+	OnbReloading_Event.Broadcast(WeaponSlot, Value);
+#if WITH_EDITOR
+	OnbReloading_ScriptEvent.Broadcast(WeaponSlot, Value);
+#endif // #if WITH_EDITOR
+}
+
 float ACsWeapon::GetReloadTime(const int32 &Index) { return ReloadTime.Get(Index); }
 float ACsWeapon::GetRechargeSecondsPerAmmo(const int32 &Index) { return RechargeSecondsPerAmmo.Get(Index); }
 float ACsWeapon::GetRechargeStartupDelay(const int32 &Index) { return RechargeStartupDelay.Get(Index); }
 
 bool ACsWeapon::CanReload()
 {
-	if (CurrentState == ReloadingState || IsReloading)
+	if (CurrentState == ReloadingState || bReloading)
 		return false;
 
 	// Check Ammo
@@ -2431,7 +2439,7 @@ void ACsWeapon::Reload()
 	}
 
 	ReloadStartTime = GetWorld()->TimeSeconds;
-	IsReloading		= true;
+	bReloading		= true;
 
 	PlayAnimation_Reload();
 

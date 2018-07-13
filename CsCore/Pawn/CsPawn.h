@@ -20,9 +20,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsPawn_OnFirstSpaw
 // Setup
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsPawn_OnSetupFinished, const uint8&, MappingId);
 // Health
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsPawn_OnChangeHealth, const uint8&, MappingId, const float&, CurrentHealth, const float&, CurrentMaxHealth);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsPawn_OnChange_Health, const uint8&, MappingId, const float&, CurrentHealth, const float&, CurrentMaxHealth);
 // Weapon
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsPawn_OnChangeCurrentWeaponSlot, const uint8&, MappingId, const FECsWeaponSlot&, LastWeaponSlot, const FECsWeaponSlot&, CurrentWeaponSlot);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsPawn_OnChange_CurrentWeaponSlot, const uint8&, MappingId, const FECsWeaponSlot&, LastWeaponSlot, const FECsWeaponSlot&, CurrentWeaponSlot);
 // Damage
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnApplyDamage_Result, const uint8&, MappingId, const FCsDamageResult&, Result);
 
@@ -194,12 +194,12 @@ public:
 
 	virtual void OnChange_Health(const float &Value);
 
-	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnChangeHealth, const uint8&, const float&, const float&);
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnChange_Health, const uint8&, const float&, const float&);
 
-	FOnChangeHealth OnChange_Health_Event;
+	FOnChange_Health OnChange_Health_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "State")
-	FBindableDynEvent_CsPawn_OnChangeHealth OnChange_Health_ScriptEvent;
+	FBindableDynEvent_CsPawn_OnChange_Health OnChange_Health_ScriptEvent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
 	float MaxHealth;
@@ -485,12 +485,12 @@ public:
 	TCsProperty_Ref<FECsWeaponSlot> CurrentWeaponSlotHandle;
 	virtual void OnChange_CurrentWeaponSlot(const FECsWeaponSlot &Slot);
 
-	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnChangeCurrentWeaponSlot, const uint8&, const FECsWeaponSlot&, const FECsWeaponSlot&);
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnChange_CurrentWeaponSlot, const uint8&, const FECsWeaponSlot&, const FECsWeaponSlot&);
 
-	FOnChangeCurrentWeaponSlot OnChange_CurrentWeaponSlot_Event;
+	FOnChange_CurrentWeaponSlot OnChange_CurrentWeaponSlot_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "Weapons")
-	FBindableDynEvent_CsPawn_OnChangeCurrentWeaponSlot OnChange_CurrentWeaponSlot_ScriptEvent;
+	FBindableDynEvent_CsPawn_OnChange_CurrentWeaponSlot OnChange_CurrentWeaponSlot_ScriptEvent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapons")
 	uint8 CurrentWeaponIndex;

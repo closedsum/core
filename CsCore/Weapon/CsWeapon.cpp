@@ -162,6 +162,9 @@ ACsWeapon::ACsWeapon(const FObjectInitializer& ObjectInitializer)
 
 	CurrentAmmoHandle.Set(&CurrentAmmo);
 	CurrentAmmoHandle.OnChange_Event.AddUObject(this, &ACsWeapon::OnChange_CurrentAmmo);
+
+	bReloadingHandle.Set(&bReloading);
+	bReloadingHandle.OnChange_Event.AddUObject(this, &ACsWeapon::OnChange_bReloading);
 }
 
 void ACsWeapon::PostInitializeComponents()
@@ -2353,9 +2356,9 @@ void ACsWeapon::PlayMuzzleFlash(const FECsWeaponFireMode &FireMode)
 
 void ACsWeapon::OnChange_bReloading(const bool &Value)
 {
-	OnbReloading_Event.Broadcast(WeaponSlot, Value);
+	OnChange_bReloading_Event.Broadcast(WeaponSlot, Value);
 #if WITH_EDITOR
-	OnbReloading_ScriptEvent.Broadcast(WeaponSlot, Value);
+	OnChange_bReloading_ScriptEvent.Broadcast(WeaponSlot, Value);
 #endif // #if WITH_EDITOR
 }
 

@@ -281,7 +281,7 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Character Data")
-	const float& GetAimTime();
+	virtual const float& GetAimTime();
 
 #pragma endregion AI
 };

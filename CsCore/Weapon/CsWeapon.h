@@ -655,7 +655,10 @@ public:
 	virtual void IncrementCurrentAmmo(const int32 &Index);
 	virtual void ResetCurrentAmmo(const int32 &Index);
 
-	bool HasUnlimitedAmmo;
+	// TODO: May need distinguish between MaxAmmo (ClipSize) and a Weapon's Ammo Capacity
+
+	UPROPERTY(BlueprintReadOnly, Category = "Firing")
+	bool bUnlimitedAmmo;
 
 	virtual const FName& GetAmmoShortCode(const FECsWeaponFireMode &FireMode, const bool &IsCharged);
 	virtual int32 GetAmmoReserve(const int32 &Index, const FECsWeaponFireMode &FireMode, const bool &IsCharged);
@@ -907,7 +910,7 @@ public:
 	float NextRechargeAmmoTime;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Reload")
-	bool IsRechargingAmmo;
+	bool bRechargingAmmo;
 
 	UFUNCTION(BlueprintCallable, Category = "Reload")
 	bool CanReload();

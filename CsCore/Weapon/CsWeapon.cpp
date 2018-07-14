@@ -751,8 +751,8 @@ void ACsWeapon::OnTick_HandleStates()
 
 	// Recharge Ammo
 	if (AllowRechargeAmmo[CS_WEAPON_DATA_VALUE] && 
-		IsRechargingAmmo &&
-		!HasUnlimitedAmmo && 
+		bRechargingAmmo &&
+		!bUnlimitedAmmo &&
 		CurrentAmmo < maxAmmo)
 	{
 		if (TimeSeconds > NextRechargeAmmoTime)
@@ -761,7 +761,7 @@ void ACsWeapon::OnTick_HandleStates()
 
 			if (CurrentAmmo == maxAmmo)
 			{
-				IsRechargingAmmo = false;
+				bRechargingAmmo = false;
 			}
 			else
 			{
@@ -830,7 +830,7 @@ void ACsWeapon::OnTick_HandleStates()
 						{
 							RechargeAmmo_StartTime = TimeSeconds;
 							NextRechargeAmmoTime   = RechargeAmmo_StartTime + RechargeSecondsPerAmmo.GetEX(CS_WEAPON_DATA_VALUE) + RechargeStartupDelay.GetEX(CS_WEAPON_DATA_VALUE);
-							IsRechargingAmmo	   = true;
+							bRechargingAmmo		   = true;
 						}
 						CheckState_Idle();
 					}
@@ -932,7 +932,7 @@ void ACsWeapon::CheckState_Idle()
 
 				if (AllowRechargeAmmo[CS_WEAPON_DATA_VALUE] && !AllowRechargeAmmoDuringFire[CS_WEAPON_DATA_VALUE])
 				{
-					IsRechargingAmmo = false;
+					bRechargingAmmo = false;
 				}
 				HandleState_Firing(FireMode);
 			}
@@ -952,7 +952,7 @@ void ACsWeapon::HandleState_Firing(const FECsWeaponFireMode &FireMode)
 
 	FireWeapon(FireMode);
 
-	if (!HasUnlimitedAmmo)
+	if (!bUnlimitedAmmo)
 	{
 		//CurrentAmmo = FMath::Max(0, CurrentAmmo - ProjectilesPerShot.Get(FireMode));
 
@@ -961,7 +961,7 @@ void ACsWeapon::HandleState_Firing(const FECsWeaponFireMode &FireMode)
 		{
 			if (AllowRechargeAmmoDuringFire[CS_WEAPON_DATA_VALUE])
 			{
-				IsRechargingAmmo	 = true;
+				bRechargingAmmo	     = true;
 				NextRechargeAmmoTime = TimeSeconds + RechargeSecondsPerAmmo.GetEX(CS_WEAPON_DATA_VALUE) + RechargeStartupDelay.GetEX(CS_WEAPON_DATA_VALUE);
 			}
 		}
@@ -976,7 +976,7 @@ bool ACsWeapon::CanFire(const FECsWeaponFireMode &FireMode)
 	const bool AllowFire		  = !DoingEquipTransition && IsEquipped && TimeSeconds - Fire_StartTime[FireMode] > TimeBetweenShots.GetEX(FireMode);
 	const bool Pass_IsFirePressed = IsFirePressed[FireMode] && !DoFireOnRelease[FireMode] && (IsFullAuto[FireMode] || (!Last_IsFirePressed[FireMode] && IsFirePressed[FireMode]) || IsBot) && AllowFire;
 	const bool Pass_FireOnRelease = DoFireOnRelease[FireMode] && ((Last_IsFirePressed[FireMode] && !IsFirePressed[FireMode])) && AllowFire;
-	const bool Pass_Ammo		  = CurrentAmmo > 0 || HasUnlimitedAmmo;
+	const bool Pass_Ammo		  = CurrentAmmo > 0 || bUnlimitedAmmo;
 
 	return (Pass_IsFirePressed || Pass_FireOnRelease) && Pass_Ammo && !bReloading;
 }
@@ -989,7 +989,7 @@ bool ACsWeapon::CanFire_Auto(const FECsWeaponFireMode &FireMode)
 	const bool AllowFire		  = !DoingEquipTransition && IsEquipped && TimeSeconds - Fire_StartTime[FireMode] > TimeBetweenAutoShots.GetEX(FireMode);
 	const bool Pass_IsFirePressed = IsFirePressed.Get(FireMode) && !DoFireOnRelease[FireMode] && (IsFullAuto[FireMode] || (!Last_IsFirePressed[FireMode] && IsFirePressed[FireMode]) || IsBot) && AllowFire;
 	const bool Pass_FireOnRelease = DoFireOnRelease[FireMode] && ((Last_IsFirePressed[FireMode] && !IsFirePressed[FireMode])) && AllowFire;
-	const bool Pass_Ammo		  = CurrentAmmo > 0 || HasUnlimitedAmmo;
+	const bool Pass_Ammo		  = CurrentAmmo > 0 || bUnlimitedAmmo;
 
 	return (Pass_IsFirePressed || Pass_FireOnRelease) && Pass_Ammo && !bReloading;
 }

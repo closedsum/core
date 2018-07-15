@@ -221,6 +221,18 @@ public:
 #pragma region
 public:
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Behavior Tree")
+	AActor* MyTargetActor;
+
+	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
+	virtual void SetTargetActor(AActor* Target);
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Behavior Tree")
+	FVector MyTargetLocation;
+
+	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
+	virtual void SetTargetLocation(const FVector &Target);
+
 	// RotateToFaceBBEntry
 #pragma region
 public:
@@ -241,6 +253,19 @@ public:
 	FBindableDynEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Finish OnBTTask_RotateToFaceBBEntry_Finish_ScriptEvent;
 
 #pragma endregion RotateToFaceBBEntry
+
+	// LookAt
+#pragma region
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
+	virtual void LookAtLocation(const FVector &Target, const float &BlendInTime, const float &LookTime);
+	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
+	virtual void LookAtActor(AActor* Target, const float &BlendInTime, const float &LookTime);
+	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
+	virtual void StopLookAt(const float &BlendOutTime);
+
+#pragma endregion LookAt
 
 	// AimAt
 #pragma region
@@ -273,7 +298,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
 	virtual void AimAtLocation(const FVector &Target);
 	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
-	virtual void AimAtActor(AActor* Target);
+	virtual void AimAtActor(AActor* Target, const FName &Bone);
 	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
 	virtual void StopAimAt();
 

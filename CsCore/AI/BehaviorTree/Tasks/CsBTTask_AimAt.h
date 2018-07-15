@@ -21,6 +21,11 @@ class CSCORE_API UCsBTTask_AimAt : public UBTTask_BlackboardBase
 {
 	GENERATED_UCLASS_BODY()
 
+protected:
+
+	UPROPERTY(EditAnywhere, Category = Node)
+	FName Bone;
+
 public:
 
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;

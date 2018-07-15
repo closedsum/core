@@ -54,7 +54,7 @@ EBTNodeResult::Type UCsBTTask_AimAt::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 
 		if (ActorValue)
 		{
-			Pawn->AimAtActor(ActorValue);
+			Pawn->AimAtActor(ActorValue, Bone);
 
 			Pawn->OnBTTask_AimAtActor_Start_Event.Broadcast(PlayerState->UniqueMappingId, ActorValue);
 #if WITH_EDITOR

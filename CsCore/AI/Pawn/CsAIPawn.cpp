@@ -91,11 +91,30 @@ void ACsAIPawn::PerformViewTrace_Response(const uint8 &RequestId, FCsTraceRespon
 // Behavior Tree
 #pragma region
 
+void ACsAIPawn::SetTargetActor(AActor* Target)
+{
+	MyTargetActor = Target;
+}
+
+void ACsAIPawn::SetTargetLocation(const FVector &Target)
+{
+	MyTargetLocation = Target;
+}
+
+	// LookAt
+#pragma region
+
+void ACsAIPawn::LookAtLocation(const FVector &Target, const float &BlendInTime, const float &LookTime){}
+void ACsAIPawn::LookAtActor(AActor* Target, const float &BlendInTime, const float &LookTime){}
+void ACsAIPawn::StopLookAt(const float &BlendOutTime){}
+
+#pragma endregion LookAt
+
 	// AimAt
 #pragma region
 
 void ACsAIPawn::AimAtLocation(const FVector &Target){}
-void ACsAIPawn::AimAtActor(AActor* Target){}
+void ACsAIPawn::AimAtActor(AActor* Target, const FName &Bone){}
 void ACsAIPawn::StopAimAt(){}
 
 #pragma endregion AimAt

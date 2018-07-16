@@ -128,7 +128,7 @@ namespace ETextKeyOperation
 // FCsBTTaskKeyValue
 #pragma region
 
-void FCsBTTask_KeyValue::Init(const FString& FunctionName)
+void FCsBTTask_KeyValue_Compare::Init(const FString& FunctionName)
 {
 	if (Type != EMCsBlackboardKeyType::Get().GetMAX())
 		return;
@@ -144,19 +144,19 @@ void FCsBTTask_KeyValue::Init(const FString& FunctionName)
 	}
 }
 
-bool FCsBTTask_KeyValue::IsValid()
+bool FCsBTTask_KeyValue_Compare::IsValid()
 {
 	return Type != ECsBlackboardKeyType::Enum && Type != ECsBlackboardKeyType::Object && Type != ECsBlackboardKeyType::Class;
 }
 
-bool FCsBTTask_KeyValue::Evaluate(const UBlackboardComponent* Blackboard)
+bool FCsBTTask_KeyValue_Compare::Evaluate(const UBlackboardComponent* Blackboard)
 {
 	Last_Evaluation = Evaluate_Internal(Blackboard);
 	return Last_Evaluation;
 }
 
 
-bool FCsBTTask_KeyValue::Evaluate_Internal(const UBlackboardComponent* Blackboard)
+bool FCsBTTask_KeyValue_Compare::Evaluate_Internal(const UBlackboardComponent* Blackboard)
 {
 	// Bool
 	if (Type == ECsBlackboardKeyType::Bool)
@@ -262,7 +262,7 @@ bool FCsBTTask_KeyValue::Evaluate_Internal(const UBlackboardComponent* Blackboar
 	return false;
 }
 
-FString FCsBTTask_KeyValue::GetStaticDescription(const class UBlackboardComponent* Blackboard) const
+FString FCsBTTask_KeyValue_Compare::GetStaticDescription(const class UBlackboardComponent* Blackboard) const
 {
 	FString Description = ECsCached::Str::Empty;
 	FString Result		= Last_Evaluation ? TEXT("True") : TEXT("False");

@@ -175,7 +175,7 @@ namespace ETextKeyOperation
 }
 
 USTRUCT()
-struct CSCORE_API FCsBTTask_KeyValue
+struct CSCORE_API FCsBTTask_KeyValue_Compare
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -216,13 +216,13 @@ struct CSCORE_API FCsBTTask_KeyValue
 
 	bool Last_Evaluation;
 
-	FCsBTTask_KeyValue()
+	FCsBTTask_KeyValue_Compare()
 	{
 		SearchCase	= ESearchCase::IgnoreCase;
 		Type		= EMCsBlackboardKeyType::Get().GetMAX();
 		Last_Evaluation = false;
 	}
-	~FCsBTTask_KeyValue(){}
+	~FCsBTTask_KeyValue_Compare(){}
 
 public:
 	void Init(const FString& FunctionName);

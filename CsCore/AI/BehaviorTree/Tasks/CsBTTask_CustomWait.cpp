@@ -56,7 +56,7 @@ EBTNodeResult::Type UCsBTTask_CustomWait::ExecuteTask(UBehaviorTreeComponent& Ow
 	check(MyMemory);
 	MyMemory->Reset();
 
-	for (FCsBTTask_KeyValue& Key : Keys)
+	for (FCsBTTask_KeyValue_Compare& Key : Keys)
 	{
 		Key.Init(ECsBTTaskCustomWaitCache::Str::ExecuteTask);
 
@@ -85,7 +85,7 @@ void UCsBTTask_CustomWait::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* No
 
 		const UBlackboardComponent* MyBlackboard = OwnerComp.GetBlackboardComponent();
 
-		for (FCsBTTask_KeyValue& Key : Keys)
+		for (FCsBTTask_KeyValue_Compare& Key : Keys)
 		{
 			if (Operation == ECsBTTask_LogicalOperator::And)
 				Pass &= Key.Evaluate(MyBlackboard);
@@ -111,7 +111,7 @@ void UCsBTTask_CustomWait::DescribeRuntimeValues(const UBehaviorTreeComponent& O
 		Description += FString::Printf(TEXT("Elapsed: %f"), MyMemory->ElapsedTime);
 	}
 
-	// WARNING: Results might be off by 1 frame. If so, update FCsBTTask_KeyValue::GetStaticDescription to NOT include the Results
+	// WARNING: Results might be off by 1 frame. If so, update FCsBTTask_KeyValue_Compare::GetStaticDescription to NOT include the Results
 	const UBlackboardComponent* MyBlackboard = OwnerComp.GetBlackboardComponent();
 	const FString OperationAsString			 = TEXT(" ") + ECsBTTask_LogicalOperator::ToSymbol(Operation) + TEXT(" ");
 

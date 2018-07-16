@@ -31,7 +31,7 @@ protected:
 	float Time;
 	
 	UPROPERTY(EditAnywhere, Category = Node)
-	TArray<FCsBTTask_KeyValue> Keys;
+	TArray<FCsBTTask_KeyValue_Compare> Keys;
 
 public:
 

@@ -785,7 +785,7 @@ public:
 	FORCEINLINE TCsProperty& operator=(const T& B)
 	{
 		Value = B;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
@@ -802,7 +802,7 @@ public:
 	FORCEINLINE virtual void Set(const T &inValue)
 	{
 		Value = inValue;
-		UpdateIsDirty();
+		Resolve();
 	}
 
 	FORCEINLINE const T& Get() { return Value; }
@@ -848,7 +848,7 @@ struct CSCORE_API FCsPrimitiveType_int32 : public TCsProperty<int32>
 	FCsPrimitiveType_int32& operator=(const int32& B)
 	{
 		Value = B;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
@@ -875,14 +875,14 @@ struct CSCORE_API FCsPrimitiveType_int32 : public TCsProperty<int32>
 	FCsPrimitiveType_int32& operator+=(const int32& B)
 	{
 		Value += B;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
 	FCsPrimitiveType_int32& operator++()
 	{
 		++Value;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
@@ -890,21 +890,21 @@ struct CSCORE_API FCsPrimitiveType_int32 : public TCsProperty<int32>
 	{
 		FCsPrimitiveType_int32 Temp = *this;
 		++*this;
-		UpdateIsDirty();
+		Resolve();
 		return Temp;
 	}
 
 	FCsPrimitiveType_int32& operator-=(const int32& B)
 	{
 		Value -= B;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
 	FCsPrimitiveType_int32& operator--()
 	{
 		--Value;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
@@ -912,14 +912,14 @@ struct CSCORE_API FCsPrimitiveType_int32 : public TCsProperty<int32>
 	{
 		FCsPrimitiveType_int32 Temp = *this;
 		--*this;
-		UpdateIsDirty();
+		Resolve();
 		return Temp;
 	}
 
 	FCsPrimitiveType_int32& operator*=(const int32& B)
 	{
 		Value *= B;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
@@ -1017,7 +1017,7 @@ struct CSCORE_API FCsPrimitiveType_uint32 : public TCsProperty<uint32>
 	FCsPrimitiveType_uint32& operator=(const uint32& B)
 	{
 		Value = B;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
@@ -1044,14 +1044,14 @@ struct CSCORE_API FCsPrimitiveType_uint32 : public TCsProperty<uint32>
 	FCsPrimitiveType_uint32& operator+=(const uint32& B)
 	{
 		Value += B;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
 	FCsPrimitiveType_uint32& operator++()
 	{
 		++Value;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
@@ -1059,21 +1059,21 @@ struct CSCORE_API FCsPrimitiveType_uint32 : public TCsProperty<uint32>
 	{
 		FCsPrimitiveType_uint32 Temp = *this;
 		++*this;
-		UpdateIsDirty();
+		Resolve();
 		return Temp;
 	}
 
 	FCsPrimitiveType_uint32& operator-=(const uint32& B)
 	{
 		Value -= B;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
 	FCsPrimitiveType_uint32& operator--()
 	{
 		--Value;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
@@ -1081,14 +1081,14 @@ struct CSCORE_API FCsPrimitiveType_uint32 : public TCsProperty<uint32>
 	{
 		FCsPrimitiveType_uint32 Temp = *this;
 		--*this;
-		UpdateIsDirty();
+		Resolve();
 		return Temp;
 	}
 
 	FCsPrimitiveType_uint32& operator*=(const uint32& B)
 	{
 		Value *= B;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
@@ -1186,7 +1186,7 @@ struct CSCORE_API FCsPrimitiveType_float : public TCsProperty<float>
 	FCsPrimitiveType_float& operator=(const float& B)
 	{
 		Value = B;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
@@ -1213,21 +1213,21 @@ struct CSCORE_API FCsPrimitiveType_float : public TCsProperty<float>
 	FCsPrimitiveType_float& operator+=(const float& B)
 	{
 		Value += B;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
 	FCsPrimitiveType_float& operator-=(const float& B)
 	{
 		Value -= B;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
 	FCsPrimitiveType_float& operator*=(const float& B)
 	{
 		Value *= B;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
@@ -1348,7 +1348,7 @@ public:
 	FCsPrimitiveType_FVector2D& operator=(const FVector2D& B)
 	{
 		Value = B;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
@@ -1385,21 +1385,21 @@ public:
 	FCsPrimitiveType_FVector2D& operator+=(const FVector2D& B)
 	{
 		Value += B;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
 	FCsPrimitiveType_FVector2D& operator-=(const FVector2D& B)
 	{
 		Value -= B;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
 	FCsPrimitiveType_FVector2D& operator*=(const FVector2D& B)
 	{
 		Value *= B;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
@@ -1479,7 +1479,7 @@ public:
 	FCsPrimitiveType_FVector& operator=(const FVector& B)
 	{
 		Value = B;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
@@ -1506,21 +1506,21 @@ public:
 	FCsPrimitiveType_FVector& operator+=(const FVector& B)
 	{
 		Value += B;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
 	FCsPrimitiveType_FVector& operator-=(const FVector& B)
 	{
 		Value -= B;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
 	FCsPrimitiveType_FVector& operator*=(const FVector& B)
 	{
 		Value *= B;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
@@ -1610,7 +1610,7 @@ public:
 	FCsPrimitiveType_FRotator& operator=(const FRotator& B)
 	{
 		Value = B;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
@@ -1637,14 +1637,14 @@ public:
 	FCsPrimitiveType_FRotator& operator+=(const FRotator& B)
 	{
 		Value += B;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
 	FCsPrimitiveType_FRotator& operator-=(const FRotator& B)
 	{
 		Value -= B;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
@@ -1714,7 +1714,7 @@ public:
 	FCsPrimitiveType_FString& operator=(const FString& B)
 	{
 		Value = B;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
@@ -1754,7 +1754,7 @@ public:
 	FCsPrimitiveType_FLinearColor& operator=(const FLinearColor& B)
 	{
 		Value = B;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
@@ -1813,7 +1813,7 @@ public:
 	FORCEINLINE TCsProperty_Ref& operator=(const ValueType& B)
 	{
 		*Value = B;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
@@ -1830,13 +1830,13 @@ public:
 	FORCEINLINE void Set(ValueType* inValue)
 	{
 		Value   = inValue;
-		UpdateIsDirty();
+		Resolve();
 	}
 
 	FORCEINLINE void Set(const ValueType &inValue)
 	{
 		*Value  = inValue;
-		UpdateIsDirty();
+		Resolve();
 	}
 
 	FORCEINLINE const ValueType& Get() { return *Value; }
@@ -1896,6 +1896,13 @@ struct CSCORE_API FCsProperty_Ref_bool : public TCsProperty_Ref<bool>
 	FORCEINLINE friend bool operator!=(const FCsProperty_Ref_bool &Lhs, const bool &Rhs)
 	{
 		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE friend FCsProperty_Ref_bool& operator |=(FCsProperty_Ref_bool &Lhs, const bool& Rhs)
+	{
+		*(Lhs.Value) = *(Lhs.Value) | Rhs;
+		Lhs.Resolve();
+		return Lhs;
 	}
 };
 

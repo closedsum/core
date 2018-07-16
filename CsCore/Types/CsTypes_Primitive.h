@@ -837,6 +837,83 @@ public:
 	}
 };
 
+struct CSCORE_API FCsProperty_bool : public TCsProperty<bool>
+{
+	FCsProperty_bool()
+	{
+		DefaultValue = false;
+	}
+	~FCsProperty_bool() {}
+
+	FORCEINLINE friend bool operator==(const bool &Lhs, const FCsProperty_bool &Rhs)
+	{
+		return Lhs == Rhs.Value;
+	}
+
+	FORCEINLINE friend bool operator==(const FCsProperty_bool &Lhs, const bool &Rhs)
+	{
+		return Lhs.Value == Rhs;
+	}
+
+	FORCEINLINE friend bool operator!=(const bool &Lhs, const FCsProperty_bool &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE friend bool operator!=(const FCsProperty_bool &Lhs, const bool &Rhs)
+	{
+		return !(Lhs == Rhs);
+	}
+
+	FORCEINLINE friend bool operator|(const bool &Lhs, const FCsProperty_bool& Rhs)
+	{
+		return Lhs | Rhs.Value;
+	}
+
+	FORCEINLINE friend bool operator|(const FCsProperty_bool &Lhs, const bool& Rhs)
+	{
+		return Lhs.Value | Rhs;
+	}
+
+	FORCEINLINE friend bool& operator|=(bool &Lhs, const FCsProperty_bool& Rhs)
+	{
+		Lhs = Lhs | Rhs.Value;
+		return Lhs;
+	}
+
+	FORCEINLINE friend FCsProperty_bool& operator|=(FCsProperty_bool &Lhs, const bool& Rhs)
+	{
+		Lhs.Value = Lhs.Value | Rhs;
+		Lhs.Resolve();
+		return Lhs;
+	}
+
+	FORCEINLINE friend bool operator&(const bool &Lhs, const FCsProperty_bool& Rhs)
+	{
+		return Lhs & Rhs.Value;
+	}
+
+	FORCEINLINE friend bool operator&(const FCsProperty_bool &Lhs, const bool& Rhs)
+	{
+		return Lhs.Value & Rhs;
+	}
+
+	FORCEINLINE friend bool& operator&=(bool &Lhs, const FCsProperty_bool& Rhs)
+	{
+		Lhs = Lhs & Rhs.Value;
+		return Lhs;
+	}
+
+	FORCEINLINE friend FCsProperty_bool& operator&=(FCsProperty_bool &Lhs, const bool& Rhs)
+	{
+		Lhs.Value = Lhs.Value & Rhs;
+		Lhs.Resolve();
+		return Lhs;
+	}
+};
+
+typedef FCsProperty_bool TCsBool;
+
 struct CSCORE_API FCsPrimitiveType_int32 : public TCsProperty<int32>
 {
 	FCsPrimitiveType_int32()
@@ -1898,9 +1975,48 @@ struct CSCORE_API FCsProperty_Ref_bool : public TCsProperty_Ref<bool>
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend FCsProperty_Ref_bool& operator |=(FCsProperty_Ref_bool &Lhs, const bool& Rhs)
+	FORCEINLINE friend bool operator|(const bool &Lhs, const FCsProperty_Ref_bool& Rhs)
+	{
+		return Lhs | *(Rhs.Value);
+	}
+
+	FORCEINLINE friend bool operator|(const FCsProperty_Ref_bool &Lhs, const bool& Rhs)
+	{
+		return *(Lhs.Value) | Rhs;
+	}
+
+	FORCEINLINE friend bool& operator|=(bool &Lhs, const FCsProperty_Ref_bool& Rhs)
+	{
+		Lhs = Lhs | *(Rhs.Value);
+		return Lhs;
+	}
+
+	FORCEINLINE friend FCsProperty_Ref_bool& operator|=(FCsProperty_Ref_bool &Lhs, const bool& Rhs)
 	{
 		*(Lhs.Value) = *(Lhs.Value) | Rhs;
+		Lhs.Resolve();
+		return Lhs;
+	}
+
+	FORCEINLINE friend bool operator&(const bool &Lhs, const FCsProperty_Ref_bool& Rhs)
+	{
+		return Lhs & *(Rhs.Value);
+	}
+
+	FORCEINLINE friend bool operator&(const FCsProperty_Ref_bool &Lhs, const bool& Rhs)
+	{
+		return *(Lhs.Value) & Rhs;
+	}
+
+	FORCEINLINE friend bool& operator&=(bool &Lhs, const FCsProperty_Ref_bool& Rhs)
+	{
+		Lhs = Lhs & *(Rhs.Value);
+		return Lhs;
+	}
+
+	FORCEINLINE friend FCsProperty_Ref_bool& operator&=(FCsProperty_Ref_bool &Lhs, const bool& Rhs)
+	{
+		*(Lhs.Value) = *(Lhs.Value) & Rhs;
 		Lhs.Resolve();
 		return Lhs;
 	}
@@ -3900,7 +4016,7 @@ typedef ECsMemberType::Type TCsMemberType;
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsProperty_bool
+struct CSCORE_API FCsBpProperty_bool
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -3918,8 +4034,8 @@ public:
 	TMulticastDelegate<void, const bool&> OnChange_Event;
 
 public:
-	FCsProperty_bool() {}
-	~FCsProperty_bool() {}
+	FCsBpProperty_bool() {}
+	~FCsBpProperty_bool() {}
 
 	void SetDefaultValue(const bool &inDefaultValue)
 	{
@@ -3934,7 +4050,7 @@ public:
 			OnChange_Event.Broadcast(Value);
 	}
 
-	FORCEINLINE FCsProperty_bool& operator=(const bool& B)
+	FORCEINLINE FCsBpProperty_bool& operator=(const bool& B)
 	{
 		Value = B;
 		UpdateIsDirty();

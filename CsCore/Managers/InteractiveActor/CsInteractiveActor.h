@@ -374,8 +374,8 @@ public:
 #pragma region
 public:
 
-	virtual bool AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type) override;
-	virtual bool RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type) override;
+	virtual bool AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType) override;
+	virtual bool RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType) override;
 
 #pragma endregion Routines
 

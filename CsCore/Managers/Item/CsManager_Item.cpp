@@ -808,7 +808,6 @@ void ACsManager_Item::OnTick_Handle_AsyncSave()
 	AsyncSaveItems.Reset();
 
 	PerformingAsyncSave = true;
-	PerformingAsyncSaveHandle.Resolve();
 
 	UCsManager_Runnable* Manager_Runnable = UCsManager_Runnable::Get();
 

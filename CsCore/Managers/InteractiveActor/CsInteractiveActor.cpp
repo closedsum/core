@@ -514,16 +514,16 @@ ACsMotionController* ACsInteractiveActor::GetLastHand_HoveringOverMe()
 // Routines
 #pragma region
 
-bool ACsInteractiveActor::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
+bool ACsInteractiveActor::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType)
 {
-	if (Super::AddRoutine_Internal(Routine, Type))
+	if (Super::AddRoutine_Internal(Routine, InType))
 		return true;
 	return false;
 }
 
-bool ACsInteractiveActor::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
+bool ACsInteractiveActor::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType)
 {
-	if (Super::RemoveRoutine_Internal(Routine, Type))
+	if (Super::RemoveRoutine_Internal(Routine, InType))
 		return true;
 	return false;
 }

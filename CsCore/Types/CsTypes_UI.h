@@ -520,7 +520,7 @@ public:
 	TCsProperty_ESlateVisibility& operator=(const ESlateVisibility& B)
 	{
 		Value = B;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
@@ -560,7 +560,7 @@ public:
 	TCsProperty_FSlateColor& operator=(const FSlateColor& B)
 	{
 		Value = B;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 
@@ -600,7 +600,7 @@ public:
 	TCsProperty_ECheckBoxState& operator=(const ECheckBoxState& B)
 	{
 		Value = B;
-		UpdateIsDirty();
+		Resolve();
 		return *this;
 	}
 

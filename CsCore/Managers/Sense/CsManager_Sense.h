@@ -58,10 +58,10 @@ public:
 	TMap<FECsSenseActorType, float> TraceToActorIntervals;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
-	bool bSeesAnyByRadius;
+	TMap<FECsSenseActorType, bool> bSeesAnyByRadius;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
-	bool bSeesAnyByDot;
+	TMap<FECsSenseActorType, bool> bSeesAnyByDot;
 
 // Debug
 #pragma region

@@ -37,6 +37,12 @@ ACsManager_Sense::ACsManager_Sense(const FObjectInitializer& ObjectInitializer) 
 	{
 		TraceToActorIntervals.Add(EMCsSenseActorType::Get().GetEnumAt(I), 0.1f);
 	}
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		bSeesAnyByRadius.Add(EMCsSenseActorType::Get().GetEnumAt(I), false);
+		bSeesAnyByDot.Add(EMCsSenseActorType::Get().GetEnumAt(I), false);
+	}
 }
 
 void ACsManager_Sense::PostActorCreated()
@@ -129,8 +135,6 @@ void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 
 	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
 
-	bSeesAnyByDot = false;
-
 	const float CurrentTimeSeconds = GetWorld()->GetTimeSeconds();
 
 	TArray<FECsSenseActorType> TypeKeys;
@@ -138,6 +142,9 @@ void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 
 	for (const FECsSenseActorType& ActorType : TypeKeys)
 	{
+		bSeesAnyByRadius[ActorType] = false;
+		bSeesAnyByDot[ActorType] = false;
+
 		TMap<uint64, FCsSenseInfo>& Map = SenseMap[ActorType];
 
 		TArray<uint64> IdKeys;
@@ -171,9 +178,14 @@ void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 			{
 				const float DistanceSq = (ActorLocation - OwnerLocation).SizeSquared();
 
-				if (DistanceSq > RadiusSq)
+				Info.SetSeesActorByRadius(DistanceSq <= RadiusSq);
+
+				if (!Info.bSeesActorByRadius)
 					continue;
 			}
+
+			bSeesAnyByRadius[ActorType] |= Info.bSeesActorByRadius;
+
 			// Check Dot
 			Sense_CheckMeToActorDot(Info);
 
@@ -185,7 +197,7 @@ void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 				continue;
 			}
 
-			bSeesAnyByDot |= Info.bSeesActorByDot;
+			bSeesAnyByDot[ActorType] |= Info.bSeesActorByDot;
 
 			Info.LastTime_SeesActorByDot = GetWorld()->GetTimeSeconds();
 
@@ -218,7 +230,17 @@ void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 	// Draw Angle
 	if (CsCVarDrawManagerSenseAngle->GetInt() == CS_CVAR_DRAW)
 	{
-		const FColor Color = bSeesAnyByDot ? FColor::Red : FColor::Green;
+		bool Sees = false;
+
+		TArray<FECsSenseActorType> TypeKeys;
+		bSeesAnyByDot.GetKeys(TypeKeys);
+
+		for (const FECsSenseActorType& ActorType : TypeKeys)
+		{
+			Sees |= bSeesAnyByDot[ActorType];
+		}
+
+		const FColor Color = Sees ? FColor::Red : FColor::Green;
 		FVector Direction  = FVector::ZeroVector;
 
 		if (ACsPawn* Pawn = Cast<ACsPawn>(Me))

@@ -776,7 +776,8 @@ public:
 
 	FORCEINLINE virtual void UpdateIsDirty()
 	{
-		IsDirty = Value != Last_Value;
+		IsDirty	   = Value != Last_Value;
+		Last_Value = Value;
 
 		if (IsDirty)
 			OnChange_Event.Broadcast(Value);
@@ -785,7 +786,7 @@ public:
 	FORCEINLINE TCsProperty& operator=(const T& B)
 	{
 		Value = B;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
@@ -802,15 +803,14 @@ public:
 	FORCEINLINE virtual void Set(const T &inValue)
 	{
 		Value = inValue;
-		Resolve();
+		UpdateIsDirty();
 	}
 
 	FORCEINLINE const T& Get() { return Value; }
 
 	FORCEINLINE virtual void Clear()
 	{
-		Last_Value = Value;
-		IsDirty	   = false;
+		IsDirty	= false;
 	}
 
 	void ResetValue()
@@ -844,6 +844,13 @@ struct CSCORE_API FCsProperty_bool : public TCsProperty<bool>
 		DefaultValue = false;
 	}
 	~FCsProperty_bool() {}
+
+	FORCEINLINE FCsProperty_bool& operator=(const bool& B)
+	{
+		Value = B;
+		UpdateIsDirty();
+		return *this;
+	}
 
 	FORCEINLINE friend bool operator==(const bool &Lhs, const FCsProperty_bool &Rhs)
 	{
@@ -884,7 +891,7 @@ struct CSCORE_API FCsProperty_bool : public TCsProperty<bool>
 	FORCEINLINE friend FCsProperty_bool& operator|=(FCsProperty_bool &Lhs, const bool& Rhs)
 	{
 		Lhs.Value = Lhs.Value | Rhs;
-		Lhs.Resolve();
+		Lhs.UpdateIsDirty();
 		return Lhs;
 	}
 
@@ -907,7 +914,7 @@ struct CSCORE_API FCsProperty_bool : public TCsProperty<bool>
 	FORCEINLINE friend FCsProperty_bool& operator&=(FCsProperty_bool &Lhs, const bool& Rhs)
 	{
 		Lhs.Value = Lhs.Value & Rhs;
-		Lhs.Resolve();
+		Lhs.UpdateIsDirty();
 		return Lhs;
 	}
 };
@@ -925,7 +932,7 @@ struct CSCORE_API FCsPrimitiveType_int32 : public TCsProperty<int32>
 	FCsPrimitiveType_int32& operator=(const int32& B)
 	{
 		Value = B;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
@@ -952,14 +959,14 @@ struct CSCORE_API FCsPrimitiveType_int32 : public TCsProperty<int32>
 	FCsPrimitiveType_int32& operator+=(const int32& B)
 	{
 		Value += B;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
 	FCsPrimitiveType_int32& operator++()
 	{
 		++Value;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
@@ -967,21 +974,20 @@ struct CSCORE_API FCsPrimitiveType_int32 : public TCsProperty<int32>
 	{
 		FCsPrimitiveType_int32 Temp = *this;
 		++*this;
-		Resolve();
 		return Temp;
 	}
 
 	FCsPrimitiveType_int32& operator-=(const int32& B)
 	{
 		Value -= B;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
 	FCsPrimitiveType_int32& operator--()
 	{
 		--Value;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
@@ -989,14 +995,13 @@ struct CSCORE_API FCsPrimitiveType_int32 : public TCsProperty<int32>
 	{
 		FCsPrimitiveType_int32 Temp = *this;
 		--*this;
-		Resolve();
 		return Temp;
 	}
 
 	FCsPrimitiveType_int32& operator*=(const int32& B)
 	{
 		Value *= B;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
@@ -1094,7 +1099,7 @@ struct CSCORE_API FCsPrimitiveType_uint32 : public TCsProperty<uint32>
 	FCsPrimitiveType_uint32& operator=(const uint32& B)
 	{
 		Value = B;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
@@ -1121,14 +1126,14 @@ struct CSCORE_API FCsPrimitiveType_uint32 : public TCsProperty<uint32>
 	FCsPrimitiveType_uint32& operator+=(const uint32& B)
 	{
 		Value += B;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
 	FCsPrimitiveType_uint32& operator++()
 	{
 		++Value;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
@@ -1136,21 +1141,20 @@ struct CSCORE_API FCsPrimitiveType_uint32 : public TCsProperty<uint32>
 	{
 		FCsPrimitiveType_uint32 Temp = *this;
 		++*this;
-		Resolve();
 		return Temp;
 	}
 
 	FCsPrimitiveType_uint32& operator-=(const uint32& B)
 	{
 		Value -= B;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
 	FCsPrimitiveType_uint32& operator--()
 	{
 		--Value;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
@@ -1158,14 +1162,13 @@ struct CSCORE_API FCsPrimitiveType_uint32 : public TCsProperty<uint32>
 	{
 		FCsPrimitiveType_uint32 Temp = *this;
 		--*this;
-		Resolve();
 		return Temp;
 	}
 
 	FCsPrimitiveType_uint32& operator*=(const uint32& B)
 	{
 		Value *= B;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
@@ -1263,7 +1266,7 @@ struct CSCORE_API FCsPrimitiveType_float : public TCsProperty<float>
 	FCsPrimitiveType_float& operator=(const float& B)
 	{
 		Value = B;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
@@ -1290,21 +1293,21 @@ struct CSCORE_API FCsPrimitiveType_float : public TCsProperty<float>
 	FCsPrimitiveType_float& operator+=(const float& B)
 	{
 		Value += B;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
 	FCsPrimitiveType_float& operator-=(const float& B)
 	{
 		Value -= B;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
 	FCsPrimitiveType_float& operator*=(const float& B)
 	{
 		Value *= B;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
@@ -1425,7 +1428,7 @@ public:
 	FCsPrimitiveType_FVector2D& operator=(const FVector2D& B)
 	{
 		Value = B;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
@@ -1462,21 +1465,21 @@ public:
 	FCsPrimitiveType_FVector2D& operator+=(const FVector2D& B)
 	{
 		Value += B;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
 	FCsPrimitiveType_FVector2D& operator-=(const FVector2D& B)
 	{
 		Value -= B;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
 	FCsPrimitiveType_FVector2D& operator*=(const FVector2D& B)
 	{
 		Value *= B;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
@@ -1556,7 +1559,7 @@ public:
 	FCsPrimitiveType_FVector& operator=(const FVector& B)
 	{
 		Value = B;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
@@ -1583,21 +1586,21 @@ public:
 	FCsPrimitiveType_FVector& operator+=(const FVector& B)
 	{
 		Value += B;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
 	FCsPrimitiveType_FVector& operator-=(const FVector& B)
 	{
 		Value -= B;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
 	FCsPrimitiveType_FVector& operator*=(const FVector& B)
 	{
 		Value *= B;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
@@ -1687,7 +1690,7 @@ public:
 	FCsPrimitiveType_FRotator& operator=(const FRotator& B)
 	{
 		Value = B;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
@@ -1714,14 +1717,14 @@ public:
 	FCsPrimitiveType_FRotator& operator+=(const FRotator& B)
 	{
 		Value += B;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
 	FCsPrimitiveType_FRotator& operator-=(const FRotator& B)
 	{
 		Value -= B;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
@@ -1791,7 +1794,7 @@ public:
 	FCsPrimitiveType_FString& operator=(const FString& B)
 	{
 		Value = B;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
@@ -1831,7 +1834,7 @@ public:
 	FCsPrimitiveType_FLinearColor& operator=(const FLinearColor& B)
 	{
 		Value = B;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
@@ -1881,7 +1884,8 @@ public:
 
 	FORCEINLINE virtual void UpdateIsDirty()
 	{
-		IsDirty = *Value != Last_Value;
+		IsDirty	   = *Value != Last_Value;
+		Last_Value = *Value;
 
 		if (IsDirty)
 			OnChange_Event.Broadcast(*Value);
@@ -1890,7 +1894,7 @@ public:
 	FORCEINLINE TCsProperty_Ref& operator=(const ValueType& B)
 	{
 		*Value = B;
-		Resolve();
+		UpdateIsDirty();
 		return *this;
 	}
 
@@ -1906,22 +1910,21 @@ public:
 
 	FORCEINLINE void Set(ValueType* inValue)
 	{
-		Value   = inValue;
-		Resolve();
+		Value = inValue;
+		UpdateIsDirty();
 	}
 
 	FORCEINLINE void Set(const ValueType &inValue)
 	{
-		*Value  = inValue;
-		Resolve();
+		*Value = inValue;
+		UpdateIsDirty();
 	}
 
 	FORCEINLINE const ValueType& Get() { return *Value; }
 
 	FORCEINLINE void Clear()
 	{
-		Last_Value = *Value;
-		IsDirty	   = false;
+		IsDirty	= false;
 	}
 
 	void ResetValue()
@@ -1954,6 +1957,13 @@ struct CSCORE_API FCsProperty_Ref_bool : public TCsProperty_Ref<bool>
 		DefaultValue = false;
 	}
 	~FCsProperty_Ref_bool() {}
+
+	FORCEINLINE FCsProperty_Ref_bool& operator=(const bool& B)
+	{
+		*Value = B;
+		UpdateIsDirty();
+		return *this;
+	}
 
 	FORCEINLINE friend bool operator==(const bool &Lhs, const FCsProperty_Ref_bool &Rhs)
 	{
@@ -1994,7 +2004,7 @@ struct CSCORE_API FCsProperty_Ref_bool : public TCsProperty_Ref<bool>
 	FORCEINLINE friend FCsProperty_Ref_bool& operator|=(FCsProperty_Ref_bool &Lhs, const bool& Rhs)
 	{
 		*(Lhs.Value) = *(Lhs.Value) | Rhs;
-		Lhs.Resolve();
+		Lhs.UpdateIsDirty();
 		return Lhs;
 	}
 
@@ -2017,7 +2027,7 @@ struct CSCORE_API FCsProperty_Ref_bool : public TCsProperty_Ref<bool>
 	FORCEINLINE friend FCsProperty_Ref_bool& operator&=(FCsProperty_Ref_bool &Lhs, const bool& Rhs)
 	{
 		*(Lhs.Value) = *(Lhs.Value) & Rhs;
-		Lhs.Resolve();
+		Lhs.UpdateIsDirty();
 		return Lhs;
 	}
 };
@@ -2031,6 +2041,13 @@ struct CSCORE_API FCsProperty_Ref_int32 : public TCsProperty_Ref<int32>
 		DefaultValue = 0;
 	}
 	~FCsProperty_Ref_int32() {}
+
+	FORCEINLINE FCsProperty_Ref_int32& operator=(const int32& B)
+	{
+		*Value = B;
+		UpdateIsDirty();
+		return *this;
+	}
 
 	FORCEINLINE friend bool operator==(const int32 &Lhs, const FCsProperty_Ref_int32 &Rhs)
 	{
@@ -2082,6 +2099,13 @@ struct CSCORE_API FCsProperty_Ref_float : public TCsProperty_Ref<float>
 		DefaultValue = 0.0f;
 	}
 	~FCsProperty_Ref_float(){}
+
+	FORCEINLINE FCsProperty_Ref_float& operator=(const float& B)
+	{
+		*Value = B;
+		UpdateIsDirty();
+		return *this;
+	}
 
 	FORCEINLINE friend bool operator==(const float &Lhs, const FCsProperty_Ref_float &Rhs)
 	{
@@ -2159,15 +2183,17 @@ public:
 
 	FORCEINLINE virtual void UpdateIsDirty()
 	{
-		IsDirty = Value != Last_Value;
+		IsDirty		= Value != Last_Value;
+		Last_Value	= Value;
 
 		if (IsDirty)
 			OnChange_Event.Broadcast(Value);
 	}
 
-	FORCEINLINE virtual void UpdateIsDirtys(const int32 &Index)
+	FORCEINLINE virtual void UpdateIsDirty(const int32 &Index)
 	{
-		IsDirtys[Index] = Values[Index] != Last_Values[Index];
+		IsDirtys[Index]		= Values[Index] != Last_Values[Index];
+		Last_Values[Index]	= Values[Index];
 
 		if (IsDirtys[Index])
 			OnChangeEX_Event.Broadcast(Index, Values[Index]);
@@ -2176,12 +2202,13 @@ public:
 	FORCEINLINE TCsProperty_Multi& operator=(const TCsProperty_Multi& B)
 	{
 		Value = B.Value;
-		
+		UpdateIsDirty();
+
 		for (uint8 I = 0; I < SIZE; ++I)
 		{
 			Values[I] = B.Values[I];
+			UpdateIsDirty(I);
 		}
-		Resolve();
 		return *this;
 	}
 
@@ -2203,7 +2230,7 @@ public:
 	void Set(const ValueType &inValue)
 	{
 		Value = inValue;
-		Resolve();
+		UpdateIsDirty();
 	}
 
 	void Set(const int32 &Index, const ValueType &inValue)
@@ -2211,7 +2238,7 @@ public:
 		if (Index > CS_PRIMITIVE_TYPE_DEFAULT && Index < SIZE)
 		{
 			Values[Index] = inValue;
-			Resolve(Index);
+			UpdateIsDirty(Index);
 		}
 		else
 		{
@@ -2228,20 +2255,17 @@ public:
 
 	FORCEINLINE void Clear()
 	{
-		Last_Value = Value;
-		IsDirty	   = false;
+		IsDirty	= false;
 
 		for (uint8 I = 0; I < SIZE; ++I)
 		{
-			Last_Values[I] = Values[I];
-			IsDirtys[I]	   = false;
+			IsDirtys[I] = false;
 		}
 	}
 
 	FORCEINLINE void Clear(const int32 &Index)
 	{
-		Last_Values[Index] = Values[Index];
-		IsDirtys[Index]	   = false;
+		IsDirtys[Index]	= false;
 	}
 
 	void ResetValues()
@@ -2275,14 +2299,14 @@ public:
 
 		for (uint8 I = 0; I < SIZE; ++I)
 		{
-			UpdateIsDirtys(I);
+			UpdateIsDirty(I);
 		}
 		Clear();
 	}
 
 	FORCEINLINE void Resolve(const int32 &Index)
 	{
-		UpdateIsDirtys(Index);
+		UpdateIsDirty(Index);
 		Clear(Index);
 	}
 };
@@ -2296,7 +2320,7 @@ struct TCsIntegralType_MultiValue : public TCsProperty_Multi<ValueType, SIZE>
 	void Add(const ValueType &inValue)
 	{ 
 		Value += inValue;
-		Resolve();
+		UpdateIsDirty();
 	}
 
 	void Add(const int32 &Index, const ValueType &inValue)
@@ -2308,14 +2332,14 @@ struct TCsIntegralType_MultiValue : public TCsProperty_Multi<ValueType, SIZE>
 		else
 		{
 			Values[Index] += inValue;
-			Resolve(Index);
+			UpdateIsDirty(Index);
 		}
 	}
 
 	void Subtract(const ValueType &inValue)
 	{ 
 		Value -= inValue;
-		Resolve();
+		UpdateIsDirty();
 	}
 
 	void Subtract(const int32 &Index, const ValueType &inValue)
@@ -2327,7 +2351,7 @@ struct TCsIntegralType_MultiValue : public TCsProperty_Multi<ValueType, SIZE>
 		else
 		{
 			Values[Index] -= inValue;
-			Resolve(Index);
+			UpdateIsDirty(Index);
 		}
 	}
 
@@ -2536,14 +2560,16 @@ public:
 	FORCEINLINE virtual void UpdateIsDirty()
 	{
 		IsDirty = Value != Last_Value;
+		Value	= Last_Value;
 
 		if (IsDirty)
 			OnChange_Event.Broadcast(Value);
 	}
 
-	FORCEINLINE virtual void UpdateIsDirtys(const int32 &Index)
+	FORCEINLINE virtual void UpdateIsDirty(const int32 &Index)
 	{
-		IsDirtys[Index] = *(Values[Index]) != Last_Values[Index];
+		IsDirtys[Index]		= *(Values[Index]) != Last_Values[Index];
+		Last_Values[Index]	= *(Values[Index]);
 
 		if (IsDirtys[Index])
 			OnChangeEX_Event.Broadcast((U)(int32)Index, *(Values[Index]));
@@ -2552,12 +2578,13 @@ public:
 	FORCEINLINE TCsProperty_MultiRef& operator=(const ValueType& B)
 	{
 		Value = B;
+		UpdateIsDirty;
 
 		for (uint8 I = 0; I < SIZE; ++I)
 		{
 			Values[I] = B.Values[I];
+			UpdateIsDirty(I);
 		}
-		Resolve();
 		return *this;
 	}
 
@@ -2579,7 +2606,7 @@ public:
 	void Set(const ValueType &inValue)
 	{
 		Value = inValue;
-		Resolve();
+		UpdateIsDirty();
 	}
 
 	void Set(const int32 &Index, ValueType* inValue)
@@ -2587,7 +2614,7 @@ public:
 		if (Index > CS_PRIMITIVE_TYPE_DEFAULT && Index < SIZE)
 		{
 			Values[Index] = inValue;
-			Resolve(Index);
+			UpdateIsDirty(Index);
 		}
 		else
 		{
@@ -2604,13 +2631,11 @@ public:
 
 	FORCEINLINE void Clear()
 	{
-		Last_Value = Value;
-		IsDirty	   = false;
+		IsDirty	= false;
 
 		for (uint8 I = 0; I < SIZE; ++I)
 		{
-			Last_Values[I] = *(Values[I]);
-			IsDirtys[I]	   = false;
+			IsDirtys[I]	= false;
 		}
 	}
 
@@ -2656,14 +2681,14 @@ public:
 
 		for (uint8 I = 0; I < SIZE; ++I)
 		{
-			UpdateIsDirtys(I);
+			UpdateIsDirty(I);
 		}
 		Clear();
 	}
 
 	FORCEINLINE void Resolve(const int32 &Index)
 	{
-		UpdateIsDirtys(Index);
+		UpdateIsDirty(Index);
 		Clear(Index);
 	}
 };
@@ -2769,15 +2794,17 @@ public:
 
 	FORCEINLINE virtual void UpdateIsDirty()
 	{
-		IsDirty = Value != Last_Value;
+		IsDirty		= Value != Last_Value;
+		Last_Value	= Value;
 
 		if (IsDirty)
 			OnChange_Event.Broadcast(Value);
 	}
 
-	FORCEINLINE virtual void UpdateIsDirtys(const int32 &Index)
+	FORCEINLINE virtual void UpdateIsDirty(const int32 &Index)
 	{
-		IsDirtys[Index] = Values[Index] != Last_Values[Index];
+		IsDirtys[Index]		= Values[Index] != Last_Values[Index];
+		Last_Values[Index]	= Values[Index];
 
 		if (IsDirtys[Index])
 			OnChangeArray_Event.Broadcast(Index, Values[Index]);
@@ -2786,12 +2813,13 @@ public:
 	FORCEINLINE TCsProperty_TArray& operator=(const TCsProperty_TArray& B)
 	{
 		Value = B.Value;
+		UpdateIsDirty();
 
 		for (uint8 I = 0; I < SIZE; ++I)
 		{
 			Values[I] = B.Values[I];
+			UpdateIsDirty(I);
 		}
-		Resolve();
 		return *this;
 	}
 
@@ -2821,7 +2849,7 @@ public:
 	FORCEINLINE void Set(const ValueType &inValue)
 	{
 		Value = inValue;
-		Resolve();
+		UpdateIsDirty();
 	}
 
 	FORCEINLINE void Set(const int32 &Index, const ValueType &inValue)
@@ -2829,7 +2857,7 @@ public:
 		if (Index > CS_PRIMITIVE_TYPE_DEFAULT && Index < SIZE)
 		{
 			Values[Index] = inValue;
-			Resolve(Index);
+			UpdateIsDirty(Index);
 		}
 		else
 		{
@@ -2856,20 +2884,17 @@ public:
 
 	FORCEINLINE void Clear()
 	{
-		Last_Value = Value;
 		IsDirty = false;
 
 		for (uint8 I = 0; I < SIZE; ++I)
 		{
-			Last_Values[I] = Values[I];
 			IsDirtys[I] = false;
 		}
 	}
 
 	FORCEINLINE void Clear(const int32 &Index)
 	{
-		Last_Values[Index]	= Values[Index];
-		IsDirtys[Index]		= false;
+		IsDirtys[Index] = false;
 	}
 
 	void ResetValues()
@@ -2906,14 +2931,14 @@ public:
 
 		for (uint8 I = 0; I < SIZE; ++I)
 		{
-			UpdateIsDirtys(I);
+			UpdateIsDirty(I);
 		}
 		Clear();
 	}
 
 	FORCEINLINE void Resolve(const int32 &Index)
 	{
-		UpdateIsDirtys(Index);
+		UpdateIsDirty(Index);
 		Clear(Index);
 	}
 };
@@ -2927,7 +2952,7 @@ struct TCsIntegralType_TArray : public TCsProperty_TArray<ValueType>
 	void Add(const ValueType &inValue)
 	{
 		Value += inValue;
-		Resolve();
+		UpdateIsDirty();
 	}
 
 	void Add(const int32 &Index, const ValueType &inValue)
@@ -2939,14 +2964,14 @@ struct TCsIntegralType_TArray : public TCsProperty_TArray<ValueType>
 		else
 		{
 			Values[Index] += inValue;
-			Resolve(Index);
+			UpdateIsDirty(Index);
 		}
 	}
 
 	void Subtract(const ValueType &inValue)
 	{
 		Value -= inValue;
-		Resolve();
+		UpdateIsDirty();
 	}
 
 	void Subtract(const int32 &Index, const ValueType &inValue)
@@ -2958,7 +2983,7 @@ struct TCsIntegralType_TArray : public TCsProperty_TArray<ValueType>
 		else
 		{
 			Values[Index] -= inValue;
-			Resolve(Index);
+			UpdateIsDirty(Index);
 		}
 	}
 
@@ -3073,15 +3098,17 @@ public:
 
 	FORCEINLINE virtual void UpdateIsDirty()
 	{
-		IsDirty = Value != Last_Value;
+		IsDirty	   = Value != Last_Value;
+		Last_Value = Value;
 
 		if (IsDirty)
 			OnChange_Event.Broadcast(Value);
 	}
 
-	FORCEINLINE virtual void UpdateIsDirtys(const int32 &Index)
+	FORCEINLINE virtual void UpdateIsDirty(const int32 &Index)
 	{
-		IsDirtys[Index] = *(Values[Index]) != Last_Values[Index];
+		IsDirtys[Index]		= *(Values[Index]) != Last_Values[Index];
+		Last_Values[Index]	= *(Values[Index]);
 
 		if (IsDirtys[Index])
 			OnChangeArray_Event.Broadcast(Index, *(Values[Index]));
@@ -3090,12 +3117,13 @@ public:
 	FORCEINLINE TCsProperty_TArrayRef& operator=(const TCsProperty_TArrayRef& B)
 	{
 		Value = B.Value;
+		UpdateIsDirty();
 
 		for (uint8 I = 0; I < SIZE; ++I)
 		{
 			Values[I] = B.Values[I];
+			UpdateIsDirty(I);
 		}
-		Resolve();
 		return *this;
 	}
 
@@ -3132,7 +3160,7 @@ public:
 	FORCEINLINE void Set(ValueType &inValue)
 	{
 		Value = inValue;
-		Resolve();
+		UpdateIsDirty();
 	}
 
 	FORCEINLINE void Set(const int32 &Index, ValueType* inValue)
@@ -3140,7 +3168,7 @@ public:
 		if (Index > CS_PRIMITIVE_TYPE_DEFAULT && Index < SIZE)
 		{
 			Values[Index] = inValue;
-			Resolve(Index);
+			UpdateIsDirty(Index);
 		}
 		else
 		{
@@ -3167,20 +3195,17 @@ public:
 
 	FORCEINLINE void Clear()
 	{
-		Last_Value = Value;
 		IsDirty = false;
 
 		for (uint8 I = 0; I < SIZE; ++I)
 		{
-			Last_Values[I] = *(Values[I]);
 			IsDirtys[I] = false;
 		}
 	}
 
 	FORCEINLINE void Clear(const int32 &Index)
 	{
-		Last_Values[Index] = *(Values[Index]);
-		IsDirtys[Index]	   = false;
+		IsDirtys[Index]	= false;
 	}
 
 	void ResetValues()
@@ -3219,14 +3244,14 @@ public:
 
 		for (uint8 I = 0; I < SIZE; ++I)
 		{
-			UpdateIsDirtys(I);
+			UpdateIsDirty(I);
 		}
 		Clear();
 	}
 
 	FORCEINLINE void Resolve(const int32 &Index)
 	{
-		UpdateIsDirtys(Index);
+		UpdateIsDirty(Index);
 		Clear(Index);
 	}
 };
@@ -3362,15 +3387,17 @@ public:
 
 	FORCEINLINE virtual void UpdateIsDirty()
 	{
-		IsDirty = Value != Last_Value;
+		IsDirty		= Value != Last_Value;
+		Last_Value	= Value;
 
 		if (IsDirty)
 			OnChange_Event.Broadcast(Value);
 	}
 
-	FORCEINLINE virtual void UpdateIsDirtys(const KeyType &Key)
+	FORCEINLINE virtual void UpdateIsDirty(const KeyType &Key)
 	{
-		IsDirtys[Key] = Values[Key] != Last_Values[Key];
+		IsDirtys[Key]	 = Values[Key] != Last_Values[Key];
+		Last_Values[Key] = Values[Key];
 
 		if (IsDirtys[Key])
 			OnChangeMap_Event.Broadcast(Key, Values[Key]);
@@ -3379,6 +3406,7 @@ public:
 	FORCEINLINE TCsProperty_TMap& operator=(const TCsProperty_TMap& B)
 	{
 		Value = B.Value;
+		UpdateIsDirty();
 
 		TArray<KeyType> Keys;
 		Values.GetKeys(Keys);
@@ -3386,8 +3414,8 @@ public:
 		for (const KeyType& Key : Keys)
 		{
 			Values[Key] = B.Values[Key];
+			UpdateIsDirty(Key);
 		}
-		Resolve();
 		return *this;
 	}
 
@@ -3412,13 +3440,13 @@ public:
 	FORCEINLINE void Set(const ValueType &InValue)
 	{
 		Value = InValue;
-		Resolve();
+		UpdateIsDirty();
 	}
 
 	FORCEINLINE void Set(const KeyType& Key, const ValueType &InValue)
 	{
 		Values[Key] = InValue;
-		Resolve(Key);
+		UpdateIsDirty(Key);
 	}
 
 	FORCEINLINE const ValueType& operator[](const KeyType &Key)
@@ -3433,23 +3461,20 @@ public:
 
 	FORCEINLINE void Clear()
 	{
-		Last_Value = Value;
-		IsDirty	   = false;
+		IsDirty	= false;
 
 		TArray<KeyType> Keys;
 		Values.GetKeys(Keys);
 
 		for (const KeyType& Key : Keys)
 		{
-			Last_Values[Key] = Values[Key];
-			IsDirtys[Key]	 = false;
+			IsDirtys[Key] = false;
 		}
 	}
 
 	FORCEINLINE void Clear(const KeyType &Key)
 	{
-		Last_Values[Key] = Values[Key];
-		IsDirtys[Key]	 = false;
+		IsDirtys[Key] = false;
 	}
 
 	void ResetValues()
@@ -3490,14 +3515,14 @@ public:
 
 		for (const KeyType& Key : Keys)
 		{
-			UpdateIsDirtys(Key);
+			UpdateIsDirty(Key);
 		}
 		Clear();
 	}
 
 	FORCEINLINE void Resolve(const KeyType &Key)
 	{
-		UpdateIsDirtys(Key);
+		UpdateIsDirty(Key);
 		Clear(Key);
 	}
 };
@@ -3511,25 +3536,25 @@ struct TCsIntegralType_TMap : public TCsProperty_TMap<KeyType, ValueType>
 	FORCEINLINE void Add(const ValueType& InValue)
 	{
 		Value += InValue;
-		Resolve();
+		UpdateIsDirty();
 	}
 
 	FORCEINLINE void Add(const KeyType &Key, const ValueType &InValue)
 	{
 		Values[Key] += InValue;
-		Resolve(Key);
+		UpdateIsDirty(Key);
 	}
 
 	FORCEINLINE void Subtract(const ValueType &InValue)
 	{
 		Value -= InValue;
-		Resolve();
+		UpdateIsDirty();
 	}
 
 	FORCEINLINE void Subtract(const KeyType &Key, const ValueType &InValue)
 	{
 		Values[Index] -= inValue;
-		Resolve(Index);
+		UpdateIsDirty(Index);
 	}
 
 	FORCEINLINE ValueType Max()
@@ -3672,15 +3697,17 @@ public:
 
 	FORCEINLINE virtual void UpdateIsDirty()
 	{
-		IsDirty = Value != Last_Value;
+		IsDirty		= Value != Last_Value;
+		Last_Value	= Value;
 
 		if (IsDirty)
 			OnChange_Event.Broadcast(Value);
 	}
 
-	FORCEINLINE virtual void UpdateIsDirtys(const KeyType &Key)
+	FORCEINLINE virtual void UpdateIsDirty(const KeyType &Key)
 	{
-		IsDirtys[Key] = *(Values[Key]) != Last_Values[Key];
+		IsDirtys[Key]	 = *(Values[Key]) != Last_Values[Key];
+		Last_Values[Key] = *(Values[Key]);
 
 		if (IsDirtys[Key])
 			OnChangeMap_Event.Broadcast(Key, *(Values[Key]));
@@ -3689,6 +3716,7 @@ public:
 	FORCEINLINE TCsProperty_TMapRef& operator=(const TCsProperty_TMapRef& B)
 	{
 		Value = B.Value;
+		UpdateIsDirty();
 
 		TArray<KeyType> Keys;
 		Values.GetKeys(Keys);
@@ -3696,8 +3724,8 @@ public:
 		for (const KeyType& Key : Keys)
 		{
 			*(Values[Key]) = *(B.Values[Key]);
+			UpdateIsDirty(Key);
 		}
-		Resolve();
 		return *this;
 	}
 
@@ -3722,13 +3750,13 @@ public:
 	FORCEINLINE void Set(const ValueType &InValue)
 	{
 		Value = InValue;
-		Resolve();
+		UpdateIsDirty();
 	}
 
 	FORCEINLINE void Set(const KeyType& Key, ValueType* InValue)
 	{
 		Values[Key] = InValue;
-		Resolve(Key);
+		UpdateIsDirty(Key);
 	}
 
 	FORCEINLINE const ValueType& operator[](const KeyType &Key)
@@ -3743,7 +3771,6 @@ public:
 
 	FORCEINLINE void Clear()
 	{
-		Last_Value = Value;
 		IsDirty = false;
 
 		TArray<KeyType> Keys;
@@ -3751,15 +3778,13 @@ public:
 
 		for (const KeyType& Key : Keys)
 		{
-			Last_Values[Key] = *(Values[Key]);
 			IsDirtys[Key] = false;
 		}
 	}
 
 	FORCEINLINE void Clear(const KeyType &Key)
 	{
-		Last_Values[Key] = *(Values[Key]);
-		IsDirtys[Key]	 = false;
+		IsDirtys[Key] = false;
 	}
 
 	void ResetValues()
@@ -3800,14 +3825,14 @@ public:
 
 		for (const KeyType& Key : Keys)
 		{
-			UpdateIsDirtys(Key);
+			UpdateIsDirty(Key);
 		}
 		Clear();
 	}
 
 	FORCEINLINE void Resolve(const KeyType &Key)
 	{
-		UpdateIsDirtys(Key);
+		UpdateIsDirty(Key);
 		Clear(Key);
 	}
 };

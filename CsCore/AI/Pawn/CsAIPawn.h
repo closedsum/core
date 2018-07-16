@@ -261,7 +261,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
 	virtual void LookAtLocation(const FVector &Target, const float &BlendInTime, const float &LookTime);
 	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
-	virtual void LookAtActor(AActor* Target, const float &BlendInTime, const float &LookTime);
+	virtual void LookAtActor(AActor* Target, const FName &Bone, const float &BlendInTime, const float &LookTime);
 	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
 	virtual void StopLookAt(const float &BlendOutTime);
 

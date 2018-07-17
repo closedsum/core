@@ -114,6 +114,44 @@ namespace ECsBTTask_LogicalOperator
 	}
 }
 
+UENUM()
+namespace ECsBTTask_BasicSetOperation
+{
+	enum Type
+	{
+		Set								UMETA(DisplayName = "Set"),
+		Clear							UMETA(DisplayName = "Clear"),
+		ECsBTTask_BasicSetOperation_MAX	UMETA(Hidden),
+	};
+}
+
+typedef ECsBTTask_BasicSetOperation::Type TCsBTTask_BasicSetOperation;
+
+struct CSCORE_API EMCsBTTask_BasicSetOperation : public TCsEnumMap<ECsBTTask_BasicSetOperation::Type>
+{
+protected:
+	EMCsBTTask_BasicSetOperation() {}
+	EMCsBTTask_BasicSetOperation(const EMCsBTTask_BasicSetOperation &) = delete;
+	EMCsBTTask_BasicSetOperation(EMCsBTTask_BasicSetOperation &&) = delete;
+public:
+	~EMCsBTTask_BasicSetOperation() {}
+private:
+	static EMCsBTTask_BasicSetOperation* Instance;
+
+public:
+	static EMCsBTTask_BasicSetOperation& Get();
+};
+
+namespace ECsBTTask_BasicSetOperation
+{
+	namespace Ref
+	{
+		extern CSCORE_API const Type Set;
+		extern CSCORE_API const Type Clear;
+		extern CSCORE_API const Type ECsBTTask_BasicSetOperation_MAX;
+	}
+}
+
 namespace EBasicKeyOperation
 {
 	namespace Sym

@@ -40,8 +40,15 @@ ACsManager_Sense::ACsManager_Sense(const FObjectInitializer& ObjectInitializer) 
 
 	for (int32 I = 0; I < Count; ++I)
 	{
-		bSeesAnyByRadius.Add(EMCsSenseActorType::Get().GetEnumAt(I), false);
-		bSeesAnyByDot.Add(EMCsSenseActorType::Get().GetEnumAt(I), false);
+		const FECsSenseActorType& ActorType = EMCsSenseActorType::Get().GetEnumAt(I);
+
+		bSeesAnyByRadius.Add(ActorType, false);
+		bSeesAnyByDot.Add(ActorType, false);
+		bSeesAnyBody.Add(ActorType, false);
+		bSeesAndBodyHandle.Add(ActorType);
+		bSeesAndBodyHandle[ActorType].Set(&(bSeesAnyBody[ActorType]));
+		bFirstSeesAnyBody.Add(ActorType, false);
+		bFirstUnSeesAnyBody.Add(ActorType, false);
 	}
 }
 
@@ -137,6 +144,7 @@ void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 
 	const float CurrentTimeSeconds = GetWorld()->GetTimeSeconds();
 
+	// Do Sensing (i.e. by Radius, Dot, and/or Trace to body part)
 	TArray<FECsSenseActorType> TypeKeys;
 	SenseMap.GetKeys(TypeKeys);
 
@@ -216,6 +224,76 @@ void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 				Info.StartTime_TraceMeToActorBody = CurrentTimeSeconds;
 			}
 			Info.SetSeesActor(Info.bSeesActorBody || Info.bSeesActorHead);
+		}
+	}
+
+	// Update flags
+	for (const FECsSenseActorType& ActorType : TypeKeys)
+	{
+		// Handle flags set for only ONE frame
+
+			// First Sees
+		if (bFirstSeesAnyBody[ActorType])
+		{
+			bFirstSeesAnyBody[ActorType] = false;
+
+			OnbFirstSeesAnyBody_Event.Broadcast(ActorType, false);
+#if WITH_EDITOR
+			OnbFirstSeesAnyBody_ScriptEvent.Broadcast(ActorType, false);
+#endif // #if WITH_EDITOR
+		}
+
+			// First UnSees
+		if (bFirstUnSeesAnyBody[ActorType])
+		{
+			bFirstUnSeesAnyBody[ActorType] = false;
+
+			OnbFirstUnSeesAnyBody_Event.Broadcast(ActorType, false);
+#if WITH_EDITOR
+			OnbFirstUnSeesAnyBody_ScriptEvent.Broadcast(ActorType, false);
+#endif // #if WITH_EDITOR
+		}
+
+		// Check ALL Actors for the given ActorType
+		bSeesAnyBody[ActorType] = false;
+
+		TMap<uint64, FCsSenseInfo>& Map = SenseMap[ActorType];
+
+		TArray<uint64> IdKeys;
+		Map.GetKeys(IdKeys);
+
+		for (const uint64& Id : IdKeys)
+		{
+			FCsSenseInfo& Info = Map[Id];
+
+			bSeesAnyBody[ActorType] |= Info.bSeesActorBody;
+		}
+
+		bSeesAndBodyHandle[ActorType].UpdateIsDirty();
+
+		if (bSeesAndBodyHandle[ActorType].HasChanged())
+		{
+			// First Sees
+			if (bSeesAnyBody[ActorType])
+			{
+				bFirstSeesAnyBody[ActorType] = true;
+
+				OnbFirstSeesAnyBody_Event.Broadcast(ActorType, true);
+#if WITH_EDITOR
+				OnbFirstSeesAnyBody_ScriptEvent.Broadcast(ActorType, true);
+#endif // #if WITH_EDITOR
+			}
+			// First UnSees
+			else
+			{
+				bFirstUnSeesAnyBody[ActorType] = true;
+
+				OnbFirstUnSeesAnyBody_Event.Broadcast(ActorType, true);
+#if WITH_EDITOR
+				OnbFirstUnSeesAnyBody_ScriptEvent.Broadcast(ActorType, true);
+#endif // #if WITH_EDITOR
+			}
+			bSeesAndBodyHandle[ActorType].Clear();
 		}
 	}
 

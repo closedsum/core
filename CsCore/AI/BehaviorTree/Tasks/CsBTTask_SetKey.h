@@ -2,7 +2,7 @@
 #pragma once
 
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
-#include "Runtime/AIModule/Classes/BehaviorTree/Blackboard/BlackboardKeyType.h"
+#include "Types/CsTypes_BehaviorTree.h"
 #include "CsBTTask_SetKey.generated.h"
 
 class AAIController;
@@ -15,7 +15,7 @@ class CSCORE_API UCsBTTask_SetKey : public UBTTask_BlackboardBase
 protected:
 
 	UPROPERTY(EditAnywhere, Category = Blackboard)
-	TEnumAsByte<EBasicKeyOperation::Type> BasicOperation;
+	TEnumAsByte<ECsBTTask_BasicSetOperation::Type> Operation;
 
 	UPROPERTY(EditAnywhere, Category = Blackboard)
 	int32 Value_Int;
@@ -38,7 +38,6 @@ protected:
 public:
 
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
-	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 	virtual void DescribeRuntimeValues(const UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTDescriptionVerbosity::Type Verbosity, TArray<FString>& Values) const override;
 	virtual FString GetStaticDescription() const override;
 };

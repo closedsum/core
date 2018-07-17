@@ -31,18 +31,11 @@ EBTNodeResult::Type UCsBTTask_SetKey::ExecuteTask(UBehaviorTreeComponent& OwnerC
 	if (!Pawn)
 		return EBTNodeResult::Failed;
 
-	const UBlackboardComponent* MyBlackboard = OwnerComp.GetBlackboardComponent();
+	UBlackboardComponent* MyBlackboard = OwnerComp.GetBlackboardComponent();
 
 	// Bool
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Bool::StaticClass())
-	{
-		bool Value = MyBlackboard->GetValue<UBlackboardKeyType_Bool>(BlackboardKey.GetSelectedKeyID());
-
-		if ((BasicOperation == EBasicKeyOperation::Set && Value) ||
-			(BasicOperation == EBasicKeyOperation::NotSet && !Value))
-			return EBTNodeResult::Succeeded;
-		return EBTNodeResult::InProgress;
-	}
+		MyBlackboard->SetValueAsBool(BlackboardKey.SelectedKeyName, Operation == ECsBTTask_BasicSetOperation::Set);
 	// Enum
 	/*
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Enum::StaticClass())
@@ -51,49 +44,27 @@ EBTNodeResult::Type UCsBTTask_SetKey::ExecuteTask(UBehaviorTreeComponent& OwnerC
 	*/
 	// Int
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Int::StaticClass())
-	{
-		int32 Value = MyBlackboard->GetValue<UBlackboardKeyType_Int>(BlackboardKey.GetSelectedKeyID());
-		return Value == Value_Int ? EBTNodeResult::Succeeded : EBTNodeResult::InProgress;
-	}
+		MyBlackboard->SetValueAsInt(BlackboardKey.SelectedKeyName, Value_Int);
 	// Float
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Float::StaticClass())
-	{
-		float Value = MyBlackboard->GetValue<UBlackboardKeyType_Float>(BlackboardKey.GetSelectedKeyID());
-		return Value == Value_Float ? EBTNodeResult::Succeeded : EBTNodeResult::InProgress;
-	}
+		MyBlackboard->SetValueAsFloat(BlackboardKey.SelectedKeyName, Value_Float);
 	// Name
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Name::StaticClass())
-	{
-		FName Value = MyBlackboard->GetValue<UBlackboardKeyType_Name>(BlackboardKey.GetSelectedKeyID());
-		return Value == Value_Name ? EBTNodeResult::Succeeded : EBTNodeResult::InProgress;
-	}
+		MyBlackboard->SetValueAsName(BlackboardKey.SelectedKeyName, Value_Name);
 	// String
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_String::StaticClass())
-	{
-		FString Value = MyBlackboard->GetValue<UBlackboardKeyType_String>(BlackboardKey.GetSelectedKeyID());
-		return Value == Value_String ? EBTNodeResult::Succeeded : EBTNodeResult::InProgress;
-	}
+		MyBlackboard->SetValueAsString(BlackboardKey.SelectedKeyName, Value_String);
 	// Vector
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Vector::StaticClass())
-	{
-		FVector Value = MyBlackboard->GetValue<UBlackboardKeyType_Vector>(BlackboardKey.GetSelectedKeyID());
-		return Value == Value_Vector ? EBTNodeResult::Succeeded : EBTNodeResult::InProgress;
-	}
+		MyBlackboard->SetValueAsVector(BlackboardKey.SelectedKeyName, Value_Vector);
 	// Rotator
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Rotator::StaticClass())
-	{
-		FRotator Value = MyBlackboard->GetValue<UBlackboardKeyType_Rotator>(BlackboardKey.GetSelectedKeyID());
-		return Value == Value_Rotator ? EBTNodeResult::Succeeded : EBTNodeResult::InProgress;
-	}
+		MyBlackboard->SetValueAsRotator(BlackboardKey.SelectedKeyName, Value_Rotator);
 	// Object
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Object::StaticClass())
 	{
-		UObject* Value = MyBlackboard->GetValue<UBlackboardKeyType_Object>(BlackboardKey.GetSelectedKeyID());
-
-		if ((BasicOperation == EBasicKeyOperation::Set && Value) ||
-			(BasicOperation == EBasicKeyOperation::NotSet && !Value))
-			return EBTNodeResult::Succeeded;
-		return EBTNodeResult::InProgress;
+		if (Operation == ECsBTTask_BasicSetOperation::Clear)
+			MyBlackboard->SetValueAsObject(BlackboardKey.SelectedKeyName, nullptr);
 	}
 	// Class
 	/*
@@ -101,101 +72,7 @@ EBTNodeResult::Type UCsBTTask_SetKey::ExecuteTask(UBehaviorTreeComponent& OwnerC
 	{
 	}
 	*/
-	return EBTNodeResult::Failed;
-}
-
-void UCsBTTask_SetKey::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
-{
-	AAIController* AIController = OwnerComp.GetAIOwner();
-
-	if (!AIController || !AIController->GetPawn())
-	{
-		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
-	}
-	else
-	{
-		const UBlackboardComponent* MyBlackboard = OwnerComp.GetBlackboardComponent();
-
-		// Bool
-		if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Bool::StaticClass())
-		{
-			bool Value = MyBlackboard->GetValue<UBlackboardKeyType_Bool>(BlackboardKey.GetSelectedKeyID());
-
-			if ((BasicOperation == EBasicKeyOperation::Set && Value) ||
-				(BasicOperation == EBasicKeyOperation::NotSet && !Value))
-				FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-		}
-		// Enum
-		/*
-		if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Enum::StaticClass())
-		{
-		}
-		*/
-		// Int
-		if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Int::StaticClass())
-		{
-			int32 Value = MyBlackboard->GetValue<UBlackboardKeyType_Int>(BlackboardKey.GetSelectedKeyID());
-			
-			if (Value == Value_Int)
-				FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-		}
-		// Float
-		if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Float::StaticClass())
-		{
-			float Value = MyBlackboard->GetValue<UBlackboardKeyType_Float>(BlackboardKey.GetSelectedKeyID());
-			
-			if (Value == Value_Float)
-				FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-		}
-		// Name
-		if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Name::StaticClass())
-		{
-			FName Value = MyBlackboard->GetValue<UBlackboardKeyType_Name>(BlackboardKey.GetSelectedKeyID());
-
-			if (Value == Value_Name)
-				FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-		}
-		// String
-		if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_String::StaticClass())
-		{
-			FString Value = MyBlackboard->GetValue<UBlackboardKeyType_String>(BlackboardKey.GetSelectedKeyID());
-
-			if (Value == Value_String)
-				FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-		}
-		// Vector
-		if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Vector::StaticClass())
-		{
-			FVector Value = MyBlackboard->GetValue<UBlackboardKeyType_Vector>(BlackboardKey.GetSelectedKeyID());
-
-			if (Value == Value_Vector)
-				FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-		}
-		// Rotator
-		if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Rotator::StaticClass())
-		{
-			FRotator Value = MyBlackboard->GetValue<UBlackboardKeyType_Rotator>(BlackboardKey.GetSelectedKeyID());
-			
-			if (Value == Value_Rotator)
-				FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-		}
-		// Object
-		if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Object::StaticClass())
-		{
-			UObject* Value = MyBlackboard->GetValue<UBlackboardKeyType_Object>(BlackboardKey.GetSelectedKeyID());
-
-			if ((BasicOperation == EBasicKeyOperation::Set && Value) ||
-				(BasicOperation == EBasicKeyOperation::NotSet && !Value))
-				FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-		}
-		// Class
-		/*
-		if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Class::StaticClass())
-		{
-		}
-		*/
-		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-	}
+	return EBTNodeResult::Succeeded;
 }
 
 void UCsBTTask_SetKey::DescribeRuntimeValues(const UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTDescriptionVerbosity::Type Verbosity, TArray<FString>& Values) const

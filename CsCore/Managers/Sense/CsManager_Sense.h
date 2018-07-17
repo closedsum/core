@@ -5,6 +5,12 @@
 #include "Types/CsTypes_Trace.h"
 #include "CsManager_Sense.generated.h"
 
+// SeesAnyBody
+	// First Sees
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerSense_OnbFirstSeesAnyBody, const FECsSenseActorType&, ActorType, bool, Value);
+	// First UnSees
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerSense_OnbFirstUnSeesAnyBody, const FECsSenseActorType&, ActorType, bool, Value);
+
 UCLASS()
 class CSCORE_API ACsManager_Sense : public AActor
 {
@@ -62,6 +68,23 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
 	TMap<FECsSenseActorType, bool> bSeesAnyByDot;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
+	TMap<FECsSenseActorType, bool> bSeesAnyBody;
+	TMap<FECsSenseActorType, TCsBool_Ref> bSeesAndBodyHandle;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
+	TMap<FECsSenseActorType, bool> bFirstSeesAnyBody;
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnbFirstSeesAnyBody, const FECsSenseActorType&, const bool&);
+	FOnbFirstSeesAnyBody OnbFirstSeesAnyBody_Event;
+	UPROPERTY(BlueprintAssignable, Category = "Sense")
+	FBindableDynEvent_CsManagerSense_OnbFirstSeesAnyBody OnbFirstSeesAnyBody_ScriptEvent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
+	TMap<FECsSenseActorType, bool> bFirstUnSeesAnyBody;
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnbFirstUnSeesAnyBody, const FECsSenseActorType&, const bool&);
+	FOnbFirstUnSeesAnyBody OnbFirstUnSeesAnyBody_Event;
+	UPROPERTY(BlueprintAssignable, Category = "Sense")
+	FBindableDynEvent_CsManagerSense_OnbFirstUnSeesAnyBody OnbFirstUnSeesAnyBody_ScriptEvent;
 
 // Debug
 #pragma region

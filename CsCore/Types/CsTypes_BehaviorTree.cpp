@@ -63,7 +63,7 @@ namespace ECsBlackboardKeyType
 	return EMCsBlackboardKeyType::Get().GetMAX();
 }
 
-// BTTaskLogicalOperator
+// BTTask_LogicalOperator
 EMCsBTTask_LogicalOperator* EMCsBTTask_LogicalOperator::Instance;
 
 EMCsBTTask_LogicalOperator& EMCsBTTask_LogicalOperator::Get()
@@ -86,6 +86,26 @@ namespace ECsBTTask_LogicalOperator
 	{
 		CSCORE_API const FString And = TEXT("&");
 		CSCORE_API const FString Or = TEXT("|");
+	}
+}
+
+// BTTask_BasicSetOperation
+EMCsBTTask_BasicSetOperation* EMCsBTTask_BasicSetOperation::Instance;
+
+EMCsBTTask_BasicSetOperation& EMCsBTTask_BasicSetOperation::Get()
+{
+	if (!Instance)
+		Instance = new EMCsBTTask_BasicSetOperation();
+	return *Instance;
+}
+
+namespace ECsBTTask_BasicSetOperation
+{
+	namespace Ref
+	{
+		CSCORE_API const Type Set = EMCsBTTask_BasicSetOperation::Get().Add(Type::Set, TEXT("Set"));
+		CSCORE_API const Type Clear = EMCsBTTask_BasicSetOperation::Get().Add(Type::Clear, TEXT("Clear"));
+		CSCORE_API const Type ECsBTTask_BasicSetOperation_MAX = EMCsBTTask_BasicSetOperation::Get().Add(Type::ECsBTTask_BasicSetOperation_MAX, TEXT("ECsBTTask_BasicSetOperation_MAX"), TEXT("MAX"));
 	}
 }
 

@@ -42,7 +42,7 @@ namespace ECsBTTask_LookAtType
 UCsBTTask_LookAt::UCsBTTask_LookAt(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	NodeName = TEXT("Lookt At");
+	NodeName = TEXT("Look At");
 	bNotifyTick = true;
 	
 	// accept only actors and vectors
@@ -200,14 +200,83 @@ EBTNodeResult::Type UCsBTTask_LookAt::AbortTask(UBehaviorTreeComponent& OwnerCom
 
 void UCsBTTask_LookAt::DescribeRuntimeValues(const UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTDescriptionVerbosity::Type Verbosity, TArray<FString>& Values) const
 {
-	FString KeyDesc = BlackboardKey.SelectedKeyName.ToString();
-	Values.Add(FString::Printf(TEXT("%s: %s"), *Super::GetStaticDescription(), *KeyDesc));
+	FString Description = BlackboardKey.SelectedKeyName.ToString();
+
+	// Object
+	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Object::StaticClass())
+	{
+		// Bone
+		if (Bone != NAME_None)
+			Description += TEXT(" at Bone: ") + Bone.ToString();
+	}
+
+	// Rate
+	if (Rate > 0.0f)
+		Description += TEXT(" with Rate: ") + FString::SanitizeFloat(Rate);
+	else
+		Description += TEXT(" immediately");
+
+	// UntilAligned
+	if (Type == ECsBTTask_LookAtType::UntilAligned)
+	{
+		if (Rate > 0.0f)
+			Description += TEXT(" until aligned");
+	}
+	// Timed
+	else
+	if (Type == ECsBTTask_LookAtType::Timed)
+	{
+		FCsBTTask_LookAtMemory* MyMemory = (FCsBTTask_LookAtMemory*)NodeMemory;
+		check(MyMemory);
+
+		Description += TEXT(" for Time: ") + FString::SanitizeFloat(Time) + TEXT(" (Elpased: ") + FString::SanitizeFloat(MyMemory->ElapsedTime) + TEXT(")");;
+	}
+	// Forever
+	else
+	if (Type == ECsBTTask_LookAtType::Forever)
+	{
+		Description += TEXT(" forever");
+	}
+	Values.Add(FString::Printf(TEXT("%s: %s"), *Super::GetStaticDescription(), *Description));
 }
 
 FString UCsBTTask_LookAt::GetStaticDescription() const
 {
-	FString KeyDesc = BlackboardKey.SelectedKeyName.ToString();
-	return FString::Printf(TEXT("%s: %s"), *Super::GetStaticDescription(), *KeyDesc);
+	FString Description = BlackboardKey.SelectedKeyName.ToString();
+
+	// Object
+	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Object::StaticClass())
+	{
+		// Bone
+		if (Bone != NAME_None)
+			Description += TEXT(" at Bone: ") + Bone.ToString();
+	}
+
+	// Rate
+	if (Rate > 0.0f)
+		Description += TEXT(" with Rate: ") + FString::SanitizeFloat(Rate);
+	else
+		Description += TEXT(" immediately");
+
+	// UntilAligned
+	if (Type == ECsBTTask_LookAtType::UntilAligned)
+	{
+		if (Rate > 0.0f)
+			Description += TEXT(" until aligned");
+	}
+	// Timed
+	else
+	if (Type == ECsBTTask_LookAtType::Timed)
+	{
+		Description += TEXT(" for Time: ") + FString::SanitizeFloat(Time);
+	}
+	// Forever
+	else
+	if (Type == ECsBTTask_LookAtType::Forever)
+	{
+		Description += TEXT(" forever");
+	}
+	return FString::Printf(TEXT("%s: %s"), *Super::GetStaticDescription(), *Description);
 }
 
 void UCsBTTask_LookAt::SetTimeByType()

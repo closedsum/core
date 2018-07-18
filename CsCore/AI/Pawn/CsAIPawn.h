@@ -10,6 +10,9 @@
 // RotateToFaceBBEntry
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Start, const uint8&, MappingId, const float&, AngleDelta, const float&, RotationRate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Finish, const uint8&, MappingId);
+// LookAtAndRotateToFace
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsAIPawn_OnBTTask_LookAtAndRotateToFace_Start, const uint8&, MappingId, const float&, AngleDelta, const float&, RotationRate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsAIPawn_OnBTTask_LookAtAndRotateToFace_Finish, const uint8&, MappingId);
 // LookAt
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsAIPawn_OnBTTask_LookAtLocation_Start, const uint8&, MappingId, const FVector&, Location);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsAIPawn_OnBTTask_LookAtActor_Start, const uint8&, MappingId, AActor*, Actor);
@@ -30,81 +33,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsAIPawn_OnBTTask_
 
 // Structs
 #pragma region
-
-USTRUCT(BlueprintType)
-struct FCsAISenseInfo_Player
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
-	uint8 PlayerMappingId;
-
-// Me to Player
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
-	bool bSensePlayerBySight;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
-	FVector MeToPlayerDir;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
-	float MeToPlayerDistance;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
-	float MeToPlayerDistanceSq;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
-	FVector MeToPlayerDirXY;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
-	float MeToPlayerDot;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
-	bool bSeesPlayer;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
-	float TraceMeToPlayerBodyStartTime;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
-	uint8 TraceRequestId_MeToPlayerBody;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
-	float TraceMeToPlayerHeadStartTime;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
-	uint8 TraceRequestId_MeToPlayerHead;
-
-// Player to Me
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
-	float PlayerToMeDot;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
-	bool bPlayerSeesMe;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
-	bool bPlayerSeesBody;
-
-	TCsBool_Ref bPlayerSeesBodyHandle;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
-	float CheckPlayerSeesBodyStartTime;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
-	bool bPlayerSeesHead;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
-	float LastKnown_DistanceToPlayer;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
-	FVector LastKnown_PlayerLocation;
-
-	FCsAISenseInfo_Player()
-	{
-
-	}
-	~FCsAISenseInfo_Player(){}
-};
 
 #pragma endregion Structs
 
@@ -257,6 +185,27 @@ public:
 	FBindableDynEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Finish OnBTTask_RotateToFaceBBEntry_Finish_ScriptEvent;
 
 #pragma endregion RotateToFaceBBEntry
+
+	// LookAtAndRotateToFace
+#pragma region
+public:
+
+		// Start
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnBTTask_LookAtAndRotateToFace_Start, const uint8&, const float&, const float&);
+
+	FOnBTTask_LookAtAndRotateToFace_Start OnBTTask_LookAtAndRotateToFace_Start_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
+	FBindableDynEvent_CsAIPawn_OnBTTask_LookAtAndRotateToFace_Start OnBTTask_LookAtAndRotateToFace_Start_ScriptEvent;
+		// Finish
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnBTTask_LookAtAndRotateToFace_Finish, const uint8&);
+
+	FOnBTTask_LookAtAndRotateToFace_Finish OnBTTask_LookAtAndRotateToFace_Finish_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
+	FBindableDynEvent_CsAIPawn_OnBTTask_LookAtAndRotateToFace_Finish OnBTTask_LookAtAndRotateToFace_Finish_ScriptEvent;
+
+#pragma endregion LookAtAndRotateToFace
 
 	// LookAt
 #pragma region

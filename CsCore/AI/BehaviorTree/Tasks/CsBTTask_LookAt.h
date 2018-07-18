@@ -13,9 +13,9 @@ namespace ECsBTTask_LookAtType
 {
 	enum Type
 	{
-		UntilAligned				UMETA(DisplayName = "And"),
-		Timed						UMETA(DisplayName = "Or"),
-		Forever						UMETA(DisplayName = "Or"),
+		UntilAligned				UMETA(DisplayName = "Until Aligned"),
+		Timed						UMETA(DisplayName = "Timed"),
+		Forever						UMETA(DisplayName = "Forever"),
 		ECsBTTask_LookAtType_MAX	UMETA(Hidden),
 	};
 }
@@ -72,7 +72,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Node)
 	TEnumAsByte<ECsBTTask_LookAtType::Type> Type;
 
-	UPROPERTY(EditAnywhere, Category = Node)
+	UPROPERTY(EditAnywhere, Category = Node, meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float Rate;
 
 	UPROPERTY(EditAnywhere, Category = Node, meta = (InlineEditConditionToggle))

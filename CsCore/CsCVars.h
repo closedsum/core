@@ -108,6 +108,7 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInteractiveAIPawnPhysicsS
 
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawAIBTMoveTo;
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawAIBTRotateToFaceBBEntry;
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawAIBTLookAtAndRotateToFace;
 
 #pragma endregion Behavior Tree
 

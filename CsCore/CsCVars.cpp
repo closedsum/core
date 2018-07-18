@@ -231,6 +231,13 @@ TAutoConsoleVariable<int32> CsCVarDrawAIBTRotateToFaceBBEntry(
 	ECVF_SetByConsole
 );
 
+TAutoConsoleVariable<int32> CsCVarDrawAIBTLookAtRotateToFace(
+	TEXT("draw.ai.bt.lookatandrotatetoface"),
+	0,
+	TEXT("Draw A.I. Behavior Tree LookAtAndRotateToFace Task."),
+	ECVF_SetByConsole
+);
+
 #pragma endregion Behavior Tree
 
 #pragma endregion AI

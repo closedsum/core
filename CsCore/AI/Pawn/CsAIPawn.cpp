@@ -104,9 +104,11 @@ void ACsAIPawn::SetTargetLocation(const FVector &Target)
 	// LookAt
 #pragma region
 
-void ACsAIPawn::LookAtLocation(const FVector &Target, const float &BlendInTime, const float &LookTime){}
-void ACsAIPawn::LookAtActor(AActor* Target, const FName &Bone, const float &BlendInTime, const float &LookTime){}
-void ACsAIPawn::StopLookAt(const float &BlendOutTime){}
+FRotator ACsAIPawn::GetFinalLookAtRotation(AActor* Target, const FName &Bone) { return FRotator(CurrentAimPitch, CurrentAimYaw, 0.0f); }
+FRotator ACsAIPawn::GetFinalLookAtRotation(const FVector &Target){ return FRotator(CurrentAimPitch, CurrentAimYaw, 0.0f); }
+void ACsAIPawn::LookAtLocation(const FVector &Target, const float &LookRate, const float &LookTime){}
+void ACsAIPawn::LookAtActor(AActor* Target, const FName &Bone, const float &LookRate, const float &LookTime){}
+void ACsAIPawn::StopLookAt(const float &BlendOutRate){}
 
 #pragma endregion LookAt
 

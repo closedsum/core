@@ -10,6 +10,10 @@
 // RotateToFaceBBEntry
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Start, const uint8&, MappingId, const float&, AngleDelta, const float&, RotationRate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Finish, const uint8&, MappingId);
+// LookAt
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsAIPawn_OnBTTask_LookAtLocation_Start, const uint8&, MappingId, const FVector&, Location);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsAIPawn_OnBTTask_LookAtActor_Start, const uint8&, MappingId, AActor*, Actor);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsAIPawn_OnBTTask_LookAt_Aborted, const uint8&, MappingId);
 // AimAt
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsAIPawn_OnBTTask_AimAtLocation_Start, const uint8&, MappingId, const FVector&, Location);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsAIPawn_OnBTTask_AimAtActor_Start, const uint8&, MappingId, AActor*, Actor);
@@ -258,18 +262,57 @@ public:
 #pragma region
 public:
 
+		// Location Start
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnBTTask_LookAtLocation_Start, const uint8&, const FVector&);
+
+	FOnBTTask_LookAtLocation_Start OnBTTask_LookAtLocation_Start_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
+	FBindableDynEvent_CsAIPawn_OnBTTask_LookAtLocation_Start OnBTTask_LookAtLocation_Start_ScriptEvent;
+
+		// Actor Start
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnBTTask_LookAtActor_Start, const uint8&, AActor*);
+
+	FOnBTTask_LookAtActor_Start OnBTTask_LookAtActor_Start_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
+	FBindableDynEvent_CsAIPawn_OnBTTask_LookAtActor_Start OnBTTask_LookAtActor_Start_ScriptEvent;
+
+		// Abort
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnBTTask_LookAt_Aborted, const uint8&);
+
+	FOnBTTask_LookAt_Aborted OnBTTask_LookAt_Aborted_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
+	FBindableDynEvent_CsAIPawn_OnBTTask_LookAt_Aborted OnBTTask_LookAt_Aborted_ScriptEvent;
+
 	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
-	virtual void LookAtLocation(const FVector &Target, const float &BlendInTime, const float &LookTime);
+	virtual FRotator GetFinalLookAtRotation(AActor* Target, const FName &Bone);
+	virtual FRotator GetFinalLookAtRotation(const FVector &Target);
+
+	/** if LookTime == 0, then Look until aligned with Target.
+		if LookTime < 0, then Look at Target forever / indefinitely
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
-	virtual void LookAtActor(AActor* Target, const FName &Bone, const float &BlendInTime, const float &LookTime);
+	virtual void LookAtLocation(const FVector &Target, const float &LookRate, const float &LookTime);
+	/** if LookTime == 0, then Look until aligned with Target.
+		if LookTime < 0, then Look at Target forever / indefinitely
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
-	virtual void StopLookAt(const float &BlendOutTime);
+	virtual void LookAtActor(AActor* Target, const FName &Bone, const float &LookRate, const float &LookTime);
+	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
+	virtual void StopLookAt(const float &BlendOutRate);
 
 #pragma endregion LookAt
 
 	// AimAt
 #pragma region
 public:
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Behavior Tree")
+	float CurrentAimYaw;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Behavior Tree")
+	float CurrentAimPitch;
 
 		// Location Start
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnBTTask_AimAtLocation_Start, const uint8&, const FVector&);

@@ -87,6 +87,23 @@ void UCsBTTask_Shoot::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMem
 
 		MyMemory->ElapsedTime += DeltaSeconds;
 
+		// Check Delay
+		if (Delay > 0.0f)
+		{
+			if (!MyMemory->DelayCompleted)
+			{
+				if (MyMemory->ElapsedTime >= Delay)
+				{
+					MyMemory->DelayCompleted = true;
+					MyMemory->ElapsedTime	 = DeltaSeconds;
+				}
+				else
+				{
+					return;
+				}
+			}
+		}
+
 		ACsAIPawn* Pawn	  = Cast<ACsAIPawn>(AIController->GetPawn());
 		ACsWeapon* Weapon = Pawn->GetCurrentWeapon();
 

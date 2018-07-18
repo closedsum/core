@@ -6,12 +6,14 @@
 
 struct FCsBTTask_ShootMemory
 {
+	bool DelayCompleted;
 	float ElapsedTime;
 	int32 Shots;
 	int32 StartCount;
 
 	void Reset()
 	{
+		DelayCompleted = false;
 		ElapsedTime = 0.0f;
 		Shots = 0;
 		StartCount = 0;
@@ -25,14 +27,17 @@ class CSCORE_API UCsBTTask_Shoot : public UBTTaskNode
 
 protected:
 
-	UPROPERTY(config, Category = Node, EditAnywhere, meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, Category = Node, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float Delay;
+
+	UPROPERTY(EditAnywhere, Category = Node, meta = (InlineEditConditionToggle))
 	bool bDuration;
-	UPROPERTY(config, Category = Node, EditAnywhere, meta = (editcondition = "bDuration"))
+	UPROPERTY(EditAnywhere, Category = Node, meta = (ClampMin = "0.0", UIMin = "0.0", editcondition = "bDuration"))
 	float Duration;
 	
-	UPROPERTY(config, Category = Node, EditAnywhere, meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, Category = Node, meta = (InlineEditConditionToggle))
 	bool bShots;
-	UPROPERTY(config, Category = Node, EditAnywhere, meta = (editcondition = "bShots"))
+	UPROPERTY(EditAnywhere, Category = Node, meta = (editcondition = "bShots"))
 	FInt32Interval Shots;
 
 public:

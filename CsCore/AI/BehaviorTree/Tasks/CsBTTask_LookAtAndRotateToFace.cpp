@@ -236,7 +236,7 @@ void UCsBTTask_LookAtAndRotateToFace::DescribeRuntimeValues(const UBehaviorTreeC
 	if (AIController != NULL && AIController->GetPawn() != NULL)
 	{
 		const FVector PawnDirection = AIController->GetPawn()->GetActorForwardVector();
-		const FVector FocalPoint = AIController->GetFocalPointForPriority(EAIFocusPriority::Gameplay);
+		const FVector FocalPoint	= AIController->GetFocalPointForPriority(EAIFocusPriority::Gameplay);
 
 		if (FocalPoint != FAISystem::InvalidLocation)
 		{
@@ -256,8 +256,18 @@ void UCsBTTask_LookAtAndRotateToFace::DescribeRuntimeValues(const UBehaviorTreeC
 
 FString UCsBTTask_LookAtAndRotateToFace::GetStaticDescription() const
 {
-	FString KeyDesc = BlackboardKey.SelectedKeyName.ToString();
-	return FString::Printf(TEXT("%s: %s"), *Super::GetStaticDescription(), *KeyDesc);
+	FString Description = BlackboardKey.SelectedKeyName.ToString();
+
+	// Object
+	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Object::StaticClass())
+	{
+		// Bone
+		if (Bone != NAME_None)
+			Description += TEXT(" at Bone: ") + Bone.ToString();
+	}
+
+	Description += TEXT(" with Rate: ") + FString::SanitizeFloat(RotationRate) + TEXT(" with Delta Sucess of: ") + FString::SanitizeFloat(AngleDeltaForSuccess) + TEXT(" degrees");
+	return FString::Printf(TEXT("%s: %s"), *Super::GetStaticDescription(), *Description);
 }
 
 float UCsBTTask_LookAtAndRotateToFace::CalculateAngleDifferenceDot(const FVector& VectorA, const FVector& VectorB) const

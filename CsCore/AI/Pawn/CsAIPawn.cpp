@@ -16,6 +16,8 @@
 // Player
 #include "Player/CsPlayerState.h"
 #include "Player/CsPlayerPawn.h"
+// Weapon
+#include "Weapon/CsWeapon.h"
 // UI
 //#include "Components/CsWidgetComponent.h"
 //#include "UI/Simple/CsWidget_ProgressBar.h"
@@ -125,7 +127,36 @@ void ACsAIPawn::StopAimAt(){}
 #pragma region
 
 void ACsAIPawn::StartShoot(){}
+void ACsAIPawn::StartShoot(const int32 &Count){}
+void ACsAIPawn::StartShoot(const float &Duration){}
+
+void ACsAIPawn::StartShootForCount(const int32 &Count)
+{
+	StartShoot(Count);
+}
+
+void ACsAIPawn::StartShootForDuration(const float &Duration)
+{
+	StartShoot(Duration);
+}
+
 void ACsAIPawn::StopShoot(){}
+
+bool ACsAIPawn::IsShooting()
+{
+	ACsWeapon* CurrentWeapon = GetCurrentWeapon();
+
+	const int32& Count = EMCsWeaponFireMode::Get().Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		const FECsWeaponFireMode& FireMode = EMCsWeaponFireMode::Get().GetEnumAt(I);
+
+		if (CurrentWeapon->IsFirePressed[FireMode])
+			return true;
+	}
+	return false;
+}
 
 #pragma endregion Shoot
 

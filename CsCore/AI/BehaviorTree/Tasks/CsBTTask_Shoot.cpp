@@ -19,6 +19,10 @@ UCsBTTask_Shoot::UCsBTTask_Shoot(const FObjectInitializer& ObjectInitializer)
 {
 	NodeName = TEXT("Shoot");
 	bNotifyTick = true;
+
+	bStopOnAbort = true;
+	Shots.Min = 0.0f;
+	Shots.Max = 0.0f;
 }
 
 EBTNodeResult::Type UCsBTTask_Shoot::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -61,7 +65,8 @@ EBTNodeResult::Type UCsBTTask_Shoot::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 
 	MyMemory->StartCount = Weapon->FireCount;
 
-	Pawn->StartShoot();
+	if (Delay <= 0.0f)
+		Pawn->StartShoot();
 
 	ACsAIPlayerState* PlayerState = Cast<ACsAIPlayerState>(Pawn->PlayerState);
 
@@ -87,6 +92,8 @@ void UCsBTTask_Shoot::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMem
 
 		MyMemory->ElapsedTime += DeltaSeconds;
 
+		ACsAIPawn* Pawn = Cast<ACsAIPawn>(AIController->GetPawn());
+
 		// Check Delay
 		if (Delay > 0.0f)
 		{
@@ -96,6 +103,8 @@ void UCsBTTask_Shoot::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMem
 				{
 					MyMemory->DelayCompleted = true;
 					MyMemory->ElapsedTime	 = DeltaSeconds;
+
+					Pawn->StartShoot();
 				}
 				else
 				{
@@ -104,21 +113,34 @@ void UCsBTTask_Shoot::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMem
 			}
 		}
 
-		ACsAIPawn* Pawn	  = Cast<ACsAIPawn>(AIController->GetPawn());
+		if (bForever)
+			return;
+
+		// Check finished Shooting (Duration or Shots)
 		ACsWeapon* Weapon = Pawn->GetCurrentWeapon();
 
-		if ((bDuration && MyMemory->ElapsedTime >= Duration) ||
-			(bShots && (Weapon->FireCount - MyMemory->StartCount > MyMemory->Shots)))
+		if (!MyMemory->Completed)
 		{
-			Pawn->StopShoot();
+			if ((bDuration && MyMemory->ElapsedTime >= Duration) ||
+				(bShots && (Weapon->FireCount - MyMemory->StartCount > MyMemory->Shots)))
+			{
+				Pawn->StopShoot();
 
-			ACsAIPlayerState* PlayerState = Cast<ACsAIPlayerState>(Pawn->PlayerState);
+				MyMemory->Completed = true;
 
-			Pawn->OnBTTask_Shoot_Stop_Event.Broadcast(PlayerState->UniqueMappingId);
+				ACsAIPlayerState* PlayerState = Cast<ACsAIPlayerState>(Pawn->PlayerState);
+
+				Pawn->OnBTTask_Shoot_Stop_Event.Broadcast(PlayerState->UniqueMappingId);
 #if WITH_EDITOR
-			Pawn->OnBTTask_Shoot_Stop_ScriptEvent.Broadcast(PlayerState->UniqueMappingId);
+				Pawn->OnBTTask_Shoot_Stop_ScriptEvent.Broadcast(PlayerState->UniqueMappingId);
 #endif // #if WITH_EDITOR
-			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+			}
+		}
+		else
+		{
+			// Check weapon has actually stopped shooting
+			if (!Pawn->IsShooting())
+				FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 		}
 	}
 }
@@ -129,7 +151,8 @@ EBTNodeResult::Type UCsBTTask_Shoot::AbortTask(UBehaviorTreeComponent& OwnerComp
 	{
 		if (ACsAIPawn* Pawn = Cast<ACsAIPawn>(AIController->GetPawn()))
 		{
-			Pawn->StopShoot();
+			if (bStopOnAbort)
+				Pawn->StopShoot();
 
 			ACsAIPlayerState* PlayerState = Cast<ACsAIPlayerState>(Pawn->PlayerState);
 
@@ -148,3 +171,77 @@ void UCsBTTask_Shoot::DescribeRuntimeValues(const UBehaviorTreeComponent& OwnerC
 	check(MyMemory);
 	Values.Add(FString::Printf(TEXT("%s: ElapsedTime: %f Count: %d"), *Super::GetStaticDescription(), MyMemory->ElapsedTime, MyMemory->StartCount));
 }
+
+FString UCsBTTask_Shoot::GetStaticDescription() const
+{
+	FString Description = ECsCached::Str::Empty;
+
+	if (Delay > 0.0f)
+		Description += TEXT("Delay: ") + FString::SanitizeFloat(Delay) + TEXT(" ");
+
+	if (bDuration)
+		Description += TEXT("Duration: ") + FString::SanitizeFloat(Duration);
+	else
+	if (bShots)
+		Description += FString::Printf(TEXT("Shots: %d-%d"),Shots.Min, Shots.Max);
+
+	return FString::Printf(TEXT("%s: %s"), *Super::GetStaticDescription(), *Description);
+}
+
+#if WITH_EDITOR
+
+void UCsBTTask_Shoot::PostEditChangeProperty(struct FPropertyChangedEvent& e)
+{
+	FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
+
+	// bDuration
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(UCsBTTask_Shoot, bDuration))
+	{
+		if (bDuration)
+		{
+			bShots = false;
+		}
+		Super::PostEditChangeProperty(e);
+		return;
+	}
+	// bShots
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(UCsBTTask_Shoot, bShots))
+	{
+		if (bShots)
+		{
+			bDuration = false;
+		}
+		Super::PostEditChangeProperty(e);
+		return;
+	}
+	// Shots.Min
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(FInt32Interval, Min))
+	{
+		if (Shots.Min <= 0)
+		{
+			Shots.Min = 1;
+			Shots.Max = FMath::Max(Shots.Min, Shots.Max);
+		}
+	}
+	// Shots.Max
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(FInt32Interval, Min))
+	{
+		if (Shots.Max <= 0)
+		{
+			Shots.Max = 1;
+			Shots.Min = FMath::Max(1, Shots.Min);
+		}
+	}
+	// bForever
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(UCsBTTask_Shoot, bForever))
+	{
+		if (bForever)
+		{
+			bShots = false;
+			bDuration = false;
+		}
+	}
+	Super::PostEditChangeProperty(e);
+}
+
+#endif // #if WITH_EDITOR

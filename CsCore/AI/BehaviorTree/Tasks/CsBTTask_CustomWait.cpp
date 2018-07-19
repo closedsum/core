@@ -34,6 +34,23 @@ UCsBTTask_CustomWait::UCsBTTask_CustomWait(const FObjectInitializer& ObjectIniti
 	bNotifyTick = true;
 }
 
+void UCsBTTask_CustomWait::InitializeFromAsset(UBehaviorTree& Asset)
+{
+	Super::InitializeFromAsset(Asset);
+
+	if (UBlackboardData* BBAsset = GetBlackboardAsset())
+	{
+		for (FCsBTTask_KeyValue_Compare& Key : Keys)
+		{
+			Key.Key.ResolveSelectedKey(*BBAsset);
+		}
+	}
+	else
+	{
+		UE_LOG(LogBehaviorTree, Warning, TEXT("Can't initialize task: %s, make sure that behavior tree specifies a blackboard asset!"), *GetName());
+	}
+}
+
 EBTNodeResult::Type UCsBTTask_CustomWait::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	AAIController* AIController = OwnerComp.GetAIOwner();

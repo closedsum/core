@@ -326,8 +326,18 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
 	virtual void StartShoot();
+	virtual void StartShoot(const int32 &Count);
+	virtual void StartShoot(const float &Duration);
+
+	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
+	void StartShootForCount(const int32 &Count);
+	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
+	void StartShootForDuration(const float &Duration);
+
 	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
 	virtual void StopShoot();
+
+	bool IsShooting();
 
 #pragma endregion Shoot
 

@@ -22,6 +22,39 @@
 //#include "Components/CsWidgetComponent.h"
 //#include "UI/Simple/CsWidget_ProgressBar.h"
 
+// Enums
+#pragma region
+
+namespace ECsPawnRoutine
+{
+	CSCORE_API const FECsPawnRoutine StartShootForCount_Internal = EMCsPawnRoutine::Get().Create(TEXT("StartShootForCount_Internal"));
+	CSCORE_API const FECsPawnRoutine StartShootForDuration_Internal = EMCsPawnRoutine::Get().Create(TEXT("StartShootForDuration_Internal"));
+}
+
+#pragma endregion Enums
+
+// Cache
+#pragma region
+
+namespace ECsAIPawnCached
+{
+	namespace Str
+	{
+		// Functions
+		const FName StartShootForCount_Internal = FName("ACsAIPawn::StartShootForCount_Internal");
+		const FName StartShootForDuration_Internal = FName("ACsAIPawn::StartShootForDuration_Internal");
+	}
+
+	namespace Name
+	{
+		// Functions
+		const FString StartShootForCount_Internal = TEXT("ACsAIPawn::StartShootForCount_Internal");
+		const FString StartShootForDuration_Internal = TEXT("ACsAIPawn::StartShootForDuration_Internal");
+	}
+}
+
+#pragma endregion Cache
+
 ACsAIPawn::ACsAIPawn(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -74,6 +107,72 @@ void ACsAIPawn::DeAllocate()
 }
 
 void ACsAIPawn::OnTick_HandleCVars(const float &DeltaSeconds){}
+
+// State
+#pragma region
+
+void ACsAIPawn::OnChange_Health(const float &Value)
+{
+	ACsAIPlayerState* MyPlayerState = Cast<ACsAIPlayerState>(PlayerState);
+
+	OnChange_Health_Event.Broadcast(MyPlayerState->UniqueMappingId, Health, MaxHealth);
+#if WITH_EDITOR
+	OnChange_Health_ScriptEvent.Broadcast(MyPlayerState->UniqueMappingId, Health, MaxHealth);
+#endif // #if WITH_EDITOR
+}
+
+#pragma endregion State
+
+// Routines
+#pragma region
+
+bool ACsAIPawn::AddRoutine_Internal(FCsRoutine* Routine, const uint8 &InType)
+{
+	if (Super::AddRoutine_Internal(Routine, InType))
+		return true;
+
+	const FECsPawnRoutine& RoutineType = EMCsPawnRoutine::Get()[InType];
+
+	// StartShootForCount_Internal
+	if (RoutineType == ECsPawnRoutine::StartShootForCount_Internal)
+	{
+		CheckLinkedToPlayerState_Internal_Routine = Routine;
+		return true;
+	}
+	// StartShootForDuration_Internal
+	if (RoutineType == ECsPawnRoutine::StartShootForDuration_Internal)
+	{
+		HandleRespawnTimer_Internal_Routine = Routine;
+		return true;
+	}
+	return false;
+}
+
+bool ACsAIPawn::RemoveRoutine_Internal(FCsRoutine* Routine, const uint8 &InType)
+{
+	if (Super::RemoveRoutine_Internal(Routine, InType))
+		return true;
+
+	const FECsPawnRoutine& RoutineType = EMCsPawnRoutine::Get()[InType];
+
+	// StartShootForCount_Internal
+	if (RoutineType == ECsPawnRoutine::StartShootForCount_Internal)
+	{
+		check(CheckLinkedToPlayerState_Internal_Routine == Routine);
+		CheckLinkedToPlayerState_Internal_Routine = nullptr;
+		return true;
+	}
+	// StartShootForDuration_Internal
+	if (RoutineType == ECsPawnRoutine::StartShootForDuration_Internal)
+	{
+		check(HandleRespawnTimer_Internal_Routine == Routine);
+		HandleRespawnTimer_Internal_Routine = nullptr;
+		return true;
+	}
+	return false;
+}
+
+#pragma endregion Routines
 
 // View
 #pragma region
@@ -135,9 +234,23 @@ void ACsAIPawn::StartShootForCount(const int32 &Count)
 	StartShoot(Count);
 }
 
+CS_COROUTINE(ACsAIPawn, StartShootForCount_Internal)
+{
+	CS_COROUTINE_BEGIN(r);
+
+	CS_COROUTINE_END(r);
+}
+
 void ACsAIPawn::StartShootForDuration(const float &Duration)
 {
 	StartShoot(Duration);
+}
+
+CS_COROUTINE(ACsAIPawn, StartShootForDuration_Internal)
+{
+	CS_COROUTINE_BEGIN(r);
+
+	CS_COROUTINE_END(r);
 }
 
 void ACsAIPawn::StopShoot(){}
@@ -161,18 +274,3 @@ bool ACsAIPawn::IsShooting()
 #pragma endregion Shoot
 
 #pragma endregion Behavior Tree
-
-// State
-#pragma region
-
-void ACsAIPawn::OnChange_Health(const float &Value)
-{
-	ACsAIPlayerState* MyPlayerState = Cast<ACsAIPlayerState>(PlayerState);
-
-	OnChange_Health_Event.Broadcast(MyPlayerState->UniqueMappingId, Health, MaxHealth);
-#if WITH_EDITOR
-	OnChange_Health_ScriptEvent.Broadcast(MyPlayerState->UniqueMappingId, Health, MaxHealth);
-#endif // #if WITH_EDITOR
-}
-
-#pragma endregion State

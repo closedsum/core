@@ -5,6 +5,7 @@
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "BehaviorTree/BehaviorTree.h"
 #include "AIController.h"
 
 #include "CsCore.h"
@@ -37,21 +38,35 @@ EBTNodeResult::Type UCsBTTask_Shoot::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 	if (!Pawn)
 		return EBTNodeResult::Failed;
 
-	if (!bDuration && !bShots)
+	UBehaviorTree* BTree = OwnerComp.GetCurrentTree();
+
+	if (!bDuration && !bShots && !bForever)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s): Either Duration or Shots must be SET. Both can NOT be NOT SET."), *(Pawn->GetName()));
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s.%s): Either Duration, Shots, or Forever must be SET. All can NOT be NOT SET."), *(Pawn->GetName()), *(BTree->GetName()));
+		return EBTNodeResult::Failed;
+	}
+
+	if (bDuration && bForever)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s.%s): Either Duration or Forever must be SET. Both can NOT be NOT SET."), *(Pawn->GetName()), *(BTree->GetName()));
 		return EBTNodeResult::Failed;
 	}
 
 	if (bDuration && Duration <= 0.0f)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s): if Duration is SET, Duration must be > 0.0f."), *(Pawn->GetName()));
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s.%s): if Duration is SET, Duration must be > 0.0f."), *(Pawn->GetName()), *(BTree->GetName()));
+		return EBTNodeResult::Failed;
+	}
+
+	if (bShots && bForever)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s.%s): Either Shots or Forever must be SET. Both can NOT be NOT SET."), *(Pawn->GetName()), *(BTree->GetName()));
 		return EBTNodeResult::Failed;
 	}
 
 	if (bShots && Shots.Min <= 0)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s): if Shots is SET, Shots.Min must be > 0."), *(Pawn->GetName()));
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s.%s): if Shots is SET, Shots.Min must be > 0."), *(Pawn->GetName()), *(BTree->GetName()));
 		return EBTNodeResult::Failed;
 	}
 

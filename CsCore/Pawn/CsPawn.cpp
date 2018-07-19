@@ -339,14 +339,14 @@ void ACsPawn::OnHandleRespawnTimerFinished(const uint8 &MappingId) {}
 // Routines
 #pragma region
 
-/*static*/ void ACsPawn::AddRoutine(UObject* InPawn, struct FCsRoutine* Routine, const uint8 &Type)
+/*static*/ void ACsPawn::AddRoutine(UObject* InPawn, struct FCsRoutine* Routine, const uint8 &InType)
 {
-	Cast<ACsPawn>(InPawn)->AddRoutine_Internal(Routine, Type);
+	Cast<ACsPawn>(InPawn)->AddRoutine_Internal(Routine, InType);
 }
 
-bool ACsPawn::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
+bool ACsPawn::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType)
 {
-	const FECsPawnRoutine& RoutineType = EMCsPawnRoutine::Get()[Type];
+	const FECsPawnRoutine& RoutineType = EMCsPawnRoutine::Get()[InType];
 
 	// CheckLinkedToPlayerState_Internal
 	if (RoutineType == ECsPawnRoutine::CheckLinkedToPlayerState_Internal)
@@ -363,14 +363,14 @@ bool ACsPawn::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
 	return false;
 }
 
-/*static*/ void ACsPawn::RemoveRoutine(UObject* InPawn, struct FCsRoutine* Routine, const uint8 &Type)
+/*static*/ void ACsPawn::RemoveRoutine(UObject* InPawn, struct FCsRoutine* Routine, const uint8 &InType)
 {
-	Cast<ACsPawn>(InPawn)->RemoveRoutine_Internal(Routine, Type);
+	Cast<ACsPawn>(InPawn)->RemoveRoutine_Internal(Routine, InType);
 }
 
-bool ACsPawn::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
+bool ACsPawn::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType)
 {
-	const FECsPawnRoutine& RoutineType = EMCsPawnRoutine::Get()[Type];
+	const FECsPawnRoutine& RoutineType = EMCsPawnRoutine::Get()[InType];
 
 	// CheckLinkedToPlayerState_Internal
 	if (RoutineType == ECsPawnRoutine::CheckLinkedToPlayerState_Internal)

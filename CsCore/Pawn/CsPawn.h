@@ -277,11 +277,11 @@ public:
 #pragma region
 public:
 
-	static void AddRoutine(UObject* InPawn, struct FCsRoutine* Routine, const uint8 &Type);
-	virtual bool AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type);
+	static void AddRoutine(UObject* InPawn, struct FCsRoutine* Routine, const uint8 &InType);
+	virtual bool AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType);
 
-	static void RemoveRoutine(UObject* InPawn, struct FCsRoutine* Routine, const uint8 &Type);
-	virtual bool RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type);
+	static void RemoveRoutine(UObject* InPawn, struct FCsRoutine* Routine, const uint8 &InType);
+	virtual bool RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType);
 
 #pragma endregion Routines
 

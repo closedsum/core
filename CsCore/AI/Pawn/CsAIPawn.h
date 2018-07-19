@@ -29,6 +29,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsAIPawn_OnBTTask_
 // Enums
 #pragma region
 
+namespace ECsPawnRoutine
+{
+	extern CSCORE_API const FECsPawnRoutine StartShootForCount_Internal;
+	extern CSCORE_API const FECsPawnRoutine StartShootForDuration_Internal;
+}
+
 #pragma endregion Enums
 
 // Structs
@@ -134,6 +140,15 @@ public:
 	virtual void OnChange_Health(const float &Value) override;
 
 #pragma endregion State
+
+// Routines
+#pragma region
+public:
+
+	virtual bool AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType) override;
+	virtual bool RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType) override;
+
+#pragma endregion Routines
 
 // View
 #pragma region
@@ -331,8 +346,13 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
 	void StartShootForCount(const int32 &Count);
+	static char StartShootForCount_Internal(FCsRoutine* r);
+	FCsRoutine* StartShootForCount_Internal_Routine;
+
 	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
 	void StartShootForDuration(const float &Duration);
+	static char StartShootForDuration_Internal(FCsRoutine* r);
+	FCsRoutine* StartShootForDuration_Internal_Routine;
 
 	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
 	virtual void StopShoot();

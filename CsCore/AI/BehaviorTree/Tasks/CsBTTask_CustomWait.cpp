@@ -122,10 +122,36 @@ void UCsBTTask_CustomWait::DescribeRuntimeValues(const UBehaviorTreeComponent& O
 		if (I == 0 && bTime)
 			Description += OperationAsString;
 
-		Description += Keys[I].GetStaticDescription(MyBlackboard);
+		Description += Keys[I].GetRuntimeDescription(MyBlackboard);
 
 		if (I > 0 && I < Count - 1)
 			Description += OperationAsString;
 	}
 	Values.Add(Description);
+}
+
+FString UCsBTTask_CustomWait::GetStaticDescription() const
+{
+	FString Description = ECsCached::Str::Empty;
+
+	if (bTime)
+	{
+		Description += FString::Printf(TEXT("Time: %f"), Time);
+	}
+
+	const FString OperationAsString = TEXT(" ") + ECsBTTask_LogicalOperator::ToSymbol(Operation) + TEXT(" ");
+
+	const int32 Count = Keys.Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		if (I == 0 && bTime)
+			Description += OperationAsString;
+
+		Description += Keys[I].GetStaticDescription();
+
+		if (I > 0 && I < Count - 1)
+			Description += OperationAsString;
+	}
+	return FString::Printf(TEXT("%s: %s"), *Super::GetStaticDescription(), *Description);
 }

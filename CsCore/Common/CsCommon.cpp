@@ -763,8 +763,8 @@ bool UCsCommon::IsMatchInProgress(UWorld *InWorld)
 
 float UCsCommon::GetAngleDelta(const float &Angle1, const float &Angle2)
 {
-	int32 Mag		 = Angle2 - Angle1 > 0 ? 1 : -1;
-	float DeltaAngle = Angle2 - Angle1;
+	const int32 Mag			= Angle2 - Angle1 > 0 ? 1 : -1;
+	const float DeltaAngle	= Angle2 - Angle1;
 
 	return FMath::Abs(DeltaAngle) > 180.0f ? -1 * Mag * (360.0f - FMath::Abs(DeltaAngle)) : Mag * FMath::Abs(DeltaAngle);
 }
@@ -783,6 +783,30 @@ FRotator UCsCommon::GetAngleDelta(const FRotator &A, const FRotator &B)
 FRotator UCsCommon::Rotator_GetAngleDelta(const FRotator &A, const FRotator &B)
 {
 	return GetAngleDelta(A, B);
+}
+
+float UCsCommon::GetAbsAngleDelta(const float &Angle1, const float &Angle2)
+{
+	const int32 Mag		   = Angle2 - Angle1 > 0 ? 1 : -1;
+	const float DeltaAngle = Angle2 - Angle1;
+
+	return FMath::Abs(FMath::Abs(DeltaAngle) > 180.0f ? -1 * Mag * (360.0f - FMath::Abs(DeltaAngle)) : Mag * FMath::Abs(DeltaAngle));
+}
+
+FRotator UCsCommon::GetAbsAngleDelta(const FRotator &A, const FRotator &B)
+{
+	FRotator Rotation;
+
+	Rotation.Pitch = GetAbsAngleDelta(A.Pitch, B.Pitch);
+	Rotation.Yaw = GetAbsAngleDelta(A.Yaw, B.Yaw);
+	Rotation.Roll = GetAbsAngleDelta(A.Roll, B.Roll);
+
+	return Rotation;
+}
+
+FRotator UCsCommon::Rotator_GetAbsAngleDelta(const FRotator &A, const FRotator &B)
+{
+	return GetAbsAngleDelta(A, B);
 }
 
 float UCsCommon::AngleClamp180(float Angle)

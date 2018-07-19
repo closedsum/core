@@ -84,6 +84,10 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Node)
 	FName Bone;
 
+	/** Success condition for Type: UntilAligned when the Actor's look direction (pitch and yaw) is within delta */
+	UPROPERTY(EditAnywhere, Category = Node, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float AngleDeltaForSuccess;
+
 public:
 
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;

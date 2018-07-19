@@ -264,6 +264,13 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	static FRotator Rotator_GetAngleDelta(const FRotator &A, const FRotator &B);
 
 	UFUNCTION(BlueprintCallable, Category = "Commmon")
+	static float GetAbsAngleDelta(const float &Angle1, const float &Angle2);
+
+	static FRotator GetAbsAngleDelta(const FRotator &A, const FRotator &B);
+	UFUNCTION(BlueprintCallable, Category = "Commmon")
+	static FRotator Rotator_GetAbsAngleDelta(const FRotator &A, const FRotator &B);
+
+	UFUNCTION(BlueprintCallable, Category = "Commmon")
 	static float AngleClamp180(float Angle);
 
 	static FRotator AngleClamp180(const FRotator &Rotation);

@@ -86,7 +86,7 @@ EBTNodeResult::Type UCsBTTask_LookAtAndRotateToFace::ExecuteTask(UBehaviorTreeCo
 				MyMemory->FocusLocationSet = ActorValue->GetActorLocation();
 				MyMemory->bActorSet		   = true;
 
-				Pawn->LookAtActor(ActorValue, Bone, 2.0f * RotationRate, -1.0f /*Forever*/);
+				Pawn->LookAtActor(ActorValue, Bone, 0.5f * RotationRate, -1.0f /*Forever*/);
 
 				Result = EBTNodeResult::InProgress;
 			}
@@ -112,7 +112,7 @@ EBTNodeResult::Type UCsBTTask_LookAtAndRotateToFace::ExecuteTask(UBehaviorTreeCo
 				AIController->SetFocalPoint(CurrentFocalPoint, EAIFocusPriority::Gameplay);
 				MyMemory->FocusLocationSet = KeyValue;
 
-				Pawn->LookAtLocation(KeyValue, 2.0f * RotationRate, -1.0f /*Forever*/);
+				Pawn->LookAtLocation(KeyValue, 0.5f * RotationRate, -1.0f /*Forever*/);
 
 				Result = EBTNodeResult::InProgress;
 			}
@@ -266,7 +266,7 @@ FString UCsBTTask_LookAtAndRotateToFace::GetStaticDescription() const
 			Description += TEXT(" at Bone: ") + Bone.ToString();
 	}
 
-	Description += TEXT(" with Rate: ") + FString::SanitizeFloat(RotationRate) + TEXT(" with Delta Sucess of: ") + FString::SanitizeFloat(AngleDeltaForSuccess) + TEXT(" degrees");
+	Description += TEXT(" with Rate: ") + FString::SanitizeFloat(RotationRate) + TEXT(" degs/sec with Delta Sucess of: ") + FString::SanitizeFloat(AngleDeltaForSuccess) + TEXT(" degs");
 	return FString::Printf(TEXT("%s: %s"), *Super::GetStaticDescription(), *Description);
 }
 

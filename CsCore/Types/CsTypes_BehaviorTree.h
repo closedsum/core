@@ -58,7 +58,7 @@ namespace ECsBlackboardKeyType
 
 struct CSCORE_API FCsBlackboardKeyTypeHelper
 {
-	static const FECsBlackboardKeyType& GetType(struct FBlackboardKeySelector &Key);
+	static const FECsBlackboardKeyType& GetType(const struct FBlackboardKeySelector &Key);
 };
 
 // BTTaskLogicalOperator
@@ -269,5 +269,6 @@ public:
 protected:
 	bool Evaluate_Internal(const class UBlackboardComponent* Blackboard);
 public:
-	FString GetStaticDescription(const class UBlackboardComponent* Blackboard) const;
+	FString GetRuntimeDescription(const class UBlackboardComponent* Blackboard) const;
+	FString GetStaticDescription() const;
 };

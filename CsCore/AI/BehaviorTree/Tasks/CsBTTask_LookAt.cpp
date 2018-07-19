@@ -54,6 +54,7 @@ UCsBTTask_LookAt::UCsBTTask_LookAt(const FObjectInitializer& ObjectInitializer)
 	bTime = false;
 	Time = 0.0f;
 	Bone = NAME_None;
+	AngleDeltaForSuccess = 1.0f;
 }
 
 EBTNodeResult::Type UCsBTTask_LookAt::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -128,6 +129,11 @@ void UCsBTTask_LookAt::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 			ACsAIPawn* Pawn							 = Cast<ACsAIPawn>(AIController->GetPawn());
 			const UBlackboardComponent* MyBlackboard = OwnerComp.GetBlackboardComponent();
 			
+			const float Tolerance = FMath::Max(KINDA_SMALL_NUMBER, AngleDeltaForSuccess);
+
+			float AbsDeltaPitch = Tolerance;
+			float AbsDeltaYaw   = Tolerance;
+
 			// Object
 			if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Object::StaticClass())
 			{
@@ -135,16 +141,8 @@ void UCsBTTask_LookAt::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 				AActor* ActorValue	= Cast<AActor>(KeyValue);
 
 				const FRotator FinalRotation = Pawn->GetFinalLookAtRotation(ActorValue, Bone);
-				const float AbsDeltaPitch	 = FMath::Abs(UCsCommon::GetAngleDelta(Pawn->CurrentAimPitch, FinalRotation.Pitch));
-				const float AbsDeltaYaw		 = FMath::Abs(UCsCommon::GetAngleDelta(Pawn->CurrentAimYaw, FinalRotation.Yaw));
-
-				static float TOLERANCE = 0.01f;
-
-				if (AbsDeltaPitch < TOLERANCE &&
-					AbsDeltaYaw < TOLERANCE)
-				{
-					FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-				}
+				AbsDeltaPitch				 = UCsCommon::GetAbsAngleDelta(Pawn->CurrentAimPitch, FinalRotation.Pitch);
+				AbsDeltaYaw					 = UCsCommon::GetAbsAngleDelta(Pawn->CurrentAimYaw, FinalRotation.Yaw);
 			}
 			// Vector
 			else 
@@ -153,16 +151,14 @@ void UCsBTTask_LookAt::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 				const FVector KeyValue = MyBlackboard->GetValue<UBlackboardKeyType_Vector>(BlackboardKey.GetSelectedKeyID());
 
 				const FRotator FinalRotation = Pawn->GetFinalLookAtRotation(KeyValue);
-				const float AbsDeltaPitch	 = FMath::Abs(UCsCommon::GetAngleDelta(Pawn->CurrentAimPitch, FinalRotation.Pitch));
-				const float AbsDeltaYaw		 = FMath::Abs(UCsCommon::GetAngleDelta(Pawn->CurrentAimYaw, FinalRotation.Yaw));
+				AbsDeltaPitch				 = UCsCommon::GetAbsAngleDelta(Pawn->CurrentAimPitch, FinalRotation.Pitch);
+				AbsDeltaYaw					 = UCsCommon::GetAbsAngleDelta(Pawn->CurrentAimYaw, FinalRotation.Yaw);
+			}
 
-				static float TOLERANCE = 0.01f;
-
-				if (AbsDeltaPitch < TOLERANCE &&
-					AbsDeltaYaw < TOLERANCE)
-				{
-					FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-				}
+			if (AbsDeltaPitch < Tolerance &&
+				AbsDeltaYaw < Tolerance)
+			{
+				FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 			}
 		}
 		// Timed
@@ -262,7 +258,7 @@ FString UCsBTTask_LookAt::GetStaticDescription() const
 	if (Type == ECsBTTask_LookAtType::UntilAligned)
 	{
 		if (Rate > 0.0f)
-			Description += TEXT(" until aligned");
+			Description += TEXT(" until aligned with Delta Sucess of: ") + FString::SanitizeFloat(AngleDeltaForSuccess) + TEXT(" degs");
 	}
 	// Timed
 	else

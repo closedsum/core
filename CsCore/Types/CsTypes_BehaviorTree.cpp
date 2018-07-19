@@ -28,7 +28,7 @@ namespace ECsBlackboardKeyType
 	CSCORE_API const FECsBlackboardKeyType Class = EMCsBlackboardKeyType::Get().Create(TEXT("Class"));
 }
 
-/*static*/ const FECsBlackboardKeyType& FCsBlackboardKeyTypeHelper::GetType(struct FBlackboardKeySelector &Key)
+/*static*/ const FECsBlackboardKeyType& FCsBlackboardKeyTypeHelper::GetType(const FBlackboardKeySelector &Key)
 {
 	// Bool
 	if (Key.SelectedKeyType == UBlackboardKeyType_Bool::StaticClass())
@@ -175,7 +175,6 @@ bool FCsBTTask_KeyValue_Compare::Evaluate(const UBlackboardComponent* Blackboard
 	return Last_Evaluation;
 }
 
-
 bool FCsBTTask_KeyValue_Compare::Evaluate_Internal(const UBlackboardComponent* Blackboard)
 {
 	// Bool
@@ -282,20 +281,129 @@ bool FCsBTTask_KeyValue_Compare::Evaluate_Internal(const UBlackboardComponent* B
 	return false;
 }
 
-FString FCsBTTask_KeyValue_Compare::GetStaticDescription(const class UBlackboardComponent* Blackboard) const
+FString FCsBTTask_KeyValue_Compare::GetRuntimeDescription(const class UBlackboardComponent* Blackboard) const
 {
 	FString Description = ECsCached::Str::Empty;
 	FString Result		= Last_Evaluation ? TEXT("True") : TEXT("False");
+	
+	const FString& Symbol	  = EBasicKeyOperation::ToSymbol(BasicOperation);
+	FString ValueAsString	  = ECsCached::Str::Empty;
+	FString DestValueAsString = ECsCached::Str::Empty;
 
 	// Bool
 	if (Type == ECsBlackboardKeyType::Bool)
 	{
-		const FString& Symbol			= EBasicKeyOperation::ToSymbol(BasicOperation);
-		bool Value						= Blackboard->GetValue<UBlackboardKeyType_Bool>(Key.GetSelectedKeyID());
-		const FString ValueAsString		= Value ? TEXT("true") : TEXT("false");
-		const FString DestValueAsTring	= EBasicKeyOperation::Set ? TEXT("true") : TEXT("false");
-		Description = TEXT("Key: ") + Key.SelectedKeyName.ToString() + TEXT("Value: ") + ValueAsString + TEXT(" ") + Symbol + TEXT(" ") + DestValueAsTring + TEXT(" is ") + Result;
+
+		bool Value			= Blackboard->GetValue<UBlackboardKeyType_Bool>(Key.GetSelectedKeyID());
+		ValueAsString		= Value ? TEXT("true") : TEXT("false");
+		DestValueAsString	= EBasicKeyOperation::Set ? TEXT("true") : TEXT("false");
+		Description = Key.SelectedKeyName.ToString() + TEXT(" (") + ValueAsString + TEXT(") = ") + DestValueAsString + TEXT(" is ") + Result;
+		return Description;
 	}
+	// Enum
+	if (Type == ECsBlackboardKeyType::Enum)
+	{
+	}
+	// Int
+	else
+	if (Type == ECsBlackboardKeyType::Int)
+	{
+		int32 Value			= Blackboard->GetValue<UBlackboardKeyType_Int>(Key.GetSelectedKeyID());
+		ValueAsString		= FString::FromInt(Value);
+		DestValueAsString	= FString::FromInt(Value_Int);
+	}
+	// Float
+	else
+	if (Type == ECsBlackboardKeyType::Float)
+	{
+		float Value			= Blackboard->GetValue<UBlackboardKeyType_Float>(Key.GetSelectedKeyID());
+		ValueAsString		= FString::SanitizeFloat(Value);
+		DestValueAsString	= FString::SanitizeFloat(Value_Float);
+	}
+	// Name
+	else
+	if (Type == ECsBlackboardKeyType::Name)
+	{
+		FName Value			= Blackboard->GetValue<UBlackboardKeyType_Name>(Key.GetSelectedKeyID());
+		ValueAsString		= Value.ToString();
+		DestValueAsString	= Value_Name.ToString();
+	}
+	// String
+	else
+	if (Type == ECsBlackboardKeyType::String)
+	{
+		FString Value		= Blackboard->GetValue<UBlackboardKeyType_String>(Key.GetSelectedKeyID());
+		ValueAsString		= Value;
+		DestValueAsString	= Value_String;
+	}
+	// Vector
+	else
+	if (Type == ECsBlackboardKeyType::Vector)
+	{
+		FVector Value		= Blackboard->GetValue<UBlackboardKeyType_Vector>(Key.GetSelectedKeyID());
+		ValueAsString		= Value.ToString();
+		DestValueAsString	= Value_Vector.ToString();
+	}
+	// Rotator
+	else
+	if (Type == ECsBlackboardKeyType::Rotator)
+	{
+		FRotator Value		= Blackboard->GetValue<UBlackboardKeyType_Rotator>(Key.GetSelectedKeyID());
+		ValueAsString		= Value.ToString();
+		DestValueAsString	= Value_Vector.ToString();
+	}
+	/*
+	// Object
+	if (Key.SelectedKeyType == UBlackboardKeyType_Object::StaticClass())
+	return ECsBlackboardKeyType::Object;
+	// Class
+	if (Key.SelectedKeyType == UBlackboardKeyType_Class::StaticClass())
+	return ECsBlackboardKeyType::Class;
+	*/
+	Description = Key.SelectedKeyName.ToString() + TEXT(" (") + ValueAsString + TEXT(" ") + Symbol + TEXT(" ") + DestValueAsString + TEXT(" is ") + Result;
+	return Description;
+}
+
+FString FCsBTTask_KeyValue_Compare::GetStaticDescription() const
+{
+	FString Description = ECsCached::Str::Empty;
+
+	const FECsBlackboardKeyType& KeyType = FCsBlackboardKeyTypeHelper::GetType(Key);
+	FString DestValueAsString			 = ECsCached::Str::Empty;
+
+	// Bool
+	if (KeyType == ECsBlackboardKeyType::Bool)
+		DestValueAsString = EBasicKeyOperation::Set ? TEXT("true") : TEXT("false");
+	// Enum
+	else
+	if (KeyType == ECsBlackboardKeyType::Enum)
+	{
+	}
+	// Int
+	else
+	if (KeyType == ECsBlackboardKeyType::Int)
+		DestValueAsString = FString::FromInt(Value_Int);
+	// Float
+	else
+	if (KeyType == ECsBlackboardKeyType::Float)
+		DestValueAsString = FString::SanitizeFloat(Value_Float);
+	// Name
+	else
+	if (KeyType == ECsBlackboardKeyType::Name)
+		DestValueAsString = Value_Name.ToString();
+	// String
+	else
+	if (KeyType == ECsBlackboardKeyType::String)
+		DestValueAsString = Value_String;
+	// Vector
+	else
+	if (KeyType == ECsBlackboardKeyType::Vector)
+		DestValueAsString = Value_Vector.ToString();
+	// Rotator
+	else
+	if (KeyType == ECsBlackboardKeyType::Rotator)
+		DestValueAsString = Value_Rotator.ToString();
+	Description = Key.SelectedKeyName.ToString() + TEXT(" is ") + DestValueAsString;
 	return Description;
 }
 

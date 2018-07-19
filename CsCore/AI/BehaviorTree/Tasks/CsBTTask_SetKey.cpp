@@ -83,6 +83,51 @@ void UCsBTTask_SetKey::DescribeRuntimeValues(const UBehaviorTreeComponent& Owner
 
 FString UCsBTTask_SetKey::GetStaticDescription() const
 {
-	FString KeyDesc = BlackboardKey.SelectedKeyName.ToString();
-	return FString::Printf(TEXT("%s: %s"), *Super::GetStaticDescription(), *KeyDesc);
+	FString Description = BlackboardKey.SelectedKeyName.ToString();
+	Description		   += TEXT(" to ");
+
+		// Bool
+	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Bool::StaticClass())
+		Description += Operation == ECsBTTask_BasicSetOperation::Set ? TEXT("true") : TEXT("false");
+	// Enum
+	/*
+	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Enum::StaticClass())
+	{
+	}
+	*/
+	// Int
+	else
+	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Int::StaticClass())
+		Description += FString::FromInt(Value_Int);
+	// Float
+	else
+	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Float::StaticClass())
+		Description += FString::SanitizeFloat(Value_Float);
+	// Name
+	else
+	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Name::StaticClass())
+		Description += Value_Name.ToString();
+	// String
+	else
+	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_String::StaticClass())
+		Description += Value_String;
+	// Vector
+	else
+	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Vector::StaticClass())
+		Description += Value_Vector.ToString();
+	// Rotator
+	else
+	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Rotator::StaticClass())
+		Description += Value_Rotator.ToString();
+	// Object
+	else
+	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Object::StaticClass())
+		Description += TEXT("NULL");
+	// Class
+	/*
+	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Class::StaticClass())
+	{
+	}
+	*/
+	return FString::Printf(TEXT("%s: %s"), *Super::GetStaticDescription(), *Description);
 }

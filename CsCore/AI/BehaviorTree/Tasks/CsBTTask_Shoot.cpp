@@ -179,6 +179,9 @@ FString UCsBTTask_Shoot::GetStaticDescription() const
 	if (Delay > 0.0f)
 		Description += TEXT("Delay: ") + FString::SanitizeFloat(Delay) + TEXT(" ");
 
+	if (bForever)
+		Description += TEXT("Forever");
+	else
 	if (bDuration)
 		Description += TEXT("Duration: ") + FString::SanitizeFloat(Duration);
 	else
@@ -194,22 +197,24 @@ void UCsBTTask_Shoot::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 {
 	FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
 
-	// bDuration
-	if (PropertyName == GET_MEMBER_NAME_CHECKED(UCsBTTask_Shoot, bDuration))
+	// Duration
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(UCsBTTask_Shoot, Duration))
 	{
 		if (bDuration)
 		{
 			bShots = false;
+			bForever = false;
 		}
 		Super::PostEditChangeProperty(e);
 		return;
 	}
-	// bShots
-	if (PropertyName == GET_MEMBER_NAME_CHECKED(UCsBTTask_Shoot, bShots))
+	// Shots
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(UCsBTTask_Shoot, Shots))
 	{
 		if (bShots)
 		{
 			bDuration = false;
+			bForever = false;
 		}
 		Super::PostEditChangeProperty(e);
 		return;
@@ -222,6 +227,8 @@ void UCsBTTask_Shoot::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 			Shots.Min = 1;
 			Shots.Max = FMath::Max(Shots.Min, Shots.Max);
 		}
+		Super::PostEditChangeProperty(e);
+		return;
 	}
 	// Shots.Max
 	if (PropertyName == GET_MEMBER_NAME_CHECKED(FInt32Interval, Min))
@@ -231,6 +238,8 @@ void UCsBTTask_Shoot::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 			Shots.Max = 1;
 			Shots.Min = FMath::Max(1, Shots.Min);
 		}
+		Super::PostEditChangeProperty(e);
+		return;
 	}
 	// bForever
 	if (PropertyName == GET_MEMBER_NAME_CHECKED(UCsBTTask_Shoot, bForever))
@@ -240,6 +249,8 @@ void UCsBTTask_Shoot::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 			bShots = false;
 			bDuration = false;
 		}
+		Super::PostEditChangeProperty(e);
+		return;
 	}
 	Super::PostEditChangeProperty(e);
 }

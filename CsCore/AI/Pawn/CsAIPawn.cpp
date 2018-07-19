@@ -226,12 +226,9 @@ void ACsAIPawn::StopAimAt(){}
 #pragma region
 
 void ACsAIPawn::StartShoot(){}
-void ACsAIPawn::StartShoot(const int32 &Count){}
-void ACsAIPawn::StartShoot(const float &Duration){}
 
 void ACsAIPawn::StartShootForCount(const int32 &Count)
 {
-	StartShoot(Count);
 }
 
 CS_COROUTINE(ACsAIPawn, StartShootForCount_Internal)
@@ -243,7 +240,6 @@ CS_COROUTINE(ACsAIPawn, StartShootForCount_Internal)
 
 void ACsAIPawn::StartShootForDuration(const float &Duration)
 {
-	StartShoot(Duration);
 }
 
 CS_COROUTINE(ACsAIPawn, StartShootForDuration_Internal)

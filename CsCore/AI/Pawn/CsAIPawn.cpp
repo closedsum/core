@@ -38,14 +38,14 @@ namespace ECsPawnRoutine
 
 namespace ECsAIPawnCached
 {
-	namespace Str
+	namespace Name
 	{
 		// Functions
 		const FName StartShootForCount_Internal = FName("ACsAIPawn::StartShootForCount_Internal");
 		const FName StartShootForDuration_Internal = FName("ACsAIPawn::StartShootForDuration_Internal");
 	}
 
-	namespace Name
+	namespace Str
 	{
 		// Functions
 		const FString StartShootForCount_Internal = TEXT("ACsAIPawn::StartShootForCount_Internal");
@@ -229,27 +229,118 @@ void ACsAIPawn::StartShoot(){}
 
 void ACsAIPawn::StartShootForCount(const int32 &Count)
 {
+	// Clear StartShootForCount
+	if (StartShootForCount_Internal_Routine && StartShootForCount_Internal_Routine->IsValid())
+		StartShootForCount_Internal_Routine->End(ECsCoroutineEndReason::Manual);
+	// Clear StartShootForDuration
+	if (StartShootForDuration_Internal_Routine && StartShootForDuration_Internal_Routine->IsValid())
+		StartShootForDuration_Internal_Routine->End(ECsCoroutineEndReason::UniqueInstance);
+
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	FCsCoroutinePayload* Payload = Scheduler->AllocatePayload();
+
+	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+
+	Payload->Schedule		= Schedule;
+	Payload->Function		= &ACsAIPawn::StartShootForCount_Internal;
+	Payload->Actor			= this;
+	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
+	Payload->Add			= &ACsAIPawn::AddRoutine;
+	Payload->Remove			= &ACsAIPawn::RemoveRoutine;
+	Payload->Type			= ECsPawnRoutine::StartShootForCount_Internal.Value;
+	Payload->DoInit			= true;
+	Payload->PerformFirstRun = false;
+	Payload->Name			= ECsAIPawnCached::Name::StartShootForCount_Internal;
+	Payload->NameAsString	= ECsAIPawnCached::Str::StartShootForCount_Internal;
+
+	FCsRoutine* R = Scheduler->Allocate(Payload);
+
+	ACsWeapon* CurrentWeapon = GetCurrentWeapon();
+
+	R->counters[0] = Count;
+	R->counters[1] = CurrentWeapon->FireCount;
+
+	Scheduler->StartRoutine(Schedule, R);
 }
 
 CS_COROUTINE(ACsAIPawn, StartShootForCount_Internal)
 {
+	ACsAIPawn* p			 = r->GetActor<ACsAIPawn>();
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
+
+	const int32& Count		= r->counters[0];
+	const int32& StartCount = r->counters[1];
+
+	ACsWeapon* CurrentWeapon = p->GetCurrentWeapon();
+
 	CS_COROUTINE_BEGIN(r);
+
+	CS_COROUTINE_WAIT_UNTIL(r, CurrentWeapon->FireCount - StartCount > Count);
+
+	p->StopShoot();
 
 	CS_COROUTINE_END(r);
 }
 
 void ACsAIPawn::StartShootForDuration(const float &Duration)
 {
+	// Clear StartShootForDuration
+	if (StartShootForDuration_Internal_Routine && StartShootForDuration_Internal_Routine->IsValid())
+		StartShootForDuration_Internal_Routine->End(ECsCoroutineEndReason::Manual);
+	// Clear StartShootForCount
+	if (StartShootForCount_Internal_Routine && StartShootForCount_Internal_Routine->IsValid())
+		StartShootForCount_Internal_Routine->End(ECsCoroutineEndReason::UniqueInstance);
+
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+
+	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+
+	Payload->Schedule		= Schedule;
+	Payload->Function		= &ACsAIPawn::StartShootForDuration_Internal;
+	Payload->Actor			= this;
+	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
+	Payload->Add			= &ACsAIPawn::AddRoutine;
+	Payload->Remove			= &ACsAIPawn::RemoveRoutine;
+	Payload->Type			= ECsPawnRoutine::StartShootForDuration_Internal.Value;
+	Payload->DoInit			= true;
+	Payload->PerformFirstRun = false;
+	Payload->Name			= ECsAIPawnCached::Name::StartShootForDuration_Internal;
+	Payload->NameAsString	= ECsAIPawnCached::Str::StartShootForDuration_Internal;
+
+	FCsRoutine* R = Scheduler->Allocate(Payload);
+
+	R->floats[0] = Duration;
+
+	Scheduler->StartRoutine(Schedule, R);
 }
 
 CS_COROUTINE(ACsAIPawn, StartShootForDuration_Internal)
 {
+	ACsAIPawn* p			 = r->GetActor<ACsAIPawn>();
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
+
+	const float& Duration	 = r->floats[0];
+	const float& ElapsedTime = r->elapsedTime;
+
 	CS_COROUTINE_BEGIN(r);
+
+	CS_COROUTINE_WAIT_UNTIL(r, ElapsedTime >= Duration);
+
+	p->StopShoot();
 
 	CS_COROUTINE_END(r);
 }
 
-void ACsAIPawn::StopShoot(){}
+void ACsAIPawn::StopShoot()
+{
+	// Clear StartShootForCount
+	if (StartShootForCount_Internal_Routine && StartShootForCount_Internal_Routine->IsValid())
+		StartShootForCount_Internal_Routine->End(ECsCoroutineEndReason::Manual);
+	// Clear StartShootForDuration
+	if (StartShootForDuration_Internal_Routine && StartShootForDuration_Internal_Routine->IsValid())
+		StartShootForDuration_Internal_Routine->End(ECsCoroutineEndReason::Manual);
+}
 
 bool ACsAIPawn::IsShooting()
 {

@@ -80,8 +80,23 @@ EBTNodeResult::Type UCsBTTask_Shoot::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 
 	MyMemory->StartCount = Weapon->FireCount;
 
+	// If NO Delay, Start Shooting
 	if (Delay <= 0.0f)
-		Pawn->StartShoot();
+	{
+		if (bStopOnAbort || bForever)
+		{
+			Pawn->StartShoot();
+		}
+		// If do NOT Stop Shooting on Abort, then run a coroutine on the Pawn
+		else
+		{
+			if (bShots)
+				Pawn->StartShootForCount(MyMemory->Shots);
+			else
+			if (bDuration)
+				Pawn->StartShootForDuration(Duration);
+		}
+	}
 
 	ACsAIPlayerState* PlayerState = Cast<ACsAIPlayerState>(Pawn->PlayerState);
 
@@ -114,12 +129,25 @@ void UCsBTTask_Shoot::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMem
 		{
 			if (!MyMemory->DelayCompleted)
 			{
+				// Start Shooting
 				if (MyMemory->ElapsedTime >= Delay)
 				{
 					MyMemory->DelayCompleted = true;
 					MyMemory->ElapsedTime	 = DeltaSeconds;
 
-					Pawn->StartShoot();
+					if (bStopOnAbort || bForever)
+					{
+						Pawn->StartShoot();
+					}
+					// If do NOT Stop Shooting on Abort, then run a coroutine on the Pawn
+					else
+					{
+						if (bShots)
+							Pawn->StartShootForCount(MyMemory->Shots);
+						else
+						if (bDuration)
+							Pawn->StartShootForDuration(Duration);
+					}
 				}
 				else
 				{
@@ -139,7 +167,8 @@ void UCsBTTask_Shoot::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMem
 			if ((bDuration && MyMemory->ElapsedTime >= Duration) ||
 				(bShots && (Weapon->FireCount - MyMemory->StartCount > MyMemory->Shots)))
 			{
-				Pawn->StopShoot();
+				if (!bStopOnAbort && !bForever)
+					Pawn->StopShoot();
 
 				MyMemory->Completed = true;
 

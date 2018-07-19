@@ -312,18 +312,16 @@ CS_COROUTINE(ACsPawn, HandleRespawnTimer_Internal)
 {
 	ACsPawn* p				 = r->GetActor<ACsPawn>();
 	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
-	UWorld* w				 = p->GetWorld();
 	ACsPlayerStateBase* ps	 = Cast<ACsPlayerStateBase>(p->PlayerState);
 
 	ACsData_Character* Data_Character = p->GetMyData_Character();
 
-	const float CurrentTime = w->GetTimeSeconds();
-	const float& StartTime  = r->startTime;
-	const float RespawnTime = Data_Character->GetRespawnTime();
+	const float& ElapsedTime = r->elapsedTime;
+	const float RespawnTime  = Data_Character->GetRespawnTime();
 
 	CS_COROUTINE_BEGIN(r);
 
-	CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - StartTime >= RespawnTime);
+	CS_COROUTINE_WAIT_UNTIL(r, ElapsedTime >= RespawnTime);
 
 	p->OnHandleRespawnTimerFinished_Event.Broadcast(ps->UniqueMappingId);
 

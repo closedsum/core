@@ -8,10 +8,12 @@
 struct FCsBTTask_CustomWaitMemory
 {
 	float ElapsedTime;
+	int32 ElapsedFrames;
 
 	void Reset()
 	{
 		ElapsedTime = 0.0f;
+		ElapsedFrames = 0;
 	}
 };
 
@@ -30,6 +32,11 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Node, meta = (editcondition = "bTime"))
 	float Time;
 	
+	UPROPERTY(EditAnywhere, Category = Node, meta = (InlineEditConditionToggle))
+	bool bFrames;
+	UPROPERTY(EditAnywhere, Category = Node, meta = (editcondition = "bFrames"))
+	int32 Frames;
+
 	UPROPERTY(EditAnywhere, Category = Node)
 	TArray<FCsBTTask_KeyValue_Compare> Keys;
 
@@ -43,4 +50,10 @@ public:
 	virtual FString GetStaticDescription() const override;
 
 	virtual uint16 GetInstanceMemorySize() const override { return sizeof(FCsBTTask_CustomWaitMemory); }
+
+#if WITH_EDITOR
+
+	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& e) override;
+
+#endif // #if WITH_EDITOR
 };

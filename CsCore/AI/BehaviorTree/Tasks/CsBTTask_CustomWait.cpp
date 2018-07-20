@@ -5,6 +5,7 @@
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "BehaviorTree/BehaviorTree.h"
 #include "AIController.h"
 
 #include "CsCore.h"
@@ -32,6 +33,11 @@ UCsBTTask_CustomWait::UCsBTTask_CustomWait(const FObjectInitializer& ObjectIniti
 {
 	NodeName = TEXT("Custom Wait");
 	bNotifyTick = true;
+
+	bTime = false;
+	Time = 0.0f;
+	bFrames = false;
+	Frames = 0;
 }
 
 void UCsBTTask_CustomWait::InitializeFromAsset(UBehaviorTree& Asset)
@@ -58,14 +64,41 @@ EBTNodeResult::Type UCsBTTask_CustomWait::ExecuteTask(UBehaviorTreeComponent& Ow
 	if (!AIController)
 		return EBTNodeResult::Failed;
 
-	ACsAIPawn* Pawn = Cast<ACsAIPawn>(AIController->GetPawn());
+	APawn* BasePawn = AIController->GetPawn();
 
-	if (!Pawn)
+	if (!BasePawn)
 		return EBTNodeResult::Failed;
 
-	if (!bTime && Keys.Num() == CS_EMPTY)
+	ACsAIPawn* Pawn		 = Cast<ACsAIPawn>(BasePawn);
+	UBehaviorTree* BTree = OwnerComp.GetCurrentTree();
+
+	if (!Pawn)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s): Either Time must be SET or there must be AT LEAST 1 Key Added to Keys."), *(Pawn->GetName()));
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s.%s): This Task only works with Pawns derived from ACsAIPawn."), *(BasePawn->GetName()), *(BTree->GetName()));
+		return EBTNodeResult::Failed;
+	}
+
+	if (!bTime && !bFrames && Keys.Num() == CS_EMPTY)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s.%s): Either Time must be SET, Frames must be SET, or there must be AT LEAST 1 Key Added to Keys."), *(Pawn->GetName()), *(BTree->GetName()));
+		return EBTNodeResult::Failed;
+	}
+
+	if (!bTime && !bFrames)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s.%s): Both Time and Frames can NOT be SET at the same time."), *(Pawn->GetName()), *(BTree->GetName()));
+		return EBTNodeResult::Failed;
+	}
+
+	if (bTime && Time <= 0.0f)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s.%s): Time must be > 0.0f."), *(Pawn->GetName()), *(BTree->GetName()));
+		return EBTNodeResult::Failed;
+	}
+
+	if (bFrames && Frames <= 0)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s.%s): Frames must be > 0."), *(Pawn->GetName()), *(BTree->GetName()));
 		return EBTNodeResult::Failed;
 	}
 
@@ -97,8 +130,9 @@ void UCsBTTask_CustomWait::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* No
 		check(MyMemory);
 
 		MyMemory->ElapsedTime += DeltaSeconds;
+		++(MyMemory->ElapsedFrames);
 
-		bool Pass = bTime && MyMemory->ElapsedTime >= Time;
+		bool Pass = (bTime && MyMemory->ElapsedTime >= Time) || (bFrames && MyMemory->ElapsedFrames >= Frames);
 
 		const UBlackboardComponent* MyBlackboard = OwnerComp.GetBlackboardComponent();
 
@@ -172,3 +206,34 @@ FString UCsBTTask_CustomWait::GetStaticDescription() const
 	}
 	return FString::Printf(TEXT("%s: %s"), *Super::GetStaticDescription(), *Description);
 }
+
+#if WITH_EDITOR
+
+void UCsBTTask_CustomWait::PostEditChangeProperty(struct FPropertyChangedEvent& e)
+{
+	FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
+
+	// Time
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(UCsBTTask_CustomWait, Time))
+	{
+		if (bTime)
+		{
+			bFrames = false;
+		}
+		Super::PostEditChangeProperty(e);
+		return;
+	}
+	// Frames
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(UCsBTTask_CustomWait, Frames))
+	{
+		if (bFrames)
+		{
+			bTime = false;
+		}
+		Super::PostEditChangeProperty(e);
+		return;
+	}
+	Super::PostEditChangeProperty(e);
+}
+
+#endif // #if WITH_EDITOR

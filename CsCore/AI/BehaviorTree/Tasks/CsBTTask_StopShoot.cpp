@@ -36,7 +36,7 @@ EBTNodeResult::Type UCsBTTask_StopShoot::ExecuteTask(UBehaviorTreeComponent& Own
 
 	if (!Pawn)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s.%s): This Task only works with Pawns derived from ACsAIPawn."), *(BasePawn->GetName()), *(BTree->GetName()));
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_StopShoot (%s.%s): This Task only works with Pawns derived from ACsAIPawn."), *(BasePawn->GetName()), *(BTree->GetName()));
 		return EBTNodeResult::Failed;
 	}
 

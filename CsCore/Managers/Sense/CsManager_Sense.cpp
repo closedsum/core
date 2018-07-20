@@ -407,7 +407,8 @@ void ACsManager_Sense::Sense_CheckMeToActorDot(FCsSenseInfo& Info)
 		Rotation.Pitch	  = 0.0f;
 		CurrentFaceDirXY  = Rotation.Vector();
 	}
-	Info.MeToActorDot = FVector::DotProduct(CurrentFaceDirXY, Info.MeToActorDirXY);
+	Info.MeToActorDot			= FVector::DotProduct(CurrentFaceDirXY, Info.MeToActorDirXY);
+	Info.MeToActorAbsDeltaAngle = FMath::Abs(FMath::RadiansToDegrees(FMath::Acos(Info.MeToActorDot)));
 
 		// Player / AI
 	if (ACsPawn* Pawn = Cast<ACsPawn>(Me))

@@ -129,6 +129,9 @@ struct FCsSenseInfo
 	float MeToActorDot;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	float MeToActorAbsDeltaAngle;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
 	FRotator MeToActorBodyRotation;
 
 	// View to Actor

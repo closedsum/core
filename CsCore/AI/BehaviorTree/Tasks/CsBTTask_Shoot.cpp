@@ -33,12 +33,19 @@ EBTNodeResult::Type UCsBTTask_Shoot::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 	if (!AIController)
 		return EBTNodeResult::Failed;
 
-	ACsAIPawn* Pawn = Cast<ACsAIPawn>(AIController->GetPawn());
+	APawn* BasePawn = AIController->GetPawn();
 
-	if (!Pawn)
+	if (!BasePawn)
 		return EBTNodeResult::Failed;
 
+	ACsAIPawn* Pawn		 = Cast<ACsAIPawn>(BasePawn);
 	UBehaviorTree* BTree = OwnerComp.GetCurrentTree();
+
+	if (!Pawn)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s.%s): This Task only works with Pawns derived from ACsAIPawn."), *(BasePawn->GetName()), *(BTree->GetName()));
+		return EBTNodeResult::Failed;
+	}
 
 	if (!bDuration && !bShots && !bForever)
 	{

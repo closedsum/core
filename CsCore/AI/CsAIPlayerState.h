@@ -1,7 +1,7 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Player/CsPlayerStateBase.h"
-#include "Types/CsTypes.h"
+#include "Types/CsTypes_Input.h"
 #include "CsAIPlayerState.generated.h"
 
 
@@ -35,4 +35,15 @@ public:
 	virtual bool IsOnBoardCompleted_Game() override;
 
 #pragma endregion OnBoard
+
+// Snap Shot
+#pragma region
+public:
+
+	UPROPERTY(BlueprintReadWrite, Category = "Snap Shot")
+	TArray<FECsGameEvent> QueuedGameEventsForNextFrame;
+
+	virtual void ProcessCurrentLocalSnapShot(const float &DeltaSeconds);
+
+#pragma endregion Snap Shot
 };

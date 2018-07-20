@@ -5,6 +5,7 @@
 #include "Types/CsTypes_Pool.h"
 #include "Types/CsTypes_Coroutine.h"
 #include "Types/CsTypes_Trace.h"
+#include "Types/CsTypes_Input.h"
 #include "CsAIPawn.generated.h"
 
 // RotateToFaceBBEntry
@@ -338,6 +339,12 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
 	FBindableDynEvent_CsAIPawn_OnBTTask_Shoot_Aborted OnBTTask_Shoot_Aborted_ScriptEvent;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Behavior Tree")
+	FECsGameEvent StartShootEvent;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Behavior Tree")
+	FECsGameEvent StopShootEvent;
 
 	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
 	virtual void StartShoot();

@@ -295,3 +295,10 @@ bool ACsAIPlayerState::IsOnBoardCompleted_Game()
 }
 
 #pragma endregion OnBoard
+
+// Snap Shot
+#pragma region
+
+void ACsAIPlayerState::ProcessCurrentLocalSnapShot(const float &DeltaSeconds){}
+
+#pragma endregion Snap Shot

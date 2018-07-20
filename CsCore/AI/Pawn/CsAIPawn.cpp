@@ -63,6 +63,12 @@ ACsAIPawn::ACsAIPawn(const FObjectInitializer& ObjectInitializer)
 	AutoPossessPlayer = EAutoReceiveInput::Disabled;
 	AutoPossessAI	  = EAutoPossessAI::PlacedInWorldOrSpawned;
 	AIControllerClass = ACsAIController::StaticClass();
+
+	// Behavior Tree
+
+		// Shoot
+	StartShootEvent = EMCsGameEvent::Get().GetMAX();
+	StopShootEvent = EMCsGameEvent::Get().GetMAX();
 }
 
 void ACsAIPawn::Init(const int32 &Index, const FECsAIType &InType)

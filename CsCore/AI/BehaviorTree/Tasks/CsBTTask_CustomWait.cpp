@@ -84,7 +84,7 @@ EBTNodeResult::Type UCsBTTask_CustomWait::ExecuteTask(UBehaviorTreeComponent& Ow
 		return EBTNodeResult::Failed;
 	}
 
-	if (!bTime && !bFrames)
+	if (bTime && bFrames)
 	{
 		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s.%s): Both Time and Frames can NOT be SET at the same time."), *(Pawn->GetName()), *(BTree->GetName()));
 		return EBTNodeResult::Failed;

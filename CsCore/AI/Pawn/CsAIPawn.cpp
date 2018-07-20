@@ -288,7 +288,7 @@ CS_COROUTINE(ACsAIPawn, StartShootForCount_Internal)
 
 	CS_COROUTINE_BEGIN(r);
 
-	CS_COROUTINE_WAIT_UNTIL(r, CurrentWeapon->FireCount - StartCount > Count);
+	CS_COROUTINE_WAIT_UNTIL(r, CurrentWeapon->FireCount - StartCount >= Count);
 
 	p->StopShoot();
 

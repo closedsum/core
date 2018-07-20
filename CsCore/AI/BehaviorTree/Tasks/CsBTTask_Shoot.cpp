@@ -165,9 +165,9 @@ void UCsBTTask_Shoot::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMem
 		if (!MyMemory->Completed)
 		{
 			if ((bDuration && MyMemory->ElapsedTime >= Duration) ||
-				(bShots && (Weapon->FireCount - MyMemory->StartCount > MyMemory->Shots)))
+				(bShots && (Weapon->FireCount - MyMemory->StartCount >= MyMemory->Shots)))
 			{
-				if (!bStopOnAbort && !bForever)
+				if (bStopOnAbort)
 					Pawn->StopShoot();
 
 				MyMemory->Completed = true;
@@ -224,13 +224,22 @@ FString UCsBTTask_Shoot::GetStaticDescription() const
 		Description += TEXT("Delay: ") + FString::SanitizeFloat(Delay) + TEXT(" ");
 
 	if (bForever)
+	{
 		Description += TEXT("Forever");
+	}
 	else
 	if (bDuration)
+	{
 		Description += TEXT("Duration: ") + FString::SanitizeFloat(Duration);
+	}
 	else
 	if (bShots)
-		Description += FString::Printf(TEXT("Shots: %d-%d"),Shots.Min, Shots.Max);
+	{
+		if (Shots.Min == Shots.Max)
+			Description += FString::Printf(TEXT("Shots: %d"), Shots.Min);
+		else
+			Description += FString::Printf(TEXT("Shots: betwween %d-%d"),Shots.Min, Shots.Max);
+	}
 
 	return FString::Printf(TEXT("%s: %s"), *Super::GetStaticDescription(), *Description);
 }

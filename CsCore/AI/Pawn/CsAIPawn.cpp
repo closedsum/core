@@ -14,7 +14,7 @@
 // Game
 #include "Game/CsGameState.h"
 // Player
-#include "Player/CsPlayerState.h"
+#include "AI/CsAIPlayerState.h"
 #include "Player/CsPlayerPawn.h"
 // Weapon
 #include "Weapon/CsWeapon.h"
@@ -231,7 +231,11 @@ void ACsAIPawn::StopAimAt(){}
 	// Shoot
 #pragma region
 
-void ACsAIPawn::StartShoot(){}
+void ACsAIPawn::StartShoot()
+{
+	ACsAIPlayerState* MyPlayerState = Cast<ACsAIPlayerState>(PlayerState);
+	MyPlayerState->QueuedGameEventsForNextFrame.Add(StartShootEvent);
+}
 
 void ACsAIPawn::StartShootForCount(const int32 &Count)
 {
@@ -241,6 +245,9 @@ void ACsAIPawn::StartShootForCount(const int32 &Count)
 	// Clear StartShootForDuration
 	if (StartShootForDuration_Internal_Routine && StartShootForDuration_Internal_Routine->IsValid())
 		StartShootForDuration_Internal_Routine->End(ECsCoroutineEndReason::UniqueInstance);
+
+	ACsAIPlayerState* MyPlayerState = Cast<ACsAIPlayerState>(PlayerState);
+	MyPlayerState->QueuedGameEventsForNextFrame.Add(StartShootEvent);
 
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload = Scheduler->AllocatePayload();
@@ -297,6 +304,9 @@ void ACsAIPawn::StartShootForDuration(const float &Duration)
 	if (StartShootForCount_Internal_Routine && StartShootForCount_Internal_Routine->IsValid())
 		StartShootForCount_Internal_Routine->End(ECsCoroutineEndReason::UniqueInstance);
 
+	ACsAIPlayerState* MyPlayerState = Cast<ACsAIPlayerState>(PlayerState);
+	MyPlayerState->QueuedGameEventsForNextFrame.Add(StartShootEvent);
+
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
@@ -346,6 +356,9 @@ void ACsAIPawn::StopShoot()
 	// Clear StartShootForDuration
 	if (StartShootForDuration_Internal_Routine && StartShootForDuration_Internal_Routine->IsValid())
 		StartShootForDuration_Internal_Routine->End(ECsCoroutineEndReason::Manual);
+
+	ACsAIPlayerState* MyPlayerState = Cast<ACsAIPlayerState>(PlayerState);
+	MyPlayerState->QueuedGameEventsForNextFrame.Add(StopShootEvent);
 }
 
 bool ACsAIPawn::IsShooting()

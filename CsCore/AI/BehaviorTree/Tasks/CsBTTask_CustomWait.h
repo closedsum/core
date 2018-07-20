@@ -29,12 +29,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = Node, meta = (InlineEditConditionToggle))
 	bool bTime;
-	UPROPERTY(EditAnywhere, Category = Node, meta = (editcondition = "bTime"))
+	UPROPERTY(EditAnywhere, Category = Node, meta = (editcondition = "bTime", ClampMin = "0.0", UIMin = "0.0"))
 	float Time;
 	
 	UPROPERTY(EditAnywhere, Category = Node, meta = (InlineEditConditionToggle))
 	bool bFrames;
-	UPROPERTY(EditAnywhere, Category = Node, meta = (editcondition = "bFrames"))
+	UPROPERTY(EditAnywhere, Category = Node, meta = (editcondition = "bFrames", ClampMin = "0", UIMin = "0"))
 	int32 Frames;
 
 	UPROPERTY(EditAnywhere, Category = Node)

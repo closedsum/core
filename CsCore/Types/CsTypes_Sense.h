@@ -183,8 +183,14 @@ struct FCsSenseInfo
 	float LastTime_SeesActorByDot;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
 	float LastTime_SeesActor;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	float SeesActorBodyTime;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	float NotSeesActorBodyTime;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
 	float LastTime_SeesActorBody;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
 	float LastTime_SeesActorHead;
 

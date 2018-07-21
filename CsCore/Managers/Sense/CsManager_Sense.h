@@ -86,6 +86,12 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Sense")
 	FBindableDynEvent_CsManagerSense_OnbFirstUnSeesAnyBody OnbFirstUnSeesAnyBody_ScriptEvent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
+	TMap<FECsSenseActorType, float> SeesAnyBodyTime;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
+	TMap<FECsSenseActorType, float> NotSeesAnyBodyTime;
+
 // Debug
 #pragma region
 public:

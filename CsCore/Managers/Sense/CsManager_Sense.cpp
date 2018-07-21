@@ -49,6 +49,9 @@ ACsManager_Sense::ACsManager_Sense(const FObjectInitializer& ObjectInitializer) 
 		bSeesAndBodyHandle[ActorType].Set(&(bSeesAnyBody[ActorType]));
 		bFirstSeesAnyBody.Add(ActorType, false);
 		bFirstUnSeesAnyBody.Add(ActorType, false);
+
+		SeesAnyBodyTime.Add(ActorType, 0.0f);
+		NotSeesAnyBodyTime.Add(ActorType, 0.0f);
 	}
 }
 
@@ -266,7 +269,28 @@ void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 		{
 			FCsSenseInfo& Info = Map[Id];
 
+			if (Info.bSeesActorBody)
+			{
+				Info.SeesActorBodyTime	 += DeltaSeconds;
+				Info.NotSeesActorBodyTime = 0.0f;
+			}
+			else
+			{
+				Info.SeesActorBodyTime     = 0.0f;
+				Info.NotSeesActorBodyTime += DeltaSeconds;
+			}
 			bSeesAnyBody[ActorType] |= Info.bSeesActorBody;
+		}
+
+		if (bSeesAnyBody[ActorType])
+		{
+			SeesAnyBodyTime[ActorType]	 += DeltaSeconds;
+			NotSeesAnyBodyTime[ActorType] = 0.0f;
+		}
+		else
+		{
+			SeesAnyBodyTime[ActorType]	   = 0.0f;
+			NotSeesAnyBodyTime[ActorType] += DeltaSeconds;
 		}
 
 		bSeesAndBodyHandle[ActorType].UpdateIsDirty();

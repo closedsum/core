@@ -222,6 +222,8 @@ void ACsAIPawn::StopLookAt(const float &BlendOutRate){}
 	// AimAt
 #pragma region
 
+void ACsAIPawn::ResetAimAt(const float &BlendOutTime){}
+
 void ACsAIPawn::AimAtLocation(const FVector &Target){}
 void ACsAIPawn::AimAtActor(AActor* Target, const FName &Bone){}
 void ACsAIPawn::StopAimAt(){}

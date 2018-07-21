@@ -23,6 +23,9 @@ UCsBTTask_AimAt::UCsBTTask_AimAt(const FObjectInitializer& ObjectInitializer)
 	// accept only actors and vectors
 	BlackboardKey.AddObjectFilter(this, GET_MEMBER_NAME_CHECKED(UCsBTTask_AimAt, BlackboardKey), AActor::StaticClass());
 	BlackboardKey.AddVectorFilter(this, GET_MEMBER_NAME_CHECKED(UCsBTTask_AimAt, BlackboardKey));
+
+	bResetOnAbort = true;
+	ResetTime	  = 0.2f;
 }
 
 EBTNodeResult::Type UCsBTTask_AimAt::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -109,6 +112,9 @@ EBTNodeResult::Type UCsBTTask_AimAt::AbortTask(UBehaviorTreeComponent& OwnerComp
 		if (ACsAIPawn* Pawn = Cast<ACsAIPawn>(AIController->GetPawn()))
 		{
 			Pawn->StopAimAt();
+
+			if (bResetOnAbort)
+				Pawn->ResetAimAt(ResetTime);
 
 			ACsAIPlayerState* PlayerState = Cast<ACsAIPlayerState>(Pawn->PlayerState);
 

@@ -108,6 +108,32 @@ FCsSenseInfo* ACsManager_Sense::Add(AActor* Actor, const TCsSenseTeam& Team)
 	return nullptr;
 }
 
+FCsSenseInfo* ACsManager_Sense::GetInfo(AActor* Actor)
+{
+	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+
+	TArray<FECsSenseActorType> TypeKeys;
+	SenseMap.GetKeys(TypeKeys);
+
+	for (const FECsSenseActorType& ActorType : TypeKeys)
+	{
+		TMap<uint64, FCsSenseInfo>& Map = SenseMap[ActorType];
+
+		TArray<uint64> IdKeys;
+		Map.GetKeys(IdKeys);
+
+		for (const uint64& Id : IdKeys)
+		{
+			FCsSenseInfo& Info = Map[Id];
+			AActor* UniqueActor = GameInstance->GetUniqueActorById(Id);
+
+			if (Actor == UniqueActor)
+				return &Info;
+		}
+	}
+	return nullptr;
+}
+
 bool ACsManager_Sense::CanSense(AActor* Actor)
 {
 	if (Cast<ACsPawn>(Actor))
@@ -198,7 +224,7 @@ void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 			bSeesAnyByRadius[ActorType] |= Info.bSeesActorByRadius;
 
 			// Check Dot
-			Sense_CheckMeToActorDot(Info);
+			CheckMeToActorDot(Info);
 
 			if (!Info.bSeesActorByDot)
 			{
@@ -215,13 +241,13 @@ void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 			if (CurrentTimeSeconds - Info.StartTime_TraceMeToActorBody >= TraceToActorIntervals[Info.ActorType])
 			{
 				// Trace to Body
-				Sense_TraceViewToActorBody(Info);
+				TraceViewToActorBody(Info);
 
 				if (Info.ActorType == ECsSenseActorType::Player ||
 					Info.ActorType == ECsSenseActorType::AI)
 				{
 					// Trace to Head
-					Sense_TraceViewToActorHead(Info);
+					TraceViewToActorHead(Info);
 				}
 
 				Info.StartTime_TraceMeToActorBody = CurrentTimeSeconds;
@@ -354,7 +380,7 @@ void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 	}
 }
 
-void ACsManager_Sense::Sense_CheckMeToActorDot(FCsSenseInfo& Info)
+void ACsManager_Sense::CheckMeToActorDot(FCsSenseInfo& Info)
 {
 	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
 	AActor* Actor				  = GameInstance->GetUniqueActorById(Info.ObserveeId);
@@ -447,7 +473,7 @@ void ACsManager_Sense::Sense_CheckMeToActorDot(FCsSenseInfo& Info)
 	Info.SetSeesActorByDot(Info.ViewToActorDot >= ViewMinDot);
 }
 
-void ACsManager_Sense::Sense_TraceViewToActorBody(FCsSenseInfo& Info)
+void ACsManager_Sense::TraceViewToActorBody(FCsSenseInfo& Info)
 {
 	ACsManager_Trace* Manager_Trace = ACsManager_Trace::Get(GetWorld());
 
@@ -457,7 +483,7 @@ void ACsManager_Sense::Sense_TraceViewToActorBody(FCsSenseInfo& Info)
 
 	Request->Caller	  = this;
 	Request->CallerId = UniqueObjectId;
-	Request->OnResponse_Event.AddUObject(this, &ACsManager_Sense::Async_Sense_TraceViewToActorBody_Response);
+	Request->OnResponse_Event.AddUObject(this, &ACsManager_Sense::Async_TraceViewToActorBody_Response);
 
 	AActor* Me = GetMyOwner();
 
@@ -511,7 +537,7 @@ void ACsManager_Sense::Sense_TraceViewToActorBody(FCsSenseInfo& Info)
 	Manager_Trace->Trace(Request);
 }
 
-void ACsManager_Sense::Async_Sense_TraceViewToActorBody_Response(const uint8 &RequestId, FCsTraceResponse* Response)
+void ACsManager_Sense::Async_TraceViewToActorBody_Response(const uint8 &RequestId, FCsTraceResponse* Response)
 {
 	FCsSenseInfo* InfoPtr = SenseTraceRequestMap[RequestId];
 	FCsSenseInfo& Info	  = *InfoPtr;
@@ -564,7 +590,7 @@ void ACsManager_Sense::Async_Sense_TraceViewToActorBody_Response(const uint8 &Re
 	}
 }
 
-void ACsManager_Sense::Sense_TraceViewToActorHead(FCsSenseInfo& Info)
+void ACsManager_Sense::TraceViewToActorHead(FCsSenseInfo& Info)
 {
 	ACsManager_Trace* Manager_Trace = ACsManager_Trace::Get(GetWorld());
 
@@ -574,7 +600,7 @@ void ACsManager_Sense::Sense_TraceViewToActorHead(FCsSenseInfo& Info)
 
 	Request->Caller = this;
 	Request->CallerId = UniqueObjectId;
-	Request->OnResponse_Event.AddUObject(this, &ACsManager_Sense::Async_Sense_TraceViewToActorBody_Response);
+	Request->OnResponse_Event.AddUObject(this, &ACsManager_Sense::Async_TraceViewToActorBody_Response);
 
 	AActor* Me = GetMyOwner();
 
@@ -614,7 +640,7 @@ void ACsManager_Sense::Sense_TraceViewToActorHead(FCsSenseInfo& Info)
 	Manager_Trace->Trace(Request);
 }
 
-void ACsManager_Sense::Async_Sense_TraceViewToActorHead_Response(const uint8 &RequestId, FCsTraceResponse* Response)
+void ACsManager_Sense::Async_TraceViewToActorHead_Response(const uint8 &RequestId, FCsTraceResponse* Response)
 {
 	FCsSenseInfo* InfoPtr = SenseTraceRequestMap[RequestId];
 	FCsSenseInfo& Info	  = *InfoPtr;

@@ -799,7 +799,7 @@ void ACsWeapon::OnTick_HandleStates()
 					StopSound(FireMode, FireSound);
 
 					ReloadStartTime = GetWorld()->TimeSeconds;
-					bReloading		= true;
+					bReloadingHandle = true;
 
 					PlayAnimation_Reload();
 
@@ -846,9 +846,9 @@ void ACsWeapon::OnTick_HandleStates()
 		{
 			ResetCurrentAmmo(CS_WEAPON_DATA_VALUE);
 
-			bReloading   = false;
-			LastState    = CurrentState;
-			CurrentState = IdleState;
+			bReloadingHandle = false;
+			LastState		= CurrentState;
+			CurrentState	= IdleState;
 
 #if WITH_EDITOR 
 			// In Editor Preview Window
@@ -895,13 +895,13 @@ void ACsWeapon::CheckState_Idle()
 			TimeSeconds - ReloadStartTime > ReloadTime.GetEX(CS_WEAPON_DATA_VALUE))
 		{
 			ResetCurrentAmmo(CS_WEAPON_DATA_VALUE);
-			bReloading = false;
+			bReloadingHandle = false;
 		}
 
 		if (ShouldAutoReload(EMCsWeaponFireMode::Get().GetMAX()))
 		{
 			ReloadStartTime = TimeSeconds;
-			bReloading		= true;
+			bReloadingHandle = true;
 
 			PlayAnimation_Reload();
 
@@ -2442,7 +2442,7 @@ void ACsWeapon::Reload()
 	}
 
 	ReloadStartTime = GetWorld()->TimeSeconds;
-	bReloading		= true;
+	bReloadingHandle = true;
 
 	PlayAnimation_Reload();
 

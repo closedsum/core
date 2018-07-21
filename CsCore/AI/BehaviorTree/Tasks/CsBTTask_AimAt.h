@@ -24,6 +24,11 @@ class CSCORE_API UCsBTTask_AimAt : public UBTTask_BlackboardBase
 protected:
 
 	UPROPERTY(EditAnywhere, Category = Node)
+	bool bResetOnAbort;
+	UPROPERTY(EditAnywhere, Category = Node, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float ResetTime;
+
+	UPROPERTY(EditAnywhere, Category = Node)
 	FName Bone;
 
 public:

@@ -107,14 +107,15 @@ public:
 	const FECsSenseActorType& GetActorType(AActor* Actor);
 
 	virtual FCsSenseInfo* Add(AActor* Actor, const TCsSenseTeam& Team);
+	FCsSenseInfo* GetInfo(AActor* Actor);
 
 	virtual bool CanSense(AActor* Actor);
 	virtual bool IsSensing(AActor* Actor);
 
 	virtual void OnTick(const float &DeltaSeconds);
-	virtual void Sense_CheckMeToActorDot(FCsSenseInfo& Info);
-	virtual void Sense_TraceViewToActorBody(FCsSenseInfo& Info);
-	virtual void Async_Sense_TraceViewToActorBody_Response(const uint8 &RequestId, FCsTraceResponse* Response);
-	virtual void Sense_TraceViewToActorHead(FCsSenseInfo& Info);
-	virtual void Async_Sense_TraceViewToActorHead_Response(const uint8 &RequestId, FCsTraceResponse* Response);
+	virtual void CheckMeToActorDot(FCsSenseInfo& Info);
+	virtual void TraceViewToActorBody(FCsSenseInfo& Info);
+	virtual void Async_TraceViewToActorBody_Response(const uint8 &RequestId, FCsTraceResponse* Response);
+	virtual void TraceViewToActorHead(FCsSenseInfo& Info);
+	virtual void Async_TraceViewToActorHead_Response(const uint8 &RequestId, FCsTraceResponse* Response);
 };

@@ -101,7 +101,7 @@ void ACsGunWeapon::OnPawnDeActivate()
 	Hide();
 	Disable();
 
-	bReloading = false;
+	bReloadingHandle = false;
 	ReloadStartTime = GetWorld()->GetTimeSeconds() + ReloadTime.Get(CS_WEAPON_DATA_VALUE) + 1.0f;
 }
 

@@ -304,6 +304,9 @@ public:
 	FBindableDynEvent_CsAIPawn_OnBTTask_AimAt_Aborted OnBTTask_AimAt_Aborted_ScriptEvent;
 
 	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
+	virtual void ResetAimAt(const float &BlendOutTime);
+
+	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
 	virtual void AimAtLocation(const FVector &Target);
 	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
 	virtual void AimAtActor(AActor* Target, const FName &Bone);

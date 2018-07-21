@@ -20,8 +20,10 @@ UCsBTTask_PlayMontage::UCsBTTask_PlayMontage(const FObjectInitializer& ObjectIni
 	bNotifyTick = true;
 
 	bStopOnAbort = true;
+#if WITH_EDITORONLY_DATA
 	bAnim = false;
 	Anim = nullptr;
+#endif // #if WITH_EDITORONLY_DATA
 	bWaitUntilFinished = false;
 	bLooping = false;
 	PlayRate = 1.0f;
@@ -48,13 +50,17 @@ EBTNodeResult::Type UCsBTTask_PlayMontage::ExecuteTask(UBehaviorTreeComponent& O
 		return EBTNodeResult::Failed;
 	}
 
+#if WITH_EDITORONLY_DATA
 	if (bAnim && !Anim)
 	{
 		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_PlayMontage (%s.%s): No Anim Set."), *(BasePawn->GetName()), *(BTree->GetName()));
 		return EBTNodeResult::Failed;
 	}
+#endif // #if WITH_EDITORONLY_DATA
 
+#if WITH_EDITORONLY_DATA
 	if (!bAnim)
+#endif // #if WITH_EDITORONLY_DATA
 	{
 		ACsData_Character* Data  = Pawn->GetMyData_Character();
 		UAnimMontage* AnimToPlay = Data->GetAnimMontage(AnimType, 0, false);
@@ -66,12 +72,14 @@ EBTNodeResult::Type UCsBTTask_PlayMontage::ExecuteTask(UBehaviorTreeComponent& O
 		}
 	}
 
+#if WITH_EDITORONLY_DATA
 	if (bAnim)
 	{
 		UAnimInstance* AnimInstance = Pawn->GetMesh()->GetAnimInstance();
 		AnimInstance->Montage_Play(Anim, PlayRate);
 	}
 	else
+#endif // #if WITH_EDITORONLY_DATA
 	{
 		ACsData_Character* Data = Pawn->GetMyData_Character();
 		Data->PlayAnimation(Pawn->GetMesh(), AnimType, 0, PlayRate, bLooping, false);
@@ -111,11 +119,13 @@ void UCsBTTask_PlayMontage::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* N
 		ACsAIPawn* Pawn			  = Cast<ACsAIPawn>(AIController->GetPawn());
 		UAnimMontage* CurrentAnim = nullptr;
 
+#if WITH_EDITORONLY_DATA
 		if (bAnim)
 		{
 			CurrentAnim = Anim;
 		}
 		else
+#endif // #if WITH_EDITORONLY_DATA
 		{
 			ACsData_Character* Data = Pawn->GetMyData_Character();
 			CurrentAnim				= Data->GetAnimMontage(AnimType, 0, false);
@@ -137,12 +147,14 @@ EBTNodeResult::Type UCsBTTask_PlayMontage::AbortTask(UBehaviorTreeComponent& Own
 		{
 			if (bStopOnAbort)
 			{
+#if WITH_EDITORONLY_DATA
 				if (bAnim)
 				{
 					UAnimInstance* AnimInstance = Pawn->GetMesh()->GetAnimInstance();
 					AnimInstance->Montage_Stop(0.0f, Anim);
 				}
 				else
+#endif // #if WITH_EDITORONLY_DATA
 				{
 					ACsData_Character* Data = Pawn->GetMyData_Character();
 					Data->StopAnimation(Pawn->GetMesh(), AnimType, 0, 0.0f, false);
@@ -164,12 +176,14 @@ FString UCsBTTask_PlayMontage::GetStaticDescription() const
 {
 	FString Description = ECsCached::Str::Empty;
 
+#if WITH_EDITORONLY_DATA
 	if (bAnim)
 	{
 		if (Anim)
 			Description += Anim->GetName();
 	}
 	else
+#endif // #if WITH_EDITORONLY_DATA
 	{
 		Description += AnimType.Name;
 	}

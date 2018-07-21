@@ -25,10 +25,12 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Node)
 	bool bStopOnAbort;
 
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(EditAnywhere, Category = Node, meta = (InlineEditConditionToggle))
 	bool bAnim;
 	UPROPERTY(EditAnywhere, Category = Node, meta = (editcondition = "bAnim"))
 	class UAnimMontage* Anim;
+#endif WITH_EDITORONLY_DATA
 
 	UPROPERTY(EditAnywhere, Category = Node, meta = (InlineEditConditionToggle))
 	FECsCharacterAnim AnimType;

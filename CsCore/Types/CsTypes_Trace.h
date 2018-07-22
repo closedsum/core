@@ -222,6 +222,9 @@ struct CSCORE_API FCsTraceRequest
 	bool IsAllocated;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Trace")
+	bool bForce;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Trace")
 	bool bProcessing;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Trace")
@@ -337,6 +340,7 @@ struct CSCORE_API FCsTraceRequest
 	FORCEINLINE void Reset()
 	{
 		IsAllocated = false;
+		bForce = false;
 		bProcessing = false;
 		Completed = false;
 		StartTime = 0.0f;

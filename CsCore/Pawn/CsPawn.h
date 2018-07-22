@@ -5,6 +5,7 @@
 #include "Types/CsTypes_Coroutine.h"
 #include "Types/CsTypes_Damage.h"
 #include "Types/CsTypes_Sense.h"
+#include "Types/CsTypes_Trace.h"
 #include "CsPawn.generated.h"
 
 // Tick
@@ -19,9 +20,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsPawn_OnFirstSpaw
 // Setup
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsPawn_OnSetupFinished, const uint8&, MappingId);
 // Health
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsPawn_OnChangeHealth, const uint8&, MappingId, const float&, CurrentHealth, const float&, CurrentMaxHealth);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsPawn_OnChange_Health, const uint8&, MappingId, const float&, CurrentHealth, const float&, CurrentMaxHealth);
 // Weapon
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsPawn_OnChangeCurrentWeaponSlot, const uint8&, MappingId, const FECsWeaponSlot&, LastWeaponSlot, const FECsWeaponSlot&, CurrentWeaponSlot);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsPawn_OnChange_CurrentWeaponSlot, const uint8&, MappingId, const FECsWeaponSlot&, LastWeaponSlot, const FECsWeaponSlot&, CurrentWeaponSlot);
 // Damage
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnApplyDamage_Result, const uint8&, MappingId, const FCsDamageResult&, Result);
 
@@ -72,6 +73,44 @@ namespace ECsPawnRoutine
 
 // Structs
 #pragma region
+
+USTRUCT(BlueprintType)
+struct FCsPawnViewTraceInfo
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
+	bool bAsync;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
+	bool bForce;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
+	uint8 RequestId;
+
+	FCollisionQueryParams QueryParams;
+
+	TArray<TWeakObjectPtr<AActor>> IgnoredActors;
+
+	FCollisionObjectQueryParams ObjectParams;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
+	float Range;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
+	float RangeSq;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
+	FVector HitLocation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
+	FHitResult HitResult;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
+	TArray<FHitResult> OutHits;
+
+	FCsPawnViewTraceInfo()
+	{
+		RequestId = CS_INVALID_TRACE_REQUEST_ID;
+	}
+	~FCsPawnViewTraceInfo(){}
+};
 
 #pragma endregion Structs
 
@@ -155,12 +194,12 @@ public:
 
 	virtual void OnChange_Health(const float &Value);
 
-	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnChangeHealth, const uint8&, const float&, const float&);
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnChange_Health, const uint8&, const float&, const float&);
 
-	FOnChangeHealth OnChange_Health_Event;
+	FOnChange_Health OnChange_Health_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "State")
-	FBindableDynEvent_CsPawn_OnChangeHealth OnChange_Health_ScriptEvent;
+	FBindableDynEvent_CsPawn_OnChange_Health OnChange_Health_ScriptEvent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
 	float MaxHealth;
@@ -238,11 +277,11 @@ public:
 #pragma region
 public:
 
-	static void AddRoutine(UObject* InPawn, struct FCsRoutine* Routine, const uint8 &Type);
-	virtual bool AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type);
+	static void AddRoutine(UObject* InPawn, struct FCsRoutine* Routine, const uint8 &InType);
+	virtual bool AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType);
 
-	static void RemoveRoutine(UObject* InPawn, struct FCsRoutine* Routine, const uint8 &Type);
-	virtual bool RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type);
+	static void RemoveRoutine(UObject* InPawn, struct FCsRoutine* Routine, const uint8 &InType);
+	virtual bool RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType);
 
 #pragma endregion Routines
 
@@ -270,7 +309,17 @@ public:
 	FVector CurrentViewRight;
 	UPROPERTY(BlueprintReadOnly, Category = "View")
 	FVector CurrentViewRightXY;
+	UPROPERTY(BlueprintReadOnly, Category = "View")
+	FVector CurrentViewUp;
 
+	UPROPERTY(BlueprintReadWrite, Category = "View")
+	bool bPerformViewTrace;
+
+	UPROPERTY(BlueprintReadWrite, Category = "View")
+	FCsPawnViewTraceInfo ViewTraceInfo;
+
+	virtual void PerformViewTrace();
+	virtual void PerformViewTrace_Response(const uint8 &RequestId, FCsTraceResponse* Response);
 	virtual void RecordView();
 
 #pragma endregion View
@@ -320,9 +369,15 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float CurrentSpeed;
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	float CurrentSpeedSq;
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float CurrentSpeedXY;
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	float CurrentSpeedXYSq;
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float CurrentSpeedZ;
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	float CurrentSpeedZSq;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	FVector CurrentVelocityRight;
@@ -345,9 +400,15 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float CurrentCapsuleSpeed;
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	float CurrentCapsuleSpeedSq;
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float CurrentCapsuleSpeedXY;
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	float CurrentCapsuleSpeedXYSq;
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float CurrentCapsuleSpeedZ;
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	float CurrentCapsuleSpeedZSq;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	FVector CurrentCapsuleVelocityRight;
@@ -424,12 +485,12 @@ public:
 	TCsProperty_Ref<FECsWeaponSlot> CurrentWeaponSlotHandle;
 	virtual void OnChange_CurrentWeaponSlot(const FECsWeaponSlot &Slot);
 
-	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnChangeCurrentWeaponSlot, const uint8&, const FECsWeaponSlot&, const FECsWeaponSlot&);
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnChange_CurrentWeaponSlot, const uint8&, const FECsWeaponSlot&, const FECsWeaponSlot&);
 
-	FOnChangeCurrentWeaponSlot OnChange_CurrentWeaponSlot_Event;
+	FOnChange_CurrentWeaponSlot OnChange_CurrentWeaponSlot_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "Weapons")
-	FBindableDynEvent_CsPawn_OnChangeCurrentWeaponSlot OnChange_CurrentWeaponSlot_ScriptEvent;
+	FBindableDynEvent_CsPawn_OnChange_CurrentWeaponSlot OnChange_CurrentWeaponSlot_ScriptEvent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapons")
 	uint8 CurrentWeaponIndex;

@@ -76,7 +76,7 @@ public:
 	virtual void PreProcessInput(const float DeltaTime, const bool bGamePaused) override;
 	virtual bool CanPostProcessInput();
 
-	TArray<TCsGameEvent> GameEventPriorityList;
+	TArray<FECsGameEvent> GameEventPriorityList;
 
 	virtual void PostProcessInput(const float DeltaTime, const bool bGamePaused) override;
 

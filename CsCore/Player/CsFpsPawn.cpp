@@ -69,7 +69,11 @@ ACsFpsPawn::ACsFpsPawn(const FObjectInitializer& ObjectInitializer)
 	NetCullDistanceSquared = FMath::Square(100000);
 	*/
 
-	bOnCalcCamera_Trace = true;
+	// View
+	bPerformViewTrace = true;
+
+	ViewTraceInfo.bAsync = false;
+	ViewTraceInfo.bForce = true;
 }
 
 void ACsFpsPawn::PostInitializeComponents()

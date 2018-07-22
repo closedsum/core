@@ -122,7 +122,7 @@ void UCsAnimInstance::OnTick_Handle_SetupInGameSimulation()
 		{
 			SetupInGameSimulation();
 	
-			DoSetupInGameSimulationHandle.Set(false);
+			DoSetupInGameSimulationHandle = false;
 			DoSetupInGameSimulationHandle.Clear();
 		}
 	}

@@ -2,6 +2,7 @@
 #include "Managers/Sense/CsManager_Sense.h"
 #include "CsCore.h"
 #include "CsCVars.h"
+#include "Common/CsCommon.h"
 
 // Managers
 #include "Managers/Trace/CsManager_Trace.h"
@@ -36,6 +37,22 @@ ACsManager_Sense::ACsManager_Sense(const FObjectInitializer& ObjectInitializer) 
 	{
 		TraceToActorIntervals.Add(EMCsSenseActorType::Get().GetEnumAt(I), 0.1f);
 	}
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		const FECsSenseActorType& ActorType = EMCsSenseActorType::Get().GetEnumAt(I);
+
+		bSeesAnyByRadius.Add(ActorType, false);
+		bSeesAnyByDot.Add(ActorType, false);
+		bSeesAnyBody.Add(ActorType, false);
+		bSeesAndBodyHandle.Add(ActorType);
+		bSeesAndBodyHandle[ActorType].Set(&(bSeesAnyBody[ActorType]));
+		bFirstSeesAnyBody.Add(ActorType, false);
+		bFirstUnSeesAnyBody.Add(ActorType, false);
+
+		SeesAnyBodyTime.Add(ActorType, 0.0f);
+		NotSeesAnyBodyTime.Add(ActorType, 0.0f);
+	}
 }
 
 void ACsManager_Sense::PostActorCreated()
@@ -64,6 +81,86 @@ void ACsManager_Sense::Init(AActor* InOwner)
 	MyOwner = InOwner;
 }
 
+const FECsSenseActorType& ACsManager_Sense::GetActorType(AActor* Actor)
+{
+	if (Cast<ACsPlayerPawn>(Actor))
+		return ECsSenseActorType::Player;
+	if (Cast<ACsAIPawn>(Actor))
+		return ECsSenseActorType::AI;
+	return EMCsSenseActorType::Get().GetMAX();
+}
+
+FCsSenseInfo* ACsManager_Sense::Add(AActor* Actor, const TCsSenseTeam& Team)
+{
+	if (ACsPawn* Pawn = Cast<ACsPawn>(Actor))
+	{
+		const FECsSenseActorType& ActorType = Cast<ACsPlayerPawn>(Pawn) ? ECsSenseActorType::Player : ECsSenseActorType::AI;
+
+		FCsSenseInfo& Info	= SenseMap[ActorType].Add(Pawn->UniqueObjectId);
+		Info.Id				= UniqueObjectId;
+		Info.ObserveeId		= Pawn->UniqueObjectId;
+		Info.ActorType		= ActorType;
+		Info.Team			= Team;
+		Info.Init();
+
+		return &Info;
+	}
+	return nullptr;
+}
+
+FCsSenseInfo* ACsManager_Sense::GetInfo(AActor* Actor)
+{
+	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+
+	TArray<FECsSenseActorType> TypeKeys;
+	SenseMap.GetKeys(TypeKeys);
+
+	for (const FECsSenseActorType& ActorType : TypeKeys)
+	{
+		TMap<uint64, FCsSenseInfo>& Map = SenseMap[ActorType];
+
+		TArray<uint64> IdKeys;
+		Map.GetKeys(IdKeys);
+
+		for (const uint64& Id : IdKeys)
+		{
+			FCsSenseInfo& Info = Map[Id];
+			AActor* UniqueActor = GameInstance->GetUniqueActorById(Id);
+
+			if (Actor == UniqueActor)
+				return &Info;
+		}
+	}
+	return nullptr;
+}
+
+bool ACsManager_Sense::CanSense(AActor* Actor)
+{
+	if (Cast<ACsPawn>(Actor))
+		return true;
+	return false;
+}
+
+bool ACsManager_Sense::IsSensing(AActor* Actor)
+{
+	if (!CanSense(Actor))
+		return false;
+
+	// Player
+	if (ACsPlayerPawn* Pawn = Cast<ACsPlayerPawn>(Actor))
+	{
+		if (SenseMap[ECsSenseActorType::Player].Find(Pawn->UniqueObjectId))
+			return true;
+	}
+	// AI
+	if (ACsAIPawn* Pawn = Cast<ACsAIPawn>(Actor))
+	{
+		if (SenseMap[ECsSenseActorType::AI].Find(Pawn->UniqueObjectId))
+			return true;
+	}
+	return false;
+}
+
 void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 {
 	AActor* Me			  = GetMyOwner();
@@ -74,15 +171,17 @@ void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 
 	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
 
-	bSeesAnyByDot = false;
-
 	const float CurrentTimeSeconds = GetWorld()->GetTimeSeconds();
 
+	// Do Sensing (i.e. by Radius, Dot, and/or Trace to body part)
 	TArray<FECsSenseActorType> TypeKeys;
 	SenseMap.GetKeys(TypeKeys);
 
 	for (const FECsSenseActorType& ActorType : TypeKeys)
 	{
+		bSeesAnyByRadius[ActorType] = false;
+		bSeesAnyByDot[ActorType] = false;
+
 		TMap<uint64, FCsSenseInfo>& Map = SenseMap[ActorType];
 
 		TArray<uint64> IdKeys;
@@ -116,11 +215,16 @@ void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 			{
 				const float DistanceSq = (ActorLocation - OwnerLocation).SizeSquared();
 
-				if (DistanceSq > RadiusSq)
+				Info.SetSeesActorByRadius(DistanceSq <= RadiusSq);
+
+				if (!Info.bSeesActorByRadius)
 					continue;
 			}
+
+			bSeesAnyByRadius[ActorType] |= Info.bSeesActorByRadius;
+
 			// Check Dot
-			Sense_CheckMeToActorDot(Info);
+			CheckMeToActorDot(Info);
 
 			if (!Info.bSeesActorByDot)
 			{
@@ -130,25 +234,116 @@ void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 				continue;
 			}
 
-			bSeesAnyByDot |= Info.bSeesActorByDot;
+			bSeesAnyByDot[ActorType] |= Info.bSeesActorByDot;
 
 			Info.LastTime_SeesActorByDot = GetWorld()->GetTimeSeconds();
 
 			if (CurrentTimeSeconds - Info.StartTime_TraceMeToActorBody >= TraceToActorIntervals[Info.ActorType])
 			{
 				// Trace to Body
-				Sense_TraceViewToActorBody(Info);
+				TraceViewToActorBody(Info);
 
 				if (Info.ActorType == ECsSenseActorType::Player ||
 					Info.ActorType == ECsSenseActorType::AI)
 				{
 					// Trace to Head
-					Sense_TraceViewToActorHead(Info);
+					TraceViewToActorHead(Info);
 				}
 
 				Info.StartTime_TraceMeToActorBody = CurrentTimeSeconds;
 			}
 			Info.SetSeesActor(Info.bSeesActorBody || Info.bSeesActorHead);
+		}
+	}
+
+	// Update flags
+	for (const FECsSenseActorType& ActorType : TypeKeys)
+	{
+		// Handle flags set for only ONE frame
+
+			// First Sees
+		if (bFirstSeesAnyBody[ActorType])
+		{
+			bFirstSeesAnyBody[ActorType] = false;
+
+			OnbFirstSeesAnyBody_Event.Broadcast(ActorType, false);
+#if WITH_EDITOR
+			OnbFirstSeesAnyBody_ScriptEvent.Broadcast(ActorType, false);
+#endif // #if WITH_EDITOR
+		}
+
+			// First UnSees
+		if (bFirstUnSeesAnyBody[ActorType])
+		{
+			bFirstUnSeesAnyBody[ActorType] = false;
+
+			OnbFirstUnSeesAnyBody_Event.Broadcast(ActorType, false);
+#if WITH_EDITOR
+			OnbFirstUnSeesAnyBody_ScriptEvent.Broadcast(ActorType, false);
+#endif // #if WITH_EDITOR
+		}
+
+		// Check ALL Actors for the given ActorType
+		bSeesAnyBody[ActorType] = false;
+
+		TMap<uint64, FCsSenseInfo>& Map = SenseMap[ActorType];
+
+		TArray<uint64> IdKeys;
+		Map.GetKeys(IdKeys);
+
+		for (const uint64& Id : IdKeys)
+		{
+			FCsSenseInfo& Info = Map[Id];
+
+			if (Info.bSeesActorBody)
+			{
+				Info.SeesActorBodyTime	 += DeltaSeconds;
+				Info.NotSeesActorBodyTime = 0.0f;
+			}
+			else
+			{
+				Info.SeesActorBodyTime     = 0.0f;
+				Info.NotSeesActorBodyTime += DeltaSeconds;
+			}
+			bSeesAnyBody[ActorType] |= Info.bSeesActorBody;
+		}
+
+		if (bSeesAnyBody[ActorType])
+		{
+			SeesAnyBodyTime[ActorType]	 += DeltaSeconds;
+			NotSeesAnyBodyTime[ActorType] = 0.0f;
+		}
+		else
+		{
+			SeesAnyBodyTime[ActorType]	   = 0.0f;
+			NotSeesAnyBodyTime[ActorType] += DeltaSeconds;
+		}
+
+		bSeesAndBodyHandle[ActorType].UpdateIsDirty();
+
+		if (bSeesAndBodyHandle[ActorType].HasChanged())
+		{
+			// First Sees
+			if (bSeesAnyBody[ActorType])
+			{
+				bFirstSeesAnyBody[ActorType] = true;
+
+				OnbFirstSeesAnyBody_Event.Broadcast(ActorType, true);
+#if WITH_EDITOR
+				OnbFirstSeesAnyBody_ScriptEvent.Broadcast(ActorType, true);
+#endif // #if WITH_EDITOR
+			}
+			// First UnSees
+			else
+			{
+				bFirstUnSeesAnyBody[ActorType] = true;
+
+				OnbFirstUnSeesAnyBody_Event.Broadcast(ActorType, true);
+#if WITH_EDITOR
+				OnbFirstUnSeesAnyBody_ScriptEvent.Broadcast(ActorType, true);
+#endif // #if WITH_EDITOR
+			}
+			bSeesAndBodyHandle[ActorType].Clear();
 		}
 	}
 
@@ -163,11 +358,21 @@ void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 	// Draw Angle
 	if (CsCVarDrawManagerSenseAngle->GetInt() == CS_CVAR_DRAW)
 	{
-		const FColor Color = bSeesAnyByDot ? FColor::Red : FColor::Green;
+		bool Sees = false;
+
+		TArray<FECsSenseActorType> TypeKeys;
+		bSeesAnyByDot.GetKeys(TypeKeys);
+
+		for (const FECsSenseActorType& ActorType : TypeKeys)
+		{
+			Sees |= bSeesAnyByDot[ActorType];
+		}
+
+		const FColor Color = Sees ? FColor::Red : FColor::Green;
 		FVector Direction  = FVector::ZeroVector;
 
 		if (ACsPawn* Pawn = Cast<ACsPawn>(Me))
-			Direction = Pawn->CurrentRootDirXY;
+			Direction = Pawn->CurrentViewDirXY;
 
 		const float AngleHeight = 0.0174533f;// FMath::DegreesToRadians(1.0f);
 
@@ -175,7 +380,7 @@ void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 	}
 }
 
-void ACsManager_Sense::Sense_CheckMeToActorDot(FCsSenseInfo& Info)
+void ACsManager_Sense::CheckMeToActorDot(FCsSenseInfo& Info)
 {
 	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
 	AActor* Actor				  = GameInstance->GetUniqueActorById(Info.ObserveeId);
@@ -208,7 +413,9 @@ void ACsManager_Sense::Sense_CheckMeToActorDot(FCsSenseInfo& Info)
 		OwnerLocation = Me->GetActorLocation();
 	}
 
-	// XYZ
+	// MeToActor
+
+		// XYZ
 	const FVector MeToActor = ActorLocation - OwnerLocation;
 	Info.MeToActorDistance	= MeToActor.Size();
 	Info.MeToActorDistanceSq = Info.MeToActorDistance * Info.MeToActorDistance;
@@ -216,15 +423,30 @@ void ACsManager_Sense::Sense_CheckMeToActorDot(FCsSenseInfo& Info)
 	
 	Info.MeToActorBodyRotation	  = UCsCommon::AngleClamp360(Info.MeToActorDir.Rotation());
 	Info.MeToActorBodyRotation.Roll = 0.0f;
-	// XY
+		// XY
 	const FVector MeToActorXY	= FVector(MeToActor.X, MeToActor.Y, 0.0f);
 	Info.MeToActorDistanceXY	= MeToActorXY.Size();
 	Info.MeToActorDistanceXYSq	= Info.MeToActorDistanceXY * Info.MeToActorDistanceXY;
 	Info.MeToActorDirXY			= MeToActorXY / Info.MeToActorDistanceXY;
 
+	// ViewToActor
+
+		// Player / AI
+	if (ACsPawn* Pawn = Cast<ACsPawn>(Me))
+	{
+		Info.ViewToActorDir			 = (ActorLocation - Pawn->CurrentViewLocation).GetSafeNormal();
+		Info.ViewToActorBodyRotation = Info.ViewToActorDir.Rotation();
+	}
+	else
+	{
+		Info.ViewToActorDir			 = Info.MeToActorDir;
+		Info.ViewToActorBodyRotation = Info.MeToActorBodyRotation;
+	}
+
+	// Dot
 	FVector CurrentFaceDirXY = FVector::ZeroVector;
 
-	// Player / AI
+		// Player / AI
 	if (ACsPawn* Pawn = Cast<ACsPawn>(Me))
 	{
 		CurrentFaceDirXY = Pawn->CurrentRootDirXY;
@@ -235,12 +457,23 @@ void ACsManager_Sense::Sense_CheckMeToActorDot(FCsSenseInfo& Info)
 		Rotation.Pitch	  = 0.0f;
 		CurrentFaceDirXY  = Rotation.Vector();
 	}
-	Info.MeToActorDot = FVector::DotProduct(CurrentFaceDirXY, Info.MeToActorDirXY);
+	Info.MeToActorDot			= FVector::DotProduct(CurrentFaceDirXY, Info.MeToActorDirXY);
+	Info.MeToActorAbsDeltaAngle = FMath::Abs(FMath::RadiansToDegrees(FMath::Acos(Info.MeToActorDot)));
 
-	Info.SetSeesActorByDot(Info.MeToActorDot >= ViewMinDot);
+		// Player / AI
+	if (ACsPawn* Pawn = Cast<ACsPawn>(Me))
+	{
+		Info.ViewToActorDot = FVector::DotProduct(Pawn->CurrentViewDirXY, Info.MeToActorDirXY);
+	}
+	else
+	{
+		Info.ViewToActorDot	= Info.MeToActorDot;
+	}
+
+	Info.SetSeesActorByDot(Info.ViewToActorDot >= ViewMinDot);
 }
 
-void ACsManager_Sense::Sense_TraceViewToActorBody(FCsSenseInfo& Info)
+void ACsManager_Sense::TraceViewToActorBody(FCsSenseInfo& Info)
 {
 	ACsManager_Trace* Manager_Trace = ACsManager_Trace::Get(GetWorld());
 
@@ -250,7 +483,7 @@ void ACsManager_Sense::Sense_TraceViewToActorBody(FCsSenseInfo& Info)
 
 	Request->Caller	  = this;
 	Request->CallerId = UniqueObjectId;
-	Request->OnResponse_Event.AddUObject(this, &ACsManager_Sense::Async_Sense_TraceViewToActorBody_Response);
+	Request->OnResponse_Event.AddUObject(this, &ACsManager_Sense::Async_TraceViewToActorBody_Response);
 
 	AActor* Me = GetMyOwner();
 
@@ -304,7 +537,7 @@ void ACsManager_Sense::Sense_TraceViewToActorBody(FCsSenseInfo& Info)
 	Manager_Trace->Trace(Request);
 }
 
-void ACsManager_Sense::Async_Sense_TraceViewToActorBody_Response(const uint8 &RequestId, FCsTraceResponse* Response)
+void ACsManager_Sense::Async_TraceViewToActorBody_Response(const uint8 &RequestId, FCsTraceResponse* Response)
 {
 	FCsSenseInfo* InfoPtr = SenseTraceRequestMap[RequestId];
 	FCsSenseInfo& Info	  = *InfoPtr;
@@ -357,7 +590,7 @@ void ACsManager_Sense::Async_Sense_TraceViewToActorBody_Response(const uint8 &Re
 	}
 }
 
-void ACsManager_Sense::Sense_TraceViewToActorHead(FCsSenseInfo& Info)
+void ACsManager_Sense::TraceViewToActorHead(FCsSenseInfo& Info)
 {
 	ACsManager_Trace* Manager_Trace = ACsManager_Trace::Get(GetWorld());
 
@@ -367,7 +600,7 @@ void ACsManager_Sense::Sense_TraceViewToActorHead(FCsSenseInfo& Info)
 
 	Request->Caller = this;
 	Request->CallerId = UniqueObjectId;
-	Request->OnResponse_Event.AddUObject(this, &ACsManager_Sense::Async_Sense_TraceViewToActorBody_Response);
+	Request->OnResponse_Event.AddUObject(this, &ACsManager_Sense::Async_TraceViewToActorBody_Response);
 
 	AActor* Me = GetMyOwner();
 
@@ -407,7 +640,7 @@ void ACsManager_Sense::Sense_TraceViewToActorHead(FCsSenseInfo& Info)
 	Manager_Trace->Trace(Request);
 }
 
-void ACsManager_Sense::Async_Sense_TraceViewToActorHead_Response(const uint8 &RequestId, FCsTraceResponse* Response)
+void ACsManager_Sense::Async_TraceViewToActorHead_Response(const uint8 &RequestId, FCsTraceResponse* Response)
 {
 	FCsSenseInfo* InfoPtr = SenseTraceRequestMap[RequestId];
 	FCsSenseInfo& Info	  = *InfoPtr;

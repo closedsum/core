@@ -184,7 +184,7 @@ bool UCsWidget_Crafting::RemoveRoutine_Internal(struct FCsRoutine* Routine, cons
 // Game Event
 #pragma region
 
-bool UCsWidget_Crafting::ProcessGameEvent(const TCsGameEvent &GameEvent)
+bool UCsWidget_Crafting::ProcessGameEvent(const FECsGameEvent &GameEvent)
 {
 	// Start
 	if (GameEvent == StartGameEvent)

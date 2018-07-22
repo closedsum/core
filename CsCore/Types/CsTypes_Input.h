@@ -1,5 +1,6 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_Primitive.h"
+#include "Runtime/InputCore/Classes/InputCoreTypes.h"
 
 #include "CsTypes_Input.generated.h"
 #pragma once
@@ -1210,13 +1211,6 @@ struct CSCORE_API FCsInputProfile
 // Game
 #pragma region
 
-namespace ECsGameEvent
-{
-	enum Type : uint8;
-}
-
-typedef ECsGameEvent::Type TCsGameEvent;
-
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsGameEvent : public FECsEnum_uint8
 {
@@ -1266,8 +1260,8 @@ struct FCsGameEventDefinition
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	FCsInputSentence Sentence;
-
-	TCsGameEvent Event;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	FECsGameEvent Event;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	uint8 Event_Script;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
@@ -1277,7 +1271,7 @@ struct FCsGameEventDefinition
 #define CS_GAME_EVENT_DEFINITION_START(Definitions, EVENT)	{ \
 																Definitions.AddDefaulted(); \
 																FCsGameEventDefinition& Def = Definitions[Definitions.Num() - 1]; \
-																Def.Event = ECsGameEvent::EVENT; \
+																Def.Event = EVENT; \
 																FCsInputSentence& Sentence = Def.Sentence;
 
 #define CS_INPUT_PHRASE_ADD()	Sentence.Phrases.AddDefaulted(); \
@@ -1301,6 +1295,6 @@ struct FCsGameEventDefinition
 
 #define CS_GAME_EVENT_DEFINITION_END() }
 
-#define CS_GAME_EVENT_DEFINITION_SIMPLE(Definitions, GAMEEVENT, ACTION, EVENT)	CreateGameEventDefinitionSimple(Definitions, ECsGameEvent::GAMEEVENT, EMCsInputAction::Get().GetEnum(FString(#ACTION)), ECsInputEvent::EVENT);
+#define CS_GAME_EVENT_DEFINITION_SIMPLE(Definitions, GAMEEVENT, ACTION, EVENT)	CreateGameEventDefinitionSimple(Definitions, EMCsGameEvent::Get().GetEnum(FString(#GAMEEVENT)), EMCsInputAction::Get().GetEnum(FString(#ACTION)), ECsInputEvent::EVENT);
 
 #pragma endregion

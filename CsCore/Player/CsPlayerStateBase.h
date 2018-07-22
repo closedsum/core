@@ -57,167 +57,105 @@ namespace ECsPlayerStateBaseOnBoardState
 	};
 }
 
-namespace ECsPlayerStateBaseOnBoardState
-{
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-		const TCsString WaitingForGameState = TCsString(TEXT("WaitingForGameState"), TEXT("waitingforgamestate"), TEXT("waiting for game state"));
-		const TCsString WaitingForFinishLoadingCommonData = TCsString(TEXT("WaitingForFinishLoadingCommonData"), TEXT("waitingforfinishloadingcommondata"), TEXT("waiting for finish loading common data"));
-		const TCsString WaitingForLocalPlayerState = TCsString(TEXT("WaitingForLocalPlayerState"), TEXT("waitingforlocalplayerstate"), TEXT("waiting for local player state"));
-		// Client
-		const TCsString RequestLocalUniqueMappingId = TCsString(TEXT("RequestLocalUniqueMappingId"), TEXT("requestlocaluniquemappingid"), TEXT("request local unique mapping id"));
-		const TCsString WaitingForLocalUniqueMappingId = TCsString(TEXT("WaitingForLocalUniqueMappingId"), TEXT("waitingforlocaluniquemappingid"), TEXT("waiting for local unique mapping id"));
-		const TCsString RecievedLocalUniqueMappingId = TCsString(TEXT("RecievedLocalUniqueMappingId"), TEXT("recievedlocaluniquemappingid"), TEXT("recieved local unique mapping id"));
-		// Requesting Player State on Client
-		const TCsString RequestUniqueMappingId = TCsString(TEXT("RequestUniqueMappingId"), TEXT("requestuniquemappingid"), TEXT("request unique mapping id"));
-		const TCsString WaitingForUniqueMappingId = TCsString(TEXT("WaitingForUniqueMappingId"), TEXT("waitingforuniquemappingid"), TEXT("waiting for unique mapping id"));
-		const TCsString RecievedUniqueMappingId = TCsString(TEXT("RecievedUniqueMappingId"), TEXT("recievedunqiuemappingid"), TEXT("recieved unique mapping id"));
-			// Player
-		const TCsString RequestPlayerData = TCsString(TEXT("RequestPlayerData"), TEXT("requestplayerdata"), TEXT("request player data"));
-		const TCsString WaitingForPlayerData = TCsString(TEXT("WaitingForPlayerData"), TEXT("waitingforplayerdata"), TEXT("waiting for player data"));
-		const TCsString ReceivedPlayerData = TCsString(TEXT("ReceivedPlayerData"), TEXT("receivedplayerdata"), TEXT("received player data"));
-			// AI
-		const TCsString RequestAIData = TCsString(TEXT("RequestAIData"), TEXT("requestaidata"), TEXT("request ai data"));
-		const TCsString WaitingForAIData = TCsString(TEXT("WaitingForAIData"), TEXT("waitingforaidata"), TEXT("waiting for ai data"));
-		const TCsString ReceivedAIData = TCsString(TEXT("ReceivedAIData"), TEXT("receivedaidata"), TEXT("received ai data"));
-		// Loading
-		const TCsString BeginLoadingPlayerData = TCsString(TEXT("BeginLoadingPlayerData"), TEXT("beginloadingplayerdata"), TEXT("begin loading player data"));
-		const TCsString WaitingForFinishLoadingPlayerData = TCsString(TEXT("WaitingForFinishLoadingPlayerData"), TEXT("waitingforfinishloadingplayerdata"), TEXT("waiting for finish loading player data"));
-		const TCsString FinishedLoadingPlayerData = TCsString(TEXT("FinishedLoadingPlayerData"), TEXT("finishedloadingplayerdata"), TEXT("finished loading player data"));
-		const TCsString SetAssetReferencesPlayerData = TCsString(TEXT("SetAssetReferencesPlayerData"), TEXT("setassetreferencesplayerdata"), TEXT("set asset references player data"));
-		const TCsString WaitingForSetAssetReferencesPlayerData = TCsString(TEXT("WaitingForSetAssetReferencesPlayerData"), TEXT("waitingforsetassetreferencesplayerdata"), TEXT("waiting for set asset references player data"));
-		const TCsString FinishedSetAssetReferencesPlayerData = TCsString(TEXT("FinishedSetAssetReferencesPlayerData"), TEXT("finishedsetassetreferencesplayerdata"), TEXT("finished set asset references player data"));
-		// Setup
-		const TCsString BeginApplyingPlayerData = TCsString(TEXT("BeginApplyingPlayerData"), TEXT("beginapplyingplayerdata"), TEXT("begin applying player data"));
-		const TCsString WaitingForFinishApplyingPlayerData = TCsString(TEXT("WaitingForFinishApplyingPlayerData"), TEXT("waitingforfinishapplyingplayerdata"), TEXT("waiting for finish applying player data"));
-		const TCsString FinishedApplyingPlayerData = TCsString(TEXT("FinishedApplyingPlayerData"), TEXT("finishedapplyingplayerdata"), TEXT("finished applying player data"));
-		// Handshaking
-		const TCsString SendOnBoardCompleted = TCsString(TEXT("SendOnBoardCompleted"), TEXT("sendonboardcompleted"), TEXT("send onboard completed"));
-		const TCsString WaitingForOnBoardCompleted = TCsString(TEXT("WaitingForOnBoardCompleted"), TEXT("waitingforonboardcompleted"), TEXT("waiting for onboard completed"));
-		const TCsString Completed = TCsString(TEXT("Completed"), TEXT("completed"), TEXT("completed"));
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::WaitingForGameState) { return Str::WaitingForGameState.Value; }
-		if (EType == Type::WaitingForFinishLoadingCommonData) { return Str::WaitingForFinishLoadingCommonData.Value; }
-		if (EType == Type::WaitingForLocalPlayerState) { return Str::WaitingForLocalPlayerState.Value; }
-		// Client
-		if (EType == Type::RequestLocalUniqueMappingId) { return Str::RequestLocalUniqueMappingId.Value; }
-		if (EType == Type::WaitingForLocalUniqueMappingId) { return Str::WaitingForLocalUniqueMappingId.Value; }
-		if (EType == Type::RecievedLocalUniqueMappingId) { return Str::RecievedLocalUniqueMappingId.Value; }
-		// Requesting Player State on Client
-		if (EType == Type::RequestUniqueMappingId) { return Str::RequestUniqueMappingId.Value; }
-		if (EType == Type::WaitingForUniqueMappingId) { return Str::WaitingForUniqueMappingId.Value; }
-		if (EType == Type::RecievedUniqueMappingId) { return Str::RecievedUniqueMappingId.Value; }
-			// Player
-		if (EType == Type::RequestPlayerData) { return Str::RequestPlayerData.Value; }
-		if (EType == Type::WaitingForPlayerData) { return Str::WaitingForPlayerData.Value; }
-		if (EType == Type::ReceivedPlayerData) { return Str::ReceivedPlayerData.Value; }
-			// AI
-		if (EType == Type::RequestAIData) { return Str::RequestAIData.Value; }
-		if (EType == Type::WaitingForAIData) { return Str::WaitingForAIData.Value; }
-		if (EType == Type::ReceivedAIData) { return Str::ReceivedAIData.Value; }
-		// Loading
-		if (EType == Type::BeginLoadingPlayerData) { return Str::BeginLoadingPlayerData.Value; }
-		if (EType == Type::WaitingForFinishLoadingPlayerData) { return Str::WaitingForFinishLoadingPlayerData.Value; }
-		if (EType == Type::FinishedLoadingPlayerData) { return Str::FinishedLoadingPlayerData.Value; }
-		if (EType == Type::SetAssetReferencesPlayerData) { return Str::SetAssetReferencesPlayerData.Value; }
-		if (EType == Type::WaitingForSetAssetReferencesPlayerData) { return Str::WaitingForSetAssetReferencesPlayerData.Value; }
-		if (EType == Type::FinishedSetAssetReferencesPlayerData) { return Str::FinishedSetAssetReferencesPlayerData.Value; }
-		// Setup
-		if (EType == Type::BeginApplyingPlayerData) { return Str::BeginApplyingPlayerData.Value; }
-		if (EType == Type::WaitingForFinishApplyingPlayerData) { return Str::WaitingForFinishApplyingPlayerData.Value; }
-		if (EType == Type::FinishedApplyingPlayerData) { return Str::FinishedApplyingPlayerData.Value; }
-		// Handshaking
-		if (EType == Type::SendOnBoardCompleted) { return Str::SendOnBoardCompleted.Value; }
-		if (EType == Type::WaitingForOnBoardCompleted) { return Str::WaitingForOnBoardCompleted.Value; }
-		if (EType == Type::Completed) { return Str::Completed.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::WaitingForGameState) { return Type::WaitingForGameState; }
-		if (String == Str::WaitingForFinishLoadingCommonData) { return Type::WaitingForFinishLoadingCommonData; }
-		if (String == Str::WaitingForLocalPlayerState) { return Type::WaitingForLocalPlayerState; }
-		// Client
-		if (String == Str::RequestLocalUniqueMappingId) { return Type::RequestLocalUniqueMappingId; }
-		if (String == Str::WaitingForLocalUniqueMappingId) { return Type::WaitingForLocalUniqueMappingId; }
-		if (String == Str::RecievedLocalUniqueMappingId) { return Type::RecievedLocalUniqueMappingId; }
-		// Requesting Player State on Client
-		if (String == Str::RequestUniqueMappingId) { return Type::RequestUniqueMappingId; }
-		if (String == Str::WaitingForUniqueMappingId) { return Type::WaitingForUniqueMappingId; }
-		if (String == Str::RecievedUniqueMappingId) { return Type::RecievedUniqueMappingId; }
-			// Player
-		if (String == Str::RequestPlayerData) { return Type::RequestPlayerData; }
-		if (String == Str::WaitingForPlayerData) { return Type::WaitingForPlayerData; }
-		if (String == Str::ReceivedPlayerData) { return Type::ReceivedPlayerData; }
-			// AI
-		if (String == Str::RequestAIData) { return Type::RequestAIData; }
-		if (String == Str::WaitingForAIData) { return Type::WaitingForAIData; }
-		if (String == Str::ReceivedAIData) { return Type::ReceivedAIData; }
-		// Loading
-		if (String == Str::BeginLoadingPlayerData) { return Type::BeginLoadingPlayerData; }
-		if (String == Str::WaitingForFinishLoadingPlayerData) { return Type::WaitingForFinishLoadingPlayerData; }
-		if (String == Str::FinishedLoadingPlayerData) { return Type::FinishedLoadingPlayerData; }
-		if (String == Str::SetAssetReferencesPlayerData) { return Type::SetAssetReferencesPlayerData; }
-		if (String == Str::WaitingForSetAssetReferencesPlayerData) { return Type::WaitingForSetAssetReferencesPlayerData; }
-		if (String == Str::FinishedSetAssetReferencesPlayerData) { return Type::FinishedSetAssetReferencesPlayerData; }
-		// Setup
-		if (String == Str::BeginApplyingPlayerData) { return Type::BeginApplyingPlayerData; }
-		if (String == Str::WaitingForFinishApplyingPlayerData) { return Type::WaitingForFinishApplyingPlayerData; }
-		if (String == Str::FinishedApplyingPlayerData) { return Type::FinishedApplyingPlayerData; }
-		// Handshaking
-		if (String == Str::SendOnBoardCompleted) { return Type::SendOnBoardCompleted; }
-		if (String == Str::WaitingForOnBoardCompleted) { return Type::WaitingForOnBoardCompleted; }
-		if (String == Str::Completed) { return Type::Completed; }
-		return Type::ECsPlayerStateBaseOnBoardState_MAX;
-	}
-}
-
 #define ECS_PLAYER_STATE_BASE_ONBOARD_STATE_MAX (uint8)ECsPlayerStateBaseOnBoardState::ECsPlayerStateBaseOnBoardState_MAX
 typedef ECsPlayerStateBaseOnBoardState::Type TCsPlayerStateBaseOnBoardState;
 
-namespace ECsPlayerStateBaseRoutine
+struct CSCORE_API EMCsPlayerStateBaseOnBoardState : public TCsEnumMap<ECsPlayerStateBaseOnBoardState::Type>
 {
-	enum Type
+protected:
+	EMCsPlayerStateBaseOnBoardState() {}
+	EMCsPlayerStateBaseOnBoardState(const EMCsPlayerStateBaseOnBoardState &) = delete;
+	EMCsPlayerStateBaseOnBoardState(EMCsPlayerStateBaseOnBoardState &&) = delete;
+public:
+	~EMCsPlayerStateBaseOnBoardState() {}
+private:
+	static EMCsPlayerStateBaseOnBoardState* Instance;
+
+public:
+	static EMCsPlayerStateBaseOnBoardState& Get();
+};
+
+namespace ECsPlayerStateBaseOnBoardState
+{
+	namespace Ref
 	{
-		OnBoard_Internal,
-		RequestUniqueMappingId_AI_Internal,
-		ECsPlayerStateBaseRoutine_MAX,
-	};
+		extern CSCORE_API const Type WaitingForGameState;
+		extern CSCORE_API const Type WaitingForFinishLoadingCommonData;
+		extern CSCORE_API const Type WaitingForLocalPlayerState;
+		// Client
+		extern CSCORE_API const Type RequestLocalUniqueMappingId;
+		extern CSCORE_API const Type WaitingForLocalUniqueMappingId;
+		extern CSCORE_API const Type RecievedLocalUniqueMappingId;
+		// Requesting Player State on Client
+		extern CSCORE_API const Type RequestUniqueMappingId;
+		extern CSCORE_API const Type WaitingForUniqueMappingId;
+		extern CSCORE_API const Type RecievedUniqueMappingId;
+			// Player
+		extern CSCORE_API const Type RequestPlayerData;
+		extern CSCORE_API const Type WaitingForPlayerData;
+		extern CSCORE_API const Type ReceivedPlayerData;
+			// AI
+		extern CSCORE_API const Type RequestAIData;
+		extern CSCORE_API const Type WaitingForAIData;
+		extern CSCORE_API const Type ReceivedAIData;
+		// Loading
+		extern CSCORE_API const Type BeginLoadingPlayerData;
+		extern CSCORE_API const Type WaitingForFinishLoadingPlayerData;
+		extern CSCORE_API const Type FinishedLoadingPlayerData;
+		extern CSCORE_API const Type SetAssetReferencesPlayerData;
+		extern CSCORE_API const Type WaitingForSetAssetReferencesPlayerData;
+		extern CSCORE_API const Type FinishedSetAssetReferencesPlayerData;
+		// Setup
+		extern CSCORE_API const Type BeginApplyingPlayerData;
+		extern CSCORE_API const Type WaitingForFinishApplyingPlayerData;
+		extern CSCORE_API const Type FinishedApplyingPlayerData;
+		// Handshaking
+		extern CSCORE_API const Type SendOnBoardCompleted;
+		extern CSCORE_API const Type WaitingForOnBoardCompleted;
+		extern CSCORE_API const Type Completed;
+		extern CSCORE_API const Type ECsPlayerStateBaseOnBoardState_MAX;
+	}
 }
 
-namespace ECsPlayerStateBaseRoutine
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsPlayerStateBaseRoutine : public FECsEnum_uint8
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
+	GENERATED_USTRUCT_BODY()
 
-	namespace Str
-	{
-		const TCsString OnBoard_Internal = TCsString(TEXT("OnBoard_Internal"), TEXT("onboard_internal"), TEXT("onboard internal"));
-		const TCsString RequestUniqueMappingId_AI_Internal = TCsString(TEXT("RequestUniqueMappingId_AI_Internal"), TEXT("requestuniquemappingid_ai_internal"), TEXT("request unique mappind id ai internal"));
-	}
+public:
+	FECsPlayerStateBaseRoutine() {}
+	FECsPlayerStateBaseRoutine(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsPlayerStateBaseRoutine(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsPlayerStateBaseRoutine() {}
 
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::OnBoard_Internal) { return Str::OnBoard_Internal.Value; }
-		if (EType == Type::RequestUniqueMappingId_AI_Internal) { return Str::RequestUniqueMappingId_AI_Internal.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
 
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::OnBoard_Internal) { return Type::OnBoard_Internal; }
-		if (String == Str::RequestUniqueMappingId_AI_Internal) { return Type::RequestUniqueMappingId_AI_Internal; }
-		return Type::ECsPlayerStateBaseRoutine_MAX;
-	}
+FORCEINLINE uint32 GetTypeHash(const FECsPlayerStateBaseRoutine& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-#define ECS_PLAYER_STATE_BASE_ROUTINE_MAX (uint8)ECsPlayerStateBaseRoutine::ECsPlayerStateBaseRoutine_MAX
-typedef ECsPlayerStateBaseRoutine::Type TCsPlayerStateBaseRoutine;
+struct CSCORE_API EMCsPlayerStateBaseRoutine : public TCsEnumStructMap<FECsPlayerStateBaseRoutine, uint8>
+{
+protected:
+	EMCsPlayerStateBaseRoutine() {}
+	EMCsPlayerStateBaseRoutine(const EMCsPlayerStateBaseRoutine &) = delete;
+	EMCsPlayerStateBaseRoutine(EMCsPlayerStateBaseRoutine &&) = delete;
+public:
+	~EMCsPlayerStateBaseRoutine() {}
+private:
+	static EMCsPlayerStateBaseRoutine* Instance;
+
+public:
+	static EMCsPlayerStateBaseRoutine& Get();
+};
+
+namespace ECsPlayerStateBaseRoutine
+{
+	extern CSCORE_API const FECsPlayerStateBaseRoutine OnBoard_Internal;
+	extern CSCORE_API const FECsPlayerStateBaseRoutine RequestUniqueMappingId_AI_Internal;
+}
 
 #pragma endregion Enums
 

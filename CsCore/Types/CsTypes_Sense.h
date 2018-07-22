@@ -129,9 +129,23 @@ struct FCsSenseInfo
 	float MeToActorDot;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	float MeToActorAbsDeltaAngle;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
 	FRotator MeToActorBodyRotation;
 
-		// Sight
+	// View to Actor
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	FVector ViewToActorDir;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	FRotator ViewToActorBodyRotation;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	float ViewToActorDot;
+
+	// Sight
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
 	bool bSeesActorByRadius;
@@ -169,8 +183,14 @@ struct FCsSenseInfo
 	float LastTime_SeesActorByDot;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
 	float LastTime_SeesActor;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	float SeesActorBodyTime;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	float NotSeesActorBodyTime;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
 	float LastTime_SeesActorBody;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
 	float LastTime_SeesActorHead;
 

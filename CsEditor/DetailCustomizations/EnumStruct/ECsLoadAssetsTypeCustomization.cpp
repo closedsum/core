@@ -1,5 +1,9 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "DetailCustomizations/EnumStruct/ECsLoadAssetsTypeCustomization.h"
+#include "IDetailChildrenBuilder.h"
+#include "DetailWidgetRow.h"
+#include "IDetailGroup.h"
+#include "DetailLayoutBuilder.h"
 
 #include "Types/CsTypes_Load.h"
 
@@ -9,6 +13,8 @@
 FECsLoadAssetsTypeCustomization::FECsLoadAssetsTypeCustomization()
 {
 	Init<FECsLoadAssetsType, EMCsLoadAssetsType>();
+
+	PerformDropDownCheck = false;
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsLoadAssetsTypeCustomization::MakeInstance()

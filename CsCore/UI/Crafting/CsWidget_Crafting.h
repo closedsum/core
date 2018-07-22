@@ -115,7 +115,7 @@ public:
 // Game Event
 #pragma region
 
-	virtual bool ProcessGameEvent(const TCsGameEvent &GameEvent) override;
+	virtual bool ProcessGameEvent(const FECsGameEvent &GameEvent) override;
 
 #pragma endregion Game Event
 
@@ -167,8 +167,8 @@ public:
 
 	FCsWidget_ButtonAndText Increment;
 
-	TCsGameEvent IncrementStartGameEvent;
-	TCsGameEvent IncrementEndGameEvent;
+	FECsGameEvent IncrementStartGameEvent;
+	FECsGameEvent IncrementEndGameEvent;
 
 	UFUNCTION()
 	void OnIncrementButtonPressed();
@@ -218,8 +218,8 @@ public:
 
 	FCsWidget_ButtonAndText Decrement;
 
-	TCsGameEvent DecrementStartGameEvent;
-	TCsGameEvent DecrementEndGameEvent;
+	FECsGameEvent DecrementStartGameEvent;
+	FECsGameEvent DecrementEndGameEvent;
 
 	UFUNCTION()
 	void OnDecrementButtonPressed();
@@ -251,7 +251,7 @@ public:
 
 	FCsWidget_ButtonAndText Start;
 
-	TCsGameEvent StartGameEvent;
+	FECsGameEvent StartGameEvent;
 
 	FECsInputAction StartInputAction;
 

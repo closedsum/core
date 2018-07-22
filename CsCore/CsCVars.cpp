@@ -190,6 +190,18 @@ TAutoConsoleVariable<int32> CsCVarLogManagerAITransactions(
 	ECVF_SetByConsole
 );
 
+	// View
+#pragma region
+
+TAutoConsoleVariable<int32> CsCVarDrawAIViewTraceHitLocation(
+	TEXT("draw.ai.view.tracehitlocation"),
+	0,
+	TEXT("Draw the Location traced out from the AI's View Location."),
+	ECVF_SetByConsole
+);
+
+#pragma endregion View
+
 	// Interactive AI Pawn
 #pragma region
 
@@ -216,6 +228,13 @@ TAutoConsoleVariable<int32> CsCVarDrawAIBTRotateToFaceBBEntry(
 	TEXT("draw.ai.bt.rotatetofacebbentry"),
 	0,
 	TEXT("Draw A.I. Behavior Tree RotateToFaceBBEntry Task."),
+	ECVF_SetByConsole
+);
+
+TAutoConsoleVariable<int32> CsCVarDrawAIBTLookAtRotateToFace(
+	TEXT("draw.ai.bt.lookatandrotatetoface"),
+	0,
+	TEXT("Draw A.I. Behavior Tree LookAtAndRotateToFace Task."),
 	ECVF_SetByConsole
 );
 
@@ -443,8 +462,8 @@ TAutoConsoleVariable<float> CsCVarDrawPlayerPawnRightThickness(
 
 #pragma endregion Pawn
 
-TAutoConsoleVariable<int32> CsCVarDrawPlayerCalcCameraTraceHitLocation(
-	TEXT("draw.player.calccamera.tracehitlocation"),
+TAutoConsoleVariable<int32> CsCVarDrawPlayerViewTraceHitLocation(
+	TEXT("draw.player.view.tracehitlocation"),
 	0,
 	TEXT("Draw the Location traced out from the Player's Camera Location."),
 	ECVF_SetByConsole

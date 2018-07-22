@@ -148,6 +148,7 @@ namespace ECsCoroutineEndReason
 #define CS_ROUTINE_VECTOR_SIZE 4
 #define CS_ROUTINE_ROTATOR_SIZE 4
 #define CS_ROUTINE_COLOR_SIZE 4
+#define CS_ROUTINE_NAME_SIZE 4
 #define CS_ROUTINE_STRING_SIZE 4
 #define CS_ROUTINE_OBJECT_SIZE 4
 #define CS_ROUTINE_VOID_POINTER_SIZE 4
@@ -203,6 +204,7 @@ public:
 	FVector vectors[CS_ROUTINE_VECTOR_SIZE];
 	FRotator rotators[CS_ROUTINE_ROTATOR_SIZE];
 	FLinearColor colors[CS_ROUTINE_COLOR_SIZE];
+	FName names[CS_ROUTINE_NAME_SIZE];
 	FString strings[CS_ROUTINE_STRING_SIZE];
 	TWeakObjectPtr<UObject> objects[CS_ROUTINE_OBJECT_SIZE];
 	void* voidPointers[CS_ROUTINE_VOID_POINTER_SIZE];
@@ -403,9 +405,14 @@ public:
 			colors[i] = FLinearColor::White;
 		}
 
+		for (int32 i = 0; i < CS_ROUTINE_NAME_SIZE; ++i)
+		{
+			names[i] = NAME_None;
+		}
+
 		for (int32 i = 0; i < CS_ROUTINE_STRING_SIZE; ++i)
 		{
-			strings[i] = TEXT("");
+			strings[i] = ECsCached::Str::Empty;
 		}
 
 		for (int32 i = 0; i < CS_ROUTINE_OBJECT_SIZE; ++i)

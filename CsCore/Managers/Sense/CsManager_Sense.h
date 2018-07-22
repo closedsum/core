@@ -5,6 +5,12 @@
 #include "Types/CsTypes_Trace.h"
 #include "CsManager_Sense.generated.h"
 
+// SeesAnyBody
+	// First Sees
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerSense_OnbFirstSeesAnyBody, const FECsSenseActorType&, ActorType, bool, Value);
+	// First UnSees
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerSense_OnbFirstUnSeesAnyBody, const FECsSenseActorType&, ActorType, bool, Value);
+
 UCLASS()
 class CSCORE_API ACsManager_Sense : public AActor
 {
@@ -58,10 +64,33 @@ public:
 	TMap<FECsSenseActorType, float> TraceToActorIntervals;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
-	bool bSeesAnyByRadius;
+	TMap<FECsSenseActorType, bool> bSeesAnyByRadius;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
-	bool bSeesAnyByDot;
+	TMap<FECsSenseActorType, bool> bSeesAnyByDot;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
+	TMap<FECsSenseActorType, bool> bSeesAnyBody;
+	TMap<FECsSenseActorType, TCsBool_Ref> bSeesAndBodyHandle;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
+	TMap<FECsSenseActorType, bool> bFirstSeesAnyBody;
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnbFirstSeesAnyBody, const FECsSenseActorType&, const bool&);
+	FOnbFirstSeesAnyBody OnbFirstSeesAnyBody_Event;
+	UPROPERTY(BlueprintAssignable, Category = "Sense")
+	FBindableDynEvent_CsManagerSense_OnbFirstSeesAnyBody OnbFirstSeesAnyBody_ScriptEvent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
+	TMap<FECsSenseActorType, bool> bFirstUnSeesAnyBody;
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnbFirstUnSeesAnyBody, const FECsSenseActorType&, const bool&);
+	FOnbFirstUnSeesAnyBody OnbFirstUnSeesAnyBody_Event;
+	UPROPERTY(BlueprintAssignable, Category = "Sense")
+	FBindableDynEvent_CsManagerSense_OnbFirstUnSeesAnyBody OnbFirstUnSeesAnyBody_ScriptEvent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
+	TMap<FECsSenseActorType, float> SeesAnyBodyTime;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
+	TMap<FECsSenseActorType, float> NotSeesAnyBodyTime;
 
 // Debug
 #pragma region
@@ -75,10 +104,18 @@ public:
 
 #pragma endregion Debug
 
+	const FECsSenseActorType& GetActorType(AActor* Actor);
+
+	virtual FCsSenseInfo* Add(AActor* Actor, const TCsSenseTeam& Team);
+	FCsSenseInfo* GetInfo(AActor* Actor);
+
+	virtual bool CanSense(AActor* Actor);
+	virtual bool IsSensing(AActor* Actor);
+
 	virtual void OnTick(const float &DeltaSeconds);
-	virtual void Sense_CheckMeToActorDot(FCsSenseInfo& Info);
-	virtual void Sense_TraceViewToActorBody(FCsSenseInfo& Info);
-	virtual void Async_Sense_TraceViewToActorBody_Response(const uint8 &RequestId, FCsTraceResponse* Response);
-	virtual void Sense_TraceViewToActorHead(FCsSenseInfo& Info);
-	virtual void Async_Sense_TraceViewToActorHead_Response(const uint8 &RequestId, FCsTraceResponse* Response);
+	virtual void CheckMeToActorDot(FCsSenseInfo& Info);
+	virtual void TraceViewToActorBody(FCsSenseInfo& Info);
+	virtual void Async_TraceViewToActorBody_Response(const uint8 &RequestId, FCsTraceResponse* Response);
+	virtual void TraceViewToActorHead(FCsSenseInfo& Info);
+	virtual void Async_TraceViewToActorHead_Response(const uint8 &RequestId, FCsTraceResponse* Response);
 };

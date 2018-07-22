@@ -13,6 +13,7 @@
 // Managers
 #include "Managers/Inventory/CsManager_Inventory.h"
 #include "Managers/Sense/CsManager_Sense.h"
+#include "Managers/Trace/CsManager_Trace.h"
 // UI
 #include "UI/State/CsHealthBarComponent.h"
 // Game
@@ -78,6 +79,19 @@ ACsPawn::ACsPawn(const FObjectInitializer& ObjectInitializer)
 	bFirstSpawn = true;
 
 	OnHandleRespawnTimerFinished_Event.AddUObject(this, &ACsPawn::OnHandleRespawnTimerFinished);
+	// View
+	bPerformViewTrace = false;
+
+	ViewTraceInfo.bAsync = true;
+	ViewTraceInfo.bForce = false;
+	ViewTraceInfo.QueryParams.TraceTag = FName("PerformViewTrace");
+	ViewTraceInfo.IgnoredActors.Add(this);
+	ViewTraceInfo.ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Pawn);
+	ViewTraceInfo.ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_PhysicsBody);
+	ViewTraceInfo.ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
+	ViewTraceInfo.ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
+	ViewTraceInfo.Range	  = 30000.0f;
+	ViewTraceInfo.RangeSq = ViewTraceInfo.Range * ViewTraceInfo.Range;
 	// Data
 	bCacheData = true;
 	// Weapon
@@ -298,18 +312,16 @@ CS_COROUTINE(ACsPawn, HandleRespawnTimer_Internal)
 {
 	ACsPawn* p				 = r->GetActor<ACsPawn>();
 	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
-	UWorld* w				 = p->GetWorld();
 	ACsPlayerStateBase* ps	 = Cast<ACsPlayerStateBase>(p->PlayerState);
 
 	ACsData_Character* Data_Character = p->GetMyData_Character();
 
-	const float CurrentTime = w->GetTimeSeconds();
-	const float& StartTime  = r->startTime;
-	const float RespawnTime = Data_Character->GetRespawnTime();
+	const float& ElapsedTime = r->elapsedTime;
+	const float RespawnTime  = Data_Character->GetRespawnTime();
 
 	CS_COROUTINE_BEGIN(r);
 
-	CS_COROUTINE_WAIT_UNTIL(r, CurrentTime - StartTime >= RespawnTime);
+	CS_COROUTINE_WAIT_UNTIL(r, ElapsedTime >= RespawnTime);
 
 	p->OnHandleRespawnTimerFinished_Event.Broadcast(ps->UniqueMappingId);
 
@@ -325,14 +337,14 @@ void ACsPawn::OnHandleRespawnTimerFinished(const uint8 &MappingId) {}
 // Routines
 #pragma region
 
-/*static*/ void ACsPawn::AddRoutine(UObject* InPawn, struct FCsRoutine* Routine, const uint8 &Type)
+/*static*/ void ACsPawn::AddRoutine(UObject* InPawn, struct FCsRoutine* Routine, const uint8 &InType)
 {
-	Cast<ACsPawn>(InPawn)->AddRoutine_Internal(Routine, Type);
+	Cast<ACsPawn>(InPawn)->AddRoutine_Internal(Routine, InType);
 }
 
-bool ACsPawn::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
+bool ACsPawn::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType)
 {
-	const FECsPawnRoutine& RoutineType = EMCsPawnRoutine::Get()[Type];
+	const FECsPawnRoutine& RoutineType = EMCsPawnRoutine::Get()[InType];
 
 	// CheckLinkedToPlayerState_Internal
 	if (RoutineType == ECsPawnRoutine::CheckLinkedToPlayerState_Internal)
@@ -349,14 +361,14 @@ bool ACsPawn::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
 	return false;
 }
 
-/*static*/ void ACsPawn::RemoveRoutine(UObject* InPawn, struct FCsRoutine* Routine, const uint8 &Type)
+/*static*/ void ACsPawn::RemoveRoutine(UObject* InPawn, struct FCsRoutine* Routine, const uint8 &InType)
 {
-	Cast<ACsPawn>(InPawn)->RemoveRoutine_Internal(Routine, Type);
+	Cast<ACsPawn>(InPawn)->RemoveRoutine_Internal(Routine, InType);
 }
 
-bool ACsPawn::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
+bool ACsPawn::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &InType)
 {
-	const FECsPawnRoutine& RoutineType = EMCsPawnRoutine::Get()[Type];
+	const FECsPawnRoutine& RoutineType = EMCsPawnRoutine::Get()[InType];
 
 	// CheckLinkedToPlayerState_Internal
 	if (RoutineType == ECsPawnRoutine::CheckLinkedToPlayerState_Internal)
@@ -383,6 +395,105 @@ bool ACsPawn::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Ty
 TEnumAsByte<ECsViewType::Type> ACsPawn::GetCurrentViewType()
 {
 	return CurrentViewType;
+}
+
+void ACsPawn::PerformViewTrace()
+{
+	TArray<FHitResult>& OutHits = ViewTraceInfo.OutHits;
+	OutHits.Reset();
+
+	const FVector Start = CurrentViewLocation;
+	const FVector Dir	= CurrentViewDir;
+	const FVector End	= Start + ViewTraceInfo.Range * Dir;
+
+	ViewTraceInfo.HitResult.Reset(0.0f, false);
+
+	ACsManager_Trace* Manager_Trace = ACsManager_Trace::Get(GetWorld());
+	FCsTraceRequest* Request		= Manager_Trace->AllocateRequest();
+
+	Request->bForce		= ViewTraceInfo.bForce;
+	Request->Caller		= this;
+	Request->CallerId	= UniqueObjectId;
+	Request->Start		= Start;
+	Request->End		= End;
+	Request->bAsync		= ViewTraceInfo.bAsync;
+	Request->Type		= ECsTraceType::Line;
+	Request->Method		= ECsTraceMethod::Multi;
+	Request->Query		= ECsTraceQuery::ObjectType;
+	UCsCommon::CopyCollisionObjectQueryParams(ViewTraceInfo.ObjectParams, Request->ObjectParams);
+	Request->Params.AddIgnoredActors(ViewTraceInfo.IgnoredActors);
+
+	Request->ReplacePending = !ViewTraceInfo.bForce;
+	Request->PendingId		= ViewTraceInfo.RequestId;
+
+	Request->OnResponse_Event.AddUObject(this, &ACsPawn::PerformViewTrace_Response);
+
+	ViewTraceInfo.RequestId = Request->Id;
+
+	FCsTraceResponse* Response = Manager_Trace->Trace(Request);
+
+	if (ViewTraceInfo.bAsync)
+		return;
+
+	PerformViewTrace_Response(ViewTraceInfo.RequestId, Response);
+}
+
+void ACsPawn::PerformViewTrace_Response(const uint8 &RequestId, FCsTraceResponse* Response)
+{
+	const bool HitFound = Response->bResult;
+
+	if (Response->OutHits.Num() > CS_EMPTY)
+		UCsCommon::CopyHitResult(Response->OutHits[CS_FIRST], ViewTraceInfo.HitResult);
+
+	Response->Reset();
+
+	if (HitFound)
+	{
+		float ClosestDistanceSq = ViewTraceInfo.RangeSq;
+		int32 ClosestIndex		= INDEX_NONE;
+		bool IgnoreActor		= false;
+
+		TArray<FHitResult>& OutHits = Response->OutHits;
+		const int32 HitCount		= OutHits.Num();
+
+		for (int32 Index = 0; Index < HitCount; ++Index)
+		{
+			IgnoreActor = false;
+
+			if (!IgnoreActor)
+			{
+				float DistanceSq = FVector::DistSquared(OutHits[Index].TraceStart, OutHits[Index].Location);
+
+				if (DistanceSq > 0.0f &&
+					DistanceSq < ClosestDistanceSq)
+				{
+					ClosestIndex = Index;
+					ClosestDistanceSq = DistanceSq;
+				}
+			}
+		}
+
+		if (ClosestIndex != INDEX_NONE)
+		{
+			ViewTraceInfo.HitLocation = OutHits[ClosestIndex].Location;
+
+			UCsCommon::CopyHitResult(OutHits[ClosestIndex], ViewTraceInfo.HitResult);
+		}
+		else
+		{
+			const FVector Start		  = CurrentViewLocation;
+			const FVector Dir		  = CurrentViewDir;
+			const FVector End		  = Start + ViewTraceInfo.Range * Dir;
+			ViewTraceInfo.HitLocation = End;
+		}
+	}
+	else
+	{
+		const FVector Start		 = CurrentViewLocation;
+		const FVector Dir		  = CurrentViewDir;
+		const FVector End		  = Start + ViewTraceInfo.Range * Dir;
+		ViewTraceInfo.HitLocation = End;
+	}
 }
 
 void ACsPawn::RecordView() {}
@@ -419,20 +530,21 @@ void ACsPawn::RecordRoot()
 
 void ACsPawn::RecordVelocityAndSpeed()
 {
-	// TODO: Potentially optimize slightly by doing normal calculation manually
-
 	// Velocity from CharacterMovement
 	CurrentVelocity			= GetVelocity();
-	CurrentVelocityDir		= CurrentVelocity.GetSafeNormal();
+	CurrentSpeed			= CurrentVelocity.Size();
+	CurrentSpeedSq			= CurrentSpeed * CurrentSpeed;
+	CurrentVelocityDir		= CurrentSpeed < SMALL_NUMBER ? FVector::ZeroVector : CurrentVelocity / CurrentSpeed;
 	CurrentVelocityXY.X		= CurrentVelocity.X;
 	CurrentVelocityXY.Y		= CurrentVelocity.Y;
-	CurrentVelocityDirXY	= CurrentVelocityXY.GetSafeNormal();
-	CurrentVelocityZ.Z		= CurrentVelocity.Z;
-	CurrentVelocityDirZ		= CurrentVelocityZ.GetSafeNormal();
-	CurrentSpeed			= CurrentVelocity.Size();
 	CurrentSpeedXY			= CurrentVelocityXY.Size();
+	CurrentSpeedXYSq		= CurrentSpeedXY * CurrentSpeedXY;
+	CurrentVelocityDirXY	= CurrentSpeedXY < SMALL_NUMBER ? FVector::ZeroVector : CurrentVelocityXY / CurrentSpeedXY;
+	CurrentVelocityZ.Z		= CurrentVelocity.Z;
 	CurrentSpeedZ			= CurrentVelocityZ.Size();
-
+	CurrentSpeedZSq			= CurrentSpeedZ * CurrentSpeedZ;
+	CurrentVelocityDirZ		= CurrentSpeedZ < SMALL_NUMBER ? FVector::ZeroVector : CurrentVelocityZ / CurrentSpeedZ;
+	
 	FRotator Rotation = CurrentVelocityDir.Rotation();
 
 	FRotationMatrix Matrix = FRotationMatrix(Rotation);
@@ -445,16 +557,19 @@ void ACsPawn::RecordVelocityAndSpeed()
 
 	// Velocity from Capsule
 	CurrentCapsuleVelocity		= GetCapsuleComponent()->GetComponentVelocity();
-	CurrentCapsuleVelocityDir	= CurrentCapsuleVelocity.GetSafeNormal();
+	CurrentCapsuleSpeed			= CurrentCapsuleVelocity.Size();
+	CurrentCapsuleSpeedSq		= CurrentCapsuleSpeed * CurrentCapsuleSpeed;
+	CurrentCapsuleVelocityDir	= CurrentCapsuleSpeed < SMALL_NUMBER ? FVector::ZeroVector : CurrentCapsuleVelocity / CurrentCapsuleSpeed;
 	CurrentCapsuleVelocityXY.X	= CurrentCapsuleVelocity.X;
 	CurrentCapsuleVelocityXY.Y	= CurrentCapsuleVelocity.Y;
-	CurrentCapsuleVelocityDirXY = CurrentCapsuleVelocityXY.GetSafeNormal();
-	CurrentCapsuleVelocityZ.Z	= CurrentCapsuleVelocity.Z;
-	CurrentCapsuleVelocityDirZ	= CurrentCapsuleVelocityZ.GetSafeNormal();
-	CurrentCapsuleSpeed			= CurrentCapsuleVelocity.Size();
 	CurrentCapsuleSpeedXY		= CurrentCapsuleVelocityXY.Size();
+	CurrentCapsuleSpeedXYSq		= CurrentCapsuleSpeedXY * CurrentCapsuleSpeedXY;
+	CurrentCapsuleVelocityDirXY = CurrentCapsuleSpeedXY < SMALL_NUMBER ? FVector::ZeroVector : CurrentCapsuleVelocityXY / CurrentCapsuleSpeedXY;
+	CurrentCapsuleVelocityZ.Z	= CurrentCapsuleVelocity.Z;
 	CurrentCapsuleSpeedZ		= CurrentCapsuleVelocityZ.Size();
-
+	CurrentCapsuleSpeedZSq		= CurrentCapsuleSpeedZ * CurrentCapsuleSpeedZ;
+	CurrentCapsuleVelocityDirZ	= CurrentCapsuleSpeedZ < SMALL_NUMBER ? FVector::ZeroVector : CurrentCapsuleVelocityZ / CurrentCapsuleVelocityZ;
+	
 	Rotation = CurrentCapsuleVelocityDir.Rotation();
 
 	Matrix = FRotationMatrix(Rotation);

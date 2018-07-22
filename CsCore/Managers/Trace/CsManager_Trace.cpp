@@ -548,7 +548,7 @@ FCsTraceResponse*  ACsManager_Trace::Trace(FCsTraceRequest* Request)
 {
 	Request->StartTime = GetWorld()->GetTimeSeconds();
 
-	bool AddPending = TraceCountThisFrame >= RequestsProcessedPerTick;
+	bool AddPending = !Request->bForce && TraceCountThisFrame >= RequestsProcessedPerTick;
 
 	// TODO: Print warning for a normal trace moved to Async
 	if (AddPending && !Request->bAsync)

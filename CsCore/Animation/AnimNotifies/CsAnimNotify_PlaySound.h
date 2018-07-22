@@ -1,8 +1,5 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 #pragma once
-
-#include "CoreMinimal.h"
-#include "UObject/ObjectMacros.h"
 #include "Animation/AnimNotifies/AnimNotify.h"
 #include "Types/CsTypes_Sound.h"
 #include "CsAnimNotify_PlaySound.generated.h"
@@ -70,6 +67,7 @@ struct FCsAnimNotifySound
 };
 
 class UAnimSequenceBase;
+class UAnimMontage;
 class USkeletalMeshComponent;
 class USoundCue;
 
@@ -92,6 +90,3 @@ public:
 
 	FCsSoundElement SoundElement;
 };
-
-
-

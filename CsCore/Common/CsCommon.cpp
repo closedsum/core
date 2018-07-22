@@ -3,33 +3,31 @@
 #include "CsCore.h"
 #include "CsCVars.h"
 #include "Types/CsTypes_Curve.h"
+#include "Coroutine/CsCoroutineScheduler.h"
+
+// Game
 #include "GameFramework/GameState.h"
 #include "GameFramework/GameMode.h"
 #include "Game/CsGameInstance.h"
-#include "Coroutine/CsCoroutineScheduler.h"
-
 // VR
 #include "IHeadMountedDisplay.h"
 #include "MotionControllerComponent.h"
 #include "MotionController/CsMotionController.h"
-
 // Components
 #include "Components/CsStaticMeshComponent.h"
 #include "Components/CsSkeletalMeshComponent.h"
 #include "Components/CsPoseableMeshComponent.h"
 #include "Components/CsBoxComponent.h"
 #include "Components/CsSphereComponent.h"
-
 // Player
 #include "Player/CsPlayerState.h"
 #include "Player/CsPlayerPawn.h"
 #include "VR/Player/CsPlayerPawn_VR.h"
 #include "../Engine/Classes/GameFramework/PlayerInput.h"
-
+// Physics
 #include "Engine/CollisionProfile.h"
-
+// Data
 #include "Data/CsData.h"
-
 // Managers
 #include "Managers/Inventory/CsManager_Inventory.h"
 
@@ -299,6 +297,13 @@ ACsMotionController* UCsCommon::GetMotionController(UWorld* InWorld, const TEnum
 		return nullptr;
 
 	return ECsControllerHand::Right ? Pawn->RightHand : Pawn->LeftHand;
+}
+
+// version of GEngine->IsStereoscopic3D() that is valid even during toggle frame. 
+bool UCsCommon::IsStereoscopic3D()
+{
+	return false;
+	//return GEngine && GEngine->StereoRenderingDevice.IsValid() && GEngine->StereoRenderingDevice->IsStereoEnabledOnNextFrame();
 }
 
 #pragma endregion
@@ -735,6 +740,12 @@ void UCsCommon::SetHitResult(FHitResult* InHitResult, FHitResult* OutHitResult)
 	OutHitResult->FaceIndex = InHitResult->FaceIndex;
 }
 
+void UCsCommon::CopyCollisionObjectQueryParams(const FCollisionObjectQueryParams& From, FCollisionObjectQueryParams& To)
+{
+	To.ObjectTypesToQuery = From.ObjectTypesToQuery;
+	To.IgnoreMask = From.IgnoreMask;
+}
+
 bool UCsCommon::IsMatchInProgress(UWorld *InWorld)
 {
 	AGameState* GameState = Cast<AGameState>(InWorld->GetGameState());
@@ -752,8 +763,8 @@ bool UCsCommon::IsMatchInProgress(UWorld *InWorld)
 
 float UCsCommon::GetAngleDelta(const float &Angle1, const float &Angle2)
 {
-	int32 Mag		 = Angle2 - Angle1 > 0 ? 1 : -1;
-	float DeltaAngle = Angle2 - Angle1;
+	const int32 Mag			= Angle2 - Angle1 > 0 ? 1 : -1;
+	const float DeltaAngle	= Angle2 - Angle1;
 
 	return FMath::Abs(DeltaAngle) > 180.0f ? -1 * Mag * (360.0f - FMath::Abs(DeltaAngle)) : Mag * FMath::Abs(DeltaAngle);
 }
@@ -772,6 +783,30 @@ FRotator UCsCommon::GetAngleDelta(const FRotator &A, const FRotator &B)
 FRotator UCsCommon::Rotator_GetAngleDelta(const FRotator &A, const FRotator &B)
 {
 	return GetAngleDelta(A, B);
+}
+
+float UCsCommon::GetAbsAngleDelta(const float &Angle1, const float &Angle2)
+{
+	const int32 Mag		   = Angle2 - Angle1 > 0 ? 1 : -1;
+	const float DeltaAngle = Angle2 - Angle1;
+
+	return FMath::Abs(FMath::Abs(DeltaAngle) > 180.0f ? -1 * Mag * (360.0f - FMath::Abs(DeltaAngle)) : Mag * FMath::Abs(DeltaAngle));
+}
+
+FRotator UCsCommon::GetAbsAngleDelta(const FRotator &A, const FRotator &B)
+{
+	FRotator Rotation;
+
+	Rotation.Pitch = GetAbsAngleDelta(A.Pitch, B.Pitch);
+	Rotation.Yaw = GetAbsAngleDelta(A.Yaw, B.Yaw);
+	Rotation.Roll = GetAbsAngleDelta(A.Roll, B.Roll);
+
+	return Rotation;
+}
+
+FRotator UCsCommon::Rotator_GetAbsAngleDelta(const FRotator &A, const FRotator &B)
+{
+	return GetAbsAngleDelta(A, B);
 }
 
 float UCsCommon::AngleClamp180(float Angle)
@@ -878,6 +913,44 @@ FString UCsCommon::UInt64ToString(const uint64 &Value)
 	}
 
 	return Zeroes + FString::Printf(TEXT("%llu"), Value);
+}
+
+FVector UCsCommon::ClampVectorComponents(FVector V, const float &Clamp)
+{
+	V.X = FMath::Abs(V.X) < Clamp ? FMath::Sign(V.X) * Clamp : V.X;
+	V.Y = FMath::Abs(V.Y) < Clamp ? FMath::Sign(V.Y) * Clamp : V.Y;
+	V.Y = FMath::Abs(V.Z) < Clamp ? FMath::Sign(V.Z) * Clamp : V.Z;
+
+	return V;
+}
+
+void UCsCommon::ClampMinVectorComponents(FVector &V, const float &Min)
+{
+	V.X = FMath::Max(V.X, Min);
+	V.Y = FMath::Max(V.Y, Min);
+	V.Z = FMath::Max(V.Z, Min);
+}
+
+void UCsCommon::ClampMaxVectorComponents(FVector &V, const float &Max)
+{
+	V.X = FMath::Min(V.X, Max);
+	V.Y = FMath::Min(V.Y, Max);
+	V.Z = FMath::Min(V.Z, Max);
+}
+
+float UCsCommon::BytesToKilobytes(const int32 &Bytes)
+{
+	return Bytes * FMath::Pow(10, -3);
+}
+
+float UCsCommon::BytesToMegabytes(const int32 &Bytes)
+{
+	return Bytes * FMath::Pow(10, -6);
+}
+
+int32 UCsCommon::KilobytesToBytes(const float &Kilobytes)
+{
+	return Kilobytes * FMath::Pow(10, 3);
 }
 
 #pragma endregion Math
@@ -1015,13 +1088,6 @@ void UCsCommon::GetHMDWorldViewPoint(APlayerController* PlayerController, FVecto
 	}
 }
 */
-
-// version of GEngine->IsStereoscopic3D() that is valid even during toggle frame. 
-bool UCsCommon::IsStereoscopic3D()
-{
-	return false;
-	//return GEngine && GEngine->StereoRenderingDevice.IsValid() && GEngine->StereoRenderingDevice->IsStereoEnabledOnNextFrame();
-}
 
 // Easing
 #pragma region
@@ -1265,34 +1331,6 @@ FString UCsCommon::ParseOption(const FString& Options, const FString& InKey)
 			return Value;
 	}
 	return TEXT("");
-}
-
-void UCsCommon::ShuffleTArray_FName(TArray<FName>& InArray)
-{
-	const int32 Len = InArray.Num();
-
-	for (int32 Index = Len; Index > 1; Index--)
-	{
-		int32 J = FMath::RandRange(0, Index - 1);
-
-		FName Temp		   = InArray[J];
-		InArray[J]		   = InArray[Index - 1];
-		InArray[Index - 1] = Temp;
-	}
-}
-
-void UCsCommon::ShuffleTArray_int32(TArray<int32>& InArray)
-{
-	const int32 Len = InArray.Num();
-
-	for (int32 Index = Len; Index > 1; Index--)
-	{
-		int32 J = FMath::RandRange(0, Index - 1);
-
-		int32 Temp		   = InArray[J];
-		InArray[J]		   = InArray[Index - 1];
-		InArray[Index - 1] = Temp;
-	}
 }
 
 bool UCsCommon::IsValidFpsAnimMontageArray(TArray<FCsFpvAnimMontage> & InArray, const TCsViewType &ViewType, const bool &IsLow)
@@ -2393,29 +2431,6 @@ void UCsCommon::Javascript_RunFile(UObject* &JavascriptContext, const FString &E
 
 #pragma endregion Javascript
 
-FVector UCsCommon::ClampVectorComponents(FVector V, float Clamp)
-{
-	V.X = FMath::Abs(V.X) < Clamp ? FMath::Sign(V.X) * Clamp : V.X;
-	V.Y = FMath::Abs(V.Y) < Clamp ? FMath::Sign(V.Y) * Clamp : V.Y;
-	V.Y = FMath::Abs(V.Z) < Clamp ? FMath::Sign(V.Z) * Clamp : V.Z;
-
-	return V;
-}
-
-void UCsCommon::ClampMinVectorComponents(FVector &V, const float &Min)
-{
-	V.X = FMath::Max(V.X, Min);
-	V.Y = FMath::Max(V.Y, Min);
-	V.Z = FMath::Max(V.Z, Min);
-}
-
-void UCsCommon::ClampMaxVectorComponents(FVector &V, const float &Max)
-{
-	V.X = FMath::Min(V.X, Max);
-	V.Y = FMath::Min(V.Y, Max);
-	V.Z = FMath::Min(V.Z, Max);
-}
-
 bool UCsCommon::IsDedicatedServer(AActor* InActor)
 {
 	return IsRunningDedicatedServer() || InActor->GetNetMode() == NM_DedicatedServer;
@@ -2479,6 +2494,13 @@ bool UCsCommon::IsDefaultObject(UObject* InObject)
 	return InObject->GetName().StartsWith(TEXT("Default__"));
 }
 
+const uint64& UCsCommon::GetUniqueObjectId(AActor* Actor)
+{
+	if (ACsPawn* Pawn = Cast<ACsPawn>(Actor))
+		return Pawn->UniqueObjectId;
+	return CS_INVALID_UNIQUE_OBJECT_ID;
+}
+
 // Time
 #pragma region
 
@@ -2508,21 +2530,6 @@ uint64 UCsCommon::GetCurrentFrame(UWorld* InWorld)
 }
 
 #pragma endregion Time
-
-float UCsCommon::BytesToKilobytes(const int32 &Bytes)
-{
-	return Bytes * FMath::Pow(10, -3);
-}
-
-float UCsCommon::BytesToMegabytes(const int32 &Bytes)
-{
-	return Bytes * FMath::Pow(10, -6);
-}
-
-int32 UCsCommon::KilobytesToBytes(const float &Kilobytes)
-{
-	return Kilobytes * FMath::Pow(10, 3);
-}
 
 bool UCsCommon::IsDeveloperBuild()
 {

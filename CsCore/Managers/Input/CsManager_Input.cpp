@@ -697,7 +697,7 @@ FCsInput* ACsManager_Input::GetPreviousPreviousInputAction(const FECsInputAction
 	return Input;
 }
 
-void ACsManager_Input::QueueGameEvent(const TCsGameEvent &Event)
+void ACsManager_Input::QueueGameEvent(const FECsGameEvent &Event)
 {
 	QueuedGameEventsForNextFrame.Add(Event);
 }
@@ -1241,7 +1241,7 @@ void ACsManager_Input::RunEditorGameJavascriptFile_FirstPressed()
 // Game Events
 #pragma region
 
-void ACsManager_Input::CreateGameEventDefinitionSimple(TArray<FCsGameEventDefinition> &Definitions, const TCsGameEvent &GameEvent, const FECsInputAction &Action, const TCsInputEvent &Event)
+void ACsManager_Input::CreateGameEventDefinitionSimple(TArray<FCsGameEventDefinition> &Definitions, const FECsGameEvent &GameEvent, const FECsInputAction &Action, const TCsInputEvent &Event)
 {
 	Definitions.AddDefaulted();
 	FCsGameEventDefinition& Def = Definitions[Definitions.Num() - 1];

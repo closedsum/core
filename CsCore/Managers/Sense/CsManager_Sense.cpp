@@ -356,7 +356,7 @@ void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 		}
 	}
 	// Draw Angle
-	if (CsCVarDrawManagerSenseAngle->GetInt() == CS_CVAR_DRAW)
+	if (bDrawRadius || CsCVarDrawManagerSenseAngle->GetInt() == CS_CVAR_DRAW)
 	{
 		bool Sees = false;
 

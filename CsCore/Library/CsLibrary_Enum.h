@@ -8,6 +8,8 @@
 #include "Blockchain/CsBlockchainCommand.h"
 #include "Blockchain/CsBlockchainContract.h"
 #include "Blockchain/Ethereum/CsEthereum.h"
+// AI
+#include "Types/CsTypes_AI.h"
 
 #include "CsLibrary_Enum.generated.h"
 
@@ -15,6 +17,31 @@ UCLASS()
 class CSCORE_API UCsLibrary_Enum : public UBlueprintFunctionLibrary
 {
 	GENERATED_UCLASS_BODY()
+
+public:
+
+	template<typename EnumStructMap, typename EnumStruct>
+	EnumStruct GetEnum(const FString& FunctionName, const FString& EnumStructName, const FString& Name)
+	{
+		if (EnumStructMap::Get().IsValidEnum(Name))
+			return EnumStructMap::Get()[Name];
+
+		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Enum::%s: Enum of type %s and Name: %s does NOT exist."), *FunctionName, *EnumStructName, *Name);
+		return EnumStruct(0, ECsCached::Str::INVALID);
+	}
+
+	template<typename EnumStructMap, typename EnumStruct>
+	EnumStruct GetEnumByIndex(const FString& FunctionName, const FString& EnumStructName, const int32& Index)
+	{
+		const int32& Count = EnumStructMap::Get().Num();
+
+		if (Index < Count)
+			return EnumStructMap::Get().GetEnumAt(Index);
+
+		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Enum::%s: Enum of type %s and Index: %d (%d >= %d) does NOT exist."), *FunctionName, *EnumStructName, Index, Index, Count);
+		return EnumStruct(0, ECsCached::Str::INVALID);
+	}
+
 
 // Asset
 #pragma region
@@ -126,4 +153,48 @@ class CSCORE_API UCsLibrary_Enum : public UBlueprintFunctionLibrary
 #pragma region
 
 #pragma endregion Sound
+
+// AI
+#pragma region
+public:
+
+	// Type
+#pragma region
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "Library Enum")
+	FECsAIType GetECsAIType(const FString& Name);
+
+	UFUNCTION(BlueprintCallable, Category = "Library Enum")
+	FECsAIType GetECsAITypeByIndex(const int32& Index);
+
+	UFUNCTION(BlueprintCallable, Category = "Library Enum")
+	FString ECsAITypeToString(const FECsAIType& Enum);
+
+#pragma endregion Type
+
+	// State
+#pragma region
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "Library Enum")
+	FECsAIState GetECsAIState(const FString& Name);
+
+	UFUNCTION(BlueprintCallable, Category = "Library Enum")
+	FECsAIState GetECsAIStateByIndex(const int32& Index);
+
+	UFUNCTION(BlueprintCallable, Category = "Library Enum")
+	FString ECsAIStateToString(const FECsAIState& Enum);
+
+#pragma endregion State
+
+	// Setup
+#pragma region
+public:
+
+
+
+#pragma endregion Setup
+
+#pragma endregion AI
 };

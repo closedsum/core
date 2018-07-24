@@ -7,6 +7,9 @@ UCsLibrary_Enum::UCsLibrary_Enum(const FObjectInitializer& ObjectInitializer)
 {
 }
 
+// Process
+#pragma region
+
 FECsProcess UCsLibrary_Enum::GetECsProcess(const FString& Name)
 {
 	if (EMCsProcess::Get().IsValidEnum(Name))
@@ -31,6 +34,8 @@ FString UCsLibrary_Enum::ECsProcessToString(const FECsProcess& Enum)
 {
 	return Enum.ToString();
 }
+
+#pragma endregion Process
 
 // Blockchain
 #pragma region
@@ -136,3 +141,68 @@ FString UCsLibrary_Enum::ECsEthereumJavascriptToString(const FECsEthereumJavascr
 }
 
 #pragma endregion Blockchain
+
+// AI
+#pragma region
+
+	// Type
+#pragma region
+
+FECsAIType UCsLibrary_Enum::GetECsAIType(const FString& Name)
+{
+	if (EMCsAIType::Get().IsValidEnum(Name))
+		return EMCsAIType::Get()[Name];
+
+	UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Enum::GetECsAIType: Enum of type FECsAIType and Name: %s does NOT exist."), *Name);
+	return FECsAIType(0, ECsCached::Str::INVALID);
+}
+
+FECsAIType UCsLibrary_Enum::GetECsAITypeByIndex(const int32& Index)
+{
+	const int32& Count = EMCsAIType::Get().Num();
+
+	if (Index < Count)
+		return EMCsAIType::Get().GetEnumAt(Index);
+
+	UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Enum::GetECsAITypeByIndex: Enum of type FECsAIType and Index: %d (%d >= %d) does NOT exist."), Index, Index, Count);
+	return FECsAIType(0, ECsCached::Str::INVALID);
+}
+
+FString UCsLibrary_Enum::ECsAITypeToString(const FECsAIType& Enum)
+{
+	return Enum.ToString();
+}
+
+#pragma endregion Type
+
+	// State
+#pragma region
+
+FECsAIState UCsLibrary_Enum::GetECsAIState(const FString& Name)
+{
+	if (EMCsAIState::Get().IsValidEnum(Name))
+		return EMCsAIState::Get()[Name];
+
+	UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Enum::GetECsAIState: Enum of type FECsAIState and Name: %s does NOT exist."), *Name);
+	return FECsAIState(0, ECsCached::Str::INVALID);
+}
+
+FECsAIState UCsLibrary_Enum::GetECsAIStateByIndex(const int32& Index)
+{
+	const int32& Count = EMCsAIState::Get().Num();
+
+	if (Index < Count)
+		return EMCsAIState::Get().GetEnumAt(Index);
+
+	UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Enum::GetECsAIStateByIndex: Enum of type FECsAIState and Index: %d (%d >= %d) does NOT exist."), Index, Index, Count);
+	return FECsAIState(0, ECsCached::Str::INVALID);
+}
+
+FString UCsLibrary_Enum::ECsAIStateToString(const FECsAIState& Enum)
+{
+	return Enum.ToString();
+}
+
+#pragma endregion State
+
+#pragma endregion AI

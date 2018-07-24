@@ -76,6 +76,7 @@ public:
 
 // Process
 #pragma region
+public:
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
 	FECsProcess GetECsProcess(const FString& Name);
@@ -90,6 +91,11 @@ public:
 
 // Blockchain
 #pragma region
+public:
+
+	// Command
+#pragma region
+public:
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
 	FECsBlockchainCommand GetECsBlockchainCommand(const FString& Name);
@@ -100,6 +106,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
 	FString ECsBlockchainCommandToString(const FECsBlockchainCommand& Enum);
 
+#pragma endregion Command
+
+	// Contract
+#pragma region
+public:
+
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
 	FECsBlockchainContract GetECsBlockchainContract(const FString& Name);
 
@@ -108,6 +120,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
 	FString ECsBlockchainContractToString(const FECsBlockchainContract& Enum);
+
+#pragma endregion Contract
+
+	// Contract Function
+#pragma region
+public:
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
 	FECsBlockchainContractFunction GetECsBlockchainContractFunction(const FString& Name);
@@ -118,6 +136,16 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
 	FString ECsBlockchainContractFunctionToString(const FECsBlockchainContractFunction& Enum);
 
+#pragma endregion Contract Function
+
+	// Ethereum
+#pragma region
+public:
+
+		// Javascript
+#pragma region
+public:
+
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
 	FECsEthereumJavascript GetECsEthereumJavascript(const FString& Name);
 
@@ -126,6 +154,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
 	FString ECsEthereumJavascriptToString(const FECsEthereumJavascript& Enum);
+
+#pragma endregion Javascript
+
+#pragma endregion Ethereum
 
 #pragma endregion Blockchain
 

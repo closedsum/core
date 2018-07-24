@@ -102,6 +102,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
 	bool bDrawAngle;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
+	bool bLogSeesActorByDot;
+
+#if !UE_BUILD_SHIPPING
+
+	void Log_bOnSeesActorByDot(const uint64& Observer, const uint64& Observee, const bool& Value);
+
+#endif // #if !UE_BUILD_SHIPPING
+
 #pragma endregion Debug
 
 	const FECsSenseActorType& GetActorType(AActor* Actor);

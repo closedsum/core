@@ -81,6 +81,20 @@ void ACsManager_Sense::Init(AActor* InOwner)
 	MyOwner = InOwner;
 }
 
+// Debug
+#pragma region
+
+#if !UE_BUILD_SHIPPING
+
+void ACsManager_Sense::Log_bOnSeesActorByDot(const uint64& Observer, const uint64& Observee, const bool& Value)
+{
+
+}
+
+#endif // #if !UE_BUILD_SHIPPING
+
+#pragma endregion Debug
+
 const FECsSenseActorType& ACsManager_Sense::GetActorType(AActor* Actor)
 {
 	if (Cast<ACsPlayerPawn>(Actor))

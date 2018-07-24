@@ -21,7 +21,7 @@ class CSCORE_API UCsLibrary_Enum : public UBlueprintFunctionLibrary
 public:
 
 	template<typename EnumStructMap, typename EnumStruct>
-	EnumStruct GetEnum(const FString& FunctionName, const FString& EnumStructName, const FString& Name)
+	static EnumStruct GetEnum(const FString& FunctionName, const FString& EnumStructName, const FString& Name)
 	{
 		if (EnumStructMap::Get().IsValidEnum(Name))
 			return EnumStructMap::Get()[Name];
@@ -31,7 +31,7 @@ public:
 	}
 
 	template<typename EnumStructMap, typename EnumStruct>
-	EnumStruct GetEnumByIndex(const FString& FunctionName, const FString& EnumStructName, const int32& Index)
+	static EnumStruct GetEnumByIndex(const FString& FunctionName, const FString& EnumStructName, const int32& Index)
 	{
 		const int32& Count = EnumStructMap::Get().Num();
 
@@ -42,6 +42,16 @@ public:
 		return EnumStruct(0, ECsCached::Str::INVALID);
 	}
 
+	template<typename EnumStructMap, typename EnumStruct>
+	static void GetAllEnum(TArray<EnumStruct> &OutTypes)
+	{
+		const int32& Count = EnumStructMap::Get().Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			OutTypes.Add(EnumStructMap::Get().GetEnumAt(I));
+		}
+	}
 
 // Asset
 #pragma region
@@ -79,13 +89,19 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	FECsProcess GetECsProcess(const FString& Name);
+	static FECsProcess GetECsProcess(const FString& Name);
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	FECsProcess GetECsProcessByIndex(const int32& Index);
+	static FECsProcess GetECsProcessByIndex(const int32& Index);
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	FString ECsProcessToString(const FECsProcess& Enum);
+	static FString ECsProcessToString(const FECsProcess& Enum);
+
+	UFUNCTION(BlueprintCallable, Category = "Library Enum")
+	static uint8 GetECsProcessCount();
+
+	UFUNCTION(BlueprintCallable, Category = "Library Enum")
+	static void GetAllECsProcess(TArray<FECsProcess> &OutTypes);
 
 #pragma endregion Process
 
@@ -98,13 +114,19 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	FECsBlockchainCommand GetECsBlockchainCommand(const FString& Name);
+	static FECsBlockchainCommand GetECsBlockchainCommand(const FString& Name);
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	FECsBlockchainCommand GetECsBlockchainCommandByIndex(const int32& Index);
+	static FECsBlockchainCommand GetECsBlockchainCommandByIndex(const int32& Index);
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	FString ECsBlockchainCommandToString(const FECsBlockchainCommand& Enum);
+	static FString ECsBlockchainCommandToString(const FECsBlockchainCommand& Enum);
+
+	UFUNCTION(BlueprintCallable, Category = "Library Enum")
+	static uint8 GetECsBlockchainCommandCount();
+
+	UFUNCTION(BlueprintCallable, Category = "Library Enum")
+	static void GetAllECsBlockchainCommand(TArray<FECsBlockchainCommand> &OutTypes);
 
 #pragma endregion Command
 
@@ -113,13 +135,19 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	FECsBlockchainContract GetECsBlockchainContract(const FString& Name);
+	static FECsBlockchainContract GetECsBlockchainContract(const FString& Name);
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	FECsBlockchainContract GetECsBlockchainContractByIndex(const int32& Index);
+	static FECsBlockchainContract GetECsBlockchainContractByIndex(const int32& Index);
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	FString ECsBlockchainContractToString(const FECsBlockchainContract& Enum);
+	static FString ECsBlockchainContractToString(const FECsBlockchainContract& Enum);
+
+	UFUNCTION(BlueprintCallable, Category = "Library Enum")
+	static uint8 GetECsBlockchainContractCount();
+
+	UFUNCTION(BlueprintCallable, Category = "Library Enum")
+	static void GetAllECsBlockchainContract(TArray<FECsBlockchainContract> &OutTypes);
 
 #pragma endregion Contract
 
@@ -128,13 +156,19 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	FECsBlockchainContractFunction GetECsBlockchainContractFunction(const FString& Name);
+	static FECsBlockchainContractFunction GetECsBlockchainContractFunction(const FString& Name);
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	FECsBlockchainContractFunction GetECsBlockchainContractFunctionByIndex(const int32& Index);
+	static FECsBlockchainContractFunction GetECsBlockchainContractFunctionByIndex(const int32& Index);
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	FString ECsBlockchainContractFunctionToString(const FECsBlockchainContractFunction& Enum);
+	static FString ECsBlockchainContractFunctionToString(const FECsBlockchainContractFunction& Enum);
+
+	UFUNCTION(BlueprintCallable, Category = "Library Enum")
+	static uint8 GetECsBlockchainContractFunctionCount();
+
+	UFUNCTION(BlueprintCallable, Category = "Library Enum")
+	static void GetAllECsBlockchainContractFunction(TArray<FECsBlockchainContractFunction> &OutTypes);
 
 #pragma endregion Contract Function
 
@@ -147,13 +181,19 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	FECsEthereumJavascript GetECsEthereumJavascript(const FString& Name);
+	static FECsEthereumJavascript GetECsEthereumJavascript(const FString& Name);
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	FECsEthereumJavascript GetECsEthereumJavascriptByIndex(const int32& Index);
+	static FECsEthereumJavascript GetECsEthereumJavascriptByIndex(const int32& Index);
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	FString ECsEthereumJavascriptToString(const FECsEthereumJavascript& Enum);
+	static FString ECsEthereumJavascriptToString(const FECsEthereumJavascript& Enum);
+
+	UFUNCTION(BlueprintCallable, Category = "Library Enum")
+	static uint8 GetECsEthereumJavascriptCount();
+
+	UFUNCTION(BlueprintCallable, Category = "Library Enum")
+	static void GetAllECsEthereumJavascript(TArray<FECsEthereumJavascript> &OutTypes);
 
 #pragma endregion Javascript
 
@@ -195,13 +235,19 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	FECsAIType GetECsAIType(const FString& Name);
+	static FECsAIType GetECsAIType(const FString& Name);
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	FECsAIType GetECsAITypeByIndex(const int32& Index);
+	static FECsAIType GetECsAITypeByIndex(const int32& Index);
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	FString ECsAITypeToString(const FECsAIType& Enum);
+	static FString ECsAITypeToString(const FECsAIType& Enum);
+
+	UFUNCTION(BlueprintCallable, Category = "Library Enum")
+	static uint8 GetECsAITypeCount();
+
+	UFUNCTION(BlueprintCallable, Category = "Library Enum")
+	static void GetAllECsAIType(TArray<FECsAIType> &OutTypes);
 
 #pragma endregion Type
 
@@ -210,13 +256,19 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	FECsAIState GetECsAIState(const FString& Name);
+	static FECsAIState GetECsAIState(const FString& Name);
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	FECsAIState GetECsAIStateByIndex(const int32& Index);
+	static FECsAIState GetECsAIStateByIndex(const int32& Index);
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	FString ECsAIStateToString(const FECsAIState& Enum);
+	static FString ECsAIStateToString(const FECsAIState& Enum);
+
+	UFUNCTION(BlueprintCallable, Category = "Library Enum")
+	static uint8 GetECsAIStateCount();
+
+	UFUNCTION(BlueprintCallable, Category = "Library Enum")
+	static void GetAllECsAIState(TArray<FECsAIState> &OutTypes);
 
 #pragma endregion State
 
@@ -225,13 +277,19 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	FECsAISetup GetECsAISetup(const FString& Name);
+	static FECsAISetup GetECsAISetup(const FString& Name);
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	FECsAISetup GetECsAISetupByIndex(const int32& Index);
+	static FECsAISetup GetECsAISetupByIndex(const int32& Index);
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	FString ECsAISetupToString(const FECsAISetup& Enum);
+	static FString ECsAISetupToString(const FECsAISetup& Enum);
+
+	UFUNCTION(BlueprintCallable, Category = "Library Enum")
+	static uint8 GetECsAISetupCount();
+
+	UFUNCTION(BlueprintCallable, Category = "Library Enum")
+	static void GetAllECsAISetup(TArray<FECsAISetup> &OutTypes);
 
 #pragma endregion Setup
 

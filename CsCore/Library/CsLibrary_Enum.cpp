@@ -75,6 +75,16 @@ FString UCsLibrary_Enum::ECsProcessToString(const FECsProcess& Enum)
 	return Enum.ToString();
 }
 
+uint8 UCsLibrary_Enum::GetECsProcessCount()
+{
+	return EMCsProcess::Get().Num();
+}
+
+void UCsLibrary_Enum::GetAllECsProcess(TArray<FECsProcess> &OutTypes)
+{
+	GetAllEnum<EMCsProcess, FECsProcess>(OutTypes);
+}
+
 #pragma endregion Process
 
 // Blockchain
@@ -98,6 +108,16 @@ FString UCsLibrary_Enum::ECsBlockchainCommandToString(const FECsBlockchainComman
 	return Enum.ToString();
 }
 
+uint8 UCsLibrary_Enum::GetECsBlockchainCommandCount()
+{
+	return EMCsBlockchainCommand::Get().Num();
+}
+
+void UCsLibrary_Enum::GetAllECsBlockchainCommand(TArray<FECsBlockchainCommand> &OutTypes)
+{
+	GetAllEnum<EMCsBlockchainCommand, FECsBlockchainCommand>(OutTypes);
+}
+
 #pragma endregion Command
 
 	// Contract
@@ -118,6 +138,16 @@ FString UCsLibrary_Enum::ECsBlockchainContractToString(const FECsBlockchainContr
 	return Enum.ToString();
 }
 
+uint8 UCsLibrary_Enum::GetECsBlockchainContractCount()
+{
+	return EMCsBlockchainContract::Get().Num();
+}
+
+void UCsLibrary_Enum::GetAllECsBlockchainContract(TArray<FECsBlockchainContract> &OutTypes)
+{
+	GetAllEnum<EMCsBlockchainContract, FECsBlockchainContract>(OutTypes);
+}
+
 #pragma endregion Contract
 
 	// Contract Function
@@ -136,6 +166,16 @@ FECsBlockchainContractFunction UCsLibrary_Enum::GetECsBlockchainContractFunction
 FString UCsLibrary_Enum::ECsBlockchainContractFunctionToString(const FECsBlockchainContractFunction& Enum)
 {
 	return Enum.ToString();
+}
+
+uint8 UCsLibrary_Enum::GetECsBlockchainContractFunctionCount()
+{
+	return EMCsBlockchainContractFunction::Get().Num();
+}
+
+void UCsLibrary_Enum::GetAllECsBlockchainContractFunction(TArray<FECsBlockchainContractFunction> &OutTypes)
+{
+	GetAllEnum<EMCsBlockchainContractFunction, FECsBlockchainContractFunction>(OutTypes);
 }
 
 #pragma endregion Contract Function
@@ -159,6 +199,16 @@ FECsEthereumJavascript UCsLibrary_Enum::GetECsEthereumJavascriptByIndex(const in
 FString UCsLibrary_Enum::ECsEthereumJavascriptToString(const FECsEthereumJavascript& Enum)
 {
 	return Enum.ToString();
+}
+
+uint8 UCsLibrary_Enum::GetECsEthereumJavascriptCount()
+{
+	return EMCsEthereumJavascript::Get().Num();
+}
+
+void UCsLibrary_Enum::GetAllECsEthereumJavascript(TArray<FECsEthereumJavascript> &OutTypes)
+{
+	GetAllEnum<EMCsEthereumJavascript, FECsEthereumJavascript>(OutTypes);
 }
 
 #pragma endregion Javascript
@@ -188,6 +238,16 @@ FString UCsLibrary_Enum::ECsAITypeToString(const FECsAIType& Enum)
 	return Enum.ToString();
 }
 
+uint8 UCsLibrary_Enum::GetECsAITypeCount()
+{
+	return EMCsAIType::Get().Num();
+}
+
+void UCsLibrary_Enum::GetAllECsAIType(TArray<FECsAIType> &OutTypes)
+{
+	GetAllEnum<EMCsAIType, FECsAIType>(OutTypes);
+}
+
 #pragma endregion Type
 
 	// State
@@ -208,6 +268,16 @@ FString UCsLibrary_Enum::ECsAIStateToString(const FECsAIState& Enum)
 	return Enum.ToString();
 }
 
+uint8 UCsLibrary_Enum::GetECsAIStateCount()
+{
+	return EMCsAIState::Get().Num();
+}
+
+void UCsLibrary_Enum::GetAllECsAIState(TArray<FECsAIState> &OutTypes)
+{
+	GetAllEnum<EMCsAIState, FECsAIState>(OutTypes);
+}
+
 #pragma endregion State
 
 	// Setup
@@ -226,6 +296,16 @@ FECsAISetup UCsLibrary_Enum::GetECsAISetupByIndex(const int32& Index)
 FString UCsLibrary_Enum::ECsAISetupToString(const FECsAISetup& Enum)
 {
 	return Enum.ToString();
+}
+
+uint8 UCsLibrary_Enum::GetECsAISetupCount()
+{
+	return EMCsAISetup::Get().Num();
+}
+
+void UCsLibrary_Enum::GetAllECsAISetup(TArray<FECsAISetup> &OutTypes)
+{
+	GetAllEnum<EMCsAISetup, FECsAISetup>(OutTypes);
 }
 
 #pragma endregion Setup

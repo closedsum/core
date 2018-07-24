@@ -366,13 +366,21 @@ void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 	// Draw Radius
 	if (bRadius)
 	{
+#if WITH_EDITORONLY_DATA
 		if (bDrawRadius || CsCVarDrawManagerSenseRadius->GetInt() == CS_CVAR_DRAW)
+#else
+		if (CsCVarDrawManagerSenseRadius->GetInt() == CS_CVAR_DRAW)
+#endif // #if #if WITH_EDITORONLY_DATA
 		{
 			DrawDebugSphere(GetWorld(), OwnerLocation, Radius, 16.0f, FColor::Green, false, DeltaSeconds + 0.001f, 0, 5.0f);
 		}
 	}
 	// Draw Angle
-	if (bDrawRadius || CsCVarDrawManagerSenseAngle->GetInt() == CS_CVAR_DRAW)
+#if WITH_EDITORONLY_DATA
+	if (bDrawAngle || CsCVarDrawManagerSenseAngle->GetInt() == CS_CVAR_DRAW)
+#else
+	if (CsCVarDrawManagerSenseAngle->GetInt() == CS_CVAR_DRAW)
+#endif // #if #if WITH_EDITORONLY_DATA
 	{
 		bool Sees = false;
 
@@ -384,8 +392,8 @@ void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 			Sees |= bSeesAnyByDot[ActorType];
 		}
 
-		const FColor Color = Sees ? FColor::Red : FColor::Green;
-		FVector Direction  = FVector::ZeroVector;
+		const FColor& Color = Sees ? FColor::Red : FColor::Green;
+		FVector Direction   = FVector::ZeroVector;
 
 		if (ACsPawn* Pawn = Cast<ACsPawn>(Me))
 			Direction = Pawn->CurrentViewDirXY;

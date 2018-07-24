@@ -96,6 +96,7 @@ public:
 #pragma region
 public:
 
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
 	bool bDrawRadius;
 
@@ -104,6 +105,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
 	bool bLogSeesActorByDot;
+#endif // #if WITH_EDITORONLY_DATA
 
 #if !UE_BUILD_SHIPPING
 

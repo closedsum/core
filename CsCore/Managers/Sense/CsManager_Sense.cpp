@@ -361,6 +361,8 @@ void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 		}
 	}
 
+#if !UE_BUILD_SHIPPING
+
 	// Draw Radius
 	if (bRadius)
 	{
@@ -392,6 +394,8 @@ void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 
 		DrawDebugCone(GetWorld(), OwnerLocation, Direction, Radius, ViewMinRadians, AngleHeight, 16, Color, false, DeltaSeconds + 0.001f, 0, 5.0f);
 	}
+
+#endif // #if !UE_BUILD_SHIPPING
 }
 
 void ACsManager_Sense::CheckMeToActorDot(FCsSenseInfo& Info)

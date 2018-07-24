@@ -88,7 +88,7 @@
 
             // Number
             if (ValueType == ECgBlockchainContractArgumentType.Number)
-                return CgCommon.NumericTypeToString(Value) + ",";
+                return FCgCommon.NumericTypeToString(Value) + ",";
             // String
             if (ValueType == ECgBlockchainContractArgumentType.String)
                 return (string)Value + ",";
@@ -162,7 +162,7 @@
         {
             // Number
             if (ValueType == ECgBlockchainContractFunctionArgumentType.Number)
-                return CgCommon.NumericTypeToString(Value);
+                return FCgCommon.NumericTypeToString(Value);
             // String
             if (ValueType == ECgBlockchainContractFunctionArgumentType.String)
                 return "'" + (string)Value + "'";
@@ -201,7 +201,7 @@
         {
             // Number
             if (ValueType == ECgBlockchainContractFunctionReturnType.Number)
-                return CgCommon.NumericTypeToString(Value);
+                return FCgCommon.NumericTypeToString(Value);
             // String
             if (ValueType == ECgBlockchainContractFunctionReturnType.String)
                 return (string)Value;

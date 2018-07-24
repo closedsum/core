@@ -102,7 +102,7 @@
 
             if (!type.IsSubclassOf(typeof(TCgManager<ECgProcess, FCgProcess, FCgProcessPayload>)))
             {
-                CgDebug.Log("ICgManager_Process.Init: Passed in Type of " + type.GetType().Name + " is NOT a SubclassOf TCgManager<ECgProcess, FCgProcess, FCgProcessPayload>");
+                FCgDebug.Log("ICgManager_Process.Init: Passed in Type of " + type.GetType().Name + " is NOT a SubclassOf TCgManager<ECgProcess, FCgProcess, FCgProcessPayload>");
                 return;
             }
 

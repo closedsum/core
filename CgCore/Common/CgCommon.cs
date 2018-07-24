@@ -6,7 +6,7 @@ namespace CgCore
     using System.Collections.Generic;
     using UnityEngine;
 
-    public static class CgCommon
+    public static class FCgCommon
     {
         public static bool IsNumericType(object o)
         {
@@ -47,6 +47,21 @@ namespace CgCore
                 default:
                     return "";
             }
+        }
+
+        public static float BytesToKilobytes(int bytes)
+        {
+            return bytes * Mathf.Pow(10.0f, -3.0f);
+        }
+
+        public static float BytesToMegabytes(int bytes)
+        {
+            return bytes * Mathf.Pow(10.0f, -6.0f);
+        }
+
+        public static int KilobytesToBytes(float kilobytes)
+        {
+            return Mathf.FloorToInt(kilobytes * Mathf.Pow(10.0f, 3.0f));
         }
     }
 }

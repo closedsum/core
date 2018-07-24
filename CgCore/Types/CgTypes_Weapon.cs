@@ -260,44 +260,44 @@
 
     public sealed class ECgWeaponBlendSpace : ECgEnum_byte
     {
-        public ECgWeaponAnim(byte value, string name) : base(value, name) { }
+        public ECgWeaponBlendSpace(byte value, string name) : base(value, name) { }
     }
 
-    public class EMCgWeaponAnim : ECgEnumMap<ECgWeaponAnim, byte>
+    public class EMCgWeaponBlendSpace : ECgEnumMap<ECgWeaponBlendSpace, byte>
     {
-        private static EMCgWeaponAnim _Instance;
-        public static EMCgWeaponAnim Instance
+        private static EMCgWeaponBlendSpace _Instance;
+        public static EMCgWeaponBlendSpace Instance
         {
             get
             {
                 if (_Instance == null)
                 {
-                    _Instance = new EMCgWeaponAnim();
+                    _Instance = new EMCgWeaponBlendSpace();
                 }
                 return _Instance;
             }
         }
 
-        public static EMCgWeaponAnim Get()
+        public static EMCgWeaponBlendSpace Get()
         {
             return Instance;
         }
     }
 
-    public sealed class ECgWeaponAnimEqualityComparer : IEqualityComparer<ECgWeaponAnim>
+    public sealed class ECgWeaponBlendSpaceEqualityComparer : IEqualityComparer<ECgWeaponBlendSpace>
     {
-        public bool Equals(ECgWeaponAnim lhs, ECgWeaponAnim rhs)
+        public bool Equals(ECgWeaponBlendSpace lhs, ECgWeaponBlendSpace rhs)
         {
             return lhs == rhs;
         }
 
-        public int GetHashCode(ECgWeaponAnim x)
+        public int GetHashCode(ECgWeaponBlendSpace x)
         {
             return x.GetHashCode();
         }
     }
 
-    #endregion // WeaponAnim
+    #endregion // WeaponBlendSpace
 
     public class CgData_Weapon_FireMode_Firing
     {

@@ -2,7 +2,7 @@
 {
     using UnityEngine;
 
-    public static class CgDebug
+    public static class FCgDebug
     {
         public static void Log(object msg)
         {

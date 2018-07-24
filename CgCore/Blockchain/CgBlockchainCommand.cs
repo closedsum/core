@@ -64,7 +64,7 @@
         {
             // Number
             if (ValueType == ECgBlockchainCommandArgumentType.Number)
-                return CgCommon.NumericTypeToString(Value);
+                return FCgCommon.NumericTypeToString(Value);
             // String
             if (ValueType == ECgBlockchainCommandArgumentType.String)
                 return (string)Value;

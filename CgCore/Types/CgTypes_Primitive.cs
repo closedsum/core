@@ -201,7 +201,7 @@ namespace CgCore
 
             if (e != null)
             {
-                CgDebug.LogError(this.GetType().Name + ".Create: Enum with name: " + name + " already exists. It is being defined in move than one place.");
+                FCgDebug.LogError(this.GetType().Name + ".Create: Enum with name: " + name + " already exists. It is being defined in move than one place.");
                 return e;
             }
 
@@ -238,7 +238,7 @@ namespace CgCore
                 StringMap.TryGetValue(key, out e);
 
                 if (e == null)
-                    CgDebug.LogError(this.GetType().Name + ".Get: No enum created of type: " + typeof(EnumClass).Name + " and name: " + key);
+                    FCgDebug.LogError(this.GetType().Name + ".Get: No enum created of type: " + typeof(EnumClass).Name + " and name: " + key);
                 return e;
             }
         }
@@ -251,7 +251,7 @@ namespace CgCore
                 TypeMap.TryGetValue(key, out e);
 
                 if (e == null)
-                    CgDebug.LogError(this.GetType().Name + ".Get: No enum created of type: " + typeof(EnumClass).Name + " and name: " + key);
+                    FCgDebug.LogError(this.GetType().Name + ".Get: No enum created of type: " + typeof(EnumClass).Name + " and name: " + key);
                 return e;
             }
         }
@@ -338,7 +338,7 @@ namespace CgCore
 
             if (e != null)
             {
-                CgDebug.LogError(this.GetType().Name + ".Create: Enum with name: " + name + " already exists. It is being defined in move than one place.");
+                FCgDebug.LogError(this.GetType().Name + ".Create: Enum with name: " + name + " already exists. It is being defined in move than one place.");
                 return e;
             }
 
@@ -373,7 +373,7 @@ namespace CgCore
                 StringMap.TryGetValue(key, out e);
 
                 if (e == null)
-                    CgDebug.LogError(this.GetType().Name + ".Get: No enum created of type: " + typeof(EnumClass).Name + " and name: " + key);
+                    FCgDebug.LogError(this.GetType().Name + ".Get: No enum created of type: " + typeof(EnumClass).Name + " and name: " + key);
                 return e;
             }
         }
@@ -386,7 +386,7 @@ namespace CgCore
                 TypeMap.TryGetValue(key, out e);
 
                 if (e == null)
-                    CgDebug.LogError(this.GetType().Name + ".Get: No enum created of type: " + typeof(EnumClass).Name + " and name: " + key);
+                    FCgDebug.LogError(this.GetType().Name + ".Get: No enum created of type: " + typeof(EnumClass).Name + " and name: " + key);
                 return e;
             }
         }

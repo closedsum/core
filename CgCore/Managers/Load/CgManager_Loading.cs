@@ -98,7 +98,7 @@
 
         public static FCgManager_Loading Get()
         {
-            return _Instance;
+            return Instance;
         }
 
         public void CleanUp()

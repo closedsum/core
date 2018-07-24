@@ -43,6 +43,10 @@ namespace ECsLibraryEnumCached
 		const FString FECsAIState = TEXT("FECsAIState");
 		const FString GetECsAIState = TEXT("GetECsAIState");
 		const FString GetECsAIStateByIndex = TEXT("GetECsAIStateByIndex");
+			// Setup
+		const FString FECsAISetup = TEXT("FECsAISetup");
+		const FString GetECsAISetup = TEXT("GetECsAISetup");
+		const FString GetECsAISetupByIndex = TEXT("GetECsAISetupByIndex");
 	}
 }
 
@@ -205,5 +209,25 @@ FString UCsLibrary_Enum::ECsAIStateToString(const FECsAIState& Enum)
 }
 
 #pragma endregion State
+
+	// Setup
+#pragma region
+
+FECsAISetup UCsLibrary_Enum::GetECsAISetup(const FString& Name)
+{
+	return GetEnum<EMCsAISetup, FECsAISetup>(ECsLibraryEnumCached::Str::GetECsAISetup, ECsLibraryEnumCached::Str::FECsAISetup, Name);
+}
+
+FECsAISetup UCsLibrary_Enum::GetECsAISetupByIndex(const int32& Index)
+{
+	return GetEnumByIndex<EMCsAISetup, FECsAISetup>(ECsLibraryEnumCached::Str::GetECsAISetupByIndex, ECsLibraryEnumCached::Str::FECsAISetup, Index);
+}
+
+FString UCsLibrary_Enum::ECsAISetupToString(const FECsAISetup& Enum)
+{
+	return Enum.ToString();
+}
+
+#pragma endregion Setup
 
 #pragma endregion AI

@@ -224,7 +224,14 @@ public:
 #pragma region
 public:
 
+	UFUNCTION(BlueprintCallable, Category = "Library Enum")
+	FECsAISetup GetECsAISetup(const FString& Name);
 
+	UFUNCTION(BlueprintCallable, Category = "Library Enum")
+	FECsAISetup GetECsAISetupByIndex(const int32& Index);
+
+	UFUNCTION(BlueprintCallable, Category = "Library Enum")
+	FString ECsAISetupToString(const FECsAISetup& Enum);
 
 #pragma endregion Setup
 

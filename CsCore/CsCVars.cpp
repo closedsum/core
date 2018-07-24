@@ -781,4 +781,11 @@ TAutoConsoleVariable<int32> CsCVarDrawManagerSenseAngle(
 	ECVF_SetByConsole | ECVF_SetByCode
 );
 
+TAutoConsoleVariable<int32> CsCVarLogManagerSenseSeesActorByDot(
+	TEXT("log.manager.sense.sees.actor.bydot"),
+	0,
+	TEXT("Log Manager Sense bSeesActorByDot."),
+	ECVF_SetByConsole | ECVF_SetByCode
+);
+
 #pragma endregion Sense

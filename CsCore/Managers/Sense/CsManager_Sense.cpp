@@ -88,7 +88,18 @@ void ACsManager_Sense::Init(AActor* InOwner)
 
 void ACsManager_Sense::Log_bOnSeesActorByDot(const uint64& Observer, const uint64& Observee, const bool& Value)
 {
+#if WITH_EDITORONLY_DATA
+	if (bLogSeesActorByDot || CsCVarLogManagerSenseSeesActorByDot->GetInt() == CS_CVAR_SHOW_LOG)
+#else
+	if (CsCVarLogManagerSenseSeesActorByDot->GetInt() == CS_CVAR_SHOW_LOG)
+#endif // #if #if WITH_EDITORONLY_DATA
+	{
+		UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+		AActor* Actor				  = GameInstance->GetUniqueActorById(Observee);
+		FString Sees				  = Value ? TEXT("First Sees") : TEXT("First UnSees");
 
+ 		UE_LOG(LogCs, Warning, TEXT("ACsManager_Sense::Log_bOnSeesActorByDot (%s): %s %s"), *(GetMyOwner()->GetName()), *Sees, *(Actor->GetName()));
+	}
 }
 
 #endif // #if !UE_BUILD_SHIPPING
@@ -117,6 +128,9 @@ FCsSenseInfo* ACsManager_Sense::Add(AActor* Actor, const TCsSenseTeam& Team)
 		Info.Team			= Team;
 		Info.Init();
 
+#if !UE_BUILD_SHIPPING
+		Info.OnSeesActorByDot_Event.AddUObject(this, &ACsManager_Sense::Log_bOnSeesActorByDot);
+#endif // #if !UE_BUILD_SHIPPING
 		return &Info;
 	}
 	return nullptr;

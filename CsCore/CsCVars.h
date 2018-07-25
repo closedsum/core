@@ -106,6 +106,7 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInteractiveAIPawnPhysicsS
 	// Behavior Tree
 #pragma region
 
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogAIBTTasks;
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawAIBTMoveTo;
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawAIBTRotateToFaceBBEntry;
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawAIBTLookAtAndRotateToFace;

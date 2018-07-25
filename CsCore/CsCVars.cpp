@@ -217,6 +217,13 @@ TAutoConsoleVariable<int32> CsCVarLogInteractiveAIPawnPhysicsStateChange(
 	// Behavior Tree
 #pragma region
 
+TAutoConsoleVariable<int32> CsCVarLogAIBTTasks(
+	TEXT("log.ai.bt.tasks"),
+	0,
+	TEXT("Log A.I. Behavior Tree Tasks (Execute, Succeeded, and Abort)."),
+	ECVF_SetByConsole
+);
+
 TAutoConsoleVariable<int32> CsCVarDrawAIBTMoveTo(
 	TEXT("draw.ai.bt.moveto"),
 	0,

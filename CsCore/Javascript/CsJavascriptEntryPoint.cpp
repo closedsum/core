@@ -2,16 +2,21 @@
 #include "Javascript/CsJavascriptEntryPoint.h"
 #include "CsCore.h"
 #include "Common/CsCommon.h"
-#include "Game/CsGameInstance.h"
-#include "Data/CsDataMapping.h"
-#include "Coroutine/CsCoroutineScheduler.h"
-#include "Game/CsGameState.h"
-#include "Player/CsPlayerController.h"
-#include "UI/CsUI.h"
-#include "Player/CsPlayerState.h"
 
+#include "Coroutine/CsCoroutineScheduler.h"
+
+// Game
+#include "Game/CsGameInstance.h"
+#include "Game/CsGameState.h"
+// UI
+#include "UI/CsUI.h"
+// Player
+#include "Player/CsPlayerController.h"
+#include "Player/CsPlayerState.h"
 // Managers
 #include "Managers/Input/CsManager_Input.h"
+// Data
+#include "Data/CsDataMapping.h"
 
 #if WITH_EDITOR
 #include "../Plugins/UnrealJS/Source/V8/Public/JavascriptIsolate.h"

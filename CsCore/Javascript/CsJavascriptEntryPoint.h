@@ -8,40 +8,44 @@
 // Enums
 #pragma region
 
-UENUM(BlueprintType)
-namespace ECsRoutineJavascriptEntryPoint
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsJavascriptEntryPointRoutine : public FECsEnum_uint8
 {
-	enum Type
-	{
-		Setup_Internal						UMETA(DisplayName = "Setup_Internal"),
-		ECsRoutineJavascriptEntryPoint_MAX	UMETA(Hidden),
-	};
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FECsJavascriptEntryPointRoutine() {}
+	FECsJavascriptEntryPointRoutine(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
+	FECsJavascriptEntryPointRoutine(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	~FECsJavascriptEntryPointRoutine() {}
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsJavascriptEntryPointRoutine& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-namespace ECsRoutineJavascriptEntryPoint
+struct CSCORE_API EMCsJavascriptEntryPointRoutine : public TCsEnumStructMap<FECsJavascriptEntryPointRoutine, uint8>
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
+protected:
+	EMCsJavascriptEntryPointRoutine() {}
+	EMCsJavascriptEntryPointRoutine(const EMCsJavascriptEntryPointRoutine &) = delete;
+	EMCsJavascriptEntryPointRoutine(EMCsJavascriptEntryPointRoutine &&) = delete;
+public:
+	~EMCsJavascriptEntryPointRoutine() {}
+private:
+	static EMCsJavascriptEntryPointRoutine* Instance;
 
-	namespace Str
-	{
-		const TCsString Setup_Internal = TCsString(TEXT("Setup_Internal"), TEXT("setup_internal"), TEXT("setup internal"));
-	}
+public:
+	static EMCsJavascriptEntryPointRoutine& Get();
+};
 
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::Setup_Internal) { return Str::Setup_Internal.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::Setup_Internal) { return Type::Setup_Internal; }
-		return Type::ECsRoutineJavascriptEntryPoint_MAX;
-	}
+namespace ECsJavascriptEntryPointRoutine
+{
+	extern CSCORE_API const FECsJavascriptEntryPointRoutine Setup_Internal;
 }
-
-#define EMBO_ROUTINE_JAVASCRIPT_ENTRY_POINT_MAX (uint8)ECsRoutineJavascriptEntryPoint::ECsRoutineJavascriptEntryPoint_MAX
-typedef ECsRoutineJavascriptEntryPoint::Type TCsRoutineJavascriptEntryPoint;
 
 #pragma endregion Enums
 
@@ -61,9 +65,7 @@ public:
 #if WITH_EDITOR
 
 	void Setup();
-
 	static char Setup_Internal(FCsRoutine* r);
-
 	FCsRoutine* Setup_Internal_Routine;
 
 	virtual bool HasCompletedAdditionalSetup();
@@ -88,10 +90,10 @@ public:
 public:
 
 	static void AddRoutine(UObject* InJavascriptEntryPoint, struct FCsRoutine* Routine, const uint8 &Type);
-	void AddRoutine_Internal(struct FCsRoutine* Routine, const TCsRoutineJavascriptEntryPoint &Type);
+	void AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type);
 
 	static void RemoveRoutine(UObject* InJavascriptEntryPoint, struct FCsRoutine* Routine, const uint8 &Type);
-	void RemoveRoutine_Internal(struct FCsRoutine* Routine, const TCsRoutineJavascriptEntryPoint &Type);
+	void RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type);
 
 #pragma endregion Routines
 

@@ -1,16 +1,17 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
 #include "AI/BehaviorTree/Tasks/CsBTTask_SetKey.h"
-#include "GameFramework/Actor.h"
-#include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
-#include "AIController.h"
-
+#include "CsCore.h"
+#include "CsCVars.h"
 #include "Common/CsCommon.h"
+
+// Behavior Tree
+#include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
+#include "BehaviorTree/BehaviorTree.h"
 // AI
+#include "AIController.h"
 #include "AI/Pawn/CsAIPawn.h"
 #include "AI/CsAIPlayerState.h"
-// Data
-#include "Data/CsData_Character.h"
 
 UCsBTTask_SetKey::UCsBTTask_SetKey(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -72,6 +73,15 @@ EBTNodeResult::Type UCsBTTask_SetKey::ExecuteTask(UBehaviorTreeComponent& OwnerC
 	{
 	}
 	*/
+
+#if !UE_BUILD_SHIPPING
+	if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)
+	{
+		UBehaviorTree* BTree = OwnerComp.GetCurrentTree();
+
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_SetKey::ExecuteTask (%s.%s): Succeeded."), *(Pawn->GetName()), *(BTree->GetName()));
+	}
+#endif // #if !UE_BUILD_SHIPPING
 	return EBTNodeResult::Succeeded;
 }
 

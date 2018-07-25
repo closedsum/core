@@ -1,12 +1,14 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
 #include "AI/BehaviorTree/Tasks/CsBTTask_PlayMontage.h"
+#include "CsCore.h"
+#include "CsCVars.h"
+
+// Behavior Tree
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
-#include "AIController.h"
-
-#include "CsCore.h"
 // AI
+#include "AIController.h"
 #include "AI/Pawn/CsAIPawn.h"
 // Data
 #include "Data/CsData_Character.h"
@@ -46,14 +48,14 @@ EBTNodeResult::Type UCsBTTask_PlayMontage::ExecuteTask(UBehaviorTreeComponent& O
 
 	if (!Pawn)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_PlayMontage (%s.%s): This Task only works with Pawns derived from ACsAIPawn."), *(BasePawn->GetName()), *(BTree->GetName()));
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_PlayMontage::ExecuteTask (%s.%s): This Task only works with Pawns derived from ACsAIPawn."), *(BasePawn->GetName()), *(BTree->GetName()));
 		return EBTNodeResult::Failed;
 	}
 
 #if WITH_EDITORONLY_DATA
 	if (bAnim && !Anim)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_PlayMontage (%s.%s): No Anim Set."), *(BasePawn->GetName()), *(BTree->GetName()));
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_PlayMontage::ExecuteTask (%s.%s): No Anim Set."), *(BasePawn->GetName()), *(BTree->GetName()));
 		return EBTNodeResult::Failed;
 	}
 #endif // #if WITH_EDITORONLY_DATA
@@ -67,7 +69,7 @@ EBTNodeResult::Type UCsBTTask_PlayMontage::ExecuteTask(UBehaviorTreeComponent& O
 
 		if (!AnimToPlay)
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsBTTask_PlayMontage (%s.%s): Data: %s has NO Anim set for AnimType: %s"), *(BasePawn->GetName()), *(BTree->GetName()), *(Data->ShortCode.ToString()), *(AnimType.Name));
+			UE_LOG(LogCs, Warning, TEXT("UCsBTTask_PlayMontage::ExecuteTask (%s.%s): Data: %s has NO Anim set for AnimType: %s"), *(BasePawn->GetName()), *(BTree->GetName()), *(Data->ShortCode.ToString()), *(AnimType.Name));
 			return EBTNodeResult::Failed;
 		}
 	}
@@ -86,7 +88,15 @@ EBTNodeResult::Type UCsBTTask_PlayMontage::ExecuteTask(UBehaviorTreeComponent& O
 	}
 
 	if (!bWaitUntilFinished)
+	{
+#if !UE_BUILD_SHIPPING
+		if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)
+		{
+			UE_LOG(LogCs, Warning, TEXT("UCsBTTask_PlayMontage::ExecuteTask (%s.%s): Succeeded."), *(Pawn->GetName()), *(BTree->GetName()));
+		}
+#endif // #if !UE_BUILD_SHIPPING
 		return EBTNodeResult::Succeeded;
+	}
 
 	FCsBTTask_PlayMontage* MyMemory = (FCsBTTask_PlayMontage*)NodeMemory;
 	check(MyMemory);
@@ -95,6 +105,12 @@ EBTNodeResult::Type UCsBTTask_PlayMontage::ExecuteTask(UBehaviorTreeComponent& O
 
 	InversePlayRate = 1.0f / PlayRate;
 
+#if !UE_BUILD_SHIPPING
+	if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_PlayMontage::ExecuteTask (%s.%s): InProgress."), *(Pawn->GetName()), *(BTree->GetName()));
+	}
+#endif // #if !UE_BUILD_SHIPPING
 	return EBTNodeResult::InProgress;
 }
 
@@ -134,7 +150,17 @@ void UCsBTTask_PlayMontage::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* N
 		const float Time = InversePlayRate * CurrentAnim->GetSectionLength(0);
 
 		if (MyMemory->ElapsedTime > Time)
+		{
+#if !UE_BUILD_SHIPPING
+			if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)
+			{
+				UBehaviorTree* BTree = OwnerComp.GetCurrentTree();
+
+				UE_LOG(LogCs, Warning, TEXT("UCsBTTask_PlayMontage::TickTask (%s.%s): Succeeded."), *(Pawn->GetName()), *(BTree->GetName()));
+			}
+#endif // #if !UE_BUILD_SHIPPING
 			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+		}
 	}
 }
 
@@ -160,6 +186,14 @@ EBTNodeResult::Type UCsBTTask_PlayMontage::AbortTask(UBehaviorTreeComponent& Own
 					Data->StopAnimation(Pawn->GetMesh(), AnimType, 0, 0.0f, false);
 				}
 			}
+#if !UE_BUILD_SHIPPING
+			if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)
+			{
+				UBehaviorTree* BTree = OwnerComp.GetCurrentTree();
+
+				UE_LOG(LogCs, Warning, TEXT("UCsBTTask_PlayMontage::AbortTask (%s.%s): Aborted."), *(Pawn->GetName()), *(BTree->GetName()));
+			}
+#endif // #if !UE_BUILD_SHIPPING
 		}
 	}
 	return EBTNodeResult::Aborted;

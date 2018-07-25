@@ -1,12 +1,14 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
 #include "AI/BehaviorTree/Tasks/CsBTTask_ResetAndStopAimAt.h"
+#include "CsCore.h"
+#include "CsCVars.h"
+
+// Behavior Tree
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
-#include "AIController.h"
-
-#include "CsCore.h"
 // AI
+#include "AIController.h"
 #include "AI/Pawn/CsAIPawn.h"
 
 UCsBTTask_ResetAndStopAimtAt::UCsBTTask_ResetAndStopAimtAt(const FObjectInitializer& ObjectInitializer)
@@ -33,7 +35,7 @@ EBTNodeResult::Type UCsBTTask_ResetAndStopAimtAt::ExecuteTask(UBehaviorTreeCompo
 
 	if (!Pawn)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_ResetAndStopAimtAt (%s.%s): This Task only works with Pawns derived from ACsAIPawn."), *(BasePawn->GetName()), *(BTree->GetName()));
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_ResetAndStopAimtAt::ExecuteTask (%s.%s): This Task only works with Pawns derived from ACsAIPawn."), *(BasePawn->GetName()), *(BTree->GetName()));
 		return EBTNodeResult::Failed;
 	}
 
@@ -46,8 +48,22 @@ EBTNodeResult::Type UCsBTTask_ResetAndStopAimtAt::ExecuteTask(UBehaviorTreeCompo
 	if (BlendOutTime <= 0.0f)
 	{
 		Pawn->StopAimAt();
+
+#if !UE_BUILD_SHIPPING
+		if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)
+		{
+			UE_LOG(LogCs, Warning, TEXT("UCsBTTask_ResetAndStopAimtAt::ExecuteTask (%s.%s): Succeeded."), *(Pawn->GetName()), *(BTree->GetName()));
+		}
+#endif // #if !UE_BUILD_SHIPPING
 		return EBTNodeResult::Succeeded;
 	}
+
+#if !UE_BUILD_SHIPPING
+	if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_ResetAndStopAimtAt::ExecuteTask (%s.%s): InProgress."), *(Pawn->GetName()), *(BTree->GetName()));
+	}
+#endif // #if !UE_BUILD_SHIPPING
 	return EBTNodeResult::InProgress;
 }
 
@@ -70,6 +86,15 @@ void UCsBTTask_ResetAndStopAimtAt::TickTask(UBehaviorTreeComponent& OwnerComp, u
 		{
 			ACsAIPawn* Pawn = Cast<ACsAIPawn>(AIController->GetPawn());
 			Pawn->StopAimAt();
+
+#if !UE_BUILD_SHIPPING
+			if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)
+			{
+				UBehaviorTree* BTree = OwnerComp.GetCurrentTree();
+
+				UE_LOG(LogCs, Warning, TEXT("UCsBTTask_ResetAndStopAimtAt::TickTask (%s.%s): Succeeded."), *(Pawn->GetName()), *(BTree->GetName()));
+			}
+#endif // #if !UE_BUILD_SHIPPING
 			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 		}
 	}
@@ -83,6 +108,15 @@ EBTNodeResult::Type UCsBTTask_ResetAndStopAimtAt::AbortTask(UBehaviorTreeCompone
 		{
 			Pawn->ResetAimAt(0.0f);
 			Pawn->StopAimAt();
+
+#if !UE_BUILD_SHIPPING
+			if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)
+			{
+				UBehaviorTree* BTree = OwnerComp.GetCurrentTree();
+
+				UE_LOG(LogCs, Warning, TEXT("UCsBTTask_ResetAndStopAimtAt::AbortTask (%s.%s): Aborted."), *(Pawn->GetName()), *(BTree->GetName()));
+			}
+#endif // #if !UE_BUILD_SHIPPING
 		}
 	}
 	return EBTNodeResult::Aborted;

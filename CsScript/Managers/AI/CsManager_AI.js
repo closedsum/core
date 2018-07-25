@@ -3,11 +3,11 @@
 
 "use strict"
 
-var JsCsManager = require('CsScript/Managers/CsManager.js');
+var JsCsManager_PooledObjects_TMap = require('CsScript/Managers/CsManager_PooledObjects_TMap.js');
 
 var me;
 
-module.exports = class JsCsManager_AI extends JsCsManager
+module.exports = class JsCsManager_AI extends JsCsManager_PooledObjects_TMap
 {
     constructor()
     {
@@ -20,6 +20,8 @@ module.exports = class JsCsManager_AI extends JsCsManager
     {
         super.Init(inPtr, inRoot);
         
-        this.ptr = CsManager_AI.C(inPtr);
+        this.ptr = ICsManager_AI.C(inPtr);
+
+
     }
 }

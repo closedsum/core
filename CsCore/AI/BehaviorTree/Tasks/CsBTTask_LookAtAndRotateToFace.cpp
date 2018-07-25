@@ -244,7 +244,8 @@ EBTNodeResult::Type UCsBTTask_LookAtAndRotateToFace::AbortTask(UBehaviorTreeComp
 	{
 		if (ACsAIPawn* Pawn = Cast<ACsAIPawn>(AIController->GetPawn()))
 		{
-			Pawn->StopLookAt(0.0f /*Immediately*/);
+			if (bStopOnAbort)
+				Pawn->StopLookAt(0.0f /*Immediately*/);
 #if !UE_BUILD_SHIPPING
 			if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)
 			{

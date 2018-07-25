@@ -28,6 +28,9 @@ class CSCORE_API UCsBTTask_LookAtAndRotateToFace : public UBTTask_BlackboardBase
 protected:
 
 	UPROPERTY(EditAnywhere, Category = Node)
+	bool bStopOnAbort;
+
+	UPROPERTY(EditAnywhere, Category = Node)
 	FName Bone;
 	/** Success condition when the Actor's facing direction is within delta */
 	UPROPERTY(EditAnywhere, Category = Node, meta = (ClampMin = "0.0", UIMin = "0.0"))

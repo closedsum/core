@@ -70,6 +70,9 @@ class CSCORE_API UCsBTTask_LookAt : public UBTTask_BlackboardBase
 protected:
 
 	UPROPERTY(EditAnywhere, Category = Node)
+	bool bStopOnAbort;
+
+	UPROPERTY(EditAnywhere, Category = Node)
 	TEnumAsByte<ECsBTTask_LookAtType::Type> Type;
 
 	UPROPERTY(EditAnywhere, Category = Node, meta = (ClampMin = "0.0", UIMin = "0.0"))

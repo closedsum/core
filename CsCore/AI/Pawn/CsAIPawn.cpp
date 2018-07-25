@@ -215,7 +215,8 @@ FRotator ACsAIPawn::GetFinalLookAtRotation(AActor* Target, const FName &Bone) { 
 FRotator ACsAIPawn::GetFinalLookAtRotation(const FVector &Target){ return FRotator(CurrentAimPitch, CurrentAimYaw, 0.0f); }
 void ACsAIPawn::LookAtLocation(const FVector &Target, const float &LookRate, const float &LookTime){}
 void ACsAIPawn::LookAtActor(AActor* Target, const FName &Bone, const float &LookRate, const float &LookTime){}
-void ACsAIPawn::StopLookAt(const float &BlendOutRate){}
+void ACsAIPawn::ResetLookAt(const float &BlendOutRate){}
+void ACsAIPawn::StopLookAt(){}
 
 #pragma endregion LookAt
 

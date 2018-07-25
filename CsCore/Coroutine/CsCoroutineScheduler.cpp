@@ -432,9 +432,11 @@ struct FCsRoutine* UCsCoroutineScheduler::StartChild(FCsCoroutinePayload* Payloa
 			}
 
 			R->Run(0.0f);
+			Payload->Reset();
 			return R;
 		}
 	}
+	Payload->Reset();
 	UE_LOG(LogCs, Warning, TEXT("UCsCoroutineScheduler::StartChild: No free Routines. Look for Runaway Coroutines or consider raising the pool size."));
 	return nullptr;
 }

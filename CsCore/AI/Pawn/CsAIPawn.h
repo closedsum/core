@@ -266,7 +266,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
 	virtual void LookAtActor(AActor* Target, const FName &Bone, const float &LookRate, const float &LookTime);
 	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
-	virtual void StopLookAt(const float &BlendOutRate);
+	virtual void ResetLookAt(const float &BlendOutRate);
+	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
+	virtual void StopLookAt();
 
 #pragma endregion LookAt
 

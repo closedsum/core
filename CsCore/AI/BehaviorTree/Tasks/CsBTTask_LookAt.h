@@ -70,7 +70,7 @@ class CSCORE_API UCsBTTask_LookAt : public UBTTask_BlackboardBase
 protected:
 
 	UPROPERTY(EditAnywhere, Category = Node)
-	bool bStopOnAbort;
+	bool bResetOnAbort;
 
 	UPROPERTY(EditAnywhere, Category = Node)
 	TEnumAsByte<ECsBTTask_LookAtType::Type> Type;

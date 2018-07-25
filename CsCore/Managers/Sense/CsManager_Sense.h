@@ -96,11 +96,22 @@ public:
 #pragma region
 public:
 
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
 	bool bDrawRadius;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
 	bool bDrawAngle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
+	bool bLogSeesActorByDot;
+#endif // #if WITH_EDITORONLY_DATA
+
+#if !UE_BUILD_SHIPPING
+
+	void Log_bOnSeesActorByDot(const uint64& Observer, const uint64& Observee, const bool& Value);
+
+#endif // #if !UE_BUILD_SHIPPING
 
 #pragma endregion Debug
 

@@ -201,7 +201,7 @@ namespace CgCore
 
             if (e != null)
             {
-                CgDebug.LogError(this.GetType().Name + ".Create: Enum with name: " + name + " already exists. It is being defined in move than one place.");
+                FCgDebug.LogError(this.GetType().Name + ".Create: Enum with name: " + name + " already exists. It is being defined in move than one place.");
                 return e;
             }
 
@@ -238,7 +238,7 @@ namespace CgCore
                 StringMap.TryGetValue(key, out e);
 
                 if (e == null)
-                    CgDebug.LogError(this.GetType().Name + ".Get: No enum created of type: " + typeof(EnumClass).Name + " and name: " + key);
+                    FCgDebug.LogError(this.GetType().Name + ".Get: No enum created of type: " + typeof(EnumClass).Name + " and name: " + key);
                 return e;
             }
         }
@@ -251,7 +251,7 @@ namespace CgCore
                 TypeMap.TryGetValue(key, out e);
 
                 if (e == null)
-                    CgDebug.LogError(this.GetType().Name + ".Get: No enum created of type: " + typeof(EnumClass).Name + " and name: " + key);
+                    FCgDebug.LogError(this.GetType().Name + ".Get: No enum created of type: " + typeof(EnumClass).Name + " and name: " + key);
                 return e;
             }
         }
@@ -338,7 +338,7 @@ namespace CgCore
 
             if (e != null)
             {
-                CgDebug.LogError(this.GetType().Name + ".Create: Enum with name: " + name + " already exists. It is being defined in move than one place.");
+                FCgDebug.LogError(this.GetType().Name + ".Create: Enum with name: " + name + " already exists. It is being defined in move than one place.");
                 return e;
             }
 
@@ -373,7 +373,7 @@ namespace CgCore
                 StringMap.TryGetValue(key, out e);
 
                 if (e == null)
-                    CgDebug.LogError(this.GetType().Name + ".Get: No enum created of type: " + typeof(EnumClass).Name + " and name: " + key);
+                    FCgDebug.LogError(this.GetType().Name + ".Get: No enum created of type: " + typeof(EnumClass).Name + " and name: " + key);
                 return e;
             }
         }
@@ -386,7 +386,7 @@ namespace CgCore
                 TypeMap.TryGetValue(key, out e);
 
                 if (e == null)
-                    CgDebug.LogError(this.GetType().Name + ".Get: No enum created of type: " + typeof(EnumClass).Name + " and name: " + key);
+                    FCgDebug.LogError(this.GetType().Name + ".Get: No enum created of type: " + typeof(EnumClass).Name + " and name: " + key);
                 return e;
             }
         }
@@ -451,7 +451,7 @@ namespace CgCore
         public abstract void Resolve();
     }
 
-    public class TCgPropertyType<T> : CgProperty 
+    public class TCgProperty<T> : CgProperty 
         where T : struct
     {
         public sealed class OnChange : TCgMulticastDelegate_OneParam<T> { }
@@ -467,14 +467,14 @@ namespace CgCore
 
         #endregion // Data Members
 
-        public TCgPropertyType()
+        public TCgProperty()
         {
             OnChange_Event = new OnChange();
         }
 
         #region "Operators"
 
-        public static bool operator ==(TCgPropertyType<T> lhs, TCgPropertyType<T> rhs)
+        public static bool operator ==(TCgProperty<T> lhs, TCgProperty<T> rhs)
         {
             if (object.ReferenceEquals(lhs, null))
                 return object.ReferenceEquals(rhs, null);
@@ -483,37 +483,37 @@ namespace CgCore
             return lhs.Value.Equals(rhs.Value);
         }
 
-        public static bool operator !=(TCgPropertyType<T> lhs, TCgPropertyType<T> rhs)
+        public static bool operator !=(TCgProperty<T> lhs, TCgProperty<T> rhs)
         {
             return !(lhs == rhs);
         }
 
-        public static bool operator ==(TCgPropertyType<T> lhs, T rhs)
+        public static bool operator ==(TCgProperty<T> lhs, T rhs)
         {
             return lhs.Value.Equals(rhs);
         }
 
-        public static bool operator !=(TCgPropertyType<T> lhs, T rhs)
+        public static bool operator !=(TCgProperty<T> lhs, T rhs)
         {
             return !(lhs == rhs);
         }
 
-        public static bool operator ==(T lhs, TCgPropertyType<T> rhs)
+        public static bool operator ==(T lhs, TCgProperty<T> rhs)
         {
             return lhs.Equals(rhs.Value);
         }
 
-        public static bool operator !=(T lhs, TCgPropertyType<T> rhs)
+        public static bool operator !=(T lhs, TCgProperty<T> rhs)
         {
             return !(lhs == rhs);
         }
 
         public override bool Equals(object obj)
         {
-            if (!(obj is TCgPropertyType<T>))
+            if (!(obj is TCgProperty<T>))
                 return false;
 
-            TCgPropertyType<T> rhs = (TCgPropertyType<T>)obj;
+            TCgProperty<T> rhs = (TCgProperty<T>)obj;
 
             if (!Value.Equals(rhs.Value)) return false;
             return true;
@@ -528,7 +528,8 @@ namespace CgCore
 
         public override void UpdateIsDirty()
         {
-            IsDirty = !Value.Equals(Last_Value);
+            IsDirty    = !Value.Equals(Last_Value);
+            Last_Value = Value;
 
             if (IsDirty)
                 OnChange_Event.Broadcast(Value);
@@ -544,7 +545,6 @@ namespace CgCore
 
         public override void Clear()
         {
-            Last_Value = Value;
             IsDirty = false;
         }
 
@@ -636,7 +636,8 @@ namespace CgCore
 
         public virtual void UpdateIsDirty()
         {
-            IsDirty = !Value.Equals(Last_Value);
+            IsDirty    = !Value.Equals(Last_Value);
+            Last_Value = Value;
 
             if (IsDirty)
                 OnChange_Event.Broadcast(Value);
@@ -644,7 +645,8 @@ namespace CgCore
 
         public virtual void UpdateIsDirtys(KeyType key)
         {
-            IsDirtys[key] = !Values[key].Equals(Last_Values[key]);
+            IsDirtys[key]     = !Values[key].Equals(Last_Values[key]);
+            Last_Values[key] = Values[key];
 
             if (IsDirtys[key])
                 OnChangeMap_Event.Broadcast(key, Values[key]);
@@ -694,14 +696,12 @@ namespace CgCore
 
         public void Clear()
         {
-            Last_Value = Value;
             IsDirty = false;
 
             Dictionary<KeyType, ValueType>.KeyCollection keys = Values.Keys;
 
             foreach (KeyType key in keys)
 		    {
-                Last_Values[key] = Values[key];
                 IsDirtys[key] = false;
             }
         }

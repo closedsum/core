@@ -370,7 +370,7 @@
 
             if (!type.IsSubclassOf(typeof(FCgBlockchain)))
             {
-                CgDebug.Log("FCgBlockchain.Init: Passed in Type of " + type.GetType().Name + " is NOT a SubclassOf FCgBlockchain");
+                FCgDebug.Log("FCgBlockchain.Init: Passed in Type of " + type.GetType().Name + " is NOT a SubclassOf FCgBlockchain");
                 return;
             }
             ConstructorInfo constructor = type.GetConstructor(Type.EmptyTypes);

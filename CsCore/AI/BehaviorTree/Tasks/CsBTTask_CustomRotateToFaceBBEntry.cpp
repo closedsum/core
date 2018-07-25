@@ -1,15 +1,18 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
 #include "AI/BehaviorTree/Tasks/CsBTTask_CustomRotateToFaceBBEntry.h"
-#include "GameFramework/Actor.h"
+#include "CsCore.h"
+#include "CsCVars.h"
+#include "Common/CsCommon.h"
+
+// Behavior Tree
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Rotator.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "BehaviorTree/BehaviorTree.h"
+// AI
 #include "AIController.h"
-
-#include "Common/CsCommon.h"
-
 #include "AI/Pawn/CsAIPawn.h"
 #include "AI/CsAIPlayerState.h"
 
@@ -148,6 +151,16 @@ EBTNodeResult::Type UCsBTTask_CustomRotateToFaceBBEntry::ExecuteTask(UBehaviorTr
 		Pawn->OnBTTask_RotateToFaceBBEntry_Start_ScriptEvent.Broadcast(PlayerState->UniqueMappingId, AngleDifference, RotationRate);
 #endif // #if WITH_EDITOR
 	}
+
+#if !UE_BUILD_SHIPPING
+	if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)
+	{
+		UBehaviorTree* BTree		 = OwnerComp.GetCurrentTree();
+		const FString ResultAsString = Result == EBTNodeResult::Succeeded ? TEXT("Succeeded") : TEXT("InProgress");
+
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_CustomRotateToFaceBBEntry::ExecuteTask (%s.%s): %s."), *(Pawn->GetName()), *(BTree->GetName()), *ResultAsString);
+	}
+#endif // #if !UE_BUILD_SHIPPING
 	return Result;
 }
 
@@ -186,6 +199,15 @@ void UCsBTTask_CustomRotateToFaceBBEntry::TickTask(UBehaviorTreeComponent& Owner
 #if WITH_EDITOR
 			Pawn->OnBTTask_RotateToFaceBBEntry_Finish_ScriptEvent.Broadcast(PlayerState->UniqueMappingId);
 #endif // #if WITH_EDITOR
+
+#if !UE_BUILD_SHIPPING
+			if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)
+			{
+				UBehaviorTree* BTree = OwnerComp.GetCurrentTree();
+
+				UE_LOG(LogCs, Warning, TEXT("UCsBTTask_CustomRotateToFaceBBEntry::TickTask (%s.%s): Succeeded."), *(Pawn->GetName()), *(BTree->GetName()));
+			}
+#endif // #if !UE_BUILD_SHIPPING
 		}
 		// LERP to goal Angle
 		else
@@ -202,6 +224,7 @@ void UCsBTTask_CustomRotateToFaceBBEntry::TickTask(UBehaviorTreeComponent& Owner
 
 			AIController->SetFocalPoint(UpdatedFocalPoint, EAIFocusPriority::Gameplay);
 
+#if !UE_BUILD_SHIPPING
 			if (CsCVarDrawAIBTRotateToFaceBBEntry->GetInt() == CS_CVAR_DRAW)
 			{
 				UWorld* World = Pawn->GetWorld();
@@ -228,6 +251,7 @@ void UCsBTTask_CustomRotateToFaceBBEntry::TickTask(UBehaviorTreeComponent& Owner
 
 				DrawDebugDirectionalArrow(World, Origin, End, 10.0f, FColor::Red, false, DeltaSeconds + 0.005f, 0, Thickness);
 			}
+#endif // #if !UE_BUILD_SHIPPING
 		}
 	}
 }
@@ -239,6 +263,18 @@ EBTNodeResult::Type UCsBTTask_CustomRotateToFaceBBEntry::AbortTask(UBehaviorTree
 	if (AIController != NULL)
 	{
 		CleanUp(*AIController, NodeMemory);
+
+		if (ACsAIPawn* Pawn = Cast<ACsAIPawn>(AIController->GetPawn()))
+		{
+#if !UE_BUILD_SHIPPING
+			if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)
+			{
+				UBehaviorTree* BTree = OwnerComp.GetCurrentTree();
+
+				UE_LOG(LogCs, Warning, TEXT("UCsBTTask_CustomRotateToFaceBBEntry::AbortTask (%s.%s): Aborted."), *(Pawn->GetName()), *(BTree->GetName()));
+			}
+#endif // #if !UE_BUILD_SHIPPING
+		}
 	}
 
 	return EBTNodeResult::Aborted;

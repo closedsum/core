@@ -42,9 +42,9 @@ namespace CgCore
 
         public delegate void InsertRoutineAheadOf(ECgCoroutineSchedule schedule, FCgRoutine pivot, FCgRoutine insert);
 
-        public sealed class FFrameType : TCgPropertyType<int> { }
-        public sealed class FTimeType : TCgPropertyType<float> { }
-        public sealed class FBoolType : TCgPropertyType<bool> { }
+        public sealed class FFrameType : TCgProperty<int> { }
+        public sealed class FTimeType : TCgProperty<float> { }
+        public sealed class FBoolType : TCgProperty<bool> { }
         public sealed class FListenMessageType : TCgPropertyClass<string> { }
 
         #region "Constants"

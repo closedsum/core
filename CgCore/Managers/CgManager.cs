@@ -349,7 +349,7 @@
 
             if (!PoolSizes.TryGetValue(e, out size))
             {
-                CgDebug.LogError(this.GetType().Name + ".Allocate: Pool: " + EnumTypeToString(e) + " is exhausted.");
+                FCgDebug.LogError(this.GetType().Name + ".Allocate: Pool: " + EnumTypeToString(e) + " is exhausted.");
                 return null;
             }
 
@@ -366,7 +366,7 @@
                     return o;
                 }
             }
-            CgDebug.LogError(this.GetType().Name + ".Allocate: Pool: " + EnumTypeToString(e) + " is exhausted.");
+            FCgDebug.LogError(this.GetType().Name + ".Allocate: Pool: " + EnumTypeToString(e) + " is exhausted.");
             return null;
         }
 
@@ -376,7 +376,7 @@
 
             if (!ActiveObjects.TryGetValue(e, out pool))
             {
-                CgDebug.LogError(this.GetType().Name + ".DeAllocate: Object of Type: " + EnumTypeToString(e) + " at " + index + " is already deallocated.");
+                FCgDebug.LogError(this.GetType().Name + ".DeAllocate: Object of Type: " + EnumTypeToString(e) + " at " + index + " is already deallocated.");
                 return false;
             }
 
@@ -409,7 +409,7 @@
                 o.Cache.ActiveIndex = i;
             }
 
-            CgDebug.LogError(this.GetType().Name + ".DeAllocate: Object of Type: " + EnumTypeToString(e) + " at " + index + " is already deallocated.");
+            FCgDebug.LogError(this.GetType().Name + ".DeAllocate: Object of Type: " + EnumTypeToString(e) + " at " + index + " is already deallocated.");
             return false;
         }
 
@@ -454,7 +454,7 @@
                     return payload;
                 }
             }
-            CgDebug.LogError(this.GetType().Name + ".AllocatePayload: Pool is exhausted.");
+            FCgDebug.LogError(this.GetType().Name + ".AllocatePayload: Pool is exhausted.");
             return default(PayloadType);
         }
 

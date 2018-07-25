@@ -1,15 +1,16 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
 #include "AI/BehaviorTree/Tasks/CsBTTask_CustomWait.h"
-#include "GameFramework/Actor.h"
+#include "CsCore.h"
+#include "CsCVars.h"
+
+// Behavior Tree
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
-#include "AIController.h"
-
-#include "CsCore.h"
 // AI
+#include "AIController.h"
 #include "AI/Pawn/CsAIPawn.h"
 #include "AI/CsAIPlayerState.h"
 // Weapon
@@ -74,31 +75,31 @@ EBTNodeResult::Type UCsBTTask_CustomWait::ExecuteTask(UBehaviorTreeComponent& Ow
 
 	if (!Pawn)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s.%s): This Task only works with Pawns derived from ACsAIPawn."), *(BasePawn->GetName()), *(BTree->GetName()));
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot::ExecuteTask (%s.%s): This Task only works with Pawns derived from ACsAIPawn."), *(BasePawn->GetName()), *(BTree->GetName()));
 		return EBTNodeResult::Failed;
 	}
 
 	if (!bTime && !bFrames && Keys.Num() == CS_EMPTY)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s.%s): Either Time must be SET, Frames must be SET, or there must be AT LEAST 1 Key Added to Keys."), *(Pawn->GetName()), *(BTree->GetName()));
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot::ExecuteTask (%s.%s): Either Time must be SET, Frames must be SET, or there must be AT LEAST 1 Key Added to Keys."), *(Pawn->GetName()), *(BTree->GetName()));
 		return EBTNodeResult::Failed;
 	}
 
 	if (bTime && bFrames)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s.%s): Both Time and Frames can NOT be SET at the same time."), *(Pawn->GetName()), *(BTree->GetName()));
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot::ExecuteTask (%s.%s): Both Time and Frames can NOT be SET at the same time."), *(Pawn->GetName()), *(BTree->GetName()));
 		return EBTNodeResult::Failed;
 	}
 
 	if (bTime && Time <= 0.0f)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s.%s): Time must be > 0.0f."), *(Pawn->GetName()), *(BTree->GetName()));
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot::ExecuteTask (%s.%s): Time must be > 0.0f."), *(Pawn->GetName()), *(BTree->GetName()));
 		return EBTNodeResult::Failed;
 	}
 
 	if (bFrames && Frames <= 0)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s.%s): Frames must be > 0."), *(Pawn->GetName()), *(BTree->GetName()));
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot::ExecuteTask (%s.%s): Frames must be > 0."), *(Pawn->GetName()), *(BTree->GetName()));
 		return EBTNodeResult::Failed;
 	}
 
@@ -113,6 +114,13 @@ EBTNodeResult::Type UCsBTTask_CustomWait::ExecuteTask(UBehaviorTreeComponent& Ow
 		if (!Key.IsValid())
 			return EBTNodeResult::Failed;
 	}
+
+#if !UE_BUILD_SHIPPING
+	if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_CustomWait::ExecuteTask (%s.%s): InProgress."), *(Pawn->GetName()), *(BTree->GetName()));
+	}
+#endif // #if !UE_BUILD_SHIPPING
 	return EBTNodeResult::InProgress;
 }
 
@@ -146,7 +154,18 @@ void UCsBTTask_CustomWait::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* No
 		}
 
 		if (Pass)
+		{
+#if !UE_BUILD_SHIPPING
+			if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)
+			{
+				ACsAIPawn* Pawn		 = Cast<ACsAIPawn>(AIController->GetPawn());
+				UBehaviorTree* BTree = OwnerComp.GetCurrentTree();
+
+				UE_LOG(LogCs, Warning, TEXT("UCsBTTask_CustomWait::TickTask (%s.%s): Succeeded."), *(Pawn->GetName()), *(BTree->GetName()));
+			}
+#endif // #if !UE_BUILD_SHIPPING
 			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+		}
 	}
 }
 

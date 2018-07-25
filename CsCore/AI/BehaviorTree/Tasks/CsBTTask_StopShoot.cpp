@@ -9,6 +9,7 @@
 #include "AIController.h"
 
 #include "CsCore.h"
+#include "CsCVars.h"
 // AI
 #include "AI/Pawn/CsAIPawn.h"
 
@@ -36,14 +37,29 @@ EBTNodeResult::Type UCsBTTask_StopShoot::ExecuteTask(UBehaviorTreeComponent& Own
 
 	if (!Pawn)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_StopShoot (%s.%s): This Task only works with Pawns derived from ACsAIPawn."), *(BasePawn->GetName()), *(BTree->GetName()));
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_StopShoot::ExecuteTask (%s.%s): This Task only works with Pawns derived from ACsAIPawn."), *(BasePawn->GetName()), *(BTree->GetName()));
 		return EBTNodeResult::Failed;
 	}
 
 	if (!Pawn->IsShooting())
+	{
+#if !UE_BUILD_SHIPPING
+		if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)
+		{
+			UE_LOG(LogCs, Warning, TEXT("UCsBTTask_StopShoot::ExecuteTask (%s.%s): Succeeded."), *(BasePawn->GetName()), *(BTree->GetName()));
+		}
+#endif // #if !UE_BUILD_SHIPPING
 		return EBTNodeResult::Succeeded;
+	}
 
 	Pawn->StopShoot();
+
+#if !UE_BUILD_SHIPPING
+	if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_StopShoot::ExecuteTask (%s.%s): InProgress."), *(BasePawn->GetName()), *(BTree->GetName()));
+	}
+#endif // #if !UE_BUILD_SHIPPING
 	return EBTNodeResult::InProgress;
 }
 
@@ -60,6 +76,16 @@ void UCsBTTask_StopShoot::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 		ACsAIPawn* Pawn = Cast<ACsAIPawn>(AIController->GetPawn());
 
 		if (!Pawn->IsShooting())
+		{
+#if !UE_BUILD_SHIPPING
+			if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)
+			{
+				UBehaviorTree* BTree = OwnerComp.GetCurrentTree();
+
+				UE_LOG(LogCs, Warning, TEXT("UCsBTTask_StopShoot::TickTask (%s.%s): Succeeded."), *(Pawn->GetName()), *(BTree->GetName()));
+			}
+#endif // #if !UE_BUILD_SHIPPING
 			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+		}
 	}
 }

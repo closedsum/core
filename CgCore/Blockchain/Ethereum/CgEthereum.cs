@@ -441,13 +441,13 @@ namespace CgCore
 
             if (p == null)
             {
-                CgDebug.Log("FCgEthereum.RunCommand: Failed to run command: " + command + ". Process Console has NOT started. Call OpenShell().");
+                FCgDebug.Log("FCgEthereum.RunCommand: Failed to run command: " + command + ". Process Console has NOT started. Call OpenShell().");
                 return;
             }
 
             if (LogIO.Log() || LogIOConsole.Log())
             {
-                CgDebug.Log("Console (Input): " + command);
+                FCgDebug.Log("Console (Input): " + command);
             }
 
             p.RunCommand(command);
@@ -460,7 +460,7 @@ namespace CgCore
 
             if (value == INVALID_COMMAND)
             {
-                CgDebug.LogWarning("FCgEthereum.RunCommand: No command set for " + command.Name);
+                FCgDebug.LogWarning("FCgEthereum.RunCommand: No command set for " + command.Name);
                 return;
             }
 
@@ -492,14 +492,14 @@ namespace CgCore
                     }
                     else
                     {
-                        CgDebug.Log("FCgEthereum.RunCommand: Failed to run command: " + command.Name + ". Wildcard count != Argument count (" + (parts.Length - 1) + "," + args.Length + ")");
+                        FCgDebug.Log("FCgEthereum.RunCommand: Failed to run command: " + command.Name + ". Wildcard count != Argument count (" + (parts.Length - 1) + "," + args.Length + ")");
                     }
                 }
             }
 
             if (LogIO.Log() || LogIOConsole.Log())
             {
-                CgDebug.Log("FCgEthereum.RunCommand: Running command: " + command);
+                FCgDebug.Log("FCgEthereum.RunCommand: Running command: " + command);
             }
             RunCommand(consoleIndex, value);
         }
@@ -520,7 +520,7 @@ namespace CgCore
         {
             if (LogCommandCompleted.Log())
             {
-                CgDebug.Log("FCgEthereum.OnCommandCompleted: Completed command: " + command);
+                FCgDebug.Log("FCgEthereum.OnCommandCompleted: Completed command: " + command);
             }
 
             // SetDataDirectory
@@ -561,7 +561,7 @@ namespace CgCore
         {
             if (LogIO.Log() || LogIOProcess.Log())
             {
-                CgDebug.Log("Process (Output): " + e.Data);
+                FCgDebug.Log("Process (Output): " + e.Data);
             }
         }
 
@@ -569,7 +569,7 @@ namespace CgCore
         {
             if (LogIO.Log() || LogIOProcess.Log())
             {
-                CgDebug.Log("Process (Error): " + e.Data);
+                FCgDebug.Log("Process (Error): " + e.Data);
             }
         }
 
@@ -577,7 +577,7 @@ namespace CgCore
         {
             if (LogIO.Log() || LogIOProcess.Log())
             {
-                CgDebug.Log("Blockchain (Process): Exited");
+                FCgDebug.Log("Blockchain (Process): Exited");
             }
 
             FCgProcess p = Processes[ECgBlockchainProcessType.RunningInstance];
@@ -594,7 +594,7 @@ namespace CgCore
 
             if (LogIO.Log() || LogIOConsole.Log())
             {
-                CgDebug.Log("Console (Output): " + output);
+                FCgDebug.Log("Console (Output): " + output);
             }
 
             ECgBlockchainCommand command = CurrentCommandInfo.Command;
@@ -621,10 +621,10 @@ namespace CgCore
 
                     if (LogAccountCreated.Log())
                     {
-                        CgDebug.Log("Creating Account: " + nickname);
-                        CgDebug.Log("-- Address: " + address);
-                        CgDebug.Log("-- PassPhrase: " + passphrase);
-                        CgDebug.Log("-- writing to: " + accountFilePath);
+                        FCgDebug.Log("Creating Account: " + nickname);
+                        FCgDebug.Log("-- Address: " + address);
+                        FCgDebug.Log("-- PassPhrase: " + passphrase);
+                        FCgDebug.Log("-- writing to: " + accountFilePath);
                     }
 
                     Accounts.Add(nickname, a);
@@ -729,7 +729,7 @@ namespace CgCore
         {
             if (LogIO.Log() || LogIOConsole.Log())
             {
-                CgDebug.Log("Console (Error): " + e.Data);
+                FCgDebug.Log("Console (Error): " + e.Data);
             }
         }
 
@@ -737,7 +737,7 @@ namespace CgCore
         {
             if (LogIO.Log() || LogIOConsole.Log())
             {
-                CgDebug.Log("Blockchain (Console): Exited");
+                FCgDebug.Log("Blockchain (Console): Exited");
             }
 
             Processes[ECgBlockchainProcessType.Console].DeAllocate();
@@ -799,7 +799,7 @@ namespace CgCore
 
                 if (LogProcessStart.Log())
                 {
-                    CgDebug.Log("FCgEthereum.StartProcess: Starting Process (" + processType.ToString() + "): " + startInfo.Filename + " " + startInfo.Arguments);
+                    FCgDebug.Log("FCgEthereum.StartProcess: Starting Process (" + processType.ToString() + "): " + startInfo.Filename + " " + startInfo.Arguments);
                 }
 
                 p = ICgManager_Process.Get().Spawn(EMCgProcess.Get()["Blockchain"], payload);
@@ -808,7 +808,7 @@ namespace CgCore
             }
             else
             {
-                CgDebug.Log("FCgEthereum.StartProcess: StartProcess called for running Process: " + processType.ToString() + " BUT the process is already RUNNING.");
+                FCgDebug.Log("FCgEthereum.StartProcess: StartProcess called for running Process: " + processType.ToString() + " BUT the process is already RUNNING.");
             }
         }
 
@@ -997,8 +997,8 @@ namespace CgCore
                         string[] parts = path.Split(new string[] {"--"}, StringSplitOptions.None);
                         string address = parts[2];
 
-                        CgDebug.Log("FCgEthereum.LoadAccounts: Failed to link Keystore with address: " + address + " to an Account.");
-                        CgDebug.Log("-- deleting: " + path);
+                        FCgDebug.Log("FCgEthereum.LoadAccounts: Failed to link Keystore with address: " + address + " to an Account.");
+                        FCgDebug.Log("-- deleting: " + path);
                     }
                 }
                 else
@@ -1028,8 +1028,8 @@ namespace CgCore
 
                 if (LogAccountLoad.Get())
                 {
-                    CgDebug.Log("FCgEthereum.LoadAccounts: Failed to link Account with Nickname: " + name + " and address: " + account.Address + " to any Keystore.");
-                    CgDebug.Log("-- deleting: " + path);
+                    FCgDebug.Log("FCgEthereum.LoadAccounts: Failed to link Account with Nickname: " + name + " and address: " + account.Address + " to any Keystore.");
+                    FCgDebug.Log("-- deleting: " + path);
                 }
             }
         }
@@ -1043,7 +1043,7 @@ namespace CgCore
 
             if (iaccount != null)
             {
-                CgDebug.LogWarning("FCgEthereum.NewAccount: Account with Nickname: " + info.Nickname + " already exists.");
+                FCgDebug.LogWarning("FCgEthereum.NewAccount: Account with Nickname: " + info.Nickname + " already exists.");
                 return;
             }
 
@@ -1096,8 +1096,8 @@ namespace CgCore
 
                 if (LogAccountCreated.Log() || LogAccountLoad.Get())
                 {
-                    CgDebug.Log("FCgEthereum.CreateKeystore: Keystore linked to Account with Nickname: " + account.Nickname);
-                    CgDebug.Log("-- saved to: " + path);
+                    FCgDebug.Log("FCgEthereum.CreateKeystore: Keystore linked to Account with Nickname: " + account.Nickname);
+                    FCgDebug.Log("-- saved to: " + path);
                 }
             }
         }
@@ -1133,8 +1133,8 @@ namespace CgCore
 
             if (LogAccountCreated.Log())
             {
-                CgDebug.Log("FCgEthereum.CreateKeystore: Keystore created for Account with Nickname: " + account.Nickname);
-                CgDebug.Log("-- saved to: " + keystoreFilePath);
+                FCgDebug.Log("FCgEthereum.CreateKeystore: Keystore created for Account with Nickname: " + account.Nickname);
+                FCgDebug.Log("-- saved to: " + keystoreFilePath);
             }
         }
 
@@ -1222,7 +1222,7 @@ namespace CgCore
 
                     if (LogAccountSetup.Log())
                     {
-                        CgDebug.Log("FCgEthereum.SetupAccount: Created Account for: " + nickname);
+                        FCgDebug.Log("FCgEthereum.SetupAccount: Created Account for: " + nickname);
                     }
                 }
             }
@@ -1236,7 +1236,7 @@ namespace CgCore
 
                 if (LogAccountSetup.Log())
                 {
-                    CgDebug.Log("FCgEthereum.SetupAccount: Unlocked Account (" + nickname + "): " + account.Address);
+                    FCgDebug.Log("FCgEthereum.SetupAccount: Unlocked Account (" + nickname + "): " + account.Address);
                 }
             }
             // Check Balance is above Threshold
@@ -1275,7 +1275,7 @@ namespace CgCore
 
                 if (LogBalance.Log())
                 {
-                    CgDebug.Log("FCgEthereum.BringBalanceToThreshold_Internal: Setting Account (" + nickname + "): " + account.Address + " as coinbase.");
+                    FCgDebug.Log("FCgEthereum.BringBalanceToThreshold_Internal: Setting Account (" + nickname + "): " + account.Address + " as coinbase.");
                 }
 
                 // Start Mining
@@ -1285,7 +1285,7 @@ namespace CgCore
 
                 if (LogBalance.Log())
                 {
-                    CgDebug.Log("FCgEthereum.BringBalanceToThreshold_Internal: Account (" + nickname + "): " + account.Address + " balance is: " + balance + " < " + threshold + ". Start mining.");
+                    FCgDebug.Log("FCgEthereum.BringBalanceToThreshold_Internal: Account (" + nickname + "): " + account.Address + " balance is: " + balance + " < " + threshold + ". Start mining.");
                 }
 
                 float INTERVAL = 0.5f;
@@ -1304,7 +1304,7 @@ namespace CgCore
 
                     if (LogBalance.Log())
                     {
-                        CgDebug.Log("FCgEthereum.BringBalanceToThreshold_Internal: Account (" + nickname + "): " + account.Address + " balance is: " + balance);
+                        FCgDebug.Log("FCgEthereum.BringBalanceToThreshold_Internal: Account (" + nickname + "): " + account.Address + " balance is: " + balance);
                     }
                 }
 
@@ -1315,7 +1315,7 @@ namespace CgCore
 
                 if (LogBalance.Log())
                 {
-                    CgDebug.Log("FCgEthereum.BringBalanceToThreshold_Internal: Finished mining.");
+                    FCgDebug.Log("FCgEthereum.BringBalanceToThreshold_Internal: Finished mining.");
                 }
             }
             // Finish
@@ -1323,7 +1323,7 @@ namespace CgCore
             {
                 if (LogBalance.Log())
                 {
-                    CgDebug.Log("FCgEthereum.BringBalanceToThreshold_Internal: Finished setup for Account (" + nickname + "): " + account.Address);
+                    FCgDebug.Log("FCgEthereum.BringBalanceToThreshold_Internal: Finished setup for Account (" + nickname + "): " + account.Address);
                 }
             }
             eth.BringBalanceToThresholdFlag.Set(true);
@@ -1419,7 +1419,7 @@ namespace CgCore
 
             if (c == null)
             {
-                CgDebug.LogWarning("FCgEthereum.LoadContract: Contract with name: " + econtract + " does NOT exist. Make sure a Contract was initialized with name: " + econtract + " in the constructor.");
+                FCgDebug.LogWarning("FCgEthereum.LoadContract: Contract with name: " + econtract + " does NOT exist. Make sure a Contract was initialized with name: " + econtract + " in the constructor.");
                 return;
             }
 
@@ -1443,7 +1443,7 @@ namespace CgCore
             }
             else
             {
-                CgDebug.LogWarning("FCgEthereum.LoadContract: Failed to find ABI for Contract: " + econtract + " at: " + abiPath);
+                FCgDebug.LogWarning("FCgEthereum.LoadContract: Failed to find ABI for Contract: " + econtract + " at: " + abiPath);
             }
 
             // If Contract is "new", setup Web3Deploy and Javascript file
@@ -1458,7 +1458,7 @@ namespace CgCore
                 }
                 else
                 {
-                    CgDebug.LogWarning("FCgEthereum.LoadContract: Failed to find Web3Deploy for Contract: " + econtract + " at: " + web3DeployPath);
+                    FCgDebug.LogWarning("FCgEthereum.LoadContract: Failed to find Web3Deploy for Contract: " + econtract + " at: " + web3DeployPath);
                 }
 
                 // Check if Contract Web3Deploy Linked (Libraries linked) file exists
@@ -1477,7 +1477,7 @@ namespace CgCore
 
                 if (!File.Exists(web3DeployLinkedPath))
                 {
-                    CgDebug.LogWarning("FCgEthereum.LoadContract: Failed to find Web3DeployLinkedPath for Contract: " + econtract + " at: " + web3DeployLinkedPath);
+                    FCgDebug.LogWarning("FCgEthereum.LoadContract: Failed to find Web3DeployLinkedPath for Contract: " + econtract + " at: " + web3DeployLinkedPath);
                 }
                 Web3DeployLinkedSnippets.Add(econtract, File.ReadAllText(web3DeployLinkedPath));
             }
@@ -1529,7 +1529,7 @@ namespace CgCore
 
             if (!ScriptPaths.TryGetValue(escript, out path))
             {
-                CgDebug.LogWarning("FCgEthereum.CreatedJavascriptContractLinked: No script path set for script: " + escript + ". Make sure a ScriptPath is set for: " + escript + " in the constructor.");
+                FCgDebug.LogWarning("FCgEthereum.CreatedJavascriptContractLinked: No script path set for script: " + escript + ". Make sure a ScriptPath is set for: " + escript + " in the constructor.");
                 return;
             }
 
@@ -1641,7 +1641,7 @@ namespace CgCore
 
             if (LogIO.Log() || LogIOConsole.Log())
             {
-                CgDebug.Log("FCgEthereum.RunContractConstantFunction: Running command: " + ECgEthereumCommand.RunContractConstantFunction);
+                FCgDebug.Log("FCgEthereum.RunContractConstantFunction: Running command: " + ECgEthereumCommand.RunContractConstantFunction);
             }
             RunCommand(SINGLE_NODE_INDEX, command);
         }
@@ -1687,7 +1687,7 @@ namespace CgCore
 
             if (LogIO.Log() || LogIOConsole.Log())
             {
-                CgDebug.Log("FCgEthereum.RunContractStateChangeFunction_Internal: Running command: " + ECgEthereumCommand.RunContractStateChangeFunction);
+                FCgDebug.Log("FCgEthereum.RunContractStateChangeFunction_Internal: Running command: " + ECgEthereumCommand.RunContractStateChangeFunction);
             }
             eth.RunCommand(SINGLE_NODE_INDEX, command);
 
@@ -1723,7 +1723,7 @@ namespace CgCore
 
             if (LogIO.Log() || LogIOConsole.Log())
             {
-                CgDebug.Log("FCgEthereum.GetGasEstimate: Running command: " + ECgEthereumCommand.GetGasEstimate);
+                FCgDebug.Log("FCgEthereum.GetGasEstimate: Running command: " + ECgEthereumCommand.GetGasEstimate);
             }
             RunCommand(SINGLE_NODE_INDEX, command);
         }

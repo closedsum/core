@@ -1,14 +1,17 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
 #include "AI/BehaviorTree/Tasks/CsBTTask_LookAt.h"
-#include "GameFramework/Actor.h"
+#include "CsCore.h"
+#include "CsCVars.h"
+#include "Common/CsCommon.h"
+
+// Behavior Tree
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "AIController.h"
-
-#include "Common/CsCommon.h"
+#include "BehaviorTree/BehaviorTree.h"
 // AI
+#include "AIController.h"
 #include "AI/Pawn/CsAIPawn.h"
 #include "AI/CsAIPlayerState.h"
 // Data
@@ -49,6 +52,7 @@ UCsBTTask_LookAt::UCsBTTask_LookAt(const FObjectInitializer& ObjectInitializer)
 	BlackboardKey.AddObjectFilter(this, GET_MEMBER_NAME_CHECKED(UCsBTTask_LookAt, BlackboardKey), AActor::StaticClass());
 	BlackboardKey.AddVectorFilter(this, GET_MEMBER_NAME_CHECKED(UCsBTTask_LookAt, BlackboardKey));
 
+	bStopOnAbort = false;
 	Type = ECsBTTask_LookAtType::UntilAligned;
 	Rate = 360.0f;
 	bTime = false;
@@ -64,10 +68,19 @@ EBTNodeResult::Type UCsBTTask_LookAt::ExecuteTask(UBehaviorTreeComponent& OwnerC
 	if (!AIController)
 		return EBTNodeResult::Failed;
 
-	ACsAIPawn* Pawn = Cast<ACsAIPawn>(AIController->GetPawn());
+	APawn* BasePawn = AIController->GetPawn();
+
+	if (!BasePawn)
+		return EBTNodeResult::Failed;
+
+	ACsAIPawn* Pawn		 = Cast<ACsAIPawn>(BasePawn);
+	UBehaviorTree* BTree = OwnerComp.GetCurrentTree();
 
 	if (!Pawn)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_LookAt::ExecuteTask (%s.%s): This Task only works with Pawns derived from ACsAIPawn."), *(BasePawn->GetName()), *(BTree->GetName()));
 		return EBTNodeResult::Failed;
+	}
 
 	FCsBTTask_LookAtMemory* MyMemory = (FCsBTTask_LookAtMemory*)NodeMemory;
 	check(MyMemory);
@@ -110,6 +123,13 @@ EBTNodeResult::Type UCsBTTask_LookAt::ExecuteTask(UBehaviorTreeComponent& OwnerC
 #endif // #if WITH_EDITOR
 		Result = EBTNodeResult::InProgress;
 	}
+
+#if !UE_BUILD_SHIPPING
+	if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_LookAt::ExecuteTask (%s.%s): InProgress."), *(Pawn->GetName()), *(BTree->GetName()));
+	}
+#endif // #if !UE_BUILD_SHIPPING
 	return Result;
 }
 
@@ -158,6 +178,14 @@ void UCsBTTask_LookAt::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 			if (AbsDeltaPitch < Tolerance &&
 				AbsDeltaYaw < Tolerance)
 			{
+#if !UE_BUILD_SHIPPING
+				if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)
+				{
+					UBehaviorTree* BTree = OwnerComp.GetCurrentTree();
+
+					UE_LOG(LogCs, Warning, TEXT("UCsBTTask_LookAt::TickTask (%s.%s): Succeeded."), *(Pawn->GetName()), *(BTree->GetName()));
+				}
+#endif // #if !UE_BUILD_SHIPPING
 				FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 			}
 		}
@@ -170,7 +198,18 @@ void UCsBTTask_LookAt::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 			MyMemory->ElapsedTime += DeltaSeconds;
 
 			if (MyMemory->ElapsedTime >= Time)
+			{
+#if !UE_BUILD_SHIPPING
+				if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)
+				{
+					ACsAIPawn* Pawn		 = Cast<ACsAIPawn>(AIController->GetPawn());
+					UBehaviorTree* BTree = OwnerComp.GetCurrentTree();
+
+					UE_LOG(LogCs, Warning, TEXT("UCsBTTask_LookAt::TickTask (%s.%s): Succeeded."), *(Pawn->GetName()), *(BTree->GetName()));
+				}
+#endif // #if !UE_BUILD_SHIPPING
 				FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+			}
 		}
 	}
 }
@@ -181,7 +220,8 @@ EBTNodeResult::Type UCsBTTask_LookAt::AbortTask(UBehaviorTreeComponent& OwnerCom
 	{
 		if (ACsAIPawn* Pawn = Cast<ACsAIPawn>(AIController->GetPawn()))
 		{
-			Pawn->StopLookAt(Rate);
+			if (bStopOnAbort)
+				Pawn->StopLookAt(Rate);
 
 			ACsAIPlayerState* PlayerState = Cast<ACsAIPlayerState>(Pawn->PlayerState);
 
@@ -189,6 +229,15 @@ EBTNodeResult::Type UCsBTTask_LookAt::AbortTask(UBehaviorTreeComponent& OwnerCom
 #if WITH_EDITOR
 			Pawn->OnBTTask_LookAt_Aborted_ScriptEvent.Broadcast(PlayerState->UniqueMappingId);
 #endif // #if WITH_EDITOR
+
+#if !UE_BUILD_SHIPPING
+			if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)
+			{
+				UBehaviorTree* BTree = OwnerComp.GetCurrentTree();
+
+				UE_LOG(LogCs, Warning, TEXT("UCsBTTask_LookAt::AbortTask (%s.%s): Aborted."), *(Pawn->GetName()), *(BTree->GetName()));
+			}
+#endif // #if !UE_BUILD_SHIPPING
 		}
 	}
 	return EBTNodeResult::Aborted;

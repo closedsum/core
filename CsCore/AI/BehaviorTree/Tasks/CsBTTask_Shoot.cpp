@@ -1,7 +1,6 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
 #include "AI/BehaviorTree/Tasks/CsBTTask_Shoot.h"
-#include "GameFramework/Actor.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -9,6 +8,7 @@
 #include "AIController.h"
 
 #include "CsCore.h"
+#include "CsCVars.h"
 // AI
 #include "AI/Pawn/CsAIPawn.h"
 #include "AI/CsAIPlayerState.h"
@@ -43,37 +43,37 @@ EBTNodeResult::Type UCsBTTask_Shoot::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 
 	if (!Pawn)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s.%s): This Task only works with Pawns derived from ACsAIPawn."), *(BasePawn->GetName()), *(BTree->GetName()));
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot::ExecuteTask (%s.%s): This Task only works with Pawns derived from ACsAIPawn."), *(BasePawn->GetName()), *(BTree->GetName()));
 		return EBTNodeResult::Failed;
 	}
 
 	if (!bDuration && !bShots && !bForever)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s.%s): Either Duration, Shots, or Forever must be SET. All can NOT be NOT SET."), *(Pawn->GetName()), *(BTree->GetName()));
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot::ExecuteTask (%s.%s): Either Duration, Shots, or Forever must be SET. All can NOT be NOT SET."), *(Pawn->GetName()), *(BTree->GetName()));
 		return EBTNodeResult::Failed;
 	}
 
 	if (bDuration && bForever)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s.%s): Either Duration or Forever must be SET. Both can NOT be NOT SET."), *(Pawn->GetName()), *(BTree->GetName()));
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot::ExecuteTask (%s.%s): Either Duration or Forever must be SET. Both can NOT be NOT SET."), *(Pawn->GetName()), *(BTree->GetName()));
 		return EBTNodeResult::Failed;
 	}
 
 	if (bDuration && Duration <= 0.0f)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s.%s): if Duration is SET, Duration must be > 0.0f."), *(Pawn->GetName()), *(BTree->GetName()));
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot::ExecuteTask (%s.%s): if Duration is SET, Duration must be > 0.0f."), *(Pawn->GetName()), *(BTree->GetName()));
 		return EBTNodeResult::Failed;
 	}
 
 	if (bShots && bForever)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s.%s): Either Shots or Forever must be SET. Both can NOT be NOT SET."), *(Pawn->GetName()), *(BTree->GetName()));
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot::ExecuteTask (%s.%s): Either Shots or Forever must be SET. Both can NOT be NOT SET."), *(Pawn->GetName()), *(BTree->GetName()));
 		return EBTNodeResult::Failed;
 	}
 
 	if (bShots && Shots.Min <= 0)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot (%s.%s): if Shots is SET, Shots.Min must be > 0."), *(Pawn->GetName()), *(BTree->GetName()));
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot::ExecuteTask (%s.%s): if Shots is SET, Shots.Min must be > 0."), *(Pawn->GetName()), *(BTree->GetName()));
 		return EBTNodeResult::Failed;
 	}
 
@@ -111,6 +111,13 @@ EBTNodeResult::Type UCsBTTask_Shoot::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 #if WITH_EDITOR
 	Pawn->OnBTTask_Shoot_Start_ScriptEvent.Broadcast(PlayerState->UniqueMappingId);
 #endif // #if WITH_EDITOR
+
+#if !UE_BUILD_SHIPPING
+	if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot::ExecuteTask (%s.%s): InProgress."), *(BasePawn->GetName()), *(BTree->GetName()));
+	}
+#endif // #if !UE_BUILD_SHIPPING
 	return EBTNodeResult::InProgress;
 }
 
@@ -191,7 +198,17 @@ void UCsBTTask_Shoot::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMem
 		{
 			// Check weapon has actually stopped shooting
 			if (!Pawn->IsShooting())
+			{
+#if !UE_BUILD_SHIPPING
+				if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)
+				{
+					UBehaviorTree* BTree = OwnerComp.GetCurrentTree();
+
+					UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot::TickTask (%s.%s): Succeeded."), *(Pawn->GetName()), *(BTree->GetName()));
+				}
+#endif // #if !UE_BUILD_SHIPPING
 				FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+			}
 		}
 	}
 }
@@ -211,6 +228,15 @@ EBTNodeResult::Type UCsBTTask_Shoot::AbortTask(UBehaviorTreeComponent& OwnerComp
 #if WITH_EDITOR
 			Pawn->OnBTTask_Shoot_Aborted_ScriptEvent.Broadcast(PlayerState->UniqueMappingId);
 #endif // #if WITH_EDITOR
+
+#if !UE_BUILD_SHIPPING
+			if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)
+			{
+				UBehaviorTree* BTree = OwnerComp.GetCurrentTree();
+
+				UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Shoot::AbortTask (%s.%s): Aborted."), *(Pawn->GetName()), *(BTree->GetName()));
+			}
+#endif // #if !UE_BUILD_SHIPPING
 		}
 	}
 	return EBTNodeResult::Aborted;

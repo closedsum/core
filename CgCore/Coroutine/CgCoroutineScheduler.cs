@@ -54,16 +54,16 @@ namespace CgCore
 
         #region "Data Members"
 
-        private static FCgCoroutineScheduler instance;
+        private static FCgCoroutineScheduler _Instance;
         public static FCgCoroutineScheduler Instance
         {
             get
             {
-                if (instance == null)
+                if (_Instance == null)
                 {
-                    instance = new FCgCoroutineScheduler();
+                    _Instance = new FCgCoroutineScheduler();
                 }
-                return instance;
+                return _Instance;
             }
         }
 

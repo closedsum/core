@@ -206,6 +206,7 @@ struct FCsSenseInfo
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
 	float LastKnown_DistanceToActor;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
 	FVector LastKnown_ActorLocation;
 

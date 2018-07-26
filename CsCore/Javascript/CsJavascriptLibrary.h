@@ -148,4 +148,12 @@ class CSCORE_API UCsJavascriptLibrary : public UBlueprintFunctionLibrary
 	static uint8 GetCoroutineScheduleMax();
 
 #pragma endregion Coroutine
+
+// CVars
+#pragma region
+
+	UFUNCTION(BlueprintCallable, Category = "Javascript")
+	static int32 GetConsoleVariableValue_int32(const FString &Name);
+
+#pragma endregion CVars
 };

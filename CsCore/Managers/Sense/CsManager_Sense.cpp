@@ -323,6 +323,7 @@ void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 		{
 			FCsSenseInfo& Info = Map[Id];
 
+			// Track Sees/NotSees Body Time
 			if (Info.bSeesActorBody)
 			{
 				Info.SeesActorBodyTime	 += DeltaSeconds;
@@ -336,6 +337,7 @@ void ACsManager_Sense::OnTick(const float &DeltaSeconds)
 			bSeesAnyBody[ActorType] |= Info.bSeesActorBody;
 		}
 
+		// Track Sees/NotSees AnyBody Time
 		if (bSeesAnyBody[ActorType])
 		{
 			SeesAnyBodyTime[ActorType]	 += DeltaSeconds;
@@ -624,6 +626,9 @@ void ACsManager_Sense::Async_TraceViewToActorBody_Response(const uint8 &RequestI
 
 				Info.LastTime_SeesActor		= GetWorld()->GetTimeSeconds();
 				Info.LastTime_SeesActorBody = GetWorld()->GetTimeSeconds();
+
+				Info.LastKnown_DistanceToActor	   = Hit.Distance;
+				Info.LastKnown_ActorLocationHandle = P->CurrentBodyLocation;
 				return;
 			}
 		}

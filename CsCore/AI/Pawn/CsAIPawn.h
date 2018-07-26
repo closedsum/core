@@ -34,6 +34,7 @@ namespace ECsPawnRoutine
 {
 	extern CSCORE_API const FECsPawnRoutine StartShootForCount_Internal;
 	extern CSCORE_API const FECsPawnRoutine StartShootForDuration_Internal;
+	extern CSCORE_API const FECsPawnRoutine SyncCurrentViewFromBone_Internal;
 }
 
 #pragma endregion Enums
@@ -156,6 +157,12 @@ public:
 public:
 
 	virtual void PerformViewTrace_Response(const uint8 &RequestId, FCsTraceResponse* Response) override;
+
+	virtual void SyncCurrentViewFromBone(const FName &Bone);
+	static char SyncCurrentViewFromBone_Internal(FCsRoutine* r);
+	FCsRoutine* SyncCurrentViewFromBone_Internal_Routine;
+
+	virtual void StopSyncCurrentViewFromBone();
 
 #pragma endregion View
 

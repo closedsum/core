@@ -209,6 +209,9 @@ struct FCsSenseInfo
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
 	FVector LastKnown_ActorLocation;
+	TCsFVector_Ref LastKnown_ActorLocationHandle;
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnChange_LastKnown_ActorLocation, const uint64&, const uint64&, const FVector&);
+	FOnChange_LastKnown_ActorLocation OnChange_LastKnown_ActorLocation_Event;
 
 	FCsSenseInfo()
 	{
@@ -250,6 +253,7 @@ struct FCsSenseInfo
 		bSeesActorHandle.Reset();
 		bSeesActorBodyHandle.Reset();
 		bSeesActorHeadHandle.Reset();
+		LastKnown_ActorLocationHandle.Reset();
 	}
 
 public:
@@ -271,6 +275,10 @@ public:
 		bSeesActorHeadHandle.Set(&bSeesActorHead);
 		bSeesActorHeadHandle.OnChange_Event.AddRaw(this, &FCsSenseInfo::OnChange_bSeesActorHead);
 		OnSeesActorHead_Event.Clear();
+
+		LastKnown_ActorLocationHandle.Set(&LastKnown_ActorLocation);
+		LastKnown_ActorLocationHandle.OnChange_Event.AddRaw(this, &FCsSenseInfo::OnChange_LastKnown_ActorLocation);
+		OnChange_LastKnown_ActorLocation_Event.Clear();
 	}
 
 	void SetSeesActorByRadius(const bool &Value)
@@ -326,6 +334,11 @@ public:
 	void OnChange_bSeesActorHead(const bool &Value)
 	{
 		OnSeesActorHead_Event.Broadcast(Id, ObserveeId, Value);
+	}
+
+	void OnChange_LastKnown_ActorLocation(const FVector &Value)
+	{
+		OnChange_LastKnown_ActorLocation_Event.Broadcast(Id, ObserveeId, Value);
 	}
 };
 

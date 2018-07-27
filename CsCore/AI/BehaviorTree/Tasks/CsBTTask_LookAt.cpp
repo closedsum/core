@@ -221,7 +221,7 @@ EBTNodeResult::Type UCsBTTask_LookAt::AbortTask(UBehaviorTreeComponent& OwnerCom
 		if (ACsAIPawn* Pawn = Cast<ACsAIPawn>(AIController->GetPawn()))
 		{
 			if (bResetOnAbort)
-				Pawn->ResetLookAt(Rate);
+				Pawn->ResetLookAt(ResetOnAbort.BlendOutRate);
 			else
 				Pawn->StopLookAt();
 

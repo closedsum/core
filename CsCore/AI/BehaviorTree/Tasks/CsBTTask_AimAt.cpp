@@ -28,7 +28,6 @@ UCsBTTask_AimAt::UCsBTTask_AimAt(const FObjectInitializer& ObjectInitializer)
 	BlackboardKey.AddVectorFilter(this, GET_MEMBER_NAME_CHECKED(UCsBTTask_AimAt, BlackboardKey));
 
 	bResetOnAbort = true;
-	ResetTime	  = 0.2f;
 }
 
 EBTNodeResult::Type UCsBTTask_AimAt::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -136,7 +135,7 @@ EBTNodeResult::Type UCsBTTask_AimAt::AbortTask(UBehaviorTreeComponent& OwnerComp
 			Pawn->StopAimAt();
 
 			if (bResetOnAbort)
-				Pawn->ResetAimAt(ResetTime);
+				Pawn->ResetAimAt(ResetOnAbort.BlendOutTime);
 
 			ACsAIPlayerState* PlayerState = Cast<ACsAIPlayerState>(Pawn->PlayerState);
 

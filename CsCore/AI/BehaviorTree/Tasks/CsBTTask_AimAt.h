@@ -4,6 +4,9 @@
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 #include "CsBTTask_AimAt.generated.h"
 
+// Structs
+#pragma region
+
 struct FCsBTTask_AimAtMemory
 {
 	float ElapsedTime;
@@ -14,6 +17,23 @@ struct FCsBTTask_AimAtMemory
 	}
 };
 
+USTRUCT(BlueprintType)
+struct FCsBTTask_AimAt_ResetOnAbort
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, Category = Node, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float BlendOutTime;
+
+	FCsBTTask_AimAt_ResetOnAbort()
+	{
+		BlendOutTime = 0.2f;
+	}
+	~FCsBTTask_AimAt_ResetOnAbort() {}
+};
+
+#pragma endregion Structs
+
 class AAIController;
 
 UCLASS(config = Game)
@@ -23,10 +43,10 @@ class CSCORE_API UCsBTTask_AimAt : public UBTTask_BlackboardBase
 
 protected:
 
-	UPROPERTY(EditAnywhere, Category = Node)
+	UPROPERTY(EditAnywhere, Category = Node, meta = (InlineEditConditionToggle))
 	bool bResetOnAbort;
-	UPROPERTY(EditAnywhere, Category = Node, meta = (ClampMin = "0.0", UIMin = "0.0"))
-	float ResetTime;
+	UPROPERTY(EditAnywhere, Category = Node, meta = (editcondition = "bResetOnAbort"))
+	FCsBTTask_AimAt_ResetOnAbort ResetOnAbort;
 
 	UPROPERTY(EditAnywhere, Category = Node)
 	FName Bone;

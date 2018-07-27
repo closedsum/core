@@ -186,8 +186,8 @@ namespace EArithmeticKeyOperation
 		if (EType == Type::NotEqual) { return Sym::NotEqual; }
 		if (EType == Type::Less) { return Sym::Less; }
 		if (EType == Type::LessOrEqual) { return Sym::LessOrEqual; }
-		if (EType == Type::Equal) { return Sym::Greater; }
-		if (EType == Type::Equal) { return Sym::GreaterOrEqual; }
+		if (EType == Type::Greater) { return Sym::Greater; }
+		if (EType == Type::GreaterOrEqual) { return Sym::GreaterOrEqual; }
 		return ECsCached::Str::Empty;
 	}
 }

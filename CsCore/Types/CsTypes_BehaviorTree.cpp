@@ -129,7 +129,7 @@ namespace EArithmeticKeyOperation
 		CSCORE_API const FString Less =TEXT("<");
 		CSCORE_API const FString LessOrEqual = TEXT("<=");
 		CSCORE_API const FString Greater = TEXT(">");
-		CSCORE_API const FString GreaterOrEqual = TEXT(".=");
+		CSCORE_API const FString GreaterOrEqual = TEXT(">=");
 	}
 }
 

@@ -177,7 +177,7 @@ namespace EArithmeticKeyOperation
 		extern CSCORE_API const FString Less; // =TEXT("<");
 		extern CSCORE_API const FString LessOrEqual; // = TEXT("<=");
 		extern CSCORE_API const FString Greater; // = TEXT(">");
-		extern CSCORE_API const FString GreaterOrEqual; // = TEXT(".=");
+		extern CSCORE_API const FString GreaterOrEqual; // = TEXT(">=");
 	}
 
 	FORCEINLINE const FString& ToSymbol(const Type &EType)

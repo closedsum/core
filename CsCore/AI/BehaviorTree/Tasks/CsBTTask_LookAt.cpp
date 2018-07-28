@@ -52,7 +52,7 @@ UCsBTTask_LookAt::UCsBTTask_LookAt(const FObjectInitializer& ObjectInitializer)
 	BlackboardKey.AddObjectFilter(this, GET_MEMBER_NAME_CHECKED(UCsBTTask_LookAt, BlackboardKey), AActor::StaticClass());
 	BlackboardKey.AddVectorFilter(this, GET_MEMBER_NAME_CHECKED(UCsBTTask_LookAt, BlackboardKey));
 
-	bStopOnAbort = false;
+	bResetOnAbort = false;
 	Type = ECsBTTask_LookAtType::UntilAligned;
 	Rate = 360.0f;
 	bTime = false;
@@ -220,8 +220,10 @@ EBTNodeResult::Type UCsBTTask_LookAt::AbortTask(UBehaviorTreeComponent& OwnerCom
 	{
 		if (ACsAIPawn* Pawn = Cast<ACsAIPawn>(AIController->GetPawn()))
 		{
-			if (bStopOnAbort)
-				Pawn->StopLookAt(Rate);
+			if (bResetOnAbort)
+				Pawn->ResetLookAt(ResetOnAbort.BlendOutRate);
+			else
+				Pawn->StopLookAt();
 
 			ACsAIPlayerState* PlayerState = Cast<ACsAIPlayerState>(Pawn->PlayerState);
 

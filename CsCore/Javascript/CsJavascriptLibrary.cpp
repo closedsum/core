@@ -2,6 +2,8 @@
 #include "Javascript/CsJavascriptLibrary.h"
 #include "CsCore.h"
 
+#include "Runtime/Core/Public/HAL/IConsoleManager.h"
+
 UCsJavascriptLibrary::UCsJavascriptLibrary(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -152,3 +154,15 @@ uint8 UCsJavascriptLibrary::CoroutineScheduleToUint8(const TEnumAsByte<ECsCorout
 uint8 UCsJavascriptLibrary::GetCoroutineScheduleMax() { return ECS_COROUTINE_SCHEDULE_MAX; }
 
 #pragma endregion Coroutine
+
+// CVars
+#pragma region
+
+int32 UCsJavascriptLibrary::GetConsoleVariableValue_int32(const FString &Name)
+{
+	if (IConsoleVariable* Variable = IConsoleManager::Get().FindConsoleVariable(*Name))
+		return Variable->GetInt();
+	return 0;
+}
+
+#pragma endregion CVars

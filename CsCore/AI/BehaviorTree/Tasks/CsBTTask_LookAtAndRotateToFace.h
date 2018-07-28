@@ -28,7 +28,7 @@ class CSCORE_API UCsBTTask_LookAtAndRotateToFace : public UBTTask_BlackboardBase
 protected:
 
 	UPROPERTY(EditAnywhere, Category = Node)
-	bool bStopOnAbort;
+	bool bResetOnAbort;
 
 	UPROPERTY(EditAnywhere, Category = Node)
 	FName Bone;

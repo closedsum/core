@@ -427,7 +427,9 @@ namespace CgCore
 
     #endregion // Enums
 
-    #region "Primitive Types"
+    #region "Property"
+
+        #region "Default"
 
     public interface ICgProperty
     {
@@ -571,8 +573,16 @@ namespace CgCore
             Clear();
         }
     }
-    
-    #region "Map"
+
+        #endregion // Default
+
+        #region "List"
+
+        
+
+        #endregion // List
+
+        #region "Map"
 
     public class TCgProperty_TMap<KeyType, ValueType>
         where KeyType : struct
@@ -682,12 +692,19 @@ namespace CgCore
             Values[key] = value;
             UpdateIsDirtys(key);
         }
-        /*
-        ValueType operator[] (KeyType key)
+
+        public ValueType this[KeyType key]
         {
-            return Values[key];
+            get
+            {
+                return Values[key];
+            }
+            set
+            {
+                Values[key] = value;
+                UpdateIsDirtys(key);
+            }
         }
-        */
 
         public ValueType Get() { return Value; }
         public ValueType Get(KeyType key) { return Values[key]; }
@@ -885,9 +902,206 @@ namespace CgCore
 
         #endregion // Map
 
-    #endregion // Primitive Types
+        #region "Map Ref"
 
-    #region "Primitive Classes"
+    public class TCgProperty_TMapRef<KeyType, ValueType>
+        where KeyType : struct
+        where ValueType : struct, IConvertible
+    {
+        public sealed class FGet : TCgDelegate_Ret_OneParam<ValueType, KeyType> { }
+        public sealed class FOverride_Get : TCgDelegate_Ret_OneParam<ValueType, KeyType> { }
+        public sealed class FOverride_Subscript : TCgDelegate_Ret_OneParam<ValueType, KeyType> { }
+        public sealed class FOnChange : TCgMulticastDelegate_OneParam<ValueType> { }
+        public sealed class FOnChangeMap : TCgMulticastDelegate_TwoParams<KeyType, ValueType> { }
+
+        public sealed class FKeyTypeEqualityComparer : IEqualityComparer<KeyType>
+        {
+            public bool Equals(KeyType lhs, KeyType rhs)
+            {
+                return lhs.Equals(rhs);
+            }
+
+            public int GetHashCode(KeyType x)
+            {
+                return x.GetHashCode();
+            }
+        }
+
+        public ValueType DefaultValue;
+        public ValueType Value;
+        public ValueType Last_Value;
+
+        public Dictionary<KeyType, object> Objects;
+        public Dictionary<KeyType, PropertyInfo> PropertyInfos;
+        public Dictionary<KeyType, ValueType> Last_Values;
+
+	    protected bool IsDirty;
+
+        protected Dictionary<KeyType, bool> IsDirtys;
+
+	    public FGet Get_Call;
+        public FOverride_Get Override_Get;
+        public FOverride_Subscript Override_Subscript;
+	    public FOnChange OnChange_Event;
+	    public FOnChangeMap OnChangeMap_Event;
+
+	    public TCgProperty_TMapRef()
+        {
+            Objects = new Dictionary<KeyType, object>(new FKeyTypeEqualityComparer());
+            PropertyInfos = new Dictionary<KeyType, PropertyInfo>(new FKeyTypeEqualityComparer());
+            Last_Values = new Dictionary<KeyType, ValueType>(new FKeyTypeEqualityComparer());
+
+            IsDirtys = new Dictionary<KeyType, bool>(new FKeyTypeEqualityComparer());
+
+            Get_Call = new FGet();
+            Override_Get = new FOverride_Get();
+            Override_Subscript = new FOverride_Subscript();
+            OnChange_Event = new FOnChange();
+            OnChangeMap_Event = new FOnChangeMap();
+        }
+
+        public void SetDefaultValue(ValueType defaultValue)
+        {
+            DefaultValue = defaultValue;
+        }
+
+        public void Init(KeyType key)
+        {
+            Objects.Add(key, null);
+            PropertyInfos.Add(key, null);
+            Last_Values.Add(key, DefaultValue);
+            IsDirtys.Add(key, false);
+        }
+
+        public virtual void UpdateIsDirty()
+        {
+            IsDirty    = !Value.Equals(Last_Value);
+            Last_Value = Value;
+
+            if (IsDirty)
+                OnChange_Event.Broadcast(Value);
+        }
+
+        public virtual void UpdateIsDirtys(KeyType key)
+        {
+            ValueType value = (ValueType)PropertyInfos[key].GetValue(Objects[key], null);
+            IsDirtys[key]    = !value.Equals(Last_Values[key]);
+            Last_Values[key] = value;
+
+            if (IsDirtys[key])
+                OnChangeMap_Event.Broadcast(key, value);
+        }
+        /*
+        bool operator ==(const TCsProperty_TMap& B) const
+	    {
+		    TArray<KeyType> Keys;
+            Values.GetKeys(Keys);
+
+		    for (const KeyType& Key : Keys)
+		    {
+			    if (Values[Key] != B.Values[Key])
+				    return false;
+		    }
+		    return Value == B;
+	    }
+
+	     bool operator !=(const TCsProperty_TMap& B) const
+	    {
+		    return !(*this == B);
+        }
+        */
+
+        public void Set(ValueType value)
+        {
+            Value = value;
+            UpdateIsDirty();
+        }
+
+        public void Set(KeyType key, object o, string propertyName)
+        {
+            Objects[key] = o;
+            PropertyInfos[key] = o.GetType().GetProperty(propertyName);
+            UpdateIsDirtys(key);
+        }
+
+        public ValueType this[KeyType key]
+        {
+            get
+            {
+                if (Override_Subscript.IsBound())
+                    return Override_Subscript.Execute(key);
+                return (ValueType)PropertyInfos[key].GetValue(Objects[key], null);
+            }
+        }
+
+        public ValueType Get() { return Value; }
+        public ValueType Get(KeyType key)
+        {
+            if (Override_Get.IsBound())
+                return Override_Get.Execute(key);
+            return (ValueType)PropertyInfos[key].GetValue(Objects[key], null);
+        }
+
+        public ValueType GetEX(KeyType key) { return Get_Call.Execute(key); }
+
+        public void Clear()
+        {
+            IsDirty = false;
+
+            Dictionary<KeyType, object>.KeyCollection keys = Objects.Keys;
+
+            foreach (KeyType key in keys)
+		    {
+                IsDirtys[key] = false;
+            }
+        }
+
+        public void ResetValues()
+        {
+            Value = DefaultValue;
+            Last_Value = Value;
+            IsDirty = false;
+
+            Dictionary<KeyType, object>.KeyCollection keys = Objects.Keys;
+
+            foreach (KeyType key in keys)
+            {
+                Objects[key] = null;
+                PropertyInfos[key] = null;
+                Last_Values[key] = Value;
+                IsDirtys[key] = false;
+            }
+        }
+
+        public void Reset()
+        {
+            ResetValues();
+
+            Get_Call.Unbind();
+            OnChange_Event.Clear();
+            OnChangeMap_Event.Clear();
+        }
+
+        public bool HasChanged() { return IsDirty; }
+        public bool HasChanged(KeyType key) { return IsDirtys[key]; }
+
+        public void Resolve()
+        {
+            UpdateIsDirty();
+
+            Dictionary<KeyType, object>.KeyCollection keys = Objects.Keys;
+
+            foreach (KeyType key in keys)
+            {
+                UpdateIsDirtys(key);
+            }
+            Clear();
+        }
+    }
+
+        #endregion // Map Ref
+
+        #region "Class"
 
     public class TCgPropertyClass<T> : CgProperty where T : class
     {
@@ -1009,7 +1223,9 @@ namespace CgCore
         }
     }
 
-    #endregion // Primitive Classes
+        #endregion // Class
+
+    #endregion // Property
 
     #region "Flags"
 

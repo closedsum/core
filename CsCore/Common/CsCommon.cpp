@@ -787,8 +787,8 @@ FRotator UCsCommon::Rotator_GetAngleDelta(const FRotator &A, const FRotator &B)
 
 float UCsCommon::GetAbsAngleDelta(const float &Angle1, const float &Angle2)
 {
-	const int32 Mag		   = Angle2 - Angle1 > 0 ? 1 : -1;
 	const float DeltaAngle = Angle2 - Angle1;
+	const int32 Mag		   = DeltaAngle > 0 ? 1 : -1;
 
 	return FMath::Abs(FMath::Abs(DeltaAngle) > 180.0f ? -1 * Mag * (360.0f - FMath::Abs(DeltaAngle)) : Mag * FMath::Abs(DeltaAngle));
 }

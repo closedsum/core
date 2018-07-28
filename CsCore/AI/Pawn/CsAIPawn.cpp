@@ -29,6 +29,7 @@ namespace ECsPawnRoutine
 {
 	CSCORE_API const FECsPawnRoutine StartShootForCount_Internal = EMCsPawnRoutine::Get().Create(TEXT("StartShootForCount_Internal"));
 	CSCORE_API const FECsPawnRoutine StartShootForDuration_Internal = EMCsPawnRoutine::Get().Create(TEXT("StartShootForDuration_Internal"));
+	CSCORE_API const FECsPawnRoutine SyncCurrentViewFromBone_Internal = EMCsPawnRoutine::Get().Create(TEXT("SyncCurrentViewFromBone_Internal"));
 }
 
 #pragma endregion Enums
@@ -43,6 +44,7 @@ namespace ECsAIPawnCached
 		// Functions
 		const FName StartShootForCount_Internal = FName("ACsAIPawn::StartShootForCount_Internal");
 		const FName StartShootForDuration_Internal = FName("ACsAIPawn::StartShootForDuration_Internal");
+		const FName SyncCurrentViewFromBone_Internal = FName("ACsAIPawn::SyncCurrentViewFromBone_Internal");
 	}
 
 	namespace Str
@@ -50,6 +52,7 @@ namespace ECsAIPawnCached
 		// Functions
 		const FString StartShootForCount_Internal = TEXT("ACsAIPawn::StartShootForCount_Internal");
 		const FString StartShootForDuration_Internal = TEXT("ACsAIPawn::StartShootForDuration_Internal");
+		const FString SyncCurrentViewFromBone_Internal = TEXT("ACsAIPawn::SyncCurrentViewFromBone_Internal");
 	}
 }
 
@@ -151,6 +154,12 @@ bool ACsAIPawn::AddRoutine_Internal(FCsRoutine* Routine, const uint8 &InType)
 		HandleRespawnTimer_Internal_Routine = Routine;
 		return true;
 	}
+	// SyncCurrentViewFromBone_Internal
+	if (RoutineType == ECsPawnRoutine::SyncCurrentViewFromBone_Internal)
+	{
+		SyncCurrentViewFromBone_Internal_Routine = Routine;
+		return true;
+	}
 	return false;
 }
 
@@ -175,6 +184,13 @@ bool ACsAIPawn::RemoveRoutine_Internal(FCsRoutine* Routine, const uint8 &InType)
 		HandleRespawnTimer_Internal_Routine = nullptr;
 		return true;
 	}
+	// SyncCurrentViewFromBone_Internal
+	if (RoutineType == ECsPawnRoutine::SyncCurrentViewFromBone_Internal)
+	{
+		check(SyncCurrentViewFromBone_Internal_Routine == Routine);
+		SyncCurrentViewFromBone_Internal_Routine = nullptr;
+		return true;
+	}
 	return false;
 }
 
@@ -191,6 +207,62 @@ void ACsAIPawn::PerformViewTrace_Response(const uint8 &RequestId, FCsTraceRespon
 	{
 		DrawDebugSphere(GetWorld(), ViewTraceInfo.HitLocation, 32.0f, 16, FColor::Green, false, GetWorld()->GetDeltaSeconds() + 0.0005f, 0, 1.0f);
 	}
+}
+
+void ACsAIPawn::SyncCurrentViewFromBone(const FName &Bone)
+{
+	// Clear SyncCurrentViewFromBone
+	if (SyncCurrentViewFromBone_Internal_Routine && SyncCurrentViewFromBone_Internal_Routine->IsValid())
+		SyncCurrentViewFromBone_Internal_Routine->End(ECsCoroutineEndReason::UniqueInstance);
+
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
+	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
+
+	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+
+	Payload->Schedule		= Schedule;
+	Payload->Function		= &ACsAIPawn::SyncCurrentViewFromBone_Internal;
+	Payload->Actor			= this;
+	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
+	Payload->Add			= &ACsAIPawn::AddRoutine;
+	Payload->Remove			= &ACsAIPawn::RemoveRoutine;
+	Payload->Type			= ECsPawnRoutine::SyncCurrentViewFromBone_Internal.Value;
+	Payload->DoInit			= true;
+	Payload->PerformFirstRun = false;
+	Payload->Name			= ECsAIPawnCached::Name::SyncCurrentViewFromBone_Internal;
+	Payload->NameAsString	= ECsAIPawnCached::Str::SyncCurrentViewFromBone_Internal;
+
+	FCsRoutine* R = Scheduler->Allocate(Payload);
+
+	R->names[0] = Bone;
+
+	Scheduler->StartRoutine(Schedule, R);
+}
+
+CS_COROUTINE(ACsAIPawn, SyncCurrentViewFromBone_Internal)
+{
+	ACsAIPawn* p			 = r->GetActor<ACsAIPawn>();
+	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
+
+	const FName& Bone		= r->names[0];
+	const FRotator Rotation	= p->GetMesh()->GetBoneQuaternion(Bone).Rotator();
+
+	p->CurrentAimPitch	= Rotation.Pitch;
+	p->CurrentAimYaw	= Rotation.Yaw;
+
+	CS_COROUTINE_BEGIN(r);
+
+	/** Waittill StopSyncCurrentViewFromBone is called. Forever. */
+	CS_COROUTINE_WAIT_UNTIL(r, false);
+
+	CS_COROUTINE_END(r);
+}
+
+void ACsAIPawn::StopSyncCurrentViewFromBone()
+{
+	// Clear SyncCurrentViewFromBone
+	if (SyncCurrentViewFromBone_Internal_Routine && SyncCurrentViewFromBone_Internal_Routine->IsValid())
+		SyncCurrentViewFromBone_Internal_Routine->End(ECsCoroutineEndReason::Manual);
 }
 
 #pragma endregion View
@@ -215,7 +287,8 @@ FRotator ACsAIPawn::GetFinalLookAtRotation(AActor* Target, const FName &Bone) { 
 FRotator ACsAIPawn::GetFinalLookAtRotation(const FVector &Target){ return FRotator(CurrentAimPitch, CurrentAimYaw, 0.0f); }
 void ACsAIPawn::LookAtLocation(const FVector &Target, const float &LookRate, const float &LookTime){}
 void ACsAIPawn::LookAtActor(AActor* Target, const FName &Bone, const float &LookRate, const float &LookTime){}
-void ACsAIPawn::StopLookAt(const float &BlendOutRate){}
+void ACsAIPawn::ResetLookAt(const float &BlendOutRate){}
+void ACsAIPawn::StopLookAt(){}
 
 #pragma endregion LookAt
 

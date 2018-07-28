@@ -34,6 +34,7 @@ namespace ECsPawnRoutine
 {
 	extern CSCORE_API const FECsPawnRoutine StartShootForCount_Internal;
 	extern CSCORE_API const FECsPawnRoutine StartShootForDuration_Internal;
+	extern CSCORE_API const FECsPawnRoutine SyncCurrentViewFromBone_Internal;
 }
 
 #pragma endregion Enums
@@ -157,6 +158,12 @@ public:
 
 	virtual void PerformViewTrace_Response(const uint8 &RequestId, FCsTraceResponse* Response) override;
 
+	virtual void SyncCurrentViewFromBone(const FName &Bone);
+	static char SyncCurrentViewFromBone_Internal(FCsRoutine* r);
+	FCsRoutine* SyncCurrentViewFromBone_Internal_Routine;
+
+	virtual void StopSyncCurrentViewFromBone();
+
 #pragma endregion View
 
 // Game Events
@@ -266,7 +273,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
 	virtual void LookAtActor(AActor* Target, const FName &Bone, const float &LookRate, const float &LookTime);
 	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
-	virtual void StopLookAt(const float &BlendOutRate);
+	virtual void ResetLookAt(const float &BlendOutRate);
+	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
+	virtual void StopLookAt();
 
 #pragma endregion LookAt
 

@@ -141,6 +141,34 @@ namespace CgCore
         }
     }
 
+    public abstract class TCgDelegate_TwoParams<T1, T2>
+    {
+        public delegate void Event(T1 t1, T2 t2);
+
+        private Event e;
+
+        public void Bind(Event inEvent)
+        {
+            e = inEvent;
+        }
+
+        public void Unbind()
+        {
+            e = null;
+        }
+
+        public bool IsBound()
+        {
+            return e != null;
+        }
+
+        public void Execute(T1 t1, T2 t2)
+        {
+            if (e != null)
+                e(t1, t2);
+        }
+    }
+
     #endregion // Single
 
     #region "Multicast"

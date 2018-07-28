@@ -170,7 +170,7 @@ void UCsBTTask_LookAtAndRotateToFace::TickTask(UBehaviorTreeComponent& OwnerComp
 		// EXIT, if near AngleDeltaForSuccess
 		if (AbsDeltaYaw <= AngleDeltaForSuccess)
 		{
-			Pawn->StopLookAt(0.0f /*Immediately*/);
+			Pawn->ResetLookAt(0.0f /*Immediately*/);
 
 			CleanUp(*AIController, NodeMemory);
 			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
@@ -244,8 +244,10 @@ EBTNodeResult::Type UCsBTTask_LookAtAndRotateToFace::AbortTask(UBehaviorTreeComp
 	{
 		if (ACsAIPawn* Pawn = Cast<ACsAIPawn>(AIController->GetPawn()))
 		{
-			if (bStopOnAbort)
-				Pawn->StopLookAt(0.0f /*Immediately*/);
+			if (bResetOnAbort)
+				Pawn->ResetLookAt(0.0f /*Immediately*/);
+			else
+				Pawn->StopLookAt();
 #if !UE_BUILD_SHIPPING
 			if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)
 			{

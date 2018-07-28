@@ -5,6 +5,7 @@
 
 
 var JsCsRoutine = require('CsScript/Coroutine/Routine.js');
+var JsCsCoroutinePayload = require('CsScript/Coroutine/CoroutinePayload.js');
 
 var me;
 
@@ -27,19 +28,27 @@ module.exports = class JsCsCoroutineScheduler
 
         const count = CsJavascriptLibrary.GetCoroutineScheduleMax();
 
-        for (let i = 0; i < count; i++)
+        for (let i = 0; i < count; ++i)
         {
             this.RoutinePoolIndices.push(0);
             this.RoutinesToInit[i] = [];
             this.RoutinesToRun[i] = [];
             this.RoutinePools[i] = new Array(ROUTINE_POOL_SIZE);
 
-            for (let j = 0; j < ROUTINE_POOL_SIZE; j++)
+            for (let j = 0; j < ROUTINE_POOL_SIZE; ++j)
             {
                 this.RoutinePools[i][j] = new JsCsRoutine();
                 this.RoutinePools[i][j].Init(this.RoutinePools[i][j], this, j);
             }
         }
+
+        this.Payloads = [];
+
+        for (let i = 0; i < ROUTINE_POOL_SIZE; ++i)
+        {
+            this.Payloads.push(new JsCsCoroutinePayload());
+        }
+        this.PayloadIndex = 0;
     };
 
     CleanUp()
@@ -47,18 +56,20 @@ module.exports = class JsCsCoroutineScheduler
         EndAll();
     }
 
-    Allocate(scheduleType, inCoroutine, inStopCondition, inActor, inObject, inAddRoutine, inRemoveRoutine, routineType, doInit, performFirstRun)
+    Allocate(payload /*JsCsCoroutinePayload*/)
     {
-        const schedule = CsJavascriptLibrary.CoroutineScheduleToUint8(scheduleType);
+        const schedule = CsJavascriptLibrary.CoroutineScheduleToUint8(payload.Schedule);
 
-        for (let i = 0; i < ROUTINE_POOL_SIZE; i++)
+        for (let i = 0; i < ROUTINE_POOL_SIZE; ++i)
         {
             this.RoutinePoolIndices[schedule] = (this.RoutinePoolIndices[schedule] + 1) % ROUTINE_POOL_SIZE;
 
-            let r = this.RoutinePools[schedule][i];
+            let r = this.RoutinePools[schedule][this.RoutinePoolIndices[schedule]];
 
             if (r.index == ROUTINE_FREE)
             {
+                r.name = payload.Name;
+
                 let currentTime = 0;
                 
                 if (inActor != null && typeof inActor === "object")
@@ -66,14 +77,14 @@ module.exports = class JsCsCoroutineScheduler
                 if (inObject != null && typeof inObject === "object")
                     currentTime = CsJavascriptLibrary.GetTimeSeconds(inObject.root.MyWorld);
 
-                r.Start(inCoroutine, inStopCondition, inActor, inObject, currentTime, inAddRoutine, inRemoveRoutine, routineType);
+                r.Start(payload.Function, payload.Stop, payload.Actor, payload.Object, currentTime, payload.Add, payload.Remove, payload.Type);
 
-                if (doInit)
+                if (payload.DoInit)
                 {
                     r.index = this.RoutinesToRun[schedule].length;
                     this.RoutinesToRun[schedule].push(r);
 
-                    if (performFirstRun)
+                    if (payload.PerformFirstRun)
                     {
                         r.Run(0.0);
                     }
@@ -82,30 +93,35 @@ module.exports = class JsCsCoroutineScheduler
                 {
                     this.RoutinesToInit[schedule].push(r);
                 }
+                // LogTransaction
+                payload.Reset();
                 return r;
             }
         }
+        payload.Reset();
         console.log("CoroutineScheduler::Allocate: No free Routines. Look for Runaway Coroutines or consider raising the pool size.");
         return null;
     };
 
-    Start(scheduleType, inCoroutine, inStopCondition, inActor, inObject, inAddRoutine, inRemoveRoutine, routineType)
+    Start(payload /*JsCsCoroutinePayload*/)
     {
-        return this.Allocate(scheduleType, inCoroutine, inStopCondition, inActor, inObject, inAddRoutine, inRemoveRoutine, routineType, true, true);
+        return this.Allocate(payload);
     }
 
-    StartChild(scheduleType, parent, inCoroutine, inStopCondition, inActor, inObject, inAddRoutine, inRemoveRoutine, routineType)
+    StartChild(payload /*JsCsCoroutinePayload*/)
     {
-        const schedule = CsJavascriptLibrary.CoroutineScheduleToUint8(scheduleType);
+        const schedule = CsJavascriptLibrary.CoroutineScheduleToUint8(payload.Schedule);
 
-        for (let i = 0; i < ROUTINE_POOL_SIZE; i++)
+        for (let i = 0; i < ROUTINE_POOL_SIZE; ++i)
         {
             this.RoutinePoolIndices[schedule] = (this.RoutinePoolIndices[schedule] + 1) % ROUTINE_POOL_SIZE;
 
-            let r = this.RoutinePools[schedule][i];
+            let r = this.RoutinePools[schedule][this.RoutinePoolIndices[schedule]];
 
             if (r.index == ROUTINE_FREE)
             {
+                r.name = payload.Name;
+
                 let currentTime = 0;
 
                 if (inActor != null && typeof inActor === "object")
@@ -113,8 +129,11 @@ module.exports = class JsCsCoroutineScheduler
                 if (inObject != null && typeof inObject === "object")
                     currentTime = CsJavascriptLibrary.GetTimeSeconds(inObject.root.MyWorld);
 
+                let parent = Payload.Parent;
+
                 parent.AddChild(r);
-                r.Start(inCoroutine, inStopCondition, inActor, inObject, currentTime, inAddRoutine, inRemoveRoutine, routineType);
+
+                r.Start(payload.Function, payload.Stop, payload.Actor, payload.Object, currentTime, payload.Add, payload.Remove, payload.Type);
 
                 let lastChild = null;
                 let len       =  parent.children.length;
@@ -131,15 +150,17 @@ module.exports = class JsCsCoroutineScheduler
 
                 let parentIndex = parent.index;
 
-                for (let j = r.index + 1; j <= parentIndex; j++)
+                for (let j = r.index + 1; j <= parentIndex; ++j)
                 {
                     r.index++;
                 }
                 
                 r.Run(0.0);
+                payload.Reset();
                 return r;
             }
         }
+        payload.Reset();
         console.log("CoroutineScheduler::StartChild: No free Routines. Look for Runaway Coroutines or consider raising the pool size.");
         return null;
     }
@@ -172,7 +193,7 @@ module.exports = class JsCsCoroutineScheduler
         // Remove any Routines executed previous to tick
         count = this.RoutinesToRun[schedule].length;
 
-        for (let i = count - 1; i >= 0; i--)
+        for (let i = count - 1; i >= 0; --i)
         {
             let r = this.RoutinesToRun[schedule][i];
 
@@ -183,6 +204,9 @@ module.exports = class JsCsCoroutineScheduler
             }
         }
         // Execute
+
+        // LogRunning(scheduleType)
+
         count = this.RoutinesToRun[schedule].length;
 
         for (let i = 0; i < count; i++)
@@ -190,7 +214,7 @@ module.exports = class JsCsCoroutineScheduler
             this.RoutinesToRun[schedule][i].Run(deltaSeconds);
         }
         // Remove any Routines executed end of tick
-        for (let i = count - 1; i >= 0; i--)
+        for (let i = count - 1; i >= 0; --i)
         {
             let r = this.RoutinesToRun[schedule][i];
 
@@ -214,7 +238,7 @@ module.exports = class JsCsCoroutineScheduler
         const start = schedule === max ? 0 : schedule;
         const end = schedule === max ? max : start + 1;
 
-        for (let i = 0; i < end; i++)
+        for (let i = 0; i < end; ++i)
         {
             let count = this.RoutinesToInit[i].length;
 
@@ -230,7 +254,7 @@ module.exports = class JsCsCoroutineScheduler
 
             count = this.RoutinesToRun[i].length;
 
-            for (let j = 0; j < count; j++)
+            for (let j = 0; j < count; ++j)
             {
                 let r = this.RoutinesToRun[i][j];
 
@@ -247,7 +271,7 @@ module.exports = class JsCsCoroutineScheduler
 
         let count = this.RoutinesToInit[schedule].length;
 
-        for (let i = 0; i < count; i++)
+        for (let i = 0; i < count; ++i)
         {
             if (inOwner != null && inOwner === "object" && inOwner != this.RoutinesToInit[schedule][i].GetOwner())
                 continue;
@@ -258,7 +282,7 @@ module.exports = class JsCsCoroutineScheduler
 
         count = this.RoutinesToRun[schedule].length;
 
-        for (let i = 0; i < count; i++)
+        for (let i = 0; i < count; ++i)
         {
             if (inOwner != null && inOwner === "object" && inOwner != this.RoutinesToInit[schedule][i].GetOwner())
                 continue;
@@ -267,6 +291,32 @@ module.exports = class JsCsCoroutineScheduler
                 this.RoutinesToRun[schedule][i].ReceiveMessage(messageType, message);
         }
     }
+
+    // TODO
+
+    // LogTransaction(functionName, transaction, r){}
+
+    // LogRunning(scheduleType)
+
+    // Payload
+    // #region
+
+    AllocatePayload()
+    {
+        for (let i = 0; i < ROUTINE_POOL_SIZE; ++I)
+        {
+            this.PayloadIndex = (this.PayloadIndex + 1) % ROUTINE_POOL_SIZE;
+
+            if (!Payloads[PayloadIndex].IsAllocated)
+            {
+                return Payloads[PayloadIndex];
+            }
+        }
+        console.log("JsCsCoroutineScheduler.AllocatePayload: No free Payloads. Look for Runaway Coroutines or consider raising the pool size.");
+        return null;
+    }
+
+    // #endregion
 };
 
 // Example

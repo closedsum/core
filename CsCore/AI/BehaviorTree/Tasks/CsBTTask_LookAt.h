@@ -50,6 +50,9 @@ namespace ECsBTTask_LookAtType
 
 #pragma endregion Enums
 
+// Structs
+#pragma region
+
 struct FCsBTTask_LookAtMemory
 {
 	float ElapsedTime;
@@ -60,6 +63,23 @@ struct FCsBTTask_LookAtMemory
 	}
 };
 
+USTRUCT(BlueprintType)
+struct FCsBTTask_LookAt_ResetOnAbort
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, Category = Node, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float BlendOutRate;
+
+	FCsBTTask_LookAt_ResetOnAbort()
+	{
+		BlendOutRate = 0.0f;
+	}
+	~FCsBTTask_LookAt_ResetOnAbort() {}
+};
+
+#pragma endregion Structs
+
 class AAIController;
 
 UCLASS(config = Game)
@@ -69,8 +89,10 @@ class CSCORE_API UCsBTTask_LookAt : public UBTTask_BlackboardBase
 
 protected:
 
-	UPROPERTY(EditAnywhere, Category = Node)
-	bool bStopOnAbort;
+	UPROPERTY(EditAnywhere, Category = Node, meta = (InlineEditConditionToggle))
+	bool bResetOnAbort;
+	UPROPERTY(EditAnywhere, Category = Node, meta = (editcondition = "bResetOnAbort"))
+	FCsBTTask_LookAt_ResetOnAbort ResetOnAbort;
 
 	UPROPERTY(EditAnywhere, Category = Node)
 	TEnumAsByte<ECsBTTask_LookAtType::Type> Type;

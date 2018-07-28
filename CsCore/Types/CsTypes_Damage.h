@@ -257,7 +257,7 @@ struct CSCORE_API FCsDamageEvent
 	uint8 Index;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
-	bool IsAllocated;
+	bool bAllocated;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
 	float Damage;
@@ -323,6 +323,7 @@ struct CSCORE_API FCsDamageEvent
 
 	void Reset()
 	{
+		bAllocated = false;
 		Damage = 0.0f;
 		Instigator.Reset();
 		Instigator = nullptr;
@@ -352,7 +353,7 @@ struct CSCORE_API FCsDamageResult
 	uint8 Index;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
-	bool IsAllocated;
+	bool bAllocated;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
 	float Damage;
@@ -406,6 +407,7 @@ struct CSCORE_API FCsDamageResult
 
 	void Reset()
 	{
+		bAllocated = false;
 		Damage = 0.0f;
 		Victim.Reset();
 		Victim = nullptr;

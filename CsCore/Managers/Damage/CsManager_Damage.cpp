@@ -2,6 +2,9 @@
 #include "Managers/Damage/CsManager_Damage.h"
 #include "CsCore.h"
 #include "CsCVars.h"
+#include "Common/CsCommon.h"
+
+// Game
 #include "Game/CsGameState.h"
 
 // static initializations
@@ -54,9 +57,9 @@ FCsDamageEvent* ACsManager_Damage::AllocateEvent()
 		const uint8 Index	   = (EventPoolIndex + I) % CS_DAMAGE_EVENT_POOL_SIZE;
 		FCsDamageEvent* Event = &(EventPool[Index]);
 
-		if (!Event->IsAllocated)
+		if (!Event->bAllocated)
 		{
-			Event->IsAllocated = true;
+			Event->bAllocated = true;
 			return Event;
 		}
 	}
@@ -76,9 +79,9 @@ FCsDamageResult* ACsManager_Damage::AllocateResult()
 		const uint8 Index       = (ResultPoolIndex + I) % CS_DAMAGE_RESULT_POOL_SIZE;
 		FCsDamageResult* Result = &(ResultPool[Index]);
 
-		if (!Result->IsAllocated)
+		if (!Result->bAllocated)
 		{
-			Result->IsAllocated = true;
+			Result->bAllocated = true;
 			return Result;
 		}
 	}

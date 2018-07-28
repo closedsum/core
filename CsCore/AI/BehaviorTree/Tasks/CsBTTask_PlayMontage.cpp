@@ -29,6 +29,8 @@ UCsBTTask_PlayMontage::UCsBTTask_PlayMontage(const FObjectInitializer& ObjectIni
 	bWaitUntilFinished = false;
 	bLooping = false;
 	PlayRate = 1.0f;
+	bSyncCurrentViewFromBone = false;
+	Bone = NAME_None;
 }
 
 EBTNodeResult::Type UCsBTTask_PlayMontage::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -73,6 +75,9 @@ EBTNodeResult::Type UCsBTTask_PlayMontage::ExecuteTask(UBehaviorTreeComponent& O
 			return EBTNodeResult::Failed;
 		}
 	}
+
+	if (bSyncCurrentViewFromBone)
+		Pawn->SyncCurrentViewFromBone(Bone);
 
 #if WITH_EDITORONLY_DATA
 	if (bAnim)
@@ -151,6 +156,9 @@ void UCsBTTask_PlayMontage::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* N
 
 		if (MyMemory->ElapsedTime > Time)
 		{
+			if (bSyncCurrentViewFromBone)
+				Pawn->StopSyncCurrentViewFromBone();
+
 #if !UE_BUILD_SHIPPING
 			if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)
 			{
@@ -177,13 +185,19 @@ EBTNodeResult::Type UCsBTTask_PlayMontage::AbortTask(UBehaviorTreeComponent& Own
 				if (bAnim)
 				{
 					UAnimInstance* AnimInstance = Pawn->GetMesh()->GetAnimInstance();
-					AnimInstance->Montage_Stop(0.0f, Anim);
+					AnimInstance->Montage_Stop(StopOnAbort.BlendOutTime, Anim);
 				}
 				else
 #endif // #if WITH_EDITORONLY_DATA
 				{
 					ACsData_Character* Data = Pawn->GetMyData_Character();
-					Data->StopAnimation(Pawn->GetMesh(), AnimType, 0, 0.0f, false);
+					Data->StopAnimation(Pawn->GetMesh(), AnimType, 0, StopOnAbort.BlendOutTime, false);
+				}
+
+				if (bSyncCurrentViewFromBone &&
+					StopOnAbort.bStopSyncCurrentViewFromBone)
+				{
+					Pawn->StopSyncCurrentViewFromBone();
 				}
 			}
 #if !UE_BUILD_SHIPPING

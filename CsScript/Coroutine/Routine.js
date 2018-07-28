@@ -38,6 +38,7 @@ module.exports = class JsCsRoutine
         this.a = null;
         this.o = null;
         this.owner = null;
+        this.ownerMemberRoutine = null;
         this.addRoutine = null;
         this.removeRoutine = null;
         this.startTime = 0.0;
@@ -89,7 +90,7 @@ module.exports = class JsCsRoutine
         return func && getType.toString.call(func) === '[object Function]';
     }
 
-    Start(inCoroutine, inStopCondition, inActor, inObject, inStartTime, inAddRoutine, inRemoveRoutine, routineType)
+    Start(inCoroutine, inStopCondition, inActor, inObject, inStartTime, inAddRoutine, inRemoveRoutine, inType)
     {
         this.coroutine = inCoroutine;
         this.stopCondition = inStopCondition;
@@ -98,7 +99,7 @@ module.exports = class JsCsRoutine
         this.startTime = inStartTime;
         this.addRoutine = inAddRoutine;
         this.removeRoutine = inRemoveRoutine;
-        this.type = routineType;
+        this.type = inType;
 
         if (this.GetActor() != null && typeof this.GetActor() === "object")
         {

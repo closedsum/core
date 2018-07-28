@@ -8,6 +8,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Float.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Rotator.h"
+#include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
 // AI
 #include "AIController.h"
 #include "AI/Pawn/CsAIPawn.h"
@@ -16,9 +17,10 @@ UCsBTDecorator_CheckAbsDeltaYaw::UCsBTDecorator_CheckAbsDeltaYaw(const FObjectIn
 {
 	NodeName = "Check Abs Delta Yaw";
 
-	// accept only rotators
+	// accept only floats, rotators, and vectors
 	BlackboardKey.AddFloatFilter(this, GET_MEMBER_NAME_CHECKED(UCsBTDecorator_CheckAbsDeltaYaw, BlackboardKey));
 	BlackboardKey.AddRotatorFilter(this, GET_MEMBER_NAME_CHECKED(UCsBTDecorator_CheckAbsDeltaYaw, BlackboardKey));
+	BlackboardKey.AddVectorFilter(this, GET_MEMBER_NAME_CHECKED(UCsBTDecorator_CheckAbsDeltaYaw, BlackboardKey));
 
 	bCurrentView = false;
 	EqualTolerance = SMALL_NUMBER;
@@ -83,6 +85,34 @@ bool UCsBTDecorator_CheckAbsDeltaYaw::CalculateRawConditionValue(UBehaviorTreeCo
 		// >=
 		if (Operation == EArithmeticKeyOperation::GreaterOrEqual)
 			return UCsCommon::GetAbsAngleDelta(Rotation.Yaw, KeyValue.Yaw) >= Delta;
+	}
+	// Vector
+	else
+	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Vector::StaticClass())
+	{
+		const FVector KeyValue				= MyBlackboard->GetValue<UBlackboardKeyType_Vector>(BlackboardKey.GetSelectedKeyID());
+		const FVector MeToLocation			= (KeyValue - Pawn->CurrentBodyLocation).GetSafeNormal2D();
+		const FRotator RotationToLocation	= MeToLocation.Rotation();
+		const float& Yaw					= RotationToLocation.Yaw;
+
+		// =
+		if (Operation == EArithmeticKeyOperation::Equal)
+			return FMath::Abs(UCsCommon::GetAbsAngleDelta(Rotation.Yaw, Yaw) - Delta) <= EqualTolerance;
+		// !=
+		if (Operation == EArithmeticKeyOperation::NotEqual)
+			return UCsCommon::GetAbsAngleDelta(Rotation.Yaw, Yaw) != Delta;
+		// <
+		if (Operation == EArithmeticKeyOperation::Less)
+			return UCsCommon::GetAbsAngleDelta(Rotation.Yaw, Yaw) < Delta;
+		// <=
+		if (Operation == EArithmeticKeyOperation::LessOrEqual)
+			return UCsCommon::GetAbsAngleDelta(Rotation.Yaw, Yaw) <= Delta;
+		// >
+		if (Operation == EArithmeticKeyOperation::Greater)
+			return UCsCommon::GetAbsAngleDelta(Rotation.Yaw, Yaw) > Delta;
+		// >=
+		if (Operation == EArithmeticKeyOperation::GreaterOrEqual)
+			return UCsCommon::GetAbsAngleDelta(Rotation.Yaw, Yaw) >= Delta;
 	}
 	return false;
 }

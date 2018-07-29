@@ -578,8 +578,8 @@ namespace CgCore
 
         #region "List"
 
-     public class TCgProperty_TList<ValueType>
-        where ValueType : struct, IConvertible
+    public class TCgProperty_TList<ValueType>
+       where ValueType : struct, IConvertible
     {
         public sealed class FGet : TCgDelegate_Ret_OneParam<ValueType, int> { }
         public sealed class FOverride_Get : TCgDelegate_Ret_OneParam<ValueType, int> { }
@@ -595,17 +595,17 @@ namespace CgCore
         public List<ValueType> Last_Values;
 
         protected byte SIZE;
-	    protected bool IsDirty;
+        protected bool IsDirty;
 
         protected List<bool> IsDirtys;
 
-	    public FGet Get_Call;
+        public FGet Get_Call;
         public FOverride_Get Override_Get;
         public FOverride_Subscript Override_Subscript;
-	    public FOnChange OnChange_Event;
-	    public FOnChangeList OnChangeList_Event;
+        public FOnChange OnChange_Event;
+        public FOnChangeList OnChangeList_Event;
 
-	    public TCgProperty_TList()
+        public TCgProperty_TList()
         {
             DefaultValue = default(ValueType);
             Value = DefaultValue;
@@ -640,7 +640,7 @@ namespace CgCore
 
         public virtual void UpdateIsDirty()
         {
-            IsDirty    = !Value.Equals(Last_Value);
+            IsDirty = !Value.Equals(Last_Value);
             Last_Value = Value;
 
             if (IsDirty)
@@ -649,7 +649,7 @@ namespace CgCore
 
         public virtual void UpdateIsDirtys(int index)
         {
-            IsDirtys[index]    = !Values[index].Equals(Last_Values[index]);
+            IsDirtys[index] = !Values[index].Equals(Last_Values[index]);
             Last_Values[index] = Values[index];
 
             if (IsDirtys[index])
@@ -716,6 +716,194 @@ namespace CgCore
         {
             IsDirty = false;
 
+            for (int i = 0; i < SIZE; ++i)
+            {
+                IsDirtys[i] = false;
+            }
+        }
+
+        public void ResetValues()
+        {
+            Value = DefaultValue;
+            Last_Value = Value;
+            IsDirty = false;
+
+            for (int i = 0; i < SIZE; ++i)
+            {
+                Values[i] = Value;
+                Last_Values[i] = Value;
+                IsDirtys[i] = false;
+            }
+        }
+
+        public void Reset()
+        {
+            ResetValues();
+
+            Get_Call.Unbind();
+            Override_Get.Unbind();
+            Override_Subscript.Unbind();
+            OnChange_Event.Clear();
+            OnChangeList_Event.Clear();
+        }
+
+        public bool HasChanged() { return IsDirty; }
+        public bool HasChanged(int index) { return IsDirtys[index]; }
+
+        public void Resolve()
+        {
+            UpdateIsDirty();
+
+            for (int i = 0; i < SIZE; ++i)
+            {
+                UpdateIsDirtys(i);
+            }
+            Clear();
+        }
+    }
+
+        #endregion // List
+
+        #region "List Ref"
+
+     public class TCgProperty_TListRef<ValueType>
+        where ValueType : struct, IConvertible
+    {
+        public sealed class FGet : TCgDelegate_Ret_OneParam<ValueType, int> { }
+        public sealed class FOverride_Get : TCgDelegate_Ret_OneParam<ValueType, int> { }
+        public sealed class FOverride_Subscript : TCgDelegate_Ret_OneParam<ValueType, int> { }
+        public sealed class FOnChange : TCgMulticastDelegate_OneParam<ValueType> { }
+        public sealed class FOnChangeList : TCgMulticastDelegate_TwoParams<int, ValueType> { }
+
+        public ValueType DefaultValue;
+        public ValueType Value;
+        public ValueType Last_Value;
+
+        public List<object> Objects;
+        public List<PropertyInfo> PropertyInfos;
+        public List<ValueType> Last_Values;
+
+        protected byte SIZE;
+	    protected bool IsDirty;
+
+        protected List<bool> IsDirtys;
+
+	    public FGet Get_Call;
+        public FOverride_Get Override_Get;
+        public FOverride_Subscript Override_Subscript;
+	    public FOnChange OnChange_Event;
+	    public FOnChangeList OnChangeList_Event;
+
+	    public TCgProperty_TListRef()
+        {
+            DefaultValue = default(ValueType);
+            Value = DefaultValue;
+            Last_Value = Value;
+
+            Objects = new List<object>();
+            PropertyInfos = new List<PropertyInfo>();
+            Last_Values = new List<ValueType>();
+
+            IsDirtys = new List<bool>();
+
+            Get_Call = new FGet();
+            Override_Get = new FOverride_Get();
+            Override_Subscript = new FOverride_Subscript();
+            OnChange_Event = new FOnChange();
+            OnChangeList_Event = new FOnChangeList();
+        }
+
+        public void SetDefaultValue(ValueType defaultValue)
+        {
+            DefaultValue = defaultValue;
+        }
+
+        public void Init(byte size)
+        {
+            for (int i = 0; i < size; ++i)
+            {
+                Objects.Add(null);
+                PropertyInfos.Add(null);
+                Last_Values.Add(DefaultValue);
+                IsDirtys.Add(false);
+            }
+        }
+
+        public virtual void UpdateIsDirty()
+        {
+            IsDirty    = !Value.Equals(Last_Value);
+            Last_Value = Value;
+
+            if (IsDirty)
+                OnChange_Event.Broadcast(Value);
+        }
+
+        public virtual void UpdateIsDirtys(int index)
+        {
+            ValueType value     = (ValueType)PropertyInfos[index].GetValue(Objects[index], null);
+            IsDirtys[index]     = !value.Equals(Last_Values[index]);
+            Last_Values[index]  = value;
+
+            if (IsDirtys[index])
+                OnChangeList_Event.Broadcast(index, value);
+        }
+        /*
+        bool operator ==(const TCsProperty_TMap& B) const
+	    {
+		    TArray<KeyType> Keys;
+            Values.GetKeys(Keys);
+
+		    for (const KeyType& Key : Keys)
+		    {
+			    if (Values[Key] != B.Values[Key])
+				    return false;
+		    }
+		    return Value == B;
+	    }
+
+	     bool operator !=(const TCsProperty_TMap& B) const
+	    {
+		    return !(*this == B);
+        }
+        */
+
+        public void Set(ValueType value)
+        {
+            Value = value;
+            UpdateIsDirty();
+        }
+
+        public void Set(int index, object o, string propertyName)
+        {
+            Objects[index] = o;
+            PropertyInfos[index] = o.GetType().GetProperty(propertyName);
+            UpdateIsDirtys(index);
+        }
+
+        public ValueType this[int index]
+        {
+            get
+            {
+                if (Override_Subscript.IsBound())
+                    return Override_Subscript.Execute(index);
+                return (ValueType)PropertyInfos[index].GetValue(Objects[index], null);
+            }
+        }
+
+        public ValueType Get() { return Value; }
+        public ValueType Get(int index)
+        {
+            if (Override_Get.IsBound())
+                return Override_Get.Execute(index);
+            return (ValueType)PropertyInfos[index].GetValue(Objects[index], null);
+        }
+
+        public ValueType GetEX(int index) { return Get_Call.Execute(index); }
+
+        public void Clear()
+        {
+            IsDirty = false;
+
             for(int i = 0; i < SIZE; ++i)
 		    {
                 IsDirtys[i] = false;
@@ -730,7 +918,8 @@ namespace CgCore
 
             for (int i = 0; i < SIZE; ++i)
             {
-                Values[i] = Value;
+                Objects[i] = null;
+                PropertyInfos[i] = null;
                 Last_Values[i] = Value;
                 IsDirtys[i] = false;
             }

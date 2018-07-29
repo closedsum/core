@@ -948,7 +948,8 @@ namespace CgCore
                 UpdateIsDirtys(i);
             }
             Clear();
-        }    
+        }
+     }
 
         #endregion // List
 

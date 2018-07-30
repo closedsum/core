@@ -48,7 +48,7 @@
         public FECgWeaponState(byte value, string name) : base(value, name) { }
     }
 
-    public class EMCgWeaponState : ECgEnumMap<FECgWeaponState, byte>
+    public class EMCgWeaponState : TCgEnumMap<FECgWeaponState, byte>
     {
         private static EMCgWeaponState _Instance;
         public static EMCgWeaponState Instance
@@ -91,7 +91,7 @@
         public FECgWeaponSlot(byte value, string name) : base(value, name) { }
     }
 
-    public class EMCgWeaponSlot : ECgEnumMap<FECgWeaponSlot, byte>
+    public class EMCgWeaponSlot : TCgEnumMap<FECgWeaponSlot, byte>
     {
         private static EMCgWeaponSlot _Instance;
         public static EMCgWeaponSlot Instance
@@ -134,7 +134,7 @@
         public FECgWeaponFireMode(byte value, string name) : base(value, name) { }
     }
 
-    public class EMCgWeaponFireMode : ECgEnumMap<FECgWeaponFireMode, byte>
+    public class EMCgWeaponFireMode : TCgEnumMap<FECgWeaponFireMode, byte>
     {
         private static EMCgWeaponFireMode _Instance;
         public static EMCgWeaponFireMode Instance
@@ -177,7 +177,7 @@
         public FECgWeaponGrip(byte value, string name) : base(value, name) { }
     }
 
-    public class EMCgWeaponGrip : ECgEnumMap<FECgWeaponGrip, byte>
+    public class EMCgWeaponGrip : TCgEnumMap<FECgWeaponGrip, byte>
     {
         private static EMCgWeaponGrip _Instance;
         public static EMCgWeaponGrip Instance
@@ -220,7 +220,7 @@
         public FECgWeaponAnim(byte value, string name) : base(value, name) { }
     }
 
-    public class EMCgWeaponAnim : ECgEnumMap<FECgWeaponAnim, byte>
+    public class EMCgWeaponAnim : TCgEnumMap<FECgWeaponAnim, byte>
     {
         private static EMCgWeaponAnim _Instance;
         public static EMCgWeaponAnim Instance
@@ -263,7 +263,7 @@
         public FECgWeaponBlendSpace(byte value, string name) : base(value, name) { }
     }
 
-    public class EMCgWeaponBlendSpace : ECgEnumMap<FECgWeaponBlendSpace, byte>
+    public class EMCgWeaponBlendSpace : TCgEnumMap<FECgWeaponBlendSpace, byte>
     {
         private static EMCgWeaponBlendSpace _Instance;
         public static EMCgWeaponBlendSpace Instance
@@ -298,6 +298,8 @@
     }
 
     #endregion // WeaponBlendSpace
+
+    #region "Data FireMode"
 
     public class FCgData_Weapon_FireMode_Firing
     {
@@ -479,4 +481,45 @@
 
         public FCgData_FpsWeapon_FireMode_Sounds() { }
     }
+
+    public sealed class FECgData_Weapon_FireMode : ECgEnum_byte
+    {
+        public FECgData_Weapon_FireMode(byte value, string name) : base(value, name) { }
+    }
+
+    public class EMCgData_Weapon_FireMode : TCgEnumMap<FECgData_Weapon_FireMode, byte>
+    {
+        private static EMCgData_Weapon_FireMode _Instance;
+        public static EMCgData_Weapon_FireMode Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = new EMCgData_Weapon_FireMode();
+                }
+                return _Instance;
+            }
+        }
+
+        public static EMCgData_Weapon_FireMode Get()
+        {
+            return Instance;
+        }
+    }
+
+    public sealed class FECgDataWeaponFireModeEqualityComparer : IEqualityComparer<FECgData_Weapon_FireMode>
+    {
+        public bool Equals(FECgData_Weapon_FireMode lhs, FECgData_Weapon_FireMode rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(FECgData_Weapon_FireMode x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
+    #endregion // Data FireMode
 }

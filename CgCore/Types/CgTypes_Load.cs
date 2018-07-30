@@ -20,7 +20,7 @@
         }
     }
 
-    public class EMCgAssetType : ECgEnumMap<ECgAssetType, byte>
+    public class EMCgAssetType : TCgEnumMap<ECgAssetType, byte>
     {
         private static EMCgAssetType _Instance;
         public static EMCgAssetType Instance

@@ -1,5 +1,6 @@
 ﻿namespace CgCore
 {
+    using System;
     using System.Collections;
     using System.Collections.Generic;
     using UnityEngine;
@@ -24,7 +25,7 @@
         }
     }
 
-    public class EMCgWeaponMultiValueMember : ECgEnumMap<FECgWeaponMultiValueMember, byte>
+    public class EMCgWeaponMultiValueMember : TCgEnumMap<FECgWeaponMultiValueMember, byte>
     {
         private static EMCgWeaponMultiValueMember _Instance;
         public static EMCgWeaponMultiValueMember Instance
@@ -110,7 +111,7 @@
         }
     }
 
-    public class EMCgWeaponRoutine : ECgEnumMap<FECgWeaponRoutine, byte>
+    public class EMCgWeaponRoutine : TCgEnumMap<FECgWeaponRoutine, byte>
     {
         private static EMCgWeaponRoutine _Instance;
         public static EMCgWeaponRoutine Instance
@@ -140,23 +141,142 @@
 
     #endregion // Enums
 
-    public class CgWeapon : MonoBehaviour
+    public class FCgWeapon : MonoBehaviour
     {
         #region "Property"
 
+        // bool
         public sealed class FRef_bool : TCgProperty_TListRef_bool { }
         public sealed class FTMap_bool : TCgProperty_TMap_bool<FECgWeaponFireMode> { }
         public sealed class FTMapRef_bool : TCgProperty_TMapRef_bool<FECgWeaponFireMode> { }
+        // byte
         public sealed class FTMap_byte : TCgIntegralType_TMap_byte<FECgWeaponFireMode> { }
         public sealed class FTMapRef_Byte : TCgIntegralType_TMapRef_byte<FECgWeaponFireMode> { }
-
+        // int
+        public sealed class FRef_int : TCgIntegralType_TListRef_int { }
+        public sealed class FTMapRef_int : TCgIntegralType_TMapRef_int<FECgWeaponFireMode> { }
+        // float
+        public sealed class FRef_float : TCgIntegralType_TListRef_float { }
+        public sealed class FTMap_float : TCgIntegralType_TMap_float<FECgWeaponFireMode> { }
+        public sealed class FTMapRef_float : TCgIntegralType_TMapRef_float<FECgWeaponFireMode> { }
 
         #endregion // Property
+
+        #region "Constants"
+
+        public static readonly int DATA_VALUE = 0;
+        public static readonly int CUSTOM_VALUE = -1;
+        public static readonly int PROJECTIVE_FIRE_PAYLOAD_POOL_SIZE = 64;
+
+        #endregion // Constants
+
+        #region "Data Members"
+
+        public ulong UniqueObjectId;
+
+        #endregion // Data Members
 
         // Use this for initialization
         void Start()
         {
 
         }
+
+        #region "Members"
+
+        public void InitMultiValueMember<ValueType>(TCgProperty_TMap<FECgWeaponFireMode, ValueType> member, ValueType defaultValue) 
+            where ValueType : struct, IConvertible
+        {
+            member.SetDefaultValue(defaultValue);
+
+            int count = EMCgWeaponFireMode.Get().Count;
+
+            for (int i = 0; i < count; ++i)
+            {
+                member.Init(EMCgWeaponFireMode.Get().GetEnumAt(i));
+            }
+        }
+
+        public void InitMultiRefValueMembers<ValueType>(TCgProperty_TMapRef<FECgWeaponFireMode, ValueType> member, ValueType defaultValue)
+            where ValueType : struct, IConvertible
+        {
+            member.SetDefaultValue(defaultValue);
+
+            int count = EMCgWeaponFireMode.Get().Count;
+
+            for (int i = 0; i < count; ++i)
+            {
+                member.Init(EMCgWeaponFireMode.Get().GetEnumAt(i));
+            }
+        }
+
+        public virtual void InitMultiValueMembers() { }
+
+            #region "Set"
+
+        public void SetMemberRefValue<ValueType>(TCgProperty_TListRef<ValueType> member, string memberName)
+            where ValueType : struct, IConvertible
+        {
+            /*
+            ACsData_Weapon* Data_Weapon = GetMyData_Weapon();
+
+		    Member.ResetValues();
+
+		    for (uint8 I = 0; I < Member.Num(); ++I)
+		    {
+			    T* DataMember = UCsCommon_Load::GetObjectMember<T>(Data_Weapon, Data_Weapon->GetClass(), MemberName, GetObjectMember_Internal);
+
+			    if (I == 0)
+				    Member.Set(*DataMember);
+			    Member.Set(I, DataMember);
+		    }
+            */
+        }
+
+        public void SetMemberMultiValue<ValueType>(TCgProperty_TMap<FECgWeaponFireMode, ValueType> member, ValueType value)
+            where ValueType : struct, IConvertible
+        {
+            member.ResetValues();
+
+            int count = EMCgWeaponFireMode.Get().Count;
+
+            for (int i = 0; i < count; ++i)
+            {
+                if (i == 0)
+                    member.Set(value);
+                member.Set(EMCgWeaponFireMode.Get().GetEnumAt(i), value);
+            }
+        }
+
+        public void SetMemberMultiRefValue<ValueType>(TCgProperty_TMapRef<FECgWeaponFireMode, ValueType> member, FECgData_Weapon_FireMode fireModeMember, string memberName)
+            where ValueType : struct, IConvertible
+        {
+            /*
+		    ACsData_ProjectileWeapon* Data_Weapon = GetMyData_Weapon<ACsData_ProjectileWeapon>();
+
+            Member.ResetValues();
+
+		    const FString& StructName = FireModeMember.Name;
+
+		    const int32& Count = EMCsWeaponFireMode::Get().Num();
+
+		    for (int32 I = 0; I<Count; ++I)
+		    {
+			    const FECsWeaponFireMode& FireMode = EMCsWeaponFireMode::Get().GetEnumAt(I);
+
+            void* Struct = UCsCommon_Load::GetStructMember<void>(Data_Weapon->GetFireModeStruct(FireMode), Data_Weapon->GetFireModeScriptStruct(), StructName, GetStructMember_Internal);
+            UScriptStruct* ScriptStruct = UCsCommon_Load::GetScriptStructMember(Data_Weapon->GetFireModeStruct(FireMode), Data_Weapon->GetFireModeScriptStruct(), StructName, GetScriptStructMember_Internal);
+            ValueType* StructMember = UCsCommon_Load::GetStructMember<ValueType>(Struct, ScriptStruct, MemberName, GetStructMember_Internal);
+
+			    if (I == 0)
+				    Member.Set(* StructMember);
+			    Member.Set(FireMode, StructMember);
+		    }
+            */
+        }
+
+            #endregion // Set
+
+        #endregion // Members
     }
 }

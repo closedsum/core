@@ -65,7 +65,7 @@ namespace CgCore
         }
     }
 
-    public class EMCgEthereumJavascript : ECgEnumMap<ECgEthereumJavascript, byte>
+    public class EMCgEthereumJavascript : TCgEnumMap<ECgEthereumJavascript, byte>
     {
         private static EMCgEthereumJavascript _Instance;
         public static EMCgEthereumJavascript Instance

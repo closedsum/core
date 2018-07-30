@@ -20,7 +20,7 @@
         }
     }
 
-    public class EMCgBlockchainCommand : ECgEnumMap<ECgBlockchainCommand, byte>
+    public class EMCgBlockchainCommand : TCgEnumMap<ECgBlockchainCommand, byte>
     {
         private static EMCgBlockchainCommand _Instance;
         public static EMCgBlockchainCommand Instance

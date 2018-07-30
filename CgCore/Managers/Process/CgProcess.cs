@@ -9,7 +9,7 @@
         public ECgProcess(byte value, string name) : base(value, name) { }
     }
     
-    public class EMCgProcess : ECgEnumMap<ECgProcess, byte>
+    public class EMCgProcess : TCgEnumMap<ECgProcess, byte>
     {
         private static EMCgProcess _Instance;
         public static EMCgProcess Instance

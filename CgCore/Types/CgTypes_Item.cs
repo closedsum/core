@@ -23,7 +23,7 @@
         }
     }
 
-    public class EMCgItemType : ECgEnumMap<ECgItemType, byte>
+    public class EMCgItemType : TCgEnumMap<ECgItemType, byte>
     {
         private static EMCgItemType _Instance;
         public static EMCgItemType Instance

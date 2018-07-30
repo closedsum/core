@@ -159,7 +159,7 @@ namespace CgCore
         public ECgEnum_uint(uint value, string name) : base(value, name) { }
     }
 
-    public class ECgEnumMap<EnumClass, EnumType>
+    public class TCgEnumMap<EnumClass, EnumType>
         where EnumClass : TCgEnum<EnumType>
         where EnumType : struct, IConvertible
     {
@@ -186,7 +186,7 @@ namespace CgCore
             get { return Enums.Count; }
         }
 
-        public ECgEnumMap()
+        public TCgEnumMap()
         {
             Enums = new List<EnumClass>();
             StringMap = new Dictionary<string, EnumClass>();
@@ -749,9 +749,44 @@ namespace CgCore
         }
     }
 
-        #endregion // Ref
+    public class FCgProperty_Ref_float : TCgProperty_Ref<float>
+    {
+        public FCgProperty_Ref_float() : base() { }
 
-        #region "List"
+        public static bool operator <(FCgProperty_Ref_float lhs, FCgProperty_Ref_float rhs)
+        {
+            return lhs.Get() < rhs.Get();
+        }
+
+        public static bool operator >(FCgProperty_Ref_float lhs, FCgProperty_Ref_float rhs)
+        {
+            return lhs.Get() > rhs.Get();
+        }
+
+        public static bool operator >(FCgProperty_Ref_float lhs, float rhs)
+        {
+            return lhs.Get() > rhs;
+        }
+
+        public static bool operator <(FCgProperty_Ref_float lhs, float rhs)
+        {
+            return lhs.Get() < rhs;
+        }
+
+        public static bool operator >(float lhs, FCgProperty_Ref_float rhs)
+        {
+            return lhs > rhs.Get();
+        }
+
+        public static bool operator <(float lhs, FCgProperty_Ref_float rhs)
+        {
+            return lhs < rhs.Get();
+        }
+    }
+
+    #endregion // Ref
+
+    #region "List"
 
     public class TCgProperty_TList<ValueType>
        where ValueType : struct, IConvertible
@@ -1126,14 +1161,30 @@ namespace CgCore
         }
      }
 
-    public class TCgProperty_TListRef_bool : TCgProperty_TListRef<bool>
+    public class TCgIntegralType_TListRef<ValueType> : TCgProperty_TListRef<ValueType>
+        where ValueType : struct, IConvertible
     {
-        public TCgProperty_TListRef_bool() : base(){}
+        public TCgIntegralType_TListRef() : base() { }
     }
 
-        #endregion // List
+    public class TCgIntegralType_TListRef_int : TCgIntegralType_TListRef<int>
+    {
+        public TCgIntegralType_TListRef_int() : base() { }
+    }
 
-        #region "Map"
+    public class TCgIntegralType_TListRef_float : TCgIntegralType_TListRef<float>
+    {
+        public TCgIntegralType_TListRef_float() : base() { }
+    }
+
+    public class TCgProperty_TListRef_bool : TCgProperty_TListRef<bool>
+    {
+        public TCgProperty_TListRef_bool() : base() { }
+    }
+
+    #endregion // List
+
+    #region "Map"
 
     public class TCgProperty_TMap<KeyType, ValueType>
         where ValueType : struct, IConvertible
@@ -1690,6 +1741,52 @@ namespace CgCore
                     min = (byte)PropertyInfos[key].GetValue(Objects[key], null);
                 else
                     min = (byte)Math.Max(min, (byte)PropertyInfos[key].GetValue(Objects[key], null));
+                ++i;
+            }
+            return min;
+        }
+    }
+
+    public class TCgIntegralType_TMapRef_int<KeyType> : TCgIntegralType_TMapRef<KeyType, int>
+    {
+        public TCgIntegralType_TMapRef_int() : base()
+        {
+            DefaultValue = 0;
+        }
+
+        int Max()
+        {
+            Dictionary<KeyType, object>.KeyCollection keys = Objects.Keys;
+
+            int max = DefaultValue;
+
+            int i = 0;
+
+            foreach (KeyType key in keys)
+            {
+                if (i == 0)
+                    max = (int)PropertyInfos[key].GetValue(Objects[key], null);
+                else
+                    max = (int)Math.Max(max, (int)PropertyInfos[key].GetValue(Objects[key], null));
+                ++i;
+            }
+            return max;
+        }
+
+        int Min()
+        {
+            Dictionary<KeyType, object>.KeyCollection keys = Objects.Keys;
+
+            int min = DefaultValue;
+
+            int i = 0;
+
+            foreach (KeyType key in keys)
+            {
+                if (i == 0)
+                    min = (int)PropertyInfos[key].GetValue(Objects[key], null);
+                else
+                    min = (int)Math.Max(min, (int)PropertyInfos[key].GetValue(Objects[key], null));
                 ++i;
             }
             return min;

@@ -49,7 +49,7 @@ namespace CgCore
         public ECgInputAction(byte value, string name) : base(value, name) { }
     }
 
-    public class EMCgInputAction : ECgEnumMap<ECgInputAction, byte>
+    public class EMCgInputAction : TCgEnumMap<ECgInputAction, byte>
     {
         private static EMCgInputAction _Instance;
         public static EMCgInputAction Instance

@@ -39,7 +39,7 @@
         }
     }
 
-    public class EMCgBlockchainContract : ECgEnumMap<ECgBlockchainContract, byte>
+    public class EMCgBlockchainContract : TCgEnumMap<ECgBlockchainContract, byte>
     {
         private static EMCgBlockchainContract _Instance;
         public static EMCgBlockchainContract Instance
@@ -119,7 +119,7 @@
         }
     }
 
-    public class EMCgBlockchainContractFunction : ECgEnumMap<ECgBlockchainContractFunction, byte>
+    public class EMCgBlockchainContractFunction : TCgEnumMap<ECgBlockchainContractFunction, byte>
     {
         private static EMCgBlockchainContractFunction _Instance;
         public static EMCgBlockchainContractFunction Instance

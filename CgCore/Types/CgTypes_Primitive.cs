@@ -453,15 +453,15 @@ namespace CgCore
         public abstract void Resolve();
     }
 
-    public class TCgProperty<T> : CgProperty 
-        where T : struct
+    public class TCgProperty<ValueType> : CgProperty 
+        where ValueType : struct
     {
-        public sealed class OnChange : TCgMulticastDelegate_OneParam<T> { }
+        public sealed class OnChange : TCgMulticastDelegate_OneParam<ValueType> { }
 
         #region "Data Members"
 
-        public T Value;
-        public T Last_Value;
+        public ValueType Value;
+        public ValueType Last_Value;
 
         protected bool IsDirty;
 
@@ -471,12 +471,17 @@ namespace CgCore
 
         public TCgProperty()
         {
+            Value = default(ValueType);
+            Last_Value = default(ValueType);
+
+            IsDirty = false;
+
             OnChange_Event = new OnChange();
         }
 
         #region "Operators"
 
-        public static bool operator ==(TCgProperty<T> lhs, TCgProperty<T> rhs)
+        public static bool operator ==(TCgProperty<ValueType> lhs, TCgProperty<ValueType> rhs)
         {
             if (object.ReferenceEquals(lhs, null))
                 return object.ReferenceEquals(rhs, null);
@@ -485,37 +490,37 @@ namespace CgCore
             return lhs.Value.Equals(rhs.Value);
         }
 
-        public static bool operator !=(TCgProperty<T> lhs, TCgProperty<T> rhs)
+        public static bool operator !=(TCgProperty<ValueType> lhs, TCgProperty<ValueType> rhs)
         {
             return !(lhs == rhs);
         }
 
-        public static bool operator ==(TCgProperty<T> lhs, T rhs)
+        public static bool operator ==(TCgProperty<ValueType> lhs, ValueType rhs)
         {
             return lhs.Value.Equals(rhs);
         }
 
-        public static bool operator !=(TCgProperty<T> lhs, T rhs)
+        public static bool operator !=(TCgProperty<ValueType> lhs, ValueType rhs)
         {
             return !(lhs == rhs);
         }
 
-        public static bool operator ==(T lhs, TCgProperty<T> rhs)
+        public static bool operator ==(ValueType lhs, TCgProperty<ValueType> rhs)
         {
             return lhs.Equals(rhs.Value);
         }
 
-        public static bool operator !=(T lhs, TCgProperty<T> rhs)
+        public static bool operator !=(ValueType lhs, TCgProperty<ValueType> rhs)
         {
             return !(lhs == rhs);
         }
 
         public override bool Equals(object obj)
         {
-            if (!(obj is TCgProperty<T>))
+            if (!(obj is TCgProperty<ValueType>))
                 return false;
 
-            TCgProperty<T> rhs = (TCgProperty<T>)obj;
+            TCgProperty<ValueType> rhs = (TCgProperty<ValueType>)obj;
 
             if (!Value.Equals(rhs.Value)) return false;
             return true;
@@ -537,13 +542,13 @@ namespace CgCore
                 OnChange_Event.Broadcast(Value);
         }
 
-        public void Set(T inValue)
+        public void Set(ValueType inValue)
         {
             Value = inValue;
             UpdateIsDirty();
         }
 
-        public T Get() { return Value; }
+        public ValueType Get() { return Value; }
 
         public override void Clear()
         {
@@ -552,7 +557,7 @@ namespace CgCore
 
         public override void ResetValue()
         {
-            Value = default(T);
+            Value = default(ValueType);
             Last_Value = Value;
             IsDirty = false;
         }
@@ -575,6 +580,176 @@ namespace CgCore
     }
 
         #endregion // Default
+
+        #region "Ref"
+
+    public class TCgProperty_Ref<ValueType> : CgProperty 
+        where ValueType : struct
+    {
+        public sealed class FOnChange : TCgMulticastDelegate_OneParam<ValueType> { }
+
+        #region "Data Members"
+
+        public object Object;
+        public PropertyInfo Info;
+        public ValueType Last_Value;
+
+        protected bool IsDirty;
+
+        public FOnChange OnChange_Event;
+
+        #endregion // Data Members
+
+        public TCgProperty_Ref()
+        {
+            Object = null;
+            Info = null;
+            Last_Value = default(ValueType);
+
+            IsDirty = false;
+
+            OnChange_Event = new FOnChange();
+        }
+
+        #region "Operators"
+
+        public static bool operator ==(TCgProperty_Ref<ValueType> lhs, TCgProperty_Ref<ValueType> rhs)
+        {
+            if (object.ReferenceEquals(lhs, null))
+                return object.ReferenceEquals(rhs, null);
+            if (object.ReferenceEquals(rhs, null))
+                return false;
+            return lhs.Get().Equals(rhs.Get());
+        }
+
+        public static bool operator !=(TCgProperty_Ref<ValueType> lhs, TCgProperty_Ref<ValueType> rhs)
+        {
+            return !(lhs == rhs);
+        }
+
+        public static bool operator ==(TCgProperty_Ref<ValueType> lhs, ValueType rhs)
+        {
+            return lhs.Get().Equals(rhs);
+        }
+
+        public static bool operator !=(TCgProperty_Ref<ValueType> lhs, ValueType rhs)
+        {
+            return !(lhs == rhs);
+        }
+
+        public static bool operator ==(ValueType lhs, TCgProperty_Ref<ValueType> rhs)
+        {
+            return lhs.Equals(rhs.Get());
+        }
+
+        public static bool operator !=(ValueType lhs, TCgProperty_Ref<ValueType> rhs)
+        {
+            return !(lhs == rhs);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is TCgProperty_Ref<ValueType>))
+                return false;
+
+            TCgProperty_Ref<ValueType> rhs = (TCgProperty_Ref<ValueType>)obj;
+
+            if (!Get().Equals(rhs.Get())) return false;
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            return Get().GetHashCode();
+        }
+
+        #endregion // Operators
+
+        public override void UpdateIsDirty()
+        {
+            ValueType value = (ValueType)Info.GetValue(Object, null);
+            IsDirty         = !value.Equals(Last_Value);
+            Last_Value      = value;
+
+            if (IsDirty)
+                OnChange_Event.Broadcast(value);
+        }
+
+        public void Set(Object o, string propertyName)
+        {
+            Object = o;
+            Info = o.GetType().GetProperty(propertyName);
+            UpdateIsDirty();
+        }
+
+        public ValueType Get() { return (ValueType)Info.GetValue(Object, null); }
+
+        public override void Clear()
+        {
+            IsDirty = false;
+        }
+
+        public override void ResetValue()
+        {
+            Object = null;
+            Info = null;
+            Last_Value = default(ValueType);
+            IsDirty = false;
+        }
+
+        public override void Reset()
+        {
+            ResetValue();
+
+            OnChange_Event.Clear();
+        }
+
+        public override bool HasChanged() { return IsDirty; }
+        public override void MarkDirty() { IsDirty = true; }
+
+        public override void Resolve()
+        {
+            UpdateIsDirty();
+            Clear();
+        }
+    }
+
+    public class FCgProperty_Ref_int : TCgProperty_Ref<int>
+    {
+        public FCgProperty_Ref_int() : base() { }
+
+        public static bool operator <(FCgProperty_Ref_int lhs, FCgProperty_Ref_int rhs)
+        {
+            return lhs.Get() < rhs.Get();
+        }
+
+        public static bool operator >(FCgProperty_Ref_int lhs, FCgProperty_Ref_int rhs)
+        {
+            return lhs.Get() > rhs.Get();
+        }
+
+        public static bool operator >(FCgProperty_Ref_int lhs, int rhs)
+        {
+            return lhs.Get() > rhs;
+        }
+
+        public static bool operator <(FCgProperty_Ref_int lhs, int rhs)
+        {
+            return lhs.Get() < rhs;
+        }
+
+        public static bool operator >(int lhs, FCgProperty_Ref_int rhs)
+        {
+            return lhs > rhs.Get();
+        }
+
+        public static bool operator <(int lhs, FCgProperty_Ref_int rhs)
+        {
+            return lhs < rhs.Get();
+        }
+    }
+
+        #endregion // Ref
 
         #region "List"
 
@@ -766,7 +941,7 @@ namespace CgCore
 
         #region "List Ref"
 
-     public class TCgProperty_TListRef<ValueType>
+    public class TCgProperty_TListRef<ValueType>
         where ValueType : struct, IConvertible
     {
         public sealed class FGet : TCgDelegate_Ret_OneParam<ValueType, int> { }
@@ -951,12 +1126,16 @@ namespace CgCore
         }
      }
 
+    public class TCgProperty_TListRef_bool : TCgProperty_TListRef<bool>
+    {
+        public TCgProperty_TListRef_bool() : base(){}
+    }
+
         #endregion // List
 
         #region "Map"
 
     public class TCgProperty_TMap<KeyType, ValueType>
-        where KeyType : struct
         where ValueType : struct, IConvertible
     {
         public sealed class FGet : TCgDelegate_Ret_OneParam<ValueType, KeyType> { }
@@ -1137,7 +1316,6 @@ namespace CgCore
     }
 
     public class TCgIntegralType_TMap<KeyType, ValueType> : TCgProperty_TMap<KeyType, ValueType>
-        where KeyType : struct
         where ValueType : struct, IConvertible
     {
         public TCgIntegralType_TMap() { }
@@ -1207,7 +1385,6 @@ namespace CgCore
     }
 
     public class TCgIntegralType_TMap_byte<KeyType> : TCgIntegralType_TMap<KeyType, byte>
-        where KeyType : struct
     {
 	    public TCgIntegralType_TMap_byte()
         {
@@ -1216,7 +1393,6 @@ namespace CgCore
     }
 
     public class TCgIntegralType_TMap_float<KeyType> : TCgIntegralType_TMap<KeyType, float>
-        where KeyType : struct
     {
 	    public TCgIntegralType_TMap_float()
         {
@@ -1225,9 +1401,8 @@ namespace CgCore
     }
 
     public class TCgProperty_TMap_bool<KeyType> : TCgProperty_TMap<KeyType, bool>
-        where KeyType : struct
     {
-	    TCgProperty_TMap_bool()
+	    public TCgProperty_TMap_bool()
         {
             DefaultValue = false;
         }
@@ -1276,7 +1451,6 @@ namespace CgCore
         #region "Map Ref"
 
     public class TCgProperty_TMapRef<KeyType, ValueType>
-        where KeyType : struct
         where ValueType : struct, IConvertible
     {
         public sealed class FGet : TCgDelegate_Ret_OneParam<ValueType, KeyType> { }
@@ -1470,9 +1644,153 @@ namespace CgCore
         }
     }
 
+    public class TCgIntegralType_TMapRef<KeyType, ValueType> : TCgProperty_TMapRef<KeyType, ValueType>
+    where ValueType : struct, IConvertible
+    {
+        public TCgIntegralType_TMapRef() : base(){ }
+    }
+
+    public class TCgIntegralType_TMapRef_byte<KeyType> : TCgIntegralType_TMapRef<KeyType, byte>
+    {
+        public TCgIntegralType_TMapRef_byte() : base()
+        {
+            DefaultValue = 0;
+        }
+
+        byte Max()
+        {
+            Dictionary<KeyType, object>.KeyCollection keys = Objects.Keys;
+
+            byte max = DefaultValue;
+
+            int i = 0;
+
+            foreach (KeyType key in keys)
+            {
+                if (i == 0)
+                    max = (byte)PropertyInfos[key].GetValue(Objects[key], null);
+                else
+                    max = (byte)Math.Max(max, (byte)PropertyInfos[key].GetValue(Objects[key], null));
+                ++i;
+            }
+            return max;
+        }
+
+        byte Min()
+        {
+            Dictionary<KeyType, object>.KeyCollection keys = Objects.Keys;
+
+            byte min = DefaultValue;
+
+            int i = 0;
+
+            foreach (KeyType key in keys)
+            {
+                if (i == 0)
+                    min = (byte)PropertyInfos[key].GetValue(Objects[key], null);
+                else
+                    min = (byte)Math.Max(min, (byte)PropertyInfos[key].GetValue(Objects[key], null));
+                ++i;
+            }
+            return min;
+        }
+    }
+
+    public class TCgIntegralType_TMapRef_float<KeyType> : TCgIntegralType_TMapRef<KeyType, float>
+    {
+        public TCgIntegralType_TMapRef_float() : base()
+        {
+            DefaultValue = 0.0f;
+        }
+
+        float Max()
+        {
+            Dictionary<KeyType, object>.KeyCollection keys = Objects.Keys;
+
+            float max = DefaultValue;
+
+            int i = 0;
+
+            foreach (KeyType key in keys)
+            {
+                if (i == 0)
+                    max = (float)PropertyInfos[key].GetValue(Objects[key], null);
+                else
+                    max = (float)Math.Max(max, (float)PropertyInfos[key].GetValue(Objects[key], null));
+                ++i;
+            }
+            return max;
+        }
+
+        float Min()
+        {
+            Dictionary<KeyType, object>.KeyCollection keys = Objects.Keys;
+
+            float min = DefaultValue;
+
+            int i = 0;
+
+            foreach (KeyType key in keys)
+            {
+                if (i == 0)
+                    min = (float)PropertyInfos[key].GetValue(Objects[key], null);
+                else
+                    min = (float)Math.Max(min, (float)PropertyInfos[key].GetValue(Objects[key], null));
+                ++i;
+            }
+            return min;
+        }
+    }
+
+    public class TCgProperty_TMapRef_bool<KeyType> : TCgProperty_TMapRef<KeyType, bool>
+    {
+        public TCgProperty_TMapRef_bool() : base()
+        {
+            DefaultValue = false;
+        }
+
+        bool Or()
+        {
+            Dictionary<KeyType, object>.KeyCollection keys = Objects.Keys;
+
+            bool or = false;
+
+            int i = 0;
+
+            foreach (KeyType key in keys)
+            {
+                if (i == 0)
+                    or = (bool)PropertyInfos[key].GetValue(Objects[key], null);
+                else
+                    or |= (bool)PropertyInfos[key].GetValue(Objects[key], null);
+                ++i;
+            }
+            return or;
+        }
+
+        bool And()
+        {
+            Dictionary<KeyType, object>.KeyCollection keys = Objects.Keys;
+
+            bool and = false;
+
+            int i = 0;
+
+            foreach (KeyType key in keys)
+            {
+                if (i == 0)
+                    and = (bool)PropertyInfos[key].GetValue(Objects[key], null);
+                else
+                    and &= (bool)PropertyInfos[key].GetValue(Objects[key], null);
+                ++i;
+            }
+            return and;
+        }
+    }
+
         #endregion // Map Ref
 
-        #region "Class"
+    #region "Class"
 
     public class TCgPropertyClass<T> : CgProperty where T : class
     {
@@ -1594,7 +1912,7 @@ namespace CgCore
         }
     }
 
-        #endregion // Class
+    #endregion // Class
 
     #endregion // Property
 

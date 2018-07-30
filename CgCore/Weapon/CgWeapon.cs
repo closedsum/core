@@ -144,6 +144,13 @@
     {
         #region "Property"
 
+        public sealed class FRef_bool : TCgProperty_TListRef_bool { }
+        public sealed class FTMap_bool : TCgProperty_TMap_bool<FECgWeaponFireMode> { }
+        public sealed class FTMapRef_bool : TCgProperty_TMapRef_bool<FECgWeaponFireMode> { }
+        public sealed class FTMap_byte : TCgIntegralType_TMap_byte<FECgWeaponFireMode> { }
+        public sealed class FTMapRef_Byte : TCgIntegralType_TMapRef_byte<FECgWeaponFireMode> { }
+
+
         #endregion // Property
 
         // Use this for initialization

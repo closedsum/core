@@ -43,12 +43,12 @@
 
     #region "WeaponState"
 
-    public sealed class ECgWeaponState : ECgEnum_byte
+    public sealed class FECgWeaponState : ECgEnum_byte
     {
-        public ECgWeaponState(byte value, string name) : base(value, name) { }
+        public FECgWeaponState(byte value, string name) : base(value, name) { }
     }
 
-    public class EMCgWeaponState : ECgEnumMap<ECgWeaponState, byte>
+    public class EMCgWeaponState : ECgEnumMap<FECgWeaponState, byte>
     {
         private static EMCgWeaponState _Instance;
         public static EMCgWeaponState Instance
@@ -69,14 +69,14 @@
         }
     }
 
-    public sealed class ECgWeaponStateEqualityComparer : IEqualityComparer<ECgWeaponState>
+    public sealed class FECgWeaponStateEqualityComparer : IEqualityComparer<FECgWeaponState>
     {
-        public bool Equals(ECgWeaponState lhs, ECgWeaponState rhs)
+        public bool Equals(FECgWeaponState lhs, FECgWeaponState rhs)
         {
             return lhs == rhs;
         }
 
-        public int GetHashCode(ECgWeaponState x)
+        public int GetHashCode(FECgWeaponState x)
         {
             return x.GetHashCode();
         }
@@ -86,12 +86,12 @@
 
     #region "WeaponSlot"
 
-    public sealed class ECgWeaponSlot : ECgEnum_byte
+    public sealed class FECgWeaponSlot : ECgEnum_byte
     {
-        public ECgWeaponSlot(byte value, string name) : base(value, name) { }
+        public FECgWeaponSlot(byte value, string name) : base(value, name) { }
     }
 
-    public class EMCgWeaponSlot : ECgEnumMap<ECgWeaponSlot, byte>
+    public class EMCgWeaponSlot : ECgEnumMap<FECgWeaponSlot, byte>
     {
         private static EMCgWeaponSlot _Instance;
         public static EMCgWeaponSlot Instance
@@ -112,14 +112,14 @@
         }
     }
 
-    public sealed class ECgWeaponSlotEqualityComparer : IEqualityComparer<ECgWeaponSlot>
+    public sealed class FECgWeaponSlotEqualityComparer : IEqualityComparer<FECgWeaponSlot>
     {
-        public bool Equals(ECgWeaponSlot lhs, ECgWeaponSlot rhs)
+        public bool Equals(FECgWeaponSlot lhs, FECgWeaponSlot rhs)
         {
             return lhs == rhs;
         }
 
-        public int GetHashCode(ECgWeaponSlot x)
+        public int GetHashCode(FECgWeaponSlot x)
         {
             return x.GetHashCode();
         }
@@ -129,12 +129,12 @@
 
     #region "WeaponFireMode"
 
-    public sealed class ECgWeaponFireMode : ECgEnum_byte
+    public sealed class FECgWeaponFireMode : ECgEnum_byte
     {
-        public ECgWeaponFireMode(byte value, string name) : base(value, name) { }
+        public FECgWeaponFireMode(byte value, string name) : base(value, name) { }
     }
 
-    public class EMCgWeaponFireMode : ECgEnumMap<ECgWeaponFireMode, byte>
+    public class EMCgWeaponFireMode : ECgEnumMap<FECgWeaponFireMode, byte>
     {
         private static EMCgWeaponFireMode _Instance;
         public static EMCgWeaponFireMode Instance
@@ -155,14 +155,14 @@
         }
     }
 
-    public sealed class ECgWeaponFireModeEqualityComparer : IEqualityComparer<ECgWeaponFireMode>
+    public sealed class FECgWeaponFireModeEqualityComparer : IEqualityComparer<FECgWeaponFireMode>
     {
-        public bool Equals(ECgWeaponFireMode lhs, ECgWeaponFireMode rhs)
+        public bool Equals(FECgWeaponFireMode lhs, FECgWeaponFireMode rhs)
         {
             return lhs == rhs;
         }
 
-        public int GetHashCode(ECgWeaponFireMode x)
+        public int GetHashCode(FECgWeaponFireMode x)
         {
             return x.GetHashCode();
         }
@@ -172,12 +172,12 @@
 
     #region "WeaponGrip"
 
-    public sealed class ECgWeaponGrip : ECgEnum_byte
+    public sealed class FECgWeaponGrip : ECgEnum_byte
     {
-        public ECgWeaponGrip(byte value, string name) : base(value, name) { }
+        public FECgWeaponGrip(byte value, string name) : base(value, name) { }
     }
 
-    public class EMCgWeaponGrip : ECgEnumMap<ECgWeaponGrip, byte>
+    public class EMCgWeaponGrip : ECgEnumMap<FECgWeaponGrip, byte>
     {
         private static EMCgWeaponGrip _Instance;
         public static EMCgWeaponGrip Instance
@@ -198,14 +198,14 @@
         }
     }
 
-    public sealed class ECgWeaponGripEqualityComparer : IEqualityComparer<ECgWeaponGrip>
+    public sealed class FECgWeaponGripEqualityComparer : IEqualityComparer<FECgWeaponGrip>
     {
-        public bool Equals(ECgWeaponGrip lhs, ECgWeaponGrip rhs)
+        public bool Equals(FECgWeaponGrip lhs, FECgWeaponGrip rhs)
         {
             return lhs == rhs;
         }
 
-        public int GetHashCode(ECgWeaponGrip x)
+        public int GetHashCode(FECgWeaponGrip x)
         {
             return x.GetHashCode();
         }
@@ -215,12 +215,12 @@
 
     #region "WeaponAnim"
 
-    public sealed class ECgWeaponAnim : ECgEnum_byte
+    public sealed class FECgWeaponAnim : ECgEnum_byte
     {
-        public ECgWeaponAnim(byte value, string name) : base(value, name) { }
+        public FECgWeaponAnim(byte value, string name) : base(value, name) { }
     }
 
-    public class EMCgWeaponAnim : ECgEnumMap<ECgWeaponAnim, byte>
+    public class EMCgWeaponAnim : ECgEnumMap<FECgWeaponAnim, byte>
     {
         private static EMCgWeaponAnim _Instance;
         public static EMCgWeaponAnim Instance
@@ -241,14 +241,14 @@
         }
     }
 
-    public sealed class ECgWeaponAnimEqualityComparer : IEqualityComparer<ECgWeaponAnim>
+    public sealed class FECgWeaponAnimEqualityComparer : IEqualityComparer<FECgWeaponAnim>
     {
-        public bool Equals(ECgWeaponAnim lhs, ECgWeaponAnim rhs)
+        public bool Equals(FECgWeaponAnim lhs, FECgWeaponAnim rhs)
         {
             return lhs == rhs;
         }
 
-        public int GetHashCode(ECgWeaponAnim x)
+        public int GetHashCode(FECgWeaponAnim x)
         {
             return x.GetHashCode();
         }
@@ -258,12 +258,12 @@
 
     #region "WeaponBlendSpace"
 
-    public sealed class ECgWeaponBlendSpace : ECgEnum_byte
+    public sealed class FECgWeaponBlendSpace : ECgEnum_byte
     {
-        public ECgWeaponBlendSpace(byte value, string name) : base(value, name) { }
+        public FECgWeaponBlendSpace(byte value, string name) : base(value, name) { }
     }
 
-    public class EMCgWeaponBlendSpace : ECgEnumMap<ECgWeaponBlendSpace, byte>
+    public class EMCgWeaponBlendSpace : ECgEnumMap<FECgWeaponBlendSpace, byte>
     {
         private static EMCgWeaponBlendSpace _Instance;
         public static EMCgWeaponBlendSpace Instance
@@ -284,14 +284,14 @@
         }
     }
 
-    public sealed class ECgWeaponBlendSpaceEqualityComparer : IEqualityComparer<ECgWeaponBlendSpace>
+    public sealed class FECgWeaponBlendSpaceEqualityComparer : IEqualityComparer<FECgWeaponBlendSpace>
     {
-        public bool Equals(ECgWeaponBlendSpace lhs, ECgWeaponBlendSpace rhs)
+        public bool Equals(FECgWeaponBlendSpace lhs, FECgWeaponBlendSpace rhs)
         {
             return lhs == rhs;
         }
 
-        public int GetHashCode(ECgWeaponBlendSpace x)
+        public int GetHashCode(FECgWeaponBlendSpace x)
         {
             return x.GetHashCode();
         }
@@ -299,7 +299,7 @@
 
     #endregion // WeaponBlendSpace
 
-    public class CgData_Weapon_FireMode_Firing
+    public class FCgData_Weapon_FireMode_Firing
     {
         /** Whether to do weapon fire on release of input */
         bool DoFireOnRelease;
@@ -330,7 +330,7 @@
         CgData_ProjectileRef Data;
         CgData_ProjectileRef ChargeData;
 
-        public CgData_Weapon_FireMode_Firing()
+        public FCgData_Weapon_FireMode_Firing()
         {
             Data = new CgData_ProjectileRef();
             ChargeData = new CgData_ProjectileRef();
@@ -359,7 +359,7 @@
         public CgData_FpsWeapon_FireMode_Animation() { }
     }
 
-    public class CgData_Weapon_FireMode_Movement
+    public class FCgData_Weapon_FireMode_Movement
     {
         bool DoSlowWhileFiring;
         float SlowWhileFiringRate;
@@ -367,10 +367,10 @@
         bool DoKickbackOnGround;
         float KickbackStrength;
 
-        public CgData_Weapon_FireMode_Movement() { }
+        public FCgData_Weapon_FireMode_Movement() { }
     }
 
-    public class CgData_Weapon_FireMode_Aiming
+    public class FCgData_Weapon_FireMode_Aiming
     {
         bool IsHoming;
         float HomingAccelerationMagnitude;
@@ -382,18 +382,18 @@
         float FiringSpreadRecoveryDelay;
         float MovingSpreadBonus;
 
-        public CgData_Weapon_FireMode_Aiming() { }
+        public FCgData_Weapon_FireMode_Aiming() { }
     }
 
-    public class CgData_FpsWeapon_FireMode_Aiming : CgData_Weapon_FireMode_Aiming
+    public class FCgData_FpsWeapon_FireMode_Aiming : FCgData_Weapon_FireMode_Aiming
     {
         float JumpSpreadImpulse;
         float ScopeAccuracyBonus;
 
-        public CgData_FpsWeapon_FireMode_Aiming() { }
+        public FCgData_FpsWeapon_FireMode_Aiming() { }
     }
 
-    public class CgData_Weapon_FireMode_Scope
+    public class FCgData_Weapon_FireMode_Scope
     {
         //TArray<FCsLocationDamageModifier> MinLocationDamageModifiers;
         //TArray<FCsLocationDamageModifier> MaxLocationDamageModifiers;
@@ -402,14 +402,14 @@
         float MaxScopePower;
         float ScopePowerGrowthRate;
 
-	    public CgData_Weapon_FireMode_Scope() { }
+	    public FCgData_Weapon_FireMode_Scope() { }
     }
 
-    public class CgData_Weapon_FireMode_FXs
+    public class FCgData_Weapon_FireMode_FXs
     {
         //TArray<FCsFxElement> MuzzleFXs;
 
-        public CgData_Weapon_FireMode_FXs() { }
+        public FCgData_Weapon_FireMode_FXs() { }
         /*
         FCsFxElement* GetMuzzleFX(const int32 Index = 0)
 	    {
@@ -428,11 +428,11 @@
         */
     }
 
-    public class CgData_FpsWeapon_FireMode_FXs
+    public class FCgData_FpsWeapon_FireMode_FXs
     {
         //TArray<FCsFpsFxElement> MuzzleFXs;
 
-        public CgData_FpsWeapon_FireMode_FXs() { }
+        public FCgData_FpsWeapon_FireMode_FXs() { }
         /*
         FCsFxElement* GetMuzzleFX(const TCsViewType &ViewType, const int32 Index = 0)
 	    {
@@ -451,7 +451,7 @@
         */
     }
 
-    public class CgData_Weapon_FireMode_Sounds
+    public class FCgData_Weapon_FireMode_Sounds
     {
         /** single fire sound (bLoopedFireSound not set) */
         //FCsSoundElement FireSound;
@@ -462,10 +462,10 @@
         /** finished burst sound (bLoopedFireSound set) */
         //FCsSoundElement FireFinishSound;
 
-        public CgData_Weapon_FireMode_Sounds() { }
+        public FCgData_Weapon_FireMode_Sounds() { }
     }
 
-    public class CgData_FpsWeapon_FireMode_Sounds
+    public class FCgData_FpsWeapon_FireMode_Sounds
     {
         /** single fire sound (bLoopedFireSound not set) */
         //FCsFpsSoundElement FireSounds;
@@ -477,6 +477,6 @@
         /** finished burst sound (bLoopedFireSound set) */
         //FCsFpsSoundElement FireFinishSounds;
 
-        public CgData_FpsWeapon_FireMode_Sounds() { }
+        public FCgData_FpsWeapon_FireMode_Sounds() { }
     }
 }

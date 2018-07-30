@@ -138,7 +138,7 @@ namespace CgCore
         /* Any links, code, and/or information related to a Contract javascript function that needs to get procedurally updated */
         protected Dictionary<FECgBlockchainContract, List<FCgEthereumJavascriptContractLink>> ScriptContractLinks;
 
-        protected Dictionary<FECgBlockchainContract, Dictionary<ECgBlockchainContractFunction, FCgBlockchainContractFunction>> ContractFunctions;
+        protected Dictionary<FECgBlockchainContract, Dictionary<FECgBlockchainContractFunction, FCgBlockchainContractFunction>> ContractFunctions;
 
         public FCgRoutine.FBoolType IsRunningInstanceCloseFlag;
 
@@ -204,7 +204,7 @@ namespace CgCore
             ScriptLinkedPaths = new Dictionary<FECgBlockchainContract, string>(new FECgBlockchainContractEqualityComparer());
             ScriptContractLinks = new Dictionary<FECgBlockchainContract, List<FCgEthereumJavascriptContractLink>>(new FECgBlockchainContractEqualityComparer());
 
-            ContractFunctions = new Dictionary<FECgBlockchainContract, Dictionary<ECgBlockchainContractFunction, FCgBlockchainContractFunction>>(new FECgBlockchainContractEqualityComparer());
+            ContractFunctions = new Dictionary<FECgBlockchainContract, Dictionary<FECgBlockchainContractFunction, FCgBlockchainContractFunction>>(new FECgBlockchainContractEqualityComparer());
 
             MonitorOutputEvents = new Dictionary<FECgBlockchainCommand, FCgProcessMonitorOutputEvent>(new FECgBlockchainCommandEqualityComparer());
 
@@ -1626,7 +1626,7 @@ namespace CgCore
             eth.SetupContractFlag.Set(true);
         }
 
-        public void RunContractConstantFunction(FECgBlockchainContract econtract, ECgBlockchainContractFunction efn, FCgBlockchainContractFunctionArgument[] args = null)
+        public void RunContractConstantFunction(FECgBlockchainContract econtract, FECgBlockchainContractFunction efn, FCgBlockchainContractFunctionArgument[] args = null)
         {
             CommandFlag.Set(false);
 
@@ -1646,13 +1646,13 @@ namespace CgCore
             RunCommand(SINGLE_NODE_INDEX, command);
         }
 
-        public void RunContractStateChangeFunction(FECgBlockchainContract econtract, ICgBlockchainAccount iaccount, ECgBlockchainContractFunction efn, FCgBlockchainContractFunctionArgument[] args = null)
+        public void RunContractStateChangeFunction(FECgBlockchainContract econtract, ICgBlockchainAccount iaccount, FECgBlockchainContractFunction efn, FCgBlockchainContractFunctionArgument[] args = null)
         {
             RunContractStateChangeFunctionFlag.Set(false);
             FCgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, RunContractStateChangeFunction_Internal(this, econtract, iaccount, efn, args));
         }
 
-        public static IEnumerator RunContractStateChangeFunction_Internal(FCgEthereum eth, FECgBlockchainContract econtract, ICgBlockchainAccount iaccount, ECgBlockchainContractFunction efn, FCgBlockchainContractFunctionArgument[] args = null)
+        public static IEnumerator RunContractStateChangeFunction_Internal(FCgEthereum eth, FECgBlockchainContract econtract, ICgBlockchainAccount iaccount, FECgBlockchainContractFunction efn, FCgBlockchainContractFunctionArgument[] args = null)
         {
             // Check Balance
             int THRESHOLD = 10;
@@ -1707,7 +1707,7 @@ namespace CgCore
             eth.ContractFunctionCompleted_Event.Broadcast(econtract, efn);
         }
 
-        public void GetGasEstimate(FECgBlockchainContract econtract, ICgBlockchainAccount iaccount, ECgBlockchainContractFunction efn, FCgBlockchainContractFunctionArgument[] args = null)
+        public void GetGasEstimate(FECgBlockchainContract econtract, ICgBlockchainAccount iaccount, FECgBlockchainContractFunction efn, FCgBlockchainContractFunctionArgument[] args = null)
         {
             CommandFlag.Set(false);
 

@@ -181,7 +181,7 @@
         public class FCommandCompleted : TCgMulticastDelegate_OneParam<FECgBlockchainCommand> { }
         public class FAccountCreated : TCgMulticastDelegate_OneParam<ICgBlockchainAccount>{ }
         public class FCoinbaseSet : TCgDelegate_OneParam<ICgBlockchainAccount> { }
-        public class FContractFunctionCompleted : TCgMulticastDelegate_TwoParams<FECgBlockchainContract, ECgBlockchainContractFunction> { }
+        public class FContractFunctionCompleted : TCgMulticastDelegate_TwoParams<FECgBlockchainContract, FECgBlockchainContractFunction> { }
 
         #region "Constants"
 

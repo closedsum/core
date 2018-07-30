@@ -13,6 +13,6 @@
             Pawn.OnUpdate(deltaTime);
         }
 
-        public virtual void ProcessGameEvents(List<ECgGameEvent> events) { }
+        public virtual void ProcessGameEvents(List<FECgGameEvent> events) { }
     }
 }

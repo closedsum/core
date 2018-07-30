@@ -1333,19 +1333,19 @@ namespace CgCore
         }
     }
 
-    public sealed class ECgGameEvent : FECgEnum_byte
+    public sealed class FECgGameEvent : FECgEnum_byte
     {
-        public ECgGameEvent(byte value, string name) : base(value, name) { }
+        public FECgGameEvent(byte value, string name) : base(value, name) { }
     }
 
-    public sealed class ECgGameEventEqualityComparer : IEqualityComparer<ECgGameEvent>
+    public sealed class FECgGameEventEqualityComparer : IEqualityComparer<FECgGameEvent>
     {
-        public bool Equals(ECgGameEvent lhs, ECgGameEvent rhs)
+        public bool Equals(FECgGameEvent lhs, FECgGameEvent rhs)
         {
             return lhs == rhs;
         }
 
-        public int GetHashCode(ECgGameEvent x)
+        public int GetHashCode(FECgGameEvent x)
         {
             return x.GetHashCode();
         }
@@ -1353,16 +1353,16 @@ namespace CgCore
 
     public sealed class ECgGameEventHelper
     {
-        public ECgGameEvent.Get Get;
-        public ECgGameEvent.GetMAX GetMAX;
-        public ECgGameEvent.ToType ToType;
-        public ECgGameEvent.ToStr ToStr;
+        public FECgGameEvent.Get Get;
+        public FECgGameEvent.GetMAX GetMAX;
+        public FECgGameEvent.ToType ToType;
+        public FECgGameEvent.ToStr ToStr;
     }
 
     public class FCgGameEventDefinition
     {
         public FCgInputSentence Sentence;
-        public ECgGameEvent Event;
+        public FECgGameEvent Event;
 
         public FCgGameEventDefinition()
         {

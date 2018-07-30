@@ -5,25 +5,25 @@
 
     using Newtonsoft.Json;
 
-    public sealed class ECgItemType : FECgEnum_byte
+    public sealed class FECgItemType : FECgEnum_byte
     {
-        public ECgItemType(byte value, string name) : base(value, name) { }
+        public FECgItemType(byte value, string name) : base(value, name) { }
     }
 
-    public sealed class ECgItemTypeEqualityComparer : IEqualityComparer<ECgItemType>
+    public sealed class FECgItemTypeEqualityComparer : IEqualityComparer<FECgItemType>
     {
-        public bool Equals(ECgItemType lhs, ECgItemType rhs)
+        public bool Equals(FECgItemType lhs, FECgItemType rhs)
         {
             return lhs == rhs;
         }
 
-        public int GetHashCode(ECgItemType x)
+        public int GetHashCode(FECgItemType x)
         {
             return x.GetHashCode();
         }
     }
 
-    public class EMCgItemType : TCgEnumMap<ECgItemType, byte>
+    public class EMCgItemType : TCgEnumMap<FECgItemType, byte>
     {
         private static EMCgItemType _Instance;
         public static EMCgItemType Instance
@@ -82,7 +82,7 @@
         public bool IsAllocated;
         public bool IsSaved;
 
-        public ECgItemType Type;
+        public FECgItemType Type;
 
         public Guid Id;
         public string Address;

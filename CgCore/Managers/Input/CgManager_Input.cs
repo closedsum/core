@@ -55,7 +55,7 @@ namespace CgCore
 
         public int CurrentInputActionMap;
 
-        public List<ECgGameEvent> QueuedGameEventsForNextFrame;
+        public List<FECgGameEvent> QueuedGameEventsForNextFrame;
 
         public FCgInputProfile InputProfile;
 
@@ -164,7 +164,7 @@ namespace CgCore
 
             RawKeyInputsPressed = new List<FCgKeyInput>();
 
-            QueuedGameEventsForNextFrame = new List<ECgGameEvent>();
+            QueuedGameEventsForNextFrame = new List<FECgGameEvent>();
 
             Inputs = new List<FCgInput_Base>();
             Infos = new List<FCgInputInfo>();
@@ -669,7 +669,7 @@ namespace CgCore
 	        return input;
         }
 
-        public void QueueGameEvent(ECgGameEvent e)
+        public void QueueGameEvent(FECgGameEvent e)
         {
             QueuedGameEventsForNextFrame.Add(e);
         }
@@ -1226,7 +1226,7 @@ namespace CgCore
 
         #region "Game Events"
 
-        public void CreateGameEventDefinitionSimple(List<FCgGameEventDefinition> definitions, ECgGameEvent gameEvent, FECgInputAction action, ECgInputEvent e)
+        public void CreateGameEventDefinitionSimple(List<FCgGameEventDefinition> definitions, FECgGameEvent gameEvent, FECgInputAction action, ECgInputEvent e)
         {
             definitions.Add(new FCgGameEventDefinition());
             FCgGameEventDefinition def = definitions[definitions.Count - 1];

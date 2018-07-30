@@ -112,7 +112,7 @@
             #endregion // Private / Local Storage
 
         IFCgBlockchainGenesis Genesis { get; set; }
-        Dictionary<ECgBlockchainContract, ICgBlockchainContract> Contracts { get; set; }
+        Dictionary<FECgBlockchainContract, ICgBlockchainContract> Contracts { get; set; }
         Dictionary<FECgBlockchainCommand, string> Commands { get; set; }
 
         Dictionary<string, ICgBlockchainAccount> Accounts { get; set; }
@@ -181,7 +181,7 @@
         public class FCommandCompleted : TCgMulticastDelegate_OneParam<FECgBlockchainCommand> { }
         public class FAccountCreated : TCgMulticastDelegate_OneParam<ICgBlockchainAccount>{ }
         public class FCoinbaseSet : TCgDelegate_OneParam<ICgBlockchainAccount> { }
-        public class FContractFunctionCompleted : TCgMulticastDelegate_TwoParams<ECgBlockchainContract, ECgBlockchainContractFunction> { }
+        public class FContractFunctionCompleted : TCgMulticastDelegate_TwoParams<FECgBlockchainContract, ECgBlockchainContractFunction> { }
 
         #region "Constants"
 
@@ -295,8 +295,8 @@
             set { _Genesis = value; }
         }
 
-        private Dictionary<ECgBlockchainContract, ICgBlockchainContract> _Contracts;
-        public Dictionary<ECgBlockchainContract, ICgBlockchainContract> Contracts
+        private Dictionary<FECgBlockchainContract, ICgBlockchainContract> _Contracts;
+        public Dictionary<FECgBlockchainContract, ICgBlockchainContract> Contracts
         {
             get { return _Contracts; }
             set { _Contracts = value; }
@@ -339,7 +339,7 @@
                 Processes.Add((ECgBlockchainProcessType)i, null);
             }
 
-            Contracts = new Dictionary<ECgBlockchainContract, ICgBlockchainContract>();
+            Contracts = new Dictionary<FECgBlockchainContract, ICgBlockchainContract>();
             Commands = new Dictionary<FECgBlockchainCommand, string>(new FECgBlockchainCommandEqualityComparer());
             
             Accounts = new Dictionary<string, ICgBlockchainAccount>();

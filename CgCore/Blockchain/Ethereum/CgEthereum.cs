@@ -88,10 +88,10 @@ namespace CgCore
 
     public struct FCgEthereumJavascriptContractLink
     {
-        public readonly ECgBlockchainContract Contract;
+        public readonly FECgBlockchainContract Contract;
         public readonly string Link;
 
-        public FCgEthereumJavascriptContractLink(ECgBlockchainContract contract, string link)
+        public FCgEthereumJavascriptContractLink(FECgBlockchainContract contract, string link)
         {
             Contract = contract;
             Link = link;
@@ -118,15 +118,15 @@ namespace CgCore
         protected Dictionary<string, FCgEthereumKeystore> Keystores;
 
         public string ABIDirectory;
-        protected Dictionary<ECgBlockchainContract, string> ABISnippets;
+        protected Dictionary<FECgBlockchainContract, string> ABISnippets;
 
         public string Web3DeployDirectory;
-        protected Dictionary<ECgBlockchainContract, string> Web3DeploySnippets;
+        protected Dictionary<FECgBlockchainContract, string> Web3DeploySnippets;
 
         public string Web3DeployLinkedDirectory;
-        protected Dictionary<ECgBlockchainContract, string> Web3DeployLinkedSnippets;
+        protected Dictionary<FECgBlockchainContract, string> Web3DeployLinkedSnippets;
 
-        protected Dictionary<ECgBlockchainContract, List<FCgEthereumWeb3DeployLink>> Web3DeployLinks;
+        protected Dictionary<FECgBlockchainContract, List<FCgEthereumWeb3DeployLink>> Web3DeployLinks;
 
         
         public string JavascriptDirectory;
@@ -134,11 +134,11 @@ namespace CgCore
         /* Path for any Javascript */
         protected Dictionary<FECgEthereumJavascript, string> ScriptPaths;
         /* Path for any Contract Javascript functions that need to get procedural updated */
-        protected Dictionary<ECgBlockchainContract, string> ScriptLinkedPaths;
+        protected Dictionary<FECgBlockchainContract, string> ScriptLinkedPaths;
         /* Any links, code, and/or information related to a Contract javascript function that needs to get procedurally updated */
-        protected Dictionary<ECgBlockchainContract, List<FCgEthereumJavascriptContractLink>> ScriptContractLinks;
+        protected Dictionary<FECgBlockchainContract, List<FCgEthereumJavascriptContractLink>> ScriptContractLinks;
 
-        protected Dictionary<ECgBlockchainContract, Dictionary<ECgBlockchainContractFunction, CgBlockchainContractFunction>> ContractFunctions;
+        protected Dictionary<FECgBlockchainContract, Dictionary<ECgBlockchainContractFunction, CgBlockchainContractFunction>> ContractFunctions;
 
         public FCgRoutine.FBoolType IsRunningInstanceCloseFlag;
 
@@ -188,23 +188,23 @@ namespace CgCore
             ContractsDeployedDirectory = ContractsDirectory + "\\Deployed";
 
             ABIDirectory = ContractsDirectory + "\\ABI";
-            ABISnippets = new Dictionary<ECgBlockchainContract, string>(new ECgBlockchainContractEqualityComparer());
+            ABISnippets = new Dictionary<FECgBlockchainContract, string>(new FECgBlockchainContractEqualityComparer());
 
             Web3DeployDirectory = ContractsDirectory + "\\Web3Deploy";
-            Web3DeploySnippets = new Dictionary<ECgBlockchainContract, string>(new ECgBlockchainContractEqualityComparer());
+            Web3DeploySnippets = new Dictionary<FECgBlockchainContract, string>(new FECgBlockchainContractEqualityComparer());
 
             Web3DeployLinkedDirectory = Web3DeployDirectory + "\\Linked";
-            Web3DeployLinkedSnippets = new Dictionary<ECgBlockchainContract, string>(new ECgBlockchainContractEqualityComparer());
+            Web3DeployLinkedSnippets = new Dictionary<FECgBlockchainContract, string>(new FECgBlockchainContractEqualityComparer());
 
-            Web3DeployLinks = new Dictionary<ECgBlockchainContract, List<FCgEthereumWeb3DeployLink>>(new ECgBlockchainContractEqualityComparer());
+            Web3DeployLinks = new Dictionary<FECgBlockchainContract, List<FCgEthereumWeb3DeployLink>>(new FECgBlockchainContractEqualityComparer());
 
             JavascriptDirectory = RootDirectory + "\\Javascript";
             JavascriptLinkedDirectory = JavascriptDirectory + "\\Linked";
             ScriptPaths = new Dictionary<FECgEthereumJavascript, string>(new FECgEthereumJavascriptEqualityComparer());
-            ScriptLinkedPaths = new Dictionary<ECgBlockchainContract, string>(new ECgBlockchainContractEqualityComparer());
-            ScriptContractLinks = new Dictionary<ECgBlockchainContract, List<FCgEthereumJavascriptContractLink>>(new ECgBlockchainContractEqualityComparer());
+            ScriptLinkedPaths = new Dictionary<FECgBlockchainContract, string>(new FECgBlockchainContractEqualityComparer());
+            ScriptContractLinks = new Dictionary<FECgBlockchainContract, List<FCgEthereumJavascriptContractLink>>(new FECgBlockchainContractEqualityComparer());
 
-            ContractFunctions = new Dictionary<ECgBlockchainContract, Dictionary<ECgBlockchainContractFunction, CgBlockchainContractFunction>>(new ECgBlockchainContractEqualityComparer());
+            ContractFunctions = new Dictionary<FECgBlockchainContract, Dictionary<ECgBlockchainContractFunction, CgBlockchainContractFunction>>(new FECgBlockchainContractEqualityComparer());
 
             MonitorOutputEvents = new Dictionary<FECgBlockchainCommand, FCgProcessMonitorOutputEvent>(new FECgBlockchainCommandEqualityComparer());
 
@@ -660,7 +660,7 @@ namespace CgCore
                     string address = right.Substring(0, 40);
 
                     // Update Contract with the address
-                    ECgBlockchainContract econtract = (ECgBlockchainContract)CurrentCommandInfo.Payload;
+                    FECgBlockchainContract econtract = (FECgBlockchainContract)CurrentCommandInfo.Payload;
 
                     FCgEthereumContract contract = (FCgEthereumContract)Contracts[econtract];
                     contract.Address            = address;
@@ -1368,13 +1368,13 @@ namespace CgCore
 
         #region Contract
 
-        public void DeployContract(ECgBlockchainContract econtract, CgBlockchainContractArgument[] args = null)
+        public void DeployContract(FECgBlockchainContract econtract, CgBlockchainContractArgument[] args = null)
         {
             DeployContractFlag.Set(false);
             FCgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, DeployContract_Internal(this, econtract, args));
         }
 
-        public static IEnumerator DeployContract_Internal(FCgEthereum eth, ECgBlockchainContract econtract, CgBlockchainContractArgument[] args = null)
+        public static IEnumerator DeployContract_Internal(FCgEthereum eth, FECgBlockchainContract econtract, CgBlockchainContractArgument[] args = null)
         {
             // Start Miner
             eth.StartMiner();
@@ -1412,7 +1412,7 @@ namespace CgCore
             eth.DeployContractFlag.Set(true);
         }
 
-        public void LoadContract(ECgBlockchainContract econtract, FECgEthereumJavascript escript)
+        public void LoadContract(FECgBlockchainContract econtract, FECgEthereumJavascript escript)
         {
             ICgBlockchainContract c = null;
             Contracts.TryGetValue(econtract, out c);
@@ -1483,7 +1483,7 @@ namespace CgCore
             }
         }
 
-        public void CreatedWeb3DeployLinked(ECgBlockchainContract econtract)
+        public void CreatedWeb3DeployLinked(FECgBlockchainContract econtract)
         {
             string snippet = Web3DeploySnippets[econtract];
 
@@ -1523,7 +1523,7 @@ namespace CgCore
             }
         }
 
-        public void CreatedJavascriptContractLinked(ECgBlockchainContract econtract, FECgEthereumJavascript escript)
+        public void CreatedJavascriptContractLinked(FECgBlockchainContract econtract, FECgEthereumJavascript escript)
         {
             string path = "";
 
@@ -1551,7 +1551,7 @@ namespace CgCore
             File.WriteAllText(ScriptLinkedPaths[econtract], script, System.Text.Encoding.ASCII);
         }
 
-        public void CreateContractABI(ECgBlockchainContract econtract)
+        public void CreateContractABI(FECgBlockchainContract econtract)
         {
             CommandFlag.Set(false);
 
@@ -1597,13 +1597,13 @@ namespace CgCore
             RunCommand(SINGLE_NODE_INDEX, ECgEthereumCommand.CreateContractInstance, args);
         }
 
-        public void SetupContract(ECgBlockchainContract econtract, FECgEthereumJavascript escript)
+        public void SetupContract(FECgBlockchainContract econtract, FECgEthereumJavascript escript)
         {
             SetupContractFlag.Set(false);
             FCgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, SetupContract_Internal(this, econtract, escript));
         }
 
-        public static IEnumerator SetupContract_Internal(FCgEthereum eth, ECgBlockchainContract econtract, FECgEthereumJavascript escript)
+        public static IEnumerator SetupContract_Internal(FCgEthereum eth, FECgBlockchainContract econtract, FECgEthereumJavascript escript)
         {
             eth.LoadContract(econtract, escript);
             eth.LoadScript(escript, eth.ScriptLinkedPaths[econtract]);
@@ -1626,7 +1626,7 @@ namespace CgCore
             eth.SetupContractFlag.Set(true);
         }
 
-        public void RunContractConstantFunction(ECgBlockchainContract econtract, ECgBlockchainContractFunction efn, CgBlockchainContractFunctionArgument[] args = null)
+        public void RunContractConstantFunction(FECgBlockchainContract econtract, ECgBlockchainContractFunction efn, CgBlockchainContractFunctionArgument[] args = null)
         {
             CommandFlag.Set(false);
 
@@ -1646,13 +1646,13 @@ namespace CgCore
             RunCommand(SINGLE_NODE_INDEX, command);
         }
 
-        public void RunContractStateChangeFunction(ECgBlockchainContract econtract, ICgBlockchainAccount iaccount, ECgBlockchainContractFunction efn, CgBlockchainContractFunctionArgument[] args = null)
+        public void RunContractStateChangeFunction(FECgBlockchainContract econtract, ICgBlockchainAccount iaccount, ECgBlockchainContractFunction efn, CgBlockchainContractFunctionArgument[] args = null)
         {
             RunContractStateChangeFunctionFlag.Set(false);
             FCgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, RunContractStateChangeFunction_Internal(this, econtract, iaccount, efn, args));
         }
 
-        public static IEnumerator RunContractStateChangeFunction_Internal(FCgEthereum eth, ECgBlockchainContract econtract, ICgBlockchainAccount iaccount, ECgBlockchainContractFunction efn, CgBlockchainContractFunctionArgument[] args = null)
+        public static IEnumerator RunContractStateChangeFunction_Internal(FCgEthereum eth, FECgBlockchainContract econtract, ICgBlockchainAccount iaccount, ECgBlockchainContractFunction efn, CgBlockchainContractFunctionArgument[] args = null)
         {
             // Check Balance
             int THRESHOLD = 10;
@@ -1707,7 +1707,7 @@ namespace CgCore
             eth.ContractFunctionCompleted_Event.Broadcast(econtract, efn);
         }
 
-        public void GetGasEstimate(ECgBlockchainContract econtract, ICgBlockchainAccount iaccount, ECgBlockchainContractFunction efn, CgBlockchainContractFunctionArgument[] args = null)
+        public void GetGasEstimate(FECgBlockchainContract econtract, ICgBlockchainAccount iaccount, ECgBlockchainContractFunction efn, CgBlockchainContractFunctionArgument[] args = null)
         {
             CommandFlag.Set(false);
 

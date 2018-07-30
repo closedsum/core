@@ -21,25 +21,25 @@
         }
     }
 
-    public sealed class ECgBlockchainContract : FECgEnum_byte
+    public sealed class FECgBlockchainContract : FECgEnum_byte
     {
-        public ECgBlockchainContract(byte value, string name) : base(value, name) { }
+        public FECgBlockchainContract(byte value, string name) : base(value, name) { }
     }
 
-    public sealed class ECgBlockchainContractEqualityComparer : IEqualityComparer<ECgBlockchainContract>
+    public sealed class FECgBlockchainContractEqualityComparer : IEqualityComparer<FECgBlockchainContract>
     {
-        public bool Equals(ECgBlockchainContract lhs, ECgBlockchainContract rhs)
+        public bool Equals(FECgBlockchainContract lhs, FECgBlockchainContract rhs)
         {
             return lhs == rhs;
         }
 
-        public int GetHashCode(ECgBlockchainContract x)
+        public int GetHashCode(FECgBlockchainContract x)
         {
             return x.GetHashCode();
         }
     }
 
-    public class EMCgBlockchainContract : TCgEnumMap<ECgBlockchainContract, byte>
+    public class EMCgBlockchainContract : TCgEnumMap<FECgBlockchainContract, byte>
     {
         private static EMCgBlockchainContract _Instance;
         public static EMCgBlockchainContract Instance
@@ -316,11 +316,11 @@
 
     public struct CgBlockchainContractFunctionPayload
     {
-        public ECgBlockchainContract Contract;
+        public FECgBlockchainContract Contract;
         public ECgBlockchainContractFunction Function;
         //object Payload;
 
-        public CgBlockchainContractFunctionPayload(ECgBlockchainContract econtract, ECgBlockchainContractFunction efn)
+        public CgBlockchainContractFunctionPayload(FECgBlockchainContract econtract, ECgBlockchainContractFunction efn)
         {
             Contract = econtract;
             Function = efn;

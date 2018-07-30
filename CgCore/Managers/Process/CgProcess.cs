@@ -4,12 +4,12 @@
     using System.Diagnostics;
     using System.Collections.Generic;
 
-    public sealed class ECgProcess : FECgEnum_byte
+    public sealed class FECgProcess : FECgEnum_byte
     {
-        public ECgProcess(byte value, string name) : base(value, name) { }
+        public FECgProcess(byte value, string name) : base(value, name) { }
     }
     
-    public class EMCgProcess : TCgEnumMap<ECgProcess, byte>
+    public class EMCgProcess : TCgEnumMap<FECgProcess, byte>
     {
         private static EMCgProcess _Instance;
         public static EMCgProcess Instance
@@ -30,7 +30,7 @@
         }
     }
 
-    public sealed class CgProcessCache : CgPooledObjectCache<ECgProcess, TCgPooledObject<ECgProcess>>
+    public sealed class FCgProcessCache : CgPooledObjectCache<FECgProcess, TCgPooledObject<FECgProcess>>
     {
     }
 
@@ -97,22 +97,22 @@
     }
 
 
-    public class FCgProcess : TCgPooledObject<ECgProcess>
+    public class FCgProcess : TCgPooledObject<FECgProcess>
     {
         public static CgConsoleVariableLog LogCommandRequest = new CgConsoleVariableLog("log.process.command.request", false, "Log Process Command Request", (int)ECgConsoleVariableFlag.Console);
 
-        public sealed class OutputDataRecieved : TCgMulticastDelegate_TwoParams<object, DataReceivedEventArgs> { }
-        public sealed class ErrorDataRecieved : TCgMulticastDelegate_TwoParams<object, DataReceivedEventArgs> { }
-        public sealed class Exited : TCgMulticastDelegate_TwoParams<object, EventArgs> { }
+        public sealed class FOutputDataRecieved : TCgMulticastDelegate_TwoParams<object, DataReceivedEventArgs> { }
+        public sealed class FErrorDataRecieved : TCgMulticastDelegate_TwoParams<object, DataReceivedEventArgs> { }
+        public sealed class FExited : TCgMulticastDelegate_TwoParams<object, EventArgs> { }
 
         #region "Data Members"
 
         public Process P;
         public bool IsRunning;
 
-        public OutputDataRecieved OutputDataRecieved_Event;
-        public ErrorDataRecieved ErrorDataRecieved_Event;
-        public Exited Exited_Event;
+        public FOutputDataRecieved OutputDataRecieved_Event;
+        public FErrorDataRecieved ErrorDataRecieved_Event;
+        public FExited Exited_Event;
 
         private List<FCgProcessMonitorOutputEvent> MonitorOuputEvents;
 
@@ -120,11 +120,11 @@
 
         public FCgProcess() : base()
         {
-            Cache = new CgProcessCache();
+            Cache = new FCgProcessCache();
 
-            OutputDataRecieved_Event = new OutputDataRecieved();
-            ErrorDataRecieved_Event = new ErrorDataRecieved();
-            Exited_Event = new Exited();
+            OutputDataRecieved_Event = new FOutputDataRecieved();
+            ErrorDataRecieved_Event = new FErrorDataRecieved();
+            Exited_Event = new FExited();
 
             MonitorOuputEvents = new List<FCgProcessMonitorOutputEvent>();
         }

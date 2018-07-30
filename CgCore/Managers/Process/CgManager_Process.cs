@@ -19,9 +19,9 @@
         public bool RedirectStandardError;
         public bool EnableRaisingEvents;
 
-        public FCgProcess.OutputDataRecieved OutputDataRecieved_Event;
-        public FCgProcess.ErrorDataRecieved ErrorDataRecieved_Event;
-        public FCgProcess.Exited Exited_Event;
+        public FCgProcess.FOutputDataRecieved OutputDataRecieved_Event;
+        public FCgProcess.FErrorDataRecieved ErrorDataRecieved_Event;
+        public FCgProcess.FExited Exited_Event;
 
         public List<FCgProcessMonitorOutputEvent> MonitorOuputEvents;
 
@@ -29,9 +29,9 @@
 
         public FCgProcessPayload() : base()
         {
-            OutputDataRecieved_Event = new FCgProcess.OutputDataRecieved();
-            ErrorDataRecieved_Event = new FCgProcess.ErrorDataRecieved();
-            Exited_Event = new FCgProcess.Exited();
+            OutputDataRecieved_Event = new FCgProcess.FOutputDataRecieved();
+            ErrorDataRecieved_Event = new FCgProcess.FErrorDataRecieved();
+            Exited_Event = new FCgProcess.FExited();
 
             MonitorOuputEvents = new List<FCgProcessMonitorOutputEvent>();
 
@@ -64,7 +64,7 @@
         }
     }
 
-    public class FCgManager_Process : TCgManager<ECgProcess, FCgProcess, FCgProcessPayload>
+    public class FCgManager_Process : TCgManager<FECgProcess, FCgProcess, FCgProcessPayload>
     {
         private static readonly int PAYLOAD_COUNT = 8;
 
@@ -100,7 +100,7 @@
                 return;
 
 
-            if (!type.IsSubclassOf(typeof(TCgManager<ECgProcess, FCgProcess, FCgProcessPayload>)))
+            if (!type.IsSubclassOf(typeof(TCgManager<FECgProcess, FCgProcess, FCgProcessPayload>)))
             {
                 FCgDebug.Log("ICgManager_Process.Init: Passed in Type of " + type.GetType().Name + " is NOT a SubclassOf TCgManager<ECgProcess, FCgProcess, FCgProcessPayload>");
                 return;
@@ -126,17 +126,17 @@
                 _Instance.Internal.Shutdown();
         }
 
-        public virtual void CreatePool(ECgProcess e, int size)
+        public virtual void CreatePool(FECgProcess e, int size)
         {
             Internal.CreatePool(e, size);
         }
 
-        public virtual void AddToPool(ECgProcess e, FCgProcess o)
+        public virtual void AddToPool(FECgProcess e, FCgProcess o)
         {
             Internal.AddToPool(e, o);
         }
 
-        public virtual void AddToActivePool(ECgProcess e, FCgProcess o)
+        public virtual void AddToActivePool(FECgProcess e, FCgProcess o)
         {
             Internal.AddToActivePool(e, o);
         }
@@ -146,19 +146,19 @@
             Internal.OnUpdate(deltaTime);
         }
 
-        public int GetActivePoolSize(ECgProcess e)
+        public int GetActivePoolSize(FECgProcess e)
         {
             return Internal.GetActivePoolSize(e);
         }
 
-        public bool IsExhausted(ECgProcess e)
+        public bool IsExhausted(FECgProcess e)
         {
             return Internal.IsExhausted(e);
         }
 
             #region "Allocate / DeAllocate"
 
-        public bool DeAllocate(ECgProcess e, int index)
+        public bool DeAllocate(FECgProcess e, int index)
         {
             return Internal.DeAllocate(e, index);
         }
@@ -170,7 +170,7 @@
 
             #endregion // Allocate / DeAllocate
 
-        public FCgProcess Spawn(ECgProcess e, FCgProcessPayload payload)
+        public FCgProcess Spawn(FECgProcess e, FCgProcessPayload payload)
         {
             return Internal.Spawn(e, payload);
         }
@@ -182,7 +182,7 @@
 
         #endregion "Internal"
 
-        public void OnAddToPool(ECgProcess e, FCgProcess o)
+        public void OnAddToPool(FECgProcess e, FCgProcess o)
         {
             Process p = new Process();
             Processes.Add(p);

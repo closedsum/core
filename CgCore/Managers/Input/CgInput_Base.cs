@@ -3,7 +3,7 @@ namespace CgCore
 {
     public abstract class FCgInput_Base
     {
-        public ECgInputAction Action;
+        public FECgInputAction Action;
         public FCgInputInfo Info;
         public int ActionMap;
         public FCgManager_Input Manager_Input;

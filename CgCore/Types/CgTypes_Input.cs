@@ -44,12 +44,12 @@ namespace CgCore
         }
     }
 
-    public sealed class ECgInputAction : FECgEnum_byte
+    public sealed class FECgInputAction : FECgEnum_byte
     {
-        public ECgInputAction(byte value, string name) : base(value, name) { }
+        public FECgInputAction(byte value, string name) : base(value, name) { }
     }
 
-    public class EMCgInputAction : TCgEnumMap<ECgInputAction, byte>
+    public class EMCgInputAction : TCgEnumMap<FECgInputAction, byte>
     {
         private static EMCgInputAction _Instance;
         public static EMCgInputAction Instance
@@ -70,14 +70,14 @@ namespace CgCore
         }
     }
 
-    public sealed class ECgInputActionEqualityComparer : IEqualityComparer<ECgInputAction>
+    public sealed class FECgInputActionEqualityComparer : IEqualityComparer<FECgInputAction>
     {
-        public bool Equals(ECgInputAction lhs, ECgInputAction rhs)
+        public bool Equals(FECgInputAction lhs, FECgInputAction rhs)
         {
             return lhs == rhs;
         }
 
-        public int GetHashCode(ECgInputAction x)
+        public int GetHashCode(FECgInputAction x)
         {
             return x.GetHashCode();
         }
@@ -217,7 +217,7 @@ namespace CgCore
 
         #region "Data Members"
 
-        public ECgInputAction Action;
+        public FECgInputAction Action;
 
         public CgKeyInputHandler_Event Event;
 
@@ -228,7 +228,7 @@ namespace CgCore
             Action = null;
         }
 
-        public FCgKeyInputHandler(ECgInputAction action)
+        public FCgKeyInputHandler(FECgInputAction action)
         {
             Action = action;
             Event = new CgKeyInputHandler_Event();
@@ -290,7 +290,7 @@ namespace CgCore
         public float DeltaTime;
         public ulong Frame;
 
-        private Dictionary<ECgInputAction, FCgKeyInputHandler>[] HandlerMap;
+        private Dictionary<FECgInputAction, FCgKeyInputHandler>[] HandlerMap;
 
         #endregion // Data Members
 
@@ -303,13 +303,13 @@ namespace CgCore
             DeltaTime = 0f;
             Frame = 0;
 
-            HandlerMap = new Dictionary<ECgInputAction, FCgKeyInputHandler>[(byte)ECgInputEvent.MAX];
+            HandlerMap = new Dictionary<FECgInputAction, FCgKeyInputHandler>[(byte)ECgInputEvent.MAX];
 
             int len = (int)ECgInputEvent.MAX;
 
             for (int i = 0; i < len; ++i)
             {
-                HandlerMap[i] = new Dictionary<ECgInputAction, FCgKeyInputHandler>(new ECgInputActionEqualityComparer());
+                HandlerMap[i] = new Dictionary<FECgInputAction, FCgKeyInputHandler>(new FECgInputActionEqualityComparer());
             }
         }
 
@@ -322,19 +322,19 @@ namespace CgCore
             DeltaTime = 0f;
             Frame = 0;
 
-            HandlerMap = new Dictionary<ECgInputAction, FCgKeyInputHandler>[(byte)ECgInputEvent.MAX];
+            HandlerMap = new Dictionary<FECgInputAction, FCgKeyInputHandler>[(byte)ECgInputEvent.MAX];
 
             int len = (int)ECgInputEvent.MAX;
 
             for (int i = 0; i < len; ++i)
             {
-                HandlerMap[i] = new Dictionary<ECgInputAction, FCgKeyInputHandler>(new ECgInputActionEqualityComparer());
+                HandlerMap[i] = new Dictionary<FECgInputAction, FCgKeyInputHandler>(new FECgInputActionEqualityComparer());
             }
         }
 
-        public FCgDelegateHandle Bind(ECgInputAction action, ECgInputEvent e, CgMulticastDelegate.Event del)
+        public FCgDelegateHandle Bind(FECgInputAction action, ECgInputEvent e, CgMulticastDelegate.Event del)
         {
-            Dictionary<ECgInputAction, FCgKeyInputHandler> map = HandlerMap[(byte)e];
+            Dictionary<FECgInputAction, FCgKeyInputHandler> map = HandlerMap[(byte)e];
 
             FCgKeyInputHandler handle = null;
             bool found               = map.TryGetValue(action, out handle);
@@ -354,9 +354,9 @@ namespace CgCore
 
         public bool UnBind(ECgInputEvent e, FCgDelegateHandle handle)
         {
-            Dictionary<ECgInputAction, FCgKeyInputHandler> map = HandlerMap[(byte)e];
+            Dictionary<FECgInputAction, FCgKeyInputHandler> map = HandlerMap[(byte)e];
 
-            Dictionary<ECgInputAction, FCgKeyInputHandler>.ValueCollection handles = map.Values;
+            Dictionary<FECgInputAction, FCgKeyInputHandler>.ValueCollection handles = map.Values;
 
             bool success = false;
 
@@ -378,9 +378,9 @@ namespace CgCore
 
         public void Execute(ECgInputEvent e)
         {
-            Dictionary<ECgInputAction, FCgKeyInputHandler> map = HandlerMap[(byte)e];
+            Dictionary<FECgInputAction, FCgKeyInputHandler> map = HandlerMap[(byte)e];
 
-            Dictionary<ECgInputAction, FCgKeyInputHandler>.ValueCollection handles = map.Values;
+            Dictionary<FECgInputAction, FCgKeyInputHandler>.ValueCollection handles = map.Values;
 
             foreach (FCgKeyInputHandler h in handles)
             { 
@@ -396,7 +396,7 @@ namespace CgCore
         public ushort PoolIndex;
         public bool IsAllocated;
         public bool IsConsumed;
-        public ECgInputAction Action;
+        public FECgInputAction Action;
         public ECgInputEvent Event;
         public float Value;
         public Vector3 Location;
@@ -487,7 +487,7 @@ namespace CgCore
             Duration = 0f;
         }
 
-        public void Set(ECgInputAction action, ECgInputEvent e, float value, Vector3 location, Vector3 rotation)
+        public void Set(FECgInputAction action, ECgInputEvent e, float value, Vector3 location, Vector3 rotation)
         {
             Action = action;
             Event = e;
@@ -496,38 +496,38 @@ namespace CgCore
             Rotation = rotation;
         }
 
-        public void Set(ECgInputAction action, ECgInputEvent e, Vector3 location, Vector3 rotation)
+        public void Set(FECgInputAction action, ECgInputEvent e, Vector3 location, Vector3 rotation)
         {
             Set(action, e, 0f, location, rotation);
         }
 
-        public void Set(ECgInputAction action, ECgInputEvent e, float time)
+        public void Set(FECgInputAction action, ECgInputEvent e, float time)
         {
             Set(action, e, time, Vector3.zero, Vector3.zero);
         }
 
-        public void Set(ECgInputAction action, ECgInputEvent e)
+        public void Set(FECgInputAction action, ECgInputEvent e)
         {
             Set(action, e, 0f, Vector3.zero, Vector3.zero);
         }
 
-        public void Allocate(ECgInputAction action, ECgInputEvent e, float value, Vector3 location, Vector3 rotation)
+        public void Allocate(FECgInputAction action, ECgInputEvent e, float value, Vector3 location, Vector3 rotation)
         {
             IsAllocated = true;
             Set(action, e, value, location, rotation);
         }
 
-        public void Allocate(ECgInputAction action, ECgInputEvent e, Vector3 location, Vector3 rotation)
+        public void Allocate(FECgInputAction action, ECgInputEvent e, Vector3 location, Vector3 rotation)
         {
             Allocate(action, e, 0f, location, rotation);
         }
 
-        public void Allocate(ECgInputAction action, ECgInputEvent e, float value)
+        public void Allocate(FECgInputAction action, ECgInputEvent e, float value)
         {
             Allocate(action, e, value, Vector3.zero, Vector3.zero);
         }
 
-        public void Allocate(ECgInputAction action, ECgInputEvent e)
+        public void Allocate(FECgInputAction action, ECgInputEvent e)
         {
             Allocate(action, e, 0f, Vector3.zero, Vector3.zero);
         }
@@ -652,7 +652,7 @@ namespace CgCore
             Inputs.Clear();
         }
 
-        public FCgInput GetInput(ECgInputAction action)
+        public FCgInput GetInput(FECgInputAction action)
         {
             int count = Inputs.Count;
 
@@ -664,7 +664,7 @@ namespace CgCore
             return null;
         }
 
-        public FCgInput GetInput(ECgInputAction action, ECgInputEvent e)
+        public FCgInput GetInput(FECgInputAction action, ECgInputEvent e)
         {
             FCgInput input = GetInput(action);
 
@@ -673,7 +673,7 @@ namespace CgCore
             return null;
         }
 
-        public FCgInput GetInput(ECgInputAction action, List<ECgInputEvent> events)
+        public FCgInput GetInput(FECgInputAction action, List<ECgInputEvent> events)
         {
             FCgInput input = GetInput(action);
 
@@ -794,7 +794,7 @@ namespace CgCore
             OrInputs = new List<FCgInput>();
         }
 
-        public void AddAndInput(ECgInputAction action, ECgInputEvent e, float value, Vector3 location, Vector3 rotation)
+        public void AddAndInput(FECgInputAction action, ECgInputEvent e, float value, Vector3 location, Vector3 rotation)
 	    {
             AndInputs.Add(new FCgInput());
 		    int index = AndInputs.Count - 1;
@@ -805,27 +805,27 @@ namespace CgCore
 		    AndInputs[index].Rotation = rotation;
 	    }
 
-        public void AddAndInput(ECgInputAction action, ECgInputEvent e)
+        public void AddAndInput(FECgInputAction action, ECgInputEvent e)
         {
             AddAndInput(action, e, 0.0f, Vector3.zero, Vector3.zero);
         }
 
-        public void AddAndInput(ECgInputAction action, ECgInputEvent e, float value)
+        public void AddAndInput(FECgInputAction action, ECgInputEvent e, float value)
         {
             AddAndInput(action, e, value, Vector3.zero, Vector3.zero);
         }
 
-        public void AddAndInput(ECgInputAction action, ECgInputEvent e, Vector3 location)
+        public void AddAndInput(FECgInputAction action, ECgInputEvent e, Vector3 location)
         {
             AddAndInput(action, e, 0.0f, location, Vector3.zero);
         }
 
-        public void AddAndInput(ECgInputAction action, ECgInputEvent e, Quaternion rotation)
+        public void AddAndInput(FECgInputAction action, ECgInputEvent e, Quaternion rotation)
         {
             AddAndInput(action, e, 0.0f, Vector3.zero, rotation.eulerAngles);
         }
 
-        public void AddOrInput(ECgInputAction action, ECgInputEvent e, float value, Vector3 location, Vector3 rotation)
+        public void AddOrInput(FECgInputAction action, ECgInputEvent e, float value, Vector3 location, Vector3 rotation)
         {
             OrInputs.Add(new FCgInput());
             int index = OrInputs.Count - 1;
@@ -836,22 +836,22 @@ namespace CgCore
             OrInputs[index].Rotation = rotation;
         }
 
-        public void AddOrInput(ECgInputAction action, ECgInputEvent e)
+        public void AddOrInput(FECgInputAction action, ECgInputEvent e)
         {
             AddOrInput(action, e, 0.0f, Vector3.zero, Vector3.zero);
         }
 
-        public void AddOrInput(ECgInputAction action, ECgInputEvent e, float value)
+        public void AddOrInput(FECgInputAction action, ECgInputEvent e, float value)
         {
             AddOrInput(action, e, value, Vector3.zero, Vector3.zero);
         }
 
-        public void AddOrInput(ECgInputAction action, ECgInputEvent e, Vector3 location)
+        public void AddOrInput(FECgInputAction action, ECgInputEvent e, Vector3 location)
         {
             AddOrInput(action, e, 0.0f, location, Vector3.zero);
         }
 
-        public void AddOrInput(ECgInputAction action, ECgInputEvent e, Quaternion rotation)
+        public void AddOrInput(FECgInputAction action, ECgInputEvent e, Quaternion rotation)
         {
             AddOrInput(action, e, 0.0f, Vector3.zero, rotation.eulerAngles);
         }
@@ -928,7 +928,7 @@ namespace CgCore
             Words = new List<FCgInputWord>();
         }
 
-        public void AddAndInputToWord(int index, ECgInputAction action, ECgInputEvent e, float value = 0.0f, Vector3 location = new Vector3(), Vector3 rotation = new Vector3())
+        public void AddAndInputToWord(int index, FECgInputAction action, ECgInputEvent e, float value = 0.0f, Vector3 location = new Vector3(), Vector3 rotation = new Vector3())
 	    {
 		    int count = Words.Count;
 
@@ -942,7 +942,7 @@ namespace CgCore
 		    Words[index].AddAndInput(action, e, value, location, rotation);
 	    }
 
-	    public void AddOrInputToWord(int index, ECgInputAction action, ECgInputEvent e, float value = 0.0f, Vector3 location = new Vector3(), Vector3 rotation = new Vector3())
+	    public void AddOrInputToWord(int index, FECgInputAction action, ECgInputEvent e, float value = 0.0f, Vector3 location = new Vector3(), Vector3 rotation = new Vector3())
         {
             int count = Words.Count;
 
@@ -1138,7 +1138,7 @@ namespace CgCore
     public class FCgInputActionMapping
     {
         public string ActionName;
-        public ECgInputAction Action;
+        public FECgInputAction Action;
         public string KeyName;
         public KeyCode Key;
         public float Scale;
@@ -1254,7 +1254,7 @@ namespace CgCore
             DeviceMappings = new FCgInputActionMappings[(byte)ECgInputDevice.MAX];
         }
 
-        public FCgInputActionMapping GetMapping(ECgInputDevice device, ECgInputAction action)
+        public FCgInputActionMapping GetMapping(ECgInputDevice device, FECgInputAction action)
 	    {
 		    FCgInputActionMappings deviceMapping = DeviceMappings[(byte)device];
 		    List<FCgInputActionMapping> mappings = deviceMapping.Mappings;
@@ -1271,7 +1271,7 @@ namespace CgCore
 		    return mappings[CgTypes.FIRST];
 	    }
 
-	    public KeyCode GetKey(ECgInputDevice device, ECgInputAction action)
+	    public KeyCode GetKey(ECgInputDevice device, FECgInputAction action)
         {
             FCgInputActionMappings deviceMapping = DeviceMappings[(byte)device];
             List<FCgInputActionMapping> mappings = deviceMapping.Mappings;
@@ -1288,7 +1288,7 @@ namespace CgCore
             return KeyCode.None;
         }
 
-        public void SetKey(ECgInputDevice device, ECgInputAction action, KeyCode key)
+        public void SetKey(ECgInputDevice device, FECgInputAction action, KeyCode key)
         {
             FCgInputActionMappings deviceMapping = DeviceMappings[(byte)device];
             List<FCgInputActionMapping> mappings = deviceMapping.Mappings;
@@ -1308,7 +1308,7 @@ namespace CgCore
             }
         }
 
-        public void AddMapping(ECgInputDevice device, string actionName, ECgInputAction action, string keyName, KeyCode key)
+        public void AddMapping(ECgInputDevice device, string actionName, FECgInputAction action, string keyName, KeyCode key)
         {
             FCgInputActionMappings deviceMapping = DeviceMappings[(byte)device];
             List<FCgInputActionMapping> mappings = deviceMapping.Mappings;

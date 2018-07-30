@@ -47,25 +47,25 @@ namespace CgCore
         public static readonly FECgBlockchainCommand MAX = EMCgBlockchainCommand.Get().Create("MAX");
     }
 
-    public sealed class ECgEthereumJavascript : FECgEnum_byte
+    public sealed class FECgEthereumJavascript : FECgEnum_byte
     {
-        public ECgEthereumJavascript(byte value, string name) : base(value, name) { }
+        public FECgEthereumJavascript(byte value, string name) : base(value, name) { }
     }
 
-    public sealed class ECgEthereumJavascriptEqualityComparer : IEqualityComparer<ECgEthereumJavascript>
+    public sealed class FECgEthereumJavascriptEqualityComparer : IEqualityComparer<FECgEthereumJavascript>
     {
-        public bool Equals(ECgEthereumJavascript lhs, ECgEthereumJavascript rhs)
+        public bool Equals(FECgEthereumJavascript lhs, FECgEthereumJavascript rhs)
         {
             return lhs == rhs;
         }
 
-        public int GetHashCode(ECgEthereumJavascript x)
+        public int GetHashCode(FECgEthereumJavascript x)
         {
             return x.GetHashCode();
         }
     }
 
-    public class EMCgEthereumJavascript : TCgEnumMap<ECgEthereumJavascript, byte>
+    public class EMCgEthereumJavascript : TCgEnumMap<FECgEthereumJavascript, byte>
     {
         private static EMCgEthereumJavascript _Instance;
         public static EMCgEthereumJavascript Instance
@@ -132,7 +132,7 @@ namespace CgCore
         public string JavascriptDirectory;
         public string JavascriptLinkedDirectory;
         /* Path for any Javascript */
-        protected Dictionary<ECgEthereumJavascript, string> ScriptPaths;
+        protected Dictionary<FECgEthereumJavascript, string> ScriptPaths;
         /* Path for any Contract Javascript functions that need to get procedural updated */
         protected Dictionary<ECgBlockchainContract, string> ScriptLinkedPaths;
         /* Any links, code, and/or information related to a Contract javascript function that needs to get procedurally updated */
@@ -200,7 +200,7 @@ namespace CgCore
 
             JavascriptDirectory = RootDirectory + "\\Javascript";
             JavascriptLinkedDirectory = JavascriptDirectory + "\\Linked";
-            ScriptPaths = new Dictionary<ECgEthereumJavascript, string>(new ECgEthereumJavascriptEqualityComparer());
+            ScriptPaths = new Dictionary<FECgEthereumJavascript, string>(new FECgEthereumJavascriptEqualityComparer());
             ScriptLinkedPaths = new Dictionary<ECgBlockchainContract, string>(new ECgBlockchainContractEqualityComparer());
             ScriptContractLinks = new Dictionary<ECgBlockchainContract, List<FCgEthereumJavascriptContractLink>>(new ECgBlockchainContractEqualityComparer());
 
@@ -1412,7 +1412,7 @@ namespace CgCore
             eth.DeployContractFlag.Set(true);
         }
 
-        public void LoadContract(ECgBlockchainContract econtract, ECgEthereumJavascript escript)
+        public void LoadContract(ECgBlockchainContract econtract, FECgEthereumJavascript escript)
         {
             ICgBlockchainContract c = null;
             Contracts.TryGetValue(econtract, out c);
@@ -1523,7 +1523,7 @@ namespace CgCore
             }
         }
 
-        public void CreatedJavascriptContractLinked(ECgBlockchainContract econtract, ECgEthereumJavascript escript)
+        public void CreatedJavascriptContractLinked(ECgBlockchainContract econtract, FECgEthereumJavascript escript)
         {
             string path = "";
 
@@ -1597,13 +1597,13 @@ namespace CgCore
             RunCommand(SINGLE_NODE_INDEX, ECgEthereumCommand.CreateContractInstance, args);
         }
 
-        public void SetupContract(ECgBlockchainContract econtract, ECgEthereumJavascript escript)
+        public void SetupContract(ECgBlockchainContract econtract, FECgEthereumJavascript escript)
         {
             SetupContractFlag.Set(false);
             FCgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, SetupContract_Internal(this, econtract, escript));
         }
 
-        public static IEnumerator SetupContract_Internal(FCgEthereum eth, ECgBlockchainContract econtract, ECgEthereumJavascript escript)
+        public static IEnumerator SetupContract_Internal(FCgEthereum eth, ECgBlockchainContract econtract, FECgEthereumJavascript escript)
         {
             eth.LoadContract(econtract, escript);
             eth.LoadScript(escript, eth.ScriptLinkedPaths[econtract]);
@@ -1771,7 +1771,7 @@ namespace CgCore
 
         #endregion // Contract
 
-        public virtual void LoadScript(ECgEthereumJavascript escript, string path)
+        public virtual void LoadScript(FECgEthereumJavascript escript, string path)
         {
             CommandFlag.Set(false);
 

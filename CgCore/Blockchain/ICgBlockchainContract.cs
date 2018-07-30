@@ -147,12 +147,12 @@
         MAX
     }
 
-    public struct CgBlockchainContractFunctionArgument
+    public struct FCgBlockchainContractFunctionArgument
     {
         public ECgBlockchainContractFunctionArgumentType ValueType;
         public object Value;
 
-        public CgBlockchainContractFunctionArgument(ECgBlockchainContractFunctionArgumentType valueType, object value)
+        public FCgBlockchainContractFunctionArgument(ECgBlockchainContractFunctionArgumentType valueType, object value)
         {
             ValueType = valueType;
             Value = value;
@@ -182,16 +182,16 @@
         MAX
     }
 
-    public struct CgBlockchainContractFunctionReturn
+    public struct FCgBlockchainContractFunctionReturn
     {
-        public static readonly CgBlockchainContractFunctionReturn Void = new CgBlockchainContractFunctionReturn(ECgBlockchainContractFunctionReturnType.MAX, null);
-        public static readonly CgBlockchainContractFunctionReturn Number = new CgBlockchainContractFunctionReturn(ECgBlockchainContractFunctionReturnType.Number, 0);
-        public static readonly CgBlockchainContractFunctionReturn String = new CgBlockchainContractFunctionReturn(ECgBlockchainContractFunctionReturnType.String, "");
+        public static readonly FCgBlockchainContractFunctionReturn Void = new FCgBlockchainContractFunctionReturn(ECgBlockchainContractFunctionReturnType.MAX, null);
+        public static readonly FCgBlockchainContractFunctionReturn Number = new FCgBlockchainContractFunctionReturn(ECgBlockchainContractFunctionReturnType.Number, 0);
+        public static readonly FCgBlockchainContractFunctionReturn String = new FCgBlockchainContractFunctionReturn(ECgBlockchainContractFunctionReturnType.String, "");
 
         public ECgBlockchainContractFunctionReturnType ValueType;
         public object Value;
 
-        public CgBlockchainContractFunctionReturn(ECgBlockchainContractFunctionReturnType valueType, object value)
+        public FCgBlockchainContractFunctionReturn(ECgBlockchainContractFunctionReturnType valueType, object value)
         {
             ValueType = valueType;
             Value = value;
@@ -214,15 +214,15 @@
         }
     }
 
-    public sealed class CgBlockchainContractFunction
+    public sealed class FCgBlockchainContractFunction
     {
         private static readonly int EMPTY = 0;
 
         public string Signature;
-        public CgBlockchainContractFunctionArgument[] Arguments;
-        public CgBlockchainContractFunctionReturn Return;
+        public FCgBlockchainContractFunctionArgument[] Arguments;
+        public FCgBlockchainContractFunctionReturn Return;
 
-        public CgBlockchainContractFunction(string signature, CgBlockchainContractFunctionArgument[] args, CgBlockchainContractFunctionReturn ret)
+        public FCgBlockchainContractFunction(string signature, FCgBlockchainContractFunctionArgument[] args, FCgBlockchainContractFunctionReturn ret)
         {
             Signature = signature;
             Arguments = args;
@@ -314,13 +314,13 @@
         }
     }
 
-    public struct CgBlockchainContractFunctionPayload
+    public struct FCgBlockchainContractFunctionPayload
     {
         public FECgBlockchainContract Contract;
         public ECgBlockchainContractFunction Function;
         //object Payload;
 
-        public CgBlockchainContractFunctionPayload(FECgBlockchainContract econtract, ECgBlockchainContractFunction efn)
+        public FCgBlockchainContractFunctionPayload(FECgBlockchainContract econtract, ECgBlockchainContractFunction efn)
         {
             Contract = econtract;
             Function = efn;

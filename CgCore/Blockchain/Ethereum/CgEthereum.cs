@@ -47,7 +47,7 @@ namespace CgCore
         public static readonly ECgBlockchainCommand MAX = EMCgBlockchainCommand.Get().Create("MAX");
     }
 
-    public sealed class ECgEthereumJavascript : ECgEnum_byte
+    public sealed class ECgEthereumJavascript : FECgEnum_byte
     {
         public ECgEthereumJavascript(byte value, string name) : base(value, name) { }
     }

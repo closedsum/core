@@ -43,7 +43,7 @@
 
     #region "WeaponState"
 
-    public sealed class FECgWeaponState : ECgEnum_byte
+    public sealed class FECgWeaponState : FECgEnum_byte
     {
         public FECgWeaponState(byte value, string name) : base(value, name) { }
     }
@@ -86,7 +86,7 @@
 
     #region "WeaponSlot"
 
-    public sealed class FECgWeaponSlot : ECgEnum_byte
+    public sealed class FECgWeaponSlot : FECgEnum_byte
     {
         public FECgWeaponSlot(byte value, string name) : base(value, name) { }
     }
@@ -129,7 +129,7 @@
 
     #region "WeaponFireMode"
 
-    public sealed class FECgWeaponFireMode : ECgEnum_byte
+    public sealed class FECgWeaponFireMode : FECgEnum_byte
     {
         public FECgWeaponFireMode(byte value, string name) : base(value, name) { }
     }
@@ -172,7 +172,7 @@
 
     #region "WeaponGrip"
 
-    public sealed class FECgWeaponGrip : ECgEnum_byte
+    public sealed class FECgWeaponGrip : FECgEnum_byte
     {
         public FECgWeaponGrip(byte value, string name) : base(value, name) { }
     }
@@ -215,7 +215,7 @@
 
     #region "WeaponAnim"
 
-    public sealed class FECgWeaponAnim : ECgEnum_byte
+    public sealed class FECgWeaponAnim : FECgEnum_byte
     {
         public FECgWeaponAnim(byte value, string name) : base(value, name) { }
     }
@@ -258,7 +258,7 @@
 
     #region "WeaponBlendSpace"
 
-    public sealed class FECgWeaponBlendSpace : ECgEnum_byte
+    public sealed class FECgWeaponBlendSpace : FECgEnum_byte
     {
         public FECgWeaponBlendSpace(byte value, string name) : base(value, name) { }
     }
@@ -482,7 +482,7 @@
         public FCgData_FpsWeapon_FireMode_Sounds() { }
     }
 
-    public sealed class FECgData_Weapon_FireMode : ECgEnum_byte
+    public sealed class FECgData_Weapon_FireMode : FECgEnum_byte
     {
         public FECgData_Weapon_FireMode(byte value, string name) : base(value, name) { }
     }

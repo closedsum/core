@@ -7,7 +7,7 @@
 
     #region "Enums"
 
-    public sealed class FECgWeaponMultiValueMember : ECgEnum_byte
+    public sealed class FECgWeaponMultiValueMember : FECgEnum_byte
     {
         public FECgWeaponMultiValueMember(byte value, string name) : base(value, name) { }
     }
@@ -93,7 +93,7 @@
         public static readonly FECgWeaponMultiValueMember RechargeStartupDelay = EMCgWeaponMultiValueMember.Get().Create("RechargeStartupDelay");
     }
 
-    public sealed class FECgWeaponRoutine : ECgEnum_byte
+    public sealed class FECgWeaponRoutine : FECgEnum_byte
     {
         public FECgWeaponRoutine(byte value, string name) : base(value, name) { }
     }

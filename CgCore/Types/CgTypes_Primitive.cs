@@ -138,11 +138,11 @@ namespace CgCore
         }
     }
 
-    public class ECgEnum_byte : TCgEnum<byte>
+    public class FECgEnum_byte : TCgEnum<byte>
     {
-        public ECgEnum_byte() : base() { }
-        public ECgEnum_byte(byte value) : base(value) { }
-        public ECgEnum_byte(byte value, string name) : base(value, name) { }
+        public FECgEnum_byte() : base() { }
+        public FECgEnum_byte(byte value) : base(value) { }
+        public FECgEnum_byte(byte value, string name) : base(value, name) { }
     }
 
     public class ECgEnum_int : TCgEnum<int>

@@ -5,7 +5,7 @@
 
     using Newtonsoft.Json;
 
-    public sealed class ECgItemType : ECgEnum_byte
+    public sealed class ECgItemType : FECgEnum_byte
     {
         public ECgItemType(byte value, string name) : base(value, name) { }
     }

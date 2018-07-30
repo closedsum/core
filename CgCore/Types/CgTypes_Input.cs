@@ -44,7 +44,7 @@ namespace CgCore
         }
     }
 
-    public sealed class ECgInputAction : ECgEnum_byte
+    public sealed class ECgInputAction : FECgEnum_byte
     {
         public ECgInputAction(byte value, string name) : base(value, name) { }
     }
@@ -1333,7 +1333,7 @@ namespace CgCore
         }
     }
 
-    public sealed class ECgGameEvent : ECgEnum_byte
+    public sealed class ECgGameEvent : FECgEnum_byte
     {
         public ECgGameEvent(byte value, string name) : base(value, name) { }
     }

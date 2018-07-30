@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    public sealed class ECgBlockchainCommand : ECgEnum_byte
+    public sealed class ECgBlockchainCommand : FECgEnum_byte
     {
         public ECgBlockchainCommand(byte value, string name) : base(value, name) { }
     }

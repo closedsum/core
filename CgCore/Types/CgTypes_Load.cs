@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    public sealed class ECgAssetType : ECgEnum_byte
+    public sealed class ECgAssetType : FECgEnum_byte
     {
         public ECgAssetType(byte value, string name) : base(value, name) { }
     }

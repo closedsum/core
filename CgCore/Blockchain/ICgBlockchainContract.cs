@@ -21,7 +21,7 @@
         }
     }
 
-    public sealed class ECgBlockchainContract : ECgEnum_byte
+    public sealed class ECgBlockchainContract : FECgEnum_byte
     {
         public ECgBlockchainContract(byte value, string name) : base(value, name) { }
     }
@@ -101,7 +101,7 @@
 
     #region "Function"
 
-    public sealed class ECgBlockchainContractFunction : ECgEnum_byte
+    public sealed class ECgBlockchainContractFunction : FECgEnum_byte
     {
         public ECgBlockchainContractFunction(byte value, string name) : base(value, name) { }
     }

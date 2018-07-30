@@ -4,7 +4,7 @@
     using System.Diagnostics;
     using System.Collections.Generic;
 
-    public sealed class ECgProcess : ECgEnum_byte
+    public sealed class ECgProcess : FECgEnum_byte
     {
         public ECgProcess(byte value, string name) : base(value, name) { }
     }

@@ -41,7 +41,7 @@
         MAX
     }
 
-    public sealed class CgProcessMonitorOutputEvent
+    public sealed class FCgProcessMonitorOutputEvent
     {
         public sealed class CompletedEvent : TCgMulticastDelegate_OneParam<string> { }
 
@@ -51,7 +51,7 @@
         private bool Completed;
         private CompletedEvent Event;
 
-        public CgProcessMonitorOutputEvent(string name, FCgStringParagraph paragraph, ECgProcessMonitorOutputEventPurpose purpose = ECgProcessMonitorOutputEventPurpose.FireOnce)
+        public FCgProcessMonitorOutputEvent(string name, FCgStringParagraph paragraph, ECgProcessMonitorOutputEventPurpose purpose = ECgProcessMonitorOutputEventPurpose.FireOnce)
         {
             Name = name;
             Paragraph = paragraph;
@@ -114,7 +114,7 @@
         public ErrorDataRecieved ErrorDataRecieved_Event;
         public Exited Exited_Event;
 
-        private List<CgProcessMonitorOutputEvent> MonitorOuputEvents;
+        private List<FCgProcessMonitorOutputEvent> MonitorOuputEvents;
 
         #endregion // Data Members
 
@@ -126,7 +126,7 @@
             ErrorDataRecieved_Event = new ErrorDataRecieved();
             Exited_Event = new Exited();
 
-            MonitorOuputEvents = new List<CgProcessMonitorOutputEvent>();
+            MonitorOuputEvents = new List<FCgProcessMonitorOutputEvent>();
         }
 
         #region "Interface"
@@ -151,7 +151,7 @@
             pay.ErrorDataRecieved_Event.CopyTo(ErrorDataRecieved_Event);
             pay.Exited_Event.CopyTo(Exited_Event);
 
-            foreach (CgProcessMonitorOutputEvent e in pay.MonitorOuputEvents)
+            foreach (FCgProcessMonitorOutputEvent e in pay.MonitorOuputEvents)
             {
                 MonitorOuputEvents.Add(e);
             }
@@ -203,7 +203,7 @@
             */
         }
 
-        public void AddMonitorOuputEvent(CgProcessMonitorOutputEvent e)
+        public void AddMonitorOuputEvent(FCgProcessMonitorOutputEvent e)
         {
             MonitorOuputEvents.Add(e);
         }
@@ -214,7 +214,7 @@
 
             for (int i = count - 1; i >= 0; --i)
             {
-                CgProcessMonitorOutputEvent o = MonitorOuputEvents[i];
+                FCgProcessMonitorOutputEvent o = MonitorOuputEvents[i];
 
                 o.ProcessOutput(ouput);
 

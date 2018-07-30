@@ -142,7 +142,7 @@ namespace CgCore
 
         public FCgRoutine.FBoolType IsRunningInstanceCloseFlag;
 
-        protected Dictionary<FECgBlockchainCommand, CgProcessMonitorOutputEvent> MonitorOutputEvents;
+        protected Dictionary<FECgBlockchainCommand, FCgProcessMonitorOutputEvent> MonitorOutputEvents;
 
         protected FCgBlockchainCommandInfo CurrentCommandInfo;
         protected object CurrentCommandOuput;
@@ -206,7 +206,7 @@ namespace CgCore
 
             ContractFunctions = new Dictionary<ECgBlockchainContract, Dictionary<ECgBlockchainContractFunction, CgBlockchainContractFunction>>(new ECgBlockchainContractEqualityComparer());
 
-            MonitorOutputEvents = new Dictionary<FECgBlockchainCommand, CgProcessMonitorOutputEvent>(new FECgBlockchainCommandEqualityComparer());
+            MonitorOutputEvents = new Dictionary<FECgBlockchainCommand, FCgProcessMonitorOutputEvent>(new FECgBlockchainCommandEqualityComparer());
 
             CurrentCommandInfo = new FCgBlockchainCommandInfo(ECgEthereumCommand.MAX, null, null);
 
@@ -219,7 +219,7 @@ namespace CgCore
             {
                 FCgStringParagraph p = FCgStringParagraphHelper.CreateOneWordParagraph("IPC endpoint opened", ECgStringWordRule.MatchCase);// TODO: also include "url=\\\\.\\pipe\\geth.ipc"?
 
-                CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.SetDataDirectory, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
+                FCgProcessMonitorOutputEvent e = new FCgProcessMonitorOutputEvent(ECgEthereumCommand.SetDataDirectory, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
                 e.AddEvent(OnCommandCompleted);
 
                 MonitorOutputEvents.Add(ECgEthereumCommand.SetDataDirectory, e);
@@ -232,7 +232,7 @@ namespace CgCore
                     p.AddSentence(FCgStringParagraphHelper.CreateOneWordSentence("instance:", ECgStringWordRule.Lower));
                     p.AddSentence(FCgStringParagraphHelper.CreateOneWordSentence("modules:", ECgStringWordRule.Lower));
 
-                CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.AttachToConsole, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
+                FCgProcessMonitorOutputEvent e = new FCgProcessMonitorOutputEvent(ECgEthereumCommand.AttachToConsole, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
                 e.AddEvent(OnCommandCompleted);
 
                 MonitorOutputEvents.Add(ECgEthereumCommand.AttachToConsole, e);
@@ -246,7 +246,7 @@ namespace CgCore
             {
                 FCgStringParagraph p = FCgStringParagraphHelper.CreateOneWordParagraph("true", ECgStringWordRule.MatchCase);
 
-                CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.UnlockAccount, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
+                FCgProcessMonitorOutputEvent e = new FCgProcessMonitorOutputEvent(ECgEthereumCommand.UnlockAccount, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
                 e.AddEvent(OnCommandCompleted);
 
                 MonitorOutputEvents.Add(ECgEthereumCommand.UnlockAccount, e);
@@ -258,7 +258,7 @@ namespace CgCore
             {
                 FCgStringParagraph p = FCgStringParagraphHelper.CreateOneWordParagraph("true", ECgStringWordRule.MatchCase);
 
-                CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.SetEtherbase, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
+                FCgProcessMonitorOutputEvent e = new FCgProcessMonitorOutputEvent(ECgEthereumCommand.SetEtherbase, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
                 e.AddEvent(OnCommandCompleted);
 
                 MonitorOutputEvents.Add(ECgEthereumCommand.SetEtherbase, e);
@@ -270,7 +270,7 @@ namespace CgCore
             {
                 FCgStringParagraph p = FCgStringParagraphHelper.CreateOneWordParagraph("null", ECgStringWordRule.MatchCase);
 
-                CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.StartMiner, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
+                FCgProcessMonitorOutputEvent e = new FCgProcessMonitorOutputEvent(ECgEthereumCommand.StartMiner, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
                 e.AddEvent(OnCommandCompleted);
 
                 MonitorOutputEvents.Add(ECgEthereumCommand.StartMiner, e);
@@ -280,7 +280,7 @@ namespace CgCore
             {
                 FCgStringParagraph p = FCgStringParagraphHelper.CreateOneWordParagraph("true", ECgStringWordRule.MatchCase);
 
-                CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.StopMiner, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
+                FCgProcessMonitorOutputEvent e = new FCgProcessMonitorOutputEvent(ECgEthereumCommand.StopMiner, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
                 e.AddEvent(OnCommandCompleted);
 
                 MonitorOutputEvents.Add(ECgEthereumCommand.StopMiner, e);
@@ -290,7 +290,7 @@ namespace CgCore
             {
                 FCgStringParagraph p = FCgStringParagraphHelper.CreateOneWordParagraph("true", ECgStringWordRule.MatchCase);
 
-                CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.LoadScript, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
+                FCgProcessMonitorOutputEvent e = new FCgProcessMonitorOutputEvent(ECgEthereumCommand.LoadScript, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
                 e.AddEvent(OnCommandCompleted);
 
                 MonitorOutputEvents.Add(ECgEthereumCommand.LoadScript, e);
@@ -300,7 +300,7 @@ namespace CgCore
             {
                 FCgStringParagraph p = FCgStringParagraphHelper.CreateOneWordParagraph("", ECgStringWordRule.MatchCase);
 
-                CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.CreateContractABI, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
+                FCgProcessMonitorOutputEvent e = new FCgProcessMonitorOutputEvent(ECgEthereumCommand.CreateContractABI, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
                 e.AddEvent(OnCommandCompleted);
 
                 MonitorOutputEvents.Add(ECgEthereumCommand.CreateContractABI, e);
@@ -310,7 +310,7 @@ namespace CgCore
             {
                 FCgStringParagraph p = FCgStringParagraphHelper.CreateOneWordParagraph("undefined", ECgStringWordRule.MatchCase);
 
-                CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.CreateContractInstance, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
+                FCgProcessMonitorOutputEvent e = new FCgProcessMonitorOutputEvent(ECgEthereumCommand.CreateContractInstance, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
                 e.AddEvent(OnCommandCompleted);
 
                 MonitorOutputEvents.Add(ECgEthereumCommand.CreateContractInstance, e);
@@ -504,7 +504,7 @@ namespace CgCore
             RunCommand(consoleIndex, value);
         }
 
-        public void AddMonitorOutputEvenToProcess(ECgBlockchainProcessType processType, int index, CgProcessMonitorOutputEvent e)
+        public void AddMonitorOutputEvenToProcess(ECgBlockchainProcessType processType, int index, FCgProcessMonitorOutputEvent e)
         {
             // TODO: Later handle PrivateMultiNode
             Processes[processType].AddMonitorOuputEvent(e);
@@ -759,7 +759,7 @@ namespace CgCore
             return Processes[processType];
         }
 
-        public override void StartProcess(ECgBlockchainProcessType processType, int index, CgBlockchainProcessStartInfo startInfo)
+        public override void StartProcess(ECgBlockchainProcessType processType, int index, FCgBlockchainProcessStartInfo startInfo)
         {
             FCgProcess p = GetProcess(processType, index);
 
@@ -792,7 +792,7 @@ namespace CgCore
                     payload.Exited_Event.Add(OnConsoleExited);
                 }
 
-                foreach (CgProcessMonitorOutputEvent e in startInfo.MonitorOutputEvents)
+                foreach (FCgProcessMonitorOutputEvent e in startInfo.MonitorOutputEvents)
                 {
                     payload.AddMonitorOutputEvent(e);
                 }
@@ -832,7 +832,7 @@ namespace CgCore
 
             FECgBlockchainCommand command = ECgEthereumCommand.SetDataDirectory;
 
-            CgBlockchainProcessStartInfo startInfo = new CgBlockchainProcessStartInfo();
+            FCgBlockchainProcessStartInfo startInfo = new FCgBlockchainProcessStartInfo();
             startInfo.Filename              = ConsoleFullPath;
             startInfo.Arguments             = Commands[command];
             startInfo.RedirectStandardInput = false;
@@ -867,7 +867,7 @@ namespace CgCore
             IsRunningInstanceOpen = true;
             IsRunningInstanceCloseFlag.Set(false);
 
-            CgBlockchainProcessStartInfo startInfo = new CgBlockchainProcessStartInfo();
+            FCgBlockchainProcessStartInfo startInfo = new FCgBlockchainProcessStartInfo();
             startInfo.Filename              = ConsoleFullPath;
             startInfo.Arguments             = Commands[ECgEthereumCommand.InitBlockchain];
             startInfo.RedirectStandardInput = false;
@@ -925,7 +925,7 @@ namespace CgCore
         {
             FECgBlockchainCommand command = ECgEthereumCommand.AttachToConsole;
 
-            CgBlockchainProcessStartInfo startInfo = new CgBlockchainProcessStartInfo();
+            FCgBlockchainProcessStartInfo startInfo = new FCgBlockchainProcessStartInfo();
             startInfo.Filename              = eth.ConsoleFullPath;
             startInfo.Arguments             = eth.Commands[command];
             startInfo.RedirectStandardInput = true;

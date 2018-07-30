@@ -33,22 +33,22 @@
         }
     }
 
-    public class CgBlockchainProcessStartInfo
+    public class FCgBlockchainProcessStartInfo
     {
         public string Filename;
         public string Arguments;
         public bool RedirectStandardInput;
-        public List<CgProcessMonitorOutputEvent> MonitorOutputEvents;
+        public List<FCgProcessMonitorOutputEvent> MonitorOutputEvents;
 
-        public CgBlockchainProcessStartInfo()
+        public FCgBlockchainProcessStartInfo()
         {
             Filename = "";
             Arguments = "";
             RedirectStandardInput = false;
-            MonitorOutputEvents = new List<CgProcessMonitorOutputEvent>();
+            MonitorOutputEvents = new List<FCgProcessMonitorOutputEvent>();
         }
 
-        public void AddMonitorOutputEvent(CgProcessMonitorOutputEvent e)
+        public void AddMonitorOutputEvent(FCgProcessMonitorOutputEvent e)
         {
             MonitorOutputEvents.Add(e);
         }
@@ -129,7 +129,7 @@
 
         void SetProcess(ECgBlockchainProcessType processType, int index, FCgProcess p);
         FCgProcess GetProcess(ECgBlockchainProcessType processType, int index);
-        void StartProcess(ECgBlockchainProcessType processType, int index, CgBlockchainProcessStartInfo startInfo);
+        void StartProcess(ECgBlockchainProcessType processType, int index, FCgBlockchainProcessStartInfo startInfo);
         void StopProcess(ECgBlockchainProcessType processType, int index);
 
         void OpenRunningInstance();
@@ -389,7 +389,7 @@
 
         public abstract void SetProcess(ECgBlockchainProcessType processType, int index, FCgProcess p);
         public abstract FCgProcess GetProcess(ECgBlockchainProcessType processType, int index);
-        public abstract void StartProcess(ECgBlockchainProcessType processType, int index, CgBlockchainProcessStartInfo startInfo);
+        public abstract void StartProcess(ECgBlockchainProcessType processType, int index, FCgBlockchainProcessStartInfo startInfo);
         public abstract void StopProcess(ECgBlockchainProcessType processType, int index);
 
         public abstract void OpenRunningInstance();

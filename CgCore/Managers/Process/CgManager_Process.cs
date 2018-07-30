@@ -23,7 +23,7 @@
         public FCgProcess.ErrorDataRecieved ErrorDataRecieved_Event;
         public FCgProcess.Exited Exited_Event;
 
-        public List<CgProcessMonitorOutputEvent> MonitorOuputEvents;
+        public List<FCgProcessMonitorOutputEvent> MonitorOuputEvents;
 
         #endregion // Data Members
 
@@ -33,12 +33,12 @@
             ErrorDataRecieved_Event = new FCgProcess.ErrorDataRecieved();
             Exited_Event = new FCgProcess.Exited();
 
-            MonitorOuputEvents = new List<CgProcessMonitorOutputEvent>();
+            MonitorOuputEvents = new List<FCgProcessMonitorOutputEvent>();
 
             Reset();
         }
 
-        public void AddMonitorOutputEvent(CgProcessMonitorOutputEvent e)
+        public void AddMonitorOutputEvent(FCgProcessMonitorOutputEvent e)
         {
             MonitorOuputEvents.Add(e);
         }

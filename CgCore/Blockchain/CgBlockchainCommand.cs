@@ -2,25 +2,25 @@
 {
     using System.Collections.Generic;
 
-    public sealed class ECgBlockchainCommand : FECgEnum_byte
+    public sealed class FECgBlockchainCommand : FECgEnum_byte
     {
-        public ECgBlockchainCommand(byte value, string name) : base(value, name) { }
+        public FECgBlockchainCommand(byte value, string name) : base(value, name) { }
     }
 
-    public sealed class ECgBlockchainCommandEqualityComparer : IEqualityComparer<ECgBlockchainCommand>
+    public sealed class FECgBlockchainCommandEqualityComparer : IEqualityComparer<FECgBlockchainCommand>
     {
-        public bool Equals(ECgBlockchainCommand lhs, ECgBlockchainCommand rhs)
+        public bool Equals(FECgBlockchainCommand lhs, FECgBlockchainCommand rhs)
         {
             return lhs == rhs;
         }
 
-        public int GetHashCode(ECgBlockchainCommand x)
+        public int GetHashCode(FECgBlockchainCommand x)
         {
             return x.GetHashCode();
         }
     }
 
-    public class EMCgBlockchainCommand : TCgEnumMap<ECgBlockchainCommand, byte>
+    public class EMCgBlockchainCommand : TCgEnumMap<FECgBlockchainCommand, byte>
     {
         private static EMCgBlockchainCommand _Instance;
         public static EMCgBlockchainCommand Instance
@@ -77,18 +77,18 @@
 
     public struct FCgBlockchainCommandInfo
     {
-        public ECgBlockchainCommand Command;
+        public FECgBlockchainCommand Command;
         public FCgBlockchainCommandArgument[] Arguments;
         public object Payload;
 
-        public FCgBlockchainCommandInfo(ECgBlockchainCommand command, FCgBlockchainCommandArgument[] args = null, object payload = null)
+        public FCgBlockchainCommandInfo(FECgBlockchainCommand command, FCgBlockchainCommandArgument[] args = null, object payload = null)
         {
             Command = command;
             Arguments = args;
             Payload = payload;
         }
 
-        public void Set(ECgBlockchainCommand command, FCgBlockchainCommandArgument[] args = null, object payload = null)
+        public void Set(FECgBlockchainCommand command, FCgBlockchainCommandArgument[] args = null, object payload = null)
         {
             Command = command;
             Arguments = args;

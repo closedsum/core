@@ -23,28 +23,28 @@ namespace CgCore
 
     public static class ECgEthereumCommand
     {
-        public static readonly ECgBlockchainCommand InitBlockchain = EMCgBlockchainCommand.Get().Create("InitBlockchain");
-        public static readonly ECgBlockchainCommand SetDataDirectory = EMCgBlockchainCommand.Get().Create("SetDataDirectory");
-        public static readonly ECgBlockchainCommand AttachToConsole = EMCgBlockchainCommand.Get().Create("AttachToConsole");
-        public static readonly ECgBlockchainCommand ExitConsole = EMCgBlockchainCommand.Get().Create("ExitConsole");
-        public static readonly ECgBlockchainCommand NewAccount = EMCgBlockchainCommand.Get().Create("NewAccount");
-        public static readonly ECgBlockchainCommand UnlockAccount = EMCgBlockchainCommand.Get().Create("UnlockAccount");
-        public static readonly ECgBlockchainCommand ListAccounts = EMCgBlockchainCommand.Get().Create("ListAccounts");
-        public static readonly ECgBlockchainCommand SetEtherbase = EMCgBlockchainCommand.Get().Create("SetEtherbase");
-        public static readonly ECgBlockchainCommand GetBalanceEther = EMCgBlockchainCommand.Get().Create("GetBalanceEther");
-        public static readonly ECgBlockchainCommand GetBalanceWei = EMCgBlockchainCommand.Get().Create("GetBalanceWei");
-        public static readonly ECgBlockchainCommand StartMiner = EMCgBlockchainCommand.Get().Create("StartMiner");
-        public static readonly ECgBlockchainCommand StopMiner = EMCgBlockchainCommand.Get().Create("StopMiner");
-        public static readonly ECgBlockchainCommand DeployContract = EMCgBlockchainCommand.Get().Create("DeployContract");
-        public static readonly ECgBlockchainCommand LoadScript = EMCgBlockchainCommand.Get().Create("LoadScript");
-        public static readonly ECgBlockchainCommand CreateContractABI = EMCgBlockchainCommand.Get().Create("CreateContractABI");
-        public static readonly ECgBlockchainCommand CreateContractInstance = EMCgBlockchainCommand.Get().Create("CreateContractInstance");
-        public static readonly ECgBlockchainCommand RunContractConstantFunction = EMCgBlockchainCommand.Get().Create("RunContractConstantFunction");
-        public static readonly ECgBlockchainCommand RunContractStateChangeFunction = EMCgBlockchainCommand.Get().Create("RunContractStateChangeFunction");
-        public static readonly ECgBlockchainCommand GetGasEstimate = EMCgBlockchainCommand.Get().Create("GetGasEstimate");
-        public static readonly ECgBlockchainCommand GetTransactionReceipt = EMCgBlockchainCommand.Get().Create("GetTransactionReceipt");
+        public static readonly FECgBlockchainCommand InitBlockchain = EMCgBlockchainCommand.Get().Create("InitBlockchain");
+        public static readonly FECgBlockchainCommand SetDataDirectory = EMCgBlockchainCommand.Get().Create("SetDataDirectory");
+        public static readonly FECgBlockchainCommand AttachToConsole = EMCgBlockchainCommand.Get().Create("AttachToConsole");
+        public static readonly FECgBlockchainCommand ExitConsole = EMCgBlockchainCommand.Get().Create("ExitConsole");
+        public static readonly FECgBlockchainCommand NewAccount = EMCgBlockchainCommand.Get().Create("NewAccount");
+        public static readonly FECgBlockchainCommand UnlockAccount = EMCgBlockchainCommand.Get().Create("UnlockAccount");
+        public static readonly FECgBlockchainCommand ListAccounts = EMCgBlockchainCommand.Get().Create("ListAccounts");
+        public static readonly FECgBlockchainCommand SetEtherbase = EMCgBlockchainCommand.Get().Create("SetEtherbase");
+        public static readonly FECgBlockchainCommand GetBalanceEther = EMCgBlockchainCommand.Get().Create("GetBalanceEther");
+        public static readonly FECgBlockchainCommand GetBalanceWei = EMCgBlockchainCommand.Get().Create("GetBalanceWei");
+        public static readonly FECgBlockchainCommand StartMiner = EMCgBlockchainCommand.Get().Create("StartMiner");
+        public static readonly FECgBlockchainCommand StopMiner = EMCgBlockchainCommand.Get().Create("StopMiner");
+        public static readonly FECgBlockchainCommand DeployContract = EMCgBlockchainCommand.Get().Create("DeployContract");
+        public static readonly FECgBlockchainCommand LoadScript = EMCgBlockchainCommand.Get().Create("LoadScript");
+        public static readonly FECgBlockchainCommand CreateContractABI = EMCgBlockchainCommand.Get().Create("CreateContractABI");
+        public static readonly FECgBlockchainCommand CreateContractInstance = EMCgBlockchainCommand.Get().Create("CreateContractInstance");
+        public static readonly FECgBlockchainCommand RunContractConstantFunction = EMCgBlockchainCommand.Get().Create("RunContractConstantFunction");
+        public static readonly FECgBlockchainCommand RunContractStateChangeFunction = EMCgBlockchainCommand.Get().Create("RunContractStateChangeFunction");
+        public static readonly FECgBlockchainCommand GetGasEstimate = EMCgBlockchainCommand.Get().Create("GetGasEstimate");
+        public static readonly FECgBlockchainCommand GetTransactionReceipt = EMCgBlockchainCommand.Get().Create("GetTransactionReceipt");
 
-        public static readonly ECgBlockchainCommand MAX = EMCgBlockchainCommand.Get().Create("MAX");
+        public static readonly FECgBlockchainCommand MAX = EMCgBlockchainCommand.Get().Create("MAX");
     }
 
     public sealed class ECgEthereumJavascript : FECgEnum_byte
@@ -142,7 +142,7 @@ namespace CgCore
 
         public FCgRoutine.FBoolType IsRunningInstanceCloseFlag;
 
-        protected Dictionary<ECgBlockchainCommand, CgProcessMonitorOutputEvent> MonitorOutputEvents;
+        protected Dictionary<FECgBlockchainCommand, CgProcessMonitorOutputEvent> MonitorOutputEvents;
 
         protected FCgBlockchainCommandInfo CurrentCommandInfo;
         protected object CurrentCommandOuput;
@@ -206,7 +206,7 @@ namespace CgCore
 
             ContractFunctions = new Dictionary<ECgBlockchainContract, Dictionary<ECgBlockchainContractFunction, CgBlockchainContractFunction>>(new ECgBlockchainContractEqualityComparer());
 
-            MonitorOutputEvents = new Dictionary<ECgBlockchainCommand, CgProcessMonitorOutputEvent>(new ECgBlockchainCommandEqualityComparer());
+            MonitorOutputEvents = new Dictionary<FECgBlockchainCommand, CgProcessMonitorOutputEvent>(new FECgBlockchainCommandEqualityComparer());
 
             CurrentCommandInfo = new FCgBlockchainCommandInfo(ECgEthereumCommand.MAX, null, null);
 
@@ -421,7 +421,7 @@ namespace CgCore
             }
         }
 
-        public override void SetCommand(ECgBlockchainCommand command, string str)
+        public override void SetCommand(FECgBlockchainCommand command, string str)
         {
             string value;
 
@@ -453,7 +453,7 @@ namespace CgCore
             p.RunCommand(command);
         }
 
-        public override void RunCommand(int consoleIndex, ECgBlockchainCommand command, FCgBlockchainCommandArgument[] args = null)
+        public override void RunCommand(int consoleIndex, FECgBlockchainCommand command, FCgBlockchainCommandArgument[] args = null)
         {
             string value;
             Commands.TryGetValue(command, out value);
@@ -510,13 +510,13 @@ namespace CgCore
             Processes[processType].AddMonitorOuputEvent(e);
         }
 
-        public void AddMonitorOutputEvenToProcess(ECgBlockchainProcessType processType, int index, ECgBlockchainCommand command)
+        public void AddMonitorOutputEvenToProcess(ECgBlockchainProcessType processType, int index, FECgBlockchainCommand command)
         {
             // TODO: Later handle PrivateMultiNode
             AddMonitorOutputEvenToProcess(processType, index, MonitorOutputEvents[command]);
         }
 
-        public virtual void OnCommandCompleted(ECgBlockchainCommand command)
+        public virtual void OnCommandCompleted(FECgBlockchainCommand command)
         {
             if (LogCommandCompleted.Log())
             {
@@ -597,7 +597,7 @@ namespace CgCore
                 FCgDebug.Log("Console (Output): " + output);
             }
 
-            ECgBlockchainCommand command = CurrentCommandInfo.Command;
+            FECgBlockchainCommand command = CurrentCommandInfo.Command;
 
             // NewAccount
             if (command == ECgEthereumCommand.NewAccount)
@@ -830,7 +830,7 @@ namespace CgCore
 
             CommandFlag.Set(false);
 
-            ECgBlockchainCommand command = ECgEthereumCommand.SetDataDirectory;
+            FECgBlockchainCommand command = ECgEthereumCommand.SetDataDirectory;
 
             CgBlockchainProcessStartInfo startInfo = new CgBlockchainProcessStartInfo();
             startInfo.Filename              = ConsoleFullPath;
@@ -923,7 +923,7 @@ namespace CgCore
 
         public static IEnumerator OpenConsole_Internal(FCgEthereum eth)
         {
-            ECgBlockchainCommand command = ECgEthereumCommand.AttachToConsole;
+            FECgBlockchainCommand command = ECgEthereumCommand.AttachToConsole;
 
             CgBlockchainProcessStartInfo startInfo = new CgBlockchainProcessStartInfo();
             startInfo.Filename              = eth.ConsoleFullPath;

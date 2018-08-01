@@ -4,12 +4,12 @@
     using System.Diagnostics;
     using System.Collections.Generic;
 
-    public sealed class ECgProcess : FECgEnum_byte
+    public sealed class FECgProcess : FECgEnum_byte
     {
-        public ECgProcess(byte value, string name) : base(value, name) { }
+        public FECgProcess(byte value, string name) : base(value, name) { }
     }
     
-    public class EMCgProcess : TCgEnumMap<ECgProcess, byte>
+    public class EMCgProcess : TCgEnumMap<FECgProcess, byte>
     {
         private static EMCgProcess _Instance;
         public static EMCgProcess Instance
@@ -30,7 +30,7 @@
         }
     }
 
-    public sealed class CgProcessCache : CgPooledObjectCache<ECgProcess, TCgPooledObject<ECgProcess>>
+    public sealed class FCgProcessCache : TCgPooledObjectCache<FECgProcess, TCgPooledObject<FECgProcess>>
     {
     }
 
@@ -41,7 +41,7 @@
         MAX
     }
 
-    public sealed class CgProcessMonitorOutputEvent
+    public sealed class FCgProcessMonitorOutputEvent
     {
         public sealed class CompletedEvent : TCgMulticastDelegate_OneParam<string> { }
 
@@ -51,7 +51,7 @@
         private bool Completed;
         private CompletedEvent Event;
 
-        public CgProcessMonitorOutputEvent(string name, FCgStringParagraph paragraph, ECgProcessMonitorOutputEventPurpose purpose = ECgProcessMonitorOutputEventPurpose.FireOnce)
+        public FCgProcessMonitorOutputEvent(string name, FCgStringParagraph paragraph, ECgProcessMonitorOutputEventPurpose purpose = ECgProcessMonitorOutputEventPurpose.FireOnce)
         {
             Name = name;
             Paragraph = paragraph;
@@ -97,36 +97,36 @@
     }
 
 
-    public class FCgProcess : TCgPooledObject<ECgProcess>
+    public class FCgProcess : TCgPooledObject<FECgProcess>
     {
         public static CgConsoleVariableLog LogCommandRequest = new CgConsoleVariableLog("log.process.command.request", false, "Log Process Command Request", (int)ECgConsoleVariableFlag.Console);
 
-        public sealed class OutputDataRecieved : TCgMulticastDelegate_TwoParams<object, DataReceivedEventArgs> { }
-        public sealed class ErrorDataRecieved : TCgMulticastDelegate_TwoParams<object, DataReceivedEventArgs> { }
-        public sealed class Exited : TCgMulticastDelegate_TwoParams<object, EventArgs> { }
+        public sealed class FOutputDataRecieved : TCgMulticastDelegate_TwoParams<object, DataReceivedEventArgs> { }
+        public sealed class FErrorDataRecieved : TCgMulticastDelegate_TwoParams<object, DataReceivedEventArgs> { }
+        public sealed class FExited : TCgMulticastDelegate_TwoParams<object, EventArgs> { }
 
         #region "Data Members"
 
         public Process P;
         public bool IsRunning;
 
-        public OutputDataRecieved OutputDataRecieved_Event;
-        public ErrorDataRecieved ErrorDataRecieved_Event;
-        public Exited Exited_Event;
+        public FOutputDataRecieved OutputDataRecieved_Event;
+        public FErrorDataRecieved ErrorDataRecieved_Event;
+        public FExited Exited_Event;
 
-        private List<CgProcessMonitorOutputEvent> MonitorOuputEvents;
+        private List<FCgProcessMonitorOutputEvent> MonitorOuputEvents;
 
         #endregion // Data Members
 
         public FCgProcess() : base()
         {
-            Cache = new CgProcessCache();
+            Cache = new FCgProcessCache();
 
-            OutputDataRecieved_Event = new OutputDataRecieved();
-            ErrorDataRecieved_Event = new ErrorDataRecieved();
-            Exited_Event = new Exited();
+            OutputDataRecieved_Event = new FOutputDataRecieved();
+            ErrorDataRecieved_Event = new FErrorDataRecieved();
+            Exited_Event = new FExited();
 
-            MonitorOuputEvents = new List<CgProcessMonitorOutputEvent>();
+            MonitorOuputEvents = new List<FCgProcessMonitorOutputEvent>();
         }
 
         #region "Interface"
@@ -151,7 +151,7 @@
             pay.ErrorDataRecieved_Event.CopyTo(ErrorDataRecieved_Event);
             pay.Exited_Event.CopyTo(Exited_Event);
 
-            foreach (CgProcessMonitorOutputEvent e in pay.MonitorOuputEvents)
+            foreach (FCgProcessMonitorOutputEvent e in pay.MonitorOuputEvents)
             {
                 MonitorOuputEvents.Add(e);
             }
@@ -203,7 +203,7 @@
             */
         }
 
-        public void AddMonitorOuputEvent(CgProcessMonitorOutputEvent e)
+        public void AddMonitorOuputEvent(FCgProcessMonitorOutputEvent e)
         {
             MonitorOuputEvents.Add(e);
         }
@@ -214,7 +214,7 @@
 
             for (int i = count - 1; i >= 0; --i)
             {
-                CgProcessMonitorOutputEvent o = MonitorOuputEvents[i];
+                FCgProcessMonitorOutputEvent o = MonitorOuputEvents[i];
 
                 o.ProcessOutput(ouput);
 

@@ -2,9 +2,9 @@
 {
     using UnityEngine;
 
-    public abstract class CgData : MonoBehaviour
+    public abstract class MCgData : MonoBehaviour
     {
-        public ECgAssetType AssetType;
+        public FECgAssetType AssetType;
         public string ShortCode;
     }
 }

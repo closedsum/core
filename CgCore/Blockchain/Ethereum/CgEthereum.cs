@@ -23,49 +23,49 @@ namespace CgCore
 
     public static class ECgEthereumCommand
     {
-        public static readonly ECgBlockchainCommand InitBlockchain = EMCgBlockchainCommand.Get().Create("InitBlockchain");
-        public static readonly ECgBlockchainCommand SetDataDirectory = EMCgBlockchainCommand.Get().Create("SetDataDirectory");
-        public static readonly ECgBlockchainCommand AttachToConsole = EMCgBlockchainCommand.Get().Create("AttachToConsole");
-        public static readonly ECgBlockchainCommand ExitConsole = EMCgBlockchainCommand.Get().Create("ExitConsole");
-        public static readonly ECgBlockchainCommand NewAccount = EMCgBlockchainCommand.Get().Create("NewAccount");
-        public static readonly ECgBlockchainCommand UnlockAccount = EMCgBlockchainCommand.Get().Create("UnlockAccount");
-        public static readonly ECgBlockchainCommand ListAccounts = EMCgBlockchainCommand.Get().Create("ListAccounts");
-        public static readonly ECgBlockchainCommand SetEtherbase = EMCgBlockchainCommand.Get().Create("SetEtherbase");
-        public static readonly ECgBlockchainCommand GetBalanceEther = EMCgBlockchainCommand.Get().Create("GetBalanceEther");
-        public static readonly ECgBlockchainCommand GetBalanceWei = EMCgBlockchainCommand.Get().Create("GetBalanceWei");
-        public static readonly ECgBlockchainCommand StartMiner = EMCgBlockchainCommand.Get().Create("StartMiner");
-        public static readonly ECgBlockchainCommand StopMiner = EMCgBlockchainCommand.Get().Create("StopMiner");
-        public static readonly ECgBlockchainCommand DeployContract = EMCgBlockchainCommand.Get().Create("DeployContract");
-        public static readonly ECgBlockchainCommand LoadScript = EMCgBlockchainCommand.Get().Create("LoadScript");
-        public static readonly ECgBlockchainCommand CreateContractABI = EMCgBlockchainCommand.Get().Create("CreateContractABI");
-        public static readonly ECgBlockchainCommand CreateContractInstance = EMCgBlockchainCommand.Get().Create("CreateContractInstance");
-        public static readonly ECgBlockchainCommand RunContractConstantFunction = EMCgBlockchainCommand.Get().Create("RunContractConstantFunction");
-        public static readonly ECgBlockchainCommand RunContractStateChangeFunction = EMCgBlockchainCommand.Get().Create("RunContractStateChangeFunction");
-        public static readonly ECgBlockchainCommand GetGasEstimate = EMCgBlockchainCommand.Get().Create("GetGasEstimate");
-        public static readonly ECgBlockchainCommand GetTransactionReceipt = EMCgBlockchainCommand.Get().Create("GetTransactionReceipt");
+        public static readonly FECgBlockchainCommand InitBlockchain = EMCgBlockchainCommand.Get().Create("InitBlockchain");
+        public static readonly FECgBlockchainCommand SetDataDirectory = EMCgBlockchainCommand.Get().Create("SetDataDirectory");
+        public static readonly FECgBlockchainCommand AttachToConsole = EMCgBlockchainCommand.Get().Create("AttachToConsole");
+        public static readonly FECgBlockchainCommand ExitConsole = EMCgBlockchainCommand.Get().Create("ExitConsole");
+        public static readonly FECgBlockchainCommand NewAccount = EMCgBlockchainCommand.Get().Create("NewAccount");
+        public static readonly FECgBlockchainCommand UnlockAccount = EMCgBlockchainCommand.Get().Create("UnlockAccount");
+        public static readonly FECgBlockchainCommand ListAccounts = EMCgBlockchainCommand.Get().Create("ListAccounts");
+        public static readonly FECgBlockchainCommand SetEtherbase = EMCgBlockchainCommand.Get().Create("SetEtherbase");
+        public static readonly FECgBlockchainCommand GetBalanceEther = EMCgBlockchainCommand.Get().Create("GetBalanceEther");
+        public static readonly FECgBlockchainCommand GetBalanceWei = EMCgBlockchainCommand.Get().Create("GetBalanceWei");
+        public static readonly FECgBlockchainCommand StartMiner = EMCgBlockchainCommand.Get().Create("StartMiner");
+        public static readonly FECgBlockchainCommand StopMiner = EMCgBlockchainCommand.Get().Create("StopMiner");
+        public static readonly FECgBlockchainCommand DeployContract = EMCgBlockchainCommand.Get().Create("DeployContract");
+        public static readonly FECgBlockchainCommand LoadScript = EMCgBlockchainCommand.Get().Create("LoadScript");
+        public static readonly FECgBlockchainCommand CreateContractABI = EMCgBlockchainCommand.Get().Create("CreateContractABI");
+        public static readonly FECgBlockchainCommand CreateContractInstance = EMCgBlockchainCommand.Get().Create("CreateContractInstance");
+        public static readonly FECgBlockchainCommand RunContractConstantFunction = EMCgBlockchainCommand.Get().Create("RunContractConstantFunction");
+        public static readonly FECgBlockchainCommand RunContractStateChangeFunction = EMCgBlockchainCommand.Get().Create("RunContractStateChangeFunction");
+        public static readonly FECgBlockchainCommand GetGasEstimate = EMCgBlockchainCommand.Get().Create("GetGasEstimate");
+        public static readonly FECgBlockchainCommand GetTransactionReceipt = EMCgBlockchainCommand.Get().Create("GetTransactionReceipt");
 
-        public static readonly ECgBlockchainCommand MAX = EMCgBlockchainCommand.Get().Create("MAX");
+        public static readonly FECgBlockchainCommand MAX = EMCgBlockchainCommand.Get().Create("MAX");
     }
 
-    public sealed class ECgEthereumJavascript : FECgEnum_byte
+    public sealed class FECgEthereumJavascript : FECgEnum_byte
     {
-        public ECgEthereumJavascript(byte value, string name) : base(value, name) { }
+        public FECgEthereumJavascript(byte value, string name) : base(value, name) { }
     }
 
-    public sealed class ECgEthereumJavascriptEqualityComparer : IEqualityComparer<ECgEthereumJavascript>
+    public sealed class FECgEthereumJavascriptEqualityComparer : IEqualityComparer<FECgEthereumJavascript>
     {
-        public bool Equals(ECgEthereumJavascript lhs, ECgEthereumJavascript rhs)
+        public bool Equals(FECgEthereumJavascript lhs, FECgEthereumJavascript rhs)
         {
             return lhs == rhs;
         }
 
-        public int GetHashCode(ECgEthereumJavascript x)
+        public int GetHashCode(FECgEthereumJavascript x)
         {
             return x.GetHashCode();
         }
     }
 
-    public class EMCgEthereumJavascript : TCgEnumMap<ECgEthereumJavascript, byte>
+    public class EMCgEthereumJavascript : TCgEnumMap<FECgEthereumJavascript, byte>
     {
         private static EMCgEthereumJavascript _Instance;
         public static EMCgEthereumJavascript Instance
@@ -88,10 +88,10 @@ namespace CgCore
 
     public struct FCgEthereumJavascriptContractLink
     {
-        public readonly ECgBlockchainContract Contract;
+        public readonly FECgBlockchainContract Contract;
         public readonly string Link;
 
-        public FCgEthereumJavascriptContractLink(ECgBlockchainContract contract, string link)
+        public FCgEthereumJavascriptContractLink(FECgBlockchainContract contract, string link)
         {
             Contract = contract;
             Link = link;
@@ -118,31 +118,31 @@ namespace CgCore
         protected Dictionary<string, FCgEthereumKeystore> Keystores;
 
         public string ABIDirectory;
-        protected Dictionary<ECgBlockchainContract, string> ABISnippets;
+        protected Dictionary<FECgBlockchainContract, string> ABISnippets;
 
         public string Web3DeployDirectory;
-        protected Dictionary<ECgBlockchainContract, string> Web3DeploySnippets;
+        protected Dictionary<FECgBlockchainContract, string> Web3DeploySnippets;
 
         public string Web3DeployLinkedDirectory;
-        protected Dictionary<ECgBlockchainContract, string> Web3DeployLinkedSnippets;
+        protected Dictionary<FECgBlockchainContract, string> Web3DeployLinkedSnippets;
 
-        protected Dictionary<ECgBlockchainContract, List<FCgEthereumWeb3DeployLink>> Web3DeployLinks;
+        protected Dictionary<FECgBlockchainContract, List<FCgEthereumWeb3DeployLink>> Web3DeployLinks;
 
         
         public string JavascriptDirectory;
         public string JavascriptLinkedDirectory;
         /* Path for any Javascript */
-        protected Dictionary<ECgEthereumJavascript, string> ScriptPaths;
+        protected Dictionary<FECgEthereumJavascript, string> ScriptPaths;
         /* Path for any Contract Javascript functions that need to get procedural updated */
-        protected Dictionary<ECgBlockchainContract, string> ScriptLinkedPaths;
+        protected Dictionary<FECgBlockchainContract, string> ScriptLinkedPaths;
         /* Any links, code, and/or information related to a Contract javascript function that needs to get procedurally updated */
-        protected Dictionary<ECgBlockchainContract, List<FCgEthereumJavascriptContractLink>> ScriptContractLinks;
+        protected Dictionary<FECgBlockchainContract, List<FCgEthereumJavascriptContractLink>> ScriptContractLinks;
 
-        protected Dictionary<ECgBlockchainContract, Dictionary<ECgBlockchainContractFunction, CgBlockchainContractFunction>> ContractFunctions;
+        protected Dictionary<FECgBlockchainContract, Dictionary<FECgBlockchainContractFunction, FCgBlockchainContractFunction>> ContractFunctions;
 
         public FCgRoutine.FBoolType IsRunningInstanceCloseFlag;
 
-        protected Dictionary<ECgBlockchainCommand, CgProcessMonitorOutputEvent> MonitorOutputEvents;
+        protected Dictionary<FECgBlockchainCommand, FCgProcessMonitorOutputEvent> MonitorOutputEvents;
 
         protected FCgBlockchainCommandInfo CurrentCommandInfo;
         protected object CurrentCommandOuput;
@@ -188,25 +188,25 @@ namespace CgCore
             ContractsDeployedDirectory = ContractsDirectory + "\\Deployed";
 
             ABIDirectory = ContractsDirectory + "\\ABI";
-            ABISnippets = new Dictionary<ECgBlockchainContract, string>(new ECgBlockchainContractEqualityComparer());
+            ABISnippets = new Dictionary<FECgBlockchainContract, string>(new FECgBlockchainContractEqualityComparer());
 
             Web3DeployDirectory = ContractsDirectory + "\\Web3Deploy";
-            Web3DeploySnippets = new Dictionary<ECgBlockchainContract, string>(new ECgBlockchainContractEqualityComparer());
+            Web3DeploySnippets = new Dictionary<FECgBlockchainContract, string>(new FECgBlockchainContractEqualityComparer());
 
             Web3DeployLinkedDirectory = Web3DeployDirectory + "\\Linked";
-            Web3DeployLinkedSnippets = new Dictionary<ECgBlockchainContract, string>(new ECgBlockchainContractEqualityComparer());
+            Web3DeployLinkedSnippets = new Dictionary<FECgBlockchainContract, string>(new FECgBlockchainContractEqualityComparer());
 
-            Web3DeployLinks = new Dictionary<ECgBlockchainContract, List<FCgEthereumWeb3DeployLink>>(new ECgBlockchainContractEqualityComparer());
+            Web3DeployLinks = new Dictionary<FECgBlockchainContract, List<FCgEthereumWeb3DeployLink>>(new FECgBlockchainContractEqualityComparer());
 
             JavascriptDirectory = RootDirectory + "\\Javascript";
             JavascriptLinkedDirectory = JavascriptDirectory + "\\Linked";
-            ScriptPaths = new Dictionary<ECgEthereumJavascript, string>(new ECgEthereumJavascriptEqualityComparer());
-            ScriptLinkedPaths = new Dictionary<ECgBlockchainContract, string>(new ECgBlockchainContractEqualityComparer());
-            ScriptContractLinks = new Dictionary<ECgBlockchainContract, List<FCgEthereumJavascriptContractLink>>(new ECgBlockchainContractEqualityComparer());
+            ScriptPaths = new Dictionary<FECgEthereumJavascript, string>(new FECgEthereumJavascriptEqualityComparer());
+            ScriptLinkedPaths = new Dictionary<FECgBlockchainContract, string>(new FECgBlockchainContractEqualityComparer());
+            ScriptContractLinks = new Dictionary<FECgBlockchainContract, List<FCgEthereumJavascriptContractLink>>(new FECgBlockchainContractEqualityComparer());
 
-            ContractFunctions = new Dictionary<ECgBlockchainContract, Dictionary<ECgBlockchainContractFunction, CgBlockchainContractFunction>>(new ECgBlockchainContractEqualityComparer());
+            ContractFunctions = new Dictionary<FECgBlockchainContract, Dictionary<FECgBlockchainContractFunction, FCgBlockchainContractFunction>>(new FECgBlockchainContractEqualityComparer());
 
-            MonitorOutputEvents = new Dictionary<ECgBlockchainCommand, CgProcessMonitorOutputEvent>(new ECgBlockchainCommandEqualityComparer());
+            MonitorOutputEvents = new Dictionary<FECgBlockchainCommand, FCgProcessMonitorOutputEvent>(new FECgBlockchainCommandEqualityComparer());
 
             CurrentCommandInfo = new FCgBlockchainCommandInfo(ECgEthereumCommand.MAX, null, null);
 
@@ -219,7 +219,7 @@ namespace CgCore
             {
                 FCgStringParagraph p = FCgStringParagraphHelper.CreateOneWordParagraph("IPC endpoint opened", ECgStringWordRule.MatchCase);// TODO: also include "url=\\\\.\\pipe\\geth.ipc"?
 
-                CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.SetDataDirectory, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
+                FCgProcessMonitorOutputEvent e = new FCgProcessMonitorOutputEvent(ECgEthereumCommand.SetDataDirectory, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
                 e.AddEvent(OnCommandCompleted);
 
                 MonitorOutputEvents.Add(ECgEthereumCommand.SetDataDirectory, e);
@@ -232,7 +232,7 @@ namespace CgCore
                     p.AddSentence(FCgStringParagraphHelper.CreateOneWordSentence("instance:", ECgStringWordRule.Lower));
                     p.AddSentence(FCgStringParagraphHelper.CreateOneWordSentence("modules:", ECgStringWordRule.Lower));
 
-                CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.AttachToConsole, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
+                FCgProcessMonitorOutputEvent e = new FCgProcessMonitorOutputEvent(ECgEthereumCommand.AttachToConsole, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
                 e.AddEvent(OnCommandCompleted);
 
                 MonitorOutputEvents.Add(ECgEthereumCommand.AttachToConsole, e);
@@ -246,7 +246,7 @@ namespace CgCore
             {
                 FCgStringParagraph p = FCgStringParagraphHelper.CreateOneWordParagraph("true", ECgStringWordRule.MatchCase);
 
-                CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.UnlockAccount, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
+                FCgProcessMonitorOutputEvent e = new FCgProcessMonitorOutputEvent(ECgEthereumCommand.UnlockAccount, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
                 e.AddEvent(OnCommandCompleted);
 
                 MonitorOutputEvents.Add(ECgEthereumCommand.UnlockAccount, e);
@@ -258,7 +258,7 @@ namespace CgCore
             {
                 FCgStringParagraph p = FCgStringParagraphHelper.CreateOneWordParagraph("true", ECgStringWordRule.MatchCase);
 
-                CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.SetEtherbase, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
+                FCgProcessMonitorOutputEvent e = new FCgProcessMonitorOutputEvent(ECgEthereumCommand.SetEtherbase, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
                 e.AddEvent(OnCommandCompleted);
 
                 MonitorOutputEvents.Add(ECgEthereumCommand.SetEtherbase, e);
@@ -270,7 +270,7 @@ namespace CgCore
             {
                 FCgStringParagraph p = FCgStringParagraphHelper.CreateOneWordParagraph("null", ECgStringWordRule.MatchCase);
 
-                CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.StartMiner, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
+                FCgProcessMonitorOutputEvent e = new FCgProcessMonitorOutputEvent(ECgEthereumCommand.StartMiner, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
                 e.AddEvent(OnCommandCompleted);
 
                 MonitorOutputEvents.Add(ECgEthereumCommand.StartMiner, e);
@@ -280,7 +280,7 @@ namespace CgCore
             {
                 FCgStringParagraph p = FCgStringParagraphHelper.CreateOneWordParagraph("true", ECgStringWordRule.MatchCase);
 
-                CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.StopMiner, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
+                FCgProcessMonitorOutputEvent e = new FCgProcessMonitorOutputEvent(ECgEthereumCommand.StopMiner, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
                 e.AddEvent(OnCommandCompleted);
 
                 MonitorOutputEvents.Add(ECgEthereumCommand.StopMiner, e);
@@ -290,7 +290,7 @@ namespace CgCore
             {
                 FCgStringParagraph p = FCgStringParagraphHelper.CreateOneWordParagraph("true", ECgStringWordRule.MatchCase);
 
-                CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.LoadScript, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
+                FCgProcessMonitorOutputEvent e = new FCgProcessMonitorOutputEvent(ECgEthereumCommand.LoadScript, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
                 e.AddEvent(OnCommandCompleted);
 
                 MonitorOutputEvents.Add(ECgEthereumCommand.LoadScript, e);
@@ -300,7 +300,7 @@ namespace CgCore
             {
                 FCgStringParagraph p = FCgStringParagraphHelper.CreateOneWordParagraph("", ECgStringWordRule.MatchCase);
 
-                CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.CreateContractABI, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
+                FCgProcessMonitorOutputEvent e = new FCgProcessMonitorOutputEvent(ECgEthereumCommand.CreateContractABI, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
                 e.AddEvent(OnCommandCompleted);
 
                 MonitorOutputEvents.Add(ECgEthereumCommand.CreateContractABI, e);
@@ -310,7 +310,7 @@ namespace CgCore
             {
                 FCgStringParagraph p = FCgStringParagraphHelper.CreateOneWordParagraph("undefined", ECgStringWordRule.MatchCase);
 
-                CgProcessMonitorOutputEvent e = new CgProcessMonitorOutputEvent(ECgEthereumCommand.CreateContractInstance, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
+                FCgProcessMonitorOutputEvent e = new FCgProcessMonitorOutputEvent(ECgEthereumCommand.CreateContractInstance, p, ECgProcessMonitorOutputEventPurpose.FireOnce);
                 e.AddEvent(OnCommandCompleted);
 
                 MonitorOutputEvents.Add(ECgEthereumCommand.CreateContractInstance, e);
@@ -421,7 +421,7 @@ namespace CgCore
             }
         }
 
-        public override void SetCommand(ECgBlockchainCommand command, string str)
+        public override void SetCommand(FECgBlockchainCommand command, string str)
         {
             string value;
 
@@ -453,7 +453,7 @@ namespace CgCore
             p.RunCommand(command);
         }
 
-        public override void RunCommand(int consoleIndex, ECgBlockchainCommand command, FCgBlockchainCommandArgument[] args = null)
+        public override void RunCommand(int consoleIndex, FECgBlockchainCommand command, FCgBlockchainCommandArgument[] args = null)
         {
             string value;
             Commands.TryGetValue(command, out value);
@@ -504,19 +504,19 @@ namespace CgCore
             RunCommand(consoleIndex, value);
         }
 
-        public void AddMonitorOutputEvenToProcess(ECgBlockchainProcessType processType, int index, CgProcessMonitorOutputEvent e)
+        public void AddMonitorOutputEvenToProcess(ECgBlockchainProcessType processType, int index, FCgProcessMonitorOutputEvent e)
         {
             // TODO: Later handle PrivateMultiNode
             Processes[processType].AddMonitorOuputEvent(e);
         }
 
-        public void AddMonitorOutputEvenToProcess(ECgBlockchainProcessType processType, int index, ECgBlockchainCommand command)
+        public void AddMonitorOutputEvenToProcess(ECgBlockchainProcessType processType, int index, FECgBlockchainCommand command)
         {
             // TODO: Later handle PrivateMultiNode
             AddMonitorOutputEvenToProcess(processType, index, MonitorOutputEvents[command]);
         }
 
-        public virtual void OnCommandCompleted(ECgBlockchainCommand command)
+        public virtual void OnCommandCompleted(FECgBlockchainCommand command)
         {
             if (LogCommandCompleted.Log())
             {
@@ -597,7 +597,7 @@ namespace CgCore
                 FCgDebug.Log("Console (Output): " + output);
             }
 
-            ECgBlockchainCommand command = CurrentCommandInfo.Command;
+            FECgBlockchainCommand command = CurrentCommandInfo.Command;
 
             // NewAccount
             if (command == ECgEthereumCommand.NewAccount)
@@ -660,7 +660,7 @@ namespace CgCore
                     string address = right.Substring(0, 40);
 
                     // Update Contract with the address
-                    ECgBlockchainContract econtract = (ECgBlockchainContract)CurrentCommandInfo.Payload;
+                    FECgBlockchainContract econtract = (FECgBlockchainContract)CurrentCommandInfo.Payload;
 
                     FCgEthereumContract contract = (FCgEthereumContract)Contracts[econtract];
                     contract.Address            = address;
@@ -679,7 +679,7 @@ namespace CgCore
 
                     CommandCompleted_Event.Broadcast(command);
 
-                    CgBlockchainContractFunctionPayload payload = (CgBlockchainContractFunctionPayload)CurrentCommandInfo.Payload;
+                    FCgBlockchainContractFunctionPayload payload = (FCgBlockchainContractFunctionPayload)CurrentCommandInfo.Payload;
 
                     ContractFunctionCompleted_Event.Broadcast(payload.Contract, payload.Function);
                 }
@@ -759,7 +759,7 @@ namespace CgCore
             return Processes[processType];
         }
 
-        public override void StartProcess(ECgBlockchainProcessType processType, int index, CgBlockchainProcessStartInfo startInfo)
+        public override void StartProcess(ECgBlockchainProcessType processType, int index, FCgBlockchainProcessStartInfo startInfo)
         {
             FCgProcess p = GetProcess(processType, index);
 
@@ -792,7 +792,7 @@ namespace CgCore
                     payload.Exited_Event.Add(OnConsoleExited);
                 }
 
-                foreach (CgProcessMonitorOutputEvent e in startInfo.MonitorOutputEvents)
+                foreach (FCgProcessMonitorOutputEvent e in startInfo.MonitorOutputEvents)
                 {
                     payload.AddMonitorOutputEvent(e);
                 }
@@ -830,9 +830,9 @@ namespace CgCore
 
             CommandFlag.Set(false);
 
-            ECgBlockchainCommand command = ECgEthereumCommand.SetDataDirectory;
+            FECgBlockchainCommand command = ECgEthereumCommand.SetDataDirectory;
 
-            CgBlockchainProcessStartInfo startInfo = new CgBlockchainProcessStartInfo();
+            FCgBlockchainProcessStartInfo startInfo = new FCgBlockchainProcessStartInfo();
             startInfo.Filename              = ConsoleFullPath;
             startInfo.Arguments             = Commands[command];
             startInfo.RedirectStandardInput = false;
@@ -867,7 +867,7 @@ namespace CgCore
             IsRunningInstanceOpen = true;
             IsRunningInstanceCloseFlag.Set(false);
 
-            CgBlockchainProcessStartInfo startInfo = new CgBlockchainProcessStartInfo();
+            FCgBlockchainProcessStartInfo startInfo = new FCgBlockchainProcessStartInfo();
             startInfo.Filename              = ConsoleFullPath;
             startInfo.Arguments             = Commands[ECgEthereumCommand.InitBlockchain];
             startInfo.RedirectStandardInput = false;
@@ -923,9 +923,9 @@ namespace CgCore
 
         public static IEnumerator OpenConsole_Internal(FCgEthereum eth)
         {
-            ECgBlockchainCommand command = ECgEthereumCommand.AttachToConsole;
+            FECgBlockchainCommand command = ECgEthereumCommand.AttachToConsole;
 
-            CgBlockchainProcessStartInfo startInfo = new CgBlockchainProcessStartInfo();
+            FCgBlockchainProcessStartInfo startInfo = new FCgBlockchainProcessStartInfo();
             startInfo.Filename              = eth.ConsoleFullPath;
             startInfo.Arguments             = eth.Commands[command];
             startInfo.RedirectStandardInput = true;
@@ -1368,13 +1368,13 @@ namespace CgCore
 
         #region Contract
 
-        public void DeployContract(ECgBlockchainContract econtract, CgBlockchainContractArgument[] args = null)
+        public void DeployContract(FECgBlockchainContract econtract, CgBlockchainContractArgument[] args = null)
         {
             DeployContractFlag.Set(false);
             FCgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, DeployContract_Internal(this, econtract, args));
         }
 
-        public static IEnumerator DeployContract_Internal(FCgEthereum eth, ECgBlockchainContract econtract, CgBlockchainContractArgument[] args = null)
+        public static IEnumerator DeployContract_Internal(FCgEthereum eth, FECgBlockchainContract econtract, CgBlockchainContractArgument[] args = null)
         {
             // Start Miner
             eth.StartMiner();
@@ -1412,7 +1412,7 @@ namespace CgCore
             eth.DeployContractFlag.Set(true);
         }
 
-        public void LoadContract(ECgBlockchainContract econtract, ECgEthereumJavascript escript)
+        public void LoadContract(FECgBlockchainContract econtract, FECgEthereumJavascript escript)
         {
             ICgBlockchainContract c = null;
             Contracts.TryGetValue(econtract, out c);
@@ -1483,7 +1483,7 @@ namespace CgCore
             }
         }
 
-        public void CreatedWeb3DeployLinked(ECgBlockchainContract econtract)
+        public void CreatedWeb3DeployLinked(FECgBlockchainContract econtract)
         {
             string snippet = Web3DeploySnippets[econtract];
 
@@ -1523,7 +1523,7 @@ namespace CgCore
             }
         }
 
-        public void CreatedJavascriptContractLinked(ECgBlockchainContract econtract, ECgEthereumJavascript escript)
+        public void CreatedJavascriptContractLinked(FECgBlockchainContract econtract, FECgEthereumJavascript escript)
         {
             string path = "";
 
@@ -1551,7 +1551,7 @@ namespace CgCore
             File.WriteAllText(ScriptLinkedPaths[econtract], script, System.Text.Encoding.ASCII);
         }
 
-        public void CreateContractABI(ECgBlockchainContract econtract)
+        public void CreateContractABI(FECgBlockchainContract econtract)
         {
             CommandFlag.Set(false);
 
@@ -1597,13 +1597,13 @@ namespace CgCore
             RunCommand(SINGLE_NODE_INDEX, ECgEthereumCommand.CreateContractInstance, args);
         }
 
-        public void SetupContract(ECgBlockchainContract econtract, ECgEthereumJavascript escript)
+        public void SetupContract(FECgBlockchainContract econtract, FECgEthereumJavascript escript)
         {
             SetupContractFlag.Set(false);
             FCgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, SetupContract_Internal(this, econtract, escript));
         }
 
-        public static IEnumerator SetupContract_Internal(FCgEthereum eth, ECgBlockchainContract econtract, ECgEthereumJavascript escript)
+        public static IEnumerator SetupContract_Internal(FCgEthereum eth, FECgBlockchainContract econtract, FECgEthereumJavascript escript)
         {
             eth.LoadContract(econtract, escript);
             eth.LoadScript(escript, eth.ScriptLinkedPaths[econtract]);
@@ -1626,15 +1626,15 @@ namespace CgCore
             eth.SetupContractFlag.Set(true);
         }
 
-        public void RunContractConstantFunction(ECgBlockchainContract econtract, ECgBlockchainContractFunction efn, CgBlockchainContractFunctionArgument[] args = null)
+        public void RunContractConstantFunction(FECgBlockchainContract econtract, FECgBlockchainContractFunction efn, FCgBlockchainContractFunctionArgument[] args = null)
         {
             CommandFlag.Set(false);
 
-            CgBlockchainContractFunction fn = ContractFunctions[econtract][efn];
+            FCgBlockchainContractFunction fn = ContractFunctions[econtract][efn];
             fn.Arguments                    = args;
             string command                  = fn.BuildConstantFunction();
 
-            CgBlockchainContractFunctionPayload payload = new CgBlockchainContractFunctionPayload(econtract, efn);
+            FCgBlockchainContractFunctionPayload payload = new FCgBlockchainContractFunctionPayload(econtract, efn);
 
             CurrentCommandInfo.Set(ECgEthereumCommand.RunContractConstantFunction, null, payload);
             CurrentCommandOuput = null;
@@ -1646,13 +1646,13 @@ namespace CgCore
             RunCommand(SINGLE_NODE_INDEX, command);
         }
 
-        public void RunContractStateChangeFunction(ECgBlockchainContract econtract, ICgBlockchainAccount iaccount, ECgBlockchainContractFunction efn, CgBlockchainContractFunctionArgument[] args = null)
+        public void RunContractStateChangeFunction(FECgBlockchainContract econtract, ICgBlockchainAccount iaccount, FECgBlockchainContractFunction efn, FCgBlockchainContractFunctionArgument[] args = null)
         {
             RunContractStateChangeFunctionFlag.Set(false);
             FCgCoroutineScheduler.Get().Start(ECgCoroutineSchedule.Update, RunContractStateChangeFunction_Internal(this, econtract, iaccount, efn, args));
         }
 
-        public static IEnumerator RunContractStateChangeFunction_Internal(FCgEthereum eth, ECgBlockchainContract econtract, ICgBlockchainAccount iaccount, ECgBlockchainContractFunction efn, CgBlockchainContractFunctionArgument[] args = null)
+        public static IEnumerator RunContractStateChangeFunction_Internal(FCgEthereum eth, FECgBlockchainContract econtract, ICgBlockchainAccount iaccount, FECgBlockchainContractFunction efn, FCgBlockchainContractFunctionArgument[] args = null)
         {
             // Check Balance
             int THRESHOLD = 10;
@@ -1676,7 +1676,7 @@ namespace CgCore
             FCgEthereumAccount account = (FCgEthereumAccount)iaccount;
             string address            = account.GetAddressAsArg();
 
-            CgBlockchainContractFunction fn = eth.ContractFunctions[econtract][efn];
+            FCgBlockchainContractFunction fn = eth.ContractFunctions[econtract][efn];
             fn.Arguments                    = args;
             int GAS_PADDING                 = 10000;
             gas                            += GAS_PADDING;
@@ -1707,14 +1707,14 @@ namespace CgCore
             eth.ContractFunctionCompleted_Event.Broadcast(econtract, efn);
         }
 
-        public void GetGasEstimate(ECgBlockchainContract econtract, ICgBlockchainAccount iaccount, ECgBlockchainContractFunction efn, CgBlockchainContractFunctionArgument[] args = null)
+        public void GetGasEstimate(FECgBlockchainContract econtract, ICgBlockchainAccount iaccount, FECgBlockchainContractFunction efn, FCgBlockchainContractFunctionArgument[] args = null)
         {
             CommandFlag.Set(false);
 
             FCgEthereumAccount account = (FCgEthereumAccount)iaccount;
             string address            = account.GetAddressAsArg();
 
-            CgBlockchainContractFunction fn = ContractFunctions[econtract][efn];
+            FCgBlockchainContractFunction fn = ContractFunctions[econtract][efn];
             fn.Arguments                    = args;
             string command                  = fn.BuildEstimateFunction(address);
 
@@ -1771,7 +1771,7 @@ namespace CgCore
 
         #endregion // Contract
 
-        public virtual void LoadScript(ECgEthereumJavascript escript, string path)
+        public virtual void LoadScript(FECgEthereumJavascript escript, string path)
         {
             CommandFlag.Set(false);
 

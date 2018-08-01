@@ -33,22 +33,22 @@
         }
     }
 
-    public class CgBlockchainProcessStartInfo
+    public class FCgBlockchainProcessStartInfo
     {
         public string Filename;
         public string Arguments;
         public bool RedirectStandardInput;
-        public List<CgProcessMonitorOutputEvent> MonitorOutputEvents;
+        public List<FCgProcessMonitorOutputEvent> MonitorOutputEvents;
 
-        public CgBlockchainProcessStartInfo()
+        public FCgBlockchainProcessStartInfo()
         {
             Filename = "";
             Arguments = "";
             RedirectStandardInput = false;
-            MonitorOutputEvents = new List<CgProcessMonitorOutputEvent>();
+            MonitorOutputEvents = new List<FCgProcessMonitorOutputEvent>();
         }
 
-        public void AddMonitorOutputEvent(CgProcessMonitorOutputEvent e)
+        public void AddMonitorOutputEvent(FCgProcessMonitorOutputEvent e)
         {
             MonitorOutputEvents.Add(e);
         }
@@ -112,8 +112,8 @@
             #endregion // Private / Local Storage
 
         IFCgBlockchainGenesis Genesis { get; set; }
-        Dictionary<ECgBlockchainContract, ICgBlockchainContract> Contracts { get; set; }
-        Dictionary<ECgBlockchainCommand, string> Commands { get; set; }
+        Dictionary<FECgBlockchainContract, ICgBlockchainContract> Contracts { get; set; }
+        Dictionary<FECgBlockchainCommand, string> Commands { get; set; }
 
         Dictionary<string, ICgBlockchainAccount> Accounts { get; set; }
 
@@ -123,13 +123,13 @@
 
         void Start();
 
-        void SetCommand(ECgBlockchainCommand command, string str);
+        void SetCommand(FECgBlockchainCommand command, string str);
         void RunCommand(int consoleIndex, string command);
-        void RunCommand(int consoleIndex, ECgBlockchainCommand command, FCgBlockchainCommandArgument[] args = null);
+        void RunCommand(int consoleIndex, FECgBlockchainCommand command, FCgBlockchainCommandArgument[] args = null);
 
         void SetProcess(ECgBlockchainProcessType processType, int index, FCgProcess p);
         FCgProcess GetProcess(ECgBlockchainProcessType processType, int index);
-        void StartProcess(ECgBlockchainProcessType processType, int index, CgBlockchainProcessStartInfo startInfo);
+        void StartProcess(ECgBlockchainProcessType processType, int index, FCgBlockchainProcessStartInfo startInfo);
         void StopProcess(ECgBlockchainProcessType processType, int index);
 
         void OpenRunningInstance();
@@ -178,10 +178,10 @@
         public class FPrivateChainCreated : TCgMulticastDelegate_OneParam<int> { }
         public class FPrivateChainStarted : TCgMulticastDelegate_OneParam<int> { }
         public class FConsoleOpened : TCgMulticastDelegate_OneParam<int> { }
-        public class FCommandCompleted : TCgMulticastDelegate_OneParam<ECgBlockchainCommand> { }
+        public class FCommandCompleted : TCgMulticastDelegate_OneParam<FECgBlockchainCommand> { }
         public class FAccountCreated : TCgMulticastDelegate_OneParam<ICgBlockchainAccount>{ }
         public class FCoinbaseSet : TCgDelegate_OneParam<ICgBlockchainAccount> { }
-        public class FContractFunctionCompleted : TCgMulticastDelegate_TwoParams<ECgBlockchainContract, ECgBlockchainContractFunction> { }
+        public class FContractFunctionCompleted : TCgMulticastDelegate_TwoParams<FECgBlockchainContract, FECgBlockchainContractFunction> { }
 
         #region "Constants"
 
@@ -295,15 +295,15 @@
             set { _Genesis = value; }
         }
 
-        private Dictionary<ECgBlockchainContract, ICgBlockchainContract> _Contracts;
-        public Dictionary<ECgBlockchainContract, ICgBlockchainContract> Contracts
+        private Dictionary<FECgBlockchainContract, ICgBlockchainContract> _Contracts;
+        public Dictionary<FECgBlockchainContract, ICgBlockchainContract> Contracts
         {
             get { return _Contracts; }
             set { _Contracts = value; }
         }
 
-        private Dictionary<ECgBlockchainCommand, string> _Commands;
-        public Dictionary<ECgBlockchainCommand, string> Commands
+        private Dictionary<FECgBlockchainCommand, string> _Commands;
+        public Dictionary<FECgBlockchainCommand, string> Commands
         {
             get { return _Commands; }
             set { _Commands = value; }
@@ -339,8 +339,8 @@
                 Processes.Add((ECgBlockchainProcessType)i, null);
             }
 
-            Contracts = new Dictionary<ECgBlockchainContract, ICgBlockchainContract>();
-            Commands = new Dictionary<ECgBlockchainCommand, string>(new ECgBlockchainCommandEqualityComparer());
+            Contracts = new Dictionary<FECgBlockchainContract, ICgBlockchainContract>();
+            Commands = new Dictionary<FECgBlockchainCommand, string>(new FECgBlockchainCommandEqualityComparer());
             
             Accounts = new Dictionary<string, ICgBlockchainAccount>();
 
@@ -383,13 +383,13 @@
 
         public abstract void Rebuild();
 
-        public abstract void SetCommand(ECgBlockchainCommand command, string str);
+        public abstract void SetCommand(FECgBlockchainCommand command, string str);
         public abstract void RunCommand(int consoleIndex, string command);
-        public abstract void RunCommand(int consoleIndex, ECgBlockchainCommand command, FCgBlockchainCommandArgument[] args = null);
+        public abstract void RunCommand(int consoleIndex, FECgBlockchainCommand command, FCgBlockchainCommandArgument[] args = null);
 
         public abstract void SetProcess(ECgBlockchainProcessType processType, int index, FCgProcess p);
         public abstract FCgProcess GetProcess(ECgBlockchainProcessType processType, int index);
-        public abstract void StartProcess(ECgBlockchainProcessType processType, int index, CgBlockchainProcessStartInfo startInfo);
+        public abstract void StartProcess(ECgBlockchainProcessType processType, int index, FCgBlockchainProcessStartInfo startInfo);
         public abstract void StopProcess(ECgBlockchainProcessType processType, int index);
 
         public abstract void OpenRunningInstance();

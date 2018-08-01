@@ -1,6 +1,6 @@
 ﻿namespace CgCore
 {
-    public abstract class CgData_Item : CgData
+    public abstract class MCgData_Item : MCgData
     {
 
     }

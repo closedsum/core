@@ -10,9 +10,9 @@
 
         public FCgManager_Input Manager_Input;
 
-        public List<ECgGameEvent> GameEventPriorityList;
+        public List<FECgGameEvent> GameEventPriorityList;
 
-        public CgPlayerState PlayerState;
+        public MCgPlayerState PlayerState;
 
         #endregion // Data Members
 
@@ -23,7 +23,7 @@
 
         public virtual void Init()
         {
-            GameEventPriorityList = new List<ECgGameEvent>();
+            GameEventPriorityList = new List<FECgGameEvent>();
         }
 
         public virtual void OnUpdate(float deltaTime)

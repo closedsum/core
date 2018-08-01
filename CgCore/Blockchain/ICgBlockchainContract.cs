@@ -21,25 +21,25 @@
         }
     }
 
-    public sealed class ECgBlockchainContract : FECgEnum_byte
+    public sealed class FECgBlockchainContract : FECgEnum_byte
     {
-        public ECgBlockchainContract(byte value, string name) : base(value, name) { }
+        public FECgBlockchainContract(byte value, string name) : base(value, name) { }
     }
 
-    public sealed class ECgBlockchainContractEqualityComparer : IEqualityComparer<ECgBlockchainContract>
+    public sealed class FECgBlockchainContractEqualityComparer : IEqualityComparer<FECgBlockchainContract>
     {
-        public bool Equals(ECgBlockchainContract lhs, ECgBlockchainContract rhs)
+        public bool Equals(FECgBlockchainContract lhs, FECgBlockchainContract rhs)
         {
             return lhs == rhs;
         }
 
-        public int GetHashCode(ECgBlockchainContract x)
+        public int GetHashCode(FECgBlockchainContract x)
         {
             return x.GetHashCode();
         }
     }
 
-    public class EMCgBlockchainContract : TCgEnumMap<ECgBlockchainContract, byte>
+    public class EMCgBlockchainContract : TCgEnumMap<FECgBlockchainContract, byte>
     {
         private static EMCgBlockchainContract _Instance;
         public static EMCgBlockchainContract Instance
@@ -101,25 +101,25 @@
 
     #region "Function"
 
-    public sealed class ECgBlockchainContractFunction : FECgEnum_byte
+    public sealed class FECgBlockchainContractFunction : FECgEnum_byte
     {
-        public ECgBlockchainContractFunction(byte value, string name) : base(value, name) { }
+        public FECgBlockchainContractFunction(byte value, string name) : base(value, name) { }
     }
 
-    public sealed class ECgBlockchainContractFunctionEqualityComparer : IEqualityComparer<ECgBlockchainContractFunction>
+    public sealed class FECgBlockchainContractFunctionEqualityComparer : IEqualityComparer<FECgBlockchainContractFunction>
     {
-        public bool Equals(ECgBlockchainContractFunction lhs, ECgBlockchainContractFunction rhs)
+        public bool Equals(FECgBlockchainContractFunction lhs, FECgBlockchainContractFunction rhs)
         {
             return lhs == rhs;
         }
 
-        public int GetHashCode(ECgBlockchainContractFunction x)
+        public int GetHashCode(FECgBlockchainContractFunction x)
         {
             return x.GetHashCode();
         }
     }
 
-    public class EMCgBlockchainContractFunction : TCgEnumMap<ECgBlockchainContractFunction, byte>
+    public class EMCgBlockchainContractFunction : TCgEnumMap<FECgBlockchainContractFunction, byte>
     {
         private static EMCgBlockchainContractFunction _Instance;
         public static EMCgBlockchainContractFunction Instance
@@ -147,12 +147,12 @@
         MAX
     }
 
-    public struct CgBlockchainContractFunctionArgument
+    public struct FCgBlockchainContractFunctionArgument
     {
         public ECgBlockchainContractFunctionArgumentType ValueType;
         public object Value;
 
-        public CgBlockchainContractFunctionArgument(ECgBlockchainContractFunctionArgumentType valueType, object value)
+        public FCgBlockchainContractFunctionArgument(ECgBlockchainContractFunctionArgumentType valueType, object value)
         {
             ValueType = valueType;
             Value = value;
@@ -182,16 +182,16 @@
         MAX
     }
 
-    public struct CgBlockchainContractFunctionReturn
+    public struct FCgBlockchainContractFunctionReturn
     {
-        public static readonly CgBlockchainContractFunctionReturn Void = new CgBlockchainContractFunctionReturn(ECgBlockchainContractFunctionReturnType.MAX, null);
-        public static readonly CgBlockchainContractFunctionReturn Number = new CgBlockchainContractFunctionReturn(ECgBlockchainContractFunctionReturnType.Number, 0);
-        public static readonly CgBlockchainContractFunctionReturn String = new CgBlockchainContractFunctionReturn(ECgBlockchainContractFunctionReturnType.String, "");
+        public static readonly FCgBlockchainContractFunctionReturn Void = new FCgBlockchainContractFunctionReturn(ECgBlockchainContractFunctionReturnType.MAX, null);
+        public static readonly FCgBlockchainContractFunctionReturn Number = new FCgBlockchainContractFunctionReturn(ECgBlockchainContractFunctionReturnType.Number, 0);
+        public static readonly FCgBlockchainContractFunctionReturn String = new FCgBlockchainContractFunctionReturn(ECgBlockchainContractFunctionReturnType.String, "");
 
         public ECgBlockchainContractFunctionReturnType ValueType;
         public object Value;
 
-        public CgBlockchainContractFunctionReturn(ECgBlockchainContractFunctionReturnType valueType, object value)
+        public FCgBlockchainContractFunctionReturn(ECgBlockchainContractFunctionReturnType valueType, object value)
         {
             ValueType = valueType;
             Value = value;
@@ -214,15 +214,15 @@
         }
     }
 
-    public sealed class CgBlockchainContractFunction
+    public sealed class FCgBlockchainContractFunction
     {
         private static readonly int EMPTY = 0;
 
         public string Signature;
-        public CgBlockchainContractFunctionArgument[] Arguments;
-        public CgBlockchainContractFunctionReturn Return;
+        public FCgBlockchainContractFunctionArgument[] Arguments;
+        public FCgBlockchainContractFunctionReturn Return;
 
-        public CgBlockchainContractFunction(string signature, CgBlockchainContractFunctionArgument[] args, CgBlockchainContractFunctionReturn ret)
+        public FCgBlockchainContractFunction(string signature, FCgBlockchainContractFunctionArgument[] args, FCgBlockchainContractFunctionReturn ret)
         {
             Signature = signature;
             Arguments = args;
@@ -314,13 +314,13 @@
         }
     }
 
-    public struct CgBlockchainContractFunctionPayload
+    public struct FCgBlockchainContractFunctionPayload
     {
-        public ECgBlockchainContract Contract;
-        public ECgBlockchainContractFunction Function;
+        public FECgBlockchainContract Contract;
+        public FECgBlockchainContractFunction Function;
         //object Payload;
 
-        public CgBlockchainContractFunctionPayload(ECgBlockchainContract econtract, ECgBlockchainContractFunction efn)
+        public FCgBlockchainContractFunctionPayload(FECgBlockchainContract econtract, FECgBlockchainContractFunction efn)
         {
             Contract = econtract;
             Function = efn;

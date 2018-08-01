@@ -2,25 +2,25 @@
 {
     using System.Collections.Generic;
 
-    public sealed class ECgAssetType : FECgEnum_byte
+    public sealed class FECgAssetType : FECgEnum_byte
     {
-        public ECgAssetType(byte value, string name) : base(value, name) { }
+        public FECgAssetType(byte value, string name) : base(value, name) { }
     }
 
-    public sealed class ECgAssetTypeEqualityComparer : IEqualityComparer<ECgAssetType>
+    public sealed class FECgAssetTypeEqualityComparer : IEqualityComparer<FECgAssetType>
     {
-        public bool Equals(ECgAssetType lhs, ECgAssetType rhs)
+        public bool Equals(FECgAssetType lhs, FECgAssetType rhs)
         {
             return lhs == rhs;
         }
 
-        public int GetHashCode(ECgAssetType x)
+        public int GetHashCode(FECgAssetType x)
         {
             return x.GetHashCode();
         }
     }
 
-    public class EMCgAssetType : TCgEnumMap<ECgAssetType, byte>
+    public class EMCgAssetType : TCgEnumMap<FECgAssetType, byte>
     {
         private static EMCgAssetType _Instance;
         public static EMCgAssetType Instance

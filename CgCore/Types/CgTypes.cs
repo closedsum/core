@@ -9,6 +9,14 @@ namespace CgCore
         public static readonly int FIRST = 0;
     }
 
+    namespace ECgCached
+    {
+        public static class Str
+        {
+            public static readonly string NAME_None = "";
+        }
+    }
+
     public interface ICgAssetRef
     {
         string Path { get; set; }

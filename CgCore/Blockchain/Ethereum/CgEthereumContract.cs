@@ -71,10 +71,10 @@
 
     public struct FCgEthereumWeb3DeployLink
     {
-        public readonly ECgBlockchainContract Contract;
+        public readonly FECgBlockchainContract Contract;
         public readonly string Link;
 
-        public FCgEthereumWeb3DeployLink(ECgBlockchainContract contract, string link)
+        public FCgEthereumWeb3DeployLink(FECgBlockchainContract contract, string link)
         {
             Contract = contract;
             Link = link;

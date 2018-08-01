@@ -8,6 +8,7 @@ namespace CgCore
     public enum ECgRoutineState : byte
     {
         Free,
+        Allocating,
         Running,
         End,
         MAX
@@ -37,8 +38,8 @@ namespace CgCore
     public sealed class FCgRoutine
     {
         public sealed class FCoroutineStopCondition : TCgMulticastDelegate_RetOrBool_OneParam<FCgRoutine> { }
-        public sealed class FAddRoutine : TCgDelegate_OneParam<FCgRoutine> { }
-        public sealed class FRemoveRoutine : TCgDelegate_OneParam<FCgRoutine> { }
+        public sealed class FAddRoutine : TCgDelegate_Ret_OneParam<bool, FCgRoutine> { }
+        public sealed class FRemoveRoutine : TCgDelegate_Ret_OneParam<bool, FCgRoutine> { }
 
         public delegate void InsertRoutineAheadOf(ECgCoroutineSchedule schedule, FCgRoutine pivot, FCgRoutine insert);
 
@@ -51,6 +52,8 @@ namespace CgCore
 
         public static readonly byte INVALID_TYPE = 255;
         public static readonly string INVALID_LISTEN_MESSAGE = "";
+
+        public static readonly byte INT_SIZE = 4;
 
         #endregion // Constants
 
@@ -113,6 +116,12 @@ namespace CgCore
         public FListenMessageType WaitForListenMessageType;
 
         public ECgCoroutineEndReason EndReason;
+
+            #region "Temporary Storage"
+
+        public int[] Ints;
+
+            #endregion // Temporary Storage
 
         #endregion // Data Members
 
@@ -178,6 +187,8 @@ namespace CgCore
             WaitForListenMessageType = null;
 
             EndReason = ECgCoroutineEndReason.MAX;
+
+            Ints = new int[INT_SIZE];
         }
 
         // Functions
@@ -513,7 +524,7 @@ namespace CgCore
             Children.Clear();
         }
 
-        public void AddMessage(string msg)
+        public void AddMessage(ECgCoroutineMessage msgType, string msg)
         {
             StopMessages.Add(msg);
         }
@@ -567,6 +578,13 @@ namespace CgCore
             bWaitForListenMessage = false;
             WaitForListenMessage = INVALID_LISTEN_MESSAGE;
             WaitForListenMessageType = null;
+
+            EndReason = ECgCoroutineEndReason.MAX;
+
+            for (byte i = 0; i < INT_SIZE; ++i)
+            {
+                Ints[i] = 0;
+            }
         }
     }
 }

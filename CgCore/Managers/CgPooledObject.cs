@@ -28,7 +28,7 @@
         void DeAllocate();
     }
 
-    public class CgPooledObjectCache<EnumType, ObjectType> : ICgPooledObjectCache
+    public class TCgPooledObjectCache<EnumType, ObjectType> : ICgPooledObjectCache
         where ObjectType : ICgPooledObject
     {
         public class OnDeAllocate : TCgMulticastDelegate_ThreeParams<int, int, EnumType> { }
@@ -128,7 +128,7 @@
 
         #endregion // Data Members
 
-        public CgPooledObjectCache()
+        public TCgPooledObjectCache()
         {
             OnDeAllocate_Event = new OnDeAllocate();
         }
@@ -188,12 +188,12 @@
 
     public abstract class TCgPooledObject<EnumType> : ICgPooledObject
     {
-        public CgPooledObjectCache<EnumType, TCgPooledObject<EnumType>> Cache;
+        public TCgPooledObjectCache<EnumType, TCgPooledObject<EnumType>> Cache;
 
         public TCgPooledObject()
         {
             // Create Cache in Child Class
-            //Cache = new CgPooledObjectCache<EnumType, TCgPooledObject<EnumType>>();
+            //Cache = new TCgPooledObjectCache<EnumType, TCgPooledObject<EnumType>>();
         }
 
         #region "Interface"

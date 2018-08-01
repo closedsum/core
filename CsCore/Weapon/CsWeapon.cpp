@@ -1795,32 +1795,12 @@ void ACsWeapon::FireWeapon_StopCondition(struct FCsRoutine* r)
 	ACsWeapon* mw				       = Cast<ACsWeapon>(r->GetActor());
 	const FECsWeaponFireMode& FireMode = EMCsWeaponFireMode::Get().GetEnumAt(r->ints[0]);
 
-#if WITH_EDITOR 
-	// In Editor Preview Window
-	if (UCsCommon::IsPlayInEditorPreview(mw->GetWorld()) &&
-		mw)
+	if (mw &&
+		!mw->GetMyOwner())
 	{
-		if (!mw->GetMyOwner())
-		{
-			mw->StopAnimation(FireMode, mw->FireAnim);
+		mw->StopAnimation(FireMode, mw->FireAnim);
 
-			r->End(ECsCoroutineEndReason::StopCondition);
-		}
-	}
-	// In Game
-	else
-#endif // #if WITH_EDITOR
-	{
-		if (mw &&
-			!mw->GetMyOwner())
-		{
-			mw->StopAnimation(FireMode, mw->FireAnim);
-
-			FCsProjectileFirePayload* Payload = (FCsProjectileFirePayload*)r->voidPointers[0];
-
-			Payload->Reset();
-			r->End(ECsCoroutineEndReason::StopCondition);
-		}
+		r->End(ECsCoroutineEndReason::StopCondition);
 	}
 }
 
@@ -1840,7 +1820,7 @@ FVector ACsWeapon::GetFireProjectileDestination()
 
 void ACsWeapon::FireProjectile(const FECsWeaponFireMode &FireMode, FCsProjectileFirePayload* FirePayload)
 {
-	const FVector RealStart   = FirePayload->Location;
+	const FVector& RealStart  = FirePayload->Location;
 	FVector RealDir			  = FirePayload->Direction;
 
 	ACsData_ProjectileWeapon* Data_Weapon	= GetMyData_Weapon<ACsData_ProjectileWeapon>();
@@ -1855,8 +1835,8 @@ void ACsWeapon::FireProjectile(const FECsWeaponFireMode &FireMode, FCsProjectile
 	}
 	else
 	{
-		const float MaxRange = 30000.0f;
-		RealEnd				 = RealStart + MaxRange * RealDir;
+		static const float MAX_RANGE = 30000.0f;
+		RealEnd						 = RealStart + MAX_RANGE * RealDir;
 	}
 
 	const TCsViewType ViewType = GetCurrentViewType();
@@ -1921,18 +1901,18 @@ void ACsWeapon::FireProjectile(const FECsWeaponFireMode &FireMode, FCsProjectile
 	{
 		FCsProjectilePayload* FakePayload = Manager_Projectile->AllocatePayload();
 
-		Payload->Relevance	= ECsProjectileRelevance::Fake;
-		Payload->Instigator = GetMyOwner();
-		Payload->Owner		= this;
-		Payload->Data		= Data_Projectile;
+		FakePayload->Relevance	= ECsProjectileRelevance::Fake;
+		FakePayload->Instigator = GetMyOwner();
+		FakePayload->Owner		= this;
+		FakePayload->Data		= Data_Projectile;
 
 		FCsProjectileFirePayload* FakeFirePayload = AllocateProjectileFirePayload(FireMode);
 		FakeFirePayload->Location				  = FakeStart;
 		FakeFirePayload->Direction			      = FakeDir;
 
-		Payload->Set(FakeFirePayload);
+		FakePayload->Set(FakeFirePayload);
 
-		ACsProjectile* FakeProjectile = Manager_Projectile->Fire(Data_Projectile->GetProjectileType(), Payload);
+		ACsProjectile* FakeProjectile = Manager_Projectile->Fire(Data_Projectile->GetProjectileType(), FakePayload);
 
 		FakeFirePayload->Reset();
 

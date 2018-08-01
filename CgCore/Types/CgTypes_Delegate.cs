@@ -424,6 +424,64 @@ namespace CgCore
         }
     }
 
+    public abstract class TCgMulticastDelegate_FourParams<T1, T2, T3, T4> : ICgMulticastDelegate
+    {
+        public delegate void Event(T1 t1, T2 t2, T3 t3, T4 t4);
+
+        private Dictionary<FCgDelegateHandle, Event> InvocationMap;
+
+        public TCgMulticastDelegate_FourParams()
+        {
+            InvocationMap = new Dictionary<FCgDelegateHandle, Event>();
+        }
+
+        public FCgDelegateHandle AddObject(object o, Event e)
+        {
+            FCgDelegateHandle handle = new FCgDelegateHandle(o, "", Guid.NewGuid());
+
+            InvocationMap.Add(handle, e);
+            return handle;
+        }
+
+        public FCgDelegateHandle Add(Event e)
+        {
+            return AddObject(null, e);
+        }
+
+        public bool Remove(FCgDelegateHandle handle)
+        {
+            return InvocationMap.Remove(handle);
+        }
+
+        public void Clear()
+        {
+            InvocationMap.Clear();
+        }
+
+        public void Broadcast(T1 t1, T2 t2, T3 t3, T4 t4)
+        {
+            Dictionary<FCgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
+
+            foreach (Event e in events)
+            {
+                e(t1, t2, t3, t4);
+            }
+        }
+
+        public void CopyTo(TCgMulticastDelegate_FourParams<T1, T2, T3, T4> to)
+        {
+            to.Clear();
+
+            Dictionary<FCgDelegateHandle, Event>.KeyCollection keys = InvocationMap.Keys;
+            Dictionary<FCgDelegateHandle, Event>.ValueCollection events = InvocationMap.Values;
+
+            foreach (FCgDelegateHandle key in keys)
+            {
+                to.AddObject(key.Object, InvocationMap[key]);
+            }
+        }
+    }
+
     public abstract class TCgMulticastDelegate_RetOrBool_OneParam<T> : ICgMulticastDelegate
     {
         public delegate bool Event(T t);

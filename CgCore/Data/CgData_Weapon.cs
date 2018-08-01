@@ -1,8 +1,9 @@
 ﻿namespace CgCore
 {
-    public class CgData_Weapon : CgData
+    public class MCgData_Weapon : MCgData
     {
         string ItemShortCode;
-        bool bUseInventory;
+
+        public virtual bool UseInventory() { return false; }
     }
 }

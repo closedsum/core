@@ -1,13 +1,68 @@
 ﻿namespace CgCore
 {
-    public class CgData_ProjectileRef
+    using System.Collections;
+    using System.Collections.Generic;
+    using UnityEngine;
+
+    public enum ECgProjectileRelevance : byte
     {
-        public TCgAssetRef<CgData_Projectile> Data;
+        RealVisible,
+        RealInvisible,
+        Fake,
+        MAX
+    }
+
+    #region "ProjectileType"
+
+    public sealed class FECgProjectileType : FECgEnum_byte
+    {
+        public FECgProjectileType(byte value, string name) : base(value, name) { }
+    }
+
+    public sealed class FECgProjectileTypeEqualityComparer : IEqualityComparer<FECgProjectileType>
+    {
+        public bool Equals(FECgProjectileType lhs, FECgProjectileType rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(FECgProjectileType x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
+    public class EMCgProjectileType : TCgEnumMap<FECgProjectileType, byte>
+    {
+        private static EMCgProjectileType _Instance;
+        public static EMCgProjectileType Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = new EMCgProjectileType();
+                }
+                return _Instance;
+            }
+        }
+
+        public static EMCgProjectileType Get()
+        {
+            return Instance;
+        }
+    }
+
+    #endregion // ProjectileType
+
+    public class FCgData_ProjectileRef
+    {
+        public TCgAssetRef<MCgData_Projectile> Data;
         public int Data_LoadFlags;
 
-        private CgData_Projectile Data_Internal;
+        private MCgData_Projectile Data_Internal;
 
-        public CgData_ProjectileRef()
+        public FCgData_ProjectileRef()
         {
             //CS_SET_BLUEPRINT_BITFLAG(Data_LoadFlags, ECsLoadFlags::Game);
         }
@@ -31,9 +86,108 @@
 		    return !(*this == B);
         }
         */
-        public CgData_Projectile Get()
+        public MCgData_Projectile Get()
 	    {
 		    return Data_Internal;
+	    }
+    }
+
+    public class FCgProjectileFirePayload
+    {
+        public bool bAllocated;
+
+        public float Time;
+        public float RealTime;
+        public ulong Frame;
+
+        public float ChargePercent;
+
+        public Vector3 Direction;
+        public Vector3 Location;
+
+        public float AdditionalSpeed;
+
+        public MonoBehaviour HomingTarget;
+
+        public string HomingBoneName;
+
+        public float HomingAccelerationMagnitude;
+
+        public List<FCgItem> Items;
+
+        public FCgProjectileFirePayload()
+        {
+            Items = new List<FCgItem>();
+
+            Reset();
+        }
+
+        public void Reset()
+        {
+            bAllocated = false;
+            Time = 0.0f;
+            RealTime = 0.0f;
+            Frame = 0;
+            ChargePercent = 0.0f;
+            Location = Vector3.zero;
+            Direction = Vector3.zero;
+            AdditionalSpeed = 0.0f;
+            HomingTarget = null;
+            HomingBoneName = ECgCached.Str.NAME_None;
+            HomingAccelerationMagnitude = 0.0f;
+            Items.Clear();
+        }
+    }
+
+    public class FCgProjectilePayload : FCgPooledObjectPayload
+    {
+        #region "Data Members"
+
+        public ECgProjectileRelevance Relevance;
+
+        public MCgData_Projectile Data;
+
+        public float ChargePercent;
+
+        public Vector3 Direction;
+
+        public Vector3 Location;
+
+        public float AdditionalSpeed;
+
+        public MonoBehaviour HomingTarget;
+
+        public string HomingBone;
+
+        public float HomingAccelerationMagnitude;
+
+        #endregion // Data Members
+
+        FCgProjectilePayload() : base(){ }
+
+        public void Set(FCgProjectileFirePayload payload)
+        {
+            ChargePercent               = payload.ChargePercent;
+            Location                    = payload.Location;
+            Direction                   = payload.Direction;
+            AdditionalSpeed             = payload.AdditionalSpeed;
+            HomingTarget                = payload.HomingTarget;
+            HomingBone                  = payload.HomingBoneName;
+            HomingAccelerationMagnitude = payload.HomingAccelerationMagnitude;
+        }
+
+        public override void Reset()
+	    {
+		    base.Reset();
+
+		    Relevance = ECgProjectileRelevance.MAX;
+		    ChargePercent = 0.0f;
+		    Location = Vector3.zero;
+		    Direction = Vector3.zero;
+		    AdditionalSpeed = 0.0f;
+		    HomingTarget = null;
+		    HomingBone = ECgCached.Str.NAME_None;
+		    HomingAccelerationMagnitude = 0.0f;
 	    }
     }
 }

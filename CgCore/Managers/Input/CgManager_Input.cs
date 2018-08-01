@@ -639,7 +639,7 @@ namespace CgCore
 
         public FCgInput GetPreviousInputAction(FECgInputAction action)
         {
-	        int lastInputFrame  = CgMath.Mod(CurrentInputFrameIndex - 1, MAX_INPUT_FRAMES);
+	        int lastInputFrame   = FCgMath.Mod(CurrentInputFrameIndex - 1, MAX_INPUT_FRAMES);
             FCgInput input       = InputFrames[lastInputFrame].GetInput(action);
 
 	        return input;
@@ -647,7 +647,7 @@ namespace CgCore
 
         public FCgInput GetPreviousInputAction(FECgInputAction action, ECgInputEvent e)
         {
-            int lastInputFrame  = CgMath.Mod(CurrentInputFrameIndex - 1, MAX_INPUT_FRAMES);
+            int lastInputFrame  = FCgMath.Mod(CurrentInputFrameIndex - 1, MAX_INPUT_FRAMES);
             FCgInput input       = InputFrames[lastInputFrame].GetInput(action, e);
 
             return input;
@@ -655,7 +655,7 @@ namespace CgCore
 
         public FCgInput GetPreviousInputAction(FECgInputAction action, List<ECgInputEvent> events)
         {
-            int lastInputFrame  = CgMath.Mod(CurrentInputFrameIndex - 1, MAX_INPUT_FRAMES);
+            int lastInputFrame  = FCgMath.Mod(CurrentInputFrameIndex - 1, MAX_INPUT_FRAMES);
             FCgInput input       = InputFrames[lastInputFrame].GetInput(action, events);
 
             return input;
@@ -663,7 +663,7 @@ namespace CgCore
 
         public FCgInput GetPreviousPreviousInputAction(FECgInputAction action)
         {
-	        int lastInputFrame  = CgMath.Mod(CurrentInputFrameIndex - 2, MAX_INPUT_FRAMES);
+	        int lastInputFrame  = FCgMath.Mod(CurrentInputFrameIndex - 2, MAX_INPUT_FRAMES);
             FCgInput input       = InputFrames[lastInputFrame].GetInput(action);
 
 	        return input;

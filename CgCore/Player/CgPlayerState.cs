@@ -4,9 +4,9 @@
     using System.Collections.Generic;
     using UnityEngine;
 
-    public class CgPlayerState
+    public class MCgPlayerState
     {
-        public CgPawn Pawn;
+        public MCgPawn Pawn;
 
         public virtual void OnUpdate(float deltaTime)
         {

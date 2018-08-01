@@ -30,7 +30,7 @@
         }
     }
 
-    public sealed class FCgProcessCache : CgPooledObjectCache<FECgProcess, TCgPooledObject<FECgProcess>>
+    public sealed class FCgProcessCache : TCgPooledObjectCache<FECgProcess, TCgPooledObject<FECgProcess>>
     {
     }
 

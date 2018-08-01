@@ -299,6 +299,135 @@
 
     #endregion // WeaponBlendSpace
 
+    #region "WeaponAnimBlueprint"
+
+    public sealed class FECgWeaponAnimBlueprint : FECgEnum_byte
+    {
+        public FECgWeaponAnimBlueprint(byte value, string name) : base(value, name) { }
+    }
+
+    public class EMCgWeaponAnimBlueprint : TCgEnumMap<FECgWeaponAnimBlueprint, byte>
+    {
+        private static EMCgWeaponAnimBlueprint _Instance;
+        public static EMCgWeaponAnimBlueprint Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = new EMCgWeaponAnimBlueprint();
+                }
+                return _Instance;
+            }
+        }
+
+        public static EMCgWeaponAnimBlueprint Get()
+        {
+            return Instance;
+        }
+    }
+
+    public sealed class FECgWeaponAnimBlueprintEqualityComparer : IEqualityComparer<FECgWeaponAnimBlueprint>
+    {
+        public bool Equals(FECgWeaponAnimBlueprint lhs, FECgWeaponAnimBlueprint rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(FECgWeaponAnimBlueprint x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
+    #endregion // WeaponAnimBlueprint
+
+    #region "WeaponSound"
+
+    public sealed class FECgWeaponSound : FECgEnum_byte
+    {
+        public FECgWeaponSound(byte value, string name) : base(value, name) { }
+    }
+
+    public class EMCgWeaponSound : TCgEnumMap<FECgWeaponSound, byte>
+    {
+        private static EMCgWeaponSound _Instance;
+        public static EMCgWeaponSound Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = new EMCgWeaponSound();
+                }
+                return _Instance;
+            }
+        }
+
+        public static EMCgWeaponSound Get()
+        {
+            return Instance;
+        }
+    }
+
+    public sealed class FECgWeaponSoundEqualityComparer : IEqualityComparer<FECgWeaponSound>
+    {
+        public bool Equals(FECgWeaponSound lhs, FECgWeaponSound rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(FECgWeaponSound x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
+    #endregion // WeaponSound
+
+    #region "WeaponOwner"
+
+    public sealed class FECgWeaponOwner : FECgEnum_byte
+    {
+        public FECgWeaponOwner(byte value, string name) : base(value, name) { }
+    }
+
+    public class EMCgWeaponOwner : TCgEnumMap<FECgWeaponOwner, byte>
+    {
+        private static EMCgWeaponOwner _Instance;
+        public static EMCgWeaponOwner Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = new EMCgWeaponOwner();
+                }
+                return _Instance;
+            }
+        }
+
+        public static EMCgWeaponOwner Get()
+        {
+            return Instance;
+        }
+    }
+
+    public sealed class FECgWeaponOwnerEqualityComparer : IEqualityComparer<FECgWeaponOwner>
+    {
+        public bool Equals(FECgWeaponOwner lhs, FECgWeaponOwner rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(FECgWeaponOwner x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
+    #endregion // WeaponOwner
+
     #region "Data FireMode"
 
     public class FCgData_Weapon_FireMode_Firing
@@ -329,13 +458,13 @@
         //TArray<FCsLocationDamageModifier> LocationDamageModifiers;
         /* Whether to also use a Fake Projectile when firing a projectile */
         bool UseFake;
-        CgData_ProjectileRef Data;
-        CgData_ProjectileRef ChargeData;
+        FCgData_ProjectileRef Data;
+        FCgData_ProjectileRef ChargeData;
 
         public FCgData_Weapon_FireMode_Firing()
         {
-            Data = new CgData_ProjectileRef();
-            ChargeData = new CgData_ProjectileRef();
+            Data = new FCgData_ProjectileRef();
+            ChargeData = new FCgData_ProjectileRef();
         }
     }
 

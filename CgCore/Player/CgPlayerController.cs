@@ -12,7 +12,7 @@
 
         public List<FECgGameEvent> GameEventPriorityList;
 
-        public CgPlayerState PlayerState;
+        public MCgPlayerState PlayerState;
 
         #endregion // Data Members
 

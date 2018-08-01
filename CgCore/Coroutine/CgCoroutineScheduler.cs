@@ -15,14 +15,16 @@ namespace CgCore
         public object Owner;
         public string OwnerName;
         public byte RoutineType;
-        public FCgRoutine.FCoroutineStopCondition StopCondition;
+        public FCgRoutine.FCoroutineStopCondition Stop;
 
         public FCgRoutine.FAddRoutine.Event Add;
         public FCgRoutine.FRemoveRoutine.Event Remove;
 
+        public string Name;
+
         public FCgCoroutinePayload()
         {
-            StopCondition = new FCgRoutine.FCoroutineStopCondition();
+            Stop = new FCgRoutine.FCoroutineStopCondition();
         }
 
         public void Reset()
@@ -33,11 +35,25 @@ namespace CgCore
             Owner = null;
             OwnerName = "";
             RoutineType = FCgRoutine.INVALID_TYPE;
-            StopCondition.Clear();
+            Stop.Clear();
             Add = null;
             Remove = null;
+            Name = "";
         }
     }
+
+    #region "Cache"
+
+    namespace ECgCoroutineScheduler
+    {
+        public static class Str
+        {
+            public static readonly string Allocate = "FCgCoroutineScheduler.Allocate";
+            public static readonly string Start = "FCgCoroutineScheduler.Start";
+        }
+    }
+
+    #endregion // Cache
 
     public class FCgCoroutineScheduler
     {
@@ -146,7 +162,7 @@ namespace CgCore
             return Instance;
         }
 
-        public FCgRoutine Allocate(ECgCoroutineSchedule schedule)
+        private FCgRoutine Allocate_Internal(ECgCoroutineSchedule schedule)
         {
             for (ushort i = 0; i < POOL_SIZE; ++i)
             {
@@ -161,6 +177,21 @@ namespace CgCore
             }
             Debug.LogError("FCgRoutine.Allocate: No free Routines. Pools[" + schedule.ToString() + "] is exhausted. Look for runaway Coroutines or consider raising the pool size.");
             return null;
+        }
+
+        public FCgRoutine Allocate(FCgCoroutinePayload payload)
+        {
+            ECgCoroutineSchedule schedule = payload.Schedule;
+
+            FCgRoutine r = Allocate_Internal(schedule);
+
+            LogTransaction(ECgCoroutineScheduler.Str.Allocate, ECgCoroutineTransaction.Allocate, r);
+
+            r.Start(payload.Fiber, payload.Stop, payload.Owner, payload.OwnerName, Time.timeSinceLevelLoad, payload.Add, payload.Remove, payload.RoutineType);
+            r.State = ECgRoutineState.Allocating;
+            payload.Reset();
+
+            return r;
         }
 
         public void InsertRoutine(ECgCoroutineSchedule schedule, FCgRoutine pivot, FCgRoutine insert)
@@ -198,11 +229,34 @@ namespace CgCore
             }
         }
 
+        public FCgRoutine Start(ECgCoroutineSchedule schedule, FCgRoutine r)
+        {
+            // If NO Head, Make r the Head
+            if (Heads[schedule] == null)
+            {
+                Heads[schedule] = r;
+                Tails[schedule] = r;
+            }
+            // Add r end of the list, Make r the Tail
+            else
+            {
+                FCgRoutine tail = Tails[schedule];
+                tail.Next       = r;
+                r.Prev          = tail;
+                Tails[schedule] = r;
+            }
+
+            RoutinesRunning[schedule].Add(r);
+
+            r.Run(0.0f);
+            return r;
+        }
+
         public FCgRoutine Start(FCgCoroutinePayload payload)
         {
             ECgCoroutineSchedule schedule = payload.Schedule;
 
-            FCgRoutine r = Allocate(schedule);
+            FCgRoutine r = Allocate_Internal(schedule);
 
             if (r == null)
             {
@@ -227,10 +281,10 @@ namespace CgCore
 
             RoutinesRunning[schedule].Add(r);
 
-            LogTransaction("FCgRoutine.Start", ECgCoroutineTransaction.Start, r);
+            LogTransaction(ECgCoroutineScheduler.Str.Start, ECgCoroutineTransaction.Start, r);
 
             // TODO: get Time from Manager_Time
-            r.Start(payload.Fiber, payload.StopCondition, payload.Owner, payload.OwnerName, Time.timeSinceLevelLoad, payload.Add, payload.Remove, payload.RoutineType);
+            r.Start(payload.Fiber, payload.Stop, payload.Owner, payload.OwnerName, Time.timeSinceLevelLoad, payload.Add, payload.Remove, payload.RoutineType);
             r.State = ECgRoutineState.Running;
             payload.Reset();
             r.Run(0.0f);
@@ -249,6 +303,21 @@ namespace CgCore
 
         public void EndAll()
         {
+        }
+
+        public void BroadcastMessage(ECgCoroutineSchedule schedule, ECgCoroutineMessage msgType, string msg, object owner = null)
+        {
+            int count = RoutinesRunning[schedule].Count;
+
+            for (int i = 0; i < count; ++i)
+            {
+                FCgRoutine r = RoutinesRunning[schedule][i];
+
+                if (owner != null && owner != r.Owner.Get())
+                    continue;
+
+                r.ReceiveMessage(msgType, msg);
+            }
         }
 
         public bool HasCoroutines(ECgCoroutineSchedule schedule)

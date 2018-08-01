@@ -77,10 +77,10 @@
         }
     }
 
-    public sealed class CgItem
+    public sealed class FCgItem
     {
-        public bool IsAllocated;
-        public bool IsSaved;
+        public bool bAllocated;
+        public bool bSaved;
 
         public FECgItemType Type;
 
@@ -94,7 +94,7 @@
 
         Dictionary<Guid, CgItemProduct> Products;
 
-        public CgItem()
+        public FCgItem()
         {
 
         }

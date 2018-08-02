@@ -7,9 +7,6 @@
 #include "CsTypes_FX.generated.h"
 #pragma once
 
-// FX
-#pragma region
-
 #define CS_MAX_EMITTER_COUNT 256
 
 USTRUCT()
@@ -38,6 +35,9 @@ public:
 		return Particle_Internal;
 	}
 };
+
+// FxPriority
+#pragma region
 
 UENUM(BlueprintType)
 namespace ECsFxPriority
@@ -88,6 +88,8 @@ namespace ECsFxPriority
 		return EMCsFxPriority::Get().ToType(String);
 	}
 }
+
+#pragma endregion FxPriority
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsFxElement
@@ -333,5 +335,3 @@ struct CSCORE_API FCsFxPayload : public FCsPooledObjectPayload
 	template<typename T>
 	FORCEINLINE T* GetParticle() { return Cast<T>(GetParticle()); }
 };
-
-#pragma endregion FX

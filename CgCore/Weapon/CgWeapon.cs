@@ -188,6 +188,8 @@
         public static readonly int CUSTOM_VALUE = -1;
         public static readonly int PROJECTILE_FIRE_PAYLOAD_POOL_SIZE = 64;
 
+        public static readonly int EMPTY = 0;
+
         public static readonly string NAME_None = "";
 
         #endregion // Constants
@@ -1552,31 +1554,33 @@
 
 			        for (int i = hitPawnCount - 1; i >= 0; --i)
 			        {
-				        MCgPawn hitPawn				  = (MCgPawn)hittablePawns[i];
-				        ACsData_Character* Data_Character = HitPawn->GetMyData_Character();
+				        MCgPawn hitPawn				     = (MCgPawn)hittablePawns[i];
+				        MCgData_Character data_character = hitPawn.GetMyData_Character();
 
-				        const float ProjectileRadius = Data_Projectile->GetSphereRadius();
+				        float projectileRadius = data_projectile.GetSphereRadius();
 
-				        // Head
-				        if (FCsHeadCollision* HeadCollision = Data_Character->GetHeadCollision())
+                        // Head
+                        FCgHeadCollision headCollision = data_character.GetHeadCollision();
+
+                        if (headCollision != null)
 				        {
-					        const float HeadRadius	= HeadCollision->Radius;
-					        const FName BoneName	= HeadCollision->BoneName;
-					        const FVector Offset	= HeadCollision->Offset;
+					        float headRadius	= headCollision.Radius;
+					        string bone	        = headCollision.Bone;
+					        Vector3 offset	    = headCollision.Offset;
 
-					        const FVector HeadLocation = HitPawn->GetMesh()->GetBoneLocation(BoneName) + Offset;
-					        const FVector HeadPoint    = FMath::ClosestPointOnSegment(HeadLocation, Start, End);
+                            Vector3 headLocation = Vector3.zero;// hitPawn.GetMesh()->GetBoneLocation(BoneName) + Offset;
+                            Vector3 headPoint    = Vector3.zero;//Vector3.ClosestPointOnSegment(HeadLocation, Start, End);
 
-					        const float DistanceToHead = FVector::Dist(HeadPoint, HeadLocation);
+					        float distanceToHead = Vector3.Distance(headPoint, headLocation);
 
 					        // Head is close enough to potential trace. Try tracing directly to the Head
-					        if (DistanceToHead < HeadRadius + ProjectileRadius)
+					        if (distanceToHead < headRadius + projectileRadius)
 					        {
-						        const float TraceDist	  = 1.5f * (HeadLocation - Start).Size();
-						        const FVector TargetPoint = HeadLocation + TraceDist * (HeadLocation - Start);
+						        float traceDist	    = 1.5f * (headLocation - start).magnitude;
+						        Vector3 targetPoint = headLocation + traceDist * (headLocation - start);
 
-						        FCsTraceRequest* Request = Manager_Trace->AllocateRequest();
-
+						        FCgTraceRequest request = manager_trace.AllocateRequest();
+                                /*
 						        Request->Caller		= this;
 						        Request->CallerId	= UniqueObjectId;
 						        Request->Start		= Start;
@@ -1589,45 +1593,45 @@
 						        Request->Params.bReturnPhysicalMaterial = true;
 						        Request->Params.AddIgnoredActors(IgnoredActors);
 						        Request->Params.AddIgnoredComponents(IgnoredComponents);
+                                */
+						        FCgTraceResponse response = manager_trace.Trace(Request);
 
-						        FCsTraceResponse* Response = Manager_Trace->Trace(Request);
+						        hitFound = response.bResult;
 
-						        HitFound = Response->bResult;
+						        //if (response.OutHits.Count > EMPTY)
+							     //   UCsCommon::CopyHitResult(Response->OutHits[CS_FIRST], HitResult);
 
-						        if (Response->OutHits.Num() > CS_EMPTY)
-							        UCsCommon::CopyHitResult(Response->OutHits[CS_FIRST], HitResult);
+						        response.Reset();
 
-						        Response->Reset();
-
-						        HittablePawns.RemoveAt(I);
+						        hittablePawns.RemoveAt(i);
 						        break;
 					        }
 				        }
 
-				        // Body
-				        const FVector BodyLocation = HitPawn->GetCapsuleComponent()->GetComponentLocation();
+                        // Body
+                        Vector3 bodyLocation = Vector3.zero;// hitPawn->GetCapsuleComponent()->GetComponentLocation();
 
-				        const FVector BodyLocationXY = FVector(BodyLocation.X, BodyLocation.Y, 0);
-				        const float BodyLocationZ    = BodyLocation.Z;
+				        Vector3 bodyLocationXY = new Vector3(bodyLocation.x, bodyLocation.y, 0.0f);
+				        float bodyLocationZ    = bodyLocation.z;
 
-				        const FVector BodyPoint = FMath::ClosestPointOnSegment(BodyLocation, Start, End);
+                        Vector3 bodyPoint = Vector3.zero;// FMath::ClosestPointOnSegment(BodyLocation, Start, End);
 
-				        const FVector BodyPointXY = FVector(BodyPoint.X, BodyPoint.Y, 0);
-				        const float BodyPointZ    = BodyPoint.Z;
+				        Vector3 bodyPointXY = new Vector3(bodyPoint.x, bodyPoint.y, 0.0f);
+				        float bodyPointZ    = bodyPoint.z;
 
-				        const float BodyXYDistFromLine = FVector::Dist(BodyPointXY, BodyLocationXY);
-				        const float BodyZDistFromLine  = FMath::Abs(BodyLocationZ - BodyPointZ);
+				        float bodyXYDistFromLine = Vector3.Distance(bodyPointXY, bodyLocationXY);
+				        float bodyZDistFromLine  = Mathf.Abs(bodyLocationZ - bodyPointZ);
 
-				        const float CharacterRadius  = HittablePawns[I]->GetCapsuleComponent()->GetScaledCapsuleRadius();
-				        const float CharacterHeight  = HittablePawns[I]->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+                        float characterRadius = 0.0f;//hittablePawns[i]->GetCapsuleComponent()->GetScaledCapsuleRadius();
+                        float characterHeight = 0.0f;//hittablePawns[i]->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
 
 				        // Body is close enough to potential trace. Try tracing directly to the body
-				        if (BodyXYDistFromLine < CharacterRadius + ProjectileRadius && BodyZDistFromLine < CharacterHeight + ProjectileRadius)
+				        if (bodyXYDistFromLine < characterRadius + projectileRadius && bodyZDistFromLine < characterHeight + projectileRadius)
 				        {
-					        const float TraceDist     = 1.5f * (BodyLocation - Start).Size();
-					        const FVector TargetPoint = BodyLocation + TraceDist * (BodyLocation - Start);
+					        float traceDist     = 1.5f * (bodyLocation - start).magnitude;
+					        Vector3 targetPoint = bodyLocation + traceDist * (bodyLocation - start);
 					
-					        FCsTraceRequest* Request = Manager_Trace->AllocateRequest();
+					        FCgTraceRequest request = manager_trace.AllocateRequest();
 
 					        Request->Caller		= this;
 					        Request->CallerId	= UniqueObjectId;

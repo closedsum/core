@@ -107,7 +107,7 @@
 
         public bool bImpulse;
 
-        public RaycastHit HitInfo;
+        public FCgHitResult HitInfo;
 
         public FCgDamageEvent()
         {
@@ -128,6 +128,7 @@
             DamageType = EMCgDamageType.Get().GetMAX();
             HitType = EMCgHitType.Get().GetMAX();
             bImpulse = false;
+            HitInfo.Reset();
         }
 
         public MonoBehaviour GetInstigator() { return Instigator; }

@@ -26,7 +26,7 @@
 
         public float Scale;
 
-        //FCsFpvDrawDistance DrawDistances;
+        public FCgFpvDrawDistance DrawDistances;
 
         public string Bone;
 
@@ -67,10 +67,10 @@
             DeathTime = 1.0f;
             Scale = 1.0f;
             Priority = ECgFxPriority.Medium;
-            //DrawDistances.Reset();
-            Bone = NAME_None;
+            DrawDistances.Reset();
+            Bone = ECgCached.Str.NAME_None;
             Location = Vector3.zero;
-            Rotation = Vector3::zero;
+            Rotation = Vector3.zero;
 
             Particle_Internal = null;
         }
@@ -144,12 +144,7 @@
             Rotation = element.Rotation;
         }
 
-        public void Set(FCgFxElement element)
-        {
-            Set(element);
-        }
-
-        public virtual void Reset()
+        public override void Reset()
 	    {
 		    base.Reset();
 
@@ -159,12 +154,11 @@
 		    DeathTime = 0.0f;
 		    Scale = 1.0f;
 		    DrawDistances.Reset();
-		    Bone = NAME_None;
+		    Bone = ECgCached.Str.NAME_None;
 		    Location = Vector3.zero;
 		    Rotation = Vector3.zero;
 	    }
 
         public ParticleSystem GetParticle() { return Particle; }
-        public T GetParticle<T>() where T : ParticleSystem { return (T)GetParticle(); }
     }
 }

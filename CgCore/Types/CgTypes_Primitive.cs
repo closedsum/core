@@ -1538,7 +1538,7 @@ namespace CgCore
             UpdateIsDirty();
         }
 
-        void Add(KeyType key, byte value)
+        public void Add(KeyType key, byte value)
         {
             Values[key] += value;
             UpdateIsDirtys(key);
@@ -2014,7 +2014,7 @@ namespace CgCore
 
         #region "Operators"
 
-        public static bool operator ==(TCgPropertyClass<T> lhs, TCgPropertyClass<T> rhs)
+        public static bool operator ==(TCgPropertyClass<ClassType> lhs, TCgPropertyClass<ClassType> rhs)
         {
             if (object.ReferenceEquals(lhs, null))
                 return object.ReferenceEquals(rhs, null);
@@ -2023,37 +2023,37 @@ namespace CgCore
             return lhs.Value.Equals(rhs.Value);
         }
 
-        public static bool operator !=(TCgPropertyClass<T> lhs, TCgPropertyClass<T> rhs)
+        public static bool operator !=(TCgPropertyClass<ClassType> lhs, TCgPropertyClass<ClassType> rhs)
         {
             return !(lhs == rhs);
         }
 
-        public static bool operator ==(TCgPropertyClass<T> lhs, T rhs)
+        public static bool operator ==(TCgPropertyClass<ClassType> lhs, ClassType rhs)
         {
             return lhs.Value.Equals(rhs);
         }
 
-        public static bool operator !=(TCgPropertyClass<T> lhs, T rhs)
+        public static bool operator !=(TCgPropertyClass<ClassType> lhs, ClassType rhs)
         {
             return !(lhs == rhs);
         }
 
-        public static bool operator ==(T lhs, TCgPropertyClass<T> rhs)
+        public static bool operator ==(ClassType lhs, TCgPropertyClass<ClassType> rhs)
         {
             return lhs.Equals(rhs.Value);
         }
 
-        public static bool operator !=(T lhs, TCgPropertyClass<T> rhs)
+        public static bool operator !=(ClassType lhs, TCgPropertyClass<ClassType> rhs)
         {
             return !(lhs == rhs);
         }
 
         public override bool Equals(object obj)
         {
-            if (!(obj is TCgPropertyClass<T>))
+            if (!(obj is TCgPropertyClass<ClassType>))
                 return false;
 
-            TCgPropertyClass<T> rhs = (TCgPropertyClass<T>)obj;
+            TCgPropertyClass<ClassType> rhs = (TCgPropertyClass<ClassType>)obj;
 
             if (!Value.Equals(rhs.Value)) return false;
             return true;

@@ -8,11 +8,23 @@
     {
         #region "Stats"
 
+        public virtual float GetLocationDamageModifier(FECgWeaponFireMode fireMode, string bone) { return 0.0f; }
+
         public virtual bool UseFakeProjectile(FECgWeaponFireMode fireMode){ return false; }
 
         public virtual MCgData_Projectile GetData_Projectile(FECgWeaponFireMode fireMode, bool isCharged = false){ return null; }
 
+        //public virtual Vector3 GetMuzzleLocation()
+
         #endregion // Stats
+
+        #region "Anims"
+
+        #endregion // Anims
+
+        #region "FX"
+
+        #endregion // FX
 
         #region "Sound"
 

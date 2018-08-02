@@ -39,7 +39,7 @@ public:
 
 #pragma endregion Event
 
-// Event
+// Result
 #pragma region
 
 	FCsDamageResult ResultPool[CS_DAMAGE_RESULT_POOL_SIZE];
@@ -48,5 +48,5 @@ public:
 
 	virtual FCsDamageResult* AllocateResult();
 
-#pragma endregion Event
+#pragma endregion Result
 };

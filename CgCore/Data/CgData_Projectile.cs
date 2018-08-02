@@ -59,7 +59,7 @@
             return false;
         }
 
-        public virtual float GetDamageFalloff()
+        public virtual float GetDamageFalloff(float distance)
         {
             return 0.0f;
         }

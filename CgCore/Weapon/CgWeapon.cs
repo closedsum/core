@@ -141,8 +141,6 @@
 
     #endregion // Enums
 
-   
-
     #region "Cache"
 
     namespace ECgWeaponCached
@@ -189,6 +187,7 @@
         public static readonly int PROJECTILE_FIRE_PAYLOAD_POOL_SIZE = 64;
 
         public static readonly int EMPTY = 0;
+        public static readonly int FIRST = 0;
 
         public static readonly string NAME_None = "";
 
@@ -1361,7 +1360,7 @@
             return false;
         }
 
-        public virtual Vector3 GetOwnerRightVecotr()
+        public virtual Vector3 GetOwnerRightVector()
         {
             return GetMyOwner().transform.right;
         }
@@ -1537,7 +1536,7 @@
 	        int recordedObstaclePenetrations = 0;
 	        bool hitFound					   = true;
 
-	        RaycastHit hitResult;
+	        FCgHitResult hitResult = null;
 
 	        // Hit trace/ Hit simulation
 	        while ((allowInfinitePawnPenetrations || recordedPawnPenetrations <= PawnPenetrations.GetEX(fireMode)) &&
@@ -1594,12 +1593,12 @@
 						        Request->Params.AddIgnoredActors(IgnoredActors);
 						        Request->Params.AddIgnoredComponents(IgnoredComponents);
                                 */
-						        FCgTraceResponse response = manager_trace.Trace(Request);
+						        FCgTraceResponse response = manager_trace.Trace(request);
 
 						        hitFound = response.bResult;
 
-						        //if (response.OutHits.Count > EMPTY)
-							     //   UCsCommon::CopyHitResult(Response->OutHits[CS_FIRST], HitResult);
+                                if (response.OutHits.Count > EMPTY)
+                                    hitResult.Copy(response.OutHits[FIRST]);
 
 						        response.Reset();
 
@@ -1632,7 +1631,7 @@
 					        Vector3 targetPoint = bodyLocation + traceDist * (bodyLocation - start);
 					
 					        FCgTraceRequest request = manager_trace.AllocateRequest();
-
+                            /*
 					        Request->Caller		= this;
 					        Request->CallerId	= UniqueObjectId;
 					        Request->Start		= Start;
@@ -1645,27 +1644,27 @@
 					        Request->Params.bReturnPhysicalMaterial = true;
 					        Request->Params.AddIgnoredActors(IgnoredActors);
 					        Request->Params.AddIgnoredComponents(IgnoredComponents);
+                            */
+					        FCgTraceResponse response = manager_trace.Trace(request);
 
-					        FCsTraceResponse* Response = Manager_Trace->Trace(Request);
+					        hitFound = response.bResult;
 
-					        HitFound = Response->bResult;
+                            if (response.OutHits.Count > EMPTY)
+                                hitResult.Copy(response.OutHits[FIRST]);
 
-					        if (Response->OutHits.Num() > CS_EMPTY)
-						        UCsCommon::CopyHitResult(Response->OutHits[CS_FIRST], HitResult);
+					        response.Reset();
 
-					        Response->Reset();
-
-					        HittablePawns.RemoveAt(I);
+					        hittablePawns.RemoveAt(i);
 					        break;
 				        }
 			        }
 		        }
 		        // Hit NOT Found and NO Hitscan with cylinder
-		        if (!HitFound || 
-			        !DoesHitscanUseRadius[FireMode])
+		        if (!hitFound || 
+			        !DoesHitscanUseRadius[fireMode])
 		        {
-			        FCsTraceRequest* Request = Manager_Trace->AllocateRequest();
-
+			        FCgTraceRequest request = manager_trace.AllocateRequest();
+                    /*
 			        Request->Caller		= this;
 			        Request->CallerId	= UniqueObjectId;
 			        Request->Start		= Start;
@@ -1678,16 +1677,16 @@
 			        Request->Params.bReturnPhysicalMaterial = true;
 			        Request->Params.AddIgnoredActors(IgnoredActors);
 			        Request->Params.AddIgnoredComponents(IgnoredComponents);
+                    */
+			        FCgTraceResponse response = manager_trace.Trace(request);
 
-			        FCsTraceResponse* Response = Manager_Trace->Trace(Request);
+			        hitFound = response.bResult;
 
-			        HitFound = Response->bResult;
+                    if (response.OutHits.Count > EMPTY)
+                        hitResult.Copy(response.OutHits[FIRST]);
 
-			        if (Response->OutHits.Num() > CS_EMPTY)
-				        UCsCommon::CopyHitResult(Response->OutHits[CS_FIRST], HitResult);
-
-			        Response->Reset();
-
+			        response.Reset();
+                    /*
 			        if ((CsCVarDrawLocalPlayerWeaponFireProjectile->GetInt() == CS_CVAR_DRAW &&
 				        UCsCommon::IsLocalPawn(GetWorld(), GetMyPawn())) ||
 				        CsCVarDrawWeaponFireProjectile->GetInt() == CS_CVAR_DRAW)
@@ -1696,60 +1695,61 @@
 
 				        DrawDebugLine(GetWorld(), Start, HitFound ? HitResult.Location : End, FColor::Red, false, DrawTime, 0, 1.0f);
 			        }
+                    */
 		        }
 		        // Hit IS Found. Check penetrations and modifiers
-		        if (HitFound)
+		        if (hitFound)
 		        {
-			        ACsManager_Damage* Manager_Damage = ACsManager_Damage::Get(GetWorld());
-			        FCsDamageEvent* Event			  = Manager_Damage->AllocateEvent();
+			        FCgManager_Damage manager_damage = FCgManager_Damage.Get();
+			        FCgDamageEvent e			     = manager_damage.AllocateEvent();
 
-			        Event->Damage	  = Data_Projectile->GetDamage();
-			        Event->Instigator = GetMyOwner();
-			        Event->Causer	  = this;
-			        //Event->SetDamageType();
-			        //Event->SetHitType();
-			
-			        UCsCommon::CopyHitResult(HitResult, Event->HitInfo);
+			        e.Damage	  = data_projectile.GetDamage();
+			        e.Instigator  = GetMyOwner();
+			        e.Causer	  = this;
+                    //Event->SetDamageType();
+                    //Event->SetHitType();
+
+                    e.HitInfo.Copy(hitResult);
 			
 			        //if (PawnToHit && UShooterStatics::IsOnSameTeam(GetWorld(), PawnToHit, MyPawn))
 			        //{
 			        //	continue;
 			        //}
 
-			        ACsPawn* HitPawn = Cast<ACsPawn>(HitResult.GetActor());
+			        MCgPawn hitPawn = hitResult.GetObject<MCgPawn>();
 
-			        if (HitPawn)
-				        RecordedPawnPenetrations++;
+			        if (hitPawn != null)
+				        ++recordedPawnPenetrations;
 			        else
-				        RecordedObstaclePenetrations++;
+				        ++recordedObstaclePenetrations;
 
 			        // Pawn
-			        if (HitPawn)
+			        if (hitPawn)
 			        {
-				        if (HitPawn->Role == ROLE_Authority)
+				        //if (HitPawn->Role == ROLE_Authority)
 				        {
 					        // Apply Damage Modifiers
-					        float& Damage = Event->Damage;
+					        float damage = e.Damage;
 
 					        // Location based Damage
-					        Damage *= Data_Weapon->GetLocationDamageModifier(FireMode, HitResult.BoneName);
+					        damage *= data_weapon.GetLocationDamageModifier(fireMode, hitResult.BoneName);
 
 					        // Damage Falloff
-					        if (Data_Projectile->CanDamageFalloff())
-						        Damage *= Data_Projectile->GetDamageFalloff(HitResult.Distance);
+					        if (data_projectile.CanDamageFalloff())
+						        damage *= data_projectile.GetDamageFalloff(hitResult.Distance);
 					        // Damage Radial
-					        else
-					        if (Data_Projectile->CanDamageRadial())
-						        Damage = Data_Projectile->GetDamageRadial(HitResult.Location, HitPawn->GetActorLocation());
+					        //else
+					        //if (data_projectile.CanDamageRadial())
+                             //   damage = data_projectile.GetDamageRadial(hitResult.Location, hitPawn.GetActorLocation());
 
-					        HitPawn->ApplyDamage(Event);
+					        hitPawn.ApplyDamage(e);
 				        }
 			        }
 			        // World
 			        else
 			        {
 			        }
-
+                    /*
 			        // Play Impact FX / Sound
 			        UPhysicalMaterial* PhysicalMaterial = HitResult.PhysMaterial.IsValid() ? HitResult.PhysMaterial.Get() : nullptr;
 
@@ -1760,6 +1760,7 @@
 				        // Sound
 				        Data_Projectile->GetData_Impact()->PlayImpactSound(GetWorld(), PhysicalMaterial->SurfaceType, nullptr, HitResult.Location);
 			        }
+                    */
 
 			        //float TimeUntilHit = HitResult.Distance / Data_Projectile->InitialSpeed;
 
@@ -1789,11 +1790,61 @@
 			        //}
 			
 			        //FakeProjectile->PlayImpactFX(CurHit.Location, CurHit);
-			        Event->Reset();
+			        e.Reset();
 		        }
 	        }
         }
+            
             #endregion // Hitscan
+
+        public virtual MonoBehaviour GetMuzzleFlashParent(ECgViewType viewType)
+        {
+            return null;
+        }
+
+        public virtual Vector3 GetMuzzleLocation(ECgViewType viewType, FECgWeaponFireMode fireMode)
+        {
+            return Vector3.zero;
+        }
+
+        public virtual void PlayMuzzleFlash(FECgWeaponFireMode fireMode)
+        {
+            /*
+             * 	AICsManager_FX* Manager_FX = nullptr;
+
+#if WITH_EDITOR 
+	// In Editor Preview Window
+	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	{
+		if (UCsAnimInstance* AnimInstance = GetMyOwner<UCsAnimInstance>())
+			Manager_FX = AnimInstance->GetManager_FX();
+	}
+	// In Game
+	else
+#endif // #if WITH_EDITOR
+	{
+		ACsGameState* GameState = GetWorld()->GetGameState<ACsGameState>();
+		Manager_FX				 = GameState->Manager_FX;
+	}
+
+	ACsData_ProjectileWeapon* Data_Weapon = GetMyData_Weapon<ACsData_ProjectileWeapon>();
+	const TCsViewType ViewType			  = GetCurrentViewType();
+	FCsFxElement* FX					  = Data_Weapon->GetMuzzleFX(ViewType, FireMode, CurrentProjectilePerShotIndex.Get(FireMode));
+
+	if (!FX->Get())
+	{
+		UE_LOG(LogCs, Warning, TEXT("ACsWeapon::PlayMuzzleFlash: Attempting to Play a NULL ParticleSystem."));
+		return;
+	}
+
+	FCsFxPayload* Payload = Manager_FX->AllocatePayload();
+	Payload->Set(FX);
+	Payload->Owner = GetMyPawn();
+	Payload->Parent = GetMuzzleFlashParent(ViewType);
+
+	Manager_FX->Play(Payload);
+    */
+        }
 
         #endregion // Firing
     }

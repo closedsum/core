@@ -2208,9 +2208,9 @@ void ACsWeapon::FireHitscan(const FECsWeaponFireMode &FireMode, const FCsProject
 			ACsPawn* HitPawn = Cast<ACsPawn>(HitResult.GetActor());
 
 			if (HitPawn)
-				RecordedPawnPenetrations++;
+				++RecordedPawnPenetrations;
 			else
-				RecordedObstaclePenetrations++;
+				++RecordedObstaclePenetrations;
 
 			// Pawn
 			if (HitPawn)

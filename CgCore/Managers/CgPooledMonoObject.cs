@@ -1,45 +1,17 @@
 ﻿namespace CgCore
 {
-    using System;
+    using System.Collections;
+    using System.Collections.Generic;
     using UnityEngine;
 
-    public interface ICgPooledObjectCache
-    {
-        #region "Data Members"
-
-        int Index { get; set; }
-        int ActiveIndex { get; set; }
-        bool bAllocated { get; set; }
-
-        object Instigator { get; set; }
-        object Owner { get; set; }
-        object Parent { get; set; }
-
-        float WarmUpTime { get; set; }
-        bool bLifeTime { get; set; }
-        float LifeTime { get; set; }
-        float Time { get; set; }
-        float RealTime { get; set; }
-        ulong Frame { get; set; }
-        float ElapsedTime { get; set; }
-
-        #endregion // Data Members
-
-        void Set(int index, object o);
-        void SetType(object e);
-        void Init(int activeIndex, ICgPooledObjectPayload payload, float time, float realTime, ulong frame);
-        void Reset();
-        void DeAllocate();
-    }
-
-    public class TCgPooledObjectCache<EnumType, ObjectType> : ICgPooledObjectCache
-        where ObjectType : ICgPooledObject
+    public class TCgPooledMonoObjectCache<EnumType, ObjectType> : ICgPooledObjectCache
+        where ObjectType : MCgPooledMonoObject
     {
         public class FOnDeAllocate : TCgMulticastDelegate_ThreeParams<int, int, EnumType> { }
 
         #region "Data Members"
 
-        #region "Interface"
+            #region "Interface"
 
         private int _Index;
         public int Index
@@ -122,7 +94,7 @@
             set { _ElapsedTime = value; }
         }
 
-        #endregion // Interface
+            #endregion // Interface
 
         public ObjectType PooledObject;
 
@@ -132,7 +104,7 @@
 
         #endregion // Data Members
 
-        public TCgPooledObjectCache()
+        public TCgPooledMonoObjectCache()
         {
             OnDeAllocate_Event = new FOnDeAllocate();
         }
@@ -185,24 +157,30 @@
         }
     }
 
-    public interface ICgPooledObject
+    public class MCgPooledMonoObject : MonoBehaviour
     {
-        void OnCreatePool();
-        void Allocate(int activeIndex, ICgPooledObjectPayload payload);
-        void DeAllocate();
-    }
-
-    public abstract class TCgPooledObject<EnumType> : ICgPooledObject
-    {
-        public TCgPooledObjectCache<EnumType, TCgPooledObject<EnumType>> Cache;
-
-        public TCgPooledObject()
+        public ICgPooledObjectCache GetCache()
         {
-            // Create Cache in Child Class
-            //Cache = new TCgPooledObjectCache<EnumType, TCgPooledObject<EnumType>>();
+            return GetCache_Internal();
         }
 
-        #region "Interface"
+        public T GetCache<T>() 
+            where T : ICgPooledObjectCache
+        {
+            return (T)GetCache();
+        }
+
+        public CacheType GetCache<CacheType, EnumType, ObjectType>()
+            where CacheType : TCgPooledMonoObjectCache<EnumType, ObjectType>
+            where ObjectType : MCgPooledMonoObject
+        {
+            return (CacheType)GetCache();
+        }
+
+        protected virtual ICgPooledObjectCache GetCache_Internal()
+        {
+            return null;
+        }
 
         public virtual void OnCreatePool()
         {
@@ -211,20 +189,18 @@
 
         public virtual void Allocate(int activeIndex, ICgPooledObjectPayload payload)
         {
-            Cache.Init(activeIndex, payload, 0.0f, 0.0f, 0);
+            GetCache().Init(activeIndex, payload, 0.0f, 0.0f, 0);
         }
 
         public virtual void DeAllocate()
         {
-            Cache.Reset();
+            GetCache().Reset();
         }
 
-        #endregion // Interface
-
-        public virtual void Init(int index, EnumType e)
+        public virtual void Init(int index, object e)
         {
-            Cache.Set(index, this);
-            Cache.Type = e;
+            GetCache().Set(index, this);
+            GetCache().SetType(e);
         }
     }
 }

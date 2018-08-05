@@ -29,7 +29,7 @@ namespace CgCore
 
         public void FirstPressed()
         {
-            if ((Manager_Input.CurrentInputActionMap & ActionMap) == ECgInputActionMap.NONE)
+            if ((Manager_Input.CurrentInputActionMap & ActionMap) == NONE)
                 return;
             
             ECgInputEvent e = ECgInputEvent.FirstPressed;
@@ -52,7 +52,7 @@ namespace CgCore
 
         public void FirstReleased()
         {
-            if ((Manager_Input.CurrentInputActionMap & ActionMap) == ECgInputActionMap.NONE)
+            if ((Manager_Input.CurrentInputActionMap & ActionMap) == NONE)
                 return;
 
             ECgInputEvent e = ECgInputEvent.FirstReleased;

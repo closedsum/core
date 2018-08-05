@@ -7,11 +7,11 @@ namespace CgCore
 
     public class FCgInput_Rotation : FCgInput_Base
     {
-        public class CgInputRotation_Event : TCgMulticastDelegate_TwoParams<MonoBehaviour, Vector3> { }
+        public class FCgInputRotation_Event : TCgMulticastDelegate_TwoParams<MonoBehaviour, Vector3> { }
 
         #region "Data Members"
 
-        private Dictionary<ECgInputEvent, CgInputRotation_Event> Events;
+        private Dictionary<ECgInputEvent, FCgInputRotation_Event> Events;
 
         #endregion // Data Members
 
@@ -21,16 +21,16 @@ namespace CgCore
             Info.Event = ECgInputEvent.Stationary;
             Info.Last_Event = Info.Event;
 
-            Events = new Dictionary<ECgInputEvent, CgInputRotation_Event>(new ECgInputEventEqualityComparer());
-            Events.Add(ECgInputEvent.FirstMoved, new CgInputRotation_Event());
-            Events.Add(ECgInputEvent.Moved, new CgInputRotation_Event());
-            Events.Add(ECgInputEvent.FirstStationary, new CgInputRotation_Event());
-            Events.Add(ECgInputEvent.Stationary, new CgInputRotation_Event());
+            Events = new Dictionary<ECgInputEvent, FCgInputRotation_Event>(new ECgInputEventEqualityComparer());
+            Events.Add(ECgInputEvent.FirstMoved, new FCgInputRotation_Event());
+            Events.Add(ECgInputEvent.Moved, new FCgInputRotation_Event());
+            Events.Add(ECgInputEvent.FirstStationary, new FCgInputRotation_Event());
+            Events.Add(ECgInputEvent.Stationary, new FCgInputRotation_Event());
         }
 
         public void Raw(Vector3 rotation)
         {
-            if ((Manager_Input.CurrentInputActionMap & (ActionMap)) == ECgInputActionMap.NONE)
+            if ((Manager_Input.CurrentInputActionMap & (ActionMap)) == NONE)
                 return;
 
             FCgInput input = Manager_Input.GetPreviousPreviousInputAction(Action);
@@ -84,16 +84,16 @@ namespace CgCore
             Broadcast(e, Manager_Input.InputOwner, rotation);
         }
 
-        public void AddEvent(ECgInputEvent e, CgInputRotation_Event.Event del)
+        public void AddEvent(ECgInputEvent e, FCgInputRotation_Event.Event del)
         {
-            CgInputRotation_Event handler;
+            FCgInputRotation_Event handler;
             Events.TryGetValue(e, out handler);
             handler.Add(del);
         }
 
         private void Broadcast(ECgInputEvent e, MonoBehaviour mb, Vector3 rotation)
         {
-            CgInputRotation_Event del;
+            FCgInputRotation_Event del;
             Events.TryGetValue(e, out del);
             del.Broadcast(mb, rotation);
         }

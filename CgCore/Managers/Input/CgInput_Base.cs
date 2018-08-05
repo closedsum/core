@@ -3,6 +3,12 @@ namespace CgCore
 {
     public abstract class FCgInput_Base
     {
+        #region "Constants"
+
+        public static readonly int NONE = 0;
+
+        #endregion // Constants
+
         public FECgInputAction Action;
         public FCgInputInfo Info;
         public int ActionMap;

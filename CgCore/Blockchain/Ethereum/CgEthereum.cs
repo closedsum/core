@@ -103,9 +103,9 @@ namespace CgCore
         #region "CVars"
 
         // Account
-        public static CgConsoleVariableLog LogAccountLoad = new CgConsoleVariableLog("log.blockchain.account.load", false, "Log Blockchain (Ethereum) when Accounts get loaded", (int)ECgConsoleVariableFlag.Console);
-        public static CgConsoleVariableLog LogAccountSetup = new CgConsoleVariableLog("log.blockchain.account.setup", false, "Log Blockchain (Ethereum) Account Setup", (int)ECgConsoleVariableFlag.Console);
-        public static CgConsoleVariableLog LogBalance = new CgConsoleVariableLog("log.blockchain.balance", false, "Log Blockchain (Ethereum) Balance", (int)ECgConsoleVariableFlag.Console);
+        public static FCgConsoleVariableLog LogAccountLoad = new FCgConsoleVariableLog("log.blockchain.account.load", false, "Log Blockchain (Ethereum) when Accounts get loaded", (int)ECgConsoleVariableFlag.Console);
+        public static FCgConsoleVariableLog LogAccountSetup = new FCgConsoleVariableLog("log.blockchain.account.setup", false, "Log Blockchain (Ethereum) Account Setup", (int)ECgConsoleVariableFlag.Console);
+        public static FCgConsoleVariableLog LogBalance = new FCgConsoleVariableLog("log.blockchain.balance", false, "Log Blockchain (Ethereum) Balance", (int)ECgConsoleVariableFlag.Console);
 
         #endregion // CVars
 

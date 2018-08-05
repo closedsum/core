@@ -7,11 +7,11 @@ namespace CgCore
 
     public class CgInput_Location : FCgInput_Base
     {
-        public class CgInputLocation_Event : TCgMulticastDelegate_TwoParams<MonoBehaviour, Vector3> { }
+        public class FCgInputLocation_Event : TCgMulticastDelegate_TwoParams<MonoBehaviour, Vector3> { }
 
         #region "Data Members"
 
-        private Dictionary<ECgInputEvent, CgInputLocation_Event> Events;
+        private Dictionary<ECgInputEvent, FCgInputLocation_Event> Events;
 
         #endregion // Data Members
 
@@ -21,16 +21,16 @@ namespace CgCore
             Info.Event = ECgInputEvent.Stationary;
             Info.Last_Event = Info.Event;
 
-            Events = new Dictionary<ECgInputEvent, CgInputLocation_Event>(new ECgInputEventEqualityComparer());
-            Events.Add(ECgInputEvent.FirstMoved, new CgInputLocation_Event());
-            Events.Add(ECgInputEvent.Moved, new CgInputLocation_Event());
-            Events.Add(ECgInputEvent.FirstStationary, new CgInputLocation_Event());
-            Events.Add(ECgInputEvent.Stationary, new CgInputLocation_Event());
+            Events = new Dictionary<ECgInputEvent, FCgInputLocation_Event>(new ECgInputEventEqualityComparer());
+            Events.Add(ECgInputEvent.FirstMoved, new FCgInputLocation_Event());
+            Events.Add(ECgInputEvent.Moved, new FCgInputLocation_Event());
+            Events.Add(ECgInputEvent.FirstStationary, new FCgInputLocation_Event());
+            Events.Add(ECgInputEvent.Stationary, new FCgInputLocation_Event());
         }
 
         public void Raw(Vector3 location)
         {
-            if ((Manager_Input.CurrentInputActionMap & (ActionMap)) == ECgInputActionMap.NONE)
+            if ((Manager_Input.CurrentInputActionMap & (ActionMap)) == NONE)
                 return;
 
             FCgInput input = Manager_Input.GetPreviousPreviousInputAction(Action);
@@ -84,16 +84,16 @@ namespace CgCore
             Broadcast(e, Manager_Input.InputOwner, location);
         }
 
-        public void AddEvent(ECgInputEvent e, CgInputLocation_Event.Event del)
+        public void AddEvent(ECgInputEvent e, FCgInputLocation_Event.Event del)
         {
-            CgInputLocation_Event handler;
+            FCgInputLocation_Event handler;
             Events.TryGetValue(e, out handler);
             handler.Add(del);
         }
 
         private void Broadcast(ECgInputEvent e, MonoBehaviour mb, Vector3 location)
         {
-            CgInputLocation_Event del;
+            FCgInputLocation_Event del;
             Events.TryGetValue(e, out del);
             del.Broadcast(mb, location);
         }

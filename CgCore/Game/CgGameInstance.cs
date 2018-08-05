@@ -7,16 +7,16 @@
     using UnityEditor;
 #endif // #if UNITY_EDITOR
 
-    public class CgGameInstance : MonoBehaviour
+    public class MCgGameInstance : MonoBehaviour
     {
-        private static CgGameInstance _Instance;
+        private static MCgGameInstance _Instance;
 
-        public static CgGameInstance Get()
+        public static MCgGameInstance Get()
         {
             return _Instance;
         }
 
-        public static T Get<T>() where T : CgGameInstance
+        public static T Get<T>() where T : MCgGameInstance
         {
             return (T)_Instance;
         }
@@ -27,6 +27,8 @@
                 return;
 
             _Instance = this;
+
+            FCgManager_Prefab.Get().Init();
 
             // Set Editor Callbacks
 #if UNITY_EDITOR

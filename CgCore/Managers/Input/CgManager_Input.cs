@@ -32,8 +32,6 @@ namespace CgCore
 
         #region "Data Members"
 
-        public ECgInputActionMapHelper InputActionMapHelper;
-
         public MonoBehaviour InputOwner;
 
         //public float CurrentDeltaTime;
@@ -127,8 +125,6 @@ namespace CgCore
 
         public FCgManager_Input()
         {
-            InputActionMapHelper = new ECgInputActionMapHelper();
-
             // InputPool
             InputPool = new FCgInput[INPUT_POOL_SIZE];
 
@@ -391,9 +387,9 @@ namespace CgCore
             }
 
             // Log Actions
-            if (CgCVars.LogInputs.Log())
+            if (FCgCVars.LogInputs.Log())
             {
-                string inputActionMapAsString = InputActionMapHelper.MaskToStr(CurrentInputActionMap);
+                string inputActionMapAsString = EMCgInputActionMap.Get().MaskToStr(CurrentInputActionMap);
 
                 Debug.Log("FCgManager_Input.PostProcessInput: ActionMap: " + inputActionMapAsString + " Frame: " + inputFrame.Frame + " Time: " + inputFrame.Time + " DeltaTime: " + inputFrame.DeltaTime + " Count: " + inputFrame.Inputs.Count);
 
@@ -405,28 +401,28 @@ namespace CgCore
                     string e      = input.Event.ToString();
 
                     // Void - No Value
-                    if ((CgCVars.LogInputAll.Log() || CgCVars.LogInputActions.Log()) &&
+                    if ((FCgCVars.LogInputAll.Log() || FCgCVars.LogInputActions.Log()) &&
                         Infos[(byte)input.Action].ValueType == ECgInputValue.Void)
                     {
                         Debug.Log("FCgManager_Input.PostProcessInput: " + action + ": " + e);
                     }
                     // Float
-                    if ((CgCVars.LogInputAll.Log() || CgCVars.LogInputAxis.Log()) &&
+                    if ((FCgCVars.LogInputAll.Log() || FCgCVars.LogInputAxis.Log()) &&
                         Infos[(byte)input.Action].ValueType == ECgInputValue.Float)
                     {
-                        Debug.Log("CsManager_Input.PostProcessInput: " + action + ": " + e + " Value: " + input.Value);
+                        Debug.Log("FCgManager_Input.PostProcessInput: " + action + ": " + e + " Value: " + input.Value);
                     }
                     // Vector
-                    if ((CgCVars.LogInputAll.Log() || CgCVars.LogInputLocations.Log()) &&
+                    if ((FCgCVars.LogInputAll.Log() || FCgCVars.LogInputLocations.Log()) &&
                         Infos[(byte)input.Action].ValueType == ECgInputValue.Vector)
                     {
-                        Debug.Log("CsManager_Input.PostProcessInput: " + action + ": " + e + " Value: " + input.Location.ToString());
+                        Debug.Log("FCgManager_Input.PostProcessInput: " + action + ": " + e + " Value: " + input.Location.ToString());
                     }
                     // Rotator
-                    if ((CgCVars.LogInputAll.Log() || CgCVars.LogInputRotations.Log()) &&
+                    if ((FCgCVars.LogInputAll.Log() || FCgCVars.LogInputRotations.Log()) &&
                         Infos[(byte)input.Action].ValueType == ECgInputValue.Rotator)
                     {
-                        Debug.Log("CsManager_Input.PostProcessInput: " + action + ": " + e + " Value: " + input.Rotation.ToString());
+                        Debug.Log("FCgManager_Input.PostProcessInput: " + action + ": " + e + " Value: " + input.Rotation.ToString());
                     }
                 }
             }
@@ -617,7 +613,7 @@ namespace CgCore
             }
         }
 
-        public void SetCurrentInputActionMap(ECgInputActionMap actionMap)
+        public void SetCurrentInputActionMap(FECgInputActionMap actionMap)
         {
 	        CurrentInputActionMap |= actionMap;
         }
@@ -627,7 +623,7 @@ namespace CgCore
             CurrentInputActionMap |= actionMap;
         }
 
-        public void ClearCurrentInputActionMap(ECgInputActionMap actionMap)
+        public void ClearCurrentInputActionMap(FECgInputActionMap actionMap)
         {
             CurrentInputActionMap &= actionMap;
         }

@@ -14,31 +14,40 @@ namespace CgCore
 
     #endregion
 
-    public class ECgInputActionMap : ECgEnum_int
+    public class FECgInputActionMap : ECgEnum_int
     {
-        public static readonly ECgInputActionMap NONE = new ECgInputActionMap(0, "None");
-
-        public ECgInputActionMap(int value, string name) : base(value, name) { }
+        public FECgInputActionMap(int value, string name) : base(value, name) { }
     }
 
-    public sealed class ECgInputActionMapHelper
+    public sealed class EMCgInputActionMap : TCgEnumMaskMap<FECgInputActionMap, int>
     {
-        public ECgInputActionMap.Get Get;
-        public ECgInputActionMap.ToType ToType;
-        public ECgInputActionMap.ToStr ToStr;
+        private static EMCgInputActionMap _Instance;
+        public static EMCgInputActionMap Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = new EMCgInputActionMap();
+                }
+                return _Instance;
+            }
+        }
 
-        public ECgInputActionMap.ToMask ToMask;
-        public ECgInputActionMap.MaskToStr MaskToStr;
+        public static EMCgInputActionMap Get()
+        {
+            return Instance;
+        }
     }
 
-    public sealed class ECgInputActionMapEqualityComparer : IEqualityComparer<ECgInputActionMap>
+    public sealed class ECgInputActionMapEqualityComparer : IEqualityComparer<FECgInputActionMap>
     {
-        public bool Equals(ECgInputActionMap lhs, ECgInputActionMap rhs)
+        public bool Equals(FECgInputActionMap lhs, FECgInputActionMap rhs)
         {
             return lhs == rhs;
         }
 
-        public int GetHashCode(ECgInputActionMap x)
+        public int GetHashCode(FECgInputActionMap x)
         {
             return x.GetHashCode();
         }
@@ -49,7 +58,7 @@ namespace CgCore
         public FECgInputAction(byte value, string name) : base(value, name) { }
     }
 
-    public class EMCgInputAction : TCgEnumMap<FECgInputAction, byte>
+    public sealed class EMCgInputAction : TCgEnumMap<FECgInputAction, byte>
     {
         private static EMCgInputAction _Instance;
         public static EMCgInputAction Instance

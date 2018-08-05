@@ -7,11 +7,11 @@ namespace CgCore
 
     public class FCgInput_Trigger : FCgInput_Base
     {
-        public class CgInputTrigger_Event : TCgMulticastDelegate_TwoParams<MonoBehaviour, float> { }
+        public class FCgInputTrigger_Event : TCgMulticastDelegate_TwoParams<MonoBehaviour, float> { }
 
         #region "Data Members"
 
-        private Dictionary<ECgInputEvent, CgInputTrigger_Event> Events;
+        private Dictionary<ECgInputEvent, FCgInputTrigger_Event> Events;
 
         #endregion // Data Members
 
@@ -21,16 +21,16 @@ namespace CgCore
             Info.Event = ECgInputEvent.Stationary;
             Info.Last_Event = Info.Event;
 
-            Events = new Dictionary<ECgInputEvent, CgInputTrigger_Event>(new ECgInputEventEqualityComparer());
-            Events.Add(ECgInputEvent.FirstMoved, new CgInputTrigger_Event());
-            Events.Add(ECgInputEvent.Moved, new CgInputTrigger_Event());
-            Events.Add(ECgInputEvent.FirstStationary, new CgInputTrigger_Event());
-            Events.Add(ECgInputEvent.Stationary, new CgInputTrigger_Event());
+            Events = new Dictionary<ECgInputEvent, FCgInputTrigger_Event>(new ECgInputEventEqualityComparer());
+            Events.Add(ECgInputEvent.FirstMoved, new FCgInputTrigger_Event());
+            Events.Add(ECgInputEvent.Moved, new FCgInputTrigger_Event());
+            Events.Add(ECgInputEvent.FirstStationary, new FCgInputTrigger_Event());
+            Events.Add(ECgInputEvent.Stationary, new FCgInputTrigger_Event());
         }
 
         public void Raw(float val)
         {
-            if ((Manager_Input.CurrentInputActionMap & (ActionMap)) == ECgInputActionMap.NONE)
+            if ((Manager_Input.CurrentInputActionMap & (ActionMap)) == NONE)
                 return;
 
             FCgInput input = Manager_Input.GetPreviousPreviousInputAction(Action);
@@ -84,16 +84,16 @@ namespace CgCore
             Broadcast(e, Manager_Input.InputOwner, val);
         }
 
-        public void AddEvent(ECgInputEvent e, CgInputTrigger_Event.Event del)
+        public void AddEvent(ECgInputEvent e, FCgInputTrigger_Event.Event del)
         {
-            CgInputTrigger_Event handler;
+            FCgInputTrigger_Event handler;
             Events.TryGetValue(e, out handler);
             handler.Add(del);
         }
 
         private void Broadcast(ECgInputEvent e, MonoBehaviour mb, float val)
         {
-            CgInputTrigger_Event del;
+            FCgInputTrigger_Event del;
             Events.TryGetValue(e, out del);
             del.Broadcast(mb, val);
         }

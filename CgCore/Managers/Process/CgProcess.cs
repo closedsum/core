@@ -99,7 +99,7 @@
 
     public class FCgProcess : TCgPooledObject<FECgProcess>
     {
-        public static CgConsoleVariableLog LogCommandRequest = new CgConsoleVariableLog("log.process.command.request", false, "Log Process Command Request", (int)ECgConsoleVariableFlag.Console);
+        public static FCgConsoleVariableLog LogCommandRequest = new FCgConsoleVariableLog("log.process.command.request", false, "Log Process Command Request", (int)ECgConsoleVariableFlag.Console);
 
         public sealed class FOutputDataRecieved : TCgMulticastDelegate_TwoParams<object, DataReceivedEventArgs> { }
         public sealed class FErrorDataRecieved : TCgMulticastDelegate_TwoParams<object, DataReceivedEventArgs> { }

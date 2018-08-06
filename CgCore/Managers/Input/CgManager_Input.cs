@@ -128,12 +128,6 @@ namespace CgCore
 
         public FCgManager_Input()
         {
-            for (int i = 0; i < EMCgInputAction.Get().Count; ++i)
-            {
-                Inputs.Add(null);
-                Infos.Add(null);
-            }
-
             // InputPool
             InputPool = new FCgInput[INPUT_POOL_SIZE];
 
@@ -177,8 +171,14 @@ namespace CgCore
             Inputs = new List<FCgInput_Base>();
             Infos = new List<FCgInputInfo>();
 
+            for (int i = 0; i < EMCgInputAction.Get().Count; ++i)
+            {
+                Inputs.Add(null);
+                Infos.Add(null);
+            }
+
             // Events
-             Action_Event = new FCgManagerInput_Action_Default();
+            Action_Event = new FCgManagerInput_Action_Default();
             FirstPressed_Event = new FCgManagerInput_Action();
             Pressed_Event = new FCgManagerInput_Action();
             FirstReleased_Event = new FCgManagerInput_Action();

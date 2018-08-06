@@ -182,6 +182,12 @@
             return null;
         }
 
+        public virtual void Init(int index, object e)
+        {
+            GetCache().Set(index, this);
+            GetCache().SetType(e);
+        }
+
         public virtual void OnCreatePool()
         {
 
@@ -194,13 +200,9 @@
 
         public virtual void DeAllocate()
         {
-            GetCache().Reset();
-        }
+            gameObject.SetActive(false);
 
-        public virtual void Init(int index, object e)
-        {
-            GetCache().Set(index, this);
-            GetCache().SetType(e);
+            GetCache().Reset();
         }
     }
 }

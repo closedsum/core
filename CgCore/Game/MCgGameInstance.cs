@@ -17,6 +17,8 @@
 
         public FOnExitingPlayMode OnExitingPlayMode_Event;
 
+        public MCgGameState GameState;
+
         #endregion // Data Members
 
         public static MCgGameInstance Get()

@@ -96,7 +96,6 @@
         }
     }
 
-
     public class FCgProcess : TCgPooledObject<FECgProcess>
     {
         public static FCgConsoleVariableLog LogCommandRequest = new FCgConsoleVariableLog("log.process.command.request", false, "Log Process Command Request", (int)ECgConsoleVariableFlag.Console);

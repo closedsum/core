@@ -222,13 +222,13 @@ namespace CgCore
 
     public class FCgKeyInputHandler
     {
-        public class CgKeyInputHandler_Event : CgMulticastDelegate { }
+        public class FCgKeyInputHandler_Event : FCgMulticastDelegate { }
 
         #region "Data Members"
 
         public FECgInputAction Action;
 
-        public CgKeyInputHandler_Event Event;
+        public FCgKeyInputHandler_Event Event;
 
         #endregion // Data Members
 
@@ -240,7 +240,7 @@ namespace CgCore
         public FCgKeyInputHandler(FECgInputAction action)
         {
             Action = action;
-            Event = new CgKeyInputHandler_Event();
+            Event = new FCgKeyInputHandler_Event();
         }
 
         public static bool operator ==(FCgKeyInputHandler lhs, FCgKeyInputHandler rhs)
@@ -272,7 +272,7 @@ namespace CgCore
             return base.GetHashCode();
         }
 
-        public FCgDelegateHandle Add(CgMulticastDelegate.Event e)
+        public FCgDelegateHandle Add(FCgMulticastDelegate.Event e)
         {
             return Event.Add(e);
         }
@@ -341,7 +341,7 @@ namespace CgCore
             }
         }
 
-        public FCgDelegateHandle Bind(FECgInputAction action, ECgInputEvent e, CgMulticastDelegate.Event del)
+        public FCgDelegateHandle Bind(FECgInputAction action, ECgInputEvent e, FCgMulticastDelegate.Event del)
         {
             Dictionary<FECgInputAction, FCgKeyInputHandler> map = HandlerMap[(byte)e];
 

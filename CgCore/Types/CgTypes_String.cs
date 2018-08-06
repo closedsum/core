@@ -329,7 +329,7 @@
 
     public sealed class FCgStringParagraph
     {
-        public sealed class FCompletedEvent : CgMulticastDelegate { }
+        public sealed class FCompletedEvent : FCgMulticastDelegate { }
 
         private bool Completed;
 

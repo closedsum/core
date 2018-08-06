@@ -2369,14 +2369,14 @@ namespace CgCore
 
     public class TCgFlagType<T> : CgFlag where T : struct
     {
-        public sealed class OnEqual : CgMulticastDelegate { }
+        public sealed class FOnEqual : FCgMulticastDelegate { }
 
         #region "Data Members"
 
         public T StartValue;
         public T EndValue;
 
-        public OnEqual OnEqual_Event;
+        public FOnEqual OnEqual_Event;
 
         #endregion // Data Members
 
@@ -2384,7 +2384,7 @@ namespace CgCore
         {
             StartValue    = startValue;
             EndValue      = endValue;
-            OnEqual_Event = new OnEqual();
+            OnEqual_Event = new FOnEqual();
         }
 
         #region "Operators"

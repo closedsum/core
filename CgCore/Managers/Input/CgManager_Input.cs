@@ -226,7 +226,7 @@ namespace CgCore
         {
         }
 
-        protected void BindInput(KeyCode key, FECgInputAction action, ECgInputEvent e, CgMulticastDelegate.Event del)
+        protected void BindInput(KeyCode key, FECgInputAction action, ECgInputEvent e, FCgMulticastDelegate.Event del)
         {
             RawKeyInputs[key].Bind(action, e, del);
 

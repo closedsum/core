@@ -9,7 +9,15 @@
 
     public class MCgGameInstance : MonoBehaviour
     {
+        public sealed class FOnExitingPlayMode : FCgMulticastDelegate {}
+
+        #region "Data Members"
+
         private static MCgGameInstance _Instance;
+
+        public FOnExitingPlayMode OnExitingPlayMode_Event;
+
+        #endregion // Data Members
 
         public static MCgGameInstance Get()
         {
@@ -27,6 +35,8 @@
                 return;
 
             _Instance = this;
+
+            OnExitingPlayMode_Event = new FOnExitingPlayMode();
 
             FCgManager_Prefab.Get().Init();
 
@@ -63,6 +73,8 @@
 
         public void OnExitingPlayMode()
         {
+            OnExitingPlayMode_Event.Broadcast();
+
             Shutdown();
         }
 

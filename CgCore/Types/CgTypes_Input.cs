@@ -1347,6 +1347,27 @@ namespace CgCore
         public FECgGameEvent(byte value, string name) : base(value, name) { }
     }
 
+    public sealed class EMCgGameEvent : TCgEnumMap<FECgGameEvent, byte>
+    {
+        private static EMCgGameEvent _Instance;
+        public static EMCgGameEvent Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = new EMCgGameEvent();
+                }
+                return _Instance;
+            }
+        }
+
+        public static EMCgGameEvent Get()
+        {
+            return Instance;
+        }
+    }
+
     public sealed class FECgGameEventEqualityComparer : IEqualityComparer<FECgGameEvent>
     {
         public bool Equals(FECgGameEvent lhs, FECgGameEvent rhs)
@@ -1358,14 +1379,6 @@ namespace CgCore
         {
             return x.GetHashCode();
         }
-    }
-
-    public sealed class ECgGameEventHelper
-    {
-        public FECgGameEvent.Get Get;
-        public FECgGameEvent.GetMAX GetMAX;
-        public FECgGameEvent.ToType ToType;
-        public FECgGameEvent.ToStr ToStr;
     }
 
     public class FCgGameEventDefinition

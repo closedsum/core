@@ -563,7 +563,8 @@
         public virtual ObjectType ConstructObject_Internal(EnumType e)
         {
             Type type     = typeof(ObjectType);
-            GameObject go = new GameObject(type.ToString());
+            GameObject go = MonoBehaviour.Instantiate(FCgManager_Prefab.Get().EmptyGameObject);
+            go.name       = type.ToString();
             return (ObjectType)(object)go.AddComponent(type);
         }
 

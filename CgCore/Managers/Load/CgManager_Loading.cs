@@ -12,7 +12,7 @@
     {
 #region "CVars"
 
-        public static CgConsoleVariableLog LogLoading = new CgConsoleVariableLog("log.manager.loading", false, "Log Manager Loading", (int)ECgConsoleVariableFlag.Console);
+        public static FCgConsoleVariableLog LogLoading = new FCgConsoleVariableLog("log.manager.loading", false, "Log Manager Loading", (int)ECgConsoleVariableFlag.Console);
 
 #endregion // CVars
 

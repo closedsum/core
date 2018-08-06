@@ -14,31 +14,40 @@ namespace CgCore
 
     #endregion
 
-    public class ECgInputActionMap : ECgEnum_int
+    public class FECgInputActionMap : ECgEnum_int
     {
-        public static readonly ECgInputActionMap NONE = new ECgInputActionMap(0, "None");
-
-        public ECgInputActionMap(int value, string name) : base(value, name) { }
+        public FECgInputActionMap(int value, string name) : base(value, name) { }
     }
 
-    public sealed class ECgInputActionMapHelper
+    public sealed class EMCgInputActionMap : TCgEnumMaskMap<FECgInputActionMap, int>
     {
-        public ECgInputActionMap.Get Get;
-        public ECgInputActionMap.ToType ToType;
-        public ECgInputActionMap.ToStr ToStr;
+        private static EMCgInputActionMap _Instance;
+        public static EMCgInputActionMap Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = new EMCgInputActionMap();
+                }
+                return _Instance;
+            }
+        }
 
-        public ECgInputActionMap.ToMask ToMask;
-        public ECgInputActionMap.MaskToStr MaskToStr;
+        public static EMCgInputActionMap Get()
+        {
+            return Instance;
+        }
     }
 
-    public sealed class ECgInputActionMapEqualityComparer : IEqualityComparer<ECgInputActionMap>
+    public sealed class ECgInputActionMapEqualityComparer : IEqualityComparer<FECgInputActionMap>
     {
-        public bool Equals(ECgInputActionMap lhs, ECgInputActionMap rhs)
+        public bool Equals(FECgInputActionMap lhs, FECgInputActionMap rhs)
         {
             return lhs == rhs;
         }
 
-        public int GetHashCode(ECgInputActionMap x)
+        public int GetHashCode(FECgInputActionMap x)
         {
             return x.GetHashCode();
         }
@@ -49,7 +58,7 @@ namespace CgCore
         public FECgInputAction(byte value, string name) : base(value, name) { }
     }
 
-    public class EMCgInputAction : TCgEnumMap<FECgInputAction, byte>
+    public sealed class EMCgInputAction : TCgEnumMap<FECgInputAction, byte>
     {
         private static EMCgInputAction _Instance;
         public static EMCgInputAction Instance
@@ -213,13 +222,13 @@ namespace CgCore
 
     public class FCgKeyInputHandler
     {
-        public class CgKeyInputHandler_Event : CgMulticastDelegate { }
+        public class FCgKeyInputHandler_Event : FCgMulticastDelegate { }
 
         #region "Data Members"
 
         public FECgInputAction Action;
 
-        public CgKeyInputHandler_Event Event;
+        public FCgKeyInputHandler_Event Event;
 
         #endregion // Data Members
 
@@ -231,7 +240,7 @@ namespace CgCore
         public FCgKeyInputHandler(FECgInputAction action)
         {
             Action = action;
-            Event = new CgKeyInputHandler_Event();
+            Event = new FCgKeyInputHandler_Event();
         }
 
         public static bool operator ==(FCgKeyInputHandler lhs, FCgKeyInputHandler rhs)
@@ -263,7 +272,7 @@ namespace CgCore
             return base.GetHashCode();
         }
 
-        public FCgDelegateHandle Add(CgMulticastDelegate.Event e)
+        public FCgDelegateHandle Add(FCgMulticastDelegate.Event e)
         {
             return Event.Add(e);
         }
@@ -332,7 +341,7 @@ namespace CgCore
             }
         }
 
-        public FCgDelegateHandle Bind(FECgInputAction action, ECgInputEvent e, CgMulticastDelegate.Event del)
+        public FCgDelegateHandle Bind(FECgInputAction action, ECgInputEvent e, FCgMulticastDelegate.Event del)
         {
             Dictionary<FECgInputAction, FCgKeyInputHandler> map = HandlerMap[(byte)e];
 
@@ -1338,6 +1347,27 @@ namespace CgCore
         public FECgGameEvent(byte value, string name) : base(value, name) { }
     }
 
+    public sealed class EMCgGameEvent : TCgEnumMap<FECgGameEvent, byte>
+    {
+        private static EMCgGameEvent _Instance;
+        public static EMCgGameEvent Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = new EMCgGameEvent();
+                }
+                return _Instance;
+            }
+        }
+
+        public static EMCgGameEvent Get()
+        {
+            return Instance;
+        }
+    }
+
     public sealed class FECgGameEventEqualityComparer : IEqualityComparer<FECgGameEvent>
     {
         public bool Equals(FECgGameEvent lhs, FECgGameEvent rhs)
@@ -1349,14 +1379,6 @@ namespace CgCore
         {
             return x.GetHashCode();
         }
-    }
-
-    public sealed class ECgGameEventHelper
-    {
-        public FECgGameEvent.Get Get;
-        public FECgGameEvent.GetMAX GetMAX;
-        public FECgGameEvent.ToType ToType;
-        public FECgGameEvent.ToStr ToStr;
     }
 
     public class FCgGameEventDefinition

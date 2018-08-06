@@ -106,9 +106,9 @@
         }
     }
 
-    public sealed class CgConsoleVariableLog : TCgConsoleVariable<bool>
+    public sealed class FCgConsoleVariableLog : TCgConsoleVariable<bool>
     {
-        public CgConsoleVariableLog(string inName, bool inValue, string inDescription, int inFlag) : base(inName, inValue, inDescription, inFlag) { }
+        public FCgConsoleVariableLog(string inName, bool inValue, string inDescription, int inFlag) : base(inName, inValue, inDescription, inFlag) { }
 
         public bool Log()
         {
@@ -116,9 +116,9 @@
         }
     }
 
-    public sealed class CgConsoleVariableDraw : TCgConsoleVariable<bool>
+    public sealed class FCgConsoleVariableDraw : TCgConsoleVariable<bool>
     {
-        public CgConsoleVariableDraw(string inName, bool inValue, string inDescription, int inFlag) : base(inName, inValue, inDescription, inFlag) { }
+        public FCgConsoleVariableDraw(string inName, bool inValue, string inDescription, int inFlag) : base(inName, inValue, inDescription, inFlag) { }
 
         public bool Draw()
         {

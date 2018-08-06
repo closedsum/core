@@ -58,8 +58,8 @@ namespace CgCore
     public class FCgCoroutineScheduler
     {
 
-        public static CgConsoleVariableLog LogTransactions = new CgConsoleVariableLog("log.coroutine.transactions", false, "Log Coroutine Scheduler Allocation and DeAllocation.", (int)ECgConsoleVariableFlag.Console);
-        public static CgConsoleVariableLog LogRunning = new CgConsoleVariableLog("log.coroutine.running", false, "Log Coroutines currently running.", (int)ECgConsoleVariableFlag.Console);
+        public static FCgConsoleVariableLog LogTransactions = new FCgConsoleVariableLog("log.coroutine.transactions", false, "Log Coroutine Scheduler Allocation and DeAllocation.", (int)ECgConsoleVariableFlag.Console);
+        public static FCgConsoleVariableLog LogRunning = new FCgConsoleVariableLog("log.coroutine.running", false, "Log Coroutines currently running.", (int)ECgConsoleVariableFlag.Console);
 
         #region "Constants"
 

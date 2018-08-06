@@ -7,11 +7,11 @@ namespace CgCore
 
     public class FCgInput_Axis : FCgInput_Base
     {
-        public class CgInputAxis_Event : TCgMulticastDelegate_TwoParams<MonoBehaviour, float> { }
+        public class FCgInputAxis_Event : TCgMulticastDelegate_TwoParams<MonoBehaviour, float> { }
 
         #region "Data Members"
 
-        private Dictionary<ECgInputEvent, CgInputAxis_Event> Events;
+        private Dictionary<ECgInputEvent, FCgInputAxis_Event> Events;
 
         #endregion // Data Members
 
@@ -21,16 +21,16 @@ namespace CgCore
             Info.Event = ECgInputEvent.Stationary;
             Info.Last_Event = Info.Event;
 
-            Events = new Dictionary<ECgInputEvent, CgInputAxis_Event>(new ECgInputEventEqualityComparer());
-            Events.Add(ECgInputEvent.FirstMoved, new CgInputAxis_Event());
-            Events.Add(ECgInputEvent.Moved, new CgInputAxis_Event());
-            Events.Add(ECgInputEvent.FirstStationary, new CgInputAxis_Event());
-            Events.Add(ECgInputEvent.Stationary, new CgInputAxis_Event());
+            Events = new Dictionary<ECgInputEvent, FCgInputAxis_Event>(new ECgInputEventEqualityComparer());
+            Events.Add(ECgInputEvent.FirstMoved, new FCgInputAxis_Event());
+            Events.Add(ECgInputEvent.Moved, new FCgInputAxis_Event());
+            Events.Add(ECgInputEvent.FirstStationary, new FCgInputAxis_Event());
+            Events.Add(ECgInputEvent.Stationary, new FCgInputAxis_Event());
         }
 
         public void Raw(float val)
         {
-            if ((Manager_Input.CurrentInputActionMap & (ActionMap)) == ECgInputActionMap.NONE)
+            if ((Manager_Input.CurrentInputActionMap & (ActionMap)) == NONE)
                 return;
             if (val != 0.0f && Info.Value == 0.0f)
                 FirstMoved(val);
@@ -81,16 +81,16 @@ namespace CgCore
             Broadcast(e, Manager_Input.InputOwner, val);
         }
 
-        public void AddEvent(ECgInputEvent e, CgInputAxis_Event.Event del)
+        public void AddEvent(ECgInputEvent e, FCgInputAxis_Event.Event del)
         {
-            CgInputAxis_Event handler;
+            FCgInputAxis_Event handler;
             Events.TryGetValue(e, out handler);
             handler.Add(del);
         }
 
         private void Broadcast(ECgInputEvent e, MonoBehaviour mb, float val)
         {
-            CgInputAxis_Event del;
+            FCgInputAxis_Event del;
             Events.TryGetValue(e, out del);
             del.Broadcast(mb, val);
         }

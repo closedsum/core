@@ -177,13 +177,13 @@ namespace CgCore
     {
     }
 
-    public abstract class CgMulticastDelegate : ICgMulticastDelegate
+    public abstract class FCgMulticastDelegate : ICgMulticastDelegate
     {
         public delegate void Event();
 
         private Dictionary<FCgDelegateHandle, Event> InvocationMap;
 
-        public CgMulticastDelegate()
+        public FCgMulticastDelegate()
         {
             InvocationMap = new Dictionary<FCgDelegateHandle, Event>();
         }
@@ -226,7 +226,7 @@ namespace CgCore
             }
         }
 
-        public void CopyTo(CgMulticastDelegate to)
+        public void CopyTo(FCgMulticastDelegate to)
         {
             to.Clear();
 

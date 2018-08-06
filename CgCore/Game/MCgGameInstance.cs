@@ -7,16 +7,26 @@
     using UnityEditor;
 #endif // #if UNITY_EDITOR
 
-    public class CgGameInstance : MonoBehaviour
+    public class MCgGameInstance : MonoBehaviour
     {
-        private static CgGameInstance _Instance;
+        public sealed class FOnExitingPlayMode : FCgMulticastDelegate {}
 
-        public static CgGameInstance Get()
+        #region "Data Members"
+
+        private static MCgGameInstance _Instance;
+
+        public FOnExitingPlayMode OnExitingPlayMode_Event;
+
+        public MCgGameState GameState;
+
+        #endregion // Data Members
+
+        public static MCgGameInstance Get()
         {
             return _Instance;
         }
 
-        public static T Get<T>() where T : CgGameInstance
+        public static T Get<T>() where T : MCgGameInstance
         {
             return (T)_Instance;
         }
@@ -27,6 +37,10 @@
                 return;
 
             _Instance = this;
+
+            OnExitingPlayMode_Event = new FOnExitingPlayMode();
+
+            FCgManager_Prefab.Get().Init();
 
             // Set Editor Callbacks
 #if UNITY_EDITOR
@@ -61,6 +75,8 @@
 
         public void OnExitingPlayMode()
         {
+            OnExitingPlayMode_Event.Broadcast();
+
             Shutdown();
         }
 

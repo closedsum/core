@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using UnityEngine;
 
-    public class CgPlayerController : MonoBehaviour
+    public class MCgPlayerController : MonoBehaviour
     {
         #region "Data Members"
 

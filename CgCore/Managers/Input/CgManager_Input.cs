@@ -237,6 +237,7 @@ namespace CgCore
             else
             {
                 KeyInputs.Add(key, new FCgKeyInput(key));
+                KeyInputs[key].Bind(action, e, del);
             }
         }
 
@@ -279,7 +280,7 @@ namespace CgCore
 
         private void RecordInputs()
         {
-            RawKeyInputsPressed.Clear();
+            KeyInputsPressed.Clear();
 
             Dictionary<KeyCode, FCgKeyInput>.ValueCollection keyInputs = KeyInputs.Values;
 
@@ -454,25 +455,25 @@ namespace CgCore
 
                     // Void - No Value
                     if ((FCgCVars.LogInputAll.Log() || FCgCVars.LogInputActions.Log()) &&
-                        Infos[(byte)input.Action].ValueType == ECgInputValue.Void)
+                        Infos[input.Action.Value].ValueType == ECgInputValue.Void)
                     {
                         Debug.Log("FCgManager_Input.PostProcessInput: " + action + ": " + e);
                     }
                     // Float
                     if ((FCgCVars.LogInputAll.Log() || FCgCVars.LogInputAxis.Log()) &&
-                        Infos[(byte)input.Action].ValueType == ECgInputValue.Float)
+                        Infos[input.Action.Value].ValueType == ECgInputValue.Float)
                     {
                         Debug.Log("FCgManager_Input.PostProcessInput: " + action + ": " + e + " Value: " + input.Value);
                     }
                     // Vector
                     if ((FCgCVars.LogInputAll.Log() || FCgCVars.LogInputLocations.Log()) &&
-                        Infos[(byte)input.Action].ValueType == ECgInputValue.Vector)
+                        Infos[input.Action.Value].ValueType == ECgInputValue.Vector)
                     {
                         Debug.Log("FCgManager_Input.PostProcessInput: " + action + ": " + e + " Value: " + input.Location.ToString());
                     }
                     // Rotator
                     if ((FCgCVars.LogInputAll.Log() || FCgCVars.LogInputRotations.Log()) &&
-                        Infos[(byte)input.Action].ValueType == ECgInputValue.Rotator)
+                        Infos[input.Action.Value].ValueType == ECgInputValue.Rotator)
                     {
                         Debug.Log("FCgManager_Input.PostProcessInput: " + action + ": " + e + " Value: " + input.Rotation.ToString());
                     }

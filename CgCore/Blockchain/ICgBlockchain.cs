@@ -166,7 +166,7 @@
         public static FCgConsoleVariableLog LogIOProcess = new FCgConsoleVariableLog("log.blockchain.io.process", false, "Log Process Blockchain Input / Output Messages", (int)ECgConsoleVariableFlag.Console);
         public static FCgConsoleVariableLog LogIOConsole = new FCgConsoleVariableLog("log.blockchain.io.console", false, "Log Console Blockchain Input / Output Messages", (int)ECgConsoleVariableFlag.Console);
         // Process
-        public static TCgConsoleVariable<bool> ShowProcessWindow = new TCgConsoleVariable<bool>("show.blockchain.processwindow", false, "Show Blockchain Process Window", (int)ECgConsoleVariableFlag.Console);
+        public static TCgConsoleVariable<bool> ShowProcessWindow = new FCgConsoleVariable_bool("show.blockchain.processwindow", false, "Show Blockchain Process Window", (int)ECgConsoleVariableFlag.Console);
         public static FCgConsoleVariableLog LogProcessStart = new FCgConsoleVariableLog("log.blockchain.process.start", false, "Log Blockchain Process Starting", (int)ECgConsoleVariableFlag.Console);
         // Command
         public static FCgConsoleVariableLog LogCommandCompleted = new FCgConsoleVariableLog("log.blockchain.command.completed", false, "Log Blockchain Command Completed", (int)ECgConsoleVariableFlag.Console);

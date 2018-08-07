@@ -6,7 +6,29 @@
 
     public class MCgGameState : MonoBehaviour
     {
-        public virtual void Init() { }
+        #region "Data Members"
+
+        private static MCgGameState _Instance;
+
+        #endregion // Data Members
+
+        public static MCgGameState Get()
+        {
+            return _Instance;
+        }
+
+        public static T Get<T>() where T : MCgGameState
+        {
+            return (T)_Instance;
+        }
+
+        public virtual void Init()
+        {
+            if (_Instance != null)
+                return;
+
+            _Instance = this;
+        }
 
         // Use this for initialization
         void Start()

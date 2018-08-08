@@ -242,7 +242,8 @@ namespace CgCore
             param[1]        = name;
             e               = (EnumClass)constructor.Invoke(param);
 
-            Max = (EnumClass)constructor.Invoke(param);
+            param[0] = (EnumType)Convert.ChangeType(Enums.Count + 1, typeof(EnumType));
+            Max      = (EnumClass)constructor.Invoke(param);
 
             // Add to List and Maps
             EnumType index = (EnumType)Convert.ChangeType(Enums.Count, typeof(EnumType));

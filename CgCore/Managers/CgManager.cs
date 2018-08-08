@@ -48,6 +48,7 @@
 
         public virtual void Reset()
         {
+            bAllocated = false;
             Instigator = null;
             Owner = null;
             Parent = null;
@@ -832,7 +833,7 @@
 
             for (int i = 0; i < count; ++i)
             {
-                int index = (PayloadIndex + i) % count;
+                int index           = (PayloadIndex + i) % count;
                 PayloadType payload = Payloads[index];
 
                 if (!payload.bAllocated)

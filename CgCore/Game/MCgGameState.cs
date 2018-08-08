@@ -4,6 +4,49 @@
     using System.Collections.Generic;
     using UnityEngine;
 
+    #region "Enums"
+
+    public sealed class FECgGameStateRoutine : FECgEnum_byte
+    {
+        public FECgGameStateRoutine(byte value, string name) : base(value, name) { }
+    }
+
+    public sealed class FECgGameStateRoutineEqualityComparer : IEqualityComparer<FECgGameStateRoutine>
+    {
+        public bool Equals(FECgGameStateRoutine lhs, FECgGameStateRoutine rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(FECgGameStateRoutine x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
+    public class EMCgGameStateRoutine : TCgEnumMap<FECgGameStateRoutine, byte>
+    {
+        private static EMCgGameStateRoutine _Instance;
+        public static EMCgGameStateRoutine Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = new EMCgGameStateRoutine();
+                }
+                return _Instance;
+            }
+        }
+
+        public static EMCgGameStateRoutine Get()
+        {
+            return Instance;
+        }
+    }
+
+    #endregion // Enums
+
     public class MCgGameState : MonoBehaviour
     {
         #region "Data Members"
@@ -30,16 +73,18 @@
             _Instance = this;
         }
 
-        // Use this for initialization
-        void Start()
-        {
+        #region "Routines"
 
+        public virtual bool AddRoutine(FCgRoutine routine)
+        {
+            return false;
         }
 
-        // Update is called once per frame
-        void Update()
+        public virtual bool RemoveRoutine(FCgRoutine routine)
         {
-
+            return false;
         }
+
+        #endregion // Routines
     }
 }

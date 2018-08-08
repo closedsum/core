@@ -205,6 +205,8 @@ namespace CgCore
             Add.Bind(add);
             Remove.Bind(remove);
 
+            RoutineType = routineType;
+
             if (Owner.IsValid())
                 Add.Execute(this);
         }

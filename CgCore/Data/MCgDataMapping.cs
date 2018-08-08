@@ -22,12 +22,19 @@
             return (T)_Instance;
         }
 
-        public virtual void Init()
+        public static void Init()
         {
             if (_Instance != null)
                 return;
 
-            _Instance = this;
+            GameObject go = GameObject.Find("d_data_mapping");
+            _Instance     = go.GetComponent<MCgDataMapping>();
+
+            _Instance.Init_Internal();
+        }
+
+        protected virtual void Init_Internal()
+        {
         }
     }
 }

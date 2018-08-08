@@ -196,6 +196,8 @@
         public virtual void Allocate(int activeIndex, ICgPooledObjectPayload payload)
         {
             GetCache().Init(activeIndex, payload, 0.0f, 0.0f, 0);
+            gameObject.SetActive(true);
+            gameObject.transform.parent = null;
         }
 
         public virtual void DeAllocate()

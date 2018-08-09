@@ -9,21 +9,21 @@
     {
         public class FOnDeAllocate : TCgMulticastDelegate_ThreeParams<int, int, EnumType> { }
 
+        #region "Constants"
+
+        public static readonly int INDEX_NONE = -1;
+
+        #endregion // Constants
+
         #region "Data Members"
 
-            #region "Interface"
+        #region "Interface"
 
         private int _Index;
         public int Index
         {
             get { return _Index; }
             set { _Index = value; }
-        }
-        private int _ActiveIndex;
-        public int ActiveIndex
-        {
-            get { return _ActiveIndex; }
-            set { _ActiveIndex = value; }
         }
         private bool _bAllocated;
         public bool bAllocated
@@ -98,7 +98,7 @@
 
         public ObjectType PooledObject;
 
-        public EnumType Type;
+        public EnumType MyType;
 
         public FOnDeAllocate OnDeAllocate_Event;
 
@@ -106,6 +106,8 @@
 
         public TCgPooledMonoObjectCache()
         {
+            Index = INDEX_NONE;
+
             OnDeAllocate_Event = new FOnDeAllocate();
         }
 
@@ -115,14 +117,18 @@
             PooledObject = (ObjectType)o;
         }
 
-        public void SetType(object e)
+        public void SetMyType(object e)
         {
-            Type = (EnumType)e;
+            MyType = (EnumType)e;
         }
 
-        public virtual void Init(int activeIndex, ICgPooledObjectPayload payload, float time, float realTime, ulong frame)
+        public object GetMyType()
         {
-            ActiveIndex = activeIndex;
+            return MyType;
+        }
+
+        public virtual void Init(ICgPooledObjectPayload payload, float time, float realTime, ulong frame)
+        {
             Instigator = payload.Instigator;
             Owner = payload.Owner;
             Parent = payload.Parent;
@@ -134,7 +140,6 @@
 
         public virtual void Reset()
         {
-            ActiveIndex = 0;
             bAllocated = false;
             //Type =
             OnDeAllocate_Event.Clear();
@@ -185,7 +190,7 @@
         public virtual void Init(int index, object e)
         {
             GetCache().Set(index, this);
-            GetCache().SetType(e);
+            GetCache().SetMyType(e);
         }
 
         public virtual void OnCreatePool()
@@ -193,9 +198,9 @@
 
         }
 
-        public virtual void Allocate(int activeIndex, ICgPooledObjectPayload payload)
+        public virtual void Allocate(ICgPooledObjectPayload payload)
         {
-            GetCache().Init(activeIndex, payload, 0.0f, 0.0f, 0);
+            GetCache().Init(payload, 0.0f, 0.0f, 0);
             gameObject.SetActive(true);
             gameObject.transform.parent = null;
         }

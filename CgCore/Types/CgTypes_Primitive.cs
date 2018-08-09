@@ -2363,12 +2363,12 @@ namespace CgCore
         bool IsEqual();
     }
 
-    public abstract class CgFlag : ICgFlag
+    public abstract class FCgFlag : ICgFlag
     {
         public abstract bool IsEqual();
     }
 
-    public class TCgFlagType<T> : CgFlag where T : struct
+    public class TCgFlag<T> : FCgFlag where T : struct
     {
         public sealed class FOnEqual : FCgMulticastDelegate { }
 
@@ -2381,7 +2381,7 @@ namespace CgCore
 
         #endregion // Data Members
 
-        public TCgFlagType(T startValue, T endValue)
+        public TCgFlag(T startValue, T endValue)
         {
             StartValue    = startValue;
             EndValue      = endValue;
@@ -2390,7 +2390,7 @@ namespace CgCore
 
         #region "Operators"
 
-        public static bool operator ==(TCgFlagType<T> lhs, TCgFlagType<T> rhs)
+        public static bool operator ==(TCgFlag<T> lhs, TCgFlag<T> rhs)
         {
             if (object.ReferenceEquals(lhs, null))
                 return object.ReferenceEquals(rhs, null);
@@ -2399,37 +2399,37 @@ namespace CgCore
             return lhs.StartValue.Equals(rhs.StartValue);
         }
 
-        public static bool operator !=(TCgFlagType<T> lhs, TCgFlagType<T> rhs)
+        public static bool operator !=(TCgFlag<T> lhs, TCgFlag<T> rhs)
         {
             return !(lhs == rhs);
         }
 
-        public static bool operator ==(TCgFlagType<T> lhs, T rhs)
+        public static bool operator ==(TCgFlag<T> lhs, T rhs)
         {
             return lhs.StartValue.Equals(rhs);
         }
 
-        public static bool operator !=(TCgFlagType<T> lhs, T rhs)
+        public static bool operator !=(TCgFlag<T> lhs, T rhs)
         {
             return !(lhs == rhs);
         }
 
-        public static bool operator ==(T lhs, TCgFlagType<T> rhs)
+        public static bool operator ==(T lhs, TCgFlag<T> rhs)
         {
             return lhs.Equals(rhs.StartValue);
         }
 
-        public static bool operator !=(T lhs, TCgFlagType<T> rhs)
+        public static bool operator !=(T lhs, TCgFlag<T> rhs)
         {
             return !(lhs == rhs);
         }
 
         public override bool Equals(object obj)
         {
-            if (!(obj is TCgFlagType<T>))
+            if (!(obj is TCgFlag<T>))
                 return false;
 
-            TCgFlagType<T> rhs = (TCgFlagType<T>)obj;
+            TCgFlag<T> rhs = (TCgFlag<T>)obj;
 
             if (!StartValue.Equals(rhs.StartValue)) return false;
             return true;
@@ -2480,17 +2480,44 @@ namespace CgCore
         public override bool IsEqual() { return StartValue.Equals(EndValue); }
     }
 
+    public class FCgFlag_int : TCgFlag<int>
+    {
+        public FCgFlag_int(int startValue, int endValue) : base(startValue, endValue) { }
+
+        #region "Operators"
+
+        public static FCgFlag_int operator ++(FCgFlag_int f)
+        {
+            ++(f.EndValue);
+
+            if (f.StartValue.Equals(f.EndValue))
+                f.OnEqual_Event.Broadcast();
+            return f;
+        }
+
+        public static FCgFlag_int operator --(FCgFlag_int f)
+        {
+            --(f.EndValue);
+
+            if (f.StartValue.Equals(f.EndValue))
+                f.OnEqual_Event.Broadcast();
+            return f;
+        }
+
+        #endregion // Operators
+    }
+
     #endregion "Flags"
 
     #region "Attribute"
 
-    public class TFCgAttributeValue<T> where T : struct
+    public class TCgAttributeValue<T> where T : struct
     {
         public T Value;
         public T UnSetValue;
         public bool IsSet;
 
-        public TFCgAttributeValue(T value)
+        public TCgAttributeValue(T value)
         {
             Value = value;
             UnSetValue = default(T);
@@ -2515,13 +2542,13 @@ namespace CgCore
         }
     }
 
-    public class TFCgAttributeRef<T> where T : class
+    public class TCgAttributeRef<T> where T : class
     {
         public T Ref;
         public T UnSetRef;
         public bool IsSet;
 
-        public TFCgAttributeRef(T inRef)
+        public TCgAttributeRef(T inRef)
         {
             Ref = inRef;
             UnSetRef = default(T);

@@ -96,13 +96,19 @@
             }
         }
 
+        #region "Constants"
+
+        public static readonly int INDEX_NONE = -1;
+
+        #endregion // Constants
+
         #region "Data Members
 
         protected Dictionary<EnumType, int> PoolSizes;
         protected List<ObjectType> Pool;
         protected Dictionary<EnumType, List<ObjectType>> Pools;
         protected Dictionary<EnumType, int> PoolIndices;
-        protected Dictionary<EnumType, List<ObjectType>> ActiveObjects;
+        protected Dictionary<EnumType, Dictionary<int, ObjectType>> ActiveObjects;
 
         protected List<PayloadType> Payloads;
         protected int PayloadIndex;
@@ -118,7 +124,7 @@
             Pool = new List<ObjectType>();
             Pools = new Dictionary<EnumType, List<ObjectType>>(new FEnumTypeEqualityComparer());
             PoolIndices = new Dictionary<EnumType, int>(new FEnumTypeEqualityComparer());
-            ActiveObjects = new Dictionary<EnumType, List<ObjectType>>(new FEnumTypeEqualityComparer());
+            ActiveObjects = new Dictionary<EnumType, Dictionary<int, ObjectType>>(new FEnumTypeEqualityComparer());
 
             Payloads = new List<PayloadType>();
 
@@ -216,24 +222,30 @@
             }
 
             o.Init(pool.Count - 1, e);
-            o.Cache.Init(0, null, 0.0f, 0.0f, 0);
+            o.Cache.Init(null, 0.0f, 0.0f, 0);
             OnAddToPool_Event.Broadcast(e, o);
         }
 
         public virtual void AddToActivePool(EnumType e, ObjectType o)
         {
+            if (o.Cache.Index == INDEX_NONE)
+            {
+                FCgDebug.LogError(this.GetType().Name + ".AddToActivePool: Object of Type: " + EnumTypeToString(e) + " was NOT added to any pool. Call AddToPool first.");
+                return;
+            }
+
             o.Cache.bAllocated = true;
 
-            List<ObjectType> pool = null;
+            Dictionary<int, ObjectType> pool = null;
 
             if (ActiveObjects.TryGetValue(e, out pool))
             {
-                ActiveObjects[e].Add(o);
+                ActiveObjects[e].Add(o.Cache.Index, o);
             }
             else
             {
-                pool = new List<ObjectType>();
-                pool.Add(o);
+                pool = new Dictionary<int, ObjectType>();
+                pool.Add(o.Cache.Index, o);
                 ActiveObjects.Add(e, pool);
             }
             //
@@ -241,25 +253,22 @@
 
         public void OnUpdate(float deltaTime)
         {
-            Dictionary<EnumType, List<ObjectType>>.KeyCollection keys = ActiveObjects.Keys;
+            Dictionary<EnumType, Dictionary<int, ObjectType>>.KeyCollection typeKeys = ActiveObjects.Keys;
 
-            foreach (EnumType e in keys)
+            foreach (EnumType e in typeKeys)
             {
-                List<ObjectType> pool = ActiveObjects[e];
-                int count             = pool.Count;
-                int earliestIndex     = count;
+                Dictionary<int, ObjectType> pool = ActiveObjects[e];
 
-                for (int j = count - 1; j >= 0; --j)
+                Dictionary<int, ObjectType>.KeyCollection indexKeys = pool.Keys;
+
+                foreach (int index in indexKeys)
                 {
-                    ObjectType o = pool[j];
+                    ObjectType o = pool[index];
 
                     // Check if Object was DeAllocated NOT in a normal way
                     if (!o.Cache.bAllocated)
                     {
-                        ActiveObjects[e].RemoveAt(j);
-
-                        if (j < earliestIndex)
-                            earliestIndex = j;
+                        ActiveObjects[e].Remove(index);
                         continue;
                     }
 
@@ -268,23 +277,10 @@
 
                     //
                     {
+                        LogTransaction();
+
                         o.DeAllocate();
-                        ActiveObjects[e].RemoveAt(j);
-
-                        if (j < earliestIndex)
-                            earliestIndex = j;
-                    }
-                }
-
-                // Update ActiveIndex
-                if (earliestIndex != count)
-                {
-                    int max = pool.Count;
-
-                    for (int j = earliestIndex; j < max; ++j)
-                    {
-                        ObjectType o        = pool[j];
-                        o.Cache.ActiveIndex = j;
+                        ActiveObjects[e].Remove(index);
                     }
                 }
             }
@@ -293,7 +289,7 @@
 
         public int GetActivePoolSize(EnumType e)
         {
-            List<ObjectType> pool = null;
+            Dictionary<int, ObjectType> pool = null;
 
             if (!ActiveObjects.TryGetValue(e, out pool))
                 return EMPTY;
@@ -351,7 +347,7 @@
 
         public bool DeAllocate(EnumType e, int index)
         {
-            List<ObjectType> pool = null;
+            Dictionary<int, ObjectType> pool = null;
 
             if (!ActiveObjects.TryGetValue(e, out pool))
             {
@@ -359,57 +355,45 @@
                 return false;
             }
 
-            int count = pool.Count;
-
-            for (int i = count - 1; i >= 0; --i)
+            if (pool.ContainsKey(index))
             {
-                ObjectType o = pool[i];
+                ObjectType o = pool[index];
 
-                // Update ActiveIndex
-                if (i > FIRST)
-                    --o.Cache.ActiveIndex;
+                LogTransaction();
 
-                if (o.Cache.Index == index)
-                {
-                    LogTransaction();
+                o.DeAllocate();
+                ActiveObjects[e].Remove(index);
 
-                    o.DeAllocate();
-                    ActiveObjects[e].RemoveAt(i);
-
-                    // OnDeAllocate+Event
-                    return true;
-                }
+                // OnDeAllocate+Event
+                return true;
             }
-
-            // Correct on Cache "Miss"
-            for (int i = 0; i < count; ++i)
-            {
-                ObjectType o        = pool[i];
-                o.Cache.ActiveIndex = i;
-            }
-
             FCgDebug.LogError(this.GetType().Name + ".DeAllocate: Object of Type: " + EnumTypeToString(e) + " at " + index + " is already deallocated.");
             return false;
         }
 
+        public bool DeAllocate(ObjectType o)
+        {
+            return DeAllocate(o.Cache.MyType, o.Cache.Index);
+        }
+
         public void DeAllocateAll()
         {
-            Dictionary<EnumType, List<ObjectType>>.KeyCollection keys = ActiveObjects.Keys;
+            Dictionary<EnumType, Dictionary<int, ObjectType>>.KeyCollection keys = ActiveObjects.Keys;
 
             foreach (EnumType e in keys)
             {
-                List<ObjectType> pool = ActiveObjects[e];
+                Dictionary<int, ObjectType> pool = ActiveObjects[e];
 
-                int count = pool.Count;
+                Dictionary<int, ObjectType>.KeyCollection indexKeys = pool.Keys;
 
-                for (int i = count - 1; i >= 0; --i)
+                foreach (int index in indexKeys)
                 {
-                    ObjectType o = pool[i];
+                    ObjectType o = pool[index];
 
                     LogTransaction();
 
                     o.DeAllocate();
-                    ActiveObjects[e].RemoveAt(i);
+                    ActiveObjects[e].Remove(index);
                 }
             }
         }
@@ -443,7 +427,7 @@
         {
             ObjectType o = Allocate(e);
 
-            o.Allocate(GetActivePoolSize(e), payload);
+            o.Allocate(payload);
             payload.Reset();
             AddToActivePool(e, o);
             return o;
@@ -498,13 +482,19 @@
             }
         }
 
+        #region "Constants"
+
+        public static readonly int INDEX_NONE = -1;
+
+        #endregion // Constants
+
         #region "Data Members
 
         protected Dictionary<EnumType, int> PoolSizes;
         protected List<ObjectType> Pool;
         protected Dictionary<EnumType, List<ObjectType>> Pools;
         protected Dictionary<EnumType, int> PoolIndices;
-        protected Dictionary<EnumType, List<ObjectType>> ActiveObjects;
+        protected Dictionary<EnumType, Dictionary<int, ObjectType>> ActiveObjects;
 
         protected List<PayloadType> Payloads;
         protected int PayloadIndex;
@@ -520,7 +510,7 @@
             Pool = new List<ObjectType>();
             Pools = new Dictionary<EnumType, List<ObjectType>>(new FEnumTypeEqualityComparer());
             PoolIndices = new Dictionary<EnumType, int>(new FEnumTypeEqualityComparer());
-            ActiveObjects = new Dictionary<EnumType, List<ObjectType>>(new FEnumTypeEqualityComparer());
+            ActiveObjects = new Dictionary<EnumType, Dictionary<int, ObjectType>>(new FEnumTypeEqualityComparer());
 
             Payloads = new List<PayloadType>();
 
@@ -625,24 +615,30 @@
             }
 
             o.Init(pool.Count - 1, e);
-            o.GetCache().Init(0, null, 0.0f, 0.0f, 0);
+            o.GetCache().Init(null, 0.0f, 0.0f, 0);
             OnAddToPool_Event.Broadcast(e, o);
         }
 
         public virtual void AddToActivePool(EnumType e, ObjectType o)
         {
+            if (o.GetCache().Index == INDEX_NONE)
+            {
+                FCgDebug.LogError(this.GetType().Name + ".AddToActivePool: Object of Type: " + EnumTypeToString(e) + " was NOT added to any pool. Call AddToPool first.");
+                return;
+            }
+
             o.GetCache().bAllocated = true;
 
-            List<ObjectType> pool = null;
+            Dictionary<int, ObjectType> pool = null;
 
             if (ActiveObjects.TryGetValue(e, out pool))
             {
-                ActiveObjects[e].Add(o);
+                ActiveObjects[e].Add(o.GetCache().Index, o);
             }
             else
             {
-                pool = new List<ObjectType>();
-                pool.Add(o);
+                pool = new Dictionary<int, ObjectType>();
+                pool.Add(o.GetCache().Index, o);
                 ActiveObjects.Add(e, pool);
             }
             //
@@ -650,25 +646,22 @@
 
         public void OnUpdate(float deltaTime)
         {
-            Dictionary<EnumType, List<ObjectType>>.KeyCollection keys = ActiveObjects.Keys;
+            Dictionary<EnumType, Dictionary<int, ObjectType>>.KeyCollection typeKeys = ActiveObjects.Keys;
 
-            foreach (EnumType e in keys)
+            foreach (EnumType e in typeKeys)
             {
-                List<ObjectType> pool = ActiveObjects[e];
-                int count = pool.Count;
-                int earliestIndex = count;
+                Dictionary<int, ObjectType> pool = ActiveObjects[e];
 
-                for (int j = count - 1; j >= 0; --j)
+                Dictionary<int, ObjectType>.KeyCollection indexKeys = pool.Keys;
+
+                foreach (int index in indexKeys)
                 {
-                    ObjectType o = pool[j];
+                    ObjectType o = pool[index];
 
                     // Check if Object was DeAllocated NOT in a normal way
                     if (!o.GetCache().bAllocated)
                     {
-                        ActiveObjects[e].RemoveAt(j);
-
-                        if (j < earliestIndex)
-                            earliestIndex = j;
+                        ActiveObjects[e].Remove(index);
                         continue;
                     }
 
@@ -677,32 +670,18 @@
 
                     //
                     {
+                        LogTransaction();
+
                         o.DeAllocate();
-                        ActiveObjects[e].RemoveAt(j);
-
-                        if (j < earliestIndex)
-                            earliestIndex = j;
-                    }
-                }
-
-                // Update ActiveIndex
-                if (earliestIndex != count)
-                {
-                    int max = pool.Count;
-
-                    for (int j = earliestIndex; j < max; ++j)
-                    {
-                        ObjectType o = pool[j];
-                        o.GetCache().ActiveIndex = j;
+                        ActiveObjects[e].Remove(index);
                     }
                 }
             }
-            //ActiveObjects.key
         }
 
         public int GetActivePoolSize(EnumType e)
         {
-            List<ObjectType> pool = null;
+            Dictionary<int, ObjectType> pool = null;
 
             if (!ActiveObjects.TryGetValue(e, out pool))
                 return EMPTY;
@@ -760,7 +739,7 @@
 
         public bool DeAllocate(EnumType e, int index)
         {
-            List<ObjectType> pool = null;
+            Dictionary<int, ObjectType> pool = null;
 
             if (!ActiveObjects.TryGetValue(e, out pool))
             {
@@ -768,57 +747,45 @@
                 return false;
             }
 
-            int count = pool.Count;
-
-            for (int i = count - 1; i >= 0; --i)
+            if (pool.ContainsKey(index))
             {
-                ObjectType o = pool[i];
+                ObjectType o = pool[index];
 
-                // Update ActiveIndex
-                if (i > FIRST)
-                    --o.GetCache().ActiveIndex;
+                LogTransaction();
 
-                if (o.GetCache().Index == index)
-                {
-                    LogTransaction();
+                o.DeAllocate();
+                ActiveObjects[e].Remove(index);
 
-                    o.DeAllocate();
-                    ActiveObjects[e].RemoveAt(i);
-
-                    // OnDeAllocate+Event
-                    return true;
-                }
+                // OnDeAllocate+Event
+                return true;
             }
-
-            // Correct on Cache "Miss"
-            for (int i = 0; i < count; ++i)
-            {
-                ObjectType o = pool[i];
-                o.GetCache().ActiveIndex = i;
-            }
-
             FCgDebug.LogError(this.GetType().Name + ".DeAllocate: Object of Type: " + EnumTypeToString(e) + " at " + index + " is already deallocated.");
             return false;
         }
 
+        public bool DeAllocate(ObjectType o)
+        {
+            return DeAllocate((EnumType)(o.GetCache().GetMyType()), o.GetCache().Index);
+        }
+
         public void DeAllocateAll()
         {
-            Dictionary<EnumType, List<ObjectType>>.KeyCollection keys = ActiveObjects.Keys;
+            Dictionary<EnumType, Dictionary<int, ObjectType>>.KeyCollection typeKeys = ActiveObjects.Keys;
 
-            foreach (EnumType e in keys)
+            foreach (EnumType e in typeKeys)
             {
-                List<ObjectType> pool = ActiveObjects[e];
+                Dictionary<int, ObjectType> pool = ActiveObjects[e];
 
-                int count = pool.Count;
+                Dictionary<int, ObjectType>.KeyCollection indexKeys = pool.Keys;
 
-                for (int i = count - 1; i >= 0; --i)
+                foreach (int index in indexKeys)
                 {
-                    ObjectType o = pool[i];
+                    ObjectType o = pool[index];
 
                     LogTransaction();
 
                     o.DeAllocate();
-                    ActiveObjects[e].RemoveAt(i);
+                    ActiveObjects[e].Remove(index);
                 }
             }
         }
@@ -852,7 +819,7 @@
         {
             ObjectType o = Allocate(e);
 
-            o.Allocate(GetActivePoolSize(e), payload);
+            o.Allocate(payload);
             payload.Reset();
             AddToActivePool(e, o);
             return o;

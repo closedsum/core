@@ -40,6 +40,7 @@
 
             OnExitingPlayMode_Event = new FOnExitingPlayMode();
 
+            MCgDataMapping.Init();
             FCgManager_Prefab.Get().Init();
 
             // Set Editor Callbacks

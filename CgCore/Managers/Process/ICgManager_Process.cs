@@ -99,7 +99,6 @@
             if (_Instance != null)
                 return;
 
-
             if (!type.IsSubclassOf(typeof(TCgManager_PooledObjects<FECgProcess, FCgProcess, FCgProcessPayload>)))
             {
                 FCgDebug.Log("ICgManager_Process.Init: Passed in Type of " + type.GetType().Name + " is NOT a SubclassOf TCgManager_PooledObjects<ECgProcess, FCgProcess, FCgProcessPayload>");

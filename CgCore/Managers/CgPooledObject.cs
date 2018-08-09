@@ -8,7 +8,6 @@
         #region "Data Members"
 
         int Index { get; set; }
-        int ActiveIndex { get; set; }
         bool bAllocated { get; set; }
 
         object Instigator { get; set; }
@@ -26,8 +25,9 @@
         #endregion // Data Members
 
         void Set(int index, object o);
-        void SetType(object e);
-        void Init(int activeIndex, ICgPooledObjectPayload payload, float time, float realTime, ulong frame);
+        void SetMyType(object e);
+        object GetMyType();
+        void Init(ICgPooledObjectPayload payload, float time, float realTime, ulong frame);
         void Reset();
         void DeAllocate();
     }
@@ -46,12 +46,6 @@
         {
             get { return _Index; }
             set { _Index = value; }
-        }
-        private int _ActiveIndex;
-        public int ActiveIndex
-        {
-            get { return _ActiveIndex; }
-            set { _ActiveIndex = value; }
         }
         private bool _bAllocated;
         public bool bAllocated
@@ -126,7 +120,7 @@
 
         public ObjectType PooledObject;
 
-        public EnumType Type;
+        public EnumType MyType;
 
         public FOnDeAllocate OnDeAllocate_Event;
 
@@ -143,14 +137,18 @@
             PooledObject = (ObjectType)o;
         }
 
-        public void SetType(object e)
+        public void SetMyType(object e)
         {
-            Type = (EnumType)e;
+            MyType = (EnumType)e;
         }
 
-        public virtual void Init(int activeIndex, ICgPooledObjectPayload payload, float time, float realTime, ulong frame)
+        public object GetMyType()
         {
-            ActiveIndex = activeIndex;
+            return MyType;
+        }
+
+        public virtual void Init(ICgPooledObjectPayload payload, float time, float realTime, ulong frame)
+        {
             Instigator = payload.Instigator;
             Owner = payload.Owner;
             Parent = payload.Parent;
@@ -162,7 +160,6 @@
 
         public virtual void Reset()
         {
-            ActiveIndex = 0;
             bAllocated = false;
             //Type =
             OnDeAllocate_Event.Clear();
@@ -188,7 +185,7 @@
     public interface ICgPooledObject
     {
         void OnCreatePool();
-        void Allocate(int activeIndex, ICgPooledObjectPayload payload);
+        void Allocate(ICgPooledObjectPayload payload);
         void DeAllocate();
     }
 
@@ -209,9 +206,9 @@
 
         }
 
-        public virtual void Allocate(int activeIndex, ICgPooledObjectPayload payload)
+        public virtual void Allocate(ICgPooledObjectPayload payload)
         {
-            Cache.Init(activeIndex, payload, 0.0f, 0.0f, 0);
+            Cache.Init(payload, 0.0f, 0.0f, 0);
         }
 
         public virtual void DeAllocate()
@@ -224,7 +221,7 @@
         public virtual void Init(int index, EnumType e)
         {
             Cache.Set(index, this);
-            Cache.Type = e;
+            Cache.MyType = e;
         }
     }
 }

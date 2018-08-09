@@ -130,9 +130,9 @@
 
         #region "Interface"
 
-        public override void Allocate(int activeIndex, ICgPooledObjectPayload payload)
+        public override void Allocate(ICgPooledObjectPayload payload)
         {
-            base.Allocate(activeIndex, payload);
+            base.Allocate(payload);
 
             FCgProcessPayload pay = (FCgProcessPayload)payload;
 

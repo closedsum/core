@@ -9,6 +9,8 @@ namespace CgCore
     {
         #region "Constants"
 
+        public static readonly float KINDA_SMALL_NUMBER = 0.0001f;
+
         public static readonly float INV_PI = 0.31830988618f;
         public static readonly float HALF_PI = 1.57079632679f;
 

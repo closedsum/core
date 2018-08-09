@@ -247,7 +247,7 @@ namespace CgCore
             }
 
             RoutinesRunning[schedule].Add(r);
-
+            r.State = ECgRoutineState.Running;
             r.Run(0.0f);
             return r;
         }

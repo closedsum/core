@@ -20,42 +20,42 @@
     {
         #region "Data Members"
 
-        private string name;
+        private string _Name;
         public string Name
         {
             get
             {
-                return name;
+                return _Name;
             }
             set
             {
-                name = value;
+                _Name = value;
             }
         }
 
-        private string description;
+        private string _Description;
         public string Description
         {
             get
             {
-                return description;
+                return _Description;
             }
             set
             {
-                description = value;
+                _Description = value;
             }
         }
 
-        private int flag;
+        private int _Flag;
         public int Flag
         {
             get
             {
-                return flag;
+                return _Flag;
             }
             set
             {
-                flag = value;
+                _Flag = value;
             }
         }
 
@@ -63,15 +63,15 @@
 
         #endregion // Data Members
 
-        public TCgConsoleVariable(string inName, T inValue, string inDescription, int inFlag)
+        public TCgConsoleVariable(string name, T value, string description, int flag)
         {
-            Name = inName;
+            Name = name;
             Value = new TCgProperty<T>();
-            Set(inValue);
-            Description = inDescription;
-            Flag = inFlag;
+            Set(value);
+            Description = description;
+            Flag = flag;
 
-            ConsoleCommandsRepository.Instance.RegisterCommand(inName, Set);
+            ConsoleCommandsRepository.Instance.RegisterCommand(name, Set);
         }
 
         public T Get()
@@ -79,12 +79,12 @@
             return Value.Get();
         }
 
-        public void Set(T inValue)
+        public virtual void Set(T value)
         {
-            Value.Set(inValue);
+            Value.Set(value);
         }
 
-        public string Set(params string[] args)
+        public virtual string Set(params string[] args)
         {
             // Check at least ONE argument is passed
             if (args.Length == 0)
@@ -106,9 +106,74 @@
         }
     }
 
-    public sealed class FCgConsoleVariableLog : TCgConsoleVariable<bool>
+    public class FCgConsoleVariable_bool : TCgConsoleVariable<bool>
     {
-        public FCgConsoleVariableLog(string inName, bool inValue, string inDescription, int inFlag) : base(inName, inValue, inDescription, inFlag) { }
+        public FCgConsoleVariable_bool(string name, bool value, string description, int flag) : base(name, value, description, flag) { }
+
+        public override void Set(bool value)
+        {
+            Value.Set(value);
+        }
+
+        public override string Set(params string[] args)
+        {
+            // Check at least ONE argument is passed
+            if (args.Length == 0)
+                return "Failed to set " + Name;
+            // Check argument is of type bool
+            bool bValue = false;
+
+            if (bool.TryParse(args[0], out bValue))
+            {
+                Value.Set(bValue);
+                return Name + " set to " + Value.ToString();
+            }
+            // Check for 1 or 0
+            else
+            {
+                // int
+                int iValue = 0;
+                if (Int32.TryParse(args[0], out iValue))
+                {
+                    if (iValue == 0)
+                    {
+                        Value.Set(false);
+                        return Name + " set to " + Value.ToString();
+                    }
+
+                    if (iValue == 1)
+                    {
+                        Value.Set(true);
+                        return Name + " set to " + Value.ToString();
+                    }
+                    return "Invalid value for " + Name + ". Must be true, false, 1, or 0.";
+                }
+                // float
+                float fValue = 0.0f;
+                    
+                if (float.TryParse(args[0], out fValue))
+                {
+                    if (fValue == 0.0)
+                    {
+                        Value.Set(false);
+                        return Name + " set to " + Value.ToString();
+                    }
+
+                    if (fValue == 1.0)
+                    {
+                        Value.Set(true);
+                        return Name + " set to " + Value.ToString();
+                    }
+                    return "Invalid value for " + Name + ". Must be true, false, 1, or 0.";
+                }
+            }
+            return "Invalid argument for " + Name + ". Must be type of " + typeof(bool);
+        }
+    }
+
+    public sealed class FCgConsoleVariableLog : FCgConsoleVariable_bool
+    {
+        public FCgConsoleVariableLog(string name, bool value, string description, int flag) : base(name, value, description, flag) { }
 
         public bool Log()
         {
@@ -116,9 +181,9 @@
         }
     }
 
-    public sealed class FCgConsoleVariableDraw : TCgConsoleVariable<bool>
+    public sealed class FCgConsoleVariableDraw : FCgConsoleVariable_bool
     {
-        public FCgConsoleVariableDraw(string inName, bool inValue, string inDescription, int inFlag) : base(inName, inValue, inDescription, inFlag) { }
+        public FCgConsoleVariableDraw(string name, bool value, string description, int flag) : base(name, value, description, flag) { }
 
         public bool Draw()
         {

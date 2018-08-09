@@ -63,5 +63,20 @@ namespace CgCore
         {
             return Mathf.FloorToInt(kilobytes * Mathf.Pow(10.0f, 3.0f));
         }
+
+        #region "Coroutine"
+
+        public static bool CoroutineStopCondition_CheckMonoObject(FCgRoutine r)
+        {
+            MonoBehaviour mb = r.Owner.Get<MonoBehaviour>();
+
+            if (mb != null)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        #endregion // Coroutine
     }
 }

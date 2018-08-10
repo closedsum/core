@@ -2451,14 +2451,14 @@ namespace CgCore
         public void SetStart(T startValue)
         {
             StartValue = startValue;
+
+            if (StartValue.Equals(EndValue))
+                OnEqual_Event.Broadcast();
         }
 
         public void SetEnd(T endValue)
         {
             EndValue = endValue;
-
-            if (StartValue.Equals(EndValue))
-                OnEqual_Event.Broadcast();
         }
 
         public T GetStart() { return StartValue; }
@@ -2488,7 +2488,7 @@ namespace CgCore
 
         public static FCgFlag_int operator ++(FCgFlag_int f)
         {
-            ++(f.EndValue);
+            ++(f.StartValue);
 
             if (f.StartValue.Equals(f.EndValue))
                 f.OnEqual_Event.Broadcast();
@@ -2497,7 +2497,7 @@ namespace CgCore
 
         public static FCgFlag_int operator --(FCgFlag_int f)
         {
-            --(f.EndValue);
+            --(f.StartValue);
 
             if (f.StartValue.Equals(f.EndValue))
                 f.OnEqual_Event.Broadcast();

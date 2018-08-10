@@ -6,5 +6,7 @@
     {
         public FECgAssetType AssetType;
         public string ShortCode;
+
+        public virtual void Init() { }
     }
 }

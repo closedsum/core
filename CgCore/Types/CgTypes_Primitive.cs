@@ -2480,6 +2480,11 @@ namespace CgCore
         public override bool IsEqual() { return StartValue.Equals(EndValue); }
     }
 
+    public class FCgFlag_bool : TCgFlag<bool>
+    {
+        public FCgFlag_bool(bool startValue, bool endValue) : base(startValue, endValue) { }
+    }
+
     public class FCgFlag_int : TCgFlag<int>
     {
         public FCgFlag_int(int startValue, int endValue) : base(startValue, endValue) { }

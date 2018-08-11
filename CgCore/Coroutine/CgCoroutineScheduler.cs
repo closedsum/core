@@ -44,7 +44,7 @@ namespace CgCore
 
     #region "Cache"
 
-    namespace ECgCoroutineScheduler
+    namespace ECgCoroutineSchedulerCached
     {
         public static class Str
         {
@@ -63,8 +63,10 @@ namespace CgCore
 
         #region "Constants"
 
-        private const int EMPTY = 0;
-        private const ushort POOL_SIZE = 2048;
+        private static readonly int EMPTY = 0;
+        private static readonly ushort POOL_SIZE = 2048;
+
+        private static readonly byte ECG_COROUTINE_SCHEDULE_MAX = (byte)ECgCoroutineSchedule.MAX;
 
         #endregion // Constants
 
@@ -109,7 +111,7 @@ namespace CgCore
         {
             Pools = new Dictionary<ECgCoroutineSchedule, List<FCgRoutine>>(new ECgCoroutineScheduleEqualityComparer());
 
-            for (byte i = 0; i < (byte)ECgCoroutineSchedule.MAX; ++i)
+            for (byte i = 0; i < ECG_COROUTINE_SCHEDULE_MAX; ++i)
             {
                 List<FCgRoutine> routines = new List<FCgRoutine>();
                 ECgCoroutineSchedule schedule = (ECgCoroutineSchedule)i;
@@ -123,28 +125,28 @@ namespace CgCore
 
             PoolIndicies = new Dictionary<ECgCoroutineSchedule, int>(new ECgCoroutineScheduleEqualityComparer());
 
-            for (byte i = 0; i < (byte)ECgCoroutineSchedule.MAX; ++i)
+            for (byte i = 0; i < ECG_COROUTINE_SCHEDULE_MAX; ++i)
             {
                 PoolIndicies[(ECgCoroutineSchedule)i] = 0;
             }
 
             RoutinesRunning = new Dictionary<ECgCoroutineSchedule, List<FCgRoutine>>(new ECgCoroutineScheduleEqualityComparer());
 
-            for (byte i = 0; i < (byte)ECgCoroutineSchedule.MAX; ++i)
+            for (byte i = 0; i < ECG_COROUTINE_SCHEDULE_MAX; ++i)
             {
                 RoutinesRunning[(ECgCoroutineSchedule)i] = new List<FCgRoutine>();
             }
 
             Heads = new Dictionary<ECgCoroutineSchedule, FCgRoutine>(new ECgCoroutineScheduleEqualityComparer());
 
-            for (byte i = 0; i < (byte)ECgCoroutineSchedule.MAX; ++i)
+            for (byte i = 0; i < ECG_COROUTINE_SCHEDULE_MAX; ++i)
             {
                 Heads[(ECgCoroutineSchedule)i] = null;
             }
 
             Tails = new Dictionary<ECgCoroutineSchedule, FCgRoutine>(new ECgCoroutineScheduleEqualityComparer());
 
-            for (byte i = 0; i < (byte)ECgCoroutineSchedule.MAX; ++i)
+            for (byte i = 0; i < ECG_COROUTINE_SCHEDULE_MAX; ++i)
             {
                 Tails[(ECgCoroutineSchedule)i] = null;
             }
@@ -185,7 +187,7 @@ namespace CgCore
 
             FCgRoutine r = Allocate_Internal(schedule);
 
-            LogTransaction(ECgCoroutineScheduler.Str.Allocate, ECgCoroutineTransaction.Allocate, r);
+            LogTransaction(ECgCoroutineSchedulerCached.Str.Allocate, ECgCoroutineTransaction.Allocate, r);
 
             r.Start(payload.Fiber, payload.Stop, payload.Owner, payload.OwnerName, Time.timeSinceLevelLoad, payload.Add, payload.Remove, payload.RoutineType);
             r.State = ECgRoutineState.Allocating;
@@ -281,7 +283,7 @@ namespace CgCore
 
             RoutinesRunning[schedule].Add(r);
 
-            LogTransaction(ECgCoroutineScheduler.Str.Start, ECgCoroutineTransaction.Start, r);
+            LogTransaction(ECgCoroutineSchedulerCached.Str.Start, ECgCoroutineTransaction.Start, r);
 
             // TODO: get Time from Manager_Time
             r.Start(payload.Fiber, payload.Stop, payload.Owner, payload.OwnerName, Time.timeSinceLevelLoad, payload.Add, payload.Remove, payload.RoutineType);
@@ -303,6 +305,37 @@ namespace CgCore
 
         public void EndAll()
         {
+            for (byte i = 0; i < ECG_COROUTINE_SCHEDULE_MAX; ++i)
+            {
+                PoolIndicies[(ECgCoroutineSchedule)i] = 0;
+            }
+
+            for (byte i = 0; i < ECG_COROUTINE_SCHEDULE_MAX; ++i)
+            {
+                ECgCoroutineSchedule schedule = (ECgCoroutineSchedule)i;
+                int count                     = RoutinesRunning[(ECgCoroutineSchedule)i].Count;
+
+                for (int j = 0; j < count; ++j)
+                {
+                    RoutinesRunning[schedule][j].End(ECgCoroutineEndReason.Shutdown);
+                    RoutinesRunning[schedule][j].Reset();
+                }
+            }
+
+            for (byte i = 0; i < ECG_COROUTINE_SCHEDULE_MAX; ++i)
+            {
+                Heads[(ECgCoroutineSchedule)i] = null;
+            }
+
+            for (byte i = 0; i < ECG_COROUTINE_SCHEDULE_MAX; ++i)
+            {
+                Tails[(ECgCoroutineSchedule)i] = null;
+            }
+
+            for (ushort i = 0; i < POOL_SIZE; ++i)
+            {
+                Payloads[i].Reset();
+            }
         }
 
         public void BroadcastMessage(ECgCoroutineSchedule schedule, ECgCoroutineMessage msgType, string msg, object owner = null)

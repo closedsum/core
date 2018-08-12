@@ -64,7 +64,7 @@
         }
     }
 
-    public class FCgManager_Process : TCgManager_PooledObjects<FECgProcess, FCgProcess, FCgProcessPayload>
+    public class FCgManager_Process : TCgManager_PooledObjects_Map<FECgProcess, FCgProcess, FCgProcessPayload>
     {
         private static readonly int PAYLOAD_COUNT = 8;
 
@@ -99,9 +99,9 @@
             if (_Instance != null)
                 return;
 
-            if (!type.IsSubclassOf(typeof(TCgManager_PooledObjects<FECgProcess, FCgProcess, FCgProcessPayload>)))
+            if (!type.IsSubclassOf(typeof(TCgManager_PooledObjects_Map<FECgProcess, FCgProcess, FCgProcessPayload>)))
             {
-                FCgDebug.Log("ICgManager_Process.Init: Passed in Type of " + type.GetType().Name + " is NOT a SubclassOf TCgManager_PooledObjects<ECgProcess, FCgProcess, FCgProcessPayload>");
+                FCgDebug.Log("ICgManager_Process.Init: Passed in Type of " + type.GetType().Name + " is NOT a SubclassOf TCgManager_PooledObjects_Map<ECgProcess, FCgProcess, FCgProcessPayload>");
                 return;
             }
 

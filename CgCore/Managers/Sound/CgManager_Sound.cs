@@ -12,7 +12,7 @@
     }
 
     /*
-    public class FCgManager_Sound : TCgManager_PooledMonoObjects<FECgSoundType, MCgSound, FCgSoundPayload>
+    public class FCgManager_Sound : TCgManager_PooledMonoObjects_Map<FECgSoundType, MCgSound, FCgSoundPayload>
     {
         private static readonly int PAYLOAD_COUNT = 8;
 

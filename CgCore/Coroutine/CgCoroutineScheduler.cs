@@ -9,7 +9,7 @@ namespace CgCore
     {
         public bool IsAllocated;
 
-        public ECgCoroutineSchedule Schedule;
+        public FECgCoroutineSchedule Schedule;
 
         public IEnumerator Fiber;
         public object Owner;
@@ -30,7 +30,7 @@ namespace CgCore
         public void Reset()
         {
             IsAllocated = false;
-            Schedule = ECgCoroutineSchedule.MAX;
+            Schedule = EMCgCoroutineSchedule.Get().GetMAX();
             Fiber = null;
             Owner = null;
             OwnerName = "";
@@ -44,7 +44,7 @@ namespace CgCore
 
     #region "Cache"
 
-    namespace ECgCoroutineScheduler
+    namespace ECgCoroutineSchedulerCached
     {
         public static class Str
         {
@@ -63,8 +63,10 @@ namespace CgCore
 
         #region "Constants"
 
-        private const int EMPTY = 0;
-        private const ushort POOL_SIZE = 2048;
+        private static readonly int EMPTY = 0;
+        private static readonly ushort POOL_SIZE = 2048;
+
+        private static readonly byte ECG_COROUTINE_SCHEDULE_MAX;
 
         #endregion // Constants
 
@@ -86,12 +88,12 @@ namespace CgCore
         private int currentFrame;
         private float currentTime;
 
-        public Dictionary<ECgCoroutineSchedule, List<FCgRoutine>> Pools;
-        public Dictionary<ECgCoroutineSchedule, int> PoolIndicies;
-        public Dictionary<ECgCoroutineSchedule, List<FCgRoutine>> RoutinesRunning;
+        public Dictionary<FECgCoroutineSchedule, List<FCgRoutine>> Pools;
+        public Dictionary<FECgCoroutineSchedule, int> PoolIndicies;
+        public Dictionary<FECgCoroutineSchedule, List<FCgRoutine>> RoutinesRunning;
 
-        public Dictionary<ECgCoroutineSchedule, FCgRoutine> Heads;
-        public Dictionary<ECgCoroutineSchedule, FCgRoutine> Tails;
+        public Dictionary<FECgCoroutineSchedule, FCgRoutine> Heads;
+        public Dictionary<FECgCoroutineSchedule, FCgRoutine> Tails;
 
             #region "Payload"
 
@@ -105,48 +107,53 @@ namespace CgCore
 
         // Constructor
 
+        static FCgCoroutineScheduler()
+        {
+            ECG_COROUTINE_SCHEDULE_MAX = (byte)EMCgCoroutineSchedule.Get().Count;
+        }
+
         public FCgCoroutineScheduler()
         {
-            Pools = new Dictionary<ECgCoroutineSchedule, List<FCgRoutine>>(new ECgCoroutineScheduleEqualityComparer());
+            Pools = new Dictionary<FECgCoroutineSchedule, List<FCgRoutine>>(new FECgCoroutineScheduleEqualityComparer());
 
-            for (byte i = 0; i < (byte)ECgCoroutineSchedule.MAX; ++i)
+            for (byte i = 0; i < ECG_COROUTINE_SCHEDULE_MAX; ++i)
             {
                 List<FCgRoutine> routines = new List<FCgRoutine>();
-                ECgCoroutineSchedule schedule = (ECgCoroutineSchedule)i;
+                FECgCoroutineSchedule schedule = EMCgCoroutineSchedule.Get()[i];
 
                 for (ushort j = 0; j < POOL_SIZE; ++j)
                 {
                     routines.Add(new FCgRoutine(j, schedule, InsertRoutine));
                 }
-                Pools[(ECgCoroutineSchedule)i] = routines;
+                Pools[EMCgCoroutineSchedule.Get()[i]] = routines;
             }
 
-            PoolIndicies = new Dictionary<ECgCoroutineSchedule, int>(new ECgCoroutineScheduleEqualityComparer());
+            PoolIndicies = new Dictionary<FECgCoroutineSchedule, int>(new FECgCoroutineScheduleEqualityComparer());
 
-            for (byte i = 0; i < (byte)ECgCoroutineSchedule.MAX; ++i)
+            for (byte i = 0; i < ECG_COROUTINE_SCHEDULE_MAX; ++i)
             {
-                PoolIndicies[(ECgCoroutineSchedule)i] = 0;
+                PoolIndicies[EMCgCoroutineSchedule.Get()[i]] = 0;
             }
 
-            RoutinesRunning = new Dictionary<ECgCoroutineSchedule, List<FCgRoutine>>(new ECgCoroutineScheduleEqualityComparer());
+            RoutinesRunning = new Dictionary<FECgCoroutineSchedule, List<FCgRoutine>>(new FECgCoroutineScheduleEqualityComparer());
 
-            for (byte i = 0; i < (byte)ECgCoroutineSchedule.MAX; ++i)
+            for (byte i = 0; i < ECG_COROUTINE_SCHEDULE_MAX; ++i)
             {
-                RoutinesRunning[(ECgCoroutineSchedule)i] = new List<FCgRoutine>();
+                RoutinesRunning[EMCgCoroutineSchedule.Get()[i]] = new List<FCgRoutine>();
             }
 
-            Heads = new Dictionary<ECgCoroutineSchedule, FCgRoutine>(new ECgCoroutineScheduleEqualityComparer());
+            Heads = new Dictionary<FECgCoroutineSchedule, FCgRoutine>(new FECgCoroutineScheduleEqualityComparer());
 
-            for (byte i = 0; i < (byte)ECgCoroutineSchedule.MAX; ++i)
+            for (byte i = 0; i < ECG_COROUTINE_SCHEDULE_MAX; ++i)
             {
-                Heads[(ECgCoroutineSchedule)i] = null;
+                Heads[EMCgCoroutineSchedule.Get()[i]] = null;
             }
 
-            Tails = new Dictionary<ECgCoroutineSchedule, FCgRoutine>(new ECgCoroutineScheduleEqualityComparer());
+            Tails = new Dictionary<FECgCoroutineSchedule, FCgRoutine>(new FECgCoroutineScheduleEqualityComparer());
 
-            for (byte i = 0; i < (byte)ECgCoroutineSchedule.MAX; ++i)
+            for (byte i = 0; i < ECG_COROUTINE_SCHEDULE_MAX; ++i)
             {
-                Tails[(ECgCoroutineSchedule)i] = null;
+                Tails[EMCgCoroutineSchedule.Get()[i]] = null;
             }
 
             Payloads = new List<FCgCoroutinePayload>();
@@ -162,7 +169,7 @@ namespace CgCore
             return Instance;
         }
 
-        private FCgRoutine Allocate_Internal(ECgCoroutineSchedule schedule)
+        private FCgRoutine Allocate_Internal(FECgCoroutineSchedule schedule)
         {
             for (ushort i = 0; i < POOL_SIZE; ++i)
             {
@@ -181,11 +188,11 @@ namespace CgCore
 
         public FCgRoutine Allocate(FCgCoroutinePayload payload)
         {
-            ECgCoroutineSchedule schedule = payload.Schedule;
+            FECgCoroutineSchedule schedule = payload.Schedule;
 
             FCgRoutine r = Allocate_Internal(schedule);
 
-            LogTransaction(ECgCoroutineScheduler.Str.Allocate, ECgCoroutineTransaction.Allocate, r);
+            LogTransaction(ECgCoroutineSchedulerCached.Str.Allocate, ECgCoroutineTransaction.Allocate, r);
 
             r.Start(payload.Fiber, payload.Stop, payload.Owner, payload.OwnerName, Time.timeSinceLevelLoad, payload.Add, payload.Remove, payload.RoutineType);
             r.State = ECgRoutineState.Allocating;
@@ -194,7 +201,7 @@ namespace CgCore
             return r;
         }
 
-        public void InsertRoutine(ECgCoroutineSchedule schedule, FCgRoutine pivot, FCgRoutine insert)
+        public void InsertRoutine(FECgCoroutineSchedule schedule, FCgRoutine pivot, FCgRoutine insert)
         {
             // Detach insert
 
@@ -229,7 +236,7 @@ namespace CgCore
             }
         }
 
-        public FCgRoutine Start(ECgCoroutineSchedule schedule, FCgRoutine r)
+        public FCgRoutine Start(FECgCoroutineSchedule schedule, FCgRoutine r)
         {
             // If NO Head, Make r the Head
             if (Heads[schedule] == null)
@@ -254,7 +261,7 @@ namespace CgCore
 
         public FCgRoutine Start(FCgCoroutinePayload payload)
         {
-            ECgCoroutineSchedule schedule = payload.Schedule;
+            FECgCoroutineSchedule schedule = payload.Schedule;
 
             FCgRoutine r = Allocate_Internal(schedule);
 
@@ -281,7 +288,7 @@ namespace CgCore
 
             RoutinesRunning[schedule].Add(r);
 
-            LogTransaction(ECgCoroutineScheduler.Str.Start, ECgCoroutineTransaction.Start, r);
+            LogTransaction(ECgCoroutineSchedulerCached.Str.Start, ECgCoroutineTransaction.Start, r);
 
             // TODO: get Time from Manager_Time
             r.Start(payload.Fiber, payload.Stop, payload.Owner, payload.OwnerName, Time.timeSinceLevelLoad, payload.Add, payload.Remove, payload.RoutineType);
@@ -291,7 +298,7 @@ namespace CgCore
             return r;
         }
 
-        public FCgRoutine Start(ECgCoroutineSchedule schedule, IEnumerator fiber)
+        public FCgRoutine Start(FECgCoroutineSchedule schedule, IEnumerator fiber)
         {
             FCgCoroutinePayload payload = AllocatePayload();
 
@@ -303,9 +310,40 @@ namespace CgCore
 
         public void EndAll()
         {
+            for (byte i = 0; i < ECG_COROUTINE_SCHEDULE_MAX; ++i)
+            {
+                PoolIndicies[EMCgCoroutineSchedule.Get()[i]] = 0;
+            }
+
+            for (byte i = 0; i < ECG_COROUTINE_SCHEDULE_MAX; ++i)
+            {
+                FECgCoroutineSchedule schedule = EMCgCoroutineSchedule.Get()[i];
+                int count                     = RoutinesRunning[schedule].Count;
+
+                for (int j = 0; j < count; ++j)
+                {
+                    RoutinesRunning[schedule][j].End(ECgCoroutineEndReason.Shutdown);
+                    RoutinesRunning[schedule][j].Reset();
+                }
+            }
+
+            for (byte i = 0; i < ECG_COROUTINE_SCHEDULE_MAX; ++i)
+            {
+                Heads[EMCgCoroutineSchedule.Get()[i]] = null;
+            }
+
+            for (byte i = 0; i < ECG_COROUTINE_SCHEDULE_MAX; ++i)
+            {
+                Tails[EMCgCoroutineSchedule.Get()[i]] = null;
+            }
+
+            for (ushort i = 0; i < POOL_SIZE; ++i)
+            {
+                Payloads[i].Reset();
+            }
         }
 
-        public void BroadcastMessage(ECgCoroutineSchedule schedule, ECgCoroutineMessage msgType, string msg, object owner = null)
+        public void BroadcastMessage(FECgCoroutineSchedule schedule, ECgCoroutineMessage msgType, string msg, object owner = null)
         {
             int count = RoutinesRunning[schedule].Count;
 
@@ -320,12 +358,12 @@ namespace CgCore
             }
         }
 
-        public bool HasCoroutines(ECgCoroutineSchedule schedule)
+        public bool HasCoroutines(FECgCoroutineSchedule schedule)
         {
             return Heads[schedule] != null;
         }
 
-        public void Update(ECgCoroutineSchedule schedule, float deltaTime)
+        public void Update(FECgCoroutineSchedule schedule, float deltaTime)
         {
             // Iterate through List
             FCgRoutine current = Heads[schedule];

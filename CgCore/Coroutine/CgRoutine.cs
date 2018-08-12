@@ -41,7 +41,7 @@ namespace CgCore
         public sealed class FAddRoutine : TCgDelegate_Ret_OneParam<bool, FCgRoutine> { }
         public sealed class FRemoveRoutine : TCgDelegate_Ret_OneParam<bool, FCgRoutine> { }
 
-        public delegate void InsertRoutineAheadOf(ECgCoroutineSchedule schedule, FCgRoutine pivot, FCgRoutine insert);
+        public delegate void InsertRoutineAheadOf(FECgCoroutineSchedule schedule, FCgRoutine pivot, FCgRoutine insert);
 
         public sealed class FFrameType : TCgProperty<int> { }
         public sealed class FTimeType : TCgProperty<float> { }
@@ -60,7 +60,7 @@ namespace CgCore
         #region "Data Members"
 
         public readonly int Index;
-        public readonly ECgCoroutineSchedule Schedule;
+        public readonly FECgCoroutineSchedule Schedule;
 
         public FCgRoutine Prev;
         public FCgRoutine Next;
@@ -127,7 +127,7 @@ namespace CgCore
 
         // Constructor
 
-        public FCgRoutine(int index, ECgCoroutineSchedule schedule, InsertRoutineAheadOf insertRoutine)
+        public FCgRoutine(int index, FECgCoroutineSchedule schedule, InsertRoutineAheadOf insertRoutine)
         {
             Index = index;
             Schedule = schedule;

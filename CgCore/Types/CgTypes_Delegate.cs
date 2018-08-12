@@ -56,7 +56,7 @@ namespace CgCore
 
     #region "Single"
 
-    public abstract class CgDelegate
+    public abstract class FCgDelegate
     {
         public delegate void Event();
 

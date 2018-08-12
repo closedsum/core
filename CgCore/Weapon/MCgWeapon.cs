@@ -1075,7 +1075,7 @@
             FCgCoroutineScheduler scheduler = FCgCoroutineScheduler.Get();
             FCgCoroutinePayload payload     = scheduler.AllocatePayload();
 
-            ECgCoroutineSchedule schedule = ECgCoroutineSchedule.Update;
+            FECgCoroutineSchedule schedule = ECgCoroutineSchedule.Update;
 
             payload.Schedule = schedule;
             payload.Fiber   = StartChargeFire_Internal(this, fireMode);
@@ -1259,7 +1259,7 @@
             FCgCoroutineScheduler scheduler = FCgCoroutineScheduler.Get();
             FCgCoroutinePayload payload     = scheduler.AllocatePayload();
 
-            ECgCoroutineSchedule schedule = ECgCoroutineSchedule.Update;
+            FECgCoroutineSchedule schedule = ECgCoroutineSchedule.Update;
 
             payload.Schedule = schedule;
             payload.Fiber   = FireWeapon_Internal(this, fireMode);

@@ -60,7 +60,7 @@
 
     }
 
-    public class TCgManager_PooledObjects<EnumType, ObjectType, PayloadType> : ICgManager 
+    public class TCgManager_PooledObjects_Map<EnumType, ObjectType, PayloadType> : ICgManager 
         where ObjectType : TCgPooledObject<EnumType>
         where PayloadType : ICgPooledObjectPayload
     {
@@ -83,14 +83,14 @@
         protected static int EMPTY = 0;
         protected static int FIRST = 0;
 
-        private static TCgManager_PooledObjects<EnumType, ObjectType, PayloadType> _Instance;
-        public static TCgManager_PooledObjects<EnumType, ObjectType, PayloadType> Instance
+        private static TCgManager_PooledObjects_Map<EnumType, ObjectType, PayloadType> _Instance;
+        public static TCgManager_PooledObjects_Map<EnumType, ObjectType, PayloadType> Instance
         {
             get
             {
                 if (_Instance == null)
                 {
-                    _Instance = new TCgManager_PooledObjects<EnumType, ObjectType, PayloadType>();
+                    _Instance = new TCgManager_PooledObjects_Map<EnumType, ObjectType, PayloadType>();
                 }
                 return _Instance;
             }
@@ -118,7 +118,7 @@
 
         #endregion // Data Members
 
-        public TCgManager_PooledObjects()
+        public TCgManager_PooledObjects_Map()
         {
             PoolSizes = new Dictionary<EnumType, int>(new FEnumTypeEqualityComparer());
             Pool = new List<ObjectType>();
@@ -260,6 +260,7 @@
                 Dictionary<int, ObjectType> pool = ActiveObjects[e];
 
                 Dictionary<int, ObjectType>.KeyCollection indexKeys = pool.Keys;
+                List<int> indicesToRemove = new List<int>();
 
                 foreach (int index in indexKeys)
                 {
@@ -268,7 +269,7 @@
                     // Check if Object was DeAllocated NOT in a normal way
                     if (!o.Cache.bAllocated)
                     {
-                        ActiveObjects[e].Remove(index);
+                        indicesToRemove.Add(index);
                         continue;
                     }
 
@@ -280,8 +281,13 @@
                         LogTransaction();
 
                         o.DeAllocate();
-                        ActiveObjects[e].Remove(index);
+                        indicesToRemove.Add(index);
                     }
+                }
+
+                foreach (int index in indicesToRemove)
+                {
+                    ActiveObjects[e].Remove(index);
                 }
             }
             //ActiveObjects.key
@@ -393,8 +399,9 @@
                     LogTransaction();
 
                     o.DeAllocate();
-                    ActiveObjects[e].Remove(index);
+                    
                 }
+                ActiveObjects[e].Clear();
             }
         }
 
@@ -446,7 +453,7 @@
         }
     }
 
-    public class TCgManager_PooledMonoObjects<EnumType, ObjectType, PayloadType> : ICgManager
+    public class TCgManager_PooledMonoObjects_Map<EnumType, ObjectType, PayloadType> : ICgManager
     where ObjectType : MCgPooledMonoObject
     where PayloadType : ICgPooledObjectPayload
     {
@@ -469,14 +476,14 @@
         protected static int EMPTY = 0;
         protected static int FIRST = 0;
 
-        private static TCgManager_PooledMonoObjects<EnumType, ObjectType, PayloadType> _Instance;
-        public static TCgManager_PooledMonoObjects<EnumType, ObjectType, PayloadType> Instance
+        private static TCgManager_PooledMonoObjects_Map<EnumType, ObjectType, PayloadType> _Instance;
+        public static TCgManager_PooledMonoObjects_Map<EnumType, ObjectType, PayloadType> Instance
         {
             get
             {
                 if (_Instance == null)
                 {
-                    _Instance = new TCgManager_PooledMonoObjects<EnumType, ObjectType, PayloadType>();
+                    _Instance = new TCgManager_PooledMonoObjects_Map<EnumType, ObjectType, PayloadType>();
                 }
                 return _Instance;
             }
@@ -504,7 +511,7 @@
 
         #endregion // Data Members
 
-        public TCgManager_PooledMonoObjects()
+        public TCgManager_PooledMonoObjects_Map()
         {
             PoolSizes = new Dictionary<EnumType, int>(new FEnumTypeEqualityComparer());
             Pool = new List<ObjectType>();
@@ -653,6 +660,7 @@
                 Dictionary<int, ObjectType> pool = ActiveObjects[e];
 
                 Dictionary<int, ObjectType>.KeyCollection indexKeys = pool.Keys;
+                List<int> indicesToRemove = new List<int>();
 
                 foreach (int index in indexKeys)
                 {
@@ -661,7 +669,7 @@
                     // Check if Object was DeAllocated NOT in a normal way
                     if (!o.GetCache().bAllocated)
                     {
-                        ActiveObjects[e].Remove(index);
+                        indicesToRemove.Add(index);
                         continue;
                     }
 
@@ -673,8 +681,13 @@
                         LogTransaction();
 
                         o.DeAllocate();
-                        ActiveObjects[e].Remove(index);
+                        indicesToRemove.Add(index);
                     }
+                }
+
+                foreach (int index in indicesToRemove)
+                {
+                    ActiveObjects[e].Remove(index);
                 }
             }
         }
@@ -785,8 +798,8 @@
                     LogTransaction();
 
                     o.DeAllocate();
-                    ActiveObjects[e].Remove(index);
                 }
+                ActiveObjects[e].Clear();
             }
         }
 

@@ -106,9 +106,9 @@ void ACsInteractiveActor::Init(const int32 &Index, const FECsInteractiveType &In
 // Allocate / DeAllocate
 #pragma region
 
-void ACsInteractiveActor::Allocate(const uint16 &ActiveIndex, FCsInteractiveActorPayload* Payload)
+void ACsInteractiveActor::Allocate(FCsInteractiveActorPayload* Payload)
 {
-	Cache.Init(ActiveIndex, Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
+	Cache.Init(Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
 
 	Allocate_Internal(Payload);
 }

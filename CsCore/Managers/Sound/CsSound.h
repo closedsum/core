@@ -51,10 +51,8 @@ struct FCsSoundCache : public FCsPooledObjectCache
 		Sound = InSound;
 	}
 
-	void Init(const int32& InActiveIndex, FCsSoundPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
+	void Init(FCsSoundPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
-		ActiveIndex = InActiveIndex;
-
 		IsAllocated = true;
 
 		Owner			 = Payload->GetOwner();
@@ -115,7 +113,7 @@ public:
 	void Init(const int32 &Index, const FECsSoundType &InType);
 	void Init(const int32 &Index);
 
-	void Allocate(const uint16& ActiveIndex, FCsSoundPayload* Payload);
+	void Allocate(FCsSoundPayload* Payload);
 
 	virtual void DeAllocate() override;
 

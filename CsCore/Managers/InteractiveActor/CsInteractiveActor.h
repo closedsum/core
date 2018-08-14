@@ -139,9 +139,8 @@ struct FCsInteractiveActorCache : public FCsPooledObjectCache
 		Actor = InActor;
 	}
 
-	void Init(const int32& InActiveIndex, FCsInteractiveActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
+	void Init(FCsInteractiveActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
-		ActiveIndex = InActiveIndex;
 		Data = Payload->GetData();
 		Owner = Payload->Owner;
 		Parent = Payload->Parent;
@@ -247,13 +246,13 @@ public:
 public:
 
 	template<typename T>
-	void Allocate(const uint16 &ActiveIndex, FCsInteractiveActorPayload* Payload, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	void Allocate(FCsInteractiveActorPayload* Payload, UObject* InOwner, UObject* InParent, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 
 	template<typename T>
-	void Allocate(const uint16 &ActiveIndex, FCsInteractiveActorPayload* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
+	void Allocate(FCsInteractiveActorPayload* Payload, T* InObject, void (T::*OnDeAllocate)(const uint16&, const uint16&, const uint8&));
 
-	void Allocate(const uint16 &ActiveIndex, FCsInteractiveActorPayload* Payload, UObject* InOwner, UObject* InParent);
-	void Allocate(const uint16 &ActiveIndex, FCsInteractiveActorPayload* Payload);
+	void Allocate(FCsInteractiveActorPayload* Payload, UObject* InOwner, UObject* InParent);
+	void Allocate(FCsInteractiveActorPayload* Payload);
 
 	virtual void Allocate_Internal(FCsInteractiveActorPayload* Payload);
 

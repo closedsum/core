@@ -33,10 +33,8 @@ struct FCsPooledWidgetCache : public FCsPooledObjectCache
 		Widget = InWidget;
 	}
 
-	void Init(const int32& InActiveIndex, FCsWidgetPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
+	void Init(FCsWidgetPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
-		ActiveIndex = InActiveIndex;
-
 		IsAllocated = true;
 
 		Owner = Payload->Owner;
@@ -70,7 +68,7 @@ class CSCORE_API UCsPooledWidget : public UCsSimpleWidget
 	virtual void Init(const FGeometry& MyGeometry) override;
 	virtual void Init(const int32 &Index, const TCsSimpleWidgetType &InType) override;
  
-	virtual void Allocate(const uint16& ActiveIndex, FCsWidgetPayload* Payload);
+	virtual void Allocate(FCsWidgetPayload* Payload);
 	virtual void DeAllocate();
 
 	UPROPERTY(BlueprintReadWrite, Category = "Widget")

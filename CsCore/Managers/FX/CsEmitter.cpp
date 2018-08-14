@@ -46,7 +46,7 @@ void ACsEmitter::OnCreatePool()
 {
 }
 
-void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxPayload* Payload)
+void ACsEmitter::Allocate(FCsFxPayload* Payload)
 {
 	UParticleSystem* Particle = Payload->GetParticle();
 
@@ -62,7 +62,7 @@ void ACsEmitter::Allocate(const uint16& ActiveIndex, FCsFxPayload* Payload)
 		return;
 	}
 
-	Cache.Init(ActiveIndex, Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
+	Cache.Init(Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
 
 	SetActorHiddenInGame(false);
 	SetTemplate(Particle);

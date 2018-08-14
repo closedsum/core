@@ -49,10 +49,8 @@ struct FCsFxCache : public FCsPooledObjectCache
 		Index = InIndex;
 		Emitter = InEmitter;
 	}
-	void Init(const int32& InActiveIndex, FCsFxPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
+	void Init(FCsFxPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
-		ActiveIndex = InActiveIndex;
-
 		IsAllocated = true;
 
 		Owner = Payload->Owner;
@@ -122,7 +120,7 @@ public:
 
 	void Init(const int32 &Index);
 	void OnCreatePool();
-	void Allocate(const uint16& ActiveIndex, FCsFxPayload* Payload);
+	void Allocate(FCsFxPayload* Payload);
 
 	void DeAllocate();
 	void StartDeath();

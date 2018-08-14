@@ -147,7 +147,7 @@ public:
 		PoolSize = Pool.Num();
 		o->Init(Pool.Num() - 1);
 		// TODO: Data needs to be set somewhere
-		o->Cache.Init(0, nullptr, 0.0f, 0.0f, 0);
+		o->Cache.Init(nullptr, 0.0f, 0.0f, 0);
 	}
 
 	virtual void AddToActivePool(ObjectType* o)
@@ -365,7 +365,7 @@ public:
 	{
 		ObjectType* o = Allocate();
 
-		o->Allocate(GetActivePoolSize(), payload);
+		o->Allocate(payload);
 
 		LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::Spawn], ECsPoolTransaction::Allocate, o);
 		payload->Reset();
@@ -535,7 +535,7 @@ public:
 
 		o->Init(poolPtr->Num() - 1, e);
 		// TODO: Data needs to be set somewhere
-		o->Cache.Init(0, nullptr, 0.0f, 0.0f, 0);
+		o->Cache.Init(nullptr, 0.0f, 0.0f, 0);
 	}
 
 	virtual void AddToActivePool(const EnumType &e, ObjectType* o)
@@ -826,7 +826,7 @@ public:
 	{
 		ObjectType* o = Allocate(e);
 
-		o->Allocate(GetActivePoolSize(e), payload);
+		o->Allocate(payload);
 
 		LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::Spawn], ECsPoolTransaction::Allocate, o);
 		payload->Reset();

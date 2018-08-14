@@ -87,7 +87,7 @@ ACsSound* FCsManager_Sound::Spawn(FCsSoundPayload* payload)
 {
 	ACsSound* o = Allocate();
 
-	o->Allocate(GetActivePoolSize(), payload);
+	o->Allocate(payload);
 
 	LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::Spawn], ECsPoolTransaction::Allocate, o);
 	payload->Reset();

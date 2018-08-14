@@ -70,9 +70,9 @@ void ACsWidgetActor::Init(const int32 &Index, const FECsWidgetActorType &InType)
 // Allocate / DeAllocate
 #pragma region
 
-void ACsWidgetActor::Allocate(const uint16 &ActiveIndex, FCsWidgetActorPayload* Payload)
+void ACsWidgetActor::Allocate( FCsWidgetActorPayload* Payload)
 {
-	Cache.Init(ActiveIndex, Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
+	Cache.Init(Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
 
 	Allocate_Internal(Payload);
 }

@@ -149,9 +149,6 @@ public:
 	int32 Index;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
-	int32 ActiveIndex;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	bool IsAllocated;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
@@ -195,8 +192,6 @@ public:
 
 	virtual void Reset()
 	{
-		ActiveIndex = 0;
-
 		IsAllocated = false;
 		State = ECsPooledObjectState::Inactive;
 
@@ -216,10 +211,6 @@ public:
 
 public:
 
-	void DecrementActiveIndex()
-	{
-		--ActiveIndex;
-	}
 	void SetFrame(const uint64 &InFrame)
 	{
 		Frame = InFrame;

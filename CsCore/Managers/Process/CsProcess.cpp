@@ -147,7 +147,7 @@ void UCsProcess::Init(const int32 &Index, const FECsProcess &Type)
 {
 }
 
-void UCsProcess::Allocate(const int32 &Index, FCsProcessPayload* Payload)
+void UCsProcess::Allocate(FCsProcessPayload* Payload)
 {
 	// For reading from child process
 	FPlatformProcess::CreatePipe(ReadPipeParent, WritePipeChild);

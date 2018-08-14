@@ -195,9 +195,9 @@ void ACsProjectile::Init(const int32 &Index, const FECsProjectileType& InType)
 	Cache.Set(Index, this);
 }
 
-void ACsProjectile::Allocate(const uint16& ActiveIndex, FCsProjectilePayload* Payload)
+void ACsProjectile::Allocate(FCsProjectilePayload* Payload)
 {
-	Cache.Init(ActiveIndex, Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
+	Cache.Init(Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
 
 	Allocate_Internal(Payload);
 

@@ -68,9 +68,8 @@ struct FCsAIPawnCache : public FCsPooledObjectCache
 		Pawn  = InPawn;
 	}
 
-	void Init(const int32& InActiveIndex, FCsAIPawnPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
+	void Init(FCsAIPawnPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
-		ActiveIndex = InActiveIndex;
 		Owner = Payload->Owner;
 		Parent = Payload->Parent;
 		Time = InTime;
@@ -113,7 +112,7 @@ class CSCORE_API ACsAIPawn : public ACsPawn
 	virtual void OnCreatePool();
 	virtual void OnPostCreatePool();
 
-	void Allocate(const int32 &ActiveIndex, FCsAIPawnPayload* Payload);
+	void Allocate(FCsAIPawnPayload* Payload);
 
 	virtual void Allocate_Internal(FCsAIPawnPayload* Payload);
 

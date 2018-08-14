@@ -55,9 +55,8 @@ struct FCsProjectileCache : public FCsPooledObjectCache
 		Projectile = InProjectile;
 	}
 
-	void Init(const int32& InActiveIndex, FCsProjectilePayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
+	void Init(FCsProjectilePayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
-		ActiveIndex = InActiveIndex;
 		Relevance = Payload->Relevance;
 
 		IsAllocated = true;
@@ -147,7 +146,7 @@ public:
 
 	void Init(const int32 &Index, const FECsProjectileType& InType);
 
-	virtual void Allocate(const uint16& ActiveIndex, FCsProjectilePayload* Payload);
+	virtual void Allocate(FCsProjectilePayload* Payload);
 
 	virtual void Allocate_Internal(FCsProjectilePayload* Payload);
 

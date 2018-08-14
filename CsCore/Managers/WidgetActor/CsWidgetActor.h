@@ -114,10 +114,8 @@ struct FCsWidgetActorCache : public FCsPooledObjectCache
 		WidgetActor = InWidgetActor;
 	}
 
-	void Init(const int32& InActiveIndex, FCsWidgetActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
+	void Init(FCsWidgetActorPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
-		ActiveIndex = InActiveIndex;
-
 		IsAllocated = true;
 
 		SetLifeTime(Payload->LifeTime);
@@ -197,7 +195,7 @@ class CSCORE_API ACsWidgetActor : public ACsPooledActor
 #pragma region
 public:
 
-	void Allocate(const uint16 &ActiveIndex, FCsWidgetActorPayload* Payload);
+	void Allocate(FCsWidgetActorPayload* Payload);
 
 	virtual void Allocate_Internal(FCsWidgetActorPayload* Payload);
 

@@ -20,9 +20,9 @@ void UCsPooledWidget::Init(const int32 &Index, const TCsSimpleWidgetType &InType
 	Cache.Set(Index, this);
 }
 
-void UCsPooledWidget::Allocate(const uint16& ActiveIndex, FCsWidgetPayload* Payload)
+void UCsPooledWidget::Allocate(FCsWidgetPayload* Payload)
 {
-	Cache.Init(ActiveIndex, Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
+	Cache.Init(Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
 
 	SetSize(Payload->Size);
 	Show();

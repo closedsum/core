@@ -42,9 +42,9 @@ void ACsSound::Init(const int32 &Index)
 	Init(Index, EMCsSoundType::Get().GetMAX());
 }
 
-void ACsSound::Allocate(const uint16& ActiveIndex, FCsSoundPayload* Payload)
+void ACsSound::Allocate(FCsSoundPayload* Payload)
 {
-	Cache.Init(ActiveIndex, Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
+	Cache.Init(Payload, GetWorld()->GetTimeSeconds(), GetWorld()->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(GetWorld()));
 
 	Play();
 }

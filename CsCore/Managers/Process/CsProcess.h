@@ -407,7 +407,7 @@ struct FCsProcessCache : public FCsPooledObjectCache
 
 	~FCsProcessCache() {}
 
-	void Init(const uint16& InActiveIndex, FCsProcessPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
+	void Init(FCsProcessPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
 		//Init(InActiveIndex, Payload, InTime, InRealTime, InFrame, nullptr, nullptr);
 	}
@@ -438,7 +438,7 @@ public:
 	FCsProcessCache Cache;
 
 	void Init(const int32 &Index, const FECsProcess &Type);
-	void Allocate(const int32 &Index, FCsProcessPayload* Payload);
+	void Allocate(FCsProcessPayload* Payload);
 
 // Interface
 #pragma region

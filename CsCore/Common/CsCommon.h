@@ -656,7 +656,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	}
 
 	template<typename T>
-	static void StuffleTArray(TArray<T>& InArray)
+	static void ShuffleTArray(TArray<T>& InArray)
 	{
 		const int32 Len = InArray.Num();
 
@@ -664,8 +664,8 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 		{
 			int32 J = FMath::RandRange(0, Index - 1);
 
-			FName Temp = InArray[J];
-			InArray[J] = InArray[Index - 1];
+			T Temp			   = InArray[J];
+			InArray[J]		   = InArray[Index - 1];
 			InArray[Index - 1] = Temp;
 		}
 	}

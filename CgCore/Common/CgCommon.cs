@@ -78,5 +78,23 @@ namespace CgCore
         }
 
         #endregion // Coroutine
+
+        #region "List"
+
+        public static void ShuffleList<T>(ref List<T> list)
+        {
+            int count = list.Count;
+
+            for (int index = count; index > 1; --index)
+            {
+                int j = UnityEngine.Random.Range(0, index - 1);
+
+                T temp          = list[j];
+                list[j]         = list[index - 1];
+                list[index - 1] = temp;
+            }
+        }
+
+        #endregion // List
     }
 }

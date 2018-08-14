@@ -271,6 +271,7 @@
 #endif // #if UNITY_EDITOR
             }
 
+#if UNITY_EDITOR
             // Broadcast the event to anyone listening
             AssetReferenceLoadedCache.Reference     = assetReference;
             AssetReferenceLoadedCache.Count         = lastCount;
@@ -280,6 +281,7 @@
             AssetReferenceLoadedCache.Time          = loadingTime;
 
             OnFinishedLoadingAssetReference_Event.Broadcast(AssetReferenceLoadedCache);
+#endif // #if UNITY_EDITOR
         }
 
         public void LoadAssetReferences(List<string> assetReferences, ECgLoadAsyncOrder asyncOrder, FOnFinishedLoadingAssetReferences.Event e)

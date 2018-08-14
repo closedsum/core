@@ -84,12 +84,12 @@ void FCsManager_FX::Log(const FString& log)
 
 void FCsManager_FX::OnTick(const float &deltaTime)
 {
-	const int32 objectCount = ActiveObjects.Num();
-	int32 earliestIndex = objectCount;
+	TArray<int32> keys;
+	ActiveObjects.GetKeys(keys);
 
-	for (int32 i = objectCount - 1; i >= 0; --i)
+	for (const int32& key : keys)
 	{
-		ACsEmitter* o = ActiveObjects[i];
+		ACsEmitter* o = ActiveObjects[key];
 
 		// Check if ObjectType was DeAllocated NOT in a normal way (i.e. Out of Bounds)
 
@@ -99,10 +99,7 @@ void FCsManager_FX::OnTick(const float &deltaTime)
 
 			LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
 
-			ActiveObjects.RemoveAt(i);
-
-			if (i < earliestIndex)
-				earliestIndex = i;
+			ActiveObjects.Remove(key);
 			continue;
 		}
 
@@ -120,12 +117,9 @@ void FCsManager_FX::OnTick(const float &deltaTime)
 				LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
 
 				o->DeAllocate();
-				ActiveObjects.RemoveAt(i);
+				ActiveObjects.Remove(key);
 
 				OnDeAllocate_Event.Broadcast(o);
-
-				if (i < earliestIndex)
-					earliestIndex = i;
 			}
 		}
 		// Check Normal Lifetime
@@ -144,29 +138,14 @@ void FCsManager_FX::OnTick(const float &deltaTime)
 					LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
 
 					o->DeAllocate();
-					ActiveObjects.RemoveAt(i);
+					ActiveObjects.Remove(key);
 
 					OnDeAllocate_Event.Broadcast(o);
-
-					if (i < earliestIndex)
-						earliestIndex = i;
 				}
 			}
 		}
 
 		OnTick_Handle_Object.ExecuteIfBound(o);
-	}
-
-	// Update ActiveIndex
-	if (earliestIndex != objectCount)
-	{
-		const int32 max = ActiveObjects.Num();
-
-		for (int32 i = earliestIndex; i < max; ++i)
-		{
-			ACsEmitter* o		 = ActiveObjects[i];
-			o->Cache.ActiveIndex = i;
-		}
 	}
 }
 
@@ -197,10 +176,10 @@ ACsEmitter* FCsManager_FX::Allocate()
 	{
 		UE_LOG(LogCs, Warning, TEXT("ACsManager_FX::Allocate: Warning. Pool is exhausted. Using Oldest Active Emitter."));
 
-		const int32 index = ActiveObjects.Find(Pool[PoolIndex]);
+		const int32& key = Pool[PoolIndex]->Cache.Index;
 
-		if (index != INDEX_NONE)
-			ActiveObjects.RemoveAt(index);
+		if (ActiveObjects.Find(key))
+			ActiveObjects.Remove(key);
 		return Pool[oldestIndex];
 	}
 #endif // #if WITH_EDITOR
@@ -320,7 +299,7 @@ void AICsManager_FX::OnTick(const float &DeltaTime)
 	Internal->OnTick(DeltaTime);
 }
 
-const TArray<ACsEmitter*>& AICsManager_FX::GetAllActiveActors()
+const TMap<int32, ACsEmitter*>& AICsManager_FX::GetAllActiveActors()
 {
 	return Internal->GetAllActiveObjects();
 }

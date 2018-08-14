@@ -72,8 +72,8 @@ public:
 	void AddToActivePool(ACsSound* Sound);
 	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
 	void OnTick(const float &DeltaTime);
-	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
-	const TArray<ACsSound*>& GetAllActiveActors();
+
+	const TMap<int32, ACsSound*>& GetAllActiveActors();
 
 	const TArray<ACsSound*>& GetActors();
 

@@ -64,38 +64,38 @@ public:
 
 	virtual void Destroyed() override;
 
-	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
+	UFUNCTION(BlueprintCallable, Category = "Manager FX")
 	void Clear();
 
 	void Shutdown();
 
 	virtual ACsEmitter* ConstructObject();
 
-	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
+	UFUNCTION(BlueprintCallable, Category = "Manager FX")
 	void CreatePool(const int32 &Size);
-	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
+	UFUNCTION(BlueprintCallable, Category = "Manager FX")
 	void AddToPool(ACsEmitter* Sound);
-	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
+	UFUNCTION(BlueprintCallable, Category = "Manager FX")
 	void AddToActivePool(ACsEmitter* Sound);
-	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
+	UFUNCTION(BlueprintCallable, Category = "Manager FX")
 	void OnTick(const float &DeltaTime);
-	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
-	const TArray<ACsEmitter*>& GetAllActiveActors();
+
+	const TMap<int32, ACsEmitter*>& GetAllActiveActors();
 
 	const TArray<ACsEmitter*>& GetActors();
 
-	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
+	UFUNCTION(BlueprintCallable, Category = "Manager FX")
 	int32 GetActivePoolSize();
-	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
+	UFUNCTION(BlueprintCallable, Category = "Manager FX")
 	bool IsExhausted();
-	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
+	UFUNCTION(BlueprintCallable, Category = "Manager FX")
 	bool DeAllocate(const int32 &Index);
-	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
+	UFUNCTION(BlueprintCallable, Category = "Manager FX")
 	void DeAllocateAll();
 
 	FCsFxPayload* AllocatePayload();
 
-	UFUNCTION(BlueprintCallable, Category = "Manager Sound")
+	UFUNCTION(BlueprintCallable, Category = "Manager FX")
 	ACsEmitter* Play(FCsFxPayload &Payload);
 	ACsEmitter* Play(FCsFxPayload* Payload);
 

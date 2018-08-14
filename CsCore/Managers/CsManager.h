@@ -63,7 +63,7 @@ protected:
 	TArray<ObjectType*> Pool;
 	int32 PoolSize;
 	int32 PoolIndex;
-	TArray<ObjectType*> ActiveObjects;
+	TMap<int, ObjectType*> ActiveObjects;
 
 	PayloadType Payloads[PAYLOAD_SIZE];
 	int32 PayloadIndex;
@@ -154,7 +154,7 @@ public:
 	{
 		o->Cache.IsAllocated = true;
 
-		ActiveObjects.Add(o);
+		ActiveObjects.Add(o->Cache.Index, o);
 	}
 
 	class UWorld* GetCurrentWorld()
@@ -208,12 +208,12 @@ public:
 
 	virtual void OnTick(const float &deltaTime)
 	{
-		const int32 objectCount = ActiveObjects.Num();
-		int32 earliestIndex		= objectCount;
+		TArray<int32> keys;
+		ActiveObjects.GetKeys(keys);
 
-		for (int32 i = objectCount - 1; i >= 0; --i)
+		for (const int32& key : keys)
 		{
-			ObjectType* o = ActiveObjects[i];
+			ObjectType* o = ActiveObjects[key];
 
 			// Check if ObjectType was DeAllocated NOT in a normal way (i.e. Out of Bounds)
 
@@ -223,10 +223,7 @@ public:
 
 				LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
 
-				ActiveObjects.RemoveAt(i);
-
-				if (i < earliestIndex)
-					earliestIndex = i;
+				ActiveObjects.Remove(key);
 				continue;
 			}
 
@@ -241,28 +238,13 @@ public:
 				LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
 
 				o->DeAllocate();
-				ActiveObjects.RemoveAt(i);
+				ActiveObjects.Remove(key);
 
 				OnDeAllocate_Event.Broadcast(o);
-
-				if (i < earliestIndex)
-					earliestIndex = i;
 				continue;
 			}
 
 			OnTick_Handle_Object.ExecuteIfBound(o);
-		}
-
-		// Update ActiveIndex
-		if (earliestIndex != objectCount)
-		{
-			const int32 max = ActiveObjects.Num();
-
-			for (int32 i = earliestIndex; i < max; ++i)
-			{
-				ObjectType* o		 = ActiveObjects[i];
-				o->Cache.ActiveIndex = i;
-			}
 		}
 	}
 
@@ -273,7 +255,7 @@ public:
 		Log(log);
 	}
 
-	const TArray<ObjectType*>& GetAllActiveObjects()
+	const TMap<int32, ObjectType*>& GetAllActiveObjects()
 	{
 		return ActiveObjects;
 	}
@@ -327,36 +309,20 @@ public:
 			return false;
 		}
 
-		const int32 count = ActiveObjects.Num();
+		TArray<int32> keys;
+		ActiveObjects.GetKeys(keys);
 
-		for (int32 i = count - 1; i >= 0; --i)
+		for (const int32& key : keys)
 		{
-			ObjectType* o = ActiveObjects[i];
+			ObjectType* o = ActiveObjects[key];
 
-			// Update ActiveIndex
-			if (i > CS_FIRST)
-			{
-				o->Cache.DecrementActiveIndex();
-			}
+			LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::DeAllocate], ECsPoolTransaction::Deallocate, o);
 
-			if (o->Cache.Index == index)
-			{
-				LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::DeAllocate], ECsPoolTransaction::Deallocate, o);
+			o->DeAllocate();
+			ActiveObjects.Remove(key);
 
-				o->DeAllocate();
-				ActiveObjects.RemoveAt(i);
-
-				OnDeAllocate_Event.Broadcast(o);
-				return true;
-			}
-		}
-
-		// Correct on Cache "Miss"
-		for (int32 i = 1; i < count; ++i)
-		{
-			ObjectType* o = ActiveObjects[i];
-			// Reset ActiveIndex
-			o->Cache.ActiveIndex = i;
+			OnDeAllocate_Event.Broadcast(o);
+			return true;
 		}
 		UE_LOG(LogCs, Warning, TEXT("%s::DeAllocate: %s at PoolIndex: %d is already deallocated."), *Name, *ObjectClassName, index);
 		return false;
@@ -364,16 +330,17 @@ public:
 
 	void DeAllocateAll()
 	{
-		const int32 count = ActiveObjects.Num();
+		TArray<int32> keys;
+		ActiveObjects.GetKeys(keys);
 
-		for (int32 i = count - 1; i >= 0; --i)
+		for (const int32& key : keys)
 		{
-			ObjectType* o = ActiveObjects[i];
+			ObjectType* o = ActiveObjects[key];
 
 			LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::DeAllocateAll], ECsPoolTransaction::Deallocate, o);
 
 			o->DeAllocate();
-			ActiveObjects.RemoveAt(i);
+			ActiveObjects.Remove(key);
 		}
 	}
 

@@ -97,7 +97,7 @@ ACsSound* FCsManager_Sound::Spawn(FCsSoundPayload* payload)
 		UE_LOG(LogCs, Warning, TEXT("ACsManager_Sound::Play: Warning more than %d Sounds playing at once"), CS_MAX_CONCURRENT_SOUNDS);
 		UE_LOG(LogCs, Warning, TEXT("ACsManager_Sound::Play: Remove Sound"));
 
-		ActiveObjects.RemoveAt(0);
+		ActiveObjects.Remove(o->Cache.Index);
 	}
 	AddToActivePool(o);
 	return o;
@@ -105,9 +105,9 @@ ACsSound* FCsManager_Sound::Spawn(FCsSoundPayload* payload)
 
 #pragma endregion Interface
 
-void FCsManager_Sound::Stop(FCsSoundElement* InSound, UObject* InOwner, UObject* InParent)
+void FCsManager_Sound::Stop(FCsSoundElement* sound, UObject* owner, UObject* parent)
 {
-	if (!InSound->Get())
+	if (!sound->Get())
 	{
 		UE_LOG(LogCs, Warning, TEXT("CsManager_Sound::Stop: Attemping to Stop a NULL Sound."));
 		return;
@@ -115,58 +115,44 @@ void FCsManager_Sound::Stop(FCsSoundElement* InSound, UObject* InOwner, UObject*
 
 #if WITH_EDITOR
 	// For Play in Preview
-	if (InOwner)
+	if (owner)
 	{
-		if (UWorld* CurrentWorld = InOwner->GetWorld())
+		if (UWorld* currentWorld = owner->GetWorld())
 		{
-			if (UCsCommon::IsPlayInEditorPreview(CurrentWorld) || UCsCommon::IsPlayInEditor(CurrentWorld))
+			if (UCsCommon::IsPlayInEditorPreview(currentWorld) || UCsCommon::IsPlayInEditor(currentWorld))
 				return;
 		}
 	}
 #endif // #if WITH_EDITOR
 
-	const int32 Count   = ActiveObjects.Num();
-
-	if (Count == CS_EMPTY)
+	if (ActiveObjects.Num() == CS_EMPTY)
 		return;
 
-	int32 EarliestIndex = Count;
+	TArray<int32> keys;
+	ActiveObjects.GetKeys(keys);
 
-	for (int32 I = Count - 1; I >= 0; --I)
+	for (const int32& key : keys)
 	{
-		ACsSound* Sound = ActiveObjects[I];
+		ACsSound* s = ActiveObjects[key];
 
-		if (InSound->Get() != Sound->Cache.GetCue())
+		if (sound->Get() != s->Cache.GetCue())
 			continue;
-		if (InOwner != Sound->Cache.GetOwner())
+		if (owner != s->Cache.GetOwner())
 			continue;
-		if (InParent != Sound->Cache.GetParent())
+		if (parent != s->Cache.GetParent())
 			continue;
 
-		if (I < EarliestIndex)
-			EarliestIndex = I;
+		LogTransaction(TEXT("CsManager_Sound::Stop"), ECsPoolTransaction::Deallocate, s);
 
-		LogTransaction(TEXT("CsManager_Sound::Stop"), ECsPoolTransaction::Deallocate, Sound);
-
-		Sound->DeAllocate();
-		ActiveObjects.RemoveAt(I);
+		s->DeAllocate();
+		ActiveObjects.Remove(key);
 
 /*
 #if WITH_EDITOR
 		OnDeAllocate_ScriptEvent.Broadcast(I);
 #endif // #if WITH_EDITOR
 */
-		OnDeAllocate_Event.Broadcast(Sound);
-	}
-
-	if (EarliestIndex != Count)
-	{
-		for (int32 I = EarliestIndex; I < Count; ++I)
-		{
-			ACsSound* Sound = ActiveObjects[I];
-			// Reset ActiveIndex
-			Sound->Cache.ActiveIndex = I;
-		}
+		OnDeAllocate_Event.Broadcast(s);
 	}
 }
 
@@ -264,7 +250,7 @@ void AICsManager_Sound::OnTick(const float &DeltaTime)
 	Internal->OnTick(DeltaTime);
 }
 
-const TArray<ACsSound*>& AICsManager_Sound::GetAllActiveActors()
+const TMap<int32, ACsSound*>& AICsManager_Sound::GetAllActiveActors()
 {
 	return Internal->GetAllActiveObjects();
 }

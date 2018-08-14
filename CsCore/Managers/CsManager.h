@@ -303,29 +303,22 @@ public:
 
 	bool DeAllocate(const int32 &index)
 	{
-		if (ActiveObjects.Num() == CS_EMPTY)
+		if (ActiveObjects.Num() == CS_EMPTY ||
+			!ActiveObjects.Find(index))
 		{
 			UE_LOG(LogCs, Warning, TEXT("%s::DeAllocate: %s at PoolIndex: %d is already deallocated."), *Name, *ObjectClassName, index);
 			return false;
 		}
 
-		TArray<int32> keys;
-		ActiveObjects.GetKeys(keys);
+		ObjectType* o = ActiveObjects[index];
 
-		for (const int32& key : keys)
-		{
-			ObjectType* o = ActiveObjects[key];
+		LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::DeAllocate], ECsPoolTransaction::Deallocate, o);
 
-			LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::DeAllocate], ECsPoolTransaction::Deallocate, o);
+		o->DeAllocate();
+		ActiveObjects.Remove(index);
 
-			o->DeAllocate();
-			ActiveObjects.Remove(key);
-
-			OnDeAllocate_Event.Broadcast(o);
-			return true;
-		}
-		UE_LOG(LogCs, Warning, TEXT("%s::DeAllocate: %s at PoolIndex: %d is already deallocated."), *Name, *ObjectClassName, index);
-		return false;
+		OnDeAllocate_Event.Broadcast(o);
+		return true;
 	}
 
 	void DeAllocateAll()
@@ -420,7 +413,7 @@ protected:
 	TMap<EnumType, TArray<ObjectType*>> Pools;
 	TMap<EnumType, int32> PoolSizes;
 	TMap<EnumType, int32> PoolIndices;
-	TMap<EnumType, TArray<ObjectType*>> ActiveObjects;
+	TMap<EnumType, TMap<int32, ObjectType*>> ActiveObjects;
 
 	PayloadType Payloads[PAYLOAD_SIZE];
 	int32 PayloadIndex;
@@ -550,16 +543,16 @@ public:
 		o->Cache.IsAllocated = true;
 
 		// Add to ActiveObjects
-		TArray<ObjectType*>* poolPtr = ActiveObjects.Find(e);
+		TMap<int32, ObjectType*>* poolPtr = ActiveObjects.Find(e);
 
 		if (poolPtr)
 		{
-			poolPtr->Add(o);
+			poolPtr->Add(o->Cache.Index, o);
 		}
 		else
 		{
-			TArray<ObjectType*> pool;
-			pool.Add(o);
+			TMap<int32, ObjectType*> pool;
+			pool.Add(o->Cache.Index, o);
 			ActiveObjects.Add(e, pool);
 		}
 	}
@@ -624,19 +617,19 @@ public:
 
 	virtual void OnTick(const float &deltaTime)
 	{
-		TArray<EnumType> Keys;
-		ActiveObjects.GetKeys(Keys);
+		TArray<EnumType> enumKeys;
+		ActiveObjects.GetKeys(enumKeys);
 
-		for (const EnumType& key : Keys)
+		for (const EnumType& key : enumKeys)
 		{
-			TArray<ObjectType*>& objects = ActiveObjects[key];
+			TMap<int32, ObjectType*>& objects = ActiveObjects[key];
 
-			const int32 objectCount = objects.Num();
-			int32 earliestIndex		= objectCount;
+			TArray<int32> indexKeys;
+			objects.GetKeys(indexKeys);
 
-			for (int32 j = objectCount - 1; j >= 0; --j)
+			for (const int32& index : indexKeys)
 			{
-				ObjectType* o = objects[j];
+				ObjectType* o = objects[index];
 
 				// Check if ObjectType was DeAllocated NOT in a normal way (i.e. Out of Bounds)
 
@@ -646,10 +639,7 @@ public:
 
 					LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
 
-					objects.RemoveAt(j);
-
-					if (j < earliestIndex)
-						earliestIndex = j;
+					objects.Remove(index);
 					continue;
 				}
 
@@ -664,28 +654,13 @@ public:
 					LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::OnTick], ECsPoolTransaction::Deallocate, o);
 
 					o->DeAllocate();
-					objects.RemoveAt(j);
+					objects.Remove(index);
 
 					OnDeAllocate_Event.Broadcast(key, o);
-
-					if (j < earliestIndex)
-						earliestIndex = j;
 					continue;
 				}
 
 				OnTick_Handle_Object.ExecuteIfBound(o);
-			}
-
-			// Update ActiveIndex
-			if (earliestIndex != objectCount)
-			{
-				const int32 max = objects.Num();
-				
-				for (int32 j = earliestIndex; j < max; ++j)
-				{
-					ObjectType* o		 = objects[j];
-					o->Cache.ActiveIndex = j;
-				}
 			}
 		}
 	}
@@ -706,16 +681,19 @@ public:
 
 	void GetAllActiveObjects(TArray<ObjectType*> &outObjects)
 	{
-		TArray<EnumType> keys;
-		ActiveObjects.GetKeys(keys);
+		TArray<EnumType> enumKeys;
+		ActiveObjects.GetKeys(enumKeys);
 
-		for (const EnumType& key : keys)
+		for (const EnumType& key : enumKeys)
 		{
-			TArray<ObjectType*>& objects = ActiveObjects[key];
+			TMap<int32, ObjectType*>& objects = ActiveObjects[key];
 
-			for (ObjectType* o : objects)
+			TArray<int32> indexKeys;
+			objects.GetKeys(indexKeys);
+
+			for (const int32& index : indexKeys)
 			{
-				outObjects.Add(o);
+				outObjects.Add(objects[index]);
 			}
 		}
 	}
@@ -727,7 +705,7 @@ public:
 
 	int32 GetActivePoolSize(const EnumType &e)
 	{
-		TArray<ObjectType*>* objectsPtr = ActiveObjects.Find(e);
+		TMap<int32, ObjectType*>* objectsPtr = ActiveObjects.Find(e);
 
 		if (!objectsPtr)
 			return CS_EMPTY;
@@ -776,68 +754,46 @@ public:
 
 	bool DeAllocate(const EnumType &e, const int32 &index)
 	{
-		TArray<ObjectType*>* objectsPtr = ActiveObjects.Find(e);
+		TMap<int32, ObjectType*>* objectsPtr = ActiveObjects.Find(e);
 
-		if (!objectsPtr)
+		if (!objectsPtr ||
+			!objectsPtr->Find(index))
 		{
 			UE_LOG(LogCs, Warning, TEXT("%s::DeAllocate: %s of Type: %s at PoolIndex: %d is already deallocated."), *Name, *ObjectClassName, *EnumTypeToString(e), index);
 			return false;
 		}
 
-		const int32 count = objectsPtr->Num();
+		ObjectType* o = (*objectsPtr)[index];
 
-		for (int32 i = count - 1; i >= 0; --i)
-		{
-			ObjectType* o = (*objectsPtr)[i];
+		LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::DeAllocate], ECsPoolTransaction::Deallocate, o);
 
-			// Update ActiveIndex
-			if (i > CS_FIRST)
-			{
-				o->Cache.DecrementActiveIndex();
-			}
+		o->DeAllocate();
+		objectsPtr->Remove(index);
 
-			if (o->Cache.Index == index)
-			{
-				LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::DeAllocate], ECsPoolTransaction::Deallocate, o);
-
-				o->DeAllocate();
-				objectsPtr->RemoveAt(i);
-
-				OnDeAllocate_Event.Broadcast(e, o);
-				return true;
-			}
-		}
-
-		// Correct on Cache "Miss"
-		for (int32 i = 1; i < count; ++i)
-		{
-			ObjectType* o = (*objectsPtr)[i];
-			// Reset ActiveIndex
-			o->Cache.ActiveIndex = i;
-		}
-		UE_LOG(LogCs, Warning, TEXT("%s::DeAllocate: %s of Type: %s at PoolIndex: %d is already deallocated."), *Name, *ObjectClassName, *EnumTypeToString(e), index);
-		return false;
+		OnDeAllocate_Event.Broadcast(e, o);
+		return true;
 	}
 
 	void DeAllocateAll()
 	{
-		TArray<EnumType> keys;
-		ActiveObjects.GetKeys(keys);
+		TArray<EnumType> enumKeys;
+		ActiveObjects.GetKeys(enumKeys);
 
-		for (const EnumType& key : keys)
+		for (const EnumType& key : enumKeys)
 		{
-			TArray<ObjectType*>& objects = ActiveObjects[key];
+			TMap<int32, ObjectType*>& objects = ActiveObjects[key];
 
-			const int32 objectCount = objects.Num();
+			TArray<int32> indexKeys;
+			objects.GetKeys(indexKeys);
 
-			for (int32 i = objectCount - 1; i >= 0; --i)
+			for (const int32& index : indexKeys)
 			{
-				ObjectType* o = objects[i];
+				ObjectType* o = objects[index];
 
 				LogTransaction(FunctionNames[ECsManagerPooledObjectsFunctionNames::DeAllocateAll], ECsPoolTransaction::Deallocate, o);
 
 				o->DeAllocate();
-				objects.RemoveAt(i);
+				objects.Remove(index);
 			}
 		}
 	}

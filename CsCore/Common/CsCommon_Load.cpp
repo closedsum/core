@@ -74,6 +74,8 @@ namespace ECsCommonLoadCached
 		const FString Blend_Space_1D = TEXT("Blend Space 1D");
 		const FString BlendSpace = TEXT("BlendSpace");
 		const FString Blend_Space = TEXT("Blend Space");
+		const FString AimOffsetBlendSpace = TEXT("AimOffsetBlendSpace");
+		const FString Aim_Offset_Blend_Space = TEXT("Aim Offset Blend Space");
 		const FString SoundCue = TEXT("SoundCue");
 		const FString Sound_Cue = TEXT("Sound Cue");
 		const FString ParticleSystem = TEXT("ParticleSystem");
@@ -5765,6 +5767,9 @@ void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct*
 			// UBlendSpace
 			if (SoftObjectProperty->PropertyClass == UBlendSpace::StaticClass())
 			{ GetAssetReferenceFromSoftObjectProperty<UBlendSpace>(SoftObjectProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Exclusive, OutAssetReferences, LoadCodes); continue; }
+			// UAnimOffsetBlendSpace
+			if (SoftObjectProperty->PropertyClass == UAimOffsetBlendSpace::StaticClass())
+			{ GetAssetReferenceFromSoftObjectProperty<UAimOffsetBlendSpace>(SoftObjectProperty, InStruct, InScriptStruct, LoadFlags, EResourceSizeMode::Exclusive, OutAssetReferences, LoadCodes); continue; }
 			// UAnimBlueprint
 			if (SoftObjectProperty->PropertyClass == UAnimBlueprint::StaticClass())
 			{ GetAssetReferenceFromSoftObjectProperty_Blueprint(SoftObjectProperty, InStruct, InScriptStruct, LoadFlags, OutAssetReferences, LoadCodes); continue; }
@@ -6935,6 +6940,9 @@ void UCsCommon_Load::LoadStructWithTSoftObjectPtrs(const FString &ObjectName, vo
 			// UBlendSpace
 			if (SoftObjectProperty->PropertyClass == UBlendSpace::StaticClass())
 			{ LoadSoftObjectProperty<UBlendSpace>(SoftObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::BlendSpace, ECsCommonLoadCached::Str::Blend_Space, LoadFlags); continue; }
+			// UAimOffsetBlendSpace
+			if (SoftObjectProperty->PropertyClass == UAimOffsetBlendSpace::StaticClass())
+			{ LoadSoftObjectProperty<UAimOffsetBlendSpace>(SoftObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, ECsCommonLoadCached::Str::AimOffsetBlendSpace, ECsCommonLoadCached::Str::Aim_Offset_Blend_Space, LoadFlags); continue; }
 			// UAnimBlueprint
 			if (SoftObjectProperty->PropertyClass == UAnimBlueprint::StaticClass())
 			{ LoadSoftObjectProperty_AnimBlueprint(SoftObjectProperty, ObjectName, InStruct, InScriptStruct, MemberName, LoadFlags); continue; }

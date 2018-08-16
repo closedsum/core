@@ -28,6 +28,7 @@
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsGestureType.h"
 	// Character
 #include "GraphEditor/EnumStruct/Character/SCsGraphPin_ECsCharacterAnim.h"
+#include "GraphEditor/EnumStruct/Character/SCsGraphPin_ECsCharacterAnimVariation.h"
 #include "GraphEditor/EnumStruct/Character/SCsGraphPin_ECsCharacterAnimBlueprint.h"
 #include "GraphEditor/EnumStruct/Character/SCsGraphPin_ECsCharacterBlendSpace.h"
 	// Process
@@ -105,6 +106,8 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 	{
 		// FECsCharacterAnim
 		if (DoesPinUseScriptStruct<FECsCharacterAnim>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsCharacterAnim, InPin); }
+		// FECsCharacterAnimVariation
+		if (DoesPinUseScriptStruct<FECsCharacterAnimVariation>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsCharacterAnimVariation, InPin); }
 		// FECsCharacterAnimBlueprint
 		if (DoesPinUseScriptStruct<FECsCharacterAnimBlueprint>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsCharacterAnimBlueprint, InPin); }
 		// FECsCharacterBlendSpace

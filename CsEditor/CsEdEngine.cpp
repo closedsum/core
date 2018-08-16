@@ -27,6 +27,7 @@
 #include "DetailCustomizations/EnumStruct/ECsGestureTypeCustomization.h"
 	// Character
 #include "DetailCustomizations/EnumStruct/Character/ECsCharacterAnimCustomization.h"
+#include "DetailCustomizations/EnumStruct/Character/ECsCharacterAnimVariationCustomization.h"
 #include "DetailCustomizations/EnumStruct/Character/ECsCharacterAnimBlueprintCustomization.h"
 #include "DetailCustomizations/EnumStruct/Character/ECsCharacterBlendSpaceCustomization.h"
 	// Weapon
@@ -88,6 +89,7 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsGestureType", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsGestureTypeCustomization::MakeInstance));
 		// Character
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsCharacterAnim", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsCharacterAnimCustomization::MakeInstance));
+		PropertyModule.RegisterCustomPropertyTypeLayout("ECsCharacterAnimVariation", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsCharacterAnimVariationCustomization::MakeInstance));
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsCharacterAnimBlueprint", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsCharacterAnimBlueprintCustomization::MakeInstance));
 		PropertyModule.RegisterCustomPropertyTypeLayout("ECsCharacterBlendSpace", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsCharacterBlendSpaceCustomization::MakeInstance));
 		// Weapon

@@ -747,7 +747,7 @@ public:
 
 #pragma endregion Enums
 
-// Primitive Types
+// Property Types
 #pragma region
 
 	// Value
@@ -4336,7 +4336,7 @@ typedef ECsMemberType::Type TCsMemberType;
 																		  Type* ptr = (Type*)(&Integral); \
 																		  *ptr = Value;
 
-#pragma endregion Primitive Types
+#pragma endregion Property Types
 
 // Blueprint Property Types
 #pragma region

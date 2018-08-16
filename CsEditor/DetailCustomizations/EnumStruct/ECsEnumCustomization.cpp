@@ -21,10 +21,9 @@ void FECsEnumCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> StructPr
 	// Alter DisplayNameList for Properties that are visible and should NOT be edited
 	if (PerformDropDownCheck)
 	{
-		UProperty* Property = StructPropertyHandle->GetProperty();
-		const uint64 DisplayAsDropDownMask = (1 << UP::EditAnywhere);
+		UProperty* Property				   = StructPropertyHandle->GetProperty();
 
-		if (!Property->HasAnyPropertyFlags(DisplayAsDropDownMask))
+		if (Property->HasAnyPropertyFlags(CPF_DisableEditOnTemplate | CPF_DisableEditOnInstance | CPF_EditConst))
 		{
 			const int32 Count = DisplayNameList.Num();
 

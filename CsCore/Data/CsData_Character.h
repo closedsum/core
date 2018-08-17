@@ -28,7 +28,7 @@ public:
 
 // Inventory
 #pragma region
-
+	
 	virtual FCsInventoryLoadout* GetLoadout();
 
 #pragma endregion Inventory
@@ -65,6 +65,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Character Data")
 	virtual const float& GetMaxAcceleration();
+
+	UFUNCTION(BlueprintCallable, Category = "Character Data")
+	virtual const float& GetJumpHeight();
 
 	UFUNCTION(BlueprintCallable, Category = "Character Data")
 	virtual const float& GetJumpZVelocity();

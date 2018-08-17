@@ -253,13 +253,13 @@ struct CSCORE_API FCsFpvFxElement
 		return !(*this == B);
 	}
 
-	FORCEINLINE FName GetBone(const TCsViewType &ViewType)
+	FORCEINLINE const FName& GetBone(const TCsViewType &ViewType)
 	{
 		if (ViewType == ECsViewType::FirstPerson)
 			return Effect1P.Bone;
 		if (ViewType == ECsViewType::ThirdPerson)
 			return Effect3P.Bone;
-		return NAME_None;
+		return ECsCached::Name::None;
 	}
 };
 

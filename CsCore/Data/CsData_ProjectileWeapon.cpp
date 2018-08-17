@@ -23,6 +23,9 @@ float ACsData_ProjectileWeapon::GetLocationDamageModifier(const FECsWeaponFireMo
 const bool& ACsData_ProjectileWeapon::UseFakeProjectile(const FECsWeaponFireMode &FireMode) { return ECsCached::Ref::False; }
 ACsData_Projectile* ACsData_ProjectileWeapon::GetData_Projectile(const FECsWeaponFireMode &FireMode, const bool &IsCharged) { return nullptr; }
 
+const FName& ACsData_ProjectileWeapon::GetMuzzleBone(const TEnumAsByte<ECsViewType::Type> &ViewType, const FECsWeaponFireMode &FireMode, const uint8 &Index /*=0*/) { return ECsCached::Name::None; }
+const FName& ACsData_ProjectileWeapon::GetMuzzleBone(const FECsWeaponFireMode &FireMode, const uint8 &Index /*=0*/){ return ECsCached::Name::None; }
+
 FVector ACsData_ProjectileWeapon::GetMuzzleLocation(USkeletalMeshComponent* InMesh, const TEnumAsByte<ECsViewType::Type> &ViewType, const FECsWeaponFireMode &FireMode, const uint8 &Index /*=0*/)
 { 
 	return GetMuzzleLocation(InMesh, (TCsViewType)ViewType, FireMode, Index);

@@ -632,7 +632,7 @@ struct FCsData_Weapon_FireMode_FXs
 		return Count > CS_EMPTY ? &(MuzzleFXs[Index % Count]) : nullptr;
 	}
 
-	FName GetMuzzleBone(const int32 Index = 0)
+	const FName& GetMuzzleBone(const int32 Index = 0)
 	{
 		const int32 Count = MuzzleFXs.Num();
 
@@ -658,7 +658,7 @@ struct FCsData_FpsWeapon_FireMode_FXs
 		return MuzzleFXs[Index % Count].Get(ViewType);
 	}
 
-	FName GetMuzzleBone(const TCsViewType &ViewType, const int32 Index = 0)
+	const FName& GetMuzzleBone(const TCsViewType &ViewType, const int32 Index = 0)
 	{
 		const int32 Count = MuzzleFXs.Num();
 

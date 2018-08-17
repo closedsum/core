@@ -21,6 +21,10 @@ class CSCORE_API ACsData_ProjectileWeapon : public ACsData_Weapon
 	UFUNCTION(BlueprintCallable, Category = "Weapon Data")
 	virtual class ACsData_Projectile* GetData_Projectile(const FECsWeaponFireMode &FireMode, const bool &IsCharged = false);
 
+	UFUNCTION(BlueprintCallable, Category = "Weapon Data")
+	virtual const FName& GetMuzzleBone(const TEnumAsByte<ECsViewType::Type> &ViewType, const FECsWeaponFireMode &FireMode, const uint8 &Index = 0);
+	virtual const FName& GetMuzzleBone(const FECsWeaponFireMode &FireMode, const uint8 &Index = 0);
+
 	virtual FVector GetMuzzleLocation(USkeletalMeshComponent* InMesh, const TCsViewType &ViewType, const FECsWeaponFireMode &FireMode, const uint8 &Index = 0);
 	UFUNCTION(BlueprintCallable, Category = "Weapon Data")
 	virtual FVector GetMuzzleLocation(USkeletalMeshComponent* InMesh, const TEnumAsByte<ECsViewType::Type> &ViewType, const FECsWeaponFireMode &FireMode, const uint8 &Index = 0);

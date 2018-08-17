@@ -180,6 +180,9 @@ void ACsTpsWeapon::SetMesh()
 
 	ACsData_ProjectileWeapon* Data_Weapon = GetMyData_Weapon<ACsData_ProjectileWeapon>();
 
+	if (!Data_Weapon->UseMesh())
+		return;
+
 #if WITH_EDITOR
 	// In Editor Preview Window
 	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))

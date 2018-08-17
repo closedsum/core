@@ -34,3 +34,24 @@ EMCsLoadAssetsType& EMCsLoadAssetsType::Get()
 		Instance = new EMCsLoadAssetsType();
 	return *Instance;
 }
+
+// LoadAsyncOrder
+EMCsLoadAsyncOrder* EMCsLoadAsyncOrder::Instance;
+
+EMCsLoadAsyncOrder& EMCsLoadAsyncOrder::Get()
+{
+	if (!Instance)
+		Instance = new EMCsLoadAsyncOrder();
+	return *Instance;
+}
+
+namespace ECsLoadAsyncOrder
+{
+	namespace Ref
+	{
+		CSCORE_API const Type None = EMCsLoadAsyncOrder::Get().Add(Type::None, TEXT("None"));
+		CSCORE_API const Type FirstToLast = EMCsLoadAsyncOrder::Get().Add(Type::FirstToLast, TEXT("FirstToLast"), TEXT("First to Last"));
+		CSCORE_API const Type Bulk = EMCsLoadAsyncOrder::Get().Add(Type::Bulk, TEXT("Bulk"));
+		CSCORE_API const Type ECsLoadAsyncOrder_MAX = EMCsLoadAsyncOrder::Get().Add(Type::ECsLoadAsyncOrder_MAX, TEXT("ECsLoadAsyncOrder_MAX"), TEXT("MAX"));
+	}
+}

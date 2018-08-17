@@ -12,9 +12,6 @@
 #define CS_CVAR_LOAD_FIRSTTOLAST 1
 #define CS_CVAR_LOAD_BULK 2
 
-// Load
-#pragma region
-
 namespace ECsLoadCached
 {
 	namespace Str
@@ -37,6 +34,9 @@ enum class ECsLoadCode : uint8
 };
 
 #define ECS_LOAD_CODE_CALCULATE_RESOURCE_SIZES 1
+
+// LoadFlags
+#pragma region
 
 UENUM(BlueprintType, meta = (Bitflags))
 enum class ECsLoadFlags : uint8
@@ -134,6 +134,8 @@ namespace ECsLoadFlags_Editor
 
 #define ECS_LOAD_FLAGS_EDITOR_MAX (uint8)ECsLoadFlags_Editor::ECsLoadFlags_Editor_MAX
 typedef ECsLoadFlags_Editor::Type TCsLoadFlags_Editor;
+
+#pragma endregion // LoadFlags
 
 USTRUCT()
 struct CSCORE_API FCsResourceSize
@@ -302,6 +304,7 @@ struct CSCORE_API FCsCategoryMemberAssociation
 };
 
 // AssetType
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsAssetType : public FECsEnum_uint8
@@ -344,7 +347,10 @@ namespace ECsAssetType
 // GetAssetTypeStaticClass
 typedef UClass*(*TCsGetAssetTypeStaticClass)(const FECsAssetType&);
 
+#pragma endregion // AssetType
+
 // LoadAssetsType
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsLoadAssetsType : public FECsEnum_uint8
@@ -379,6 +385,8 @@ private:
 public:
 	static EMCsLoadAssetsType& Get();
 };
+
+#pragma endregion // LoadAssetsType
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsPayload
@@ -457,6 +465,8 @@ struct CSCORE_API FCsTArrayPayload
 	}
 };
 
+// LoadAsyncOrder
+
 UENUM(BlueprintType)
 namespace ECsLoadAsyncOrder
 {
@@ -472,35 +482,51 @@ namespace ECsLoadAsyncOrder
 	};
 }
 
+typedef ECsLoadAsyncOrder::Type TCsLoadAsyncOrder;
+
+struct CSCORE_API EMCsLoadAsyncOrder : public TCsEnumMap<ECsLoadAsyncOrder::Type>
+{
+protected:
+	EMCsLoadAsyncOrder() {}
+	EMCsLoadAsyncOrder(const EMCsLoadAsyncOrder &) = delete;
+	EMCsLoadAsyncOrder(EMCsLoadAsyncOrder &&) = delete;
+public:
+	~EMCsLoadAsyncOrder() {}
+private:
+	static EMCsLoadAsyncOrder* Instance;
+
+public:
+	static EMCsLoadAsyncOrder& Get();
+};
+
 namespace ECsLoadAsyncOrder
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
+	namespace Ref
 	{
-		const TCsString None = TCsString(TEXT("None"), TEXT("none"), TEXT("none"));
-		const TCsString FirstToLast = TCsString(TEXT("FirstToLast"), TEXT("firsttolast"), TEXT("first to last"));
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::None) { return Str::None.Value; }
-		if (EType == Type::FirstToLast) { return Str::FirstToLast.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::None) { return Type::None; }
-		if (String == Str::FirstToLast) { return Type::FirstToLast; }
-		return Type::ECsLoadAsyncOrder_MAX;
+		extern CSCORE_API const Type None;
+		extern CSCORE_API const Type FirstToLast;
+		extern CSCORE_API const Type Bulk;
+		extern CSCORE_API const Type ECsLoadAsyncOrder_MAX;
 	}
 }
 
-#define ECS_LOADING_ASYNC_ORDER_MAX (uint8)ECsLoadAsyncOrder::ECsLoadAsyncOrder_MAX
-typedef ECsLoadAsyncOrder::Type TCsLoadAsyncOrder;
+#pragma endregion // LoadAsyncOrder
 
-#pragma endregion Load
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsData_ShortCode
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data_ShortCode")
+	FECsAssetType Type;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data_ShortCode")
+	FName ShortCode;
+
+public:
+	FCsData_ShortCode() {}
+	~FCsData_ShortCode() {}
+};
 
 // JsonWriter
 typedef bool(*TCsWriteStructToJson_Internal)(UProperty*, TSharedRef<class TJsonWriter<TCHAR>> &, void*, UScriptStruct* const &);

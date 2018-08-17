@@ -4,10 +4,7 @@
 #include "CsTypes_Character.generated.h"
 #pragma once
 
-// Character
-#pragma region
-
-	// CharacterAnim
+// CharacterAnim
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsCharacterAnim : public FECsEnum_uint8
@@ -43,7 +40,7 @@ public:
 	static EMCsCharacterAnim& Get();
 };
 
-	// CharacterBlendSpace
+// CharacterBlendSpace
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsCharacterBlendSpace : public FECsEnum_uint8
@@ -80,7 +77,7 @@ public:
 };
 
 
-	// CharacterAnimBlueprint
+// CharacterAnimBlueprint
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsCharacterAnimBlueprint : public FECsEnum_uint8
@@ -138,7 +135,7 @@ typedef TCsCharacterAnimVariation(*TCsStringToCharacterAnimVariation)(const FStr
 											CharacterAnimVariationToString = &ECsCharacterAnimVariation::ToString; \
 											StringToCharacterAnimVariation = &ECsCharacterAnimVariation::ToType;
 
-	// CharacterAnimVariation
+// CharacterAnimVariation
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsCharacterAnimVariation : public FECsEnum_uint8
@@ -213,4 +210,54 @@ struct CSCORE_API FCsHeadCollision
 	}
 };
 
-#pragma endregion Character
+/*
+UENUM(BlueprintType)
+namespace ECsCharacterJumpMovementState
+{
+	enum Type
+	{
+		None								UMETA(DisplayName = "None"),
+		Up									UMETA(DisplayName = "Up"),
+		Down								UMETA(DisplayName = "Down"),
+		ECsCharacterJumpMovementState_MAX	UMETA(Hidden),
+	};
+}
+
+typedef ECsCharacterJumpMovementState::Type TCsCharacterJumpMovementState;
+
+struct CSCORE_API EMCsFpvAnimMember : public TCsEnumMap<ECsFpvAnimMember::Type>
+{
+protected:
+	EMCsFpvAnimMember() {}
+	EMCsFpvAnimMember(const EMCsFpvAnimMember &) = delete;
+	EMCsFpvAnimMember(EMCsFpvAnimMember &&) = delete;
+public:
+	~EMCsFpvAnimMember() {}
+private:
+	static EMCsFpvAnimMember* Instance;
+
+public:
+	static EMCsFpvAnimMember& Get();
+};
+
+namespace ECsFpvAnimMember
+{
+	namespace Ref
+	{
+		extern CSCORE_API const Type Anim1P;
+		extern CSCORE_API const Type Anim3P;
+		extern CSCORE_API const Type Anim3P_Low;
+		extern CSCORE_API const Type AnimVR;
+		extern CSCORE_API const Type ECsFpvAnimMember_MAX;
+	}
+
+	FORCEINLINE const FString& ToStringFromViewType(const TCsViewType &ViewType, const bool &IsLow = false)
+	{
+		if (ViewType == ECsViewType::FirstPerson) { return EMCsFpvAnimMember::Get().ToString(Ref::Anim1P); }
+		if (ViewType == ECsViewType::ThirdPerson && !IsLow) { return EMCsFpvAnimMember::Get().ToString(Ref::Anim3P); }
+		if (ViewType == ECsViewType::ThirdPerson && IsLow) { return EMCsFpvAnimMember::Get().ToString(Ref::Anim3P_Low); }
+		if (ViewType == ECsViewType::VR) { return EMCsFpvAnimMember::Get().ToString(Ref::AnimVR); }
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+}
+*/

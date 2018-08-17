@@ -410,6 +410,13 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float CurrentCapsuleSpeedZSq;
 
+	/*
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	TEnumAsByte<ECsCharacterJumpMovementState::Type> CurrentJumpMovementState;
+
+
+	void OnChange_CurrentJumpMovementState(const TEnumAsByte<ECsCharacterJumpMovementState::Type> &StateType);
+	*/
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	FVector CurrentCapsuleVelocityRight;
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")

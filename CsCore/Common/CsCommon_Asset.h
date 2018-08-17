@@ -320,6 +320,14 @@ public:
 		}
 	}
 
+	static class ACsDataMapping* GetDataMapping();
+
+	template<typename T>
+	static T* GetDataMapping()
+	{
+		return Cast<T>(GetDataMapping());
+	}
+
 	static void SyncBrowserToAsset(UObject* InObject);
 	static void SyncBrowserToAssets(TArray<UObject*> Objects);
 

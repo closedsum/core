@@ -313,11 +313,11 @@ struct CSCORE_API FECsAssetType : public FECsEnum_uint8
 
 public:
 	FECsAssetType() {}
-	FECsAssetType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsAssetType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	FECsAssetType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : Super(InValue, InName, InDisplayName) {}
+	FECsAssetType(const uint8 &InValue, const FString &InName) : Super(InValue, InName) {}
 	~FECsAssetType() {}
 
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	FORCEINLINE virtual FString ToString() const override { return Super::ToString(); }
 };
 
 FORCEINLINE uint32 GetTypeHash(const FECsAssetType& b)
@@ -359,11 +359,11 @@ struct CSCORE_API FECsLoadAssetsType : public FECsEnum_uint8
 
 public:
 	FECsLoadAssetsType() {}
-	FECsLoadAssetsType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsLoadAssetsType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
+	FECsLoadAssetsType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : Super(InValue, InName, InDisplayName) {}
+	FECsLoadAssetsType(const uint8 &InValue, const FString &InName) : Super(InValue, InName) {}
 	~FECsLoadAssetsType() {}
 
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	FORCEINLINE virtual FString ToString() const override { return Super::ToString(); }
 };
 
 FORCEINLINE uint32 GetTypeHash(const FECsLoadAssetsType& b)
@@ -518,14 +518,11 @@ struct CSCORE_API FCsData_ShortCode
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data_ShortCode")
-	FECsAssetType Type;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data_ShortCode")
 	FName ShortCode;
 
 public:
 	FCsData_ShortCode() {}
-	~FCsData_ShortCode() {}
+	virtual ~FCsData_ShortCode() {}
 };
 
 // JsonWriter

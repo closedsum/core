@@ -7,6 +7,9 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/PoseableMeshComponent.h"
 
+// Data
+#include "Data/CsDataMapping.h"
+
 #if WITH_EDITOR
 
 // Level Sequence
@@ -18,6 +21,19 @@
 #include "Editor/ContentBrowser/Public/IContentBrowserSingleton.h"
 
 #endif // #if WITH_EDITOR
+
+// Cache
+#pragma region
+
+namespace ECsCommonAssetCached
+{
+	namespace Str
+	{
+		const FString bp_data_mapping = TEXT("bp_data_mapping");
+	}
+}
+
+#pragma endregion // Cache
 
 UCsCommon_Asset::UCsCommon_Asset(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -33,6 +49,11 @@ IAssetRegistry& UCsCommon_Asset::GetAssetRegistry()
 {
 	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(FName("AssetRegistry"));
 	return AssetRegistryModule.Get();
+}
+
+ACsDataMapping* UCsCommon_Asset::GetDataMapping()
+{
+	return GetBlueprintDefaultObject<ACsDataMapping>(ECsCommonAssetCached::Str::bp_data_mapping, ECsStringCompare::Equals, ACsDataMapping::StaticClass());
 }
 
 void UCsCommon_Asset::SyncBrowserToAsset(UObject* InObject)

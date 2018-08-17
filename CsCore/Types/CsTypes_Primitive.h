@@ -679,6 +679,8 @@ struct CSCORE_API FECsEnum_uint8 : public FECsEnum
 {
 	GENERATED_USTRUCT_BODY()
 
+public:
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enum_uint8")
 	uint8 Value;
 
@@ -882,6 +884,8 @@ struct CSCORE_API FECsEnumMask_int32 : public FECsEnum
 {
 	GENERATED_USTRUCT_BODY()
 
+public:
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "EnumMask_uint32")
 	uint8 Value;
 
@@ -984,6 +988,8 @@ USTRUCT(BlueprintType)
 struct CSCORE_API FECsEnumMask_uint32 : public FECsEnum
 {
 	GENERATED_USTRUCT_BODY()
+
+public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "EnumMask_uint32")
 	uint8 Value;

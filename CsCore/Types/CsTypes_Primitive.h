@@ -237,6 +237,395 @@ public:
 	}
 };
 
+template<typename EnumType>
+struct TCsEnumMaskMap
+{
+private:
+	TArray<EnumType> Enums;
+	int32 Count;
+	TMap<FString, EnumType> FromNameMap;
+	TMap<EnumType, FString> ToNameMap;
+	TMap<FString, EnumType> FromDisplayNameMap;
+	TMap<EnumType, FString> ToDisplayNameMap;
+	TMap<FName, EnumType> FromNameInternalMap;
+	TMap<EnumType, FName> ToNameInternalMap;
+	TMap<uint64, EnumType> FlagMap;
+	EnumType None;
+protected:
+	TCsEnumMaskMap()
+	{
+		Count = 0;
+		None = (EnumType)0;
+	}
+public:
+	virtual ~TCsEnumMaskMap() {}
+
+	FORCEINLINE TCsEnumMaskMap Add(const EnumType& Enum, const FString &Name, const FString &DisplayName)
+	{
+		Enums.Add(Enum);
+		++Count;
+		FromNameMap.Add(Name, Enum);
+		ToNameMap.Add(Enum, Name);
+		FromDisplayNameMap.Add(DisplayName, Enum);
+		ToDisplayNameMap.Add(Enum, DisplayName);
+		FromNameInternalMap.Add(FName(*Name), Enum);
+		ToNameInternalMap.Add(Enum, FName(*Name));
+		FlagMap.Add((uint64)Enum, Enum);
+		return Enum;
+	}
+
+	FORCEINLINE EnumType Add(const EnumType& Enum, const FString &Name)
+	{
+		return Add(Enum, Name, Name);
+	}
+
+	FORCEINLINE const EnumType& operator[](const FString &Name)
+	{
+		return FromNameMap[Name];
+	}
+
+	FORCEINLINE const EnumType& operator[](const FName &Name)
+	{
+		return FromNameInternalMap[Name];
+	}
+
+	FORCEINLINE bool IsValidEnum(EnumType E)
+	{
+		return Enums.Find(E) > INDEX_NONE;
+	}
+
+	FORCEINLINE bool IsValidEnum(const FString &Name)
+	{
+		return FromNameMap.Find(Name) != nullptr;
+	}
+
+	FORCEINLINE bool IsValidEnum(const FName &Name)
+	{
+		return FromNameInternalMap.Find(Name) != nullptr;
+	}
+
+	FORCEINLINE bool IsValidFlag(const uint64 &Flag)
+	{
+		return FlagMap.Find(Flag) != nullptr;
+	}
+
+	FORCEINLINE const EnumType& GetEnumAt(const int32 &Index)
+	{
+		return Enums[Index];
+	}
+
+	FORCEINLINE const EnumType& GetSafeEnumAt(const int32 &Index)
+	{
+		return Index < Count ? Enums[Index] : None;
+	}
+
+	FORCEINLINE const EnumType& GetEnum(const FString &Name)
+	{
+		return FromNameMap[Name];
+	}
+
+	FORCEINLINE const EnumType& GetSafeEnum(const FString &Name)
+	{
+		return IsValidEnum(Name) ? FromNameMap[Name] : None;
+	}
+
+	FORCEINLINE const EnumType& GetEnum(const FName &Name)
+	{
+		return FromNameInternalMap[Name];
+	}
+
+	FORCEINLINE const EnumType& GetSafeEnum(const FName &Name)
+	{
+		return IsValidEnum(Name) ? FromNameInternalMap[Name] : None;
+	}
+
+	FORCEINLINE const EnumType& GetEnumByDisplayName(const FString &DisplayName)
+	{
+		return FromDisplayNameMap[DisplayName];
+	}
+
+	FORCEINLINE const EnumType& GetEnumByFlag(const uint64 &Flag)
+	{
+		return FlagMap[Flag];
+	}
+
+	FORCEINLINE const EnumType& GetSafeEnumByFlag(const uint64 &Flag)
+	{
+		return IsValidFlag(Flag) ? FlagMap[Flag] : None;
+	}
+
+	FORCEINLINE const int32& Num()
+	{
+		return Count;
+	}
+
+	FORCEINLINE const FString& ToString(const EnumType& Enum)
+	{
+		if (FString* Name = ToNameMap.Find(Enum))
+			return *Name;
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE const FString& ToString(const int32& Index)
+	{
+		if (Index >= Count)
+			return CS_INVALID_ENUM_TO_STRING;
+		return ToString(Enums[Index]);
+	}
+
+	FORCEINLINE FString MaskToString(const uint64 &Mask)
+	{
+		//  TEXT("")
+		FString String = ECsCached::Str::Empty;
+		bool IsFirst   = true;
+
+		for (const EnumType& Enum : Enums)
+		{
+			if (CS_TEST_BITFLAG(Mask, Enum))
+			{
+				if (!IsFirst)
+				{
+					String += TEXT(" | ");
+				}
+				String += ToString(Enum);
+				IsFirst = false;
+			}
+		}
+
+		// (String == TEXT(""))
+		if (String == ECsCached::Str::Empty)
+			return ECsCached::Str::None;
+		// TEXT("None")
+		return String;
+	}
+
+	FORCEINLINE const FName& ToName(const EnumType& Enum)
+	{
+		if (FName* Name = ToNameInternalMap.Find(Enum))
+			return *Name;
+		return CS_INVALID_ENUM_TO_NAME;
+	}
+
+	FORCEINLINE const FString& ToDisplayName(const EnumType& Enum)
+	{
+		if (FString* Name = ToDisplayNameMap.Find(Enum))
+			return *Name;
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE const EnumType& ToType(const FString &Name)
+	{
+		if (EnumType* Enum = FromNameMap.Find(Name))
+			return *Enum;
+		return None;
+	}
+
+	FORCEINLINE const EnumType& ToType(const FName &Name)
+	{
+		if (EnumType* Enum = FromNameInternalMap.Find(Name))
+			return *Enum;
+		return None;
+	}
+};
+
+template<typename EnumType>
+struct TCsEnumFlagMap
+{
+private:
+	TArray<EnumType> Enums;
+	int32 Count;
+	TMap<FString, EnumType> FromNameMap;
+	TMap<EnumType, FString> ToNameMap;
+	TMap<FString, EnumType> FromDisplayNameMap;
+	TMap<EnumType, FString> ToDisplayNameMap;
+	TMap<FName, EnumType> FromNameInternalMap;
+	TMap<EnumType, FName> ToNameInternalMap;
+	TMap<uint32, EnumType> FlagMap;
+	TArray<uint32> Flags;
+protected:
+	TCsEnumFlagMap()
+	{
+		Count = 0;
+	}
+public:
+	virtual ~TCsEnumFlagMap() {}
+
+	FORCEINLINE TCsEnumFlagMap Add(const EnumType& Enum, const FString &Name, const FString &DisplayName)
+	{
+		Enums.Add(Enum);
+		++Count;
+		FromNameMap.Add(Name, Enum);
+		ToNameMap.Add(Enum, Name);
+		FromDisplayNameMap.Add(DisplayName, Enum);
+		ToDisplayNameMap.Add(Enum, DisplayName);
+		FromNameInternalMap.Add(FName(*Name), Enum);
+		ToNameInternalMap.Add(Enum, FName(*Name));
+		FlagMap.Add(1 << static_cast<uint32>(Enum), Enum);
+		Flags.Add(1 << static_cast<uint32>(Enum));
+		return Enum;
+	}
+
+	FORCEINLINE EnumType Add(const EnumType& Enum, const FString &Name)
+	{
+		return Add(Enum, Name, Name);
+	}
+
+	FORCEINLINE const EnumType& operator[](const FString &Name)
+	{
+		return FromNameMap[Name];
+	}
+
+	FORCEINLINE const EnumType& operator[](const FName &Name)
+	{
+		return FromNameInternalMap[Name];
+	}
+
+	FORCEINLINE bool IsValidEnum(EnumType E)
+	{
+		return Enums.Find(E) > INDEX_NONE;
+	}
+
+	FORCEINLINE bool IsValidEnum(const FString &Name)
+	{
+		return FromNameMap.Find(Name) != nullptr;
+	}
+
+	FORCEINLINE bool IsValidEnum(const FName &Name)
+	{
+		return FromNameInternalMap.Find(Name) != nullptr;
+	}
+
+	FORCEINLINE bool IsValidFlag(const uint32 &Flag)
+	{
+		return FlagMap.Find(Flag) != nullptr;
+	}
+
+	FORCEINLINE const EnumType& GetEnumAt(const int32 &Index)
+	{
+		return Enums[Index];
+	}
+
+	FORCEINLINE const EnumType& GetSafeEnumAt(const int32 &Index)
+	{
+		return Index < Count ? Enums[Index] : None;
+	}
+
+	FORCEINLINE const EnumType& GetEnum(const FString &Name)
+	{
+		return FromNameMap[Name];
+	}
+
+	FORCEINLINE const EnumType& GetSafeEnum(const FString &Name)
+	{
+		return IsValidEnum(Name) ? FromNameMap[Name] : None;
+	}
+
+	FORCEINLINE const EnumType& GetEnum(const FName &Name)
+	{
+		return FromNameInternalMap[Name];
+	}
+
+	FORCEINLINE const EnumType& GetSafeEnum(const FName &Name)
+	{
+		return IsValidEnum(Name) ? FromNameInternalMap[Name] : None;
+	}
+
+	FORCEINLINE const EnumType& GetEnumByDisplayName(const FString &DisplayName)
+	{
+		return FromDisplayNameMap[DisplayName];
+	}
+
+	FORCEINLINE const EnumType& GetEnumByFlag(const uint32 &Flag)
+	{
+		return FlagMap[Flag];
+	}
+
+	FORCEINLINE const EnumType& GetSafeEnumByFlag(const uint32 &Flag)
+	{
+		return IsValidFlag(Flag) ? FlagMap[Flag] : None;
+	}
+
+	FORCEINLINE const int32& Num()
+	{
+		return Count;
+	}
+
+	FORCEINLINE const FString& ToString(const EnumType& Enum)
+	{
+		if (FString* Name = ToNameMap.Find(Enum))
+			return *Name;
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE const FString& ToString(const int32& Index)
+	{
+		if (Index >= Count)
+			return CS_INVALID_ENUM_TO_STRING;
+		return ToString(Enums[Index]);
+	}
+
+	FORCEINLINE const FString& ToString(const uint32& Flag)
+	{
+		if (IsValidFlag(Flag))
+			return ToNameMap[FlagMap[Flag]];
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE FString MaskToString(const uint32 &Mask)
+	{
+		//  TEXT("")
+		FString String = ECsCached::Str::Empty;
+		bool IsFirst = true;
+
+		for (const uint32& Flag : Flags)
+		{
+			if (CS_TEST_BITFLAG(Mask, Flag))
+			{
+				if (!IsFirst)
+				{
+					String += TEXT(" | ");
+				}
+				String += ToString(Flag);
+				IsFirst = false;
+			}
+		}
+
+		// (String == TEXT(""))
+		if (String == ECsCached::Str::Empty)
+			return ECsCached::Str::None;
+		// TEXT("None")
+		return String;
+	}
+
+	FORCEINLINE const FName& ToName(const EnumType& Enum)
+	{
+		if (FName* Name = ToNameInternalMap.Find(Enum))
+			return *Name;
+		return CS_INVALID_ENUM_TO_NAME;
+	}
+
+	FORCEINLINE const FString& ToDisplayName(const EnumType& Enum)
+	{
+		if (FString* Name = ToDisplayNameMap.Find(Enum))
+			return *Name;
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE const EnumType& ToType(const FString &Name)
+	{
+		if (EnumType* Enum = FromNameMap.Find(Name))
+			return *Enum;
+		return None;
+	}
+
+	FORCEINLINE const EnumType& ToType(const FName &Name)
+	{
+		if (EnumType* Enum = FromNameInternalMap.Find(Name))
+			return *Enum;
+		return None;
+	}
+};
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsEnum
 {
@@ -560,6 +949,31 @@ struct CSCORE_API FECsEnumMask_int32 : public FECsEnum
 		return !(Lhs == Rhs);
 	}
 
+	FORCEINLINE int32 operator|(const FECsEnumMask_int32 &B) const
+	{
+		return Mask | B.Mask;
+	}
+
+	FORCEINLINE friend int32 operator|(const FECsEnumMask_int32 &Lhs, const uint8 &Rhs)
+	{
+		return Lhs.Mask | Rhs;
+	}
+
+	FORCEINLINE friend int32 operator|(const uint8 &Lhs, const FECsEnumMask_int32 &Rhs)
+	{
+		return Lhs | Rhs.Mask;
+	}
+
+	FORCEINLINE friend int32 operator|(const FECsEnumMask_int32 &Lhs, const int32 &Rhs)
+	{
+		return Lhs.Mask | Rhs;
+	}
+
+	FORCEINLINE friend int32 operator|(const int32 &Lhs, const FECsEnumMask_int32 &Rhs)
+	{
+		return Lhs | Rhs.Mask;
+	}
+
 	FORCEINLINE virtual FString ToString() const override
 	{
 		return TEXT("Name: ") + Name + TEXT(" Value: ") + FString::FromInt(Value) + TEXT(" Mask: ") + FString::FromInt(Mask);
@@ -638,6 +1052,41 @@ struct CSCORE_API FECsEnumMask_uint32 : public FECsEnum
 		return !(Lhs == Rhs);
 	}
 
+	FORCEINLINE uint32 operator|(const FECsEnumMask_uint32 &B) const
+	{
+		return Mask | B.Mask;
+	}
+
+	FORCEINLINE friend uint32 operator|(const FECsEnumMask_uint32 &Lhs, const uint8 &Rhs)
+	{
+		return Lhs.Mask | Rhs;
+	}
+
+	FORCEINLINE friend uint32 operator|(const uint8 &Lhs, const FECsEnumMask_uint32 &Rhs)
+	{
+		return Lhs | Rhs.Mask;
+	}
+
+	FORCEINLINE friend uint32 operator|(const FECsEnumMask_uint32 &Lhs, const int32 &Rhs)
+	{
+		return Lhs.Mask | Rhs;
+	}
+
+	FORCEINLINE friend uint32 operator|(const int32 &Lhs, const FECsEnumMask_uint32 &Rhs)
+	{
+		return Lhs | Rhs.Mask;
+	}
+
+	FORCEINLINE friend uint32 operator|(const FECsEnumMask_uint32 &Lhs, const uint32 &Rhs)
+	{
+		return Lhs.Mask | Rhs;
+	}
+
+	FORCEINLINE friend uint32 operator|(const uint32 &Lhs, const FECsEnumMask_uint32 &Rhs)
+	{
+		return Lhs | Rhs.Mask;
+	}
+
 	FORCEINLINE virtual FString ToString() const override
 	{
 		return TEXT("Name: ") + Name + TEXT(" Value: ") + FString::FromInt(Value) + TEXT(" Mask: ") + FString::FromInt(Mask);
@@ -673,7 +1122,7 @@ public:
 				return Enums[Index - 1];
 			}
 		}
-		// unt32
+		// uint32
 		if (std::is_same<EnumType, uint32>::value)
 		{
 			if (Index > CS_INT32_BIT_MAX)

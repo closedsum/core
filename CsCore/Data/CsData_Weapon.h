@@ -25,6 +25,9 @@ public:
 #pragma region
 public:
 
+	UFUNCTION(BlueprintCallable, Category = "Mesh")
+	virtual const bool& UseMesh();
+
 	virtual USkeletalMesh* GetMesh(const TCsViewType &ViewType, const bool &IsLow = false);
 	UFUNCTION(BlueprintCallable, Category = "Mesh")
 	virtual USkeletalMesh* GetMesh(const TEnumAsByte<ECsViewType::Type> &ViewType, const bool &IsLow = false);

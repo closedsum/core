@@ -323,7 +323,7 @@ void ACsDataMapping::PopulateDataAssetReferences()
 				// FCsDataMappingEntry
 				if (InnerStructProperty->Struct == FCsDataMappingEntry::StaticStruct())
 				{
-					AssetTypeIndex++;
+					++AssetTypeIndex;
 
 					const FECsAssetType& AssetType = EMCsAssetType::Get().GetEnumAt(AssetTypeIndex);
 
@@ -381,7 +381,7 @@ void ACsDataMapping::PopulateAssetReferences()
 				// FCsDataMappingEntry
 				if (InnerStructProperty->Struct == FCsDataMappingEntry::StaticStruct())
 				{
-					AssetTypeIndex++;
+					++AssetTypeIndex;
 
 					const FECsAssetType& AssetType = EMCsAssetType::Get().GetEnumAt(AssetTypeIndex);
 
@@ -433,7 +433,7 @@ void ACsDataMapping::PopulateAssetReferences()
 								// References to anything Data references
 								int32 ReferenceCount = OutAsset->AssetReferences[J].References.Num();
 								
-								for (int32 K = 0; K < ReferenceCount; K++)
+								for (int32 K = 0; K < ReferenceCount; ++K)
 								{
 									(*Member)[I].AssetReferences[J].References.Add(OutAsset->AssetReferences[J].References[K]);
 									AssetReferences[J].References.Add(OutAsset->AssetReferences[J].References[K]);
@@ -1689,6 +1689,8 @@ void ACsDataMapping::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 		Validate.Validate = false;
 	}
 	Super::PostEditChangeProperty(e);
+
+	GenerateMaps();
 }
 
 bool ACsDataMapping::CheckEntryExists(const FName &ShortCode, const FECsAssetType &AssetType, const TCsLoadFlags_Editor &LoadFlags, FString &OutMessage)

@@ -273,6 +273,8 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const FECsLoadAs
 
 		if (Successful)
 		{
+			DataMapping->GenerateMaps();
+
 			OutEntries.Reset();
 			OutAssetTypes.Reset();
 			OutIndices.Reset();

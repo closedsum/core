@@ -441,7 +441,8 @@ void ACsData::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 		ACsDataMapping* DataMapping = GetDataMapping();
 
 		DataMapping->PerformAddEntry(ShortCode, Type, AddToDataMapping.LoadFlags, AddToDataMapping.Message, AddToDataMapping.Output);
-	
+		DataMapping->GenerateMaps();
+
 		if (UCsCommon::IsDefaultObject(this))
 		{
 			UCsCommon::DisplayNotificationInfo(AddToDataMapping.Output, TEXT("Data"), TEXT("AddToDataMappingOutput"), 5.0f);

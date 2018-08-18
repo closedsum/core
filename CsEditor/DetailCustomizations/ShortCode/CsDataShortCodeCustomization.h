@@ -4,25 +4,23 @@
 #include "PropertyHandle.h"
 #include "Widgets/Input/SComboBox.h"
 
-#include "Types/CsTypes_Load.h"
-
 class IDetailGroup;
 
 /**
 * Customizes a FCsData_ShortCode property to use a dropdown
 */
-class CSEDITOR_API FCsShortCodeCustomization : public IPropertyTypeCustomization
+class CSEDITOR_API FCsDataShortCodeCustomization : public IPropertyTypeCustomization
 {
 private:
 	typedef IPropertyTypeCustomization Super;
 
 public:
 
-	FCsShortCodeCustomization();
+	FCsDataShortCodeCustomization();
 
 protected:
 
-	void Init(const FECsAssetType &AssetType);
+	void Init();
 
 public:
 
@@ -34,14 +32,7 @@ public:
 
 protected:
 
-	virtual void SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle);
-
-	template<typename ShortCodeStruct>
-	void SetPropertyHandles_Internal(TSharedRef<IPropertyHandle> StructPropertyHandle)
-	{
-		ShortCodeHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(ShortCodeStruct, ShortCode));
-		check(ShortCodeHandle.IsValid());
-	}
+	void SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle);
 
 	TSharedRef<SWidget> OnGenerateWidget(TSharedPtr<FString> InItem);
 

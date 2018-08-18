@@ -12,6 +12,7 @@
 
 #include "Classes/Factories/BlueprintFactory.h"
 // Data
+#include "Data/CsDataMapping.h"
 #include "Data/CsData.h"
 
 #include "Editor/PropertyEditor/Public/PropertyEditorModule.h"
@@ -70,7 +71,7 @@
 		// Projectile
 #include "DetailCustomizations/EnumStruct/Projectile/ECsProjectileTypeCustomization.h"
 	// ShortCode
-#include "DetailCustomizations/ShortCode/CsShortCodeCustomization.h"
+#include "DetailCustomizations/ShortCode/CsDataShortCodeCustomization.h"
 
 void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 {
@@ -138,7 +139,7 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 		}
 		// ShortCode
 		{
-			PropertyModule.RegisterCustomPropertyTypeLayout("CsData_ShortCode", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FCsShortCodeCustomization::MakeInstance));
+			PropertyModule.RegisterCustomPropertyTypeLayout("CsData_ShortCode", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FCsDataShortCodeCustomization::MakeInstance));
 		}
 	}
 }
@@ -150,6 +151,9 @@ void UCsEdEngine::Tick(float DeltaSeconds, bool bIdleMode)
 	if (!DataMapping)
 	{
 		DataMapping = UCsCommon_Asset::GetDataMapping();
+
+		if (DataMapping)
+			DataMapping->GenerateMaps();
 	}
 }
 

@@ -1,5 +1,5 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
-#include "DetailCustomizations/ShortCode/CsShortCodeCustomization.h"
+#include "DetailCustomizations/ShortCode/CsDataShortCodeCustomization.h"
 #include "CsEditor.h"
 #include "Common/CsCommon_Asset.h"
 
@@ -16,32 +16,12 @@
 #define LOCTEXT_NAMESPACE "CsShortCodeCustomization"
 
 
-FCsShortCodeCustomization::FCsShortCodeCustomization()
+FCsDataShortCodeCustomization::FCsDataShortCodeCustomization()
 {
 }
 
-void FCsShortCodeCustomization::Init(const FECsAssetType &AssetType)
+void FCsDataShortCodeCustomization::Init()
 {
-	ACsDataMapping* DataMapping = Cast<UCsEdEngine>(GEditor)->DataMapping;
-
-	TArray<FCsDataMappingEntry>* EntriesPtr = DataMapping->GetDataMappings(AssetType);
-	TArray<FCsDataMappingEntry>& Entries    = *EntriesPtr;
-
-	for (const FCsDataMappingEntry& Entry : Entries)
-	{
-		DisplayNameList.Add(MakeShareable(new FString(Entry.ShortCode.ToString())));
-	}
-}
-
-TSharedRef<IPropertyTypeCustomization> FCsShortCodeCustomization::MakeInstance()
-{
-	return MakeShareable(new FCsShortCodeCustomization);
-}
-
-void FCsShortCodeCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> StructPropertyHandle, class FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
-{
-	SetPropertyHandles(StructPropertyHandle);
-
 	uint8 AssetTypeAsByte;
 	AssetTypeHandle->GetValue(AssetTypeAsByte);
 
@@ -58,6 +38,18 @@ void FCsShortCodeCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> Stru
 			DisplayNameList.Add(MakeShareable(new FString(Entry.ShortCode.ToString())));
 		}
 	}
+}
+
+TSharedRef<IPropertyTypeCustomization> FCsDataShortCodeCustomization::MakeInstance()
+{
+	return MakeShareable(new FCsDataShortCodeCustomization);
+}
+
+void FCsDataShortCodeCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> StructPropertyHandle, class FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
+{
+	SetPropertyHandles(StructPropertyHandle);
+
+	Init();
 
 	TSharedPtr<FString> InitialSelectedDisplayName = GetSelectedDisplayName();
 
@@ -76,22 +68,22 @@ void FCsShortCodeCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> Stru
 	[
 		SAssignNew(DisplayNameComboBox, SComboBox<TSharedPtr<FString>>)
 		.OptionsSource(&DisplayNameList)
-		.OnGenerateWidget(this, &FCsShortCodeCustomization::OnGenerateWidget)
-		.OnSelectionChanged(this, &FCsShortCodeCustomization::OnSelectionChanged)
-		.OnComboBoxOpening(this, &FCsShortCodeCustomization::OnComboBoxOpening)
+		.OnGenerateWidget(this, &FCsDataShortCodeCustomization::OnGenerateWidget)
+		.OnSelectionChanged(this, &FCsDataShortCodeCustomization::OnSelectionChanged)
+		.OnComboBoxOpening(this, &FCsDataShortCodeCustomization::OnComboBoxOpening)
 		.InitiallySelectedItem(InitialSelectedDisplayName)
 		.IsEnabled(FSlateApplication::Get().GetNormalExecutionAttribute())
 		.ContentPadding(FMargin(2.0f, 2.0f))
 		.Content()
 		[
 			SNew(STextBlock)
-			.Text(this, &FCsShortCodeCustomization::GetComboBoxContent)
+			.Text(this, &FCsDataShortCodeCustomization::GetComboBoxContent)
 			.Font(IDetailLayoutBuilder::GetDetailFont())
 		]
 	];
 }
 
-void FCsShortCodeCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
+void FCsDataShortCodeCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
 	AssetTypeHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FCsData_ShortCode, Type));
 	check(AssetTypeHandle.IsValid());
@@ -99,11 +91,11 @@ void FCsShortCodeCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> S
 	check(ShortCodeHandle.IsValid());
 }
 
-void FCsShortCodeCustomization::CustomizeChildren(TSharedRef<class IPropertyHandle> StructPropertyHandle, class IDetailChildrenBuilder& StructBuilder, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
+void FCsDataShortCodeCustomization::CustomizeChildren(TSharedRef<class IPropertyHandle> StructPropertyHandle, class IDetailChildrenBuilder& StructBuilder, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
 }
 
-TSharedRef<SWidget> FCsShortCodeCustomization::OnGenerateWidget(TSharedPtr<FString> InItem)
+TSharedRef<SWidget> FCsDataShortCodeCustomization::OnGenerateWidget(TSharedPtr<FString> InItem)
 {
 	return
 		SNew(STextBlock)
@@ -111,7 +103,7 @@ TSharedRef<SWidget> FCsShortCodeCustomization::OnGenerateWidget(TSharedPtr<FStri
 		.Font(IDetailLayoutBuilder::GetDetailFont());
 }
 
-void FCsShortCodeCustomization::OnSelectionChanged(TSharedPtr<FString> DisplayNameItem, ESelectInfo::Type SelectInfo)
+void FCsDataShortCodeCustomization::OnSelectionChanged(TSharedPtr<FString> DisplayNameItem, ESelectInfo::Type SelectInfo)
 {
 	if (DisplayNameItem.IsValid())
 	{
@@ -119,7 +111,7 @@ void FCsShortCodeCustomization::OnSelectionChanged(TSharedPtr<FString> DisplayNa
 	}
 }
 
-void FCsShortCodeCustomization::OnComboBoxOpening()
+void FCsDataShortCodeCustomization::OnComboBoxOpening()
 {
 	TSharedPtr<FString> SelectedDisplayName = GetSelectedDisplayName();
 
@@ -130,7 +122,7 @@ void FCsShortCodeCustomization::OnComboBoxOpening()
 	}
 }
 
-TSharedPtr<FString> FCsShortCodeCustomization::GetSelectedDisplayName() const
+TSharedPtr<FString> FCsDataShortCodeCustomization::GetSelectedDisplayName() const
 {
 	const int32 Count = DisplayNameList.Num();
 
@@ -154,7 +146,7 @@ TSharedPtr<FString> FCsShortCodeCustomization::GetSelectedDisplayName() const
 	return DisplayNameList[0];
 }
 
-void FCsShortCodeCustomization::SetShortCodeWithDisplayName(const FString& DisplayName)
+void FCsDataShortCodeCustomization::SetShortCodeWithDisplayName(const FString& DisplayName)
 {
 	check(ShortCodeHandle.IsValid());
 
@@ -169,14 +161,14 @@ void FCsShortCodeCustomization::SetShortCodeWithDisplayName(const FString& Displ
 	}
 }
 
-void FCsShortCodeCustomization::GetDisplayNamePropertyValue(FName& OutShortCode) const
+void FCsDataShortCodeCustomization::GetDisplayNamePropertyValue(FName& OutShortCode) const
 {
 	check(ShortCodeHandle.IsValid());
 	ShortCodeHandle->GetValue(OutShortCode);
 
 }
 
-FText FCsShortCodeCustomization::GetComboBoxContent() const
+FText FCsDataShortCodeCustomization::GetComboBoxContent() const
 {
 	TSharedPtr<FString> SelectedDisplayName = GetSelectedDisplayName();
 

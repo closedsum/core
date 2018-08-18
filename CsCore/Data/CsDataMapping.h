@@ -184,6 +184,8 @@ class CSCORE_API ACsDataMapping : public AActor
 
 	virtual TMap<FName, FCsDataMappingEntry>* GetDataMappings_Map(const FECsAssetType &AssetType);
 
+	FCsDataMappingEntry* GetDataMappingEntry(const FECsAssetType &AssetType, const FName& ShortCode);
+
 	void GenerateMaps(const FECsAssetType &AssetType);
 	void GenerateMaps();
 

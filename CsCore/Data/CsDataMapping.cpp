@@ -83,6 +83,18 @@ void ACsDataMapping::GenerateMaps()
 	}
 }
 
+FCsDataMappingEntry* ACsDataMapping::GetDataMappingEntry(const FECsAssetType &AssetType, const FName& ShortCode)
+{
+	if (TMap<FName, FCsDataMappingEntry>* Map = GetDataMappings_Map(AssetType))
+	{
+		if (FCsDataMappingEntry* Entry = Map->Find(ShortCode))
+			return Entry;
+
+		UE_LOG(LogCs, Warning, TEXT("ACsDataMapping::GetDataMappingEntry: No Entry found for AssetType: %s with ShortCode: %s"), *(AssetType.Name), *ShortCode.ToString());
+	}
+	return nullptr;
+}
+
 const FECsAssetType& ACsDataMapping::GetDataAssetType(const FName &ShortCode)
 {
 	// Search TMaps - Populated if GenerateMaps was called

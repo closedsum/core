@@ -163,7 +163,7 @@ void ACsPawn::PostInitializeComponents()
 
 	if (!IsPendingKill())
 	{
-		IsPlacedInWorld = GetWorld()->bStartup;
+		bPlacedInWorld = GetWorld()->bStartup;
 	}
 }
 

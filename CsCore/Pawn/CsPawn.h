@@ -131,7 +131,7 @@ class CSCORE_API ACsPawn : public ACharacter
 	uint64 UniqueObjectId;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Pawn")
-	bool IsPlacedInWorld;
+	bool bPlacedInWorld;
 
 	/** ONLY Call in the child class in which you want to implement this functionality */
 	virtual void PreTick(const float &DeltaSeconds);

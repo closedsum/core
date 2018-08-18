@@ -5590,6 +5590,9 @@ struct CSCORE_API FCsOptionalRotatorInterval
 
 #pragma endregion Vector Types
 
+// String
+#pragma region
+
 namespace ECsStringCompare
 {
 	enum Type
@@ -5650,3 +5653,55 @@ namespace ECsStringCompare
 
 #define ECS_STRING_COMPARE_MAX (uint8)ECsStringCompare::ECsStringCompare_MAX
 typedef ECsStringCompare::Type TCsStringCompare;
+
+#pragma endregion String
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsData_ShortCode
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data_ShortCode")
+	uint8 Type;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data_ShortCode")
+	FName ShortCode;
+
+public:
+	FCsData_ShortCode()
+	{
+		Type = UINT8_MAX;
+		ShortCode = CS_INVALID_SHORT_CODE;
+	}
+	virtual ~FCsData_ShortCode() {}
+
+	FORCEINLINE FCsData_ShortCode& operator=(const FCsData_ShortCode& B)
+	{
+		Type = B.Type;
+		ShortCode = B.ShortCode;
+		return *this;
+	}
+
+	FORCEINLINE bool operator==(const FCsData_ShortCode& B) const
+	{
+		if (Type != B.Type)
+			return false;
+		if (ShortCode != B.ShortCode)
+			return false;
+		return true;
+	}
+
+	FORCEINLINE bool operator!=(const FCsData_ShortCode& B) const
+	{
+		return !(*this == B);
+	}
+
+	FORCEINLINE bool IsValid()
+	{
+		if (Type == UINT8_MAX)
+			return false;
+		if (ShortCode == CS_INVALID_SHORT_CODE)
+			return false;
+		return true;
+	}
+};

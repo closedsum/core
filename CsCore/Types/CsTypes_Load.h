@@ -512,22 +512,6 @@ namespace ECsLoadAsyncOrder
 
 #pragma endregion // LoadAsyncOrder
 
-USTRUCT(BlueprintType)
-struct CSCORE_API FCsData_ShortCode
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data_ShortCode")
-	uint8 Type;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data_ShortCode")
-	FName ShortCode;
-
-public:
-	FCsData_ShortCode() {}
-	virtual ~FCsData_ShortCode() {}
-};
-
 // JsonWriter
 typedef bool(*TCsWriteStructToJson_Internal)(UProperty*, TSharedRef<class TJsonWriter<TCHAR>> &, void*, UScriptStruct* const &);
 typedef bool(*TCsWriteObjectToJson_Internal)(UProperty*, TSharedRef<class TJsonWriter<TCHAR>> &, void*, UClass* const &);

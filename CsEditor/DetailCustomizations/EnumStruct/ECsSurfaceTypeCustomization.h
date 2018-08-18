@@ -5,8 +5,11 @@
 /**
 * Customizes a FECsSurfaceType property to use a dropdown
 */
-class FECsSurfaceTypeCustomization : public FECsEnumCustomization
+class CSEDITOR_API FECsSurfaceTypeCustomization : public FECsEnumCustomization
 {
+private:
+	typedef FECsEnumCustomization Super;
+
 public:
 
 	FECsSurfaceTypeCustomization();

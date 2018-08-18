@@ -5,8 +5,11 @@
 /**
 * Customizes a FECsCharacterBlendSpace property to use a dropdown
 */
-class FECsCharacterBlendSpaceCustomization : public FECsEnumCustomization
+class CSEDITOR_API FECsCharacterBlendSpaceCustomization : public FECsEnumCustomization
 {
+private:
+	typedef FECsEnumCustomization Super;
+
 public:
 
 	FECsCharacterBlendSpaceCustomization();

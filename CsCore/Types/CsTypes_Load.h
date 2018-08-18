@@ -518,6 +518,9 @@ struct CSCORE_API FCsData_ShortCode
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data_ShortCode")
+	uint8 Type;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data_ShortCode")
 	FName ShortCode;
 
 public:

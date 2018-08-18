@@ -11,13 +11,17 @@ public:
 	GENERATED_BODY()
 
 	virtual void Init(IEngineLoop* InEngineLoop) override;
+	virtual void Tick(float DeltaSeconds, bool bIdleMode) override;
 
 	// Begin FExec Interface
 	virtual bool Exec(UWorld* InWorld, const TCHAR* Cmd, FOutputDevice& Ar = *GLog) override;
 	// End FExec Interface
 
+	class ACsDataMapping* DataMapping;
+
 // Types
 #pragma region
+public:
 
 	TCsGetAssetTypeStaticClass GetAssetTypeStaticClass;
 

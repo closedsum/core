@@ -5,8 +5,11 @@
 /**
 * Customizes a FECsHitType property to use a dropdown
 */
-class FECsHitTypeCustomization : public FECsEnumCustomization
+class CSEDITOR_API FECsHitTypeCustomization : public FECsEnumCustomization
 {
+private:
+	typedef FECsEnumCustomization Super;
+
 public:
 
 	FECsHitTypeCustomization();

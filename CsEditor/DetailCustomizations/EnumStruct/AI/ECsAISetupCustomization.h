@@ -5,8 +5,11 @@
 /**
 * Customizes a FECsAISetup property to use a dropdown
 */
-class FECsAISetupCustomization : public FECsEnumCustomization
+class CSEDITOR_API FECsAISetupCustomization : public FECsEnumCustomization
 {
+private:
+	typedef FECsEnumCustomization Super;
+
 public:
 
 	FECsAISetupCustomization();

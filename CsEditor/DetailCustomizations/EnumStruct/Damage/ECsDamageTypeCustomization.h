@@ -5,8 +5,11 @@
 /**
 * Customizes a FECsDamageType property to use a dropdown
 */
-class FECsDamageTypeCustomization : public FECsEnumCustomization
+class CSEDITOR_API FECsDamageTypeCustomization : public FECsEnumCustomization
 {
+private:
+	typedef FECsEnumCustomization Super;
+
 public:
 
 	FECsDamageTypeCustomization();

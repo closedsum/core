@@ -5,8 +5,11 @@
 /**
 * Customizes a FECsLoadAssetsType property to use a dropdown
 */
-class FECsLoadAssetsTypeCustomization : public FECsEnumCustomization
+class CSEDITOR_API FECsLoadAssetsTypeCustomization : public FECsEnumCustomization
 {
+private:
+	typedef FECsEnumCustomization Super;
+
 public:
 
 	FECsLoadAssetsTypeCustomization();

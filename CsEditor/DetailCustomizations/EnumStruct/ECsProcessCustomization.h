@@ -5,8 +5,11 @@
 /**
 * Customizes a FECsProcess property to use a dropdown
 */
-class FECsProcessCustomization : public FECsEnumCustomization
+class CSEDITOR_API FECsProcessCustomization : public FECsEnumCustomization
 {
+private:
+	typedef FECsEnumCustomization Super;
+
 public:
 
 	FECsProcessCustomization();

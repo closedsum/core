@@ -5,8 +5,11 @@
 /**
 * Customizes a FECsGestureType property to use a dropdown
 */
-class FECsGestureTypeCustomization : public FECsEnumCustomization
+class CSEDITOR_API FECsGestureTypeCustomization : public FECsEnumCustomization
 {
+private:
+	typedef FECsEnumCustomization Super;
+
 public:
 
 	FECsGestureTypeCustomization();

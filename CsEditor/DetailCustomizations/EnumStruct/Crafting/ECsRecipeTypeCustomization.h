@@ -5,8 +5,11 @@
 /**
 * Customizes a FECsRecipeType property to use a dropdown
 */
-class FECsRecipeTypeCustomization : public FECsEnumCustomization
+class CSEDITOR_API FECsRecipeTypeCustomization : public FECsEnumCustomization
 {
+private:
+	typedef FECsEnumCustomization Super;
+
 public:
 
 	FECsRecipeTypeCustomization();

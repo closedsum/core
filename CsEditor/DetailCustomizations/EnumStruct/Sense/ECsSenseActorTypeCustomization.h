@@ -5,8 +5,11 @@
 /**
 * Customizes a FECsSenseActorType property to use a dropdown
 */
-class FECsSenseActorTypeCustomization : public FECsEnumCustomization
+class CSEDITOR_API FECsSenseActorTypeCustomization : public FECsEnumCustomization
 {
+private:
+	typedef FECsEnumCustomization Super;
+
 public:
 
 	FECsSenseActorTypeCustomization();

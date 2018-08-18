@@ -5,8 +5,11 @@
 /**
 * Customizes a FECsWeaponBlendSpace property to use a dropdown
 */
-class FECsWeaponBlendSpaceCustomization : public FECsEnumCustomization
+class CSEDITOR_API FECsWeaponBlendSpaceCustomization : public FECsEnumCustomization
 {
+private:
+	typedef FECsEnumCustomization Super;
+
 public:
 
 	FECsWeaponBlendSpaceCustomization();

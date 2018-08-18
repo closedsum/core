@@ -5,8 +5,11 @@
 /**
 * Customizes a FECsWeaponOwner property to use a dropdown
 */
-class FECsWeaponOwnerCustomization : public FECsEnumCustomization
+class CSEDITOR_API FECsWeaponOwnerCustomization : public FECsEnumCustomization
 {
+private:
+	typedef FECsEnumCustomization Super;
+
 public:
 
 	FECsWeaponOwnerCustomization();

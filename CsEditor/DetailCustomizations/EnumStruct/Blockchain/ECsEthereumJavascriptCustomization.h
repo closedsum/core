@@ -5,8 +5,11 @@
 /**
 * Customizes a FECsEthereumJavascript property to use a dropdown
 */
-class FECsEthereumJavascriptCustomization : public FECsEnumCustomization
+class CSEDITOR_API FECsEthereumJavascriptCustomization : public FECsEnumCustomization
 {
+private:
+	typedef FECsEnumCustomization Super;
+
 public:
 
 	FECsEthereumJavascriptCustomization();

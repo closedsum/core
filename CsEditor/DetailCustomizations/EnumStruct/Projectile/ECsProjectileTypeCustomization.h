@@ -5,8 +5,11 @@
 /**
 * Customizes a FECsProjectiveType property to use a dropdown
 */
-class FECsProjectileTypeCustomization : public FECsEnumCustomization
+class CSEDITOR_API FECsProjectileTypeCustomization : public FECsEnumCustomization
 {
+private:
+	typedef FECsEnumCustomization Super;
+
 public:
 
 	FECsProjectileTypeCustomization();

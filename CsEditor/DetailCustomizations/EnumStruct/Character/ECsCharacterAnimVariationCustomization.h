@@ -5,8 +5,11 @@
 /**
 * Customizes a FECsCharacterAnimVariation property to use a dropdown
 */
-class FECsCharacterAnimVariationCustomization : public FECsEnumCustomization
+class CSEDITOR_API FECsCharacterAnimVariationCustomization : public FECsEnumCustomization
 {
+private:
+	typedef FECsEnumCustomization Super;
+
 public:
 
 	FECsCharacterAnimVariationCustomization();

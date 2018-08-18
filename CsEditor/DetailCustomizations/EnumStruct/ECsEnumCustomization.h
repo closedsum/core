@@ -9,8 +9,11 @@ class IDetailGroup;
 /**
 * Customizes a FECsEnum property to use a dropdown
 */
-class FECsEnumCustomization : public IPropertyTypeCustomization
+class CSEDITOR_API FECsEnumCustomization : public IPropertyTypeCustomization
 {
+private:
+	typedef FECsEnumCustomization Super;
+
 public:
 
 	FECsEnumCustomization();

@@ -5,8 +5,11 @@
 /**
 * Customizes a FECsGameEvent property to use a dropdown
 */
-class FECsGameEventCustomization : public FECsEnumCustomization
+class CSEDITOR_API FECsGameEventCustomization : public FECsEnumCustomization
 {
+private:
+	typedef FECsEnumCustomization Super;
+
 public:
 
 	FECsGameEventCustomization();

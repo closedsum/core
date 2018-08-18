@@ -1,5 +1,6 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "DetailCustomizations/ShortCode/CsShortCodeCustomization.h"
+#include "CsEditor.h"
 #include "Common/CsCommon_Asset.h"
 
 #include "IDetailChildrenBuilder.h"
@@ -7,6 +8,8 @@
 #include "IDetailGroup.h"
 #include "DetailLayoutBuilder.h"
 
+#include "Editor.h"
+#include "CsEdEngine.h"
 // Data
 #include "Data/CsDataMapping.h"
 
@@ -19,7 +22,7 @@ FCsShortCodeCustomization::FCsShortCodeCustomization()
 
 void FCsShortCodeCustomization::Init(const FECsAssetType &AssetType)
 {
-	ACsDataMapping* DataMapping = UCsCommon_Asset::GetDataMapping();
+	ACsDataMapping* DataMapping = Cast<UCsEdEngine>(GEditor)->DataMapping;
 
 	TArray<FCsDataMappingEntry>* EntriesPtr = DataMapping->GetDataMappings(AssetType);
 	TArray<FCsDataMappingEntry>& Entries    = *EntriesPtr;
@@ -38,6 +41,23 @@ TSharedRef<IPropertyTypeCustomization> FCsShortCodeCustomization::MakeInstance()
 void FCsShortCodeCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> StructPropertyHandle, class FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
 	SetPropertyHandles(StructPropertyHandle);
+
+	uint8 AssetTypeAsByte;
+	AssetTypeHandle->GetValue(AssetTypeAsByte);
+
+	ACsDataMapping* DataMapping = Cast<UCsEdEngine>(GEditor)->DataMapping;
+
+	const FECsAssetType& AssetType = EMCsAssetType::Get()[AssetTypeAsByte];
+
+	if (TArray<FCsDataMappingEntry>* EntriesPtr = DataMapping->GetDataMappings(AssetType))
+	{
+		TArray<FCsDataMappingEntry>& Entries = *EntriesPtr;
+
+		for (const FCsDataMappingEntry& Entry : Entries)
+		{
+			DisplayNameList.Add(MakeShareable(new FString(Entry.ShortCode.ToString())));
+		}
+	}
 
 	TSharedPtr<FString> InitialSelectedDisplayName = GetSelectedDisplayName();
 
@@ -71,7 +91,13 @@ void FCsShortCodeCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> Stru
 	];
 }
 
-void FCsShortCodeCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle){}
+void FCsShortCodeCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
+{
+	AssetTypeHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FCsData_ShortCode, Type));
+	check(AssetTypeHandle.IsValid());
+	ShortCodeHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FCsData_ShortCode, ShortCode));
+	check(ShortCodeHandle.IsValid());
+}
 
 void FCsShortCodeCustomization::CustomizeChildren(TSharedRef<class IPropertyHandle> StructPropertyHandle, class IDetailChildrenBuilder& StructBuilder, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
@@ -113,8 +139,10 @@ TSharedPtr<FString> FCsShortCodeCustomization::GetSelectedDisplayName() const
 		return NULL;
 	}
 
-	FString DisplayName;
-	GetDisplayNamePropertyValue(DisplayName);
+	FName ShortCode;
+	GetDisplayNamePropertyValue(ShortCode);
+
+	const FString& DisplayName = ShortCode.ToString();
 
 	for (int32 I = 0; I < Count; ++I)
 	{
@@ -141,10 +169,11 @@ void FCsShortCodeCustomization::SetShortCodeWithDisplayName(const FString& Displ
 	}
 }
 
-void FCsShortCodeCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
+void FCsShortCodeCustomization::GetDisplayNamePropertyValue(FName& OutShortCode) const
 {
-	check(DisplayNameHandle.IsValid());
-	DisplayNameHandle->GetValue(OutDisplayName);
+	check(ShortCodeHandle.IsValid());
+	ShortCodeHandle->GetValue(OutShortCode);
+
 }
 
 FText FCsShortCodeCustomization::GetComboBoxContent() const

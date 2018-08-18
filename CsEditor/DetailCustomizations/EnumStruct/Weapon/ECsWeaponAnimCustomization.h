@@ -5,8 +5,11 @@
 /**
 * Customizes a FECsWeaponAnim property to use a dropdown
 */
-class FECsWeaponAnimCustomization : public FECsEnumCustomization
+class CSEDITOR_API FECsWeaponAnimCustomization : public FECsEnumCustomization
 {
+private:
+	typedef FECsEnumCustomization Super;
+
 public:
 
 	FECsWeaponAnimCustomization();

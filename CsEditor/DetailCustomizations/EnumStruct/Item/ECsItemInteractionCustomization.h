@@ -5,8 +5,11 @@
 /**
 * Customizes a FECsItemInteraction property to use a dropdown
 */
-class FECsItemInteractionCustomization : public FECsEnumCustomization
+class CSEDITOR_API FECsItemInteractionCustomization : public FECsEnumCustomization
 {
+private:
+	typedef FECsEnumCustomization Super;
+
 public:
 
 	FECsItemInteractionCustomization();

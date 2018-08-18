@@ -5,8 +5,11 @@
 /**
 * Customizes a FECsWeaponSound property to use a dropdown
 */
-class FECsWeaponSoundCustomization : public FECsEnumCustomization
+class CSEDITOR_API FECsWeaponSoundCustomization : public FECsEnumCustomization
 {
+private:
+	typedef FECsEnumCustomization Super;
+
 public:
 
 	FECsWeaponSoundCustomization();

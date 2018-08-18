@@ -11,9 +11,8 @@ class IDetailGroup;
 /**
 * Customizes a FCsData_ShortCode property to use a dropdown
 */
-class FCsShortCodeCustomization : public IPropertyTypeCustomization
+class CSEDITOR_API FCsShortCodeCustomization : public IPropertyTypeCustomization
 {
-
 private:
 	typedef IPropertyTypeCustomization Super;
 
@@ -53,12 +52,13 @@ protected:
 
 	void SetShortCodeWithDisplayName(const FString& DisplayName);
 
-	void GetDisplayNamePropertyValue(FString& OutDisplayName) const;
+	void GetDisplayNamePropertyValue(FName& OutShortCode) const;
 
 	FText GetComboBoxContent() const;
 
 protected:
 
+	TSharedPtr<IPropertyHandle> AssetTypeHandle;
 	TSharedPtr<IPropertyHandle> ShortCodeHandle;
 	TArray<TSharedPtr<FString>> DisplayNameList;
 	TSharedPtr<SComboBox<TSharedPtr<FString>>> DisplayNameComboBox;

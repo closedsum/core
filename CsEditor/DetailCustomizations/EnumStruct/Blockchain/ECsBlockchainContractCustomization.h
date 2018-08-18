@@ -5,8 +5,11 @@
 /**
 * Customizes a FECsBlockchainContract property to use a dropdown
 */
-class FECsBlockchainContractCustomization : public FECsEnumCustomization
+class CSEDITOR_API FECsBlockchainContractCustomization : public FECsEnumCustomization
 {
+private:
+	typedef FECsEnumCustomization Super;
+
 public:
 
 	FECsBlockchainContractCustomization();

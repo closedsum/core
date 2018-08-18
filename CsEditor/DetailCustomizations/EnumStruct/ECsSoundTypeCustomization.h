@@ -5,8 +5,11 @@
 /**
 * Customizes a FECsSoundType property to use a dropdown
 */
-class FECsSoundTypeCustomization : public FECsEnumCustomization
+class CSEDITOR_API FECsSoundTypeCustomization : public FECsEnumCustomization
 {
+private:
+	typedef FECsEnumCustomization Super;
+
 public:
 
 	FECsSoundTypeCustomization();

@@ -118,10 +118,10 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Setup")
 	FECsAIState CurrentState;
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Setup")
+	UPROPERTY(BlueprintReadOnly, Category = "Setup")
 	FECsAIState SpawnedState;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Setup")
+	UPROPERTY(BlueprintReadOnly, Category = "Setup")
 	FECsAISetup CurrentSetup;
 
 #pragma endregion Setup
@@ -167,13 +167,13 @@ public:
 #pragma region
 public:
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Behavior Tree")
+	UPROPERTY(BlueprintReadOnly, Category = "Behavior Tree")
 	AActor* MyTargetActor;
 
 	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
 	virtual void SetTargetActor(AActor* Target);
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Behavior Tree")
+	UPROPERTY(BlueprintReadOnly, Category = "Behavior Tree")
 	FVector MyTargetLocation;
 
 	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")

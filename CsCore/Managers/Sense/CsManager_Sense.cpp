@@ -59,6 +59,10 @@ void ACsManager_Sense::PostActorCreated()
 {
 	Super::PostActorCreated();
 
+#if WITH_EDITOR
+	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+		return;
+#endif // #if WITH_EDITOR
 	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
 	UniqueObjectId = GameInstance->GetUniqueObjectId();
 }

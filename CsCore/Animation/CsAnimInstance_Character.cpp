@@ -52,6 +52,11 @@ void UCsAnimInstance_Character::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
 
+#if WITH_EDITOR
+	if (UCsCommon::IsPlayInEditor(GetWorld()) || UCsCommon::IsPlayInEditorPreview(GetWorld()))
+		return;
+#endif // #if WITH_EDITOR
+
 	ACsPawn* MyPawn = Cast<ACsPawn>(GetOwningPawn());
 
 	if (!MyPawn)

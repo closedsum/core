@@ -145,40 +145,40 @@ struct CSCORE_API FCsPooledObjectCache
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(BlueprintReadWrite, Category = "Cache")
 	int32 Index;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(BlueprintReadWrite, Category = "Cache")
 	bool IsAllocated;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(BlueprintReadWrite, Category = "Cache")
 	TEnumAsByte<ECsPooledObjectState::Type> State;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<UObject> Instigator;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<UObject> Owner;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<UObject> Parent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(BlueprintReadWrite, Category = "Cache")
 	float WarmUpTime;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(BlueprintReadWrite, Category = "Cache")
 	bool bLifeTime;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(BlueprintReadWrite, Category = "Cache")
 	float LifeTime;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(BlueprintReadWrite, Category = "Cache")
 	float Time;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(BlueprintReadWrite, Category = "Cache")
 	float RealTime;
 
 	UPROPERTY()
 	uint64 Frame;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(BlueprintReadWrite, Category = "Cache")
 	int32 Frame_Script;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(BlueprintReadWrite, Category = "Cache")
 	float ElapsedTime;
 
 public:

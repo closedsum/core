@@ -49,10 +49,10 @@ struct FCsAIPawnCache : public FCsPooledObjectCache
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<class ACsAIPawn> Pawn;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(BlueprintReadWrite, Category = "Cache")
 	FECsAIType Type;
 
 	FCsAIPawnCache()
@@ -124,12 +124,12 @@ class CSCORE_API ACsAIPawn : public ACsPawn
 #pragma region
 public:
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Setup")
+	UPROPERTY(BlueprintReadOnly, Category = "Setup")
 	FECsAIState CurrentState;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Setup")
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Setup")
 	FECsAIState SpawnedState;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Setup")
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Setup")
 	FECsAISetup CurrentSetup;
 
 #pragma endregion Setup

@@ -144,6 +144,11 @@ void ACsPawn::Destroyed()
 {
 	Super::Destroyed();
 
+#if WITH_EDITOR
+	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+		return;
+#endif // #if WITH_EDITOR
+
 	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
 	GameInstance->UnregisterUniqueObject(UniqueObjectId);
 

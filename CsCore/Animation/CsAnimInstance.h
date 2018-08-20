@@ -105,18 +105,16 @@ public:
 #pragma region
 public:
 
-#if WITH_EDITOR
-	virtual void SetupInGameSimulation();
-	virtual void OnTick_Handle_SetupInGameSimulation();
-#endif // #if WITH_EDITOR
-
 #if WITH_EDITORONLY_DATA
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "0 Setup")
-	bool DoSetupInGameSimulation;
+	bool bSetupInGameSimulation;
 #endif // #if WITH_EDITORONLY_DATA
 
 #if WITH_EDITOR
-	TCsBool_Ref DoSetupInGameSimulationHandle;
+	TCsBool_Ref bSetupInGameSimulationHandle;
+
+	virtual void SetupInGameSimulation();
+	virtual void OnTick_Handle_bSetupInGameSimulation();
 #endif // #if WITH_EDITOR
 
 #if WITH_EDITORONLY_DATA

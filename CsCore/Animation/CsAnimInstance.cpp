@@ -27,7 +27,7 @@ UCsAnimInstance::UCsAnimInstance(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 #if WITH_EDITOR
-	DoSetupInGameSimulationHandle.Set(&DoSetupInGameSimulation);
+	bSetupInGameSimulationHandle.Set(&bSetupInGameSimulation);
 	ShowEmitterEditorIconsHandle.Set(&ShowEmitterEditorIcons);
 	ShowSoundEditorIconsHandle.Set(&ShowSoundEditorIcons);
 
@@ -86,7 +86,7 @@ void UCsAnimInstance::NativeInitializeAnimation()
 	Super::NativeInitializeAnimation();
 
 #if WITH_EDITOR 
-	DoSetupInGameSimulation = false;
+	bSetupInGameSimulation = false;
 #endif // #if WITH_EDITOR
 
 	OwningPawn = TryGetPawnOwner();
@@ -112,18 +112,18 @@ void UCsAnimInstance::SetupInGameSimulation()
 	Spawn_Manager_Sound();
 }
 
-void UCsAnimInstance::OnTick_Handle_SetupInGameSimulation()
+void UCsAnimInstance::OnTick_Handle_bSetupInGameSimulation()
 {
-	if (DoSetupInGameSimulation)
-	{
-		DoSetupInGameSimulationHandle.UpdateIsDirty();
+	bSetupInGameSimulationHandle.UpdateIsDirty();
 
-		if (DoSetupInGameSimulationHandle.HasChanged())
+	if (bSetupInGameSimulationHandle.HasChanged())
+	{
+		if (bSetupInGameSimulation)
 		{
 			SetupInGameSimulation();
-	
-			DoSetupInGameSimulationHandle = false;
-			DoSetupInGameSimulationHandle.Clear();
+
+			bSetupInGameSimulationHandle = false;
+			bSetupInGameSimulationHandle.Clear();
 		}
 	}
 }
@@ -239,7 +239,7 @@ void UCsAnimInstance::NativeUpdateAnimation(float DeltaTimeX)
 	if (!UCsCommon::IsPlayInEditorPreview(GetWorld()))
 		return;
 
-	OnTick_Handle_SetupInGameSimulation();
+	OnTick_Handle_bSetupInGameSimulation();
 	OnTick_Handle_ShowEditorIcons();
 	OnTick_Handle_GlobalPlayRate();
 

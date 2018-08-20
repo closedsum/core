@@ -80,7 +80,7 @@ struct FCsAIPawnCache : public FCsPooledObjectCache
 
 	virtual void Reset() override
 	{
-		FCsPooledObjectCache::Reset();
+		Super::Reset();
 
 		Pawn.Reset();
 		Pawn = nullptr;

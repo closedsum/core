@@ -76,10 +76,7 @@ ACsAIPawn::ACsAIPawn(const FObjectInitializer& ObjectInitializer)
 
 void ACsAIPawn::Init(const int32 &Index, const FECsAIType &InType)
 {
-	PoolIndex	= Index;
-	Type		= InType;
-
-	Cache.Set(Index, this);
+	Cache.Set(Index, this, InType);
 }
 
 void ACsAIPawn::OnCreatePool()

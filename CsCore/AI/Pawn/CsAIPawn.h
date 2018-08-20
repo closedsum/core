@@ -62,10 +62,11 @@ struct FCsAIPawnCache : public FCsPooledObjectCache
 
 	~FCsAIPawnCache(){}
 
-	void Set(const int32 &InIndex, ACsAIPawn* InPawn)
+	void Set(const int32 &InIndex, ACsAIPawn* InPawn, const FECsAIType &InType)
 	{
 		Index = InIndex;
 		Pawn  = InPawn;
+		Type  = InType;
 	}
 
 	void Init(FCsAIPawnPayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
@@ -94,15 +95,6 @@ UCLASS()
 class CSCORE_API ACsAIPawn : public ACsPawn
 {
 	GENERATED_UCLASS_BODY()
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Pool")
-	int32 PoolIndex;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Pool")
-	bool IsAllocated;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
-	FECsAIType Type;
 
 	UPROPERTY(BlueprintReadWrite, Category = "AI")
 	struct FCsAIPawnCache Cache;

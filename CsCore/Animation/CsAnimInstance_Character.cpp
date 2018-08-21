@@ -158,11 +158,8 @@ void UCsAnimInstance_Character::NativeUpdateAnimation(float DeltaTimeX)
 {
 	Super::NativeUpdateAnimation(DeltaTimeX);
 
-	ACsPawn* Pawn = GetOwningPawn<ACsPawn>();
-
 #if WITH_EDITOR
-	if (!Pawn &&
-		UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
 	{
 		OnTick_Handle_Data_Character();
 		OnTick_Handle_Data_CharacterMeshSkin();

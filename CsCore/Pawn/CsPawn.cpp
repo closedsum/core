@@ -97,10 +97,6 @@ ACsPawn::ACsPawn(const FObjectInitializer& ObjectInitializer)
 	// Weapon
 	CurrentWeaponSlotHandle.Set(&CurrentWeaponSlot);
 	CurrentWeaponSlotHandle.OnChange_Event.AddUObject(this, &ACsPawn::OnChange_CurrentWeaponSlot);
-
-#if WITH_EDITORONLY_DATA
-	bSetupInGameSimulationHandle.Set(&bSetupInGameSimulation);
-#endif // #if WITH_EDITORONLY_DATA
 }
 
 void ACsPawn::OnConstructor(const FObjectInitializer& ObjectInitializer)
@@ -733,87 +729,9 @@ ACsManager_Inventory* ACsPawn::GetMyManager_Inventory() { return nullptr; }
 // Play In Preview Toggles
 #pragma region
 
-#if WITH_EDITOR
-
-void ACsPawn::Spawn_CoroutineScheduler()
-{
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
-
-	if (!Scheduler)
-	{
-		UCsCoroutineScheduler::Init();
-
-		Scheduler = UCsCoroutineScheduler::Get();
-	}
-	Scheduler->MyOwner = this;
-}
-
-AICsManager_FX* ACsPawn::GetManager_FX()
-{
-	return Manager_FX.IsValid() ? Manager_FX.Get() : nullptr;
-}
-
-void ACsPawn::Spawn_Manager_FX()
-{
-	// Check if Manager_FX was already created. This may be the case when Refreshing Nodes for the AnimInstance
-	for (TActorIterator<AICsManager_FX> Itr(GetWorld()); Itr; ++Itr)
-	{
-		if (Itr)
-		{
-			Manager_FX = *Itr;
-			break;
-		}
-	}
-
-	if (!GetManager_FX())
-	{
-		FActorSpawnParameters SpawnInfo;
-		SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		SpawnInfo.ObjectFlags |= RF_Transient;
-
-		Manager_FX = GetWorld()->SpawnActor<AICsManager_FX>(SpawnInfo);
-		AICsManager_FX::Init(this);
-		Manager_FX->CreatePool(4);
-		//Manager_FX->ToggleEmitterEditorIcons(false);
-	}
-}
-
-AICsManager_Sound* ACsPawn::GetManager_Sound()
-{
-	return Manager_Sound.IsValid() ? Manager_Sound.Get() : nullptr;
-}
-
-void ACsPawn::Spawn_Manager_Sound()
-{
-	// Check if Manager_Sound was already created. This may be the case when Refreshing Nodes for the AnimInstance
-	for (TActorIterator<AICsManager_Sound> Itr(GetWorld()); Itr; ++Itr)
-	{
-		if (Itr)
-		{
-			Manager_Sound = *Itr;
-			break;
-		}
-	}
-
-	if (!GetManager_Sound())
-	{
-		FActorSpawnParameters SpawnInfo;
-		SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		SpawnInfo.ObjectFlags |= RF_Transient;
-
-		Manager_Sound = GetWorld()->SpawnActor<AICsManager_Sound>(SpawnInfo);
-		AICsManager_Sound::Init(this);
-
-		Manager_Sound->CreatePool(8);
-	}
-}
-
-#endif // #if WITH_EDITOR
-
 #if WITH_EDITORONLY_DATA
 
 void ACsPawn::SetupInGameSimulation(){}
-void ACsPawn::OnTick_EditorPreview_Handle_bSetupInGameSimulation(){}
 
 #endif // #if WITH_EDITORONLY_DATA
 

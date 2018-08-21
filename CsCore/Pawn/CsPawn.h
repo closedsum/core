@@ -487,7 +487,7 @@ public:
 #pragma region
 public:
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapons")
+	UPROPERTY(BlueprintReadOnly, Category = "Weapons")
 	FECsWeaponSlot CurrentWeaponSlot;
 	TCsProperty_Ref<FECsWeaponSlot> CurrentWeaponSlotHandle;
 	virtual void OnChange_CurrentWeaponSlot(const FECsWeaponSlot &Slot);
@@ -499,13 +499,13 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Weapons")
 	FBindableDynEvent_CsPawn_OnChange_CurrentWeaponSlot OnChange_CurrentWeaponSlot_ScriptEvent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapons")
+	UPROPERTY(BlueprintReadOnly, Category = "Weapons")
 	uint8 CurrentWeaponIndex;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapons")
+	UPROPERTY(BlueprintReadOnly, Category = "Weapons")
 	FECsWeaponSlot LastWeaponSlot;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapons")
+	UPROPERTY(BlueprintReadOnly, Category = "Weapons")
 	uint8 LastWeaponIndex;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapons")
+	UPROPERTY(BlueprintReadOnly, Category = "Weapons")
 	uint8 CurrentWeaponCount;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapons")
 	uint8 MaxWeaponCount;
@@ -606,40 +606,12 @@ public:
 #pragma region
 public:
 
-#if WITH_EDITOR
-
-	// Coroutine Scheduler
-
-	void Spawn_CoroutineScheduler();
-
-	// Manager FX
-
-	TWeakObjectPtr<class AICsManager_FX> Manager_FX;
-
-	class AICsManager_FX* GetManager_FX();
-
-	void Spawn_Manager_FX();
-
-	// Manager Sound
-
-	TWeakObjectPtr<class AICsManager_Sound> Manager_Sound;
-
-	class AICsManager_Sound* GetManager_Sound();
-
-	void Spawn_Manager_Sound();
-
-#endif // #if WITH_EDITOR
-
 #if WITH_EDITORONLY_DATA
 
 	virtual void SetupInGameSimulation();
 
 	UPROPERTY(Transient, EditDefaultsOnly, BlueprintReadWrite, Category = "Play In Preview Toggle")
 	bool bSetupInGameSimulation;
-
-	TCsBool_Ref bSetupInGameSimulationHandle;
-
-	virtual void OnTick_EditorPreview_Handle_bSetupInGameSimulation();
 
 #endif // #if WITH_EDITORONLY_DATA
 

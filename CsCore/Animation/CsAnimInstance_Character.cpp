@@ -52,15 +52,25 @@ void UCsAnimInstance_Character::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
 
-#if WITH_EDITOR
-	if (UCsCommon::IsPlayInEditor(GetWorld()) || UCsCommon::IsPlayInEditorPreview(GetWorld()))
-		return;
-#endif // #if WITH_EDITOR
-
 	ACsPawn* MyPawn = Cast<ACsPawn>(GetOwningPawn());
 
-	if (!MyPawn)
+#if WITH_EDITOR
+	if (UCsCommon::IsPlayInEditor(GetWorld()))
 		return;
+
+	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	{
+		if (!MyPawn)
+			return;
+
+		if (MyPawn->bSetupInGameSimulation)
+		{
+			MyPawn->SetupInGameSimulation();
+			SetupInGameSimulation();
+		}
+		return;
+	}
+#endif // #if WITH_EDITOR
 	
 	// Data_Character
 	Data_Character.Data = TSoftClassPtr<ACsData_Character>(MyPawn->GetMyData_Character());
@@ -147,17 +157,21 @@ void UCsAnimInstance_Character::ApplyData_Weapon(){}
 void UCsAnimInstance_Character::NativeUpdateAnimation(float DeltaTimeX)
 {
 	Super::NativeUpdateAnimation(DeltaTimeX);
+
+	ACsPawn* Pawn = GetOwningPawn<ACsPawn>();
+
 #if WITH_EDITOR
-	if (!UCsCommon::IsPlayInEditorPreview(GetWorld()))
-		return;
+	if (!Pawn &&
+		UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	{
+		OnTick_Handle_Data_Character();
+		OnTick_Handle_Data_CharacterMeshSkin();
+		OnTick_Handle_Data_CharacterMaterialSkin();
+		OnTick_Handle_Data_Weapon();
+		OnTick_Handle_Data_WeaponMaterialSkin();
 
-	OnTick_Handle_Data_Character();
-	OnTick_Handle_Data_CharacterMeshSkin();
-	OnTick_Handle_Data_CharacterMaterialSkin();
-	OnTick_Handle_Data_Weapon();
-	OnTick_Handle_Data_WeaponMaterialSkin();
-
-	OnTick_Handle_Weapon(DeltaTimeX);
+		OnTick_Handle_Weapon(DeltaTimeX);
+	}
 #endif // #if WITH_EDITOR
 }
 

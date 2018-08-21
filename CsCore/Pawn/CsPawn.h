@@ -602,6 +602,49 @@ public:
 
 #pragma endregion Managers
 
+// Play In Preview Toggles
+#pragma region
+public:
+
+#if WITH_EDITOR
+
+	// Coroutine Scheduler
+
+	void Spawn_CoroutineScheduler();
+
+	// Manager FX
+
+	TWeakObjectPtr<class AICsManager_FX> Manager_FX;
+
+	class AICsManager_FX* GetManager_FX();
+
+	void Spawn_Manager_FX();
+
+	// Manager Sound
+
+	TWeakObjectPtr<class AICsManager_Sound> Manager_Sound;
+
+	class AICsManager_Sound* GetManager_Sound();
+
+	void Spawn_Manager_Sound();
+
+#endif // #if WITH_EDITOR
+
+#if WITH_EDITORONLY_DATA
+
+	virtual void SetupInGameSimulation();
+
+	UPROPERTY(Transient, EditDefaultsOnly, BlueprintReadWrite, Category = "Play In Preview Toggle")
+	bool bSetupInGameSimulation;
+
+	TCsBool_Ref bSetupInGameSimulationHandle;
+
+	virtual void OnTick_EditorPreview_Handle_bSetupInGameSimulation();
+
+#endif // #if WITH_EDITORONLY_DATA
+
+#pragma endregion Play In Preview Toggles
+
 #if WITH_EDITOR
 
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& e) override;

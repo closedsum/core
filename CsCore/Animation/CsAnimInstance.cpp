@@ -102,6 +102,7 @@ USkeletalMeshComponent* UCsAnimInstance::GetSkeletalMeshComponent(){ return GetS
 #pragma region
 
 #if WITH_EDITOR
+
 void UCsAnimInstance::SetupInGameSimulation()
 {
 	if (!UCsCommon::IsPlayInEditorPreview(GetWorld()))
@@ -236,19 +237,19 @@ void UCsAnimInstance::NativeUpdateAnimation(float DeltaTimeX)
 	Super::NativeUpdateAnimation(DeltaTimeX);
 
 #if WITH_EDITOR
-	if (!UCsCommon::IsPlayInEditorPreview(GetWorld()))
-		return;
+	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+	{
+		OnTick_Handle_bSetupInGameSimulation();
+		OnTick_Handle_ShowEditorIcons();
+		OnTick_Handle_GlobalPlayRate();
 
-	OnTick_Handle_bSetupInGameSimulation();
-	OnTick_Handle_ShowEditorIcons();
-	OnTick_Handle_GlobalPlayRate();
-
-	if (UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get())
-		Scheduler->OnTick_Update(DeltaTimeX);
-	if (AICsManager_FX* MyManager_FX = GetManager_FX())
-		MyManager_FX->OnTick(DeltaTimeX);
-	if (AICsManager_Sound* MyManager_Sound = GetManager_Sound())
-		MyManager_Sound->OnTick(DeltaTimeX);
+		if (UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get())
+			Scheduler->OnTick_Update(DeltaTimeX);
+		if (AICsManager_FX* MyManager_FX = GetManager_FX())
+			MyManager_FX->OnTick(DeltaTimeX);
+		if (AICsManager_Sound* MyManager_Sound = GetManager_Sound())
+			MyManager_Sound->OnTick(DeltaTimeX);
+	}
 #endif // #if WITH_EDITOR
 }
 

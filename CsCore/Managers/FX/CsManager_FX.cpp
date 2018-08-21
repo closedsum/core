@@ -6,7 +6,9 @@
 
 #include "Game/CsGameState.h"
 
+#if WITH_EDITOR
 #include "Animation/CsAnimInstance.h"
+#endif // #if WITH_EDITOR
 
 // static initializations
 TWeakObjectPtr<UObject> AICsManager_FX::MyOwner;

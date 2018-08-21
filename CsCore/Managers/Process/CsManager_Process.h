@@ -7,6 +7,9 @@
 
 class FCsManager_Process : public TCsManager_PooledObjects_TMap<FECsProcess, UCsProcess, FCsProcessPayload, 16>
 {
+private:
+	typedef TCsManager_PooledObjects_TMap<FECsProcess, UCsProcess, FCsProcessPayload, 16> Super;
+
 public:
 	~FCsManager_Process();
 

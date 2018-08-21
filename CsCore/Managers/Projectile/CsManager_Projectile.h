@@ -10,6 +10,9 @@
 
 class FCsManager_Projectile : public TCsManager_PooledObjects_TMap<FECsProjectileType, ACsProjectile, FCsProjectilePayload, CS_PROJECTILE_PAYLOAD_SIZE>
 {
+private:
+	typedef TCsManager_PooledObjects_TMap<FECsProjectileType, ACsProjectile, FCsProjectilePayload, CS_PROJECTILE_PAYLOAD_SIZE> Super;
+
 public:
 	~FCsManager_Projectile();
 

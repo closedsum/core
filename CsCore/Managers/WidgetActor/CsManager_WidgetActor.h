@@ -8,6 +8,9 @@
 
 class FCsManager_WidgetActor : public TCsManager_PooledObjects_TMap<FECsWidgetActorType, ACsWidgetActor, FCsWidgetActorPayload, CS_WIDGET_ACTOR_PAYLOAD_SIZE>
 {
+private:
+	typedef TCsManager_PooledObjects_TMap<FECsWidgetActorType, ACsWidgetActor, FCsWidgetActorPayload, CS_WIDGET_ACTOR_PAYLOAD_SIZE> Super;
+
 public:
 	~FCsManager_WidgetActor();
 

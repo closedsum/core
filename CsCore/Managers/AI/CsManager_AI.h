@@ -8,6 +8,9 @@
 
 class FCsManager_AI : public TCsManager_PooledObjects_TMap<FECsAIType, ACsAIPawn, FCsAIPawnPayload, CS_AI_PAWN_PAYLOAD_SIZE>
 {
+private:
+	typedef TCsManager_PooledObjects_TMap<FECsAIType, ACsAIPawn, FCsAIPawnPayload, CS_AI_PAWN_PAYLOAD_SIZE> Super;
+
 public:
 	~FCsManager_AI();
 

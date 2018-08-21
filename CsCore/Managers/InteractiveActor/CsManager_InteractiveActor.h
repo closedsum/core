@@ -8,6 +8,9 @@
 
 class FCsManager_InteractiveActor : public TCsManager_PooledObjects_TMap<FECsInteractiveType, ACsInteractiveActor, FCsInteractiveActorPayload, CS_INTERACTIVE_ACTOR_PAYLOAD_SIZE>
 {
+private:
+	typedef TCsManager_PooledObjects_TMap<FECsInteractiveType, ACsInteractiveActor, FCsInteractiveActorPayload, CS_INTERACTIVE_ACTOR_PAYLOAD_SIZE> Super;
+
 public:
 	~FCsManager_InteractiveActor();
 

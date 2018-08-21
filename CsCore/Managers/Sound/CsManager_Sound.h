@@ -10,6 +10,9 @@
 
 class FCsManager_Sound : public TCsManager_PooledObjects<ACsSound, FCsSoundPayload, CS_SOUND_PAYLOAD_SIZE>
 {
+private:
+	typedef TCsManager_PooledObjects<ACsSound, FCsSoundPayload, CS_SOUND_PAYLOAD_SIZE> Super;
+
 public:
 	~FCsManager_Sound();
 

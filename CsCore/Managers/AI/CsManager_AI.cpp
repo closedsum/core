@@ -35,7 +35,7 @@ void FCsManager_AI::Shutdown()
 		}
 	}
 	ControllerPool.Reset();
-	TCsManager_PooledObjects_TMap::Shutdown();
+	Super::Shutdown();
 }
 
 FString FCsManager_AI::GetObjectName(ACsAIPawn* a)
@@ -71,7 +71,7 @@ void FCsManager_AI::CreatePool(const FECsAIType &e, const int32 &size)
 
 void FCsManager_AI::AddToPool(const FECsAIType &e, ACsAIPawn* a)
 {
-	TCsManager_PooledObjects_TMap::AddToPool(e, a);
+	Super::AddToPool(e, a);
 
 	ACsAIController* controller = Cast<ACsAIController>(a->Controller);
 

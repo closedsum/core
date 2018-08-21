@@ -9,6 +9,9 @@
 
 class FCsManager_FX : public TCsManager_PooledObjects<ACsEmitter, FCsFxPayload, CS_FX_PAYLOAD_SIZE>
 {
+private:
+	typedef TCsManager_PooledObjects<ACsEmitter, FCsFxPayload, CS_FX_PAYLOAD_SIZE> Super;
+
 public:
 	~FCsManager_FX();
 

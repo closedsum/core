@@ -95,10 +95,10 @@ void ACsAIPawn::Allocate(FCsAIPawnPayload* Payload)
 
 void ACsAIPawn::Allocate_Internal(FCsAIPawnPayload* Payload)
 {
-	if (Payload->TeleportLocation || Payload->TeleportRotation)
+	if (Payload->bLocation || Payload->bRotation)
 	{
-		SpawnLocation = Payload->TeleportLocation ? Payload->Location : GetActorLocation();
-		SpawnRotation = Payload->TeleportRotation ? Payload->Rotation : GetActorRotation();
+		SpawnLocation = Payload->bLocation ? Payload->Location : GetActorLocation();
+		SpawnRotation = Payload->bRotation ? Payload->Rotation : GetActorRotation();
 
 		TeleportTo(SpawnLocation, SpawnRotation, false, false);
 	}

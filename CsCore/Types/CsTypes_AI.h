@@ -125,13 +125,13 @@ struct CSCORE_API FCsAIPawnPayload : public FCsPooledObjectPayload
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
-	bool TeleportLocation;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	UPROPERTY(BlueprintReadWrite, Category = "Payload")
+	bool bLocation;
+	UPROPERTY(BlueprintReadWrite, Category = "Payload")
 	FVector Location;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
-	bool TeleportRotation;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	UPROPERTY(BlueprintReadWrite, Category = "Payload")
+	bool bRotation;
+	UPROPERTY(BlueprintReadWrite, Category = "Payload")
 	FRotator Rotation;
 
 	FCsAIPawnPayload()
@@ -144,9 +144,9 @@ struct CSCORE_API FCsAIPawnPayload : public FCsPooledObjectPayload
 	{
 		FCsPooledObjectPayload::Reset();
 
-		TeleportLocation = false;
+		bLocation = false;
 		Location = FVector::ZeroVector;
-		TeleportRotation = false;
+		bRotation = false;
 		Rotation = FRotator::ZeroRotator;
 	}
 };

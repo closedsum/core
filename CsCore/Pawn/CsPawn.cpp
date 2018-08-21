@@ -118,28 +118,6 @@ void ACsPawn::OnConstructor(const FObjectInitializer& ObjectInitializer)
 void ACsPawn::PostActorCreated()
 {
 	Super::PostActorCreated();
-
-	// TODO: Test placing actors in the level and see how this affects spawning weapons
-#if WITH_EDITOR
-	if (UCsCommon::IsPlayInEditor(GetWorld()) || UCsCommon::IsPlayInEditorPreview(GetWorld()))
-		return;
-#endif // #if WITH_EDITOR
-
-	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
-	UniqueObjectId				  = GameInstance->RegisterUniqueObject(this);
-
-	// Spawn Weapons
-	FActorSpawnParameters SpawnInfo;
-	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	SpawnInfo.ObjectFlags |= RF_Transient;
-
-	for (int32 I = 0; I < MaxWeaponCount; I++)
-	{
-		Weapons[I] = GetWorld()->SpawnActor<ACsWeapon>(WeaponClass, SpawnInfo);
-		Weapons[I]->SetMyPawn(this);
-	}
-
-	CheckLinkedToPlayerState();
 }
 
 void ACsPawn::Destroyed()
@@ -168,10 +146,32 @@ void ACsPawn::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
+	// TODO: Test placing actors in the level and see how this affects spawning weapons
+#if WITH_EDITOR
+	if (UCsCommon::IsPlayInEditor(GetWorld()) || UCsCommon::IsPlayInEditorPreview(GetWorld()))
+		return;
+#endif // #if WITH_EDITOR
+
 	if (!IsPendingKill())
 	{
 		bPlacedInWorld = GetWorld()->bStartup;
 	}
+
+	UCsGameInstance* GameInstance = Cast<UCsGameInstance>(GetGameInstance());
+	UniqueObjectId				  = GameInstance->RegisterUniqueObject(this);
+
+	// Spawn Weapons
+	FActorSpawnParameters SpawnInfo;
+	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnInfo.ObjectFlags |= RF_Transient;
+
+	for (int32 I = 0; I < MaxWeaponCount; I++)
+	{
+		Weapons[I] = GetWorld()->SpawnActor<ACsWeapon>(WeaponClass, SpawnInfo);
+		Weapons[I]->SetMyPawn(this);
+	}
+
+	CheckLinkedToPlayerState();
 }
 
 void ACsPawn::PreTick(const float &DeltaSeconds)

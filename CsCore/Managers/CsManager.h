@@ -146,8 +146,6 @@ public:
 		Pool.Add(o);
 		PoolSize = Pool.Num();
 		o->Init(Pool.Num() - 1);
-		// TODO: Data needs to be set somewhere
-		o->Cache.Init(nullptr, 0.0f, 0.0f, 0);
 	}
 
 	virtual void AddToActivePool(ObjectType* o)
@@ -506,7 +504,7 @@ public:
 		int32* size = PoolSizes.Find(e);
 
 		if (size)
-			(*size)++;
+			++(*size);
 		else
 			PoolSizes.Add(e, 1);
 
@@ -534,8 +532,6 @@ public:
 		}
 
 		o->Init(poolPtr->Num() - 1, e);
-		// TODO: Data needs to be set somewhere
-		o->Cache.Init(nullptr, 0.0f, 0.0f, 0);
 	}
 
 	virtual void AddToActivePool(const EnumType &e, ObjectType* o)

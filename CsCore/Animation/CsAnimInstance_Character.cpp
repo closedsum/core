@@ -72,6 +72,10 @@ void UCsAnimInstance_Character::NativeInitializeAnimation()
 	}
 #endif // #if WITH_EDITOR
 	
+	// TODO: IsOnBoardCompleted_Game needs to be changed to IsOnBoardCompleted
+	if (!MyPawn->IsOnBoardCompleted_Game())
+		return;
+
 	// Data_Character
 	Data_Character.Data = TSoftClassPtr<ACsData_Character>(MyPawn->GetMyData_Character());
 	Data_Character.Data_Internal = MyPawn->GetMyData_Character();

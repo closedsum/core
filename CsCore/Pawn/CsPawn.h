@@ -427,6 +427,8 @@ public:
 
 	virtual void RecordVelocityAndSpeed();
 
+	virtual FVector GetFeetLocation() const;
+
 #pragma endregion Movement
 
 // Data

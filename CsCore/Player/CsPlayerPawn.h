@@ -29,8 +29,6 @@ public:
 	virtual FRotator GetViewRotation() const override;
 	virtual FVector GetPawnViewLocation() const override;
 
-	virtual FVector GetFeetLocation() const;
-
 #pragma endregion Camera
 
 // View

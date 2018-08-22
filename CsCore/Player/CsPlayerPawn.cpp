@@ -143,11 +143,6 @@ FVector ACsPlayerPawn::GetPawnViewLocation() const
 	return GetFeetLocation() + FVector(0.0f, 0.0f, EyeHeight);
 }
 
-FVector ACsPlayerPawn::GetFeetLocation() const
-{
-	return GetActorLocation() - FVector(0.0f, 0.0f, GetCapsuleComponent()->GetScaledCapsuleHalfHeight());
-}
-
 #pragma endregion Camera
 
 // View

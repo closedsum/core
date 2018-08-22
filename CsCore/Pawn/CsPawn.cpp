@@ -588,6 +588,11 @@ void ACsPawn::RecordVelocityAndSpeed()
 	CurrentCapsuleVelocityRightXY = Matrix.GetScaledAxis(EAxis::Y);
 }
 
+FVector ACsPawn::GetFeetLocation() const
+{
+	return GetActorLocation() - FVector(0.0f, 0.0f, GetCapsuleComponent()->GetScaledCapsuleHalfHeight());
+}
+
 #pragma endregion Movement
 
 // Data

@@ -146,8 +146,6 @@ void ACsManager_Trace::OnTick(const float &DeltaSeconds)
 
 	int32 I = 0;
 
-	//TLinkedList<FCsTraceRequest*>& PendingRequestQueue = *PendingRequestHead;
-
 	TLinkedList<FCsTraceRequest*>* Current = PendingRequestHead;
 
 	while (Current)

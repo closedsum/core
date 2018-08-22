@@ -167,6 +167,18 @@ public:
 #pragma region
 public:
 
+	// Jump
+#pragma region
+public:
+
+	UPROPERTY(BlueprintReadOnly, Category = "Behavior Tree")
+	FECsGameEvent StartJumpEvent;
+
+	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
+	virtual void StartJump();
+
+#pragma endregion Jump
+
 	UPROPERTY(BlueprintReadOnly, Category = "Behavior Tree")
 	AActor* MyTargetActor;
 
@@ -185,18 +197,18 @@ public:
 
 		// Start
 	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnBTTask_RotateToFaceBBEntry_Start, const uint8&, const float&, const float&);
-
 	FOnBTTask_RotateToFaceBBEntry_Start OnBTTask_RotateToFaceBBEntry_Start_Event;
-
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
 	FBindableDynEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Start OnBTTask_RotateToFaceBBEntry_Start_ScriptEvent;
+#endif // #if WITH_EDITORONLY_DATA
 		// Finish
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnBTTask_RotateToFaceBBEntry_Finish, const uint8&);
-
 	FOnBTTask_RotateToFaceBBEntry_Finish OnBTTask_RotateToFaceBBEntry_Finish_Event;
-
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
 	FBindableDynEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Finish OnBTTask_RotateToFaceBBEntry_Finish_ScriptEvent;
+#endif // #if WITH_EDITORONLY_DATA
 
 #pragma endregion RotateToFaceBBEntry
 
@@ -206,18 +218,18 @@ public:
 
 		// Start
 	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnBTTask_LookAtAndRotateToFace_Start, const uint8&, const float&, const float&);
-
 	FOnBTTask_LookAtAndRotateToFace_Start OnBTTask_LookAtAndRotateToFace_Start_Event;
-
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
 	FBindableDynEvent_CsAIPawn_OnBTTask_LookAtAndRotateToFace_Start OnBTTask_LookAtAndRotateToFace_Start_ScriptEvent;
+#endif // #if WITH_EDITORONLY_DATA
 		// Finish
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnBTTask_LookAtAndRotateToFace_Finish, const uint8&);
-
 	FOnBTTask_LookAtAndRotateToFace_Finish OnBTTask_LookAtAndRotateToFace_Finish_Event;
-
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
 	FBindableDynEvent_CsAIPawn_OnBTTask_LookAtAndRotateToFace_Finish OnBTTask_LookAtAndRotateToFace_Finish_ScriptEvent;
+#endif // #if WITH_EDITORONLY_DATA
 
 #pragma endregion LookAtAndRotateToFace
 
@@ -227,27 +239,25 @@ public:
 
 		// Location Start
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnBTTask_LookAtLocation_Start, const uint8&, const FVector&);
-
 	FOnBTTask_LookAtLocation_Start OnBTTask_LookAtLocation_Start_Event;
-
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
 	FBindableDynEvent_CsAIPawn_OnBTTask_LookAtLocation_Start OnBTTask_LookAtLocation_Start_ScriptEvent;
-
+#endif // #if WITH_EDITORONLY_DATA
 		// Actor Start
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnBTTask_LookAtActor_Start, const uint8&, AActor*);
-
 	FOnBTTask_LookAtActor_Start OnBTTask_LookAtActor_Start_Event;
-
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
 	FBindableDynEvent_CsAIPawn_OnBTTask_LookAtActor_Start OnBTTask_LookAtActor_Start_ScriptEvent;
-
+#endif // #if WITH_EDITORONLY_DATA
 		// Abort
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnBTTask_LookAt_Aborted, const uint8&);
-
 	FOnBTTask_LookAt_Aborted OnBTTask_LookAt_Aborted_Event;
-
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
 	FBindableDynEvent_CsAIPawn_OnBTTask_LookAt_Aborted OnBTTask_LookAt_Aborted_ScriptEvent;
+#endif // #if WITH_EDITORONLY_DATA
 
 	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
 	virtual FRotator GetFinalLookAtRotation(AActor* Target, const FName &Bone);
@@ -281,27 +291,25 @@ public:
 
 		// Location Start
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnBTTask_AimAtLocation_Start, const uint8&, const FVector&);
-
 	FOnBTTask_AimAtLocation_Start OnBTTask_AimAtLocation_Start_Event;
-
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
 	FBindableDynEvent_CsAIPawn_OnBTTask_AimAtLocation_Start OnBTTask_AimAtLocation_Start_ScriptEvent;
-
+#endif // #if WITH_EDITORONLY_DATA
 		// Actor Start
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnBTTask_AimAtActor_Start, const uint8&, AActor*);
-
 	FOnBTTask_AimAtActor_Start OnBTTask_AimAtActor_Start_Event;
-
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
 	FBindableDynEvent_CsAIPawn_OnBTTask_AimAtActor_Start OnBTTask_AimAtActor_Start_ScriptEvent;
-
+#endif // #if WITH_EDITORONLY_DATA
 		// Abort
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnBTTask_AimAt_Aborted, const uint8&);
-
 	FOnBTTask_AimAt_Aborted OnBTTask_AimAt_Aborted_Event;
-
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
 	FBindableDynEvent_CsAIPawn_OnBTTask_AimAt_Aborted OnBTTask_AimAt_Aborted_ScriptEvent;
+#endif // #if WITH_EDITORONLY_DATA
 
 	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
 	virtual void ResetAimAt(const float &BlendOutTime);
@@ -321,33 +329,28 @@ public:
 
 		// Start
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnBTTask_Shoot_Start, const uint8&);
-
 	FOnBTTask_Shoot_Start OnBTTask_Shoot_Start_Event;
-
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
 	FBindableDynEvent_CsAIPawn_OnBTTask_Shoot_Start OnBTTask_Shoot_Start_ScriptEvent;
-
+#endif // #if WITH_EDITORONLY_DATA
 		// Stop
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnBTTask_Shoot_Stop, const uint8&);
-
 	FOnBTTask_Shoot_Stop OnBTTask_Shoot_Stop_Event;
-
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
 	FBindableDynEvent_CsAIPawn_OnBTTask_Shoot_Stop OnBTTask_Shoot_Stop_ScriptEvent;
-
+#endif // #if WITH_EDITORONLY_DATA
 		// Abort
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnBTTask_Shoot_Aborted, const uint8&);
-
 	FOnBTTask_Shoot_Aborted OnBTTask_Shoot_Aborted_Event;
-
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
 	FBindableDynEvent_CsAIPawn_OnBTTask_Shoot_Aborted OnBTTask_Shoot_Aborted_ScriptEvent;
+#endif // #if WITH_EDITORONLY_DATA
 
 	UPROPERTY(BlueprintReadOnly, Category = "Behavior Tree")
 	FECsGameEvent StartShootEvent;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Behavior Tree")
-	FECsGameEvent StopShootEvent;
 
 	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
 	virtual void StartShoot();
@@ -361,6 +364,9 @@ public:
 	void StartShootForDuration(const float &Duration);
 	static char StartShootForDuration_Internal(FCsRoutine* r);
 	FCsRoutine* StartShootForDuration_Internal_Routine;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Behavior Tree")
+	FECsGameEvent StopShootEvent;
 
 	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
 	virtual void StopShoot();

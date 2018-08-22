@@ -69,6 +69,8 @@ ACsAIPawn::ACsAIPawn(const FObjectInitializer& ObjectInitializer)
 
 	// Behavior Tree
 
+		// Jump
+	StartJumpEvent = EMCsGameEvent::Get().GetMAX();
 		// Shoot
 	StartShootEvent = EMCsGameEvent::Get().GetMAX();
 	StopShootEvent = EMCsGameEvent::Get().GetMAX();
@@ -266,6 +268,17 @@ void ACsAIPawn::StopSyncCurrentViewFromBone()
 
 // Behavior Tree
 #pragma region
+
+	// Jump
+#pragma region
+
+void ACsAIPawn::StartJump()
+{
+	ACsAIPlayerState* MyPlayerState = Cast<ACsAIPlayerState>(PlayerState);
+	MyPlayerState->QueuedGameEventsForNextFrame.Add(StartJumpEvent);
+}
+
+#pragma endregion Jump
 
 void ACsAIPawn::SetTargetActor(AActor* Target)
 {

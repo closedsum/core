@@ -26,6 +26,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsPawn_OnChange
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsPawn_OnChange_CurrentWeaponSlot, const uint8&, MappingId, const FECsWeaponSlot&, LastWeaponSlot, const FECsWeaponSlot&, CurrentWeaponSlot);
 // Damage
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnApplyDamage_Result, const uint8&, MappingId, const FCsDamageResult&, Result);
+// Movement
+	// Jumping
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnChange_CurrentJumpMovementState, const TEnumAsByte<ECsCharacterJumpMovementState::Type>&, From, const TEnumAsByte<ECsCharacterJumpMovementState::Type>&, To);
 
 // Enums
 #pragma region
@@ -134,6 +137,35 @@ struct FCsPawnTraceToGroundWhileJumpingInfo
 		LastTime = 0.0f;
 	}
 	~FCsPawnTraceToGroundWhileJumpingInfo() {}
+};
+
+USTRUCT(BlueprintType)
+struct FCsPawnJumpingFallingInfo
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	float ElapsedTime_Jumping;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	float ElapsedTime_Falling;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	float DistanceToGround;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	float TimeTillGrounded;
+
+	FCsPawnJumpingFallingInfo(){}
+	~FCsPawnJumpingFallingInfo() {}
+
+	void Reset()
+	{
+		ElapsedTime_Jumping = 0.0f;
+		ElapsedTime_Falling = 0.0f;
+		DistanceToGround = 0.0f;
+		TimeTillGrounded = 0.0f;
+	}
 };
 
 #pragma endregion Structs
@@ -369,6 +401,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Body")
 	FVector CurrentRootRightXY;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Body")
+	FVector CurrentCapsuleBaseLocation;
+
 	virtual void RecordRoot();
 
 #pragma endregion Body / Root
@@ -445,11 +480,22 @@ public:
 
 	virtual FVector GetFeetLocation() const;
 
+	// Jumping
+#pragma region
+public:
+
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	bool bJumpFinished;
+
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	TEnumAsByte<ECsCharacterJumpMovementState::Type> CurrentJumpMovementState;
 
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnChange_CurrentJumpMovementState, const TCsCharacterJumpMovementState&, const TCsCharacterJumpMovementState&);
 	FOnChange_CurrentJumpMovementState OnChange_CurrentJumpMovementState_Event;
+#if WITH_EDITORONLY_DATA
+	UPROPERTY(BlueprintAssignable, Category = "Movement")
+	FBindableDynEvent_CsPawn_OnChange_CurrentJumpMovementState OnChange_CurrentJumpMovementState_ScriptEvent;
+#endif // #if WITH_EDITORONLY_DATA
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	bool bTraceToGroundWhileJumping;
@@ -461,7 +507,9 @@ public:
 	void Async_TraceToGroundWhileJumping_Response(const uint8 &RequestId, FCsTraceResponse* Response);
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
-	float TimeTillGrounded;
+	FCsPawnJumpingFallingInfo JumpingFallingInfo;
+
+#pragma endregion Jumping
 
 #pragma endregion Movement
 

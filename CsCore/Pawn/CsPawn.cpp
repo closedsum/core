@@ -92,6 +92,8 @@ ACsPawn::ACsPawn(const FObjectInitializer& ObjectInitializer)
 	ViewTraceInfo.ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
 	ViewTraceInfo.Range	  = 30000.0f;
 	ViewTraceInfo.RangeSq = ViewTraceInfo.Range * ViewTraceInfo.Range;
+	// Movement
+	CurrentJumpMovementState = ECsCharacterJumpMovementState::Grounded;
 	// Data
 	bCacheData = true;
 	// Weapon
@@ -569,7 +571,7 @@ void ACsPawn::RecordVelocityAndSpeed()
 	{
 		const EMovementMode Mode = GetCharacterMovement()->MovementMode;
 
-		// Grounded -> Up
+		// Grounded -> Up (Jumping)
 		if (CurrentJumpMovementState == ECsCharacterJumpMovementState::Grounded)
 		{
 			if (Mode == EMovementMode::MOVE_Falling &&
@@ -578,9 +580,12 @@ void ACsPawn::RecordVelocityAndSpeed()
 				CurrentJumpMovementState = ECsCharacterJumpMovementState::Up;
 
 				OnChange_CurrentJumpMovementState_Event.Broadcast(ECsCharacterJumpMovementState::Grounded, ECsCharacterJumpMovementState::Up);
+#if WITH_EDITOR
+				OnChange_CurrentJumpMovementState_ScriptEvent.Broadcast(ECsCharacterJumpMovementState::Grounded, ECsCharacterJumpMovementState::Up);
+#endif // #if WITH_EDITOR
 			}
 		}
-		// Up -> Down
+		// Up (Jumping) -> Down (Falling)
 		else
 		if (CurrentJumpMovementState == ECsCharacterJumpMovementState::Up)
 		{
@@ -589,21 +594,34 @@ void ACsPawn::RecordVelocityAndSpeed()
 			{
 				// TimeTillGrounded
 				CurrentJumpMovementState = ECsCharacterJumpMovementState::Down;
+
+				OnChange_CurrentJumpMovementState_Event.Broadcast(ECsCharacterJumpMovementState::Up, ECsCharacterJumpMovementState::Down);
+#if WITH_EDITOR
+				OnChange_CurrentJumpMovementState_ScriptEvent.Broadcast(ECsCharacterJumpMovementState::Up, ECsCharacterJumpMovementState::Down);
+#endif // #if WITH_EDITOR
 			}
 		}
-		// Down -> Grounded
+		// Down (Falling) -> Grounded
 		else
 		if (CurrentJumpMovementState == ECsCharacterJumpMovementState::Down)
 		{
 			if (Mode == EMovementMode::MOVE_Walking)
 			{
 				CurrentJumpMovementState = ECsCharacterJumpMovementState::Grounded;
+
+				OnChange_CurrentJumpMovementState_Event.Broadcast(ECsCharacterJumpMovementState::Down, ECsCharacterJumpMovementState::Grounded);
+#if WITH_EDITOR
+				OnChange_CurrentJumpMovementState_ScriptEvent.Broadcast(ECsCharacterJumpMovementState::Down, ECsCharacterJumpMovementState::Grounded);
+#endif // #if WITH_EDITOR
+				JumpingFallingInfo.Reset();
 			}
 		}
 
 		if (Mode == EMovementMode::MOVE_Walking)
 		{
 			CurrentJumpMovementState = ECsCharacterJumpMovementState::Grounded;
+
+			JumpingFallingInfo.Reset();
 		}
 	}
 
@@ -663,7 +681,7 @@ void ACsPawn::TraceToGroundWhileJumping()
 	Request->OnResponse_Event.AddUObject(this, &ACsPawn::Async_TraceToGroundWhileJumping_Response);
 
 
-	Request->Start = GetFeetLocation();
+	Request->Start = CurrentFeetLocation;
 	static const float RANGE = 3000.0f;
 	Request->End = Request->Start + RANGE * CurrentVelocityDirZ;
 	Request->bAsync = true;
@@ -684,7 +702,34 @@ void ACsPawn::TraceToGroundWhileJumping()
 
 void ACsPawn::Async_TraceToGroundWhileJumping_Response(const uint8 &RequestId, FCsTraceResponse* Response)
 {
+	TraceToGroundWhileJumpingInfo.RequestId = CS_INVALID_TRACE_REQUEST_ID;
 
+	if (!Response->bResult)
+		return;
+
+	float Distance = MAX_FLT;
+
+	for (FHitResult& Hit : Response->OutHits)
+	{
+		UPrimitiveComponent* Component = Hit.GetComponent();
+
+		const FVector Location = Component->GetComponentLocation();
+
+		const float NewDistance = (Location - CurrentFeetLocation).Size();
+
+		if (NewDistance < Distance)
+			Distance = NewDistance;
+	}
+
+	JumpingFallingInfo.DistanceToGround = Distance;
+
+	// Calculate TimeTillGrounded
+	// - Vf = Sqrt(Vo^2 + 2a(Xf - Xo))
+	const float& Velocity0 = CurrentVelocityZ.Z;
+	static const float GRAVITY = -980.0f;
+	const float Velocity1 = -1.0f * FMath::Sqrt((Velocity0*Velocity0) + 2.0f * GRAVITY * JumpingFallingInfo.DistanceToGround);
+	// - (Vf - Vo)/a = t
+	JumpingFallingInfo.TimeTillGrounded = (Velocity1 - Velocity0) / GRAVITY;
 }
 
 #pragma endregion Movement

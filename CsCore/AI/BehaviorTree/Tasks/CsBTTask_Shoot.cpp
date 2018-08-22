@@ -1,15 +1,16 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
 #include "AI/BehaviorTree/Tasks/CsBTTask_Shoot.h"
+#include "CsCore.h"
+#include "CsCVars.h"
+
+// Behavior Tree
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
-#include "AIController.h"
-
-#include "CsCore.h"
-#include "CsCVars.h"
 // AI
+#include "AIController.h"
 #include "AI/Pawn/CsAIPawn.h"
 #include "AI/CsAIPlayerState.h"
 // Weapon

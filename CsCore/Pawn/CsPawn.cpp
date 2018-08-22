@@ -178,6 +178,21 @@ void ACsPawn::PreTick(const float &DeltaSeconds)
 {
 	RecordRoot();
 	RecordVelocityAndSpeed();
+
+	if (bTraceToGroundWhileJumping &&
+		CurrentJumpMovementState != ECsCharacterJumpMovementState::Grounded)
+	{
+		const float& Interval = TraceToGroundWhileJumpingInfo.Interval;
+		float& LastTime		  = TraceToGroundWhileJumpingInfo.LastTime;
+
+		if (Interval == 0.0f ||
+			GetWorld()->GetTimeSeconds() - LastTime >= Interval)
+		{
+			TraceToGroundWhileJumping();
+
+			LastTime = GetWorld()->GetTimeSeconds();
+		}
+	}
 }
 
 void ACsPawn::PostTick(const float &DeltaSeconds){}
@@ -547,7 +562,51 @@ void ACsPawn::RecordVelocityAndSpeed()
 	CurrentSpeedXY			= CurrentVelocityXY.Size();
 	CurrentSpeedXYSq		= CurrentSpeedXY * CurrentSpeedXY;
 	CurrentVelocityDirXY	= CurrentSpeedXY < SMALL_NUMBER ? FVector::ZeroVector : CurrentVelocityXY / CurrentSpeedXY;
+	float Last_VelocityZ	= CurrentVelocityZ.Z;
 	CurrentVelocityZ.Z		= CurrentVelocity.Z;
+
+	// Check JumpMovementState
+	{
+		const EMovementMode Mode = GetCharacterMovement()->MovementMode;
+
+		// Grounded -> Up
+		if (CurrentJumpMovementState == ECsCharacterJumpMovementState::Grounded)
+		{
+			if (Mode == EMovementMode::MOVE_Falling &&
+				CurrentVelocityZ.Z > 0.0f)
+			{
+				CurrentJumpMovementState = ECsCharacterJumpMovementState::Up;
+
+				OnChange_CurrentJumpMovementState_Event.Broadcast(ECsCharacterJumpMovementState::Grounded, ECsCharacterJumpMovementState::Up);
+			}
+		}
+		// Up -> Down
+		else
+		if (CurrentJumpMovementState == ECsCharacterJumpMovementState::Up)
+		{
+			if (Mode == EMovementMode::MOVE_Falling &&
+				(Last_VelocityZ >= 0.0f && CurrentVelocityZ.Z < 0.0f))
+			{
+				// TimeTillGrounded
+				CurrentJumpMovementState = ECsCharacterJumpMovementState::Down;
+			}
+		}
+		// Down -> Grounded
+		else
+		if (CurrentJumpMovementState == ECsCharacterJumpMovementState::Down)
+		{
+			if (Mode == EMovementMode::MOVE_Walking)
+			{
+				CurrentJumpMovementState = ECsCharacterJumpMovementState::Grounded;
+			}
+		}
+
+		if (Mode == EMovementMode::MOVE_Walking)
+		{
+			CurrentJumpMovementState = ECsCharacterJumpMovementState::Grounded;
+		}
+	}
+
 	CurrentSpeedZ			= CurrentVelocityZ.Size();
 	CurrentSpeedZSq			= CurrentSpeedZ * CurrentSpeedZ;
 	CurrentVelocityDirZ		= CurrentSpeedZ < SMALL_NUMBER ? FVector::ZeroVector : CurrentVelocityZ / CurrentSpeedZ;
@@ -591,6 +650,41 @@ void ACsPawn::RecordVelocityAndSpeed()
 FVector ACsPawn::GetFeetLocation() const
 {
 	return GetActorLocation() - FVector(0.0f, 0.0f, GetCapsuleComponent()->GetScaledCapsuleHalfHeight());
+}
+
+void ACsPawn::TraceToGroundWhileJumping()
+{
+	ACsManager_Trace* Manager_Trace = ACsManager_Trace::Get(GetWorld());
+
+	FCsTraceRequest* Request = Manager_Trace->AllocateRequest();
+
+	Request->Caller	  = this;
+	Request->CallerId = UniqueObjectId;
+	Request->OnResponse_Event.AddUObject(this, &ACsPawn::Async_TraceToGroundWhileJumping_Response);
+
+
+	Request->Start = GetFeetLocation();
+	static const float RANGE = 3000.0f;
+	Request->End = Request->Start + RANGE * CurrentVelocityDirZ;
+	Request->bAsync = true;
+	Request->Type = ECsTraceType::Line;
+	Request->Method = ECsTraceMethod::Multi;
+	Request->Query = ECsTraceQuery::ObjectType;
+
+	Request->ObjectParams.AddObjectTypesToQuery(ECC_WorldStatic);
+	Request->ObjectParams.AddObjectTypesToQuery(ECC_WorldDynamic);
+
+	Request->Params.AddIgnoredActor(this);
+
+	Request->ReplacePending = true;
+	Request->PendingId = TraceToGroundWhileJumpingInfo.RequestId;
+
+	Manager_Trace->Trace(Request);
+}
+
+void ACsPawn::Async_TraceToGroundWhileJumping_Response(const uint8 &RequestId, FCsTraceResponse* Response)
+{
+
 }
 
 #pragma endregion Movement

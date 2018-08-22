@@ -6,6 +6,7 @@
 #include "Types/CsTypes_Damage.h"
 #include "Types/CsTypes_Sense.h"
 #include "Types/CsTypes_Trace.h"
+#include "Types/CsTypes_Character.h"
 #include "CsPawn.generated.h"
 
 // Tick
@@ -110,6 +111,29 @@ struct FCsPawnViewTraceInfo
 		RequestId = CS_INVALID_TRACE_REQUEST_ID;
 	}
 	~FCsPawnViewTraceInfo(){}
+};
+
+USTRUCT(BlueprintType)
+struct FCsPawnTraceToGroundWhileJumpingInfo
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(BlueprintReadWrite, Category = "Trace")
+	uint8 RequestId;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Trace")
+	float Interval;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Trace")
+	float LastTime;
+
+	FCsPawnTraceToGroundWhileJumpingInfo()
+	{
+		RequestId = CS_INVALID_TRACE_REQUEST_ID;
+		Interval = 0.0f;
+		LastTime = 0.0f;
+	}
+	~FCsPawnTraceToGroundWhileJumpingInfo() {}
 };
 
 #pragma endregion Structs
@@ -409,14 +433,6 @@ public:
 	float CurrentCapsuleSpeedZ;
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float CurrentCapsuleSpeedZSq;
-
-	/*
-	UPROPERTY(BlueprintReadOnly, Category = "Movement")
-	TEnumAsByte<ECsCharacterJumpMovementState::Type> CurrentJumpMovementState;
-
-
-	void OnChange_CurrentJumpMovementState(const TEnumAsByte<ECsCharacterJumpMovementState::Type> &StateType);
-	*/
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	FVector CurrentCapsuleVelocityRight;
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
@@ -428,6 +444,24 @@ public:
 	virtual void RecordVelocityAndSpeed();
 
 	virtual FVector GetFeetLocation() const;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	TEnumAsByte<ECsCharacterJumpMovementState::Type> CurrentJumpMovementState;
+
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnChange_CurrentJumpMovementState, const TCsCharacterJumpMovementState&, const TCsCharacterJumpMovementState&);
+	FOnChange_CurrentJumpMovementState OnChange_CurrentJumpMovementState_Event;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	bool bTraceToGroundWhileJumping;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	FCsPawnTraceToGroundWhileJumpingInfo TraceToGroundWhileJumpingInfo;
+
+	void TraceToGroundWhileJumping();
+	void Async_TraceToGroundWhileJumping_Response(const uint8 &RequestId, FCsTraceResponse* Response);
+
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	float TimeTillGrounded;
 
 #pragma endregion Movement
 

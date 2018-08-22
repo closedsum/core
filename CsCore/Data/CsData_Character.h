@@ -73,6 +73,9 @@ public:
 	virtual const float& GetJumpZVelocity();
 
 	UFUNCTION(BlueprintCallable, Category = "Character Data")
+	virtual const float& GetGroundToJumpPeakTime();
+
+	UFUNCTION(BlueprintCallable, Category = "Character Data")
 	virtual const float& GetGravityScale();
 
 	UFUNCTION(BlueprintCallable, Category = "Character Data")

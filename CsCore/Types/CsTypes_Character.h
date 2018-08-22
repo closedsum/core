@@ -5,6 +5,7 @@
 #pragma once
 
 // CharacterAnim
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsCharacterAnim : public FECsEnum_uint8
@@ -40,7 +41,10 @@ public:
 	static EMCsCharacterAnim& Get();
 };
 
+#pragma endregion CharacterAnim
+
 // CharacterBlendSpace
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsCharacterBlendSpace : public FECsEnum_uint8
@@ -76,8 +80,10 @@ public:
 	static EMCsCharacterBlendSpace& Get();
 };
 
+#pragma endregion CharacterBlendSpace
 
 // CharacterAnimBlueprint
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsCharacterAnimBlueprint : public FECsEnum_uint8
@@ -113,6 +119,11 @@ public:
 	static EMCsCharacterAnimBlueprint& Get();
 };
 
+#pragma endregion CharacterAnimBlueprint
+
+// CharacterAnimVariation
+#pragma region
+
 namespace ECsCharacterAnimVariation
 {
 	enum Type : uint8;
@@ -134,8 +145,6 @@ typedef TCsCharacterAnimVariation(*TCsStringToCharacterAnimVariation)(const FStr
 											CHARACTER_ANIM_VARIATION_MAX = (uint8)CharacterAnimVariation_MAX \
 											CharacterAnimVariationToString = &ECsCharacterAnimVariation::ToString; \
 											StringToCharacterAnimVariation = &ECsCharacterAnimVariation::ToType;
-
-// CharacterAnimVariation
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsCharacterAnimVariation : public FECsEnum_uint8
@@ -170,6 +179,8 @@ private:
 public:
 	static EMCsCharacterAnimVariation& Get();
 };
+
+#pragma endregion CharacterAnimVariation
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsHeadCollision
@@ -210,13 +221,15 @@ struct CSCORE_API FCsHeadCollision
 	}
 };
 
-/*
+// CharacterJumpMovementState
+#pragma region
+
 UENUM(BlueprintType)
 namespace ECsCharacterJumpMovementState
 {
 	enum Type
 	{
-		None								UMETA(DisplayName = "None"),
+		Grounded							UMETA(DisplayName = "Grounded"),
 		Up									UMETA(DisplayName = "Up"),
 		Down								UMETA(DisplayName = "Down"),
 		ECsCharacterJumpMovementState_MAX	UMETA(Hidden),
@@ -225,39 +238,30 @@ namespace ECsCharacterJumpMovementState
 
 typedef ECsCharacterJumpMovementState::Type TCsCharacterJumpMovementState;
 
-struct CSCORE_API EMCsFpvAnimMember : public TCsEnumMap<ECsFpvAnimMember::Type>
+struct CSCORE_API EMCsCharacterJumpMovementState : public TCsEnumMap<ECsCharacterJumpMovementState::Type>
 {
 protected:
-	EMCsFpvAnimMember() {}
-	EMCsFpvAnimMember(const EMCsFpvAnimMember &) = delete;
-	EMCsFpvAnimMember(EMCsFpvAnimMember &&) = delete;
+	EMCsCharacterJumpMovementState() {}
+	EMCsCharacterJumpMovementState(const EMCsCharacterJumpMovementState &) = delete;
+	EMCsCharacterJumpMovementState(EMCsCharacterJumpMovementState &&) = delete;
 public:
-	~EMCsFpvAnimMember() {}
+	~EMCsCharacterJumpMovementState() {}
 private:
-	static EMCsFpvAnimMember* Instance;
+	static EMCsCharacterJumpMovementState* Instance;
 
 public:
-	static EMCsFpvAnimMember& Get();
+	static EMCsCharacterJumpMovementState& Get();
 };
 
-namespace ECsFpvAnimMember
+namespace ECsCharacterJumpMovementState
 {
 	namespace Ref
 	{
-		extern CSCORE_API const Type Anim1P;
-		extern CSCORE_API const Type Anim3P;
-		extern CSCORE_API const Type Anim3P_Low;
-		extern CSCORE_API const Type AnimVR;
-		extern CSCORE_API const Type ECsFpvAnimMember_MAX;
-	}
-
-	FORCEINLINE const FString& ToStringFromViewType(const TCsViewType &ViewType, const bool &IsLow = false)
-	{
-		if (ViewType == ECsViewType::FirstPerson) { return EMCsFpvAnimMember::Get().ToString(Ref::Anim1P); }
-		if (ViewType == ECsViewType::ThirdPerson && !IsLow) { return EMCsFpvAnimMember::Get().ToString(Ref::Anim3P); }
-		if (ViewType == ECsViewType::ThirdPerson && IsLow) { return EMCsFpvAnimMember::Get().ToString(Ref::Anim3P_Low); }
-		if (ViewType == ECsViewType::VR) { return EMCsFpvAnimMember::Get().ToString(Ref::AnimVR); }
-		return CS_INVALID_ENUM_TO_STRING;
+		extern CSCORE_API const Type Grounded;
+		extern CSCORE_API const Type Up;
+		extern CSCORE_API const Type Down;
+		extern CSCORE_API const Type ECsCharacterJumpMovementState_MAX;
 	}
 }
-*/
+
+#pragma endregion CharacterJumpMovementState

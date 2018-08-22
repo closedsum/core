@@ -40,3 +40,24 @@ EMCsCharacterAnimVariation& EMCsCharacterAnimVariation::Get()
 		Instance = new EMCsCharacterAnimVariation();
 	return *Instance;
 }
+
+// CharacterJumpMovementState
+EMCsCharacterJumpMovementState* EMCsCharacterJumpMovementState::Instance;
+
+EMCsCharacterJumpMovementState& EMCsCharacterJumpMovementState::Get()
+{
+	if (!Instance)
+		Instance = new EMCsCharacterJumpMovementState();
+	return *Instance;
+}
+
+namespace ECsCharacterJumpMovementState
+{
+	namespace Ref
+	{
+		CSCORE_API const Type Grounded = EMCsCharacterJumpMovementState::Get().Add(Type::Grounded, TEXT("Grounded"));
+		CSCORE_API const Type Up = EMCsCharacterJumpMovementState::Get().Add(Type::Up, TEXT("Up"));
+		CSCORE_API const Type Down = EMCsCharacterJumpMovementState::Get().Add(Type::Down, TEXT("Down"));
+		CSCORE_API const Type ECsCharacterJumpMovementState_MAX = EMCsCharacterJumpMovementState::Get().Add(Type::ECsCharacterJumpMovementState_MAX, TEXT("ECsCharacterJumpMovementState_MAX"), TEXT("MAX"));
+	}
+}

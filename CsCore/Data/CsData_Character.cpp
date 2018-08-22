@@ -42,6 +42,7 @@ const float& ACsData_Character::GetMaxWalkSpeed() { return ECsCached::Ref::Float
 const float& ACsData_Character::GetMaxAcceleration() { return ECsCached::Ref::Float; }
 const float& ACsData_Character::GetJumpHeight() { return ECsCached::Ref::Float; }
 const float& ACsData_Character::GetJumpZVelocity() { return ECsCached::Ref::Float; }
+const float& ACsData_Character::GetGroundToJumpPeakTime() { return ECsCached::Ref::Float; }
 const float& ACsData_Character::GetGravityScale() { return ECsCached::Ref::Float; }
 const float& ACsData_Character::GetAirControl() { return ECsCached::Ref::Float; }
 

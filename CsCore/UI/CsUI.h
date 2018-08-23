@@ -177,7 +177,7 @@ public:
 #pragma region
 public:
 
-	virtual bool ProcessGameEventInfo(const FECsGameEvent &GameEvent);
+	virtual bool ProcessGameEventInfo(const FCsGameEventInfo &Info);
 
 	UPROPERTY(BlueprintAssignable, Category = "UI")
 	FBindableDynEvent_CsUI_Override_ProcessGameEventInfo Override_ProcessGameEventInfo_ScriptEvent;

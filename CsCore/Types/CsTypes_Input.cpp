@@ -52,7 +52,7 @@ EMCsInputEvent& EMCsInputEvent::Get()
 	return *Instance;
 }
 
-namespace ECsInputEvent
+namespace NCsInputEvent
 {
 	namespace Ref
 	{

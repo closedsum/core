@@ -8,6 +8,9 @@
 // Input
 #pragma region
 
+	// InputDevice
+#pragma region
+
 UENUM(BlueprintType)
 namespace ECsInputDevice
 {
@@ -59,6 +62,11 @@ namespace ECsInputDevice
 #define ECS_INPUT_DEVICE_MAX (uint8)ECsInputDevice::ECsInputDevice_MAX
 typedef ECsInputDevice::Type TCsInputDevice;
 
+#pragma endregion InputDevice
+
+	// InputType
+#pragma region
+
 UENUM(BlueprintType)
 enum class ECsInputType : uint8
 {
@@ -99,6 +107,11 @@ namespace NCsInputType
 		extern CSCORE_API const Type ECsInputType_MAX;
 	}
 }
+
+#pragma endregion InputType
+
+	// InputEvent
+#pragma region
 
 UENUM(BlueprintType)
 enum class ECsInputEvent: uint8
@@ -147,6 +160,11 @@ namespace NCsInputEvent
 	}
 }
 
+#pragma endregion InputEvent
+
+	// InputValue
+#pragma region
+
 UENUM(BlueprintType)
 enum class ECsInputValue : uint8
 {
@@ -185,6 +203,11 @@ namespace NCsInputValue
 		extern CSCORE_API const Type ECsInputValue_MAX;
 	}
 }
+
+#pragma endregion InputValue
+
+	// InputActionMap
+#pragma region
 
 namespace ECsInputActionMap
 {
@@ -239,6 +262,8 @@ public:
 	static EMCsInputActionMap& Get();
 };
 
+#pragma endregion InputActionMap
+
 struct CSCORE_API FCsInputActionMapRule
 {
 	int32 Clear;
@@ -263,6 +288,9 @@ struct CSCORE_API FCsInputActionMapRule
 	}
 	~FCsInputActionMapRule(){}
 };
+
+	// InputAction
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsInputAction : public FECsEnum_uint8
@@ -297,6 +325,8 @@ private:
 public:
 	static EMCsInputAction& Get();
 };
+
+#pragma endregion InputAction
 
 #define CS_INVALID_INPUT_POOL_INDEX 65535
 
@@ -1169,6 +1199,9 @@ struct CSCORE_API FCsInputProfile
 // Game
 #pragma region
 
+	// GameEvent
+#pragma region
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsGameEvent : public FECsEnum_uint8
 {
@@ -1202,6 +1235,8 @@ private:
 public:
 	static EMCsGameEvent& Get();
 };
+
+#pragma endregion GameEvent
 
 namespace ECsRep_GameEvent
 {

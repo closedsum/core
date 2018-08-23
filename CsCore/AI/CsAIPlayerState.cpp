@@ -299,6 +299,12 @@ bool ACsAIPlayerState::IsOnBoardCompleted_Game()
 // Snap Shot
 #pragma region
 
+void ACsAIPlayerState::AddQueuedGameEvent(const FECsGameEvent& Event)
+{
+	QueuedGameEventInfosForNextFrame.AddDefaulted();
+	QueuedGameEventInfosForNextFrame.Last().Event = Event;
+}
+
 void ACsAIPlayerState::ProcessCurrentLocalSnapShot(const float &DeltaSeconds){}
 
 #pragma endregion Snap Shot

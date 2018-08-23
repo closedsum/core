@@ -175,7 +175,7 @@ class CSCORE_API ACsManager_Input : public AActor
 	FCsInput* GetPreviousInputAction(const FECsInputAction &Action, const TArray<ECsInputEvent> &Events);
 	FCsInput* GetPreviousPreviousInputAction(const FECsInputAction &Action);
 
-	TArray<FECsGameEvent> QueuedGameEventsForNextFrame;
+	TArray<FCsGameEventInfo> QueuedGameEventInfosForNextFrame;
 
 	virtual void QueueGameEvent(const FECsGameEvent &Event);
 

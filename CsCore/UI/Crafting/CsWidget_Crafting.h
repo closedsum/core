@@ -115,7 +115,7 @@ public:
 // Game Event
 #pragma region
 
-	virtual bool ProcessGameEvent(const FECsGameEvent &GameEvent) override;
+	virtual bool ProcessGameEventInfo(const FCsGameEventInfo &Info) override;
 
 #pragma endregion Game Event
 

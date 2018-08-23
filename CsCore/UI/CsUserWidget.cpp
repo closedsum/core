@@ -419,9 +419,9 @@ bool UCsUserWidget::ChildWidgets_ProcessInputFrame(FCsInputFrame &InputFrame)
 // Game Event
 #pragma region
 
-bool UCsUserWidget::ProcessGameEvent(const FECsGameEvent &GameEvent) { return false; }
+bool UCsUserWidget::ProcessGameEventInfo(const FCsGameEventInfo &Info) { return false; }
 
-bool UCsUserWidget::ChildWidgets_ProcessGameEvent(const FECsGameEvent &GameEvent)
+bool UCsUserWidget::ChildWidgets_ProcessGameEventInfo(const FCsGameEventInfo &Info)
 {
 	const int32 Count = ChildWidgetTypes.Num();
 
@@ -431,7 +431,7 @@ bool UCsUserWidget::ChildWidgets_ProcessGameEvent(const FECsGameEvent &GameEvent
 		{
 			UCsUserWidget* Widget = GetActiveChildWidget(ChildWidgetTypes[I]);
 
-			if (Widget->ProcessGameEvent(GameEvent))
+			if (Widget->ProcessGameEventInfo(Info))
 				return true;
 		}
 	}

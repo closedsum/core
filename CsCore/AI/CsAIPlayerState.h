@@ -41,7 +41,10 @@ public:
 public:
 
 	UPROPERTY(BlueprintReadWrite, Category = "Snap Shot")
-	TArray<FECsGameEvent> QueuedGameEventsForNextFrame;
+	TArray<FCsGameEventInfo> QueuedGameEventInfosForNextFrame;
+
+	UFUNCTION(BlueprintCallable, Category = "Snap Shot")
+	void AddQueuedGameEvent(const FECsGameEvent& Event);
 
 	virtual void ProcessCurrentLocalSnapShot(const float &DeltaSeconds);
 

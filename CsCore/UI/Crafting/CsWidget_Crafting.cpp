@@ -184,34 +184,36 @@ bool UCsWidget_Crafting::RemoveRoutine_Internal(struct FCsRoutine* Routine, cons
 // Game Event
 #pragma region
 
-bool UCsWidget_Crafting::ProcessGameEvent(const FECsGameEvent &GameEvent)
+bool UCsWidget_Crafting::ProcessGameEventInfo(const FCsGameEventInfo &Info)
 {
+	const FECsGameEvent& Event = Info.Event;
+
 	// Start
-	if (GameEvent == StartGameEvent)
+	if (Event == StartGameEvent)
 	{
 		CraftItems();
 		return true;
 	}
 	// Increment Start
-	if (GameEvent == IncrementStartGameEvent)
+	if (Event == IncrementStartGameEvent)
 	{
 		IncrementCount();
 		return true;
 	}
 	// Increment End
-	if (GameEvent == IncrementEndGameEvent)
+	if (Event == IncrementEndGameEvent)
 	{
 		StopIncrementCount();
 		return true;
 	}
 	// Decrement Start
-	if (GameEvent == DecrementStartGameEvent)
+	if (Event == DecrementStartGameEvent)
 	{
 		DecrementCount();
 		return true;
 	}
 	// Decrement End
-	if (GameEvent == DecrementEndGameEvent)
+	if (Event == DecrementEndGameEvent)
 	{
 		StopDecrementCount();
 		return true;

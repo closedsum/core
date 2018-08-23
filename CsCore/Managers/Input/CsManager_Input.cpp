@@ -699,12 +699,13 @@ FCsInput* ACsManager_Input::GetPreviousPreviousInputAction(const FECsInputAction
 
 void ACsManager_Input::QueueGameEvent(const FECsGameEvent &Event)
 {
-	QueuedGameEventsForNextFrame.Add(Event);
+	QueuedGameEventInfosForNextFrame.AddDefaulted();
+	QueuedGameEventInfosForNextFrame.Last().Event = Event;
 }
 
 void ACsManager_Input::ClearQueuedGameEvents()
 {
-	QueuedGameEventsForNextFrame.Reset();
+	QueuedGameEventInfosForNextFrame.Reset();
 }
 
 void ACsManager_Input::DetermineGameEvents(const TArray<FCsInput*> &InInputs)

@@ -275,7 +275,7 @@ void ACsAIPawn::StopSyncCurrentViewFromBone()
 void ACsAIPawn::StartJump()
 {
 	ACsAIPlayerState* MyPlayerState = Cast<ACsAIPlayerState>(PlayerState);
-	MyPlayerState->QueuedGameEventsForNextFrame.Add(StartJumpEvent);
+	MyPlayerState->AddQueuedGameEvent(StartJumpEvent);
 }
 
 #pragma endregion Jump
@@ -319,7 +319,7 @@ void ACsAIPawn::StopAimAt(){}
 void ACsAIPawn::StartShoot()
 {
 	ACsAIPlayerState* MyPlayerState = Cast<ACsAIPlayerState>(PlayerState);
-	MyPlayerState->QueuedGameEventsForNextFrame.Add(StartShootEvent);
+	MyPlayerState->AddQueuedGameEvent(StartShootEvent);
 }
 
 void ACsAIPawn::StartShootForCount(const int32 &Count)
@@ -332,7 +332,7 @@ void ACsAIPawn::StartShootForCount(const int32 &Count)
 		StartShootForDuration_Internal_Routine->End(ECsCoroutineEndReason::UniqueInstance);
 
 	ACsAIPlayerState* MyPlayerState = Cast<ACsAIPlayerState>(PlayerState);
-	MyPlayerState->QueuedGameEventsForNextFrame.Add(StartShootEvent);
+	MyPlayerState->AddQueuedGameEvent(StartShootEvent);
 
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload = Scheduler->AllocatePayload();
@@ -390,7 +390,7 @@ void ACsAIPawn::StartShootForDuration(const float &Duration)
 		StartShootForCount_Internal_Routine->End(ECsCoroutineEndReason::UniqueInstance);
 
 	ACsAIPlayerState* MyPlayerState = Cast<ACsAIPlayerState>(PlayerState);
-	MyPlayerState->QueuedGameEventsForNextFrame.Add(StartShootEvent);
+	MyPlayerState->AddQueuedGameEvent(StartShootEvent);
 
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
@@ -443,7 +443,7 @@ void ACsAIPawn::StopShoot()
 		StartShootForDuration_Internal_Routine->End(ECsCoroutineEndReason::Manual);
 
 	ACsAIPlayerState* MyPlayerState = Cast<ACsAIPlayerState>(PlayerState);
-	MyPlayerState->QueuedGameEventsForNextFrame.Add(StopShootEvent);
+	MyPlayerState->AddQueuedGameEvent(StopShootEvent);
 }
 
 bool ACsAIPawn::IsShooting()

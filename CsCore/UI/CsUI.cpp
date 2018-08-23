@@ -232,6 +232,6 @@ bool ACsUI::ProcessInputFrame(FCsInputFrame &InputFrame) { return false; }
 // Game Event
 #pragma region
 
-bool ACsUI::ProcessGameEvent(const FECsGameEvent &GameEvent) { return false; }
+bool ACsUI::ProcessGameEventInfo(const FCsGameEventInfo &Info) { return false; }
 
 #pragma endregion Game Event

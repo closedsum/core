@@ -1252,7 +1252,7 @@ struct FCsGameEventInfo
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	ECsInputEvent Event;
+	FECsGameEvent Event;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	float Value;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
@@ -1264,11 +1264,24 @@ struct FCsGameEventInfo
 	}
 	~FCsGameEventInfo(){}
 
-	void Reset()
+	FORCEINLINE FCsGameEventInfo& operator=(const FCsGameEventInfo& B)
+	{
+		Event = B.Event;
+		Value = B.Value;
+		Location = B.Location;
+		return *this;
+	}
+
+	 FORCEINLINE void Reset()
 	{
 		Event = EMCsGameEvent::Get().GetMAX();
 		Value = 0.0f;
-		Location = FVector::ZeroVector();
+		Location = FVector::ZeroVector;
+	}
+
+	FORCEINLINE bool IsValid()
+	{
+		return Event != EMCsGameEvent::Get().GetMAX();
 	}
 };
 

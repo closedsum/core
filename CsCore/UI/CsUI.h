@@ -21,8 +21,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUI_OnOpen, const
 DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsUI_OnOpen, const FECsWidgetType&);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUI_OnClose, const FECsWidgetType&, WidgetType);
 DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsUI_OnClose, const FECsWidgetType&);
-// ProcessGameEvent
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUI_Override_ProcessGameEvent, const uint8&, GameEvent);
+// ProcessGameEventInfo
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsUI_Override_ProcessGameEventInfo, const FCsGameEventInfo&, Info);
 
 UCLASS()
 class CSCORE_API ACsUI : public AHUD
@@ -177,10 +177,10 @@ public:
 #pragma region
 public:
 
-	virtual bool ProcessGameEvent(const FECsGameEvent &GameEvent);
+	virtual bool ProcessGameEventInfo(const FECsGameEvent &GameEvent);
 
 	UPROPERTY(BlueprintAssignable, Category = "UI")
-	FBindableDynEvent_CsUI_Override_ProcessGameEvent Override_ProcessGameEvent_ScriptEvent;
+	FBindableDynEvent_CsUI_Override_ProcessGameEventInfo Override_ProcessGameEventInfo_ScriptEvent;
 
 #pragma endregion Game Event
 };

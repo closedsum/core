@@ -44,14 +44,13 @@ EBTNodeResult::Type UCsBTTask_Jump::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 
 	Pawn->StartJump();
 
-	/*
 	ACsAIPlayerState* PlayerState = Cast<ACsAIPlayerState>(Pawn->PlayerState);
 
-	Pawn->OnBTTask_Shoot_Start_Event.Broadcast(PlayerState->UniqueMappingId);
+	Pawn->OnBTTask_Jump_Start_Event.Broadcast(PlayerState->UniqueMappingId);
 #if WITH_EDITOR
-	Pawn->OnBTTask_Shoot_Start_ScriptEvent.Broadcast(PlayerState->UniqueMappingId);
+	Pawn->OnBTTask_Jump_Start_ScriptEvent.Broadcast(PlayerState->UniqueMappingId);
 #endif // #if WITH_EDITOR
-*/
+
 #if !UE_BUILD_SHIPPING
 	if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)
 	{
@@ -75,14 +74,13 @@ void UCsBTTask_Jump::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 
 		if (Pawn->bJumpFinished)
 		{
-			/*
 			ACsAIPlayerState* PlayerState = Cast<ACsAIPlayerState>(Pawn->PlayerState);
 
-			Pawn->OnBTTask_Shoot_Stop_Event.Broadcast(PlayerState->UniqueMappingId);
-	#if WITH_EDITOR
-			Pawn->OnBTTask_Shoot_Stop_ScriptEvent.Broadcast(PlayerState->UniqueMappingId);
-	#endif // #if WITH_EDITOR
-	*/
+			Pawn->OnBTTask_Jump_Finish_Event.Broadcast(PlayerState->UniqueMappingId);
+#if WITH_EDITOR
+			Pawn->OnBTTask_Jump_Finish_ScriptEvent.Broadcast(PlayerState->UniqueMappingId);
+#endif // #if WITH_EDITOR
+
 #if !UE_BUILD_SHIPPING
 			if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)
 			{

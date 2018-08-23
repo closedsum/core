@@ -8,6 +8,9 @@
 #include "Types/CsTypes_Input.h"
 #include "CsAIPawn.generated.h"
 
+// Jump
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsAIPawn_OnBTTask_Jump_Start, const uint8&, MappingId);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsAIPawn_OnBTTask_Jump_Finish, const uint8&, MappingId);
 // RotateToFaceBBEntry
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Start, const uint8&, MappingId, const float&, AngleDelta, const float&, RotationRate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsAIPawn_OnBTTask_RotateToFaceBBEntry_Finish, const uint8&, MappingId);
@@ -176,6 +179,21 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
 	virtual void StartJump();
+
+	// Start
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnBTTask_Jump_Start, const uint8&);
+	FOnBTTask_Jump_Start OnBTTask_Jump_Start_Event;
+#if WITH_EDITORONLY_DATA
+	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
+	FBindableDynEvent_CsAIPawn_OnBTTask_Jump_Start OnBTTask_Jump_Start_ScriptEvent;
+#endif // #if WITH_EDITORONLY_DATA
+	// Finish
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnBTTask_Jump_Finish, const uint8&);
+	FOnBTTask_Jump_Finish OnBTTask_Jump_Finish_Event;
+#if WITH_EDITORONLY_DATA
+	UPROPERTY(BlueprintAssignable, Category = "Behavior Tree")
+	FBindableDynEvent_CsAIPawn_OnBTTask_Jump_Finish OnBTTask_Jump_Finish_ScriptEvent;
+#endif // #if WITH_EDITORONLY_DATA
 
 #pragma endregion Jump
 

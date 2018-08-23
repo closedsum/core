@@ -449,18 +449,18 @@ void UCsEthereum::RunCommand(const int32 &ConsoleIndex, const FECsBlockchainComm
 	RunCommand(ConsoleIndex, Composite);
 }
 
-void UCsEthereum::SetProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, UCsProcess* Process)
+void UCsEthereum::SetProcess(const ECsBlockchainProcessType &ProcessType, const int32 &Index, UCsProcess* Process)
 {
 	// TODO: Later handle PrivateMultiNode
 	Processes[ProcessType] = Process;
 }
 
-UCsProcess* UCsEthereum::GetProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index) 
+UCsProcess* UCsEthereum::GetProcess(const ECsBlockchainProcessType &ProcessType, const int32 &Index) 
 { 
 	return Processes[ProcessType]; 
 }
 
-void UCsEthereum::StartProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, const FCsBlockchainProcessStartInfo &StartInfo)
+void UCsEthereum::StartProcess(const ECsBlockchainProcessType &ProcessType, const int32 &Index, const FCsBlockchainProcessStartInfo &StartInfo)
 {
 	UCsProcess* Process = GetProcess(ProcessType, Index);
 
@@ -477,7 +477,7 @@ void UCsEthereum::StartProcess(const TEnumAsByte<ECsBlockchainProcessType::Type>
 
 		if (CsCVarLogBlockchainProcessStart->GetInt() == CS_CVAR_SHOW_LOG)
 		{
-			const FString& ProcessTypeAsString = ECsBlockchainProcessType::ToString(ProcessType);
+			const FString& ProcessTypeAsString = EMCsBlockchainProcessType::Get().ToString(ProcessType);
 
 			UE_LOG(LogCs, Log, TEXT("CgEthereum::StartProcess: Starting Process (%s): %s %s"), *ProcessTypeAsString, *(StartInfo.Filename), *(StartInfo.Arguments));
 		}
@@ -507,13 +507,13 @@ void UCsEthereum::StartProcess(const TEnumAsByte<ECsBlockchainProcessType::Type>
 	}
 	else
 	{
-		const FString& ProcessTypeAsString = ECsBlockchainProcessType::ToString(ProcessType);
+		const FString& ProcessTypeAsString = EMCsBlockchainProcessType::Get().ToString(ProcessType);
 
 		UE_LOG(LogCs, Log, TEXT("CgEthereum::StartProcess: StartProcess called for running Process: %s BUT the process is already RUNNING."));
 	}
 }
 
-void UCsEthereum::StopProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index)
+void UCsEthereum::StopProcess(const ECsBlockchainProcessType &ProcessType, const int32 &Index)
 {
 	if (Processes[ProcessType] == nullptr)
 		return;
@@ -538,7 +538,7 @@ void UCsEthereum::OpenRunningInstance()
 	StartInfo.RedirectStandardInput = false;
 	StartInfo.AddMonitorOutputEvent(MonitorOutputEvents[Command]);
 
-	const TCsBlockchainProcessType& ProcessType = ECsBlockchainProcessType::Ref::RunningInstance;
+	const ECsBlockchainProcessType& ProcessType = NCsBlockchainProcessType::Ref::RunningInstance;
 
 	StartProcess(ProcessType, 0, StartInfo);
 
@@ -687,7 +687,7 @@ CS_COROUTINE(UCsEthereum, OpenConsole_Internal)
 		StartInfo.RedirectStandardInput = true;
 		StartInfo.AddMonitorOutputEvent(eth->MonitorOutputEvents[Command]);
 
-		const TCsBlockchainProcessType& ProcessType = ECsBlockchainProcessType::Ref::Console;
+		const ECsBlockchainProcessType& ProcessType = NCsBlockchainProcessType::Ref::Console;
 
 		eth->StartProcess(ProcessType, CS_BLOCKCHAIN_SINGLE_NODE_INDEX, StartInfo);
 	}
@@ -1103,13 +1103,13 @@ void UCsEthereum::Rebuild()
 // Process
 #pragma region
 
-void UCsEthereum::AddMonitorOutputEvenToProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, const FCsProcessMonitorOutputEvent &Event)
+void UCsEthereum::AddMonitorOutputEvenToProcess(const ECsBlockchainProcessType &ProcessType, const int32 &Index, const FCsProcessMonitorOutputEvent &Event)
 {
 	// TODO: Later handle PrivateMultiNode
 	Processes[ProcessType]->AddMonitorOutputEvent(Event);
 }
 
-void UCsEthereum::AddMonitorOutputEvenToProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, const FECsBlockchainCommand& Command)
+void UCsEthereum::AddMonitorOutputEvenToProcess(const ECsBlockchainProcessType &ProcessType, const int32 &Index, const FECsBlockchainCommand& Command)
 {
 	// TODO: Later handle PrivateMultiNode
 	AddMonitorOutputEvenToProcess(ProcessType, Index, MonitorOutputEvents[Command]);

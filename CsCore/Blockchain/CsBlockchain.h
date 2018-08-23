@@ -7,99 +7,74 @@
 #include "CsBlockchain.generated.h"
 
 UENUM(BlueprintType)
-namespace ECsBlockchainType
+enum class ECsBlockchainType : uint8
 {
-	enum Type
-	{
-		PrivateSingleNode		UMETA(DisplayName = "Private Single Node"),
-		Local					UMETA(DisplayName = "Local"),
-		Server					UMETA(DisplayName = "Server"),
-		ECsBlockchainType_MAX	UMETA(Hidden),
-	};
-}
+	PrivateSingleNode		UMETA(DisplayName = "Private Single Node"),
+	Local					UMETA(DisplayName = "Local"),
+	Server					UMETA(DisplayName = "Server"),
+	ECsBlockchainType_MAX	UMETA(Hidden),
+};
 
-#define ECS_BLOCKCHAIN_TYPE_MAX (uint8)ECsBlockchainType::ECsBlockchainType_MAX
-typedef ECsBlockchainType::Type TCsBlockchainType;
-
-namespace ECsBlockchainType
+struct CSCORE_API EMCsBlockchainType : public TCsEnumMap<ECsBlockchainType>
 {
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
+protected:
+	EMCsBlockchainType() {}
+	EMCsBlockchainType(const EMCsBlockchainType &) = delete;
+	EMCsBlockchainType(EMCsBlockchainType &&) = delete;
+public:
+	~EMCsBlockchainType() {}
+private:
+	static EMCsBlockchainType* Instance;
 
-	namespace Str
-	{
-		extern CSCORE_API const TCsString PrivateSingleNode;
-		extern CSCORE_API const TCsString Local;
-		extern CSCORE_API const TCsString Server;
-	}
+public:
+	static EMCsBlockchainType& Get();
+};
 
+namespace NCsBlockchainType
+{
 	namespace Ref
 	{
+		typedef ECsBlockchainType Type;
+
 		extern CSCORE_API const Type PrivateSingleNode;
 		extern CSCORE_API const Type Local;
 		extern CSCORE_API const Type Server;
 		extern CSCORE_API const Type ECsBlockchainType_MAX;
 	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::PrivateSingleNode) { return Str::PrivateSingleNode.Value; }
-		if (EType == Type::Local) { return Str::Local.Value; }
-		if (EType == Type::Server) { return Str::Server.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE const Type& ToType(const FString &InString)
-	{
-		if (InString == Str::PrivateSingleNode) { return Ref::PrivateSingleNode; }
-		if (InString == Str::Local) { return Ref::Local; }
-		if (InString == Str::Server) { return Ref::Server; }
-		return Ref::ECsBlockchainType_MAX;
-	}
 }
 
 UENUM(BlueprintType)
-namespace ECsBlockchainProcessType
+enum class ECsBlockchainProcessType : uint8
 {
-	enum Type
-	{
-		RunningInstance					UMETA(DisplayName = "Running Instance"),
-		Console							UMETA(DisplayName = "Console"),
-		ECsBlockchainProcessType_MAX	UMETA(Hidden),
-	};
-}
+	RunningInstance					UMETA(DisplayName = "Running Instance"),
+	Console							UMETA(DisplayName = "Console"),
+	ECsBlockchainProcessType_MAX	UMETA(Hidden),
+};
 
-#define ECS_BLOCKCHAIN_PROCESS_TYPE_MAX (uint8)ECsBlockchainProcessType::ECsBlockchainProcessType_MAX
-typedef ECsBlockchainProcessType::Type TCsBlockchainProcessType;
-
-namespace ECsBlockchainProcessType
+struct CSCORE_API EMCsBlockchainProcessType : public TCsEnumMap<ECsBlockchainProcessType>
 {
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
+protected:
+	EMCsBlockchainProcessType() {}
+	EMCsBlockchainProcessType(const EMCsBlockchainProcessType &) = delete;
+	EMCsBlockchainProcessType(EMCsBlockchainProcessType &&) = delete;
+public:
+	~EMCsBlockchainProcessType() {}
+private:
+	static EMCsBlockchainProcessType* Instance;
 
-	namespace Str
-	{
-		extern CSCORE_API const TCsString RunningInstance;
-		extern CSCORE_API const TCsString Console;
-	}
+public:
+	static EMCsBlockchainProcessType& Get();
+};
 
+namespace NCsBlockchainProcessType
+{
 	namespace Ref
 	{
+		typedef ECsBlockchainProcessType Type;
+
 		extern CSCORE_API const Type RunningInstance;
 		extern CSCORE_API const Type Console;
 		extern CSCORE_API const Type ECsBlockchainProcessType_MAX;
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::RunningInstance) { return Str::RunningInstance.Value; }
-		if (EType == Type::Console) { return Str::Console.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE const Type& ToType(const FString &InString)
-	{
-		if (InString == Str::RunningInstance) { return Ref::RunningInstance; }
-		if (InString == Str::Console) { return Ref::Console; }
-		return Ref::ECsBlockchainProcessType_MAX;
 	}
 }
 
@@ -458,35 +433,49 @@ public:
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FContractFunctionCompleted, const FECsBlockchainContract&, const FECsBlockchainContractFunction&);
 
 	FPrivateChainCreated PrivateChainCreated_Event;
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(BlueprintAssignable, Category = "Blockchain")
 	FBindableDynEvent_CsBlockchain_PrivateChainCreated PrivateChainCreated_ScriptEvent;
+#endif // #if WITH_EDITORONLY_DATA
 
 	FPrivateChainStarted PrivateChainStarted_Event;
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(BlueprintAssignable, Category = "Blockchain")
 	FBindableDynEvent_CsBlockchain_PrivateChainStarted PrivateChainStarted_ScriptEvent;
+#endif // #if WITH_EDITORONLY_DATA
 
 	FConsoleOpened ConsoleOpened_Event;
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(BlueprintAssignable, Category = "Blockchain")
 	FBindableDynEvent_CsBlockchain_ConsoleOpened ConsoleOpened_ScriptEvent;
+#endif // #if WITH_EDITORONLY_DATA
 
 	FCommandCompleted CommandCompleted_Event;
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(BlueprintAssignable, Category = "Blockchain")
 	FBindableDynEvent_CsBlockchain_CommandCompleted CommandCompleted_ScriptEvent;
+#endif // #if WITH_EDITORONLY_DATA
 
 	FAccountCreated AccountCreated_Event;
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(BlueprintAssignable, Category = "Blockchain")
 	FBindableDynEvent_CsBlockchain_AccountCreated AccountCreated_ScriptEvent;
+#endif // #if WITH_EDITORONLY_DATA
 
 	FCoinbaseSet CoinbaseSet_Event;
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(BlueprintAssignable, Category = "Blockchain")
 	FBindableDynEvent_CsBlockchain_CoinbaseSet CoinbaseSet_ScriptEvent;
+#endif // #if WITH_EDITORONLY_DATA
 
 	FContractFunctionCompleted ContractFunctionCompleted_Event;
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(BlueprintAssignable, Category = "Blockchain")
 	FBindableDynEvent_CsBlockchain_ContractFunctionCompleted ContractFunctionCompleted_ScriptEvent;
+#endif // #if WITH_EDITORONLY_DATA
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Blockchain")
-	TEnumAsByte<ECsBlockchainType::Type> StorageType;
+	ECsBlockchainType StorageType;
 
 // Paths
 #pragma region
@@ -528,7 +517,7 @@ public:
 #pragma region
 public:
 
-	TMap<TCsBlockchainProcessType, UCsProcess*> Processes;
+	TMap<ECsBlockchainProcessType, UCsProcess*> Processes;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Blockchain")
 	FString ConsoleFilename;
@@ -569,16 +558,16 @@ public:
 	virtual void RunCommand(const int32 &ConsoleIndex, const FECsBlockchainCommand &Command, TArray<FCsBlockchainCommandArgument> &Arguments);
 
 	UFUNCTION(BlueprintCallable, Category = "Blockchain")
-	virtual void SetProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, class UCsProcess* Process);
+	virtual void SetProcess(const ECsBlockchainProcessType &ProcessType, const int32 &Index, class UCsProcess* Process);
 	
 	UFUNCTION(BlueprintCallable, Category = "Blockchain")
-	virtual class UCsProcess* GetProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index);
+	virtual class UCsProcess* GetProcess(const ECsBlockchainProcessType &ProcessType, const int32 &Index);
 
 	UFUNCTION(BlueprintCallable, Category = "Blockchain")
-	virtual void StartProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, const FCsBlockchainProcessStartInfo &StartInfo);
+	virtual void StartProcess(const ECsBlockchainProcessType &ProcessType, const int32 &Index, const FCsBlockchainProcessStartInfo &StartInfo);
 
 	UFUNCTION(BlueprintCallable, Category = "Blockchain")
-	virtual void StopProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index);
+	virtual void StopProcess(const ECsBlockchainProcessType &ProcessType, const int32 &Index);
 
 	UFUNCTION(BlueprintCallable, Category = "Blockchain")
 	virtual void OpenRunningInstance();

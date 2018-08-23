@@ -12,39 +12,44 @@ bool UCsBlockchain::s_bBlockchainHasShutdown = false;
 // Enums
 #pragma region
 
-namespace ECsBlockchainType
+// BlockchainType
+EMCsBlockchainType* EMCsBlockchainType::Instance;
+
+EMCsBlockchainType& EMCsBlockchainType::Get()
 {
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
+	if (!Instance)
+		Instance = new EMCsBlockchainType();
+	return *Instance;
+}
 
-	namespace Str
-	{
-		CSCORE_API const TCsString PrivateSingleNode = TCsString(TEXT("PrivateSingleNode"), TEXT("privatesinglenode"));
-		CSCORE_API const TCsString Local = TCsString(TEXT("Local"), TEXT("local"));
-		CSCORE_API const TCsString Server = TCsString(TEXT("Server"), TEXT("server"));
-	}
-
+namespace NCsBlockchainType
+{
 	namespace Ref
 	{
-		CSCORE_API const Type PrivateSingleNode = Type::PrivateSingleNode;
-		CSCORE_API const Type Local = Type::Local;
-		CSCORE_API const Type Server = Type::Server;
-		CSCORE_API const Type ECsBlockchainType_MAX = Type::ECsBlockchainType_MAX;
+		CSCORE_API const Type PrivateSingleNode = EMCsBlockchainType::Get().Add(Type::PrivateSingleNode, TEXT("PrivateSingleNode"), TEXT("Private Single Node"));
+		CSCORE_API const Type Local = EMCsBlockchainType::Get().Add(Type::Local, TEXT("Local"));
+		CSCORE_API const Type Server = EMCsBlockchainType::Get().Add(Type::Server, TEXT("Server"));
+		CSCORE_API const Type ECsBlockchainType_MAX = EMCsBlockchainType::Get().Add(Type::ECsBlockchainType_MAX, TEXT("ECsBlockchainType_MAX"), TEXT("MAX"));
 	}
 }
 
-namespace ECsBlockchainProcessType
-{
-	namespace Str
-	{
-		CSCORE_API const TCsString RunningInstance = TCsString(TEXT("RunningInstance"), TEXT("runninginstance"));
-		CSCORE_API const TCsString Console = TCsString(TEXT("Console"), TEXT("console"));
-	}
+// BlockchainProcessType
+EMCsBlockchainProcessType* EMCsBlockchainProcessType::Instance;
 
+EMCsBlockchainProcessType& EMCsBlockchainProcessType::Get()
+{
+	if (!Instance)
+		Instance = new EMCsBlockchainProcessType();
+	return *Instance;
+}
+
+namespace NCsBlockchainProcessType
+{
 	namespace Ref
 	{
-		CSCORE_API const Type RunningInstance = Type::RunningInstance;
-		CSCORE_API const Type Console = Type::Console;
-		CSCORE_API const Type ECsBlockchainProcessType_MAX = Type::ECsBlockchainProcessType_MAX;
+		CSCORE_API const Type RunningInstance = EMCsBlockchainProcessType::Get().Add(Type::RunningInstance, TEXT("RunningInstance"), TEXT("Running Instance"));
+		CSCORE_API const Type Console = EMCsBlockchainProcessType::Get().Add(Type::Console, TEXT("Console"));
+		CSCORE_API const Type ECsBlockchainProcessType_MAX = EMCsBlockchainProcessType::Get().Add(Type::ECsBlockchainProcessType_MAX, TEXT("ECsBlockchainProcessType_MAX"), TEXT("MAX"));
 	}
 }
 
@@ -90,9 +95,9 @@ UCsBlockchain::UCsBlockchain(const FObjectInitializer& ObjectInitializer) : Supe
 
 void UCsBlockchain::Initialize()
 {
-	for (int32 I = 0; I < ECS_BLOCKCHAIN_PROCESS_TYPE_MAX; ++I)
+	for (int32 I = 0; I < EMCsBlockchainProcessType::Get().Num(); ++I)
 	{
-		Processes.Add((TCsBlockchainProcessType)I, nullptr);
+		Processes.Add(EMCsBlockchainProcessType::Get().GetEnumAt(I), nullptr);
 	}
 }
 
@@ -158,10 +163,10 @@ void UCsBlockchain::RunCommand(const int32 &ConsoleIndex, const FString &Command
 void UCsBlockchain::RunCommandEX(const int32 &ConsoleIndex, const FString &Command) { RunCommand(ConsoleIndex, Command); }
 void UCsBlockchain::RunCommand(const int32 &ConsoleIndex, const FECsBlockchainCommand &Command, TArray<FCsBlockchainCommandArgument> &Arguments){}
 
-void UCsBlockchain::SetProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, class UCsProcess* Process){}
-UCsProcess* UCsBlockchain::GetProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index) { return nullptr; }
-void UCsBlockchain::StartProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, const FCsBlockchainProcessStartInfo &StartInfo){}
-void UCsBlockchain::StopProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index){}
+void UCsBlockchain::SetProcess(const ECsBlockchainProcessType &ProcessType, const int32 &Index, class UCsProcess* Process){}
+UCsProcess* UCsBlockchain::GetProcess(const ECsBlockchainProcessType &ProcessType, const int32 &Index) { return nullptr; }
+void UCsBlockchain::StartProcess(const ECsBlockchainProcessType &ProcessType, const int32 &Index, const FCsBlockchainProcessStartInfo &StartInfo){}
+void UCsBlockchain::StopProcess(const ECsBlockchainProcessType &ProcessType, const int32 &Index){}
 
 void UCsBlockchain::OpenRunningInstance(){}
 void UCsBlockchain::CreatePrivateChain(){}

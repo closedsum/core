@@ -263,10 +263,10 @@ public:
 	virtual void RunCommand(const int32 &ConsoleIndex, const FString &Command) override;
 	virtual void RunCommand(const int32 &ConsoleIndex, const FECsBlockchainCommand &Command, TArray<FCsBlockchainCommandArgument> &Arguments) override;
 
-	virtual void SetProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, class UCsProcess* Process) override;
-	virtual class UCsProcess* GetProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index) override;
-	virtual void StartProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, const FCsBlockchainProcessStartInfo &StartInfo) override;
-	virtual void StopProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index) override;
+	virtual void SetProcess(const ECsBlockchainProcessType &ProcessType, const int32 &Index, class UCsProcess* Process) override;
+	virtual class UCsProcess* GetProcess(const ECsBlockchainProcessType &ProcessType, const int32 &Index) override;
+	virtual void StartProcess(const ECsBlockchainProcessType &ProcessType, const int32 &Index, const FCsBlockchainProcessStartInfo &StartInfo) override;
+	virtual void StopProcess(const ECsBlockchainProcessType &ProcessType, const int32 &Index) override;
 
 	virtual void OpenRunningInstance() override;
 	virtual void CreatePrivateChain() override;
@@ -402,9 +402,9 @@ public:
 #pragma region
 public:
 
-	void AddMonitorOutputEvenToProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, const FCsProcessMonitorOutputEvent &Event);
+	void AddMonitorOutputEvenToProcess(const ECsBlockchainProcessType &ProcessType, const int32 &Index, const FCsProcessMonitorOutputEvent &Event);
 	UFUNCTION(BlueprintCallable, Category = "Ethereum")
-	void AddMonitorOutputEvenToProcess(const TEnumAsByte<ECsBlockchainProcessType::Type> &ProcessType, const int32 &Index, const FECsBlockchainCommand& Command);
+	void AddMonitorOutputEvenToProcess(const ECsBlockchainProcessType &ProcessType, const int32 &Index, const FECsBlockchainCommand& Command);
 
 	virtual void OnCommandCompleted(const FECsBlockchainCommand &Command);
 	virtual void OnCommandCompleted(const FString &Name);

@@ -60,20 +60,17 @@ namespace ECsInputDevice
 typedef ECsInputDevice::Type TCsInputDevice;
 
 UENUM(BlueprintType)
-namespace ECsInputType
+enum class ECsInputType : uint8
 {
-	enum Type
-	{
-		Action				UMETA(DisplayName = "Action"),
-		Axis				UMETA(DisplayName = "Axis"),
-		Trigger				UMETA(DisplayName = "Trigger"),
-		Location			UMETA(DisplayName = "Location"),
-		Rotation			UMETA(DisplayName = "Rotation"),
-		ECsInputType_MAX	UMETA(Hidden),
-	};
-}
+	Action				UMETA(DisplayName = "Action"),
+	Axis				UMETA(DisplayName = "Axis"),
+	Trigger				UMETA(DisplayName = "Trigger"),
+	Location			UMETA(DisplayName = "Location"),
+	Rotation			UMETA(DisplayName = "Rotation"),
+	ECsInputType_MAX	UMETA(Hidden),
+};
 
-struct CSCORE_API EMCsInputType : public TCsEnumMap<ECsInputType::Type>
+struct CSCORE_API EMCsInputType : public TCsEnumMap<ECsInputType>
 {
 protected:
 	EMCsInputType() {}
@@ -88,10 +85,12 @@ public:
 	static EMCsInputType& Get();
 };
 
-namespace ECsInputType
+namespace NCsInputType
 {
 	namespace Ref
 	{
+		typedef ECsInputType Type;
+
 		extern CSCORE_API const Type Action;
 		extern CSCORE_API const Type Axis;
 		extern CSCORE_API const Type Trigger;
@@ -99,20 +98,7 @@ namespace ECsInputType
 		extern CSCORE_API const Type Rotation;
 		extern CSCORE_API const Type ECsInputType_MAX;
 	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		return EMCsInputType::Get().ToString(EType);
-	}
-
-	FORCEINLINE const Type& ToType(const FString &String)
-	{
-		return EMCsInputType::Get().ToType(String);
-	}
 }
-
-#define ECS_INPUT_TYPE_MAX (uint8)ECsInputType::ECsInputType_MAX
-typedef ECsInputType::Type TCsInputType;
 
 UENUM(BlueprintType)
 enum class ECsInputEvent: uint8
@@ -161,20 +147,17 @@ namespace NCsInputEvent
 	}
 }
 
-UENUM()
-namespace ECsInputValue
+UENUM(BlueprintType)
+enum class ECsInputValue : uint8
 {
-	enum Type
-	{
-		Void				UMETA(DisplayName = "Void"),
-		Float				UMETA(DisplayName = "Float"),
-		Vector				UMETA(DisplayName = "Vector"),
-		Rotator				UMETA(DisplayName = "Rotator"),
-		ECsInputValue_MAX	UMETA(Hidden),
-	};
-}
+	Void				UMETA(DisplayName = "Void"),
+	Float				UMETA(DisplayName = "Float"),
+	Vector				UMETA(DisplayName = "Vector"),
+	Rotator				UMETA(DisplayName = "Rotator"),
+	ECsInputValue_MAX	UMETA(Hidden),
+};
 
-struct CSCORE_API EMCsInputValue : public TCsEnumMap<ECsInputValue::Type>
+struct CSCORE_API EMCsInputValue : public TCsEnumMap<ECsInputValue>
 {
 protected:
 	EMCsInputValue() {}
@@ -189,30 +172,19 @@ public:
 	static EMCsInputValue& Get();
 };
 
-namespace ECsInputValue
+namespace NCsInputValue
 {
 	namespace Ref
 	{
+		typedef ECsInputValue Type;
+
 		extern CSCORE_API const Type Void;
 		extern CSCORE_API const Type Float;
 		extern CSCORE_API const Type Vector;
 		extern CSCORE_API const Type Rotator;
 		extern CSCORE_API const Type ECsInputValue_MAX;
 	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		return EMCsInputValue::Get().ToString(EType);
-	}
-
-	FORCEINLINE const Type& ToType(const FString &String)
-	{
-		return EMCsInputValue::Get().ToType(String);
-	}
 }
-
-#define ECS_INPUT_VALUE_MAX (uint8)ECsInputValue::ECsInputValue_MAX
-typedef ECsInputValue::Type TCsInputValue;
 
 namespace ECsInputActionMap
 {
@@ -334,9 +306,9 @@ struct CSCORE_API FCsInputInfo
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	TEnumAsByte<ECsInputType::Type> Type;
+	ECsInputType Type;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	TEnumAsByte<ECsInputValue::Type> ValueType;
+	ECsInputValue ValueType;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	ECsInputEvent Event;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")

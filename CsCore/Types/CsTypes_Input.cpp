@@ -30,7 +30,7 @@ EMCsInputType& EMCsInputType::Get()
 	return *Instance;
 }
 
-namespace ECsInputType
+namespace NCsInputType
 {
 	namespace Ref
 	{
@@ -77,7 +77,7 @@ EMCsInputValue& EMCsInputValue::Get()
 	return *Instance;
 }
 
-namespace ECsInputValue
+namespace NCsInputValue
 {
 	namespace Ref
 	{

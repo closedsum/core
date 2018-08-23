@@ -51,7 +51,7 @@ EMCsCharacterJumpMovementState& EMCsCharacterJumpMovementState::Get()
 	return *Instance;
 }
 
-namespace ECsCharacterJumpMovementState
+namespace NCsCharacterJumpMovementState
 {
 	namespace Ref
 	{

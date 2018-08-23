@@ -225,20 +225,15 @@ struct CSCORE_API FCsHeadCollision
 #pragma region
 
 UENUM(BlueprintType)
-namespace ECsCharacterJumpMovementState
+enum class ECsCharacterJumpMovementState : uint8
 {
-	enum Type
-	{
-		Grounded							UMETA(DisplayName = "Grounded"),
-		Up									UMETA(DisplayName = "Up"),
-		Down								UMETA(DisplayName = "Down"),
-		ECsCharacterJumpMovementState_MAX	UMETA(Hidden),
-	};
-}
+	Grounded							UMETA(DisplayName = "Grounded"),
+	Up									UMETA(DisplayName = "Up"),
+	Down								UMETA(DisplayName = "Down"),
+	ECsCharacterJumpMovementState_MAX	UMETA(Hidden),
+};
 
-typedef ECsCharacterJumpMovementState::Type TCsCharacterJumpMovementState;
-
-struct CSCORE_API EMCsCharacterJumpMovementState : public TCsEnumMap<ECsCharacterJumpMovementState::Type>
+struct CSCORE_API EMCsCharacterJumpMovementState : public TCsEnumMap<ECsCharacterJumpMovementState>
 {
 protected:
 	EMCsCharacterJumpMovementState() {}
@@ -253,10 +248,12 @@ public:
 	static EMCsCharacterJumpMovementState& Get();
 };
 
-namespace ECsCharacterJumpMovementState
+namespace NCsCharacterJumpMovementState
 {
 	namespace Ref
 	{
+		typedef ECsCharacterJumpMovementState Type;
+
 		extern CSCORE_API const Type Grounded;
 		extern CSCORE_API const Type Up;
 		extern CSCORE_API const Type Down;

@@ -160,19 +160,8 @@ namespace ECsInputEvent
 		extern CSCORE_API const Type Stationary;
 		extern CSCORE_API const Type ECsInputEvent_MAX;
 	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		return EMCsInputEvent::Get().ToString(EType);
-	}
-
-	FORCEINLINE const Type& ToType(const FString &String)
-	{
-		return EMCsInputEvent::Get().ToType(String);
-	}
 }
 
-#define ECS_INPUT_EVENT_MAX (uint8)ECsInputEvent::ECsInputEvent_MAX
 typedef ECsInputEvent::Type TCsInputEvent;
 
 UENUM()

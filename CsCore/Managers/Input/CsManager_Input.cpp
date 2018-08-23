@@ -341,7 +341,7 @@ void ACsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 			const FCsInput* Input = InputFrame.Inputs[I];
 
 			const FString& Action = Input->Action.Name;
-			const FString& Event  = ECsInputEvent::ToString(Input->Event);
+			const FString& Event  = EMCsInputEvent::Get().ToString(Input->Event);
 
 			// Void - No Value
 			if ((CsCVarLogInputAll->GetInt() == CS_CVAR_SHOW_LOG || CsCVarLogInputActions->GetInt() == CS_CVAR_SHOW_LOG) &&

@@ -28,7 +28,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsPawn_OnChange
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnApplyDamage_Result, const uint8&, MappingId, const FCsDamageResult&, Result);
 // Movement
 	// Jumping
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnChange_CurrentJumpMovementState, const TEnumAsByte<ECsCharacterJumpMovementState::Type>&, From, const TEnumAsByte<ECsCharacterJumpMovementState::Type>&, To);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPawn_OnChange_CurrentJumpMovementState, const ECsCharacterJumpMovementState&, From, const ECsCharacterJumpMovementState&, To);
 
 // Enums
 #pragma region
@@ -488,9 +488,9 @@ public:
 	bool bJumpFinished;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
-	TEnumAsByte<ECsCharacterJumpMovementState::Type> CurrentJumpMovementState;
+	ECsCharacterJumpMovementState CurrentJumpMovementState;
 
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnChange_CurrentJumpMovementState, const TCsCharacterJumpMovementState&, const TCsCharacterJumpMovementState&);
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnChange_CurrentJumpMovementState, const ECsCharacterJumpMovementState&, const ECsCharacterJumpMovementState&);
 	FOnChange_CurrentJumpMovementState OnChange_CurrentJumpMovementState_Event;
 #if WITH_EDITORONLY_DATA
 	UPROPERTY(BlueprintAssignable, Category = "Movement")

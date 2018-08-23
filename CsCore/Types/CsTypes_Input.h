@@ -1247,6 +1247,32 @@ namespace ECsRep_GameEvent
 typedef ECsRep_GameEvent::BitMask TCsRep_GameEvent;
 
 USTRUCT(BlueprintType)
+struct FCsGameEventInfo
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	ECsInputEvent Event;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	float Value;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	FVector Location;
+
+	FCsGameEventInfo()
+	{
+		Reset();
+	}
+	~FCsGameEventInfo(){}
+
+	void Reset()
+	{
+		Event = EMCsGameEvent::Get().GetMAX();
+		Value = 0.0f;
+		Location = FVector::ZeroVector();
+	}
+};
+
+USTRUCT(BlueprintType)
 struct FCsGameEventDefinition
 {
 	GENERATED_USTRUCT_BODY()

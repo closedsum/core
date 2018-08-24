@@ -1272,7 +1272,7 @@ void ACsMotionController::OnButtonInteraction(const TArray<USceneComponent*> &Bu
 			UCsButtonComponent* Button = Cast<UCsButtonComponent>(Component);
 
 			// ('CurrentState' | None) -> FirstHover
-			if (CurrentInteractiveActorStates[I] == ECsButtonState::FirstHover)
+			if (CurrentInteractiveActorStates[I] == ECsInteractiveState::FirstHover)
 			{
 				IsFirstHover = true;
 				OnFirstHoverButtons.Add(Component);
@@ -1303,8 +1303,8 @@ void ACsMotionController::OnButtonInteraction(const TArray<USceneComponent*> &Bu
 				continue;
 
 			// (FirstHover | Hover) -> FirstUnHover
-			if (CurrentInteractiveActorStates[I] == ECsButtonState::FirstHover ||
-				CurrentInteractiveActorStates[I] == ECsButtonState::Hover)
+			if (CurrentInteractiveActorStates[I] == ECsInteractiveState::FirstHover ||
+				CurrentInteractiveActorStates[I] == ECsInteractiveState::Hover)
 			{
 				OnFirstUnHoverButtons.Add(Component);
 			}

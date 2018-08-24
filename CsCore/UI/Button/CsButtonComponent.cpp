@@ -99,7 +99,7 @@ void UCsButtonComponent::ClearInstigators()
 {
 	for (int32 I = 0; I < ECS_BUTTON_STATE_MAX; ++I)
 	{
-		TArray<TWeakObjectPtr<UObject>>* Objects = Instigators.Find((TCsButtonState)I);
+		TArray<TWeakObjectPtr<UObject>>* Objects = Instigators.Find((ECsButtonState)I);
 
 		if (!Objects)
 			continue;

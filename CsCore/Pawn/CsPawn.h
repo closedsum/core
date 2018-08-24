@@ -168,6 +168,18 @@ struct FCsPawnJumpingFallingInfo
 	}
 };
 
+USTRUCT(BlueprintType)
+struct FCsPawnJumpEventInfo
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	float ElapsedTime_Jumping;
+
+	FCsPawnJumpEventInfo(){}
+	~FCsPawnJumpEventInfo(){}
+};
+
 #pragma endregion Structs
 
 UCLASS()

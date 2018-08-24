@@ -652,7 +652,7 @@ void UCsEthereum::OpenConsole()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const ECsCoroutineSchedule& Schedule = ECsCoroutineSchedule::Ref::Tick;
+	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &UCsEthereum::OpenConsole_Internal;
@@ -1363,7 +1363,7 @@ void UCsEthereum::CreateKeystore(CsEthereumAccount* Account)
 		UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 		FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-		const ECsCoroutineSchedule& Schedule = ECsCoroutineSchedule::Ref::Tick;
+		const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
 
 		Payload->Schedule		= Schedule;
 		Payload->Function		= &UCsEthereum::CreateKeystore_Internal;

@@ -465,8 +465,6 @@ enum class ECsButtonState : uint8
 	ECsButtonState_MAX	UMETA(Hidden),
 };
 
-typedef ECsButtonState::Type TCsButtonState;
-
 struct CSCORE_API EMCsButtonState : public TCsEnumMap<ECsButtonState>
 {
 protected:

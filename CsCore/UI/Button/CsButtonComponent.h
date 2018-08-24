@@ -62,7 +62,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "State")
 	ECsButtonState State;
 
-	TMap<TCsButtonState, TArray<TWeakObjectPtr<UObject>>> Instigators;
+	TMap<ECsButtonState, TArray<TWeakObjectPtr<UObject>>> Instigators;
 
 	UFUNCTION(BlueprintCallable, Category = "State")
 	void AddInstigator(const ECsButtonState &InState, UObject* InInstigator);

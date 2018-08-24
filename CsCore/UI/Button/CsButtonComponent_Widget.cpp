@@ -11,7 +11,7 @@ void UCsButtonComponent_Widget::OnConstructor(const FObjectInitializer& ObjectIn
 // State
 #pragma region
 
-void UCsButtonComponent_Widget::AddInstigator(const TEnumAsByte<ECsButtonState::Type> &InState, UObject* InInstigator)
+void UCsButtonComponent_Widget::AddInstigator(const ECsButtonState &InState, UObject* InInstigator)
 {
 	TArray<TWeakObjectPtr<UObject>>* Objects = Instigators.Find(InState);
 
@@ -36,7 +36,7 @@ void UCsButtonComponent_Widget::AddInstigator(const TEnumAsByte<ECsButtonState::
 	Objects->Add(InInstigator);
 }
 
-void UCsButtonComponent_Widget::RemoveInstigator(const TEnumAsByte<ECsButtonState::Type> &InState, UObject* InInstigator)
+void UCsButtonComponent_Widget::RemoveInstigator(const ECsButtonState &InState, UObject* InInstigator)
 {
 	TArray<TWeakObjectPtr<UObject>>* Objects = Instigators.Find(InState);
 
@@ -81,12 +81,12 @@ void UCsButtonComponent_Widget::ClearInstigators()
 	}
 }
 
-TArray<TWeakObjectPtr<UObject>>* UCsButtonComponent_Widget::GetInstigators(const TEnumAsByte<ECsButtonState::Type> &InState)
+TArray<TWeakObjectPtr<UObject>>* UCsButtonComponent_Widget::GetInstigators(const ECsButtonState &InState)
 {
 	return Instigators.Find(InState);
 }
 
-void UCsButtonComponent_Widget::GetInstigators_Script(const TEnumAsByte<ECsButtonState::Type> &InState, TArray<UObject*> OutInstigators)
+void UCsButtonComponent_Widget::GetInstigators_Script(const ECsButtonState &InState, TArray<UObject*> OutInstigators)
 {
 	TArray<TWeakObjectPtr<UObject>>* Objects = GetInstigators(InState);
 
@@ -104,7 +104,7 @@ void UCsButtonComponent_Widget::GetInstigators_Script(const TEnumAsByte<ECsButto
 	}
 }
 
-void UCsButtonComponent_Widget::OnInteraction_Script(const TEnumAsByte<ECsButtonState::Type> &InState, UObject* InInstigator)
+void UCsButtonComponent_Widget::OnInteraction_Script(const ECsButtonState &InState, UObject* InInstigator)
 {
 	if (InState == ECsButtonState::FirstHover) { OnFirstHover(InInstigator); return; }
 	if (InState == ECsButtonState::Hover) { OnHover(InInstigator); return; }
@@ -153,12 +153,12 @@ void UCsButtonComponent_Widget::OnFirstReleased(UObject* InInstigator)
 	State = ECsButtonState::FirstReleased;
 }
 
-bool UCsButtonComponent_Widget::CanChangeState(const TEnumAsByte<ECsButtonState::Type> &FromState, const TEnumAsByte<ECsButtonState::Type> &ToState)
+bool UCsButtonComponent_Widget::CanChangeState(const ECsButtonState &FromState, const ECsButtonState &ToState)
 {
 	return true;
 }
 
-bool UCsButtonComponent_Widget::CanChangeFromAnyState(const TArray<TEnumAsByte<ECsButtonState::Type>> &FromStates, const TEnumAsByte<ECsButtonState::Type> &ToState)
+bool UCsButtonComponent_Widget::CanChangeFromAnyState(const TArray<ECsButtonState> &FromStates, const ECsButtonState &ToState)
 {
 	const int32 Count = FromStates.Num();
 

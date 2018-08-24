@@ -39,21 +39,21 @@ class CSCORE_API UCsButtonComponent_Widget : public UCsWidgetComponent
 public:
 
 	UPROPERTY(BlueprintReadWrite, Category = "State")
-	TEnumAsByte<ECsButtonState::Type> State;
+	ECsButtonState State;
 
 	TMap<TCsButtonState, TArray<TWeakObjectPtr<UObject>>> Instigators;
 
 	UFUNCTION(BlueprintCallable, Category = "State")
-	void AddInstigator(const TEnumAsByte<ECsButtonState::Type> &InState, UObject* InInstigator);
+	void AddInstigator(const ECsButtonState &InState, UObject* InInstigator);
 	UFUNCTION(BlueprintCallable, Category = "State")
-	void RemoveInstigator(const TEnumAsByte<ECsButtonState::Type> &InState, UObject* InInstigator);
+	void RemoveInstigator(const ECsButtonState &InState, UObject* InInstigator);
 	UFUNCTION(BlueprintCallable, Category = "State")
 	void ClearInstigators();
 
-	TArray<TWeakObjectPtr<UObject>>* GetInstigators(const TEnumAsByte<ECsButtonState::Type> &InState);
+	TArray<TWeakObjectPtr<UObject>>* GetInstigators(const ECsButtonState &InState);
 
 	UFUNCTION(BlueprintCallable, Category = "State")
-	void GetInstigators_Script(const TEnumAsByte<ECsButtonState::Type> &InState, TArray<UObject*> OutInstigators);
+	void GetInstigators_Script(const ECsButtonState &InState, TArray<UObject*> OutInstigators);
 
 	FBindableEvent_CsButtonComponent_Widget_OnInteraction OnInteraction_Event;
 
@@ -64,9 +64,11 @@ public:
 	FBindableEvent_CsButtonComponent_Widget_OnPressed OnPressed_Event;
 	FBindableEvent_CsButtonComponent_Widget_OnFirstReleased OnFirstReleased_Event;
 
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(BlueprintAssignable, Category = "State")
 	FBindableDynEvent_CsButtonComponent_Widget_Override_OnInteraction Override_OnInteraction_ScriptEvent;
 
+	UPROPERTY(BlueprintAssignable, Category = "State")
 	FBindableDynEvent_CsButtonComponent_Widget_Override_OnFirstHover Override_OnFirstHover_ScriptEvent;
 	UPROPERTY(BlueprintAssignable, Category = "State")
 	FBindableDynEvent_CsButtonComponent_Widget_Override_OnHover Override_OnHover_ScriptEvent;
@@ -78,9 +80,10 @@ public:
 	FBindableDynEvent_CsButtonComponent_Widget_Override_OnPressed Override_OnPressed_ScriptEvent;
 	UPROPERTY(BlueprintAssignable, Category = "State")
 	FBindableDynEvent_CsButtonComponent_Widget_Override_OnFirstReleased Override_OnFirstReleased_ScriptEvent;
+#endif // #if WITH_EDITORONLY_DATA
 
 	UFUNCTION(BlueprintCallable, Category = "State")
-	void OnInteraction_Script(const TEnumAsByte<ECsButtonState::Type> &InState, UObject* InInstigator);
+	void OnInteraction_Script(const ECsButtonState &InState, UObject* InInstigator);
 
 	virtual void OnInteraction(UObject* InInstigator);
 
@@ -92,9 +95,9 @@ public:
 	virtual void OnFirstReleased(UObject* InInstigator);
 
 	UFUNCTION(BlueprintCallable = Category = "State")
-	virtual bool CanChangeState(const TEnumAsByte<ECsButtonState::Type> &FromState, const TEnumAsByte<ECsButtonState::Type> &ToState);
+	virtual bool CanChangeState(const ECsButtonState &FromState, const ECsButtonState &ToState);
 	UFUNCTION(BlueprintCallable = Category = "State")
-	virtual bool CanChangeFromAnyState(const TArray<TEnumAsByte<ECsButtonState::Type>> &FromStates, const TEnumAsByte<ECsButtonState::Type> &ToState);
+	virtual bool CanChangeFromAnyState(const TArray<ECsButtonState> &FromStates, const ECsButtonState &ToState);
 
 #pragma endregion State
 

@@ -53,7 +53,7 @@ EMCsButtonState& EMCsButtonState::Get()
 	return *Instance;
 }
 
-namespace ECsButtonState
+namespace NCsButtonState
 {
 	namespace Ref
 	{

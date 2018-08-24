@@ -453,24 +453,21 @@ namespace ECsVerticalTextAligment
 }
 
 UENUM(BlueprintType)
-namespace ECsButtonState
+enum class ECsButtonState : uint8
 {
-	enum Type
-	{
-		None				UMETA(DisplayName = "None"),
-		FirstHover			UMETA(DisplayName = "FirstHover"),
-		Hover				UMETA(DisplayName = "Hover"),
-		FirstUnHover		UMETA(DisplayName = "FirstUnHover"),
-		FirstPressed		UMETA(DisplayName = "FirstPressed"),
-		Pressed				UMETA(DisplayName = "Pressed"),
-		FirstReleased		UMETA(DisplayName = "FirstReleased"),
-		ECsButtonState_MAX	UMETA(Hidden),
-	};
-}
+	None				UMETA(DisplayName = "None"),
+	FirstHover			UMETA(DisplayName = "FirstHover"),
+	Hover				UMETA(DisplayName = "Hover"),
+	FirstUnHover		UMETA(DisplayName = "FirstUnHover"),
+	FirstPressed		UMETA(DisplayName = "FirstPressed"),
+	Pressed				UMETA(DisplayName = "Pressed"),
+	FirstReleased		UMETA(DisplayName = "FirstReleased"),
+	ECsButtonState_MAX	UMETA(Hidden),
+};
 
 typedef ECsButtonState::Type TCsButtonState;
 
-struct CSCORE_API EMCsButtonState : public TCsEnumMap<ECsButtonState::Type>
+struct CSCORE_API EMCsButtonState : public TCsEnumMap<ECsButtonState>
 {
 protected:
 	EMCsButtonState() {}
@@ -485,10 +482,12 @@ public:
 	static EMCsButtonState& Get();
 };
 
-namespace ECsButtonState
+namespace NCsButtonState
 {
 	namespace Ref
 	{
+		typedef ECsButtonState Type;
+
 		extern CSCORE_API const Type None;
 		extern CSCORE_API const Type FirstHover;
 		extern CSCORE_API const Type Hover;

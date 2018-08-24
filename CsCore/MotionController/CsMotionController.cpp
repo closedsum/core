@@ -1145,7 +1145,7 @@ bool ACsMotionController::IsHoveringOverAny()
 // Button State
 #pragma region
 
-void ACsMotionController::GetCurrentButtons(const TEnumAsByte<ECsButtonState::Type> &StateType, TArray<USceneComponent*> &OutButtons)
+void ACsMotionController::GetCurrentButtons(const ECsButtonState &StateType, TArray<USceneComponent*> &OutButtons)
 {
 	const int32 Count = CurrentButtons.Num();
 
@@ -1161,7 +1161,7 @@ void ACsMotionController::GetCurrentButtons(const TEnumAsByte<ECsButtonState::Ty
 	}
 }
 
-void ACsMotionController::OnButtonInteraction_Script(const TEnumAsByte<ECsButtonState::Type> &InState, const TArray<USceneComponent*> Buttons)
+void ACsMotionController::OnButtonInteraction_Script(const ECsButtonState &InState, const TArray<USceneComponent*> Buttons)
 {
 	if (InState == ECsButtonState::FirstHover) { OnButtonFirstHover(Buttons); return; }
 	if (InState == ECsButtonState::Hover) { OnButtonHover(Buttons); return; }
@@ -1245,7 +1245,7 @@ void ACsMotionController::OnButtonInteraction(const TArray<USceneComponent*> &Bu
 				if (CurrentButtonStates[I] == ECsButtonState::FirstHover ||
 					CurrentButtonStates[I] == ECsButtonState::Hover)
 				{
-					TArray<TEnumAsByte<ECsButtonState::Type>> States;
+					TArray<ECsButtonState> States;
 					States.Add(ECsButtonState::FirstHover);
 					States.Add(ECsButtonState::Hover);
 
@@ -1366,7 +1366,7 @@ void ACsMotionController::OnButtonFirstReleased(const TArray<USceneComponent*> &
 }
 
 
-bool ACsMotionController::IsInteractingWithButton(const TEnumAsByte<ECsButtonState::Type> &InState, USceneComponent* InButton)
+bool ACsMotionController::IsInteractingWithButton(const ECsButtonState &InState, USceneComponent* InButton)
 {
 	USceneComponent* FoundButton = nullptr;
 	const int32 Count			 = CurrentButtons.Num();
@@ -1390,7 +1390,7 @@ bool ACsMotionController::IsInteractingWithButton(const TEnumAsByte<ECsButtonSta
 	return true;
 }
 
-bool ACsMotionController::IsInteractingWithAnyButton(const TEnumAsByte<ECsButtonState::Type> &InState)
+bool ACsMotionController::IsInteractingWithAnyButton(const ECsButtonState &InState)
 {
 	TArray<USceneComponent*> Components;
 

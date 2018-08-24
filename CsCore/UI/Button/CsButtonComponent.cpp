@@ -38,7 +38,7 @@ void UCsButtonComponent::OnConstructor(const FObjectInitializer& ObjectInitializ
 // State
 #pragma region
 
-void UCsButtonComponent::AddInstigator(const TEnumAsByte<ECsButtonState::Type> &InState, UObject* InInstigator)
+void UCsButtonComponent::AddInstigator(const ECsButtonState &InState, UObject* InInstigator)
 {
 	TArray<TWeakObjectPtr<UObject>>* Objects = Instigators.Find(InState);
 
@@ -63,7 +63,7 @@ void UCsButtonComponent::AddInstigator(const TEnumAsByte<ECsButtonState::Type> &
 	Objects->Add(InInstigator);
 }
 
-void UCsButtonComponent::RemoveInstigator(const TEnumAsByte<ECsButtonState::Type> &InState, UObject* InInstigator)
+void UCsButtonComponent::RemoveInstigator(const ECsButtonState &InState, UObject* InInstigator)
 {
 	TArray<TWeakObjectPtr<UObject>>* Objects = Instigators.Find(InState);
 
@@ -108,12 +108,12 @@ void UCsButtonComponent::ClearInstigators()
 	}
 }
 
-TArray<TWeakObjectPtr<UObject>>* UCsButtonComponent::GetInstigators(const TEnumAsByte<ECsButtonState::Type> &InState)
+TArray<TWeakObjectPtr<UObject>>* UCsButtonComponent::GetInstigators(const ECsButtonState &InState)
 {
 	return Instigators.Find(InState);
 }
 
-void UCsButtonComponent::GetInstigators_Script(const TEnumAsByte<ECsButtonState::Type> &InState, TArray<UObject*> OutInstigators)
+void UCsButtonComponent::GetInstigators_Script(const ECsButtonState &InState, TArray<UObject*> OutInstigators)
 {
 	TArray<TWeakObjectPtr<UObject>>* Objects = GetInstigators(InState);
 
@@ -131,7 +131,7 @@ void UCsButtonComponent::GetInstigators_Script(const TEnumAsByte<ECsButtonState:
 	}
 }
 
-void UCsButtonComponent::OnInteraction_Script(const TEnumAsByte<ECsButtonState::Type> &InState, UObject* InInstigator)
+void UCsButtonComponent::OnInteraction_Script(const ECsButtonState &InState, UObject* InInstigator)
 {
 	if (InState == ECsButtonState::FirstHover) { OnFirstHover(InInstigator); return; }
 	if (InState == ECsButtonState::Hover) { OnHover(InInstigator); return; }
@@ -180,12 +180,12 @@ void UCsButtonComponent::OnFirstReleased(UObject* InInstigator)
 	State = ECsButtonState::FirstReleased;
 }
 
-bool UCsButtonComponent::CanChangeState(const TEnumAsByte<ECsButtonState::Type> &FromState, const TEnumAsByte<ECsButtonState::Type> &ToState)
+bool UCsButtonComponent::CanChangeState(const ECsButtonState &FromState, const ECsButtonState &ToState)
 {
 	return true;
 }
 
-bool UCsButtonComponent::CanChangeFromAnyState(const TArray<TEnumAsByte<ECsButtonState::Type>> &FromStates, const TEnumAsByte<ECsButtonState::Type> &ToState)
+bool UCsButtonComponent::CanChangeFromAnyState(const TArray<ECsButtonState> &FromStates, const ECsButtonState &ToState)
 {
 	const int32 Count = FromStates.Num();
 

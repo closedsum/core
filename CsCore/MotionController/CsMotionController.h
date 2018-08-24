@@ -391,14 +391,14 @@ public:
 public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Button State")
-	TEnumAsByte<ECsButtonState::Type> ButtonState;
+	ECsButtonState ButtonState;
 
 	TArray<TWeakObjectPtr<USceneComponent>> CurrentButtons;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Button State")
-	TArray<TEnumAsByte<ECsButtonState::Type>> CurrentButtonStates;
+	TArray<ECsButtonState> CurrentButtonStates;
 
 	UFUNCTION(BlueprintCallable, Category = "Button State")
-	void GetCurrentButtons(const TEnumAsByte<ECsButtonState::Type> &StateType, TArray<USceneComponent*> &OutButtons);
+	void GetCurrentButtons(const ECsButtonState &StateType, TArray<USceneComponent*> &OutButtons);
 
 	FBindableEvent_CsMotionController_OnButtonInteraction OnButtonInteraction_Event;
 
@@ -409,6 +409,7 @@ public:
 	FBindableEvent_CsMotionController_OnButtonPressed OnButtonPressed_Event;
 	FBindableEvent_CsMotionController_OnButtonFirstReleased OnButtonFirstReleased_Event;
 
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(BlueprintAssignable, Category = "State")
 	FBindableDynEvent_CsMotionController_Override_OnButtonInteraction Override_OnButtonInteraction_ScriptEvent;
 
@@ -424,9 +425,10 @@ public:
 	FBindableDynEvent_CsMotionController_Override_OnButtonPressed Override_OnButtonPressed_ScriptEvent;
 	UPROPERTY(BlueprintAssignable, Category = "State")
 	FBindableDynEvent_CsMotionController_Override_OnButtonFirstReleased Override_OnFirstReleased_ScriptEvent;
+#endif // #if WITH_EDITORONLY_DATA
 
 	UFUNCTION(BlueprintCallable, Category = "State")
-	void OnButtonInteraction_Script(const TEnumAsByte<ECsButtonState::Type> &InState, const TArray<USceneComponent*> Buttons);
+	void OnButtonInteraction_Script(const ECsButtonState &InState, const TArray<USceneComponent*> Buttons);
 
 	virtual void OnButtonInteraction(const TArray<USceneComponent*> &Buttons);
 
@@ -438,9 +440,9 @@ public:
 	virtual void OnButtonFirstReleased(const TArray<USceneComponent*> &Buttons);
 
 	UFUNCTION(BlueprintCallable, Category = "State")
-	bool IsInteractingWithButton(const TEnumAsByte<ECsButtonState::Type> &InState, USceneComponent* InButton);
+	bool IsInteractingWithButton(const ECsButtonState &InState, USceneComponent* InButton);
 	UFUNCTION(BlueprintCallable, Category = "State")
-	bool IsInteractingWithAnyButton(const TEnumAsByte<ECsButtonState::Type> &InState);
+	bool IsInteractingWithAnyButton(const ECsButtonState &InState);
 
 	UFUNCTION(BlueprintCallable, Category = "State")
 	bool IsHoveringOverButton(USceneComponent* InButton);

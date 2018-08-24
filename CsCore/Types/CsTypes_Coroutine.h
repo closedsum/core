@@ -1,6 +1,7 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_Macro.h"
 #include "Types/CsTypes_Primitive.h"
+#include "Types/CsTypes_Delegate.h"
 #include "Coroutine/pt.h"
 
 #include "CsTypes_Coroutine.generated.h"
@@ -162,6 +163,9 @@ typedef void(*CsCoroutineStopCondition)(struct FCsRoutine*);
 typedef void(*CsAddRoutine)(class UObject*, struct FCsRoutine*, const uint8&);
 typedef void(*CsRemoveRoutine)(class UObject*, struct FCsRoutine*, const uint8&);
 
+struct FCsAddRoutine : TCsDelegate_Static_Three_Params<class UObject*, struct FCsRoutine*, const uint8&>{};
+struct FCsRemoveRoutine : TCsDelegate_Static_Three_Params<class UObject*, struct FCsRoutine*, const uint8&> {};
+
 struct FCsRoutine
 {
 public:
@@ -182,8 +186,8 @@ public:
 	TWeakObjectPtr<UObject> o;
 	TWeakObjectPtr<UObject> owner;
 	struct FCsRoutine** ownerMemberRoutine;
-	CsAddRoutine addRoutine;
-	CsRemoveRoutine removeRoutine;
+	FCsAddRoutine addRoutine;
+	FCsRemoveRoutine removeRoutine;
 	float startTime;
 	float elapsedTime;
 	float deltaSeconds;
@@ -293,8 +297,8 @@ public:
 		a = inActor;
 		o = inObject;
 		startTime = inStartTime;
-		addRoutine = inAddRoutine;
-		removeRoutine = inRemoveRoutine;
+		addRoutine.Bind(inAddRoutine);
+		removeRoutine.Bind(inRemoveRoutine);
 		type = inType;
 
 		if (GetActor())
@@ -307,8 +311,8 @@ public:
 			owner = o;
 		}
 
-		if (GetOwner() && addRoutine)
-			(*addRoutine)(GetOwner(), self, type);
+		if (GetOwner())
+			addRoutine.Execute(GetOwner(), self, type);
 	}
 
 	void End(const TCsCoroutineEndReason &inEndReason)
@@ -316,8 +320,8 @@ public:
 		if (ownerMemberRoutine)
 			*ownerMemberRoutine = nullptr;
 		else
-		if (GetOwner() && removeRoutine)
-			(*removeRoutine)(GetOwner(), self, type);
+		if (GetOwner())
+			removeRoutine.Execute(GetOwner(), self, type);
 		EndChildren();
 		index = CS_ROUTINE_END;
 		endReason = inEndReason;
@@ -351,8 +355,8 @@ public:
 		o = nullptr;
 		owner.Reset();
 		owner = nullptr;
-		addRoutine = nullptr;
-		removeRoutine = nullptr;
+		addRoutine.Unbind();
+		removeRoutine.Unbind();
 		ownerMemberRoutine = nullptr;
 		startTime = 0.0f;
 		elapsedTime = 0.0f;

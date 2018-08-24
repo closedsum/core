@@ -2378,15 +2378,7 @@ void UCsCommon::CoroutineStopCondition_CheckObject(struct FCsRoutine* r)
 	if (!r->GetRObject())
 		r->End(ECsCoroutineEndReason::StopCondition);
 }
-/*
-void UCsCommon::CoroutineStopCondition_CheckCharacter(struct FRoutine* r)
-{
-	AShooterCharacter* c = Cast<AShooterCharacter>(r->GetActor());
 
-	if (!c || !c->IsAlive() || !c->IsActiveAndFullyReplicated)
-		r->End(ECsCoroutineEndReason::StopCondition);
-}
-*/
 #pragma endregion Coroutine
 
 // Javascript

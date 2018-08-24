@@ -276,6 +276,8 @@ void ACsAIPawn::StartJump()
 {
 	ACsAIPlayerState* MyPlayerState = Cast<ACsAIPlayerState>(PlayerState);
 	MyPlayerState->AddQueuedGameEvent(StartJumpEvent);
+
+	bJumpFinished = false;
 }
 
 #pragma endregion Jump

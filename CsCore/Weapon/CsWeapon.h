@@ -560,7 +560,7 @@ public:
 	virtual void PlayAnimation_Reload();
 	static char PlayAnimation_Reload_Internal(struct FCsRoutine* r);
 	struct FCsRoutine* PlayAnimation_Reload_Internal_Routine;
-	static void PlayAnimation_Reload_StopCondition(struct FCsRoutine* r);
+	static bool PlayAnimation_Reload_StopCondition(struct FCsRoutine* r);
 
 	UFUNCTION(BlueprintCallable, Category = "Animation")
 	virtual float GetAnimationLength(const FECsWeaponFireMode &FireMode, const FECsWeaponAnim &AnimType, const int32 &Index = 0);
@@ -738,7 +738,7 @@ public:
 	static char StartChargeFire_Internal(struct FCsRoutine* r);
 	struct FCsRoutine* StartChargeFire_Internal_Routine;
 
-	static void StartChargeFire_StopCondition(struct FCsRoutine* r);
+	static bool StartChargeFire_StopCondition(struct FCsRoutine* r);
 
 	float ChargeFire_StartTime;
 
@@ -824,7 +824,7 @@ public:
 	static char FireWeapon_Internal(struct FCsRoutine* r);
 	struct FCsRoutine* FireWeapon_Internal_Routine;
 
-	static void FireWeapon_StopCondition(struct FCsRoutine* r);
+	static bool FireWeapon_StopCondition(struct FCsRoutine* r);
 
 	UPROPERTY(BlueprintAssignable, Category = "Firing")
 	FBindableDynEvent_CsWeapon_Override_FireWeapon Override_FireWeapon_ScriptEvent;

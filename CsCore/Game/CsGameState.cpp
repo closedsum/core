@@ -323,12 +323,12 @@ void ACsGameState::OnBoard()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &ACsGameState::OnBoard_Internal;
 	Payload->Actor			= this;
-	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
+	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
 	Payload->Add			= &ACsGameState::AddRoutine;
 	Payload->Remove			= &ACsGameState::RemoveRoutine;
 	Payload->Type			= ECsGameStateRoutine::OnBoard_Internal.Value;

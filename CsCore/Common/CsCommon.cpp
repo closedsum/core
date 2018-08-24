@@ -1855,12 +1855,12 @@ void UCsCommon::EndAndClearRoutine(struct FCsRoutine* &r)
 	r = nullptr;
 }
 
-FCsRoutine* UCsCommon::ScaleActorOverTime(const TCsCoroutineSchedule &ScheduleType, const TEnumAsByte<ECsEasingType::Type> &EasingType, AActor* InActor, const float &StartScale, const float &EndScale, const float &Time, const bool &IsRelativeScale)
+FCsRoutine* UCsCommon::ScaleActorOverTime(const ECsCoroutineSchedule &ScheduleType, const TEnumAsByte<ECsEasingType::Type> &EasingType, AActor* InActor, const float &StartScale, const float &EndScale, const float &Time, const bool &IsRelativeScale)
 {
 	return ScaleActorOverTime(ScheduleType, EasingType, InActor, FVector(StartScale), FVector(EndScale), Time, IsRelativeScale);
 }
 
-FCsRoutine* UCsCommon::ScaleActorOverTime(const TCsCoroutineSchedule &ScheduleType, const TEnumAsByte<ECsEasingType::Type> &EasingType, AActor* InActor, const FVector &StartScale, const FVector &EndScale, const float &Time, const bool &IsRelativeScale)
+FCsRoutine* UCsCommon::ScaleActorOverTime(const ECsCoroutineSchedule &ScheduleType, const TEnumAsByte<ECsEasingType::Type> &EasingType, AActor* InActor, const FVector &StartScale, const FVector &EndScale, const float &Time, const bool &IsRelativeScale)
 {
 	if (Time <= 0.0f)
 		return nullptr;
@@ -1871,7 +1871,7 @@ FCsRoutine* UCsCommon::ScaleActorOverTime(const TCsCoroutineSchedule &ScheduleTy
 	Payload->Schedule		= ScheduleType;
 	Payload->Function		= &UCsCommon::ScaleActorOverTime_Internal;
 	Payload->Actor			= InActor;
-	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
+	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			= ECsCommonCached::Name::ScaleActorOverTime_Internal;
@@ -1893,12 +1893,12 @@ FCsRoutine* UCsCommon::ScaleActorOverTime(const TCsCoroutineSchedule &ScheduleTy
 	return R;
 }
 
-FCsRoutine* UCsCommon::ScaleActorOverTime(const TCsCoroutineSchedule &ScheduleType, UCurveBase* Curve, AActor* InActor, const float &StartScale, const float &EndScale, const float &Time, const bool &IsRelativeScale)
+FCsRoutine* UCsCommon::ScaleActorOverTime(const ECsCoroutineSchedule &ScheduleType, UCurveBase* Curve, AActor* InActor, const float &StartScale, const float &EndScale, const float &Time, const bool &IsRelativeScale)
 {
 	return ScaleActorOverTime(ScheduleType, Curve, InActor, FVector(StartScale), FVector(EndScale), Time, IsRelativeScale);
 }
 
-FCsRoutine* UCsCommon::ScaleActorOverTime(const TCsCoroutineSchedule &ScheduleType, UCurveBase* Curve, AActor* InActor, const FVector &StartScale, const FVector &EndScale, const float &Time, const bool &IsRelativeScale)
+FCsRoutine* UCsCommon::ScaleActorOverTime(const ECsCoroutineSchedule &ScheduleType, UCurveBase* Curve, AActor* InActor, const FVector &StartScale, const FVector &EndScale, const float &Time, const bool &IsRelativeScale)
 {
 	if (Time <= 0.0f)
 		return nullptr;
@@ -2000,7 +2000,7 @@ PT_THREAD(UCsCommon::ScaleActorOverTime_Internal(struct FCsRoutine* r))
 	CS_COROUTINE_END(r);
 }
 
-FCsRoutine* UCsCommon::ScaleActorOverTime_AsCurve(const TCsCoroutineSchedule &ScheduleType, UCurveBase* Curve, AActor* InActor, const bool &IsRelativeScale)
+FCsRoutine* UCsCommon::ScaleActorOverTime_AsCurve(const ECsCoroutineSchedule &ScheduleType, UCurveBase* Curve, AActor* InActor, const bool &IsRelativeScale)
 {
 	if (!Cast<UCurveFloat>(Curve) && !Cast<UCurveVector>(Curve))
 		return nullptr;
@@ -2011,7 +2011,7 @@ FCsRoutine* UCsCommon::ScaleActorOverTime_AsCurve(const TCsCoroutineSchedule &Sc
 	Payload->Schedule		= ScheduleType;
 	Payload->Function		= &UCsCommon::ScaleActorOverTime_AsCurve_Internal;
 	Payload->Actor			= InActor;
-	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
+	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			= ECsCommonCached::Name::ScaleActorOverTime_AsCurve_Internal;
@@ -2108,7 +2108,7 @@ PT_THREAD(UCsCommon::ScaleActorOverTime_AsCurve_Internal(struct FCsRoutine* r))
 	CS_COROUTINE_END(r);
 }
 
-FCsRoutine* UCsCommon::MoveActorOverTime(const TCsCoroutineSchedule &ScheduleType, const TEnumAsByte<ECsEasingType::Type> &EasingType, AActor* InActor, const FVector &StartLocation, const FVector &EndLocation, const float &Time, const bool &IsRelativeLocation)
+FCsRoutine* UCsCommon::MoveActorOverTime(const ECsCoroutineSchedule &ScheduleType, const TEnumAsByte<ECsEasingType::Type> &EasingType, AActor* InActor, const FVector &StartLocation, const FVector &EndLocation, const float &Time, const bool &IsRelativeLocation)
 {
 	if (Time <= 0.0f)
 		return nullptr;
@@ -2119,7 +2119,7 @@ FCsRoutine* UCsCommon::MoveActorOverTime(const TCsCoroutineSchedule &ScheduleTyp
 	Payload->Schedule		= ScheduleType;
 	Payload->Function		= &UCsCommon::MoveActorOverTime_Internal;
 	Payload->Actor			= InActor;
-	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
+	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			= ECsCommonCached::Name::MoveActorOverTime_Internal;
@@ -2185,7 +2185,7 @@ PT_THREAD(UCsCommon::MoveActorOverTime_Internal(struct FCsRoutine* r))
 	CS_COROUTINE_END(r);
 }
 
-FCsRoutine* UCsCommon::DestroyMaterialInstanceDynamic(const TCsCoroutineSchedule &ScheduleType, UMaterialInstanceDynamic* InMID, const float &Delay)
+FCsRoutine* UCsCommon::DestroyMaterialInstanceDynamic(const ECsCoroutineSchedule &ScheduleType, UMaterialInstanceDynamic* InMID, const float &Delay)
 {
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
@@ -2193,7 +2193,7 @@ FCsRoutine* UCsCommon::DestroyMaterialInstanceDynamic(const TCsCoroutineSchedule
 	Payload->Schedule		= ScheduleType;
 	Payload->Function		= &UCsCommon::DestroyMaterialInstanceDynamic_Internal;
 	Payload->Object			= InMID;
-	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckObject;
+	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			= ECsCommonCached::Name::DestroyMaterialInstanceDynamic_Internal;
@@ -2233,7 +2233,7 @@ PT_THREAD(UCsCommon::DestroyMaterialInstanceDynamic_Internal(struct FCsRoutine* 
 	CS_COROUTINE_END(r);
 }
 
-FCsRoutine* UCsCommon::DestroyMaterialInstanceDynamics(const TCsCoroutineSchedule &ScheduleType, TArray<UMaterialInstanceDynamic*>& InMIDs, const float &Delay)
+FCsRoutine* UCsCommon::DestroyMaterialInstanceDynamics(const ECsCoroutineSchedule &ScheduleType, TArray<UMaterialInstanceDynamic*>& InMIDs, const float &Delay)
 {
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 
@@ -2265,7 +2265,7 @@ FCsRoutine* UCsCommon::DestroyMaterialInstanceDynamics(const TCsCoroutineSchedul
 	return R;
 }
 
-FCsRoutine* UCsCommon::FadeCameraOverTime(const TCsCoroutineSchedule &ScheduleType, const TEnumAsByte<ECsEasingType::Type> &EasingType, APlayerController* Controller, const float &Start, const float &End, const float &Time, const FLinearColor &Color)
+FCsRoutine* UCsCommon::FadeCameraOverTime(const ECsCoroutineSchedule &ScheduleType, const TEnumAsByte<ECsEasingType::Type> &EasingType, APlayerController* Controller, const float &Start, const float &End, const float &Time, const FLinearColor &Color)
 {
 	if (Time <= 0.0f)
 		return nullptr;
@@ -2276,7 +2276,7 @@ FCsRoutine* UCsCommon::FadeCameraOverTime(const TCsCoroutineSchedule &ScheduleTy
 	Payload->Schedule		= ScheduleType;
 	Payload->Function		= &UCsCommon::FadeCameraOverTime_Internal;
 	Payload->Actor			= Controller;
-	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckObject;
+	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			= ECsCommonCached::Name::FadeCameraOverTime_Internal;
@@ -2341,7 +2341,7 @@ PT_THREAD(UCsCommon::FadeCameraOverTime_Internal(struct FCsRoutine* r))
 	CS_COROUTINE_END(r);
 }
 /*
-FCsRoutine* UCsCommon::AllocateAndActivateEmitter(ACsCoroutineScheduler* ScheduleType, const TCsCoroutineSchedule &CoroutineSchedule, FEffectsElement* InEffectsElement, FVector Location, float Delay)
+FCsRoutine* UCsCommon::AllocateAndActivateEmitter(ACsCoroutineScheduler* ScheduleType, const ECsCoroutineSchedule &CoroutineSchedule, FEffectsElement* InEffectsElement, FVector Location, float Delay)
 {
 	if (!CoroutineScheduler)
 		return nullptr;
@@ -2367,16 +2367,18 @@ PT_THREAD(UCsCommon::AllocateAndActivateEmitter_Internal(struct FCsRoutine* r))
 	CS_COROUTINE_END(r);
 }
 */
-void UCsCommon::CoroutineStopCondition_CheckActor(struct FCsRoutine* r)
+bool UCsCommon::CoroutineStopCondition_CheckActor(struct FCsRoutine* r)
 {
 	if (!r->GetActor())
-		r->End(ECsCoroutineEndReason::StopCondition);
+		return true;
+	return false;
 }
 
-void UCsCommon::CoroutineStopCondition_CheckObject(struct FCsRoutine* r)
+bool UCsCommon::CoroutineStopCondition_CheckObject(struct FCsRoutine* r)
 {
 	if (!r->GetRObject())
-		r->End(ECsCoroutineEndReason::StopCondition);
+		return true;
+	return false;
 }
 
 #pragma endregion Coroutine

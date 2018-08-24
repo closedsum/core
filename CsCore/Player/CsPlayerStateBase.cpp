@@ -229,12 +229,12 @@ void ACsPlayerStateBase::OnBoard()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &ACsPlayerStateBase::OnBoard_Internal;
 	Payload->Actor			= this;
-	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
+	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
 	Payload->Add			= &ACsPlayerStateBase::AddRoutine;
 	Payload->Remove			= &ACsPlayerStateBase::RemoveRoutine;
 	Payload->Type			= ECsPlayerStateBaseRoutine::OnBoard_Internal.Value;
@@ -654,12 +654,12 @@ void ACsPlayerStateBase::RequestUniqueMappingId_AI(ACsPlayerStateBase* Requestin
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	Payload->Schedule		 = Schedule;
 	Payload->Function		 = &ACsPlayerStateBase::RequestUniqueMappingId_AI_Internal;
 	Payload->Actor			 = this;
-	Payload->Stop			 = &UCsCommon::CoroutineStopCondition_CheckActor;
+	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
 	Payload->Add			 = &ACsPlayerStateBase::AddRoutine;
 	Payload->Remove			 = &ACsPlayerStateBase::RemoveRoutine;
 	Payload->Type			 = ECsPlayerStateBaseRoutine::RequestUniqueMappingId_AI_Internal.Value;

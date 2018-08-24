@@ -1078,12 +1078,12 @@ void ACsWeapon::PlayAnimation_Reload()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &ACsWeapon::PlayAnimation_Reload_Internal;
 	Payload->Actor			= this;
-	Payload->Stop			= &ACsWeapon::PlayAnimation_Reload_StopCondition;
+	Payload->Stop.Add(&ACsWeapon::PlayAnimation_Reload_StopCondition);
 	Payload->Add			= &ACsWeapon::AddRoutine;
 	Payload->Remove			= &ACsWeapon::RemoveRoutine;
 	Payload->Type			= (uint8)ECsWeaponRoutine::PlayAnimation_Reload_Internal.Value;
@@ -1125,7 +1125,7 @@ CS_COROUTINE(ACsWeapon, PlayAnimation_Reload_Internal)
 	CS_COROUTINE_END(r);
 }
 
-void ACsWeapon::PlayAnimation_Reload_StopCondition(struct FCsRoutine* r)
+bool ACsWeapon::PlayAnimation_Reload_StopCondition(struct FCsRoutine* r)
 {
 	ACsWeapon* mw = Cast<ACsWeapon>(r->GetActor());
 
@@ -1135,15 +1135,16 @@ void ACsWeapon::PlayAnimation_Reload_StopCondition(struct FCsRoutine* r)
 		mw)
 	{
 		if (!mw->GetMyOwner())
-			r->End(ECsCoroutineEndReason::StopCondition);
+			return true;
 	}
 	// In Game
 	else
 #endif // #if WITH_EDITOR
 	{
 		if (!mw)
-			r->End(ECsCoroutineEndReason::StopCondition);
+			return true;
 	}
+	return false;
 }
 
 float ACsWeapon::GetAnimationLength(const FECsWeaponFireMode &FireMode, const FECsWeaponAnim &AnimType, const int32 &Index /*=0*/)
@@ -1477,12 +1478,12 @@ void ACsWeapon::StartChargeFire(const FECsWeaponFireMode &FireMode)
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &ACsWeapon::StartChargeFire_Internal;
 	Payload->Actor			= this;
-	Payload->Stop			= &ACsWeapon::StartChargeFire_StopCondition;
+	Payload->Stop.Add(&ACsWeapon::StartChargeFire_StopCondition);
 	Payload->Add			= &ACsWeapon::AddRoutine;
 	Payload->Remove			= &ACsWeapon::RemoveRoutine;
 	Payload->Type			= (uint8)ECsWeaponRoutine::StartChargeFire_Internal.Value;
@@ -1535,7 +1536,7 @@ CS_COROUTINE(ACsWeapon, StartChargeFire_Internal)
 	CS_COROUTINE_END(r);
 }
 
-void ACsWeapon::StartChargeFire_StopCondition(struct FCsRoutine* r)
+bool ACsWeapon::StartChargeFire_StopCondition(struct FCsRoutine* r)
 {
 	ACsWeapon* mw = Cast<ACsWeapon>(r->GetActor());
 
@@ -1549,7 +1550,7 @@ void ACsWeapon::StartChargeFire_StopCondition(struct FCsRoutine* r)
 		{
 			mw->StopAnimation(FireMode, mw->ChargeFireStartAnim);
 			mw->StopAnimation(FireMode, mw->ChargeFireLoopAnim);
-			r->End(ECsCoroutineEndReason::StopMessage);
+			return true;
 		}
 	}
 	// In Game
@@ -1561,8 +1562,9 @@ void ACsWeapon::StartChargeFire_StopCondition(struct FCsRoutine* r)
 			mw->StopAnimation(FireMode, mw->ChargeFireStartAnim);
 			mw->StopAnimation(FireMode, mw->ChargeFireLoopAnim);
 		}
-		r->End(ECsCoroutineEndReason::StopCondition);
+		return true;
 	}
+	return false;
 }
 
 float ACsWeapon::GetChargeFireHeldTime()
@@ -1691,12 +1693,12 @@ void ACsWeapon::FireWeapon(const FECsWeaponFireMode &FireMode)
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &ACsWeapon::FireWeapon_Internal;
 	Payload->Actor			= this;
-	Payload->Stop			= &ACsWeapon::FireWeapon_StopCondition;
+	Payload->Stop.Add(&ACsWeapon::FireWeapon_StopCondition);
 	Payload->Add			= &ACsWeapon::AddRoutine;
 	Payload->Remove			= &ACsWeapon::RemoveRoutine;
 	Payload->Type			= (uint8)ECsWeaponRoutine::FireWeapon_Internal.Value;
@@ -1790,7 +1792,7 @@ CS_COROUTINE(ACsWeapon, FireWeapon_Internal)
 	CS_COROUTINE_END(r);
 }
 
-void ACsWeapon::FireWeapon_StopCondition(struct FCsRoutine* r)
+bool ACsWeapon::FireWeapon_StopCondition(struct FCsRoutine* r)
 {
 	ACsWeapon* mw				       = Cast<ACsWeapon>(r->GetActor());
 	const FECsWeaponFireMode& FireMode = EMCsWeaponFireMode::Get().GetEnumAt(r->ints[0]);
@@ -1799,9 +1801,9 @@ void ACsWeapon::FireWeapon_StopCondition(struct FCsRoutine* r)
 		!mw->GetMyOwner())
 	{
 		mw->StopAnimation(FireMode, mw->FireAnim);
-
-		r->End(ECsCoroutineEndReason::StopCondition);
+		return true;
 	}
+	return false;
 }
 
 FVector ACsWeapon::GetOwnerRightVector()
@@ -1934,13 +1936,13 @@ void ACsWeapon::DrawFireProjectile(class ACsProjectile* Projectile, const FVecto
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload     = Scheduler->AllocatePayload();
 
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	Payload->Schedule			= Schedule;
 	Payload->Function			= &ACsWeapon::DrawFireProjectile_Internal;
 	Payload->Actor				= this;
 	Payload->Object				= Projectile;
-	Payload->Stop				= &ACsWeapon::FireWeapon_StopCondition;
+	Payload->Stop.Add(&ACsWeapon::FireWeapon_StopCondition);
 	Payload->DoInit				= true;
 	Payload->PerformFirstRun	= false;
 	Payload->Name				= ECsWeaponCached::Name::DrawFireProjectile_Internal;

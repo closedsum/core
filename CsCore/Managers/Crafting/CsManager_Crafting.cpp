@@ -118,12 +118,12 @@ void ACsManager_Crafting::CraftItems(FCsCraftingPayload* Payload)
 	UCsCoroutineScheduler* Scheduler		= UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* CoroutinePayload	= Scheduler->AllocatePayload();
 
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	CoroutinePayload->Schedule		  = Schedule;
 	CoroutinePayload->Function		  = &ACsManager_Crafting::CraftItems_Internal;
 	CoroutinePayload->Actor			  = this;
-	CoroutinePayload->Stop			  = &UCsCommon::CoroutineStopCondition_CheckActor;
+	CoroutinePayload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
 	CoroutinePayload->DoInit		  = true;
 	CoroutinePayload->PerformFirstRun = false;
 	CoroutinePayload->Name			  = ECsManagerCraftingCached::Name::CraftItems_Internal;

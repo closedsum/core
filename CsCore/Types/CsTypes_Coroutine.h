@@ -11,20 +11,15 @@
 #pragma region
 
 UENUM(BlueprintType)
-namespace ECsCoroutineSchedule
+enum class ECsCoroutineSchedule : uint8
 {
-	enum Type
-	{
-		Tick						UMETA(DisplayName = "Tick"),
-		CalcCamera					UMETA(DisplayName = "CalcCamera"),
-		LastTick					UMETA(DisplayName = "LastTick"),
-		ECsCoroutineSchedule_MAX	UMETA(Hidden),
-	};
-}
+	Tick						UMETA(DisplayName = "Tick"),
+	CalcCamera					UMETA(DisplayName = "CalcCamera"),
+	LastTick					UMETA(DisplayName = "LastTick"),
+	ECsCoroutineSchedule_MAX	UMETA(Hidden),
+};
 
-typedef ECsCoroutineSchedule::Type TCsCoroutineSchedule;
-
-struct CSCORE_API EMCsCoroutineSchedule : public TCsEnumMap<ECsCoroutineSchedule::Type>
+struct CSCORE_API EMCsCoroutineSchedule : public TCsEnumMap<ECsCoroutineSchedule>
 {
 protected:
 	EMCsCoroutineSchedule() {}
@@ -39,10 +34,12 @@ public:
 	static EMCsCoroutineSchedule& Get();
 };
 
-namespace ECsCoroutineSchedule
+namespace NCsCoroutineSchedule
 {
 	namespace Ref
 	{
+		typedef ECsCoroutineSchedule Type;
+
 		extern CSCORE_API const Type Tick;
 		extern CSCORE_API const Type CalcCamera;
 		extern CSCORE_API const Type LastTick;
@@ -159,24 +156,27 @@ namespace ECsCoroutineEndReason
 #define CS_ROUTINE_FREE -2
 
 typedef char(*CsCoroutine)(struct FCsRoutine*);
-typedef void(*CsCoroutineStopCondition)(struct FCsRoutine*);
+typedef bool(*CsCoroutineStopCondition)(struct FCsRoutine*);
 typedef void(*CsAddRoutine)(class UObject*, struct FCsRoutine*, const uint8&);
 typedef void(*CsRemoveRoutine)(class UObject*, struct FCsRoutine*, const uint8&);
 
-struct FCsAddRoutine : TCsDelegate_Static_Three_Params<class UObject*, struct FCsRoutine*, const uint8&>{};
-struct FCsRemoveRoutine : TCsDelegate_Static_Three_Params<class UObject*, struct FCsRoutine*, const uint8&> {};
-
 struct FCsRoutine
 {
+public:
+
+	struct FCoroutineStopCondition : TCsMulticastDelegate_Static_RetOrBool_OneParam<struct FCsRoutine*> {};
+	struct FAddRoutine : TCsDelegate_Static_Three_Params<class UObject*, struct FCsRoutine*, const uint8&> {};
+	struct FRemoveRoutine : TCsDelegate_Static_Three_Params<class UObject*, struct FCsRoutine*, const uint8&> {};
+
 public:
 
 	struct FCsRoutine* self;
 	struct pt pt;
 	struct FCsRoutine* parent;
 	TArray<struct FCsRoutine*> children;
-	TCsCoroutineSchedule scheduleType;
+	ECsCoroutineSchedule scheduleType;
 	CsCoroutine coroutine;
-	CsCoroutineStopCondition stopCondition;
+	FCoroutineStopCondition stopCondition;
 	int32 poolIndex;
 	int32 index;
 	FName name;
@@ -186,8 +186,8 @@ public:
 	TWeakObjectPtr<UObject> o;
 	TWeakObjectPtr<UObject> owner;
 	struct FCsRoutine** ownerMemberRoutine;
-	FCsAddRoutine addRoutine;
-	FCsRemoveRoutine removeRoutine;
+	FAddRoutine addRoutine;
+	FRemoveRoutine removeRoutine;
 	float startTime;
 	float elapsedTime;
 	float deltaSeconds;
@@ -224,7 +224,7 @@ public:
 		Reset();
 	}
 
-	void Init(const TCsCoroutineSchedule &inScheduleType, const int32 &inPoolIndex)
+	void Init(const ECsCoroutineSchedule &inScheduleType, const int32 &inPoolIndex)
 	{
 		self = this;
 		scheduleType = inScheduleType;
@@ -290,10 +290,18 @@ public:
 		*ownerMemberRoutine = self;
 	}
 
+	void Start(CsCoroutine inCoroutine, FCoroutineStopCondition &inStopCondition, AActor* inActor, UObject* inObject, const float &inStartTime, FCsRoutine** inOwnerMemberRoutine)
+	{
+		Start(inCoroutine, inStopCondition, inActor, inObject, inStartTime, nullptr, nullptr, CS_ROUTINE_MAX_TYPE);
+
+		ownerMemberRoutine = inOwnerMemberRoutine;
+		*ownerMemberRoutine = self;
+	}
+
 	void Start(CsCoroutine inCoroutine, CsCoroutineStopCondition inStopCondition, AActor* inActor, UObject* inObject, const float &inStartTime, CsAddRoutine inAddRoutine, CsRemoveRoutine inRemoveRoutine, const uint8 &inType)
 	{
 		coroutine = inCoroutine;
-		stopCondition = inStopCondition;
+		stopCondition.Add(inStopCondition);
 		a = inActor;
 		o = inObject;
 		startTime = inStartTime;
@@ -310,6 +318,31 @@ public:
 		{
 			owner = o;
 		}
+
+		if (GetOwner())
+			addRoutine.Execute(GetOwner(), self, type);
+	}
+
+	void Start(CsCoroutine inCoroutine, FCoroutineStopCondition &inStopCondition, AActor* inActor, UObject* inObject, const float &inStartTime, CsAddRoutine inAddRoutine, CsRemoveRoutine inRemoveRoutine, const uint8 &inType)
+	{
+		coroutine = inCoroutine;
+		stopCondition = inStopCondition;
+		a = inActor;
+		o = inObject;
+		startTime = inStartTime;
+		addRoutine.Bind(inAddRoutine);
+		removeRoutine.Bind(inRemoveRoutine);
+		type = inType;
+
+		if (GetActor())
+		{
+			owner = a;
+		}
+		else
+			if (GetRObject())
+			{
+				owner = o;
+			}
 
 		if (GetOwner())
 			addRoutine.Execute(GetOwner(), self, type);
@@ -344,7 +377,7 @@ public:
 		EndChildren();
 
 		coroutine = nullptr;
-		stopCondition = nullptr;
+		stopCondition.Clear();
 		index = CS_ROUTINE_FREE;
 		name = NAME_None;
 		nameAsString = ECsCached::Str::Empty;
@@ -454,8 +487,17 @@ public:
 		}
 		stopMessages_recieved.Reset();
 
-		if (stopCondition)
-			(*stopCondition)(self);
+		if (index == CS_ROUTINE_END &&
+			endReason == ECsCoroutineEndReason::StopMessage)
+		{
+			return;
+		}
+
+		if (stopCondition.Broadcast(self))
+		{
+			End(ECsCoroutineEndReason::StopCondition);
+			return;
+		}
 
 		if (index == CS_ROUTINE_END)
 		{

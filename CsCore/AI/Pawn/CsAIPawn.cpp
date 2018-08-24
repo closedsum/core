@@ -217,12 +217,12 @@ void ACsAIPawn::SyncCurrentViewFromBone(const FName &Bone)
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &ACsAIPawn::SyncCurrentViewFromBone_Internal;
 	Payload->Actor			= this;
-	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
+	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
 	Payload->Add			= &ACsAIPawn::AddRoutine;
 	Payload->Remove			= &ACsAIPawn::RemoveRoutine;
 	Payload->Type			= ECsPawnRoutine::SyncCurrentViewFromBone_Internal.Value;
@@ -339,12 +339,12 @@ void ACsAIPawn::StartShootForCount(const int32 &Count)
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload = Scheduler->AllocatePayload();
 
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &ACsAIPawn::StartShootForCount_Internal;
 	Payload->Actor			= this;
-	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
+	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
 	Payload->Add			= &ACsAIPawn::AddRoutine;
 	Payload->Remove			= &ACsAIPawn::RemoveRoutine;
 	Payload->Type			= ECsPawnRoutine::StartShootForCount_Internal.Value;
@@ -397,12 +397,12 @@ void ACsAIPawn::StartShootForDuration(const float &Duration)
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &ACsAIPawn::StartShootForDuration_Internal;
 	Payload->Actor			= this;
-	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
+	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
 	Payload->Add			= &ACsAIPawn::AddRoutine;
 	Payload->Remove			= &ACsAIPawn::RemoveRoutine;
 	Payload->Type			= ECsPawnRoutine::StartShootForDuration_Internal.Value;

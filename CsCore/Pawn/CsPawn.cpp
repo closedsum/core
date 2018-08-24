@@ -209,12 +209,12 @@ void ACsPawn::CheckLinkedToPlayerState()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload = Scheduler->AllocatePayload();
 
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &ACsPawn::CheckLinkedToPlayerState_Internal;
 	Payload->Actor			= this;
-	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
+	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
 	Payload->Add			= &ACsPawn::AddRoutine;
 	Payload->Remove			= &ACsPawn::RemoveRoutine;
 	Payload->Type			= ECsPawnRoutine::CheckLinkedToPlayerState_Internal.Value;
@@ -313,12 +313,12 @@ void ACsPawn::HandleRespawnTimer()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &ACsPawn::HandleRespawnTimer_Internal;
 	Payload->Actor			= this;
-	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
+	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
 	Payload->Add			= &ACsPawn::AddRoutine;
 	Payload->Remove			= &ACsPawn::RemoveRoutine;
 	Payload->Type			= ECsPawnRoutine::HandleRespawnTimer_Internal.Value;

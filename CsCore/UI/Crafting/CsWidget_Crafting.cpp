@@ -393,12 +393,12 @@ void UCsWidget_Crafting::IncrementCount()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	Payload->Schedule		 = Schedule;
 	Payload->Function		 = &UCsWidget_Crafting::IncrementCount_Internal;
 	Payload->Object			 = this;
-	Payload->Stop			 = &UCsCommon::CoroutineStopCondition_CheckObject;
+	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
 	Payload->Add			 = &UCsUserWidget::AddRoutine;
 	Payload->Remove			 = &UCsUserWidget::RemoveRoutine;
 	Payload->Type			 = (uint8)ECsWidgetCraftingRoutine::IncrementCount_Internal;
@@ -525,12 +525,12 @@ void UCsWidget_Crafting::DecrementCount()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	Payload->Schedule		 = Schedule;
 	Payload->Function		 = &UCsWidget_Crafting::DecrementCount_Internal;
 	Payload->Object			 = this;
-	Payload->Stop			 = &UCsCommon::CoroutineStopCondition_CheckObject;
+	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
 	Payload->Add			 = &UCsUserWidget::AddRoutine;
 	Payload->Remove			 = &UCsUserWidget::RemoveRoutine;
 	Payload->Type			 = (uint8)ECsWidgetCraftingRoutine::DecrementCount_Internal;
@@ -710,12 +710,12 @@ void UCsWidget_Crafting::UpdateProgress(const uint64 &PayloadId)
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	Payload->Schedule		 = Schedule;
 	Payload->Function		 = &UCsWidget_Crafting::UpdateProgress_Internal;
 	Payload->Object			 = this;
-	Payload->Stop			 = &UCsCommon::CoroutineStopCondition_CheckObject;
+	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
 	Payload->Add			 = &UCsUserWidget::AddRoutine;
 	Payload->Remove			 = &UCsUserWidget::RemoveRoutine;
 	Payload->Type			 = (uint8)ECsWidgetCraftingRoutine::UpdateProgress_Internal;

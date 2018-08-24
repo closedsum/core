@@ -78,7 +78,7 @@ bool UCsWidget_Fullscreen::RemoveRoutine_Internal(struct FCsRoutine* Routine, co
 
 void UCsWidget_Fullscreen::FadeOut(const TEnumAsByte<ECsEasingType::Type> &EasingType, const float &Start, const float &End, const float &Time, const FLinearColor &Color)
 {
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	CsCoroutine Function		  = &UCsWidget_Fullscreen::Fade_Internal;
 	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
@@ -100,7 +100,7 @@ void UCsWidget_Fullscreen::FadeOut(const TEnumAsByte<ECsEasingType::Type> &Easin
 
 void UCsWidget_Fullscreen::FadeIn(const TEnumAsByte<ECsEasingType::Type> &EasingType, const float &Start, const float &End, const float &Time, const FLinearColor &Color)
 {
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	CsCoroutine Function		  = &UCsWidget_Fullscreen::Fade_Internal;
 	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckObject;

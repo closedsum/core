@@ -11,7 +11,7 @@ EMCsCoroutineSchedule& EMCsCoroutineSchedule::Get()
 	return *Instance;
 }
 
-namespace ECsCoroutineSchedule
+namespace NCsCoroutineSchedule
 {
 	namespace Ref
 	{

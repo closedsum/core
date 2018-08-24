@@ -150,7 +150,7 @@ float UCsJavascriptLibrary::GetRealTimeSeconds(UWorld* InWorld) { return InWorld
 // Coroutine
 #pragma region
 
-uint8 UCsJavascriptLibrary::CoroutineScheduleToUint8(const TEnumAsByte<ECsCoroutineSchedule::Type> &Schedule) { return (uint8)Schedule; }
+uint8 UCsJavascriptLibrary::CoroutineScheduleToUint8(const ECsCoroutineSchedule &Schedule) { return (uint8)Schedule; }
 uint8 UCsJavascriptLibrary::GetCoroutineScheduleMax() { return ECS_COROUTINE_SCHEDULE_MAX; }
 
 #pragma endregion Coroutine

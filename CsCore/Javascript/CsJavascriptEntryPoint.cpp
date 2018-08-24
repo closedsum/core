@@ -84,12 +84,12 @@ void ACsJavascriptEntryPoint::Setup()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const TCsCoroutineSchedule& Schedule = ECsCoroutineSchedule::Ref::Tick;
+	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &ACsJavascriptEntryPoint::Setup_Internal;
 	Payload->Actor			= this;
-	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckActor;
+	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
 	Payload->Add			= &ACsJavascriptEntryPoint::AddRoutine;
 	Payload->Remove			= &ACsJavascriptEntryPoint::RemoveRoutine;
 	Payload->Type			= ECsJavascriptEntryPointRoutine::Setup_Internal.Value;

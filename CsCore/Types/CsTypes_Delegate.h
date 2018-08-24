@@ -2,6 +2,9 @@
 //#include "CsTypes_Delegate.generated.h"
 #pragma once
 
+// Single
+#pragma region
+
 struct TCsDelegate_Static
 {
 
@@ -144,3 +147,147 @@ public:
 			(*Event)(p1, p2, p3);
 	}
 };
+
+#pragma endregion Single
+
+// Multicast
+#pragma region
+
+template<typename ParamType>
+struct TCsMulticastDelegate_Static_RetAndBool_OneParam
+{
+private:
+	typedef bool(*FnPtr)(ParamType);
+
+private:
+
+	TMap<FDelegateHandle, FnPtr> InvocationMap;
+
+public:
+
+	TCsMulticastDelegate_Static_RetAndBool_OneParam()
+	{
+		InvocationMap.Reset();
+	}
+	~TCsMulticastDelegate_Static_RetAndBool_OneParam() {}
+
+	FORCEINLINE TCsMulticastDelegate_Static_RetAndBool_OneParam& operator=(const TCsMulticastDelegate_Static_RetAndBool_OneParam& B)
+	{
+		InvocationMap.Reset();
+
+		TArray<FDelegateHandle> keys;
+		B.InvocationMap.GetKeys(keys);
+
+		for (const FDelegateHandle& key : keys)
+		{
+			InvocationMap.Add(key, B.InvocationMap[key]);
+		}
+		return *this;
+	}
+
+	FORCEINLINE FDelegateHandle Add(FnPtr e)
+	{
+		FDelegateHandle handle = FDelegateHandle(FDelegateHandle::EGenerateNewHandleType::GenerateNewHandle);
+		InvocationMap.Add(handle, e);
+		return handle;
+	}
+
+	FORCEINLINE bool Remove(const FDelegateHandle& handle)
+	{
+		return InvocationMap.Remove(handle);
+	}
+
+	FORCEINLINE void Clear()
+	{
+		InvocationMap.Reset();
+	}
+
+	FORCEINLINE bool IsBound()
+	{
+		return InvocationMap.Num() > 0;
+	}
+
+	FORCEINLINE bool Broadcast(ParamType p)
+	{
+		TArray<FDelegateHandle> keys;
+		InvocationMap.GetKeys(keys);
+
+		bool ret = true;
+
+		for(const FDelegateHandle& key : keys)
+		{
+			ret &= (*InvocationMap[key])(p);
+		}
+		return (keys.Num() > 0) & ret;
+	}
+};
+
+template<typename ParamType>
+struct TCsMulticastDelegate_Static_RetOrBool_OneParam
+{
+private:
+	typedef bool(*FnPtr)(ParamType);
+
+private:
+
+	TMap<FDelegateHandle, FnPtr> InvocationMap;
+
+public:
+
+	TCsMulticastDelegate_Static_RetOrBool_OneParam()
+	{
+		InvocationMap.Reset();
+	}
+	~TCsMulticastDelegate_Static_RetOrBool_OneParam() {}
+
+	FORCEINLINE TCsMulticastDelegate_Static_RetOrBool_OneParam& operator=(const TCsMulticastDelegate_Static_RetOrBool_OneParam& B)
+	{
+		InvocationMap.Reset();
+
+		TArray<FDelegateHandle> keys;
+		B.InvocationMap.GetKeys(keys);
+
+		for (const FDelegateHandle& key : keys)
+		{
+			InvocationMap.Add(key, B.InvocationMap[key]);
+		}
+		return *this;
+	}
+
+	FORCEINLINE FDelegateHandle Add(FnPtr e)
+	{
+		FDelegateHandle handle = FDelegateHandle(FDelegateHandle::EGenerateNewHandleType::GenerateNewHandle);
+		InvocationMap.Add(handle, e);
+		return handle;
+	}
+
+	FORCEINLINE bool Remove(const FDelegateHandle& handle)
+	{
+		return InvocationMap.Remove(handle);
+	}
+
+	FORCEINLINE void Clear()
+	{
+		InvocationMap.Reset();
+	}
+
+	FORCEINLINE bool IsBound()
+	{
+		return InvocationMap.Num() > 0;
+	}
+
+	FORCEINLINE bool Broadcast(ParamType p)
+	{
+		TArray<FDelegateHandle> keys;
+		InvocationMap.GetKeys(keys);
+
+		for (const FDelegateHandle& key : keys)
+		{
+			if ((*InvocationMap[key])(p))
+				return true;
+		}
+		return false;
+	}
+};
+
+#pragma endregion Multicast

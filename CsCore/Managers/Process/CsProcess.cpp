@@ -272,12 +272,12 @@ void UCsProcess::StartRead()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload = Scheduler->AllocatePayload();
 
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &UCsProcess::StartRead_Internal;
 	Payload->Object			= this;
-	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckObject;
+	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
 	Payload->Add			= &UCsProcess::AddRoutine;
 	Payload->Remove			= &UCsProcess::RemoveRoutine;
 	Payload->Type			= (uint8)ECsProcessRoutine::StartRead_Internal;

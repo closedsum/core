@@ -277,7 +277,7 @@ bool UCsGameInstance::RemoveRoutine_Internal(struct FCsRoutine* Routine, const u
 
 void UCsGameInstance::OnBoard()
 {
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	CsCoroutine Function		  = &UCsGameInstance::OnBoard_Internal;
 	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
@@ -345,7 +345,7 @@ void UCsGameInstance::LoadDataMapping()
 		return;
 	}
 
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	CsCoroutine Function		  = &UCsGameInstance::LoadDataMapping_Internal;
 	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
@@ -503,12 +503,12 @@ void UCsGameInstance::CreateFullscreenWidget()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload = Scheduler->AllocatePayload();
 
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &UCsGameInstance::CreateFullscreenWidget_Internal;
 	Payload->Object			= this;
-	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckObject;
+	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
 	Payload->Add			= &UCsGameInstance::AddRoutine;
 	Payload->Remove			= &UCsGameInstance::RemoveRoutine;
 	Payload->Type			= (uint8)ECsGameInstanceRoutine::CreateFullscreenWidget_Internal;
@@ -577,12 +577,12 @@ void UCsGameInstance::HideMouseCursor()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &UCsGameInstance::HideMouseCursor_Internal;
 	Payload->Object			= this;
-	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckObject;
+	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
 	Payload->Add			= &UCsGameInstance::AddRoutine;
 	Payload->Remove			= &UCsGameInstance::RemoveRoutine;
 	Payload->Type			= (uint8)ECsGameInstanceRoutine::HideMouseCursor_Internal;
@@ -644,7 +644,7 @@ void UCsGameInstance::PerformLevelTransition(const FString &Level, const FString
 {
 	LevelState = ECsLevelState::BeginTransition;
 
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	CsCoroutine Function		  = &UCsGameInstance::PerformLevelTransition_Internal;
 	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckObject;

@@ -79,7 +79,7 @@ namespace ECsCoroutineCached
 		extern const FString OnLastTick_Update;// = TEXT("UCsCoroutineScheduler::OnLastTick_Update");
 	}
 
-	FORCEINLINE FString ToUpdate(const TCsCoroutineSchedule &ScheduleType)
+	FORCEINLINE FString ToUpdate(const ECsCoroutineSchedule &ScheduleType)
 	{
 		if (ScheduleType == ECsCoroutineSchedule::Tick) { return Str::OnTick_Update; }
 		if (ScheduleType == ECsCoroutineSchedule::CalcCamera) { return Str::OnCacCamera_Update; }
@@ -95,14 +95,14 @@ struct FCsCoroutinePayload
 {
 	bool IsAllocated;
 
-	TCsCoroutineSchedule Schedule;
+	ECsCoroutineSchedule Schedule;
 
 	FCsRoutine* Parent;
 	CsCoroutine Function;
 	AActor* Actor;
 	UObject* Object;
 	FCsRoutine** Routine;
-	CsCoroutineStopCondition Stop;
+	FCsRoutine::FCoroutineStopCondition Stop;
 	CsAddRoutine Add;
 	CsRemoveRoutine Remove;
 	uint8 Type;
@@ -127,7 +127,7 @@ struct FCsCoroutinePayload
 		Actor = nullptr;
 		Object = nullptr;
 		Routine = nullptr;
-		Stop = nullptr;
+		Stop.Clear();
 		Add = nullptr;
 		Remove = nullptr;
 		Type = CS_ROUTINE_MAX_TYPE;
@@ -181,56 +181,56 @@ public:
 	TArray<TArray<struct FCsRoutine*>> RoutinesToInit;
 	TArray<TArray<struct FCsRoutine*>> RoutinesToRun;
 
-	struct FCsRoutine* Allocate(const TCsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, AActor* InActor, const bool &DoInit = true, const bool &PerformFirstRun = false);
-	struct FCsRoutine* Allocate(const TCsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, const bool &DoInit = true, const bool &PerformFirstRun = false);
-	struct FCsRoutine* Allocate(const TCsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, struct FCsRoutine** InOwnerMemberRoutine = nullptr, const bool &DoInit = true, const bool &PerformFirstRun = false);
-	struct FCsRoutine* Allocate(const TCsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, CsAddRoutine InAddRoutine = nullptr, CsRemoveRoutine InRemoveRoutine = nullptr, const uint8 &RoutineType = CS_ROUTINE_MAX_TYPE, const bool &DoInit = true, const bool &PerformFirstRun = false);
-	struct FCsRoutine* Allocate(const TCsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, UObject* InObject, const bool &DoInit = true, const bool &PerformFirstRun = false);
-	struct FCsRoutine* Allocate(const TCsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject, const bool &DoInit = true, const bool &PerformFirstRun = false);
-	struct FCsRoutine* Allocate(const TCsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject, struct FCsRoutine** InOwnerMemberRoutine = nullptr, const bool &DoInit = true, const bool &PerformFirstRun = false);
-	struct FCsRoutine* Allocate(const TCsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject, CsAddRoutine InAddRoutine = nullptr, CsRemoveRoutine InRemoveRoutine = nullptr, const uint8 &RoutineType = CS_ROUTINE_MAX_TYPE, const bool &DoInit = true, const bool &PerformFirstRun = false);
-	struct FCsRoutine* Allocate(const TCsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, AActor* InActor, UObject* InObject, const bool &DoInit = true, const bool &PerformFirstRun = false);
-	struct FCsRoutine* Allocate(const TCsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject, const bool &DoInit = true, const bool &PerformFirstRun = false);
-	struct FCsRoutine* Allocate(const TCsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject, struct FCsRoutine** InOwnerMemberRoutine = nullptr, const bool &DoInit = true, const bool &PerformFirstRun = false);
-	struct FCsRoutine* Allocate(const TCsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject, CsAddRoutine InAddRoutine = nullptr, CsRemoveRoutine InRemoveRoutine = nullptr, const uint8 &RoutineType = CS_ROUTINE_MAX_TYPE, const bool &DoInit = true, const bool &PerformFirstRun = false);
+	struct FCsRoutine* Allocate(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, AActor* InActor, const bool &DoInit = true, const bool &PerformFirstRun = false);
+	struct FCsRoutine* Allocate(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, const bool &DoInit = true, const bool &PerformFirstRun = false);
+	struct FCsRoutine* Allocate(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, struct FCsRoutine** InOwnerMemberRoutine = nullptr, const bool &DoInit = true, const bool &PerformFirstRun = false);
+	struct FCsRoutine* Allocate(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, CsAddRoutine InAddRoutine = nullptr, CsRemoveRoutine InRemoveRoutine = nullptr, const uint8 &RoutineType = CS_ROUTINE_MAX_TYPE, const bool &DoInit = true, const bool &PerformFirstRun = false);
+	struct FCsRoutine* Allocate(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, UObject* InObject, const bool &DoInit = true, const bool &PerformFirstRun = false);
+	struct FCsRoutine* Allocate(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject, const bool &DoInit = true, const bool &PerformFirstRun = false);
+	struct FCsRoutine* Allocate(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject, struct FCsRoutine** InOwnerMemberRoutine = nullptr, const bool &DoInit = true, const bool &PerformFirstRun = false);
+	struct FCsRoutine* Allocate(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject, CsAddRoutine InAddRoutine = nullptr, CsRemoveRoutine InRemoveRoutine = nullptr, const uint8 &RoutineType = CS_ROUTINE_MAX_TYPE, const bool &DoInit = true, const bool &PerformFirstRun = false);
+	struct FCsRoutine* Allocate(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, AActor* InActor, UObject* InObject, const bool &DoInit = true, const bool &PerformFirstRun = false);
+	struct FCsRoutine* Allocate(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject, const bool &DoInit = true, const bool &PerformFirstRun = false);
+	struct FCsRoutine* Allocate(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject, struct FCsRoutine** InOwnerMemberRoutine = nullptr, const bool &DoInit = true, const bool &PerformFirstRun = false);
+	struct FCsRoutine* Allocate(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject, CsAddRoutine InAddRoutine = nullptr, CsRemoveRoutine InRemoveRoutine = nullptr, const uint8 &RoutineType = CS_ROUTINE_MAX_TYPE, const bool &DoInit = true, const bool &PerformFirstRun = false);
 	struct FCsRoutine* Allocate(FCsCoroutinePayload* Payload);
 
-	struct FCsRoutine* Start(const TCsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, AActor* InActor);
-	struct FCsRoutine* Start(const TCsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor);
-	struct FCsRoutine* Start(const TCsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, struct FCsRoutine** InOwnerMemberRoutine = nullptr);
-	struct FCsRoutine* Start(const TCsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, CsAddRoutine InAddRoutine = nullptr, CsRemoveRoutine InRemoveRoutine = nullptr, const uint8 &RoutineType = CS_ROUTINE_MAX_TYPE);
-	struct FCsRoutine* Start(const TCsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, UObject* InObject);
-	struct FCsRoutine* Start(const TCsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject);
-	struct FCsRoutine* Start(const TCsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject, struct FCsRoutine** InOwnerMemberRoutine = nullptr);
-	struct FCsRoutine* Start(const TCsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject, CsAddRoutine InAddRoutine = nullptr, CsRemoveRoutine InRemoveRoutine = nullptr, const uint8 &RoutineType = CS_ROUTINE_MAX_TYPE);
-	struct FCsRoutine* Start(const TCsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, AActor* InActor, UObject* InObject);
-	struct FCsRoutine* Start(const TCsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject);
-	struct FCsRoutine* Start(const TCsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject, struct FCsRoutine** InOwnerMemberRoutine = nullptr);
-	struct FCsRoutine* Start(const TCsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject, CsAddRoutine InAddRoutine = nullptr, CsRemoveRoutine InRemoveRoutine = nullptr, const uint8 &RoutineType = CS_ROUTINE_MAX_TYPE);
+	struct FCsRoutine* Start(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, AActor* InActor);
+	struct FCsRoutine* Start(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor);
+	struct FCsRoutine* Start(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, struct FCsRoutine** InOwnerMemberRoutine = nullptr);
+	struct FCsRoutine* Start(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, CsAddRoutine InAddRoutine = nullptr, CsRemoveRoutine InRemoveRoutine = nullptr, const uint8 &RoutineType = CS_ROUTINE_MAX_TYPE);
+	struct FCsRoutine* Start(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, UObject* InObject);
+	struct FCsRoutine* Start(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject);
+	struct FCsRoutine* Start(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject, struct FCsRoutine** InOwnerMemberRoutine = nullptr);
+	struct FCsRoutine* Start(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject, CsAddRoutine InAddRoutine = nullptr, CsRemoveRoutine InRemoveRoutine = nullptr, const uint8 &RoutineType = CS_ROUTINE_MAX_TYPE);
+	struct FCsRoutine* Start(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, AActor* InActor, UObject* InObject);
+	struct FCsRoutine* Start(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject);
+	struct FCsRoutine* Start(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject, struct FCsRoutine** InOwnerMemberRoutine = nullptr);
+	struct FCsRoutine* Start(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject, CsAddRoutine InAddRoutine = nullptr, CsRemoveRoutine InRemoveRoutine = nullptr, const uint8 &RoutineType = CS_ROUTINE_MAX_TYPE);
 	struct FCsRoutine* Start(FCsCoroutinePayload* Payload);
 
-	struct FCsRoutine* StartChild(const TCsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, AActor* InActor);
-	struct FCsRoutine* StartChild(const TCsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor);
-	struct FCsRoutine* StartChild(const TCsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, struct FCsRoutine** InOwnerMemberRoutine = nullptr);
-	struct FCsRoutine* StartChild(const TCsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, CsAddRoutine InAddRoutine = nullptr, CsRemoveRoutine InRemoveRoutine = nullptr, const uint8 &RoutineType = CS_ROUTINE_MAX_TYPE);
-	struct FCsRoutine* StartChild(const TCsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, UObject* InObject);
-	struct FCsRoutine* StartChild(const TCsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject);
-	struct FCsRoutine* StartChild(const TCsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject, struct FCsRoutine** InOwnerMemberRoutine = nullptr);
-	struct FCsRoutine* StartChild(const TCsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject, CsAddRoutine InAddRoutine = nullptr, CsRemoveRoutine InRemoveRoutine = nullptr, const uint8 &RoutineType = CS_ROUTINE_MAX_TYPE);
-	struct FCsRoutine* StartChild(const TCsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, AActor* InActor, UObject* InObject);
-	struct FCsRoutine* StartChild(const TCsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject);
-	struct FCsRoutine* StartChild(const TCsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject, struct FCsRoutine** InOwnerMemberRoutine = nullptr);
-	struct FCsRoutine* StartChild(const TCsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject, CsAddRoutine InAddRoutine = nullptr, CsRemoveRoutine InRemoveRoutine = nullptr, const uint8 &RoutineType = CS_ROUTINE_MAX_TYPE);
+	struct FCsRoutine* StartChild(const ECsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, AActor* InActor);
+	struct FCsRoutine* StartChild(const ECsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor);
+	struct FCsRoutine* StartChild(const ECsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, struct FCsRoutine** InOwnerMemberRoutine = nullptr);
+	struct FCsRoutine* StartChild(const ECsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, CsAddRoutine InAddRoutine = nullptr, CsRemoveRoutine InRemoveRoutine = nullptr, const uint8 &RoutineType = CS_ROUTINE_MAX_TYPE);
+	struct FCsRoutine* StartChild(const ECsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, UObject* InObject);
+	struct FCsRoutine* StartChild(const ECsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject);
+	struct FCsRoutine* StartChild(const ECsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject, struct FCsRoutine** InOwnerMemberRoutine = nullptr);
+	struct FCsRoutine* StartChild(const ECsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject, CsAddRoutine InAddRoutine = nullptr, CsRemoveRoutine InRemoveRoutine = nullptr, const uint8 &RoutineType = CS_ROUTINE_MAX_TYPE);
+	struct FCsRoutine* StartChild(const ECsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, AActor* InActor, UObject* InObject);
+	struct FCsRoutine* StartChild(const ECsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject);
+	struct FCsRoutine* StartChild(const ECsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject, struct FCsRoutine** InOwnerMemberRoutine = nullptr);
+	struct FCsRoutine* StartChild(const ECsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject, CsAddRoutine InAddRoutine = nullptr, CsRemoveRoutine InRemoveRoutine = nullptr, const uint8 &RoutineType = CS_ROUTINE_MAX_TYPE);
 	struct FCsRoutine* StartChild(FCsCoroutinePayload* Payload);
 
-	struct FCsRoutine* StartRoutine(const TCsCoroutineSchedule &ScheduleType, struct FCsRoutine* R);
+	struct FCsRoutine* StartRoutine(const ECsCoroutineSchedule &ScheduleType, struct FCsRoutine* R);
 
-	void EndAll(const TCsCoroutineSchedule &ScheduleType = ECsCoroutineSchedule::ECsCoroutineSchedule_MAX);
+	void EndAll(const ECsCoroutineSchedule &ScheduleType = ECsCoroutineSchedule::ECsCoroutineSchedule_MAX);
 
-	void BroadcastMessage(const TCsCoroutineSchedule &ScheduleType, const TCsCoroutineMessage &MessageType, const FName &Message, UObject* InOwner);
-	void BroadcastMessage(const TCsCoroutineSchedule &ScheduleType, const TCsCoroutineMessage &MessageType, const FName &Message);
+	void BroadcastMessage(const ECsCoroutineSchedule &ScheduleType, const TCsCoroutineMessage &MessageType, const FName &Message, UObject* InOwner);
+	void BroadcastMessage(const ECsCoroutineSchedule &ScheduleType, const TCsCoroutineMessage &MessageType, const FName &Message);
 
-	void Update(const TCsCoroutineSchedule &ScheduleType, const float &DeltaSeconds);
+	void Update(const ECsCoroutineSchedule &ScheduleType, const float &DeltaSeconds);
 
 // Run on Tick
 #pragma region 
@@ -258,7 +258,7 @@ public:
 #pragma endregion Run on LastTick
 
 	void LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsCoroutineTransaction::Type> &Transaction, struct FCsRoutine* R);
-	void LogRunning(const TCsCoroutineSchedule &ScheduleType);
+	void LogRunning(const ECsCoroutineSchedule &ScheduleType);
 
 // Payload
 #pragma region

@@ -143,7 +143,7 @@ class CSCORE_API UCsJavascriptLibrary : public UBlueprintFunctionLibrary
 #pragma region
 
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static uint8 CoroutineScheduleToUint8(const TEnumAsByte<ECsCoroutineSchedule::Type> &Schedule);
+	static uint8 CoroutineScheduleToUint8(const ECsCoroutineSchedule &Schedule);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
 	static uint8 GetCoroutineScheduleMax();
 

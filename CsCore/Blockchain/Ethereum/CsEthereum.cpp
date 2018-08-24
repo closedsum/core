@@ -585,12 +585,12 @@ void UCsEthereum::StartPrivateChain()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &UCsEthereum::StartPrivateChain_Internal;
 	Payload->Object			= this;
-	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckObject;
+	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
 	Payload->Add			= &UCsEthereum::AddRoutine;
 	Payload->Remove			= &UCsEthereum::RemoveRoutine;
 	Payload->Type			= (uint8)ECsEthereumRoutine::StartPrivateChain_Internal;
@@ -652,12 +652,12 @@ void UCsEthereum::OpenConsole()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &UCsEthereum::OpenConsole_Internal;
 	Payload->Object			= this;
-	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckObject;
+	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
 	Payload->Add			= &UCsEthereum::AddRoutine;
 	Payload->Remove			= &UCsEthereum::RemoveRoutine;
 	Payload->Type			= (uint8)ECsEthereumRoutine::OpenConsole_Internal;
@@ -1363,12 +1363,12 @@ void UCsEthereum::CreateKeystore(CsEthereumAccount* Account)
 		UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 		FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-		const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+		const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 		Payload->Schedule		= Schedule;
 		Payload->Function		= &UCsEthereum::CreateKeystore_Internal;
 		Payload->Object			= this;
-		Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckObject;
+		Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
 		Payload->Add			= &UCsEthereum::AddRoutine;
 		Payload->Remove			= &UCsEthereum::RemoveRoutine;
 		Payload->Type			= (uint8)ECsEthereumRoutine::CreateKeystore_Internal;
@@ -1502,12 +1502,12 @@ void UCsEthereum::SetupAccount(void* Payload)
 	UCsCoroutineScheduler* Scheduler		= UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* CoroutinePayload	= Scheduler->AllocatePayload();
 
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	CoroutinePayload->Schedule		= Schedule;
 	CoroutinePayload->Function		= &UCsEthereum::SetupAccount_Internal;
 	CoroutinePayload->Object		= this;
-	CoroutinePayload->Stop			= &UCsCommon::CoroutineStopCondition_CheckObject;
+	CoroutinePayload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
 	CoroutinePayload->Add			= &UCsEthereum::AddRoutine;
 	CoroutinePayload->Remove		= &UCsEthereum::RemoveRoutine;
 	CoroutinePayload->Type			= (uint8)ECsEthereumRoutine::SetupAccount_Internal;
@@ -1582,12 +1582,12 @@ void UCsEthereum::BringBalanceToThreshold(ICsBlockchainAccount* IAccount, const 
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload = Scheduler->AllocatePayload();
 
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &UCsEthereum::BringBalanceToThreshold_Internal;
 	Payload->Object			= this;
-	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckObject;
+	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
 	Payload->Add			= &UCsEthereum::AddRoutine;
 	Payload->Remove			= &UCsEthereum::RemoveRoutine;
 	Payload->Type			= (uint8)ECsEthereumRoutine::BringBalanceToThreshold_Internal;
@@ -1710,12 +1710,12 @@ void UCsEthereum::DeployContract(const FECsBlockchainContract &EContract, TArray
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &UCsEthereum::DeployContract_Internal;
 	Payload->Object			= this;
-	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckObject;
+	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
 	Payload->Add			= &UCsEthereum::AddRoutine;
 	Payload->Remove			= &UCsEthereum::RemoveRoutine;
 	Payload->Type			= (uint8)ECsEthereumRoutine::DeployContract_Internal;
@@ -1996,12 +1996,12 @@ void UCsEthereum::SetupContract(const FECsBlockchainContract &EContract, const F
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &UCsEthereum::SetupContract_Internal;
 	Payload->Object			= this;
-	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckObject;
+	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
 	Payload->Add			= &UCsEthereum::AddRoutine;
 	Payload->Remove			= &UCsEthereum::RemoveRoutine;
 	Payload->Type			= (uint8)ECsEthereumRoutine::SetupContract_Internal;
@@ -2086,12 +2086,12 @@ void UCsEthereum::RunContractStateChangeFunction(const FECsBlockchainContract &E
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &UCsEthereum::RunContractStateChangeFunction_Internal;
 	Payload->Object			= this;
-	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckObject;
+	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
 	Payload->Add			= &UCsEthereum::AddRoutine;
 	Payload->Remove			= &UCsEthereum::RemoveRoutine;
 	Payload->Type			= (uint8)ECsEthereumRoutine::RunContractStateChangeFunction_Internal;
@@ -2230,12 +2230,12 @@ void UCsEthereum::CheckTransactionHasBeenMined(const FString &TransactionHash)
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const TCsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &UCsEthereum::CheckTransactionHasBeenMined_Internal;
 	Payload->Object			= this;
-	Payload->Stop			= &UCsCommon::CoroutineStopCondition_CheckObject;
+	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
 	Payload->Add			= &UCsEthereum::AddRoutine;
 	Payload->Remove			= &UCsEthereum::RemoveRoutine;
 	Payload->Type			= (uint8)ECsEthereumRoutine::CheckTransactionHasBeenMined_Internal;

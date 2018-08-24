@@ -40,7 +40,6 @@ void ACsUI::OnLastTick(const float &DeltaSeconds){}
 AActor* ACsUI::GetMyOwner() { return MyOwner.IsValid() ? MyOwner.Get() : nullptr; }
 
 void ACsUI::AddWidget(const FECsWidgetType &WidgetType) {}
-void ACsUI::AddWidget_Script(const uint8 &WidgetType) { AddWidget(EMCsWidgetType::Get().GetEnumAt(WidgetType)); }
 
 // Get
 #pragma region

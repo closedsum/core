@@ -75,16 +75,16 @@ public:
 #pragma region
 public:
 
+	UFUNCTION(BlueprintCallable, Category = "UI")
 	virtual void AddWidget(const FECsWidgetType &WidgetType);
 
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(BlueprintAssignable, Category = "UI")
 	FBindableDynEvent_CsUI_OnAddWidget OnAddWidget_ScriptEvent;
 
-	UFUNCTION(BlueprintCallable, Category = "UI")
-	void AddWidget_Script(const uint8 &WidgetType);
-
 	UPROPERTY(BlueprintAssignable, Category = "UI")
 	FBindableDynEvent_CsUI_OnAddWidgetActor OnAddWidgetActor_ScriptEvent;
+#endif // #if WITH_EDITORONLY_DATA
 
 #pragma endregion Add
 

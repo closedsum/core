@@ -118,7 +118,7 @@ void ACsManager_Crafting::CraftItems(FCsCraftingPayload* Payload)
 	UCsCoroutineScheduler* Scheduler		= UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* CoroutinePayload	= Scheduler->AllocatePayload();
 
-	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
 
 	CoroutinePayload->Schedule		  = Schedule;
 	CoroutinePayload->Function		  = &ACsManager_Crafting::CraftItems_Internal;

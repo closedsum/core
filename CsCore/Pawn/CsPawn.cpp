@@ -209,7 +209,7 @@ void ACsPawn::CheckLinkedToPlayerState()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload = Scheduler->AllocatePayload();
 
-	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &ACsPawn::CheckLinkedToPlayerState_Internal;
@@ -313,7 +313,7 @@ void ACsPawn::HandleRespawnTimer()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &ACsPawn::HandleRespawnTimer_Internal;

@@ -585,7 +585,7 @@ void UCsEthereum::StartPrivateChain()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &UCsEthereum::StartPrivateChain_Internal;
@@ -652,7 +652,7 @@ void UCsEthereum::OpenConsole()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule& Schedule = ECsCoroutineSchedule::Ref::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &UCsEthereum::OpenConsole_Internal;
@@ -1363,7 +1363,7 @@ void UCsEthereum::CreateKeystore(CsEthereumAccount* Account)
 		UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 		FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-		const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+		const ECsCoroutineSchedule& Schedule = ECsCoroutineSchedule::Ref::Tick;
 
 		Payload->Schedule		= Schedule;
 		Payload->Function		= &UCsEthereum::CreateKeystore_Internal;
@@ -1502,7 +1502,7 @@ void UCsEthereum::SetupAccount(void* Payload)
 	UCsCoroutineScheduler* Scheduler		= UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* CoroutinePayload	= Scheduler->AllocatePayload();
 
-	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
 
 	CoroutinePayload->Schedule		= Schedule;
 	CoroutinePayload->Function		= &UCsEthereum::SetupAccount_Internal;
@@ -1582,7 +1582,7 @@ void UCsEthereum::BringBalanceToThreshold(ICsBlockchainAccount* IAccount, const 
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload = Scheduler->AllocatePayload();
 
-	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &UCsEthereum::BringBalanceToThreshold_Internal;
@@ -1710,7 +1710,7 @@ void UCsEthereum::DeployContract(const FECsBlockchainContract &EContract, TArray
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &UCsEthereum::DeployContract_Internal;
@@ -1996,7 +1996,7 @@ void UCsEthereum::SetupContract(const FECsBlockchainContract &EContract, const F
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &UCsEthereum::SetupContract_Internal;
@@ -2086,7 +2086,7 @@ void UCsEthereum::RunContractStateChangeFunction(const FECsBlockchainContract &E
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &UCsEthereum::RunContractStateChangeFunction_Internal;
@@ -2230,7 +2230,7 @@ void UCsEthereum::CheckTransactionHasBeenMined(const FString &TransactionHash)
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &UCsEthereum::CheckTransactionHasBeenMined_Internal;

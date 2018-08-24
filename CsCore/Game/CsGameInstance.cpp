@@ -277,7 +277,7 @@ bool UCsGameInstance::RemoveRoutine_Internal(struct FCsRoutine* Routine, const u
 
 void UCsGameInstance::OnBoard()
 {
-	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
 
 	CsCoroutine Function		  = &UCsGameInstance::OnBoard_Internal;
 	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
@@ -345,7 +345,7 @@ void UCsGameInstance::LoadDataMapping()
 		return;
 	}
 
-	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
 
 	CsCoroutine Function		  = &UCsGameInstance::LoadDataMapping_Internal;
 	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
@@ -503,7 +503,7 @@ void UCsGameInstance::CreateFullscreenWidget()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload = Scheduler->AllocatePayload();
 
-	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &UCsGameInstance::CreateFullscreenWidget_Internal;
@@ -577,7 +577,7 @@ void UCsGameInstance::HideMouseCursor()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &UCsGameInstance::HideMouseCursor_Internal;
@@ -644,7 +644,7 @@ void UCsGameInstance::PerformLevelTransition(const FString &Level, const FString
 {
 	LevelState = ECsLevelState::BeginTransition;
 
-	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
 
 	CsCoroutine Function		  = &UCsGameInstance::PerformLevelTransition_Internal;
 	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckObject;

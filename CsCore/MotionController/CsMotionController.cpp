@@ -400,7 +400,7 @@ void ACsMotionController::RemoveRoutine_Internal(struct FCsRoutine* Routine, con
 
 void ACsMotionController::Setup_OnCalcCamera()
 {
-	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
 
 	CsCoroutine Function		  = &ACsMotionController::Setup_OnCalcCamera_Internal;
 	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckActor;

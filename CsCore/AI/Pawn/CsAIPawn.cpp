@@ -217,7 +217,7 @@ void ACsAIPawn::SyncCurrentViewFromBone(const FName &Bone)
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &ACsAIPawn::SyncCurrentViewFromBone_Internal;
@@ -339,7 +339,7 @@ void ACsAIPawn::StartShootForCount(const int32 &Count)
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload = Scheduler->AllocatePayload();
 
-	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &ACsAIPawn::StartShootForCount_Internal;
@@ -397,7 +397,7 @@ void ACsAIPawn::StartShootForDuration(const float &Duration)
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &ACsAIPawn::StartShootForDuration_Internal;

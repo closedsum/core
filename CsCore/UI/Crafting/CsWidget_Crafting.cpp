@@ -393,7 +393,7 @@ void UCsWidget_Crafting::IncrementCount()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
 
 	Payload->Schedule		 = Schedule;
 	Payload->Function		 = &UCsWidget_Crafting::IncrementCount_Internal;
@@ -525,7 +525,7 @@ void UCsWidget_Crafting::DecrementCount()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
 
 	Payload->Schedule		 = Schedule;
 	Payload->Function		 = &UCsWidget_Crafting::DecrementCount_Internal;
@@ -710,7 +710,7 @@ void UCsWidget_Crafting::UpdateProgress(const uint64 &PayloadId)
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
 
 	Payload->Schedule		 = Schedule;
 	Payload->Function		 = &UCsWidget_Crafting::UpdateProgress_Internal;

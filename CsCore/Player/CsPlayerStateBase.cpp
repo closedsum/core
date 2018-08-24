@@ -229,7 +229,7 @@ void ACsPlayerStateBase::OnBoard()
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
 
 	Payload->Schedule		= Schedule;
 	Payload->Function		= &ACsPlayerStateBase::OnBoard_Internal;
@@ -654,7 +654,7 @@ void ACsPlayerStateBase::RequestUniqueMappingId_AI(ACsPlayerStateBase* Requestin
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsCoroutinePayload* Payload	 = Scheduler->AllocatePayload();
 
-	const ECsCoroutineSchedule Schedule = ECsCoroutineSchedule::Tick;
+	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
 
 	Payload->Schedule		 = Schedule;
 	Payload->Function		 = &ACsPlayerStateBase::RequestUniqueMappingId_AI_Internal;

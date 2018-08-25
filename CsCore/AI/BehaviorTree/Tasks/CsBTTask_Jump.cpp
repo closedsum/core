@@ -198,7 +198,7 @@ void UCsBTTask_Jump::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 	FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
 
 	// bTime
-	if (PropertyName == GET_MEMBER_NAME_CHECKED(UCsBTTask_Jump, bTime))
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(UCsBTTask_Jump, Time))
 	{
 		if (bTime)
 		{
@@ -209,7 +209,7 @@ void UCsBTTask_Jump::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 		}
 	}
 	// bHeight
-	if (PropertyName == GET_MEMBER_NAME_CHECKED(UCsBTTask_Jump, bHeight))
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(UCsBTTask_Jump, Height))
 	{
 		if (bHeight)
 		{

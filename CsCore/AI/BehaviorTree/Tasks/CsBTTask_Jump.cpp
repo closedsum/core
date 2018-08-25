@@ -22,6 +22,7 @@ UCsBTTask_Jump::UCsBTTask_Jump(const FObjectInitializer& ObjectInitializer)
 	bNotifyTick = true;
 
 	// accept only actors, vectors, and rotators
+	BlackboardKey.AllowNoneAsValue(true);
 	BlackboardKey.AddObjectFilter(this, GET_MEMBER_NAME_CHECKED(UCsBTTask_Jump, BlackboardKey), AActor::StaticClass());
 	BlackboardKey.AddVectorFilter(this, GET_MEMBER_NAME_CHECKED(UCsBTTask_Jump, BlackboardKey));
 	BlackboardKey.AddRotatorFilter(this, GET_MEMBER_NAME_CHECKED(UCsBTTask_Jump, BlackboardKey));
@@ -54,40 +55,57 @@ EBTNodeResult::Type UCsBTTask_Jump::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	const UBlackboardComponent* MyBlackboard = OwnerComp.GetBlackboardComponent();
 
 	FVector Direction = FVector::ZeroVector;
+	bool UseDistance = false;
+	float Distance = 0.0f;
 
 	// Object
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Object::StaticClass())
 	{
 		UObject* KeyValue  = MyBlackboard->GetValue<UBlackboardKeyType_Object>(BlackboardKey.GetSelectedKeyID());
 		AActor* ActorValue = Cast<AActor>(KeyValue);
+
+		const FVector Destination	= ActorValue->GetActorLocation();
+		const FVector DestinationXY = FVector(Destination.X, Destination.Y, 0.0f);
+		const FVector& Location		= Pawn->CurrentBodyLocation;
+		const FVector LocationXY	= FVector(Location.X, Location.Y, 0.0f);
+		const FVector MeToGoal		= DestinationXY - LocationXY;
+		Distance					= MeToGoal.Size2D();
+
+		const float Tolerance = Pawn->GetCapsuleComponent()->GetScaledCapsuleRadius();
+		Direction			  = Distance <= Tolerance ? FVector::ZeroVector : MeToGoal / Distance;
+
+		UseDistance = Distance > Tolerance;
 	}
 	// Vector
 	else
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Vector::StaticClass())
 	{
-		// Get Direction
 		const FVector KeyValue = MyBlackboard->GetValue<UBlackboardKeyType_Vector>(BlackboardKey.GetSelectedKeyID());
 		
 		const FVector KeyValueXY = FVector(KeyValue.X, KeyValue.Y, 0.0f);
 		const FVector& Location  = Pawn->CurrentBodyLocation;
 		const FVector LocationXY = FVector(Location.X, Location.Y, 0.0f);
 		const FVector MeToGoal	 = KeyValueXY - LocationXY;
-		const float Distance	 = MeToGoal.Size2D();
+		Distance				 = MeToGoal.Size2D();
 
 		const float Tolerance   = Pawn->GetCapsuleComponent()->GetScaledCapsuleRadius();
-		Direction = Distance <= Tolerance ? FVector::ZeroVector : MeToGoal / Distance;
-		
+		Direction				= Distance <= Tolerance ? FVector::ZeroVector : MeToGoal / Distance;
+
+		UseDistance = Distance > Tolerance;
 	}
 	// Rotator
 	else
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Rotator::StaticClass())
 	{
+		const FRotator KeyValue = MyBlackboard->GetValue<UBlackboardKeyType_Rotator>(BlackboardKey.GetSelectedKeyID());
+		Direction				= KeyValue.Vector();
+	}
+
+	if (UseDistance)
+	{
+		Pawn->SetStartJumpEventInfoConstrainedBySpeedXY(Direction, Distance);
 	}
 	else
-	{
-
-	}
-
 	if (bTime)
 	{
 		Pawn->SetStartJumpEventInfoByTime(Direction, Time, bSpeedXYAsPercent ? SpeedXYAsPercent : 1.0f);

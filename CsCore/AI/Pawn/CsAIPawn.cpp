@@ -70,7 +70,7 @@ ACsAIPawn::ACsAIPawn(const FObjectInitializer& ObjectInitializer)
 	// Behavior Tree
 
 		// Jump
-	StartJumpEvent = EMCsGameEvent::Get().GetMAX();
+	StartJumpEventInfo.Clear();
 		// Shoot
 	StartShootEvent = EMCsGameEvent::Get().GetMAX();
 	StopShootEvent = EMCsGameEvent::Get().GetMAX();
@@ -272,9 +272,45 @@ void ACsAIPawn::StopSyncCurrentViewFromBone()
 	// Jump
 #pragma region
 
+void ACsAIPawn::SetStartJumpEventInfoConstrainedByTime(const FVector &Direction, const float &Distance)
+{
+	StartJumpEventInfo.Direction = Direction == FVector::ZeroVector ? CurrentRootDirXY : Direction;
+
+	ACsData_Character* Data = GetMyData_Character();
+	const float Time		= 2.0f * Data->GetGroundToJumpPeakTime();
+	StartJumpEventInfo.Time = Time;
+	const float SpeedXY		= Distance / Time;
+
+	StartJumpEventInfo.JumpZVelocity	= Data->GetJumpZVelocity();
+	StartJumpEventInfo.Height			= Data->GetGroundToJumpPeakTime() * StartJumpEventInfo.JumpZVelocity;
+	StartJumpEventInfo.SpeedXYAsPercent = SpeedXY / Data->GetMaxWalkSpeed();
+}
+
+void ACsAIPawn::SetStartJumpEventInfoConstrainedBySpeedXY(const FVector &Direction, const float &Distance)
+{
+	StartJumpEventInfo.Direction = Direction == FVector::ZeroVector ? CurrentRootDirXY : Direction;
+
+	ACsData_Character* Data = GetMyData_Character();
+	const float& SpeedXY    = Data->GetMaxWalkSpeed();
+	const float Time		= Distance / SpeedXY;
+	StartJumpEventInfo.Time = Time;
+
+	// V0 = -a*t;
+	const float& GravityScale			= Data->GetGravityScale();
+	StartJumpEventInfo.JumpZVelocity	= GravityScale * 980.0f * Time * 0.5f;
+	StartJumpEventInfo.Height			= 0.5f * Time * StartJumpEventInfo.JumpZVelocity;
+	StartJumpEventInfo.SpeedXYAsPercent = 1.0f;
+}
+
 void ACsAIPawn::SetStartJumpEventInfo(const FVector &Direction, const float &SpeedXYAsPercent /*=1.0f*/)
 {
 	StartJumpEventInfo.Direction = Direction == FVector::ZeroVector ? CurrentRootDirXY : Direction;
+
+	ACsData_Character* Data				= GetMyData_Character();
+	const float Time					= 2.0f * Data->GetGroundToJumpPeakTime();
+	StartJumpEventInfo.Time				= Time;
+	StartJumpEventInfo.Height			= Data->GetJumpHeight();
+	StartJumpEventInfo.JumpZVelocity	= Data->GetJumpZVelocity();
 	StartJumpEventInfo.SpeedXYAsPercent = SpeedXYAsPercent;
 }
 
@@ -287,7 +323,8 @@ void ACsAIPawn::SetStartJumpEventInfoByTime(const FVector &Direction, const floa
 	// V0 = -a*t;
 	StartJumpEventInfo.JumpZVelocity = GravityScale * 980.0f * Time * 0.5f;
 
-	StartJumpEventInfo.Time = Time;
+	StartJumpEventInfo.Time				= Time;
+	StartJumpEventInfo.Height			= 0.5f * Time * StartJumpEventInfo.JumpZVelocity;
 	StartJumpEventInfo.SpeedXYAsPercent = SpeedXYAsPercent;
 }
 
@@ -300,7 +337,8 @@ void ACsAIPawn::SetStartJumpEventInfoByHeight(const FVector &Direction, const fl
 	// V0 = Sqrt(2*a*s);
 	StartJumpEventInfo.JumpZVelocity = FMath::Sqrt(1960.0f * GravityScale * Height);
 
-	StartJumpEventInfo.Height = Height;
+	StartJumpEventInfo.Time				= 2.0f * (Height / StartJumpEventInfo.JumpZVelocity);
+	StartJumpEventInfo.Height			= Height;
 	StartJumpEventInfo.SpeedXYAsPercent = SpeedXYAsPercent;
 }
 

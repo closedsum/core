@@ -11,19 +11,19 @@ class CSCORE_API UCsBTTask_Jump : public UBTTask_BlackboardBase
 
 protected:
 
-	UPROPERTY(EditAnywhere, Category = Node)
+	UPROPERTY(EditAnywhere, Category = Node, meta = (InlineEditConditionToggle))
 	bool bTime;
-	UPROPERTY(EditAnywhere, Category = Node, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, Category = Node, meta = (editcondition = "bTime", ClampMin = "0.0", UIMin = "0.0"))
 	float Time;
 
-	UPROPERTY(EditAnywhere, Category = Node)
+	UPROPERTY(EditAnywhere, Category = Node, meta = (InlineEditConditionToggle))
 	bool bHeight;
-	UPROPERTY(EditAnywhere, Category = Node, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, Category = Node, meta = (editcondition = "bHeight", ClampMin = "0.0", UIMin = "0.0"))
 	float Height;
 
-	UPROPERTY(EditAnywhere, Category = Node)
+	UPROPERTY(EditAnywhere, Category = Node, meta = (InlineEditConditionToggle))
 	bool bSpeedXYAsPercent;
-	UPROPERTY(EditAnywhere, Category = Node, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, Category = Node, meta = (editcondition = "bSpeedXYAsPercent", ClampMin = "0.0", UIMin = "0.0"))
 	float SpeedXYAsPercent;
 
 public:

@@ -218,11 +218,16 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Behavior Tree")
 	FCsAIPawnJumpEventInfo StartJumpEventInfo;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Behavior Tree")
+	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
+	virtual void SetStartJumpEventInfoConstrainedByTime(const FVector &Direction, const float &Distance);
+	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
+	virtual void SetStartJumpEventInfoConstrainedBySpeedXY(const FVector &Direction, const float &Distance);
+
+	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
 	virtual void SetStartJumpEventInfo(const FVector &Direction, const float &SpeedXYAsPercent = 1.0f);
-	UPROPERTY(BlueprintReadOnly, Category = "Behavior Tree")
+	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
 	virtual void SetStartJumpEventInfoByTime(const FVector &Direction, const float &Time, const float &SpeedXYAsPercent = 1.0f);
-	UPROPERTY(BlueprintReadOnly, Category = "Behavior Tree")
+	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
 	virtual void SetStartJumpEventInfoByHeight(const FVector &Direction, const float &Height, const float &SpeedXYAsPercent = 1.0f);
 
 	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")

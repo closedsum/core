@@ -272,10 +272,42 @@ void ACsAIPawn::StopSyncCurrentViewFromBone()
 	// Jump
 #pragma region
 
+void ACsAIPawn::SetStartJumpEventInfo(const FVector &Direction, const float &SpeedXYAsPercent /*=1.0f*/)
+{
+	StartJumpEventInfo.Direction = Direction == FVector::ZeroVector ? CurrentRootDirXY : Direction;
+	StartJumpEventInfo.SpeedXYAsPercent = SpeedXYAsPercent;
+}
+
+void ACsAIPawn::SetStartJumpEventInfoByTime(const FVector &Direction, const float &Time, const float &SpeedXYAsPercent /*=1.0f*/)
+{
+	StartJumpEventInfo.Direction = Direction == FVector::ZeroVector ? CurrentRootDirXY : Direction;
+
+	ACsData_Character* Data			 = GetMyData_Character();
+	const float& GravityScale		 = Data->GetGravityScale();
+	// V0 = -a*t;
+	StartJumpEventInfo.JumpZVelocity = GravityScale * 980.0f * Time * 0.5f;
+
+	StartJumpEventInfo.Time = Time;
+	StartJumpEventInfo.SpeedXYAsPercent = SpeedXYAsPercent;
+}
+
+void ACsAIPawn::SetStartJumpEventInfoByHeight(const FVector &Direction, const float &Height, const float &SpeedXYAsPercent /*=1.0f*/)
+{
+	StartJumpEventInfo.Direction = Direction == FVector::ZeroVector ? CurrentRootDirXY : Direction;
+
+	ACsData_Character* Data		= GetMyData_Character();
+	const float& GravityScale	= Data->GetGravityScale();
+	// V0 = Sqrt(2*a*s);
+	StartJumpEventInfo.JumpZVelocity = FMath::Sqrt(1960.0f * GravityScale * Height);
+
+	StartJumpEventInfo.Height = Height;
+	StartJumpEventInfo.SpeedXYAsPercent = SpeedXYAsPercent;
+}
+
 void ACsAIPawn::StartJump()
 {
 	ACsAIPlayerState* MyPlayerState = Cast<ACsAIPlayerState>(PlayerState);
-	MyPlayerState->AddQueuedGameEvent(StartJumpEvent);
+	MyPlayerState->AddQueuedGameEvent(StartJumpEventInfo.Event);
 
 	bJumpFinished = false;
 }

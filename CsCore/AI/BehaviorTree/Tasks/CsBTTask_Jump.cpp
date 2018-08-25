@@ -7,6 +7,7 @@
 // Behavior Tree
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
+#include "BehaviorTree/Blackboard/BlackboardKeyType_Rotator.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
 // AI
@@ -24,6 +25,9 @@ UCsBTTask_Jump::UCsBTTask_Jump(const FObjectInitializer& ObjectInitializer)
 	BlackboardKey.AddObjectFilter(this, GET_MEMBER_NAME_CHECKED(UCsBTTask_Jump, BlackboardKey), AActor::StaticClass());
 	BlackboardKey.AddVectorFilter(this, GET_MEMBER_NAME_CHECKED(UCsBTTask_Jump, BlackboardKey));
 	BlackboardKey.AddRotatorFilter(this, GET_MEMBER_NAME_CHECKED(UCsBTTask_Jump, BlackboardKey));
+
+	bSpeedXYAsPercent = true;
+	SpeedXYAsPercent = 1.0f;
 }
 
 EBTNodeResult::Type UCsBTTask_Jump::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -45,6 +49,57 @@ EBTNodeResult::Type UCsBTTask_Jump::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	{
 		UE_LOG(LogCs, Warning, TEXT("UCsBTTask_Jump::ExecuteTask (%s.%s): This Task only works with Pawns derived from ACsAIPawn."), *(BasePawn->GetName()), *(BTree->GetName()));
 		return EBTNodeResult::Failed;
+	}
+
+	const UBlackboardComponent* MyBlackboard = OwnerComp.GetBlackboardComponent();
+
+	FVector Direction = FVector::ZeroVector;
+
+	// Object
+	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Object::StaticClass())
+	{
+		UObject* KeyValue  = MyBlackboard->GetValue<UBlackboardKeyType_Object>(BlackboardKey.GetSelectedKeyID());
+		AActor* ActorValue = Cast<AActor>(KeyValue);
+	}
+	// Vector
+	else
+	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Vector::StaticClass())
+	{
+		// Get Direction
+		const FVector KeyValue = MyBlackboard->GetValue<UBlackboardKeyType_Vector>(BlackboardKey.GetSelectedKeyID());
+		
+		const FVector KeyValueXY = FVector(KeyValue.X, KeyValue.Y, 0.0f);
+		const FVector& Location  = Pawn->CurrentBodyLocation;
+		const FVector LocationXY = FVector(Location.X, Location.Y, 0.0f);
+		const FVector MeToGoal	 = KeyValueXY - LocationXY;
+		const float Distance	 = MeToGoal.Size2D();
+
+		const float Tolerance   = Pawn->GetCapsuleComponent()->GetScaledCapsuleRadius();
+		Direction = Distance <= Tolerance ? FVector::ZeroVector : MeToGoal / Distance;
+		
+	}
+	// Rotator
+	else
+	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Rotator::StaticClass())
+	{
+	}
+	else
+	{
+
+	}
+
+	if (bTime)
+	{
+		Pawn->SetStartJumpEventInfoByTime(Direction, Time, bSpeedXYAsPercent ? SpeedXYAsPercent : 1.0f);
+	}
+	else
+	if (bHeight)
+	{
+		Pawn->SetStartJumpEventInfoByHeight(Direction, Height, bSpeedXYAsPercent ? SpeedXYAsPercent : 1.0f);
+	}
+	else
+	{
+		Pawn->SetStartJumpEventInfo(Direction, bSpeedXYAsPercent ? SpeedXYAsPercent : 1.0f);
 	}
 
 	Pawn->StartJump();

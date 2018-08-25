@@ -45,8 +45,6 @@ namespace ECsPawnRoutine
 // Structs
 #pragma region
 
-#pragma endregion Structs
-
 USTRUCT(BlueprintType)
 struct FCsAIPawnCache : public FCsPooledObjectCache
 {
@@ -93,6 +91,49 @@ struct FCsAIPawnCache : public FCsPooledObjectCache
 	template<typename T>
 	FORCEINLINE T* GetPawn() { return Cast<T>(GetPawn()); }
 };
+
+USTRUCT(BlueprintType)
+struct FCsAIPawnJumpEventInfo
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(BlueprintReadWrite, Category = "Movement")
+	FECsGameEvent Event;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Movement")
+	FVector Direction;
+	UPROPERTY(BlueprintReadWrite, Category = "Movement")
+	float JumpZVelocity;
+
+
+	UPROPERTY(BlueprintReadWrite, Category = "Movement", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float Time;
+	UPROPERTY(BlueprintReadWrite, Category = "Movement", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float Height;
+	UPROPERTY(BlueprintReadWrite, Category = "Movement", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float SpeedXYAsPercent;
+
+	FCsAIPawnJumpEventInfo() 
+	{
+		Event = EMCsGameEvent::Get().GetMAX();
+
+		Clear();
+	}
+	~FCsAIPawnJumpEventInfo() {}
+
+	void Clear()
+	{
+		Direction = FVector::ZeroVector;
+		JumpZVelocity = 0.0f;
+
+		Time = 0.0f;
+		Height = 0.0f;
+
+		SpeedXYAsPercent = 1.0f;
+	}
+};
+
+#pragma endregion Structs
 
 UCLASS()
 class CSCORE_API ACsAIPawn : public ACsPawn
@@ -175,7 +216,14 @@ public:
 public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Behavior Tree")
-	FECsGameEvent StartJumpEvent;
+	FCsAIPawnJumpEventInfo StartJumpEventInfo;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Behavior Tree")
+	virtual void SetStartJumpEventInfo(const FVector &Direction, const float &SpeedXYAsPercent = 1.0f);
+	UPROPERTY(BlueprintReadOnly, Category = "Behavior Tree")
+	virtual void SetStartJumpEventInfoByTime(const FVector &Direction, const float &Time, const float &SpeedXYAsPercent = 1.0f);
+	UPROPERTY(BlueprintReadOnly, Category = "Behavior Tree")
+	virtual void SetStartJumpEventInfoByHeight(const FVector &Direction, const float &Height, const float &SpeedXYAsPercent = 1.0f);
 
 	UFUNCTION(BlueprintCallable, Category = "Behavior Tree")
 	virtual void StartJump();

@@ -13,18 +13,18 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = Node)
 	bool bTime;
-	UPROPERTY(EditAnywhere, Category = Node)
+	UPROPERTY(EditAnywhere, Category = Node, meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float Time;
 
 	UPROPERTY(EditAnywhere, Category = Node)
 	bool bHeight;
-	UPROPERTY(EditAnywhere, Category = Node)
+	UPROPERTY(EditAnywhere, Category = Node, meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float Height;
 
 	UPROPERTY(EditAnywhere, Category = Node)
-	bool bSpeedAsPercent;
-	UPROPERTY(EditAnywhere, Category = Node)
-	float SpeedAsPercent;
+	bool bSpeedXYAsPercent;
+	UPROPERTY(EditAnywhere, Category = Node, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float SpeedXYAsPercent;
 
 public:
 

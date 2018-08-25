@@ -123,61 +123,29 @@ EBTNodeResult::Type UCsBTTask_Jump::AbortTask(UBehaviorTreeComponent& OwnerComp,
 void UCsBTTask_Jump::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 {
 	FName PropertyName = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
-	/*
-	// Type
-	if (PropertyName == GET_MEMBER_NAME_CHECKED(UCsBTTask_Jump, Type))
-	{
-		SetTimeByType();
 
-		Super::PostEditChangeProperty(e);
-		return;
-	}
 	// bTime
-	if (PropertyName == GET_MEMBER_NAME_CHECKED(UCsBTTask_Jump, Type))
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(UCsBTTask_Jump, bTime))
 	{
 		if (bTime)
 		{
-			Type = ECsBTTask_LookAtType::Timed;
-
 			if (Time <= 0.0f)
 				Time = 1.0f;
-		}
-		else
-		{
-			if (Type == ECsBTTask_LookAtType::Timed)
-				Type = ECsBTTask_LookAtType::UntilAligned;
 
-			if (Time > 0.0f)
-				Time = 0.0f;
+			bHeight = false;
 		}
-
-		Super::PostEditChangeProperty(e);
-		return;
 	}
-	// Time
-	if (PropertyName == GET_MEMBER_NAME_CHECKED(UCsBTTask_Jump, Time))
+	// bHeight
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(UCsBTTask_Jump, bHeight))
 	{
-		if (Time < 0.0f)
+		if (bHeight)
 		{
-			bTime = false;
-			Type = ECsBTTask_LookAtType::Forever;
-		}
-		else
-			if (Time > 0.0f)
-			{
-				bTime = true;
-				Type = ECsBTTask_LookAtType::Timed;
-			}
-			else
-			{
-				bTime = false;
-				Type = ECsBTTask_LookAtType::UntilAligned;
-			}
+			if (Height <= 0.0f)
+				Height = 300.0f;
 
-		Super::PostEditChangeProperty(e);
-		return;
+			bTime = false;
+		}
 	}
-	*/
 	Super::PostEditChangeProperty(e);
 }
 

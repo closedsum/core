@@ -417,6 +417,8 @@ template<typename T>
 		InJsonWriter->WriteObjectEnd();
 	}
 
+	static void WriteMemberStructPropertyToJson_FCsData_ShortCode(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UStructProperty* &StructProperty, void* InObject, const FString &MemberName);
+
 	template<typename T>
 	static void WriteMemberEnumStructPropertyToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UStructProperty* &StructProperty, void* InObject, const FString &MemberName)
 	{
@@ -771,6 +773,8 @@ template<typename T>
 
 		ReadStructFromJson(Object, (void*)Member, StructProperty->Struct, Internal);
 	}
+
+	static void WriteToMemberStructPropertyFromJson_FCsData_ShortCode(TSharedPtr<class FJsonObject> &JsonObject, UStructProperty* &StructProperty, void* InObject, const FString &MemberName);
 
 	template<typename EnumStruct, typename EnumMap>
 	static void WriteToMemberEnumStructPropertyFromJson(TSharedPtr<class FJsonObject> &JsonObject, UStructProperty* &StructProperty, void* InObject, const FString &MemberName)

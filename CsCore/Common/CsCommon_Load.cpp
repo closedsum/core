@@ -336,6 +336,20 @@ void UCsCommon_Load::WriteMemberArrayStructPropertyToJson_Transform(TSharedRef<T
 	InJsonWriter->WriteArrayEnd();
 }
 
+void UCsCommon_Load::WriteMemberStructPropertyToJson_FCsData_ShortCode(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UStructProperty* &StructProperty, void* InObject, const FString &MemberName)
+{
+	InJsonWriter->WriteObjectStart(MemberName);
+
+		FCsData_ShortCode* Member = StructProperty->ContainerPtrToValuePtr<FCsData_ShortCode>(InObject);
+
+		// Type
+		InJsonWriter->WriteValue(EMCsAssetType::Get()[Member->Type].Name, TEXT("Type"));
+		// ShortCode
+		InJsonWriter->WriteValue(Member->ShortCode.ToString(), TEXT("ShortCode"));
+
+	InJsonWriter->WriteObjectEnd();
+}
+
 bool UCsCommon_Load::WriteStructToJson_Internal_Helper(TCsWriteStructToJson_Internal Internal, UProperty* Property, TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, void* InStruct, UScriptStruct* const &InScriptStruct)
 {
 	if (Internal)
@@ -2666,6 +2680,18 @@ void UCsCommon_Load::WriteToMemberArrayStructPropertyFromJson_uint64(TSharedPtr<
 
 		(*Member)[I] = FCString::Strtoui64(*Value, NULL, 10);
 	}
+}
+
+void UCsCommon_Load::WriteToMemberStructPropertyFromJson_FCsData_ShortCode(TSharedPtr<class FJsonObject> &JsonObject, UStructProperty* &StructProperty, void* InObject, const FString &MemberName)
+{
+	FCsData_ShortCode* Member = StructProperty->ContainerPtrToValuePtr<FCsData_ShortCode>(InObject);
+
+	TSharedPtr<FJsonObject> Object = JsonObject->GetObjectField(MemberName);
+	const FString& AssetTypeName = Object->GetStringField(TEXT("Type"));
+	// Type
+	Member->Type = EMCsAssetType::Get().GetEnum(AssetTypeName).Value;
+	// ShortCode
+	Member->ShortCode = FName(*(Object->GetStringField(TEXT("ShortCode"))));
 }
 
 bool UCsCommon_Load::ReadStructFromJson_Internal_Helper(TCsReadStructFromJson_Internal Internal, UProperty* Property, TSharedPtr<class FJsonObject> &JsonObject, void* InStruct, UScriptStruct* const &InScriptStruct)

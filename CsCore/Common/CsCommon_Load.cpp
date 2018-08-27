@@ -343,9 +343,9 @@ void UCsCommon_Load::WriteMemberStructPropertyToJson_FCsData_ShortCode(TSharedRe
 		FCsData_ShortCode* Member = StructProperty->ContainerPtrToValuePtr<FCsData_ShortCode>(InObject);
 
 		// Type
-		InJsonWriter->WriteValue(EMCsAssetType::Get()[Member->Type].Name, TEXT("Type"));
+		InJsonWriter->WriteValue(TEXT("Type"), EMCsAssetType::Get()[Member->Type].Name);
 		// ShortCode
-		InJsonWriter->WriteValue(Member->ShortCode.ToString(), TEXT("ShortCode"));
+		InJsonWriter->WriteValue(TEXT("ShortCode"), Member->ShortCode.ToString());
 
 	InJsonWriter->WriteObjectEnd();
 }

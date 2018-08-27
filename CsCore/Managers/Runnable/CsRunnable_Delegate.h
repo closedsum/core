@@ -15,10 +15,9 @@ struct FCsRunnableCache
 {
 public:
 
-	bool IsAllocated;
+	bool bAllocated;
 
 	uint8 Index;
-	uint8 ActiveIndex;
 	FString Name;
 
 	TWeakObjectPtr<class UObject> Owner;
@@ -46,10 +45,9 @@ public:
 		Name = InName;
 	}
 
-	void Init(const uint8& InActiveIndex, FCsRunnablePayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
+	void Init(FCsRunnablePayload* Payload, const float &InTime, const float &InRealTime, const uint64 &InFrame)
 	{
-		IsAllocated = true;
-		ActiveIndex = InActiveIndex;
+		bAllocated = true;
 		Owner = Payload->GetOwner();
 		StackSize = Payload->StackSize;
 		ThreadPriority = Payload->ThreadPriority;
@@ -60,9 +58,7 @@ public:
 
 	virtual void Reset()
 	{
-		IsAllocated = false;
-
-		ActiveIndex = 0;
+		bAllocated = false;
 
 		Owner.Reset();
 		Owner = nullptr;
@@ -118,7 +114,7 @@ public:
 	FBindableEvent_CsRunnableDelegate Delegate;
 	FBindableEvent_CsRunnableDelegate_OnExit Delegate_OnExit;
 
-	void Allocate(const uint8 &ActiveIndex, FCsRunnablePayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame);
+	void Allocate(FCsRunnablePayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame);
 	void Start();
 
 	bool bExit;

@@ -61,9 +61,9 @@ void FCsRunnable_Delegate::Setup(const uint8& InIndex)
 	Cache.Set(InIndex, Name);
 }
 
-void FCsRunnable_Delegate::Allocate(const uint8 &ActiveIndex, FCsRunnablePayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame)
+void FCsRunnable_Delegate::Allocate(FCsRunnablePayload* Payload, const float &Time, const float &RealTime, const uint64 &Frame)
 {
-	Cache.Init(ActiveIndex, Payload, Time, RealTime, Frame);
+	Cache.Init(Payload, Time, RealTime, Frame);
 
 	bExit = false;
 }

@@ -56,7 +56,7 @@ private:
 
 	uint8 PoolIndex;
 
-	TArray<FCsRunnable_Delegate*> ActiveRunnables;
+	TMap<uint8, FCsRunnable_Delegate*> ActiveRunnables;
 
 public:
 

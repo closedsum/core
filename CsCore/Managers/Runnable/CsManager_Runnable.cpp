@@ -81,16 +81,13 @@ bool UCsManager_Runnable::Tick(float DeltaSeconds)
 		FCsRunnable_Delegate* Runnable = ActiveRunnables[I];
 
 		// Check if Runnable was DeAllocated NOT in a normal way
-		if (!Runnable->Cache.IsAllocated)
+		if (!Runnable->Cache.bAllocated)
 		{
 			UE_LOG(LogCs, Warning, TEXT("UCsManager_Runnable::OnTick: Runnable: %s at PoolIndex: %s was prematurely deallocted NOT in a normal way."), *(Runnable->Cache.Name), Runnable->Cache.Index);
 
 			LogTransaction(ECsManagerRunnableCached::Str::OnTick, ECsPoolTransaction::Deallocate, Runnable);
 
-			ActiveRunnables.RemoveAt(I);
-
-			if (I < EarliestIndex)
-				EarliestIndex = I;
+			ActiveRunnables.Remove(Runnable->Cache.Index);
 			continue;
 		}
 
@@ -99,22 +96,8 @@ bool UCsManager_Runnable::Tick(float DeltaSeconds)
 			LogTransaction(ECsManagerRunnableCached::Str::OnTick, ECsPoolTransaction::Deallocate, Runnable);
 
 			Runnable->DeAllocate();
-			ActiveRunnables.RemoveAt(I);
-
-			if (I < EarliestIndex)
-				EarliestIndex = I;
+			ActiveRunnables.Remove(Runnable->Cache.Index);
 			continue;
-		}
-	}
-	// Update ActiveIndex
-	if (EarliestIndex != Count)
-	{
-		const uint8 Max = ActiveRunnables.Num();
-
-		for (uint8 I = EarliestIndex; I < Max; ++I)
-		{
-			FCsRunnable_Delegate* Runnable = ActiveRunnables[I];
-			Runnable->Cache.ActiveIndex	   = I;;
 		}
 	}
 	return true;
@@ -146,9 +129,9 @@ FCsRunnablePayload* UCsManager_Runnable::AllocatePayload()
 		const uint8 Index			= (PayloadIndex + I) % CS_RUNNABLE_DELEGATE_POOL_SIZE;
 		FCsRunnablePayload* Payload = &(Payloads[Index]);
 
-		if (!Payload->IsAllocated)
+		if (!Payload->bAllocated)
 		{
-			Payload->IsAllocated = true;
+			Payload->bAllocated = true;
 			return Payload;
 		}
 	}
@@ -188,9 +171,9 @@ FCsRunnable_Delegate* UCsManager_Runnable::Allocate()
 		PoolIndex					   = (PoolIndex + I) % CS_RUNNABLE_DELEGATE_POOL_SIZE;
 		FCsRunnable_Delegate* Runnable = &(Pool[PoolIndex]);
 
-		if (!Runnable->Cache.IsAllocated)
+		if (!Runnable->Cache.bAllocated)
 		{
-			Runnable->Cache.IsAllocated = true;
+			Runnable->Cache.bAllocated = true;
 			return Runnable;
 		}
 	}
@@ -201,13 +184,12 @@ FCsRunnable_Delegate* UCsManager_Runnable::Allocate()
 FCsRunnable_Delegate * UCsManager_Runnable::Prep(FCsRunnablePayload* Payload)
 {
 	FCsRunnable_Delegate* Runnable = Allocate();
-	ActiveRunnables.Add(Runnable);
-	const uint8 ActiveIndex = ActiveRunnables.Num();
+	ActiveRunnables.Add(Runnable->Cache.Index, Runnable);
 
 	if (UWorld* World = GetCurrentWorld())
-		Runnable->Allocate(ActiveIndex, Payload, World->GetTimeSeconds(), World->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(World));
+		Runnable->Allocate(Payload, World->GetTimeSeconds(), World->GetRealTimeSeconds(), UCsCommon::GetCurrentFrame(World));
 	else
-		Runnable->Allocate(ActiveIndex, Payload, UCsCommon::GetCurrentDateTimeSeconds(), UCsCommon::GetCurrentDateTimeSeconds(), 0);
+		Runnable->Allocate(Payload, UCsCommon::GetCurrentDateTimeSeconds(), UCsCommon::GetCurrentDateTimeSeconds(), 0);
 
 	LogTransaction(ECsManagerRunnableCached::Str::Prep, ECsPoolTransaction::Allocate, Runnable);
 	Payload->Reset();

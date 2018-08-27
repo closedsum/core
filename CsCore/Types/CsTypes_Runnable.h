@@ -79,7 +79,7 @@ namespace ECsThreadPriority
 
 struct FCsRunnablePayload
 {
-	bool IsAllocated;
+	bool bAllocated;
 
 	TWeakObjectPtr<class UObject> Owner;
 
@@ -94,7 +94,7 @@ struct FCsRunnablePayload
 
 	void Reset()
 	{
-		IsAllocated = false;
+		bAllocated = false;
 		Owner.Reset();
 		Owner = nullptr;
 		StackSize = 0;

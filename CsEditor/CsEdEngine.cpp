@@ -144,6 +144,11 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 	}
 }
 
+void UCsEdEngine::PreExit()
+{
+	Super::PreExit();
+}
+
 void UCsEdEngine::Tick(float DeltaSeconds, bool bIdleMode)
 {
 	Super::Tick(DeltaSeconds, bIdleMode);

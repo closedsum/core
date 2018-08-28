@@ -10,8 +10,11 @@ class CSEDITOR_API UCsEdEngine : public UUnrealEdEngine
 public:
 	GENERATED_BODY()
 
+	//~ Begin UEngine Interface.
 	virtual void Init(IEngineLoop* InEngineLoop) override;
+	virtual void PreExit() override;
 	virtual void Tick(float DeltaSeconds, bool bIdleMode) override;
+	//~ End UEngine Interface.
 
 	// Begin FExec Interface
 	virtual bool Exec(UWorld* InWorld, const TCHAR* Cmd, FOutputDevice& Ar = *GLog) override;

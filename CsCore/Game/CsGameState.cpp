@@ -583,6 +583,7 @@ void ACsGameState::SetTransientLoadedAssets(const TArray<UObject*> &LoadedAssets
 void ACsGameState::ClearTransientLoadedAssets()
 {
 	TransientLoadedAssets.Reset();
+	TransientShortCodes.Reset();
 #if WITH_EDITOR
 	UCsCommon::GetDataMapping(GetWorld())->AsyncTaskMutex.Unlock();
 #endif // #if WITH_EDITOR
@@ -734,9 +735,7 @@ void ACsGameState::AddPlayerStateMapping(ACsPlayerState* NewPlayerState)
 			TArray<FCsPlayerStateMappingRelationship>* Relationships = PlayerStateMappingRelationships.Find(Key);
 			Relationships->AddDefaulted(1);
 
-			const uint8 Size = Relationships->Num();
-
-			FCsPlayerStateMappingRelationship& Relationship = (*Relationships)[Size - 1];
+			FCsPlayerStateMappingRelationship& Relationship = (*Relationships).Last();
 			Relationship.A = Key;
 			Relationship.B = CurrentPlayerStateUniqueMappingId;
 		}
@@ -756,7 +755,7 @@ void ACsGameState::AddPlayerStateMapping(ACsPlayerState* NewPlayerState)
 
 		Relationships->AddDefaulted(1);
 
-		FCsAIPlayerStateMappingRelationship& Relationship = (*Relationships)[I];
+		FCsAIPlayerStateMappingRelationship& Relationship = (*Relationships).Last();
 		Relationship.A = Key;
 		Relationship.B = CurrentPlayerStateUniqueMappingId;
 	}

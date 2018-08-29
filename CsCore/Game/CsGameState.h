@@ -232,6 +232,7 @@ protected:
 
 	UPROPERTY()
 	TArray<UObject*> TransientLoadedAssets;
+	TArray<FName> TransientShortCodes;
 
 	void SetTransientLoadedAssets(const TArray<UObject*> &LoadedAssets);
 	void ClearTransientLoadedAssets();

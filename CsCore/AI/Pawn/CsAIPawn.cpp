@@ -79,6 +79,12 @@ ACsAIPawn::ACsAIPawn(const FObjectInitializer& ObjectInitializer)
 void ACsAIPawn::Init(const int32 &Index, const FECsAIType &InType)
 {
 	Cache.Set(Index, this, InType);
+
+	if (bPlacedInWorld)
+	{
+		SpawnLocation = GetActorLocation();
+		SpawnRotation = GetActorRotation();
+	}
 }
 
 void ACsAIPawn::OnCreatePool()

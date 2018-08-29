@@ -6,6 +6,7 @@
 #pragma once
 
 // DamageType
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsDamageType : public FECsEnum_uint8
@@ -41,7 +42,10 @@ public:
 	static EMCsDamageType& Get();
 };
 
+#pragma endregion DamageType
+
 // HitType
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsHitType : public FECsEnum_uint8
@@ -77,8 +81,62 @@ public:
 	static EMCsHitType& Get();
 };
 
+#pragma endregion HitType
+
 #define CS_INVALID_DAMAGE_TYPE 255
 #define CS_INVALID_HIT_TYPE 255
+
+// HitDirection
+#pragma region
+
+UENUM(BlueprintType)
+enum class ECsHitDirection : uint8
+{
+	Front				UMETA(DisplayName = "Front"),
+	FrontRight			UMETA(DisplayName = "Front Right"),
+	Right				UMETA(DisplayName = "Right"),
+	BackRight			UMETA(DisplayName = "Back Right"),
+	Back				UMETA(DisplayName = "Back"),
+	BackLeft			UMETA(DisplayName = "Back Left"),
+	Left				UMETA(DisplayName = "Left"),
+	FrontLeft			UMETA(DisplayName = "Front Left"),
+	ECsHitDirection_MAX	UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsHitDirection : public TCsEnumMap<ECsHitDirection>
+{
+protected:
+	EMCsHitDirection() {}
+	EMCsHitDirection(const EMCsHitDirection &) = delete;
+	EMCsHitDirection(EMCsHitDirection &&) = delete;
+public:
+	~EMCsHitDirection() {}
+private:
+	static EMCsHitDirection* Instance;
+
+public:
+	static EMCsHitDirection& Get();
+};
+
+namespace NCsHitDirection
+{
+	namespace Ref
+	{
+		typedef ECsHitDirection Type;
+
+		extern CSCORE_API const Type Front;
+		extern CSCORE_API const Type FrontRight;
+		extern CSCORE_API const Type Right;
+		extern CSCORE_API const Type BackRight;
+		extern CSCORE_API const Type Back;
+		extern CSCORE_API const Type BackLeft;
+		extern CSCORE_API const Type Left;
+		extern CSCORE_API const Type FrontLeft;
+		extern CSCORE_API const Type ECsHitDirection_MAX;
+	}
+}
+
+#pragma endregion HitType
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsDamageFalloff

@@ -120,10 +120,10 @@ public:
 
 namespace NCsHitDirection
 {
+	typedef ECsHitDirection Type;
+
 	namespace Ref
 	{
-		typedef ECsHitDirection Type;
-
 		extern CSCORE_API const Type Front;
 		extern CSCORE_API const Type FrontRight;
 		extern CSCORE_API const Type Right;
@@ -133,6 +133,37 @@ namespace NCsHitDirection
 		extern CSCORE_API const Type Left;
 		extern CSCORE_API const Type FrontLeft;
 		extern CSCORE_API const Type ECsHitDirection_MAX;
+	}
+
+	FORCEINLINE const Type& GetTypeFromAngleDelta(const float &Delta)
+	{
+		const float AbsDelta = FMath::Abs(Delta);
+
+		// Front
+		if (AbsDelta < 27.5f)
+			return Ref::Front;
+		// FrontRight
+		if (Delta <= -27.5f && Delta >= -62.5f)
+			return Ref::FrontRight;
+		// Right
+		if (Delta < -62.5f && Delta > -117.5f)
+			return Ref::Right;
+		// BackRight
+		if (Delta <= -117.5f && Delta >= -162.5f)
+			return Ref::BackRight;
+		// Back
+		if (AbsDelta <= 180.0f && AbsDelta > 162.5f)
+			return Ref::Back;
+		// BackLeft
+		if (Delta >= 117.5f && Delta <= 162.5f)
+			return Ref::BackLeft;
+		// Left
+		if (Delta > 62.5f && Delta < 117.5f)
+			return Ref::Left;
+		// FrontLeft
+		if (Delta >= 27.5f && Delta <= 62.5f)
+			return Ref::FrontLeft;
+		return Ref::ECsHitDirection_MAX;
 	}
 }
 

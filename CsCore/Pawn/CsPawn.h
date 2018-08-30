@@ -296,8 +296,10 @@ public:
 
 	FOnChange_Health OnChange_Health_Event;
 
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(BlueprintAssignable, Category = "State")
 	FBindableDynEvent_CsPawn_OnChange_Health OnChange_Health_ScriptEvent;
+#endif // #if WITH_EDITORONLY_DATA
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
 	float MaxHealth;
@@ -324,8 +326,10 @@ public:
 
 	FOnApplyDamage_Result OnApplyDamage_Result_Event;
 
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(BlueprintAssignable, Category = "State")
 	FBindableDynEvent_CsPawn_OnApplyDamage_Result OnApplyDamage_Result_ScriptEvent;
+#endif // #if WITH_EDITORONLY_DATA
 
 #pragma endregion Damage
 

@@ -259,50 +259,6 @@ void ACsPawn::OnTick_HandleSetup() {}
 // State
 #pragma region
 
-	// Health
-#pragma region
-
-void ACsPawn::SetHealth(const float& InHealth)
-{
-	Health = FMath::Max(0.0f, InHealth);
-
-	HealthHandle.UpdateIsDirty();
-
-	if (HealthHandle.HasChanged())
-	{
-		HealthHandle.Clear();
-	}
-}
-
-void ACsPawn::OnChange_Health(const float &Value){}
-
-#pragma endregion Health
-
-void ACsPawn::ApplyDamage(FCsDamageEvent* Event)
-{
-	Health -= FMath::CeilToInt(Event->Damage);
-
-	if (Health <= 0)
-	{
-		Health = 0.0f;
-	}
-}
-
-void ACsPawn::OnApplyDamage_Result(FCsDamageResult* Result)
-{
-	ACsPlayerStateBase* MyPlayerState = Cast<ACsPlayerStateBase>(PlayerState);
-
-	OnApplyDamage_Result_Event.Broadcast(MyPlayerState->UniqueMappingId, Result);
-#if WITH_EDITOR
-	OnApplyDamage_Result_ScriptEvent.Broadcast(MyPlayerState->UniqueMappingId, *Result);
-#endif // #if WITH_EDITOR
-}
-
-void ACsPawn::Die()
-{
-	bSpawnedAndActive = false;
-}
-
 	// Spawn
 #pragma region
 
@@ -355,6 +311,55 @@ CS_COROUTINE(ACsPawn, HandleRespawnTimer_Internal)
 void ACsPawn::OnHandleRespawnTimerFinished(const uint8 &MappingId) {}
 
 #pragma endregion Spawn
+
+	// Health
+#pragma region
+
+void ACsPawn::SetHealth(const float& InHealth)
+{
+	Health = FMath::Max(0.0f, InHealth);
+
+	HealthHandle.UpdateIsDirty();
+
+	if (HealthHandle.HasChanged())
+	{
+		HealthHandle.Clear();
+	}
+}
+
+void ACsPawn::OnChange_Health(const float &Value){}
+
+#pragma endregion Health
+
+	// Damage
+#pragma region
+
+void ACsPawn::ApplyDamage(FCsDamageEvent* Event)
+{
+	Health -= FMath::CeilToInt(Event->Damage);
+
+	if (Health <= 0)
+	{
+		Health = 0.0f;
+	}
+}
+
+void ACsPawn::OnApplyDamage_Result(FCsDamageResult* Result)
+{
+	ACsPlayerStateBase* MyPlayerState = Cast<ACsPlayerStateBase>(PlayerState);
+
+	OnApplyDamage_Result_Event.Broadcast(MyPlayerState->UniqueMappingId, Result);
+#if WITH_EDITOR
+	OnApplyDamage_Result_ScriptEvent.Broadcast(MyPlayerState->UniqueMappingId, *Result);
+#endif // #if WITH_EDITOR
+}
+
+#pragma endregion Damage
+
+void ACsPawn::Die()
+{
+	bSpawnedAndActive = false;
+}
 
 #pragma endregion State
 

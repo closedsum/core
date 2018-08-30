@@ -236,55 +236,6 @@ class CSCORE_API ACsPawn : public ACharacter
 #pragma region
 public:
 
-	// Health
-#pragma region
-public:
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
-	float Health;
-
-	UFUNCTION(BlueprintCallable, Category = "State")
-	virtual void SetHealth(const float& InHealth);
-
-	TCsFloat_Ref HealthHandle;
-
-	virtual void OnChange_Health(const float &Value);
-
-	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnChange_Health, const uint8&, const float&, const float&);
-
-	FOnChange_Health OnChange_Health_Event;
-
-	UPROPERTY(BlueprintAssignable, Category = "State")
-	FBindableDynEvent_CsPawn_OnChange_Health OnChange_Health_ScriptEvent;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
-	float MaxHealth;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
-	bool bHealthBar;
-
-	UPROPERTY(BlueprintReadOnly, Category = "State")
-	class UCsHealthBarComponent* HealthBarComponent;
-
-	UPROPERTY()
-	class UCsWidget_HealthBar* HealthBarWidget;
-
-#pragma endregion Health
-
-public:
-
-	virtual void ApplyDamage(FCsDamageEvent* Event);
-	virtual void OnApplyDamage_Result(FCsDamageResult* Result);
-
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnApplyDamage_Result, const uint8&, FCsDamageResult*);
-
-	FOnApplyDamage_Result OnApplyDamage_Result_Event;
-
-	UPROPERTY(BlueprintAssignable, Category = "State")
-	FBindableDynEvent_CsPawn_OnApplyDamage_Result OnApplyDamage_Result_ScriptEvent;
-
-	virtual void Die();
-
 	// Spawn
 #pragma region
 public:
@@ -326,6 +277,61 @@ public:
 	bool bSpawnedAndActive;
 
 #pragma endregion Spawn
+
+	// Health
+#pragma region
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
+	float Health;
+
+	UFUNCTION(BlueprintCallable, Category = "State")
+	virtual void SetHealth(const float& InHealth);
+
+	TCsFloat_Ref HealthHandle;
+
+	virtual void OnChange_Health(const float &Value);
+
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnChange_Health, const uint8&, const float&, const float&);
+
+	FOnChange_Health OnChange_Health_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "State")
+	FBindableDynEvent_CsPawn_OnChange_Health OnChange_Health_ScriptEvent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
+	float MaxHealth;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
+	bool bHealthBar;
+
+	UPROPERTY(BlueprintReadOnly, Category = "State")
+	class UCsHealthBarComponent* HealthBarComponent;
+
+	UPROPERTY()
+	class UCsWidget_HealthBar* HealthBarWidget;
+
+#pragma endregion Health
+
+	// Damage
+#pragma region
+public:
+
+	virtual void ApplyDamage(FCsDamageEvent* Event);
+	virtual void OnApplyDamage_Result(FCsDamageResult* Result);
+
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnApplyDamage_Result, const uint8&, FCsDamageResult*);
+
+	FOnApplyDamage_Result OnApplyDamage_Result_Event;
+
+	UPROPERTY(BlueprintAssignable, Category = "State")
+	FBindableDynEvent_CsPawn_OnApplyDamage_Result OnApplyDamage_Result_ScriptEvent;
+
+#pragma endregion Damage
+
+public:
+
+	virtual void Die();
 
 #pragma endregion State
 

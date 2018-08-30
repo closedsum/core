@@ -339,10 +339,10 @@ public:
 			owner = a;
 		}
 		else
-			if (GetRObject())
-			{
-				owner = o;
-			}
+		if (GetRObject())
+		{
+			owner = o;
+		}
 
 		if (GetOwner())
 			addRoutine.Execute(GetOwner(), self, type);

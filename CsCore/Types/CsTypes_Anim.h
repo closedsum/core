@@ -14,9 +14,6 @@
 #include "CsTypes_Anim.generated.h"
 #pragma once
 
-// Anim
-#pragma region
-
 namespace ECsAnimCached
 {
 	namespace Str
@@ -35,6 +32,9 @@ namespace ECsAnimCached
 		extern CSCORE_API const FString Aim_Offset_Blend_Space;// = TEXT("Aim Offset Blend Space");
 	}
 }
+
+// FpvAnimMember
+#pragma region
 
 UENUM(BlueprintType)
 namespace ECsFpvAnimMember
@@ -86,6 +86,8 @@ namespace ECsFpvAnimMember
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 }
+
+#pragma endregion FpvAnimMember
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsAnimSequence
@@ -497,6 +499,9 @@ public:
 	}
 };
 
+// FpvAnimBlueprintMember
+#pragma region
+
 UENUM(BlueprintType)
 namespace ECsFpvAnimBlueprintMember
 {
@@ -547,6 +552,8 @@ namespace ECsFpvAnimBlueprintMember
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 }
+
+#pragma endregion FpvAnimBlueprintMember
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsAnimBlueprint
@@ -699,6 +706,9 @@ public:
 	}
 };
 
+// FpvAnimBlendSpaceMember
+#pragma region
+
 UENUM(BlueprintType)
 namespace ECsFpvAnimBlendSpaceMember
 {
@@ -749,6 +759,8 @@ namespace ECsFpvAnimBlendSpaceMember
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 }
+
+#pragma endregion FpvAnimBlendSpaceMember
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsBlendSpace1D
@@ -1233,6 +1245,9 @@ public:
 	}
 };
 
+// AdditiveBasePoseType
+#pragma region
+
 UENUM(BlueprintType)
 namespace ECsAdditiveBasePoseType
 {
@@ -1299,6 +1314,11 @@ namespace ECsAdditiveBasePoseType
 	}
 }
 
+#pragma endregion AdditiveBasePoseType
+
+// AdditiveAnimationType
+#pragma region
+
 UENUM(BlueprintType)
 namespace ECsAdditiveAnimationType
 {
@@ -1360,4 +1380,4 @@ namespace ECsAdditiveAnimationType
 	}
 }
 
-#pragma endregion Anim
+#pragma endregion AdditiveAnimationType

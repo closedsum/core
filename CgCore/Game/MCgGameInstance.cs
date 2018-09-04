@@ -19,6 +19,8 @@
 
         public MCgGameState GameState;
 
+        public List<MCgPlayerController> PlayerControllers;
+
         #endregion // Data Members
 
         public static MCgGameInstance Get()
@@ -42,6 +44,8 @@
 
             MCgDataMapping.Init();
             FCgManager_Prefab.Get().Init();
+
+            PlayerControllers = new List<MCgPlayerController>();
 
             // Set Editor Callbacks
 #if UNITY_EDITOR

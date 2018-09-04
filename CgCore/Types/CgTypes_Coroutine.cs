@@ -52,6 +52,8 @@
         public static readonly FECgCoroutineSchedule PreCull = EMCgCoroutineSchedule.Get().Create("PreCull");
         public static readonly FECgCoroutineSchedule PreRender = EMCgCoroutineSchedule.Get().Create("PreRender");
         public static readonly FECgCoroutineSchedule Manual = EMCgCoroutineSchedule.Get().Create("Manual");
+
+        public static void Init() { }
     }
 
     public enum ECgCoroutineTransaction : byte

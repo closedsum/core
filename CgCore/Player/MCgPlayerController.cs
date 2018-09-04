@@ -14,6 +14,8 @@
 
         public MCgPlayerState PlayerState;
 
+        public FCgHud Hud;
+
         #endregion // Data Members
 
         // Use this for initialization

@@ -96,5 +96,70 @@ namespace CgCore
         }
 
         #endregion // List
+
+        #region "Local"
+
+        public static MCgPlayerController GetLocalPlayerController(int index = 0)
+        {
+            MCgGameInstance gameInstance = MCgGameInstance.Get();
+
+            return gameInstance.PlayerControllers.Count > index ? gameInstance.PlayerControllers[index] : null;
+        }
+
+        public static T GetLocalPlayerController<T>(int index = 0)
+            where T : MCgPlayerController
+        {
+            return (T)GetLocalPlayerController(index);
+        }
+
+        public static MCgPlayerState GetLocalPlayerState(int index = 0)
+        {
+            MCgPlayerController controller = GetLocalPlayerController(index);
+
+            if (controller == null)
+                return null;
+
+            return controller.PlayerState;
+        }
+
+        public static T GetLocalPlayerState<T>(int index = 0)
+            where T : MCgPlayerState
+        {
+            return (T)GetLocalPlayerState(index);
+        }
+
+        public static FCgManager_Input GetLocalManager_Input(int index = 0)
+        {
+            MCgPlayerController controller = GetLocalPlayerController(index);
+
+            if (controller == null)
+                return null;
+
+            return controller.Manager_Input;
+        }
+
+        public static T GetLocalManager_Input<T>(int index = 0)
+            where T : FCgManager_Input
+        {
+            return (T)GetLocalManager_Input(index);
+        }
+
+        public static FCgHud GetLocalHud(int index = 0)
+        {
+            MCgPlayerController controller = GetLocalPlayerController(index);
+
+            if (controller == null)
+                return null;
+
+            return controller.Hud;
+        }
+
+        public static T GetLocalHud<T>(int index = 0)
+            where T : FCgHud
+        {
+            return (T)GetLocalHud(index);
+        }
+
+        #endregion // Local 
     }
 }

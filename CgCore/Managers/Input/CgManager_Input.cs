@@ -56,7 +56,7 @@ namespace CgCore
 
         public int CurrentInputActionMap;
 
-        public List<FECgGameEvent> QueuedGameEventsForNextFrame;
+        public List<FCgGameEventInfo> QueuedGameEventInfosForNextFrame;
 
         public FCgInputProfile InputProfile;
 
@@ -166,7 +166,7 @@ namespace CgCore
             KeyInputs = new Dictionary<KeyCode, FCgKeyInput>(new FKeyCodeEqualityComparer());
             KeyInputsPressed = new List<FCgKeyInput>();
 
-            QueuedGameEventsForNextFrame = new List<FECgGameEvent>();
+            QueuedGameEventInfosForNextFrame = new List<FCgGameEventInfo>();
 
             Inputs = new List<FCgInput_Base>();
             Infos = new List<FCgInputInfo>();
@@ -720,12 +720,15 @@ namespace CgCore
 
         public void QueueGameEvent(FECgGameEvent e)
         {
-            QueuedGameEventsForNextFrame.Add(e);
+            FCgGameEventInfo info = new FCgGameEventInfo();
+            info.Event            = e;
+
+            QueuedGameEventInfosForNextFrame.Add(info);
         }
 
         public void ClearQueuedGameEvents()
         {
-            QueuedGameEventsForNextFrame.Clear();
+            QueuedGameEventInfosForNextFrame.Clear();
         }
 
         public void DetermineGameEvents(List<FCgInput> inputs)

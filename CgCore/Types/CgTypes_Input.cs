@@ -1381,6 +1381,25 @@ namespace CgCore
         }
     }
 
+    public class FCgGameEventInfo
+    {
+        public FECgGameEvent Event;
+        public float Value;
+        public Vector3 Location;
+
+        public void Reset()
+        {
+            Event = EMCgGameEvent.Get().GetMAX();
+            Value = 0.0f;
+            Location = Vector3.zero;
+        }
+
+        public bool IsValid()
+        {
+            return Event != EMCgGameEvent.Get().GetMAX();
+        }
+    }
+
     public class FCgGameEventDefinition
     {
         public FCgInputSentence Sentence;

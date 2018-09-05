@@ -427,7 +427,7 @@ bool ACsManager_Trace::ProcessRequest(FCsTraceRequest* Request)
 		else
 		if (Request->Query == ECsTraceQuery::Profile)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::ProcessRequest: There is NO Async Line Trace %s By Profile Method. Use TraceMethod: Channel or ObjectType."), *TraceMethodAsString);
+			UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::ProcessRequest: There is NO Async Line Trace %s By Profile Method. Use TraceQuery: Channel or ObjectType."), *TraceMethodAsString);
 			Request->Reset();
 			return false;
 		}
@@ -446,7 +446,7 @@ bool ACsManager_Trace::ProcessRequest(FCsTraceRequest* Request)
 		else
 		if (Request->Query == ECsTraceQuery::Profile)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::ProcessRequest: There is NO Async Sweep Trace %s By Profile Method. Use TraceMethod: Channel or ObjectType."), *TraceMethodAsString);
+			UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::ProcessRequest: There is NO Async Sweep Trace %s By Profile Method. Use TraceQuery: Channel or ObjectType."), *TraceMethodAsString);
 			Request->Reset();
 			return false;
 		}
@@ -465,7 +465,7 @@ bool ACsManager_Trace::ProcessRequest(FCsTraceRequest* Request)
 		else
 		if (Request->Query == ECsTraceQuery::Profile)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::ProcessRequest: There is NO Async Sweep Trace %s By Profile Method. Use TraceMethod: Channel or ObjectType."), *TraceMethodAsString);
+			UE_LOG(LogCs, Warning, TEXT("ACsManager_Trace::ProcessRequest: There is NO Async Sweep Trace %s By Profile Method. Use TraceQuery: Channel or ObjectType."), *TraceMethodAsString);
 			Request->Reset();
 			return false;
 		}

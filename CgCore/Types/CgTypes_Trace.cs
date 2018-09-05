@@ -4,22 +4,59 @@
     using System.Collections.Generic;
     using UnityEngine;
 
+    public enum ECgTraceType : byte
+    {
+        Line,
+        Sweep,
+        Overlap,
+        MAX
+    }
+
+    public enum ECgTraceMethod : byte
+    {
+        Test,
+        Single,
+        Multi,
+        MAX
+    }
+
+    public enum ECgCollisionShape : byte
+    {
+        Box,
+        Sphere,
+        Capsule,
+        MAX
+    }
+
     public class FCgTraceResponse
     {
+        #region "Constants"
+
+        public static readonly int HIT_BUFFER = 16;
+        public static readonly int OVERLAP_BUFFER = 16;
+
+        #endregion // Constants
+
+        #region "Data Members"
+
         public bool bAllocated;
 
         public bool bResult;
 
         public float ElapsedTime;
 
-        public List<FCgHitResult> OutHits;
+        public RaycastHit[] OutHits;
+        public int OutHitCount;
 
-	    public List<FCgOverlapResult> OutOverlaps;
+	    public Collider[] OutOverlaps;
+        public int OutOverlapCount;
 
-	    public FCgTraceResponse()
+        #endregion // Data Members
+
+        public FCgTraceResponse()
         {
-            OutHits = new List<FCgHitResult>();
-            OutOverlaps = new List<FCgOverlapResult>();
+            OutHits = new RaycastHit[HIT_BUFFER];
+            OutOverlaps = new Collider[OVERLAP_BUFFER];
 
             Reset();
         }
@@ -30,16 +67,88 @@
             bResult = false;
             ElapsedTime = 0.0f;
 
-            OutHits.Clear();
-            OutOverlaps.Clear();
+            OutHitCount = 0;
+            OutOverlapCount = 0;
         }
     }
 
     public class FCgTraceRequest
     {
+        #region "Constants"
+
+        public static readonly int NO_LAYER = 0;
+        public static readonly ulong INVALID_CALLER_ID = ulong.MaxValue;
+        public static readonly byte INVALID_REQUEST_ID = byte.MaxValue;
+
+        #endregion // Constants
+
+        #region "Data Members"
+
+        public byte Id;
+        public bool bAllocated;
+        public bool bForce;
+        public bool bProcessing;
+        public bool bCompleted;
+        public float StartTime;
+        public float StaleTime;
+
+        public object Caller;
+        public ulong CallerId;
+       
+        public class FOnRespone : TCgMulticastDelegate_TwoParams<byte, FCgTraceResponse> { }
+        public FOnRespone OnResponse_Event;
+
+        public bool bAsync;
+
+        public ECgTraceType Type;
+        public ECgTraceMethod Method;
+
+        public Vector3 Start;
+        public Vector3 End;
+
+        public Vector3 Rotation;
+
+        public int LayerMask;
+
+        public ECgCollisionShape Shape;
+
+        public bool bReplacePending;
+        public byte PendingId;
+
+        public LinkedListNode<FCgTraceRequest> Link;
+
+        #endregion // Data Members
+
         public FCgTraceRequest()
         {
+            Reset();
+        }
 
+        public void Reset()
+        {
+            bAllocated = false;
+            bForce = false;
+            bProcessing = false;
+            bCompleted = false;
+            StartTime = 0.0f;
+            StaleTime = 1.0f;
+            Caller = null;
+            CallerId = INVALID_CALLER_ID;
+
+            OnResponse_Event.Clear();
+
+            bAsync = false;
+            Type = ECgTraceType.MAX;
+            Method = ECgTraceMethod.MAX;
+            Start = Vector3.zero;
+            End = Vector3.zero;
+            Rotation = Vector3.zero;
+            LayerMask = NO_LAYER;
+            Shape = ECgCollisionShape.MAX;
+            bReplacePending = false;
+            PendingId = INVALID_REQUEST_ID;
+
+            Link = null;
         }
     }
 }

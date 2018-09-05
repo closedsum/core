@@ -44,16 +44,14 @@
         public ulong TraceCountLifetime;
 
         public Dictionary<ulong, ulong> TraceCountLifetimeByObjectId;
-        //uint64 TraceCountLifetimeByType[ECS_TRACE_TYPE_MAX];
-        //uint64 TraceCountLifetimeByMethod[ECS_TRACE_METHOD_MAX];
-        //uint64 TraceCountLifetimeByQuery[ECS_TRACE_QUERY_MAX];
+        public ulong[] TraceCountLifetimeByType;
+        public ulong[] TraceCountLifetimeByMethod;
 
         public int TraceCountThisFrame;
 
         public Dictionary<ulong, ushort> TraceCountThisFrameByObjectId;
-        //uint16 TraceCountThisFrameByType[ECS_TRACE_TYPE_MAX];
-        //uint16 TraceCountThisFrameByMethod[ECS_TRACE_METHOD_MAX];
-        //uint16 TraceCountThisFrameByQuery[ECS_TRACE_QUERY_MAX];
+        public ushort[] TraceCountThisFrameByType;
+        public ushort[] TraceCountThisFrameByMethod;
 
             #region "Request"
 
@@ -69,7 +67,6 @@
         public Dictionary<ulong, Dictionary<byte, FCgTraceRequest>> PendingRequestsByObjectId;
         //TMap<TCsTraceType, TMap<TCsTraceRequestId, FCsTraceRequest*>> PendingRequestsByType;
         //TMap<TCsTraceMethod, TMap<TCsTraceRequestId, FCsTraceRequest*>> PendingRequestsByMethod;
-        //TMap<TCsTraceQuery, TMap<TCsTraceRequestId, FCsTraceRequest*>> PendingRequestsByQuery;
 
             #endregion // Request
 
@@ -83,7 +80,27 @@
 
         #endregion // Data Members
 
-        public FCgManager_Trace() { }
+        public FCgManager_Trace()
+        {
+            TraceCountLifetimeByObjectId = new Dictionary<ulong, ulong>();
+            TraceCountLifetimeByType = new ulong[(byte)ECgTraceType.MAX];
+            TraceCountLifetimeByMethod = new ulong[(byte)ECgTraceMethod.MAX];
+
+            TraceCountLifetimeByObjectId = new Dictionary<ulong, ulong>();
+            TraceCountThisFrameByType = new ushort[(byte)ECgTraceType.MAX];
+            TraceCountThisFrameByMethod = new ushort[(byte)ECgTraceMethod.MAX];
+
+            Requests = new FCgTraceRequest[REQUEST_SIZE];
+
+            for (int i = 0; i < REQUEST_SIZE; ++i)
+            {
+                Requests[i] = new FCgTraceRequest();
+            }
+
+            PendingRequests = new LinkedList<FCgTraceRequest>();
+
+            PendingRequestMap = new Dictionary<byte, FCgTraceRequest>();
+        }
 
         public static FCgManager_Trace Get()
         {

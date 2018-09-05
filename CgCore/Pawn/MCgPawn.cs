@@ -27,9 +27,20 @@
         }
     }
 
-    public class MCgPawn : MonoBehaviour
+    public class MCgPawn : MonoBehaviour, ICgObject
     {
         #region "Data Members"
+
+            #region "Interface"
+
+        private ulong _UniqueObjectId;
+        public ulong UniqueObjectId
+        {
+            get { return _UniqueObjectId; }
+            set { _UniqueObjectId = value; }
+        }
+
+            #endregion // Interface
 
             #region "Setup"
 

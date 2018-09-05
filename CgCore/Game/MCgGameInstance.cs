@@ -9,7 +9,7 @@
 
     public class MCgGameInstance : MonoBehaviour
     {
-        public sealed class FOnExitingPlayMode : FCgMulticastDelegate {}
+        public sealed class FOnExitingPlayMode : FCgMulticastDelegate { }
 
         #region "Data Members"
 
@@ -20,6 +20,10 @@
         public MCgGameState GameState;
 
         public List<MCgPlayerController> PlayerControllers;
+
+        public ulong UniqueObjectIdIndex;
+
+        public Dictionary<ulong, ICgObject> ObjectMap;
 
         #endregion // Data Members
 
@@ -86,5 +90,55 @@
         }
 
 #endif // #if UNITY_EDITOR
+
+        #region "Object"
+
+        public ulong GetUniqueObjectId()
+        {
+            ++UniqueObjectIdIndex;
+            return UniqueObjectIdIndex;
+        }
+
+        public ulong RegisterUniqueObject(ICgObject o)
+        {
+            ulong id = GetUniqueObjectId();
+
+            ObjectMap.Add(id, o);
+
+            return id;
+        }
+
+        public void UnregisterUniqueObject(ulong id)
+        {
+            ObjectMap.Remove(id);
+        }
+
+        public ICgObject GetUniqueObjectById(ulong id)
+        {
+            return ObjectMap[id];
+        }
+
+        public T GetUniqueObjectById<T>(ulong id)
+            where T : ICgObject
+        {
+            return (T)GetUniqueObjectById(id);
+        }
+
+        public ICgObject GetSafeUniqueObjectId(ulong id)
+        {
+            ICgObject o;
+
+            if (ObjectMap.TryGetValue(id, out o))
+                return o;
+            return null;
+        }
+
+        public T GetSafeUniqueObjectId<T>(ulong id)
+            where T : ICgObject
+        {
+            return (T)GetSafeUniqueObjectId(id);
+        }
+
+        #endregion // Object
     }
 }

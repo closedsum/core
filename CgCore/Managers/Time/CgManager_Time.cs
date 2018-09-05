@@ -69,6 +69,7 @@
             }
         }
 
+        private Dictionary<FECgTime, float> LastRealtimeSinceStartup;
         private Dictionary<FECgTime, float> TimeSinceStart;
         private Dictionary<FECgTime, float> DeltaTime;
         private Dictionary<FECgTime, bool> bPaused;
@@ -77,6 +78,7 @@
 
         public FCgManager_Time()
         {
+            LastRealtimeSinceStartup = new Dictionary<FECgTime, float>(new FECgTimeEqualityComparer());
             TimeSinceStart = new Dictionary<FECgTime, float>(new FECgTimeEqualityComparer());
             DeltaTime = new Dictionary<FECgTime, float>(new FECgTimeEqualityComparer());
             bPaused = new Dictionary<FECgTime, bool>(new FECgTimeEqualityComparer());
@@ -98,23 +100,18 @@
             return Instance;
         }
 
-        public void Update()
+        public void Update(FECgTime time)
         {
-            int count = EMCgTime.Get().Count;
+            float deltaTime = Time.realtimeSinceStartup - LastRealtimeSinceStartup[time];
 
-            for (int i = 0; i < count; ++i)
+            if (!bPaused[time])
             {
-                FECgTime e = EMCgTime.Get().GetEnumAt(i);
-
-                if (!bPaused[e])
-                {
-                    TimeSinceStart[e] += Time.deltaTime;
-                    DeltaTime[e]      = Time.deltaTime;
-                }
-                else
-                {
-                    DeltaTime[e] = 0.0f;
-                }
+                TimeSinceStart[time] += deltaTime;
+                DeltaTime[time]       = deltaTime;
+            }
+            else
+            {
+                DeltaTime[time] = 0.0f;
             }
         }
 

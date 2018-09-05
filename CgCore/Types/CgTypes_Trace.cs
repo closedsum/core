@@ -12,6 +12,19 @@
         MAX
     }
 
+    public sealed class ECgTraceTypeEqualityComparer : IEqualityComparer<ECgTraceType>
+    {
+        public bool Equals(ECgTraceType lhs, ECgTraceType rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(ECgTraceType x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
     public enum ECgTraceMethod : byte
     {
         Test,
@@ -20,12 +33,38 @@
         MAX
     }
 
+    public sealed class ECgTraceMethodEqualityComparer : IEqualityComparer<ECgTraceMethod>
+    {
+        public bool Equals(ECgTraceMethod lhs, ECgTraceMethod rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(ECgTraceMethod x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
     public enum ECgCollisionShape : byte
     {
         Box,
         Sphere,
         Capsule,
         MAX
+    }
+
+    public sealed class ECgCollisionShapeEqualityComparer : IEqualityComparer<ECgCollisionShape>
+    {
+        public bool Equals(ECgCollisionShape lhs, ECgCollisionShape rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(ECgCollisionShape x)
+        {
+            return x.GetHashCode();
+        }
     }
 
     public class FCgTraceResponse
@@ -121,6 +160,13 @@
 
         public FCgTraceRequest()
         {
+            Reset();
+        }
+
+        public FCgTraceRequest(byte id)
+        {
+            Id = id;
+
             Reset();
         }
 

@@ -5,15 +5,6 @@ namespace CgCore
     using System.Collections.Generic;
     using UnityEngine;
 
-    #region "Constants"
-
-    public static class CgTypes_Input
-    {
-        public static ushort INVALID_INPUT_POOL_INDEX = 65535;
-    }
-
-    #endregion
-
     public class FECgInputActionMap : ECgEnum_int
     {
         public FECgInputActionMap(int value, string name) : base(value, name) { }
@@ -400,6 +391,12 @@ namespace CgCore
 
     public class FCgInput
     {
+        #region "Constants"
+
+        public static ushort INVALID_POOL_INDEX = 65535;
+
+        #endregion // Constants
+
         #region "Data Members"
 
         public ushort PoolIndex;
@@ -416,7 +413,7 @@ namespace CgCore
 
         public FCgInput()
         {
-            PoolIndex = CgTypes_Input.INVALID_INPUT_POOL_INDEX;
+            PoolIndex = INVALID_POOL_INDEX;
             IsAllocated = false;
             IsConsumed = false;
             Action = null;

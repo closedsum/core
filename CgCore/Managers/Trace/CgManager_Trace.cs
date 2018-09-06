@@ -16,6 +16,15 @@
 
     #endregion // Enums
 
+    #region "Cache"
+
+    public static class ECgManagerTraceCached
+    {
+        public static readonly string OnAsyncRequestCompleted = "FCgManager_Trace.OnAsyncRequestCompleted";
+    }
+
+    #endregion // Cache
+
     public class FCgManager_Trace
     {
         #region "Constants"
@@ -334,7 +343,7 @@
                     return request;
                 }
             }
-            FCgDebug.LogError("FCsManager_Trace::AllocateRequest: Pool is exhausted");
+            FCgDebug.LogError("FCsManager_Trace.AllocateRequest: Pool is exhausted");
             return null;
         }
 
@@ -494,10 +503,10 @@
             */
             request.bProcessing = true;
 
-            // Test
+            // Test (Check)
             if (request.Method == ECgTraceMethod.Test)
             {
-                FCgDebug.LogWarning("FCsManager_Trace::ProcessRequest: There is NO Async Trace " + request.Method.ToString() + " Method. Use TraceMethod: Single or Multi.");
+                FCgDebug.LogWarning("FCsManager_Trace.ProcessRequest: There is NO Async Trace " + request.Method.ToString() + " Method. Use TraceMethod: Single or Multi.");
                 request.Reset();
                 return false;
             }
@@ -512,7 +521,7 @@
             else
             if (request.Type == ECgTraceType.Sweep)
             {
-                FCgDebug.LogWarning("FCsManager_Trace::ProcessRequest: There is NO Async Sweep (Cast) Trace Method. Use TraceType: Line.");
+                FCgDebug.LogWarning("FCsManager_Trace.ProcessRequest: There is NO Async Sweep (Cast) Trace Method. Use TraceType: Line.");
                 request.Reset();
                 return false;
             }
@@ -520,7 +529,7 @@
             else
             if (request.Type == ECgTraceType.Overlap)
             {
-                FCgDebug.LogWarning("FCsManager_Trace::ProcessRequest: There is NO Async Overlap (Cast) Trace Method. Use TraceType: Overlap.");
+                FCgDebug.LogWarning("FCsManager_Trace.ProcessRequest: There is NO Async Overlap (Cast) Trace Method. Use TraceType: Overlap.");
                 request.Reset();
                 return false;
             }
@@ -551,16 +560,196 @@
         public void OnAsyncRequestCompleted(FCgTraceRequest request)
         {
             // Setup Response
+            FCgTraceResponse response = AllocateResponse();
 
+            response.CopyHitResults(ref request.Results);
+            response.bResult     = response.OutHitCount > EMPTY;
+            response.ElapsedTime = FCgManager_Time.Get().GetTimeSinceStart(TimeType) - request.StartTime;
+
+            /*
+            if (CsCVarDrawManagerTraceResponses->GetInt() == CS_CVAR_DRAW)
+            {
+                if (Response->bResult)
+                {
+                    // Sphere around Start
+                    DrawDebugSphere(GetWorld(), Response->OutHits[CS_FIRST].TraceStart, 16.0f, 16, FColor::Green, false, 0.1f, 0, 1.0f);
+                    // Line from Start to End
+                    DrawDebugLine(GetWorld(), Response->OutHits[CS_FIRST].TraceStart, Response->OutHits[CS_FIRST].Location, FColor::Red, false, 0.1f, 0, 1.0f);
+                }
+            }
+            */
+            LogTransaction(ECgManagerTraceCached.OnAsyncRequestCompleted, ECgTraceTransaction.Complete, request, response);
+
+            // Broadcast Response
+            request.OnResponse_Event.Broadcast(request.Id, response);
+            response.Reset();
+
+            request.bProcessing = false;
+            request.bCompleted = true;
         }
-
-        //public void OnOverlapResponse()
 
         #endregion // Response
 
         public FCgTraceResponse Trace(FCgTraceRequest request)
         {
-            return null;
+            request.StartTime = FCgManager_Time.Get().GetTimeSinceStart(TimeType);
+
+            bool addPending = !request.bForce && TraceCountThisFrame >= RequestsProcessedPerTick;
+
+            // TODO: Print warning for a normal trace moved to Async
+            if (addPending && !request.bAsync)
+            {
+                request.Reset();
+                FCgDebug.LogWarning("FCsManager_Trace.Trace: Reached maximum RequestsProcessedPerTick: " + RequestsProcessedPerTick + "and Request is NOT Async. Abandoning Request.");
+                return null;
+            }
+
+            // Async
+            if (request.bAsync ||
+                addPending)
+            {
+                // if NOT Pending, Start Async
+                if (!addPending)
+                {
+                    // if Successful in processing Request, EXIT
+                    if (ProcessRequest(request))
+                    {
+                        AddPendingRequest(request);
+                        IncrementTraceCount(request);
+                        return null;
+                    }
+                }
+
+                // ADD Pending Request
+                AddPendingRequest(request);
+                return null;
+            }
+            // Normal
+            else
+            {
+                /*
+                if (CsCVarDrawManagerTraceRequests->GetInt() == CS_CVAR_DRAW)
+                {
+                    // Sphere around Start
+                    DrawDebugSphere(GetWorld(), Request->Start, 16.0f, 16, FColor::Green, false, 0.1f, 0, 1.0f);
+                    // Line from Start to End
+                    DrawDebugLine(GetWorld(), Request->Start, Request->End, FColor::Red, false, 0.1f, 0, 1.0f);
+                }
+                */
+                FCgTraceResponse response = AllocateResponse();
+
+                response.ElapsedTime = FCgManager_Time.Get().GetTimeSinceStart(TimeType) - request.StartTime;
+
+                // Line
+                if (request.Type == ECgTraceType.Line)
+                {
+                    // Test
+                    if (request.Method == ECgTraceMethod.Test)
+                    {
+                        // Linecast
+                        response.bResult = Physics.Linecast(request.Start, request.End, request.LayerMask);
+                    }
+                    // Single
+                    else
+                    if (request.Method == ECgTraceMethod.Single)
+                    {
+                        FCgDebug.LogWarning("FCsManager_Trace.Trace: Line Trace Single is NOT supported. Use TraceMethod: Test or Multi. Abandoning Request.");
+                    }
+                    // Multi
+                    else
+                    if (request.Method == ECgTraceMethod.Multi)
+                    {
+                        // RaycastNonAlloc
+                        Vector3 v       = request.End - request.Start;
+                        float distance  = v.magnitude;
+                        Vector3 dir     = distance > 0.0f ? v / distance : Vector3.zero;
+                        Ray ray =        new Ray(request.Start, dir);
+
+                        float EXTEND = 0.1f;
+
+                        response.OutHitCount = Physics.RaycastNonAlloc(ray, response.OutHits, distance + EXTEND, request.LayerMask);
+                        response.bResult     = response.OutHitCount > EMPTY;
+                    }
+                }
+                // Sweep
+                else
+                if (request.Type == ECgTraceType.Sweep)
+                {
+                    // Test
+                    if (request.Method == ECgTraceMethod.Test)
+                    {
+                        // Box
+                        if (request.Shape == ECgCollisionShape.Box)
+                        {
+                            // CheckBox
+                            //response.bResult = Physics.CheckBox
+                        }
+                        // Sphere
+                        else
+                        if (request.Shape == ECgCollisionShape.Sphere)
+                        {
+
+                        }
+                        // Capsule
+                        else
+                        if (request.Shape == ECgCollisionShape.Capsule)
+                        {
+
+                        }
+                    }
+                    // Single
+                    else
+                    if (request.Method == ECgTraceMethod.Single)
+                    {
+                        FCgDebug.LogWarning("FCsManager_Trace.Trace: Sweep Trace Single is NOT supported. Use TraceMethod: Test or Multi. Abandoning Request.");
+                    }
+                    // Multi
+                    else
+                    if (request.Method == ECgTraceMethod.Multi)
+                    {
+                    }
+                }
+                // Overlap
+                else
+                if (request.Type == ECgTraceType.Overlap)
+                {
+                }
+                /*
+                bool SweepTestByChannel(const FVector& Start, const FVector& End, const FQuat& Rot, ECollisionChannel TraceChannel, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams& ResponseParam = FCollisionResponseParams::DefaultResponseParam) const;
+                bool SweepTestByObjectType(const FVector& Start, const FVector& End, const FQuat& Rot, const FCollisionObjectQueryParams& ObjectQueryParams, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
+                bool SweepTestByProfile(const FVector& Start, const FVector& End, const FQuat& Rot, FName ProfileName, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params) const;
+                bool SweepSingleByChannel(struct FHitResult& OutHit, const FVector& Start, const FVector& End, const FQuat& Rot, ECollisionChannel TraceChannel, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams& ResponseParam = FCollisionResponseParams::DefaultResponseParam) const;
+                bool SweepSingleByObjectType(struct FHitResult& OutHit, const FVector& Start, const FVector& End, const FQuat& Rot, const FCollisionObjectQueryParams& ObjectQueryParams, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
+                bool SweepSingleByProfile(struct FHitResult& OutHit, const FVector& Start, const FVector& End, const FQuat& Rot, FName ProfileName, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
+                bool SweepMultiByChannel(TArray<struct FHitResult>& OutHits, const FVector& Start, const FVector& End, const FQuat& Rot, ECollisionChannel TraceChannel, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams& ResponseParam = FCollisionResponseParams::DefaultResponseParam) const;
+                bool SweepMultiByObjectType(TArray<struct FHitResult>& OutHits, const FVector& Start, const FVector& End, const FQuat& Rot, const FCollisionObjectQueryParams& ObjectQueryParams, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
+                bool SweepMultiByProfile(TArray<FHitResult>& OutHits, const FVector& Start, const FVector& End, const FQuat& Rot, FName ProfileName, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
+                bool OverlapBlockingTestByChannel(const FVector& Pos, const FQuat& Rot, ECollisionChannel TraceChannel, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams& ResponseParam = FCollisionResponseParams::DefaultResponseParam) const;
+                bool OverlapAnyTestByChannel(const FVector& Pos, const FQuat& Rot, ECollisionChannel TraceChannel, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams& ResponseParam = FCollisionResponseParams::DefaultResponseParam) const;
+                bool OverlapAnyTestByObjectType(const FVector& Pos, const FQuat& Rot, const FCollisionObjectQueryParams& ObjectQueryParams, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
+                bool OverlapBlockingTestByProfile(const FVector& Pos, const FQuat& Rot, FName ProfileName, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
+                bool OverlapAnyTestByProfile(const FVector& Pos, const FQuat& Rot, FName ProfileName, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
+                bool OverlapMultiByChannel(TArray<struct FOverlapResult>& OutOverlaps, const FVector& Pos, const FQuat& Rot, ECollisionChannel TraceChannel, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams& ResponseParam = FCollisionResponseParams::DefaultResponseParam) const;
+                bool OverlapMultiByObjectType(TArray<struct FOverlapResult>& OutOverlaps, const FVector& Pos, const FQuat& Rot, const FCollisionObjectQueryParams& ObjectQueryParams, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
+                bool OverlapMultiByProfile(TArray<struct FOverlapResult>& OutOverlaps, const FVector& Pos, const FQuat& Rot, FName ProfileName, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
+                */
+                IncrementTraceCount(Request);
+                Request->Reset();
+
+                if (CsCVarDrawManagerTraceResponses->GetInt() == CS_CVAR_DRAW)
+                {
+                    if (Response->bResult)
+                    {
+                        // Sphere around Start
+                        DrawDebugSphere(GetWorld(), Response->OutHits[CS_FIRST].TraceStart, 16.0f, 16, FColor::Green, false, 0.1f, 0, 1.0f);
+                        // Line from Start to End
+                        DrawDebugLine(GetWorld(), Response->OutHits[CS_FIRST].TraceStart, Response->OutHits[CS_FIRST].Location, FColor::Red, false, 0.1f, 0, 1.0f);
+                    }
+                }
+                return Response;
+            }
+            Request->Reset();
+            return nullptr;
         }
 
         public virtual void LogTransaction(string functionName, ECgTraceTransaction transaction, FCgTraceRequest request, FCgTraceResponse response)

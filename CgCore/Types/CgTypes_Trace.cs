@@ -56,6 +56,33 @@
         MAX
     }
 
+    public class FCgCollisionBoxParams
+    {
+        Vector3 Center;
+        Vector3 HalfExtents;
+        Quaternion Orientation;
+
+        public FCgCollisionBoxParams(){ }
+    }
+
+    public class FCgCollisionSphereParams
+    {
+        Vector3 Position;
+        float Radius;
+
+        public FCgCollisionSphereParams() { }
+        public FCgCollisionSphereParams(Vector3 position, float radius)
+        {
+            Set(position, radius);
+        }
+
+        public void Set(Vector3 position, float radius)
+        {
+            Position = position;
+            Radius = radius;
+        }
+    }
+
     public sealed class ECgCollisionShapeEqualityComparer : IEqualityComparer<ECgCollisionShape>
     {
         public bool Equals(ECgCollisionShape lhs, ECgCollisionShape rhs)
@@ -111,6 +138,22 @@
             OutHitCount = 0;
             OutOverlapCount = 0;
         }
+
+        public void CopyHitResults(ref NativeArray<RaycastHit> results)
+        {
+            OutHitCount = 0;
+
+            int len = results.Length;
+
+            for (int i = 0; i < len; ++i)
+            {
+.               if (results[i].distance <= 0.0f ||
+                    results[i].distance == float.MaxValue)
+                    continue;
+                OutHits[i] = results[i];
+                ++OutHitCount;
+            }
+        }
     }
 
     public class FCgTraceRequest
@@ -122,6 +165,9 @@
         public static readonly byte INVALID_REQUEST_ID = byte.MaxValue;
 
         public static readonly int HIT_BUFFER = 16;
+
+        public static readonly RaycastHit DEFAULT_RAYCAST_HIT = new RaycastHit();
+        public static readonly RaycastCommand DEFAULT_RAYCAST_COMMAND = new RaycastCommand();
 
         #endregion // Constants
 
@@ -143,10 +189,10 @@
 
         public bool bAsync;
 
-        NativeArray<RaycastHit> Results;
-        NativeArray<RaycastCommand> Commands;
+        public NativeArray<RaycastHit> Results;
+        public NativeArray<RaycastCommand> Commands;
 
-        JobHandle Handle;
+        public JobHandle Handle;
 
         public ECgTraceType Type;
         public ECgTraceMethod Method;
@@ -199,6 +245,14 @@
             OnResponse_Event.Clear();
 
             bAsync = false;
+
+            for (int i = 0; i < HIT_BUFFER; ++i)
+            {
+                Results[i] = DEFAULT_RAYCAST_HIT;
+            }
+
+            Commands[0] = DEFAULT_RAYCAST_COMMAND;
+
             Type = ECgTraceType.MAX;
             Method = ECgTraceMethod.MAX;
             Start = Vector3.zero;
@@ -219,7 +273,7 @@
             command.direction   = (End - Start).normalized;
             command.layerMask   = LayerMask;
             command.maxHits     = HIT_BUFFER;
-
+            
             Commands[0] = command;
 
             Handle = RaycastCommand.ScheduleBatch(Commands, Results, 1);

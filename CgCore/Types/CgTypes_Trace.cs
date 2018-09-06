@@ -3,6 +3,8 @@
     using System.Collections;
     using System.Collections.Generic;
     using UnityEngine;
+    using Unity.Collections;
+    using Unity.Jobs;
 
     public enum ECgTraceType : byte
     {
@@ -119,6 +121,8 @@
         public static readonly ulong INVALID_CALLER_ID = ulong.MaxValue;
         public static readonly byte INVALID_REQUEST_ID = byte.MaxValue;
 
+        public static readonly int HIT_BUFFER = 16;
+
         #endregion // Constants
 
         #region "Data Members"
@@ -138,6 +142,11 @@
         public FOnRespone OnResponse_Event;
 
         public bool bAsync;
+
+        NativeArray<RaycastHit> Results;
+        NativeArray<RaycastCommand> Commands;
+
+        JobHandle Handle;
 
         public ECgTraceType Type;
         public ECgTraceMethod Method;
@@ -160,12 +169,18 @@
 
         public FCgTraceRequest()
         {
+            Results = new NativeArray<RaycastHit>(HIT_BUFFER, Allocator.Persistent);
+            Commands = new NativeArray<RaycastCommand>(1, Allocator.Persistent);
+
             Reset();
         }
 
         public FCgTraceRequest(byte id)
         {
             Id = id;
+
+            Results = new NativeArray<RaycastHit>(HIT_BUFFER, Allocator.Persistent);
+            Commands = new NativeArray<RaycastCommand>(1, Allocator.Persistent);
 
             Reset();
         }
@@ -195,6 +210,24 @@
             PendingId = INVALID_REQUEST_ID;
 
             Link = null;
+        }
+
+        public void ScheduleCommand()
+        {
+            RaycastCommand command = new RaycastCommand();
+            command.from        = Start;
+            command.direction   = (End - Start).normalized;
+            command.layerMask   = LayerMask;
+            command.maxHits     = HIT_BUFFER;
+
+            Commands[0] = command;
+
+            Handle = RaycastCommand.ScheduleBatch(Commands, Results, 1);
+        }
+
+        public bool HasCommandCompleted()
+        {
+            return Handle.IsCompleted;
         }
     }
 }

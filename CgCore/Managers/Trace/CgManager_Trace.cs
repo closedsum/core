@@ -3,6 +3,7 @@
     using System.Collections;
     using System.Collections.Generic;
     using UnityEngine;
+    using Unity.Collections;
 
     #region "Enums"
 
@@ -26,6 +27,7 @@
         public static readonly byte RESPONSE_SIZE = 255;
 
         public static readonly byte SINGLETON = 1;
+        public static readonly int EMPTY = 0;
 
         #endregion // Constants
 
@@ -43,6 +45,8 @@
                 return _Instance;
             }
         }
+
+        public FECgTime TimeType;
 
         public int RequestsProcessedPerTick;
 
@@ -89,6 +93,8 @@
 
         public FCgManager_Trace()
         {
+            TimeType = ECgTime.Update;
+
             TraceCountLifetimeByObjectId = new Dictionary<ulong, ulong>();
 
             TraceCountLifetimeByType = new ulong[TRACE_TYPE_MAX];
@@ -203,6 +209,11 @@
             Clear();
         }
 
+        public void SetTimeType(FECgTime timeType)
+        {
+            TimeType = timeType;
+        }
+
         public void OnUpdate(float deltaTime)
         {
             // Reset TraceCountThisFrame
@@ -226,9 +237,9 @@
             int keyCount = keys.Count;
             int count = Mathf.Min(keyCount, processCountMax);
 
-            float currentTime = FCgManager_Time.Get().GetTimeSinceStart(ECgTime.Update);
+            float currentTime = FCgManager_Time.Get().GetTimeSinceStart(TimeType);
 
-            int i = 0;
+            int index = 0;
 
             LinkedListNode<FCgTraceRequest> current = PendingRequestHead;
 
@@ -239,7 +250,12 @@
 
                 // If Processing, SKIP
                 if (request.bProcessing)
-                    continue;
+                {
+                    if (request.HasCommandCompleted())
+                        OnAsyncRequestCompleted(request);
+                    else
+                       continue;
+                }
                 // If COMPLETED, Remove
                 if (request.bCompleted)
                 {
@@ -254,12 +270,12 @@
                     continue;
                 }
                 // PROCESS Request
-                if (i < count)
+                if (index < count)
                 {
                     ProcessRequest(request);
                     IncrementTraceCount(request);
                 }
-                ++i;
+                ++index;
             }
         }
 
@@ -427,12 +443,88 @@
 
         private void RemovePendingRequest(FCgTraceRequest request)
         {
+            // Update Maps
+            byte requestId = request.Id;
 
+            PendingRequestMap.Remove(requestId);
+            // TraceId
+            //const TCsTraceHandleId&HandleId = Request->Handle._Handle;
+
+            //PendingRequestsByTraceId.Remove(HandleId);
+            // ObjectId
+            Dictionary<byte, FCgTraceRequest> mapId = PendingRequestsByObjectId[request.CallerId];
+            mapId.Remove(requestId);
+            // Type
+            Dictionary<byte, FCgTraceRequest> mapType = PendingRequestsByType[request.Type];
+            mapType.Remove(requestId);
+            // Method
+            Dictionary<byte, FCgTraceRequest> mapMethod = PendingRequestsByMethod[request.Method];
+            mapMethod.Remove(requestId);
+
+            // LOG TRANSACTION
+
+            // Update HEAD of Queue
+            LinkedListNode<FCgTraceRequest> link = request.Link;
+
+            if (link == PendingRequestHead)
+            {
+                if (PendingRequests.Count > EMPTY)
+                {
+                    PendingRequestHead = link.Next;
+                }
+                else
+                {
+                    PendingRequestHead = null;
+                    PendingRequestTail = null;
+                }
+            }
+            request.Reset();
         }
 
         private bool ProcessRequest(FCgTraceRequest request)
         {
-            return false;
+            /*
+            if (CsCVarDrawManagerTraceRequests->GetInt() == CS_CVAR_DRAW)
+            {
+                // Sphere around Start
+                DrawDebugSphere(GetWorld(), Request->Start, 16.0f, 16, FColor::Green, false, 0.1f, 0, 1.0f);
+                // Line from Start to End
+                DrawDebugLine(GetWorld(), Request->Start, Request->End, FColor::Red, false, 0.1f, 0, 1.0f);
+            }
+            */
+            request.bProcessing = true;
+
+            // Test
+            if (request.Method == ECgTraceMethod.Test)
+            {
+                FCgDebug.LogWarning("FCsManager_Trace::ProcessRequest: There is NO Async Trace " + request.Method.ToString() + " Method. Use TraceMethod: Single or Multi.");
+                request.Reset();
+                return false;
+            }
+
+            // Line
+            if (request.Type == ECgTraceType.Line)
+            {
+                request.ScheduleCommand();
+                return true;
+            }
+            // Sweep (Cast)
+            else
+            if (request.Type == ECgTraceType.Sweep)
+            {
+                FCgDebug.LogWarning("FCsManager_Trace::ProcessRequest: There is NO Async Sweep (Cast) Trace Method. Use TraceType: Line.");
+                request.Reset();
+                return false;
+            }
+            // Overlap
+            else
+            if (request.Type == ECgTraceType.Overlap)
+            {
+                FCgDebug.LogWarning("FCsManager_Trace::ProcessRequest: There is NO Async Overlap (Cast) Trace Method. Use TraceType: Overlap.");
+                request.Reset();
+                return false;
+            }
+            return true;
         }
 
         #endregion // Request
@@ -441,10 +533,27 @@
 
         public FCgTraceResponse AllocateResponse()
         {
+            for (byte i = 0; i < RESPONSE_SIZE; ++i)
+            {
+                byte index                = (byte)((ResponseIndex + i) % RESPONSE_SIZE);
+                FCgTraceResponse response = Responses[index];
+
+                if (!response.bAllocated)
+                {
+                    response.bAllocated = true;
+                    return response;
+                }
+            }
+            FCgDebug.LogError("FCsManager_Trace::AllocateResponse: Pool is exhausted");
             return null;
         }
 
-        //public void OnTraceResponse()
+        public void OnAsyncRequestCompleted(FCgTraceRequest request)
+        {
+            // Setup Response
+
+        }
+
         //public void OnOverlapResponse()
 
         #endregion // Response

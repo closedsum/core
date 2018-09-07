@@ -18,11 +18,6 @@
 // Data
 #include "Data/CsDataMapping.h"
 
-#if WITH_EDITOR
-#include "../Plugins/UnrealJS/Source/V8/Public/JavascriptIsolate.h"
-#include "../Plugins/UnrealJS/Source/V8/Public/JavascriptContext.h"
-#endif // #if WITH_EDITOR
-
 #include "GameFramework/Character.h"
 
 // Enums

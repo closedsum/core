@@ -63,7 +63,7 @@ namespace CgCore
 
         #region "Constants"
 
-        private static readonly int EMPTY = 0;
+        //private static readonly int EMPTY = 0;
         private static readonly ushort POOL_SIZE = 2048;
 
         private static readonly byte ECG_COROUTINE_SCHEDULE_MAX;

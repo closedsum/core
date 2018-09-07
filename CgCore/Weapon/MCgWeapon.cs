@@ -159,7 +159,7 @@
 
     #endregion // Cache
 
-    public class MCgWeapon : MonoBehaviour
+    public class MCgWeapon : MonoBehaviour, ICgObject
     {
         #region "Property"
 
@@ -195,7 +195,16 @@
 
         #region "Data Members"
 
-        public ulong UniqueObjectId;
+            #region "Interface"
+
+        private ulong _UniqueObjectId;
+        public ulong UniqueObjectId
+        {
+            get { return _UniqueObjectId; }
+            set { _UniqueObjectId = value; }
+        }
+
+            #endregion // Interface
 
             #region "Data"
 
@@ -382,17 +391,18 @@
         // Use this for initialization
         void Start()
         {
+        }
+
+        public virtual void Init()
+        {
+            MCgGameInstance.Get().RegisterUniqueObject(this);
+
             ProjectileFirePayloads = new FCgProjectileFirePayload[PROJECTILE_FIRE_PAYLOAD_POOL_SIZE];
 
             for (int i = 0; i < PROJECTILE_FIRE_PAYLOAD_POOL_SIZE; ++i)
             {
                 ProjectileFirePayloads[i] = new FCgProjectileFirePayload();
             }
-        }
-
-        public void Init()
-        {
-
         }
 
         #region "Members"
@@ -1536,7 +1546,7 @@
 	        int recordedObstaclePenetrations = 0;
 	        bool hitFound					   = true;
 
-	        FCgHitResult hitResult = null;
+            FCgHitResult hitResult = null;
 
 	        // Hit trace/ Hit simulation
 	        while ((allowInfinitePawnPenetrations || recordedPawnPenetrations <= PawnPenetrations.GetEX(fireMode)) &&
@@ -1597,8 +1607,8 @@
 
 						        hitFound = response.bResult;
 
-                                if (response.OutHits.Count > EMPTY)
-                                    hitResult.Copy(response.OutHits[FIRST]);
+                                if (response.OutHitCount > EMPTY)
+                                    hitResult = response.OutHits[FIRST];
 
 						        response.Reset();
 
@@ -1649,8 +1659,8 @@
 
 					        hitFound = response.bResult;
 
-                            if (response.OutHits.Count > EMPTY)
-                                hitResult.Copy(response.OutHits[FIRST]);
+                            if (response.OutHitCount > EMPTY)
+                                hitResult = response.OutHits[FIRST];
 
 					        response.Reset();
 
@@ -1682,8 +1692,8 @@
 
 			        hitFound = response.bResult;
 
-                    if (response.OutHits.Count > EMPTY)
-                        hitResult.Copy(response.OutHits[FIRST]);
+                    if (response.OutHitCount > EMPTY)
+                        hitResult = response.OutHits[FIRST];
 
 			        response.Reset();
                     /*
@@ -1709,14 +1719,14 @@
                     //Event->SetDamageType();
                     //Event->SetHitType();
 
-                    e.HitInfo.Copy(hitResult);
+                    e.HitInfo = hitResult;
 			
 			        //if (PawnToHit && UShooterStatics::IsOnSameTeam(GetWorld(), PawnToHit, MyPawn))
 			        //{
 			        //	continue;
 			        //}
 
-			        MCgPawn hitPawn = hitResult.GetObject<MCgPawn>();
+			        MCgPawn hitPawn = hitResult.GetTransform().GetComponent<MCgPawn>();
 
 			        if (hitPawn != null)
 				        ++recordedPawnPenetrations;

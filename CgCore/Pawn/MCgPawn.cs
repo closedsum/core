@@ -215,6 +215,8 @@
 
         public virtual void Init()
         {
+            MCgGameInstance.Get().RegisterUniqueObject(this);
+
             MyTransform = GetComponent<Transform>();
         }
 

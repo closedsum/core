@@ -48,60 +48,14 @@
         }
     }
 
-    public enum ECgCollisionShape : byte
-    {
-        Box,
-        Sphere,
-        Capsule,
-        MAX
-    }
-
-    public class FCgCollisionBoxParams
-    {
-        Vector3 Center;
-        Vector3 HalfExtents;
-        Quaternion Orientation;
-
-        public FCgCollisionBoxParams(){ }
-    }
-
-    public class FCgCollisionSphereParams
-    {
-        Vector3 Position;
-        float Radius;
-
-        public FCgCollisionSphereParams() { }
-        public FCgCollisionSphereParams(Vector3 position, float radius)
-        {
-            Set(position, radius);
-        }
-
-        public void Set(Vector3 position, float radius)
-        {
-            Position = position;
-            Radius = radius;
-        }
-    }
-
-    public sealed class ECgCollisionShapeEqualityComparer : IEqualityComparer<ECgCollisionShape>
-    {
-        public bool Equals(ECgCollisionShape lhs, ECgCollisionShape rhs)
-        {
-            return lhs == rhs;
-        }
-
-        public int GetHashCode(ECgCollisionShape x)
-        {
-            return x.GetHashCode();
-        }
-    }
-
     public class FCgTraceResponse
     {
         #region "Constants"
 
         public static readonly int HIT_BUFFER = 16;
         public static readonly int OVERLAP_BUFFER = 16;
+
+        public static readonly int EMPTY = 0;
 
         #endregion // Constants
 
@@ -113,18 +67,33 @@
 
         public float ElapsedTime;
 
-        public RaycastHit[] OutHits;
+        public RaycastHit[] OutHitBuffer;
+        public FCgHitResult[] OutHits;
         public int OutHitCount;
 
-	    public Collider[] OutOverlaps;
+	    public Collider[] OutOverlapBuffer;
+        public FCgOverlapResult[] OutOverlaps;
         public int OutOverlapCount;
 
         #endregion // Data Members
 
         public FCgTraceResponse()
         {
-            OutHits = new RaycastHit[HIT_BUFFER];
-            OutOverlaps = new Collider[OVERLAP_BUFFER];
+            OutHitBuffer = new RaycastHit[HIT_BUFFER];
+            OutHits = new FCgHitResult[HIT_BUFFER];
+
+            for (int i = 0; i < HIT_BUFFER; ++i)
+            {
+                OutHits[i] = new FCgHitResult();
+            }
+
+            OutOverlapBuffer = new Collider[OVERLAP_BUFFER];
+            OutOverlaps = new FCgOverlapResult[OVERLAP_BUFFER];
+
+            for (int i = 0; i < OVERLAP_BUFFER; ++i)
+            {
+                OutOverlaps[i] = new FCgOverlapResult();
+            }
 
             Reset();
         }
@@ -135,7 +104,16 @@
             bResult = false;
             ElapsedTime = 0.0f;
 
+            foreach (FCgHitResult r in OutHits)
+            {
+                r.Reset();
+            }
             OutHitCount = 0;
+
+            foreach (FCgOverlapResult r in OutOverlaps)
+            {
+                r.Reset();
+            }
             OutOverlapCount = 0;
         }
 
@@ -147,12 +125,27 @@
 
             for (int i = 0; i < len; ++i)
             {
-.               if (results[i].distance <= 0.0f ||
+                if (results[i].distance <= 0.0f ||
                     results[i].distance == float.MaxValue)
                     continue;
-                OutHits[i] = results[i];
+                OutHitBuffer[i] = results[i];
                 ++OutHitCount;
             }
+        }
+
+        public void ResolveBuffers(float time)
+        {
+            for (int i = 0; i < OutHitCount; ++i)
+            {
+                OutHits[i].Set(time, ref OutHitBuffer[i]);
+            }
+
+            for (int i = 0; i < OutOverlapCount; ++i)
+            {
+                OutOverlaps[i].Set(time, OutOverlapBuffer[i]);
+            }
+
+            bResult = OutHitCount > EMPTY || OutOverlapCount > EMPTY;
         }
     }
 
@@ -206,6 +199,10 @@
 
         public ECgCollisionShape Shape;
 
+        public FCgCollisionBoxParams BoxParams;
+        public FCgCollisionSphereParams SphereParams;
+        public FCgCollisionCapsuleParams CapsuleParams;
+
         public bool bReplacePending;
         public byte PendingId;
 
@@ -217,6 +214,10 @@
         {
             Results = new NativeArray<RaycastHit>(HIT_BUFFER, Allocator.Persistent);
             Commands = new NativeArray<RaycastCommand>(1, Allocator.Persistent);
+
+            BoxParams = new FCgCollisionBoxParams();
+            SphereParams = new FCgCollisionSphereParams();
+            CapsuleParams = new FCgCollisionCapsuleParams();
 
             Reset();
         }
@@ -260,6 +261,11 @@
             Rotation = Vector3.zero;
             LayerMask = NO_LAYER;
             Shape = ECgCollisionShape.MAX;
+
+            BoxParams.Reset();
+            SphereParams.Reset();
+            CapsuleParams.Reset();
+
             bReplacePending = false;
             PendingId = INVALID_REQUEST_ID;
 

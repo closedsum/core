@@ -563,8 +563,12 @@
             FCgTraceResponse response = AllocateResponse();
 
             response.CopyHitResults(ref request.Results);
-            response.bResult     = response.OutHitCount > EMPTY;
-            response.ElapsedTime = FCgManager_Time.Get().GetTimeSinceStart(TimeType) - request.StartTime;
+
+            float currentTime = FCgManager_Time.Get().GetTimeSinceStart(TimeType);
+
+            response.ResolveBuffers(currentTime);
+
+            response.ElapsedTime = currentTime - request.StartTime;
 
             /*
             if (CsCVarDrawManagerTraceResponses->GetInt() == CS_CVAR_DRAW)
@@ -638,7 +642,7 @@
                 */
                 FCgTraceResponse response = AllocateResponse();
 
-                response.ElapsedTime = FCgManager_Time.Get().GetTimeSinceStart(TimeType) - request.StartTime;
+                response.ElapsedTime = 0.0f;
 
                 // Line
                 if (request.Type == ECgTraceType.Line)
@@ -663,12 +667,11 @@
                         Vector3 v       = request.End - request.Start;
                         float distance  = v.magnitude;
                         Vector3 dir     = distance > 0.0f ? v / distance : Vector3.zero;
-                        Ray ray =        new Ray(request.Start, dir);
 
                         float EXTEND = 0.1f;
 
-                        response.OutHitCount = Physics.RaycastNonAlloc(ray, response.OutHits, distance + EXTEND, request.LayerMask);
-                        response.bResult     = response.OutHitCount > EMPTY;
+                        response.OutHitCount = Physics.RaycastNonAlloc(request.Start, dir, response.OutHitBuffer, distance + EXTEND, request.LayerMask);
+                        response.ResolveBuffers(request.StartTime);
                     }
                 }
                 // Sweep
@@ -682,19 +685,21 @@
                         if (request.Shape == ECgCollisionShape.Box)
                         {
                             // CheckBox
-                            //response.bResult = Physics.CheckBox
+                            response.bResult = Physics.CheckBox(request.BoxParams.Center, request.BoxParams.HalfExtents, request.BoxParams.Orientation, request.LayerMask);
                         }
                         // Sphere
                         else
                         if (request.Shape == ECgCollisionShape.Sphere)
                         {
-
+                            // CheckSphere
+                            response.bResult = Physics.CheckSphere(request.SphereParams.Position, request.SphereParams.Radius, request.LayerMask);
                         }
                         // Capsule
                         else
                         if (request.Shape == ECgCollisionShape.Capsule)
                         {
-
+                            // CheckCapsule
+                            response.bResult = Physics.CheckCapsule(request.CapsuleParams.Start, request.CapsuleParams.End, request.CapsuleParams.Radius, request.LayerMask);
                         }
                     }
                     // Single
@@ -707,35 +712,97 @@
                     else
                     if (request.Method == ECgTraceMethod.Multi)
                     {
+                        // Box
+                        if (request.Shape == ECgCollisionShape.Box)
+                        {
+                            // BoxCastNonAlloc
+                            Vector3 v      = request.End - request.Start;
+                            float distance = v.magnitude;
+                            Vector3 dir    = distance > 0.0f ? v / distance : Vector3.zero;
+
+                            float EXTEND = 0.1f;
+
+                            response.OutHitCount = Physics.BoxCastNonAlloc(request.BoxParams.Center, request.BoxParams.HalfExtents, dir, response.OutHitBuffer, request.BoxParams.Orientation, distance + EXTEND, request.LayerMask);
+                            response.ResolveBuffers(request.StartTime);
+                        }
+                        // Sphere
+                        else
+                        if (request.Shape == ECgCollisionShape.Sphere)
+                        {
+                            // SphereCastNonAlloc
+                            Vector3 v       = request.End - request.Start;
+                            float distance  = v.magnitude;
+                            Vector3 dir     = distance > 0.0f ? v / distance : Vector3.zero;
+
+                            float EXTEND = 0.1f;
+
+                            response.OutHitCount = Physics.SphereCastNonAlloc(request.Start, request.SphereParams.Radius, dir, response.OutHitBuffer, distance + EXTEND, request.LayerMask);
+                            response.ResolveBuffers(request.StartTime);
+                        }
+                        // Capsule
+                        else
+                        if (request.Shape == ECgCollisionShape.Capsule)
+                        {
+                            // CapsuleCastNonAlloc
+                            Vector3 v       = request.End - request.Start;
+                            float distance  = v.magnitude;
+                            Vector3 dir     = distance > 0.0f ? v / distance : Vector3.zero;
+
+                            float EXTEND = 0.1f;
+
+                            response.OutHitCount = Physics.CapsuleCastNonAlloc(request.CapsuleParams.Start, request.CapsuleParams.End, request.CapsuleParams.Radius, dir, response.OutHitBuffer, distance + EXTEND, request.LayerMask);
+                            response.ResolveBuffers(request.StartTime);
+                        }
                     }
                 }
                 // Overlap
                 else
                 if (request.Type == ECgTraceType.Overlap)
                 {
+                    // Test
+                    if (request.Method == ECgTraceMethod.Test)
+                    {
+                        FCgDebug.LogWarning("FCsManager_Trace.Trace: Overlap Trace Test is NOT supported. Use TraceMethod: Multi. Abandoning Request.");
+                    }
+                    // Single
+                    else
+                    if (request.Method == ECgTraceMethod.Single)
+                    {
+                        FCgDebug.LogWarning("FCsManager_Trace.Trace: Overlap Trace Single is NOT supported. Use TraceMethod: Multi. Abandoning Request.");
+                    }
+                    // Multi
+                    else
+                    if (request.Method == ECgTraceMethod.Multi)
+                    {
+                        // Box
+                        if (request.Shape == ECgCollisionShape.Box)
+                        {
+                            // OverlapBoxNonAlloc
+                            response.OutOverlapCount = Physics.OverlapBoxNonAlloc(request.BoxParams.Center, request.BoxParams.HalfExtents, response.OutOverlapBuffer, request.BoxParams.Orientation, request.LayerMask);
+                            response.ResolveBuffers(request.StartTime);
+                        }
+                        // Sphere
+                        else
+                        if (request.Shape == ECgCollisionShape.Sphere)
+                        {
+                            // OverlapSphereNonAlloc
+                            response.OutOverlapCount = Physics.OverlapSphereNonAlloc(request.SphereParams.Position, request.SphereParams.Radius, response.OutOverlapBuffer, request.LayerMask);
+                            response.ResolveBuffers(request.StartTime);
+                        }
+                        // Capsule
+                        else
+                        if (request.Shape == ECgCollisionShape.Capsule)
+                        {
+                            // CapsuleCastNonAlloc
+                            response.OutOverlapCount = Physics.OverlapCapsuleNonAlloc(request.CapsuleParams.Start, request.CapsuleParams.End, request.CapsuleParams.Radius, response.OutOverlapBuffer, request.LayerMask);
+                            response.ResolveBuffers(request.StartTime);
+                        }
+                    }
                 }
-                /*
-                bool SweepTestByChannel(const FVector& Start, const FVector& End, const FQuat& Rot, ECollisionChannel TraceChannel, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams& ResponseParam = FCollisionResponseParams::DefaultResponseParam) const;
-                bool SweepTestByObjectType(const FVector& Start, const FVector& End, const FQuat& Rot, const FCollisionObjectQueryParams& ObjectQueryParams, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
-                bool SweepTestByProfile(const FVector& Start, const FVector& End, const FQuat& Rot, FName ProfileName, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params) const;
-                bool SweepSingleByChannel(struct FHitResult& OutHit, const FVector& Start, const FVector& End, const FQuat& Rot, ECollisionChannel TraceChannel, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams& ResponseParam = FCollisionResponseParams::DefaultResponseParam) const;
-                bool SweepSingleByObjectType(struct FHitResult& OutHit, const FVector& Start, const FVector& End, const FQuat& Rot, const FCollisionObjectQueryParams& ObjectQueryParams, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
-                bool SweepSingleByProfile(struct FHitResult& OutHit, const FVector& Start, const FVector& End, const FQuat& Rot, FName ProfileName, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
-                bool SweepMultiByChannel(TArray<struct FHitResult>& OutHits, const FVector& Start, const FVector& End, const FQuat& Rot, ECollisionChannel TraceChannel, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams& ResponseParam = FCollisionResponseParams::DefaultResponseParam) const;
-                bool SweepMultiByObjectType(TArray<struct FHitResult>& OutHits, const FVector& Start, const FVector& End, const FQuat& Rot, const FCollisionObjectQueryParams& ObjectQueryParams, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
-                bool SweepMultiByProfile(TArray<FHitResult>& OutHits, const FVector& Start, const FVector& End, const FQuat& Rot, FName ProfileName, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
-                bool OverlapBlockingTestByChannel(const FVector& Pos, const FQuat& Rot, ECollisionChannel TraceChannel, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams& ResponseParam = FCollisionResponseParams::DefaultResponseParam) const;
-                bool OverlapAnyTestByChannel(const FVector& Pos, const FQuat& Rot, ECollisionChannel TraceChannel, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams& ResponseParam = FCollisionResponseParams::DefaultResponseParam) const;
-                bool OverlapAnyTestByObjectType(const FVector& Pos, const FQuat& Rot, const FCollisionObjectQueryParams& ObjectQueryParams, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
-                bool OverlapBlockingTestByProfile(const FVector& Pos, const FQuat& Rot, FName ProfileName, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
-                bool OverlapAnyTestByProfile(const FVector& Pos, const FQuat& Rot, FName ProfileName, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
-                bool OverlapMultiByChannel(TArray<struct FOverlapResult>& OutOverlaps, const FVector& Pos, const FQuat& Rot, ECollisionChannel TraceChannel, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams& ResponseParam = FCollisionResponseParams::DefaultResponseParam) const;
-                bool OverlapMultiByObjectType(TArray<struct FOverlapResult>& OutOverlaps, const FVector& Pos, const FQuat& Rot, const FCollisionObjectQueryParams& ObjectQueryParams, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
-                bool OverlapMultiByProfile(TArray<struct FOverlapResult>& OutOverlaps, const FVector& Pos, const FQuat& Rot, FName ProfileName, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam) const;
-                */
-                IncrementTraceCount(Request);
-                Request->Reset();
+                IncrementTraceCount(request);
+                request.Reset();
 
+                /*
                 if (CsCVarDrawManagerTraceResponses->GetInt() == CS_CVAR_DRAW)
                 {
                     if (Response->bResult)
@@ -746,10 +813,9 @@
                         DrawDebugLine(GetWorld(), Response->OutHits[CS_FIRST].TraceStart, Response->OutHits[CS_FIRST].Location, FColor::Red, false, 0.1f, 0, 1.0f);
                     }
                 }
-                return Response;
+                */
+                return response;
             }
-            Request->Reset();
-            return nullptr;
         }
 
         public virtual void LogTransaction(string functionName, ECgTraceTransaction transaction, FCgTraceRequest request, FCgTraceResponse response)

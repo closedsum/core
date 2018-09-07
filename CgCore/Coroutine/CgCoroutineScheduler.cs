@@ -7,7 +7,7 @@ namespace CgCore
 
     public sealed class FCgCoroutinePayload
     {
-        public bool IsAllocated;
+        public bool bAllocated;
 
         public FECgCoroutineSchedule Schedule;
 
@@ -29,7 +29,7 @@ namespace CgCore
 
         public void Reset()
         {
-            IsAllocated = false;
+            bAllocated = false;
             Schedule = EMCgCoroutineSchedule.Get().GetMAX();
             Fiber = null;
             Owner = null;
@@ -477,7 +477,7 @@ namespace CgCore
 
                 FCgCoroutinePayload p = Payloads[PayloadIndex];
 
-                if (!p.IsAllocated)
+                if (!p.bAllocated)
                 {
                     return p;
                 }

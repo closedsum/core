@@ -133,19 +133,22 @@
             }
         }
 
-        public void ResolveBuffers(float time)
+        public void ResolveHitBuffers(float time, Vector3 start, Vector3 end)
         {
             for (int i = 0; i < OutHitCount; ++i)
             {
-                OutHits[i].Set(time, ref OutHitBuffer[i]);
+                OutHits[i].Set(time, start, end, ref OutHitBuffer[i]);
             }
+            bResult = OutHitCount > EMPTY;
+        }
 
+        public void ResolveOverlapBuffers(float time)
+        {
             for (int i = 0; i < OutOverlapCount; ++i)
             {
                 OutOverlaps[i].Set(time, OutOverlapBuffer[i]);
             }
-
-            bResult = OutHitCount > EMPTY || OutOverlapCount > EMPTY;
+            bResult = OutOverlapCount > EMPTY;
         }
     }
 

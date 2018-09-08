@@ -27,6 +27,13 @@
 
     public class FCgManager_Trace
     {
+        #region "CVars"
+
+        public static FCgConsoleVariableDraw DrawRequests = new FCgConsoleVariableDraw("draw.manager.trace.requests", false, "Draw Manager Trace Requests", (int)ECgConsoleVariableFlag.Console);
+        public static FCgConsoleVariableDraw DrawResponses = new FCgConsoleVariableDraw("draw.manager.trace.responses", false, "Draw Manager Trace Responses", (int)ECgConsoleVariableFlag.Console);
+
+        #endregion // CVars
+
         #region "Constants"
 
         public static readonly byte TRACE_TYPE_MAX = (byte)ECgTraceType.MAX;
@@ -37,6 +44,7 @@
 
         public static readonly byte SINGLETON = 1;
         public static readonly int EMPTY = 0;
+        public static readonly int FIRST = 0;
 
         #endregion // Constants
 
@@ -566,22 +574,23 @@
 
             float currentTime = FCgManager_Time.Get().GetTimeSinceStart(TimeType);
 
-            response.ResolveBuffers(currentTime);
+            response.ResolveHitBuffers(currentTime, request.Start, request.End);
 
             response.ElapsedTime = currentTime - request.StartTime;
 
-            /*
-            if (CsCVarDrawManagerTraceResponses->GetInt() == CS_CVAR_DRAW)
+#if UNITY_EDITOR
+            if (DrawResponses.Draw())
             {
-                if (Response->bResult)
+                if (response.bResult)
                 {
                     // Sphere around Start
-                    DrawDebugSphere(GetWorld(), Response->OutHits[CS_FIRST].TraceStart, 16.0f, 16, FColor::Green, false, 0.1f, 0, 1.0f);
+                    FCgManager_Draw.Get().DrawSphere(response.OutHits[FIRST].TraceStart, 16.0f, Color.green, 0.1f);
                     // Line from Start to End
-                    DrawDebugLine(GetWorld(), Response->OutHits[CS_FIRST].TraceStart, Response->OutHits[CS_FIRST].Location, FColor::Red, false, 0.1f, 0, 1.0f);
+                    FCgManager_Draw.Get().DrawLine(response.OutHits[FIRST].TraceStart, response.OutHits[FIRST].Location, Color.red, 0.1f);
                 }
             }
-            */
+#endif // #if UNITY_EDITOR
+
             LogTransaction(ECgManagerTraceCached.OnAsyncRequestCompleted, ECgTraceTransaction.Complete, request, response);
 
             // Broadcast Response
@@ -631,15 +640,16 @@
             // Normal
             else
             {
-                /*
-                if (CsCVarDrawManagerTraceRequests->GetInt() == CS_CVAR_DRAW)
+#if UNITY_EDITOR
+                if (DrawRequests.Draw())
                 {
                     // Sphere around Start
-                    DrawDebugSphere(GetWorld(), Request->Start, 16.0f, 16, FColor::Green, false, 0.1f, 0, 1.0f);
+                    FCgManager_Draw.Get().DrawSphere(request.Start, 0.16f, Color.green, 0.1f);
                     // Line from Start to End
-                    DrawDebugLine(GetWorld(), Request->Start, Request->End, FColor::Red, false, 0.1f, 0, 1.0f);
+                    FCgManager_Draw.Get().DrawLine(request.Start, request.End, Color.red, 0.1f);
                 }
-                */
+#endif // #if UNITY_EDITOR
+
                 FCgTraceResponse response = AllocateResponse();
 
                 response.ElapsedTime = 0.0f;
@@ -671,7 +681,7 @@
                         float EXTEND = 0.1f;
 
                         response.OutHitCount = Physics.RaycastNonAlloc(request.Start, dir, response.OutHitBuffer, distance + EXTEND, request.LayerMask);
-                        response.ResolveBuffers(request.StartTime);
+                        response.ResolveHitBuffers(request.StartTime, request.Start, request.End);
                     }
                 }
                 // Sweep
@@ -723,7 +733,7 @@
                             float EXTEND = 0.1f;
 
                             response.OutHitCount = Physics.BoxCastNonAlloc(request.BoxParams.Center, request.BoxParams.HalfExtents, dir, response.OutHitBuffer, request.BoxParams.Orientation, distance + EXTEND, request.LayerMask);
-                            response.ResolveBuffers(request.StartTime);
+                            response.ResolveHitBuffers(request.StartTime, request.Start, request.End);
                         }
                         // Sphere
                         else
@@ -737,7 +747,7 @@
                             float EXTEND = 0.1f;
 
                             response.OutHitCount = Physics.SphereCastNonAlloc(request.Start, request.SphereParams.Radius, dir, response.OutHitBuffer, distance + EXTEND, request.LayerMask);
-                            response.ResolveBuffers(request.StartTime);
+                            response.ResolveHitBuffers(request.StartTime, request.Start, request.End);
                         }
                         // Capsule
                         else
@@ -751,7 +761,7 @@
                             float EXTEND = 0.1f;
 
                             response.OutHitCount = Physics.CapsuleCastNonAlloc(request.CapsuleParams.Start, request.CapsuleParams.End, request.CapsuleParams.Radius, dir, response.OutHitBuffer, distance + EXTEND, request.LayerMask);
-                            response.ResolveBuffers(request.StartTime);
+                            response.ResolveHitBuffers(request.StartTime, request.Start, request.End);
                         }
                     }
                 }
@@ -779,7 +789,7 @@
                         {
                             // OverlapBoxNonAlloc
                             response.OutOverlapCount = Physics.OverlapBoxNonAlloc(request.BoxParams.Center, request.BoxParams.HalfExtents, response.OutOverlapBuffer, request.BoxParams.Orientation, request.LayerMask);
-                            response.ResolveBuffers(request.StartTime);
+                            response.ResolveOverlapBuffers(request.StartTime);
                         }
                         // Sphere
                         else
@@ -787,7 +797,7 @@
                         {
                             // OverlapSphereNonAlloc
                             response.OutOverlapCount = Physics.OverlapSphereNonAlloc(request.SphereParams.Position, request.SphereParams.Radius, response.OutOverlapBuffer, request.LayerMask);
-                            response.ResolveBuffers(request.StartTime);
+                            response.ResolveOverlapBuffers(request.StartTime);
                         }
                         // Capsule
                         else
@@ -795,25 +805,25 @@
                         {
                             // CapsuleCastNonAlloc
                             response.OutOverlapCount = Physics.OverlapCapsuleNonAlloc(request.CapsuleParams.Start, request.CapsuleParams.End, request.CapsuleParams.Radius, response.OutOverlapBuffer, request.LayerMask);
-                            response.ResolveBuffers(request.StartTime);
+                            response.ResolveOverlapBuffers(request.StartTime);
                         }
                     }
                 }
                 IncrementTraceCount(request);
                 request.Reset();
 
-                /*
-                if (CsCVarDrawManagerTraceResponses->GetInt() == CS_CVAR_DRAW)
+#if UNITY_EDITOR
+                if (DrawResponses.Draw())
                 {
-                    if (Response->bResult)
+                    if (response.bResult)
                     {
                         // Sphere around Start
-                        DrawDebugSphere(GetWorld(), Response->OutHits[CS_FIRST].TraceStart, 16.0f, 16, FColor::Green, false, 0.1f, 0, 1.0f);
+                        FCgManager_Draw.Get().DrawSphere(response.OutHits[FIRST].TraceStart, 0.16f, Color.green, 0.1f);
                         // Line from Start to End
-                        DrawDebugLine(GetWorld(), Response->OutHits[CS_FIRST].TraceStart, Response->OutHits[CS_FIRST].Location, FColor::Red, false, 0.1f, 0, 1.0f);
+                        FCgManager_Draw.Get().DrawLine(response.OutHits[FIRST].TraceStart, response.OutHits[FIRST].Location, Color.red, 0.1f);
                     }
                 }
-                */
+#endif // #if UNITY_EDITOR
                 return response;
             }
         }

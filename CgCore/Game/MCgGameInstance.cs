@@ -65,6 +65,11 @@
         {
         }
 
+        void OnDrawGizmos()
+        {
+            FCgManager_Draw.Get().OnDrawGizmos();    
+        }
+
         public virtual void Shutdown()
         {
             // Blockchain

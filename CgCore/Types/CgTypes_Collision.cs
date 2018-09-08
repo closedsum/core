@@ -164,7 +164,7 @@
             BoneName = from.BoneName;
         }
 
-        public void Set(float time, ref RaycastHit hit)
+        public void Set(float time, Vector3 start, Vector3 end, ref RaycastHit hit)
         {
             Time = time;
             Distance = hit.distance;
@@ -172,6 +172,8 @@
             ImpactPoint = hit.point;
             Normal = hit.normal;
             ImpactNormal = hit.normal;
+            TraceStart = start;
+            TraceEnd = end;
             _Transform = hit.transform;
             _Collider = hit.collider;
             _RigidBody = hit.rigidbody;

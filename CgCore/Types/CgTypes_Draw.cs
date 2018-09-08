@@ -257,7 +257,7 @@
         public void Draw()
         {
             Gizmos.color = DrawColor;
-
+            FCgDebug.Log("drawing" + LineParams.From.ToString() + " " + LineParams.To.ToString());
             // Line
             if (Shape == ECgGizmoDrawShape.Line)
                 Gizmos.DrawLine(LineParams.From, LineParams.To);

@@ -89,6 +89,7 @@
             {
                 FECgTime e = EMCgTime.Get().GetEnumAt(i);
 
+                LastRealtimeSinceStartup.Add(e, 0.0f);
                 TimeSinceStart.Add(e, 0.0f);
                 DeltaTime.Add(e, 0.0f);
                 bPaused.Add(e, false);
@@ -113,6 +114,7 @@
             {
                 DeltaTime[time] = 0.0f;
             }
+            LastRealtimeSinceStartup[time] = Time.realtimeSinceStartup;
         }
 
         public float GetDeltaTime(FECgTime timeType)

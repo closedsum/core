@@ -70,13 +70,14 @@
         {
             int count = ActiveRequests.Count;
 
-            for (int i = 0; i < count; ++i)
+            for (int i = count - 1; i >= 0; --i)
             {
                 FCgGizmoDrawRequest request = ActiveRequests[i];
 
                 if (request.HasCompleted())
                 {
                     request.Reset();
+                    ActiveRequests.RemoveAt(i);
                     continue;
                 }
                 else
@@ -117,6 +118,8 @@
             request.LineParams.Set(from, to);
             request.bWaitForTime = true;
             request.WaitForTime = time;
+
+            ActiveRequests.Add(request);
         }
 
         public void DrawRay(Vector3 from, Vector3 direction, Color color, float time)
@@ -128,6 +131,8 @@
             request.RayParams.Set(from, direction);
             request.bWaitForTime = true;
             request.WaitForTime = time;
+
+            ActiveRequests.Add(request);
         }
 
         public void DrawSphere(Vector3 center, float radius, Color color, float time)
@@ -139,6 +144,8 @@
             request.SphereParams.Set(center, radius);
             request.bWaitForTime = true;
             request.WaitForTime = time;
+
+            ActiveRequests.Add(request);
         }
     }
 }

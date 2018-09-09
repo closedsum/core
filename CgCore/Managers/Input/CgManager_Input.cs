@@ -608,7 +608,7 @@ namespace CgCore
         {
             for (int i = 0; i < INPUT_POOL_SIZE; ++i)
             {
-                CurrentInputPoolIndex = (CurrentInputPoolIndex + i) % INPUT_POOL_SIZE;
+                CurrentInputPoolIndex = (CurrentInputPoolIndex + 1) % INPUT_POOL_SIZE;
                 FCgInput input         = InputPool[CurrentInputPoolIndex];
 
                 // Add Input to InputFrame

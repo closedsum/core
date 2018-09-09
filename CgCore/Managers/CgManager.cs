@@ -735,10 +735,10 @@
 
             for (int i = 0; i < size; ++i)
             {
-                int index = PoolIndices[e];
-                index = (index + 1) % size;
-                PoolIndices[e] = index;
-                ObjectType o = pool[index];
+                int index       = PoolIndices[e];
+                index           = (index + 1) % size;
+                PoolIndices[e]  = index;
+                ObjectType o    = pool[index];
 
                 if (!o.GetCache().bAllocated)
                 {

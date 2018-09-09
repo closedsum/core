@@ -42,6 +42,8 @@
         public static readonly byte REQUEST_SIZE = 255;
         public static readonly byte RESPONSE_SIZE = 255;
 
+        public static readonly int MAX_REQUESTS_PROCESSED_PER_TICK = 64;
+
         public static readonly byte SINGLETON = 1;
         public static readonly int EMPTY = 0;
         public static readonly int FIRST = 0;
@@ -112,6 +114,8 @@
         {
             TimeType = ECgTime.Update;
 
+            RequestsProcessedPerTick = MAX_REQUESTS_PROCESSED_PER_TICK;
+
             TraceCountLifetimeByObjectId = new Dictionary<ulong, ulong>();
 
             TraceCountLifetimeByType = new ulong[TRACE_TYPE_MAX];
@@ -129,6 +133,8 @@
             }
 
             TraceCountLifetimeByObjectId = new Dictionary<ulong, ulong>();
+
+            TraceCountThisFrameByObjectId = new Dictionary<ulong, ushort>();
 
             TraceCountThisFrameByType = new ushort[TRACE_TYPE_MAX];
 
@@ -302,11 +308,9 @@
             ++TraceCountLifetime;
 
             {
-                ulong countById = ulong.MaxValue;
-
-                if (TraceCountLifetimeByObjectId.TryGetValue(request.CallerId, out countById))
+                if (TraceCountLifetimeByObjectId.ContainsKey(request.CallerId))
                 {
-                    ++(TraceCountLifetimeByObjectId[countById]);
+                    ++(TraceCountLifetimeByObjectId[request.CallerId]);
                 }
                 else
                 {
@@ -320,11 +324,9 @@
             ++TraceCountThisFrame;
 
             {
-                ushort countById = ushort.MaxValue;
-
-                if (TraceCountThisFrameByObjectId.TryGetValue(request.CallerId, out countById))
+                if (TraceCountThisFrameByObjectId.ContainsKey(request.CallerId))
                 {
-                    ++(TraceCountThisFrameByObjectId[countById]);
+                    ++(TraceCountThisFrameByObjectId[request.CallerId]);
                 }
                 else
                 {
@@ -342,8 +344,8 @@
         {
             for (byte i = 0; i < REQUEST_SIZE; ++i)
             {
-                byte index              = (byte)((RequestIndex + i) % REQUEST_SIZE);
-                FCgTraceRequest request = Requests[index];
+                RequestIndex            = (byte)((RequestIndex + 1) % REQUEST_SIZE);
+                FCgTraceRequest request = Requests[RequestIndex];
 
                 if (!request.bAllocated)
                 {
@@ -552,8 +554,8 @@
         {
             for (byte i = 0; i < RESPONSE_SIZE; ++i)
             {
-                byte index                = (byte)((ResponseIndex + i) % RESPONSE_SIZE);
-                FCgTraceResponse response = Responses[index];
+                ResponseIndex             = (byte)((ResponseIndex + 1) % RESPONSE_SIZE);
+                FCgTraceResponse response = Responses[ResponseIndex];
 
                 if (!response.bAllocated)
                 {
@@ -584,9 +586,9 @@
                 if (response.bResult)
                 {
                     // Sphere around Start
-                    FCgManager_Draw.Get().DrawSphere(response.OutHits[FIRST].TraceStart, 16.0f, Color.green, 0.1f);
+                    FCgManager_GizmoDraw.Get().DrawSphere(response.OutHits[FIRST].TraceStart, 16.0f, Color.green, 0.1f);
                     // Line from Start to End
-                    FCgManager_Draw.Get().DrawLine(response.OutHits[FIRST].TraceStart, response.OutHits[FIRST].Location, Color.red, 0.1f);
+                    FCgManager_GizmoDraw.Get().DrawLine(response.OutHits[FIRST].TraceStart, response.OutHits[FIRST].Location, Color.red, 0.1f);
                 }
             }
 #endif // #if UNITY_EDITOR
@@ -613,7 +615,7 @@
             if (addPending && !request.bAsync)
             {
                 request.Reset();
-                FCgDebug.LogWarning("FCsManager_Trace.Trace: Reached maximum RequestsProcessedPerTick: " + RequestsProcessedPerTick + "and Request is NOT Async. Abandoning Request.");
+                FCgDebug.LogWarning("FCsManager_Trace.Trace: Reached maximum RequestsProcessedPerTick: " + RequestsProcessedPerTick + " and Request is NOT Async. Abandoning Request.");
                 return null;
             }
 
@@ -644,9 +646,9 @@
                 if (DrawRequests.Draw())
                 {
                     // Sphere around Start
-                    FCgManager_Draw.Get().DrawSphere(request.Start, 0.16f, Color.green, 0.1f);
+                    FCgManager_GizmoDraw.Get().DrawSphere(request.Start, 0.16f, Color.green, 0.1f);
                     // Line from Start to End
-                    FCgManager_Draw.Get().DrawLine(request.Start, request.End, Color.red, 0.1f);
+                    FCgManager_GizmoDraw.Get().DrawLine(request.Start, request.End, Color.red, 0.1f);
                 }
 #endif // #if UNITY_EDITOR
 
@@ -811,16 +813,15 @@
                 }
                 IncrementTraceCount(request);
                 request.Reset();
-
 #if UNITY_EDITOR
                 if (DrawResponses.Draw())
                 {
                     if (response.bResult)
                     {
                         // Sphere around Start
-                        FCgManager_Draw.Get().DrawSphere(response.OutHits[FIRST].TraceStart, 0.16f, Color.green, 0.1f);
+                        FCgManager_GizmoDraw.Get().DrawSphere(response.OutHits[FIRST].TraceStart, 0.16f, Color.green, 0.1f);
                         // Line from Start to End
-                        FCgManager_Draw.Get().DrawLine(response.OutHits[FIRST].TraceStart, response.OutHits[FIRST].Location, Color.red, 0.1f);
+                        FCgManager_GizmoDraw.Get().DrawLine(response.OutHits[FIRST].TraceStart, response.OutHits[FIRST].Location, Color.red, 0.1f);
                     }
                 }
 #endif // #if UNITY_EDITOR

@@ -48,6 +48,8 @@
     public static class ECgTime
     {
         public static readonly FECgTime Update = EMCgTime.Get().Create("Update");
+
+        public static void Init() { }
     }
 
     #endregion // Enums

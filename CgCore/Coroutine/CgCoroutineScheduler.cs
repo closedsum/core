@@ -173,7 +173,7 @@ namespace CgCore
         {
             for (ushort i = 0; i < POOL_SIZE; ++i)
             {
-                PoolIndicies[schedule] = (PoolIndicies[schedule] + i) % POOL_SIZE;
+                PoolIndicies[schedule] = (PoolIndicies[schedule] + 1) % POOL_SIZE;
 
                 FCgRoutine r = Pools[schedule][PoolIndicies[schedule]];
 

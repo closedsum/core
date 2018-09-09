@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using UnityEngine;
 
-    public class FCgManager_Draw
+    public class FCgManager_GizmoDraw
     {
         #region "Constants"
 
@@ -14,14 +14,14 @@
 
         #region "Data Members"
 
-        private static FCgManager_Draw _Instance;
-        public static FCgManager_Draw Instance
+        private static FCgManager_GizmoDraw _Instance;
+        public static FCgManager_GizmoDraw Instance
         {
             get
             {
                 if (_Instance == null)
                 {
-                    _Instance = new FCgManager_Draw();
+                    _Instance = new FCgManager_GizmoDraw();
                 }
                 return _Instance;
             }
@@ -35,7 +35,7 @@
 
         #endregion // Data Members
 
-        public FCgManager_Draw()
+        public FCgManager_GizmoDraw()
         {
             Requests = new FCgGizmoDrawRequest[REQUEST_SIZE];
 
@@ -47,7 +47,7 @@
             ActiveRequests = new List<FCgGizmoDrawRequest>();
         }
 
-        public static FCgManager_Draw Get()
+        public static FCgManager_GizmoDraw Get()
         {
             return Instance;
         }
@@ -78,6 +78,10 @@
                 {
                     request.Reset();
                     ActiveRequests.RemoveAt(i);
+
+#if UNITY_EDITOR
+                    FCgPlayInEditor.Get().ClearGizmoField();
+#endif // #if UNITY_EDITOR
                     continue;
                 }
                 else
@@ -120,6 +124,10 @@
             request.WaitForTime = time;
 
             ActiveRequests.Add(request);
+
+#if UNITY_EDITOR
+            FCgPlayInEditor.Get().SetGizmoField();
+#endif // #if UNITY_EDITOR
         }
 
         public void DrawRay(Vector3 from, Vector3 direction, Color color, float time)
@@ -133,6 +141,10 @@
             request.WaitForTime = time;
 
             ActiveRequests.Add(request);
+
+#if UNITY_EDITOR
+            FCgPlayInEditor.Get().SetGizmoField();
+#endif // #if UNITY_EDITOR
         }
 
         public void DrawSphere(Vector3 center, float radius, Color color, float time)
@@ -146,6 +158,10 @@
             request.WaitForTime = time;
 
             ActiveRequests.Add(request);
+
+#if UNITY_EDITOR
+            FCgPlayInEditor.Get().SetGizmoField();
+#endif // #if UNITY_EDITOR
         }
     }
 }

@@ -215,8 +215,7 @@
 
         public FCgTraceRequest()
         {
-            Results = new NativeArray<RaycastHit>(HIT_BUFFER, Allocator.Persistent);
-            Commands = new NativeArray<RaycastCommand>(1, Allocator.Persistent);
+            OnResponse_Event = new FOnRespone();
 
             BoxParams = new FCgCollisionBoxParams();
             SphereParams = new FCgCollisionSphereParams();
@@ -229,8 +228,11 @@
         {
             Id = id;
 
-            Results = new NativeArray<RaycastHit>(HIT_BUFFER, Allocator.Persistent);
-            Commands = new NativeArray<RaycastCommand>(1, Allocator.Persistent);
+            OnResponse_Event = new FOnRespone();
+
+            BoxParams = new FCgCollisionBoxParams();
+            SphereParams = new FCgCollisionSphereParams();
+            CapsuleParams = new FCgCollisionCapsuleParams();
 
             Reset();
         }
@@ -250,12 +252,10 @@
 
             bAsync = false;
 
-            for (int i = 0; i < HIT_BUFFER; ++i)
-            {
-                Results[i] = DEFAULT_RAYCAST_HIT;
-            }
-
-            Commands[0] = DEFAULT_RAYCAST_COMMAND;
+            if (Results.IsCreated)
+                Results.Dispose();
+            if (Commands.IsCreated)
+                Commands.Dispose();
 
             Type = ECgTraceType.MAX;
             Method = ECgTraceMethod.MAX;
@@ -277,6 +277,9 @@
 
         public void ScheduleCommand()
         {
+            Results = new NativeArray<RaycastHit>(HIT_BUFFER, Allocator.Persistent);
+            Commands = new NativeArray<RaycastCommand>(1, Allocator.Persistent);
+
             RaycastCommand command = new RaycastCommand();
             command.from        = Start;
             command.direction   = (End - Start).normalized;

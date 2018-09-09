@@ -49,6 +49,10 @@
             MCgDataMapping.Init();
             FCgManager_Prefab.Get().Init();
 
+#if UNITY_EDITOR
+            FCgPlayInEditor.Get();
+#endif // #if UNITY_EDITOR
+
             PlayerControllers = new List<MCgPlayerController>();
 
             // Set Editor Callbacks
@@ -67,11 +71,13 @@
 
         void OnDrawGizmos()
         {
-            FCgManager_Draw.Get().OnDrawGizmos();    
+            FCgManager_GizmoDraw.Get().OnDrawGizmos();    
         }
 
         public virtual void Shutdown()
         {
+            FCgManager_GizmoDraw.Get().Shutdown();
+
             // Blockchain
             if (ICgBlockchainInterface.Get() != null)
                 ICgBlockchainInterface.Get().Shutdown();
@@ -96,7 +102,7 @@
 
 #endif // #if UNITY_EDITOR
 
-        #region "Object"
+#region "Object"
 
         public ulong GetUniqueObjectId()
         {
@@ -144,6 +150,6 @@
             return (T)GetSafeUniqueObjectId(id);
         }
 
-        #endregion // Object
+#endregion // Object
     }
 }

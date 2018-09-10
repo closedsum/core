@@ -126,10 +126,11 @@ FCsRunnablePayload* UCsManager_Runnable::AllocatePayload()
 {
 	for (uint8 I = 0; I < CS_RUNNABLE_DELEGATE_POOL_SIZE; ++I)
 	{
-		const uint8 Index			= (PayloadIndex + I) % CS_RUNNABLE_DELEGATE_POOL_SIZE;
-		FCsRunnablePayload* Payload = &(Payloads[Index]);
+		PayloadIndex				= (PayloadIndex + 1) % CS_RUNNABLE_DELEGATE_POOL_SIZE;
+		FCsRunnablePayload* Payload = &(Payloads[PayloadIndex]);
 
 		if (!Payload->bAllocated)
+
 		{
 			Payload->bAllocated = true;
 			return Payload;

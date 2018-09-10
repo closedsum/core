@@ -189,7 +189,7 @@ struct FCsRoutine* UCsCoroutineScheduler::Allocate(FCsCoroutinePayload* Payload)
 
 	for (int32 I = 0; I < CS_ROUTINE_POOL_SIZE; ++I)
 	{
-		RoutinePoolIndices[Schedule] = (RoutinePoolIndices[Schedule] + I) % CS_ROUTINE_POOL_SIZE;
+		RoutinePoolIndices[Schedule] = (RoutinePoolIndices[Schedule] + 1) % CS_ROUTINE_POOL_SIZE;
 
 		FCsRoutine* R = &(RoutinePools[Schedule][RoutinePoolIndices[Schedule]]);
 

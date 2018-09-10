@@ -591,7 +591,7 @@ FCsInput* ACsManager_Input::AllocateInput(const FECsInputAction &Action, const E
 {
 	for (int32 I = 0; I < CS_INPUT_POOL_SIZE; ++I)
 	{
-		CurrentInputPoolIndex = (CurrentInputPoolIndex + I) % CS_INPUT_POOL_SIZE;
+		CurrentInputPoolIndex = (CurrentInputPoolIndex + 1) % CS_INPUT_POOL_SIZE;
 		FCsInput* Input		  = &InputPool[CurrentInputPoolIndex];
 
 		// Add Input to InputFrame

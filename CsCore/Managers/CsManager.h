@@ -286,7 +286,7 @@ public:
 
 		for (int32 i = 0; i < PoolSize; ++i)
 		{
-			PoolIndex	  = (PoolIndex + i) % PoolSize;
+			PoolIndex	  = (PoolIndex + 1) % PoolSize;
 			ObjectType* o = Pool[PoolIndex];
 
 			if (!o->Cache.IsAllocated)
@@ -344,8 +344,8 @@ public:
 	{
 		for (int32 i = 0; i < PAYLOAD_SIZE; ++i)
 		{
-			const int32 index = (PayloadIndex + i) % PAYLOAD_SIZE;
-			PayloadType* Payload = &(Payloads[index]);
+			PayloadIndex		 = (PayloadIndex + 1) % PAYLOAD_SIZE;
+			PayloadType* Payload = &(Payloads[PayloadIndex]);
 
 			if (!Payload->IsAllocated)
 			{
@@ -735,7 +735,7 @@ public:
 		for (int32 i = 0; i < size; ++i)
 		{
 			int32* poolIndexPtr = PoolIndices.Find(e);
-			*poolIndexPtr		= (*poolIndexPtr + i) % size;
+			*poolIndexPtr		= (*poolIndexPtr + 1) % size;
 			ObjectType* o		= (*pool)[*poolIndexPtr];
 
 			if (!o->Cache.IsAllocated)
@@ -803,8 +803,8 @@ public:
 	{
 		for (int32 i = 0; i < PAYLOAD_SIZE; ++i)
 		{
-			const int32 index    = (PayloadIndex + i) % PAYLOAD_SIZE;
-			PayloadType* Payload = &(Payloads[index]);
+			PayloadIndex		 = (PayloadIndex + 1) % PAYLOAD_SIZE;
+			PayloadType* Payload = &(Payloads[PayloadIndex]);
 
 			if (!Payload->IsAllocated)
 			{

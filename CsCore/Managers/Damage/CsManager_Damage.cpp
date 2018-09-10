@@ -54,8 +54,8 @@ FCsDamageEvent* ACsManager_Damage::AllocateEvent()
 {
 	for (uint8 I = 0; I < CS_DAMAGE_EVENT_POOL_SIZE; ++I)
 	{
-		const uint8 Index	   = (EventPoolIndex + I) % CS_DAMAGE_EVENT_POOL_SIZE;
-		FCsDamageEvent* Event = &(EventPool[Index]);
+		EventPoolIndex		  = (EventPoolIndex + 1) % CS_DAMAGE_EVENT_POOL_SIZE;
+		FCsDamageEvent* Event = &(EventPool[EventPoolIndex]);
 
 		if (!Event->bAllocated)
 		{
@@ -76,8 +76,8 @@ FCsDamageResult* ACsManager_Damage::AllocateResult()
 {
 	for (uint8 I = 0; I < CS_DAMAGE_RESULT_POOL_SIZE; ++I)
 	{
-		const uint8 Index       = (ResultPoolIndex + I) % CS_DAMAGE_RESULT_POOL_SIZE;
-		FCsDamageResult* Result = &(ResultPool[Index]);
+		ResultPoolIndex			= (ResultPoolIndex + 1) % CS_DAMAGE_RESULT_POOL_SIZE;
+		FCsDamageResult* Result = &(ResultPool[ResultPoolIndex]);
 
 		if (!Result->bAllocated)
 		{

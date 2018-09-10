@@ -220,8 +220,8 @@ FCsTraceRequest* ACsManager_Trace::AllocateRequest()
 {
 	for (uint8 I = 0; I < CS_POOLED_TRACE_REQUEST_SIZE; ++I)
 	{
-		const uint8 Index		 = (RequestIndex + I) % CS_POOLED_TRACE_REQUEST_SIZE;
-		FCsTraceRequest* Request = &(Requests[Index]);
+		RequestIndex			 = (RequestIndex + 1) % CS_POOLED_TRACE_REQUEST_SIZE;
+		FCsTraceRequest* Request = &(Requests[RequestIndex]);
 
 		if (!Request->IsAllocated)
 		{
@@ -482,8 +482,8 @@ FCsTraceResponse* ACsManager_Trace::AllocateResponse()
 {
 	for (uint8 I = 0; I < CS_POOLED_TRACE_RESPONSE_SIZE; ++I)
 	{
-		const uint8 Index		   = (ResponseIndex + I) % CS_POOLED_TRACE_RESPONSE_SIZE;
-		FCsTraceResponse* Response = &(Responses[Index]);
+		ResponseIndex				= (ResponseIndex + 1) % CS_POOLED_TRACE_RESPONSE_SIZE;
+		FCsTraceResponse* Response	= &(Responses[ResponseIndex]);
 
 		if (!Response->IsAllocated)
 		{

@@ -135,7 +135,7 @@ FCsItem* ACsManager_Item::Allocate_Internal()
 {
 	for (uint16 I = 0; I < CS_ITEM_POOL_SIZE; ++I)
 	{
-		PoolIndex	  = (PoolIndex + I) % CS_ITEM_POOL_SIZE;
+		PoolIndex	  = (PoolIndex + 1) % CS_ITEM_POOL_SIZE;
 		FCsItem* Item = &(Pool[PoolIndex]);
 
 		if (!Item->IsAllocated)

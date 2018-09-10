@@ -80,8 +80,8 @@ FCsCraftingProcess* ACsManager_Crafting::AllocateProcess()
 {
 	for (uint8 I = 0; I < CS_CRAFTING_PAYLOAD_SIZE; ++I)
 	{
-		const uint8 Index		    = (ProcessIndex + I) % CS_CRAFTING_PAYLOAD_SIZE;
-		FCsCraftingProcess* Process = &(Processes[Index]);
+		ProcessIndex				= (ProcessIndex + 1) % CS_CRAFTING_PAYLOAD_SIZE;
+		FCsCraftingProcess* Process = &(Processes[ProcessIndex]);
 
 		if (!Process->IsAllocated)
 		{

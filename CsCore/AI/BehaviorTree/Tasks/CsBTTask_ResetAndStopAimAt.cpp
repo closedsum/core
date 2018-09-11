@@ -47,8 +47,6 @@ EBTNodeResult::Type UCsBTTask_ResetAndStopAimtAt::ExecuteTask(UBehaviorTreeCompo
 
 	if (BlendOutTime <= 0.0f)
 	{
-		Pawn->StopAimAt();
-
 #if !UE_BUILD_SHIPPING
 		if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)
 		{
@@ -85,7 +83,6 @@ void UCsBTTask_ResetAndStopAimtAt::TickTask(UBehaviorTreeComponent& OwnerComp, u
 		if (MyMemory->ElapsedTime >= BlendOutTime)
 		{
 			ACsAIPawn* Pawn = Cast<ACsAIPawn>(AIController->GetPawn());
-			Pawn->StopAimAt();
 
 #if !UE_BUILD_SHIPPING
 			if (CsCVarLogAIBTTasks->GetInt() == CS_CVAR_SHOW_LOG)

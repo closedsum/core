@@ -241,6 +241,8 @@ void ACsAIPawn::SyncCurrentViewFromBone(const FName &Bone)
 
 	R->names[0] = Bone;
 
+	bSyncCurrentViewFromBone = true;
+
 	Scheduler->StartRoutine(Schedule, R);
 }
 
@@ -268,6 +270,8 @@ void ACsAIPawn::StopSyncCurrentViewFromBone()
 	// Clear SyncCurrentViewFromBone
 	if (SyncCurrentViewFromBone_Internal_Routine && SyncCurrentViewFromBone_Internal_Routine->IsValid())
 		SyncCurrentViewFromBone_Internal_Routine->End(ECsCoroutineEndReason::Manual);
+
+	bSyncCurrentViewFromBone = false;
 }
 
 #pragma endregion View

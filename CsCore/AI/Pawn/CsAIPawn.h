@@ -193,6 +193,9 @@ public:
 
 	virtual void PerformViewTrace_Response(const uint8 &RequestId, FCsTraceResponse* Response) override;
 
+	UPROPERTY(BlueprintReadOnly, Category = "View")
+	bool bSyncCurrentViewFromBone;
+
 	virtual void SyncCurrentViewFromBone(const FName &Bone);
 	static char SyncCurrentViewFromBone_Internal(FCsRoutine* r);
 	FCsRoutine* SyncCurrentViewFromBone_Internal_Routine;

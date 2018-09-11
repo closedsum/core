@@ -30,7 +30,7 @@ UCsBTTask_PlayMontage::UCsBTTask_PlayMontage(const FObjectInitializer& ObjectIni
 	bLooping = false;
 	PlayRate = 1.0f;
 	bSyncCurrentViewFromBone = false;
-	Bone = NAME_None;
+	BoneForCurrentView = NAME_None;
 }
 
 EBTNodeResult::Type UCsBTTask_PlayMontage::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -77,7 +77,7 @@ EBTNodeResult::Type UCsBTTask_PlayMontage::ExecuteTask(UBehaviorTreeComponent& O
 	}
 
 	if (bSyncCurrentViewFromBone)
-		Pawn->SyncCurrentViewFromBone(Bone);
+		Pawn->SyncCurrentViewFromBone(BoneForCurrentView);
 
 #if WITH_EDITORONLY_DATA
 	if (bAnim)

@@ -58,7 +58,7 @@ protected:
 	class UAnimMontage* Anim;
 #endif WITH_EDITORONLY_DATA
 
-	UPROPERTY(EditAnywhere, Category = Node, meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, Category = Node)
 	FECsCharacterAnim AnimType;
 
 	UPROPERTY(EditAnywhere, Category = Node)
@@ -74,7 +74,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Node, meta = (InlineEditConditionToggle))
 	bool bSyncCurrentViewFromBone;
 	UPROPERTY(EditAnywhere, Category = Node, meta = (editcondition = "bSyncCurrentViewFromBone"))
-	FName Bone;
+	FName BoneForCurrentView;
 
 public:
 

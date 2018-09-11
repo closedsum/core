@@ -383,6 +383,7 @@ void ACsManager_Trace::RemovePendingRequest(FCsTraceRequest* Request)
 
 bool ACsManager_Trace::ProcessRequest(FCsTraceRequest* Request)
 {
+#if !UE_BUILD_SHIPPING
 	if (CsCVarDrawManagerTraceRequests->GetInt() == CS_CVAR_DRAW)
 	{
 		// Sphere around Start
@@ -390,6 +391,7 @@ bool ACsManager_Trace::ProcessRequest(FCsTraceRequest* Request)
 		// Line from Start to End
 		DrawDebugLine(GetWorld(), Request->Start, Request->End, FColor::Red, false, 0.1f, 0, 1.0f);
 	}
+#endif // #if !UE_BUILD_SHIPPING
 
 	Request->bProcessing = true;
 
@@ -515,6 +517,7 @@ void ACsManager_Trace::OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& 
 		UCsCommon::CopyHitResult(Datum.OutHits[I], Response->OutHits[I]);
 	}
 	
+#if !UE_BUILD_SHIPPING
 	if (CsCVarDrawManagerTraceResponses->GetInt() == CS_CVAR_DRAW)
 	{
 		if (Response->bResult)
@@ -525,6 +528,7 @@ void ACsManager_Trace::OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& 
 			DrawDebugLine(GetWorld(), Response->OutHits[CS_FIRST].TraceStart, Response->OutHits[CS_FIRST].Location, FColor::Red, false, 0.1f, 0, 1.0f);
 		}
 	}
+#endif // #if !UE_BUILD_SHIPPING
 
 	LogTransaction(ECsManagerTraceCached::Str::OnTraceResponse, ECsTraceTransaction::Complete, Request, Response);
 
@@ -579,6 +583,7 @@ FCsTraceResponse*  ACsManager_Trace::Trace(FCsTraceRequest* Request)
 	// Normal
 	else
 	{
+#if !UE_BUILD_SHIPPING
 		if (CsCVarDrawManagerTraceRequests->GetInt() == CS_CVAR_DRAW)
 		{
 			// Sphere around Start
@@ -586,6 +591,7 @@ FCsTraceResponse*  ACsManager_Trace::Trace(FCsTraceRequest* Request)
 			// Line from Start to End
 			DrawDebugLine(GetWorld(), Request->Start, Request->End, FColor::Red, false, 0.1f, 0, 1.0f);
 		}
+#endif // #if !UE_BUILD_SHIPPING
 
 		FCsTraceResponse* Response = AllocateResponse();
 
@@ -691,6 +697,7 @@ FCsTraceResponse*  ACsManager_Trace::Trace(FCsTraceRequest* Request)
 		IncrementTraceCount(Request);
 		Request->Reset();
 
+#if !UE_BUILD_SHIPPING
 		if (CsCVarDrawManagerTraceResponses->GetInt() == CS_CVAR_DRAW)
 		{
 			if (Response->bResult)
@@ -701,6 +708,7 @@ FCsTraceResponse*  ACsManager_Trace::Trace(FCsTraceRequest* Request)
 				DrawDebugLine(GetWorld(), Response->OutHits[CS_FIRST].TraceStart, Response->OutHits[CS_FIRST].Location, FColor::Red, false, 0.1f, 0, 1.0f);
 			}
 		}
+#endif // #if !UE_BUILD_SHIPPING
 		return Response;
 	}
 	Request->Reset();
@@ -709,6 +717,7 @@ FCsTraceResponse*  ACsManager_Trace::Trace(FCsTraceRequest* Request)
 
 void ACsManager_Trace::LogTransaction(const FString &FunctionName, const TCsTraceTransaction &Transaction, FCsTraceRequest* Request, FCsTraceResponse* Response)
 {
+#if !UE_BUILD_SHIPPING
 	if (CsCVarLogManagerTraceTransactions->GetInt() == CS_CVAR_SHOW_LOG)
 	{
 		/*
@@ -731,4 +740,5 @@ void ACsManager_Trace::LogTransaction(const FString &FunctionName, const TCsTrac
 		}
 		*/
 	}
+#endif // #if !UE_BUILD_SHIPPING
 }

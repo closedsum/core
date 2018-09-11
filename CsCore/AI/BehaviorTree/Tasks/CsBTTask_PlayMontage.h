@@ -73,6 +73,7 @@ protected:
 	/** Use the Bone rotation to determine the CurrentView */
 	UPROPERTY(EditAnywhere, Category = Node, meta = (InlineEditConditionToggle))
 	bool bSyncCurrentViewFromBone;
+	/** Bone used to determine the CurrentView */
 	UPROPERTY(EditAnywhere, Category = Node, meta = (editcondition = "bSyncCurrentViewFromBone"))
 	FName BoneForCurrentView;
 

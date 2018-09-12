@@ -53,6 +53,7 @@ namespace ECsCommonLoadCached
 		const FString CsLoadFlags = TEXT("ECsLoadFlags");
 		const FString CsItemMemberValueType = TEXT("ECsItemMemberValueType");
 		const FString CsItemOnConsumeContentAction = TEXT("ECsItemOnConsumeContentAction");
+		const FString CsEasingType = TEXT("ECsEasingType");
 
 		const FString BitmaskEnum = TEXT("BitmaskEnum");
 
@@ -1725,6 +1726,14 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				InJsonWriter->WriteValue(MemberName, *Member);
 			continue;
 		}
+		// Enum Class
+		if (UEnumProperty* EnumProperty = Cast<UEnumProperty>(*It))
+		{
+			// ECsEasingType
+			if (EnumProperty->GetEnum()->CppType.Contains(ECsCommonLoadCached::Str::CsEasingType))
+			{ WriteMemberEnumPropertyToJson<ECsEasingType, EMCsEasingType>(InJsonWriter, EnumProperty, InStruct, MemberName); continue; }
+			continue;
+		}
 		// Byte / Enum
 		if (UByteProperty* ByteProperty = Cast<UByteProperty>(*It))
 		{
@@ -2407,6 +2416,14 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				InJsonWriter->WriteValue(MemberName, *Member);
 			continue;
 		}
+		// Enum Class
+		if (UEnumProperty* EnumProperty = Cast<UEnumProperty>(*It))
+		{
+			// ECsEasingType
+			if (EnumProperty->GetEnum()->CppType.Contains(ECsCommonLoadCached::Str::CsEasingType))
+			{ WriteMemberEnumPropertyToJson<ECsEasingType, EMCsEasingType>(InJsonWriter, EnumProperty, InObject, MemberName); continue; }
+			continue;
+		}
 		// Byte / Enum
 		if (UByteProperty* ByteProperty = Cast<UByteProperty>(*It))
 		{
@@ -2463,11 +2480,6 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				if (uint8* Member = ByteProperty->ContainerPtrToValuePtr<uint8>(InObject))
 					InJsonWriter->WriteValue(MemberName, *Member);
 			}
-			continue;
-		}
-		// Enum Class
-		if (UEnumProperty* EnumProperty = Cast<UEnumProperty>(*It))
-		{
 			continue;
 		}
 		// int32
@@ -3317,6 +3329,14 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 			{ *Member = JsonObject->GetBoolField(MemberName); continue; }
 			continue;
 		}
+		// Enum Class
+		if (UEnumProperty* EnumProperty = Cast<UEnumProperty>(*It))
+		{
+			// ECsEasingType
+			if (EnumProperty->GetEnum()->CppType.Contains(ECsCommonLoadCached::Str::CsEasingType))
+			{ WriteToMemberEnumPropertyFromJson<ECsEasingType, EMCsEasingType>(JsonObject, EnumProperty, InStruct, MemberName); continue; }
+			continue;
+		}
 		// Byte / Enum
 		if (UByteProperty* ByteProperty = Cast<UByteProperty>(*It))
 		{
@@ -4120,6 +4140,14 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			{ *Member = JsonObject->GetBoolField(MemberName); continue; }
 			continue;
 		}
+		// Enum Class
+		if (UEnumProperty* EnumProperty = Cast<UEnumProperty>(*It))
+		{
+			// ECsEasingType
+			if (EnumProperty->GetEnum()->CppType.Contains(ECsCommonLoadCached::Str::CsEasingType))
+			{ WriteToMemberEnumPropertyFromJson<ECsEasingType, EMCsEasingType>(JsonObject, EnumProperty, InStruct, MemberName); continue; }
+			continue;
+		}
 		// Byte / Enum
 		if (UByteProperty* ByteProperty = Cast<UByteProperty>(*It))
 		{
@@ -4848,6 +4876,14 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			{ *Member = JsonObject->GetBoolField(MemberName); continue; }
 			continue;
 		}
+		// Enum Class
+		if (UEnumProperty* EnumProperty = Cast<UEnumProperty>(*It))
+		{
+			// ECsEasingType
+			if (EnumProperty->GetEnum()->CppType.Contains(ECsCommonLoadCached::Str::CsEasingType))
+			{ WriteToMemberEnumPropertyFromJson<ECsEasingType, EMCsEasingType>(JsonObject, EnumProperty, InObject, MemberName); continue; }
+			continue;
+		}
 		// Byte / Enum
 		if (UByteProperty* ByteProperty = Cast<UByteProperty>(*It))
 		{
@@ -4856,16 +4892,10 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 			{
 				// ECollisionEnabled
 				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CollisionEnabled))
-				{
-					if (ECollisionEnabled::Type* Member = ByteProperty->ContainerPtrToValuePtr<ECollisionEnabled::Type>(InObject))
-					{ *Member = ECollisionEnabled::ToType(JsonObject->GetStringField(MemberName)); continue; }
-				}
+				{ WriteToMemberEnumAsBytePropertyFromJson<ECollisionEnabled::Type>(JsonObject, ByteProperty, InObject, MemberName, &ECollisionEnabled::ToType); continue; }
 				// ECollisionChannel
 				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CollisionChannel))
-				{
-					if (ECollisionChannel* Member = ByteProperty->ContainerPtrToValuePtr<ECollisionChannel>(InObject))
-					{ *Member = ECsCollisionChannel::ToType(JsonObject->GetStringField(MemberName)); continue; }
-				}
+				{ WriteToMemberBytePropertyFromJson<ECollisionChannel>(JsonObject, ByteProperty, InObject, MemberName, &ECsCollisionChannel::ToType); continue; }
 				// ECollisionResponse
 				if (ByteProperty->Enum->CppType.Contains(ECsCommonLoadCached::Str::CollisionResponse))
 				{

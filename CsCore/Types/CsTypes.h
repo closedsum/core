@@ -1879,7 +1879,7 @@ namespace ECsCollisionChannel
 		return EMCsCollisionChannel::Get().ToString(EType);
 	}
 
-	FORCEINLINE ECollisionChannel ToType(const FString &String)
+	FORCEINLINE const ECollisionChannel& ToType(const FString &String)
 	{
 		return EMCsCollisionChannel::Get().ToType(String);
 	}

@@ -1092,7 +1092,7 @@ void UCsCommon::GetHMDWorldViewPoint(APlayerController* PlayerController, FVecto
 // Easing
 #pragma region
 
-float UCsCommon::Ease(const TEnumAsByte<ECsEasingType::Type> &EasingType, const float &Time, const float &Start, const float &Final, const float &Duration)
+float UCsCommon::Ease(const ECsEasingType &EasingType, const float &Time, const float &Start, const float &Final, const float &Duration)
 {
 	if (EasingType == ECsEasingType::Linear)
 		return Linear(Time, Start, Final, Duration);
@@ -1216,32 +1216,7 @@ float UCsCommon::ExpoEaseInOut(const float &Time, const float &Start, const floa
 	return (Final / 2.0f) * (-FMath::Pow(2.0f, -10.0f * T) + 2.0f) + Start;
 }
 
-TCsEasingFunction UCsCommon::GetEasingFunction(const TCsEasingType &EasingType)
-{
-	if (EasingType == ECsEasingType::Linear)
-		return &UCsCommon::Linear;
-	if (EasingType == ECsEasingType::BounceIn)
-		return &UCsCommon::BounceEaseIn;
-	if (EasingType == ECsEasingType::BounceOut)
-		return &UCsCommon::BounceEaseOut;
-	if (EasingType == ECsEasingType::BounceInOut)
-		return &UCsCommon::BounceEaseInOut;
-	if (EasingType == ECsEasingType::CubicIn)
-		return &UCsCommon::CubicEaseIn;
-	if (EasingType == ECsEasingType::CubicOut)
-		return &UCsCommon::CubicEaseOut;
-	if (EasingType == ECsEasingType::CubicInOut)
-		return &UCsCommon::CubicEaseInOut;
-	if (EasingType == ECsEasingType::ExpoIn)
-		return &UCsCommon::ExpoEaseIn;
-	if (EasingType == ECsEasingType::ExpoOut)
-		return &UCsCommon::ExpoEaseOut;
-	if (EasingType == ECsEasingType::ExpoInOut)
-		return &UCsCommon::ExpoEaseInOut;
-	return &UCsCommon::Linear;
-}
-
-TCsEasingFunction UCsCommon::GetEasingFunction(const TEnumAsByte<ECsEasingType::Type> &EasingType)
+TCsEasingFunction UCsCommon::GetEasingFunction(const ECsEasingType &EasingType)
 {
 	if (EasingType == ECsEasingType::Linear)
 		return &UCsCommon::Linear;
@@ -1855,12 +1830,12 @@ void UCsCommon::EndAndClearRoutine(struct FCsRoutine* &r)
 	r = nullptr;
 }
 
-FCsRoutine* UCsCommon::ScaleActorOverTime(const ECsCoroutineSchedule &ScheduleType, const TEnumAsByte<ECsEasingType::Type> &EasingType, AActor* InActor, const float &StartScale, const float &EndScale, const float &Time, const bool &IsRelativeScale)
+FCsRoutine* UCsCommon::ScaleActorOverTime(const ECsCoroutineSchedule &ScheduleType, const ECsEasingType &EasingType, AActor* InActor, const float &StartScale, const float &EndScale, const float &Time, const bool &IsRelativeScale)
 {
 	return ScaleActorOverTime(ScheduleType, EasingType, InActor, FVector(StartScale), FVector(EndScale), Time, IsRelativeScale);
 }
 
-FCsRoutine* UCsCommon::ScaleActorOverTime(const ECsCoroutineSchedule &ScheduleType, const TEnumAsByte<ECsEasingType::Type> &EasingType, AActor* InActor, const FVector &StartScale, const FVector &EndScale, const float &Time, const bool &IsRelativeScale)
+FCsRoutine* UCsCommon::ScaleActorOverTime(const ECsCoroutineSchedule &ScheduleType, const ECsEasingType &EasingType, AActor* InActor, const FVector &StartScale, const FVector &EndScale, const float &Time, const bool &IsRelativeScale)
 {
 	if (Time <= 0.0f)
 		return nullptr;
@@ -1945,10 +1920,10 @@ PT_THREAD(UCsCommon::ScaleActorOverTime_Internal(struct FCsRoutine* r))
 	const FVector StartScale = ClampVectorComponents(r->vectors[0], CS_ACTOR_SMALLEST_SCALE);
 	const FVector EndScale   = ClampVectorComponents(r->vectors[1], CS_ACTOR_SMALLEST_SCALE);
 
-	const bool IsRelativeScale						  = r->flags[0];
-	const TEnumAsByte<ECsEasingType::Type> EasingType = (TEnumAsByte<ECsEasingType::Type>)r->ints[0];
-	UCurveFloat* CurveFloat							  = r->objects[0].IsValid() && r->objects[0].Get() ? Cast<UCurveFloat>(r->objects[0].Get()) : nullptr;
-	UCurveVector* CurveVector					      = r->objects[0].IsValid() && r->objects[0].Get() ? Cast<UCurveVector>(r->objects[0].Get()) : nullptr;
+	const bool IsRelativeScale		= r->flags[0];
+	const ECsEasingType& EasingType = EMCsEasingType::Get().GetEnumAt(r->ints[0]);
+	UCurveFloat* CurveFloat			= r->objects[0].IsValid() && r->objects[0].Get() ? Cast<UCurveFloat>(r->objects[0].Get()) : nullptr;
+	UCurveVector* CurveVector		= r->objects[0].IsValid() && r->objects[0].Get() ? Cast<UCurveVector>(r->objects[0].Get()) : nullptr;
 
 	CS_COROUTINE_BEGIN(r);
 
@@ -2108,7 +2083,7 @@ PT_THREAD(UCsCommon::ScaleActorOverTime_AsCurve_Internal(struct FCsRoutine* r))
 	CS_COROUTINE_END(r);
 }
 
-FCsRoutine* UCsCommon::MoveActorOverTime(const ECsCoroutineSchedule &ScheduleType, const TEnumAsByte<ECsEasingType::Type> &EasingType, AActor* InActor, const FVector &StartLocation, const FVector &EndLocation, const float &Time, const bool &IsRelativeLocation)
+FCsRoutine* UCsCommon::MoveActorOverTime(const ECsCoroutineSchedule &ScheduleType, const ECsEasingType &EasingType, AActor* InActor, const FVector &StartLocation, const FVector &EndLocation, const float &Time, const bool &IsRelativeLocation)
 {
 	if (Time <= 0.0f)
 		return nullptr;
@@ -2154,8 +2129,8 @@ PT_THREAD(UCsCommon::MoveActorOverTime_Internal(struct FCsRoutine* r))
 	const FVector StartLocation = r->vectors[0];
 	const FVector EndLocation   = r->vectors[1];
 
-	const bool IsRelativeLocation					  = r->flags[0];
-	const TEnumAsByte<ECsEasingType::Type> EasingType = (TEnumAsByte<ECsEasingType::Type>)r->ints[0];
+	const bool IsRelativeLocation	= r->flags[0];
+	const ECsEasingType& EasingType = EMCsEasingType::Get().GetEnumAt(r->ints[0]);
 
 	CS_COROUTINE_BEGIN(r);
 
@@ -2265,7 +2240,7 @@ FCsRoutine* UCsCommon::DestroyMaterialInstanceDynamics(const ECsCoroutineSchedul
 	return R;
 }
 
-FCsRoutine* UCsCommon::FadeCameraOverTime(const ECsCoroutineSchedule &ScheduleType, const TEnumAsByte<ECsEasingType::Type> &EasingType, APlayerController* Controller, const float &Start, const float &End, const float &Time, const FLinearColor &Color)
+FCsRoutine* UCsCommon::FadeCameraOverTime(const ECsCoroutineSchedule &ScheduleType, const ECsEasingType &EasingType, APlayerController* Controller, const float &Start, const float &End, const float &Time, const FLinearColor &Color)
 {
 	if (Time <= 0.0f)
 		return nullptr;
@@ -2308,7 +2283,7 @@ PT_THREAD(UCsCommon::FadeCameraOverTime_Internal(struct FCsRoutine* r))
 	const float StartTime   = r->timers[0];
 	const float MaxTime		= r->floats[2];
 
-	const TEnumAsByte<ECsEasingType::Type> EasingType = (TEnumAsByte<ECsEasingType::Type>)r->ints[0];
+	const ECsEasingType& EasingType = EMCsEasingType::Get().GetEnumAt(r->ints[0]);
 
 	const float Start	 = r->floats[0];
 	const float End		 = r->floats[1];

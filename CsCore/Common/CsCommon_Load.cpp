@@ -2465,6 +2465,11 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 			}
 			continue;
 		}
+		// Enum Class
+		if (UEnumProperty* EnumProperty = Cast<UEnumProperty>(*It))
+		{
+			continue;
+		}
 		// int32
 		if (UIntProperty* IntProperty = Cast<UIntProperty>(*It))
 		{

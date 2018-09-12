@@ -76,7 +76,7 @@ bool UCsWidget_Fullscreen::RemoveRoutine_Internal(struct FCsRoutine* Routine, co
 
 #pragma endregion Routines
 
-void UCsWidget_Fullscreen::FadeOut(const TEnumAsByte<ECsEasingType::Type> &EasingType, const float &Start, const float &End, const float &Time, const FLinearColor &Color)
+void UCsWidget_Fullscreen::FadeOut(const ECsEasingType &EasingType, const float &Start, const float &End, const float &Time, const FLinearColor &Color)
 {
 	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
 
@@ -98,7 +98,7 @@ void UCsWidget_Fullscreen::FadeOut(const TEnumAsByte<ECsEasingType::Type> &Easin
 	Scheduler->StartRoutine(Schedule, R);
 }
 
-void UCsWidget_Fullscreen::FadeIn(const TEnumAsByte<ECsEasingType::Type> &EasingType, const float &Start, const float &End, const float &Time, const FLinearColor &Color)
+void UCsWidget_Fullscreen::FadeIn(const ECsEasingType &EasingType, const float &Start, const float &End, const float &Time, const FLinearColor &Color)
 {
 	const ECsCoroutineSchedule& Schedule = NCsCoroutineSchedule::Ref::Tick;
 
@@ -130,7 +130,7 @@ CS_COROUTINE(UCsWidget_Fullscreen, Fade_Internal)
 	const float StartTime   = r->startTime;
 	const float MaxTime     = r->floats[2];
 
-	const TEnumAsByte<ECsEasingType::Type> EasingType = (TEnumAsByte<ECsEasingType::Type>)r->ints[0];
+	const ECsEasingType& EasingType = EMCsEasingType::Get().GetEnumAt(r->ints[0]);
 
 	const float Start	 = r->floats[0];
 	const float End		 = r->floats[1];

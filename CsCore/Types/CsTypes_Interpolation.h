@@ -48,25 +48,22 @@ namespace NCsBlendDirection
 #pragma region
 
 UENUM(BlueprintType)
-namespace ECsEasingType
+enum class ECsEasingType : uint8
 {
-	enum Type
-	{
-		Linear				UMETA(DisplayName = "Linear"),
-		BounceIn			UMETA(DisplayName = "Bounce In"),
-		BounceOut			UMETA(DisplayName = "Bounce Out"),
-		BounceInOut			UMETA(DisplayName = "Bounce In Out"),
-		CubicIn				UMETA(DisplayName = "Cubic In"),
-		CubicOut			UMETA(DisplayName = "Cubic Out"),
-		CubicInOut			UMETA(DisplayName = "Cubic In Out"),
-		ExpoIn				UMETA(DisplayName = "Cubic In"),
-		ExpoOut				UMETA(DisplayName = "Expo Out"),
-		ExpoInOut			UMETA(DisplayName = "Expo In Out"),
-		ECsEasingType_MAX	UMETA(Hidden),
-	};
-}
+	Linear				UMETA(DisplayName = "Linear"),
+	BounceIn			UMETA(DisplayName = "Bounce In"),
+	BounceOut			UMETA(DisplayName = "Bounce Out"),
+	BounceInOut			UMETA(DisplayName = "Bounce In Out"),
+	CubicIn				UMETA(DisplayName = "Cubic In"),
+	CubicOut			UMETA(DisplayName = "Cubic Out"),
+	CubicInOut			UMETA(DisplayName = "Cubic In Out"),
+	ExpoIn				UMETA(DisplayName = "Cubic In"),
+	ExpoOut				UMETA(DisplayName = "Expo Out"),
+	ExpoInOut			UMETA(DisplayName = "Expo In Out"),
+	ECsEasingType_MAX	UMETA(Hidden),
+};
 
-struct CSCORE_API EMCsEasingType : public TCsEnumMap<ECsEasingType::Type>
+struct CSCORE_API EMCsEasingType : public TCsEnumMap<ECsEasingType>
 {
 protected:
 	EMCsEasingType() {}
@@ -81,13 +78,11 @@ public:
 	static EMCsEasingType& Get();
 };
 
-typedef ECsEasingType::Type TCsEasingType;
-
 namespace NCsEasingType
 {
 	namespace Ref
 	{
-		typedef ECsEasingType::Type Type;
+		typedef ECsEasingType Type;
 
 		extern CSCORE_API const Type Linear;
 		extern CSCORE_API const Type BounceIn;
@@ -102,8 +97,6 @@ namespace NCsEasingType
 		extern CSCORE_API const Type ECsEasingType_MAX;
 	}
 }
-
-#define ECS_EASING_TYPE_MAX (uint8)ECsEasingType::ECsEasingType_MAX
 
 #pragma endregion EasingType
 

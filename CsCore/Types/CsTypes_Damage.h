@@ -192,7 +192,7 @@ struct CSCORE_API FCsDamageFalloff
 	bool bEasingType;
 	/** Easing method for interpolating values between the Maximum Distance and the Current Distance */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (editcondition = "bEasingType"))
-	TEnumAsByte<ECsEasingType::Type> EasingType;
+	ECsEasingType EasingType;
 
 	TCsEasingFunction EasingFunction;
 
@@ -257,7 +257,7 @@ struct CSCORE_API FCsDamageRadial
 
 	/** Easing method for interpolating values between Min and Max */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
-	TEnumAsByte<ECsEasingType::Type> EasingType;
+	ECsEasingType EasingType;
 
 	TCsEasingFunction EasingFunction;
 

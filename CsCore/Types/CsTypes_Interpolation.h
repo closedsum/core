@@ -4,47 +4,45 @@
 //#include "CsTypes_Interpolation.generated.h"
 #pragma once
 
-// Interpolation
+// BlendDirection
 #pragma region
 
 UENUM(BlueprintType)
-namespace ECsBlendDirection
+enum class ECsBlendDirection : uint8
 {
-	enum Type
+	In						UMETA(DisplayName = "In"),
+	Out						UMETA(DisplayName = "Out"),
+	ECsBlendDirection_MAX	UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsBlendDirection : public TCsEnumMap<ECsBlendDirection>
+{
+protected:
+	EMCsBlendDirection() {}
+	EMCsBlendDirection(const EMCsBlendDirection &) = delete;
+	EMCsBlendDirection(EMCsBlendDirection &&) = delete;
+public:
+	~EMCsBlendDirection() {}
+private:
+	static EMCsBlendDirection* Instance;
+
+public:
+	static EMCsBlendDirection& Get();
+};
+
+namespace NCsBlendDirection
+{
+	namespace Ref
 	{
-		In						UMETA(DisplayName = "In"),
-		Out						UMETA(DisplayName = "Out"),
-		ECsBlendDirection_MAX	UMETA(Hidden),
-	};
+		typedef ECsBlendDirection Type;
+
+		extern CSCORE_API const Type In;
+		extern CSCORE_API const Type Out;
+		extern CSCORE_API const Type ECsBlendDirection_MAX;
+	}
 }
 
-namespace ECsBlendDirection
-{
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
-
-	namespace Str
-	{
-		const TCsString In = TCsString(TEXT("In"), TEXT("in"));
-		const TCsString Out = TCsString(TEXT("Out"), TEXT("out"));
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::In) { return Str::In.Value; }
-		if (EType == Type::Out) { return Str::Out.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::In) { return Type::In; }
-		if (String == Str::Out) { return Type::Out; }
-		return Type::ECsBlendDirection_MAX;
-	}
-}
-
-#define ECS_BLEND_DIRECTION_MAX (uint8)ECsBlendDirection::ECsBlendDirection_MAX
-typedef ECsBlendDirection::Type TCsBlendDirection;
+#pragma endregion BlendDirection
 
 UENUM(BlueprintType)
 namespace ECsEasingType
@@ -119,5 +117,3 @@ typedef ECsEasingType::Type TCsEasingType;
 
 // Easing Function (Time, Start, Final, Duration)
 typedef float(*TCsEasingFunction)(const float&, const float&, const float&, const float&);
-
-#pragma endregion View

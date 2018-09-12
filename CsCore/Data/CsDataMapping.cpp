@@ -933,12 +933,12 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const FECsAssetType
 										{
 											if (!CS_TEST_BLUEPRINT_BITFLAG(Entry.Data_LoadFlags, J))
 											{
-												const FString PreviousDataLoadFlagsAsString = TEXT("(") + UCsCommon::LoadFlagsToString(Entry.Data_LoadFlags) + TEXT(")");
+												const FString PreviousDataLoadFlagsAsString = TEXT("(") + EMCsLoadFlags::Get().MaskToString(Entry.Data_LoadFlags) + TEXT(")");
 
 												CS_SET_BLUEPRINT_BITFLAG(Entry.Data_LoadFlags, J);
 
-												const FString DataLoadFlagsAsString = TEXT("(") + UCsCommon::LoadFlagsToString(Entry.Data_LoadFlags) + TEXT(")");
-												const FString LoadFlagsAsString		= TEXT("(") + UCsCommon::LoadFlagsToString(J) + TEXT(")");
+												const FString DataLoadFlagsAsString = TEXT("(") + EMCsLoadFlags::Get().MaskToString(Entry.Data_LoadFlags) + TEXT(")");
+												const FString LoadFlagsAsString		= TEXT("(") + EMCsLoadFlags::Get().ToString((int32)J) + TEXT(")");
 
 												const FString Output = TEXT("ACsDataMapping::PerformAddEntry: [") + AssetTypeAsString + TEXT(", ") + ShortCode.ToString() + TEXT(", ") + FString::FromInt(I) + TEXT("] Adding LoadFlags ") + PreviousDataLoadFlagsAsString + TEXT(" + ") + LoadFlagsAsString + TEXT(" = ") + DataLoadFlagsAsString + TEXT(".");
 
@@ -1270,12 +1270,12 @@ bool ACsDataMapping::PerformAddEntry(const FName &ShortCode, const int32 &LoadFl
 										{
 											if (!CS_TEST_BLUEPRINT_BITFLAG(Entry.Data_LoadFlags, J))
 											{
-												const FString PreviousDataLoadFlagsAsString = TEXT("(") + UCsCommon::LoadFlagsToString(Entry.Data_LoadFlags) + TEXT(")");
+												const FString PreviousDataLoadFlagsAsString = TEXT("(") + EMCsLoadFlags::Get().MaskToString(Entry.Data_LoadFlags) + TEXT(")");
 
 												CS_SET_BLUEPRINT_BITFLAG(Entry.Data_LoadFlags, J);
 												
-												const FString DataLoadFlagsAsString = TEXT("(") + UCsCommon::LoadFlagsToString(Entry.Data_LoadFlags) + TEXT(")");
-												const FString LoadFlagsAsString     = TEXT("(") + UCsCommon::LoadFlagsToString(J) + TEXT(")");
+												const FString DataLoadFlagsAsString = TEXT("(") + EMCsLoadFlags::Get().MaskToString(Entry.Data_LoadFlags) + TEXT(")");
+												const FString LoadFlagsAsString     = TEXT("(") + EMCsLoadFlags::Get().ToString((int32)J) + TEXT(")");
 
 												const FString Output = TEXT("ACsDataMapping::PerformAddEntry: [") + AssetTypeAsString + TEXT(", ") + ShortCode.ToString() + TEXT(", ") + FString::FromInt(I) + TEXT("] Adding LoadFlags ") + PreviousDataLoadFlagsAsString + TEXT(" + ") + LoadFlagsAsString + TEXT(" = ") + DataLoadFlagsAsString + TEXT(".");
 
@@ -1734,7 +1734,7 @@ bool ACsDataMapping::CheckEntryExists(const FName &ShortCode, const FECsAssetTyp
 
 								if (!CS_TEST_BLUEPRINT_BITFLAG(Entry.Data_LoadFlags, Flags))
 								{
-									OutMessage += TEXT(" LoadFlags: [") + UCsCommon::LoadFlagsToString(Entry.Data_LoadFlags) + TEXT("] does NOT include ") + ECsLoadFlags_Editor::ToString(LoadFlags) + TEXT(".");
+									OutMessage += TEXT(" LoadFlags: [") + EMCsLoadFlags::Get().MaskToString(Entry.Data_LoadFlags) + TEXT("] does NOT include ") + EMCsLoadFlags_Editor::Get().ToString(LoadFlags) + TEXT(".");
 									Found = false;
 								}
 								// Check Data

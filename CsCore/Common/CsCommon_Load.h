@@ -20,14 +20,10 @@ class CSCORE_API UCsCommon_Load : public UBlueprintFunctionLibrary
 // Enum to String Conversion
 #pragma region
 
-	static FString LoadFlagsToString(const int32 &LoadFlags);
-
 #pragma endregion Enum to String Conversion
 
 // Enum to Enum Conversion
 #pragma region
-
-	static int32 StringtoLoadFlags(const FString &LoadFlags);
 
 	static ECsLoadFlags ViewTypeToLoadFlags(const TCsViewType &ViewType, const bool &IsLow = false);
 
@@ -512,11 +508,18 @@ template<typename T>
 			InJsonWriter->WriteValue(MemberName, EnumMap::Get().ToString(*Member));
 	}
 
-	template<typename T>
-	static void WriteMemberBytePropertyToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UByteProperty* &ByteProperty, void* InObject, const FString &MemberName, const FString& (*EnumToString)(const T&))
+	template<typename EnumType>
+	static void WriteMemberBytePropertyToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UByteProperty* &ByteProperty, void* InObject, const FString &MemberName, const FString& (*EnumToString)(const EnumType&))
 	{
-		if (TEnumAsByte<T>* Member = ByteProperty->ContainerPtrToValuePtr<TEnumAsByte<T>>(InObject))
+		if (EnumType* Member = ByteProperty->ContainerPtrToValuePtr<T>(InObject))
 			InJsonWriter->WriteValue(MemberName, (*EnumToString)(*Member));
+	}
+
+	template<typename EnumType, typename EnumMap>
+	static void WriteMemberBytePropertyToJson(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UByteProperty* &ByteProperty, void* InObject, const FString &MemberName)
+	{
+		if (EnumType* Member = ByteProperty->ContainerPtrToValuePtr<T>(InObject))
+			InJsonWriter->WriteValue(MemberName, EnumMap::Get().ToString(*Member));
 	}
 
 	template<typename T>
@@ -851,7 +854,7 @@ template<typename T>
 	static void WriteToMemberEnumAsBytePropertyFromJson(TSharedPtr<class FJsonObject> &JsonObject, UByteProperty* &ByteProperty, void* InObject, const FString &MemberName, const EnumType&(*ToType)(const FString&))
 	{
 		if (TEnumAsByte<EnumType>* Member = ByteProperty->ContainerPtrToValuePtr<TEnumAsByte<EnumType>>(InObject))
-			*Member = (*ToType)(*JsonObject->GetStringField(MemberName));
+			*Member = (*ToType)(JsonObject->GetStringField(MemberName));
 	}
 
 	template<typename EnumType, typename EnumMap>
@@ -865,7 +868,14 @@ template<typename T>
 	static void WriteToMemberBytePropertyFromJson(TSharedPtr<class FJsonObject> &JsonObject, UByteProperty* &ByteProperty, void* InObject, const FString &MemberName, const EnumType&(*ToType)(const FString&))
 	{
 		if (EnumType* Member = ByteProperty->ContainerPtrToValuePtr<EnumType>(InObject))
-			*Member = (*ToType)(*JsonObject->GetStringField(MemberName));
+			*Member = (*ToType)(JsonObject->GetStringField(MemberName));
+	}
+
+	template<typename EnumType, typename EnumMap>
+	static void WriteToMemberBytePropertyFromJson(TSharedPtr<class FJsonObject> &JsonObject, UByteProperty* &ByteProperty, void* InObject, const FString &MemberName)
+	{
+		if (EnumType* Member = ByteProperty->ContainerPtrToValuePtr<EnumType>(InObject))
+			*Member = EnumMap::Get()[JsonObject->GetStringField(MemberName)];
 	}
 
 	template<typename T>

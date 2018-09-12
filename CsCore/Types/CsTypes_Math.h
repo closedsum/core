@@ -4,9 +4,6 @@
 #include "CsTypes_Math.generated.h"
 #pragma once
 
-// Math
-#pragma region
-
 USTRUCT(BlueprintType)
 struct FCsRadius
 {
@@ -75,6 +72,9 @@ struct FCsRadius
 															MemberName.Square(); \
 														}
 
+// ParametricFunctionType
+#pragma region
+
 UENUM(BlueprintType)
 namespace ECsParametricFunctionType
 {
@@ -87,36 +87,39 @@ namespace ECsParametricFunctionType
 	};
 }
 
+typedef ECsParametricFunctionType::Type TCsParametricFunctionType;
+
+struct CSCORE_API EMCsParametricFunctionType : public TCsEnumMap<ECsParametricFunctionType::Type>
+{
+protected:
+	EMCsParametricFunctionType() {}
+	EMCsParametricFunctionType(const EMCsParametricFunctionType &) = delete;
+	EMCsParametricFunctionType(EMCsParametricFunctionType &&) = delete;
+public:
+	~EMCsParametricFunctionType() {}
+private:
+	static EMCsParametricFunctionType* Instance;
+
+public:
+	static EMCsParametricFunctionType& Get();
+};
+
 namespace ECsParametricFunctionType
 {
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
-
 	namespace Str
 	{
-		const TCsString Linear = TCsString(TEXT("Linear"), TEXT("linear"));
-		const TCsString Quadratic = TCsString(TEXT("Quadratic"), TEXT("quadratic"));
-		const TCsString Sine = TCsString(TEXT("Sine"), TEXT("sine"));
-	}
+		typedef ECsParametricFunctionType::Type Type;
 
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::Linear) { return Str::Linear.Value; }
-		if (EType == Type::Quadratic) { return Str::Quadratic.Value; }
-		if (EType == Type::Sine) { return Str::Sine.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::Linear) { return Type::Linear; }
-		if (String == Str::Quadratic) { return Type::Quadratic; }
-		if (String == Str::Sine) { return Type::Sine; }
-		return Type::ECsParametricFunctionType_MAX;
+		extern CSCORE_API const Type Linear;
+		extern CSCORE_API const Type Quadratic;
+		extern CSCORE_API const Type Sine;
+		extern CSCORE_API const Type ECsParametricFunctionType_MAX;
 	}
 }
 
 #define ECS_PARAMETRIC_FUNCTION_TYPE_MAX (uint8)ECsParametricFunctionType::ECsParametricFunctionType_MAX
-typedef ECsParametricFunctionType::Type TCsParametricFunctionType;
+
+#pragma endregion ParametricFunctionType
 
 USTRUCT(BlueprintType)
 struct FCsParametricFunctionAxis
@@ -339,5 +342,3 @@ struct FCsParametricFunction
 		return WorldTransform.GetTranslation();
 	}
 };
-
-#pragma endregion Math

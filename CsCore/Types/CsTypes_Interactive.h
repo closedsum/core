@@ -202,16 +202,6 @@ namespace ECsInteractiveCollision
 		extern CSCORE_API const Type Mesh;
 		extern CSCORE_API const Type ECsInteractiveCollision_MAX;
 	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		return EMCsInteractiveCollision::Get().ToString(EType);
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		return EMCsInteractiveCollision::Get().ToType(String);
-	}
 }
 
 USTRUCT(BlueprintType)

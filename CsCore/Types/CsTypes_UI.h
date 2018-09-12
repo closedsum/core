@@ -43,7 +43,8 @@ enum class ECsWidgetFocus : uint8
 // 1 (2^0 Mouse) + 2 (2^1 Keyboard) + 4 (2^2 Controller)
 #define ECS_WIDGET_FOCUS_ALL 7
 
-// WidgetActorType
+	// WidgetActorType
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsWidgetActorType : public FECsEnum_uint8
@@ -79,7 +80,10 @@ public:
 	static EMCsWidgetActorType& Get();
 };
 
-// WidgetType
+#pragma endregion WidgetActorType
+
+	// WidgetType
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsWidgetType : public FECsEnum_uint8
@@ -114,6 +118,11 @@ private:
 public:
 	static EMCsWidgetType& Get();
 };
+
+#pragma endregion WidgetType
+
+	// SimpleWidgetType
+#pragma region
 
 UENUM(BlueprintType)
 namespace ECsSimpleWidgetType
@@ -156,6 +165,8 @@ namespace ECsSimpleWidgetType
 		extern CSCORE_API const Type ECsSimpleWidgetType_MAX;
 	}
 }
+
+#pragma endregion SimpleWidgetType
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsWidgetActorInfo
@@ -393,64 +404,70 @@ public:
 																			} \
 																		}
 
+	// HorizTextAligment
+#pragma region
+
+struct CSCORE_API EMHorizTextAligment : public TCsEnumMap<EHorizTextAligment>
+{
+protected:
+	EMHorizTextAligment() {}
+	EMHorizTextAligment(const EMHorizTextAligment &) = delete;
+	EMHorizTextAligment(EMHorizTextAligment &&) = delete;
+public:
+	~EMHorizTextAligment() {}
+private:
+	static EMHorizTextAligment* Instance;
+
+public:
+	static EMHorizTextAligment& Get();
+};
+
 namespace ECsHorizTextAligment
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
+	namespace Ref
 	{
-		const TCsString EHTA_Left = TCsString(TEXT("EHTA_Left"), TEXT("ehta_left"), TEXT("left"));
-		const TCsString EHTA_Center = TCsString(TEXT("EHTA_Center"), TEXT("ehta_center"), TEXT("center"));
-		const TCsString EHTA_Right = TCsString(TEXT("EHTA_Right"), TEXT("ehta_right"), TEXT("right"));
-	}
+		typedef EHorizTextAligment Type;
 
-	FORCEINLINE const FString& ToString(const EHorizTextAligment &EType)
-	{
-		if (EType == EHorizTextAligment::EHTA_Left) { return Str::EHTA_Left.Value; }
-		if (EType == EHorizTextAligment::EHTA_Center) { return Str::EHTA_Center.Value; }
-		if (EType == EHorizTextAligment::EHTA_Right) { return Str::EHTA_Right.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE EHorizTextAligment ToType(const FString &String)
-	{
-		if (String == Str::EHTA_Left) { return EHorizTextAligment::EHTA_Left; }
-		if (String == Str::EHTA_Center) { return EHorizTextAligment::EHTA_Center; }
-		if (String == Str::EHTA_Right) { return EHorizTextAligment::EHTA_Right; }
-		return EHorizTextAligment::EHTA_Left;
+		extern CSCORE_API const Type EHTA_Left;
+		extern CSCORE_API const Type EHTA_Center;
+		extern CSCORE_API const Type EHTA_Right;
 	}
 }
+
+#pragma endregion HorizTextAligment
+
+	// VerticalTextAligment
+#pragma region
+
+struct CSCORE_API EMVerticalTextAligment : public TCsEnumMap<EVerticalTextAligment>
+{
+protected:
+	EMVerticalTextAligment() {}
+	EMVerticalTextAligment(const EMVerticalTextAligment &) = delete;
+	EMVerticalTextAligment(EMVerticalTextAligment &&) = delete;
+public:
+	~EMVerticalTextAligment() {}
+private:
+	static EMVerticalTextAligment* Instance;
+
+public:
+	static EMVerticalTextAligment& Get();
+};
 
 namespace ECsVerticalTextAligment
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
+	namespace Ref
 	{
-		const TCsString EVRTA_TextTop = TCsString(TEXT("EVRTA_TextTop"), TEXT("evrta_texttop"), TEXT("text top"));
-		const TCsString EVRTA_TextCenter = TCsString(TEXT("EVRTA_TextCenter"), TEXT("evrta_textcenter"), TEXT("text center"));
-		const TCsString EVRTA_TextBottom = TCsString(TEXT("EVRTA_TextBottom"), TEXT("evrta_textbottom"), TEXT("text bottom"));
-		const TCsString EVRTA_QuadTop = TCsString(TEXT("EVRTA_QuadTop"), TEXT("evrta_quadtop"), TEXT("quad top"));
-	}
+		typedef EVerticalTextAligment Type;
 
-	FORCEINLINE const FString& ToString(const EVerticalTextAligment &EType)
-	{
-		if (EType == EVerticalTextAligment::EVRTA_TextTop) { return Str::EVRTA_TextTop.Value; }
-		if (EType == EVerticalTextAligment::EVRTA_TextCenter) { return Str::EVRTA_TextCenter.Value; }
-		if (EType == EVerticalTextAligment::EVRTA_TextBottom) { return Str::EVRTA_TextBottom.Value; }
-		if (EType == EVerticalTextAligment::EVRTA_QuadTop) { return Str::EVRTA_QuadTop.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE EVerticalTextAligment ToType(const FString &String)
-	{
-		if (String == Str::EVRTA_TextTop) { return EVerticalTextAligment::EVRTA_TextTop; }
-		if (String == Str::EVRTA_TextCenter) { return EVerticalTextAligment::EVRTA_TextCenter; }
-		if (String == Str::EVRTA_TextBottom) { return EVerticalTextAligment::EVRTA_TextBottom; }
-		if (String == Str::EVRTA_QuadTop) { return EVerticalTextAligment::EVRTA_QuadTop; }
-		return EVerticalTextAligment::EVRTA_TextTop;
+		extern CSCORE_API const Type EVRTA_TextTop;
+		extern CSCORE_API const Type EVRTA_TextCenter;
+		extern CSCORE_API const Type EVRTA_TextBottom;
+		extern CSCORE_API const Type EVRTA_QuadTop;
 	}
 }
+
+#pragma endregion VerticalTextAligment
 
 UENUM(BlueprintType)
 enum class ECsButtonState : uint8

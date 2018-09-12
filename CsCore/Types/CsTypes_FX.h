@@ -77,16 +77,6 @@ namespace ECsFxPriority
 		extern CSCORE_API const Type High;
 		extern CSCORE_API const Type ECsFxPriority_MAX;
 	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		return EMCsFxPriority::Get().ToString(EType);
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		return EMCsFxPriority::Get().ToType(String);
-	}
 }
 
 #pragma endregion FxPriority

@@ -127,7 +127,7 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const FECsLoadAs
 
 		if (Index != INDEX_NONE)
 		{
-			const FString& LoadFlagsAsString	  = ECsLoadFlags_Editor::ToString(LoadFlags);
+			const FString& LoadFlagsAsString	  = EMCsLoadFlags_Editor::Get().ToString(LoadFlags);
 			const FString& LoadAssetsTypeAsString = OutLoadAssetsTypes[Index].Name;
 
 			FCsPayload* Payload = OutPayloads[Index];
@@ -171,7 +171,7 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const FECsLoadAs
 			{
 				CS_SET_BLUEPRINT_BITFLAG(OutEntries[CS_FIRST]->Data_LoadFlags, Flags);
 
-				const FString& LoadFlagsAsString = ECsLoadFlags_Editor::ToString(LoadFlags);
+				const FString& LoadFlagsAsString = EMCsLoadFlags_Editor::Get().ToString(LoadFlags);
 				const FString& AssetTypeAsString = OutAssetTypes[CS_FIRST].Name;
 
 				const FString Output = TEXT("ACsData_Payload::PostEditChangeProperty: Missing LoadFlags: ") + LoadFlagsAsString + TEXT(" in DataMapping: [") + AssetTypeAsString + TEXT(",") + InShortCode.ToString() + TEXT(",") + FString::FromInt(OutIndices[CS_FIRST]) + TEXT("]. Manually adding LoadFlag: ") + LoadFlagsAsString + TEXT(".");
@@ -216,7 +216,7 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const FECsLoadAs
 								Array[ArraySize].LoadFlags	= LoadFlags;
 
 								const FString& LoadAssetsTypeAsString = LoadAssetsType.Name;
-								const FString& LoadFlagsAsString	  = ECsLoadFlags_Editor::ToString(LoadFlags);
+								const FString& LoadFlagsAsString	  = EMCsLoadFlags_Editor::Get().ToString(LoadFlags);
 
 								OutOutput = TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + AssetTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(ArraySize) + TEXT("]");
 								OutMessage = TEXT("SUCCESS.");
@@ -315,7 +315,7 @@ bool ACsData_Payload::PerformAddEntry(const FName &InShortCode, const FECsLoadAs
 								Array[ArraySize].LoadFlags	= LoadFlags;
 
 								const FString& LoadAssetsTypeAsString = LoadAssetsType.Name;
-								const FString& LoadFlagsAsString	  = ECsLoadFlags_Editor::ToString(LoadFlags);
+								const FString& LoadFlagsAsString	  = EMCsLoadFlags_Editor::Get().ToString(LoadFlags);
 
 								OutOutput  = TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + AssetTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(ArraySize) + TEXT("]");
 								OutMessage = TEXT("SUCCESS. Check LOG.");
@@ -406,8 +406,8 @@ bool ACsData_Payload::Editor_IsValid(ACsDataMapping* DataMapping)
 										// Check for LoadFlags
 										if (!CS_TEST_BLUEPRINT_BITFLAG(OutEntries[CS_FIRST]->Data_LoadFlags, Array[J].LoadFlags))
 										{
-											const FString DataLoadFlagsAsString    = UCsCommon::LoadFlagsToString(OutEntries[CS_FIRST]->Data_LoadFlags);
-											const FString& PayloadLoadFlagsAsString = ECsLoadFlags_Editor::ToString(Array[J].LoadFlags);
+											const FString DataLoadFlagsAsString    = EMCsLoadFlags::Get().MaskToString(OutEntries[CS_FIRST]->Data_LoadFlags);
+											const FString& PayloadLoadFlagsAsString = EMCsLoadFlags_Editor::Get().ToString(Array[J].LoadFlags);
 
 											UE_LOG(LogCs, Warning, TEXT("ACsData_Payload::Editor_IsValid: [%s, %s, %d] LoadFlags NOT present in DataMapping Entry [%s, %d]. (%s) does NOT containt %s"), *LoadAssetsTypeAsString, *_ShortCodeAsString, J, *OutAssetTypeAsString, OutIndices[CS_FIRST], *DataLoadFlagsAsString, *PayloadLoadFlagsAsString);
 											Pass &= false;
@@ -477,7 +477,7 @@ void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 
 			const FString& LoadAssetsTypeAsString = OutLoadAssetsTypes[I].Name;
 			const FString& AssetTypeAsString	  = OutPayloads[I]->AssetType;
-			const FString& LoadFlagsAsString	  = ECsLoadFlags_Editor::ToString(OutPayloads[I]->LoadFlags);
+			const FString& LoadFlagsAsString	  = EMCsLoadFlags_Editor::Get().ToString(OutPayloads[I]->LoadFlags);
 
 			FindEntry.Output += TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + AssetTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(OutIndices[I]) + TEXT("]");
 		}
@@ -628,7 +628,7 @@ void ACsData_Payload::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 											RemoveEntry.Output += TEXT(", ");
 
 										const FString& AssetTypeAsString = Payload.AssetType;
-										const FString& LoadFlagsAsString = ECsLoadFlags_Editor::ToString(Payload.LoadFlags);
+										const FString& LoadFlagsAsString = EMCsLoadFlags_Editor::Get().ToString(Payload.LoadFlags);
 
 										RemoveEntry.Output += TEXT("[") + LoadAssetsTypeAsString + TEXT(", ") + AssetTypeAsString + TEXT(", ") + LoadFlagsAsString + TEXT(", ") + FString::FromInt(J) + TEXT("]");
 

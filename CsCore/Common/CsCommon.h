@@ -141,8 +141,6 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 // Enum to Enum Conversion
 #pragma region
 
-	static int32 StringtoLoadFlags(const FString &LoadFlags);
-
 	static ECsLoadFlags ViewTypeToLoadFlags(const TCsViewType &ViewType, const bool &IsLow = false);
 
 #pragma endregion Enum to Enum Conversion

@@ -7,7 +7,7 @@
 #include "CsTypes_Sound.generated.h"
 #pragma once
 
-// Sound
+// SoundType
 #pragma region
 
 USTRUCT(BlueprintType)
@@ -43,6 +43,11 @@ private:
 public:
 	static EMCsSoundType& Get();
 };
+
+#pragma endregion SoundType
+
+// SoundPriority
+#pragma region
 
 UENUM(BlueprintType)
 namespace ECsSoundPriority
@@ -86,17 +91,9 @@ namespace ECsSoundPriority
 		extern CSCORE_API const Type VeryHigh;
 		extern CSCORE_API const Type ECsSoundPriority_MAX;
 	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		return EMCsSoundPriority::Get().ToString(EType);
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		return EMCsSoundPriority::Get().ToType(String);
-	}
 }
+
+#pragma endregion SoundPriority
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsSoundElement
@@ -301,5 +298,3 @@ struct CSCORE_API FCsSoundPayload : public FCsPooledObjectPayload
 	template<typename T>
 	FORCEINLINE T* GetCue() { return Cast<T>(GetCue()); }
 };
-
-#pragma endregion Sound

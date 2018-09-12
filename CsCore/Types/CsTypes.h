@@ -1805,16 +1805,6 @@ namespace ECollisionEnabled
 		extern CSCORE_API const Type PhysicsOnly;
 		extern CSCORE_API const Type QueryAndPhysics;
 	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		return EMCollisionEnabled::Get().ToString(EType);
-	}
-
-	FORCEINLINE const Type& ToType(const FString &String)
-	{
-		return EMCollisionEnabled::Get().ToType(String);
-	}
 }
 
 struct CSCORE_API EMCsCollisionChannel : public TCsEnumMap<ECollisionChannel>
@@ -1873,16 +1863,6 @@ namespace ECsCollisionChannel
 
 		extern CSCORE_API const ECollisionChannel ECC_MAX;
 	}
-
-	FORCEINLINE const FString& ToString(const ECollisionChannel &EType)
-	{
-		return EMCsCollisionChannel::Get().ToString(EType);
-	}
-
-	FORCEINLINE const ECollisionChannel& ToType(const FString &String)
-	{
-		return EMCsCollisionChannel::Get().ToType(String);
-	}
 }
 
 struct CSCORE_API EMCollisionResponse : public TCsEnumMap<ECollisionResponse>
@@ -1908,16 +1888,6 @@ namespace ECsCollisionResponse
 		extern CSCORE_API const ECollisionResponse ECR_Overlap;
 		extern CSCORE_API const ECollisionResponse ECR_Block;
 		extern CSCORE_API const ECollisionResponse ECR_MAX;
-	}
-
-	FORCEINLINE const FString& ToString(const ECollisionResponse &EType)
-	{
-		return EMCollisionResponse::Get().ToString(EType);
-	}
-
-	FORCEINLINE ECollisionResponse ToType(const FString &String)
-	{
-		return EMCollisionResponse::Get().ToType(String);
 	}
 };
 

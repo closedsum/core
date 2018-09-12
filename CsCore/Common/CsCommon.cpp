@@ -324,7 +324,7 @@ FString UCsCommon::LoadFlagsToString(const int32 &LoadFlags)
 			{
 				String += TEXT(" | ");
 			}
-			String += ECsLoadFlags_Editor::ToString((TCsLoadFlags_Editor)I);
+			String += EMCsLoadFlags_Editor::Get().ToString((TCsLoadFlags_Editor)I);
 			IsFirst = false;
 		}
 	}
@@ -355,20 +355,6 @@ FString UCsCommon::InteractivePhysicsStateToString(const int32 &PhysicsState)
 
 // Enum to Enum Conversion
 #pragma region
-
-int32 UCsCommon::StringtoLoadFlags(const FString &LoadFlags)
-{
-	int32 Flag = 0;
-
-	for (int32 I = 0; I < ECS_LOAD_FLAGS_EDITOR_MAX; ++I)
-	{
-		const FString EnumAsString = ECsLoadFlags_Editor::ToString((TCsLoadFlags_Editor)I);
-
-		if (LoadFlags.Contains(EnumAsString))
-			CS_SET_BLUEPRINT_BITFLAG(Flag, ECsLoadFlags_Editor::ToFlag(EnumAsString));
-	}
-	return Flag;
-}
 
 ECsLoadFlags UCsCommon::ViewTypeToLoadFlags(const TCsViewType &ViewType, const bool &IsLow /*=false*/)
 {

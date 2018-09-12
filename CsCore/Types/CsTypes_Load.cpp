@@ -15,6 +15,55 @@ namespace ECsLoadCached
 	}
 }
 
+// LoadFlags
+EMCsLoadFlags* EMCsLoadFlags::Instance;
+
+EMCsLoadFlags& EMCsLoadFlags::Get()
+{
+	if (!Instance)
+		Instance = new EMCsLoadFlags();
+	return *Instance;
+}
+
+namespace NCsLoadFlags
+{
+	namespace Ref
+	{
+		CSCORE_API const Type Game = EMCsLoadFlags::Get().Add(Type::Game, TEXT("Game"));
+		CSCORE_API const Type Game1P = EMCsLoadFlags::Get().Add(Type::Game1P, TEXT("Game1P"), TEXT("Game 1P"));
+		CSCORE_API const Type Game3P = EMCsLoadFlags::Get().Add(Type::Game3P, TEXT("Game3P"), TEXT("Game 3P"));
+		CSCORE_API const Type Game3PLow = EMCsLoadFlags::Get().Add(Type::Game3PLow, TEXT("Game3PLow"), TEXT("Game 3P Low"));
+		CSCORE_API const Type GameVR = EMCsLoadFlags::Get().Add(Type::GameVR, TEXT("GameVR"), TEXT("Game VR"));
+		CSCORE_API const Type UI = EMCsLoadFlags::Get().Add(Type::UI, TEXT("UI"));
+		CSCORE_API const Type All = EMCsLoadFlags::Get().Add(Type::All, TEXT("All"));
+	}
+}
+
+// LoadFlags_Editor
+EMCsLoadFlags_Editor* EMCsLoadFlags_Editor::Instance;
+
+EMCsLoadFlags_Editor& EMCsLoadFlags_Editor::Get()
+{
+	if (!Instance)
+		Instance = new EMCsLoadFlags_Editor();
+	return *Instance;
+}
+
+namespace ECsLoadFlags_Editor
+{
+	namespace Ref
+	{
+		CSCORE_API const Type Game = EMCsLoadFlags_Editor::Get().Add(Type::Game, TEXT("Game"));
+		CSCORE_API const Type Game1P = EMCsLoadFlags_Editor::Get().Add(Type::Game1P, TEXT("Game1P"), TEXT("Game 1P"));
+		CSCORE_API const Type Game3P = EMCsLoadFlags_Editor::Get().Add(Type::Game3P, TEXT("Game3P"), TEXT("Game 3P"));
+		CSCORE_API const Type Game3PLow = EMCsLoadFlags_Editor::Get().Add(Type::Game3PLow, TEXT("Game3PLow"), TEXT("Game 3P Low"));
+		CSCORE_API const Type GameVR = EMCsLoadFlags_Editor::Get().Add(Type::GameVR, TEXT("GameVR"), TEXT("Game VR"));
+		CSCORE_API const Type UI = EMCsLoadFlags_Editor::Get().Add(Type::UI, TEXT("UI"));
+		CSCORE_API const Type All = EMCsLoadFlags_Editor::Get().Add(Type::All, TEXT("All"));
+		CSCORE_API const Type ECsLoadFlags_Editor_MAX = EMCsLoadFlags_Editor::Get().Add(Type::ECsLoadFlags_Editor_MAX, TEXT("ECsLoadFlags_Editor_MAX"), TEXT("MAX"));
+	}
+}
+
 // AssetType
 EMCsAssetType* EMCsAssetType::Instance;
 

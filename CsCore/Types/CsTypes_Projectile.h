@@ -4,9 +4,6 @@
 #include "CsTypes_Projectile.generated.h"
 #pragma once
 
-// Projectile
-#pragma region
-
 // ACsData_Projectile
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsData_ProjectilePtr
@@ -99,6 +96,9 @@ public:
 	}
 };
 
+// ProjectileRelevance
+#pragma region
+
 UENUM(BlueprintType)
 namespace ECsProjectileRelevance
 {
@@ -139,6 +139,11 @@ namespace ECsProjectileRelevance
 	}
 }
 
+#pragma endregion ProjectileRelevance
+
+// ProjectileType
+#pragma region
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsProjectileType : public FECsEnum_uint8
 {
@@ -172,6 +177,11 @@ private:
 public:
 	static EMCsProjectileType& Get();
 };
+
+#pragma endregion ProjectileType
+
+// ProjectileState
+#pragma region
 
 UENUM(BlueprintType)
 namespace ECsProjectileState
@@ -213,6 +223,11 @@ namespace ECsProjectileState
 	}
 }
 
+#pragma endregion ProjectileState
+
+// ProjectileDeActivate
+#pragma region
+
 UENUM(BlueprintType)
 namespace ECsProjectileDeActivate
 {
@@ -253,6 +268,11 @@ namespace ECsProjectileDeActivate
 	}
 }
 
+#pragma endregion ProjectileDeActivate
+
+// ProjectileMovement
+#pragma region
+
 UENUM(BlueprintType)
 namespace ECsProjectileMovement
 {
@@ -291,6 +311,11 @@ namespace ECsProjectileMovement
 	}
 }
 
+#pragma endregion ProjectileMovement
+
+// ProjectileMovementFunctionType
+#pragma region
+
 UENUM(BlueprintType)
 namespace ECsProjectileMovementFunctionType
 {
@@ -327,17 +352,9 @@ namespace ECsProjectileMovementFunctionType
 		extern CSCORE_API const Type Sine;
 		extern CSCORE_API const Type ECsProjectileMovementFunctionType_MAX;
 	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		return EMCsProjectileMovementFunctionType::Get().ToString(EType);
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		return EMCsProjectileMovementFunctionType::Get().ToType(String);
-	}
 }
+
+#pragma endregion ProjectileMovementFunctionType
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsProjectileMovementFunctionAxis
@@ -685,5 +702,3 @@ struct CSCORE_API FCsProjectilePayload : public FCsPooledObjectPayload
 		return Cast<T>(GetHomingTarget());
 	}
 };
-
-#pragma endregion Projectile

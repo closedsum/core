@@ -5,7 +5,7 @@
 #include "CsTypes_Item.generated.h"
 #pragma once
 
-// Items
+// ItemType
 #pragma region
 
 USTRUCT(BlueprintType)
@@ -41,6 +41,11 @@ private:
 public:
 	static EMCsItemType& Get();
 };
+
+#pragma endregion ItemType
+
+// ItemCollection
+#pragma region
 
 UENUM(BlueprintType)
 namespace ECsItemCollection
@@ -82,6 +87,8 @@ namespace ECsItemCollection
 	};
 }
 
+#pragma endregion ItemCollection
+
 namespace ECsItemCollectionCached
 {
 	namespace Str
@@ -89,6 +96,9 @@ namespace ECsItemCollectionCached
 		extern CSCORE_API const FString Single;// = TEXT("1x");
 	}
 }
+
+// ItemOwner
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsItemOwner : public FECsEnum_uint8
@@ -124,6 +134,8 @@ public:
 	static EMCsItemOwner& Get();
 };
 
+#pragma endregion ItemOwner
+
 namespace ECsItemOwnerId
 {
 	const FGuid None = FGuid();
@@ -146,6 +158,9 @@ enum class ECsInventoryItemState : uint8
 													// (Visible | Ingredient)
 													// ((1<<0) | (1<<1))
 #define CS_INVENTORY_ITEM_STATE_VISIBLE_AND_INGREDIENT 3
+
+// InventoryItemState_Editor
+#pragma region
 
 UENUM(BlueprintType)
 namespace ECsInventoryItemState_Editor
@@ -219,6 +234,8 @@ namespace ECsInventoryItemState_Editor
 		return ECsInventoryItemState::Visible;;
 	}
 }
+
+#pragma endregion InventoryItemState_Editor
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsInventoryItemProperties
@@ -324,6 +341,9 @@ struct CSCORE_API FCsInventoryItemProperties
 	}
 };
 
+// ItemMemberValueType
+#pragma region
+
 UENUM(BlueprintType)
 namespace ECsItemMemberValueType
 {
@@ -364,18 +384,9 @@ namespace ECsItemMemberValueType
 		extern CSCORE_API const Type Float;
 		extern CSCORE_API const Type ECsItemMemberValueType_MAX;
 	};
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		return EMCsItemMemberValueType::Get().ToString(EType);
-	}
-
-	FORCEINLINE const Type& ToType(const FString &String)
-	{
-		return EMCsItemMemberValueType::Get().ToType(String);
-	}
-
 }
+
+#pragma endregion ItemMemberValueType
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsItemMemberValue
@@ -1008,6 +1019,9 @@ struct CSCORE_API FCsInventoryLoadout
 	}
 };
 
+// ItemOnConsumeContentAction
+#pragma region
+
 UENUM(BlueprintType)
 namespace ECsItemOnConsumeContentAction
 {
@@ -1046,18 +1060,9 @@ namespace ECsItemOnConsumeContentAction
 		extern CSCORE_API const Type Retain;
 		extern CSCORE_API const Type ECsItemOnConsumeContentAction_MAX;
 	};
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		return EMCsItemOnConsumeContentAction::Get().ToString(EType);
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		return EMCsItemOnConsumeContentAction::Get().ToType(String);
-	}
-
 }
+
+#pragma endregion ItemOnConsumeContentAction
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsItemOnConsumeContentRule
@@ -1094,6 +1099,9 @@ struct CSCORE_API FCsItemOnConsumeContentRule
 	}
 };
 
+// ItemInteraction
+#pragma region
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsItemInteraction : public FECsEnum_uint8
 {
@@ -1127,6 +1135,8 @@ private:
 public:
 	static EMCsItemInteraction& Get();
 };
+
+#pragma endregion ItemInteraction
 
 namespace ECsFileItemProductHeaderCached
 {
@@ -1167,5 +1177,3 @@ namespace ECsFileItemHistoryHeaderCached
 		extern CSCORE_API const FString Value;// = TEXT("Value");
 	}
 }
-
-#pragma endregion Items

@@ -50,7 +50,43 @@ enum class ECsLoadFlags : uint8
 	All			UMETA(DisplayName = "All"),
 };
 
+struct CSCORE_API EMCsLoadFlags : public TCsEnumFlagMap<ECsLoadFlags>
+{
+protected:
+	EMCsLoadFlags() {}
+	EMCsLoadFlags(const EMCsLoadFlags &) = delete;
+	EMCsLoadFlags(EMCsLoadFlags &&) = delete;
+public:
+	~EMCsLoadFlags() {}
+private:
+	static EMCsLoadFlags* Instance;
+
+public:
+	static EMCsLoadFlags& Get();
+};
+
+namespace NCsLoadFlags
+{
+	namespace Ref
+	{
+		typedef ECsLoadFlags Type;
+
+		extern CSCORE_API const Type Game;
+		extern CSCORE_API const Type Game1P;
+		extern CSCORE_API const Type Game3P;
+		extern CSCORE_API const Type Game3PLow;
+		extern CSCORE_API const Type GameVR;
+		extern CSCORE_API const Type UI;
+		extern CSCORE_API const Type All;
+	}
+}
+
 #define CS_LOAD_FLAGS_NONE 0
+
+#pragma endregion // LoadFlags
+
+// LoadFlags_Editor
+#pragma region
 
 UENUM(BlueprintType)
 namespace ECsLoadFlags_Editor
@@ -68,74 +104,55 @@ namespace ECsLoadFlags_Editor
 	};
 }
 
+typedef ECsLoadFlags_Editor::Type TCsLoadFlags_Editor;
+
+struct CSCORE_API EMCsLoadFlags_Editor : public TCsEnumMap<ECsLoadFlags_Editor::Type>
+{
+protected:
+	EMCsLoadFlags_Editor() {}
+	EMCsLoadFlags_Editor(const EMCsLoadFlags_Editor &) = delete;
+	EMCsLoadFlags_Editor(EMCsLoadFlags_Editor &&) = delete;
+public:
+	~EMCsLoadFlags_Editor() {}
+private:
+	static EMCsLoadFlags_Editor* Instance;
+
+public:
+	static EMCsLoadFlags_Editor& Get();
+};
+
 namespace ECsLoadFlags_Editor
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
+	namespace Ref
 	{
-		const TCsString Game = TCsString(TEXT("Game"), TEXT("game"), TEXT("game"));
-		const TCsString Game1P = TCsString(TEXT("Game1P"), TEXT("game1p"), TEXT("game 1p"));
-		const TCsString Game3P = TCsString(TEXT("Game3P"), TEXT("game3p"), TEXT("game 3p"));
-		const TCsString Game3PLow = TCsString(TEXT("Game3PLow"), TEXT("game3plow"), TEXT("game 3p low"));
-		const TCsString GameVR = TCsString(TEXT("GameVR"), TEXT("gamevr"), TEXT("game vr"));
-		const TCsString UI = TCsString(TEXT("UI"), TEXT("ui"), TEXT("ui"));
-		const TCsString All = TCsString(TEXT("All"), TEXT("all"), TEXT("all"));
+		typedef ECsLoadFlags_Editor::Type Type;
+
+		extern CSCORE_API const Type Game;
+		extern CSCORE_API const Type Game1P;
+		extern CSCORE_API const Type Game3P;
+		extern CSCORE_API const Type Game3PLow;
+		extern CSCORE_API const Type GameVR;
+		extern CSCORE_API const Type UI;
+		extern CSCORE_API const Type All;
+		extern CSCORE_API const Type ECsLoadFlags_Editor_MAX;
 	}
 
-	FORCEINLINE const FString& ToString(const Type &EType)
+	FORCEINLINE const ECsLoadFlags& ToBaseType(const Type &EType)
 	{
-		if (EType == Type::Game) { return Str::Game.Value; }
-		if (EType == Type::Game1P) { return Str::Game1P.Value; }
-		if (EType == Type::Game3P) { return Str::Game3P.Value; }
-		if (EType == Type::Game3PLow) { return Str::Game3PLow.Value; }
-		if (EType == Type::GameVR) { return Str::GameVR.Value; }
-		if (EType == Type::UI) { return Str::UI.Value; }
-		if (EType == Type::All) { return Str::All.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::Game) { return Type::Game; }
-		if (String == Str::Game1P) { return Type::Game1P; }
-		if (String == Str::Game3P) { return Type::Game3P; }
-		if (String == Str::Game3PLow) { return Type::Game3PLow; }
-		if (String == Str::GameVR) { return Type::GameVR; }
-		if (String == Str::UI) { return Type::UI; }
-		if (String == Str::All) { return Type::All; }
-		return Type::ECsLoadFlags_Editor_MAX;
-	}
-
-	FORCEINLINE ECsLoadFlags ToBaseType(const Type &EType)
-	{
-		if (EType == Type::Game) { return ECsLoadFlags::Game; }
-		if (EType == Type::Game1P) { return ECsLoadFlags::Game1P; }
-		if (EType == Type::Game3P) { return ECsLoadFlags::Game3P; }
-		if (EType == Type::Game3PLow) { return ECsLoadFlags::Game3PLow; }
-		if (EType == Type::GameVR) { return ECsLoadFlags::GameVR; }
-		if (EType == Type::UI) { return ECsLoadFlags::UI; }
-		if (EType == Type::All) { return ECsLoadFlags::All; }
-		return ECsLoadFlags::All;
-	}
-
-	FORCEINLINE ECsLoadFlags ToFlag(const FString &String)
-	{
-		if (String == Str::Game) { return ECsLoadFlags::Game; }
-		if (String == Str::Game1P) { return ECsLoadFlags::Game1P; }
-		if (String == Str::Game3P) { return ECsLoadFlags::Game3P; }
-		if (String == Str::Game3PLow) { return ECsLoadFlags::Game3PLow; }
-		if (String == Str::GameVR) { return ECsLoadFlags::GameVR; }
-		if (String == Str::UI) { return ECsLoadFlags::UI; }
-		if (String == Str::All) { return ECsLoadFlags::All; }
-		return ECsLoadFlags::All;;
+		if (EType == Type::Game) { return NCsLoadFlags::Ref::Game; }
+		if (EType == Type::Game1P) { return NCsLoadFlags::Ref::Game1P; }
+		if (EType == Type::Game3P) { return NCsLoadFlags::Ref::Game3P; }
+		if (EType == Type::Game3PLow) { return NCsLoadFlags::Ref::Game3PLow; }
+		if (EType == Type::GameVR) { return NCsLoadFlags::Ref::GameVR; }
+		if (EType == Type::UI) { return NCsLoadFlags::Ref::UI; }
+		if (EType == Type::All) { return NCsLoadFlags::Ref::All; }
+		return NCsLoadFlags::Ref::All;
 	}
 }
 
 #define ECS_LOAD_FLAGS_EDITOR_MAX (uint8)ECsLoadFlags_Editor::ECsLoadFlags_Editor_MAX
-typedef ECsLoadFlags_Editor::Type TCsLoadFlags_Editor;
 
-#pragma endregion // LoadFlags
+#pragma endregion // LoadFlags_Editor
 
 USTRUCT()
 struct CSCORE_API FCsResourceSize

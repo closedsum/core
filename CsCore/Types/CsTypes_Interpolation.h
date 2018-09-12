@@ -44,6 +44,9 @@ namespace NCsBlendDirection
 
 #pragma endregion BlendDirection
 
+// EasingType
+#pragma region
+
 UENUM(BlueprintType)
 namespace ECsEasingType
 {
@@ -63,57 +66,46 @@ namespace ECsEasingType
 	};
 }
 
-namespace ECsEasingType
+struct CSCORE_API EMCsEasingType : public TCsEnumMap<ECsEasingType::Type>
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
+protected:
+	EMCsEasingType() {}
+	EMCsEasingType(const EMCsEasingType &) = delete;
+	EMCsEasingType(EMCsEasingType &&) = delete;
+public:
+	~EMCsEasingType() {}
+private:
+	static EMCsEasingType* Instance;
 
-	namespace Str
-	{
-		const TCsString Linear = TCsString(TEXT("Linear"), TEXT("linear"), TEXT("linear"));
-		const TCsString BounceIn = TCsString(TEXT("BounceIn"), TEXT("bouncein"), TEXT("bounce in"));
-		const TCsString BounceOut = TCsString(TEXT("BounceOut"), TEXT("bounceout"), TEXT("bounce out"));
-		const TCsString BounceInOut = TCsString(TEXT("BounceInOut"), TEXT("bounceinout"), TEXT("bounce in out"));
-		const TCsString CubicIn = TCsString(TEXT("CubicIn"), TEXT("cubicin"), TEXT("cubic in"));
-		const TCsString CubicOut = TCsString(TEXT("CubicOut"), TEXT("cubicout"), TEXT("cubic out"));
-		const TCsString CubicInOut = TCsString(TEXT("CubicInOut"), TEXT("cubicinout"), TEXT("cubic in out"));
-		const TCsString ExpoIn = TCsString(TEXT("ExpoIn"), TEXT("expoin"), TEXT("expo in"));
-		const TCsString ExpoOut = TCsString(TEXT("ExpoOut"), TEXT("expoout"), TEXT("expo out"));
-		const TCsString ExpoInOut = TCsString(TEXT("ExpoInOut"), TEXT("expoinout"), TEXT("expo in out"));
-	}
+public:
+	static EMCsEasingType& Get();
+};
 
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::Linear) { return Str::Linear.Value; }
-		if (EType == Type::BounceIn) { return Str::BounceIn.Value; }
-		if (EType == Type::BounceOut) { return Str::BounceOut.Value; }
-		if (EType == Type::BounceInOut) { return Str::BounceInOut.Value; }
-		if (EType == Type::CubicIn) { return Str::CubicIn.Value; }
-		if (EType == Type::CubicOut) { return Str::CubicOut.Value; }
-		if (EType == Type::CubicInOut) { return Str::CubicInOut.Value; }
-		if (EType == Type::ExpoIn) { return Str::ExpoIn.Value; }
-		if (EType == Type::ExpoOut) { return Str::ExpoOut.Value; }
-		if (EType == Type::ExpoInOut) { return Str::ExpoInOut.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
+typedef ECsEasingType::Type TCsEasingType;
 
-	FORCEINLINE Type ToType(const FString &String)
+namespace NCsEasingType
+{
+	namespace Ref
 	{
-		if (String == Str::Linear) { return Type::Linear; }
-		if (String == Str::BounceIn) { return Type::BounceIn; }
-		if (String == Str::BounceOut) { return Type::BounceOut; }
-		if (String == Str::BounceInOut) { return Type::BounceInOut; }
-		if (String == Str::CubicIn) { return Type::CubicIn; }
-		if (String == Str::CubicOut) { return Type::CubicOut; }
-		if (String == Str::CubicInOut) { return Type::CubicInOut; }
-		if (String == Str::ExpoIn) { return Type::ExpoIn; }
-		if (String == Str::ExpoOut) { return Type::ExpoOut; }
-		if (String == Str::ExpoInOut) { return Type::ExpoInOut; }
-		return Type::ECsEasingType_MAX;
+		typedef ECsEasingType::Type Type;
+
+		extern CSCORE_API const Type Linear;
+		extern CSCORE_API const Type BounceIn;
+		extern CSCORE_API const Type BounceOut;
+		extern CSCORE_API const Type BounceInOut;
+		extern CSCORE_API const Type CubicIn;
+		extern CSCORE_API const Type CubicOut;
+		extern CSCORE_API const Type CubicInOut;
+		extern CSCORE_API const Type ExpoIn;
+		extern CSCORE_API const Type ExpoOut;
+		extern CSCORE_API const Type ExpoInOut;
+		extern CSCORE_API const Type ECsEasingType_MAX;
 	}
 }
 
 #define ECS_EASING_TYPE_MAX (uint8)ECsEasingType::ECsEasingType_MAX
-typedef ECsEasingType::Type TCsEasingType;
+
+#pragma endregion EasingType
 
 // Easing Function (Time, Start, Final, Duration)
 typedef float(*TCsEasingFunction)(const float&, const float&, const float&, const float&);

@@ -29,6 +29,12 @@
 
     public class MCgPawn : MonoBehaviour, ICgObject
     {
+        #region "Constants
+
+        public static readonly int AUTO_ASSIGN_CONTROLLER = -1;
+
+        #endregion // Constants
+
         #region "Data Members"
 
             #region "Interface"
@@ -43,6 +49,9 @@
             #endregion // Interface
 
             #region "Setup"
+
+        public bool bAutoPossess;
+        public int ControllerIndex = AUTO_ASSIGN_CONTROLLER;
 
         public sealed class FOnSetupFinished : TCgMulticastDelegate_OneParam<byte> { }
         public FOnSetupFinished OnSetupFinished_Event;
@@ -207,6 +216,10 @@
             #endregion // Managers
 
         #endregion // Data Members
+
+        void Awake()
+        {
+        }
 
         // Use this for initialization
         void Start()

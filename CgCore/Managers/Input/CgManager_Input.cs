@@ -95,6 +95,7 @@ namespace CgCore
                     // Mouse
 
         public Vector3 CurrentMousePosition;
+        public Vector3 CurrentMousePositionAsPercent;
 
         public FCgManagerInput_Location_Raw Mouse_Location_Raw;
 
@@ -163,7 +164,7 @@ namespace CgCore
 
             RawKeyInputsPressed = new List<FCgKeyInput>();
 
-            KeyInputs = new Dictionary<KeyCode, FCgKeyInput>(new FKeyCodeEqualityComparer());
+            KeyInputs        = new Dictionary<KeyCode, FCgKeyInput>(new FKeyCodeEqualityComparer());
             KeyInputsPressed = new List<FCgKeyInput>();
 
             QueuedGameEventInfosForNextFrame = new List<FCgGameEventInfo>();
@@ -319,6 +320,8 @@ namespace CgCore
             RecordInputs();
 
             CurrentMousePosition = Input.mousePosition;
+            CurrentMousePositionAsPercent.x = CurrentMousePosition.x / Screen.currentResolution.width;
+            CurrentMousePositionAsPercent.y = CurrentMousePosition.y / Screen.currentResolution.height;
 
             if (Mouse_Location_Raw != null)
                 Mouse_Location_Raw.Broadcast(CurrentMousePosition);

@@ -10,7 +10,7 @@
 
         public FCgManager_Input Manager_Input;
 
-        public List<FECgGameEvent> GameEventPriorityList;
+        public List<FCgGameEventInfo> GameEventInfoPriorityList;
 
         public MCgPlayerState PlayerState;
 
@@ -18,14 +18,14 @@
 
         #endregion // Data Members
 
+        public virtual void Init()
+        {
+            GameEventInfoPriorityList = new List<FCgGameEventInfo>();
+        }
+
         // Use this for initialization
         void Start()
         {
-        }
-
-        public virtual void Init()
-        {
-            GameEventPriorityList = new List<FECgGameEvent>();
         }
 
         public virtual void OnUpdate(float deltaTime)
@@ -46,11 +46,6 @@
         {
             PreProcessInput(deltaTime);
             PostProcessInput(deltaTime);
-        }
-
-        public virtual void ProcessGameEvents()
-        {
-            PlayerState.ProcessGameEvents(GameEventPriorityList);
         }
     }
 }

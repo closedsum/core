@@ -45,6 +45,12 @@
         {
             // TODO: Search for the Prefab rather than the Scene
             EmptyGameObject = GameObject.Find(EMPTY_GAME_OBJECT_NAME);
+#if UNITY_EDITOR
+            if (EmptyGameObject == null)
+            {
+                FCgDebug.LogError("FCgManager_Prefab.Init: Failed to find EmptyGameObject named " + EMPTY_GAME_OBJECT_NAME + ". needs to exist in the level in order to create other objects.");
+            }
+#endif // #if UNITY_EDITOR
         }
     }
 }

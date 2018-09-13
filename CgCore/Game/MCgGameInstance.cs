@@ -7,6 +7,49 @@
     using UnityEditor;
 #endif // #if UNITY_EDITOR
 
+    #region "Enums"
+
+    public sealed class FECgGameInstanceState : FECgEnum_byte
+    {
+        public FECgGameInstanceState(byte value, string name) : base(value, name) { }
+    }
+
+    public sealed class FECgGameInstanceStateEqualityComparer : IEqualityComparer<FECgGameInstanceState>
+    {
+        public bool Equals(FECgGameInstanceState lhs, FECgGameInstanceState rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(FECgGameInstanceState x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
+    public class EMCgGameInstanceState : TCgEnumMap<FECgGameInstanceState, byte>
+    {
+        private static EMCgGameInstanceState _Instance;
+        public static EMCgGameInstanceState Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = new EMCgGameInstanceState();
+                }
+                return _Instance;
+            }
+        }
+
+        public static EMCgGameInstanceState Get()
+        {
+            return Instance;
+        }
+    }
+
+    #endregion // Enums
+
     public class MCgGameInstance : MonoBehaviour
     {
         public sealed class FOnExitingPlayMode : FCgMulticastDelegate { }
@@ -21,9 +64,15 @@
 
         public List<MCgPlayerController> PlayerControllers;
 
+        public FECgGameInstanceState CurrentState;
+
+            #region "Unique Id"
+
         public ulong UniqueObjectIdIndex;
 
         public Dictionary<ulong, ICgObject> ObjectMap;
+
+            #endregion // Unique Id
 
         #endregion // Data Members
 

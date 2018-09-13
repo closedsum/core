@@ -2412,14 +2412,14 @@ void ACsWeapon::Reload()
 
 		for (int32 I = 0; I < Count; ++I)
 		{
-			StopChargeFire(EMCsWeaponFireMode::Get().GetEnum(I));
+			StopChargeFire(EMCsWeaponFireMode::Get().GetEnumAt(I));
 		}
 
 		Scheduler->BroadcastMessage(ECsCoroutineSchedule::Tick, ECsCoroutineMessage::Stop, ECsWeaponCached::Name::Stop_FireWeapon_Internal, this);
 
 		for (int32 I = 0; I < Count; ++I)
 		{
-			StopAnimation(EMCsWeaponFireMode::Get().GetEnum(I), FireAnim);
+			StopAnimation(EMCsWeaponFireMode::Get().GetEnumAt(I), FireAnim);
 		}
 	}
 

@@ -227,6 +227,9 @@
 
             #region "State"
 
+        public FECgTime TimeType;
+        public FECgCoroutineSchedule ScheduleType;
+
         public byte WeaponIndex;
 
         public FECgWeaponSlot WeaponSlot;
@@ -382,9 +385,37 @@
 
         public FTMapRef_int PawnPenetrations;
 
-                #endregion // Hitscan
+        #endregion // Hitscan
 
-            #endregion // Firing
+        #endregion // Firing
+
+            #region "Reload"
+
+        public FECgWeaponState ReloadingState;
+
+        public bool bReloading;
+        FCgBool_Ref bReloadingHandle;
+
+        public sealed class FOnChange_bReloading : TCgMulticastDelegate_TwoParams<FECgWeaponSlot, bool> { }
+        public FOnChange_bReloading OnChange_bReloading_Event;
+
+        FRef_float ReloadTime;
+
+        public float ReloadStartTime;
+
+        public FRef_bool AllowRechargeAmmo;
+        public FRef_bool AllowRechargeAmmoDuringFire;
+
+        public FRef_float RechargeSecondsPerAmmo;
+
+        public FRef_float RechargeStartupDelay;
+
+	    public float RechargeAmmo_StartTime;
+        public float NextRechargeAmmoTime;
+
+        public bool bRechargingAmmo;
+
+            #endregion // Reload
 
         #endregion // Data Members
 
@@ -397,6 +428,11 @@
         {
             MCgGameInstance.Get().RegisterUniqueObject(this);
 
+            // State
+            ScheduleType = ECgCoroutineSchedule.Update;
+            TimeType = ECgTime.Update;
+
+            // Firing
             ProjectileFirePayloads = new FCgProjectileFirePayload[PROJECTILE_FIRE_PAYLOAD_POOL_SIZE];
 
             for (int i = 0; i < PROJECTILE_FIRE_PAYLOAD_POOL_SIZE; ++i)
@@ -420,7 +456,7 @@
             }
         }
 
-        public void InitMultiRefValueMembers<ValueType>(TCgProperty_TMapRef<FECgWeaponFireMode, ValueType> member, ValueType defaultValue)
+        public void InitMultiRefValueMember<ValueType>(TCgProperty_TMapRef<FECgWeaponFireMode, ValueType> member, ValueType defaultValue)
             where ValueType : struct, IConvertible
         {
             member.SetDefaultValue(defaultValue);
@@ -433,7 +469,75 @@
             }
         }
 
-        public virtual void InitMultiValueMembers() { }
+        public virtual void InitMultiValueMembers()
+        {
+            // Firing
+            {
+                MaxAmmo.Init(1);
+                MaxAmmo.Get_Call.Bind(GetMaxAmmo);
+                InitMultiRefValueMember<byte>(ProjectilesPerShot, 0);
+                ProjectilesPerShot.Get_Call.Bind(GetProjectilesPerShot);
+                InitMultiValueMember<byte>(CurrentProjectilePerShotIndex, 0);
+                InitMultiRefValueMember<bool>(DoFireOnRelease, false);
+                InitMultiRefValueMember<bool>(IsFullAuto, false);
+                InitMultiRefValueMember<float>(TimeBetweenProjectilesPerShot, 0.0f);
+                TimeBetweenProjectilesPerShot.Get_Call.Bind(GetTimeBetweenProjectilesPerShot);
+                InitMultiRefValueMember<float>(TimeBetweenShots, 0.0f);
+                TimeBetweenShots.Get_Call.Bind(GetTimeBetweenShots);
+                InitMultiRefValueMember<float>(TimeBetweenAutoShots, 0.0f);
+                TimeBetweenAutoShots.Get_Call.Bind(GetTimeBetweenShots);
+                InitMultiValueMember<bool>(IsFirePressed, false);
+                InitMultiValueMember<bool>(Last_IsFirePressed, false);
+                InitMultiValueMember<float>(IsFirePressed_StartTime, 0.0f);
+                InitMultiValueMember<float>(IsFireReleased_StartTime, 0.0f);
+                InitMultiValueMember<float>(Fire_StartTime, 0.0f);
+                // Charge
+                InitMultiRefValueMember<bool>(AllowChargeFire, false);
+                InitMultiRefValueMember<float>(MaxChargeFireTime, 0.0f);
+                MaxChargeFireTime.Get_Call.Bind(GetMaxChargeFireTime);
+                // Spread
+                InitMultiRefValueMember<bool>(DoSpread, false);
+                InitMultiRefValueMember<float>(MinSpread, 0.0f);
+                MinSpread.Get_Call.Bind(GetMinSpread);
+                InitMultiRefValueMember<float>(MaxSpread, 0.0f);
+                MaxSpread.Get_Call.Bind(GetMaxSpread);
+                InitMultiRefValueMember<float>(SpreadAddedPerShot, 0.0f);
+                SpreadAddedPerShot.Get_Call.Bind(GetSpreadAddedPerShot);
+                InitMultiRefValueMember<float>(SpreadRecoveryRate, 0.0f);
+                SpreadRecoveryRate.Get_Call.Bind(GetSpreadRecoveryRate);
+                InitMultiRefValueMember<float>(FiringSpreadRecoveryDelay, 0.0f);
+                FiringSpreadRecoveryDelay.Get_Call.Bind(GetFiringSpreadRecoveryDelay);
+                InitMultiRefValueMember<float>(MovingSpreadBonus, 0.0f);
+                MovingSpreadBonus.Get_Call.Bind(GetMovingSpreadBonus);
+                InitMultiValueMember<float>(CurrentBaseSpread, 0.0f);
+                InitMultiValueMember<float>(CurrentSpread, 0.0f);
+                InitMultiValueMember<float>(LastSpreadFireTime, 0.0f);
+                // Anim
+                InitMultiRefValueMember<bool>(LoopFireAnim, false);
+                InitMultiRefValueMember<bool>(DoScaleFireAnim, false);
+                // Sound
+                InitMultiRefValueMember<bool>(LoopFireSound, false);
+                // Hitscan
+                InitMultiRefValueMember<bool>(IsHitscan, false);
+                InitMultiRefValueMember<bool>(DoesHitscanUseRadius, false);
+                InitMultiRefValueMember<bool>(DoesHitscanSimulateProjectileDuration, false);
+                InitMultiRefValueMember<int>(ObstaclePenetrations, 0);
+                ObstaclePenetrations.Get_Call.Bind(GetObstaclePenetractions);
+                InitMultiRefValueMember<int>(PawnPenetrations, 0);
+                PawnPenetrations.Get_Call.Bind(GetPawnPenetrations);
+            }
+            // Reload
+            {
+                ReloadTime.Init(1);
+                ReloadTime.Get_Call.Bind(GetReloadTime);
+                AllowRechargeAmmo.Init(1);
+                AllowRechargeAmmoDuringFire.Init(1);
+                RechargeSecondsPerAmmo.Init(1);
+                RechargeSecondsPerAmmo.Get_Call.Bind(GetRechargeSecondsPerAmmo);
+                RechargeStartupDelay.Init(1);
+                RechargeStartupDelay.Get_Call.Bind(GetRechargeStartupDelay);
+            }
+        }
 
             #region "Set"
 
@@ -802,7 +906,7 @@
         {
             bEquipped = true;
 
-            //OnEquip_Event.Broadcast(WeaponSlot);
+            OnEquip_Event.Broadcast(WeaponSlot, CurrentAmmo, GetMaxAmmo(DATA_VALUE), GetAmmoReserve(DATA_VALUE, PrimaryFireMode, false));
         }
 
         public virtual void UnEquip()
@@ -825,8 +929,8 @@
             {
                 FECgWeaponFireMode fireMode = EMCgWeaponFireMode.Get().GetEnumAt(i);
 
-                //if (CurrentProjectilePerShotIndex[fireMode] < ProjectilesPerShot[fireMode] - 1)
-                //    return false;
+                if (CurrentProjectilePerShotIndex[fireMode] < ProjectilesPerShot[fireMode] - 1)
+                    return false;
             }
             return true;
         }
@@ -1012,7 +1116,7 @@
 
             #endregion // Ammo
 
-        public virtual byte GetProjectilePerShot(FECgWeaponFireMode fireMode) { return ProjectilesPerShot.Get(fireMode); }
+        public virtual byte GetProjectilesPerShot(FECgWeaponFireMode fireMode) { return ProjectilesPerShot.Get(fireMode); }
         public virtual float GetTimeBetweenProjectilesPerShot(FECgWeaponFireMode fireMode) { return TimeBetweenProjectilesPerShot.Get(fireMode); }
         public virtual float GetTimeBetweenShots(FECgWeaponFireMode fireMode) { return TimeBetweenShots.Get(fireMode); }
         public virtual float GetTimeBetweenAutoShots(FECgWeaponFireMode fireMode) { return TimeBetweenAutoShots.Get(fireMode); }
@@ -1857,5 +1961,102 @@
         }
 
         #endregion // Firing
+
+        #region "Reload"
+
+        public void OnChange_bReloading(bool value)
+        {
+            OnChange_bReloading_Event.Broadcast(WeaponSlot, value);
+        }
+
+        public virtual float GetReloadTime(int index) { return ReloadTime.Get(index); }
+        public virtual float GetRechargeSecondsPerAmmo(int index) { return RechargeSecondsPerAmmo.Get(index); }
+        public virtual float GetRechargeStartupDelay(int index) { return RechargeStartupDelay.Get(index); }
+
+        public bool CanReload()
+        {
+            if (CurrentState == ReloadingState || bReloading)
+                return false;
+
+            // Check Ammo
+            int ammoReserve = GetAmmoReserve(DATA_VALUE, PrimaryFireMode, false);
+
+            if (ammoReserve == EMPTY)
+                return false;
+            return true;
+        }
+
+        public bool CanAutoReload(FECgWeaponFireMode fireMode)
+        {
+            if (!CanReload())
+                return false;
+
+            // Check time since last Fire
+            float timeSeconds = FCgManager_Time.Get().GetTimeSinceStart(TimeType);
+
+            if (fireMode == EMCgWeaponFireMode.Get().GetMAX())
+            {
+                if (timeSeconds - Fire_StartTime.Min() < Math.Max(TimeBetweenShots.Max(), TimeBetweenAutoShots.Max()))
+                    return false;
+            }
+            else
+            {
+                bool pass_AutoShots = IsFullAuto[fireMode] && timeSeconds - Fire_StartTime[fireMode] > TimeBetweenAutoShots.GetEX(fireMode);
+                bool pass_Shots     = timeSeconds - Fire_StartTime[fireMode] > TimeBetweenShots.GetEX(fireMode);
+
+                if (!pass_AutoShots && !pass_Shots)
+                    return false;
+            }
+            return true;
+        }
+
+        public bool ShouldAutoReload(FECgWeaponFireMode fireMode)
+        {
+            if (CurrentAmmo > EMPTY)
+                return false;
+            return CanAutoReload(fireMode);
+        }
+
+        public void Reload()
+        {
+            if (!CanReload())
+                return;
+
+            // Idle
+            if (CurrentState == IdleState)
+            {
+                if (CurrentAmmo == MaxAmmo.GetEX(DATA_VALUE))
+                    return;
+            }
+            // Firing
+            if (CurrentState == FiringState)
+            {
+                FCgCoroutineScheduler scheduler = FCgCoroutineScheduler.Get();
+
+                int count = EMCgWeaponFireMode.Get().Count;
+
+                for (int i = 0; i < count; ++i)
+                {
+                    StopChargeFire(EMCgWeaponFireMode.Get().GetEnumAt(i));
+                }
+
+                scheduler.BroadcastMessage(ScheduleType, ECgCoroutineMessage.Stop, ECgWeaponCached.Str.Stop_FireWeapon_Internal, this);
+
+                for (int i = 0; i < count; ++i)
+                {
+                    StopAnimation(EMCgWeaponFireMode.Get().GetEnumAt(i), FireAnim);
+                }
+            }
+
+            ReloadStartTime = FCgManager_Time.Get().GetTimeSinceStart(TimeType);
+            bReloadingHandle.Set(true);
+
+            PlayAnimation_Reload();
+
+            LastState = CurrentState;
+            CurrentState = ReloadingState;
+        }
+
+        #endregion // Reload
     }
 }

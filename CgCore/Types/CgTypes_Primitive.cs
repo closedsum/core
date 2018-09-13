@@ -877,6 +877,12 @@ namespace CgCore
             UpdateIsDirty();
         }
 
+        public void Set(ValueType value)
+        {
+            Info.SetValue(Object, value, null);
+            UpdateIsDirty();
+        }
+
         public ValueType Get() { return (ValueType)Info.GetValue(Object, null); }
 
         public override void Clear()
@@ -908,6 +914,14 @@ namespace CgCore
             Clear();
         }
     }
+
+    public class FCgProperty_Ref_bool : TCgProperty_Ref<bool>
+    {
+        public FCgProperty_Ref_bool() : base() { }
+    }
+
+    // Short hand to mimic typedef
+    public sealed class FCgBool_Ref : FCgProperty_Ref_bool { }
 
     public class FCgProperty_Ref_int : TCgProperty_Ref<int>
     {
@@ -1655,6 +1669,44 @@ namespace CgCore
 	    public TCgIntegralType_TMap_float()
         {
             DefaultValue = 0.0f;
+        }
+
+        public float Max()
+        {
+            Dictionary<KeyType, float>.KeyCollection keys = Values.Keys;
+
+            float max = DefaultValue;
+
+            int i = 0;
+
+            foreach (KeyType key in keys)
+            {
+                if (i == 0)
+                    max = Values[key];
+                else
+                    max = (float)Math.Max(max, Values[key]);
+                ++i;
+            }
+            return max;
+        }
+
+        public float Min()
+        {
+            Dictionary<KeyType, float>.KeyCollection keys = Values.Keys;
+
+            float min = DefaultValue;
+
+            int i = 0;
+
+            foreach (KeyType key in keys)
+            {
+                if (i == 0)
+                    min = Values[key];
+                else
+                    min = (float)Math.Max(min, Values[key]);
+                ++i;
+            }
+            return min;
         }
     }
 

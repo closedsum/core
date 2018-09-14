@@ -1,10 +1,15 @@
 ﻿namespace CgCore
 {
+    using System;
     using System.Collections.Generic;
+    using UnityEngine;
 
-    public class FCgLocationDamageModifier
+    [Serializable]
+    public class FCgLocationDamageModifier : System.Object
     {
+        [SerializeField]
         public string Bone;
+        [SerializeField]
         public float Multiplier;
 
         public FCgLocationDamageModifier()

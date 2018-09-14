@@ -198,7 +198,7 @@ namespace CgCore
 
         public void Prep(FCgRoutine r, FCgCoroutinePayload payload)
         {
-            r.Start(payload.Fiber, payload.Stop, payload.Owner, payload.OwnerName, Time.timeSinceLevelLoad, payload.Add, payload.Remove, payload.RoutineType);
+            r.Start(payload.Fiber, payload.Stop, payload.Owner, payload.OwnerName, payload.StartTime, payload.Add, payload.Remove, payload.RoutineType);
             r.State = ECgRoutineState.Allocating;
 
             LogTransaction(ECgCoroutineSchedulerCached.Str.Prep, ECgCoroutineTransaction.Allocate, r);
@@ -212,7 +212,7 @@ namespace CgCore
 
             FCgRoutine r = Allocate_Internal(schedule);
 
-            r.Start(payload.Fiber, payload.Stop, payload.Owner, payload.OwnerName, Time.timeSinceLevelLoad, payload.Add, payload.Remove, payload.RoutineType);
+            r.Start(payload.Fiber, payload.Stop, payload.Owner, payload.OwnerName, payload.StartTime, payload.Add, payload.Remove, payload.RoutineType);
             r.State = ECgRoutineState.Allocating;
 
             LogTransaction(ECgCoroutineSchedulerCached.Str.Allocate, ECgCoroutineTransaction.Allocate, r);
@@ -310,7 +310,7 @@ namespace CgCore
             RoutinesRunning[schedule].Add(r);
 
             // TODO: get Time from Manager_Time
-            r.Start(payload.Fiber, payload.Stop, payload.Owner, payload.OwnerName, Time.timeSinceLevelLoad, payload.Add, payload.Remove, payload.RoutineType);
+            r.Start(payload.Fiber, payload.Stop, payload.Owner, payload.OwnerName, payload.StartTime, payload.Add, payload.Remove, payload.RoutineType);
             r.State = ECgRoutineState.Running;
 
             LogTransaction(ECgCoroutineSchedulerCached.Str.Start, ECgCoroutineTransaction.Start, r);

@@ -1155,6 +1155,7 @@
             FCgRoutine r                    = scheduler.PreAllocate(ScheduleType);
 
             payload.Schedule = ScheduleType;
+            payload.StartTime = FCgManager_Time.Get().GetTimeSinceStart(TimeType);
             payload.Fiber    = PlayAnimation_Reload_Internal(r);
             payload.Owner    = this;
             payload.Stop.Add(PlayAnimation_Reload_StopCondition);
@@ -1172,20 +1173,20 @@
 
         public static IEnumerator PlayAnimation_Reload_Internal(FCgRoutine r)
         {
-            MCgWeapon w = r.Owner.Get<MCgWeapon>();
+            MCgWeapon mw = r.Owner.Get<MCgWeapon>();
 
             float reloadTime = r.Floats[FIRST];
 
             r.AddMessage(ECgCoroutineMessage.Stop, ECgWeaponCached.Str.Stop_PlayAnimation_Reload_Internal);
 
-            w.PlayAnimation(EMCgWeaponFireMode.Get().GetMAX(), w.ReloadAnim, 0);
+            mw.PlayAnimation(EMCgWeaponFireMode.Get().GetMAX(), mw.ReloadAnim, 0);
 
             yield return reloadTime;
         }
 
         public bool PlayAnimation_Reload_StopCondition(FCgRoutine r)
         {
-            MCgWeapon w = r.Owner.Get<MCgWeapon>();
+            MCgWeapon mw = r.Owner.Get<MCgWeapon>();
 
 #if UNITY_EDITOR
             /*
@@ -1201,7 +1202,7 @@
             */
 #endif // #if UNITY_EDITOR
             {
-                if (w == null || w.GetMyOwner() == null)
+                if (mw == null || mw.GetMyOwner() == null)
                    return true;
             }
             return false;
@@ -1212,9 +1213,7 @@
             return 0.0f;
         }
 
-        public virtual void StopAnimation(FECgWeaponFireMode fireMode, FECgWeaponAnim AnimType, int index = 0)
-        {
-        }
+        public virtual void StopAnimation(FECgWeaponFireMode fireMode, FECgWeaponAnim AnimType, int index = 0){}
 
         #endregion // Animation
 
@@ -1682,7 +1681,7 @@
 
                     payload.Time     = FCgManager_Time.Get().GetTimeSinceStart(TimeType);
                     payload.RealTime = FCgManager_Time.Get().GetTimeSinceStart(ECgTime.Update);
-                    payload.Frame    = 0;// UCsCommon::GetCurrentFrame(GetWorld());
+                    payload.Frame    = FCgManager_Time.Get().GetFramesSinceStart(TimeType);
 
                     payload.Location      = GetFireWeaponStartLocation(fireMode);
                     payload.Direction     = GetFireWeaponStartDirection(fireMode);
@@ -1713,14 +1712,17 @@
 
         public void FireWeapon(FECgWeaponFireMode fireMode)
         {
+            // Clear FireWeapon_Internal_Routine
             if (FireWeapon_Internal_Routine != null)
                 FireWeapon_Internal_Routine.End(ECgCoroutineEndReason.UniqueInstance);
 
             FCgCoroutineScheduler scheduler = FCgCoroutineScheduler.Get();
             FCgCoroutinePayload payload     = scheduler.AllocatePayload();
+            FCgRoutine r                    = scheduler.PreAllocate(ScheduleType);
 
             payload.Schedule = ScheduleType;
-            payload.Fiber   = FireWeapon_Internal(this, fireMode);
+            payload.StartTime = FCgManager_Time.Get().GetTimeSinceStart(TimeType);
+            payload.Fiber   = FireWeapon_Internal(r);
             payload.Owner   = this;
             payload.Stop.Add(FirewWeapon_StopCondition);
             payload.Add         = AddRoutine;
@@ -1728,17 +1730,20 @@
             payload.RoutineType = ECgWeaponRoutine.FireWeapon_Internal.Value;
             payload.Name        = ECgWeaponCached.Str.FireWeapon_Internal;
 
-            FCgRoutine r = scheduler.Allocate(payload);
+            scheduler.Prep(r, payload);
 
             r.AddMessage(ECgCoroutineMessage.Stop, ECgWeaponCached.Str.Stop_FireWeapon_Internal);
 
-            r.Ints[0] = fireMode.Value;
+            r.Ints[FIRST] = fireMode.Value;
 
             scheduler.Start(ScheduleType, r);
         }
 
-        public static IEnumerator FireWeapon_Internal(MCgWeapon mw, FECgWeaponFireMode fireMode)
+        public static IEnumerator FireWeapon_Internal(FCgRoutine r)
         {
+            MCgWeapon mw = r.Owner.Get<MCgWeapon>();
+
+            FECgWeaponFireMode fireMode = EMCgWeaponFireMode.Get().GetEnumAt(r.Ints[FIRST]);
 #if UNITY_EDITOR
             /*
             // In Editor Preview Window

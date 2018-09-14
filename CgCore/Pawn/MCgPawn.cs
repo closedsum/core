@@ -48,6 +48,8 @@
 
             #endregion // Interface
 
+        public MCgPlayerState PlayerState;
+
             #region "Setup"
 
         public bool bAutoPossess;

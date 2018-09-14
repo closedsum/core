@@ -12,20 +12,8 @@ namespace CgCore
         string GetName();
     }
 
-    public abstract class TCgEnum<T> : ICgEnum where T : struct, IConvertible
+    public abstract class TCgEnum<T> : System.Object, ICgEnum where T : struct, IConvertible
     {
-        #region "Delegates"
-
-        public delegate TCgEnum<T> Get(T t);
-        public delegate TCgEnum<T> GetMAX();
-        public delegate TCgEnum<T> ToType(string s);
-        public delegate string ToStr(TCgEnum<T> e);
-
-        public delegate int ToMask(string s);
-        public delegate string MaskToStr(int m);
-
-        #endregion // Delegates
-
         #region "Data Members"
 
         public readonly T Value;
@@ -142,6 +130,7 @@ namespace CgCore
         }
     }
 
+    [Serializable]
     public class FECgEnum_byte : TCgEnum<byte>
     {
         public FECgEnum_byte() : base() { }
@@ -149,6 +138,7 @@ namespace CgCore
         public FECgEnum_byte(byte value, string name) : base(value, name) { }
     }
 
+    [Serializable]
     public class ECgEnum_int : TCgEnum<int>
     {
         public ECgEnum_int() : base() { }
@@ -176,6 +166,7 @@ namespace CgCore
         }
     }
 
+    [Serializable]
     public class ECgEnum_uint : TCgEnum<uint>
     {
         public ECgEnum_uint() : base() { }

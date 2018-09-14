@@ -134,6 +134,11 @@
             return TimeSinceStart[timeType];
         }
 
+        public ulong GetFramesSinceStart(FECgTime timeType)
+        {
+            return FramesSinceStart[timeType];
+        }
+
         public void Pause(FECgTime timeType)
         {
             bPaused[timeType] = true;

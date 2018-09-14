@@ -54,6 +54,7 @@ namespace CgCore
         public static readonly string INVALID_LISTEN_MESSAGE = "";
 
         public static readonly byte INT_SIZE = 4;
+        public static readonly byte FLOAT_SIZE = 4;
 
         #endregion // Constants
 
@@ -120,6 +121,7 @@ namespace CgCore
             #region "Temporary Storage"
 
         public int[] Ints;
+        public float[] Floats;
 
             #endregion // Temporary Storage
 
@@ -189,6 +191,7 @@ namespace CgCore
             EndReason = ECgCoroutineEndReason.MAX;
 
             Ints = new int[INT_SIZE];
+            Floats = new float[FLOAT_SIZE];
         }
 
         // Functions
@@ -586,6 +589,11 @@ namespace CgCore
             for (byte i = 0; i < INT_SIZE; ++i)
             {
                 Ints[i] = 0;
+            }
+
+            for (byte i = 0; i < FLOAT_SIZE; ++i)
+            {
+                Floats[i] = 0.0f;
             }
         }
     }

@@ -11,6 +11,7 @@ namespace CgCore
 
         public FECgCoroutineSchedule Schedule;
 
+        public float StartTime;
         public IEnumerator Fiber;
         public object Owner;
         public string OwnerName;
@@ -25,12 +26,15 @@ namespace CgCore
         public FCgCoroutinePayload()
         {
             Stop = new FCgRoutine.FCoroutineStopCondition();
+
+            Reset();
         }
 
         public void Reset()
         {
             bAllocated = false;
             Schedule = EMCgCoroutineSchedule.Get().GetMAX();
+            StartTime = 0.0f;
             Fiber = null;
             Owner = null;
             OwnerName = "";

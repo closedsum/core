@@ -1146,17 +1146,46 @@
 
         public virtual void PlayAnimation_Reload()
         {
+            // Clear PlayAnimation_Reload_Internal
+            if (PlayAnimation_Reload_Internal_Routine != null)
+                PlayAnimation_Reload_Internal_Routine.End(ECgCoroutineEndReason.UniqueInstance);
 
+            FCgCoroutineScheduler scheduler = FCgCoroutineScheduler.Get();
+            FCgCoroutinePayload payload     = scheduler.AllocatePayload();
+            FCgRoutine r                    = scheduler.PreAllocate(ScheduleType);
+
+            payload.Schedule = ScheduleType;
+            payload.Fiber    = PlayAnimation_Reload_Internal(r);
+            payload.Owner    = this;
+            payload.Stop.Add(PlayAnimation_Reload_StopCondition);
+            payload.Add         = AddRoutine;
+            payload.Remove      = RemoveRoutine;
+            payload.RoutineType = ECgWeaponRoutine.PlayAnimation_Reload_Internal.Value;
+            payload.Name        = ECgWeaponCached.Str.PlayAnimation_Reload_Internal;
+
+            scheduler.Prep(r, payload);
+
+            r.Floats[FIRST] = GetAnimationLength(EMCgWeaponFireMode.Get().GetMAX(), ReloadAnim);
+
+            scheduler.Start(ScheduleType, r);
         }
 
-        public static IEnumerator PlayAnimation_Reload_Internal()
+        public static IEnumerator PlayAnimation_Reload_Internal(FCgRoutine r)
         {
-            yield return null;
+            MCgWeapon w = r.Owner.Get<MCgWeapon>();
+
+            float reloadTime = r.Floats[FIRST];
+
+            r.AddMessage(ECgCoroutineMessage.Stop, ECgWeaponCached.Str.Stop_PlayAnimation_Reload_Internal);
+
+            w.PlayAnimation(EMCgWeaponFireMode.Get().GetMAX(), w.ReloadAnim, 0);
+
+            yield return reloadTime;
         }
 
         public bool PlayAnimation_Reload_StopCondition(FCgRoutine r)
         {
-            MCgWeapon mw = (MCgWeapon)r.Owner.Get();
+            MCgWeapon w = r.Owner.Get<MCgWeapon>();
 
 #if UNITY_EDITOR
             /*
@@ -1172,7 +1201,7 @@
             */
 #endif // #if UNITY_EDITOR
             {
-                if (mw == null)
+                if (w == null || w.GetMyOwner() == null)
                    return true;
             }
             return false;

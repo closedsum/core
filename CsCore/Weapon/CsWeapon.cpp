@@ -973,9 +973,9 @@ bool ACsWeapon::CanFire(const FECsWeaponFireMode &FireMode)
 	const float TimeSeconds = GetWorld()->GetTimeSeconds();
 
 	const bool IsBot			  = false;// Cast<AShooterBot>(MyPawn) != nullptr;
-	const bool AllowFire		  = !DoingEquipTransition && IsEquipped && TimeSeconds - Fire_StartTime[FireMode] > TimeBetweenShots.GetEX(FireMode);
-	const bool Pass_IsFirePressed = IsFirePressed[FireMode] && !DoFireOnRelease[FireMode] && (IsFullAuto[FireMode] || (!Last_IsFirePressed[FireMode] && IsFirePressed[FireMode]) || IsBot) && AllowFire;
-	const bool Pass_FireOnRelease = DoFireOnRelease[FireMode] && ((Last_IsFirePressed[FireMode] && !IsFirePressed[FireMode])) && AllowFire;
+	const bool AllowFire		  = !DoingEquipTransition && IsEquipped && (TimeSeconds - Fire_StartTime[FireMode] > TimeBetweenShots.GetEX(FireMode));
+	const bool Pass_IsFirePressed = AllowFire && IsFirePressed[FireMode] && !DoFireOnRelease[FireMode] && (IsFullAuto[FireMode] || (!Last_IsFirePressed[FireMode] && IsFirePressed[FireMode]) || IsBot);
+	const bool Pass_FireOnRelease = AllowFire && DoFireOnRelease[FireMode] && ((Last_IsFirePressed[FireMode] && !IsFirePressed[FireMode]));
 	const bool Pass_Ammo		  = CurrentAmmo > 0 || bUnlimitedAmmo;
 
 	return (Pass_IsFirePressed || Pass_FireOnRelease) && Pass_Ammo && !bReloading;
@@ -986,9 +986,9 @@ bool ACsWeapon::CanFire_Auto(const FECsWeaponFireMode &FireMode)
 	const float TimeSeconds = GetWorld()->GetTimeSeconds();
 
 	const bool IsBot			  = false;// Cast<AShooterBot>(MyPawn) != nullptr;
-	const bool AllowFire		  = !DoingEquipTransition && IsEquipped && TimeSeconds - Fire_StartTime[FireMode] > TimeBetweenAutoShots.GetEX(FireMode);
-	const bool Pass_IsFirePressed = IsFirePressed.Get(FireMode) && !DoFireOnRelease[FireMode] && (IsFullAuto[FireMode] || (!Last_IsFirePressed[FireMode] && IsFirePressed[FireMode]) || IsBot) && AllowFire;
-	const bool Pass_FireOnRelease = DoFireOnRelease[FireMode] && ((Last_IsFirePressed[FireMode] && !IsFirePressed[FireMode])) && AllowFire;
+	const bool AllowFire		  = !DoingEquipTransition && IsEquipped && (TimeSeconds - Fire_StartTime[FireMode] > TimeBetweenAutoShots.GetEX(FireMode));
+	const bool Pass_IsFirePressed = AllowFire && IsFirePressed.Get(FireMode) && !DoFireOnRelease[FireMode] && (IsFullAuto[FireMode] || (!Last_IsFirePressed[FireMode] && IsFirePressed[FireMode]) || IsBot);
+	const bool Pass_FireOnRelease = AllowFire && DoFireOnRelease[FireMode] && ((Last_IsFirePressed[FireMode] && !IsFirePressed[FireMode]));
 	const bool Pass_Ammo		  = CurrentAmmo > 0 || bUnlimitedAmmo;
 
 	return (Pass_IsFirePressed || Pass_FireOnRelease) && Pass_Ammo && !bReloading;

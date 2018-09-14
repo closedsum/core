@@ -51,21 +51,21 @@
         public static readonly FECgWeaponMultiValueMember MaxAmmo = EMCgWeaponMultiValueMember.Get().Create("MaxAmmo");
         public static readonly FECgWeaponMultiValueMember ProjectilesPerShot = EMCgWeaponMultiValueMember.Get().Create("ProjectilesPerShot");
         public static readonly FECgWeaponMultiValueMember CurrentProjectilePerShotIndex = EMCgWeaponMultiValueMember.Get().Create("CurrentProjectilePerShotIndex");
-        public static readonly FECgWeaponMultiValueMember DoFireOnRelease = EMCgWeaponMultiValueMember.Get().Create("DoFireOnRelease");
-        public static readonly FECgWeaponMultiValueMember IsFullAuto = EMCgWeaponMultiValueMember.Get().Create("IsFullAuto");
+        public static readonly FECgWeaponMultiValueMember bFireOnRelease = EMCgWeaponMultiValueMember.Get().Create("bFireOnRelease");
+        public static readonly FECgWeaponMultiValueMember bFullAuto = EMCgWeaponMultiValueMember.Get().Create("bFullAuto");
         public static readonly FECgWeaponMultiValueMember TimeBetweenProjectilesPerShot = EMCgWeaponMultiValueMember.Get().Create("TimeBetweenProjectilesPerShot");
         public static readonly FECgWeaponMultiValueMember TimeBetweenShots = EMCgWeaponMultiValueMember.Get().Create("TimeBetweenShots");
         public static readonly FECgWeaponMultiValueMember TimeBetweenAutoShots = EMCgWeaponMultiValueMember.Get().Create("TimeBetweenAutoShots");
-        public static readonly FECgWeaponMultiValueMember IsFirePressed = EMCgWeaponMultiValueMember.Get().Create("IsFirePressed");
-        public static readonly FECgWeaponMultiValueMember Last_IsFirePressed = EMCgWeaponMultiValueMember.Get().Create("Last_IsFirePressed");
-        public static readonly FECgWeaponMultiValueMember IsFirePressed_StartTime = EMCgWeaponMultiValueMember.Get().Create("IsFirePressed_StartTime");
-        public static readonly FECgWeaponMultiValueMember IsFireReleased_StartTime = EMCgWeaponMultiValueMember.Get().Create("IsFireReleased_StartTime");
+        public static readonly FECgWeaponMultiValueMember bFirePressed = EMCgWeaponMultiValueMember.Get().Create("bFirePressed");
+        public static readonly FECgWeaponMultiValueMember Last_bFirePressed = EMCgWeaponMultiValueMember.Get().Create("Last_bFirePressed");
+        public static readonly FECgWeaponMultiValueMember bFirePressed_StartTime = EMCgWeaponMultiValueMember.Get().Create("bFirePressed_StartTime");
+        public static readonly FECgWeaponMultiValueMember bFireReleased_StartTime = EMCgWeaponMultiValueMember.Get().Create("bFireReleased_StartTime");
         public static readonly FECgWeaponMultiValueMember Fire_StartTime = EMCgWeaponMultiValueMember.Get().Create("Fire_StartTime");
         // Charge
-        public static readonly FECgWeaponMultiValueMember AllowChargeFire = EMCgWeaponMultiValueMember.Get().Create("AllowChargeFire");
+        public static readonly FECgWeaponMultiValueMember bChargeFire = EMCgWeaponMultiValueMember.Get().Create("bChargeFire");
         public static readonly FECgWeaponMultiValueMember MaxChargeFireTime = EMCgWeaponMultiValueMember.Get().Create("MaxChargeFireTime");
         // Spread
-        public static readonly FECgWeaponMultiValueMember DoSpread = EMCgWeaponMultiValueMember.Get().Create("DoSpread");
+        public static readonly FECgWeaponMultiValueMember bSpread = EMCgWeaponMultiValueMember.Get().Create("bSpread");
         public static readonly FECgWeaponMultiValueMember MinSpread = EMCgWeaponMultiValueMember.Get().Create("MinSpread");
         public static readonly FECgWeaponMultiValueMember MaxSpread = EMCgWeaponMultiValueMember.Get().Create("MaxSpread");
         public static readonly FECgWeaponMultiValueMember SpreadAddedPerShot = EMCgWeaponMultiValueMember.Get().Create("SpreadAddedPerShot");
@@ -75,20 +75,20 @@
         public static readonly FECgWeaponMultiValueMember CurrentSpread = EMCgWeaponMultiValueMember.Get().Create("CurrentSpread");
         public static readonly FECgWeaponMultiValueMember LastSpreadFireTime = EMCgWeaponMultiValueMember.Get().Create("LastSpreadFireTime");
         // Anim
-        public static readonly FECgWeaponMultiValueMember LoopFireAnim = EMCgWeaponMultiValueMember.Get().Create("LoopFireAnim");
-        public static readonly FECgWeaponMultiValueMember DoScaleFireAnim = EMCgWeaponMultiValueMember.Get().Create("DoScaleFireAnim");
+        public static readonly FECgWeaponMultiValueMember bLoopFireAnim = EMCgWeaponMultiValueMember.Get().Create("bLoopFireAnim");
+        public static readonly FECgWeaponMultiValueMember bScaleFireAnim = EMCgWeaponMultiValueMember.Get().Create("bScaleFireAnim");
         // Sound
-        public static readonly FECgWeaponMultiValueMember LoopFireSound = EMCgWeaponMultiValueMember.Get().Create("LoopFireSound");
+        public static readonly FECgWeaponMultiValueMember bLoopFireSound = EMCgWeaponMultiValueMember.Get().Create("bLoopFireSound");
         // Hitscan
-        public static readonly FECgWeaponMultiValueMember IsHitscan = EMCgWeaponMultiValueMember.Get().Create("IsHitscan");
-        public static readonly FECgWeaponMultiValueMember DoesHitscanUseRadius = EMCgWeaponMultiValueMember.Get().Create("DoesHitscanUseRadius");
-        public static readonly FECgWeaponMultiValueMember DoesHitscanSimulateProjectileDuration = EMCgWeaponMultiValueMember.Get().Create("DoesHitscanSimulateProjectileDuration");
+        public static readonly FECgWeaponMultiValueMember bHitscan = EMCgWeaponMultiValueMember.Get().Create("bHitscan");
+        public static readonly FECgWeaponMultiValueMember bHitscanUseRadius = EMCgWeaponMultiValueMember.Get().Create("bHitscanUseRadius");
+        public static readonly FECgWeaponMultiValueMember bHitscanSimulateProjectileDuration = EMCgWeaponMultiValueMember.Get().Create("bHitscanSimulateProjectileDuration");
         public static readonly FECgWeaponMultiValueMember ObstaclePenetrations = EMCgWeaponMultiValueMember.Get().Create("ObstaclePenetrations");
         public static readonly FECgWeaponMultiValueMember PawnPenetrations = EMCgWeaponMultiValueMember.Get().Create("PawnPenetrations");
         // Reload
         public static readonly FECgWeaponMultiValueMember ReloadTime = EMCgWeaponMultiValueMember.Get().Create("ReloadTime");
-        public static readonly FECgWeaponMultiValueMember AllowRechargeAmmo = EMCgWeaponMultiValueMember.Get().Create("AllowRechargeAmmo");
-        public static readonly FECgWeaponMultiValueMember AllowRechargeAmmoDuringFire = EMCgWeaponMultiValueMember.Get().Create("AllowRechargeAmmoDuringFire");
+        public static readonly FECgWeaponMultiValueMember bRechargeAmmo = EMCgWeaponMultiValueMember.Get().Create("bRechargeAmmo");
+        public static readonly FECgWeaponMultiValueMember bRechargeAmmoDuringFire = EMCgWeaponMultiValueMember.Get().Create("bRechargeAmmoDuringFire");
         public static readonly FECgWeaponMultiValueMember RechargeSecondsPerAmmo = EMCgWeaponMultiValueMember.Get().Create("RechargeSecondsPerAmmo");
         public static readonly FECgWeaponMultiValueMember RechargeStartupDelay = EMCgWeaponMultiValueMember.Get().Create("RechargeStartupDelay");
     }
@@ -152,6 +152,7 @@
             public static readonly string StartChargeFire_Internal = "StartChargeFire_Internal";
             public static readonly string FireWeapon_Internal = "FireWeapon_Internal";
             // Stop Messages
+            public static readonly string Stop_PlayAnimation_Reload_Internal = "Stop PlayAnimation_Reload_Internal";
             public static readonly string Stop_StartChargeFire_Internal = "Stop StartChargeFire_Internal";
             public static readonly string Stop_FireWeapon_Internal = "Stop FireWeapon_Internal";
         }
@@ -305,18 +306,18 @@
 
         public FTMap_byte CurrentProjectilePerShotIndex;
 
-        public FTMapRef_bool DoFireOnRelease;
-        public FTMapRef_bool IsFullAuto;
+        public FTMapRef_bool bFireOnRelease;
+        public FTMapRef_bool bFullAuto;
 
         public FTMapRef_float TimeBetweenProjectilesPerShot;
         public FTMapRef_float TimeBetweenShots;
         public FTMapRef_float TimeBetweenAutoShots;
 
-        public FTMap_bool IsFirePressed;
-        public FTMap_bool Last_IsFirePressed;
+        public FTMap_bool bFirePressed;
+        public FTMap_bool Last_bFirePressed;
 
-        public FTMap_float IsFirePressed_StartTime;
-        public FTMap_float IsFireReleased_StartTime;
+        public FTMap_float bFirePressed_StartTime;
+        public FTMap_float bFireReleased_StartTime;
         public FTMap_float Fire_StartTime;
 
                 #region "Charge"
@@ -359,13 +360,13 @@
 
         public FECgWeaponAnim FireAnim;
 
-        public FTMapRef_bool LoopFireAnim;
-        public FTMapRef_bool DoScaleFireAnim;
+        public FTMapRef_bool bLoopFireAnim;
+        public FTMapRef_bool bScaleFireAnim;
 
                 // Sound
         public FECgData_Weapon_FireMode SoundsDataFireMode;
 
-        public FTMapRef_bool LoopFireSound;
+        public FTMapRef_bool bLoopFireSound;
 
         public int FireCount;
 
@@ -403,8 +404,8 @@
 
         public float ReloadStartTime;
 
-        public FRef_bool AllowRechargeAmmo;
-        public FRef_bool AllowRechargeAmmoDuringFire;
+        public FRef_bool bRechargeAmmo;
+        public FRef_bool bRechargeAmmoDuringFire;
 
         public FRef_float RechargeSecondsPerAmmo;
 
@@ -478,18 +479,18 @@
                 InitMultiRefValueMember<byte>(ProjectilesPerShot, 0);
                 ProjectilesPerShot.Get_Call.Bind(GetProjectilesPerShot);
                 InitMultiValueMember<byte>(CurrentProjectilePerShotIndex, 0);
-                InitMultiRefValueMember<bool>(DoFireOnRelease, false);
-                InitMultiRefValueMember<bool>(IsFullAuto, false);
+                InitMultiRefValueMember<bool>(bFireOnRelease, false);
+                InitMultiRefValueMember<bool>(bFullAuto, false);
                 InitMultiRefValueMember<float>(TimeBetweenProjectilesPerShot, 0.0f);
                 TimeBetweenProjectilesPerShot.Get_Call.Bind(GetTimeBetweenProjectilesPerShot);
                 InitMultiRefValueMember<float>(TimeBetweenShots, 0.0f);
                 TimeBetweenShots.Get_Call.Bind(GetTimeBetweenShots);
                 InitMultiRefValueMember<float>(TimeBetweenAutoShots, 0.0f);
                 TimeBetweenAutoShots.Get_Call.Bind(GetTimeBetweenShots);
-                InitMultiValueMember<bool>(IsFirePressed, false);
-                InitMultiValueMember<bool>(Last_IsFirePressed, false);
-                InitMultiValueMember<float>(IsFirePressed_StartTime, 0.0f);
-                InitMultiValueMember<float>(IsFireReleased_StartTime, 0.0f);
+                InitMultiValueMember<bool>(bFirePressed, false);
+                InitMultiValueMember<bool>(Last_bFirePressed, false);
+                InitMultiValueMember<float>(bFirePressed_StartTime, 0.0f);
+                InitMultiValueMember<float>(bFireReleased_StartTime, 0.0f);
                 InitMultiValueMember<float>(Fire_StartTime, 0.0f);
                 // Charge
                 InitMultiRefValueMember<bool>(AllowChargeFire, false);
@@ -513,10 +514,10 @@
                 InitMultiValueMember<float>(CurrentSpread, 0.0f);
                 InitMultiValueMember<float>(LastSpreadFireTime, 0.0f);
                 // Anim
-                InitMultiRefValueMember<bool>(LoopFireAnim, false);
-                InitMultiRefValueMember<bool>(DoScaleFireAnim, false);
+                InitMultiRefValueMember<bool>(bLoopFireAnim, false);
+                InitMultiRefValueMember<bool>(bScaleFireAnim, false);
                 // Sound
-                InitMultiRefValueMember<bool>(LoopFireSound, false);
+                InitMultiRefValueMember<bool>(bLoopFireSound, false);
                 // Hitscan
                 InitMultiRefValueMember<bool>(IsHitscan, false);
                 InitMultiRefValueMember<bool>(DoesHitscanUseRadius, false);
@@ -530,8 +531,8 @@
             {
                 ReloadTime.Init(1);
                 ReloadTime.Get_Call.Bind(GetReloadTime);
-                AllowRechargeAmmo.Init(1);
-                AllowRechargeAmmoDuringFire.Init(1);
+                bRechargeAmmo.Init(1);
+                bRechargeAmmoDuringFire.Init(1);
                 RechargeSecondsPerAmmo.Init(1);
                 RechargeSecondsPerAmmo.Get_Call.Bind(GetRechargeSecondsPerAmmo);
                 RechargeStartupDelay.Init(1);
@@ -606,6 +607,21 @@
 
         #endregion // Members
 
+        #region "Managers"
+
+        public FCgManager_Inventory GetMyManager_Inventory()
+        {
+            return null;
+        }
+
+        public T GetMyManager_Inventory<T>()
+            where T : FCgManager_Inventory
+        {
+            return (T)GetMyManager_Inventory();
+        }
+
+        #endregion // Managers
+
         #region "Data"
 
         public MCgData_Weapon GetMyData_Weapon()
@@ -632,31 +648,82 @@
 
         #endregion // Data
 
-        #region "Managers"
-
-        public FCgManager_Inventory GetMyManager_Inventory()
-        {
-            return null;
-        }
-
-        public T GetMyManager_Inventory<T>()
-            where T : FCgManager_Inventory
-        {
-            return (T)GetMyManager_Inventory();
-        }
-
-        #endregion // Managers
-
         #region "Routines"
 
         public virtual bool AddRoutine(FCgRoutine routine)
         {
+            FECgWeaponRoutine routineType = EMCgWeaponRoutine.Get()[routine.RoutineType];
+
+            // PlayAnimation_Reload_Internal
+            if (routineType == ECgWeaponRoutine.PlayAnimation_Reload_Internal)
+            {
+                PlayAnimation_Reload_Internal_Routine = routine;
+                return true;
+            }
+            // StartChargeFire_Internal
+            if (routineType == ECgWeaponRoutine.StartChargeFire_Internal)
+            {
+                StartChargeFire_Internal_Routine = routine;
+                return true;
+            }
+            // FireWeapon_Internal
+            if (routineType == ECgWeaponRoutine.FireWeapon_Internal)
+            {
+                FireWeapon_Internal_Routine = routine;
+                return true;
+            }
+            FCgDebug.LogError("MCgWeapon.AddRoutine: Adding a Routine of unknown Type.");
             return false;
         }
 
         public virtual bool RemoveRoutine(FCgRoutine routine)
         {
+            FECgWeaponRoutine routineType = EMCgWeaponRoutine.Get()[routine.RoutineType];
+
+            // PlayAnimation_Reload_Internal
+            if (routineType == ECgWeaponRoutine.PlayAnimation_Reload_Internal)
+            {
+                if (PlayAnimation_Reload_Internal_Routine != routine)
+                {
+                    FCgDebug.LogError("MCgWeapon.RemoveRoutine: Routine " + routineType.Name + " was removed prematurely.");
+                    return false;
+                }
+                PlayAnimation_Reload_Internal_Routine = null;
+                return true;
+            }
+            // StartChargeFire_Internal
+            if (routineType == ECgWeaponRoutine.StartChargeFire_Internal)
+            {
+                if (StartChargeFire_Internal_Routine != routine)
+                {
+                    FCgDebug.LogError("MCgWeapon.RemoveRoutine: Routine " + routineType.Name + " was removed prematurely.");
+                    return false;
+                }
+                StartChargeFire_Internal_Routine = null;
+                return true;
+            }
+            // FireWeapon_Internal
+            if (routineType == ECgWeaponRoutine.FireWeapon_Internal)
+            {
+                if (FireWeapon_Internal_Routine != routine)
+                {
+                    FCgDebug.LogError("MCgWeapon.RemoveRoutine: Routine " + routineType.Name + " was removed prematurely.");
+                    return false;
+                }
+                FireWeapon_Internal_Routine = null;
+                return true;
+            }
+            FCgDebug.LogError("MCgWeapon.RemoveRoutine: Removing a Routine of unknown Type.");
             return false;
+        }
+
+        public virtual void ClearRoutines()
+        {
+            FCgCoroutineScheduler scheduler = FCgCoroutineScheduler.Get();
+
+            scheduler.BroadcastMessage(ScheduleType, ECgCoroutineMessage.Stop, ECgWeaponCached.Str.Stop_PlayAnimation_Reload_Internal, this);
+            scheduler.BroadcastMessage(ScheduleType, ECgCoroutineMessage.Stop, ECgWeaponCached.Str.Stop_StartChargeFire_Internal, this);
+            scheduler.BroadcastMessage(ScheduleType, ECgCoroutineMessage.Stop, ECgWeaponCached.Str.Stop_FireWeapon_Internal, this);
         }
 
         #endregion // Routines
@@ -744,9 +811,8 @@
 	        else
             */
 #endif // #if UNITY_EDITOR
-            /*
             {
-                float timeElapsed = Time.timeSinceLevelLoad;
+                float timeSeconds = FCgManager_Time.Get().GetTimeSinceStart(TimeType);
                 int count         = EMCgWeaponFireMode.Get().Count;
 
                 // Spread
@@ -757,73 +823,326 @@
                     if (DoSpread[fireMode])
                     {
                         // Firing
-                        if (TimeSeconds - LastSpreadFireTime[FireMode] > FiringSpreadRecoveryDelay[FireMode])
+                        if (timeSeconds - LastSpreadFireTime[fireMode] > FiringSpreadRecoveryDelay[fireMode])
                         {
-                            CurrentBaseSpread.Set(FireMode, FMath::Max(CurrentBaseSpread[FireMode] - (SpreadRecoveryRate.GetEX(FireMode) * DeltaSeconds), MinSpread.GetEX(FireMode)));
+                            CurrentBaseSpread.Set(fireMode, Mathf.Max(CurrentBaseSpread[fireMode] - (SpreadRecoveryRate.GetEX(fireMode) * deltaTime), MinSpread.GetEX(fireMode)));
                         }
-                        CurrentSpread.Set(FireMode, FMath::Clamp(CurrentBaseSpread[FireMode], 0.f, MaxSpread.GetEX(FireMode)));
+                        CurrentSpread.Set(fireMode, Mathf.Clamp(CurrentBaseSpread[fireMode], 0.0f, MaxSpread.GetEX(fireMode)));
                     }
                 }
             }
 
 	        OnTick_Event.Broadcast(WeaponSlot, deltaTime);
 
-            //OnTick_HandleStates();
+            OnTick_HandleStates();
 
-            Last_IsFirePressed = IsFirePressed;
-            */
+            Last_bFirePressed.Copy(bFirePressed);
         }
 
         public void OnTick_HandleStates()
         {
+            MCgData_Weapon data_weapon = GetMyData_Weapon();
+            int maxAmmo                = MaxAmmo.GetEX(DATA_VALUE);
 
-        }
+            float timeSeconds = FCgManager_Time.Get().GetTimeSinceStart(TimeType);
 
-        public bool CanFire(FECgWeaponFireMode fireMode)
-        {
-            return false;
-        }
+            // Recharge Ammo
+            if (bRechargeAmmo[DATA_VALUE] &&
+                bRechargingAmmo &&
+                !bUnlimitedAmmo &&
+                CurrentAmmo < maxAmmo)
+            {
+                if (timeSeconds > NextRechargeAmmoTime)
+                {
+                    IncrementCurrentAmmo(DATA_VALUE);
 
-        public bool CanFire_Auto(FECgWeaponFireMode fireMode)
-        {
-            return false;
+                    if (CurrentAmmo == maxAmmo)
+                    {
+                        bRechargingAmmo = false;
+                    }
+                    else
+                    {
+                        NextRechargeAmmoTime = NextRechargeAmmoTime + RechargeSecondsPerAmmo.GetEX(DATA_VALUE);
+                    }
+                }
+            }
+
+            // Handle Fire / Melee / etc from Idle
+            CheckState_Idle();
+
+            // Firing
+            if (CurrentState == FiringState)
+            {
+                bool pass = false;
+
+                int count = EMCgWeaponFireMode.Get().Count;
+
+                for (int i = 0; i < count; ++i)
+                {
+                    FECgWeaponFireMode fireMode = EMCgWeaponFireMode.Get().GetEnumAt(i);
+
+                    bool isPressed = bFirePressed[fireMode];
+
+                    bool pass_AutoShots = isPressed && bFullAuto[fireMode] && timeSeconds - Fire_StartTime[fireMode] > TimeBetweenAutoShots.GetEX(fireMode);
+                    bool pass_Shots     = isPressed && timeSeconds - Fire_StartTime[fireMode] > TimeBetweenShots.GetEX(fireMode);
+
+                    if (pass_AutoShots || pass_Shots)
+                    {
+                        pass |= true;
+
+                        // If out of ammo, Reload
+                        if (ShouldAutoReload(fireMode))
+                        {
+                            StopSound(fireMode, FireSound);
+
+                            ReloadStartTime  = FCgManager_Time.Get().GetTimeSinceStart(TimeType);
+                            bReloadingHandle.Set(true);
+
+                            PlayAnimation_Reload();
+
+                            LastState    = CurrentState;
+                            CurrentState = ReloadingState;
+                        }
+                        else
+                        {
+                            // If using an automatic weapon / continuous fire, then
+                            // do the firing again
+                            if ((pass_AutoShots && CanFire_Auto(fireMode)) ||
+                                (pass_Shots && CanFire(fireMode)))
+                            {
+                                HandleState_Firing(fireMode);
+                            }
+                            // Stop Firing, go to Idle
+                            else
+                            {
+                                //StopFireSound();
+                                StopSound(fireMode, FireSound);
+                                StopAnimation(fireMode, FireAnim);
+
+                                LastState = CurrentState;
+                                CurrentState = IdleState;
+
+                                if (bRechargeAmmo[DATA_VALUE] &&
+                                    !bRechargeAmmoDuringFire[DATA_VALUE])
+                                {
+                                    RechargeAmmo_StartTime = timeSeconds;
+                                    NextRechargeAmmoTime = RechargeAmmo_StartTime + RechargeSecondsPerAmmo.GetEX(DATA_VALUE) + RechargeStartupDelay.GetEX(DATA_VALUE);
+                                    bRechargingAmmo = true;
+                                }
+                                CheckState_Idle();
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Reloading
+            if (CurrentState == ReloadingState)
+            {
+                if (timeSeconds - ReloadStartTime > ReloadTime.GetEX(DATA_VALUE))
+                {
+                    ResetCurrentAmmo(DATA_VALUE);
+
+                    bReloadingHandle.Set(false);
+                    LastState        = CurrentState;
+                    CurrentState     = IdleState;
+
+#if UNITY_EDITOR
+                    /*
+                    // In Editor Preview Window
+                    if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
+			        {
+			        }
+			        // In Game
+			        else
+            */
+#endif // #if UNITY_EDITOR
+                    {
+                        //MyPawn->OnReloadFinishEvent.Broadcast();
+                    }
+                    CheckState_Idle();
+                }
+            }
         }
 
         public void CheckState_Idle()
         {
+            if (CurrentState == IdleState)
+            {
+                float timeSeconds = FCgManager_Time.Get().GetTimeSinceStart(TimeType);
+
+                if (bReloading &&
+                    timeSeconds - ReloadStartTime > ReloadTime.GetEX(DATA_VALUE))
+                {
+                    ResetCurrentAmmo(DATA_VALUE);
+                    bReloadingHandle.Set(false);
+                }
+
+                if (ShouldAutoReload(EMCgWeaponFireMode.Get().GetMAX()))
+                {
+                    ReloadStartTime = timeSeconds;
+                    bReloadingHandle.Set(true);
+
+                    PlayAnimation_Reload();
+
+                    LastState = CurrentState;
+                    CurrentState = ReloadingState;
+                }
+
+                HandleChargeFire();
+
+                bool pass_Firing = false;
+
+                int count = EMCgWeaponFireMode.Get().Count;
+
+                for (int i = 0; i < count; ++i)
+                {
+                    FECgWeaponFireMode fireMode = EMCgWeaponFireMode.Get().GetEnumAt(i);
+
+                    if ((bFullAuto[fireMode] && CanFire_Auto(fireMode)) ||
+                        CanFire(fireMode))
+                    {
+                        pass_Firing |= true;
+
+                        if (bLoopFireSound[fireMode])
+                            PlaySound(fireMode, FireSound);
+
+                        if (bLoopFireAnim[fireMode])
+                            PlayAnimation(fireMode, FireAnim);
+
+                        if (bRechargeAmmo[DATA_VALUE] && !bRechargeAmmoDuringFire[DATA_VALUE])
+                        {
+                            bRechargingAmmo = false;
+                        }
+                        HandleState_Firing(fireMode);
+                    }
+                }
+            }
+        }
+
+        public void HandleState_Firing(FECgWeaponFireMode fireMode)
+        {
+            CurrentProjectilePerShotIndex.Set(fireMode, (byte)(CurrentAmmo > ProjectilesPerShot.GetEX(fireMode) ? 0 : ProjectilesPerShot.GetEX(fireMode) - CurrentAmmo));
+
+            float timeSeconds = FCgManager_Time.Get().GetTimeSinceStart(TimeType);
+
+            Fire_StartTime.Set(fireMode, timeSeconds);
+            LastState    = CurrentState;
+            CurrentState = FiringState;
+
+            FireWeapon(fireMode);
+
+            if (!bUnlimitedAmmo)
+            {
+                //CurrentAmmo = FMath::Max(0, CurrentAmmo - ProjectilesPerShot.Get(FireMode));
+
+                // Recharge Ammo
+                if (bRechargeAmmo[DATA_VALUE])
+                {
+                    if (bRechargeAmmoDuringFire[DATA_VALUE])
+                    {
+                        bRechargingAmmo      = true;
+                        NextRechargeAmmoTime = timeSeconds + RechargeSecondsPerAmmo.GetEX(DATA_VALUE) + RechargeStartupDelay.GetEX(DATA_VALUE);
+                    }
+                }
+            }
+        }
+
+        public bool CanFire(FECgWeaponFireMode fireMode)
+        {
+            float timeSeconds = FCgManager_Time.Get().GetTimeSinceStart(TimeType);
+
+            bool isBot              = false;// Cast<AShooterBot>(MyPawn) != nullptr;
+            bool allowFire          = !bDoingEquipTransition && bEquipped && (timeSeconds - Fire_StartTime[fireMode] > TimeBetweenShots.GetEX(fireMode));
+            bool pass_bFirePressed = allowFire && bFirePressed[fireMode] && !bFireOnRelease[fireMode] && (bFullAuto[fireMode] || (!Last_bFirePressed[fireMode] && bFirePressed[fireMode]) || isBot);
+            bool pass_bFireOnRelease = allowFire && bFireOnRelease[fireMode] && ((Last_bFirePressed[fireMode] && !bFirePressed[fireMode]));
+            bool pass_Ammo          = CurrentAmmo > 0 || bUnlimitedAmmo;
+
+            return (pass_bFirePressed || pass_bFireOnRelease) && pass_Ammo && !bReloading;
+        }
+
+        public bool CanFire_Auto(FECgWeaponFireMode fireMode)
+        {
+            float timeSeconds = FCgManager_Time.Get().GetTimeSinceStart(TimeType);
+
+            bool isBot              = false;// Cast<AShooterBot>(MyPawn) != nullptr;
+            bool allowFire          = !bDoingEquipTransition && bEquipped && timeSeconds - Fire_StartTime[fireMode] > TimeBetweenAutoShots.GetEX(fireMode);
+            bool pass_bFirePressed = allowFire && bFirePressed.Get(fireMode) && !bFireOnRelease[fireMode] && (bFullAuto[fireMode] || (!Last_bFirePressed[fireMode] && bFirePressed[fireMode]) || isBot);
+            bool pass_bFireOnRelease = allowFire && bFireOnRelease[fireMode] && ((Last_bFirePressed[fireMode] && !bFirePressed[fireMode]));
+            bool pass_Ammo          = CurrentAmmo > 0 || bUnlimitedAmmo;
+
+            return (pass_bFirePressed || pass_bFireOnRelease) && pass_Ammo && !bReloading;
         }
 
         public void OnEnable()
         {
+            ResetCurrentAmmo(DATA_VALUE);
         }
 
         public virtual void Disable()
         {
+            int count = EMCgWeaponFireMode.Get().Count;
 
+            if (CurrentState == FiringState || GetSound(FireSound))
+            {
+                for (int i = 0; i < count; ++i)
+                {
+                    FECgWeaponFireMode fireMode = EMCgWeaponFireMode.Get().GetEnumAt(i);
+
+                    StopSound(fireMode, FireSound);
+                }
+            }
+
+            LastState = CurrentState;
+            CurrentState = IdleState;
+
+            for (int i = 0; i < count; ++i)
+            {
+                FECgWeaponFireMode fireMode = EMCgWeaponFireMode.Get().GetEnumAt(i);
+
+                bFirePressed.Set(fireMode, false);
+                Last_bFirePressed.Set(fireMode, false);
+            }
+
+            bPerformingChargeFire = false;
+
+            if (GetMyData_Weapon())
+            {
+                for (int i = 0; i < count; ++i)
+                {
+                    FECgWeaponFireMode fireMode = EMCgWeaponFireMode.Get().GetEnumAt(i);
+
+                    if (bLoopFireAnim[fireMode])
+                        StopAnimation(fireMode, FireAnim);
+                }
+            }
+
+            for (int i = 0; i < PROJECTILE_FIRE_PAYLOAD_POOL_SIZE; ++i)
+            {
+                ProjectileFirePayloads[i].Reset();
+            }
+
+            ProjectileFirePayloadPoolIndex = 0;
+
+            ClearRoutines();
         }
 
         public void Reset()
         {
+            Disable();
+
+            FireCount = 0;
         }
         
-        public virtual void Show()
-        {
+        public virtual void Show(){}
 
-        }
-
-        public virtual void Hide()
-        {
-
-        }
+        public virtual void Hide(){}
 
         #endregion // State
 
         #region "Animation"
 
-        public virtual void PlayAnimation(FECgWeaponFireMode fireMode, FECgWeaponAnim animType, int index = 0)
-        {
-
-        }
+        public virtual void PlayAnimation(FECgWeaponFireMode fireMode, FECgWeaponAnim animType, int index = 0){}
 
         public virtual void PlayAnimation_Reload()
         {
@@ -1123,17 +1442,17 @@
 
         public void SetIsFirePressed(FECgWeaponFireMode fireMode, bool value, bool doOnTick = false)
         {
-            IsFirePressed.Set(fireMode, value);
+            bFirePressed.Set(fireMode, value);
 
-            float timeElapsed = Time.timeSinceLevelLoad;
+            float timeSeconds = FCgManager_Time.Get().GetTimeSinceStart(TimeType);
 
             if (value)
             {
-                IsFirePressed_StartTime.Set(fireMode, timeElapsed);
+                bFirePressed_StartTime.Set(fireMode, timeSeconds);
             }
             else
             {
-                IsFireReleased_StartTime.Set(fireMode, timeElapsed);
+                bFireReleased_StartTime.Set(fireMode, timeSeconds);
             }
 
 #if UNITY_EDITOR
@@ -1170,7 +1489,7 @@
                 FECgWeaponFireMode fireMode = EMCgWeaponFireMode.Get().GetEnumAt(i);
 
                 if (AllowChargeFire[fireMode] &&
-                    IsFirePressed[fireMode])
+                    bFirePressed[fireMode])
                 {
                     StartChargeFire(fireMode);
                     return;
@@ -1181,7 +1500,7 @@
         public void StartChargeFire(FECgWeaponFireMode fireMode)
         {
             bPerformingChargeFire = true;
-            ChargeFire_StartTime  = Time.timeSinceLevelLoad;
+            ChargeFire_StartTime  = FCgManager_Time.Get().GetTimeSinceStart(TimeType);
 
             if (StartChargeFire_Internal_Routine != null)
                 StartChargeFire_Internal_Routine.End(ECgCoroutineEndReason.UniqueInstance);
@@ -1189,9 +1508,7 @@
             FCgCoroutineScheduler scheduler = FCgCoroutineScheduler.Get();
             FCgCoroutinePayload payload     = scheduler.AllocatePayload();
 
-            FECgCoroutineSchedule schedule = ECgCoroutineSchedule.Update;
-
-            payload.Schedule = schedule;
+            payload.Schedule = ScheduleType;
             payload.Fiber   = StartChargeFire_Internal(this, fireMode);
             payload.Owner   = this;
             payload.Stop.Add(StartChargeFire_StopCondition);
@@ -1206,7 +1523,7 @@
 
             r.Ints[0] = fireMode.Value;
 
-            scheduler.Start(schedule, r);
+            scheduler.Start(ScheduleType, r);
         }
 
         public static IEnumerator StartChargeFire_Internal(MCgWeapon mw, FECgWeaponFireMode fireMode)
@@ -1263,7 +1580,7 @@
 
         public float GetChargeFireHeldTime()
         {
-            return Time.timeSinceLevelLoad - ChargeFire_StartTime;
+            return FCgManager_Time.Get().GetTimeSinceStart(TimeType) - ChargeFire_StartTime;
         }
 
         public float GetChargeFireHeldPercent(FECgWeaponFireMode fireMode)
@@ -1273,7 +1590,7 @@
 
         public float GetCurrentChargeFireHeldTime()
         {
-            return bPerformingChargeFire ? Time.timeSinceLevelLoad - ChargeFire_StartTime : 0.0f;
+            return bPerformingChargeFire ? FCgManager_Time.Get().GetTimeSinceStart(TimeType) - ChargeFire_StartTime : 0.0f;
         }
 
         public float GetCurrentChargeFireHeldPercent(FECgWeaponFireMode fireMode)
@@ -1334,8 +1651,8 @@
                 {
                     payload.bAllocated = true;
 
-                    payload.Time     = Time.timeSinceLevelLoad;
-                    payload.RealTime = Time.realtimeSinceStartup;
+                    payload.Time     = FCgManager_Time.Get().GetTimeSinceStart(TimeType);
+                    payload.RealTime = FCgManager_Time.Get().GetTimeSinceStart(ECgTime.Update);
                     payload.Frame    = 0;// UCsCommon::GetCurrentFrame(GetWorld());
 
                     payload.Location      = GetFireWeaponStartLocation(fireMode);
@@ -1373,9 +1690,7 @@
             FCgCoroutineScheduler scheduler = FCgCoroutineScheduler.Get();
             FCgCoroutinePayload payload     = scheduler.AllocatePayload();
 
-            FECgCoroutineSchedule schedule = ECgCoroutineSchedule.Update;
-
-            payload.Schedule = schedule;
+            payload.Schedule = ScheduleType;
             payload.Fiber   = FireWeapon_Internal(this, fireMode);
             payload.Owner   = this;
             payload.Stop.Add(FirewWeapon_StopCondition);
@@ -1390,7 +1705,7 @@
 
             r.Ints[0] = fireMode.Value;
 
-            scheduler.Start(schedule, r);
+            scheduler.Start(ScheduleType, r);
         }
 
         public static IEnumerator FireWeapon_Internal(MCgWeapon mw, FECgWeaponFireMode fireMode)
@@ -1416,10 +1731,10 @@
                     // Set the StartTime
 
                     // Play Fire Sound
-                    if (!mw.LoopFireSound.Get(fireMode))
+                    if (!mw.bLoopFireSound.Get(fireMode))
                         mw.PlaySound(fireMode, mw.FireSound);
                     // Play Fire Animation
-                    if (!mw.LoopFireAnim.Get(fireMode))
+                    if (!mw.bLoopFireAnim.Get(fireMode))
                         mw.PlayAnimation(fireMode, mw.FireAnim);
 
 #if UNITY_EDITOR
@@ -1530,7 +1845,7 @@
                     fakeDir = dir;
                 }
                 CurrentBaseSpread.Set(fireMode, Mathf.Min(CurrentBaseSpread[fireMode] + SpreadAddedPerShot.GetEX(fireMode), MaxSpread.GetEX(fireMode)));
-                LastSpreadFireTime.Set(fireMode, Time.timeSinceLevelLoad);
+                LastSpreadFireTime.Set(fireMode, FCgManager_Time.Get().GetTimeSinceStart(TimeType));
             }
             FireProjectile_Internal(fireMode, firePayload);
 
@@ -2001,7 +2316,7 @@
             }
             else
             {
-                bool pass_AutoShots = IsFullAuto[fireMode] && timeSeconds - Fire_StartTime[fireMode] > TimeBetweenAutoShots.GetEX(fireMode);
+                bool pass_AutoShots = bFullAuto[fireMode] && timeSeconds - Fire_StartTime[fireMode] > TimeBetweenAutoShots.GetEX(fireMode);
                 bool pass_Shots     = timeSeconds - Fire_StartTime[fireMode] > TimeBetweenShots.GetEX(fireMode);
 
                 if (!pass_AutoShots && !pass_Shots)

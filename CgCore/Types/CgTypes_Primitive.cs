@@ -1573,6 +1573,20 @@ namespace CgCore
             }
             Clear();
         }
+
+        public void Copy(TCgProperty_TMap<KeyType, ValueType> from)
+        {
+            Value = from.Value;
+            UpdateIsDirty();
+
+            Dictionary<KeyType, ValueType>.KeyCollection keys = Values.Keys;
+
+            foreach (KeyType key in keys)
+            {
+                Values[key] = from.Values[key];
+                UpdateIsDirtys(key);
+            }
+        }
     }
 
     public class TCgIntegralType_TMap<KeyType, ValueType> : TCgProperty_TMap<KeyType, ValueType>

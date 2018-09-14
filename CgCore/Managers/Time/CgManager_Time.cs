@@ -74,6 +74,9 @@
         private Dictionary<FECgTime, float> LastRealtimeSinceStartup;
         private Dictionary<FECgTime, float> TimeSinceStart;
         private Dictionary<FECgTime, float> DeltaTime;
+
+        private Dictionary<FECgTime, ulong> FramesSinceStart;
+
         private Dictionary<FECgTime, bool> bPaused;
 
         #endregion // Data Members
@@ -94,6 +97,7 @@
                 LastRealtimeSinceStartup.Add(e, 0.0f);
                 TimeSinceStart.Add(e, 0.0f);
                 DeltaTime.Add(e, 0.0f);
+                FramesSinceStart.Add(e, 0);
                 bPaused.Add(e, false);
             }
         }
@@ -111,6 +115,7 @@
             {
                 TimeSinceStart[time] += deltaTime;
                 DeltaTime[time]       = deltaTime;
+                FramesSinceStart[time] += 1;
             }
             else
             {
@@ -143,6 +148,7 @@
         {
             TimeSinceStart[timeType] = 0.0f;
             DeltaTime[timeType] = 0.0f;
+            FramesSinceStart[timeType] = 0;
             bPaused[timeType] = false;
         }
     }

@@ -48,6 +48,7 @@ namespace CgCore
     {
         public static class Str
         {
+            public static readonly string Prep = "FCgCoroutineScheduler.Prep";
             public static readonly string Allocate = "FCgCoroutineScheduler.Allocate";
             public static readonly string Start = "FCgCoroutineScheduler.Start";
         }
@@ -186,16 +187,32 @@ namespace CgCore
             return null;
         }
 
+        public FCgRoutine PreAllocate(FECgCoroutineSchedule schedule)
+        {
+            return Allocate_Internal(schedule);
+        }
+
+        public void Prep(FCgRoutine r, FCgCoroutinePayload payload)
+        {
+            r.Start(payload.Fiber, payload.Stop, payload.Owner, payload.OwnerName, Time.timeSinceLevelLoad, payload.Add, payload.Remove, payload.RoutineType);
+            r.State = ECgRoutineState.Allocating;
+
+            LogTransaction(ECgCoroutineSchedulerCached.Str.Prep, ECgCoroutineTransaction.Allocate, r);
+
+            payload.Reset();
+        }
+
         public FCgRoutine Allocate(FCgCoroutinePayload payload)
         {
             FECgCoroutineSchedule schedule = payload.Schedule;
 
             FCgRoutine r = Allocate_Internal(schedule);
 
-            LogTransaction(ECgCoroutineSchedulerCached.Str.Allocate, ECgCoroutineTransaction.Allocate, r);
-
             r.Start(payload.Fiber, payload.Stop, payload.Owner, payload.OwnerName, Time.timeSinceLevelLoad, payload.Add, payload.Remove, payload.RoutineType);
             r.State = ECgRoutineState.Allocating;
+
+            LogTransaction(ECgCoroutineSchedulerCached.Str.Allocate, ECgCoroutineTransaction.Allocate, r);
+
             payload.Reset();
 
             return r;
@@ -288,11 +305,12 @@ namespace CgCore
 
             RoutinesRunning[schedule].Add(r);
 
-            LogTransaction(ECgCoroutineSchedulerCached.Str.Start, ECgCoroutineTransaction.Start, r);
-
             // TODO: get Time from Manager_Time
             r.Start(payload.Fiber, payload.Stop, payload.Owner, payload.OwnerName, Time.timeSinceLevelLoad, payload.Add, payload.Remove, payload.RoutineType);
             r.State = ECgRoutineState.Running;
+
+            LogTransaction(ECgCoroutineSchedulerCached.Str.Start, ECgCoroutineTransaction.Start, r);
+
             payload.Reset();
             r.Run(0.0f);
             return r;

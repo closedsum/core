@@ -3421,7 +3421,8 @@ protected:
 public:
 	TBaseDelegate<ValueType, const int32&> GetDelegate;
 	TBaseDelegate<const ValueType&, const int32&> Override_Get;
-	TBaseDelegate<const ValueType&, const int32&> Override_Subscript;
+	TBaseDelegate<const ValueType&, const int32&> Override_Subscript_Const;
+	TBaseDelegate<ValueType&, const int32&> Override_Subscript;
 	TMulticastDelegate<void, const ValueType&> OnChange_Event;
 	TMulticastDelegate<void, const int32&, const ValueType&> OnChangeArray_Event;
 
@@ -3436,6 +3437,7 @@ public:
 		GetDelegate.Unbind();
 		Override_Get.Unbind();
 		Override_Subscript.Unbind();
+		Override_Subscript_Const.Unbind();
 		OnChange_Event.Clear();
 		OnChangeArray_Event.Clear();
 	}
@@ -3519,10 +3521,17 @@ public:
 		}
 	}
 
-	FORCEINLINE const ValueType& operator[](const int32 &Index)
+	FORCEINLINE ValueType& operator[](const int32 &Index)
 	{
 		if (Override_Subscript.IsBound())
 			return Override_Subscript.Execute(Index);
+		return Values[Index];
+	}
+
+	FORCEINLINE const ValueType& operator[](const int32 &Index) const
+	{
+		if (Override_Subscript_Const.IsBound())
+			return Override_Subscript_Const.Execute(Index);
 		return Values[Index];
 	}
 
@@ -3572,6 +3581,7 @@ public:
 		GetDelegate.Unbind();
 		Override_Get.Unbind();
 		Override_Subscript.Unbind();
+		Override_Subscript_Const.Unbind();
 		OnChange_Event.Clear();
 		OnChangeEX_Event.Clear();
 	}
@@ -4170,7 +4180,12 @@ public:
 		UpdateIsDirty(Key);
 	}
 
-	FORCEINLINE const ValueType& operator[](const KeyType &Key)
+	FORCEINLINE ValueType& operator[](const KeyType &Key)
+	{
+		return Values[Key];
+	}
+
+	FORCEINLINE const ValueType& operator[](const KeyType &Key) const
 	{
 		return Values[Key];
 	}

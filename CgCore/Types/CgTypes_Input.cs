@@ -1,6 +1,7 @@
 ﻿// Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 namespace CgCore
 {
+    using System;
     using System.Collections;
     using System.Collections.Generic;
     using UnityEngine;
@@ -44,6 +45,7 @@ namespace CgCore
         }
     }
 
+    [Serializable]
     public sealed class FECgInputAction : FECgEnum_byte
     {
         public FECgInputAction(byte value, string name) : base(value, name) { }

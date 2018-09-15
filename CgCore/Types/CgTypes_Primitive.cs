@@ -12,7 +12,7 @@ namespace CgCore
         string GetName();
     }
 
-    public abstract class TCgEnum<T> : System.Object, ICgEnum where T : struct, IConvertible
+    public abstract class TCgEnum<T> : UnityEngine.Object, ICgEnum where T : struct, IConvertible
     {
         #region "Data Members"
 

@@ -17,6 +17,8 @@
 
         private static MCgDataMapping _Instance;
 
+        public FECgInputAction Action;
+
         #endregion // Data Members
 
         public static MCgDataMapping Get()

@@ -5,11 +5,18 @@
     using UnityEngine;
 
     [Serializable]
-    public class FCgLocationDamageModifier : System.Object
+    public struct S_FCgLocationDamageModifier
     {
         [SerializeField]
         public string Bone;
         [SerializeField]
+        public float Multiplier;
+    }
+
+    public class FCgLocationDamageModifier
+    {
+        public string Bone;
+
         public float Multiplier;
 
         public FCgLocationDamageModifier()
@@ -438,33 +445,33 @@
     public class FCgData_Weapon_FireMode_Firing
     {
         /** Whether to do weapon fire on release of input */
-        bool DoFireOnRelease;
-        bool AllowChargeFire;
-        float MaxChargeFireTime;
+        public bool DoFireOnRelease;
+        public bool AllowChargeFire;
+        public float MaxChargeFireTime;
         /** Time before force ending the charge fire. If 0, charge fire will NOT be forced to end. */
-        float ForceReleaseChargeFireTime;
-        float ChargeFireDamageMultiplier;
-        float ChargeFireSpeedMultiplier;
+        public float ForceReleaseChargeFireTime;
+        public float ChargeFireDamageMultiplier;
+        public float ChargeFireSpeedMultiplier;
         /** Is the fully automatic weapon */
-        bool IsFullAuto;
+        public bool IsFullAuto;
         /** Number of projectiles to fire per shot */
-        byte ProjectilesPerShot;
+        public byte ProjectilesPerShot;
         /** Time between each projectile fired per shot */
-        float TimeBetweenProjectilesPerShot;
+        public float TimeBetweenProjectilesPerShot;
         /** Time between two consecutive shots */
-        float TimeBetweenShots;
+        public float TimeBetweenShots;
         /** Time between two consecutive shots in full auto */
-        float TimeBetweenAutoShots;
-        bool IsHitscan;
-        bool DoesHitscanUseRadius;
-        bool DoesHitscanSimulateProjectileDuration;
-        int ObstaclePenetrations;
-        int PawnPenetrations;
+        public float TimeBetweenAutoShots;
+        public bool IsHitscan;
+        public bool DoesHitscanUseRadius;
+        public bool DoesHitscanSimulateProjectileDuration;
+        public int ObstaclePenetrations;
+        public int PawnPenetrations;
         //TArray<FCsLocationDamageModifier> LocationDamageModifiers;
         /* Whether to also use a Fake Projectile when firing a projectile */
-        bool UseFake;
-        FCgData_ProjectileRef Data;
-        FCgData_ProjectileRef ChargeData;
+        public bool UseFake;
+        public FCgData_ProjectileRef Data;
+        public FCgData_ProjectileRef ChargeData;
 
         public FCgData_Weapon_FireMode_Firing()
         {
@@ -475,56 +482,55 @@
 
     public class CgData_Weapon_FireMode_Animation
     {
-
-        bool LoopFireAnim;
+        public bool LoopFireAnim;
         //FCsAnimMontage FireAnim;
-        bool DoScaleFireAnim;
+        public bool DoScaleFireAnim;
 
         public CgData_Weapon_FireMode_Animation() { }
     }
 
     public class CgData_FpsWeapon_FireMode_Animation
     {
-        bool LoopFireAnim;
+        public bool LoopFireAnim;
         //FCsFpvAnimMontage FireAnims;
-        bool DoScaleFireAnim;
-        bool LoopAdsFireAnim;
-       // FCsFpvAnimMontage AdsFireAnims;
-        bool DoScaleAdsFireAnim;
+        public bool DoScaleFireAnim;
+        public bool LoopAdsFireAnim;
+        // FCsFpvAnimMontage AdsFireAnims;
+        public bool DoScaleAdsFireAnim;
 
         public CgData_FpsWeapon_FireMode_Animation() { }
     }
 
     public class FCgData_Weapon_FireMode_Movement
     {
-        bool DoSlowWhileFiring;
-        float SlowWhileFiringRate;
-        bool DoKickback;
-        bool DoKickbackOnGround;
-        float KickbackStrength;
+        public bool DoSlowWhileFiring;
+        public float SlowWhileFiringRate;
+        public bool DoKickback;
+        public bool DoKickbackOnGround;
+        public float KickbackStrength;
 
         public FCgData_Weapon_FireMode_Movement() { }
     }
 
     public class FCgData_Weapon_FireMode_Aiming
     {
-        bool IsHoming;
-        float HomingAccelerationMagnitude;
-        bool DoSpread;
-        float MinSpread;
-        float MaxSpread;
-        float SpreadAddedPerShot;
-        float SpreadRecoveryRate;
-        float FiringSpreadRecoveryDelay;
-        float MovingSpreadBonus;
+        public bool IsHoming;
+        public float HomingAccelerationMagnitude;
+        public bool DoSpread;
+        public float MinSpread;
+        public float MaxSpread;
+        public float SpreadAddedPerShot;
+        public float SpreadRecoveryRate;
+        public float FiringSpreadRecoveryDelay;
+        public float MovingSpreadBonus;
 
         public FCgData_Weapon_FireMode_Aiming() { }
     }
 
     public class FCgData_FpsWeapon_FireMode_Aiming : FCgData_Weapon_FireMode_Aiming
     {
-        float JumpSpreadImpulse;
-        float ScopeAccuracyBonus;
+        public float JumpSpreadImpulse;
+        public float ScopeAccuracyBonus;
 
         public FCgData_FpsWeapon_FireMode_Aiming() { }
     }
@@ -534,9 +540,9 @@
         //TArray<FCsLocationDamageModifier> MinLocationDamageModifiers;
         //TArray<FCsLocationDamageModifier> MaxLocationDamageModifiers;
         //FCsCurveFloat LocationDamageModifierRamp;
-        bool DoScopePower;
-        float MaxScopePower;
-        float ScopePowerGrowthRate;
+        public bool DoScopePower;
+        public float MaxScopePower;
+        public float ScopePowerGrowthRate;
 
 	    public FCgData_Weapon_FireMode_Scope() { }
     }
@@ -591,7 +597,7 @@
     {
         /** single fire sound (bLoopedFireSound not set) */
         //FCsSoundElement FireSound;
-        bool LoopFireSound;
+        public bool LoopFireSound;
 
         /** looped fire sound (bLoopedFireSound set) */
         //FCsSoundElement FireLoopSound;
@@ -606,7 +612,7 @@
         /** single fire sound (bLoopedFireSound not set) */
         //FCsFpsSoundElement FireSounds;
 
-        bool LoopFireSound;
+        public bool LoopFireSound;
 
         /** looped fire sound (bLoopedFireSound set) */
         //FCsFpsSoundElement FireLoopSounds;

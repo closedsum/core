@@ -38,11 +38,10 @@
             // Value
             property.serializedObject.Update();
 
-            EnumClass e = (EnumClass)property.objectReferenceValue;
-            int newIndex = EditorGUI.Popup(contentPosition, e == null ? 0 : (int)(object)(e.Value), EnumNames);
-            Debug.Log(Map.GetEnumAt(newIndex).Value);
-            property.objectReferenceValue = Map.GetEnumAt(newIndex);
-
+            //EnumClass e = (EnumClass)property.objectReferenceValue;
+            //int newIndex = EditorGUI.Popup(contentPosition, e == null ? 0 : (int)(object)(e.Value), EnumNames);
+            //Debug.Log(Map.GetEnumAt(newIndex).Value);
+            
             property.serializedObject.ApplyModifiedProperties();
         }
 

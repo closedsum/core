@@ -12,11 +12,12 @@ namespace CgCore
         string GetName();
     }
 
-    public abstract class TCgEnum<T> : UnityEngine.Object, ICgEnum where T : struct, IConvertible
+    public abstract class TCgEnum<T> : ICgEnum where T : struct, IConvertible
     {
         #region "Data Members"
 
         public readonly T Value;
+
         public readonly string Name;
 
         #endregion // Data Members
@@ -130,7 +131,6 @@ namespace CgCore
         }
     }
 
-    [Serializable]
     public class FECgEnum_byte : TCgEnum<byte>
     {
         public FECgEnum_byte() : base() { }
@@ -138,7 +138,6 @@ namespace CgCore
         public FECgEnum_byte(byte value, string name) : base(value, name) { }
     }
 
-    [Serializable]
     public class ECgEnum_int : TCgEnum<int>
     {
         public ECgEnum_int() : base() { }
@@ -166,7 +165,6 @@ namespace CgCore
         }
     }
 
-    [Serializable]
     public class ECgEnum_uint : TCgEnum<uint>
     {
         public ECgEnum_uint() : base() { }

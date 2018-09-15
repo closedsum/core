@@ -45,7 +45,6 @@ namespace CgCore
         }
     }
 
-    [Serializable]
     public sealed class FECgInputAction : FECgEnum_byte
     {
         public FECgInputAction(byte value, string name) : base(value, name) { }

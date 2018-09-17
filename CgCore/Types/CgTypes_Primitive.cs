@@ -536,7 +536,7 @@ namespace CgCore
         void Resolve();
     }
 
-    public abstract class CgProperty : ICgProperty
+    public abstract class FCgProperty : ICgProperty
     {
         public abstract void UpdateIsDirty();
         public abstract void Clear();
@@ -547,7 +547,7 @@ namespace CgCore
         public abstract void Resolve();
     }
 
-    public class TCgProperty<ValueType> : CgProperty 
+    public class TCgProperty<ValueType> : FCgProperty
         where ValueType : struct
     {
         public sealed class OnChange : TCgMulticastDelegate_OneParam<ValueType> { }
@@ -767,7 +767,7 @@ namespace CgCore
 
         #region "Ref"
 
-    public class TCgProperty_Ref<ValueType> : CgProperty 
+    public class TCgProperty_Ref<ValueType> : FCgProperty 
         where ValueType : struct
     {
         public sealed class FOnChange : TCgMulticastDelegate_OneParam<ValueType> { }
@@ -2257,7 +2257,7 @@ namespace CgCore
 
         #region "Class"
 
-    public class TCgPropertyClass<ClassType> : CgProperty 
+    public class TCgPropertyClass<ClassType> : FCgProperty
         where ClassType : class
     {
         public sealed class FOnChange : TCgMulticastDelegate_OneParam<ClassType> { }
@@ -2383,7 +2383,7 @@ namespace CgCore
 
         #region "Class Ref"
 
-    public class TCgPropertyClass_Ref<ClassType> : CgProperty 
+    public class TCgPropertyClass_Ref<ClassType> : FCgProperty
         where ClassType : class
     {
         public sealed class FOnChange : TCgMulticastDelegate_OneParam<ClassType> { }

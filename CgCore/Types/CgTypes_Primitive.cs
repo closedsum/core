@@ -774,8 +774,11 @@ namespace CgCore
 
         #region "Data Members"
 
-        public object Object;
-        public PropertyInfo Info;
+        protected object Object;
+        protected bool bFieldInfo;
+        protected FieldInfo _FieldInfo;
+        protected bool bPropertyInfo;
+        protected PropertyInfo _PropertyInfo;
         public ValueType Last_Value;
 
         protected bool IsDirty;
@@ -787,7 +790,7 @@ namespace CgCore
         public TCgProperty_Ref()
         {
             Object = null;
-            Info = null;
+            _PropertyInfo = null;
             Last_Value = default(ValueType);
 
             IsDirty = false;
@@ -851,7 +854,13 @@ namespace CgCore
 
         public override void UpdateIsDirty()
         {
-            ValueType value = (ValueType)Info.GetValue(Object, null);
+            ValueType value = default(ValueType);
+
+            if (bFieldInfo)
+                value = (ValueType)_FieldInfo.GetValue(Object);
+            if (bPropertyInfo)
+                value = (ValueType)_PropertyInfo.GetValue(Object, null);
+
             IsDirty         = !value.Equals(Last_Value);
             Last_Value      = value;
 
@@ -859,20 +868,38 @@ namespace CgCore
                 OnChange_Event.Broadcast(value);
         }
 
-        public void Set(Object o, string propertyName)
+        public void Set(Object o, string name)
         {
             Object = o;
-            Info = o.GetType().GetProperty(propertyName);
+
+            Type type = o.GetType();
+
+            _PropertyInfo = type.GetProperty(name);
+            bPropertyInfo = _PropertyInfo != null;
+
+            _FieldInfo = type.GetField(name);
+            bFieldInfo = _FieldInfo != null;
+
             UpdateIsDirty();
         }
 
         public void Set(ValueType value)
         {
-            Info.SetValue(Object, value, null);
+            if (bFieldInfo)
+                _FieldInfo.SetValue(Object, value);
+            if (bPropertyInfo)
+                _PropertyInfo.SetValue(Object, value, null);
             UpdateIsDirty();
         }
 
-        public ValueType Get() { return (ValueType)Info.GetValue(Object, null); }
+        public ValueType Get()
+        {
+            if (bFieldInfo)
+                return (ValueType)_FieldInfo.GetValue(Object);
+            if (bPropertyInfo)
+                return (ValueType)_PropertyInfo.GetValue(Object, null);
+            return default(ValueType);
+        }
 
         public override void Clear()
         {
@@ -882,7 +909,8 @@ namespace CgCore
         public override void ResetValue()
         {
             Object = null;
-            Info = null;
+            _FieldInfo = null;
+            _PropertyInfo = null;
             Last_Value = default(ValueType);
             IsDirty = false;
         }
@@ -1187,8 +1215,11 @@ namespace CgCore
         public ValueType Value;
         public ValueType Last_Value;
 
-        public List<object> Objects;
-        public List<PropertyInfo> PropertyInfos;
+        protected List<object> Objects;
+        protected bool bFieldInfo;
+        protected List<FieldInfo> FieldInfos;
+        protected bool bPropertyInfo;
+        protected List<PropertyInfo> PropertyInfos;
         public List<ValueType> Last_Values;
 
         protected byte SIZE;
@@ -1248,7 +1279,14 @@ namespace CgCore
 
         public virtual void UpdateIsDirtys(int index)
         {
-            ValueType value     = (ValueType)PropertyInfos[index].GetValue(Objects[index], null);
+            ValueType value = DefaultValue;
+
+            if (bFieldInfo)
+                value = (ValueType)FieldInfos[index].GetValue(Objects[index]);
+
+            if (bPropertyInfo)
+                value = (ValueType)PropertyInfos[index].GetValue(Objects[index], null);
+
             IsDirtys[index]     = !value.Equals(Last_Values[index]);
             Last_Values[index]  = value;
 
@@ -1281,10 +1319,27 @@ namespace CgCore
             UpdateIsDirty();
         }
 
-        public void Set(int index, object o, string propertyName)
+        public void Set(int index, object o, string name)
         {
             Objects[index] = o;
-            PropertyInfos[index] = o.GetType().GetProperty(propertyName);
+
+            Type type = o.GetType();
+
+            FieldInfo f = type.GetField(name);
+
+            if (f != null)
+            {
+                FieldInfos[index] = f;
+                bFieldInfo        = true;
+            }
+
+            PropertyInfo p = type.GetProperty(name);
+
+            if (p != null)
+            {
+                PropertyInfos[index] = p;
+                bPropertyInfo        = true;
+            }
             UpdateIsDirtys(index);
         }
 
@@ -1294,7 +1349,12 @@ namespace CgCore
             {
                 if (Override_Subscript.IsBound())
                     return Override_Subscript.Execute(index);
-                return (ValueType)PropertyInfos[index].GetValue(Objects[index], null);
+
+                if (bFieldInfo)
+                    return (ValueType)FieldInfos[index].GetValue(Objects[index]);
+                if (bPropertyInfo)
+                    return (ValueType)PropertyInfos[index].GetValue(Objects[index], null);
+                return DefaultValue;
             }
         }
 
@@ -1303,7 +1363,12 @@ namespace CgCore
         {
             if (Override_Get.IsBound())
                 return Override_Get.Execute(index);
-            return (ValueType)PropertyInfos[index].GetValue(Objects[index], null);
+
+            if (bFieldInfo)
+                return (ValueType)FieldInfos[index].GetValue(Objects[index]);
+            if (bPropertyInfo)
+                return (ValueType)PropertyInfos[index].GetValue(Objects[index], null);
+            return DefaultValue;
         }
 
         public ValueType GetEX(int index) { return Get_Call.Execute(index); }
@@ -1327,6 +1392,7 @@ namespace CgCore
             for (int i = 0; i < SIZE; ++i)
             {
                 Objects[i] = null;
+                FieldInfos[i] = null;
                 PropertyInfos[i] = null;
                 Last_Values[i] = Value;
                 IsDirtys[i] = false;
@@ -1789,9 +1855,12 @@ namespace CgCore
         public ValueType Value;
         public ValueType Last_Value;
 
-        public Dictionary<KeyType, object> Objects;
-        public Dictionary<KeyType, PropertyInfo> PropertyInfos;
-        public Dictionary<KeyType, ValueType> Last_Values;
+        protected Dictionary<KeyType, object> Objects;
+        protected bool bFieldInfo;
+        protected Dictionary<KeyType, FieldInfo> FieldInfos;
+        protected bool bPropertyInfo;
+        protected Dictionary<KeyType, PropertyInfo> PropertyInfos;
+        protected Dictionary<KeyType, ValueType> Last_Values;
 
 	    protected bool IsDirty;
 
@@ -1806,6 +1875,7 @@ namespace CgCore
 	    public TCgProperty_TMapRef()
         {
             Objects = new Dictionary<KeyType, object>(new FKeyTypeEqualityComparer());
+            FieldInfos = new Dictionary<KeyType, FieldInfo>(new FKeyTypeEqualityComparer());
             PropertyInfos = new Dictionary<KeyType, PropertyInfo>(new FKeyTypeEqualityComparer());
             Last_Values = new Dictionary<KeyType, ValueType>(new FKeyTypeEqualityComparer());
 
@@ -1826,6 +1896,7 @@ namespace CgCore
         public void Init(KeyType key)
         {
             Objects.Add(key, null);
+            FieldInfos.Add(key, null);
             PropertyInfos.Add(key, null);
             Last_Values.Add(key, DefaultValue);
             IsDirtys.Add(key, false);
@@ -1842,7 +1913,13 @@ namespace CgCore
 
         public virtual void UpdateIsDirtys(KeyType key)
         {
-            ValueType value = (ValueType)PropertyInfos[key].GetValue(Objects[key], null);
+            ValueType value = DefaultValue;
+
+            if (bFieldInfo)
+                value = (ValueType)FieldInfos[key].GetValue(Objects[key]);
+            if (bPropertyInfo)
+                value = (ValueType)PropertyInfos[key].GetValue(Objects[key], null);
+
             IsDirtys[key]    = !value.Equals(Last_Values[key]);
             Last_Values[key] = value;
 
@@ -1875,10 +1952,28 @@ namespace CgCore
             UpdateIsDirty();
         }
 
-        public void Set(KeyType key, object o, string propertyName)
+        public void Set(KeyType key, object o, string name)
         {
             Objects[key] = o;
-            PropertyInfos[key] = o.GetType().GetProperty(propertyName);
+
+            Type type = o.GetType();
+
+            FieldInfo f = type.GetField(name);
+
+            if (f != null)
+            {
+                FieldInfos[key] = f;
+                bFieldInfo      = true;
+            }
+
+            PropertyInfo p = type.GetProperty(name);
+
+            if (p != null)
+            {
+                PropertyInfos[key]  = p;
+                bPropertyInfo       = true;
+            }
+
             UpdateIsDirtys(key);
         }
 
@@ -1888,7 +1983,12 @@ namespace CgCore
             {
                 if (Override_Subscript.IsBound())
                     return Override_Subscript.Execute(key);
-                return (ValueType)PropertyInfos[key].GetValue(Objects[key], null);
+
+                if (bFieldInfo)
+                    return (ValueType)FieldInfos[key].GetValue(Objects[key]);
+                if (bPropertyInfo)
+                    return (ValueType)PropertyInfos[key].GetValue(Objects[key], null);
+                return DefaultValue;
             }
         }
 
@@ -1897,7 +1997,12 @@ namespace CgCore
         {
             if (Override_Get.IsBound())
                 return Override_Get.Execute(key);
-            return (ValueType)PropertyInfos[key].GetValue(Objects[key], null);
+
+            if (bFieldInfo)
+                return (ValueType)FieldInfos[key].GetValue(Objects[key]);
+            if (bPropertyInfo)
+                return (ValueType)PropertyInfos[key].GetValue(Objects[key], null);
+            return DefaultValue;
         }
 
         public ValueType GetEX(KeyType key) { return Get_Call.Execute(key); }
@@ -1925,6 +2030,7 @@ namespace CgCore
             foreach (KeyType key in keys)
             {
                 Objects[key] = null;
+                FieldInfos[key] = null;
                 PropertyInfos[key] = null;
                 Last_Values[key] = Value;
                 IsDirtys[key] = false;
@@ -2284,9 +2390,12 @@ namespace CgCore
 
         #region "Data Members"
 
-        public object Object;
-        public PropertyInfo Info;
-        public ClassType Last_Value;
+        protected object Object;
+        protected bool bFieldInfo;
+        protected FieldInfo _FieldInfo;
+        protected bool bPropertyInfo;
+        protected PropertyInfo _PropertyInfo;
+        protected ClassType Last_Value;
 
         protected bool IsDirty;
 
@@ -2297,7 +2406,8 @@ namespace CgCore
         public TCgPropertyClass_Ref()
         {
             Object = null;
-            Info = null;
+            _FieldInfo = null;
+            _PropertyInfo = null;
             Last_Value = null;
 
             IsDirty = false;
@@ -2361,7 +2471,13 @@ namespace CgCore
 
         public override void UpdateIsDirty()
         {
-            ClassType value = (ClassType)Info.GetValue(Object, null);
+            ClassType value = null;
+
+            if (bFieldInfo)
+                value = (ClassType)_FieldInfo.GetValue(Object);
+            if (bPropertyInfo)
+                value = (ClassType)_PropertyInfo.GetValue(Object, null);
+
             IsDirty         = !value.Equals(Last_Value);
             Last_Value      = value;
 
@@ -2369,14 +2485,29 @@ namespace CgCore
                 OnChange_Event.Broadcast(value);
         }
 
-        public void Set(Object o, string propertyName)
+        public void Set(Object o, string name)
         {
             Object = o;
-            Info = o.GetType().GetProperty(propertyName);
+
+            Type type = o.GetType();
+
+            _FieldInfo = type.GetField(name);
+            bFieldInfo = _FieldInfo != null;
+
+            _PropertyInfo = type.GetProperty(name);
+            bPropertyInfo = _PropertyInfo != null;
+
             UpdateIsDirty();
         }
 
-        public ClassType Get() { return (ClassType)Info.GetValue(Object, null); }
+        public ClassType Get()
+        {
+            if (bFieldInfo)
+                return (ClassType)_FieldInfo.GetValue(Object);
+            if (bPropertyInfo)
+                return (ClassType)_PropertyInfo.GetValue(Object, null);
+            return null;
+        }
 
         public override void Clear()
         {
@@ -2386,7 +2517,8 @@ namespace CgCore
         public override void ResetValue()
         {
             Object = null;
-            Info = null;
+            _FieldInfo = null;
+            _PropertyInfo = null;
             Last_Value = null;
             IsDirty = false;
         }

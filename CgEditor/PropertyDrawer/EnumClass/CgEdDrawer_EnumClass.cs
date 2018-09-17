@@ -25,6 +25,7 @@
             MemberInfo[] members = typeof(EnumMap).GetMember("Instance");
 
             Map = (EnumMap)((PropertyInfo)members[0]).GetValue(null, null);
+            
             // Populate Enum Names
             EnumNames = GetEnumNames();
         }

@@ -8,8 +8,6 @@
     {
         #region "Stats"
 
-        string ItemShortCode;
-
         public virtual string GetItemShortCode() { return ECgCached.Str.NAME_None; }
         public virtual bool UseInventory() { return false; }
 

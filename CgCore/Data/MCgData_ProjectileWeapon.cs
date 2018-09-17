@@ -14,29 +14,37 @@
 
         public virtual MCgData_Projectile GetData_Projectile(FECgWeaponFireMode fireMode, bool isCharged = false){ return null; }
 
-        //public virtual Vector3 GetMuzzleLocation()
+        public virtual string GetMuzzleBone(ECgViewType viewType, FECgWeaponFireMode fireMode, int index = 0) { return ECgCached.Str.NAME_None; }
+        public virtual string GetMuzzleBone(FECgWeaponFireMode fireMode, int index = 0) { return ECgCached.Str.NAME_None; }
+
+        public virtual Vector3 GetMuzzleLocation(FCgSkeleton skeleton, ECgViewType viewType, FECgWeaponFireMode fireMode, int index = 0){ return Vector3.zero; }
+        public virtual Vector3 GetMuzzleLocation(FCgSkeleton skeleton, FECgWeaponFireMode fireMode, int index = 0) { return Vector3.zero; }
+
+        public virtual FECgWeaponGrip GetGripType() { return EMCgWeaponGrip.Get().GetMAX(); }
+
+        public virtual int GetMaxAmmo() { return 0; }
+
+        public virtual float GetRechargeStartupDelay() { return 0.0f; }
+        public virtual float GetRechargeSecondsPerAmmo() { return 0.0f; }
+        public virtual float GetReloadTime() { return 0.0f; }
 
         #endregion // Stats
 
         #region "Anims"
-
+        
         #endregion // Anims
 
         #region "FX"
+
+        public virtual FCgFxElement GetMuzzleFX(ECgViewType viewType, FECgWeaponFireMode fireMode, int index = 0) { return null; }
+        public virtual FCgFxElement GetMuzzleFX(FECgWeaponFireMode fireMode, int index = 0) { return null; }
 
         #endregion // FX
 
         #region "Sound"
 
-        public virtual FCgSoundElement GetSound(ECgViewType viewType, FECgWeaponFireMode fireMode, FECgWeaponSound soundType)
-        {
-            return null;
-        }
-
-	    public virtual FCgSoundElement GetSound(FECgWeaponFireMode fireMode, FECgWeaponSound soundType)
-        {
-            return null;
-        }
+        public virtual FCgSoundElement GetSound(ECgViewType viewType, FECgWeaponFireMode fireMode, FECgWeaponSound soundType){ return null; }
+	    public virtual FCgSoundElement GetSound(FECgWeaponFireMode fireMode, FECgWeaponSound soundType){ return null; }
 
 	    public virtual void PlaySound(ECgViewType viewType, FECgWeaponFireMode fireMode, FECgWeaponSound soundType, MonoBehaviour owner, MonoBehaviour parent)
         {

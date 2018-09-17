@@ -3,7 +3,15 @@
     using System;
     using System.Collections.Generic;
 
+    using UnityEngine;
+
     [Serializable]
+    public struct S_FECgAssetType
+    {
+        [SerializeField]
+        public string name;
+    }
+
     public sealed class FECgAssetType : FECgEnum_byte
     {
         public FECgAssetType(byte value, string name) : base(value, name) { }

@@ -4,6 +4,17 @@
     using System.Collections.Generic;
     using UnityEngine;
 
+    #region "Enums"
+
+    public enum ECgBoneSpaces : byte
+    {
+        World,
+        Local,
+        MAX,
+    }
+
+    #endregion // Enums
+
     public class FCgSkeleton
     {
         #region "Data Members"
@@ -46,6 +57,24 @@
 
                 Build(child);
             }
+        }
+
+        public Vector3 GetBoneLocation(string name, ECgBoneSpaces space = ECgBoneSpaces.World)
+        {
+            Transform bone;
+            BoneNameMap.TryGetValue(name, out bone);
+
+            if (bone != null)
+                return space == ECgBoneSpaces.World ? bone.position : bone.localPosition;
+            return Vector3.zero;
+        }
+
+        public Vector3 GetBoneLocation(int index, ECgBoneSpaces space = ECgBoneSpaces.World)
+        {
+            if (index >= Bones.Count)
+                return Vector3.zero;
+
+            return space == ECgBoneSpaces.World ? Bones[index].position : Bones[index].localPosition;
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿namespace CgCore
 {
+    using System;
     using System.Collections;
     using System.Collections.Generic;
+
     using UnityEngine;
 
     public enum ECgProjectileRelevance : byte
@@ -54,6 +56,24 @@
     }
 
     #endregion // ProjectileType
+
+    [Serializable]
+    public struct S_FCgAssetRef_Projectile
+    {
+        [NonSerialized]
+        private MCgData_Projectile Asset;
+        [SerializeField]
+        public string Path;
+    }
+
+    [Serializable]
+    public struct S_FCgData_ProjectileRef
+    {
+        [SerializeField]
+        public S_FCgAssetRef_Projectile Data;
+        [SerializeField]
+        public int Data_LoadFlags;
+    }
 
     public class FCgData_ProjectileRef
     {

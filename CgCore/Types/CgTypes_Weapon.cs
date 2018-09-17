@@ -442,18 +442,71 @@
 
     #region "Data FireMode"
 
+    [Serializable]
+    public struct S_FCgData_Weapon_FireMode_Firing
+    {
+        /** Whether to do weapon fire on release of input */
+        [SerializeField]
+        public bool bFireOnRelease;
+        [SerializeField]
+        public bool bChargeFire;
+        [SerializeField]
+        public float MaxChargeFireTime;
+        /** Time before force ending the charge fire. If 0, charge fire will NOT be forced to end. */
+        [SerializeField]
+        public float ForceReleaseChargeFireTime;
+        [SerializeField]
+        public float ChargeFireDamageMultiplier;
+        [SerializeField]
+        public float ChargeFireSpeedMultiplier;
+        /** Is the fully automatic weapon */
+        [SerializeField]
+        public bool bFullAuto;
+        /** Number of projectiles to fire per shot */
+        [SerializeField]
+        public byte ProjectilesPerShot;
+        /** Time between each projectile fired per shot */
+        [SerializeField]
+        public float TimeBetweenProjectilesPerShot;
+        /** Time between two consecutive shots */
+        [SerializeField]
+        public float TimeBetweenShots;
+        /** Time between two consecutive shots in full auto */
+        [SerializeField]
+        public float TimeBetweenAutoShots;
+        [SerializeField]
+        public bool bHitscan;
+        [SerializeField]
+        public bool bHitscanUseRadius;
+        [SerializeField]
+        public bool bHitscanSimulateProjectileDuration;
+        [SerializeField]
+        public int ObstaclePenetrations;
+        [SerializeField]
+        public int PawnPenetrations;
+        [SerializeField]
+        public List<FCgLocationDamageModifier> LocationDamageModifiers;
+        /* Whether to also use a Fake Projectile when firing a projectile */
+        [SerializeField]
+        public bool bUseFake;
+        [SerializeField]
+        public FCgData_ProjectileRef Data;
+        [SerializeField]
+        public FCgData_ProjectileRef ChargeData;
+    }
+
     public class FCgData_Weapon_FireMode_Firing
     {
         /** Whether to do weapon fire on release of input */
-        public bool DoFireOnRelease;
-        public bool AllowChargeFire;
+        public bool bFireOnRelease;
+        public bool bChargeFire;
         public float MaxChargeFireTime;
         /** Time before force ending the charge fire. If 0, charge fire will NOT be forced to end. */
         public float ForceReleaseChargeFireTime;
         public float ChargeFireDamageMultiplier;
         public float ChargeFireSpeedMultiplier;
         /** Is the fully automatic weapon */
-        public bool IsFullAuto;
+        public bool bFullAuto;
         /** Number of projectiles to fire per shot */
         public byte ProjectilesPerShot;
         /** Time between each projectile fired per shot */
@@ -462,61 +515,97 @@
         public float TimeBetweenShots;
         /** Time between two consecutive shots in full auto */
         public float TimeBetweenAutoShots;
-        public bool IsHitscan;
-        public bool DoesHitscanUseRadius;
-        public bool DoesHitscanSimulateProjectileDuration;
+        public bool bHitscan;
+        public bool bHitscanUseRadius;
+        public bool bHitscanSimulateProjectileDuration;
         public int ObstaclePenetrations;
         public int PawnPenetrations;
-        //TArray<FCsLocationDamageModifier> LocationDamageModifiers;
+        public List<FCgLocationDamageModifier> LocationDamageModifiers;
         /* Whether to also use a Fake Projectile when firing a projectile */
-        public bool UseFake;
+        public bool bUseFake;
         public FCgData_ProjectileRef Data;
         public FCgData_ProjectileRef ChargeData;
 
         public FCgData_Weapon_FireMode_Firing()
         {
+            LocationDamageModifiers = new List<FCgLocationDamageModifier>();
+
             Data = new FCgData_ProjectileRef();
             ChargeData = new FCgData_ProjectileRef();
         }
     }
 
-    public class CgData_Weapon_FireMode_Animation
+    [Serializable]
+    public struct S_FCgData_Weapon_FireMode_Animation
     {
-        public bool LoopFireAnim;
-        //FCsAnimMontage FireAnim;
-        public bool DoScaleFireAnim;
-
-        public CgData_Weapon_FireMode_Animation() { }
+        [SerializeField]
+        public bool bLoopFireAnim;
+        [SerializeField]
+        public FCgAnimClip FireAnim;
+        [SerializeField]
+        public bool bScaleFireAnim;
     }
 
-    public class CgData_FpsWeapon_FireMode_Animation
+    public class FCgData_Weapon_FireMode_Animation
     {
-        public bool LoopFireAnim;
-        //FCsFpvAnimMontage FireAnims;
-        public bool DoScaleFireAnim;
-        public bool LoopAdsFireAnim;
-        // FCsFpvAnimMontage AdsFireAnims;
-        public bool DoScaleAdsFireAnim;
+        public bool bLoopFireAnim;
+        public FCgAnimClip FireAnim;
+        public bool bScaleFireAnim;
 
-        public CgData_FpsWeapon_FireMode_Animation() { }
+        public FCgData_Weapon_FireMode_Animation() { }
+    }
+
+    public class FCgData_FpsWeapon_FireMode_Animation
+    {
+        public bool bLoopFireAnim;
+        public FCgFpvAnimClip FireAnims;
+        public bool bScaleFireAnim;
+        public bool bLoopAdsFireAnim;
+        public FCgFpvAnimClip AdsFireAnims;
+        public bool bScaleAdsFireAnim;
+
+        public FCgData_FpsWeapon_FireMode_Animation() { }
     }
 
     public class FCgData_Weapon_FireMode_Movement
     {
-        public bool DoSlowWhileFiring;
+        public bool bSlowWhileFiring;
         public float SlowWhileFiringRate;
-        public bool DoKickback;
-        public bool DoKickbackOnGround;
+        public bool bKickback;
+        public bool bKickbackOnGround;
         public float KickbackStrength;
 
         public FCgData_Weapon_FireMode_Movement() { }
     }
 
+    [Serializable]
+    public struct S_FCgData_Weapon_FireMode_Aiming
+    {
+        [SerializeField]
+        public bool bHoming;
+        [SerializeField]
+        public float HomingAccelerationMagnitude;
+        [SerializeField]
+        public bool bSpread;
+        [SerializeField]
+        public float MinSpread;
+        [SerializeField]
+        public float MaxSpread;
+        [SerializeField]
+        public float SpreadAddedPerShot;
+        [SerializeField]
+        public float SpreadRecoveryRate;
+        [SerializeField]
+        public float FiringSpreadRecoveryDelay;
+        [SerializeField]
+        public float MovingSpreadBonus;
+    }
+
     public class FCgData_Weapon_FireMode_Aiming
     {
-        public bool IsHoming;
+        public bool bHoming;
         public float HomingAccelerationMagnitude;
-        public bool DoSpread;
+        public bool bSpread;
         public float MinSpread;
         public float MaxSpread;
         public float SpreadAddedPerShot;
@@ -537,42 +626,57 @@
 
     public class FCgData_Weapon_FireMode_Scope
     {
-        //TArray<FCsLocationDamageModifier> MinLocationDamageModifiers;
-        //TArray<FCsLocationDamageModifier> MaxLocationDamageModifiers;
+        public List<FCgLocationDamageModifier> MinLocationDamageModifiers;
+        public List<FCgLocationDamageModifier> MaxLocationDamageModifiers;
         //FCsCurveFloat LocationDamageModifierRamp;
-        public bool DoScopePower;
+        public bool bScopePower;
         public float MaxScopePower;
         public float ScopePowerGrowthRate;
 
 	    public FCgData_Weapon_FireMode_Scope() { }
     }
 
+    [Serializable]
+    public struct S_FCgData_Weapon_FireMode_FXs
+    {
+        [SerializeField]
+        public List<S_FCgFxElement> MuzzleFXs;
+    }
+
     public class FCgData_Weapon_FireMode_FXs
     {
-        //TArray<FCsFxElement> MuzzleFXs;
+        #region "Constants"
+
+        public static readonly byte EMPTY = 0;
+
+        #endregion // Constants
+
+        #region "Data Members"
+
+        public List<FCgFxElement> MuzzleFXs;
+
+        #endregion // Data Members
 
         public FCgData_Weapon_FireMode_FXs() { }
-        /*
-        FCsFxElement* GetMuzzleFX(const int32 Index = 0)
-	    {
+        
+        public FCgFxElement GetMuzzleFX(int index = 0)
+        {
+            int count = MuzzleFXs.Count;
 
-            const int32 Count = MuzzleFXs.Num();
-
-		    return Count > CS_EMPTY? &(MuzzleFXs[Index % Count]) : nullptr;
+		    return count > EMPTY ? MuzzleFXs[index % count] : null;
 	    }
 
-        FName GetMuzzleBone(const int32 Index = 0)
+        public string GetMuzzleBone(int index = 0)
         {
-            const int32 Count = MuzzleFXs.Num();
+            int count = MuzzleFXs.Count;
 
-            return MuzzleFXs[Index % Count].Bone;
+            return MuzzleFXs[index % count].Bone;
         }
-        */
     }
 
     public class FCgData_FpsWeapon_FireMode_FXs
     {
-        //TArray<FCsFpsFxElement> MuzzleFXs;
+        public List<FCgFpvFxElement> MuzzleFXs;
 
         public FCgData_FpsWeapon_FireMode_FXs() { }
         /*
@@ -593,31 +697,53 @@
         */
     }
 
+    [Serializable]
+    public struct S_FCgData_Weapon_FireMode_Sounds
+    {
+        /** Single fire sound (bLoopedFireSound not set) */
+        [SerializeField]
+        public S_FCgSoundElement FireSound;
+        [SerializeField]
+        public bool bLoopFireSound;
+
+        /** Looped fire sound (bLoopedFireSound set) */
+        [SerializeField]
+        public S_FCgSoundElement FireLoopSound;
+        /** Finished burst sound (bLoopedFireSound set) */
+        [SerializeField]
+        public S_FCgSoundElement FireFinishSound;
+    }
+
     public class FCgData_Weapon_FireMode_Sounds
     {
-        /** single fire sound (bLoopedFireSound not set) */
-        //FCsSoundElement FireSound;
-        public bool LoopFireSound;
+        #region "Data Members"
 
-        /** looped fire sound (bLoopedFireSound set) */
-        //FCsSoundElement FireLoopSound;
-        /** finished burst sound (bLoopedFireSound set) */
-        //FCsSoundElement FireFinishSound;
+        /** Single fire sound (bLoopedFireSound not set) */
+        public FCgSoundElement FireSound;
+
+        public bool bLoopFireSound;
+
+        /** Looped fire sound (bLoopedFireSound set) */
+        public FCgSoundElement FireLoopSound;
+        /** Finished burst sound (bLoopedFireSound set) */
+        public FCgSoundElement FireFinishSound;
+
+        #endregion // Data Members
 
         public FCgData_Weapon_FireMode_Sounds() { }
     }
 
     public class FCgData_FpsWeapon_FireMode_Sounds
     {
-        /** single fire sound (bLoopedFireSound not set) */
-        //FCsFpsSoundElement FireSounds;
+        /** Single fire sound (bLoopedFireSound not set) */
+        public FCgFpvSoundElement FireSounds;
 
         public bool LoopFireSound;
 
-        /** looped fire sound (bLoopedFireSound set) */
-        //FCsFpsSoundElement FireLoopSounds;
-        /** finished burst sound (bLoopedFireSound set) */
-        //FCsFpsSoundElement FireFinishSounds;
+        /** Looped fire sound (bLoopedFireSound set) */
+        public FCgFpvSoundElement FireLoopSounds;
+        /** Finished burst sound (bLoopedFireSound set) */
+        public FCgFpvSoundElement FireFinishSounds;
 
         public FCgData_FpsWeapon_FireMode_Sounds() { }
     }

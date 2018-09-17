@@ -841,7 +841,7 @@
 
         public void OnTick_HandleStates()
         {
-            MCgData_Weapon data_weapon = GetMyData_Weapon();
+            //MCgData_Weapon data_weapon = GetMyData_Weapon();
             int maxAmmo                = MaxAmmo.GetEX(DATA_VALUE);
 
             float timeSeconds = FCgManager_Time.Get().GetTimeSinceStart(TimeType);

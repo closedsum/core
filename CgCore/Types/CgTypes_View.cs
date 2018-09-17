@@ -1,5 +1,9 @@
 ﻿namespace CgCore
 {
+    using System;
+
+    using UnityEngine;
+
     public enum ECgViewType : byte
     {
         FirstPerson,
@@ -48,20 +52,33 @@
         }
     }
 
-        public class FCgFpvDrawDistance
+    [Serializable]
+    public struct S_FCgFpvDrawDistance
+    {
+        [SerializeField]
+        public float Distance1P;
+        [SerializeField]
+        public float Distance1PSq;
+        [SerializeField]
+        public float Distance3P;
+        [SerializeField]
+        public float Distance3PSq;
+    }
+
+    public class FCgFpvDrawDistance
+    {
+        public float Distance1P;
+
+        public float Distance1PSq;
+
+        public float Distance3P;
+
+        public float Distance3PSq;
+
+        public FCgFpvDrawDistance()
         {
-            public float Distance1P;
-
-            public float Distance1PSq;
-
-            public float Distance3P;
-
-            public float Distance3PSq;
-
-            public FCgFpvDrawDistance()
-            {
-                Reset();
-            }
+            Reset();
+        }
 
         public void Square()
         {

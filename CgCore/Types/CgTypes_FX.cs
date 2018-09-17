@@ -1,7 +1,9 @@
 ﻿namespace CgCore
 {
+    using System;
     using System.Collections;
     using System.Collections.Generic;
+
     using UnityEngine;
 
     public enum ECgFxPriority : byte
@@ -10,6 +12,31 @@
         Medium,
         High,
         MAX
+    }
+
+    [Serializable]
+    public struct S_FCgFxElement
+    {
+        [SerializeField]
+        public ParticleSystem Particle;
+        [SerializeField]
+        public int Particle_LoadFlags;
+        [SerializeField]
+        public ECgFxPriority Priority;
+        [SerializeField]
+        public float LifeTime;
+        [SerializeField]
+        public float DeathTime;
+        [SerializeField]
+        public float Scale;
+        [SerializeField]
+        public S_FCgFpvDrawDistance DrawDistances;
+        [SerializeField]
+        public string Bone;
+        [SerializeField]
+        public Vector3 Location;
+        [SerializeField]
+        public Vector3 Rotation;
     }
 
     public class FCgFxElement

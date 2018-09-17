@@ -1,10 +1,19 @@
 ﻿namespace CgCore
 {
+    using System;
     using System.Collections;
     using System.Collections.Generic;
+
     using UnityEngine;
 
     #region "SoundType"
+
+    [Serializable]
+    public struct S_FECgSoundType
+    {
+        [SerializeField]
+        public string name;
+    }
 
     public sealed class FECgSoundType : FECgEnum_byte
     {
@@ -57,9 +66,35 @@
         MAX
     }
 
+    [Serializable]
+    public struct S_FCgSoundElement
+    {
+        [SerializeField]
+        public AudioClip Sound;
+        [SerializeField]
+        public int Sound_LoadFlags;
+        [SerializeField]
+        public S_FECgSoundType SoundType;
+        [SerializeField]
+        public ECgSoundPriority Priority;
+        [SerializeField]
+        public bool bSpatialize;
+        [SerializeField]
+        public float Duration;
+        [SerializeField]
+        public bool bLooping;
+        [SerializeField]
+        public float VolumeMultiplier;
+        [SerializeField]
+        public float PitchMultiplier;
+        [SerializeField]
+        public string Bone;
+    }
+
     public class FCgSoundElement
     {
         //TSoftObjectPtr<class USoundCue> Sound;
+        public AudioClip Sound;
 
         public int Sound_LoadFlags;
 
@@ -127,8 +162,13 @@
         }
         */
         public AudioClip Get()
-	    {
-		    return Sound_Internal;
-	    }
+        {
+            return Sound_Internal;
+        }
+    }
+
+    public class FCgFpvSoundElement
+    {
+        public FCgFpvSoundElement() { }
     }
 }

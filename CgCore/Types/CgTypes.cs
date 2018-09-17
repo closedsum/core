@@ -2,6 +2,9 @@
 namespace CgCore
 {
     using UnityEngine;
+#if UNITY_EDITOR
+    using UnityEditor;
+#endif // #if UNITY_EDITOR
 
     public static class CgTypes
     {
@@ -26,7 +29,7 @@ namespace CgCore
         void Load();
     }
 
-    public abstract class CgAssetRef
+    public abstract class FCgAssetRef
     {
         private string _Path;
         public string Path
@@ -40,8 +43,8 @@ namespace CgCore
         public abstract void Load();
     }
 
-    public class TCgAssetRef<AssetClass> : CgAssetRef
-        where AssetClass : MonoBehaviour
+    public class TCgAssetRef<AssetClass> : FCgAssetRef
+        where AssetClass : UnityEngine.Object
     {
         private AssetClass Asset;
 
@@ -59,6 +62,17 @@ namespace CgCore
         public override void SetAsset(object asset)
         {
             Asset = (AssetClass)asset;
+#if UNITY_EDITOR
+            Path = AssetDatabase.GetAssetPath(Asset);
+#endif // UNITY_EDITOR
+        }
+
+        public void SetAsset(AssetClass asset)
+        {
+            Asset = asset;
+#if UNITY_EDITOR
+            Path = AssetDatabase.GetAssetPath(Asset);
+#endif // UNITY_EDITOR
         }
 
         public override void Load()

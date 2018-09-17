@@ -46,7 +46,7 @@
             _Instance = go.GetComponent<MCgDataMapping>();
 
 #if UNITY_EDITOR
-            if (_Instance = null)
+            if (_Instance == null)
             {
                 FCgDebug.LogError("MCgDataMapping.Init: GameObject: " + DATA_MAPPING_NAME + " does not have a component of type MCgDataMapping.");
             }

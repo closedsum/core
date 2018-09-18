@@ -214,8 +214,8 @@
 
         public MCgData_Weapon MyData_Weapon;
 
-        public sealed class FOnApplyDataWeapon : TCgMulticastDelegate_OneParam<byte> { }
-        public FOnApplyDataWeapon OnApplyDataWeapon_Event;
+        public sealed class FOnApplyData_Weapon : TCgMulticastDelegate_OneParam<byte> { }
+        public FOnApplyData_Weapon OnApplyData_Weapon_Event;
 
             #endregion // Data
 
@@ -328,7 +328,7 @@
         public FECgWeaponAnim ChargeFireStartAnim;
         public FECgWeaponAnim ChargeFireLoopAnim;
 
-        public FTMapRef_bool AllowChargeFire;
+        public FTMapRef_bool bChargeFire;
 
         public bool bPerformingChargeFire;
 
@@ -344,17 +344,17 @@
 
         public FECgData_Weapon_FireMode AimingDataFireMode;
 
-        FTMapRef_bool DoSpread;
-        FTMapRef_float MinSpread;
-        FTMapRef_float MaxSpread;
-        FTMapRef_float SpreadAddedPerShot;
-        FTMapRef_float SpreadRecoveryRate;
-        FTMapRef_float FiringSpreadRecoveryDelay;
-        FTMapRef_float MovingSpreadBonus;
+        public FTMapRef_bool bSpread;
+        public FTMapRef_float MinSpread;
+        public FTMapRef_float MaxSpread;
+        public FTMapRef_float SpreadAddedPerShot;
+        public FTMapRef_float SpreadRecoveryRate;
+        public FTMapRef_float FiringSpreadRecoveryDelay;
+        public FTMapRef_float MovingSpreadBonus;
 
-        FTMap_float CurrentBaseSpread;
-        FTMap_float CurrentSpread;
-        FTMap_float LastSpreadFireTime;
+        public FTMap_float CurrentBaseSpread;
+        public FTMap_float CurrentSpread;
+        public FTMap_float LastSpreadFireTime;
 
                 #endregion // Spread
 
@@ -381,29 +381,29 @@
 
                 #region "Hitscan"
 
-        public FTMapRef_bool IsHitscan;
-        public FTMapRef_bool DoesHitscanUseRadius;
-        public FTMapRef_bool DoesHitscanSimulateProjectileDuration;
+        public FTMapRef_bool bHitscan;
+        public FTMapRef_bool bHitscanUseRadius;
+        public FTMapRef_bool bHitscanSimulateProjectileDuration;
 
         public FTMapRef_int ObstaclePenetrations;
 
         public FTMapRef_int PawnPenetrations;
 
-        #endregion // Hitscan
+                #endregion // Hitscan
 
-        #endregion // Firing
+            #endregion // Firing
 
             #region "Reload"
 
         public FECgWeaponState ReloadingState;
 
         public bool bReloading;
-        FCgBool_Ref bReloadingHandle;
+        public FCgBool_Ref bReloadingHandle;
 
         public sealed class FOnChange_bReloading : TCgMulticastDelegate_TwoParams<FECgWeaponSlot, bool> { }
         public FOnChange_bReloading OnChange_bReloading_Event;
 
-        FRef_float ReloadTime;
+        public FRef_float ReloadTime;
 
         public float ReloadStartTime;
 
@@ -432,17 +432,96 @@
         {
             MCgGameInstance.Get().RegisterUniqueObject(this);
 
+            // Data
+            OnApplyData_Weapon_Event = new FOnApplyData_Weapon();
+
             // State
             ScheduleType = ECgCoroutineSchedule.Update;
             TimeType = ECgTime.Update;
+            OnTick_Event = new FOnTick();
+
+            // Equip / UnEquip
+            OnEquip_Event = new FOnEquip();
+            OnUnEquip_Event = new FOnUnEquip();
 
             // Firing
+
+                // Ammo
+            MaxAmmo = new FRef_int();
+            CurrentAmmoHandle = new FRef_int();
+            OnChange_CurrentAmmo_Event = new FOnChange_CurrentAmmo();
+            OnConsumeAmmo_Event = new FOnConsumeAmmo();
+            OnConsumeAmmoItem_Event = new FOnConsumeAmmoItem();
+
+            ProjectilesPerShot = new FTMapRef_byte();
+            CurrentProjectilePerShotIndex = new FTMap_byte();
+
+            bFireOnRelease = new FTMapRef_bool();
+            bFullAuto = new FTMapRef_bool();
+
+            TimeBetweenProjectilesPerShot = new FTMapRef_float();
+            TimeBetweenShots = new FTMapRef_float();
+            TimeBetweenAutoShots = new FTMapRef_float();
+
+            bFirePressed = new FTMap_bool();
+            Last_bFirePressed = new FTMap_bool();
+
+            bFirePressed_StartTime = new FTMap_float();
+            bFireReleased_StartTime = new FTMap_float();
+            Fire_StartTime = new FTMap_float();
+
+                // Charge
+            bChargeFire = new FTMapRef_bool();
+            MaxChargeFireTime = new FTMapRef_float();
+
+                // Spread
+            bSpread = new FTMapRef_bool();
+            MinSpread = new FTMapRef_float();
+            MaxSpread = new FTMapRef_float();
+            SpreadAddedPerShot = new FTMapRef_float();
+            SpreadRecoveryRate = new FTMapRef_float();
+            FiringSpreadRecoveryDelay = new FTMapRef_float();
+            MovingSpreadBonus = new FTMapRef_float();
+
+            CurrentBaseSpread = new FTMap_float();
+            CurrentSpread = new FTMap_float();
+            LastSpreadFireTime = new FTMap_float();
+
+                // Anim
+            bLoopFireAnim = new FTMapRef_bool();
+            bScaleFireAnim = new FTMapRef_bool();
+
+                // Sound
+            bLoopFireSound = new FTMapRef_bool();
+
             ProjectileFirePayloads = new FCgProjectileFirePayload[PROJECTILE_FIRE_PAYLOAD_POOL_SIZE];
 
             for (int i = 0; i < PROJECTILE_FIRE_PAYLOAD_POOL_SIZE; ++i)
             {
                 ProjectileFirePayloads[i] = new FCgProjectileFirePayload();
             }
+
+                // Hitscan
+            bHitscan = new FTMapRef_bool();
+            bHitscanUseRadius = new FTMapRef_bool();
+            bHitscanSimulateProjectileDuration = new FTMapRef_bool();
+
+            ObstaclePenetrations = new FTMapRef_int();
+
+            PawnPenetrations = new FTMapRef_int();
+
+            // Reload
+            bReloadingHandle = new FCgBool_Ref();
+
+            OnChange_bReloading_Event = new FOnChange_bReloading();
+
+            ReloadTime = new FRef_float();
+
+            bRechargeAmmo = new FRef_bool();
+            bRechargeAmmoDuringFire = new FRef_bool();
+
+            RechargeSecondsPerAmmo = new FRef_float();
+            RechargeStartupDelay = new FRef_float();
 
             FiringDataFireMode = EMCgData_Weapon_FireMode.Get().GetMAX();
             AnimationDataFireMode = EMCgData_Weapon_FireMode.Get().GetMAX();
@@ -517,11 +596,11 @@
                 InitMultiValueMember<float>(bFireReleased_StartTime, 0.0f);
                 InitMultiValueMember<float>(Fire_StartTime, 0.0f);
                 // Charge
-                InitMultiRefValueMember<bool>(AllowChargeFire, false);
+                InitMultiRefValueMember<bool>(bChargeFire, false);
                 InitMultiRefValueMember<float>(MaxChargeFireTime, 0.0f);
                 MaxChargeFireTime.Get_Call.Bind(GetMaxChargeFireTime);
                 // Spread
-                InitMultiRefValueMember<bool>(DoSpread, false);
+                InitMultiRefValueMember<bool>(bSpread, false);
                 InitMultiRefValueMember<float>(MinSpread, 0.0f);
                 MinSpread.Get_Call.Bind(GetMinSpread);
                 InitMultiRefValueMember<float>(MaxSpread, 0.0f);
@@ -543,9 +622,9 @@
                 // Sound
                 InitMultiRefValueMember<bool>(bLoopFireSound, false);
                 // Hitscan
-                InitMultiRefValueMember<bool>(IsHitscan, false);
-                InitMultiRefValueMember<bool>(DoesHitscanUseRadius, false);
-                InitMultiRefValueMember<bool>(DoesHitscanSimulateProjectileDuration, false);
+                InitMultiRefValueMember<bool>(bHitscan, false);
+                InitMultiRefValueMember<bool>(bHitscanUseRadius, false);
+                InitMultiRefValueMember<bool>(bHitscanSimulateProjectileDuration, false);
                 InitMultiRefValueMember<int>(ObstaclePenetrations, 0);
                 ObstaclePenetrations.Get_Call.Bind(GetObstaclePenetractions);
                 InitMultiRefValueMember<int>(PawnPenetrations, 0);
@@ -839,7 +918,7 @@
                 {
                     FECgWeaponFireMode fireMode = EMCgWeaponFireMode.Get().GetEnumAt(i);
 
-                    if (DoSpread[fireMode])
+                    if (bSpread[fireMode])
                     {
                         // Firing
                         if (timeSeconds - LastSpreadFireTime[fireMode] > FiringSpreadRecoveryDelay[fireMode])
@@ -1535,7 +1614,7 @@
             {
                 FECgWeaponFireMode fireMode = EMCgWeaponFireMode.Get().GetEnumAt(i);
 
-                if (AllowChargeFire[fireMode] &&
+                if (bChargeFire[fireMode] &&
                     bFirePressed[fireMode])
                 {
                     StartChargeFire(fireMode);
@@ -1647,7 +1726,7 @@
 
         public void StopChargeFire(FECgWeaponFireMode fireMode)
         {
-            if (!AllowChargeFire[fireMode])
+            if (!bChargeFire[fireMode])
                 return;
 
             bPerformingChargeFire = false;
@@ -1807,7 +1886,7 @@
                         mw.ConsumeAmmoItem(fireMode, payload.ChargePercent > 0.0f, ref payload.Items);
                         mw.ConsumeAmmo(fireMode, payload.ChargePercent > 0.0f);
 
-                        if (mw.IsHitscan.Get(fireMode))
+                        if (mw.bHitscan.Get(fireMode))
                             mw.FireHitscan(fireMode, payload);
                         else
                             mw.FireProjectile(fireMode, payload);
@@ -1878,7 +1957,7 @@
             Vector3 fakeDir      = (realEnd - fakeStart).normalized;
 
             // Spread
-            if (DoSpread.Get(fireMode))
+            if (bSpread.Get(fireMode))
             {
                 if (CurrentSpread.Get(fireMode) > 0.0f)
                 {
@@ -2028,7 +2107,7 @@
 		        hitFound = false;
 
 		        // Hitscan with cylinder
-		        if (DoesHitscanUseRadius[fireMode])
+		        if (bHitscanUseRadius[fireMode])
 		        {
 			        // See if this line is close enough to hit any enemy characters
 			        int hitPawnCount = hittablePawns.Count;
@@ -2143,7 +2222,7 @@
 		        }
 		        // Hit NOT Found and NO Hitscan with cylinder
 		        if (!hitFound || 
-			        !DoesHitscanUseRadius[fireMode])
+			        !bHitscanUseRadius[fireMode])
 		        {
 			        FCgTraceRequest request = manager_trace.AllocateRequest();
                     /*
@@ -2246,7 +2325,7 @@
 
 			        //float TimeUntilHit = HitResult.Distance / Data_Projectile->InitialSpeed;
 
-			        //if (DoesHitscanSimulateProjectileDuration.Get(FireMode))
+			        //if (bHitscanSimulateProjectileDuration.Get(FireMode))
 			        //{
 			        //	FakeProjectile->Lifetime = TimeUntilHit;
 			        //}

@@ -1827,9 +1827,9 @@ namespace CgCore
         }
     }
 
-        #endregion // Map
+    #endregion // Map
 
-        #region "Map Ref"
+    #region "Map Ref"
 
     public class TCgProperty_TMapRef<KeyType, ValueType>
         where ValueType : struct, IConvertible

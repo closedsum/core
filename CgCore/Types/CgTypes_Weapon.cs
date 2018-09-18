@@ -805,5 +805,9 @@
         }
     }
 
+    public class FCgData_Weapon_FireMode
+    {
+    }
+
     #endregion // Data FireMode
-}
+    }

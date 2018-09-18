@@ -205,7 +205,10 @@
             set { _UniqueObjectId = value; }
         }
 
-            #endregion // Interface
+        #endregion // Interface
+
+        public bool bPlacedInWorld;
+
 
             #region "Data"
 
@@ -420,10 +423,10 @@
 
         #endregion // Data Members
 
+        //void Awake(){}
+
         // Use this for initialization
-        void Start()
-        {
-        }
+        //void Start(){}
 
         public virtual void Init()
         {
@@ -440,6 +443,27 @@
             {
                 ProjectileFirePayloads[i] = new FCgProjectileFirePayload();
             }
+
+            FiringDataFireMode = EMCgData_Weapon_FireMode.Get().GetMAX();
+            AnimationDataFireMode = EMCgData_Weapon_FireMode.Get().GetMAX();
+            AimingDataFireMode = EMCgData_Weapon_FireMode.Get().GetMAX();
+            SoundsDataFireMode = EMCgData_Weapon_FireMode.Get().GetMAX();
+
+            CurrentState = EMCgWeaponState.Get().GetMAX();
+            LastState = CurrentState;
+
+            IdleState = EMCgWeaponState.Get().GetMAX();
+
+            PrimaryFireMode = EMCgWeaponFireMode.Get().GetMAX();
+
+            FiringState = EMCgWeaponState.Get().GetMAX();
+            FireAnim = EMCgWeaponAnim.Get().GetMAX();
+            ChargeFireStartAnim = EMCgWeaponAnim.Get().GetMAX();
+            ChargeFireLoopAnim = EMCgWeaponAnim.Get().GetMAX();
+            FireSound = EMCgWeaponSound.Get().GetMAX();
+
+            ReloadingState = EMCgWeaponState.Get().GetMAX();
+            ReloadAnim = EMCgWeaponAnim.Get().GetMAX();
         }
 
         #region "Members"
@@ -545,20 +569,18 @@
         public void SetMemberRefValue<ValueType>(TCgProperty_TListRef<ValueType> member, string memberName)
             where ValueType : struct, IConvertible
         {
-            /*
-            ACsData_Weapon* Data_Weapon = GetMyData_Weapon();
+            MCgData_Weapon data_weapon = GetMyData_Weapon();
 
-		    Member.ResetValues();
+		    member.ResetValues();
 
-		    for (uint8 I = 0; I < Member.Num(); ++I)
+            byte count = member.Num();
+
+		    for (byte i = 0; i < count; ++i)
 		    {
-			    T* DataMember = UCsCommon_Load::GetObjectMember<T>(Data_Weapon, Data_Weapon->GetClass(), MemberName, GetObjectMember_Internal);
-
-			    if (I == 0)
-				    Member.Set(*DataMember);
-			    Member.Set(I, DataMember);
+			    if (i == 0)
+                    member.Set((ValueType)typeof(MCgData_Weapon).GetField(memberName).GetValue(data_weapon));
+                member.Set(i, data_weapon, memberName);
 		    }
-            */
         }
 
         public void SetMemberMultiValue<ValueType>(TCgProperty_TMap<FECgWeaponFireMode, ValueType> member, ValueType value)
@@ -579,28 +601,25 @@
         public void SetMemberMultiRefValue<ValueType>(TCgProperty_TMapRef<FECgWeaponFireMode, ValueType> member, FECgData_Weapon_FireMode fireModeMember, string memberName)
             where ValueType : struct, IConvertible
         {
-            /*
-		    ACsData_ProjectileWeapon* Data_Weapon = GetMyData_Weapon<ACsData_ProjectileWeapon>();
+		    MCgData_ProjectileWeapon data_weapon = GetMyData_Weapon<MCgData_ProjectileWeapon>();
 
-            Member.ResetValues();
+            member.ResetValues();
 
-		    const FString& StructName = FireModeMember.Name;
+		    string structName = fireModeMember.Name;
 
-		    const int32& Count = EMCsWeaponFireMode::Get().Num();
+		    int count = EMCgWeaponFireMode.Get().Count;
 
-		    for (int32 I = 0; I<Count; ++I)
+		    for (int i = 0; i < count; ++i)
 		    {
-			    const FECsWeaponFireMode& FireMode = EMCsWeaponFireMode::Get().GetEnumAt(I);
+			    FECgWeaponFireMode fireMode = EMCgWeaponFireMode.Get().GetEnumAt(i);
 
-            void* Struct = UCsCommon_Load::GetStructMember<void>(Data_Weapon->GetFireModeStruct(FireMode), Data_Weapon->GetFireModeScriptStruct(), StructName, GetStructMember_Internal);
-            UScriptStruct* ScriptStruct = UCsCommon_Load::GetScriptStructMember(Data_Weapon->GetFireModeStruct(FireMode), Data_Weapon->GetFireModeScriptStruct(), StructName, GetScriptStructMember_Internal);
-            ValueType* StructMember = UCsCommon_Load::GetStructMember<ValueType>(Struct, ScriptStruct, MemberName, GetStructMember_Internal);
+                FCgData_Weapon_FireMode fireModeClass = data_weapon.GetFireModeClass(fireMode);
+                object fireModeMemberClass            = fireModeClass.GetType().GetField(fireModeMember.Name).GetValue(fireModeClass);
 
-			    if (I == 0)
-				    Member.Set(* StructMember);
-			    Member.Set(FireMode, StructMember);
+			    if (i == 0)
+                    member.Set((ValueType)fireModeMemberClass.GetType().GetField(memberName).GetValue(fireModeMemberClass));
+                member.Set(fireMode, fireModeMemberClass, memberName);
 		    }
-            */
         }
 
         #endregion // Set
@@ -1123,7 +1142,7 @@
             }
 
             ProjectileFirePayloadPoolIndex = 0;
-
+            
             ClearRoutines();
         }
 

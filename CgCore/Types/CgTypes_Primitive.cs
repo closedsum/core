@@ -1268,6 +1268,8 @@ namespace CgCore
             }
         }
 
+        public byte Num() { return SIZE; }
+
         public virtual void UpdateIsDirty()
         {
             IsDirty    = !Value.Equals(Last_Value);

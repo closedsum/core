@@ -8,6 +8,8 @@
     {
         #region "Stats"
 
+        public virtual FCgData_Weapon_FireMode GetFireModeClass(FECgWeaponFireMode fireMode) { return null; }
+
         public virtual float GetLocationDamageModifier(FECgWeaponFireMode fireMode, string bone) { return 0.0f; }
 
         public virtual bool UseFakeProjectile(FECgWeaponFireMode fireMode){ return false; }

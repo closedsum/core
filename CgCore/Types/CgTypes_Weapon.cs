@@ -490,9 +490,9 @@
         [SerializeField]
         public bool bUseFake;
         [SerializeField]
-        public FCgData_ProjectileRef Data;
+        public S_FCgData_ProjectileRef Data;
         [SerializeField]
-        public FCgData_ProjectileRef ChargeData;
+        public S_FCgData_ProjectileRef ChargeData;
     }
 
     public class FCgData_Weapon_FireMode_Firing
@@ -633,7 +633,11 @@
         public float MaxScopePower;
         public float ScopePowerGrowthRate;
 
-	    public FCgData_Weapon_FireMode_Scope() { }
+	    public FCgData_Weapon_FireMode_Scope()
+        {
+            MinLocationDamageModifiers = new List<FCgLocationDamageModifier>();
+            MaxLocationDamageModifiers = new List<FCgLocationDamageModifier>();
+        }
     }
 
     [Serializable]
@@ -657,7 +661,10 @@
 
         #endregion // Data Members
 
-        public FCgData_Weapon_FireMode_FXs() { }
+        public FCgData_Weapon_FireMode_FXs()
+        {
+            MuzzleFXs = new List<FCgFxElement>();
+        }
         
         public FCgFxElement GetMuzzleFX(int index = 0)
         {
@@ -676,25 +683,36 @@
 
     public class FCgData_FpsWeapon_FireMode_FXs
     {
+        #region "Constants"
+
+        public static readonly byte EMPTY = 0;
+
+        #endregion // Constants
+
+        #region "Data Members"
+
         public List<FCgFpvFxElement> MuzzleFXs;
 
-        public FCgData_FpsWeapon_FireMode_FXs() { }
-        /*
-        FCsFxElement* GetMuzzleFX(const TCsViewType &ViewType, const int32 Index = 0)
-	    {
+        #endregion // Data Members
 
-            const int32 Count = MuzzleFXs.Num();
-
-		    return MuzzleFXs[Index % Count].Get(ViewType);
-        }
-
-        FName GetMuzzleBone(const TCsViewType &ViewType, const int32 Index = 0)
+        public FCgData_FpsWeapon_FireMode_FXs()
         {
-            const int32 Count = MuzzleFXs.Num();
-
-            return MuzzleFXs[Index % Count].GetBone(ViewType);
+            MuzzleFXs = new List<FCgFpvFxElement>();
         }
-        */
+        
+        FCgFxElement GetMuzzleFX(ECgViewType viewType, int index = 0)
+	    {
+            int count = MuzzleFXs.Count;
+
+		    return count > EMPTY ? MuzzleFXs[index % count].Get(viewType) : null;
+        }
+
+        string GetMuzzleBone(ECgViewType viewType, int index = 0)
+        {
+            int count = MuzzleFXs.Count;
+
+            return count > EMPTY ? MuzzleFXs[index % count].GetBone(viewType) : null;
+        }
     }
 
     [Serializable]

@@ -1,6 +1,8 @@
 ﻿// Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 namespace CgCore
 {
+    using System;
+
     using UnityEngine;
 #if UNITY_EDITOR
     using UnityEditor;
@@ -78,6 +80,45 @@ namespace CgCore
         public override void Load()
         {
             Asset = (AssetClass)Resources.Load(GetFullPath());
+        }
+    }
+
+    [Serializable]
+    public struct S_FCgAssetRef_Mesh
+    {
+        [SerializeField]
+        public string Path;
+    }
+
+    [Serializable]
+    public struct S_FCgMesh
+    {
+        [SerializeField]
+        public S_FCgAssetRef_Mesh _Mesh;
+        [SerializeField]
+        public int _Mesh_LoadFlags;
+    }
+
+    public class FCgMesh
+    {
+        #region "Data Members"
+
+        public TCgAssetRef<Mesh> _Mesh;
+
+        public int _Mesh_LoadFlags;
+
+        private Mesh _Mesh_Internal;
+
+        #endregion // Data Members
+
+        public FCgMesh()
+        {
+            _Mesh = new TCgAssetRef<Mesh>();
+        }
+
+        public Mesh Get()
+        {
+            return _Mesh_Internal;
         }
     }
 }

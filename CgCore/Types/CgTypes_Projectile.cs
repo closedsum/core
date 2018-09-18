@@ -60,8 +60,6 @@
     [Serializable]
     public struct S_FCgAssetRef_Projectile
     {
-        [NonSerialized]
-        private MCgData_Projectile Asset;
         [SerializeField]
         public string Path;
     }

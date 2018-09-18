@@ -15,7 +15,7 @@
 
         #region "Mesh"
 
-        public bool UseMesh() { return false; }
+        public virtual bool UseMesh() { return false; }
 
         public virtual Mesh GetMesh(ECgViewType viewType, bool isLow = false) { return null; }
         public virtual Mesh GetMesh() { return null; }

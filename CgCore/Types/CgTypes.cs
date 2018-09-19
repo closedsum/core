@@ -2,6 +2,7 @@
 namespace CgCore
 {
     using System;
+    using System.Collections.Generic;
 
     using UnityEngine;
 #if UNITY_EDITOR
@@ -121,4 +122,52 @@ namespace CgCore
             return _Mesh_Internal;
         }
     }
+
+    #region "Materials"
+
+    [Serializable]
+    public struct S_FCgAssetRef_Materials
+    {
+        [SerializeField]
+        public List<string> Paths;
+    }
+
+    [Serializable]
+    public struct S_FCgListMaterial
+    {
+        [SerializeField]
+        public S_FCgAssetRef_Materials Materials;
+        [SerializeField]
+        public int Materials_LoadFlags;
+    }
+
+    public class FCgListMaterial
+    {
+        #region "Data Members"
+
+        public List<TCgAssetRef<Material>> Materials;
+
+        public int Materials_LoadFlags;
+
+        private List<Material> Materials_Internal;
+
+        #endregion // Data Members
+
+        public FCgListMaterial()
+        {
+            Materials = new List<TCgAssetRef<Material>>();
+        }
+
+        public List<Material> Get()
+        {
+            return Materials_Internal;
+        }
+
+        public Material Get(int index)
+        {
+            return index < Materials_Internal.Count ? Materials_Internal[index] : null;
+        }
+    }
+
+    #endregion // Materials
 }

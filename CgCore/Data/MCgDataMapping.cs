@@ -17,6 +17,8 @@
 
         private static MCgDataMapping _Instance;
 
+        public Dictionary<FECgAssetType, Dictionary<string, MCgData>> Map;
+
         #endregion // Data Members
 
         public static MCgDataMapping Get()
@@ -57,6 +59,49 @@
 
         protected virtual void Init_Internal()
         {
+            Map = new Dictionary<FECgAssetType, Dictionary<string, MCgData>>(new FECgAssetTypeEqualityComparer());
+
+            int count = EMCgAssetType.Get().Count;
+
+            for (int i = 0; i < count; ++i)
+            {
+                Map.Add(EMCgAssetType.Get().GetEnumAt(i), new Dictionary<string, MCgData>());
+            }
+        }
+
+        public virtual void GenerateMaps(bool initialize = false){}
+
+        public void GenerateMap<DataType>(FECgAssetType assetType, ref List<DataType> list, ref Dictionary<string, DataType> map, bool intialize = false)
+            where DataType : MCgData
+        {
+            if (intialize)
+            {
+                if (list == null)
+                    list = new List<DataType>();
+
+                map = new Dictionary<string, DataType>();
+            }
+
+            foreach (DataType d in list)
+            {
+                map.Add(d.ShortCode, d);
+                Map[assetType].Add(d.ShortCode, d);
+            }
+        }
+
+        public MCgData GetData(FECgAssetType assetType, string shortCode)
+        {
+            if (Map[assetType].ContainsKey(shortCode))
+                return Map[assetType][shortCode];
+
+            FCgDebug.LogWarning("MCgDataMapping.GetData: No " + assetType.Name + " with ShortCode: " + shortCode);
+            return null;
+        }
+
+        public T GetData<T>(FECgAssetType assetType, string shortCode)
+            where T : MCgData
+        {
+            return (T)GetData(assetType, shortCode);
         }
     }
 }

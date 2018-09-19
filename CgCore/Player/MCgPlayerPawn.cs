@@ -4,8 +4,7 @@
     using System.Collections.Generic;
     using UnityEngine;
 
-    public class MCgData_WeaponMaterialSkin : MCgData
+    public class MCgPlayerPawn : MCgPawn
     {
-        public virtual List<Material> GetMaterials() { return null; }
     }
 }

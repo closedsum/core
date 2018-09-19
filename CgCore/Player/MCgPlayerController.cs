@@ -69,6 +69,7 @@
         public virtual void Possess(MCgPawn pawn)
         {
             Pawn = pawn;
+            Pawn.PlayerState = PlayerState;
         }
     }
 }

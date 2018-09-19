@@ -36,16 +36,12 @@
         }
     }
 
-    public class MCgPlayerState : MonoBehaviour
+    public class MCgPlayerState : MCgPlayerStateBase
     {
         #region "Data Members"
 
         public FCgSnapShot_Player CurrentSnapShot;
 
         #endregion // Data Members
-
-        public virtual void Init() { }
-        public virtual void OnUpdate(float deltaTime){}
-        public virtual void ProcessCurrentLocalSnapShot(float deltaTime) { }
     }
 }

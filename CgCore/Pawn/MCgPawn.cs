@@ -48,7 +48,7 @@
 
             #endregion // Interface
 
-        public MCgPlayerState PlayerState;
+        public MCgPlayerStateBase PlayerState;
 
             #region "Setup"
 
@@ -64,6 +64,8 @@
 
                 #region "Health"
 
+        [Header("Health")]
+
         public float Health;
 
         public FCgProperty_Ref_float HealthHandle;
@@ -78,11 +80,15 @@
 
                 #region "Spawn"
 
+        [Header("Spawn")]
+
+        [FCgReadOnly]
         public bool bFirstSpawn;
 
         public sealed class FOnFirstSpawn : TCgMulticastDelegate_OneParam<MCgPawn> { }
         public FOnFirstSpawn OnFirstSpawn_Event;
 
+        [FCgReadOnly]
         public int SpawnCount;
 
         public Vector3 SpawnLocation;
@@ -95,6 +101,7 @@
         public sealed class FOnHandleRespawnTimerFinished : TCgMulticastDelegate_OneParam<byte>{}
         public FOnHandleRespawnTimerFinished OnHandleRespawnTimerFinished_Event;
 
+        [FCgReadOnly]
         public bool bSpawnedAndActive;
 
                #endregion // Spawn
@@ -103,18 +110,30 @@
 
             #region "View"
 
+        [Header("View")]
+
+        [FCgReadOnly]
         public ECgViewType CurrentViewType;
 
+        [FCgReadOnly]
         public Vector3 CurrentViewRotation;
+        [FCgReadOnly]
         public Vector3 CurrentViewRotationDelta;
 
+        [FCgReadOnly]
         public Vector3 CurrentViewLocation;
+        [FCgReadOnly]
         public Vector3 CurrentViewDir;
+        [FCgReadOnly]
         public Vector3 CurrentViewDirXY;
+        [FCgReadOnly]
         public Vector3 CurrentViewRight;
+        [FCgReadOnly]
         public Vector3 CurrentViewRightXY;
+        [FCgReadOnly]
         public Vector3 CurrentViewUp;
 
+        [FCgReadOnly]
         public bool bPerformViewTrace;
 
         public FCgPawnViewTraceInfo ViewTraceInfo;
@@ -123,70 +142,118 @@
 
             #region "Body / Root"
 
+        [Header("Body / Root")]
+
+        [FCgReadOnly]
         public Vector3 CurrentRootRotation;
+        [FCgReadOnly]
         public Vector3 CurrentRootLocation;
+        [FCgReadOnly]
         public Vector3 CurrentBodyLocation;
+        [FCgReadOnly]
         public Vector3 CurrentFeetLocation;
+        [FCgReadOnly]
         public Vector3 CurrentRootDir;
+        [FCgReadOnly]
         public Vector3 CurrentRootDirXY;
+        [FCgReadOnly]
         public Vector3 CurrentRootRight;
+        [FCgReadOnly]
         public Vector3 CurrentRootRightXY;
 
             #endregion // Body / Root
 
             #region "Movement"
 
+        [Header("Movement")]
+
         private Transform MyTransform;
 
+        [FCgReadOnly]
         public Vector3 CurrentVelocity;
+        [FCgReadOnly]
         public Vector3 CurrentVelocityDir;
+        [FCgReadOnly]
         public Vector3 CurrentVelocityXY;
+        [FCgReadOnly]
         public Vector3 CurrentVelocityDirXY;
+        [FCgReadOnly]
         public Vector3 CurrentVelocityZ;
+        [FCgReadOnly]
         public Vector3 CurrentVelocityDirZ;
-       
+
+        [FCgReadOnly]
         public float CurrentSpeed;
+        [FCgReadOnly]
         public float CurrentSpeedSq;
+        [FCgReadOnly]
         public float CurrentSpeedXY;
+        [FCgReadOnly]
         public float CurrentSpeedXYSq;
+        [FCgReadOnly]
         public float CurrentSpeedZ;
+        [FCgReadOnly]
         public float CurrentSpeedZSq;
 
+        [FCgReadOnly]
         public Vector3 CurrentVelocityRight;
+        [FCgReadOnly]
         public Vector3 CurrentVelocityRightXY;
 
+        [FCgReadOnly]
         public Vector3 CurrentCapsuleVelocity;
+        [FCgReadOnly]
         public Vector3 CurrentCapsuleVelocityDir;
+        [FCgReadOnly]
         public Vector3 CurrentCapsuleVelocityXY;
+        [FCgReadOnly]
         public Vector3 CurrentCapsuleVelocityDirXY;
+        [FCgReadOnly]
         public Vector3 CurrentCapsuleVelocityZ;
+        [FCgReadOnly]
         public Vector3 CurrentCapsuleVelocityDirZ;
 
+        [FCgReadOnly]
         public float CurrentCapsuleSpeed;
+        [FCgReadOnly]
         public float CurrentCapsuleSpeedSq;
+        [FCgReadOnly]
         public float CurrentCapsuleSpeedXY;
+        [FCgReadOnly]
         public float CurrentCapsuleSpeedXYSq;
+        [FCgReadOnly]
         public float CurrentCapsuleSpeedZ;
+        [FCgReadOnly]
         public float CurrentCapsuleSpeedZSq;
 
+        [FCgReadOnly]
         public Vector3 CurrentCapsuleVelocityRight;
+        [FCgReadOnly]
         public Vector3 CurrentCapsuleVelocityRightXY;
 
+        [FCgReadOnly]
         public float CurrentMoveRightLeftValue;
 
             #endregion // Movement
 
             #region "Data"
 
+        [Header("Data")]
+
         public bool bCacheData;
 
+        [FCgReadOnly]
         public MCgData_Character MyData_Character;
+        [FCgReadOnly]
         public MCgData_CharacterMeshSkin MyData_CharacterMeshSkin;
+        [FCgReadOnly]
         public MCgData_CharacterMaterialSkin MyData_CharacterMaterialSkin;
 
             #endregion // Data
 
             #region "Weapons"
+
+        [Header("Weapons")]
 
         public FECgWeaponSlot CurrentWeaponSlot;
         public TCgPropertyClass_Ref<FECgWeaponSlot> CurrentWeaponSlotHandle;
@@ -194,39 +261,41 @@
         public sealed class FOnChange_CurrentWeaponSlot : TCgMulticastDelegate_ThreeParams<byte, FECgWeaponSlot, FECgWeaponSlot> { }
         public FOnChange_CurrentWeaponSlot OnChange_CurrentWeaponSlot_Event;
 
+        [FCgReadOnly]
         public byte CurrentWeaponIndex;
         public FECgWeaponSlot LastWeaponSlot;
+        [FCgReadOnly]
         public byte LastWeaponIndex;
+        [FCgReadOnly]
         public byte CurrentWeaponCount;
+        [FCgReadOnly]
         public byte MaxWeaponCount;
 
+        [FCgReadOnly]
         public List<MCgWeapon> Weapons;
 
+        [FCgReadOnly]
         public List<MCgData_Weapon> Data_Weapons;
+        [FCgReadOnly]
         public List<MCgData_WeaponMaterialSkin> Data_WeaponMaterialSkins;
 
              #endregion // Weapons
 
             #region Sense
 
+        [Header("Sense")]
+
             #endregion Sense
 
             #region "Managers"
+
+        [Header("Managers")]
 
         public FCgManager_Sense Manager_Sense;
 
             #endregion // Managers
 
         #endregion // Data Members
-
-        void Awake()
-        {
-        }
-
-        // Use this for initialization
-        void Start()
-        {   
-        }
 
         public virtual void Init()
         {

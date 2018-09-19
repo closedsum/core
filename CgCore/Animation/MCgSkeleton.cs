@@ -1,5 +1,6 @@
 ﻿namespace CgCore
 {
+    using System;
     using System.Collections;
     using System.Collections.Generic;
     using UnityEngine;
@@ -15,32 +16,33 @@
 
     #endregion // Enums
 
-    public class FCgSkeleton
+    public class MCgSkeleton : MonoBehaviour
     {
         #region "Data Members"
 
+        [FCgReadOnly]
         public List<Transform> Bones;
         public Dictionary<int, string> BoneIndexNameMap;
         public Dictionary<string, Transform> BoneNameMap;
 
+        [NonSerialized]
         public Transform Root;
 
         #endregion // Data Members
 
-        public FCgSkeleton()
+        public void Init()
         {
             Bones = new List<Transform>();
             BoneIndexNameMap = new Dictionary<int, string>();
             BoneNameMap = new Dictionary<string, Transform>();
-        }
 
-        public void Init(Transform root)
-        {
-            Bones.Add(root);
-            BoneIndexNameMap.Add(0, root.name);
-            BoneNameMap.Add(root.name, root);
+            Root = transform;
 
-            Build(root);
+            Bones.Add(Root);
+            BoneIndexNameMap.Add(0, Root.name);
+            BoneNameMap.Add(Root.name, Root);
+
+            Build(Root);
         }
 
         public void Build(Transform bone)

@@ -271,7 +271,6 @@
         [FCgReadOnly]
         public byte MaxWeaponCount;
 
-        [FCgReadOnly]
         public List<MCgWeapon> Weapons;
 
         [FCgReadOnly]

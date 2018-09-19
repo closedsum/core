@@ -205,12 +205,11 @@
             set { _UniqueObjectId = value; }
         }
 
-        #endregion // Interface
-
-        public bool bPlacedInWorld;
-
+            #endregion // Interface
 
             #region "Data"
+
+        [Header("Data")]
 
         public MCgData_Weapon MyData_Weapon;
 
@@ -233,6 +232,8 @@
 
         public FECgTime TimeType;
         public FECgCoroutineSchedule ScheduleType;
+
+        [Header("State")]
 
         public byte WeaponIndex;
 
@@ -266,6 +267,8 @@
 
             #region "Equip / UnEqup"
 
+        [Header("Equip / UnEquip")]
+
         public bool bEquipped;
 
         public sealed class FOnEquip : TCgMulticastDelegate_FourParams<FECgWeaponSlot, int, int, int> { }
@@ -274,6 +277,7 @@
         public sealed class FOnUnEquip : TCgMulticastDelegate_OneParam<FECgWeaponSlot> { }
         public FOnUnEquip OnUnEquip_Event;
 
+        [FCgReadOnly]
         public bool bDoingEquipTransition;
 
             #endregion // Equip / UnEquip
@@ -287,6 +291,8 @@
                 #region "Ammo"
 
         public FRef_int MaxAmmo;
+
+        [Header("- Ammo")]
 
         public int CurrentAmmo;
 
@@ -330,12 +336,16 @@
 
         public FTMapRef_bool bChargeFire;
 
+        [Header("- Charge")]
+
+        [FCgReadOnly]
         public bool bPerformingChargeFire;
 
         public FTMapRef_float MaxChargeFireTime;
 
         public FCgRoutine StartChargeFire_Internal_Routine;
 
+        [FCgReadOnly]
         public float ChargeFire_StartTime;
 
                 #endregion // Charge
@@ -371,10 +381,12 @@
 
         public FTMapRef_bool bLoopFireSound;
 
+        [FCgReadOnly]
         public int FireCount;
 
         public FCgProjectileFirePayload[] ProjectileFirePayloads;
 
+        [FCgReadOnly]
         public int ProjectileFirePayloadPoolIndex;
 
         public FCgRoutine FireWeapon_Internal_Routine;
@@ -397,6 +409,9 @@
 
         public FECgWeaponState ReloadingState;
 
+        [Header("- Reload")]
+
+        [FCgReadOnly]
         public bool bReloading;
         public FCgBool_Ref bReloadingHandle;
 
@@ -405,6 +420,7 @@
 
         public FRef_float ReloadTime;
 
+        [FCgReadOnly]
         public float ReloadStartTime;
 
         public FRef_bool bRechargeAmmo;
@@ -414,9 +430,12 @@
 
         public FRef_float RechargeStartupDelay;
 
-	    public float RechargeAmmo_StartTime;
+        [FCgReadOnly]
+        public float RechargeAmmo_StartTime;
+        [FCgReadOnly]
         public float NextRechargeAmmoTime;
 
+        [FCgReadOnly]
         public bool bRechargingAmmo;
 
             #endregion // Reload

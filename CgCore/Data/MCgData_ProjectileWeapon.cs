@@ -19,12 +19,12 @@
         public virtual string GetMuzzleBone(ECgViewType viewType, FECgWeaponFireMode fireMode, int index = 0) { return ECgCached.Str.NAME_None; }
         public virtual string GetMuzzleBone(FECgWeaponFireMode fireMode, int index = 0) { return ECgCached.Str.NAME_None; }
 
-        public virtual Vector3 GetMuzzleLocation(FCgSkeleton skeleton, ECgViewType viewType, FECgWeaponFireMode fireMode, int index = 0)
+        public virtual Vector3 GetMuzzleLocation(MCgSkeleton skeleton, ECgViewType viewType, FECgWeaponFireMode fireMode, int index = 0)
         {
             return skeleton.GetBoneLocation(GetMuzzleBone(viewType, fireMode, index));
         }
 
-        public virtual Vector3 GetMuzzleLocation(FCgSkeleton skeleton, FECgWeaponFireMode fireMode, int index = 0)
+        public virtual Vector3 GetMuzzleLocation(MCgSkeleton skeleton, FECgWeaponFireMode fireMode, int index = 0)
         {
             return skeleton.GetBoneLocation(GetMuzzleBone(fireMode, index));
         }

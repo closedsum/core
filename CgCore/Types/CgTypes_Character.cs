@@ -186,4 +186,90 @@
 
         public FCgHeadCollision() { }
     }
+
+    #region "CharacterState"
+
+    public sealed class FECgCharacterState : FECgEnum_byte
+    {
+        public FECgCharacterState(byte value, string name) : base(value, name) { }
+    }
+
+    public class EMCgCharacterState : TCgEnumMap<FECgCharacterState, byte>
+    {
+        private static EMCgCharacterState _Instance;
+        public static EMCgCharacterState Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = new EMCgCharacterState();
+                }
+                return _Instance;
+            }
+        }
+
+        public static EMCgCharacterState Get()
+        {
+            return Instance;
+        }
+    }
+
+    public sealed class FECgCharacterStateEqualityComparer : IEqualityComparer<FECgCharacterState>
+    {
+        public bool Equals(FECgCharacterState lhs, FECgCharacterState rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(FECgCharacterState x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
+    #endregion // CharacterState
+
+    #region "CharacterSetup"
+
+    public sealed class FECgCharacterSetup : FECgEnum_byte
+    {
+        public FECgCharacterSetup(byte value, string name) : base(value, name) { }
+    }
+
+    public class EMCgCharacterSetup : TCgEnumMap<FECgCharacterSetup, byte>
+    {
+        private static EMCgCharacterSetup _Instance;
+        public static EMCgCharacterSetup Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = new EMCgCharacterSetup();
+                }
+                return _Instance;
+            }
+        }
+
+        public static EMCgCharacterSetup Get()
+        {
+            return Instance;
+        }
+    }
+
+    public sealed class FECgCharacterSetupEqualityComparer : IEqualityComparer<FECgCharacterSetup>
+    {
+        public bool Equals(FECgCharacterSetup lhs, FECgCharacterSetup rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(FECgCharacterSetup x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
+    #endregion // CharacterSetup
 }

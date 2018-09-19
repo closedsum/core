@@ -69,7 +69,7 @@
                 return;
             }
             
-            ICgManager_Sound manager_sound = ICgManager_Sound.Get();
+            //ICgManager_Sound manager_sound = ICgManager_Sound.Get();
             /*
             FCsSoundPayload* Payload = Manager_Sound->AllocatePayload();
             Payload->Set(SoundElement);
@@ -90,7 +90,7 @@
                 return;
             }
             
-            ICgManager_Sound manager_sound = ICgManager_Sound.Get();
+            //ICgManager_Sound manager_sound = ICgManager_Sound.Get();
             /*
             FCsSoundPayload* Payload = Manager_Sound->AllocatePayload();
             Payload->Set(SoundElement);
@@ -111,7 +111,7 @@
                 return;
             }
 
-            ICgManager_Sound manager_sound = ICgManager_Sound.Get();
+            //ICgManager_Sound manager_sound = ICgManager_Sound.Get();
             /*
             FCsSoundPayload* Payload = Manager_Sound->AllocatePayload();
             Payload->Set(SoundElement);
@@ -132,7 +132,7 @@
 		        return;
 	        }
 
-            ICgManager_Sound manager_sound = ICgManager_Sound.Get();
+            //ICgManager_Sound manager_sound = ICgManager_Sound.Get();
             /*
             FCsSoundPayload* Payload = Manager_Sound->AllocatePayload();
             Payload->Set(SoundElement);
@@ -145,16 +145,16 @@
 
 	    public virtual void StopSound(ECgViewType viewType, FECgWeaponFireMode fireMode, FECgWeaponSound soundType, MonoBehaviour owner, MonoBehaviour parent)
         {
-            FCgSoundElement soundElement    = GetSound(viewType, fireMode, soundType);
-            ICgManager_Sound manager_sound  = ICgManager_Sound.Get();
+            //FCgSoundElement soundElement    = GetSound(viewType, fireMode, soundType);
+            //ICgManager_Sound manager_sound  = ICgManager_Sound.Get();
 
             //manager_sound.Stop(soundElement, owner, parent);
         }
 	    
         public virtual void StopSound(FECgWeaponFireMode fireMode, FECgWeaponSound soundType, MonoBehaviour owner, MonoBehaviour parent)
         {
-            FCgSoundElement soundElement    = GetSound(fireMode, soundType);
-            ICgManager_Sound manager_sound  = ICgManager_Sound.Get();
+            //FCgSoundElement soundElement    = GetSound(fireMode, soundType);
+            //ICgManager_Sound manager_sound  = ICgManager_Sound.Get();
 
             //manager_sound.Stop(soundElement, owner, parent);
         }

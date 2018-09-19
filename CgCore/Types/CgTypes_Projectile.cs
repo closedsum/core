@@ -108,6 +108,12 @@
 	    {
 		    return Data_Internal;
 	    }
+
+        // TODO: HACK: used to temporarily stop warnings
+        public void TempAssign()
+        {
+            Data_Internal = Data.Get();
+        }
     }
 
     public class FCgProjectileFirePayload

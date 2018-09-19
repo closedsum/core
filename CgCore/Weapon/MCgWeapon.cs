@@ -712,7 +712,7 @@
 			    FECgWeaponFireMode fireMode = EMCgWeaponFireMode.Get().GetEnumAt(i);
 
                 FCgData_Weapon_FireMode fireModeClass = data_weapon.GetFireModeClass(fireMode);
-                object fireModeMemberClass            = fireModeClass.GetType().GetField(fireModeMember.Name).GetValue(fireModeClass);
+                object fireModeMemberClass            = fireModeClass.GetType().GetField(structName).GetValue(fireModeClass);
 
 			    if (i == 0)
                     member.Set((ValueType)fireModeMemberClass.GetType().GetField(memberName).GetValue(fireModeMemberClass));
@@ -1538,7 +1538,7 @@
             if (GetMyData_Weapon().UseInventory())
             {
                 // TODO: Later might need a way to store the LastFireMode used
-                FCgManager_Inventory manager_inventory = GetMyManager_Inventory();
+                //FCgManager_Inventory manager_inventory = GetMyManager_Inventory();
 
                 string shortCode = GetAmmoShortCode(PrimaryFireMode, false);
 
@@ -1581,7 +1581,7 @@
             if (GetMyData_Weapon().UseInventory())
             {
                 // TODO: Later might need a way to store the LastFireMode used
-                FCgManager_Inventory manager_inventory = GetMyManager_Inventory();
+                //FCgManager_Inventory manager_inventory = GetMyManager_Inventory();
 
                 string shortCode = GetAmmoShortCode(PrimaryFireMode, false);
 
@@ -1622,7 +1622,7 @@
 
             if (GetMyData_Weapon().UseInventory())
             {
-                FCgManager_Inventory manager_inventory = GetMyManager_Inventory();
+                //FCgManager_Inventory manager_inventory = GetMyManager_Inventory();
 
                 string shortCode = GetAmmoShortCode(fireMode, isCharged);
 
@@ -1662,7 +1662,7 @@
 
             if (GetMyData_Weapon().UseInventory())
             {
-                FCgManager_Inventory manager_inventory  = GetMyManager_Inventory();
+                //FCgManager_Inventory manager_inventory  = GetMyManager_Inventory();
                 MCgData_Projectile data_projectile      = GetMyData_Projectile<MCgData_Projectile>(fireMode, isCharged);
                 string shortCode                        = data_projectile.GetItemShortCode();
 

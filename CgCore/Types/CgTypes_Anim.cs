@@ -25,6 +25,12 @@
         {
             return Anim_Internal;
         }
+
+        // TODO: HACK: used to temporarily stop warnings
+        public void TempAssign()
+        {
+            Anim_Internal = Anim.Get();
+        }
     }
 
     public class FCgFpvAnimClip

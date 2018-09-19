@@ -9,7 +9,7 @@
     public struct S_FECgAssetType
     {
         [SerializeField]
-        public string name;
+        public string Name;
     }
 
     public sealed class FECgAssetType : FECgEnum_byte

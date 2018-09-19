@@ -6,6 +6,8 @@ namespace CgCore
     using System.Collections.Generic;
     using UnityEngine;
 
+    #region "InputActionMap"
+
     public class FECgInputActionMap : ECgEnum_int
     {
         public FECgInputActionMap(int value, string name) : base(value, name) { }
@@ -43,6 +45,17 @@ namespace CgCore
         {
             return x.GetHashCode();
         }
+    }
+
+    #endregion // InputActionMap
+
+    #region "InputAction"
+
+    [Serializable]
+    public struct S_FECgInputAction
+    {
+        [SerializeField]
+        public string Name;
     }
 
     public sealed class FECgInputAction : FECgEnum_byte
@@ -83,6 +96,8 @@ namespace CgCore
             return x.GetHashCode();
         }
     }
+
+    #endregion // InputAction
 
     public enum ECgInputDevice : byte
     {

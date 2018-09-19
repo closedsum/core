@@ -60,14 +60,17 @@
 
         public FOnExitingPlayMode OnExitingPlayMode_Event;
 
+        [FCgReadOnly]
         public MCgGameState GameState;
 
+        [FCgReadOnly]
         public List<MCgPlayerController> PlayerControllers;
 
         public FECgGameInstanceState CurrentState;
 
             #region "Unique Id"
 
+        [FCgReadOnly]
         public ulong UniqueObjectIdIndex;
 
         public Dictionary<ulong, ICgObject> ObjectMap;

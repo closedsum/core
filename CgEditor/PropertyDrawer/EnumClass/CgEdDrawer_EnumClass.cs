@@ -21,6 +21,11 @@
 
         static FCgEdDrawer_EnumClass()
         {
+            Assembly asm = typeof(EnumMap).Assembly;
+
+            // Call FCgEnumClassLinker.Init() for Initialize any EnumClasses
+            asm.GetType("FCgEnumClassLinker").GetMethod("Init").Invoke(null, null);
+
             // Get Static Instance of Map
             MemberInfo[] members = typeof(EnumMap).GetMember("Instance");
 
@@ -39,10 +44,16 @@
             // Value
             property.serializedObject.Update();
 
-            //EnumClass e = (EnumClass)property.objectReferenceValue;
-            //int newIndex = EditorGUI.Popup(contentPosition, e == null ? 0 : (int)(object)(e.Value), EnumNames);
-            //Debug.Log(Map.GetEnumAt(newIndex).Value);
-            
+            SerializedProperty nameProperty = property.FindPropertyRelative("Name");
+            EnumClass e                     = Map.GetSafeEnum(nameProperty.stringValue);
+
+            string value     = "" + e.Value;
+            int currentIndex = int.Parse(value);
+            int newIndex     = EditorGUI.Popup(contentPosition, e == Map.GetMAX() ? 0 : currentIndex, EnumNames);
+            e                = Map.GetSafeEnumAt(newIndex);
+
+            nameProperty.stringValue = e == Map.GetMAX() ? "INVALID" : e.Name;
+
             property.serializedObject.ApplyModifiedProperties();
         }
 

@@ -48,15 +48,18 @@
 
             #endregion // Interface
 
+        [FCgReadOnly]
         public MCgPlayerStateBase PlayerState;
 
             #region "Setup"
 
+        [Header("Setup")]
+
         public bool bAutoPossess;
         public int ControllerIndex = AUTO_ASSIGN_CONTROLLER;
 
-        public sealed class FOnSetupFinished : TCgMulticastDelegate_OneParam<byte> { }
-        public FOnSetupFinished OnSetupFinished_Event;
+        public sealed class FOnSetup_Finished : TCgMulticastDelegate_OneParam<byte> { }
+        public FOnSetup_Finished OnSetup_Finished_Event;
 
             #endregion // Setup
 

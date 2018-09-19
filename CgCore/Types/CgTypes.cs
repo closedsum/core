@@ -121,6 +121,12 @@ namespace CgCore
         {
             return _Mesh_Internal;
         }
+
+        // TODO: HACK: used to temporarily stop warnings
+        public void TempAssign()
+        {
+            _Mesh_Internal = _Mesh.Get();
+        }
     }
 
     #region "Materials"
@@ -166,6 +172,15 @@ namespace CgCore
         public Material Get(int index)
         {
             return index < Materials_Internal.Count ? Materials_Internal[index] : null;
+        }
+
+        // TODO: HACK: used to temporarily stop warnings
+        public void TempAssign()
+        {
+            foreach (TCgAssetRef<Material> assetRef in Materials)
+            {
+                Materials_Internal.Add(assetRef.Get());
+            }
         }
     }
 

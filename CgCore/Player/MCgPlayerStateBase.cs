@@ -6,6 +6,12 @@
 
     public class MCgPlayerStateBase : MonoBehaviour
     {
+        #region "Data Members"
+
+        [FCgReadOnly]
+        public byte UniqueMappingId;
+
+        #endregion // Data Members
 
         public virtual void Init() { }
         public virtual void OnUpdate(float deltaTime) { }

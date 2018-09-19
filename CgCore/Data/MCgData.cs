@@ -18,6 +18,8 @@
 
         public virtual void Init()
         {
+            AssetType = EMCgAssetType.Get().GetSafeEnum(S_AssetType.Name);
+            /*
             Dictionary<string, FieldInfo> serializedFields = new Dictionary<string, FieldInfo>();
             Dictionary<string, FieldInfo> nonSerializedFields = new Dictionary<string, FieldInfo>(); 
 
@@ -54,10 +56,12 @@
                     FieldInfo nsf = nonSerializedFields[ns_name];
                 }
             }
+            */
         }
 
         public void StructToClassSerialization(object structObject, FieldInfo structFieldInfo, object classObject, FieldInfo classFieldInfo)
         {
+            /*
             object sValue           = structFieldInfo.GetValue(structObject);
             Type sType              = sValue.GetType();
             FieldInfo[] sFieldInfos = sType.GetFields(BindingFlags.Public);
@@ -65,6 +69,7 @@
             object cValue = classFieldInfo.GetValue(classObject);
             Type cType = cValue.GetType();
             FieldInfo[] cFieldInfos = cType.GetFields(BindingFlags.Public);
+            */
         }
     }
 }

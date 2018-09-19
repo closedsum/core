@@ -165,6 +165,12 @@
         {
             return Sound_Internal;
         }
+
+        // TODO: HACK: used to temporarily stop warnings
+        public void TempAssign()
+        {
+            Sound_Internal = Sound;
+        }
     }
 
     public class FCgFpvSoundElement

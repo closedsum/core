@@ -701,7 +701,115 @@
 		    }
         }
 
-        #endregion // Set
+        public virtual void SetMultiValueMembers()
+        {
+            MCgData_ProjectileWeapon data = GetMyData_Weapon<MCgData_ProjectileWeapon>();
+
+            // MaxAmmo
+            MaxAmmo.ResetValues();
+            int ival = data.GetMaxAmmo();
+            MaxAmmo.Set(ival);
+            MaxAmmo.Set(DATA_VALUE, data, data.GetMaxAmmoMemberName());
+
+            ResetCurrentAmmo(DATA_VALUE);
+
+            // Firing
+            {
+                // DoFireOnRelease
+                SetMemberMultiRefValue<bool>(bFireOnRelease, FiringDataFireMode, "bFireOnRelease");
+                // IsFullAuto
+                SetMemberMultiRefValue<bool>(bFullAuto, FiringDataFireMode, "bFullAuto");
+                // AllowChargeFire
+                SetMemberMultiRefValue<bool>(bChargeFire, FiringDataFireMode, "bChargeFire");
+                // MaxChargeFireTime
+                SetMemberMultiRefValue<float>(MaxChargeFireTime, FiringDataFireMode, "MaxChargeFireTime");
+                // ProjectilesPerShot
+                SetMemberMultiRefValue<byte>(ProjectilesPerShot, FiringDataFireMode, "ProjectilesPerShot");
+                // CurrentProjectilePerShotIndex
+                SetMemberMultiValue<byte>(CurrentProjectilePerShotIndex, 0);
+                // TimeBetweenProjectilesPerShot
+                SetMemberMultiRefValue<float>(TimeBetweenProjectilesPerShot, FiringDataFireMode, "TimeBetweenProjectilesPerShot");
+                // TimeBetweenShots
+                SetMemberMultiRefValue<float>(TimeBetweenShots, FiringDataFireMode, "TimeBetweenShots");
+                // TimeBetweenAutoShots
+                SetMemberMultiRefValue<float>(TimeBetweenAutoShots, FiringDataFireMode, "TimeBetweenAutoShots");
+                // IsFirePressed
+                SetMemberMultiValue<bool>(bFirePressed, false);
+                // Last_IsFirePressed
+                SetMemberMultiValue<bool>(Last_bFirePressed, false);
+                // IsFirePressed_StartTime
+                SetMemberMultiValue<float>(bFirePressed_StartTime, 0.0f);
+                // IsFireReleased_StartTime
+                SetMemberMultiValue<float>(bFireReleased_StartTime, 0.0f);
+                // Fire_StartTime
+                SetMemberMultiValue<float>(Fire_StartTime, 0.0f);
+                // IsHitScan
+                SetMemberMultiRefValue<bool>(bHitscan, FiringDataFireMode, "bHitScan");
+                // DoesHitscanUseRadius
+                SetMemberMultiRefValue<bool>(bHitscanUseRadius, FiringDataFireMode, "bHitscanUseRadius");
+                // DoesHitscanSimulateProjectileDuration
+                SetMemberMultiRefValue<bool>(bHitscanSimulateProjectileDuration, FiringDataFireMode, "bHitscanSimulateProjectileDuration");
+                // ObstaclePenetrations
+                SetMemberMultiRefValue<int>(ObstaclePenetrations, FiringDataFireMode, "ObstaclePenetrations");
+                // SetMemberMultiRefValue
+                SetMemberMultiRefValue<int>(PawnPenetrations, FiringDataFireMode, "PawnPenetrations");
+
+            }
+            // Animation
+            {
+                // LoopFireAnim
+                SetMemberMultiRefValue<bool>(bLoopFireAnim, AnimationDataFireMode, "bLoopFireAnim");
+                // DoScaleFireAnim
+                SetMemberMultiRefValue<bool>(bScaleFireAnim, AnimationDataFireMode, "bScaleFireAnim");
+            }
+            // Aiming
+            {
+                // DoSpread
+                SetMemberMultiRefValue<bool>(bSpread, AimingDataFireMode, "bSpread");
+                // MinSpread
+                SetMemberMultiRefValue<float>(MinSpread, AimingDataFireMode, "MinSpread");
+                // MaxSpread
+                SetMemberMultiRefValue<float>(MaxSpread, AimingDataFireMode, "MaxSpread");
+                // SpreadAddedPerShot
+                SetMemberMultiRefValue<float>(SpreadAddedPerShot, AimingDataFireMode, "SpreadAddedPerShot");
+                // SpreadRecoveryRate
+                SetMemberMultiRefValue<float>(SpreadRecoveryRate, AimingDataFireMode, "SpreadRecoveryRate");
+                // FiringSpreadRecoveryDelay
+                SetMemberMultiRefValue<float>(FiringSpreadRecoveryDelay, AimingDataFireMode, "FiringSpreadRecoveryDelay");
+                // MovingSpreadBonus
+                SetMemberMultiRefValue<float>(MovingSpreadBonus, AimingDataFireMode, "MovingSpreadBonus");
+            }
+            // Sounds
+            {
+                // LoopFireSound
+                SetMemberMultiRefValue<bool>(bLoopFireSound, SoundsDataFireMode, "bLoopFireSound");
+            }
+            // Stats
+            {
+                // AllowRechargeAmmo
+                SetMemberRefValue<bool>(bRechargeAmmo, "bRechargeAmmo");
+                // AllowRechargeAmmoDuringFire
+                SetMemberRefValue<bool>(bRechargeAmmoDuringFire, "bRechargeAmmoDuringFire");
+
+                // RechargeSecondsPerAmmo
+                RechargeSecondsPerAmmo.ResetValues();
+                float fval = data.GetRechargeSecondsPerAmmo();
+                RechargeSecondsPerAmmo.Set(fval);
+                RechargeSecondsPerAmmo.Set(DATA_VALUE, data, data.GetRechargeSecondsPerAmmoMemberName());
+                // RechargeStartupDelay
+                RechargeStartupDelay.ResetValues();
+                fval = data.GetRechargeStartupDelay();
+                RechargeStartupDelay.Set(fval);
+                RechargeStartupDelay.Set(DATA_VALUE, data, data.GetRechargeStartupDelayMemberName());
+                // ReloadTime
+                ReloadTime.ResetValues();
+                fval = data.GetReloadTime();
+                ReloadTime.Set(fval);
+                ReloadTime.Set(DATA_VALUE, data, data.GetReloadTimeMemberName());
+            }
+        }
+
+            #endregion // Set
 
         #endregion // Members
 

@@ -31,10 +31,14 @@
 
         public virtual FECgWeaponGrip GetGripType() { return EMCgWeaponGrip.Get().GetMAX(); }
 
+        public virtual string GetMaxAmmoMemberName() { return ECgCached.Str.NAME_None; }
         public virtual int GetMaxAmmo() { return 0; }
 
+        public virtual string GetRechargeStartupDelayMemberName() { return ECgCached.Str.NAME_None; }
         public virtual float GetRechargeStartupDelay() { return 0.0f; }
+        public virtual string GetRechargeSecondsPerAmmoMemberName() { return ECgCached.Str.NAME_None; }
         public virtual float GetRechargeSecondsPerAmmo() { return 0.0f; }
+        public virtual string GetReloadTimeMemberName() { return ECgCached.Str.NAME_None; }
         public virtual float GetReloadTime() { return 0.0f; }
 
         #endregion // Stats

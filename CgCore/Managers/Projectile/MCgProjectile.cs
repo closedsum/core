@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using UnityEngine;
 
-    public class MCgProjectile : MonoBehaviour
+    public class MCgProjectile : MCgPooledMonoObject, ICgObject
     {
 
         // Use this for initialization

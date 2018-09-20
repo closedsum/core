@@ -187,7 +187,7 @@
 
         #endregion // Data Members
 
-        FCgProjectilePayload() : base(){ }
+        public FCgProjectilePayload() : base(){ }
 
         public void Set(FCgProjectileFirePayload payload)
         {

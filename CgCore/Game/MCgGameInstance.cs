@@ -129,7 +129,8 @@
             return _Instance;
         }
 
-        public static T Get<T>() where T : MCgGameInstance
+        public static T Get<T>() 
+            where T : MCgGameInstance
         {
             return (T)_Instance;
         }

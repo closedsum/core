@@ -162,8 +162,23 @@
         }
     }
 
-    public class MCgPooledMonoObject : MonoBehaviour
+    public class MCgPooledMonoObject : MonoBehaviour, ICgObject
     {
+        #region "Data Members"
+
+            #region "Interface"
+
+        private ulong _UniqueObjectId;
+        public ulong UniqueObjectId
+        {
+            get { return _UniqueObjectId; }
+            set { _UniqueObjectId = value; }
+        }
+
+            #endregion // Interface
+
+        #endregion // Data Members
+
         public ICgPooledObjectCache GetCache()
         {
             return GetCache_Internal();
@@ -189,6 +204,8 @@
 
         public virtual void Init(int index, object e)
         {
+            MCgGameInstance.Get().RegisterUniqueObject(this);
+
             GetCache().Set(index, this);
             GetCache().SetMyType(e);
         }

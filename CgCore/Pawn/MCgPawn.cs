@@ -51,6 +51,9 @@
         [FCgReadOnly]
         public MCgPlayerStateBase PlayerState;
 
+        [FCgReadOnly]
+        public bool bPlacedInWorld;
+
             #region "Setup"
 
         [Header("Setup")]
@@ -239,12 +242,12 @@
 
         #endregion // Movement
 
-        #region "Mesh"
+            #region "Mesh"
 
         public MCgMeshComponent MyMesh;
         public MCgSkinnedMeshComponent MySkinnedMesh;
 
-        #endregion // Mesh
+            #endregion // Mesh
 
             #region "Data"
 
@@ -334,7 +337,7 @@
         {
             if (PlayerState == null)
                 return false;
-            return false;
+            return PlayerState.IsOnBoardCompleted_Game();
         }
 
         public virtual void OnUpdate_HandleSetup()

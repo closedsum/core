@@ -246,8 +246,8 @@
 
         public FECgWeaponFireMode PrimaryFireMode;
 
-        public sealed class FOnTick : TCgMulticastDelegate_TwoParams<FECgWeaponSlot, float> { }
-        public FOnTick OnTick_Event;
+        public sealed class FOnUpdate : TCgMulticastDelegate_TwoParams<FECgWeaponSlot, float> { }
+        public FOnUpdate OnUpdate_Event;
 
             #endregion // State
 
@@ -457,7 +457,7 @@
             // State
             ScheduleType = ECgCoroutineSchedule.Update;
             TimeType = ECgTime.Update;
-            OnTick_Event = new FOnTick();
+            OnUpdate_Event = new FOnUpdate();
 
             // Equip / UnEquip
             OnEquip_Event = new FOnEquip();
@@ -1024,7 +1024,7 @@
 
         #region "State"
 
-        public virtual void OnTick(float deltaTime)
+        public virtual void OnUpdate(float deltaTime)
         {
 #if UNITY_EDITOR
             /*
@@ -1057,14 +1057,14 @@
                 }
             }
 
-	        OnTick_Event.Broadcast(WeaponSlot, deltaTime);
+	        OnUpdate_Event.Broadcast(WeaponSlot, deltaTime);
 
-            OnTick_HandleStates();
+            OnUpdate_HandleStates();
 
             Last_bFirePressed.Copy(bFirePressed);
         }
 
-        public void OnTick_HandleStates()
+        public void OnUpdate_HandleStates()
         {
             //MCgData_Weapon data_weapon = GetMyData_Weapon();
             int maxAmmo                = MaxAmmo.GetEX(DATA_VALUE);
@@ -1693,7 +1693,7 @@
         public virtual float GetTimeBetweenShots(FECgWeaponFireMode fireMode) { return TimeBetweenShots.Get(fireMode); }
         public virtual float GetTimeBetweenAutoShots(FECgWeaponFireMode fireMode) { return TimeBetweenAutoShots.Get(fireMode); }
 
-        public void SetIsFirePressed(FECgWeaponFireMode fireMode, bool value, bool doOnTick = false)
+        public void SetIsFirePressed(FECgWeaponFireMode fireMode, bool value, bool doOnUpdate = false)
         {
             bFirePressed.Set(fireMode, value);
 
@@ -1713,16 +1713,16 @@
             // In Editor Preview Window
             if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
 	        {
-		        if (DoOnTick)
-			        OnTick(0.0f);
+		        if (doOnUpdate)
+			        OnUpdate(0.0f);
 	        }
 	        // In Game
 	        else
             */
 #endif // #if UNITY_EDITOR
             {
-                if (doOnTick)
-                    OnTick(0.0f);
+                if (doOnUpdate)
+                    OnUpdate(0.0f);
             }
         }
 

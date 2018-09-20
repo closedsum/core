@@ -9,6 +9,51 @@
 
     #region "Enums"
 
+        #region "GameInstanceOnBoard"
+
+    public sealed class FECgGameInstanceOnBoard : FECgEnum_byte
+    {
+        public FECgGameInstanceOnBoard(byte value, string name) : base(value, name) { }
+    }
+
+    public sealed class FECgGameInstanceOnBoardEqualityComparer : IEqualityComparer<FECgGameInstanceOnBoard>
+    {
+        public bool Equals(FECgGameInstanceOnBoard lhs, FECgGameInstanceOnBoard rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(FECgGameInstanceOnBoard x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
+    public class EMCgGameInstanceOnBoard : TCgEnumMap<FECgGameInstanceOnBoard, byte>
+    {
+        private static EMCgGameInstanceOnBoard _Instance;
+        public static EMCgGameInstanceOnBoard Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = new EMCgGameInstanceOnBoard();
+                }
+                return _Instance;
+            }
+        }
+
+        public static EMCgGameInstanceOnBoard Get()
+        {
+            return Instance;
+        }
+    }
+
+        #endregion // GameInstanceOnBoard
+
+        #region "GameInstanceState"
+
     public sealed class FECgGameInstanceState : FECgEnum_byte
     {
         public FECgGameInstanceState(byte value, string name) : base(value, name) { }
@@ -48,6 +93,8 @@
         }
     }
 
+        #endregion // GameInstanceState
+
     #endregion // Enums
 
     public class MCgGameInstance : MonoBehaviour
@@ -66,6 +113,7 @@
         [FCgReadOnly]
         public List<MCgPlayerController> PlayerControllers;
 
+        public FECgGameInstanceOnBoard OnBoardState;
         public FECgGameInstanceState CurrentState;
 
             #region "Unique Id"
@@ -78,7 +126,7 @@
         #endregion // Unique Id
 
         // TODO: Look at having a Scene Manager
-        #region "World"
+            #region "World"
 
         public List<MCgPawn> Pawns;
         public List<MCgPawn> PlayerPawns;

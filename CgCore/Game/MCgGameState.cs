@@ -6,6 +6,51 @@
 
     #region "Enums"
 
+        #region "GameStateOnBoard"
+
+    public sealed class FECgGameStateOnBoard : FECgEnum_byte
+    {
+        public FECgGameStateOnBoard(byte value, string name) : base(value, name) { }
+    }
+
+    public sealed class FECgGameStateOnBoardEqualityComparer : IEqualityComparer<FECgGameStateOnBoard>
+    {
+        public bool Equals(FECgGameStateOnBoard lhs, FECgGameStateOnBoard rhs)
+        {
+            return lhs == rhs;
+        }
+
+        public int GetHashCode(FECgGameStateOnBoard x)
+        {
+            return x.GetHashCode();
+        }
+    }
+
+    public class EMCgGameStateOnBoard : TCgEnumMap<FECgGameStateOnBoard, byte>
+    {
+        private static EMCgGameStateOnBoard _Instance;
+        public static EMCgGameStateOnBoard Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = new EMCgGameStateOnBoard();
+                }
+                return _Instance;
+            }
+        }
+
+        public static EMCgGameStateOnBoard Get()
+        {
+            return Instance;
+        }
+    }
+
+        #endregion // GameStateOnBoard
+
+        #region "GameStateRoutine"
+
     public sealed class FECgGameStateRoutine : FECgEnum_byte
     {
         public FECgGameStateRoutine(byte value, string name) : base(value, name) { }
@@ -45,6 +90,8 @@
         }
     }
 
+        #endregion // GameStateRoutine
+
     #endregion // Enums
 
     public class MCgGameState : MonoBehaviour
@@ -52,6 +99,8 @@
         #region "Data Members"
 
         private static MCgGameState _Instance;
+
+        public FECgGameStateOnBoard OnBoardState;
 
         #endregion // Data Members
 
@@ -72,6 +121,8 @@
 
             _Instance = this;
         }
+
+        public virtual void OnUpdate(float deltaTime) { }
 
         #region "Routines"
 

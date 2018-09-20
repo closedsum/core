@@ -89,4 +89,18 @@ namespace CgCore
                 );
         }
     }
+
+    public struct FCgTransform
+    {
+        public Vector3 Position;
+        public Quaternion Rotation;
+        public Vector3 Scale;
+
+        public FCgTransform(Transform transform, bool local = false)
+        {
+            Position = local ? transform.localPosition : transform.position;
+            Rotation = local ? transform.localRotation : transform.rotation;
+            Scale = Vector3.one;// transform.scale;
+        }
+    }
 }

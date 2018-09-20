@@ -24,6 +24,7 @@
         public List<Transform> Bones;
         public Dictionary<int, string> BoneIndexNameMap;
         public Dictionary<string, Transform> BoneNameMap;
+        public Dictionary<string, FCgTransform> BoneTransformMap;
 
         [NonSerialized]
         public Transform Root;
@@ -35,23 +36,66 @@
             Bones = new List<Transform>();
             BoneIndexNameMap = new Dictionary<int, string>();
             BoneNameMap = new Dictionary<string, Transform>();
+            BoneTransformMap = new Dictionary<string, FCgTransform>();
 
             Root = transform;
 
             Bones.Add(Root);
             BoneIndexNameMap.Add(0, Root.name);
             BoneNameMap.Add(Root.name, Root);
+            BoneTransformMap.Add(Root.name, new FCgTransform(Root, true));
 
             Build(Root);
         }
 
-        public void Reset()
+        public void Clear()
         {
             Bones.Clear();
             BoneIndexNameMap.Clear();
             BoneNameMap.Clear();
+            BoneTransformMap.Clear();
+        }
+
+        public void Reset()
+        {
+            Clear();
 
             Root = null;
+        }
+
+        public void SetRoot(Transform root)
+        {
+            bool dirty = Root != root;
+            Root       = root;
+
+            // Clear
+            if (root == null)
+            {
+                Clear();
+            }
+            // Rebuild Maps
+            else
+            if (dirty)
+            {
+                Bones.Add(Root);
+                BoneIndexNameMap.Add(0, Root.name);
+                BoneNameMap.Add(Root.name, Root);
+                BoneTransformMap.Add(Root.name, new FCgTransform(Root, true));
+
+                Build(Root);
+            }
+        }
+
+        public void Rebuild()
+        {
+            Clear();
+
+            Bones.Add(Root);
+            BoneIndexNameMap.Add(0, Root.name);
+            BoneNameMap.Add(Root.name, Root);
+            BoneTransformMap.Add(Root.name, new FCgTransform(Root, true));
+
+            Build(Root);
         }
 
         public void Build(Transform bone)
@@ -65,6 +109,7 @@
                 Bones.Add(child);
                 BoneIndexNameMap.Add(Bones.Count - 1, child.name);
                 BoneNameMap.Add(child.name, child);
+                BoneTransformMap.Add(child.name, new FCgTransform(child, true));
 
                 Build(child);
             }

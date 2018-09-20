@@ -237,7 +237,14 @@
         [FCgReadOnly]
         public float CurrentMoveRightLeftValue;
 
-            #endregion // Movement
+        #endregion // Movement
+
+        #region "Mesh"
+
+        public MCgMeshComponent MyMesh;
+        public MCgSkinnedMeshComponent MySkinnedMesh;
+
+        #endregion // Mesh
 
             #region "Data"
 

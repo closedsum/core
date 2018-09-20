@@ -10,13 +10,18 @@
 
         public Transform Eye;
 
-        public SkinnedMeshRenderer Mesh1P;
+            #region "Mesh"
+
+        public MCgMeshComponent MyMesh1P;
+        public MCgSkinnedMeshComponent MySkinnedMesh1P;
+
+            #endregion // Mesh
 
             #region "Camera"
 
         public float EyeHeight;
 
-        #endregion // Camera
+            #endregion // Camera
 
         #endregion // Data Members
 
@@ -36,7 +41,12 @@
 
         #region "Mesh"
 
-        public virtual SkinnedMeshRenderer GetCurrentMesh()
+        public virtual MCgMeshComponent GetCurrentMesh()
+        {
+            return null;
+        }
+
+        public virtual MCgSkinnedMeshComponent GetCurrentSkinnedMesh()
         {
             return null;
         }

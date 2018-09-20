@@ -50,7 +50,7 @@
             string value     = "" + e.Value;
             int currentIndex = int.Parse(value);
             int newIndex     = EditorGUI.Popup(contentPosition, e == Map.GetMAX() ? 0 : currentIndex, EnumNames);
-            e                = Map.GetSafeEnumAt(newIndex);
+            e                = Map.GetSafeEnum(EnumNames[newIndex]);
 
             nameProperty.stringValue = e == Map.GetMAX() ? "INVALID" : e.Name;
 

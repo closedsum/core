@@ -19,13 +19,12 @@
         // Use this for initialization
         void Start()
         {
-
+            
         }
 
         // Update is called once per frame
         void Update()
         {
-
         }
 
         public virtual void Init()
@@ -34,15 +33,17 @@
             MyMesh         = MyMeshRenderer.sharedMesh;
         }
 
-        public void SetMesh(Mesh mesh)
+        public void SetMesh(Mesh mesh, Transform root)
         {
             MyMesh                    = mesh;
             MyMeshRenderer.sharedMesh = mesh;
-
+            Skeleton.SetRoot(root);
         }
 
-        public virtual void BuildSkeleton()
+        public virtual void RebuildSkeleton()
         {
+            Skeleton.Clear();
+
 
         }
     }

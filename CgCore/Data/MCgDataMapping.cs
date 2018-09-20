@@ -89,6 +89,23 @@
             }
         }
 
+        // TODO: Need to actually do Loading for cache "miss"
+        public MCgData LoadData(FECgAssetType assetType, string shortCode)
+        {
+            if (Map[assetType].ContainsKey(shortCode))
+                return Map[assetType][shortCode];
+
+            FCgDebug.LogWarning("MCgDataMapping.LoadData: No " + assetType.Name + " with ShortCode: " + shortCode);
+            return null;
+        }
+
+        // TODO: Need to actually do Loading for cache "miss"
+        public T LoadData<T>(FECgAssetType assetType, string shortCode)
+            where T : MCgData
+        {
+            return (T)LoadData(assetType, shortCode);
+        }
+
         public MCgData GetData(FECgAssetType assetType, string shortCode)
         {
             if (Map[assetType].ContainsKey(shortCode))

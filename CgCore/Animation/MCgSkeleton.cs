@@ -45,6 +45,15 @@
             Build(Root);
         }
 
+        public void Reset()
+        {
+            Bones.Clear();
+            BoneIndexNameMap.Clear();
+            BoneNameMap.Clear();
+
+            Root = null;
+        }
+
         public void Build(Transform bone)
         {
             int count = bone.childCount;

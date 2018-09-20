@@ -315,10 +315,27 @@
 
         public virtual void OnUpdate(float deltaTime)
         {
-            OnUpdate_Handle_Movement(deltaTime);
+        }
+
+        public virtual void OnPreUpdate(float deltaTime)
+        {
+            RecordRoot();
+            RecordVelocityAndSpeed();
+        }
+
+        public virtual void OnPostUpdate(float deltaTime)
+        {
+
         }
 
         #region "Setup"
+
+        public virtual bool IsOnBoardCompleted_Game()
+        {
+            if (PlayerState == null)
+                return false;
+            return false;
+        }
 
         public virtual void OnUpdate_HandleSetup()
         {

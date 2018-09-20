@@ -75,7 +75,15 @@
 
         public Dictionary<ulong, ICgObject> ObjectMap;
 
-            #endregion // Unique Id
+        #endregion // Unique Id
+
+        // TODO: Look at having a Scene Manager
+        #region "World"
+
+        public List<MCgPawn> Pawns;
+        public List<MCgPawn> PlayerPawns;
+
+            #endregion // World
 
         #endregion // Data Members
 
@@ -97,6 +105,9 @@
             _Instance = this;
 
             OnExitingPlayMode_Event = new FOnExitingPlayMode();
+
+            Pawns = new List<MCgPawn>();
+            PlayerPawns = new List<MCgPawn>();
 
             MCgDataMapping.Init();
             FCgManager_Prefab.Get().Init();

@@ -110,9 +110,6 @@
         [FCgReadOnly]
         public MCgGameState GameState;
 
-        [FCgReadOnly]
-        public List<MCgPlayerController> PlayerControllers;
-
         public FECgGameInstanceOnBoard OnBoardState;
         public FECgGameInstanceState CurrentState;
 
@@ -124,14 +121,6 @@
         public Dictionary<ulong, ICgObject> ObjectMap;
 
         #endregion // Unique Id
-
-        // TODO: Look at having a Scene Manager
-            #region "World"
-
-        public List<MCgPawn> Pawns;
-        public List<MCgPawn> PlayerPawns;
-
-            #endregion // World
 
         #endregion // Data Members
 
@@ -154,17 +143,12 @@
 
             OnExitingPlayMode_Event = new FOnExitingPlayMode();
 
-            Pawns = new List<MCgPawn>();
-            PlayerPawns = new List<MCgPawn>();
-
             MCgDataMapping.Init();
             FCgManager_Prefab.Get().Init();
 
 #if UNITY_EDITOR
             FCgPlayInEditor.Get();
 #endif // #if UNITY_EDITOR
-
-            PlayerControllers = new List<MCgPlayerController>();
 
             // Set Editor Callbacks
 #if UNITY_EDITOR

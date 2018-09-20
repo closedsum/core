@@ -101,9 +101,9 @@ namespace CgCore
 
         public static MCgPlayerController GetLocalPlayerController(int index = 0)
         {
-            MCgGameInstance gameInstance = MCgGameInstance.Get();
+            MCgGameState gamestate = MCgGameInstance.Get().GameState;
 
-            return gameInstance.PlayerControllers.Count > index ? gameInstance.PlayerControllers[index] : null;
+            return gamestate.PlayerControllers.Count > index ? gamestate.PlayerControllers[index] : null;
         }
 
         public static T GetLocalPlayerController<T>(int index = 0)

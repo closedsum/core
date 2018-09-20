@@ -31,7 +31,9 @@
             if (LinkedPawn != null)
                 return LinkedPawn;
 
-            foreach (MCgPawn pawn in MCgGameInstance.Get().Pawns)
+            MCgGameState gameState = MCgGameState.Get();
+
+            foreach (MCgPawn pawn in gameState.Pawns)
             {
                 if (pawn.PlayerState == this)
                 {

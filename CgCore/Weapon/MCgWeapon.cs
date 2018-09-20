@@ -205,7 +205,10 @@
             set { _UniqueObjectId = value; }
         }
 
-            #endregion // Interface
+        #endregion // Interface
+
+        [FCgReadOnly]
+        public bool bPlacedInWorld;
 
             #region "Data"
 

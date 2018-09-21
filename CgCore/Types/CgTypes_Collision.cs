@@ -4,6 +4,14 @@
     using System.Collections.Generic;
     using UnityEngine;
 
+    public enum ECgColliderState : byte
+    {
+        Enter,
+        Stay,
+        Exit,
+        MAX
+    }
+    
     public enum ECgCollisionShape : byte
     {
         Box,

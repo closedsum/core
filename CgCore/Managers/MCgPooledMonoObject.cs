@@ -138,6 +138,18 @@
             Frame = frame;
         }
 
+        public virtual void Init<PayloadType>(PayloadType payload, float time, float realTime, ulong frame)
+            where PayloadType : ICgPooledObjectPayload
+        {
+            Instigator = payload.Instigator;
+            Owner = payload.Owner;
+            Parent = payload.Parent;
+
+            Time = time;
+            RealTime = realTime;
+            Frame = frame;
+        }
+
         public virtual void Reset()
         {
             bAllocated = false;
@@ -184,10 +196,10 @@
             return GetCache_Internal();
         }
 
-        public T GetCache<T>() 
-            where T : ICgPooledObjectCache
+        public CacheType GetCache<CacheType>() 
+            where CacheType : ICgPooledObjectCache
         {
-            return (T)GetCache();
+            return (CacheType)GetCache();
         }
 
         public CacheType GetCache<CacheType, EnumType, ObjectType>()
@@ -221,7 +233,13 @@
             gameObject.SetActive(true);
             gameObject.transform.parent = null;
         }
-
+        /*
+        public virtual void Allocate<PayloadType>(PayloadType payload)
+            where PayloadType : ICgPooledObjectPayload
+        {
+            GetCache().Init<PayloadType>(payload, 0.0f, 0.0f, 0);
+        }
+        */
         public virtual void DeAllocate()
         {
             gameObject.SetActive(false);

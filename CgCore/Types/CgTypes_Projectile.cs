@@ -57,6 +57,13 @@
 
     #endregion // ProjectileType
 
+    public enum ECgProjectileMovement : byte
+    {
+        Simulated,
+        Function,
+        MAX
+    }
+
     [Serializable]
     public struct S_FCgAssetRef_Projectile
     {
@@ -127,7 +134,7 @@
         public float ChargePercent;
 
         public Vector3 Direction;
-        public Vector3 Location;
+        public Vector3 Position;
 
         public float AdditionalSpeed;
 
@@ -153,7 +160,7 @@
             RealTime = 0.0f;
             Frame = 0;
             ChargePercent = 0.0f;
-            Location = Vector3.zero;
+            Position = Vector3.zero;
             Direction = Vector3.zero;
             AdditionalSpeed = 0.0f;
             HomingTarget = null;
@@ -175,7 +182,7 @@
 
         public Vector3 Direction;
 
-        public Vector3 Location;
+        public Vector3 Position;
 
         public float AdditionalSpeed;
 
@@ -192,7 +199,7 @@
         public void Set(FCgProjectileFirePayload payload)
         {
             ChargePercent               = payload.ChargePercent;
-            Location                    = payload.Location;
+            Position                    = payload.Position;
             Direction                   = payload.Direction;
             AdditionalSpeed             = payload.AdditionalSpeed;
             HomingTarget                = payload.HomingTarget;
@@ -206,7 +213,7 @@
 
 		    Relevance = ECgProjectileRelevance.MAX;
 		    ChargePercent = 0.0f;
-		    Location = Vector3.zero;
+            Position = Vector3.zero;
 		    Direction = Vector3.zero;
 		    AdditionalSpeed = 0.0f;
 		    HomingTarget = null;

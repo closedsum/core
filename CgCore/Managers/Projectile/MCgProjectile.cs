@@ -4,9 +4,46 @@
     using System.Collections.Generic;
     using UnityEngine;
 
-    public sealed class FCgProjectileCache : TCgPooledMonoObjectCache<FECgProjectileType, MCgProjectile>
+    public sealed class FCgProjectileCache : TCgPooledMonoObjectCache<FECgProjectileType, MCgProjectile, FCgProjectilePayload>
     {
+        #region "Data Members"
+
+        public MCgData_Projectile Data;
+
+        public ECgProjectileRelevance Relevance;
+
+        public ECgProjectileMovement Movement;
+
+        public Vector3 Position;
+        public Vector3 Direction;
+        public Quaternion Rotation;
+        public FCgTransform _Transform;
+        public float ChargePercent;
+        public float Speed;
+        public float DrawDistanceSq;
+
+        #endregion // Data Members
+
         public FCgProjectileCache() : base() { }
+
+        public override void Init(FCgProjectilePayload payload, float time, float realTime, ulong frame)
+        {
+            base.Init(payload, time, realTime, frame);
+
+            Relevance = payload.Relevance;
+
+            Position = payload.Position;
+            Direction = payload.Direction;
+            //Rotation = Direction.
+
+            ChargePercent = payload.ChargePercent;
+            Speed = Data.GetInitialSpeed() + payload.AdditionalSpeed;
+        }
+
+        public override void Reset()
+        {
+            base.Reset();
+        }
     }
 
     public class MCgProjectile : MCgPooledMonoObject, ICgObject
@@ -34,7 +71,20 @@
 
         public Rigidbody MyRigidBody;
 
+        public List<Component> IgnoreComponents;
+        public List<GameObject> IgnoreGameObjects;
+
             #endregion // Collision
+
+            #region "Movement"
+
+        public float InitialSpeed;
+        public float MaxSpeed;
+        public float GravityScale;
+        public float AccelerationXY;
+        public Vector3 Velocity;
+
+            #endregion // Movement
 
         #endregion // Data Members
 

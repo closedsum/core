@@ -100,7 +100,7 @@ namespace CgCore
         {
             Position = local ? transform.localPosition : transform.position;
             Rotation = local ? transform.localRotation : transform.rotation;
-            Scale = Vector3.one;// transform.scale;
+            Scale = local ? transform.localScale : transform.lossyScale;
         }
     }
 }

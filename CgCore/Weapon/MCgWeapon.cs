@@ -1911,7 +1911,7 @@
                     payload.RealTime = FCgManager_Time.Get().GetTimeSinceStart(ECgTime.Update);
                     payload.Frame    = FCgManager_Time.Get().GetFramesSinceStart(TimeType);
 
-                    payload.Location      = GetFireWeaponStartLocation(fireMode);
+                    payload.Position      = GetFireWeaponStartLocation(fireMode);
                     payload.Direction     = GetFireWeaponStartDirection(fireMode);
                     payload.ChargePercent = GetCurrentChargeFireHeldPercent(fireMode);
 
@@ -2063,7 +2063,7 @@
 
         public virtual void FireProjectile(FECgWeaponFireMode fireMode, FCgProjectileFirePayload firePayload)
         {
-            Vector3 realStart = firePayload.Location;
+            Vector3 realStart = firePayload.Position;
             Vector3 realDir   = firePayload.Direction;
 
             MCgData_ProjectileWeapon data_weapon = GetMyData_Weapon<MCgData_ProjectileWeapon>();
@@ -2122,7 +2122,7 @@
             payload.Owner       = this;
             payload.Data        = data_projectile;
 
-            firePayload.Location  = realStart;
+            firePayload.Position  = realStart;
             firePayload.Direction = realDir;
 
             payload.Set(firePayload);
@@ -2151,7 +2151,7 @@
                 fakePayload.Data        = data_projectile;
 
                 FCgProjectileFirePayload fakeFirePayload = AllocateProjectileFirePayload(fireMode);
-                fakeFirePayload.Location                 = fakeStart;
+                fakeFirePayload.Position                 = fakeStart;
                 fakeFirePayload.Direction                = fakeDir;
 
                 fakePayload.Set(fakeFirePayload);
@@ -2205,7 +2205,7 @@
 
 	        //ECollisionChannel ProjectileCollision = Data_Projectile->GetCollisionObjectType();
 
-	        Vector3 start	   = payload.Location;
+	        Vector3 start	   = payload.Position;
 	        Vector3 dir		   = payload.Direction;
 	        float maxTraceRange = data_projectile.GetMaxRange();
 	        Vector3 end		   = start + maxTraceRange * dir;

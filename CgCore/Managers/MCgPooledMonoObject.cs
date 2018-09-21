@@ -4,8 +4,9 @@
     using System.Collections.Generic;
     using UnityEngine;
 
-    public class TCgPooledMonoObjectCache<EnumType, ObjectType> : ICgPooledObjectCache
+    public class TCgPooledMonoObjectCache<EnumType, ObjectType, PayloadType> : ICgPooledObjectCache
         where ObjectType : MCgPooledMonoObject
+        where PayloadType : ICgPooledObjectPayload
     {
         public class FOnDeAllocate : TCgMulticastDelegate_ThreeParams<int, int, EnumType> { }
 
@@ -138,8 +139,7 @@
             Frame = frame;
         }
 
-        public virtual void Init<PayloadType>(PayloadType payload, float time, float realTime, ulong frame)
-            where PayloadType : ICgPooledObjectPayload
+        public virtual void Init(PayloadType payload, float time, float realTime, ulong frame)
         {
             Instigator = payload.Instigator;
             Owner = payload.Owner;
@@ -202,9 +202,10 @@
             return (CacheType)GetCache();
         }
 
-        public CacheType GetCache<CacheType, EnumType, ObjectType>()
-            where CacheType : TCgPooledMonoObjectCache<EnumType, ObjectType>
+        public CacheType GetCache<CacheType, EnumType, ObjectType, PayloadType>()
+            where CacheType : TCgPooledMonoObjectCache<EnumType, ObjectType, PayloadType>
             where ObjectType : MCgPooledMonoObject
+            where PayloadType : ICgPooledObjectPayload
         {
             return (CacheType)GetCache();
         }

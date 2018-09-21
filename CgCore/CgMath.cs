@@ -88,13 +88,44 @@ namespace CgCore
                 (omc * zx - ys) * v.x + (omc * yz + xs) * v.y + (omc * zz + c) * v.z
                 );
         }
+
+        public static Vector3 VectorToEuler(Vector3 v)
+        {
+            Vector3 r;
+
+            // Pitch
+            r.x = Mathf.Atan2(v.z, Mathf.Sqrt(v.x * v.x + v.y * v.y)) * (180.0f / Mathf.PI);
+            // Yaw
+            r.y = Mathf.Atan2(v.y, v.x) * (180.0f / Mathf.PI);
+            // Roll
+            r.z = 0.0f;
+
+            return r;
+        }
     }
 
     public struct FCgTransform
     {
+        #region "Constants"
+
+        public static readonly FCgTransform Identity = new FCgTransform(Vector3.zero, Quaternion.identity, Vector3.zero);
+        
+        #endregion // Constants
+
+        #region "Data Members"
+
         public Vector3 Position;
         public Quaternion Rotation;
         public Vector3 Scale;
+
+        #endregion // Data Members
+
+        public FCgTransform(Vector3 position, Quaternion rotation, Vector3 scale)
+        {
+            Position = position;
+            Rotation = rotation;
+            Scale = scale;
+        }
 
         public FCgTransform(Transform transform, bool local = false)
         {

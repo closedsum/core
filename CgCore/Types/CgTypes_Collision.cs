@@ -1,5 +1,6 @@
 ﻿namespace CgCore
 {
+    using System;
     using System.Collections;
     using System.Collections.Generic;
     using UnityEngine;
@@ -109,6 +110,32 @@
         {
             return x.GetHashCode();
         }
+    }
+
+    [Serializable]
+    public struct FCgRigidbodyConstraint
+    {
+        [SerializeField]
+        public FCgVectorFlag FreezePosition;
+        [SerializeField]
+        public FCgVectorFlag FreezeRotation;
+    }
+
+    [Serializable]
+    public struct FCgRigidbodyPreset
+    {
+        [SerializeField]
+        public float Mass;
+        [SerializeField]
+        public bool bGravity;
+        [SerializeField]
+        public bool bKinematic;
+        [SerializeField]
+        public RigidbodyInterpolation Interpolate;
+        [SerializeField]
+        public CollisionDetectionMode CollisionDetection;
+        [SerializeField]
+        public FCgRigidbodyConstraint Constraints;
     }
 
     public class FCgHitResult

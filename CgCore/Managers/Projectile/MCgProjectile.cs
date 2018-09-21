@@ -16,7 +16,7 @@
 
         public Vector3 Position;
         public Vector3 Direction;
-        public Quaternion Rotation;
+        public Vector3 Rotation;
         public FCgTransform _Transform;
         public float ChargePercent;
         public float Speed;
@@ -31,10 +31,13 @@
             base.Init(payload, time, realTime, frame);
 
             Relevance = payload.Relevance;
+            Data = payload.Data;
 
             Position = payload.Position;
             Direction = payload.Direction;
-            //Rotation = Direction.
+            Rotation = FCgMath.VectorToEuler(Direction);
+            _Transform.Position = Position;
+            _Transform.Rotation = Quaternion.Euler(Rotation);
 
             ChargePercent = payload.ChargePercent;
             Speed = Data.GetInitialSpeed() + payload.AdditionalSpeed;
@@ -43,11 +46,29 @@
         public override void Reset()
         {
             base.Reset();
+
+            Data = null;
+            Relevance = ECgProjectileRelevance.MAX;
+            Movement = ECgProjectileMovement.MAX;
+            ElapsedTime = 0.0f;
+            Position = Vector3.zero;
+            Direction = Vector3.zero;
+            Rotation = Vector3.zero;
+            _Transform = FCgTransform.Identity;
+            ChargePercent = 0.0f;
+            Speed = 0.0f;
+            DrawDistanceSq = 0.0f;
         }
     }
 
     public class MCgProjectile : MCgPooledMonoObject, ICgObject
     {
+        #region "Constants"
+
+        public static readonly Vector3 GRAVITY = new Vector3(0.0f, -9.80655f, 0.0f);
+
+        #endregion // Constants
+
         #region "Data Members"
 
         public FCgProjectileCache Cache;
@@ -69,7 +90,7 @@
 
         public Collider MyCollider;
 
-        public Rigidbody MyRigidBody;
+        public Rigidbody MyRigidbody;
 
         public List<Component> IgnoreComponents;
         public List<GameObject> IgnoreGameObjects;
@@ -128,7 +149,7 @@
 
                 MyCollider.enabled = false;
 
-                MyRigidBody = gameObject.AddComponent<Rigidbody>();
+                MyRigidbody = gameObject.AddComponent<Rigidbody>();
             }
         }
 
@@ -146,10 +167,10 @@
 
         void OnCollisionEnter(Collision collision)
         {
-            OnCollision(ECgColliderState.Enter, collision);
+            OnCollision_Enter(collision);
         }
 
-        public virtual void OnCollision(ECgColliderState state, Collision collision)
+        public virtual void OnCollision_Enter(Collision collision)
         {
 
         }

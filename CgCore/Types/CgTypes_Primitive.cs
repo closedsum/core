@@ -2827,4 +2827,26 @@ namespace CgCore
     }
 
     #endregion // Attribute
+
+    #region "Vector Types"
+
+    [Serializable]
+    public struct FCgVectorFlag
+    {
+        [UnityEngine.SerializeField]
+        public bool X;
+        [UnityEngine.SerializeField]
+        public bool Y;
+        [UnityEngine.SerializeField]
+        public bool Z;
+
+        public FCgVectorFlag(bool x, bool y, bool z)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+        }
+    }
+
+    #endregion // Vector Types
 }

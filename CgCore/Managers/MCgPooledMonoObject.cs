@@ -127,7 +127,7 @@
         {
             return MyType;
         }
-
+        
         public virtual void Init(ICgPooledObjectPayload payload, float time, float realTime, ulong frame)
         {
             Instigator = payload.Instigator;
@@ -138,7 +138,7 @@
             RealTime = realTime;
             Frame = frame;
         }
-
+        
         public virtual void Init(PayloadType payload, float time, float realTime, ulong frame)
         {
             Instigator = payload.Instigator;

@@ -90,6 +90,7 @@
 
         public Collider MyCollider;
 
+        public bool bRigidbody;
         public Rigidbody MyRigidbody;
 
         public List<Component> IgnoreComponents;
@@ -101,8 +102,8 @@
 
         public float InitialSpeed;
         public float MaxSpeed;
-        public float GravityScale;
-        public float AccelerationXY;
+        public float GravityMultiplier;
+        public float ForwardAcceleration;
         public Vector3 Velocity;
 
             #endregion // Movement
@@ -149,7 +150,8 @@
 
                 MyCollider.enabled = false;
 
-                MyRigidbody = gameObject.AddComponent<Rigidbody>();
+                if (bRigidbody)
+                    MyRigidbody = gameObject.AddComponent<Rigidbody>();
             }
         }
 

@@ -112,6 +112,72 @@
         }
     }
 
+    public enum ECgCapsuleColliderDirection : byte
+    {
+        X,
+        Y,
+        Z,
+        MAX
+    }
+
+    [Serializable]
+    public struct FCgColliderBoxInfo
+    {
+        [SerializeField]
+        public bool bTrigger;
+        [SerializeField]
+        public PhysicMaterial Material;
+        [SerializeField]
+        public Vector3 Center;
+        [SerializeField]
+        public Vector3 Size;
+    }
+
+    [Serializable]
+    public struct FCgColliderSphereInfo
+    {
+        [SerializeField]
+        public bool bTrigger;
+        [SerializeField]
+        public PhysicMaterial Material;
+        [SerializeField]
+        public Vector3 Center;
+        [SerializeField]
+        public float Radius;
+    }
+
+    [Serializable]
+    public struct FCgColliderCapsuleInfo
+    {
+        [SerializeField]
+        public bool bTrigger;
+        [SerializeField]
+        public PhysicMaterial Material;
+        [SerializeField]
+        public Vector3 Center;
+        [SerializeField]
+        public float Radius;
+        [SerializeField]
+        public float Height;
+        [SerializeField]
+        public ECgCapsuleColliderDirection Direction;
+    }
+
+    [Serializable]
+    public struct FCgColliderPreset
+    {
+        [SerializeField]
+        public ECgCollisionShape Shape;
+
+        [SerializeField]
+        public FCgColliderBoxInfo BoxInfo;
+        [SerializeField]
+        public FCgColliderSphereInfo SphereInfo;
+        [SerializeField]
+        public FCgColliderCapsuleInfo CapsuleInfo;
+
+    }
+
     [Serializable]
     public struct FCgRigidbodyConstraint
     {

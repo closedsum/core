@@ -1,6 +1,7 @@
 ﻿// Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 namespace CgCore
 {
+    using System;
     using System.Collections;
     using System.Collections.Generic;
     using UnityEngine;
@@ -104,6 +105,7 @@ namespace CgCore
         }
     }
 
+    [Serializable]
     public struct FCgTransform
     {
         #region "Constants"
@@ -114,8 +116,13 @@ namespace CgCore
 
         #region "Data Members"
 
+        [SerializeField]
         public Vector3 Position;
+        [NonSerialized]
         public Quaternion Rotation;
+        [SerializeField]
+        public Vector3 Euler;
+        [SerializeField]
         public Vector3 Scale;
 
         #endregion // Data Members
@@ -124,6 +131,7 @@ namespace CgCore
         {
             Position = position;
             Rotation = rotation;
+            Euler = Rotation.eulerAngles;
             Scale = scale;
         }
 
@@ -131,7 +139,20 @@ namespace CgCore
         {
             Position = local ? transform.localPosition : transform.position;
             Rotation = local ? transform.localRotation : transform.rotation;
+            Euler = Rotation.eulerAngles;
             Scale = local ? transform.localScale : transform.lossyScale;
+        }
+
+        public void SetRotation(Vector3 euler)
+        {
+            Euler = euler;
+            Rotation = Quaternion.Euler(euler);
+        }
+
+        public void SetRotation(Quaternion rotation)
+        {
+            Rotation = rotation;
+            Euler = Rotation.eulerAngles;
         }
     }
 }

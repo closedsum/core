@@ -55,6 +55,13 @@
 
     #region "WeaponState"
 
+    [Serializable]
+    public struct S_FECgWeaponState
+    {
+        [SerializeField]
+        public string Name;
+    }
+
     public sealed class FECgWeaponState : FECgEnum_byte
     {
         public FECgWeaponState(byte value, string name) : base(value, name) { }

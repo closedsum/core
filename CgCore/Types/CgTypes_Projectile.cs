@@ -16,6 +16,13 @@
 
     #region "ProjectileType"
 
+    [Serializable]
+    public struct S_FECgProjectileType
+    {
+        [SerializeField]
+        public string Name;
+    }
+
     public sealed class FECgProjectileType : FECgEnum_byte
     {
         public FECgProjectileType(byte value, string name) : base(value, name) { }

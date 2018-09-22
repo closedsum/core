@@ -3,7 +3,7 @@
     using System;
     using UnityEngine;
 
-    public interface ICgPooledObjectCache
+    public interface ICgPooledObjectCache<EnumType, ObjectType, PayloadType>
     {
         #region "Data Members"
 
@@ -24,16 +24,17 @@
 
         #endregion // Data Members
 
-        void Set(int index, object o);
-        void SetMyType(object e);
-        object GetMyType();
-        void Init(ICgPooledObjectPayload payload, float time, float realTime, ulong frame);
+        void Set(int index, ObjectType o);
+        void SetMyType(EnumType e);
+        EnumType GetMyType();
+        void Init(PayloadType payload, float time, float realTime, ulong frame);
         void Reset();
         void DeAllocate();
     }
 
-    public class TCgPooledObjectCache<EnumType, ObjectType> : ICgPooledObjectCache
-        where ObjectType : ICgPooledObject
+    public class TCgPooledObjectCache<EnumType, ObjectType, PayloadType> : ICgPooledObjectCache<EnumType, ObjectType, PayloadType>
+        where ObjectType : ICgPooledObject<PayloadType>
+        where PayloadType : ICgPooledObjectPayload
     {
         public class FOnDeAllocate : TCgMulticastDelegate_ThreeParams<int, int, EnumType> { }
 
@@ -131,23 +132,23 @@
             OnDeAllocate_Event = new FOnDeAllocate();
         }
 
-        public void Set(int index, object o)
+        public void Set(int index, ObjectType o)
         {
             Index = index;
-            PooledObject = (ObjectType)o;
+            PooledObject = o;
         }
 
-        public void SetMyType(object e)
+        public void SetMyType(EnumType e)
         {
-            MyType = (EnumType)e;
+            MyType = e;
         }
 
-        public object GetMyType()
+        public EnumType GetMyType()
         {
             return MyType;
         }
 
-        public virtual void Init(ICgPooledObjectPayload payload, float time, float realTime, ulong frame)
+        public virtual void Init(PayloadType payload, float time, float realTime, ulong frame)
         {
             Instigator = payload.Instigator;
             Owner = payload.Owner;
@@ -182,16 +183,17 @@
         }
     }
 
-    public interface ICgPooledObject
+    public interface ICgPooledObject<PayloadType>
     {
         void OnCreatePool();
-        void Allocate(ICgPooledObjectPayload payload);
+        void Allocate(PayloadType payload);
         void DeAllocate();
     }
 
-    public abstract class TCgPooledObject<EnumType> : ICgPooledObject
+    public abstract class TCgPooledObject<EnumType, PayloadType> : ICgPooledObject<PayloadType>
+        where PayloadType : ICgPooledObjectPayload
     {
-        public TCgPooledObjectCache<EnumType, TCgPooledObject<EnumType>> Cache;
+        public TCgPooledObjectCache<EnumType, TCgPooledObject<EnumType, PayloadType>, PayloadType> Cache;
 
         public TCgPooledObject()
         {
@@ -206,7 +208,7 @@
 
         }
 
-        public virtual void Allocate(ICgPooledObjectPayload payload)
+        public virtual void Allocate(PayloadType payload)
         {
             Cache.Init(payload, 0.0f, 0.0f, 0);
         }

@@ -1,5 +1,6 @@
 ﻿namespace CgCore
 {
+    using System;
     using System.Collections;
     using System.Collections.Generic;
     using UnityEngine;
@@ -35,7 +36,7 @@
 
             Position = payload.Position;
             Direction = payload.Direction;
-            Rotation = FCgMath.VectorToEuler(Direction);
+            Rotation = FCgMath.VectorToAngles(Direction);
             _Transform.Position = Position;
             _Transform.Rotation = Quaternion.Euler(Rotation);
 
@@ -106,22 +107,22 @@
         public float ForwardAcceleration;
         public Vector3 Velocity;
 
-            #endregion // Movement
+        #endregion // Movement
 
         #endregion // Data Members
 
         #region "Interface"
 
-        protected override ICgPooledObjectCache GetCache_Internal()
+        public override FCgProjectileCache GetCache<FECgProjectileType, MCgProjectile, FCgProjectilePayload, FCgProjectileCache>()
         {
-            return Cache;
+            return (FCgProjectileCache)(object)Cache;
         }
 
-        public override void Init(int index, object e)
+        public override void Init<FECgProjectileType, MCgProjectile, FCgProjectilePayload, FCgProjectileCache>(int index, FECgProjectileType e)
         {
-            Cache = new FCgProjectileCache();
+            Cache = (CgCore.FCgProjectileCache)(object)Activator.CreateInstance<FCgProjectileCache>();
 
-            base.Init(index, e);
+            base.Init<FECgProjectileType, MCgProjectile, FCgProjectilePayload, FCgProjectileCache>(index, e);
 
             ColliderShape = ECgCollisionShape.MAX;
         }
@@ -155,9 +156,9 @@
             }
         }
 
-        public override void DeAllocate()
+        public override void DeAllocate<FECgProjectileType, MCgProjectile, FCgProjectilePayload, FCgProjectileCache>()
         {
-            base.DeAllocate();
+            base.DeAllocate<FECgProjectileType, MCgProjectile, FCgProjectilePayload, FCgProjectileCache>();
 
             if (bCollider)
                 MyCollider.enabled = false;

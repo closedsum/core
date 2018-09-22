@@ -30,7 +30,7 @@
         }
     }
 
-    public sealed class FCgProcessCache : TCgPooledObjectCache<FECgProcess, TCgPooledObject<FECgProcess>>
+    public sealed class FCgProcessCache : TCgPooledObjectCache<FECgProcess, TCgPooledObject<FECgProcess, FCgProcessPayload>, FCgProcessPayload>
     {
     }
 
@@ -96,7 +96,7 @@
         }
     }
 
-    public class FCgProcess : TCgPooledObject<FECgProcess>
+    public class FCgProcess : TCgPooledObject<FECgProcess, FCgProcessPayload>
     {
         public static FCgConsoleVariableLog LogCommandRequest = new FCgConsoleVariableLog("log.process.command.request", false, "Log Process Command Request", (int)ECgConsoleVariableFlag.Console);
 
@@ -130,27 +130,25 @@
 
         #region "Interface"
 
-        public override void Allocate(ICgPooledObjectPayload payload)
+        public override void Allocate(FCgProcessPayload payload)
         {
             base.Allocate(payload);
 
-            FCgProcessPayload pay = (FCgProcessPayload)payload;
+            P.StartInfo.CreateNoWindow = payload.CreateNoWindow;
+            P.StartInfo.UseShellExecute = payload.UseShellExecute;
+            P.StartInfo.FileName = payload.Filename;
+            P.StartInfo.Arguments = payload.Arguments;
+            P.StartInfo.ErrorDialog = payload.ErrorDialog;
+            P.StartInfo.RedirectStandardInput = payload.RedirectStandardInput;
+            P.StartInfo.RedirectStandardOutput = payload.RedirectStandardOutput;
+            P.StartInfo.RedirectStandardError = payload.RedirectStandardError;
+            P.EnableRaisingEvents = payload.EnableRaisingEvents;
 
-            P.StartInfo.CreateNoWindow = pay.CreateNoWindow;
-            P.StartInfo.UseShellExecute = pay.UseShellExecute;
-            P.StartInfo.FileName = pay.Filename;
-            P.StartInfo.Arguments = pay.Arguments;
-            P.StartInfo.ErrorDialog = pay.ErrorDialog;
-            P.StartInfo.RedirectStandardInput = pay.RedirectStandardInput;
-            P.StartInfo.RedirectStandardOutput = pay.RedirectStandardOutput;
-            P.StartInfo.RedirectStandardError = pay.RedirectStandardError;
-            P.EnableRaisingEvents = pay.EnableRaisingEvents;
+            payload.OutputDataRecieved_Event.CopyTo(OutputDataRecieved_Event);
+            payload.ErrorDataRecieved_Event.CopyTo(ErrorDataRecieved_Event);
+            payload.Exited_Event.CopyTo(Exited_Event);
 
-            pay.OutputDataRecieved_Event.CopyTo(OutputDataRecieved_Event);
-            pay.ErrorDataRecieved_Event.CopyTo(ErrorDataRecieved_Event);
-            pay.Exited_Event.CopyTo(Exited_Event);
-
-            foreach (FCgProcessMonitorOutputEvent e in pay.MonitorOuputEvents)
+            foreach (FCgProcessMonitorOutputEvent e in payload.MonitorOuputEvents)
             {
                 MonitorOuputEvents.Add(e);
             }
@@ -159,9 +157,9 @@
 
             P.Start();
 
-            if (pay.RedirectStandardError)
+            if (payload.RedirectStandardError)
                 P.BeginErrorReadLine();
-            if (pay.RedirectStandardOutput)
+            if (payload.RedirectStandardOutput)
                 P.BeginOutputReadLine();
         }
 

@@ -1302,7 +1302,7 @@
             return (pass_bFirePressed || pass_bFireOnRelease) && pass_Ammo && !bReloading;
         }
 
-        public void OnEnable()
+        public void Enable()
         {
             ResetCurrentAmmo(DATA_VALUE);
         }
@@ -1355,7 +1355,7 @@
             ClearRoutines();
         }
 
-        public void Reset()
+        public void _Reset()
         {
             Disable();
 

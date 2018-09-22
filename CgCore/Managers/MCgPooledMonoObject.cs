@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using UnityEngine;
 
-    public class TCgPooledMonoObjectCache<EnumType, ObjectType, PayloadType> : ICgPooledObjectCache
+    public class TCgPooledMonoObjectCache<EnumType, ObjectType, PayloadType> : ICgPooledObjectCache<EnumType, ObjectType, PayloadType>
         where ObjectType : MCgPooledMonoObject
         where PayloadType : ICgPooledObjectPayload
     {
@@ -112,31 +112,20 @@
             OnDeAllocate_Event = new FOnDeAllocate();
         }
 
-        public void Set(int index, object o)
+        public void Set(int index, ObjectType o)
         {
             Index = index;
-            PooledObject = (ObjectType)o;
+            PooledObject = o;
         }
 
-        public void SetMyType(object e)
+        public void SetMyType(EnumType e)
         {
-            MyType = (EnumType)e;
+            MyType = e;
         }
 
-        public object GetMyType()
+        public EnumType GetMyType()
         {
             return MyType;
-        }
-        
-        public virtual void Init(ICgPooledObjectPayload payload, float time, float realTime, ulong frame)
-        {
-            Instigator = payload.Instigator;
-            Owner = payload.Owner;
-            Parent = payload.Parent;
-
-            Time = time;
-            RealTime = realTime;
-            Frame = frame;
         }
         
         public virtual void Init(PayloadType payload, float time, float realTime, ulong frame)
@@ -191,36 +180,23 @@
 
         #endregion // Data Members
 
-        public ICgPooledObjectCache GetCache()
-        {
-            return GetCache_Internal();
-        }
-
-        public CacheType GetCache<CacheType>() 
-            where CacheType : ICgPooledObjectCache
-        {
-            return (CacheType)GetCache();
-        }
-
-        public CacheType GetCache<CacheType, EnumType, ObjectType, PayloadType>()
-            where CacheType : TCgPooledMonoObjectCache<EnumType, ObjectType, PayloadType>
+        public virtual CacheType GetCache<EnumType, ObjectType, PayloadType, CacheType>()
             where ObjectType : MCgPooledMonoObject
             where PayloadType : ICgPooledObjectPayload
-        {
-            return (CacheType)GetCache();
-        }
-
-        protected virtual ICgPooledObjectCache GetCache_Internal()
+            where CacheType : TCgPooledMonoObjectCache<EnumType, ObjectType, PayloadType>
         {
             return null;
         }
 
-        public virtual void Init(int index, object e)
+        public virtual void Init<EnumType, ObjectType, PayloadType, CacheType>(int index, EnumType e)
+            where ObjectType : MCgPooledMonoObject
+            where PayloadType : ICgPooledObjectPayload
+            where CacheType : TCgPooledMonoObjectCache<EnumType, ObjectType, PayloadType>
         {
             MCgGameInstance.Get().RegisterUniqueObject(this);
 
-            GetCache().Set(index, this);
-            GetCache().SetMyType(e);
+            GetCache<EnumType, ObjectType, PayloadType, CacheType>().Set(index, (ObjectType)this);
+            GetCache<EnumType, ObjectType, PayloadType, CacheType>().SetMyType(e);
         }
 
         public virtual void OnCreatePool()
@@ -228,24 +204,24 @@
 
         }
 
-        public virtual void Allocate(ICgPooledObjectPayload payload)
+        public virtual void Allocate<EnumType, ObjectType, PayloadType, CacheType>(PayloadType payload)
+            where ObjectType : MCgPooledMonoObject
+            where PayloadType : ICgPooledObjectPayload
+            where CacheType : TCgPooledMonoObjectCache<EnumType, ObjectType, PayloadType>
         {
-            GetCache().Init(payload, 0.0f, 0.0f, 0);
+            GetCache<EnumType, ObjectType, PayloadType, CacheType>().Init(payload, 0.0f, 0.0f, 0);
             gameObject.SetActive(true);
             gameObject.transform.parent = null;
         }
-        /*
-        public virtual void Allocate<PayloadType>(PayloadType payload)
+
+        public virtual void DeAllocate<EnumType, ObjectType, PayloadType, CacheType>()
+            where ObjectType : MCgPooledMonoObject
             where PayloadType : ICgPooledObjectPayload
-        {
-            GetCache().Init<PayloadType>(payload, 0.0f, 0.0f, 0);
-        }
-        */
-        public virtual void DeAllocate()
+            where CacheType : TCgPooledMonoObjectCache<EnumType, ObjectType, PayloadType>
         {
             gameObject.SetActive(false);
 
-            GetCache().Reset();
+            GetCache<EnumType, ObjectType, PayloadType, CacheType>().Reset();
         }
     }
 }

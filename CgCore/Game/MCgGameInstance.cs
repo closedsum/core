@@ -144,6 +144,8 @@
 
             OnExitingPlayMode_Event = new FOnExitingPlayMode();
 
+            ObjectMap = new Dictionary<ulong, ICgObject>();
+
             MCgDataMapping.Init();
             FCgManager_Prefab.Get().Init();
 

@@ -86,6 +86,7 @@
             LastRealtimeSinceStartup = new Dictionary<FECgTime, float>(new FECgTimeEqualityComparer());
             TimeSinceStart = new Dictionary<FECgTime, float>(new FECgTimeEqualityComparer());
             DeltaTime = new Dictionary<FECgTime, float>(new FECgTimeEqualityComparer());
+            FramesSinceStart = new Dictionary<FECgTime, ulong>(new FECgTimeEqualityComparer());
             bPaused = new Dictionary<FECgTime, bool>(new FECgTimeEqualityComparer());
 
             int count = EMCgTime.Get().Count;

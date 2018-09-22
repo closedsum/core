@@ -26,7 +26,7 @@
 
         public virtual void ApplyData_Weapon(FECgWeaponSlot slot, MCgData_Weapon data, MCgData_WeaponMaterialSkin skin, bool isEquipped = true)
         {
-            Reset();
+            _Reset();
 
             WeaponSlot = slot;
             WeaponIndex = slot.Value;

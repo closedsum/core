@@ -61,7 +61,7 @@
     }
 
     public class TCgManager_PooledObjects_Map<EnumType, ObjectType, PayloadType> : ICgManager 
-        where ObjectType : TCgPooledObject<EnumType>
+        where ObjectType : TCgPooledObject<EnumType, PayloadType>
         where PayloadType : ICgPooledObjectPayload
     {
         protected sealed class FEnumTypeEqualityComparer : IEqualityComparer<EnumType>
@@ -222,7 +222,7 @@
             }
 
             o.Init(pool.Count - 1, e);
-            o.Cache.Init(null, 0.0f, 0.0f, 0);
+            o.Cache.Init(default(PayloadType), 0.0f, 0.0f, 0);
             OnAddToPool_Event.Broadcast(e, o);
         }
 
@@ -453,9 +453,10 @@
         }
     }
 
-    public class TCgManager_PooledMonoObjects_Map<EnumType, ObjectType, PayloadType> : ICgManager
-    where ObjectType : MCgPooledMonoObject
-    where PayloadType : ICgPooledObjectPayload
+    public class TCgManager_PooledMonoObjects_Map<EnumType, ObjectType, PayloadType, CacheType> : ICgManager
+        where ObjectType : MCgPooledMonoObject
+        where PayloadType : ICgPooledObjectPayload
+        where CacheType : TCgPooledMonoObjectCache<EnumType, ObjectType, PayloadType>
     {
         protected sealed class FEnumTypeEqualityComparer : IEqualityComparer<EnumType>
         {
@@ -476,14 +477,14 @@
         protected static int EMPTY = 0;
         protected static int FIRST = 0;
 
-        private static TCgManager_PooledMonoObjects_Map<EnumType, ObjectType, PayloadType> _Instance;
-        public static TCgManager_PooledMonoObjects_Map<EnumType, ObjectType, PayloadType> Instance
+        private static TCgManager_PooledMonoObjects_Map<EnumType, ObjectType, PayloadType, CacheType> _Instance;
+        public static TCgManager_PooledMonoObjects_Map<EnumType, ObjectType, PayloadType, CacheType> Instance
         {
             get
             {
                 if (_Instance == null)
                 {
-                    _Instance = new TCgManager_PooledMonoObjects_Map<EnumType, ObjectType, PayloadType>();
+                    _Instance = new TCgManager_PooledMonoObjects_Map<EnumType, ObjectType, PayloadType, CacheType>();
                 }
                 return _Instance;
             }
@@ -535,7 +536,7 @@
 
             for (int i = 0; i < count; ++i)
             {
-                Pool[i].DeAllocate();
+                Pool[i].DeAllocate<EnumType, ObjectType, PayloadType, CacheType>();
             }
 
             Pool.Clear();
@@ -576,9 +577,9 @@
             for (int i = 0; i < size; ++i)
             {
                 ObjectType o = ConstructObject.Execute(e);
-                o.Init(i, e);
+                o.Init<EnumType, ObjectType, PayloadType, CacheType>(i, e);
                 o.OnCreatePool();
-                o.DeAllocate();
+                o.DeAllocate<EnumType, ObjectType, PayloadType, CacheType>();
                 Pool.Add(o);
                 pool.Add(o);
                 OnAddToPool_Event.Broadcast(e, o);
@@ -621,31 +622,31 @@
                 Pools.Add(e, pool);
             }
 
-            o.Init(pool.Count - 1, e);
-            o.GetCache().Init(null, 0.0f, 0.0f, 0);
+            o.Init<EnumType, ObjectType, PayloadType, CacheType>(pool.Count - 1, e);
+            o.GetCache<EnumType, ObjectType, PayloadType, CacheType>().Init(default(PayloadType), 0.0f, 0.0f, 0);
             OnAddToPool_Event.Broadcast(e, o);
         }
 
         public virtual void AddToActivePool(EnumType e, ObjectType o)
         {
-            if (o.GetCache().Index == INDEX_NONE)
+            if (o.GetCache<EnumType, ObjectType, PayloadType, CacheType>().Index == INDEX_NONE)
             {
                 FCgDebug.LogError(this.GetType().Name + ".AddToActivePool: Object of Type: " + EnumTypeToString(e) + " was NOT added to any pool. Call AddToPool first.");
                 return;
             }
 
-            o.GetCache().bAllocated = true;
+            o.GetCache<EnumType, ObjectType, PayloadType, CacheType>().bAllocated = true;
 
             Dictionary<int, ObjectType> pool = null;
 
             if (ActiveObjects.TryGetValue(e, out pool))
             {
-                ActiveObjects[e].Add(o.GetCache().Index, o);
+                ActiveObjects[e].Add(o.GetCache<EnumType, ObjectType, PayloadType, CacheType>().Index, o);
             }
             else
             {
                 pool = new Dictionary<int, ObjectType>();
-                pool.Add(o.GetCache().Index, o);
+                pool.Add(o.GetCache<EnumType, ObjectType, PayloadType, CacheType>().Index, o);
                 ActiveObjects.Add(e, pool);
             }
             //
@@ -667,20 +668,20 @@
                     ObjectType o = pool[index];
 
                     // Check if Object was DeAllocated NOT in a normal way
-                    if (!o.GetCache().bAllocated)
+                    if (!o.GetCache<EnumType, ObjectType, PayloadType, CacheType>().bAllocated)
                     {
                         indicesToRemove.Add(index);
                         continue;
                     }
 
-                    if (!o.GetCache().bLifeTime)
+                    if (!o.GetCache<EnumType, ObjectType, PayloadType, CacheType>().bLifeTime)
                         continue;
 
                     //
                     {
                         LogTransaction();
 
-                        o.DeAllocate();
+                        o.DeAllocate<EnumType, ObjectType, PayloadType, CacheType>();
                         indicesToRemove.Add(index);
                     }
                 }
@@ -740,9 +741,9 @@
                 PoolIndices[e]  = index;
                 ObjectType o    = pool[index];
 
-                if (!o.GetCache().bAllocated)
+                if (!o.GetCache<EnumType, ObjectType, PayloadType, CacheType>().bAllocated)
                 {
-                    o.GetCache().bAllocated = true;
+                    o.GetCache<EnumType, ObjectType, PayloadType, CacheType>().bAllocated = true;
                     return o;
                 }
             }
@@ -766,7 +767,7 @@
 
                 LogTransaction();
 
-                o.DeAllocate();
+                o.DeAllocate<EnumType, ObjectType, PayloadType, CacheType>();
                 ActiveObjects[e].Remove(index);
 
                 // OnDeAllocate+Event
@@ -778,7 +779,7 @@
 
         public bool DeAllocate(ObjectType o)
         {
-            return DeAllocate((EnumType)(o.GetCache().GetMyType()), o.GetCache().Index);
+            return DeAllocate((EnumType)(o.GetCache<EnumType, ObjectType, PayloadType, CacheType>().GetMyType()), o.GetCache<EnumType, ObjectType, PayloadType, CacheType>().Index);
         }
 
         public void DeAllocateAll()
@@ -797,7 +798,7 @@
 
                     LogTransaction();
 
-                    o.DeAllocate();
+                    o.DeAllocate<EnumType, ObjectType, PayloadType, CacheType>();
                 }
                 ActiveObjects[e].Clear();
             }
@@ -832,7 +833,7 @@
         {
             ObjectType o = Allocate(e);
 
-            o.Allocate(payload);
+            o.Allocate<EnumType, ObjectType, PayloadType, CacheType>(payload);
             payload.Reset();
             AddToActivePool(e, o);
             return o;

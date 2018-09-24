@@ -69,6 +69,11 @@
 
         #region "Internal"
 
+        public void SetTimeType(FECgTime timeType)
+        {
+            Internal.TimeType = timeType;
+        }
+
         public virtual void Clear()
         {
             Internal.Clear();

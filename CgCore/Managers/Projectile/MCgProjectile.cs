@@ -156,6 +156,10 @@
             }
         }
 
+        public override void OnUpdate(float deltaTime)
+        {
+        }
+
         public override void DeAllocate<FECgProjectileType, MCgProjectile, FCgProjectilePayload, FCgProjectileCache>()
         {
             base.DeAllocate<FECgProjectileType, MCgProjectile, FCgProjectilePayload, FCgProjectileCache>();

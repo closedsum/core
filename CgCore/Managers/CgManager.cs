@@ -498,6 +498,8 @@
 
         #region "Data Members
 
+        public FECgTime TimeType;
+
         protected Dictionary<EnumType, int> PoolSizes;
         protected List<ObjectType> Pool;
         protected Dictionary<EnumType, List<ObjectType>> Pools;
@@ -514,6 +516,8 @@
 
         public TCgManager_PooledMonoObjects_Map()
         {
+            TimeType = ECgTime.Update;
+
             PoolSizes = new Dictionary<EnumType, int>(new FEnumTypeEqualityComparer());
             Pool = new List<ObjectType>();
             Pools = new Dictionary<EnumType, List<ObjectType>>(new FEnumTypeEqualityComparer());
@@ -683,7 +687,9 @@
 
                         o.DeAllocate<EnumType, ObjectType, PayloadType, CacheType>();
                         indicesToRemove.Add(index);
+                        continue;
                     }
+                    o.OnUpdate(deltaTime);
                 }
 
                 foreach (int index in indicesToRemove)

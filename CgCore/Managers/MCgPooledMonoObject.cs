@@ -199,10 +199,9 @@
             GetCache<EnumType, ObjectType, PayloadType, CacheType>().SetMyType(e);
         }
 
-        public virtual void OnCreatePool()
-        {
+        public virtual void OnCreatePool() { }
 
-        }
+        public virtual void OnUpdate(float deltaTime) { }
 
         public virtual void Allocate<EnumType, ObjectType, PayloadType, CacheType>(PayloadType payload)
             where ObjectType : MCgPooledMonoObject

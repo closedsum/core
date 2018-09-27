@@ -129,7 +129,7 @@ bool ACsAnim_Control::HasTransformChanged()
 	return Location.HasChanged() || Rotation.HasChanged() || Scale.HasChanged();
 }
 
-bool ACsAnim_Control::HasRelativeTransformMemberChanged(const TEnumAsByte<ECsTransformMember::Type> &Member, const int32 &Axes)
+bool ACsAnim_Control::HasRelativeTransformMemberChanged(const ECsTransformMember &Member, const int32 &Axes)
 {
 	if (Member == ECsTransformMember::Location)
 		return RelativeLocation.HasAxesChanged(Axes);
@@ -140,7 +140,7 @@ bool ACsAnim_Control::HasRelativeTransformMemberChanged(const TEnumAsByte<ECsTra
 	return false;
 }
 
-bool ACsAnim_Control::HasTransformMemberChanged(const TEnumAsByte<ECsTransformMember::Type> &Member, const int32 &Axes)
+bool ACsAnim_Control::HasTransformMemberChanged(const ECsTransformMember &Member, const int32 &Axes)
 {
 	if (Member == ECsTransformMember::Location)
 		return Location.HasAxesChanged(Axes);

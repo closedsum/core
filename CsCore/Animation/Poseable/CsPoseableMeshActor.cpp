@@ -1785,10 +1785,10 @@ void ACsPoseableMeshActor::PerformFK(const int32 &Index)
 			continue;
 		}
 
-		const TCsTransformMember OutMember = Connection.Output.Member;
+		const ECsTransformMember& OutMember = Connection.Output.Member;
 		ACsAnim_Bone* Bone				   = Bones[BoneArrayIndex].Actor;
 		const int32 OutAxes				   = Connection.Output.Axes;
-		const TCsTransformMember InMember  = Connection.Input.Member;
+		const ECsTransformMember& InMember  = Connection.Input.Member;
 		const int32 InAxes				   = Connection.Input.Axes;
 		const bool OneToMany			   = NumOutputAxes == 1;
 

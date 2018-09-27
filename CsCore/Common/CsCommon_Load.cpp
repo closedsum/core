@@ -483,9 +483,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				if (WriteStructToJson_Internal_Helper(Internal, Property, InJsonWriter, InStruct, InScriptStruct)) { continue; }
 				continue;
 			}
-			// FCsFpsStaticMesh
-			if (StructProperty->Struct == FCsFpsStaticMesh::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsFpsStaticMesh>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsFpvStaticMesh
+			if (StructProperty->Struct == FCsFpvStaticMesh::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsFpvStaticMesh>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 			// FCsSkeletalMesh
 			if (StructProperty->Struct == FCsSkeletalMesh::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsSkeletalMesh>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
@@ -1251,9 +1251,9 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				if (WriteStructToJson_Internal_Helper(Internal, Property, InJsonWriter, InStruct, InScriptStruct)) { continue; }
 				continue;
 			}
-			// FCsFpsStaticMesh
-			if (StructProperty->Struct == FCsFpsStaticMesh::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsFpsStaticMesh>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
+			// FCsFpvStaticMesh
+			if (StructProperty->Struct == FCsFpvStaticMesh::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsFpvStaticMesh>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
 			// FCsSkeletalMesh
 			if (StructProperty->Struct == FCsSkeletalMesh::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsSkeletalMesh>(InJsonWriter, StructProperty, InStruct, MemberName, true, Internal); continue; }
@@ -1995,9 +1995,9 @@ void UCsCommon_Load::WriteObjectToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				if (WriteObjectToJson_Internal_Helper(Internal, Property, InJsonWriter, InObject, InClass)) { continue; }
 				continue;
 			}
-			// FCsFpsStaticMesh
-			if (StructProperty->Struct == FCsFpsStaticMesh::StaticStruct())
-			{ WriteMemberStructPropertyToJson<FCsFpsStaticMesh>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
+			// FCsFpvStaticMesh
+			if (StructProperty->Struct == FCsFpvStaticMesh::StaticStruct())
+			{ WriteMemberStructPropertyToJson<FCsFpvStaticMesh>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
 			// FCsTArrayStaticMesh
 			if (StructProperty->Struct == FCsTArrayStaticMesh::StaticStruct())
 			{ WriteMemberStructPropertyToJson<FCsTArrayStaticMesh>(InJsonWriter, StructProperty, InObject, MemberName); continue; }
@@ -2856,9 +2856,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 				if (ReadStructFromJson_Internal_Helper(Internal, Property, JsonObject, InStruct, InScriptStruct)) { continue; }
 				continue;
 			}
-			// FCsFpsStaticMesh
-			if (StructProperty->Struct == FCsFpsStaticMesh::StaticStruct())
-			{ WriteToMemberStructPropertyFromJson<FCsFpsStaticMesh>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
+			// FCsFpvStaticMesh
+			if (StructProperty->Struct == FCsFpvStaticMesh::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsFpvStaticMesh>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 			// FCsSkeletalMesh
 			if (StructProperty->Struct == FCsSkeletalMesh::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsSkeletalMesh>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
@@ -3625,9 +3625,9 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				if (ReadStructFromJson_Internal_Helper(Internal, Property, JsonObject, InStruct, InScriptStruct)) { continue; }
 				continue;
 			}
-			// FCsFpsStaticMesh
-			if (StructProperty->Struct == FCsFpsStaticMesh::StaticStruct())
-			{ WriteToMemberStructPropertyFromJson<FCsFpsStaticMesh>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
+			// FCsFpvStaticMesh
+			if (StructProperty->Struct == FCsFpvStaticMesh::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsFpvStaticMesh>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
 			// FCsSkeletalMesh
 			if (StructProperty->Struct == FCsSkeletalMesh::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsSkeletalMesh>(JsonObject, StructProperty, InStruct, MemberName, Internal); continue; }
@@ -4383,9 +4383,9 @@ void UCsCommon_Load::ReadObjectFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				if (ReadObjectFromJson_Internal_Helper(Internal, Property, JsonObject, InObject, InClass)) { continue; }
 				continue;
 			}
-			// FCsFpsStaticMesh
-			if (StructProperty->Struct == FCsFpsStaticMesh::StaticStruct())
-			{ WriteToMemberStructPropertyFromJson<FCsFpsStaticMesh>(JsonObject, StructProperty, InObject, MemberName); continue; }
+			// FCsFpvStaticMesh
+			if (StructProperty->Struct == FCsFpvStaticMesh::StaticStruct())
+			{ WriteToMemberStructPropertyFromJson<FCsFpvStaticMesh>(JsonObject, StructProperty, InObject, MemberName); continue; }
 			// FCsTArrayStaticMesh
 			if (StructProperty->Struct == FCsTArrayStaticMesh::StaticStruct())
 			{ WriteToMemberStructPropertyFromJson<FCsTArrayStaticMesh>(JsonObject, StructProperty, InObject, MemberName); continue; }
@@ -5768,9 +5768,9 @@ void UCsCommon_Load::GetAssetReferencesFromStruct(void* InStruct, UScriptStruct*
 				}
 				continue;
 			}
-			// FCsFpsStaticMesh
-			if (StructProperty->Struct == FCsFpsStaticMesh::StaticStruct())
-			{ GetAssetReferencesFromStructProperty<FCsFpsStaticMesh>(StructProperty, InStruct, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
+			// FCsFpvStaticMesh
+			if (StructProperty->Struct == FCsFpvStaticMesh::StaticStruct())
+			{ GetAssetReferencesFromStructProperty<FCsFpvStaticMesh>(StructProperty, InStruct, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
 			// FCsTArrayStaticMesh
 			if (StructProperty->Struct == FCsTArrayStaticMesh::StaticStruct())
 			{ GetAssetReferencesFromStructProperty<FCsTArrayStaticMesh>(StructProperty, InStruct, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
@@ -6024,9 +6024,9 @@ void UCsCommon_Load::GetAssetReferencesFromObject(void* InObject, UClass* const 
 				}
 				continue;
 			}
-			// FCsFpsStaticMesh
-			if (StructProperty->Struct == FCsFpsStaticMesh::StaticStruct())
-			{ GetAssetReferencesFromStructProperty<FCsFpsStaticMesh>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
+			// FCsFpvStaticMesh
+			if (StructProperty->Struct == FCsFpvStaticMesh::StaticStruct())
+			{ GetAssetReferencesFromStructProperty<FCsFpvStaticMesh>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
 			// FCsTArrayStaticMesh
 			if (StructProperty->Struct == FCsTArrayStaticMesh::StaticStruct())
 			{ GetAssetReferencesFromStructProperty<FCsTArrayStaticMesh>(StructProperty, InObject, LoadFlags, OutAssetReferences, nullptr, LoadCodes); continue; }
@@ -6943,9 +6943,9 @@ void UCsCommon_Load::LoadStructWithTSoftObjectPtrs(const FString &ObjectName, vo
 				}
 				continue;
 			}
-			// FCsFpsStaticMesh
-			if (StructProperty->Struct == FCsFpsStaticMesh::StaticStruct())
-			{ LoadMemberStructProperty<FCsFpsStaticMesh>(StructProperty, InStruct, StructName, LoadFlags); continue; }
+			// FCsFpvStaticMesh
+			if (StructProperty->Struct == FCsFpvStaticMesh::StaticStruct())
+			{ LoadMemberStructProperty<FCsFpvStaticMesh>(StructProperty, InStruct, StructName, LoadFlags); continue; }
 			// FCsTArrayStaticMesh
 			if (StructProperty->Struct == FCsTArrayStaticMesh::StaticStruct())
 			{ LoadMemberStructProperty<FCsTArrayStaticMesh>(StructProperty, InStruct, StructName, LoadFlags); continue; }
@@ -7344,9 +7344,9 @@ void UCsCommon_Load::LoadObjectWithTSoftObjectPtrs(const FString &ObjectName, vo
 				}
 				continue;
 			}
-			// FCsFpsStaticMesh
-			if (StructProperty->Struct == FCsFpsStaticMesh::StaticStruct())
-			{ LoadMemberStructProperty<FCsFpsStaticMesh>(StructProperty, InObject, StructName, LoadFlags); continue; }
+			// FCsFpvStaticMesh
+			if (StructProperty->Struct == FCsFpvStaticMesh::StaticStruct())
+			{ LoadMemberStructProperty<FCsFpvStaticMesh>(StructProperty, InObject, StructName, LoadFlags); continue; }
 			// FCsTArrayStaticMesh
 			if (StructProperty->Struct == FCsTArrayStaticMesh::StaticStruct())
 			{ LoadMemberStructProperty<FCsTArrayStaticMesh>(StructProperty, InObject, StructName, LoadFlags); continue; }
@@ -8559,9 +8559,9 @@ void UCsCommon_Load::CheckObjectWithEnum(const FString &ObjectName, void* InObje
 				}
 				continue;
 			}
-			// FCsFpsStaticMesh
-			if (StructProperty->Struct == FCsFpsStaticMesh::StaticStruct())
-			{ CheckEnumStructProperty<FCsFpsStaticMesh>(StructProperty, InObject, StructName, nullptr); continue; }
+			// FCsFpvStaticMesh
+			if (StructProperty->Struct == FCsFpvStaticMesh::StaticStruct())
+			{ CheckEnumStructProperty<FCsFpvStaticMesh>(StructProperty, InObject, StructName, nullptr); continue; }
 			// FCsTArrayStaticMesh
 			if (StructProperty->Struct == FCsTArrayStaticMesh::StaticStruct())
 			{ CheckEnumStructProperty<FCsTArrayStaticMesh>(StructProperty, InObject, StructName, nullptr); continue; }

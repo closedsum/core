@@ -26,20 +26,20 @@
 // Level
 #pragma region
 
-UENUM(BlueprintType)
-namespace ECsLevelState
-{
-	enum Type
-	{
-		None				UMETA(DisplayName = "None"),
-		Loaded				UMETA(DisplayName = "Loaded"),
-		BeginTransition		UMETA(DisplayName = "Begin Transition"),
-		InTransition		UMETA(DisplayName = "In Transition"),
-		ECsLevelState_MAX	UMETA(Hidden),
-	};
-}
+	// LevelState
+#pragma region
 
-struct CSCORE_API EMCsLevelState : public TCsEnumMap<ECsLevelState::Type>
+UENUM(BlueprintType)
+enum class ECsLevelState : uint8
+{
+	None				UMETA(DisplayName = "None"),
+	Loaded				UMETA(DisplayName = "Loaded"),
+	BeginTransition		UMETA(DisplayName = "Begin Transition"),
+	InTransition		UMETA(DisplayName = "In Transition"),
+	ECsLevelState_MAX	UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsLevelState : public TCsEnumMap<ECsLevelState>
 {
 protected:
 	EMCsLevelState() {}
@@ -54,10 +54,12 @@ public:
 	static EMCsLevelState& Get();
 };
 
-namespace ECsLevelState
+namespace NCsLevelState
 {
 	namespace Ref
 	{
+		typedef ECsLevelState Type;
+
 		extern CSCORE_API const Type None;
 		extern CSCORE_API const Type Loaded;
 		extern CSCORE_API const Type BeginTransition;
@@ -67,11 +69,15 @@ namespace ECsLevelState
 }
 
 #define ECS_LEVEL_STATE (uint8)ECsLevelState::ECsLevelState_MAX
-typedef ECsLevelState::Type TCsLevelState;
+
+#pragma endregion LevelState
 
 #pragma endregion Level
 
 // Transform
+#pragma region
+
+	// Axes
 #pragma region
 
 UENUM(BlueprintType, meta = (Bitflags))
@@ -82,24 +88,53 @@ enum class ECsAxes : uint8
 	Z	UMETA(DisplayName = "Z | Roll"),
 };
 
+struct CSCORE_API EMCsAxes : public TCsEnumFlagMap<ECsAxes>
+{
+protected:
+	EMCsAxes() {}
+	EMCsAxes(const EMCsAxes &) = delete;
+	EMCsAxes(EMCsAxes &&) = delete;
+public:
+	~EMCsAxes() {}
+private:
+	static EMCsAxes* Instance;
+
+public:
+	static EMCsAxes& Get();
+};
+
+namespace NCsAxes
+{
+	namespace Ref
+	{
+		typedef ECsAxes Type;
+
+		extern CSCORE_API const Type X;
+		extern CSCORE_API const Type Y;
+		extern CSCORE_API const Type Z;
+	}
+}
+
 #define ECS_AXES_NONE 0
 					 // (1<<((uint8)ECsAxes::X)) | (1<<((uint8)ECsAxes::Y)) | (1<<((uint8)ECsAxes::Z))
 					 // 1 + 2 + 4 = 7
 #define ECS_AXES_3D_ALL 7
 
-UENUM(BlueprintType)
-namespace ECsAxes_Editor
-{
-	enum Type
-	{
-		X					UMETA(DisplayName = "X | Roll"),
-		Y					UMETA(DisplayName = "Y | Pitch"),
-		Z					UMETA(DisplayName = "Z | Yaw"),
-		ECsAxes_Editor_MAX	UMETA(Hidden),
-	};
-}
+#pragma endregion Axes
 
-struct CSCORE_API EMCsAxes_Editor : public TCsEnumMap<ECsAxes_Editor::Type>
+	// Axes_Editor
+#pragma region
+
+UENUM(BlueprintType)
+enum class ECsAxes_Editor : uint8
+{
+	X					UMETA(DisplayName = "X | Roll"),
+	Y					UMETA(DisplayName = "Y | Pitch"),
+	Z					UMETA(DisplayName = "Z | Yaw"),
+	ECsAxes_Editor_MAX	UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsAxes_Editor : public TCsEnumMap<ECsAxes_Editor>
 {
 protected:
 	EMCsAxes_Editor() {}
@@ -114,16 +149,9 @@ public:
 	static EMCsAxes_Editor& Get();
 };
 
-namespace ECsAxes_Editor
+namespace NCsAxes_Editor
 {
-	typedef TCsProperty_Multi_FString_Enum_ThreeParams TCsString;
-
-	namespace Str
-	{
-		extern CSCORE_API const TCsString X;
-		extern CSCORE_API const TCsString Y;
-		extern CSCORE_API const TCsString Z;
-	}
+	typedef ECsAxes_Editor Type;
 
 	namespace Ref
 	{
@@ -133,16 +161,6 @@ namespace ECsAxes_Editor
 		extern CSCORE_API const Type ECsAxes_Editor_MAX;
 	}
 
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		return EMCsAxes_Editor::Get().ToString(EType);
-	}
-
-	FORCEINLINE const Type& ToType(const FString &String)
-	{
-		return EMCsAxes_Editor::Get().ToType(String);
-	}
-
 	FORCEINLINE ECsAxes ToBaseType(const Type &EType)
 	{
 		if (EType == Type::X) { return ECsAxes::X; }
@@ -150,32 +168,25 @@ namespace ECsAxes_Editor
 		if (EType == Type::Z) { return ECsAxes::Z; }
 		return ECsAxes::X;
 	}
-
-	FORCEINLINE ECsAxes ToFlag(const FString &String)
-	{
-		if (String == Str::X) { return ECsAxes::X; }
-		if (String == Str::Y) { return ECsAxes::Y; }
-		if (String == Str::Z) { return ECsAxes::Z; }
-		return ECsAxes::X;;
-	}
 }
 
 #define ECS_AXES_EDITOR_MAX (uint8)ECsAxes_Editor::ECsAxes_Editor_MAX
-typedef ECsAxes_Editor::Type TCsAxes_Editor;
+
+#pragma endregion Axes_Editor
+
+	// TransformMember
+#pragma region
 
 UENUM(BlueprintType)
-namespace ECsTransformMember
+enum class ECsTransformMember : uint8
 {
-	enum Type
-	{
-		Location				UMETA(DisplayName = "Location"),
-		Rotation				UMETA(DisplayName = "Rotation"),
-		Scale					UMETA(DisplayName = "Scale"),
-		ECsTransformMember_MAX	UMETA(Hidden),
-	};
-}
+	Location				UMETA(DisplayName = "Location"),
+	Rotation				UMETA(DisplayName = "Rotation"),
+	Scale					UMETA(DisplayName = "Scale"),
+	ECsTransformMember_MAX	UMETA(Hidden),
+};
 
-struct CSCORE_API EMCsTransformMember : public TCsEnumMap<ECsTransformMember::Type>
+struct CSCORE_API EMCsTransformMember : public TCsEnumMap<ECsTransformMember>
 {
 protected:
 	EMCsTransformMember() {}
@@ -190,10 +201,12 @@ public:
 	static EMCsTransformMember& Get();
 };
 
-namespace ECsTransformMember
+namespace NCsTransformMember
 {
 	namespace Ref
 	{
+		typedef ECsTransformMember Type;
+
 		extern CSCORE_API const Type Location;
 		extern CSCORE_API const Type Rotation;
 		extern CSCORE_API const Type Scale;
@@ -201,7 +214,7 @@ namespace ECsTransformMember
 	}
 }
 
-typedef ECsTransformMember::Type TCsTransformMember;
+#pragma endregion TransformMember
 
 #pragma endregion Transform
 
@@ -254,7 +267,7 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsFpsStaticMesh
+struct CSCORE_API FCsFpvStaticMesh
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -295,7 +308,7 @@ private:
 	UPROPERTY(Transient)
 	class UStaticMesh* MeshVR_Internal;
 public:
-	FCsFpsStaticMesh()
+	FCsFpvStaticMesh()
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Mesh1P_LoadFlags, ECsLoadFlags::Game);
 		CS_SET_BLUEPRINT_BITFLAG(Mesh1P_LoadFlags, ECsLoadFlags::Game1P);
@@ -310,7 +323,7 @@ public:
 		CS_SET_BLUEPRINT_BITFLAG(MeshVR_LoadFlags, ECsLoadFlags::GameVR);
 	}
 
-	FORCEINLINE FCsFpsStaticMesh& operator=(const FCsFpsStaticMesh& B)
+	FORCEINLINE FCsFpvStaticMesh& operator=(const FCsFpvStaticMesh& B)
 	{
 		Mesh1P			 = B.Mesh1P;
 		Mesh1P_LoadFlags = B.Mesh1P_LoadFlags;
@@ -330,7 +343,7 @@ public:
 		return *this;
 	}
 
-	FORCEINLINE bool operator==(const FCsFpsStaticMesh& B) const
+	FORCEINLINE bool operator==(const FCsFpvStaticMesh& B) const
 	{
 		return Mesh1P == B.Mesh1P && Mesh1P_LoadFlags == B.Mesh1P_LoadFlags && Mesh1P_Internal == B.Mesh1P_Internal &&
 			   Mesh3P == B.Mesh3P && Mesh3P_LoadFlags == B.Mesh3P_LoadFlags && Mesh3P_Internal == B.Mesh3P_Internal &&
@@ -338,7 +351,7 @@ public:
 			   MeshVR == B.MeshVR && MeshVR_LoadFlags == B.MeshVR_LoadFlags && MeshVR_Internal == B.MeshVR_Internal;
 	}
 
-	FORCEINLINE bool operator!=(const FCsFpsStaticMesh& B) const
+	FORCEINLINE bool operator!=(const FCsFpvStaticMesh& B) const
 	{
 		return !(*this == B);
 	}
@@ -1287,22 +1300,22 @@ struct CSCORE_API FCsPhysicsPreset
 	}
 };
 
-UENUM(BlueprintType)
-namespace ECsPhysicsImpulseType
-{
-	enum Type
-	{
-		AddForce					UMETA(DisplayName = "Add Force"),
-		AddForceAtPosition			UMETA(DisplayName = "Add Force At Position"),
-		AddTorque					UMETA(DisplayName = "Add Torque"),
-		AddAngularImpulse			UMETA(DisplayName = "Add Angular Impulse"),
-		AddImpulse					UMETA(DisplayName = "Add Impulse"),
-		AddImpulseAtPosition		UMETA(DisplayName = "Add Impulse At Position"),
-		ECsPhysicsImpulseType_MAX	UMETA(Hidden),
-	};
-}
+	// PhysicsImpulseType
+#pragma region
 
-struct CSCORE_API EMCsPhysicsImpulseType : public TCsEnumMap<ECsPhysicsImpulseType::Type>
+UENUM(BlueprintType)
+enum class ECsPhysicsImpulseType : uint8
+{
+	AddForce					UMETA(DisplayName = "Add Force"),
+	AddForceAtPosition			UMETA(DisplayName = "Add Force At Position"),
+	AddTorque					UMETA(DisplayName = "Add Torque"),
+	AddAngularImpulse			UMETA(DisplayName = "Add Angular Impulse"),
+	AddImpulse					UMETA(DisplayName = "Add Impulse"),
+	AddImpulseAtPosition		UMETA(DisplayName = "Add Impulse At Position"),
+	ECsPhysicsImpulseType_MAX	UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsPhysicsImpulseType : public TCsEnumMap<ECsPhysicsImpulseType>
 {
 protected:
 	EMCsPhysicsImpulseType() {}
@@ -1317,22 +1330,12 @@ public:
 	static EMCsPhysicsImpulseType& Get();
 };
 
-namespace ECsPhysicsImpulseType
+namespace NCsPhysicsImpulseType
 {
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
-
-	namespace Str
-	{
-		extern CSCORE_API const TCsString AddForce;
-		extern CSCORE_API const TCsString AddForceAtPosition;
-		extern CSCORE_API const TCsString AddTorque;
-		extern CSCORE_API const TCsString AddAngularImpulse;
-		extern CSCORE_API const TCsString AddImpulse;
-		extern CSCORE_API const TCsString AddImpulseAtPosition;
-	}
-
 	namespace Ref
 	{
+		typedef ECsPhysicsImpulseType Type;
+
 		extern CSCORE_API const Type AddForce;
 		extern CSCORE_API const Type AddForceAtPosition;
 		extern CSCORE_API const Type AddTorque;
@@ -1341,20 +1344,11 @@ namespace ECsPhysicsImpulseType
 		extern CSCORE_API const Type AddImpulseAtPosition;
 		extern CSCORE_API const Type ECsPhysicsImpulseType_MAX;
 	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		return EMCsPhysicsImpulseType::Get().ToString(EType);
-	}
-
-	FORCEINLINE const Type& ToType(const FString &String)
-	{
-		return EMCsPhysicsImpulseType::Get().ToType(String);
-	}
 }
 
 #define ECS_PHYSICS_IMPULSE_TYPE_MAX (uint8)ECsPhysicsImpulseType::ECsPhysicsImpulseType_MAX
-typedef ECsPhysicsImpulseType::Type TCsPhysicsImpulseType;
+
+#pragma endregion ECsPhysicsImpulseType
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsPhysicsImpulse
@@ -1362,7 +1356,7 @@ struct CSCORE_API FCsPhysicsImpulse
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
-	TEnumAsByte<ECsPhysicsImpulseType::Type> Type;
+	ECsPhysicsImpulseType Type;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
 	FCsOptionalRotatorInterval ImpulseRotation;
@@ -1573,22 +1567,22 @@ public:
 // VR
 #pragma region
 
-UENUM(BlueprintType)
-namespace ECsHMDDeviceType
-{
-	enum Type
-	{
-		DT_OculusRift			UMETA(DisplayName = "Oculus Rift"),
-		DT_Morpheus				UMETA(DisplayName = "Playstaton VR"),
-		DT_ES2GenericStereoMesh UMETA(DisplayName = "ES2 Generic"),
-		DT_SteamVR				UMETA(DisplayName = "Vive"),
-		DT_GearVR				UMETA(DisplayName = "Gear VR"),
-		DT_GoogleVR				UMETA(DisplayName = "Google VR"),
-		ECsHMDDeviceType_MAX	UMETA(Hidden),
-	};
-}
+	// HMDDeviceType
+#pragma region
 
-struct CSCORE_API EMCsHMDDeviceType : public TCsEnumMap<ECsHMDDeviceType::Type>
+UENUM(BlueprintType)
+enum class ECsHMDDeviceType : uint8
+{
+	DT_OculusRift			UMETA(DisplayName = "Oculus Rift"),
+	DT_Morpheus				UMETA(DisplayName = "Playstaton VR"),
+	DT_ES2GenericStereoMesh UMETA(DisplayName = "ES2 Generic"),
+	DT_SteamVR				UMETA(DisplayName = "Vive"),
+	DT_GearVR				UMETA(DisplayName = "Gear VR"),
+	DT_GoogleVR				UMETA(DisplayName = "Google VR"),
+	ECsHMDDeviceType_MAX	UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsHMDDeviceType : public TCsEnumMap<ECsHMDDeviceType>
 {
 protected:
 	EMCsHMDDeviceType() {}
@@ -1603,10 +1597,12 @@ public:
 	static EMCsHMDDeviceType& Get();
 };
 
-namespace ECsHMDDeviceType
+namespace NCsHMDDeviceType
 {
 	namespace Ref
 	{
+		typedef ECsHMDDeviceType Type;
+
 		extern CSCORE_API const Type DT_OculusRift;
 		extern CSCORE_API const Type DT_Morpheus;
 		extern CSCORE_API const Type DT_ES2GenericStereoMesh;
@@ -1640,9 +1636,9 @@ namespace ECsHMDDeviceType
 	*/
 }
 
-typedef ECsHMDDeviceType::Type TCsHMDDeviceType;
+#pragma endregion HMDDeviceType
 
-#pragma  endregion VR
+#pragma endregion VR
 
 // Gestures
 #pragma region

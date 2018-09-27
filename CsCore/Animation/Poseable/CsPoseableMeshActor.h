@@ -74,9 +74,9 @@ struct FCsAnimControlInfo_FK_ConnectionOutput
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Control")
-	TEnumAsByte<ECsTransformMember::Type> Member;
+	ECsTransformMember Member;
 
-	TCsTransformMember Last_Member;
+	ECsTransformMember Last_Member;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Control", meta = (Bitmask, BitmaskEnum = "ECsAxes"))
 	int32 Axes;
@@ -120,9 +120,9 @@ struct FCsAnimControlInfo_FK_ConnectionInput
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Control")
-	TEnumAsByte<ECsTransformMember::Type> Member;
+	ECsTransformMember Member;
 
-	TCsTransformMember Last_Member;
+	ECsTransformMember Last_Member;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Control", meta = (Bitmask, BitmaskEnum = "ECsAxes"))
 	int32 Axes;

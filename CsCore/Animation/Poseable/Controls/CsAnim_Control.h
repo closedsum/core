@@ -78,9 +78,9 @@ class CSCORE_API ACsAnim_Control : public AStaticMeshActor
 	UFUNCTION(BlueprintCallable, Category = "Control")
 	bool HasTransformChanged();
 	UFUNCTION(BlueprintCallable, Category = "Control")
-	bool HasRelativeTransformMemberChanged(const TEnumAsByte<ECsTransformMember::Type> &Member, const int32 &Axes);
+	bool HasRelativeTransformMemberChanged(const ECsTransformMember &Member, const int32 &Axes);
 	UFUNCTION(BlueprintCallable, Category = "Control")
-	bool HasTransformMemberChanged(const TEnumAsByte<ECsTransformMember::Type> &Member, const int32 &Axes);
+	bool HasTransformMemberChanged(const ECsTransformMember &Member, const int32 &Axes);
 
 #if WITH_EDITOR
 

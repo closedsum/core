@@ -4,6 +4,7 @@
 // Level
 #pragma region
 
+	// LevelState
 EMCsLevelState* EMCsLevelState::Instance;
 
 EMCsLevelState& EMCsLevelState::Get()
@@ -13,7 +14,7 @@ EMCsLevelState& EMCsLevelState::Get()
 	return *Instance;
 }
 
-namespace ECsLevelState
+namespace NCsLevelState
 {
 	namespace Ref
 	{
@@ -30,6 +31,27 @@ namespace ECsLevelState
 // Transform
 #pragma region
 
+	// Axes
+EMCsAxes* EMCsAxes::Instance;
+
+EMCsAxes& EMCsAxes::Get()
+{
+	if (!Instance)
+		Instance = new EMCsAxes();
+	return *Instance;
+}
+
+namespace NCsAxes
+{
+	namespace Ref
+	{
+		CSCORE_API const Type X = EMCsAxes::Get().Add(Type::X, TEXT("X"));
+		CSCORE_API const Type Y = EMCsAxes::Get().Add(Type::Y, TEXT("Y"));
+		CSCORE_API const Type Z = EMCsAxes::Get().Add(Type::Z, TEXT("Z"));
+	}
+}
+
+	// Axes_Editor
 EMCsAxes_Editor* EMCsAxes_Editor::Instance;
 
 EMCsAxes_Editor& EMCsAxes_Editor::Get()
@@ -39,15 +61,8 @@ EMCsAxes_Editor& EMCsAxes_Editor::Get()
 	return *Instance;
 }
 
-namespace ECsAxes_Editor
+namespace NCsAxes_Editor
 {
-	namespace Str
-	{
-		CSCORE_API const TCsString X = TCsString(TEXT("X"), TEXT("x"), TEXT("roll"));
-		CSCORE_API const TCsString Y = TCsString(TEXT("Y"), TEXT("y"), TEXT("pitch"));
-		CSCORE_API const TCsString Z = TCsString(TEXT("Z"), TEXT("z"), TEXT("yaw"));
-	}
-
 	namespace Ref
 	{
 		CSCORE_API const Type X = EMCsAxes_Editor::Get().Add(Type::X, TEXT("X"));
@@ -66,7 +81,7 @@ EMCsTransformMember& EMCsTransformMember::Get()
 	return *Instance;
 }
 
-namespace ECsTransformMember
+namespace NCsTransformMember
 {
 	namespace Ref
 	{
@@ -96,6 +111,7 @@ EMCsSurfaceType& EMCsSurfaceType::Get()
 // Physics
 #pragma region
 
+	// PhysicsImpulseType
 EMCsPhysicsImpulseType* EMCsPhysicsImpulseType::Instance;
 
 EMCsPhysicsImpulseType& EMCsPhysicsImpulseType::Get()
@@ -105,7 +121,7 @@ EMCsPhysicsImpulseType& EMCsPhysicsImpulseType::Get()
 	return *Instance;
 }
 
-namespace ECsPhysicsImpulseType
+namespace NCsPhysicsImpulseType
 {
 	namespace Ref
 	{
@@ -124,6 +140,7 @@ namespace ECsPhysicsImpulseType
 // VR
 #pragma region
 
+	// HMDDeviceType
 EMCsHMDDeviceType* EMCsHMDDeviceType::Instance;
 
 EMCsHMDDeviceType& EMCsHMDDeviceType::Get()
@@ -133,7 +150,7 @@ EMCsHMDDeviceType& EMCsHMDDeviceType::Get()
 	return *Instance;
 }
 
-namespace ECsHMDDeviceType
+namespace NCsHMDDeviceType
 {
 	namespace Ref
 	{

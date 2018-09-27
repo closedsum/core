@@ -281,7 +281,7 @@ public:
 public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Game Instance")
-	TEnumAsByte<ECsLevelState::Type> LevelState;
+	ECsLevelState LevelState;
 
 	FDelegateHandle OnPreWorldInitializationHandle;
 	void OnPreWorldInitialization(UWorld* InWorld, const UWorld::InitializationValues);

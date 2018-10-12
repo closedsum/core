@@ -37,10 +37,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Gesture")
 	void AddGesture(TSubclassOf<class UCsGesture> GestureClass);
 
-	UCsGesture* GetGesture(const TCsGestureType &GestureType);
 	UFUNCTION(BlueprintCallable, Category = "Gesture")
-	UCsGesture* GetGesture_Script(const uint8 &GestureType);
-
+	UCsGesture* GetGesture(const FECsGestureType &GestureType);
+	
 	UFUNCTION(BlueprintCallable, Category = "Gesture")
 	virtual void ProcessInputs(FCsInputFrame &InputFrame);
 

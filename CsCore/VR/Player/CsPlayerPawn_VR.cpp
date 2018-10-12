@@ -80,7 +80,7 @@ void ACsPlayerPawn_VR::LinkHandsToCamera(USceneComponent* CameraViewComponent)
 // Hands
 #pragma region
 
-void ACsPlayerPawn_VR::ShowHand(const TCsControllerHand &Hand)
+void ACsPlayerPawn_VR::ShowHand(const ECsControllerHand &Hand)
 {
 	if (Hand == ECsControllerHand::Left)
 		LeftHand->Show();
@@ -94,7 +94,7 @@ void ACsPlayerPawn_VR::ShowHands()
 	ShowHand(ECsControllerHand::Right);
 }
 
-void ACsPlayerPawn_VR::HideHand(const TCsControllerHand &Hand)
+void ACsPlayerPawn_VR::HideHand(const ECsControllerHand &Hand)
 {
 	if (Hand == ECsControllerHand::Left)
 		LeftHand->Hide();

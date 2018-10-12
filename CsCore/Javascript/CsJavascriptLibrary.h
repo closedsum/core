@@ -123,7 +123,7 @@ class CSCORE_API UCsJavascriptLibrary : public UBlueprintFunctionLibrary
 #pragma region
 
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static FLinearColor GetLinearColor(const TEnumAsByte<ECsLinearColor::Type> &Color);
+	static FLinearColor GetLinearColor(const ECsLinearColor &Color);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
 	static FColor GetColor(const TEnumAsByte<ECsColor::Type> &Color);
 

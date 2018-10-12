@@ -25,10 +25,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Gesture")
 	UWorld* GetCurrentWorld();
 
-	TCsGestureType Type;
-
 	UPROPERTY(BlueprintReadOnly, Category = "Gesture")
-	uint8 Type_Script;
+	FECsGestureType Type;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Gesture")
 	bool Completed;

@@ -1644,17 +1644,14 @@ namespace NCsHMDDeviceType
 #pragma region
 
 UENUM(BlueprintType)
-namespace ECsGestureDevice
+enum class ECsGestureDevice : uint8
 {
-	enum Type
-	{
-		Mouse					UMETA(DisplayName = "Mouse"),
-		MotionController		UMETA(DisplayName = "MotionController"),
-		ECsGestureDevice_MAX	UMETA(Hidden),
-	};
-}
+	Mouse					UMETA(DisplayName = "Mouse"),
+	MotionController		UMETA(DisplayName = "MotionController"),
+	ECsGestureDevice_MAX	UMETA(Hidden),
+};
 
-struct CSCORE_API EMCsGestureDevice : public TCsEnumMap<ECsGestureDevice::Type>
+struct CSCORE_API EMCsGestureDevice : public TCsEnumMap<ECsGestureDevice>
 {
 protected:
 	EMCsGestureDevice() {}
@@ -1669,24 +1666,17 @@ public:
 	static EMCsGestureDevice& Get();
 };
 
-namespace ECsGestureDevice
+namespace NCsGestureDevice
 {
 	namespace Ref
 	{
+		typedef ECsGestureDevice Type;
+
 		extern CSCORE_API const Type Mouse;
 		extern CSCORE_API const Type MotionController;
 		extern CSCORE_API const Type ECsGestureDevice_MAX;
 	}
 }
-
-typedef ECsGestureDevice::Type TCsGestureDevice;
-
-namespace ECsGestureType
-{
-	enum Type : uint8;
-}
-
-typedef ECsGestureType::Type TCsGestureType;
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsGestureType : public FECsEnum_uint8
@@ -1735,17 +1725,14 @@ public:
 #pragma region
 
 UENUM(BlueprintType)
-namespace ECsControllerHand
+enum class ECsControllerHand : uint8
 {
-	enum Type
-	{
-		Left					UMETA(DisplayName = "Left"),
-		Right					UMETA(DisplayName = "Right"),
-		ECsControllerHand_MAX	UMETA(Hidden),
-	};
-}
+	Left					UMETA(DisplayName = "Left"),
+	Right					UMETA(DisplayName = "Right"),
+	ECsControllerHand_MAX	UMETA(Hidden),
+};
 
-struct CSCORE_API EMCsControllerHand : public TCsEnumMap<ECsControllerHand::Type>
+struct CSCORE_API EMCsControllerHand : public TCsEnumMap<ECsControllerHand>
 {
 protected:
 	EMCsControllerHand() {}
@@ -1760,17 +1747,17 @@ public:
 	static EMCsControllerHand& Get();
 };
 
-namespace ECsControllerHand
+namespace NCsControllerHand
 {
 	namespace Ref
 	{
+		typedef ECsControllerHand Type;
+
 		extern CSCORE_API const Type Left;
 		extern CSCORE_API const Type Right;
 		extern CSCORE_API const Type ECsControllerHand_MAX;
 	}
 }
-
-typedef ECsControllerHand::Type TCsControllerHand;
 
 #pragma endregion Motion Controller
 
@@ -1950,63 +1937,53 @@ struct CSCORE_API FCsCollisionPreset
 // Color
 #pragma region
 
+	// LinearColor
+#pragma region
+
 UENUM(BlueprintType)
-namespace ECsLinearColor
+enum class ECsLinearColor : uint8
 {
-	enum Type
-	{
-		White				UMETA(DisplayName = "White"),
-		Gray				UMETA(DisplayName = "Gray"),
-		Black				UMETA(DisplayName = "Black"),
-		Transparent			UMETA(DisplayName = "Transparent"),
-		Red					UMETA(DisplayName = "Red"),
-		Green				UMETA(DisplayName = "Green"),
-		Blue				UMETA(DisplayName = "Blue"),
-		Yellow				UMETA(DisplayName = "Yellow"),
-		ECsLinearColor_MAX	UMETA(Hidden),
-	};
-}
+	White				UMETA(DisplayName = "White"),
+	Gray				UMETA(DisplayName = "Gray"),
+	Black				UMETA(DisplayName = "Black"),
+	Transparent			UMETA(DisplayName = "Transparent"),
+	Red					UMETA(DisplayName = "Red"),
+	Green				UMETA(DisplayName = "Green"),
+	Blue				UMETA(DisplayName = "Blue"),
+	Yellow				UMETA(DisplayName = "Yellow"),
+	ECsLinearColor_MAX	UMETA(Hidden),
+};
 
-namespace ECsLinearColor
+struct CSCORE_API EMCsLinearColor : public TCsEnumMap<ECsLinearColor>
 {
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
+protected:
+	EMCsLinearColor() {}
+	EMCsLinearColor(const EMCsLinearColor &) = delete;
+	EMCsLinearColor(EMCsLinearColor &&) = delete;
+public:
+	~EMCsLinearColor() {}
+private:
+	static EMCsLinearColor* Instance;
 
-	namespace Str
-	{
-		const TCsString White = TCsString(TEXT("White"), TEXT("white"));
-		const TCsString Gray = TCsString(TEXT("Gray"), TEXT("gray"));
-		const TCsString Black = TCsString(TEXT("Black"), TEXT("black"));
-		const TCsString Transparent = TCsString(TEXT("Transparent"), TEXT("transparent"));
-		const TCsString Red = TCsString(TEXT("Red"), TEXT("red"));
-		const TCsString Green = TCsString(TEXT("Green"), TEXT("green"));
-		const TCsString Blue = TCsString(TEXT("Blue"), TEXT("blue"));
-		const TCsString Yellow = TCsString(TEXT("Yellow"), TEXT("yellow"));
-	}
+public:
+	static EMCsLinearColor& Get();
+};
 
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::White) { return Str::White.Value; }
-		if (EType == Type::Gray) { return Str::Gray.Value; }
-		if (EType == Type::Black) { return Str::Black.Value; }
-		if (EType == Type::Transparent) { return Str::Transparent.Value; }
-		if (EType == Type::Red) { return Str::Red.Value; }
-		if (EType == Type::Green) { return Str::Green.Value; }
-		if (EType == Type::Blue) { return Str::Blue.Value; }
-		if (EType == Type::Yellow) { return Str::Yellow.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
+namespace NCsLinearColor
+{
+	typedef ECsLinearColor Type;
 
-	FORCEINLINE Type ToType(const FString &String)
+	namespace Ref
 	{
-		if (String == Str::White) { return Type::White; }
-		if (String == Str::Gray) { return Type::Gray; }
-		if (String == Str::Black) { return Type::Black; }
-		if (String == Str::Transparent) { return Type::Transparent; }
-		if (String == Str::Red) { return Type::Red; }
-		if (String == Str::Green) { return Type::Green; }
-		if (String == Str::Blue) { return Type::Blue; }
-		if (String == Str::Yellow) { return Type::Yellow; }
-		return Type::ECsLinearColor_MAX;
+		extern CSCORE_API const Type White;
+		extern CSCORE_API const Type Gray;
+		extern CSCORE_API const Type Black;
+		extern CSCORE_API const Type Transparent;
+		extern CSCORE_API const Type Red;
+		extern CSCORE_API const Type Green;
+		extern CSCORE_API const Type Blue;
+		extern CSCORE_API const Type Yellow;
+		extern CSCORE_API const Type ECsLinearColor_MAX;
 	}
 
 	FORCEINLINE FLinearColor ToLinearColor(const Type &EType)
@@ -2024,7 +2001,8 @@ namespace ECsLinearColor
 }
 
 #define ECS_LINEAR_COLOR_MAX (uint8)ECsLinearColor::ECsLinearColor_MAX
-typedef ECsLinearColor::Type TCsLinearColor;
+
+#pragma endregion LinearColor
 
 UENUM(BlueprintType)
 namespace ECsColor

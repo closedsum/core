@@ -76,7 +76,7 @@ void UCsManager_Gesture::AddGesture(TSubclassOf<class UCsGesture> GestureClass)
 	Gestures.Add(Gesture);
 }
 
-UCsGesture* UCsManager_Gesture::GetGesture(const TCsGestureType &GestureType)
+UCsGesture* UCsManager_Gesture::GetGesture(const FECsGestureType &GestureType)
 {
 	const int32 Count = Gestures.Num();
 
@@ -86,11 +86,6 @@ UCsGesture* UCsManager_Gesture::GetGesture(const TCsGestureType &GestureType)
 			return Gestures[I];
 	}
 	return nullptr;
-}
-
-UCsGesture* UCsManager_Gesture::GetGesture_Script(const uint8 &GestureType)
-{
-	return GetGesture((TCsGestureType)GestureType);
 }
 
 void UCsManager_Gesture::ProcessInputs(FCsInputFrame &InputFrame)

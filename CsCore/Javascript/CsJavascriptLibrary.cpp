@@ -134,7 +134,7 @@ USkeletalMeshComponent* UCsJavascriptLibrary::GetMesh(class ACharacter* InCharac
 // Color
 #pragma region
 
-FLinearColor UCsJavascriptLibrary::GetLinearColor(const TEnumAsByte<ECsLinearColor::Type> &Color) { return ECsLinearColor::ToLinearColor(Color); }
+FLinearColor UCsJavascriptLibrary::GetLinearColor(const ECsLinearColor &Color) { return NCsLinearColor::ToLinearColor(Color); }
 FColor UCsJavascriptLibrary::GetColor(const TEnumAsByte<ECsColor::Type> &Color) { return ECsColor::ToColor(Color); }
 
 #pragma endregion Color

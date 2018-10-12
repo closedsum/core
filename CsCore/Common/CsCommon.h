@@ -94,7 +94,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	UFUNCTION(BlueprintCallable, Category = "Common")
 	static float GetSquaredDistanceToLocalControllerEye(UWorld *InWorld, const FVector& Location);
 
-	static class ACsMotionController* GetLocalHand(UWorld *InWorld, const TCsControllerHand &Hand);
+	static class ACsMotionController* GetLocalHand(UWorld *InWorld, const ECsControllerHand &Hand);
 
 	static class ACsManager_Inventory* GetLocalManager_Inventory(UWorld *InWorld);
 
@@ -117,7 +117,7 @@ class CSCORE_API UCsCommon : public UBlueprintFunctionLibrary
 	static void GetHMDWorldViewPoint(UWorld* InWorld, FVector &OutLocation, FRotator& OutRotation);
 
 	UFUNCTION(BlueprintCallable, Category = "Commmon")
-	static class ACsMotionController* GetMotionController(UWorld* InWorld, const TEnumAsByte<ECsControllerHand::Type> &Hand);
+	static class ACsMotionController* GetMotionController(UWorld* InWorld, const ECsControllerHand &Hand);
 
 	UFUNCTION(BlueprintCallable, Category = "Commmon")
 	static bool IsStereoscopic3D();

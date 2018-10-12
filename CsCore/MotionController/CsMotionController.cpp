@@ -251,7 +251,7 @@ void ACsMotionController::OnTick_Handle_FirstHoldAndHold(const float &DeltaSecon
 	OnFirstUnCollide(OnFirstUnCollideInfos);
 }
 
-void ACsMotionController::Init(class UMotionControllerComponent* InComponent, const TCsControllerHand &InHand)
+void ACsMotionController::Init(class UMotionControllerComponent* InComponent, const ECsControllerHand &InHand)
 {
 	Hand					  = InHand;
 	MotionControllerComponent = InComponent;

@@ -13,59 +13,59 @@
 // Interactives
 #pragma region
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FBindableDynEvent_CsMotionController_Override_OnCalcCamera, const uint8&, MappingId, const TEnumAsByte<ECsControllerHand::Type>&, InHand, const float&, DeltaTime, const struct FMinimalViewInfo&, ViewInfo);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FBindableDynEvent_CsMotionController_Override_OnCalcCamera, const uint8&, MappingId, const ECsControllerHand&, InHand, const float&, DeltaTime, const struct FMinimalViewInfo&, ViewInfo);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_SevenParams(FBindableDynEvent_CsMotionController_Override_OnBeginOverlap, const TEnumAsByte<ECsControllerHand::Type>&, Hand, UPrimitiveComponent*, OverlappedComponent, AActor*, OtherActor, UPrimitiveComponent*, OtherComp, int32, OtherBodyIndex, bool, bFromSweep, const FHitResult &, SweepResult);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_SevenParams(FBindableDynEvent_CsMotionController_Override_OnBeginOverlap, const ECsControllerHand&, Hand, UPrimitiveComponent*, OverlappedComponent, AActor*, OtherActor, UPrimitiveComponent*, OtherComp, int32, OtherBodyIndex, bool, bFromSweep, const FHitResult &, SweepResult);
 
 // Interaction
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnInteraction, const TEnumAsByte<ECsControllerHand::Type>&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnInteraction, const TEnumAsByte<ECsControllerHand::Type>&, const TArray<FCsInteractedActorInfo>&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnInteraction, const ECsControllerHand&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnInteraction, const ECsControllerHand&, const TArray<FCsInteractedActorInfo>&);
 
 // FirstFreeze
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnFirstFreeze, const TEnumAsByte<ECsControllerHand::Type>&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnFirstFreeze, const TEnumAsByte<ECsControllerHand::Type>&, const TArray<FCsInteractedActorInfo>&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnFirstFreeze, const ECsControllerHand&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnFirstFreeze, const ECsControllerHand&, const TArray<FCsInteractedActorInfo>&);
 // Freeze
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnFreeze, const TEnumAsByte<ECsControllerHand::Type>&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnFreeze, const TEnumAsByte<ECsControllerHand::Type>&, const TArray<FCsInteractedActorInfo>&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnFreeze, const ECsControllerHand&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnFreeze, const ECsControllerHand&, const TArray<FCsInteractedActorInfo>&);
 // FirstUnFreeze
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnFirstUnFreeze, const TEnumAsByte<ECsControllerHand::Type>&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnFirstUnFreeze, const TEnumAsByte<ECsControllerHand::Type>&, const TArray<FCsInteractedActorInfo>&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnFirstUnFreeze, const ECsControllerHand&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnFirstUnFreeze, const ECsControllerHand&, const TArray<FCsInteractedActorInfo>&);
 // FirstHold
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnFirstHold, const TEnumAsByte<ECsControllerHand::Type>&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnFirstHold, const TEnumAsByte<ECsControllerHand::Type>&, const TArray<FCsInteractedActorInfo>&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnFirstHold, const ECsControllerHand&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnFirstHold, const ECsControllerHand&, const TArray<FCsInteractedActorInfo>&);
 // Hold
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnHold, const TEnumAsByte<ECsControllerHand::Type>&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnHold, const TEnumAsByte<ECsControllerHand::Type>&, const TArray<FCsInteractedActorInfo>&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnHold, const ECsControllerHand&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnHold, const ECsControllerHand&, const TArray<FCsInteractedActorInfo>&);
 // Release
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnRelease, const TEnumAsByte<ECsControllerHand::Type>&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnRelease, const TEnumAsByte<ECsControllerHand::Type>&, const TArray<FCsInteractedActorInfo>&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnRelease, const ECsControllerHand&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnRelease, const ECsControllerHand&, const TArray<FCsInteractedActorInfo>&);
 // FirstTouch
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnFirstTouch, const TEnumAsByte<ECsControllerHand::Type>&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnFirstTouch, const TEnumAsByte<ECsControllerHand::Type>&, const TArray<FCsInteractedActorInfo>&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnFirstTouch, const ECsControllerHand&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnFirstTouch, const ECsControllerHand&, const TArray<FCsInteractedActorInfo>&);
 // Touch
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnTouch, const TEnumAsByte<ECsControllerHand::Type>&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnTouch, const TEnumAsByte<ECsControllerHand::Type>&, const TArray<FCsInteractedActorInfo>&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnTouch, const ECsControllerHand&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnTouch, const ECsControllerHand&, const TArray<FCsInteractedActorInfo>&);
 // FirstHover
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnFirstHover, const TEnumAsByte<ECsControllerHand::Type>&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnFirstHover, const TEnumAsByte<ECsControllerHand::Type>&, const TArray<FCsInteractedActorInfo>&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnFirstHover, const ECsControllerHand&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnFirstHover, const ECsControllerHand&, const TArray<FCsInteractedActorInfo>&);
 // Hover
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnHover, const TEnumAsByte<ECsControllerHand::Type>&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnHover, const TEnumAsByte<ECsControllerHand::Type>&, const TArray<FCsInteractedActorInfo>&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnHover, const ECsControllerHand&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnHover, const ECsControllerHand&, const TArray<FCsInteractedActorInfo>&);
 // FirstUnHover
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnFirstUnHover, const TEnumAsByte<ECsControllerHand::Type>&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnFirstUnHover, const TEnumAsByte<ECsControllerHand::Type>&, const TArray<FCsInteractedActorInfo>&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnFirstUnHover, const ECsControllerHand&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnFirstUnHover, const ECsControllerHand&, const TArray<FCsInteractedActorInfo>&);
 // FirstCollide
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnFirstCollide, const TEnumAsByte<ECsControllerHand::Type>&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnFirstCollide, const TEnumAsByte<ECsControllerHand::Type>&, const TArray<FCsInteractedActorInfo>&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnFirstCollide, const ECsControllerHand&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnFirstCollide, const ECsControllerHand&, const TArray<FCsInteractedActorInfo>&);
 // Collide
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnCollide, const TEnumAsByte<ECsControllerHand::Type>&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnCollide, const TEnumAsByte<ECsControllerHand::Type>&, const TArray<FCsInteractedActorInfo>&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnCollide, const ECsControllerHand&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnCollide, const ECsControllerHand&, const TArray<FCsInteractedActorInfo>&);
 // FirstUnCollide
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnFirstUnCollide, const TEnumAsByte<ECsControllerHand::Type>&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnFirstUnCollide, const TEnumAsByte<ECsControllerHand::Type>&, const TArray<FCsInteractedActorInfo>&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnFirstUnCollide, const ECsControllerHand&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnFirstUnCollide, const ECsControllerHand&, const TArray<FCsInteractedActorInfo>&);
 // Remove
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnRemove, const TEnumAsByte<ECsControllerHand::Type>&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnRemove, const TEnumAsByte<ECsControllerHand::Type>&, const TArray<FCsInteractedActorInfo>&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnRemove, const ECsControllerHand&, Hand, const TArray<FCsInteractedActorInfo>&, Infos);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnRemove, const ECsControllerHand&, const TArray<FCsInteractedActorInfo>&);
 
 #pragma endregion Interactives
 
@@ -73,27 +73,27 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnRemove,
 #pragma region
 
 // Interaction
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnButtonInteraction, const TEnumAsByte<ECsControllerHand::Type>&, Hand, const TArray<USceneComponent*>&, Buttons);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnButtonInteraction, const TEnumAsByte<ECsControllerHand::Type>&, const TArray<USceneComponent*>&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnButtonInteraction, const ECsControllerHand&, Hand, const TArray<USceneComponent*>&, Buttons);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnButtonInteraction, const ECsControllerHand&, const TArray<USceneComponent*>&);
 
 // FirstHover
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnButtonFirstHover, const TEnumAsByte<ECsControllerHand::Type>&, Hand, const TArray<USceneComponent*>&, Buttons);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnButtonFirstHover, const TEnumAsByte<ECsControllerHand::Type>&, const TArray<USceneComponent*>&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnButtonFirstHover, const ECsControllerHand&, Hand, const TArray<USceneComponent*>&, Buttons);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnButtonFirstHover, const ECsControllerHand&, const TArray<USceneComponent*>&);
 // Hover
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnButtonHover, const TEnumAsByte<ECsControllerHand::Type>&, Hand, const TArray<USceneComponent*>&, Buttons);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnButtonHover, const TEnumAsByte<ECsControllerHand::Type>&, const TArray<USceneComponent*>&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnButtonHover, const ECsControllerHand&, Hand, const TArray<USceneComponent*>&, Buttons);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnButtonHover, const ECsControllerHand&, const TArray<USceneComponent*>&);
 // FirstUnHover
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnButtonFirstUnHover, const TEnumAsByte<ECsControllerHand::Type>&, Hand, const TArray<USceneComponent*>&, Buttons);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnButtonFirstUnHover, const TEnumAsByte<ECsControllerHand::Type>&, const TArray<USceneComponent*>&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnButtonFirstUnHover, const ECsControllerHand&, Hand, const TArray<USceneComponent*>&, Buttons);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnButtonFirstUnHover, const ECsControllerHand&, const TArray<USceneComponent*>&);
 // FirstPressed
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnButtonFirstPressed, const TEnumAsByte<ECsControllerHand::Type>&, Hand, const TArray<USceneComponent*>&, Buttons);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnButtonFirstPressed, const TEnumAsByte<ECsControllerHand::Type>&, const TArray<USceneComponent*>&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnButtonFirstPressed, const ECsControllerHand&, Hand, const TArray<USceneComponent*>&, Buttons);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnButtonFirstPressed, const ECsControllerHand&, const TArray<USceneComponent*>&);
 // Pressed
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnButtonPressed, const TEnumAsByte<ECsControllerHand::Type>&, Hand, const TArray<USceneComponent*>&, Buttons);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnButtonPressed, const TEnumAsByte<ECsControllerHand::Type>&, const TArray<USceneComponent*>&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnButtonPressed, const ECsControllerHand&, Hand, const TArray<USceneComponent*>&, Buttons);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnButtonPressed, const ECsControllerHand&, const TArray<USceneComponent*>&);
 // FirstReleased
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnButtonFirstReleased, const TEnumAsByte<ECsControllerHand::Type>&, Hand, const TArray<USceneComponent*>&, Buttons);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnButtonFirstReleased, const TEnumAsByte<ECsControllerHand::Type>&, const TArray<USceneComponent*>&);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsMotionController_Override_OnButtonFirstReleased, const ECsControllerHand&, Hand, const TArray<USceneComponent*>&, Buttons);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsMotionController_OnButtonFirstReleased, const ECsControllerHand&, const TArray<USceneComponent*>&);
 
 #pragma endregion Buttons
 
@@ -178,7 +178,7 @@ class CSCORE_API ACsMotionController : public AActor
 	class USceneComponent* AnchorComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Motion")
-	TEnumAsByte<ECsControllerHand::Type> Hand;
+	ECsControllerHand Hand;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Motion")
 	TWeakObjectPtr<class ACsMotionController> OtherHand;
@@ -191,7 +191,7 @@ class CSCORE_API ACsMotionController : public AActor
 	virtual void OnTick_Check_FirstTouch(const float &DeltaSeconds);
 	virtual void OnTick_Handle_FirstHoldAndHold(const float &DeltaSeconds);
 
-	virtual void Init(class UMotionControllerComponent* InComponent, const TCsControllerHand &InHand);
+	virtual void Init(class UMotionControllerComponent* InComponent, const ECsControllerHand &InHand);
 
 // Touch
 #pragma region

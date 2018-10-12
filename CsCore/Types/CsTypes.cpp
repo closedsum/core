@@ -169,6 +169,7 @@ namespace NCsHMDDeviceType
 // Gestures
 #pragma region
 
+	// GestureDevice
 EMCsGestureDevice* EMCsGestureDevice::Instance;
 
 EMCsGestureDevice& EMCsGestureDevice::Get()
@@ -178,7 +179,7 @@ EMCsGestureDevice& EMCsGestureDevice::Get()
 	return *Instance;
 }
 
-namespace ECsGestureDevice
+namespace NCsGestureDevice
 {
 	namespace Ref
 	{
@@ -188,6 +189,7 @@ namespace ECsGestureDevice
 	}
 }
 
+	// GestureType
 EMCsGestureType* EMCsGestureType::Instance;
 
 EMCsGestureType& EMCsGestureType::Get()
@@ -211,7 +213,7 @@ EMCsControllerHand& EMCsControllerHand::Get()
 	return *Instance;
 }
 
-namespace ECsControllerHand
+namespace NCsControllerHand
 {
 	namespace Ref
 	{
@@ -318,3 +320,34 @@ namespace ECsCollisionResponse
 }
 
 #pragma endregion Collision
+
+// Color
+#pragma region
+
+	// LinearColor
+EMCsLinearColor* EMCsLinearColor::Instance;
+
+EMCsLinearColor& EMCsLinearColor::Get()
+{
+	if (!Instance)
+		Instance = new EMCsLinearColor();
+	return *Instance;
+}
+
+namespace NCsLinearColor
+{
+	namespace Ref
+	{
+		CSCORE_API const Type White = EMCsLinearColor::Get().Add(Type::White, TEXT("White"));
+		CSCORE_API const Type Gray = EMCsLinearColor::Get().Add(Type::Gray, TEXT("Gray"));
+		CSCORE_API const Type Black = EMCsLinearColor::Get().Add(Type::Black, TEXT("Black"));
+		CSCORE_API const Type Transparent = EMCsLinearColor::Get().Add(Type::Transparent, TEXT("Transparent"));
+		CSCORE_API const Type Red = EMCsLinearColor::Get().Add(Type::Red, TEXT("Red"));
+		CSCORE_API const Type Green = EMCsLinearColor::Get().Add(Type::Green, TEXT("Green"));
+		CSCORE_API const Type Blue = EMCsLinearColor::Get().Add(Type::Blue, TEXT("Blue"));
+		CSCORE_API const Type Yellow = EMCsLinearColor::Get().Add(Type::Yellow, TEXT("Yellow"));
+		CSCORE_API const Type ECsLinearColor_MAX = EMCsLinearColor::Get().Add(Type::ECsLinearColor_MAX, TEXT("ECsLinearColor_MAX"));
+	}
+}
+
+#pragma endregion Color

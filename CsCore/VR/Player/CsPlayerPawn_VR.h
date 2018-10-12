@@ -41,10 +41,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hands")
 	class ACsMotionController* RightHand;
 
-	void ShowHand(const TCsControllerHand &Hand);
+	void ShowHand(const ECsControllerHand &Hand);
 	void ShowHands();
 
-	void HideHand(const TCsControllerHand &Hand);
+	void HideHand(const ECsControllerHand &Hand);
 	void HideHands();
 
 #pragma endregion Hands

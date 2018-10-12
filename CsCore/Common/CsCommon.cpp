@@ -188,7 +188,7 @@ float UCsCommon::GetSquaredDistanceToLocalControllerEye(UWorld *InWorld, const F
 	return FVector::DistSquared(ViewLocation, Location);
 }
 
-ACsMotionController* UCsCommon::GetLocalHand(UWorld *InWorld, const TCsControllerHand &Hand)
+ACsMotionController* UCsCommon::GetLocalHand(UWorld *InWorld, const ECsControllerHand &Hand)
 {
 	ACsPlayerPawn_VR* Pawn = GetLocalPawn<ACsPlayerPawn_VR>(InWorld);
 
@@ -289,14 +289,14 @@ void UCsCommon::GetHMDWorldViewPoint(UWorld* InWorld, FVector &OutLocation, FRot
 	}
 }
 
-ACsMotionController* UCsCommon::GetMotionController(UWorld* InWorld, const TEnumAsByte<ECsControllerHand::Type> &Hand)
+ACsMotionController* UCsCommon::GetMotionController(UWorld* InWorld, const ECsControllerHand &Hand)
 {
 	ACsPlayerPawn_VR* Pawn = GetLocalPawn<ACsPlayerPawn_VR>(InWorld);
 
 	if (!Pawn)
 		return nullptr;
 
-	return ECsControllerHand::Right ? Pawn->RightHand : Pawn->LeftHand;
+	return Hand == ECsControllerHand::Right ? Pawn->RightHand : Pawn->LeftHand;
 }
 
 // version of GEngine->IsStereoscopic3D() that is valid even during toggle frame. 

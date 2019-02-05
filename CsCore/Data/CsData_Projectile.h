@@ -98,7 +98,7 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Transform")
-	virtual const FTransform& GetTransform();
+	virtual const FTransform& GetMyTransform();
 
 #pragma endregion Transform
 

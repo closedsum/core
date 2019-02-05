@@ -35,13 +35,13 @@ ACsFpsPawn::ACsFpsPawn(const FObjectInitializer& ObjectInitializer)
 	Mesh1P->bOwnerNoSee = false;
 	Mesh1P->bCastDynamicShadow = false;
 	Mesh1P->bReceivesDecals = false;
-	Mesh1P->MeshComponentUpdateFlag = EMeshComponentUpdateFlag::OnlyTickPoseWhenRendered;
+	Mesh1P->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::OnlyTickPoseWhenRendered;
 	Mesh1P->PrimaryComponentTick.TickGroup = TG_PrePhysics;
 	Mesh1P->SetCollisionObjectType(ECC_Pawn);
 	Mesh1P->KinematicBonesUpdateType = EKinematicBonesUpdateToPhysics::SkipAllBones;
 	Mesh1P->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Mesh1P->SetCollisionResponseToAllChannels(ECR_Ignore);
-	Mesh1P->bGenerateOverlapEvents = false;
+	Mesh1P->SetGenerateOverlapEvents(false);
 	Mesh1P->Deactivate();
 	/*
 	GetMesh()->SetHiddenInGame(true);

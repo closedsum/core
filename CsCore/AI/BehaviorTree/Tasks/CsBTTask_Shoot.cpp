@@ -106,7 +106,7 @@ EBTNodeResult::Type UCsBTTask_Shoot::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 		}
 	}
 
-	ACsAIPlayerState* PlayerState = Cast<ACsAIPlayerState>(Pawn->PlayerState);
+	ACsAIPlayerState* PlayerState = Pawn->GetPlayerState<ACsAIPlayerState>();
 
 	Pawn->OnBTTask_Shoot_Start_Event.Broadcast(PlayerState->UniqueMappingId);
 #if WITH_EDITOR
@@ -187,7 +187,7 @@ void UCsBTTask_Shoot::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMem
 
 				MyMemory->Completed = true;
 
-				ACsAIPlayerState* PlayerState = Cast<ACsAIPlayerState>(Pawn->PlayerState);
+				ACsAIPlayerState* PlayerState = Pawn->GetPlayerState<ACsAIPlayerState>();
 
 				Pawn->OnBTTask_Shoot_Stop_Event.Broadcast(PlayerState->UniqueMappingId);
 #if WITH_EDITOR
@@ -223,7 +223,7 @@ EBTNodeResult::Type UCsBTTask_Shoot::AbortTask(UBehaviorTreeComponent& OwnerComp
 			if (bStopOnAbort)
 				Pawn->StopShoot();
 
-			ACsAIPlayerState* PlayerState = Cast<ACsAIPlayerState>(Pawn->PlayerState);
+			ACsAIPlayerState* PlayerState = Pawn->GetPlayerState<ACsAIPlayerState>();
 
 			Pawn->OnBTTask_Shoot_Aborted_Event.Broadcast(PlayerState->UniqueMappingId);
 #if WITH_EDITOR

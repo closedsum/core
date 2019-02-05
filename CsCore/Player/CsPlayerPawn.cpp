@@ -188,7 +188,7 @@ void ACsPlayerPawn::RecordView()
 
 ACsManager_Inventory* ACsPlayerPawn::GetMyManager_Inventory()
 {  
-	ACsPlayerState* MyPlayerState = Cast<ACsPlayerState>(PlayerState);
+	ACsPlayerState* MyPlayerState = GetPlayerState<ACsPlayerState>();
 	
 	return MyPlayerState->Manager_Inventory;
 }

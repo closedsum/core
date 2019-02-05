@@ -5,6 +5,10 @@
 #include "AI/CsAIController.h"
 #include "AI/Pawn/CsAIPawn.h"
 
+#include "NavigationSystem/Public/NavigationSystem.h"
+#include "NavigationSystem/Public/NavigationData.h"
+#include "AI/NavigationSystemBase.h"
+
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
 
@@ -28,12 +32,12 @@ void UCsBTService_SetRandomLocation::TickNode(UBehaviorTreeComponent& OwnerComp,
 	ACsAIController*  Controller	 = Cast<ACsAIController>(OwnerComp.GetOwner());
 	ACsAIPawn* Pawn					 = Cast<ACsAIPawn>(Controller->GetPawn());
 
-	UWorld* World			  = Pawn->GetWorld();
-	UNavigationSystem* NavSys = UNavigationSystem::GetCurrent(World);
+	UWorld* World			    = Pawn->GetWorld();
+	UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(World);
 
 	if (NavSys)
 	{
-		ANavigationData* NavData = NavSys->GetMainNavData(FNavigationSystem::DontCreate);
+		ANavigationData* NavData = Cast<ANavigationData>(NavSys->GetMainNavData());
 
 		if (NavData)
 		{

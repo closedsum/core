@@ -36,7 +36,7 @@ ACsProjectile::ACsProjectile(const FObjectInitializer& ObjectInitializer) : Supe
 	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	CollisionComponent->SetCollisionObjectType(CS_COLLISION_PROJECTILE);
 	CollisionComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
-	CollisionComponent->bGenerateOverlapEvents = false;
+	CollisionComponent->SetGenerateOverlapEvents(false);
 	CollisionComponent->bReturnMaterialOnMove  = true;
 	CollisionComponent->SetNotifyRigidBodyCollision(true);
 	CollisionComponent->PrimaryComponentTick.bStartWithTickEnabled = false;
@@ -272,7 +272,7 @@ void ACsProjectile::Allocate_Internal(FCsProjectilePayload* Payload)
 	{
 		// Mesh
 		MeshComponent->SetStaticMesh(Data_Projectile->GetMesh(ViewType));
-		MeshComponent->SetRelativeTransform(Data_Projectile->GetTransform());
+		MeshComponent->SetRelativeTransform(Data_Projectile->GetMyTransform());
 		MeshComponent->Activate();
 		MeshComponent->SetVisibility(true);
 		MeshComponent->SetHiddenInGame(false);

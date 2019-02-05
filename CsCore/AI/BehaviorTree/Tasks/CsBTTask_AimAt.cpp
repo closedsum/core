@@ -49,7 +49,7 @@ EBTNodeResult::Type UCsBTTask_AimAt::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 	EBTNodeResult::Type Result = EBTNodeResult::Failed;
 
 	const UBlackboardComponent* MyBlackboard = OwnerComp.GetBlackboardComponent();
-	ACsAIPlayerState* PlayerState			 = Cast<ACsAIPlayerState>(Pawn->PlayerState);
+	ACsAIPlayerState* PlayerState			 = Pawn->GetPlayerState<ACsAIPlayerState>();
 
 	// Object
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Object::StaticClass())
@@ -137,7 +137,7 @@ EBTNodeResult::Type UCsBTTask_AimAt::AbortTask(UBehaviorTreeComponent& OwnerComp
 			if (bResetOnAbort)
 				Pawn->ResetAimAt(ResetOnAbort.BlendOutTime);
 
-			ACsAIPlayerState* PlayerState = Cast<ACsAIPlayerState>(Pawn->PlayerState);
+			ACsAIPlayerState* PlayerState = Pawn->GetPlayerState<ACsAIPlayerState>();
 
 			Pawn->OnBTTask_AimAt_Aborted_Event.Broadcast(PlayerState->UniqueMappingId);
 #if WITH_EDITOR

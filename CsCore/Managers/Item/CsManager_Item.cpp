@@ -479,7 +479,7 @@ bool ACsManager_Item::Transfer(FCsItem* Item, UObject* Instigator)
 	if (ACsPawn* Pawn = Cast<ACsPawn>(Instigator))
 	{
 		// Player
-		if (ACsPlayerStateBase* PlayerState = Cast<ACsPlayerStateBase>(Pawn->PlayerState))
+		if (ACsPlayerStateBase* PlayerState = Pawn->GetPlayerState<ACsPlayerStateBase>())
 		{
 			Manager_Inventory = PlayerState->Manager_Inventory;
 		}
@@ -506,7 +506,7 @@ bool ACsManager_Item::Transfer(TArray<FCsItem*> &Items, UObject* Instigator, con
 	if (ACsPawn* Pawn = Cast<ACsPawn>(Instigator))
 	{
 		// Player
-		if (ACsPlayerStateBase* PlayerState = Cast<ACsPlayerStateBase>(Pawn->PlayerState))
+		if (ACsPlayerStateBase* PlayerState = Pawn->GetPlayerState<ACsPlayerStateBase>())
 		{
 			Manager_Inventory = PlayerState->Manager_Inventory;
 		}

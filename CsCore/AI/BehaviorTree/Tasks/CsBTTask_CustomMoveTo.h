@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "AI/Navigation/NavFilters/NavigationQueryFilter.h"
+#include "NavigationSystem/Public/NavFilters/NavigationQueryFilter.h"
 #include "AITypes.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 #include "CsBTTask_CustomMoveTo.generated.h"

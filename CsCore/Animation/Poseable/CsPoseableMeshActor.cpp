@@ -1138,7 +1138,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindO
 		ULevelSequence* Seq     = AnimLevelSequence.Shots[Index].Shot;
 		const float DeltaTime   = 2.0f;
 		UMovieScene* MovieScene = Seq->GetMovieScene();
-		MovieScene->SetPlaybackRange(0.0f, DeltaTime);
+		MovieScene->SetPlaybackRange(FFrameNumber(0), DeltaTime);
 
 		UMovieSceneFolder* NewFolder = NewObject<UMovieSceneFolder>(MovieScene, NAME_None, RF_Transactional);
 		const FString AnimName	     = TEXT("anim_") + MeshName + TEXT("_") + Shot.Name;
@@ -1175,6 +1175,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindO
 
 			const int32 SectionCount = Sections.Num();
 
+			/*
 			if (SectionCount > CS_EMPTY)
 			{
 				float LastTime = 0.0f;
@@ -1195,6 +1196,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_FindO
 			{
 				ShotTrack->AddSequence(Seq, 0.0f, DeltaTime);
 			}
+			*/
 		}
 		else
 		{
@@ -1316,8 +1318,8 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_Expor
 	// Now run our sequence
 	UMovieScene* MovieScene = Seq->GetMovieScene();
 
-	double StartTime		= MovieScene->GetPlaybackRange().GetLowerBoundValue();
-	double SequenceLength	= Anim->SequenceLength = MovieScene->GetPlaybackRange().Size<float>();
+	double StartTime		= (double)MovieScene->GetPlaybackRange().GetLowerBoundValue().Value;
+	double SequenceLength   = 0.0f;// Anim->SequenceLength = MovieScene->GetPlaybackRange().Size<float>();
 	const float FPS			= Shot.ExportInterval_FPS;
 	int32 FrameCount		= Anim->NumFrames = FMath::CeilToInt(SequenceLength * FPS);
 	double FrameCountDouble = (double)FrameCount;
@@ -1410,17 +1412,17 @@ void ACsPoseableMeshActor::AnimLevelSequence_Shot_AddTransformTrack(const int32 
 	const FRotator Rotation = ActorRelativeTransform.GetRotation().Rotator();
 	const FVector Scale     = ActorRelativeTransform.GetScale3D();
 	
-	TransformSection->SetDefault(FTransformKey(EKey3DTransformChannel::Translation, EAxis::X, Location.X, false /*bUnwindRotation*/));
-	TransformSection->SetDefault(FTransformKey(EKey3DTransformChannel::Translation, EAxis::Y, Location.Y, false /*bUnwindRotation*/));
-	TransformSection->SetDefault(FTransformKey(EKey3DTransformChannel::Translation, EAxis::Z, Location.Z, false /*bUnwindRotation*/));
+	//TransformSection->SetDefault(FTransformKey(EKey3DTransformChannel::Translation, EAxis::X, Location.X, false /*bUnwindRotation*/));
+	//TransformSection->SetDefault(FTransformKey(EKey3DTransformChannel::Translation, EAxis::Y, Location.Y, false /*bUnwindRotation*/));
+	//TransformSection->SetDefault(FTransformKey(EKey3DTransformChannel::Translation, EAxis::Z, Location.Z, false /*bUnwindRotation*/));
 
-	TransformSection->SetDefault(FTransformKey(EKey3DTransformChannel::Rotation, EAxis::X, Rotation.Euler().X, false /*bUnwindRotation*/));
-	TransformSection->SetDefault(FTransformKey(EKey3DTransformChannel::Rotation, EAxis::Y, Rotation.Euler().Y, false /*bUnwindRotation*/));
-	TransformSection->SetDefault(FTransformKey(EKey3DTransformChannel::Rotation, EAxis::Z, Rotation.Euler().Z, false /*bUnwindRotation*/));
+	//TransformSection->SetDefault(FTransformKey(EKey3DTransformChannel::Rotation, EAxis::X, Rotation.Euler().X, false /*bUnwindRotation*/));
+	//TransformSection->SetDefault(FTransformKey(EKey3DTransformChannel::Rotation, EAxis::Y, Rotation.Euler().Y, false /*bUnwindRotation*/));
+	//TransformSection->SetDefault(FTransformKey(EKey3DTransformChannel::Rotation, EAxis::Z, Rotation.Euler().Z, false /*bUnwindRotation*/));
 
-	TransformSection->SetDefault(FTransformKey(EKey3DTransformChannel::Scale, EAxis::X, Scale.X, false /*bUnwindRotation*/));
-	TransformSection->SetDefault(FTransformKey(EKey3DTransformChannel::Scale, EAxis::Y, Scale.Y, false /*bUnwindRotation*/));
-	TransformSection->SetDefault(FTransformKey(EKey3DTransformChannel::Scale, EAxis::Z, Scale.Z, false /*bUnwindRotation*/));
+	//TransformSection->SetDefault(FTransformKey(EKey3DTransformChannel::Scale, EAxis::X, Scale.X, false /*bUnwindRotation*/));
+	//TransformSection->SetDefault(FTransformKey(EKey3DTransformChannel::Scale, EAxis::Y, Scale.Y, false /*bUnwindRotation*/));
+	//TransformSection->SetDefault(FTransformKey(EKey3DTransformChannel::Scale, EAxis::Z, Scale.Z, false /*bUnwindRotation*/));
 }
 
 void ACsPoseableMeshActor::AnimLevelSequence_Shot_AddKey(const int32 &Index, AActor* Actor)
@@ -1466,29 +1468,29 @@ void ACsPoseableMeshActor::AnimLevelSequence_Shot_AddKey(const int32 &Index, AAc
 	const TArray<UMovieSceneSection*>& Sections		= TransformTrack->GetAllSections();
 	UMovieSceneSection* Section						= Sections[CS_FIRST];
 	UMovieScene3DTransformSection* TransformSection = CastChecked<UMovieScene3DTransformSection>(Section);
-
+	/*
 	const float CurrentTime = LevelSequenceEditor->GetSequencer().Get()->GetGlobalTime();
 
 	if (CurrentTime > TransformSection->GetEndTime())
 		TransformSection->SetEndTime(CurrentTime);
-
+	*/
 	FTransform ActorRelativeTransform = Actor->GetRootComponent()->GetRelativeTransform();
 
 	const FVector Location = ActorRelativeTransform.GetTranslation();
 	const FRotator Rotation = ActorRelativeTransform.GetRotation().Rotator();
 	const FVector Scale = ActorRelativeTransform.GetScale3D();
 
-	TransformSection->AddKey(CurrentTime, FTransformKey(EKey3DTransformChannel::Translation, EAxis::X, Location.X, false), EMovieSceneKeyInterpolation::Auto);
-	TransformSection->AddKey(CurrentTime, FTransformKey(EKey3DTransformChannel::Translation, EAxis::Y, Location.Y, false), EMovieSceneKeyInterpolation::Auto);
-	TransformSection->AddKey(CurrentTime, FTransformKey(EKey3DTransformChannel::Translation, EAxis::Z, Location.Z, false), EMovieSceneKeyInterpolation::Auto);
+	//TransformSection->AddKey(CurrentTime, FTransformKey(EKey3DTransformChannel::Translation, EAxis::X, Location.X, false), EMovieSceneKeyInterpolation::Auto);
+	//TransformSection->AddKey(CurrentTime, FTransformKey(EKey3DTransformChannel::Translation, EAxis::Y, Location.Y, false), EMovieSceneKeyInterpolation::Auto);
+	//TransformSection->AddKey(CurrentTime, FTransformKey(EKey3DTransformChannel::Translation, EAxis::Z, Location.Z, false), EMovieSceneKeyInterpolation::Auto);
 
-	TransformSection->AddKey(CurrentTime, FTransformKey(EKey3DTransformChannel::Rotation, EAxis::X, Rotation.Euler().X, false), EMovieSceneKeyInterpolation::Auto);
-	TransformSection->AddKey(CurrentTime, FTransformKey(EKey3DTransformChannel::Rotation, EAxis::Y, Rotation.Euler().Y, false), EMovieSceneKeyInterpolation::Auto);
-	TransformSection->AddKey(CurrentTime, FTransformKey(EKey3DTransformChannel::Rotation, EAxis::Z, Rotation.Euler().Z, false), EMovieSceneKeyInterpolation::Auto);
+	//TransformSection->AddKey(CurrentTime, FTransformKey(EKey3DTransformChannel::Rotation, EAxis::X, Rotation.Euler().X, false), EMovieSceneKeyInterpolation::Auto);
+	//TransformSection->AddKey(CurrentTime, FTransformKey(EKey3DTransformChannel::Rotation, EAxis::Y, Rotation.Euler().Y, false), EMovieSceneKeyInterpolation::Auto);
+	//TransformSection->AddKey(CurrentTime, FTransformKey(EKey3DTransformChannel::Rotation, EAxis::Z, Rotation.Euler().Z, false), EMovieSceneKeyInterpolation::Auto);
 
-	TransformSection->AddKey(CurrentTime, FTransformKey(EKey3DTransformChannel::Scale, EAxis::X, Scale.X, false), EMovieSceneKeyInterpolation::Auto);
-	TransformSection->AddKey(CurrentTime, FTransformKey(EKey3DTransformChannel::Scale, EAxis::Y, Scale.Y, false), EMovieSceneKeyInterpolation::Auto);
-	TransformSection->AddKey(CurrentTime, FTransformKey(EKey3DTransformChannel::Scale, EAxis::Z, Scale.Z, false), EMovieSceneKeyInterpolation::Auto);
+	//TransformSection->AddKey(CurrentTime, FTransformKey(EKey3DTransformChannel::Scale, EAxis::X, Scale.X, false), EMovieSceneKeyInterpolation::Auto);
+	//TransformSection->AddKey(CurrentTime, FTransformKey(EKey3DTransformChannel::Scale, EAxis::Y, Scale.Y, false), EMovieSceneKeyInterpolation::Auto);
+	//TransformSection->AddKey(CurrentTime, FTransformKey(EKey3DTransformChannel::Scale, EAxis::Z, Scale.Z, false), EMovieSceneKeyInterpolation::Auto);
 }
 
 // Bones

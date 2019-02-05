@@ -290,7 +290,7 @@ struct CSCORE_API FCsDataMappingEntry
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct CSCORE_API FCsAssetReferenceLoadedCache
 {
 	GENERATED_USTRUCT_BODY()
@@ -308,7 +308,7 @@ struct CSCORE_API FCsAssetReferenceLoadedCache
 	float Time;
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct CSCORE_API FCsCategoryMemberAssociation
 {
 	GENERATED_USTRUCT_BODY()

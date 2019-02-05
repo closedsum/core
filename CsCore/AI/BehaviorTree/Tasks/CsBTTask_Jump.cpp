@@ -122,7 +122,7 @@ EBTNodeResult::Type UCsBTTask_Jump::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 
 	Pawn->StartJump();
 
-	ACsAIPlayerState* PlayerState = Cast<ACsAIPlayerState>(Pawn->PlayerState);
+	ACsAIPlayerState* PlayerState = Pawn->GetPlayerState<ACsAIPlayerState>();
 
 	Pawn->OnBTTask_Jump_Start_Event.Broadcast(PlayerState->UniqueMappingId);
 #if WITH_EDITOR
@@ -152,7 +152,7 @@ void UCsBTTask_Jump::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 
 		if (Pawn->bJumpFinished)
 		{
-			ACsAIPlayerState* PlayerState = Cast<ACsAIPlayerState>(Pawn->PlayerState);
+			ACsAIPlayerState* PlayerState = Pawn->GetPlayerState<ACsAIPlayerState>();
 
 			Pawn->OnBTTask_Jump_Finish_Event.Broadcast(PlayerState->UniqueMappingId);
 #if WITH_EDITOR

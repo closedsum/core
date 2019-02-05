@@ -34,6 +34,7 @@ public class CsCore : ModuleRules
                     "AnimationCore",
                     "Sequencer",
                     "LevelSequence",
+                    "NavigationSystem",
                     "MovieScene",
                     "MovieSceneTracks",
                 }
@@ -64,6 +65,7 @@ public class CsCore : ModuleRules
                     "HeadMountedDisplay",
                     "V8",
                     "LevelSequence",
+                    "NavigationSystem",
                 }
             );
         }

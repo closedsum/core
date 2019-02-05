@@ -17,7 +17,7 @@ ACsTpsWeapon::ACsTpsWeapon(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	Mesh = ObjectInitializer.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("Mesh"));
-	Mesh->MeshComponentUpdateFlag = EMeshComponentUpdateFlag::OnlyTickPoseWhenRendered;
+	Mesh->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::OnlyTickPoseWhenRendered;
 	Mesh->bReceivesDecals = false;
 	Mesh->CastShadow = false;
 	Mesh->SetHiddenInGame(true);
@@ -72,7 +72,7 @@ void ACsTpsWeapon::AttachMeshToPawn()
 	// In Editor Preview Window
 	if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
 	{
-		Mesh->MeshComponentUpdateFlag = EMeshComponentUpdateFlag::AlwaysTickPoseAndRefreshBones;
+		Mesh->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
 		Mesh->SetOnlyOwnerSee(false);
 		Mesh->SetOwnerNoSee(false);
 	}
@@ -157,7 +157,7 @@ void ACsTpsWeapon::Show()
 	Mesh->SetHiddenInGame(false);
 	Mesh->SetComponentTickEnabled(true);
 	Mesh->Activate();
-	Mesh->MeshComponentUpdateFlag = EMeshComponentUpdateFlag::AlwaysTickPoseAndRefreshBones;
+	Mesh->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
 	Mesh->UpdateComponentToWorld();
 }
 
@@ -166,7 +166,7 @@ void ACsTpsWeapon::Hide()
 	Mesh->SetHiddenInGame(true);
 	Mesh->Deactivate();
 	Mesh->SetComponentTickEnabled(false);
-	Mesh->MeshComponentUpdateFlag = EMeshComponentUpdateFlag::OnlyTickPoseWhenRendered;
+	Mesh->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::OnlyTickPoseWhenRendered;
 }
 
 #pragma endregion State

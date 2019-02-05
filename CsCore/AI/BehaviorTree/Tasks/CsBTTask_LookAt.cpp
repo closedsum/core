@@ -91,7 +91,7 @@ EBTNodeResult::Type UCsBTTask_LookAt::ExecuteTask(UBehaviorTreeComponent& OwnerC
 	EBTNodeResult::Type Result = EBTNodeResult::Failed;
 
 	const UBlackboardComponent* MyBlackboard = OwnerComp.GetBlackboardComponent();
-	ACsAIPlayerState* PlayerState			 = Cast<ACsAIPlayerState>(Pawn->PlayerState);
+	ACsAIPlayerState* PlayerState			 = Pawn->GetPlayerState<ACsAIPlayerState>();
 
 	// Object
 	if (BlackboardKey.SelectedKeyType == UBlackboardKeyType_Object::StaticClass())
@@ -225,7 +225,7 @@ EBTNodeResult::Type UCsBTTask_LookAt::AbortTask(UBehaviorTreeComponent& OwnerCom
 			else
 				Pawn->StopLookAt();
 
-			ACsAIPlayerState* PlayerState = Cast<ACsAIPlayerState>(Pawn->PlayerState);
+			ACsAIPlayerState* PlayerState = Pawn->GetPlayerState<ACsAIPlayerState>();
 
 			Pawn->OnBTTask_LookAt_Aborted_Event.Broadcast(PlayerState->UniqueMappingId);
 #if WITH_EDITOR

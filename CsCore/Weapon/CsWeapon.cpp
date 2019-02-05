@@ -532,7 +532,7 @@ ACsManager_Inventory* ACsWeapon::GetMyManager_Inventory()
 {
 	if (ACsPawn* Pawn = GetMyOwner<ACsPawn>())
 	{
-		ACsPlayerStateBase* PlayerState = Cast<ACsPlayerStateBase>(Pawn->PlayerState);
+		ACsPlayerStateBase* PlayerState = Pawn->GetPlayerState<ACsPlayerStateBase>();
 		return PlayerState->Manager_Inventory;
 	}
 	return nullptr;

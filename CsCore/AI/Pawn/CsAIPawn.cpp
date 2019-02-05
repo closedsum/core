@@ -127,7 +127,7 @@ void ACsAIPawn::OnTick_HandleCVars(const float &DeltaSeconds){}
 
 void ACsAIPawn::OnChange_Health(const float &Value)
 {
-	ACsAIPlayerState* MyPlayerState = Cast<ACsAIPlayerState>(PlayerState);
+	ACsAIPlayerState* MyPlayerState = GetPlayerState<ACsAIPlayerState>();
 
 	OnChange_Health_Event.Broadcast(MyPlayerState->UniqueMappingId, Health, MaxHealth);
 #if WITH_EDITOR
@@ -354,7 +354,7 @@ void ACsAIPawn::SetStartJumpEventInfoByHeight(const FVector &Direction, const fl
 
 void ACsAIPawn::StartJump()
 {
-	ACsAIPlayerState* MyPlayerState = Cast<ACsAIPlayerState>(PlayerState);
+	ACsAIPlayerState* MyPlayerState = GetPlayerState<ACsAIPlayerState>();
 	MyPlayerState->AddQueuedGameEvent(StartJumpEventInfo.Event);
 
 	bJumpFinished = false;
@@ -400,7 +400,7 @@ void ACsAIPawn::StopAimAt(){}
 
 void ACsAIPawn::StartShoot()
 {
-	ACsAIPlayerState* MyPlayerState = Cast<ACsAIPlayerState>(PlayerState);
+	ACsAIPlayerState* MyPlayerState = GetPlayerState<ACsAIPlayerState>();
 	MyPlayerState->AddQueuedGameEvent(StartShootEvent);
 }
 
@@ -413,7 +413,7 @@ void ACsAIPawn::StartShootForCount(const int32 &Count)
 	if (StartShootForDuration_Internal_Routine && StartShootForDuration_Internal_Routine->IsValid())
 		StartShootForDuration_Internal_Routine->End(ECsCoroutineEndReason::UniqueInstance);
 
-	ACsAIPlayerState* MyPlayerState = Cast<ACsAIPlayerState>(PlayerState);
+	ACsAIPlayerState* MyPlayerState = GetPlayerState<ACsAIPlayerState>();
 	MyPlayerState->AddQueuedGameEvent(StartShootEvent);
 
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
@@ -471,7 +471,7 @@ void ACsAIPawn::StartShootForDuration(const float &Duration)
 	if (StartShootForCount_Internal_Routine && StartShootForCount_Internal_Routine->IsValid())
 		StartShootForCount_Internal_Routine->End(ECsCoroutineEndReason::UniqueInstance);
 
-	ACsAIPlayerState* MyPlayerState = Cast<ACsAIPlayerState>(PlayerState);
+	ACsAIPlayerState* MyPlayerState = GetPlayerState<ACsAIPlayerState>();
 	MyPlayerState->AddQueuedGameEvent(StartShootEvent);
 
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
@@ -524,7 +524,7 @@ void ACsAIPawn::StopShoot()
 	if (StartShootForDuration_Internal_Routine && StartShootForDuration_Internal_Routine->IsValid())
 		StartShootForDuration_Internal_Routine->End(ECsCoroutineEndReason::Manual);
 
-	ACsAIPlayerState* MyPlayerState = Cast<ACsAIPlayerState>(PlayerState);
+	ACsAIPlayerState* MyPlayerState = GetPlayerState<ACsAIPlayerState>();
 	MyPlayerState->AddQueuedGameEvent(StopShootEvent);
 }
 

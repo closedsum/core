@@ -144,7 +144,7 @@ EBTNodeResult::Type UCsBTTask_CustomRotateToFaceBBEntry::ExecuteTask(UBehaviorTr
 
 	if (Result == EBTNodeResult::InProgress)
 	{
-		ACsAIPlayerState* PlayerState = Cast<ACsAIPlayerState>(Pawn->PlayerState);
+		ACsAIPlayerState* PlayerState = Pawn->GetPlayerState<ACsAIPlayerState>();
 
 		Pawn->OnBTTask_RotateToFaceBBEntry_Start_Event.Broadcast(PlayerState->UniqueMappingId, AngleDifference, RotationRate);
 #if WITH_EDITOR
@@ -193,7 +193,7 @@ void UCsBTTask_CustomRotateToFaceBBEntry::TickTask(UBehaviorTreeComponent& Owner
 			CleanUp(*AIController, NodeMemory);
 			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 
-			ACsAIPlayerState* PlayerState = Cast<ACsAIPlayerState>(Pawn->PlayerState);
+			ACsAIPlayerState* PlayerState = Pawn->GetPlayerState<ACsAIPlayerState>();
 
 			Pawn->OnBTTask_RotateToFaceBBEntry_Finish_Event.Broadcast(PlayerState->UniqueMappingId);
 #if WITH_EDITOR

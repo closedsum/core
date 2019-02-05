@@ -124,7 +124,7 @@ EBTNodeResult::Type UCsBTTask_LookAtAndRotateToFace::ExecuteTask(UBehaviorTreeCo
 
 	if (Result == EBTNodeResult::InProgress)
 	{
-		ACsAIPlayerState* PlayerState = Cast<ACsAIPlayerState>(Pawn->PlayerState);
+		ACsAIPlayerState* PlayerState = Pawn->GetPlayerState<ACsAIPlayerState>();
 
 		Pawn->OnBTTask_LookAtAndRotateToFace_Start_Event.Broadcast(PlayerState->UniqueMappingId, AngleDifference, RotationRate);
 #if WITH_EDITOR
@@ -175,7 +175,7 @@ void UCsBTTask_LookAtAndRotateToFace::TickTask(UBehaviorTreeComponent& OwnerComp
 			CleanUp(*AIController, NodeMemory);
 			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 
-			ACsAIPlayerState* PlayerState = Cast<ACsAIPlayerState>(Pawn->PlayerState);
+			ACsAIPlayerState* PlayerState = Pawn->GetPlayerState<ACsAIPlayerState>();
 
 			Pawn->OnBTTask_LookAtAndRotateToFace_Finish_Event.Broadcast(PlayerState->UniqueMappingId);
 #if WITH_EDITOR

@@ -155,7 +155,7 @@ ACsPawn* ACsPlayerStateBase::GetMyPawn()
 	{
 		APawn* Pawn = It->Get();
 
-		if (Pawn->PlayerState == this)
+		if (Pawn->GetPlayerState() == this)
 		{
 			LinkedPawn = Cast<ACsPawn>(Pawn);
 			break;
@@ -820,7 +820,7 @@ bool ACsPlayerStateBase::IsOnBoardCompleted_Game()
 		return false;
 	if (MyPawn->IsPendingKill())
 		return false;
-	if (Cast<ACsPlayerStateBase>(MyPawn->PlayerState) != this)
+	if (MyPawn->GetPlayerState<ACsPlayerStateBase>() != this)
 		return false;
 	return true;
 }

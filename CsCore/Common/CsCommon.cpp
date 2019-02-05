@@ -163,9 +163,9 @@ bool UCsCommon::IsLocalPawn(UWorld* InWorld, APawn* InPawn)
 {
 	if (!InPawn)
 		return false;
-	if (!InPawn->PlayerState)
+	if (!InPawn->GetPlayerState())
 		return false;
-	return InPawn->PlayerState == GetLocalPlayerState(InWorld);
+	return InPawn->GetPlayerState() == GetLocalPlayerState(InWorld);
 }
 
 void UCsCommon::GetLocalPlayerViewPoint(UWorld* InWorld, FVector &OutLocation, FRotator &OutRotation)
@@ -1363,12 +1363,12 @@ void UCsCommon::InitComponent(USceneComponent* Component, USceneComponent* RootC
 		Mesh->SetCollisionResponseToAllChannels(ECR_Ignore);
 		Mesh->SetCastShadow(false);
 		Mesh->bCastDynamicShadow = false;
-		Mesh->MeshComponentUpdateFlag = EMeshComponentUpdateFlag::OnlyTickPoseWhenRendered;
+		Mesh->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::OnlyTickPoseWhenRendered;
 
 		if (RootComponent)
 			Mesh->SetupAttachment(RootComponent);
 
-		Mesh->bGenerateOverlapEvents  = false;
+		Mesh->SetGenerateOverlapEvents(false);
 	}
 	// Text Render Component
 	if (UTextRenderComponent* Text = Cast<UTextRenderComponent>(Component))
@@ -1398,7 +1398,7 @@ void UCsCommon::InitComponent(USceneComponent* Component, USceneComponent* RootC
 	// Box Component
 	if (UBoxComponent* Box = Cast<UBoxComponent>(Component))
 	{
-		Box->bGenerateOverlapEvents = false;
+		Box->SetGenerateOverlapEvents(false);
 		Box->SetNotifyRigidBodyCollision(false);
 		Box->SetCollisionObjectType(Channel);
 		Box->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -1410,7 +1410,7 @@ void UCsCommon::InitComponent(USceneComponent* Component, USceneComponent* RootC
 	// Sphere Component
 	if (USphereComponent* Sphere = Cast<USphereComponent>(Component))
 	{
-		Sphere->bGenerateOverlapEvents = false;
+		Sphere->SetGenerateOverlapEvents(false);
 		Sphere->SetNotifyRigidBodyCollision(false);
 		Sphere->SetCollisionObjectType(Channel);
 		Sphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -1445,7 +1445,7 @@ void UCsCommon::EnableComponent(USceneComponent* Component, const bool &SetUpdat
 
 		if (SetUpdateFlag)
 		{
-			Mesh->MeshComponentUpdateFlag = EMeshComponentUpdateFlag::AlwaysTickPoseAndRefreshBones;
+			Mesh->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
 		}
 	}
 	// Sphere Component
@@ -1492,7 +1492,7 @@ void UCsCommon::DisableComponent(USceneComponent* Component, const bool &Detach 
 
 		if (SetUpdateFlag)
 		{
-			Mesh->MeshComponentUpdateFlag = EMeshComponentUpdateFlag::OnlyTickPoseWhenRendered;
+			Mesh->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::OnlyTickPoseWhenRendered;
 		}
 		Mesh->SetComponentTickEnabled(false);
 		Mesh->PrimaryComponentTick.bStartWithTickEnabled = false;
@@ -2566,8 +2566,8 @@ bool UCsCommon::SetCollisionPreset(FCsCollisionPreset &Preset, UPrimitiveCompone
 	IsDirty |= BodyInstance.GetSimplePhysicalMaterial() != Preset.PhysMaterialOverride.Material;
 	Preset.PhysMaterialOverride.Material = BodyInstance.GetSimplePhysicalMaterial();
 	// bGenerateOverlapEvents
-	IsDirty |= Component->bGenerateOverlapEvents != Preset.bGenerateOverlapEvents;
-	Preset.bGenerateOverlapEvents = Component->bGenerateOverlapEvents;
+	IsDirty |= Component->GetGenerateOverlapEvents() != Preset.bGenerateOverlapEvents;
+	Preset.bGenerateOverlapEvents = Component->GetGenerateOverlapEvents();
 	// CollisionEnabled
 	IsDirty |= Component->GetCollisionEnabled() != Preset.CollisionEnabled;
 	Preset.CollisionEnabled = Component->GetCollisionEnabled();
@@ -2598,7 +2598,7 @@ void UCsCommon::SetCollisionFromPreset(const FCsCollisionPreset &Preset, UPrimit
 	// PhysMaterialOverride
 	BodyInstance.SetPhysMaterialOverride(Preset.PhysMaterialOverride.Get());
 	// bGenerateOverlapEvents
-	Component->bGenerateOverlapEvents = Preset.bGenerateOverlapEvents;
+	Component->SetGenerateOverlapEvents(Preset.bGenerateOverlapEvents);
 	// ObjectType
 	Component->SetCollisionObjectType(Preset.ObjectType);
 	// CollisionResponses

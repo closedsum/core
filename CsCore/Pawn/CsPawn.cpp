@@ -231,7 +231,7 @@ void ACsPawn::CheckLinkedToPlayerState()
 CS_COROUTINE(ACsPawn, CheckLinkedToPlayerState_Internal)
 {
 	ACsPawn* p			   = r->GetActor<ACsPawn>();
-	ACsPlayerStateBase* ps = Cast<ACsPlayerStateBase>(p->PlayerState);
+	ACsPlayerStateBase* ps = p->GetPlayerState<ACsPlayerStateBase>();
 
 	CS_COROUTINE_BEGIN(r);
 
@@ -245,7 +245,7 @@ CS_COROUTINE(ACsPawn, CheckLinkedToPlayerState_Internal)
 
 bool ACsPawn::IsOnBoardCompleted_Game()
 {
-	ACsPlayerStateBase* MyPlayerState = Cast<ACsPlayerStateBase>(PlayerState);
+	ACsPlayerStateBase* MyPlayerState = GetPlayerState<ACsPlayerStateBase>();
 
 	if (!MyPlayerState)
 		return false;
@@ -292,7 +292,7 @@ CS_COROUTINE(ACsPawn, HandleRespawnTimer_Internal)
 {
 	ACsPawn* p				 = r->GetActor<ACsPawn>();
 	UCsCoroutineScheduler* s = UCsCoroutineScheduler::Get();
-	ACsPlayerStateBase* ps	 = Cast<ACsPlayerStateBase>(p->PlayerState);
+	ACsPlayerStateBase* ps	 = p->GetPlayerState<ACsPlayerStateBase>();
 
 	ACsData_Character* Data_Character = p->GetMyData_Character();
 
@@ -346,7 +346,7 @@ void ACsPawn::ApplyDamage(FCsDamageEvent* Event)
 
 void ACsPawn::OnApplyDamage_Result(FCsDamageResult* Result)
 {
-	ACsPlayerStateBase* MyPlayerState = Cast<ACsPlayerStateBase>(PlayerState);
+	ACsPlayerStateBase* MyPlayerState = GetPlayerState<ACsPlayerStateBase>();
 
 	OnApplyDamage_Result_Event.Broadcast(MyPlayerState->UniqueMappingId, Result);
 #if WITH_EDITOR
@@ -773,7 +773,7 @@ void ACsPawn::OnRespawn_ApplyData_Character(){}
 
 void ACsPawn::OnChange_CurrentWeaponSlot(const FECsWeaponSlot &Slot)
 {
-	ACsPlayerStateBase* MyPlayerState = Cast<ACsPlayerStateBase>(PlayerState);
+	ACsPlayerStateBase* MyPlayerState = GetPlayerState<ACsPlayerStateBase>();
 
 	OnChange_CurrentWeaponSlot_Event.Broadcast(MyPlayerState->UniqueMappingId, LastWeaponSlot, CurrentWeaponSlot);
 #if WITH_EDITOR

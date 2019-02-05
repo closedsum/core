@@ -11,6 +11,7 @@
 #include "AI/CsAIController.h"
 #include "AI/Pawn/CsAIPawn.h"
 
+#include "NavigationSystem/Public/NavigationSystem.h"
 
 UCsBTTask_SetRandomLocation::UCsBTTask_SetRandomLocation(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -28,12 +29,12 @@ EBTNodeResult::Type UCsBTTask_SetRandomLocation::ExecuteTask(UBehaviorTreeCompon
 	ACsAIController*  Controller	 = Cast<ACsAIController>(OwnerComp.GetOwner());
 	ACsAIPawn* Pawn					 = Cast<ACsAIPawn>(Controller->GetPawn());
 
-	UWorld* World			  = Pawn->GetWorld();
-	UNavigationSystem* NavSys = UNavigationSystem::GetCurrent(World);
+	UWorld* World			    = Pawn->GetWorld();
+	UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(World);
 
 	if (NavSys)
 	{
-		ANavigationData* NavData = NavSys->GetMainNavData(FNavigationSystem::DontCreate);
+		ANavigationData* NavData = Cast<ANavigationData>(NavSys->GetMainNavData());
 
 		if (NavData)
 		{

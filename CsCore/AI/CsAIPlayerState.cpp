@@ -281,7 +281,7 @@ bool ACsAIPlayerState::IsOnBoardCompleted_Game()
 		return false;
 	if (MyPawn->IsPendingKill())
 		return false;
-	if (Cast<ACsAIPlayerState>(MyPawn->PlayerState) != this)
+	if (MyPawn->GetPlayerState<ACsAIPlayerState>() != this)
 		return false;
 
 	if (ACsAIController* MyPlayerController = Cast<ACsAIController>(GetMyController()))

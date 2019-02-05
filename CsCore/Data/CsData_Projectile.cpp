@@ -70,7 +70,7 @@ float ACsData_Projectile::GetDrawDistanceSq(const TEnumAsByte<ECsViewType::Type>
 // Transform
 #pragma region
 
-const FTransform& ACsData_Projectile::GetTransform() { return FTransform::Identity; }
+const FTransform& ACsData_Projectile::GetMyTransform() { return FTransform::Identity; }
 
 #pragma endregion Transform
 

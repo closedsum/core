@@ -44,7 +44,7 @@ ACsFpsWeapon::ACsFpsWeapon(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	Mesh1P = ObjectInitializer.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("Mesh1P"));
-	Mesh1P->MeshComponentUpdateFlag = EMeshComponentUpdateFlag::OnlyTickPoseWhenRendered;
+	Mesh1P->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::OnlyTickPoseWhenRendered;
 	Mesh1P->bReceivesDecals = false;
 	Mesh1P->CastShadow = false;
 	Mesh1P->SetHiddenInGame(true);
@@ -60,7 +60,7 @@ ACsFpsWeapon::ACsFpsWeapon(const FObjectInitializer& ObjectInitializer)
 	RootComponent = Mesh1P;
 
 	Mesh3P = ObjectInitializer.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("Mesh3P"));
-	Mesh3P->MeshComponentUpdateFlag = EMeshComponentUpdateFlag::OnlyTickPoseWhenRendered;
+	Mesh3P->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::OnlyTickPoseWhenRendered;
 	Mesh3P->bReceivesDecals = false;
 	Mesh3P->CastShadow = false;
 	Mesh3P->bCastDynamicShadow = false;
@@ -272,7 +272,7 @@ void ACsFpsWeapon::AttachMeshToPawn()
 		// In Editor Preview Window
 		if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
 		{
-			Mesh1P->MeshComponentUpdateFlag = EMeshComponentUpdateFlag::AlwaysTickPoseAndRefreshBones;
+			Mesh1P->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
 			Mesh1P->SetOnlyOwnerSee(false);
 			Mesh1P->SetOwnerNoSee(false);
 		}
@@ -306,7 +306,7 @@ void ACsFpsWeapon::AttachMeshToPawn()
 		// In Editor Preview Window
 		if (UCsCommon::IsPlayInEditorPreview(GetWorld()))
 		{
-			Mesh3P->MeshComponentUpdateFlag = EMeshComponentUpdateFlag::AlwaysTickPoseAndRefreshBones;
+			Mesh3P->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
 			Mesh3P->SetOnlyOwnerSee(false);
 			Mesh3P->SetOwnerNoSee(false);
 		}
@@ -445,7 +445,7 @@ void ACsFpsWeapon::Show()
 	if (ViewType == ECsViewType::FirstPerson)
 	{
 		Mesh1P->Activate();
-		Mesh1P->MeshComponentUpdateFlag = EMeshComponentUpdateFlag::AlwaysTickPoseAndRefreshBones;
+		Mesh1P->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
 		Mesh1P->UpdateComponentToWorld();
 	}
 
@@ -472,14 +472,14 @@ void ACsFpsWeapon::Hide()
 	Mesh1P->Deactivate();
 	Mesh1P->SetComponentTickEnabled(false);
 	//Cast<UCsAnimInstance>(Mesh1P->GetAnimInstance())->StopAllMontagesEX(0.0f);
-	Mesh1P->MeshComponentUpdateFlag = EMeshComponentUpdateFlag::OnlyTickPoseWhenRendered;
+	Mesh1P->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::OnlyTickPoseWhenRendered;
 	// 3P
 	Mesh3P->SetHiddenInGame(true);
 	Mesh3P->SetVisibility(false);
 	Mesh3P->Deactivate();
 	Mesh3P->SetComponentTickEnabled(false);
 	//Cast<UCsAnimInstance>(Mesh3P->GetAnimInstance())->StopAllMontagesEX(0.0f);
-	Mesh3P->MeshComponentUpdateFlag = EMeshComponentUpdateFlag::OnlyTickPoseWhenRendered;
+	Mesh3P->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::OnlyTickPoseWhenRendered;
 }
 
 #pragma endregion State

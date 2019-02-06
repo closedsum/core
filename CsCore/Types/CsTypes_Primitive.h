@@ -785,6 +785,8 @@ struct TCsEnumStructMap
 private:
 	TArray<EnumStruct> Enums;
 	int32 Count;
+	TArray<EnumStruct> UserDefinedEnums;
+	TMap<FString, EnumStruct> UserDefinedNameMap;
 	TMap<FString, EnumStruct> NameMap;
 	TMap<FString, EnumStruct> DisplayNameMap;
 	TMap<FName, EnumStruct> NameInternalMap;
@@ -801,13 +803,18 @@ protected:
 public:
 	virtual ~TCsEnumStructMap() {}
 
-	FORCEINLINE EnumStruct Create(const FString &Name, const FString &DisplayName)
+	FORCEINLINE EnumStruct Create(const FString &Name, const FString &DisplayName, const bool& UserDefinedEnum = false)
 	{
 		EnumType Index = (EnumType)Enums.Num();
 		EnumStruct E(Index, Name, DisplayName);
 
 		Enums.Add(E);
 		++Count;
+		if (UserDefinedEnum)
+		{
+			UserDefinedEnums.Add(E);
+			UserDefinedNameMap.Add(Name, E);
+		}
 		NameMap.Add(Name, E);
 		DisplayNameMap.Add(DisplayName, E);
 		NameInternalMap.Add(E.Name_Internal, E);
@@ -820,6 +827,41 @@ public:
 	{
 		return Create(Name, Name);
 	}
+	
+#if WITH_EDITOR
+
+	FORCEINLINE void CreateSafe(const FString &Name, const FString &DisplayName, const bool& UserDefinedEnum = false)
+	{
+		// Check Name already exists
+		if (NameMap.Find(Name) != nullptr)
+			return;
+		// Check DisplayName already exists
+		if (DisplayNameMap.Find(DisplayName) != nullptr)
+			return;
+
+		EnumType Index = (EnumType)Enums.Num();
+		EnumStruct E(Index, Name, DisplayName);
+
+		Enums.Add(E);
+		++Count;
+		if (UserDefinedEnum)
+		{
+			UserDefinedEnums.Add(E);
+			UserDefinedNameMap.Add(Name, E);
+		}
+		NameMap.Add(Name, E);
+		DisplayNameMap.Add(DisplayName, E);
+		NameInternalMap.Add(E.Name_Internal, E);
+		TypeMap.Add(Index, E);
+		MAX.Value = (EnumType)Count;
+	}
+
+	FORCEINLINE void CreateSafe(const FString &Name, const bool& UserDefinedEnum = false)
+	{
+		CreateSafe(Name, Name, UserDefinedEnum);
+	}
+
+#endif // #if WITH_EDITOR
 	
 	FORCEINLINE const EnumStruct& operator[](const EnumType &Type)
 	{
@@ -900,6 +942,38 @@ public:
 	{
 		return MAX;
 	}
+	
+#if WITH_EDITOR
+
+	FORCEINLINE void ClearUserDefinedEnums()
+	{
+		const int32 StartSize = Enums.Num();
+
+		for (int32 I = StartSize - 1; I >= 0; --I)
+		{
+			const EnumStruct& E = Enums[I];
+
+			if (EnumStruct* EnumPtr = UserDefinedNameMap.Find(E.Name))
+			{
+				NameMap.Remove(E.Name);
+				DisplayNameMap.Remove(E.DisplayName);
+				NameInternalMap.Remove(E.Name_Internal);
+				TypeMap.Remove((EnumType)E.Value);
+				Enums.RemoveAt(I);
+
+				Count = Enums.Num();
+				
+				for (int32 J = I; J < Count; ++J)
+				{
+					Enums[J].Value = J;
+				}
+			}
+		}
+		UserDefinedEnums.Reset();
+		UserDefinedNameMap.Reset();
+	}
+
+#endif // #if WITH_EDITOR
 };
 
 USTRUCT(BlueprintType)

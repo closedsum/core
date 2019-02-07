@@ -179,7 +179,13 @@ struct FCsBlockchainCommandInfo
 
 	void* Payload_ptr;
 
-	FCsBlockchainCommandInfo() {}
+	FCsBlockchainCommandInfo() :
+		Command(EMCsBlockchainCommand::Get().GetMAX()),
+		Payload_Contract(EMCsBlockchainContract::Get().GetMAX()),
+		Payload_ContractFunction()
+	{
+		Reset();
+	}
 
 	FCsBlockchainCommandInfo(const FECsBlockchainCommand &InCommand)
 	{

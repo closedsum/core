@@ -138,7 +138,7 @@ struct CSCORE_API FCsTraceResponse
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
-	bool IsAllocated;
+	bool bAllocated;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Trace")
 	bool bResult;
@@ -151,13 +151,18 @@ struct CSCORE_API FCsTraceResponse
 
 	TArray<struct FOverlapResult> OutOverlaps;
 
-	~FCsTraceResponse() {}
+	FCsTraceResponse() 
+	{
+		Reset();
+	}
 
-	FCsTraceResponse() {}
-	
+	~FCsTraceResponse() 
+	{
+	}
+
 	FORCEINLINE FCsTraceResponse& operator=(const FCsTraceResponse& B)
 	{
-		IsAllocated = B.IsAllocated;
+		bAllocated = B.bAllocated;
 		bResult = B.bResult;
 
 		OutHits.Reset();
@@ -177,7 +182,7 @@ struct CSCORE_API FCsTraceResponse
 
 	FORCEINLINE bool operator==(const FCsTraceResponse& B) const
 	{
-		if (IsAllocated != B.IsAllocated)
+		if (bAllocated != B.bAllocated)
 			return false;
 		if (bResult != B.bResult)
 			return false;
@@ -197,7 +202,7 @@ struct CSCORE_API FCsTraceResponse
 
 	FORCEINLINE void Reset()
 	{
-		IsAllocated = false;
+		bAllocated = false;
 		bResult = false;
 		ElapsedTime = 0.0f;
 

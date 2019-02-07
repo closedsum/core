@@ -183,7 +183,8 @@ public:
 
 public:
 
-	FCsPooledObjectCache()
+	FCsPooledObjectCache() :
+		Index(0)
 	{
 		Reset();
 	}

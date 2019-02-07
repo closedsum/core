@@ -707,7 +707,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enum_uint8")
 	uint8 Value;
 
-	FECsEnum_uint8(){}
+	FECsEnum_uint8() :
+		Value(0)
+	{
+	}
 
 	FECsEnum_uint8(const uint8 &InValue, const FString &InName, const FString &InDisplayName)
 	{

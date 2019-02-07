@@ -259,7 +259,10 @@ struct CSCORE_API FCsInventoryItemProperties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	int32 Capacity;
 
-	FCsInventoryItemProperties() {}
+	FCsInventoryItemProperties() 
+	{
+		Reset();
+	}
 	~FCsInventoryItemProperties() {}
 
 	FORCEINLINE FCsInventoryItemProperties& operator=(const FCsInventoryItemProperties& B)
@@ -406,7 +409,8 @@ struct CSCORE_API FCsItemMemberValue
 	UPROPERTY()
 	float Value_float;
 
-	FCsItemMemberValue() 
+	FCsItemMemberValue() :
+		Type(ECsItemMemberValueType::ECsItemMemberValueType_MAX)
 	{
 		ResetValues();
 	}
@@ -509,9 +513,6 @@ struct CSCORE_API FCsItemHistory
 
 	UPROPERTY()
 	FECsItemOwner OwnerType;
-
-	UPROPERTY()
-	uint8 OwnerType_Script;
 
 	UPROPERTY()
 	FString OwnerName;

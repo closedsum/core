@@ -43,11 +43,17 @@ struct FCsAnimNotifyFX
 
 	FQuat RotationQuat;
 
-	FCsAnimNotifyFX()
+	FCsAnimNotifyFX() :
+		Particle(nullptr),
+		Priority(ECsFxPriority::Medium),
+		LifeTime(0.0f),
+		DeathTime(1.0f),
+		Scale(1.0f),
+		DrawDistances(),
+		Bone(NAME_None),
+		Location(0.0f),
+		Rotation(0.0f)
 	{
-		DeathTime = 1.0f;
-		Scale = 1.0f;
-		Priority = ECsFxPriority::Medium;
 	}
 
 	FCsAnimNotifyFX& operator=(const FCsAnimNotifyFX& B)

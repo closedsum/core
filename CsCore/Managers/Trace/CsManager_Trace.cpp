@@ -487,9 +487,9 @@ FCsTraceResponse* ACsManager_Trace::AllocateResponse()
 		ResponseIndex				= (ResponseIndex + 1) % CS_POOLED_TRACE_RESPONSE_SIZE;
 		FCsTraceResponse* Response	= &(Responses[ResponseIndex]);
 
-		if (!Response->IsAllocated)
+		if (!Response->bAllocated)
 		{
-			Response->IsAllocated = true;
+			Response->bAllocated = true;
 			return Response;
 		}
 	}

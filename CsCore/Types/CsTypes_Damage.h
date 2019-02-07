@@ -459,7 +459,8 @@ struct CSCORE_API FCsDamageResult
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
 	FHitResult HitInfo;
 
-	FCsDamageResult()
+	FCsDamageResult() :
+		Index(0)
 	{
 		Reset();
 	}

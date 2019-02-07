@@ -753,7 +753,12 @@ struct FCsBlockchainContractFunctionPayload
 
 	//void* Payload;
 
-	FCsBlockchainContractFunctionPayload(){}
+	FCsBlockchainContractFunctionPayload() :
+		Contract(EMCsBlockchainContract::Get().GetMAX()),
+		Function(EMCsBlockchainContractFunction::Get().GetMAX())
+	{
+	}
+
 	FCsBlockchainContractFunctionPayload(const FECsBlockchainContract &EContract, const FECsBlockchainContractFunction &EFn)
 	{
 		Contract = EContract;

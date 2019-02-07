@@ -30,13 +30,15 @@ struct FCsAnimNotifySound
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 	FName Bone;
 
-	FCsAnimNotifySound()
+	FCsAnimNotifySound() :
+		Sound(nullptr),
+		Type(EMCsSoundType::Get().GetMAX()),
+		Priority(ECsSoundPriority::Medium),
+		bSpatialize(true),
+		VolumeMultiplier(1.0f),
+		PitchMultiplier(1.0f),
+		Bone(NAME_None)
 	{
-		Priority = ECsSoundPriority::Medium;
-		bSpatialize = true;
-		VolumeMultiplier = 1.0f;
-		PitchMultiplier = 1.0f;
-		Bone = NAME_None;
 	}
 
 	FCsAnimNotifySound& operator=(const FCsAnimNotifySound& B)

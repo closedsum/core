@@ -9,6 +9,9 @@
 // Enums
 #pragma region
 
+	// Process
+#pragma region
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsProcess : public FECsEnum_uint8
 {
@@ -43,19 +46,20 @@ public:
 	static EMCsProcess& Get();
 };
 
-namespace ECsProcessRoutine
+#pragma endregion Process
+
+	// ProcessRoutine
+#pragma region
+
+enum class ECsProcessRoutine : uint8
 {
-	enum Type
-	{
-		StartRead_Internal,
-		ECsProcessRoutine_MAX,
-	};
-}
+	StartRead_Internal,
+	ECsProcessRoutine_MAX,
+};
 
 #define ECS_PROCESS_ROUTINE_MAX (uint8)ECsProcessRoutine::ECsProcessRoutine_MAX
-typedef ECsProcessRoutine::Type TCsProcessRoutine;
 
-struct CSCORE_API EMCsProcessRoutine : public TCsEnumMap<ECsProcessRoutine::Type>
+struct CSCORE_API EMCsProcessRoutine : public TCsEnumMap<ECsProcessRoutine>
 {
 protected:
 	EMCsProcessRoutine() {}
@@ -70,14 +74,18 @@ public:
 	static EMCsProcessRoutine& Get();
 };
 
-namespace ECsProcessRoutine
+namespace NCsProcessRoutine
 {
 	namespace Ref
 	{
+		typedef ECsProcessRoutine Type;
+
 		extern CSCORE_API const Type StartRead_Internal;
 		extern CSCORE_API const Type ECsProcessRoutine_MAX;
 	}
 }
+
+#pragma endregion ProcessRoutine
 
 #pragma endregion Enums
 
@@ -85,20 +93,16 @@ namespace ECsProcessRoutine
 #pragma region
 
 UENUM(BlueprintType)
-namespace ECsProcessMonitorOutputEventPurpose
+enum class ECsProcessMonitorOutputEventPurpose : uint8
 {
-	enum Type
-	{
-		FireOnce								UMETA(DisplayName = "FireOnce"),
-		Loop									UMETA(DisplayName = "Loop"),
-		ECsProcessMonitorOutputEventPurpose_MAX	UMETA(Hidden),
-	};
-}
+	FireOnce								UMETA(DisplayName = "FireOnce"),
+	Loop									UMETA(DisplayName = "Loop"),
+	ECsProcessMonitorOutputEventPurpose_MAX	UMETA(Hidden),
+};
 
 #define ECS_PROCESS_MONITOR_OUTPUT_EVENT_PURPOSE (uint8)ECsProcessMonitorOutputEventPurpose::ECsProcessMonitorOutputEventPurpose_MAX
-typedef ECsProcessMonitorOutputEventPurpose::Type TCsProcessMonitorOutputEventPurpose;
 
-struct CSCORE_API EMCsProcessMonitorOutputEventPurpose : public TCsEnumMap<ECsProcessMonitorOutputEventPurpose::Type>
+struct CSCORE_API EMCsProcessMonitorOutputEventPurpose : public TCsEnumMap<ECsProcessMonitorOutputEventPurpose>
 {
 protected:
 	EMCsProcessMonitorOutputEventPurpose() {}
@@ -113,10 +117,12 @@ public:
 	static EMCsProcessMonitorOutputEventPurpose& Get();
 };
 
-namespace ECsProcessMonitorOutputEventPurpose
+namespace NCsProcessMonitorOutputEventPurpose
 {
 	namespace Ref
 	{
+		typedef ECsProcessMonitorOutputEventPurpose Type;
+
 		extern CSCORE_API const Type FireOnce;
 		extern CSCORE_API const Type Loop;
 		extern CSCORE_API const Type ECsProcessMonitorOutputEventPurpose_MAX;
@@ -137,7 +143,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
 	FString Name;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
-	TEnumAsByte<ECsProcessMonitorOutputEventPurpose::Type> Purpose;
+	ECsProcessMonitorOutputEventPurpose Purpose;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
 	FCsStringParagraph Paragraph;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
@@ -148,9 +154,15 @@ public:
 	FBindableDynEvent_CsProcessMonitorOutputEvent_Completed ScriptEvent;
 
 public:
-	FCsProcessMonitorOutputEvent() {}
+	FCsProcessMonitorOutputEvent() :
+		Name(),
+		Purpose(ECsProcessMonitorOutputEventPurpose::ECsProcessMonitorOutputEventPurpose_MAX),
+		Paragraph(),
+		Completed(false)
+	{
+	}
 
-	FCsProcessMonitorOutputEvent(const FString &InName, const FCsStringParagraph &InParagraph, const TCsProcessMonitorOutputEventPurpose &InPurpse) 
+	FCsProcessMonitorOutputEvent(const FString &InName, const FCsStringParagraph &InParagraph, const ECsProcessMonitorOutputEventPurpose &InPurpse) 
 	{
 		Name = InName;
 		Paragraph = InParagraph;

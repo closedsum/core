@@ -41,38 +41,43 @@ public:
 // Argument
 #pragma region
 
+	// BlockchainContractArgumentType
+#pragma region
+
 UENUM(BlueprintType)
-namespace ECsBlockchainContractArgumentType
+enum class ECsBlockchainContractArgumentType : uint8
 {
-	enum Type
-	{
-		Bool									UMETA(DisplayName = "Bool"),
-		Int32									UMETA(DisplayName = "Int32"),
-		Float									UMETA(DisplayName = "Float"),
-		String									UMETA(DisplayName = "String"),
-		StringString							UMETA(DisplayName = "StringString"),
-		ECsBlockchainContractArgumentType_MAX	UMETA(Hidden),
-	};
-}
+	Bool									UMETA(DisplayName = "Bool"),
+	Int32									UMETA(DisplayName = "Int32"),
+	Float									UMETA(DisplayName = "Float"),
+	String									UMETA(DisplayName = "String"),
+	StringString							UMETA(DisplayName = "StringString"),
+	ECsBlockchainContractArgumentType_MAX	UMETA(Hidden),
+};
 
 #define ECS_BLOCKCHAIN_CONTRACT_ARGUMENT_TYPE_MAX (uint8)ECsBlockchainContractArgumentType::ECsBlockchainContractArgumentType_MAX
-typedef ECsBlockchainContractArgumentType::Type TCsBlockchainContractArgumentType;
 
-namespace ECsBlockchainContractArgumentType
+struct CSCORE_API EMCsBlockchainContractArgumentType : public TCsEnumMap<ECsBlockchainContractArgumentType>
 {
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
+protected:
+	EMCsBlockchainContractArgumentType() {}
+	EMCsBlockchainContractArgumentType(const EMCsBlockchainContractArgumentType &) = delete;
+	EMCsBlockchainContractArgumentType(EMCsBlockchainContractArgumentType &&) = delete;
+public:
+	~EMCsBlockchainContractArgumentType() {}
+private:
+	static EMCsBlockchainContractArgumentType* Instance;
 
-	namespace Str
-	{
-		extern CSCORE_API const TCsString Bool;
-		extern CSCORE_API const TCsString Int32;
-		extern CSCORE_API const TCsString Float;
-		extern CSCORE_API const TCsString String;
-		extern CSCORE_API const TCsString StringString;
-	}
+public:
+	static EMCsBlockchainContractArgumentType& Get();
+};
 
+namespace NCsBlockchainContractArgumentType
+{
 	namespace Ref
 	{
+		typedef ECsBlockchainContractArgumentType Type;
+
 		extern CSCORE_API const Type Bool;
 		extern CSCORE_API const Type Int32;
 		extern CSCORE_API const Type Float;
@@ -80,27 +85,9 @@ namespace ECsBlockchainContractArgumentType
 		extern CSCORE_API const Type StringString;
 		extern CSCORE_API const Type ECsBlockchainContractArgumentType_MAX;
 	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::Bool) { return Str::Bool.Value; }
-		if (EType == Type::Int32) { return Str::Int32.Value; }
-		if (EType == Type::Float) { return Str::Float.Value; }
-		if (EType == Type::String) { return Str::String.Value; }
-		if (EType == Type::StringString) { return Str::StringString.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE const Type& ToType(const FString &InString)
-	{
-		if (InString == Str::Bool) { return Ref::Bool; }
-		if (InString == Str::Int32) { return Ref::Int32; }
-		if (InString == Str::Float) { return Ref::Float; }
-		if (InString == Str::String) { return Ref::String; }
-		if (InString == Str::StringString) { return Ref::StringString; }
-		return Ref::ECsBlockchainContractArgumentType_MAX;
-	}
 }
+
+#pragma endregion BlockchainContractArgumentType
 
 USTRUCT(BlueprintType)
 struct FCsBlockchainContractArgument
@@ -111,7 +98,7 @@ struct FCsBlockchainContractArgument
 	FString Name;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
-	TEnumAsByte<ECsBlockchainContractArgumentType::Type> ValueType;
+	ECsBlockchainContractArgumentType ValueType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
 	bool Value_bool;
@@ -125,8 +112,12 @@ struct FCsBlockchainContractArgument
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
 	FString Value_FString;
 
-	FCsBlockchainContractArgument(){}
-	FCsBlockchainContractArgument(const FString &InName, const TCsBlockchainContractArgumentType &InValueType)
+	FCsBlockchainContractArgument()
+	{
+		Reset();
+	}
+
+	FCsBlockchainContractArgument(const FString &InName, const ECsBlockchainContractArgumentType &InValueType)
 	{
 		// HACKY: For now add ',' to distinguish between the same input arguments in the ABI
 		Name	  = InName + TEXT(",");
@@ -136,25 +127,25 @@ struct FCsBlockchainContractArgument
 		Value_float = 0.0f;
 	}
 
-	FCsBlockchainContractArgument(const FString &InName, const TCsBlockchainContractArgumentType &InValueType, const bool &Value)
+	FCsBlockchainContractArgument(const FString &InName, const ECsBlockchainContractArgumentType &InValueType, const bool &Value)
 	{
 		FCsBlockchainContractArgument(InName, InValueType);
 		Value_bool = Value;
 	}
 
-	FCsBlockchainContractArgument(const FString &InName, const TCsBlockchainContractArgumentType &InValueType, const int32 &Value)
+	FCsBlockchainContractArgument(const FString &InName, const ECsBlockchainContractArgumentType &InValueType, const int32 &Value)
 	{
 		FCsBlockchainContractArgument(InName, InValueType);
 		Value_int32 = Value;
 	}
 
-	FCsBlockchainContractArgument(const FString &InName, const TCsBlockchainContractArgumentType &InValueType, const float &Value)
+	FCsBlockchainContractArgument(const FString &InName, const ECsBlockchainContractArgumentType &InValueType, const float &Value)
 	{
 		FCsBlockchainContractArgument(InName, InValueType);
 		Value_float = Value;
 	}
 
-	FCsBlockchainContractArgument(const FString &InName, const TCsBlockchainContractArgumentType &InValueType, const FString &Value)
+	FCsBlockchainContractArgument(const FString &InName, const ECsBlockchainContractArgumentType &InValueType, const FString &Value)
 	{
 		FCsBlockchainContractArgument(InName, InValueType);
 		Value_FString = Value;
@@ -189,32 +180,32 @@ struct FCsBlockchainContractArgument
 		return !(*this == B);
 	}
 
-	FORCEINLINE void Set(const FString &InName, const TCsBlockchainContractArgumentType &InValueType)
+	FORCEINLINE void Set(const FString &InName, const ECsBlockchainContractArgumentType &InValueType)
 	{
 		// HACKY: For now add ',' to distinguish between the same input arguments in the ABI
 		Name = InName + TEXT(",");
 		ValueType = InValueType;
 	}
 
-	FORCEINLINE void Set(const FString &InName, const TCsBlockchainContractArgumentType &InValueType, const bool &Value)
+	FORCEINLINE void Set(const FString &InName, const ECsBlockchainContractArgumentType &InValueType, const bool &Value)
 	{
 		Set(InName, InValueType);
 		Value_bool = Value;
 	}
 
-	FORCEINLINE void Set(const FString &InName, const TCsBlockchainContractArgumentType &InValueType, const int32 &Value)
+	FORCEINLINE void Set(const FString &InName, const ECsBlockchainContractArgumentType &InValueType, const int32 &Value)
 	{
 		Set(InName, InValueType);
 		Value_int32 = Value;
 	}
 
-	FORCEINLINE void Set(const FString &InName, const TCsBlockchainContractArgumentType &InValueType, const float &Value)
+	FORCEINLINE void Set(const FString &InName, const ECsBlockchainContractArgumentType &InValueType, const float &Value)
 	{
 		Set(InName, InValueType);
 		Value_float = Value;
 	}
 
-	FORCEINLINE void Set(const FString &InName, const TCsBlockchainContractArgumentType &InValueType, const FString &Value)
+	FORCEINLINE void Set(const FString &InName, const ECsBlockchainContractArgumentType &InValueType, const FString &Value)
 	{
 		Set(InName, InValueType);
 		Value_FString = Value;
@@ -258,6 +249,9 @@ struct FCsBlockchainContractArgument
 // Function
 #pragma region
 
+	// BlockchainContractFunction
+#pragma region
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsBlockchainContractFunction : public FECsEnum_uint8
 {
@@ -277,7 +271,7 @@ FORCEINLINE uint32 GetTypeHash(const FECsBlockchainContractFunction& b)
 	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-struct  CSCORE_API EMCsBlockchainContractFunction : public TCsEnumStructMap<FECsBlockchainContractFunction, uint8>
+struct CSCORE_API EMCsBlockchainContractFunction : public TCsEnumStructMap<FECsBlockchainContractFunction, uint8>
 {
 protected:
 	EMCsBlockchainContractFunction() {}
@@ -292,56 +286,51 @@ public:
 	static EMCsBlockchainContractFunction& Get();
 };
 
+#pragma endregion BlockchainContractFunction
+
+	// BlockchainContractFunctionArgumentType
+#pragma region
+
 UENUM(BlueprintType)
-namespace ECsBlockchainContractFunctionArgumentType
+enum class ECsBlockchainContractFunctionArgumentType : uint8
 {
-	enum Type
-	{
-		Int32											UMETA(DisplayName = "Int32"),
-		Float											UMETA(DisplayName = "Float"),
-		String											UMETA(DisplayName = "String"),
-		ECsBlockchainContractFunctionArgumentType_MAX	UMETA(Hidden),
-	};
-}
+	Int32											UMETA(DisplayName = "Int32"),
+	Float											UMETA(DisplayName = "Float"),
+	String											UMETA(DisplayName = "String"),
+	ECsBlockchainContractFunctionArgumentType_MAX	UMETA(Hidden),
+};
 
 #define ECS_BLOCKCHAIN_CONTRACT_FUNCTION_ARGUMENT_TYPE_MAX (uint8)ECsBlockchainContractFunctionArgumentType::ECsBlockchainContractFunctionArgumentType_MAX
-typedef ECsBlockchainContractFunctionArgumentType::Type TCsBlockchainContractFunctionArgumentType;
 
-namespace ECsBlockchainContractFunctionArgumentType
+struct CSCORE_API EMCsBlockchainContractFunctionArgumentType : public TCsEnumMap<ECsBlockchainContractFunctionArgumentType>
 {
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
+protected:
+	EMCsBlockchainContractFunctionArgumentType() {}
+	EMCsBlockchainContractFunctionArgumentType(const EMCsBlockchainContractFunctionArgumentType &) = delete;
+	EMCsBlockchainContractFunctionArgumentType(EMCsBlockchainContractFunctionArgumentType &&) = delete;
+public:
+	~EMCsBlockchainContractFunctionArgumentType() {}
+private:
+	static EMCsBlockchainContractFunctionArgumentType* Instance;
 
-	namespace Str
-	{
-		extern CSCORE_API const TCsString Int32;
-		extern CSCORE_API const TCsString Float;
-		extern CSCORE_API const TCsString String;
-	}
+public:
+	static EMCsBlockchainContractFunctionArgumentType& Get();
+};
 
+namespace NCsBlockchainContractFunctionArgumentType
+{
 	namespace Ref
 	{
+		typedef ECsBlockchainContractFunctionArgumentType Type;
+
 		extern CSCORE_API const Type Int32;
 		extern CSCORE_API const Type Float;
 		extern CSCORE_API const Type String;
 		extern CSCORE_API const Type ECsBlockchainContractFunctionArgumentType_MAX;
 	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::Int32) { return Str::Int32.Value; }
-		if (EType == Type::Float) { return Str::Float.Value; }
-		if (EType == Type::String) { return Str::String.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE const Type& ToType(const FString &InString)
-	{
-		if (InString == Str::Int32) { return Ref::Int32; }
-		if (InString == Str::Float) { return Ref::Float; }
-		if (InString == Str::String) { return Ref::String; }
-		return Ref::ECsBlockchainContractFunctionArgumentType_MAX;
-	}
 }
+
+#pragma endregion BlockchainContractFunctionArgumentType
 
 USTRUCT(BlueprintType)
 struct FCsBlockchainContractFunctionArgument
@@ -349,7 +338,7 @@ struct FCsBlockchainContractFunctionArgument
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
-	TEnumAsByte<ECsBlockchainContractFunctionArgumentType::Type> ValueType;
+	ECsBlockchainContractFunctionArgumentType ValueType;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
 	int32 Value_int32;
@@ -360,20 +349,27 @@ struct FCsBlockchainContractFunctionArgument
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
 	FString Value_FString;
 
-	FCsBlockchainContractFunctionArgument() {}
-	FCsBlockchainContractFunctionArgument(const TCsBlockchainContractFunctionArgumentType &InValueType, const int32 &Value)
+	FCsBlockchainContractFunctionArgument() :
+		ValueType(ECsBlockchainContractFunctionArgumentType::ECsBlockchainContractFunctionArgumentType_MAX),
+		Value_int32(0),
+		Value_float(0.0f),
+		Value_FString()
+	{
+	}
+
+	FCsBlockchainContractFunctionArgument(const ECsBlockchainContractFunctionArgumentType &InValueType, const int32 &Value)
 	{
 		ValueType = InValueType;
 		Value_int32 = Value;
 	}
 
-	FCsBlockchainContractFunctionArgument(const TCsBlockchainContractFunctionArgumentType &InValueType, const float &Value)
+	FCsBlockchainContractFunctionArgument(const ECsBlockchainContractFunctionArgumentType &InValueType, const float &Value)
 	{
 		ValueType = InValueType;
 		Value_float = Value;
 	}
 
-	FCsBlockchainContractFunctionArgument(const TCsBlockchainContractFunctionArgumentType &InValueType, const FString &Value)
+	FCsBlockchainContractFunctionArgument(const ECsBlockchainContractFunctionArgumentType &InValueType, const FString &Value)
 	{
 		ValueType = InValueType;
 		Value_FString = Value;
@@ -429,56 +425,49 @@ struct FCsBlockchainContractFunctionArgument
 	}
 };
 
+	// BlockchainContractFunctionReturnType
+#pragma region
+
 UENUM(BlueprintType)
-namespace ECsBlockchainContractFunctionReturnType
+enum class ECsBlockchainContractFunctionReturnType : uint8
 {
-	enum Type
-	{
-		Int32										UMETA(DisplayName = "Int32"),
-		Float										UMETA(DisplayName = "Float"),
-		String										UMETA(DisplayName = "STring"),
-		ECsBlockchainContractFunctionReturnType_MAX	UMETA(Hidden),
-	};
-}
+	Int32										UMETA(DisplayName = "Int32"),
+	Float										UMETA(DisplayName = "Float"),
+	String										UMETA(DisplayName = "STring"),
+	ECsBlockchainContractFunctionReturnType_MAX	UMETA(Hidden),
+};
 
 #define ECS_BLOCKCHAIN_CONTRACT_FUNCTION_RETURN_TYPE_MAX (uint8)ECsBlockchainContractFunctionReturnType::ECsBlockchainContractFunctionReturnType_MAX
-typedef ECsBlockchainContractFunctionReturnType::Type TCsBlockchainContractFunctionReturnType;
 
-namespace ECsBlockchainContractFunctionReturnType
+struct CSCORE_API EMCsBlockchainContractFunctionReturnType : public TCsEnumMap<ECsBlockchainContractFunctionReturnType>
 {
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
+protected:
+	EMCsBlockchainContractFunctionReturnType() {}
+	EMCsBlockchainContractFunctionReturnType(const EMCsBlockchainContractFunctionReturnType &) = delete;
+	EMCsBlockchainContractFunctionReturnType(EMCsBlockchainContractFunctionReturnType &&) = delete;
+public:
+	~EMCsBlockchainContractFunctionReturnType() {}
+private:
+	static EMCsBlockchainContractFunctionReturnType* Instance;
 
-	namespace Str
-	{
-		extern CSCORE_API const TCsString Int32;
-		extern CSCORE_API const TCsString Float;
-		extern CSCORE_API const TCsString String;
-	}
+public:
+	static EMCsBlockchainContractFunctionReturnType& Get();
+};
 
+namespace NCsBlockchainContractFunctionReturnType
+{
 	namespace Ref
 	{
+		typedef ECsBlockchainContractFunctionReturnType Type;
+
 		extern CSCORE_API const Type Int32;
 		extern CSCORE_API const Type Float;
 		extern CSCORE_API const Type String;
 		extern CSCORE_API const Type ECsBlockchainContractFunctionReturnType_MAX;
 	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::Int32) { return Str::Int32.Value; }
-		if (EType == Type::Float) { return Str::Float.Value; }
-		if (EType == Type::String) { return Str::String.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE const Type& ToType(const FString &InString)
-	{
-		if (InString == Str::Int32) { return Ref::Int32; }
-		if (InString == Str::Float) { return Ref::Float; }
-		if (InString == Str::String) { return Ref::String; }
-		return Ref::ECsBlockchainContractFunctionReturnType_MAX;
-	}
 }
+
+#pragma endregion BlockchainContractFunctionReturnType
 
 USTRUCT(BlueprintType)
 struct FCsBlockchainContractFunctionReturn
@@ -486,7 +475,7 @@ struct FCsBlockchainContractFunctionReturn
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
-	TEnumAsByte<ECsBlockchainContractFunctionReturnType::Type> ValueType;
+	ECsBlockchainContractFunctionReturnType ValueType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
 	int32 Value_int32;
@@ -497,20 +486,27 @@ struct FCsBlockchainContractFunctionReturn
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
 	FString Value_FString;
 
-	FCsBlockchainContractFunctionReturn() {}
-	FCsBlockchainContractFunctionReturn(const TCsBlockchainContractFunctionReturnType &InValueType, const int32 &Value)
+	FCsBlockchainContractFunctionReturn() :
+		ValueType(ECsBlockchainContractFunctionReturnType::ECsBlockchainContractFunctionReturnType_MAX),
+		Value_int32(0),
+		Value_float(0.0f),
+		Value_FString()
+	{
+	}
+
+	FCsBlockchainContractFunctionReturn(const ECsBlockchainContractFunctionReturnType &InValueType, const int32 &Value)
 	{
 		ValueType = InValueType;
 		Value_int32 = Value;
 	}
 
-	FCsBlockchainContractFunctionReturn(const TCsBlockchainContractFunctionReturnType &InValueType, const float &Value)
+	FCsBlockchainContractFunctionReturn(const ECsBlockchainContractFunctionReturnType &InValueType, const float &Value)
 	{
 		ValueType = InValueType;
 		Value_float = Value;
 	}
 
-	FCsBlockchainContractFunctionReturn(const TCsBlockchainContractFunctionReturnType &InValueType, const FString &Value)
+	FCsBlockchainContractFunctionReturn(const ECsBlockchainContractFunctionReturnType &InValueType, const FString &Value)
 	{
 		ValueType = InValueType;
 		Value_FString = Value;

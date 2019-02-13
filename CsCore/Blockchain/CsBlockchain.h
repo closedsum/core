@@ -95,7 +95,13 @@ struct FCsBlockchainProcessStartInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
 	TArray<FCsProcessMonitorOutputEvent> MonitorOutputEvents;
 
-	FCsBlockchainProcessStartInfo(){}
+	FCsBlockchainProcessStartInfo() :
+		Filename(),
+		Arguments(),
+		RedirectStandardInput(false)
+	{
+	}
+
 	~FCsBlockchainProcessStartInfo(){}
 
 	FORCEINLINE FCsBlockchainProcessStartInfo& operator=(const FCsBlockchainProcessStartInfo& B)

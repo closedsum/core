@@ -39,32 +39,35 @@ public:
 };
 
 UENUM(BlueprintType)
-namespace ECsBlockchainCommandArgumentType
+enum class ECsBlockchainCommandArgumentType : uint8
 {
-	enum Type
-	{
-		Int32									UMETA(DisplayName = "Int32"),
-		Float									UMETA(DisplayName = "Float"),
-		String									UMETA(DisplayName = "Local"),
-		StringString							UMETA(DisplayName = "Server"),
-		ECsBlockchainCommandArgumentType_MAX	UMETA(Hidden),
-	};
-}
+	Int32									UMETA(DisplayName = "Int32"),
+	Float									UMETA(DisplayName = "Float"),
+	String									UMETA(DisplayName = "Local"),
+	StringString							UMETA(DisplayName = "Server"),
+	ECsBlockchainCommandArgumentType_MAX	UMETA(Hidden),
+};
 
 #define ECS_BLOCKCHAIN_COMMAND_ARGUMENT_TYPE_MAX (uint8)ECsBlockchainCommandArgumentType::ECsBlockchainCommandArgumentType_MAX
-typedef ECsBlockchainCommandArgumentType::Type TCsBlockchainCommandArgumentType;
 
-namespace ECsBlockchainCommandArgumentType
+struct CSCORE_API EMCsBlockchainCommandArgumentType : public TCsEnumMap<ECsBlockchainCommandArgumentType>
 {
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
+protected:
+	EMCsBlockchainCommandArgumentType() {}
+	EMCsBlockchainCommandArgumentType(const EMCsBlockchainCommandArgumentType &) = delete;
+	EMCsBlockchainCommandArgumentType(EMCsBlockchainCommandArgumentType &&) = delete;
+public:
+	~EMCsBlockchainCommandArgumentType() {}
+private:
+	static EMCsBlockchainCommandArgumentType* Instance;
 
-	namespace Str
-	{
-		extern CSCORE_API const TCsString Int32;
-		extern CSCORE_API const TCsString Float;
-		extern CSCORE_API const TCsString String;
-		extern CSCORE_API const TCsString StringString;
-	}
+public:
+	static EMCsBlockchainCommandArgumentType& Get();
+};
+
+namespace NCsBlockchainCommandArgumentType
+{
+	typedef ECsBlockchainCommandArgumentType Type;
 
 	namespace Ref
 	{
@@ -74,24 +77,6 @@ namespace ECsBlockchainCommandArgumentType
 		extern CSCORE_API const Type StringString;
 		extern CSCORE_API const Type ECsBlockchainCommandArgumentType_MAX;
 	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::Int32) { return Str::Int32.Value; }
-		if (EType == Type::Float) { return Str::Float.Value; }
-		if (EType == Type::String) { return Str::String.Value; }
-		if (EType == Type::StringString) { return Str::StringString.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE const Type& ToType(const FString &String)
-	{
-		if (String == Str::Int32) { return Ref::Int32; }
-		if (String == Str::Float) { return Ref::Float; }
-		if (String == Str::String) { return Ref::String; }
-		if (String == Str::StringString) { return Ref::StringString; }
-		return Ref::ECsBlockchainCommandArgumentType_MAX;
-	}
 }
 
 USTRUCT(BlueprintType)
@@ -100,7 +85,7 @@ struct FCsBlockchainCommandArgument
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
-	TEnumAsByte<ECsBlockchainCommandArgumentType::Type> ValueType;
+	ECsBlockchainCommandArgumentType ValueType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
 	int32 Value_int32;
@@ -111,22 +96,29 @@ struct FCsBlockchainCommandArgument
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blockchain")
 	FString Value_FString;
 
-	FCsBlockchainCommandArgument(){}
-	FCsBlockchainCommandArgument(const TCsBlockchainCommandArgumentType &valueType, const int32& value)
+	FCsBlockchainCommandArgument() :
+		ValueType(ECsBlockchainCommandArgumentType::ECsBlockchainCommandArgumentType_MAX),
+		Value_int32(0),
+		Value_float(0.0f),
+		Value_FString()
+	{
+	}
+
+	FCsBlockchainCommandArgument(const ECsBlockchainCommandArgumentType &valueType, const int32& value)
 	{
 		ValueType = valueType;
 		Value_int32 = value;
 		Value_float = 0.0f;
 	}
 
-	FCsBlockchainCommandArgument(const TCsBlockchainCommandArgumentType &valueType, const float& value)
+	FCsBlockchainCommandArgument(const ECsBlockchainCommandArgumentType &valueType, const float& value)
 	{
 		ValueType = valueType;
 		Value_int32 = 0;
 		Value_float = value;
 	}
 
-	FCsBlockchainCommandArgument(const TCsBlockchainCommandArgumentType &valueType, const FString& value)
+	FCsBlockchainCommandArgument(const ECsBlockchainCommandArgumentType &valueType, const FString& value)
 	{
 		ValueType = valueType;
 		Value_int32 = 0;
@@ -163,21 +155,21 @@ struct FCsBlockchainCommandArgument
 		return !(*this == B);
 	}
 
-	FORCEINLINE void Set(const TCsBlockchainCommandArgumentType &valueType, const int32& value)
+	FORCEINLINE void Set(const ECsBlockchainCommandArgumentType &valueType, const int32& value)
 	{
 		ValueType = valueType;
 		Value_int32 = value;
 		Value_float = 0.0f;
 	}
 
-	FORCEINLINE void Set(const TCsBlockchainCommandArgumentType &valueType, const float& value)
+	FORCEINLINE void Set(const ECsBlockchainCommandArgumentType &valueType, const float& value)
 	{
 		ValueType = valueType;
 		Value_int32 = 0;
 		Value_float = value;
 	}
 
-	FORCEINLINE void Set(const TCsBlockchainCommandArgumentType &valueType, const FString& value)
+	FORCEINLINE void Set(const ECsBlockchainCommandArgumentType &valueType, const FString& value)
 	{
 		ValueType = valueType;
 		Value_int32 = 0;
@@ -222,7 +214,14 @@ struct FCsBlockchainCommandOutput
 
 	void* Value_ptr;
 
-	FCsBlockchainCommandOutput(){}
+	FCsBlockchainCommandOutput() :
+		Value_bool(false),
+		Value_int32(0),
+		Value_float(0.0f),
+		Value_FString(),
+		Value_ptr(nullptr)
+	{}
+
 	~FCsBlockchainCommandOutput(){}
 
 	FORCEINLINE FCsBlockchainCommandOutput& operator=(const FCsBlockchainCommandOutput& B)

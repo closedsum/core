@@ -2,7 +2,6 @@
 #include "Types/CsTypes_String.h"
 
 // StringEscapeType
-
 EMCsStringEscapeType* EMCsStringEscapeType::Instance;
 
 EMCsStringEscapeType& EMCsStringEscapeType::Get()
@@ -12,7 +11,7 @@ EMCsStringEscapeType& EMCsStringEscapeType::Get()
 	return *Instance;
 }
 
-namespace ECsStringEscapeType
+namespace NCsStringEscapeType
 {
 	namespace Ref
 	{
@@ -27,7 +26,6 @@ namespace ECsStringEscapeType
 }
 
 // StringWordRule
-
 EMCsStringWordRule* EMCsStringWordRule::Instance;
 
 EMCsStringWordRule& EMCsStringWordRule::Get()
@@ -37,7 +35,7 @@ EMCsStringWordRule& EMCsStringWordRule::Get()
 	return *Instance;
 }
 
-namespace ECsStringWordRule
+namespace NCsStringWordRule
 {
 	namespace Ref
 	{
@@ -47,7 +45,7 @@ namespace ECsStringWordRule
 	}
 }
 
-namespace ECsStringEscapeCharacter
+namespace NCsStringEscapeCharacter
 {
 	CSCORE_API const FString Int = TEXT("%d");
 	CSCORE_API const FString Float = TEXT("%f");
@@ -60,7 +58,7 @@ namespace ECsStringEscapeCharacter
 // Word / Phrase / Sentence / Paragraph
 #pragma region
 
-FCsStringSentence CsStringParagraphHelper::CreateOneWordSentence(const FString &Word, const TCsStringWordRule &Rule)
+FCsStringSentence NCsStringParagraphHelper::CreateOneWordSentence(const FString &Word, const ECsStringWordRule &Rule)
 {
 	FCsStringSentence Sentence;
 	FCsStringPhrase Phrase;
@@ -70,7 +68,7 @@ FCsStringSentence CsStringParagraphHelper::CreateOneWordSentence(const FString &
 	return Sentence;
 }
 
-FCsStringParagraph CsStringParagraphHelper::CreateOneWordParagraph(const FString &Word, const TCsStringWordRule &Rule)
+FCsStringParagraph NCsStringParagraphHelper::CreateOneWordParagraph(const FString &Word, const ECsStringWordRule &Rule)
 {
 	FCsStringParagraph Paragraph;
 	FCsStringSentence Sentence;
@@ -122,15 +120,15 @@ void FCsStringHelper::GetLineTerminatingIndexAndCharacter(const FString &Input, 
 
 	TArray<FString> Chars;
 
-	const uint8 ESCAPE_COUNT = 3;
-	const uint8 EOL = 0;
-	const uint8 CR = 1;
-	const uint8 LF = 2;
+	static const uint8 ESCAPE_COUNT = 3;
+	static const uint8 EOL = 0;
+	static const uint8 CR = 1;
+	static const uint8 LF = 2;
 
 	Chars.SetNum(ESCAPE_COUNT);
-	Chars[EOL] = ECsStringEscapeCharacter::EOL;
-	Chars[CR] = ECsStringEscapeCharacter::CR;
-	Chars[LF] = ECsStringEscapeCharacter::LF;
+	Chars[EOL] = NCsStringEscapeCharacter::EOL;
+	Chars[CR] = NCsStringEscapeCharacter::CR;
+	Chars[LF] = NCsStringEscapeCharacter::LF;
 
 	const int32 Count = Chars.Num();
 

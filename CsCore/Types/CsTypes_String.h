@@ -9,24 +9,20 @@
 #pragma region
 
 UENUM(BlueprintType)
-namespace ECsStringEscapeType
+enum class ECsStringEscapeType : uint8
 {
-	enum Type
-	{
-		Int						UMETA(DisplayName = "Int"),
-		Float					UMETA(DisplayName = "Float"),
-		String					UMETA(DisplayName = "String"),
-		CR						UMETA(DisplayName = "Carriage Return"),
-		LF						UMETA(DisplayName = "Line Feed"),
-		EOL						UMETA(DisplayName = "End of Line"),
-		ECsStringEscapeType_MAX	UMETA(Hidden),
-	};
-}
+	Int						UMETA(DisplayName = "Int"),
+	Float					UMETA(DisplayName = "Float"),
+	String					UMETA(DisplayName = "String"),
+	CR						UMETA(DisplayName = "Carriage Return"),
+	LF						UMETA(DisplayName = "Line Feed"),
+	EOL						UMETA(DisplayName = "End of Line"),
+	ECsStringEscapeType_MAX	UMETA(Hidden),
+};
 
 #define ECS_STRING_ESCAPE_TYPE_MAX (uint8)ECsStringEscapeType::ECsStringEscapeType_MAX
-typedef ECsStringEscapeType::Type TCsStringEscapeType;
 
-struct CSCORE_API EMCsStringEscapeType : public TCsEnumMap<ECsStringEscapeType::Type>
+struct CSCORE_API EMCsStringEscapeType : public TCsEnumMap<ECsStringEscapeType>
 {
 protected:
 	EMCsStringEscapeType() {}
@@ -41,10 +37,12 @@ public:
 	static EMCsStringEscapeType& Get();
 };
 
-namespace ECsStringEscapeType
+namespace NCsStringEscapeType
 {
 	namespace Ref
 	{
+		typedef ECsStringEscapeType Type;
+
 		extern CSCORE_API const Type Int;
 		extern CSCORE_API const Type Float;
 		extern CSCORE_API const Type String;
@@ -55,7 +53,7 @@ namespace ECsStringEscapeType
 	}
 }
 
-namespace ECsStringEscapeCharacter
+namespace NCsStringEscapeCharacter
 {
 	extern CSCORE_API const FString Int;
 	extern CSCORE_API const FString Float;
@@ -71,20 +69,16 @@ namespace ECsStringEscapeCharacter
 #pragma region
 
 UENUM(BlueprintType)
-namespace ECsStringWordRule
+enum class ECsStringWordRule : uint8
 {
-	enum Type
-	{
-		MatchCase				UMETA(DisplayName = "MatchCase"),
-		Lower					UMETA(DisplayName = "Lower"),
-		ECsStringWordRule_MAX	UMETA(Hidden),
-	};
-}
+	MatchCase				UMETA(DisplayName = "MatchCase"),
+	Lower					UMETA(DisplayName = "Lower"),
+	ECsStringWordRule_MAX	UMETA(Hidden),
+};
 
 #define ECS_STRING_WORD_RULE_MAX (uint8)ECsStringWordRule::ECsStringWordRule_MAX
-typedef ECsStringWordRule::Type TCsStringWordRule;
 
-struct CSCORE_API EMCsStringWordRule : public TCsEnumMap<ECsStringWordRule::Type>
+struct CSCORE_API EMCsStringWordRule : public TCsEnumMap<ECsStringWordRule>
 {
 protected:
 	EMCsStringWordRule() {}
@@ -99,10 +93,12 @@ public:
 	static EMCsStringWordRule& Get();
 };
 
-namespace ECsStringWordRule
+namespace NCsStringWordRule
 {
 	namespace Ref
 	{
+		typedef ECsStringWordRule Type;
+
 		extern CSCORE_API const Type MatchCase;
 		extern CSCORE_API const Type Lower;
 		extern CSCORE_API const Type ECsStringWordRule_MAX;
@@ -118,24 +114,31 @@ struct FCsStringWordInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
 	FString Value;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
-	TEnumAsByte<ECsStringWordRule::Type> Rule;
+	ECsStringWordRule Rule;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
 	FString Altered;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
-	TEnumAsByte<ECsStringEscapeType::Type> EscapeType;
+	ECsStringEscapeType EscapeType;
 
-	FCsStringWordInfo(){}
-	FCsStringWordInfo(const FString &InValue, const TCsStringWordRule &InRule)
+	FCsStringWordInfo() :
+		Value(),
+		Rule(ECsStringWordRule::ECsStringWordRule_MAX),
+		Altered(),
+		EscapeType(ECsStringEscapeType::ECsStringEscapeType_MAX)
+	{
+	}
+
+	FCsStringWordInfo(const FString &InValue, const ECsStringWordRule &InRule)
 	{
 		Value		= InValue;
 		Rule		= InRule;
 		Altered		= Rule == ECsStringWordRule::Lower ? Value.ToLower() : Value;
 		EscapeType	= ECsStringEscapeType::ECsStringEscapeType_MAX;
 
-		if (Value == ECsStringEscapeCharacter::Int)
+		if (Value == NCsStringEscapeCharacter::Int)
 			EscapeType = ECsStringEscapeType::Int;
 		else
-		if (Value == ECsStringEscapeCharacter::Float)
+		if (Value == NCsStringEscapeCharacter::Float)
 			EscapeType = ECsStringEscapeType::Float;
 	}
 
@@ -283,12 +286,12 @@ struct FCsStringWord
 		return !(*this == B);
 	}
 
-	void AddAnd(const FString &S, const TCsStringWordRule &Rule = ECsStringWordRule::MatchCase)
+	void AddAnd(const FString &S, const ECsStringWordRule &Rule = ECsStringWordRule::MatchCase)
 	{
 		Ands.Add(FCsStringWordInfo(S, Rule));
 	}
 
-	void AddOr(const FString &S, const TCsStringWordRule &Rule = ECsStringWordRule::MatchCase)
+	void AddOr(const FString &S, const ECsStringWordRule &Rule = ECsStringWordRule::MatchCase)
 	{
 		Ors.Add(FCsStringWordInfo(S, Rule));
 	}
@@ -386,7 +389,7 @@ struct FCsStringPhrase
 		return !(*this == B);
 	}
 
-	void AddAndToWord(const int32 &Index, const FString &Word, const TCsStringWordRule &Rule = ECsStringWordRule::MatchCase)
+	void AddAndToWord(const int32 &Index, const FString &Word, const ECsStringWordRule &Rule = ECsStringWordRule::MatchCase)
 	{
 		const int32 Count = Words.Num();
 
@@ -400,7 +403,7 @@ struct FCsStringPhrase
 		Words[Index].AddAnd(Word, Rule);
 	}
 
-	void AddOrToWord(const int32 &Index, const FString &Word, const TCsStringWordRule &Rule = ECsStringWordRule::MatchCase)
+	void AddOrToWord(const int32 &Index, const FString &Word, const ECsStringWordRule &Rule = ECsStringWordRule::MatchCase)
 	{
 		const int32 Count = Words.Num();
 
@@ -675,10 +678,10 @@ struct FCsStringParagraph
 	}
 };
 
-namespace CsStringParagraphHelper
+namespace NCsStringParagraphHelper
 {
-	FCsStringSentence CreateOneWordSentence(const FString &Word, const TCsStringWordRule &Rule);
-	FCsStringParagraph CreateOneWordParagraph(const FString &Word, const TCsStringWordRule &Rule);
+	FCsStringSentence CreateOneWordSentence(const FString &Word, const ECsStringWordRule &Rule);
+	FCsStringParagraph CreateOneWordParagraph(const FString &Word, const ECsStringWordRule &Rule);
 }
 
 #pragma endregion Word / Phrase / Sentence / Paragraph

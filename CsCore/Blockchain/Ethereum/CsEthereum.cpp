@@ -207,7 +207,7 @@ void UCsEthereum::Initialize()
 		// InitBlockchain
 		SetCommand(ECsEthereumCommand::InitBlockchain, TEXT("--datadir=\"") + ChainDirectory + TEXT("\" init \"") + RootDirectory + TEXT("\\genesis.json\""));
 		{
-			FCsStringParagraph P = CsStringParagraphHelper::CreateOneWordParagraph(TEXT("database=lightchaindata"), ECsStringWordRule::MatchCase);
+			FCsStringParagraph P = NCsStringParagraphHelper::CreateOneWordParagraph(TEXT("database=lightchaindata"), ECsStringWordRule::MatchCase);
 
 			FCsProcessMonitorOutputEvent E(ECsEthereumCommand::InitBlockchain, P, ECsProcessMonitorOutputEventPurpose::FireOnce);
 			E.Event.AddUObject(this, &UCsEthereum::OnCommandCompleted);
@@ -218,7 +218,7 @@ void UCsEthereum::Initialize()
 		SetCommand(ECsEthereumCommand::SetDataDirectory, TEXT("--datadir=\"") + ChainDirectory + TEXT("\" --networkid 15 --gcmode archive"));
 		{
 			// TODO: also include "url=\\\\.\\pipe\\geth.ipc"?
-			FCsStringParagraph P = CsStringParagraphHelper::CreateOneWordParagraph(TEXT("IPC endpoint opened"), ECsStringWordRule::MatchCase);
+			FCsStringParagraph P = NCsStringParagraphHelper::CreateOneWordParagraph(TEXT("IPC endpoint opened"), ECsStringWordRule::MatchCase);
 
 			FCsProcessMonitorOutputEvent E(ECsEthereumCommand::SetDataDirectory, P, ECsProcessMonitorOutputEventPurpose::FireOnce);
 			E.Event.AddUObject(this, &UCsEthereum::OnCommandCompleted);
@@ -229,9 +229,9 @@ void UCsEthereum::Initialize()
 		SetCommand(ECsEthereumCommand::AttachToConsole, TEXT("attach ipc:\\\\.\\pipe\\geth.ipc"));
 		{
 			FCsStringParagraph P;
-			P.AddSentence(CsStringParagraphHelper::CreateOneWordSentence(TEXT("welcome"), ECsStringWordRule::Lower));
-			P.AddSentence(CsStringParagraphHelper::CreateOneWordSentence(TEXT("instance:"), ECsStringWordRule::Lower));
-			P.AddSentence(CsStringParagraphHelper::CreateOneWordSentence(TEXT("modules:"), ECsStringWordRule::Lower));
+			P.AddSentence(NCsStringParagraphHelper::CreateOneWordSentence(TEXT("welcome"), ECsStringWordRule::Lower));
+			P.AddSentence(NCsStringParagraphHelper::CreateOneWordSentence(TEXT("instance:"), ECsStringWordRule::Lower));
+			P.AddSentence(NCsStringParagraphHelper::CreateOneWordSentence(TEXT("modules:"), ECsStringWordRule::Lower));
 
 			FCsProcessMonitorOutputEvent E(ECsEthereumCommand::AttachToConsole, P, ECsProcessMonitorOutputEventPurpose::FireOnce);
 			E.Event.AddUObject(this, &UCsEthereum::OnCommandCompleted);
@@ -245,7 +245,7 @@ void UCsEthereum::Initialize()
 		// UnlockAccount
 		SetCommand(ECsEthereumCommand::UnlockAccount, TEXT("personal.unlockAccount(%s,%s,%s)"));
 		{
-			FCsStringParagraph P = CsStringParagraphHelper::CreateOneWordParagraph(TEXT("true"), ECsStringWordRule::MatchCase);
+			FCsStringParagraph P = NCsStringParagraphHelper::CreateOneWordParagraph(TEXT("true"), ECsStringWordRule::MatchCase);
 
 			FCsProcessMonitorOutputEvent E(ECsEthereumCommand::UnlockAccount, P, ECsProcessMonitorOutputEventPurpose::FireOnce);
 			E.Event.AddUObject(this, &UCsEthereum::OnCommandCompleted);
@@ -257,7 +257,7 @@ void UCsEthereum::Initialize()
 		// SetEtherbase
 		SetCommand(ECsEthereumCommand::SetEtherbase, TEXT("miner.setEtherbase(%s);"));
 		{
-			FCsStringParagraph P = CsStringParagraphHelper::CreateOneWordParagraph(TEXT("true"), ECsStringWordRule::MatchCase);
+			FCsStringParagraph P = NCsStringParagraphHelper::CreateOneWordParagraph(TEXT("true"), ECsStringWordRule::MatchCase);
 
 			FCsProcessMonitorOutputEvent E(ECsEthereumCommand::SetEtherbase, P, ECsProcessMonitorOutputEventPurpose::FireOnce);
 			E.Event.AddUObject(this, &UCsEthereum::OnCommandCompleted);
@@ -269,7 +269,7 @@ void UCsEthereum::Initialize()
 		// StartMiner
 		SetCommand(ECsEthereumCommand::StartMiner, TEXT("miner.start();"));
 		{
-			FCsStringParagraph P = CsStringParagraphHelper::CreateOneWordParagraph(TEXT("null"), ECsStringWordRule::MatchCase);
+			FCsStringParagraph P = NCsStringParagraphHelper::CreateOneWordParagraph(TEXT("null"), ECsStringWordRule::MatchCase);
 
 			FCsProcessMonitorOutputEvent E(ECsEthereumCommand::StartMiner, P, ECsProcessMonitorOutputEventPurpose::FireOnce);
 			E.Event.AddUObject(this, &UCsEthereum::OnCommandCompleted);
@@ -279,7 +279,7 @@ void UCsEthereum::Initialize()
 		// StopMiner
 		SetCommand(ECsEthereumCommand::StopMiner, TEXT("miner.stop();"));
 		{
-			FCsStringParagraph P = CsStringParagraphHelper::CreateOneWordParagraph(TEXT("true"), ECsStringWordRule::MatchCase);
+			FCsStringParagraph P = NCsStringParagraphHelper::CreateOneWordParagraph(TEXT("true"), ECsStringWordRule::MatchCase);
 
 			FCsProcessMonitorOutputEvent E(ECsEthereumCommand::StopMiner, P, ECsProcessMonitorOutputEventPurpose::FireOnce);
 			E.Event.AddUObject(this, &UCsEthereum::OnCommandCompleted);
@@ -289,7 +289,7 @@ void UCsEthereum::Initialize()
 		// LoadScript
 		SetCommand(ECsEthereumCommand::LoadScript, TEXT("loadScript(%s)"));
 		{
-			FCsStringParagraph P = CsStringParagraphHelper::CreateOneWordParagraph(TEXT("true"), ECsStringWordRule::MatchCase);
+			FCsStringParagraph P = NCsStringParagraphHelper::CreateOneWordParagraph(TEXT("true"), ECsStringWordRule::MatchCase);
 
 			FCsProcessMonitorOutputEvent E(ECsEthereumCommand::LoadScript, P, ECsProcessMonitorOutputEventPurpose::FireOnce);
 			E.Event.AddUObject(this, &UCsEthereum::OnCommandCompleted);
@@ -299,7 +299,7 @@ void UCsEthereum::Initialize()
 		// CreateContractABI
 		SetCommand(ECsEthereumCommand::CreateContractABI, TEXT("%s"));
 		{
-			FCsStringParagraph P = CsStringParagraphHelper::CreateOneWordParagraph(TEXT(""), ECsStringWordRule::MatchCase);
+			FCsStringParagraph P = NCsStringParagraphHelper::CreateOneWordParagraph(TEXT(""), ECsStringWordRule::MatchCase);
 
 			FCsProcessMonitorOutputEvent E(ECsEthereumCommand::CreateContractABI, P, ECsProcessMonitorOutputEventPurpose::FireOnce);
 			E.Event.AddUObject(this, &UCsEthereum::OnCommandCompleted);
@@ -309,7 +309,7 @@ void UCsEthereum::Initialize()
 		// CreateContractInstance
 		SetCommand(ECsEthereumCommand::CreateContractInstance, TEXT("var %s = %s.at(%s)"));
 		{
-			FCsStringParagraph P = CsStringParagraphHelper::CreateOneWordParagraph(TEXT("undefined"), ECsStringWordRule::MatchCase);
+			FCsStringParagraph P = NCsStringParagraphHelper::CreateOneWordParagraph(TEXT("undefined"), ECsStringWordRule::MatchCase);
 
 			FCsProcessMonitorOutputEvent E(ECsEthereumCommand::CreateContractInstance, P, ECsProcessMonitorOutputEventPurpose::FireOnce);
 			E.Event.AddUObject(this, &UCsEthereum::OnCommandCompleted);

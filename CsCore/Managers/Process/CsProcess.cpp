@@ -13,6 +13,7 @@
 // Enums
 #pragma region
 
+	// Process
 EMCsProcess* EMCsProcess::Instance;
 
 EMCsProcess& EMCsProcess::Get()
@@ -22,8 +23,7 @@ EMCsProcess& EMCsProcess::Get()
 	return *Instance;
 }
 
-// ProcessRoutine
-
+	// ProcessRoutine
 EMCsProcessRoutine* EMCsProcessRoutine::Instance;
 
 EMCsProcessRoutine& EMCsProcessRoutine::Get()
@@ -33,7 +33,7 @@ EMCsProcessRoutine& EMCsProcessRoutine::Get()
 	return *Instance;
 }
 
-namespace ECsProcessRoutine
+namespace NCsProcessRoutine
 {
 	namespace Ref
 	{
@@ -42,8 +42,7 @@ namespace ECsProcessRoutine
 	}
 }
 
-// ProcessMonitorOutputEventPurpose
-
+	// ProcessMonitorOutputEventPurpose
 EMCsProcessMonitorOutputEventPurpose* EMCsProcessMonitorOutputEventPurpose::Instance;
 
 EMCsProcessMonitorOutputEventPurpose& EMCsProcessMonitorOutputEventPurpose::Get()
@@ -53,7 +52,7 @@ EMCsProcessMonitorOutputEventPurpose& EMCsProcessMonitorOutputEventPurpose::Get(
 	return *Instance;
 }
 
-namespace ECsProcessMonitorOutputEventPurpose
+namespace NCsProcessMonitorOutputEventPurpose
 {
 	namespace Ref
 	{
@@ -63,6 +62,7 @@ namespace ECsProcessMonitorOutputEventPurpose
 	}
 }
 
+	// ProcessPriorityModifier
 namespace ECsProcessPriorityModifier
 {
 	namespace Str
@@ -215,7 +215,7 @@ void UCsProcess::DeAllocate()
 
 bool UCsProcess::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
 {
-	const TCsProcessRoutine RoutineType = (TCsProcessRoutine)Type;
+	const ECsProcessRoutine RoutineType = (ECsProcessRoutine)Type;
 
 	// CreateKeystore_Internal
 	if (RoutineType == ECsProcessRoutine::StartRead_Internal)
@@ -233,7 +233,7 @@ bool UCsProcess::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Ty
 
 bool UCsProcess::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
 {
-	const TCsProcessRoutine RoutineType = (TCsProcessRoutine)Type;
+	const ECsProcessRoutine RoutineType = (ECsProcessRoutine)Type;
 
 	// CreateKeystore_Internal
 	if (RoutineType == ECsProcessRoutine::StartRead_Internal)

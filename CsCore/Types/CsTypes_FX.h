@@ -25,7 +25,9 @@ private:
 	class UParticleSystem* Particle_Internal;
 
 public:
-	FCsParticleSystem()
+	FCsParticleSystem() :
+		Particle_LoadFlags(0),
+		Particle_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Particle_LoadFlags, ECsLoadFlags::Game);
 	}
@@ -123,7 +125,15 @@ private:
 
 public:
 
-	FCsFxElement()
+	FCsFxElement() :
+		Particle_LoadFlags(0),
+		LifeTime(0.0f),
+		DeathTime(0.0f),
+		DrawDistances(),
+		Bone(NAME_None),
+		Location(0.0f),
+		Rotation(0.0f),
+		Particle_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Particle_LoadFlags, ECsLoadFlags::Game);
 
@@ -285,7 +295,10 @@ struct CSCORE_API FCsFxPayload : public FCsPooledObjectPayload
 	UPROPERTY(EditAnywhere, Category = "FX")
 	FRotator Rotation;
 
-	FCsFxPayload() {}
+	FCsFxPayload() 
+	{
+		Reset();
+	}
 	~FCsFxPayload() {}
 
 	FORCEINLINE void Set(FCsFxElement* Element)

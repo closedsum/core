@@ -288,7 +288,16 @@ struct FCsParametricFunction
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function", meta = (editcondition = "bZ"))
 	FCsParametricFunctionAxis Z;
 
-	FCsParametricFunction() {}
+	FCsParametricFunction() :
+		bX(false),
+		X(),
+		bY(false),
+		Y(),
+		bZ(false),
+		Z()
+	{
+	}
+
 	~FCsParametricFunction() {}
 
 	FCsParametricFunction& operator=(const FCsParametricFunction& B)

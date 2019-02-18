@@ -27,7 +27,9 @@ private:
 	class UCurveFloat* Curve_Internal;
 
 public:
-	FCsCurveFloat()
+	FCsCurveFloat() :
+		Curve_LoadFlags(0),
+		Curve_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Curve_LoadFlags, ECsLoadFlags::Game);
 	}
@@ -73,7 +75,9 @@ private:
 	class UCurveVector* Curve_Internal;
 
 public:
-	FCsCurveVector()
+	FCsCurveVector() :
+		Curve_LoadFlags(0),
+		Curve_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Curve_LoadFlags, ECsLoadFlags::Game);
 	}

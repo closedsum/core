@@ -94,7 +94,15 @@ struct CSCORE_API FCsEthereumABI
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ethereum")
 	FString type;
 
-	FCsEthereumABI(){}
+	FCsEthereumABI() :
+		constant(false),
+		name(),
+		payable(false),
+		stateMutability(),
+		type()
+	{
+	}
+
 	~FCsEthereumABI(){}
 
 	FORCEINLINE FCsEthereumABI& operator=(const FCsEthereumABI& B)

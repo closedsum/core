@@ -475,7 +475,12 @@ struct CSCORE_API FCsItemMemberDescription
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Member")
 	TEnumAsByte<ECsItemMemberValueType::Type> Type;
 
-	FCsItemMemberDescription() {}
+	FCsItemMemberDescription() :
+		Name(NAME_None),
+		Type(ECsItemMemberValueType::ECsItemMemberValueType_MAX)
+	{
+	}
+
 	~FCsItemMemberDescription() {}
 
 	FORCEINLINE FCsItemMemberDescription& operator=(const FCsItemMemberDescription& B)
@@ -1077,7 +1082,12 @@ struct CSCORE_API FCsItemOnConsumeContentRule
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
 	TEnumAsByte<ECsItemOnConsumeContentAction::Type> Action;
 
-	FCsItemOnConsumeContentRule(){}
+	FCsItemOnConsumeContentRule() :
+		ShortCode(NAME_None),
+		Action(ECsItemOnConsumeContentAction::ECsItemOnConsumeContentAction_MAX)
+	{
+	}
+
 	~FCsItemOnConsumeContentRule() {}
 
 	FORCEINLINE FCsItemOnConsumeContentRule& operator=(const FCsItemOnConsumeContentRule& B)

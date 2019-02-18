@@ -276,7 +276,9 @@ struct CSCORE_API FCsDataMappingEntry
 	UPROPERTY(VisibleDefaultsOnly, Category = "Data")
 	FCsTArrayStringAssetReference AssetReferences[ECsLoadFlags_Editor::ECsLoadFlags_Editor_MAX];
 
-	FCsDataMappingEntry()
+	FCsDataMappingEntry() :
+		ShortCode(NAME_None),
+		Data_LoadFlags(0)
 	{
 		LookUpCode = CS_INVALID_LOOK_UP_CODE_MAX;
 

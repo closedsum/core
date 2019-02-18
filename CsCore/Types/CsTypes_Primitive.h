@@ -992,7 +992,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "EnumMask_uint32")
 	int32 Mask;
 
-	FECsEnumMask_int32() {}
+	FECsEnumMask_int32() :
+		Value(0),
+		Mask(0)
+	{
+	}
 
 	FECsEnumMask_int32(const uint8 &InValue, const FString &InName, const FString &InDisplayName)
 	{
@@ -1097,7 +1101,11 @@ public:
 	UPROPERTY()
 	uint32 Mask;
 
-	FECsEnumMask_uint32() {}
+	FECsEnumMask_uint32() :
+		Value(0),
+		Mask(0)
+	{
+	}
 
 	FECsEnumMask_uint32(const uint8 &InValue, const FString &InName, const FString &InDisplayName)
 	{
@@ -4930,7 +4938,13 @@ public:
 	TMulticastDelegate<void, const bool&> OnChange_Event;
 
 public:
-	FCsBpProperty_bool() {}
+	FCsBpProperty_bool() :
+		DefaultValue(false),
+		Value(false),
+		Last_Value(false),
+		IsDirty(false)
+	{
+	}
 	~FCsBpProperty_bool() {}
 
 	void SetDefaultValue(const bool &inDefaultValue)

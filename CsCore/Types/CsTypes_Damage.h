@@ -203,7 +203,14 @@ struct CSCORE_API FCsDamageFalloff
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (editcondition = "bCurve"))
 	FCsCurveFloat Curve;
 
-	FCsDamageFalloff()
+	FCsDamageFalloff() :
+		Rate(0.0f),
+		Frequency(0.0f),
+		Minimum(0.0f),
+		MaxDistance(0.0f),
+		bEasingType(false),
+		bCurve(false),
+		Curve()
 	{
 		EasingType = ECsEasingType::Linear;
 	}
@@ -277,12 +284,22 @@ struct CSCORE_API FCsDamageRadial
 
 	/** Whether the Damage also afflicts the Owner */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (InlineEditConditionToggle))
-	bool ApplyToOwner;
+	bool bApplyToOwner;
 	/** Percentage of Damage to apply to the Owner */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (editcondition = "ApplyToOwner"), meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (editcondition = "bApplyToOwner"), meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float OwnerPercent;
 
-	FCsDamageRadial()
+	FCsDamageRadial() :
+		Min(0.0f),
+		Max(0.0f),
+		Delta(0.0f),
+		bCurve(false),
+		Curve(),
+		MinRadius(0.0f),
+		MaxRadius(0.0f),
+		DeltaRadius(0.0f),
+		bApplyToOwner(false),
+		OwnerPercent(0.0f)
 	{
 		EasingType = ECsEasingType::Linear;
 	}
@@ -328,7 +345,7 @@ struct CSCORE_API FCsDamageRadial
 
 	float GetOwnerDamage(const FVector &Origin, const FVector &Location)
 	{
-		if (!ApplyToOwner)
+		if (!bApplyToOwner)
 			return 0.0f;
 		if (OwnerPercent == 0.0f)
 			return 0.0f;
@@ -372,7 +389,8 @@ struct CSCORE_API FCsDamageEvent
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
 	FHitResult HitInfo;
 
-	FCsDamageEvent()
+	FCsDamageEvent() :
+		Index(0)
 	{
 		Reset();
 	}

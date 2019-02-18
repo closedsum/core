@@ -355,7 +355,10 @@ struct FCsProcessPayload : public FCsPooledObjectPayload
 	FString OptionalWorkingDirectory;
 
 public:
-	FCsProcessPayload() {}
+	FCsProcessPayload() 
+	{
+		Reset();
+	}
 	~FCsProcessPayload() {}
 
 	virtual void Reset() override

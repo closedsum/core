@@ -237,7 +237,9 @@ private:
 	class UStaticMesh* Mesh_Internal;
 
 public:
-	FCsStaticMesh()
+	FCsStaticMesh() :
+		Mesh_LoadFlags(0),
+		Mesh_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Mesh_LoadFlags, ECsLoadFlags::Game);
 	}
@@ -308,7 +310,15 @@ private:
 	UPROPERTY(Transient)
 	class UStaticMesh* MeshVR_Internal;
 public:
-	FCsFpvStaticMesh()
+	FCsFpvStaticMesh() :
+		Mesh1P_LoadFlags(0),
+		Mesh3P_LoadFlags(0),
+		Mesh3P_Low_LoadFlags(0),
+		MeshVR_LoadFlags(0),
+		Mesh1P_Internal(nullptr),
+		Mesh3P_Internal(nullptr),
+		Mesh3P_Low_Internal(nullptr),
+		MeshVR_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Mesh1P_LoadFlags, ECsLoadFlags::Game);
 		CS_SET_BLUEPRINT_BITFLAG(Mesh1P_LoadFlags, ECsLoadFlags::Game1P);
@@ -384,7 +394,8 @@ private:
 	TArray<class UStaticMesh*> Meshes_Internal;
 
 public:
-	FCsTArrayStaticMesh()
+	FCsTArrayStaticMesh() :
+		Meshes_LoadFlags(0)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Meshes_LoadFlags, ECsLoadFlags::Game);
 	}
@@ -468,7 +479,9 @@ private:
 	class USkeletalMesh* Mesh_Internal;
 
 public:
-	FCsSkeletalMesh()
+	FCsSkeletalMesh() :
+		Mesh_LoadFlags(0),
+		Mesh_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Mesh_LoadFlags, ECsLoadFlags::Game);
 	}
@@ -539,7 +552,15 @@ private:
 	UPROPERTY(Transient)
 	class USkeletalMesh* MeshVR_Internal;
 public:
-	FCsFpsSkeletalMesh()
+	FCsFpsSkeletalMesh() :
+		Mesh1P_LoadFlags(0),
+		Mesh3P_LoadFlags(0),
+		Mesh3P_Low_LoadFlags(0),
+		MeshVR_LoadFlags(0),
+		Mesh1P_Internal(nullptr),
+		Mesh3P_Internal(nullptr),
+		Mesh3P_Low_Internal(nullptr),
+		MeshVR_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Mesh1P_LoadFlags, ECsLoadFlags::Game);
 		CS_SET_BLUEPRINT_BITFLAG(Mesh1P_LoadFlags, ECsLoadFlags::Game1P);
@@ -615,7 +636,8 @@ private:
 	TArray<class USkeletalMesh*> Meshes_Internal;
 
 public:
-	FCsTArraySkeletalMesh()
+	FCsTArraySkeletalMesh() :
+		Meshes_LoadFlags(0)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Meshes_LoadFlags, ECsLoadFlags::Game);
 	}
@@ -774,7 +796,9 @@ private:
 	class UMaterialInstance* Material_Internal;
 
 public:
-	FCsMaterialInstance()
+	FCsMaterialInstance() :
+		Material_LoadFlags(0),
+		Material_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Material_LoadFlags, ECsLoadFlags::Game);
 	}
@@ -801,7 +825,9 @@ private:
 	class UMaterialInstanceConstant* Material_Internal;
 
 public:
-	FCsMaterialInstanceConstant()
+	FCsMaterialInstanceConstant() :
+		Material_LoadFlags(0),
+		Material_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Material_LoadFlags, ECsLoadFlags::Game);
 	}
@@ -828,7 +854,8 @@ private:
 	TArray<class UMaterialInstanceConstant*> Materials_Internal;
 
 public:
-	FCsTArrayMaterialInstanceConstant()
+	FCsTArrayMaterialInstanceConstant() :
+		Materials_LoadFlags(0)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Materials_LoadFlags, ECsLoadFlags::Game);
 	}
@@ -934,7 +961,11 @@ private:
 	TArray<class UMaterialInstanceConstant*> MaterialsVR_Internal;
 
 public:
-	FCsFpsTArrayMaterialInstanceConstant()
+	FCsFpsTArrayMaterialInstanceConstant() :
+		Materials1P_LoadFlags(0),
+		Materials3P_LoadFlags(0),
+		Materials3P_Low_LoadFlags(0),
+		MaterialsVR_LoadFlags(0)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Materials1P_LoadFlags, ECsLoadFlags::Game);
 		CS_SET_BLUEPRINT_BITFLAG(Materials1P_LoadFlags, ECsLoadFlags::Game1P);
@@ -1156,7 +1187,9 @@ private:
 	class UPhysicalMaterial* Material_Internal;
 
 public:
-	FCsPhysicalMaterial()
+	FCsPhysicalMaterial() :
+		Material_LoadFlags(0),
+		Material_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Material_LoadFlags, ECsLoadFlags::Game);
 	}
@@ -1198,7 +1231,9 @@ private:
 	class UPhysicsAsset* Physics_Internal;
 
 public:
-	FCsPhysicsAsset()
+	FCsPhysicsAsset() :
+		Physics_LoadFlags(0),
+		Physics_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Physics_LoadFlags, ECsLoadFlags::Game);
 	}
@@ -1380,7 +1415,8 @@ struct CSCORE_API FCsPhysicsImpulse
 	/** Used in AddForceAtPosition */
 	bool bIsLocalForce;
 
-	FCsPhysicsImpulse()
+	FCsPhysicsImpulse() :
+		Type(ECsPhysicsImpulseType::ECsPhysicsImpulseType_MAX)
 	{
 		ImpulseRotation.Reset();
 		ImpulseMagnitude = 0.0f;
@@ -1472,7 +1508,9 @@ private:
 	class UBlueprintGeneratedClass* Blueprint_Internal;
 
 public:
-	FCsBlueprint()
+	FCsBlueprint() :
+		Blueprint_LoadFlags(0),
+		Blueprint_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Blueprint_LoadFlags, ECsLoadFlags::Game);
 	}
@@ -1499,7 +1537,8 @@ private:
 	TArray<class UBlueprintGeneratedClass*> Blueprints_Internal;
 
 public:
-	FCsTArrayBlueprint()
+	FCsTArrayBlueprint() :
+		Blueprints_LoadFlags(0)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Blueprints_LoadFlags, ECsLoadFlags::Game);
 	}

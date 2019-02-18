@@ -13,14 +13,15 @@ struct FCsPooledWidgetCache : public FCsPooledObjectCache
 	TWeakObjectPtr<class UCsPooledWidget> Widget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
-	TEnumAsByte<ECsSimpleWidgetType::Type> Type;
+	ECsSimpleWidgetType Type;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FString DisplayName;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	FIntPoint Offset;
 
-	FCsPooledWidgetCache()
+	FCsPooledWidgetCache() :
+		Type(ECsSimpleWidgetType::ECsSimpleWidgetType_MAX)
 	{
 		Reset();
 	}
@@ -66,7 +67,7 @@ class CSCORE_API UCsPooledWidget : public UCsSimpleWidget
 	GENERATED_UCLASS_BODY()
 
 	virtual void Init(const FGeometry& MyGeometry) override;
-	virtual void Init(const int32 &Index, const TCsSimpleWidgetType &InType) override;
+	virtual void Init(const int32& Index, const ECsSimpleWidgetType& InType) override;
  
 	virtual void Allocate(FCsWidgetPayload* Payload);
 	virtual void DeAllocate();

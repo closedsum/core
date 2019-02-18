@@ -118,7 +118,14 @@ struct FCsDataMappingAddEntry
 	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Helper")
 	FString Output;
 
-	FCsDataMappingAddEntry()
+	FCsDataMappingAddEntry() :
+		Add(false),
+		ShortCode(NAME_None),
+		AssetType(EMCsAssetType::Get().GetMAX()),
+		LoadFlags(0),
+		Message(),
+		Output()
+
 	{
 		CS_SET_BLUEPRINT_BITFLAG(LoadFlags, ECsLoadFlags::All);
 		CS_SET_BLUEPRINT_BITFLAG(LoadFlags, ECsLoadFlags::Game);

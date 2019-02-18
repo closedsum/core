@@ -21,7 +21,9 @@ private:
 	class ACsData_Projectile* Data_Internal;
 
 public:
-	FCsData_ProjectilePtr()
+	FCsData_ProjectilePtr() :
+		Data_LoadFlags(0),
+		Data_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Data_LoadFlags, ECsLoadFlags::Game);
 	}
@@ -67,7 +69,9 @@ private:
 	class ACsData_ProjectileImpact* Data_Internal;
 
 public:
-	FCsData_ProjectileImpactPtr()
+	FCsData_ProjectileImpactPtr() :
+		Data_LoadFlags(0),
+		Data_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Data_LoadFlags, ECsLoadFlags::Game);
 	}
@@ -625,7 +629,11 @@ struct CSCORE_API FCsProjectilePayload : public FCsPooledObjectPayload
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	float HomingAccelerationMagnitude;
 
-	FCsProjectilePayload(){}
+	FCsProjectilePayload()
+	{
+		Reset();
+	}
+
 	~FCsProjectilePayload(){}
 
 	FORCEINLINE FCsProjectilePayload& operator=(const FCsProjectilePayload& B)

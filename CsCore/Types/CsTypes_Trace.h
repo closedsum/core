@@ -292,7 +292,8 @@ struct CSCORE_API FCsTraceRequest
 
 	TLinkedList<FCsTraceRequest*> Link;
 
-	FCsTraceRequest()
+	FCsTraceRequest() :
+		Id(0)
 	{
 		Link = TLinkedList<FCsTraceRequest*>(this);
 

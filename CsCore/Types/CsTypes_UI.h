@@ -125,21 +125,16 @@ public:
 #pragma region
 
 UENUM(BlueprintType)
-namespace ECsSimpleWidgetType
+enum class ECsSimpleWidgetType : uint8
 {
-	enum Type
-	{
-		Text					UMETA(DisplayName = "Text"),
-		Float					UMETA(DisplayName = "Float"),
-		Button					UMETA(DisplayName = "Button"),
-		Bar						UMETA(DisplayName = "Bar"),
-		ECsSimpleWidgetType_MAX	UMETA(Hidden),
-	};
-}
+	Text					UMETA(DisplayName = "Text"),
+	Float					UMETA(DisplayName = "Float"),
+	Button					UMETA(DisplayName = "Button"),
+	Bar						UMETA(DisplayName = "Bar"),
+	ECsSimpleWidgetType_MAX	UMETA(Hidden),
+};
 
-typedef ECsSimpleWidgetType::Type TCsSimpleWidgetType;
-
-struct CSCORE_API EMCsSimpleWidgetType : public TCsEnumMap<ECsSimpleWidgetType::Type>
+struct CSCORE_API EMCsSimpleWidgetType : public TCsEnumMap<ECsSimpleWidgetType>
 {
 protected:
 	EMCsSimpleWidgetType() {}
@@ -154,10 +149,12 @@ public:
 	static EMCsSimpleWidgetType& Get();
 };
 
-namespace ECsSimpleWidgetType
+namespace NCsSimpleWidgetType
 {
 	namespace Ref
 	{
+		typedef ECsSimpleWidgetType Type;
+
 		extern CSCORE_API const Type Text;
 		extern CSCORE_API const Type Float;
 		extern CSCORE_API const Type Button;
@@ -220,7 +217,19 @@ private:
 	class UBlueprintGeneratedClass* Blueprint_Internal;
 
 public:
-	FCsWidgetActorInfo()
+	FCsWidgetActorInfo() :
+		Blueprint_LoadFlags(0),
+		LifeTime(0.0f),
+		bMinDrawDistance(false),
+		MinDrawDistance(),
+		ScaleByDistance(false),
+		FollowCamera(false),
+		DistanceProjectedOutFromCamera(0.0f),
+		LookAtCamera(false),
+		LockAxes(),
+		bMovementFunction(false),
+		MovementFunction(),
+		Blueprint_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Blueprint_LoadFlags, ECsLoadFlags::Game);
 		CS_SET_BLUEPRINT_BITFLAG(Blueprint_LoadFlags, ECsLoadFlags::UI);
@@ -337,7 +346,16 @@ private:
 	class UBlueprintGeneratedClass* Blueprint_Internal;
 
 public:
-	FCsWidgetComponentInfo()
+	FCsWidgetComponentInfo() :
+		Blueprint_LoadFlags(0),
+		bMinDrawDistance(false),
+		MinDrawDistance(),
+		ScaleByDistance(false),
+		FollowOwner(false),
+		FollowCamera(false),
+		DistanceProjectedOutFromCamera(0.0f),
+		LookAtCamera(false),
+		LockAxes()
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Blueprint_LoadFlags, ECsLoadFlags::Game);
 		CS_SET_BLUEPRINT_BITFLAG(Blueprint_LoadFlags, ECsLoadFlags::UI);

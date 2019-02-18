@@ -108,7 +108,9 @@ private:
 
 public:
 
-	FCsAnimSequence()
+	FCsAnimSequence() :
+		Anim_LoadFlags(0),
+		Anim_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Anim_LoadFlags, ECsLoadFlags::Game);
 	}
@@ -182,7 +184,15 @@ private:
 
 public:
 
-	FCsFpvAnimSequence()
+	FCsFpvAnimSequence() :
+		Anim1P_LoadFlags(0),
+		Anim3P_LoadFlags(0),
+		Anim3P_Low_LoadFlags(0),
+		AnimVR_LoadFlags(0),
+		Anim1P_Internal(nullptr),
+		Anim3P_Internal(nullptr),
+		Anim3P_Low_Internal(nullptr),
+		AnimVR_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Anim1P_LoadFlags, ECsLoadFlags::Game);
 		CS_SET_BLUEPRINT_BITFLAG(Anim1P_LoadFlags, ECsLoadFlags::Game1P);
@@ -269,7 +279,9 @@ private:
 
 public:
 
-	FCsAnimMontage()
+	FCsAnimMontage() :
+		Anim_LoadFlags(0),
+		Anim_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Anim_LoadFlags, ECsLoadFlags::Game);
 	}
@@ -343,7 +355,15 @@ private:
 
 public:
 
-	FCsFpvAnimMontage()
+	FCsFpvAnimMontage() :
+		Anim1P_LoadFlags(0),
+		Anim3P_LoadFlags(0),
+		Anim3P_Low_LoadFlags(0),
+		AnimVR_LoadFlags(0),
+		Anim1P_Internal(nullptr),
+		Anim3P_Internal(nullptr),
+		Anim3P_Low_Internal(nullptr),
+		AnimVR_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Anim1P_LoadFlags, ECsLoadFlags::Game);
 		CS_SET_BLUEPRINT_BITFLAG(Anim1P_LoadFlags, ECsLoadFlags::Game1P);
@@ -429,7 +449,8 @@ private:
 	TArray<class UAnimMontage*> Anims_Internal;
 
 public:
-	FCsTArrayAnimMontage()
+	FCsTArrayAnimMontage() :
+		Anims_LoadFlags(0)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Anims_LoadFlags, ECsLoadFlags::Game);
 	}
@@ -574,7 +595,9 @@ private:
 
 public:
 
-	FCsAnimBlueprint()
+	FCsAnimBlueprint() :
+		Blueprint_LoadFlags(0),
+		Blueprint_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Blueprint_LoadFlags, ECsLoadFlags::Game);
 	}
@@ -648,7 +671,15 @@ public:
 
 public:
 
-	FCsFpvAnimBlueprint()
+	FCsFpvAnimBlueprint() :
+		Blueprint1P_LoadFlags(0),
+		Blueprint3P_LoadFlags(0),
+		Blueprint3P_Low_LoadFlags(0),
+		BlueprintVR_LoadFlags(0),
+		Blueprint1P_Internal(nullptr),
+		Blueprint3P_Internal(nullptr),
+		Blueprint3P_Low_Internal(nullptr),
+		BlueprintVR_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Blueprint1P_LoadFlags, ECsLoadFlags::Game);
 		CS_SET_BLUEPRINT_BITFLAG(Blueprint1P_LoadFlags, ECsLoadFlags::Game1P);
@@ -780,7 +811,9 @@ public:
 
 public:
 
-	FCsBlendSpace1D()
+	FCsBlendSpace1D() :
+		Blend_LoadFlags(0),
+		Blend_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Blend_LoadFlags, ECsLoadFlags::Game);
 	}
@@ -854,7 +887,15 @@ public:
 
 public:
 
-	FCsFpvBlendSpace1D()
+	FCsFpvBlendSpace1D() :
+		Blend1P_LoadFlags(0),
+		Blend3P_LoadFlags(0),
+		Blend3P_Low_LoadFlags(0),
+		BlendVR_LoadFlags(0),
+		Blend1P_Internal(nullptr),
+		Blend3P_Internal(nullptr),
+		Blend3P_Low_Internal(nullptr),
+		BlendVR_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Blend1P_LoadFlags, ECsLoadFlags::Game);
 		CS_SET_BLUEPRINT_BITFLAG(Blend1P_LoadFlags, ECsLoadFlags::Game1P);
@@ -941,7 +982,9 @@ public:
 
 public:
 
-	FCsBlendSpace()
+	FCsBlendSpace() :
+		Blend_LoadFlags(0),
+		Blend_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Blend_LoadFlags, ECsLoadFlags::Game);
 	}
@@ -1015,7 +1058,15 @@ public:
 
 public:
 
-	FCsFpvBlendSpace()
+	FCsFpvBlendSpace() :
+		Blend1P_LoadFlags(0),
+		Blend3P_LoadFlags(0),
+		Blend3P_Low_LoadFlags(0),
+		BlendVR_LoadFlags(0),
+		Blend1P_Internal(nullptr),
+		Blend3P_Internal(nullptr),
+		Blend3P_Low_Internal(nullptr),
+		BlendVR_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Blend1P_LoadFlags, ECsLoadFlags::Game);
 		CS_SET_BLUEPRINT_BITFLAG(Blend1P_LoadFlags, ECsLoadFlags::Game1P);
@@ -1102,7 +1153,9 @@ public:
 
 public:
 
-	FCsAimOffset()
+	FCsAimOffset() :
+		Blend_LoadFlags(0),
+		Blend_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Blend_LoadFlags, ECsLoadFlags::Game);
 	}
@@ -1176,7 +1229,15 @@ public:
 
 public:
 
-	FCsFpvAimOffset()
+	FCsFpvAimOffset() :
+		Blend1P_LoadFlags(0),
+		Blend3P_LoadFlags(0),
+		Blend3P_Low_LoadFlags(0),
+		BlendVR_LoadFlags(0),
+		Blend1P_Internal(nullptr),
+		Blend3P_Internal(nullptr),
+		Blend3P_Low_Internal(nullptr),
+		BlendVR_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Blend1P_LoadFlags, ECsLoadFlags::Game);
 		CS_SET_BLUEPRINT_BITFLAG(Blend1P_LoadFlags, ECsLoadFlags::Game1P);

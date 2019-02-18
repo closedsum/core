@@ -451,7 +451,28 @@ struct FCsData_Weapon_FireMode_Firing
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 	FCsData_ProjectilePtr ChargeData;
 
-	FCsData_Weapon_FireMode_Firing() {}
+	FCsData_Weapon_FireMode_Firing() :
+		DoFireOnRelease(false),
+		AllowChargeFire(false),
+		MaxChargeFireTime(0.0f),
+		ForceReleaseChargeFireTime(0.0f),
+		ChargeFireDamageMultiplier(0.0f),
+		ChargeFireSpeedMultiplier(0.0f),
+		IsFullAuto(false),
+		ProjectilesPerShot(0),
+		TimeBetweenProjectilesPerShot(0.0f),
+		TimeBetweenShots(0.0f),
+		TimeBetweenAutoShots(0.0f),
+		IsHitscan(false),
+		DoesHitscanUseRadius(false),
+		DoesHitscanSimulateProjectileDuration(false),
+		ObstaclePenetrations(0),
+		PawnPenetrations(0),
+		UseFake(false),
+		Data(),
+		ChargeData()
+	{
+	}
 	virtual ~FCsData_Weapon_FireMode_Firing() {}
 
 	class ACsData_Projectile* GetData()
@@ -506,7 +527,15 @@ struct FCsData_FpsWeapon_FireMode_Animation
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 	bool DoScaleAdsFireAnim;
 
-	FCsData_FpsWeapon_FireMode_Animation() {}
+	FCsData_FpsWeapon_FireMode_Animation() :
+		LoopFireAnim(false),
+		FireAnims(),
+		DoScaleFireAnim(false),
+		LoopAdsFireAnim(false),
+		AdsFireAnims(),
+		DoScaleAdsFireAnim(false)
+	{
+	}
 	virtual ~FCsData_FpsWeapon_FireMode_Animation() {}
 };
 
@@ -530,7 +559,14 @@ struct FCsData_Weapon_FireMode_Movement
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float KickbackStrength;
 
-	FCsData_Weapon_FireMode_Movement() {}
+	FCsData_Weapon_FireMode_Movement() :
+		DoSlowWhileFiring(false),
+		SlowWhileFiringRate(0.0f),
+		DoKickback(false),
+		DoKickbackOnGround(false),
+		KickbackStrength(0.0f)
+	{
+	}
 	virtual ~FCsData_Weapon_FireMode_Movement() {}
 };
 
@@ -566,7 +602,19 @@ struct FCsData_Weapon_FireMode_Aiming
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Aiming")
 	float MovingSpreadBonus;
 
-	FCsData_Weapon_FireMode_Aiming() {}
+	FCsData_Weapon_FireMode_Aiming() :
+		IsHoming(false),
+		HomingAccelerationMagnitude(0.0f),
+		DoSpread(false),
+		MinSpread(0.0f),
+		MaxSpread(0.0f),
+		SpreadAddedPerShot(0.0f),
+		SpreadRecoveryRate(0.0f),
+		FiringSpreadRecoveryDelay(0.0f),
+		MovingSpreadBonus(0.0f)
+	{
+	}
+
 	virtual ~FCsData_Weapon_FireMode_Aiming() {}
 };
 
@@ -581,7 +629,11 @@ struct FCsData_FpsWeapon_FireMode_Aiming : public FCsData_Weapon_FireMode_Aiming
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Aiming")
 	float ScopeAccuracyBonus;
 
-	FCsData_FpsWeapon_FireMode_Aiming(){}
+	FCsData_FpsWeapon_FireMode_Aiming() :
+		JumpSpreadImpulse(0.0f),
+		ScopeAccuracyBonus(0.0f)
+	{
+	}
 	~FCsData_FpsWeapon_FireMode_Aiming() {}
 };
 
@@ -610,7 +662,13 @@ struct FCsData_Weapon_FireMode_Scope
 
 public:
 
-	FCsData_Weapon_FireMode_Scope() {}
+	FCsData_Weapon_FireMode_Scope() :
+		LocationDamageModifierRamp(),
+		DoScopePower(false),
+		MaxScopePower(0.0f),
+		ScopePowerGrowthRate(0.0f)
+	{
+	}
 	virtual ~FCsData_Weapon_FireMode_Scope() {}
 };
 
@@ -686,7 +744,13 @@ struct FCsData_Weapon_FireMode_Sounds
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds")
 	FCsSoundElement FireFinishSound;
 
-	FCsData_Weapon_FireMode_Sounds() {}
+	FCsData_Weapon_FireMode_Sounds() :
+		FireSound(),
+		LoopFireSound(false),
+		FireLoopSound(),
+		FireFinishSound()
+	{
+	}
 	virtual ~FCsData_Weapon_FireMode_Sounds() {}
 };
 
@@ -710,7 +774,13 @@ struct FCsData_FpsWeapon_FireMode_Sounds
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds")
 	FCsFpvSoundElement FireFinishSounds;
 
-	FCsData_FpsWeapon_FireMode_Sounds() {}
+	FCsData_FpsWeapon_FireMode_Sounds() :
+		FireSounds(),
+		LoopFireSound(false),
+		FireLoopSounds(),
+		FireFinishSounds()
+	{
+	}
 	virtual ~FCsData_FpsWeapon_FireMode_Sounds() {}
 };
 

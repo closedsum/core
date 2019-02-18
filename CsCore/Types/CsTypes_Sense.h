@@ -219,6 +219,7 @@ struct FCsSenseInfo
 		Team = ECsSenseTeam::Friendly;
 		Id = MAX_uint64;
 		ObserveeId = MAX_uint64;
+		// Me to Actor
 		MeToActorDir = FVector::ZeroVector;
 		MeToActorDistance = 0.0f;;
 		MeToActorDistanceSq = 0.0f;
@@ -226,7 +227,12 @@ struct FCsSenseInfo
 		MeToActorDistanceXY = 0.0f;
 		MeToActorDistanceXYSq = 0.0f;
 		MeToActorDot = 0.0f;
+		MeToActorAbsDeltaAngle = 0.0f;
 		MeToActorBodyRotation = FRotator::ZeroRotator;
+		// View to Actor
+		ViewToActorDir = FVector::ZeroVector;
+		ViewToActorBodyRotation = FRotator::ZeroRotator;
+		ViewToActorDot = 0.0f;
 		// Sight
 		bSeesActorByRadius= false;
 		bSeesActorByDot= false;
@@ -236,6 +242,8 @@ struct FCsSenseInfo
 		LastTime_SeesActorByRadius = 0.0f;
 		LastTime_SeesActorByDot = 0.0f;
 		LastTime_SeesActor = 0.0f;
+		SeesActorBodyTime = 0.0f;
+		NotSeesActorBodyTime = 0.0f;
 		LastTime_SeesActorBody = 0.0f;
 		LastTime_SeesActorHead = 0.0f;
 		StartTime_TraceMeToActorBody = 0.0f;

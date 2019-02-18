@@ -15,7 +15,7 @@ void UCsPooledWidget::Init(const FGeometry& MyGeometry)
 	Super::Init(MyGeometry);
 }
 
-void UCsPooledWidget::Init(const int32 &Index, const TCsSimpleWidgetType &InType)
+void UCsPooledWidget::Init(const int32& Index, const ECsSimpleWidgetType& InType)
 {
 	Cache.Set(Index, this);
 }

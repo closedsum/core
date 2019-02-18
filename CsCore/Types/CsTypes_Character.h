@@ -199,7 +199,12 @@ struct CSCORE_API FCsHeadCollision
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
 	FVector Offset;
 
-	FCsHeadCollision() {}
+	FCsHeadCollision() :
+		Radius(0.0f),
+		BoneName(NAME_None),
+		Offset(0.0f)
+	{
+	}
 	~FCsHeadCollision() {}
 
 	FORCEINLINE FCsHeadCollision& operator=(const FCsHeadCollision& B)

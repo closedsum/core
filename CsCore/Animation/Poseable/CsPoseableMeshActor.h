@@ -740,6 +740,7 @@ struct FCsAnimLevelSequenceInfo_Shot
 		ExportInterval = ECsSequencerTimeSnapInterval::STSI_30Fps;
 		ExportInterval_Internal = ECsSequencerTimeSnapInterval::ToFloat(ExportInterval);
 		ExportInterval_FPS = ECsSequencerTimeSnapInterval::ToFPS(ExportInterval);
+		Import = false;
 		Anim = nullptr;
 	}
 

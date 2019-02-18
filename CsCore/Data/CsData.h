@@ -34,7 +34,11 @@ struct FCsDataAddToDataMapping
 	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "Helper")
 	FString Output;
 
-	FCsDataAddToDataMapping()
+	FCsDataAddToDataMapping() :
+		AddToDataMapping(false),
+		LoadFlags(0),
+		Message(),
+		Output()
 	{
 		CS_SET_BLUEPRINT_BITFLAG(LoadFlags, ECsLoadFlags::Game);
 	}

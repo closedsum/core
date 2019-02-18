@@ -109,7 +109,15 @@ struct FCsPawnViewTraceInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
 	TArray<FHitResult> OutHits;
 
-	FCsPawnViewTraceInfo()
+	FCsPawnViewTraceInfo() :
+		bAsync(false),
+		bForce(false),
+		QueryParams(),
+		ObjectParams(),
+		Range(0.0f),
+		RangeSq(0.0f),
+		HitLocation(0.0f),
+		HitResult()
 	{
 		RequestId = CS_INVALID_TRACE_REQUEST_ID;
 	}
@@ -156,7 +164,11 @@ struct FCsPawnJumpingFallingInfo
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float TimeTillGrounded;
 
-	FCsPawnJumpingFallingInfo(){}
+	FCsPawnJumpingFallingInfo()
+	{
+		Reset();
+	}
+
 	~FCsPawnJumpingFallingInfo() {}
 
 	void Reset()

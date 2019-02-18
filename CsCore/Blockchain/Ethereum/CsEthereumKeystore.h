@@ -19,7 +19,15 @@ struct FCsEthereumKeystoreKdfParams
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ethereum Keystore")
 	FString salt;
 
-	FCsEthereumKeystoreKdfParams(){}
+	FCsEthereumKeystoreKdfParams() :
+		dklen(0),
+		n(0),
+		p(0),
+		r(0),
+		salt()
+	{
+	}
+
 	~FCsEthereumKeystoreKdfParams(){}
 };
 

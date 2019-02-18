@@ -257,7 +257,10 @@ struct CSCORE_API FCsPooledObjectPayload
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
 	TWeakObjectPtr<UObject> Parent;
 
-	FCsPooledObjectPayload(){}
+	FCsPooledObjectPayload()
+	{
+		Reset();
+	}
 	virtual ~FCsPooledObjectPayload(){}
 
 	virtual void Reset()

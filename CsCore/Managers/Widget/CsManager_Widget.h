@@ -7,17 +7,17 @@
 
 #define CS_POOLED_WIDGET_PAYLOAD_SIZE 256
 
-class FCsManager_Widget : public TCsManager_PooledObjects_TMap<TCsSimpleWidgetType, UCsPooledWidget, FCsWidgetPayload, CS_POOLED_WIDGET_PAYLOAD_SIZE>
+class FCsManager_Widget : public TCsManager_PooledObjects_TMap<ECsSimpleWidgetType, UCsPooledWidget, FCsWidgetPayload, CS_POOLED_WIDGET_PAYLOAD_SIZE>
 {
 private:
-	typedef TCsManager_PooledObjects_TMap<TCsSimpleWidgetType, UCsPooledWidget, FCsWidgetPayload, CS_POOLED_WIDGET_PAYLOAD_SIZE> Super;
+	typedef TCsManager_PooledObjects_TMap<ECsSimpleWidgetType, UCsPooledWidget, FCsWidgetPayload, CS_POOLED_WIDGET_PAYLOAD_SIZE> Super;
 
 public:
 	~FCsManager_Widget();
 
 	virtual void DeconstructObject(UCsPooledWidget* o) override;
 	virtual FString GetObjectName(UCsPooledWidget* o) override;
-	virtual const FString& EnumTypeToString(const TCsSimpleWidgetType &e) override;
+	virtual const FString& EnumTypeToString(const ECsSimpleWidgetType &e) override;
 	virtual const FString& EnumTypeToString(const int32 &index) override;
 	virtual void Log(const FString& log) override;
 };
@@ -46,47 +46,40 @@ public:
 
 	void Shutdown();
 
-	TMap<TCsSimpleWidgetType, UClass*> ClassMap;
+	TMap<ECsSimpleWidgetType, UClass*> ClassMap;
 
-	virtual UCsPooledWidget* ConstructObject(const TCsSimpleWidgetType &Type);
+	virtual UCsPooledWidget* ConstructObject(const ECsSimpleWidgetType &Type);
 
-	void CreatePool(const TCsSimpleWidgetType &Type, const int32 &Size);
 	UFUNCTION(BlueprintCallable, Category = "Manager Widget")
-	void CreatePool(const TEnumAsByte<ECsSimpleWidgetType::Type> &Type, const int32 &Size);
-	void AddToPool(const TCsSimpleWidgetType &Type, UCsPooledWidget* Object);
+	void CreatePool(const ECsSimpleWidgetType& Type, const int32 &Size);
 	UFUNCTION(BlueprintCallable, Category = "Manager Widget")
-	void AddToPool(const TEnumAsByte<ECsSimpleWidgetType::Type> &Type, UCsPooledWidget* Object);
-	void AddToActivePool(const TCsSimpleWidgetType &Type, UCsPooledWidget* Object);
+	void AddToPool(const ECsSimpleWidgetType& Type, UCsPooledWidget* Object);
 	UFUNCTION(BlueprintCallable, Category = "Manager Widget")
-	void AddToActivePool(const TEnumAsByte<ECsSimpleWidgetType::Type> &Type, UCsPooledWidget* Object);
+	void AddToActivePool(const ECsSimpleWidgetType& Type, UCsPooledWidget* Object);
 	UFUNCTION(BlueprintCallable, Category = "Manager Widget")
 	void OnTick(const float &DeltaTime);
 	UFUNCTION(BlueprintCallable, Category = "Manager Widget")
 	void GetAllActiveObjects(TArray<UCsPooledWidget*> &OutObjects);
 
-	const TArray<class UCsPooledWidget*>* GetObjects(const TCsSimpleWidgetType& Type);
+	const TArray<class UCsPooledWidget*>* GetObjects(const ECsSimpleWidgetType& Type);
 
-	int32 GetActivePoolSize(const TCsSimpleWidgetType &Type);
 	UFUNCTION(BlueprintCallable, Category = "Manager Widget")
-	int32 GetActivePoolSize(const TEnumAsByte<ECsSimpleWidgetType::Type> &Type);
-	bool IsExhausted(const TCsSimpleWidgetType &Type);
+	int32 GetActivePoolSize(const ECsSimpleWidgetType& Type);
 	UFUNCTION(BlueprintCallable, Category = "Manager Widget")
-	bool IsExhausted(const TEnumAsByte<ECsSimpleWidgetType::Type> &Type);
-	bool DeAllocate(const TCsSimpleWidgetType &Type, const int32 &Index);
+	bool IsExhausted(const ECsSimpleWidgetType& Type);
 	UFUNCTION(BlueprintCallable, Category = "Manager Widget")
-	bool DeAllocate(const TEnumAsByte<ECsSimpleWidgetType::Type> &Type, const int32 &Index);
+	bool DeAllocate(const ECsSimpleWidgetType& Type, const int32 &Index);
 	UFUNCTION(BlueprintCallable, Category = "Manager Widget")
 	void DeAllocateAll();
 
 	FCsWidgetPayload* AllocatePayload();
 
-	UCsPooledWidget* Display(const TCsSimpleWidgetType &Type, FCsWidgetPayload &Payload);
 	UFUNCTION(BlueprintCallable, Category = "Manager Widget")
-	UCsPooledWidget* Display(const TEnumAsByte<ECsSimpleWidgetType::Type> &Type, FCsWidgetPayload &Payload);
-	UCsPooledWidget* Display(const TCsSimpleWidgetType &Type, FCsWidgetPayload* Payload);
+	UCsPooledWidget* Display(const ECsSimpleWidgetType& Type, FCsWidgetPayload &Payload);
+	UCsPooledWidget* Display(const ECsSimpleWidgetType& Type, FCsWidgetPayload* Payload);
 
 	template<typename T>
-	T* Display(const TCsSimpleWidgetType &Type, FCsWidgetPayload* Payload)
+	T* Display(const ECsSimpleWidgetType& Type, FCsWidgetPayload* Payload)
 	{
 		return Cast<T>(Display(Type, Payload));
 	}

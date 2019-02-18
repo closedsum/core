@@ -220,10 +220,16 @@ private:
 	class UMaterialInstanceConstant* Materials_Internal[ECsInteractiveState::ECsInteractiveState_MAX];
 
 public:
-	FCsInteractiveMaterials()
+	FCsInteractiveMaterials() :
+		Materials_LoadFlags(0)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Materials_LoadFlags, ECsLoadFlags::Game);
 		CS_SET_BLUEPRINT_BITFLAG(Materials_LoadFlags, ECsLoadFlags::UI);
+
+		for (int32 I = 0; I < ECS_INTERACTIVE_STATE_MAX; ++I)
+		{
+			Materials_Internal[I] = nullptr;
+		}
 	}
 
 	FORCEINLINE FCsInteractiveMaterials& operator=(const FCsInteractiveMaterials& B)

@@ -43,7 +43,7 @@ void UCsSimpleWidget::Init(const FGeometry& MyGeometry)
 	Size = MyGeometry.GetAbsoluteSize(); 
 }
 
-void UCsSimpleWidget::Init(const int32 &Index, const TCsSimpleWidgetType &InType){}
+void UCsSimpleWidget::Init(const int32& Index, const ECsSimpleWidgetType& InType){}
 
 void UCsSimpleWidget::OnCreatePool(){}
 

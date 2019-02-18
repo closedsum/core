@@ -254,7 +254,16 @@ struct CSCORE_API FCsBTTask_KeyValue_Compare
 
 	bool Last_Evaluation;
 
-	FCsBTTask_KeyValue_Compare()
+	FCsBTTask_KeyValue_Compare() :
+		Key(),
+		BasicOperation(EBasicKeyOperation::NotSet),
+		ArithmeticOperation(EArithmeticKeyOperation::Equal),
+		TextOperation(ETextKeyOperation::Contain),
+		Value_Int(0),
+		Value_Float(0.0f),
+		Value_Name(NAME_None),
+		Value_Vector(0.0f),
+		Value_Rotator(0.0f)
 	{
 		SearchCase	= ESearchCase::IgnoreCase;
 		Type		= EMCsBlackboardKeyType::Get().GetMAX();

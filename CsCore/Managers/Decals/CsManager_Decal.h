@@ -20,7 +20,13 @@ struct FCsDecalCache : public FCsPooledObjectCache
 	UPROPERTY()
 	class ADecalActor* DecalActor;
 
-	FCsDecalCache(){}
+	FCsDecalCache() :
+		PoolIndex(0),
+		TimeAllocated(0.0f),
+		DecalActor(nullptr)
+	{
+	}
+
 	~FCsDecalCache(){}
 };
 

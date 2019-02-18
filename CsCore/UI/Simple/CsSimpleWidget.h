@@ -17,7 +17,7 @@ class CSCORE_API UCsSimpleWidget : public UUserWidget
 	bool HasNativeContructed;
 
 	virtual void Init(const FGeometry& MyGeometry);
-	virtual void Init(const int32 &Index, const TCsSimpleWidgetType &InType);
+	virtual void Init(const int32& Index, const ECsSimpleWidgetType& InType);
 
 	virtual void OnCreatePool();
 

@@ -20,7 +20,7 @@ FString FCsManager_Widget::GetObjectName(UCsPooledWidget* o)
 	return o->GetName();
 }
 
-const FString& FCsManager_Widget::EnumTypeToString(const TCsSimpleWidgetType &e)
+const FString& FCsManager_Widget::EnumTypeToString(const ECsSimpleWidgetType& e)
 {
 	return EMCsSimpleWidgetType::Get().ToString(e);
 }
@@ -76,39 +76,25 @@ UWorld* UICsManager_Widget::GetCurrentWorld()
 	return CurrentWorld.IsValid() ? CurrentWorld.Get() : nullptr;
 }
 
-UCsPooledWidget* UICsManager_Widget::ConstructObject(const TCsSimpleWidgetType &Type)
+UCsPooledWidget* UICsManager_Widget::ConstructObject(const ECsSimpleWidgetType& Type)
 {
 	return  CreateWidget<UCsPooledWidget>(GetCurrentWorld(), ClassMap.Find(Type) ? ClassMap[Type] : UCsPooledWidget::StaticClass());
 }
 
-void UICsManager_Widget::CreatePool(const TCsSimpleWidgetType &Type, const int32 &Size)
+void UICsManager_Widget::CreatePool(const ECsSimpleWidgetType& Type, const int32 &Size)
 {
 	Internal->CreatePool(Type, Size);
 }
 
-void UICsManager_Widget::CreatePool(const TEnumAsByte<ECsSimpleWidgetType::Type> &Type, const int32 &Size)
-{
-	Internal->CreatePool((TCsSimpleWidgetType)Type, Size);
-}
-
-void UICsManager_Widget::AddToPool(const TCsSimpleWidgetType &Type, UCsPooledWidget* Object)
+void UICsManager_Widget::AddToPool(const ECsSimpleWidgetType& Type, UCsPooledWidget* Object)
 {
 	Internal->AddToPool(Type, Object);
 }
 
-void UICsManager_Widget::AddToPool(const TEnumAsByte<ECsSimpleWidgetType::Type> &Type, UCsPooledWidget* Object)
-{
-	Internal->AddToPool((TCsSimpleWidgetType)Type, Object);
-}
 
-void UICsManager_Widget::AddToActivePool(const TCsSimpleWidgetType &Type, UCsPooledWidget* Object)
+void UICsManager_Widget::AddToActivePool(const ECsSimpleWidgetType& Type, UCsPooledWidget* Object)
 {
 	Internal->AddToActivePool(Type, Object);
-}
-
-void UICsManager_Widget::AddToActivePool(const TEnumAsByte<ECsSimpleWidgetType::Type> &Type, UCsPooledWidget* Object)
-{
-	Internal->AddToActivePool((TCsSimpleWidgetType)Type, Object);
 }
 
 void UICsManager_Widget::OnTick(const float &DeltaTime)
@@ -121,39 +107,24 @@ void UICsManager_Widget::GetAllActiveObjects(TArray<UCsPooledWidget*> &OutObject
 	Internal->GetAllActiveObjects(OutObjects);
 }
 
-const TArray<class UCsPooledWidget*>* UICsManager_Widget::GetObjects(const TCsSimpleWidgetType& Type)
+const TArray<class UCsPooledWidget*>* UICsManager_Widget::GetObjects(const ECsSimpleWidgetType& Type)
 {
 	return Internal->GetObjects(Type);
 }
 
-int32 UICsManager_Widget::GetActivePoolSize(const TCsSimpleWidgetType &Type)
+int32 UICsManager_Widget::GetActivePoolSize(const ECsSimpleWidgetType& Type)
 {
 	return Internal->GetActivePoolSize(Type);
 }
 
-int32 UICsManager_Widget::GetActivePoolSize(const TEnumAsByte<ECsSimpleWidgetType::Type> &Type)
-{
-	return Internal->GetActivePoolSize((TCsSimpleWidgetType)Type);
-}
-
-bool UICsManager_Widget::IsExhausted(const TCsSimpleWidgetType &Type)
+bool UICsManager_Widget::IsExhausted(const ECsSimpleWidgetType& Type)
 {
 	return Internal->IsExhausted(Type);
 }
 
-bool UICsManager_Widget::IsExhausted(const TEnumAsByte<ECsSimpleWidgetType::Type> &Type)
-{
-	return Internal->IsExhausted((TCsSimpleWidgetType)Type);
-}
-
-bool UICsManager_Widget::DeAllocate(const TCsSimpleWidgetType &Type, const int32 &Index)
+bool UICsManager_Widget::DeAllocate(const ECsSimpleWidgetType& Type, const int32 &Index)
 {
 	return Internal->DeAllocate(Type, Index);
-}
-
-bool UICsManager_Widget::DeAllocate(const TEnumAsByte<ECsSimpleWidgetType::Type> &Type, const int32 &Index)
-{
-	return Internal->DeAllocate((TCsSimpleWidgetType)Type, Index);
 }
 
 void UICsManager_Widget::DeAllocateAll()
@@ -166,17 +137,12 @@ FCsWidgetPayload* UICsManager_Widget::AllocatePayload()
 	return Internal->AllocatePayload();
 }
 
-UCsPooledWidget* UICsManager_Widget::Display(const TCsSimpleWidgetType &Type, FCsWidgetPayload &Payload)
+UCsPooledWidget* UICsManager_Widget::Display(const ECsSimpleWidgetType& Type, FCsWidgetPayload& Payload)
 {
 	return Internal->Spawn(Type, &Payload);
 }
 
-UCsPooledWidget* UICsManager_Widget::Display(const TEnumAsByte<ECsSimpleWidgetType::Type> &Type, FCsWidgetPayload &Payload)
-{
-	return Internal->Spawn((TCsSimpleWidgetType)Type, &Payload);
-}
-
-UCsPooledWidget* UICsManager_Widget::Display(const TCsSimpleWidgetType &Type, FCsWidgetPayload *Payload)
+UCsPooledWidget* UICsManager_Widget::Display(const ECsSimpleWidgetType& Type, FCsWidgetPayload* Payload)
 {
 	return Internal->Spawn(Type, Payload);
 }

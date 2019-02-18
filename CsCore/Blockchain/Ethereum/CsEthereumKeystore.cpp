@@ -7,7 +7,14 @@
 
 #include "Runtime/Core/Public/HAL/FileManagerGeneric.h"
 
-FCsEthereumKeystore::FCsEthereumKeystore(){}
+FCsEthereumKeystore::FCsEthereumKeystore() :
+	address(),
+	crypto(),
+	id(),
+	version(0)
+{
+}
+
 FCsEthereumKeystore::~FCsEthereumKeystore(){}
 
 void FCsEthereumKeystore::Parse(const FString &Str)

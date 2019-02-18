@@ -84,6 +84,7 @@ struct FCsSoundCache : public FCsPooledObjectCache
 		VolumeMultiplier = 1.0f;
 		PitchMultiplier  = 1.0f;
 		Bone			 = NAME_None;
+		Location		 = FVector::ZeroVector;
 	}
 
 	FORCEINLINE ACsSound* GetSound() { return Sound.IsValid() ? Sound.Get() : nullptr; }

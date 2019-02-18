@@ -135,7 +135,11 @@ private:
 	class USoundCue* Sound_Internal;
 
 public:
-	FCsSoundElement()
+	FCsSoundElement() :
+		Sound_LoadFlags(0),
+		bSpatialize(false),
+		IsLooping(false),
+		Sound_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Sound_LoadFlags, ECsLoadFlags::Game);
 
@@ -264,7 +268,10 @@ struct CSCORE_API FCsSoundPayload : public FCsPooledObjectPayload
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FVector Location;
 
-	FCsSoundPayload(){}
+	FCsSoundPayload()
+	{
+		Reset();
+	}
 	~FCsSoundPayload(){}
 
 	FORCEINLINE void Set(FCsSoundElement* Element)

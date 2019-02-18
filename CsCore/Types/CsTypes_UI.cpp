@@ -31,7 +31,7 @@ EMCsSimpleWidgetType& EMCsSimpleWidgetType::Get()
 	return *Instance;
 }
 
-namespace ECsSimpleWidgetType
+namespace NCsSimpleWidgetType
 {
 	namespace Ref
 	{

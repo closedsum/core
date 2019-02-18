@@ -352,7 +352,18 @@ struct CSCORE_API FCsInputInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	float Duration;
 
-	FCsInputInfo() {}
+	FCsInputInfo() :
+		Type(ECsInputType::ECsInputType_MAX),
+		ValueType(ECsInputValue::ECsInputValue_MAX),
+		Event(ECsInputEvent::ECsInputEvent_MAX),
+		Last_Event(ECsInputEvent::ECsInputEvent_MAX),
+		Value(0.0f),
+		Location(0.0f),
+		Rotation(0.0f),
+		Duration(0.0f)
+	{
+	}
+
 	~FCsInputInfo(){}
 
 	FORCEINLINE FCsInputInfo& operator=(const FCsInputInfo& B)
@@ -470,11 +481,7 @@ struct CSCORE_API FCsInput
 	FCsInput()
 	{
 		PoolIndex = CS_INVALID_INPUT_POOL_INDEX;
-		Action	  = EMCsInputAction::Get().GetMAX();
-		Event	  = ECsInputEvent::ECsInputEvent_MAX;
-		Value	  = INFINITY;
-		Location  = FVector::ZeroVector;
-		Rotation  = FRotator::ZeroRotator;
+		Reset();
 	}
 
 	FORCEINLINE FCsInput& operator=(const FRep_CsInput& B)

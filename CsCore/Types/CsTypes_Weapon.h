@@ -500,7 +500,13 @@ struct FCsData_Weapon_FireMode_Animation
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 	bool DoScaleFireAnim;
 
-	FCsData_Weapon_FireMode_Animation() {}
+	FCsData_Weapon_FireMode_Animation() :
+		LoopFireAnim(false),
+		FireAnim(),
+		DoScaleFireAnim(false)
+	{
+	}
+
 	virtual ~FCsData_Weapon_FireMode_Animation() {}
 };
 

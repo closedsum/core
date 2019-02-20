@@ -355,7 +355,8 @@ public:
 		FollowCamera(false),
 		DistanceProjectedOutFromCamera(0.0f),
 		LookAtCamera(false),
-		LockAxes()
+		LockAxes(),
+		Blueprint_Internal(nullptr)
 	{
 		CS_SET_BLUEPRINT_BITFLAG(Blueprint_LoadFlags, ECsLoadFlags::Game);
 		CS_SET_BLUEPRINT_BITFLAG(Blueprint_LoadFlags, ECsLoadFlags::UI);

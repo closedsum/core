@@ -17,17 +17,7 @@ enum class ECsBlockchainType : uint8
 
 struct CSCORE_API EMCsBlockchainType : public TCsEnumMap<ECsBlockchainType>
 {
-protected:
-	EMCsBlockchainType() {}
-	EMCsBlockchainType(const EMCsBlockchainType &) = delete;
-	EMCsBlockchainType(EMCsBlockchainType &&) = delete;
-public:
-	~EMCsBlockchainType() {}
-private:
-	static EMCsBlockchainType* Instance;
-
-public:
-	static EMCsBlockchainType& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsBlockchainType)
 };
 
 namespace NCsBlockchainType
@@ -53,17 +43,7 @@ enum class ECsBlockchainProcessType : uint8
 
 struct CSCORE_API EMCsBlockchainProcessType : public TCsEnumMap<ECsBlockchainProcessType>
 {
-protected:
-	EMCsBlockchainProcessType() {}
-	EMCsBlockchainProcessType(const EMCsBlockchainProcessType &) = delete;
-	EMCsBlockchainProcessType(EMCsBlockchainProcessType &&) = delete;
-public:
-	~EMCsBlockchainProcessType() {}
-private:
-	static EMCsBlockchainProcessType* Instance;
-
-public:
-	static EMCsBlockchainProcessType& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsBlockchainProcessType)
 };
 
 namespace NCsBlockchainProcessType

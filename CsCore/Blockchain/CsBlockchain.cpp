@@ -13,14 +13,7 @@ bool UCsBlockchain::s_bBlockchainHasShutdown = false;
 #pragma region
 
 // BlockchainType
-EMCsBlockchainType* EMCsBlockchainType::Instance;
-
-EMCsBlockchainType& EMCsBlockchainType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsBlockchainType();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMCsBlockchainType)
 
 namespace NCsBlockchainType
 {
@@ -34,14 +27,7 @@ namespace NCsBlockchainType
 }
 
 // BlockchainProcessType
-EMCsBlockchainProcessType* EMCsBlockchainProcessType::Instance;
-
-EMCsBlockchainProcessType& EMCsBlockchainProcessType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsBlockchainProcessType();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMCsBlockchainProcessType)
 
 namespace NCsBlockchainProcessType
 {

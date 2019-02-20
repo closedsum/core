@@ -1,24 +1,11 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "Blockchain/CsBlockchainCommand.h"
 
-EMCsBlockchainCommand* EMCsBlockchainCommand::Instance;
-
-EMCsBlockchainCommand& EMCsBlockchainCommand::Get()
-{
-	if (!Instance)
-		Instance = new EMCsBlockchainCommand();
-	return *Instance;
-}
+// BlockchainCommand
+CS_DEFINE_ENUM_MAP_BODY(EMCsBlockchainCommand)
 
 // BlockchainCommandArgumentType
-EMCsBlockchainCommandArgumentType* EMCsBlockchainCommandArgumentType::Instance;
-
-EMCsBlockchainCommandArgumentType& EMCsBlockchainCommandArgumentType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsBlockchainCommandArgumentType();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMCsBlockchainCommandArgumentType)
 
 namespace NCsBlockchainCommandArgumentType
 {

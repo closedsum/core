@@ -25,17 +25,7 @@ FORCEINLINE uint32 GetTypeHash(const FECsBlockchainContract& b)
 
 struct CSCORE_API EMCsBlockchainContract : public TCsEnumStructMap<FECsBlockchainContract, uint8>
 {
-protected:
-	EMCsBlockchainContract() {}
-	EMCsBlockchainContract(const EMCsBlockchainContract &) = delete;
-	EMCsBlockchainContract(EMCsBlockchainContract &&) = delete;
-public:
-	~EMCsBlockchainContract() {}
-private:
-	static EMCsBlockchainContract* Instance;
-
-public:
-	static EMCsBlockchainContract& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsBlockchainContract)
 };
 
 // Argument
@@ -59,17 +49,7 @@ enum class ECsBlockchainContractArgumentType : uint8
 
 struct CSCORE_API EMCsBlockchainContractArgumentType : public TCsEnumMap<ECsBlockchainContractArgumentType>
 {
-protected:
-	EMCsBlockchainContractArgumentType() {}
-	EMCsBlockchainContractArgumentType(const EMCsBlockchainContractArgumentType &) = delete;
-	EMCsBlockchainContractArgumentType(EMCsBlockchainContractArgumentType &&) = delete;
-public:
-	~EMCsBlockchainContractArgumentType() {}
-private:
-	static EMCsBlockchainContractArgumentType* Instance;
-
-public:
-	static EMCsBlockchainContractArgumentType& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsBlockchainContractArgumentType)
 };
 
 namespace NCsBlockchainContractArgumentType
@@ -273,17 +253,7 @@ FORCEINLINE uint32 GetTypeHash(const FECsBlockchainContractFunction& b)
 
 struct CSCORE_API EMCsBlockchainContractFunction : public TCsEnumStructMap<FECsBlockchainContractFunction, uint8>
 {
-protected:
-	EMCsBlockchainContractFunction() {}
-	EMCsBlockchainContractFunction(const EMCsBlockchainContractFunction &) = delete;
-	EMCsBlockchainContractFunction(EMCsBlockchainContractFunction &&) = delete;
-public:
-	~EMCsBlockchainContractFunction() {}
-private:
-	static EMCsBlockchainContractFunction* Instance;
-
-public:
-	static EMCsBlockchainContractFunction& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsBlockchainContractFunction)
 };
 
 #pragma endregion BlockchainContractFunction
@@ -304,17 +274,7 @@ enum class ECsBlockchainContractFunctionArgumentType : uint8
 
 struct CSCORE_API EMCsBlockchainContractFunctionArgumentType : public TCsEnumMap<ECsBlockchainContractFunctionArgumentType>
 {
-protected:
-	EMCsBlockchainContractFunctionArgumentType() {}
-	EMCsBlockchainContractFunctionArgumentType(const EMCsBlockchainContractFunctionArgumentType &) = delete;
-	EMCsBlockchainContractFunctionArgumentType(EMCsBlockchainContractFunctionArgumentType &&) = delete;
-public:
-	~EMCsBlockchainContractFunctionArgumentType() {}
-private:
-	static EMCsBlockchainContractFunctionArgumentType* Instance;
-
-public:
-	static EMCsBlockchainContractFunctionArgumentType& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsBlockchainContractFunctionArgumentType)
 };
 
 namespace NCsBlockchainContractFunctionArgumentType
@@ -441,17 +401,7 @@ enum class ECsBlockchainContractFunctionReturnType : uint8
 
 struct CSCORE_API EMCsBlockchainContractFunctionReturnType : public TCsEnumMap<ECsBlockchainContractFunctionReturnType>
 {
-protected:
-	EMCsBlockchainContractFunctionReturnType() {}
-	EMCsBlockchainContractFunctionReturnType(const EMCsBlockchainContractFunctionReturnType &) = delete;
-	EMCsBlockchainContractFunctionReturnType(EMCsBlockchainContractFunctionReturnType &&) = delete;
-public:
-	~EMCsBlockchainContractFunctionReturnType() {}
-private:
-	static EMCsBlockchainContractFunctionReturnType* Instance;
-
-public:
-	static EMCsBlockchainContractFunctionReturnType& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsBlockchainContractFunctionReturnType)
 };
 
 namespace NCsBlockchainContractFunctionReturnType

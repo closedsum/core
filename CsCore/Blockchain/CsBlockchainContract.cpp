@@ -1,23 +1,8 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "Blockchain/CsBlockchainContract.h"
 
-EMCsBlockchainContract* EMCsBlockchainContract::Instance;
-
-EMCsBlockchainContract& EMCsBlockchainContract::Get()
-{
-	if (!Instance)
-		Instance = new EMCsBlockchainContract();
-	return *Instance;
-}
-
-EMCsBlockchainContractFunction* EMCsBlockchainContractFunction::Instance;
-
-EMCsBlockchainContractFunction& EMCsBlockchainContractFunction::Get()
-{
-	if (!Instance)
-		Instance = new EMCsBlockchainContractFunction();
-	return *Instance;
-}
+// BlockchainContract
+CS_DEFINE_ENUM_MAP_BODY(EMCsBlockchainContract)
 
 ICsBlockchainContract::ICsBlockchainContract(){}
 ICsBlockchainContract::ICsBlockchainContract(const FString &InName){}
@@ -27,14 +12,7 @@ ICsBlockchainContract::~ICsBlockchainContract(){}
 #pragma region
 
 	// BlockchainContractArgumentType
-EMCsBlockchainContractArgumentType* EMCsBlockchainContractArgumentType::Instance;
-
-EMCsBlockchainContractArgumentType& EMCsBlockchainContractArgumentType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsBlockchainContractArgumentType();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMCsBlockchainContractArgumentType)
 
 namespace NCsBlockchainContractArgumentType
 {
@@ -54,15 +32,11 @@ namespace NCsBlockchainContractArgumentType
 // Function
 #pragma region
 
-	// BlockchainContractFunctionArgumentType
-EMCsBlockchainContractFunctionArgumentType* EMCsBlockchainContractFunctionArgumentType::Instance;
+	// BlockchainContractFunction
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsBlockchainContractFunction)
 
-EMCsBlockchainContractFunctionArgumentType& EMCsBlockchainContractFunctionArgumentType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsBlockchainContractFunctionArgumentType();
-	return *Instance;
-}
+	// BlockchainContractFunctionArgumentType
+CS_DEFINE_ENUM_MAP_BODY(EMCsBlockchainContractFunctionArgumentType)
 
 namespace NCsBlockchainContractFunctionArgumentType
 {
@@ -76,14 +50,7 @@ namespace NCsBlockchainContractFunctionArgumentType
 }
 
 	// BlockchainContractFunctionReturnType
-EMCsBlockchainContractFunctionReturnType* EMCsBlockchainContractFunctionReturnType::Instance;
-
-EMCsBlockchainContractFunctionReturnType& EMCsBlockchainContractFunctionReturnType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsBlockchainContractFunctionReturnType();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMCsBlockchainContractFunctionReturnType)
 
 namespace NCsBlockchainContractFunctionReturnType
 {

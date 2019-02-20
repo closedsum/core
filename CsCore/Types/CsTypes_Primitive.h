@@ -237,6 +237,29 @@ public:
 	}
 };
 
+#define CS_DECLARE_ENUM_MAP_BODY(EnumMap) \
+	protected: \
+		EnumMap() {} \
+		EnumMap(const EnumMap &) = delete; \
+		EnumMap(EnumMap &&) = delete; \
+	public: \
+		~EnumMap() {} \
+	private: \
+		static EnumMap* Instance; \
+		\
+	public: \
+		static EnumMap& Get();
+
+#define CS_DEFINE_ENUM_MAP_BODY(EnumMap) \
+	EnumMap* EnumMap::Instance; \
+	\
+	EnumMap& EnumMap::Get() \
+	{ \
+		if (!Instance) \
+			Instance = new EnumMap(); \
+		return *Instance; \
+	}
+
 template<typename EnumType>
 struct TCsEnumMaskMap
 {
@@ -978,6 +1001,29 @@ public:
 
 #endif // #if WITH_EDITOR
 };
+
+#define CS_DECLARE_ENUM_STRUCT_MAP_BODY(EnumMap) \
+	protected: \
+		EnumMap() {} \
+		EnumMap(const EnumMap &) = delete; \
+		EnumMap(EnumMap &&) = delete; \
+	public: \
+		~EnumMap() {} \
+	private: \
+		static EnumMap* Instance; \
+		\
+	public: \
+		static EnumMap& Get();
+
+#define CS_DEFINE_ENUM_STRUCT_MAP_BODY(EnumMap) \
+	EnumMap* EnumMap::Instance; \
+	\
+	EnumMap& EnumMap::Get() \
+	{ \
+		if (!Instance) \
+			Instance = new EnumMap(); \
+		return *Instance; \
+	}
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsEnumMask_int32 : public FECsEnum

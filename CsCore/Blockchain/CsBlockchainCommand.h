@@ -25,17 +25,7 @@ FORCEINLINE uint32 GetTypeHash(const FECsBlockchainCommand& b)
 
 struct CSCORE_API EMCsBlockchainCommand : public TCsEnumStructMap<FECsBlockchainCommand, uint8>
 {
-protected:
-	EMCsBlockchainCommand() {}
-	EMCsBlockchainCommand(const EMCsBlockchainCommand &) = delete;
-	EMCsBlockchainCommand(EMCsBlockchainCommand &&) = delete;
-public:
-	~EMCsBlockchainCommand() {}
-private:
-	static EMCsBlockchainCommand* Instance;
-
-public:
-	static EMCsBlockchainCommand& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsBlockchainCommand)
 };
 
 UENUM(BlueprintType)
@@ -52,17 +42,7 @@ enum class ECsBlockchainCommandArgumentType : uint8
 
 struct CSCORE_API EMCsBlockchainCommandArgumentType : public TCsEnumMap<ECsBlockchainCommandArgumentType>
 {
-protected:
-	EMCsBlockchainCommandArgumentType() {}
-	EMCsBlockchainCommandArgumentType(const EMCsBlockchainCommandArgumentType &) = delete;
-	EMCsBlockchainCommandArgumentType(EMCsBlockchainCommandArgumentType &&) = delete;
-public:
-	~EMCsBlockchainCommandArgumentType() {}
-private:
-	static EMCsBlockchainCommandArgumentType* Instance;
-
-public:
-	static EMCsBlockchainCommandArgumentType& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsBlockchainCommandArgumentType)
 };
 
 namespace NCsBlockchainCommandArgumentType

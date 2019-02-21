@@ -14,24 +14,10 @@
 #pragma region
 
 	// Process
-EMCsProcess* EMCsProcess::Instance;
-
-EMCsProcess& EMCsProcess::Get()
-{
-	if (!Instance)
-		Instance = new EMCsProcess();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsProcess)
 
 	// ProcessRoutine
-EMCsProcessRoutine* EMCsProcessRoutine::Instance;
-
-EMCsProcessRoutine& EMCsProcessRoutine::Get()
-{
-	if (!Instance)
-		Instance = new EMCsProcessRoutine();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMCsProcessRoutine)
 
 namespace NCsProcessRoutine
 {
@@ -43,14 +29,7 @@ namespace NCsProcessRoutine
 }
 
 	// ProcessMonitorOutputEventPurpose
-EMCsProcessMonitorOutputEventPurpose* EMCsProcessMonitorOutputEventPurpose::Instance;
-
-EMCsProcessMonitorOutputEventPurpose& EMCsProcessMonitorOutputEventPurpose::Get()
-{
-	if (!Instance)
-		Instance = new EMCsProcessMonitorOutputEventPurpose();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMCsProcessMonitorOutputEventPurpose)
 
 namespace NCsProcessMonitorOutputEventPurpose
 {
@@ -63,25 +42,18 @@ namespace NCsProcessMonitorOutputEventPurpose
 }
 
 	// ProcessPriorityModifier
-namespace ECsProcessPriorityModifier
-{
-	namespace Str
-	{
-		CSCORE_API const TCsString Idle = TCsString(TEXT("Idle"), TEXT("idle"));
-		CSCORE_API const TCsString Low = TCsString(TEXT("Low"), TEXT("low"));
-		CSCORE_API const TCsString Normal = TCsString(TEXT("Normal"), TEXT("normal"));
-		CSCORE_API const TCsString High = TCsString(TEXT("High"), TEXT("high"));
-		CSCORE_API const TCsString Higher = TCsString(TEXT("Higher"), TEXT("higher"));
-	}
+CS_DEFINE_ENUM_MAP_BODY(EMCsProcessPriorityModifier)
 
+namespace NCsProcessPriorityModifier
+{
 	namespace Ref
 	{
-		CSCORE_API const Type Idle = Type::Idle;
-		CSCORE_API const Type Low = Type::Low;
-		CSCORE_API const Type Normal = Type::Normal;
-		CSCORE_API const Type High = Type::High;
-		CSCORE_API const Type Higher = Type::Higher;
-		CSCORE_API const Type ECsProcessPriorityModifier_MAX = Type::ECsProcessPriorityModifier_MAX;
+		CSCORE_API const Type Idle = EMCsProcessPriorityModifier::Get().Add(Type::Idle, TEXT("Idle"));
+		CSCORE_API const Type Low = EMCsProcessPriorityModifier::Get().Add(Type::Low, TEXT("Low"));
+		CSCORE_API const Type Normal = EMCsProcessPriorityModifier::Get().Add(Type::Normal, TEXT("Normal"));
+		CSCORE_API const Type High = EMCsProcessPriorityModifier::Get().Add(Type::High, TEXT("High"));
+		CSCORE_API const Type Higher = EMCsProcessPriorityModifier::Get().Add(Type::Higher, TEXT("Higher"));
+		CSCORE_API const Type ECsProcessPriorityModifier_MAX = EMCsProcessPriorityModifier::Get().Add(Type::ECsProcessPriorityModifier_MAX, TEXT("ECsProcessPriorityModifier_MAX"), TEXT("MAX"));
 	}
 
 	namespace Val
@@ -159,7 +131,7 @@ void UCsProcess::Allocate(FCsProcessPayload* Payload)
 	const bool& bLaunchDetached				= Payload->bLaunchDetached;
 	const bool& bLaucnhHidden				= Payload->bLaunchHidden;
 	const bool& bLaunchReallyHidden			= Payload->bLaunchReallyHidden;
-	const int32& PriorityModifier			= ECsProcessPriorityModifier::ToInt32(Payload->PriorityModifier);
+	const int32& PriorityModifier			= NCsProcessPriorityModifier::ToInt32(Payload->PriorityModifier);
 	const TCHAR* OptionalWorkingDirectory	= Payload->bOptionalWorkingDirectory ? *(Payload->OptionalWorkingDirectory) : nullptr;
 
 	ProcessHandle = FPlatformProcess::CreateProc(*URL, *Params, bLaunchDetached, bLaucnhHidden, bLaunchReallyHidden, &ProcessID, PriorityModifier, OptionalWorkingDirectory, WritePipeChild, ReadPipeChild);

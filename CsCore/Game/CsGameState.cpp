@@ -46,7 +46,7 @@
 // Cache
 #pragma region
 
-namespace ECsGameStateCached
+namespace NCsGameStateCached
 {
 	namespace Name
 	{
@@ -65,16 +65,10 @@ namespace ECsGameStateCached
 // Enums
 #pragma region
 
-EMCsGameStateOnBoardState* EMCsGameStateOnBoardState::Instance;
+// GameStateOnBoardState
+CS_DEFINE_ENUM_MAP_BODY(EMCsGameStateOnBoardState)
 
-EMCsGameStateOnBoardState& EMCsGameStateOnBoardState::Get()
-{
-	if (!Instance)
-		Instance = new EMCsGameStateOnBoardState();
-	return *Instance;
-}
-
-namespace ECsGameStateOnBoardState
+namespace NCsGameStateOnBoardState
 {
 	namespace Ref
 	{
@@ -94,16 +88,10 @@ namespace ECsGameStateOnBoardState
 	}
 }
 
-EMCsGameStateRoutine* EMCsGameStateRoutine::Instance;
+// GameStateRoutine
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsGameStateRoutine)
 
-EMCsGameStateRoutine& EMCsGameStateRoutine::Get()
-{
-	if (!Instance)
-		Instance = new EMCsGameStateRoutine();
-	return *Instance;
-}
-
-namespace ECsGameStateRoutine
+namespace NCsGameStateRoutine
 {
 	CSCORE_API const FECsGameStateRoutine OnBoard_Internal = EMCsGameStateRoutine::Get().Create(TEXT("OnBoard_Internal"));
 }
@@ -286,7 +274,7 @@ bool ACsGameState::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &
 	const FECsGameStateRoutine& RoutineType = EMCsGameStateRoutine::Get().GetEnumAt(Type);
 
 	// OnBoard_Internal
-	if (RoutineType == ECsGameStateRoutine::OnBoard_Internal)
+	if (RoutineType == NCsGameStateRoutine::OnBoard_Internal)
 	{
 		OnBoard_Internal_Routine = Routine;
 		return true;
@@ -304,7 +292,7 @@ bool ACsGameState::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint
 	const FECsGameStateRoutine& RoutineType = EMCsGameStateRoutine::Get().GetEnumAt(Type);
 
 	// OnBoard_Internal
-	if (RoutineType == ECsGameStateRoutine::OnBoard_Internal)
+	if (RoutineType == NCsGameStateRoutine::OnBoard_Internal)
 	{
 		check(OnBoard_Internal_Routine == Routine);
 		OnBoard_Internal_Routine = nullptr;
@@ -331,11 +319,11 @@ void ACsGameState::OnBoard()
 	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
 	Payload->Add			= &ACsGameState::AddRoutine;
 	Payload->Remove			= &ACsGameState::RemoveRoutine;
-	Payload->Type			= ECsGameStateRoutine::OnBoard_Internal.Value;
+	Payload->Type			= NCsGameStateRoutine::OnBoard_Internal.Value;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsGameStateCached::Name::OnBoard_Internal;
-	Payload->NameAsString	= ECsGameStateCached::Str::OnBoard_Internal;
+	Payload->Name			= NCsGameStateCached::Name::OnBoard_Internal;
+	Payload->NameAsString	= NCsGameStateCached::Str::OnBoard_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
@@ -935,7 +923,7 @@ void ACsGameState::SetPlayerStateMappingRelationshipFlag(const uint8 &ClientMapp
 
 FString ACsGameState::GetLocalPlayerProfileName()
 {
-	return ECsGameStateCached::Str::DefaultPlayerProfileName;
+	return NCsGameStateCached::Str::DefaultPlayerProfileName;
 }
 
 #pragma endregion Player State

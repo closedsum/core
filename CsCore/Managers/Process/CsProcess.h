@@ -33,17 +33,7 @@ FORCEINLINE uint32 GetTypeHash(const FECsProcess& b)
 
 struct CSCORE_API EMCsProcess : public TCsEnumStructMap<FECsProcess, uint8>
 {
-protected:
-	EMCsProcess(){}
-	EMCsProcess(const EMCsProcess &) = delete;
-	EMCsProcess(EMCsProcess &&) = delete;
-public:
-	~EMCsProcess(){}
-private:
-	static EMCsProcess* Instance;
-
-public:
-	static EMCsProcess& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsProcess)
 };
 
 #pragma endregion Process
@@ -61,17 +51,7 @@ enum class ECsProcessRoutine : uint8
 
 struct CSCORE_API EMCsProcessRoutine : public TCsEnumMap<ECsProcessRoutine>
 {
-protected:
-	EMCsProcessRoutine() {}
-	EMCsProcessRoutine(const EMCsProcessRoutine &) = delete;
-	EMCsProcessRoutine(EMCsProcessRoutine &&) = delete;
-public:
-	~EMCsProcessRoutine() {}
-private:
-	static EMCsProcessRoutine* Instance;
-
-public:
-	static EMCsProcessRoutine& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsProcessRoutine)
 };
 
 namespace NCsProcessRoutine
@@ -104,17 +84,7 @@ enum class ECsProcessMonitorOutputEventPurpose : uint8
 
 struct CSCORE_API EMCsProcessMonitorOutputEventPurpose : public TCsEnumMap<ECsProcessMonitorOutputEventPurpose>
 {
-protected:
-	EMCsProcessMonitorOutputEventPurpose() {}
-	EMCsProcessMonitorOutputEventPurpose(const EMCsProcessMonitorOutputEventPurpose &) = delete;
-	EMCsProcessMonitorOutputEventPurpose(EMCsProcessMonitorOutputEventPurpose &&) = delete;
-public:
-	~EMCsProcessMonitorOutputEventPurpose() {}
-private:
-	static EMCsProcessMonitorOutputEventPurpose* Instance;
-
-public:
-	static EMCsProcessMonitorOutputEventPurpose& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsProcessMonitorOutputEventPurpose)
 };
 
 namespace NCsProcessMonitorOutputEventPurpose
@@ -244,34 +214,26 @@ public:
 #pragma region
 
 UENUM(BlueprintType)
-namespace ECsProcessPriorityModifier
+enum class ECsProcessPriorityModifier : uint8
 {
-	enum Type
-	{
-		Idle							UMETA(DisplayName = "Idle"),
-		Low								UMETA(DisplayName = "Low"),
-		Normal							UMETA(DisplayName = "Normal"),
-		High							UMETA(DisplayName = "High"),
-		Higher							UMETA(DisplayName = "Higher"),
-		ECsProcessPriorityModifier_MAX	UMETA(Hidden),
-	};
-}
+	Idle							UMETA(DisplayName = "Idle"),
+	Low								UMETA(DisplayName = "Low"),
+	Normal							UMETA(DisplayName = "Normal"),
+	High							UMETA(DisplayName = "High"),
+	Higher							UMETA(DisplayName = "Higher"),
+	ECsProcessPriorityModifier_MAX	UMETA(Hidden),
+};
 
 #define ECS_PROCESS_PRIORITY_MODIFIER (uint8)ECsProcessPriorityModifier::ECsProcessPriorityModifier_MAX
-typedef ECsProcessPriorityModifier::Type TCsProcessPriorityModifier;
 
-namespace ECsProcessPriorityModifier
+struct CSCORE_API EMCsProcessPriorityModifier : public TCsEnumMap<ECsProcessPriorityModifier>
 {
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
+	CS_DECLARE_ENUM_MAP_BODY(EMCsProcessPriorityModifier)
+};
 
-	namespace Str
-	{
-		extern CSCORE_API const TCsString Idle;
-		extern CSCORE_API const TCsString Low;
-		extern CSCORE_API const TCsString Normal;
-		extern CSCORE_API const TCsString High;
-		extern CSCORE_API const TCsString Higher;
-	}
+namespace NCsProcessPriorityModifier
+{
+	typedef ECsProcessPriorityModifier Type;
 
 	namespace Ref
 	{
@@ -290,26 +252,6 @@ namespace ECsProcessPriorityModifier
 		extern CSCORE_API const int32 Normal;
 		extern CSCORE_API const int32 High;
 		extern CSCORE_API const int32 Higher;
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::Idle) { return Str::Idle.Value; }
-		if (EType == Type::Low) { return Str::Low.Value; }
-		if (EType == Type::Normal) { return Str::Normal.Value; }
-		if (EType == Type::High) { return Str::High.Value; }
-		if (EType == Type::Higher) { return Str::Higher.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE const Type& ToType(const FString &String)
-	{
-		if (String == Str::Idle) { return Ref::Idle; }
-		if (String == Str::Low) { return Ref::Low; }
-		if (String == Str::Normal) { return Ref::Normal; }
-		if (String == Str::High) { return Ref::High; }
-		if (String == Str::Higher) { return Ref::Higher; }
-		return Ref::ECsProcessPriorityModifier_MAX;
 	}
 
 	FORCEINLINE const int32& ToInt32(const Type &EType)
@@ -347,7 +289,7 @@ struct FCsProcessPayload : public FCsPooledObjectPayload
 	bool bLaunchReallyHidden;
 	/** idle, low, normal, high, higher */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
-	TEnumAsByte<ECsProcessPriorityModifier::Type> PriorityModifier;
+	ECsProcessPriorityModifier PriorityModifier;
 	/** Directory to start in when running the program, or NULL to use the current working directory */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
 	bool bOptionalWorkingDirectory;
@@ -408,7 +350,7 @@ struct FCsProcessCache : public FCsPooledObjectCache
 	bool bLaunchReallyHidden;
 	/** idle, low, normal, high, higher */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
-	TEnumAsByte<ECsProcessPriorityModifier::Type> PriorityModifier;
+	ECsProcessPriorityModifier PriorityModifier;
 	/** Directory to start in when running the program, or NULL to use the current working directory */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
 	bool bOptionalWorkingDirectory;

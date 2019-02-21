@@ -1333,7 +1333,7 @@ void ACsPoseableMeshActor::PostEditChangeChainProperty_LevelSequence_Shots_Expor
 		float CurrentTime = (float)(StartTime + FMath::Clamp(((double)Frame / FrameCountDouble) * SequenceLength, 0.0, SequenceLength));
 
 		// Tick Sequence
-		LevelSequenceActor->SequencePlayer->SetPlaybackPosition(CurrentTime);
+		//LevelSequenceActor->SequencePlayer->SetPlaybackPosition(CurrentTime);
 
 		// Copy data to tracks
 		const FTransform ComponentTransform = PoseableMeshComponent->GetComponentTransform();

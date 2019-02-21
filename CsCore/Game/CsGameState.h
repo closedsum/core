@@ -16,52 +16,43 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsGameState_OnAIPl
 // Enums
 #pragma region
 
-namespace ECsGameStateOnBoardState
+	// GameStateOnBoardState
+#pragma region
+
+enum class ECsGameStateOnBoardState : uint8
 {
-	enum Type
-	{
-		/** Any Data that is Common to ALL Game Modes. This is usually UI. */
-		LoadCommonData,
-		SetAssetReferencesCommonData,
-		SetupHUD,
-		/** Any Data that is specific to the Game Mode. */
-		LoadGameData,
-		SetAssetReferencesGameData,
-		/** Any Items Data loaded from disk or from a Server / Backend. */
-		LoadItems,
-		/** Any Data that is specific to the Level. */
-		LoadSceneData,
-		SetAssetReferencesSceneData,
-		SetupScene,
-		SetupLastTickActor,
-		SetupJavascriptEntryPoint,
-		Completed,
-		ECsGameStateOnBoardState_MAX,
-	};
-}
-
-#define ECS_GAME_STATE_ONBOARD_STATE_MAX (uint8)ECsGameStateOnBoardState::ECsGameStateOnBoardState_MAX
-typedef ECsGameStateOnBoardState::Type TCsGameStateOnBoardState;
-
-struct CSCORE_API EMCsGameStateOnBoardState : public TCsEnumMap<ECsGameStateOnBoardState::Type>
-{
-protected:
-	EMCsGameStateOnBoardState() {}
-	EMCsGameStateOnBoardState(const EMCsGameStateOnBoardState &) = delete;
-	EMCsGameStateOnBoardState(EMCsGameStateOnBoardState &&) = delete;
-public:
-	~EMCsGameStateOnBoardState() {}
-private:
-	static EMCsGameStateOnBoardState* Instance;
-
-public:
-	static EMCsGameStateOnBoardState& Get();
+	/** Any Data that is Common to ALL Game Modes. This is usually UI. */
+	LoadCommonData,
+	SetAssetReferencesCommonData,
+	SetupHUD,
+	/** Any Data that is specific to the Game Mode. */
+	LoadGameData,
+	SetAssetReferencesGameData,
+	/** Any Items Data loaded from disk or from a Server / Backend. */
+	LoadItems,
+	/** Any Data that is specific to the Level. */
+	LoadSceneData,
+	SetAssetReferencesSceneData,
+	SetupScene,
+	SetupLastTickActor,
+	SetupJavascriptEntryPoint,
+	Completed,
+	ECsGameStateOnBoardState_MAX,
 };
 
-namespace ECsGameStateOnBoardState
+#define ECS_GAME_STATE_ONBOARD_STATE_MAX (uint8)ECsGameStateOnBoardState::ECsGameStateOnBoardState_MAX
+
+struct CSCORE_API EMCsGameStateOnBoardState : public TCsEnumMap<ECsGameStateOnBoardState>
+{
+	CS_DECLARE_ENUM_MAP_BODY(EMCsGameStateOnBoardState)
+};
+
+namespace NCsGameStateOnBoardState
 {
 	namespace Ref
 	{
+		typedef ECsGameStateOnBoardState Type;
+
 		extern CSCORE_API const Type LoadCommonData;
 		extern CSCORE_API const Type SetAssetReferencesCommonData;
 		extern CSCORE_API const Type SetupHUD;
@@ -77,6 +68,11 @@ namespace ECsGameStateOnBoardState
 		extern CSCORE_API const Type ECsGameStateOnBoardState_MAX;
 	}
 }
+
+#pragma endregion GameStateOnBoardState
+
+	// GameStateRoutine
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsGameStateRoutine : public FECsEnum_uint8
@@ -99,23 +95,15 @@ FORCEINLINE uint32 GetTypeHash(const FECsGameStateRoutine& b)
 
 struct CSCORE_API EMCsGameStateRoutine : public TCsEnumStructMap<FECsGameStateRoutine, uint8>
 {
-protected:
-	EMCsGameStateRoutine() {}
-	EMCsGameStateRoutine(const EMCsGameStateRoutine &) = delete;
-	EMCsGameStateRoutine(EMCsGameStateRoutine &&) = delete;
-public:
-	~EMCsGameStateRoutine() {}
-private:
-	static EMCsGameStateRoutine* Instance;
-
-public:
-	static EMCsGameStateRoutine& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsGameStateRoutine)
 };
 
-namespace ECsGameStateRoutine
+namespace NCsGameStateRoutine
 {
 	extern CSCORE_API const FECsGameStateRoutine OnBoard_Internal;
 }
+
+#pragma endregion GameStateRoutine
 
 #pragma endregion Enums
 
@@ -196,7 +184,7 @@ public:
 #pragma region
 public:
 
-	ECsGameStateOnBoardState::Type OnBoardState;
+	ECsGameStateOnBoardState OnBoardState;
 
 	CS_COROUTINE_DECLARE(OnBoard)
 

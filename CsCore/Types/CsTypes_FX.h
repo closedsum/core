@@ -321,7 +321,7 @@ struct CSCORE_API FCsFxPayload : public FCsPooledObjectPayload
 
 	FORCEINLINE virtual void Reset() override
 	{
-		FCsPooledObjectPayload::Reset();
+		Super::Reset();
 
 		Particle = nullptr;
 		Priority = ECsFxPriority::Medium;

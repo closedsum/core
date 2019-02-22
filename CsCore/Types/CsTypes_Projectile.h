@@ -681,7 +681,7 @@ struct CSCORE_API FCsProjectilePayload : public FCsPooledObjectPayload
 
 	FORCEINLINE virtual void Reset() override
 	{
-		FCsPooledObjectPayload::Reset();
+		Super::Reset();
 
 		Relevance = ECsProjectileRelevance::ECsProjectileRelevance_MAX;
 		Instigator.Reset();

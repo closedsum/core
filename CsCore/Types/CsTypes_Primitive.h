@@ -805,6 +805,13 @@ public:
 	}
 };
 
+#define CS_ENUM_UINT8_BODY(Enum) \
+	public: \
+		Enum() {} \
+		Enum(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {} \
+		Enum(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {} \
+		~Enum() {}
+
 template<typename EnumStruct, typename EnumType>
 struct TCsEnumStructMap
 {

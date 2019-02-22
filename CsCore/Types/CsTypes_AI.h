@@ -142,7 +142,7 @@ struct CSCORE_API FCsAIPawnPayload : public FCsPooledObjectPayload
 
 	FORCEINLINE virtual void Reset() override
 	{
-		FCsPooledObjectPayload::Reset();
+		Super::Reset();
 
 		bLocation = false;
 		Location = FVector::ZeroVector;

@@ -288,7 +288,7 @@ struct CSCORE_API FCsSoundPayload : public FCsPooledObjectPayload
 
 	FORCEINLINE virtual void Reset() override
 	{
-		FCsPooledObjectPayload::Reset();
+		Super::Reset();
 
 		Sound = nullptr;
 		Priority = ECsSoundPriority::Medium;

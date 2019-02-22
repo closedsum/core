@@ -14,71 +14,59 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsPlayerStateBase_
 #pragma region
 
 UENUM(BlueprintType)
-namespace ECsPlayerStateBaseOnBoardState
+enum class ECsPlayerStateBaseOnBoardState : uint8
 {
-	enum Type
-	{
-		WaitingForGameState						UMETA(DisplayName = "Waiting For GameState"),
-		WaitingForFinishLoadingCommonData		UMETA(DisplayName = "Waiting for Finish Loading Common Data"),
-		WaitingForLocalPlayerState				UMETA(DisplayName = "Waiting For Local PlayerState"),
-		// Client
-		RequestLocalUniqueMappingId				UMETA(DisplayName = "Request Local Unique Mapping Id"),
-		WaitingForLocalUniqueMappingId			UMETA(DisplayName = "Waiting For Local Unique Mapping Id"),
-		RecievedLocalUniqueMappingId			UMETA(DisplayName = "Received Local Unique Mapping Id"),
-		// Requesting Player State on Client
-		RequestUniqueMappingId					UMETA(DisplayName = "Request Unique Mapping Id"),
-		WaitingForUniqueMappingId				UMETA(DisplayName = "Waiting for Unique Mapping Id"),
-		RecievedUniqueMappingId					UMETA(DisplayName = "Received Unique Mapping Id"),
-			// Player
-		RequestPlayerData						UMETA(DisplayName = "Request PlayerData"),
-		WaitingForPlayerData					UMETA(DisplayName = "Waiting for PlayerData"),
-		ReceivedPlayerData						UMETA(DisplayName = "Received PlayerData"),
-			// AI
-		RequestAIData							UMETA(DisplayName = "Request AIData"),
-		WaitingForAIData						UMETA(DisplayName = "Waiting for AIData"),
-		ReceivedAIData							UMETA(DisplayName = "Received AIData"),
-		// Loading
-		WaitingForGameStateOnBoardCompleted		UMETA(DisplayName = "Waiting for GameState OnBoard Completed"),
-		BeginLoadingPlayerData					UMETA(DisplayName = "Begin Loading PlayerData"),
-		WaitingForFinishLoadingPlayerData		UMETA(DisplayName = "Waiting for Finish Loading PlayerData"),
-		FinishedLoadingPlayerData				UMETA(DisplayName = "Finished Loading PlayerData"),
-		SetAssetReferencesPlayerData			UMETA(DisplayName = "Set Asset References PlayerData"),
-		WaitingForSetAssetReferencesPlayerData	UMETA(DisplayName = "Waiting for Set Asset References PlayerData"),
-		FinishedSetAssetReferencesPlayerData	UMETA(DisplayName = "Finished Set Asset References PlayerData"),
-		// Setup
-		BeginApplyingPlayerData					UMETA(DisplayName = "Begin Applying PlayerData"),
-		WaitingForFinishApplyingPlayerData		UMETA(DisplayName = "Waiting for Finish Applying PlayerData"),
-		FinishedApplyingPlayerData				UMETA(DisplayName = "Finished Applying PlayerData"),
-		// Handshaking
-		SendOnBoardCompleted					UMETA(DisplayName = "Send OnBoard Completed"),
-		WaitingForOnBoardCompleted				UMETA(DisplayName = "Waiting for OnBoard Completed"),
-		Completed								UMETA(DisplayName = "Completed"),
-		ECsPlayerStateBaseOnBoardState_MAX		UMETA(Hidden),
-	};
-}
-
-#define ECS_PLAYER_STATE_BASE_ONBOARD_STATE_MAX (uint8)ECsPlayerStateBaseOnBoardState::ECsPlayerStateBaseOnBoardState_MAX
-typedef ECsPlayerStateBaseOnBoardState::Type TCsPlayerStateBaseOnBoardState;
-
-struct CSCORE_API EMCsPlayerStateBaseOnBoardState : public TCsEnumMap<ECsPlayerStateBaseOnBoardState::Type>
-{
-protected:
-	EMCsPlayerStateBaseOnBoardState() {}
-	EMCsPlayerStateBaseOnBoardState(const EMCsPlayerStateBaseOnBoardState &) = delete;
-	EMCsPlayerStateBaseOnBoardState(EMCsPlayerStateBaseOnBoardState &&) = delete;
-public:
-	~EMCsPlayerStateBaseOnBoardState() {}
-private:
-	static EMCsPlayerStateBaseOnBoardState* Instance;
-
-public:
-	static EMCsPlayerStateBaseOnBoardState& Get();
+	WaitingForGameState						UMETA(DisplayName = "Waiting For GameState"),
+	WaitingForFinishLoadingCommonData		UMETA(DisplayName = "Waiting for Finish Loading Common Data"),
+	WaitingForLocalPlayerState				UMETA(DisplayName = "Waiting For Local PlayerState"),
+	// Client
+	RequestLocalUniqueMappingId				UMETA(DisplayName = "Request Local Unique Mapping Id"),
+	WaitingForLocalUniqueMappingId			UMETA(DisplayName = "Waiting For Local Unique Mapping Id"),
+	RecievedLocalUniqueMappingId			UMETA(DisplayName = "Received Local Unique Mapping Id"),
+	// Requesting Player State on Client
+	RequestUniqueMappingId					UMETA(DisplayName = "Request Unique Mapping Id"),
+	WaitingForUniqueMappingId				UMETA(DisplayName = "Waiting for Unique Mapping Id"),
+	RecievedUniqueMappingId					UMETA(DisplayName = "Received Unique Mapping Id"),
+	// Player
+	RequestPlayerData						UMETA(DisplayName = "Request PlayerData"),
+	WaitingForPlayerData					UMETA(DisplayName = "Waiting for PlayerData"),
+	ReceivedPlayerData						UMETA(DisplayName = "Received PlayerData"),
+	// AI
+	RequestAIData							UMETA(DisplayName = "Request AIData"),
+	WaitingForAIData						UMETA(DisplayName = "Waiting for AIData"),
+	ReceivedAIData							UMETA(DisplayName = "Received AIData"),
+	// Loading
+	WaitingForGameStateOnBoardCompleted		UMETA(DisplayName = "Waiting for GameState OnBoard Completed"),
+	BeginLoadingPlayerData					UMETA(DisplayName = "Begin Loading PlayerData"),
+	WaitingForFinishLoadingPlayerData		UMETA(DisplayName = "Waiting for Finish Loading PlayerData"),
+	FinishedLoadingPlayerData				UMETA(DisplayName = "Finished Loading PlayerData"),
+	SetAssetReferencesPlayerData			UMETA(DisplayName = "Set Asset References PlayerData"),
+	WaitingForSetAssetReferencesPlayerData	UMETA(DisplayName = "Waiting for Set Asset References PlayerData"),
+	FinishedSetAssetReferencesPlayerData	UMETA(DisplayName = "Finished Set Asset References PlayerData"),
+	// Setup
+	BeginApplyingPlayerData					UMETA(DisplayName = "Begin Applying PlayerData"),
+	WaitingForFinishApplyingPlayerData		UMETA(DisplayName = "Waiting for Finish Applying PlayerData"),
+	FinishedApplyingPlayerData				UMETA(DisplayName = "Finished Applying PlayerData"),
+	// Handshaking
+	SendOnBoardCompleted					UMETA(DisplayName = "Send OnBoard Completed"),
+	WaitingForOnBoardCompleted				UMETA(DisplayName = "Waiting for OnBoard Completed"),
+	Completed								UMETA(DisplayName = "Completed"),
+	ECsPlayerStateBaseOnBoardState_MAX		UMETA(Hidden),
 };
 
-namespace ECsPlayerStateBaseOnBoardState
+#define ECS_PLAYER_STATE_BASE_ONBOARD_STATE_MAX (uint8)ECsPlayerStateBaseOnBoardState::ECsPlayerStateBaseOnBoardState_MAX
+
+struct CSCORE_API EMCsPlayerStateBaseOnBoardState : public TCsEnumMap<ECsPlayerStateBaseOnBoardState>
+{
+	CS_DECLARE_ENUM_MAP_BODY(EMCsPlayerStateBaseOnBoardState)
+};
+
+namespace NCsPlayerStateBaseOnBoardState
 {
 	namespace Ref
 	{
+		typedef ECsPlayerStateBaseOnBoardState Type;
+
 		extern CSCORE_API const Type WaitingForGameState;
 		extern CSCORE_API const Type WaitingForFinishLoadingCommonData;
 		extern CSCORE_API const Type WaitingForLocalPlayerState;
@@ -122,11 +110,7 @@ struct CSCORE_API FECsPlayerStateBaseRoutine : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsPlayerStateBaseRoutine() {}
-	FECsPlayerStateBaseRoutine(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsPlayerStateBaseRoutine(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsPlayerStateBaseRoutine() {}
+	CS_ENUM_UINT8_BODY(FECsPlayerStateBaseRoutine)
 
 	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
 };
@@ -138,17 +122,7 @@ FORCEINLINE uint32 GetTypeHash(const FECsPlayerStateBaseRoutine& b)
 
 struct CSCORE_API EMCsPlayerStateBaseRoutine : public TCsEnumStructMap<FECsPlayerStateBaseRoutine, uint8>
 {
-protected:
-	EMCsPlayerStateBaseRoutine() {}
-	EMCsPlayerStateBaseRoutine(const EMCsPlayerStateBaseRoutine &) = delete;
-	EMCsPlayerStateBaseRoutine(EMCsPlayerStateBaseRoutine &&) = delete;
-public:
-	~EMCsPlayerStateBaseRoutine() {}
-private:
-	static EMCsPlayerStateBaseRoutine* Instance;
-
-public:
-	static EMCsPlayerStateBaseRoutine& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsPlayerStateBaseRoutine)
 };
 
 namespace ECsPlayerStateBaseRoutine
@@ -215,7 +189,7 @@ public:
 	virtual void OnTick_OnBoard();
 
 	UPROPERTY()
-	TEnumAsByte<ECsPlayerStateBaseOnBoardState::Type> OnBoardState;
+	ECsPlayerStateBaseOnBoardState OnBoardState;
 
 	UPROPERTY()
 	uint8 UniqueMappingId;

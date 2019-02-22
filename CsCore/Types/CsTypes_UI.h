@@ -2273,7 +2273,7 @@ struct CSCORE_API FCsWidgetPayload : public FCsPooledObjectPayload
 
 	FORCEINLINE virtual void Reset() override
 	{
-		FCsPooledObjectPayload::Reset();
+		Super::Reset();
 
 		DisplayName = ECsCached::Str::Empty;
 		Size = FVector2D::ZeroVector;
@@ -2328,7 +2328,7 @@ struct CSCORE_API FCsWidgetActorPayload : public FCsPooledObjectPayload
 
 	FORCEINLINE virtual void Reset() override
 	{
-		FCsPooledObjectPayload::Reset();
+		Super::Reset();
 
 		Widget.Reset();
 		Widget = nullptr;

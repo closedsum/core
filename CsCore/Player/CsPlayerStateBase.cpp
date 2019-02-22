@@ -26,31 +26,10 @@
 // Enums
 #pragma region
 
-EMCsPlayerStateBaseRoutine* EMCsPlayerStateBaseRoutine::Instance;
+	// PlayerStateBaseOnBoardState
+CS_DEFINE_ENUM_MAP_BODY(EMCsPlayerStateBaseOnBoardState)
 
-EMCsPlayerStateBaseRoutine& EMCsPlayerStateBaseRoutine::Get()
-{
-	if (!Instance)
-		Instance = new EMCsPlayerStateBaseRoutine();
-	return *Instance;
-}
-
-namespace ECsPlayerStateBaseRoutine
-{
-	CSCORE_API const FECsPlayerStateBaseRoutine OnBoard_Internal = EMCsPlayerStateBaseRoutine::Get().Create(TEXT("OnBoard_Internal"));
-	CSCORE_API const FECsPlayerStateBaseRoutine RequestUniqueMappingId_AI_Internal = EMCsPlayerStateBaseRoutine::Get().Create(TEXT("RequestUniqueMappingId_AI_Internal"));
-}
-
-EMCsPlayerStateBaseOnBoardState* EMCsPlayerStateBaseOnBoardState::Instance;
-
-EMCsPlayerStateBaseOnBoardState& EMCsPlayerStateBaseOnBoardState::Get()
-{
-	if (!Instance)
-		Instance = new EMCsPlayerStateBaseOnBoardState();
-	return *Instance;
-}
-
-namespace ECsPlayerStateBaseOnBoardState
+namespace NCsPlayerStateBaseOnBoardState
 {
 	namespace Ref
 	{
@@ -90,6 +69,15 @@ namespace ECsPlayerStateBaseOnBoardState
 		CSCORE_API const Type Completed = EMCsPlayerStateBaseOnBoardState::Get().Add(Type::Completed, TEXT("Completed"));
 		CSCORE_API const Type ECsPlayerStateBaseOnBoardState_MAX = EMCsPlayerStateBaseOnBoardState::Get().Add(Type::ECsPlayerStateBaseOnBoardState_MAX, TEXT("ECsPlayerStateBaseOnBoardState_MAX"), TEXT("MAX"));
 	}
+}
+
+// PlayerStateBaseRoutine
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsPlayerStateBaseRoutine)
+
+namespace ECsPlayerStateBaseRoutine
+{
+	CSCORE_API const FECsPlayerStateBaseRoutine OnBoard_Internal = EMCsPlayerStateBaseRoutine::Get().Create(TEXT("OnBoard_Internal"));
+	CSCORE_API const FECsPlayerStateBaseRoutine RequestUniqueMappingId_AI_Internal = EMCsPlayerStateBaseRoutine::Get().Create(TEXT("RequestUniqueMappingId_AI_Internal"));
 }
 
 #pragma endregion Enums

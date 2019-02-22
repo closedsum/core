@@ -305,7 +305,7 @@ public:
 
 	virtual void Reset() override
 	{
-		FCsPooledObjectPayload::Reset();
+		Super::Reset();
 
 		Name = ECsCached::Str::Empty;
 		URL = ECsCached::Str::Empty;

@@ -489,7 +489,7 @@ struct CSCORE_API FCsInteractiveActorPayload : public FCsPooledObjectPayload
 
 	FORCEINLINE virtual void Reset() override
 	{
-		FCsPooledObjectPayload::Reset();
+		Super::Reset();
 
 		LifeTime = 0.0f;
 		bLocation = false;

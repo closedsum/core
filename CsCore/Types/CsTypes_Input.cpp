@@ -1,16 +1,10 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_Input.h"
 
-EMCsInputDevice* EMCsInputDevice::Instance;
+// InputDevice
+CS_DEFINE_ENUM_MAP_BODY(EMCsInputDevice)
 
-EMCsInputDevice& EMCsInputDevice::Get()
-{
-	if (!Instance)
-		Instance = new EMCsInputDevice();
-	return *Instance;
-}
-
-namespace ECsInputDevice
+namespace NCsInputDevice
 {
 	namespace Ref
 	{

@@ -637,7 +637,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				{ WriteMemberStructPropertyToJson<FCsInputActionMappings>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 
 				if (StructProperty->ArrayDim == ECS_INPUT_DEVICE_MAX)
-				{ WriteMemberFixedArrayStructPropertyToJson_EnumSize<FCsInputActionMappings, ECsInputDevice::Type, ECS_INPUT_DEVICE_MAX>(InJsonWriter, StructProperty, InStruct, MemberName, &ECsInputDevice::ToString, nullptr); continue; }
+				{ WriteMemberFixedArrayStructPropertyToJson_EnumSize<FCsInputActionMappings, ECsInputDevice, EMCsInputDevice, ECS_INPUT_DEVICE_MAX>(InJsonWriter, StructProperty, InStruct, MemberName, nullptr); continue; }
 			}
 			// FCsInputActionMapping
 			if (StructProperty->Struct == FCsInputActionMapping::StaticStruct())
@@ -1408,7 +1408,7 @@ void UCsCommon_Load::WriteStructToJson(TSharedRef<TJsonWriter<TCHAR>> &InJsonWri
 				{ WriteMemberStructPropertyToJson<FCsInputActionMappings>(InJsonWriter, StructProperty, InStruct, MemberName, true, nullptr); continue; }
 
 				if (StructProperty->ArrayDim == ECS_INPUT_DEVICE_MAX)
-				{ WriteMemberFixedArrayStructPropertyToJson_EnumSize<FCsInputActionMappings, ECsInputDevice::Type, ECS_INPUT_DEVICE_MAX>(InJsonWriter, StructProperty, InStruct, MemberName, &ECsInputDevice::ToString, nullptr); continue; }
+				{ WriteMemberFixedArrayStructPropertyToJson_EnumSize<FCsInputActionMappings, ECsInputDevice, EMCsInputDevice, ECS_INPUT_DEVICE_MAX>(InJsonWriter, StructProperty, InStruct, MemberName, nullptr); continue; }
 			}
 			// FCsInputActionMapping
 			if (StructProperty->Struct == FCsInputActionMapping::StaticStruct())
@@ -3009,7 +3009,7 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonObject, voi
 				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToMemberStructPropertyFromJson<FCsInputActionMappings>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 				if (StructProperty->ArrayDim == ECS_INPUT_DEVICE_MAX)
-				{ WriteToMemberFixedArrayStructPropertyFromJson_EnumSize<FCsInputActionMappings, ECsInputDevice::Type, ECS_INPUT_DEVICE_MAX>(JsonObject, StructProperty, InStruct, MemberName, &ECsInputDevice::ToString, nullptr); continue; }
+				{ WriteToMemberFixedArrayStructPropertyFromJson_EnumSize<FCsInputActionMappings, ECsInputDevice, EMCsInputDevice, ECS_INPUT_DEVICE_MAX>(JsonObject, StructProperty, InStruct, MemberName, nullptr); continue; }
 
 				if (ReadStructFromJson_Internal_Helper(Internal, Property, JsonObject, InStruct, InScriptStruct)) { continue; }
 				continue;
@@ -3781,7 +3781,7 @@ void UCsCommon_Load::ReadStructFromJson(TSharedPtr<FJsonObject> &JsonParsed, voi
 				if (StructProperty->ArrayDim == CS_SINGLETON)
 				{ WriteToMemberStructPropertyFromJson<FCsInputActionMappings>(JsonObject, StructProperty, InStruct, MemberName); continue; }
 				if (StructProperty->ArrayDim == ECS_INPUT_DEVICE_MAX)
-				{ WriteToMemberFixedArrayStructPropertyFromJson_EnumSize<FCsInputActionMappings, ECsInputDevice::Type, ECS_INPUT_DEVICE_MAX>(JsonObject, StructProperty, InStruct, MemberName, &ECsInputDevice::ToString, nullptr); continue; }
+				{ WriteToMemberFixedArrayStructPropertyFromJson_EnumSize<FCsInputActionMappings, ECsInputDevice, EMCsInputDevice, ECS_INPUT_DEVICE_MAX>(JsonObject, StructProperty, InStruct, MemberName, nullptr); continue; }
 
 				if (ReadStructFromJson_Internal_Helper(Internal, Property, JsonObject, InStruct, InScriptStruct)) { continue; }
 				continue;

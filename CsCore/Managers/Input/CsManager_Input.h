@@ -202,7 +202,7 @@ class CSCORE_API ACsManager_Input : public AActor
 #pragma region
 public:
 
-	virtual bool CanSaveInputActionMapping(const TCsInputDevice &Device, const FECsInputAction &Action);
+	virtual bool CanSaveInputActionMapping(const ECsInputDevice& Device, const FECsInputAction& Action);
 
 	FCsInputProfile InputProfile;
 
@@ -213,21 +213,21 @@ public:
 	void LoadDefaultInputProfile();
 	void LoadInputProfile();
 
-	bool IsValidKey(const TCsInputDevice &Device, const FKey &Key);
+	bool IsValidKey(const ECsInputDevice& Device, const FKey& Key);
 
 	struct FKey GetKey(const FString &KeyName);
 	
-	const FECsInputAction& GetActionFromKey(const TCsInputDevice &Device, const FKey &Key);
-	FKey GetKeyFromAction(const TCsInputDevice &Device, const FECsInputAction &Action);
+	const FECsInputAction& GetActionFromKey(const ECsInputDevice& Device, const FKey& Key);
+	FKey GetKeyFromAction(const ECsInputDevice& Device, const FECsInputAction& Action);
 	FKey GetKeyFromAction(const FECsInputAction& Action);
 
-	void UnbindActionMapping(const TCsInputDevice &Device, const FECsInputAction &Action, const FKey &Key);
-	void UnbindAxisMapping(const TCsInputDevice &Device, const FECsInputAction &Action, const FKey &Key);
-	void UnbindMapping(const TCsInputDevice &Device, const FECsInputAction &Action, const FKey &Key);
+	void UnbindActionMapping(const ECsInputDevice& Device, const FECsInputAction& Action, const FKey& Key);
+	void UnbindAxisMapping(const ECsInputDevice& Device, const FECsInputAction& Action, const FKey& Key);
+	void UnbindMapping(const ECsInputDevice& Device, const FECsInputAction& Action, const FKey& Key);
 
-	void RebindActionMapping(const TCsInputDevice &Device, const FECsInputAction &Action, const FKey &Key);
-	void RebindAxisMapping(const TCsInputDevice &Device, const FECsInputAction &Action, const FKey &Key);
-	void RebindMapping(const TCsInputDevice &Device, const FECsInputAction &Action, const FKey &Key);
+	void RebindActionMapping(const ECsInputDevice& Device, const FECsInputAction& Action, const FKey& Key);
+	void RebindAxisMapping(const ECsInputDevice& Device, const FECsInputAction& Action, const FKey& Key);
+	void RebindMapping(const ECsInputDevice& Device, const FECsInputAction& Action, const FKey& Key);
 
 #pragma endregion Profile
 

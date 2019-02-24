@@ -768,7 +768,7 @@ float ACsManager_Input::GetInputDuration(const FECsInputAction &Action)
 // Profile
 #pragma region
 
-bool ACsManager_Input::CanSaveInputActionMapping(const TCsInputDevice &Device, const FECsInputAction &Action)
+bool ACsManager_Input::CanSaveInputActionMapping(const ECsInputDevice& Device, const FECsInputAction& Action)
 {
 	return true;
 }
@@ -909,7 +909,7 @@ void ACsManager_Input::LoadInputProfile()
 	}
 }
 
-bool ACsManager_Input::IsValidKey(const TCsInputDevice &Device, const FKey &Key)
+bool ACsManager_Input::IsValidKey(const ECsInputDevice& Device, const FKey& Key)
 {
 	if (Key == EKeys::Invalid)
 		return false;
@@ -931,7 +931,7 @@ bool ACsManager_Input::IsValidKey(const TCsInputDevice &Device, const FKey &Key)
 	return true;
 }
 
-FKey ACsManager_Input::GetKey(const FString &KeyName)
+FKey ACsManager_Input::GetKey(const FString& KeyName)
 {
 	if (KeyName == TEXT(""))
 		return EKeys::Invalid;
@@ -951,7 +951,7 @@ FKey ACsManager_Input::GetKey(const FString &KeyName)
 	return EKeys::Invalid;
 }
 
-const FECsInputAction& ACsManager_Input::GetActionFromKey(const TCsInputDevice &Device, const FKey &Key)
+const FECsInputAction& ACsManager_Input::GetActionFromKey(const ECsInputDevice& Device, const FKey& Key)
 {
 	FCsInputActionMappings& DeviceMapping   = InputProfile.DeviceMappings[(uint8)Device];
 	TArray<FCsInputActionMapping>& Mappings = DeviceMapping.Mappings;
@@ -964,7 +964,7 @@ const FECsInputAction& ACsManager_Input::GetActionFromKey(const TCsInputDevice &
 	return EMCsInputAction::Get().GetMAX();
 }
 
-FKey ACsManager_Input::GetKeyFromAction(const TCsInputDevice &Device, const FECsInputAction &Action)
+FKey ACsManager_Input::GetKeyFromAction(const ECsInputDevice& Device, const FECsInputAction& Action)
 {
 	FCsInputActionMappings& DeviceMapping   = InputProfile.DeviceMappings[(uint8)Device];
 	TArray<FCsInputActionMapping>& Mappings = DeviceMapping.Mappings;
@@ -998,7 +998,7 @@ FKey ACsManager_Input::GetKeyFromAction(const FECsInputAction& Action)
 	return EKeys::Invalid;
 }
 
-void ACsManager_Input::UnbindActionMapping(const TCsInputDevice &Device, const FECsInputAction &Action, const FKey &Key)
+void ACsManager_Input::UnbindActionMapping(const ECsInputDevice& Device, const FECsInputAction& Action, const FKey& Key)
 {
 	ACsPlayerController* Controller = Cast<ACsPlayerController>(GetInputOwner());
 	UPlayerInput* PlayerInput		= Controller->PlayerInput;
@@ -1039,7 +1039,7 @@ void ACsManager_Input::UnbindActionMapping(const TCsInputDevice &Device, const F
 	PlayerInput->ForceRebuildingKeyMaps(false);
 }
 
-void ACsManager_Input::UnbindAxisMapping(const TCsInputDevice &Device, const FECsInputAction &Action, const FKey &Key)
+void ACsManager_Input::UnbindAxisMapping(const ECsInputDevice& Device, const FECsInputAction& Action, const FKey& Key)
 {
 	ACsPlayerController* Controller = Cast<ACsPlayerController>(GetInputOwner());
 	UPlayerInput* PlayerInput		= Controller->PlayerInput;
@@ -1080,7 +1080,7 @@ void ACsManager_Input::UnbindAxisMapping(const TCsInputDevice &Device, const FEC
 	PlayerInput->ForceRebuildingKeyMaps(false);
 }
 
-void ACsManager_Input::UnbindMapping(const TCsInputDevice &Device, const FECsInputAction &Action, const FKey &Key)
+void ACsManager_Input::UnbindMapping(const ECsInputDevice& Device, const FECsInputAction& Action, const FKey& Key)
 {
 	if (Infos[Action.Value]->Type == ECsInputType::Action)
 		UnbindActionMapping(Device, Action, Key);
@@ -1090,7 +1090,7 @@ void ACsManager_Input::UnbindMapping(const TCsInputDevice &Device, const FECsInp
 
 // TODO: Need to store the original Key "Keyboard" mappings for Input. Do similar for control setup
 
-void ACsManager_Input::RebindActionMapping(const TCsInputDevice &Device, const FECsInputAction &Action, const FKey &Key)
+void ACsManager_Input::RebindActionMapping(const ECsInputDevice& Device, const FECsInputAction& Action, const FKey& Key)
 {
 	if (!IsValidKey(Device, Key))
 		return;
@@ -1145,7 +1145,7 @@ void ACsManager_Input::RebindActionMapping(const TCsInputDevice &Device, const F
 	PlayerInput->ForceRebuildingKeyMaps(false);
 }
 
-void ACsManager_Input::RebindAxisMapping(const TCsInputDevice &Device, const FECsInputAction &Action, const FKey &Key)
+void ACsManager_Input::RebindAxisMapping(const ECsInputDevice& Device, const FECsInputAction& Action, const FKey& Key)
 {
 	if (!IsValidKey(Device, Key))
 		return;
@@ -1200,7 +1200,7 @@ void ACsManager_Input::RebindAxisMapping(const TCsInputDevice &Device, const FEC
 	PlayerInput->ForceRebuildingKeyMaps(false);
 }
 
-void ACsManager_Input::RebindMapping(const TCsInputDevice &Device, const FECsInputAction &Action, const FKey &Key)
+void ACsManager_Input::RebindMapping(const ECsInputDevice& Device, const FECsInputAction& Action, const FKey& Key)
 {
 	if (Infos[Action.Value]->Type == ECsInputType::Action)
 		RebindActionMapping(Device, Action, Key);

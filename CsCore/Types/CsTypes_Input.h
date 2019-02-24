@@ -12,55 +12,33 @@
 #pragma region
 
 UENUM(BlueprintType)
-namespace ECsInputDevice
+enum class ECsInputDevice : uint8
 {
-	enum Type
-	{
-		MouseAndKeyboard	UMETA(DisplayName = "Mouse And Keyboard"),
-		Gamepad				UMETA(DisplayName = "Gamepad"),
-		MotionController	UMETA(DisplayName = "MotionController"),
-		ECsInputDevice_MAX	UMETA(Hidden),
-	};
-}
-
-struct CSCORE_API EMCsInputDevice : public TCsEnumMap<ECsInputDevice::Type>
-{
-protected:
-	EMCsInputDevice() {}
-	EMCsInputDevice(const EMCsInputDevice &) = delete;
-	EMCsInputDevice(EMCsInputDevice &&) = delete;
-public:
-	~EMCsInputDevice() {}
-private:
-	static EMCsInputDevice* Instance;
-
-public:
-	static EMCsInputDevice& Get();
+	MouseAndKeyboard	UMETA(DisplayName = "Mouse And Keyboard"),
+	Gamepad				UMETA(DisplayName = "Gamepad"),
+	MotionController	UMETA(DisplayName = "MotionController"),
+	ECsInputDevice_MAX	UMETA(Hidden),
 };
 
-namespace ECsInputDevice
+struct CSCORE_API EMCsInputDevice : public TCsEnumMap<ECsInputDevice>
+{
+	CS_DECLARE_ENUM_MAP_BODY(EMCsInputDevice)
+};
+
+namespace NCsInputDevice
 {
 	namespace Ref
 	{
+		typedef ECsInputDevice Type;
+
 		extern CSCORE_API const Type MouseAndKeyboard;
 		extern CSCORE_API const Type Gamepad;
 		extern CSCORE_API const Type MotionController;
 		extern CSCORE_API const Type ECsInputDevice_MAX;
 	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		return EMCsInputDevice::Get().ToString(EType);
-	}
-
-	FORCEINLINE const Type& ToType(const FString &String)
-	{
-		return EMCsInputDevice::Get().ToType(String);
-	}
 }
 
 #define ECS_INPUT_DEVICE_MAX (uint8)ECsInputDevice::ECsInputDevice_MAX
-typedef ECsInputDevice::Type TCsInputDevice;
 
 #pragma endregion InputDevice
 
@@ -1137,7 +1115,7 @@ struct CSCORE_API FCsInputProfile
 		Player = 0;
 	}
 
-	FORCEINLINE FCsInputActionMapping& GetMapping(const TCsInputDevice &Device, const FECsInputAction &Action)
+	FORCEINLINE FCsInputActionMapping& GetMapping(const ECsInputDevice& Device, const FECsInputAction& Action)
 	{
 		FCsInputActionMappings& DeviceMapping   = DeviceMappings[(uint8)Device];
 		TArray<FCsInputActionMapping>& Mappings = DeviceMapping.Mappings;
@@ -1150,7 +1128,7 @@ struct CSCORE_API FCsInputProfile
 		return Mappings[CS_FIRST];
 	}
 
-	FORCEINLINE FKey GetKey(const TCsInputDevice &Device, const FECsInputAction &Action)
+	FORCEINLINE FKey GetKey(const ECsInputDevice& Device, const FECsInputAction& Action)
 	{
 		FCsInputActionMappings& DeviceMapping   = DeviceMappings[(uint8)Device];
 		TArray<FCsInputActionMapping>& Mappings = DeviceMapping.Mappings;
@@ -1163,7 +1141,7 @@ struct CSCORE_API FCsInputProfile
 		return EKeys::Invalid;
 	}
 
-	FORCEINLINE void SetKey(const TCsInputDevice &Device, const FECsInputAction &Action, const FKey &Key)
+	FORCEINLINE void SetKey(const ECsInputDevice& Device, const FECsInputAction& Action, const FKey& Key)
 	{
 		FCsInputActionMappings& DeviceMapping   = DeviceMappings[(uint8)Device];
 		TArray<FCsInputActionMapping>& Mappings = DeviceMapping.Mappings;
@@ -1179,7 +1157,7 @@ struct CSCORE_API FCsInputProfile
 		}
 	}
 
-	FORCEINLINE void AddMapping(const TCsInputDevice &Device, const FECsInputAction &Action, const FString &KeyName, const FKey &Key)
+	FORCEINLINE void AddMapping(const ECsInputDevice& Device, const FECsInputAction& Action, const FString& KeyName, const FKey& Key)
 	{
 		FCsInputActionMappings& DeviceMapping   = DeviceMappings[(uint8)Device];
 		TArray<FCsInputActionMapping>& Mappings = DeviceMapping.Mappings;

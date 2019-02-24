@@ -459,6 +459,22 @@ template<typename T>
 		InJsonWriter->WriteObjectEnd();
 	}
 
+	template<typename T, typename EnumType, typename EnumMap, uint8 SIZE>
+	static void WriteMemberFixedArrayStructPropertyToJson_EnumSize(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UStructProperty* &StructProperty, void* InObject, const FString &MemberName, TCsWriteStructToJson_Internal Internal = nullptr)
+	{
+		T(*Member)[SIZE] = StructProperty->ContainerPtrToValuePtr<T[SIZE]>(InObject);
+
+		InJsonWriter->WriteObjectStart(MemberName);
+
+		for (int32 I = 0; I < SIZE; ++I)
+		{
+			InJsonWriter->WriteObjectStart(EnumMap::Get().ToString(I));
+			WriteStructToJson(InJsonWriter, (void*)&((*Member)[I]), StructProperty->Struct, Internal);
+			InJsonWriter->WriteObjectEnd();
+		}
+		InJsonWriter->WriteObjectEnd();
+	}
+
 	template<typename T>
 	static void WriteMemberStructPropertyToJson_Primitive(TSharedRef<class TJsonWriter<TCHAR>> &InJsonWriter, UStructProperty* &StructProperty, void* InObject, const FString &MemberName, FString(T::*ToString)() const)
 	{
@@ -838,6 +854,22 @@ template<typename T>
 		{
 			TSharedPtr<class FJsonObject> Object = JObject->GetObjectField((*ToString)((E)I));
 			
+			if (Object->Values.Num() > CS_EMPTY)
+				ReadStructFromJson(Object, (void*)&((*Member)[I]), StructProperty->Struct, Internal);
+		}
+	}
+
+	template<typename T, typename EnumType, typename EnumMap, uint8 SIZE>
+	static void WriteToMemberFixedArrayStructPropertyFromJson_EnumSize(TSharedPtr<class FJsonObject> &JsonObject, UStructProperty* &StructProperty, void* InObject, const FString &MemberName, TCsReadStructFromJson_Internal Internal = nullptr)
+	{
+		T(*Member)[SIZE] = StructProperty->ContainerPtrToValuePtr<T[SIZE]>(InObject);
+
+		const TSharedPtr<class FJsonObject> JObject = JsonObject->GetObjectField(MemberName);
+
+		for (int32 I = 0; I < SIZE; ++I)
+		{
+			TSharedPtr<class FJsonObject> Object = JObject->GetObjectField(EnumMap::Get().ToString(I));
+
 			if (Object->Values.Num() > CS_EMPTY)
 				ReadStructFromJson(Object, (void*)&((*Member)[I]), StructProperty->Struct, Internal);
 		}

@@ -20,12 +20,27 @@ public:
 
 protected:
 
+	virtual void CustomPopulateEnumMap();
+
+	bool bPopulateEnumMapFromUserDefinedEnum;
+	FName UserDefinedEnumObjectPath;
+
+	void PopulateEnumMapFromUserDefinedEnum();
+
+	virtual void AddEnumToMap(const FString& Name);
+	virtual FString GetEnumStructName();
+	
 	template<typename EnumStruct, typename EnumMap>
 	void Init()
 	{
+		EnumMap::Get().ClearUserDefinedEnums();
+
+		CustomPopulateEnumMap();
+		PopulateEnumMapFromUserDefinedEnum();
+		
 		PerformDropDownCheck = true;
 
-		const int32 Count = EnumMap::Get().Num();
+		const int32& Count = EnumMap::Get().Num();
 
 		for (int32 I = 0; I < Count; ++I)
 		{

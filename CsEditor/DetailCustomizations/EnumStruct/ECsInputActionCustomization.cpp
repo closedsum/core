@@ -8,7 +8,25 @@
 
 FECsInputActionCustomization::FECsInputActionCustomization()
 {
+	UserDefinedEnumObjectPath		= FName("");
+	bPopulateEnumMapFromUserDefinedEnum 	= true;
+	
 	Init<FECsInputAction, EMCsInputAction>();
+}
+
+void FECsInputActionCustomization::CustomPopulateEnumMap()
+{
+	//FR6EnumEditorUtils::SyncInputAction();
+}
+
+void FECsInputActionCustomization::AddEnumToMap(const FString& Name)
+{
+	EMCsInputAction::Get().CreateSafe(Name, true);
+}
+
+FString FECsInputActionCustomization::GetEnumStructName()
+{
+	return TEXT("FECsInputAction");
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsInputActionCustomization::MakeInstance()

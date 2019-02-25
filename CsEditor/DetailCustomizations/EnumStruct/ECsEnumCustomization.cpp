@@ -7,11 +7,66 @@
 
 #include "Types/CsTypes_Primitive.h"
 
+#include "AssetRegistryModule.h"
+#include "Developer/AssetTools/Public/AssetToolsModule.h"
+#include "Editor/ContentBrowser/Public/ContentBrowserModule.h"
+
+#include "Classes/Factories/BlueprintFactory.h"
+
+#include "Classes/Engine/UserDefinedEnum.h"
+
 #define LOCTEXT_NAMESPACE "ECsEnumCustomization"
 
 
 FECsEnumCustomization::FECsEnumCustomization()
 {
+}
+
+void FECsEnumCustomization::CustomPopulateEnumMap(){}
+
+void FECsEnumCustomization::PopulateEnumMapFromUserDefinedEnum()
+{
+	if (!bPopulateEnumMapFromUserDefinedEnum)
+		return;
+
+	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(FName("AssetRegistry"));
+	TArray<FAssetData> OutAssetData;
+	IAssetRegistry& AssetRegistry = AssetRegistryModule.Get();
+
+	FAssetData Asset = AssetRegistry.GetAssetByObjectPath(UserDefinedEnumObjectPath);
+
+	if (UUserDefinedEnum* Enum = Cast<UUserDefinedEnum>(Asset.GetAsset()))
+	{
+		const int32 Count = Enum->NumEnums() - 1;
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const FString Name = Enum->GetDisplayNameTextByIndex(I).ToString();
+
+			AddEnumToMap(Name);
+		}
+	}
+	else
+	{
+		if (UserDefinedEnumObjectPath == NAME_None)
+		{
+			UE_LOG(LogR6Editor, Warning, TEXT("FER6EnumStructCustomization::PopulateEnumMapFromUserDefinedEnum (%s): No valid UserDefinedEnumObjectPath set."), *GetEnumStructName());
+		}
+		else
+		{
+			UE_LOG(LogR6Editor, Warning, TEXT("FER6EnumStructCustomization::PopulateEnumMapFromUserDefinedEnum (%s): Failed to find UserDefinedEnum at: %s. It is possible it was deleted or moved."), *GetEnumStructName(), *(UserDefinedEnumObjectPath.ToString()));
+		}
+	}
+}
+
+void FECsEnumCustomization::AddEnumToMap(const FString& Name)
+{
+
+}
+
+FString FECsEnumCustomization::GetEnumStructName()
+{
+	return TEXT("");
 }
 
 void FECsEnumCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> StructPropertyHandle, class FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils)

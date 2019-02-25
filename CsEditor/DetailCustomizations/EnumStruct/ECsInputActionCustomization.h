@@ -14,6 +14,13 @@ public:
 
 	FECsInputActionCustomization();
 
+protected:
+
+	virtual void CustomPopulateEnumMap() override;
+
+	virtual void AddEnumToMap(const FString& Name) override;
+	virtual FString GetEnumStructName() override;
+	
 	static TSharedRef<IPropertyTypeCustomization> MakeInstance();
 
 protected:

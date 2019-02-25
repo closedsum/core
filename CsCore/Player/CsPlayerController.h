@@ -6,7 +6,6 @@
 #include "CsPlayerController.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsPlayerController_OnTickActor, const uint8&, MappingId, const float&, DeltaSeconds);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsPlayerController_OnCalcCamera, const uint8&, const float&, const struct FMinimalViewInfo&);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FBindableDynEvent_CsPlayerController_OnCalcCamera, const uint8&, MappingId, const float&, DeltaTime, const struct FMinimalViewInfo&, ViewInfo);
 
 UCLASS()
@@ -25,7 +24,9 @@ class CSCORE_API ACsPlayerController : public APlayerController
 #pragma region
 public:
 
-	FBindableEvent_CsPlayerController_OnCalcCamera OnCalcCamera_Event;
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnCalcCamera, const uint8&, const float&, const struct FMinimalViewInfo&);
+
+	FOnCalcCamera OnCalcCamera_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "Camera")
 	FBindableDynEvent_CsPlayerController_OnCalcCamera OnCalcCamera_ScriptEvent;
@@ -56,16 +57,17 @@ public:
 #pragma region
 public:
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly, Category = "Input")
 	class ACsManager_Input* Manager_Input;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TSubclassOf<class ACsManager_Input> ManagerInputClass;
 
 	int32 GetCurrentInputActionMap();
-	void SetCurrentInputActionMap(const TCsInputActionMap &ActionMap);
-	void SetCurrentInputActionMap(const int32 &ActionMap);
-	void ClearCurrentInputActionMap(const TCsInputActionMap &ActionMap);
-	void ClearCurrentInputActionMap(const int32 &ActionMap);
+	void SetCurrentInputActionMap(const TCsInputActionMap& ActionMap);
+	void SetCurrentInputActionMap(const int32& ActionMap);
+	void ClearCurrentInputActionMap(const TCsInputActionMap& ActionMap);
+	void ClearCurrentInputActionMap(const int32& ActionMap);
 
 	virtual void InitInputSystem() override;
 	virtual void BindDelegatesToInputManager();

@@ -41,17 +41,7 @@ enum class ECsLevelState : uint8
 
 struct CSCORE_API EMCsLevelState : public TCsEnumMap<ECsLevelState>
 {
-protected:
-	EMCsLevelState() {}
-	EMCsLevelState(const EMCsLevelState &) = delete;
-	EMCsLevelState(EMCsLevelState &&) = delete;
-public:
-	~EMCsLevelState() {}
-private:
-	static EMCsLevelState* Instance;
-
-public:
-	static EMCsLevelState& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsLevelState)
 };
 
 namespace NCsLevelState
@@ -90,17 +80,7 @@ enum class ECsAxes : uint8
 
 struct CSCORE_API EMCsAxes : public TCsEnumFlagMap<ECsAxes>
 {
-protected:
-	EMCsAxes() {}
-	EMCsAxes(const EMCsAxes &) = delete;
-	EMCsAxes(EMCsAxes &&) = delete;
-public:
-	~EMCsAxes() {}
-private:
-	static EMCsAxes* Instance;
-
-public:
-	static EMCsAxes& Get();
+	CS_DECLARE_ENUM_FLAG_MAP_BODY(EMCsAxes)
 };
 
 namespace NCsAxes
@@ -136,17 +116,7 @@ enum class ECsAxes_Editor : uint8
 
 struct CSCORE_API EMCsAxes_Editor : public TCsEnumMap<ECsAxes_Editor>
 {
-protected:
-	EMCsAxes_Editor() {}
-	EMCsAxes_Editor(const EMCsAxes_Editor &) = delete;
-	EMCsAxes_Editor(EMCsAxes_Editor &&) = delete;
-public:
-	~EMCsAxes_Editor() {}
-private:
-	static EMCsAxes_Editor* Instance;
-
-public:
-	static EMCsAxes_Editor& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsAxes_Editor)
 };
 
 namespace NCsAxes_Editor
@@ -161,12 +131,12 @@ namespace NCsAxes_Editor
 		extern CSCORE_API const Type ECsAxes_Editor_MAX;
 	}
 
-	FORCEINLINE ECsAxes ToBaseType(const Type &EType)
+	FORCEINLINE const ECsAxes& ToBaseType(const Type &EType)
 	{
-		if (EType == Type::X) { return ECsAxes::X; }
-		if (EType == Type::Y) { return ECsAxes::Y; }
-		if (EType == Type::Z) { return ECsAxes::Z; }
-		return ECsAxes::X;
+		if (EType == Type::X) { return NCsAxes::Ref::X; }
+		if (EType == Type::Y) { return NCsAxes::Ref::Y; }
+		if (EType == Type::Z) { return NCsAxes::Ref::Z; }
+		return NCsAxes::Ref::X;
 	}
 }
 
@@ -188,17 +158,7 @@ enum class ECsTransformMember : uint8
 
 struct CSCORE_API EMCsTransformMember : public TCsEnumMap<ECsTransformMember>
 {
-protected:
-	EMCsTransformMember() {}
-	EMCsTransformMember(const EMCsTransformMember &) = delete;
-	EMCsTransformMember(EMCsTransformMember &&) = delete;
-public:
-	~EMCsTransformMember() {}
-private:
-	static EMCsTransformMember* Instance;
-
-public:
-	static EMCsTransformMember& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsTransformMember)
 };
 
 namespace NCsTransformMember
@@ -746,11 +706,7 @@ struct CSCORE_API FECsSurfaceType : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsSurfaceType() {}
-	FECsSurfaceType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsSurfaceType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsSurfaceType() {}
+	CS_ENUM_UINT8_BODY(FECsSurfaceType)
 
 	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
 };
@@ -762,17 +718,7 @@ FORCEINLINE uint32 GetTypeHash(const FECsSurfaceType& b)
 
 struct CSCORE_API EMCsSurfaceType : public TCsEnumStructMap<FECsSurfaceType, uint8>
 {
-protected:
-	EMCsSurfaceType() {}
-	EMCsSurfaceType(const EMCsSurfaceType &) = delete;
-	EMCsSurfaceType(EMCsSurfaceType &&) = delete;
-public:
-	~EMCsSurfaceType() {}
-private:
-	static EMCsSurfaceType* Instance;
-
-public:
-	static EMCsSurfaceType& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsSurfaceType)
 };
 
 #pragma endregion Surface
@@ -1352,17 +1298,7 @@ enum class ECsPhysicsImpulseType : uint8
 
 struct CSCORE_API EMCsPhysicsImpulseType : public TCsEnumMap<ECsPhysicsImpulseType>
 {
-protected:
-	EMCsPhysicsImpulseType() {}
-	EMCsPhysicsImpulseType(const EMCsPhysicsImpulseType &) = delete;
-	EMCsPhysicsImpulseType(EMCsPhysicsImpulseType &&) = delete;
-public:
-	~EMCsPhysicsImpulseType() {}
-private:
-	static EMCsPhysicsImpulseType* Instance;
-
-public:
-	static EMCsPhysicsImpulseType& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsPhysicsImpulseType)
 };
 
 namespace NCsPhysicsImpulseType
@@ -1623,17 +1559,7 @@ enum class ECsHMDDeviceType : uint8
 
 struct CSCORE_API EMCsHMDDeviceType : public TCsEnumMap<ECsHMDDeviceType>
 {
-protected:
-	EMCsHMDDeviceType() {}
-	EMCsHMDDeviceType(const EMCsHMDDeviceType &) = delete;
-	EMCsHMDDeviceType(EMCsHMDDeviceType &&) = delete;
-public:
-	~EMCsHMDDeviceType() {}
-private:
-	static EMCsHMDDeviceType* Instance;
-
-public:
-	static EMCsHMDDeviceType& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsHMDDeviceType)
 };
 
 namespace NCsHMDDeviceType
@@ -1682,6 +1608,9 @@ namespace NCsHMDDeviceType
 // Gestures
 #pragma region
 
+	// GestureDevice
+#pragma region
+
 UENUM(BlueprintType)
 enum class ECsGestureDevice : uint8
 {
@@ -1692,17 +1621,7 @@ enum class ECsGestureDevice : uint8
 
 struct CSCORE_API EMCsGestureDevice : public TCsEnumMap<ECsGestureDevice>
 {
-protected:
-	EMCsGestureDevice() {}
-	EMCsGestureDevice(const EMCsGestureDevice &) = delete;
-	EMCsGestureDevice(EMCsGestureDevice &&) = delete;
-public:
-	~EMCsGestureDevice() {}
-private:
-	static EMCsGestureDevice* Instance;
-
-public:
-	static EMCsGestureDevice& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsGestureDevice)
 };
 
 namespace NCsGestureDevice
@@ -1717,16 +1636,17 @@ namespace NCsGestureDevice
 	}
 }
 
+#pragma endregion GestureDevice
+
+	// GestureType
+#pragma region
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsGestureType : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsGestureType() {}
-	FECsGestureType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsGestureType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsGestureType() {}
+	CS_ENUM_UINT8_BODY(FECsGestureType)
 
 	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
 };
@@ -1738,18 +1658,10 @@ FORCEINLINE uint32 GetTypeHash(const FECsGestureType& b)
 
 struct CSCORE_API EMCsGestureType : public TCsEnumStructMap<FECsGestureType, uint8>
 {
-protected:
-	EMCsGestureType() {}
-	EMCsGestureType(const EMCsGestureType &) = delete;
-	EMCsGestureType(EMCsGestureType &&) = delete;
-public:
-	~EMCsGestureType() {}
-private:
-	static EMCsGestureType* Instance;
-
-public:
-	static EMCsGestureType& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsGestureType)
 };
+
+#pragma endregion GestureType
 
 #pragma endregion Gestures
 
@@ -1763,6 +1675,9 @@ public:
 // Motion Controller
 #pragma region
 
+	// ControllerHand
+#pragma region
+
 UENUM(BlueprintType)
 enum class ECsControllerHand : uint8
 {
@@ -1773,17 +1688,7 @@ enum class ECsControllerHand : uint8
 
 struct CSCORE_API EMCsControllerHand : public TCsEnumMap<ECsControllerHand>
 {
-protected:
-	EMCsControllerHand() {}
-	EMCsControllerHand(const EMCsControllerHand &) = delete;
-	EMCsControllerHand(EMCsControllerHand &&) = delete;
-public:
-	~EMCsControllerHand() {}
-private:
-	static EMCsControllerHand* Instance;
-
-public:
-	static EMCsControllerHand& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsControllerHand)
 };
 
 namespace NCsControllerHand
@@ -1798,24 +1703,19 @@ namespace NCsControllerHand
 	}
 }
 
+#pragma endregion ControllerHand
+
 #pragma endregion Motion Controller
 
 // Collision
 #pragma region
 
+	// CollisionEnabled
+#pragma endregion
+
 struct CSCORE_API EMCollisionEnabled : public TCsEnumMap<ECollisionEnabled::Type>
 {
-protected:
-	EMCollisionEnabled() {}
-	EMCollisionEnabled(const EMCollisionEnabled &) = delete;
-	EMCollisionEnabled(EMCollisionEnabled &&) = delete;
-public:
-	~EMCollisionEnabled() {}
-private:
-	static EMCollisionEnabled* Instance;
-
-public:
-	static EMCollisionEnabled& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCollisionEnabled)
 };
 
 namespace ECollisionEnabled
@@ -1829,19 +1729,14 @@ namespace ECollisionEnabled
 	}
 }
 
+#pragma endregion CollisionEnabled
+
+	// CollisionChannel
+#pragma region
+
 struct CSCORE_API EMCsCollisionChannel : public TCsEnumMap<ECollisionChannel>
 {
-protected:
-	EMCsCollisionChannel() {}
-	EMCsCollisionChannel(const EMCsCollisionChannel &) = delete;
-	EMCsCollisionChannel(EMCsCollisionChannel &&) = delete;
-public:
-	~EMCsCollisionChannel() {}
-private:
-	static EMCsCollisionChannel* Instance;
-
-public:
-	static EMCsCollisionChannel& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsCollisionChannel)
 };
 
 namespace ECsCollisionChannel
@@ -1887,19 +1782,14 @@ namespace ECsCollisionChannel
 	}
 }
 
+#pragma endregion CollisionChannel
+
+	// CollisionResponse
+#pragma region
+
 struct CSCORE_API EMCollisionResponse : public TCsEnumMap<ECollisionResponse>
 {
-protected:
-	EMCollisionResponse() {}
-	EMCollisionResponse(const EMCollisionResponse &) = delete;
-	EMCollisionResponse(EMCollisionResponse &&) = delete;
-public:
-	~EMCollisionResponse() {}
-private:
-	static EMCollisionResponse* Instance;
-
-public:
-	static EMCollisionResponse& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCollisionResponse)
 };
 
 namespace ECsCollisionResponse
@@ -1912,6 +1802,8 @@ namespace ECsCollisionResponse
 		extern CSCORE_API const ECollisionResponse ECR_MAX;
 	}
 };
+
+#pragma endregion CollisionResponse
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsCollisionPreset
@@ -1995,17 +1887,7 @@ enum class ECsLinearColor : uint8
 
 struct CSCORE_API EMCsLinearColor : public TCsEnumMap<ECsLinearColor>
 {
-protected:
-	EMCsLinearColor() {}
-	EMCsLinearColor(const EMCsLinearColor &) = delete;
-	EMCsLinearColor(EMCsLinearColor &&) = delete;
-public:
-	~EMCsLinearColor() {}
-private:
-	static EMCsLinearColor* Instance;
-
-public:
-	static EMCsLinearColor& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsLinearColor)
 };
 
 namespace NCsLinearColor
@@ -2044,89 +1926,53 @@ namespace NCsLinearColor
 #pragma endregion LinearColor
 
 UENUM(BlueprintType)
-namespace ECsColor
+enum class ECsColor : uint8
 {
-	enum Type
-	{
-		White			UMETA(DisplayName = "White"),
-		Black			UMETA(DisplayName = "Black"),
-		Transparent		UMETA(DisplayName = "Transparent"),
-		Red				UMETA(DisplayName = "Red"),
-		Green			UMETA(DisplayName = "Green"),
-		Blue			UMETA(DisplayName = "Blue"),
-		Yellow			UMETA(DisplayName = "Yellow"),
-		Cyan			UMETA(DisplayName = "Cyan"),
-		Magenta			UMETA(DisplayName = "Magenta"),
-		Orange			UMETA(DisplayName = "Orange"),
-		Purple			UMETA(DisplayName = "Purple"),
-		Turquoise		UMETA(DisplayName = "Turquoise"),
-		Silver			UMETA(DisplayName = "Silver"),
-		Emerald			UMETA(DisplayName = "Emerald"),
-		ECsColor_MAX	UMETA(Hidden),
-	};
-}
+	White			UMETA(DisplayName = "White"),
+	Black			UMETA(DisplayName = "Black"),
+	Transparent		UMETA(DisplayName = "Transparent"),
+	Red				UMETA(DisplayName = "Red"),
+	Green			UMETA(DisplayName = "Green"),
+	Blue			UMETA(DisplayName = "Blue"),
+	Yellow			UMETA(DisplayName = "Yellow"),
+	Cyan			UMETA(DisplayName = "Cyan"),
+	Magenta			UMETA(DisplayName = "Magenta"),
+	Orange			UMETA(DisplayName = "Orange"),
+	Purple			UMETA(DisplayName = "Purple"),
+	Turquoise		UMETA(DisplayName = "Turquoise"),
+	Silver			UMETA(DisplayName = "Silver"),
+	Emerald			UMETA(DisplayName = "Emerald"),
+	ECsColor_MAX	UMETA(Hidden),
+};
 
-namespace ECsColor
+struct CSCORE_API EMCsColor : public TCsEnumMap<ECsColor>
 {
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
+	CS_DECLARE_ENUM_MAP_BODY(EMCsColor)
+};
 
-	namespace Str
+namespace NCsColor
+{
+	typedef ECsColor Type;
+
+	namespace Ref
 	{
-		const TCsString White = TCsString(TEXT("White"), TEXT("white"));
-		const TCsString Black = TCsString(TEXT("Black"), TEXT("black"));
-		const TCsString Transparent = TCsString(TEXT("Transparent"), TEXT("transparent"));
-		const TCsString Red = TCsString(TEXT("Red"), TEXT("red"));
-		const TCsString Green = TCsString(TEXT("Green"), TEXT("green"));
-		const TCsString Blue = TCsString(TEXT("Blue"), TEXT("blue"));
-		const TCsString Yellow = TCsString(TEXT("Yellow"), TEXT("yellow"));
-		const TCsString Cyan = TCsString(TEXT("Cyan"), TEXT("cyan"));
-		const TCsString Magenta = TCsString(TEXT("Magenta"), TEXT("magenta"));
-		const TCsString Orange = TCsString(TEXT("Orange"), TEXT("orange"));
-		const TCsString Purple = TCsString(TEXT("Purple"), TEXT("purple"));
-		const TCsString Turquoise = TCsString(TEXT("Turquoise"), TEXT("turquoise"));
-		const TCsString Silver = TCsString(TEXT("Silver"), TEXT("silver"));
-		const TCsString Emerald = TCsString(TEXT("Emerald"), TEXT("emerald"));
+		extern CSCORE_API const Type White;
+		extern CSCORE_API const Type Black;
+		extern CSCORE_API const Type Transparent;
+		extern CSCORE_API const Type Red;
+		extern CSCORE_API const Type Green;
+		extern CSCORE_API const Type Blue;
+		extern CSCORE_API const Type Yellow;
+		extern CSCORE_API const Type Cyan;
+		extern CSCORE_API const Type Magenta;
+		extern CSCORE_API const Type Orange;
+		extern CSCORE_API const Type Purple;
+		extern CSCORE_API const Type Turquoise;
+		extern CSCORE_API const Type Silver;
+		extern CSCORE_API const Type Emerald;
 	}
 
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::White) { return Str::White.Value; }
-		if (EType == Type::Black) { return Str::Black.Value; }
-		if (EType == Type::Transparent) { return Str::Transparent.Value; }
-		if (EType == Type::Red) { return Str::Red.Value; }
-		if (EType == Type::Green) { return Str::Green.Value; }
-		if (EType == Type::Blue) { return Str::Blue.Value; }
-		if (EType == Type::Yellow) { return Str::Yellow.Value; }
-		if (EType == Type::Cyan) { return Str::Cyan.Value; }
-		if (EType == Type::Magenta) { return Str::Magenta.Value; }
-		if (EType == Type::Orange) { return Str::Orange.Value; }
-		if (EType == Type::Purple) { return Str::Purple.Value; }
-		if (EType == Type::Turquoise) { return Str::Turquoise.Value; }
-		if (EType == Type::Silver) { return Str::Silver.Value; }
-		if (EType == Type::Emerald) { return Str::Emerald.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE Type ToType(const FString &String)
-	{
-		if (String == Str::White) { return Type::White; }
-		if (String == Str::Black) { return Type::Black; }
-		if (String == Str::Transparent) { return Type::Transparent; }
-		if (String == Str::Red) { return Type::Red; }
-		if (String == Str::Green) { return Type::Green; }
-		if (String == Str::Blue) { return Type::Blue; }
-		if (String == Str::Yellow) { return Type::Yellow; }
-		if (String == Str::Cyan) { return Type::Cyan; }
-		if (String == Str::Magenta) { return Type::Magenta; }
-		if (String == Str::Orange) { return Type::Orange; }
-		if (String == Str::Purple) { return Type::Purple; }
-		if (String == Str::Turquoise) { return Type::Turquoise; }
-		if (String == Str::Silver) { return Type::Silver; }
-		if (String == Str::Emerald) { return Type::Emerald; }
-		return Type::ECsColor_MAX;
-	}
-
-	FORCEINLINE FColor ToColor(const Type &EType)
+	FORCEINLINE const FColor& ToColor(const Type &EType)
 	{
 		if (EType == Type::White) { return FColor::White; }
 		if (EType == Type::Black) { return FColor::Black; }
@@ -2147,7 +1993,6 @@ namespace ECsColor
 }
 
 #define ECS_COLOR_MAX (uint8)ECsColor::ECsColor_MAX
-typedef ECsColor::Type TCsColor;
 
 #pragma endregion Color
 

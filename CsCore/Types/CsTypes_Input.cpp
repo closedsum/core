@@ -15,14 +15,8 @@ namespace NCsInputDevice
 	}
 }
 
-EMCsInputType* EMCsInputType::Instance;
-
-EMCsInputType& EMCsInputType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsInputType();
-	return *Instance;
-}
+// InputType
+CS_DEFINE_ENUM_MAP_BODY(EMCsInputType)
 
 namespace NCsInputType
 {
@@ -37,14 +31,8 @@ namespace NCsInputType
 	}
 }
 
-EMCsInputEvent* EMCsInputEvent::Instance;
-
-EMCsInputEvent& EMCsInputEvent::Get()
-{
-	if (!Instance)
-		Instance = new EMCsInputEvent();
-	return *Instance;
-}
+// InputEvent
+CS_DEFINE_ENUM_MAP_BODY(EMCsInputEvent)
 
 namespace NCsInputEvent
 {
@@ -62,14 +50,8 @@ namespace NCsInputEvent
 	}
 }
 
-EMCsInputValue* EMCsInputValue::Instance;
-
-EMCsInputValue& EMCsInputValue::Get()
-{
-	if (!Instance)
-		Instance = new EMCsInputValue();
-	return *Instance;
-}
+// InputValue
+CS_DEFINE_ENUM_MAP_BODY(EMCsInputValue)
 
 namespace NCsInputValue
 {
@@ -92,20 +74,8 @@ EMCsInputActionMap& EMCsInputActionMap::Get()
 	return *Instance;
 }
 
-EMCsInputAction* EMCsInputAction::Instance;
+// InputAction
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsInputAction)
 
-EMCsInputAction& EMCsInputAction::Get()
-{
-	if (!Instance)
-		Instance = new EMCsInputAction();
-	return *Instance;
-}
-
-EMCsGameEvent* EMCsGameEvent::Instance;
-
-EMCsGameEvent& EMCsGameEvent::Get()
-{
-	if (!Instance)
-		Instance = new EMCsGameEvent();
-	return *Instance;
-}
+// GameEvent
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsGameEvent)

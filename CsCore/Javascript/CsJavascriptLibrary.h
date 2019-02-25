@@ -12,21 +12,21 @@ class CSCORE_API UCsJavascriptLibrary : public UBlueprintFunctionLibrary
 	GENERATED_UCLASS_BODY()
 
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static void ConsoleLog(const FString &String);
+	static void ConsoleLog(const FString& String);
 
 // Vector
 #pragma region
 
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static FString Vector_ToString(const FVector &V);
+	static FString Vector_ToString(const FVector& V);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static float Vector_Size(const FVector &V);
+	static float Vector_Size(const FVector& V);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static float Vector_SizeSquared(const FVector &V);
+	static float Vector_SizeSquared(const FVector& V);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static FVector Vector_GetSafeNormal(const FVector &V);
+	static FVector Vector_GetSafeNormal(const FVector& V);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static FRotator Vector_Rotation(const FVector &V);
+	static FRotator Vector_Rotation(const FVector& V);
 
 #pragma endregion Vector
 
@@ -34,13 +34,13 @@ class CSCORE_API UCsJavascriptLibrary : public UBlueprintFunctionLibrary
 #pragma region
 
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static FString Rotator_ToString(const FRotator &R);
+	static FString Rotator_ToString(const FRotator& R);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static FVector Rotator_Vector(const FRotator &R);
+	static FVector Rotator_Vector(const FRotator& R);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static FRotator Add_RotatorRotator(const FRotator &A, const FRotator &B);
+	static FRotator Add_RotatorRotator(const FRotator& A, const FRotator& B);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static FRotator Subtract_RotatorRotator(const FRotator &A, const FRotator &B);
+	static FRotator Subtract_RotatorRotator(const FRotator& A, const FRotator& B);
 
 #pragma endregion Rotator
 
@@ -48,10 +48,10 @@ class CSCORE_API UCsJavascriptLibrary : public UBlueprintFunctionLibrary
 #pragma region
 
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static AActor* HitResult_GetActor(const FHitResult &HitResult);
+	static AActor* HitResult_GetActor(const FHitResult& HitResult);
 
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static UPrimitiveComponent* HitResult_GetComponent(const FHitResult &HitResult);
+	static UPrimitiveComponent* HitResult_GetComponent(const FHitResult& HitResult);
 
 #pragma endregion HitResult
 
@@ -59,7 +59,7 @@ class CSCORE_API UCsJavascriptLibrary : public UBlueprintFunctionLibrary
 #pragma region
 
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static void SetCollisionResponseToChannels(UPrimitiveComponent* InComponent, const FCollisionResponseContainer &Response);
+	static void SetCollisionResponseToChannels(UPrimitiveComponent* InComponent, const FCollisionResponseContainer& Response);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
 	static void AddMoveIngoreActor(UPrimitiveComponent* InComponent, AActor* InActor);
 
@@ -71,9 +71,9 @@ class CSCORE_API UCsJavascriptLibrary : public UBlueprintFunctionLibrary
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
 	static FVector GetComponentLocation(USceneComponent* InComponent);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static void ComponentAttachToComponent(USceneComponent* InComponent, USceneComponent* Parent, const TEnumAsByte<ECsAttachmentTransformRules::Type> &AttachmentRules, const FName &SocketName = NAME_None);
+	static void ComponentAttachToComponent(USceneComponent* InComponent, USceneComponent* Parent, const TEnumAsByte<ECsAttachmentTransformRules::Type>& AttachmentRules, const FName& SocketName = NAME_None);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static void ComponentDetachFromComponent(USceneComponent* InComponent, const TEnumAsByte<ECsDetachmentTransformRules::Type> &DetachmentRules);
+	static void ComponentDetachFromComponent(USceneComponent* InComponent, const TEnumAsByte<ECsDetachmentTransformRules::Type>& DetachmentRules);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
 	static void SetComponentRelativeTransform(USceneComponent* InComponent, const FTransform& NewTransform, bool bSweep, FHitResult& SweepHitResult, bool bTeleport);
 
@@ -89,21 +89,21 @@ class CSCORE_API UCsJavascriptLibrary : public UBlueprintFunctionLibrary
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
 	static FRotator GetActorRotation(AActor* InActor);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static bool SetActorLocation(AActor* InActor, const FVector &NewLocation, const bool &bSweep, FHitResult& SweepHitResult, const bool &bTeleport);
+	static bool SetActorLocation(AActor* InActor, const FVector& NewLocation, const bool& bSweep, FHitResult& SweepHitResult, const bool& bTeleport);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static bool SetActorRotation(AActor* InActor, const FRotator &NewRotation, const bool &bTeleportPhysics);
+	static bool SetActorRotation(AActor* InActor, const FRotator& NewRotation, const bool& bTeleportPhysics);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static void SetActorRelativeRotation(AActor* InActor, const FRotator &NewRelativeRotation, const bool &bSweep, FHitResult& SweepHitResult, const bool &bTeleport);
+	static void SetActorRelativeRotation(AActor* InActor, const FRotator& NewRelativeRotation, const bool& bSweep, FHitResult& SweepHitResult, const bool& bTeleport);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static void SetActorRelativeTransform(AActor* InActor, const FTransform& NewTransform, const bool &bSweep, FHitResult& SweepHitResult, const bool &bTeleport);
+	static void SetActorRelativeTransform(AActor* InActor, const FTransform& NewTransform, const bool& bSweep, FHitResult& SweepHitResult, const bool& bTeleport);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
 	static bool TeleportTo(AActor* InActor, const FVector& DestLocation, const FRotator& DestRotation, bool bIsATest = false, bool bNoCheck = false);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static void ActorAttachToActor(AActor* InActor, AActor* ParentActor, const TEnumAsByte<ECsAttachmentTransformRules::Type> &AttachmentRules, const FName &SocketName = NAME_None);
+	static void ActorAttachToActor(AActor* InActor, AActor* ParentActor, const TEnumAsByte<ECsAttachmentTransformRules::Type>& AttachmentRules, const FName& SocketName = NAME_None);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static void ActorAttachToComponent(AActor* InActor, USceneComponent* Parent, const TEnumAsByte<ECsAttachmentTransformRules::Type> &AttachmentRules, const FName &SocketName = NAME_None);
+	static void ActorAttachToComponent(AActor* InActor, USceneComponent* Parent, const TEnumAsByte<ECsAttachmentTransformRules::Type>& AttachmentRules, const FName& SocketName = NAME_None);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static void ActorDetachFromActor(AActor* InActor, const TEnumAsByte<ECsDetachmentTransformRules::Type> &DetachmentRules);
+	static void ActorDetachFromActor(AActor* InActor, const TEnumAsByte<ECsDetachmentTransformRules::Type>& DetachmentRules);
 
 #pragma endregion Actor
 
@@ -123,9 +123,9 @@ class CSCORE_API UCsJavascriptLibrary : public UBlueprintFunctionLibrary
 #pragma region
 
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static FLinearColor GetLinearColor(const ECsLinearColor &Color);
+	static FLinearColor GetLinearColor(const ECsLinearColor& Color);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static FColor GetColor(const TEnumAsByte<ECsColor::Type> &Color);
+	static FColor GetColor(const ECsColor& Color);
 
 #pragma endregion Color
 
@@ -143,7 +143,7 @@ class CSCORE_API UCsJavascriptLibrary : public UBlueprintFunctionLibrary
 #pragma region
 
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static uint8 CoroutineScheduleToUint8(const ECsCoroutineSchedule &Schedule);
+	static uint8 CoroutineScheduleToUint8(const ECsCoroutineSchedule& Schedule);
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
 	static uint8 GetCoroutineScheduleMax();
 
@@ -153,7 +153,7 @@ class CSCORE_API UCsJavascriptLibrary : public UBlueprintFunctionLibrary
 #pragma region
 
 	UFUNCTION(BlueprintCallable, Category = "Javascript")
-	static int32 GetConsoleVariableValue_int32(const FString &Name);
+	static int32 GetConsoleVariableValue_int32(const FString& Name);
 
 #pragma endregion CVars
 };

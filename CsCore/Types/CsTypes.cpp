@@ -5,14 +5,7 @@
 #pragma region
 
 	// LevelState
-EMCsLevelState* EMCsLevelState::Instance;
-
-EMCsLevelState& EMCsLevelState::Get()
-{
-	if (!Instance)
-		Instance = new EMCsLevelState();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMCsLevelState)
 
 namespace NCsLevelState
 {
@@ -32,14 +25,7 @@ namespace NCsLevelState
 #pragma region
 
 	// Axes
-EMCsAxes* EMCsAxes::Instance;
-
-EMCsAxes& EMCsAxes::Get()
-{
-	if (!Instance)
-		Instance = new EMCsAxes();
-	return *Instance;
-}
+CS_DEFINE_ENUM_FLAG_MAP_BODY(EMCsAxes)
 
 namespace NCsAxes
 {
@@ -52,14 +38,7 @@ namespace NCsAxes
 }
 
 	// Axes_Editor
-EMCsAxes_Editor* EMCsAxes_Editor::Instance;
-
-EMCsAxes_Editor& EMCsAxes_Editor::Get()
-{
-	if (!Instance)
-		Instance = new EMCsAxes_Editor();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMCsAxes_Editor)
 
 namespace NCsAxes_Editor
 {
@@ -72,14 +51,8 @@ namespace NCsAxes_Editor
 	}
 }
 
-EMCsTransformMember* EMCsTransformMember::Instance;
-
-EMCsTransformMember& EMCsTransformMember::Get()
-{
-	if (!Instance)
-		Instance = new EMCsTransformMember();
-	return *Instance;
-}
+	// TransformMember
+CS_DEFINE_ENUM_MAP_BODY(EMCsTransformMember)
 
 namespace NCsTransformMember
 {
@@ -97,14 +70,8 @@ namespace NCsTransformMember
 // Surface
 #pragma region
 
-EMCsSurfaceType* EMCsSurfaceType::Instance;
-
-EMCsSurfaceType& EMCsSurfaceType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsSurfaceType();
-	return *Instance;
-}
+	// SurfaceType
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsSurfaceType)
 
 #pragma endregion Surface
 
@@ -112,14 +79,7 @@ EMCsSurfaceType& EMCsSurfaceType::Get()
 #pragma region
 
 	// PhysicsImpulseType
-EMCsPhysicsImpulseType* EMCsPhysicsImpulseType::Instance;
-
-EMCsPhysicsImpulseType& EMCsPhysicsImpulseType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsPhysicsImpulseType();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMCsPhysicsImpulseType)
 
 namespace NCsPhysicsImpulseType
 {
@@ -141,14 +101,7 @@ namespace NCsPhysicsImpulseType
 #pragma region
 
 	// HMDDeviceType
-EMCsHMDDeviceType* EMCsHMDDeviceType::Instance;
-
-EMCsHMDDeviceType& EMCsHMDDeviceType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsHMDDeviceType();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMCsHMDDeviceType)
 
 namespace NCsHMDDeviceType
 {
@@ -170,14 +123,7 @@ namespace NCsHMDDeviceType
 #pragma region
 
 	// GestureDevice
-EMCsGestureDevice* EMCsGestureDevice::Instance;
-
-EMCsGestureDevice& EMCsGestureDevice::Get()
-{
-	if (!Instance)
-		Instance = new EMCsGestureDevice();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMCsGestureDevice)
 
 namespace NCsGestureDevice
 {
@@ -190,28 +136,15 @@ namespace NCsGestureDevice
 }
 
 	// GestureType
-EMCsGestureType* EMCsGestureType::Instance;
-
-EMCsGestureType& EMCsGestureType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsGestureType();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMCsGestureType)
 
 #pragma endregion Gestures
 
 // Motion Controller
 #pragma region
 
-EMCsControllerHand* EMCsControllerHand::Instance;
-
-EMCsControllerHand& EMCsControllerHand::Get()
-{
-	if (!Instance)
-		Instance = new EMCsControllerHand();
-	return *Instance;
-}
+	// ControllerHand
+CS_DEFINE_ENUM_MAP_BODY(EMCsControllerHand)
 
 namespace NCsControllerHand
 {
@@ -227,14 +160,8 @@ namespace NCsControllerHand
 // Collision
 #pragma region
 
-EMCollisionEnabled* EMCollisionEnabled::Instance;
-
-EMCollisionEnabled& EMCollisionEnabled::Get()
-{
-	if (!Instance)
-		Instance = new EMCollisionEnabled();
-	return *Instance;
-}
+	// CollisionEnabled
+CS_DEFINE_ENUM_MAP_BODY(EMCollisionEnabled)
 
 namespace ECollisionEnabled
 {
@@ -247,14 +174,8 @@ namespace ECollisionEnabled
 	}
 }
 
-EMCsCollisionChannel* EMCsCollisionChannel::Instance;
-
-EMCsCollisionChannel& EMCsCollisionChannel::Get()
-{
-	if (!Instance)
-		Instance = new EMCsCollisionChannel();
-	return *Instance;
-}
+	// CollisionChannel
+CS_DEFINE_ENUM_MAP_BODY(EMCsCollisionChannel)
 
 namespace ECsCollisionChannel
 {
@@ -299,14 +220,8 @@ namespace ECsCollisionChannel
 	}
 }
 
-EMCollisionResponse* EMCollisionResponse::Instance;
-
-EMCollisionResponse& EMCollisionResponse::Get()
-{
-	if (!Instance)
-		Instance = new EMCollisionResponse();
-	return *Instance;
-}
+	// CollisionResponse
+CS_DEFINE_ENUM_MAP_BODY(EMCollisionResponse)
 
 namespace ECsCollisionResponse
 {
@@ -325,14 +240,7 @@ namespace ECsCollisionResponse
 #pragma region
 
 	// LinearColor
-EMCsLinearColor* EMCsLinearColor::Instance;
-
-EMCsLinearColor& EMCsLinearColor::Get()
-{
-	if (!Instance)
-		Instance = new EMCsLinearColor();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMCsLinearColor)
 
 namespace NCsLinearColor
 {
@@ -346,7 +254,32 @@ namespace NCsLinearColor
 		CSCORE_API const Type Green = EMCsLinearColor::Get().Add(Type::Green, TEXT("Green"));
 		CSCORE_API const Type Blue = EMCsLinearColor::Get().Add(Type::Blue, TEXT("Blue"));
 		CSCORE_API const Type Yellow = EMCsLinearColor::Get().Add(Type::Yellow, TEXT("Yellow"));
-		CSCORE_API const Type ECsLinearColor_MAX = EMCsLinearColor::Get().Add(Type::ECsLinearColor_MAX, TEXT("ECsLinearColor_MAX"));
+		CSCORE_API const Type ECsLinearColor_MAX = EMCsLinearColor::Get().Add(Type::ECsLinearColor_MAX, TEXT("ECsLinearColor_MAX"), TEXT("MAX"));
+	}
+}
+
+	// Color
+CS_DEFINE_ENUM_MAP_BODY(EMCsColor)
+
+namespace NCsColor
+{
+	namespace Ref
+	{
+		CSCORE_API const Type White = EMCsColor::Get().Add(Type::White, TEXT("White"));
+		CSCORE_API const Type Black = EMCsColor::Get().Add(Type::Black, TEXT("Black"));
+		CSCORE_API const Type Transparent = EMCsColor::Get().Add(Type::Transparent, TEXT("Transparent"));
+		CSCORE_API const Type Red = EMCsColor::Get().Add(Type::Red, TEXT("Red"));
+		CSCORE_API const Type Green = EMCsColor::Get().Add(Type::Green, TEXT("Green"));
+		CSCORE_API const Type Blue = EMCsColor::Get().Add(Type::Blue, TEXT("Blue"));
+		CSCORE_API const Type Yellow = EMCsColor::Get().Add(Type::Yellow, TEXT("Yellow"));
+		CSCORE_API const Type Cyan = EMCsColor::Get().Add(Type::Cyan, TEXT("Cyan"));
+		CSCORE_API const Type Magenta = EMCsColor::Get().Add(Type::Magenta, TEXT("Magenta"));
+		CSCORE_API const Type Orange = EMCsColor::Get().Add(Type::Orange, TEXT("Orange"));
+		CSCORE_API const Type Purple = EMCsColor::Get().Add(Type::Purple, TEXT("Purple"));
+		CSCORE_API const Type Turquoise = EMCsColor::Get().Add(Type::Turquoise, TEXT("Turquoise"));
+		CSCORE_API const Type Silver = EMCsColor::Get().Add(Type::Silver, TEXT("Silver"));
+		CSCORE_API const Type Emerald = EMCsColor::Get().Add(Type::Emerald, TEXT("Emerald"));
+		CSCORE_API const Type ECsColor_MAX = EMCsColor::Get().Add(Type::ECsColor_MAX, TEXT("ECsColor_MAX"), TEXT("MAX"));
 	}
 }
 

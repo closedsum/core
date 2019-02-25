@@ -140,15 +140,15 @@ class CSCORE_API ACsManager_Input : public AActor
 
 	FCsInput InputPool[CS_INPUT_POOL_SIZE];
 
-	FCsInput* AllocateInput(const FECsInputAction &Action, const ECsInputEvent &Event, const float &Value = 0.0f, const FVector &Location = FVector::ZeroVector, const FRotator &Rotation = FRotator::ZeroRotator);
+	FCsInput* AllocateInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value = 0.0f, const FVector& Location = FVector::ZeroVector, const FRotator& Rotation = FRotator::ZeroRotator);
 
-	virtual void AddInput(const FECsInputAction &Action, const ECsInputEvent &Event, const float &Value=0.0f, const FVector &Location=FVector::ZeroVector, const FRotator &Rotation=FRotator::ZeroRotator);
+	virtual void AddInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value=0.0f, const FVector& Location=FVector::ZeroVector, const FRotator& Rotation=FRotator::ZeroRotator);
 
 	TArray<FCsInput*> QueuedInputsForNextFrame;
 
-	virtual void QueueInput(const FECsInputAction &Action, const ECsInputEvent &Event, const float &Value = 0.0f, const FVector &Location = FVector::ZeroVector, const FRotator &Rotation = FRotator::ZeroRotator);
+	virtual void QueueInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value = 0.0f, const FVector& Location = FVector::ZeroVector, const FRotator& Rotation = FRotator::ZeroRotator);
 
-	void ConsumeInput(const FECsInputAction &Action);
+	void ConsumeInput(const FECsInputAction& Action);
 
 	uint16 CurrentInputPoolIndex;
 
@@ -163,40 +163,40 @@ class CSCORE_API ACsManager_Input : public AActor
 
 	CS_DECLARE_INPUT_ACTION_MAP
 
-	void SetCurrentInputActionMap(const TCsInputActionMap &ActionMap);
-	void SetCurrentInputActionMap(const int32 &ActionMap);
-	void ClearCurrentInputActionMap(const TCsInputActionMap &ActionMap);
-	void ClearCurrentInputActionMap(const int32 &ActionMap);
+	void SetCurrentInputActionMap(const TCsInputActionMap& ActionMap);
+	void SetCurrentInputActionMap(const int32& ActionMap);
+	void ClearCurrentInputActionMap(const TCsInputActionMap& ActionMap);
+	void ClearCurrentInputActionMap(const int32& ActionMap);
 
 	TArray<FKey> PressedKeys;
 
-	FCsInput* GetPreviousInputAction(const FECsInputAction &Action);
-	FCsInput* GetPreviousInputAction(const FECsInputAction &Action, const ECsInputEvent &Event);
-	FCsInput* GetPreviousInputAction(const FECsInputAction &Action, const TArray<ECsInputEvent> &Events);
-	FCsInput* GetPreviousPreviousInputAction(const FECsInputAction &Action);
+	FCsInput* GetPreviousInputAction(const FECsInputAction& Action);
+	FCsInput* GetPreviousInputAction(const FECsInputAction& Action, const ECsInputEvent& Event);
+	FCsInput* GetPreviousInputAction(const FECsInputAction& Action, const TArray<ECsInputEvent>& Events);
+	FCsInput* GetPreviousPreviousInputAction(const FECsInputAction& Action);
 
 	TArray<FCsGameEventInfo> QueuedGameEventInfosForNextFrame;
 
-	virtual void QueueGameEvent(const FECsGameEvent &Event);
+	virtual void QueueGameEvent(const FECsGameEvent& Event);
 
 	void ClearQueuedGameEvents();
 
-	virtual void DetermineGameEvents(const TArray<FCsInput*> &InInputs);
+	virtual void DetermineGameEvents(const TArray<FCsInput*>& InInputs);
 
 	//UFUNCTION(BlueprintCallable, Category = "Input")
 	//bool HasActionEventOccured(const FECsInputAction &Action, const ECsInputEvent &Event);
-	bool HasActionEventOccured(const FECsInputAction &Action, const ECsInputEvent &Event);
+	bool HasActionEventOccured(const FECsInputAction& Action, const ECsInputEvent& Event);
 
 	UFUNCTION(BlueprintCallable, Category = "Input")
-	float GetInputValue(const FECsInputAction &Action);
+	float GetInputValue(const FECsInputAction& Action);
 	UFUNCTION(BlueprintCallable, Category = "Input")
-	FVector GetInputLocation(const FECsInputAction &Action);
+	FVector GetInputLocation(const FECsInputAction& Action);
 
 	UFUNCTION(BlueprintCallable, Category = "Input")
 	ECsInputEvent GetInputEvent(const FECsInputAction& Action);
 
 	UFUNCTION(BlueprintCallable, Category = "Input")
-	float GetInputDuration(const FECsInputAction &Action);
+	float GetInputDuration(const FECsInputAction& Action);
 
 // Profile
 #pragma region
@@ -263,7 +263,7 @@ protected:
 	TArray<ECsInputEvent*> Last_Actions;
 
 	template<typename T>
-	void DefineInputValues(T* &Input, const FECsInputAction &Action, const int32 &ActionMap)
+	void DefineInputValues(T*& Input, const FECsInputAction& Action, const int32& ActionMap)
 	{
 		Input = NewObject<T>(GetWorld(), T::StaticClass(), *(Action.Name), RF_Transient);
 		Input->AddToRoot();
@@ -419,7 +419,7 @@ public:
 // Game Events
 #pragma region
 
-	void CreateGameEventDefinitionSimple(TArray<FCsGameEventDefinition> &Definitions, const FECsGameEvent &GameEvent, const FECsInputAction &Action, const ECsInputEvent &Event);
+	void CreateGameEventDefinitionSimple(TArray<FCsGameEventDefinition>& Definitions, const FECsGameEvent& GameEvent, const FECsInputAction& Action, const ECsInputEvent& Event);
 
 #pragma endregion Game Events
 };

@@ -587,7 +587,7 @@ void ACsManager_Input::ProcessInput(AActor* ActionOwner, const struct FCsInput* 
 	}
 }
 
-FCsInput* ACsManager_Input::AllocateInput(const FECsInputAction &Action, const ECsInputEvent &Event, const float &Value /*=0.0f*/, const FVector &Location /*=FVector::ZeroVector*/, const FRotator &Rotation /*=FRotator::ZeroRotator*/)
+FCsInput* ACsManager_Input::AllocateInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value /*=0.0f*/, const FVector& Location /*=FVector::ZeroVector*/, const FRotator& Rotation /*=FRotator::ZeroRotator*/)
 {
 	for (int32 I = 0; I < CS_INPUT_POOL_SIZE; ++I)
 	{
@@ -605,20 +605,20 @@ FCsInput* ACsManager_Input::AllocateInput(const FECsInputAction &Action, const E
 	return nullptr;
 }
 
-void ACsManager_Input::AddInput(const FECsInputAction &Action, const ECsInputEvent &Event, const float &Value /*=0.0f*/, const FVector &Location /*=FVector::ZeroVector*/, const FRotator &Rotation /*=FRotator::ZeroRotator*/)
+void ACsManager_Input::AddInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value /*=0.0f*/, const FVector& Location /*=FVector::ZeroVector*/, const FRotator& Rotation /*=FRotator::ZeroRotator*/)
 {
 	FCsInput* Input = AllocateInput(Action, Event, Value, Location, Rotation);
 	InputFrames[CurrentInputFrameIndex].Inputs.Add(Input);
 }
 
-void ACsManager_Input::QueueInput(const FECsInputAction &Action, const ECsInputEvent &Event, const float &Value /*=0.0f*/, const FVector &Location /*=FVector::ZeroVector*/, const FRotator &Rotation /*=FRotator::ZeroRotator*/)
+void ACsManager_Input::QueueInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value /*=0.0f*/, const FVector& Location /*=FVector::ZeroVector*/, const FRotator& Rotation /*=FRotator::ZeroRotator*/)
 {
 	FCsInput* Input = AllocateInput(Action, Event, Value, Location, Rotation);
 
 	QueuedInputsForNextFrame.Add(Input);
 }
 
-void ACsManager_Input::ConsumeInput(const FECsInputAction &Action)
+void ACsManager_Input::ConsumeInput(const FECsInputAction& Action)
 {
 	FCsInputFrame& InputFrame = InputFrames[CurrentInputFrameIndex];
 
@@ -645,27 +645,27 @@ void ACsManager_Input::ConsumeInput(const FECsInputAction &Action)
 	}
 }
 
-void ACsManager_Input::SetCurrentInputActionMap(const TCsInputActionMap &ActionMap)
+void ACsManager_Input::SetCurrentInputActionMap(const TCsInputActionMap& ActionMap)
 {
 	CS_SET_BITFLAG(CurrentInputActionMap, ActionMap);
 }
 
-void ACsManager_Input::SetCurrentInputActionMap(const int32 &ActionMap)
+void ACsManager_Input::SetCurrentInputActionMap(const int32& ActionMap)
 {
 	CS_SET_BITFLAG(CurrentInputActionMap, ActionMap);
 }
 
-void ACsManager_Input::ClearCurrentInputActionMap(const TCsInputActionMap &ActionMap)
+void ACsManager_Input::ClearCurrentInputActionMap(const TCsInputActionMap& ActionMap)
 {
 	CS_CLEAR_BITFLAG(CurrentInputActionMap, ActionMap);
 }
 
-void ACsManager_Input::ClearCurrentInputActionMap(const int32 &ActionMap)
+void ACsManager_Input::ClearCurrentInputActionMap(const int32& ActionMap)
 {
 	CS_CLEAR_BITFLAG(CurrentInputActionMap, ActionMap);
 }
 
-FCsInput* ACsManager_Input::GetPreviousInputAction(const FECsInputAction &Action)
+FCsInput* ACsManager_Input::GetPreviousInputAction(const FECsInputAction& Action)
 {
 	const int32 LastInputFrame = UCsCommon::Mod(CurrentInputFrameIndex - 1, CS_MAX_INPUT_FRAMES);
 	FCsInput* Input			   = InputFrames[LastInputFrame].GetInput(Action);
@@ -673,7 +673,7 @@ FCsInput* ACsManager_Input::GetPreviousInputAction(const FECsInputAction &Action
 	return Input;
 }
 
-FCsInput* ACsManager_Input::GetPreviousInputAction(const FECsInputAction &Action, const ECsInputEvent &Event)
+FCsInput* ACsManager_Input::GetPreviousInputAction(const FECsInputAction& Action, const ECsInputEvent& Event)
 {
 	const int32 LastInputFrame = UCsCommon::Mod(CurrentInputFrameIndex - 1, CS_MAX_INPUT_FRAMES);
 	FCsInput* Input			   = InputFrames[LastInputFrame].GetInput(Action, Event);
@@ -681,7 +681,7 @@ FCsInput* ACsManager_Input::GetPreviousInputAction(const FECsInputAction &Action
 	return Input;
 }
 
-FCsInput* ACsManager_Input::GetPreviousInputAction(const FECsInputAction &Action, const TArray<ECsInputEvent> &Events)
+FCsInput* ACsManager_Input::GetPreviousInputAction(const FECsInputAction& Action, const TArray<ECsInputEvent>& Events)
 {
 	const int32 LastInputFrame = UCsCommon::Mod(CurrentInputFrameIndex - 1, CS_MAX_INPUT_FRAMES);
 	FCsInput* Input			   = InputFrames[LastInputFrame].GetInput(Action, Events);
@@ -689,7 +689,7 @@ FCsInput* ACsManager_Input::GetPreviousInputAction(const FECsInputAction &Action
 	return Input;
 }
 
-FCsInput* ACsManager_Input::GetPreviousPreviousInputAction(const FECsInputAction &Action)
+FCsInput* ACsManager_Input::GetPreviousPreviousInputAction(const FECsInputAction& Action)
 {
 	const int32 LastInputFrame = UCsCommon::Mod(CurrentInputFrameIndex - 2, CS_MAX_INPUT_FRAMES);
 	FCsInput* Input			   = InputFrames[LastInputFrame].GetInput(Action);
@@ -697,7 +697,7 @@ FCsInput* ACsManager_Input::GetPreviousPreviousInputAction(const FECsInputAction
 	return Input;
 }
 
-void ACsManager_Input::QueueGameEvent(const FECsGameEvent &Event)
+void ACsManager_Input::QueueGameEvent(const FECsGameEvent& Event)
 {
 	QueuedGameEventInfosForNextFrame.AddDefaulted();
 	QueuedGameEventInfosForNextFrame.Last().Event = Event;
@@ -708,11 +708,11 @@ void ACsManager_Input::ClearQueuedGameEvents()
 	QueuedGameEventInfosForNextFrame.Reset();
 }
 
-void ACsManager_Input::DetermineGameEvents(const TArray<FCsInput*> &InInputs)
+void ACsManager_Input::DetermineGameEvents(const TArray<FCsInput*>& InInputs)
 {
 }
 
-bool ACsManager_Input::HasActionEventOccured(const FECsInputAction &Action, const ECsInputEvent &Event)
+bool ACsManager_Input::HasActionEventOccured(const FECsInputAction& Action, const ECsInputEvent& Event)
 {
 	FCsInputFrame& InputFrame = InputFrames[CurrentInputFrameIndex];
 
@@ -724,7 +724,7 @@ bool ACsManager_Input::HasActionEventOccured(const FECsInputAction &Action, cons
 	return false;
 }
 
-float ACsManager_Input::GetInputValue(const FECsInputAction &Action)
+float ACsManager_Input::GetInputValue(const FECsInputAction& Action)
 {
 	FCsInputFrame& InputFrame = InputFrames[CurrentInputFrameIndex];
 
@@ -736,7 +736,7 @@ float ACsManager_Input::GetInputValue(const FECsInputAction &Action)
 	return 0.0f;
 }
 
-FVector ACsManager_Input::GetInputLocation(const FECsInputAction &Action)
+FVector ACsManager_Input::GetInputLocation(const FECsInputAction& Action)
 {
 	FCsInputFrame& InputFrame = InputFrames[CurrentInputFrameIndex];
 
@@ -760,7 +760,7 @@ ECsInputEvent ACsManager_Input::GetInputEvent(const FECsInputAction& Action)
 	return ECsInputEvent::ECsInputEvent_MAX;
 }
 
-float ACsManager_Input::GetInputDuration(const FECsInputAction &Action)
+float ACsManager_Input::GetInputDuration(const FECsInputAction& Action)
 {
 	return Infos[Action.Value]->Duration;
 }
@@ -1237,7 +1237,7 @@ void ACsManager_Input::RunEditorGameJavascriptFile_FirstPressed()
 // Game Events
 #pragma region
 
-void ACsManager_Input::CreateGameEventDefinitionSimple(TArray<FCsGameEventDefinition> &Definitions, const FECsGameEvent &GameEvent, const FECsInputAction &Action, const ECsInputEvent &Event)
+void ACsManager_Input::CreateGameEventDefinitionSimple(TArray<FCsGameEventDefinition>& Definitions, const FECsGameEvent& GameEvent, const FECsInputAction& Action, const ECsInputEvent& Event)
 {
 	Definitions.AddDefaulted();
 	FCsGameEventDefinition& Def = Definitions[Definitions.Num() - 1];

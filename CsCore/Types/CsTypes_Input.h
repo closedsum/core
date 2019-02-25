@@ -58,17 +58,7 @@ enum class ECsInputType : uint8
 
 struct CSCORE_API EMCsInputType : public TCsEnumMap<ECsInputType>
 {
-protected:
-	EMCsInputType() {}
-	EMCsInputType(const EMCsInputType &) = delete;
-	EMCsInputType(EMCsInputType &&) = delete;
-public:
-	~EMCsInputType() {}
-private:
-	static EMCsInputType* Instance;
-
-public:
-	static EMCsInputType& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsInputType)
 };
 
 namespace NCsInputType
@@ -107,17 +97,7 @@ enum class ECsInputEvent: uint8
 
 struct CSCORE_API EMCsInputEvent : public TCsEnumMap<ECsInputEvent>
 {
-protected:
-	EMCsInputEvent() {}
-	EMCsInputEvent(const EMCsInputEvent &) = delete;
-	EMCsInputEvent(EMCsInputEvent &&) = delete;
-public:
-	~EMCsInputEvent() {}
-private:
-	static EMCsInputEvent* Instance;
-
-public:
-	static EMCsInputEvent& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsInputEvent)
 };
 
 namespace NCsInputEvent
@@ -155,17 +135,7 @@ enum class ECsInputValue : uint8
 
 struct CSCORE_API EMCsInputValue : public TCsEnumMap<ECsInputValue>
 {
-protected:
-	EMCsInputValue() {}
-	EMCsInputValue(const EMCsInputValue &) = delete;
-	EMCsInputValue(EMCsInputValue &&) = delete;
-public:
-	~EMCsInputValue() {}
-private:
-	static EMCsInputValue* Instance;
-
-public:
-	static EMCsInputValue& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsInputValue)
 };
 
 namespace NCsInputValue
@@ -275,11 +245,7 @@ struct CSCORE_API FECsInputAction : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsInputAction() {}
-	FECsInputAction(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsInputAction(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsInputAction() {}
+	CS_ENUM_UINT8_BODY(FECsInputAction)
 
 	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
 };
@@ -291,17 +257,7 @@ FORCEINLINE uint32 GetTypeHash(const FECsInputAction& b)
 
 struct CSCORE_API EMCsInputAction : public TCsEnumStructMap<FECsInputAction, uint8>
 {
-protected:
-	EMCsInputAction() {}
-	EMCsInputAction(const EMCsInputAction &) = delete;
-	EMCsInputAction(EMCsInputAction &&) = delete;
-public:
-	~EMCsInputAction() {}
-private:
-	static EMCsInputAction* Instance;
-
-public:
-	static EMCsInputAction& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsInputAction)
 };
 
 #pragma endregion InputAction
@@ -1192,11 +1148,7 @@ struct CSCORE_API FECsGameEvent : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsGameEvent() {}
-	FECsGameEvent(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsGameEvent(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsGameEvent() {}
+	CS_ENUM_UINT8_BODY(FECsGameEvent)
 
 	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
 };
@@ -1208,17 +1160,7 @@ FORCEINLINE uint32 GetTypeHash(const FECsGameEvent& b)
 
 struct CSCORE_API EMCsGameEvent : public TCsEnumStructMap<FECsGameEvent, uint8>
 {
-protected:
-	EMCsGameEvent() {}
-	EMCsGameEvent(const EMCsGameEvent &) = delete;
-	EMCsGameEvent(EMCsGameEvent &&) = delete;
-public:
-	~EMCsGameEvent() {}
-private:
-	static EMCsGameEvent* Instance;
-
-public:
-	static EMCsGameEvent& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsGameEvent)
 };
 
 #pragma endregion GameEvent

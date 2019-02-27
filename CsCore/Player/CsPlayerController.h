@@ -58,15 +58,15 @@ public:
 public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Input")
-	class ACsManager_Input* Manager_Input;
+	class UCsManager_Input* Manager_Input;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
-	TSubclassOf<class ACsManager_Input> ManagerInputClass;
+	TSubclassOf<class UCsManager_Input> ManagerInputClass;
 
 	int32 GetCurrentInputActionMap();
-	void SetCurrentInputActionMap(const TCsInputActionMap& ActionMap);
+	void SetCurrentInputActionMap(const FECsInputActionMap& ActionMap);
 	void SetCurrentInputActionMap(const int32& ActionMap);
-	void ClearCurrentInputActionMap(const TCsInputActionMap& ActionMap);
+	void ClearCurrentInputActionMap(const FECsInputActionMap& ActionMap);
 	void ClearCurrentInputActionMap(const int32& ActionMap);
 
 	virtual void InitInputSystem() override;

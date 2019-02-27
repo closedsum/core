@@ -1,7 +1,7 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
-#include "GameFramework/Actor.h"
+#include "Classes/Components/ActorComponent.h"
 #include "Types/CsTypes_Input.h"
 #include "CsManager_Input.generated.h"
 
@@ -100,35 +100,41 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 
 #pragma endregion Macros
 
-#if WITH_EDITOR
-
-DECLARE_MULTICAST_DELEGATE(FBindableEvent_CsManagerInput_RunEditorGameBatchConsoleCommands_FirstPressed);
-DECLARE_MULTICAST_DELEGATE(FBindableEvent_CsManagerInput_RunEditorGameJavascriptFile_FirstPressed);
-
-#endif // #if WITH_EDITOR
-
 #pragma endregion Input Delegates
 
 // Game Action Delegates
 
+class AActor;
+class ACsPlayerController;
+
 UCLASS()
-class CSCORE_API ACsManager_Input : public AActor
+class CSCORE_API UCsManager_Input : public UActorComponent
 {
 	GENERATED_UCLASS_BODY()
 
 	virtual void Init();
 
-	static ACsManager_Input* Get(UWorld* InWorld, const int32 &Id = INDEX_NONE);
+	static UCsManager_Input* Get(UWorld* World, const int32& Index = INDEX_NONE);
 
-	virtual void Shutdown();
-	virtual void OnServerTravel();
-	virtual void Destroyed() override;
+// Owner
+#pragma region
+public:
 
-	TWeakObjectPtr<AActor> InputOwner;
+	TWeakObjectPtr<ACsPlayerController> MyOwner;
 
-	virtual AActor* GetInputOwner();
+	UFUNCTION(BlueprintCallable, Category = "Owner")
+	ACsPlayerController* GetMyOwner();
 
+	template<typename T>
+	T* GetMyOwner()
+	{
+		return Cast<T>(GetMyOwner());
+	}
+
+	UPROPERTY(BlueprintReadOnly, Category = "Owner")
 	int32 ControllerId;
+
+#pragma endregion Owner
 
 	virtual void SetupInputComponent();
 
@@ -142,11 +148,13 @@ class CSCORE_API ACsManager_Input : public AActor
 
 	FCsInput* AllocateInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value = 0.0f, const FVector& Location = FVector::ZeroVector, const FRotator& Rotation = FRotator::ZeroRotator);
 
-	virtual void AddInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value=0.0f, const FVector& Location=FVector::ZeroVector, const FRotator& Rotation=FRotator::ZeroRotator);
+	void AddInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value=0.0f, const FVector& Location=FVector::ZeroVector, const FRotator& Rotation=FRotator::ZeroRotator);
+
+	bool CanAddInput(const FECsInputAction& Action);
 
 	TArray<FCsInput*> QueuedInputsForNextFrame;
 
-	virtual void QueueInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value = 0.0f, const FVector& Location = FVector::ZeroVector, const FRotator& Rotation = FRotator::ZeroRotator);
+	void QueueInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value = 0.0f, const FVector& Location = FVector::ZeroVector, const FRotator& Rotation = FRotator::ZeroRotator);
 
 	void ConsumeInput(const FECsInputAction& Action);
 
@@ -157,16 +165,39 @@ class CSCORE_API ACsManager_Input : public AActor
 	UPROPERTY(BlueprintReadOnly, Category = "Input")
 	int32 CurrentInputFrameIndex;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Input")
 	FCsInputFrame CurrentInputFrame;
 
+// Action Map
+#pragma region
+public:
+
+	TMap<FECsInputAction, FCsInputInfo> InputInfoMap;
+
+	void SetupInputInfoMap();
+
+	TMap<FECsInputActionMap, TSet<FECsInputAction>> InputActionMappings;
+
+	void SetupInputActionMapping();
+
+	UFUNCTION(BlueprintNativeEvent, Category = "Action Map")
+	void BP_GetInputActionNamesFromMapping(const FECsInputActionMap& Map, TArray<FName>& OutNames);
+
+	UPROPERTY(BlueprintReadOnly, Category = "Action Map")
+	TMap<FECsInputAction, int32> InputActionMapping;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Input")
 	int32 CurrentInputActionMap;
 
-	CS_DECLARE_INPUT_ACTION_MAP
-
-	void SetCurrentInputActionMap(const TCsInputActionMap& ActionMap);
+	UFUNCTION(BlueprintCallable, Category = "Action Map")
+	void SetCurrentInputActionMap(const FECsInputActionMap& ActionMap);
 	void SetCurrentInputActionMap(const int32& ActionMap);
-	void ClearCurrentInputActionMap(const TCsInputActionMap& ActionMap);
+
+	UFUNCTION(BlueprintCallable, Category = "Action Map")
+	void ClearCurrentInputActionMap(const FECsInputActionMap& ActionMap);
 	void ClearCurrentInputActionMap(const int32& ActionMap);
+
+#pragma endregion Action Map
 
 	TArray<FKey> PressedKeys;
 
@@ -183,8 +214,7 @@ class CSCORE_API ACsManager_Input : public AActor
 
 	virtual void DetermineGameEvents(const TArray<FCsInput*>& InInputs);
 
-	//UFUNCTION(BlueprintCallable, Category = "Input")
-	//bool HasActionEventOccured(const FECsInputAction &Action, const ECsInputEvent &Event);
+	UFUNCTION(BlueprintCallable, Category = "Input")
 	bool HasActionEventOccured(const FECsInputAction& Action, const ECsInputEvent& Event);
 
 	UFUNCTION(BlueprintCallable, Category = "Input")
@@ -237,11 +267,15 @@ public:
 #pragma region
 public:
 
-	FBindableEvent_CsManagerInput_RunEditorGameBatchConsoleCommands_FirstPressed OnRunEditorGameBatchConsoleCommands_FirstPressed_Event;
+	DECLARE_MULTICAST_DELEGATE(FOnRunEditorGameBatchConsoleCommands_FirstPressed);
+
+	FOnRunEditorGameBatchConsoleCommands_FirstPressed OnRunEditorGameBatchConsoleCommands_FirstPressed_Event;
 
 	void RunEditorGameBatchConsoleCommands_FirstPressed();
 
-	FBindableEvent_CsManagerInput_RunEditorGameJavascriptFile_FirstPressed OnRunEditorGameJavascriptFile_FirstPressed_Event;
+	DECLARE_MULTICAST_DELEGATE(FOnRunEditorGameJavascriptFile_FirstPressed);
+
+	FOnRunEditorGameJavascriptFile_FirstPressed OnRunEditorGameJavascriptFile_FirstPressed_Event;
 
 	void RunEditorGameJavascriptFile_FirstPressed();
 

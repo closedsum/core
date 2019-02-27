@@ -357,14 +357,14 @@ bool UCsWidget_Crafting::CanCompleteRecipe(const uint32& Count)
 
 void UCsWidget_Crafting::OnIncrementButtonPressed()
 {
-	ACsManager_Input* Manager_Input = ACsManager_Input::Get(GetWorld());
+	UCsManager_Input* Manager_Input = UCsManager_Input::Get(GetWorld());
 
 	Manager_Input->QueueInput(IncrementInputAction, ECsInputEvent::FirstPressed);
 }
 
 void UCsWidget_Crafting::OnIncrementButtonReleased()
 {
-	ACsManager_Input* Manager_Input = ACsManager_Input::Get(GetWorld());
+	UCsManager_Input* Manager_Input = UCsManager_Input::Get(GetWorld());
 
 	Manager_Input->QueueInput(IncrementInputAction, ECsInputEvent::FirstReleased);
 }
@@ -489,14 +489,14 @@ void UCsWidget_Crafting::OnCountValueCommitted(int32 InValue, ETextCommit::Type 
 
 void UCsWidget_Crafting::OnDecrementButtonPressed()
 {
-	ACsManager_Input* Manager_Input = ACsManager_Input::Get(GetWorld());
+	UCsManager_Input* Manager_Input = UCsManager_Input::Get(GetWorld());
 
 	Manager_Input->QueueInput(DecrementInputAction, ECsInputEvent::FirstPressed);
 }
 
 void UCsWidget_Crafting::OnDecrementButtonReleased()
 {
-	ACsManager_Input* Manager_Input = ACsManager_Input::Get(GetWorld());
+	UCsManager_Input* Manager_Input = UCsManager_Input::Get(GetWorld());
 
 	Manager_Input->QueueInput(DecrementInputAction, ECsInputEvent::FirstReleased);
 }
@@ -594,7 +594,7 @@ void UCsWidget_Crafting::StopDecrementCount()
 
 void UCsWidget_Crafting::OnStartButtonPressed()
 {
-	ACsManager_Input* Manager_Input = ACsManager_Input::Get(GetWorld());
+	UCsManager_Input* Manager_Input = UCsManager_Input::Get(GetWorld());
 
 	Manager_Input->QueueInput(StartInputAction, ECsInputEvent::FirstPressed);
 }

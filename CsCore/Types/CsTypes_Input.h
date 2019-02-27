@@ -157,35 +157,12 @@ namespace NCsInputValue
 	// InputActionMap
 #pragma region
 
-namespace ECsInputActionMap
-{
-	enum BitMask : int32;
-}
-
-typedef ECsInputActionMap::BitMask TCsInputActionMap;
-
-// InputActionMapMasktoString
-typedef FString(*TCsInputActionMapMaskToString)(const int32&);
-// StringToInputActionMap
-typedef TCsInputActionMap(*TCsStringToInputActionMap)(const FString&);
-
-#define CS_DECLARE_INPUT_ACTION_MAP	TCsInputActionMapMaskToString InputActionMapMaskToString; \
-									TCsStringToInputActionMap StringToInputActionMap;
-
-#define CS_DEFINE_INPUT_ACTION_MAP	InputActionMapMaskToString = &ECsInputActionMap::MaskToString; \
-									StringToInputActionMap = &ECsInputActionMap::ToBitMask;
-
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsInputActionMap : public FECsEnumMask_int32
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-
-	FECsInputActionMap() {}
-	FECsInputActionMap(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnumMask_int32(InValue, InName, InDisplayName) {}
-	FECsInputActionMap(const uint8 &InValue, const FString &InName) : FECsEnumMask_int32(InValue, InName) {}
-	~FECsInputActionMap() {}
+	CS_ENUM_MASK_INT32_BODY(FECsInputActionMap)
 
 	FORCEINLINE virtual FString ToString() const override { return FECsEnumMask_int32::ToString(); }
 };
@@ -197,17 +174,7 @@ FORCEINLINE uint32 GetTypeHash(const FECsInputActionMap& b)
 
 struct CSCORE_API EMCsInputActionMap : public TCsEnumStructMaskMap<FECsInputActionMap, int32>
 {
-protected:
-	EMCsInputActionMap() {}
-	EMCsInputActionMap(const EMCsInputActionMap &) = delete;
-	EMCsInputActionMap(EMCsInputActionMap &&) = delete;
-public:
-	~EMCsInputActionMap() {}
-private:
-	static EMCsInputActionMap* Instance;
-
-public:
-	static EMCsInputActionMap& Get();
+	CS_DECLARE_ENUM_STRUCT_MASK_MAP_BODY(EMCsInputActionMap)
 };
 
 #pragma endregion InputActionMap
@@ -229,7 +196,7 @@ struct CSCORE_API FCsInputActionMapRule
 		Set = InSet;
 	}
 
-	FCsInputActionMapRule(const TCsInputActionMap& InClear, const TCsInputActionMap& InSet)
+	FCsInputActionMapRule(const FECsInputActionMap& InClear, const FECsInputActionMap& InSet)
 	{
 		Clear = (int32)InClear;
 		Set = (int32)InSet;
@@ -269,6 +236,8 @@ struct CSCORE_API FCsInputInfo
 {
 	GENERATED_USTRUCT_BODY()
 
+	bool bEvaluated;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	ECsInputType Type;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
@@ -287,6 +256,7 @@ struct CSCORE_API FCsInputInfo
 	float Duration;
 
 	FCsInputInfo() :
+		bEvaluated(false),
 		Type(ECsInputType::ECsInputType_MAX),
 		ValueType(ECsInputValue::ECsInputValue_MAX),
 		Event(ECsInputEvent::ECsInputEvent_MAX),

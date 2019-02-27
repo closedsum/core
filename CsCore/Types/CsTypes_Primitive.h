@@ -451,6 +451,29 @@ public:
 	}
 };
 
+#define CS_DECLARE_ENUM_MASK_MAP_BODY(EnumMap) \
+	protected: \
+		EnumMap() {} \
+		EnumMap(const EnumMap &) = delete; \
+		EnumMap(EnumMap &&) = delete; \
+	public: \
+		~EnumMap() {} \
+	private: \
+		static EnumMap* Instance; \
+		\
+	public: \
+		static EnumMap& Get();
+
+#define CS_DEFINE_ENUM_MASK_MAP_BODY(EnumMap) \
+	EnumMap* EnumMap::Instance; \
+	\
+	EnumMap& EnumMap::Get() \
+	{ \
+		if (!Instance) \
+			Instance = new EnumMap(); \
+		return *Instance; \
+	}
+
 template<typename EnumType>
 struct TCsEnumFlagMap
 {
@@ -1164,6 +1187,13 @@ public:
 	}
 };
 
+#define CS_ENUM_MASK_INT32_BODY(Enum) \
+	public: \
+		Enum() {} \
+		Enum(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnumMask_int32(InValue, InName, InDisplayName) {} \
+		Enum(const uint8 &InValue, const FString &InName) : FECsEnumMask_int32(InValue, InName) {} \
+		~Enum() {}
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsEnumMask_uint32 : public FECsEnum
 {
@@ -1289,18 +1319,27 @@ struct TCsEnumStructMaskMap
 private:
 	TArray<EnumStruct> Enums;
 	int32 Count;
+	TArray<EnumStruct> UserDefinedEnums;
+	TMap<FString, EnumStruct> UserDefinedNameMap;
 	TMap<FString, EnumStruct> NameMap;
 	TMap<FString, EnumStruct> DisplayNameMap;
+	TMap<FName, EnumStruct> NameInternalMap;
 	TMap<EnumType, EnumStruct> TypeMap;
+	TMap<uint64, EnumType> FlagMap;
+	EnumStruct NONE;
 protected:
 	TCsEnumStructMaskMap()
 	{
 		Count = 0;
+		NONE.Value = 0;
+		NONE.Mask = 0;
+		NONE.Name = TEXT("NONE");
+		NONE.DisplayName = TEXT("NONE");
 	}
 public:
 	virtual ~TCsEnumStructMaskMap() {}
 
-	FORCEINLINE EnumStruct Create(const FString &Name, const FString &DisplayName)
+	FORCEINLINE EnumStruct Create(const FString &Name, const FString &DisplayName, const bool& UserDefinedEnum = false)
 	{
 		EnumType Index = (EnumType)Enums.Num();
 
@@ -1325,9 +1364,16 @@ public:
 
 		Enums.Add(E);
 		++Count;
+		if (UserDefinedEnum)
+		{
+			UserDefinedEnums.Add(E);
+			UserDefinedNameMap.Add(Name, E);
+		}
 		NameMap.Add(Name, E);
 		DisplayNameMap.Add(DisplayName, E);
+		NameInternalMap.Add(E.Name_Internal, E);
 		TypeMap.Add(Index, E);
+		FlagMap.Add((uint64)E.Mask, E);
 		return E;
 	}
 
@@ -1335,6 +1381,60 @@ public:
 	{
 		return Create(Name, Name);
 	}
+
+#if WITH_EDITOR
+
+	FORCEINLINE void CreateSafe(const FString &Name, const FString &DisplayName, const bool& UserDefinedEnum = false)
+	{
+		// Check Name already exists
+		if (NameMap.Find(Name) != nullptr)
+			return;
+		// Check DisplayName already exists
+		if (DisplayNameMap.Find(DisplayName) != nullptr)
+			return;
+
+		EnumType Index = (EnumType)Enums.Num();
+
+		// int32
+		if (std::is_same<EnumType, int32>::value)
+		{
+			if (Index > CS_INT32_BIT_MAX)
+			{
+				return Enums[Index - 1];
+			}
+		}
+		// uint32
+		if (std::is_same<EnumType, uint32>::value)
+		{
+			if (Index > CS_INT32_BIT_MAX)
+			{
+				return Enums[Index - 1];
+			}
+		}
+
+		EnumStruct E(Index, Name, DisplayName);
+
+		Enums.Add(E);
+		++Count;
+		if (UserDefinedEnum)
+		{
+			UserDefinedEnums.Add(E);
+			UserDefinedNameMap.Add(Name, E);
+		}
+		NameMap.Add(Name, E);
+		DisplayNameMap.Add(DisplayName, E);
+		NameInternalMap.Add(E.Name_Internal, E);
+		TypeMap.Add(Index, E);
+		FlagMap.Add((uint64)E.Mask, E);
+		MAX.Value = (EnumType)Count;
+	}
+
+	FORCEINLINE void CreateSafe(const FString &Name, const bool& UserDefinedEnum = false)
+	{
+		CreateSafe(Name, Name, UserDefinedEnum);
+	}
+
+#endif // #if WITH_EDITOR
 
 	FORCEINLINE const EnumStruct& operator[](const EnumType &Type)
 	{
@@ -1346,6 +1446,11 @@ public:
 		return NameMap[Name];
 	}
 
+	FORCEINLINE const EnumStruct& operator[](const FName &Name)
+	{
+		return NameInternalMap[Name];
+	}
+
 	FORCEINLINE bool IsValidEnum(EnumStruct E)
 	{
 		return Enums.Find(E) > INDEX_NONE;
@@ -1353,9 +1458,17 @@ public:
 
 	FORCEINLINE bool IsValidEnum(const FString &Name)
 	{
-		if (NameMap.Find(Name))
-			return true;
-		return false;
+		return NameMap.Find(Name) != nullptr;
+	}
+
+	FORCEINLINE bool IsValidEnum(const FName &Name)
+	{
+		return NameInternalMap.Find(Name) != nullptr;
+	}
+
+	FORCEINLINE bool IsValidFlag(const uint64 &Flag)
+	{
+		return FlagMap.Find(Flag) != nullptr;
 	}
 
 	FORCEINLINE const EnumStruct& GetEnumAt(const int32 &Index)
@@ -1363,9 +1476,29 @@ public:
 		return Enums[Index];
 	}
 
+	FORCEINLINE const EnumStruct& GetSafeEnumAt(const int32 &Index)
+	{
+		return Index < Count ? Enums[Index] : NONE;
+	}
+
 	FORCEINLINE const EnumStruct& GetEnum(const FString &Name)
 	{
 		return NameMap[Name];
+	}
+
+	FORCEINLINE const EnumStruct& GetSafeEnum(const FString &Name)
+	{
+		return IsValidEnum(Name) ? NameMap[Name] : MAX;
+	}
+
+	FORCEINLINE const EnumStruct& GetEnum(const FName &Name)
+	{
+		return NameInternalMap[Name];
+	}
+
+	FORCEINLINE const EnumStruct& GetSafeEnum(const FName &Name)
+	{
+		return IsValidEnum(Name) ? NameInternalMap[Name] : NONE;
 	}
 
 	FORCEINLINE const EnumStruct& GetEnum(const EnumType &Type)
@@ -1378,11 +1511,150 @@ public:
 		return DisplayNameMap[DisplayName];
 	}
 
+	FORCEINLINE const EnumType& GetEnumByFlag(const uint64 &Flag)
+	{
+		return FlagMap[Flag];
+	}
+
+	FORCEINLINE const EnumType& GetSafeEnumByFlag(const uint64 &Flag)
+	{
+		return IsValidFlag(Flag) ? FlagMap[Flag] : NONE;
+	}
+
 	FORCEINLINE const int32& Num()
 	{
 		return Count;
 	}
+
+	FORCEINLINE const EnumStruct& GetNONE()
+	{
+		return NONE;
+	}
+
+	FORCEINLINE const FString& ToString(const EnumType& Enum)
+	{
+		if (FString* Name = ToNameMap.Find(Enum))
+			return *Name;
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE const FString& ToString(const int32& Index)
+	{
+		if (Index >= Count)
+			return CS_INVALID_ENUM_TO_STRING;
+		return ToString(Enums[Index]);
+	}
+
+	FORCEINLINE FString MaskToString(const uint64 &Mask)
+	{
+		//  TEXT("")
+		FString String = ECsCached::Str::Empty;
+		bool IsFirst = true;
+
+		for (const EnumType& Enum : Enums)
+		{
+			if (CS_TEST_BITFLAG(Mask, Enum))
+			{
+				if (!IsFirst)
+				{
+					String += TEXT(" | ");
+				}
+				String += ToString(Enum);
+				IsFirst = false;
+			}
+		}
+
+		// (String == TEXT(""))
+		if (String == ECsCached::Str::Empty)
+			return ECsCached::Str::None;
+		// TEXT("None")
+		return String;
+	}
+
+	FORCEINLINE const FName& ToName(const EnumType& Enum)
+	{
+		if (FName* Name = ToNameInternalMap.Find(Enum))
+			return *Name;
+		return CS_INVALID_ENUM_TO_NAME;
+	}
+
+	FORCEINLINE const FString& ToDisplayName(const EnumType& Enum)
+	{
+		if (FString* Name = ToDisplayNameMap.Find(Enum))
+			return *Name;
+		return CS_INVALID_ENUM_TO_STRING;
+	}
+
+	FORCEINLINE const EnumType& ToType(const FString &Name)
+	{
+		if (EnumType* Enum = FromNameMap.Find(Name))
+			return *Enum;
+		return NONE;
+	}
+
+	FORCEINLINE const EnumType& ToType(const FName &Name)
+	{
+		if (EnumType* Enum = FromNameInternalMap.Find(Name))
+			return *Enum;
+		return NONE;
+	}
+
+#if WITH_EDITOR
+
+	FORCEINLINE void ClearUserDefinedEnums()
+	{
+		const int32 StartSize = Enums.Num();
+
+		for (int32 I = StartSize - 1; I >= 0; --I)
+		{
+			const EnumStruct& E = Enums[I];
+
+			if (EnumStruct* EnumPtr = UserDefinedNameMap.Find(E.Name))
+			{
+				NameMap.Remove(E.Name);
+				DisplayNameMap.Remove(E.DisplayName);
+				NameInternalMap.Remove(E.Name_Internal);
+				TypeMap.Remove((EnumType)E.Value);
+				FlagMap.Remove((uint64)E.Mask);
+				Enums.RemoveAt(I);
+
+				Count = Enums.Num();
+
+				for (int32 J = I; J < Count; ++J)
+				{
+					Enums[J].Value = J;
+				}
+			}
+		}
+		UserDefinedEnums.Reset();
+		UserDefinedNameMap.Reset();
+	}
+
+#endif // #if WITH_EDITOR
 };
+
+#define CS_DECLARE_ENUM_STRUCT_MASK_MAP_BODY(EnumMap) \
+	protected: \
+		EnumMap() {} \
+		EnumMap(const EnumMap &) = delete; \
+		EnumMap(EnumMap &&) = delete; \
+	public: \
+		~EnumMap() {} \
+	private: \
+		static EnumMap* Instance; \
+		\
+	public: \
+		static EnumMap& Get();
+
+#define CS_DEFINE_ENUM_STRUCT_MASK_MAP_BODY(EnumMap) \
+	EnumMap* EnumMap::Instance; \
+	\
+	EnumMap& EnumMap::Get() \
+	{ \
+		if (!Instance) \
+			Instance = new EnumMap(); \
+		return *Instance; \
+	}
 
 #pragma endregion Enums
 

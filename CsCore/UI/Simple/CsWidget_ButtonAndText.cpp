@@ -80,7 +80,7 @@ UPanelSlot* UCsWidget_ButtonAndText::GetChildSlot()
 
 void UCsWidget_ButtonAndText::MyButton_OnPressed()
 {
-	ACsManager_Input* Manager_Input = ACsManager_Input::Get(GetWorld());
+	UCsManager_Input* Manager_Input = UCsManager_Input::Get(GetWorld());
 
 	Manager_Input->QueueInput(InputAction_OnPressed, ECsInputEvent::FirstPressed);
 
@@ -89,7 +89,7 @@ void UCsWidget_ButtonAndText::MyButton_OnPressed()
 
 void UCsWidget_ButtonAndText::MyButton_OnReleased()
 {
-	ACsManager_Input* Manager_Input = ACsManager_Input::Get(GetWorld());
+	UCsManager_Input* Manager_Input = UCsManager_Input::Get(GetWorld());
 	MousePosition_OnReleased		= Manager_Input->CurrentMousePosition;
 }
 

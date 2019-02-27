@@ -22,7 +22,7 @@ class CSCORE_API UCsInput_Base : public UObject
 	CS_DECLARE_INPUT_ACTION_MAP
 
 	UPROPERTY(BlueprintReadOnly, Category = "Input")
-	class ACsManager_Input* Manager_Input;
+	class UCsManager_Input* Manager_Input;
 
 #if WITH_EDITOR
 	virtual void OnPrePIEEnded(const bool bIsSimulating);

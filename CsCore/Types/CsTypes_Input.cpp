@@ -65,14 +65,8 @@ namespace NCsInputValue
 	}
 }
 
-EMCsInputActionMap* EMCsInputActionMap::Instance;
-
-EMCsInputActionMap& EMCsInputActionMap::Get()
-{
-	if (!Instance)
-		Instance = new EMCsInputActionMap();
-	return *Instance;
-}
+// InputActionMap
+CS_DEFINE_ENUM_STRUCT_MASK_MAP_BODY(EMCsInputActionMap)
 
 // InputAction
 CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsInputAction)

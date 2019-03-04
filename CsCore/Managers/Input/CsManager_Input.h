@@ -15,7 +15,6 @@
 
 	// Pressed
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBindableDynEvent_CsManagerInput, const FECsInputAction&, Action, const ECsInputEvent&, Event);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FBindableEvent_CsManagerInput, AActor*, const FECsInputAction&, const ECsInputEvent&);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsManagerInput_FirstPressed, const FECsInputAction&, Action);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsManagerInput_Pressed, const FECsInputAction&, Action);
@@ -107,7 +106,7 @@ DECLARE_DELEGATE_OneParam(FBindableCall_CsManagerInput_Rotation_Raw, const FRota
 class AActor;
 class ACsPlayerController;
 
-UCLASS()
+UCLASS(Blueprintable)
 class CSCORE_API UCsManager_Input : public UActorComponent
 {
 	GENERATED_UCLASS_BODY()
@@ -136,8 +135,6 @@ public:
 
 #pragma endregion Owner
 
-	virtual void SetupInputComponent();
-
 	virtual void PreProcessInput(const float DeltaTime, const bool bGamePaused);
 	virtual void PostProcessInput(const float DeltaTime, const bool bGamePaused);
 	virtual void ProcessInput(AActor* ActionOwner, const struct FCsInput* PreviousInput, const struct FCsInput* CurrentInput, const float DeltaTime);
@@ -151,6 +148,10 @@ public:
 	void AddInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value=0.0f, const FVector& Location=FVector::ZeroVector, const FRotator& Rotation=FRotator::ZeroRotator);
 
 	bool CanAddInput(const FECsInputAction& Action);
+
+	bool TryAddInput(const ECsInputType& Type, const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value = 0.0f, const FVector& Location = FVector::ZeroVector, const FRotator& Rotation = FRotator::ZeroRotator);
+
+	const ECsInputEvent& ProcessInputEvent(const ECsInputType& Type, const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value, const FVector& Location, const FRotator& Rotation);
 
 	TArray<FCsInput*> QueuedInputsForNextFrame;
 
@@ -172,9 +173,9 @@ public:
 #pragma region
 public:
 
-	TMap<FECsInputAction, FCsInputInfo> InputInfoMap;
+	TMap<FECsInputAction, FCsInputInfo> InputActionEventInfoMap;
 
-	void SetupInputInfoMap();
+	void SetupInputActionEventInfoMap();
 
 	TMap<FECsInputActionMap, TSet<FECsInputAction>> InputActionMappings;
 
@@ -186,16 +187,16 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Action Map")
 	TMap<FECsInputAction, int32> InputActionMapping;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Input")
+	UPROPERTY(BlueprintReadWrite, Category = "Action Map")
 	int32 CurrentInputActionMap;
 
 	UFUNCTION(BlueprintCallable, Category = "Action Map")
-	void SetCurrentInputActionMap(const FECsInputActionMap& ActionMap);
-	void SetCurrentInputActionMap(const int32& ActionMap);
+	void SetCurrentInputActionMap(const FECsInputActionMap& Map);
+	void SetCurrentInputActionMap(const int32& Map);
 
 	UFUNCTION(BlueprintCallable, Category = "Action Map")
-	void ClearCurrentInputActionMap(const FECsInputActionMap& ActionMap);
-	void ClearCurrentInputActionMap(const int32& ActionMap);
+	void ClearCurrentInputActionMap(const FECsInputActionMap& Map);
+	void ClearCurrentInputActionMap(const int32& Map);
 
 #pragma endregion Action Map
 
@@ -206,7 +207,37 @@ public:
 	FCsInput* GetPreviousInputAction(const FECsInputAction& Action, const TArray<ECsInputEvent>& Events);
 	FCsInput* GetPreviousPreviousInputAction(const FECsInputAction& Action);
 
+// Events
+#pragma region
+public:
+
+	TMap<FECsGameEvent, FCsInputSentence> GameEventDefinitions;
+
+	void SetupGameEventDefinitions();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Events")
+	void BP_GetGameEventDefinitionSimpleFromGameEvent(const FECsGameEvent& Event, FCsGameEventDefinitionSimpleInfo& Def);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Events")
+	void BP_GetInputSentenceFromGameEvent(const FECsGameEvent& Event, FCsInputSentence& Sentence);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Events")
+	TArray<FECsGameEvent> GameEventPriorityList;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Events")
+	TMap<FECsGameEvent, int32> GameEventPriorityMap;
+
+	TArray<FCsGameEventInfo> CurrentGameEventInfos;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Events")
+	TArray<FCsGameEventInfo> CurrentValidGameEventInfos;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Events")
 	TArray<FCsGameEventInfo> QueuedGameEventInfosForNextFrame;
+
+#if WITH_EDITOR
+	void LogProcessGameEventDefinition(const FString& FunctionName, const FECsGameEvent& Event, const FCsInputSentence& Sentence);
+#endif // #if WITH_EDITOR
 
 	virtual void QueueGameEvent(const FECsGameEvent& Event);
 
@@ -216,6 +247,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Input")
 	bool HasActionEventOccured(const FECsInputAction& Action, const ECsInputEvent& Event);
+
+#pragma endregion Events
 
 	UFUNCTION(BlueprintCallable, Category = "Input")
 	float GetInputValue(const FECsInputAction& Action);
@@ -317,7 +350,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Input")
 	FBindableDynEvent_CsManagerInput Action_ScriptEvent;
 
-	FBindableEvent_CsManagerInput Action_Event;
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnAction, AActor*, const FECsInputAction&, const ECsInputEvent&);
+
+	FOnAction Action_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "Input")
 	FBindableDynEvent_CsManagerInput_FirstPressed FirstPressed_ScriptEvent;

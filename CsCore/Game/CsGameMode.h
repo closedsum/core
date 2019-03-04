@@ -3,7 +3,7 @@
 #include "GameFramework/GameMode.h"
 #include "CsGameMode.generated.h"
 
-UCLASS()
+UCLASS(hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick", "LOD", "Cooking"))
 class CSCORE_API ACsGameMode : public AGameMode
 {
 	GENERATED_UCLASS_BODY()

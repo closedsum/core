@@ -1,14 +1,14 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "DetailCustomizations/EnumStruct/ECsEnumCustomization.h"
+#include "DetailCustomizations/EnumStruct/ECsEnumStructCustomization.h"
 
 /**
 * Customizes a FECsGestureType property to use a dropdown
 */
-class CSEDITOR_API FECsGestureTypeCustomization : public FECsEnumCustomization
+class CSEDITOR_API FECsGestureTypeCustomization : public FECsEnumStructCustomization
 {
 private:
-	typedef FECsEnumCustomization Super;
+	typedef FECsEnumStructCustomization Super;
 
 public:
 

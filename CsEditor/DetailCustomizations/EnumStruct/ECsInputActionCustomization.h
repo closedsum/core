@@ -1,18 +1,20 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "DetailCustomizations/EnumStruct/ECsEnumCustomization.h"
+#include "DetailCustomizations/EnumStruct/ECsEnumStructCustomization.h"
 
 /**
 * Customizes a FECsInputAction property to use a dropdown
 */
-class CSEDITOR_API FECsInputActionCustomization : public FECsEnumCustomization
+class CSEDITOR_API FECsInputActionCustomization : public FECsEnumStructCustomization
 {
 private:
-	typedef FECsEnumCustomization Super;
+	typedef FECsEnumStructCustomization Super;
 
 public:
 
 	FECsInputActionCustomization();
+
+	static TSharedRef<IPropertyTypeCustomization> MakeInstance();
 
 protected:
 
@@ -20,10 +22,6 @@ protected:
 
 	virtual void AddEnumToMap(const FString& Name) override;
 	virtual FString GetEnumStructName() override;
-	
-	static TSharedRef<IPropertyTypeCustomization> MakeInstance();
-
-protected:
 
 	virtual void SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle) override;
 	virtual void SetEnumWithDisplayName(const FString& DisplayName) override;

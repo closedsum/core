@@ -9,14 +9,14 @@ class IDetailGroup;
 /**
 * Customizes a FECsEnum property to use a dropdown
 */
-class CSEDITOR_API FECsEnumCustomization : public IPropertyTypeCustomization
+class CSEDITOR_API FECsEnumStructCustomization : public IPropertyTypeCustomization
 {
 private:
-	typedef FECsEnumCustomization Super;
+	typedef FECsEnumStructCustomization Super;
 
 public:
 
-	FECsEnumCustomization();
+	FECsEnumStructCustomization();
 
 protected:
 
@@ -94,11 +94,11 @@ protected:
 		FString OldDisplayName;
 		DisplayNameHandle->GetValue(OldDisplayName);
 
+		const EnumStruct& Enum = EnumMap::Get().GetEnumByDisplayName(DisplayName);
+
 		if (OldDisplayName != DisplayName)
 		{
 			DisplayNameHandle->SetValue(DisplayName);
-
-			const EnumStruct& Enum = EnumMap::Get().GetEnumByDisplayName(DisplayName);
 
 			check(ValueHandle.IsValid());
 			ValueHandle->SetValue(Enum.Value);
@@ -106,6 +106,26 @@ protected:
 			NameHandle->SetValue(Enum.Name);
 			check(NameInternalHandle.IsValid());
 			NameInternalHandle->SetValue(Enum.Name_Internal);
+		}
+		else
+		{
+			check(ValueHandle.IsValid());
+			uint8 OutValue;
+			ValueHandle->GetValue(OutValue);
+			if (OutValue != Enum.Value)
+				ValueHandle->SetValue(Enum.Value);
+
+			check(NameHandle.IsValid());
+			FString OutString;
+			NameHandle->GetValue(OutString);
+			if (OutString != Enum.Name)
+				NameHandle->SetValue(Enum.Name);
+
+			check(NameInternalHandle.IsValid());
+			FName OutName;
+			NameInternalHandle->GetValue(OutName);
+			if (OutName != Enum.Name_Internal)
+				NameInternalHandle->SetValue(Enum.Name_Internal);
 		}
 	}
 

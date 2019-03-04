@@ -19,9 +19,6 @@ ACsPlayerController::ACsPlayerController(const FObjectInitializer& ObjectInitial
 void ACsPlayerController::Destroyed()
 {
 	Super::Destroyed();
-
-	if (!Manager_Input && !Manager_Input->IsPendingKill())
-		Manager_Input->Destroy();
 }
 
 void ACsPlayerController::OnTickActor_HandleCVars(){}
@@ -76,6 +73,7 @@ void ACsPlayerController::InitInputSystem()
 
 	if (!Manager_Input)
 	{
+		/*
 		FActorSpawnParameters SpawnInfo;
 		SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		SpawnInfo.ObjectFlags |= RF_Transient;
@@ -96,6 +94,7 @@ void ACsPlayerController::InitInputSystem()
 		Manager_Input->LoadInputProfile();
 
 		Cast<UCsGameInstance>(GetGameInstance())->OnServerTravel_Event.AddUObject(Manager_Input, &UCsManager_Input::OnServerTravel);
+		*/
 	}
 }
 
@@ -105,21 +104,12 @@ void ACsPlayerController::UnBindPawnDelegatesFromInputManager(){}
 void ACsPlayerController::BuildInputStack(TArray<UInputComponent*>& InputStack)
 {
 	Super::BuildInputStack(InputStack);
-
-	if (Manager_Input &&
-		Manager_Input->InputComponent)
-	{
-		InputStack.Push(Manager_Input->InputComponent);
-	}
 }
 
 void ACsPlayerController::PreProcessInput(const float DeltaTime, const bool bGamePaused)
 {
-	if (Manager_Input &&
-		Manager_Input->InputComponent)
-	{
+	if (Manager_Input)
 		Manager_Input->PreProcessInput(DeltaTime, bGamePaused);
-	}
 }
 
 bool ACsPlayerController::CanPostProcessInput() { return true; }

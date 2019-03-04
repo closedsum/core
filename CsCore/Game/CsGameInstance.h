@@ -9,7 +9,6 @@
 
 // OnTick
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsGameInstance_OnTick, const float&, DeltaSeconds);
-DECLARE_MULTICAST_DELEGATE_OneParam(FBindableEvent_CsGameInstance_OnTick, const float&);
 // OnServerTravel
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBindableDynEvent_CsGameInstance_OnServerTravel);
 DECLARE_MULTICAST_DELEGATE(FBindableEvent_CsGameInstance_OnServerTravel);
@@ -17,65 +16,41 @@ DECLARE_MULTICAST_DELEGATE(FBindableEvent_CsGameInstance_OnServerTravel);
 // Enums
 #pragma region
 
-namespace ECsGameInstanceRoutine
+	// GameInstanceRoutine
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsGameInstanceRoutine : public FECsEnum_uint8
 {
-	enum Type
-	{
-		OnBoard_Internal				UMETA(DisplayName = "OnBoard_Internal"),
-		LoadDataMapping_Internal		UMETA(DisplayName = "LoadDataMapping_Internal"),
-		PerformLevelTransition_Internal	UMETA(DisplayName = "PerformLevelTransition_Internal"),
-		CreateFullscreenWidget_Internal UMETA(DisplayName = "CreateFullscreenWidget_Internal"),
-		HideMouseCursor_Internal		UMETA(DisplayName = "HideMouseCursor_Internal"),
-		ECsGameInstanceRoutine_MAX		UMETA(Hidden),
-	};
+	GENERATED_USTRUCT_BODY()
+
+	CS_ENUM_UINT8_BODY(FECsGameInstanceRoutine)
+
+	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+};
+
+FORCEINLINE uint32 GetTypeHash(const FECsGameInstanceRoutine& b)
+{
+	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
 }
 
-#define ECS_GAME_INSTANCE_ROUTINE_MAX (uint8)ECsGameInstanceRoutine::ECsGameInstanceRoutine_MAX
-typedef ECsGameInstanceRoutine::Type TCsGameInstanceRoutine;
+struct CSCORE_API EMCsGameInstanceRoutine : public TCsEnumStructMap<FECsGameInstanceRoutine, uint8>
+{
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsGameInstanceRoutine)
+};
 
 namespace ECsGameInstanceRoutine
 {
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
+	typedef FECsGameInstanceRoutine Type;
 
-	namespace Str
-	{
-		extern const TCsString OnBoard_Internal;
-		extern const TCsString LoadDataMapping_Internal;
-		extern const TCsString PerformLevelTransition_Internal;
-		extern const TCsString CreateFullscreenWidget_Internal;
-		extern const TCsString HideMouseCursor_Internal;
-	}
-
-	namespace Ref
-	{
-		extern const TCsGameInstanceRoutine OnBoard_Internal;
-		extern const TCsGameInstanceRoutine LoadDataMapping_Internal;
-		extern const TCsGameInstanceRoutine PerformLevelTransition_Internal;
-		extern const TCsGameInstanceRoutine CreateFullscreenWidget_Internal;
-		extern const TCsGameInstanceRoutine HideMouseCursor_Internal;
-		extern const TCsGameInstanceRoutine ECsGameInstanceRoutine_MAX;
-	}
-
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::OnBoard_Internal) { return Str::OnBoard_Internal.Value; }
-		if (EType == Type::LoadDataMapping_Internal) { return Str::LoadDataMapping_Internal.Value; }
-		if (EType == Type::PerformLevelTransition_Internal) { return Str::PerformLevelTransition_Internal.Value; }
-		if (EType == Type::CreateFullscreenWidget_Internal) { return Str::CreateFullscreenWidget_Internal.Value; }
-		if (EType == Type::HideMouseCursor_Internal) { return Str::HideMouseCursor_Internal.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE const Type& ToType(const FString &String)
-	{
-		if (String == Str::OnBoard_Internal) { return Ref::OnBoard_Internal; }
-		if (String == Str::LoadDataMapping_Internal) { return Ref::LoadDataMapping_Internal; }
-		if (String == Str::PerformLevelTransition_Internal) { return Ref::PerformLevelTransition_Internal; }
-		if (String == Str::CreateFullscreenWidget_Internal) { return Ref::CreateFullscreenWidget_Internal; }
-		if (String == Str::HideMouseCursor_Internal) { return Ref::HideMouseCursor_Internal; }
-		return Ref::ECsGameInstanceRoutine_MAX;
-	}
+	extern CSCORE_API const Type OnBoard_Internal;
+	extern CSCORE_API const Type LoadDataMapping_Internal;
+	extern CSCORE_API const Type PerformLevelTransition_Internal;
+	extern CSCORE_API const Type CreateFullscreenWidget_Internal;
+	extern CSCORE_API const Type HideMouseCursor_Internal;
 }
+
+#pragma endregion GameInstanceRoutine
 
 namespace ECsGameInstanceOnBoardState
 {
@@ -146,6 +121,8 @@ typedef ECsGameInstanceOnBoardState::Type TCsGameInstanceOnBoardState;
 
 #define CS_INVALID_UNIQUE_OBJECT_ID ECsCached::Ref::Long_MAX
 
+class ACsDataMapping;
+
 UCLASS(config = Game)
 class CSCORE_API UCsGameInstance : public UGameInstance
 {
@@ -169,7 +146,9 @@ class CSCORE_API UCsGameInstance : public UGameInstance
 
 	virtual bool Tick(float DeltaSeconds);
 
-	FBindableEvent_CsGameInstance_OnTick OnTick_Event;
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnTick, const float&);
+
+	FOnTick OnTick_Event;
 
 	UPROPERTY(BlueprintAssignable, Category = "Tick")
 	FBindableDynEvent_CsGameInstance_OnTick OnTick_ScriptEvent;
@@ -180,11 +159,11 @@ class CSCORE_API UCsGameInstance : public UGameInstance
 #pragma region
 public:
 
-	static void AddRoutine(UObject* InGameInstance, struct FCsRoutine* Routine, const uint8 &Type);
-	virtual bool AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type);
+	static void AddRoutine(UObject* InGameInstance, struct FCsRoutine* Routine, const uint8& Type);
+	virtual bool AddRoutine_Internal(struct FCsRoutine* Routine, const uint8& Type);
 
-	static void RemoveRoutine(UObject* InGameInstance, struct FCsRoutine* Routine, const uint8 &Type);
-	virtual bool RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type);
+	static void RemoveRoutine(UObject* InGameInstance, struct FCsRoutine* Routine, const uint8& Type);
+	virtual bool RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8& Type);
 
 #pragma endregion Routines
 
@@ -202,14 +181,17 @@ public:
 
 	FString DataMappingAssetPath;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game Instance")
+	TSoftClassPtr<ACsDataMapping> DataMappingClass;
+
 	UPROPERTY(BlueprintReadOnly, Category = "Game Instance")
-	class ACsDataMapping* DataMapping;
+	ACsDataMapping* DataMapping;
 
 	bool ForcePopulateAssetReferences;
 
 	CS_COROUTINE_DECLARE(LoadDataMapping)
 
-	virtual void OnFinishedLoadingDataAssets(const TArray<UObject*> &LoadedAssets, const float& LoadingTime);
+	virtual void OnFinishedLoadingDataAssets(const TArray<UObject*>& LoadedAssets, const float& LoadingTime);
 
 	bool HasLoadedDataAssets;
 
@@ -229,7 +211,7 @@ public:
 public:
 
 	virtual void LoadStartUpData();
-	virtual void OnFinishedLoadingStartUpDataAssets(const TArray<UObject*> &LoadedAssets, const float& LoadingTime);
+	virtual void OnFinishedLoadingStartUpDataAssets(const TArray<UObject*>& LoadedAssets, const float& LoadingTime);
 
 #pragma endregion Load StartUp Data
 
@@ -256,9 +238,9 @@ public:
 
 public:
 
-	DECLARE_MULTICAST_DELEGATE(OnBoardCompleted);
+	DECLARE_MULTICAST_DELEGATE(FOnBoardCompleted);
 
-	OnBoardCompleted OnBoardCompleted_Event;
+	FOnBoardCompleted OnBoardCompleted_Event;
 
 #pragma endregion OnBoard
 
@@ -292,7 +274,7 @@ public:
 	FDelegateHandle OnLevelRemovedFromWorldHandle;
 	void OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld);
 
-	virtual void PerformLevelTransition(const FString &Level, const FString &GameMode);
+	virtual void PerformLevelTransition(const FString& Level, const FString& GameMode);
 	static char PerformLevelTransition_Internal(struct FCsRoutine* r);
 	struct FCsRoutine* PerformLevelTransition_Internal_Routine;
 
@@ -320,32 +302,32 @@ public:
 	TMap<uint64, TWeakObjectPtr<AActor>> ActorMap;
 
 	uint64 RegisterUniqueObject(UObject* InObject);
-	void UnregisterUniqueObject(const uint64 &Id);
+	void UnregisterUniqueObject(const uint64& Id);
 
-	UObject* GetUniqueObjectById(const uint64 &Id);
+	UObject* GetUniqueObjectById(const uint64& Id);
 	template<typename T>
-	T* GetUniqueObjectById(const uint64 &Id)
+	T* GetUniqueObjectById(const uint64& Id)
 	{
 		return Cast<T>(GetUniqueObjectById(Id));
 	}
 
-	UObject* GetSafeUniqueObjectById(const uint64 &Id);
+	UObject* GetSafeUniqueObjectById(const uint64& Id);
 	template<typename T>
-	T* GetSafeUniqueObjectById(const uint64 &Id)
+	T* GetSafeUniqueObjectById(const uint64& Id)
 	{
 		return Cast<T>(GetSafeUniqueObjectById(Id));
 	}
 
-	AActor* GetUniqueActorById(const uint64 &Id);
+	AActor* GetUniqueActorById(const uint64& Id);
 	template<typename T>
-	T* GetUniqueActorById(const uint64 &Id)
+	T* GetUniqueActorById(const uint64& Id)
 	{
 		return Cast<T>(GetUniqueActorById(Id));
 	}
 
-	AActor* GetSafeUniqueActorById(const uint64 &Id);
+	AActor* GetSafeUniqueActorById(const uint64& Id);
 	template<typename T>
-	T* GetSafeUniqueActorById(const uint64 &Id)
+	T* GetSafeUniqueActorById(const uint64& Id)
 	{
 		return Cast<T>(GetSafeUniqueActorById(Id));
 	}

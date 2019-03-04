@@ -22,13 +22,18 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDisplayLoading;
 // Input
 #pragma region
 
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInputs;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInputAll;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInputActions;
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInputRaw;
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInputRawAction;
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInputRawAxis;
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInput;
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInputAction;
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInputAxis;
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInputTrigger;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInputLocations;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInputRotations;
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInputLocation;
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInputRotation;
+
+extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInputGameEvent;
 
 #pragma endregion Input
 
@@ -351,3 +356,197 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDrawManagerSenseAngle;
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerSenseSeesActorByDot;
 
 #pragma endregion Sense
+
+// CVarLog
+#pragma region
+
+UENUM(BlueprintType)
+enum class ECsCVarLog : uint8
+{
+	// Loading
+	LogManagerLoading								UMETA(DisplayName = "Log Manager Loading"),
+
+	// Input
+	LogInputRaw										UMETA(DisplayName = "Log Input Raw"),
+	LogInputRawAction								UMETA(DisplayName = "Log Input Raw Action"),
+	LogInputRawAxis									UMETA(DisplayName = "Log Input Raw Axis"),
+
+	LogInput										UMETA(DisplayName = "Log Input"),
+	LogInputAction									UMETA(DisplayName = "Log Input Action"),
+	LogInputAxis									UMETA(DisplayName = "Log Input Axis"),
+	LogInputTrigger									UMETA(DisplayName = "Log Input Trigger"),
+	LogInputLocation								UMETA(DisplayName = "Log Input Location"),
+	LogInputRotation								UMETA(DisplayName = "Log Input Rotation"),
+
+	LogInputGameEvent								UMETA(DisplayName = "Log Input Game Event"),
+
+	// OnBoard
+	LogPlayerStateOnBoard							UMETA(DisplayName = "Log PlayerState OnBoard"),
+
+	// GameState
+	LogGameStateOnBoard								UMETA(DisplayName = "Log GameState OnBoard"),
+
+	// Json
+	LogJsonDataFilenames							UMETA(DisplayName = "Log Json Data Filenames"),
+
+	// Interactive Actor
+	LogInteractiveActorPhysicsStateChange			UMETA(DisplayName = "Log Interactive Actor Physics State Change"),
+	LogManagerInteractiveActorTransactions			UMETA(DisplayName = "Log Manager Interactive Actor Transactions"),
+
+	// Widget Actor
+	LogManagerWidgetActorTransactions				UMETA(DisplayName = "Log Manager Widget Actor Transactions"),
+
+	// AI
+	LogManagerAITransactions						UMETA(DisplayName = "Log Manager AI Transactions"),
+
+		// Interactive AI Pawn
+	LogInteractiveAIPawnPhysicsStateChange			UMETA(DisplayName = "Log Interactive AI Pawn Physics State Change"),
+
+		// Behavior Tree
+	LogAIBTTasks									UMETA(DisplayName = "Log AI BT Tasks"),
+
+	// Script
+	LogOverrideFunctions							UMETA(DisplayName = "Log Override Functions"),
+
+	// Sound
+	LogManagerSoundTransactions						UMETA(DisplayName = "Log Manager Sound Transactions"),
+
+	// FX
+	LogManagerFxTransactions						UMETA(DisplayName = "Log Manager FX Transactions"),
+
+	// Projectile
+	LogManagerProjectileTransactions				UMETA(DisplayName = "Log Manager Projectile Transactions"),
+
+	// Coroutine
+	LogCoroutineTransactions						UMETA(DisplayName = "Log Coroutine Transactions"),
+	LogCoroutineRunning								UMETA(DisplayName = "Log Coroutine Running"),
+
+	// UI
+
+		// Widget
+	LogManagerWidgetTransactions					UMETA(DisplayName = "Log Manager Widget Transactions"),
+
+	// Item
+	LogManagerItemTransactions						UMETA(DisplayName = "Log Manager Item Transactions"),
+	LogManagerItemActionGetFail						UMETA(DisplayName = "Log Manager Item Action Get Fail"),
+
+	// Inventory
+	LogManagerInventoryTransactions					UMETA(DisplayName = "Log Manager Inventory Transactions"),
+
+	// Crafting
+	LogManagerCraftingTransactions					UMETA(DisplayName = "Log Manager Crafting Transactions"),
+
+	// Collision
+
+		// Trace
+	LogManagerTraceTransactions						UMETA(DisplayName = "Log Manager Trace Transactions"),
+
+	// Runnable
+	LogManagerRunnableTransactions					UMETA(DisplayName = "Log Manager Runnable Transactions"),
+
+	// Process
+	LogManagerProcessTransactions					UMETA(DisplayName = "Log Manager Process Transactions"),
+	LogProcessIO									UMETA(DisplayName = "Log Process IO"),
+
+	// Blockchain
+	LogBlockchainIO									UMETA(DisplayName = "Log Blockchain IO"),
+	LogBlockchainIORunning							UMETA(DisplayName = "Log Blockchain IO Running"),
+	LogBlockchainIOConsole							UMETA(DisplayName = "Log Blockchain IO Console"),
+		// Process
+	LogBlockchainProcessStart						UMETA(DisplayName = "Log Blockchain Process Start"),
+		// Command
+	LogBlockchainCommandCompleted					UMETA(DisplayName = "Log Blockchain Command Completed"),
+		// Account
+	LogBlockchainAccountCreated						UMETA(DisplayName = "Log Blockchain Account Created"),
+
+	// Ethereum
+	LogBlockchainAccountLoad						UMETA(DisplayName = "Log Blockchain Account Load"),
+	LogBlockchainAccountSetup						UMETA(DisplayName = "Log Blockchain Account Setup"),
+	LogBlockchainBalance							UMETA(DisplayName = "Log Blockchain Balance"),
+
+	// Sense
+	LogManagerSenseSeesActorByDot					UMETA(DisplayName = "Log Manager Sense Sees Actor by Dot"),
+
+	ECsCVarLog_MAX									UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsCVarLog : public TCsEnumMap<ECsCVarLog>
+{
+	CS_DECLARE_ENUM_MAP_BODY(EMCsCVarLog)
+};
+
+namespace NCsCVarLog
+{
+	namespace Ref
+	{
+		typedef ECsCVarLog Type;
+
+		//extern CSCORE_API const Type FirstPressed;
+		//extern CSCORE_API const Type ECsInputEvent_MAX;
+	}
+}
+
+#pragma endregion CVarLog
+
+struct CSCORE_API FCsCVarLogMap
+{
+protected:
+	FCsCVarLogMap() {}
+	FCsCVarLogMap(const FCsCVarLogMap &) = delete;
+	FCsCVarLogMap(FCsCVarLogMap &&) = delete;
+public:
+	~FCsCVarLogMap() {}
+private:
+	static FCsCVarLogMap* Instance;
+		
+	TMap<ECsCVarLog, TAutoConsoleVariable<int32>*> Map;
+	TMap<ECsCVarLog, int32> DefaultValues;
+	TMap<ECsCVarLog, bool> DirtyValues;
+
+public:
+	static FCsCVarLogMap& Get();
+
+private:
+	void Init();
+
+public:
+
+	void Reset();
+	void ResetDirty();
+
+	FORCEINLINE int32 GetValue(const ECsCVarLog& Log)
+	{
+		return 0;
+	}
+
+	FORCEINLINE void SetValue(const ECsCVarLog& Log, const int32& Value)
+	{
+		(*Map[Log])->Set(Value, ECVF_SetByConsole);
+	}
+
+	FORCEINLINE bool IsShowing(const ECsCVarLog& Log)
+	{
+		return (*Map[Log])->GetInt() == CS_CVAR_SHOW_LOG;
+	}
+
+	FORCEINLINE bool IsHiding(const ECsCVarLog& Log)
+	{
+		return (*Map[Log])->GetInt() == CS_CVAR_HIDE_LOG;
+	}
+
+	FORCEINLINE void Show(const ECsCVarLog& Log, const bool& MarkDirty = false)
+	{
+		(*Map[Log])->Set(CS_CVAR_SHOW_LOG, ECVF_SetByConsole);
+
+		if (MarkDirty)
+			DirtyValues[Log] = true;
+	}
+
+	FORCEINLINE void Hide(const ECsCVarLog& Log, const bool& MarkDirty = false)
+	{
+		(*Map[Log])->Set(CS_CVAR_HIDE_LOG, ECVF_SetByConsole);
+
+		if (MarkDirty)
+			DirtyValues[Log] = true;
+	}
+};

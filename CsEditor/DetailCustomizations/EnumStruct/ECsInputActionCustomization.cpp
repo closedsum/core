@@ -14,6 +14,11 @@ FECsInputActionCustomization::FECsInputActionCustomization()
 	Init<FECsInputAction, EMCsInputAction>();
 }
 
+TSharedRef<IPropertyTypeCustomization> FECsInputActionCustomization::MakeInstance()
+{
+	return MakeShareable(new FECsInputActionCustomization);
+}
+
 void FECsInputActionCustomization::CustomPopulateEnumMap()
 {
 	//FR6EnumEditorUtils::SyncInputAction();
@@ -27,11 +32,6 @@ void FECsInputActionCustomization::AddEnumToMap(const FString& Name)
 FString FECsInputActionCustomization::GetEnumStructName()
 {
 	return TEXT("FECsInputAction");
-}
-
-TSharedRef<IPropertyTypeCustomization> FECsInputActionCustomization::MakeInstance()
-{
-	return MakeShareable(new FECsInputActionCustomization);
 }
 
 void FECsInputActionCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)

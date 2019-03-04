@@ -1,5 +1,7 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
-#include "DetailCustomizations/EnumStruct/ECsEnumCustomization.h"
+#include "DetailCustomizations/EnumStruct/ECsEnumStructCustomization.h"
+#include "CsEditor.h"
+
 #include "IDetailChildrenBuilder.h"
 #include "DetailWidgetRow.h"
 #include "IDetailGroup.h"
@@ -15,16 +17,16 @@
 
 #include "Classes/Engine/UserDefinedEnum.h"
 
-#define LOCTEXT_NAMESPACE "ECsEnumCustomization"
+#define LOCTEXT_NAMESPACE "ECsEnumStructCustomization"
 
 
-FECsEnumCustomization::FECsEnumCustomization()
+FECsEnumStructCustomization::FECsEnumStructCustomization()
 {
 }
 
-void FECsEnumCustomization::CustomPopulateEnumMap(){}
+void FECsEnumStructCustomization::CustomPopulateEnumMap(){}
 
-void FECsEnumCustomization::PopulateEnumMapFromUserDefinedEnum()
+void FECsEnumStructCustomization::PopulateEnumMapFromUserDefinedEnum()
 {
 	if (!bPopulateEnumMapFromUserDefinedEnum)
 		return;
@@ -50,26 +52,26 @@ void FECsEnumCustomization::PopulateEnumMapFromUserDefinedEnum()
 	{
 		if (UserDefinedEnumObjectPath == NAME_None)
 		{
-			UE_LOG(LogR6Editor, Warning, TEXT("FER6EnumStructCustomization::PopulateEnumMapFromUserDefinedEnum (%s): No valid UserDefinedEnumObjectPath set."), *GetEnumStructName());
+			UE_LOG(LogCsEditor, Warning, TEXT("FER6EnumStructCustomization::PopulateEnumMapFromUserDefinedEnum (%s): No valid UserDefinedEnumObjectPath set."), *GetEnumStructName());
 		}
 		else
 		{
-			UE_LOG(LogR6Editor, Warning, TEXT("FER6EnumStructCustomization::PopulateEnumMapFromUserDefinedEnum (%s): Failed to find UserDefinedEnum at: %s. It is possible it was deleted or moved."), *GetEnumStructName(), *(UserDefinedEnumObjectPath.ToString()));
+			UE_LOG(LogCsEditor, Warning, TEXT("FER6EnumStructCustomization::PopulateEnumMapFromUserDefinedEnum (%s): Failed to find UserDefinedEnum at: %s. It is possible it was deleted or moved."), *GetEnumStructName(), *(UserDefinedEnumObjectPath.ToString()));
 		}
 	}
 }
 
-void FECsEnumCustomization::AddEnumToMap(const FString& Name)
+void FECsEnumStructCustomization::AddEnumToMap(const FString& Name)
 {
 
 }
 
-FString FECsEnumCustomization::GetEnumStructName()
+FString FECsEnumStructCustomization::GetEnumStructName()
 {
 	return TEXT("");
 }
 
-void FECsEnumCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> StructPropertyHandle, class FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
+void FECsEnumStructCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> StructPropertyHandle, class FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
 	SetPropertyHandles(StructPropertyHandle);
 	
@@ -111,28 +113,28 @@ void FECsEnumCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> StructPr
 	[
 		SAssignNew(DisplayNameComboBox, SComboBox<TSharedPtr<FString>>)
 		.OptionsSource(&DisplayNameList)
-		.OnGenerateWidget(this, &FECsEnumCustomization::OnGenerateWidget)
-		.OnSelectionChanged(this, &FECsEnumCustomization::OnSelectionChanged)
-		.OnComboBoxOpening(this, &FECsEnumCustomization::OnComboBoxOpening)
+		.OnGenerateWidget(this, &FECsEnumStructCustomization::OnGenerateWidget)
+		.OnSelectionChanged(this, &FECsEnumStructCustomization::OnSelectionChanged)
+		.OnComboBoxOpening(this, &FECsEnumStructCustomization::OnComboBoxOpening)
 		.InitiallySelectedItem(InitialSelectedDisplayName)
 		.IsEnabled(FSlateApplication::Get().GetNormalExecutionAttribute())
 		.ContentPadding(FMargin(2.0f, 2.0f))
 		.Content()
 		[
 			SNew(STextBlock)
-			.Text(this, &FECsEnumCustomization::GetComboBoxContent)
+			.Text(this, &FECsEnumStructCustomization::GetComboBoxContent)
 			.Font(IDetailLayoutBuilder::GetDetailFont())
 		]
 	];
 }
 
-void FECsEnumCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle){}
+void FECsEnumStructCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle){}
 
-void FECsEnumCustomization::CustomizeChildren(TSharedRef<class IPropertyHandle> StructPropertyHandle, class IDetailChildrenBuilder& StructBuilder, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
+void FECsEnumStructCustomization::CustomizeChildren(TSharedRef<class IPropertyHandle> StructPropertyHandle, class IDetailChildrenBuilder& StructBuilder, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
 }
 
-TSharedRef<SWidget> FECsEnumCustomization::OnGenerateWidget(TSharedPtr<FString> InItem)
+TSharedRef<SWidget> FECsEnumStructCustomization::OnGenerateWidget(TSharedPtr<FString> InItem)
 {
 	return
 		SNew(STextBlock)
@@ -140,7 +142,7 @@ TSharedRef<SWidget> FECsEnumCustomization::OnGenerateWidget(TSharedPtr<FString> 
 		.Font(IDetailLayoutBuilder::GetDetailFont());
 }
 
-void FECsEnumCustomization::OnSelectionChanged(TSharedPtr<FString> DisplayNameItem, ESelectInfo::Type SelectInfo)
+void FECsEnumStructCustomization::OnSelectionChanged(TSharedPtr<FString> DisplayNameItem, ESelectInfo::Type SelectInfo)
 {
 	if (DisplayNameItem.IsValid())
 	{
@@ -148,7 +150,7 @@ void FECsEnumCustomization::OnSelectionChanged(TSharedPtr<FString> DisplayNameIt
 	}
 }
 
-void FECsEnumCustomization::OnComboBoxOpening()
+void FECsEnumStructCustomization::OnComboBoxOpening()
 {
 	TSharedPtr<FString> SelectedDisplayName = GetSelectedDisplayName();
 
@@ -159,7 +161,7 @@ void FECsEnumCustomization::OnComboBoxOpening()
 	}
 }
 
-TSharedPtr<FString> FECsEnumCustomization::GetSelectedDisplayName() const
+TSharedPtr<FString> FECsEnumStructCustomization::GetSelectedDisplayName() const
 {
 	const int32 Count = DisplayNameList.Num();
 
@@ -181,15 +183,15 @@ TSharedPtr<FString> FECsEnumCustomization::GetSelectedDisplayName() const
 	return DisplayNameList[0];
 }
 
-void FECsEnumCustomization::SetEnumWithDisplayName(const FString& DisplayName){}
+void FECsEnumStructCustomization::SetEnumWithDisplayName(const FString& DisplayName){}
 
-void FECsEnumCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
+void FECsEnumStructCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
 	check(DisplayNameHandle.IsValid());
 	DisplayNameHandle->GetValue(OutDisplayName);
 }
 
-FText FECsEnumCustomization::GetComboBoxContent() const
+FText FECsEnumStructCustomization::GetComboBoxContent() const
 {
 	TSharedPtr<FString> SelectedDisplayName = GetSelectedDisplayName();
 

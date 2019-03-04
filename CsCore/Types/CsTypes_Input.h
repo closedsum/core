@@ -236,7 +236,11 @@ struct CSCORE_API FCsInputInfo
 {
 	GENERATED_USTRUCT_BODY()
 
+private:
+
 	bool bEvaluated;
+	
+public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	ECsInputType Type;
@@ -296,22 +300,47 @@ struct CSCORE_API FCsInputInfo
 		return !(*this == B);
 	}
 
-	FORCEINLINE void Set(const ECsInputEvent &inEvent, const float &inValue)
+	FORCEINLINE void Set(const ECsInputEvent& inEvent, const float& inValue)
 	{
 		Event = inEvent;
 		Value = inValue;
 	}
 
-	FORCEINLINE void Set(const ECsInputEvent &inEvent, const FVector &inLocation)
+	FORCEINLINE void Set(const ECsInputEvent& inEvent, const FVector& inLocation)
 	{
 		Event = inEvent;
 		Location = inLocation;
 	}
 
-	FORCEINLINE void Set(const ECsInputEvent &inEvent, const FRotator &inRotation)
+	FORCEINLINE void Set(const ECsInputEvent& inEvent, const FRotator& inRotation)
 	{
 		Event = inEvent;
 		Rotation = inRotation;
+	}
+
+	FORCEINLINE bool IsEvaluated()
+	{
+		return bEvaluated;
+	}
+
+	FORCEINLINE void StartEvaluation()
+	{
+		bEvaluated = true;
+	}
+
+	FORCEINLINE void EndEvaluation()
+	{
+		bEvaluated = false;
+	}
+
+	FORCEINLINE bool HasEventChanged()
+	{
+		return Event != Last_Event;
+	}
+
+	FORCEINLINE void FlushEvent()
+	{
+		Last_Event = Event;
 	}
 };
 
@@ -343,7 +372,7 @@ struct CSCORE_API FRep_CsInput
 		return !(*this == B);
 	}
 
-	void Init(const FECsInputAction &inAction, const ECsInputEvent &inEvent)
+	void Init(const FECsInputAction& inAction, const ECsInputEvent& inEvent)
 	{
 		Action = inAction;
 		Event = inEvent;
@@ -395,12 +424,12 @@ struct CSCORE_API FCsInput
 		return *this;
 	}
 
-	FORCEINLINE void Init(const uint16 &inPoolIndex)
+	FORCEINLINE void Init(const uint16& inPoolIndex)
 	{
 		PoolIndex = inPoolIndex;
 	}
 
-	FORCEINLINE void Set(const FECsInputAction &inAction, const ECsInputEvent &inEvent, const float &inValue, const FVector &inLocation, const FRotator &inRotation)
+	FORCEINLINE void Set(const FECsInputAction& inAction, const ECsInputEvent& inEvent, const float& inValue, const FVector& inLocation, const FRotator& inRotation)
 	{
 		Action		  = inAction;
 		Event		  = inEvent;
@@ -409,48 +438,48 @@ struct CSCORE_API FCsInput
 		Rotation	  = inRotation;
 	}
 
-	FORCEINLINE void Set(const FECsInputAction &inAction, const ECsInputEvent &inEvent, const FVector &inLocation)
+	FORCEINLINE void Set(const FECsInputAction& inAction, const ECsInputEvent& inEvent, const FVector& inLocation)
 	{
 		Set(inAction, inEvent, 0.0f, inLocation, FRotator::ZeroRotator);
 	}
 
-	FORCEINLINE void Set(const FECsInputAction &inAction, const ECsInputEvent &inEvent, const FRotator &inRotation)
+	FORCEINLINE void Set(const FECsInputAction& inAction, const ECsInputEvent& inEvent, const FRotator& inRotation)
 	{
 		Set(inAction, inEvent, 0.0f, FVector::ZeroVector, inRotation);
 	}
 
-	FORCEINLINE void Set(const FECsInputAction &inAction, const ECsInputEvent &inEvent, const float &inValue)
+	FORCEINLINE void Set(const FECsInputAction& inAction, const ECsInputEvent& inEvent, const float& inValue)
 	{
 		Set(inAction, inEvent, inValue, FVector::ZeroVector, FRotator::ZeroRotator);
 	}
 
-	FORCEINLINE void Set(const FECsInputAction &inAction, const ECsInputEvent &inEvent)
+	FORCEINLINE void Set(const FECsInputAction& inAction, const ECsInputEvent& inEvent)
 	{
 		Set(inAction, inEvent, 0.0f, FVector::ZeroVector, FRotator::ZeroRotator);
 	}
 
-	FORCEINLINE void Allocate(const FECsInputAction &inAction, const ECsInputEvent &inEvent, const float &inValue, const FVector &inLocation, const FRotator &inRotation)
+	FORCEINLINE void Allocate(const FECsInputAction& inAction, const ECsInputEvent& inEvent, const float& inValue, const FVector& inLocation, const FRotator& inRotation)
 	{
 		IsAllocated = true;
 		Set(inAction, inEvent, inValue, inLocation, inRotation);
 	}
 
-	FORCEINLINE void Allocate(const FECsInputAction &inAction, const ECsInputEvent &inEvent, const FVector &inLocation)
+	FORCEINLINE void Allocate(const FECsInputAction& inAction, const ECsInputEvent& inEvent, const FVector& inLocation)
 	{
 		Allocate(inAction, inEvent, 0.0f, inLocation, FRotator::ZeroRotator);
 	}
 
-	FORCEINLINE void Allocate(const FECsInputAction &inAction, const ECsInputEvent &inEvent, const FRotator &inRotation)
+	FORCEINLINE void Allocate(const FECsInputAction& inAction, const ECsInputEvent& inEvent, const FRotator& inRotation)
 	{
 		Allocate(inAction, inEvent, 0.0f, FVector::ZeroVector, inRotation);
 	}
 
-	FORCEINLINE void Allocate(const FECsInputAction &inAction, const ECsInputEvent &inEvent, const float &inValue)
+	FORCEINLINE void Allocate(const FECsInputAction& inAction, const ECsInputEvent& inEvent, const float& inValue)
 	{
 		Allocate(inAction, inEvent, inValue, FVector::ZeroVector, FRotator::ZeroRotator);
 	}
 
-	FORCEINLINE void Allocate(const FECsInputAction &inAction, const ECsInputEvent &inEvent)
+	FORCEINLINE void Allocate(const FECsInputAction& inAction, const ECsInputEvent& inEvent)
 	{
 		Allocate(inAction, inEvent, 0.0f, FVector::ZeroVector, FRotator::ZeroRotator);
 	}
@@ -501,7 +530,7 @@ struct CSCORE_API FCsInputFrame
 		return *this;
 	}
 
-	FORCEINLINE void Init(const float &inTime, const float &inRealTime, const float &inDeltaTime, const uint64 &inFrame)
+	FORCEINLINE void Init(const float& inTime, const float& inRealTime, const float& inDeltaTime, const uint64& inFrame)
 	{
 		Time	  = inTime;
 		RealTime  = inRealTime;
@@ -515,7 +544,7 @@ struct CSCORE_API FCsInputFrame
 		Inputs.Reset();
 	}
 
-	FORCEINLINE FCsInput* GetInput(const FECsInputAction &Action)
+	FORCEINLINE FCsInput* GetInput(const FECsInputAction& Action)
 	{
 		for (FCsInput* Input : Inputs)
 		{
@@ -525,14 +554,14 @@ struct CSCORE_API FCsInputFrame
 		return nullptr;
 	}
 
-	FORCEINLINE FCsInput* GetInput(const FECsInputAction &Action, const ECsInputEvent &Event)
+	FORCEINLINE FCsInput* GetInput(const FECsInputAction& Action, const ECsInputEvent& Event)
 	{
 		if (FCsInput* Input = GetInput(Action))
 			return Input->Event == Event ? Input : nullptr;
 		return nullptr;
 	}
 
-	FORCEINLINE FCsInput* GetInput(const FECsInputAction &Action, const TArray<ECsInputEvent> &Events)
+	FORCEINLINE FCsInput* GetInput(const FECsInputAction& Action, const TArray<ECsInputEvent>& Events)
 	{
 		if (FCsInput* Input = GetInput(Action))
 			return Events.Find(Input->Event) != INDEX_NONE ? Input : nullptr;
@@ -546,13 +575,13 @@ struct CSCORE_API FCsInputWord
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(BlueprintReadOnly, Category = "Input")
-	bool Completed;
+	bool bCompleted;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Input")
 	float CompletedTime;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Input")
-	bool Consume;
+	bool bConsume;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	TArray<FCsInput> AndInputs;
@@ -562,12 +591,35 @@ struct CSCORE_API FCsInputWord
 
 	FCsInputWord()
 	{
-		Completed = false;
+		bCompleted = false;
 		CompletedTime = 0.0f;
-		Consume = false;
+		bConsume = false;
 	}
 
-	void AddAndInput(const FECsInputAction &Action, const ECsInputEvent &Event, const float &Value, const FVector &Location, const FRotator &Rotation)
+
+	FORCEINLINE FCsInputWord& operator=(const FCsInputWord& B)
+	{
+		bCompleted = B.bCompleted;
+		CompletedTime = B.CompletedTime;
+		bConsume = B.bConsume;
+
+		AndInputs.Reset();
+
+		for (const FCsInput& Input : B.AndInputs)
+		{
+			AndInputs.Add(Input);
+		}
+
+		OrInputs.Reset();
+
+		for (const FCsInput& Input : B.OrInputs)
+		{
+			OrInputs.Add(Input);
+		}
+		return *this;
+	}
+
+	void AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value, const FVector& Location, const FRotator& Rotation)
 	{
 		AndInputs.AddDefaulted();
 		const int32 Index = AndInputs.Num() - 1;
@@ -578,27 +630,27 @@ struct CSCORE_API FCsInputWord
 		AndInputs[Index].Rotation = Rotation;
 	}
 
-	void AddAndInput(const FECsInputAction &Action, const ECsInputEvent &Event)
+	void AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event)
 	{
 		AddAndInput(Action, Event, 0.0f, FVector::ZeroVector, FRotator::ZeroRotator);
 	}
 
-	void AddAndInput(const FECsInputAction &Action, const ECsInputEvent &Event, const float &Value)
+	void AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value)
 	{
 		AddAndInput(Action, Event, Value, FVector::ZeroVector, FRotator::ZeroRotator);
 	}
 
-	void AddAndInput(const FECsInputAction &Action, const ECsInputEvent &Event, const FVector &Location)
+	void AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event, const FVector& Location)
 	{
 		AddAndInput(Action, Event, 0.0f, Location, FRotator::ZeroRotator);
 	}
 
-	void AddAndInput(const FECsInputAction &Action, const ECsInputEvent &Event, const FRotator &Rotation)
+	void AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event, const FRotator& Rotation)
 	{
 		AddAndInput(Action, Event, 0.0f, FVector::ZeroVector, Rotation);
 	}
 
-	void AddOrInput(const FECsInputAction &Action, const ECsInputEvent &Event, const float &Value, const FVector &Location, const FRotator &Rotation)
+	void AddOrInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value, const FVector& Location, const FRotator& Rotation)
 	{
 		OrInputs.AddDefaulted();
 		const int32 Index = OrInputs.Num() - 1;
@@ -609,32 +661,32 @@ struct CSCORE_API FCsInputWord
 		OrInputs[Index].Rotation = Rotation;
 	}
 
-	void AddOrInput(const FECsInputAction &Action, const ECsInputEvent &Event)
+	void AddOrInput(const FECsInputAction& Action, const ECsInputEvent& Event)
 	{
 		AddOrInput(Action, Event, 0.0f, FVector::ZeroVector, FRotator::ZeroRotator);
 	}
 
-	void AddOrInput(const FECsInputAction &Action, const ECsInputEvent &Event, const float &Value)
+	void AddOrInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value)
 	{
 		AddOrInput(Action, Event, Value, FVector::ZeroVector, FRotator::ZeroRotator);
 	}
 
-	void AddOrInput(const FECsInputAction &Action, const ECsInputEvent &Event, const FVector &Location)
+	void AddOrInput(const FECsInputAction& Action, const ECsInputEvent& Event, const FVector& Location)
 	{
 		AddOrInput(Action, Event, 0.0f, Location, FRotator::ZeroRotator);
 	}
 
-	void AddOrInput(const FECsInputAction &Action, const ECsInputEvent &Event, const FRotator &Rotation)
+	void AddOrInput(const FECsInputAction& Action, const ECsInputEvent& Event, const FRotator& Rotation)
 	{
 		AddOrInput(Action, Event, 0.0f, FVector::ZeroVector, Rotation);
 	}
 
 	FORCEINLINE void Reset()
 	{
-		Completed = false;
+		bCompleted = false;
 	}
 
-	FORCEINLINE void ProcessInput(FCsInputFrame &InputFrame)
+	FORCEINLINE void ProcessInput(FCsInputFrame& InputFrame)
 	{
 		int32 And = 0;
 		bool Or   = false;
@@ -667,11 +719,11 @@ struct CSCORE_API FCsInputWord
 					break;
 			}
 			
-			Completed = (And > 0 && And == AndCount) || Or;
+			bCompleted = (And > 0 && And == AndCount) || Or;
 
-			if (Completed)
+			if (bCompleted)
 			{
-				if (Consume)
+				if (bConsume)
 					InputFrame.Inputs.RemoveAt(I);
 				CompletedTime = InputFrame.Time;
 				break;
@@ -686,19 +738,19 @@ struct CSCORE_API FCsInputPhrase
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(BlueprintReadOnly, Category = "Input")
-	bool Completed;
+	bool bCompleted;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Input")
 	float CompletedTime;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	bool UseInterval;
+	bool bUseInterval;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float Interval;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	bool UseFrames;
+	bool bUseFrames;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (ClampMin = "0", UIMin = "0"))
 	int32 Frames;
@@ -708,15 +760,33 @@ struct CSCORE_API FCsInputPhrase
 
 	FCsInputPhrase()
 	{
-		Completed = false;
+		bCompleted = false;
 		CompletedTime = 0.0f;
-		UseInterval = false;
+		bUseInterval = false;
 		Interval = 0.0f;
-		UseFrames = false;
+		bUseFrames = false;
 		Frames = 0;
 	}
 
-	void AddAndInputToWord(const int32 &Index, const FECsInputAction &Action, const ECsInputEvent &Event, const float &Value = 0.0f, const FVector &Location = FVector::ZeroVector, const FRotator &Rotation = FRotator::ZeroRotator)
+	FORCEINLINE FCsInputPhrase& operator=(const FCsInputPhrase& B)
+	{
+		bCompleted = B.bCompleted;
+		CompletedTime = B.CompletedTime;
+		bUseInterval = B.bUseInterval;
+		Interval = B.Interval;
+		bUseFrames = B.bUseFrames;
+		Frames = B.Frames;
+
+		Words.Reset();
+
+		for (const FCsInputWord& Word : B.Words)
+		{
+			Words.Add(Word);
+		}
+		return *this;
+	}
+
+	void AddAndInputToWord(const int32& Index, const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value = 0.0f, const FVector& Location = FVector::ZeroVector, const FRotator& Rotation = FRotator::ZeroRotator)
 	{
 		const int32 Count = Words.Num();
 
@@ -730,7 +800,7 @@ struct CSCORE_API FCsInputPhrase
 		Words[Index].AddAndInput(Action, Event, Value, Location, Rotation);
 	}
 
-	void AddOrInputToWord(const int32 &Index, const FECsInputAction &Action, const ECsInputEvent &Event, const float &Value = 0.0f, const FVector &Location = FVector::ZeroVector, const FRotator &Rotation = FRotator::ZeroRotator)
+	void AddOrInputToWord(const int32& Index, const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value = 0.0f, const FVector& Location = FVector::ZeroVector, const FRotator& Rotation = FRotator::ZeroRotator)
 	{
 		const int32 Count = Words.Num();
 
@@ -750,11 +820,11 @@ struct CSCORE_API FCsInputPhrase
 		{
 			Word.Reset();
 		}
-		Completed = false;
+		bCompleted = false;
 		CompletedTime = 0.0f;
 	}
 
-	FORCEINLINE void ProcessInput(FCsInputFrame &InputFrame)
+	FORCEINLINE void ProcessInput(FCsInputFrame& InputFrame)
 	{
 		const float& CurrentTime = InputFrame.Time;
 
@@ -762,14 +832,14 @@ struct CSCORE_API FCsInputPhrase
 		const int32 Count = Words.Num();
 		int32 Index		  = 0;
 
-		if (UseInterval)
+		if (bUseInterval)
 		{
 			float ElapsedTime			= 0.0f;
 			float EarliestCompletedTime = CurrentTime;
 
 			for (Index = 0; Index < Count; ++Index)
 			{
-				if (Words[Index].Completed)
+				if (Words[Index].bCompleted)
 				{
 					if (Words[Index].CompletedTime < EarliestCompletedTime)
 						EarliestCompletedTime = Words[Index].CompletedTime;
@@ -785,7 +855,7 @@ struct CSCORE_API FCsInputPhrase
 
 				Words[Index].ProcessInput(InputFrame);
 
-				if (Index < Count - 1 || !Words[Index].Completed)
+				if (Index < Count - 1 || !Words[Index].bCompleted)
 					break;
 			}
 		}
@@ -793,12 +863,12 @@ struct CSCORE_API FCsInputPhrase
 		{
 			for (Index = 0; Index < Count; ++Index)
 			{
-				if (Words[Index].Completed)
+				if (Words[Index].bCompleted)
 					continue;
 
 				Words[Index].ProcessInput(InputFrame);
 
-				if (Index < Count - 1 || !Words[Index].Completed)
+				if (Index < Count - 1 || !Words[Index].bCompleted)
 					break;
 			}
 
@@ -808,7 +878,7 @@ struct CSCORE_API FCsInputPhrase
 		// Check if Completed
 		if (Index > 0 && Index == Count)
 		{
-			Completed = true;
+			bCompleted = true;
 			CompletedTime = CurrentTime;
 		}
 	}
@@ -820,10 +890,10 @@ struct CSCORE_API FCsInputSentence
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(BlueprintReadOnly, Category = "Input")
-	bool Active;
+	bool bActive;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Input")
-	bool Completed;
+	bool bCompleted;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Input")
 	float CompletedTime;
@@ -832,13 +902,13 @@ struct CSCORE_API FCsInputSentence
 	float Cooldown;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	bool UseInterval;
+	bool bUseInterval;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float Interval;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	bool UseFrames;
+	bool bUseFrames;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (ClampMin = "0", UIMin = "0"))
 	int32 Frames;
@@ -848,33 +918,53 @@ struct CSCORE_API FCsInputSentence
 
 	FCsInputSentence()
 	{
-		Active = true;
-		Completed = false;
+		bActive = true;
+		bCompleted = false;
 		CompletedTime = 0.0f;
 		Cooldown = 0.0f;
-		UseInterval = false;
+		bUseInterval = false;
 		Interval = 0.0f;
-		UseFrames = false;
+		bUseFrames = false;
 		Frames = 0;
+	}
+
+	FORCEINLINE FCsInputSentence& operator=(const FCsInputSentence& B)
+	{
+		bActive = B.bActive;
+		bCompleted = B.bCompleted;
+		CompletedTime = B.CompletedTime;
+		Cooldown = B.Cooldown;
+		bUseInterval = B.bUseInterval;
+		Interval = B.Interval;
+		bUseFrames = B.bUseFrames;
+		Frames = B.Frames;
+
+		Phrases.Reset();
+
+		for (const FCsInputPhrase& Phrase : B.Phrases)
+		{
+			Phrases.Add(Phrase);
+		}
+		return *this;
 	}
 
 	FORCEINLINE void Reset()
 	{
-		Active = true;
+		bActive = true;
 
 		for (FCsInputPhrase& Phrase : Phrases)
 		{
 			Phrase.Reset();
 		}
-		Completed = false;
+		bCompleted = false;
 	}
 
-	FORCEINLINE void ProcessInput(FCsInputFrame &InputFrame)
+	FORCEINLINE void ProcessInput(FCsInputFrame& InputFrame)
 	{
 		const float& CurrentTime = InputFrame.Time;
 
 		// Check if Cooldown has Expired
-		if (!Active)
+		if (!bActive)
 		{
 			if (CurrentTime - CompletedTime >= Cooldown)
 				Reset();
@@ -885,14 +975,14 @@ struct CSCORE_API FCsInputSentence
 		const int32 Count = Phrases.Num();
 		int32 Index		  = 0;
 
-		if (UseInterval)
+		if (bUseInterval)
 		{
 			float ElapsedTime			= 0.0f;
 			float EarliestCompletedTime = CurrentTime;
 
 			for (Index = 0; Index < Count; ++Index)
 			{
-				if (Phrases[Index].Completed)
+				if (Phrases[Index].bCompleted)
 				{
 					if (Phrases[Index].CompletedTime < EarliestCompletedTime)
 						EarliestCompletedTime = Phrases[Index].CompletedTime;
@@ -908,7 +998,7 @@ struct CSCORE_API FCsInputSentence
 
 				Phrases[Index].ProcessInput(InputFrame);
 
-				if (Index < Count - 1 || !Phrases[Index].Completed)
+				if (Index < Count - 1 || !Phrases[Index].bCompleted)
 					break;
 			}
 		}
@@ -916,12 +1006,12 @@ struct CSCORE_API FCsInputSentence
 		{
 			for (Index = 0; Index < Count; ++Index)
 			{
-				if (Phrases[Index].Completed)
+				if (Phrases[Index].bCompleted)
 					continue;
 
 				Phrases[Index].ProcessInput(InputFrame);
 
-				if (Index < Count - 1 || !Phrases[Index].Completed)
+				if (Index < Count - 1 || !Phrases[Index].bCompleted)
 					break;
 			}
 
@@ -929,11 +1019,11 @@ struct CSCORE_API FCsInputSentence
 				Reset();
 		}
 		// Check if Completed
-		if (Index == Count)
+		if (Count > 0 && Index == Count)
 		{
-			Completed = true;
+			bCompleted = true;
 			CompletedTime = CurrentTime;
-			Active = false;
+			bActive = false;
 		}
 	}
 };
@@ -1169,16 +1259,39 @@ struct FCsGameEventInfo
 		return *this;
 	}
 
-	 FORCEINLINE void Reset()
+	FORCEINLINE void Reset()
 	{
 		Event = EMCsGameEvent::Get().GetMAX();
 		Value = 0.0f;
 		Location = FVector::ZeroVector;
 	}
 
-	FORCEINLINE bool IsValid()
+	FORCEINLINE bool IsValid() const
 	{
 		return Event != EMCsGameEvent::Get().GetMAX();
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FCsGameEventDefinitionSimpleInfo
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	FECsInputAction Action;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	ECsInputEvent Event;
+
+	FCsGameEventDefinitionSimpleInfo() :
+		Event(ECsInputEvent::ECsInputEvent_MAX)
+	{
+		Action = EMCsInputAction::Get().GetMAX();
+	}
+
+	bool IsValid()
+	{
+		return EMCsInputAction::Get().IsValidEnum(Action) && Event != ECsInputEvent::ECsInputEvent_MAX;
 	}
 };
 
@@ -1191,10 +1304,12 @@ struct FCsGameEventDefinition
 	FCsInputSentence Sentence;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	FECsGameEvent Event;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	uint8 Event_Script;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	FString EventAsString;
+
+	FCsGameEventDefinition() :
+		Sentence()
+	{
+		Event = EMCsGameEvent::Get().GetMAX();
+	}
 };
 
 #define CS_GAME_EVENT_DEFINITION_START(Definitions, EVENT)	{ \

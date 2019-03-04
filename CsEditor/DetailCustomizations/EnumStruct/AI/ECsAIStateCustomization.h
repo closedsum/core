@@ -1,14 +1,14 @@
 // Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "DetailCustomizations/EnumStruct/ECsEnumCustomization.h"
+#include "DetailCustomizations/EnumStruct/ECsEnumStructCustomization.h"
 
 /**
 * Customizes a FECsAIState property to use a dropdown
 */
-class CSEDITOR_API FECsAIStateCustomization : public FECsEnumCustomization
+class CSEDITOR_API FECsAIStateCustomization : public FECsEnumStructCustomization
 {
 private:
-	typedef FECsEnumCustomization Super;
+	typedef FECsEnumStructCustomization Super;
 
 public:
 

@@ -5,6 +5,8 @@
 #include "Types/CsTypes_Input.h"
 #include "CsInput_Base.generated.h"
 
+class UCsManager_Input;
+
 UCLASS()
 class CSCORE_API UCsInput_Base : public UObject
 {
@@ -19,10 +21,8 @@ class CSCORE_API UCsInput_Base : public UObject
 	UPROPERTY(BlueprintReadWrite, Category = "Input")
 	int32 ActionMap;
 
-	CS_DECLARE_INPUT_ACTION_MAP
-
 	UPROPERTY(BlueprintReadOnly, Category = "Input")
-	class UCsManager_Input* Manager_Input;
+	UCsManager_Input* Manager_Input;
 
 #if WITH_EDITOR
 	virtual void OnPrePIEEnded(const bool bIsSimulating);

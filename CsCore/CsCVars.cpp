@@ -31,24 +31,38 @@ TAutoConsoleVariable<int32> CsCVarDisplayLoading(
 // Input
 #pragma region
 
-TAutoConsoleVariable<int32> CsCVarLogInputs(
-	TEXT("log.inputs"),
+TAutoConsoleVariable<int32> CsCVarLogInputRaw(
+	TEXT("log.input.raw"),
 	0,
-	TEXT("Log Inputs"),
+	TEXT("Log Input Raw"),
 	ECVF_SetByConsole
 );
 
-TAutoConsoleVariable<int32> CsCVarLogInputAll(
-	TEXT("log.input.all"),
+TAutoConsoleVariable<int32> CsCVarLogInputRawAction(
+	TEXT("log.input.raw.action"),
 	0,
-	TEXT("Log Input All"),
+	TEXT("Log Input Raw Action"),
 	ECVF_SetByConsole
 );
 
-TAutoConsoleVariable<int32> CsCVarLogInputActions(
-	TEXT("log.input.actions"),
+TAutoConsoleVariable<int32> CsCVarLogInputRawAxis(
+	TEXT("log.input.raw.axis"),
 	0,
-	TEXT("Log Input Actions"),
+	TEXT("Log Input Raw Axis"),
+	ECVF_SetByConsole
+);
+
+TAutoConsoleVariable<int32> CsCVarLogInput(
+	TEXT("log.input"),
+	0,
+	TEXT("Log Input"),
+	ECVF_SetByConsole
+);
+
+TAutoConsoleVariable<int32> CsCVarLogInputAction(
+	TEXT("log.input.action"),
+	0,
+	TEXT("Log Input Action"),
 	ECVF_SetByConsole
 );
 
@@ -59,17 +73,31 @@ TAutoConsoleVariable<int32> CsCVarLogInputAxis(
 	ECVF_SetByConsole
 );
 
-TAutoConsoleVariable<int32> CsCVarLogInputLocations(
-	TEXT("log.input.locations"),
+TAutoConsoleVariable<int32> CsCVarLogInputTrigger(
+	TEXT("log.input.trigger"),
 	0,
-	TEXT("Log Input Locatons"),
+	TEXT("Log Input Trigger"),
 	ECVF_SetByConsole
 );
 
-TAutoConsoleVariable<int32> CsCVarLogInputRotations(
-	TEXT("log.input.rotations"),
+TAutoConsoleVariable<int32> CsCVarLogInputLocation(
+	TEXT("log.input.location"),
 	0,
-	TEXT("Log Input Rotations"),
+	TEXT("Log Input Locaton"),
+	ECVF_SetByConsole
+);
+
+TAutoConsoleVariable<int32> CsCVarLogInputRotation(
+	TEXT("log.input.rotation"),
+	0,
+	TEXT("Log Input Rotation"),
+	ECVF_SetByConsole
+);
+
+TAutoConsoleVariable<int32> CsCVarLogInputGameEvent(
+	TEXT("log.input.gameevent"),
+	0,
+	TEXT("Log Input Game Event"),
 	ECVF_SetByConsole
 );
 
@@ -796,3 +824,136 @@ TAutoConsoleVariable<int32> CsCVarLogManagerSenseSeesActorByDot(
 );
 
 #pragma endregion Sense
+
+// CVarLog
+CS_DEFINE_ENUM_MAP_BODY(EMCsCVarLog)
+
+// CVarLogMap
+#pragma region
+
+FCsCVarLogMap* FCsCVarLogMap::Instance;
+
+FCsCVarLogMap& FCsCVarLogMap::Get()
+{
+	if (!Instance)
+	{
+		Instance = new FCsCVarLogMap();
+		Instance->Init();
+	}
+	return *Instance;
+}
+
+void FCsCVarLogMap::Init()
+{
+	// Loading
+	Map.Add(ECsCVarLog::LogManagerLoading, &CsCVarLogManagerLoading);
+	// Input
+	Map.Add(ECsCVarLog::LogInputRaw, &CsCVarLogInputRaw);
+	Map.Add(ECsCVarLog::LogInputRawAction, &CsCVarLogInputRawAction);
+	Map.Add(ECsCVarLog::LogInputRawAxis, &CsCVarLogInputRawAxis);
+
+	Map.Add(ECsCVarLog::LogInput, &CsCVarLogInput);
+	Map.Add(ECsCVarLog::LogInputAction, &CsCVarLogInputAction);
+	Map.Add(ECsCVarLog::LogInputAxis, &CsCVarLogInputAxis);
+	Map.Add(ECsCVarLog::LogInputTrigger, &CsCVarLogInputTrigger);
+	Map.Add(ECsCVarLog::LogInputLocation, &CsCVarLogInputLocation);
+	Map.Add(ECsCVarLog::LogInputRotation, &CsCVarLogInputRotation);
+
+	Map.Add(ECsCVarLog::LogInputGameEvent, &CsCVarLogInputGameEvent);
+	// OnBoard
+	Map.Add(ECsCVarLog::LogPlayerStateOnBoard, &CsCVarLogPlayerStateOnBoard);
+	// GameState
+	Map.Add(ECsCVarLog::LogGameStateOnBoard, &CsCVarLogGameStateOnBoard);
+	// Json
+	Map.Add(ECsCVarLog::LogJsonDataFilenames, &CsCVarLogGameStateOnBoard);
+	// Interactive Actor
+	Map.Add(ECsCVarLog::LogInteractiveActorPhysicsStateChange, &CsCVarLogInteractiveActorPhysicsStateChange);
+	Map.Add(ECsCVarLog::LogManagerInteractiveActorTransactions, &CsCVarLogManagerInteractiveActorTransactions);
+	// Widget Actor
+	Map.Add(ECsCVarLog::LogManagerWidgetActorTransactions, &CsCVarLogManagerWidgetActorTransactions);
+	// AI
+	Map.Add(ECsCVarLog::LogManagerAITransactions, &CsCVarLogManagerAITransactions);
+		// Interactive AI Pawn
+	Map.Add(ECsCVarLog::LogInteractiveAIPawnPhysicsStateChange, &CsCVarLogInteractiveAIPawnPhysicsStateChange);
+		// Behavior Tree
+	Map.Add(ECsCVarLog::LogAIBTTasks, &CsCVarLogAIBTTasks);
+	// Script
+	Map.Add(ECsCVarLog::LogOverrideFunctions, &CsCVarLogOverrideFunctions);
+	// Sound
+	Map.Add(ECsCVarLog::LogManagerSoundTransactions, &CsCVarLogManagerSoundTransactions);
+	// FX
+	Map.Add(ECsCVarLog::LogManagerFxTransactions, &CsCVarLogManagerFxTransactions);
+	// Projectile
+	Map.Add(ECsCVarLog::LogManagerProjectileTransactions, &CsCVarLogManagerProjectileTransactions);
+	// Coroutine
+	Map.Add(ECsCVarLog::LogCoroutineTransactions, &CsCVarLogCoroutineTransactions);
+	Map.Add(ECsCVarLog::LogCoroutineRunning, &CsCVarLogCoroutineRunning);
+	// UI
+		// Widget
+	Map.Add(ECsCVarLog::LogManagerWidgetTransactions, &CsCVarLogManagerWidgetTransactions);
+	// Item
+	Map.Add(ECsCVarLog::LogManagerItemTransactions, &CsCVarLogManagerItemTransactions);
+	Map.Add(ECsCVarLog::LogManagerItemActionGetFail, &CsCVarLogManagerItemActionGetFail);
+	// Inventory
+	Map.Add(ECsCVarLog::LogManagerInventoryTransactions, &CsCVarLogManagerInventoryTransactions);
+	// Crafting
+	Map.Add(ECsCVarLog::LogManagerCraftingTransactions, &CsCVarLogManagerCraftingTransactions);
+	// Collision
+		// Trace
+	Map.Add(ECsCVarLog::LogManagerTraceTransactions, &CsCVarLogManagerTraceTransactions);
+	// Runnable
+	Map.Add(ECsCVarLog::LogManagerRunnableTransactions, &CsCVarLogManagerRunnableTransactions);
+	// Process
+	Map.Add(ECsCVarLog::LogManagerProcessTransactions, &CsCVarLogManagerProcessTransactions);
+	Map.Add(ECsCVarLog::LogProcessIO, &CsCVarLogProcessIO);
+	// Blockchain
+	Map.Add(ECsCVarLog::LogBlockchainIO, &CsCVarLogBlockchainIO);
+	Map.Add(ECsCVarLog::LogBlockchainIORunning, &CsCVarLogBlockchainIORunning);
+	Map.Add(ECsCVarLog::LogBlockchainIOConsole, &CsCVarLogBlockchainIOConsole);
+		// Process
+	Map.Add(ECsCVarLog::LogBlockchainProcessStart, &CsCVarLogBlockchainProcessStart);
+		// Command
+	Map.Add(ECsCVarLog::LogBlockchainCommandCompleted, &CsCVarLogBlockchainCommandCompleted);
+		// Account
+	Map.Add(ECsCVarLog::LogBlockchainAccountCreated, &CsCVarLogBlockchainAccountCreated);
+		// Ethereum
+	Map.Add(ECsCVarLog::LogBlockchainAccountLoad, &CsCVarLogBlockchainAccountLoad);
+	Map.Add(ECsCVarLog::LogBlockchainAccountSetup, &CsCVarLogBlockchainAccountSetup);
+	Map.Add(ECsCVarLog::LogBlockchainBalance, &CsCVarLogBlockchainBalance);
+	// Sense
+	Map.Add(ECsCVarLog::LogManagerSenseSeesActorByDot, &CsCVarLogManagerSenseSeesActorByDot);
+
+	TArray<ECsCVarLog> Keys;
+	Map.GetKeys(Keys);
+
+	for (const ECsCVarLog& Key : Keys)
+	{
+		DefaultValues.Add(Key, GetValue(Key));
+		DirtyValues.Add(Key, false);
+	}
+}
+
+void FCsCVarLogMap::Reset()
+{
+	TArray<ECsCVarLog> Keys;
+	Map.GetKeys(Keys);
+
+	for (const ECsCVarLog& Key : Keys)
+	{
+		SetValue(Key, DefaultValues[Key]);
+	}
+}
+
+void FCsCVarLogMap::ResetDirty()
+{
+	TArray<ECsCVarLog> Keys;
+	Map.GetKeys(Keys);
+
+	for (const ECsCVarLog& Key : Keys)
+	{
+		if (DirtyValues[Key])
+			SetValue(Key, DefaultValues[Key]);
+	}
+}
+
+#pragma endregion CVarLogMap

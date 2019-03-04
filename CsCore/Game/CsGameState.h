@@ -146,7 +146,7 @@ struct FCsAIPlayerStateMappingRelationship
 
 #pragma endregion Structs
 
-UCLASS()
+UCLASS(hidecategories = (Object, Actor, Replication, Rendering, Input, "Actor Tick", "LOD", "Cooking"))
 class CSCORE_API ACsGameState : public AGameState
 {
 	GENERATED_UCLASS_BODY()

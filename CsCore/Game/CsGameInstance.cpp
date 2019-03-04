@@ -27,26 +27,16 @@
 // Enums
 #pragma region
 
+	// GameInstanceRoutine
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsGameInstanceRoutine)
+
 namespace ECsGameInstanceRoutine
 {
-	namespace Str
-	{
-		const TCsString OnBoard_Internal = TCsString(TEXT("OnBoard_Internal"), TEXT("onboard_internal"));
-		const TCsString LoadDataMapping_Internal = TCsString(TEXT("LoadDataMapping_Internal"), TEXT("loaddatamapping_internal"));
-		const TCsString PerformLevelTransition_Internal = TCsString(TEXT("PerformLevelTransition_Internal"), TEXT("performleveltransition_internal"));
-		const TCsString CreateFullscreenWidget_Internal = TCsString(TEXT("CreateFullscreenWidget_Internal"), TEXT("createfullscreenwidget_internal"));
-		const TCsString HideMouseCursor_Internal = TCsString(TEXT("HideMouseCursor_Internal"), TEXT("hidemousecursor_internal"));
-	}
-
-	namespace Ref
-	{
-		const TCsGameInstanceRoutine OnBoard_Internal = Type::OnBoard_Internal;
-		const TCsGameInstanceRoutine LoadDataMapping_Internal = Type::LoadDataMapping_Internal;
-		const TCsGameInstanceRoutine PerformLevelTransition_Internal = Type::PerformLevelTransition_Internal;
-		const TCsGameInstanceRoutine CreateFullscreenWidget_Internal = Type::CreateFullscreenWidget_Internal;
-		const TCsGameInstanceRoutine HideMouseCursor_Internal = Type::HideMouseCursor_Internal;
-		const TCsGameInstanceRoutine ECsGameInstanceRoutine_MAX = Type::ECsGameInstanceRoutine_MAX;
-	}
+	CSCORE_API const Type OnBoard_Internal = EMCsGameInstanceRoutine::Get().Create(TEXT("OnBoard_Internal"));
+	CSCORE_API const Type LoadDataMapping_Internal = EMCsGameInstanceRoutine::Get().Create(TEXT("LoadDataMapping_Internal"));
+	CSCORE_API const Type PerformLevelTransition_Internal = EMCsGameInstanceRoutine::Get().Create(TEXT("PerformLevelTransition_Internal"));
+	CSCORE_API const Type CreateFullscreenWidget_Internal = EMCsGameInstanceRoutine::Get().Create(TEXT("CreateFullscreenWidget_Internal"));
+	CSCORE_API const Type HideMouseCursor_Internal = EMCsGameInstanceRoutine::Get().Create(TEXT("HideMouseCursor_Internal"));
 }
 
 namespace ECsGameInstanceOnBoardState
@@ -194,14 +184,14 @@ bool UCsGameInstance::Tick(float DeltaSeconds)
 // Routines
 #pragma region
 
-/*static*/ void UCsGameInstance::AddRoutine(UObject* InGameInstance, struct FCsRoutine* Routine, const uint8 &Type)
+/*static*/ void UCsGameInstance::AddRoutine(UObject* InGameInstance, struct FCsRoutine* Routine, const uint8& Type)
 {
 	Cast<UCsGameInstance>(InGameInstance)->AddRoutine_Internal(Routine, Type);
 }
 
-bool UCsGameInstance::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
+bool UCsGameInstance::AddRoutine_Internal(struct FCsRoutine* Routine, const uint8& Type)
 {
-	const TCsGameInstanceRoutine RoutineType = (TCsGameInstanceRoutine)Type;
+	const FECsGameInstanceRoutine RoutineType = EMCsGameInstanceRoutine::Get()[Type];
 
 	// OnBoard_Internal
 	if (RoutineType == ECsGameInstanceRoutine::OnBoard_Internal)
@@ -230,14 +220,14 @@ bool UCsGameInstance::AddRoutine_Internal(struct FCsRoutine* Routine, const uint
 	return false;
 }
 
-/*static*/ void UCsGameInstance::RemoveRoutine(UObject* InGameInstance, struct FCsRoutine* Routine, const uint8 &Type)
+/*static*/ void UCsGameInstance::RemoveRoutine(UObject* InGameInstance, struct FCsRoutine* Routine, const uint8& Type)
 {
 	Cast<UCsGameInstance>(InGameInstance)->RemoveRoutine_Internal(Routine, Type);
 }
 
-bool UCsGameInstance::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8 &Type)
+bool UCsGameInstance::RemoveRoutine_Internal(struct FCsRoutine* Routine, const uint8& Type)
 {
-	const TCsGameInstanceRoutine RoutineType = (TCsGameInstanceRoutine)Type;
+	const FECsGameInstanceRoutine RoutineType = EMCsGameInstanceRoutine::Get()[Type];
 
 	// OnBoard_Internal
 	if (RoutineType == ECsGameInstanceRoutine::OnBoard_Internal)
@@ -283,7 +273,7 @@ void UCsGameInstance::OnBoard()
 	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
 	CsAddRoutine Add			  = &UCsGameInstance::AddRoutine;
 	CsRemoveRoutine Remove		  = &UCsGameInstance::RemoveRoutine;
-	const uint8 Type			  = (uint8)ECsGameInstanceRoutine::OnBoard_Internal;
+	const uint8 Type			  = ECsGameInstanceRoutine::OnBoard_Internal.Value;
 
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsRoutine* R					 = Scheduler->Allocate(Schedule, Function, Stop, this, Add, Remove, Type, true, false);
@@ -491,7 +481,7 @@ void UCsGameInstance::AsyncPopulateAssetReferences()
 #pragma region
 
 void UCsGameInstance::LoadStartUpData(){ OnBoardState = ECsGameInstanceOnBoardState::LoadScreen; }
-void UCsGameInstance::OnFinishedLoadingStartUpDataAssets(const TArray<UObject*> &LoadedAssets, const float& LoadingTime){}
+void UCsGameInstance::OnFinishedLoadingStartUpDataAssets(const TArray<UObject*>& LoadedAssets, const float& LoadingTime){}
 
 #pragma endregion Load StartUp Data
 
@@ -511,7 +501,7 @@ void UCsGameInstance::CreateFullscreenWidget()
 	Payload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckObject);
 	Payload->Add			= &UCsGameInstance::AddRoutine;
 	Payload->Remove			= &UCsGameInstance::RemoveRoutine;
-	Payload->Type			= (uint8)ECsGameInstanceRoutine::CreateFullscreenWidget_Internal;
+	Payload->Type			= ECsGameInstanceRoutine::CreateFullscreenWidget_Internal.Value;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
 	Payload->Name			= ECsGameInstanceCached::Name::CreateFullscreenWidget_Internal;
@@ -640,7 +630,7 @@ void UCsGameInstance::OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld)
 	CheckFullscreenWidget();
 }
 
-void UCsGameInstance::PerformLevelTransition(const FString &Level, const FString &GameMode)
+void UCsGameInstance::PerformLevelTransition(const FString& Level, const FString& GameMode)
 {
 	LevelState = ECsLevelState::BeginTransition;
 
@@ -650,7 +640,7 @@ void UCsGameInstance::PerformLevelTransition(const FString &Level, const FString
 	CsCoroutineStopCondition Stop = &UCsCommon::CoroutineStopCondition_CheckObject;
 	CsAddRoutine Add			  = &UCsGameInstance::AddRoutine;
 	CsRemoveRoutine Remove		  = &UCsGameInstance::RemoveRoutine;
-	const uint8 Type			  = (uint8)ECsGameInstanceRoutine::PerformLevelTransition_Internal;
+	const uint8 Type			  = ECsGameInstanceRoutine::PerformLevelTransition_Internal.Value;
 
 	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get();
 	FCsRoutine* R					 = Scheduler->Allocate(Schedule, Function, Stop, this, Add, Remove, Type, true, false);
@@ -729,30 +719,30 @@ uint64 UCsGameInstance::RegisterUniqueObject(UObject* InObject)
 	return Id;
 }
 
-void UCsGameInstance::UnregisterUniqueObject(const uint64 &Id)
+void UCsGameInstance::UnregisterUniqueObject(const uint64& Id)
 {
 	ObjectMap.Remove(Id);
 	ActorMap.Remove(Id);
 }
 
-UObject* UCsGameInstance::GetUniqueObjectById(const uint64 &Id)
+UObject* UCsGameInstance::GetUniqueObjectById(const uint64& Id)
 {
 	return ObjectMap[Id].IsValid() ? ObjectMap[Id].Get() : nullptr;
 }
 
-UObject* UCsGameInstance::GetSafeUniqueObjectById(const uint64 &Id)
+UObject* UCsGameInstance::GetSafeUniqueObjectById(const uint64& Id)
 {
 	if (!ObjectMap.Find(Id))
 		return nullptr;
 	return GetUniqueObjectById(Id);
 }
 
-AActor* UCsGameInstance::GetUniqueActorById(const uint64 &Id)
+AActor* UCsGameInstance::GetUniqueActorById(const uint64& Id)
 {
 	return ActorMap[Id].IsValid() ? ActorMap[Id].Get() : nullptr;
 }
 
-AActor* UCsGameInstance::GetSafeUniqueActorById(const uint64 &Id)
+AActor* UCsGameInstance::GetSafeUniqueActorById(const uint64& Id)
 {
 	if (!ActorMap.Find(Id))
 		return nullptr;

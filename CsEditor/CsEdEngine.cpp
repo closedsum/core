@@ -245,7 +245,7 @@ void UCsEdEngine::GetUserDefinedEnumNames(const FString& EnumName, const FName& 
 	}
 	else
 	{
-		UE_LOG(LogR6Editor, Warning, TEXT("UCsEdEngine::GetUserDefinedEnumNames (%s): Failed to find UserDefinedEnum at: %s. It is possible it was deleted or moved."), *EnumName, *(UserDefinedEnumObjectPath.ToString()));
+		UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::GetUserDefinedEnumNames (%s): Failed to find UserDefinedEnum at: %s. It is possible it was deleted or moved."), *EnumName, *(UserDefinedEnumObjectPath.ToString()));
 	}
 }
 

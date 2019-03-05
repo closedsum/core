@@ -73,6 +73,10 @@
 	// ShortCode
 #include "DetailCustomizations/ShortCode/CsDataShortCodeCustomization.h"
 
+#include "Classes/Engine/UserDefinedEnum.h"
+
+#include "Enum/CsEnumEditorUtils.h"
+
 void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 {
 	Super::Init(InEngineLoop);
@@ -142,6 +146,13 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 			PropertyModule.RegisterCustomPropertyTypeLayout("CsData_ShortCode", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FCsDataShortCodeCustomization::MakeInstance));
 		}
 	}
+	
+	PopulateUserDefinedEnums();
+	PopulateEnumMapsFromUserDefinedEnums();
+
+	GEditor->OnBlueprintPreCompile().AddUObject(this, &UCsEdEngine::OnBlueprintPreCompile);
+
+	FEditorDelegates::BeginPIE.AddUObject(this, &UCsEdEngine::OnBeginPIE);
 }
 
 void UCsEdEngine::PreExit()
@@ -174,6 +185,71 @@ bool UCsEdEngine::Exec(UWorld* InWorld, const TCHAR* Stream, FOutputDevice& Ar)
 	}
 	return true;
 }
+
+void UR6EdEngine::OnBlueprintPreCompile(UBlueprint* Blueprint)
+{
+	PopulateUserDefinedEnums();
+	PopulateEnumMapsFromUserDefinedEnums();
+}
+
+void UR6EdEngine::OnBeginPIE(bool IsSimulating)
+{
+	FR6CVarLogMap::Get().ResetDirty();
+	FR6CVarToggleMap::Get().ResetDirty();
+}
+
+// Enums
+#pragma region
+
+void UCsEdEngine::PopulateUserDefinedEnums()
+{
+	PopulateUserDefinedEnum_InputAction();
+}
+
+void UCsEdEngine::PopulateUserDefinedEnum_InputAction()
+{
+	FR6EnumEditorUtils::SyncInputAction();
+}
+
+void UCsEdEngine::PopulateEnumMapsFromUserDefinedEnums()
+{
+	// AssetType
+	PopulateEnumMapFromUserDefinedEnum<EMR6AssetType>(TEXT("FECsAssetType"), FName(""));
+	// Input
+	{
+		// InputAction
+		PopulateEnumMapFromUserDefinedEnum<EMR6InputAction>(TEXT("FECsInputAction"), FName(""));
+		// InputActionMap
+		PopulateEnumMapFromUserDefinedEnum<EMR6InputActionMap>(TEXT("FECsInputActionMap"), FName(""));
+		// GameEvent
+		PopulateEnumMapFromUserDefinedEnum<EMR6GameEvent>(TEXT("FECsGameEvent"), FName(""));
+	}
+}
+
+void UCsEdEngine::GetUserDefinedEnumNames(const FString& EnumName, const FName& UserDefinedEnumObjectPath, TArray<FString>& OutNames)
+{
+	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(FName("AssetRegistry"));
+	TArray<FAssetData> OutAssetData;
+	IAssetRegistry& AssetRegistry = AssetRegistryModule.Get();
+
+	FAssetData Asset = AssetRegistry.GetAssetByObjectPath(UserDefinedEnumObjectPath);
+
+	if (UUserDefinedEnum* Enum = Cast<UUserDefinedEnum>(Asset.GetAsset()))
+	{
+		const int32 Count = Enum->NumEnums() - 1;
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			OutNames.Add(Enum->GetDisplayNameTextByIndex(I).ToString());
+		}
+	}
+	else
+	{
+		UE_LOG(LogR6Editor, Warning, TEXT("UCsEdEngine::GetUserDefinedEnumNames (%s): Failed to find UserDefinedEnum at: %s. It is possible it was deleted or moved."), *EnumName, *(UserDefinedEnumObjectPath.ToString()));
+	}
+}
+
+#pragma endregion Enums
 
 // Stream
 #pragma region

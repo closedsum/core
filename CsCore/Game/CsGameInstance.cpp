@@ -167,6 +167,13 @@ void UCsGameInstance::StartGameInstance()
 
 FGameInstancePIEResult UCsGameInstance::StartPlayInEditorGameInstance(ULocalPlayer* LocalPlayer, const FGameInstancePIEParameters& Params)
 {
+	// Cache Params
+	GameInstancePIEParametersCache.bSimulateInEditor = Params.bSimulateInEditor;
+	GameInstancePIEParametersCache.bAnyBlueprintErrors = Params.bAnyBlueprintErrors;
+	GameInstancePIEParametersCache.bStartInSpectatorMode = Params.bStartInSpectatorMode;
+	GameInstancePIEParametersCache.bRunAsDedicated = Params.bRunAsDedicated;
+	GameInstancePIEParametersCache.WorldFeatureLevel = Params.WorldFeatureLevel;
+	
 	return Super::StartPlayInEditorGameInstance(LocalPlayer, Params);
 }
 

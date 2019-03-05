@@ -204,6 +204,40 @@ public:
 
 #pragma endregion Data Mapping
 
+// Enums
+#pragma region
+public:
+
+	void PopulateEnumMapsFromUserDefinedEnums();
+
+	template<typename EnumMap>
+	void PopulateEnumMapFromUserDefinedEnum(const FString& EnumName, const FString& UserDefinedEnumObjectPath)
+	{
+		TArray<FString> Names;
+		GetUserDefinedEnumNames(EnumName, UserDefinedEnumObjectPath, Names);
+#if WITH_EDITOR
+		EnumMap::Get().ClearUserDefinedEnums();
+#endif // #if WITH_EDITOR
+		AddEnumsByNameToEnumMap<EnumMap>(Names);
+	}
+
+	void GetUserDefinedEnumNames(const FString& EnumName, const FString& UserDefinedEnumObjectPath, TArray<FString>& OutNames);
+
+	template<typename EnumMap>
+	void AddEnumsByNameToEnumMap(const TArray<FString>& Names)
+	{
+		for (const FString& Name : Names)
+		{
+#if WITH_EDITOR
+			EnumMap::Get().CreateSafe(Name, true);
+#else
+			EnumMap::Get().Create(Name, true);
+#endif // #if WITH_EDITOR
+		}
+	}
+
+#pragma endregion Enums
+
 	// Load StartUp Data
 #pragma region
 public:

@@ -134,6 +134,8 @@ void UCsGameInstance::Init()
 	OnBoard();
 
 	IsVR = GEngine->StereoRenderingDevice.IsValid() && GEngine->IsStereoscopic3D();
+	
+	//PopulateEnumMapsFromUserDefinedEnums();
 }
 
 void UCsGameInstance::Shutdown()
@@ -179,6 +181,15 @@ bool UCsGameInstance::Tick(float DeltaSeconds)
 	OnTick_ScriptEvent.Broadcast(DeltaSeconds);
 #endif // #if WITH_EDITOR
 	return true;
+}
+
+bool UR6GameInstance::IsSimulateInEditor()
+{
+#if WITH_EDITOR
+	return GameInstancePIEParametersCache.bSimulateInEditor;
+#else
+	return false;
+#endif // #if WITH_EDITOR
 }
 
 // Routines
@@ -476,6 +487,47 @@ void UCsGameInstance::AsyncPopulateAssetReferences()
 */
 
 #pragma endregion Data Mapping
+
+
+// Enums
+#pragma region
+
+void UCsGameInstance::PopulateEnumMapsFromUserDefinedEnums()
+{
+	// AssetType
+	PopulateEnumMapFromUserDefinedEnum<EMCsAssetType>(TEXT("FECsAssetType"));
+	// Input
+	{
+		// InputAction
+		PopulateEnumMapFromUserDefinedEnum<EMCsInputAction>(TEXT("FECsInputAction"));
+		// InputActionMap
+		PopulateEnumMapFromUserDefinedEnum<EMCsInputActionMap>(TEXT("FECsInputActionMap"));
+		// GameEvent
+		PopulateEnumMapFromUserDefinedEnum<EMCsGameEvent>(TEXT("FECsGameEvent"));
+	}
+}
+
+void UCsGameInstance::GetUserDefinedEnumNames(const FString& EnumName, const FString& UserDefinedEnumObjectPath, TArray<FString>& OutNames)
+{
+	const FStringAssetReference AssetRef		 = FStringAssetReference(UserDefinedEnumObjectPath);
+	TSoftObjectPtr<UUserDefinedEnum> AssetObject = TSoftObjectPtr<UUserDefinedEnum>(AssetRef);
+
+	if (UUserDefinedEnum* Enum = AssetObject.LoadSynchronous())
+	{
+		const int32 Count = Enum->NumEnums() - 1;
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			OutNames.Add(Enum->GetDisplayNameTextByIndex(I).ToString());
+		}
+	}
+	else
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsGameInstance::GetUserDefinedEnumNames (%s): Failed to find UserDefinedEnum at: %s. It is possible it was deleted or moved."), *EnumName, *UserDefinedEnumObjectPath);
+	}
+}
+
+#pragma endregion Enums
 
 	// Load StartUp Data
 #pragma region

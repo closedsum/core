@@ -138,6 +138,10 @@ class CSCORE_API UCsGameInstance : public UGameInstance
 	virtual FGameInstancePIEResult StartPlayInEditorGameInstance(ULocalPlayer* LocalPlayer, const FGameInstancePIEParameters& Params) override;
 #endif // #if WITH_EDITOR
 
+#if WITH_EDITOR
+	FGameInstancePIEParameters GameInstancePIEParametersCache;
+#endif // #if WITH_EDITOR
+
 	/** Delegate for callbacks to Tick */
 	FTickerDelegate	TickDelegate;
 

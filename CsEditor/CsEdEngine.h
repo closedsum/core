@@ -22,6 +22,41 @@ public:
 
 	class ACsDataMapping* DataMapping;
 
+	void OnBlueprintPreCompile(UBlueprint* Blueprint);
+
+	void OnBeginPIE(bool IsSimulating);
+
+// Enums
+#pragma region
+public:
+
+	void PopulateUserDefinedEnums();
+	void PopulateUserDefinedEnum_InputAction();
+
+	void PopulateEnumMapsFromUserDefinedEnums();
+
+	template<typename EnumMap>
+	void PopulateEnumMapFromUserDefinedEnum(const FString& EnumName, const FName& UserDefinedEnumObjectPath)
+	{
+		TArray<FString> Names;
+		GetUserDefinedEnumNames(EnumName, UserDefinedEnumObjectPath, Names);
+		EnumMap::Get().ClearUserDefinedEnums();
+		AddEnumsByNameToEnumMap<EnumMap>(Names);
+	}
+
+	void GetUserDefinedEnumNames(const FString& EnumName, const FName& UserDefinedEnumObjectPath, TArray<FString>& OutNames);
+
+	template<typename EnumMap>
+	void AddEnumsByNameToEnumMap(const TArray<FString>& Names)
+	{
+		for (const FString& Name : Names)
+		{
+			EnumMap::Get().CreateSafe(Name, true);
+		}
+	}
+
+#pragma endregion Enums
+
 // Types
 #pragma region
 public:

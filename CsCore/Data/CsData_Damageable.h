@@ -1,4 +1,4 @@
-// Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Data/CsData_Interactive.h"
 #include "CsData_Damageable.generated.h"

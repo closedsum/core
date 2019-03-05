@@ -1,4 +1,4 @@
-// Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Input/CsManager_Input.h"
 #include "CsCore.h"
 #include "CsCVars.h"
@@ -372,19 +372,17 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 	CurrentValidGameEventInfos.Reset();
 
 	// Process GameEventDefinitions
-	TArray<FECsGameEvent> Keys;
-	GameEventDefinitions.GetKeys(Keys);
-
-	for (const FECsGameEvent& Event : Keys)
+	for (FCsGameEventDefinition& Def : GameEventDefinitions)
 	{
-		FCsInputSentence& Sentence = GameEventDefinitions[Event];
+		const FECsGameEvent& Event = Def.Event;
+		FCsInputSentence& Sentence = Def.Sentence;
 
 		Sentence.ProcessInput(CurrentInputFrame);
 
 		if (Sentence.bCompleted)
 		{
-			const int32& Index = GameEventPriorityMap[Event];
-			CurrentGameEventInfos[Index].Event = Event;
+			const int32& Index					= GameEventPriorityMap[Event];
+			CurrentGameEventInfos[Index].Event  = Event;
 
 #if WITH_EDITOR
 			LogProcessGameEventDefinition(NCsManagerInputCached::Str::PostProcessInput, Event, Sentence);
@@ -794,7 +792,7 @@ void UCsManager_Input::SetupInputActionMapping()
 			InputActionMappings[Map].Add(Action);
 		}
 
-		const int32 Mask = 1 << static_cast<int32>(Map);
+		const int32& Mask					 = Map.Mask;
 		const TSet<FECsInputAction>& Actions = InputActionMappings[Map];
 
 		// Initialize InputActionMapping
@@ -882,50 +880,72 @@ FCsInput* UCsManager_Input::GetPreviousPreviousInputAction(const FECsInputAction
 
 void UCsManager_Input::SetupGameEventDefinitions()
 {
+	for (const FCsGameEventDefinition& Def : GameEventDefinitions)
+	{
+		const FECsGameEvent& Event = Def.Event;
+
+		if (!Def.IsValid())
+		{
+#if WITH_EDITOR
+			UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::SetupGameEventDefinitions (%s): GameEventDefinition set with GameEvent: %s is NOT Valid. Check the Sentence."), *(MyOwner->GetName()), *(Event.Name));
+#endif // #if WITH_EDITOR
+			continue;
+		}
+
+		const FCsInputSentence& Sentence = Def.Sentence;
+
+		GameEventDefinitionMap.Add(Event, Sentence);
+	}
+
+	for (const FCsGameEventDefinitionSimple& Def : GameEventDefinitionsSimple)
+	{
+		const FECsGameEvent& GameEvent = Def.GameEvent;
+		const FECsInputAction& Action  = Def.Action;
+		const ECsInputEvent& Event     = Def.Event;
+
+		if (!Def.IsValid())
+		{
+#if WITH_EDITOR
+			UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::SetupGameEventDefinitions (%s): GameEventDefinitionSimple set with GameEvent: %s is NOT Valid. Action: %s. Event: %s"), *(MyOwner->GetName()), *(GameEvent.Name), *(Action.Name), *(EMCsInputEvent::Get().ToString(Event)));
+#endif // #if WITH_EDITOR
+			continue;
+		}
+
+		if (GameEventDefinitionMap.Find(GameEvent))
+		{
+#if WITH_EDITOR
+			UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::SetupGameEventDefinitions (%s): GameEventDefinitionSimple set with GameEvent: %s is already Set in GameEventDefinitions."), *(MyOwner->GetName()), *(GameEvent.Name));
+#endif // #if WITH_EDITOR
+			continue;
+		}
+
+		FCsInputSentence Sentence;
+		Sentence.Reset();
+		Sentence.Phrases.AddDefaulted();
+		Sentence.Phrases[CS_FIRST].AddAndInputToWord(CS_FIRST, Action, Event);
+
+		GameEventDefinitionMap.Add(GameEvent, Sentence);
+
+		FCsGameEventDefinition GameEventDefinition;
+		GameEventDefinition.Event = GameEvent;
+		GameEventDefinition.Sentence = Sentence;
+
+		GameEventDefinitions.Add(GameEventDefinition);
+	}
+
+#if WITH_EDITOR
 	const int32& Count = EMCsGameEvent::Get().Num();
 
 	for (int32 I = 0; I < Count; ++I)
 	{
 		const FECsGameEvent& Event = EMCsGameEvent::Get().GetEnumAt(I);
 
-		FCsGameEventDefinitionSimpleInfo Def;
-		BP_GetGameEventDefinitionSimpleFromGameEvent(Event, Def);
-
-		if (Def.IsValid())
+		if (!GameEventDefinitionMap.Find(Event))
 		{
-			if (!GameEventDefinitions.Find(Event))
-			{
-				GameEventDefinitions.Add(Event);
-			}
-
-			GameEventDefinitions[Event].Reset();
-			GameEventDefinitions[Event].Phrases.AddDefaulted();
-			GameEventDefinitions[Event].Phrases[CS_FIRST].AddAndInputToWord(CS_FIRST, Def.Action, Def.Event);
-			continue;
+			UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::SetupGameEventDefinitions (%s): No GameEventDefinition set for GameEvent: %s."), *(MyOwner->GetName()), *(Event.Name));
 		}
-
-		FCsInputSentence Sentence;
-		BP_GetInputSentenceFromGameEvent(Event, Sentence);
-
-		if (!GameEventDefinitions.Find(Event))
-		{
-			GameEventDefinitions.Add(Event);
-		}
-
-		GameEventDefinitions[Event] = Sentence;
-
-#if WITH_EDITOR
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Input::SetupGameEventDefinitions (%s): No GameEventDefinition set for GameEvent: %s."), *(MyOwner->GetName()), *(Event.Name));
-#endif // #if WITH_EDITOR
 	}
-}
-
-void UCsManager_Input::BP_GetGameEventDefinitionSimpleFromGameEvent_Implementation(const FECsGameEvent& Event, FCsGameEventDefinitionSimpleInfo& Def)
-{
-}
-
-void UCsManager_Input::BP_GetInputSentenceFromGameEvent_Implementation(const FECsGameEvent& Event, FCsInputSentence& Sentence)
-{
+#endif // #if WITH_EDITOR
 }
 
 #if WITH_EDITOR

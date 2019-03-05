@@ -1,4 +1,4 @@
-// Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Game/CsGameInstance.h"
 #include "CsCore.h"
 #include "CsCVars.h"
@@ -99,7 +99,7 @@ UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer)
 	CurrentGameFrame = 0;
 
 #if WITH_EDITOR
-	ForcePopulateAssetReferences = true;
+	bForcePopulateAssetReferences = true;
 #endif // #if WITH_EDITOR
 
 	DataMappingAssetPath = TEXT("/Game/AlwaysCook/bp_data_mapping.bp_data_mapping_C");
@@ -357,7 +357,7 @@ PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(struct FCsRoutine* r))
 
 	CS_COROUTINE_BEGIN(r);
 
-	if (gi->ForcePopulateAssetReferences || dataMapping->ForcePopulateAssetReferences)
+	if (gi->bForcePopulateAssetReferences || dataMapping->bForcePopulateAssetReferences)
 	{
 		UCsManager_Loading::Get()->LoadAssetReferences(gi->GetWorld(), dataMapping->DataAssetReferences, ECsLoadAsyncOrder::Bulk, gi, &UCsGameInstance::OnFinishedLoadingDataAssets);
 
@@ -394,7 +394,7 @@ PT_THREAD(UCsGameInstance::LoadDataMapping_Internal(struct FCsRoutine* r))
 	dataMapping->AsyncTaskMutex.Unlock();
 #endif // #if WITH_EDITOR
 
-	gi->HasLoadedDataMapping = true;
+	gi->bHasLoadedDataMapping = true;
 	gi->OnBoardState = ECsGameInstanceOnBoardState::LoadStartUpData;
 
 	CS_COROUTINE_END(r);

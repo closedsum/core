@@ -1,4 +1,4 @@
-// Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_Primitive.h"
 #include "Runtime/InputCore/Classes/InputCoreTypes.h"
 
@@ -424,6 +424,24 @@ struct CSCORE_API FCsInput
 		return *this;
 	}
 
+	FORCEINLINE bool operator==(const FCsInput& B) const
+	{
+		if (IsAllocated != B.IsAllocated) { return false; }
+		if (IsConsumed != B.IsConsumed) { return false; }
+		if (Action != B.Action) { return false; }
+		if (Event != B.Event) { return false; }
+		if (Value != B.Value) { return false; }
+		if (Location != B.Location) { return false; }
+		if (Rotation != B.Rotation) { return false; }
+		if (Duration != B.Duration) { return false; }
+		return true;
+	}
+
+	FORCEINLINE bool operator!=(const FCsInput& B) const
+	{
+		return !(*this == B);
+	}
+
 	FORCEINLINE void Init(const uint16& inPoolIndex)
 	{
 		PoolIndex = inPoolIndex;
@@ -494,6 +512,11 @@ struct CSCORE_API FCsInput
 		Location	  = FVector::ZeroVector;
 		Rotation	  = FRotator::ZeroRotator;
 		Duration	  = 0.0f;
+	}
+
+	bool IsValid() const
+	{
+		return Action != EMCsInputAction::Get().GetMAX() && Event != ECsInputEvent::ECsInputEvent_MAX;
 	}
 };
 
@@ -596,7 +619,6 @@ struct CSCORE_API FCsInputWord
 		bConsume = false;
 	}
 
-
 	FORCEINLINE FCsInputWord& operator=(const FCsInputWord& B)
 	{
 		bCompleted = B.bCompleted;
@@ -617,6 +639,41 @@ struct CSCORE_API FCsInputWord
 			OrInputs.Add(Input);
 		}
 		return *this;
+	}
+
+	FORCEINLINE bool operator!=(const FCsInputWord& B) const
+	{
+		return !(*this == B);
+	}
+
+	FORCEINLINE bool operator==(const FCsInputWord& B) const
+	{
+		if (bCompleted != B.bCompleted) { return false; }
+		if (CompletedTime != B.CompletedTime) { return false; }
+		if (bConsume != B.bConsume) { return false; }
+
+		if (AndInputs.Num() != B.AndInputs.Num())
+			return false;
+
+		const int32 AndCount = AndInputs.Num();
+
+		for (int32 I = 0; I < AndCount; ++I)
+		{
+			if (AndInputs[I] != B.AndInputs[I])
+				return false;
+		}
+
+		if (OrInputs.Num() != B.OrInputs.Num())
+			return false;
+
+		const int32 OrCount = OrInputs.Num();
+
+		for (int32 I = 0; I < OrCount; ++I)
+		{
+			if (OrInputs[I] != B.OrInputs[I])
+				return false;
+		}
+		return true;
 	}
 
 	void AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value, const FVector& Location, const FRotator& Rotation)
@@ -730,6 +787,28 @@ struct CSCORE_API FCsInputWord
 			}
 		}
 	}
+
+	bool IsValid() const
+	{
+		if (AndInputs.Num() == CS_EMPTY &&
+			OrInputs.Num() == CS_EMPTY) 
+		{ 
+			return false; 
+		}
+
+		for (const FCsInput& Input : AndInputs)
+		{
+			if (!Input.IsValid())
+				return false;
+		}
+
+		for (const FCsInput& Input : OrInputs)
+		{
+			if (!Input.IsValid())
+				return false;
+		}
+		return true;
+	}
 };
 
 USTRUCT(BlueprintType)
@@ -784,6 +863,33 @@ struct CSCORE_API FCsInputPhrase
 			Words.Add(Word);
 		}
 		return *this;
+	}
+
+	FORCEINLINE bool operator==(const FCsInputPhrase& B) const
+	{
+		if (bCompleted != B.bCompleted) { return false; }
+		if (CompletedTime != B.CompletedTime) { return false; }
+		if (bUseInterval != B.bUseInterval) { return false; }
+		if (Interval != B.Interval) { return false; }
+		if (bUseFrames != B.bUseFrames) { return false; }
+		if (Frames != B.Frames) { return false; }
+
+		if (Words.Num() != B.Words.Num())
+			return false;
+
+		const int32 Count = Words.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			if (Words[I] != B.Words[I])
+				return false;
+		}
+		return true;
+	}
+
+	FORCEINLINE bool operator!=(const FCsInputPhrase& B) const
+	{
+		return !(*this == B);
 	}
 
 	void AddAndInputToWord(const int32& Index, const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value = 0.0f, const FVector& Location = FVector::ZeroVector, const FRotator& Rotation = FRotator::ZeroRotator)
@@ -882,6 +988,18 @@ struct CSCORE_API FCsInputPhrase
 			CompletedTime = CurrentTime;
 		}
 	}
+
+	bool IsValid() const
+	{
+		if (Words.Num() == CS_EMPTY) { return false; }
+
+		for (const FCsInputWord& Word : Words)
+		{
+			if (!Word.IsValid())
+				return false;
+		}
+		return true;
+	}
 };
 
 USTRUCT(BlueprintType)
@@ -946,6 +1064,35 @@ struct CSCORE_API FCsInputSentence
 			Phrases.Add(Phrase);
 		}
 		return *this;
+	}
+
+	FORCEINLINE bool operator==(const FCsInputSentence& B) const
+	{
+		if (bActive != B.bActive) { return false; }
+		if (bCompleted != B.bActive) { return false; }
+		if (CompletedTime != B.CompletedTime) { return false; }
+		if (Cooldown != B.Cooldown) { return false; }
+		if (bUseInterval != B.bUseInterval) { return false; }
+		if (Interval != B.Interval) { return false; }
+		if (bUseFrames != B.bUseFrames) { return false; }
+		if (Frames != B.Frames) { return false; }
+
+		if (Phrases.Num() != B.Phrases.Num())
+			return false;
+
+		const int32 Count = Phrases.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			if (Phrases[I] != B.Phrases[I])
+				return false;
+		}
+		return true;
+	}
+
+	FORCEINLINE bool operator!=(const FCsInputSentence& B) const
+	{
+		return !(*this == B);
 	}
 
 	FORCEINLINE void Reset()
@@ -1025,6 +1172,18 @@ struct CSCORE_API FCsInputSentence
 			CompletedTime = CurrentTime;
 			bActive = false;
 		}
+	}
+
+	bool IsValid() const
+	{
+		if (Phrases.Num() == CS_EMPTY) { return false; }
+
+		for (const FCsInputPhrase& Phrase : Phrases)
+		{
+			if (!Phrase.IsValid())
+				return false;
+		}
+		return true;
 	}
 };
 
@@ -1289,11 +1448,48 @@ struct FCsGameEventDefinitionSimpleInfo
 		Action = EMCsInputAction::Get().GetMAX();
 	}
 
-	bool IsValid()
+	bool IsValid() const
 	{
-		return EMCsInputAction::Get().IsValidEnum(Action) && Event != ECsInputEvent::ECsInputEvent_MAX;
+		return Action != EMCsInputAction::Get().GetMAX() && Event != ECsInputEvent::ECsInputEvent_MAX;
 	}
 };
+
+USTRUCT(BlueprintType)
+struct FCsGameEventDefinitionSimple
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	FECsGameEvent GameEvent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	FECsInputAction Action;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	ECsInputEvent Event;
+
+	FCsGameEventDefinitionSimple() :
+		Event(ECsInputEvent::ECsInputEvent_MAX)
+	{
+		GameEvent = EMCsGameEvent::Get().GetMAX();
+		Action = EMCsInputAction::Get().GetMAX();
+	}
+
+	FORCEINLINE bool operator==(const FCsGameEventDefinitionSimple& B) const
+	{
+		return GameEvent == B.GameEvent && Action == B.Action && Event == B.Event;
+	}
+
+	bool IsValid() const
+	{
+		return GameEvent != EMCsGameEvent::Get().GetMAX() && Action != EMCsInputAction::Get().GetMAX() && Event != ECsInputEvent::ECsInputEvent_MAX;
+	}
+};
+
+FORCEINLINE uint32 GetTypeHash(const FCsGameEventDefinitionSimple& b)
+{
+	return GetTypeHash(b.GameEvent);
+}
 
 USTRUCT(BlueprintType)
 struct FCsGameEventDefinition
@@ -1301,16 +1497,31 @@ struct FCsGameEventDefinition
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	FCsInputSentence Sentence;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	FECsGameEvent Event;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	FCsInputSentence Sentence;
 
 	FCsGameEventDefinition() :
 		Sentence()
 	{
 		Event = EMCsGameEvent::Get().GetMAX();
 	}
+
+	FORCEINLINE bool operator==(const FCsGameEventDefinition& B) const
+	{
+		return Event == B.Event && Sentence == B.Sentence;
+	}
+
+	bool IsValid() const
+	{
+		return Event != EMCsGameEvent::Get().GetMAX() && Sentence.IsValid();
+	}
 };
+
+FORCEINLINE uint32 GetTypeHash(const FCsGameEventDefinition& b)
+{
+	return GetTypeHash(b.Event);
+}
 
 #define CS_GAME_EVENT_DEFINITION_START(Definitions, EVENT)	{ \
 																Definitions.AddDefaulted(); \

@@ -1,4 +1,4 @@
-// Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
 #include "Classes/Components/ActorComponent.h"
@@ -211,15 +211,16 @@ public:
 #pragma region
 public:
 
-	TMap<FECsGameEvent, FCsInputSentence> GameEventDefinitions;
+	UPROPERTY(EditDefaultsOnly, Category = "Events")
+	TSet<FCsGameEventDefinitionSimple> GameEventDefinitionsSimple;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Events")
+	TSet<FCsGameEventDefinition> GameEventDefinitions;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Events")
+	TMap<FECsGameEvent, FCsInputSentence> GameEventDefinitionMap;
 
 	void SetupGameEventDefinitions();
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Events")
-	void BP_GetGameEventDefinitionSimpleFromGameEvent(const FECsGameEvent& Event, FCsGameEventDefinitionSimpleInfo& Def);
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Events")
-	void BP_GetInputSentenceFromGameEvent(const FECsGameEvent& Event, FCsInputSentence& Sentence);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Events")
 	TArray<FECsGameEvent> GameEventPriorityList;

@@ -1,4 +1,4 @@
-// Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
 #include "Engine/GameInstance.h"
@@ -187,13 +187,11 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Game Instance")
 	ACsDataMapping* DataMapping;
 
-	bool ForcePopulateAssetReferences;
+	bool bForcePopulateAssetReferences;
 
 	CS_COROUTINE_DECLARE(LoadDataMapping)
 
 	virtual void OnFinishedLoadingDataAssets(const TArray<UObject*>& LoadedAssets, const float& LoadingTime);
-
-	bool HasLoadedDataAssets;
 
 	void PopulateAssetReferences();
 	void AsyncPopulateAssetReferences();
@@ -202,7 +200,7 @@ public:
 	TArray<UObject*> LoadedDataAssets;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Game Instance")
-	bool HasLoadedDataMapping;
+	bool bHasLoadedDataMapping;
 
 #pragma endregion Data Mapping
 

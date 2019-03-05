@@ -1,4 +1,4 @@
-// Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Runtime/Core/Public/Containers/Ticker.h"
 #include "Runtime/Core/Public/Delegates/IDelegateInstance.h"

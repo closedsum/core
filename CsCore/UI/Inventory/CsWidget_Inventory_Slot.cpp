@@ -1,4 +1,4 @@
-// Copyright 2017-2018 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "UI/Inventory/CsWidget_Inventory_Slot.h"
 #include "CsCore.h"
 

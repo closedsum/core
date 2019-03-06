@@ -51,19 +51,10 @@ struct CSCORE_API FECsWidgetActorType : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsWidgetActorType() {}
-	FECsWidgetActorType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsWidgetActorType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsWidgetActorType() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsWidgetActorType)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsWidgetActorType& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWidgetActorType)
 
 struct CSCORE_API EMCsWidgetActorType : public TCsEnumStructMap<FECsWidgetActorType, uint8>
 {
@@ -90,19 +81,10 @@ struct CSCORE_API FECsWidgetType : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsWidgetType() {}
-	FECsWidgetType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsWidgetType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsWidgetType() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsWidgetType)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsWidgetType& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWidgetType)
 
 struct CSCORE_API EMCsWidgetType : public TCsEnumStructMap<FECsWidgetType, uint8>
 {

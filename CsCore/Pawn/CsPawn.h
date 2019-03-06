@@ -38,19 +38,10 @@ struct CSCORE_API FECsPawnRoutine : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsPawnRoutine() {}
-	FECsPawnRoutine(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsPawnRoutine(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsPawnRoutine() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsPawnRoutine)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsPawnRoutine& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsPawnRoutine)
 
 struct CSCORE_API EMCsPawnRoutine : public TCsEnumStructMap<FECsPawnRoutine, uint8>
 {

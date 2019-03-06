@@ -12,19 +12,10 @@ struct CSCORE_API FECsInteractiveType : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsInteractiveType() {}
-	FECsInteractiveType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsInteractiveType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsInteractiveType() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsInteractiveType)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsInteractiveType& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsInteractiveType)
 
 struct CSCORE_API EMCsInteractiveType : public TCsEnumStructMap<FECsInteractiveType, uint8>
 {
@@ -398,19 +389,10 @@ struct CSCORE_API FECsPickupFX : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsPickupFX() {}
-	FECsPickupFX(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsPickupFX(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsPickupFX() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsPickupFX)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsPickupFX& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsPickupFX)
 
 struct CSCORE_API EMCsPickupFX : public TCsEnumStructMap<FECsPickupFX, uint8>
 {
@@ -432,19 +414,10 @@ struct CSCORE_API FECsPickupSound : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsPickupSound() {}
-	FECsPickupSound(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsPickupSound(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsPickupSound() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsPickupSound)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsPickupSound& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsPickupSound)
 
 struct CSCORE_API EMCsPickupSound : public TCsEnumStructMap<FECsPickupSound, uint8>
 {

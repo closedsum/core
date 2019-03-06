@@ -13,19 +13,10 @@ struct CSCORE_API FECsBlackboardKeyType : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsBlackboardKeyType() {}
-	FECsBlackboardKeyType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsBlackboardKeyType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsBlackboardKeyType() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsBlackboardKeyType)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsBlackboardKeyType& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsBlackboardKeyType)
 
 struct CSCORE_API EMCsBlackboardKeyType : public TCsEnumStructMap<FECsBlackboardKeyType, uint8>
 {

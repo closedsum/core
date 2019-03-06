@@ -13,19 +13,10 @@ struct CSCORE_API FECsDamageType : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsDamageType() {}
-	FECsDamageType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsDamageType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsDamageType() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsDamageType)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsDamageType& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsDamageType)
 
 struct CSCORE_API EMCsDamageType : public TCsEnumStructMap<FECsDamageType, uint8>
 {
@@ -52,19 +43,10 @@ struct CSCORE_API FECsHitType : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsHitType() {}
-	FECsHitType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsHitType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsHitType() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsHitType)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsHitType& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsHitType)
 
 struct CSCORE_API EMCsHitType : public TCsEnumStructMap<FECsHitType, uint8>
 {

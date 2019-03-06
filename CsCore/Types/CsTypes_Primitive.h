@@ -863,7 +863,15 @@ public:
 		FORCEINLINE bool operator==(const Enum& B) const \
 		{ \
 			return Value == B.Value && Name_Internal == B.Name_Internal; \
-		}
+		} \
+		\
+		FORCEINLINE virtual FString ToString() const override { return Super::ToString(); }
+
+#define CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(Enum) \
+	FORCEINLINE uint32 GetTypeHash(const Enum& b) \
+	{ \
+		return GetTypeHash(b.Name_Internal) ^ GetTypeHash(b.Value); \
+	}
 
 template<typename EnumStruct, typename EnumType>
 struct TCsEnumStructMap
@@ -909,9 +917,9 @@ public:
 		return E;
 	}
 
-	FORCEINLINE EnumStruct Create(const FString& Name)
+	FORCEINLINE EnumStruct Create(const FString& Name, const bool& UserDefinedEnum = false)
 	{
-		return Create(Name, Name);
+		return Create(Name, Name, UserDefinedEnum);
 	}
 	
 #if WITH_EDITOR
@@ -1391,9 +1399,9 @@ public:
 		return E;
 	}
 
-	FORCEINLINE EnumStruct Create(const FString& Name)
+	FORCEINLINE EnumStruct Create(const FString& Name, const bool& UserDefinedEnum = false)
 	{
-		return Create(Name, Name);
+		return Create(Name, Name, UserDefinedEnum);
 	}
 
 #if WITH_EDITOR

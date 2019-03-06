@@ -12,19 +12,10 @@ struct CSCORE_API FECsCharacterAnim : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsCharacterAnim() {}
-	FECsCharacterAnim(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsCharacterAnim(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsCharacterAnim() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsCharacterAnim)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsCharacterAnim& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsCharacterAnim)
 
 struct CSCORE_API EMCsCharacterAnim : public TCsEnumStructMap<FECsCharacterAnim, uint8>
 {
@@ -51,19 +42,10 @@ struct CSCORE_API FECsCharacterBlendSpace : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsCharacterBlendSpace() {}
-	FECsCharacterBlendSpace(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsCharacterBlendSpace(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsCharacterBlendSpace() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsCharacterBlendSpace)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsCharacterBlendSpace& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsCharacterBlendSpace)
 
 struct CSCORE_API EMCsCharacterBlendSpace : public TCsEnumStructMap<FECsCharacterBlendSpace, uint8>
 {
@@ -90,19 +72,10 @@ struct CSCORE_API FECsCharacterAnimBlueprint : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsCharacterAnimBlueprint() {}
-	FECsCharacterAnimBlueprint(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsCharacterAnimBlueprint(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsCharacterAnimBlueprint() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsCharacterAnimBlueprint)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsCharacterAnimBlueprint& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsCharacterAnimBlueprint)
 
 struct CSCORE_API EMCsCharacterAnimBlueprint : public TCsEnumStructMap<FECsCharacterAnimBlueprint, uint8>
 {
@@ -151,19 +124,10 @@ struct CSCORE_API FECsCharacterAnimVariation : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsCharacterAnimVariation() {}
-	FECsCharacterAnimVariation(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsCharacterAnimVariation(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsCharacterAnimVariation() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsCharacterAnimVariation)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsCharacterAnimVariation& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsCharacterAnimVariation)
 
 struct CSCORE_API EMCsCharacterAnimVariation : public TCsEnumStructMap<FECsCharacterAnimVariation, uint8>
 {

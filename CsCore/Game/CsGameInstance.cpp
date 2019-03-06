@@ -6,6 +6,9 @@
 
 #include "Coroutine/CsCoroutineScheduler.h"
 
+#include "Types/CsTypes_Load.h"
+#include "Types/CsTypes_Input.h"
+
 // Managers
 #include "Managers/CsManager_Loading.h"
 #include "Managers/Runnable/CsManager_Runnable.h"
@@ -190,7 +193,7 @@ bool UCsGameInstance::Tick(float DeltaSeconds)
 	return true;
 }
 
-bool UR6GameInstance::IsSimulateInEditor()
+bool UCsGameInstance::IsSimulateInEditor()
 {
 #if WITH_EDITOR
 	return GameInstancePIEParametersCache.bSimulateInEditor;
@@ -502,15 +505,15 @@ void UCsGameInstance::AsyncPopulateAssetReferences()
 void UCsGameInstance::PopulateEnumMapsFromUserDefinedEnums()
 {
 	// AssetType
-	PopulateEnumMapFromUserDefinedEnum<EMCsAssetType>(TEXT("FECsAssetType"));
+	PopulateEnumMapFromUserDefinedEnum<EMCsAssetType>(TEXT("FECsAssetType"), TEXT(""));
 	// Input
 	{
 		// InputAction
-		PopulateEnumMapFromUserDefinedEnum<EMCsInputAction>(TEXT("FECsInputAction"));
+		PopulateEnumMapFromUserDefinedEnum<EMCsInputAction>(TEXT("FECsInputAction"), TEXT(""));
 		// InputActionMap
-		PopulateEnumMapFromUserDefinedEnum<EMCsInputActionMap>(TEXT("FECsInputActionMap"));
+		PopulateEnumMapFromUserDefinedEnum<EMCsInputActionMap>(TEXT("FECsInputActionMap"), TEXT(""));
 		// GameEvent
-		PopulateEnumMapFromUserDefinedEnum<EMCsGameEvent>(TEXT("FECsGameEvent"));
+		PopulateEnumMapFromUserDefinedEnum<EMCsGameEvent>(TEXT("FECsGameEvent"), TEXT(""));
 	}
 }
 

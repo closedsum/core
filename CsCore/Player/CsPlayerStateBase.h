@@ -111,14 +111,9 @@ struct CSCORE_API FECsPlayerStateBaseRoutine : public FECsEnum_uint8
 	GENERATED_USTRUCT_BODY()
 
 	CS_ENUM_UINT8_BODY(FECsPlayerStateBaseRoutine)
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsPlayerStateBaseRoutine& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsPlayerStateBaseRoutine)
 
 struct CSCORE_API EMCsPlayerStateBaseRoutine : public TCsEnumStructMap<FECsPlayerStateBaseRoutine, uint8>
 {

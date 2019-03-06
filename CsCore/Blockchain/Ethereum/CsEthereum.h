@@ -166,19 +166,10 @@ struct CSCORE_API FECsEthereumJavascript : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsEthereumJavascript() {}
-	FECsEthereumJavascript(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsEthereumJavascript(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsEthereumJavascript() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsEthereumJavascript)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsEthereumJavascript& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsEthereumJavascript)
 
 struct CSCORE_API EMCsEthereumJavascript : public TCsEnumStructMap<FECsEthereumJavascript, uint8>
 {

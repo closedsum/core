@@ -13,19 +13,10 @@ struct CSCORE_API FECsJavascriptEntryPointRoutine : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsJavascriptEntryPointRoutine() {}
-	FECsJavascriptEntryPointRoutine(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsJavascriptEntryPointRoutine(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsJavascriptEntryPointRoutine() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsJavascriptEntryPointRoutine)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsJavascriptEntryPointRoutine& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsJavascriptEntryPointRoutine)
 
 struct CSCORE_API EMCsJavascriptEntryPointRoutine : public TCsEnumStructMap<FECsJavascriptEntryPointRoutine, uint8>
 {

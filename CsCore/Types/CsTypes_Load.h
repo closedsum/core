@@ -330,19 +330,10 @@ struct CSCORE_API FECsAssetType : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsAssetType() {}
-	FECsAssetType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : Super(InValue, InName, InDisplayName) {}
-	FECsAssetType(const uint8 &InValue, const FString &InName) : Super(InValue, InName) {}
-	~FECsAssetType() {}
-
-	FORCEINLINE virtual FString ToString() const override { return Super::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsAssetType)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsAssetType& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsAssetType)
 
 struct CSCORE_API EMCsAssetType : public TCsEnumStructMap<FECsAssetType, uint8>
 {
@@ -376,19 +367,10 @@ struct CSCORE_API FECsLoadAssetsType : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsLoadAssetsType() {}
-	FECsLoadAssetsType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : Super(InValue, InName, InDisplayName) {}
-	FECsLoadAssetsType(const uint8 &InValue, const FString &InName) : Super(InValue, InName) {}
-	~FECsLoadAssetsType() {}
-
-	FORCEINLINE virtual FString ToString() const override { return Super::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsLoadAssetsType)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsLoadAssetsType& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsLoadAssetsType)
 
 struct CSCORE_API EMCsLoadAssetsType : public TCsEnumStructMap<FECsLoadAssetsType, uint8>
 {

@@ -61,19 +61,10 @@ struct CSCORE_API FECsWeaponState : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsWeaponState() {}
-	FECsWeaponState(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsWeaponState(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsWeaponState() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsWeaponState)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsWeaponState& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWeaponState)
 
 struct CSCORE_API EMCsWeaponState : public TCsEnumStructMap<FECsWeaponState, uint8>
 {
@@ -97,19 +88,10 @@ struct CSCORE_API FECsWeaponSlot : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsWeaponSlot() {}
-	FECsWeaponSlot(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsWeaponSlot(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsWeaponSlot() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsWeaponSlot)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsWeaponSlot& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWeaponSlot)
 
 struct CSCORE_API EMCsWeaponSlot : public TCsEnumStructMap<FECsWeaponSlot, uint8>
 {
@@ -133,19 +115,10 @@ struct CSCORE_API FECsWeaponFireMode : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsWeaponFireMode() {}
-	FECsWeaponFireMode(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsWeaponFireMode(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsWeaponFireMode() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsWeaponFireMode)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsWeaponFireMode& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWeaponFireMode)
 
 struct CSCORE_API EMCsWeaponFireMode : public TCsEnumStructMap<FECsWeaponFireMode, uint8>
 {
@@ -169,19 +142,10 @@ struct CSCORE_API FECsWeaponGrip : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsWeaponGrip() {}
-	FECsWeaponGrip(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsWeaponGrip(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsWeaponGrip() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsWeaponGrip)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsWeaponGrip& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWeaponGrip)
 
 struct CSCORE_API EMCsWeaponGrip : public TCsEnumStructMap<FECsWeaponGrip, uint8>
 {
@@ -205,19 +169,10 @@ struct CSCORE_API FECsWeaponAnim : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsWeaponAnim() {}
-	FECsWeaponAnim(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsWeaponAnim(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsWeaponAnim() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsWeaponAnim)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsWeaponAnim& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWeaponAnim)
 
 struct CSCORE_API EMCsWeaponAnim : public TCsEnumStructMap<FECsWeaponAnim, uint8>
 {
@@ -241,19 +196,10 @@ struct CSCORE_API FECsWeaponBlendSpace : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsWeaponBlendSpace() {}
-	FECsWeaponBlendSpace(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsWeaponBlendSpace(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsWeaponBlendSpace() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsWeaponBlendSpace)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsWeaponBlendSpace& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWeaponBlendSpace)
 
 struct CSCORE_API EMCsWeaponBlendSpace : public TCsEnumStructMap<FECsWeaponBlendSpace, uint8>
 {
@@ -277,19 +223,10 @@ struct CSCORE_API FECsWeaponAnimBlueprint : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsWeaponAnimBlueprint() {}
-	FECsWeaponAnimBlueprint(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsWeaponAnimBlueprint(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsWeaponAnimBlueprint() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsWeaponAnimBlueprint)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsWeaponAnimBlueprint& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWeaponAnimBlueprint)
 
 struct CSCORE_API EMCsWeaponAnimBlueprint : public TCsEnumStructMap<FECsWeaponAnimBlueprint, uint8>
 {
@@ -313,19 +250,10 @@ struct CSCORE_API FECsWeaponSound : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsWeaponSound() {}
-	FECsWeaponSound(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsWeaponSound(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsWeaponSound() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsWeaponSound)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsWeaponSound& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWeaponSound)
 
 struct CSCORE_API EMCsWeaponSound : public TCsEnumStructMap<FECsWeaponSound, uint8>
 {
@@ -349,19 +277,10 @@ struct CSCORE_API FECsWeaponOwner : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsWeaponOwner() {}
-	FECsWeaponOwner(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsWeaponOwner(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsWeaponOwner() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsWeaponOwner)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsWeaponOwner& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWeaponOwner)
 
 struct CSCORE_API EMCsWeaponOwner : public TCsEnumStructMap<FECsWeaponOwner, uint8>
 {
@@ -795,19 +714,10 @@ struct CSCORE_API FECsData_Weapon_FireMode : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsData_Weapon_FireMode() {}
-	FECsData_Weapon_FireMode(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsData_Weapon_FireMode(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsData_Weapon_FireMode() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsData_Weapon_FireMode)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsData_Weapon_FireMode& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsData_Weapon_FireMode)
 
 struct CSCORE_API EMCsData_Weapon_FireMode : public TCsEnumStructMap<FECsData_Weapon_FireMode, uint8>
 {

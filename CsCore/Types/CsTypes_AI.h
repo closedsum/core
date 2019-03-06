@@ -14,19 +14,10 @@ struct CSCORE_API FECsAIType : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsAIType() {}
-	FECsAIType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsAIType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsAIType() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsAIType)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsAIType& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsAIType)
 
 struct CSCORE_API EMCsAIType : public TCsEnumStructMap<FECsAIType, uint8>
 {
@@ -50,19 +41,10 @@ struct CSCORE_API FECsAIState : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsAIState() {}
-	FECsAIState(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsAIState(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsAIState() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsAIState)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsAIState& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsAIState)
 
 struct CSCORE_API EMCsAIState : public TCsEnumStructMap<FECsAIState, uint8>
 {
@@ -91,19 +73,10 @@ struct CSCORE_API FECsAISetup : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsAISetup() {}
-	FECsAISetup(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsAISetup(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsAISetup() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsAISetup)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsAISetup& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsAISetup)
 
 struct CSCORE_API EMCsAISetup : public TCsEnumStructMap<FECsAISetup, uint8>
 {

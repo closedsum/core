@@ -14,19 +14,10 @@ struct CSCORE_API FECsAnimInstanceRoutine : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsAnimInstanceRoutine() {}
-	FECsAnimInstanceRoutine(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsAnimInstanceRoutine(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsAnimInstanceRoutine() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsAnimInstanceRoutine)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsAnimInstanceRoutine& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsAnimInstanceRoutine)
 
 struct CSCORE_API EMCsAnimInstanceRoutine : public TCsEnumStructMap<FECsAnimInstanceRoutine, uint8>
 {

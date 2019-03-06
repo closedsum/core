@@ -9,19 +9,10 @@ struct CSCORE_API FECsBlockchainCommand : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsBlockchainCommand() {}
-	FECsBlockchainCommand(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsBlockchainCommand(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsBlockchainCommand() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsBlockchainCommand)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsBlockchainCommand& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsBlockchainCommand)
 
 struct CSCORE_API EMCsBlockchainCommand : public TCsEnumStructMap<FECsBlockchainCommand, uint8>
 {

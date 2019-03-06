@@ -25,14 +25,9 @@ struct CSCORE_API FECsGameInstanceRoutine : public FECsEnum_uint8
 	GENERATED_USTRUCT_BODY()
 
 	CS_ENUM_UINT8_BODY(FECsGameInstanceRoutine)
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsGameInstanceRoutine& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsGameInstanceRoutine)
 
 struct CSCORE_API EMCsGameInstanceRoutine : public TCsEnumStructMap<FECsGameInstanceRoutine, uint8>
 {
@@ -158,6 +153,8 @@ class CSCORE_API UCsGameInstance : public UGameInstance
 	FBindableDynEvent_CsGameInstance_OnTick OnTick_ScriptEvent;
 
 	uint64 CurrentGameFrame;
+
+	bool IsSimulateInEditor();
 
 // Routines
 #pragma region

@@ -11,19 +11,10 @@ struct CSCORE_API FECsSenseActorType : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsSenseActorType() {}
-	FECsSenseActorType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsSenseActorType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsSenseActorType() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsSenseActorType)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsSenseActorType& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsSenseActorType)
 
 struct CSCORE_API EMCsSenseActorType : public TCsEnumStructMap<FECsSenseActorType, uint8>
 {

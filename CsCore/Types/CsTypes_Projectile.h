@@ -153,19 +153,10 @@ struct CSCORE_API FECsProjectileType : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsProjectileType() {}
-	FECsProjectileType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsProjectileType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsProjectileType() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsProjectileType)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsProjectileType& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsProjectileType)
 
 struct CSCORE_API EMCsProjectileType : public TCsEnumStructMap<FECsProjectileType, uint8>
 {

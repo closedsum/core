@@ -707,14 +707,9 @@ struct CSCORE_API FECsSurfaceType : public FECsEnum_uint8
 	GENERATED_USTRUCT_BODY()
 
 	CS_ENUM_UINT8_BODY(FECsSurfaceType)
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsSurfaceType& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsSurfaceType)
 
 struct CSCORE_API EMCsSurfaceType : public TCsEnumStructMap<FECsSurfaceType, uint8>
 {
@@ -1647,14 +1642,9 @@ struct CSCORE_API FECsGestureType : public FECsEnum_uint8
 	GENERATED_USTRUCT_BODY()
 
 	CS_ENUM_UINT8_BODY(FECsGestureType)
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsGestureType& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsGestureType)
 
 struct CSCORE_API EMCsGestureType : public TCsEnumStructMap<FECsGestureType, uint8>
 {

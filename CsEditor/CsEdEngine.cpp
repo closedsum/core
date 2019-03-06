@@ -1,9 +1,13 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "CsEdEngine.h"
 #include "CsEditor.h"
+#include "CsCVars.h"
 
 #include "Common/CsCommon.h"
 #include "Common/CsCommon_Asset.h"
+
+#include "Types/CsTypes_Load.h"
+#include "Types/CsTypes_Input.h"
 
 // Asset Registry
 #include "AssetRegistryModule.h"
@@ -15,6 +19,7 @@
 #include "Data/CsDataMapping.h"
 #include "Data/CsData.h"
 
+#include "Editor/UnrealEd/Public/Editor.h"
 #include "Editor/PropertyEditor/Public/PropertyEditorModule.h"
 
 // DetailCustomizations
@@ -186,16 +191,16 @@ bool UCsEdEngine::Exec(UWorld* InWorld, const TCHAR* Stream, FOutputDevice& Ar)
 	return true;
 }
 
-void UR6EdEngine::OnBlueprintPreCompile(UBlueprint* Blueprint)
+void UCsEdEngine::OnBlueprintPreCompile(UBlueprint* Blueprint)
 {
 	PopulateUserDefinedEnums();
 	PopulateEnumMapsFromUserDefinedEnums();
 }
 
-void UR6EdEngine::OnBeginPIE(bool IsSimulating)
+void UCsEdEngine::OnBeginPIE(bool IsSimulating)
 {
-	FR6CVarLogMap::Get().ResetDirty();
-	FR6CVarToggleMap::Get().ResetDirty();
+	FCsCVarLogMap::Get().ResetDirty();
+	//FCsCVarToggleMap::Get().ResetDirty();
 }
 
 // Enums
@@ -208,21 +213,21 @@ void UCsEdEngine::PopulateUserDefinedEnums()
 
 void UCsEdEngine::PopulateUserDefinedEnum_InputAction()
 {
-	FR6EnumEditorUtils::SyncInputAction();
+	FCsEnumEditorUtils::SyncInputAction();
 }
 
 void UCsEdEngine::PopulateEnumMapsFromUserDefinedEnums()
 {
 	// AssetType
-	PopulateEnumMapFromUserDefinedEnum<EMR6AssetType>(TEXT("FECsAssetType"), FName(""));
+	PopulateEnumMapFromUserDefinedEnum<EMCsAssetType>(TEXT("FECsAssetType"), FName(""));
 	// Input
 	{
 		// InputAction
-		PopulateEnumMapFromUserDefinedEnum<EMR6InputAction>(TEXT("FECsInputAction"), FName(""));
+		PopulateEnumMapFromUserDefinedEnum<EMCsInputAction>(TEXT("FECsInputAction"), FName(""));
 		// InputActionMap
-		PopulateEnumMapFromUserDefinedEnum<EMR6InputActionMap>(TEXT("FECsInputActionMap"), FName(""));
+		PopulateEnumMapFromUserDefinedEnum<EMCsInputActionMap>(TEXT("FECsInputActionMap"), FName(""));
 		// GameEvent
-		PopulateEnumMapFromUserDefinedEnum<EMR6GameEvent>(TEXT("FECsGameEvent"), FName(""));
+		PopulateEnumMapFromUserDefinedEnum<EMCsGameEvent>(TEXT("FECsGameEvent"), FName(""));
 	}
 }
 
@@ -254,7 +259,7 @@ void UCsEdEngine::GetUserDefinedEnumNames(const FString& EnumName, const FName& 
 // Stream
 #pragma region
 
-bool UCsEdEngine::Stream_GetString(const TCHAR*& Str, const FString &StringType, FString &OutString, const FString &Check, const FString &Format)
+bool UCsEdEngine::Stream_GetString(const TCHAR*& Str, const FString& StringType, FString& OutString, const FString& Check, const FString& Format)
 {
 	OutString = UCsCommon::Stream_GetString(Str, false);
 
@@ -282,7 +287,7 @@ bool UCsEdEngine::Check_MarkDatasDirty(const TCHAR* Stream)
 	{
 		// AssetType
 		const FString AssetTypeAsString = UCsCommon::Stream_GetString(Stream, false);
-		const FECsAssetType AssetType    = EMCsAssetType::Get().GetSafeEnum(AssetTypeAsString);
+		const FECsAssetType AssetType   = EMCsAssetType::Get().GetSafeEnum(AssetTypeAsString);
 
 		MarkDatasDirty(AssetType);
 		return true;
@@ -290,7 +295,7 @@ bool UCsEdEngine::Check_MarkDatasDirty(const TCHAR* Stream)
 	return false;
 }
 
-void UCsEdEngine::MarkDatasDirty(const FECsAssetType &AssetType)
+void UCsEdEngine::MarkDatasDirty(const FECsAssetType& AssetType)
 {
 	TArray<ACsData*> Datas;
 

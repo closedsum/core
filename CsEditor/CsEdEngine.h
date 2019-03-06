@@ -69,7 +69,7 @@ public:
 #pragma region
 public:
 
-	bool Stream_GetString(const TCHAR*& Str, const FString &StringType, FString &OutString, const FString &Check, const FString &Format);
+	bool Stream_GetString(const TCHAR*& Str, const FString& StringType, FString& OutString, const FString& Check, const FString& Format);
 
 #pragma endregion Stream
 
@@ -78,7 +78,7 @@ public:
 public:
 
 	bool Check_MarkDatasDirty(const TCHAR* Stream);
-	void MarkDatasDirty(const FECsAssetType &AssetType);
+	void MarkDatasDirty(const FECsAssetType& AssetType);
 
 #pragma endregion Data
 };

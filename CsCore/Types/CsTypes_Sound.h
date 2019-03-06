@@ -15,19 +15,10 @@ struct CSCORE_API FECsSoundType : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsSoundType() {}
-	FECsSoundType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsSoundType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsSoundType() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsSoundType)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsSoundType& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsSoundType)
 
 struct CSCORE_API EMCsSoundType : public TCsEnumStructMap<FECsSoundType, uint8>
 {

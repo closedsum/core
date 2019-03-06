@@ -38,19 +38,10 @@ struct CSCORE_API FECsWeaponMultiValueMember : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsWeaponMultiValueMember() {}
-	FECsWeaponMultiValueMember(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsWeaponMultiValueMember(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsWeaponMultiValueMember() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsWeaponMultiValueMember)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsWeaponMultiValueMember& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWeaponMultiValueMember)
 
 struct CSCORE_API EMCsWeaponMultiValueMember : public TCsEnumStructMap<FECsWeaponMultiValueMember, uint8>
 {
@@ -120,19 +111,10 @@ struct CSCORE_API FECsWeaponRoutine : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsWeaponRoutine() {}
-	FECsWeaponRoutine(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsWeaponRoutine(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsWeaponRoutine() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsWeaponRoutine)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsWeaponRoutine& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWeaponRoutine)
 
 struct CSCORE_API EMCsWeaponRoutine : public TCsEnumStructMap<FECsWeaponRoutine, uint8>
 {

@@ -9,19 +9,10 @@ struct CSCORE_API FECsBlockchainContract : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsBlockchainContract() {}
-	FECsBlockchainContract(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsBlockchainContract(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsBlockchainContract() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsBlockchainContract)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsBlockchainContract& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsBlockchainContract)
 
 struct CSCORE_API EMCsBlockchainContract : public TCsEnumStructMap<FECsBlockchainContract, uint8>
 {
@@ -237,19 +228,10 @@ struct CSCORE_API FECsBlockchainContractFunction : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsBlockchainContractFunction() {}
-	FECsBlockchainContractFunction(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsBlockchainContractFunction(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsBlockchainContractFunction() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsBlockchainContractFunction)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsBlockchainContractFunction& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsBlockchainContractFunction)
 
 struct CSCORE_API EMCsBlockchainContractFunction : public TCsEnumStructMap<FECsBlockchainContractFunction, uint8>
 {

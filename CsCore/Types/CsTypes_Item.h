@@ -13,19 +13,10 @@ struct CSCORE_API FECsItemType : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsItemType() {}
-	FECsItemType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsItemType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsItemType() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsItemType)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsItemType& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsItemType)
 
 struct CSCORE_API EMCsItemType : public TCsEnumStructMap<FECsItemType, uint8>
 {
@@ -105,19 +96,10 @@ struct CSCORE_API FECsItemOwner : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsItemOwner() {}
-	FECsItemOwner(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsItemOwner(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsItemOwner() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsItemOwner)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsItemOwner& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsItemOwner)
 
 struct CSCORE_API EMCsItemOwner : public TCsEnumStructMap<FECsItemOwner, uint8>
 {
@@ -1118,19 +1100,10 @@ struct CSCORE_API FECsItemInteraction : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsItemInteraction() {}
-	FECsItemInteraction(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsItemInteraction(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsItemInteraction() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsItemInteraction)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsItemInteraction& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsItemInteraction)
 
 struct CSCORE_API EMCsItemInteraction : public TCsEnumStructMap<FECsItemInteraction, uint8>
 {

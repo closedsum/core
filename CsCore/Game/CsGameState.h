@@ -79,19 +79,10 @@ struct CSCORE_API FECsGameStateRoutine : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsGameStateRoutine() {}
-	FECsGameStateRoutine(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsGameStateRoutine(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsGameStateRoutine() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsGameStateRoutine)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsGameStateRoutine& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsGameStateRoutine)
 
 struct CSCORE_API EMCsGameStateRoutine : public TCsEnumStructMap<FECsGameStateRoutine, uint8>
 {

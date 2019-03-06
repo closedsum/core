@@ -169,7 +169,7 @@ struct CSCORE_API FECsInputActionMap : public FECsEnumMask_int32
 
 FORCEINLINE uint32 GetTypeHash(const FECsInputActionMap& b)
 {
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
+	return GetTypeHash(b.Name_Internal) ^ GetTypeHash(b.Value);
 }
 
 struct CSCORE_API EMCsInputActionMap : public TCsEnumStructMaskMap<FECsInputActionMap, int32>
@@ -213,14 +213,9 @@ struct CSCORE_API FECsInputAction : public FECsEnum_uint8
 	GENERATED_USTRUCT_BODY()
 
 	CS_ENUM_UINT8_BODY(FECsInputAction)
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsInputAction& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsInputAction)
 
 struct CSCORE_API EMCsInputAction : public TCsEnumStructMap<FECsInputAction, uint8>
 {
@@ -1368,14 +1363,9 @@ struct CSCORE_API FECsGameEvent : public FECsEnum_uint8
 	GENERATED_USTRUCT_BODY()
 
 	CS_ENUM_UINT8_BODY(FECsGameEvent)
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsGameEvent& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsGameEvent)
 
 struct CSCORE_API EMCsGameEvent : public TCsEnumStructMap<FECsGameEvent, uint8>
 {

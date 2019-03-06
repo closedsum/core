@@ -12,19 +12,10 @@ struct CSCORE_API FECsRecipeType : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	FECsRecipeType() {}
-	FECsRecipeType(const uint8 &InValue, const FString &InName, const FString &InDisplayName) : FECsEnum_uint8(InValue, InName, InDisplayName) {}
-	FECsRecipeType(const uint8 &InValue, const FString &InName) : FECsEnum_uint8(InValue, InName) {}
-	~FECsRecipeType() {}
-
-	FORCEINLINE virtual FString ToString() const override { return FECsEnum_uint8::ToString(); }
+	CS_ENUM_UINT8_BODY(FECsRecipeType)
 };
 
-FORCEINLINE uint32 GetTypeHash(const FECsRecipeType& b)
-{
-	return GetTypeHash(b.Name) ^ GetTypeHash(b.Value);
-}
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsRecipeType)
 
 struct CSCORE_API EMCsRecipeType : public TCsEnumStructMap<FECsRecipeType, uint8>
 {

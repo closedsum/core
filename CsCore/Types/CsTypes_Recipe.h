@@ -19,17 +19,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsRecipeType)
 
 struct CSCORE_API EMCsRecipeType : public TCsEnumStructMap<FECsRecipeType, uint8>
 {
-protected:
-	EMCsRecipeType() {}
-	EMCsRecipeType(const EMCsRecipeType &) = delete;
-	EMCsRecipeType(EMCsRecipeType &&) = delete;
-public:
-	~EMCsRecipeType() {}
-private:
-	static EMCsRecipeType* Instance;
-
-public:
-	static EMCsRecipeType& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsRecipeType)
 };
 
 USTRUCT(BlueprintType)

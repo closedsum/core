@@ -45,17 +45,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWeaponMultiValueMember)
 
 struct CSCORE_API EMCsWeaponMultiValueMember : public TCsEnumStructMap<FECsWeaponMultiValueMember, uint8>
 {
-protected:
-	EMCsWeaponMultiValueMember() {}
-	EMCsWeaponMultiValueMember(const EMCsWeaponMultiValueMember &) = delete;
-	EMCsWeaponMultiValueMember(EMCsWeaponMultiValueMember &&) = delete;
-public:
-	~EMCsWeaponMultiValueMember() {}
-private:
-	static EMCsWeaponMultiValueMember* Instance;
-
-public:
-	static EMCsWeaponMultiValueMember& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsWeaponMultiValueMember)
 };
 
 namespace ECsWeaponMultiValueMember
@@ -118,17 +108,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWeaponRoutine)
 
 struct CSCORE_API EMCsWeaponRoutine : public TCsEnumStructMap<FECsWeaponRoutine, uint8>
 {
-protected:
-	EMCsWeaponRoutine() {}
-	EMCsWeaponRoutine(const EMCsWeaponRoutine &) = delete;
-	EMCsWeaponRoutine(EMCsWeaponRoutine &&) = delete;
-public:
-	~EMCsWeaponRoutine() {}
-private:
-	static EMCsWeaponRoutine* Instance;
-
-public:
-	static EMCsWeaponRoutine& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsWeaponRoutine)
 };
 
 namespace ECsWeaponRoutine

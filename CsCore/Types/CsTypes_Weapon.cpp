@@ -2,100 +2,31 @@
 #include "Types/CsTypes_Weapon.h"
 
 // WeaponState
-EMCsWeaponState* EMCsWeaponState::Instance;
-
-EMCsWeaponState& EMCsWeaponState::Get()
-{
-	if (!Instance)
-		Instance = new EMCsWeaponState();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsWeaponState)
 
 // WeaponSlot
-EMCsWeaponSlot* EMCsWeaponSlot::Instance;
-
-EMCsWeaponSlot& EMCsWeaponSlot::Get()
-{
-	if (!Instance)
-		Instance = new EMCsWeaponSlot();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsWeaponSlot)
 
 // WeaponFireMode
-EMCsWeaponFireMode* EMCsWeaponFireMode::Instance;
-
-EMCsWeaponFireMode& EMCsWeaponFireMode::Get()
-{
-	if (!Instance)
-		Instance = new EMCsWeaponFireMode();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsWeaponFireMode)
 
 // WeaponGrip
-EMCsWeaponGrip* EMCsWeaponGrip::Instance;
-
-EMCsWeaponGrip& EMCsWeaponGrip::Get()
-{
-	if (!Instance)
-		Instance = new EMCsWeaponGrip();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsWeaponGrip)
 
 // WeaponAnim
-EMCsWeaponAnim* EMCsWeaponAnim::Instance;
-
-EMCsWeaponAnim& EMCsWeaponAnim::Get()
-{
-	if (!Instance)
-		Instance = new EMCsWeaponAnim();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsWeaponAnim)
 
 // WeaponBlendSpace
-EMCsWeaponBlendSpace* EMCsWeaponBlendSpace::Instance;
-
-EMCsWeaponBlendSpace& EMCsWeaponBlendSpace::Get()
-{
-	if (!Instance)
-		Instance = new EMCsWeaponBlendSpace();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsWeaponBlendSpace)
 
 // WeaponAnimBlueprint
-EMCsWeaponAnimBlueprint* EMCsWeaponAnimBlueprint::Instance;
-
-EMCsWeaponAnimBlueprint& EMCsWeaponAnimBlueprint::Get()
-{
-	if (!Instance)
-		Instance = new EMCsWeaponAnimBlueprint();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsWeaponAnimBlueprint)
 
 // WeaponSound
-EMCsWeaponSound* EMCsWeaponSound::Instance;
-
-EMCsWeaponSound& EMCsWeaponSound::Get()
-{
-	if (!Instance)
-		Instance = new EMCsWeaponSound();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsWeaponSound)
 
 // WeaponOwner
-EMCsWeaponOwner* EMCsWeaponOwner::Instance;
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsWeaponOwner)
 
-EMCsWeaponOwner& EMCsWeaponOwner::Get()
-{
-	if (!Instance)
-		Instance = new EMCsWeaponOwner();
-	return *Instance;
-}
-
-EMCsData_Weapon_FireMode* EMCsData_Weapon_FireMode::Instance;
-
-EMCsData_Weapon_FireMode& EMCsData_Weapon_FireMode::Get()
-{
-	if (!Instance)
-		Instance = new EMCsData_Weapon_FireMode();
-	return *Instance;
-}
+// Data_Weapon_FireMode
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsData_Weapon_FireMode)

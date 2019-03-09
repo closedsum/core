@@ -26,14 +26,8 @@
 // Enums
 #pragma region
 
-EMCsPawnRoutine* EMCsPawnRoutine::Instance;
-
-EMCsPawnRoutine& EMCsPawnRoutine::Get()
-{
-	if (!Instance)
-		Instance = new EMCsPawnRoutine();
-	return *Instance;
-}
+	// PawnRoutine
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsPawnRoutine)
 
 namespace ECsPawnRoutine
 {

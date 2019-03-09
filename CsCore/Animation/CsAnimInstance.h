@@ -21,17 +21,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsAnimInstanceRoutine)
 
 struct CSCORE_API EMCsAnimInstanceRoutine : public TCsEnumStructMap<FECsAnimInstanceRoutine, uint8>
 {
-protected:
-	EMCsAnimInstanceRoutine() {}
-	EMCsAnimInstanceRoutine(const EMCsAnimInstanceRoutine &) = delete;
-	EMCsAnimInstanceRoutine(EMCsAnimInstanceRoutine &&) = delete;
-public:
-	~EMCsAnimInstanceRoutine() {}
-private:
-	static EMCsAnimInstanceRoutine* Instance;
-
-public:
-	static EMCsAnimInstanceRoutine& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsAnimInstanceRoutine)
 };
 
 namespace ECsAnimInstanceRoutine

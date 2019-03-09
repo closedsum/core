@@ -3,24 +3,10 @@
 #include "CsCore.h"
 
 // InteractiveType
-EMCsInteractiveType* EMCsInteractiveType::Instance;
-
-EMCsInteractiveType& EMCsInteractiveType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsInteractiveType();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsInteractiveType)
 
 // InteractiveState
-EMCsInteractiveState* EMCsInteractiveState::Instance;
-
-EMCsInteractiveState& EMCsInteractiveState::Get()
-{
-	if (!Instance)
-		Instance = new EMCsInteractiveState();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMCsInteractiveState)
 
 namespace ECsInteractiveState
 {
@@ -47,14 +33,7 @@ namespace ECsInteractiveState
 }
 
 // InteractiveInstigator
-EMCsInteractiveInstigator* EMCsInteractiveInstigator::Instance;
-
-EMCsInteractiveInstigator& EMCsInteractiveInstigator::Get()
-{
-	if (!Instance)
-		Instance = new EMCsInteractiveInstigator();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMCsInteractiveInstigator)
 
 namespace ECsInteractiveInstigator
 {
@@ -69,14 +48,7 @@ namespace ECsInteractiveInstigator
 }
 
 // InteractiveCollision
-EMCsInteractiveCollision* EMCsInteractiveCollision::Instance;
-
-EMCsInteractiveCollision& EMCsInteractiveCollision::Get()
-{
-	if (!Instance)
-		Instance = new EMCsInteractiveCollision();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMCsInteractiveCollision)
 
 namespace ECsInteractiveCollision
 {
@@ -92,21 +64,7 @@ namespace ECsInteractiveCollision
 }
 
 // PickupFX
-EMCsPickupFX* EMCsPickupFX::Instance;
-
-EMCsPickupFX& EMCsPickupFX::Get()
-{
-	if (!Instance)
-		Instance = new EMCsPickupFX();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsPickupFX)
 
 // PickupSound
-EMCsPickupSound* EMCsPickupSound::Instance;
-
-EMCsPickupSound& EMCsPickupSound::Get()
-{
-	if (!Instance)
-		Instance = new EMCsPickupSound();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsPickupSound)

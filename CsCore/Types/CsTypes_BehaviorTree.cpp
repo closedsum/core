@@ -5,14 +5,7 @@
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
 
 // BlackboardKeyType
-EMCsBlackboardKeyType* EMCsBlackboardKeyType::Instance;
-
-EMCsBlackboardKeyType& EMCsBlackboardKeyType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsBlackboardKeyType();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsBlackboardKeyType)
 
 namespace ECsBlackboardKeyType
 {

@@ -2,24 +2,10 @@
 #include "Types/CsTypes_Item.h"
 
 // ItemType
-EMCsItemType* EMCsItemType::Instance;
-
-EMCsItemType& EMCsItemType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsItemType();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsItemType)
 
 // ItemCollection
-EMCsItemCollection* EMCsItemCollection::Instance;
-
-EMCsItemCollection& EMCsItemCollection::Get()
-{
-	if (!Instance)
-		Instance = new EMCsItemCollection();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMCsItemCollection)
 
 namespace ECsItemCollection
 {
@@ -41,24 +27,10 @@ namespace ECsItemCollectionCached
 }
 
 // ItemOwner
-EMCsItemOwner* EMCsItemOwner::Instance;
-
-EMCsItemOwner& EMCsItemOwner::Get()
-{
-	if (!Instance)
-		Instance = new EMCsItemOwner();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsItemOwner)
 
 // ItemMemberValueType
-EMCsItemMemberValueType* EMCsItemMemberValueType::Instance;
-
-EMCsItemMemberValueType& EMCsItemMemberValueType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsItemMemberValueType();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMCsItemMemberValueType)
 
 namespace ECsItemMemberValueType
 {
@@ -134,11 +106,4 @@ namespace ECsItemOnConsumeContentAction
 }
 
 // ItemInteraction
-EMCsItemInteraction* EMCsItemInteraction::Instance;
-
-EMCsItemInteraction& EMCsItemInteraction::Get()
-{
-	if (!Instance)
-		Instance = new EMCsItemInteraction();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsItemInteraction)

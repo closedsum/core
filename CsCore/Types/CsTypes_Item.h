@@ -20,17 +20,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsItemType)
 
 struct CSCORE_API EMCsItemType : public TCsEnumStructMap<FECsItemType, uint8>
 {
-protected:
-	EMCsItemType() {}
-	EMCsItemType(const EMCsItemType &) = delete;
-	EMCsItemType(EMCsItemType &&) = delete;
-public:
-	~EMCsItemType() {}
-private:
-	static EMCsItemType* Instance;
-
-public:
-	static EMCsItemType& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsItemType)
 };
 
 #pragma endregion ItemType
@@ -54,17 +44,7 @@ typedef ECsItemCollection::Type TCsItemCollection;
 
 struct CSCORE_API EMCsItemCollection : public TCsEnumMap<ECsItemCollection::Type>
 {
-protected:
-	EMCsItemCollection() {}
-	EMCsItemCollection(const EMCsItemCollection &) = delete;
-	EMCsItemCollection(EMCsItemCollection &&) = delete;
-public:
-	~EMCsItemCollection() {}
-private:
-	static EMCsItemCollection* Instance;
-
-public:
-	static EMCsItemCollection& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsItemCollection)
 };
 
 namespace ECsItemCollection
@@ -103,17 +83,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsItemOwner)
 
 struct CSCORE_API EMCsItemOwner : public TCsEnumStructMap<FECsItemOwner, uint8>
 {
-protected:
-	EMCsItemOwner() {}
-	EMCsItemOwner(const EMCsItemOwner &) = delete;
-	EMCsItemOwner(EMCsItemOwner &&) = delete;
-public:
-	~EMCsItemOwner() {}
-private:
-	static EMCsItemOwner* Instance;
-
-public:
-	static EMCsItemOwner& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsItemOwner)
 };
 
 #pragma endregion ItemOwner
@@ -346,17 +316,7 @@ typedef ECsItemMemberValueType::Type TCsItemMemberValueType;
 
 struct CSCORE_API EMCsItemMemberValueType : public TCsEnumMap<ECsItemMemberValueType::Type>
 {
-protected:
-	EMCsItemMemberValueType() {}
-	EMCsItemMemberValueType(const EMCsItemMemberValueType &) = delete;
-	EMCsItemMemberValueType(EMCsItemMemberValueType &&) = delete;
-public:
-	~EMCsItemMemberValueType() {}
-private:
-	static EMCsItemMemberValueType* Instance;
-
-public:
-	static EMCsItemMemberValueType& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsItemMemberValueType)
 };
 
 namespace ECsItemMemberValueType
@@ -1107,17 +1067,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsItemInteraction)
 
 struct CSCORE_API EMCsItemInteraction : public TCsEnumStructMap<FECsItemInteraction, uint8>
 {
-protected:
-	EMCsItemInteraction() {}
-	EMCsItemInteraction(const EMCsItemInteraction &) = delete;
-	EMCsItemInteraction(EMCsItemInteraction &&) = delete;
-public:
-	~EMCsItemInteraction() {}
-private:
-	static EMCsItemInteraction* Instance;
-
-public:
-	static EMCsItemInteraction& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsItemInteraction)
 };
 
 #pragma endregion ItemInteraction

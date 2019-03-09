@@ -70,14 +70,8 @@ namespace ECsEthereumRoutine
 	}
 }
 
-EMCsEthereumJavascript* EMCsEthereumJavascript::Instance;
-
-EMCsEthereumJavascript& EMCsEthereumJavascript::Get()
-{
-	if (!Instance)
-		Instance = new EMCsEthereumJavascript();
-	return *Instance;
-}
+	// EthereumJavascript
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsEthereumJavascript)
 
 #pragma endregion Enums
 

@@ -61,14 +61,8 @@ namespace ECsWeaponCached
 // Enums
 #pragma region
 
-EMCsWeaponMultiValueMember* EMCsWeaponMultiValueMember::Instance;
-
-EMCsWeaponMultiValueMember& EMCsWeaponMultiValueMember::Get()
-{
-	if (!Instance)
-		Instance = new EMCsWeaponMultiValueMember();
-	return *Instance;
-}
+	// WeaponMultiValueMember
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsWeaponMultiValueMember)
 
 namespace ECsWeaponMultiValueMember
 {
@@ -118,14 +112,8 @@ namespace ECsWeaponMultiValueMember
 	CSCORE_API const FECsWeaponMultiValueMember RechargeStartupDelay = EMCsWeaponMultiValueMember::Get().Create(TEXT("RechargeStartupDelay"));
 }
 
-EMCsWeaponRoutine* EMCsWeaponRoutine::Instance;
-
-EMCsWeaponRoutine& EMCsWeaponRoutine::Get()
-{
-	if (!Instance)
-		Instance = new EMCsWeaponRoutine();
-	return *Instance;
-}
+	// WeaponRoutine
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsWeaponRoutine)
 
 namespace ECsWeaponRoutine
 {

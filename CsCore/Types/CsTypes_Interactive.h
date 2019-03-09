@@ -19,17 +19,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsInteractiveType)
 
 struct CSCORE_API EMCsInteractiveType : public TCsEnumStructMap<FECsInteractiveType, uint8>
 {
-protected:
-	EMCsInteractiveType() {}
-	EMCsInteractiveType(const EMCsInteractiveType &) = delete;
-	EMCsInteractiveType(EMCsInteractiveType &&) = delete;
-public:
-	~EMCsInteractiveType() {}
-private:
-	static EMCsInteractiveType* Instance;
-
-public:
-	static EMCsInteractiveType& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsInteractiveType)
 };
 
 UENUM(BlueprintType)
@@ -59,17 +49,7 @@ namespace ECsInteractiveState
 
 struct CSCORE_API EMCsInteractiveState : public TCsEnumMap<ECsInteractiveState::Type>
 {
-protected:
-	EMCsInteractiveState() {}
-	EMCsInteractiveState(const EMCsInteractiveState &) = delete;
-	EMCsInteractiveState(EMCsInteractiveState &&) = delete;
-public:
-	~EMCsInteractiveState() {}
-private:
-	static EMCsInteractiveState* Instance;
-
-public:
-	static EMCsInteractiveState& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsInteractiveState)
 };
 
 namespace ECsInteractiveState
@@ -126,17 +106,7 @@ typedef ECsInteractiveInstigator::Type TCsInteractiveInstigator;
 
 struct CSCORE_API EMCsInteractiveInstigator : public TCsEnumMap<ECsInteractiveInstigator::Type>
 {
-protected:
-	EMCsInteractiveInstigator() {}
-	EMCsInteractiveInstigator(const EMCsInteractiveInstigator &) = delete;
-	EMCsInteractiveInstigator(EMCsInteractiveInstigator &&) = delete;
-public:
-	~EMCsInteractiveInstigator() {}
-private:
-	static EMCsInteractiveInstigator* Instance;
-
-public:
-	static EMCsInteractiveInstigator& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsInteractiveInstigator)
 };
 
 namespace ECsInteractiveInstigator
@@ -169,17 +139,7 @@ typedef ECsInteractiveCollision::Type TCsInteractiveCollision;
 
 struct CSCORE_API EMCsInteractiveCollision : public TCsEnumMap<ECsInteractiveCollision::Type>
 {
-protected:
-	EMCsInteractiveCollision() {}
-	EMCsInteractiveCollision(const EMCsInteractiveCollision &) = delete;
-	EMCsInteractiveCollision(EMCsInteractiveCollision &&) = delete;
-public:
-	~EMCsInteractiveCollision() {}
-private:
-	static EMCsInteractiveCollision* Instance;
-
-public:
-	static EMCsInteractiveCollision& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsInteractiveCollision)
 };
 
 namespace ECsInteractiveCollision
@@ -396,17 +356,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsPickupFX)
 
 struct CSCORE_API EMCsPickupFX : public TCsEnumStructMap<FECsPickupFX, uint8>
 {
-protected:
-	EMCsPickupFX() {}
-	EMCsPickupFX(const EMCsPickupFX &) = delete;
-	EMCsPickupFX(EMCsPickupFX &&) = delete;
-public:
-	~EMCsPickupFX() {}
-private:
-	static EMCsPickupFX* Instance;
-
-public:
-	static EMCsPickupFX& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsPickupFX)
 };
 
 USTRUCT(BlueprintType)
@@ -421,17 +371,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsPickupSound)
 
 struct CSCORE_API EMCsPickupSound : public TCsEnumStructMap<FECsPickupSound, uint8>
 {
-protected:
-	EMCsPickupSound() {}
-	EMCsPickupSound(const EMCsPickupSound &) = delete;
-	EMCsPickupSound(EMCsPickupSound &&) = delete;
-public:
-	~EMCsPickupSound() {}
-private:
-	static EMCsPickupSound* Instance;
-
-public:
-	static EMCsPickupSound& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsPickupSound)
 };
 
 USTRUCT(BlueprintType)

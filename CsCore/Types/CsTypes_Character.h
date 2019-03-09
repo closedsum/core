@@ -19,17 +19,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsCharacterAnim)
 
 struct CSCORE_API EMCsCharacterAnim : public TCsEnumStructMap<FECsCharacterAnim, uint8>
 {
-protected:
-	EMCsCharacterAnim() {}
-	EMCsCharacterAnim(const EMCsCharacterAnim &) = delete;
-	EMCsCharacterAnim(EMCsCharacterAnim &&) = delete;
-public:
-	~EMCsCharacterAnim() {}
-private:
-	static EMCsCharacterAnim* Instance;
-
-public:
-	static EMCsCharacterAnim& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsCharacterAnim)
 };
 
 #pragma endregion CharacterAnim
@@ -49,17 +39,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsCharacterBlendSpace)
 
 struct CSCORE_API EMCsCharacterBlendSpace : public TCsEnumStructMap<FECsCharacterBlendSpace, uint8>
 {
-protected:
-	EMCsCharacterBlendSpace() {}
-	EMCsCharacterBlendSpace(const EMCsCharacterBlendSpace &) = delete;
-	EMCsCharacterBlendSpace(EMCsCharacterBlendSpace &&) = delete;
-public:
-	~EMCsCharacterBlendSpace() {}
-private:
-	static EMCsCharacterBlendSpace* Instance;
-
-public:
-	static EMCsCharacterBlendSpace& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsCharacterBlendSpace)
 };
 
 #pragma endregion CharacterBlendSpace
@@ -79,17 +59,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsCharacterAnimBlueprint)
 
 struct CSCORE_API EMCsCharacterAnimBlueprint : public TCsEnumStructMap<FECsCharacterAnimBlueprint, uint8>
 {
-protected:
-	EMCsCharacterAnimBlueprint() {}
-	EMCsCharacterAnimBlueprint(const EMCsCharacterAnimBlueprint &) = delete;
-	EMCsCharacterAnimBlueprint(EMCsCharacterAnimBlueprint &&) = delete;
-public:
-	~EMCsCharacterAnimBlueprint() {}
-private:
-	static EMCsCharacterAnimBlueprint* Instance;
-
-public:
-	static EMCsCharacterAnimBlueprint& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsCharacterAnimBlueprint)
 };
 
 #pragma endregion CharacterAnimBlueprint
@@ -131,17 +101,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsCharacterAnimVariation)
 
 struct CSCORE_API EMCsCharacterAnimVariation : public TCsEnumStructMap<FECsCharacterAnimVariation, uint8>
 {
-protected:
-	EMCsCharacterAnimVariation() {}
-	EMCsCharacterAnimVariation(const EMCsCharacterAnimVariation &) = delete;
-	EMCsCharacterAnimVariation(EMCsCharacterAnimVariation &&) = delete;
-public:
-	~EMCsCharacterAnimVariation() {}
-private:
-	static EMCsCharacterAnimVariation* Instance;
-
-public:
-	static EMCsCharacterAnimVariation& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsCharacterAnimVariation)
 };
 
 #pragma endregion CharacterAnimVariation
@@ -204,17 +164,7 @@ enum class ECsCharacterJumpMovementState : uint8
 
 struct CSCORE_API EMCsCharacterJumpMovementState : public TCsEnumMap<ECsCharacterJumpMovementState>
 {
-protected:
-	EMCsCharacterJumpMovementState() {}
-	EMCsCharacterJumpMovementState(const EMCsCharacterJumpMovementState &) = delete;
-	EMCsCharacterJumpMovementState(EMCsCharacterJumpMovementState &&) = delete;
-public:
-	~EMCsCharacterJumpMovementState() {}
-private:
-	static EMCsCharacterJumpMovementState* Instance;
-
-public:
-	static EMCsCharacterJumpMovementState& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsCharacterJumpMovementState)
 };
 
 namespace NCsCharacterJumpMovementState

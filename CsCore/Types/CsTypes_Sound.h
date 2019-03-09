@@ -22,17 +22,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsSoundType)
 
 struct CSCORE_API EMCsSoundType : public TCsEnumStructMap<FECsSoundType, uint8>
 {
-protected:
-	EMCsSoundType() {}
-	EMCsSoundType(const EMCsSoundType &) = delete;
-	EMCsSoundType(EMCsSoundType &&) = delete;
-public:
-	~EMCsSoundType() {}
-private:
-	static EMCsSoundType* Instance;
-
-public:
-	static EMCsSoundType& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsSoundType)
 };
 
 #pragma endregion SoundType
@@ -58,17 +48,7 @@ typedef ECsSoundPriority::Type TCsSoundPriority;
 
 struct CSCORE_API EMCsSoundPriority : public TCsEnumMap<ECsSoundPriority::Type>
 {
-protected:
-	EMCsSoundPriority() {}
-	EMCsSoundPriority(const EMCsSoundPriority &) = delete;
-	EMCsSoundPriority(EMCsSoundPriority &&) = delete;
-public:
-	~EMCsSoundPriority() {}
-private:
-	static EMCsSoundPriority* Instance;
-
-public:
-	static EMCsSoundPriority& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsSoundPriority)
 };
 
 namespace ECsSoundPriority

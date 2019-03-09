@@ -3,24 +3,10 @@
 #include "CsCore.h"
 
 // SoundType
-EMCsSoundType* EMCsSoundType::Instance;
-
-EMCsSoundType& EMCsSoundType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsSoundType();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsSoundType)
 
 // SoundPriority
-EMCsSoundPriority* EMCsSoundPriority::Instance;
-
-EMCsSoundPriority& EMCsSoundPriority::Get()
-{
-	if (!Instance)
-		Instance = new EMCsSoundPriority();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMCsSoundPriority)
 
 namespace ECsSoundPriority
 {

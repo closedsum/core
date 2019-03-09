@@ -5,6 +5,7 @@
 #pragma once
 
 // SenseActorType
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsSenseActorType : public FECsEnum_uint8
@@ -18,17 +19,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsSenseActorType)
 
 struct CSCORE_API EMCsSenseActorType : public TCsEnumStructMap<FECsSenseActorType, uint8>
 {
-protected:
-	EMCsSenseActorType() {}
-	EMCsSenseActorType(const EMCsSenseActorType &) = delete;
-	EMCsSenseActorType(EMCsSenseActorType &&) = delete;
-public:
-	~EMCsSenseActorType() {}
-private:
-	static EMCsSenseActorType* Instance;
-
-public:
-	static EMCsSenseActorType& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsSenseActorType)
 };
 
 namespace ECsSenseActorType
@@ -37,7 +28,10 @@ namespace ECsSenseActorType
 	extern CSCORE_API const FECsSenseActorType AI;
 }
 
+#pragma endregion SenseActorType
+
 // SenseTeam
+#pragma region
 
 UENUM(BlueprintType)
 namespace ECsSenseTeam
@@ -55,17 +49,7 @@ typedef ECsSenseTeam::Type TCsSenseTeam;
 
 struct CSCORE_API EMCsSenseTeam : public TCsEnumMap<ECsSenseTeam::Type>
 {
-protected:
-	EMCsSenseTeam() {}
-	EMCsSenseTeam(const EMCsSenseTeam &) = delete;
-	EMCsSenseTeam(EMCsSenseTeam &&) = delete;
-public:
-	~EMCsSenseTeam() {}
-private:
-	static EMCsSenseTeam* Instance;
-
-public:
-	static EMCsSenseTeam& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsSenseTeam)
 };
 
 namespace ECsSenseTeam
@@ -78,6 +62,8 @@ namespace ECsSenseTeam
 		extern CSCORE_API const Type ECsSenseTeam_MAX;
 	}
 }
+
+#pragma endregion SenseTeam
 
 USTRUCT(BlueprintType)
 struct FCsSenseInfo

@@ -12,14 +12,8 @@
 // Enums
 #pragma region
 
-EMCsAnimInstanceRoutine* EMCsAnimInstanceRoutine::Instance;
-
-EMCsAnimInstanceRoutine& EMCsAnimInstanceRoutine::Get()
-{
-	if (!Instance)
-		Instance = new EMCsAnimInstanceRoutine();
-	return *Instance;
-}
+	// AnimInstanceRoutine
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsAnimInstanceRoutine)
 
 #pragma endregion Enums
 

@@ -2,31 +2,10 @@
 #include "Types/CsTypes_AI.h"
 
 // AIType
-EMCsAIType* EMCsAIType::Instance;
-
-EMCsAIType& EMCsAIType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsAIType();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsAIType)
 
 // AIState
-EMCsAIState* EMCsAIState::Instance;
-
-EMCsAIState& EMCsAIState::Get()
-{
-	if (!Instance)
-		Instance = new EMCsAIState();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsAIState)
 
 // AISetup
-EMCsAISetup* EMCsAISetup::Instance;
-
-EMCsAISetup& EMCsAISetup::Get()
-{
-	if (!Instance)
-		Instance = new EMCsAISetup();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsAISetup)

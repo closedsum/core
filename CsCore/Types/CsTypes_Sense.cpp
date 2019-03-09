@@ -2,14 +2,7 @@
 #include "Types/CsTypes_Sense.h"
 
 // SenseActorType
-EMCsSenseActorType* EMCsSenseActorType::Instance;
-
-EMCsSenseActorType& EMCsSenseActorType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsSenseActorType();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsSenseActorType)
 
 namespace ECsSenseActorType
 {
@@ -18,14 +11,7 @@ namespace ECsSenseActorType
 }
 
 // SenseTeam
-EMCsSenseTeam* EMCsSenseTeam::Instance;
-
-EMCsSenseTeam& EMCsSenseTeam::Get()
-{
-	if (!Instance)
-		Instance = new EMCsSenseTeam();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMCsSenseTeam)
 
 namespace ECsSenseTeam
 {

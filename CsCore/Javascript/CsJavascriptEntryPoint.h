@@ -20,17 +20,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsJavascriptEntryPointRoutine)
 
 struct CSCORE_API EMCsJavascriptEntryPointRoutine : public TCsEnumStructMap<FECsJavascriptEntryPointRoutine, uint8>
 {
-protected:
-	EMCsJavascriptEntryPointRoutine() {}
-	EMCsJavascriptEntryPointRoutine(const EMCsJavascriptEntryPointRoutine &) = delete;
-	EMCsJavascriptEntryPointRoutine(EMCsJavascriptEntryPointRoutine &&) = delete;
-public:
-	~EMCsJavascriptEntryPointRoutine() {}
-private:
-	static EMCsJavascriptEntryPointRoutine* Instance;
-
-public:
-	static EMCsJavascriptEntryPointRoutine& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsJavascriptEntryPointRoutine)
 };
 
 namespace ECsJavascriptEntryPointRoutine

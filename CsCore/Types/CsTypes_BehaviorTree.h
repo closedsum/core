@@ -20,17 +20,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsBlackboardKeyType)
 
 struct CSCORE_API EMCsBlackboardKeyType : public TCsEnumStructMap<FECsBlackboardKeyType, uint8>
 {
-protected:
-	EMCsBlackboardKeyType() {}
-	EMCsBlackboardKeyType(const EMCsBlackboardKeyType &) = delete;
-	EMCsBlackboardKeyType(EMCsBlackboardKeyType &&) = delete;
-public:
-	~EMCsBlackboardKeyType() {}
-private:
-	static EMCsBlackboardKeyType* Instance;
-
-public:
-	static EMCsBlackboardKeyType& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsBlackboardKeyType)
 };
 
 namespace ECsBlackboardKeyType

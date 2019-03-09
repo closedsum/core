@@ -20,17 +20,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsDamageType)
 
 struct CSCORE_API EMCsDamageType : public TCsEnumStructMap<FECsDamageType, uint8>
 {
-protected:
-	EMCsDamageType() {}
-	EMCsDamageType(const EMCsDamageType &) = delete;
-	EMCsDamageType(EMCsDamageType &&) = delete;
-public:
-	~EMCsDamageType() {}
-private:
-	static EMCsDamageType* Instance;
-
-public:
-	static EMCsDamageType& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsDamageType)
 };
 
 #pragma endregion DamageType
@@ -50,17 +40,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsHitType)
 
 struct CSCORE_API EMCsHitType : public TCsEnumStructMap<FECsHitType, uint8>
 {
-protected:
-	EMCsHitType() {}
-	EMCsHitType(const EMCsHitType &) = delete;
-	EMCsHitType(EMCsHitType &&) = delete;
-public:
-	~EMCsHitType() {}
-private:
-	static EMCsHitType* Instance;
-
-public:
-	static EMCsHitType& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsHitType)
 };
 
 #pragma endregion HitType
@@ -87,17 +67,7 @@ enum class ECsHitDirection : uint8
 
 struct CSCORE_API EMCsHitDirection : public TCsEnumMap<ECsHitDirection>
 {
-protected:
-	EMCsHitDirection() {}
-	EMCsHitDirection(const EMCsHitDirection &) = delete;
-	EMCsHitDirection(EMCsHitDirection &&) = delete;
-public:
-	~EMCsHitDirection() {}
-private:
-	static EMCsHitDirection* Instance;
-
-public:
-	static EMCsHitDirection& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsHitDirection)
 };
 
 namespace NCsHitDirection

@@ -55,6 +55,7 @@ struct FCsLocationDamageModifier
 #pragma region
 
 	// WeaponState
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsWeaponState : public FECsEnum_uint8
@@ -68,20 +69,13 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWeaponState)
 
 struct CSCORE_API EMCsWeaponState : public TCsEnumStructMap<FECsWeaponState, uint8>
 {
-protected:
-	EMCsWeaponState() {}
-	EMCsWeaponState(const EMCsWeaponState &) = delete;
-	EMCsWeaponState(EMCsWeaponState &&) = delete;
-public:
-	~EMCsWeaponState() {}
-private:
-	static EMCsWeaponState* Instance;
-
-public:
-	static EMCsWeaponState& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsWeaponState)
 };
 
+#pragma endregion WeaponState
+
 	// WeaponSlot
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsWeaponSlot : public FECsEnum_uint8
@@ -95,20 +89,13 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWeaponSlot)
 
 struct CSCORE_API EMCsWeaponSlot : public TCsEnumStructMap<FECsWeaponSlot, uint8>
 {
-protected:
-	EMCsWeaponSlot() {}
-	EMCsWeaponSlot(const EMCsWeaponSlot &) = delete;
-	EMCsWeaponSlot(EMCsWeaponSlot &&) = delete;
-public:
-	~EMCsWeaponSlot() {}
-private:
-	static EMCsWeaponSlot* Instance;
-
-public:
-	static EMCsWeaponSlot& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsWeaponSlot)
 };
 
+#pragma endregion WeaponSlot
+
 	// WeaponFireMode
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsWeaponFireMode : public FECsEnum_uint8
@@ -122,20 +109,13 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWeaponFireMode)
 
 struct CSCORE_API EMCsWeaponFireMode : public TCsEnumStructMap<FECsWeaponFireMode, uint8>
 {
-protected:
-	EMCsWeaponFireMode() {}
-	EMCsWeaponFireMode(const EMCsWeaponFireMode &) = delete;
-	EMCsWeaponFireMode(EMCsWeaponFireMode &&) = delete;
-public:
-	~EMCsWeaponFireMode() {}
-private:
-	static EMCsWeaponFireMode* Instance;
-
-public:
-	static EMCsWeaponFireMode& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsWeaponFireMode)
 };
 
+#pragma endregion WeaponFireMode
+
 	// WeaponGrip
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsWeaponGrip : public FECsEnum_uint8
@@ -149,20 +129,13 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWeaponGrip)
 
 struct CSCORE_API EMCsWeaponGrip : public TCsEnumStructMap<FECsWeaponGrip, uint8>
 {
-protected:
-	EMCsWeaponGrip() {}
-	EMCsWeaponGrip(const EMCsWeaponGrip &) = delete;
-	EMCsWeaponGrip(EMCsWeaponGrip &&) = delete;
-public:
-	~EMCsWeaponGrip() {}
-private:
-	static EMCsWeaponGrip* Instance;
-
-public:
-	static EMCsWeaponGrip& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsWeaponGrip)
 };
 
+#pragma endregion WeaponGrip
+
 	// WeaponAnim
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsWeaponAnim : public FECsEnum_uint8
@@ -176,20 +149,13 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWeaponAnim)
 
 struct CSCORE_API EMCsWeaponAnim : public TCsEnumStructMap<FECsWeaponAnim, uint8>
 {
-protected:
-	EMCsWeaponAnim() {}
-	EMCsWeaponAnim(const EMCsWeaponAnim &) = delete;
-	EMCsWeaponAnim(EMCsWeaponAnim &&) = delete;
-public:
-	~EMCsWeaponAnim() {}
-private:
-	static EMCsWeaponAnim* Instance;
-
-public:
-	static EMCsWeaponAnim& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsWeaponAnim)
 };
 
+#pragma endregion WeaponAnim
+
 	// WeaponBlendSpace
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsWeaponBlendSpace : public FECsEnum_uint8
@@ -203,20 +169,13 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWeaponBlendSpace)
 
 struct CSCORE_API EMCsWeaponBlendSpace : public TCsEnumStructMap<FECsWeaponBlendSpace, uint8>
 {
-protected:
-	EMCsWeaponBlendSpace() {}
-	EMCsWeaponBlendSpace(const EMCsWeaponBlendSpace &) = delete;
-	EMCsWeaponBlendSpace(EMCsWeaponBlendSpace &&) = delete;
-public:
-	~EMCsWeaponBlendSpace() {}
-private:
-	static EMCsWeaponBlendSpace* Instance;
-
-public:
-	static EMCsWeaponBlendSpace& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsWeaponBlendSpace)
 };
 
+#pragma endregion WeaponBlendSpace
+
 	// WeaponAnimBlueprint
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsWeaponAnimBlueprint : public FECsEnum_uint8
@@ -230,20 +189,13 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWeaponAnimBlueprint)
 
 struct CSCORE_API EMCsWeaponAnimBlueprint : public TCsEnumStructMap<FECsWeaponAnimBlueprint, uint8>
 {
-protected:
-	EMCsWeaponAnimBlueprint() {}
-	EMCsWeaponAnimBlueprint(const EMCsWeaponAnimBlueprint &) = delete;
-	EMCsWeaponAnimBlueprint(EMCsWeaponAnimBlueprint &&) = delete;
-public:
-	~EMCsWeaponAnimBlueprint() {}
-private:
-	static EMCsWeaponAnimBlueprint* Instance;
-
-public:
-	static EMCsWeaponAnimBlueprint& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsWeaponAnimBlueprint)
 };
 
+#pragma endregion WeaponAnimBlueprint
+
 	// WeaponSound
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsWeaponSound : public FECsEnum_uint8
@@ -257,20 +209,13 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWeaponSound)
 
 struct CSCORE_API EMCsWeaponSound : public TCsEnumStructMap<FECsWeaponSound, uint8>
 {
-protected:
-	EMCsWeaponSound() {}
-	EMCsWeaponSound(const EMCsWeaponSound &) = delete;
-	EMCsWeaponSound(EMCsWeaponSound &&) = delete;
-public:
-	~EMCsWeaponSound() {}
-private:
-	static EMCsWeaponSound* Instance;
-
-public:
-	static EMCsWeaponSound& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsWeaponSound)
 };
 
+#pragma endregion WeaponSound
+
 	// WeaponOwner
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsWeaponOwner : public FECsEnum_uint8
@@ -284,18 +229,10 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWeaponOwner)
 
 struct CSCORE_API EMCsWeaponOwner : public TCsEnumStructMap<FECsWeaponOwner, uint8>
 {
-protected:
-	EMCsWeaponOwner() {}
-	EMCsWeaponOwner(const EMCsWeaponOwner &) = delete;
-	EMCsWeaponOwner(EMCsWeaponOwner &&) = delete;
-public:
-	~EMCsWeaponOwner() {}
-private:
-	static EMCsWeaponOwner* Instance;
-
-public:
-	static EMCsWeaponOwner& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsWeaponOwner)
 };
+
+#pragma endregion WeaponOwner
 
 USTRUCT(BlueprintType)
 struct FCsData_Weapon_FireMode_Firing
@@ -721,17 +658,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsData_Weapon_FireMode)
 
 struct CSCORE_API EMCsData_Weapon_FireMode : public TCsEnumStructMap<FECsData_Weapon_FireMode, uint8>
 {
-protected:
-	EMCsData_Weapon_FireMode() {}
-	EMCsData_Weapon_FireMode(const EMCsData_Weapon_FireMode &) = delete;
-	EMCsData_Weapon_FireMode(EMCsData_Weapon_FireMode &&) = delete;
-public:
-	~EMCsData_Weapon_FireMode() {}
-private:
-	static EMCsData_Weapon_FireMode* Instance;
-
-public:
-	static EMCsData_Weapon_FireMode& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsData_Weapon_FireMode)
 };
 
 #pragma endregion Weapon

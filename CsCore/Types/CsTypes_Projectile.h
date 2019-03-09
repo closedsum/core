@@ -160,17 +160,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsProjectileType)
 
 struct CSCORE_API EMCsProjectileType : public TCsEnumStructMap<FECsProjectileType, uint8>
 {
-protected:
-	EMCsProjectileType() {}
-	EMCsProjectileType(const EMCsProjectileType &) = delete;
-	EMCsProjectileType(EMCsProjectileType &&) = delete;
-public:
-	~EMCsProjectileType() {}
-private:
-	static EMCsProjectileType* Instance;
-
-public:
-	static EMCsProjectileType& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsProjectileType)
 };
 
 #pragma endregion ProjectileType
@@ -194,17 +184,7 @@ typedef ECsProjectileState::Type TCsProjectileState;
 
 struct CSCORE_API EMCsProjectileState : public TCsEnumMap<ECsProjectileState::Type>
 {
-protected:
-	EMCsProjectileState() {}
-	EMCsProjectileState(const EMCsProjectileState &) = delete;
-	EMCsProjectileState(EMCsProjectileState &&) = delete;
-public:
-	~EMCsProjectileState() {}
-private:
-	static EMCsProjectileState* Instance;
-
-public:
-	static EMCsProjectileState& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsProjectileState)
 };
 
 namespace ECsProjectileState
@@ -239,17 +219,7 @@ typedef ECsProjectileDeActivate::Type TCsProjectileDeActivate;
 
 struct CSCORE_API EMCsProjectileDeActivate : public TCsEnumMap<ECsProjectileDeActivate::Type>
 {
-protected:
-	EMCsProjectileDeActivate() {}
-	EMCsProjectileDeActivate(const EMCsProjectileDeActivate &) = delete;
-	EMCsProjectileDeActivate(EMCsProjectileDeActivate &&) = delete;
-public:
-	~EMCsProjectileDeActivate() {}
-private:
-	static EMCsProjectileDeActivate* Instance;
-
-public:
-	static EMCsProjectileDeActivate& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsProjectileDeActivate)
 };
 
 namespace ECsProjectileDeActivate
@@ -283,17 +253,7 @@ typedef ECsProjectileMovement::Type TCsProjectileMovement;
 
 struct CSCORE_API EMCsProjectileMovement : public TCsEnumMap<ECsProjectileMovement::Type>
 {
-protected:
-	EMCsProjectileMovement() {}
-	EMCsProjectileMovement(const EMCsProjectileMovement &) = delete;
-	EMCsProjectileMovement(EMCsProjectileMovement &&) = delete;
-public:
-	~EMCsProjectileMovement() {}
-private:
-	static EMCsProjectileMovement* Instance;
-
-public:
-	static EMCsProjectileMovement& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsProjectileMovement)
 };
 
 namespace ECsProjectileMovement
@@ -326,17 +286,7 @@ typedef ECsProjectileMovementFunctionType::Type TCsProjectileMovementFunctionTyp
 
 struct CSCORE_API EMCsProjectileMovementFunctionType : public TCsEnumMap<ECsProjectileMovementFunctionType::Type>
 {
-protected:
-	EMCsProjectileMovementFunctionType() {}
-	EMCsProjectileMovementFunctionType(const EMCsProjectileMovementFunctionType &) = delete;
-	EMCsProjectileMovementFunctionType(EMCsProjectileMovementFunctionType &&) = delete;
-public:
-	~EMCsProjectileMovementFunctionType() {}
-private:
-	static EMCsProjectileMovementFunctionType* Instance;
-
-public:
-	static EMCsProjectileMovementFunctionType& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsProjectileMovementFunctionType)
 };
 
 namespace ECsProjectileMovementFunctionType

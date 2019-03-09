@@ -65,34 +65,13 @@ namespace ECsLoadFlags_Editor
 }
 
 // AssetType
-EMCsAssetType* EMCsAssetType::Instance;
-
-EMCsAssetType& EMCsAssetType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsAssetType();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsAssetType)
 
 // LoadAssetsType
-EMCsLoadAssetsType* EMCsLoadAssetsType::Instance;
-
-EMCsLoadAssetsType& EMCsLoadAssetsType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsLoadAssetsType();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsLoadAssetsType)
 
 // LoadAsyncOrder
-EMCsLoadAsyncOrder* EMCsLoadAsyncOrder::Instance;
-
-EMCsLoadAsyncOrder& EMCsLoadAsyncOrder::Get()
-{
-	if (!Instance)
-		Instance = new EMCsLoadAsyncOrder();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMCsLoadAsyncOrder)
 
 namespace ECsLoadAsyncOrder
 {

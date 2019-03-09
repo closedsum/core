@@ -2,34 +2,13 @@
 #include "Types/CsTypes_Damage.h"
 
 // DamageType
-EMCsDamageType* EMCsDamageType::Instance;
-
-EMCsDamageType& EMCsDamageType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsDamageType();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsDamageType)
 
 // HitType
-EMCsHitType* EMCsHitType::Instance;
-
-EMCsHitType& EMCsHitType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsHitType();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsHitType)
 
 // HitDirection
-EMCsHitDirection* EMCsHitDirection::Instance;
-
-EMCsHitDirection& EMCsHitDirection::Get()
-{
-	if (!Instance)
-		Instance = new EMCsHitDirection();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMCsHitDirection)
 
 namespace NCsHitDirection
 {

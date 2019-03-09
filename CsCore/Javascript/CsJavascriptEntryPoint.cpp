@@ -23,15 +23,8 @@
 // Enums
 #pragma region
 
-// JavascriptEntryPointRoutine
-EMCsJavascriptEntryPointRoutine* EMCsJavascriptEntryPointRoutine::Instance;
-
-EMCsJavascriptEntryPointRoutine& EMCsJavascriptEntryPointRoutine::Get()
-{
-	if (!Instance)
-		Instance = new EMCsJavascriptEntryPointRoutine();
-	return *Instance;
-}
+	// JavascriptEntryPointRoutine
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsJavascriptEntryPointRoutine)
 
 namespace ECsJavascriptEntryPointRoutine
 {

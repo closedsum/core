@@ -337,17 +337,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsAssetType)
 
 struct CSCORE_API EMCsAssetType : public TCsEnumStructMap<FECsAssetType, uint8>
 {
-protected:
-	EMCsAssetType() {}
-	EMCsAssetType(const EMCsAssetType &) = delete;
-	EMCsAssetType(EMCsAssetType &&) = delete;
-public:
-	~EMCsAssetType() {}
-private:
-	static EMCsAssetType* Instance;
-
-public:
-	static EMCsAssetType& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsAssetType)
 };
 
 namespace ECsAssetType
@@ -374,17 +364,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsLoadAssetsType)
 
 struct CSCORE_API EMCsLoadAssetsType : public TCsEnumStructMap<FECsLoadAssetsType, uint8>
 {
-protected:
-	EMCsLoadAssetsType() {}
-	EMCsLoadAssetsType(const EMCsLoadAssetsType &) = delete;
-	EMCsLoadAssetsType(EMCsLoadAssetsType &&) = delete;
-public:
-	~EMCsLoadAssetsType() {}
-private:
-	static EMCsLoadAssetsType* Instance;
-
-public:
-	static EMCsLoadAssetsType& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsLoadAssetsType)
 };
 
 #pragma endregion // LoadAssetsType
@@ -487,17 +467,7 @@ typedef ECsLoadAsyncOrder::Type TCsLoadAsyncOrder;
 
 struct CSCORE_API EMCsLoadAsyncOrder : public TCsEnumMap<ECsLoadAsyncOrder::Type>
 {
-protected:
-	EMCsLoadAsyncOrder() {}
-	EMCsLoadAsyncOrder(const EMCsLoadAsyncOrder &) = delete;
-	EMCsLoadAsyncOrder(EMCsLoadAsyncOrder &&) = delete;
-public:
-	~EMCsLoadAsyncOrder() {}
-private:
-	static EMCsLoadAsyncOrder* Instance;
-
-public:
-	static EMCsLoadAsyncOrder& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsLoadAsyncOrder)
 };
 
 namespace ECsLoadAsyncOrder

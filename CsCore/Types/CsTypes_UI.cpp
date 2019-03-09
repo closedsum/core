@@ -2,34 +2,13 @@
 #include "Types/CsTypes_UI.h"
 
 // WidgetActorType
-EMCsWidgetActorType* EMCsWidgetActorType::Instance;
-
-EMCsWidgetActorType& EMCsWidgetActorType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsWidgetActorType();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsWidgetActorType)
 
 // WidgetType
-EMCsWidgetType* EMCsWidgetType::Instance;
-
-EMCsWidgetType& EMCsWidgetType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsWidgetType();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsWidgetType)
 
 // SimpleWidgetType
-EMCsSimpleWidgetType* EMCsSimpleWidgetType::Instance;
-
-EMCsSimpleWidgetType& EMCsSimpleWidgetType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsSimpleWidgetType();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMCsSimpleWidgetType)
 
 namespace NCsSimpleWidgetType
 {
@@ -44,14 +23,7 @@ namespace NCsSimpleWidgetType
 }
 
 // HorizTextAligment
-EMHorizTextAligment* EMHorizTextAligment::Instance;
-
-EMHorizTextAligment& EMHorizTextAligment::Get()
-{
-	if (!Instance)
-		Instance = new EMHorizTextAligment();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMHorizTextAligment)
 
 namespace ECsHorizTextAligment
 {
@@ -64,14 +36,7 @@ namespace ECsHorizTextAligment
 }
 
 // VerticalTextAligment
-EMVerticalTextAligment* EMVerticalTextAligment::Instance;
-
-EMVerticalTextAligment& EMVerticalTextAligment::Get()
-{
-	if (!Instance)
-		Instance = new EMVerticalTextAligment();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMVerticalTextAligment)
 
 namespace ECsVerticalTextAligment
 {
@@ -85,14 +50,7 @@ namespace ECsVerticalTextAligment
 }
 
 // ButtonState
-EMCsButtonState* EMCsButtonState::Instance;
-
-EMCsButtonState& EMCsButtonState::Get()
-{
-	if (!Instance)
-		Instance = new EMCsButtonState();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMCsButtonState)
 
 namespace NCsButtonState
 {

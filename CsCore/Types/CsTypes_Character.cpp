@@ -2,54 +2,19 @@
 #include "Types/CsTypes_Character.h"
 
 // CharacterAnim
-EMCsCharacterAnim* EMCsCharacterAnim::Instance;
-
-EMCsCharacterAnim& EMCsCharacterAnim::Get()
-{
-	if (!Instance)
-		Instance = new EMCsCharacterAnim();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsCharacterAnim)
 
 // CharacterBlendSpace
-EMCsCharacterBlendSpace* EMCsCharacterBlendSpace::Instance;
-
-EMCsCharacterBlendSpace& EMCsCharacterBlendSpace::Get()
-{
-	if (!Instance)
-		Instance = new EMCsCharacterBlendSpace();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsCharacterBlendSpace)
 
 // CharacterAnimBlueprint
-EMCsCharacterAnimBlueprint* EMCsCharacterAnimBlueprint::Instance;
-
-EMCsCharacterAnimBlueprint& EMCsCharacterAnimBlueprint::Get()
-{
-	if (!Instance)
-		Instance = new EMCsCharacterAnimBlueprint();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsCharacterAnimBlueprint)
 
 // CharacterAnimVariation
-EMCsCharacterAnimVariation* EMCsCharacterAnimVariation::Instance;
-
-EMCsCharacterAnimVariation& EMCsCharacterAnimVariation::Get()
-{
-	if (!Instance)
-		Instance = new EMCsCharacterAnimVariation();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsCharacterAnimVariation)
 
 // CharacterJumpMovementState
-EMCsCharacterJumpMovementState* EMCsCharacterJumpMovementState::Instance;
-
-EMCsCharacterJumpMovementState& EMCsCharacterJumpMovementState::Get()
-{
-	if (!Instance)
-		Instance = new EMCsCharacterJumpMovementState();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsCharacterJumpMovementState)
 
 namespace NCsCharacterJumpMovementState
 {

@@ -58,17 +58,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWidgetActorType)
 
 struct CSCORE_API EMCsWidgetActorType : public TCsEnumStructMap<FECsWidgetActorType, uint8>
 {
-protected:
-	EMCsWidgetActorType() {}
-	EMCsWidgetActorType(const EMCsWidgetActorType &) = delete;
-	EMCsWidgetActorType(EMCsWidgetActorType &&) = delete;
-public:
-	~EMCsWidgetActorType() {}
-private:
-	static EMCsWidgetActorType* Instance;
-
-public:
-	static EMCsWidgetActorType& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsWidgetActorType)
 };
 
 #pragma endregion WidgetActorType
@@ -88,17 +78,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsWidgetType)
 
 struct CSCORE_API EMCsWidgetType : public TCsEnumStructMap<FECsWidgetType, uint8>
 {
-protected:
-	EMCsWidgetType() {}
-	EMCsWidgetType(const EMCsWidgetType &) = delete;
-	EMCsWidgetType(EMCsWidgetType &&) = delete;
-public:
-	~EMCsWidgetType() {}
-private:
-	static EMCsWidgetType* Instance;
-
-public:
-	static EMCsWidgetType& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsWidgetType)
 };
 
 #pragma endregion WidgetType
@@ -118,17 +98,7 @@ enum class ECsSimpleWidgetType : uint8
 
 struct CSCORE_API EMCsSimpleWidgetType : public TCsEnumMap<ECsSimpleWidgetType>
 {
-protected:
-	EMCsSimpleWidgetType() {}
-	EMCsSimpleWidgetType(const EMCsSimpleWidgetType &) = delete;
-	EMCsSimpleWidgetType(EMCsSimpleWidgetType &&) = delete;
-public:
-	~EMCsSimpleWidgetType() {}
-private:
-	static EMCsSimpleWidgetType* Instance;
-
-public:
-	static EMCsSimpleWidgetType& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsSimpleWidgetType)
 };
 
 namespace NCsSimpleWidgetType
@@ -410,17 +380,7 @@ public:
 
 struct CSCORE_API EMHorizTextAligment : public TCsEnumMap<EHorizTextAligment>
 {
-protected:
-	EMHorizTextAligment() {}
-	EMHorizTextAligment(const EMHorizTextAligment &) = delete;
-	EMHorizTextAligment(EMHorizTextAligment &&) = delete;
-public:
-	~EMHorizTextAligment() {}
-private:
-	static EMHorizTextAligment* Instance;
-
-public:
-	static EMHorizTextAligment& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMHorizTextAligment)
 };
 
 namespace ECsHorizTextAligment
@@ -442,17 +402,7 @@ namespace ECsHorizTextAligment
 
 struct CSCORE_API EMVerticalTextAligment : public TCsEnumMap<EVerticalTextAligment>
 {
-protected:
-	EMVerticalTextAligment() {}
-	EMVerticalTextAligment(const EMVerticalTextAligment &) = delete;
-	EMVerticalTextAligment(EMVerticalTextAligment &&) = delete;
-public:
-	~EMVerticalTextAligment() {}
-private:
-	static EMVerticalTextAligment* Instance;
-
-public:
-	static EMVerticalTextAligment& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMVerticalTextAligment)
 };
 
 namespace ECsVerticalTextAligment
@@ -485,17 +435,7 @@ enum class ECsButtonState : uint8
 
 struct CSCORE_API EMCsButtonState : public TCsEnumMap<ECsButtonState>
 {
-protected:
-	EMCsButtonState() {}
-	EMCsButtonState(const EMCsButtonState &) = delete;
-	EMCsButtonState(EMCsButtonState &&) = delete;
-public:
-	~EMCsButtonState() {}
-private:
-	static EMCsButtonState* Instance;
-
-public:
-	static EMCsButtonState& Get();
+	CS_DECLARE_ENUM_MAP_BODY(EMCsButtonState)
 };
 
 namespace NCsButtonState

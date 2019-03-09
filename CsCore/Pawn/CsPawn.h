@@ -45,17 +45,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsPawnRoutine)
 
 struct CSCORE_API EMCsPawnRoutine : public TCsEnumStructMap<FECsPawnRoutine, uint8>
 {
-protected:
-	EMCsPawnRoutine() {}
-	EMCsPawnRoutine(const EMCsPawnRoutine &) = delete;
-	EMCsPawnRoutine(EMCsPawnRoutine &&) = delete;
-public:
-	~EMCsPawnRoutine() {}
-private:
-	static EMCsPawnRoutine* Instance;
-
-public:
-	static EMCsPawnRoutine& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsPawnRoutine)
 };
 
 namespace ECsPawnRoutine

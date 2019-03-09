@@ -23,24 +23,10 @@ namespace ECsProjectileRelevance
 }
 
 // ProjectileType
-EMCsProjectileType* EMCsProjectileType::Instance;
-
-EMCsProjectileType& EMCsProjectileType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsProjectileType();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsProjectileType)
 
 // ProjectileState
-EMCsProjectileState* EMCsProjectileState::Instance;
-
-EMCsProjectileState& EMCsProjectileState::Get()
-{
-	if (!Instance)
-		Instance = new EMCsProjectileState();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMCsProjectileState)
 
 namespace ECsProjectileState
 {
@@ -54,14 +40,7 @@ namespace ECsProjectileState
 }
 
 // ProjectileDeActivate
-EMCsProjectileDeActivate* EMCsProjectileDeActivate::Instance;
-
-EMCsProjectileDeActivate& EMCsProjectileDeActivate::Get()
-{
-	if (!Instance)
-		Instance = new EMCsProjectileDeActivate();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMCsProjectileDeActivate)
 
 namespace ECsProjectileDeActivate
 {
@@ -75,14 +54,7 @@ namespace ECsProjectileDeActivate
 }
 
 // ProjectileMovement
-EMCsProjectileMovement* EMCsProjectileMovement::Instance;
-
-EMCsProjectileMovement& EMCsProjectileMovement::Get()
-{
-	if (!Instance)
-		Instance = new EMCsProjectileMovement();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMCsProjectileMovement)
 
 namespace ECsProjectileMovement
 {
@@ -95,14 +67,7 @@ namespace ECsProjectileMovement
 }
 
 // ProjectileMovementFunctionType
-EMCsProjectileMovementFunctionType* EMCsProjectileMovementFunctionType::Instance;
-
-EMCsProjectileMovementFunctionType& EMCsProjectileMovementFunctionType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsProjectileMovementFunctionType();
-	return *Instance;
-}
+CS_DEFINE_ENUM_MAP_BODY(EMCsProjectileMovementFunctionType)
 
 namespace ECsProjectileMovementFunctionType
 {

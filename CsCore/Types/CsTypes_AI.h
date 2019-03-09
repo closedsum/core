@@ -21,17 +21,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsAIType)
 
 struct CSCORE_API EMCsAIType : public TCsEnumStructMap<FECsAIType, uint8>
 {
-protected:
-	EMCsAIType() {}
-	EMCsAIType(const EMCsAIType &) = delete;
-	EMCsAIType(EMCsAIType &&) = delete;
-public:
-	~EMCsAIType() {}
-private:
-	static EMCsAIType* Instance;
-
-public:
-	static EMCsAIType& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsAIType)
 };
 
 	// AIState
@@ -48,17 +38,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsAIState)
 
 struct CSCORE_API EMCsAIState : public TCsEnumStructMap<FECsAIState, uint8>
 {
-protected:
-	EMCsAIState() {}
-	EMCsAIState(const EMCsAIState &) = delete;
-	EMCsAIState(EMCsAIState &&) = delete;
-public:
-	~EMCsAIState() {}
-private:
-	static EMCsAIState* Instance;
-
-public:
-	static EMCsAIState& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsAIState)
 };
 
 namespace ECsAISetup
@@ -80,17 +60,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsAISetup)
 
 struct CSCORE_API EMCsAISetup : public TCsEnumStructMap<FECsAISetup, uint8>
 {
-protected:
-	EMCsAISetup() {}
-	EMCsAISetup(const EMCsAISetup &) = delete;
-	EMCsAISetup(EMCsAISetup &&) = delete;
-public:
-	~EMCsAISetup() {}
-private:
-	static EMCsAISetup* Instance;
-
-public:
-	static EMCsAISetup& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsAISetup)
 };
 
 USTRUCT(BlueprintType)

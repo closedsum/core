@@ -173,17 +173,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsEthereumJavascript)
 
 struct CSCORE_API EMCsEthereumJavascript : public TCsEnumStructMap<FECsEthereumJavascript, uint8>
 {
-protected:
-	EMCsEthereumJavascript() {}
-	EMCsEthereumJavascript(const EMCsEthereumJavascript &) = delete;
-	EMCsEthereumJavascript(EMCsEthereumJavascript &&) = delete;
-public:
-	~EMCsEthereumJavascript() {}
-private:
-	static EMCsEthereumJavascript* Instance;
-
-public:
-	static EMCsEthereumJavascript& Get();
+	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsEthereumJavascript)
 };
 
 USTRUCT(BlueprintType)

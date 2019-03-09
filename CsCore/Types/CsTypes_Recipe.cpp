@@ -2,11 +2,4 @@
 #include "Types/CsTypes_Recipe.h"
 
 // RecipeType
-EMCsRecipeType* EMCsRecipeType::Instance;
-
-EMCsRecipeType& EMCsRecipeType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsRecipeType();
-	return *Instance;
-}
+CS_DEFINE_ENUM_STRUCT_MAP_BODY(EMCsRecipeType)

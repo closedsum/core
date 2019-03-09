@@ -20,16 +20,10 @@
 // Enums
 #pragma region
 
-EMCsBTTask_LookAtType* EMCsBTTask_LookAtType::Instance;
+	// BTTask_LookAtType
+CS_DEFINE_ENUM_MAP_BODY(EMCsBTTask_LookAtType)
 
-EMCsBTTask_LookAtType& EMCsBTTask_LookAtType::Get()
-{
-	if (!Instance)
-		Instance = new EMCsBTTask_LookAtType();
-	return *Instance;
-}
-
-namespace ECsBTTask_LookAtType
+namespace NCsBTTask_LookAtType
 {
 	namespace Ref
 	{
@@ -38,6 +32,8 @@ namespace ECsBTTask_LookAtType
 		CSCORE_API const Type Forever = EMCsBTTask_LookAtType::Get().Add(Type::Forever, TEXT("Forever"));
 		CSCORE_API const Type ECsBTTask_LookAtType_MAX = EMCsBTTask_LookAtType::Get().Add(Type::ECsBTTask_LookAtType_MAX, TEXT("ECsBTTask_LookAtType_MAX"), TEXT("MAX"));
 	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsBTTask_LookAtType_MAX;
 }
 
 #pragma endregion Enums

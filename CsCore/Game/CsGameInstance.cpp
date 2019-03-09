@@ -42,28 +42,23 @@ namespace ECsGameInstanceRoutine
 	CSCORE_API const Type HideMouseCursor_Internal = EMCsGameInstanceRoutine::Get().Create(TEXT("HideMouseCursor_Internal"));
 }
 
-namespace ECsGameInstanceOnBoardState
-{
-	namespace Str
-	{
-		const TCsString LoadDataMapping = TCsString(TEXT("LoadDataMapping"), TEXT("loaddatamapping"));
-		const TCsString FinishedLoadingDataAssets = TCsString(TEXT("FinishedLoadingDataAssets"), TEXT("finishedloadingdataassets"));
-		const TCsString FinishedPopulatingAssetReferences = TCsString(TEXT("FinishedPopulatingAssetReferences"), TEXT("finishedpopulatingassetreferences"));
-		const TCsString LoadStartUpData = TCsString(TEXT("LoadStartUpData"), TEXT("loadstartupdata"));
-		const TCsString LoadScreen = TCsString(TEXT("LoadScreen"), TEXT("loadscreen"));
-		const TCsString Completed = TCsString(TEXT("Completed"), TEXT("completed"));
-	}
+	// GameInstanceOnBoardState
+CS_DEFINE_ENUM_MAP_BODY(EMCsGameInstanceOnBoardState)
 
+namespace NCsGameInstanceOnBoardState
+{
 	namespace Ref
 	{
-		const Type LoadDataMapping = Type::LoadDataMapping;
-		const Type FinishedLoadingDataAssets = Type::FinishedLoadingDataAssets;
-		const Type FinishedPopulatingAssetReferences = Type::FinishedPopulatingAssetReferences;
-		const Type LoadStartUpData = Type::LoadStartUpData;
-		const Type LoadScreen = Type::LoadScreen;
-		const Type Completed = Type::Completed;
-		const Type ECsGameInstanceOnBoardState_MAX = Type::ECsGameInstanceOnBoardState_MAX;
+		CSCORE_API const Type LoadDataMapping = EMCsGameInstanceOnBoardState::Get().Add(Type::LoadDataMapping, TEXT("OnBoard_Internal"));
+		CSCORE_API const Type FinishedLoadingDataAssets = EMCsGameInstanceOnBoardState::Get().Add(Type::FinishedLoadingDataAssets, TEXT("FinishedLoadingDataAssets"));
+		CSCORE_API const Type FinishedPopulatingAssetReferences = EMCsGameInstanceOnBoardState::Get().Add(Type::FinishedPopulatingAssetReferences, TEXT("FinishedPopulatingAssetReferences"));
+		CSCORE_API const Type LoadStartUpData = EMCsGameInstanceOnBoardState::Get().Add(Type::LoadStartUpData, TEXT("LoadStartUpData"));
+		CSCORE_API const Type LoadScreen = EMCsGameInstanceOnBoardState::Get().Add(Type::LoadScreen, TEXT("LoadScreen"));
+		CSCORE_API const Type Completed = EMCsGameInstanceOnBoardState::Get().Add(Type::Completed, TEXT("Completed"));
+		CSCORE_API const Type ECsGameInstanceOnBoardState_MAX = EMCsGameInstanceOnBoardState::Get().Add(Type::ECsGameInstanceOnBoardState_MAX, TEXT("ECsGameInstanceOnBoardState_MAX"), TEXT("MAX"));
 	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsGameInstanceOnBoardState_MAX;
 }
 
 #pragma endregion
@@ -71,7 +66,7 @@ namespace ECsGameInstanceOnBoardState
 // Cache
 #pragma region
 
-namespace ECsGameInstanceCached
+namespace NCsGameInstanceCached
 {
 	namespace Name
 	{
@@ -566,8 +561,8 @@ void UCsGameInstance::CreateFullscreenWidget()
 	Payload->Type			= ECsGameInstanceRoutine::CreateFullscreenWidget_Internal.Value;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsGameInstanceCached::Name::CreateFullscreenWidget_Internal;
-	Payload->NameAsString	= ECsGameInstanceCached::Str::CreateFullscreenWidget_Internal;
+	Payload->Name			= NCsGameInstanceCached::Name::CreateFullscreenWidget_Internal;
+	Payload->NameAsString	= NCsGameInstanceCached::Str::CreateFullscreenWidget_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
@@ -640,8 +635,8 @@ void UCsGameInstance::HideMouseCursor()
 	Payload->Type			= (uint8)ECsGameInstanceRoutine::HideMouseCursor_Internal;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsGameInstanceCached::Name::HideMouseCursor_Internal;
-	Payload->NameAsString	= ECsGameInstanceCached::Str::HideMouseCursor_Internal;
+	Payload->Name			= NCsGameInstanceCached::Name::HideMouseCursor_Internal;
+	Payload->NameAsString	= NCsGameInstanceCached::Str::HideMouseCursor_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 

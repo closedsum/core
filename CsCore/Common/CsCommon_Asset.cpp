@@ -25,7 +25,7 @@
 // Cache
 #pragma region
 
-namespace ECsCommonAssetCached
+namespace NCsCommonAssetCached
 {
 	namespace Str
 	{
@@ -53,7 +53,7 @@ IAssetRegistry& UCsCommon_Asset::GetAssetRegistry()
 
 ACsDataMapping* UCsCommon_Asset::GetDataMapping()
 {
-	return GetBlueprintDefaultObject<ACsDataMapping>(ECsCommonAssetCached::Str::bp_data_mapping, ECsStringCompare::Equals, ACsDataMapping::StaticClass());
+	return GetBlueprintDefaultObject<ACsDataMapping>(NCsCommonAssetCached::Str::bp_data_mapping, ECsStringCompare::Equals, ACsDataMapping::StaticClass());
 }
 
 void UCsCommon_Asset::SyncBrowserToAsset(UObject* InObject)

@@ -47,70 +47,47 @@ namespace ECsGameInstanceRoutine
 
 #pragma endregion GameInstanceRoutine
 
-namespace ECsGameInstanceOnBoardState
-{
-	enum Type
-	{
-		LoadDataMapping,
-		FinishedLoadingDataAssets,
-		FinishedPopulatingAssetReferences,
-		LoadStartUpData,
-		LoadScreen,
-		Completed,
-		ECsGameInstanceOnBoardState_MAX,
-	};
-}
+	// GameInstanceOnBoardState
+#pragma region
 
-namespace ECsGameInstanceOnBoardState
+enum class ECsGameInstanceOnBoardState : uint8
 {
-	typedef TCsProperty_Multi_FString_Enum_TwoParams TCsString;
+	LoadDataMapping,
+	FinishedLoadingDataAssets,
+	FinishedPopulatingAssetReferences,
+	LoadStartUpData,
+	LoadScreen,
+	Completed,
+	ECsGameInstanceOnBoardState_MAX,
+};
 
-	namespace Str
-	{
-		extern const TCsString LoadDataMapping;
-		extern const TCsString FinishedLoadingDataAssets;
-		extern const TCsString FinishedPopulatingAssetReferences;
-		extern const TCsString LoadStartUpData;
-		extern const TCsString LoadScreen;
-		extern const TCsString Completed;
-	}
+struct CSCORE_API EMCsGameInstanceOnBoardState : public TCsEnumMap<ECsGameInstanceOnBoardState>
+{
+	CS_DECLARE_ENUM_MAP_BODY(EMCsGameInstanceOnBoardState)
+};
+
+
+namespace NCsGameInstanceOnBoardState
+{
+	typedef ECsGameInstanceOnBoardState Type;
 
 	namespace Ref
 	{
-		extern const Type LoadDataMapping;
-		extern const Type FinishedLoadingDataAssets;
-		extern const Type FinishedPopulatingAssetReferences;
-		extern const Type LoadStartUpData;
-		extern const Type LoadScreen;
-		extern const Type Completed;
-		extern const Type ECsGameInstanceOnBoardState_MAX;
+		extern CSCORE_API const Type LoadDataMapping;
+		extern CSCORE_API const Type FinishedLoadingDataAssets;
+		extern CSCORE_API const Type FinishedPopulatingAssetReferences;
+		extern CSCORE_API const Type LoadStartUpData;
+		extern CSCORE_API const Type LoadScreen;
+		extern CSCORE_API const Type Completed;
+		extern CSCORE_API const Type ECsGameInstanceOnBoardState_MAX;
 	}
 
-	FORCEINLINE const FString& ToString(const Type &EType)
-	{
-		if (EType == Type::LoadDataMapping) { return Str::LoadDataMapping.Value; }
-		if (EType == Type::FinishedLoadingDataAssets) { return Str::FinishedLoadingDataAssets.Value; }
-		if (EType == Type::FinishedPopulatingAssetReferences) { return Str::FinishedPopulatingAssetReferences.Value; }
-		if (EType == Type::LoadStartUpData) { return Str::LoadStartUpData.Value; }
-		if (EType == Type::LoadScreen) { return Str::LoadScreen.Value; }
-		if (EType == Type::Completed) { return Str::Completed.Value; }
-		return CS_INVALID_ENUM_TO_STRING;
-	}
-
-	FORCEINLINE const Type& ToType(const FString &String)
-	{
-		if (String == Str::LoadDataMapping) { return Ref::LoadDataMapping; }
-		if (String == Str::FinishedLoadingDataAssets) { return Ref::FinishedLoadingDataAssets; }
-		if (String == Str::FinishedPopulatingAssetReferences) { return Ref::FinishedPopulatingAssetReferences; }
-		if (String == Str::LoadStartUpData) { return Ref::LoadStartUpData; }
-		if (String == Str::LoadScreen) { return Ref::LoadScreen; }
-		if (String == Str::Completed) { return Ref::Completed; }
-		return Ref::ECsGameInstanceOnBoardState_MAX;
-	}
+	extern CSCORE_API const uint8 MAX;
 }
 
-#define ECS_GAME_INSTANCE_ONBOARD_STATE_MAX (uint8)ECsGameInstanceOnBoardState::ECsGameInstanceOnBoardState_MAX
-typedef ECsGameInstanceOnBoardState::Type TCsGameInstanceOnBoardState;
+#define ECS_GAME_INSTANCE_ONBOARD_STATE_MAX NCsGameInstanceOnBoardState::MAX
+
+#pragma endregion GameInstanceOnBoardState
 
 #pragma endregion Enums
 
@@ -172,7 +149,7 @@ public:
 #pragma region
 public:
 
-	TCsGameInstanceOnBoardState OnBoardState;
+	ECsGameInstanceOnBoardState OnBoardState;
 
 	CS_COROUTINE_DECLARE(OnBoard)
 

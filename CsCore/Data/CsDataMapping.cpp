@@ -15,7 +15,7 @@
 // Cache
 #pragma region
 
-namespace ECsDataMappingCache
+namespace NCsDataMappingCache
 {
 	namespace Str
 	{

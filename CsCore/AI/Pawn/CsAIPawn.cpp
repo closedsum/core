@@ -37,7 +37,7 @@ namespace ECsPawnRoutine
 // Cache
 #pragma region
 
-namespace ECsAIPawnCached
+namespace NCsAIPawnCached
 {
 	namespace Name
 	{
@@ -234,8 +234,8 @@ void ACsAIPawn::SyncCurrentViewFromBone(const FName &Bone)
 	Payload->Type			= ECsPawnRoutine::SyncCurrentViewFromBone_Internal.Value;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsAIPawnCached::Name::SyncCurrentViewFromBone_Internal;
-	Payload->NameAsString	= ECsAIPawnCached::Str::SyncCurrentViewFromBone_Internal;
+	Payload->Name			= NCsAIPawnCached::Name::SyncCurrentViewFromBone_Internal;
+	Payload->NameAsString	= NCsAIPawnCached::Str::SyncCurrentViewFromBone_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
@@ -430,8 +430,8 @@ void ACsAIPawn::StartShootForCount(const int32 &Count)
 	Payload->Type			= ECsPawnRoutine::StartShootForCount_Internal.Value;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsAIPawnCached::Name::StartShootForCount_Internal;
-	Payload->NameAsString	= ECsAIPawnCached::Str::StartShootForCount_Internal;
+	Payload->Name			= NCsAIPawnCached::Name::StartShootForCount_Internal;
+	Payload->NameAsString	= NCsAIPawnCached::Str::StartShootForCount_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
@@ -488,8 +488,8 @@ void ACsAIPawn::StartShootForDuration(const float &Duration)
 	Payload->Type			= ECsPawnRoutine::StartShootForDuration_Internal.Value;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsAIPawnCached::Name::StartShootForDuration_Internal;
-	Payload->NameAsString	= ECsAIPawnCached::Str::StartShootForDuration_Internal;
+	Payload->Name			= NCsAIPawnCached::Name::StartShootForDuration_Internal;
+	Payload->NameAsString	= NCsAIPawnCached::Str::StartShootForDuration_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 

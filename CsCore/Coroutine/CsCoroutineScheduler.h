@@ -67,7 +67,7 @@ typedef ECsCoroutineTransaction::Type TCsCoroutineTransaction;
 
 #pragma endregion Enums
 
-namespace ECsCoroutineCached
+namespace NCsCoroutineCached
 {
 	namespace Str
 	{

@@ -170,7 +170,7 @@ struct FCsDataMappingValidate
 // Cache
 #pragma region
 
-namespace ECsDataMappingCache
+namespace NCsDataMappingCache
 {
 	namespace Str
 	{
@@ -302,7 +302,7 @@ public:
 	template<typename T>
 	T* LoadData(const FECsAssetType &AssetType, const uint16 &LookUpCode, const ECsLoadFlags &LoadFlags = ECsLoadFlags::Game)
 	{
-		return LoadData<T>(ECsDataMappingCache::Str::LoadData, AssetType, LookUpCode, LoadFlags);
+		return LoadData<T>(NCsDataMappingCache::Str::LoadData, AssetType, LookUpCode, LoadFlags);
 	}
 
 	template<typename T>
@@ -334,7 +334,7 @@ public:
 	template<typename T>
 	T* LoadData(const FECsAssetType &AssetType, const uint8 &LookUpCode, const ECsLoadFlags &LoadFlags = ECsLoadFlags::Game)
 	{
-		return LoadData<T>(ECsDataMappingCache::Str::LoadData, AssetType, LookUpCode, LoadFlags);
+		return LoadData<T>(NCsDataMappingCache::Str::LoadData, AssetType, LookUpCode, LoadFlags);
 	}
 
 	template<typename T>
@@ -377,13 +377,13 @@ public:
 	template<typename T>
 	T* LoadData(const FECsAssetType &AssetType, const FName &ShortCode, const ECsLoadFlags &LoadFlags = ECsLoadFlags::Game)
 	{
-		return LoadData<T>(ECsDataMappingCache::Str::LoadData, AssetType, ShortCode, LoadFlags);
+		return LoadData<T>(NCsDataMappingCache::Str::LoadData, AssetType, ShortCode, LoadFlags);
 	}
 
 	template<typename T>
 	T* LoadData_Internal(const FECsAssetType &AssetType, FCsDataMappingEntry& Mapping, const ECsLoadFlags &LoadFlags = ECsLoadFlags::Game)
 	{
-		return LoadData_Internal<T>(ECsDataMappingCache::Str::LoadData, AssetType, Mapping, LoadFlags);
+		return LoadData_Internal<T>(NCsDataMappingCache::Str::LoadData, AssetType, Mapping, LoadFlags);
 	}
 
 	template<typename T>

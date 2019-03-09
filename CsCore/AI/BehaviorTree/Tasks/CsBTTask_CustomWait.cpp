@@ -19,7 +19,7 @@
 // Cache
 #pragma region
 
-namespace ECsBTTaskCustomWaitCache
+namespace NCsBTTaskCustomWaitCache
 {
 	namespace Str
 	{
@@ -109,7 +109,7 @@ EBTNodeResult::Type UCsBTTask_CustomWait::ExecuteTask(UBehaviorTreeComponent& Ow
 
 	for (FCsBTTask_KeyValue_Compare& Key : Keys)
 	{
-		Key.Init(ECsBTTaskCustomWaitCache::Str::ExecuteTask);
+		Key.Init(NCsBTTaskCustomWaitCache::Str::ExecuteTask);
 
 		if (!Key.IsValid())
 			return EBTNodeResult::Failed;

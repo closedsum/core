@@ -8,37 +8,27 @@
 // Enums
 #pragma region
 
+	// BTTask_LookAtType
+#pragma region
+
 UENUM()
-namespace ECsBTTask_LookAtType
+enum class ECsBTTask_LookAtType : uint8
 {
-	enum Type
-	{
-		UntilAligned				UMETA(DisplayName = "Until Aligned"),
-		Timed						UMETA(DisplayName = "Timed"),
-		Forever						UMETA(DisplayName = "Forever"),
-		ECsBTTask_LookAtType_MAX	UMETA(Hidden),
-	};
-}
-
-typedef ECsBTTask_LookAtType::Type TCsBTTask_LookAtType;
-
-struct CSCORE_API EMCsBTTask_LookAtType : public TCsEnumMap<ECsBTTask_LookAtType::Type>
-{
-protected:
-	EMCsBTTask_LookAtType() {}
-	EMCsBTTask_LookAtType(const EMCsBTTask_LookAtType &) = delete;
-	EMCsBTTask_LookAtType(EMCsBTTask_LookAtType &&) = delete;
-public:
-	~EMCsBTTask_LookAtType() {}
-private:
-	static EMCsBTTask_LookAtType* Instance;
-
-public:
-	static EMCsBTTask_LookAtType& Get();
+	UntilAligned				UMETA(DisplayName = "Until Aligned"),
+	Timed						UMETA(DisplayName = "Timed"),
+	Forever						UMETA(DisplayName = "Forever"),
+	ECsBTTask_LookAtType_MAX	UMETA(Hidden),
 };
 
-namespace ECsBTTask_LookAtType
+struct CSCORE_API EMCsBTTask_LookAtType : public TCsEnumMap<ECsBTTask_LookAtType>
 {
+	CS_DECLARE_ENUM_MAP_BODY(EMCsBTTask_LookAtType)
+};
+
+namespace NCsBTTask_LookAtType
+{
+	typedef ECsBTTask_LookAtType Type;
+
 	namespace Ref
 	{
 		extern CSCORE_API const Type UntilAligned;
@@ -46,7 +36,13 @@ namespace ECsBTTask_LookAtType
 		extern CSCORE_API const Type Forever;
 		extern CSCORE_API const Type ECsBTTask_LookAtType_MAX;
 	}
+
+	extern CSCORE_API const uint8 MAX;
 }
+
+#define ECS_BTTASK_LOOKATTYPE NCsBTTask_LookAtType::MAX
+
+#pragma endregion BTTask_LookAtType
 
 #pragma endregion Enums
 
@@ -95,7 +91,7 @@ protected:
 	FCsBTTask_LookAt_ResetOnAbort ResetOnAbort;
 
 	UPROPERTY(EditAnywhere, Category = Node)
-	TEnumAsByte<ECsBTTask_LookAtType::Type> Type;
+	ECsBTTask_LookAtType Type;
 
 	UPROPERTY(EditAnywhere, Category = Node, meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float Rate;

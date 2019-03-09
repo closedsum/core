@@ -11,7 +11,7 @@ bool UCsCoroutineScheduler::s_bCoroutineSchedulerHasShutdown = false;
 // Cache
 #pragma region
 
-namespace ECsCoroutineCached
+namespace NCsCoroutineCached
 {
 	namespace Str
 	{
@@ -227,7 +227,7 @@ struct FCsRoutine* UCsCoroutineScheduler::Allocate(FCsCoroutinePayload* Payload)
 			{
 				RoutinesToInit[Schedule].Add(R);
 			}
-			LogTransaction(ECsCoroutineCached::Str::Allocate, (Payload->DoInit && Payload->PerformFirstRun) ? ECsCoroutineTransaction::Start : ECsCoroutineTransaction::Allocate, R);
+			LogTransaction(NCsCoroutineCached::Str::Allocate, (Payload->DoInit && Payload->PerformFirstRun) ? ECsCoroutineTransaction::Start : ECsCoroutineTransaction::Allocate, R);
 			Payload->Reset();
 			return R;
 		}
@@ -568,7 +568,7 @@ void UCsCoroutineScheduler::Update(const ECsCoroutineSchedule &ScheduleType, con
 
 		if (R->index == CS_ROUTINE_END)
 		{
-			LogTransaction(ECsCoroutineCached::ToUpdate(ScheduleType), ECsCoroutineTransaction::End, R);
+			LogTransaction(NCsCoroutineCached::ToUpdate(ScheduleType), ECsCoroutineTransaction::End, R);
 
 			R->Reset();
 			RoutinesToRun[Schedule].RemoveAt(Index);
@@ -590,7 +590,7 @@ void UCsCoroutineScheduler::Update(const ECsCoroutineSchedule &ScheduleType, con
 
 		if (R->index == CS_ROUTINE_END)
 		{
-			LogTransaction(ECsCoroutineCached::ToUpdate(ScheduleType), ECsCoroutineTransaction::End, R);
+			LogTransaction(NCsCoroutineCached::ToUpdate(ScheduleType), ECsCoroutineTransaction::End, R);
 
 			R->Reset();
 			RoutinesToRun[Schedule].RemoveAt(Index);
@@ -705,7 +705,7 @@ void UCsCoroutineScheduler::LogRunning(const ECsCoroutineSchedule &ScheduleType)
 
 	float CurrentTime = World ? World->GetTimeSeconds() : UCsCommon::GetCurrentDateTimeSeconds();
 
-	const FString& FunctionName		    = ECsCoroutineCached::Str::Update;
+	const FString& FunctionName		    = NCsCoroutineCached::Str::Update;
 	const FString& ScheduleTypeAsString = EMCsCoroutineSchedule::Get().ToString(ScheduleType);
 
 	UE_LOG(LogCs, Warning, TEXT("%s: On%s. Running %d Coroutines at %f."), *FunctionName, *ScheduleTypeAsString, Count, CurrentTime);

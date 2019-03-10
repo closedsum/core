@@ -101,7 +101,7 @@ public:
 	static uint8 GetECsProcessCount();
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static void GetAllECsProcess(TArray<FECsProcess> &OutTypes);
+	static void GetAllECsProcess(TArray<FECsProcess>& OutTypes);
 
 #pragma endregion Process
 
@@ -126,7 +126,7 @@ public:
 	static uint8 GetECsBlockchainCommandCount();
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static void GetAllECsBlockchainCommand(TArray<FECsBlockchainCommand> &OutTypes);
+	static void GetAllECsBlockchainCommand(TArray<FECsBlockchainCommand>& OutTypes);
 
 #pragma endregion Command
 
@@ -147,7 +147,7 @@ public:
 	static uint8 GetECsBlockchainContractCount();
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static void GetAllECsBlockchainContract(TArray<FECsBlockchainContract> &OutTypes);
+	static void GetAllECsBlockchainContract(TArray<FECsBlockchainContract>& OutTypes);
 
 #pragma endregion Contract
 
@@ -168,7 +168,7 @@ public:
 	static uint8 GetECsBlockchainContractFunctionCount();
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static void GetAllECsBlockchainContractFunction(TArray<FECsBlockchainContractFunction> &OutTypes);
+	static void GetAllECsBlockchainContractFunction(TArray<FECsBlockchainContractFunction>& OutTypes);
 
 #pragma endregion Contract Function
 
@@ -193,7 +193,7 @@ public:
 	static uint8 GetECsEthereumJavascriptCount();
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static void GetAllECsEthereumJavascript(TArray<FECsEthereumJavascript> &OutTypes);
+	static void GetAllECsEthereumJavascript(TArray<FECsEthereumJavascript>& OutTypes);
 
 #pragma endregion Javascript
 
@@ -247,7 +247,7 @@ public:
 	static uint8 GetECsAITypeCount();
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static void GetAllECsAIType(TArray<FECsAIType> &OutTypes);
+	static void GetAllECsAIType(TArray<FECsAIType>& OutTypes);
 
 #pragma endregion Type
 
@@ -268,7 +268,7 @@ public:
 	static uint8 GetECsAIStateCount();
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static void GetAllECsAIState(TArray<FECsAIState> &OutTypes);
+	static void GetAllECsAIState(TArray<FECsAIState>& OutTypes);
 
 #pragma endregion State
 
@@ -289,7 +289,7 @@ public:
 	static uint8 GetECsAISetupCount();
 
 	UFUNCTION(BlueprintCallable, Category = "Library Enum")
-	static void GetAllECsAISetup(TArray<FECsAISetup> &OutTypes);
+	static void GetAllECsAISetup(TArray<FECsAISetup>& OutTypes);
 
 #pragma endregion Setup
 

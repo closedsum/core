@@ -17,7 +17,7 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FBindableEvent_CsManagerCrafting_OnFinishCr
 
 struct FCsCraftingProcess
 {
-	bool IsAllocated;
+	bool bAllocated;
 	uint64 Id;
 	FCsRoutine* R;
 	TWeakObjectPtr<UObject> Instigator;
@@ -33,7 +33,7 @@ struct FCsCraftingProcess
 
 	void Reset()
 	{
-		IsAllocated = false;
+		bAllocated = false;
 		Id = 0;
 		R = nullptr;
 		Instigator.Reset();
@@ -73,7 +73,7 @@ public:
 protected:
 	TMap<uint64, FCsCraftingPayload*> PayloadMap;
 public:
-	FCsCraftingPayload* GetPayload(const uint64 &Id);
+	FCsCraftingPayload* GetPayload(const uint64& Id);
 
 #pragma endregion Payload
 
@@ -92,7 +92,7 @@ protected:
 
 public:
 
-	FCsCraftingProcess* GetProcess(const uint64 &Id);
+	FCsCraftingProcess* GetProcess(const uint64& Id);
 
 #pragma endregion Process
 
@@ -103,6 +103,6 @@ public:
 
 	FBindableEvent_CsManagerCrafting_OnBeginCraftingProcess OnBeginCraftingProcess_Event;
 
-	void CancelCraftingProcess(const uint64 &Id);
+	void CancelCraftingProcess(const uint64& Id);
 	void CancelCraftingProcesses(UObject* Instigator);
 };

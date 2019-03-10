@@ -85,7 +85,7 @@ struct FCsCraftingPayload
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY()
-	bool IsAllocated;
+	bool bAllocated;
 	UPROPERTY()
 	uint64 Id;
 	UPROPERTY()
@@ -114,7 +114,7 @@ struct FCsCraftingPayload
 
 	FORCEINLINE void Reset()
 	{
-		IsAllocated = false;
+		bAllocated = false;
 		Id = 0;
 		Instigator.Reset();
 		Instigator = nullptr;

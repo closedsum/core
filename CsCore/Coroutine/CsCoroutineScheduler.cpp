@@ -8,6 +8,34 @@
 UCsCoroutineScheduler* UCsCoroutineScheduler::s_coroutineSchedulerSingleton;
 bool UCsCoroutineScheduler::s_bCoroutineSchedulerHasShutdown = false;
 
+// Enums
+#pragma region
+
+	// GameInstanceRoutine
+CS_DEFINE_ENUM_MAP_BODY(EMCsCoroutineTransaction)
+
+namespace NCsCoroutineTransaction
+{
+	namespace Ref
+	{
+		CSCORE_API const Type Allocate = EMCsCoroutineTransaction::Get().Add(Type::Allocate, TEXT("Allocate"));
+		CSCORE_API const Type Start = EMCsCoroutineTransaction::Get().Add(Type::Start, TEXT("Start"));
+		CSCORE_API const Type End = EMCsCoroutineTransaction::Get().Add(Type::End, TEXT("End"));
+		CSCORE_API const Type ECsCoroutineTransaction_MAX = EMCsCoroutineTransaction::Get().Add(Type::ECsCoroutineTransaction_MAX, TEXT("ECsCoroutineTransaction_MAX"), TEXT("MAX"));
+	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsCoroutineTransaction_MAX;
+
+	namespace Str
+	{
+		CSCORE_API const TCsString Allocate = TCsString(TEXT("Allocate"), TEXT("allocate"), TEXT("Allocating"));
+		CSCORE_API const TCsString Start = TCsString(TEXT("Start"), TEXT("start"), TEXT("Starting"));
+		CSCORE_API const TCsString End = TCsString(TEXT("End"), TEXT("end"), TEXT("Ending"));
+	}
+}
+
+#pragma endregion Enums
+
 // Cache
 #pragma region
 
@@ -99,57 +127,57 @@ UObject* UCsCoroutineScheduler::GetMyOwner()
 // Allocate
 #pragma region
 
-struct FCsRoutine* UCsCoroutineScheduler::Allocate(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, AActor* InActor, const bool &DoInit, const bool &PerformFirstRun)
+struct FCsRoutine* UCsCoroutineScheduler::Allocate(const ECsCoroutineSchedule& ScheduleType, CsCoroutine InCoroutine, AActor* InActor, const bool& DoInit, const bool& PerformFirstRun)
 {
 	return Allocate(ScheduleType, InCoroutine, nullptr, InActor, nullptr, nullptr, nullptr, CS_ROUTINE_MAX_TYPE, DoInit, PerformFirstRun);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::Allocate(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, const bool &DoInit, const bool &PerformFirstRun)
+struct FCsRoutine* UCsCoroutineScheduler::Allocate(const ECsCoroutineSchedule& ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, const bool& DoInit, const bool& PerformFirstRun)
 {
 	return Allocate(ScheduleType, InCoroutine, InStopCondition, InActor, nullptr, nullptr, nullptr, CS_ROUTINE_MAX_TYPE, DoInit, PerformFirstRun);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::Allocate(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, struct FCsRoutine** InOwnerMemberRoutine, const bool &DoInit, const bool &PerformFirstRun)
+struct FCsRoutine* UCsCoroutineScheduler::Allocate(const ECsCoroutineSchedule& ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, struct FCsRoutine** InOwnerMemberRoutine, const bool& DoInit, const bool& PerformFirstRun)
 {
 	return Allocate(ScheduleType, InCoroutine, InStopCondition, InActor, nullptr, InOwnerMemberRoutine, DoInit, PerformFirstRun);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::Allocate(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, CsAddRoutine InAddRoutine, CsRemoveRoutine InRemoveRoutine, const uint8 &RoutineType, const bool &DoInit, const bool &PerformFirstRun)
+struct FCsRoutine* UCsCoroutineScheduler::Allocate(const ECsCoroutineSchedule& ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, CsAddRoutine InAddRoutine, CsRemoveRoutine InRemoveRoutine, const uint8& RoutineType, const bool& DoInit, const bool& PerformFirstRun)
 {
 	return Allocate(ScheduleType, InCoroutine, InStopCondition, InActor, nullptr, InAddRoutine, InRemoveRoutine, RoutineType, DoInit, PerformFirstRun);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::Allocate(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, UObject* InObject, const bool &DoInit, const bool &PerformFirstRun)
+struct FCsRoutine* UCsCoroutineScheduler::Allocate(const ECsCoroutineSchedule& ScheduleType, CsCoroutine InCoroutine, UObject* InObject, const bool& DoInit, const bool& PerformFirstRun)
 {
 	return Allocate(ScheduleType, InCoroutine, nullptr, nullptr, InObject, nullptr, nullptr, CS_ROUTINE_MAX_TYPE, DoInit, PerformFirstRun);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::Allocate(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject, const bool &DoInit, const bool &PerformFirstRun)
+struct FCsRoutine* UCsCoroutineScheduler::Allocate(const ECsCoroutineSchedule& ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject, const bool& DoInit, const bool& PerformFirstRun)
 {
 	return Allocate(ScheduleType, InCoroutine, InStopCondition, nullptr, InObject, nullptr, nullptr, CS_ROUTINE_MAX_TYPE, DoInit, PerformFirstRun);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::Allocate(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject, struct FCsRoutine** InOwnerMemberRoutine, const bool &DoInit, const bool &PerformFirstRun)
+struct FCsRoutine* UCsCoroutineScheduler::Allocate(const ECsCoroutineSchedule& ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject, struct FCsRoutine** InOwnerMemberRoutine, const bool& DoInit, const bool& PerformFirstRun)
 {
 	return Allocate(ScheduleType, InCoroutine, InStopCondition, nullptr, InObject, InOwnerMemberRoutine, DoInit, PerformFirstRun);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::Allocate(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject, CsAddRoutine InAddRoutine, CsRemoveRoutine InRemoveRoutine, const uint8 &RoutineType, const bool &DoInit, const bool &PerformFirstRun)
+struct FCsRoutine* UCsCoroutineScheduler::Allocate(const ECsCoroutineSchedule& ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject, CsAddRoutine InAddRoutine, CsRemoveRoutine InRemoveRoutine, const uint8& RoutineType, const bool& DoInit, const bool& PerformFirstRun)
 {
 	return Allocate(ScheduleType, InCoroutine, InStopCondition, nullptr, InObject, InAddRoutine, InRemoveRoutine, RoutineType, DoInit, PerformFirstRun);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::Allocate(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, AActor* InActor, UObject* InObject, const bool &DoInit, const bool &PerformFirstRun)
+struct FCsRoutine* UCsCoroutineScheduler::Allocate(const ECsCoroutineSchedule& ScheduleType, CsCoroutine InCoroutine, AActor* InActor, UObject* InObject, const bool& DoInit, const bool& PerformFirstRun)
 {
 	return Allocate(ScheduleType, InCoroutine, nullptr, InActor, InObject, nullptr, nullptr, CS_ROUTINE_MAX_TYPE, DoInit, PerformFirstRun);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::Allocate(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject, const bool &DoInit, const bool &PerformFirstRun)
+struct FCsRoutine* UCsCoroutineScheduler::Allocate(const ECsCoroutineSchedule& ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject, const bool& DoInit, const bool& PerformFirstRun)
 {
 	return Allocate(ScheduleType, InCoroutine, nullptr, InActor, InObject, nullptr, nullptr, CS_ROUTINE_MAX_TYPE, DoInit, PerformFirstRun);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::Allocate(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject, struct FCsRoutine** InOwnerMemberRoutine, const bool &DoInit, const bool &PerformFirstRun)
+struct FCsRoutine* UCsCoroutineScheduler::Allocate(const ECsCoroutineSchedule& ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject, struct FCsRoutine** InOwnerMemberRoutine, const bool& DoInit, const bool& PerformFirstRun)
 {
 	FCsCoroutinePayload* Payload = AllocatePayload();
 
@@ -165,7 +193,7 @@ struct FCsRoutine* UCsCoroutineScheduler::Allocate(const ECsCoroutineSchedule &S
 	return Allocate(Payload);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::Allocate(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject, CsAddRoutine InAddRoutine, CsRemoveRoutine InRemoveRoutine, const uint8 &RoutineType, const bool &DoInit, const bool &PerformFirstRun)
+struct FCsRoutine* UCsCoroutineScheduler::Allocate(const ECsCoroutineSchedule& ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject, CsAddRoutine InAddRoutine, CsRemoveRoutine InRemoveRoutine, const uint8& RoutineType, const bool& DoInit, const bool& PerformFirstRun)
 {
 	FCsCoroutinePayload* Payload = AllocatePayload();
 
@@ -242,52 +270,52 @@ struct FCsRoutine* UCsCoroutineScheduler::Allocate(FCsCoroutinePayload* Payload)
 // Start
 #pragma region
 
-struct FCsRoutine* UCsCoroutineScheduler::Start(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, AActor* InActor)
+struct FCsRoutine* UCsCoroutineScheduler::Start(const ECsCoroutineSchedule& ScheduleType, CsCoroutine InCoroutine, AActor* InActor)
 {
 	return Allocate(ScheduleType, InCoroutine, nullptr, InActor, nullptr, nullptr, nullptr, CS_ROUTINE_MAX_TYPE, true, true);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::Start(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor)
+struct FCsRoutine* UCsCoroutineScheduler::Start(const ECsCoroutineSchedule& ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor)
 {
 	return Allocate(ScheduleType, InCoroutine, InStopCondition, InActor, nullptr, nullptr, nullptr, CS_ROUTINE_MAX_TYPE, true, true);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::Start(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, struct FCsRoutine** InOwnerMemberRoutine)
+struct FCsRoutine* UCsCoroutineScheduler::Start(const ECsCoroutineSchedule& ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, struct FCsRoutine** InOwnerMemberRoutine)
 {
 	return Allocate(ScheduleType, InCoroutine, InStopCondition, InActor, nullptr, InOwnerMemberRoutine, true, true);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::Start(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, CsAddRoutine InAddRoutine, CsRemoveRoutine InRemoveRoutine, const uint8 &RoutineType)
+struct FCsRoutine* UCsCoroutineScheduler::Start(const ECsCoroutineSchedule& ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, CsAddRoutine InAddRoutine, CsRemoveRoutine InRemoveRoutine, const uint8& RoutineType)
 {
 	return Allocate(ScheduleType, InCoroutine, InStopCondition, InActor, nullptr, InAddRoutine, InRemoveRoutine, RoutineType, true, true);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::Start(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, UObject* InObject)
+struct FCsRoutine* UCsCoroutineScheduler::Start(const ECsCoroutineSchedule& ScheduleType, CsCoroutine InCoroutine, UObject* InObject)
 {
 	return Allocate(ScheduleType, InCoroutine, nullptr, nullptr, InObject, nullptr, nullptr, CS_ROUTINE_MAX_TYPE, true, true);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::Start(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject)
+struct FCsRoutine* UCsCoroutineScheduler::Start(const ECsCoroutineSchedule& ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject)
 {
 	return Allocate(ScheduleType, InCoroutine, InStopCondition, nullptr, InObject, nullptr, nullptr, CS_ROUTINE_MAX_TYPE, true, true);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::Start(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject, struct FCsRoutine** InOwnerMemberRoutine)
+struct FCsRoutine* UCsCoroutineScheduler::Start(const ECsCoroutineSchedule& ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject, struct FCsRoutine** InOwnerMemberRoutine)
 {
 	return Allocate(ScheduleType, InCoroutine, InStopCondition, nullptr, InObject, InOwnerMemberRoutine, true, true);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::Start(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject, CsAddRoutine InAddRoutine, CsRemoveRoutine InRemoveRoutine, const uint8 &RoutineType)
+struct FCsRoutine* UCsCoroutineScheduler::Start(const ECsCoroutineSchedule& ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject, CsAddRoutine InAddRoutine, CsRemoveRoutine InRemoveRoutine, const uint8& RoutineType)
 {
 	return Allocate(ScheduleType, InCoroutine, InStopCondition, nullptr, InObject, InAddRoutine, InRemoveRoutine, RoutineType, true, true);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::Start(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, AActor* InActor, UObject* InObject)
+struct FCsRoutine* UCsCoroutineScheduler::Start(const ECsCoroutineSchedule& ScheduleType, CsCoroutine InCoroutine, AActor* InActor, UObject* InObject)
 {
 	return Allocate(ScheduleType, InCoroutine, nullptr, InActor, InObject, nullptr, nullptr, CS_ROUTINE_MAX_TYPE, true, true);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::Start(const ECsCoroutineSchedule &ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject)
+struct FCsRoutine* UCsCoroutineScheduler::Start(const ECsCoroutineSchedule& ScheduleType, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject)
 {
 	return Allocate(ScheduleType, InCoroutine, InStopCondition, InActor, InObject, nullptr, nullptr, CS_ROUTINE_MAX_TYPE, true, true);
 }
@@ -302,57 +330,57 @@ struct FCsRoutine* UCsCoroutineScheduler::Start(FCsCoroutinePayload* Payload)
 // StartChild
 #pragma region
 
-struct FCsRoutine* UCsCoroutineScheduler::StartChild(const ECsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, AActor* InActor)
+struct FCsRoutine* UCsCoroutineScheduler::StartChild(const ECsCoroutineSchedule& ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, AActor* InActor)
 {
 	return StartChild(ScheduleType, Parent, InCoroutine, nullptr, InActor, nullptr, nullptr, nullptr, CS_ROUTINE_MAX_TYPE);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::StartChild(const ECsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor)
+struct FCsRoutine* UCsCoroutineScheduler::StartChild(const ECsCoroutineSchedule& ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor)
 {
 	return StartChild(ScheduleType, Parent, InCoroutine, InStopCondition, InActor, nullptr, nullptr, nullptr, CS_ROUTINE_MAX_TYPE);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::StartChild(const ECsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, struct FCsRoutine** InOwnerMemberRoutine)
+struct FCsRoutine* UCsCoroutineScheduler::StartChild(const ECsCoroutineSchedule& ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, struct FCsRoutine** InOwnerMemberRoutine)
 {
 	return StartChild(ScheduleType, Parent, InCoroutine, InStopCondition, InActor, nullptr, InOwnerMemberRoutine);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::StartChild(const ECsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, CsAddRoutine InAddRoutine, CsRemoveRoutine InRemoveRoutine, const uint8 &RoutineType)
+struct FCsRoutine* UCsCoroutineScheduler::StartChild(const ECsCoroutineSchedule& ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, CsAddRoutine InAddRoutine, CsRemoveRoutine InRemoveRoutine, const uint8& RoutineType)
 {
 	return StartChild(ScheduleType, Parent, InCoroutine, InStopCondition, InActor, nullptr, InAddRoutine, InRemoveRoutine, RoutineType);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::StartChild(const ECsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, UObject* InObject)
+struct FCsRoutine* UCsCoroutineScheduler::StartChild(const ECsCoroutineSchedule& ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, UObject* InObject)
 {
 	return StartChild(ScheduleType, Parent, InCoroutine, nullptr, nullptr, InObject, nullptr, nullptr, CS_ROUTINE_MAX_TYPE);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::StartChild(const ECsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject)
+struct FCsRoutine* UCsCoroutineScheduler::StartChild(const ECsCoroutineSchedule& ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject)
 {
 	return StartChild(ScheduleType, Parent, InCoroutine, InStopCondition, nullptr, InObject, nullptr, nullptr, CS_ROUTINE_MAX_TYPE);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::StartChild(const ECsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject, struct FCsRoutine** InOwnerMemberRoutine)
+struct FCsRoutine* UCsCoroutineScheduler::StartChild(const ECsCoroutineSchedule& ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject, struct FCsRoutine** InOwnerMemberRoutine)
 {
 	return StartChild(ScheduleType, Parent, InCoroutine, InStopCondition, nullptr, InObject, InOwnerMemberRoutine);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::StartChild(const ECsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject, CsAddRoutine InAddRoutine, CsRemoveRoutine InRemoveRoutine, const uint8 &RoutineType)
+struct FCsRoutine* UCsCoroutineScheduler::StartChild(const ECsCoroutineSchedule& ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, UObject* InObject, CsAddRoutine InAddRoutine, CsRemoveRoutine InRemoveRoutine, const uint8& RoutineType)
 {
 	return StartChild(ScheduleType, Parent, InCoroutine, InStopCondition, nullptr, InObject, InAddRoutine, InRemoveRoutine, RoutineType);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::StartChild(const ECsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, AActor* InActor, UObject* InObject)
+struct FCsRoutine* UCsCoroutineScheduler::StartChild(const ECsCoroutineSchedule& ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, AActor* InActor, UObject* InObject)
 {
 	return StartChild(ScheduleType, Parent, InCoroutine, nullptr, InActor, InObject, nullptr, nullptr, CS_ROUTINE_MAX_TYPE);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::StartChild(const ECsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject)
+struct FCsRoutine* UCsCoroutineScheduler::StartChild(const ECsCoroutineSchedule& ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject)
 {
 	return StartChild(ScheduleType, Parent, InCoroutine, InStopCondition, InActor, InObject, nullptr, nullptr, CS_ROUTINE_MAX_TYPE);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::StartChild(const ECsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject, struct FCsRoutine** InOwnerMemberRoutine)
+struct FCsRoutine* UCsCoroutineScheduler::StartChild(const ECsCoroutineSchedule& ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject, struct FCsRoutine** InOwnerMemberRoutine)
 {
 	FCsCoroutinePayload* Payload = AllocatePayload();
 
@@ -367,7 +395,7 @@ struct FCsRoutine* UCsCoroutineScheduler::StartChild(const ECsCoroutineSchedule 
 	return StartChild(Payload);
 }
 
-struct FCsRoutine* UCsCoroutineScheduler::StartChild(const ECsCoroutineSchedule &ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject, CsAddRoutine InAddRoutine, CsRemoveRoutine InRemoveRoutine, const uint8 &RoutineType)
+struct FCsRoutine* UCsCoroutineScheduler::StartChild(const ECsCoroutineSchedule& ScheduleType, struct FCsRoutine* Parent, CsCoroutine InCoroutine, CsCoroutineStopCondition InStopCondition, AActor* InActor, UObject* InObject, CsAddRoutine InAddRoutine, CsRemoveRoutine InRemoveRoutine, const uint8& RoutineType)
 {
 	FCsCoroutinePayload* Payload = AllocatePayload();
 
@@ -443,7 +471,7 @@ struct FCsRoutine* UCsCoroutineScheduler::StartChild(FCsCoroutinePayload* Payloa
 
 #pragma endregion // StartChild
 
-struct FCsRoutine* UCsCoroutineScheduler::StartRoutine(const ECsCoroutineSchedule &ScheduleType, struct FCsRoutine* R)
+struct FCsRoutine* UCsCoroutineScheduler::StartRoutine(const ECsCoroutineSchedule& ScheduleType, struct FCsRoutine* R)
 {
 	const uint8 Schedule = (uint8)ScheduleType;
 
@@ -477,7 +505,7 @@ struct FCsRoutine* UCsCoroutineScheduler::StartRoutine(const ECsCoroutineSchedul
 	return R;
 }
 
-void UCsCoroutineScheduler::EndAll(const ECsCoroutineSchedule &ScheduleType /*= ECsCoroutineSchedule::ECsCoroutineSchedule_MAX*/)
+void UCsCoroutineScheduler::EndAll(const ECsCoroutineSchedule& ScheduleType /*= ECsCoroutineSchedule::ECsCoroutineSchedule_MAX*/)
 {
 	const uint8 Start = ScheduleType == ECsCoroutineSchedule::ECsCoroutineSchedule_MAX ? 0 : (uint8)ScheduleType;
 	const uint8 End   = ScheduleType == ECsCoroutineSchedule::ECsCoroutineSchedule_MAX ? ECS_COROUTINE_SCHEDULE_MAX : Start + 1;
@@ -509,7 +537,7 @@ void UCsCoroutineScheduler::EndAll(const ECsCoroutineSchedule &ScheduleType /*= 
 	}
 }
 
-void UCsCoroutineScheduler::BroadcastMessage(const ECsCoroutineSchedule &ScheduleType, const TCsCoroutineMessage &MessageType, const FName &Message, UObject* InOwner)
+void UCsCoroutineScheduler::BroadcastMessage(const ECsCoroutineSchedule& ScheduleType, const TCsCoroutineMessage& MessageType, const FName& Message, UObject* InOwner)
 {
 	const uint8 Schedule = (uint8)ScheduleType;
 
@@ -536,12 +564,12 @@ void UCsCoroutineScheduler::BroadcastMessage(const ECsCoroutineSchedule &Schedul
 	}
 }
 
-void UCsCoroutineScheduler::BroadcastMessage(const ECsCoroutineSchedule &ScheduleType, const TCsCoroutineMessage &MessageType, const FName &Message)
+void UCsCoroutineScheduler::BroadcastMessage(const ECsCoroutineSchedule& ScheduleType, const TCsCoroutineMessage& MessageType, const FName& Message)
 {
 	BroadcastMessage(ScheduleType, MessageType, Message, nullptr);
 }
 
-void UCsCoroutineScheduler::Update(const ECsCoroutineSchedule &ScheduleType, const float &DeltaSeconds)
+void UCsCoroutineScheduler::Update(const ECsCoroutineSchedule& ScheduleType, const float& DeltaSeconds)
 {
 	const uint8 Schedule = (uint8)ScheduleType;
 
@@ -601,7 +629,7 @@ void UCsCoroutineScheduler::Update(const ECsCoroutineSchedule &ScheduleType, con
 // Run on Tick
 #pragma region 
 
-void UCsCoroutineScheduler::OnTick_Update(const float &DeltaSeconds)
+void UCsCoroutineScheduler::OnTick_Update(const float& DeltaSeconds)
 {
 	Update(ECsCoroutineSchedule::Tick, DeltaSeconds);
 	OnTickUpdate_Event.Broadcast(DeltaSeconds);
@@ -612,7 +640,7 @@ void UCsCoroutineScheduler::OnTick_Update(const float &DeltaSeconds)
 // Run on CalcCamera
 #pragma region
 
-void UCsCoroutineScheduler::OnCalcCamera_Update(const float &DeltaSeconds)
+void UCsCoroutineScheduler::OnCalcCamera_Update(const float& DeltaSeconds)
 {
 	Update(ECsCoroutineSchedule::CalcCamera, DeltaSeconds);
 }
@@ -622,21 +650,21 @@ void UCsCoroutineScheduler::OnCalcCamera_Update(const float &DeltaSeconds)
 // Run on LastTick
 #pragma region
 
-void UCsCoroutineScheduler::OnLastTick_Update(const float &DeltaSeconds)
+void UCsCoroutineScheduler::OnLastTick_Update(const float& DeltaSeconds)
 {
 	Update(ECsCoroutineSchedule::LastTick, DeltaSeconds);
 }
 
 #pragma endregion Run on LastTick
 
-void UCsCoroutineScheduler::LogTransaction(const FString &FunctionName, const TEnumAsByte<ECsCoroutineTransaction::Type> &Transaction, FCsRoutine* R)
+void UCsCoroutineScheduler::LogTransaction(const FString& FunctionName, const ECsCoroutineTransaction& Transaction, FCsRoutine* R)
 {
 	if (CsCVarLogCoroutineTransactions->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		FString TransactionAsString = ECsCoroutineTransaction::ToActionString(Transaction);
+		FString TransactionAsString = NCsCoroutineTransaction::ToActionString(Transaction);
 			
 		if (Transaction == ECsCoroutineTransaction::End)
-			TransactionAsString = ECsCoroutineTransaction::ToActionString(Transaction) + TEXT("(Reason=") + EMCsCoroutineEndReason::Get().ToString(R->endReason) + TEXT(")");
+			TransactionAsString = NCsCoroutineTransaction::ToActionString(Transaction) + TEXT("(Reason=") + EMCsCoroutineEndReason::Get().ToString(R->endReason) + TEXT(")");
 
 		const FString& ScheduleTypeAsString = EMCsCoroutineSchedule::Get().ToString(R->scheduleType);
 
@@ -687,7 +715,7 @@ void UCsCoroutineScheduler::LogTransaction(const FString &FunctionName, const TE
 	}
 }
 
-void UCsCoroutineScheduler::LogRunning(const ECsCoroutineSchedule &ScheduleType)
+void UCsCoroutineScheduler::LogRunning(const ECsCoroutineSchedule& ScheduleType)
 {
 	if (CsCVarLogCoroutineRunning->GetInt() != CS_CVAR_SHOW_LOG)
 		return;

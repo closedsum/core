@@ -16,7 +16,7 @@
 // Cache
 #pragma region
 
-namespace ECsManagerCraftingCached
+namespace NCsManagerCraftingCached
 {
 	namespace Name
 	{
@@ -52,13 +52,13 @@ FCsCraftingPayload* ACsManager_Crafting::AllocatePayload()
 		const uint8 Index			= (PayloadIndex + I) % CS_CRAFTING_PAYLOAD_SIZE;
 		FCsCraftingPayload* Payload = &(Payloads[Index]);
 
-		if (!Payload->IsAllocated)
+		if (!Payload->bAllocated)
 		{
-			Payload->IsAllocated = true;
+			Payload->bAllocated = true;
 			Payload->Id			 = CurrentPayloadIdIndex;
 
 			PayloadMap.Add(Payload->Id, Payload);
-			CurrentPayloadIdIndex++;
+			++CurrentPayloadIdIndex;
 			return Payload;
 		}
 	}
@@ -66,7 +66,7 @@ FCsCraftingPayload* ACsManager_Crafting::AllocatePayload()
 	return nullptr;
 }
 
-FCsCraftingPayload* ACsManager_Crafting::GetPayload(const uint64 &Id)
+FCsCraftingPayload* ACsManager_Crafting::GetPayload(const uint64& Id)
 {
 	return *(PayloadMap.Find(Id));
 }
@@ -83,13 +83,13 @@ FCsCraftingProcess* ACsManager_Crafting::AllocateProcess()
 		ProcessIndex				= (ProcessIndex + 1) % CS_CRAFTING_PAYLOAD_SIZE;
 		FCsCraftingProcess* Process = &(Processes[ProcessIndex]);
 
-		if (!Process->IsAllocated)
+		if (!Process->bAllocated)
 		{
-			Process->IsAllocated = true;
+			Process->bAllocated = true;
 			Process->Id			 = CurrentProcessIdIndex;
 
 			ProcessMap.Add(Process->Id, Process);
-			CurrentProcessIdIndex++;
+			++CurrentProcessIdIndex;
 			return Process;
 		}
 	}
@@ -97,7 +97,7 @@ FCsCraftingProcess* ACsManager_Crafting::AllocateProcess()
 	return nullptr;
 }
 
-FCsCraftingProcess* ACsManager_Crafting::GetProcess(const uint64 &Id)
+FCsCraftingProcess* ACsManager_Crafting::GetProcess(const uint64& Id)
 {
 	return *(ProcessMap.Find(Id));
 }
@@ -126,8 +126,8 @@ void ACsManager_Crafting::CraftItems(FCsCraftingPayload* Payload)
 	CoroutinePayload->Stop.Add(&UCsCommon::CoroutineStopCondition_CheckActor);
 	CoroutinePayload->DoInit		  = true;
 	CoroutinePayload->PerformFirstRun = false;
-	CoroutinePayload->Name			  = ECsManagerCraftingCached::Name::CraftItems_Internal;
-	CoroutinePayload->NameAsString	  = ECsManagerCraftingCached::Str::CraftItems_Internal;
+	CoroutinePayload->Name			  = NCsManagerCraftingCached::Name::CraftItems_Internal;
+	CoroutinePayload->NameAsString	  = NCsManagerCraftingCached::Str::CraftItems_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(CoroutinePayload);
 
@@ -271,7 +271,7 @@ CS_COROUTINE(ACsManager_Crafting, CraftItems_Internal)
 	CS_COROUTINE_END(r);
 }
 
-void ACsManager_Crafting::CancelCraftingProcess(const uint64 &Id)
+void ACsManager_Crafting::CancelCraftingProcess(const uint64& Id)
 {
 	FCsCraftingProcess** ProcessPtr = ProcessMap.Find(Id);
 

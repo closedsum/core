@@ -66,7 +66,6 @@ struct CSCORE_API EMCsGameInstanceOnBoardState : public TCsEnumMap<ECsGameInstan
 	CS_DECLARE_ENUM_MAP_BODY(EMCsGameInstanceOnBoardState)
 };
 
-
 namespace NCsGameInstanceOnBoardState
 {
 	typedef ECsGameInstanceOnBoardState Type;

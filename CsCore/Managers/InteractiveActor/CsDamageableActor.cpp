@@ -11,7 +11,7 @@
 // Cache
 #pragma region
 
-namespace ECsDamageableActorCached
+namespace NCsDamageableActorCached
 {
 	namespace Str
 	{
@@ -158,8 +158,8 @@ void ACsDamageableActor::Respawn()
 	Payload->Type			= (uint8)ECsDamageableActorRoutine::Respawn_Internal;
 	Payload->DoInit			= true;
 	Payload->PerformFirstRun = false;
-	Payload->Name			= ECsDamageableActorCached::Name::Respawn_Internal;
-	Payload->NameAsString	= ECsDamageableActorCached::Str::Respawn_Internal;
+	Payload->Name			= NCsDamageableActorCached::Name::Respawn_Internal;
+	Payload->NameAsString	= NCsDamageableActorCached::Str::Respawn_Internal;
 
 	FCsRoutine* R = Scheduler->Allocate(Payload);
 
